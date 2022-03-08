@@ -2,156 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7920E4D2168
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Mar 2022 20:28:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA8B34D21A1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Mar 2022 20:35:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348894AbiCHT26 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Mar 2022 14:28:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33588 "EHLO
+        id S1350008AbiCHTgd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Mar 2022 14:36:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40872 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239799AbiCHT25 (ORCPT
+        with ESMTP id S1349999AbiCHTgc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Mar 2022 14:28:57 -0500
-Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 331DA29CB3
-        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Mar 2022 11:28:00 -0800 (PST)
-Received: by mail-lf1-x131.google.com with SMTP id g39so34046120lfv.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Mar 2022 11:28:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=e3tyhZcTT5clPSsfgGSWeMIMTPV1eQ06G1tymibw6gs=;
-        b=aqDqW0jKuhDTNMpf9AsVdDMH6RT/Ezu0dBsTBUUQ4vX5oqqv49dTEHgxErfyishTTc
-         S+eIKJZN2WvBq3cMo8TTWiHLnHHSrH07K61PMqdSsV2ggvRfAy3/wo2t8JO6dsCpZ6oa
-         +nhIlcK37MdeSXNbbYFPMD1h8wTUj0XPqv5NU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=e3tyhZcTT5clPSsfgGSWeMIMTPV1eQ06G1tymibw6gs=;
-        b=CRWD+lWc8+XnWFlNNe9NfoC4XXAAr/K4AEZpM9GIsPLtmJwUOYGleZGm1EAHOilKLY
-         tfi8A370oJVpV6MFvRkhQ4d4lFstaVzuTOFcysI7jJoZMAFMxykMt9gZCv5BiUzNPSz+
-         DaRRnpKOvgVU9h6auiNY83hjyzLuzcNOA+k9obUekxa59k10T41M41rxUVYOGBph4S+u
-         88GLAy2mNtLoQIglqbPdizEfvwkEtC5krc7g579/NPZH0TOpRLQJg3eoraBZE67vNywa
-         JZlF4pf00aSOs3oDZ+WQHzxbpHG+jhblnQ0ZAA8vh71Kcxd8FA+7pUZ9irRhTihHuUEH
-         O5RA==
-X-Gm-Message-State: AOAM531QpSCWW7OcCMMKyN6re43SP4ZsLwcf7/qNi2ubRtgsy4dus/nY
-        jaBUNc7YmvZfCswN0sziwR/efWTpEkayq9Ze9RI=
-X-Google-Smtp-Source: ABdhPJw96ZzMJveqRzYaVvQ69mf6O2gs8icuLczGJoLuzier8kMZjGOvrIO5iMO2IcJZVNhzGg1pmw==
-X-Received: by 2002:a05:6512:398b:b0:443:3b11:a985 with SMTP id j11-20020a056512398b00b004433b11a985mr11505502lfu.211.1646767677835;
-        Tue, 08 Mar 2022 11:27:57 -0800 (PST)
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
-        by smtp.gmail.com with ESMTPSA id p11-20020ac24ecb000000b004482df5aeadsm1685040lfr.106.2022.03.08.11.27.55
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Mar 2022 11:27:56 -0800 (PST)
-Received: by mail-lj1-f174.google.com with SMTP id s25so31341lji.5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Mar 2022 11:27:55 -0800 (PST)
-X-Received: by 2002:a2e:804b:0:b0:247:e81f:87e9 with SMTP id
- p11-20020a2e804b000000b00247e81f87e9mr6717778ljg.176.1646767674964; Tue, 08
- Mar 2022 11:27:54 -0800 (PST)
-MIME-Version: 1.0
-References: <CAHc6FU5nP+nziNGG0JAF1FUx-GV7kKFvM7aZuU_XD2_1v4vnvg@mail.gmail.com>
- <CAHk-=wgmCuuJdf96WiT6WXzQQTEeSK=cgBy24J4U9V2AvK4KdQ@mail.gmail.com>
- <bcafacea-7e67-405c-a969-e5a58a3c727e@redhat.com> <CAHk-=wh1WJ-s9Gj15yFciq6TOd9OOsE7H=R7rRskdRP6npDktQ@mail.gmail.com>
- <CAHk-=wjHsQywXgNe9D+MQCiMhpyB2Gs5M78CGCpTr9BSeP71bw@mail.gmail.com>
-In-Reply-To: <CAHk-=wjHsQywXgNe9D+MQCiMhpyB2Gs5M78CGCpTr9BSeP71bw@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 8 Mar 2022 11:27:38 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjs2Jf3LzqCPmfkXd=ULPyCrrGEF7rR6TYzz1RPF+qh3Q@mail.gmail.com>
-Message-ID: <CAHk-=wjs2Jf3LzqCPmfkXd=ULPyCrrGEF7rR6TYzz1RPF+qh3Q@mail.gmail.com>
-Subject: Re: Buffered I/O broken on s390x with page faults disabled (gfs2)
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
+        Tue, 8 Mar 2022 14:36:32 -0500
+Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DC7454688;
+        Tue,  8 Mar 2022 11:35:35 -0800 (PST)
+Received: from in02.mta.xmission.com ([166.70.13.52]:60392)
+        by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1nRfcL-006Rk2-Nb; Tue, 08 Mar 2022 12:35:33 -0700
+Received: from ip68-227-174-4.om.om.cox.net ([68.227.174.4]:33848 helo=email.froward.int.ebiederm.org.xmission.com)
+        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1nRfcK-001fpg-Bz; Tue, 08 Mar 2022 12:35:33 -0700
+From:   "Eric W. Biederman" <ebiederm@xmission.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>
-Content-Type: multipart/mixed; boundary="0000000000004c1c4a05d9b9fadf"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=no autolearn_force=no version=3.4.6
+        Denys Vlasenko <vda.linux@googlemail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <liam.howlett@oracle.com>,
+        Jann Horn <jannh@google.com>, <linux-mm@kvack.org>
+References: <20220131153740.2396974-1-willy@infradead.org>
+        <871r0nriy4.fsf@email.froward.int.ebiederm.org>
+        <YfgKw5z2uswzMVRQ@casper.infradead.org>
+        <877dafq3bw.fsf@email.froward.int.ebiederm.org>
+        <YfgPwPvopO1aqcVC@casper.infradead.org>
+        <CAG48ez3MCs8d8hjBfRSQxwUTW3o64iaSwxF=UEVtk+SEme0chQ@mail.gmail.com>
+        <87bkzroica.fsf_-_@email.froward.int.ebiederm.org>
+Date:   Tue, 08 Mar 2022 13:35:03 -0600
+In-Reply-To: <87bkzroica.fsf_-_@email.froward.int.ebiederm.org> (Eric
+        W. Biederman's message of "Mon, 31 Jan 2022 12:44:53 -0600")
+Message-ID: <87h788fdaw.fsf_-_@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1nRfcK-001fpg-Bz;;;mid=<87h788fdaw.fsf_-_@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.174.4;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18VHZi4qAUqp2lFjUGTMEwqPtkpQK8w5+o=
+X-SA-Exim-Connect-IP: 68.227.174.4
+X-SA-Exim-Mail-From: ebiederm@xmission.com
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-DCC: XMission; sa04 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Kees Cook <keescook@chromium.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 536 ms - load_scoreonly_sql: 0.06 (0.0%),
+        signal_user_changed: 11 (2.0%), b_tie_ro: 9 (1.6%), parse: 1.56 (0.3%),
+         extract_message_metadata: 5 (1.0%), get_uri_detail_list: 2.0 (0.4%),
+        tests_pri_-1000: 6 (1.1%), tests_pri_-950: 1.92 (0.4%),
+        tests_pri_-900: 1.49 (0.3%), tests_pri_-90: 202 (37.7%), check_bayes:
+        200 (37.3%), b_tokenize: 9 (1.7%), b_tok_get_all: 6 (1.1%),
+        b_comp_prob: 3.8 (0.7%), b_tok_touch_all: 177 (33.1%), b_finish: 1.11
+        (0.2%), tests_pri_0: 280 (52.2%), check_dkim_signature: 0.81 (0.2%),
+        check_dkim_adsp: 3.8 (0.7%), poll_dns_idle: 1.14 (0.2%), tests_pri_10:
+        3.8 (0.7%), tests_pri_500: 10 (1.8%), rewrite_mail: 0.00 (0.0%)
+Subject: [GIT PULL] Fix fill_files_note
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---0000000000004c1c4a05d9b9fadf
-Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Mar 8, 2022 at 9:40 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> Hmm. The futex code actually uses "fixup_user_fault()" for this case.
-> Maybe fault_in_safe_writeable() should do that?
+Kees,
 
-.. paging all the bits back in, I'm reminded that one of the worries
-was "what about large areas".
+Please pull the coredump-vma-snapshot-fix branch from the git tree:
 
-But I really think that the solution should be that we limit the size
-of fault_in_safe_writeable() to just a couple of pages.
+  git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git coredump-vma-snapshot-fix
 
-Even if you were to fault in gigabytes, page-out can undo it anyway,
-so there is no semantic reason why that function should ever do more
-than a few pages to make sure. There's already even a comment about
-how there's no guarantee that the pages will stay.
+  HEAD: 390031c942116d4733310f0684beb8db19885fe6 coredump: Use the vma snapshot in fill_files_note
 
-Side note: the current GUP-based fault_in_safe_writeable() is buggy in
-another way anyway: it doesn't work right for stack extending
-accesses.
+Matthew Wilcox has reported that a missing mmap_lock in file_files_note,
+which could cause trouble.
 
-So I think the fix for this all might be something like the attached
-(TOTALLY UNTESTED)!
+Refactor the code and clean it up so that the vma snapshot makes
+it to fill_files_note, and then use the vma snapshot in fill_files_note.
 
-Comments? Andreas, mind (carefully - maybe it is totally broken and
-does unspeakable acts to your pets) testing this?
+Eric W. Biederman (5):
+      coredump: Move definition of struct coredump_params into coredump.h
+      coredump: Snapshot the vmas in do_coredump
+      coredump: Remove the WARN_ON in dump_vma_snapshot
+      coredump/elf: Pass coredump_params into fill_note_info
+      coredump: Use the vma snapshot in fill_files_note
 
-                         Linus
+ fs/binfmt_elf.c          | 66 ++++++++++++++++++++++--------------------------
+ fs/binfmt_elf_fdpic.c    | 18 +++++--------
+ fs/binfmt_flat.c         |  1 +
+ fs/coredump.c            | 59 ++++++++++++++++++++++++++++---------------
+ include/linux/binfmts.h  | 13 +---------
+ include/linux/coredump.h | 20 ++++++++++++---
+ 6 files changed, 93 insertions(+), 84 deletions(-)
 
---0000000000004c1c4a05d9b9fadf
-Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
-Content-Disposition: attachment; filename="patch.diff"
-Content-Transfer-Encoding: base64
-Content-ID: <f_l0iixtc20>
-X-Attachment-Id: f_l0iixtc20
+---
 
-IG1tL2d1cC5jIHwgNDAgKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQog
-MSBmaWxlIGNoYW5nZWQsIDEyIGluc2VydGlvbnMoKyksIDI4IGRlbGV0aW9ucygtKQoKZGlmZiAt
-LWdpdCBhL21tL2d1cC5jIGIvbW0vZ3VwLmMKaW5kZXggYTlkNGQ3MjRhZWY3Li45ZTA4NWU3Yjlj
-MjggMTAwNjQ0Ci0tLSBhL21tL2d1cC5jCisrKyBiL21tL2d1cC5jCkBAIC0xNzQ1LDQ0ICsxNzQ1
-LDI4IEBAIEVYUE9SVF9TWU1CT0woZmF1bHRfaW5fd3JpdGVhYmxlKTsKIHNpemVfdCBmYXVsdF9p
-bl9zYWZlX3dyaXRlYWJsZShjb25zdCBjaGFyIF9fdXNlciAqdWFkZHIsIHNpemVfdCBzaXplKQog
-ewogCXVuc2lnbmVkIGxvbmcgc3RhcnQgPSAodW5zaWduZWQgbG9uZyl1bnRhZ2dlZF9hZGRyKHVh
-ZGRyKTsKLQl1bnNpZ25lZCBsb25nIGVuZCwgbnN0YXJ0LCBuZW5kOworCXVuc2lnbmVkIGxvbmcg
-ZW5kLCBuc3RhcnQ7CiAJc3RydWN0IG1tX3N0cnVjdCAqbW0gPSBjdXJyZW50LT5tbTsKLQlzdHJ1
-Y3Qgdm1fYXJlYV9zdHJ1Y3QgKnZtYSA9IE5VTEw7Ci0JaW50IGxvY2tlZCA9IDA7CisJY29uc3Qg
-dW5zaWduZWQgaW50IGZhdWx0X2ZsYWdzID0gRkFVTFRfRkxBR19XUklURSB8IEZBVUxUX0ZMQUdf
-S0lMTEFCTEU7CisJY29uc3Qgc2l6ZV90IG1heF9zaXplID0gNCAqIFBBR0VfU0laRTsKIAogCW5z
-dGFydCA9IHN0YXJ0ICYgUEFHRV9NQVNLOwotCWVuZCA9IFBBR0VfQUxJR04oc3RhcnQgKyBzaXpl
-KTsKKwllbmQgPSBQQUdFX0FMSUdOKHN0YXJ0ICsgbWluKHNpemUsIG1heF9zaXplKSk7CiAJaWYg
-KGVuZCA8IG5zdGFydCkKIAkJZW5kID0gMDsKLQlmb3IgKDsgbnN0YXJ0ICE9IGVuZDsgbnN0YXJ0
-ID0gbmVuZCkgewotCQl1bnNpZ25lZCBsb25nIG5yX3BhZ2VzOwotCQlsb25nIHJldDsKIAotCQlp
-ZiAoIWxvY2tlZCkgewotCQkJbG9ja2VkID0gMTsKLQkJCW1tYXBfcmVhZF9sb2NrKG1tKTsKLQkJ
-CXZtYSA9IGZpbmRfdm1hKG1tLCBuc3RhcnQpOwotCQl9IGVsc2UgaWYgKG5zdGFydCA+PSB2bWEt
-PnZtX2VuZCkKLQkJCXZtYSA9IHZtYS0+dm1fbmV4dDsKLQkJaWYgKCF2bWEgfHwgdm1hLT52bV9z
-dGFydCA+PSBlbmQpCi0JCQlicmVhazsKLQkJbmVuZCA9IGVuZCA/IG1pbihlbmQsIHZtYS0+dm1f
-ZW5kKSA6IHZtYS0+dm1fZW5kOwotCQlpZiAodm1hLT52bV9mbGFncyAmIChWTV9JTyB8IFZNX1BG
-Tk1BUCkpCi0JCQljb250aW51ZTsKLQkJaWYgKG5zdGFydCA8IHZtYS0+dm1fc3RhcnQpCi0JCQlu
-c3RhcnQgPSB2bWEtPnZtX3N0YXJ0OwotCQlucl9wYWdlcyA9IChuZW5kIC0gbnN0YXJ0KSAvIFBB
-R0VfU0laRTsKLQkJcmV0ID0gX19nZXRfdXNlcl9wYWdlc19sb2NrZWQobW0sIG5zdGFydCwgbnJf
-cGFnZXMsCi0JCQkJCSAgICAgIE5VTEwsIE5VTEwsICZsb2NrZWQsCi0JCQkJCSAgICAgIEZPTExf
-VE9VQ0ggfCBGT0xMX1dSSVRFKTsKLQkJaWYgKHJldCA8PSAwKQorCW1tYXBfcmVhZF9sb2NrKG1t
-KTsKKwlmb3IgKDsgbnN0YXJ0ICE9IGVuZDsgbnN0YXJ0ICs9IFBBR0VfU0laRSkgeworCQlpZiAo
-Zml4dXBfdXNlcl9mYXVsdChtbSwgbnN0YXJ0LCBmYXVsdF9mbGFncywgTlVMTCkpCiAJCQlicmVh
-azsKLQkJbmVuZCA9IG5zdGFydCArIHJldCAqIFBBR0VfU0laRTsKIAl9Ci0JaWYgKGxvY2tlZCkK
-LQkJbW1hcF9yZWFkX3VubG9jayhtbSk7CisJbW1hcF9yZWFkX3VubG9jayhtbSk7CisKKwkvKiBJ
-ZiB3ZSBnb3QgYWxsIG9mIG91ciAodHJ1bmNhdGVkKSBmYXVsdC1pbiwgd2UgY2xhaW0gd2UgZ290
-IGl0IGFsbCAqLwogCWlmIChuc3RhcnQgPT0gZW5kKQogCQlyZXR1cm4gMDsKKworCS8qIC4uIG90
-aGVyd2lzZSB3ZSdsbCB1c2UgdGhlIG9yaWdpbmFsIHVudHJ1bmNhdGVkIHNpemUgKi8KIAlyZXR1
-cm4gc2l6ZSAtIG1pbl90KHNpemVfdCwgbnN0YXJ0IC0gc3RhcnQsIHNpemUpOwogfQogRVhQT1JU
-X1NZTUJPTChmYXVsdF9pbl9zYWZlX3dyaXRlYWJsZSk7Cg==
---0000000000004c1c4a05d9b9fadf--
+Kees I realized I needed to rebase this on Jann Horn's commit
+84158b7f6a06 ("coredump: Also dump first pages of non-executable ELF
+libraries").  Unfortunately before I got that done I got distracted and
+these changes have been sitting in limbo for most of the development
+cycle.  Since you are running a tree that is including changes like this
+including Jann's can you please pull these changes into your tree.
+
+Thank you,
+Eric
