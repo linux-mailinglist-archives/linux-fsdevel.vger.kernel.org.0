@@ -2,117 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 752FB4D0BE5
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Mar 2022 00:18:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 44A134D0DA8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Mar 2022 02:46:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243219AbiCGXTU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Mar 2022 18:19:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39606 "EHLO
+        id S1344316AbiCHBrH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Mar 2022 20:47:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231462AbiCGXTT (ORCPT
+        with ESMTP id S1344303AbiCHBrG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Mar 2022 18:19:19 -0500
-Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2D053193E
-        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Mar 2022 15:18:22 -0800 (PST)
-Received: by mail-lf1-x12d.google.com with SMTP id w7so15379639lfd.6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Mar 2022 15:18:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bvag9d2yKnVQ2WA/+ZCk8meLFVTu4t3Z/Y+Vhn7jLqs=;
-        b=iE1Mpo/4WNvmX4KVx+vCPrRdmpw6OvR5A+gP5peGjMWmvtI9qqXJ7QVWhM5mmjDAr9
-         OxRVuE27WlAcAJxgb2qcdgwfIEVoyYkX+FP20GgX2hzl8hfi+DISfSMg4WgSb2Dw6/4C
-         iRVzuKCVR8of2ZBhjlZfemAtmupGO2kDD76nQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bvag9d2yKnVQ2WA/+ZCk8meLFVTu4t3Z/Y+Vhn7jLqs=;
-        b=k4cMNIcPXuEoK21HszmlwXdcaemd6SNW5zkucfddHhKy3z5vcJ1hfUnmveruHqzimi
-         hVh+Js7GXLyESJl8PJGUULXWeYtlL1ieaaXNvR7y1JLQQQCQniT3H/0WeZkA3PUS2stv
-         IJChJi0CYXtFNWTdvwj1EMsgPB3OxJUkxO4f1uqj2F0RAlvafguWGTmuppME9AKcXYju
-         5jwMaU3+zDV8R/EsI0as1ur+4564b+SKvIiXzfrDvDeqvCERwaW+pyTMcIbMpbcBLJFH
-         wBxIH4vBgDQdYiwtoRv+VJIancqROl2211bY1lF1LnDNDJwG3ONe4hqJ+RQ+6+1i8IO/
-         mVmQ==
-X-Gm-Message-State: AOAM5335dSSBvrbb8W63wjx/g/pD/j8N/6QVOQtmzIZgMxswkEwAG86A
-        WeWzXhoSYUbpj+KF/LFR3yp4F5fYFOERSw1TPJY=
-X-Google-Smtp-Source: ABdhPJz7DjCyqqgmWvTkGA6dxrrmpHWSwHOVbrt4FdAZfz9L4eZptuOBjDAFXzsdekiAZ0/4OZGN4Q==
-X-Received: by 2002:a05:6512:16a7:b0:445:862e:a1ba with SMTP id bu39-20020a05651216a700b00445862ea1bamr8825665lfb.85.1646695100824;
-        Mon, 07 Mar 2022 15:18:20 -0800 (PST)
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
-        by smtp.gmail.com with ESMTPSA id h20-20020a2ea494000000b00247eb07015bsm657447lji.26.2022.03.07.15.18.18
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Mar 2022 15:18:19 -0800 (PST)
-Received: by mail-lf1-f44.google.com with SMTP id l20so4408898lfg.12
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Mar 2022 15:18:18 -0800 (PST)
-X-Received: by 2002:a05:6512:3049:b0:447:d55d:4798 with SMTP id
- b9-20020a056512304900b00447d55d4798mr8957028lfb.531.1646695098272; Mon, 07
- Mar 2022 15:18:18 -0800 (PST)
+        Mon, 7 Mar 2022 20:47:06 -0500
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26D373B2AB;
+        Mon,  7 Mar 2022 17:46:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1646703970; x=1678239970;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   mime-version:in-reply-to;
+  bh=mHBCi6qAEBh/nnklYLjjX0eLK1S8y5VX77Z1SPbc3yQ=;
+  b=ULmH3UEBLdccUYzQgIXK0dw+/n2E3nyWqtarEdlbrhI/qPGrgDozMej3
+   XODS3M2TAfukAkmK28C/7WUE0m1FhZjKGwWOTFcwYncWUriBNuf861Ulf
+   iUyHGFEzYSzu3RuSaZoVHJPydGtvyptuDeqiiJV/dHXEEM8dXiCigeN4k
+   21t2qgVVI4kp+GcymcBYFJOgQVmLRTk204HJtYUamYpzzVCivVu+UDlse
+   GCL/Uk+aGnFehCVIXjUnXei17+5UOF35VCeP4KvKm+F61+qcCCQHVj5Lb
+   o4tcvZwbTSsawDGzU0RQ7xla5jUUDx8PeI7/GkFpW4lAUfXrDClF5GKrs
+   w==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10279"; a="252132725"
+X-IronPort-AV: E=Sophos;i="5.90,163,1643702400"; 
+   d="scan'208";a="252132725"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2022 17:46:09 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.90,163,1643702400"; 
+   d="scan'208";a="495276231"
+Received: from chaop.bj.intel.com (HELO localhost) ([10.240.192.101])
+  by orsmga003.jf.intel.com with ESMTP; 07 Mar 2022 17:46:02 -0800
+Date:   Tue, 8 Mar 2022 09:45:45 +0800
+From:   Chao Peng <chao.p.peng@linux.intel.com>
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com
+Subject: Re: [PATCH v4 03/12] mm: Introduce memfile_notifier
+Message-ID: <20220308014545.GA43625@chaop.bj.intel.com>
+Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
+References: <20220118132121.31388-1-chao.p.peng@linux.intel.com>
+ <20220118132121.31388-4-chao.p.peng@linux.intel.com>
+ <9ac9a88f-54b4-a49f-0857-c3094d3e0d2b@suse.cz>
 MIME-Version: 1.0
-References: <CAHc6FU5nP+nziNGG0JAF1FUx-GV7kKFvM7aZuU_XD2_1v4vnvg@mail.gmail.com>
-In-Reply-To: <CAHc6FU5nP+nziNGG0JAF1FUx-GV7kKFvM7aZuU_XD2_1v4vnvg@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 7 Mar 2022 15:18:02 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgmCuuJdf96WiT6WXzQQTEeSK=cgBy24J4U9V2AvK4KdQ@mail.gmail.com>
-Message-ID: <CAHk-=wgmCuuJdf96WiT6WXzQQTEeSK=cgBy24J4U9V2AvK4KdQ@mail.gmail.com>
-Subject: Re: Buffered I/O broken on s390x with page faults disabled (gfs2)
-To:     Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>,
-        David Hildenbrand <david@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9ac9a88f-54b4-a49f-0857-c3094d3e0d2b@suse.cz>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 7, 2022 at 2:52 PM Andreas Gruenbacher <agruenba@redhat.com> wrote:
->
-> After generic_file_read_iter() returns a short or empty read, we fault
-> in some pages with fault_in_iov_iter_writeable(). This succeeds, but
-> the next call to generic_file_read_iter() returns -EFAULT and we're
-> not making any progress.
+On Mon, Mar 07, 2022 at 04:42:08PM +0100, Vlastimil Babka wrote:
+> On 1/18/22 14:21, Chao Peng wrote:
+> > This patch introduces memfile_notifier facility so existing memory file
+> > subsystems (e.g. tmpfs/hugetlbfs) can provide memory pages to allow a
+> > third kernel component to make use of memory bookmarked in the memory
+> > file and gets notified when the pages in the memory file become
+> > allocated/invalidated.
+> > 
+> > It will be used for KVM to use a file descriptor as the guest memory
+> > backing store and KVM will use this memfile_notifier interface to
+> > interact with memory file subsystems. In the future there might be other
+> > consumers (e.g. VFIO with encrypted device memory).
+> > 
+> > It consists two sets of callbacks:
+> >   - memfile_notifier_ops: callbacks for memory backing store to notify
+> >     KVM when memory gets allocated/invalidated.
+> >   - memfile_pfn_ops: callbacks for KVM to call into memory backing store
+> >     to request memory pages for guest private memory.
+> > 
+> > Userspace is in charge of guest memory lifecycle: it first allocates
+> > pages in memory backing store and then passes the fd to KVM and lets KVM
+> > register each memory slot to memory backing store via
+> > memfile_register_notifier.
+> > 
+> > The supported memory backing store should maintain a memfile_notifier list
+> > and provide routine for memfile_notifier to get the list head address and
+> > memfile_pfn_ops callbacks for memfile_register_notifier. It also should call
+> > memfile_notifier_fallocate/memfile_notifier_invalidate when the bookmarked
+> > memory gets allocated/invalidated.
+> > 
+> > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> 
+> Process nitpick:
+> Here and in patch 4/12 you have Kirill's S-o-b so there should probably be
+> also "From: Kirill ..." as was in v3? Or in case you modified the original
+> patches so much to become the primary author, you should add
+> "Co-developed-by: Kirill ..." here before his S-o-b.
 
-Since this is s390-specific, I get the very strong feeling that the
+Thanks. 3/12 is vastly rewritten so the latter case can be applied.
+4/12 should keep Kirill as the primary author.
 
-  fault_in_iov_iter_writeable ->
-    fault_in_safe_writeable ->
-      __get_user_pages_locked ->
-        __get_user_pages
-
-path somehow successfully finds the page, despite it not being
-properly accessible in the page tables.
-
-And it's presumably something specific in the s390x page table
-functionality that makes that happen.
-
-The places I'd look at in particular is to make sure that
-follow_page_mask() actually has the same rules as a real page table
-lookup on s390x.
-
-IOW, if follow_page_mask() finds the page and thinks it's writable,
-then it will return a 'page' successfully, and the __get_user_pages()
-code will be happy and say "it's there".
-
-But if then accessing the page by trying to write to it using the
-virtual address fails despite that, then you'll get the behavior you
-describe.
-
-I'd take a look at that can_follow_write_pte() case in particular,
-since this is a FOLL_WRITE thing, but it could be any of the pte
-checking details.
-
-Have you tried tracing through that path?
-
-                      Linus
+Chao
