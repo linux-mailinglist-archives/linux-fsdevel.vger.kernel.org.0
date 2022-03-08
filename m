@@ -2,299 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 16EDE4D16ED
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Mar 2022 13:11:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 085A44D170F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Mar 2022 13:17:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346709AbiCHMMb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Mar 2022 07:12:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51260 "EHLO
+        id S1346631AbiCHMSU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Mar 2022 07:18:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232039AbiCHMM3 (ORCPT
+        with ESMTP id S1346780AbiCHMSD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Mar 2022 07:12:29 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C6CB03ED22
-        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Mar 2022 04:11:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1646741491;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=My+rA77TnRiVMf0r++5rhnoLzDzN0CO6+Ek5CVVdjaA=;
-        b=G7NgqbVn5COOUvMgGnv8l5tjIex4EwMhhhEup6jfnOW8TrOdcx/6wXryCEkBITvzMHamyr
-        oFW4P8Rh9fchiRRellSzTUoUxPs0GE9TWt5MmBgAWEOp2NDmaR/Ia+mcWGlk2SxfAje5q8
-        qvwXBVm92Uybp3RtPNzbnF6YV6sdMlc=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-360-DlAmjPp7OFKOZ5RjDcoVrQ-1; Tue, 08 Mar 2022 07:11:30 -0500
-X-MC-Unique: DlAmjPp7OFKOZ5RjDcoVrQ-1
-Received: by mail-wr1-f71.google.com with SMTP id y13-20020adfee0d000000b001f1fa450a3dso1367361wrn.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Mar 2022 04:11:30 -0800 (PST)
+        Tue, 8 Mar 2022 07:18:03 -0500
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A711E43EEC;
+        Tue,  8 Mar 2022 04:17:06 -0800 (PST)
+Received: by mail-ej1-x62f.google.com with SMTP id qa43so38708312ejc.12;
+        Tue, 08 Mar 2022 04:17:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=sender:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=OFA2/eM8lwGnQdw8L8HYozWRTs8bN4HRmWhwr7+OpfQ=;
+        b=dZxiz91cR9d8+CC4dJkv0i2jFfJ9CP0b3NlEsXD6TPHMGYacNdhru2mSELTl8O+6T+
+         FkPBsspyt6yrQV1UNk0fLDyvuyTBbsyYl6/T/V6x+ZilvnI0NzYTKb6PgY7cnu5zGc3W
+         z8u6cgybLElr2aEZQqTCU+yd3hjzgyX32dfmIm7l1uFqFRVNXPWDahWbmtxQMKSxUF6t
+         mDip2hxkD1fj4trIskXiu0dLQGix1y5LAmHMsfX0r/TW2pyZZX5NoWOICWOAFwOo7IeO
+         jpGsIE8IKRoh4awk7E5UsjXtaPmC6jPN5sC8oetFJ5PMyH0bpwZVfBbDUpiUazI2kL/w
+         rFpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent
-         :content-language:from:to:cc:references:organization:subject
-         :in-reply-to:content-transfer-encoding;
-        bh=My+rA77TnRiVMf0r++5rhnoLzDzN0CO6+Ek5CVVdjaA=;
-        b=x2cI9ex2B+xK+TTmnvQ3u+qTeg5WKqwFRMYXytebg9/Cg4PFc1jS7iCxach1+wVVyD
-         M+dVxYKdbCEq/HdZiGiiWQe6yFwFY9z5GomnP6pMFkF3Fyro2uBFC7qUdaE5btPue8vn
-         tNq404YvCs892Fn/KTrlVJB4NT4bF+dhCunFPme1j3uuuzIOjy7VokMSHtIyXckOr6DG
-         HJ6GNpt7kgBvdBZe2+e6JJJpNHrq8noudzhUElW1vo1qRcRMkBBvCE9SPJ68L9jwsCDB
-         IZTEKewIs4ftOCAPUVdT22lBBdWc5smzHpNeJm0FdsYHgMMGWIrHTy/PgwqA6HynWkSU
-         hwWg==
-X-Gm-Message-State: AOAM531CPEmYejXNJZQzdPpMw9KosNxr2h1dUqoxZ7yohOLiYb38RwyK
-        3N7O49aPmjm5GS2dLs2o0BRBHxjunGs7yElMGn/fJenFjU6S8ILrSY0D0h7fnnGI6uZR8gZq1Ix
-        zlwlr64QiFqbls5n9L8HohdGSgw==
-X-Received: by 2002:a5d:648c:0:b0:1ed:b04d:300 with SMTP id o12-20020a5d648c000000b001edb04d0300mr9479639wri.347.1646741489651;
-        Tue, 08 Mar 2022 04:11:29 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJyS0RIaqKLeHkgO2t9OYkaaKQ8wNAplyKf1ZSIpNTCQ7/fdrBVSMK96sCf+QkB9iBPO2ZQxCQ==
-X-Received: by 2002:a5d:648c:0:b0:1ed:b04d:300 with SMTP id o12-20020a5d648c000000b001edb04d0300mr9479613wri.347.1646741489376;
-        Tue, 08 Mar 2022 04:11:29 -0800 (PST)
-Received: from ?IPV6:2003:cb:c708:b000:acda:b420:16aa:6b67? (p200300cbc708b000acdab42016aa6b67.dip0.t-ipconnect.de. [2003:cb:c708:b000:acda:b420:16aa:6b67])
-        by smtp.gmail.com with ESMTPSA id u15-20020a056000038f00b001f1e57a74e2sm7487160wrf.4.2022.03.08.04.11.28
+        h=x-gm-message-state:sender:message-id:date:mime-version:user-agent
+         :subject:content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=OFA2/eM8lwGnQdw8L8HYozWRTs8bN4HRmWhwr7+OpfQ=;
+        b=r0OKZEy++X04LXgPuvGLZAV+xqgFCxlzL6HlMYMJf6JxxF04BeYhNVTU8XzJHIO8nk
+         aZgZUXbLfjkjWXfxH8IlCdmW8F8TnOqVjczIF+iVuePU9vbwwSF244Ehvr/8uEROWI/L
+         P+Cd8Nsi/7iE8uXREHzZFilsz4L3KlOesSuHvQhesdBNtpx7VQMZNMwdMTfYdQicBXBz
+         EUO+8pqg1gLmbpI0OA1F7lwBkgmKDdyQ4tSZwzq0S2WmActedAslT1sAlmVkAOe0LTUz
+         3C0PbKqfPbYDP/HCR9xoMprgKFlwBbdR3Bgj8eIRx2J7NOMLyNmL5ySKWRzTneFvIZOc
+         AYJg==
+X-Gm-Message-State: AOAM533xcSInz+ARxj+U1EvNpk0EEFQc8bJvKhJSrgEVCyMbHaV0G2kT
+        Bo/trlK3AEy8vNwwSdMvW1/W9qLbtgY=
+X-Google-Smtp-Source: ABdhPJwE9PU5xJ81uImIisWcDcAXQ3ECFtBqwX9p5ItDnR0zlR5H81k8PeGbgOyJEUFk90ZFZol5QQ==
+X-Received: by 2002:a17:907:97cc:b0:6da:a8fb:d1db with SMTP id js12-20020a17090797cc00b006daa8fbd1dbmr13315004ejc.267.1646741825187;
+        Tue, 08 Mar 2022 04:17:05 -0800 (PST)
+Received: from ?IPV6:2001:b07:6468:f312:c8dd:75d4:99ab:290a? ([2001:b07:6468:f312:c8dd:75d4:99ab:290a])
+        by smtp.googlemail.com with ESMTPSA id r19-20020a17090638d300b006d6e4fc047bsm5886872ejd.11.2022.03.08.04.17.03
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Mar 2022 04:11:28 -0800 (PST)
-Message-ID: <81f2f76d-24ef-c23b-449e-0b8fdec506e1@redhat.com>
-Date:   Tue, 8 Mar 2022 13:11:28 +0100
+        Tue, 08 Mar 2022 04:17:04 -0800 (PST)
+Sender: Paolo Bonzini <paolo.bonzini@gmail.com>
+Message-ID: <800a68f8-fbe0-5980-4290-bdc0ed4d05bd@redhat.com>
+Date:   Tue, 8 Mar 2022 13:17:02 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.5.0
+Subject: Re: [PATCH v4 01/12] mm/shmem: Introduce F_SEAL_INACCESSIBLE
 Content-Language: en-US
-From:   David Hildenbrand <david@redhat.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-References: <CAHc6FU5nP+nziNGG0JAF1FUx-GV7kKFvM7aZuU_XD2_1v4vnvg@mail.gmail.com>
- <CAHk-=wgmCuuJdf96WiT6WXzQQTEeSK=cgBy24J4U9V2AvK4KdQ@mail.gmail.com>
- <bcafacea-7e67-405c-a969-e5a58a3c727e@redhat.com>
- <2266e1a8-ac79-94a1-b6e2-47475e5986c5@redhat.com>
-Organization: Red Hat
-Subject: Re: Buffered I/O broken on s390x with page faults disabled (gfs2)
-In-Reply-To: <2266e1a8-ac79-94a1-b6e2-47475e5986c5@redhat.com>
-Content-Type: text/plain; charset=UTF-8
+To:     Chao Peng <chao.p.peng@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>
+Cc:     Steven Price <steven.price@arm.com>,
+        kvm list <kvm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        qemu-devel@nongnu.org, Linux API <linux-api@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        "Nakajima, Jun" <jun.nakajima@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>
+References: <20220118132121.31388-1-chao.p.peng@linux.intel.com>
+ <20220118132121.31388-2-chao.p.peng@linux.intel.com>
+ <619547ad-de96-1be9-036b-a7b4e99b09a6@kernel.org>
+ <20220217130631.GB32679@chaop.bj.intel.com>
+ <2ca78dcb-61d9-4c9d-baa9-955b6f4298bb@www.fastmail.com>
+ <20220223114935.GA53733@chaop.bj.intel.com>
+ <71a06402-6743-bfd2-bbd4-997f8e256554@arm.com>
+ <7cc65bbd-e323-eabb-c576-b5656a3355ac@kernel.org>
+ <20220307132602.GA58690@chaop.bj.intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+In-Reply-To: <20220307132602.GA58690@chaop.bj.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-1.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+        HEADER_FROM_DIFFERENT_DOMAINS,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 08.03.22 09:37, David Hildenbrand wrote:
-> On 08.03.22 09:21, David Hildenbrand wrote:
->> On 08.03.22 00:18, Linus Torvalds wrote:
->>> On Mon, Mar 7, 2022 at 2:52 PM Andreas Gruenbacher <agruenba@redhat.com> wrote:
->>>>
->>>> After generic_file_read_iter() returns a short or empty read, we fault
->>>> in some pages with fault_in_iov_iter_writeable(). This succeeds, but
->>>> the next call to generic_file_read_iter() returns -EFAULT and we're
->>>> not making any progress.
->>>
->>> Since this is s390-specific, I get the very strong feeling that the
->>>
->>>   fault_in_iov_iter_writeable ->
->>>     fault_in_safe_writeable ->
->>>       __get_user_pages_locked ->
->>>         __get_user_pages
->>>
->>> path somehow successfully finds the page, despite it not being
->>> properly accessible in the page tables.
+On 3/7/22 14:26, Chao Peng wrote:
+>> In pseudo-Rust, this is the difference between:
 >>
->> As raised offline already, I suspect
+>> fn convert_to_private(in: &mut Memfd)
 >>
->> shrink_active_list()
->> ->page_referenced()
->>  ->page_referenced_one()
->>   ->ptep_clear_flush_young_notify()
->>    ->ptep_clear_flush_young()
+>> and
 >>
->> which results on s390x in:
+>> fn convert_to_private(in: Memfd) -> PrivateMemoryFd
 >>
->> static inline pte_t pte_mkold(pte_t pte)
->> {
->> 	pte_val(pte) &= ~_PAGE_YOUNG;
->> 	pte_val(pte) |= _PAGE_INVALID;
->> 	return pte;
->> }
->>
->> static inline int ptep_test_and_clear_young(struct vm_area_struct *vma,
->> 					    unsigned long addr, pte_t *ptep)
->> {
->> 	pte_t pte = *ptep;
->>
->> 	pte = ptep_xchg_direct(vma->vm_mm, addr, ptep, pte_mkold(pte));
->> 	return pte_young(pte);
->> }
->>
->>
->> _PAGE_INVALID is the actual HW bit, _PAGE_PRESENT is a
->> pure SW bit. AFAIU, pte_present() still holds:
->>
->> static inline int pte_present(pte_t pte)
->> {
->> 	/* Bit pattern: (pte & 0x001) == 0x001 */
->> 	return (pte_val(pte) & _PAGE_PRESENT) != 0;
->> }
->>
->>
->> pte_mkyoung() will revert that action:
->>
->> static inline pte_t pte_mkyoung(pte_t pte)
->> {
->> 	pte_val(pte) |= _PAGE_YOUNG;
->> 	if (pte_val(pte) & _PAGE_READ)
->> 		pte_val(pte) &= ~_PAGE_INVALID;
->> 	return pte;
->> }
->>
->>
->> and pte_modify() will adjust it properly again:
->>
->> /*
->>  * The following pte modification functions only work if
->>  * pte_present() is true. Undefined behaviour if not..
->>  */
->> static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
->> {
->> 	pte_val(pte) &= _PAGE_CHG_MASK;
->> 	pte_val(pte) |= pgprot_val(newprot);
->> 	/*
->> 	 * newprot for PAGE_NONE, PAGE_RO, PAGE_RX, PAGE_RW and PAGE_RWX
->> 	 * has the invalid bit set, clear it again for readable, young pages
->> 	 */
->> 	if ((pte_val(pte) & _PAGE_YOUNG) && (pte_val(pte) & _PAGE_READ))
->> 		pte_val(pte) &= ~_PAGE_INVALID;
->> 	/*
->> 	 * newprot for PAGE_RO, PAGE_RX, PAGE_RW and PAGE_RWX has the page
->> 	 * protection bit set, clear it again for writable, dirty pages
->> 	 */
->> 	if ((pte_val(pte) & _PAGE_DIRTY) && (pte_val(pte) & _PAGE_WRITE))
->> 		pte_val(pte) &= ~_PAGE_PROTECT;
->> 	return pte;
->> }
->>
->>
->>
->> Which leaves me wondering if there is a way in GUP whereby
->> we would lookup that page and not clear _PAGE_INVALID,
->> resulting in GUP succeeding but faults via the MMU still
->> faulting on _PAGE_INVALID.
-> 
-> 
-> follow_page_pte() has this piece of code:
-> 
-> 	if (flags & FOLL_TOUCH) {
-> 		if ((flags & FOLL_WRITE) &&
-> 		    !pte_dirty(pte) && !PageDirty(page))
-> 			set_page_dirty(page);
-> 		/*
-> 		 * pte_mkyoung() would be more correct here, but atomic care
-> 		 * is needed to avoid losing the dirty bit: it is easier to use
-> 		 * mark_page_accessed().
-> 		 */
-> 		mark_page_accessed(page);
-> 	}
-> 
-> Which at least to me suggests that, although the page is marked accessed and GUP
-> succeeds, that the PTE might still have _PAGE_INVALID set after we succeeded GUP.
-> 
-> 
-> On s390x, there is no HW dirty bit, so we might just be able to do a proper
-> pte_mkyoung() here instead of the mark_page_accessed().
-> 
+>> This doesn't map particularly nicely to the kernel, though.
+> I understand this Rust semantics and the difficulty to handle races.
+> Probably we should not expose F_SEAL_INACCESSIBLE to userspace, instead
+> we can use a new in-kernel flag to indicate the same thing. That flag
+> should be set only when the memfd is created with MFD_INACCESSIBLE.
 
-Something hacky like this should be able to show if what I suspect is the case.
-It compiles, but I didn't actually test it.
+Yes, I like this.
 
-
-From fee26d7bd90e219688c29bbe174e7a23d5e2dfd3 Mon Sep 17 00:00:00 2001
-From: David Hildenbrand <david@redhat.com>
-Date: Tue, 8 Mar 2022 12:51:26 +0100
-Subject: [PATCH] mm/gup: fix buffered I/O on s390x with pagefaults disabled
-
-On s390x, we actually need a pte_mkyoung() instead of a
-mark_page_accessed() when doing a FOLL_TOUCH to clear the HW invalid bit
-in the pte and allow subsequent accesses via the MMU to succeed without
-triggering a pagefault.
-
-Otherwise, buffered I/O will loop forever because it will keep stumlbing
-over the set HW invalid bit, requiring a page fault, which is disabled.
-
-Reported-by: Andreas Gruenbacher <agruenba@redhat.com>
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
- mm/gup.c | 23 ++++++++++++++++++++---
- 1 file changed, 20 insertions(+), 3 deletions(-)
-
-diff --git a/mm/gup.c b/mm/gup.c
-index a9d4d724aef7..d6c65474ed72 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -592,10 +592,27 @@ static struct page *follow_page_pte(struct vm_area_struct *vma,
- 			set_page_dirty(page);
- 		/*
- 		 * pte_mkyoung() would be more correct here, but atomic care
--		 * is needed to avoid losing the dirty bit: it is easier to use
--		 * mark_page_accessed().
-+		 * is needed for architectures that have a hw dirty bit, to
-+		 * avoid losing the dirty bit: it is easier to use
-+		 * mark_page_accessed() for these architectures.
-+		 *
-+		 * s390x doesn't have a hw reference/dirty bit and sets the
-+		 * hw invalid bit in pte_mkold(), to catch further references.
-+		 * We have to update the pte via pte_mkyoung() here to clear the
-+		 * invalid bit and mark the page young; otherwise, callers that
-+		 * rely on not requiring a MMU fault once GUP(FOLL_TOUCH)
-+		 * succeeded will loop forever because the page won't be
-+		 * actually accessible via the MMU.
- 		 */
--		mark_page_accessed(page);
-+		if (IS_ENABLED(CONFIG_S390)) {
-+			pte = pte_mkyoung(pte);
-+			if (!pte_same(pte, *ptep)) {
-+				set_pte_at(vma->vm_mm, address, ptep, pte);
-+				update_mmu_cache(vma, address, ptep);
-+			}
-+		} else {
-+			mark_page_accessed(page);
-+		}
- 	}
- 	if ((flags & FOLL_MLOCK) && (vma->vm_flags & VM_LOCKED)) {
- 		/* Do not mlock pte-mapped THP */
--- 
-2.35.1
-
-
-
-We should probably generalize this, using an ARCH config that says that we
-don't have HW dirty bits and can do a pte_mkyoung() here without losing
-any concurrent updates to the pte via the hw.
-
-Further, I wonder if we might have to do a pte_mkdirty() in case of FOLL_WRITE
-for these architectures as well, instead of going via the set_page_dirty().
-Could be that that might be required as well here, haven't looked into the
-details.
-
-The follow_trans_huge_pmd()->touch_pmd() case should be fine I guess,
-and it does both, the pmd_mkyoung and the pmd_mkdirty.
-
--- 
-Thanks,
-
-David / dhildenb
+Paolo
 
