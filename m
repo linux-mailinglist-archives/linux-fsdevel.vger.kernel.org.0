@@ -2,79 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 44A134D0DA8
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Mar 2022 02:46:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CFA14D0E2A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Mar 2022 03:58:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344316AbiCHBrH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Mar 2022 20:47:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34606 "EHLO
+        id S244521AbiCHC7j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Mar 2022 21:59:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344303AbiCHBrG (ORCPT
+        with ESMTP id S244248AbiCHC7i (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Mar 2022 20:47:06 -0500
-Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26D373B2AB;
-        Mon,  7 Mar 2022 17:46:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1646703970; x=1678239970;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   mime-version:in-reply-to;
-  bh=mHBCi6qAEBh/nnklYLjjX0eLK1S8y5VX77Z1SPbc3yQ=;
-  b=ULmH3UEBLdccUYzQgIXK0dw+/n2E3nyWqtarEdlbrhI/qPGrgDozMej3
-   XODS3M2TAfukAkmK28C/7WUE0m1FhZjKGwWOTFcwYncWUriBNuf861Ulf
-   iUyHGFEzYSzu3RuSaZoVHJPydGtvyptuDeqiiJV/dHXEEM8dXiCigeN4k
-   21t2qgVVI4kp+GcymcBYFJOgQVmLRTk204HJtYUamYpzzVCivVu+UDlse
-   GCL/Uk+aGnFehCVIXjUnXei17+5UOF35VCeP4KvKm+F61+qcCCQHVj5Lb
-   o4tcvZwbTSsawDGzU0RQ7xla5jUUDx8PeI7/GkFpW4lAUfXrDClF5GKrs
-   w==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10279"; a="252132725"
-X-IronPort-AV: E=Sophos;i="5.90,163,1643702400"; 
-   d="scan'208";a="252132725"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2022 17:46:09 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.90,163,1643702400"; 
-   d="scan'208";a="495276231"
-Received: from chaop.bj.intel.com (HELO localhost) ([10.240.192.101])
-  by orsmga003.jf.intel.com with ESMTP; 07 Mar 2022 17:46:02 -0800
-Date:   Tue, 8 Mar 2022 09:45:45 +0800
-From:   Chao Peng <chao.p.peng@linux.intel.com>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com
-Subject: Re: [PATCH v4 03/12] mm: Introduce memfile_notifier
-Message-ID: <20220308014545.GA43625@chaop.bj.intel.com>
-Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
-References: <20220118132121.31388-1-chao.p.peng@linux.intel.com>
- <20220118132121.31388-4-chao.p.peng@linux.intel.com>
- <9ac9a88f-54b4-a49f-0857-c3094d3e0d2b@suse.cz>
+        Mon, 7 Mar 2022 21:59:38 -0500
+Received: from mail-qt1-x834.google.com (mail-qt1-x834.google.com [IPv6:2607:f8b0:4864:20::834])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87C903A19B;
+        Mon,  7 Mar 2022 18:58:42 -0800 (PST)
+Received: by mail-qt1-x834.google.com with SMTP id b23so15071627qtt.6;
+        Mon, 07 Mar 2022 18:58:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=isRqt1Y496G0sLivJF5nVqMHeY/3u42l/ZTo/kY3Jlc=;
+        b=K9daq1jdLt9eKdelC1BMlASmFPLlrLIyn89a9N0BrgOinjjjvar2+YedcK5bbRKljl
+         SufRCIHbXU0jxFDXl784sWbxevCT3ztb08lBWTd9z5b0NF9yRwt2XyrzVP6Gr28GZjxi
+         QnoFVf4rh6lL/HP+mF2xYa10bgHviKgWYg2Mv6HBJ8tmTtyunAus67E61HzyjVgJbrZO
+         xLiFuB0uS0zIkt2s6KD3PaEJruyDYFii/stMWmvQ8kho/3HfkEo65yihoqLsapq49/2W
+         STpp0n/A5OAzEVHkBUZ/CrD7y3h0GuICRFppo5BXcLgn2AmTZ0+5r9GOuEsZbY4brEOX
+         kqHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=isRqt1Y496G0sLivJF5nVqMHeY/3u42l/ZTo/kY3Jlc=;
+        b=27zBzPbbh/0l0oJd2R1sTX8OlZD/hMdVuW58ZU5qFon23mLk/0r1ZNFe9fP7Q5pXjx
+         0mddl0kNB7A8AT/8c5NDEHwTw+Em9kzANg3YQ5UEqU8VZ5SxWilmqOjA8GTUfOB8xRnE
+         RPOR+BMpz42bZgmcb5ZWyRyB8VCOZXhQAbugDA27yYLzKHvrTvgCkIb6n6zKIcNbkTxV
+         S5JC0CFC8/vGEEwURI9NHmPs5DDSCDwqDqnK+svY08Ab+UDHnW+xMnHRT2nElzTXi9To
+         CPIao27m+nUWykPxxi4KkUpvk8Jdy7GHxnQv8ENpv51hB5sInYeE7O+smd+/yPmCk7uC
+         mltg==
+X-Gm-Message-State: AOAM532Abzx9ITiCC60Ag4+ngkF/xPCrwrLR1sZW8o1xjwI18V7L077y
+        CVp47fVjJlz//FoRzKrqIO0nCSBnGdg=
+X-Google-Smtp-Source: ABdhPJx/n/Hca715d9nmQDjr6uyXUeMAUP5MD7xvR9VEZ0J4ik3fWmXNzK+9W51fdoOCD59qPiiL5Q==
+X-Received: by 2002:a05:622a:1825:b0:2e0:64e4:5a93 with SMTP id t37-20020a05622a182500b002e064e45a93mr7428449qtc.400.1646708321576;
+        Mon, 07 Mar 2022 18:58:41 -0800 (PST)
+Received: from localhost.localdomain ([193.203.214.57])
+        by smtp.gmail.com with ESMTPSA id j10-20020ac85f8a000000b002dde6288fa7sm10036766qta.83.2022.03.07.18.58.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Mar 2022 18:58:41 -0800 (PST)
+From:   cgel.zte@gmail.com
+X-Google-Original-From: lv.ruyi@zte.com.cn
+To:     viro@zeniv.linux.org.uk
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        lv.ruyi@zte.com.cn, zealci@zte.com.cn
+Subject: [PATCH] pipe: fix data race in pipe_poll / pipe_release
+Date:   Tue,  8 Mar 2022 02:58:20 +0000
+Message-Id: <20220308025820.2077261-1-lv.ruyi@zte.com.cn>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9ac9a88f-54b4-a49f-0857-c3094d3e0d2b@suse.cz>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -82,45 +69,103 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 07, 2022 at 04:42:08PM +0100, Vlastimil Babka wrote:
-> On 1/18/22 14:21, Chao Peng wrote:
-> > This patch introduces memfile_notifier facility so existing memory file
-> > subsystems (e.g. tmpfs/hugetlbfs) can provide memory pages to allow a
-> > third kernel component to make use of memory bookmarked in the memory
-> > file and gets notified when the pages in the memory file become
-> > allocated/invalidated.
-> > 
-> > It will be used for KVM to use a file descriptor as the guest memory
-> > backing store and KVM will use this memfile_notifier interface to
-> > interact with memory file subsystems. In the future there might be other
-> > consumers (e.g. VFIO with encrypted device memory).
-> > 
-> > It consists two sets of callbacks:
-> >   - memfile_notifier_ops: callbacks for memory backing store to notify
-> >     KVM when memory gets allocated/invalidated.
-> >   - memfile_pfn_ops: callbacks for KVM to call into memory backing store
-> >     to request memory pages for guest private memory.
-> > 
-> > Userspace is in charge of guest memory lifecycle: it first allocates
-> > pages in memory backing store and then passes the fd to KVM and lets KVM
-> > register each memory slot to memory backing store via
-> > memfile_register_notifier.
-> > 
-> > The supported memory backing store should maintain a memfile_notifier list
-> > and provide routine for memfile_notifier to get the list head address and
-> > memfile_pfn_ops callbacks for memfile_register_notifier. It also should call
-> > memfile_notifier_fallocate/memfile_notifier_invalidate when the bookmarked
-> > memory gets allocated/invalidated.
-> > 
-> > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> 
-> Process nitpick:
-> Here and in patch 4/12 you have Kirill's S-o-b so there should probably be
-> also "From: Kirill ..." as was in v3? Or in case you modified the original
-> patches so much to become the primary author, you should add
-> "Co-developed-by: Kirill ..." here before his S-o-b.
+From: Lv Ruyi (CGEL ZTE) <lv.ruyi@zte.com.cn>
 
-Thanks. 3/12 is vastly rewritten so the latter case can be applied.
-4/12 should keep Kirill as the primary author.
+pipe_poll is reading pipe->writers without any synchronization while
+pipe_release can write it with holding pipe lock. It is same to
+pipe->readers.
 
-Chao
+Reading pipe state only, no need for acquiring the semaphore. Use
+READ_ONCE to document them.
+
+BUG: KCSAN: data-race in pipe_poll / pipe_release
+write to 0xff1100003f332de8 of 4 bytes by task 31893 on cpu 0:
+ pipe_release+0xc3/0x1f0 fs/pipe.c:721
+ __fput+0x29b/0x530 fs/file_table.c:280
+ ____fput+0x11/0x20 fs/file_table.c:313
+ task_work_run+0x94/0x120 kernel/task_work.c:164
+ exit_task_work include/linux/task_work.h:32 [inline]
+ do_exit+0x675/0x1720 kernel/exit.c:832
+ do_group_exit+0xa4/0x180 kernel/exit.c:929
+ __do_sys_exit_group+0xb/0x10 kernel/exit.c:940
+ __se_sys_exit_group+0x5/0x10 kernel/exit.c:938
+ __x64_sys_exit_group+0x16/0x20 kernel/exit.c:938
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x4a/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+read to 0xff1100003f332de8 of 4 bytes by task 31891 on cpu 3:
+ pipe_poll+0x18b/0x270 fs/pipe.c:679
+ vfs_poll include/linux/poll.h:90 [inline]
+ do_select+0x7bb/0xec0 fs/select.c:537
+ core_sys_select+0x42a/0x6a0 fs/select.c:680
+ kern_select fs/select.c:721 [inline]
+ __do_sys_select fs/select.c:728 [inline]
+ __se_sys_select+0x1a7/0x1e0 fs/select.c:725
+ __x64_sys_select+0x63/0x70 fs/select.c:725
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x4a/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+value changed: 0x00000001 -> 0x00000000
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 3 PID: 31891 Comm: sshd Not tainted 5.16.10 #3
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.0-0-ga698c8995f-prebuilt.qemu.org 04/01/2014
+==================================================================
+
+kernel version : linux_5.16.10/linux-stable
+
+(gdb) l *pipe_release+0xc3
+0xffffffff8144f2d3 is in pipe_release (fs/pipe.c:721).
+716
+717             __pipe_lock(pipe);
+718             if (file->f_mode & FMODE_READ)
+719                     pipe->readers--;
+720             if (file->f_mode & FMODE_WRITE)
+721                     pipe->writers--;
+722
+723             /* Was that the last reader or writer, but not the other side? */
+724             if (!pipe->readers != !pipe->writers) {
+725                     wake_up_interruptible_all(&pipe->rd_wait);
+(gdb) l *pipe_poll+0x18b
+0xffffffff8144e84b is in pipe_poll (fs/pipe.c:679).
+674
+675             mask = 0;
+676             if (filp->f_mode & FMODE_READ) {
+677                     if (!pipe_empty(head, tail))
+678                             mask |= EPOLLIN | EPOLLRDNORM;
+679                     if (!pipe->writers && filp->f_version != pipe->w_counter)
+680                             mask |= EPOLLHUP;
+681             }
+682
+683             if (filp->f_mode & FMODE_WRITE) {
+
+Reported-by: Zeal Robot <zealci@zte.com.cn>
+Signed-off-by: Lv Ruyi (CGEL ZTE) <lv.ruyi@zte.com.cn>
+---
+ fs/pipe.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/pipe.c b/fs/pipe.c
+index 71946832e33f..ddc8050f97ca 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -677,7 +677,7 @@ pipe_poll(struct file *filp, poll_table *wait)
+ 	if (filp->f_mode & FMODE_READ) {
+ 		if (!pipe_empty(head, tail))
+ 			mask |= EPOLLIN | EPOLLRDNORM;
+-		if (!pipe->writers && filp->f_version != pipe->w_counter)
++		if (!READ_ONCE(pipe->writers) && filp->f_version != pipe->w_counter)
+ 			mask |= EPOLLHUP;
+ 	}
+ 
+@@ -688,7 +688,7 @@ pipe_poll(struct file *filp, poll_table *wait)
+ 		 * Most Unices do not set EPOLLERR for FIFOs but on Linux they
+ 		 * behave exactly like pipes for poll().
+ 		 */
+-		if (!pipe->readers)
++		if (!READ_ONCE(pipe->readers))
+ 			mask |= EPOLLERR;
+ 	}
+ 
+-- 
+2.25.1
+
