@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C68B4D1642
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Mar 2022 12:29:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 81BF64D1645
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Mar 2022 12:29:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346408AbiCHLaV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Mar 2022 06:30:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52384 "EHLO
+        id S1346510AbiCHLaZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Mar 2022 06:30:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346045AbiCHLaT (ORCPT
+        with ESMTP id S1346466AbiCHLaV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Mar 2022 06:30:19 -0500
+        Tue, 8 Mar 2022 06:30:21 -0500
 Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B81DA37A85;
-        Tue,  8 Mar 2022 03:29:22 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FC2C3A5D1;
+        Tue,  8 Mar 2022 03:29:25 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 6FFF6B81868;
-        Tue,  8 Mar 2022 11:29:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C37F2C340EC;
-        Tue,  8 Mar 2022 11:29:19 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 23956B81752;
+        Tue,  8 Mar 2022 11:29:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 928A8C340EC;
+        Tue,  8 Mar 2022 11:29:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646738960;
-        bh=/ZE7KoA/CEZ9Cv7O8oC7vdpXC4AHqtlt9/5UjASb5C4=;
+        s=k20201202; t=1646738962;
+        bh=Cgl0qA66PzKkXnlxny3eTwo2XWjpLBhZQNxtn6qkKoU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ioqBWh4cSnOzOuU/9i+dFIwPdadEchN5jfsV5HRU/gWchDvncPXRTmAmSzVJXdw5O
-         RoLFK2P19uEyhLKCfnixFaexLkC+Aydq48DpprBuvJQD4nBAFziEHmpdQSmlr4PIv0
-         +VtEcq0JXvhDGfSj2qVlfSiZ3vqlTVaTjl2WPyCCtgjkLGzx5bMQoTDpswmK/NcK6d
-         5AQdd+yq25X0/zaixvd5ZjqiBPm5aDu4We+yervOrsFRD1P18uNk9m2Q5dWmJgJZYf
-         +BpmyvP4E1BewqQdsRwWdJ46umflBSh0rzaNrw7wwvZ6jhmqsXcIkSnTP2KYAn6aLb
-         /4td00AFAKcfw==
+        b=VubbAgcJ5C1kTfkMRe5DOVPs3CVCfg5RBHj6uVzV5thQwyrl70oV606uxiFAsxiea
+         YBDSE79E1vqFWdsRxSTTPj5n6v3BmmsbgXT5uccdWArP4L34OGL6S6Gmmg1V7xOPkt
+         byS9Zoc7bJ9Wj4lrQuwQ4XfqdCKK1ERpX0cB3UVTfGxz7k16Xm5gEtDDC2JIdQNt8W
+         BCz70rcPSZ0Kwf/Nk7mm+kOeNmWViJhxHwV5fNYK5V0AHESKLyztFG8Uidv3uZWyn7
+         Nl8DsM47fYJdtBjIh2G/TtktzsxvgSyYyya+rZrc7STHiBlTYT4PAHkawU6Z0L7+wM
+         JnU6eOwA4GSnQ==
 From:   Jarkko Sakkinen <jarkko@kernel.org>
 To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
 Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
@@ -41,9 +41,9 @@ Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
         linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
         Jarkko Sakkinen <jarkko@kernel.org>
-Subject: [PATCH RFC v3 2/3] x86/sgx: Export sgx_encl_page_alloc()
-Date:   Tue,  8 Mar 2022 13:28:32 +0200
-Message-Id: <20220308112833.262805-3-jarkko@kernel.org>
+Subject: [PATCH RFC v3 3/3] x86/sgx: Implement EAUG population with MAP_POPULATE
+Date:   Tue,  8 Mar 2022 13:28:33 +0200
+Message-Id: <20220308112833.262805-4-jarkko@kernel.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220308112833.262805-1-jarkko@kernel.org>
 References: <20220308112833.262805-1-jarkko@kernel.org>
@@ -59,129 +59,173 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Move sgx_encl_page_alloc() to encl.c and export it so that it can be
-used in the implementation for MAP_POPULATE, which requires to allocate
-new enclave pages.
+With SGX1 an enclave needs to be created with its maximum memory demands
+pre-allocated. Pages cannot be added to an enclave after it is initialized.
+SGX2 introduces a new function, ENCLS[EAUG] for adding pages to an
+initialized enclave.
+
+Add support for dynamically adding pages to an initialized enclave with
+mmap() by populating pages with EAUG. Use f_ops->populate() callback to
+achieve this behaviour.
 
 Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
- arch/x86/kernel/cpu/sgx/encl.c  | 38 +++++++++++++++++++++++++++++++++
- arch/x86/kernel/cpu/sgx/encl.h  |  3 +++
- arch/x86/kernel/cpu/sgx/ioctl.c | 38 ---------------------------------
- 3 files changed, 41 insertions(+), 38 deletions(-)
+ arch/x86/kernel/cpu/sgx/driver.c | 128 +++++++++++++++++++++++++++++++
+ 1 file changed, 128 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/sgx/encl.c b/arch/x86/kernel/cpu/sgx/encl.c
-index f24a41d3ec70..0256918b2c2f 100644
---- a/arch/x86/kernel/cpu/sgx/encl.c
-+++ b/arch/x86/kernel/cpu/sgx/encl.c
-@@ -913,6 +913,44 @@ int sgx_encl_test_and_clear_young(struct mm_struct *mm,
- 	return ret;
+diff --git a/arch/x86/kernel/cpu/sgx/driver.c b/arch/x86/kernel/cpu/sgx/driver.c
+index aa9b8b868867..848938334e8a 100644
+--- a/arch/x86/kernel/cpu/sgx/driver.c
++++ b/arch/x86/kernel/cpu/sgx/driver.c
+@@ -9,6 +9,7 @@
+ #include <asm/traps.h>
+ #include "driver.h"
+ #include "encl.h"
++#include "encls.h"
+ 
+ u64 sgx_attributes_reserved_mask;
+ u64 sgx_xfrm_reserved_mask = ~0x3;
+@@ -101,6 +102,132 @@ static int sgx_mmap(struct file *file, struct vm_area_struct *vma)
+ 	return 0;
  }
  
-+struct sgx_encl_page *sgx_encl_page_alloc(struct sgx_encl *encl,
-+					  unsigned long offset,
-+					  u64 secinfo_flags)
++static int sgx_encl_augment_page(struct sgx_encl *encl, unsigned long offset)
 +{
++	struct sgx_pageinfo pginfo = {0};
 +	struct sgx_encl_page *encl_page;
-+	unsigned long prot;
++	struct sgx_epc_page *epc_page;
++	struct sgx_va_page *va_page;
++	u64 secinfo_flags;
++	int ret;
 +
-+	encl_page = kzalloc(sizeof(*encl_page), GFP_KERNEL);
-+	if (!encl_page)
-+		return ERR_PTR(-ENOMEM);
++	/*
++	 * Ignore internal permission checking for dynamically added pages.
++	 * They matter only for data added during the pre-initialization phase.
++	 * The enclave decides the permissions by the means of EACCEPT,
++	 * EACCEPTCOPY and EMODPE.
++	 */
++	secinfo_flags = SGX_SECINFO_R | SGX_SECINFO_W | SGX_SECINFO_X;
++	encl_page = sgx_encl_page_alloc(encl, offset, secinfo_flags);
++	if (IS_ERR(encl_page))
++		return PTR_ERR(encl_page);
 +
-+	encl_page->desc = encl->base + offset;
++	epc_page = sgx_alloc_epc_page(encl_page, true);
++	if (IS_ERR(epc_page)) {
++		ret = PTR_ERR(epc_page);
++		goto err_alloc_epc_page;
++	}
++
++	va_page = sgx_encl_grow(encl);
++	if (IS_ERR(va_page)) {
++		ret = PTR_ERR(va_page);
++		goto err_grow;
++	}
++
++	mutex_lock(&encl->lock);
++
++	/*
++	 * Adding to encl->va_pages must be done under encl->lock.  Ditto for
++	 * deleting (via sgx_encl_shrink()) in the error path.
++	 */
++	if (va_page)
++		list_add(&va_page->list, &encl->va_pages);
++
++	/*
++	 * Insert prior to EADD in case of OOM.  EADD modifies MRENCLAVE, i.e.
++	 * can't be gracefully unwound, while failure on EADD/EXTEND is limited
++	 * to userspace errors (or kernel/hardware bugs).
++	 */
++	ret = xa_insert(&encl->page_array, PFN_DOWN(encl_page->desc),
++			encl_page, GFP_KERNEL);
++
++	/*
++	 * If ret == -EBUSY then page was created in another flow while
++	 * running without encl->lock
++	 */
++	if (ret)
++		goto err_xa_insert;
++
++	pginfo.secs = (unsigned long)sgx_get_epc_virt_addr(encl->secs.epc_page);
++	pginfo.addr = encl_page->desc & PAGE_MASK;
++	pginfo.metadata = 0;
++
++	ret = __eaug(&pginfo, sgx_get_epc_virt_addr(epc_page));
++	if (ret)
++		goto err_eaug;
++
 +	encl_page->encl = encl;
++	encl_page->epc_page = epc_page;
++	encl_page->type = SGX_PAGE_TYPE_REG;
++	encl->secs_child_cnt++;
 +
-+	prot = _calc_vm_trans(secinfo_flags, SGX_SECINFO_R, PROT_READ)  |
-+	       _calc_vm_trans(secinfo_flags, SGX_SECINFO_W, PROT_WRITE) |
-+	       _calc_vm_trans(secinfo_flags, SGX_SECINFO_X, PROT_EXEC);
++	sgx_mark_page_reclaimable(encl_page->epc_page);
 +
-+	/*
-+	 * TCS pages must always RW set for CPU access while the SECINFO
-+	 * permissions are *always* zero - the CPU ignores the user provided
-+	 * values and silently overwrites them with zero permissions.
-+	 */
-+	if ((secinfo_flags & SGX_SECINFO_PAGE_TYPE_MASK) == SGX_SECINFO_TCS)
-+		prot |= PROT_READ | PROT_WRITE;
++	mutex_unlock(&encl->lock);
 +
-+	/* Calculate maximum of the VM flags for the page. */
-+	encl_page->vm_max_prot_bits = calc_vm_prot_bits(prot, 0);
++	return 0;
 +
-+	/*
-+	 * At time of allocation, the runtime protection bits are the same
-+	 * as the maximum protection bits.
-+	 */
-+	encl_page->vm_run_prot_bits = encl_page->vm_max_prot_bits;
++err_eaug:
++	xa_erase(&encl->page_array, PFN_DOWN(encl_page->desc));
 +
-+	return encl_page;
++err_xa_insert:
++	sgx_encl_shrink(encl, va_page);
++	mutex_unlock(&encl->lock);
++
++err_grow:
++	sgx_encl_free_epc_page(epc_page);
++
++err_alloc_epc_page:
++	kfree(encl_page);
++
++	return VM_FAULT_SIGBUS;
 +}
 +
- /**
-  * sgx_zap_enclave_ptes() - remove PTEs mapping the address from enclave
-  * @encl: the enclave
-diff --git a/arch/x86/kernel/cpu/sgx/encl.h b/arch/x86/kernel/cpu/sgx/encl.h
-index 1b6ce1da7c92..3df0d3faf3a1 100644
---- a/arch/x86/kernel/cpu/sgx/encl.h
-+++ b/arch/x86/kernel/cpu/sgx/encl.h
-@@ -113,6 +113,9 @@ int sgx_encl_get_backing(struct sgx_encl *encl, unsigned long page_index,
- void sgx_encl_put_backing(struct sgx_backing *backing, bool do_write);
- int sgx_encl_test_and_clear_young(struct mm_struct *mm,
- 				  struct sgx_encl_page *page);
-+struct sgx_encl_page *sgx_encl_page_alloc(struct sgx_encl *encl,
-+					  unsigned long offset,
-+					  u64 secinfo_flags);
- void sgx_zap_enclave_ptes(struct sgx_encl *encl, unsigned long addr);
- struct sgx_epc_page *sgx_alloc_va_page(void);
- unsigned int sgx_alloc_va_slot(struct sgx_va_page *va_page);
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index d8c3c07badb3..3e3ca27a6f72 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -169,44 +169,6 @@ static long sgx_ioc_enclave_create(struct sgx_encl *encl, void __user *arg)
- 	return ret;
- }
++/*
++ * Add new pages to the enclave sequentially with ENCLS[EAUG]. Note that
++ * sgx_mmap() validates that the given VMA is within the enclave range. Calling
++ * here sgx_encl_may_map() second time would too time consuming.
++ */
++static int sgx_populate(struct file *file, unsigned long start, unsigned long end)
++{
++	struct sgx_encl *encl = file->private_data;
++	unsigned long length = end - start;
++	unsigned long pos;
++	int ret;
++
++	/* EAUG works only for initialized enclaves. */
++	if (!test_bit(SGX_ENCL_INITIALIZED, &encl->flags))
++		return -EINVAL;
++
++	for (pos = 0 ; pos < length; pos += PAGE_SIZE) {
++		if (signal_pending(current)) {
++			if (!pos)
++				ret = -ERESTARTSYS;
++
++			break;
++		}
++
++		if (need_resched())
++			cond_resched();
++
++		ret = sgx_encl_augment_page(encl, start + pos);
++		if (ret)
++			break;
++	}
++
++	return ret;
++}
++
+ static unsigned long sgx_get_unmapped_area(struct file *file,
+ 					   unsigned long addr,
+ 					   unsigned long len,
+@@ -133,6 +260,7 @@ static const struct file_operations sgx_encl_fops = {
+ 	.compat_ioctl		= sgx_compat_ioctl,
+ #endif
+ 	.mmap			= sgx_mmap,
++	.populate		= sgx_populate,
+ 	.get_unmapped_area	= sgx_get_unmapped_area,
+ };
  
--static struct sgx_encl_page *sgx_encl_page_alloc(struct sgx_encl *encl,
--						 unsigned long offset,
--						 u64 secinfo_flags)
--{
--	struct sgx_encl_page *encl_page;
--	unsigned long prot;
--
--	encl_page = kzalloc(sizeof(*encl_page), GFP_KERNEL);
--	if (!encl_page)
--		return ERR_PTR(-ENOMEM);
--
--	encl_page->desc = encl->base + offset;
--	encl_page->encl = encl;
--
--	prot = _calc_vm_trans(secinfo_flags, SGX_SECINFO_R, PROT_READ)  |
--	       _calc_vm_trans(secinfo_flags, SGX_SECINFO_W, PROT_WRITE) |
--	       _calc_vm_trans(secinfo_flags, SGX_SECINFO_X, PROT_EXEC);
--
--	/*
--	 * TCS pages must always RW set for CPU access while the SECINFO
--	 * permissions are *always* zero - the CPU ignores the user provided
--	 * values and silently overwrites them with zero permissions.
--	 */
--	if ((secinfo_flags & SGX_SECINFO_PAGE_TYPE_MASK) == SGX_SECINFO_TCS)
--		prot |= PROT_READ | PROT_WRITE;
--
--	/* Calculate maximum of the VM flags for the page. */
--	encl_page->vm_max_prot_bits = calc_vm_prot_bits(prot, 0);
--
--	/*
--	 * At time of allocation, the runtime protection bits are the same
--	 * as the maximum protection bits.
--	 */
--	encl_page->vm_run_prot_bits = encl_page->vm_max_prot_bits;
--
--	return encl_page;
--}
--
- static int sgx_validate_secinfo(struct sgx_secinfo *secinfo)
- {
- 	u64 perm = secinfo->flags & SGX_SECINFO_PERMISSION_MASK;
 -- 
 2.35.1
 
