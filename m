@@ -2,52 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0755B4D1445
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Mar 2022 11:08:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 99A0A4D1473
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Mar 2022 11:11:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345646AbiCHKJt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Mar 2022 05:09:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39506 "EHLO
+        id S1345759AbiCHKMk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Mar 2022 05:12:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345559AbiCHKJs (ORCPT
+        with ESMTP id S238695AbiCHKMh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Mar 2022 05:09:48 -0500
+        Tue, 8 Mar 2022 05:12:37 -0500
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D39822521
-        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Mar 2022 02:08:52 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48ABB42EEE;
+        Tue,  8 Mar 2022 02:11:27 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2097761512
-        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Mar 2022 10:08:52 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5439C340EF;
-        Tue,  8 Mar 2022 10:08:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1646734131;
-        bh=2rouWrGlPKA6b4vo2GG+CkYIvvyfhsUYOL6ItyQoXBw=;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C517161512;
+        Tue,  8 Mar 2022 10:11:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F770C340EB;
+        Tue,  8 Mar 2022 10:11:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1646734286;
+        bh=fYSUhe3wecNdmSDhFtYlrEjcl8plDtdT7/KRcR78mg8=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=O4wop8tDW9jCYsMi9GKihiap1s+KCJHq6bbfql/zEvt+Ln9pSbgAnZcHoSIJNkkR5
-         UtVE5poyAISs6XT7t/dhM+VU/NfUr23lNzt7nBhluNOVt2AmsVqqhk+nwswv54AniF
-         4jQfLu/dwUwWhhYXpZi0gV3Xf2DIpdsWzbk64oQQ=
-Date:   Tue, 8 Mar 2022 11:08:48 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Sasha Levin <sashal@kernel.org>,
-        lsf-pc <lsf-pc@lists.linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>, Theodore Tso <tytso@mit.edu>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [LSF/MM TOPIC] FS, MM, and stable trees
-Message-ID: <YicrMCidylefTC3n@kroah.com>
-References: <20190212170012.GF69686@sasha-vm>
- <CAOQ4uxjysufPUtwepPGNZDhoC_HdsnkHx7--kso_OXWPyPkw_A@mail.gmail.com>
+        b=u4nsxISBKCbp0kWFZQFzaUS+y+q3Vc8eNVHhG0Dmv4Nb/JhF26ncQ7Echex+2TBWw
+         HzESBnHl4TLrNzabSQGNB7ZbF8RfKTG8YIJq2SApT5oCxEWRfJr2l9JoJPXihK3vfQ
+         duy0ns8W9IpIrx2oeLNdvolKx2mHVixqS4CJNaiMHhOoWN2qQZmcekG4CxoSZIyJX4
+         EJo+hN5kIQOs94WI2C6ml3xu/HoLZzZhctA1CyAepjY5M6e1IrYFTj5uS071+txQfv
+         E2z0+8a/Amxg9QK2hYAnt6jFaeTl8IVajwPvjbBMhdwUfexozvzQDosql+YtSoO6QB
+         ViNC/V8kidVXQ==
+Date:   Tue, 8 Mar 2022 12:10:45 +0200
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     David Laight <David.Laight@aculab.com>
+Cc:     'Christoph Hellwig' <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Nathaniel McCallum <nathaniel@profian.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Matthew Auld <matthew.auld@intel.com>,
+        Thomas =?iso-8859-1?Q?Hellstr=F6m?= 
+        <thomas.hellstrom@linux.intel.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Jason Ekstrand <jason@jlekstrand.net>,
+        Chris Wilson <chris@chris-wilson.co.uk>, "G@iki.fi" <G@iki.fi>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tvrtko Ursulin <tvrtko.ursulin@intel.com>,
+        Vasily Averin <vvs@virtuozzo.com>,
+        Shakeel Butt <shakeelb@google.com>,
+        Michal Hocko <mhocko@suse.com>,
+        zhangyiru <zhangyiru3@huawei.com>,
+        Alexey Gladkov <legion@kernel.org>,
+        Alexander Mikhalitsyn <alexander.mikhalitsyn@virtuozzo.com>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "codalist@coda.cs.cmu.edu" <codalist@coda.cs.cmu.edu>,
+        "linux-unionfs@vger.kernel.org" <linux-unionfs@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH RFC 0/3] MAP_POPULATE for device memory
+Message-ID: <YicrpX9K1dSdCK7u@iki.fi>
+References: <20220306053211.135762-1-jarkko@kernel.org>
+ <YiSb7tsUEBRGS+HA@casper.infradead.org>
+ <YiW4yurDXSifTYUt@infradead.org>
+ <YiYIv9guOgClLKT8@iki.fi>
+ <YiYrRWMp1akXY8Vb@infradead.org>
+ <5729d03d6a174da6b66d1534ebdb1127@AcuMS.aculab.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAOQ4uxjysufPUtwepPGNZDhoC_HdsnkHx7--kso_OXWPyPkw_A@mail.gmail.com>
+In-Reply-To: <5729d03d6a174da6b66d1534ebdb1127@AcuMS.aculab.com>
 X-Spam-Status: No, score=-7.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -58,73 +89,40 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 08, 2022 at 11:32:43AM +0200, Amir Goldstein wrote:
-> On Tue, Feb 12, 2019 at 7:31 PM Sasha Levin <sashal@kernel.org> wrote:
-> >
-> > Hi all,
-> >
-> > I'd like to propose a discussion about the workflow of the stable trees
-> > when it comes to fs/ and mm/. In the past year we had some friction with
-> > regards to the policies and the procedures around picking patches for
-> > stable tree, and I feel it would be very useful to establish better flow
-> > with the folks who might be attending LSF/MM.
-> >
-> > I feel that fs/ and mm/ are in very different places with regards to
-> > which patches go in -stable, what tests are expected, and the timeline
-> > of patches from the point they are proposed on a mailing list to the
-> > point they are released in a stable tree. Therefore, I'd like to propose
-> > two different sessions on this (one for fs/ and one for mm/), as a
-> > common session might be less conductive to agreeing on a path forward as
-> > the starting point for both subsystems are somewhat different.
-> >
-> > We can go through the existing processes, automation, and testing
-> > mechanisms we employ when building stable trees, and see how we can
-> > improve these to address the concerns of fs/ and mm/ folks.
-> >
+On Mon, Mar 07, 2022 at 10:11:19PM +0000, David Laight wrote:
+> From: Christoph Hellwig
+> > Sent: 07 March 2022 15:57
+> > 
+> > On Mon, Mar 07, 2022 at 03:29:35PM +0200, Jarkko Sakkinen wrote:
+> > > So what would you suggest to sort out the issue? I'm happy to go with
+> > > ioctl if nothing else is acceptable.
+> > 
+> > PLenty of drivers treat all mmaps as if MAP_POPULATE was specified,
+> > typically by using (io_)remap_pfn_range.  If there any reason to only
+> > optionally have the pre-fault semantics for sgx?  If not this should
+> > be really simple.  And if we have a real need for it to be optional
+> > we'll just need to find a sane way to pass that information to ->mmap.
 > 
-> Hi Sasha,
+> Is there any space in vma->vm_flags ?
 > 
-> I think it would be interesting to have another discussion on the state of fs/
-> in -stable and see if things have changed over the past couple of years.
-> If you do not plan to attend LSF/MM in person, perhaps you will be able to
-> join this discussion remotely?
-> 
-> >From what I can see, the flow of ext4/btrfs patches into -stable still looks
-> a lot healthier than the flow of xfs patches into -stable.
+> That would be better than an extra argument or function.
 
-That is explicitly because the ext4/btrfs developers/maintainers are
-marking patches for stable backports, while the xfs
-developers/maintainers are not.
+It's very dense but I'll give a shot for callback route based on Dave's
+comments in this thread. I.e. use it as filter inside __mm_populate() and
+populate_vma_page_range().
 
-It has nothing to do with how me and Sasha are working, so go take this
-up with the fs developers :)
+For Enarx, which we are implementing being able to use MAP_POPULATE and get
+the full range EAUG'd would be best way to optimize the performance of wasm
+JIT (Enarx is a wasm run-time capable of running inside an SGX enclave, AMD
+SEV-SNP VM etc.). More so than any predictor (ra_state, madvice etc.) inside
+#PF handler, which have been suggested in this thread.
 
-> In 2019, Luis started an effort to improve this situation (with some
-> assistance from me and you) that ended up with several submissions
-> of stable patches for v4.19.y, but did not continue beyond 2019.
-> 
-> When one looks at xfstest bug reports on the list for xfs on kernels > v4.19
-> one has to wonder if using xfs on kernels v5.x.y is a wise choice.
+After some research on how we implement user space, I'd rather keep the #PF
+handler working on a single page (EAUG a single page) and have either ioctl
+or MAP_POPULATE to do the batch fill.
 
-That's up to the xfs maintainers to discuss.
+We can still "not trust the user space" i.e. the populate does not have to
+guarantee to do the full length since the #PF handler will then fill the
+holes. This was one concern in this thread but it is not hard to address.
 
-> Which makes me wonder: how do the distro kernel maintainers keep up
-> with xfs fixes?
-
-Who knows, ask the distro maintainers that use xfs.  What do they do?
-
-The xfs developers/maintainer told us (Sasha and I) to not cherry-pick
-any xfs "fixes:" patches to the stable trees unless they explicitly
-marked it for stable.  So there's not much we can do here about this
-without their involvement as I do not want to ever route around an
-active maintainer like that.
-
-> Many of the developers on CC of this message are involved in development
-> of a distro kernel (at least being consulted with), so I would be very much
-> interested to know how and if this issue is being dealt with.
-
-Maybe no distro cares about xfs?  :)
-
-thanks,
-
-greg k-h
+BR, Jarkko
