@@ -2,122 +2,176 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7683F4D1374
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Mar 2022 10:33:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B5BE64D13DE
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Mar 2022 10:52:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236116AbiCHJdy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Mar 2022 04:33:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60734 "EHLO
+        id S1345501AbiCHJxR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Mar 2022 04:53:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232666AbiCHJdy (ORCPT
+        with ESMTP id S1345585AbiCHJxJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Mar 2022 04:33:54 -0500
-Received: from mail-ot1-x334.google.com (mail-ot1-x334.google.com [IPv6:2607:f8b0:4864:20::334])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD5573191B
-        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Mar 2022 01:32:55 -0800 (PST)
-Received: by mail-ot1-x334.google.com with SMTP id t8-20020a0568301e2800b005b235a56f2dso4012458otr.9
-        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Mar 2022 01:32:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=befouEOLs7gEwW/9zrJZYjQYxPJ4HO32tJhcwqgsRGs=;
-        b=SGdSAQjefewuGEuy4daE/ymnwn+Cd2AOGY5dqFNw4OlkkSESBA4T3Q+tIx9HID0M7m
-         aiUUzMj2f84t0zFsyzh++t+p381hBVmaA9ZxeW1aSsaWn4oYT2pBW7O1sHf12lSV85V3
-         ZKsiye9UqlxzCzXseT3VoyOaZrWPxBc0hy7z5jDWhGJy1WkZnXr0+K9+hph9g3RYr7n9
-         J/tfbkUOrDm8nCYxDH/jfFzaxnBwVeWacqsOZ7MIXiXLYBZ3zvBR6xNPYtnw8HGetWPi
-         XNVVS2T4/r7YD9W2a2BdNq4mFQFXqI7o+I0uUUTL8M2O4OJEDbgEUxbBrO5J3aJQAW1/
-         TWvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=befouEOLs7gEwW/9zrJZYjQYxPJ4HO32tJhcwqgsRGs=;
-        b=XR8LyyaRYyOMPRxSq+zxNA7HY7zvHFn3VFFxVBWJYLtuhv2tzYtE45wYsJfL8whEyD
-         TvlRmRPk9La0WP3qncgUTNcOcPlUrlMlfGDfh1HFlQu2x0mLMDKEP8CXLt7IIZWGAJcs
-         nPhhrIJvRMeycGpJrCVL/F+lIYBGy6YrwgW+48V6iGAMKIe8CiGaINOqDhxRUOiir1cK
-         eg/G3e88k5LcSgMMfKQxa+ItiubS0NF10p9Mq7/dBGpji+3aCqWNjQnFAHgYzIp/Y68H
-         vIvS8APFkfd7NaINbWcqHP5h4B2DCQ7TUW4SPSHGkSquYmyk+rQsC0pUGptGaQdJXr0F
-         u0Ow==
-X-Gm-Message-State: AOAM530ngc2gvQoFq3M9xUPNhSOEbCiWaw/3oKq13SwyEByXbJDTkZeX
-        gh2P5Fek+0Y7j662RTy3yKxmoiwjNMCOk962MTY=
-X-Google-Smtp-Source: ABdhPJyUPMNCea8Bf5pKcFe/SIoPvgx90rtOcD9Ul+AE5T6iqaFjw/f2MG8sU3uYtMOUq/srw3DnvLe1iyuaFn8U/H4=
-X-Received: by 2002:a9d:5cc8:0:b0:5b2:35ae:7ad6 with SMTP id
- r8-20020a9d5cc8000000b005b235ae7ad6mr4458084oti.275.1646731975073; Tue, 08
- Mar 2022 01:32:55 -0800 (PST)
+        Tue, 8 Mar 2022 04:53:09 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D703B4198D;
+        Tue,  8 Mar 2022 01:52:13 -0800 (PST)
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 2288GoSs007823;
+        Tue, 8 Mar 2022 09:52:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding; s=pp1;
+ bh=WM6Qf/k39OV7NTPzqsRekO0Zxro6Fcz/vyXRYcDLL2U=;
+ b=RT4G2ffxcQh1Z2zSZNS16vvy9CXsbNdcAYQYJw5CC7Q6CeYGT8Ob89LBttqKnhuaTlZ1
+ pHxrQqEtmPIEuYNFqt++IpKeJYKq0DUFQ/u0CNS9JzpcS7RGcFG4K7tSazmJPDEqfbdG
+ PeGWCsfD+816rYUOA+l8SJBLsSXV/45bXM/JtPMg3mGT76gqDHLSFx/krQD8skqTFeRS
+ oZu68fNgfO/k+sk1FxhCDp5OVtUXckCb/wVV6g2y4I/x/CP9ymH8CEJIz8D+fxZMdOPW
+ Az0/XrUR/Mu9upVPQYo9cb1P+kq5Gx31932PX0yEZ4RlrrPK91BgU1Cj02ky8Kp8RhsV DA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3ep0hfd970-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 08 Mar 2022 09:52:11 +0000
+Received: from m0098414.ppops.net (m0098414.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 2289mvDj030756;
+        Tue, 8 Mar 2022 09:52:11 GMT
+Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 3ep0hfd96j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 08 Mar 2022 09:52:11 +0000
+Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
+        by ppma06fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2289g3Ej005740;
+        Tue, 8 Mar 2022 09:52:09 GMT
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
+        by ppma06fra.de.ibm.com with ESMTP id 3eky4j62t9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 08 Mar 2022 09:52:09 +0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2289q6gQ57803074
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 8 Mar 2022 09:52:06 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C676DA405C;
+        Tue,  8 Mar 2022 09:52:06 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 74BC4A405F;
+        Tue,  8 Mar 2022 09:52:04 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.43.83.182])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue,  8 Mar 2022 09:52:04 +0000 (GMT)
+From:   Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To:     linux-ext4@vger.kernel.org
+Cc:     Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] ext4: Make mb_optimize_scan option work with set/unset mount cmd
+Date:   Tue,  8 Mar 2022 15:22:00 +0530
+Message-Id: <c98970fe99f26718586d02e942f293300fb48ef3.1646732698.git.ojaswin@linux.ibm.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-References: <20190212170012.GF69686@sasha-vm>
-In-Reply-To: <20190212170012.GF69686@sasha-vm>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 8 Mar 2022 11:32:43 +0200
-Message-ID: <CAOQ4uxjysufPUtwepPGNZDhoC_HdsnkHx7--kso_OXWPyPkw_A@mail.gmail.com>
-Subject: Re: [LSF/MM TOPIC] FS, MM, and stable trees
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     lsf-pc <lsf-pc@lists.linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>, Theodore Tso <tytso@mit.edu>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Greg KH <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: XqNFAGE4dnT6UjJKckdvpzGY40jSVrsA
+X-Proofpoint-ORIG-GUID: X9tOMWz5TEmvvnvJSK7ES0311wrjsdWq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.64.514
+ definitions=2022-03-08_03,2022-03-04_01,2022-02-23_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1011
+ impostorscore=0 spamscore=0 bulkscore=0 adultscore=0 suspectscore=0
+ lowpriorityscore=0 malwarescore=0 mlxscore=0 mlxlogscore=999
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2202240000 definitions=main-2203080049
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 7:31 PM Sasha Levin <sashal@kernel.org> wrote:
->
-> Hi all,
->
-> I'd like to propose a discussion about the workflow of the stable trees
-> when it comes to fs/ and mm/. In the past year we had some friction with
-> regards to the policies and the procedures around picking patches for
-> stable tree, and I feel it would be very useful to establish better flow
-> with the folks who might be attending LSF/MM.
->
-> I feel that fs/ and mm/ are in very different places with regards to
-> which patches go in -stable, what tests are expected, and the timeline
-> of patches from the point they are proposed on a mailing list to the
-> point they are released in a stable tree. Therefore, I'd like to propose
-> two different sessions on this (one for fs/ and one for mm/), as a
-> common session might be less conductive to agreeing on a path forward as
-> the starting point for both subsystems are somewhat different.
->
-> We can go through the existing processes, automation, and testing
-> mechanisms we employ when building stable trees, and see how we can
-> improve these to address the concerns of fs/ and mm/ folks.
->
+After moving to the new mount API, mb_optimize_scan mount option
+handling was not working as expected due to the parsed value always
+being overwritten by default. Refactor and fix this to the expected
+behavior described below:
 
-Hi Sasha,
+*  mb_optimize_scan=1 - On
+*  mb_optimize_scan=0 - Off
+*  mb_optimize_scan not passed - On if no. of BGs > threshold else off
+*  Remounts retain previous value unless we explicitly pass the option
+   with a new value
 
-I think it would be interesting to have another discussion on the state of fs/
-in -stable and see if things have changed over the past couple of years.
-If you do not plan to attend LSF/MM in person, perhaps you will be able to
-join this discussion remotely?
+Reported-by: Ritesh Harjani <riteshh@linux.ibm.com>
+Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+---
+ fs/ext4/super.c | 24 ++++++++++++++----------
+ 1 file changed, 14 insertions(+), 10 deletions(-)
 
-From what I can see, the flow of ext4/btrfs patches into -stable still looks
-a lot healthier than the flow of xfs patches into -stable.
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index c5021ca0a28a..cd0547fabd79 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -2021,12 +2021,12 @@ static int ext4_set_test_dummy_encryption(struct super_block *sb, char *arg)
+ #define EXT4_SPEC_s_commit_interval		(1 << 16)
+ #define EXT4_SPEC_s_fc_debug_max_replay		(1 << 17)
+ #define EXT4_SPEC_s_sb_block			(1 << 18)
++#define EXT4_SPEC_mb_optimize_scan		(1 << 19)
+ 
+ struct ext4_fs_context {
+ 	char		*s_qf_names[EXT4_MAXQUOTAS];
+ 	char		*test_dummy_enc_arg;
+ 	int		s_jquota_fmt;	/* Format of quota to use */
+-	int		mb_optimize_scan;
+ #ifdef CONFIG_EXT4_DEBUG
+ 	int s_fc_debug_max_replay;
+ #endif
+@@ -2451,12 +2451,17 @@ static int ext4_parse_param(struct fs_context *fc, struct fs_parameter *param)
+ 			ctx_clear_mount_opt(ctx, m->mount_opt);
+ 		return 0;
+ 	case Opt_mb_optimize_scan:
+-		if (result.int_32 != 0 && result.int_32 != 1) {
++		if (result.int_32 == 1) {
++			ctx_set_mount_opt2(ctx, EXT4_MOUNT2_MB_OPTIMIZE_SCAN);
++			ctx->spec |= EXT4_SPEC_mb_optimize_scan;
++		} else if (result.int_32 == 0) {
++			ctx_clear_mount_opt2(ctx, EXT4_MOUNT2_MB_OPTIMIZE_SCAN);
++			ctx->spec |= EXT4_SPEC_mb_optimize_scan;
++		} else {
+ 			ext4_msg(NULL, KERN_WARNING,
+ 				 "mb_optimize_scan should be set to 0 or 1.");
+ 			return -EINVAL;
+ 		}
+-		ctx->mb_optimize_scan = result.int_32;
+ 		return 0;
+ 	}
+ 
+@@ -4369,7 +4374,6 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
+ 
+ 	/* Set defaults for the variables that will be set during parsing */
+ 	ctx->journal_ioprio = DEFAULT_JOURNAL_IOPRIO;
+-	ctx->mb_optimize_scan = DEFAULT_MB_OPTIMIZE_SCAN;
+ 
+ 	sbi->s_inode_readahead_blks = EXT4_DEF_INODE_READAHEAD_BLKS;
+ 	sbi->s_sectors_written_start =
+@@ -5320,12 +5324,12 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
+ 	 * turned off by passing "mb_optimize_scan=0". This can also be
+ 	 * turned on forcefully by passing "mb_optimize_scan=1".
+ 	 */
+-	if (ctx->mb_optimize_scan == 1)
+-		set_opt2(sb, MB_OPTIMIZE_SCAN);
+-	else if (ctx->mb_optimize_scan == 0)
+-		clear_opt2(sb, MB_OPTIMIZE_SCAN);
+-	else if (sbi->s_groups_count >= MB_DEFAULT_LINEAR_SCAN_THRESHOLD)
+-		set_opt2(sb, MB_OPTIMIZE_SCAN);
++	if (!(ctx->spec & EXT4_SPEC_mb_optimize_scan)) {
++		if (sbi->s_groups_count >= MB_DEFAULT_LINEAR_SCAN_THRESHOLD)
++			set_opt2(sb, MB_OPTIMIZE_SCAN);
++		else
++			clear_opt2(sb, MB_OPTIMIZE_SCAN);
++	}
+ 
+ 	err = ext4_mb_init(sb);
+ 	if (err) {
+-- 
+2.27.0
 
-In 2019, Luis started an effort to improve this situation (with some
-assistance from me and you) that ended up with several submissions
-of stable patches for v4.19.y, but did not continue beyond 2019.
-
-When one looks at xfstest bug reports on the list for xfs on kernels > v4.19
-one has to wonder if using xfs on kernels v5.x.y is a wise choice.
-
-Which makes me wonder: how do the distro kernel maintainers keep up
-with xfs fixes?
-
-Many of the developers on CC of this message are involved in development
-of a distro kernel (at least being consulted with), so I would be very much
-interested to know how and if this issue is being dealt with.
-
-Thanks,
-Amir.
