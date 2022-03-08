@@ -2,209 +2,284 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D490B4D13E1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Mar 2022 10:52:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 990614D1426
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Mar 2022 11:03:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345506AbiCHJxT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Mar 2022 04:53:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32912 "EHLO
+        id S1345556AbiCHKEn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Mar 2022 05:04:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345608AbiCHJxO (ORCPT
+        with ESMTP id S233810AbiCHKEm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Mar 2022 04:53:14 -0500
-Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2592F3FBD2;
-        Tue,  8 Mar 2022 01:52:18 -0800 (PST)
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 2288eFml016853;
-        Tue, 8 Mar 2022 09:52:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=pp1;
- bh=+DbVfJM9T//JWovv3DB+Zga9LWmRsy++c1sznUWBOcc=;
- b=tAsy9WHjFvG4QIPmvLLx3qS+B57EXHbTabLvPV4uXznb7ZBMQ4xUQgDPJtYQmAHVcXTd
- ObTFvIoNLDILts8IKeqMjXCqGl8Q/W9/Bq9MFh+06hIQyF0XdPk4F1qqtXPLADWQVnZ4
- wpDX6R49+hANfwxb+1Z3ND31LIdm3GrCyB5Fw1x91TkrTplkj8FovC/8eJbpDwJ4DWz+
- cqCAQ3j761LMyXLY5IF8HlKe6NDdA5CvVerkGgHPao1gnOLGUkntXaWbS1+SPraXSB2f
- tg31YCAkErmnY1zi17M6wyfkGHl8Yc7yaBQKPlEoo3x2tXmSAmIObiwih5CuALzKb5fX yw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3ep0sccr2j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 08 Mar 2022 09:52:15 +0000
-Received: from m0098413.ppops.net (m0098413.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 2289aLQw013084;
-        Tue, 8 Mar 2022 09:52:14 GMT
-Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 3ep0sccr22-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 08 Mar 2022 09:52:14 +0000
-Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
-        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2289h5Uu030993;
-        Tue, 8 Mar 2022 09:52:13 GMT
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
-        by ppma06ams.nl.ibm.com with ESMTP id 3eky4hy6av-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 08 Mar 2022 09:52:13 +0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2289qAPG40305086
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 8 Mar 2022 09:52:10 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0E600A405F;
-        Tue,  8 Mar 2022 09:52:10 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 59431A4054;
-        Tue,  8 Mar 2022 09:52:07 +0000 (GMT)
-Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.43.83.182])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue,  8 Mar 2022 09:52:07 +0000 (GMT)
-From:   Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To:     linux-ext4@vger.kernel.org
-Cc:     Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Ritesh Harjani <riteshh@linux.ibm.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        rnsastry@linux.ibm.com,
-        Geetika Moolchandani <Geetika.Moolchandani1@ibm.com>
-Subject: [PATCH 2/2] ext4: Make mb_optimize_scan performance mount option work with extents
-Date:   Tue,  8 Mar 2022 15:22:01 +0530
-Message-Id: <fc9a48f7f8dcfc83891a8b21f6dd8cdf056ed810.1646732698.git.ojaswin@linux.ibm.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <c98970fe99f26718586d02e942f293300fb48ef3.1646732698.git.ojaswin@linux.ibm.com>
-References: <c98970fe99f26718586d02e942f293300fb48ef3.1646732698.git.ojaswin@linux.ibm.com>
+        Tue, 8 Mar 2022 05:04:42 -0500
+Received: from mail-oi1-x22f.google.com (mail-oi1-x22f.google.com [IPv6:2607:f8b0:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 219853FDA5;
+        Tue,  8 Mar 2022 02:03:46 -0800 (PST)
+Received: by mail-oi1-x22f.google.com with SMTP id z7so18268190oid.4;
+        Tue, 08 Mar 2022 02:03:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=N8NyC0HQLRNlBfMnrTVIE2guWnmK/c2ptH5AUAHFhoE=;
+        b=gUKXwVM4DNiokUV9ZYCnHg41X1LS3Dy3adlkI2nJY4Nc/cSI+Yf3JAkudlHUndz+d6
+         DRlHanNcey/ZMlIFUE80aQ0Y0GGkNzZTPolXV0+x+metDlb1u5M++sL40O/jt/JfesB4
+         tVQ+qCAVtFTS7H10MoOJZgpwIwTwnkhPeGtwulYkS2U3j0fG8wW7My7CRuZm0SnwkHrO
+         Oi3DGoC6VLoQFtFfFe+/o7SVoX5GBYSLHupz43GQY5wQBQxmkn/Dw3jHS2gqT3YEa77v
+         ldGhs7Ko67qc6YAcgVHGiYbsvtfEFnDclkjGQB4ekLVYxJOKIGSoJYOUIDxl7bAWVbit
+         v9kQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=N8NyC0HQLRNlBfMnrTVIE2guWnmK/c2ptH5AUAHFhoE=;
+        b=fuRSKqlyRAhcb3ZWxOFs6laLuwlKO0/d/pG98I8zXsHTzTImQzz0vSjbaD/yAw9SFs
+         lwq4juTIwzcoxzHjqiZxvqDAiqKyUKu5owtwTwB3E7EEWPeDLLFbrvSVOndqb2v+Tl34
+         ldJRcpdd+tOWk8JrDYy1hojaXtCSVYHHrA7Bnhf7P/UdDn23PAfZOdyDPMjxBl18dniQ
+         u2upC5MiuJR74ny7aoj/kM1bdkZXxyfj7KNwC3v6LmegXVESLMB8qNIbOB7Xl0UBdCb7
+         5Be2PlYTPQP9WC47Mmv8XU6ILp7d+XTs9NrADUPxPLXqIwJ9x0sUNvq/hSBewyNelZ1r
+         lw1g==
+X-Gm-Message-State: AOAM530BFqhS76j4C8iwvej3UymY+AmaGhWC6F9tTLFtAj+ssHTLlcsN
+        mkhEegk3WN74RP/PGA9kUhexSeqy738GclMB34pCYJ90QFs=
+X-Google-Smtp-Source: ABdhPJxQL3pP+7Ccdf8a+03LvzxVaOhhUzFTSrIeaWIMjKjlR4gWZEfvy0VUYWVJ9xIvRS2z+9sYK3o5CKMLbPWoSf8=
+X-Received: by 2002:aca:b845:0:b0:2d4:4207:8fd5 with SMTP id
+ i66-20020acab845000000b002d442078fd5mr2082731oif.98.1646733825348; Tue, 08
+ Mar 2022 02:03:45 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: gFRTUXBF-YZPRnQnchzBQPB9BGED1qVC
-X-Proofpoint-GUID: VyyJX6WoVHVmI2TaY6gO4Q3BjUI3FA7-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.64.514
- definitions=2022-03-08_03,2022-03-04_01,2022-02-23_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
- suspectscore=0 impostorscore=0 priorityscore=1501 phishscore=0
- clxscore=1015 bulkscore=0 spamscore=0 mlxscore=0 lowpriorityscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2202240000 definitions=main-2203080049
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20220305160424.1040102-1-amir73il@gmail.com> <20220305160424.1040102-3-amir73il@gmail.com>
+In-Reply-To: <20220305160424.1040102-3-amir73il@gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 8 Mar 2022 12:03:33 +0200
+Message-ID: <CAOQ4uxg57_c2Y4LMfqgJcE4VNGacHToiSC3PNkvLkDPL72b6Qw@mail.gmail.com>
+Subject: Re: [PATCH v4 2/9] lib/percpu_counter: add helpers for arrays of counters
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Currently mb_optimize_scan scan feature which improves filesystem
-performance heavily (when FS is fragmented), seems to be not working
-with files with extents (ext4 by default has files with extents).
+On Sat, Mar 5, 2022 at 6:04 PM Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> Hoist the helpers to init/destroy an array of counters from
+> nfsd_stats to percpu_counter library.
+>
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> ---
+>  fs/nfsd/export.c               | 10 ++++++---
+>  fs/nfsd/nfscache.c             |  5 +++--
+>  fs/nfsd/stats.c                | 37 +++-------------------------------
+>  fs/nfsd/stats.h                |  3 ---
+>  include/linux/percpu_counter.h | 19 +++++++++++++++++
+>  lib/percpu_counter.c           | 27 +++++++++++++++++++++++++
+>  6 files changed, 59 insertions(+), 42 deletions(-)
+>
+> diff --git a/fs/nfsd/export.c b/fs/nfsd/export.c
+> index 668c7527b17e..ec97a086077a 100644
+> --- a/fs/nfsd/export.c
+> +++ b/fs/nfsd/export.c
+> @@ -334,17 +334,21 @@ static void nfsd4_fslocs_free(struct nfsd4_fs_locations *fsloc)
+>  static int export_stats_init(struct export_stats *stats)
+>  {
+>         stats->start_time = ktime_get_seconds();
+> -       return nfsd_percpu_counters_init(stats->counter, EXP_STATS_COUNTERS_NUM);
+> +       return percpu_counters_init(stats->counter, EXP_STATS_COUNTERS_NUM, 0,
+> +                                   GFP_KERNEL);
+>  }
+>
+>  static void export_stats_reset(struct export_stats *stats)
+>  {
+> -       nfsd_percpu_counters_reset(stats->counter, EXP_STATS_COUNTERS_NUM);
+> +       int i;
+> +
+> +       for (i = 0; i < EXP_STATS_COUNTERS_NUM; i++)
+> +               percpu_counter_set(&stats->counter[i], 0);
+>  }
+>
+>  static void export_stats_destroy(struct export_stats *stats)
+>  {
+> -       nfsd_percpu_counters_destroy(stats->counter, EXP_STATS_COUNTERS_NUM);
+> +       percpu_counters_destroy(stats->counter, EXP_STATS_COUNTERS_NUM);
+>  }
+>
+>  static void svc_export_put(struct kref *ref)
+> diff --git a/fs/nfsd/nfscache.c b/fs/nfsd/nfscache.c
+> index 0b3f12aa37ff..d93bb4866d07 100644
+> --- a/fs/nfsd/nfscache.c
+> +++ b/fs/nfsd/nfscache.c
+> @@ -150,12 +150,13 @@ void nfsd_drc_slab_free(void)
+>
+>  static int nfsd_reply_cache_stats_init(struct nfsd_net *nn)
+>  {
+> -       return nfsd_percpu_counters_init(nn->counter, NFSD_NET_COUNTERS_NUM);
+> +       return percpu_counters_init(nn->counter, NFSD_NET_COUNTERS_NUM, 0,
+> +                                   GFP_KERNEL);
+>  }
+>
+>  static void nfsd_reply_cache_stats_destroy(struct nfsd_net *nn)
+>  {
+> -       nfsd_percpu_counters_destroy(nn->counter, NFSD_NET_COUNTERS_NUM);
+> +       percpu_counters_destroy(nn->counter, NFSD_NET_COUNTERS_NUM);
+>  }
+>
+>  int nfsd_reply_cache_init(struct nfsd_net *nn)
+> diff --git a/fs/nfsd/stats.c b/fs/nfsd/stats.c
+> index a8c5a02a84f0..933e703cbb3b 100644
+> --- a/fs/nfsd/stats.c
+> +++ b/fs/nfsd/stats.c
+> @@ -84,46 +84,15 @@ static const struct proc_ops nfsd_proc_ops = {
+>         .proc_release   = single_release,
+>  };
+>
+> -int nfsd_percpu_counters_init(struct percpu_counter counters[], int num)
+> -{
+> -       int i, err = 0;
+> -
+> -       for (i = 0; !err && i < num; i++)
+> -               err = percpu_counter_init(&counters[i], 0, GFP_KERNEL);
+> -
+> -       if (!err)
+> -               return 0;
+> -
+> -       for (; i > 0; i--)
+> -               percpu_counter_destroy(&counters[i-1]);
+> -
+> -       return err;
+> -}
+> -
+> -void nfsd_percpu_counters_reset(struct percpu_counter counters[], int num)
+> -{
+> -       int i;
+> -
+> -       for (i = 0; i < num; i++)
+> -               percpu_counter_set(&counters[i], 0);
+> -}
+> -
+> -void nfsd_percpu_counters_destroy(struct percpu_counter counters[], int num)
+> -{
+> -       int i;
+> -
+> -       for (i = 0; i < num; i++)
+> -               percpu_counter_destroy(&counters[i]);
+> -}
+> -
+>  static int nfsd_stat_counters_init(void)
+>  {
+> -       return nfsd_percpu_counters_init(nfsdstats.counter, NFSD_STATS_COUNTERS_NUM);
+> +       return percpu_counters_init(nfsdstats.counter, NFSD_STATS_COUNTERS_NUM,
+> +                                   0, GFP_KERNEL);
+>  }
+>
+>  static void nfsd_stat_counters_destroy(void)
+>  {
+> -       nfsd_percpu_counters_destroy(nfsdstats.counter, NFSD_STATS_COUNTERS_NUM);
+> +       percpu_counters_destroy(nfsdstats.counter, NFSD_STATS_COUNTERS_NUM);
+>  }
+>
+>  int nfsd_stat_init(void)
+> diff --git a/fs/nfsd/stats.h b/fs/nfsd/stats.h
+> index 9b43dc3d9991..61840f9035a9 100644
+> --- a/fs/nfsd/stats.h
+> +++ b/fs/nfsd/stats.h
+> @@ -36,9 +36,6 @@ extern struct nfsd_stats      nfsdstats;
+>
+>  extern struct svc_stat         nfsd_svcstats;
+>
+> -int nfsd_percpu_counters_init(struct percpu_counter counters[], int num);
+> -void nfsd_percpu_counters_reset(struct percpu_counter counters[], int num);
+> -void nfsd_percpu_counters_destroy(struct percpu_counter counters[], int num);
+>  int nfsd_stat_init(void);
+>  void nfsd_stat_shutdown(void);
+>
+> diff --git a/include/linux/percpu_counter.h b/include/linux/percpu_counter.h
+> index 7f01f2e41304..37dd81c85411 100644
+> --- a/include/linux/percpu_counter.h
+> +++ b/include/linux/percpu_counter.h
+> @@ -46,6 +46,10 @@ s64 __percpu_counter_sum(struct percpu_counter *fbc);
+>  int __percpu_counter_compare(struct percpu_counter *fbc, s64 rhs, s32 batch);
+>  void percpu_counter_sync(struct percpu_counter *fbc);
+>
+> +int percpu_counters_init(struct percpu_counter counters[], int num, s64 amount,
+> +                        gfp_t gfp);
+> +void percpu_counters_destroy(struct percpu_counter counters[], int num);
+> +
+>  static inline int percpu_counter_compare(struct percpu_counter *fbc, s64 rhs)
+>  {
+>         return __percpu_counter_compare(fbc, rhs, percpu_counter_batch);
+> @@ -109,6 +113,21 @@ static inline void percpu_counter_destroy(struct percpu_counter *fbc)
+>  {
+>  }
+>
+> +static inline int percpu_counters_init(struct percpu_counter counters[],
+> +                                      int num, s64 amount, gfp_t gfp)
+> +{
+> +       int i;
+> +
+> +       for (i = 0; i < num; i++)
+> +               counters[i] = amount;
 
-This patch fixes that and makes mb_optimize_scan feature work
-for files with extents.
+OOPS:
 
-Below are some performance numbers obtained when allocating a 10M and 100M
-file with and w/o this patch on a filesytem with no 1M contiguous block.
++               counters[i].count = amount;
 
-<perf numbers>
-===============
-Workload: dd if=/dev/urandom of=test conv=fsync bs=1M count=10/100
-
-Time taken
-=====================================================
-no.     Size   without-patch     with-patch    Diff(%)
-1       10M      0m8.401s         0m5.623s     33.06%
-2       100M     1m40.465s        1m14.737s    25.6%
-
-<debug stats>
-=============
-w/o patch:
-  mballoc:
-    reqs: 17056
-    success: 11407
-    groups_scanned: 13643
-    cr0_stats:
-            hits: 37
-            groups_considered: 9472
-            useless_loops: 36
-            bad_suggestions: 0
-    cr1_stats:
-            hits: 11418
-            groups_considered: 908560
-            useless_loops: 1894
-            bad_suggestions: 0
-    cr2_stats:
-            hits: 1873
-            groups_considered: 6913
-            useless_loops: 21
-    cr3_stats:
-            hits: 21
-            groups_considered: 5040
-            useless_loops: 21
-    extents_scanned: 417364
-            goal_hits: 3707
-            2^n_hits: 37
-            breaks: 1873
-            lost: 0
-    buddies_generated: 239/240
-    buddies_time_used: 651080
-    preallocated: 705
-    discarded: 478
-
-with patch:
-  mballoc:
-    reqs: 12768
-    success: 11305
-    groups_scanned: 12768
-    cr0_stats:
-            hits: 1
-            groups_considered: 18
-            useless_loops: 0
-            bad_suggestions: 0
-    cr1_stats:
-            hits: 5829
-            groups_considered: 50626
-            useless_loops: 0
-            bad_suggestions: 0
-    cr2_stats:
-            hits: 6938
-            groups_considered: 580363
-            useless_loops: 0
-    cr3_stats:
-            hits: 0
-            groups_considered: 0
-            useless_loops: 0
-    extents_scanned: 309059
-            goal_hits: 0
-            2^n_hits: 1
-            breaks: 1463
-            lost: 0
-    buddies_generated: 239/240
-    buddies_time_used: 791392
-    preallocated: 673
-    discarded: 446
-
-Fixes: 196e402 (ext4: improve cr 0 / cr 1 group scanning)
-Reported-by: Geetika Moolchandani <Geetika.Moolchandani1@ibm.com>
-Reported-by: Nageswara R Sastry <rnsastry@linux.ibm.com>
-Suggested-by: Ritesh Harjani <riteshh@linux.ibm.com>
-Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
----
- fs/ext4/mballoc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-index 67ac95c4cd9b..f9be6ab482a5 100644
---- a/fs/ext4/mballoc.c
-+++ b/fs/ext4/mballoc.c
-@@ -1000,7 +1000,7 @@ static inline int should_optimize_scan(struct ext4_allocation_context *ac)
- 		return 0;
- 	if (ac->ac_criteria >= 2)
- 		return 0;
--	if (ext4_test_inode_flag(ac->ac_inode, EXT4_INODE_EXTENTS))
-+	if (!ext4_test_inode_flag(ac->ac_inode, EXT4_INODE_EXTENTS))
- 		return 0;
- 	return 1;
- }
--- 
-2.27.0
-
+> +       return 0;
+> +}
+> +
+> +static inline void percpu_counters_destroy(struct percpu_counter counters[],
+> +                                          int num)
+> +{
+> +}
+> +
+>  static inline void percpu_counter_set(struct percpu_counter *fbc, s64 amount)
+>  {
+>         fbc->count = amount;
+> diff --git a/lib/percpu_counter.c b/lib/percpu_counter.c
+> index ed610b75dc32..f75a45c63c18 100644
+> --- a/lib/percpu_counter.c
+> +++ b/lib/percpu_counter.c
+> @@ -181,6 +181,33 @@ void percpu_counter_destroy(struct percpu_counter *fbc)
+>  }
+>  EXPORT_SYMBOL(percpu_counter_destroy);
+>
+> +int percpu_counters_init(struct percpu_counter counters[], int num, s64 amount,
+> +                        gfp_t gfp)
+> +{
+> +       int i, err = 0;
+> +
+> +       for (i = 0; !err && i < num; i++)
+> +               err = percpu_counter_init(&counters[i], amount, gfp);
+> +
+> +       if (!err)
+> +               return 0;
+> +
+> +       for (; i > 0; i--)
+> +               percpu_counter_destroy(&counters[i-1]);
+> +
+> +       return err;
+> +}
+> +EXPORT_SYMBOL(percpu_counters_init);
+> +
+> +void percpu_counters_destroy(struct percpu_counter counters[], int num)
+> +{
+> +       int i;
+> +
+> +       for (i = 0; i < num; i++)
+> +               percpu_counter_destroy(&counters[i]);
+> +}
+> +EXPORT_SYMBOL(percpu_counters_destroy);
+> +
+>  int percpu_counter_batch __read_mostly = 32;
+>  EXPORT_SYMBOL(percpu_counter_batch);
+>
+> --
+> 2.25.1
+>
