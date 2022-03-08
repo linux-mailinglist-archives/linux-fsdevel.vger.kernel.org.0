@@ -2,127 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3196E4D1B9B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Mar 2022 16:25:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB1E54D1C13
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Mar 2022 16:43:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234280AbiCHP0o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Mar 2022 10:26:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57096 "EHLO
+        id S1347932AbiCHPn4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Mar 2022 10:43:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244709AbiCHP0o (ORCPT
+        with ESMTP id S1347917AbiCHPnx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Mar 2022 10:26:44 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6024147561
-        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Mar 2022 07:25:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1646753146;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=vn7UND9wBFlJmmt538KsB78UCXUVTdqlds9oCSIt2Bs=;
-        b=Og2YdQbqGIGR1GfXPslyVbyXmuNFowKXnte0OHLGmvKiE/F9yCSi3j+E6jFPpQR9dUwatk
-        hKM5UXbGxjWlBXdrPwvui2qZJ756HRXmNkNMGdTm4V1PqCFVN79VtPcx1PpkK37O5JJqrP
-        ZVYgZhedh2SD+lJn6qE/Q2m1vVLGCbA=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-624-jX7CCqvTMVGyMKQc-NvMOw-1; Tue, 08 Mar 2022 10:25:45 -0500
-X-MC-Unique: jX7CCqvTMVGyMKQc-NvMOw-1
-Received: by mail-ed1-f72.google.com with SMTP id cm27-20020a0564020c9b00b004137effc24bso10819896edb.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Mar 2022 07:25:45 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=vn7UND9wBFlJmmt538KsB78UCXUVTdqlds9oCSIt2Bs=;
-        b=oTebzZJIvNE+5OPPDGpo3Yz7AeaCP6salD4ixAsp+rMeZ/nKqptT/n8M5sX99mq85X
-         yJsKHNIlyFF/kOgPfjBLN3H65fE2gsyrAw6aARfZsEXJHV1A3j2E4ZQySs7zwJ9Dn99O
-         mOYKYA35uP7NQfRtqSvsETI/Hsg1KN3uWOssi4AFhleYaCjJhZSHixc2PckIYGQeVebp
-         Kn1K8XYVb/KFn7gLcOSf9fJkEyFtSnOrtGw4Ejkw+NgwiouMDj7ML1x2WkZ8/Ykp6wcF
-         rksx62THnNNgjmv2T3XrX+miB8fTEGAMG3jmIWBSiZfTLx5Iu+icevlMFCpqy6Tic8Yd
-         O6LA==
-X-Gm-Message-State: AOAM533vFn4hDqwkV7RMFLtA+yOkFWdschVw/fOMGT0ejN/Vd5CTNFVM
-        avgWp/Hegf2Wvpq7qg/b3OF4aYqpwguMjSl0kHpEmsg871PwvAnDCs0moh4Rd4KetDKng3TBRoV
-        lx+uItp2Y6jo4i37A0qJ3i7DyyQ==
-X-Received: by 2002:a17:907:3f22:b0:6d7:8257:b27d with SMTP id hq34-20020a1709073f2200b006d78257b27dmr13175701ejc.190.1646753144239;
-        Tue, 08 Mar 2022 07:25:44 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJz1qYMSm7nL5PC30Ej4xgqkK5cH/Xhy7tEF9HLiReD7+r/essYpy5YQPz6oDE+KoFGxzpLTqA==
-X-Received: by 2002:a17:907:3f22:b0:6d7:8257:b27d with SMTP id hq34-20020a1709073f2200b006d78257b27dmr13175692ejc.190.1646753144074;
-        Tue, 08 Mar 2022 07:25:44 -0800 (PST)
-Received: from ?IPV6:2001:1c00:c1e:bf00:1db8:22d3:1bc9:8ca1? (2001-1c00-0c1e-bf00-1db8-22d3-1bc9-8ca1.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:1db8:22d3:1bc9:8ca1])
-        by smtp.gmail.com with ESMTPSA id f3-20020a056402004300b004162aa024c0sm4709277edu.76.2022.03.08.07.25.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Mar 2022 07:25:43 -0800 (PST)
-Message-ID: <e1ff6522-35f3-0443-5e9b-381b0a79ac39@redhat.com>
-Date:   Tue, 8 Mar 2022 16:25:42 +0100
+        Tue, 8 Mar 2022 10:43:53 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 097E2B02
+        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Mar 2022 07:42:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=76FEX8qUtLRkl7lxqw4J0imzfgnmrqEXTiC33Rmzfi8=; b=StSBb3tj7LxqSNgN9cXMEh6jhG
+        cDd1oFwYlTdOQZNdGkxbI/JQhahWTfLfOc2TeoAw7v7dK96KbZM3C+EQfzGzc/2sbpINxFnbYLuXT
+        IJ4M+cR6Yp20ISzgAaVPWoSzt3lJdpFR3CF3FeebixB+bCyI7c1Ra1oAUq2TSnMaHKdGZUAat317e
+        dim346gf/bb1fCDLBVx/tBN2mk7xs4ZYYm821V/cnjkhxppFwdHdfvCGhxQbU7eU8H+y1JW5VhZKt
+        o8newGtAe4hGXivNdv91l+2uoOcYmHy2AnaG/pzM6nChqitCuxiKkPY2faXaLgXgOdnXl07ii8LlA
+        xXj83Zqw==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nRbz7-0050rx-RG; Tue, 08 Mar 2022 15:42:49 +0000
+Date:   Tue, 8 Mar 2022 07:42:49 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>,
+        lsf-pc <lsf-pc@lists.linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>, Theodore Tso <tytso@mit.edu>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [LSF/MM TOPIC] FS, MM, and stable trees
+Message-ID: <Yid5eU6Qas2WImGT@bombadil.infradead.org>
+References: <20190212170012.GF69686@sasha-vm>
+ <CAOQ4uxjysufPUtwepPGNZDhoC_HdsnkHx7--kso_OXWPyPkw_A@mail.gmail.com>
+ <YicrMCidylefTC3n@kroah.com>
+ <CAOQ4uxjjdFgdMxEOq7aW-nLZFf-S99CC93Ycg1CcMUBiRAYTQQ@mail.gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.0
-Subject: Re: mmotm 2022-03-06-20-33 uploaded (x86-android-tablets)
-Content-Language: en-US
-To:     Randy Dunlap <rdunlap@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>, broonie@kernel.org,
-        mhocko@suse.cz, sfr@canb.auug.org.au, linux-next@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org
-Cc:     platform-driver-x86@vger.kernel.org
-References: <20220307043435.251DBC340E9@smtp.kernel.org>
- <77c9adca-df79-1bbc-f2e5-5635f79b7148@infradead.org>
-From:   Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <77c9adca-df79-1bbc-f2e5-5635f79b7148@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxjjdFgdMxEOq7aW-nLZFf-S99CC93Ycg1CcMUBiRAYTQQ@mail.gmail.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Tue, Mar 08, 2022 at 01:04:05PM +0200, Amir Goldstein wrote:
+> On Tue, Mar 8, 2022 at 12:08 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> > so go take this up with the fs developers :)
+> 
+> It is easy to blame the "fs developers", but is it also very hard on an
+> overloaded maintainer to ALSO take care of GOOD stable tree updates.
+> 
+> Here is a model that seems to be working well for some subsystems:
+> When a tester/developer finds a bug they write an LTP test.
+> That LTP test gets run by stable kernel test bots and prompts action
+> from distros who now know of this issue and may invest resources
+> in backporting patches.
+> 
+> If I am seeing random developers reporting bugs from running xfstests
+> on stable kernels and I am not seeing the stable kernel test bots reporting
+> those bugs, then there may be room for improvement in the stable kernel
+> testing process??
 
-On 3/7/22 22:15, Randy Dunlap wrote:
-> 
-> 
-> On 3/6/22 20:34, Andrew Morton wrote:
->> The mm-of-the-moment snapshot 2022-03-06-20-33 has been uploaded to
->>
->>    https://www.ozlabs.org/~akpm/mmotm/
->>
->> mmotm-readme.txt says
->>
->> README for mm-of-the-moment:
->>
->> https://www.ozlabs.org/~akpm/mmotm/
->>
->> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
->> more than once a week.
->>
->> You will need quilt to apply these patches to the latest Linus release (5.x
->> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
->> https://ozlabs.org/~akpm/mmotm/series
-> 
-> on x86_64:
-> 
-> ld: drivers/platform/x86/x86-android-tablets.o: in function `lenovo_yoga_tab2_830_1050_power_off':
-> x86-android-tablets.c:(.text+0x17): undefined reference to `efi'
-> ld: drivers/platform/x86/x86-android-tablets.o: in function `lenovo_yoga_tab2_830_1050_init':
-> x86-android-tablets.c:(.init.text+0x6d2): undefined reference to `spi_bus_type'
-> 
-> 
-> Full randconfig file is attached.
+I have been investing huge amounts of time to improve this process, to
+the point you can get fstests going and test against a known baseline
+on kdevops [0] today with just the following 6 commands (and works with
+different cloud providers, or local virtualized solutions):
 
-Thank you for reporting this. I'll send out a fix adding
-SPI and EFI to depends on list for the Kconfig symbol for this module.
+make menuconfig
+make
+make bringup
+make linux
+make fstest
+make fstest-baseline
 
-Regards,
+The baseline is what still takes time to create, and so with that it
+should in theory be possible to get the average Joe to at least help
+start testing a filesystem easily. Patches welcomed.
 
-Hans
+In so far as actually getting more patches into stable for XFS, it
+is just about doing the actual work of thorough review and then ensuring
+it doesn't break the baseline. It does require time and effort,
+but hopefully the above will help.
 
+Do you have a series of stable candidates you'd like to review?
+
+[0] https://github.com/mcgrof/kdevops
+
+  Luis
