@@ -2,142 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 032134D2571
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Mar 2022 02:14:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC4374D25F0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Mar 2022 02:14:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229516AbiCIBEf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Mar 2022 20:04:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47128 "EHLO
+        id S230176AbiCIBOf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Mar 2022 20:14:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51090 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229828AbiCIBD6 (ORCPT
+        with ESMTP id S232043AbiCIBN7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Mar 2022 20:03:58 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id ACB841CCB24
-        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Mar 2022 16:41:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1646786473;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=p+pgcNpWd9Z0Lg44C5ppkgCdlhM7jaOoTuVvdLpsIEA=;
-        b=dFODF/usA6C+pnJ+t9+8Kq5vJjoCqX0xNdVCaP6lj8o1srf/nMRlilqASr91402EqWG3zB
-        JPmj9FAc3DR2p90ENlo1gcu3kjpoob8wnmLs1dXYfq4RcLPG7DeUSpynYoG5Zjw2oRhxcs
-        WQF8QNxX0yxp8tmGr2vPtSlJoj+kAp0=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-433-x6cLh8qPM5mvnMPkDZgq8w-1; Tue, 08 Mar 2022 18:30:07 -0500
-X-MC-Unique: x6cLh8qPM5mvnMPkDZgq8w-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id DE1671006AA9;
-        Tue,  8 Mar 2022 23:30:05 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D9F755DBA7;
-        Tue,  8 Mar 2022 23:30:02 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH v2 19/19] afs: Maintain netfs_i_context::remote_i_size
-From:   David Howells <dhowells@redhat.com>
-To:     linux-cachefs@redhat.com
-Cc:     linux-afs@lists.infradead.org, dhowells@redhat.com,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Jeff Layton <jlayton@redhat.com>,
-        David Wysochanski <dwysocha@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jeffle Xu <jefflexu@linux.alibaba.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 08 Mar 2022 23:30:02 +0000
-Message-ID: <164678220204.1200972.17408022517463940584.stgit@warthog.procyon.org.uk>
-In-Reply-To: <164678185692.1200972.597611902374126174.stgit@warthog.procyon.org.uk>
-References: <164678185692.1200972.597611902374126174.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/1.4
+        Tue, 8 Mar 2022 20:13:59 -0500
+Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E126E160404
+        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Mar 2022 17:01:31 -0800 (PST)
+Received: from dread.disaster.area (pa49-186-17-0.pa.vic.optusnet.com.au [49.186.17.0])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 183E3530EAF;
+        Wed,  9 Mar 2022 11:02:07 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1nRjmH-003BUv-T7; Wed, 09 Mar 2022 11:02:05 +1100
+Date:   Wed, 9 Mar 2022 11:02:05 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Sasha Levin <sashal@kernel.org>,
+        lsf-pc <lsf-pc@lists.linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>, Theodore Tso <tytso@mit.edu>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Greg KH <gregkh@linuxfoundation.org>
+Subject: Re: [LSF/MM TOPIC] FS, MM, and stable trees
+Message-ID: <20220309000205.GV3927073@dread.disaster.area>
+References: <20190212170012.GF69686@sasha-vm>
+ <CAOQ4uxjysufPUtwepPGNZDhoC_HdsnkHx7--kso_OXWPyPkw_A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxjysufPUtwepPGNZDhoC_HdsnkHx7--kso_OXWPyPkw_A@mail.gmail.com>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=deDjYVbe c=1 sm=1 tr=0 ts=6227ee81
+        a=+dVDrTVfsjPpH/ci3UuFng==:117 a=+dVDrTVfsjPpH/ci3UuFng==:17
+        a=kj9zAlcOel0A:10 a=o8Y5sQTvuykA:10 a=VwQbUJbxAAAA:8 a=7-415B0cAAAA:8
+        a=c5HUopjpSe6SA2MVdLkA:9 a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22
+        a=biEYGPWJfzWAr4FL6Ov7:22
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Make afs use netfslib's tracking for the server's idea of what the current
-inode size is independently of inode->i_size.  We really want to use this
-value when calculating the new vnode size when initiating a StoreData RPC
-op rather than the size stat() presents to the user (ie. inode->i_size) as
-the latter is affected by as-yet uncommitted writes.
+On Tue, Mar 08, 2022 at 11:32:43AM +0200, Amir Goldstein wrote:
+> On Tue, Feb 12, 2019 at 7:31 PM Sasha Levin <sashal@kernel.org> wrote:
+> >
+> > Hi all,
+> >
+> > I'd like to propose a discussion about the workflow of the stable trees
+> > when it comes to fs/ and mm/. In the past year we had some friction with
+> > regards to the policies and the procedures around picking patches for
+> > stable tree, and I feel it would be very useful to establish better flow
+> > with the folks who might be attending LSF/MM.
+> >
+> > I feel that fs/ and mm/ are in very different places with regards to
+> > which patches go in -stable, what tests are expected, and the timeline
+> > of patches from the point they are proposed on a mailing list to the
+> > point they are released in a stable tree. Therefore, I'd like to propose
+> > two different sessions on this (one for fs/ and one for mm/), as a
+> > common session might be less conductive to agreeing on a path forward as
+> > the starting point for both subsystems are somewhat different.
+> >
+> > We can go through the existing processes, automation, and testing
+> > mechanisms we employ when building stable trees, and see how we can
+> > improve these to address the concerns of fs/ and mm/ folks.
+> >
+> 
+> Hi Sasha,
+> 
+> I think it would be interesting to have another discussion on the state of fs/
+> in -stable and see if things have changed over the past couple of years.
+> If you do not plan to attend LSF/MM in person, perhaps you will be able to
+> join this discussion remotely?
+> 
+> From what I can see, the flow of ext4/btrfs patches into -stable still looks
+> a lot healthier than the flow of xfs patches into -stable.
+> 
+> In 2019, Luis started an effort to improve this situation (with some
+> assistance from me and you) that ended up with several submissions
+> of stable patches for v4.19.y, but did not continue beyond 2019.
+> 
+> When one looks at xfstest bug reports on the list for xfs on kernels > v4.19
+> one has to wonder if using xfs on kernels v5.x.y is a wise choice.
+> 
+> Which makes me wonder: how do the distro kernel maintainers keep up
+> with xfs fixes?
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: linux-cachefs@redhat.com
-cc: linux-afs@lists.infradead.org
+For RHEL, we actively backport whole upstream releases with a few
+cycle's delay. That means, for example, A RHEL 8 kernel might have a
+5.10 XFS + random critical fixes from 5.11-16 in it. We monitor for
+relevant "Fixes" tags, manage all the QE of those backports
+ourselves, handle all the regressions and end user bug reports
+ourselves, etc. 
 
-Link: https://lore.kernel.org/r/164623014626.3564931.8375344024648265358.stgit@warthog.procyon.org.uk/ # v1
----
+There is almost zero impact on upstream from the RHEL stable
+kernel process - they only intersect when a bug that also affects
+upstream kernels is found. At which point, the "upstream first"
+policy kicks in, and then we backport the upstream fix to the RHEL
+stable kernels that need it as per eveything else that is done.
 
- fs/afs/inode.c |    1 +
- fs/afs/write.c |    7 +++----
- 2 files changed, 4 insertions(+), 4 deletions(-)
+IOWs, there's a whole team of ppl at RH across FS, QE and SE who are
+pretty much entirely dedicated to enabling, testing and supporting
+the RHEL backports. This work is largely invisible to upstream
+development and developers, except for the fact we tag bug fixes
+with "fixes" tags so that distro kernel maintainers know to consider
+that they need to consider backporting them sooner rather than later.
 
-diff --git a/fs/afs/inode.c b/fs/afs/inode.c
-index 5b5e40197655..2fe402483ad5 100644
---- a/fs/afs/inode.c
-+++ b/fs/afs/inode.c
-@@ -246,6 +246,7 @@ static void afs_apply_status(struct afs_operation *op,
- 		 * idea of what the size should be that's not the same as
- 		 * what's on the server.
- 		 */
-+		vnode->netfs_ctx.remote_i_size = status->size;
- 		if (change_size) {
- 			afs_set_i_size(vnode, status->size);
- 			inode->i_ctime = t;
-diff --git a/fs/afs/write.c b/fs/afs/write.c
-index e4b47f67a408..85c9056ba9fb 100644
---- a/fs/afs/write.c
-+++ b/fs/afs/write.c
-@@ -353,9 +353,10 @@ static const struct afs_operation_ops afs_store_data_operation = {
- static int afs_store_data(struct afs_vnode *vnode, struct iov_iter *iter, loff_t pos,
- 			  bool laundering)
- {
-+	struct netfs_i_context *ictx = &vnode->netfs_ctx;
- 	struct afs_operation *op;
- 	struct afs_wb_key *wbk = NULL;
--	loff_t size = iov_iter_count(iter), i_size;
-+	loff_t size = iov_iter_count(iter);
- 	int ret = -ENOKEY;
- 
- 	_enter("%s{%llx:%llu.%u},%llx,%llx",
-@@ -377,15 +378,13 @@ static int afs_store_data(struct afs_vnode *vnode, struct iov_iter *iter, loff_t
- 		return -ENOMEM;
- 	}
- 
--	i_size = i_size_read(&vnode->vfs_inode);
--
- 	afs_op_set_vnode(op, 0, vnode);
- 	op->file[0].dv_delta = 1;
- 	op->file[0].modification = true;
- 	op->store.write_iter = iter;
- 	op->store.pos = pos;
- 	op->store.size = size;
--	op->store.i_size = max(pos + size, i_size);
-+	op->store.i_size = max(pos + size, ictx->remote_i_size);
- 	op->store.laundering = laundering;
- 	op->mtime = vnode->vfs_inode.i_mtime;
- 	op->flags |= AFS_OPERATION_UNINTR;
+Keep in mind that an LTS kernel is no different to a SLES or RHEL
+kernel in terms of the number or significance of changes it
+accumulates over it's life time. However, those LTS kernels they
+don't have anywhere near the same level of quality control as even
+.0 upstream releases, nor do LTS kernels have a dedicated QE or
+support organisations that maintaining and supporting a reliable
+product that has millions of end users really requires.
 
+It sounds like there are some things the LTS maintainers have
+underway that substantially change the QE equation for LTS kernels.
+WE've been asking for that for a long time with limited short term
+success (e.g. Luis' effort), so I'm hopeful that things coming down
+the pipeline will create a sustainable long term solution that will
+enable us to have confidence that LTS backports (automated or
+manual) are robust and regression free.
 
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
