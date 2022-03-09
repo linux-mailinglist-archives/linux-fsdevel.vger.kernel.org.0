@@ -2,137 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EF934D3BD5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Mar 2022 22:13:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A4AB4D3BE4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Mar 2022 22:14:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238388AbiCIVN5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Mar 2022 16:13:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35322 "EHLO
+        id S236991AbiCIVPJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Mar 2022 16:15:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238381AbiCIVN4 (ORCPT
+        with ESMTP id S233850AbiCIVPG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Mar 2022 16:13:56 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D539CFF9;
-        Wed,  9 Mar 2022 13:12:56 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 59EA561AD1;
-        Wed,  9 Mar 2022 21:12:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CFE7C340F4;
-        Wed,  9 Mar 2022 21:12:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646860375;
-        bh=iRtGcZSySF09u13R1mT5NLROo7Lq5VVmijSoeUqM3ds=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=qqZNH2I1hX/JXgejzg8J5o0RBIaMFKyeq+jxOEujWuRmeL8cFAcORukF3OATCbFsE
-         zxqka9zCPUPZtwq3cs5vLlUvHTuQIBqlC9oggV3q+JsnzOMIhTSHI3AdL2F61VfcOl
-         uJclZFett5KSVbAu633cHl813HG5HeYRnzyLGPB8Kr0TgdL9LBuXiXMgOxJIbXba5G
-         1TzcbW44p9l4cM33AjRDUzZU19yCPGUXJ0NY0Nnom1M+Av+ogdEPQCGpFE9/8Bhsx3
-         dzRv2Gpp9lrtGqRqxWpX83pgjpDVBc1cfpFHBo3JlCsT7eN0/YJAwCg5BWrv6dQ5sG
-         DiTv+0laLP1Fw==
-Message-ID: <92ebc9fbdda967c14274f2b246ef3f77a1f21224.camel@kernel.org>
-Subject: Re: [PATCH v2 19/19] afs: Maintain netfs_i_context::remote_i_size
-From:   Jeff Layton <jlayton@kernel.org>
-To:     David Howells <dhowells@redhat.com>, linux-cachefs@redhat.com
-Cc:     linux-afs@lists.infradead.org,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        David Wysochanski <dwysocha@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jeffle Xu <jefflexu@linux.alibaba.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 09 Mar 2022 16:12:52 -0500
-In-Reply-To: <164678220204.1200972.17408022517463940584.stgit@warthog.procyon.org.uk>
-References: <164678185692.1200972.597611902374126174.stgit@warthog.procyon.org.uk>
-         <164678220204.1200972.17408022517463940584.stgit@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.42.4 (3.42.4-1.fc35) 
+        Wed, 9 Mar 2022 16:15:06 -0500
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7B7BD19A6
+        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Mar 2022 13:14:04 -0800 (PST)
+Received: by mail-ed1-x532.google.com with SMTP id y12so4477325edt.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Mar 2022 13:14:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=f5IgrytsM1z255q0jxMkzG+bK0OqR/xpVoDKIJj7gWE=;
+        b=PYjTxrITXZ0P+IIMJ2kYz5DT9QrptbeaV2LKhBofyf71eguq7QgW7V5r55c2zIOHaS
+         bdQu7SYcWDdfxmOATNbUyNqofGYjskiLDE5mb5EQytDi7VaPpuH7uhahKYYeBdR6aitf
+         6ar3PhX5Q/Abm/7jZDVvuhDmRGNPaSzCbQkH/Eo3n0sjMIr4A/se2Z2gwla0M9UtXZ7y
+         YQ6v4zjuFxRqAqbegiErhyofxGDo0Mes3amvz6Vomx6gLQ0lSJFMWAQjL9z2wUKI9ARZ
+         UypFFga/ES+fy/rSYHqYGJ/mc76WQ6B3xNGL1rgmmU55h4twBjPewdS5OoV+LHlNDugf
+         ebtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=f5IgrytsM1z255q0jxMkzG+bK0OqR/xpVoDKIJj7gWE=;
+        b=7Q/3rHzKAcOPjpyUf8REJ3GlQzsp7jsE2TzShUCVLITF5IVHW2plESNe4dd3jnplD8
+         910ArCABbfXCDm4K2i5I0nk1RwfJfmbyLaUulKZtwMIWQuvZHtw9tTrw87Ud1aaHx+Co
+         c3374vDtksqdCOW8OMQLZZ0Nt4TFIOSS2wvaFu9OjGx+lr1bQnOJRnTiHSiYMauY7GYC
+         ENDVLb80vCbCOvzJILrFwoVjsXErKJm9uw/9zQm0sbOx7c+6CfzAPjRmvLW0KR1MXqWT
+         2dZk3WDk5KbR7H3dPHvhKNRTGi32SWYtTlyY1XKYZdwBEMj9KUyn/11dhGbu9zfm29Op
+         WuZw==
+X-Gm-Message-State: AOAM5328l9/UuMAaeBQxHTv5KUuFi5Vzko4BOHHvoX4qvD9XG+XzhJBG
+        7H7imO2dDNZFhS3bZCdCTlsdik+2MzAKLDn1noGL
+X-Google-Smtp-Source: ABdhPJz4X98bQukjGwDFGAtygl26ij7BEag5McvZShhItQgyA0woPa848QS4nTdGZ1blYK7nPYrORSPSOQ3IdP7Aeno=
+X-Received: by 2002:aa7:d494:0:b0:415:a309:7815 with SMTP id
+ b20-20020aa7d494000000b00415a3097815mr1355507edr.340.1646860443242; Wed, 09
+ Mar 2022 13:14:03 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-7.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20211117015806.2192263-1-dvander@google.com> <CAOQ4uxjjapFeOAFGLmsXObdgFVYLfNer-rnnee1RR+joxK3xYg@mail.gmail.com>
+ <Yao51m9EXszPsxNN@redhat.com> <CAOQ4uxjk4piLyx67Ena-FfypDVWzRqVN0xmFUXXPYa+SC4Q-vQ@mail.gmail.com>
+ <YapjNRrjpDu2a5qQ@redhat.com> <CAHC9VhQTUgBRBEz_wFX8daSA70nGJCJLXj8Yvcqr5+DHcfDmwA@mail.gmail.com>
+ <CA+FmFJA-r+JgMqObNCvE_X+L6jxWtDrczM9Jh0L38Fq-6mnbbA@mail.gmail.com>
+In-Reply-To: <CA+FmFJA-r+JgMqObNCvE_X+L6jxWtDrczM9Jh0L38Fq-6mnbbA@mail.gmail.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 9 Mar 2022 16:13:52 -0500
+Message-ID: <CAHC9VhRer7UWdZyizWO4VuxrgQDnLCOyj8LO7P6T5BGjd=s9zQ@mail.gmail.com>
+Subject: Re: [PATCH v19 0/4] overlayfs override_creds=off & nested get xattr fix
+To:     David Anderson <dvander@google.com>
+Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        John Stultz <john.stultz@linaro.org>,
+        linux-doc@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        kernel-team <kernel-team@android.com>, selinux@vger.kernel.org,
+        paulmoore@microsoft.com, luca.boccassi@microsoft.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2022-03-08 at 23:30 +0000, David Howells wrote:
-> Make afs use netfslib's tracking for the server's idea of what the current
-> inode size is independently of inode->i_size.  We really want to use this
-> value when calculating the new vnode size when initiating a StoreData RPC
-> op rather than the size stat() presents to the user (ie. inode->i_size) as
-> the latter is affected by as-yet uncommitted writes.
-> 
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: linux-cachefs@redhat.com
-> cc: linux-afs@lists.infradead.org
-> 
-> Link: https://lore.kernel.org/r/164623014626.3564931.8375344024648265358.stgit@warthog.procyon.org.uk/ # v1
-> ---
-> 
->  fs/afs/inode.c |    1 +
->  fs/afs/write.c |    7 +++----
->  2 files changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/afs/inode.c b/fs/afs/inode.c
-> index 5b5e40197655..2fe402483ad5 100644
-> --- a/fs/afs/inode.c
-> +++ b/fs/afs/inode.c
-> @@ -246,6 +246,7 @@ static void afs_apply_status(struct afs_operation *op,
->  		 * idea of what the size should be that's not the same as
->  		 * what's on the server.
->  		 */
-> +		vnode->netfs_ctx.remote_i_size = status->size;
->  		if (change_size) {
->  			afs_set_i_size(vnode, status->size);
->  			inode->i_ctime = t;
-> diff --git a/fs/afs/write.c b/fs/afs/write.c
-> index e4b47f67a408..85c9056ba9fb 100644
-> --- a/fs/afs/write.c
-> +++ b/fs/afs/write.c
-> @@ -353,9 +353,10 @@ static const struct afs_operation_ops afs_store_data_operation = {
->  static int afs_store_data(struct afs_vnode *vnode, struct iov_iter *iter, loff_t pos,
->  			  bool laundering)
->  {
-> +	struct netfs_i_context *ictx = &vnode->netfs_ctx;
->  	struct afs_operation *op;
->  	struct afs_wb_key *wbk = NULL;
-> -	loff_t size = iov_iter_count(iter), i_size;
-> +	loff_t size = iov_iter_count(iter);
->  	int ret = -ENOKEY;
->  
->  	_enter("%s{%llx:%llu.%u},%llx,%llx",
-> @@ -377,15 +378,13 @@ static int afs_store_data(struct afs_vnode *vnode, struct iov_iter *iter, loff_t
->  		return -ENOMEM;
->  	}
->  
-> -	i_size = i_size_read(&vnode->vfs_inode);
-> -
->  	afs_op_set_vnode(op, 0, vnode);
->  	op->file[0].dv_delta = 1;
->  	op->file[0].modification = true;
->  	op->store.write_iter = iter;
->  	op->store.pos = pos;
->  	op->store.size = size;
-> -	op->store.i_size = max(pos + size, i_size);
-> +	op->store.i_size = max(pos + size, ictx->remote_i_size);
+On Tue, Mar 1, 2022 at 12:05 AM David Anderson <dvander@google.com> wrote:
+> On Mon, Feb 28, 2022 at 5:09 PM Paul Moore <paul@paul-moore.com> wrote:
+>>
+>> I wanted to try and bring this thread back from the dead (?) as I
+>> believe the use-case is still valid and worth supporting.  Some more
+>> brief comments below ...
+>>
+>> On Fri, Dec 3, 2021 at 1:34 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+>> > I am not sure. In the early version of patches I think argument was
+>> > that do not switch to mounter's creds and use caller's creds on
+>> > underlying filesystem as well. And each caller will be privileged
+>> > enough to be able to perform the operation.
+>
+> Indeed that was the argument - though, "userxattr" eliminated the need fo=
+r patches 1 & 2 completely for us, which is great. We're no longer carrying=
+ those in our 5.15 tree.
+>
+>> Unfortunately, this idea falls apart when we attempt to use overlayfs
+>> due to the clever/usual way it caches the mounting processes
+>> credentials and uses that in place of the current process' credentials
+>> when accessing certain parts of the underlying filesystems.  The
+>> current overlayfs implementation assumes that the mounter will always
+>> be more privileged than the processes accessing the filesystem, it
+>> would be nice if we could build a mechanism that didn't have this
+>> assumption baked into the implementation.
+>>
+>> This patchset may not have been The Answer, but surely there is
+>> something we can do to support this use-case.
+>
+> Yup exactly, and we still need patches 3 & 4 to deal with this. My curren=
+t plan is to try and rework our sepolicy (we have some ideas on how it coul=
+d be made compatible with how overlayfs works). If that doesn't pan out we'=
+ll revisit these patches and think harder about how to deal with the cohere=
+ncy issues.
 
-Ahh ok, so if i_size is larger than is represented by this write, you'll
-have a zeroed out region until writeback catches up. Makes sense.
+Can you elaborate a bit more on the coherency issues?  Is this the dir
+cache issue that is alluded to in the patchset?  Anything else that
+has come up on review?
 
->  	op->store.laundering = laundering;
->  	op->mtime = vnode->vfs_inode.i_mtime;
->  	op->flags |= AFS_OPERATION_UNINTR;
-> 
-> 
+Before I start looking at the dir cache in any detail, did you have
+any thoughts on how to resolve the problems that have arisen?
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+--=20
+paul-moore.com
