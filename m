@@ -2,140 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 81A454D398A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Mar 2022 20:08:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98F8E4D39F5
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Mar 2022 20:19:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237316AbiCITJ1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Mar 2022 14:09:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52594 "EHLO
+        id S235475AbiCITTc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Mar 2022 14:19:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237304AbiCITJW (ORCPT
+        with ESMTP id S237603AbiCITT3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Mar 2022 14:09:22 -0500
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BF15131976
-        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Mar 2022 11:08:22 -0800 (PST)
-Received: by mail-lf1-x12b.google.com with SMTP id bt26so5510101lfb.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Mar 2022 11:08:22 -0800 (PST)
+        Wed, 9 Mar 2022 14:19:29 -0500
+Received: from mail-qt1-x836.google.com (mail-qt1-x836.google.com [IPv6:2607:f8b0:4864:20::836])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EEBF114FC4
+        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Mar 2022 11:18:21 -0800 (PST)
+Received: by mail-qt1-x836.google.com with SMTP id o22so2739596qta.8
+        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Mar 2022 11:18:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XXR1y9mWPI79aJN86zN1Xw4k1kIrgJW/qF3J3mr8s/o=;
-        b=f2HKjN7pnq1Yx0IZQSDYsv3QQKsG+2d6SyKPs8kRV0DJINmCv0zY8YggZgmbRh8s9G
-         5W1TTtOlOHELiVloxzikMZjMiZj3rLso6o3JgLPBQDjrwKLUkGQeH0vZpt7UqvmOkcfZ
-         TYZh0tYA7JeXfR6IRR0cTQnv83g6YC9SeVOuE=
+        d=cmpxchg-org.20210112.gappssmtp.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=V59HgvRc61glNOVchpXeR9lrKfDnI5JVZxCRrOe4PRw=;
+        b=iI4AVJfDe2rTLVR5kFUQ47GJYK0B64dsIEiT0iiLSmBiX/DirSdJUpyJg1gkefekcd
+         7rZpVe2BLc878GhnKz7ojbP41jmTM/KchQ5Rr+DmAMxO1Tr5AJXQpbvV7Wu/9KbHXGSW
+         1cEi85cR1+tl0b3zerdE35IYi3cjOJhODO4pcmugXZhgtEHUS5Q/mppaZKrA0xq8choB
+         sqKnLqxJ5LAVyge5tVouHdQ+SY3H6pMT6vO1LnjN2WAMYUhUJzpTH6AvCDFhw39/i4Ly
+         Oo/ERGpImlyfJsA0F269mgwQIeJEqoQqqtFgevrd9EnVCJrtdIzX5C0O/ca/mjG1lql3
+         SPxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XXR1y9mWPI79aJN86zN1Xw4k1kIrgJW/qF3J3mr8s/o=;
-        b=N0q1tlm/cLt4abNk1u+/Cf7bs/pKxEe+KtIFPWpt5ukpxzqRTOmLPipsTWoxD9OAVD
-         yq8HnGb3wqpikpq1xmIEpQRKEIXP+LkXVLJEBwBQ8paQzTJ/snCKm8vVArVY5u/XlKRY
-         t1ETZRV7E22+AUPJb6pFM7td9JojGsNMG8hbcHsi5KLRwEq+fTcR5pkvK8eNzlTlIwuh
-         ZNRalByavJEj3cGbQ5DfouE8pYTPLn3NUjhZieKd1zr+t2qk9H+ozz/Mxk9MK/gWCOjp
-         x4bgPCMn1GWsH/T8iJHgdcLtP6pMoT9Y/jEq5i9EG8U0rVjC5qt+FRWMjRIQmjY6Ezv6
-         fwJg==
-X-Gm-Message-State: AOAM531QRj7i3W3eRxJDUDF6kpo4qOAI1SIr3V19DNP+3DT3i0DrWPAQ
-        OFCrO8VxXOjV+DULkJlW7RKK/mI9ONvTVIp/GuU=
-X-Google-Smtp-Source: ABdhPJxtyWf5NVpk+L4L68H6TjG3+zDYtSpPAvCIw/AXWCxhkRR1usNp777IscClrH3GtNZE2PnkIg==
-X-Received: by 2002:a05:6512:2255:b0:446:6f6a:fd74 with SMTP id i21-20020a056512225500b004466f6afd74mr712508lfu.246.1646852900694;
-        Wed, 09 Mar 2022 11:08:20 -0800 (PST)
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
-        by smtp.gmail.com with ESMTPSA id f7-20020ac24e47000000b00443591e0d63sm535491lfr.189.2022.03.09.11.08.19
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Mar 2022 11:08:19 -0800 (PST)
-Received: by mail-lf1-f53.google.com with SMTP id l20so5436076lfg.12
-        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Mar 2022 11:08:19 -0800 (PST)
-X-Received: by 2002:ac2:41cf:0:b0:448:1eaa:296c with SMTP id
- d15-20020ac241cf000000b004481eaa296cmr679738lfi.52.1646852899217; Wed, 09 Mar
- 2022 11:08:19 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=V59HgvRc61glNOVchpXeR9lrKfDnI5JVZxCRrOe4PRw=;
+        b=m+e8oSyUY17U0/4VbHcqWNGE7NlD8VQ/skXJB1fhAtoeePdBP0wa/0GEn063I/9k4g
+         aVvV5T7t5edTD8q9qSqUrof/8RtyKWR6bj+gvwCxOjdFa4CZbYLYDexdkOQIzkD0Zcnd
+         MZIxBjKMPxr2qNVsAW1KJMg6TU43oGsYU90A6zkdI1Vsn6aXSesgu6uOi4Zl/gkfDD+9
+         12XwiZPsbXOwd96TO2IYkezT3iTwlujyRgaztBuJPl+IiOz6pJ9QsVlfT29uZ37uj4kL
+         axmpDLsFvXdSLp91khLpUoBQH2teQtIuxDFXorMVIYC63Y3WfZSZV4gy9V9/mdhGpL4X
+         GTIA==
+X-Gm-Message-State: AOAM532d+yVkQMKr2+qxD12xIvBgCBnZNL6Bm/wVBcOnvIy9nIFHAVGh
+        dtBkGG4CjAQNEp4qqKZuL9es6w==
+X-Google-Smtp-Source: ABdhPJwojhJ2jO+Hc+klRruTOm98kS9CL/R0u4elp0+vS8geZsyq/412gxGCq0Y/QKSQEu64XQ2pZA==
+X-Received: by 2002:ac8:7dc6:0:b0:2de:708:3e3a with SMTP id c6-20020ac87dc6000000b002de07083e3amr1026671qte.459.1646853500165;
+        Wed, 09 Mar 2022 11:18:20 -0800 (PST)
+Received: from localhost (cpe-98-15-154-102.hvc.res.rr.com. [98.15.154.102])
+        by smtp.gmail.com with ESMTPSA id z6-20020ae9c106000000b0067d3b9ef387sm876005qki.28.2022.03.09.11.18.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Mar 2022 11:18:19 -0800 (PST)
+Date:   Wed, 9 Mar 2022 14:18:19 -0500
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     cgel.zte@gmail.com
+Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, akpm@linux-foundation.org,
+        Yang Yang <yang.yang29@zte.com.cn>,
+        Ran Xiaokai <ran.xiaokai@zte.com.cn>
+Subject: Re: [PATCH] block/psi: remove PSI annotations from submit_bio
+Message-ID: <Yij9eygSYy5MSIA0@cmpxchg.org>
+References: <20220309094323.2082884-1-yang.yang29@zte.com.cn>
 MIME-Version: 1.0
-References: <CAHc6FU5nP+nziNGG0JAF1FUx-GV7kKFvM7aZuU_XD2_1v4vnvg@mail.gmail.com>
- <CAHk-=wgmCuuJdf96WiT6WXzQQTEeSK=cgBy24J4U9V2AvK4KdQ@mail.gmail.com>
- <bcafacea-7e67-405c-a969-e5a58a3c727e@redhat.com> <CAHk-=wh1WJ-s9Gj15yFciq6TOd9OOsE7H=R7rRskdRP6npDktQ@mail.gmail.com>
- <CAHk-=wjHsQywXgNe9D+MQCiMhpyB2Gs5M78CGCpTr9BSeP71bw@mail.gmail.com>
- <CAHk-=wjs2Jf3LzqCPmfkXd=ULPyCrrGEF7rR6TYzz1RPF+qh3Q@mail.gmail.com>
- <CAHk-=wi1jrn=sds1doASepf55-wiBEiQ_z6OatOojXj6Gtntyg@mail.gmail.com>
- <CAHc6FU6L8c9UCJF_qcqY=USK_CqyKnpDSJvrAGput=62h0djDw@mail.gmail.com>
- <CAHk-=whaoxuCPg4foD_4VBVr+LVgmW7qScjYFRppvHqnni0EMA@mail.gmail.com> <20220309184238.1583093-1-agruenba@redhat.com>
-In-Reply-To: <20220309184238.1583093-1-agruenba@redhat.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 9 Mar 2022 11:08:02 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgBOFg3brJbo-gcaPM+fxjzHwC4efhcM8tCKK3YUhYUug@mail.gmail.com>
-Message-ID: <CAHk-=wgBOFg3brJbo-gcaPM+fxjzHwC4efhcM8tCKK3YUhYUug@mail.gmail.com>
-Subject: Re: Buffered I/O broken on s390x with page faults disabled (gfs2)
-To:     Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220309094323.2082884-1-yang.yang29@zte.com.cn>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 9, 2022 at 10:42 AM Andreas Gruenbacher <agruenba@redhat.com> wrote:
->
-> From what I took from the previous discussion, probing at a sub-page
-> granularity won't be necessary for bytewise copying: when the address
-> we're trying to access is poisoned, fault_in_*() will fail; when we get
-> a short result, that will take us to the poisoned address in the next
-> iteration.
+On Wed, Mar 09, 2022 at 09:43:24AM +0000, cgel.zte@gmail.com wrote:
+> From: Yang Yang <yang.yang29@zte.com.cn>
+> 
+> psi tracks the time spent submitting the IO of refaulting pages[1].
+> But after we tracks refault stalls from swap_readpage[2][3], there
+> is no need to do so anymore. Since swap_readpage already includes
+> IO submitting time.
+> 
+> [1] commit b8e24a9300b0 ("block: annotate refault stalls from IO submission")
+> [2] commit 937790699be9 ("mm/page_io.c: annotate refault stalls from swap_readpage")
+> [3] commit 2b413a1a728f ("mm: page_io: fix psi memory pressure error on cold swapins")
+> 
+> Signed-off-by: Yang Yang <yang.yang29@zte.com.cn>
+> Reviewed-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
 
-Sadly, that isn't actually the case.
+It's still needed by file cache refaults!
 
-It's not the case for GUP (that page aligns things), and it's not the
-case for fault_in_writeable() itself (that also page aligns things).
-
-But more importantly, it's not actually the case for the *users*
-either. Not all of the users are byte-stream oriented, and I think it
-was btrfs that had a case of "copy a struct at the beginning of the
-stream". And if that copy failed, it wouldn't advance by as many bytes
-as it got - it would require that struct to be all fetched, and start
-from the beginning.
-
-So we do need to probe at least a minimum set of bytes. Probably a
-fairly small minimum, but still...
-
-
-> With a large enough buffer, a simple malloc() will return unmapped
-> pages, and reading into such a buffer will result in fault-in.  So page
-> faults during read() are actually pretty normal, and it's not the user's
-> fault.
-
-Agreed. But that wasn't the case here:
-
-> In my test case, the buffer was pre-initialized with memset() to avoid
-> those kinds of page faults, which meant that the page faults in
-> gfs2_file_read_iter() only started to happen when we were out of memory.
-> But that's not the common case.
-
-Exactly. I do not think this is a case that we should - or need to -
-optimize for.
-
-And doing too much pre-faulting is actually counter-productive.
-
-> * Get rid of max_size: it really makes no sense to second-guess what the
->   caller needs.
-
-It's not about "what caller needs". It's literally about latency
-issues. If you can force a busy loop in kernel space by having one
-unmapped page and then do a 2GB read(), that's a *PROBLEM*.
-
-Now, we can try this thing, because I think we end up having other
-size limitations in the IO subsystem that means that the filesystem
-won't actually do that, but the moment I hear somebody talk about
-latencies, that max_size goes back.
-
-                Linus
+NAK
