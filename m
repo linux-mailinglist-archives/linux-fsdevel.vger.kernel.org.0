@@ -2,132 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E3B44D2524
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Mar 2022 02:13:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D2F044D254D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Mar 2022 02:13:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230020AbiCIBJD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Mar 2022 20:09:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57458 "EHLO
+        id S229821AbiCIBF0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Mar 2022 20:05:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51072 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230201AbiCIBIb (ORCPT
+        with ESMTP id S229877AbiCIBFP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Mar 2022 20:08:31 -0500
-Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 618B014563B
-        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Mar 2022 16:50:00 -0800 (PST)
-Received: by mail-lf1-x12f.google.com with SMTP id s25so960935lfs.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Mar 2022 16:50:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yOkhTNcLWPufcykwdZmZBF2oqQGok/K5B2vr+Tqh36g=;
-        b=Vj4rshnTpWz5DU66OERET/pAsAiEtJHCvq1p7tYsuGWD7WJCMh23fM0fO4nZdPLYHC
-         90pf8J0GgnEP+YZrzPyFs7Bg/J9pen3fzwCfz2wTn/gw4B+2lcPdZNWYCNfMWKpUwV9E
-         ohAJR1uT0oUJ+kwVfBbrRuha/QYIMA/OMi3B4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yOkhTNcLWPufcykwdZmZBF2oqQGok/K5B2vr+Tqh36g=;
-        b=yG3Y2JtkuukdE4sLmrI14ntHbjU0dsPNzNHZFjpzMxaWsWQ9O0aFWw/GiGGYWtg0oL
-         idrC1wdGfaS0rDEB7i66QOZwFGZED4bHGgAOjebGSd86zwcC9mXaY72nooaHKUaXnA0z
-         rwfd3Hq+nsbHwvuNccdx5zXdfx1o9bPyVT13wqnV8un0yBbWZlGKri8Of8CC8roZTN6s
-         Cx/Id6LLbFxVvt7H6i8t0iHwNrgTOvrm6FNuql1ZCzreg8ZP3glMYtnMNk3ByWOEyaIc
-         qXMtt2tyfkFlTfpuAiZkAjPbAgPwVbKJYCUWnu8A5HpxbvaASSq9OZMsRErxWHP1+WA0
-         NcJg==
-X-Gm-Message-State: AOAM5319EDyLfUfCGx3aoDbmCxSeRazFwypJBXm8bJ/j2tE5UX1cXTv0
-        BfP6dpWh6nX4jY5XqRFIJUx2GhkfKi4ZSPvZM1s=
-X-Google-Smtp-Source: ABdhPJyFEO5zeDAoV2cLTUD3VA5pMSE/TeM1DZunjOOeBVdiEj617D3CRmzQ1A643bsWtL52/cFSlw==
-X-Received: by 2002:a05:651c:211a:b0:246:876c:bbf with SMTP id a26-20020a05651c211a00b00246876c0bbfmr12368905ljq.496.1646785373629;
-        Tue, 08 Mar 2022 16:22:53 -0800 (PST)
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
-        by smtp.gmail.com with ESMTPSA id p1-20020a05651238c100b004437b4e5034sm67158lft.159.2022.03.08.16.22.51
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 08 Mar 2022 16:22:52 -0800 (PST)
-Received: by mail-lj1-f171.google.com with SMTP id o6so897904ljp.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Mar 2022 16:22:51 -0800 (PST)
-X-Received: by 2002:a2e:6f17:0:b0:248:124:9c08 with SMTP id
- k23-20020a2e6f17000000b0024801249c08mr696937ljc.506.1646785371366; Tue, 08
- Mar 2022 16:22:51 -0800 (PST)
-MIME-Version: 1.0
-References: <CAHc6FU5nP+nziNGG0JAF1FUx-GV7kKFvM7aZuU_XD2_1v4vnvg@mail.gmail.com>
- <CAHk-=wgmCuuJdf96WiT6WXzQQTEeSK=cgBy24J4U9V2AvK4KdQ@mail.gmail.com>
- <bcafacea-7e67-405c-a969-e5a58a3c727e@redhat.com> <CAHk-=wh1WJ-s9Gj15yFciq6TOd9OOsE7H=R7rRskdRP6npDktQ@mail.gmail.com>
- <CAHk-=wjHsQywXgNe9D+MQCiMhpyB2Gs5M78CGCpTr9BSeP71bw@mail.gmail.com>
- <CAHk-=wjs2Jf3LzqCPmfkXd=ULPyCrrGEF7rR6TYzz1RPF+qh3Q@mail.gmail.com>
- <CAHk-=wi1jrn=sds1doASepf55-wiBEiQ_z6OatOojXj6Gtntyg@mail.gmail.com> <CAHc6FU6L8c9UCJF_qcqY=USK_CqyKnpDSJvrAGput=62h0djDw@mail.gmail.com>
-In-Reply-To: <CAHc6FU6L8c9UCJF_qcqY=USK_CqyKnpDSJvrAGput=62h0djDw@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 8 Mar 2022 16:22:35 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whaoxuCPg4foD_4VBVr+LVgmW7qScjYFRppvHqnni0EMA@mail.gmail.com>
-Message-ID: <CAHk-=whaoxuCPg4foD_4VBVr+LVgmW7qScjYFRppvHqnni0EMA@mail.gmail.com>
-Subject: Re: Buffered I/O broken on s390x with page faults disabled (gfs2)
-To:     Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     David Hildenbrand <david@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
+        Tue, 8 Mar 2022 20:05:15 -0500
+Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id AFB0E134DEE
+        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Mar 2022 16:43:05 -0800 (PST)
+Received: from dread.disaster.area (pa49-186-17-0.pa.vic.optusnet.com.au [49.186.17.0])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 9BC5D10E24D0;
+        Wed,  9 Mar 2022 11:43:04 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1nRkPv-003C7b-I4; Wed, 09 Mar 2022 11:43:03 +1100
+Date:   Wed, 9 Mar 2022 11:43:03 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Theodore Ts'o <tytso@mit.edu>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Sasha Levin <sashal@kernel.org>,
+        lsf-pc <lsf-pc@lists.linux-foundation.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=no autolearn_force=no version=3.4.6
+        Jan Kara <jack@suse.cz>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [LSF/MM TOPIC] FS, MM, and stable trees
+Message-ID: <20220309004303.GW3927073@dread.disaster.area>
+References: <20190212170012.GF69686@sasha-vm>
+ <CAOQ4uxjysufPUtwepPGNZDhoC_HdsnkHx7--kso_OXWPyPkw_A@mail.gmail.com>
+ <YicrMCidylefTC3n@kroah.com>
+ <YieG8rZkgnfwygyu@mit.edu>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YieG8rZkgnfwygyu@mit.edu>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=VuxAv86n c=1 sm=1 tr=0 ts=6227f819
+        a=+dVDrTVfsjPpH/ci3UuFng==:117 a=+dVDrTVfsjPpH/ci3UuFng==:17
+        a=kj9zAlcOel0A:10 a=o8Y5sQTvuykA:10 a=NEAV23lmAAAA:8 a=7-415B0cAAAA:8
+        a=G0-Vs6eqYytFQsxIBV8A:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 8, 2022 at 3:25 PM Andreas Gruenbacher <agruenba@redhat.com> wrote:
->
-> Seems to be working on s390x for this test case at least; the kind of
-> trace I'm getting is:
+On Tue, Mar 08, 2022 at 11:40:18AM -0500, Theodore Ts'o wrote:
+> On Tue, Mar 08, 2022 at 11:08:48AM +0100, Greg KH wrote:
+> > > When one looks at xfstest bug reports on the list for xfs on kernels > v4.19
+> > > one has to wonder if using xfs on kernels v5.x.y is a wise choice.
+> > 
+> > That's up to the xfs maintainers to discuss.
+> > 
+> > > Which makes me wonder: how do the distro kernel maintainers keep up
+> > > with xfs fixes?
+> > 
+> > Who knows, ask the distro maintainers that use xfs.  What do they do?
+> 
+> This is something which is being worked, so I'm not sure we'll need to
+> discuss the specifics of the xfs stable backports at LSF/MM.  I'm
+> hopeful that by May, we'll have come to some kind of resolution of
+> that topic.
+> 
+> One of my team members has been working with Darrick to set up a set
+> of xfs configs[1] recommended by Darrick, and she's stood up an
+> automated test spinner using gce-xfstests which can watch a git branch
+> and automatically kick off a set of tests whenever it is updated.
+> Sasha has also provided her with a copy of his scripts so we can do
+> automated cherry picks of commits with Fixes tags.  So the idea is
+> that we can, hopefully in a mostly completely automated fashion, do
+> the backports and do a full set of regression tests on those stable
+> backports of XFS bug fixes.
+> 
+> [1] https://github.com/tytso/xfstests-bld/tree/master/kvm-xfstests/test-appliance/files/root/fs/xfs/cfg
+> 
+> Next steps are to get a first tranche of cherry-picks for 5.10 and
+> probably 5.15, and use the test spinner to demonstrate that they don't
+> have any test regressions (if there are, we'll drop those commits).
+> Once we have a first set of proposed stable backports for XFS, we'll
+> present them to the XFS development community for their input.  There
+> are a couple of things that could happen at this point, depending on
+> what the XFS community is willing to accept.
+> 
+> The first is that we'll send these tested stable patches directly to
+> Greg and Sasha for inclusion in the LTS releases, with the linux-xfs
+> list cc'ed so they know what's going into the stable trees.
+> 
+> The second is that we send them only to the linux-xfs list, and they
+> have to do whatever approval they want before they go into the
+> upstream stable trees.
 
-Good.
+This effectively what we do with RHEL backports - the set of
+proposed changes have to be backported cleanly and tested by the
+proposer and it doesn't get merged until it has been reviewed.
 
-> This shows bursts of successful fault-ins in gfs2_file_read_iter
-> (read_fault). The pauses in between might be caused by the storage;
-> I'm not sure.
+This is pretty much what we've been asking for from the LTS kernel
+process for a few years now (and what Luis did for a while), so I
+see no problems with someone actually taking long term
+responsibility for driving and maintaining an LTS backport process
+like this.
 
-Don't know about the pauses, but the burst size might be impacted by that
+> And the third option, if they aren't willing to take our work or they
+> choose to require manual approvals and those approvals are taking too
+> long, is that we'll feed the commits into Google's Container-Optimized
+> OS (COS) kernel, so that our customers can get those fixes and so we
+> can support XFS fully.  This isn't our preferred path; we'd prefer to
+> take the backports into the COS tree via the stable trees if at all
+> possible.  (Note: if requested, we could also publish these
+> backported-and-tested commits on a git tree for other distros to
+> take.)
+> 
+> There are still some details we'll need to work out; for example, will
+> the XFS maintainers let us do minor/obvious patch conflict
+> resolutions, or perhaps those commits which don't cherry-pick cleanly
+> will need to go through some round of approval by the linux-xfs list,
+> if the "we've run a full set of tests and there are no test
+> regressions" isn't good enough for them.
 
-+       const size_t max_size = 4 * PAGE_SIZE;
+I would expect that any proposals for backporting changes to LTS
+kernels have already had this conflict/merge fixups work already
+done and documented in the commit message by whoever is proposing
+the backports. I.e. the commit message tells the reviewer where the
+change deviates from the upstream commit.
 
-thing that limits how many calls to fixup_user_fault() we do per
-fault_in_safe_writeable().
+> There is also the problem that sometimes commits aren't marked with
+> Fixes tag, but maybe there are some other signals we could use (for
+> example, maybe an indication in a comment in an xfstests test that
+> it's testing regressions for a specified kernel commit id).  Or
+> perhaps some other would be willing to contribute candidate commit
+> id's for backport consideration, with the approval of linux-xfs?
+> TBD...
 
-So it might be worth checking if that value seems to make any difference.
+That's not unique to XFS - every backport has this problem
+regardless of subsystem. If you need a commit to be backported, then
+just backport it and it just becomes another patch in the LTS
+update process.
 
-> I'd still let the caller of fault_in_safe_writeable() decide how much
-> memory to fault in; the tight cap in fault_in_safe_writeable() doesn't
-> seem useful.
+Cheers,
 
-Well, there are real latency concerns there - fixup_user_fault() is
-not necessarily all that low-cost.
-
-And it's actually going to be worse when we have the sub-page coloring
-issues happening, and will need to probe at a 128-byte granularity
-(not on s390, but on arm64).
-
-At that point, we almost certainly will need to have a "probe user
-space non-destructibly for writability" instruction (possibly
-extending on our current arch_futex_atomic_op_inuser()
-infrastructure).
-
-So honestly, if you do IO on areas that will get page faults on them,
-to some degree it's a "you are doing something stupid, you get what
-you deserve". This code should _work_, it should not have to worry
-about users having bad patterns (where "read data into huge cold
-mappings under enough memory pressure that it causes access bit faults
-in the middle of the read" very much counts as such a bad pattern).
-
-> Also, you want to put in an extra L here:
-> > Signed-off-by: linus Torvalds <torvalds@linux-foundation.org>
-
-Heh. Fixed locally.
-
-                 Linus
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
