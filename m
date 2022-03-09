@@ -2,201 +2,975 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B2EFE4D3AF0
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Mar 2022 21:19:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A94474D3B0B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Mar 2022 21:27:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237649AbiCIUUK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Mar 2022 15:20:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54128 "EHLO
+        id S238156AbiCIU2P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Mar 2022 15:28:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235113AbiCIUUJ (ORCPT
+        with ESMTP id S232408AbiCIU2O (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Mar 2022 15:20:09 -0500
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63619125CA9
-        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Mar 2022 12:19:09 -0800 (PST)
-Received: by mail-lf1-x129.google.com with SMTP id r4so5837143lfr.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Mar 2022 12:19:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ixsSzJyccfkLXZEYbJBe+Tg8HEZFA+58dxzkI0TlXwk=;
-        b=Jij/llasGfimGoHd1XLy6zXbl5NbdV8ZlM1SFcbh7CybVLtODagLJPVQAVfLvID+KE
-         Zqnwm85uO+wAG5FQAOg57bA2CGhLAkOVhShQcX0Oh8rBW43G7B8fBiY2jnYl0e1Y0tvw
-         ZVhDsJOMuq1fNk3t5pSFJeWiorsDuxMlEfvAY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ixsSzJyccfkLXZEYbJBe+Tg8HEZFA+58dxzkI0TlXwk=;
-        b=EKUNATn+Bt6zd/CLFUc99DWfgtrlWzuTO2iDAdUefk98doClM9fb3SKrYX0V1TzfJn
-         wIH4t4niuhiXsfEDm4XC+4MCyEA1ed4ihpta9CRB67t7n2jI6P+J9CnryXLPUN4WWiyc
-         rPKqTm6NyGO2E/p9CwpytyBkqcPP9uxKts2alUsbxBCnQ9gTFHnJ1DtLHZAm7K8S9MfD
-         aMDg3FN8EeLMBSoj4/Ab+mQMvq63k16kt5/nLd6IpT2a+8fyE/GeffojpQUGXjl/G2rX
-         m4pYhjyPhiVQzWoRaUV8FO+Lv3NbywdwroiAMPuhgfMU3oEV3MWadpOt+hDMGWQ4Yys8
-         bbnQ==
-X-Gm-Message-State: AOAM5307A1xYLed3sTizTaevex1Xrf1NSauYoyupXiH0YKmD0fhA2U33
-        r4UzcS3YeWWl1S5FjruupYSEachSLcUQN73LouU=
-X-Google-Smtp-Source: ABdhPJwTsI76VI9gfSCcf8zy18GtR97xitJj8WL+Qrcq9u0C7/YuB/wFSZ0bej0IyC7YXjo4UTvcaA==
-X-Received: by 2002:ac2:4e06:0:b0:448:50d9:c80f with SMTP id e6-20020ac24e06000000b0044850d9c80fmr860628lfr.8.1646857147419;
-        Wed, 09 Mar 2022 12:19:07 -0800 (PST)
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
-        by smtp.gmail.com with ESMTPSA id f14-20020a056512092e00b004423570c03asm563451lft.287.2022.03.09.12.19.04
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Mar 2022 12:19:05 -0800 (PST)
-Received: by mail-lj1-f178.google.com with SMTP id u7so4814402ljk.13
-        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Mar 2022 12:19:04 -0800 (PST)
-X-Received: by 2002:a2e:804b:0:b0:247:e81f:87e9 with SMTP id
- p11-20020a2e804b000000b00247e81f87e9mr831138ljg.176.1646857144051; Wed, 09
- Mar 2022 12:19:04 -0800 (PST)
+        Wed, 9 Mar 2022 15:28:14 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 305D71928C;
+        Wed,  9 Mar 2022 12:27:13 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 83775B8216F;
+        Wed,  9 Mar 2022 20:27:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97914C340E8;
+        Wed,  9 Mar 2022 20:27:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1646857630;
+        bh=lx00kPEo2jX0PaQGifk3CvFoPBfCxBprOLx0/2Ca8Gw=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=Y0ZXNQwTA8GBnKECKaXF1gm8ZTzGeI29zG7S+csVRv/P89lEZZiGSaWOaU6b4OgDM
+         kKJQgmT/arBqWIffwpEnsasmnwb+Y31oakaHMNNQlrFVU9fBN9zKN17qVSxHdbOSiA
+         o0SFPQefaGqrXi2PnGL068tFT+VqmHcouAvXEeoXsOrXz4qvSU8i+xS/CJzRm6YksF
+         L2/KJA81pMChORJa6MaK2cAVaxXv8fSHyTw4FduF2k/sJFlZn54ScEDIquQdcTUqqu
+         ecLWCoj7edzKg/yG5QYATA7h4f5kSpbFRrIx36DvpGc9+99HxzjfRHz10OzSCoQt7p
+         70fPnfq9dKVkQ==
+Message-ID: <76046e1df11bdf9269b64b7f6d691318c9a62dbf.camel@kernel.org>
+Subject: Re: [PATCH v2 16/19] netfs: Split fs/netfs/read_helper.c
+From:   Jeff Layton <jlayton@kernel.org>
+To:     David Howells <dhowells@redhat.com>, linux-cachefs@redhat.com
+Cc:     Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        David Wysochanski <dwysocha@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jeffle Xu <jefflexu@linux.alibaba.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 09 Mar 2022 15:27:07 -0500
+In-Reply-To: <164678217075.1200972.5101072043126828757.stgit@warthog.procyon.org.uk>
+References: <164678185692.1200972.597611902374126174.stgit@warthog.procyon.org.uk>
+         <164678217075.1200972.5101072043126828757.stgit@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.42.4 (3.42.4-1.fc35) 
 MIME-Version: 1.0
-References: <CAHc6FU5nP+nziNGG0JAF1FUx-GV7kKFvM7aZuU_XD2_1v4vnvg@mail.gmail.com>
- <CAHk-=wgmCuuJdf96WiT6WXzQQTEeSK=cgBy24J4U9V2AvK4KdQ@mail.gmail.com>
- <bcafacea-7e67-405c-a969-e5a58a3c727e@redhat.com> <CAHk-=wh1WJ-s9Gj15yFciq6TOd9OOsE7H=R7rRskdRP6npDktQ@mail.gmail.com>
- <CAHk-=wjHsQywXgNe9D+MQCiMhpyB2Gs5M78CGCpTr9BSeP71bw@mail.gmail.com>
- <CAHk-=wjs2Jf3LzqCPmfkXd=ULPyCrrGEF7rR6TYzz1RPF+qh3Q@mail.gmail.com>
- <CAHk-=wi1jrn=sds1doASepf55-wiBEiQ_z6OatOojXj6Gtntyg@mail.gmail.com>
- <CAHc6FU6L8c9UCJF_qcqY=USK_CqyKnpDSJvrAGput=62h0djDw@mail.gmail.com>
- <CAHk-=whaoxuCPg4foD_4VBVr+LVgmW7qScjYFRppvHqnni0EMA@mail.gmail.com>
- <20220309184238.1583093-1-agruenba@redhat.com> <CAHk-=wixOLK1Xp-LKhqEWEh3SxGak_ziwR0_fi8uMzY5ZYBzbg@mail.gmail.com>
- <CAHc6FU6aqqYO4d5x3=73bxr+9yfL6CLJeGGzFwCZCy9wzApgwQ@mail.gmail.com>
-In-Reply-To: <CAHc6FU6aqqYO4d5x3=73bxr+9yfL6CLJeGGzFwCZCy9wzApgwQ@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 9 Mar 2022 12:18:47 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wj4Av2gecvTfExCq-d2cXx0m7fdO0sG6JC1DxdCCDT7ig@mail.gmail.com>
-Message-ID: <CAHk-=wj4Av2gecvTfExCq-d2cXx0m7fdO0sG6JC1DxdCCDT7ig@mail.gmail.com>
-Subject: Re: Buffered I/O broken on s390x with page faults disabled (gfs2)
-To:     Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>
-Content-Type: multipart/mixed; boundary="00000000000011bc1705d9cecf39"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=no autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-7.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---00000000000011bc1705d9cecf39
-Content-Type: text/plain; charset="UTF-8"
+On Tue, 2022-03-08 at 23:29 +0000, David Howells wrote:
+> Split fs/netfs/read_helper.c into two pieces, one to deal with buffered
+> writes and one to deal with the I/O mechanism.
+> 
 
-On Wed, Mar 9, 2022 at 11:35 AM Andreas Gruenbacher <agruenba@redhat.com> wrote:
->
-> That's better, thanks.
+I think you mean buffered reads here?
 
-Ok, can you give this one more test?
+> Changes
+> =======
+> ver #2)
+>  - Add kdoc reference to new file.
+> 
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: linux-cachefs@redhat.com
+> 
+> Link: https://lore.kernel.org/r/164623005586.3564931.6149556072728481767.stgit@warthog.procyon.org.uk/ # v1
+> ---
+> 
+>  fs/netfs/Makefile        |    1 
+>  fs/netfs/buffered_read.c |  428 ++++++++++++++++++++++++++++++++++++++++++++++
+>  fs/netfs/io.c            |  418 ---------------------------------------------
+>  3 files changed, 429 insertions(+), 418 deletions(-)
+>  create mode 100644 fs/netfs/buffered_read.c
+> 
+> diff --git a/fs/netfs/Makefile b/fs/netfs/Makefile
+> index 51ece4f7bc77..88b904532bc7 100644
+> --- a/fs/netfs/Makefile
+> +++ b/fs/netfs/Makefile
+> @@ -1,6 +1,7 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  
+>  netfs-y := \
+> +	buffered_read.o \
+>  	io.o \
+>  	objects.o
+>  
+> diff --git a/fs/netfs/buffered_read.c b/fs/netfs/buffered_read.c
+> new file mode 100644
+> index 000000000000..09ba7097a970
+> --- /dev/null
+> +++ b/fs/netfs/buffered_read.c
+> @@ -0,0 +1,428 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/* Network filesystem high-level buffered read support.
+> + *
+> + * Copyright (C) 2021 Red Hat, Inc. All Rights Reserved.
+> + * Written by David Howells (dhowells@redhat.com)
+> + */
+> +
+> +#include <linux/export.h>
+> +#include <linux/task_io_accounting_ops.h>
+> +#include "internal.h"
+> +
+> +/*
+> + * Unlock the folios in a read operation.  We need to set PG_fscache on any
+> + * folios we're going to write back before we unlock them.
+> + */
+> +void netfs_rreq_unlock_folios(struct netfs_io_request *rreq)
+> +{
+> +	struct netfs_io_subrequest *subreq;
+> +	struct folio *folio;
+> +	unsigned int iopos, account = 0;
+> +	pgoff_t start_page = rreq->start / PAGE_SIZE;
+> +	pgoff_t last_page = ((rreq->start + rreq->len) / PAGE_SIZE) - 1;
+> +	bool subreq_failed = false;
+> +
+> +	XA_STATE(xas, &rreq->mapping->i_pages, start_page);
+> +
+> +	if (test_bit(NETFS_RREQ_FAILED, &rreq->flags)) {
+> +		__clear_bit(NETFS_RREQ_COPY_TO_CACHE, &rreq->flags);
+> +		list_for_each_entry(subreq, &rreq->subrequests, rreq_link) {
+> +			__clear_bit(NETFS_SREQ_COPY_TO_CACHE, &subreq->flags);
+> +		}
+> +	}
+> +
+> +	/* Walk through the pagecache and the I/O request lists simultaneously.
+> +	 * We may have a mixture of cached and uncached sections and we only
+> +	 * really want to write out the uncached sections.  This is slightly
+> +	 * complicated by the possibility that we might have huge pages with a
+> +	 * mixture inside.
+> +	 */
+> +	subreq = list_first_entry(&rreq->subrequests,
+> +				  struct netfs_io_subrequest, rreq_link);
+> +	iopos = 0;
+> +	subreq_failed = (subreq->error < 0);
+> +
+> +	trace_netfs_rreq(rreq, netfs_rreq_trace_unlock);
+> +
+> +	rcu_read_lock();
+> +	xas_for_each(&xas, folio, last_page) {
+> +		unsigned int pgpos = (folio_index(folio) - start_page) * PAGE_SIZE;
+> +		unsigned int pgend = pgpos + folio_size(folio);
+> +		bool pg_failed = false;
+> +
+> +		for (;;) {
+> +			if (!subreq) {
+> +				pg_failed = true;
+> +				break;
+> +			}
+> +			if (test_bit(NETFS_SREQ_COPY_TO_CACHE, &subreq->flags))
+> +				folio_start_fscache(folio);
+> +			pg_failed |= subreq_failed;
+> +			if (pgend < iopos + subreq->len)
+> +				break;
+> +
+> +			account += subreq->transferred;
+> +			iopos += subreq->len;
+> +			if (!list_is_last(&subreq->rreq_link, &rreq->subrequests)) {
+> +				subreq = list_next_entry(subreq, rreq_link);
+> +				subreq_failed = (subreq->error < 0);
+> +			} else {
+> +				subreq = NULL;
+> +				subreq_failed = false;
+> +			}
+> +			if (pgend == iopos)
+> +				break;
+> +		}
+> +
+> +		if (!pg_failed) {
+> +			flush_dcache_folio(folio);
+> +			folio_mark_uptodate(folio);
+> +		}
+> +
+> +		if (!test_bit(NETFS_RREQ_DONT_UNLOCK_FOLIOS, &rreq->flags)) {
+> +			if (folio_index(folio) == rreq->no_unlock_folio &&
+> +			    test_bit(NETFS_RREQ_NO_UNLOCK_FOLIO, &rreq->flags))
+> +				_debug("no unlock");
+> +			else
+> +				folio_unlock(folio);
+> +		}
+> +	}
+> +	rcu_read_unlock();
+> +
+> +	task_io_account_read(account);
+> +	if (rreq->netfs_ops->done)
+> +		rreq->netfs_ops->done(rreq);
+> +}
+> +
+> +static void netfs_cache_expand_readahead(struct netfs_io_request *rreq,
+> +					 loff_t *_start, size_t *_len, loff_t i_size)
+> +{
+> +	struct netfs_cache_resources *cres = &rreq->cache_resources;
+> +
+> +	if (cres->ops && cres->ops->expand_readahead)
+> +		cres->ops->expand_readahead(cres, _start, _len, i_size);
+> +}
+> +
+> +static void netfs_rreq_expand(struct netfs_io_request *rreq,
+> +			      struct readahead_control *ractl)
+> +{
+> +	/* Give the cache a chance to change the request parameters.  The
+> +	 * resultant request must contain the original region.
+> +	 */
+> +	netfs_cache_expand_readahead(rreq, &rreq->start, &rreq->len, rreq->i_size);
+> +
+> +	/* Give the netfs a chance to change the request parameters.  The
+> +	 * resultant request must contain the original region.
+> +	 */
+> +	if (rreq->netfs_ops->expand_readahead)
+> +		rreq->netfs_ops->expand_readahead(rreq);
+> +
+> +	/* Expand the request if the cache wants it to start earlier.  Note
+> +	 * that the expansion may get further extended if the VM wishes to
+> +	 * insert THPs and the preferred start and/or end wind up in the middle
+> +	 * of THPs.
+> +	 *
+> +	 * If this is the case, however, the THP size should be an integer
+> +	 * multiple of the cache granule size, so we get a whole number of
+> +	 * granules to deal with.
+> +	 */
+> +	if (rreq->start  != readahead_pos(ractl) ||
+> +	    rreq->len != readahead_length(ractl)) {
+> +		readahead_expand(ractl, rreq->start, rreq->len);
+> +		rreq->start  = readahead_pos(ractl);
+> +		rreq->len = readahead_length(ractl);
+> +
+> +		trace_netfs_read(rreq, readahead_pos(ractl), readahead_length(ractl),
+> +				 netfs_read_trace_expanded);
+> +	}
+> +}
+> +
+> +/**
+> + * netfs_readahead - Helper to manage a read request
+> + * @ractl: The description of the readahead request
+> + *
+> + * Fulfil a readahead request by drawing data from the cache if possible, or
+> + * the netfs if not.  Space beyond the EOF is zero-filled.  Multiple I/O
+> + * requests from different sources will get munged together.  If necessary, the
+> + * readahead window can be expanded in either direction to a more convenient
+> + * alighment for RPC efficiency or to make storage in the cache feasible.
+> + *
+> + * The calling netfs must initialise a netfs context contiguous to the vfs
+> + * inode before calling this.
+> + *
+> + * This is usable whether or not caching is enabled.
+> + */
+> +void netfs_readahead(struct readahead_control *ractl)
+> +{
+> +	struct netfs_io_request *rreq;
+> +	struct netfs_i_context *ctx = netfs_i_context(ractl->mapping->host);
+> +	int ret;
+> +
+> +	_enter("%lx,%x", readahead_index(ractl), readahead_count(ractl));
+> +
+> +	if (readahead_count(ractl) == 0)
+> +		return;
+> +
+> +	rreq = netfs_alloc_request(ractl->mapping, ractl->file,
+> +				   readahead_pos(ractl),
+> +				   readahead_length(ractl),
+> +				   NETFS_READAHEAD);
+> +	if (IS_ERR(rreq))
+> +		return;
+> +
+> +	if (ctx->ops->begin_cache_operation) {
+> +		ret = ctx->ops->begin_cache_operation(rreq);
+> +		if (ret == -ENOMEM || ret == -EINTR || ret == -ERESTARTSYS)
+> +			goto cleanup_free;
+> +	}
+> +
+> +	netfs_stat(&netfs_n_rh_readahead);
+> +	trace_netfs_read(rreq, readahead_pos(ractl), readahead_length(ractl),
+> +			 netfs_read_trace_readahead);
+> +
+> +	netfs_rreq_expand(rreq, ractl);
+> +
+> +	/* Drop the refs on the folios here rather than in the cache or
+> +	 * filesystem.  The locks will be dropped in netfs_rreq_unlock().
+> +	 */
+> +	while (readahead_folio(ractl))
+> +		;
+> +
+> +	netfs_begin_read(rreq, false);
+> +	return;
+> +
+> +cleanup_free:
+> +	netfs_put_request(rreq, false, netfs_rreq_trace_put_failed);
+> +	return;
+> +}
+> +EXPORT_SYMBOL(netfs_readahead);
+> +
+> +/**
+> + * netfs_readpage - Helper to manage a readpage request
+> + * @file: The file to read from
+> + * @subpage: A subpage of the folio to read
+> + *
+> + * Fulfil a readpage request by drawing data from the cache if possible, or the
+> + * netfs if not.  Space beyond the EOF is zero-filled.  Multiple I/O requests
+> + * from different sources will get munged together.
+> + *
+> + * The calling netfs must initialise a netfs context contiguous to the vfs
+> + * inode before calling this.
+> + *
+> + * This is usable whether or not caching is enabled.
+> + */
+> +int netfs_readpage(struct file *file, struct page *subpage)
+> +{
+> +	struct folio *folio = page_folio(subpage);
+> +	struct address_space *mapping = folio_file_mapping(folio);
+> +	struct netfs_io_request *rreq;
+> +	struct netfs_i_context *ctx = netfs_i_context(mapping->host);
+> +	int ret;
+> +
+> +	_enter("%lx", folio_index(folio));
+> +
+> +	rreq = netfs_alloc_request(mapping, file,
+> +				   folio_file_pos(folio), folio_size(folio),
+> +				   NETFS_READPAGE);
+> +	if (IS_ERR(rreq)) {
+> +		ret = PTR_ERR(rreq);
+> +		goto alloc_error;
+> +	}
+> +
+> +	if (ctx->ops->begin_cache_operation) {
+> +		ret = ctx->ops->begin_cache_operation(rreq);
+> +		if (ret == -ENOMEM || ret == -EINTR || ret == -ERESTARTSYS)
+> +			goto discard;
+> +	}
+> +
+> +	netfs_stat(&netfs_n_rh_readpage);
+> +	trace_netfs_read(rreq, rreq->start, rreq->len, netfs_read_trace_readpage);
+> +	return netfs_begin_read(rreq, true);
+> +
+> +discard:
+> +	netfs_put_request(rreq, false, netfs_rreq_trace_put_discard);
+> +alloc_error:
+> +	folio_unlock(folio);
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL(netfs_readpage);
+> +
+> +/*
+> + * Prepare a folio for writing without reading first
+> + * @folio: The folio being prepared
+> + * @pos: starting position for the write
+> + * @len: length of write
+> + * @always_fill: T if the folio should always be completely filled/cleared
+> + *
+> + * In some cases, write_begin doesn't need to read at all:
+> + * - full folio write
+> + * - write that lies in a folio that is completely beyond EOF
+> + * - write that covers the folio from start to EOF or beyond it
+> + *
+> + * If any of these criteria are met, then zero out the unwritten parts
+> + * of the folio and return true. Otherwise, return false.
+> + */
+> +static bool netfs_skip_folio_read(struct folio *folio, loff_t pos, size_t len,
+> +				 bool always_fill)
+> +{
+> +	struct inode *inode = folio_inode(folio);
+> +	loff_t i_size = i_size_read(inode);
+> +	size_t offset = offset_in_folio(folio, pos);
+> +	size_t plen = folio_size(folio);
+> +
+> +	if (unlikely(always_fill)) {
+> +		if (pos - offset + len <= i_size)
+> +			return false; /* Page entirely before EOF */
+> +		zero_user_segment(&folio->page, 0, plen);
+> +		folio_mark_uptodate(folio);
+> +		return true;
+> +	}
+> +
+> +	/* Full folio write */
+> +	if (offset == 0 && len >= plen)
+> +		return true;
+> +
+> +	/* Page entirely beyond the end of the file */
+> +	if (pos - offset >= i_size)
+> +		goto zero_out;
+> +
+> +	/* Write that covers from the start of the folio to EOF or beyond */
+> +	if (offset == 0 && (pos + len) >= i_size)
+> +		goto zero_out;
+> +
+> +	return false;
+> +zero_out:
+> +	zero_user_segments(&folio->page, 0, offset, offset + len, len);
+> +	return true;
+> +}
+> +
+> +/**
+> + * netfs_write_begin - Helper to prepare for writing
+> + * @file: The file to read from
+> + * @mapping: The mapping to read from
+> + * @pos: File position at which the write will begin
+> + * @len: The length of the write (may extend beyond the end of the folio chosen)
+> + * @aop_flags: AOP_* flags
+> + * @_folio: Where to put the resultant folio
+> + * @_fsdata: Place for the netfs to store a cookie
+> + *
+> + * Pre-read data for a write-begin request by drawing data from the cache if
+> + * possible, or the netfs if not.  Space beyond the EOF is zero-filled.
+> + * Multiple I/O requests from different sources will get munged together.  If
+> + * necessary, the readahead window can be expanded in either direction to a
+> + * more convenient alighment for RPC efficiency or to make storage in the cache
+> + * feasible.
+> + *
+> + * The calling netfs must provide a table of operations, only one of which,
+> + * issue_op, is mandatory.
+> + *
+> + * The check_write_begin() operation can be provided to check for and flush
+> + * conflicting writes once the folio is grabbed and locked.  It is passed a
+> + * pointer to the fsdata cookie that gets returned to the VM to be passed to
+> + * write_end.  It is permitted to sleep.  It should return 0 if the request
+> + * should go ahead; unlock the folio and return -EAGAIN to cause the folio to
+> + * be regot; or return an error.
+> + *
+> + * The calling netfs must initialise a netfs context contiguous to the vfs
+> + * inode before calling this.
+> + *
+> + * This is usable whether or not caching is enabled.
+> + */
+> +int netfs_write_begin(struct file *file, struct address_space *mapping,
+> +		      loff_t pos, unsigned int len, unsigned int aop_flags,
+> +		      struct folio **_folio, void **_fsdata)
+> +{
+> +	struct netfs_io_request *rreq;
+> +	struct netfs_i_context *ctx = netfs_i_context(file_inode(file ));
+> +	struct folio *folio;
+> +	unsigned int fgp_flags;
+> +	pgoff_t index = pos >> PAGE_SHIFT;
+> +	int ret;
+> +
+> +	DEFINE_READAHEAD(ractl, file, NULL, mapping, index);
+> +
+> +retry:
+> +	fgp_flags = FGP_LOCK | FGP_WRITE | FGP_CREAT | FGP_STABLE;
+> +	if (aop_flags & AOP_FLAG_NOFS)
+> +		fgp_flags |= FGP_NOFS;
+> +	folio = __filemap_get_folio(mapping, index, fgp_flags,
+> +				    mapping_gfp_mask(mapping));
+> +	if (!folio)
+> +		return -ENOMEM;
+> +
+> +	if (ctx->ops->check_write_begin) {
+> +		/* Allow the netfs (eg. ceph) to flush conflicts. */
+> +		ret = ctx->ops->check_write_begin(file, pos, len, folio, _fsdata);
+> +		if (ret < 0) {
+> +			trace_netfs_failure(NULL, NULL, ret, netfs_fail_check_write_begin);
+> +			if (ret == -EAGAIN)
+> +				goto retry;
+> +			goto error;
+> +		}
+> +	}
+> +
+> +	if (folio_test_uptodate(folio))
+> +		goto have_folio;
+> +
+> +	/* If the page is beyond the EOF, we want to clear it - unless it's
+> +	 * within the cache granule containing the EOF, in which case we need
+> +	 * to preload the granule.
+> +	 */
+> +	if (!netfs_is_cache_enabled(ctx) &&
+> +	    netfs_skip_folio_read(folio, pos, len, false)) {
+> +		netfs_stat(&netfs_n_rh_write_zskip);
+> +		goto have_folio_no_wait;
+> +	}
+> +
+> +	rreq = netfs_alloc_request(mapping, file,
+> +				   folio_file_pos(folio), folio_size(folio),
+> +				   NETFS_READ_FOR_WRITE);
+> +	if (IS_ERR(rreq)) {
+> +		ret = PTR_ERR(rreq);
+> +		goto error;
+> +	}
+> +	rreq->no_unlock_folio	= folio_index(folio);
+> +	__set_bit(NETFS_RREQ_NO_UNLOCK_FOLIO, &rreq->flags);
+> +
+> +	if (ctx->ops->begin_cache_operation) {
+> +		ret = ctx->ops->begin_cache_operation(rreq);
+> +		if (ret == -ENOMEM || ret == -EINTR || ret == -ERESTARTSYS)
+> +			goto error_put;
+> +	}
+> +
+> +	netfs_stat(&netfs_n_rh_write_begin);
+> +	trace_netfs_read(rreq, pos, len, netfs_read_trace_write_begin);
+> +
+> +	/* Expand the request to meet caching requirements and download
+> +	 * preferences.
+> +	 */
+> +	ractl._nr_pages = folio_nr_pages(folio);
+> +	netfs_rreq_expand(rreq, &ractl);
+> +
+> +	/* We hold the folio locks, so we can drop the references */
+> +	folio_get(folio);
+> +	while (readahead_folio(&ractl))
+> +		;
+> +
+> +	ret = netfs_begin_read(rreq, true);
+> +	if (ret < 0)
+> +		goto error;
+> +
+> +have_folio:
+> +	ret = folio_wait_fscache_killable(folio);
+> +	if (ret < 0)
+> +		goto error;
+> +have_folio_no_wait:
+> +	*_folio = folio;
+> +	_leave(" = 0");
+> +	return 0;
+> +
+> +error_put:
+> +	netfs_put_request(rreq, false, netfs_rreq_trace_put_failed);
+> +error:
+> +	folio_unlock(folio);
+> +	folio_put(folio);
+> +	_leave(" = %d", ret);
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL(netfs_write_begin);
+> diff --git a/fs/netfs/io.c b/fs/netfs/io.c
+> index 058a534ba917..1fe9706c58a5 100644
+> --- a/fs/netfs/io.c
+> +++ b/fs/netfs/io.c
+> @@ -246,91 +246,6 @@ static void netfs_rreq_write_to_cache(struct netfs_io_request *rreq)
+>  		BUG();
+>  }
+>  
+> -/*
+> - * Unlock the folios in a read operation.  We need to set PG_fscache on any
+> - * folios we're going to write back before we unlock them.
+> - */
+> -void netfs_rreq_unlock_folios(struct netfs_io_request *rreq)
+> -{
+> -	struct netfs_io_subrequest *subreq;
+> -	struct folio *folio;
+> -	unsigned int iopos, account = 0;
+> -	pgoff_t start_page = rreq->start / PAGE_SIZE;
+> -	pgoff_t last_page = ((rreq->start + rreq->len) / PAGE_SIZE) - 1;
+> -	bool subreq_failed = false;
+> -
+> -	XA_STATE(xas, &rreq->mapping->i_pages, start_page);
+> -
+> -	if (test_bit(NETFS_RREQ_FAILED, &rreq->flags)) {
+> -		__clear_bit(NETFS_RREQ_COPY_TO_CACHE, &rreq->flags);
+> -		list_for_each_entry(subreq, &rreq->subrequests, rreq_link) {
+> -			__clear_bit(NETFS_SREQ_COPY_TO_CACHE, &subreq->flags);
+> -		}
+> -	}
+> -
+> -	/* Walk through the pagecache and the I/O request lists simultaneously.
+> -	 * We may have a mixture of cached and uncached sections and we only
+> -	 * really want to write out the uncached sections.  This is slightly
+> -	 * complicated by the possibility that we might have huge pages with a
+> -	 * mixture inside.
+> -	 */
+> -	subreq = list_first_entry(&rreq->subrequests,
+> -				  struct netfs_io_subrequest, rreq_link);
+> -	iopos = 0;
+> -	subreq_failed = (subreq->error < 0);
+> -
+> -	trace_netfs_rreq(rreq, netfs_rreq_trace_unlock);
+> -
+> -	rcu_read_lock();
+> -	xas_for_each(&xas, folio, last_page) {
+> -		unsigned int pgpos = (folio_index(folio) - start_page) * PAGE_SIZE;
+> -		unsigned int pgend = pgpos + folio_size(folio);
+> -		bool pg_failed = false;
+> -
+> -		for (;;) {
+> -			if (!subreq) {
+> -				pg_failed = true;
+> -				break;
+> -			}
+> -			if (test_bit(NETFS_SREQ_COPY_TO_CACHE, &subreq->flags))
+> -				folio_start_fscache(folio);
+> -			pg_failed |= subreq_failed;
+> -			if (pgend < iopos + subreq->len)
+> -				break;
+> -
+> -			account += subreq->transferred;
+> -			iopos += subreq->len;
+> -			if (!list_is_last(&subreq->rreq_link, &rreq->subrequests)) {
+> -				subreq = list_next_entry(subreq, rreq_link);
+> -				subreq_failed = (subreq->error < 0);
+> -			} else {
+> -				subreq = NULL;
+> -				subreq_failed = false;
+> -			}
+> -			if (pgend == iopos)
+> -				break;
+> -		}
+> -
+> -		if (!pg_failed) {
+> -			flush_dcache_folio(folio);
+> -			folio_mark_uptodate(folio);
+> -		}
+> -
+> -		if (!test_bit(NETFS_RREQ_DONT_UNLOCK_FOLIOS, &rreq->flags)) {
+> -			if (folio_index(folio) == rreq->no_unlock_folio &&
+> -			    test_bit(NETFS_RREQ_NO_UNLOCK_FOLIO, &rreq->flags))
+> -				_debug("no unlock");
+> -			else
+> -				folio_unlock(folio);
+> -		}
+> -	}
+> -	rcu_read_unlock();
+> -
+> -	task_io_account_read(account);
+> -	if (rreq->netfs_ops->done)
+> -		rreq->netfs_ops->done(rreq);
+> -}
+> -
+>  /*
+>   * Handle a short read.
+>   */
+> @@ -750,336 +665,3 @@ int netfs_begin_read(struct netfs_io_request *rreq, bool sync)
+>  	}
+>  	return ret;
+>  }
+> -
+> -static void netfs_cache_expand_readahead(struct netfs_io_request *rreq,
+> -					 loff_t *_start, size_t *_len, loff_t i_size)
+> -{
+> -	struct netfs_cache_resources *cres = &rreq->cache_resources;
+> -
+> -	if (cres->ops && cres->ops->expand_readahead)
+> -		cres->ops->expand_readahead(cres, _start, _len, i_size);
+> -}
+> -
+> -static void netfs_rreq_expand(struct netfs_io_request *rreq,
+> -			      struct readahead_control *ractl)
+> -{
+> -	/* Give the cache a chance to change the request parameters.  The
+> -	 * resultant request must contain the original region.
+> -	 */
+> -	netfs_cache_expand_readahead(rreq, &rreq->start, &rreq->len, rreq->i_size);
+> -
+> -	/* Give the netfs a chance to change the request parameters.  The
+> -	 * resultant request must contain the original region.
+> -	 */
+> -	if (rreq->netfs_ops->expand_readahead)
+> -		rreq->netfs_ops->expand_readahead(rreq);
+> -
+> -	/* Expand the request if the cache wants it to start earlier.  Note
+> -	 * that the expansion may get further extended if the VM wishes to
+> -	 * insert THPs and the preferred start and/or end wind up in the middle
+> -	 * of THPs.
+> -	 *
+> -	 * If this is the case, however, the THP size should be an integer
+> -	 * multiple of the cache granule size, so we get a whole number of
+> -	 * granules to deal with.
+> -	 */
+> -	if (rreq->start  != readahead_pos(ractl) ||
+> -	    rreq->len != readahead_length(ractl)) {
+> -		readahead_expand(ractl, rreq->start, rreq->len);
+> -		rreq->start  = readahead_pos(ractl);
+> -		rreq->len = readahead_length(ractl);
+> -
+> -		trace_netfs_read(rreq, readahead_pos(ractl), readahead_length(ractl),
+> -				 netfs_read_trace_expanded);
+> -	}
+> -}
+> -
+> -/**
+> - * netfs_readahead - Helper to manage a read request
+> - * @ractl: The description of the readahead request
+> - *
+> - * Fulfil a readahead request by drawing data from the cache if possible, or
+> - * the netfs if not.  Space beyond the EOF is zero-filled.  Multiple I/O
+> - * requests from different sources will get munged together.  If necessary, the
+> - * readahead window can be expanded in either direction to a more convenient
+> - * alighment for RPC efficiency or to make storage in the cache feasible.
+> - *
+> - * The calling netfs must initialise a netfs context contiguous to the vfs
+> - * inode before calling this.
+> - *
+> - * This is usable whether or not caching is enabled.
+> - */
+> -void netfs_readahead(struct readahead_control *ractl)
+> -{
+> -	struct netfs_io_request *rreq;
+> -	struct netfs_i_context *ctx = netfs_i_context(ractl->mapping->host);
+> -	int ret;
+> -
+> -	_enter("%lx,%x", readahead_index(ractl), readahead_count(ractl));
+> -
+> -	if (readahead_count(ractl) == 0)
+> -		return;
+> -
+> -	rreq = netfs_alloc_request(ractl->mapping, ractl->file,
+> -				   readahead_pos(ractl),
+> -				   readahead_length(ractl),
+> -				   NETFS_READAHEAD);
+> -	if (IS_ERR(rreq))
+> -		return;
+> -
+> -	if (ctx->ops->begin_cache_operation) {
+> -		ret = ctx->ops->begin_cache_operation(rreq);
+> -		if (ret == -ENOMEM || ret == -EINTR || ret == -ERESTARTSYS)
+> -			goto cleanup_free;
+> -	}
+> -
+> -	netfs_stat(&netfs_n_rh_readahead);
+> -	trace_netfs_read(rreq, readahead_pos(ractl), readahead_length(ractl),
+> -			 netfs_read_trace_readahead);
+> -
+> -	netfs_rreq_expand(rreq, ractl);
+> -
+> -	/* Drop the refs on the folios here rather than in the cache or
+> -	 * filesystem.  The locks will be dropped in netfs_rreq_unlock().
+> -	 */
+> -	while (readahead_folio(ractl))
+> -		;
+> -
+> -	netfs_begin_read(rreq, false);
+> -	return;
+> -
+> -cleanup_free:
+> -	netfs_put_request(rreq, false, netfs_rreq_trace_put_failed);
+> -	return;
+> -}
+> -EXPORT_SYMBOL(netfs_readahead);
+> -
+> -/**
+> - * netfs_readpage - Helper to manage a readpage request
+> - * @file: The file to read from
+> - * @subpage: A subpage of the folio to read
+> - *
+> - * Fulfil a readpage request by drawing data from the cache if possible, or the
+> - * netfs if not.  Space beyond the EOF is zero-filled.  Multiple I/O requests
+> - * from different sources will get munged together.
+> - *
+> - * The calling netfs must initialise a netfs context contiguous to the vfs
+> - * inode before calling this.
+> - *
+> - * This is usable whether or not caching is enabled.
+> - */
+> -int netfs_readpage(struct file *file, struct page *subpage)
+> -{
+> -	struct folio *folio = page_folio(subpage);
+> -	struct address_space *mapping = folio->mapping;
+> -	struct netfs_io_request *rreq;
+> -	struct netfs_i_context *ctx = netfs_i_context(mapping->host);
+> -	int ret;
+> -
+> -	_enter("%lx", folio_index(folio));
+> -
+> -	rreq = netfs_alloc_request(mapping, file,
+> -				   folio_file_pos(folio), folio_size(folio),
+> -				   NETFS_READPAGE);
+> -	if (IS_ERR(rreq)) {
+> -		ret = PTR_ERR(rreq);
+> -		goto alloc_error;
+> -	}
+> -
+> -	if (ctx->ops->begin_cache_operation) {
+> -		ret = ctx->ops->begin_cache_operation(rreq);
+> -		if (ret == -ENOMEM || ret == -EINTR || ret == -ERESTARTSYS)
+> -			goto discard;
+> -	}
+> -
+> -	netfs_stat(&netfs_n_rh_readpage);
+> -	trace_netfs_read(rreq, rreq->start, rreq->len, netfs_read_trace_readpage);
+> -	return netfs_begin_read(rreq, true);
+> -
+> -discard:
+> -	netfs_put_request(rreq, false, netfs_rreq_trace_put_discard);
+> -alloc_error:
+> -	folio_unlock(folio);
+> -	return ret;
+> -}
+> -EXPORT_SYMBOL(netfs_readpage);
+> -
+> -/*
+> - * Prepare a folio for writing without reading first
+> - * @folio: The folio being prepared
+> - * @pos: starting position for the write
+> - * @len: length of write
+> - * @always_fill: T if the folio should always be completely filled/cleared
+> - *
+> - * In some cases, write_begin doesn't need to read at all:
+> - * - full folio write
+> - * - write that lies in a folio that is completely beyond EOF
+> - * - write that covers the folio from start to EOF or beyond it
+> - *
+> - * If any of these criteria are met, then zero out the unwritten parts
+> - * of the folio and return true. Otherwise, return false.
+> - */
+> -static bool netfs_skip_folio_read(struct folio *folio, loff_t pos, size_t len,
+> -				 bool always_fill)
+> -{
+> -	struct inode *inode = folio_inode(folio);
+> -	loff_t i_size = i_size_read(inode);
+> -	size_t offset = offset_in_folio(folio, pos);
+> -	size_t plen = folio_size(folio);
+> -
+> -	if (unlikely(always_fill)) {
+> -		if (pos - offset + len <= i_size)
+> -			return false; /* Page entirely before EOF */
+> -		zero_user_segment(&folio->page, 0, plen);
+> -		folio_mark_uptodate(folio);
+> -		return true;
+> -	}
+> -
+> -	/* Full folio write */
+> -	if (offset == 0 && len >= plen)
+> -		return true;
+> -
+> -	/* Page entirely beyond the end of the file */
+> -	if (pos - offset >= i_size)
+> -		goto zero_out;
+> -
+> -	/* Write that covers from the start of the folio to EOF or beyond */
+> -	if (offset == 0 && (pos + len) >= i_size)
+> -		goto zero_out;
+> -
+> -	return false;
+> -zero_out:
+> -	zero_user_segments(&folio->page, 0, offset, offset + len, len);
+> -	return true;
+> -}
+> -
+> -/**
+> - * netfs_write_begin - Helper to prepare for writing
+> - * @file: The file to read from
+> - * @mapping: The mapping to read from
+> - * @pos: File position at which the write will begin
+> - * @len: The length of the write (may extend beyond the end of the folio chosen)
+> - * @aop_flags: AOP_* flags
+> - * @_folio: Where to put the resultant folio
+> - * @_fsdata: Place for the netfs to store a cookie
+> - *
+> - * Pre-read data for a write-begin request by drawing data from the cache if
+> - * possible, or the netfs if not.  Space beyond the EOF is zero-filled.
+> - * Multiple I/O requests from different sources will get munged together.  If
+> - * necessary, the readahead window can be expanded in either direction to a
+> - * more convenient alighment for RPC efficiency or to make storage in the cache
+> - * feasible.
+> - *
+> - * The calling netfs must provide a table of operations, only one of which,
+> - * issue_op, is mandatory.
+> - *
+> - * The check_write_begin() operation can be provided to check for and flush
+> - * conflicting writes once the folio is grabbed and locked.  It is passed a
+> - * pointer to the fsdata cookie that gets returned to the VM to be passed to
+> - * write_end.  It is permitted to sleep.  It should return 0 if the request
+> - * should go ahead; unlock the folio and return -EAGAIN to cause the folio to
+> - * be regot; or return an error.
+> - *
+> - * The calling netfs must initialise a netfs context contiguous to the vfs
+> - * inode before calling this.
+> - *
+> - * This is usable whether or not caching is enabled.
+> - */
+> -int netfs_write_begin(struct file *file, struct address_space *mapping,
+> -		      loff_t pos, unsigned int len, unsigned int aop_flags,
+> -		      struct folio **_folio, void **_fsdata)
+> -{
+> -	struct netfs_io_request *rreq;
+> -	struct netfs_i_context *ctx = netfs_i_context(file_inode(file ));
+> -	struct folio *folio;
+> -	unsigned int fgp_flags;
+> -	pgoff_t index = pos >> PAGE_SHIFT;
+> -	int ret;
+> -
+> -	DEFINE_READAHEAD(ractl, file, NULL, mapping, index);
+> -
+> -retry:
+> -	fgp_flags = FGP_LOCK | FGP_WRITE | FGP_CREAT | FGP_STABLE;
+> -	if (aop_flags & AOP_FLAG_NOFS)
+> -		fgp_flags |= FGP_NOFS;
+> -	folio = __filemap_get_folio(mapping, index, fgp_flags,
+> -				    mapping_gfp_mask(mapping));
+> -	if (!folio)
+> -		return -ENOMEM;
+> -
+> -	if (ctx->ops->check_write_begin) {
+> -		/* Allow the netfs (eg. ceph) to flush conflicts. */
+> -		ret = ctx->ops->check_write_begin(file, pos, len, folio, _fsdata);
+> -		if (ret < 0) {
+> -			trace_netfs_failure(NULL, NULL, ret, netfs_fail_check_write_begin);
+> -			if (ret == -EAGAIN)
+> -				goto retry;
+> -			goto error;
+> -		}
+> -	}
+> -
+> -	if (folio_test_uptodate(folio))
+> -		goto have_folio;
+> -
+> -	/* If the page is beyond the EOF, we want to clear it - unless it's
+> -	 * within the cache granule containing the EOF, in which case we need
+> -	 * to preload the granule.
+> -	 */
+> -	if (!netfs_is_cache_enabled(ctx) &&
+> -	    netfs_skip_folio_read(folio, pos, len, false)) {
+> -		netfs_stat(&netfs_n_rh_write_zskip);
+> -		goto have_folio_no_wait;
+> -	}
+> -
+> -	rreq = netfs_alloc_request(mapping, file,
+> -				   folio_file_pos(folio), folio_size(folio),
+> -				   NETFS_READ_FOR_WRITE);
+> -	if (IS_ERR(rreq)) {
+> -		ret = PTR_ERR(rreq);
+> -		goto error;
+> -	}
+> -	rreq->no_unlock_folio	= folio_index(folio);
+> -	__set_bit(NETFS_RREQ_NO_UNLOCK_FOLIO, &rreq->flags);
+> -
+> -	if (ctx->ops->begin_cache_operation) {
+> -		ret = ctx->ops->begin_cache_operation(rreq);
+> -		if (ret == -ENOMEM || ret == -EINTR || ret == -ERESTARTSYS)
+> -			goto error_put;
+> -	}
+> -
+> -	netfs_stat(&netfs_n_rh_write_begin);
+> -	trace_netfs_read(rreq, pos, len, netfs_read_trace_write_begin);
+> -
+> -	/* Expand the request to meet caching requirements and download
+> -	 * preferences.
+> -	 */
+> -	ractl._nr_pages = folio_nr_pages(folio);
+> -	netfs_rreq_expand(rreq, &ractl);
+> -
+> -	/* We hold the folio locks, so we can drop the references */
+> -	folio_get(folio);
+> -	while (readahead_folio(&ractl))
+> -		;
+> -
+> -	ret = netfs_begin_read(rreq, true);
+> -	if (ret < 0)
+> -		goto error;
+> -
+> -have_folio:
+> -	ret = folio_wait_fscache_killable(folio);
+> -	if (ret < 0)
+> -		goto error;
+> -have_folio_no_wait:
+> -	*_folio = folio;
+> -	_leave(" = 0");
+> -	return 0;
+> -
+> -error_put:
+> -	netfs_put_request(rreq, false, netfs_rreq_trace_put_failed);
+> -error:
+> -	folio_unlock(folio);
+> -	folio_put(folio);
+> -	_leave(" = %d", ret);
+> -	return ret;
+> -}
+> -EXPORT_SYMBOL(netfs_write_begin);
+> 
+> 
 
-It has that simplified loop, but it also replaced the
-FAULT_FLAG_KILLABLE with just passing in 'unlocked'.
+Patch itself is fine though.
 
-I thought I didn't need to do that, but the "retry" loop inside
-fixup_user_fault() will actually set that 'unlocked' thing even if the
-caller doesn't care whether the mmap_sem was unlocked during the call,
-so we have to pass in that pointer just to get that to work.
-
-And we don't care if mmap_sem was dropped, because this loop doesn't
-cache any vma information or anything like that, but we don't want to
-get a NULL pointer oops just because fixup_user_fault() tries to
-inform us about something we don't care about ;)
-
-That incidentally gets us FAULT_FLAG_ALLOW_RETRY too, which is
-probably a good thing anyway - it means that the mmap_sem will be
-dropped if we wait for IO. Not likely a huge deal, but it's the
-RightThing(tm) to do.
-
-So this has some other changes there too, but on the whole the
-function is now really quite simple. But it would be good to have one
-final round of testing considering how many small details changed..
-
-                      Linus
-
---00000000000011bc1705d9cecf39
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="0001-mm-gup-make-fault_in_safe_writeable-use-fixup_user_f.patch"
-Content-Disposition: attachment; 
-	filename="0001-mm-gup-make-fault_in_safe_writeable-use-fixup_user_f.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_l0k07iyo0>
-X-Attachment-Id: f_l0k07iyo0
-
-RnJvbSAyYTQzN2EwNWM0YzA2ZTIwODlmYTFhNzg5ZTk2MTAwZWEyMTM1ZjZhIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBMaW51cyBUb3J2YWxkcyA8dG9ydmFsZHNAbGludXgtZm91bmRh
-dGlvbi5vcmc+CkRhdGU6IFR1ZSwgOCBNYXIgMjAyMiAxMTo1NTo0OCAtMDgwMApTdWJqZWN0OiBb
-UEFUQ0hdIG1tOiBndXA6IG1ha2UgZmF1bHRfaW5fc2FmZV93cml0ZWFibGUoKSB1c2UKIGZpeHVw
-X3VzZXJfZmF1bHQoKQoKSW5zdGVkYWQgb2YgdXNpbmcgR1VQLCBtYWtlIGZhdWx0X2luX3NhZmVf
-d3JpdGVhYmxlKCkgYWN0dWFsbHkgZm9yY2UgYQonaGFuZGxlX21tX2ZhdWx0KCknIHVzaW5nIHRo
-ZSBzYW1lIGZpeHVwX3VzZXJfZmF1bHQoKSBtYWNoaW5lcnkgdGhhdApmdXRleGVzIGFscmVhZHkg
-dXNlLgoKVXNpbmcgdGhlIEdVUCBtYWNoaW5lcnkgbWVhbnQgdGhhdCBmYXVsdF9pbl9zYWZlX3dy
-aXRlYWJsZSgpIGRpZCBub3QgZG8KZXZlcnl0aGluZyB0aGF0IGEgcmVhbCBmYXVsdCB3b3VsZCBk
-bywgcmFuZ2luZyBmcm9tIG5vdCBhdXRvLWV4cGFuZGluZwp0aGUgc3RhY2sgc2VnbWVudCwgdG8g
-bm90IHVwZGF0aW5nIGFjY2Vzc2VkIG9yIGRpcnR5IGZsYWdzIGluIHRoZSBwYWdlCnRhYmxlcyAo
-R1VQIHNldHMgdGhvc2UgZmxhZ3Mgb24gdGhlIHBhZ2VzIHRoZW1zZWx2ZXMpLgoKVGhlIGxhdHRl
-ciBjYXVzZXMgcHJvYmxlbXMgb24gYXJjaGl0ZWN0dXJlcyAobGlrZSBzMzkwKSB0aGF0IGRvIGFj
-Y2Vzc2VkCmJpdCBoYW5kbGluZyBpbiBzb2Z0d2FyZSwgd2hpY2ggbWVhbnQgdGhhdCBmYXVsdF9p
-bl9zYWZlX3dyaXRlYWJsZSgpCmRpZG4ndCBhY3R1YWxseSBkbyBhbGwgdGhlIGZhdWx0IGhhbmRs
-aW5nIGl0IG5lZWRlZCB0by4KClJlcG9ydGVkLWFuZC10ZXN0ZWQtYnk6IEFuZHJlYXMgR3J1ZW5i
-YWNoZXIgPGFncnVlbmJhQHJlZGhhdC5jb20+Ckxpbms6IGh0dHBzOi8vbG9yZS5rZXJuZWwub3Jn
-L2FsbC9DQUhjNkZVNW5QK256aU5HRzBKQUYxRlV4LUdWN2tLRnZNN2FadVVfWEQyXzF2NHZudmdA
-bWFpbC5nbWFpbC5jb20vCkNjOiBEYXZpZCBIaWxkZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT4K
-U2lnbmVkLW9mZi1ieTogTGludXMgVG9ydmFsZHMgPHRvcnZhbGRzQGxpbnV4LWZvdW5kYXRpb24u
-b3JnPgotLS0KIG1tL2d1cC5jIHwgNTcgKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCAxOSBpbnNlcnRpb25zKCsp
-LCAzOCBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9tbS9ndXAuYyBiL21tL2d1cC5jCmluZGV4
-IGE5ZDRkNzI0YWVmNy4uN2JjMWJhOWNlNDQwIDEwMDY0NAotLS0gYS9tbS9ndXAuYworKysgYi9t
-bS9ndXAuYwpAQCAtMTcyOSwxMSArMTcyOSwxMSBAQCBFWFBPUlRfU1lNQk9MKGZhdWx0X2luX3dy
-aXRlYWJsZSk7CiAgKiBAdWFkZHI6IHN0YXJ0IG9mIGFkZHJlc3MgcmFuZ2UKICAqIEBzaXplOiBs
-ZW5ndGggb2YgYWRkcmVzcyByYW5nZQogICoKLSAqIEZhdWx0cyBpbiBhbiBhZGRyZXNzIHJhbmdl
-IHVzaW5nIGdldF91c2VyX3BhZ2VzLCBpLmUuLCB3aXRob3V0IHRyaWdnZXJpbmcKLSAqIGhhcmR3
-YXJlIHBhZ2UgZmF1bHRzLiAgVGhpcyBpcyBwcmltYXJpbHkgdXNlZnVsIHdoZW4gd2UgYWxyZWFk
-eSBrbm93IHRoYXQKLSAqIHNvbWUgb3IgYWxsIG9mIHRoZSBwYWdlcyBpbiB0aGUgYWRkcmVzcyBy
-YW5nZSBhcmVuJ3QgaW4gbWVtb3J5LgorICogRmF1bHRzIGluIGFuIGFkZHJlc3MgcmFuZ2UgZm9y
-IHdyaXRpbmcuICBUaGlzIGlzIHByaW1hcmlseSB1c2VmdWwgd2hlbiB3ZQorICogYWxyZWFkeSBr
-bm93IHRoYXQgc29tZSBvciBhbGwgb2YgdGhlIHBhZ2VzIGluIHRoZSBhZGRyZXNzIHJhbmdlIGFy
-ZW4ndCBpbgorICogbWVtb3J5LgogICoKLSAqIE90aGVyIHRoYW4gZmF1bHRfaW5fd3JpdGVhYmxl
-KCksIHRoaXMgZnVuY3Rpb24gaXMgbm9uLWRlc3RydWN0aXZlLgorICogVW5saWtlIGZhdWx0X2lu
-X3dyaXRlYWJsZSgpLCB0aGlzIGZ1bmN0aW9uIGlzIG5vbi1kZXN0cnVjdGl2ZS4KICAqCiAgKiBO
-b3RlIHRoYXQgd2UgZG9uJ3QgcGluIG9yIG90aGVyd2lzZSBob2xkIHRoZSBwYWdlcyByZWZlcmVu
-Y2VkIHRoYXQgd2UgZmF1bHQKICAqIGluLiAgVGhlcmUncyBubyBndWFyYW50ZWUgdGhhdCB0aGV5
-J2xsIHN0YXkgaW4gbWVtb3J5IGZvciBhbnkgZHVyYXRpb24gb2YKQEAgLTE3NDQsNDYgKzE3NDQs
-MjcgQEAgRVhQT1JUX1NZTUJPTChmYXVsdF9pbl93cml0ZWFibGUpOwogICovCiBzaXplX3QgZmF1
-bHRfaW5fc2FmZV93cml0ZWFibGUoY29uc3QgY2hhciBfX3VzZXIgKnVhZGRyLCBzaXplX3Qgc2l6
-ZSkKIHsKLQl1bnNpZ25lZCBsb25nIHN0YXJ0ID0gKHVuc2lnbmVkIGxvbmcpdW50YWdnZWRfYWRk
-cih1YWRkcik7Ci0JdW5zaWduZWQgbG9uZyBlbmQsIG5zdGFydCwgbmVuZDsKKwl1bnNpZ25lZCBs
-b25nIHN0YXJ0ID0gKHVuc2lnbmVkIGxvbmcpdWFkZHIsIGVuZDsKIAlzdHJ1Y3QgbW1fc3RydWN0
-ICptbSA9IGN1cnJlbnQtPm1tOwotCXN0cnVjdCB2bV9hcmVhX3N0cnVjdCAqdm1hID0gTlVMTDsK
-LQlpbnQgbG9ja2VkID0gMDsKKwlib29sIHVubG9ja2VkID0gZmFsc2U7CiAKLQluc3RhcnQgPSBz
-dGFydCAmIFBBR0VfTUFTSzsKKwlpZiAodW5saWtlbHkoc2l6ZSA9PSAwKSkKKwkJcmV0dXJuIDA7
-CiAJZW5kID0gUEFHRV9BTElHTihzdGFydCArIHNpemUpOwotCWlmIChlbmQgPCBuc3RhcnQpCisJ
-aWYgKGVuZCA8IHN0YXJ0KQogCQllbmQgPSAwOwotCWZvciAoOyBuc3RhcnQgIT0gZW5kOyBuc3Rh
-cnQgPSBuZW5kKSB7Ci0JCXVuc2lnbmVkIGxvbmcgbnJfcGFnZXM7Ci0JCWxvbmcgcmV0OwogCi0J
-CWlmICghbG9ja2VkKSB7Ci0JCQlsb2NrZWQgPSAxOwotCQkJbW1hcF9yZWFkX2xvY2sobW0pOwot
-CQkJdm1hID0gZmluZF92bWEobW0sIG5zdGFydCk7Ci0JCX0gZWxzZSBpZiAobnN0YXJ0ID49IHZt
-YS0+dm1fZW5kKQotCQkJdm1hID0gdm1hLT52bV9uZXh0OwotCQlpZiAoIXZtYSB8fCB2bWEtPnZt
-X3N0YXJ0ID49IGVuZCkKLQkJCWJyZWFrOwotCQluZW5kID0gZW5kID8gbWluKGVuZCwgdm1hLT52
-bV9lbmQpIDogdm1hLT52bV9lbmQ7Ci0JCWlmICh2bWEtPnZtX2ZsYWdzICYgKFZNX0lPIHwgVk1f
-UEZOTUFQKSkKLQkJCWNvbnRpbnVlOwotCQlpZiAobnN0YXJ0IDwgdm1hLT52bV9zdGFydCkKLQkJ
-CW5zdGFydCA9IHZtYS0+dm1fc3RhcnQ7Ci0JCW5yX3BhZ2VzID0gKG5lbmQgLSBuc3RhcnQpIC8g
-UEFHRV9TSVpFOwotCQlyZXQgPSBfX2dldF91c2VyX3BhZ2VzX2xvY2tlZChtbSwgbnN0YXJ0LCBu
-cl9wYWdlcywKLQkJCQkJICAgICAgTlVMTCwgTlVMTCwgJmxvY2tlZCwKLQkJCQkJICAgICAgRk9M
-TF9UT1VDSCB8IEZPTExfV1JJVEUpOwotCQlpZiAocmV0IDw9IDApCisJbW1hcF9yZWFkX2xvY2so
-bW0pOworCWRvIHsKKwkJaWYgKGZpeHVwX3VzZXJfZmF1bHQobW0sIHN0YXJ0LCBGQVVMVF9GTEFH
-X1dSSVRFLCAmdW5sb2NrZWQpKQogCQkJYnJlYWs7Ci0JCW5lbmQgPSBuc3RhcnQgKyByZXQgKiBQ
-QUdFX1NJWkU7Ci0JfQotCWlmIChsb2NrZWQpCi0JCW1tYXBfcmVhZF91bmxvY2sobW0pOwotCWlm
-IChuc3RhcnQgPT0gZW5kKQotCQlyZXR1cm4gMDsKLQlyZXR1cm4gc2l6ZSAtIG1pbl90KHNpemVf
-dCwgbnN0YXJ0IC0gc3RhcnQsIHNpemUpOworCQlzdGFydCA9IChzdGFydCArIFBBR0VfU0laRSkg
-JiBQQUdFX01BU0s7CisJfSB3aGlsZSAoc3RhcnQgIT0gZW5kKTsKKwltbWFwX3JlYWRfdW5sb2Nr
-KG1tKTsKKworCWlmIChzaXplID4gKHVuc2lnbmVkIGxvbmcpdWFkZHIgLSBzdGFydCkKKwkJcmV0
-dXJuIHNpemUgLSAoKHVuc2lnbmVkIGxvbmcpdWFkZHIgLSBzdGFydCk7CisJcmV0dXJuIDA7CiB9
-CiBFWFBPUlRfU1lNQk9MKGZhdWx0X2luX3NhZmVfd3JpdGVhYmxlKTsKIAotLSAKMi4zNS4xLjM1
-Ni5nZTY2MzBmNTdjZi5kaXJ0eQoK
---00000000000011bc1705d9cecf39--
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
