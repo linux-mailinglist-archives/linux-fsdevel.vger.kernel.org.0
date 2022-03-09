@@ -2,110 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 124CE4D3932
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Mar 2022 19:50:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 288654D3951
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Mar 2022 19:57:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236906AbiCISuV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Mar 2022 13:50:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56674 "EHLO
+        id S235952AbiCIS6d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Mar 2022 13:58:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234205AbiCISuU (ORCPT
+        with ESMTP id S235281AbiCIS6c (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Mar 2022 13:50:20 -0500
-Received: from mail-qt1-x832.google.com (mail-qt1-x832.google.com [IPv6:2607:f8b0:4864:20::832])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51CE61A41CE
-        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Mar 2022 10:49:21 -0800 (PST)
-Received: by mail-qt1-x832.google.com with SMTP id 10so172854qtz.11
-        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Mar 2022 10:49:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20210112.gappssmtp.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=nKuE38NOU2hkJuD1KLyg6RrwTXvuKBzM+TX7qgfpuP8=;
-        b=2KYwnPO4qFOzkuFk8l6tZ/PALkc6qNAlX3MSb8GTgY8sih7mjaZlG/qJTxFRrkHK5y
-         pJc8cfeGCMW2cOlQxQ3sSQ++SgRe59t/U9W9ZQJMgJc16hKH/banqiqtZxbOVwZo3Qn9
-         exrp/qwEfSBfRcPmsjc7SsFGn4wvMmtOQvTUJiSLLgLkoLmFTsVLWR5T/xnjuyQ7wqQ1
-         /cppXhdwFnQE0n/HiLTOjiKq+KdwidZT629XBNG7Ow3Lr85NJPyZtaGJIQszEHCN9cB2
-         q3qWq+8rZBhDdKOwSAmDTS17WRDsRcyDp0XjQhYd6VP8RyilPoLvKIdekMdSyd7/7NNh
-         S20g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=nKuE38NOU2hkJuD1KLyg6RrwTXvuKBzM+TX7qgfpuP8=;
-        b=tPflhK/0H6P0gH7doLLuY/BDB2+D8HkseXKZZBOcSshYTAu1MS7/bwIR6SdXmGWoUu
-         sdPqyH+hXeTiUob384Amz6KRvPzGwsxZ4XkJkxy7mvOUsjflFGIjboMHriIf8b1YD5Sm
-         P1F2Lr/eRlrC73vCqGRc5EoaAbZPTswKv4omQwYwnts+gHHVaZT2bkuh/m6k7dETat5F
-         iHEHBLZVyTyqIVdIM3c6J8/9p3u4IHSDR3GKdfUTi6NCrXLurj1tm6khJkojhmsh6Kwq
-         pake8YhzCpFnIwL7jRn7w+QJitWcmisAljKLS2vd5vjRy0hL8me8joXq6TRdgN9+70NC
-         3iTA==
-X-Gm-Message-State: AOAM5316/L42wJO0THQwdZwmkBEzzqtPlg0wwdW5ZU2B+Xc3hFbZH0oB
-        iezjuoc55Q+DxgW/IP45nLr5LQ==
-X-Google-Smtp-Source: ABdhPJwZqAklp4rUS0SV8Z7S7kiKHtg7aMVBylvoMgwVlNDkmvuCWlkXtYLS2NmzoyM74vWF0JnHyw==
-X-Received: by 2002:ac8:60a:0:b0:2cc:1a58:3bc0 with SMTP id d10-20020ac8060a000000b002cc1a583bc0mr960891qth.358.1646851760291;
-        Wed, 09 Mar 2022 10:49:20 -0800 (PST)
-Received: from localhost (cpe-174-109-172-136.nc.res.rr.com. [174.109.172.136])
-        by smtp.gmail.com with ESMTPSA id j188-20020a3755c5000000b0067d1c76a09fsm1328785qkb.74.2022.03.09.10.49.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Mar 2022 10:49:19 -0800 (PST)
-Date:   Wed, 9 Mar 2022 13:49:18 -0500
-From:   Josef Bacik <josef@toxicpanda.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Theodore Ts'o <tytso@mit.edu>,
+        Wed, 9 Mar 2022 13:58:32 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1B096597
+        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Mar 2022 10:57:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=380l+Gu5qIiiXNX/ArbUGoUCh7yNUhAFRcWP2zrXEf4=; b=vG5NBLGQlonAUGXQ+V6WFpLZzZ
+        F/H+zyPQgIw3L58tjvbZqOTSlL322PzxhXKS0XvXj34q+K9+R0xzt5VMQn6WJqLAzDj1crIUur0cn
+        yfK95xYdRyhTXWAqjhxC52UEuWSFDaZ9tYDu3W+CTrx029fOiNvsgiuPivqxqN0TEUVtQvGIVYs5Z
+        rYt8K9xuoFiq9/kdGA1aN4Er/lg8Trxp/Isp4inP78UNy+BBJf9okAjHC4Xw97tnFH3aHaRqHVd/H
+        XqbnbKXQrRSQr0NeGWfuc3Atw+TbcS8cNcAR7D9nBpKKxoSXb8RlQWmMYhE2bxpJMvdzXv+d2eDnO
+        TT4ebcBQ==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nS1Uy-00AA89-Ag; Wed, 09 Mar 2022 18:57:24 +0000
+Date:   Wed, 9 Mar 2022 10:57:24 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
         Greg KH <gregkh@linuxfoundation.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Sasha Levin <sashal@kernel.org>,
         lsf-pc <lsf-pc@lists.linux-foundation.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>,
+        Jan Kara <jack@suse.cz>, Theodore Tso <tytso@mit.edu>,
         "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Josef Bacik <josef@toxicpanda.com>,
         Matthew Wilcox <willy@infradead.org>
 Subject: Re: [LSF/MM TOPIC] FS, MM, and stable trees
-Message-ID: <Yij2rqDn4TiN3kK9@localhost.localdomain>
+Message-ID: <Yij4lD19KGloWPJw@bombadil.infradead.org>
 References: <20190212170012.GF69686@sasha-vm>
  <CAOQ4uxjysufPUtwepPGNZDhoC_HdsnkHx7--kso_OXWPyPkw_A@mail.gmail.com>
  <YicrMCidylefTC3n@kroah.com>
- <YieG8rZkgnfwygyu@mit.edu>
- <Yij08f7ee4pDZ2AC@bombadil.infradead.org>
+ <CAOQ4uxjjdFgdMxEOq7aW-nLZFf-S99CC93Ycg1CcMUBiRAYTQQ@mail.gmail.com>
+ <YiepUS/bDKTNA5El@sashalap>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Yij08f7ee4pDZ2AC@bombadil.infradead.org>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <YiepUS/bDKTNA5El@sashalap>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 09, 2022 at 10:41:53AM -0800, Luis Chamberlain wrote:
-> On Tue, Mar 08, 2022 at 11:40:18AM -0500, Theodore Ts'o wrote:
-> > One of my team members has been working with Darrick to set up a set
-> > of xfs configs[1] recommended by Darrick, and she's stood up an
-> > automated test spinner using gce-xfstests which can watch a git branch
-> > and automatically kick off a set of tests whenever it is updated.
-> 
-> I think its important to note, as we would all know, that contrary to
-> most other subsystems, in so far as blktests and fstests is concerned,
-> simply passing a test once does not mean there is no issue given that
-> some test can fail with a failure rate of 1/1,000 for instance.
-> 
+On Tue, Mar 08, 2022 at 02:06:57PM -0500, Sasha Levin wrote:
+> What we can't do is invest significant time into doing the testing work
+> ourselves for each and every subsystem in the kernel.
 
-FWIW we (the btrfs team) have been running nightly runs of fstests against our
-devel branch for over a year and tracking the results.  This allowed us to get
-down to 0 failures because we could identify flakey tests and fix them or simply
-disable them.  Then this means when we do have one of those 1/1,000 failures in
-one of our configs (I copied Ted's approach and test all the various feature
-combos) we know what set of parameters the failure was on and can go run that
-test in a loop to reproduce the problem.
+I think this experience helps though, it gives you I think a better
+appreciation for what concerns we have to merge any fix and the effort
+and dilligence required to ensure we don't regress. I think the
+kernel-ci steady state goal takes this a bit further.
 
-We like this approach because it's not a "wait a week to see if something
-failed", we know the day after some new thing was merged if it caused a problem.
-If it's more subtle then we still find it because a test will start failing at
-some point.  It's a nice balance in how long we have to wait for results and
-allows us to be a lot more sure in merging new code without hemming and hawing
-for months.  Thanks,
+> The testing rig I had is expensive, not even just time-wise but also
+> w.r.t the compute resources it required to operate, I suspect that most
+> of the bots that are running around won't dedicate that much resources
+> to each filesystem on a voluntary basis.
 
-Josef
+Precicely because of the above is *why* one of *my* requirements for
+building a kernel-ci system was to be able to ensure I can run my tests
+regardless of what employer I am at, and easily ramp up. So I can use
+local virtualized solutions (KVM or virtualbox), or *any* cloud solution
+at will (AWS, GCE, Azure, OpenStack). And so kdevops enables all this
+using the same commands I posted before, using simple make target
+commands.
+
+Perhaps the one area that might interest folks is the test setup,
+using loopback drives and truncated files, if you find holes in
+this please let me know:
+
+https://github.com/mcgrof/kdevops/blob/master/docs/testing-with-loopback.md
+
+In my experience this setup just finds *more* issues, rather than less,
+and in my experience as well none of these issues found were bogus, they
+always lead to real bugs:
+
+https://github.com/mcgrof/kdevops/blob/master/docs/seeing-more-issues.md
+
+A test rig for a high kernel-ci steady state goal does require
+resources, time and effort. Fortunately I am now confident in the
+architecture behind the tests / automation though. So all that is
+really needed now is just a dedicated system to run these, agree what
+configs we'd test (I have some well defined and documented for XFS on
+kdevops through Kconfig, based on conversations we last had about stable
+testing), work with a public baseline to reflect this setup (I have
+public baselines already published for tons of kernels and for different
+filesystems), and then test candidate fixes. This later effort is still
+time consuming too. But with a proper ongoing rig running a kernel-ci,
+this becomes much easier and it is a much smoother sailing process.
+
+> I can comment on what I'm seeing with Google's COS distro: it's a
+> chicken-and-egg problem. It's hard to offer commercial support with the
+> current state of xfs, but on the other hand it's hard to improve the
+> state of xfs without a commercial party that would invest more
+> significant resources into it.
+
+This is the non-Enterprise argument to it.
+
+And yes. I agree, but it doesn't mean we can't resolve it. I think we
+just need to agree to a a dedicated test rig, test setup, and a public
+baseline might be a good next step.
+
+> Luckily there is an individual in Google who has picked up this work and
+> hopefully we will see something coming out of it very soon, but honestly
+> - we just got lucky.
+
+Groovy.
+
+  Luis
