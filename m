@@ -2,64 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BE534D2DC2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Mar 2022 12:15:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 644874D31B3
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Mar 2022 16:26:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231995AbiCILPu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Mar 2022 06:15:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46872 "EHLO
+        id S233834AbiCIP1U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Mar 2022 10:27:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230392AbiCILPt (ORCPT
+        with ESMTP id S230014AbiCIP1T (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Mar 2022 06:15:49 -0500
+        Wed, 9 Mar 2022 10:27:19 -0500
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF41F13CA2B;
-        Wed,  9 Mar 2022 03:14:50 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15BF19F6EB;
+        Wed,  9 Mar 2022 07:26:21 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 900B9B82023;
-        Wed,  9 Mar 2022 11:14:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5476CC340EE;
-        Wed,  9 Mar 2022 11:14:48 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id ADBDAB82206;
+        Wed,  9 Mar 2022 15:26:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 061A3C340E8;
+        Wed,  9 Mar 2022 15:26:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646824488;
-        bh=k62VYnEAja+A8m7m/Ypa0GboSWV+2bBhbEgOgQIQVR4=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=ra455ULILUulZFobV379nzboqFYi3ADAbkEj4B9+/CzI/43yRfkwPIo+Z8h7C+BOX
-         n30vrJFpQF8OJ40Xlnp6jzeVzgMH+mg8pXx1IJQuOVaCunqMhcqlw9F0ISv1D1CUMg
-         dC9WRDkvN6X/0CGRKQ366APg3kv/sJtuYsyPxjclha11pA7YWrdZ2OW8ojm6qLZISn
-         6lTmlE+YPuUIItTJqxzYYv/tGAk+yPcNJtGgmaBEceyfCG6zaHvaC4g+HdHnKP057c
-         KG+uC9ssTeeYJNT273ofFgIgQJTrBEjbr8pdJzapwK9q4hzY0rE/6WTGO93pEXhNHE
-         XpuRYY3RcGDdQ==
-Received: by mail-wr1-f48.google.com with SMTP id q14so2477025wrc.4;
-        Wed, 09 Mar 2022 03:14:48 -0800 (PST)
-X-Gm-Message-State: AOAM5323QugK2H0HUaUycwEcOSPEiY6KeEldVDaE6Pmu9ODEuAL5Iq1V
-        +HdGQZOpN9CLLKGWnA/6JYOAYqUq/oBZJ6P7L5Q=
-X-Google-Smtp-Source: ABdhPJy6hfL3Lomm6LHCjFT02ifY5Z2dI7dos7tZhxKknO38FbpSc3bNemFJ7dwu98T+AWRaPXffZcT0e/onc5UvZKA=
-X-Received: by 2002:a5d:4387:0:b0:1ed:a13a:ef0c with SMTP id
- i7-20020a5d4387000000b001eda13aef0cmr15722930wrq.62.1646824486677; Wed, 09
- Mar 2022 03:14:46 -0800 (PST)
+        s=k20201202; t=1646839578;
+        bh=wE8WScMA30oNgZIX8sgYX722g0p0ycgmgh/CjHL+/9w=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=saBHRU4rxxqAcFBQKx8VXhVd6Txoc8aJG9uJ8Y2DdijC8a6sESxud37tDU6VI6LpN
+         LEGtepyE0wLYuFchvbMlHh+APL6RmUim4Uauz2QLj35GhT3/yynrYMkndXBu3rTXUL
+         HVAm5j7okn3Lw3uBthbQ38cWSm7PTv1KXX4kBbxuJDARAYqjvS02bBwwe60C3/2WJs
+         WB+6mn4Azf+jRxi7ukfUPFXcUMI2Ose765kUGV/vzSBrSzz1KlYYPBpACr7LqRQff+
+         V2JtM5G0UfLKMCfY/oORRVoyolYe+JD+aNY5oO+dNETtfNRYozYh4joHKh8Ko/vtw6
+         SLHP8MQv9n5dA==
+Message-ID: <9132b97b5e52fec9c2838b31739175619df3e752.camel@kernel.org>
+Subject: Re: [PATCH v2 01/19] fscache: export fscache_end_operation()
+From:   Jeff Layton <jlayton@kernel.org>
+To:     David Howells <dhowells@redhat.com>, linux-cachefs@redhat.com
+Cc:     Jeffle Xu <jefflexu@linux.alibaba.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        David Wysochanski <dwysocha@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 09 Mar 2022 10:26:15 -0500
+In-Reply-To: <164678190346.1200972.7453733431978569479.stgit@warthog.procyon.org.uk>
+References: <164678185692.1200972.597611902374126174.stgit@warthog.procyon.org.uk>
+         <164678190346.1200972.7453733431978569479.stgit@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.42.4 (3.42.4-1.fc35) 
 MIME-Version: 1.0
-Received: by 2002:a05:6000:1d93:0:0:0:0 with HTTP; Wed, 9 Mar 2022 03:14:45
- -0800 (PST)
-In-Reply-To: <HK2PR04MB38910EE3467822EBAB4CC79681099@HK2PR04MB3891.apcprd04.prod.outlook.com>
-References: <HK2PR04MB38914869B1FEE326CFE11779812D9@HK2PR04MB3891.apcprd04.prod.outlook.com>
- <CAKYAXd_hF+xYXNiawCZLYmnha+wSUSUCEJTVBw8v6UDYfjPiUg@mail.gmail.com> <HK2PR04MB38910EE3467822EBAB4CC79681099@HK2PR04MB3891.apcprd04.prod.outlook.com>
-From:   Namjae Jeon <linkinjeon@kernel.org>
-Date:   Wed, 9 Mar 2022 20:14:45 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd8c+qTqa_ymymFeZmcar+35_CYMjwP41GpbbiMeGUYxjw@mail.gmail.com>
-Message-ID: <CAKYAXd8c+qTqa_ymymFeZmcar+35_CYMjwP41GpbbiMeGUYxjw@mail.gmail.com>
-Subject: Re: [PATCH] exfat: do not clear VolumeDirty in writeback
-To:     "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
-Cc:     "sj1557.seo@samsung.com" <sj1557.seo@samsung.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Andy.Wu@sony.com" <Andy.Wu@sony.com>,
-        "Wataru.Aoyama@sony.com" <Wataru.Aoyama@sony.com>,
-        "Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp" 
-        <Kohada.Tetsuhiro@dc.mitsubishielectric.co.jp>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-7.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -70,31 +65,119 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-2022-03-08 19:55 GMT+09:00, Yuezhang.Mo@sony.com <Yuezhang.Mo@sony.com>:
-> Hi Namjae Jeon,
->
->> > +int exfat_clear_volume_dirty(struct super_block *sb) {
->> > +	if (sb->s_flags & (SB_SYNCHRONOUS | SB_DIRSYNC))
->> How about moving exfat_clear_volume_dirty() to IS_DIRSYNC() check in each
->> operations instead of this check?
->
-> I found that VolumeDirty keeps VOL_DIRTY until sync or umount regardless of
-> sync or dirsync enabled,
-> because there is no paired call to
-> exfat_set_volume_dirty()/exfat_clear_volume_dirty() in
-> __exfat_write_inode().
->
-> If exfat_set_volume_dirty()/exfat_clear_volume_dirty() is called in pairs in
-> __exfat_write_inode(),
-> it will cause frequent writing of bootsector.
->
-> So, how about removing exfat_clear_volume_dirty() from each operations,
-> except in exfat_sync_fs()?
-Okay. Please send the patch for this.
+On Tue, 2022-03-08 at 23:25 +0000, David Howells wrote:
+> From: Jeffle Xu <jefflexu@linux.alibaba.com>
+> 
+> Export fscache_end_operation() to avoid code duplication.
+> 
+> Besides, considering the paired fscache_begin_read_operation() is
+> already exported, it shall make sense to also export
+> fscache_end_operation().
+> 
 
-Thanks!
->
->
-> Best Regards,
-> Yuezhang Mo
->
+Not what I think of when you say "exporting" but the patch itself looks
+fine.
+
+> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: linux-cachefs@redhat.com
+> 
+> Link: https://lore.kernel.org/r/20220302125134.131039-2-jefflexu@linux.alibaba.com/ # Jeffle's v4
+> Link: https://lore.kernel.org/r/164622971432.3564931.12184135678781328146.stgit@warthog.procyon.org.uk/ # v1
+> ---
+> 
+>  fs/cifs/fscache.c       |    8 --------
+>  fs/fscache/internal.h   |   11 -----------
+>  fs/nfs/fscache.c        |    8 --------
+>  include/linux/fscache.h |   14 ++++++++++++++
+>  4 files changed, 14 insertions(+), 27 deletions(-)
+> 
+> diff --git a/fs/cifs/fscache.c b/fs/cifs/fscache.c
+> index 33af72e0ac0c..b47c2011ce5b 100644
+> --- a/fs/cifs/fscache.c
+> +++ b/fs/cifs/fscache.c
+> @@ -134,14 +134,6 @@ void cifs_fscache_release_inode_cookie(struct inode *inode)
+>  	}
+>  }
+>  
+> -static inline void fscache_end_operation(struct netfs_cache_resources *cres)
+> -{
+> -	const struct netfs_cache_ops *ops = fscache_operation_valid(cres);
+> -
+> -	if (ops)
+> -		ops->end_operation(cres);
+> -}
+> -
+>  /*
+>   * Fallback page reading interface.
+>   */
+> diff --git a/fs/fscache/internal.h b/fs/fscache/internal.h
+> index f121c21590dc..ed1c9ed737f2 100644
+> --- a/fs/fscache/internal.h
+> +++ b/fs/fscache/internal.h
+> @@ -70,17 +70,6 @@ static inline void fscache_see_cookie(struct fscache_cookie *cookie,
+>  			     where);
+>  }
+>  
+> -/*
+> - * io.c
+> - */
+> -static inline void fscache_end_operation(struct netfs_cache_resources *cres)
+> -{
+> -	const struct netfs_cache_ops *ops = fscache_operation_valid(cres);
+> -
+> -	if (ops)
+> -		ops->end_operation(cres);
+> -}
+> -
+>  /*
+>   * main.c
+>   */
+> diff --git a/fs/nfs/fscache.c b/fs/nfs/fscache.c
+> index cfe901650ab0..39654ca72d3d 100644
+> --- a/fs/nfs/fscache.c
+> +++ b/fs/nfs/fscache.c
+> @@ -249,14 +249,6 @@ void nfs_fscache_release_file(struct inode *inode, struct file *filp)
+>  	}
+>  }
+>  
+> -static inline void fscache_end_operation(struct netfs_cache_resources *cres)
+> -{
+> -	const struct netfs_cache_ops *ops = fscache_operation_valid(cres);
+> -
+> -	if (ops)
+> -		ops->end_operation(cres);
+> -}
+> -
+>  /*
+>   * Fallback page reading interface.
+>   */
+> diff --git a/include/linux/fscache.h b/include/linux/fscache.h
+> index 296c5f1d9f35..d2430da8aa67 100644
+> --- a/include/linux/fscache.h
+> +++ b/include/linux/fscache.h
+> @@ -456,6 +456,20 @@ int fscache_begin_read_operation(struct netfs_cache_resources *cres,
+>  	return -ENOBUFS;
+>  }
+>  
+> +/**
+> + * fscache_end_operation - End the read operation for the netfs lib
+> + * @cres: The cache resources for the read operation
+> + *
+> + * Clean up the resources at the end of the read request.
+> + */
+> +static inline void fscache_end_operation(struct netfs_cache_resources *cres)
+> +{
+> +	const struct netfs_cache_ops *ops = fscache_operation_valid(cres);
+> +
+> +	if (ops)
+> +		ops->end_operation(cres);
+> +}
+> +
+>  /**
+>   * fscache_read - Start a read from the cache.
+>   * @cres: The cache resources to use
+> 
+> 
+
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
