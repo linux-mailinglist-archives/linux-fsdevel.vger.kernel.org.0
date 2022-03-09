@@ -2,53 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 288654D3951
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Mar 2022 19:57:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AF8B14D395E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Mar 2022 20:01:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235952AbiCIS6d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Mar 2022 13:58:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43282 "EHLO
+        id S232102AbiCITB5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Mar 2022 14:01:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235281AbiCIS6c (ORCPT
+        with ESMTP id S230261AbiCITB4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Mar 2022 13:58:32 -0500
+        Wed, 9 Mar 2022 14:01:56 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1B096597
-        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Mar 2022 10:57:32 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F86C9E57D
+        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Mar 2022 11:00:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
         MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=380l+Gu5qIiiXNX/ArbUGoUCh7yNUhAFRcWP2zrXEf4=; b=vG5NBLGQlonAUGXQ+V6WFpLZzZ
-        F/H+zyPQgIw3L58tjvbZqOTSlL322PzxhXKS0XvXj34q+K9+R0xzt5VMQn6WJqLAzDj1crIUur0cn
-        yfK95xYdRyhTXWAqjhxC52UEuWSFDaZ9tYDu3W+CTrx029fOiNvsgiuPivqxqN0TEUVtQvGIVYs5Z
-        rYt8K9xuoFiq9/kdGA1aN4Er/lg8Trxp/Isp4inP78UNy+BBJf9okAjHC4Xw97tnFH3aHaRqHVd/H
-        XqbnbKXQrRSQr0NeGWfuc3Atw+TbcS8cNcAR7D9nBpKKxoSXb8RlQWmMYhE2bxpJMvdzXv+d2eDnO
-        TT4ebcBQ==;
+        bh=xhr2CmmYZuf5RbJ/cVs+BdGvtRZIFC9nUre+0XVD3Oo=; b=Q5YVn6JZjJ5pUlfyDeMlQssP89
+        Z7PLSx34b/w/9o3rU/721oHkXK/xSDsI8MdtjABmL2q5hp/eed3SdNJ+n8ABA2/UxB6EhM9i4m2U5
+        hLYdq+/dTbrGgygOGDXZUa82HQ5FDUPgLOnP7Ll7UV7a8CKEryoKZYRSB0NRPAaladoqrIVVPttT1
+        egGUVMayVEvzJUErBsMEfCgxBtwUU0ZAN1vL2BKhVY3k5zuJQXeOjMRxYxLTOMS29QBN/E0g/mV+y
+        s3cdP1mi6Knn9GP1E9QK9JOzM6wr3DSMkgJm9IV20PpgvB3YIVRAuGUrDnrsrp7nEj4VXoJS1nAXv
+        wY5x4J8A==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nS1Uy-00AA89-Ag; Wed, 09 Mar 2022 18:57:24 +0000
-Date:   Wed, 9 Mar 2022 10:57:24 -0800
+        id 1nS1YH-00AAp0-Qp; Wed, 09 Mar 2022 19:00:49 +0000
+Date:   Wed, 9 Mar 2022 11:00:49 -0800
 From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
+To:     Josef Bacik <josef@toxicpanda.com>
+Cc:     Theodore Ts'o <tytso@mit.edu>,
         Greg KH <gregkh@linuxfoundation.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Sasha Levin <sashal@kernel.org>,
         lsf-pc <lsf-pc@lists.linux-foundation.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>, Theodore Tso <tytso@mit.edu>,
+        Jan Kara <jack@suse.cz>,
         "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Josef Bacik <josef@toxicpanda.com>,
         Matthew Wilcox <willy@infradead.org>
 Subject: Re: [LSF/MM TOPIC] FS, MM, and stable trees
-Message-ID: <Yij4lD19KGloWPJw@bombadil.infradead.org>
+Message-ID: <Yij5YTD5+V2qpsSs@bombadil.infradead.org>
 References: <20190212170012.GF69686@sasha-vm>
  <CAOQ4uxjysufPUtwepPGNZDhoC_HdsnkHx7--kso_OXWPyPkw_A@mail.gmail.com>
  <YicrMCidylefTC3n@kroah.com>
- <CAOQ4uxjjdFgdMxEOq7aW-nLZFf-S99CC93Ycg1CcMUBiRAYTQQ@mail.gmail.com>
- <YiepUS/bDKTNA5El@sashalap>
+ <YieG8rZkgnfwygyu@mit.edu>
+ <Yij08f7ee4pDZ2AC@bombadil.infradead.org>
+ <Yij2rqDn4TiN3kK9@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YiepUS/bDKTNA5El@sashalap>
+In-Reply-To: <Yij2rqDn4TiN3kK9@localhost.localdomain>
 Sender: Luis Chamberlain <mcgrof@infradead.org>
 X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
@@ -60,68 +62,35 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 08, 2022 at 02:06:57PM -0500, Sasha Levin wrote:
-> What we can't do is invest significant time into doing the testing work
-> ourselves for each and every subsystem in the kernel.
+On Wed, Mar 09, 2022 at 01:49:18PM -0500, Josef Bacik wrote:
+> On Wed, Mar 09, 2022 at 10:41:53AM -0800, Luis Chamberlain wrote:
+> > On Tue, Mar 08, 2022 at 11:40:18AM -0500, Theodore Ts'o wrote:
+> > > One of my team members has been working with Darrick to set up a set
+> > > of xfs configs[1] recommended by Darrick, and she's stood up an
+> > > automated test spinner using gce-xfstests which can watch a git branch
+> > > and automatically kick off a set of tests whenever it is updated.
+> > 
+> > I think its important to note, as we would all know, that contrary to
+> > most other subsystems, in so far as blktests and fstests is concerned,
+> > simply passing a test once does not mean there is no issue given that
+> > some test can fail with a failure rate of 1/1,000 for instance.
+> > 
+> 
+> FWIW we (the btrfs team) have been running nightly runs of fstests against our
+> devel branch for over a year and tracking the results.
 
-I think this experience helps though, it gives you I think a better
-appreciation for what concerns we have to merge any fix and the effort
-and dilligence required to ensure we don't regress. I think the
-kernel-ci steady state goal takes this a bit further.
+That's wonderful, what is your steady state goal? And do you have your
+configurations used public and also your baseline somehwere? I think
+this later aspect could be very useful to everyone.
 
-> The testing rig I had is expensive, not even just time-wise but also
-> w.r.t the compute resources it required to operate, I suspect that most
-> of the bots that are running around won't dedicate that much resources
-> to each filesystem on a voluntary basis.
+Yes, everyone's test setup can be different, but this is why I went with
+a loopback/truncated file setup, it does find more issues and so far
+these have all been real.
 
-Precicely because of the above is *why* one of *my* requirements for
-building a kernel-ci system was to be able to ensure I can run my tests
-regardless of what employer I am at, and easily ramp up. So I can use
-local virtualized solutions (KVM or virtualbox), or *any* cloud solution
-at will (AWS, GCE, Azure, OpenStack). And so kdevops enables all this
-using the same commands I posted before, using simple make target
-commands.
+It kind of begs the question if we should adopt something like kconfig
+on fstests to help enable a few test configs we can agree on. Thoughts?
 
-Perhaps the one area that might interest folks is the test setup,
-using loopback drives and truncated files, if you find holes in
-this please let me know:
-
-https://github.com/mcgrof/kdevops/blob/master/docs/testing-with-loopback.md
-
-In my experience this setup just finds *more* issues, rather than less,
-and in my experience as well none of these issues found were bogus, they
-always lead to real bugs:
-
-https://github.com/mcgrof/kdevops/blob/master/docs/seeing-more-issues.md
-
-A test rig for a high kernel-ci steady state goal does require
-resources, time and effort. Fortunately I am now confident in the
-architecture behind the tests / automation though. So all that is
-really needed now is just a dedicated system to run these, agree what
-configs we'd test (I have some well defined and documented for XFS on
-kdevops through Kconfig, based on conversations we last had about stable
-testing), work with a public baseline to reflect this setup (I have
-public baselines already published for tons of kernels and for different
-filesystems), and then test candidate fixes. This later effort is still
-time consuming too. But with a proper ongoing rig running a kernel-ci,
-this becomes much easier and it is a much smoother sailing process.
-
-> I can comment on what I'm seeing with Google's COS distro: it's a
-> chicken-and-egg problem. It's hard to offer commercial support with the
-> current state of xfs, but on the other hand it's hard to improve the
-> state of xfs without a commercial party that would invest more
-> significant resources into it.
-
-This is the non-Enterprise argument to it.
-
-And yes. I agree, but it doesn't mean we can't resolve it. I think we
-just need to agree to a a dedicated test rig, test setup, and a public
-baseline might be a good next step.
-
-> Luckily there is an individual in Google who has picked up this work and
-> hopefully we will see something coming out of it very soon, but honestly
-> - we just got lucky.
-
-Groovy.
+I've been experimenting a lot with this on kdevops. So the Kconfig logic
+could easily just move to fstests.
 
   Luis
