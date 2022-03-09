@@ -2,78 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CBF5C4D36D9
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Mar 2022 18:44:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DC2A4D35B2
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Mar 2022 18:42:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232130AbiCIQok (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Mar 2022 11:44:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48036 "EHLO
+        id S237500AbiCIRFi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Mar 2022 12:05:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236717AbiCIQgp (ORCPT
+        with ESMTP id S238844AbiCIREI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Mar 2022 11:36:45 -0500
-Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5C71CCC6F
-        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Mar 2022 08:32:16 -0800 (PST)
-Received: by mail-pg1-x533.google.com with SMTP id bc27so2406556pgb.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Mar 2022 08:32:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=gY50ygEuixJOL5+CoXoow1CeKmNwyNyKxbVe9LukYfQ=;
-        b=PWj3A38TItrhsUjIRjWiaSik+i8qjhK1vVSzvImJ/IP/sBZ1SK16gd+4vLXNQJIbfz
-         fq1MW9biuBNne5pe3fHiUnjTtyl3ymQBVPVACAAd0YvUvvBY80zbJXDXhDENAQEcfLCy
-         w3cs3JW4i8Wm/1fIlJ8U/oZ/PDcWTWgkItkFw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=gY50ygEuixJOL5+CoXoow1CeKmNwyNyKxbVe9LukYfQ=;
-        b=WsapSoVAKLhl5EQSYouMhgpTpUV0HkK1nVvrq8WtF9OU2J/bAPgcpXnRFV2jRrzh2H
-         kboLHw5IbRNCPTRK5k21ZWHMRN16YxyyujRtVIjeBO3E9DPg2dtGqjuP9NT+omulIszr
-         T/5XJB7OcwoPRXGKfaiE2C6srdAmxWX5QLWw58lcKKY9v2/PiIAbPhQ0YCyTrcCkc7GL
-         WmjzNsjNbkieqQeu82GQk0ne2eZ/4ChX1EB+P85qRLXUYm/Kt8VU2qXPcU/UOGuBCZLg
-         06qlZOp5TjgDv3Kk2USozndEbMi5aAKRJ3YBydJ2dsBI6ClmvlqbCTpLgRknuW103K5Z
-         BD5g==
-X-Gm-Message-State: AOAM532lYqcOMGlfDrYLyyycBe6PwjACQq6LA3gcYo/ro1uy3Fvx4PDA
-        rygZuLLI0RTpMJSLjtAwfLjQ7g==
-X-Google-Smtp-Source: ABdhPJwXXZ86osX5c0II41H74ZTE2EneiajZEn1zrtqB/xvvBuaNxf78dej0GeYsUMxEOmzs8vYjZA==
-X-Received: by 2002:a05:6a00:ad0:b0:4e1:2d96:2ab0 with SMTP id c16-20020a056a000ad000b004e12d962ab0mr549019pfl.3.1646843535989;
-        Wed, 09 Mar 2022 08:32:15 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id q24-20020aa79618000000b004e0e89985eesm3588763pfg.156.2022.03.09.08.32.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Mar 2022 08:32:15 -0800 (PST)
-Date:   Wed, 9 Mar 2022 08:32:14 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Denys Vlasenko <vda.linux@googlemail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Liam R . Howlett" <liam.howlett@oracle.com>,
-        Jann Horn <jannh@google.com>, linux-mm@kvack.org
-Subject: Re: [GIT PULL] Fix fill_files_note
-Message-ID: <202203090830.7E971BD6C@keescook>
-References: <20220131153740.2396974-1-willy@infradead.org>
- <871r0nriy4.fsf@email.froward.int.ebiederm.org>
- <YfgKw5z2uswzMVRQ@casper.infradead.org>
- <877dafq3bw.fsf@email.froward.int.ebiederm.org>
- <YfgPwPvopO1aqcVC@casper.infradead.org>
- <CAG48ez3MCs8d8hjBfRSQxwUTW3o64iaSwxF=UEVtk+SEme0chQ@mail.gmail.com>
- <87bkzroica.fsf_-_@email.froward.int.ebiederm.org>
- <87h788fdaw.fsf_-_@email.froward.int.ebiederm.org>
- <202203081342.1924AD9@keescook>
- <877d93dr8p.fsf@email.froward.int.ebiederm.org>
+        Wed, 9 Mar 2022 12:04:08 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A3F39AD8A;
+        Wed,  9 Mar 2022 08:52:47 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0C30E61B45;
+        Wed,  9 Mar 2022 16:52:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07F6CC340EC;
+        Wed,  9 Mar 2022 16:52:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1646844755;
+        bh=wIeGbE6Q41oIhTY+lLUbah8qqKEMzvsX86DStRQLx9g=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=ajZf+msEiuAWYsEHyAa1la9mmAEWm9CLYkJ001PCn+OQvcazGSJy3d9bN2D8B8QOl
+         5AmoJJMr61AzJpz/9+Ut/VwC1v4hD8jL5NrR+B7Tcg/own5k4BGYTnt/h4otdOlDEa
+         5nzPVdlP12f35p/OQIYWEAYEpd+EMx+VJpxJ9RwcIpFERATK2geEjU5UtMXmU3dMTt
+         8+VCsgjtIlQWdTx6ECnl08vIoCehsmH4HavcgIT1iTq9WjSopxA4kmJQ4PjDaBaak/
+         zxymJkFfufPzJLXiDgcXeJwV6wBNC7DrdpaFm2CX46qY7OsD49zaSn1Xoof0/8QlTi
+         63TkLPMr13Wtg==
+Message-ID: <4cbb2bb06eafb8f03135fc377ced779102004ea7.camel@kernel.org>
+Subject: Re: [PATCH v2 11/19] netfs: Change ->init_request() to return an
+ error code
+From:   Jeff Layton <jlayton@kernel.org>
+To:     David Howells <dhowells@redhat.com>, linux-cachefs@redhat.com
+Cc:     Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        David Wysochanski <dwysocha@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jeffle Xu <jefflexu@linux.alibaba.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 09 Mar 2022 11:52:32 -0500
+In-Reply-To: <164678212401.1200972.16537041523832944934.stgit@warthog.procyon.org.uk>
+References: <164678185692.1200972.597611902374126174.stgit@warthog.procyon.org.uk>
+         <164678212401.1200972.16537041523832944934.stgit@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.42.4 (3.42.4-1.fc35) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <877d93dr8p.fsf@email.froward.int.ebiederm.org>
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-7.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -81,64 +66,187 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 09, 2022 at 10:29:10AM -0600, Eric W. Biederman wrote:
-> Kees Cook <keescook@chromium.org> writes:
+On Tue, 2022-03-08 at 23:28 +0000, David Howells wrote:
+> Change the request initialisation function to return an error code so that
+> the network filesystem can return a failure (ENOMEM, for example).
 > 
-> > On Tue, Mar 08, 2022 at 01:35:03PM -0600, Eric W. Biederman wrote:
-> >> 
-> >> Kees,
-> >> 
-> >> Please pull the coredump-vma-snapshot-fix branch from the git tree:
-> >> 
-> >>   git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git coredump-vma-snapshot-fix
-> >> 
-> >>   HEAD: 390031c942116d4733310f0684beb8db19885fe6 coredump: Use the vma snapshot in fill_files_note
-> >> 
-> >> Matthew Wilcox has reported that a missing mmap_lock in file_files_note,
-> >> which could cause trouble.
-> >> 
-> >> Refactor the code and clean it up so that the vma snapshot makes
-> >> it to fill_files_note, and then use the vma snapshot in fill_files_note.
-> >> 
-> >> Eric W. Biederman (5):
-> >>       coredump: Move definition of struct coredump_params into coredump.h
-> >>       coredump: Snapshot the vmas in do_coredump
-> >>       coredump: Remove the WARN_ON in dump_vma_snapshot
-> >>       coredump/elf: Pass coredump_params into fill_note_info
-> >>       coredump: Use the vma snapshot in fill_files_note
-> >> 
-> >>  fs/binfmt_elf.c          | 66 ++++++++++++++++++++++--------------------------
-> >>  fs/binfmt_elf_fdpic.c    | 18 +++++--------
-> >>  fs/binfmt_flat.c         |  1 +
-> >>  fs/coredump.c            | 59 ++++++++++++++++++++++++++++---------------
-> >>  include/linux/binfmts.h  | 13 +---------
-> >>  include/linux/coredump.h | 20 ++++++++++++---
-> >>  6 files changed, 93 insertions(+), 84 deletions(-)
-> >> 
-> >> ---
-> >> 
-> >> Kees I realized I needed to rebase this on Jann Horn's commit
-> >> 84158b7f6a06 ("coredump: Also dump first pages of non-executable ELF
-> >> libraries").  Unfortunately before I got that done I got distracted and
-> >> these changes have been sitting in limbo for most of the development
-> >> cycle.  Since you are running a tree that is including changes like this
-> >> including Jann's can you please pull these changes into your tree.
-> >
-> > Sure! Can you make a signed tag for this pull?
+> This will also allow ceph to abort a ->readahead() op if the server refuses
+> to give it a cap allowing local caching from within the netfslib framework
+> (errors aren't passed back through ->readahead(), so returning, say,
+> -ENOBUFS will cause the op to be aborted).
 > 
-> Not yet.
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: linux-cachefs@redhat.com
+> ---
 > 
-> Hopefully I will get the time to set that up soon, but I am not at all
-> setup to do signed tags at this point.
+>  fs/9p/vfs_addr.c       |    3 ++-
+>  fs/afs/file.c          |    3 ++-
+>  fs/netfs/objects.c     |   41 ++++++++++++++++++++++++-----------------
+>  fs/netfs/read_helper.c |   20 ++++++++++++--------
+>  include/linux/netfs.h  |    2 +-
+>  5 files changed, 41 insertions(+), 28 deletions(-)
+> 
+> diff --git a/fs/9p/vfs_addr.c b/fs/9p/vfs_addr.c
+> index fdc1033a1546..91d3926c9559 100644
+> --- a/fs/9p/vfs_addr.c
+> +++ b/fs/9p/vfs_addr.c
+> @@ -56,12 +56,13 @@ static void v9fs_issue_read(struct netfs_io_subrequest *subreq)
+>   * @rreq: The read request
+>   * @file: The file being read from
+>   */
+> -static void v9fs_init_request(struct netfs_io_request *rreq, struct file *file)
+> +static int v9fs_init_request(struct netfs_io_request *rreq, struct file *file)
+>  {
+>  	struct p9_fid *fid = file->private_data;
+>  
+>  	refcount_inc(&fid->count);
+>  	rreq->netfs_priv = fid;
+> +	return 0;
+>  }
+>  
+>  /**
+> diff --git a/fs/afs/file.c b/fs/afs/file.c
+> index b19d635eed12..6469d7f98ef5 100644
+> --- a/fs/afs/file.c
+> +++ b/fs/afs/file.c
+> @@ -359,9 +359,10 @@ static int afs_symlink_readpage(struct file *file, struct page *page)
+>  	return ret;
+>  }
+>  
+> -static void afs_init_request(struct netfs_io_request *rreq, struct file *file)
+> +static int afs_init_request(struct netfs_io_request *rreq, struct file *file)
+>  {
+>  	rreq->netfs_priv = key_get(afs_file_key(file));
+> +	return 0;
+>  }
+>  
+>  static bool afs_is_cache_enabled(struct inode *inode)
+> diff --git a/fs/netfs/objects.c b/fs/netfs/objects.c
+> index 986d7a9d25dd..ae18827e156b 100644
+> --- a/fs/netfs/objects.c
+> +++ b/fs/netfs/objects.c
+> @@ -20,27 +20,34 @@ struct netfs_io_request *netfs_alloc_request(struct address_space *mapping,
+>  {
+>  	static atomic_t debug_ids;
+>  	struct netfs_io_request *rreq;
+> +	int ret;
+>  
+>  	rreq = kzalloc(sizeof(struct netfs_io_request), GFP_KERNEL);
+> -	if (rreq) {
+> -		rreq->start	= start;
+> -		rreq->len	= len;
+> -		rreq->origin	= origin;
+> -		rreq->netfs_ops	= ops;
+> -		rreq->netfs_priv = netfs_priv;
+> -		rreq->mapping	= mapping;
+> -		rreq->inode	= file_inode(file);
+> -		rreq->i_size	= i_size_read(rreq->inode);
+> -		rreq->debug_id	= atomic_inc_return(&debug_ids);
+> -		INIT_LIST_HEAD(&rreq->subrequests);
+> -		INIT_WORK(&rreq->work, netfs_rreq_work);
+> -		refcount_set(&rreq->ref, 1);
+> -		__set_bit(NETFS_RREQ_IN_PROGRESS, &rreq->flags);
+> -		if (ops->init_request)
+> -			ops->init_request(rreq, file);
+> -		netfs_stat(&netfs_n_rh_rreq);
+> +	if (!rreq)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	rreq->start	= start;
+> +	rreq->len	= len;
+> +	rreq->origin	= origin;
+> +	rreq->netfs_ops	= ops;
+> +	rreq->netfs_priv = netfs_priv;
+> +	rreq->mapping	= mapping;
+> +	rreq->inode	= file_inode(file);
+> +	rreq->i_size	= i_size_read(rreq->inode);
+> +	rreq->debug_id	= atomic_inc_return(&debug_ids);
+> +	INIT_LIST_HEAD(&rreq->subrequests);
+> +	INIT_WORK(&rreq->work, netfs_rreq_work);
+> +	refcount_set(&rreq->ref, 1);
+> +	__set_bit(NETFS_RREQ_IN_PROGRESS, &rreq->flags);
+> +	if (rreq->netfs_ops->init_request) {
+> +		ret = rreq->netfs_ops->init_request(rreq, file);
+> +		if (ret < 0) {
+> +			kfree(rreq);
+> +			return ERR_PTR(ret);
+> +		}
+>  	}
+>  
+> +	netfs_stat(&netfs_n_rh_rreq);
+>  	return rreq;
+>  }
+>  
+> diff --git a/fs/netfs/read_helper.c b/fs/netfs/read_helper.c
+> index dea085715286..b5176f4320f4 100644
+> --- a/fs/netfs/read_helper.c
+> +++ b/fs/netfs/read_helper.c
+> @@ -768,7 +768,7 @@ void netfs_readahead(struct readahead_control *ractl,
+>  				   readahead_pos(ractl),
+>  				   readahead_length(ractl),
+>  				   NETFS_READAHEAD);
+> -	if (!rreq)
+> +	if (IS_ERR(rreq))
+>  		goto cleanup;
+>  
+>  	if (ops->begin_cache_operation) {
+> @@ -842,11 +842,9 @@ int netfs_readpage(struct file *file,
+>  	rreq = netfs_alloc_request(folio->mapping, file, ops, netfs_priv,
+>  				   folio_file_pos(folio), folio_size(folio),
+>  				   NETFS_READPAGE);
+> -	if (!rreq) {
+> -		if (netfs_priv)
+> -			ops->cleanup(folio_file_mapping(folio), netfs_priv);
+> -		folio_unlock(folio);
+> -		return -ENOMEM;
+> +	if (IS_ERR(rreq)) {
+> +		ret = PTR_ERR(rreq);
+> +		goto alloc_error;
+>  	}
+>  
+>  	if (ops->begin_cache_operation) {
+> @@ -887,6 +885,11 @@ int netfs_readpage(struct file *file,
+>  out:
+>  	netfs_put_request(rreq, false, netfs_rreq_trace_put_hold);
+>  	return ret;
+> +alloc_error:
+> +	if (netfs_priv)
+> +		ops->cleanup(folio_file_mapping(folio), netfs_priv);
+> +	folio_unlock(folio);
+> +	return ret;
+>  }
+>  EXPORT_SYMBOL(netfs_readpage);
+>  
+> @@ -1007,12 +1010,13 @@ int netfs_write_begin(struct file *file, struct address_space *mapping,
+>  		goto have_folio_no_wait;
+>  	}
+>  
+> -	ret = -ENOMEM;
+>  	rreq = netfs_alloc_request(mapping, file, ops, netfs_priv,
+>  				   folio_file_pos(folio), folio_size(folio),
+>  				   NETFS_READ_FOR_WRITE);
+> -	if (!rreq)
+> +	if (IS_ERR(rreq)) {
+> +		ret = PTR_ERR(rreq);
+>  		goto error;
+> +	}
+>  	rreq->no_unlock_folio	= folio_index(folio);
+>  	__set_bit(NETFS_RREQ_NO_UNLOCK_FOLIO, &rreq->flags);
+>  	netfs_priv = NULL;
+> diff --git a/include/linux/netfs.h b/include/linux/netfs.h
+> index 7dc741d9b21b..4b99e38f73d9 100644
+> --- a/include/linux/netfs.h
+> +++ b/include/linux/netfs.h
+> @@ -193,7 +193,7 @@ struct netfs_io_request {
+>   */
+>  struct netfs_request_ops {
+>  	bool (*is_cache_enabled)(struct inode *inode);
+> -	void (*init_request)(struct netfs_io_request *rreq, struct file *file);
+> +	int (*init_request)(struct netfs_io_request *rreq, struct file *file);
+>  	int (*begin_cache_operation)(struct netfs_io_request *rreq);
+>  	void (*expand_readahead)(struct netfs_io_request *rreq);
+>  	bool (*clamp_length)(struct netfs_io_subrequest *subreq);
+> 
+> 
 
-Okay, cool. Since I'd already review these before, I've pulled and it
-should be in -next now.
-
-> [...]
-> Thanks.  That looks like a good place to start.
-
-I will try to clean up that work-flow and stuff it into my kernel-tools
-repo.
-
--- 
-Kees Cook
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
