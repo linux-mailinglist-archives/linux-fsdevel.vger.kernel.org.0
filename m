@@ -2,95 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AF8B14D395E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Mar 2022 20:01:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 81A454D398A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Mar 2022 20:08:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232102AbiCITB5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Mar 2022 14:01:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44666 "EHLO
+        id S237316AbiCITJ1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Mar 2022 14:09:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52594 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230261AbiCITB4 (ORCPT
+        with ESMTP id S237304AbiCITJW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Mar 2022 14:01:56 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F86C9E57D
-        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Mar 2022 11:00:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=xhr2CmmYZuf5RbJ/cVs+BdGvtRZIFC9nUre+0XVD3Oo=; b=Q5YVn6JZjJ5pUlfyDeMlQssP89
-        Z7PLSx34b/w/9o3rU/721oHkXK/xSDsI8MdtjABmL2q5hp/eed3SdNJ+n8ABA2/UxB6EhM9i4m2U5
-        hLYdq+/dTbrGgygOGDXZUa82HQ5FDUPgLOnP7Ll7UV7a8CKEryoKZYRSB0NRPAaladoqrIVVPttT1
-        egGUVMayVEvzJUErBsMEfCgxBtwUU0ZAN1vL2BKhVY3k5zuJQXeOjMRxYxLTOMS29QBN/E0g/mV+y
-        s3cdP1mi6Knn9GP1E9QK9JOzM6wr3DSMkgJm9IV20PpgvB3YIVRAuGUrDnrsrp7nEj4VXoJS1nAXv
-        wY5x4J8A==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nS1YH-00AAp0-Qp; Wed, 09 Mar 2022 19:00:49 +0000
-Date:   Wed, 9 Mar 2022 11:00:49 -0800
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Josef Bacik <josef@toxicpanda.com>
-Cc:     Theodore Ts'o <tytso@mit.edu>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Sasha Levin <sashal@kernel.org>,
-        lsf-pc <lsf-pc@lists.linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [LSF/MM TOPIC] FS, MM, and stable trees
-Message-ID: <Yij5YTD5+V2qpsSs@bombadil.infradead.org>
-References: <20190212170012.GF69686@sasha-vm>
- <CAOQ4uxjysufPUtwepPGNZDhoC_HdsnkHx7--kso_OXWPyPkw_A@mail.gmail.com>
- <YicrMCidylefTC3n@kroah.com>
- <YieG8rZkgnfwygyu@mit.edu>
- <Yij08f7ee4pDZ2AC@bombadil.infradead.org>
- <Yij2rqDn4TiN3kK9@localhost.localdomain>
+        Wed, 9 Mar 2022 14:09:22 -0500
+Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BF15131976
+        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Mar 2022 11:08:22 -0800 (PST)
+Received: by mail-lf1-x12b.google.com with SMTP id bt26so5510101lfb.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Mar 2022 11:08:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XXR1y9mWPI79aJN86zN1Xw4k1kIrgJW/qF3J3mr8s/o=;
+        b=f2HKjN7pnq1Yx0IZQSDYsv3QQKsG+2d6SyKPs8kRV0DJINmCv0zY8YggZgmbRh8s9G
+         5W1TTtOlOHELiVloxzikMZjMiZj3rLso6o3JgLPBQDjrwKLUkGQeH0vZpt7UqvmOkcfZ
+         TYZh0tYA7JeXfR6IRR0cTQnv83g6YC9SeVOuE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XXR1y9mWPI79aJN86zN1Xw4k1kIrgJW/qF3J3mr8s/o=;
+        b=N0q1tlm/cLt4abNk1u+/Cf7bs/pKxEe+KtIFPWpt5ukpxzqRTOmLPipsTWoxD9OAVD
+         yq8HnGb3wqpikpq1xmIEpQRKEIXP+LkXVLJEBwBQ8paQzTJ/snCKm8vVArVY5u/XlKRY
+         t1ETZRV7E22+AUPJb6pFM7td9JojGsNMG8hbcHsi5KLRwEq+fTcR5pkvK8eNzlTlIwuh
+         ZNRalByavJEj3cGbQ5DfouE8pYTPLn3NUjhZieKd1zr+t2qk9H+ozz/Mxk9MK/gWCOjp
+         x4bgPCMn1GWsH/T8iJHgdcLtP6pMoT9Y/jEq5i9EG8U0rVjC5qt+FRWMjRIQmjY6Ezv6
+         fwJg==
+X-Gm-Message-State: AOAM531QRj7i3W3eRxJDUDF6kpo4qOAI1SIr3V19DNP+3DT3i0DrWPAQ
+        OFCrO8VxXOjV+DULkJlW7RKK/mI9ONvTVIp/GuU=
+X-Google-Smtp-Source: ABdhPJxtyWf5NVpk+L4L68H6TjG3+zDYtSpPAvCIw/AXWCxhkRR1usNp777IscClrH3GtNZE2PnkIg==
+X-Received: by 2002:a05:6512:2255:b0:446:6f6a:fd74 with SMTP id i21-20020a056512225500b004466f6afd74mr712508lfu.246.1646852900694;
+        Wed, 09 Mar 2022 11:08:20 -0800 (PST)
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
+        by smtp.gmail.com with ESMTPSA id f7-20020ac24e47000000b00443591e0d63sm535491lfr.189.2022.03.09.11.08.19
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Mar 2022 11:08:19 -0800 (PST)
+Received: by mail-lf1-f53.google.com with SMTP id l20so5436076lfg.12
+        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Mar 2022 11:08:19 -0800 (PST)
+X-Received: by 2002:ac2:41cf:0:b0:448:1eaa:296c with SMTP id
+ d15-20020ac241cf000000b004481eaa296cmr679738lfi.52.1646852899217; Wed, 09 Mar
+ 2022 11:08:19 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Yij2rqDn4TiN3kK9@localhost.localdomain>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+References: <CAHc6FU5nP+nziNGG0JAF1FUx-GV7kKFvM7aZuU_XD2_1v4vnvg@mail.gmail.com>
+ <CAHk-=wgmCuuJdf96WiT6WXzQQTEeSK=cgBy24J4U9V2AvK4KdQ@mail.gmail.com>
+ <bcafacea-7e67-405c-a969-e5a58a3c727e@redhat.com> <CAHk-=wh1WJ-s9Gj15yFciq6TOd9OOsE7H=R7rRskdRP6npDktQ@mail.gmail.com>
+ <CAHk-=wjHsQywXgNe9D+MQCiMhpyB2Gs5M78CGCpTr9BSeP71bw@mail.gmail.com>
+ <CAHk-=wjs2Jf3LzqCPmfkXd=ULPyCrrGEF7rR6TYzz1RPF+qh3Q@mail.gmail.com>
+ <CAHk-=wi1jrn=sds1doASepf55-wiBEiQ_z6OatOojXj6Gtntyg@mail.gmail.com>
+ <CAHc6FU6L8c9UCJF_qcqY=USK_CqyKnpDSJvrAGput=62h0djDw@mail.gmail.com>
+ <CAHk-=whaoxuCPg4foD_4VBVr+LVgmW7qScjYFRppvHqnni0EMA@mail.gmail.com> <20220309184238.1583093-1-agruenba@redhat.com>
+In-Reply-To: <20220309184238.1583093-1-agruenba@redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 9 Mar 2022 11:08:02 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgBOFg3brJbo-gcaPM+fxjzHwC4efhcM8tCKK3YUhYUug@mail.gmail.com>
+Message-ID: <CAHk-=wgBOFg3brJbo-gcaPM+fxjzHwC4efhcM8tCKK3YUhYUug@mail.gmail.com>
+Subject: Re: Buffered I/O broken on s390x with page faults disabled (gfs2)
+To:     Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 09, 2022 at 01:49:18PM -0500, Josef Bacik wrote:
-> On Wed, Mar 09, 2022 at 10:41:53AM -0800, Luis Chamberlain wrote:
-> > On Tue, Mar 08, 2022 at 11:40:18AM -0500, Theodore Ts'o wrote:
-> > > One of my team members has been working with Darrick to set up a set
-> > > of xfs configs[1] recommended by Darrick, and she's stood up an
-> > > automated test spinner using gce-xfstests which can watch a git branch
-> > > and automatically kick off a set of tests whenever it is updated.
-> > 
-> > I think its important to note, as we would all know, that contrary to
-> > most other subsystems, in so far as blktests and fstests is concerned,
-> > simply passing a test once does not mean there is no issue given that
-> > some test can fail with a failure rate of 1/1,000 for instance.
-> > 
-> 
-> FWIW we (the btrfs team) have been running nightly runs of fstests against our
-> devel branch for over a year and tracking the results.
+On Wed, Mar 9, 2022 at 10:42 AM Andreas Gruenbacher <agruenba@redhat.com> wrote:
+>
+> From what I took from the previous discussion, probing at a sub-page
+> granularity won't be necessary for bytewise copying: when the address
+> we're trying to access is poisoned, fault_in_*() will fail; when we get
+> a short result, that will take us to the poisoned address in the next
+> iteration.
 
-That's wonderful, what is your steady state goal? And do you have your
-configurations used public and also your baseline somehwere? I think
-this later aspect could be very useful to everyone.
+Sadly, that isn't actually the case.
 
-Yes, everyone's test setup can be different, but this is why I went with
-a loopback/truncated file setup, it does find more issues and so far
-these have all been real.
+It's not the case for GUP (that page aligns things), and it's not the
+case for fault_in_writeable() itself (that also page aligns things).
 
-It kind of begs the question if we should adopt something like kconfig
-on fstests to help enable a few test configs we can agree on. Thoughts?
+But more importantly, it's not actually the case for the *users*
+either. Not all of the users are byte-stream oriented, and I think it
+was btrfs that had a case of "copy a struct at the beginning of the
+stream". And if that copy failed, it wouldn't advance by as many bytes
+as it got - it would require that struct to be all fetched, and start
+from the beginning.
 
-I've been experimenting a lot with this on kdevops. So the Kconfig logic
-could easily just move to fstests.
+So we do need to probe at least a minimum set of bytes. Probably a
+fairly small minimum, but still...
 
-  Luis
+
+> With a large enough buffer, a simple malloc() will return unmapped
+> pages, and reading into such a buffer will result in fault-in.  So page
+> faults during read() are actually pretty normal, and it's not the user's
+> fault.
+
+Agreed. But that wasn't the case here:
+
+> In my test case, the buffer was pre-initialized with memset() to avoid
+> those kinds of page faults, which meant that the page faults in
+> gfs2_file_read_iter() only started to happen when we were out of memory.
+> But that's not the common case.
+
+Exactly. I do not think this is a case that we should - or need to -
+optimize for.
+
+And doing too much pre-faulting is actually counter-productive.
+
+> * Get rid of max_size: it really makes no sense to second-guess what the
+>   caller needs.
+
+It's not about "what caller needs". It's literally about latency
+issues. If you can force a busy loop in kernel space by having one
+unmapped page and then do a 2GB read(), that's a *PROBLEM*.
+
+Now, we can try this thing, because I think we end up having other
+size limitations in the IO subsystem that means that the filesystem
+won't actually do that, but the moment I hear somebody talk about
+latencies, that max_size goes back.
+
+                Linus
