@@ -2,124 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 78A164D5178
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Mar 2022 20:43:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 514414D52AB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Mar 2022 20:56:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343652AbiCJTfs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Mar 2022 14:35:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48886 "EHLO
+        id S244664AbiCJT53 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Mar 2022 14:57:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343639AbiCJTfs (ORCPT
+        with ESMTP id S244226AbiCJT52 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Mar 2022 14:35:48 -0500
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2668D14D707;
-        Thu, 10 Mar 2022 11:34:47 -0800 (PST)
-Received: by mail-pg1-f181.google.com with SMTP id e6so5569870pgn.2;
-        Thu, 10 Mar 2022 11:34:47 -0800 (PST)
+        Thu, 10 Mar 2022 14:57:28 -0500
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1783213FACD
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Mar 2022 11:56:27 -0800 (PST)
+Received: by mail-lj1-x232.google.com with SMTP id r22so9291104ljd.4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Mar 2022 11:56:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=K2Wz219nvat7o4Hv5So6QIXYKsJ4ceesV+enxd1hA8M=;
+        b=Z32HTViBy9oMzZHj1RUGbdP8X1j5ggnctR1fE2AX//T4bqyz5C4qMQRw7jXJXt/3+O
+         YsLMvkPUjdgSoAQ1O0J2kqVSv2TByYCw1aWHMwibpYpk+kWAzkfpxm5tr+PGYp4DByTw
+         9Z5NMp67VygZeUC+jkmx6ezO880rKnd5Dhjjg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=o7PndJI501rkr9gmwF/udE5TGyFYFXZE5Syas0Qrj84=;
-        b=aN1NMLHohp58VImx7oXMDCMRHaQJ3v/QVd38oImX9CWIaPWZ42m60UHankid6ECd0Z
-         9itvsAJDgbMf7H2l6bs7RB+dRaULlzLmiRlk9t18WZQwDJBtXjxF+jcT1wCIETYEtfuS
-         mYk5vS7/KYnMblxNdbuNYAAE4ppi+N1vUyoAI9l5WMVgZxBj0G/0inRpubOa1d8OVCW3
-         J6GnakRcv07vzTWNtypBSTdfLflth9BkLD/BCxd49Mzer3jXixqwEZ3CjXXsjhLQ3Gxq
-         20qcnsV9/XIw3T4SYgnjf2/YGzjA1HtShkjsKXbPr7jOjZOW94qFXYFrjVYEPr4Ii93W
-         yOmA==
-X-Gm-Message-State: AOAM532uA3QZDEUMfTqPrcA+xNpD73CTV0K6FDkjeyx3429ODyTzJAfH
-        MS/myExyZKrzMje8KYGncGOiuzN9q6A=
-X-Google-Smtp-Source: ABdhPJxgm6AqE8kHcxQEoxRzzLFn66z5SVUx1Kz9Qkq3sTGTHT/Hr8ElW/IypR19OtkCCKG08u/bxw==
-X-Received: by 2002:a63:c011:0:b0:378:74a6:9c31 with SMTP id h17-20020a63c011000000b0037874a69c31mr5348347pgg.585.1646940886455;
-        Thu, 10 Mar 2022 11:34:46 -0800 (PST)
-Received: from ?IPV6:2620:0:1000:2514:57c0:65bf:1736:4f17? ([2620:0:1000:2514:57c0:65bf:1736:4f17])
-        by smtp.gmail.com with ESMTPSA id f194-20020a6238cb000000b004f6ce898c61sm7669112pfa.77.2022.03.10.11.34.44
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=K2Wz219nvat7o4Hv5So6QIXYKsJ4ceesV+enxd1hA8M=;
+        b=0G5c9GJZBqh+rSBJIfprYRrXURxn+1GflLrtNxOhN7HjaUd2MvBgBM/17k2KlFaTh4
+         E1TDKKWvxjFWxDPuhN5gr+k1MzLE/tVEzUZDWKWdoq7iet9QpifgobgMLTpR9Vg2nFiz
+         1XmwjWNRx/KcVhDxIoEEkMhO8zZAN/H6WGTNMpjqVVJlgL1lcjJ7SVKfhm+u9TMbNQjk
+         RuPvR0zijNSB7AK5GiExCcVm5UfY4lQLNgyN6Is6Sd3ICBNtQSXSAQLrNoKFwXSJ6+85
+         LsFA1BYABcfNslMdR2dXqUZowKUleH/w2Bvm34huRM2SnXdkau+FwPyKfzac18QWjEV/
+         SnHA==
+X-Gm-Message-State: AOAM5320x6NfzH1Y3C5EiZKlfLe+ZoBc2o71EGyff/Td4wFc1FKwk9xD
+        u1IYU5R+Mg5mKGLWKCP2yEgT6ezcwztEP7dZK2w=
+X-Google-Smtp-Source: ABdhPJyTqRBIJLwxZprhUjpChzQi/unn1gECZ30k8g1RaxCa+8/640DhkF1nHa+sNTmK/37NWKscsw==
+X-Received: by 2002:a2e:a550:0:b0:247:e2b2:a726 with SMTP id e16-20020a2ea550000000b00247e2b2a726mr4099203ljn.111.1646942185255;
+        Thu, 10 Mar 2022 11:56:25 -0800 (PST)
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
+        by smtp.gmail.com with ESMTPSA id 8-20020a2e1548000000b002463639d0f2sm1208503ljv.68.2022.03.10.11.56.21
+        for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Mar 2022 11:34:46 -0800 (PST)
-Message-ID: <c27a5ec3-f683-d2a7-d5e7-fd54d2baa278@acm.org>
-Date:   Thu, 10 Mar 2022 11:34:44 -0800
+        Thu, 10 Mar 2022 11:56:22 -0800 (PST)
+Received: by mail-lf1-f54.google.com with SMTP id g17so11376257lfh.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Mar 2022 11:56:21 -0800 (PST)
+X-Received: by 2002:a05:6512:e8a:b0:443:7b8c:579a with SMTP id
+ bi10-20020a0565120e8a00b004437b8c579amr3900843lfb.687.1646942181633; Thu, 10
+ Mar 2022 11:56:21 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.1
-Subject: Re: [EXT] Re: [PATCH 2/2] block: remove the per-bio/request write
- hint.
-Content-Language: en-US
-To:     Jens Axboe <axboe@kernel.dk>,
-        "Luca Porzio (lporzio)" <lporzio@micron.com>,
-        Manjong Lee <mj0123.lee@samsung.com>,
-        "david@fromorbit.com" <david@fromorbit.com>
-Cc:     "hch@lst.de" <hch@lst.de>, "kbusch@kernel.org" <kbusch@kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>,
-        "sagi@grimberg.me" <sagi@grimberg.me>,
-        "song@kernel.org" <song@kernel.org>,
-        "seunghwan.hyun@samsung.com" <seunghwan.hyun@samsung.com>,
-        "sookwan7.kim@samsung.com" <sookwan7.kim@samsung.com>,
-        "nanich.lee@samsung.com" <nanich.lee@samsung.com>,
-        "woosung2.lee@samsung.com" <woosung2.lee@samsung.com>,
-        "yt0928.kim@samsung.com" <yt0928.kim@samsung.com>,
-        "junho89.kim@samsung.com" <junho89.kim@samsung.com>,
-        "jisoo2146.oh@samsung.com" <jisoo2146.oh@samsung.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20220306231727.GP3927073@dread.disaster.area>
- <CGME20220309042324epcas1p111312e20f4429dc3a17172458284a923@epcas1p1.samsung.com>
- <20220309133119.6915-1-mj0123.lee@samsung.com>
- <CO3PR08MB797524ACBF04B861D48AF612DC0B9@CO3PR08MB7975.namprd08.prod.outlook.com>
- <e98948ae-1709-32ef-e1e4-063be38609b1@kernel.dk>
- <CO3PR08MB797562AAE72BC201EB951C6CDC0B9@CO3PR08MB7975.namprd08.prod.outlook.com>
- <d477c7bf-f3a7-ccca-5472-f9cbb05b83c1@kernel.dk>
-From:   Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <d477c7bf-f3a7-ccca-5472-f9cbb05b83c1@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
+References: <CAHc6FU5nP+nziNGG0JAF1FUx-GV7kKFvM7aZuU_XD2_1v4vnvg@mail.gmail.com>
+ <CAHk-=wgmCuuJdf96WiT6WXzQQTEeSK=cgBy24J4U9V2AvK4KdQ@mail.gmail.com>
+ <bcafacea-7e67-405c-a969-e5a58a3c727e@redhat.com> <CAHk-=wh1WJ-s9Gj15yFciq6TOd9OOsE7H=R7rRskdRP6npDktQ@mail.gmail.com>
+ <CAHk-=wjHsQywXgNe9D+MQCiMhpyB2Gs5M78CGCpTr9BSeP71bw@mail.gmail.com>
+ <CAHk-=wjs2Jf3LzqCPmfkXd=ULPyCrrGEF7rR6TYzz1RPF+qh3Q@mail.gmail.com>
+ <02b20949-82aa-665a-71ea-5a67c1766785@redhat.com> <CAHk-=wiX1PspWAJ-4Jqk7GHig4B4pJFzPXU7eH2AYtN+iNVAeQ@mail.gmail.com>
+ <CAHc6FU6+y2ZGg3QnW9NLsj43vvDpAFu-pVBK-xTPfsDcKa39Mg@mail.gmail.com> <CAHk-=wiXEQ9+NedP6LRbAXGTHrT4MZSPRvbJAFmgrDh75GpE2Q@mail.gmail.com>
+In-Reply-To: <CAHk-=wiXEQ9+NedP6LRbAXGTHrT4MZSPRvbJAFmgrDh75GpE2Q@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 10 Mar 2022 11:56:04 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wi0hBrR3QqYejZ-aJmfAaPWYUEFVaET6UgfCJOky9qOgg@mail.gmail.com>
+Message-ID: <CAHk-=wi0hBrR3QqYejZ-aJmfAaPWYUEFVaET6UgfCJOky9qOgg@mail.gmail.com>
+Subject: Re: Buffered I/O broken on s390x with page faults disabled (gfs2)
+To:     Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     David Hildenbrand <david@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 3/10/22 11:10, Jens Axboe wrote:
-> On 3/10/22 11:50 AM, Luca Porzio (lporzio) wrote:
->> Micron Confidential
->>
->>>
->>> You do both realize that this is just the file specific hint? Inode based hints
->>> will still work fine for UFS.
->>>
->>> --
->>> Jens Axboe
->>
->> Jens,
->>
->> Thanks for this reply.
->>
->> This whole patch series removes support for per-bio write_hint.
->> Without bio write_hint, F2FS won't be able to cascade Hot/Warm/Cold
->> information to SCSI / UFS driver.
->>
->> This is my current understanding. I might be wrong but I don't think we
->> Are concerned with inode hint (as well as file hints).
-> 
-> But ufs/scsi doesn't use it in mainline, as far as I can tell. So how
-> does that work?
+It's out as commit fe673d3f5bf1 ("mm: gup: make
+fault_in_safe_writeable() use fixup_user_fault()") now.
 
-Hi Luca,
-
-I'm not aware of any Android branch on which the UFS driver or the SCSI 
-core uses bi_write_hint or the struct request write_hint member. Did I 
-perhaps overlook something?
-
-Thanks,
-
-Bart.
-
-
+                 Linus
