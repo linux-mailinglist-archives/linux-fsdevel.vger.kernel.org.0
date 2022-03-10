@@ -2,92 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DE1B4D3D88
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Mar 2022 00:26:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 900934D3DD3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Mar 2022 01:02:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238103AbiCIX1S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Mar 2022 18:27:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41872 "EHLO
+        id S238940AbiCJADG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Mar 2022 19:03:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37846 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235851AbiCIX1R (ORCPT
+        with ESMTP id S238892AbiCJACy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Mar 2022 18:27:17 -0500
-Received: from ms.lwn.net (ms.lwn.net [IPv6:2600:3c01:e000:3a1::42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1177A122F79
-        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Mar 2022 15:26:18 -0800 (PST)
-Received: from localhost (unknown [IPv6:2601:281:8300:104d::5f6])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id E745C2CD;
-        Wed,  9 Mar 2022 23:26:16 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net E745C2CD
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-        t=1646868377; bh=Wrwgt7HXDmvhrJfZQQLH8FOF8me4AXFD7djPQdhzA+Q=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=XS1pBDUp6cGTSINeE/bJ63FCmGnbpEsE8qTlo3N/SNF5OQSQqTXyC2HCHTG34UWdX
-         JkIscYV6hN/F3emDII1XHgmGMnayvf7XhcQLRFx4dCEVNfEqPgCwYwiejmUMWc6t7F
-         PPcdk4WIB9WLSR7S02WU/62v3YhxBanVT3sxyuguULa0T9zXRwd/C6allnDuul/Tke
-         Tcc2V31aNqdgJ2Nsv3GRCSOUetmAUHVJYf5vqNuwop0POOFiP17G5Uyv6DQO0TwZQK
-         MNll/Z8anQvuxexOHmhqzstk8gvmAeV4uWPH1wgyMlD+9GwpVWqAEMJxZGTULNyBBv
-         TnfJ8cacrDZcQ==
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     YI <afctgo@gmail.com>, trivial@kernel.org
-Cc:     YI <afctgo@gmail.com>, Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Anton Mitterer <mail@christoph.anton.mitterer.name>,
-        Kalesh Singh <kaleshsingh@google.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Colin Cross <ccross@google.com>,
-        Mike Rapoport <rppt@kernel.org>, Peter Xu <peterx@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH] docs: proc.rst: fix wrong time unit
-In-Reply-To: <20220302161122.3984304-1-uuuuuu@protonmail.com>
-References: <20220302161122.3984304-1-uuuuuu@protonmail.com>
-Date:   Wed, 09 Mar 2022 16:26:16 -0700
-Message-ID: <87r17a7lnr.fsf@meer.lwn.net>
+        Wed, 9 Mar 2022 19:02:54 -0500
+Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7510C122F72
+        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Mar 2022 16:01:55 -0800 (PST)
+Received: by mail-pg1-x530.google.com with SMTP id c11so3269451pgu.11
+        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Mar 2022 16:01:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PUB8geEpJ+XtoTHFW5CyzSR89RxzbZocHBgXZDsT0q4=;
+        b=otdsgu05707Lk9KMy9Xl5aGoGpb6RqPU5UPULqEDsN/2l0x6ZW4fwG3smZmmXYgccr
+         uSOZID4KxBtbRYlE+5DzLmbTAZ+0UWldA4oJxDpKPrEnop8Fo9ENjzluPuJpHAt/f0Ph
+         JWHz1tJmUUKYOA51azuWN3u/HBuHP6xKdAEKkTinas859+sluZ5V6iIwToVN0w545JZ0
+         3MztadxrOxyAdk25++05k8H4fZKxTQ71SQh5zMwp9yN8iMhkMaVGQTUzYKS4c55c7s98
+         4/Uv6gYvdgNlFaNfigcT3+pjUGlyDppfCnmg8Tgo1wa+NEPrmpAzqwTGnItaDus8dWJS
+         vbZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PUB8geEpJ+XtoTHFW5CyzSR89RxzbZocHBgXZDsT0q4=;
+        b=KE94u4wmTkgQEH/O8yfuWzViiQtGzNEuVFT/bd9ixRA7V+iz982xABdV/mIof3qD2I
+         QDGnM6BlC7hC+ILNUSwA0CmA/8wWgY9zctQM3+4wo/IewclJ5l6J4sz4fyVbR2AQ/+dq
+         rTxRTbC/aZZ80RiLXBB1O49sbU3VXmtILoEE8VNsMn4zCqpMdJx6XzMH4SobMCJE+KU5
+         //lsDgUi8iynPfkOXUQjKbf3kvRQDPNJQmQYqAQ5rdT2QUS35FZVtPk1m1jfFlILzR5E
+         evz4aFjG/yfrBFY5vuYGMByjV7lXfUYtwfsWWQqANk74xOspo53k3D/lBroLpEmXk18k
+         NdDg==
+X-Gm-Message-State: AOAM532wk/zihIE8u1OJviT4yGsHl/dYz8bG61SS1wnXrQ3UU/mufWT3
+        OQMgR6SUL6j1XZfkODrk0yOm7Hg6rE45GrASuSRcp91alkA=
+X-Google-Smtp-Source: ABdhPJxMwIgsbbMlOTDNiL7M3O6I5DfVtqlrxkmc58HdiEKBYmj4+VrHYnD7h5nPhaUJdRIDGvR7mrBpMKdCiPBYlTI=
+X-Received: by 2002:a05:6a02:283:b0:342:703e:1434 with SMTP id
+ bk3-20020a056a02028300b00342703e1434mr1821136pgb.74.1646870515046; Wed, 09
+ Mar 2022 16:01:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+References: <20220302082718.32268-1-songmuchun@bytedance.com> <20220302082718.32268-2-songmuchun@bytedance.com>
+In-Reply-To: <20220302082718.32268-2-songmuchun@bytedance.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 9 Mar 2022 16:01:44 -0800
+Message-ID: <CAPcyv4j0cMaknAcMSHJ0U0QP4E2btir2b+1g=Rw+o2CHVQrH=A@mail.gmail.com>
+Subject: Re: [PATCH v4 1/6] mm: rmap: fix cache flush on THP pages
+To:     Muchun Song <songmuchun@bytedance.com>
+Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alistair Popple <apopple@nvidia.com>,
+        Yang Shi <shy828301@gmail.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Hugh Dickins <hughd@google.com>, xiyuyang19@fudan.edu.cn,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ross Zwisler <zwisler@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux NVDIMM <nvdimm@lists.linux.dev>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>, duanxiongchun@bytedance.com,
+        Muchun Song <smuchun@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-YI <afctgo@gmail.com> writes:
-
-> From: YI <afctgo@gmail.com>
+On Wed, Mar 2, 2022 at 12:29 AM Muchun Song <songmuchun@bytedance.com> wrote:
 >
-> Dear Trivial Patch Monkey, 
-
-The trivial patch monkey has gone into retirement, I'm as close as
-you're going to get.
-
-> This commit fixes a small documentaion problem reported in
-> https://bugzilla.kernel.org/show_bug.cgi?id=194593.
+> The flush_cache_page() only remove a PAGE_SIZE sized range from the cache.
+> However, it does not cover the full pages in a THP except a head page.
+> Replace it with flush_cache_range() to fix this issue. At least, no
+> problems were found due to this. Maybe because the architectures that
+> have virtual indexed caches is less.
 >
-> Some fields in the file /proc/$pid/stat represent time.
-> Their units are clock_t, not jiffies as stated in the documentation.
-> This commit fixes https://bugzilla.kernel.org/show_bug.cgi?id=194593.
+> Fixes: f27176cfc363 ("mm: convert page_mkclean_one() to use page_vma_mapped_walk()")
+> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+> Reviewed-by: Yang Shi <shy828301@gmail.com>
 
-We certainly don't need to give the bugzilla URL twice; I'm not
-convinced it's needed even once.  The changelog should just say what the
-patch does, please.
-
-Also, "clock_t" isn't really a unit type; what are the actual units of
-the field?
-
-> Reported-by: hujunjie
-
-This isn't a valid reported-by line
-
-> Signed-off-by: YI <afctgo@gmail.com>
-
-...and the signoff need to have your full name, please.
-
-Thanks,
-
-jon
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
