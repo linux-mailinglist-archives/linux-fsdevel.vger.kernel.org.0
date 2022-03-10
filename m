@@ -2,56 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 900934D3DD3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Mar 2022 01:02:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F0CF4D3DDB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Mar 2022 01:06:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238940AbiCJADG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Mar 2022 19:03:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37846 "EHLO
+        id S236627AbiCJAHU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Mar 2022 19:07:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238892AbiCJACy (ORCPT
+        with ESMTP id S238897AbiCJAHQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Mar 2022 19:02:54 -0500
-Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7510C122F72
-        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Mar 2022 16:01:55 -0800 (PST)
-Received: by mail-pg1-x530.google.com with SMTP id c11so3269451pgu.11
-        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Mar 2022 16:01:55 -0800 (PST)
+        Wed, 9 Mar 2022 19:07:16 -0500
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11A58F9552
+        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Mar 2022 16:06:17 -0800 (PST)
+Received: by mail-pl1-x630.google.com with SMTP id p17so3366118plo.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Mar 2022 16:06:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=intel-com.20210112.gappssmtp.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=PUB8geEpJ+XtoTHFW5CyzSR89RxzbZocHBgXZDsT0q4=;
-        b=otdsgu05707Lk9KMy9Xl5aGoGpb6RqPU5UPULqEDsN/2l0x6ZW4fwG3smZmmXYgccr
-         uSOZID4KxBtbRYlE+5DzLmbTAZ+0UWldA4oJxDpKPrEnop8Fo9ENjzluPuJpHAt/f0Ph
-         JWHz1tJmUUKYOA51azuWN3u/HBuHP6xKdAEKkTinas859+sluZ5V6iIwToVN0w545JZ0
-         3MztadxrOxyAdk25++05k8H4fZKxTQ71SQh5zMwp9yN8iMhkMaVGQTUzYKS4c55c7s98
-         4/Uv6gYvdgNlFaNfigcT3+pjUGlyDppfCnmg8Tgo1wa+NEPrmpAzqwTGnItaDus8dWJS
-         vbZQ==
+        bh=IQJaIhmi/QzFmALiltJXNjf6ckrS2EgY1Uh0aPn7MYs=;
+        b=gHn6uRZhcwc/1/iluj+hvVI/tjLthpe0Akd+MQKuvfdxMcu9PCDly6aCrg472eEh3m
+         TjX0NOdopbKbRdKaTnbzERgZdM/mueEx2YG8+M+5257GEhp393PupeQgUlkt7oFEvDNE
+         3oK0YaD8xaVKZQHhdXj8we5uTjgvoB98hHYuntfbhhJEs/08fC7MpT6rEISUbYY/ic66
+         WSvO3h2xy30LL3YTP0oNjR8eybS0lFiAfsfYGA4HOD3rEng97uK2wZ6VlssMAfKNTXSz
+         EKoRjaRuHELjmnQMxekNcgSoQf+ZMttBSndyI4apgf7t9m0BmZJQgb+1OpttRu0tnJ2D
+         9JGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=PUB8geEpJ+XtoTHFW5CyzSR89RxzbZocHBgXZDsT0q4=;
-        b=KE94u4wmTkgQEH/O8yfuWzViiQtGzNEuVFT/bd9ixRA7V+iz982xABdV/mIof3qD2I
-         QDGnM6BlC7hC+ILNUSwA0CmA/8wWgY9zctQM3+4wo/IewclJ5l6J4sz4fyVbR2AQ/+dq
-         rTxRTbC/aZZ80RiLXBB1O49sbU3VXmtILoEE8VNsMn4zCqpMdJx6XzMH4SobMCJE+KU5
-         //lsDgUi8iynPfkOXUQjKbf3kvRQDPNJQmQYqAQ5rdT2QUS35FZVtPk1m1jfFlILzR5E
-         evz4aFjG/yfrBFY5vuYGMByjV7lXfUYtwfsWWQqANk74xOspo53k3D/lBroLpEmXk18k
-         NdDg==
-X-Gm-Message-State: AOAM532wk/zihIE8u1OJviT4yGsHl/dYz8bG61SS1wnXrQ3UU/mufWT3
-        OQMgR6SUL6j1XZfkODrk0yOm7Hg6rE45GrASuSRcp91alkA=
-X-Google-Smtp-Source: ABdhPJxMwIgsbbMlOTDNiL7M3O6I5DfVtqlrxkmc58HdiEKBYmj4+VrHYnD7h5nPhaUJdRIDGvR7mrBpMKdCiPBYlTI=
-X-Received: by 2002:a05:6a02:283:b0:342:703e:1434 with SMTP id
- bk3-20020a056a02028300b00342703e1434mr1821136pgb.74.1646870515046; Wed, 09
- Mar 2022 16:01:55 -0800 (PST)
+        bh=IQJaIhmi/QzFmALiltJXNjf6ckrS2EgY1Uh0aPn7MYs=;
+        b=0D/ctEMiZ7w4yGLsYJrzFHo66VDxgrwfDsYLBzGyCYeuU6DzGWFcd7frHa9/7Pr4Ay
+         CbrEoD3pP8+eLDimRLHcqjFh8xMoBmr8lcvS9+7EBhqmR3BwiIoHReAGOhiYg0roRI7C
+         juvkgyMbj4LEAbaCQJdw4xafesXyvZWYRuoli7AicmHZkLm/kQD2U+I3rsdQSugwJPjB
+         3tNrGhNB2b96t2jdfNAad1cymwyBZApWqU0Fqq7jroBVZNXoh/g7us9qeEsJ+FjDplqG
+         E38Dv7lWhOe0NPKbuUaK0QRXTnj9ICPj0WB3kiGdAHmUxBsHcW+RVHpdkZJaJ9Beho1H
+         fEyQ==
+X-Gm-Message-State: AOAM530WtMEYYio/QXeHoqzci8DClPwhxj2Sp3G8TvJcyyzreiD7HTH3
+        wkE1zyAGS1UgS8eHUbEVEn3rxcVFjy/C0YD6FSJiTQ==
+X-Google-Smtp-Source: ABdhPJwb9kJQ7QI7FmWPhygsP7CpEdP0qVgYwpDcpFWyZG/Qf8Jpi7IliqWagwPdOiBZnW2yD9cno3XpwTf/bXrgthc=
+X-Received: by 2002:a17:902:7296:b0:14b:4bc6:e81 with SMTP id
+ d22-20020a170902729600b0014b4bc60e81mr2305234pll.132.1646870776595; Wed, 09
+ Mar 2022 16:06:16 -0800 (PST)
 MIME-Version: 1.0
-References: <20220302082718.32268-1-songmuchun@bytedance.com> <20220302082718.32268-2-songmuchun@bytedance.com>
-In-Reply-To: <20220302082718.32268-2-songmuchun@bytedance.com>
+References: <20220302082718.32268-1-songmuchun@bytedance.com> <20220302082718.32268-3-songmuchun@bytedance.com>
+In-Reply-To: <20220302082718.32268-3-songmuchun@bytedance.com>
 From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 9 Mar 2022 16:01:44 -0800
-Message-ID: <CAPcyv4j0cMaknAcMSHJ0U0QP4E2btir2b+1g=Rw+o2CHVQrH=A@mail.gmail.com>
-Subject: Re: [PATCH v4 1/6] mm: rmap: fix cache flush on THP pages
+Date:   Wed, 9 Mar 2022 16:06:05 -0800
+Message-ID: <CAPcyv4j7rn8OzWKydcCJNXdrhXm6h6Vq5n7uLzP5BSMJ_qSZgg@mail.gmail.com>
+Subject: Re: [PATCH v4 2/6] dax: fix cache flush on PMD-mapped pages
 To:     Muchun Song <songmuchun@bytedance.com>
 Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
         Al Viro <viro@zeniv.linux.org.uk>,
@@ -71,7 +71,8 @@ Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
 Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -82,12 +83,16 @@ On Wed, Mar 2, 2022 at 12:29 AM Muchun Song <songmuchun@bytedance.com> wrote:
 >
 > The flush_cache_page() only remove a PAGE_SIZE sized range from the cache.
 > However, it does not cover the full pages in a THP except a head page.
-> Replace it with flush_cache_range() to fix this issue. At least, no
-> problems were found due to this. Maybe because the architectures that
-> have virtual indexed caches is less.
->
-> Fixes: f27176cfc363 ("mm: convert page_mkclean_one() to use page_vma_mapped_walk()")
-> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-> Reviewed-by: Yang Shi <shy828301@gmail.com>
+> Replace it with flush_cache_range() to fix this issue.
+
+This needs to clarify that this is just a documentation issue with the
+respect to properly documenting the expected usage of cache flushing
+before modifying the pmd. However, in practice this is not a problem
+due to the fact that DAX is not available on architectures with
+virtually indexed caches per:
+
+d92576f1167c dax: does not work correctly with virtual aliasing caches
+
+Otherwise, you can add:
 
 Reviewed-by: Dan Williams <dan.j.williams@intel.com>
