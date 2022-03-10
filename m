@@ -2,89 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C74074D5001
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Mar 2022 18:13:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E00A4D5099
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Mar 2022 18:33:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243850AbiCJROP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Mar 2022 12:14:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43886 "EHLO
+        id S244031AbiCJRcd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Mar 2022 12:32:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230394AbiCJROP (ORCPT
+        with ESMTP id S233084AbiCJRca (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Mar 2022 12:14:15 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A393717F698
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Mar 2022 09:13:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1646932392;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=K0g7kEPpgKBPzdK7oqMjhrzrQPzP1oj31vajQi/QH0g=;
-        b=dlpHnE/4VqpQfLD0xbXP+TWM67zGWfxPibSvjDKrAdzm3wDf2VrKPTmemLnIy74ktXaFYC
-        dqGAkVszIY7L4ZwH4lxTdH1l3KNSkUqrkWH6D4cIL1/5xjzFtodmQ5gUX+JgY3cImA1ZwW
-        IySKhkmk+APR/MKyZdsTXQF1bg22frI=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-564-psYdEe7dM0GsrvCHErOgHw-1; Thu, 10 Mar 2022 12:13:11 -0500
-X-MC-Unique: psYdEe7dM0GsrvCHErOgHw-1
-Received: by mail-wr1-f71.google.com with SMTP id a5-20020adfdd05000000b001f023fe32ffso1902340wrm.18
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Mar 2022 09:13:11 -0800 (PST)
+        Thu, 10 Mar 2022 12:32:30 -0500
+Received: from mail-qt1-x82e.google.com (mail-qt1-x82e.google.com [IPv6:2607:f8b0:4864:20::82e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01C74F5436
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Mar 2022 09:31:29 -0800 (PST)
+Received: by mail-qt1-x82e.google.com with SMTP id bt3so5265602qtb.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Mar 2022 09:31:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20210112.gappssmtp.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=i7J8e206Bwozad+xJPF02nCEZhsFp5sZ0xZvk63VV68=;
+        b=UkGo0vpr4SaQ7VeIYfKdoCqVYOfqyZ3ua0gxQaiJfTvuIAdcEhC7UzaOYUa+8sTpBI
+         wYGfW0Oyu3FfBBXPWw6SmL7k9/Ix6fjwuGHvkSm5lrOgl0ENo1rP0RrjvEBxzxAp03Gh
+         zQ/3YctkGkQXC22sPfWYmqkvHsQeraa8bVSTnn2NJXnxYA2o5wMomQMsd54TRQk6BinA
+         66SHzCNzlLrkOoGYPJbmY/C9U3RloqxiyhcEza5IJT17waUWq6Pr7CkjrynsZ5QIxT6A
+         Ty6Wst/a7i05d2X56zLTgO7XY9bwMpKsT3BIpaI3jYkRcGuzXkvWvLMzj9Mop7ypQ0PI
+         yD4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent
-         :content-language:to:cc:references:from:organization:subject
-         :in-reply-to:content-transfer-encoding;
-        bh=K0g7kEPpgKBPzdK7oqMjhrzrQPzP1oj31vajQi/QH0g=;
-        b=vB/WH3ROyt7vxHMTI/O3OsmJaz1goNGtlA0g0xbFJ41C4e0K0Q9m7PZNxJFyTLMHGz
-         c83P98hHblA0+PYOUTpaGxZ8f6Cbx2s0ye7+Ql/FTI2GUx+NEw92n3qdvZU/dkw0VNn5
-         pMIoXgmal0ipPTaTDcMTdO9fGbyXIS2tkm2F1Q5thGzj6IPQxOvKeHtDY8kzUE3n1mtT
-         bCKoa3kHRwS/RvhSF0WcpK2/3mkyMVHTPXRLpPXmTNWWkvQ78HSby+NRci+wctV9idZI
-         b7/HCxOtCV9LobKdrZow8SG/azz/iEtoQKgV10v0x96pNEdmpzgkvkJQautntYyfwFz9
-         +omw==
-X-Gm-Message-State: AOAM5330Zkf4vBuflYd9EBFaQB6XHecmwkYoJ4RClkTSO/gQOnUZDDse
-        21e8s1KE2Z6jBV44g+cYYVzuO49KSGq6718FWxfbkLaobk1hpLjIfF4zVvSdwHg1iX+YKc4bDJ2
-        YQ1hH/M+FUfS27O2AU1BX2/LC4w==
-X-Received: by 2002:a05:6000:1683:b0:1f1:eb7c:be70 with SMTP id y3-20020a056000168300b001f1eb7cbe70mr4261146wrd.129.1646932390259;
-        Thu, 10 Mar 2022 09:13:10 -0800 (PST)
-X-Google-Smtp-Source: ABdhPJw3SkTi3yW7UBBeX1DEMnFy33opyiuGAlZsjFfPFWjJgPjyUpAftbHJ/wJhhj/ZTUEnc+Lavw==
-X-Received: by 2002:a05:6000:1683:b0:1f1:eb7c:be70 with SMTP id y3-20020a056000168300b001f1eb7cbe70mr4261126wrd.129.1646932389931;
-        Thu, 10 Mar 2022 09:13:09 -0800 (PST)
-Received: from ?IPV6:2003:cb:c708:6100:d527:e3ca:6293:8440? (p200300cbc7086100d527e3ca62938440.dip0.t-ipconnect.de. [2003:cb:c708:6100:d527:e3ca:6293:8440])
-        by smtp.gmail.com with ESMTPSA id j15-20020a5d564f000000b0020371faf04fsm4545238wrw.67.2022.03.10.09.13.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Mar 2022 09:13:09 -0800 (PST)
-Message-ID: <02b20949-82aa-665a-71ea-5a67c1766785@redhat.com>
-Date:   Thu, 10 Mar 2022 18:13:08 +0100
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=i7J8e206Bwozad+xJPF02nCEZhsFp5sZ0xZvk63VV68=;
+        b=zteNIaw3atI2fztfQBkRaA4KveqwGNNyoRYYM75PLz+NxplKPllqaIWqtD9/XvCc3s
+         OhZie6KXUgl1G3OWZKyE1j2AV3+gbWUDbbxyG9oGzedsBf6Sx9QZkTcqC91F5vZD4s0R
+         1oLwgfBVYF2UuEN6ynsrHhKrkMeKM5+xas5kfRLMNcnGupeBbZNZ+LO+gAZV8YPDDGK5
+         twAaaLziVZlLGNZy1NsQseUeqBjb4YYCIcAV1zoWiHZa3t0RQnpQdOria+KmoYsYnQCV
+         qjeBBq884mtdNGwcZWGEuWIb8Ago68saYaRKwzQZL4OYQo/x/NXA/+ZECThWW0IUYg7W
+         4fcA==
+X-Gm-Message-State: AOAM533hIYbliHj3X5FEQsLexHKgqUAquPZ2BSUy91uCWebac3jnrbif
+        Y9rckDMD1fKqStbl0I/k1kuL1Q==
+X-Google-Smtp-Source: ABdhPJwXrthz2QtCLsnFtqyDL0e1w0h1YTxxQQFSEJP3ZvHCIAN7kMeF7r6fRWtGJMhwK1gVmjpSbw==
+X-Received: by 2002:a05:622a:550:b0:2e0:7422:a1d5 with SMTP id m16-20020a05622a055000b002e07422a1d5mr5001583qtx.444.1646933488129;
+        Thu, 10 Mar 2022 09:31:28 -0800 (PST)
+Received: from localhost (cpe-98-15-154-102.hvc.res.rr.com. [98.15.154.102])
+        by smtp.gmail.com with ESMTPSA id bs11-20020a05620a470b00b004b2d02f8a92sm2579261qkb.126.2022.03.10.09.31.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Mar 2022 09:31:27 -0800 (PST)
+Date:   Thu, 10 Mar 2022 12:31:26 -0500
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     cgel.zte@gmail.com, axboe@kernel.dk, viro@zeniv.linux.org.uk,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, akpm@linux-foundation.org,
+        Yang Yang <yang.yang29@zte.com.cn>,
+        Ran Xiaokai <ran.xiaokai@zte.com.cn>
+Subject: Re: [PATCH] block/psi: remove PSI annotations from submit_bio
+Message-ID: <Yio17pXawRuuVJFO@cmpxchg.org>
+References: <20220309094323.2082884-1-yang.yang29@zte.com.cn>
+ <Yij9eygSYy5MSIA0@cmpxchg.org>
+ <Yime3HdbEqFgRVtO@infradead.org>
+ <YiokaQLWeulWpiCx@cmpxchg.org>
+ <Yiok1xi0Hqmh1fbi@infradead.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.2
-Content-Language: en-US
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>
-References: <CAHc6FU5nP+nziNGG0JAF1FUx-GV7kKFvM7aZuU_XD2_1v4vnvg@mail.gmail.com>
- <CAHk-=wgmCuuJdf96WiT6WXzQQTEeSK=cgBy24J4U9V2AvK4KdQ@mail.gmail.com>
- <bcafacea-7e67-405c-a969-e5a58a3c727e@redhat.com>
- <CAHk-=wh1WJ-s9Gj15yFciq6TOd9OOsE7H=R7rRskdRP6npDktQ@mail.gmail.com>
- <CAHk-=wjHsQywXgNe9D+MQCiMhpyB2Gs5M78CGCpTr9BSeP71bw@mail.gmail.com>
- <CAHk-=wjs2Jf3LzqCPmfkXd=ULPyCrrGEF7rR6TYzz1RPF+qh3Q@mail.gmail.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Subject: Re: Buffered I/O broken on s390x with page faults disabled (gfs2)
-In-Reply-To: <CAHk-=wjs2Jf3LzqCPmfkXd=ULPyCrrGEF7rR6TYzz1RPF+qh3Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Yiok1xi0Hqmh1fbi@infradead.org>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -92,51 +77,15 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 08.03.22 20:27, Linus Torvalds wrote:
-> On Tue, Mar 8, 2022 at 9:40 AM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
->>
->> Hmm. The futex code actually uses "fixup_user_fault()" for this case.
->> Maybe fault_in_safe_writeable() should do that?
+On Thu, Mar 10, 2022 at 08:18:31AM -0800, Christoph Hellwig wrote:
+> On Thu, Mar 10, 2022 at 11:16:41AM -0500, Johannes Weiner wrote:
+> > The first version did that, but it was sprawling and not well-received:
+> > 
+> > https://lkml.org/lkml/2019/7/22/1261
 > 
-> .. paging all the bits back in, I'm reminded that one of the worries
-> was "what about large areas".
-> 
-> But I really think that the solution should be that we limit the size
-> of fault_in_safe_writeable() to just a couple of pages.
-> 
-> Even if you were to fault in gigabytes, page-out can undo it anyway,
-> so there is no semantic reason why that function should ever do more
-> than a few pages to make sure. There's already even a comment about
-> how there's no guarantee that the pages will stay.
-> 
-> Side note: the current GUP-based fault_in_safe_writeable() is buggy in
-> another way anyway: it doesn't work right for stack extending
-> accesses.
-> 
-> So I think the fix for this all might be something like the attached
-> (TOTALLY UNTESTED)!
-> 
-> Comments? Andreas, mind (carefully - maybe it is totally broken and
-> does unspeakable acts to your pets) testing this?
+> Well, Dave's comments are spot on.  Except that we replaced it with
+> something even more horrible and not something sensible as he suggested.
 
-I'm late to the party, I agree with the "stack extending accesses" issue
-and that using fixup_user_fault() looks "cleaner" than FOLL_TOUCH.
-
-
-I'm just going to point out that fixup_user_fault() on a per-page basis
-is sub-optimal, especially when dealing with something that's PMD- or
-PUD-mapped (THP, hugetlb, ...). In contrast, GUP is optimized for that.
-
-So that might be something interesting to look into optimizing in the
-future, if relevant in pactice. Not sure how we could return that
-information the best way to the caller ("the currently faulted
-in/present page ends at address X").
-
-For the time being, the idea LGTM.
-
--- 
-Thanks,
-
-David / dhildenb
-
+Confused. I changed it the way Dave suggested, to which he replied
+"this is much cleaner and easier to maintain". Are we reading
+different threads? Care to elaborate?
