@@ -2,130 +2,177 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C4F34D468C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Mar 2022 13:13:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB16B4D4698
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Mar 2022 13:15:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241888AbiCJMOb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Mar 2022 07:14:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60306 "EHLO
+        id S241925AbiCJMQQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Mar 2022 07:16:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241867AbiCJMOa (ORCPT
+        with ESMTP id S241278AbiCJMQO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Mar 2022 07:14:30 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 827EAA76FB;
-        Thu, 10 Mar 2022 04:13:29 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 13F35618C5;
-        Thu, 10 Mar 2022 12:13:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F128C340F4;
-        Thu, 10 Mar 2022 12:13:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1646914408;
-        bh=UKbNBOgnndbhaHzuo5wICJa7XmlyUEtQGp8bX6HrNe0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=H4qbh3FrxVI2JPSZ4Jd44z+OtU7akB1h2LiFq2xkFqCAZ9WR6Fu9thwdicFr+iALm
-         2X1CVvi/RBVtCvcgUYqS44gWR5u2uh2x8m7DoYIV6wjcSVE8rL+dHBwsSWetnLdjRu
-         rpCyQLe48rFAkT/QWj7+3c3ES4J88a68XH+zIkl+s/WUaqWuRJ3utHxR8VtcWcshDH
-         jgGItDtiMD774HBYbB/QQHEYcPNi0GGkpPov1Oz/HKyT+8gOVvaFSSo7/ThRLQe6UQ
-         aWSM3TXF6ezSTVYC91gDfyOqpe6mj2HZK9Ug6tKWItJHf/x/VUGJRceZ7hBEUGO3jl
-         N1Ht4/fONRSdA==
-Date:   Thu, 10 Mar 2022 12:13:25 +0000
-From:   Filipe Manana <fdmanana@kernel.org>
-To:     Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Filipe Manana <fdmanana@suse.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-btrfs <linux-btrfs@vger.kernel.org>
-Subject: Re: Buffered I/O broken on s390x with page faults disabled (gfs2)
-Message-ID: <YinrZVoAnEU8/wpa@debian9.Home>
-References: <bcafacea-7e67-405c-a969-e5a58a3c727e@redhat.com>
- <CAHk-=wh1WJ-s9Gj15yFciq6TOd9OOsE7H=R7rRskdRP6npDktQ@mail.gmail.com>
- <CAHk-=wjHsQywXgNe9D+MQCiMhpyB2Gs5M78CGCpTr9BSeP71bw@mail.gmail.com>
- <CAHk-=wjs2Jf3LzqCPmfkXd=ULPyCrrGEF7rR6TYzz1RPF+qh3Q@mail.gmail.com>
- <CAHk-=wi1jrn=sds1doASepf55-wiBEiQ_z6OatOojXj6Gtntyg@mail.gmail.com>
- <CAHc6FU6L8c9UCJF_qcqY=USK_CqyKnpDSJvrAGput=62h0djDw@mail.gmail.com>
- <CAHk-=whaoxuCPg4foD_4VBVr+LVgmW7qScjYFRppvHqnni0EMA@mail.gmail.com>
- <20220309184238.1583093-1-agruenba@redhat.com>
- <CAHk-=wgBOFg3brJbo-gcaPM+fxjzHwC4efhcM8tCKK3YUhYUug@mail.gmail.com>
- <CAHc6FU5+AgDcoXE4Qfh_9hpn9d_it4aFyhoS=TKpqrBPe4GP+w@mail.gmail.com>
+        Thu, 10 Mar 2022 07:16:14 -0500
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAA4F1480DF
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Mar 2022 04:15:13 -0800 (PST)
+Received: by mail-pl1-x62e.google.com with SMTP id n2so4705430plf.4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Mar 2022 04:15:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=hoPWBro4VveouJ4vx2nAAxYFxr+KDw+cTxYyidREMFo=;
+        b=3lHvgXyOZWgBu7xmQFS37eeUDuf1cB/DlgDJKt7JktscFsHvnp2Z8HCO7AOl2uhI4v
+         IfKhXbGVbCyxw6KBqmCJJj9pXcgNwwx8ywoRtiOyPNStQnrxq6KFtxGsd3biz/AqcHWW
+         j/w7UdCS6+jAfG4hgQcTgSKFx6XIqC3Hw8YADTHIrxFAt+0Rmac4VbfJyn/Y1VvMEj6d
+         VMO8rDYU5jzoD8Ukc1lKq/tWuwpvqQxOdscRi7bEgiCGO5gHq1sZuu1Qy9OGPoqkq6Bb
+         HqFsp7iKPtFoQ8ApxZav7UKCYUNl9udtO7+ktT1RlPCAqGWAg58SD0xHYkrZOrmdn/8K
+         1cUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=hoPWBro4VveouJ4vx2nAAxYFxr+KDw+cTxYyidREMFo=;
+        b=wc/4DHb5wLsGuGX6Vq0Ufi8nYyEOuy+r9M4IhyTTBtvtxEUw8DPWdCzCrZR0Yj5ScZ
+         fZdfwPdS11dH2BZzZXJ8lKFTLBGv0PkfrjozGWmQq/HbzLbkS2NCc7yQTDd1wazpx8Hu
+         8ICD3N2HcbYCHGXD5NDcjF13S4BNQBtDvKhWbRBlpJ/VKSqI0DFw62N9+IRcUJIYE5m0
+         neWGi5xSxqxM3JkL11do2Ci/aW047pD6u5rkFsIm1RV43EngyBYkfJ7j8xqH1AirjD/b
+         FA4DYjzRhFZdIJb+GXWfOh5dy/E7SfN/Mo3It7I8M+rWlKIzoVWJhf8gKU6JLptby3iq
+         RDHQ==
+X-Gm-Message-State: AOAM5322bdPjbxYIRwoMrf5Y97dHlOzIy6VbCjUsPxAJ0yKwLso9Db24
+        iHRl6vcftA88Oe4UKcAc2bMxGw==
+X-Google-Smtp-Source: ABdhPJzSQmxtoIBTxfTuTtDJblYzgJmRRteHsYoyEbd/AE8Ym0coXr6/kU1kFb735T1a56f84F6JHQ==
+X-Received: by 2002:a17:90b:3a8f:b0:1bf:ccc:59bc with SMTP id om15-20020a17090b3a8f00b001bf0ccc59bcmr4730847pjb.234.1646914513229;
+        Thu, 10 Mar 2022 04:15:13 -0800 (PST)
+Received: from [192.168.1.100] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id o66-20020a17090a0a4800b001bf388fc96esm5918336pjo.21.2022.03.10.04.15.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Mar 2022 04:15:12 -0800 (PST)
+Message-ID: <e98948ae-1709-32ef-e1e4-063be38609b1@kernel.dk>
+Date:   Thu, 10 Mar 2022 05:15:10 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHc6FU5+AgDcoXE4Qfh_9hpn9d_it4aFyhoS=TKpqrBPe4GP+w@mail.gmail.com>
-X-Spam-Status: No, score=-7.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.1
+Subject: Re: [EXT] Re: [PATCH 2/2] block: remove the per-bio/request write
+ hint.
+Content-Language: en-US
+To:     "Luca Porzio (lporzio)" <lporzio@micron.com>,
+        Manjong Lee <mj0123.lee@samsung.com>,
+        "david@fromorbit.com" <david@fromorbit.com>
+Cc:     "hch@lst.de" <hch@lst.de>, "kbusch@kernel.org" <kbusch@kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>,
+        "sagi@grimberg.me" <sagi@grimberg.me>,
+        "song@kernel.org" <song@kernel.org>,
+        "seunghwan.hyun@samsung.com" <seunghwan.hyun@samsung.com>,
+        "sookwan7.kim@samsung.com" <sookwan7.kim@samsung.com>,
+        "nanich.lee@samsung.com" <nanich.lee@samsung.com>,
+        "woosung2.lee@samsung.com" <woosung2.lee@samsung.com>,
+        "yt0928.kim@samsung.com" <yt0928.kim@samsung.com>,
+        "junho89.kim@samsung.com" <junho89.kim@samsung.com>,
+        "jisoo2146.oh@samsung.com" <jisoo2146.oh@samsung.com>
+References: <20220306231727.GP3927073@dread.disaster.area>
+ <CGME20220309042324epcas1p111312e20f4429dc3a17172458284a923@epcas1p1.samsung.com>
+ <20220309133119.6915-1-mj0123.lee@samsung.com>
+ <CO3PR08MB797524ACBF04B861D48AF612DC0B9@CO3PR08MB7975.namprd08.prod.outlook.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <CO3PR08MB797524ACBF04B861D48AF612DC0B9@CO3PR08MB7975.namprd08.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 09, 2022 at 10:08:32PM +0100, Andreas Gruenbacher wrote:
-> On Wed, Mar 9, 2022 at 8:08 PM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> > On Wed, Mar 9, 2022 at 10:42 AM Andreas Gruenbacher <agruenba@redhat.com> wrote:
-> > > With a large enough buffer, a simple malloc() will return unmapped
-> > > pages, and reading into such a buffer will result in fault-in.  So page
-> > > faults during read() are actually pretty normal, and it's not the user's
-> > > fault.
-> >
-> > Agreed. But that wasn't the case here:
-> >
-> > > In my test case, the buffer was pre-initialized with memset() to avoid
-> > > those kinds of page faults, which meant that the page faults in
-> > > gfs2_file_read_iter() only started to happen when we were out of memory.
-> > > But that's not the common case.
-> >
-> > Exactly. I do not think this is a case that we should - or need to -
-> > optimize for.
-> >
-> > And doing too much pre-faulting is actually counter-productive.
-> >
-> > > * Get rid of max_size: it really makes no sense to second-guess what the
-> > >   caller needs.
-> >
-> > It's not about "what caller needs". It's literally about latency
-> > issues. If you can force a busy loop in kernel space by having one
-> > unmapped page and then do a 2GB read(), that's a *PROBLEM*.
-> >
-> > Now, we can try this thing, because I think we end up having other
-> > size limitations in the IO subsystem that means that the filesystem
-> > won't actually do that, but the moment I hear somebody talk about
-> > latencies, that max_size goes back.
+On 3/10/22 4:34 AM, Luca Porzio (lporzio) wrote:
+>> -----Original Message-----
+>> From: Manjong Lee <mj0123.lee@samsung.com>
+>> Sent: Wednesday, March 9, 2022 2:31 PM
+>> To: david@fromorbit.com
+>> Cc: axboe@kernel.dk; hch@lst.de; kbusch@kernel.org; linux-
+>> block@vger.kernel.org; linux-fsdevel@vger.kernel.org; linux-
+>> nvme@lists.infradead.org; linux-raid@vger.kernel.org; sagi@grimberg.me;
+>> song@kernel.org; seunghwan.hyun@samsung.com;
+>> sookwan7.kim@samsung.com; nanich.lee@samsung.com;
+>> woosung2.lee@samsung.com; yt0928.kim@samsung.com;
+>> junho89.kim@samsung.com; jisoo2146.oh@samsung.com
+>> Subject: [EXT] Re: [PATCH 2/2] block: remove the per-bio/request write hint.
+>>
+>> CAUTION: EXTERNAL EMAIL. Do not click links or open attachments unless
+>> you recognize the sender and were expecting this message.
+>>
+>>
+>>> On Sun, ddMar 06, 2022 at 11:06:12AM -0700, Jens Axboe wrote:
+>>>> On 3/6/22 11:01 AM, Christoph Hellwig wrote:
+>>>>> On Sun, Mar 06, 2022 at 10:11:46AM -0700, Jens Axboe wrote:
+>>>>>> Yes, I think we should kill it. If we retain the inode hint, the
+>>>>>> f2fs doesn't need a any changes. And it should be safe to make the
+>>>>>> per-file fcntl hints return EINVAL, which they would on older kernels
+>> anyway.
+>>>>>> Untested, but something like the below.
+>>>>>
+>>>>> I've sent this off to the testing farm this morning, but EINVAL
+>>>>> might be even better:
+>>>>>
+>>>>> https://urldefense.com/v3/__http://git.infradead.org/users/hch/bloc
+>>>>> k.git/shortlog/refs/heads/more-hint-
+>> removal__;!!KZTdOCjhgt4hgw!qsgy
+>>>>>
+>> oejchUYPeorpCL0Ov3jPGvXpXgxa7hpSCViD7XQy7uJDMDLo3U8v_bmoUtg$
+>>>
+>>> Yup, I like that.
+>>>
+>>>> I do think EINVAL is better, as it just tells the app it's not
+>>>> available like we would've done before. With just doing zeroes, that
+>>>> might break applications that set-and-verify. Of course there's also
+>>>> the risk of that since we retain inode hints (so they work), but fail file
+>> hints.
+>>>> That's a lesser risk though, and we only know of the inode hints
+>>>> being used.
+>>>
+>>> Agreed, I think EINVAL would be better here - jsut make it behave like
+>>> it would on a kernel that never supported this functionality in the
+>>> first place. Seems simpler to me for user applications if we do that.
+>>>
+>>> Cheers,
+>>>
+>>> Dave.
+>>> --
+>>> Dave Chinner
+>>> david@fromorbit.com
+>>>
+>>
+>> Currently, UFS device also supports hot/cold data separation and uses
+>> existing write_hint code.
+>>
+>> In other words, the function is also being used in storage other than NVMe,
+>> and if it is removed, it is thought that there will be an operation problem.
+>>
+>> If the code is removed, I am worried about how other devices that use the
+>> function.
+>>
+>> Is there a good alternative?
 > 
-> Thanks, this puts fault_in_safe_writeable() in line with
-> fault_in_readable() and fault_in_writeable().
+> Hi all,
 > 
-> There currently are two users of
-> fault_in_safe_writeable()/fault_in_iov_iter_writeable(): gfs2 and
-> btrfs.
-> In gfs2, we cap the size at BIO_MAX_VECS pages (256). I don't see an
-> explicit cap in btrfs; adding Filipe.
-
-On btrfs, for buffered writes, we have some cap (done at btrfs_buffered_write()),
-for buffered reads we don't have any control on that as we use filemap_read().
-
-For direct IO we don't have any cap, we try to fault in everything that's left.
-However we keep track if we are doing any progress, and if we aren't making any
-progress we just fall back to the buffered IO path. So that prevents infinite
-or long loops.
-
-There's really no good reason to not cap how much we try to fault in in the
-direct IO paths. We should do it, as it probably has a negative performance
-impact for very large direct IO reads/writes.
-
-Thanks.
-
+> I work for Micron UFS team. I confirm and support Manjong message above.
+> There are UFS customers using custom write_hint in Android and due to the 
+> "upstream first" policy from Google, if you remove write_hints in block device,
+> The Android ecosystem will suffer this lack.
 > 
-> Andreas
-> 
+> Can we revert back this decision? Or think of an alternative solution which 
+> may work?
+
+You do both realize that this is just the file specific hint? Inode
+based hints will still work fine for UFS.
+
+-- 
+Jens Axboe
+
