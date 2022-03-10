@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F1334D4928
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Mar 2022 15:16:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D34984D48F4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Mar 2022 15:15:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243059AbiCJONl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Mar 2022 09:13:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52744 "EHLO
+        id S243092AbiCJOOg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Mar 2022 09:14:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243020AbiCJONC (ORCPT
+        with ESMTP id S243055AbiCJONj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Mar 2022 09:13:02 -0500
-Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3AF015694C;
-        Thu, 10 Mar 2022 06:11:20 -0800 (PST)
+        Thu, 10 Mar 2022 09:13:39 -0500
+Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F9869A9B5;
+        Thu, 10 Mar 2022 06:11:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1646921480; x=1678457480;
+  t=1646921497; x=1678457497;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references;
-  bh=dJciXpEHLFj6Z+EAfDFvGxoZXvWRu/tGM+jdlgCTKlE=;
-  b=Js2cUaBkpKSpZ2f+bQu0e7Lq8W9rIAI3MQoOOEaEh5WQaOMkMXTMoKdJ
-   HRkqWCOWgyt7zDICbp3zC2lArsOpGhv75JsDbR80rFTaY9Pa057PQjVob
-   vYy0CtKv5iJmts/UIK96OKSkEqEqPObvvJ1Xkt6t6ezjnNhxTHCPJA0qC
-   U09Wngd7+C5MTe+bdJwCOngIf77CQrNBRsPUnGgsk8LXtpSmV9PJesf8i
-   q51wtmEurz3TifUvoG6dO8/xTLoj8tlPLF9NqV0BwoyhMjDYJAOXe4vny
-   loSSqhC8NDLAr4t85Ap37dilJ7AfKfu8yQHH4qkChqpFMJCNWQLjomSTc
-   g==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10281"; a="252823625"
+  bh=UDNf/tndP7AKz2Uk9JPtbsxmn9QkdDXr+UJSlA/azbE=;
+  b=O+YpcDiy1oXurDZKsyZVFJGI1pPv7DnewXMpBYDVw6YIyq1s4VN9+Ncc
+   wLm5S4V1j2GC0AG8q8eP9PaWBn+4LP5wzVddndRBxK7h66QOH/txLZYZH
+   4i+DB0Jr5DEQjEhdE5xoR681vqcHUFE4UXS9i/axp+bLcPo2kQ6X032dK
+   GONoT3dk4umm9NRp53s+Wrm46e32mqEKPyiTosJCI/N7dvOge5C9gmnZR
+   I+8FraorLY6y5PKl6V8F1aoT5MgdKpxunySqL3sPEkvY80DJJ1ZQwDwgb
+   tQqxsp1ui5yJB3K7Kz1AGxZoujLjAwWqKqGfZQ34aad4tDkYw/7SD4FiR
+   w==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10281"; a="242702811"
 X-IronPort-AV: E=Sophos;i="5.90,170,1643702400"; 
-   d="scan'208";a="252823625"
+   d="scan'208";a="242702811"
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2022 06:10:57 -0800
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2022 06:11:05 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.90,170,1643702400"; 
-   d="scan'208";a="554655136"
+   d="scan'208";a="554655204"
 Received: from chaop.bj.intel.com ([10.240.192.101])
-  by orsmga008.jf.intel.com with ESMTP; 10 Mar 2022 06:10:49 -0800
+  by orsmga008.jf.intel.com with ESMTP; 10 Mar 2022 06:10:56 -0800
 From:   Chao Peng <chao.p.peng@linux.intel.com>
 To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
@@ -66,182 +66,119 @@ Cc:     Paolo Bonzini <pbonzini@redhat.com>,
         "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
         luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
         ak@linux.intel.com, david@redhat.com
-Subject: [PATCH v5 10/13] KVM: Register private memslot to memory backing store
-Date:   Thu, 10 Mar 2022 22:09:08 +0800
-Message-Id: <20220310140911.50924-11-chao.p.peng@linux.intel.com>
+Subject: [PATCH v5 11/13] KVM: Zap existing KVM mappings when pages changed in the private fd
+Date:   Thu, 10 Mar 2022 22:09:09 +0800
+Message-Id: <20220310140911.50924-12-chao.p.peng@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220310140911.50924-1-chao.p.peng@linux.intel.com>
 References: <20220310140911.50924-1-chao.p.peng@linux.intel.com>
-X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-4.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add 'notifier' to memslot to make it a memfile_notifier node and then
-register it to memory backing store via memfile_register_notifier() when
-memslot gets created. When memslot is deleted, do the reverse with
-memfile_unregister_notifier(). Note each KVM memslot can be registered
-to different memory backing stores (or the same backing store but at
-different offset) independently.
+KVM gets notified when memory pages changed in the memory backing store.
+When userspace allocates the memory with fallocate() or frees memory
+with fallocate(FALLOC_FL_PUNCH_HOLE), memory backing store calls into
+KVM fallocate/invalidate callbacks respectively. To ensure KVM never
+maps both the private and shared variants of a GPA into the guest, in
+the fallocate callback, we should zap the existing shared mapping and
+in the invalidate callback we should zap the existing private mapping.
+
+In the callbacks, KVM firstly converts the offset range into the
+gfn_range and then calls existing kvm_unmap_gfn_range() which will zap
+the shared or private mapping. Both callbacks pass in a memslot
+reference but we need 'kvm' so add a reference in memslot structure.
 
 Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
 Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
 ---
- include/linux/kvm_host.h |  1 +
- virt/kvm/kvm_main.c      | 75 ++++++++++++++++++++++++++++++++++++----
- 2 files changed, 70 insertions(+), 6 deletions(-)
+ include/linux/kvm_host.h |  3 ++-
+ virt/kvm/kvm_main.c      | 36 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 38 insertions(+), 1 deletion(-)
 
 diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index 6e1d770d6bf8..9b175aeca63f 100644
+index 9b175aeca63f..186b9b981a65 100644
 --- a/include/linux/kvm_host.h
 +++ b/include/linux/kvm_host.h
-@@ -567,6 +567,7 @@ struct kvm_memory_slot {
- 	struct file *private_file;
+@@ -236,7 +236,7 @@ bool kvm_setup_async_pf(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
+ int kvm_async_pf_wakeup_all(struct kvm_vcpu *vcpu);
+ #endif
+ 
+-#ifdef KVM_ARCH_WANT_MMU_NOTIFIER
++#if defined(KVM_ARCH_WANT_MMU_NOTIFIER) || defined(CONFIG_MEMFILE_NOTIFIER)
+ struct kvm_gfn_range {
+ 	struct kvm_memory_slot *slot;
+ 	gfn_t start;
+@@ -568,6 +568,7 @@ struct kvm_memory_slot {
  	loff_t private_offset;
  	struct memfile_pfn_ops *pfn_ops;
-+	struct memfile_notifier notifier;
+ 	struct memfile_notifier notifier;
++	struct kvm *kvm;
  };
  
  static inline bool kvm_slot_is_private(const struct kvm_memory_slot *slot)
 diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index d11a2628b548..67349421eae3 100644
+index 67349421eae3..52319f49d58a 100644
 --- a/virt/kvm/kvm_main.c
 +++ b/virt/kvm/kvm_main.c
-@@ -840,6 +840,37 @@ static int kvm_init_mmu_notifier(struct kvm *kvm)
- 
+@@ -841,8 +841,43 @@ static int kvm_init_mmu_notifier(struct kvm *kvm)
  #endif /* CONFIG_MMU_NOTIFIER && KVM_ARCH_WANT_MMU_NOTIFIER */
  
-+#ifdef CONFIG_MEMFILE_NOTIFIER
-+static inline int kvm_memfile_register(struct kvm_memory_slot *slot)
+ #ifdef CONFIG_MEMFILE_NOTIFIER
++static void kvm_memfile_notifier_handler(struct memfile_notifier *notifier,
++					 pgoff_t start, pgoff_t end)
 +{
-+	return memfile_register_notifier(file_inode(slot->private_file),
-+					 &slot->notifier,
-+					 &slot->pfn_ops);
++	int idx;
++	struct kvm_memory_slot *slot = container_of(notifier,
++						    struct kvm_memory_slot,
++						    notifier);
++	struct kvm_gfn_range gfn_range = {
++		.slot		= slot,
++		.start		= start - (slot->private_offset >> PAGE_SHIFT),
++		.end		= end - (slot->private_offset >> PAGE_SHIFT),
++		.may_block 	= true,
++	};
++	struct kvm *kvm = slot->kvm;
++
++	gfn_range.start = max(gfn_range.start, slot->base_gfn);
++	gfn_range.end = min(gfn_range.end, slot->base_gfn + slot->npages);
++
++	if (gfn_range.start >= gfn_range.end)
++		return;
++
++	idx = srcu_read_lock(&kvm->srcu);
++	KVM_MMU_LOCK(kvm);
++	kvm_unmap_gfn_range(kvm, &gfn_range);
++	kvm_flush_remote_tlbs(kvm);
++	KVM_MMU_UNLOCK(kvm);
++	srcu_read_unlock(&kvm->srcu, idx);
 +}
 +
-+static inline void kvm_memfile_unregister(struct kvm_memory_slot *slot)
-+{
-+	if (slot->private_file) {
-+		memfile_unregister_notifier(file_inode(slot->private_file),
-+					    &slot->notifier);
-+		fput(slot->private_file);
-+		slot->private_file = NULL;
-+	}
-+}
++static struct memfile_notifier_ops kvm_memfile_notifier_ops = {
++	.invalidate = kvm_memfile_notifier_handler,
++	.fallocate = kvm_memfile_notifier_handler,
++};
 +
-+#else /* !CONFIG_MEMFILE_NOTIFIER */
-+
-+static inline int kvm_memfile_register(struct kvm_memory_slot *slot)
-+{
-+	return -EOPNOTSUPP;
-+}
-+
-+static inline void kvm_memfile_unregister(struct kvm_memory_slot *slot)
-+{
-+}
-+
-+#endif /* CONFIG_MEMFILE_NOTIFIER */
-+
- #ifdef CONFIG_HAVE_KVM_PM_NOTIFIER
- static int kvm_pm_notifier_call(struct notifier_block *bl,
- 				unsigned long state,
-@@ -884,6 +915,9 @@ static void kvm_destroy_dirty_bitmap(struct kvm_memory_slot *memslot)
- /* This does not remove the slot from struct kvm_memslots data structures */
- static void kvm_free_memslot(struct kvm *kvm, struct kvm_memory_slot *slot)
+ static inline int kvm_memfile_register(struct kvm_memory_slot *slot)
  {
-+	if (slot->flags & KVM_MEM_PRIVATE)
-+		kvm_memfile_unregister(slot);
-+
- 	kvm_destroy_dirty_bitmap(slot);
- 
- 	kvm_arch_free_memslot(kvm, slot);
-@@ -1738,6 +1772,12 @@ static int kvm_set_memslot(struct kvm *kvm,
- 		kvm_invalidate_memslot(kvm, old, invalid_slot);
- 	}
- 
-+	if (new->flags & KVM_MEM_PRIVATE && change == KVM_MR_CREATE) {
-+		r = kvm_memfile_register(new);
-+		if (r)
-+			return r;
-+	}
-+
- 	r = kvm_prepare_memory_region(kvm, old, new, change);
- 	if (r) {
- 		/*
-@@ -1752,6 +1792,10 @@ static int kvm_set_memslot(struct kvm *kvm,
- 		} else {
- 			mutex_unlock(&kvm->slots_arch_lock);
- 		}
-+
-+		if (new->flags & KVM_MEM_PRIVATE && change == KVM_MR_CREATE)
-+			kvm_memfile_unregister(new);
-+
- 		return r;
- 	}
- 
-@@ -1817,6 +1861,7 @@ int __kvm_set_memory_region(struct kvm *kvm,
- 	enum kvm_mr_change change;
- 	unsigned long npages;
- 	gfn_t base_gfn;
-+	struct file *file = NULL;
- 	int as_id, id;
- 	int r;
- 
-@@ -1890,14 +1935,24 @@ int __kvm_set_memory_region(struct kvm *kvm,
- 			return 0;
- 	}
- 
-+	if (mem->flags & KVM_MEM_PRIVATE) {
-+		file = fdget(region_ext->private_fd).file;
-+		if (!file)
-+			return -EINVAL;
-+	}
-+
- 	if ((change == KVM_MR_CREATE || change == KVM_MR_MOVE) &&
--	    kvm_check_memslot_overlap(slots, id, base_gfn, base_gfn + npages))
--		return -EEXIST;
-+	    kvm_check_memslot_overlap(slots, id, base_gfn, base_gfn + npages)) {
-+		r = -EEXIST;
-+		goto out;
-+	}
- 
- 	/* Allocate a slot that will persist in the memslot. */
- 	new = kzalloc(sizeof(*new), GFP_KERNEL_ACCOUNT);
--	if (!new)
--		return -ENOMEM;
-+	if (!new) {
-+		r = -ENOMEM;
-+		goto out;
-+	}
- 
- 	new->as_id = as_id;
- 	new->id = id;
-@@ -1905,10 +1960,18 @@ int __kvm_set_memory_region(struct kvm *kvm,
- 	new->npages = npages;
- 	new->flags = mem->flags;
- 	new->userspace_addr = mem->userspace_addr;
-+	new->private_file = file;
-+	new->private_offset = mem->flags & KVM_MEM_PRIVATE ?
-+			      region_ext->private_offset : 0;
++	slot->notifier.ops = &kvm_memfile_notifier_ops;
+ 	return memfile_register_notifier(file_inode(slot->private_file),
+ 					 &slot->notifier,
+ 					 &slot->pfn_ops);
+@@ -1963,6 +1998,7 @@ int __kvm_set_memory_region(struct kvm *kvm,
+ 	new->private_file = file;
+ 	new->private_offset = mem->flags & KVM_MEM_PRIVATE ?
+ 			      region_ext->private_offset : 0;
++	new->kvm = kvm;
  
  	r = kvm_set_memslot(kvm, old, new, change);
--	if (r)
--		kfree(new);
-+	if (!r)
-+		return r;
-+
-+	kfree(new);
-+out:
-+	if (file)
-+		fput(file);
- 	return r;
- }
- EXPORT_SYMBOL_GPL(__kvm_set_memory_region);
+ 	if (!r)
 -- 
 2.17.1
 
