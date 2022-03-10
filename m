@@ -2,101 +2,347 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5979C4D4EA1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Mar 2022 17:20:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C54CA4D4E9E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Mar 2022 17:20:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242367AbiCJQSo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Mar 2022 11:18:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37690 "EHLO
+        id S242204AbiCJQSn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Mar 2022 11:18:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242203AbiCJQSG (ORCPT
+        with ESMTP id S242106AbiCJQSD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Mar 2022 11:18:06 -0500
-Received: from mail-qt1-x82e.google.com (mail-qt1-x82e.google.com [IPv6:2607:f8b0:4864:20::82e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67DBC190C0B
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Mar 2022 08:17:01 -0800 (PST)
-Received: by mail-qt1-x82e.google.com with SMTP id v14so668103qta.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Mar 2022 08:17:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20210112.gappssmtp.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=o3XiKem00gLr34GESQrNS9nG0HHXcvKwNDWv//lSnUM=;
-        b=1fMvNcrI8SVPpYX5QeQXT/4iXJRVTUzJeQd1sa60b2pCKrmUm9NbtttV/Kyt8R5muB
-         bwwpBmP5tj0wbJabkvNrWbTYUMXQ1ir91xgoRqdvbXkVfhQPTYQ2Y58FwiFCM26tzVbr
-         rroGMlE+9VDqfWr13l06K8AMZkyhLkkDKU694V6IZoQSJyDXELYvYuJ4s+lSC5LUu0g/
-         0arzgD1FEFOxFyaqL4DMiESYWo/unfntY4t++86tkpIS0ezudYQGGho2nAf+HLE9zipp
-         kEEr1OwgMF4GSXwLeMJUoCjOrHkm8LUYuUshvd6q/YZLWgS2P5DB8KKNgkzJ9IqxuIbK
-         atyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=o3XiKem00gLr34GESQrNS9nG0HHXcvKwNDWv//lSnUM=;
-        b=e3h2L8G1qebxc4K2PWB0A7RyJja7LDwtrt8t2fWD9eZrrtUMIqodRTdObLCEOyXphB
-         VmcTnYfZllR2Akktz5+AmIQat22TUgjUzAxqauwcmE+rMH4XYJmayQxN9sGnGsZvSW39
-         N85g0kQhq4Gxzvf0pRJnvzrr5jwlx451h6w2yc7DfuCXL5gOd4PxRK4WeYwupON6WTia
-         SINoJXUZmKlvRFNTH4W7tiMiNvnkvszwebHWCAFpBy2FnUGHZD6Dxga3mS+SSrYwFs8P
-         0/K32rSM1wdb2L8AHtw1Iq4xrA70/Bus47s3hrvsmtznrgoTT5yoK4zpJjY2GODbcTIf
-         l/hw==
-X-Gm-Message-State: AOAM5338A5vCQRxvTOzBQnWo02n24X4eYaiZPOmX/0lNw1LtL/zVz6Dl
-        mi6mVtdHgN39bvCMG5WwW38+bMJk/+rDCA==
-X-Google-Smtp-Source: ABdhPJxHk9T5sCR1iHYOfvBRYoGqWAwMh2DfAxFoPQdXl/cWJ0bsam+OAT9uib4F75e/XrCLQt9oiw==
-X-Received: by 2002:ac8:5fd1:0:b0:2d9:4547:9ddb with SMTP id k17-20020ac85fd1000000b002d945479ddbmr4468324qta.149.1646929020380;
-        Thu, 10 Mar 2022 08:17:00 -0800 (PST)
-Received: from localhost ([2620:10d:c091:480::1:5de6])
-        by smtp.gmail.com with ESMTPSA id f14-20020ac8068e000000b002dd1bc00eadsm3187735qth.93.2022.03.10.08.16.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Mar 2022 08:17:00 -0800 (PST)
-Date:   Thu, 10 Mar 2022 11:16:41 -0500
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     cgel.zte@gmail.com, axboe@kernel.dk, viro@zeniv.linux.org.uk,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, akpm@linux-foundation.org,
-        Yang Yang <yang.yang29@zte.com.cn>,
-        Ran Xiaokai <ran.xiaokai@zte.com.cn>
-Subject: Re: [PATCH] block/psi: remove PSI annotations from submit_bio
-Message-ID: <YiokaQLWeulWpiCx@cmpxchg.org>
-References: <20220309094323.2082884-1-yang.yang29@zte.com.cn>
- <Yij9eygSYy5MSIA0@cmpxchg.org>
- <Yime3HdbEqFgRVtO@infradead.org>
+        Thu, 10 Mar 2022 11:18:03 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C3515191403
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Mar 2022 08:16:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1646929016;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=8cfGxYB8njuOkQO17893uLOX/1s/bBn62z9nmWYRuKs=;
+        b=gn34k7+ZE4FlAq+bHzrVmQL9jixWrGjTo2vxNZbdEfbdIU2+H2HoOaKE9PY6usq67tniea
+        Xln6cbBPrli2xNlc43PXbTkyI4StQNfCqKUpkROzLU2eI2qrsMoqdpeyCS870yryIShXhE
+        Ew0SldXk1HWva+P0PfZBnox+62SspvU=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-674-QdzTfoPGN_-AwGmAAkQoyg-1; Thu, 10 Mar 2022 11:16:55 -0500
+X-MC-Unique: QdzTfoPGN_-AwGmAAkQoyg-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 5C85B1006AAA;
+        Thu, 10 Mar 2022 16:16:53 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1AB5086593;
+        Thu, 10 Mar 2022 16:16:49 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH v3 07/20] netfs: Trace refcounting on the netfs_io_request
+ struct
+From:   David Howells <dhowells@redhat.com>
+To:     linux-cachefs@redhat.com
+Cc:     Jeff Layton <jlayton@kernel.org>, dhowells@redhat.com,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Jeff Layton <jlayton@redhat.com>,
+        David Wysochanski <dwysocha@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jeffle Xu <jefflexu@linux.alibaba.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Thu, 10 Mar 2022 16:16:49 +0000
+Message-ID: <164692900920.2099075.11847712419940675791.stgit@warthog.procyon.org.uk>
+In-Reply-To: <164692883658.2099075.5745824552116419504.stgit@warthog.procyon.org.uk>
+References: <164692883658.2099075.5745824552116419504.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/1.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Yime3HdbEqFgRVtO@infradead.org>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 09, 2022 at 10:46:52PM -0800, Christoph Hellwig wrote:
-> On Wed, Mar 09, 2022 at 02:18:19PM -0500, Johannes Weiner wrote:
-> > On Wed, Mar 09, 2022 at 09:43:24AM +0000, cgel.zte@gmail.com wrote:
-> > > From: Yang Yang <yang.yang29@zte.com.cn>
-> > > 
-> > > psi tracks the time spent submitting the IO of refaulting pages[1].
-> > > But after we tracks refault stalls from swap_readpage[2][3], there
-> > > is no need to do so anymore. Since swap_readpage already includes
-> > > IO submitting time.
-> > > 
-> > > [1] commit b8e24a9300b0 ("block: annotate refault stalls from IO submission")
-> > > [2] commit 937790699be9 ("mm/page_io.c: annotate refault stalls from swap_readpage")
-> > > [3] commit 2b413a1a728f ("mm: page_io: fix psi memory pressure error on cold swapins")
-> > > 
-> > > Signed-off-by: Yang Yang <yang.yang29@zte.com.cn>
-> > > Reviewed-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
-> > 
-> > It's still needed by file cache refaults!
-> 
-> Can we get proper annotations for those please?  These bio-level hooks are
-> horrible and a maintainance nightmware.
+Add refcount tracing for the netfs_io_request structure.
 
-The first version did that, but it was sprawling and not well-received:
+Changes
+=======
+ver #3)
+ - Switch 'W=' to 'R=' in the traceline to match other request debug IDs.
 
-https://lkml.org/lkml/2019/7/22/1261
+Signed-off-by: David Howells <dhowells@redhat.com>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+cc: linux-cachefs@redhat.com
+Link: https://lore.kernel.org/r/164622997668.3564931.14456171619219324968.stgit@warthog.procyon.org.uk/ # v1
+Link: https://lore.kernel.org/r/164678200943.1200972.7241495532327787765.stgit@warthog.procyon.org.uk/ # v2
+---
+
+ fs/netfs/internal.h          |   11 +++++++++--
+ fs/netfs/objects.c           |   24 +++++++++++++++++-------
+ fs/netfs/read_helper.c       |   14 +++++++-------
+ include/linux/netfs.h        |    2 +-
+ include/trace/events/netfs.h |   35 +++++++++++++++++++++++++++++++++++
+ 5 files changed, 69 insertions(+), 17 deletions(-)
+
+diff --git a/fs/netfs/internal.h b/fs/netfs/internal.h
+index cf7a3ddb16a4..89b02357500d 100644
+--- a/fs/netfs/internal.h
++++ b/fs/netfs/internal.h
+@@ -20,13 +20,20 @@
+ struct netfs_io_request *netfs_alloc_request(const struct netfs_request_ops *ops,
+ 					     void *netfs_priv,
+ 					     struct file *file);
+-void netfs_get_request(struct netfs_io_request *rreq);
++void netfs_get_request(struct netfs_io_request *rreq, enum netfs_rreq_ref_trace what);
+ void netfs_clear_subrequests(struct netfs_io_request *rreq, bool was_async);
+-void netfs_put_request(struct netfs_io_request *rreq, bool was_async);
++void netfs_put_request(struct netfs_io_request *rreq, bool was_async,
++		       enum netfs_rreq_ref_trace what);
+ struct netfs_io_subrequest *netfs_alloc_subrequest(struct netfs_io_request *rreq);
+ void netfs_put_subrequest(struct netfs_io_subrequest *subreq, bool was_async);
+ void netfs_get_subrequest(struct netfs_io_subrequest *subreq);
+ 
++static inline void netfs_see_request(struct netfs_io_request *rreq,
++				     enum netfs_rreq_ref_trace what)
++{
++	trace_netfs_rreq_ref(rreq->debug_id, refcount_read(&rreq->ref), what);
++}
++
+ /*
+  * read_helper.c
+  */
+diff --git a/fs/netfs/objects.c b/fs/netfs/objects.c
+index f7383c28dc6e..4e29c3bb6e5a 100644
+--- a/fs/netfs/objects.c
++++ b/fs/netfs/objects.c
+@@ -27,7 +27,7 @@ struct netfs_io_request *netfs_alloc_request(
+ 		rreq->debug_id	= atomic_inc_return(&debug_ids);
+ 		INIT_LIST_HEAD(&rreq->subrequests);
+ 		INIT_WORK(&rreq->work, netfs_rreq_work);
+-		refcount_set(&rreq->usage, 1);
++		refcount_set(&rreq->ref, 1);
+ 		__set_bit(NETFS_RREQ_IN_PROGRESS, &rreq->flags);
+ 		if (ops->init_request)
+ 			ops->init_request(rreq, file);
+@@ -37,9 +37,12 @@ struct netfs_io_request *netfs_alloc_request(
+ 	return rreq;
+ }
+ 
+-void netfs_get_request(struct netfs_io_request *rreq)
++void netfs_get_request(struct netfs_io_request *rreq, enum netfs_rreq_ref_trace what)
+ {
+-	refcount_inc(&rreq->usage);
++	int r;
++
++	__refcount_inc(&rreq->ref, &r);
++	trace_netfs_rreq_ref(rreq->debug_id, r + 1, what);
+ }
+ 
+ void netfs_clear_subrequests(struct netfs_io_request *rreq, bool was_async)
+@@ -68,9 +71,16 @@ static void netfs_free_request(struct work_struct *work)
+ 	netfs_stat_d(&netfs_n_rh_rreq);
+ }
+ 
+-void netfs_put_request(struct netfs_io_request *rreq, bool was_async)
++void netfs_put_request(struct netfs_io_request *rreq, bool was_async,
++		       enum netfs_rreq_ref_trace what)
+ {
+-	if (refcount_dec_and_test(&rreq->usage)) {
++	unsigned int debug_id = rreq->debug_id;
++	bool dead;
++	int r;
++
++	dead = __refcount_dec_and_test(&rreq->ref, &r);
++	trace_netfs_rreq_ref(debug_id, r - 1, what);
++	if (dead) {
+ 		if (was_async) {
+ 			rreq->work.func = netfs_free_request;
+ 			if (!queue_work(system_unbound_wq, &rreq->work))
+@@ -93,7 +103,7 @@ struct netfs_io_subrequest *netfs_alloc_subrequest(struct netfs_io_request *rreq
+ 		INIT_LIST_HEAD(&subreq->rreq_link);
+ 		refcount_set(&subreq->usage, 2);
+ 		subreq->rreq = rreq;
+-		netfs_get_request(rreq);
++		netfs_get_request(rreq, netfs_rreq_trace_get_subreq);
+ 		netfs_stat(&netfs_n_rh_sreq);
+ 	}
+ 
+@@ -113,7 +123,7 @@ static void __netfs_put_subrequest(struct netfs_io_subrequest *subreq,
+ 	trace_netfs_sreq(subreq, netfs_sreq_trace_free);
+ 	kfree(subreq);
+ 	netfs_stat_d(&netfs_n_rh_sreq);
+-	netfs_put_request(rreq, was_async);
++	netfs_put_request(rreq, was_async, netfs_rreq_trace_put_subreq);
+ }
+ 
+ void netfs_put_subrequest(struct netfs_io_subrequest *subreq, bool was_async)
+diff --git a/fs/netfs/read_helper.c b/fs/netfs/read_helper.c
+index 181aeda32649..620c3be5ec0a 100644
+--- a/fs/netfs/read_helper.c
++++ b/fs/netfs/read_helper.c
+@@ -109,7 +109,7 @@ static void netfs_rreq_completed(struct netfs_io_request *rreq, bool was_async)
+ {
+ 	trace_netfs_rreq(rreq, netfs_rreq_trace_done);
+ 	netfs_clear_subrequests(rreq, was_async);
+-	netfs_put_request(rreq, was_async);
++	netfs_put_request(rreq, was_async, netfs_rreq_trace_put_complete);
+ }
+ 
+ /*
+@@ -799,7 +799,7 @@ void netfs_readahead(struct readahead_control *ractl,
+ 	return;
+ 
+ cleanup_free:
+-	netfs_put_request(rreq, false);
++	netfs_put_request(rreq, false, netfs_rreq_trace_put_failed);
+ 	return;
+ cleanup:
+ 	if (netfs_priv)
+@@ -858,7 +858,7 @@ int netfs_readpage(struct file *file,
+ 	netfs_stat(&netfs_n_rh_readpage);
+ 	trace_netfs_read(rreq, rreq->start, rreq->len, netfs_read_trace_readpage);
+ 
+-	netfs_get_request(rreq);
++	netfs_get_request(rreq, netfs_rreq_trace_get_hold);
+ 
+ 	atomic_set(&rreq->nr_outstanding, 1);
+ 	do {
+@@ -883,7 +883,7 @@ int netfs_readpage(struct file *file,
+ 		ret = -EIO;
+ 	}
+ out:
+-	netfs_put_request(rreq, false);
++	netfs_put_request(rreq, false, netfs_rreq_trace_put_hold);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(netfs_readpage);
+@@ -1030,13 +1030,13 @@ int netfs_write_begin(struct file *file, struct address_space *mapping,
+ 	 */
+ 	ractl._nr_pages = folio_nr_pages(folio);
+ 	netfs_rreq_expand(rreq, &ractl);
+-	netfs_get_request(rreq);
+ 
+ 	/* We hold the folio locks, so we can drop the references */
+ 	folio_get(folio);
+ 	while (readahead_folio(&ractl))
+ 		;
+ 
++	netfs_get_request(rreq, netfs_rreq_trace_get_hold);
+ 	atomic_set(&rreq->nr_outstanding, 1);
+ 	do {
+ 		if (!netfs_rreq_submit_slice(rreq, &debug_index))
+@@ -1062,7 +1062,7 @@ int netfs_write_begin(struct file *file, struct address_space *mapping,
+ 		trace_netfs_failure(rreq, NULL, ret, netfs_fail_short_write_begin);
+ 		ret = -EIO;
+ 	}
+-	netfs_put_request(rreq, false);
++	netfs_put_request(rreq, false, netfs_rreq_trace_put_hold);
+ 	if (ret < 0)
+ 		goto error;
+ 
+@@ -1078,7 +1078,7 @@ int netfs_write_begin(struct file *file, struct address_space *mapping,
+ 	return 0;
+ 
+ error_put:
+-	netfs_put_request(rreq, false);
++	netfs_put_request(rreq, false, netfs_rreq_trace_put_failed);
+ error:
+ 	folio_unlock(folio);
+ 	folio_put(folio);
+diff --git a/include/linux/netfs.h b/include/linux/netfs.h
+index f63de27d6f29..541aebe828f3 100644
+--- a/include/linux/netfs.h
++++ b/include/linux/netfs.h
+@@ -168,7 +168,7 @@ struct netfs_io_request {
+ 	loff_t			i_size;		/* Size of the file */
+ 	loff_t			start;		/* Start position */
+ 	pgoff_t			no_unlock_folio; /* Don't unlock this folio after read */
+-	refcount_t		usage;
++	refcount_t		ref;
+ 	unsigned long		flags;
+ #define NETFS_RREQ_INCOMPLETE_IO	0	/* Some ioreqs terminated short or with error */
+ #define NETFS_RREQ_COPY_TO_CACHE	1	/* Need to write to the cache */
+diff --git a/include/trace/events/netfs.h b/include/trace/events/netfs.h
+index 0c7a26c4d11c..e35a5ce52eb5 100644
+--- a/include/trace/events/netfs.h
++++ b/include/trace/events/netfs.h
+@@ -55,6 +55,15 @@
+ 	EM(netfs_fail_short_write_begin,	"short-write-begin")	\
+ 	E_(netfs_fail_prepare_write,		"prep-write")
+ 
++#define netfs_rreq_ref_traces					\
++	EM(netfs_rreq_trace_get_hold,		"GET HOLD   ")	\
++	EM(netfs_rreq_trace_get_subreq,		"GET SUBREQ ")	\
++	EM(netfs_rreq_trace_put_complete,	"PUT COMPLT ")	\
++	EM(netfs_rreq_trace_put_failed,		"PUT FAILED ")	\
++	EM(netfs_rreq_trace_put_hold,		"PUT HOLD   ")	\
++	EM(netfs_rreq_trace_put_subreq,		"PUT SUBREQ ")	\
++	E_(netfs_rreq_trace_new,		"NEW        ")
++
+ #ifndef __NETFS_DECLARE_TRACE_ENUMS_ONCE_ONLY
+ #define __NETFS_DECLARE_TRACE_ENUMS_ONCE_ONLY
+ 
+@@ -67,6 +76,7 @@ enum netfs_read_trace { netfs_read_traces } __mode(byte);
+ enum netfs_rreq_trace { netfs_rreq_traces } __mode(byte);
+ enum netfs_sreq_trace { netfs_sreq_traces } __mode(byte);
+ enum netfs_failure { netfs_failures } __mode(byte);
++enum netfs_rreq_ref_trace { netfs_rreq_ref_traces } __mode(byte);
+ 
+ #endif
+ 
+@@ -83,6 +93,7 @@ netfs_rreq_traces;
+ netfs_sreq_sources;
+ netfs_sreq_traces;
+ netfs_failures;
++netfs_rreq_ref_traces;
+ 
+ /*
+  * Now redefine the EM() and E_() macros to map the enums to the strings that
+@@ -229,6 +240,30 @@ TRACE_EVENT(netfs_failure,
+ 		      __entry->error)
+ 	    );
+ 
++TRACE_EVENT(netfs_rreq_ref,
++	    TP_PROTO(unsigned int rreq_debug_id, int ref,
++		     enum netfs_rreq_ref_trace what),
++
++	    TP_ARGS(rreq_debug_id, ref, what),
++
++	    TP_STRUCT__entry(
++		    __field(unsigned int,		rreq		)
++		    __field(int,			ref		)
++		    __field(enum netfs_rreq_ref_trace,	what		)
++			     ),
++
++	    TP_fast_assign(
++		    __entry->rreq	= rreq_debug_id;
++		    __entry->ref	= ref;
++		    __entry->what	= what;
++			   ),
++
++	    TP_printk("R=%08x %s r=%u",
++		      __entry->rreq,
++		      __print_symbolic(__entry->what, netfs_rreq_ref_traces),
++		      __entry->ref)
++	    );
++
+ #undef EM
+ #undef E_
+ #endif /* _TRACE_NETFS_H */
+
+
