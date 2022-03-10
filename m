@@ -2,51 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D71204D4D5E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Mar 2022 16:43:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E2DE4D4D90
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Mar 2022 16:52:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232834AbiCJPSb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Mar 2022 10:18:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33426 "EHLO
+        id S233594AbiCJPss (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Mar 2022 10:48:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58610 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244259AbiCJPSB (ORCPT
+        with ESMTP id S231241AbiCJPsq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Mar 2022 10:18:01 -0500
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7374DFEB;
-        Thu, 10 Mar 2022 07:16:59 -0800 (PST)
-Received: from kwepemi100014.china.huawei.com (unknown [172.30.72.54])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4KDt0N47l5zBrlV;
-        Thu, 10 Mar 2022 23:15:00 +0800 (CST)
-Received: from kwepemm600001.china.huawei.com (7.193.23.3) by
- kwepemi100014.china.huawei.com (7.221.188.106) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.21; Thu, 10 Mar 2022 23:16:56 +0800
-Received: from [10.174.176.245] (10.174.176.245) by
- kwepemm600001.china.huawei.com (7.193.23.3) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.21; Thu, 10 Mar 2022 23:16:56 +0800
-To:     "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "maz@kernel.org" <maz@kernel.org>, <jbaron@akamai.com>,
-        <akpm@linux-foundation.org>, <khazhy@google.com>,
-        <kaleshsingh@google.com>, <dbueso@suse.de>
-CC:     linux-kernel <linux-kernel@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>
-From:   "wanghai (M)" <wanghai38@huawei.com>
-Subject: epoll: Does anyone know about CVE-2021-39634
-Message-ID: <37574411-707e-89c9-5e77-35b254337664@huawei.com>
-Date:   Thu, 10 Mar 2022 23:16:55 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Thu, 10 Mar 2022 10:48:46 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3964CDAC
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Mar 2022 07:47:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1646927264;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=l9mR/80qlAMFJEP55l81aNyJ85t2ielrHjLYKFMQaYQ=;
+        b=KTN9ECwFXlZhIrYTzh4nJ1Jj73oLE2AHdIqGDFOTsPTW4geGuehiSF3il+iTCGe9SzoQVf
+        JQhynYzFaucxP04hI1kxN4iwx14ysjqOVVNu4KwtJDEV7vKvWqEEck5t9adE1xTd7w5rip
+        JGVrsvFoAglNIhePWhm9rCoSXmxv0mM=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-664-P74NfXXjNsGi-zE_7koIOA-1; Thu, 10 Mar 2022 10:47:41 -0500
+X-MC-Unique: P74NfXXjNsGi-zE_7koIOA-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CD6A3520E;
+        Thu, 10 Mar 2022 15:47:39 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8889A832A5;
+        Thu, 10 Mar 2022 15:47:38 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH] afs: Fix potential thrashing in afs writeback
+From:   David Howells <dhowells@redhat.com>
+To:     marc.dionne@auristor.com
+Cc:     linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 10 Mar 2022 15:47:37 +0000
+Message-ID: <164692725757.2097000.2060513769492301854.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/1.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset="gbk"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.174.176.245]
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemm600001.china.huawei.com (7.193.23.3)
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -54,29 +63,56 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-I've spent a long time and can't figure out the details of the following 
-CVE, can anyone help me?
+In afs_writepages_region(), if the dirty page we find is undergoing
+writeback or write to cache, but the sync_mode is WB_SYNC_NONE, we go round
+the loop trying the same page again and again with no pausing or waiting
+unless and until another thread manages to clear the writeback and fscache
+flags.
 
-CVE-2021-39634 [1]
-In fs/eventpoll.c, there is a possible use after free.
+Fix this with three measures:
 
-I have two questions:
-1. How does the UAF problem happen?
-2. Why it can be fixed by commit f8d4f44df056 ("epoll: do not insert 
-into poll queues until all sanity checks are done") [2]
+ (1) Advance the start to after the page we found.
 
-I'm guessing that patch [3] solved a problem similar to [4], is this 
-correct?
+ (2) Break out of the loop and return if rescheduling is requested.
 
-Any feedback would be appreciated, thanks.
+ (3) Arbitrarily give up after a maximum of 5 skips.
 
-[1] https://nvd.nist.gov/vuln/detail/CVE-2021-39634
-[2] https://www.linuxkernelcves.com/cves/CVE-2021-39634
-[3] 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit?id=f8d4f44df056c5b504b0d49683fb7279218fd207
-[4] 
-https://cloudfuzz.github.io/android-kernel-exploitation/chapters/root-cause-analysis.html
+Fixes: 31143d5d515e ("AFS: implement basic file write support")
+Reported-by: Marc Dionne <marc.dionne@auristor.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
 
--- 
-Wang Hai
+ fs/afs/write.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/fs/afs/write.c b/fs/afs/write.c
+index 85c9056ba9fb..bd0201f4939a 100644
+--- a/fs/afs/write.c
++++ b/fs/afs/write.c
+@@ -701,7 +701,7 @@ static int afs_writepages_region(struct address_space *mapping,
+ 	struct folio *folio;
+ 	struct page *head_page;
+ 	ssize_t ret;
+-	int n;
++	int n, skips = 0;
+ 
+ 	_enter("%llx,%llx,", start, end);
+ 
+@@ -752,8 +752,15 @@ static int afs_writepages_region(struct address_space *mapping,
+ #ifdef CONFIG_AFS_FSCACHE
+ 				folio_wait_fscache(folio);
+ #endif
++			} else {
++				start += folio_size(folio);
+ 			}
+ 			folio_put(folio);
++			if (wbc->sync_mode == WB_SYNC_NONE) {
++				if (skips >= 5 || need_resched())
++					break;
++				skips++;
++			}
+ 			continue;
+ 		}
+ 
+
 
