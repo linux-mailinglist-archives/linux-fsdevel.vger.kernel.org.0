@@ -2,73 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E00A4D5099
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Mar 2022 18:33:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FAE84D50AB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Mar 2022 18:35:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244031AbiCJRcd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Mar 2022 12:32:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53574 "EHLO
+        id S245060AbiCJRfp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Mar 2022 12:35:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233084AbiCJRca (ORCPT
+        with ESMTP id S245077AbiCJRfn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Mar 2022 12:32:30 -0500
-Received: from mail-qt1-x82e.google.com (mail-qt1-x82e.google.com [IPv6:2607:f8b0:4864:20::82e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01C74F5436
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Mar 2022 09:31:29 -0800 (PST)
-Received: by mail-qt1-x82e.google.com with SMTP id bt3so5265602qtb.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Mar 2022 09:31:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20210112.gappssmtp.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=i7J8e206Bwozad+xJPF02nCEZhsFp5sZ0xZvk63VV68=;
-        b=UkGo0vpr4SaQ7VeIYfKdoCqVYOfqyZ3ua0gxQaiJfTvuIAdcEhC7UzaOYUa+8sTpBI
-         wYGfW0Oyu3FfBBXPWw6SmL7k9/Ix6fjwuGHvkSm5lrOgl0ENo1rP0RrjvEBxzxAp03Gh
-         zQ/3YctkGkQXC22sPfWYmqkvHsQeraa8bVSTnn2NJXnxYA2o5wMomQMsd54TRQk6BinA
-         66SHzCNzlLrkOoGYPJbmY/C9U3RloqxiyhcEza5IJT17waUWq6Pr7CkjrynsZ5QIxT6A
-         Ty6Wst/a7i05d2X56zLTgO7XY9bwMpKsT3BIpaI3jYkRcGuzXkvWvLMzj9Mop7ypQ0PI
-         yD4w==
+        Thu, 10 Mar 2022 12:35:43 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C976A18CC0C
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Mar 2022 09:34:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1646933678;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=+sI8yl68F8AaSxc5/19rLFgsuz0y8nt6Rj/YSh3VHaE=;
+        b=OLTQGWpaYtuHXDafAtrAHvckTYIX7so9rgjr9MdvRg3UE7uhHY5O/ZoleWfYuprOQUsHEY
+        Awl/Vjrm1jCxK5u0JLg55y/py7k0j/wqG+zgAftwCrqLLaeN9D+9+KR0zjB4RyN7w7rvad
+        paJljT5Sg0/0tsfUPix37+NUJdym+LY=
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
+ [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-223-MxzBdYA_P7ivewiM4PSagQ-1; Thu, 10 Mar 2022 12:34:37 -0500
+X-MC-Unique: MxzBdYA_P7ivewiM4PSagQ-1
+Received: by mail-qt1-f197.google.com with SMTP id m12-20020ac807cc000000b002e05dbf21acso4510776qth.22
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Mar 2022 09:34:37 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=i7J8e206Bwozad+xJPF02nCEZhsFp5sZ0xZvk63VV68=;
-        b=zteNIaw3atI2fztfQBkRaA4KveqwGNNyoRYYM75PLz+NxplKPllqaIWqtD9/XvCc3s
-         OhZie6KXUgl1G3OWZKyE1j2AV3+gbWUDbbxyG9oGzedsBf6Sx9QZkTcqC91F5vZD4s0R
-         1oLwgfBVYF2UuEN6ynsrHhKrkMeKM5+xas5kfRLMNcnGupeBbZNZ+LO+gAZV8YPDDGK5
-         twAaaLziVZlLGNZy1NsQseUeqBjb4YYCIcAV1zoWiHZa3t0RQnpQdOria+KmoYsYnQCV
-         qjeBBq884mtdNGwcZWGEuWIb8Ago68saYaRKwzQZL4OYQo/x/NXA/+ZECThWW0IUYg7W
-         4fcA==
-X-Gm-Message-State: AOAM533hIYbliHj3X5FEQsLexHKgqUAquPZ2BSUy91uCWebac3jnrbif
-        Y9rckDMD1fKqStbl0I/k1kuL1Q==
-X-Google-Smtp-Source: ABdhPJwXrthz2QtCLsnFtqyDL0e1w0h1YTxxQQFSEJP3ZvHCIAN7kMeF7r6fRWtGJMhwK1gVmjpSbw==
-X-Received: by 2002:a05:622a:550:b0:2e0:7422:a1d5 with SMTP id m16-20020a05622a055000b002e07422a1d5mr5001583qtx.444.1646933488129;
-        Thu, 10 Mar 2022 09:31:28 -0800 (PST)
-Received: from localhost (cpe-98-15-154-102.hvc.res.rr.com. [98.15.154.102])
-        by smtp.gmail.com with ESMTPSA id bs11-20020a05620a470b00b004b2d02f8a92sm2579261qkb.126.2022.03.10.09.31.27
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=+sI8yl68F8AaSxc5/19rLFgsuz0y8nt6Rj/YSh3VHaE=;
+        b=u4KDS7XBQI3bLY8h4S/QwVR9T77zRDr+QDRs8R/6UPVJi+CcS1hJHgkDS/A6HqDjxU
+         ICrPc5tkI/RslqLOVKuiRP0JffoRda+KWUSxk/zKFXiD6/slrzey2KrlJjoScUqeOmM/
+         n0tz8D8kZZJdIe0VO/YUDkRsfKbtK4mxkb5m4nRZlNbdcDWjXjf+aJLXQiM8bXVUMb3L
+         +ueRvwqF6CpdTC2CdsYCvFA7IkXKIRE/rHhAlsTf+AI25dpLxKybW3NSediy+ZT1hmiE
+         P7y/4+HRogVbP5+GfCBJfB+hkjD3gb0AxfRBJ0O5pNhB5PhqDQNZAN0Fw+QSHZW5yNgt
+         4amw==
+X-Gm-Message-State: AOAM532/F/3cWUPIytVY5j1wtmpphnLEYZkgNMaEfSyGlt78jm30k3no
+        4eAOhwYduQ7y/SU6mlpwRFnP+d690LJe0249xJ+gN6IC/hHnb8aZ1/X8USxQGMDNWqGFkts12Jn
+        xn4INuHUYEw5GRmE70vIedThJ0Q==
+X-Received: by 2002:ac8:5f84:0:b0:2e0:6965:c999 with SMTP id j4-20020ac85f84000000b002e06965c999mr4925472qta.477.1646933676594;
+        Thu, 10 Mar 2022 09:34:36 -0800 (PST)
+X-Google-Smtp-Source: ABdhPJzM49ZVae3bPgm0svuUu3uf+AJzp4pMchlkgmKNd23/D20Xgvy0iFYR1hc8U1liK5jF6Izwyg==
+X-Received: by 2002:ac8:5f84:0:b0:2e0:6965:c999 with SMTP id j4-20020ac85f84000000b002e06965c999mr4925451qta.477.1646933676349;
+        Thu, 10 Mar 2022 09:34:36 -0800 (PST)
+Received: from [192.168.1.3] (68-20-15-154.lightspeed.rlghnc.sbcglobal.net. [68.20.15.154])
+        by smtp.gmail.com with ESMTPSA id t28-20020a05620a005c00b00662fb1899d2sm2562187qkt.0.2022.03.10.09.34.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Mar 2022 09:31:27 -0800 (PST)
-Date:   Thu, 10 Mar 2022 12:31:26 -0500
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     cgel.zte@gmail.com, axboe@kernel.dk, viro@zeniv.linux.org.uk,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, akpm@linux-foundation.org,
-        Yang Yang <yang.yang29@zte.com.cn>,
-        Ran Xiaokai <ran.xiaokai@zte.com.cn>
-Subject: Re: [PATCH] block/psi: remove PSI annotations from submit_bio
-Message-ID: <Yio17pXawRuuVJFO@cmpxchg.org>
-References: <20220309094323.2082884-1-yang.yang29@zte.com.cn>
- <Yij9eygSYy5MSIA0@cmpxchg.org>
- <Yime3HdbEqFgRVtO@infradead.org>
- <YiokaQLWeulWpiCx@cmpxchg.org>
- <Yiok1xi0Hqmh1fbi@infradead.org>
+        Thu, 10 Mar 2022 09:34:35 -0800 (PST)
+Message-ID: <dd054c962818716e718bd9b446ee5322ca097675.camel@redhat.com>
+Subject: Re: [PATCH v3 12/20] ceph: Make ceph_init_request() check caps on
+ readahead
+From:   Jeff Layton <jlayton@redhat.com>
+To:     David Howells <dhowells@redhat.com>, linux-cachefs@redhat.com
+Cc:     ceph-devel@vger.kernel.org,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Steve French <sfrench@samba.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        David Wysochanski <dwysocha@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jeffle Xu <jefflexu@linux.alibaba.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Thu, 10 Mar 2022 12:34:34 -0500
+In-Reply-To: <164692907694.2099075.10081819855690054094.stgit@warthog.procyon.org.uk>
+References: <164692883658.2099075.5745824552116419504.stgit@warthog.procyon.org.uk>
+         <164692907694.2099075.10081819855690054094.stgit@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.42.4 (3.42.4-1.fc35) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Yiok1xi0Hqmh1fbi@infradead.org>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
         T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -77,15 +90,128 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 10, 2022 at 08:18:31AM -0800, Christoph Hellwig wrote:
-> On Thu, Mar 10, 2022 at 11:16:41AM -0500, Johannes Weiner wrote:
-> > The first version did that, but it was sprawling and not well-received:
-> > 
-> > https://lkml.org/lkml/2019/7/22/1261
+On Thu, 2022-03-10 at 16:17 +0000, David Howells wrote:
+> Move the caps check from ceph_readahead() to ceph_init_request(),
+> conditional on the origin being NETFS_READAHEAD so that in a future patch,
+> ceph can point its ->readahead() vector directly at netfs_readahead().
 > 
-> Well, Dave's comments are spot on.  Except that we replaced it with
-> something even more horrible and not something sensible as he suggested.
+> Changes
+> =======
+> ver #3)
+>  - Split from the patch to add a netfs inode context[1].
+>  - Need to store the caps got in rreq->netfs_priv for later freeing.
+> 
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: ceph-devel@vger.kernel.org
+> cc: linux-cachefs@redhat.com
+> Link: https://lore.kernel.org/r/8af0d47f17d89c06bbf602496dd845f2b0bf25b3.camel@kernel.org/ [1]
+> ---
+> 
+>  fs/ceph/addr.c |   69 +++++++++++++++++++++++++++++++++-----------------------
+>  1 file changed, 41 insertions(+), 28 deletions(-)
+> 
+> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+> index 9189257476f8..6d056db41f50 100644
+> --- a/fs/ceph/addr.c
+> +++ b/fs/ceph/addr.c
+> @@ -354,6 +354,45 @@ static void ceph_netfs_issue_read(struct netfs_io_subrequest *subreq)
+>  	dout("%s: result %d\n", __func__, err);
+>  }
+>  
+> +static int ceph_init_request(struct netfs_io_request *rreq, struct file *file)
+> +{
+> +	struct inode *inode = rreq->inode;
+> +	int got = 0, want = CEPH_CAP_FILE_CACHE;
+> +	int ret = 0;
+> +
+> +	if (file) {
+> +		struct ceph_rw_context *rw_ctx;
+> +		struct ceph_file_info *fi = file->private_data;
+> +
+> +		rw_ctx = ceph_find_rw_context(fi);
+> +		if (rw_ctx)
+> +			return 0;
+> +	}
+> +
+> +	if (rreq->origin != NETFS_READAHEAD)
+> +		return 0;
+> +
 
-Confused. I changed it the way Dave suggested, to which he replied
-"this is much cleaner and easier to maintain". Are we reading
-different threads? Care to elaborate?
+^^^
+I think you should move this check above the if (file) block above it.
+We don't need to anything at all if we're not in readahead.
+
+> +	/*
+> +	 * readahead callers do not necessarily hold Fcb caps
+> +	 * (e.g. fadvise, madvise).
+> +	 */
+> +	ret = ceph_try_get_caps(inode, CEPH_CAP_FILE_RD, want, true, &got);
+> +	if (ret < 0) {
+> +		dout("start_read %p, error getting cap\n", inode);
+> +		return ret;
+> +	}
+> +
+> +	if (!(got & want)) {
+> +		dout("start_read %p, no cache cap\n", inode);
+> +		return -EACCES;
+> +	}
+> +	if (ret == 0)
+> +		return -EACCES;
+> +
+> +	rreq->netfs_priv = (void *)(uintptr_t)got;
+> +	return 0;
+> +}
+> +
+>  static void ceph_readahead_cleanup(struct address_space *mapping, void *priv)
+>  {
+>  	struct inode *inode = mapping->host;
+> @@ -365,7 +404,7 @@ static void ceph_readahead_cleanup(struct address_space *mapping, void *priv)
+>  }
+>  
+>  static const struct netfs_request_ops ceph_netfs_read_ops = {
+> -	.is_cache_enabled	= ceph_is_cache_enabled,
+> +	.init_request		= ceph_init_request,
+>  	.begin_cache_operation	= ceph_begin_cache_operation,
+>  	.issue_read		= ceph_netfs_issue_read,
+>  	.expand_readahead	= ceph_netfs_expand_readahead,
+> @@ -393,33 +432,7 @@ static int ceph_readpage(struct file *file, struct page *subpage)
+>  
+>  static void ceph_readahead(struct readahead_control *ractl)
+>  {
+> -	struct inode *inode = file_inode(ractl->file);
+> -	struct ceph_file_info *fi = ractl->file->private_data;
+> -	struct ceph_rw_context *rw_ctx;
+> -	int got = 0;
+> -	int ret = 0;
+> -
+> -	if (ceph_inode(inode)->i_inline_version != CEPH_INLINE_NONE)
+> -		return;
+> -
+> -	rw_ctx = ceph_find_rw_context(fi);
+> -	if (!rw_ctx) {
+> -		/*
+> -		 * readahead callers do not necessarily hold Fcb caps
+> -		 * (e.g. fadvise, madvise).
+> -		 */
+> -		int want = CEPH_CAP_FILE_CACHE;
+> -
+> -		ret = ceph_try_get_caps(inode, CEPH_CAP_FILE_RD, want, true, &got);
+> -		if (ret < 0)
+> -			dout("start_read %p, error getting cap\n", inode);
+> -		else if (!(got & want))
+> -			dout("start_read %p, no cache cap\n", inode);
+> -
+> -		if (ret <= 0)
+> -			return;
+> -	}
+> -	netfs_readahead(ractl, &ceph_netfs_read_ops, (void *)(uintptr_t)got);
+> +	netfs_readahead(ractl, &ceph_netfs_read_ops, NULL);
+>  }
+>  
+>  #ifdef CONFIG_CEPH_FSCACHE
+> 
+> 
+
+-- 
+Jeff Layton <jlayton@redhat.com>
+
