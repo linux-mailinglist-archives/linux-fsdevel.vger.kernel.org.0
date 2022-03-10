@@ -2,119 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D7554D544D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Mar 2022 23:11:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA6EF4D547B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Mar 2022 23:18:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344295AbiCJWMY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Mar 2022 17:12:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37300 "EHLO
+        id S1344037AbiCJWTZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Mar 2022 17:19:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238810AbiCJWMV (ORCPT
+        with ESMTP id S232607AbiCJWTX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Mar 2022 17:12:21 -0500
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDD4218A7A4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Mar 2022 14:11:18 -0800 (PST)
-Received: by mail-ej1-x62f.google.com with SMTP id bg10so15200476ejb.4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Mar 2022 14:11:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=9km0i8SFuccdCOVZYquGLNsFmsoS5afCtujPM89debo=;
-        b=DkO/8stlw+jpHvI8npwNphLXTcJGdwo5HGKNzsLEQgRJKoqLNqUtQ14rO8YztWtv6H
-         bAxp1qhPNeH3fynL0mw7GJsoth6uZUwOJRQT3vdvrEI2RpF54ufTb0yXO3++rTXBespQ
-         x5lpjmtoM0L6NN0u9NAmn1YkWynYbmAVkFmqK9RxmA3NcICSIgE9yAEScpXJQ4VdYV+H
-         qGhCj6APjWltlRC5qBmw4vuoMHC3nKYsIbGWFHWJaXvc4I/QXkVgLDu0Y46f5aCQWnEh
-         nBP1d+G1PMaC87QCOjKfloK3Lw9CLGuuIdMcOaJnRc9h+7uDqcwjICH2qyHuewLribm8
-         lAZA==
+        Thu, 10 Mar 2022 17:19:23 -0500
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E0AF4EF60;
+        Thu, 10 Mar 2022 14:18:22 -0800 (PST)
+Received: by mail-pl1-f173.google.com with SMTP id n15so6135156plh.2;
+        Thu, 10 Mar 2022 14:18:22 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=9km0i8SFuccdCOVZYquGLNsFmsoS5afCtujPM89debo=;
-        b=jVmj2dD8FI/4oFtXTEZsdh8Sg0lxhdN5BB52q2pQiqYJEt1P9MF+OGmjbCHq5wmg2v
-         EJMtz23BIrGia4GEVg9VOxH6Ji3sl9xSTVkTW9JsdlfdL62waz7K2rgSQelpyWKs7NZx
-         eOEK8mtlVN69glGaO/uxOiKnk9mtv7Es9kWSYn3fa/uHOK5FCrTZvF5jM/HGShVaErp7
-         WzBoGEB4KIjF9tdy71X9sIGoP1/SGhaf/GIwBkfvkTKM7opmpz79WYvTTipGpqQoMfkm
-         lYCO80jJrn9OhDOCSrm6My6CvTncTXoZ/A5tqN2P5MhDOTbUzRgI/pq6GBICADmMosRv
-         la9A==
-X-Gm-Message-State: AOAM533MwErEaiEqtlM56rH+ZnNDP/Q7mJsxVZRyOlfS0TgJMbjgCn0T
-        uGcN0/6nIUM0bE5drETvvDT8X1xROk7n6Bnmxjez
-X-Google-Smtp-Source: ABdhPJzuqe7pKCSsXOm2hSO3J0hQynYE7R+uH9xz7Xj/FjdVN2m1z54F4ZugUJ/pEbmhBHGUILXKrslgjHDns1/T+QA=
-X-Received: by 2002:a17:907:216f:b0:6ce:d85f:35cf with SMTP id
- rl15-20020a170907216f00b006ced85f35cfmr6109610ejb.517.1646950277373; Thu, 10
- Mar 2022 14:11:17 -0800 (PST)
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=5X5xVWc1nkDEIZdla3XpRNW/bQySQD0uGStRSZKwtGE=;
+        b=IBZfoKfGrgIwVgfLYskv27A7+PQBvlBev/0B6zmUjP5ASHmO8YgY0jpYnLplphXFlT
+         DSywr/P8HZxzbRJFbdpgGyQ3EyJggTdXOnpkGkWpo5SoUeVG0xnlwXYJuUBC7YTtzGyx
+         iAd/TVoA1JBI3tyHH8cfnJiQp25UyZAEr0o633/ZwILdCYqPKN66sI2fckkvHoQpQ/b6
+         G9TQJaJ0UzzYY4S/rY/+mU2i0tytn2bO0rGv1zjo+MhShTk8hGaaIqVg5I6VLksN6hMT
+         s5oBC/gIEc9oAl8YDWzedqRzBOCMibXEQaHNbmKXIXjeBsr2h1fLPS+zFXVWA7ieW3vY
+         fILA==
+X-Gm-Message-State: AOAM5332tZtBUKhhJ2jOsR+EuHPrz4jjdng5RxSGS+utseCHcELVy+nZ
+        MphcXp1ugIaVZuy6IR0sNk77WNhKt8A=
+X-Google-Smtp-Source: ABdhPJy62zhEbGvei3QmnuKG1X3fqXb+LD/edNZIPKgqnhwAVLyBG86WPVpfaMOVxXBkkDzB2GptKQ==
+X-Received: by 2002:a17:902:f646:b0:151:d5b1:cbb4 with SMTP id m6-20020a170902f64600b00151d5b1cbb4mr7207735plg.150.1646950701430;
+        Thu, 10 Mar 2022 14:18:21 -0800 (PST)
+Received: from ?IPV6:2620:15c:211:201:8b4d:7ed7:9546:30d2? ([2620:15c:211:201:8b4d:7ed7:9546:30d2])
+        by smtp.gmail.com with ESMTPSA id o5-20020a056a0015c500b004f76735be68sm5366491pfu.216.2022.03.10.14.18.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Mar 2022 14:18:21 -0800 (PST)
+Message-ID: <9d645cf0-1685-437a-23e4-b2a01553bba5@acm.org>
+Date:   Thu, 10 Mar 2022 14:18:19 -0800
 MIME-Version: 1.0
-References: <20211117015806.2192263-1-dvander@google.com> <CAOQ4uxjjapFeOAFGLmsXObdgFVYLfNer-rnnee1RR+joxK3xYg@mail.gmail.com>
- <Yao51m9EXszPsxNN@redhat.com> <CAOQ4uxjk4piLyx67Ena-FfypDVWzRqVN0xmFUXXPYa+SC4Q-vQ@mail.gmail.com>
- <YapjNRrjpDu2a5qQ@redhat.com> <CAHC9VhQTUgBRBEz_wFX8daSA70nGJCJLXj8Yvcqr5+DHcfDmwA@mail.gmail.com>
- <CA+FmFJA-r+JgMqObNCvE_X+L6jxWtDrczM9Jh0L38Fq-6mnbbA@mail.gmail.com> <CAHC9VhRer7UWdZyizWO4VuxrgQDnLCOyj8LO7P6T5BGjd=s9zQ@mail.gmail.com>
-In-Reply-To: <CAHC9VhRer7UWdZyizWO4VuxrgQDnLCOyj8LO7P6T5BGjd=s9zQ@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 10 Mar 2022 17:11:05 -0500
-Message-ID: <CAHC9VhQkLSBGQ-F5Oi9p3G6L7Bf_jQMWAxug_G4bSOJ0_cYXxQ@mail.gmail.com>
-Subject: Re: [PATCH v19 0/4] overlayfs override_creds=off & nested get xattr fix
-To:     Vivek Goyal <vgoyal@redhat.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        David Anderson <dvander@google.com>
-Cc:     Mark Salyzyn <salyzyn@android.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        John Stultz <john.stultz@linaro.org>,
-        linux-doc@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        kernel-team <kernel-team@android.com>, selinux@vger.kernel.org,
-        paulmoore@microsoft.com, luca.boccassi@microsoft.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.1
+Subject: Re: [EXT] Re: [PATCH 2/2] block: remove the per-bio/request write
+ hint.
+Content-Language: en-US
+To:     "Bean Huo (beanhuo)" <beanhuo@micron.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        "Luca Porzio (lporzio)" <lporzio@micron.com>,
+        Manjong Lee <mj0123.lee@samsung.com>,
+        "david@fromorbit.com" <david@fromorbit.com>
+Cc:     "hch@lst.de" <hch@lst.de>, "kbusch@kernel.org" <kbusch@kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>,
+        "sagi@grimberg.me" <sagi@grimberg.me>,
+        "song@kernel.org" <song@kernel.org>,
+        "seunghwan.hyun@samsung.com" <seunghwan.hyun@samsung.com>,
+        "sookwan7.kim@samsung.com" <sookwan7.kim@samsung.com>,
+        "nanich.lee@samsung.com" <nanich.lee@samsung.com>,
+        "woosung2.lee@samsung.com" <woosung2.lee@samsung.com>,
+        "yt0928.kim@samsung.com" <yt0928.kim@samsung.com>,
+        "junho89.kim@samsung.com" <junho89.kim@samsung.com>,
+        "jisoo2146.oh@samsung.com" <jisoo2146.oh@samsung.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20220306231727.GP3927073@dread.disaster.area>
+ <CGME20220309042324epcas1p111312e20f4429dc3a17172458284a923@epcas1p1.samsung.com>
+ <20220309133119.6915-1-mj0123.lee@samsung.com>
+ <CO3PR08MB797524ACBF04B861D48AF612DC0B9@CO3PR08MB7975.namprd08.prod.outlook.com>
+ <e98948ae-1709-32ef-e1e4-063be38609b1@kernel.dk>
+ <CO3PR08MB797562AAE72BC201EB951C6CDC0B9@CO3PR08MB7975.namprd08.prod.outlook.com>
+ <d477c7bf-f3a7-ccca-5472-f9cbb05b83c1@kernel.dk>
+ <c27a5ec3-f683-d2a7-d5e7-fd54d2baa278@acm.org>
+ <PH0PR08MB7889642784B2E1FC1799A828DB0B9@PH0PR08MB7889.namprd08.prod.outlook.com>
+From:   Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <PH0PR08MB7889642784B2E1FC1799A828DB0B9@PH0PR08MB7889.namprd08.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 9, 2022 at 4:13 PM Paul Moore <paul@paul-moore.com> wrote:
-> On Tue, Mar 1, 2022 at 12:05 AM David Anderson <dvander@google.com> wrote=
-:
-> > On Mon, Feb 28, 2022 at 5:09 PM Paul Moore <paul@paul-moore.com> wrote:
+On 3/10/22 13:52, Bean Huo (beanhuo) wrote:
+> Yes, in upstream linux and upstream android, there is no such code. But as we know,
+> mobile customers have used bio->bi_write_hint in their products for years. And the
+> group ID is set according to bio->bi_write_hint before passing the CDB to UFS.
+> 
+> 
+> 	lrbp = &hba->lrb[tag];
+>   
+>                WARN_ON(lrbp->cmd);
+>               + if(cmd->cmnd[0] == WRITE_10)
+>                +{
+>                  +             cmd->cmnd[6] = (0x1f& cmd->request->bio->bi_write_hint);
+>                +}
+>                lrbp->cmd = cmd;
+>                lrbp->sense_bufflen = UFS_SENSE_SIZE;
+>                lrbp->sense_buffer = cmd->sense_buffer;
+> 
+> I don't know why they don't push these changes to the community, maybe
+> it's because changes across the file system and block layers are unacceptable to the
+> block layer and FS. but for sure we should now warn them to push to the
+> community as soon as possible.
 
-...
+Thanks Bean for having shared this information. I think the above code sets the GROUP
+NUMBER information in the WRITE(10) command and also that the following text from the
+UFS specification applies to that information:
+<quote>
+GROUP NUMBER: Notifies the Target device that the data linked to a ContextID:
+  -----------------------------------------------------------------------------------------
+     GROUP NUMBER Value     |  Function
+  -----------------------------------------------------------------------------------------
+  00000b                    | Default, no Context ID is associated with the read operation.
+  00001b to 01111b (0XXXXb) | Context ID. (XXXX I from 0001b to 1111b ‐ Context ID value)
+  10000b                    | Data has System Data characteristics
+  10001b to 11111b          | Reserved
+  -----------------------------------------------------------------------------------------
 
-> >> This patchset may not have been The Answer, but surely there is
-> >> something we can do to support this use-case.
-> >
-> > Yup exactly, and we still need patches 3 & 4 to deal with this. My curr=
-ent plan is to try and rework our sepolicy (we have some ideas on how it co=
-uld be made compatible with how overlayfs works). If that doesn't pan out w=
-e'll revisit these patches and think harder about how to deal with the cohe=
-rency issues.
->
-> Can you elaborate a bit more on the coherency issues?  Is this the dir
-> cache issue that is alluded to in the patchset?  Anything else that
-> has come up on review?
->
-> Before I start looking at the dir cache in any detail, did you have
-> any thoughts on how to resolve the problems that have arisen?
+In case the GROUP NUMBER is set to a reserved value, the operation shall fail and a status
+response of CHECK CONDITION will be returned along with the sense key set to ILLEGAL REQUEST.
+</quote>
 
-David, Vivek, Amir, Miklos, or anyone for that matter, can you please
-go into more detail on the cache issues?  I *think* I may have found a
-potential solution for an issue that could arise when the credential
-override is not in place, but I'm not certain it's the only issue :)
+Since there is a desire to remove the write hint information from struct bio, is there
+any other information the "system data characteristics" information can be derived from?
+How about e.g. deriving that information from request flags like REQ_SYNC, REQ_META and/or
+REQ_IDLE?
 
-There is motivation on our part to try and get the
-"override_creds=3Doff" portion of the patchset working and suitable for
-upstreaming, but I need some help in making sure I understand all the
-objections/problems.
+Thanks,
 
---=20
-paul-moore.com
+Bart.
