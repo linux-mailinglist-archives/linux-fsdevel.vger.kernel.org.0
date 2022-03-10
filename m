@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CD20C4D48CF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Mar 2022 15:15:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4334F4D48EB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Mar 2022 15:15:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243029AbiCJOO5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Mar 2022 09:14:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51584 "EHLO
+        id S243024AbiCJOP2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Mar 2022 09:15:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243067AbiCJOOF (ORCPT
+        with ESMTP id S243104AbiCJOOl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Mar 2022 09:14:05 -0500
-Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D41C9154704;
-        Thu, 10 Mar 2022 06:11:44 -0800 (PST)
+        Thu, 10 Mar 2022 09:14:41 -0500
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 316851390F8;
+        Thu, 10 Mar 2022 06:11:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1646921504; x=1678457504;
+  t=1646921516; x=1678457516;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references;
-  bh=dlixjqkIQMYPAGk8N2BV+CT0PbmeRswbnhn9umPYrd0=;
-  b=hf0NsgxOOE3+V8fImk9HNH6oRLTvXKAwPiB3LcSB1kPw97l1cWdsYeOR
-   5v7Q2vxcjh2LFDahb+CaIAdmG/kE6a+s2K1LG4VC0C6RP8YPVta9725Aw
-   LEECMnQTcK/3H0aj5g3fxUaC8GszMiM6dyfa54p6tIr8pmSSuTMa8XkWP
-   UWGAtyO3RM4ThbxSwOcBsdDhd2AtzR4Km8FUX5bq/vU2pZfhxoPx7m7wP
-   cfFyLNPKteIalmkjnEZT6IZqtZY1fpb8EPfE8BUz4mvLhQNF/m51gbVz7
-   Cc+ipkFfP4n3Yc+Lu/+2vusseDxxVeDAdeL+CfHhvpmK/RbFTS+EgIywJ
-   A==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10281"; a="255203360"
+  bh=XcUkjLL+YpWw11P834waxgWm/NgeT+vT/ACdu5U5CAo=;
+  b=F/sUjSpCuWk97h0sO46fD8jRuA5FWxvDd7aR3R7NaO1nE+jWvZXr0D6X
+   7wV4dJPL83+hSaW5X+NXupMONaBK+cElKsWFL+e8KgMo050tAAXng81hQ
+   lF8vP+Q/dzgF4dcZBWpHsqRa8oGrIPlmFkBhAM+2KckfcgAMk7+7kE5I0
+   Oizkr9EPNs4pC1KYrd8PnQNMf6493I9na6tX9HBAV1LjccSeiGQ6luqTj
+   ha3tiaEZDTNZK2PaAFfwJaX9xTmZeEBA5np1QiG01hLK02CewHfNNmUOW
+   7vDoveF13QNAwosp2COiEYa9HBK2oj0CUjxpSmqVBGccZjPPJ5y4ieCqP
+   w==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10281"; a="235206263"
 X-IronPort-AV: E=Sophos;i="5.90,170,1643702400"; 
-   d="scan'208";a="255203360"
+   d="scan'208";a="235206263"
 Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2022 06:11:12 -0800
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2022 06:11:21 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.90,170,1643702400"; 
-   d="scan'208";a="554655235"
+   d="scan'208";a="554655270"
 Received: from chaop.bj.intel.com ([10.240.192.101])
-  by orsmga008.jf.intel.com with ESMTP; 10 Mar 2022 06:11:04 -0800
+  by orsmga008.jf.intel.com with ESMTP; 10 Mar 2022 06:11:12 -0800
 From:   Chao Peng <chao.p.peng@linux.intel.com>
 To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
@@ -66,14 +66,14 @@ Cc:     Paolo Bonzini <pbonzini@redhat.com>,
         "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
         luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
         ak@linux.intel.com, david@redhat.com
-Subject: [PATCH v5 12/13] KVM: Expose KVM_MEM_PRIVATE
-Date:   Thu, 10 Mar 2022 22:09:10 +0800
-Message-Id: <20220310140911.50924-13-chao.p.peng@linux.intel.com>
+Subject: [PATCH v5 13/13] memfd_create.2: Describe MFD_INACCESSIBLE flag
+Date:   Thu, 10 Mar 2022 22:09:11 +0800
+Message-Id: <20220310140911.50924-14-chao.p.peng@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220310140911.50924-1-chao.p.peng@linux.intel.com>
 References: <20220310140911.50924-1-chao.p.peng@linux.intel.com>
 X-Spam-Status: No, score=-4.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,
         SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -82,88 +82,35 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-KVM_MEM_PRIVATE is not exposed by default but architecture code can turn
-on it by implementing kvm_arch_private_memory_supported().
-
-Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
 Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
 ---
- include/linux/kvm_host.h |  1 +
- virt/kvm/kvm_main.c      | 24 +++++++++++++++++++-----
- 2 files changed, 20 insertions(+), 5 deletions(-)
+ man2/memfd_create.2 | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index 186b9b981a65..0150e952a131 100644
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -1432,6 +1432,7 @@ bool kvm_arch_dy_has_pending_interrupt(struct kvm_vcpu *vcpu);
- int kvm_arch_post_init_vm(struct kvm *kvm);
- void kvm_arch_pre_destroy_vm(struct kvm *kvm);
- int kvm_arch_create_vm_debugfs(struct kvm *kvm);
-+bool kvm_arch_private_memory_supported(struct kvm *kvm);
- 
- #ifndef __KVM_HAVE_ARCH_VM_ALLOC
- /*
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 52319f49d58a..df5311755a40 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -1485,10 +1485,19 @@ static void kvm_replace_memslot(struct kvm *kvm,
- 	}
- }
- 
--static int check_memory_region_flags(const struct kvm_userspace_memory_region *mem)
-+bool __weak kvm_arch_private_memory_supported(struct kvm *kvm)
-+{
-+	return false;
-+}
-+
-+static int check_memory_region_flags(struct kvm *kvm,
-+				const struct kvm_userspace_memory_region *mem)
- {
- 	u32 valid_flags = KVM_MEM_LOG_DIRTY_PAGES;
- 
-+	if (kvm_arch_private_memory_supported(kvm))
-+		valid_flags |= KVM_MEM_PRIVATE;
-+
- #ifdef __KVM_HAVE_READONLY_MEM
- 	valid_flags |= KVM_MEM_READONLY;
- #endif
-@@ -1900,7 +1909,7 @@ int __kvm_set_memory_region(struct kvm *kvm,
- 	int as_id, id;
- 	int r;
- 
--	r = check_memory_region_flags(mem);
-+	r = check_memory_region_flags(kvm, mem);
- 	if (r)
- 		return r;
- 
-@@ -1913,10 +1922,12 @@ int __kvm_set_memory_region(struct kvm *kvm,
- 		return -EINVAL;
- 	if (mem->guest_phys_addr & (PAGE_SIZE - 1))
- 		return -EINVAL;
--	/* We can read the guest memory with __xxx_user() later on. */
- 	if ((mem->userspace_addr & (PAGE_SIZE - 1)) ||
--	    (mem->userspace_addr != untagged_addr(mem->userspace_addr)) ||
--	     !access_ok((void __user *)(unsigned long)mem->userspace_addr,
-+	    (mem->userspace_addr != untagged_addr(mem->userspace_addr)))
-+		return -EINVAL;
-+	/* We can read the guest memory with __xxx_user() later on. */
-+	if (!(mem->flags & KVM_MEM_PRIVATE) &&
-+	    !access_ok((void __user *)(unsigned long)mem->userspace_addr,
- 			mem->memory_size))
- 		return -EINVAL;
- 	if (as_id >= KVM_ADDRESS_SPACE_NUM || id >= KVM_MEM_SLOTS_NUM)
-@@ -1957,6 +1968,9 @@ int __kvm_set_memory_region(struct kvm *kvm,
- 		if ((kvm->nr_memslot_pages + npages) < kvm->nr_memslot_pages)
- 			return -EINVAL;
- 	} else { /* Modify an existing slot. */
-+		/* Private memslots are immutable, they can only be deleted. */
-+		if (mem->flags & KVM_MEM_PRIVATE)
-+			return -EINVAL;
- 		if ((mem->userspace_addr != old->userspace_addr) ||
- 		    (npages != old->npages) ||
- 		    ((mem->flags ^ old->flags) & KVM_MEM_READONLY))
+diff --git a/man2/memfd_create.2 b/man2/memfd_create.2
+index 89e9c4136..2698222ae 100644
+--- a/man2/memfd_create.2
++++ b/man2/memfd_create.2
+@@ -101,6 +101,19 @@ meaning that no other seals can be set on the file.
+ .\" FIXME Why is the MFD_ALLOW_SEALING behavior not simply the default?
+ .\" Is it worth adding some text explaining this?
+ .TP
++.BR MFD_INACCESSIBLE
++Disallow userspace access through ordinary MMU accesses via
++.BR read (2),
++.BR write (2)
++and
++.BR mmap (2).
++The file size cannot be changed once initialized.
++This flag cannot coexist with
++.B MFD_ALLOW_SEALING
++and when this flag is set, the initial set of seals will be
++.B F_SEAL_SEAL,
++meaning that no other seals can be set on the file.
++.TP
+ .BR MFD_HUGETLB " (since Linux 4.14)"
+ .\" commit 749df87bd7bee5a79cef073f5d032ddb2b211de8
+ The anonymous file will be created in the hugetlbfs filesystem using
 -- 
 2.17.1
 
