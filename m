@@ -2,155 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B137D4D5507
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Mar 2022 00:08:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 66AF14D563C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Mar 2022 01:01:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344545AbiCJXJf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Mar 2022 18:09:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51364 "EHLO
+        id S240388AbiCKAAz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Mar 2022 19:00:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232714AbiCJXJe (ORCPT
+        with ESMTP id S1345093AbiCKAAo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Mar 2022 18:09:34 -0500
-Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id DE6F8119F3E;
-        Thu, 10 Mar 2022 15:08:32 -0800 (PST)
-Received: from dread.disaster.area (pa49-186-150-27.pa.vic.optusnet.com.au [49.186.150.27])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 73D1310E29AA;
-        Fri, 11 Mar 2022 10:08:23 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1nSRtO-003xhf-9L; Fri, 11 Mar 2022 10:08:22 +1100
-Date:   Fri, 11 Mar 2022 10:08:22 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Chao Peng <chao.p.peng@linux.intel.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com
-Subject: Re: [PATCH v5 03/13] mm/shmem: Support memfile_notifier
-Message-ID: <20220310230822.GO661808@dread.disaster.area>
-References: <20220310140911.50924-1-chao.p.peng@linux.intel.com>
- <20220310140911.50924-4-chao.p.peng@linux.intel.com>
+        Thu, 10 Mar 2022 19:00:44 -0500
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4624DDBD0D
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Mar 2022 15:59:38 -0800 (PST)
+Received: by mail-lf1-x135.google.com with SMTP id w12so12224639lfr.9
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Mar 2022 15:59:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MocVVrMh3F8v4LYKGaMV51Hsn56CobhowxFuvpnbz/M=;
+        b=oNOgi3+MZhbEWIiEQPgy+GQON7LKrd2NBnt21TSCdVeMNGYJwrTXEqBiioy5AF5U0d
+         t/p5VuHR18EW0IwsBx7y/kNYI8nExO2QIZlK9a35qWVb+X4RPQ6b/j69071nzzBSBh2M
+         KU4n1VH4TJZ39jzbMfOAHc5WdBn8hgiOhoFxeMi248VU1iI8vPS6Pk4U5uSn+ZqIl/7c
+         8CuvzPBGyNOiwn1uogrnrXkp2AgxRP8EqUdIrf6JKS4AtJ4wMoakaN+M61n6PzwdaWux
+         a/GDb4va+E+j2R6y1IJQDr9nVELiwlpiYJd1/NOZ0zY47JTASQokdE2CB3WLEoWCrs2F
+         TB8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MocVVrMh3F8v4LYKGaMV51Hsn56CobhowxFuvpnbz/M=;
+        b=ugu3M8dtyjDW+mihJVglvHLjuFk2D+zG8IUJNFE+BCizjPUX4YYqVr/JYZa0+uLt2x
+         holjQXSp9NJzT6hLFyIInLCE96eAFmPcnYDZwksao4WRywQCy0E687lYRgN2+R3e4rCz
+         ig9g4FZhIjNewsGVcvxtXaCnDfZXOm7PsLWGOrhdAvwtC3fxyGaUayPQQf5puqEE4oPX
+         5ow2gFDfffqrJwgmmai5mNrDm1IrBBSKDJLZ2+N7ogFoTha6HrpE95AbStCp/PfJzPV5
+         T2vmDIfE25N9nFbuh16rqyaQvyijVnbxNKyJPwlXYBabNX8x3Bxa2dnkyoRItzHd8ms2
+         RD3Q==
+X-Gm-Message-State: AOAM533SD9mRDbyGdwQEMNW4esHj4AEo3JX7EORzdxuIDC77sH0DDzuj
+        x31Zwz/+EdW2khQrw4e69eM6JgYCmFlA4RFO9aOi7cuELTQ=
+X-Google-Smtp-Source: ABdhPJy8rDO4PMRpSyz0iE2AjomAsUpUJcojQkukk6al20UOpA3SDygCGhCkyLCIsYl8z6vF92FIr5xFlHlqwKwRStM=
+X-Received: by 2002:a05:6512:b19:b0:446:f1c6:81bd with SMTP id
+ w25-20020a0565120b1900b00446f1c681bdmr4458598lfu.320.1646956776431; Thu, 10
+ Mar 2022 15:59:36 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220310140911.50924-4-chao.p.peng@linux.intel.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=deDjYVbe c=1 sm=1 tr=0 ts=622a84f0
-        a=sPqof0Mm7fxWrhYUF33ZaQ==:117 a=sPqof0Mm7fxWrhYUF33ZaQ==:17
-        a=kj9zAlcOel0A:10 a=o8Y5sQTvuykA:10 a=QyXUC8HyAAAA:8 a=7-415B0cAAAA:8
-        a=RCrhQ6IY2R1Uy-UsxHgA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20190212170012.GF69686@sasha-vm> <CAOQ4uxjysufPUtwepPGNZDhoC_HdsnkHx7--kso_OXWPyPkw_A@mail.gmail.com>
+ <YicrMCidylefTC3n@kroah.com> <CAOQ4uxjjdFgdMxEOq7aW-nLZFf-S99CC93Ycg1CcMUBiRAYTQQ@mail.gmail.com>
+ <YiepUS/bDKTNA5El@sashalap>
+In-Reply-To: <YiepUS/bDKTNA5El@sashalap>
+From:   Steve French <smfrench@gmail.com>
+Date:   Thu, 10 Mar 2022 17:59:24 -0600
+Message-ID: <CAH2r5msh55UBczN=DZHx15f7hHrnOpdMUj+jFunR5E4S3sy=wQ@mail.gmail.com>
+Subject: Re: [LSF/MM TOPIC] FS, MM, and stable trees
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        lsf-pc <lsf-pc@lists.linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>, Theodore Tso <tytso@mit.edu>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 10, 2022 at 10:09:01PM +0800, Chao Peng wrote:
-> From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-> 
-> It maintains a memfile_notifier list in shmem_inode_info structure and
-> implements memfile_pfn_ops callbacks defined by memfile_notifier. It
-> then exposes them to memfile_notifier via
-> shmem_get_memfile_notifier_info.
-> 
-> We use SGP_NOALLOC in shmem_get_lock_pfn since the pages should be
-> allocated by userspace for private memory. If there is no pages
-> allocated at the offset then error should be returned so KVM knows that
-> the memory is not private memory.
-> 
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
-> ---
->  include/linux/shmem_fs.h |  4 +++
->  mm/shmem.c               | 76 ++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 80 insertions(+)
-> 
-> diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
-> index 2dde843f28ef..7bb16f2d2825 100644
-> --- a/include/linux/shmem_fs.h
-> +++ b/include/linux/shmem_fs.h
-> @@ -9,6 +9,7 @@
->  #include <linux/percpu_counter.h>
->  #include <linux/xattr.h>
->  #include <linux/fs_parser.h>
-> +#include <linux/memfile_notifier.h>
->  
->  /* inode in-kernel data */
->  
-> @@ -28,6 +29,9 @@ struct shmem_inode_info {
->  	struct simple_xattrs	xattrs;		/* list of xattrs */
->  	atomic_t		stop_eviction;	/* hold when working on inode */
->  	unsigned int		xflags;		/* shmem extended flags */
-> +#ifdef CONFIG_MEMFILE_NOTIFIER
-> +	struct memfile_notifier_list memfile_notifiers;
-> +#endif
->  	struct inode		vfs_inode;
->  };
->  
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index 9b31a7056009..7b43e274c9a2 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -903,6 +903,28 @@ static struct folio *shmem_get_partial_folio(struct inode *inode, pgoff_t index)
->  	return page ? page_folio(page) : NULL;
->  }
->  
-> +static void notify_fallocate(struct inode *inode, pgoff_t start, pgoff_t end)
-> +{
-> +#ifdef CONFIG_MEMFILE_NOTIFIER
-> +	struct shmem_inode_info *info = SHMEM_I(inode);
-> +
-> +	memfile_notifier_fallocate(&info->memfile_notifiers, start, end);
-> +#endif
-> +}
+On Tue, Mar 8, 2022 at 6:16 PM Sasha Levin <sashal@kernel.org> wrote:
+>
+> On Tue, Mar 08, 2022 at 01:04:05PM +0200, Amir Goldstein wrote:
+> >On Tue, Mar 8, 2022 at 12:08 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> >>
+> >> On Tue, Mar 08, 2022 at 11:32:43AM +0200, Amir Goldstein wrote:
+> >> > On Tue, Feb 12, 2019 at 7:31 PM Sasha Levin <sashal@kernel.org> wrote:
+> >> > >
+> >> > > Hi all,
+> >> > >
+> >> > > I'd like to propose a discussion about the workflow of the stable trees
+> >> > > when it comes to fs/ and mm/. In the past year we had some friction with
+> >> > > regards to the policies and the procedures around picking patches for
+> >> > > stable tree, and I feel it would be very useful to establish better flow
+> >> > > with the folks who might be attending LSF/MM.
 
-*notify_populate(), not fallocate.  This is a notification that a
-range has been populated, not that the fallocate() syscall was run
-to populate the backing store of a file.
+I would like to participate in this as well - it is very important
+that we improve
+test automation processes.  We run a series of tests, hosted with VMs in Azure
+(mostly xfstests but also the git fs regression tests and various ones
+that are fs specific
+for testing various scenarios like reconnect and various fs specific
+mount options)
+regularly (on every pull request sent upstream to mainline) for cifs.ko and
+also for the kernel server (ksmbd.ko) as well.
 
-i.e.  fallocate is the name of a userspace filesystem API that can
-be used to manipulate the backing store of a file in various ways.
-It can both populate and punch away the backing store of a file, and
-some operations that fallocate() can run will do both (e.g.
-FALLOC_FL_ZERO_RANGE) and so could generate both
-notify_invalidate() and a notify_populate() events.
+This does leave a big gap for stable although Redhat and SuSE seem to
+run a similar set of regression tests so not much risk for the distros.
 
-Hence "fallocate" as an internal mm namespace or operation does not
-belong anywhere in core MM infrastructure - it should never get used
-anywhere other than the VFS/filesystem layers that implement the
-fallocate() syscall or use it directly.
+In theory we could periodically run the cifs/smb3.1.1 automated tests
+against stable,
+perhaps every few weeks and send results somewhere if there was a process
+for this for the various fs - but the tests we run were pretty clearly listed
+(and also in the wiki.samba.org) so may be easier ways to do this.  Tests could
+be run locally on the same machine to ksmbd from cifs.ko (or to Samba if
+preferred) so nothing extra to setup.
 
-Cheers,
+Would be worth discussing the best process for automating something like
+this - others may have figured out tricks that could help all fs in this
+xfstest automation
 
-Dave.
+
+> >> > > I feel that fs/ and mm/ are in very different places with regards to
+> >> > > which patches go in -stable, what tests are expected, and the timeline
+> >> > > of patches from the point they are proposed on a mailing list to the
+> >> > > point they are released in a stable tree. Therefore, I'd like to propose
+> >> > > two different sessions on this (one for fs/ and one for mm/), as a
+> >> > > common session might be less conductive to agreeing on a path forward as
+> >> > > the starting point for both subsystems are somewhat different.
+> >> > >
+> >> > > We can go through the existing processes, automation, and testing
+> >> > > mechanisms we employ when building stable trees, and see how we can
+> >> > > improve these to address the concerns of fs/ and mm/ folks.
+
+
+> >> > Hi Sasha,
+> >> >
+> >> > I think it would be interesting to have another discussion on the state of fs/
+> >> > in -stable and see if things have changed over the past couple of years.
+
 
 -- 
-Dave Chinner
-david@fromorbit.com
+Thanks,
+
+Steve
