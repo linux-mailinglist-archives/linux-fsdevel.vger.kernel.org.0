@@ -2,92 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E78554D3E88
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Mar 2022 02:02:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C94A4D3EB0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Mar 2022 02:22:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238829AbiCJBDS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Mar 2022 20:03:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52382 "EHLO
+        id S235058AbiCJBXV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Mar 2022 20:23:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39106 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235724AbiCJBDQ (ORCPT
+        with ESMTP id S232553AbiCJBXT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Mar 2022 20:03:16 -0500
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 163A311B5EE
-        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Mar 2022 17:02:17 -0800 (PST)
-Received: by mail-pj1-x1034.google.com with SMTP id cx5so3853467pjb.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Mar 2022 17:02:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IhfcqA5j4A8+cMHFR/NtiJjgNVB+qOjhOgFLJgToPWQ=;
-        b=NdlCgpyR4b6VJWwPwqOC1MX6c6jvcptN0j9px6P5gSJixNo6VOfOmyZRxxRxE+VcE+
-         3nEGij+QWTIieZfJjhT4HEQ3r8HlS19ooIBYayhvUymBhIQ9hyFgxtJgI8pCRkAg+1pQ
-         wZsyJA2tqg/k12oz9Zx1hzeXs53PX/Kj85fAbo2oA10eW2hvyuDPgEUBhgXI6pkk7Y4r
-         4/vjzDmA4LTjsDjSdL3djqJkFB/CcFZI7eYmB7zcVbZW/JYEKjHk2esCGc2dbDEPdE6T
-         FFVi6RCbUv4X+dMgyidWvaHx1H1e/ThhA9xh9EmPmn8MxL3p8c6rsvYdZ7ZqiLAGwoMG
-         82mA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IhfcqA5j4A8+cMHFR/NtiJjgNVB+qOjhOgFLJgToPWQ=;
-        b=hsX3pIN6rKkF8P3+ydjNtwN/1Hy/h/QQvkRXCiR905zHRaotdFV6uUap5KUaVATFCl
-         WVNG3hQMZa8mMuVOC6VRkbbsZYJb3uAWctCeaWzRkh0iZZWSQQaBkO4HBqY+5YXextVo
-         VWWmxfE4BXgxZNc/DWVwpKfJyhDZzkSMltmC08oZq81ozFqjdHDiSGFECIrcYLjAq7c8
-         /CiIVm1Fwjy0y7EVF4ANCVVc6o+wZm+ivlqidYY18OPQBMwGlM7R0TZkpbNRBwY+fzLl
-         sVmQMzrTkeo/iOdu+CcYD63p4U8Z0T4xy0wOeVf1UusSjtwgmnwk2VfdM0Ekor/2PU20
-         eNHA==
-X-Gm-Message-State: AOAM532z3NX2Imt/ZnXyLm/9Obv9OZVXmyKrX6Dhh7+mJP49+r29V31P
-        R53ocjA29QFy5Dn5g6Gk4kWybVKYNkVLA4f7SnIOWA==
-X-Google-Smtp-Source: ABdhPJwgZUATGKxceYX9Kl5KUvMdd8JlCChq4tHFBS02sVXYJrllv/gFImd7TLQzyeaZBA7iP0auoWsyQWoxXaoDMk0=
-X-Received: by 2002:a17:902:d506:b0:151:ced2:3cf with SMTP id
- b6-20020a170902d50600b00151ced203cfmr2284734plg.147.1646874136625; Wed, 09
- Mar 2022 17:02:16 -0800 (PST)
+        Wed, 9 Mar 2022 20:23:19 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BE3412756E;
+        Wed,  9 Mar 2022 17:22:20 -0800 (PST)
+Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 22A0a8rw022133;
+        Thu, 10 Mar 2022 01:22:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=pp1; bh=BMOQijfPxKxeD41463c4qMnhFFwbfqkfwHXCsb/Fq0c=;
+ b=Lqrezjg734uyFYsf+eiY5loDGf3Wl8tHyvxmb64V1oFZNwhK1LjTsxgLOU+oI7FtidoB
+ 89/H5Ae/63B7zrjNBLQVS5MBASbepF7aNGClBa1IuLr3tTzV9fV6CLuAFwgpclDhJvN/
+ AaVHZUecmuBPfjV0xOmgEW5Q4ro5/1qg2m+3b3/L4DXaF8g1NdAG/5d+GozKfieZz+p/
+ crWrSZ8h7v8eenjjS/xS/ABo+vYX+lLV5+Pk5hKFz2GnBjHo/Aug2XIXExBlBMLlxzg9
+ YJpyJTlXDRe/X+vbsQIHJuD8cSY1e01bOLYA+q7nQ7hQxag5S/qyIHceWSq5GaWy+DTX pQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3enu2tdp90-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 10 Mar 2022 01:22:13 +0000
+Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 22A1IEFQ022641;
+        Thu, 10 Mar 2022 01:22:12 GMT
+Received: from ppma05fra.de.ibm.com (6c.4a.5195.ip4.static.sl-reverse.com [149.81.74.108])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3enu2tdp87-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 10 Mar 2022 01:22:12 +0000
+Received: from pps.filterd (ppma05fra.de.ibm.com [127.0.0.1])
+        by ppma05fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 22A1DgIN019159;
+        Thu, 10 Mar 2022 01:22:09 GMT
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
+        by ppma05fra.de.ibm.com with ESMTP id 3epysw8kjs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 10 Mar 2022 01:22:09 +0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 22A1M7bT54788386
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 10 Mar 2022 01:22:07 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 28D3BAE055;
+        Thu, 10 Mar 2022 01:22:07 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 89058AE053;
+        Thu, 10 Mar 2022 01:22:06 +0000 (GMT)
+Received: from localhost (unknown [9.43.30.40])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 10 Mar 2022 01:22:06 +0000 (GMT)
+Date:   Thu, 10 Mar 2022 06:52:05 +0530
+From:   Ritesh Harjani <riteshh@linux.ibm.com>
+To:     "Theodore Ts'o" <tytso@mit.edu>
+Cc:     linux-ext4@vger.kernel.org,
+        Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
+        Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC 0/9] ext4: Improve FC trace events and discuss one FC
+ failure
+Message-ID: <20220310012143.hdssmcricg3rohfw@riteshh-domain>
+References: <cover.1645558375.git.riteshh@linux.ibm.com>
+ <YijoeFbb54zHMHq6@mit.edu>
 MIME-Version: 1.0
-References: <20220302082718.32268-1-songmuchun@bytedance.com> <20220302082718.32268-7-songmuchun@bytedance.com>
-In-Reply-To: <20220302082718.32268-7-songmuchun@bytedance.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 9 Mar 2022 17:02:05 -0800
-Message-ID: <CAPcyv4gnzDMWgzw9xW6PLRvDgw18RL35NtWsKYRV391SRWSuQg@mail.gmail.com>
-Subject: Re: [PATCH v4 6/6] mm: remove range parameter from follow_invalidate_pte()
-To:     Muchun Song <songmuchun@bytedance.com>
-Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alistair Popple <apopple@nvidia.com>,
-        Yang Shi <shy828301@gmail.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Hugh Dickins <hughd@google.com>, xiyuyang19@fudan.edu.cn,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ross Zwisler <zwisler@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux NVDIMM <nvdimm@lists.linux.dev>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>, duanxiongchun@bytedance.com,
-        Muchun Song <smuchun@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YijoeFbb54zHMHq6@mit.edu>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: LnCoX3j89LYzev5GI7-bf1AqZ10Pt6tB
+X-Proofpoint-GUID: fNvst2t0P-Qe5zjBVhwHIC86rvMcJ3sx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.64.514
+ definitions=2022-03-09_10,2022-03-09_01,2022-02-23_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ clxscore=1015 mlxscore=0 spamscore=0 lowpriorityscore=0 bulkscore=0
+ impostorscore=0 phishscore=0 suspectscore=0 malwarescore=0 mlxlogscore=444
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2202240000 definitions=main-2203100002
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 2, 2022 at 12:30 AM Muchun Song <songmuchun@bytedance.com> wrote:
+On 22/03/09 12:48PM, Theodore Ts'o wrote:
+> Ritesh,
 >
-> The only user (DAX) of range parameter of follow_invalidate_pte()
-> is gone, it safe to remove the range paramter and make it static
-> to simlify the code.
->
+> Were you going to be sending a revised version of this patch series?
 
-Looks good, I suspect this savings is still valid if the "just use
-page_mkclean_one" directly feedback is workable.
+Hello Ted,
 
-Otherwise you can add:
+Due to some unexpected guests at home, I was on leave since last weekend.
+I am starting to work from today. Let me work on the revised version of this
+patch series. I will try to complete it before end of day i.e. before
+our call.
 
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+
+-ritesh
