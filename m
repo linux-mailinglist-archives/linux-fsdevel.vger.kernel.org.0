@@ -2,189 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A06E64D54B7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Mar 2022 23:41:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B137D4D5507
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Mar 2022 00:08:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344366AbiCJWmo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Mar 2022 17:42:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48854 "EHLO
+        id S1344545AbiCJXJf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Mar 2022 18:09:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231160AbiCJWmn (ORCPT
+        with ESMTP id S232714AbiCJXJe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Mar 2022 17:42:43 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 891CC182BF0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Mar 2022 14:41:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=+3L7jodFoIUQYj4yIhb5tUpkok/HttGAxp6gleQgQT0=; b=hFNliu0Rfj5bF3Z2SKSdroSPw0
-        fLiSunaK6E6tSECeu8Cndvkt4kZhX8g7zZKpnj5uyB5wkPWoCo1zyWcly9XfNp9sb+ujQAVArD138
-        +qMRK4TVS2ciKq2o0Vg+iraPJMwowuv2ZCKDY/YCWBnLgtFEdi4ziHhSTWTbfZ8g2CW1WVC4Q42La
-        FW47VWbNXz8J7IKXqSxB9EFgcAcgKY0/psOznVgpHXo8Kr0zEIs3NiXYBCxPd3t/WQflS7idK/L5z
-        zpzEntowZHMCxaLEiOjoObCoiy929Zyyeoc3PpyMLQq3yQGC2Yly899pEJA2DDNLanKc2FtKzOyfB
-        l/p9wKXw==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nSRTO-00EDul-5z; Thu, 10 Mar 2022 22:41:30 +0000
-Date:   Thu, 10 Mar 2022 14:41:30 -0800
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Josef Bacik <josef@toxicpanda.com>
-Cc:     Theodore Ts'o <tytso@mit.edu>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Sasha Levin <sashal@kernel.org>,
-        lsf-pc <lsf-pc@lists.linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [LSF/MM TOPIC] FS, MM, and stable trees
-Message-ID: <Yip+mh0TY77XfPlc@bombadil.infradead.org>
-References: <20190212170012.GF69686@sasha-vm>
- <CAOQ4uxjysufPUtwepPGNZDhoC_HdsnkHx7--kso_OXWPyPkw_A@mail.gmail.com>
- <YicrMCidylefTC3n@kroah.com>
- <YieG8rZkgnfwygyu@mit.edu>
- <Yij08f7ee4pDZ2AC@bombadil.infradead.org>
- <Yij2rqDn4TiN3kK9@localhost.localdomain>
- <Yij5YTD5+V2qpsSs@bombadil.infradead.org>
- <YikZ2Zy6CtdNQ7WQ@localhost.localdomain>
- <YilUPAGQBPwI0V3n@bombadil.infradead.org>
- <YipIqqiz91D39nMQ@localhost.localdomain>
+        Thu, 10 Mar 2022 18:09:34 -0500
+Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id DE6F8119F3E;
+        Thu, 10 Mar 2022 15:08:32 -0800 (PST)
+Received: from dread.disaster.area (pa49-186-150-27.pa.vic.optusnet.com.au [49.186.150.27])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 73D1310E29AA;
+        Fri, 11 Mar 2022 10:08:23 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1nSRtO-003xhf-9L; Fri, 11 Mar 2022 10:08:22 +1100
+Date:   Fri, 11 Mar 2022 10:08:22 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Chao Peng <chao.p.peng@linux.intel.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com
+Subject: Re: [PATCH v5 03/13] mm/shmem: Support memfile_notifier
+Message-ID: <20220310230822.GO661808@dread.disaster.area>
+References: <20220310140911.50924-1-chao.p.peng@linux.intel.com>
+ <20220310140911.50924-4-chao.p.peng@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YipIqqiz91D39nMQ@localhost.localdomain>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20220310140911.50924-4-chao.p.peng@linux.intel.com>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=deDjYVbe c=1 sm=1 tr=0 ts=622a84f0
+        a=sPqof0Mm7fxWrhYUF33ZaQ==:117 a=sPqof0Mm7fxWrhYUF33ZaQ==:17
+        a=kj9zAlcOel0A:10 a=o8Y5sQTvuykA:10 a=QyXUC8HyAAAA:8 a=7-415B0cAAAA:8
+        a=RCrhQ6IY2R1Uy-UsxHgA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 10, 2022 at 01:51:22PM -0500, Josef Bacik wrote:
-> On Wed, Mar 09, 2022 at 05:28:28PM -0800, Luis Chamberlain wrote:
-> > On Wed, Mar 09, 2022 at 04:19:21PM -0500, Josef Bacik wrote:
-> > > On Wed, Mar 09, 2022 at 11:00:49AM -0800, Luis Chamberlain wrote:
-> > 
-> > That's great!
-> > 
-> > But although this runs nightly, it seems this runs fstest *once* to
-> > ensure if there are no regressions. Is that right?
-> > 
+On Thu, Mar 10, 2022 at 10:09:01PM +0800, Chao Peng wrote:
+> From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 > 
-> Yup once per config, so 8 full fstest runs.
+> It maintains a memfile_notifier list in shmem_inode_info structure and
+> implements memfile_pfn_ops callbacks defined by memfile_notifier. It
+> then exposes them to memfile_notifier via
+> shmem_get_memfile_notifier_info.
+> 
+> We use SGP_NOALLOC in shmem_get_lock_pfn since the pages should be
+> allocated by userspace for private memory. If there is no pages
+> allocated at the offset then error should be returned so KVM knows that
+> the memory is not private memory.
+> 
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
+> ---
+>  include/linux/shmem_fs.h |  4 +++
+>  mm/shmem.c               | 76 ++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 80 insertions(+)
+> 
+> diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
+> index 2dde843f28ef..7bb16f2d2825 100644
+> --- a/include/linux/shmem_fs.h
+> +++ b/include/linux/shmem_fs.h
+> @@ -9,6 +9,7 @@
+>  #include <linux/percpu_counter.h>
+>  #include <linux/xattr.h>
+>  #include <linux/fs_parser.h>
+> +#include <linux/memfile_notifier.h>
+>  
+>  /* inode in-kernel data */
+>  
+> @@ -28,6 +29,9 @@ struct shmem_inode_info {
+>  	struct simple_xattrs	xattrs;		/* list of xattrs */
+>  	atomic_t		stop_eviction;	/* hold when working on inode */
+>  	unsigned int		xflags;		/* shmem extended flags */
+> +#ifdef CONFIG_MEMFILE_NOTIFIER
+> +	struct memfile_notifier_list memfile_notifiers;
+> +#endif
+>  	struct inode		vfs_inode;
+>  };
+>  
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index 9b31a7056009..7b43e274c9a2 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -903,6 +903,28 @@ static struct folio *shmem_get_partial_folio(struct inode *inode, pgoff_t index)
+>  	return page ? page_folio(page) : NULL;
+>  }
+>  
+> +static void notify_fallocate(struct inode *inode, pgoff_t start, pgoff_t end)
+> +{
+> +#ifdef CONFIG_MEMFILE_NOTIFIER
+> +	struct shmem_inode_info *info = SHMEM_I(inode);
+> +
+> +	memfile_notifier_fallocate(&info->memfile_notifiers, start, end);
+> +#endif
+> +}
 
-From my experience that is not enough to capture all failures given
-lower failure rates on tests other than 1/1, like 1/42 or
-1/300. So minimum I'd go for 500 loops of fstests per config.
-This does mean this is not possible nightly though, yes. 5 days
-on average. And so much more work is needed to bring this down
-further.
+*notify_populate(), not fallocate.  This is a notification that a
+range has been populated, not that the fallocate() syscall was run
+to populate the backing store of a file.
 
-> > > This was all put together to build into something a little more polished, but
-> > > clearly priorities being what they are this is as far as we've taken it.  For
-> > > configuration you can see my virt-scripts here
-> > > https://github.com/josefbacik/virt-scripts which are what I use to generate the
-> > > VM's to run xfstests in.
-> > > 
-> > > The kernel config I use is in there, I use a variety of btrfs mount options and
-> > > mkfs options, not sure how interesting those are for people outside of btrfs.
-> > 
-> > Extremely useful.
-> > 
-> 
-> [root@fedora-rawhide ~]# cat /xfstests-dev/local.config
-> [btrfs_normal_freespacetree]
-> TEST_DIR=/mnt/test
-> TEST_DEV=/dev/mapper/vg0-lv0
-> SCRATCH_DEV_POOL="/dev/mapper/vg0-lv7 /dev/mapper/vg0-lv6 /dev/mapper/vg0-lv5 /dev/mapper/vg0-lv4 /dev/mapper/vg0-lv3 /dev/mapper/vg0-lv2 /dev/mapper/vg0-lv1 "
-> SCRATCH_MNT=/mnt/scratch
-> LOGWRITES_DEV=/dev/mapper/vg0-lv8
-> PERF_CONFIGNAME=jbacik
-> MKFS_OPTIONS="-K -f -O ^no-holes"
-> MOUNT_OPTIONS="-o space_cache=v2"
-> FSTYP=btrfs
-> 
-> [btrfs_compress_freespacetree]
-> MOUNT_OPTIONS="-o compress=zlib,space_cache=v2"
-> MKFS_OPTIONS="-K -f -O ^no-holes"
-> 
-> [btrfs_normal]
-> TEST_DIR=/mnt/test
-> TEST_DEV=/dev/mapper/vg0-lv0
-> SCRATCH_DEV_POOL="/dev/mapper/vg0-lv9 /dev/mapper/vg0-lv8 /dev/mapper/vg0-lv7 /dev/mapper/vg0-lv6 /dev/mapper/vg0-lv5 /dev/mapper/vg0-lv4 /dev/mapper/vg0-lv3 /dev/mapper/vg0-lv2 /dev/mapper/vg0-lv1 "
-> SCRATCH_MNT=/mnt/scratch
-> LOGWRITES_DEV=/dev/mapper/vg0-lv10
-> PERF_CONFIGNAME=jbacik
-> MKFS_OPTIONS="-K -O ^no-holes -R ^free-space-tree"
-> MOUNT_OPTIONS="-o discard=async"
-> 
-> [btrfs_compression]
-> MOUNT_OPTIONS="-o compress=zstd,discard=async"
-> MKFS_OPTIONS="-K -O ^no-holes -R ^free-space-tree"
-> 
-> [kdave]
-> MKFS_OPTIONS="-K -O no-holes -R ^free-space-tree"
-> MOUNT_OPTIONS="-o discard,space_cache=v2"
-> 
-> [root@xfstests3 ~]# cat /xfstests-dev/local.config
-> [btrfs_normal_noholes]
-> TEST_DIR=/mnt/test
-> TEST_DEV=/dev/mapper/vg0-lv0
-> SCRATCH_DEV_POOL="/dev/mapper/vg0-lv9 /dev/mapper/vg0-lv8 /dev/mapper/vg0-lv7 /dev/mapper/vg0-lv6 /dev/mapper/vg0-lv5 /dev/mapper/vg0-lv4 /dev/mapper/vg0-lv3 /dev/mapper/vg0-lv2 /dev/mapper/vg0-lv1 "
-> SCRATCH_MNT=/mnt/scratch
-> LOGWRITES_DEV=/dev/mapper/vg0-lv10
-> PERF_CONFIGNAME=jbacik
-> MKFS_OPTIONS="-K -O no-holes -f -R ^free-space-tree"
-> 
-> [btrfs_compress_noholes]
-> MKFS_OPTIONS="-K -O no-holes -f -R ^free-space-tree"
-> MOUNT_OPTIONS="-o compress=lzo"
-> 
-> [btrfs_noholes_freespacetree]
-> MKFS_OPTIONS="-K -O no-holes -f"
-> MOUNT_OPTIONS="-o space_cache=v2"
+i.e.  fallocate is the name of a userspace filesystem API that can
+be used to manipulate the backing store of a file in various ways.
+It can both populate and punch away the backing store of a file, and
+some operations that fallocate() can run will do both (e.g.
+FALLOC_FL_ZERO_RANGE) and so could generate both
+notify_invalidate() and a notify_populate() events.
 
-Thanks I can eventually cake these in to kdevops (or patches welcmeD)
-modulo I use loopback/truncated filews. It is possible to add an option
-to use dm linear too if that is really desirable.
+Hence "fallocate" as an internal mm namespace or operation does not
+belong anywhere in core MM infrastructure - it should never get used
+anywhere other than the VFS/filesystem layers that implement the
+fallocate() syscall or use it directly.
 
-> > > Right now I have a box with ZNS drives waiting for me to set this up on so that
-> > > we can also be testing btrfs zoned support nightly, as well as my 3rd
-> > > RaspberryPi that I'm hoping doesn't blow up this time.
-> > 
-> > Great to hear you will be covering ZNS as well.
-> > 
-> > > I have another virt setup that uses btrfs snapshots to create a one off chroot
-> > > to run smoke tests for my development using virtme-run.  I want to replace the
-> > > libvirtd vms with virtme-run, however I've got about a 2x performance difference
-> > > between virtme-run and libvirtd that I'm trying to figure out, so right now all
-> > > the nightly test VM's are using libvirtd.
-> > > 
-> > > Long, long term the plan is to replace my janky home setup with AWS VM's that
-> > > can be fired from GitHub actions whenever we push branches, that way individual
-> > > developers can get results for their patches before they're merged, and we don't
-> > > have to rely on my terrible python+html for test results.
-> > 
-> > If you do move to AWS just keep in mind using loopback drives +
-> > truncated files *finds* more issues than not. So when I used AWS
-> > I got two spare nvme drives and used one to stuff the truncated
-> > files there.
-> > 
-> 
-> My plan was to get ones with attached storage and do the LVM thing I do for my
-> vms.
+Cheers,
 
-The default for AWS for kdevops is to use m5ad.4xlarge (~$0.824 per
-Hour) that comes with 61 GiB RAM, 16 vcpus, 1 8 GiB main drive, and two
-additional 300 GiB nvme drives. The nvme drives are used so to also
-mimic the KVM setup when kdevops uses local virtualization.
+Dave.
 
-FWIW, the kdevops AWS kconfig is at terraform/aws/Kconfig
-
-  Luis
+-- 
+Dave Chinner
+david@fromorbit.com
