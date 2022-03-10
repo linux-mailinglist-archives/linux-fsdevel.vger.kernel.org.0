@@ -2,117 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E2DE4D4D90
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Mar 2022 16:52:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 07DEB4D4DED
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Mar 2022 17:00:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233594AbiCJPss (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Mar 2022 10:48:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58610 "EHLO
+        id S239611AbiCJQBA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Mar 2022 11:01:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231241AbiCJPsq (ORCPT
+        with ESMTP id S239805AbiCJQAy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Mar 2022 10:48:46 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3964CDAC
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Mar 2022 07:47:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1646927264;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=l9mR/80qlAMFJEP55l81aNyJ85t2ielrHjLYKFMQaYQ=;
-        b=KTN9ECwFXlZhIrYTzh4nJ1Jj73oLE2AHdIqGDFOTsPTW4geGuehiSF3il+iTCGe9SzoQVf
-        JQhynYzFaucxP04hI1kxN4iwx14ysjqOVVNu4KwtJDEV7vKvWqEEck5t9adE1xTd7w5rip
-        JGVrsvFoAglNIhePWhm9rCoSXmxv0mM=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-664-P74NfXXjNsGi-zE_7koIOA-1; Thu, 10 Mar 2022 10:47:41 -0500
-X-MC-Unique: P74NfXXjNsGi-zE_7koIOA-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id CD6A3520E;
-        Thu, 10 Mar 2022 15:47:39 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8889A832A5;
-        Thu, 10 Mar 2022 15:47:38 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH] afs: Fix potential thrashing in afs writeback
-From:   David Howells <dhowells@redhat.com>
-To:     marc.dionne@auristor.com
-Cc:     linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Thu, 10 Mar 2022 15:47:37 +0000
-Message-ID: <164692725757.2097000.2060513769492301854.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/1.4
+        Thu, 10 Mar 2022 11:00:54 -0500
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A0CE184636;
+        Thu, 10 Mar 2022 07:59:52 -0800 (PST)
+Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 22AFeApK021863;
+        Thu, 10 Mar 2022 15:59:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : content-transfer-encoding : mime-version; s=pp1;
+ bh=CP0U+j6h4uZqGjLy0jQWcXoqaVQquNBOxqL4TXvRt9g=;
+ b=CG//XyovQ5WlIuNJx+0PTPQ4u7oJJdFBoa4+DvpVR9/jVJDbvTDQsxFDPW7S++nxswGj
+ I449EjNKuhIAndZJwkrtCefxKsslWK+BGzKH7HJ09nF/9k9Lo/xvE7ulvcEpS6EwQzkK
+ k4FU4w1iGp2lOWTR3I5hiWa8AAn78CixsV/Ul2nbp7r3YNydD3oJba9kA/HwS8vo1JFp
+ hVGRcrhZzNwJBPscQa76fdEPwJKfOGSW3DmnbUIcItlks/agaFdNU8N9l9zYVLfp9VTp
+ 1bLTnXCyK+AudR9RFcQ64H1F6tfwbVFGPng+vZp8X1QJtIhUtegm6MFx5zzA8cY/i78C CA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3eqg9rxp4y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 10 Mar 2022 15:59:31 +0000
+Received: from m0127361.ppops.net (m0127361.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 22ADTwhn013695;
+        Thu, 10 Mar 2022 15:59:31 GMT
+Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3eqg9rxp4f-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 10 Mar 2022 15:59:31 +0000
+Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
+        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 22AFvLpA022398;
+        Thu, 10 Mar 2022 15:59:29 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma06ams.nl.ibm.com with ESMTP id 3eky4j55m2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 10 Mar 2022 15:59:29 +0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 22AFxR8A13763068
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 10 Mar 2022 15:59:27 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1B78EA406F;
+        Thu, 10 Mar 2022 15:59:27 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AB1C8A4054;
+        Thu, 10 Mar 2022 15:59:26 +0000 (GMT)
+Received: from localhost (unknown [9.43.36.239])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 10 Mar 2022 15:59:26 +0000 (GMT)
+From:   Ritesh Harjani <riteshh@linux.ibm.com>
+To:     linux-ext4@vger.kernel.org
+Cc:     Jan Kara <jack@suse.cz>, "Theodore Ts'o" <tytso@mit.edu>,
+        Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: [PATCHv2 00/10] ext4: Improve FC trace events
+Date:   Thu, 10 Mar 2022 21:28:54 +0530
+Message-Id: <cover.1646922487.git.riteshh@linux.ibm.com>
+X-Mailer: git-send-email 2.31.1
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 8SAM30P4rlt-HXmkFXrCoeUBzub8hXjX
+X-Proofpoint-ORIG-GUID: C5Y7M0ic7wovz2_omucnyhbpSEUsiV-V
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.64.514
+ definitions=2022-03-10_06,2022-03-09_01,2022-02-23_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 malwarescore=0
+ mlxlogscore=837 bulkscore=0 spamscore=0 clxscore=1015 impostorscore=0
+ suspectscore=0 mlxscore=0 priorityscore=1501 lowpriorityscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2202240000 definitions=main-2203100084
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In afs_writepages_region(), if the dirty page we find is undergoing
-writeback or write to cache, but the sync_mode is WB_SYNC_NONE, we go round
-the loop trying the same page again and again with no pausing or waiting
-unless and until another thread manages to clear the writeback and fscache
-flags.
+Hello,
 
-Fix this with three measures:
+Please find the v2 of this patch series.
 
- (1) Advance the start to after the page we found.
+Note:- I still couldn't figure out how to expose EXT4_FC_REASON_MAX in patch-2
+which (I think) might be (only) needed by trace-cmd or perf record for trace_ext4_fc_stats.
+But it seems "cat /sys/kernel/debug/tracing/trace_pipe" gives the right output
+for ext4_fc_stats trace event (as shown below).
 
- (2) Break out of the loop and return if rescheduling is requested.
+So with above reasoning, do you think we should take these patches in?
+And we can later see how to provide EXT4_FC_REASON_MAX definition available to
+libtraceevent?
 
- (3) Arbitrarily give up after a maximum of 5 skips.
+Either ways, please let me know your opinion around this.
 
-Fixes: 31143d5d515e ("AFS: implement basic file write support")
-Reported-by: Marc Dionne <marc.dionne@auristor.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+<output of cat /sys/kernel/debug/tracing/trace_pipe> (shows FALLOC_RANGE:5)
+=====================================================
+jbd2/loop2-8-2219    [000] .....  1883.771539: ext4_fc_stats: dev 7,2 fc ineligible reasons:
+XATTR:0, CROSS_RENAME:0, JOURNAL_FLAG_CHANGE:0, NO_MEM:0, SWAP_BOOT:0, RESIZE:0, RENAME_DIR:0, FALLOC_RANGE:5, INODE_JOURNAL_DATA:0 num_commits:22, ineligible: 4, numblks: 22
 
- fs/afs/write.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/fs/afs/write.c b/fs/afs/write.c
-index 85c9056ba9fb..bd0201f4939a 100644
---- a/fs/afs/write.c
-+++ b/fs/afs/write.c
-@@ -701,7 +701,7 @@ static int afs_writepages_region(struct address_space *mapping,
- 	struct folio *folio;
- 	struct page *head_page;
- 	ssize_t ret;
--	int n;
-+	int n, skips = 0;
- 
- 	_enter("%llx,%llx,", start, end);
- 
-@@ -752,8 +752,15 @@ static int afs_writepages_region(struct address_space *mapping,
- #ifdef CONFIG_AFS_FSCACHE
- 				folio_wait_fscache(folio);
- #endif
-+			} else {
-+				start += folio_size(folio);
- 			}
- 			folio_put(folio);
-+			if (wbc->sync_mode == WB_SYNC_NONE) {
-+				if (skips >= 5 || need_resched())
-+					break;
-+				skips++;
-+			}
- 			continue;
- 		}
- 
+Changes since RFC
+================
+RFC -> v2
+1. Added new patch-5 ("ext4: Return early for non-eligible fast_commit track events")
+2. Removed a trace event in ext4_fc_track_template() (which was added in RFC)
+   from patch-6 and added patch-7 to add the tid info in callers of
+   ext4_fc_track_template(). (As per review comments from Jan)
 
+Tested this with xfstests -g "quick"
+
+
+[RFC]: https://lore.kernel.org/linux-ext4/cover.1645558375.git.riteshh@linux.ibm.com/
+
+Ritesh Harjani (10):
+  ext4: Remove unused enum EXT4_FC_COMMIT_FAILED
+  ext4: Fix ext4_fc_stats trace point
+  ext4: Convert ext4_fc_track_dentry type events to use event class
+  ext4: Do not call FC trace event in ext4_fc_commit() if FS does not support FC
+  ext4: Return early for non-eligible fast_commit track events
+  ext4: Add new trace event in ext4_fc_cleanup
+  ext4: Add transaction tid info in fc_track events
+  ext4: Add commit_tid info in jbd debug log
+  ext4: Add commit tid info in ext4_fc_commit_start/stop trace events
+  ext4: Fix remaining two trace events to use same printk convention
+
+ fs/ext4/fast_commit.c       |  95 ++++++++----
+ fs/ext4/fast_commit.h       |   1 -
+ include/trace/events/ext4.h | 297 +++++++++++++++++++++++-------------
+ 3 files changed, 257 insertions(+), 136 deletions(-)
+
+Cc: Steven Rostedt <rostedt@goodmis.org>
+
+--
+2.31.1
 
