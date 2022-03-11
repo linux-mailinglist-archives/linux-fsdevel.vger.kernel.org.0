@@ -2,64 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E208B4D697C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Mar 2022 21:31:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 429CB4D69B2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Mar 2022 21:52:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347783AbiCKUco (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Mar 2022 15:32:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48730 "EHLO
+        id S229929AbiCKUxy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Mar 2022 15:53:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230171AbiCKUcn (ORCPT
+        with ESMTP id S229894AbiCKUxx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Mar 2022 15:32:43 -0500
+        Fri, 11 Mar 2022 15:53:53 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E99D1C6645;
-        Fri, 11 Mar 2022 12:31:39 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C7271DA60
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Mar 2022 12:52:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
         MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=SG03lQG6qHMN8Gkp16KAmYCtvGRQwl9SqagLXU3XZjE=; b=yRDSOsLGtKkCsRQ92Vhi4NWR5Q
-        BsWOcTvNSRVbJvrqyESgW/VCHe+OyncwdCcCAQ6zjNUBbLG0SFitZyYGqgCKu3XWiSHKnNLp2guYO
-        yO2HNJa5YHTrRLSarYsNIUJ3zaHEteMtHqifaHzvIvTkkLrPEJq6rsb+3KRnoXyBFQf3Nhu1BJOQp
-        hHtnMAh5uCxIcO0H/8h7ZhoLL30quldcJjivlLGXLpSjjgf4FfsvsJp+WO+z30vn/nObut7xDdew8
-        so1KYBMSLcZj9WV/j+4HQfZ9jOB7O23WfgzjxgWIE/ihfQu2A3a5j8ql8t0WnrPYYQkUGxdURs68t
-        5qHBkenA==;
+        bh=p9YPbzPzuQ4pAFDmITOigHOI0CNOBi444MQVcUikK44=; b=ITn7CtoHxHgxvk+MzAaqmiEPqe
+        GPhIqztDBcBO0wv0hBSwQeMAA6K2Pr3I+dNb3Yv5nKGZZU3ShQSXYKpQ+Eb74YD82QrOpCY4LqVO+
+        z/XnkDvtrm9aIEhcoAwWGixlpIEz0WCOOWxhm/5CEkz3rInOAL/1KV8hoMSyWxirl9O+hu3gVwTte
+        lBKm5/JqFJx4rBqKXCE1sROEH2MD9MzyD4iG6aj6tKq7ytb87i99cNSYQR7wYnpqtygXvSuPvgev2
+        Ah58AM9rNrWNkZ1mbTm7VZl2hFW7O5BB0Eeq4NySasH9ekVvcD/cjvrjJLf2eEaTyAQ6G1USzsozs
+        Bue+Zcsw==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nSlvH-000CK2-1M; Fri, 11 Mar 2022 20:31:39 +0000
-Date:   Fri, 11 Mar 2022 12:31:39 -0800
+        id 1nSmFd-000FbK-Ae; Fri, 11 Mar 2022 20:52:41 +0000
+Date:   Fri, 11 Mar 2022 12:52:41 -0800
 From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Javier =?iso-8859-1?Q?Gonz=E1lez?= <javier@javigon.com>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        lsf-pc@lists.linux-foundation.org,
-        Matias =?iso-8859-1?Q?Bj=F8rling?= <Matias.Bjorling@wdc.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Adam Manzanares <a.manzanares@samsung.com>,
-        Keith Busch <Keith.Busch@wdc.com>,
-        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-        Naohiro Aota <Naohiro.Aota@wdc.com>,
-        Pankaj Raghav <pankydev8@gmail.com>,
-        Kanchan Joshi <joshi.k@samsung.com>,
-        Nitesh Shetty <nj.shetty@samsung.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [LSF/MM/BPF BoF] BoF for Zoned Storage
-Message-ID: <Yiuxq0DXe5M5dsqh@bombadil.infradead.org>
-References: <YiASVnlEEsyj8kzN@bombadil.infradead.org>
- <20220304001022.GJ3927073@dread.disaster.area>
- <YiKOQM+HMZXnArKT@bombadil.infradead.org>
- <20220304224257.GN3927073@dread.disaster.area>
- <YiKY6pMczvRuEovI@bombadil.infradead.org>
- <20220305073321.5apdknpmctcvo3qj@ArmHalley.localdomain>
- <20220307071229.GR3927073@dread.disaster.area>
- <Yiqcgi7G7ZrEbPHV@bombadil.infradead.org>
- <YirnIuXUj5RrUadm@infradead.org>
+To:     Theodore Ts'o <tytso@mit.edu>
+Cc:     Sasha Levin <sashal@kernel.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        lsf-pc <lsf-pc@lists.linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [LSF/MM TOPIC] FS, MM, and stable trees
+Message-ID: <Yiu2mRwguHhbVpLJ@bombadil.infradead.org>
+References: <20190212170012.GF69686@sasha-vm>
+ <CAOQ4uxjysufPUtwepPGNZDhoC_HdsnkHx7--kso_OXWPyPkw_A@mail.gmail.com>
+ <YicrMCidylefTC3n@kroah.com>
+ <CAOQ4uxjjdFgdMxEOq7aW-nLZFf-S99CC93Ycg1CcMUBiRAYTQQ@mail.gmail.com>
+ <YiepUS/bDKTNA5El@sashalap>
+ <Yij4lD19KGloWPJw@bombadil.infradead.org>
+ <Yirc69JyH5N/pXKJ@mit.edu>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YirnIuXUj5RrUadm@infradead.org>
+In-Reply-To: <Yirc69JyH5N/pXKJ@mit.edu>
 Sender: Luis Chamberlain <mcgrof@infradead.org>
 X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
@@ -71,30 +63,113 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 10, 2022 at 10:07:30PM -0800, Christoph Hellwig wrote:
-> On Thu, Mar 10, 2022 at 04:49:06PM -0800, Luis Chamberlain wrote:
-> > Some filesystems who want to support zone storage natively have been
-> > extended to do things to help with these quirks. My concerns were the
-> > divergence on approaches to how filesystems use ZNS as well. Do you have
-> > any plans to consider such efforts for XFS or would you rather build on
-> > ZoneFS somehow?
+On Fri, Mar 11, 2022 at 12:23:55AM -0500, Theodore Ts'o wrote:
+> On Wed, Mar 09, 2022 at 10:57:24AM -0800, Luis Chamberlain wrote:
+> > On Tue, Mar 08, 2022 at 02:06:57PM -0500, Sasha Levin wrote:
+> > > What we can't do is invest significant time into doing the testing work
+> > > ourselves for each and every subsystem in the kernel.
+> > 
+> > I think this experience helps though, it gives you I think a better
+> > appreciation for what concerns we have to merge any fix and the effort
+> > and dilligence required to ensure we don't regress. I think the
+> > kernel-ci steady state goal takes this a bit further.
 > 
-> XFS will always require a random writable area for metadata.
+> Different communities seem to have different goals that they believe
+> the stable kernels should be aiming for.  Sure, if you never merge any
+> fix, you can guarantee that there will be no regressions.  However,
+> the question is whether the result is a better quality kernel.  For
+> example, there is a recent change to XFS which fixes a security bug
+> which allows an attacker to gain access to deleted data.  How do you
+> balance the tradeoff of "no regressions, ever", versus, "we'll leave a
+> security bug in XFS which is fixed in mainline linux, but we fear
+> regressions so much that we won't even backport a single-line fix to
+> the stable kernel?"
 
-XFS also supports an external journal, so could that go through
-a conventional zone?
+That patch should just be applied, thanks for the heads up, I'll go try
+to spin some resources to test if this is not merged already.
 
-> I have
-> an old early draft with a fully zone aware allocator essentially
-> replacing the realtime subvolume.  But it's been catching dust so far,
-> maybe I'll have a chance to resurrect it if I don't have too fight too
-> many stupid patchseries all at once.
+And perhaps in such cases the KERNEL_CI_STEADY_STATE_GOAL can be reduced.
 
-Good to know thanks!
+> In my view, the service which Greg, Sasha and the other stable
+> maintainers provide is super-valuable, and I am happy that ext4
+> changes are automatically cherry-picked into the stable kernel.  Have
+> there been times when this has resulted in regressions in ext4 for the
+> stable kernel?  Sure!  It's only been a handful of a times, though,
+> and the number of bug fixes that users using stable kernels have _not_
+> seen *far* outweighs the downsides of the occasional regressions
+> (which gets found and then reverted).
 
-I was wondering weather or not Chinner's subvolume concept could be
-applied to ZoneFS for the data area. But given the file would be on
-another filesystem made me think this would probably not be possible.
-Then there is the append only requirement as well...
+I think by now the community should know I'm probably one of the biggest
+advocates of kernel automation. Whether that be kernel testing or kernel
+code generation... the reason I've started dabbling into the automation
+part of testing is that they go hand in hand. So while I value the
+stable process, I think it should be respected if subsystems with a
+higher threshold than others for testing / review is kept.
+
+The only way to move forward with enabling more automation for kernel
+code integration is through better and improved kernel test automation.
+And it is *exactly* why I've been working so hard on that problem.
+
+> > Perhaps the one area that might interest folks is the test setup,
+> > using loopback drives and truncated files, if you find holes in
+> > this please let me know:
+> > 
+> > https://github.com/mcgrof/kdevops/blob/master/docs/testing-with-loopback.md
+> > 
+> > In my experience this setup just finds *more* issues, rather than less,
+> > and in my experience as well none of these issues found were bogus, they
+> > always lead to real bugs:
+> > 
+> > https://github.com/mcgrof/kdevops/blob/master/docs/seeing-more-issues.md
+> 
+> Different storage devices --- Google Cloud Persistent Disks, versus
+> single spindle HDD's, SSD's,
+
+<-- Insert tons of variability requirements on test drives -->
+<-- Insert tons of variability requirements on confidence in testing -->
+<-- Insert tons of variability requirements on price / cost assessment -->
+<-- Insert tons of variability requirements on business case -->
+
+What you left out in terms of variability was you use GCE, and yes
+others will want to use AWS, OpenStack, etc as well. So that's another
+variability aspect too.
+
+What's the common theme here? Variability!
+
+And what is the most respectable modeling variability language? Kconfig!
+
+It is why the way I've designed kdevops was to embrace kconfig. It
+enables you to test however you want, using whatever test devices,
+with whatever test criteria you might have and on any cloud or local
+virt solution.
+
+Yes, some of the variability things in kdevops are applicable only to
+kdevops, but since I picked up kconfig it meant I also adopted it for
+variability for fstest and blktests. It should be possible to move that
+to fstests / blktests if we wanted to, and for kdevops to just use it.
+
+And if you are thinking:
+
+   why shucks.. but I don't want to deal with the complexity of
+   integrating kconfig into a new project. That sounds difficult.
+
+Yes I hear you, and to help with that I've created a git tree which can
+be used as a git subtree (note: different than the stupid git
+submodules) to let you easily integrate kconfig adoption into any
+project with only a few lines of code differences:
+
+https://github.com/mcgrof/kconfig
+
+Also let's recall that just because you have your own test framework
+it does not mean we could not benefit from others testing our
+filesystems on their own silly hardware at home as well. Yes tons
+of projects can be used which wrap fstests... but I never found one
+as easy to use as compiling the kernel and running a few make commands.
+So my goal was not just addressing the variability aspect for fstests
+and blktests, but also enabling the average user to also easily help
+test as well.
+
+There is the concept of results too and a possible way to share things..
+but this is getting a bit off topic and I don't want to bore people more.
 
   Luis
