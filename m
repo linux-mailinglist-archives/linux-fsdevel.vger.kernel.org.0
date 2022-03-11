@@ -2,58 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B80354D6873
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Mar 2022 19:32:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E208B4D697C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Mar 2022 21:31:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350911AbiCKSdi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Mar 2022 13:33:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34606 "EHLO
+        id S1347783AbiCKUco (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Mar 2022 15:32:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230313AbiCKSdh (ORCPT
+        with ESMTP id S230171AbiCKUcn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Mar 2022 13:33:37 -0500
+        Fri, 11 Mar 2022 15:32:43 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F11A2607
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Mar 2022 10:32:32 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E99D1C6645;
+        Fri, 11 Mar 2022 12:31:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
         MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Xudai42Cp5jRl00qxrn9d2KlYL2/GMrj/hgYV6hkeFs=; b=NdYjXKOHubFp3Vb0xNDDCgpR6O
-        CvCYJ2fV/6201RdSIKv12lltxDtOPAC7vSA4EA6LhT2NLdw64IOMSVYNw1mC4gWDHaXe+ycGmXehM
-        OUo4BnisZ0T0LGHIsDnGO3+91VgAFRYOBxMak3DsagXZ6gw26rBMH3riv2DZQ1XZRo79njND/UpHo
-        Yy6Un8sUEPbPcCssG4YpE16syffvRpMhXlsyXioOULVzJ0ahipnedHw8he3F/4vU0uVSoOj2LcllO
-        t8+6ZiOm3pk75jZQvdyUpXboQ4D/Ffx8RbeRMdm1rgHHdGTwfVwC9G312sJQheS5mL2WtTFO0g/Yg
-        f53FKNRQ==;
+        bh=SG03lQG6qHMN8Gkp16KAmYCtvGRQwl9SqagLXU3XZjE=; b=yRDSOsLGtKkCsRQ92Vhi4NWR5Q
+        BsWOcTvNSRVbJvrqyESgW/VCHe+OyncwdCcCAQ6zjNUBbLG0SFitZyYGqgCKu3XWiSHKnNLp2guYO
+        yO2HNJa5YHTrRLSarYsNIUJ3zaHEteMtHqifaHzvIvTkkLrPEJq6rsb+3KRnoXyBFQf3Nhu1BJOQp
+        hHtnMAh5uCxIcO0H/8h7ZhoLL30quldcJjivlLGXLpSjjgf4FfsvsJp+WO+z30vn/nObut7xDdew8
+        so1KYBMSLcZj9WV/j+4HQfZ9jOB7O23WfgzjxgWIE/ihfQu2A3a5j8ql8t0WnrPYYQkUGxdURs68t
+        5qHBkenA==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nSk3o-0001Yt-NY; Fri, 11 Mar 2022 18:32:20 +0000
-Date:   Fri, 11 Mar 2022 10:32:20 -0800
+        id 1nSlvH-000CK2-1M; Fri, 11 Mar 2022 20:31:39 +0000
+Date:   Fri, 11 Mar 2022 12:31:39 -0800
 From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Josef Bacik <josef@toxicpanda.com>, Theodore Ts'o <tytso@mit.edu>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Sasha Levin <sashal@kernel.org>,
-        lsf-pc <lsf-pc@lists.linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [LSF/MM TOPIC] FS, MM, and stable trees
-Message-ID: <YiuVtM232ye4tHde@bombadil.infradead.org>
-References: <YicrMCidylefTC3n@kroah.com>
- <YieG8rZkgnfwygyu@mit.edu>
- <Yij08f7ee4pDZ2AC@bombadil.infradead.org>
- <Yij2rqDn4TiN3kK9@localhost.localdomain>
- <Yij5YTD5+V2qpsSs@bombadil.infradead.org>
- <YikZ2Zy6CtdNQ7WQ@localhost.localdomain>
- <YilUPAGQBPwI0V3n@bombadil.infradead.org>
- <YipIqqiz91D39nMQ@localhost.localdomain>
- <Yip+mh0TY77XfPlc@bombadil.infradead.org>
- <20220311120935.ahn6i5a2dtuf4gos@quack3.lan>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Javier =?iso-8859-1?Q?Gonz=E1lez?= <javier@javigon.com>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        lsf-pc@lists.linux-foundation.org,
+        Matias =?iso-8859-1?Q?Bj=F8rling?= <Matias.Bjorling@wdc.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Adam Manzanares <a.manzanares@samsung.com>,
+        Keith Busch <Keith.Busch@wdc.com>,
+        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        Naohiro Aota <Naohiro.Aota@wdc.com>,
+        Pankaj Raghav <pankydev8@gmail.com>,
+        Kanchan Joshi <joshi.k@samsung.com>,
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [LSF/MM/BPF BoF] BoF for Zoned Storage
+Message-ID: <Yiuxq0DXe5M5dsqh@bombadil.infradead.org>
+References: <YiASVnlEEsyj8kzN@bombadil.infradead.org>
+ <20220304001022.GJ3927073@dread.disaster.area>
+ <YiKOQM+HMZXnArKT@bombadil.infradead.org>
+ <20220304224257.GN3927073@dread.disaster.area>
+ <YiKY6pMczvRuEovI@bombadil.infradead.org>
+ <20220305073321.5apdknpmctcvo3qj@ArmHalley.localdomain>
+ <20220307071229.GR3927073@dread.disaster.area>
+ <Yiqcgi7G7ZrEbPHV@bombadil.infradead.org>
+ <YirnIuXUj5RrUadm@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220311120935.ahn6i5a2dtuf4gos@quack3.lan>
+In-Reply-To: <YirnIuXUj5RrUadm@infradead.org>
 Sender: Luis Chamberlain <mcgrof@infradead.org>
 X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
@@ -65,38 +71,30 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 11, 2022 at 01:09:35PM +0100, Jan Kara wrote:
-> On Thu 10-03-22 14:41:30, Luis Chamberlain wrote:
-> > On Thu, Mar 10, 2022 at 01:51:22PM -0500, Josef Bacik wrote:
-> > > On Wed, Mar 09, 2022 at 05:28:28PM -0800, Luis Chamberlain wrote:
-> > > > On Wed, Mar 09, 2022 at 04:19:21PM -0500, Josef Bacik wrote:
-> > > > > On Wed, Mar 09, 2022 at 11:00:49AM -0800, Luis Chamberlain wrote:
-> > > > 
-> > > > That's great!
-> > > > 
-> > > > But although this runs nightly, it seems this runs fstest *once* to
-> > > > ensure if there are no regressions. Is that right?
-> > > > 
-> > > 
-> > > Yup once per config, so 8 full fstest runs.
-> > 
-> > From my experience that is not enough to capture all failures given
-> > lower failure rates on tests other than 1/1, like 1/42 or
-> > 1/300. So minimum I'd go for 500 loops of fstests per config.
-> > This does mean this is not possible nightly though, yes. 5 days
-> > on average. And so much more work is needed to bring this down
-> > further.
+On Thu, Mar 10, 2022 at 10:07:30PM -0800, Christoph Hellwig wrote:
+> On Thu, Mar 10, 2022 at 04:49:06PM -0800, Luis Chamberlain wrote:
+> > Some filesystems who want to support zone storage natively have been
+> > extended to do things to help with these quirks. My concerns were the
+> > divergence on approaches to how filesystems use ZNS as well. Do you have
+> > any plans to consider such efforts for XFS or would you rather build on
+> > ZoneFS somehow?
 > 
-> Well, yes, 500 loops have better chance of detecting rare bugs. But if you
-> did only say 100 loops, you are likely to detect the bug just 5 days later
-> on average. Sure that makes finding the bug somewhat harder (you generally
-> need to investigate larger time span to find the bug) but testing costs are
-> lower... It is a tradeoff.
+> XFS will always require a random writable area for metadata.
 
-Crap sorry I had my numbers mixed, yes 100 takes about 5 days (for btrfs
-or xfs running all confgurations in parallel), so indeed, 100 was
-reasonable goal today. 500 would take almost a month and if that doesn't
-give you much time to fix issues either if you have a kernel release per
-month!
+XFS also supports an external journal, so could that go through
+a conventional zone?
+
+> I have
+> an old early draft with a fully zone aware allocator essentially
+> replacing the realtime subvolume.  But it's been catching dust so far,
+> maybe I'll have a chance to resurrect it if I don't have too fight too
+> many stupid patchseries all at once.
+
+Good to know thanks!
+
+I was wondering weather or not Chinner's subvolume concept could be
+applied to ZoneFS for the data area. But given the file would be on
+another filesystem made me think this would probably not be possible.
+Then there is the append only requirement as well...
 
   Luis
