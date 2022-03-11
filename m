@@ -2,74 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ECA594D5E54
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Mar 2022 10:24:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4374F4D5E55
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Mar 2022 10:24:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346526AbiCKJXp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Mar 2022 04:23:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47666 "EHLO
+        id S1347461AbiCKJYi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Mar 2022 04:24:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50470 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345021AbiCKJXk (ORCPT
+        with ESMTP id S1347485AbiCKJYg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Mar 2022 04:23:40 -0500
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D90B3B1;
-        Fri, 11 Mar 2022 01:22:35 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 3E48A1F381;
-        Fri, 11 Mar 2022 09:22:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1646990554; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=0izCbKy2PPDXTj3zqLWTj1ez7s4mrzmIYx97ZIN4SaQ=;
-        b=pcQn5HK48a7pGy1Uie5Q/uhC9zp+X98MWoSUrVTBJ9+4GGdOqVavasGuHcy+EPFuUWlyhU
-        PvayG78vRTejFQ8Ggi7AdDQzJ0QelHbK2ZxYAXC2kTLBigaHCxBHik28X2LHo7Phgtz2BF
-        OQRf4lU00xDvtTbDF94osF7v3fM02Pg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1646990554;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=0izCbKy2PPDXTj3zqLWTj1ez7s4mrzmIYx97ZIN4SaQ=;
-        b=J+vUxs6CxNl4yRwPAXVmhazKXZenTR2kKtNXQWKOrgangeXmQvkUHtd/vdrT6pABlnIF72
-        Z9upYF45BJRfLYBg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 019A613A82;
-        Fri, 11 Mar 2022 09:22:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 0QF6OtkUK2L/UwAAMHmgww
-        (envelope-from <vkarasulli@suse.de>); Fri, 11 Mar 2022 09:22:33 +0000
-Date:   Fri, 11 Mar 2022 10:22:32 +0100
-From:   Vasant Karasulli <vkarasulli@suse.de>
-To:     Namjae Jeon <linkinjeon@kernel.org>
-Cc:     David Disseldorp <ddiss@suse.de>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Takashi Iwai <tiwai@suse.de>
-Subject: Re: [PATCH v2 2/2] exfat currently unconditionally strips trailing
- periods '.' when performing path lookup, but allows them in the filenames
- during file creation. This is done intentionally, loosely following Windows
- behaviour and specifications which state:
-Message-ID: <YisU2FA7EBeguwN5@vasant-suse>
-References: <20220310142455.23127-1-vkarasulli@suse.de>
- <20220310142455.23127-3-vkarasulli@suse.de>
- <20220310210633.095f0245@suse.de>
- <CAKYAXd_ij3WqJHQZvH458XRwLBtboiJnr-fK0hVPDi_j_8XDZQ@mail.gmail.com>
+        Fri, 11 Mar 2022 04:24:36 -0500
+Received: from mx0a-003b2802.pphosted.com (mx0a-003b2802.pphosted.com [205.220.168.83])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E47D250066;
+        Fri, 11 Mar 2022 01:23:29 -0800 (PST)
+Received: from pps.filterd (m0278966.ppops.net [127.0.0.1])
+        by mx0a-003b2802.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 22B3ehmJ005462;
+        Fri, 11 Mar 2022 02:23:16 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=micron.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=Q5wvnU47cNNRPU3V481aLVb+rtloYqTGJfrugq6vR+o=;
+ b=nM0np0dTNftXy/ileOy+1tDM3iuAytdfjOBjvLy4HiNXnAsktbePSe6fAbsoZqyK64r1
+ ihnDyCj4DHExopWr5wAYsZUOxODrg/YOlTYbS4fFKOtzX69aZvGd7pW+ocm+Jrm8FEHg
+ sl/jWcYfxd3waWCLGdv9YiCYLl4lv30hwtK2uISDtr6MQuD97hNjOVDQ28/LTlt2+j68
+ 2BfLnw1cOOo/zzGS1ZgV+dA4DO0MP4sEJmnGftKSbNqU7qvfb320KHaaLP8wurXrvqr9
+ xo1Awmy7LSY7Lr04cWey0MOYYlzjm3CCss+F/joe3tVefzgQdP/2hmCYHvHV7xE2CxEw 1w== 
+Received: from nam04-mw2-obe.outbound.protection.outlook.com (mail-mw2nam08lp2172.outbound.protection.outlook.com [104.47.73.172])
+        by mx0a-003b2802.pphosted.com (PPS) with ESMTPS id 3em5bgpx79-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 11 Mar 2022 02:23:16 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=DwNzg387IOqA+Alk8oJbjaBT/oaOdIwj3DEMsPxV4ukVUoDebvl/DH+5YApuFp5JcNk2lmAKACHUVq5VVDvYW09WKbMfzxptx4O3IHAcYkmRICk9V8Cg8tnIpJR2PdkilMn3NFfp7KCPoz1apLJh9zrEXuAGMXCP0IV0DL7+3jEVSWWClEpQpQL3IZxTeDMOqYAbq5nkewYRHpMfMkO+3rJqnWP8f76J3kJkwMNOkA1ddRa0oy2VSNJrkiCMXNLo6zK3Sk2jQd6AmvG/fxI2MKQQESS9aD0pTKMLiGHDvmSpoSOnUgewEYY5xIT3fwGxDOqf04YYT6U9d7iDnFc2Jg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Q5wvnU47cNNRPU3V481aLVb+rtloYqTGJfrugq6vR+o=;
+ b=jbIkw+Y5MRu/VuDhdnYqFC+bZHTT4JzlyR3irqGrgiyu5Ag5IRlhBTYSkXZlzJLAP9DOctd/ZCgh7SPGpRgTCFjtXclzGbwvz662mipoVBQRzu70VPz0LeomOSibrwScLrHQ6ncq4lF1/oc90pw5/PAwd+mDQrPpb56GRj5iInr0I7XetxcyYrz2FeQNDMM/bLh/g8kXH/fkujfLVnZBxEFREat3x5MWWY6jnWKCuwBHY/YWY0GOxIftMKRwvoTIyUrHdBWAhvWMJ8LsJJj29pwuNar27C8w4Vxy1YbAoM8MIBYgjcAP1cuZx4gC7V8ChBkPBZ4CY7gSe3yusX+j1A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=micron.com; dmarc=pass action=none header.from=micron.com;
+ dkim=pass header.d=micron.com; arc=none
+Received: from CO3PR08MB7975.namprd08.prod.outlook.com (2603:10b6:303:166::10)
+ by CY1PR0801MB2282.namprd08.prod.outlook.com (2a01:111:e400:c618::27) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5061.22; Fri, 11 Mar
+ 2022 09:23:13 +0000
+Received: from CO3PR08MB7975.namprd08.prod.outlook.com
+ ([fe80::106d:1c1:99ae:45ac]) by CO3PR08MB7975.namprd08.prod.outlook.com
+ ([fe80::106d:1c1:99ae:45ac%9]) with mapi id 15.20.5061.024; Fri, 11 Mar 2022
+ 09:23:13 +0000
+From:   "Luca Porzio (lporzio)" <lporzio@micron.com>
+To:     Eric Biggers <ebiggers@kernel.org>
+CC:     "hch@lst.de" <hch@lst.de>, Manjong Lee <mj0123.lee@samsung.com>,
+        "david@fromorbit.com" <david@fromorbit.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "kbusch@kernel.org" <kbusch@kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>,
+        "sagi@grimberg.me" <sagi@grimberg.me>,
+        "song@kernel.org" <song@kernel.org>,
+        "seunghwan.hyun@samsung.com" <seunghwan.hyun@samsung.com>,
+        "sookwan7.kim@samsung.com" <sookwan7.kim@samsung.com>,
+        "nanich.lee@samsung.com" <nanich.lee@samsung.com>,
+        "woosung2.lee@samsung.com" <woosung2.lee@samsung.com>,
+        "yt0928.kim@samsung.com" <yt0928.kim@samsung.com>,
+        "junho89.kim@samsung.com" <junho89.kim@samsung.com>,
+        "jisoo2146.oh@samsung.com" <jisoo2146.oh@samsung.com>
+Subject: RE: [EXT] Re: [PATCH 2/2] block: remove the per-bio/request write
+ hint.
+Thread-Topic: [EXT] Re: [PATCH 2/2] block: remove the per-bio/request write
+ hint.
+Thread-Index: AQHYM213hUiroX0Mx0m03tMAg0KZ2Ky4fWtAgAAwFACAAEsrEIAAq+gAgABHedA=
+Date:   Fri, 11 Mar 2022 09:23:12 +0000
+Message-ID: <CO3PR08MB7975906A41E28FCBA0DAC41BDC0C9@CO3PR08MB7975.namprd08.prod.outlook.com>
+References: <20220306231727.GP3927073@dread.disaster.area>
+ <CGME20220309042324epcas1p111312e20f4429dc3a17172458284a923@epcas1p1.samsung.com>
+ <20220309133119.6915-1-mj0123.lee@samsung.com>
+ <CO3PR08MB797524ACBF04B861D48AF612DC0B9@CO3PR08MB7975.namprd08.prod.outlook.com>
+ <20220310142148.GA1069@lst.de>
+ <CO3PR08MB7975AB3E282C7DA35A5B1CF0DC0B9@CO3PR08MB7975.namprd08.prod.outlook.com>
+ <YirYvvIBW+XNGvxP@sol.localdomain>
+In-Reply-To: <YirYvvIBW+XNGvxP@sol.localdomain>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_6fdea275-d6f3-438f-b8d8-013cab2023d3_Enabled=true;
+ MSIP_Label_6fdea275-d6f3-438f-b8d8-013cab2023d3_SetDate=2022-03-11T09:22:06Z;
+ MSIP_Label_6fdea275-d6f3-438f-b8d8-013cab2023d3_Method=Privileged;
+ MSIP_Label_6fdea275-d6f3-438f-b8d8-013cab2023d3_Name=Public;
+ MSIP_Label_6fdea275-d6f3-438f-b8d8-013cab2023d3_SiteId=f38a5ecd-2813-4862-b11b-ac1d563c806f;
+ MSIP_Label_6fdea275-d6f3-438f-b8d8-013cab2023d3_ActionId=fbe66a85-b0fe-40f2-8775-25f085a93321;
+ MSIP_Label_6fdea275-d6f3-438f-b8d8-013cab2023d3_ContentBits=0
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: a9cb5e77-0b1c-40b8-c94d-08da0340c426
+x-ms-traffictypediagnostic: CY1PR0801MB2282:EE_
+x-microsoft-antispam-prvs: <CY1PR0801MB2282DD79B788004B7BF857EDDC0C9@CY1PR0801MB2282.namprd08.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: ysp3x3xYVuV/gWNbbAR9qnGrVNi5nrhlr05KnNZ8zMPnqQIb4HXkJZmYvdbH498z1JRoKx0m9bwuOS5oH7Q0aUM8sUZgPc9neCwjWsys4kaNo5mPtit0yQUMw1gn7OrSvGWw7kkS8JQlpgRtrIvsmwmc90vlpSIAJAftVmb4tPl/hzYVdno7XQAznjCU3CvOHWbxwcbZdxIq790A82Rqg8SUSGQgaAPiD4La+YLcH0DrgnlSbK5q6PAlnXo1ogL1+amxR9skq6RZXJG+iSkQvWF1cyjgQESl9x8h7EPm0viKD3GAe6se4oJBE6W9y1ZbK6tvW3WtmJLJYzfVfdVQy2VDzLq3lO2VI7w0eN/cGz2Qho9icbjc4nVve73LDjyZLu8fMX4YTiPsrwRNSebTXHeepwVePTPY/XUAQTGMUG87RHPtWYjdqB9brWn1veiqlWBgZIez5vpaSfG6BjNOUUZ1SlIUagPy75OkI37HyI6Go/1A1aNwtsNBs+4g5hQGgEWZ20lPYHx2E30GwQeMbQOqNmvLjkM5c1cQINDoyAoLhTU+3fEjTLAorkYwrqFyGIW2N+XQCLViUhLmGcXVy4hMxuvFHB4EZz5VmW0mfoyczeN5kL+sf/RGFo3JI8BaQ/cB6TTD04iB5j7tXp95SGv0Sq1Pgk0xtjgIqK8BB3rOu5jSt7S2CmBxjsBXr9vHmI6tPIufTU+k9J7fFWVe4w==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO3PR08MB7975.namprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(8676002)(4326008)(33656002)(86362001)(76116006)(508600001)(66556008)(66446008)(66476007)(52536014)(7416002)(316002)(8936002)(5660300002)(64756008)(122000001)(66946007)(38100700002)(38070700005)(186003)(7696005)(6506007)(26005)(54906003)(4744005)(9686003)(71200400001)(6916009)(55016003)(2906002);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?PZx//c4u/Aj/sB8dHT4oFuKN2AiFgwGzHzhoLm7n5KFOvq2Jdvuh6BWnvFXL?=
+ =?us-ascii?Q?iSYNR1Lv9AowL9+64ziIS5Yl/+LP9V4ZYaPYcnFJR41xgKO2ffdIXe3xIMzO?=
+ =?us-ascii?Q?ow9dlmyKf3NvMZJwIfxcfsl6tWi9fpTI7VplvzqMA3O4zf7y4KQhF0Fn/xXS?=
+ =?us-ascii?Q?9Ah9SulUl5W4qpyD/hpl3FdM1K7EWNy6k/5yZywh2kUeGs/5s2PelMXafpwQ?=
+ =?us-ascii?Q?Lwj7dJC3vq8he5bVToRyWJxvtlznlEOaWe9DdAW4KaahCz/6nmRNn3vwDkhN?=
+ =?us-ascii?Q?SpCh3sJ3jCVTbjn4DTAvkI1VOJ7bXXu5uwNfjwCxPfCwEWh2eSMB6TMFDaYc?=
+ =?us-ascii?Q?zJTw+gzp7cjHwMjHH0IHshzASR9z8rIpWz9/4CLJ8AmH8KAKwPtUsEnj3EB9?=
+ =?us-ascii?Q?BXicOsjDa1kHsoIHJHqmvqz+ranCIzS0mA8CVH4DivZQKHkWO2h4EYOI60Ul?=
+ =?us-ascii?Q?ros0m/waDqha3xbcrDdi4+4lFgnUfbpo0vEyHhkwVMqNaf1HRCli4ntTOaNH?=
+ =?us-ascii?Q?xgFwCGWoq66MamrACcoLEOtVxtc0g3YtyQzty83Va2E5t5Fmpy7DQhAM7+Zq?=
+ =?us-ascii?Q?djAtI74Y9hL5jUNEa7oGWvfpwCTVTwdBUecluCeyU7oL5OX4XLP7n/WHqP7I?=
+ =?us-ascii?Q?vRsY4UsqMhZgFvWWTqpHF1ASYRHJ70FWvsBLV9TQG3FQwCXba0kzHeHNcU2A?=
+ =?us-ascii?Q?wnNqKhKbNS93aZgcAiAST470oZWw6ParcjCRlGf7JQeZf5wZee//wY7VSX/T?=
+ =?us-ascii?Q?5wrsp5lD9+Z505xhIvIxiVNS4FTfmimmUMDh5qhO/lNIh4Sao6dzCjpL3dHj?=
+ =?us-ascii?Q?rPxosN2PoB+vZV7W6UkJ4z/Jdc3VV9ZhZkcr6DHA7lej/yWXNFIxqeL3VDVt?=
+ =?us-ascii?Q?BFVuYh7aKTnVj/Qon5a5gnRK3fmKJigydLFqD6N6Nd+94RnSlsJnNnDHTZ3s?=
+ =?us-ascii?Q?Sgpx5ykY363ZovThBUacEIEthSi+YNnIu6+AD7YoWo8oRkk2vWBw8Gr9S+EQ?=
+ =?us-ascii?Q?MoYqlwedJobXyBvGJ8aTGfO+H/9J6WJDdGkHs71HGCIljnRMaCTbIa+dorE/?=
+ =?us-ascii?Q?vJ1cX2dRCFAcLkq5BKZzEmAOHaHftujSSZLEzcI9y1t5GqGpTm3/tuq0dl3J?=
+ =?us-ascii?Q?zWH9qCI6fO/vfNcZ3OoDf81KvlhUgsEPPcmXjixugCvWwFcS28Snx6B7zNU8?=
+ =?us-ascii?Q?CXyxxHLr2ONpqKsqjAQ3bk7sH8x+gxxlXx2hnEQcIS/X8M/LbvVoZZ0bTQgS?=
+ =?us-ascii?Q?GQPkf4cYmUVZ0Ie+zE8C/qPNK52sLzzLBQt4X9dAFFSCPocwC3441MoMjH9O?=
+ =?us-ascii?Q?KZPttfOULsm+yOtwsn6r1GIyJvwrsTaqg8xNs+F/bRPMr/kTcoaEM1fjCpgf?=
+ =?us-ascii?Q?SdUBWdYZm2YpbLX7JLnClZpdweWoDaUkt2rxQrD8XtIb46CqPh2tQie3L6Kz?=
+ =?us-ascii?Q?hqiYy0B+xYyeRlHDQQbu3hI8h2ZEGWXl?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKYAXd_ij3WqJHQZvH458XRwLBtboiJnr-fK0hVPDi_j_8XDZQ@mail.gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+X-OriginatorOrg: micron.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CO3PR08MB7975.namprd08.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a9cb5e77-0b1c-40b8-c94d-08da0340c426
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Mar 2022 09:23:12.9075
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: f38a5ecd-2813-4862-b11b-ac1d563c806f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: nreBQUcm5XntFem8X4CSehHZXcp82e5anvKahzbSDHC7jptyvuaBujJFR58RRaigv9BnBlWFGz9YvDcdTFGGAg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR0801MB2282
+X-Proofpoint-GUID: fJBtJeweGgxYpCNH7zPgw-KBJoqAtZpx
+X-Proofpoint-ORIG-GUID: fJBtJeweGgxYpCNH7zPgw-KBJoqAtZpx
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -77,106 +156,27 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fr 11-03-22 18:03:57, Namjae Jeon wrote:
-> 2022-03-11 5:06 GMT+09:00, David Disseldorp <ddiss@suse.de>:
-> > Thanks for reworking these changes, Vasant.
+>=20
+> On Thu, Mar 10, 2022 at 06:51:39PM +0000, Luca Porzio (lporzio) wrote:
 > >
-> > Please trim the 1/2 and 2/2 patch subjects down to around 50 chars
-> > (including a "exfat: " prefix), with the details moved into the commit
-> > message body...
-> >
-> > On Thu, 10 Mar 2022 15:24:55 +0100, Vasant Karasulli wrote:
-> >
-> >>   #exFAT
-> >>   The concatenated file name has the same set of illegal characters as
-> >>   other FAT-based file systems (see Table 31).
-> >>
-> >>   #FAT
-> >>   ...
-> >>   Leading and trailing spaces in a long name are ignored.
-> >>   Leading and embedded periods are allowed in a name and are stored in
-> >>   the long name. Trailing periods are ignored.
-> >>
-> >> Note: Leading and trailing space ' ' characters are currently retained
-> >> by Linux kernel exfat, in conflict with the above specification.
-> >
-> > I think it makes sense to mention your findings from the Windows tests
-> > here. E.g. "Windows 10 also retains leading and trailing space
-> > characters".
-> Windows 10 do also strip them. So you can make another patch to strip
-> it as well as trailing periods.
-Actually I found contradicting behavior between Window 10 File Explorer and
-Commandline. Commandline seems to strip trailing spaces, but File Explorer
-doesn't.
+> > Micron Confidential
+>=20
+> This is a public mailing list, so please do not use this header/footer.
 
-> >
-> >> Some implementations, such as fuse-exfat, don't perform path trailer
-> >> removal. When mounting images which contain trailing-dot paths, these
-> >> paths are unreachable, e.g.:
-> >>
-> >>   + mount.exfat-fuse /dev/zram0 /mnt/test/
-> >>   FUSE exfat 1.3.0
-> >>   + cd /mnt/test/
-> >>   + touch fuse_created_dots... '  fuse_created_spaces  '
-> >>   + ls -l
-> >>   total 0
-> >>   -rwxrwxrwx 1 root 0 0 Aug 18 09:45 '  fuse_created_spaces  '
-> >>   -rwxrwxrwx 1 root 0 0 Aug 18 09:45  fuse_created_dots...
-> >>   + cd /
-> >>   + umount /mnt/test/
-> >>   + mount -t exfat /dev/zram0 /mnt/test
-> >>   + cd /mnt/test
-> >>   + ls -l
-> >>   ls: cannot access 'fuse_created_dots...': No such file or directory
-> >>   total 0
-> >>   -rwxr-xr-x 1 root 0 0 Aug 18 09:45 '  fuse_created_spaces  '
-> >>   -????????? ? ?    ? ?            ?  fuse_created_dots...
-> >>   + touch kexfat_created_dots... '  kexfat_created_spaces  '
-> >>   + ls -l
-> >>   ls: cannot access 'fuse_created_dots...': No such file or directory
-> >>   total 0
-> >>   -rwxr-xr-x 1 root 0 0 Aug 18 09:45 '  fuse_created_spaces  '
-> >>   -rwxr-xr-x 1 root 0 0 Aug 18 09:45 '  kexfat_created_spaces  '
-> >>   -????????? ? ?    ? ?            ?  fuse_created_dots...
-> >>   -rwxr-xr-x 1 root 0 0 Aug 18 09:45  kexfat_created_dots
-> >>   + cd /
-> >>   + umount /mnt/test/
-> >>
-> >> With this change, the "keep_last_dots" mount option can be used to access
-> >> paths with trailing periods and disallow creating files with names with
-> >> trailing periods. E.g. continuing from the previous example:
-> >>
-> >>   + mount -t exfat -o keep_last_dots /dev/zram0 /mnt/test
-> >>   + cd /mnt/test
-> >>   + ls -l
-> >>   total 0
-> >>   -rwxr-xr-x 1 root 0 0 Aug 18 10:32 '  fuse_created_spaces  '
-> >>   -rwxr-xr-x 1 root 0 0 Aug 18 10:32 '  kexfat_created_spaces  '
-> >>   -rwxr-xr-x 1 root 0 0 Aug 18 10:32  fuse_created_dots...
-> >>   -rwxr-xr-x 1 root 0 0 Aug 18 10:32  kexfat_created_dots
-> >
-> > It'd be nice to demonstrate "keep_last_dots" creation here as well, e.g.
-> >
-> >   + echo > kexfat_created_dots_again...
-> >   sh: kexfat_created_dots_again...: Invalid argument
-> >
-> > @Namjae: not sure whether this is what you had in mind for preventing
-> > creation of invalid paths. What's your preference?
-> Look like what I wanted.
-That's great. I will resend the patch after modifying the commit message
-as David suggested.
->
-> Thanks!
-> >
-> > Cheers, David
-> >
+Eric,
 
-Thanks,
-Vasant Karasulli
-Kernel generalist
-www.suse.com<http://www.suse.com>
-[https://www.suse.com/assets/img/social-platforms-suse-logo.png]<http://www.suse.com/>
-SUSE - Open Source Solutions for Enterprise Servers & Cloud<http://www.suse.com/>
-Modernize your infrastructure with SUSE Linux Enterprise servers, cloud technology for IaaS, and SUSE's software-defined storage.
-www.suse.com
+I am sorry, sometimes it is hard for me to cope with all the company proxie=
+s/firewall.
+I'll try to make sure this won't happen in future.
 
+>=20
+> > it is used across the (Android) ecosystem.
+>=20
+> So why hasn't it been submitted upstream?
+
+I'm not sure about this but I am open to fix this for future.
+
+>=20
+> - Eric
+
+Luca
