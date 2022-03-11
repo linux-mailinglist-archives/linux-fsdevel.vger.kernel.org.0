@@ -2,61 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 456634D6575
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Mar 2022 16:58:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 144864D65AD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Mar 2022 17:02:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348487AbiCKP7g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Mar 2022 10:59:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54476 "EHLO
+        id S1349947AbiCKQDv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Mar 2022 11:03:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236561AbiCKP7e (ORCPT
+        with ESMTP id S1350415AbiCKQDi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Mar 2022 10:59:34 -0500
+        Fri, 11 Mar 2022 11:03:38 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 201D215338D
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Mar 2022 07:58:31 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 06E929FFF
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Mar 2022 08:02:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1647014310;
+        s=mimecast20190719; t=1647014553;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding;
-        bh=YzULi3Mf2x8o0v0/vm+cJ+iGXlkMLGGs801f/kC1Ckw=;
-        b=CeJX6BzzFWzv4RzU+3EEcIXqnRcKK7hMORCIeWNVX8oQryz9lxZkWN1oxvUJvig1xsvEO+
-        7yLEvwz8xVYoqFeCBepO/D8Cw7NKW4LAn3skzpPmHZs0aQYBlf2gNbR2GbfYFxogAMxsvm
-        gTuK+VzpCgA2N/rxy58nKFEYYCwK0Is=
+        bh=ilGm5MsrGcVXow52rFFtdj0YbYqX9AM62W1VECQWVlE=;
+        b=FjERbka43EaeJhVyjryTYkOAXxnbeKIqaGzJYHNxlTOrd4aSLwR7ifGtYvxlwMidNmI2Vd
+        RThTADnOvEePcv9j6ypiE8K6KFP5R8bBNSgY3M5TR3wKbbuKmxn60G+ZW52VY9Rh0L1its
+        eMnrnMaxcRBqjaQgUs+x7nOQQMolBLc=
 Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
  [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-445-jEEfoacfOJuXawk_LCI7Sw-1; Fri, 11 Mar 2022 10:58:27 -0500
-X-MC-Unique: jEEfoacfOJuXawk_LCI7Sw-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+ us-mta-99-Ng7loZ2EPzmp-sVX6vNM8w-1; Fri, 11 Mar 2022 11:02:31 -0500
+X-MC-Unique: Ng7loZ2EPzmp-sVX6vNM8w-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id AC0A71091DA1;
-        Fri, 11 Mar 2022 15:58:25 +0000 (UTC)
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 19D60FC80;
+        Fri, 11 Mar 2022 16:02:30 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.33.36.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8021D7F0DB;
-        Fri, 11 Mar 2022 15:58:22 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EB50F866D6;
+        Fri, 11 Mar 2022 16:02:18 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH] afs: Fix potential thrashing in afs writeback
+Subject: [PATCH] cachefiles: Fix volume coherency attribute
 From:   David Howells <dhowells@redhat.com>
 To:     torvalds@linux-foundation.org
-Cc:     dhowells@redhat.com, marc.dionne@auristor.com,
-        linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+Cc:     Rohith Surabattula <rohiths.msft@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Steve French <smfrench@gmail.com>, linux-cifs@vger.kernel.org,
+        linux-cachefs@redhat.com, dhowells@redhat.com,
+        rohiths.msft@gmail.com, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Date:   Fri, 11 Mar 2022 15:58:21 +0000
-Message-ID: <164701430151.2588429.8245041241669432969.stgit@warthog.procyon.org.uk>
+Date:   Fri, 11 Mar 2022 16:02:18 +0000
+Message-ID: <164701453798.2588911.12798385110642752783.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/1.4
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
 X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -64,59 +67,138 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In afs_writepages_region(), if the dirty page we find is undergoing
-writeback or write to cache, but the sync_mode is WB_SYNC_NONE, we go round
-the loop trying the same page again and again with no pausing or waiting
-unless and until another thread manages to clear the writeback and fscache
-flags.
+A network filesystem may set coherency data on a volume cookie, and if
+given, cachefiles will store this in an xattr on the directory in the cache
+corresponding to the volume.
 
-Fix this with three measures:
+The function that sets the xattr just stores the contents of the volume
+coherency buffer directly into the xattr, with nothing added; the checking
+function, on the other hand, has a cut'n'paste error whereby it tries to
+interpret the xattr contents as would be the xattr on an ordinary file
+(using the cachefiles_xattr struct).  This results in a failure to match
+the coherency data because the buffer ends up being shifted by 18 bytes.
 
- (1) Advance start to after the page we found.
+Fix this by defining a structure specifically for the volume xattr and
+making both the setting and checking functions use it.
 
- (2) Break out of the loop and return if rescheduling is requested.
+Since the volume coherency doesn't work if used, take the opportunity to
+insert a reserved field for future use, set it to 0 and check that it is 0.
+Log mismatch through the appropriate tracepoint.
 
- (3) Arbitrarily give up after a maximum of 5 skips.
+Note that this only affects cifs; 9p, afs, ceph and nfs don't use the
+volume coherency data at the moment.
 
-Fixes: 31143d5d515e ("AFS: implement basic file write support")
-Reported-by: Marc Dionne <marc.dionne@auristor.com>
+Fixes: 32e150037dce ("fscache, cachefiles: Store the volume coherency data")
+Reported-by: Rohith Surabattula <rohiths.msft@gmail.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
-Tested-by: Marc Dionne <marc.dionne@auristor.com>
-Acked-by: Marc Dionne <marc.dionne@auristor.com>
-Link: https://lore.kernel.org/r/164692725757.2097000.2060513769492301854.stgit@warthog.procyon.org.uk/ # v1
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+cc: Steve French <smfrench@gmail.com>
+cc: linux-cifs@vger.kernel.org
+cc: linux-cachefs@redhat.com
 ---
 
- fs/afs/write.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ fs/cachefiles/xattr.c             |   23 ++++++++++++++++++++---
+ include/trace/events/cachefiles.h |    2 ++
+ 2 files changed, 22 insertions(+), 3 deletions(-)
 
-diff --git a/fs/afs/write.c b/fs/afs/write.c
-index 85c9056ba9fb..bd0201f4939a 100644
---- a/fs/afs/write.c
-+++ b/fs/afs/write.c
-@@ -701,7 +701,7 @@ static int afs_writepages_region(struct address_space *mapping,
- 	struct folio *folio;
- 	struct page *head_page;
- 	ssize_t ret;
--	int n;
-+	int n, skips = 0;
+diff --git a/fs/cachefiles/xattr.c b/fs/cachefiles/xattr.c
+index 83f41bd0c3a9..35465109d9c4 100644
+--- a/fs/cachefiles/xattr.c
++++ b/fs/cachefiles/xattr.c
+@@ -28,6 +28,11 @@ struct cachefiles_xattr {
+ static const char cachefiles_xattr_cache[] =
+ 	XATTR_USER_PREFIX "CacheFiles.cache";
  
- 	_enter("%llx,%llx,", start, end);
++struct cachefiles_vol_xattr {
++	__be32	reserved;	/* Reserved, should be 0 */
++	__u8	data[];		/* netfs volume coherency data */
++} __packed;
++
+ /*
+  * set the state xattr on a cache file
+  */
+@@ -185,6 +190,7 @@ void cachefiles_prepare_to_write(struct fscache_cookie *cookie)
+  */
+ bool cachefiles_set_volume_xattr(struct cachefiles_volume *volume)
+ {
++	struct cachefiles_vol_xattr *buf;
+ 	unsigned int len = volume->vcookie->coherency_len;
+ 	const void *p = volume->vcookie->coherency;
+ 	struct dentry *dentry = volume->dentry;
+@@ -192,10 +198,17 @@ bool cachefiles_set_volume_xattr(struct cachefiles_volume *volume)
  
-@@ -752,8 +752,15 @@ static int afs_writepages_region(struct address_space *mapping,
- #ifdef CONFIG_AFS_FSCACHE
- 				folio_wait_fscache(folio);
- #endif
-+			} else {
-+				start += folio_size(folio);
- 			}
- 			folio_put(folio);
-+			if (wbc->sync_mode == WB_SYNC_NONE) {
-+				if (skips >= 5 || need_resched())
-+					break;
-+				skips++;
-+			}
- 			continue;
+ 	_enter("%x,#%d", volume->vcookie->debug_id, len);
+ 
++	len += sizeof(*buf);
++	buf = kmalloc(len, GFP_KERNEL);
++	if (!buf)
++		return false;
++	buf->reserved = cpu_to_be32(0);
++	memcpy(buf->data, p, len);
++
+ 	ret = cachefiles_inject_write_error();
+ 	if (ret == 0)
+ 		ret = vfs_setxattr(&init_user_ns, dentry, cachefiles_xattr_cache,
+-				   p, len, 0);
++				   buf, len, 0);
+ 	if (ret < 0) {
+ 		trace_cachefiles_vfs_error(NULL, d_inode(dentry), ret,
+ 					   cachefiles_trace_setxattr_error);
+@@ -209,6 +222,7 @@ bool cachefiles_set_volume_xattr(struct cachefiles_volume *volume)
+ 					       cachefiles_coherency_vol_set_ok);
+ 	}
+ 
++	kfree(buf);
+ 	_leave(" = %d", ret);
+ 	return ret == 0;
+ }
+@@ -218,7 +232,7 @@ bool cachefiles_set_volume_xattr(struct cachefiles_volume *volume)
+  */
+ int cachefiles_check_volume_xattr(struct cachefiles_volume *volume)
+ {
+-	struct cachefiles_xattr *buf;
++	struct cachefiles_vol_xattr *buf;
+ 	struct dentry *dentry = volume->dentry;
+ 	unsigned int len = volume->vcookie->coherency_len;
+ 	const void *p = volume->vcookie->coherency;
+@@ -228,6 +242,7 @@ int cachefiles_check_volume_xattr(struct cachefiles_volume *volume)
+ 
+ 	_enter("");
+ 
++	len += sizeof(*buf);
+ 	buf = kmalloc(len, GFP_KERNEL);
+ 	if (!buf)
+ 		return -ENOMEM;
+@@ -245,7 +260,9 @@ int cachefiles_check_volume_xattr(struct cachefiles_volume *volume)
+ 					"Failed to read xattr with error %zd", xlen);
  		}
- 
+ 		why = cachefiles_coherency_vol_check_xattr;
+-	} else if (memcmp(buf->data, p, len) != 0) {
++	} else if (buf->reserved != cpu_to_be32(0)) {
++		why = cachefiles_coherency_vol_check_resv;
++	} else if (memcmp(buf->data, p, len - sizeof(*buf)) != 0) {
+ 		why = cachefiles_coherency_vol_check_cmp;
+ 	} else {
+ 		why = cachefiles_coherency_vol_check_ok;
+diff --git a/include/trace/events/cachefiles.h b/include/trace/events/cachefiles.h
+index 002d0ae4f9bc..311c14a20e70 100644
+--- a/include/trace/events/cachefiles.h
++++ b/include/trace/events/cachefiles.h
+@@ -56,6 +56,7 @@ enum cachefiles_coherency_trace {
+ 	cachefiles_coherency_set_ok,
+ 	cachefiles_coherency_vol_check_cmp,
+ 	cachefiles_coherency_vol_check_ok,
++	cachefiles_coherency_vol_check_resv,
+ 	cachefiles_coherency_vol_check_xattr,
+ 	cachefiles_coherency_vol_set_fail,
+ 	cachefiles_coherency_vol_set_ok,
+@@ -139,6 +140,7 @@ enum cachefiles_error_trace {
+ 	EM(cachefiles_coherency_set_ok,		"SET ok  ")		\
+ 	EM(cachefiles_coherency_vol_check_cmp,	"VOL BAD cmp ")		\
+ 	EM(cachefiles_coherency_vol_check_ok,	"VOL OK      ")		\
++	EM(cachefiles_coherency_vol_check_resv,	"VOL BAD resv")	\
+ 	EM(cachefiles_coherency_vol_check_xattr,"VOL BAD xatt")		\
+ 	EM(cachefiles_coherency_vol_set_fail,	"VOL SET fail")		\
+ 	E_(cachefiles_coherency_vol_set_ok,	"VOL SET ok  ")
 
 
