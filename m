@@ -2,150 +2,157 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 630184D58BD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Mar 2022 04:15:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A9A64D596A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Mar 2022 05:10:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345967AbiCKDQD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Mar 2022 22:16:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39532 "EHLO
+        id S1346162AbiCKELL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Mar 2022 23:11:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345960AbiCKDQC (ORCPT
+        with ESMTP id S231511AbiCKELK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Mar 2022 22:16:02 -0500
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C9BB1A6157;
-        Thu, 10 Mar 2022 19:15:00 -0800 (PST)
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 22B0Ad5p029667;
-        Fri, 11 Mar 2022 03:14:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
- subject : message-id : references : mime-version : content-type :
- in-reply-to; s=pp1; bh=jqIC8Bg12ntTvl+0SIbsbDTrpL8KxvLBHT167uzVtcw=;
- b=ljBujJ0qV11WSnGUmiynIGtQJ1GRSpxPDm5ogCkJw21m2+a2BN1coAOcDby4ygm4CQks
- 5Jg/W2nw7+bgT0BBoGEC7WHOTNv2PbVVCaKSSBvGA1k2Fxnw6H5BNOURXegGN6uZ/4lc
- cGiNcqjiBhNFA1yrGAX93uBdp2JG27yK6QwL0Iw6P7RAtePAJMkwifYmR+Vt36K2t1X1
- 4ucBLpfpitNOzOBgxKNF0zzSR2FtCEM3fb9qhQIUzmvL37QoRcmt2+RIb/hgjJRe1F1L
- 5FApaWDyQgOUk0IqNfN5deUWH97tCdzCapORsraV8gBz3wQJRQ6fkvZM9xXPzxQo95gO Lg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3eqnccjeu9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 11 Mar 2022 03:14:38 +0000
-Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 22B3CI1T022677;
-        Fri, 11 Mar 2022 03:14:38 GMT
-Received: from ppma04ams.nl.ibm.com (63.31.33a9.ip4.static.sl-reverse.com [169.51.49.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3eqnccjetr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 11 Mar 2022 03:14:37 +0000
-Received: from pps.filterd (ppma04ams.nl.ibm.com [127.0.0.1])
-        by ppma04ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 22B37kPv015817;
-        Fri, 11 Mar 2022 03:14:35 GMT
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (d06relay11.portsmouth.uk.ibm.com [9.149.109.196])
-        by ppma04ams.nl.ibm.com with ESMTP id 3enqgnrjhh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 11 Mar 2022 03:14:35 +0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 22B3EXLx53019128
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 11 Mar 2022 03:14:33 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id ED5ED4C044;
-        Fri, 11 Mar 2022 03:14:32 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 808494C040;
-        Fri, 11 Mar 2022 03:14:32 +0000 (GMT)
-Received: from localhost (unknown [9.43.36.239])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 11 Mar 2022 03:14:32 +0000 (GMT)
-Date:   Fri, 11 Mar 2022 08:44:31 +0530
-From:   Ritesh Harjani <riteshh@linux.ibm.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     linux-ext4@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 00/10] ext4: Improve FC trace events
-Message-ID: <20220311031431.3sfbibwuthn4xkym@riteshh-domain>
-References: <cover.1646922487.git.riteshh@linux.ibm.com>
- <20220310110553.431cc997@gandalf.local.home>
- <20220310170731.hq6z6flycmgkhnaa@riteshh-domain>
- <20220310193936.38ae7754@gandalf.local.home>
- <20220311021931.d4oozgtefbalrcch@riteshh-domain>
- <20220310213356.3948cfb7@gandalf.local.home>
+        Thu, 10 Mar 2022 23:11:10 -0500
+Received: from mail-oi1-x234.google.com (mail-oi1-x234.google.com [IPv6:2607:f8b0:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37C26986FF;
+        Thu, 10 Mar 2022 20:10:08 -0800 (PST)
+Received: by mail-oi1-x234.google.com with SMTP id n7so8157799oif.5;
+        Thu, 10 Mar 2022 20:10:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=9QeKB4cZIGNALzfAGtAHD8EFO6aEieNDe1cqjoQ6gsM=;
+        b=W9vUjPbowBxn+x7F9t0T9ph91PQtdPdrKRG92teEt6N37XUEPsuq7+Semk0Sq7eBL6
+         dcYQ9Tv22KHCDJpJTZArvmF8RQJMWhrnNFrlH0Z9uAj420D8GZTtOsl5n/GtRwmZJ8IA
+         76XZx0gnVjqsOEJfE51RvM5322G6zPl57koGYA+BKcBlE7vuRS9sF5hcoMo88FJDRAK5
+         +kwRe4M+oG+gEgYFREXYAIe783yanNbzuJWyEOA9cbY052rFHSqbNMsxjUA23QLzXa3/
+         qwh29b/LmPrDFBeRC3n+EEkGfabc7nyxk2erQfzTI/vhMLMU2KsmYvLjrtBhha2kRRP/
+         ijHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=9QeKB4cZIGNALzfAGtAHD8EFO6aEieNDe1cqjoQ6gsM=;
+        b=NZW/LNPYvMyDD0iILIXVPwu3OT8GGJdCO4UJtixsPhNlztP4E6LlKBS9jgeqz3M2AM
+         tCweRqyvOVRbGq27iZiMFyj6xf9hBTs5S8ENRkCBDVeR/VMIqtbUWgyS4EBOl+dxKQyv
+         oXJoU/QrLAbMqXsBh7gJf5UONGHNHOuGO/1Remqi/V4Zvxp7xxViNvgu3GjM8sVDaVUU
+         PtWGGdBIa8dDl+hhhKskXt3wLUTunnprJFb2+bPoGJoEASC0r2yOWUklCuMwXl180Aa2
+         mAVzGzGSy3L9MNl1Qu+Xsy9+pIZUtR0RVos1mXFaURus2XzrenovKsHDXTNTGwlDlI5i
+         xZbA==
+X-Gm-Message-State: AOAM533+F5d23lhlFDMU4ZheXcb+Qdzb8jLj9KFs0TNCPnm0zsEmPZP0
+        +npyH6o6yAYkawv1QWEMDsCi5w59RZb1LbvWl9z6yTm6sBQ=
+X-Google-Smtp-Source: ABdhPJx+9DTvJp/p1u4f9zeF1IL/TTETZ9pXW0fHuKtmLByfNy/fessGS5yeAZyPOoS/6x3jVT2neAlc+D3agDdooSw=
+X-Received: by 2002:a05:6808:23c1:b0:2da:30fd:34d9 with SMTP id
+ bq1-20020a05680823c100b002da30fd34d9mr8741863oib.203.1646971807529; Thu, 10
+ Mar 2022 20:10:07 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220310213356.3948cfb7@gandalf.local.home>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: qUP-iZseQfzoUmnJRu3EkAsFV4tUzxHh
-X-Proofpoint-GUID: MHi4IatWeYIPMQc3Uve-fpvyTGaiBTWZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.64.514
- definitions=2022-03-10_09,2022-03-09_01,2022-02-23_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=712
- lowpriorityscore=0 adultscore=0 clxscore=1015 priorityscore=1501
- impostorscore=0 spamscore=0 mlxscore=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2202240000 definitions=main-2203110013
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20211117015806.2192263-1-dvander@google.com> <CAOQ4uxjjapFeOAFGLmsXObdgFVYLfNer-rnnee1RR+joxK3xYg@mail.gmail.com>
+ <Yao51m9EXszPsxNN@redhat.com> <CAOQ4uxjk4piLyx67Ena-FfypDVWzRqVN0xmFUXXPYa+SC4Q-vQ@mail.gmail.com>
+ <YapjNRrjpDu2a5qQ@redhat.com> <CAHC9VhQTUgBRBEz_wFX8daSA70nGJCJLXj8Yvcqr5+DHcfDmwA@mail.gmail.com>
+ <CA+FmFJA-r+JgMqObNCvE_X+L6jxWtDrczM9Jh0L38Fq-6mnbbA@mail.gmail.com>
+ <CAHC9VhRer7UWdZyizWO4VuxrgQDnLCOyj8LO7P6T5BGjd=s9zQ@mail.gmail.com> <CAHC9VhQkLSBGQ-F5Oi9p3G6L7Bf_jQMWAxug_G4bSOJ0_cYXxQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhQkLSBGQ-F5Oi9p3G6L7Bf_jQMWAxug_G4bSOJ0_cYXxQ@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 11 Mar 2022 06:09:56 +0200
+Message-ID: <CAOQ4uxhfU+LGunL3cweorPPdoCXCZU0xMtF=MekOAe-F-68t_Q@mail.gmail.com>
+Subject: Re: [PATCH v19 0/4] overlayfs override_creds=off & nested get xattr fix
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Vivek Goyal <vgoyal@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        David Anderson <dvander@google.com>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        John Stultz <john.stultz@linaro.org>,
+        linux-doc@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        kernel-team <kernel-team@android.com>, selinux@vger.kernel.org,
+        paulmoore@microsoft.com, luca.boccassi@microsoft.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 22/03/10 09:33PM, Steven Rostedt wrote:
-> On Fri, 11 Mar 2022 07:49:31 +0530
-> Ritesh Harjani <riteshh@linux.ibm.com> wrote:
+On Fri, Mar 11, 2022 at 12:11 AM Paul Moore <paul@paul-moore.com> wrote:
 >
-> > > # cat /sys/kernel/tracing/events/ext4/ext4_fc_commit_stop/format
-> >
-> > I think you meant ext4_fc_stats.
+> On Wed, Mar 9, 2022 at 4:13 PM Paul Moore <paul@paul-moore.com> wrote:
+> > On Tue, Mar 1, 2022 at 12:05 AM David Anderson <dvander@google.com> wro=
+te:
+> > > On Mon, Feb 28, 2022 at 5:09 PM Paul Moore <paul@paul-moore.com> wrot=
+e:
 >
-> Sure.
+> ...
 >
-> >
+> > >> This patchset may not have been The Answer, but surely there is
+> > >> something we can do to support this use-case.
 > > >
-> > > and show me what it outputs.
+> > > Yup exactly, and we still need patches 3 & 4 to deal with this. My cu=
+rrent plan is to try and rework our sepolicy (we have some ideas on how it =
+could be made compatible with how overlayfs works). If that doesn't pan out=
+ we'll revisit these patches and think harder about how to deal with the co=
+herency issues.
 > >
-> > root@qemu:/home/qemu# cat /sys/kernel/tracing/events/ext4/ext4_fc_stats/format
-> > name: ext4_fc_stats
-> > ID: 986
-> > format:
-> >         field:unsigned short common_type;       offset:0;       size:2; signed:0;
-> >         field:unsigned char common_flags;       offset:2;       size:1; signed:0;
-> >         field:unsigned char common_preempt_count;       offset:3;       size:1; signed:0;
-> >         field:int common_pid;   offset:4;       size:4; signed:1;
+> > Can you elaborate a bit more on the coherency issues?  Is this the dir
+> > cache issue that is alluded to in the patchset?  Anything else that
+> > has come up on review?
 > >
-> >         field:dev_t dev;        offset:8;       size:4; signed:0;
-> >         field:unsigned int fc_ineligible_rc[EXT4_FC_REASON_MAX];        offset:12;      size:36;        signed:0;
+> > Before I start looking at the dir cache in any detail, did you have
+> > any thoughts on how to resolve the problems that have arisen?
 >
-> Bah, the above tells us how many items, and the TRACE_DEFINE_ENUM() doesn't
-> modify this part of the file.
-
-Then shall I just define TRACE_DEFINE_ENUM(EXT4_FC_REASON_MAX) in this patch.
-Would that be the correct approach? Like how we have defined other enums.
-We haven't yet defined EXT4_FC_REASON_MAX in current patch.
-(as I saw it doesn't affect TP_STRUCT__entry())
-
-
+> David, Vivek, Amir, Miklos, or anyone for that matter, can you please
+> go into more detail on the cache issues?  I *think* I may have found a
+> potential solution for an issue that could arise when the credential
+> override is not in place, but I'm not certain it's the only issue :)
 >
-> I could update it to do so though.
 
-Please let me know if you have any patch for me to try.
+Hi Paul,
 
-Thanks
--ritesh
+In this thread I claimed that the authors of the patches did not present
+a security model for overlayfs, such as the one currently in overlayfs.rst.
+If we had a model we could have debated its correctness and review its
+implementation.
 
+As a proof that there is no solid model, I gave an *example* regarding
+the overlay readdir cache.
 
->
-> -- Steve
->
->
-> >         field:unsigned long fc_commits; offset:48;      size:8; signed:0;
-> >         field:unsigned long fc_ineligible_commits;      offset:56;      size:8; signed:0;
-> >         field:unsigned long fc_numblks; offset:64;      size:8; signed:0;
->
+When listing a merged dir, meaning, a directory containing entries from
+several overlay layers, ovl_permission() is called to check user's permissi=
+on,
+but ovl_permission() does not currently check permissions to read all layer=
+s,
+because that is not the current overlayfs model.
+
+Overlayfs has a readdir cache, so without override_cred, a user with high
+credentials can populate the readdir cache and then a user will fewer
+credentials, not enough to access the lower layers, but enough to access
+the upper most layer, will pass ovl_permission() check and be allowed to
+read from readdir cache.
+
+This specific problem can be solved in several ways - disable readdir
+cache with override_cred=3Doff, check all layers in ovl_permission().
+That's not my point. My point is that I provided a proof that the current
+model of override_cred=3Doff is flawed and it is up to the authors of the
+patch to fix the model and provide the analysis of overlayfs code to
+prove the model's correctness.
+
+The core of the matter is there is no easy way to "merge" the permissions
+from all layers into a single permission blob that could be checked once.
+
+Maybe the example I gave is the only flaw in the model, maybe not
+I am not sure. I will be happy to help you in review of a model and the
+solution that you may have found.
+
+Thanks,
+Amir.
