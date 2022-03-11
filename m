@@ -2,109 +2,182 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 30F644D5CC0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Mar 2022 08:53:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AE244D5DA5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Mar 2022 09:42:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244902AbiCKHyY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Mar 2022 02:54:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45904 "EHLO
+        id S238437AbiCKInl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Mar 2022 03:43:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232453AbiCKHyX (ORCPT
+        with ESMTP id S238414AbiCKInk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Mar 2022 02:54:23 -0500
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABA9EB54EC
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Mar 2022 23:53:20 -0800 (PST)
-Received: by mail-wm1-x32a.google.com with SMTP id r187-20020a1c2bc4000000b003810e6b192aso4850466wmr.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Mar 2022 23:53:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=javigon-com.20210112.gappssmtp.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=xwb70iZvFY3Ug69wBXrwkmTUB5j/QKwDZ/9LSmzVgoE=;
-        b=hlivmh7hpdycrkE58yN/AKpN3BjGkgS14lhr/ZALDbCf3CHYm+LsaCW4TsOKhVU9fH
-         HoSoWoXsaTDi34bCZVHib4WZ8R5tDpCTgd/milsDKvmXI11ndzsnzTKVfXEUaqmI0iOV
-         sMabHJkfpBrKPDNakDSoMOsY5JLdb9UMv2YWR4usVTNOlUk+HW8P8ZvjyZpCFDm880Ew
-         1qAjaWym74AqgyniqM1Dv1uQQaNUrCJTZ4pdnVwUduNlFz66yDr6vWOMfP9CQdw7HRSI
-         lgD64tVAsh7i2ssmgUEKU8ymxxWcpUQsO/5MJM60ezc08cBzHNLPXdoICP+aKwuSxa4G
-         AoUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=xwb70iZvFY3Ug69wBXrwkmTUB5j/QKwDZ/9LSmzVgoE=;
-        b=wsHeDNAC78f4eIiMB+/zynIUYiPqdh/bGOCra6DCQ6TniSrhTjkN0c/5qQ4F6eiHCl
-         mZB7PkMRKGmTcDuC/EshnlNvCo0RpyQxW2qL4W00Jure16Tk7HpibpldZeCub01tUo7w
-         Nu2W3ktxkhWBlmn7S4Mp46rLFVGX7lgiWBtLbz4UEmZ+Zhjd0L8iAkKRF1hrrjGSJs51
-         OTdIhqlWuE63CuQFqkDJGcmXCHOPzc3bD8r6AvxdyAR5cAke5E3/YN/212ACL4+lp7rs
-         Ksk/i0rb2tWrMbCkwoWWYXWgGTLYKPTpLp/paA9yr5muAg5sE+BHgb5Zd3+avYm/lFo5
-         TjQg==
-X-Gm-Message-State: AOAM532u+1XDsWe5TfSrQfK90nZlCcNewJFj4Vb9EMdq5AH3HUxwG3By
-        nqF8N8MJTk4zFM5YQcUkh576IQ==
-X-Google-Smtp-Source: ABdhPJy/MRgCRkxNvQp+v2QGs4GsetEVTW4/ulUZAQQ1nVD5qskJ9yUZmwvUd1FbdLzu4s1hs1KL/g==
-X-Received: by 2002:a05:600c:3c8b:b0:37f:1546:40c9 with SMTP id bg11-20020a05600c3c8b00b0037f154640c9mr6350055wmb.161.1646985199202;
-        Thu, 10 Mar 2022 23:53:19 -0800 (PST)
-Received: from localhost (5.186.121.195.cgn.fibianet.dk. [5.186.121.195])
-        by smtp.gmail.com with ESMTPSA id e10-20020a056000178a00b0020393321552sm1892851wrg.85.2022.03.10.23.53.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Mar 2022 23:53:18 -0800 (PST)
-Date:   Fri, 11 Mar 2022 08:53:17 +0100
-From:   Javier =?utf-8?B?R29uesOhbGV6?= <javier@javigon.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-        Keith Busch <kbusch@kernel.org>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        lsf-pc@lists.linux-foundation.org,
-        Matias =?utf-8?B?QmrDuHJsaW5n?= <matias.bjorling@wdc.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Adam Manzanares <a.manzanares@samsung.com>,
-        Keith Busch <keith.busch@wdc.com>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        Naohiro Aota <naohiro.aota@wdc.com>,
-        Pankaj Raghav <pankydev8@gmail.com>,
-        Kanchan Joshi <joshi.k@samsung.com>,
-        Nitesh Shetty <nj.shetty@samsung.com>
-Subject: Re: [LSF/MM/BPF BoF] BoF for Zoned Storage
-Message-ID: <20220311075317.fjn3mj25dpicnpgi@ArmHalley.local>
-References: <69932637edee8e6d31bafa5fd39e19a9790dd4ab.camel@HansenPartnership.com>
- <DD05D9B0-195F-49EF-80DA-1AA0E4FA281F@javigon.com>
- <20220307151556.GB3260574@dhcp-10-100-145-180.wdc.com>
- <8f8255c3-5fa8-310b-9925-1e4e8b105547@opensource.wdc.com>
- <20220311072101.k52rkmsnecolsoel@ArmHalley.localdomain>
- <61c1b49c-cd34-614a-876a-29b796e4ff0d@opensource.wdc.com>
- <Yir9a8HusXWApk5l@infradead.org>
+        Fri, 11 Mar 2022 03:43:40 -0500
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D3B73B3F4;
+        Fri, 11 Mar 2022 00:42:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1646988157; x=1678524157;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   mime-version:in-reply-to;
+  bh=rnnCy0Hbi4uhBKWJV93SLPhz7c/vwnMymNdqjK9CGiI=;
+  b=TSElsKllxlM6Vbk/Yu5miqQ82L2dxUe/dDgksMB0D2EdOXf8XYk2WkEj
+   myfQNcCnR6zYAGT12LUIKb8v3YV9o/90cR3BDbuXEH+LX9DqDeVD32A1M
+   8rNxfacfmDOdjrJiizTANRs3sG23rLUpT9TSd9jxsx1ZO2+pX2Kxy+Cq8
+   nNPz0jbwJzTVG/OayqiycDDw3+vZOaAntqGF4w+S4wRM1YExYLl09AMQ6
+   vkqLelSenko/TAyf/FG1Ngp00gfmzfLgYgD4beHN9Op/lpMch9ZLhABxN
+   u1g/19eSh9AuGotby4eBXtAboRcwbyLK/1dgRkKnzlZJtpeEgILjBNmVD
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10282"; a="341958572"
+X-IronPort-AV: E=Sophos;i="5.90,173,1643702400"; 
+   d="scan'208";a="341958572"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Mar 2022 00:42:35 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.90,173,1643702400"; 
+   d="scan'208";a="538926645"
+Received: from chaop.bj.intel.com (HELO localhost) ([10.240.192.101])
+  by orsmga007.jf.intel.com with ESMTP; 11 Mar 2022 00:42:24 -0800
+Date:   Fri, 11 Mar 2022 16:42:08 +0800
+From:   Chao Peng <chao.p.peng@linux.intel.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com
+Subject: Re: [PATCH v5 03/13] mm/shmem: Support memfile_notifier
+Message-ID: <20220311084208.GB56193@chaop.bj.intel.com>
+Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
+References: <20220310140911.50924-1-chao.p.peng@linux.intel.com>
+ <20220310140911.50924-4-chao.p.peng@linux.intel.com>
+ <20220310230822.GO661808@dread.disaster.area>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Yir9a8HusXWApk5l@infradead.org>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20220310230822.GO661808@dread.disaster.area>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Spam-Status: No, score=-4.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10.03.2022 23:42, Christoph Hellwig wrote:
->On Fri, Mar 11, 2022 at 04:39:12PM +0900, Damien Le Moal wrote:
->> > (we need to look into it). F2FS will use the emulation layer for now;
->> > only !PO2 devices will pay the price. We will add a knob in the block
->> > layer so that F2FS can force enable the emulation.
->>
->> No. The FS has no business changing the device.
+On Fri, Mar 11, 2022 at 10:08:22AM +1100, Dave Chinner wrote:
+> On Thu, Mar 10, 2022 at 10:09:01PM +0800, Chao Peng wrote:
+> > From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+> > 
+> > It maintains a memfile_notifier list in shmem_inode_info structure and
+> > implements memfile_pfn_ops callbacks defined by memfile_notifier. It
+> > then exposes them to memfile_notifier via
+> > shmem_get_memfile_notifier_info.
+> > 
+> > We use SGP_NOALLOC in shmem_get_lock_pfn since the pages should be
+> > allocated by userspace for private memory. If there is no pages
+> > allocated at the offset then error should be returned so KVM knows that
+> > the memory is not private memory.
+> > 
+> > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> > Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
+> > ---
+> >  include/linux/shmem_fs.h |  4 +++
+> >  mm/shmem.c               | 76 ++++++++++++++++++++++++++++++++++++++++
+> >  2 files changed, 80 insertions(+)
+> > 
+> > diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
+> > index 2dde843f28ef..7bb16f2d2825 100644
+> > --- a/include/linux/shmem_fs.h
+> > +++ b/include/linux/shmem_fs.h
+> > @@ -9,6 +9,7 @@
+> >  #include <linux/percpu_counter.h>
+> >  #include <linux/xattr.h>
+> >  #include <linux/fs_parser.h>
+> > +#include <linux/memfile_notifier.h>
+> >  
+> >  /* inode in-kernel data */
+> >  
+> > @@ -28,6 +29,9 @@ struct shmem_inode_info {
+> >  	struct simple_xattrs	xattrs;		/* list of xattrs */
+> >  	atomic_t		stop_eviction;	/* hold when working on inode */
+> >  	unsigned int		xflags;		/* shmem extended flags */
+> > +#ifdef CONFIG_MEMFILE_NOTIFIER
+> > +	struct memfile_notifier_list memfile_notifiers;
+> > +#endif
+> >  	struct inode		vfs_inode;
+> >  };
+> >  
+> > diff --git a/mm/shmem.c b/mm/shmem.c
+> > index 9b31a7056009..7b43e274c9a2 100644
+> > --- a/mm/shmem.c
+> > +++ b/mm/shmem.c
+> > @@ -903,6 +903,28 @@ static struct folio *shmem_get_partial_folio(struct inode *inode, pgoff_t index)
+> >  	return page ? page_folio(page) : NULL;
+> >  }
+> >  
+> > +static void notify_fallocate(struct inode *inode, pgoff_t start, pgoff_t end)
+> > +{
+> > +#ifdef CONFIG_MEMFILE_NOTIFIER
+> > +	struct shmem_inode_info *info = SHMEM_I(inode);
+> > +
+> > +	memfile_notifier_fallocate(&info->memfile_notifiers, start, end);
+> > +#endif
+> > +}
+> 
+> *notify_populate(), not fallocate.  This is a notification that a
+> range has been populated, not that the fallocate() syscall was run
+> to populate the backing store of a file.
+> 
+> i.e.  fallocate is the name of a userspace filesystem API that can
+> be used to manipulate the backing store of a file in various ways.
+> It can both populate and punch away the backing store of a file, and
+> some operations that fallocate() can run will do both (e.g.
+> FALLOC_FL_ZERO_RANGE) and so could generate both
+> notify_invalidate() and a notify_populate() events.
 
-Ok. Then it can be something the user can set.
+Yes, I fully agreed fallocate syscall has both populating and hole
+punching semantics so notify_fallocate can be misleading since we
+actually mean populate here.
 
->
->And nvme will not support any kind of emulation if that wasn't clear.
+> 
+> Hence "fallocate" as an internal mm namespace or operation does not
+> belong anywhere in core MM infrastructure - it should never get used
+> anywhere other than the VFS/filesystem layers that implement the
+> fallocate() syscall or use it directly.
 
-How do you propose we meed the request from Damien to support _all_
-existing users if we remove the PO2 constraint from the block layer?
+Will use your suggestion through the series where applied. Thanks for
+your suggestion.
 
-The emulation is not the goal, but it seems to be a requirement
-
+Chao
+> 
+> Cheers,
+> 
+> Dave.
+> 
+> -- 
+> Dave Chinner
+> david@fromorbit.com
