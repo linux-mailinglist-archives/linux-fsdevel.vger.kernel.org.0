@@ -2,153 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4374F4D5E55
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Mar 2022 10:24:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC2F24D60FA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Mar 2022 12:48:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347461AbiCKJYi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Mar 2022 04:24:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50470 "EHLO
+        id S235279AbiCKLtD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Mar 2022 06:49:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347485AbiCKJYg (ORCPT
+        with ESMTP id S231319AbiCKLtC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Mar 2022 04:24:36 -0500
-Received: from mx0a-003b2802.pphosted.com (mx0a-003b2802.pphosted.com [205.220.168.83])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E47D250066;
-        Fri, 11 Mar 2022 01:23:29 -0800 (PST)
-Received: from pps.filterd (m0278966.ppops.net [127.0.0.1])
-        by mx0a-003b2802.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 22B3ehmJ005462;
-        Fri, 11 Mar 2022 02:23:16 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=micron.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=Q5wvnU47cNNRPU3V481aLVb+rtloYqTGJfrugq6vR+o=;
- b=nM0np0dTNftXy/ileOy+1tDM3iuAytdfjOBjvLy4HiNXnAsktbePSe6fAbsoZqyK64r1
- ihnDyCj4DHExopWr5wAYsZUOxODrg/YOlTYbS4fFKOtzX69aZvGd7pW+ocm+Jrm8FEHg
- sl/jWcYfxd3waWCLGdv9YiCYLl4lv30hwtK2uISDtr6MQuD97hNjOVDQ28/LTlt2+j68
- 2BfLnw1cOOo/zzGS1ZgV+dA4DO0MP4sEJmnGftKSbNqU7qvfb320KHaaLP8wurXrvqr9
- xo1Awmy7LSY7Lr04cWey0MOYYlzjm3CCss+F/joe3tVefzgQdP/2hmCYHvHV7xE2CxEw 1w== 
-Received: from nam04-mw2-obe.outbound.protection.outlook.com (mail-mw2nam08lp2172.outbound.protection.outlook.com [104.47.73.172])
-        by mx0a-003b2802.pphosted.com (PPS) with ESMTPS id 3em5bgpx79-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 11 Mar 2022 02:23:16 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=DwNzg387IOqA+Alk8oJbjaBT/oaOdIwj3DEMsPxV4ukVUoDebvl/DH+5YApuFp5JcNk2lmAKACHUVq5VVDvYW09WKbMfzxptx4O3IHAcYkmRICk9V8Cg8tnIpJR2PdkilMn3NFfp7KCPoz1apLJh9zrEXuAGMXCP0IV0DL7+3jEVSWWClEpQpQL3IZxTeDMOqYAbq5nkewYRHpMfMkO+3rJqnWP8f76J3kJkwMNOkA1ddRa0oy2VSNJrkiCMXNLo6zK3Sk2jQd6AmvG/fxI2MKQQESS9aD0pTKMLiGHDvmSpoSOnUgewEYY5xIT3fwGxDOqf04YYT6U9d7iDnFc2Jg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Q5wvnU47cNNRPU3V481aLVb+rtloYqTGJfrugq6vR+o=;
- b=jbIkw+Y5MRu/VuDhdnYqFC+bZHTT4JzlyR3irqGrgiyu5Ag5IRlhBTYSkXZlzJLAP9DOctd/ZCgh7SPGpRgTCFjtXclzGbwvz662mipoVBQRzu70VPz0LeomOSibrwScLrHQ6ncq4lF1/oc90pw5/PAwd+mDQrPpb56GRj5iInr0I7XetxcyYrz2FeQNDMM/bLh/g8kXH/fkujfLVnZBxEFREat3x5MWWY6jnWKCuwBHY/YWY0GOxIftMKRwvoTIyUrHdBWAhvWMJ8LsJJj29pwuNar27C8w4Vxy1YbAoM8MIBYgjcAP1cuZx4gC7V8ChBkPBZ4CY7gSe3yusX+j1A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=micron.com; dmarc=pass action=none header.from=micron.com;
- dkim=pass header.d=micron.com; arc=none
-Received: from CO3PR08MB7975.namprd08.prod.outlook.com (2603:10b6:303:166::10)
- by CY1PR0801MB2282.namprd08.prod.outlook.com (2a01:111:e400:c618::27) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5061.22; Fri, 11 Mar
- 2022 09:23:13 +0000
-Received: from CO3PR08MB7975.namprd08.prod.outlook.com
- ([fe80::106d:1c1:99ae:45ac]) by CO3PR08MB7975.namprd08.prod.outlook.com
- ([fe80::106d:1c1:99ae:45ac%9]) with mapi id 15.20.5061.024; Fri, 11 Mar 2022
- 09:23:13 +0000
-From:   "Luca Porzio (lporzio)" <lporzio@micron.com>
-To:     Eric Biggers <ebiggers@kernel.org>
-CC:     "hch@lst.de" <hch@lst.de>, Manjong Lee <mj0123.lee@samsung.com>,
-        "david@fromorbit.com" <david@fromorbit.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "kbusch@kernel.org" <kbusch@kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>,
-        "sagi@grimberg.me" <sagi@grimberg.me>,
-        "song@kernel.org" <song@kernel.org>,
-        "seunghwan.hyun@samsung.com" <seunghwan.hyun@samsung.com>,
-        "sookwan7.kim@samsung.com" <sookwan7.kim@samsung.com>,
-        "nanich.lee@samsung.com" <nanich.lee@samsung.com>,
-        "woosung2.lee@samsung.com" <woosung2.lee@samsung.com>,
-        "yt0928.kim@samsung.com" <yt0928.kim@samsung.com>,
-        "junho89.kim@samsung.com" <junho89.kim@samsung.com>,
-        "jisoo2146.oh@samsung.com" <jisoo2146.oh@samsung.com>
-Subject: RE: [EXT] Re: [PATCH 2/2] block: remove the per-bio/request write
- hint.
-Thread-Topic: [EXT] Re: [PATCH 2/2] block: remove the per-bio/request write
- hint.
-Thread-Index: AQHYM213hUiroX0Mx0m03tMAg0KZ2Ky4fWtAgAAwFACAAEsrEIAAq+gAgABHedA=
-Date:   Fri, 11 Mar 2022 09:23:12 +0000
-Message-ID: <CO3PR08MB7975906A41E28FCBA0DAC41BDC0C9@CO3PR08MB7975.namprd08.prod.outlook.com>
-References: <20220306231727.GP3927073@dread.disaster.area>
- <CGME20220309042324epcas1p111312e20f4429dc3a17172458284a923@epcas1p1.samsung.com>
- <20220309133119.6915-1-mj0123.lee@samsung.com>
- <CO3PR08MB797524ACBF04B861D48AF612DC0B9@CO3PR08MB7975.namprd08.prod.outlook.com>
- <20220310142148.GA1069@lst.de>
- <CO3PR08MB7975AB3E282C7DA35A5B1CF0DC0B9@CO3PR08MB7975.namprd08.prod.outlook.com>
- <YirYvvIBW+XNGvxP@sol.localdomain>
-In-Reply-To: <YirYvvIBW+XNGvxP@sol.localdomain>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_6fdea275-d6f3-438f-b8d8-013cab2023d3_Enabled=true;
- MSIP_Label_6fdea275-d6f3-438f-b8d8-013cab2023d3_SetDate=2022-03-11T09:22:06Z;
- MSIP_Label_6fdea275-d6f3-438f-b8d8-013cab2023d3_Method=Privileged;
- MSIP_Label_6fdea275-d6f3-438f-b8d8-013cab2023d3_Name=Public;
- MSIP_Label_6fdea275-d6f3-438f-b8d8-013cab2023d3_SiteId=f38a5ecd-2813-4862-b11b-ac1d563c806f;
- MSIP_Label_6fdea275-d6f3-438f-b8d8-013cab2023d3_ActionId=fbe66a85-b0fe-40f2-8775-25f085a93321;
- MSIP_Label_6fdea275-d6f3-438f-b8d8-013cab2023d3_ContentBits=0
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: a9cb5e77-0b1c-40b8-c94d-08da0340c426
-x-ms-traffictypediagnostic: CY1PR0801MB2282:EE_
-x-microsoft-antispam-prvs: <CY1PR0801MB2282DD79B788004B7BF857EDDC0C9@CY1PR0801MB2282.namprd08.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: ysp3x3xYVuV/gWNbbAR9qnGrVNi5nrhlr05KnNZ8zMPnqQIb4HXkJZmYvdbH498z1JRoKx0m9bwuOS5oH7Q0aUM8sUZgPc9neCwjWsys4kaNo5mPtit0yQUMw1gn7OrSvGWw7kkS8JQlpgRtrIvsmwmc90vlpSIAJAftVmb4tPl/hzYVdno7XQAznjCU3CvOHWbxwcbZdxIq790A82Rqg8SUSGQgaAPiD4La+YLcH0DrgnlSbK5q6PAlnXo1ogL1+amxR9skq6RZXJG+iSkQvWF1cyjgQESl9x8h7EPm0viKD3GAe6se4oJBE6W9y1ZbK6tvW3WtmJLJYzfVfdVQy2VDzLq3lO2VI7w0eN/cGz2Qho9icbjc4nVve73LDjyZLu8fMX4YTiPsrwRNSebTXHeepwVePTPY/XUAQTGMUG87RHPtWYjdqB9brWn1veiqlWBgZIez5vpaSfG6BjNOUUZ1SlIUagPy75OkI37HyI6Go/1A1aNwtsNBs+4g5hQGgEWZ20lPYHx2E30GwQeMbQOqNmvLjkM5c1cQINDoyAoLhTU+3fEjTLAorkYwrqFyGIW2N+XQCLViUhLmGcXVy4hMxuvFHB4EZz5VmW0mfoyczeN5kL+sf/RGFo3JI8BaQ/cB6TTD04iB5j7tXp95SGv0Sq1Pgk0xtjgIqK8BB3rOu5jSt7S2CmBxjsBXr9vHmI6tPIufTU+k9J7fFWVe4w==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO3PR08MB7975.namprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(8676002)(4326008)(33656002)(86362001)(76116006)(508600001)(66556008)(66446008)(66476007)(52536014)(7416002)(316002)(8936002)(5660300002)(64756008)(122000001)(66946007)(38100700002)(38070700005)(186003)(7696005)(6506007)(26005)(54906003)(4744005)(9686003)(71200400001)(6916009)(55016003)(2906002);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?PZx//c4u/Aj/sB8dHT4oFuKN2AiFgwGzHzhoLm7n5KFOvq2Jdvuh6BWnvFXL?=
- =?us-ascii?Q?iSYNR1Lv9AowL9+64ziIS5Yl/+LP9V4ZYaPYcnFJR41xgKO2ffdIXe3xIMzO?=
- =?us-ascii?Q?ow9dlmyKf3NvMZJwIfxcfsl6tWi9fpTI7VplvzqMA3O4zf7y4KQhF0Fn/xXS?=
- =?us-ascii?Q?9Ah9SulUl5W4qpyD/hpl3FdM1K7EWNy6k/5yZywh2kUeGs/5s2PelMXafpwQ?=
- =?us-ascii?Q?Lwj7dJC3vq8he5bVToRyWJxvtlznlEOaWe9DdAW4KaahCz/6nmRNn3vwDkhN?=
- =?us-ascii?Q?SpCh3sJ3jCVTbjn4DTAvkI1VOJ7bXXu5uwNfjwCxPfCwEWh2eSMB6TMFDaYc?=
- =?us-ascii?Q?zJTw+gzp7cjHwMjHH0IHshzASR9z8rIpWz9/4CLJ8AmH8KAKwPtUsEnj3EB9?=
- =?us-ascii?Q?BXicOsjDa1kHsoIHJHqmvqz+ranCIzS0mA8CVH4DivZQKHkWO2h4EYOI60Ul?=
- =?us-ascii?Q?ros0m/waDqha3xbcrDdi4+4lFgnUfbpo0vEyHhkwVMqNaf1HRCli4ntTOaNH?=
- =?us-ascii?Q?xgFwCGWoq66MamrACcoLEOtVxtc0g3YtyQzty83Va2E5t5Fmpy7DQhAM7+Zq?=
- =?us-ascii?Q?djAtI74Y9hL5jUNEa7oGWvfpwCTVTwdBUecluCeyU7oL5OX4XLP7n/WHqP7I?=
- =?us-ascii?Q?vRsY4UsqMhZgFvWWTqpHF1ASYRHJ70FWvsBLV9TQG3FQwCXba0kzHeHNcU2A?=
- =?us-ascii?Q?wnNqKhKbNS93aZgcAiAST470oZWw6ParcjCRlGf7JQeZf5wZee//wY7VSX/T?=
- =?us-ascii?Q?5wrsp5lD9+Z505xhIvIxiVNS4FTfmimmUMDh5qhO/lNIh4Sao6dzCjpL3dHj?=
- =?us-ascii?Q?rPxosN2PoB+vZV7W6UkJ4z/Jdc3VV9ZhZkcr6DHA7lej/yWXNFIxqeL3VDVt?=
- =?us-ascii?Q?BFVuYh7aKTnVj/Qon5a5gnRK3fmKJigydLFqD6N6Nd+94RnSlsJnNnDHTZ3s?=
- =?us-ascii?Q?Sgpx5ykY363ZovThBUacEIEthSi+YNnIu6+AD7YoWo8oRkk2vWBw8Gr9S+EQ?=
- =?us-ascii?Q?MoYqlwedJobXyBvGJ8aTGfO+H/9J6WJDdGkHs71HGCIljnRMaCTbIa+dorE/?=
- =?us-ascii?Q?vJ1cX2dRCFAcLkq5BKZzEmAOHaHftujSSZLEzcI9y1t5GqGpTm3/tuq0dl3J?=
- =?us-ascii?Q?zWH9qCI6fO/vfNcZ3OoDf81KvlhUgsEPPcmXjixugCvWwFcS28Snx6B7zNU8?=
- =?us-ascii?Q?CXyxxHLr2ONpqKsqjAQ3bk7sH8x+gxxlXx2hnEQcIS/X8M/LbvVoZZ0bTQgS?=
- =?us-ascii?Q?GQPkf4cYmUVZ0Ie+zE8C/qPNK52sLzzLBQt4X9dAFFSCPocwC3441MoMjH9O?=
- =?us-ascii?Q?KZPttfOULsm+yOtwsn6r1GIyJvwrsTaqg8xNs+F/bRPMr/kTcoaEM1fjCpgf?=
- =?us-ascii?Q?SdUBWdYZm2YpbLX7JLnClZpdweWoDaUkt2rxQrD8XtIb46CqPh2tQie3L6Kz?=
- =?us-ascii?Q?hqiYy0B+xYyeRlHDQQbu3hI8h2ZEGWXl?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 11 Mar 2022 06:49:02 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC1A75883C;
+        Fri, 11 Mar 2022 03:47:57 -0800 (PST)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id D821C21122;
+        Fri, 11 Mar 2022 11:47:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1646999275; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=PXw5xkYVIyyybMC0OVEI/4rr/BItd3ICga11fgiA2A8=;
+        b=v/8WY0f3Vn+AOZHqQ2nqD32vNMLI1XuzfRz/X3S0IWeRlXMf8RxS6rQVtyt3g3Vvu5jbFY
+        OqGvucFfVIKEzgkxcg5xLD9sEBbap5u5FKj6CG4hh/Ttgqr9A/qa7p29w0y796veoNlwdU
+        d5DKu453/j1rrPtJh6ZFpU9q7tEnr2c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1646999275;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=PXw5xkYVIyyybMC0OVEI/4rr/BItd3ICga11fgiA2A8=;
+        b=ob5OmvP9RccCgCqEAWe7bsGIEjNAyH1/D6sKvs1DtwXSK7lXanE2rQ/amkrZ5lSUZT+KA0
+        a0YSVXGP8NZsaDBQ==
+Received: from vasant-suse.fritz.box (unknown [10.163.24.178])
+        by relay2.suse.de (Postfix) with ESMTP id 4881BA3B81;
+        Fri, 11 Mar 2022 11:47:55 +0000 (UTC)
+From:   Vasant Karasulli <vkarasulli@suse.de>
+To:     Namjae Jeon <linkinjeon@kernel.org>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ddiss@suse.de
+Cc:     Vasant Karasulli <vkarasulli@suse.de>
+Subject: [PATCH v3 0/2] exfat: allow access to paths with trailing dots
+Date:   Fri, 11 Mar 2022 12:47:44 +0100
+Message-Id: <20220311114746.7643-1-vkarasulli@suse.de>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-X-OriginatorOrg: micron.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CO3PR08MB7975.namprd08.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a9cb5e77-0b1c-40b8-c94d-08da0340c426
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Mar 2022 09:23:12.9075
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f38a5ecd-2813-4862-b11b-ac1d563c806f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: nreBQUcm5XntFem8X4CSehHZXcp82e5anvKahzbSDHC7jptyvuaBujJFR58RRaigv9BnBlWFGz9YvDcdTFGGAg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR0801MB2282
-X-Proofpoint-GUID: fJBtJeweGgxYpCNH7zPgw-KBJoqAtZpx
-X-Proofpoint-ORIG-GUID: fJBtJeweGgxYpCNH7zPgw-KBJoqAtZpx
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -156,27 +57,84 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
->=20
-> On Thu, Mar 10, 2022 at 06:51:39PM +0000, Luca Porzio (lporzio) wrote:
-> >
-> > Micron Confidential
->=20
-> This is a public mailing list, so please do not use this header/footer.
+This is the version 3 of the patch that introduces
+a new exfat mount option 'keep_last_dots'. In this
+version I have reworked the commit messages according
+to the feedback received on version 2 of the patch.
 
-Eric,
+Vasant Karasulli (2):
+  The "keep_last_dots" mount option will, in a subsequent commit,
+    control whether or not trailing periods '.' are stripped from path
+    components during file lookup or file creation.
+  exfat currently unconditionally strips trailing periods '.' when
+    performing path lookup, but allows them in the filenames during file
+    creation. This is done intentionally, loosely following Windows
+    behaviour and specifications which state:
 
-I am sorry, sometimes it is hard for me to cope with all the company proxie=
-s/firewall.
-I'll try to make sure this won't happen in future.
+ fs/exfat/exfat_fs.h |  3 ++-
+ fs/exfat/namei.c    | 50 ++++++++++++++++++++++++++++++++-------------
+ fs/exfat/super.c    |  7 +++++++
+ 3 files changed, 45 insertions(+), 15 deletions(-)
 
->=20
-> > it is used across the (Android) ecosystem.
->=20
-> So why hasn't it been submitted upstream?
 
-I'm not sure about this but I am open to fix this for future.
+base-commit: ffb217a13a2eaf6d5bd974fc83036a53ca69f1e2
+prerequisite-patch-id: aa89fed0f25e0593bd930cb1925a61318970af3b
+prerequisite-patch-id: b82d57cf11a808fd91ebce196ad90742f266ae39
+prerequisite-patch-id: 8fb922007d8da42e7d8915ad4192c3a881384720
+prerequisite-patch-id: 80a740f0cc838892abca091667fa5b407611ea39
+prerequisite-patch-id: 70a6044affdfcfba97c7651fb2150fa42cf01805
+prerequisite-patch-id: a017bdbdcc66df4dd3a66ba03a37714b8e68d253
+prerequisite-patch-id: 52771ab4aa8cbdafed3594d7d9a0c75b8a53f6e4
+prerequisite-patch-id: fe388ead9e78b2e67bfb1ddfd5cd60a496c12d1c
+prerequisite-patch-id: fb7ef4d34a652d20b3c6edefaf72ca6298d1e8f4
+prerequisite-patch-id: 4194bee4bb9ee6eaeb6ee1ddd82cb84cdcab8d38
+prerequisite-patch-id: e178f0c524a65e855ffb7861f1b9a9b2d56a2428
+prerequisite-patch-id: e35925ec691c2fa8c167c19844cb40ef090845aa
+prerequisite-patch-id: 6f54f7183bb0c519f9f76d8645da5a881ca71458
+prerequisite-patch-id: b2d2dc9c206fbfc0c80f1be3d9ab031ba2dfd279
+prerequisite-patch-id: 47a6c9093808e07f6ff561d011566a4ee4e7465a
+prerequisite-patch-id: 70b5f29b3208d4e0b8bd27900618aeaba901d19a
+prerequisite-patch-id: 56b6ad48cc9999893d34e7378ad1bbad293ca52b
+prerequisite-patch-id: 3318f5c0bb1dac4c932e892329c52c1a118633b4
+prerequisite-patch-id: e6aa617911d8647d1b7764c6916e3a01ffed1371
+prerequisite-patch-id: 60f8292acf6a200ce4b8f0080a4e7e6429f0f78f
+prerequisite-patch-id: e2f2b35b6e7c1aaa6a9b22e563c0f753df5fbe88
+prerequisite-patch-id: 70880c12ac3be19b196165cf4a06baf3b6074072
+prerequisite-patch-id: 55d302be95eccc06e20360e5b392f72e7249ea76
+prerequisite-patch-id: 0fc645d44f0354b6217c3a713d1ac144de7c786f
+prerequisite-patch-id: ebf526d3226975950e8997ed5f83f9b11d631aa5
+prerequisite-patch-id: ddb73fe6ea6d1e72b379f480b47ec60162352eb7
+prerequisite-patch-id: 091d1b77db64fcd1832dbe1db820fd4685f5651b
+prerequisite-patch-id: 30006d3af6ae601664ddee4c468520dc800b27bf
+prerequisite-patch-id: fcfb1b6ee7b1c7ab5cdd02d71113551c710a21ca
+prerequisite-patch-id: 8f225e2d574ffabb6ed842e92543fd0aab52fa19
+prerequisite-patch-id: cf3c7778997c4ca97ab08b195cfe861c565f504c
+prerequisite-patch-id: 0757c9df4b98726a778f260c4c8ac12f764a2a66
+prerequisite-patch-id: 60d1cbbfad4650cce75ffea3253629e8bd9a512c
+prerequisite-patch-id: 6657313f73334d9d56215ce286cb0d96674a9c9d
+prerequisite-patch-id: 352c99d07523c55e000b9df37a938da22bfedb9f
+prerequisite-patch-id: 27176966d0b2d1b98804f3de159a39fcbff0dc9a
+prerequisite-patch-id: 6d0311021d93c54e5a306af2d40f43b482a7ee66
+prerequisite-patch-id: b5d02eeea8fd63acf76bf7ad5235c20e68858d16
+prerequisite-patch-id: f169a13a30c2b09839055a91dd8853c476e8c3f7
+prerequisite-patch-id: 14df2ff4090dc2b7518be5a48feec7711628e0d4
+prerequisite-patch-id: f4d3503460646e4accd4c54f44f9593816fc62a0
+prerequisite-patch-id: 9205bc688a48d7ab778b6bd8454890e1fb7cc039
+prerequisite-patch-id: 48513af66ec62d400de1d559f7e75327610b5686
+prerequisite-patch-id: 2169938ae51c00399f010f88027bf70b05a1d90f
+prerequisite-patch-id: 2b9450e957e69b30414bbf0e1cc3caebd334f654
+prerequisite-patch-id: 0c7d6e599af288ca298bbc59a08246715982a7ab
+prerequisite-patch-id: a2c1416d88c502ef5b7d621325e2f6712e56a3f4
+prerequisite-patch-id: bb6d17d263aa6dab21e87887c98b535595e25c1f
+prerequisite-patch-id: f7fa011b9e279104d8c8e2bf09fb5d3ab3f34b67
+prerequisite-patch-id: 8358ac66a9d65695fb2bc02637cfddf4695ddeaa
+prerequisite-patch-id: 665d9352bf8e6ffc4b7c0ff25659468b5262d4e7
+prerequisite-patch-id: 307e544949317538681dc124fdf2b33df538d897
+prerequisite-patch-id: 31616804feb9f7b6d5e010d5306b0304005d5efe
+prerequisite-patch-id: f8065fb1765262737c2222ad80d2f3d60454e955
+prerequisite-patch-id: d99c3d909e24f1ca3269c1e08034f7936f3a5622
+prerequisite-patch-id: 0e1efe816412e68314ec226f80b2ded7d2fb33a0
+prerequisite-patch-id: 1cf9b69fe0847e9961756cbd69858aecbdab9d1e
+--
+2.32.0
 
->=20
-> - Eric
-
-Luca
