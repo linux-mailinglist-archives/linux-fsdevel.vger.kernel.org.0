@@ -2,157 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A9A64D596A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Mar 2022 05:10:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A4BC14D5999
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Mar 2022 05:32:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346162AbiCKELL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Mar 2022 23:11:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42650 "EHLO
+        id S1346312AbiCKEdn convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Mar 2022 23:33:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231511AbiCKELK (ORCPT
+        with ESMTP id S241349AbiCKEdl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Mar 2022 23:11:10 -0500
-Received: from mail-oi1-x234.google.com (mail-oi1-x234.google.com [IPv6:2607:f8b0:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37C26986FF;
-        Thu, 10 Mar 2022 20:10:08 -0800 (PST)
-Received: by mail-oi1-x234.google.com with SMTP id n7so8157799oif.5;
-        Thu, 10 Mar 2022 20:10:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=9QeKB4cZIGNALzfAGtAHD8EFO6aEieNDe1cqjoQ6gsM=;
-        b=W9vUjPbowBxn+x7F9t0T9ph91PQtdPdrKRG92teEt6N37XUEPsuq7+Semk0Sq7eBL6
-         dcYQ9Tv22KHCDJpJTZArvmF8RQJMWhrnNFrlH0Z9uAj420D8GZTtOsl5n/GtRwmZJ8IA
-         76XZx0gnVjqsOEJfE51RvM5322G6zPl57koGYA+BKcBlE7vuRS9sF5hcoMo88FJDRAK5
-         +kwRe4M+oG+gEgYFREXYAIe783yanNbzuJWyEOA9cbY052rFHSqbNMsxjUA23QLzXa3/
-         qwh29b/LmPrDFBeRC3n+EEkGfabc7nyxk2erQfzTI/vhMLMU2KsmYvLjrtBhha2kRRP/
-         ijHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=9QeKB4cZIGNALzfAGtAHD8EFO6aEieNDe1cqjoQ6gsM=;
-        b=NZW/LNPYvMyDD0iILIXVPwu3OT8GGJdCO4UJtixsPhNlztP4E6LlKBS9jgeqz3M2AM
-         tCweRqyvOVRbGq27iZiMFyj6xf9hBTs5S8ENRkCBDVeR/VMIqtbUWgyS4EBOl+dxKQyv
-         oXJoU/QrLAbMqXsBh7gJf5UONGHNHOuGO/1Remqi/V4Zvxp7xxViNvgu3GjM8sVDaVUU
-         PtWGGdBIa8dDl+hhhKskXt3wLUTunnprJFb2+bPoGJoEASC0r2yOWUklCuMwXl180Aa2
-         mAVzGzGSy3L9MNl1Qu+Xsy9+pIZUtR0RVos1mXFaURus2XzrenovKsHDXTNTGwlDlI5i
-         xZbA==
-X-Gm-Message-State: AOAM533+F5d23lhlFDMU4ZheXcb+Qdzb8jLj9KFs0TNCPnm0zsEmPZP0
-        +npyH6o6yAYkawv1QWEMDsCi5w59RZb1LbvWl9z6yTm6sBQ=
-X-Google-Smtp-Source: ABdhPJx+9DTvJp/p1u4f9zeF1IL/TTETZ9pXW0fHuKtmLByfNy/fessGS5yeAZyPOoS/6x3jVT2neAlc+D3agDdooSw=
-X-Received: by 2002:a05:6808:23c1:b0:2da:30fd:34d9 with SMTP id
- bq1-20020a05680823c100b002da30fd34d9mr8741863oib.203.1646971807529; Thu, 10
- Mar 2022 20:10:07 -0800 (PST)
+        Thu, 10 Mar 2022 23:33:41 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1B3E2A71C;
+        Thu, 10 Mar 2022 20:32:38 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 94878B824C7;
+        Fri, 11 Mar 2022 04:32:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8BFDC340EC;
+        Fri, 11 Mar 2022 04:32:35 +0000 (UTC)
+Date:   Thu, 10 Mar 2022 23:32:34 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Ritesh Harjani <riteshh@linux.ibm.com>
+Cc:     linux-ext4@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv2 00/10] ext4: Improve FC trace events
+Message-ID: <20220310233234.4418186a@gandalf.local.home>
+In-Reply-To: <20220311031431.3sfbibwuthn4xkym@riteshh-domain>
+References: <cover.1646922487.git.riteshh@linux.ibm.com>
+        <20220310110553.431cc997@gandalf.local.home>
+        <20220310170731.hq6z6flycmgkhnaa@riteshh-domain>
+        <20220310193936.38ae7754@gandalf.local.home>
+        <20220311021931.d4oozgtefbalrcch@riteshh-domain>
+        <20220310213356.3948cfb7@gandalf.local.home>
+        <20220311031431.3sfbibwuthn4xkym@riteshh-domain>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20211117015806.2192263-1-dvander@google.com> <CAOQ4uxjjapFeOAFGLmsXObdgFVYLfNer-rnnee1RR+joxK3xYg@mail.gmail.com>
- <Yao51m9EXszPsxNN@redhat.com> <CAOQ4uxjk4piLyx67Ena-FfypDVWzRqVN0xmFUXXPYa+SC4Q-vQ@mail.gmail.com>
- <YapjNRrjpDu2a5qQ@redhat.com> <CAHC9VhQTUgBRBEz_wFX8daSA70nGJCJLXj8Yvcqr5+DHcfDmwA@mail.gmail.com>
- <CA+FmFJA-r+JgMqObNCvE_X+L6jxWtDrczM9Jh0L38Fq-6mnbbA@mail.gmail.com>
- <CAHC9VhRer7UWdZyizWO4VuxrgQDnLCOyj8LO7P6T5BGjd=s9zQ@mail.gmail.com> <CAHC9VhQkLSBGQ-F5Oi9p3G6L7Bf_jQMWAxug_G4bSOJ0_cYXxQ@mail.gmail.com>
-In-Reply-To: <CAHC9VhQkLSBGQ-F5Oi9p3G6L7Bf_jQMWAxug_G4bSOJ0_cYXxQ@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 11 Mar 2022 06:09:56 +0200
-Message-ID: <CAOQ4uxhfU+LGunL3cweorPPdoCXCZU0xMtF=MekOAe-F-68t_Q@mail.gmail.com>
-Subject: Re: [PATCH v19 0/4] overlayfs override_creds=off & nested get xattr fix
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Vivek Goyal <vgoyal@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        David Anderson <dvander@google.com>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        John Stultz <john.stultz@linaro.org>,
-        linux-doc@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        kernel-team <kernel-team@android.com>, selinux@vger.kernel.org,
-        paulmoore@microsoft.com, luca.boccassi@microsoft.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
+X-Spam-Status: No, score=-6.7 required=5.0 tests=BAYES_00,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 11, 2022 at 12:11 AM Paul Moore <paul@paul-moore.com> wrote:
->
-> On Wed, Mar 9, 2022 at 4:13 PM Paul Moore <paul@paul-moore.com> wrote:
-> > On Tue, Mar 1, 2022 at 12:05 AM David Anderson <dvander@google.com> wro=
-te:
-> > > On Mon, Feb 28, 2022 at 5:09 PM Paul Moore <paul@paul-moore.com> wrot=
-e:
->
-> ...
->
-> > >> This patchset may not have been The Answer, but surely there is
-> > >> something we can do to support this use-case.
-> > >
-> > > Yup exactly, and we still need patches 3 & 4 to deal with this. My cu=
-rrent plan is to try and rework our sepolicy (we have some ideas on how it =
-could be made compatible with how overlayfs works). If that doesn't pan out=
- we'll revisit these patches and think harder about how to deal with the co=
-herency issues.
-> >
-> > Can you elaborate a bit more on the coherency issues?  Is this the dir
-> > cache issue that is alluded to in the patchset?  Anything else that
-> > has come up on review?
-> >
-> > Before I start looking at the dir cache in any detail, did you have
-> > any thoughts on how to resolve the problems that have arisen?
->
-> David, Vivek, Amir, Miklos, or anyone for that matter, can you please
-> go into more detail on the cache issues?  I *think* I may have found a
-> potential solution for an issue that could arise when the credential
-> override is not in place, but I'm not certain it's the only issue :)
->
+On Fri, 11 Mar 2022 08:44:31 +0530
+Ritesh Harjani <riteshh@linux.ibm.com> wrote:
 
-Hi Paul,
+> > I could update it to do so though.  
+> 
+> Please let me know if you have any patch for me to try.
 
-In this thread I claimed that the authors of the patches did not present
-a security model for overlayfs, such as the one currently in overlayfs.rst.
-If we had a model we could have debated its correctness and review its
-implementation.
+Can you try this?
 
-As a proof that there is no solid model, I gave an *example* regarding
-the overlay readdir cache.
+-- Steve
 
-When listing a merged dir, meaning, a directory containing entries from
-several overlay layers, ovl_permission() is called to check user's permissi=
-on,
-but ovl_permission() does not currently check permissions to read all layer=
-s,
-because that is not the current overlayfs model.
+From 392b91c598da2a8c5bbaebad08cd0410f4607bf4 Mon Sep 17 00:00:00 2001
+From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
+Date: Thu, 10 Mar 2022 23:27:38 -0500
+Subject: [PATCH] tracing: Have TRACE_DEFINE_ENUM affect trace event types as
+ well
 
-Overlayfs has a readdir cache, so without override_cred, a user with high
-credentials can populate the readdir cache and then a user will fewer
-credentials, not enough to access the lower layers, but enough to access
-the upper most layer, will pass ovl_permission() check and be allowed to
-read from readdir cache.
+The macro TRACE_DEFINE_ENUM is used to convert enums in the kernel to
+their actual value when they are exported to user space via the trace
+event format file.
 
-This specific problem can be solved in several ways - disable readdir
-cache with override_cred=3Doff, check all layers in ovl_permission().
-That's not my point. My point is that I provided a proof that the current
-model of override_cred=3Doff is flawed and it is up to the authors of the
-patch to fix the model and provide the analysis of overlayfs code to
-prove the model's correctness.
+Currently only the enums in the "print fmt" (TP_printk in the TRACE_EVENT
+macro) have the enums converted. But the enums can be used to denote array
+size:
 
-The core of the matter is there is no easy way to "merge" the permissions
-from all layers into a single permission blob that could be checked once.
+        field:unsigned int fc_ineligible_rc[EXT4_FC_REASON_MAX]; offset:12;      size:36;        signed:0;
 
-Maybe the example I gave is the only flaw in the model, maybe not
-I am not sure. I will be happy to help you in review of a model and the
-solution that you may have found.
+The EXT4_FC_REASON_MAX has no meaning to userspace but it needs to know
+that information to know how to parse the array.
 
-Thanks,
-Amir.
+Have the array indexes also be parsed as well.
+
+Link: https://lore.kernel.org/all/cover.1646922487.git.riteshh@linux.ibm.com/
+
+Reported-by: Ritesh Harjani <riteshh@linux.ibm.com>
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+ kernel/trace/trace_events.c | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+
+diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
+index 38afd66d80e3..ae9a3b8481f5 100644
+--- a/kernel/trace/trace_events.c
++++ b/kernel/trace/trace_events.c
+@@ -2633,6 +2633,33 @@ static void update_event_printk(struct trace_event_call *call,
+ 	}
+ }
+ 
++static void update_event_fields(struct trace_event_call *call,
++				struct trace_eval_map *map)
++{
++	struct ftrace_event_field *field;
++	struct list_head *head;
++	char *ptr;
++	int len = strlen(map->eval_string);
++
++	head = trace_get_fields(call);
++	list_for_each_entry(field, head, link) {
++		ptr = strchr(field->type, '[');
++		if (!ptr)
++			continue;
++		ptr++;
++
++		if (!isalpha(*ptr) && *ptr != '_')
++			continue;
++
++		if (strncmp(map->eval_string, ptr, len) != 0)
++			continue;
++
++		ptr = eval_replace(ptr, map, len);
++		/* enum/sizeof string smaller than value */
++		WARN_ON_ONCE(!ptr);
++	}
++}
++
+ void trace_event_eval_update(struct trace_eval_map **map, int len)
+ {
+ 	struct trace_event_call *call, *p;
+@@ -2668,6 +2695,7 @@ void trace_event_eval_update(struct trace_eval_map **map, int len)
+ 					first = false;
+ 				}
+ 				update_event_printk(call, map[i]);
++				update_event_fields(call, map[i]);
+ 			}
+ 		}
+ 	}
+-- 
+2.34.1
+
