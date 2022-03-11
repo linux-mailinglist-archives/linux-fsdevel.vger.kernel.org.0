@@ -2,111 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 41B934D613C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Mar 2022 13:09:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 53DD84D61A6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Mar 2022 13:36:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231795AbiCKMKl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Mar 2022 07:10:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53030 "EHLO
+        id S1345522AbiCKMhW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Mar 2022 07:37:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230104AbiCKMKk (ORCPT
+        with ESMTP id S239437AbiCKMhW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Mar 2022 07:10:40 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF669CA71A
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Mar 2022 04:09:37 -0800 (PST)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 7B2CA210FD;
-        Fri, 11 Mar 2022 12:09:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1647000576; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        Fri, 11 Mar 2022 07:37:22 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id F24931B45E6
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Mar 2022 04:36:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1647002178;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=vdV3DuHqMBTtAbK1TqcwTCPXIqDocGGLtoVyAoGrJts=;
-        b=exUHZeibHWUHyc1eHnSjRf+ITP00RoJFTBG5C1N+I/0ilFpN5pJAt/qjzyB3bCIk4ApBeV
-        /YLI6ZTRPitPxjv9BRTCYTYHYoEbZOeYWjuc8B9M42PwOR0eC3Fg4Go/Z54NIzOrDRoCCm
-        v9MBqPHEVuTjIRRYYJblPs1hglc4azA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1647000576;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=vdV3DuHqMBTtAbK1TqcwTCPXIqDocGGLtoVyAoGrJts=;
-        b=ifdgwwDzdJTBW3oPoOvifAqK33RiKpF5FDGHpd4Kj0MEEzq9aZkWAjbCSA0g/Y8Di5j0tX
-        +A1lIiBSpvHTVIBg==
-Received: from quack3.suse.cz (unknown [10.100.224.230])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        bh=UKVzSKeZMycHkCzJ/H7Xt/yUOfRzsg+N9RfGNa9T9b4=;
+        b=ihqEGKfY4zPT1zGVWPi1kPYDfbLRxA/n+pekUknx2qlJpV05i76zQcV29H3IQY3a7LPbBr
+        7ESmAERUsWjbHGXRbrvO0H9/00NX2wwFAQAckG0RyiGus4eaF4p/0g1b8jtqB5v8ZM8GkS
+        jFObwohPaxyT1I5Pkzl/dJcIljIXqtg=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-159-mt5AQL_AOreHGHjfKihEvw-1; Fri, 11 Mar 2022 07:36:14 -0500
+X-MC-Unique: mt5AQL_AOreHGHjfKihEvw-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 4770CA3B8A;
-        Fri, 11 Mar 2022 12:09:36 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id C06FCA0611; Fri, 11 Mar 2022 13:09:35 +0100 (CET)
-Date:   Fri, 11 Mar 2022 13:09:35 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Josef Bacik <josef@toxicpanda.com>, Theodore Ts'o <tytso@mit.edu>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Sasha Levin <sashal@kernel.org>,
-        lsf-pc <lsf-pc@lists.linux-foundation.org>,
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id BA90D801AFE;
+        Fri, 11 Mar 2022 12:36:13 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.22.16.83])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9828E68D94;
+        Fri, 11 Mar 2022 12:36:13 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 31DC7223A46; Fri, 11 Mar 2022 07:36:13 -0500 (EST)
+Date:   Fri, 11 Mar 2022 07:36:13 -0500
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Steve French <smfrench@gmail.com>
+Cc:     lsf-pc@lists.linux-foundation.org,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [LSF/MM TOPIC] FS, MM, and stable trees
-Message-ID: <20220311120935.ahn6i5a2dtuf4gos@quack3.lan>
-References: <CAOQ4uxjysufPUtwepPGNZDhoC_HdsnkHx7--kso_OXWPyPkw_A@mail.gmail.com>
- <YicrMCidylefTC3n@kroah.com>
- <YieG8rZkgnfwygyu@mit.edu>
- <Yij08f7ee4pDZ2AC@bombadil.infradead.org>
- <Yij2rqDn4TiN3kK9@localhost.localdomain>
- <Yij5YTD5+V2qpsSs@bombadil.infradead.org>
- <YikZ2Zy6CtdNQ7WQ@localhost.localdomain>
- <YilUPAGQBPwI0V3n@bombadil.infradead.org>
- <YipIqqiz91D39nMQ@localhost.localdomain>
- <Yip+mh0TY77XfPlc@bombadil.infradead.org>
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [LSF/MM/BPF TOPIC] Enabling change notification for network and
+ cluster fs
+Message-ID: <YitCPVmurnC5Re9D@redhat.com>
+References: <CAH2r5mt9OfU+8PoKsmv_7aszhbw-dOuDCL6BOxb_2yRwc4HHCw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Yip+mh0TY77XfPlc@bombadil.infradead.org>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+In-Reply-To: <CAH2r5mt9OfU+8PoKsmv_7aszhbw-dOuDCL6BOxb_2yRwc4HHCw@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 10-03-22 14:41:30, Luis Chamberlain wrote:
-> On Thu, Mar 10, 2022 at 01:51:22PM -0500, Josef Bacik wrote:
-> > On Wed, Mar 09, 2022 at 05:28:28PM -0800, Luis Chamberlain wrote:
-> > > On Wed, Mar 09, 2022 at 04:19:21PM -0500, Josef Bacik wrote:
-> > > > On Wed, Mar 09, 2022 at 11:00:49AM -0800, Luis Chamberlain wrote:
-> > > 
-> > > That's great!
-> > > 
-> > > But although this runs nightly, it seems this runs fstest *once* to
-> > > ensure if there are no regressions. Is that right?
-> > > 
-> > 
-> > Yup once per config, so 8 full fstest runs.
+On Wed, Feb 23, 2022 at 11:16:33PM -0600, Steve French wrote:
+> Currently only local events can be waited on with the current notify
+> kernel API since the requests to wait on these events is not passed to
+> the filesystem.   Especially for network and cluster filesystems it is
+> important that they be told that applications want to be notified of
+> these file or directory change events.
 > 
-> From my experience that is not enough to capture all failures given
-> lower failure rates on tests other than 1/1, like 1/42 or
-> 1/300. So minimum I'd go for 500 loops of fstests per config.
-> This does mean this is not possible nightly though, yes. 5 days
-> on average. And so much more work is needed to bring this down
-> further.
+> A few years ago, discussions began on the changes needed to enable
+> support for this.   Would be timely to finish those discussions, as
+> waiting on file and directory change events to network mounts is very
+> common for other OS, and would be valuable for Linux to fix.
 
-Well, yes, 500 loops have better chance of detecting rare bugs. But if you
-did only say 100 loops, you are likely to detect the bug just 5 days later
-on average. Sure that makes finding the bug somewhat harder (you generally
-need to investigate larger time span to find the bug) but testing costs are
-lower... It is a tradeoff.
+If this topic gets selected for discussion, I will be interested in
+joining the conversation.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Vivek
+> 
+> -- 
+> Thanks,
+> 
+> Steve
+> 
+
