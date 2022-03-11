@@ -2,65 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B0D954D62A6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Mar 2022 14:55:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 492D14D62C0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Mar 2022 15:01:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348984AbiCKN4J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Mar 2022 08:56:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51368 "EHLO
+        id S1349039AbiCKOCo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Mar 2022 09:02:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239616AbiCKN4I (ORCPT
+        with ESMTP id S1349029AbiCKOCn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Mar 2022 08:56:08 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B9501C4B1B;
-        Fri, 11 Mar 2022 05:55:04 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Fri, 11 Mar 2022 09:02:43 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6D02A1C57D0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Mar 2022 06:01:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1647007299;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=I+nWv4ywDxtdW2kAMKWAd/9h8AiRGVEXkvqyetpKnWc=;
+        b=dWQFvdLKw//Dc84MFg9J4h3vnUbZ87VC6gRC0/Y90m7Kk90HSYH1+yxZdInEGp19iCvG0z
+        5Cnvw7Erx3fmuKMtQnGObTJSSavMcnjZV5cG5CY13eo6mTQktzWQBDgjAvZnR7c7SWG/Mv
+        ed6n7kd7Q2CDqa2pAqwdFXllfVmyhM8=
+Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
+ [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-669-sly5me0lPe6uMFhCLHqmOA-1; Fri, 11 Mar 2022 09:01:36 -0500
+X-MC-Unique: sly5me0lPe6uMFhCLHqmOA-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 3EE6FB82C08;
-        Fri, 11 Mar 2022 13:55:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78EAFC340E9;
-        Fri, 11 Mar 2022 13:55:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647006901;
-        bh=OBsbrwAjRxifwn84roMcXQuqX/kpZdztcjpFo/JKQko=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=QbFLEHJ9gNUiww7Aa2daPJT8G3gJjnCZZn+DTKJZtqNdpc4ugsphe6nOXX+6UKaRS
-         h66FdJ667Cy/wbe5Y2U599bOkoPkgvXruaWbwbzmgfyHn4aIFNojJHEDVXxK6O7XMG
-         488ynVbT08O5uuswo2XlyJVKqwRQjb79aN/8r54ax3vYquyh+Wwj9Z6OrnUoSaXfu2
-         RIG/PEIuCootjEC/Vop1yPyUUnw6FJnimm2bv16vzWcssG/wmgFknygna88SBp+kB7
-         szWj5K3pR9Ah1SBNwxCQjisCD6tJTfIpVZC2Dpx4FeKLJQnfnvSeDQFZttNGkcrDoy
-         Uk1sRD7k66Clw==
-Message-ID: <1e96f2c36f7c49a7d2d57dc1eb4135bd27a06122.camel@kernel.org>
-Subject: Re: [PATCH v3 12/20] ceph: Make ceph_init_request() check caps on
- readahead
-From:   Jeff Layton <jlayton@kernel.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     linux-cachefs@redhat.com, ceph-devel@vger.kernel.org,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        David Wysochanski <dwysocha@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jeffle Xu <jefflexu@linux.alibaba.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 11 Mar 2022 08:54:59 -0500
-In-Reply-To: <2533821.1647006574@warthog.procyon.org.uk>
-References: <dd054c962818716e718bd9b446ee5322ca097675.camel@redhat.com>
-         <164692883658.2099075.5745824552116419504.stgit@warthog.procyon.org.uk>
-         <164692907694.2099075.10081819855690054094.stgit@warthog.procyon.org.uk>
-         <2533821.1647006574@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.42.4 (3.42.4-1.fc35) 
+        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id C64741854E21;
+        Fri, 11 Mar 2022 14:01:31 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.22.16.83])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 06A257AD1B;
+        Fri, 11 Mar 2022 14:01:30 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 58049223A46; Fri, 11 Mar 2022 09:01:30 -0500 (EST)
+Date:   Fri, 11 Mar 2022 09:01:30 -0500
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        David Anderson <dvander@google.com>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        John Stultz <john.stultz@linaro.org>,
+        linux-doc@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        kernel-team <kernel-team@android.com>, selinux@vger.kernel.org,
+        paulmoore@microsoft.com, luca.boccassi@microsoft.com
+Subject: Re: [PATCH v19 0/4] overlayfs override_creds=off & nested get xattr
+ fix
+Message-ID: <YitWOqzIRjnP1lok@redhat.com>
+References: <20211117015806.2192263-1-dvander@google.com>
+ <CAOQ4uxjjapFeOAFGLmsXObdgFVYLfNer-rnnee1RR+joxK3xYg@mail.gmail.com>
+ <Yao51m9EXszPsxNN@redhat.com>
+ <CAOQ4uxjk4piLyx67Ena-FfypDVWzRqVN0xmFUXXPYa+SC4Q-vQ@mail.gmail.com>
+ <YapjNRrjpDu2a5qQ@redhat.com>
+ <CAHC9VhQTUgBRBEz_wFX8daSA70nGJCJLXj8Yvcqr5+DHcfDmwA@mail.gmail.com>
+ <CA+FmFJA-r+JgMqObNCvE_X+L6jxWtDrczM9Jh0L38Fq-6mnbbA@mail.gmail.com>
+ <CAHC9VhRer7UWdZyizWO4VuxrgQDnLCOyj8LO7P6T5BGjd=s9zQ@mail.gmail.com>
+ <CAHC9VhQkLSBGQ-F5Oi9p3G6L7Bf_jQMWAxug_G4bSOJ0_cYXxQ@mail.gmail.com>
+ <CAOQ4uxhfU+LGunL3cweorPPdoCXCZU0xMtF=MekOAe-F-68t_Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-7.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxhfU+LGunL3cweorPPdoCXCZU0xMtF=MekOAe-F-68t_Q@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -68,157 +86,120 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 2022-03-11 at 13:49 +0000, David Howells wrote:
-> Jeff Layton <jlayton@redhat.com> wrote:
+On Fri, Mar 11, 2022 at 06:09:56AM +0200, Amir Goldstein wrote:
+> On Fri, Mar 11, 2022 at 12:11 AM Paul Moore <paul@paul-moore.com> wrote:
+> >
+> > On Wed, Mar 9, 2022 at 4:13 PM Paul Moore <paul@paul-moore.com> wrote:
+> > > On Tue, Mar 1, 2022 at 12:05 AM David Anderson <dvander@google.com> wrote:
+> > > > On Mon, Feb 28, 2022 at 5:09 PM Paul Moore <paul@paul-moore.com> wrote:
+> >
+> > ...
+> >
+> > > >> This patchset may not have been The Answer, but surely there is
+> > > >> something we can do to support this use-case.
+> > > >
+> > > > Yup exactly, and we still need patches 3 & 4 to deal with this. My current plan is to try and rework our sepolicy (we have some ideas on how it could be made compatible with how overlayfs works). If that doesn't pan out we'll revisit these patches and think harder about how to deal with the coherency issues.
+> > >
+> > > Can you elaborate a bit more on the coherency issues?  Is this the dir
+> > > cache issue that is alluded to in the patchset?  Anything else that
+> > > has come up on review?
+> > >
+> > > Before I start looking at the dir cache in any detail, did you have
+> > > any thoughts on how to resolve the problems that have arisen?
+> >
+> > David, Vivek, Amir, Miklos, or anyone for that matter, can you please
+> > go into more detail on the cache issues?  I *think* I may have found a
+> > potential solution for an issue that could arise when the credential
+> > override is not in place, but I'm not certain it's the only issue :)
+> >
 > 
-> > > +static int ceph_init_request(struct netfs_io_request *rreq, struct file *file)
-> > > +{
-> > > +	struct inode *inode = rreq->inode;
-> > > +	int got = 0, want = CEPH_CAP_FILE_CACHE;
-> > > +	int ret = 0;
-> > > +
-> > > +	if (file) {
-> > > +		struct ceph_rw_context *rw_ctx;
-> > > +		struct ceph_file_info *fi = file->private_data;
-> > > +
-> > > +		rw_ctx = ceph_find_rw_context(fi);
-> > > +		if (rw_ctx)
-> > > +			return 0;
-> > > +	}
-> > > +
-> > > +	if (rreq->origin != NETFS_READAHEAD)
-> > > +		return 0;
-> > > +
-> > 
-> > ^^^
-> > I think you should move this check above the if (file) block above it.
-> > We don't need to anything at all if we're not in readahead.
+> Hi Paul,
 > 
-> How about the attached, then?
+> In this thread I claimed that the authors of the patches did not present
+> a security model for overlayfs, such as the one currently in overlayfs.rst.
+> If we had a model we could have debated its correctness and review its
+> implementation.
+
+Agreed. After going through the patch set, I was wondering what's the
+overall security model and how to visualize that.
+
+So probably there needs to be a documentation patch which explains
+what's the new security model and how does it work.
+
+Also think both in terms of DAC and MAC. (Instead of just focussing too
+hard on SELinux).
+
+My understanding is that in current model, some of the overlayfs
+operations require priviliges. So mounter is supposed to be priviliged
+and does the operation on underlying layers.
+
+Now in this new model, there will be two levels of check. Both overlay
+level and underlying layer checks will happen in the context of task
+which is doing the operation. So first of all, all tasks will need
+to have enough priviliges to be able to perform various operations
+on lower layer. 
+
+If we do checks at both the levels in with the creds of calling task,
+I guess that probably is fine. (But will require a closer code inspection
+to make sure there is no privilege escalation both for mounter as well
+calling task).
+
 > 
-> David
-> ---
-> commit 7082946186fc26016b15bc9039bd6d92ae732ef3
-> Author: David Howells <dhowells@redhat.com>
-> Date:   Wed Mar 9 21:45:22 2022 +0000
+> As a proof that there is no solid model, I gave an *example* regarding
+> the overlay readdir cache.
 > 
->     ceph: Make ceph_init_request() check caps on readahead
->     
->     Move the caps check from ceph_readahead() to ceph_init_request(),
->     conditional on the origin being NETFS_READAHEAD so that in a future patch,
->     ceph can point its ->readahead() vector directly at netfs_readahead().
->     
->     Changes
->     =======
->     ver #4)
->      - Move the check for NETFS_READAHEAD up in ceph_init_request()[2].
->     
->     ver #3)
->      - Split from the patch to add a netfs inode context[1].
->      - Need to store the caps got in rreq->netfs_priv for later freeing.
->     
->     Signed-off-by: David Howells <dhowells@redhat.com>
->     cc: ceph-devel@vger.kernel.org
->     cc: linux-cachefs@redhat.com
->     Link: https://lore.kernel.org/r/8af0d47f17d89c06bbf602496dd845f2b0bf25b3.camel@kernel.org/ [1]
->     Link: https://lore.kernel.org/r/dd054c962818716e718bd9b446ee5322ca097675.camel@redhat.com/ [2]
+> When listing a merged dir, meaning, a directory containing entries from
+> several overlay layers, ovl_permission() is called to check user's permission,
+> but ovl_permission() does not currently check permissions to read all layers,
+> because that is not the current overlayfs model.
 > 
-> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> index 9189257476f8..4aeccafa5dda 100644
-> --- a/fs/ceph/addr.c
-> +++ b/fs/ceph/addr.c
-> @@ -354,6 +354,45 @@ static void ceph_netfs_issue_read(struct netfs_io_subrequest *subreq)
->  	dout("%s: result %d\n", __func__, err);
->  }
->  
-> +static int ceph_init_request(struct netfs_io_request *rreq, struct file *file)
-> +{
-> +	struct inode *inode = rreq->inode;
-> +	int got = 0, want = CEPH_CAP_FILE_CACHE;
-> +	int ret = 0;
-> +
-> +	if (rreq->origin != NETFS_READAHEAD)
-> +		return 0;
-> +
-> +	if (file) {
-> +		struct ceph_rw_context *rw_ctx;
-> +		struct ceph_file_info *fi = file->private_data;
-> +
-> +		rw_ctx = ceph_find_rw_context(fi);
-> +		if (rw_ctx)
-> +			return 0;
-> +	}
-> +
-> +	/*
-> +	 * readahead callers do not necessarily hold Fcb caps
-> +	 * (e.g. fadvise, madvise).
-> +	 */
-> +	ret = ceph_try_get_caps(inode, CEPH_CAP_FILE_RD, want, true, &got);
-> +	if (ret < 0) {
-> +		dout("start_read %p, error getting cap\n", inode);
-> +		return ret;
-> +	}
-> +
-> +	if (!(got & want)) {
-> +		dout("start_read %p, no cache cap\n", inode);
-> +		return -EACCES;
-> +	}
-> +	if (ret == 0)
-> +		return -EACCES;
-> +
-> +	rreq->netfs_priv = (void *)(uintptr_t)got;
-> +	return 0;
-> +}
-> +
->  static void ceph_readahead_cleanup(struct address_space *mapping, void *priv)
->  {
->  	struct inode *inode = mapping->host;
-> @@ -365,7 +404,7 @@ static void ceph_readahead_cleanup(struct address_space *mapping, void *priv)
->  }
->  
->  static const struct netfs_request_ops ceph_netfs_read_ops = {
-> -	.is_cache_enabled	= ceph_is_cache_enabled,
-> +	.init_request		= ceph_init_request,
->  	.begin_cache_operation	= ceph_begin_cache_operation,
->  	.issue_read		= ceph_netfs_issue_read,
->  	.expand_readahead	= ceph_netfs_expand_readahead,
-> @@ -393,33 +432,7 @@ static int ceph_readpage(struct file *file, struct page *subpage)
->  
->  static void ceph_readahead(struct readahead_control *ractl)
->  {
-> -	struct inode *inode = file_inode(ractl->file);
-> -	struct ceph_file_info *fi = ractl->file->private_data;
-> -	struct ceph_rw_context *rw_ctx;
-> -	int got = 0;
-> -	int ret = 0;
-> -
-> -	if (ceph_inode(inode)->i_inline_version != CEPH_INLINE_NONE)
-> -		return;
-> -
-> -	rw_ctx = ceph_find_rw_context(fi);
-> -	if (!rw_ctx) {
-> -		/*
-> -		 * readahead callers do not necessarily hold Fcb caps
-> -		 * (e.g. fadvise, madvise).
-> -		 */
-> -		int want = CEPH_CAP_FILE_CACHE;
-> -
-> -		ret = ceph_try_get_caps(inode, CEPH_CAP_FILE_RD, want, true, &got);
-> -		if (ret < 0)
-> -			dout("start_read %p, error getting cap\n", inode);
-> -		else if (!(got & want))
-> -			dout("start_read %p, no cache cap\n", inode);
-> -
-> -		if (ret <= 0)
-> -			return;
-> -	}
-> -	netfs_readahead(ractl, &ceph_netfs_read_ops, (void *)(uintptr_t)got);
-> +	netfs_readahead(ractl, &ceph_netfs_read_ops, NULL);
->  }
->  
->  #ifdef CONFIG_CEPH_FSCACHE
+> Overlayfs has a readdir cache, so without override_cred, a user with high
+> credentials can populate the readdir cache and then a user will fewer
+> credentials, not enough to access the lower layers, but enough to access
+> the upper most layer, will pass ovl_permission() check and be allowed to
+> read from readdir cache.
+
+I am not very familiar with dir caching code. When I read through the
+overlayfs.rst, it gave the impression that caching is per "struct file".
+
+"This merged name list is cached in the
+'struct file' and so remains as long as the file is kept open."
+
+And I was wondering if that's the case, then one user should not be able
+to access the cache built by another priviliged user (until and unless
+privileged user passed fd).
+
+But looks like we build this cache and store in ovl inode and that's
+why this issue of cache built by higher privileged process will be
+accessible to lower privileged process.
+
+With current model this is not an issue because "mounter" is providing
+those privileges to unprivileged process. So while unprivileged process
+can't do "readdir" on an underlying lower dir, it might still be able
+to do that through an overlay mount. But if we don't switch to mounter's
+creds, then we probably can't rely on this dir caching. Agreed that
+disabling dir caching seems simplest solution if we were to do
+override_creds=off.
+
+Thanks
+Vivek
+
+> 
+> This specific problem can be solved in several ways - disable readdir
+> cache with override_cred=off, check all layers in ovl_permission().
+> That's not my point. My point is that I provided a proof that the current
+> model of override_cred=off is flawed and it is up to the authors of the
+> patch to fix the model and provide the analysis of overlayfs code to
+> prove the model's correctness.
+> 
+> The core of the matter is there is no easy way to "merge" the permissions
+> from all layers into a single permission blob that could be checked once.
+> 
+> Maybe the example I gave is the only flaw in the model, maybe not
+> I am not sure. I will be happy to help you in review of a model and the
+> solution that you may have found.
+> 
+> Thanks,
+> Amir.
 > 
 
-LGTM,
-
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
