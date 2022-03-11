@@ -2,115 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E2A214D56D8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Mar 2022 01:39:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 66B5E4D56F1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Mar 2022 01:49:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238200AbiCKAkn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Mar 2022 19:40:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50336 "EHLO
+        id S241590AbiCKAuN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Mar 2022 19:50:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233337AbiCKAkm (ORCPT
+        with ESMTP id S235560AbiCKAuJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Mar 2022 19:40:42 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0639869496;
-        Thu, 10 Mar 2022 16:39:39 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 908AE61DE1;
-        Fri, 11 Mar 2022 00:39:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D990C340E8;
-        Fri, 11 Mar 2022 00:39:38 +0000 (UTC)
-Date:   Thu, 10 Mar 2022 19:39:36 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Ritesh Harjani <riteshh@linux.ibm.com>
-Cc:     linux-ext4@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 00/10] ext4: Improve FC trace events
-Message-ID: <20220310193936.38ae7754@gandalf.local.home>
-In-Reply-To: <20220310170731.hq6z6flycmgkhnaa@riteshh-domain>
-References: <cover.1646922487.git.riteshh@linux.ibm.com>
-        <20220310110553.431cc997@gandalf.local.home>
-        <20220310170731.hq6z6flycmgkhnaa@riteshh-domain>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+        Thu, 10 Mar 2022 19:50:09 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CCB29FD8;
+        Thu, 10 Mar 2022 16:49:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=uYxZAHznPxDG69YtW4XG3s2UEng8dpthSKX9JFM/ivc=; b=ZlVKtnf+J5/YwrXwdNuICI62se
+        qH5Gfx3oATvhaCOjrwBT9IbXBrAraUC/RerntzJmGBfq+SLwhs4C8V7Xa3ofgWYBqeLOV9AgNiCYw
+        o+QfAvYXr0GG4I+mNuebILfVMzbRoJ6fxOohrXZ8uTVDNkfbHFkpf/BjxDhQUO/M+q6AnYDItsp2e
+        5iOIRPfYwx89fxwYmAy52zg6cPAceGRLfT4e87fAVz8sSXyKGj04zNYEMXmp7rLSCYOYgXmymX/kV
+        bhrDK/BLcldvM+L4/c3+//EOFb6MLNkDn50FwVz1KwnKCNFEBSXPqqupSVuBD4fLwUL1oS7jpooy5
+        jFCzvwYA==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nSTSs-00ERZL-SG; Fri, 11 Mar 2022 00:49:06 +0000
+Date:   Thu, 10 Mar 2022 16:49:06 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Javier =?iso-8859-1?Q?Gonz=E1lez?= <javier@javigon.com>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        lsf-pc@lists.linux-foundation.org,
+        Matias =?iso-8859-1?Q?Bj=F8rling?= <Matias.Bjorling@wdc.com>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Adam Manzanares <a.manzanares@samsung.com>,
+        Keith Busch <Keith.Busch@wdc.com>,
+        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        Naohiro Aota <Naohiro.Aota@wdc.com>,
+        Pankaj Raghav <pankydev8@gmail.com>,
+        Kanchan Joshi <joshi.k@samsung.com>,
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [LSF/MM/BPF BoF] BoF for Zoned Storage
+Message-ID: <Yiqcgi7G7ZrEbPHV@bombadil.infradead.org>
+References: <YiASVnlEEsyj8kzN@bombadil.infradead.org>
+ <20220304001022.GJ3927073@dread.disaster.area>
+ <YiKOQM+HMZXnArKT@bombadil.infradead.org>
+ <20220304224257.GN3927073@dread.disaster.area>
+ <YiKY6pMczvRuEovI@bombadil.infradead.org>
+ <20220305073321.5apdknpmctcvo3qj@ArmHalley.localdomain>
+ <20220307071229.GR3927073@dread.disaster.area>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-6.7 required=5.0 tests=BAYES_00,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220307071229.GR3927073@dread.disaster.area>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 10 Mar 2022 22:37:31 +0530
-Ritesh Harjani <riteshh@linux.ibm.com> wrote:
+On Mon, Mar 07, 2022 at 06:12:29PM +1100, Dave Chinner wrote:
+> The generic interface that the kernel provides for zoned storage is
+> called ZoneFS. Forget about the fact it is a filesystem, all it
+> does is provide userspace with a named zone abstraction for a zoned
+> device: every zone is an append-only file.
 
-> On 22/03/10 11:05AM, Steven Rostedt wrote:
-> > On Thu, 10 Mar 2022 21:28:54 +0530
-> > Ritesh Harjani <riteshh@linux.ibm.com> wrote:
-> >  
-> > > Note:- I still couldn't figure out how to expose EXT4_FC_REASON_MAX in patch-2
-> > > which (I think) might be (only) needed by trace-cmd or perf record for trace_ext4_fc_stats.
-> > > But it seems "cat /sys/kernel/debug/tracing/trace_pipe" gives the right output
-> > > for ext4_fc_stats trace event (as shown below).
-> > >
-> > > So with above reasoning, do you think we should take these patches in?
-> > > And we can later see how to provide EXT4_FC_REASON_MAX definition available to
-> > > libtraceevent?  
-> >
-> > I don't see EXT4_FC_REASON_MAX being used in the TP_printk(). If it isn't
-> > used there, it doesn't need to be exposed. Or did I miss something?  
+We seem to be reaching consensus on a path forward to use ZoneFS for
+raw access.
+
+> > My point is that there is space for both ZoneFS and raw zoned block
+> > device. And regarding !PO2 zone sizes, my point is that this can be
+> > leveraged both by btrfs and this raw zone block device.
 > 
-> I was mentioning about EXT4_FC_REASON_MAX used in TP_STRUCT__entry.
-> When I hard code EXT4_FC_REASON_MAX to 9 in TP_STRUCT__entry, I could
-> see proper values using trace-cmd. Otherwise I see all 0 (when using trace-cmd
-> or perf record).
-> 
-> +	TP_STRUCT__entry(
-> +		__field(dev_t, dev)
-> +		__array(unsigned int, fc_ineligible_rc, EXT4_FC_REASON_MAX)
+> On that I disagree - any argument that starts with "we need raw
+> zoned block device access to ...." is starting from an invalid
+> premise.
 
-Ah, I bet it's showing up in the format portion and not the print fmt part
-of the format file.
+This seems reasonable given the possibility to bring folks forward
+with ZoneFS.
 
-Just to confirm, can you do the following:
+> We should be hiding hardware quirks from userspace, not
+> exposing them further.
 
-# cat /sys/kernel/tracing/events/ext4/ext4_fc_commit_stop/format
+ZoneFS requires a block device and such block device cannot be exposed
+if the zone size != PO2. So sadly ZoneFS cannot be used by !PO2 ZNS
+drives.
 
-and show me what it outputs.
+> IMO, we want writing zone storage native applications to be simple
+> and approachable by anyone who knows how to write to append-only
+> files.  We do not want such applications to be limited to people who
+> have deep and rare expertise in the dark details of, say, largely
+> undocumented niche NVMe ZNS specification and protocol quirks.
+>
+> ZoneFS provides us with a path to the former, what you are
+> advocating is the latter....
 
-Thanks,
+That surely simplifies things if we can use ZoneFS!
 
--- Steve
+Some filesystems who want to support zone storage natively have been
+extended to do things to help with these quirks. My concerns were the
+divergence on approaches to how filesystems use ZNS as well. Do you have
+any plans to consider such efforts for XFS or would you rather build on
+ZoneFS somehow?
 
-
-> 
-> Should we anyway hard code this to 9. Since we are anyway printing all the
-> 9 elements of array values individually.
-> 
-> +	TP_printk("dev %d,%d fc ineligible reasons:\n"
-> +		  "%s:%u, %s:%u, %s:%u, %s:%u, %s:%u, %s:%u, %s:%u, %s:%u, %s:%u "
-> +		  "num_commits:%lu, ineligible: %lu, numblks: %lu",
-> +		  MAJOR(__entry->dev), MINOR(__entry->dev),
-> +		  FC_REASON_NAME_STAT(EXT4_FC_REASON_XATTR),
-> +		  FC_REASON_NAME_STAT(EXT4_FC_REASON_CROSS_RENAME),
-> +		  FC_REASON_NAME_STAT(EXT4_FC_REASON_JOURNAL_FLAG_CHANGE),
-> +		  FC_REASON_NAME_STAT(EXT4_FC_REASON_NOMEM),
-> +		  FC_REASON_NAME_STAT(EXT4_FC_REASON_SWAP_BOOT),
-> +		  FC_REASON_NAME_STAT(EXT4_FC_REASON_RESIZE),
-> +		  FC_REASON_NAME_STAT(EXT4_FC_REASON_RENAME_DIR),
-> +		  FC_REASON_NAME_STAT(EXT4_FC_REASON_FALLOC_RANGE),
-> +		  FC_REASON_NAME_STAT(EXT4_FC_REASON_INODE_JOURNAL_DATA),
-> +		  __entry->fc_commits, __entry->fc_ineligible_commits,
-> +		  __entry->fc_numblks)
-> 
-> 
-> Thanks
-> -ritesh
-
+  Luis
