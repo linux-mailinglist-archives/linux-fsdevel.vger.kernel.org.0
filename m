@@ -2,106 +2,151 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 585E24D6698
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Mar 2022 17:42:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E6A04D66A4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Mar 2022 17:45:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350085AbiCKQnu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Mar 2022 11:43:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50170 "EHLO
+        id S1350131AbiCKQqI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Mar 2022 11:46:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231971AbiCKQns (ORCPT
+        with ESMTP id S236353AbiCKQqH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Mar 2022 11:43:48 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABDFF1FA4E;
-        Fri, 11 Mar 2022 08:42:43 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 18F33CE295C;
-        Fri, 11 Mar 2022 16:42:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B39DC340EE;
-        Fri, 11 Mar 2022 16:42:39 +0000 (UTC)
-Date:   Fri, 11 Mar 2022 11:42:37 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Ritesh Harjani <riteshh@linux.ibm.com>
-Cc:     linux-ext4@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 00/10] ext4: Improve FC trace events
-Message-ID: <20220311114237.51a2ed29@gandalf.local.home>
-In-Reply-To: <20220311150357.x6wpvzthsimb26m6@riteshh-domain>
-References: <cover.1646922487.git.riteshh@linux.ibm.com>
-        <20220310110553.431cc997@gandalf.local.home>
-        <20220310170731.hq6z6flycmgkhnaa@riteshh-domain>
-        <20220310193936.38ae7754@gandalf.local.home>
-        <20220311021931.d4oozgtefbalrcch@riteshh-domain>
-        <20220310213356.3948cfb7@gandalf.local.home>
-        <20220311031431.3sfbibwuthn4xkym@riteshh-domain>
-        <20220310233234.4418186a@gandalf.local.home>
-        <20220311051249.ltgqbjjothbrkbno@riteshh-domain>
-        <20220311094524.1fa2d98f@gandalf.local.home>
-        <20220311150357.x6wpvzthsimb26m6@riteshh-domain>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+        Fri, 11 Mar 2022 11:46:07 -0500
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 899081C1EF8;
+        Fri, 11 Mar 2022 08:45:03 -0800 (PST)
+Received: by mail-pg1-f179.google.com with SMTP id 6so7931689pgg.0;
+        Fri, 11 Mar 2022 08:45:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=E5Rh7fNKmDbNOiCA65wqlhJIxWl5SUHmk0p+XbHj9Es=;
+        b=uVblCE7AH+3gSeqJeRRFswQnwOlgdvgqvGBXQbcrraDIjc/5zJzykppVPXhgIlPn8K
+         1btKEHtu+Jjjy9GcwnpEaAQrG6FwE2luIwvr5SP7w6uFmYNbU1DseCXb0h4EBayxAXHD
+         sTxqBcPOQCERKxo3K74Y/ufFh7gZw3/5bTgPdA6wyu7ILk5GuH+J+UwIFn4w6nYmnoqC
+         bUPTbaHRQk+zx3axmpLDbbJjBB19XBXnM/d/GLFtPvKswKNeukcl7GMvBvLUDGTEnI7S
+         v98yB68gh6Azcx02zadxk6EAKFoo399L2WmpcbPvMTVLghs+3K63JBFKboRatvZYo0Vw
+         jAWA==
+X-Gm-Message-State: AOAM5300LvR6OdnfbwKbSKoI/zOFRhGR5bbGQpynmPeVMD1Ox/c+wu3B
+        L4bzg+UysjOFHZ1mLyYxzrI=
+X-Google-Smtp-Source: ABdhPJz4EFo8AESgB57XfMxnPtCXO4rpfMMukfL94/sEfG3NNBKJLhbov5D59jzFpme6r510OGixTg==
+X-Received: by 2002:a05:6a00:887:b0:4f2:6d3f:5b53 with SMTP id q7-20020a056a00088700b004f26d3f5b53mr11093540pfj.21.1647017102717;
+        Fri, 11 Mar 2022 08:45:02 -0800 (PST)
+Received: from ?IPV6:2601:647:4000:d7:feaa:14ff:fe9d:6dbd? ([2601:647:4000:d7:feaa:14ff:fe9d:6dbd])
+        by smtp.gmail.com with ESMTPSA id o7-20020a63f147000000b00373facf1083sm8820705pgk.57.2022.03.11.08.45.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Mar 2022 08:45:02 -0800 (PST)
+Message-ID: <bf221ef4-f4d0-4431-02f3-ef3bea0e8cb2@acm.org>
+Date:   Fri, 11 Mar 2022 08:45:00 -0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.1
+Subject: Re: [EXT] Re: [PATCH 2/2] block: remove the per-bio/request write
+ hint.
+Content-Language: en-US
+To:     Jens Axboe <axboe@kernel.dk>,
+        "Bean Huo (beanhuo)" <beanhuo@micron.com>,
+        "Luca Porzio (lporzio)" <lporzio@micron.com>,
+        Manjong Lee <mj0123.lee@samsung.com>,
+        "david@fromorbit.com" <david@fromorbit.com>
+Cc:     "hch@lst.de" <hch@lst.de>, "kbusch@kernel.org" <kbusch@kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>,
+        "sagi@grimberg.me" <sagi@grimberg.me>,
+        "song@kernel.org" <song@kernel.org>,
+        "seunghwan.hyun@samsung.com" <seunghwan.hyun@samsung.com>,
+        "sookwan7.kim@samsung.com" <sookwan7.kim@samsung.com>,
+        "nanich.lee@samsung.com" <nanich.lee@samsung.com>,
+        "woosung2.lee@samsung.com" <woosung2.lee@samsung.com>,
+        "yt0928.kim@samsung.com" <yt0928.kim@samsung.com>,
+        "junho89.kim@samsung.com" <junho89.kim@samsung.com>,
+        "jisoo2146.oh@samsung.com" <jisoo2146.oh@samsung.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20220306231727.GP3927073@dread.disaster.area>
+ <CGME20220309042324epcas1p111312e20f4429dc3a17172458284a923@epcas1p1.samsung.com>
+ <20220309133119.6915-1-mj0123.lee@samsung.com>
+ <CO3PR08MB797524ACBF04B861D48AF612DC0B9@CO3PR08MB7975.namprd08.prod.outlook.com>
+ <e98948ae-1709-32ef-e1e4-063be38609b1@kernel.dk>
+ <CO3PR08MB797562AAE72BC201EB951C6CDC0B9@CO3PR08MB7975.namprd08.prod.outlook.com>
+ <d477c7bf-f3a7-ccca-5472-f9cbb05b83c1@kernel.dk>
+ <c27a5ec3-f683-d2a7-d5e7-fd54d2baa278@acm.org>
+ <PH0PR08MB7889642784B2E1FC1799A828DB0B9@PH0PR08MB7889.namprd08.prod.outlook.com>
+ <ef77ef36-df95-8658-ff54-7d8046f5d0e7@kernel.dk>
+From:   Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <ef77ef36-df95-8658-ff54-7d8046f5d0e7@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-6.7 required=5.0 tests=BAYES_00,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 11 Mar 2022 20:33:57 +0530
-Ritesh Harjani <riteshh@linux.ibm.com> wrote:
-
-> On 22/03/11 09:45AM, Steven Rostedt wrote:
-> > On Fri, 11 Mar 2022 10:42:49 +0530
-> > Ritesh Harjani <riteshh@linux.ibm.com> wrote:
-> >  
-> > > You may add below, if you like:-
-> > >
-> > > Reported-and-tested-by: Ritesh Harjani <riteshh@linux.ibm.com>  
-> >
-> > Will do. Thanks for testing.
-> >
-> > I'll be adding this for the next merge window. I don't think this is
-> > something that needs to be added to this rc release nor stable. Do you
-> > agree?  
+On 3/10/22 14:10, Jens Axboe wrote:
+> On 3/10/22 2:52 PM, Bean Huo (beanhuo) wrote:
+>> Yes, in upstream linux and upstream android, there is no such code.
+>> But as we know, mobile customers have used bio->bi_write_hint in their
+>> products for years. And the group ID is set according to
+>> bio->bi_write_hint before passing the CDB to UFS.
+>>
+>>
+>> 	lrbp = &hba->lrb[tag];
+>>   
+>>                WARN_ON(lrbp->cmd);
+>>               + if(cmd->cmnd[0] == WRITE_10)
+>>                +{
+>>                  +             cmd->cmnd[6] = (0x1f& cmd->request->bio->bi_write_hint);
+>>                +}
+>>                lrbp->cmd = cmd;
+>>                lrbp->sense_bufflen = UFS_SENSE_SIZE;
+>>                lrbp->sense_buffer = cmd->sense_buffer;
+>>
+>> I don't know why they don't push these changes to the community, maybe
+>> it's because changes across the file system and block layers are
+>> unacceptable to the block layer and FS. but for sure we should now
+>> warn them to push to the community as soon as possible.
 > 
-> If using an enum in TP_STRUCT__entry's __array field doesn't cause any side
-> effect other than it just can't be decoded by userspace perf record / trace-cmd,
-> then I guess it should be ok.
-
-Right. It only causes trace-cmd and perf to not be able to parse the field.
-But that's not really a regression, as it never was able to parse an enum
-defining an array size.
-
+> If the code isn't upstream, it's a bit late to start thinking about
+> that now. This feature has existed for 5 years at this point, and the
+> only consumer was NVMe. The upstream kernel cares only about what is
+> in-tree, as that is the only part we can modify and fix. We
+> change/modify internal kernel APIs all the time, which is how tech debt
+> is removed and the long term sanity of the project is maintained. This
+> in turn means that out-of-tree code will break, that's just a natural
+> side effect and something we can't do anything about.
 > 
-> But for this PATCH 2/10 "ext4: Fix ext4_fc_stats trace point", will be
-> needed to be Cc'd to stable tree as discussed before, as it tries to
-> dereference some sbi pointer from the tracing ring buffer. Then hopefully the
-> only problem with previous kernel version would be that ext4_fc_stats(), won't
-> show proper values for array entries in older kernel version where this patch
-> of trace_events is not found.
-> But cat /sys/kernel/debug/tracing/trace_pipe should be able to show the right values.
-> 
-> 
-> >From my side, I will send a v3 of this patch series with just EXT4_FC_REASON_MAX  
-> defined using TRACE_DEFINE_ENUM.
+> If at some point there's a desire to actually try and upstream this
+> support, then we'll be happy to review that patchset. Or you can
+> continue to stay out-of-tree and just patch in what you need. If you're
+> already modifying core code, then that shouldn't be a problem.
 
-OK, I'll just add this for the next merge window. If people complain about
-the parser not being able to parse this from user space, then we can either
-backport it, or add a plugin that parses it manually in libtraceevent.
+Hi Jens,
 
-> 
-> Thanks again for your help :)
-> 
+The "upstream first" policy applies to the Android kernel (see also 
+https://arstechnica.com/gadgets/2021/09/android-to-take-an-upstream-first-development-model-for-the-linux-kernel/). 
+If anyone requests inclusion in the Android kernel tree of a patch that 
+is not upstream, that request is rejected unless a very strong reason 
+can be provided why it should be included in the Android kernel only 
+instead of being sent upstream. It is not clear to me why the patch Bean 
+mentioned is not upstream nor in the upstream Android kernel tree.
 
-No problem. Thanks for the report.
+ From a UFS vendor I received the feedback that the F2FS write hint 
+information helps to reduce write amplification significantly. If the 
+write hint information is retained in the upstream kernel I can help 
+with making sure that the UFS patch mentioned above is integrated in the 
+upstream Linux kernel.
 
--- Steve
+Thanks,
+
+Bart.
+
+
