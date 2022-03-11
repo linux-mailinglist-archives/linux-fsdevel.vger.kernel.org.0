@@ -2,203 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 144864D65AD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Mar 2022 17:02:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 585E24D6698
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Mar 2022 17:42:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349947AbiCKQDv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Mar 2022 11:03:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37598 "EHLO
+        id S1350085AbiCKQnu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Mar 2022 11:43:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50170 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350415AbiCKQDi (ORCPT
+        with ESMTP id S231971AbiCKQns (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Mar 2022 11:03:38 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 06E929FFF
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Mar 2022 08:02:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1647014553;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=ilGm5MsrGcVXow52rFFtdj0YbYqX9AM62W1VECQWVlE=;
-        b=FjERbka43EaeJhVyjryTYkOAXxnbeKIqaGzJYHNxlTOrd4aSLwR7ifGtYvxlwMidNmI2Vd
-        RThTADnOvEePcv9j6ypiE8K6KFP5R8bBNSgY3M5TR3wKbbuKmxn60G+ZW52VY9Rh0L1its
-        eMnrnMaxcRBqjaQgUs+x7nOQQMolBLc=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-99-Ng7loZ2EPzmp-sVX6vNM8w-1; Fri, 11 Mar 2022 11:02:31 -0500
-X-MC-Unique: Ng7loZ2EPzmp-sVX6vNM8w-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Fri, 11 Mar 2022 11:43:48 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABDFF1FA4E;
+        Fri, 11 Mar 2022 08:42:43 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id 19D60FC80;
-        Fri, 11 Mar 2022 16:02:30 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id EB50F866D6;
-        Fri, 11 Mar 2022 16:02:18 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH] cachefiles: Fix volume coherency attribute
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     Rohith Surabattula <rohiths.msft@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Steve French <smfrench@gmail.com>, linux-cifs@vger.kernel.org,
-        linux-cachefs@redhat.com, dhowells@redhat.com,
-        rohiths.msft@gmail.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 11 Mar 2022 16:02:18 +0000
-Message-ID: <164701453798.2588911.12798385110642752783.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/1.4
+        by sin.source.kernel.org (Postfix) with ESMTPS id 18F33CE295C;
+        Fri, 11 Mar 2022 16:42:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B39DC340EE;
+        Fri, 11 Mar 2022 16:42:39 +0000 (UTC)
+Date:   Fri, 11 Mar 2022 11:42:37 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Ritesh Harjani <riteshh@linux.ibm.com>
+Cc:     linux-ext4@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv2 00/10] ext4: Improve FC trace events
+Message-ID: <20220311114237.51a2ed29@gandalf.local.home>
+In-Reply-To: <20220311150357.x6wpvzthsimb26m6@riteshh-domain>
+References: <cover.1646922487.git.riteshh@linux.ibm.com>
+        <20220310110553.431cc997@gandalf.local.home>
+        <20220310170731.hq6z6flycmgkhnaa@riteshh-domain>
+        <20220310193936.38ae7754@gandalf.local.home>
+        <20220311021931.d4oozgtefbalrcch@riteshh-domain>
+        <20220310213356.3948cfb7@gandalf.local.home>
+        <20220311031431.3sfbibwuthn4xkym@riteshh-domain>
+        <20220310233234.4418186a@gandalf.local.home>
+        <20220311051249.ltgqbjjothbrkbno@riteshh-domain>
+        <20220311094524.1fa2d98f@gandalf.local.home>
+        <20220311150357.x6wpvzthsimb26m6@riteshh-domain>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-6.7 required=5.0 tests=BAYES_00,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-A network filesystem may set coherency data on a volume cookie, and if
-given, cachefiles will store this in an xattr on the directory in the cache
-corresponding to the volume.
+On Fri, 11 Mar 2022 20:33:57 +0530
+Ritesh Harjani <riteshh@linux.ibm.com> wrote:
 
-The function that sets the xattr just stores the contents of the volume
-coherency buffer directly into the xattr, with nothing added; the checking
-function, on the other hand, has a cut'n'paste error whereby it tries to
-interpret the xattr contents as would be the xattr on an ordinary file
-(using the cachefiles_xattr struct).  This results in a failure to match
-the coherency data because the buffer ends up being shifted by 18 bytes.
+> On 22/03/11 09:45AM, Steven Rostedt wrote:
+> > On Fri, 11 Mar 2022 10:42:49 +0530
+> > Ritesh Harjani <riteshh@linux.ibm.com> wrote:
+> >  
+> > > You may add below, if you like:-
+> > >
+> > > Reported-and-tested-by: Ritesh Harjani <riteshh@linux.ibm.com>  
+> >
+> > Will do. Thanks for testing.
+> >
+> > I'll be adding this for the next merge window. I don't think this is
+> > something that needs to be added to this rc release nor stable. Do you
+> > agree?  
+> 
+> If using an enum in TP_STRUCT__entry's __array field doesn't cause any side
+> effect other than it just can't be decoded by userspace perf record / trace-cmd,
+> then I guess it should be ok.
 
-Fix this by defining a structure specifically for the volume xattr and
-making both the setting and checking functions use it.
+Right. It only causes trace-cmd and perf to not be able to parse the field.
+But that's not really a regression, as it never was able to parse an enum
+defining an array size.
 
-Since the volume coherency doesn't work if used, take the opportunity to
-insert a reserved field for future use, set it to 0 and check that it is 0.
-Log mismatch through the appropriate tracepoint.
+> 
+> But for this PATCH 2/10 "ext4: Fix ext4_fc_stats trace point", will be
+> needed to be Cc'd to stable tree as discussed before, as it tries to
+> dereference some sbi pointer from the tracing ring buffer. Then hopefully the
+> only problem with previous kernel version would be that ext4_fc_stats(), won't
+> show proper values for array entries in older kernel version where this patch
+> of trace_events is not found.
+> But cat /sys/kernel/debug/tracing/trace_pipe should be able to show the right values.
+> 
+> 
+> >From my side, I will send a v3 of this patch series with just EXT4_FC_REASON_MAX  
+> defined using TRACE_DEFINE_ENUM.
 
-Note that this only affects cifs; 9p, afs, ceph and nfs don't use the
-volume coherency data at the moment.
+OK, I'll just add this for the next merge window. If people complain about
+the parser not being able to parse this from user space, then we can either
+backport it, or add a plugin that parses it manually in libtraceevent.
 
-Fixes: 32e150037dce ("fscache, cachefiles: Store the volume coherency data")
-Reported-by: Rohith Surabattula <rohiths.msft@gmail.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
-cc: Steve French <smfrench@gmail.com>
-cc: linux-cifs@vger.kernel.org
-cc: linux-cachefs@redhat.com
----
+> 
+> Thanks again for your help :)
+> 
 
- fs/cachefiles/xattr.c             |   23 ++++++++++++++++++++---
- include/trace/events/cachefiles.h |    2 ++
- 2 files changed, 22 insertions(+), 3 deletions(-)
+No problem. Thanks for the report.
 
-diff --git a/fs/cachefiles/xattr.c b/fs/cachefiles/xattr.c
-index 83f41bd0c3a9..35465109d9c4 100644
---- a/fs/cachefiles/xattr.c
-+++ b/fs/cachefiles/xattr.c
-@@ -28,6 +28,11 @@ struct cachefiles_xattr {
- static const char cachefiles_xattr_cache[] =
- 	XATTR_USER_PREFIX "CacheFiles.cache";
- 
-+struct cachefiles_vol_xattr {
-+	__be32	reserved;	/* Reserved, should be 0 */
-+	__u8	data[];		/* netfs volume coherency data */
-+} __packed;
-+
- /*
-  * set the state xattr on a cache file
-  */
-@@ -185,6 +190,7 @@ void cachefiles_prepare_to_write(struct fscache_cookie *cookie)
-  */
- bool cachefiles_set_volume_xattr(struct cachefiles_volume *volume)
- {
-+	struct cachefiles_vol_xattr *buf;
- 	unsigned int len = volume->vcookie->coherency_len;
- 	const void *p = volume->vcookie->coherency;
- 	struct dentry *dentry = volume->dentry;
-@@ -192,10 +198,17 @@ bool cachefiles_set_volume_xattr(struct cachefiles_volume *volume)
- 
- 	_enter("%x,#%d", volume->vcookie->debug_id, len);
- 
-+	len += sizeof(*buf);
-+	buf = kmalloc(len, GFP_KERNEL);
-+	if (!buf)
-+		return false;
-+	buf->reserved = cpu_to_be32(0);
-+	memcpy(buf->data, p, len);
-+
- 	ret = cachefiles_inject_write_error();
- 	if (ret == 0)
- 		ret = vfs_setxattr(&init_user_ns, dentry, cachefiles_xattr_cache,
--				   p, len, 0);
-+				   buf, len, 0);
- 	if (ret < 0) {
- 		trace_cachefiles_vfs_error(NULL, d_inode(dentry), ret,
- 					   cachefiles_trace_setxattr_error);
-@@ -209,6 +222,7 @@ bool cachefiles_set_volume_xattr(struct cachefiles_volume *volume)
- 					       cachefiles_coherency_vol_set_ok);
- 	}
- 
-+	kfree(buf);
- 	_leave(" = %d", ret);
- 	return ret == 0;
- }
-@@ -218,7 +232,7 @@ bool cachefiles_set_volume_xattr(struct cachefiles_volume *volume)
-  */
- int cachefiles_check_volume_xattr(struct cachefiles_volume *volume)
- {
--	struct cachefiles_xattr *buf;
-+	struct cachefiles_vol_xattr *buf;
- 	struct dentry *dentry = volume->dentry;
- 	unsigned int len = volume->vcookie->coherency_len;
- 	const void *p = volume->vcookie->coherency;
-@@ -228,6 +242,7 @@ int cachefiles_check_volume_xattr(struct cachefiles_volume *volume)
- 
- 	_enter("");
- 
-+	len += sizeof(*buf);
- 	buf = kmalloc(len, GFP_KERNEL);
- 	if (!buf)
- 		return -ENOMEM;
-@@ -245,7 +260,9 @@ int cachefiles_check_volume_xattr(struct cachefiles_volume *volume)
- 					"Failed to read xattr with error %zd", xlen);
- 		}
- 		why = cachefiles_coherency_vol_check_xattr;
--	} else if (memcmp(buf->data, p, len) != 0) {
-+	} else if (buf->reserved != cpu_to_be32(0)) {
-+		why = cachefiles_coherency_vol_check_resv;
-+	} else if (memcmp(buf->data, p, len - sizeof(*buf)) != 0) {
- 		why = cachefiles_coherency_vol_check_cmp;
- 	} else {
- 		why = cachefiles_coherency_vol_check_ok;
-diff --git a/include/trace/events/cachefiles.h b/include/trace/events/cachefiles.h
-index 002d0ae4f9bc..311c14a20e70 100644
---- a/include/trace/events/cachefiles.h
-+++ b/include/trace/events/cachefiles.h
-@@ -56,6 +56,7 @@ enum cachefiles_coherency_trace {
- 	cachefiles_coherency_set_ok,
- 	cachefiles_coherency_vol_check_cmp,
- 	cachefiles_coherency_vol_check_ok,
-+	cachefiles_coherency_vol_check_resv,
- 	cachefiles_coherency_vol_check_xattr,
- 	cachefiles_coherency_vol_set_fail,
- 	cachefiles_coherency_vol_set_ok,
-@@ -139,6 +140,7 @@ enum cachefiles_error_trace {
- 	EM(cachefiles_coherency_set_ok,		"SET ok  ")		\
- 	EM(cachefiles_coherency_vol_check_cmp,	"VOL BAD cmp ")		\
- 	EM(cachefiles_coherency_vol_check_ok,	"VOL OK      ")		\
-+	EM(cachefiles_coherency_vol_check_resv,	"VOL BAD resv")	\
- 	EM(cachefiles_coherency_vol_check_xattr,"VOL BAD xatt")		\
- 	EM(cachefiles_coherency_vol_set_fail,	"VOL SET fail")		\
- 	E_(cachefiles_coherency_vol_set_ok,	"VOL SET ok  ")
-
-
+-- Steve
