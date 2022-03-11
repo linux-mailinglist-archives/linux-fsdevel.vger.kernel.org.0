@@ -2,150 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 21EEB4D6A9D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Mar 2022 00:26:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE3784D6A93
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Mar 2022 00:26:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229461AbiCKWnr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Mar 2022 17:43:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48770 "EHLO
+        id S229808AbiCKWsY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Mar 2022 17:48:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229447AbiCKWnr (ORCPT
+        with ESMTP id S229711AbiCKWsI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Mar 2022 17:43:47 -0500
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4122D186B82
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Mar 2022 14:18:48 -0800 (PST)
-Received: from cwcc.thunk.org (pool-108-7-220-252.bstnma.fios.verizon.net [108.7.220.252])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 22BM4b9T021054
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 11 Mar 2022 17:04:38 -0500
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id 6738015C3E98; Fri, 11 Mar 2022 17:04:37 -0500 (EST)
-Date:   Fri, 11 Mar 2022 17:04:37 -0500
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Sasha Levin <sashal@kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        lsf-pc <lsf-pc@lists.linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [LSF/MM TOPIC] FS, MM, and stable trees
-Message-ID: <YivHdetTMVW260df@mit.edu>
-References: <20190212170012.GF69686@sasha-vm>
- <CAOQ4uxjysufPUtwepPGNZDhoC_HdsnkHx7--kso_OXWPyPkw_A@mail.gmail.com>
- <YicrMCidylefTC3n@kroah.com>
- <CAOQ4uxjjdFgdMxEOq7aW-nLZFf-S99CC93Ycg1CcMUBiRAYTQQ@mail.gmail.com>
- <YiepUS/bDKTNA5El@sashalap>
- <Yij4lD19KGloWPJw@bombadil.infradead.org>
- <Yirc69JyH5N/pXKJ@mit.edu>
- <Yiu2mRwguHhbVpLJ@bombadil.infradead.org>
+        Fri, 11 Mar 2022 17:48:08 -0500
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1D622B8528
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Mar 2022 14:22:58 -0800 (PST)
+Received: by mail-wr1-x433.google.com with SMTP id k24so14965845wrd.7
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Mar 2022 14:22:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=BQM5s6KARQo6xsMTrgtyjfqQgxp9yGfc0ghCKKcQtf8=;
+        b=rW/V0Cqhy9qbkUdJ08Dw1HwcmmSatPyby1AlVx9WHUmj9YQZXnZI6RRhui0BKniegl
+         Bp4L5KkXUZfWD6SlN1Mvrh1Lvk3p0ITMLPhbZQCXgqS7Yq+2PZ6lA8nNYPL0qHRDFzT6
+         5FrpxfTqET6rhn/cJiLvzXJ0XafMN+n1STTLYYqei2QcB891AuBOiL0LtdufoxoieDmv
+         VhrwqolLTex1i3JOkNgCh/2wmS9XMMwGcMlZYG7X2l49KbEfZ6DjIIfZw62E5a+gVdTv
+         OwHdtrKmna54ohmVYQnBKcHjgaGCKQFMWyxt7uCVl4q0dm/OyD+28lS8CyPG2PRdOSWf
+         /nrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=BQM5s6KARQo6xsMTrgtyjfqQgxp9yGfc0ghCKKcQtf8=;
+        b=qYJ6LtVw7R3uo2R4jHLfIccQkSPHDvzvck9/fWpgWaSKZ1+MhlEQIvleOo6YVGyQah
+         CgFtuKccxEsDh6fRx38EIZ4CBQfsuZuPwYB3GdLON5rA8HbKKsQKZIihDRGGk6hPB2k2
+         2x5MKt04pPJO6Xb+ZvV1YL4i6PrUHKwdwYOyZHeXp+fmGxEc8s8bFxT99x+jZ/3IBeTm
+         IdvvL9qVBfS85ij8Wo8Qggc8VtIi/H1D45kYxh9MjBBg6Ih7MiKmk9xobkhUcKge4OOy
+         fhMbwxbfNnwYSxFCmox57usdLzld6SLuSKtXGGfUHe8BMhAYnrMISPViX7BayIu5jKrY
+         ZGQg==
+X-Gm-Message-State: AOAM530dTz/jYfW4u5hcAZxLzrrVtMk1LfxmDPjKEvHQ+8Ymryl0y8CF
+        2RYpDzNbLnfMluzXg02G/haPT3HzwpSt8yn4dN39GpYatA==
+X-Google-Smtp-Source: ABdhPJyYYX7Wm53Pi2h5di1/gf7hL0sQSYVXL0VPvZQ90klkGVBoawKXG5YHabI6/+DnOGW87KYt9/tNYbHqYtRdtZw=
+X-Received: by 2002:a05:6402:d2:b0:413:2e50:d6fd with SMTP id
+ i18-20020a05640200d200b004132e50d6fdmr10938615edu.171.1647036912117; Fri, 11
+ Mar 2022 14:15:12 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Yiu2mRwguHhbVpLJ@bombadil.infradead.org>
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20220228215935.748017-1-mic@digikod.net> <20220301092232.wh7m3fxbe7hyxmcu@wittgenstein>
+ <f6b63133-d555-a77c-0847-de15a9302283@digikod.net> <CAHC9VhQd3rL-13k0u39Krkdjp2_dtPfgEPxr=kawWUM9FjjOsw@mail.gmail.com>
+ <8d520529-4d3e-4874-f359-0ead9207cead@canonical.com>
+In-Reply-To: <8d520529-4d3e-4874-f359-0ead9207cead@canonical.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 11 Mar 2022 17:15:01 -0500
+Message-ID: <CAHC9VhRrjqe1AdZYtjpzLJyBF6FTeQ4EcEwsOd2YMimA5_tzEA@mail.gmail.com>
+Subject: Re: [PATCH v1] fs: Fix inconsistent f_mode
+To:     John Johansen <john.johansen@canonical.com>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Eric Paris <eparis@parisplace.org>,
+        James Morris <jmorris@namei.org>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Steve French <sfrench@samba.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@linux.microsoft.com>,
+        selinux@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 11, 2022 at 12:52:41PM -0800, Luis Chamberlain wrote:
-> 
-> The only way to move forward with enabling more automation for kernel
-> code integration is through better and improved kernel test automation.
-> And it is *exactly* why I've been working so hard on that problem.
+On Wed, Mar 9, 2022 at 7:36 PM John Johansen
+<john.johansen@canonical.com> wrote:
+> On 3/9/22 13:31, Paul Moore wrote:
+> > On Tue, Mar 1, 2022 at 5:15 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.ne=
+t> wrote:
+> >> On 01/03/2022 10:22, Christian Brauner wrote:
+> >>> On Mon, Feb 28, 2022 at 10:59:35PM +0100, Micka=C3=ABl Sala=C3=BCn wr=
+ote:
+> >>>> From: Micka=C3=ABl Sala=C3=BCn <mic@linux.microsoft.com>
+> >>>>
+> >>>> While transitionning to ACC_MODE() with commit 5300990c0370 ("Saniti=
+ze
+> >>>> f_flags helpers") and then fixing it with commit 6d125529c6cb ("Fix
+> >>>> ACC_MODE() for real"), we lost an open flags consistency check.  Ope=
+ning
+> >>>> a file with O_WRONLY | O_RDWR leads to an f_flags containing MAY_REA=
+D |
+> >>>> MAY_WRITE (thanks to the ACC_MODE() helper) and an empty f_mode.
+> >>>> Indeed, the OPEN_FMODE() helper transforms 3 (an incorrect value) to=
+ 0.
+> >>>>
+> >>>> Fortunately, vfs_read() and vfs_write() both check for FMODE_READ, o=
+r
+> >>>> respectively FMODE_WRITE, and return an EBADF error if it is absent.
+> >>>> Before commit 5300990c0370 ("Sanitize f_flags helpers"), opening a f=
+ile
+> >>>> with O_WRONLY | O_RDWR returned an EINVAL error.  Let's restore this=
+ safe
+> >>>> behavior.
+> >>>
+> >>> That specific part seems a bit risky at first glance. Given that the
+> >>> patch referenced is from 2009 this means we've been allowing O_WRONLY=
+ |
+> >>> O_RDWR to succeed for almost 13 years now.
+> >>
+> >> Yeah, it's an old bug, but we should keep in mind that a file descript=
+or
+> >> created with such flags cannot be used to read nor write. However,
+> >> unfortunately, it can be used for things like ioctl, fstat, chdir=E2=
+=80=A6 I
+> >> don't know if there is any user of this trick.
+> >>
+> >> Either way, there is an inconsistency between those using ACC_MODE() a=
+nd
+> >> those using OPEN_FMODE(). If we decide to take a side for the behavior
+> >> of one or the other, without denying to create such FD, it could also
+> >> break security policies. We have to choose what to potentially break=
+=E2=80=A6
+> >
+> > I'm not really liking the idea that the empty/0 f_mode field leads to
+> > SELinux doing an ioctl access check as opposed to the expected
+> > read|write check.  Yes, other parts of the code catch the problem, but
+> > this is bad from a SELinux perspective.  Looking quickly at the other
+> > LSMs, it would appear that other LSMs are affected as well.
+> >
+> > If we're not going to fix file::f_mode, the LSMs probably need to
+> > consider using file::f_flags directly in conjunction with a correct
+> > OPEN_FMODE() macro (or better yet a small inline function that isn't
+> > as ugly).
+> >
+> yeah, I have to agree
 
-I think we're on the same page here.
+The silence on this has been deafening :/  No thoughts on fixing, or
+not fixing OPEN_FMODE(), Al?
 
-> Also let's recall that just because you have your own test framework
-> it does not mean we could not benefit from others testing our
-> filesystems on their own silly hardware at home as well. Yes tons
-> of projects can be used which wrap fstests...
+At this point I have to assume OPEN_FMODE() isn't changing so I'm
+going to go ahead with moving SELinux over to file::f_flags.  Once
+I've got something working I'll CC the LSM list on the patches in case
+the other LSMs want to do something similar.  Full disclosure, that
+might not happen until early-to-mid next week due to the weekend, new
+kernel expected on Sunday, etc.
 
-No argument from me!  I'm strongly in favor of diversity in test
-framework automation as well as test environments.
-
-In particular, I think there are some valuable things we can learn
-from each other, in terms of cross polination in terms of features and
-as well as feedback about how easy it is to use a particular test
-framework.
-
-For example: README.md doesn't say anything about running make as root
-when running "make" as kdevops.  At least, I *think* this is why
-running make as kdevops failed:
-
-fatal: [localhost]: FAILED! => {"changed": true, "cmd": ["/usr/sbin/apparmor_status", "--enabled"], "delta": "0:00:00.001426", "end": "2022-03-11 16:23:11.769658", "failed_when_result": true, "rc": 0, "start": "2022-03-11 16:23:11.768232", "stderr": "", "stderr_lines": [], "stdout": "", "stdout_lines": []}
-
-(I do have apparmor installed, but it's currently not enabled.  I
-haven't done more experimentation since I'm a bit scared of running
-"make XXX" as root for any package I randomly download from the net,
-so I haven't explored trying to use kdevops, at least not until I set
-up a sandboxed VM.  :-)
-
-Including the Debian package names that should be installed would also
-be helpful in kdevops/doc/requirements.md.  That's not a problem for
-the experienced Debian developer, but one of my personal goals for
-kvm-xfstests and gce-xfstests is to allow a random graduate student
-who has presented some research file system like Betrfs at the Usenix
-FAST conference to be able to easily run fstests.  And it sounds like
-you have similar goals of "enabling the average user to also easily
-run tests".
-
-
-> but I never found one
-> as easy to use as compiling the kernel and running a few make commands.
-
-I've actually done a lot of work to optimize developer velocity using
-my test framework.  So for example:
-
-kvm-xfstests install-kconfig    # set up a kernel Kconfig suitable for kvm-xfstests and gce-xfstests
-make
-kvm-xfstests smoke     # boot the test appliance VM, using the kernel that was just built
-
-And a user can test a particular stable kernel using a single command
-line (this will checkout a particular kernel, and build it on a build
-VM, and then launch tests in parallel on a dozen or so VM's):
-
-gce-xfstests ltm -c ext4/all -g auto --repo stable.git --commit v5.15.28
-
-... or if we want to bisect a particular test failure, we might do
-something like this:
-
-gce-xfstests ltm -c ext4 generic/361 --bisect-good v5.15 --bisect-bad v5.16
-
-... or I can establish a watcher that will automatically build a git
-tree when a branch on a git tree changes:
-
-gce-xfstests ltm -c ext4/4k -g auto --repo next.git --watch master
-
-Granted, this only works on GCE --- but feel free to take these ideas
-and integrate them into kdevops if you feel inspired to do so.  :-)
-
-> There is the concept of results too and a possible way to share things..
-> but this is getting a bit off topic and I don't want to bore people more.
-
-This would be worth chatting about, perhaps at LSF/MM.  xfstests
-already supports junit results files; we could convert it to TAP
-format, but junit has more functionality, so perhaps the right
-approach is to have tools that can support both TAP and junit?  What
-about some way to establish interchange of test artifacts?  i.e.,
-saving the kernel logs, and the generic/NNN.full and
-generic/NNN.out.bad files?
-
-I have a large library of these test results and test artifacts, and
-perhaps others would find it useful if we had a way sharing test
-results between developers, especially we have multiple test
-infrastructures that might be running ext4, f2fs, and xfs tests?
-
-Cheers,
-
-						- Ted
+--=20
+paul-moore.com
