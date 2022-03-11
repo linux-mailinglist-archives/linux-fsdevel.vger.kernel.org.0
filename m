@@ -2,220 +2,266 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1360C4D6A6A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Mar 2022 00:26:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A9CDA4D6B21
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Mar 2022 00:55:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229764AbiCKWrH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Mar 2022 17:47:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49450 "EHLO
+        id S229693AbiCKXgb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Mar 2022 18:36:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43688 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229646AbiCKWqr (ORCPT
+        with ESMTP id S229665AbiCKXga (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Mar 2022 17:46:47 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B41742DBB92
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Mar 2022 14:37:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=ZPzgNgyOXSQq4j6/3Cp7uIUJ1RdwvKUGK420JwTB39U=; b=l0x/l7CcpCAa7cB19xquK8/ey/
-        EQ6QKJAqeVveG0yGkWGtNEHRPYUoQixmmDGWWmsYLhQ5rK15vjNaBa565MH9005la5qyPw5UoVOyZ
-        hNi81XMzKPmP33nbfa/cBAQYELS8vQckr+3uc0kH0V0fQv3pIKcoGljaYgHBK54q7geZDdHfbx/N2
-        M1zI4fo9SOkPS/c7fD54B9Pg+wM0lV8E0r8RjqwEeEQEvrrGlZvgNbKye0vDUDcD2YUU3jW1/yEK/
-        +8ezBatYDnwuyIBzr6F4+QguUbDG8s/4rROhm5pMFmTcFfL/ue6pbpH49HDLRqj/SE9WJ1qYoYugy
-        6iVzk8Zg==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nSnsW-000P5U-Tf; Fri, 11 Mar 2022 22:36:56 +0000
-Date:   Fri, 11 Mar 2022 14:36:56 -0800
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Theodore Ts'o <tytso@mit.edu>
-Cc:     Sasha Levin <sashal@kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        lsf-pc <lsf-pc@lists.linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [LSF/MM TOPIC] FS, MM, and stable trees
-Message-ID: <YivPCOr85bmqAPcu@bombadil.infradead.org>
-References: <20190212170012.GF69686@sasha-vm>
- <CAOQ4uxjysufPUtwepPGNZDhoC_HdsnkHx7--kso_OXWPyPkw_A@mail.gmail.com>
- <YicrMCidylefTC3n@kroah.com>
- <CAOQ4uxjjdFgdMxEOq7aW-nLZFf-S99CC93Ycg1CcMUBiRAYTQQ@mail.gmail.com>
- <YiepUS/bDKTNA5El@sashalap>
- <Yij4lD19KGloWPJw@bombadil.infradead.org>
- <Yirc69JyH5N/pXKJ@mit.edu>
- <Yiu2mRwguHhbVpLJ@bombadil.infradead.org>
- <YivHdetTMVW260df@mit.edu>
+        Fri, 11 Mar 2022 18:36:30 -0500
+Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62B8FECB06
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Mar 2022 15:35:25 -0800 (PST)
+Received: by mail-pg1-x535.google.com with SMTP id 6so8722201pgg.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Mar 2022 15:35:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=13t7T+1H2gbtDRvuwDVr1bm3a+2J2xIzpet95fdBuh4=;
+        b=RIgXQdVfVb6lODawzvdTxr4kAtwLPsRjREsyVUC9K9FXvakpJNymy17e6FkbZx5Gvv
+         LeDcUKOKw2VoVa83HdzrEPE+n4lq8xuCULunoupKYxugg5JDuOq5trFf3fm42gMytdUt
+         ERkjzkjwpAU0zoJJj8eO/F2dpsyBXR6QjMjtDGcOsDfDr2CJipG41gyKlmh4HlNGNwWJ
+         vwkcU6O57nxaJWLRTl+0Hya9nMI7GHfWxpWRkjw+wUNIj2S8tgExKh9huQ4lWfIYS5K0
+         A8C1eX/+5cBiho3K4ItispCSGtWUy9zYfhJ3aJCa4TY2pJ8nVxCb77Wvrz7OmBeIoOjA
+         1QIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=13t7T+1H2gbtDRvuwDVr1bm3a+2J2xIzpet95fdBuh4=;
+        b=tevIy6++DZQ4xhnLjbvE6E2ew2uWhJq3gf+dCiKsMpmUtPKciZ6LlAX47TMBOJYziv
+         VlQSZA5kM58Y/sjdfGVraHsyvWcgZ3V6kXB9IICCG/AjTpN4tZwPjBRCHgPwI29QP5Z2
+         +5hDZByT42/8zDa/qdlA62ppKWQQ/wpaL/nCgV5lZwIPEBobrpQKfu90z+ULtywpkIPl
+         6Pa0HM0fX7NDVPYZfwDFeRO8JmCOG0dJ/IFvfESxmF6gjygNQyYZKSw81xB24X0Z+s6p
+         pWiyvWHBfH52QXYqMOvrnGgY7BtOm1ywUANP8W/ja3rW7OlBShKsItqunqPydoZN6mfY
+         Wo0w==
+X-Gm-Message-State: AOAM5332F7AyjKP7RMsMOPB74/b5Rzj9VELFOGR2+MIxBjxcnQemQbPt
+        mPJoeHz81zQFE5z71rvEiZcHY5yMWUKfwjEWcFiM/g==
+X-Google-Smtp-Source: ABdhPJy2YDPTfdvIBlgNDhr+xnU7i87kZGa7MwrAaA3nvXLDFGkcmuMWf5/eMsJKEsCu2BWW9StjfFYHKRuRIZXl8BI=
+X-Received: by 2002:a62:1481:0:b0:4f6:38c0:ed08 with SMTP id
+ 123-20020a621481000000b004f638c0ed08mr12796868pfu.86.1647041724808; Fri, 11
+ Mar 2022 15:35:24 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YivHdetTMVW260df@mit.edu>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+References: <20220227120747.711169-1-ruansy.fnst@fujitsu.com> <20220227120747.711169-2-ruansy.fnst@fujitsu.com>
+In-Reply-To: <20220227120747.711169-2-ruansy.fnst@fujitsu.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Fri, 11 Mar 2022 15:35:13 -0800
+Message-ID: <CAPcyv4jAqV7dZdmGcKrG=f8sYmUXaL7YCQtME6GANywncwd+zg@mail.gmail.com>
+Subject: Re: [PATCH v11 1/8] dax: Introduce holder for dax_device
+To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Linux NVDIMM <nvdimm@lists.linux.dev>,
+        Linux MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "Darrick J. Wong" <djwong@kernel.org>, david <david@fromorbit.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jane Chu <jane.chu@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 11, 2022 at 05:04:37PM -0500, Theodore Ts'o wrote:
-> On Fri, Mar 11, 2022 at 12:52:41PM -0800, Luis Chamberlain wrote:
-> > 
-> > The only way to move forward with enabling more automation for kernel
-> > code integration is through better and improved kernel test automation.
-> > And it is *exactly* why I've been working so hard on that problem.
-> 
-> I think we're on the same page here.
-> 
-> > Also let's recall that just because you have your own test framework
-> > it does not mean we could not benefit from others testing our
-> > filesystems on their own silly hardware at home as well. Yes tons
-> > of projects can be used which wrap fstests...
-> 
-> No argument from me!  I'm strongly in favor of diversity in test
-> framework automation as well as test environments.
-> 
-> In particular, I think there are some valuable things we can learn
-> from each other, in terms of cross polination in terms of features and
-> as well as feedback about how easy it is to use a particular test
-> framework.
-> 
-> For example: README.md doesn't say anything about running make as root
-> when running "make" as kdevops.  At least, I *think* this is why
-> running make as kdevops failed:
-> 
-> fatal: [localhost]: FAILED! => {"changed": true, "cmd": ["/usr/sbin/apparmor_status", "--enabled"], "delta": "0:00:00.001426", "end": "2022-03-11 16:23:11.769658", "failed_when_result": true, "rc": 0, "start": "2022-03-11 16:23:11.768232", "stderr": "", "stderr_lines": [], "stdout": "", "stdout_lines": []}
+On Sun, Feb 27, 2022 at 4:08 AM Shiyang Ruan <ruansy.fnst@fujitsu.com> wrote:
+>
+> To easily track filesystem from a pmem device, we introduce a holder for
+> dax_device structure, and also its operation.  This holder is used to
+> remember who is using this dax_device:
+>  - When it is the backend of a filesystem, the holder will be the
+>    instance of this filesystem.
+>  - When this pmem device is one of the targets in a mapped device, the
+>    holder will be this mapped device.  In this case, the mapped device
+>    has its own dax_device and it will follow the first rule.  So that we
+>    can finally track to the filesystem we needed.
+>
+> The holder and holder_ops will be set when filesystem is being mounted,
+> or an target device is being activated.
+>
+> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+> ---
+>  drivers/dax/super.c | 89 +++++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/dax.h | 32 ++++++++++++++++
+>  2 files changed, 121 insertions(+)
+>
+> diff --git a/drivers/dax/super.c b/drivers/dax/super.c
+> index e3029389d809..da5798e19d57 100644
+> --- a/drivers/dax/super.c
+> +++ b/drivers/dax/super.c
+> @@ -21,6 +21,9 @@
+>   * @cdev: optional character interface for "device dax"
+>   * @private: dax driver private data
+>   * @flags: state and boolean properties
+> + * @ops: operations for dax_device
+> + * @holder_data: holder of a dax_device: could be filesystem or mapped device
+> + * @holder_ops: operations for the inner holder
+>   */
+>  struct dax_device {
+>         struct inode inode;
+> @@ -28,6 +31,8 @@ struct dax_device {
+>         void *private;
+>         unsigned long flags;
+>         const struct dax_operations *ops;
+> +       void *holder_data;
+> +       const struct dax_holder_operations *holder_ops;
+>  };
+>
+>  static dev_t dax_devt;
+> @@ -193,6 +198,29 @@ int dax_zero_page_range(struct dax_device *dax_dev, pgoff_t pgoff,
+>  }
+>  EXPORT_SYMBOL_GPL(dax_zero_page_range);
+>
+> +int dax_holder_notify_failure(struct dax_device *dax_dev, u64 off,
+> +                             u64 len, int mf_flags)
+> +{
+> +       int rc, id;
+> +
+> +       id = dax_read_lock();
+> +       if (!dax_alive(dax_dev)) {
+> +               rc = -ENXIO;
+> +               goto out;
+> +       }
+> +
+> +       if (!dax_dev->holder_ops) {
+> +               rc = -EOPNOTSUPP;
 
-Ah a check for sudo without privs is in order. I'll add a check.
+I think it is ok to return success (0) for this case. All the caller
+of dax_holder_notify_failure() wants to know is if the notification
+was successfully delivered to the holder. If there is no holder
+present then there is nothing to report. This is minor enough for me
+to fix up locally if nothing else needs to be changed.
 
-> (I do have apparmor installed, but it's currently not enabled.  I
-> haven't done more experimentation since I'm a bit scared of running
-> "make XXX" as root for any package I randomly download from the net,
-> so I haven't explored trying to use kdevops, at least not until I set
-> up a sandboxed VM.  :-)
+> +               goto out;
+> +       }
+> +
+> +       rc = dax_dev->holder_ops->notify_failure(dax_dev, off, len, mf_flags);
+> +out:
+> +       dax_read_unlock(id);
+> +       return rc;
+> +}
+> +EXPORT_SYMBOL_GPL(dax_holder_notify_failure);
+> +
+>  #ifdef CONFIG_ARCH_HAS_PMEM_API
+>  void arch_wb_cache_pmem(void *addr, size_t size);
+>  void dax_flush(struct dax_device *dax_dev, void *addr, size_t size)
+> @@ -268,6 +296,10 @@ void kill_dax(struct dax_device *dax_dev)
+>
+>         clear_bit(DAXDEV_ALIVE, &dax_dev->flags);
+>         synchronize_srcu(&dax_srcu);
+> +
+> +       /* clear holder data */
+> +       dax_dev->holder_ops = NULL;
+> +       dax_dev->holder_data = NULL;
 
-Sure. A lot of that setup stuff on the host was added to make it
-even easier to use. It however is optional, as otherwise it just
-runs sanity checks.
+Isn't this another failure scenario? If kill_dax() is called while a
+holder is still holding the dax_device that seems to be another
+->notify_failure scenario to tell the holder that the device is going
+away and the holder has not released the device yet.
 
-> Including the Debian package names that should be installed would also
-> be helpful in kdevops/doc/requirements.md.  That's not a problem for
-> the experienced Debian developer, but one of my personal goals for
-> kvm-xfstests and gce-xfstests is to allow a random graduate student
-> who has presented some research file system like Betrfs at the Usenix
-> FAST conference to be able to easily run fstests.  And it sounds like
-> you have similar goals of "enabling the average user to also easily
-> run tests".
+>  }
+>  EXPORT_SYMBOL_GPL(kill_dax);
+>
+> @@ -409,6 +441,63 @@ void put_dax(struct dax_device *dax_dev)
+>  }
+>  EXPORT_SYMBOL_GPL(put_dax);
+>
+> +/**
+> + * dax_holder() - obtain the holder of a dax device
+> + * @dax_dev: a dax_device instance
+> +
+> + * Return: the holder's data which represents the holder if registered,
+> + * otherwize NULL.
+> + */
+> +void *dax_holder(struct dax_device *dax_dev)
+> +{
+> +       if (!dax_alive(dax_dev))
+> +               return NULL;
 
-Yup.
+It's safe for the holder to assume that it can de-reference
+->holder_data freely in its notify_handler callback because
+dax_holder_notify_failure() arranges for the callback to run in
+dax_read_lock() context.
 
-Did this requirements doc not suffice?
+This is another minor detail that I can fixup locally.
 
-https://github.com/mcgrof/kdevops/blob/master/docs/requirements.md
+> +
+> +       return dax_dev->holder_data;
+> +}
+> +EXPORT_SYMBOL_GPL(dax_holder);
+> +
+> +/**
+> + * dax_register_holder() - register a holder to a dax device
+> + * @dax_dev: a dax_device instance
+> + * @holder: a pointer to a holder's data which represents the holder
+> + * @ops: operations of this holder
+> +
+> + * Return: negative errno if an error occurs, otherwise 0.
+> + */
+> +int dax_register_holder(struct dax_device *dax_dev, void *holder,
+> +               const struct dax_holder_operations *ops)
+> +{
+> +       if (!dax_alive(dax_dev))
+> +               return -ENXIO;
+> +
+> +       if (cmpxchg(&dax_dev->holder_data, NULL, holder))
+> +               return -EBUSY;
+> +
+> +       dax_dev->holder_ops = ops;
+> +       return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(dax_register_holder);
+> +
+> +/**
+> + * dax_unregister_holder() - unregister the holder for a dax device
+> + * @dax_dev: a dax_device instance
+> + * @holder: the holder to be unregistered
+> + *
+> + * Return: negative errno if an error occurs, otherwise 0.
+> + */
+> +int dax_unregister_holder(struct dax_device *dax_dev, void *holder)
+> +{
+> +       if (!dax_alive(dax_dev))
+> +               return -ENXIO;
+> +
+> +       if (cmpxchg(&dax_dev->holder_data, holder, NULL) != holder)
+> +               return -EBUSY;
+> +       dax_dev->holder_ops = NULL;
+> +       return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(dax_unregister_holder);
+> +
+>  /**
+>   * inode_dax: convert a public inode into its dax_dev
+>   * @inode: An inode with i_cdev pointing to a dax_dev
+> diff --git a/include/linux/dax.h b/include/linux/dax.h
+> index 9fc5f99a0ae2..262d7bad131a 100644
+> --- a/include/linux/dax.h
+> +++ b/include/linux/dax.h
+> @@ -32,8 +32,24 @@ struct dax_operations {
+>         int (*zero_page_range)(struct dax_device *, pgoff_t, size_t);
+>  };
+>
+> +struct dax_holder_operations {
+> +       /*
+> +        * notify_failure - notify memory failure into inner holder device
+> +        * @dax_dev: the dax device which contains the holder
+> +        * @offset: offset on this dax device where memory failure occurs
+> +        * @len: length of this memory failure event
 
-> > but I never found one
-> > as easy to use as compiling the kernel and running a few make commands.
-> 
-> I've actually done a lot of work to optimize developer velocity using
-> my test framework.  So for example:
-> 
-> kvm-xfstests install-kconfig    # set up a kernel Kconfig suitable for kvm-xfstests and gce-xfstests
-> make
-> kvm-xfstests smoke     # boot the test appliance VM, using the kernel that was just built
-> 
-> And a user can test a particular stable kernel using a single command
-> line (this will checkout a particular kernel, and build it on a build
-> VM, and then launch tests in parallel on a dozen or so VM's):
-> 
-> gce-xfstests ltm -c ext4/all -g auto --repo stable.git --commit v5.15.28
+Forgive me if this has been discussed before, but since dax_operations
+are in terms of pgoff and nr pages and memory_failure() is in terms of
+pfns what was the rationale for making the function signature byte
+based?
 
-Neat we have parity.
-
-> ... or if we want to bisect a particular test failure, we might do
-> something like this:
-> 
-> gce-xfstests ltm -c ext4 generic/361 --bisect-good v5.15 --bisect-bad v5.16
-
-I don't have that.
-
-> ... or I can establish a watcher that will automatically build a git
-> tree when a branch on a git tree changes:
-> 
-> gce-xfstests ltm -c ext4/4k -g auto --repo next.git --watch master
-
-Nor this, neat.
-
-> Granted, this only works on GCE --- but feel free to take these ideas
-> and integrate them into kdevops if you feel inspired to do so.  :-)
-
-Thanks, will do. As you probably know by now each of these definitely
-takes a lot of time. Right now I a few other objectives on my goal list
-but I will gladly welcome patches to enable such a thing!
-
-> > There is the concept of results too and a possible way to share things..
-> > but this is getting a bit off topic and I don't want to bore people more.
-> 
-> This would be worth chatting about, perhaps at LSF/MM.  xfstests
-
-I'd like to just ask that to help folks who are not used to accepting
-the fact that xfstests is actually used for *all filesystems* that we
-just call it fstests. Calling it just xfstests confuses people. I recall
-people realizing even at LSFMM that xfstests is used *widely* by
-everyone to test other filesystems, and the issue I think is the name.
-
-If we just refer to it as fstests folks will get it.
-
-> already supports junit results files; we could convert it to TAP
-> format,
-
-Kunit went TAP.
-
-I don't care what format we choose, so long as we all strive for one
-thing. I'd be happy with TAP too
-
-> but junit has more functionality, so perhaps the right
-> approach is to have tools that can support both TAP and junit? 
-
-Sure.. another lesson I learned:
-
-if you just look for the test failure files *.bad... that will not
-tell you all tests that fail. Likewise if you just look at junit it
-also will not always tell you all the tests that fail. So kdevops looks
-at both...
-
-> What
-> about some way to establish interchange of test artifacts?  i.e.,
-> saving the kernel logs, and the generic/NNN.full and
-> generic/NNN.out.bad files?
-
-Yup, all great topics.
-
-Then .. the expunge files, so to help us express a baseline and also
-allows us to easily specify failures and bug URLs.  For instance I have:
-
-https://github.com/mcgrof/kdevops/blob/master/workflows/fstests/expunges/opensuse-leap/15.3/xfs/unassigned/all.txt
-
-And they look like:
-
-generic/047 # bsc#1178756
-generic/048 # bsc#1178756
-generic/068 # bsc#1178756
-
-And kernel.org bugzilla entries are with korg#1234 where 1234 would be
-the bug ID.
-
-> I have a large library of these test results and test artifacts, and
-> perhaps others would find it useful if we had a way sharing test
-> results between developers, especially we have multiple test
-> infrastructures that might be running ext4, f2fs, and xfs tests?
-
-Yes yes and yes. I've been dreaming up of perhaps a ledger.
-
-  Luis
+I want to get this series merged into linux-next shortly after
+v5.18-rc1. Then we can start working on incremental fixups rather
+resending the full series with these long reply cycles.
