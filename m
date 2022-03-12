@@ -2,45 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E66134D6FA8
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Mar 2022 16:14:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D5B64D6FB1
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Mar 2022 16:17:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231579AbiCLPPM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 12 Mar 2022 10:15:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43374 "EHLO
+        id S231794AbiCLPSq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 12 Mar 2022 10:18:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230322AbiCLPPL (ORCPT
+        with ESMTP id S231539AbiCLPSp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 12 Mar 2022 10:15:11 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AA0F14076D;
-        Sat, 12 Mar 2022 07:14:05 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id C07DAB80184;
-        Sat, 12 Mar 2022 15:14:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86FF8C340EC;
-        Sat, 12 Mar 2022 15:14:01 +0000 (UTC)
-Date:   Sat, 12 Mar 2022 10:13:59 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Ritesh Harjani <riteshh@linux.ibm.com>
-Cc:     linux-ext4@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@kernel.org
-Subject: Re: [PATCHv3 02/10] ext4: Fix ext4_fc_stats trace point
-Message-ID: <20220312101359.27b713b8@rorschach.local.home>
-In-Reply-To: <b4b9691414c35c62e570b723e661c80674169f9a.1647057583.git.riteshh@linux.ibm.com>
-References: <cover.1647057583.git.riteshh@linux.ibm.com>
-        <b4b9691414c35c62e570b723e661c80674169f9a.1647057583.git.riteshh@linux.ibm.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+        Sat, 12 Mar 2022 10:18:45 -0500
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FB3220C186
+        for <linux-fsdevel@vger.kernel.org>; Sat, 12 Mar 2022 07:17:38 -0800 (PST)
+Received: by mail-ed1-x52c.google.com with SMTP id t1so14101102edc.3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 12 Mar 2022 07:17:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Pxin1j5j6CcmsdIEAHJPFzyAPatANahFw6X6/cFoxnM=;
+        b=SU4xr4X6+2waARawoylMlsiCPWBIBETU0MciuaZEiWdrDk2hx5UmhtjVBnOvAg/j8Y
+         P5AEc3LcMVyzxEP5nHlv2Olz53uvkKS0fxrgUxGcRFmX98+Qq6Q6eMA/vwzJmqCvzO/O
+         j+/mBzE+2Hp2rK2NI//4QDTmfX1LS9FohQxULpnfR8tTvY+r5fNWcupz8YhvqN+Qfuv8
+         G8GJScHk8gdOrtgUA2dETidap7xy6kcyCZ5Ayh4fMOWadoH7T5SieRyl6yB9ATdxntP9
+         /mrpSZqnk7afxXSrRZfLG9VUNA1B3WEMpKhYck68O+2UM4Q/g0ZrqJAGonS296H4uEre
+         YMyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Pxin1j5j6CcmsdIEAHJPFzyAPatANahFw6X6/cFoxnM=;
+        b=wfoX31TRM74neVQ3KUPbxN6MBfpf+TVvBNDDyShodCA0+q9ASfLHtrqGaAsxdcDiwJ
+         Lp9GpH/iFnO0wIRBRVKcNdWJm0F0g4i2cn5C/Ab/35FNL6XeOXbro56CdY5ALaJT7wnT
+         T029rwJ9wRp9Nb/Q7C2gc7Bi+uS3rsiJc8Vc/nh8+NXuKBDy+7OqeoPgtPc7saMGCcm/
+         YhwsFOpfbHEbS+rX5TPzmlLj0cPZhg+OYS0g2bMQNOrGts2L785FTwgV2paKdRaXzJBA
+         cwKiSIHYdDWP9CsZgo39v1Syqyov7NrcjBwHh0uYiAjgkL9dNoYEyECCeC8RlLH+82WI
+         i+sQ==
+X-Gm-Message-State: AOAM5300F988dEcnG+xDOQYhpGUyNpZFx48Vsl5f/ioQEpi8woviFLev
+        fJ24awBR/+onTboZ+eInCFjvErdMI5jDbv/6Jon0
+X-Google-Smtp-Source: ABdhPJx4I73OmpEwBz9ywyJrJAWk2KLqVxBU5gzL/MTLzVaMx0+vl+oJ6aU8A6EOZmbP9Kz1KnrnrjH5oF/o50aIp00=
+X-Received: by 2002:a05:6402:2552:b0:416:a745:9626 with SMTP id
+ l18-20020a056402255200b00416a7459626mr13558015edb.405.1647098256718; Sat, 12
+ Mar 2022 07:17:36 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-6.7 required=5.0 tests=BAYES_00,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS,
+References: <20220228215935.748017-1-mic@digikod.net> <20220301092232.wh7m3fxbe7hyxmcu@wittgenstein>
+ <f6b63133-d555-a77c-0847-de15a9302283@digikod.net> <CAHC9VhQd3rL-13k0u39Krkdjp2_dtPfgEPxr=kawWUM9FjjOsw@mail.gmail.com>
+ <8d520529-4d3e-4874-f359-0ead9207cead@canonical.com> <CAHC9VhRrjqe1AdZYtjpzLJyBF6FTeQ4EcEwsOd2YMimA5_tzEA@mail.gmail.com>
+ <b848fe63-e86d-af38-5198-5519cb3c02ef@I-love.SAKURA.ne.jp>
+In-Reply-To: <b848fe63-e86d-af38-5198-5519cb3c02ef@I-love.SAKURA.ne.jp>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Sat, 12 Mar 2022 10:17:25 -0500
+Message-ID: <CAHC9VhQqx7B+6Ji_92eMZ1o9O_yaDQQoPVw92Av0Zznv7i8F8w@mail.gmail.com>
+Subject: Re: [PATCH v1] fs: Fix inconsistent f_mode
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     John Johansen <john.johansen@canonical.com>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Eric Paris <eparis@parisplace.org>,
+        James Morris <jmorris@namei.org>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Steve French <sfrench@samba.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@linux.microsoft.com>,
+        selinux@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -48,141 +83,49 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, 12 Mar 2022 11:09:47 +0530
-Ritesh Harjani <riteshh@linux.ibm.com> wrote:
+On Fri, Mar 11, 2022 at 8:35 PM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+> On 2022/03/12 7:15, Paul Moore wrote:
+> > The silence on this has been deafening :/  No thoughts on fixing, or
+> > not fixing OPEN_FMODE(), Al?
+>
+> On 2022/03/01 19:15, Micka=C3=ABl Sala=C3=BCn wrote:
+> >
+> > On 01/03/2022 10:22, Christian Brauner wrote:
+> >> That specific part seems a bit risky at first glance. Given that the
+> >> patch referenced is from 2009 this means we've been allowing O_WRONLY =
+|
+> >> O_RDWR to succeed for almost 13 years now.
+> >
+> > Yeah, it's an old bug, but we should keep in mind that a file descripto=
+r
+> > created with such flags cannot be used to read nor write. However,
+> > unfortunately, it can be used for things like ioctl, fstat, chdir=E2=80=
+=A6 I
+> > don't know if there is any user of this trick.
+>
+> I got a reply from Al at https://lkml.kernel.org/r/20090212032821.GD28946=
+@ZenIV.linux.org.uk
+> that sys_open(path, 3) is for ioctls only. And I'm using this trick when =
+opening something
+> for ioctls only.
 
-> ftrace's __print_symbolic() requires that any enum values used in the
-> symbol to string translation table be wrapped in a TRACE_DEFINE_ENUM
-> so that the enum value can be decoded from the ftrace ring buffer by
-> user space tooling.
-> 
-> This patch also fixes few other problems found in this trace point.
-> e.g. dereferencing structures in TP_printk which should not be done
-> at any cost.
-> 
-> Also to avoid checkpatch warnings, this patch removes those
-> whitespaces/tab stops issues.
-> 
+Thanks Tetsuo, that's helpful.  After reading your email I went
+digging around to see if this was documented anywhere, and buried in
+the open(2) manpage, towards the bottom under the "File access mode"
+header, is this paragraph:
 
-It is recommend now that when there's a fixes and a reported-by tag,
-you should include the link to the report when available.
+ "Linux reserves the special, nonstandard access mode 3 (binary 11)
+  in flags to mean: check for read and write permission on the file
+  and return a file descriptor that can't be used for reading or
+  writing.  This nonstandard access mode is used by some Linux
+  drivers to return a file descriptor that is to be used only for
+  device-specific ioctl(2) operations."
 
-Link: https://lore.kernel.org/all/20220221160916.333e6491@rorschach.local.home/
+I learned something new today :)  With this in mind it looks like
+doing a SELinux file:ioctl check is the correct thing to do.
 
--- Steve
+Thanks again Tetsuo for clearing things up.
 
-
-> Cc: stable@kernel.org
-> Fixes: commit aa75f4d3daae ("ext4: main fast-commit commit path")
-> Reported-by: Steven Rostedt <rostedt@goodmis.org>
-> Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> Reviewed-by: Harshad Shirwadkar <harshadshirwadkar@gmail.com>
-> ---
->  include/trace/events/ext4.h | 78 +++++++++++++++++++++++--------------
->  1 file changed, 49 insertions(+), 29 deletions(-)
-> 
-> diff --git a/include/trace/events/ext4.h b/include/trace/events/ext4.h
-> index 19e957b7f941..1a0b7030f72a 100644
-> --- a/include/trace/events/ext4.h
-> +++ b/include/trace/events/ext4.h
-> @@ -95,6 +95,17 @@ TRACE_DEFINE_ENUM(ES_REFERENCED_B);
->  	{ FALLOC_FL_COLLAPSE_RANGE,	"COLLAPSE_RANGE"},	\
->  	{ FALLOC_FL_ZERO_RANGE,		"ZERO_RANGE"})
->  
-> +TRACE_DEFINE_ENUM(EXT4_FC_REASON_XATTR);
-> +TRACE_DEFINE_ENUM(EXT4_FC_REASON_CROSS_RENAME);
-> +TRACE_DEFINE_ENUM(EXT4_FC_REASON_JOURNAL_FLAG_CHANGE);
-> +TRACE_DEFINE_ENUM(EXT4_FC_REASON_NOMEM);
-> +TRACE_DEFINE_ENUM(EXT4_FC_REASON_SWAP_BOOT);
-> +TRACE_DEFINE_ENUM(EXT4_FC_REASON_RESIZE);
-> +TRACE_DEFINE_ENUM(EXT4_FC_REASON_RENAME_DIR);
-> +TRACE_DEFINE_ENUM(EXT4_FC_REASON_FALLOC_RANGE);
-> +TRACE_DEFINE_ENUM(EXT4_FC_REASON_INODE_JOURNAL_DATA);
-> +TRACE_DEFINE_ENUM(EXT4_FC_REASON_MAX);
-> +
->  #define show_fc_reason(reason)						\
->  	__print_symbolic(reason,					\
->  		{ EXT4_FC_REASON_XATTR,		"XATTR"},		\
-> @@ -2723,41 +2734,50 @@ TRACE_EVENT(ext4_fc_commit_stop,
->  
->  #define FC_REASON_NAME_STAT(reason)					\
->  	show_fc_reason(reason),						\
-> -	__entry->sbi->s_fc_stats.fc_ineligible_reason_count[reason]
-> +	__entry->fc_ineligible_rc[reason]
->  
->  TRACE_EVENT(ext4_fc_stats,
-> -	    TP_PROTO(struct super_block *sb),
-> -
-> -	    TP_ARGS(sb),
-> +	TP_PROTO(struct super_block *sb),
->  
-> -	    TP_STRUCT__entry(
-> -		    __field(dev_t, dev)
-> -		    __field(struct ext4_sb_info *, sbi)
-> -		    __field(int, count)
-> -		    ),
-> +	TP_ARGS(sb),
->  
-> -	    TP_fast_assign(
-> -		    __entry->dev = sb->s_dev;
-> -		    __entry->sbi = EXT4_SB(sb);
-> -		    ),
-> +	TP_STRUCT__entry(
-> +		__field(dev_t, dev)
-> +		__array(unsigned int, fc_ineligible_rc, EXT4_FC_REASON_MAX)
-> +		__field(unsigned long, fc_commits)
-> +		__field(unsigned long, fc_ineligible_commits)
-> +		__field(unsigned long, fc_numblks)
-> +	),
->  
-> -	    TP_printk("dev %d:%d fc ineligible reasons:\n"
-> -		      "%s:%d, %s:%d, %s:%d, %s:%d, %s:%d, %s:%d, %s:%d, %s:%d, %s:%d; "
-> -		      "num_commits:%ld, ineligible: %ld, numblks: %ld",
-> -		      MAJOR(__entry->dev), MINOR(__entry->dev),
-> -		      FC_REASON_NAME_STAT(EXT4_FC_REASON_XATTR),
-> -		      FC_REASON_NAME_STAT(EXT4_FC_REASON_CROSS_RENAME),
-> -		      FC_REASON_NAME_STAT(EXT4_FC_REASON_JOURNAL_FLAG_CHANGE),
-> -		      FC_REASON_NAME_STAT(EXT4_FC_REASON_NOMEM),
-> -		      FC_REASON_NAME_STAT(EXT4_FC_REASON_SWAP_BOOT),
-> -		      FC_REASON_NAME_STAT(EXT4_FC_REASON_RESIZE),
-> -		      FC_REASON_NAME_STAT(EXT4_FC_REASON_RENAME_DIR),
-> -		      FC_REASON_NAME_STAT(EXT4_FC_REASON_FALLOC_RANGE),
-> -		      FC_REASON_NAME_STAT(EXT4_FC_REASON_INODE_JOURNAL_DATA),
-> -		      __entry->sbi->s_fc_stats.fc_num_commits,
-> -		      __entry->sbi->s_fc_stats.fc_ineligible_commits,
-> -		      __entry->sbi->s_fc_stats.fc_numblks)
-> +	TP_fast_assign(
-> +		int i;
->  
-> +		__entry->dev = sb->s_dev;
-> +		for (i = 0; i < EXT4_FC_REASON_MAX; i++) {
-> +			__entry->fc_ineligible_rc[i] =
-> +				EXT4_SB(sb)->s_fc_stats.fc_ineligible_reason_count[i];
-> +		}
-> +		__entry->fc_commits = EXT4_SB(sb)->s_fc_stats.fc_num_commits;
-> +		__entry->fc_ineligible_commits =
-> +			EXT4_SB(sb)->s_fc_stats.fc_ineligible_commits;
-> +		__entry->fc_numblks = EXT4_SB(sb)->s_fc_stats.fc_numblks;
-> +	),
-> +
-> +	TP_printk("dev %d,%d fc ineligible reasons:\n"
-> +		  "%s:%u, %s:%u, %s:%u, %s:%u, %s:%u, %s:%u, %s:%u, %s:%u, %s:%u "
-> +		  "num_commits:%lu, ineligible: %lu, numblks: %lu",
-> +		  MAJOR(__entry->dev), MINOR(__entry->dev),
-> +		  FC_REASON_NAME_STAT(EXT4_FC_REASON_XATTR),
-> +		  FC_REASON_NAME_STAT(EXT4_FC_REASON_CROSS_RENAME),
-> +		  FC_REASON_NAME_STAT(EXT4_FC_REASON_JOURNAL_FLAG_CHANGE),
-> +		  FC_REASON_NAME_STAT(EXT4_FC_REASON_NOMEM),
-> +		  FC_REASON_NAME_STAT(EXT4_FC_REASON_SWAP_BOOT),
-> +		  FC_REASON_NAME_STAT(EXT4_FC_REASON_RESIZE),
-> +		  FC_REASON_NAME_STAT(EXT4_FC_REASON_RENAME_DIR),
-> +		  FC_REASON_NAME_STAT(EXT4_FC_REASON_FALLOC_RANGE),
-> +		  FC_REASON_NAME_STAT(EXT4_FC_REASON_INODE_JOURNAL_DATA),
-> +		  __entry->fc_commits, __entry->fc_ineligible_commits,
-> +		  __entry->fc_numblks)
->  );
->  
->  #define DEFINE_TRACE_DENTRY_EVENT(__type)				\
-
+--=20
+paul-moore.com
