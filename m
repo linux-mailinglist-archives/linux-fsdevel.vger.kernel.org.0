@@ -2,266 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A9CDA4D6B21
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Mar 2022 00:55:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 311EC4D6BAE
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Mar 2022 02:36:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229693AbiCKXgb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Mar 2022 18:36:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43688 "EHLO
+        id S229613AbiCLBhQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Mar 2022 20:37:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36808 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229665AbiCKXga (ORCPT
+        with ESMTP id S229447AbiCLBhP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Mar 2022 18:36:30 -0500
-Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62B8FECB06
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Mar 2022 15:35:25 -0800 (PST)
-Received: by mail-pg1-x535.google.com with SMTP id 6so8722201pgg.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Mar 2022 15:35:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=13t7T+1H2gbtDRvuwDVr1bm3a+2J2xIzpet95fdBuh4=;
-        b=RIgXQdVfVb6lODawzvdTxr4kAtwLPsRjREsyVUC9K9FXvakpJNymy17e6FkbZx5Gvv
-         LeDcUKOKw2VoVa83HdzrEPE+n4lq8xuCULunoupKYxugg5JDuOq5trFf3fm42gMytdUt
-         ERkjzkjwpAU0zoJJj8eO/F2dpsyBXR6QjMjtDGcOsDfDr2CJipG41gyKlmh4HlNGNwWJ
-         vwkcU6O57nxaJWLRTl+0Hya9nMI7GHfWxpWRkjw+wUNIj2S8tgExKh9huQ4lWfIYS5K0
-         A8C1eX/+5cBiho3K4ItispCSGtWUy9zYfhJ3aJCa4TY2pJ8nVxCb77Wvrz7OmBeIoOjA
-         1QIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=13t7T+1H2gbtDRvuwDVr1bm3a+2J2xIzpet95fdBuh4=;
-        b=tevIy6++DZQ4xhnLjbvE6E2ew2uWhJq3gf+dCiKsMpmUtPKciZ6LlAX47TMBOJYziv
-         VlQSZA5kM58Y/sjdfGVraHsyvWcgZ3V6kXB9IICCG/AjTpN4tZwPjBRCHgPwI29QP5Z2
-         +5hDZByT42/8zDa/qdlA62ppKWQQ/wpaL/nCgV5lZwIPEBobrpQKfu90z+ULtywpkIPl
-         6Pa0HM0fX7NDVPYZfwDFeRO8JmCOG0dJ/IFvfESxmF6gjygNQyYZKSw81xB24X0Z+s6p
-         pWiyvWHBfH52QXYqMOvrnGgY7BtOm1ywUANP8W/ja3rW7OlBShKsItqunqPydoZN6mfY
-         Wo0w==
-X-Gm-Message-State: AOAM5332F7AyjKP7RMsMOPB74/b5Rzj9VELFOGR2+MIxBjxcnQemQbPt
-        mPJoeHz81zQFE5z71rvEiZcHY5yMWUKfwjEWcFiM/g==
-X-Google-Smtp-Source: ABdhPJy2YDPTfdvIBlgNDhr+xnU7i87kZGa7MwrAaA3nvXLDFGkcmuMWf5/eMsJKEsCu2BWW9StjfFYHKRuRIZXl8BI=
-X-Received: by 2002:a62:1481:0:b0:4f6:38c0:ed08 with SMTP id
- 123-20020a621481000000b004f638c0ed08mr12796868pfu.86.1647041724808; Fri, 11
- Mar 2022 15:35:24 -0800 (PST)
+        Fri, 11 Mar 2022 20:37:15 -0500
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 215E974633;
+        Fri, 11 Mar 2022 17:36:10 -0800 (PST)
+Received: from fsav115.sakura.ne.jp (fsav115.sakura.ne.jp [27.133.134.242])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 22C1YYxk016513;
+        Sat, 12 Mar 2022 10:34:34 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav115.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav115.sakura.ne.jp);
+ Sat, 12 Mar 2022 10:34:34 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav115.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 22C1YTKo016496
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Sat, 12 Mar 2022 10:34:34 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <b848fe63-e86d-af38-5198-5519cb3c02ef@I-love.SAKURA.ne.jp>
+Date:   Sat, 12 Mar 2022 10:34:27 +0900
 MIME-Version: 1.0
-References: <20220227120747.711169-1-ruansy.fnst@fujitsu.com> <20220227120747.711169-2-ruansy.fnst@fujitsu.com>
-In-Reply-To: <20220227120747.711169-2-ruansy.fnst@fujitsu.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Fri, 11 Mar 2022 15:35:13 -0800
-Message-ID: <CAPcyv4jAqV7dZdmGcKrG=f8sYmUXaL7YCQtME6GANywncwd+zg@mail.gmail.com>
-Subject: Re: [PATCH v11 1/8] dax: Introduce holder for dax_device
-To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Linux NVDIMM <nvdimm@lists.linux.dev>,
-        Linux MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "Darrick J. Wong" <djwong@kernel.org>, david <david@fromorbit.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jane Chu <jane.chu@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH v1] fs: Fix inconsistent f_mode
+Content-Language: en-US
+To:     Paul Moore <paul@paul-moore.com>,
+        John Johansen <john.johansen@canonical.com>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8?= =?UTF-8?Q?n?= <mic@digikod.net>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Eric Paris <eparis@parisplace.org>,
+        James Morris <jmorris@namei.org>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Steve French <sfrench@samba.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>,
+        selinux@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
+References: <20220228215935.748017-1-mic@digikod.net>
+ <20220301092232.wh7m3fxbe7hyxmcu@wittgenstein>
+ <f6b63133-d555-a77c-0847-de15a9302283@digikod.net>
+ <CAHC9VhQd3rL-13k0u39Krkdjp2_dtPfgEPxr=kawWUM9FjjOsw@mail.gmail.com>
+ <8d520529-4d3e-4874-f359-0ead9207cead@canonical.com>
+ <CAHC9VhRrjqe1AdZYtjpzLJyBF6FTeQ4EcEwsOd2YMimA5_tzEA@mail.gmail.com>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <CAHC9VhRrjqe1AdZYtjpzLJyBF6FTeQ4EcEwsOd2YMimA5_tzEA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Feb 27, 2022 at 4:08 AM Shiyang Ruan <ruansy.fnst@fujitsu.com> wrote:
->
-> To easily track filesystem from a pmem device, we introduce a holder for
-> dax_device structure, and also its operation.  This holder is used to
-> remember who is using this dax_device:
->  - When it is the backend of a filesystem, the holder will be the
->    instance of this filesystem.
->  - When this pmem device is one of the targets in a mapped device, the
->    holder will be this mapped device.  In this case, the mapped device
->    has its own dax_device and it will follow the first rule.  So that we
->    can finally track to the filesystem we needed.
->
-> The holder and holder_ops will be set when filesystem is being mounted,
-> or an target device is being activated.
->
-> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
-> ---
->  drivers/dax/super.c | 89 +++++++++++++++++++++++++++++++++++++++++++++
->  include/linux/dax.h | 32 ++++++++++++++++
->  2 files changed, 121 insertions(+)
->
-> diff --git a/drivers/dax/super.c b/drivers/dax/super.c
-> index e3029389d809..da5798e19d57 100644
-> --- a/drivers/dax/super.c
-> +++ b/drivers/dax/super.c
-> @@ -21,6 +21,9 @@
->   * @cdev: optional character interface for "device dax"
->   * @private: dax driver private data
->   * @flags: state and boolean properties
-> + * @ops: operations for dax_device
-> + * @holder_data: holder of a dax_device: could be filesystem or mapped device
-> + * @holder_ops: operations for the inner holder
->   */
->  struct dax_device {
->         struct inode inode;
-> @@ -28,6 +31,8 @@ struct dax_device {
->         void *private;
->         unsigned long flags;
->         const struct dax_operations *ops;
-> +       void *holder_data;
-> +       const struct dax_holder_operations *holder_ops;
->  };
->
->  static dev_t dax_devt;
-> @@ -193,6 +198,29 @@ int dax_zero_page_range(struct dax_device *dax_dev, pgoff_t pgoff,
->  }
->  EXPORT_SYMBOL_GPL(dax_zero_page_range);
->
-> +int dax_holder_notify_failure(struct dax_device *dax_dev, u64 off,
-> +                             u64 len, int mf_flags)
-> +{
-> +       int rc, id;
-> +
-> +       id = dax_read_lock();
-> +       if (!dax_alive(dax_dev)) {
-> +               rc = -ENXIO;
-> +               goto out;
-> +       }
-> +
-> +       if (!dax_dev->holder_ops) {
-> +               rc = -EOPNOTSUPP;
+On 2022/03/12 7:15, Paul Moore wrote:
+> The silence on this has been deafening :/  No thoughts on fixing, or
+> not fixing OPEN_FMODE(), Al?
 
-I think it is ok to return success (0) for this case. All the caller
-of dax_holder_notify_failure() wants to know is if the notification
-was successfully delivered to the holder. If there is no holder
-present then there is nothing to report. This is minor enough for me
-to fix up locally if nothing else needs to be changed.
-
-> +               goto out;
-> +       }
-> +
-> +       rc = dax_dev->holder_ops->notify_failure(dax_dev, off, len, mf_flags);
-> +out:
-> +       dax_read_unlock(id);
-> +       return rc;
-> +}
-> +EXPORT_SYMBOL_GPL(dax_holder_notify_failure);
-> +
->  #ifdef CONFIG_ARCH_HAS_PMEM_API
->  void arch_wb_cache_pmem(void *addr, size_t size);
->  void dax_flush(struct dax_device *dax_dev, void *addr, size_t size)
-> @@ -268,6 +296,10 @@ void kill_dax(struct dax_device *dax_dev)
+On 2022/03/01 19:15, Mickaël Salaün wrote:
+> 
+> On 01/03/2022 10:22, Christian Brauner wrote:
+>> That specific part seems a bit risky at first glance. Given that the
+>> patch referenced is from 2009 this means we've been allowing O_WRONLY |
+>> O_RDWR to succeed for almost 13 years now.
 >
->         clear_bit(DAXDEV_ALIVE, &dax_dev->flags);
->         synchronize_srcu(&dax_srcu);
-> +
-> +       /* clear holder data */
-> +       dax_dev->holder_ops = NULL;
-> +       dax_dev->holder_data = NULL;
+> Yeah, it's an old bug, but we should keep in mind that a file descriptor
+> created with such flags cannot be used to read nor write. However,
+> unfortunately, it can be used for things like ioctl, fstat, chdir… I
+> don't know if there is any user of this trick.
 
-Isn't this another failure scenario? If kill_dax() is called while a
-holder is still holding the dax_device that seems to be another
-->notify_failure scenario to tell the holder that the device is going
-away and the holder has not released the device yet.
-
->  }
->  EXPORT_SYMBOL_GPL(kill_dax);
->
-> @@ -409,6 +441,63 @@ void put_dax(struct dax_device *dax_dev)
->  }
->  EXPORT_SYMBOL_GPL(put_dax);
->
-> +/**
-> + * dax_holder() - obtain the holder of a dax device
-> + * @dax_dev: a dax_device instance
-> +
-> + * Return: the holder's data which represents the holder if registered,
-> + * otherwize NULL.
-> + */
-> +void *dax_holder(struct dax_device *dax_dev)
-> +{
-> +       if (!dax_alive(dax_dev))
-> +               return NULL;
-
-It's safe for the holder to assume that it can de-reference
-->holder_data freely in its notify_handler callback because
-dax_holder_notify_failure() arranges for the callback to run in
-dax_read_lock() context.
-
-This is another minor detail that I can fixup locally.
-
-> +
-> +       return dax_dev->holder_data;
-> +}
-> +EXPORT_SYMBOL_GPL(dax_holder);
-> +
-> +/**
-> + * dax_register_holder() - register a holder to a dax device
-> + * @dax_dev: a dax_device instance
-> + * @holder: a pointer to a holder's data which represents the holder
-> + * @ops: operations of this holder
-> +
-> + * Return: negative errno if an error occurs, otherwise 0.
-> + */
-> +int dax_register_holder(struct dax_device *dax_dev, void *holder,
-> +               const struct dax_holder_operations *ops)
-> +{
-> +       if (!dax_alive(dax_dev))
-> +               return -ENXIO;
-> +
-> +       if (cmpxchg(&dax_dev->holder_data, NULL, holder))
-> +               return -EBUSY;
-> +
-> +       dax_dev->holder_ops = ops;
-> +       return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(dax_register_holder);
-> +
-> +/**
-> + * dax_unregister_holder() - unregister the holder for a dax device
-> + * @dax_dev: a dax_device instance
-> + * @holder: the holder to be unregistered
-> + *
-> + * Return: negative errno if an error occurs, otherwise 0.
-> + */
-> +int dax_unregister_holder(struct dax_device *dax_dev, void *holder)
-> +{
-> +       if (!dax_alive(dax_dev))
-> +               return -ENXIO;
-> +
-> +       if (cmpxchg(&dax_dev->holder_data, holder, NULL) != holder)
-> +               return -EBUSY;
-> +       dax_dev->holder_ops = NULL;
-> +       return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(dax_unregister_holder);
-> +
->  /**
->   * inode_dax: convert a public inode into its dax_dev
->   * @inode: An inode with i_cdev pointing to a dax_dev
-> diff --git a/include/linux/dax.h b/include/linux/dax.h
-> index 9fc5f99a0ae2..262d7bad131a 100644
-> --- a/include/linux/dax.h
-> +++ b/include/linux/dax.h
-> @@ -32,8 +32,24 @@ struct dax_operations {
->         int (*zero_page_range)(struct dax_device *, pgoff_t, size_t);
->  };
->
-> +struct dax_holder_operations {
-> +       /*
-> +        * notify_failure - notify memory failure into inner holder device
-> +        * @dax_dev: the dax device which contains the holder
-> +        * @offset: offset on this dax device where memory failure occurs
-> +        * @len: length of this memory failure event
-
-Forgive me if this has been discussed before, but since dax_operations
-are in terms of pgoff and nr pages and memory_failure() is in terms of
-pfns what was the rationale for making the function signature byte
-based?
-
-I want to get this series merged into linux-next shortly after
-v5.18-rc1. Then we can start working on incremental fixups rather
-resending the full series with these long reply cycles.
+I got a reply from Al at https://lkml.kernel.org/r/20090212032821.GD28946@ZenIV.linux.org.uk
+that sys_open(path, 3) is for ioctls only. And I'm using this trick when opening something
+for ioctls only.
