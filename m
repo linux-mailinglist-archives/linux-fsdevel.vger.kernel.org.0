@@ -2,197 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F363D4D6CF4
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Mar 2022 06:58:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82DAA4D6D03
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Mar 2022 07:31:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229623AbiCLF7d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 12 Mar 2022 00:59:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59326 "EHLO
+        id S230360AbiCLGcB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 12 Mar 2022 01:32:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35686 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229379AbiCLF7c (ORCPT
+        with ESMTP id S230137AbiCLGcA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 12 Mar 2022 00:59:32 -0500
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AA5E49FA8;
-        Fri, 11 Mar 2022 21:58:27 -0800 (PST)
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 22C4V05s015317;
-        Sat, 12 Mar 2022 05:58:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
- subject : message-id : references : mime-version : content-type :
- in-reply-to; s=pp1; bh=cMTGxYgqvsVPZGigDD4Quz2L3girGmNcicNa0Cx9lnk=;
- b=QBO/9XbetpYgeaaJmVEAWKW1YNUwengJf9O8ZoTFpTaRUvYUhz5rZffvU7i1EQchw6qd
- B+JaKdEXJNse7lzQMKomoQvCHU2WWMdP7gR1VGi9MjqRiwQMtpKOqC7MsYVIlNEWhPzh
- UW4kHrSb7Opzju7bW0D0fmdJ2PVitBzwAjWNj4J2gYRkOzMbFAu3gYZx6aIlc1gR1gMP
- ixBgSB9Ffza/+V7Zr71fGt9K5EX0Jhgdc9F5IFqnbVAddS23wMj//tHZfxEwFN5kZQ1x
- YckVin4A9Hy84lIaKBx+j2XDawi9Ave+Fydxnkk75PH0KicEKx7dPrrQinZDzTtU5O0D vw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3erjas2pmj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 12 Mar 2022 05:58:25 +0000
-Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 22C5qR72021133;
-        Sat, 12 Mar 2022 05:58:25 GMT
-Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3erjas2pm7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 12 Mar 2022 05:58:25 +0000
-Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
-        by ppma06fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 22C5wLJU025993;
-        Sat, 12 Mar 2022 05:58:22 GMT
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
-        by ppma06fra.de.ibm.com with ESMTP id 3erjshg7fr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 12 Mar 2022 05:58:22 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 22C5wKg814221580
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 12 Mar 2022 05:58:20 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3E1D842041;
-        Sat, 12 Mar 2022 05:58:20 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C140B4203F;
-        Sat, 12 Mar 2022 05:58:19 +0000 (GMT)
-Received: from localhost (unknown [9.43.36.239])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Sat, 12 Mar 2022 05:58:19 +0000 (GMT)
-Date:   Sat, 12 Mar 2022 11:28:18 +0530
-From:   Ritesh Harjani <riteshh@linux.ibm.com>
-To:     Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc:     linux-ext4@vger.kernel.org,
-        Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
-        "Theodore Ts'o" <tytso@mit.edu>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Lukas Czerner <lczerner@redhat.com>
-Subject: Re: [PATCH 1/2] ext4: Make mb_optimize_scan option work with
- set/unset mount cmd
-Message-ID: <20220312055818.s6wdut3riqsqssq7@riteshh-domain>
-References: <c98970fe99f26718586d02e942f293300fb48ef3.1646732698.git.ojaswin@linux.ibm.com>
+        Sat, 12 Mar 2022 01:32:00 -0500
+Received: from beige.elm.relay.mailchannels.net (beige.elm.relay.mailchannels.net [23.83.212.16])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E866622321B
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Mar 2022 22:30:54 -0800 (PST)
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+        by relay.mailchannels.net (Postfix) with ESMTP id D625D120A0B;
+        Sat, 12 Mar 2022 06:23:12 +0000 (UTC)
+Received: from pdx1-sub0-mail-a285.dreamhost.com (unknown [127.0.0.6])
+        (Authenticated sender: dreamhost)
+        by relay.mailchannels.net (Postfix) with ESMTPA id 4202B120917;
+        Sat, 12 Mar 2022 06:23:12 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1647066192; a=rsa-sha256;
+        cv=none;
+        b=o3RnW6CW664n9zExlcBuqo54yHAkZUss8PuQZ5wJ5TkxLuRkR/hQLZfU8uweKD4dL3MGhP
+        CFnFYwrscnvCFglGHJYM4pLpFtR/wZ0ds1qqsHrog+GypiGk232RZFcv6BtcCt7AZVBnpK
+        p2M1x13+MoPC6DFy2+7E/P/d4mqUdq2MIK/mZDySFdmT0lZpA7L7gY/DbCLhAt5Zs9ClcF
+        g8YHWUjlWg3dKnHDL1IRJU3SzvxnpVA3RySqQX9Wq/VHzCm0t5RzJqMllPBpSymIYLOsfA
+        3FmYYJZ0IJHoXEb+gAZLG7nX0Z8DZGpVP2uREdTvz65X4elvtvx7uFz3KVWKUA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+        s=arc-2022; t=1647066192;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references:dkim-signature;
+        bh=ZT6VYtL+vw9T6Ub1vZFvKzNpePpg6HvywdN/5J0ms3A=;
+        b=KG/AGyrqjGG56k+ROYlE8sRPDAPbaF9wE6e6nysfp8ilOxa6wHBjvsft8+agHs5P2vGolx
+        cqfFGrLcdrp8cqGG75JZs/MB8mKn1RbaYCKBZU58JjqKPU/eLbiJbtt3zJHnFcC/liGb3c
+        uSNoXwhhZ6Z8VZcml7m38+nqntMElFxDbN/UFaeVi1TIAMUEIcpXSUisZ7MsG++zRa68SM
+        26xf2xT/jNofYgYjbXjVYlr6WdqYP7ERC/Y2OvI3yj3n/nuQ7cVLOnpu8aX9FdktxSxvMx
+        kYDqOkzcLFtM/Ee3uYaP3envgaBNPR88LnuVKlQ3cWhmoXeXLdXlaZ0C37SOoQ==
+ARC-Authentication-Results: i=1;
+        rspamd-74bfb75fc6-7fwp9;
+        auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+Received: from pdx1-sub0-mail-a285.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+        by 100.121.210.153 (trex/6.5.3);
+        Sat, 12 Mar 2022 06:23:12 +0000
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
+X-MailChannels-Auth-Id: dreamhost
+X-Ruddy-Hysterical: 4f10bc886adb8da1_1647066192610_2593148567
+X-MC-Loop-Signature: 1647066192610:1373089155
+X-MC-Ingress-Time: 1647066192609
+Received: from offworld (unknown [104.36.25.8])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: dave@stgolabs.net)
+        by pdx1-sub0-mail-a285.dreamhost.com (Postfix) with ESMTPSA id 4KFt5q2Knrz2D;
+        Fri, 11 Mar 2022 22:23:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
+        s=dreamhost; t=1647066192;
+        bh=t8Z4mZVXuCsWQ9U69iGvsRsjxPW8BY5M80Cl7ufLOQw=;
+        h=Date:From:To:Cc:Subject:Content-Type;
+        b=NRvqJfHoXh3CqdhILWYE1/0nVWER03Xp3QGPB7z3APIYb3SuCbwPikhqtqq3ln5Ei
+         PTEgQYnCol0+rmUNPmD1d7WjVczdFRK1WGZJ9xrXXBm63xn8zYgHjBIaDojOcX6+np
+         758+wIMM2QCToxANG6QRVzAdUx7pBwlmLa91JvYptow8WmdcsGn4X9yMkHdafWBOhZ
+         /9s2unNu1nNPUkDQn7LXItcajmZr5NTsrDXq5oCvEMHsf22ZtRmR8q1ySc1lxlT2sv
+         VVwNqECbwVTs0et2/6RT0L/Cap6xExXrjO4vb8RH0N5Xta2mvOy7HIBpiohMK7Fv7E
+         id+IUfZWxC+4w==
+Date:   Fri, 11 Mar 2022 22:14:17 -0800
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     Xiaoming Ni <nixiaoming@huawei.com>
+Cc:     Meng Tang <tangmeng@uniontech.com>, mcgrof@kernel.org,
+        keescook@chromium.org, yzaikin@google.com, ebiederm@xmission.com,
+        willy@infradead.org, nizhen@uniontech.com,
+        zhanglianjie@uniontech.com, sujiaxun@uniontech.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] fs/proc: optimize exactly register one ctl_table
+Message-ID: <20220312061417.bpdzf2fxf4pb2h6a@offworld>
+References: <20220303070847.28684-1-tangmeng@uniontech.com>
+ <624f92f0-c2a1-c7d9-a4ed-6d72c48d3ab3@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <c98970fe99f26718586d02e942f293300fb48ef3.1646732698.git.ojaswin@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: iHKFEVvEP5ya7vMvstucK7sJHYacx0PR
-X-Proofpoint-GUID: XQkt6CNHIgBRk-tWGEQzpxuyneYAHYO-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.816,Hydra:6.0.425,FMLib:17.11.64.514
- definitions=2022-03-12_02,2022-03-11_02,2022-02-23_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- adultscore=0 malwarescore=0 suspectscore=0 lowpriorityscore=0 phishscore=0
- bulkscore=0 mlxlogscore=999 clxscore=1015 spamscore=0 impostorscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2202240000 definitions=main-2203120032
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <624f92f0-c2a1-c7d9-a4ed-6d72c48d3ab3@huawei.com>
+User-Agent: NeoMutt/20211029
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-cc' Lukas too
+On Fri, 04 Mar 2022, Xiaoming Ni wrote:
+>For example,
+>
+>+ #define register_sysctl_init(path, table)
+>__register_sysctl_init(path, table, ARRAY_SIZE(table))
+>...
+>-		for (entry = table; entry->procname; entry++, node++)
+>+		for (entry = table; entry->procname && num > 0; entry++, node++, num--) {
 
-On 22/03/08 03:22PM, Ojaswin Mujoo wrote:
-> After moving to the new mount API, mb_optimize_scan mount option
-> handling was not working as expected due to the parsed value always
-> being overwritten by default. Refactor and fix this to the expected
-> behavior described below:
->
-> *  mb_optimize_scan=1 - On
-> *  mb_optimize_scan=0 - Off
-> *  mb_optimize_scan not passed - On if no. of BGs > threshold else off
-> *  Remounts retain previous value unless we explicitly pass the option
->    with a new value
+Furthermore the other iteratators could be consolidated such as:
 
-So with new mount API, once we call ctx_set/clear_mount_opt2 with
-EXT4_MOUNT2_MB_OPTIMIZE_SCAN, ext4_apply_options() will take care of
-setting/clearing it in sbi->s_mount_**
++#define for_each_table_entry(entry, table) \
++       for ((entry) = (table); (entry)->procname; (entry)++)
 
-Then with that small nit mentioned below, the patch looks good to me.
-Feel free to add after addressing it.
+.... probably before this patch.
 
-Reviewed-by: Ritesh Harjani <riteshh@linux.ibm.com>
-
-
->
-> Reported-by: Ritesh Harjani <riteshh@linux.ibm.com>
-> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> ---
->  fs/ext4/super.c | 24 ++++++++++++++----------
->  1 file changed, 14 insertions(+), 10 deletions(-)
->
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index c5021ca0a28a..cd0547fabd79 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -2021,12 +2021,12 @@ static int ext4_set_test_dummy_encryption(struct super_block *sb, char *arg)
->  #define EXT4_SPEC_s_commit_interval		(1 << 16)
->  #define EXT4_SPEC_s_fc_debug_max_replay		(1 << 17)
->  #define EXT4_SPEC_s_sb_block			(1 << 18)
-> +#define EXT4_SPEC_mb_optimize_scan		(1 << 19)
->
->  struct ext4_fs_context {
->  	char		*s_qf_names[EXT4_MAXQUOTAS];
->  	char		*test_dummy_enc_arg;
->  	int		s_jquota_fmt;	/* Format of quota to use */
-> -	int		mb_optimize_scan;
->  #ifdef CONFIG_EXT4_DEBUG
->  	int s_fc_debug_max_replay;
->  #endif
-> @@ -2451,12 +2451,17 @@ static int ext4_parse_param(struct fs_context *fc, struct fs_parameter *param)
->  			ctx_clear_mount_opt(ctx, m->mount_opt);
->  		return 0;
->  	case Opt_mb_optimize_scan:
-> -		if (result.int_32 != 0 && result.int_32 != 1) {
-> +		if (result.int_32 == 1) {
-> +			ctx_set_mount_opt2(ctx, EXT4_MOUNT2_MB_OPTIMIZE_SCAN);
-> +			ctx->spec |= EXT4_SPEC_mb_optimize_scan;
-> +		} else if (result.int_32 == 0) {
-> +			ctx_clear_mount_opt2(ctx, EXT4_MOUNT2_MB_OPTIMIZE_SCAN);
-> +			ctx->spec |= EXT4_SPEC_mb_optimize_scan;
-> +		} else {
->  			ext4_msg(NULL, KERN_WARNING,
->  				 "mb_optimize_scan should be set to 0 or 1.");
->  			return -EINVAL;
->  		}
-> -		ctx->mb_optimize_scan = result.int_32;
->  		return 0;
->  	}
->
-> @@ -4369,7 +4374,6 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
->
->  	/* Set defaults for the variables that will be set during parsing */
->  	ctx->journal_ioprio = DEFAULT_JOURNAL_IOPRIO;
-> -	ctx->mb_optimize_scan = DEFAULT_MB_OPTIMIZE_SCAN;
-
-So if we are not using this DEFAULT_MB_OPTIMIZE_SCAN macro anywhere else, then
-we should just kill it's definition too in the same patch.
-
->
->  	sbi->s_inode_readahead_blks = EXT4_DEF_INODE_READAHEAD_BLKS;
->  	sbi->s_sectors_written_start =
-> @@ -5320,12 +5324,12 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
->  	 * turned off by passing "mb_optimize_scan=0". This can also be
->  	 * turned on forcefully by passing "mb_optimize_scan=1".
->  	 */
-> -	if (ctx->mb_optimize_scan == 1)
-> -		set_opt2(sb, MB_OPTIMIZE_SCAN);
-> -	else if (ctx->mb_optimize_scan == 0)
-> -		clear_opt2(sb, MB_OPTIMIZE_SCAN);
-> -	else if (sbi->s_groups_count >= MB_DEFAULT_LINEAR_SCAN_THRESHOLD)
-> -		set_opt2(sb, MB_OPTIMIZE_SCAN);
-> +	if (!(ctx->spec & EXT4_SPEC_mb_optimize_scan)) {
-> +		if (sbi->s_groups_count >= MB_DEFAULT_LINEAR_SCAN_THRESHOLD)
-> +			set_opt2(sb, MB_OPTIMIZE_SCAN);
-> +		else
-> +			clear_opt2(sb, MB_OPTIMIZE_SCAN);
-> +	}
->
->  	err = ext4_mb_init(sb);
->  	if (err) {
-> --
-> 2.27.0
->
+Thanks,
+Davidlohr
