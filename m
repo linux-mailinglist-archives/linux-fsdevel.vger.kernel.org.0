@@ -2,150 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A08C64D80CE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Mar 2022 12:34:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85C414D8873
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Mar 2022 16:46:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238992AbiCNLex (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Mar 2022 07:34:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55830 "EHLO
+        id S242710AbiCNPrf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Mar 2022 11:47:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238997AbiCNLev (ORCPT
+        with ESMTP id S240508AbiCNPre (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Mar 2022 07:34:51 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EE813E5DE
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Mar 2022 04:33:42 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id DBD04210F9;
-        Mon, 14 Mar 2022 11:33:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1647257620; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=eGHhSLFNBdBdOpF1M7PClHm95e1yibe/HB1z0ZnwZaQ=;
-        b=zPOTvhHj4LPdwjPEdNrUoDpgUJXDftk3x0oF7xm+Lnsb+4qXLyOQG36+EdvFCGvTiGBFsA
-        g6jItxO531WyaHQOfxZKhpYnDrKs183lR+04hDQvTkIplo6XuDvQAV3yHp16T5ZfIxCe+H
-        uT/PbyWWbxwvuGKU+4VTOUxvEYm4m78=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1647257620;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=eGHhSLFNBdBdOpF1M7PClHm95e1yibe/HB1z0ZnwZaQ=;
-        b=JGHvJMsKSeO43Sm/BuepYYs6pPXZ+M23pEbU2ZcQyOiXyTD8HuD4noFfHjtXy2iRbuHfzo
-        ty2P+po+iWsEQrDA==
-Received: from quack3.suse.cz (unknown [10.100.200.198])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id C94ACA3B83;
-        Mon, 14 Mar 2022 11:33:40 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 7DB3CA0615; Mon, 14 Mar 2022 12:33:37 +0100 (CET)
-Date:   Mon, 14 Mar 2022 12:33:37 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, Srinivas <talkwithsrinivas@yahoo.co.in>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: Fanotify Directory exclusion not working when using
- FAN_MARK_MOUNT
-Message-ID: <20220314113337.j7slrb5srxukztje@quack3.lan>
-References: <1357949524.990839.1647084149724.ref@mail.yahoo.com>
- <1357949524.990839.1647084149724@mail.yahoo.com>
- <20220314084706.ncsk754gjywkcqxq@quack3.lan>
- <CAOQ4uxiDubhONM3w502anndtbqy73q_Kt5bOQ07zbATb8ndvVA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxiDubhONM3w502anndtbqy73q_Kt5bOQ07zbATb8ndvVA@mail.gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+        Mon, 14 Mar 2022 11:47:34 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2F303D493;
+        Mon, 14 Mar 2022 08:46:23 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id k8-20020a05600c1c8800b003899c7ac55dso188385wms.1;
+        Mon, 14 Mar 2022 08:46:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id;
+        bh=zFis4A1NtQeLxMnXhGuuPtQ60nrevPLqoS/Xvsr95sg=;
+        b=f5gs+TSGJckpSTyUcdUGwz3qLglSdo5mN09lNpCXxHa0XnYj3DWvdDm7wX0sal8OD6
+         VCTIqjK3fyL/7vT3gJRyfrBWbRZl9qFTjnuuTDDt8otL/yBRYBOF5Q0H8CyxWPpr9j1+
+         2K3R2IZNFMpl/H4UxGr7v2dKnUnQHFvyIx5iV1qEjFF4ncYBU6h31jYsHeipDzZ5qSKD
+         DwS0A79SinTg2gUAMMSCVScj6ZMXkxitv/tSuwy3l0V1bsqyLlh7yjKFTDBaMkUkJ5B5
+         yp2AfQijsgSUqx1alPpNUNNQfK77qE4kPIEfwtHx7LbVbOzas8jOfutOKrgSzsfwXy5l
+         zZYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=zFis4A1NtQeLxMnXhGuuPtQ60nrevPLqoS/Xvsr95sg=;
+        b=C1eteU0YgZWU5s83jjCRPR60oj+1AkBal/HK45VNvL9jkUyjQ+tLY8P1UpiHJtHzDQ
+         Mj0f7soeGQYScW4OwCw76SDXmBY5neFyYO3hiZ1Qo/4lFBswt4KwgkIetqOsgVCbMuaI
+         WrTY8Lz1Ky2OTO9qpRYepty25w/qX78EwvMVYP3mz9CloY65/iec6/naX0BYNqmMylpC
+         rTaWe5Nz9Qw7cf+Fhp84/ecbn3Yxc+VweiH1mRsXLnH8Srjp/Y5P9XPLg7uh6I9xingh
+         vLPy7hnv0eMUjgQpplTg36D70idvCA96hvoA0GLHyr1WrtAxL/HEALRTkGc0bLkTUpW1
+         kvKQ==
+X-Gm-Message-State: AOAM532G5i24SgnrbfVEOZZXyp8AqvYFd86sPpP7uoxGba+LcTTFG4hC
+        z5sMIuuog8bq/m96tsmSqHGGNvgp1Zw=
+X-Google-Smtp-Source: ABdhPJxjTgxk96MWcEpvJh3cNtenE36+KhpGmm+RrGV601V018GOEGRLsFO4ZsU2pVU/3AWNQnCMIA==
+X-Received: by 2002:a7b:c4d8:0:b0:386:69ef:6ca with SMTP id g24-20020a7bc4d8000000b0038669ef06camr18046295wmk.6.1647272782115;
+        Mon, 14 Mar 2022 08:46:22 -0700 (PDT)
+Received: from felia.fritz.box (200116b82624ff0060a4091d550340a9.dip.versatel-1u1.de. [2001:16b8:2624:ff00:60a4:91d:5503:40a9])
+        by smtp.gmail.com with ESMTPSA id r186-20020a1c2bc3000000b0037bdd94a4e5sm15371507wmr.39.2022.03.14.08.46.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Mar 2022 08:46:21 -0700 (PDT)
+From:   Lukas Bulwahn <lukas.bulwahn@gmail.com>
+To:     Benjamin LaHaise <bcrl@kvack.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Subject: [PATCH] aio: drop needless assignment in aio_read()
+Date:   Mon, 14 Mar 2022 16:46:05 +0100
+Message-Id: <20220314154605.11498-1-lukas.bulwahn@gmail.com>
+X-Mailer: git-send-email 2.17.1
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 14-03-22 11:28:23, Amir Goldstein wrote:
-> On Mon, Mar 14, 2022 at 10:47 AM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Sat 12-03-22 11:22:29, Srinivas wrote:
-> > > If a  process calls fanotify_mark(fd, FAN_MARK_ADD | FAN_MARK_MOUNT,
-> > > FAN_OPEN_PERM, 0, "/mountpoint") no other directory exclusions can be
-> > > applied.
-> > >
-> > > However a path (file) exclusion can still be applied using
-> > >
-> > > fanotify_mark(fd, FAN_MARK_ADD | FAN_MARK_IGNORED_MASK |
-> > > FAN_MARK_IGNORED_SURV_MODIFY, FAN_OPEN_PERM | FAN_CLOSE_WRITE, AT_FDCWD,
-> > > "/tmp/fio/abc");  ===> path exclusion that works.
-> > >
-> > > I think the directory exclusion not working is a bug as otherwise AV
-> > > solutions cant exclude directories when using FAN_MARK_MOUNT.
-> > >
-> > > I believe the change should be simple since we are already supporting
-> > > path exclusions. So we should be able to add the same for the directory
-> > > inode.
-> > >
-> > > 215676 – fanotify Ignoring/Excluding a Directory not working with
-> > > FAN_MARK_MOUNT (kernel.org)
-> >
-> > Thanks for report! So I believe this should be fixed by commit 4f0b903ded
-> > ("fsnotify: fix merge with parent's ignored mask") which is currently
-> > sitting in my tree and will go to Linus during the merge (opening in a
-> > week).
-> 
-> Actually, in a closer look, that fix alone is not enough.
-> 
-> With the current upstream kernel this should work to exclude events
-> in a directory:
-> 
-> fanotify_mark(fd, FAN_MARK_ADD, FAN_EVENT_ON_CHILD |
->                        FAN_OPEN_PERM | FAN_CLOSE_WRITE,
->                        AT_FDCWD, "/tmp/fio/");
-> fanotify_mark(fd, FAN_MARK_ADD | FAN_MARK_IGNORED_MASK |
->                        FAN_MARK_IGNORED_SURV_MODIFY,
->                        FAN_OPEN_PERM | FAN_CLOSE_WRITE,
->                        AT_FDCWD, "/tmp/fio/");
-> 
-> The first call tells fanotify that the inode mark on "/tmp/foo" is
-> interested in events on children (and not only on self).
-> The second call sets the ignored mark for open/close events.
-> 
-> The fix only removed the need to include the events in the
-> first call.
-> 
-> Should we also interpret FAN_EVENT_ON_CHILD correctly
-> in a call to fanotify_mark() to set an ignored mask?
-> Possibly. But that has not been done yet.
-> I can look into that if there is interest.
+Commit 84c4e1f89fef ("aio: simplify - and fix - fget/fput for io_submit()")
+refactored aio_read() and some error cases into early return, which made
+some intermediate assignment of the return variable needless.
 
-Oh, right. I forgot about the need for FAN_EVENT_ON_CHILD in the
-mark->mask. It seems we can set FAN_EVENT_ON_CHILD in the ignored_mask as
-well but it just gets ignored currently. So we would need to propagate it
-even from ignore_mask to inode->i_fsnotify_mask. But send_to_group() would
-also need to be more careful now with ignore masks and apply them from
-parent only if the particular mark has FAN_EVENT_ON_CHILD in the ignore
-mask. Interestingly fanotify_group_event_mask() does explicitely apply
-ignore_mask from the parent regardless of FAN_EVENT_ON_CHILD flags. So
-there is some inconsistency there and it would need some tweaking...
+Drop this needless assignment in aio_read().
 
-Overall I guess the functionality makes sense to me (in fact it is somewhat
-surprising it is not working like that from the beginning), API-wise it is
-not outright horrible, and technically it seems doable. What do you think?
+No functional change. No change in resulting object code.
 
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+---
+I cc'ed Linus as he is the author of the referred commit, but I expect
+that this clean-up just goes the usual way to Al Viro and then in some
+git pull to Linus.
 
-> In retrospect, FAN_EVENT_ON_CHILD and FAN_ONDIR would have
-> been more clear as FAN_MARK_ flags, but that's too late.
+ fs/aio.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Yeah, it is like this since fanotify has been created so no real chance to
-change that.
-
-								Honza
+diff --git a/fs/aio.c b/fs/aio.c
+index eb0948bb74f1..7b761d9d774a 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -1552,7 +1552,6 @@ static int aio_read(struct kiocb *req, const struct iocb *iocb,
+ 	file = req->ki_filp;
+ 	if (unlikely(!(file->f_mode & FMODE_READ)))
+ 		return -EBADF;
+-	ret = -EINVAL;
+ 	if (unlikely(!file->f_op->read_iter))
+ 		return -EINVAL;
+ 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.17.1
+
