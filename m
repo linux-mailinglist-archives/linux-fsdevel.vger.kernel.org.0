@@ -2,140 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B4294D8099
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Mar 2022 12:25:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A08C64D80CE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Mar 2022 12:34:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238888AbiCNL0f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Mar 2022 07:26:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40566 "EHLO
+        id S238992AbiCNLex (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Mar 2022 07:34:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230506AbiCNL0e (ORCPT
+        with ESMTP id S238997AbiCNLev (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Mar 2022 07:26:34 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7A3C3B029;
-        Mon, 14 Mar 2022 04:25:24 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        Mon, 14 Mar 2022 07:34:51 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EE813E5DE
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Mar 2022 04:33:42 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id DBD04210F9;
+        Mon, 14 Mar 2022 11:33:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1647257620; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=eGHhSLFNBdBdOpF1M7PClHm95e1yibe/HB1z0ZnwZaQ=;
+        b=zPOTvhHj4LPdwjPEdNrUoDpgUJXDftk3x0oF7xm+Lnsb+4qXLyOQG36+EdvFCGvTiGBFsA
+        g6jItxO531WyaHQOfxZKhpYnDrKs183lR+04hDQvTkIplo6XuDvQAV3yHp16T5ZfIxCe+H
+        uT/PbyWWbxwvuGKU+4VTOUxvEYm4m78=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1647257620;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=eGHhSLFNBdBdOpF1M7PClHm95e1yibe/HB1z0ZnwZaQ=;
+        b=JGHvJMsKSeO43Sm/BuepYYs6pPXZ+M23pEbU2ZcQyOiXyTD8HuD4noFfHjtXy2iRbuHfzo
+        ty2P+po+iWsEQrDA==
+Received: from quack3.suse.cz (unknown [10.100.200.198])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0DD5F60F90;
-        Mon, 14 Mar 2022 11:25:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16D21C340E9;
-        Mon, 14 Mar 2022 11:25:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647257123;
-        bh=SiP4Qn2jTFv6RByEUSvXD5ODclyZr9Ye1fB0nauJE9s=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DTq4YS+/kdeLb9sfvgSO+mfansL4Mxq+qR1ZcJBTNqqOqg+mIm1bHTv31a3/t94CY
-         GbTde97QOhozBEM2PqvsfbHAnL0Y/IX4h/9uaVj6aEGSjtEwl0orobP2JrP6v5e2RJ
-         /WSrO1ISmOkoLMTyWEBHLStmBCXFT1oUk6g7XH3kSANQuqSxEr7AH9w2e0v/ZIEfMg
-         yhwmoe4N2oOMMNh/Ez6MDhp3OH7RiliADZemorsRGQRjb/hVEqb47Yc5PsAHF13VN1
-         C3hKXhX8pK0/CECnJ3mN4zDbmEtzov5rszzJkgAqAWc0tNel14Ju/PL3LAr567bYWz
-         V4QZ2YDqsaUmA==
-Date:   Mon, 14 Mar 2022 11:25:20 +0000
-From:   Filipe Manana <fdmanana@kernel.org>
-To:     Naohiro Aota <Naohiro.Aota@wdc.com>
-Cc:     "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "david@fromorbit.com" <david@fromorbit.com>
-Subject: Re: [PATCH 1/4] btrfs: mark resumed async balance as writing
-Message-ID: <Yi8mIFooTUybN+l0@debian9.Home>
-References: <cover.1646983176.git.naohiro.aota@wdc.com>
- <65730df62341500bfcbde7d86eeaa3e9b15f1bcb.1646983176.git.naohiro.aota@wdc.com>
- <YitX5fpZcC/P70o6@debian9.Home>
- <20220314022922.e4k5wxob6rqjw3aw@naota-xeon>
+        by relay2.suse.de (Postfix) with ESMTPS id C94ACA3B83;
+        Mon, 14 Mar 2022 11:33:40 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 7DB3CA0615; Mon, 14 Mar 2022 12:33:37 +0100 (CET)
+Date:   Mon, 14 Mar 2022 12:33:37 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, Srinivas <talkwithsrinivas@yahoo.co.in>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: Fanotify Directory exclusion not working when using
+ FAN_MARK_MOUNT
+Message-ID: <20220314113337.j7slrb5srxukztje@quack3.lan>
+References: <1357949524.990839.1647084149724.ref@mail.yahoo.com>
+ <1357949524.990839.1647084149724@mail.yahoo.com>
+ <20220314084706.ncsk754gjywkcqxq@quack3.lan>
+ <CAOQ4uxiDubhONM3w502anndtbqy73q_Kt5bOQ07zbATb8ndvVA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20220314022922.e4k5wxob6rqjw3aw@naota-xeon>
-X-Spam-Status: No, score=-8.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxiDubhONM3w502anndtbqy73q_Kt5bOQ07zbATb8ndvVA@mail.gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 14, 2022 at 02:29:22AM +0000, Naohiro Aota wrote:
-> On Fri, Mar 11, 2022 at 02:08:37PM +0000, Filipe Manana wrote:
-> > On Fri, Mar 11, 2022 at 04:38:02PM +0900, Naohiro Aota wrote:
-> > > When btrfs balance is interrupted with umount, the background balance
-> > > resumes on the next mount. There is a potential deadlock with FS freezing
-> > > here like as described in commit 26559780b953 ("btrfs: zoned: mark
-> > > relocation as writing").
-> > > 
-> > > Mark the process as sb_writing. To preserve the order of sb_start_write()
-> > > (or mnt_want_write_file()) and btrfs_exclop_start(), call sb_start_write()
-> > > at btrfs_resume_balance_async() before taking fs_info->super_lock.
-> > > 
-> > > Fixes: 5accdf82ba25 ("fs: Improve filesystem freezing handling")
-> > 
-> > This seems odd to me. I read the note you left on the cover letter about
-> > this, but honestly I don't think it's fair to blame that commit. I see
-> > it more as btrfs specific problem.
+On Mon 14-03-22 11:28:23, Amir Goldstein wrote:
+> On Mon, Mar 14, 2022 at 10:47 AM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Sat 12-03-22 11:22:29, Srinivas wrote:
+> > > If a  process calls fanotify_mark(fd, FAN_MARK_ADD | FAN_MARK_MOUNT,
+> > > FAN_OPEN_PERM, 0, "/mountpoint") no other directory exclusions can be
+> > > applied.
+> > >
+> > > However a path (file) exclusion can still be applied using
+> > >
+> > > fanotify_mark(fd, FAN_MARK_ADD | FAN_MARK_IGNORED_MASK |
+> > > FAN_MARK_IGNORED_SURV_MODIFY, FAN_OPEN_PERM | FAN_CLOSE_WRITE, AT_FDCWD,
+> > > "/tmp/fio/abc");  ===> path exclusion that works.
+> > >
+> > > I think the directory exclusion not working is a bug as otherwise AV
+> > > solutions cant exclude directories when using FAN_MARK_MOUNT.
+> > >
+> > > I believe the change should be simple since we are already supporting
+> > > path exclusions. So we should be able to add the same for the directory
+> > > inode.
+> > >
+> > > 215676 – fanotify Ignoring/Excluding a Directory not working with
+> > > FAN_MARK_MOUNT (kernel.org)
+> >
+> > Thanks for report! So I believe this should be fixed by commit 4f0b903ded
+> > ("fsnotify: fix merge with parent's ignored mask") which is currently
+> > sitting in my tree and will go to Linus during the merge (opening in a
+> > week).
 > 
-> Yeah, I was really not sure how I should write the tag. The issue is
-> we missed to add sb_start_write() after this commit.
+> Actually, in a closer look, that fix alone is not enough.
 > 
-> > Plus it's a 10 years old commit, so instead of the Fixes tag, adding a
-> > minimal kernel version to the CC stable tag below makes more sense.
+> With the current upstream kernel this should work to exclude events
+> in a directory:
 > 
-> So, only with "Cc: stable@vger.kernel.org # 3.6+" ?
+> fanotify_mark(fd, FAN_MARK_ADD, FAN_EVENT_ON_CHILD |
+>                        FAN_OPEN_PERM | FAN_CLOSE_WRITE,
+>                        AT_FDCWD, "/tmp/fio/");
+> fanotify_mark(fd, FAN_MARK_ADD | FAN_MARK_IGNORED_MASK |
+>                        FAN_MARK_IGNORED_SURV_MODIFY,
+>                        FAN_OPEN_PERM | FAN_CLOSE_WRITE,
+>                        AT_FDCWD, "/tmp/fio/");
+> 
+> The first call tells fanotify that the inode mark on "/tmp/foo" is
+> interested in events on children (and not only on self).
+> The second call sets the ignored mark for open/close events.
+> 
+> The fix only removed the need to include the events in the
+> first call.
+> 
+> Should we also interpret FAN_EVENT_ON_CHILD correctly
+> in a call to fanotify_mark() to set an ignored mask?
+> Possibly. But that has not been done yet.
+> I can look into that if there is interest.
 
-Looking at kernel.org the oldest stable kernel is 4.9, so anything older
-than that is pointless.
+Oh, right. I forgot about the need for FAN_EVENT_ON_CHILD in the
+mark->mask. It seems we can set FAN_EVENT_ON_CHILD in the ignored_mask as
+well but it just gets ignored currently. So we would need to propagate it
+even from ignore_mask to inode->i_fsnotify_mask. But send_to_group() would
+also need to be more careful now with ignore masks and apply them from
+parent only if the particular mark has FAN_EVENT_ON_CHILD in the ignore
+mask. Interestingly fanotify_group_event_mask() does explicitely apply
+ignore_mask from the parent regardless of FAN_EVENT_ON_CHILD flags. So
+there is some inconsistency there and it would need some tweaking...
 
-> 
-> > > Cc: stable@vger.kernel.org
-> > > Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
-> > > ---
-> > >  fs/btrfs/volumes.c | 2 ++
-> > >  1 file changed, 2 insertions(+)
-> > > 
-> > > diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-> > > index 1be7cb2f955f..0d27d8d35c7a 100644
-> > > --- a/fs/btrfs/volumes.c
-> > > +++ b/fs/btrfs/volumes.c
-> > > @@ -4443,6 +4443,7 @@ static int balance_kthread(void *data)
-> > >  	if (fs_info->balance_ctl)
-> > >  		ret = btrfs_balance(fs_info, fs_info->balance_ctl, NULL);
-> > >  	mutex_unlock(&fs_info->balance_mutex);
-> > > +	sb_end_write(fs_info->sb);
-> > >  
-> > >  	return ret;
-> > >  }
-> > > @@ -4463,6 +4464,7 @@ int btrfs_resume_balance_async(struct btrfs_fs_info *fs_info)
-> > >  		return 0;
-> > >  	}
-> > >  
-> > > +	sb_start_write(fs_info->sb);
-> > 
-> > I don't understand this.
-> > 
-> > We are doing the sb_start_write() here, in the task doing the mount, and then
-> > we do the sb_end_write() at the kthread that runs balance_kthread().
-> 
-> Oops, I made a mistake here. It actually printed the lockdep warning
-> "lock held when returning to user space!".
-> 
-> > Why not do the sb_start_write() in the kthread?
-> > 
-> > This is also buggy in the case the call below to kthread_run() fails, as
-> > we end up never calling sb_end_write().
-> 
-> I was trying to preserve the lock taking order: sb_start_write() ->
-> spin_lock(fs_info->super_lock). But, it might not be a big deal as
-> long as we don't call sb_start_write() in the super_lock.
-> 
-> > Thanks.
-> > 
-> > >  	spin_lock(&fs_info->super_lock);
-> > >  	ASSERT(fs_info->exclusive_operation == BTRFS_EXCLOP_BALANCE_PAUSED);
-> > >  	fs_info->exclusive_operation = BTRFS_EXCLOP_BALANCE;
-> > > -- 
-> > > 2.35.1
-> > > 
+Overall I guess the functionality makes sense to me (in fact it is somewhat
+surprising it is not working like that from the beginning), API-wise it is
+not outright horrible, and technically it seems doable. What do you think?
+
+
+> In retrospect, FAN_EVENT_ON_CHILD and FAN_ONDIR would have
+> been more clear as FAN_MARK_ flags, but that's too late.
+
+Yeah, it is like this since fanotify has been created so no real chance to
+change that.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
