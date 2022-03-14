@@ -2,53 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AF27C4D8D45
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Mar 2022 20:50:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C8D5C4D8D61
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Mar 2022 20:52:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244649AbiCNTv6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Mar 2022 15:51:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35424 "EHLO
+        id S244500AbiCNTxL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Mar 2022 15:53:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244628AbiCNTvx (ORCPT
+        with ESMTP id S244741AbiCNTw1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Mar 2022 15:51:53 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D922C3EF01;
-        Mon, 14 Mar 2022 12:50:25 -0700 (PDT)
+        Mon, 14 Mar 2022 15:52:27 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B6573FD83;
+        Mon, 14 Mar 2022 12:51:00 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 0E17BB80F96;
-        Mon, 14 Mar 2022 19:50:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AF52C340EE;
-        Mon, 14 Mar 2022 19:50:20 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CE301611BD;
+        Mon, 14 Mar 2022 19:50:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFBBEC340EE;
+        Mon, 14 Mar 2022 19:50:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647287421;
-        bh=pyw+uUsWl3RVdP8v6qowJOWyQJdm2VaPP/Bj2TK1ByM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V35xPzC0SANL4OOpntptnxwfH3nLIYI5VEaA9BrwfwAu8bvPOHyAqVUw21vYwVrAk
-         BE5/t7c15HReRasVusQQv81fElEBG3vFWSvir6e8NJI0FHrAmInGhKkxkr64Ge2tSt
-         3Y5mzD6EWbBR2HGUd2PvFkmH64XSZ6Ije2djTBcdzpvhRp/Y+bGCgBRz4Q0WVx9TqW
-         O4H6xttVahB95D7TRtPhoEdwKcjVctFHjWNYaQazpf9nZQlppkShxTpdFuo2PA2xNb
-         FmQWRJtWbFVp4Pz8M8/ZiWhPityGzRb61SWCJO6KTXLpHDReAXGSpmLEadGt/jWb01
-         VkyTxadUGALpQ==
-From:   Nathan Chancellor <nathan@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>, x86@kernel.org
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        llvm@lists.linux.dev, Nathan Chancellor <nathan@kernel.org>
-Subject: [PATCH 2/2] x86/Kconfig: Do not allow CONFIG_X86_X32_ABI=y with llvm-objcopy
-Date:   Mon, 14 Mar 2022 12:48:42 -0700
-Message-Id: <20220314194842.3452-3-nathan@kernel.org>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220314194842.3452-1-nathan@kernel.org>
-References: <20220314194842.3452-1-nathan@kernel.org>
+        s=k20201202; t=1647287427;
+        bh=On3lskfefDO7Bl1q7PKJQXQAMhTxwnHGKT6na9XT9Wo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=WFZcNWXFGZVA+2W7kyzs6SFdlrv3FyV/aJpjGOYQrp3rgQAHpkzRjFdMvwqDhPEVY
+         8HccX0Lo2E1PNfiZQDUrzkEZYvszKgIDh+jEv4UlieiUh562ltwNsZ+yC+z+A/sAvG
+         VQMJafX4Ed9uPokPP2M97s8W6Z/uFiwrLEVIODiu9Lw4BvxBUz98r92nboGi0+u9DC
+         rsyoWTTLz4oO2dWRjOaZxGA3OhCqhH9OiqCZtdX0G5qpVM+atFaGbdz5ZlHsYog415
+         LYR+jbkEfGOWoZwkJxMlwjdHCgo0dnUlWfhid2a5xtgycNP4N1S4HQNjiP7N/dP0ey
+         hYnS7fa2QRuvg==
+Date:   Mon, 14 Mar 2022 19:50:25 +0000
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Avi Shchislowski <Avi.Shchislowski@wdc.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, Bart Van Assche <bvanassche@acm.org>,
+        "Bean Huo (beanhuo)" <beanhuo@micron.com>,
+        "Luca Porzio (lporzio)" <lporzio@micron.com>,
+        Manjong Lee <mj0123.lee@samsung.com>,
+        "david@fromorbit.com" <david@fromorbit.com>,
+        "hch@lst.de" <hch@lst.de>, "kbusch@kernel.org" <kbusch@kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>,
+        "sagi@grimberg.me" <sagi@grimberg.me>,
+        "song@kernel.org" <song@kernel.org>,
+        "seunghwan.hyun@samsung.com" <seunghwan.hyun@samsung.com>,
+        "sookwan7.kim@samsung.com" <sookwan7.kim@samsung.com>,
+        "nanich.lee@samsung.com" <nanich.lee@samsung.com>,
+        "woosung2.lee@samsung.com" <woosung2.lee@samsung.com>,
+        "yt0928.kim@samsung.com" <yt0928.kim@samsung.com>,
+        "junho89.kim@samsung.com" <junho89.kim@samsung.com>,
+        "jisoo2146.oh@samsung.com" <jisoo2146.oh@samsung.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: Re: [PATCH 2/2] block: remove the per-bio/request write hint.
+Message-ID: <Yi+cgUXaSx+PN10B@gmail.com>
+References: <CO3PR08MB797524ACBF04B861D48AF612DC0B9@CO3PR08MB7975.namprd08.prod.outlook.com>
+ <e98948ae-1709-32ef-e1e4-063be38609b1@kernel.dk>
+ <CO3PR08MB797562AAE72BC201EB951C6CDC0B9@CO3PR08MB7975.namprd08.prod.outlook.com>
+ <d477c7bf-f3a7-ccca-5472-f9cbb05b83c1@kernel.dk>
+ <c27a5ec3-f683-d2a7-d5e7-fd54d2baa278@acm.org>
+ <PH0PR08MB7889642784B2E1FC1799A828DB0B9@PH0PR08MB7889.namprd08.prod.outlook.com>
+ <ef77ef36-df95-8658-ff54-7d8046f5d0e7@kernel.dk>
+ <bf221ef4-f4d0-4431-02f3-ef3bea0e8cb2@acm.org>
+ <800fa121-5da2-e4c0-d756-991f007f0ad4@kernel.dk>
+ <SN6PR04MB3872231050F8585FFC6824C59A0F9@SN6PR04MB3872.namprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SN6PR04MB3872231050F8585FFC6824C59A0F9@SN6PR04MB3872.namprd04.prod.outlook.com>
 X-Spam-Status: No, score=-8.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -59,52 +81,10 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-There are two outstanding issues with CONFIG_X86_X32_ABI and
-llvm-objcopy, with similar root causes:
+On Mon, Mar 14, 2022 at 07:40:42AM +0000, Avi Shchislowski wrote:
+>
+> We also supports Samsung & Micron approach
 
-1. llvm-objcopy does not properly convert .note.gnu.property when going
-   from x86_64 to x86_x32, resulting in a corrupted section when
-   linking:
+Great, so send some patches upstream to have it be supported properly.
 
-   https://github.com/ClangBuiltLinux/linux/issues/1141
-
-2. llvm-objcopy produces corrupted compressed debug sections when going
-   from x86_64 to x86_x32, also resulting in an error when linking:
-
-   https://github.com/ClangBuiltLinux/linux/issues/514
-
-After commit 41c5ef31ad71 ("x86/ibt: Base IBT bits"), the
-.note.gnu.property section is always generated when
-CONFIG_X86_KERNEL_IBT is enabled, which causes the first issue to become
-visible with an allmodconfig build:
-
-  ld.lld: error: arch/x86/entry/vdso/vclock_gettime-x32.o:(.note.gnu.property+0x1c): program property is too short
-
-To avoid this error, do not allow CONFIG_X86_X32_ABI to be selected when
-using llvm-objcopy. If the two issues ever get fixed in llvm-objcopy,
-this can be turned into a feature check.
-
-Signed-off-by: Nathan Chancellor <nathan@kernel.org>
----
- arch/x86/Kconfig | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index b903bfcd713c..0f0672d2c816 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -2864,6 +2864,11 @@ config IA32_AOUT
- config X86_X32_ABI
- 	bool "x32 ABI for 64-bit mode"
- 	depends on X86_64
-+	# llvm-objcopy does not convert x86_64 .note.gnu.property or
-+	# compressed debug sections to x86_x32 properly:
-+	# https://github.com/ClangBuiltLinux/linux/issues/514
-+	# https://github.com/ClangBuiltLinux/linux/issues/1141
-+	depends on $(success,$(OBJCOPY) --version | head -n1 | grep -qv llvm)
- 	help
- 	  Include code to run binaries for the x32 native 32-bit ABI
- 	  for 64-bit processors.  An x32 process gets access to the
--- 
-2.35.1
-
+- Eric
