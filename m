@@ -2,146 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B1BC04D8E73
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Mar 2022 21:50:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BFA3E4D8E84
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Mar 2022 22:00:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240288AbiCNUvi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Mar 2022 16:51:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51340 "EHLO
+        id S245199AbiCNVCF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Mar 2022 17:02:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231727AbiCNUvi (ORCPT
+        with ESMTP id S234775AbiCNVCE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Mar 2022 16:51:38 -0400
-Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C2173C499
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Mar 2022 13:50:27 -0700 (PDT)
-Received: by mail-pj1-x102b.google.com with SMTP id mm23-20020a17090b359700b001bfceefd8c6so409285pjb.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Mar 2022 13:50:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=O2sXHURm0NoY8IkGl4zp8hYr0GiRSSumlHJx+8DBDR8=;
-        b=VhtWPU5hfae5y3UUUMJ53v9z+E9cDVJIzdnbdhqMLcZjn/y1tL1g4Ip4yO+C4Fok2K
-         bkA2PkP51EJHCCddXQKObdt27Fru7/62k24TcydvfkiIVLHPqli3aLjUtpSqhf6fdvm8
-         1tdvjT2lcpLsz9HkJYzRiUDg0oCZ5KAIkOCZllpiAF6fb+esenRjlDpqT7+FW9d7AchY
-         mGVomHGFT+saFC/IwCLVOpGVGM13KdQCU94o195Z/wWPW30GzVIhaRLhaD0BjuDsiejE
-         24QuSkzXgDPKVuG/LFy/ynbPOQDZfiRQ0Ri1H2+DhkMdX+72GpsZkfJDWYWMHLKiSbnT
-         /mxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=O2sXHURm0NoY8IkGl4zp8hYr0GiRSSumlHJx+8DBDR8=;
-        b=IFl/LKlx5RESkwnjPHnJXGzwb/JI+Pix9JayhnSPZHRiwKldAeCkLcuV/fAHBQwzVb
-         6yyBWlSUGl6Z110nZC8lUNPq8pJxaAZNTsxmyj+GM3JtBY15PXYl2K+Ckajq0+uW3C0H
-         2sJJgG7pv3LtBJMFyeaTiV5xlOBYGFZ399DQGDmeXVGPYoFyqUAu/IzLWFRoh/4NW1id
-         iLRI7kl9DUApp9PGkp7cjdPSr6Xtxui17yAF74+9xHDkkDppKG9HkubQihl0EqOKTKRB
-         4nzJxAEswnhpFDHfwMAB/Wy9bmw129dur2vYJ9jjnTfBqIvT+UJ1OVLRFNQHCMlmuZPf
-         4gIw==
-X-Gm-Message-State: AOAM532p3VgI/qegvBvw3pW9uGuzO4TCYmkZ1fvVf3xMDKmwKXBwqB0g
-        FPIcZqsF7ExPKwlWpcJBuV6VY6x3oGTFnEidCAXqzw==
-X-Google-Smtp-Source: ABdhPJyzK/9bpWo87K7yVfuQDVxjAiaa0iHolmeQz5FZjuIEWLouKzJgJxd/xUTCLfio9rCn6T0zucx/Bsw9kuMKEmc=
-X-Received: by 2002:a17:902:7296:b0:14b:4bc6:e81 with SMTP id
- d22-20020a170902729600b0014b4bc60e81mr25125235pll.132.1647291026682; Mon, 14
- Mar 2022 13:50:26 -0700 (PDT)
+        Mon, 14 Mar 2022 17:02:04 -0400
+Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 603C03D1F8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Mar 2022 14:00:54 -0700 (PDT)
+Received: from dread.disaster.area (pa49-186-150-27.pa.vic.optusnet.com.au [49.186.150.27])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 36E9510E4338;
+        Tue, 15 Mar 2022 08:00:52 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1nTroB-005V23-Ii; Tue, 15 Mar 2022 08:00:51 +1100
+Date:   Tue, 15 Mar 2022 08:00:51 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Christopher Hodgkins <George.Hodgkins@colorado.edu>
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: Re: Fwd: Spurious SIGBUS when threads race to insert a DAX page
+Message-ID: <20220314210051.GQ661808@dread.disaster.area>
+References: <CAGd_VJzZArEHHR5HUoUDjkN70aJ7CVsfBjro0mtS3eTPeTy1nw@mail.gmail.com>
+ <CAGd_VJxRooTgJdkQw+2m_-r3NFhQ5EaY61Kw+b1GNh=sDvwVDQ@mail.gmail.com>
 MIME-Version: 1.0
-References: <20220302082718.32268-1-songmuchun@bytedance.com>
- <20220302082718.32268-6-songmuchun@bytedance.com> <CAPcyv4hsMWe1AreVVhGJD-St3FGtGBMeA-BX7XbA_kVX97tw4Q@mail.gmail.com>
- <CAMZfGtUmhcryboPdRC7ZhWVuV3TX0rLcKUxhvamAGbHUoATaow@mail.gmail.com>
-In-Reply-To: <CAMZfGtUmhcryboPdRC7ZhWVuV3TX0rLcKUxhvamAGbHUoATaow@mail.gmail.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 14 Mar 2022 13:50:16 -0700
-Message-ID: <CAPcyv4gdP+FSsQW2+W3+NKNGnM3fAfF3d=ZxuCDc+r_AnRBCUg@mail.gmail.com>
-Subject: Re: [PATCH v4 5/6] dax: fix missing writeprotect the pte entry
-To:     Muchun Song <songmuchun@bytedance.com>
-Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alistair Popple <apopple@nvidia.com>,
-        Yang Shi <shy828301@gmail.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Hugh Dickins <hughd@google.com>,
-        Xiyu Yang <xiyuyang19@fudan.edu.cn>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ross Zwisler <zwisler@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux NVDIMM <nvdimm@lists.linux.dev>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        Muchun Song <smuchun@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGd_VJxRooTgJdkQw+2m_-r3NFhQ5EaY61Kw+b1GNh=sDvwVDQ@mail.gmail.com>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=deDjYVbe c=1 sm=1 tr=0 ts=622fad05
+        a=sPqof0Mm7fxWrhYUF33ZaQ==:117 a=sPqof0Mm7fxWrhYUF33ZaQ==:17
+        a=kj9zAlcOel0A:10 a=o8Y5sQTvuykA:10 a=7-415B0cAAAA:8
+        a=PhE4woCKD5HsnWeAxIwA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 11, 2022 at 1:06 AM Muchun Song <songmuchun@bytedance.com> wrote:
->
-> On Thu, Mar 10, 2022 at 8:59 AM Dan Williams <dan.j.williams@intel.com> wrote:
-> >
-> > On Wed, Mar 2, 2022 at 12:30 AM Muchun Song <songmuchun@bytedance.com> wrote:
-> > >
-> > > Currently dax_mapping_entry_mkclean() fails to clean and write protect
-> > > the pte entry within a DAX PMD entry during an *sync operation. This
-> > > can result in data loss in the following sequence:
-> > >
-> > >   1) process A mmap write to DAX PMD, dirtying PMD radix tree entry and
-> > >      making the pmd entry dirty and writeable.
-> > >   2) process B mmap with the @offset (e.g. 4K) and @length (e.g. 4K)
-> > >      write to the same file, dirtying PMD radix tree entry (already
-> > >      done in 1)) and making the pte entry dirty and writeable.
-> > >   3) fsync, flushing out PMD data and cleaning the radix tree entry. We
-> > >      currently fail to mark the pte entry as clean and write protected
-> > >      since the vma of process B is not covered in dax_entry_mkclean().
-> > >   4) process B writes to the pte. These don't cause any page faults since
-> > >      the pte entry is dirty and writeable. The radix tree entry remains
-> > >      clean.
-> > >   5) fsync, which fails to flush the dirty PMD data because the radix tree
-> > >      entry was clean.
-> > >   6) crash - dirty data that should have been fsync'd as part of 5) could
-> > >      still have been in the processor cache, and is lost.
-> >
-> > Excellent description.
-> >
-> > >
-> > > Just to use pfn_mkclean_range() to clean the pfns to fix this issue.
-> >
-> > So the original motivation for CONFIG_FS_DAX_LIMITED was for archs
-> > that do not have spare PTE bits to indicate pmd_devmap(). So this fix
-> > can only work in the CONFIG_FS_DAX_LIMITED=n case and in that case it
-> > seems you can use the current page_mkclean_one(), right?
->
-> I don't know the history of CONFIG_FS_DAX_LIMITED.
-> page_mkclean_one() need a struct page associated with
-> the pfn,  do the struct pages exist when CONFIG_FS_DAX_LIMITED
-> and ! FS_DAX_PMD?
+On Mon, Mar 14, 2022 at 02:04:35PM -0600, Christopher Hodgkins wrote:
+> NOTE: This question is about kernel 4.15. All line numbers and symbol
+> names correspond to the Git source at tag v4.15.
+> 
+> Hi all,
+> I've been running some benchmarks using ext4 files on PMEM (first-gen
+> Intel Optane) as "anonymous" memory, and I've run into a weird error.
+> For reference, the way this works is that we have a runtime that at
+> startup `fallocate`s a large PMEM-backed file and maps the whole thing
+> R/W with MAP_SYNC, and then it interposes on calls to `mmap` in
+> userspace to return page-sized chunks of PMEM when anonymous memory is
+> requested.
+> 
+> The error I have encountered is the nondeterministic delivery of
+> SIGBUS on the first access to an untouched page of the mapped region
+> (which since the file is passed to the application sequentially, is
+> also typically the first uninitialized extent in the file at time of
+> crash). The accesses are aligned and within a mapped region according
+> to smaps, which eliminates the only documented reasons for delivery of
+> SIGBUS that I'm aware of.
 
-CONFIG_FS_DAX_LIMITED was created to preserve some DAX use for S390
-which does not have CONFIG_ARCH_HAS_PTE_DEVMAP. Without PTE_DEVMAP
-then get_user_pages() for DAX mappings fails.
+First thing to check is whether it occurs with XFS+DAX on that
+kernel. That will tell you if it's an infrastructure or ext4
+problem.
 
-To your question, no, there are no pages at all in the
-CONFIG_FS_DAX_LIMITED=y case. So page_mkclean_one() could only be
-deployed for PMD mappings, but I think it is reasonable to just
-disable PMD mappings for the CONFIG_FS_DAX_LIMITED=y case.
+Second thing to do is to test a current 5.17-rc8 kernel to see if
+the problem reproduces on a current kernel. i.e. determine if the
+problem has actually been fixed or not.
 
-Going forward the hope is to remove the ARCH_HAS_PTE_DEVMAP
-requirement for DAX, and use PTE_SPECIAL for the S390 case. However,
-that still wants to have 'struct page' availability as an across the
-board requirement.
+If it reproduces on a current kernel, then update the bug report
+with all that information and post the code that reproduces the
+problem so we can look at it more detail.
 
-> If yes, I think you are right. But I don't
-> see this guarantee. I am not familiar with DAX code, so what am
-> I missing here?
+> I did a bit of digging with FTrace, and the course of events at a
+> crash seems to be as follows. Multiple (>2) threads start faulting in
+> the page, and go through the "synchronous page fault" path. They all
+> return error-free from the fdatasync() call at dax.c:1588 and call
+> dax_insert_pfn_mkwrite. The first thread to exit that function returns
+> NOPAGE (success) and the others all return SIGBUS, and each raises the
+> userspace signal on the return path.
+> 
+> My best guess for why this occurs is that the unsuccessful calls all
+> bounce with EBUSY (because of the successful one?) in insert_pfn
+> (which tails into the call to vm_insert_mixed_mkwrite at dax.c:1548),
+> and then dax_fault_return maps that to SIGBUS. The signal is
+> definitely spurious -- as mentioned, one of the threads returns
+> success, and if I catch the signal with GDB, the faulting access can
+> be successfully performed after the signal is caught. Also, as
+> mentioned above, the error is nondeterministic -- it happens maybe one
+> out of every five runs. To clarify some other things that could make a
+> difference, the pages are normal-sized (not huge) and the SIGBUS isn't
+> due to PMEM failure (ie HWPOISON).
+> 
+> I'm on an old kernel (4.15) so if this is really an error in the
+> kernel code it may be fixed on the current series. If that's the case,
+> just point me to a patch or release number where it was fixed and I'll
+> be happy.
 
-Perhaps I missed a 'struct page' dependency? I thought the bug you are
-fixing only triggers in the presence of PMDs. The
-CONFIG_FS_DAX_LIMITED=y case can still use the current "page-less"
-mkclean path for PTEs.
+git bisect is your friend, and it doesn't require any upstream
+developer time for you to run the bisect and determine where it was
+fixed...
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
