@@ -2,155 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C666D4D79CB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Mar 2022 04:54:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 918C14D7B12
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Mar 2022 07:59:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234742AbiCNDzV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 13 Mar 2022 23:55:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32824 "EHLO
+        id S236503AbiCNHAy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Mar 2022 03:00:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231751AbiCNDzU (ORCPT
+        with ESMTP id S236495AbiCNHAx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 13 Mar 2022 23:55:20 -0400
-Received: from mx05.melco.co.jp (mx05.melco.co.jp [192.218.140.145])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35A5B15A12;
-        Sun, 13 Mar 2022 20:54:09 -0700 (PDT)
-Received: from mr05.melco.co.jp (mr05 [133.141.98.165])
-        by mx05.melco.co.jp (Postfix) with ESMTP id 4KH2hw410hzMw4R9;
-        Mon, 14 Mar 2022 12:54:08 +0900 (JST)
-Received: from mr05.melco.co.jp (unknown [127.0.0.1])
-        by mr05.imss (Postfix) with ESMTP id 4KH2hw3cZkzMqvSs;
-        Mon, 14 Mar 2022 12:54:08 +0900 (JST)
-Received: from mf04_second.melco.co.jp (unknown [192.168.20.184])
-        by mr05.melco.co.jp (Postfix) with ESMTP id 4KH2hw3JCLzMqvSB;
-        Mon, 14 Mar 2022 12:54:08 +0900 (JST)
-Received: from mf04.melco.co.jp (unknown [133.141.98.184])
-        by mf04_second.melco.co.jp (Postfix) with ESMTP id 4KH2hw3GGCzMr4pt;
-        Mon, 14 Mar 2022 12:54:08 +0900 (JST)
-Received: from JPN01-TYC-obe.outbound.protection.outlook.com (unknown [104.47.23.171])
-        by mf04.melco.co.jp (Postfix) with ESMTP id 4KH2hw34QTzMr4q0;
-        Mon, 14 Mar 2022 12:54:08 +0900 (JST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RjCCPDdYfoC+vP2qd+QPiXNjbskoz2yVjkSMgzIkcRo98mtdmv7oepsluLwIgfWE5DAkTOUZbNS+XFGFyUgkBRoGMOiszLDbAPPEomOvsWeOumy774SHpkqWicAHGWUdxwsUT8T3WikzrnTz+6tMBSP3qcY0AYsPn0SQIlJ6qJ0VoVvnNWPP4jY0DWjE9elxpAXxwXRGCj9U2KjVTxKBvCENapsbmnRb/s8t0GCZ6yLFCImQTDvR9C9zB9rgMnSoWqxTYrLOmic4ylKTkXf67ueqzzLB/14RoHdGvJXW7L66JLftjnBqbjth6x+GnkFWshmtQFCDPt9jwngN2edjWg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Gmj7CKGhvvJLP6x92X87ob+0oNAgx21Yh9+yxaH7hLA=;
- b=OQoyGF3GvVr5N1sAa1L/3ia1OTpMcpR88l42Z2RhnUsGy3H2nOw5cz7z/G5zsq7O/xwLdz4lOhlqm6GaaK5v5okBtymx+2bfPMVNPbN5yA80kPE5S6RlKhM1Yd7/dGCSDckGj0RQjhEU18zOVk1/cDlMEY8UIzCjlySoWfUFT0osQNcLCSN8Sqk8OJvgdu40fpNJ49LkXEkAjCDae7w9Hb7HSUxw7T1S09bpgRDWZHxs7vMsKcip0JhcA+A97mX4B3bbW9osk+xfrurQDJ9Znj2c4CIB14JsyAXYq2PPBJ7PNaDvQ4Hr4KYEcAmhu9NyFlZDUXt2mrEWahaqNSU74w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=dc.mitsubishielectric.co.jp; dmarc=pass action=none
- header.from=dc.mitsubishielectric.co.jp; dkim=pass
- header.d=dc.mitsubishielectric.co.jp; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mitsubishielectricgroup.onmicrosoft.com;
- s=selector2-mitsubishielectricgroup-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Gmj7CKGhvvJLP6x92X87ob+0oNAgx21Yh9+yxaH7hLA=;
- b=ZEBXME/h7k6x99gnx9Js4cFPA9vSWL5UQFw6bYLRPKCZEM4P25BDT8LZtq7SCNjPMGciTdCcAA36ThGpaZYbm63dRkzCqS75tJjzZaeOGnln58m0Y7qogzJK36gvMVlR2Aru+UP2Yas1z0kI241yjNxuPNsn3SGwOc+hqMUyDns=
-Received: from TYAPR01MB5353.jpnprd01.prod.outlook.com (2603:1096:404:803d::8)
- by OS3PR01MB6039.jpnprd01.prod.outlook.com (2603:1096:604:d0::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5061.25; Mon, 14 Mar
- 2022 03:54:06 +0000
-Received: from TYAPR01MB5353.jpnprd01.prod.outlook.com
- ([fe80::cd6:cd27:1fe8:818]) by TYAPR01MB5353.jpnprd01.prod.outlook.com
- ([fe80::cd6:cd27:1fe8:818%7]) with mapi id 15.20.5061.028; Mon, 14 Mar 2022
- 03:54:06 +0000
-From:   "Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp" 
-        <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
-To:     'Vasant Karasulli' <vkarasulli@suse.de>
-CC:     'Sungjong Seo' <sj1557.seo@samsung.com>,
-        "'linux-fsdevel@vger.kernel.org'" <linux-fsdevel@vger.kernel.org>,
-        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
-        'Takashi Iwai' <tiwai@suse.de>,
-        'David Disseldorp' <ddiss@suse.de>,
-        'Namjae Jeon' <linkinjeon@kernel.org>
-Subject: RE: [PATCH v2 2/2] exfat currently unconditionally strips trailing
- periods '.' when performing path lookup, but allows them in the filenames
- during file creation. This is done intentionally, loosely following Windows
- behaviour and specifications which ...
-Thread-Topic: [PATCH v2 2/2] exfat currently unconditionally strips trailing
- periods '.' when performing path lookup, but allows them in the filenames
- during file creation. This is done intentionally, loosely following Windows
- behaviour and specifications which ...
-Thread-Index: AQHYNLplcevRMz/jOUuuvmG0JvLRkKy55GyAgAAFMQCABE5KoA==
-Date:   Mon, 14 Mar 2022 03:52:08 +0000
-Deferred-Delivery: Mon, 14 Mar 2022 03:54:00 +0000
-Message-ID: <TYAPR01MB535314A6E1FB0CB1BAD621C2900F9@TYAPR01MB5353.jpnprd01.prod.outlook.com>
-References: <20220310142455.23127-1-vkarasulli@suse.de>
- <20220310142455.23127-3-vkarasulli@suse.de> <20220310210633.095f0245@suse.de>
- <CAKYAXd_ij3WqJHQZvH458XRwLBtboiJnr-fK0hVPDi_j_8XDZQ@mail.gmail.com>
- <YisU2FA7EBeguwN5@vasant-suse>
-In-Reply-To: <YisU2FA7EBeguwN5@vasant-suse>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-melpop: 1
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=dc.MitsubishiElectric.co.jp;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: a1d493fd-15cd-4d73-05a6-08da056e49bf
-x-ms-traffictypediagnostic: OS3PR01MB6039:EE_
-x-microsoft-antispam-prvs: <OS3PR01MB603960D4856FF3EA0CAC7065900F9@OS3PR01MB6039.jpnprd01.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: g6kCcm/2RR2EXlS5nRXUKuPZtK+qoSr5MaItP5LSHpm/1fnjFUgqnRx+aRqAJPrrLCqs2My23OE7i6vsSGDZWWSacWWrVtG+VYkuH4PGBwhITRJ3ombveGj6+6y52QqB5Q2O7CFfcqHzbf+v/jLor5RbZPVGCqv/k8L62NPpseCr4cKiRL9bsvDhvxFF4fCNvQUa4N2VUJAwjwDGu3nxBDJw3kL5tUUtE3Inzlf7PdxmvS4O1vgJwnGdyAq4nXS7hIystcTGB0/Act/VFk3D9Ma8st3X1n3Bi39d7pTFSARF0HW5FkWteEi0zElif7fZnyxIG8imEms3VRAdP2g0H+LYwHjfkb0du1Pn+hsKmGjKvjhKZntrOvOKpeB12qpBqleBsI52VSj2Z1+Y/1Nxwde3HRJhYX66QnNvJscrJVCbwGwcN/J+mesKvnOa4wUCEwOHZdL6DvA1tQbeKcL3qH3kGNEt0XXZVtx1bVycN/9jPXlYkVWV93ZIFAp5Ve5xY/vWDe9frXMNU7PgtOjMbGZ3tG4dZj9V8nc9r8wxxhBcWD+vSsimSP3DtjGPQS6CxlsnecvKxUYXZVqSScLbhV8Pq1guzOu8P8Gl/69Z9hctb65lQusg10aNGUjzRcYtyyn7DYf2t5BS+qW1pPB5e/QAPbBULPPp7JQ8B/+DRUoIgbWIkqGGoEJxr5ABexSaZI0rgJcN7k+ms0eX8zcEUDv/l4Hom9MtFEyxbSPesk6CVkvapI8HdTdvWwdO62WNy0g+of/4NcFqK25UC2TIxw==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYAPR01MB5353.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(7696005)(9686003)(6506007)(6916009)(54906003)(316002)(4326008)(33656002)(55016003)(122000001)(38100700002)(76116006)(8676002)(64756008)(66446008)(66476007)(66946007)(66556008)(71200400001)(508600001)(86362001)(5660300002)(52536014)(8936002)(83380400001)(26005)(2906002)(186003)(38070700005)(219693004)(95630200002);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-2022-jp?B?b0MxRk9sbFhlQlZhalloMis4NGQveGdyME1lMURIRkVrTC9CcjhxcDgv?=
- =?iso-2022-jp?B?cngxTWhVZWdMUXFqUVVYaUpzZmR6QUsrNTJwYVhDWDIyRWRoRk42QXNk?=
- =?iso-2022-jp?B?S00zRXprUlJHZi8vWVRZbnBQd2t3TDRjenlRTUNiNDB0emdJMkdJVVlr?=
- =?iso-2022-jp?B?b2FrL3d0UzIwNmltOGw2MGE3Rkc0cHB1RnBZVnBnYkppMWRZdzBSMjd4?=
- =?iso-2022-jp?B?dVJwZEdhWFAxYzhuVGdNb2FNS1ovODFxQ09LS09tbWJsWGFjcUh3SlEx?=
- =?iso-2022-jp?B?bDUyZDExOWhJT3dvM1VrUmZjcy9VbnhaMVNrUnJHZkl5RHBYaUkrR0wz?=
- =?iso-2022-jp?B?UHhwaGFVRk1Fbkh2V29SRmovZjdVWTg4cmcyQ2twdEptTGVPRHhQbEYz?=
- =?iso-2022-jp?B?SXNvZVdKc3VoaXZTVTZtbVUvWlJhVjB2M3p6UDFMcEFhMUp4bDZuMStL?=
- =?iso-2022-jp?B?NytZaytvL05QTDUzNk5WaXo1MndudHlMZURUejZna3RSL1JjcWdFZkhk?=
- =?iso-2022-jp?B?QzB2cS8xQzVOMThKK3FDTk56YXEwU29BQmdBcEEwNFM1cVlKb1VkZ0J0?=
- =?iso-2022-jp?B?ajMxVWRYbU9LaGpzQzFMT0VKRzZub3FPdE1mNWhqOWl4b1ZLNFREMlQz?=
- =?iso-2022-jp?B?M3czK2lWaTBYVlo3UWU0UUZ6NjFJTGcvV0hZTXFiT0tKQ2dtVUFpNkdS?=
- =?iso-2022-jp?B?MUwvL3RVN2RaaTNsL0xKTzAyaWZLUEFFV1l2WGNQNzFwOVA3ZzZyMFVa?=
- =?iso-2022-jp?B?OWM5SkRuMFdLUFdiKzhjMWxFdE1zRWc0bURnMW1jNVdDempDY1BINDJN?=
- =?iso-2022-jp?B?UGRqdzJQUUVocDlMVjd5aVdlbVAreEdzTnY4K3MzRGpscXA0dDdsK0pz?=
- =?iso-2022-jp?B?TENkZStGZGNRZ1lTNU9oaWZPLzZUK2VzSnZabUU4K0c4NWdtM05SSVFu?=
- =?iso-2022-jp?B?ZHU0ekMvM2ZML2pEL3FKWXNDUmsvZmw5cEIvNEVDOVREZDBOVkVMQ2Zv?=
- =?iso-2022-jp?B?K0RaQVJoRkhrTVFuOWFHRHVtUnh0dWRSbnJ2NXFraXRaandOWHJHMjdQ?=
- =?iso-2022-jp?B?ZUdqbVBaekpCaXFWeWUzV3VKL0ZyWS9aM3R4U3dXcWF6OURHQmNxOEc2?=
- =?iso-2022-jp?B?dXhieWJ2NzkvRUhhODIxYXpabzl4KzJCaDl5QkNTTG95cU5KcVpRWkF5?=
- =?iso-2022-jp?B?aHBVRjBkYzNFSEszL1ZCTXhSR0l5VENBOWZkMjN2SHlyZkQ3UGk5WEFz?=
- =?iso-2022-jp?B?YXRwbjUyd3NMSjdIUmRVQVBCbU5lTUxRdGJmcGVUa0hMcUZsN2tmTmt1?=
- =?iso-2022-jp?B?elBBQ2E1RS9rWEVKTHVBRHRhY3hNWVFidmVIUmhMaDlOVmdQNXFlVHVD?=
- =?iso-2022-jp?B?NHN1a3pVNXpPTUc3SmR2RVlBQVFsZjFGWjVwRFlhVTdkMW5IbTZySHRH?=
- =?iso-2022-jp?B?NjdLb2lNcWZiTkVydUhBeW91emFrUENDQmdYK3ZMbXVyQnlNSTFpVmJn?=
- =?iso-2022-jp?B?cXRHTnJjdFlTbk5EUUdHMjZJSk9TYTFmblV6NXg2Z3c4SHlPamIzZE9N?=
- =?iso-2022-jp?B?ZVJEcEIvOU9WUVRRWVV1V3laOVZCREVnbmZWcGNuNXNMV3gxSmlCaE9z?=
- =?iso-2022-jp?B?dDA4Q0Y3WmRWSXdJakdldXdHZEZLYUN0cEJGSEt3bEZ4NDdRN3JQbTd3?=
- =?iso-2022-jp?B?N2F3RzhoK1pERmN1Q3VMZzdHb3JlUk81b2xjQTdoR1dRZDFaMXZmU3Y3?=
- =?iso-2022-jp?B?TGNWZHhHY3ZxQW1heU9ZOS9ZRlBPdk9tRi9WeDJ3NTBiRFJGd3lDak1U?=
- =?iso-2022-jp?B?WFUzZGRkOUpYNk5kZy9TQlNYTmdQR210NC9DWE1ORDc2cXVXMVZPdjdl?=
- =?iso-2022-jp?B?eW9sZ0FlR0wxRk9iSkFNMWdLNlJWVitRcGRLZzZGK3FQU2h3eUNkdGZV?=
- =?iso-2022-jp?B?MHFOemZ5SjUxWHplcTRzUGI0MXhPYWFuekJ6clFyMkdzQm0zSmZseUNX?=
- =?iso-2022-jp?B?Nlo5R0U1YWhha09aWWdpdFpGN2o5Vk82cUlYNkNYdXh0M2FsRUpUVWgy?=
- =?iso-2022-jp?B?aktjbHdVRDBRV3pXN0JxejY1SHZtZmhvU011cWtDRjhuRjJXZytHMG1h?=
- =?iso-2022-jp?B?dUY=?=
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 14 Mar 2022 03:00:53 -0400
+Received: from lgeamrelo11.lge.com (lgeamrelo13.lge.com [156.147.23.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0427D3FDAB
+        for <linux-fsdevel@vger.kernel.org>; Sun, 13 Mar 2022 23:59:42 -0700 (PDT)
+Received: from unknown (HELO lgeamrelo02.lge.com) (156.147.1.126)
+        by 156.147.23.53 with ESMTP; 14 Mar 2022 15:59:40 +0900
+X-Original-SENDERIP: 156.147.1.126
+X-Original-MAILFROM: byungchul.park@lge.com
+Received: from unknown (HELO X58A-UD3R) (10.177.244.38)
+        by 156.147.1.126 with ESMTP; 14 Mar 2022 15:59:40 +0900
+X-Original-SENDERIP: 10.177.244.38
+X-Original-MAILFROM: byungchul.park@lge.com
+Date:   Mon, 14 Mar 2022 15:59:06 +0900
+From:   Byungchul Park <byungchul.park@lge.com>
+To:     Hyeonggon Yoo <42.hyeyoo@gmail.com>
+Cc:     torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
+        linux-ide@vger.kernel.org, adilger.kernel@dilger.ca,
+        linux-ext4@vger.kernel.org, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, peterz@infradead.org,
+        will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
+        joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
+        chris@chris-wilson.co.uk, duyuyang@gmail.com,
+        johannes.berg@intel.com, tj@kernel.org, tytso@mit.edu,
+        willy@infradead.org, david@fromorbit.com, amir73il@gmail.com,
+        bfields@fieldses.org, gregkh@linuxfoundation.org,
+        kernel-team@lge.com, linux-mm@kvack.org, akpm@linux-foundation.org,
+        mhocko@kernel.org, minchan@kernel.org, hannes@cmpxchg.org,
+        vdavydov.dev@gmail.com, sj@kernel.org, jglisse@redhat.com,
+        dennis@kernel.org, cl@linux.com, penberg@kernel.org,
+        rientjes@google.com, vbabka@suse.cz, ngupta@vflare.org,
+        linux-block@vger.kernel.org, paolo.valente@linaro.org,
+        josef@toxicpanda.com, linux-fsdevel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, jack@suse.cz, jack@suse.com,
+        jlayton@kernel.org, dan.j.williams@intel.com, hch@infradead.org,
+        djwong@kernel.org, dri-devel@lists.freedesktop.org,
+        airlied@linux.ie, rodrigosiqueiramelo@gmail.com,
+        melissa.srw@gmail.com, hamohammed.sa@gmail.com
+Subject: Re: [PATCH v4 00/24] DEPT(Dependency Tracker)
+Message-ID: <20220314065906.GA6255@X58A-UD3R>
+References: <1646377603-19730-1-git-send-email-byungchul.park@lge.com>
+ <Yiv9Fn4kcRbXJLmu@ip-172-31-19-208.ap-northeast-1.compute.internal>
 MIME-Version: 1.0
-X-OriginatorOrg: dc.MitsubishiElectric.co.jp
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYAPR01MB5353.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a1d493fd-15cd-4d73-05a6-08da056e49bf
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Mar 2022 03:54:06.7518
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: c5a75b62-4bff-4c96-a720-6621ce9978e5
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: jTxZi19/3BDHiv/XY6r2P4wPgMxjDIPlOaQ1artr4ZPFxAUuDsq9UouOEoIZei0qDuH+2D8/KW9mNVuQw3lsiw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB6039
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_PASS,SPF_PASS,
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Yiv9Fn4kcRbXJLmu@ip-172-31-19-208.ap-northeast-1.compute.internal>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Spam-Status: No, score=-7.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_HI,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -158,35 +66,198 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi, Vasant Karasulli.
+On Sat, Mar 12, 2022 at 01:53:26AM +0000, Hyeonggon Yoo wrote:
+> On Fri, Mar 04, 2022 at 04:06:19PM +0900, Byungchul Park wrote:
+> > Hi Linus and folks,
+> > 
+> > I've been developing a tool for detecting deadlock possibilities by
+> > tracking wait/event rather than lock(?) acquisition order to try to
+> > cover all synchonization machanisms. It's done on v5.17-rc1 tag.
+> > 
+> > https://github.com/lgebyungchulpark/linux-dept/commits/dept1.14_on_v5.17-rc1
+> >
+> 
+> Small feedback unrelated to thread:
+> I'm not sure "Need to expand the ring buffer" is something to call
+> WARN(). Is this stack trace useful for something?
 
-> > > I think it makes sense to mention your findings from the Windows
-> > > tests here. E.g. "Windows 10 also retains leading and trailing space
-> > > characters".
-> > Windows 10 do also strip them. So you can make another patch to strip
-> > it as well as trailing periods.
-> Actually I found contradicting behavior between Window 10 File Explorer a=
-nd Commandline. Commandline seems to strip
-> trailing spaces, but File Explorer doesn't.
+Yeah. It seems to happen too often. I won't warn it. Thanks.
 
-The exfat specification specifies an invalid character set, but there are n=
-o restrictions on the use of leading or trailing white-space or dots.
-Even if the filename has trailing-dot as shown below, it conforms to the ex=
-fat specification and can be created on Windows.
-"a"
-"a."
-"a.."
-These are treated as "a" in the current implementation of linix-exfat, so t=
-he intended file cannot be accessed.
-The specified filename should not be modified to comply with the exfat spec=
-ification.
-Therefore, exfat_striptail_len() should not be used.
+> ========
+> 
+> Hello Byungchul. These are two warnings of DEPT on system.
+> Both cases look similar.
+> 
+> In what case DEPT says (unknown)?
+> I'm not sure we can properly debug this.
+> 
+> ===================================================
+> DEPT: Circular dependency has been detected.
+> 5.17.0-rc1+ #3 Tainted: G        W        
+> ---------------------------------------------------
+> summary
+> ---------------------------------------------------
+> *** AA DEADLOCK ***
+> 
+> context A
+>     [S] (unknown)(&vfork:0)
+>     [W] wait_for_completion_killable(&vfork:0)
+>     [E] complete(&vfork:0)
 
-Note:
-Windows explorer removes trailing white-space and dots, but not the behavio=
-r of the filesystem.
-Also, you can create a trailing-dot filename by quoting it on the command l=
-ine.
+All the reports look like having to do with kernel_clone(). I need to
+check it more. Thank you very much.
 
-BR
-T.Kohada
+You are awesome, Hyeonggon.
+
+Thank you,
+Byungchul
+
+> [S]: start of the event context
+> [W]: the wait blocked
+> [E]: the event not reachable
+> ---------------------------------------------------
+> context A's detail
+> ---------------------------------------------------
+> context A
+>     [S] (unknown)(&vfork:0)
+>     [W] wait_for_completion_killable(&vfork:0)
+>     [E] complete(&vfork:0)
+> 
+> [S] (unknown)(&vfork:0):
+> (N/A)
+> 
+> [W] wait_for_completion_killable(&vfork:0):
+> [<ffffffc00802204c>] kernel_clone+0x25c/0x2b8
+> stacktrace:
+>       dept_wait+0x74/0x88
+>       wait_for_completion_killable+0x60/0xa0
+>       kernel_clone+0x25c/0x2b8
+>       __do_sys_clone+0x5c/0x74
+>       __arm64_sys_clone+0x18/0x20
+>       invoke_syscall.constprop.0+0x78/0xc4
+>       do_el0_svc+0x98/0xd0
+>       el0_svc+0x44/0xe4
+>       el0t_64_sync_handler+0xb0/0x12c
+>       el0t_64_sync+0x158/0x15c
+> 
+> [E] complete(&vfork:0):
+> [<ffffffc00801f49c>] mm_release+0x7c/0x90
+> stacktrace:
+>       dept_event+0xe0/0x100
+>       complete+0x48/0x98
+>       mm_release+0x7c/0x90
+>       exit_mm_release+0xc/0x14
+>       do_exit+0x1b4/0x81c
+>       do_group_exit+0x30/0x9c
+>       __wake_up_parent+0x0/0x24
+>       invoke_syscall.constprop.0+0x78/0xc4
+>       do_el0_svc+0x98/0xd0
+>       el0_svc+0x44/0xe4
+>       el0t_64_sync_handler+0xb0/0x12c
+>       el0t_64_sync+0x158/0x15c
+> ---------------------------------------------------
+> information that might be helpful
+> ---------------------------------------------------
+> CPU: 6 PID: 229 Comm: start-stop-daem Tainted: G        W         5.17.0-rc1+ #3
+> Hardware name: linux,dummy-virt (DT)
+> Call trace:
+>  dump_backtrace.part.0+0x9c/0xc4
+>  show_stack+0x14/0x28
+>  dump_stack_lvl+0x9c/0xcc
+>  dump_stack+0x14/0x2c
+>  print_circle+0x2d4/0x438
+>  cb_check_dl+0x44/0x70
+>  bfs+0x60/0x168
+>  add_dep+0x88/0x11c
+>  do_event.constprop.0+0x19c/0x2c0
+>  dept_event+0xe0/0x100
+>  complete+0x48/0x98
+>  mm_release+0x7c/0x90
+>  exit_mm_release+0xc/0x14
+>  do_exit+0x1b4/0x81c
+>  do_group_exit+0x30/0x9c
+>  __wake_up_parent+0x0/0x24
+>  invoke_syscall.constprop.0+0x78/0xc4
+>  do_el0_svc+0x98/0xd0
+>  el0_svc+0x44/0xe4
+>  el0t_64_sync_handler+0xb0/0x12c
+>  el0t_64_sync+0x158/0x15c
+> 
+> 
+> 
+> 
+> ===================================================
+> DEPT: Circular dependency has been detected.
+> 5.17.0-rc1+ #3 Tainted: G        W        
+> ---------------------------------------------------
+> summary
+> ---------------------------------------------------
+> *** AA DEADLOCK ***
+> 
+> context A
+>     [S] (unknown)(&try_completion:0)
+>     [W] wait_for_completion_timeout(&try_completion:0)
+>     [E] complete(&try_completion:0)
+> 
+> [S]: start of the event context
+> [W]: the wait blocked
+> [E]: the event not reachable
+> ---------------------------------------------------
+> context A's detail
+> ---------------------------------------------------
+> context A
+>     [S] (unknown)(&try_completion:0)
+>     [W] wait_for_completion_timeout(&try_completion:0)
+>     [E] complete(&try_completion:0)
+> 
+> [S] (unknown)(&try_completion:0):
+> (N/A)
+> 
+> [W] wait_for_completion_timeout(&try_completion:0):
+> [<ffffffc008166bf4>] kunit_try_catch_run+0xb4/0x160
+> stacktrace:
+>       dept_wait+0x74/0x88
+>       wait_for_completion_timeout+0x64/0xa0
+>       kunit_try_catch_run+0xb4/0x160
+>       kunit_test_try_catch_successful_try_no_catch+0x3c/0x98
+>       kunit_try_run_case+0x9c/0xa0
+>       kunit_generic_run_threadfn_adapter+0x1c/0x28
+>       kthread+0xd4/0xe4
+>       ret_from_fork+0x10/0x20
+> 
+> [E] complete(&try_completion:0):
+> [<ffffffc00803dce4>] kthread_complete_and_exit+0x18/0x20
+> stacktrace:
+>       dept_event+0xe0/0x100
+>       complete+0x48/0x98
+>       kthread_complete_and_exit+0x18/0x20
+>       kunit_try_catch_throw+0x0/0x1c
+>       kthread+0xd4/0xe4
+>       ret_from_fork+0x10/0x20
+> 
+> ---------------------------------------------------
+> information that might be helpful
+> ---------------------------------------------------
+> CPU: 15 PID: 132 Comm: kunit_try_catch Tainted: G        W         5.17.0-rc1+ #3
+> Hardware name: linux,dummy-virt (DT)
+> Call trace:
+>  dump_backtrace.part.0+0x9c/0xc4
+>  show_stack+0x14/0x28
+>  dump_stack_lvl+0x9c/0xcc
+>  dump_stack+0x14/0x2c
+>  print_circle+0x2d4/0x438
+>  cb_check_dl+0x44/0x70
+>  bfs+0x60/0x168
+>  add_dep+0x88/0x11c
+>  do_event.constprop.0+0x19c/0x2c0
+>  dept_event+0xe0/0x100
+>  complete+0x48/0x98
+>  kthread_complete_and_exit+0x18/0x20
+>  kunit_try_catch_throw+0x0/0x1c
+>  kthread+0xd4/0xe4
+>  ret_from_fork+0x10/0x20
+
+
+> -- 
+> Thank you, You are awesome!
+> Hyeonggon :-)
