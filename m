@@ -2,176 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3062D4D7EC1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Mar 2022 10:37:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B4294D8099
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Mar 2022 12:25:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238206AbiCNJiZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Mar 2022 05:38:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34744 "EHLO
+        id S238888AbiCNL0f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Mar 2022 07:26:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40566 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238159AbiCNJiU (ORCPT
+        with ESMTP id S230506AbiCNL0e (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Mar 2022 05:38:20 -0400
-Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 020423FBC1;
-        Mon, 14 Mar 2022 02:37:11 -0700 (PDT)
-Received: by mail-pl1-x62a.google.com with SMTP id t22so1789025plo.0;
-        Mon, 14 Mar 2022 02:37:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Rc30Ltg5OaNXziswtFeLNccH8pd7ymn8bVN5NTdVbj8=;
-        b=Ki/4dypeHaGER1Hb9fJsbNxtix+BqHNvGSuCb81og/lGwmD942hNiNJEOezYimhgbG
-         Xl6FwntRM9Wh9eeNGkg+jGixUurpcd+S0fKegAFJM3xHU71NCCxqbMsHtqNBV4aRzDS+
-         ++QkgTPyelCDk7pw+SlGNDIap2Ll3Yat4bKRE9ao5dHDs+EZWDvMyTVVLsUh9V+QVEaQ
-         X/gHSyzyohJ0bUhq32LRuywUB5SVbnyF4XNEqTFRfXM6uwFwmCr1a2olpLIn62APqRGm
-         IkR+H9I6vMoGwoHb4muzI/d6QiJW2urGBUf5OF5Lo3sJV/Uy3KuiSs55Tth8yOW+IH2c
-         tf7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Rc30Ltg5OaNXziswtFeLNccH8pd7ymn8bVN5NTdVbj8=;
-        b=mSdBrbrqxlU9U3xEm9mGVRQFZlUMcp0I6Cux3VdE55N/Eotk1vHPjaKYs4ftcRXIhs
-         +0kk8xQz53R6h0znNKFq+Dp1erT1Q6raommudN/v+BDojfOVLfo5ljK0NLYE91UMsMG7
-         gpP3dR7HmWFfOVrGm8KFiG+CLuYBq1fbVw7zP+0i8CeGOorD+YokBwZDw8A627t+gKzP
-         p0bimRG8FiVOjv9ry101P937wLTJhE8cFVQGOawqucW+ZeXp/fWxfUXhgMLz2/Q9gS2v
-         8AbnANhwpre4K37paKtQrbDKhNa6uZl2GXDxGCgy01nNyYEvuWegfX9apkEm44jCJROT
-         /TYg==
-X-Gm-Message-State: AOAM530xmkzQTxmArPFO3tTf+6+o+XXFXhb4tDy0QhHonNBFBfHNuiu5
-        qhj3my0/QOFv7pZiz8jYmTA=
-X-Google-Smtp-Source: ABdhPJyOtjSmYlypA0RLzVKRhyy0NRodqlYP+jhHGIQ6y6h8mUJO7LfKZaLhdkUCJdo0piomwsV2og==
-X-Received: by 2002:a17:902:f545:b0:151:fa59:95bc with SMTP id h5-20020a170902f54500b00151fa5995bcmr23226335plf.82.1647250630137;
-        Mon, 14 Mar 2022 02:37:10 -0700 (PDT)
-Received: from localhost ([115.231.19.224])
-        by smtp.gmail.com with ESMTPSA id a5-20020a621a05000000b004f79f8f795fsm9321559pfa.0.2022.03.14.02.37.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Mar 2022 02:37:09 -0700 (PDT)
-From:   "chao.peng" <chaop.peng@gmail.com>
-To:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     peng_super@163.com, chaop.peng@gmail.com
-Subject: [PATCH] Coredump: fix crash when set core_pipe_limit
-Date:   Mon, 14 Mar 2022 17:37:05 +0800
-Message-Id: <20220314093705.5895-1-chaop.peng@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        Mon, 14 Mar 2022 07:26:34 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7A3C3B029;
+        Mon, 14 Mar 2022 04:25:24 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0DD5F60F90;
+        Mon, 14 Mar 2022 11:25:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16D21C340E9;
+        Mon, 14 Mar 2022 11:25:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1647257123;
+        bh=SiP4Qn2jTFv6RByEUSvXD5ODclyZr9Ye1fB0nauJE9s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=DTq4YS+/kdeLb9sfvgSO+mfansL4Mxq+qR1ZcJBTNqqOqg+mIm1bHTv31a3/t94CY
+         GbTde97QOhozBEM2PqvsfbHAnL0Y/IX4h/9uaVj6aEGSjtEwl0orobP2JrP6v5e2RJ
+         /WSrO1ISmOkoLMTyWEBHLStmBCXFT1oUk6g7XH3kSANQuqSxEr7AH9w2e0v/ZIEfMg
+         yhwmoe4N2oOMMNh/Ez6MDhp3OH7RiliADZemorsRGQRjb/hVEqb47Yc5PsAHF13VN1
+         C3hKXhX8pK0/CECnJ3mN4zDbmEtzov5rszzJkgAqAWc0tNel14Ju/PL3LAr567bYWz
+         V4QZ2YDqsaUmA==
+Date:   Mon, 14 Mar 2022 11:25:20 +0000
+From:   Filipe Manana <fdmanana@kernel.org>
+To:     Naohiro Aota <Naohiro.Aota@wdc.com>
+Cc:     "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "david@fromorbit.com" <david@fromorbit.com>
+Subject: Re: [PATCH 1/4] btrfs: mark resumed async balance as writing
+Message-ID: <Yi8mIFooTUybN+l0@debian9.Home>
+References: <cover.1646983176.git.naohiro.aota@wdc.com>
+ <65730df62341500bfcbde7d86eeaa3e9b15f1bcb.1646983176.git.naohiro.aota@wdc.com>
+ <YitX5fpZcC/P70o6@debian9.Home>
+ <20220314022922.e4k5wxob6rqjw3aw@naota-xeon>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=2.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,RCVD_IN_SORBS_WEB,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
-        version=3.4.6
-X-Spam-Level: **
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220314022922.e4k5wxob6rqjw3aw@naota-xeon>
+X-Spam-Status: No, score=-8.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: "chaop.peng" <chaop.peng@gmail.com>
+On Mon, Mar 14, 2022 at 02:29:22AM +0000, Naohiro Aota wrote:
+> On Fri, Mar 11, 2022 at 02:08:37PM +0000, Filipe Manana wrote:
+> > On Fri, Mar 11, 2022 at 04:38:02PM +0900, Naohiro Aota wrote:
+> > > When btrfs balance is interrupted with umount, the background balance
+> > > resumes on the next mount. There is a potential deadlock with FS freezing
+> > > here like as described in commit 26559780b953 ("btrfs: zoned: mark
+> > > relocation as writing").
+> > > 
+> > > Mark the process as sb_writing. To preserve the order of sb_start_write()
+> > > (or mnt_want_write_file()) and btrfs_exclop_start(), call sb_start_write()
+> > > at btrfs_resume_balance_async() before taking fs_info->super_lock.
+> > > 
+> > > Fixes: 5accdf82ba25 ("fs: Improve filesystem freezing handling")
+> > 
+> > This seems odd to me. I read the note you left on the cover letter about
+> > this, but honestly I don't think it's fair to blame that commit. I see
+> > it more as btrfs specific problem.
+> 
+> Yeah, I was really not sure how I should write the tag. The issue is
+> we missed to add sb_start_write() after this commit.
+> 
+> > Plus it's a 10 years old commit, so instead of the Fixes tag, adding a
+> > minimal kernel version to the CC stable tag below makes more sense.
+> 
+> So, only with "Cc: stable@vger.kernel.org # 3.6+" ?
 
-If core_pipe_count was set by /proc/sys/kernel/core_pipe_limit, and the
-umh kernel config with the following configuration:
-...
-CONFIG_STATIC_USERMODEHELPER=y
-CONFIG_STATIC_USERMODEHELPER_PATH=""
-...
-The umh was disabled and call_usermodehelper_exec() return early,
-the variable core_pipe_limitand ispipe both with none-zero value,
-if the current task signal is pending, call wait_for_dump_helpers
-(cprm.file) with NULL value would caused carsh.
+Looking at kernel.org the oldest stable kernel is 4.9, so anything older
+than that is pointless.
 
-[26083.547473] Unable to handle kernel NULL pointer dereference at
-virtual address 00000000000000d8
-[26083.547485] Mem abort info:
-[26083.547491]	 ESR = 0x96000006
-[26083.547498]   EC = 0x25: DABT (current EL), IL = 32 bits
-[26083.547504]	 SET = 0, FnV = 0
-[26083.547509]	 EA = 0, S1PTW = 0
-[26083.547514] Data abort info:
-[26083.547520]	 ISV = 0, ISS = 0x00000006
-[26083.547525]	 CM = 0, WnR = 0
-[26083.547533] user pgtable: 4k pages, 39-bit VAs, pgdp=000000011181b000
-[26083.547539] [00000000000000d8] pgd=0000000123e4e003
-[26083.547543] , p4d=0000000123e4e003
-[26083.547549] , pud=0000000123e4e003
-[26083.547555] , pmd=0000000000000000
-[26083.547570] Internal error: Oops: 96000006 [#1] PREEMPT SMP
-[26083.597731] Kernel Offset: 0x1af0c0000 from 0xffffffc010000000
-[26083.597744] PHYS_OFFSET: 0x40000000
-[26083.597753] pstate: 22400005 (nzCv daif +PAN -UAO)
-[26083.597765] pc : [0xffffffdb012a9280] do_coredump+0x99c/0x1ad4
-[26083.597773] lr : [0xffffffdb012a90d0] do_coredump+0x7ec/0x1ad4
-[26083.597778] sp : ffffffc048803b50
-[26083.597784] x29: ffffffc048803c60 x28: ffffffdb03dee748
-[26083.597790] x27: ffffff819060cec0 x26: ffffff8107a1f3c0
-[26083.597796] x25: ffffff895e655400 x24: 0000000000000001
-[26083.597801] x23: 0000000000000000 x22: 0000000000000000
-[26083.597806] x21: ffffff818f3eb580 x20: ffffff81890973c0
-[26083.597812] x19: ffffff800dff3780 x18: ffffffc03da8b020
-[26083.597817] x17: ffffffdb03688544 x16: 0000000000000002
-[26083.597823] x15: 0000000000000001 x14: 0000000000000000
-[26083.597828] x13: ffffff818f3eb420 x12: 0000000000000000
-[26083.597834] x11: 0000000000000001 x10: 0000000000000000
-[26083.597839] x9 : 0000000000000000 x8 : 0000000000000000
-[26083.597844] x7 : 0000000000000000 x6 : ffffff818f3eb428
-[26083.597850] x5 : 0000000000000040 x4 : 0000000000000000
-[26083.597855] x3 : 0000000000000001 x2 : 0000000000000001
-[26083.597860] x1 : 0000000000000000 x0 : ffffff800fab8dc0
-[26083.598835] Call trace:
-[26083.598844]  dump_backtrace.cfi_jt+0x0/0x8
-[26083.598852]  dump_stack_lvl+0xc4/0x140
-[26083.598857]  dump_stack+0x1c/0x2c
-[26083.598952]  die+0x344/0x748
-[26083.598959]  die_kernel_fault+0x84/0x94
-[26083.598965]  __do_kernel_fault+0x230/0x27c
-[26083.598974]  do_page_fault+0xb4/0x778
-[26083.598980]  do_translation_fault+0x48/0x64
-[26083.598986]  do_mem_abort+0x6c/0x164
-[26083.598993]  el1_abort+0x44/0x68
-[26083.599000]  el1_sync_handler+0x58/0x88
-[26083.599006]  el1_sync+0x8c/0x140
-[26083.599013]  do_coredump+0x99c/0x1ad4
-[26083.599020]  get_signal+0xc68/0xffc
-[26083.599026]  do_signal+0xd4/0x268
-[26083.599032]  do_notify_resume+0x15c/0x264
-[26083.599038]  work_pending+0xc/0x5f0
-
-Signed-off-by: chaop.peng <chaop.peng@gmail.com>
----
- fs/coredump.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/fs/coredump.c b/fs/coredump.c
-index 1c060c0a2d72..7add39409203 100644
---- a/fs/coredump.c
-+++ b/fs/coredump.c
-@@ -736,15 +736,15 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 	retval = unshare_files();
- 	if (retval)
- 		goto close_fail;
-+	/*
-+	 * umh disabled with CONFIG_STATIC_USERMODEHELPER_PATH="" would
-+	 * have this set to NULL.
-+	 */
-+	if (!cprm.file) {
-+		pr_info("Core dump to |%s disabled\n", cn.corename);
-+		goto close_fail;
-+	}
- 	if (!dump_interrupted()) {
--		/*
--		 * umh disabled with CONFIG_STATIC_USERMODEHELPER_PATH="" would
--		 * have this set to NULL.
--		 */
--		if (!cprm.file) {
--			pr_info("Core dump to |%s disabled\n", cn.corename);
--			goto close_fail;
--		}
- 		file_start_write(cprm.file);
- 		core_dumped = binfmt->core_dump(&cprm);
- 		/*
--- 
-2.25.1
-
+> 
+> > > Cc: stable@vger.kernel.org
+> > > Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+> > > ---
+> > >  fs/btrfs/volumes.c | 2 ++
+> > >  1 file changed, 2 insertions(+)
+> > > 
+> > > diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+> > > index 1be7cb2f955f..0d27d8d35c7a 100644
+> > > --- a/fs/btrfs/volumes.c
+> > > +++ b/fs/btrfs/volumes.c
+> > > @@ -4443,6 +4443,7 @@ static int balance_kthread(void *data)
+> > >  	if (fs_info->balance_ctl)
+> > >  		ret = btrfs_balance(fs_info, fs_info->balance_ctl, NULL);
+> > >  	mutex_unlock(&fs_info->balance_mutex);
+> > > +	sb_end_write(fs_info->sb);
+> > >  
+> > >  	return ret;
+> > >  }
+> > > @@ -4463,6 +4464,7 @@ int btrfs_resume_balance_async(struct btrfs_fs_info *fs_info)
+> > >  		return 0;
+> > >  	}
+> > >  
+> > > +	sb_start_write(fs_info->sb);
+> > 
+> > I don't understand this.
+> > 
+> > We are doing the sb_start_write() here, in the task doing the mount, and then
+> > we do the sb_end_write() at the kthread that runs balance_kthread().
+> 
+> Oops, I made a mistake here. It actually printed the lockdep warning
+> "lock held when returning to user space!".
+> 
+> > Why not do the sb_start_write() in the kthread?
+> > 
+> > This is also buggy in the case the call below to kthread_run() fails, as
+> > we end up never calling sb_end_write().
+> 
+> I was trying to preserve the lock taking order: sb_start_write() ->
+> spin_lock(fs_info->super_lock). But, it might not be a big deal as
+> long as we don't call sb_start_write() in the super_lock.
+> 
+> > Thanks.
+> > 
+> > >  	spin_lock(&fs_info->super_lock);
+> > >  	ASSERT(fs_info->exclusive_operation == BTRFS_EXCLOP_BALANCE_PAUSED);
+> > >  	fs_info->exclusive_operation = BTRFS_EXCLOP_BALANCE;
+> > > -- 
+> > > 2.35.1
+> > > 
