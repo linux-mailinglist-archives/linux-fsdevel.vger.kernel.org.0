@@ -2,129 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 827D44D8FD4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Mar 2022 23:45:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B3DAC4D9045
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Mar 2022 00:20:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238415AbiCNWqu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Mar 2022 18:46:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48984 "EHLO
+        id S1343672AbiCNXVY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Mar 2022 19:21:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232454AbiCNWqt (ORCPT
+        with ESMTP id S237512AbiCNXVX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Mar 2022 18:46:49 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE08136173;
-        Mon, 14 Mar 2022 15:45:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=D0Z22KQQxwYjzOvYM7WsI37q+7g8YdO5f8f+qk77u9s=; b=YDPvVSxFNmcud3pBJlvRspp2M+
-        rWXmXzqkrL49o7PQgu54oOGl98Xix6CVniW69ad+dbMBNXVqn2UayF9Y+tjJ+avNj0kpIHCSBJVnY
-        AKG2jYpcMJa7dlmkF3t1amQtR54wLVyqwbB9o+Ra0gninfKuN+n+h8l9hvWmAPruhtPInnn4XpUxJ
-        tpU0y66+L3go9pUqPZCWUNJZfoNu05fKFmtgwKTmOAOT3aQHSar2wHUMCeqhxc1yKNK8Kxpezrykf
-        d5T1trEjQqWMR+sCaNQCFjgmNrShl19hJvHzq0FbWPrAv5Du3TWwlvk2Z7rX66rqN4dXnllCL1Tqp
-        /R55kkOw==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nTtRQ-0074q7-W3; Mon, 14 Mar 2022 22:45:28 +0000
-Date:   Mon, 14 Mar 2022 15:45:28 -0700
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.cz>
-Cc:     Theodore Ts'o <tytso@mit.edu>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Sasha Levin <sashal@kernel.org>,
-        lsf-pc <lsf-pc@lists.linux-foundation.org>,
-        linux-btrfs@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Pankaj Raghav <p.raghav@samsung.com>,
-        Javier =?iso-8859-1?Q?Gonz=E1lez?= <javier.gonz@samsung.com>,
-        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
-        Adam Manzanares <a.manzanares@samsung.com>,
-        kanchan Joshi <joshi.k@samsung.com>,
-        Pankaj Raghav <pankydev8@gmail.com>,
-        Kanchan Joshi <joshiiitr@gmail.com>
-Subject: btrfs profiles to test was: (Re: [LSF/MM TOPIC] FS, MM, and stable
- trees)
-Message-ID: <Yi/FiHhw01zW2NXc@bombadil.infradead.org>
-References: <CAOQ4uxjysufPUtwepPGNZDhoC_HdsnkHx7--kso_OXWPyPkw_A@mail.gmail.com>
- <YicrMCidylefTC3n@kroah.com>
- <YieG8rZkgnfwygyu@mit.edu>
- <Yij08f7ee4pDZ2AC@bombadil.infradead.org>
- <Yij2rqDn4TiN3kK9@localhost.localdomain>
- <Yij5YTD5+V2qpsSs@bombadil.infradead.org>
- <YikZ2Zy6CtdNQ7WQ@localhost.localdomain>
- <YilUPAGQBPwI0V3n@bombadil.infradead.org>
- <YipIqqiz91D39nMQ@localhost.localdomain>
- <YiwAWRRS8AmurVm6@bombadil.infradead.org>
+        Mon, 14 Mar 2022 19:21:23 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B69F1EAF4;
+        Mon, 14 Mar 2022 16:20:13 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 1DF9CB81091;
+        Mon, 14 Mar 2022 23:20:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDEEBC340F5;
+        Mon, 14 Mar 2022 23:20:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1647300010;
+        bh=2FdC7SwihSVVrZs4phed7Lbrp21pfyud0aUkZsI1zA8=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=VsVC9uixp0hNsOks/Wwq8a2FmoTGO7S63O8uUrVNV/kh39qbr1toIhu88f3ZQ/XAG
+         5LwAYgVXyVetXSgcBID/TjC/v0LE9wNGm9j5oWY0XeV7ppCaLn52ZfIMR0e+WXShZi
+         5MqYKBoG9PxvlnARBX9tIIxVTQ7YgzlNQ/FJRNk5ZKQOzXv3DD8+yTKzWRWieGkej5
+         pdn0xpOC0tsErjYtgD1vkKfpYDfL+p2dlCR56YSd+wcQiqT5hgKg+oJtELhoTWXC8r
+         Ts3AhSxo9t+33I3R0RsFMHJOrVVrgS9fcc4Uu0YWp98+qHPhhW8JvC7EC6SHB1Po05
+         zTjZnxUDss9wQ==
+Received: by mail-wr1-f49.google.com with SMTP id b19so4056473wrh.11;
+        Mon, 14 Mar 2022 16:20:10 -0700 (PDT)
+X-Gm-Message-State: AOAM532qxoVKQ+RmdLklbC7dkbwpqZBDDkarLh+rCJn2rBpudcnfE0kB
+        gDpXt6r5IWqHZ3jOcmIiqMRt4mzAnS1qz8TkfTs=
+X-Google-Smtp-Source: ABdhPJzocQjOSkwRAEOVvX1B3TdY7Z8TMDh2BkXK/Ec8oBJKzlFUSGVDXfcqAVufgB2uvtwr0YwjSXN1FRddBPI9O8U=
+X-Received: by 2002:a05:6000:1d8c:b0:1f1:d8e2:fcb1 with SMTP id
+ bk12-20020a0560001d8c00b001f1d8e2fcb1mr18618922wrb.165.1647300009057; Mon, 14
+ Mar 2022 16:20:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YiwAWRRS8AmurVm6@bombadil.infradead.org>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Received: by 2002:a05:6000:1d93:0:0:0:0 with HTTP; Mon, 14 Mar 2022 16:20:08
+ -0700 (PDT)
+In-Reply-To: <TYAPR01MB5353A452BE48880A1D4778B5900C9@TYAPR01MB5353.jpnprd01.prod.outlook.com>
+References: <HK2PR04MB3891D1D0AFAD9CA98B67706B810B9@HK2PR04MB3891.apcprd04.prod.outlook.com>
+ <TYAPR01MB5353A452BE48880A1D4778B5900C9@TYAPR01MB5353.jpnprd01.prod.outlook.com>
+From:   Namjae Jeon <linkinjeon@kernel.org>
+Date:   Tue, 15 Mar 2022 08:20:08 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd9BO1LipYx1EtOK=Uo11dY3beBc_0mh_t=opWXPibutBQ@mail.gmail.com>
+Message-ID: <CAKYAXd9BO1LipYx1EtOK=Uo11dY3beBc_0mh_t=opWXPibutBQ@mail.gmail.com>
+Subject: Re: [PATCH v2] exfat: do not clear VolumeDirty in writeback
+To:     "Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp" 
+        <Kohada.Tetsuhiro@dc.mitsubishielectric.co.jp>,
+        "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
+Cc:     "sj1557.seo@samsung.com" <sj1557.seo@samsung.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Andy.Wu@sony.com" <Andy.Wu@sony.com>,
+        "Wataru.Aoyama@sony.com" <Wataru.Aoyama@sony.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-8.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 11, 2022 at 06:07:21PM -0800, Luis Chamberlain wrote:
-> On Thu, Mar 10, 2022 at 01:51:22PM -0500, Josef Bacik wrote:
-> > [root@fedora-rawhide ~]# cat /xfstests-dev/local.config
-> > [btrfs_normal_freespacetree]
-> > [btrfs_compress_freespacetree]
-> > [btrfs_normal]
-> > [btrfs_compression]
-> > [kdave]
-> > [btrfs_normal_noholes]
-> > [btrfs_compress_noholes]
-> > [btrfs_noholes_freespacetree]
-> 
-> + linux-btrfs and zone folks.
-> 
-> The name needs to be: $FS_$FANCY_SINGLE_SPACED_NAME
+2022-03-11 13:34 GMT+09:00,
+Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp
+<Kohada.Tetsuhiro@dc.mitsubishielectric.co.jp>:
+> Hi, Yuezhang,Mo
+>
+> I think it's good.
+> It will not be possible to clear dirty automatically, but I think device
+> life and reliable integrity are more important.
+>
+>
+>> -       if (sync)
+>> -               sync_dirty_buffer(sbi->boot_bh);
+>> +       sync_dirty_buffer(sbi->boot_bh);
+>> +
+>
+> Use __sync_dirty_buffer() with REQ_FUA/REQ_PREFLUSH instead to guarantee a
+> strict write order (including devices).
+Yuezhang, It seems to make sense. Can you check this ?
 
-Actually using_underscores_is_fine for the hostnames so we can keep
-your original except kdave :) and that just gets mapped to btrfs_kdave
-for now until you guys figure out what to call it.
-
-Likewise it would be useful if someone goees through these and gives me
-hints as to the kernel revision that supports such config, so that if
-testing on stable for instance or an older kernel, then the kconfig
-option for them does not appear.
-
-> I see nothing for NVMe ZNS.. so how about 
-> 
-> [btrfs_zns]
-> MKFS_OPTIONS="-f -d single -m single"
-> TEST_DEV=@FSTESTSTESTZNSDEV@
-> SCRATCH_DEV_POOL="@FSTESTSSCRATCHDEVZNSPOOL@"
-> 
-> [btrfs_simple]
-> TEST_DEV=@FSTESTSTESTSDEV@
-> MKFS_OPTIONS="-f -d single -m single"
-> SCRATCH_DEV_POOL="@FSTESTSSCRATCHDEVPOOL@"
-> 
-> The idea being btrfs_simple will not use zns drives behind the scenes
-> but btrfs_zns will.
-
-I went with:
-
-[btrfs_simple]
-[btrfs_simple_zns]
-
-If there are other ZNS profiles we can use / should test please let me know.
-
-Thanks,
-
-  Luis
+Thanks!
+>
+> BR
+> T .Kohada
