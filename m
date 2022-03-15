@@ -2,47 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4486E4D9EE0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Mar 2022 16:39:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 742334D9EFC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Mar 2022 16:45:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349683AbiCOPkm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Mar 2022 11:40:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47270 "EHLO
+        id S1343895AbiCOPqJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Mar 2022 11:46:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55310 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349680AbiCOPkl (ORCPT
+        with ESMTP id S236068AbiCOPqI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Mar 2022 11:40:41 -0400
-Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C41F651302;
-        Tue, 15 Mar 2022 08:39:28 -0700 (PDT)
-Received: by fieldses.org (Postfix, from userid 2815)
-        id 5062272A6; Tue, 15 Mar 2022 11:39:28 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org 5062272A6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
-        s=default; t=1647358768;
-        bh=jsZMp3Bg3w3pMx3Swoz6Ezy/RdgvP3Q66fIkcqQ4p4g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HRziIqkLQvuja8PPI6WujoFYdc2rHunwJ0uAK/0FK/1zLeZVA84WXega8OKM3VlYc
-         Nn/JFWU6H7ME2ecxP83+8RA5GD5bcWkqV+egInu8z4xLXQ+QMgBJm3Msuq5QOO+isE
-         YR90Jmxh1+f67IimNT3ubD4zp60Q8feqIDkGSGJo=
-Date:   Tue, 15 Mar 2022 11:39:28 -0400
-From:   "J. Bruce Fields" <bfields@fieldses.org>
-To:     Dai Ngo <dai.ngo@oracle.com>
-Cc:     chuck.lever@oracle.com, jlayton@redhat.com,
-        viro@zeniv.linux.org.uk, linux-nfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH RFC v16 05/11] NFSD: Update nfs4_get_vfs_file() to handle
- courtesy clients
-Message-ID: <20220315153928.GC19168@fieldses.org>
-References: <1647051215-2873-1-git-send-email-dai.ngo@oracle.com>
- <1647051215-2873-6-git-send-email-dai.ngo@oracle.com>
+        Tue, 15 Mar 2022 11:46:08 -0400
+Received: from mail-il1-x12b.google.com (mail-il1-x12b.google.com [IPv6:2607:f8b0:4864:20::12b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5449612A88
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Mar 2022 08:44:56 -0700 (PDT)
+Received: by mail-il1-x12b.google.com with SMTP id o12so13578214ilg.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Mar 2022 08:44:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=kU+GLJEFYIiN6NGm+q/bq337K/F3drtFqv3LO1H4fKE=;
+        b=gT6Y1bbmKjfoWVGM6TuXc6Ew3txTgEY9NUokJyBPFxsps4dxNt108edzQMlliVyula
+         oSIaGoB2zOd7tJBXXETitXby9wwwghsCALOxo9SclxNe/c2zLW2xT7DuzfGcx2oj1B+d
+         xUaer0hBghpARihJCQG30tsZLNXZpVr0PU0tzOsBSY4KT6vt2STQAbQ4ZmCFXva3rwtk
+         8q7qLksIoMvpIw/WA2Kbc2QvQ2NIV4aADl5cST4HOY2frRlQWn1fH23PbDGkRljqI9NN
+         isLqrW4T0Ot7sJZElLaOFWkBsmvrMFUQ21PRhs8farpcJiB9D4vvpUd0tvp1DFjMtJWo
+         41wQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=kU+GLJEFYIiN6NGm+q/bq337K/F3drtFqv3LO1H4fKE=;
+        b=bfeDP4bFbLX6lt+1PTFLAH4OXzT1KNV+uTYfWGrBlU2dAwsZmr6HOytUX1RCCxKqK6
+         NQJfj5unJsDBgNQG3o0KWy03hi4kPzU8floHcXc46wImMP7H/JZAjkiE+dq078rM0ssB
+         7S4ic98RDe95wS8l5m94WNl78bWR4aYBztgZmd6E5p1P9dNokB6lclRbc42R/E8shjfi
+         hl7AdewW7Zt0E60ufzlDYTjvdTj3KaRg+KB4+VPKKsbwYw8IsY6KBIRIj7sPW7LV19LQ
+         X1X6Sy8tjl3fCMW6eRzTt3YiMhbHCrqoQZknXaSN0Xh27eOUIftVBNfM5o/unlN9gnBe
+         onDw==
+X-Gm-Message-State: AOAM533CszirZqQe2IC3dG2nkYEFq0b1r4Pw/4K3U/Itq+RHvAEhwRXd
+        gGkbIMj7pmIz5ANZtWEfU7bnHA==
+X-Google-Smtp-Source: ABdhPJyych0DqX/cH/hqdWSDTCrkBK3odSgH+RTperxlzi4UKTip9ytPQ9AbkvcaBJmp6mZx9NU3nA==
+X-Received: by 2002:a92:ca45:0:b0:2c7:c473:6785 with SMTP id q5-20020a92ca45000000b002c7c4736785mr800177ilo.40.1647359095651;
+        Tue, 15 Mar 2022 08:44:55 -0700 (PDT)
+Received: from [192.168.1.172] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id s10-20020a6b740a000000b006413d13477dsm10427409iog.33.2022.03.15.08.44.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Mar 2022 08:44:55 -0700 (PDT)
+Message-ID: <95588225-b2af-72b6-2feb-811a3b346f9f@kernel.dk>
+Date:   Tue, 15 Mar 2022 09:44:52 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1647051215-2873-6-git-send-email-dai.ngo@oracle.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.2
+Subject: Re: [EXT] Re: [PATCH 2/2] block: remove the per-bio/request write
+ hint.
+Content-Language: en-US
+To:     "Luca Porzio (lporzio)" <lporzio@micron.com>,
+        Avi Shchislowski <Avi.Shchislowski@wdc.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        "Bean Huo (beanhuo)" <beanhuo@micron.com>,
+        Manjong Lee <mj0123.lee@samsung.com>,
+        "david@fromorbit.com" <david@fromorbit.com>
+Cc:     "hch@lst.de" <hch@lst.de>, "kbusch@kernel.org" <kbusch@kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>,
+        "sagi@grimberg.me" <sagi@grimberg.me>,
+        "song@kernel.org" <song@kernel.org>,
+        "seunghwan.hyun@samsung.com" <seunghwan.hyun@samsung.com>,
+        "sookwan7.kim@samsung.com" <sookwan7.kim@samsung.com>,
+        "nanich.lee@samsung.com" <nanich.lee@samsung.com>,
+        "woosung2.lee@samsung.com" <woosung2.lee@samsung.com>,
+        "yt0928.kim@samsung.com" <yt0928.kim@samsung.com>,
+        "junho89.kim@samsung.com" <junho89.kim@samsung.com>,
+        "jisoo2146.oh@samsung.com" <jisoo2146.oh@samsung.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>
+References: <20220306231727.GP3927073@dread.disaster.area>
+ <CGME20220309042324epcas1p111312e20f4429dc3a17172458284a923@epcas1p1.samsung.com>
+ <20220309133119.6915-1-mj0123.lee@samsung.com>
+ <CO3PR08MB797524ACBF04B861D48AF612DC0B9@CO3PR08MB7975.namprd08.prod.outlook.com>
+ <e98948ae-1709-32ef-e1e4-063be38609b1@kernel.dk>
+ <CO3PR08MB797562AAE72BC201EB951C6CDC0B9@CO3PR08MB7975.namprd08.prod.outlook.com>
+ <d477c7bf-f3a7-ccca-5472-f9cbb05b83c1@kernel.dk>
+ <c27a5ec3-f683-d2a7-d5e7-fd54d2baa278@acm.org>
+ <PH0PR08MB7889642784B2E1FC1799A828DB0B9@PH0PR08MB7889.namprd08.prod.outlook.com>
+ <ef77ef36-df95-8658-ff54-7d8046f5d0e7@kernel.dk>
+ <bf221ef4-f4d0-4431-02f3-ef3bea0e8cb2@acm.org>
+ <800fa121-5da2-e4c0-d756-991f007f0ad4@kernel.dk>
+ <SN6PR04MB3872231050F8585FFC6824C59A0F9@SN6PR04MB3872.namprd04.prod.outlook.com>
+ <0c40073d-3920-8835-fc50-b17d4da099f0@kernel.dk>
+ <CO3PR08MB7975EF4B014E211ACFAB7AF4DC109@CO3PR08MB7975.namprd08.prod.outlook.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <CO3PR08MB7975EF4B014E211ACFAB7AF4DC109@CO3PR08MB7975.namprd08.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -50,175 +106,59 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 11, 2022 at 06:13:29PM -0800, Dai Ngo wrote:
-> Update nfs4_get_vfs_file and nfs4_upgrade_open to handle share
-> reservation conflict with courtesy client.
+On 3/15/22 9:36 AM, Luca Porzio (lporzio) wrote:
+>>
+>> This isn't some setup to solicit votes on who supports what. If the code isn't
+>> upstream, it by definition doesn't exist to the kernel. No amount of "we're
+>> also interested in this" changes that.
+>>
+>> What I wrote earlier still applies - whoever is interested in supporting lifetime
+>> hints should submit that code upstream. The existing patchset to clean this
+>> up doesn't change that process AT ALL. As mentioned, the only difference is
+>> what the baseline looks like in terms of what the patchset is based on.
+>>
 > 
-> If share/access check fails with share denied then check if the
-> the conflict was caused by courtesy clients. If that's the case
-> then set CLIENT_EXPIRED flag to expire the courtesy clients and
-> allow nfs4_get_vfs_file to continue. Client with CLIENT_EXPIRED
-> is expired by the laundromat.
-
-I'm not following this code.  I'll see if I can give it another shot
-tomorrow, but are you sure it can't be simplified somehow?
-
-Keep in mind, we really don't care about share conflicts much.  I'm not
-sure whether anyone actually uses open deny modes, so there's no need to
-optimize that case.  I'd be totally fine with expiring things
-unnecessarily in the deny mode case, for example.
-
---b.
-
-> Signed-off-by: Dai Ngo <dai.ngo@oracle.com>
-> ---
->  fs/nfsd/nfs4state.c | 99 ++++++++++++++++++++++++++++++++++++++++++++++++-----
->  1 file changed, 91 insertions(+), 8 deletions(-)
+> Jens, 
 > 
-> diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-> index 2beb0972de88..b16f689f34c3 100644
-> --- a/fs/nfsd/nfs4state.c
-> +++ b/fs/nfsd/nfs4state.c
-> @@ -4973,9 +4973,75 @@ nfsd4_truncate(struct svc_rqst *rqstp, struct svc_fh *fh,
->  	return nfsd_setattr(rqstp, fh, &iattr, 0, (time64_t)0);
->  }
->  
-> +static bool
-> +nfs4_check_access_deny_bmap(struct nfs4_ol_stateid *stp, u32 access,
-> +			bool share_access)
-> +{
-> +	if (share_access) {
-> +		if (!stp->st_deny_bmap)
-> +			return false;
-> +
-> +		if ((stp->st_deny_bmap & (1 << NFS4_SHARE_DENY_BOTH)) ||
-> +			(access & NFS4_SHARE_ACCESS_READ &&
-> +				stp->st_deny_bmap & (1 << NFS4_SHARE_DENY_READ)) ||
-> +			(access & NFS4_SHARE_ACCESS_WRITE &&
-> +				stp->st_deny_bmap & (1 << NFS4_SHARE_DENY_WRITE))) {
-> +			return true;
-> +		}
-> +		return false;
-> +	}
-> +	if ((access & NFS4_SHARE_DENY_BOTH) ||
-> +		(access & NFS4_SHARE_DENY_READ &&
-> +			stp->st_access_bmap & (1 << NFS4_SHARE_ACCESS_READ)) ||
-> +		(access & NFS4_SHARE_DENY_WRITE &&
-> +			stp->st_access_bmap & (1 << NFS4_SHARE_ACCESS_WRITE))) {
-> +		return true;
-> +	}
-> +	return false;
-> +}
-> +
-> +/*
-> + * Check whether courtesy clients have conflicting access
-> + *
-> + * access:  is op_share_access if share_access is true.
-> + *	    Check if access mode, op_share_access, would conflict with
-> + *	    the current deny mode of the file 'fp'.
-> + * access:  is op_share_deny if share_access is false.
-> + *	    Check if the deny mode, op_share_deny, would conflict with
-> + *	    current access of the file 'fp'.
-> + * stp:     skip checking this entry.
-> + * new_stp: normal open, not open upgrade.
-> + *
-> + * Function returns:
-> + *	true   - access/deny mode conflict with normal client.
-> + *	false  - no conflict or conflict with courtesy client(s) is resolved.
-> + */
-> +static bool
-> +nfs4_resolve_deny_conflicts_locked(struct nfs4_file *fp, bool new_stp,
-> +		struct nfs4_ol_stateid *stp, u32 access, bool share_access)
-> +{
-> +	struct nfs4_ol_stateid *st;
-> +	struct nfs4_client *clp;
-> +	bool conflict = false;
-> +
-> +	lockdep_assert_held(&fp->fi_lock);
-> +	list_for_each_entry(st, &fp->fi_stateids, st_perfile) {
-> +		if (st->st_openstp || (st == stp && new_stp) ||
-> +			(!nfs4_check_access_deny_bmap(st,
-> +					access, share_access)))
-> +			continue;
-> +		clp = st->st_stid.sc_client;
-> +		if (nfs4_check_and_expire_courtesy_client(clp))
-> +			continue;
-> +		conflict = true;
-> +		break;
-> +	}
-> +	return conflict;
-> +}
-> +
->  static __be32 nfs4_get_vfs_file(struct svc_rqst *rqstp, struct nfs4_file *fp,
->  		struct svc_fh *cur_fh, struct nfs4_ol_stateid *stp,
-> -		struct nfsd4_open *open)
-> +		struct nfsd4_open *open, bool new_stp)
->  {
->  	struct nfsd_file *nf = NULL;
->  	__be32 status;
-> @@ -4991,15 +5057,29 @@ static __be32 nfs4_get_vfs_file(struct svc_rqst *rqstp, struct nfs4_file *fp,
->  	 */
->  	status = nfs4_file_check_deny(fp, open->op_share_deny);
->  	if (status != nfs_ok) {
-> -		spin_unlock(&fp->fi_lock);
-> -		goto out;
-> +		if (status != nfserr_share_denied) {
-> +			spin_unlock(&fp->fi_lock);
-> +			goto out;
-> +		}
-> +		if (nfs4_resolve_deny_conflicts_locked(fp, new_stp,
-> +				stp, open->op_share_deny, false)) {
-> +			spin_unlock(&fp->fi_lock);
-> +			goto out;
-> +		}
->  	}
->  
->  	/* set access to the file */
->  	status = nfs4_file_get_access(fp, open->op_share_access);
->  	if (status != nfs_ok) {
-> -		spin_unlock(&fp->fi_lock);
-> -		goto out;
-> +		if (status != nfserr_share_denied) {
-> +			spin_unlock(&fp->fi_lock);
-> +			goto out;
-> +		}
-> +		if (nfs4_resolve_deny_conflicts_locked(fp, new_stp,
-> +				stp, open->op_share_access, true)) {
-> +			spin_unlock(&fp->fi_lock);
-> +			goto out;
-> +		}
->  	}
->  
->  	/* Set access bits in stateid */
-> @@ -5050,7 +5130,7 @@ nfs4_upgrade_open(struct svc_rqst *rqstp, struct nfs4_file *fp, struct svc_fh *c
->  	unsigned char old_deny_bmap = stp->st_deny_bmap;
->  
->  	if (!test_access(open->op_share_access, stp))
-> -		return nfs4_get_vfs_file(rqstp, fp, cur_fh, stp, open);
-> +		return nfs4_get_vfs_file(rqstp, fp, cur_fh, stp, open, false);
->  
->  	/* test and set deny mode */
->  	spin_lock(&fp->fi_lock);
-> @@ -5059,7 +5139,10 @@ nfs4_upgrade_open(struct svc_rqst *rqstp, struct nfs4_file *fp, struct svc_fh *c
->  		set_deny(open->op_share_deny, stp);
->  		fp->fi_share_deny |=
->  				(open->op_share_deny & NFS4_SHARE_DENY_BOTH);
-> -	}
-> +	} else if (status == nfserr_share_denied &&
-> +		!nfs4_resolve_deny_conflicts_locked(fp, false, stp,
-> +			open->op_share_deny, false))
-> +		status = nfs_ok;
->  	spin_unlock(&fp->fi_lock);
->  
->  	if (status != nfs_ok)
-> @@ -5399,7 +5482,7 @@ nfsd4_process_open2(struct svc_rqst *rqstp, struct svc_fh *current_fh, struct nf
->  			goto out;
->  		}
->  	} else {
-> -		status = nfs4_get_vfs_file(rqstp, fp, current_fh, stp, open);
-> +		status = nfs4_get_vfs_file(rqstp, fp, current_fh, stp, open, true);
->  		if (status) {
->  			stp->st_stid.sc_type = NFS4_CLOSED_STID;
->  			release_open_stateid(stp);
-> -- 
-> 2.9.5
+> Actually we might work to issue a patch and revert the patch plus add
+> the code that Bean and Bart mentioned which is currently Android only.
+> The reason it has not been done before is because for now it's not
+> production yet but it may soon be that case.
+> 
+> Would this patch revert be an option and accepted as a closure for
+> this discussion?
+
+What patch revert? It's not clear to me which patch you're talking about
+here. If you're talking about the "remove the per-bio/request write
+hint" patch, then no, that's certainly not being reverted. See previous
+replies I made and also below for why, and let's please stop beating
+this dead horse.
+
+> Another option (which I actually prefer), if I ask for a MM & Storage
+> BoF discussion on storage hints where I can show you the status of
+> temperature management and my studies on how this is beneficial for
+> storage devices. 
+
+As long as it's accompanied by code that implements it, then that would
+be fine.
+
+> Would this be more beneficial and maybe get some wider consensus on
+> the write hints?
+> 
+> After that consensus reverting (or agreeing on a new approach) will be
+> easier.
+
+As I've said multiple times, whenever code is available, it'll be
+reviewed and discussed. I don't like to discuss hypotheticals as too
+many times in the past there's a promise made and expectations built
+only for nothing to materialize. As it stands, the only in-kernel user
+of the hints is gone, and that means that the support code is being
+removed. We NEVER keep code in the kernel that doesn't have a user, as
+it can't get tested.
+
+Submit your patches when they are ready, it really has no bearing on the
+currently queued up changes to write hints.
+
+-- 
+Jens Axboe
+
