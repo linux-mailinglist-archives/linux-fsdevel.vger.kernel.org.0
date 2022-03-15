@@ -2,163 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D665A4D95AE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Mar 2022 08:53:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6111E4D95E3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Mar 2022 09:05:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345693AbiCOHye (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Mar 2022 03:54:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59394 "EHLO
+        id S1345736AbiCOIGS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Mar 2022 04:06:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242545AbiCOHyd (ORCPT
+        with ESMTP id S1345723AbiCOIGR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Mar 2022 03:54:33 -0400
-Received: from mail-yb1-xb2d.google.com (mail-yb1-xb2d.google.com [IPv6:2607:f8b0:4864:20::b2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80CE1E0CF
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Mar 2022 00:53:21 -0700 (PDT)
-Received: by mail-yb1-xb2d.google.com with SMTP id g26so35639723ybj.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Mar 2022 00:53:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9fx9f/dGI0jG5qMZR80BsY4AEIW3adegKwssDhY/VxU=;
-        b=X3kXd8IgVsb6phSuLDtCPMN6ZSj5LyxjrsIZNHgQ1y74uWx+8ke/pSvk5/wrAfN+AV
-         lwpxSb95g8tsy1IKUKROLcWljPhTXP8G8CdfQvYCYBCD4WKDaNM1W7gd26JURACTcKTK
-         U3+872+E2nf2ZnX6YFLLKzHo1LqglmwIRHhnzsh/9xpK3F76XwIov/1a/2/lc3AjvK3y
-         WJ3CsWyLfDSnxyYDTEkXFcjTEtAy0l249WxSCqLrNslHL2R5ohpXwQGVELyaSdGfbjGW
-         r8S2HA/zPdzeDW0xO6HOu5NqHdJUdjPlrWCCjkMuxlduawfSy2iACKrnAHZi4WI2RqB9
-         NLBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9fx9f/dGI0jG5qMZR80BsY4AEIW3adegKwssDhY/VxU=;
-        b=DBzo9nw1Azu3ySMa7ACzNhZDX8XChaK3rwIXa2nsBuzGvnumbEYHrozvN7K+3aHCC1
-         j2bD7cyeGzen7d0Wn2QfzNc5b89zkYylpXpExA430whFz7BWjnNezq1EYRJ2boLNNgWt
-         jG0QWuQmjUgM7lAi1BJTxUrzazG2HtAfYtR23uKCX6AN/Afmj0okoO2ebLI4QqY+MPjX
-         CQdY/qWzRyKnL8ofPlgzqSNSscBzEF84OoMPbL7SVsKDwA+yFce8B0BTF/YHi4q6Kibp
-         KxtowBmpBDaOoOgNDRB6rbG9KHJ7uJJgm3SL1VGxoRWITjgA/vOoNw+XZBr9DftD/UKm
-         RKKQ==
-X-Gm-Message-State: AOAM533Fp0z8vDtB55UpKk9JaEwZT9tVTL0ZHb+UUkgH0PCxz6h6Xt6V
-        YQygif7v2j2iQqEfE7qG0Zcd9d6vca5mU2c/islAHQ==
-X-Google-Smtp-Source: ABdhPJxOY+Gd7fbyVQ1ZM8TF+hRcSWHjS8y0g3Rs/rRlJp/i6LSmbPejo0CMOLJoPxKwDrAWMN6zwhZl7EOhjTmKxxw=
-X-Received: by 2002:a25:dc4:0:b0:629:2337:f9ea with SMTP id
- 187-20020a250dc4000000b006292337f9eamr21531864ybn.6.1647330800437; Tue, 15
- Mar 2022 00:53:20 -0700 (PDT)
+        Tue, 15 Mar 2022 04:06:17 -0400
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 087E74BFC5;
+        Tue, 15 Mar 2022 01:05:03 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0V7Gi8nm_1647331499;
+Received: from B-P7TQMD6M-0146.local(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0V7Gi8nm_1647331499)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 15 Mar 2022 16:05:01 +0800
+Date:   Tue, 15 Mar 2022 16:04:59 +0800
+From:   Gao Xiang <hsiangkao@linux.alibaba.com>
+To:     Guo Xuenan <guoxuenan@huawei.com>
+Cc:     willy@infradead.org, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        houtao1@huawei.com, fangwei1@huawei.com,
+        "Darrick J. Wong" <djwong@kernel.org>
+Subject: Re: [PATCH] iomap: fix an infinite loop in iomap_fiemap
+Message-ID: <YjBIq3hFg+RlyAOF@B-P7TQMD6M-0146.local>
+Mail-Followup-To: Guo Xuenan <guoxuenan@huawei.com>, willy@infradead.org,
+        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, houtao1@huawei.com,
+        fangwei1@huawei.com, "Darrick J. Wong" <djwong@kernel.org>
+References: <20220315065745.3441989-1-guoxuenan@huawei.com>
 MIME-Version: 1.0
-References: <20220302082718.32268-1-songmuchun@bytedance.com>
- <20220302082718.32268-6-songmuchun@bytedance.com> <CAPcyv4hsMWe1AreVVhGJD-St3FGtGBMeA-BX7XbA_kVX97tw4Q@mail.gmail.com>
- <CAMZfGtUmhcryboPdRC7ZhWVuV3TX0rLcKUxhvamAGbHUoATaow@mail.gmail.com> <CAPcyv4gdP+FSsQW2+W3+NKNGnM3fAfF3d=ZxuCDc+r_AnRBCUg@mail.gmail.com>
-In-Reply-To: <CAPcyv4gdP+FSsQW2+W3+NKNGnM3fAfF3d=ZxuCDc+r_AnRBCUg@mail.gmail.com>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Tue, 15 Mar 2022 15:51:31 +0800
-Message-ID: <CAMZfGtX1tgMQX3iCMO_x=HG1y2c21038YQUWuSzhaO2miUTLcA@mail.gmail.com>
-Subject: Re: [PATCH v4 5/6] dax: fix missing writeprotect the pte entry
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alistair Popple <apopple@nvidia.com>,
-        Yang Shi <shy828301@gmail.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Hugh Dickins <hughd@google.com>,
-        Xiyu Yang <xiyuyang19@fudan.edu.cn>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ross Zwisler <zwisler@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux NVDIMM <nvdimm@lists.linux.dev>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        Muchun Song <smuchun@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20220315065745.3441989-1-guoxuenan@huawei.com>
+X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H5,
+        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 15, 2022 at 4:50 AM Dan Williams <dan.j.williams@intel.com> wrote:
->
-> On Fri, Mar 11, 2022 at 1:06 AM Muchun Song <songmuchun@bytedance.com> wrote:
-> >
-> > On Thu, Mar 10, 2022 at 8:59 AM Dan Williams <dan.j.williams@intel.com> wrote:
-> > >
-> > > On Wed, Mar 2, 2022 at 12:30 AM Muchun Song <songmuchun@bytedance.com> wrote:
-> > > >
-> > > > Currently dax_mapping_entry_mkclean() fails to clean and write protect
-> > > > the pte entry within a DAX PMD entry during an *sync operation. This
-> > > > can result in data loss in the following sequence:
-> > > >
-> > > >   1) process A mmap write to DAX PMD, dirtying PMD radix tree entry and
-> > > >      making the pmd entry dirty and writeable.
-> > > >   2) process B mmap with the @offset (e.g. 4K) and @length (e.g. 4K)
-> > > >      write to the same file, dirtying PMD radix tree entry (already
-> > > >      done in 1)) and making the pte entry dirty and writeable.
-> > > >   3) fsync, flushing out PMD data and cleaning the radix tree entry. We
-> > > >      currently fail to mark the pte entry as clean and write protected
-> > > >      since the vma of process B is not covered in dax_entry_mkclean().
-> > > >   4) process B writes to the pte. These don't cause any page faults since
-> > > >      the pte entry is dirty and writeable. The radix tree entry remains
-> > > >      clean.
-> > > >   5) fsync, which fails to flush the dirty PMD data because the radix tree
-> > > >      entry was clean.
-> > > >   6) crash - dirty data that should have been fsync'd as part of 5) could
-> > > >      still have been in the processor cache, and is lost.
-> > >
-> > > Excellent description.
-> > >
-> > > >
-> > > > Just to use pfn_mkclean_range() to clean the pfns to fix this issue.
-> > >
-> > > So the original motivation for CONFIG_FS_DAX_LIMITED was for archs
-> > > that do not have spare PTE bits to indicate pmd_devmap(). So this fix
-> > > can only work in the CONFIG_FS_DAX_LIMITED=n case and in that case it
-> > > seems you can use the current page_mkclean_one(), right?
-> >
-> > I don't know the history of CONFIG_FS_DAX_LIMITED.
-> > page_mkclean_one() need a struct page associated with
-> > the pfn,  do the struct pages exist when CONFIG_FS_DAX_LIMITED
-> > and ! FS_DAX_PMD?
->
-> CONFIG_FS_DAX_LIMITED was created to preserve some DAX use for S390
-> which does not have CONFIG_ARCH_HAS_PTE_DEVMAP. Without PTE_DEVMAP
-> then get_user_pages() for DAX mappings fails.
->
-> To your question, no, there are no pages at all in the
-> CONFIG_FS_DAX_LIMITED=y case. So page_mkclean_one() could only be
-> deployed for PMD mappings, but I think it is reasonable to just
-> disable PMD mappings for the CONFIG_FS_DAX_LIMITED=y case.
->
-> Going forward the hope is to remove the ARCH_HAS_PTE_DEVMAP
-> requirement for DAX, and use PTE_SPECIAL for the S390 case. However,
-> that still wants to have 'struct page' availability as an across the
-> board requirement.
+Hi Xuenan,
 
-Got it. Thanks for your patient explanation.
+(+ Cc Darrick.. )
 
->
-> > If yes, I think you are right. But I don't
-> > see this guarantee. I am not familiar with DAX code, so what am
-> > I missing here?
->
-> Perhaps I missed a 'struct page' dependency? I thought the bug you are
-> fixing only triggers in the presence of PMDs. The
+On Tue, Mar 15, 2022 at 02:57:45PM +0800, Guo Xuenan wrote:
+> when get fiemap starting from MAX_LFS_FILESIZE, (maxbytes - *len) < start
+> will always true , then *len set zero. because of start offset is byhond
+> file size, for erofs filesystem it will always return iomap.length with
+> zero,iomap iterate will be infinite loop.
 
-Right.
+Thanks! If my understanding is correct, we once had a similar
+behavior in compressed inodes and it has been worked around with
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/erofs/zmap.c?h=v5.17-rc8#n762
 
-> CONFIG_FS_DAX_LIMITED=y case can still use the current "page-less"
-> mkclean path for PTEs.
+But yeah, if iomap can define or handle post-EOF extent length
+behavior exactly, it would be much better!
 
-But I think introducing pfn_mkclean_range() could make the code
-simple and easy to maintain here since it could handle both PTE
-and PMD mappings.  And page_vma_mapped_walk() could work
-on PFNs since commit [1], which is the case here, we do not need
-extra code to handle the page-less case here.  What do you
-think?
+So on my side,
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=b786e44a4dbfe64476e7120ec7990b89a37be37d
+Reviewed-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+
+(Also you might need to inform iomap maintainer Darrick as well..)
+
+Thanks,
+Gao Xiang
+
+
+> 
+> In order to avoid this situation, it is better to calculate the actual
+> mapping length at first. If the len is 0, there is no need to continue
+> the operation.
+> 
+> ------------[ cut here ]------------
+> WARNING: CPU: 7 PID: 905 at fs/iomap/iter.c:35 iomap_iter+0x97f/0xc70
+> Modules linked in: xfs erofs
+> CPU: 7 PID: 905 Comm: iomap Tainted: G        W         5.17.0-rc8 #27
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubuntu1.1 04/01/2014
+> RIP: 0010:iomap_iter+0x97f/0xc70
+> Code: 85 a1 fc ff ff e8 71 be 9c ff 0f 1f 44 00 00 e9 92 fc ff ff e8 62 be 9c ff 0f 0b b8 fb ff ff ff e9 fc f8 ff ff e8 51 be 9c ff <0f> 0b e9 2b fc ff ff e8 45 be 9c ff 0f 0b e9 e1 fb ff ff e8 39 be
+> RSP: 0018:ffff888060a37ab0 EFLAGS: 00010293
+> RAX: 0000000000000000 RBX: ffff888060a37bb0 RCX: 0000000000000000
+> RDX: ffff88807e19a900 RSI: ffffffff81a7da7f RDI: ffff888060a37be0
+> RBP: 7fffffffffffffff R08: 0000000000000000 R09: ffff888060a37c20
+> R10: ffff888060a37c67 R11: ffffed100c146f8c R12: 7fffffffffffffff
+> R13: 0000000000000000 R14: ffff888060a37bd8 R15: ffff888060a37c20
+> FS:  00007fd3cca01540(0000) GS:ffff888108780000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000000020010820 CR3: 0000000054b92000 CR4: 00000000000006e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  iomap_fiemap+0x1c9/0x2f0
+>  erofs_fiemap+0x64/0x90 [erofs]
+>  do_vfs_ioctl+0x40d/0x12e0
+>  __x64_sys_ioctl+0xaa/0x1c0
+>  do_syscall_64+0x35/0x80
+>  entry_SYSCALL_64_after_hwframe+0x44/0xae
+>  </TASK>
+> ---[ end trace 0000000000000000 ]---
+> watchdog: BUG: soft lockup - CPU#7 stuck for 26s! [iomap:905]
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Guo Xuenan <guoxuenan@huawei.com>
+> ---
+>  fs/ioctl.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/ioctl.c b/fs/ioctl.c
+> index 1ed097e94af2..7f70e90766ed 100644
+> --- a/fs/ioctl.c
+> +++ b/fs/ioctl.c
+> @@ -171,8 +171,6 @@ int fiemap_prep(struct inode *inode, struct fiemap_extent_info *fieinfo,
+>  	u32 incompat_flags;
+>  	int ret = 0;
+>  
+> -	if (*len == 0)
+> -		return -EINVAL;
+>  	if (start > maxbytes)
+>  		return -EFBIG;
+>  
+> @@ -182,6 +180,9 @@ int fiemap_prep(struct inode *inode, struct fiemap_extent_info *fieinfo,
+>  	if (*len > maxbytes || (maxbytes - *len) < start)
+>  		*len = maxbytes - start;
+>  
+> +	if (*len == 0)
+> +		return -EINVAL;
+> +
+>  	supported_flags |= FIEMAP_FLAG_SYNC;
+>  	supported_flags &= FIEMAP_FLAGS_COMPAT;
+>  	incompat_flags = fieinfo->fi_flags & ~supported_flags;
+> -- 
+> 2.22.0
