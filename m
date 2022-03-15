@@ -2,166 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F2444DA093
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Mar 2022 17:56:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 30F4C4DA108
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Mar 2022 18:21:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350321AbiCOQ5X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Mar 2022 12:57:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42700 "EHLO
+        id S237488AbiCORWM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Mar 2022 13:22:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243479AbiCOQ5X (ORCPT
+        with ESMTP id S1350516AbiCORWE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Mar 2022 12:57:23 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF7CA4CD71;
-        Tue, 15 Mar 2022 09:56:10 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 79197B8122D;
-        Tue, 15 Mar 2022 16:56:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C142C340E8;
-        Tue, 15 Mar 2022 16:56:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647363368;
-        bh=PNchmz87ektRRcL0pHOs89tCvETP4cDYQqgB0b4jOl4=;
+        Tue, 15 Mar 2022 13:22:04 -0400
+Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDD385880F;
+        Tue, 15 Mar 2022 10:20:51 -0700 (PDT)
+Received: by fieldses.org (Postfix, from userid 2815)
+        id 1EC6C6A84; Tue, 15 Mar 2022 13:20:51 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org 1EC6C6A84
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
+        s=default; t=1647364851;
+        bh=nMdUSnDfJGUkkshZG+wCco5fLanizJJTvgIT15m762s=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YR3aPzCQ+f+yMrDWWvlBZc+hrN3j1H3TJHl3vq3jJix+jX6Rrd1i1On/qxHmoGnIy
-         3CQMh1o1gsmtjmDEHOnycRogqjw5YK4zIDdsPloiqF+eFgThNi0PwXZqS3J5eJnJqS
-         mcX/ShKHZPhRt2q1R9vCMnqD41fa48ltcPMvVn1oTPVrThLe/aEi49fC9GiuNg+abc
-         mqpnAEJmZ/zM1+ptJ3PxMGMZMdzob6MrUuIphpGTR7yl8Z0yuyHC0qiOrHsYYhGnKj
-         3sLtFmIGi/URLj7i6OMScD+es3G7yRzR53ax9IVfSkb/pp5kldi071gKD39gcVRIVY
-         wE24fxjliOVtQ==
-Date:   Tue, 15 Mar 2022 09:56:07 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Ritesh Harjani <riteshh@linux.ibm.com>
-Cc:     fstests <fstests@vger.kernel.org>, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 4/4] generic/677: Add a test to check unwritten extents
- tracking
-Message-ID: <20220315165607.GD8200@magnolia>
-References: <cover.1647342932.git.riteshh@linux.ibm.com>
- <37d65f1026f2fc1f2d13ab54980de93f4fa34c46.1647342932.git.riteshh@linux.ibm.com>
+        b=q+yRz4wipkaDWxm6N9up/EmnOZqr+Nwm/cs0aCcQtbJsiubKwLlzHroBRaElXCwSh
+         6Y7iRU+RS+YDdh3hrpqn9Vjv0iytNh6J/iWn/w2eBIydgv3p3Rm9I4ovcFnaKgertP
+         k/WVaZLvksv+BzktkxicNPYF+U+/uI3QCU/GWCfU=
+Date:   Tue, 15 Mar 2022 13:20:51 -0400
+From:   "J. Bruce Fields" <bfields@fieldses.org>
+To:     dai.ngo@oracle.com
+Cc:     chuck.lever@oracle.com, jlayton@redhat.com,
+        viro@zeniv.linux.org.uk, linux-nfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH RFC v16 03/11] NFSD: Add lm_lock_expired call out
+Message-ID: <20220315172051.GD19168@fieldses.org>
+References: <1647051215-2873-1-git-send-email-dai.ngo@oracle.com>
+ <1647051215-2873-4-git-send-email-dai.ngo@oracle.com>
+ <20220315150245.GA19168@fieldses.org>
+ <1e1ff6a1-86cf-99d4-13ad-45352e58fe73@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <37d65f1026f2fc1f2d13ab54980de93f4fa34c46.1647342932.git.riteshh@linux.ibm.com>
-X-Spam-Status: No, score=-8.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <1e1ff6a1-86cf-99d4-13ad-45352e58fe73@oracle.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 15, 2022 at 07:58:59PM +0530, Ritesh Harjani wrote:
-> With these sequence of operation (in certain cases like with ext4 fast_commit)
-> could miss to track unwritten extents during replay phase
-> (after sudden FS shutdown).
+On Tue, Mar 15, 2022 at 09:26:46AM -0700, dai.ngo@oracle.com wrote:
 > 
-> This fstest adds a test case to test this.
+> On 3/15/22 8:02 AM, J. Bruce Fields wrote:
+> >On Fri, Mar 11, 2022 at 06:13:27PM -0800, Dai Ngo wrote:
+> >>Add callout function nfsd4_lm_lock_expired for lm_lock_expired.
+> >>If lock request has conflict with courtesy client then expire the
+> >>courtesy client and return no conflict to caller.
+> >>
+> >>Signed-off-by: Dai Ngo <dai.ngo@oracle.com>
+> >>---
+> >>  fs/nfsd/nfs4state.c | 37 +++++++++++++++++++++++++++++++++++++
+> >>  1 file changed, 37 insertions(+)
+> >>
+> >>diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+> >>index a65d59510681..583ac807e98d 100644
+> >>--- a/fs/nfsd/nfs4state.c
+> >>+++ b/fs/nfsd/nfs4state.c
+> >>@@ -6578,10 +6578,47 @@ nfsd4_lm_notify(struct file_lock *fl)
+> >>  	}
+> >>  }
+> >>+/**
+> >>+ * nfsd4_lm_lock_expired - check if lock conflict can be resolved.
+> >>+ *
+> >>+ * @fl: pointer to file_lock with a potential conflict
+> >>+ * Return values:
+> >>+ *   %false: real conflict, lock conflict can not be resolved.
+> >>+ *   %true: no conflict, lock conflict was resolved.
+> >>+ *
+> >>+ * Note that this function is called while the flc_lock is held.
+> >>+ */
+> >>+static bool
+> >>+nfsd4_lm_lock_expired(struct file_lock *fl)
+> >>+{
+> >>+	struct nfs4_lockowner *lo;
+> >>+	struct nfs4_client *clp;
+> >>+	bool rc = false;
+> >>+
+> >>+	if (!fl)
+> >>+		return false;
+> >>+	lo = (struct nfs4_lockowner *)fl->fl_owner;
+> >>+	clp = lo->lo_owner.so_client;
+> >>+
+> >>+	/* need to sync with courtesy client trying to reconnect */
+> >>+	spin_lock(&clp->cl_cs_lock);
+> >>+	if (test_bit(NFSD4_CLIENT_EXPIRED, &clp->cl_flags))
+> >>+		rc = true;
+> >>+	else {
+> >>+		if (test_bit(NFSD4_CLIENT_COURTESY, &clp->cl_flags)) {
+> >>+			set_bit(NFSD4_CLIENT_EXPIRED, &clp->cl_flags);
+> >>+			rc =  true;
+> >>+		}
+> >>+	}
+> >I'd prefer:
+> >
+> >	if (test_bit(NFSD4_CLIENT_COURTESY, &clp->cl_flags))
+> >		set_bit(NFSD4_CLIENT_EXPIRED, &clp->cl_flags);
 > 
-> 5e4d0eba1ccaf19f
-> ext4: fix fast commit may miss tracking range for FALLOC_FL_ZERO_RANGE
-> 
-> Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
-> ---
->  tests/generic/677     | 64 +++++++++++++++++++++++++++++++++++++++++++
->  tests/generic/677.out |  6 ++++
->  2 files changed, 70 insertions(+)
->  create mode 100755 tests/generic/677
->  create mode 100644 tests/generic/677.out
-> 
-> diff --git a/tests/generic/677 b/tests/generic/677
-> new file mode 100755
-> index 00000000..e316763a
-> --- /dev/null
-> +++ b/tests/generic/677
-> @@ -0,0 +1,64 @@
-> +#! /bin/bash
-> +# SPDX-License-Identifier: GPL-2.0
-> +# Copyright (c) 2022 IBM Corporation.  All Rights Reserved.
-> +#
-> +# FS QA Test 677
-> +#
-> +# Test below sequence of operation which (w/o below kernel patch) in case of
-> +# ext4 with fast_commit may misss to track unwritten extents.
-> +# commit 5e4d0eba1ccaf19f
-> +# ext4: fix fast commit may miss tracking range for FALLOC_FL_ZERO_RANGE
-> +#
-> +. ./common/preamble
-> +_begin_fstest auto quick log shutdown recoveryloop
-> +
-> +# Override the default cleanup function.
-> +_cleanup()
-> +{
-> +	cd /
-> +	rm -r -f $tmp.*
-> +}
-> +
-> +# Import common functions.
-> +. ./common/filter
-> +. ./common/punch
-> +
-> +# real QA test starts here
-> +
-> +# Modify as appropriate.
-> +_supported_fs generic
-> +_require_scratch
-> +_require_xfs_io_command "fzero"
-> +_require_xfs_io_command "fiemap"
-> +
-> +t1=$SCRATCH_MNT/t1
-> +
-> +_scratch_mkfs > $seqres.full 2>&1
-> +
-> +_scratch_mount >> $seqres.full 2>&1
-> +
-> +bs=$(_get_block_size $SCRATCH_MNT)
+> we also need to set rc to true here.
 
-Same comments about blocksize, group names, and
-_require_scratch_shutdown as the last patch.
+No, the next line does it because we set the EXPIRED bit.
 
---D
+--b.
 
-> +
-> +# create and write data to t1
-> +$XFS_IO_PROG -f -c "pwrite 0 $((100*$bs))" $t1 | _filter_xfs_io_numbers
-> +
-> +# fsync t1
-> +$XFS_IO_PROG -c "fsync" $t1
-> +
-> +# fzero certain range in between
-> +$XFS_IO_PROG -c "fzero -k  $((40*$bs)) $((20*$bs))" $t1
-> +
-> +# fsync t1
-> +$XFS_IO_PROG -c "fsync" $t1
-> +
-> +# shutdown FS now for replay of journal to kick during next mount
-> +_scratch_shutdown -v >> $seqres.full 2>&1
-> +
-> +_scratch_cycle_mount
-> +
-> +# check fiemap reported is valid or not
-> +$XFS_IO_PROG -c "fiemap -v" $t1 | _filter_fiemap_flags $bs
-> +
-> +# success, all done
-> +status=0
-> +exit
-> diff --git a/tests/generic/677.out b/tests/generic/677.out
-> new file mode 100644
-> index 00000000..b91ab77a
-> --- /dev/null
-> +++ b/tests/generic/677.out
-> @@ -0,0 +1,6 @@
-> +QA output created by 677
-> +wrote XXXX/XXXX bytes at offset XXXX
-> +XXX Bytes, X ops; XX:XX:XX.X (XXX YYY/sec and XXX ops/sec)
-> +0: [0..39]: none
-> +1: [40..59]: unwritten
-> +2: [60..99]: nonelast
-> --
-> 2.31.1
 > 
+> >	if (test_bit(NFSD4_CLIENT_EXPIRED, &clp->cl_flags))
+> >		rc = true;
+> 
+> With v16 we need to check for NFSD4_CLIENT_EXPIRED first then
+> NFSD4_CLIENT_COURTESY because both flags can be set. In the
+> next patch version, we will clear NFSD4_CLIENT_COURTESY when
+> setting NFSD4_CLIENT_EXPIRED so the order of check does not
+> matter.
+> 
+> >
+> >Same result, but more compact and straightforward, I think.
+> 
+> Chuck wants to replace the bits used for courtesy client in
+> cl_flags with a  separate u8 field so it does not have to use
+> bit operation to set/test.
+> 
+> -Dai
+> 
+> >
+> >--b.
+> >
+> >>+	spin_unlock(&clp->cl_cs_lock);
+> >>+	return rc;
+> >>+}
+> >>+
+> >>  static const struct lock_manager_operations nfsd_posix_mng_ops  = {
+> >>  	.lm_notify = nfsd4_lm_notify,
+> >>  	.lm_get_owner = nfsd4_lm_get_owner,
+> >>  	.lm_put_owner = nfsd4_lm_put_owner,
+> >>+	.lm_lock_expired = nfsd4_lm_lock_expired,
+> >>  };
+> >>  static inline void
+> >>-- 
+> >>2.9.5
