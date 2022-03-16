@@ -2,182 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E5E64DB134
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Mar 2022 14:20:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 09E404DB140
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Mar 2022 14:21:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356181AbiCPNUy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Mar 2022 09:20:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56036 "EHLO
+        id S1356394AbiCPNWT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Mar 2022 09:22:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356324AbiCPNTr (ORCPT
+        with ESMTP id S1356452AbiCPNWJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Mar 2022 09:19:47 -0400
-Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3CC94617E;
-        Wed, 16 Mar 2022 06:18:02 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R861e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=16;SR=0;TI=SMTPD_---0V7NEPse_1647436676;
-Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0V7NEPse_1647436676)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 16 Mar 2022 21:17:57 +0800
-From:   Jeffle Xu <jefflexu@linux.alibaba.com>
-To:     dhowells@redhat.com, linux-cachefs@redhat.com, xiang@kernel.org,
-        chao@kernel.org, linux-erofs@lists.ozlabs.org
-Cc:     torvalds@linux-foundation.org, gregkh@linuxfoundation.org,
-        willy@infradead.org, linux-fsdevel@vger.kernel.org,
-        joseph.qi@linux.alibaba.com, bo.liu@linux.alibaba.com,
-        tao.peng@linux.alibaba.com, gerry@linux.alibaba.com,
-        eguan@linux.alibaba.com, linux-kernel@vger.kernel.org,
-        luodaowen.backend@bytedance.com
-Subject: [PATCH v5 22/22] erofs: add 'uuid' mount option
-Date:   Wed, 16 Mar 2022 21:17:23 +0800
-Message-Id: <20220316131723.111553-23-jefflexu@linux.alibaba.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20220316131723.111553-1-jefflexu@linux.alibaba.com>
-References: <20220316131723.111553-1-jefflexu@linux.alibaba.com>
+        Wed, 16 Mar 2022 09:22:09 -0400
+Received: from mail-ot1-x32f.google.com (mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 322342BB34
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Mar 2022 06:20:42 -0700 (PDT)
+Received: by mail-ot1-x32f.google.com with SMTP id 17-20020a9d0611000000b005b251571643so1412142otn.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Mar 2022 06:20:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=U6KqhFI4KMB+IC4qnRY9p1qx52so3v0/vbNiuaSJcBU=;
+        b=fGcqbVpIyaQkjWbqegI/d4IWXhgG/WXl2VePWV6+DOwGU+SxhUleeweGi14nWvmQmj
+         u0ECs3Pwraag0HsQLSL3WySqkhQoq/1dZXPu3HIxzgZtPKQ+c8Q/DsmTv0YWkF/9lt12
+         4DafMzJTDh6BYqysIlI6+dlMjeLQwwWS6DrqqmupAOCwtFQgaDAuLBJplsnuwo7QAUhl
+         NDO3TJFGP9NlYijiceLhOdFVuQ7BHeWOLdgOR19W2t6p1pXbBCw0dP/b6nbK0SWZn+qn
+         hKrLxOyY5x6TL91bTJlQxIJEG7FEAIWGyBqFaBNjthP9w7sdOYLsdVnZKSk89USCGH7u
+         NN0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=U6KqhFI4KMB+IC4qnRY9p1qx52so3v0/vbNiuaSJcBU=;
+        b=Q8B5tXCp0CmPywC8SXWnoi009C475MMmIProI+ro6rmAxwafaSmnTe07WMbP/lwa11
+         cfWk85MSin8pYjoI2EjaoYMMavtGD9xpVGkHoNY+WJqzwwwBs9oqIY5nuN/WcaRSPRxl
+         XNwzT5Y44pPvAey4jlZ0LeKs/+YK3G3fHFIf00BTKk9Et4udub0aGTlzOa/htwKu/99n
+         oyAHtYEyI8VFdavcfNDMT5NF5t8fvN1AjNAjJcd5IWz4qvm0dCbvgAHdmTcOt8kwyOxY
+         NnLCepcElGx7z/4rOsycUcC9YTXiZARQzkoIfr0qGvYESLLYdOw0L8sV7oJSOBtFMYR+
+         biYw==
+X-Gm-Message-State: AOAM533Il4NUhjfZlI/Jr0gLXxu8MECylonm6aPLPimK816SpvMJcraP
+        ZX3EqiKIGnP9BcNuaye0mrwVj2w9V1jtjviATXI=
+X-Google-Smtp-Source: ABdhPJxGuk0eW/dqMYYgE9/LCc4QA9Z6XmT+3sd7Rnl4CVZYg4axvRP/W0PMfCR4rGvk3Irf6IZ4KRTJaKhaBdxU0Bo=
+X-Received: by 2002:a9d:5cc8:0:b0:5b2:35ae:7ad6 with SMTP id
+ r8-20020a9d5cc8000000b005b235ae7ad6mr13999852oti.275.1647436841455; Wed, 16
+ Mar 2022 06:20:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H5,
-        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no
-        version=3.4.6
+References: <1357949524.990839.1647084149724.ref@mail.yahoo.com>
+ <1357949524.990839.1647084149724@mail.yahoo.com> <20220314084706.ncsk754gjywkcqxq@quack3.lan>
+ <CAOQ4uxiDubhONM3w502anndtbqy73q_Kt5bOQ07zbATb8ndvVA@mail.gmail.com> <20220316115632.khj6m4npjrjviimi@quack3.lan>
+In-Reply-To: <20220316115632.khj6m4npjrjviimi@quack3.lan>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 16 Mar 2022 15:20:30 +0200
+Message-ID: <CAOQ4uxj9wxwgaR3KHxtRAg7+tcfygko4OTw8Hh9J8PLTnO-oBQ@mail.gmail.com>
+Subject: Re: Fanotify Directory exclusion not working when using FAN_MARK_MOUNT
+To:     Jan Kara <jack@suse.cz>
+Cc:     Srinivas <talkwithsrinivas@yahoo.co.in>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Introduce 'uuid' mount option to enable on-demand read sementics. In
-this case, erofs could be mounted from blob files instead of blkdev.
-By then users could specify the path of bootstrap blob file containing
-the complete erofs image.
+On Wed, Mar 16, 2022 at 1:56 PM Jan Kara <jack@suse.cz> wrote:
+>
+> On Mon 14-03-22 11:28:23, Amir Goldstein wrote:
+> > On Mon, Mar 14, 2022 at 10:47 AM Jan Kara <jack@suse.cz> wrote:
+> > >
+> > > On Sat 12-03-22 11:22:29, Srinivas wrote:
+> > > > If a  process calls fanotify_mark(fd, FAN_MARK_ADD | FAN_MARK_MOUNT=
+,
+> > > > FAN_OPEN_PERM, 0, "/mountpoint") no other directory exclusions can =
+be
+> > > > applied.
+> > > >
+> > > > However a path (file) exclusion can still be applied using
+> > > >
+> > > > fanotify_mark(fd, FAN_MARK_ADD | FAN_MARK_IGNORED_MASK |
+> > > > FAN_MARK_IGNORED_SURV_MODIFY, FAN_OPEN_PERM | FAN_CLOSE_WRITE, AT_F=
+DCWD,
+> > > > "/tmp/fio/abc");  =3D=3D=3D> path exclusion that works.
+> > > >
+> > > > I think the directory exclusion not working is a bug as otherwise A=
+V
+> > > > solutions cant exclude directories when using FAN_MARK_MOUNT.
+> > > >
+> > > > I believe the change should be simple since we are already supporti=
+ng
+> > > > path exclusions. So we should be able to add the same for the direc=
+tory
+> > > > inode.
+> > > >
+> > > > 215676 =E2=80=93 fanotify Ignoring/Excluding a Directory not workin=
+g with
+> > > > FAN_MARK_MOUNT (kernel.org)
+> > >
+> > > Thanks for report! So I believe this should be fixed by commit 4f0b90=
+3ded
+> > > ("fsnotify: fix merge with parent's ignored mask") which is currently
+> > > sitting in my tree and will go to Linus during the merge (opening in =
+a
+> > > week).
+> >
+> > Actually, in a closer look, that fix alone is not enough.
+> >
+> > With the current upstream kernel this should work to exclude events
+> > in a directory:
+> >
+> > fanotify_mark(fd, FAN_MARK_ADD, FAN_EVENT_ON_CHILD |
+> >                        FAN_OPEN_PERM | FAN_CLOSE_WRITE,
+> >                        AT_FDCWD, "/tmp/fio/");
+> > fanotify_mark(fd, FAN_MARK_ADD | FAN_MARK_IGNORED_MASK |
+> >                        FAN_MARK_IGNORED_SURV_MODIFY,
+> >                        FAN_OPEN_PERM | FAN_CLOSE_WRITE,
+> >                        AT_FDCWD, "/tmp/fio/");
+>
+> Thinking about this again, it could also be considered a bug (although
+> convenient at times ;), that in current upstream kernel this combination =
+of
+> marks results in ignoring the OPEN_PERM & CLOSE_WRITE events on children =
+of
+> /tmp/fio, couldn't it? We probably should not consider the parent's ignor=
+e
+> mask for events on children to maintain compatibility with older kernels?
+> In theory it could bite someone unexpectedly...
+>
+> And to enable this convenient functionality we should rather introduce th=
+e
+> new bit we've discussed. What do you think?
+>
 
-Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
----
- fs/erofs/super.c | 44 +++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 37 insertions(+), 7 deletions(-)
+I kind of made this "convenient bug" public on several occasions.
+Considering how useful this bug is, I think it is more likely that someone
+will be bit by "fixing" the "bug" in a stable kernel that is it likely for
+someone to be bit by the "bug".
 
-diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index 2942029a7049..8bc4b782f9a9 100644
---- a/fs/erofs/super.c
-+++ b/fs/erofs/super.c
-@@ -400,6 +400,7 @@ enum {
- 	Opt_dax,
- 	Opt_dax_enum,
- 	Opt_device,
-+	Opt_uuid,
- 	Opt_err
- };
- 
-@@ -424,6 +425,7 @@ static const struct fs_parameter_spec erofs_fs_parameters[] = {
- 	fsparam_flag("dax",             Opt_dax),
- 	fsparam_enum("dax",		Opt_dax_enum, erofs_dax_param_enums),
- 	fsparam_string("device",	Opt_device),
-+	fsparam_string("uuid",		Opt_uuid),
- 	{}
- };
- 
-@@ -519,6 +521,12 @@ static int erofs_fc_parse_param(struct fs_context *fc,
- 		}
- 		++ctx->devs->extra_devices;
- 		break;
-+	case Opt_uuid:
-+		kfree(ctx->opt.uuid);
-+		ctx->opt.uuid = kstrdup(param->string, GFP_KERNEL);
-+		if (!ctx->opt.uuid)
-+			return -ENOMEM;
-+		break;
- 	default:
- 		return -ENOPARAM;
- 	}
-@@ -593,9 +601,14 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
- 
- 	sb->s_magic = EROFS_SUPER_MAGIC;
- 
--	if (!sb_set_blocksize(sb, EROFS_BLKSIZ)) {
--		erofs_err(sb, "failed to set erofs blksize");
--		return -EINVAL;
-+	if (erofs_bdev_mode(sb)) {
-+		if (!sb_set_blocksize(sb, EROFS_BLKSIZ)) {
-+			erofs_err(sb, "failed to set erofs blksize");
-+			return -EINVAL;
-+		}
-+	} else {
-+		sb->s_blocksize = EROFS_BLKSIZ;
-+		sb->s_blocksize_bits = LOG_BLOCK_SIZE;
- 	}
- 
- 	sbi = kzalloc(sizeof(*sbi), GFP_KERNEL);
-@@ -604,11 +617,12 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
- 
- 	sb->s_fs_info = sbi;
- 	sbi->opt = ctx->opt;
--	sbi->dax_dev = fs_dax_get_by_bdev(sb->s_bdev, &sbi->dax_part_off);
- 	sbi->devs = ctx->devs;
- 	ctx->devs = NULL;
- 
--	if (!erofs_bdev_mode(sb)) {
-+	if (erofs_bdev_mode(sb)) {
-+		sbi->dax_dev = fs_dax_get_by_bdev(sb->s_bdev, &sbi->dax_part_off);
-+	} else {
- 		struct erofs_fscache_context *bootstrap;
- 
- 		bootstrap = erofs_fscache_get_ctx(sb, ctx->opt.uuid, true);
-@@ -620,6 +634,8 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
- 		err = super_setup_bdi(sb);
- 		if (err)
- 			return err;
-+
-+		sbi->dax_dev = NULL;
- 	}
- 
- 	err = erofs_read_superblock(sb);
-@@ -682,6 +698,11 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
- 
- static int erofs_fc_get_tree(struct fs_context *fc)
- {
-+	struct erofs_fs_context *ctx = fc->fs_private;
-+
-+	if (ctx->opt.uuid)
-+		return get_tree_nodev(fc, erofs_fc_fill_super);
-+
- 	return get_tree_bdev(fc, erofs_fc_fill_super);
- }
- 
-@@ -731,6 +752,7 @@ static void erofs_fc_free(struct fs_context *fc)
- 	struct erofs_fs_context *ctx = fc->fs_private;
- 
- 	erofs_free_dev_context(ctx->devs);
-+	kfree(ctx->opt.uuid);
- 	kfree(ctx);
- }
- 
-@@ -771,7 +793,10 @@ static void erofs_kill_sb(struct super_block *sb)
- 
- 	WARN_ON(sb->s_magic != EROFS_SUPER_MAGIC);
- 
--	kill_block_super(sb);
-+	if (erofs_bdev_mode(sb))
-+		kill_block_super(sb);
-+	else
-+		generic_shutdown_super(sb);
- 
- 	sbi = EROFS_SB(sb);
- 	if (!sbi)
-@@ -889,7 +914,12 @@ static int erofs_statfs(struct dentry *dentry, struct kstatfs *buf)
- {
- 	struct super_block *sb = dentry->d_sb;
- 	struct erofs_sb_info *sbi = EROFS_SB(sb);
--	u64 id = huge_encode_dev(sb->s_bdev->bd_dev);
-+	u64 id;
-+
-+	if (erofs_bdev_mode(sb))
-+		id = huge_encode_dev(sb->s_bdev->bd_dev);
-+	else
-+		id = 0; /* TODO */
- 
- 	buf->f_type = sb->s_magic;
- 	buf->f_bsize = EROFS_BLKSIZ;
--- 
-2.27.0
+Also, if taking away the "convenient bug" from stable kernels without
+providing the new API is not very fair. and making sure that the "bug fix"
+is not backported to any stable kernel is not sustainable.
 
+IOW, I do not see good coming from changing behavior now.
+We can document that behavior of ON_CHILD/ONDIR in ignored mask
+is "undefined" and then make the behavior defined with a new
+FAN_MARK_IGNORED_MASK_* flag.
+
+Thanks,
+Amir.
