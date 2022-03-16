@@ -2,52 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AE4EA4DA7B0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Mar 2022 03:07:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DFFE34DA817
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Mar 2022 03:27:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345217AbiCPCIk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Mar 2022 22:08:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41274 "EHLO
+        id S1353079AbiCPC2c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Mar 2022 22:28:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237330AbiCPCIi (ORCPT
+        with ESMTP id S1351842AbiCPC21 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Mar 2022 22:08:38 -0400
-Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C406C5E744
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Mar 2022 19:07:24 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04357;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0V7JsqWV_1647396439;
-Received: from B-P7TQMD6M-0146.local(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0V7JsqWV_1647396439)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 16 Mar 2022 10:07:22 +0800
-Date:   Wed, 16 Mar 2022 10:07:19 +0800
-From:   Gao Xiang <hsiangkao@linux.alibaba.com>
-To:     Roman Gushchin <roman.gushchin@linux.dev>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Stephen Brennan <stephen.s.brennan@oracle.com>,
-        lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org,
-        Gautham Ananthakrishna <gautham.ananthakrishna@oracle.com>,
-        khlebnikov@yandex-team.ru
-Subject: Re: [LSF/MM TOPIC] Better handling of negative dentries
-Message-ID: <YjFGVxImP/nVyprQ@B-P7TQMD6M-0146.local>
-Mail-Followup-To: Roman Gushchin <roman.gushchin@linux.dev>,
-        Matthew Wilcox <willy@infradead.org>,
-        Stephen Brennan <stephen.s.brennan@oracle.com>,
-        lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org,
-        Gautham Ananthakrishna <gautham.ananthakrishna@oracle.com>,
-        khlebnikov@yandex-team.ru
-References: <YjDvRPuxPN0GsxLB@casper.infradead.org>
- <A35C545C-1926-4AA9-BFC7-0CF11669EA9E@linux.dev>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <A35C545C-1926-4AA9-BFC7-0CF11669EA9E@linux.dev>
-X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H5,
-        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no
+        Tue, 15 Mar 2022 22:28:27 -0400
+Received: from lgeamrelo11.lge.com (lgeamrelo12.lge.com [156.147.23.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 781265DA73
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Mar 2022 19:27:10 -0700 (PDT)
+Received: from unknown (HELO lgemrelse7q.lge.com) (156.147.1.151)
+        by 156.147.23.52 with ESMTP; 16 Mar 2022 11:27:09 +0900
+X-Original-SENDERIP: 156.147.1.151
+X-Original-MAILFROM: byungchul.park@lge.com
+Received: from unknown (HELO localhost.localdomain) (10.177.244.38)
+        by 156.147.1.151 with ESMTP; 16 Mar 2022 11:27:09 +0900
+X-Original-SENDERIP: 10.177.244.38
+X-Original-MAILFROM: byungchul.park@lge.com
+From:   Byungchul Park <byungchul.park@lge.com>
+To:     torvalds@linux-foundation.org
+Cc:     damien.lemoal@opensource.wdc.com, linux-ide@vger.kernel.org,
+        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        mingo@redhat.com, linux-kernel@vger.kernel.org,
+        peterz@infradead.org, will@kernel.org, tglx@linutronix.de,
+        rostedt@goodmis.org, joel@joelfernandes.org, sashal@kernel.org,
+        daniel.vetter@ffwll.ch, chris@chris-wilson.co.uk,
+        duyuyang@gmail.com, johannes.berg@intel.com, tj@kernel.org,
+        tytso@mit.edu, willy@infradead.org, david@fromorbit.com,
+        amir73il@gmail.com, bfields@fieldses.org,
+        gregkh@linuxfoundation.org, kernel-team@lge.com,
+        linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
+        minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
+        sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
+        penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
+        ngupta@vflare.org, linux-block@vger.kernel.org,
+        paolo.valente@linaro.org, josef@toxicpanda.com,
+        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        jack@suse.cz, jack@suse.com, jlayton@kernel.org,
+        dan.j.williams@intel.com, hch@infradead.org, djwong@kernel.org,
+        dri-devel@lists.freedesktop.org, airlied@linux.ie,
+        rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
+        hamohammed.sa@gmail.com
+Subject: [PATCH RFC v5 00/21] DEPT(Dependency Tracker)
+Date:   Wed, 16 Mar 2022 11:26:12 +0900
+Message-Id: <1647397593-16747-1-git-send-email-byungchul.park@lge.com>
+X-Mailer: git-send-email 1.9.1
+X-Spam-Status: No, score=-6.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_HI,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -55,35 +61,190 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 15, 2022 at 01:56:18PM -0700, Roman Gushchin wrote:
-> 
-> > On Mar 15, 2022, at 12:56 PM, Matthew Wilcox <willy@infradead.org> wrote:
-> > 
-> > ﻿The number of negative dentries is effectively constrained only by memory
-> > size.  Systems which do not experience significant memory pressure for
-> > an extended period can build up millions of negative dentries which
-> > clog the dcache.  That can have different symptoms, such as inotify
-> > taking a long time [1], high memory usage [2] and even just poor lookup
-> > performance [3].  We've also seen problems with cgroups being pinned
-> > by negative dentries, though I think we now reparent those dentries to
-> > their parent cgroup instead.
-> 
-> Yes, it should be fixed already.
-> 
-> > 
-> > We don't have a really good solution yet, and maybe some focused
-> > brainstorming on the problem would lead to something that actually works.
-> 
-> I’d be happy to join this discussion. And in my opinion it’s going beyond negative dentries: there are other types of objects which tend to grow beyond any reasonable limits if there is no memory pressure.
+I'm gonna re-add RFC for a while at Ted's request. But hard testing is
+needed to find false alarms for now that there's no false alarm with my
+system. I'm gonna look for other systems that might produce false
+alarms. And it'd be appreciated if you share it when you see any alarms
+with yours.
 
-+1, we once had a similar issue as well, and agree that is not only
-limited to negative dentries but all too many LRU-ed dentries and inodes.
+---
 
-Limited the total number may benefit to avoid shrink spiking for servers.
+Hi Linus and folks,
+
+I've been developing a tool for detecting deadlock possibilities by
+tracking wait/event rather than lock(?) acquisition order to try to
+cover all synchonization machanisms. It's done on v5.17-rc7 tag.
+
+https://github.com/lgebyungchulpark/linux-dept/commits/dept1.18_on_v5.17-rc7
+
+Benifit:
+
+	0. Works with all lock primitives.
+	1. Works with wait_for_completion()/complete().
+	2. Works with 'wait' on PG_locked.
+	3. Works with 'wait' on PG_writeback.
+	4. Works with swait/wakeup.
+	5. Works with waitqueue.
+	6. Multiple reports are allowed.
+	7. Deduplication control on multiple reports.
+	8. Withstand false positives thanks to 6.
+	9. Easy to tag any wait/event.
+
+Future work:
+
+	0. To make it more stable.
+	1. To separates Dept from Lockdep.
+	2. To improves performance in terms of time and space.
+	3. To use Dept as a dependency engine for Lockdep.
+	4. To add any missing tags of wait/event in the kernel.
+	5. To deduplicate stack trace.
+
+How to interpret reports:
+
+	1. E(event) in each context cannot be triggered because of the
+	   W(wait) that cannot be woken.
+	2. The stack trace helping find the problematic code is located
+	   in each conext's detail.
 
 Thanks,
-Gao Xiang
+Byungchul
 
-> A perfect example when it happens is when a machine is almost idle for some period of time. Periodically running processes creating various kernel objects (mostly vfs cache) which over time are filling significant portions of the total memory. And when the need for memory arises, we realize that the memory is heavily fragmented and it’s costly to reclaim it back.
-> 
-> Thanks!
+---
+
+Changes from v4:
+
+	1. Fix some bugs that produce false alarms.
+	2. Distinguish each syscall context from another *for arm64*.
+	3. Make it not warn it but just print it in case Dept ring
+	   buffer gets exhausted. (feedback from Hyeonggon)
+	4. Explicitely describe "EXPERIMENTAL" and "Dept might produce
+	   false positive reports" in Kconfig. (feedback from Ted)
+
+Changes from v3:
+
+	1. Dept shouldn't create dependencies between different depths
+	   of a class that were indicated by *_lock_nested(). Dept
+	   normally doesn't but it does once another lock class comes
+	   in. So fixed it. (feedback from Hyeonggon)
+	2. Dept considered a wait as a real wait once getting to
+	   __schedule() even if it has been set to TASK_RUNNING by wake
+	   up sources in advance. Fixed it so that Dept doesn't consider
+	   the case as a real wait. (feedback from Jan Kara)
+	3. Stop tracking dependencies with a map once the event
+	   associated with the map has been handled. Dept will start to
+	   work with the map again, on the next sleep.
+
+Changes from v2:
+
+	1. Disable Dept on bit_wait_table[] in sched/wait_bit.c
+	   reporting a lot of false positives, which is my fault.
+	   Wait/event for bit_wait_table[] should've been tagged in a
+	   higher layer for better work, which is a future work.
+	   (feedback from Jan Kara)
+	2. Disable Dept on crypto_larval's completion to prevent a false
+	   positive.
+
+Changes from v1:
+
+	1. Fix coding style and typo. (feedback from Steven)
+	2. Distinguish each work context from another in workqueue.
+	3. Skip checking lock acquisition with nest_lock, which is about
+	   correct lock usage that should be checked by Lockdep.
+
+Changes from RFC:
+
+	1. Prevent adding a wait tag at prepare_to_wait() but __schedule().
+	   (feedback from Linus and Matthew)
+	2. Use try version at lockdep_acquire_cpus_lock() annotation.
+	3. Distinguish each syscall context from another.
+
+Byungchul Park (21):
+  llist: Move llist_{head,node} definition to types.h
+  dept: Implement Dept(Dependency Tracker)
+  dept: Embed Dept data in Lockdep
+  dept: Apply Dept to spinlock
+  dept: Apply Dept to mutex families
+  dept: Apply Dept to rwlock
+  dept: Apply Dept to wait_for_completion()/complete()
+  dept: Apply Dept to seqlock
+  dept: Apply Dept to rwsem
+  dept: Add proc knobs to show stats and dependency graph
+  dept: Introduce split map concept and new APIs for them
+  dept: Apply Dept to wait/event of PG_{locked,writeback}
+  dept: Apply SDT to swait
+  dept: Apply SDT to wait(waitqueue)
+  locking/lockdep, cpu/hotplus: Use a weaker annotation in AP thread
+  dept: Distinguish each syscall context from another
+  dept: Distinguish each work from another
+  dept: Disable Dept within the wait_bit layer by default
+  dept: Add nocheck version of init_completion()
+  dept: Disable Dept on struct crypto_larval's completion for now
+  dept: Don't create dependencies between different depths in any case
+
+ arch/arm64/kernel/syscall.c        |    2 +
+ arch/x86/entry/common.c            |    4 +
+ crypto/api.c                       |    7 +-
+ include/linux/completion.h         |   50 +-
+ include/linux/dept.h               |  544 +++++++
+ include/linux/dept_page.h          |   78 +
+ include/linux/dept_sdt.h           |   62 +
+ include/linux/hardirq.h            |    3 +
+ include/linux/irqflags.h           |   33 +-
+ include/linux/llist.h              |    8 -
+ include/linux/lockdep.h            |  157 ++-
+ include/linux/lockdep_types.h      |    3 +
+ include/linux/mutex.h              |   32 +
+ include/linux/page-flags.h         |   45 +-
+ include/linux/pagemap.h            |    7 +-
+ include/linux/percpu-rwsem.h       |   10 +-
+ include/linux/rtmutex.h            |    7 +
+ include/linux/rwlock.h             |   50 +
+ include/linux/rwlock_api_smp.h     |    8 +-
+ include/linux/rwlock_types.h       |    7 +
+ include/linux/rwsem.h              |   32 +
+ include/linux/sched.h              |    7 +
+ include/linux/seqlock.h            |   68 +-
+ include/linux/spinlock.h           |   25 +
+ include/linux/spinlock_types_raw.h |   13 +
+ include/linux/swait.h              |    4 +
+ include/linux/types.h              |    8 +
+ include/linux/wait.h               |    6 +-
+ init/init_task.c                   |    2 +
+ init/main.c                        |    4 +
+ kernel/Makefile                    |    1 +
+ kernel/cpu.c                       |    2 +-
+ kernel/dependency/Makefile         |    4 +
+ kernel/dependency/dept.c           | 2743 ++++++++++++++++++++++++++++++++++++
+ kernel/dependency/dept_hash.h      |   10 +
+ kernel/dependency/dept_internal.h  |   26 +
+ kernel/dependency/dept_object.h    |   13 +
+ kernel/dependency/dept_proc.c      |   92 ++
+ kernel/exit.c                      |    1 +
+ kernel/fork.c                      |    2 +
+ kernel/locking/lockdep.c           |   12 +-
+ kernel/module.c                    |    2 +
+ kernel/sched/completion.c          |   12 +-
+ kernel/sched/core.c                |    8 +
+ kernel/sched/swait.c               |   10 +
+ kernel/sched/wait.c                |   16 +
+ kernel/sched/wait_bit.c            |    5 +-
+ kernel/softirq.c                   |    6 +-
+ kernel/trace/trace_preemptirq.c    |   19 +-
+ kernel/workqueue.c                 |    3 +
+ lib/Kconfig.debug                  |   27 +
+ mm/filemap.c                       |   68 +
+ mm/page_ext.c                      |    5 +
+ 53 files changed, 4313 insertions(+), 60 deletions(-)
+ create mode 100644 include/linux/dept.h
+ create mode 100644 include/linux/dept_page.h
+ create mode 100644 include/linux/dept_sdt.h
+ create mode 100644 kernel/dependency/Makefile
+ create mode 100644 kernel/dependency/dept.c
+ create mode 100644 kernel/dependency/dept_hash.h
+ create mode 100644 kernel/dependency/dept_internal.h
+ create mode 100644 kernel/dependency/dept_object.h
+ create mode 100644 kernel/dependency/dept_proc.c
+
+-- 
+1.9.1
+
