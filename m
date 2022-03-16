@@ -2,396 +2,171 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B50ED4DAD88
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Mar 2022 10:30:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4720C4DAF23
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Mar 2022 12:51:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354896AbiCPJba (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Mar 2022 05:31:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44396 "EHLO
+        id S1355453AbiCPLwW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Mar 2022 07:52:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346468AbiCPJb3 (ORCPT
+        with ESMTP id S1355462AbiCPLwU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Mar 2022 05:31:29 -0400
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 858BA65420;
-        Wed, 16 Mar 2022 02:30:15 -0700 (PDT)
-Received: by mail-pj1-x1036.google.com with SMTP id fs4-20020a17090af28400b001bf5624c0aaso1894516pjb.0;
-        Wed, 16 Mar 2022 02:30:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=7YtA4PKUNK1dlzTx/+dzDDwxLZbii02Hkl6fdvscBxc=;
-        b=KVlegeKfeY8W67qw6DCRgUShajC9v378ZrSbgZ8Y0HtviKaBmr2m5+8eyDmK6v8H7G
-         0k4SKtLdQMzPWKYvWjIUw0JR80sIdV3nL/kZsp/8CMWPi0qzlJYHpdb6mTsxG5IplBDw
-         Thjkg26PVRf89HpwWIaOAsMjwtBy88ghXsm3oCEO44EdAiRuJ+Hy1ivpDe/BbZ7lcgZd
-         dHBTIFzQC/kC/yrS730ReRdUhoP2+Aaw4VueXzMK0UoB7ipdFT9/d6fVdvDr2cfqj6nn
-         WNwm/S0LF7EvMRSd+YYrg4Smn09H44hOEzfTH45IP3+FlPTrlirMRsSVXsDe7ukKTlyO
-         OEOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=7YtA4PKUNK1dlzTx/+dzDDwxLZbii02Hkl6fdvscBxc=;
-        b=IIUjxdiIXlpycbb6d6nvkwjEU+Dg+yNKREjdU+PPv0KTBQl202/MGD8pgcMHLQKKuB
-         zLlcnyg+s3mUhyAUfuXVyh9sV+HOFs7JULGKjnEDeBItFxHUuG/3vtNzaZObqgaF5w/5
-         6yavrDpPwfREIUaoVWd0Jt5VszJpi5+pDc+eSAIJRr8zHb/wSFzV3xmmBTNgmdCZDW0l
-         Q1u61mTFGqhwhomBUMD83qVvFK7c7MT1+lNyt6mppmHJrjCUtxW5l21+cqD+i7o7NNgz
-         5TZzmeIP6mZ6h3dwm79cUfiJoGCq/9nDIgKRQfTyKxtJEdcOGkRf0NuwcnayWd6imxMQ
-         jWgQ==
-X-Gm-Message-State: AOAM532YYMhaR588mesahNzCzH3E7TX+tZDQniF/3XBoUN4PUnLp1lQk
-        kElWtoKmw0Mr+VPG4dDMiv0=
-X-Google-Smtp-Source: ABdhPJzonkpDhlI2fR4HgAVkbUVABxaINz60vwbRBqde0ZZEBs11+G4Wm7i86hUtVDnumBtYwvPoTA==
-X-Received: by 2002:a17:902:a502:b0:151:8289:b19 with SMTP id s2-20020a170902a50200b0015182890b19mr32422431plq.149.1647423014943;
-        Wed, 16 Mar 2022 02:30:14 -0700 (PDT)
-Received: from ip-172-31-19-208.ap-northeast-1.compute.internal (ec2-18-181-137-102.ap-northeast-1.compute.amazonaws.com. [18.181.137.102])
-        by smtp.gmail.com with ESMTPSA id x29-20020aa79a5d000000b004f0ef1822d3sm2081888pfj.128.2022.03.16.02.30.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Mar 2022 02:30:14 -0700 (PDT)
-Date:   Wed, 16 Mar 2022 09:30:02 +0000
-From:   Hyeonggon Yoo <42.hyeyoo@gmail.com>
-To:     Byungchul Park <byungchul.park@lge.com>
-Cc:     torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
-        linux-ide@vger.kernel.org, adilger.kernel@dilger.ca,
-        linux-ext4@vger.kernel.org, mingo@redhat.com,
-        linux-kernel@vger.kernel.org, peterz@infradead.org,
-        will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
-        joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
-        chris@chris-wilson.co.uk, duyuyang@gmail.com,
-        johannes.berg@intel.com, tj@kernel.org, tytso@mit.edu,
-        willy@infradead.org, david@fromorbit.com, amir73il@gmail.com,
-        bfields@fieldses.org, gregkh@linuxfoundation.org,
-        kernel-team@lge.com, linux-mm@kvack.org, akpm@linux-foundation.org,
-        mhocko@kernel.org, minchan@kernel.org, hannes@cmpxchg.org,
-        vdavydov.dev@gmail.com, sj@kernel.org, jglisse@redhat.com,
-        dennis@kernel.org, cl@linux.com, penberg@kernel.org,
-        rientjes@google.com, vbabka@suse.cz, ngupta@vflare.org,
-        linux-block@vger.kernel.org, paolo.valente@linaro.org,
-        josef@toxicpanda.com, linux-fsdevel@vger.kernel.org,
-        viro@zeniv.linux.org.uk, jack@suse.cz, jack@suse.com,
-        jlayton@kernel.org, dan.j.williams@intel.com, hch@infradead.org,
-        djwong@kernel.org, dri-devel@lists.freedesktop.org,
-        airlied@linux.ie, rodrigosiqueiramelo@gmail.com,
-        melissa.srw@gmail.com, hamohammed.sa@gmail.com
-Subject: Re: [PATCH v4 00/24] DEPT(Dependency Tracker)
-Message-ID: <YjGuGmdiZCpRt98n@ip-172-31-19-208.ap-northeast-1.compute.internal>
-References: <1646377603-19730-1-git-send-email-byungchul.park@lge.com>
- <Yiv9Fn4kcRbXJLmu@ip-172-31-19-208.ap-northeast-1.compute.internal>
- <20220316043212.GA5715@X58A-UD3R>
+        Wed, 16 Mar 2022 07:52:20 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFCE565821
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Mar 2022 04:51:05 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 6F2AB21125;
+        Wed, 16 Mar 2022 11:51:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1647431464; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=67aUddn27qf6jHBtXuAhMdDeMDo+3enNKv6w+CD/9/k=;
+        b=bgC4gE73OP/kO0MCvU3sBZgHA2UfS+KvoT23h2J4UKGfJCSHGJr5/0F1k9o8+C/vmVxqn+
+        lyv0mLeJGeJPNoAfmTuvhOrMC2rA//UOhQsMzrbLzchsFtsB4eZ1AxhlDrIK7RGM5hSK8b
+        9wy/lycM66poortB1RpGY1V6IZWX9Nw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1647431464;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=67aUddn27qf6jHBtXuAhMdDeMDo+3enNKv6w+CD/9/k=;
+        b=oSpG6MYnrT7PrGmJcv3G89XzXH9Cca9pDbxFRaM9xZa87g54gBoRGs/bejy5Y7b0FCIYJI
+        XaIUlO1lpLsH2yDg==
+Received: from quack3.suse.cz (unknown [10.163.28.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id C2520A3B8A;
+        Wed, 16 Mar 2022 11:50:59 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 80F32A0615; Wed, 16 Mar 2022 12:50:58 +0100 (CET)
+Date:   Wed, 16 Mar 2022 12:50:58 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, Srinivas <talkwithsrinivas@yahoo.co.in>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: Fanotify Directory exclusion not working when using
+ FAN_MARK_MOUNT
+Message-ID: <20220316115058.a2ki6injgdp7xjf7@quack3.lan>
+References: <1357949524.990839.1647084149724.ref@mail.yahoo.com>
+ <1357949524.990839.1647084149724@mail.yahoo.com>
+ <20220314084706.ncsk754gjywkcqxq@quack3.lan>
+ <CAOQ4uxiDubhONM3w502anndtbqy73q_Kt5bOQ07zbATb8ndvVA@mail.gmail.com>
+ <20220314113337.j7slrb5srxukztje@quack3.lan>
+ <CAOQ4uxhwXgqbMKMSQJwNqQpKi-iAtS4dsFwkeDDMv=Y0ewp=og@mail.gmail.com>
+ <20220315111536.jlnid26rv5pxjpas@quack3.lan>
+ <CAOQ4uxhSKk=rPtF4vwiW0u1Yy4p8Rhdd+wKC2BLJxHR8Q9V9AA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220316043212.GA5715@X58A-UD3R>
-X-Spam-Status: No, score=-0.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,HK_RANDOM_ENVFROM,
-        HK_RANDOM_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
+In-Reply-To: <CAOQ4uxhSKk=rPtF4vwiW0u1Yy4p8Rhdd+wKC2BLJxHR8Q9V9AA@mail.gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 16, 2022 at 01:32:13PM +0900, Byungchul Park wrote:
-> On Sat, Mar 12, 2022 at 01:53:26AM +0000, Hyeonggon Yoo wrote:
-> > On Fri, Mar 04, 2022 at 04:06:19PM +0900, Byungchul Park wrote:
-> > > Hi Linus and folks,
-> > > 
-> > > I've been developing a tool for detecting deadlock possibilities by
-> > > tracking wait/event rather than lock(?) acquisition order to try to
-> > > cover all synchonization machanisms. It's done on v5.17-rc1 tag.
-> > > 
-> > > https://github.com/lgebyungchulpark/linux-dept/commits/dept1.14_on_v5.17-rc1
+On Tue 15-03-22 15:07:24, Amir Goldstein wrote:
+> > > > Overall I guess the functionality makes sense to me (in fact it is somewhat
+> > > > surprising it is not working like that from the beginning), API-wise it is
+> > > > not outright horrible, and technically it seems doable. What do you think?
 > > >
-> > 
-> > Small feedback unrelated to thread:
-> > I'm not sure "Need to expand the ring buffer" is something to call
-> > WARN(). Is this stack trace useful for something?
-> > ========
-> > 
-> > Hello Byungchul. These are two warnings of DEPT on system.
+> > > I think that having ONDIR and ON_CHILD in ignored mask is source for
+> > > confusion. Imagine a mount mark with FAN_ONDIR and ignored mark (on dir
+> > > inode) without FAN_ONDIR.  What should the outcome be?
+> > > Don't ignore the events on dir because ignore mask does not have ONDIR?
+> > > That is not the obvious behavior that people will expect.
+> > >
+> > > ON_CHILD may be a different case, but I also prefer not to deviate it from
+> > > ONDIR.
+> > >
+> > > The only thing I can think of to add clarification is FAN_MARK_PARENT.
+> > >
+> > > man page already says:
+> > > "The flag has no effect when marking mounts and filesystems."
+> > > It can also say:
+> > > "The flag has no effect when set in the ignored mask..."
+> > > "The flag is implied for both mask and ignored mask when marking
+> > >  directories with FAN_MARK_PARENT".
+> > >
+> > > Implementation wise, this would be very simple, because we already
+> > > force set FAN_EVENT_ON_CHILD for FAN_MARK_MOUNT
+> > > and FAN_MARK_FILESYSTEM with REPORT_DIR_FID, se we can
+> > > also force set it for FAN_MARK_PARENT.
+> > >
+> > > But maybe it's just me that thinks this would be more clear??
+> >
+> > Yeah, I'm not sure if adding another flag that iteracts with ON_CHILD or
+> > ONDIR adds any clarity to this mess. In my opinion defining that ON_CHILD
+> > flag in the ignore mask means "apply this ignore mask to events from
+> > immediate children" has an intuitive meaning as it is exactly matching the
+> > semantics of ON_CHILD in the normal mark mask.
+> >
 > 
-> Hi Hyeonggon,
+> Ok.
 > 
-> Could you run scripts/decode_stacktrace.sh and share the result instead
-> of the raw format below if the reports still appear with PATCH v5? It'd
-> be appreciated (:
->
+> The only thing is, as you wrote to Srinivas, there is really no practical
+> way to make ignore mask with ON_CHILD work on old kernels, so
+> what can users do if they want to write a portable program?
+> Add this mark and hope for the best?
 
-Hi Byungchul.
+OK, this objection probably tipped the balace towards a new flag for me :)
 
-on dept1.18_on_v5.17-rc7, the kernel_clone() warning has gone.
-There is one warning remaining on my system:
+> If users had FAN_MARK_PARENT, the outcome at least would
+> have been predictable.
+> Maybe FAN_MARK_PARENT is an overkill.
+> Maybe what we need is FAN_MARK_IGNORED_ON_CHILD.
+> It's not very pretty, but it is clear.
 
-It warns when running kunit-try-catch-test testcase.
+Or how about FAN_MARK_IGNORED_MASK_CHECKED which would properly check for
+supported bits in the ignore mask and then we can use ON_CHILD as I wanted
+and we would regain ONDIR bit for future use as well?
 
-===================================================
-DEPT: Circular dependency has been detected.
-5.17.0-rc7+ #4 Not tainted
----------------------------------------------------
-summary
----------------------------------------------------
-*** AA DEADLOCK ***
+> > With ONDIR I agree things are not as obvious. Historically we have applied
+> > ignore mask even for events coming from directories regardless of ONDIR
+> > flag in the ignore mask. So ignore mask without any special flag has the
+> > implicit meaning of "apply to all events regardless of type of originating
+> > inode". I don't think we can change that meaning at this point. We could
+> > define meaning of ONDIR in ignore mask to either "ignore only events from
+> > directories" or to "ignore only events from ordinary files". But neither
+> > seems particularly natural or useful.
+> >
+> 
+> TBH, I always found it annoying that fanotify cannot be used to specify
+> a filter to get only mkdirs, which is a pretty common thing to want to be
+> notified of (i.e. for recursive watch).
+> But I have no intention to propose API changes to fix that.
 
-context A
-[S] (unknown)(&try_completion:0)
-[W] wait_for_completion_timeout(&try_completion:0)
-[E] complete(&try_completion:0)
+I see, so we could repurpose ONDIR bit in ignore mask for EVENT_IGNORE_NONDIR
+feature or something like that. But as you say, no pressing need...
 
-[S]: start of the event context
-[W]: the wait blocked
-[E]: the event not reachable
----------------------------------------------------
-context A's detail
----------------------------------------------------
-context A
-[S] (unknown)(&try_completion:0)
-[W] wait_for_completion_timeout(&try_completion:0)
-[E] complete(&try_completion:0)
+> > Another concern is that currently fanotify_mark() ignores both ONDIR and
+> > ON_CHILD flags in the ignore mask. So there is a chance someone happens to
+> > set them by accident. For the ON_CHILD flag I would be willing to take a
+> > chance and assign the meaning to this flag because I think chances for
+> > real world breakage are really low. But for ONDIR, given it is unclear
+> > whether ignore masks should apply for directory events without that flag, I
+> > think the chances someone sets it "just to be sure" are high enough that I
+> > would be reluctant to take that chance. So for ONDIR I think we are more or
+> > less stuck with keeping it unused in the ignore mask.
+> >
+> 
+> I agree with your risk assessment, so no hard objection to ON_CHILD
+> on ignored mask.
+> If we go with FAN_MARK_IGNORED_ON_CHILD it will not be a concern
+> at all.
+> 
+> I should be able to find some time to fix this one way or the other
+> when we decide on the design.
 
-[S] (unknown)(&try_completion:0):
-(N/A)
+Thanks!
 
-[W] wait_for_completion_timeout(&try_completion:0):
-kunit_try_catch_run (lib/kunit/try-catch.c:78 (discriminator 1)) 
-stacktrace:
-dept_wait (kernel/dependency/dept.c:2149) 
-wait_for_completion_timeout (kernel/sched/completion.c:119 (discriminator 4) kernel/sched/completion.c:165 (discriminator 4)) 
-kunit_try_catch_run (lib/kunit/try-catch.c:78 (discriminator 1)) 
-kunit_test_try_catch_successful_try_no_catch (lib/kunit/kunit-test.c:43) 
-kunit_try_run_case (lib/kunit/test.c:333 lib/kunit/test.c:374) 
-kunit_generic_run_threadfn_adapter (lib/kunit/try-catch.c:30) 
-kthread (kernel/kthread.c:379) 
-ret_from_fork (arch/arm64/kernel/entry.S:757)
-
-[E] complete(&try_completion:0):
-kthread_complete_and_exit (kernel/kthread.c:327) 
-stacktrace:
-dept_event (kernel/dependency/dept.c:2376 (discriminator 2)) 
-complete (kernel/sched/completion.c:33 (discriminator 4)) 
-kthread_complete_and_exit (kernel/kthread.c:327) 
-kunit_try_catch_throw (lib/kunit/try-catch.c:18) 
-kthread (kernel/kthread.c:379) 
-ret_from_fork (arch/arm64/kernel/entry.S:757) 
-
----------------------------------------------------
-information that might be helpful
----------------------------------------------------
-Hardware name: linux,dummy-virt (DT)
-Call trace:
-dump_backtrace.part.0 (arch/arm64/kernel/stacktrace.c:186) 
-show_stack (arch/arm64/kernel/stacktrace.c:193) 
-dump_stack_lvl (lib/dump_stack.c:107 (discriminator 4)) 
-dump_stack (lib/dump_stack.c:114) 
-print_circle (./arch/arm64/include/asm/atomic_ll_sc.h:112 ./arch/arm64/include/asm/atomic.h:30 ./include/linux/atomic/atomic-arch-fallback.h:511 ./include/linux/atomic/atomic-instrumented.h:258 kernel/dependency/dept.c:140 kernel/dependency/dept.c:748) 
-cb_check_dl (kernel/dependency/dept.c:1083 kernel/dependency/dept.c:1064) 
-bfs (kernel/dependency/dept.c:833) 
-add_dep (kernel/dependency/dept.c:1409) 
-do_event (kernel/dependency/dept.c:175 kernel/dependency/dept.c:1644) 
-dept_event (kernel/dependency/dept.c:2376 (discriminator 2)) 
-complete (kernel/sched/completion.c:33 (discriminator 4)) 
-kthread_complete_and_exit (kernel/kthread.c:327) 
-kunit_try_catch_throw (lib/kunit/try-catch.c:18) 
-kthread (kernel/kthread.c:379) 
-ret_from_fork (arch/arm64/kernel/entry.S:757)
-
+								Honza
 -- 
-Thank you, You are awesome!
-Hyeonggon :-)
-
-> https://lkml.org/lkml/2022/3/15/1277
-> (or https://github.com/lgebyungchulpark/linux-dept/commits/dept1.18_on_v5.17-rc7)
-> 
-> Thank you very much!
-> 
-> --
-> Byungchul
-> 
-> > Both cases look similar.
-> > 
-> > In what case DEPT says (unknown)?
-> > I'm not sure we can properly debug this.
-> > 
-> > ===================================================
-> > DEPT: Circular dependency has been detected.
-> > 5.17.0-rc1+ #3 Tainted: G        W        
-> > ---------------------------------------------------
-> > summary
-> > ---------------------------------------------------
-> > *** AA DEADLOCK ***
-> > 
-> > context A
-> >     [S] (unknown)(&vfork:0)
-> >     [W] wait_for_completion_killable(&vfork:0)
-> >     [E] complete(&vfork:0)
-> > 
-> > [S]: start of the event context
-> > [W]: the wait blocked
-> > [E]: the event not reachable
-> > ---------------------------------------------------
-> > context A's detail
-> > ---------------------------------------------------
-> > context A
-> >     [S] (unknown)(&vfork:0)
-> >     [W] wait_for_completion_killable(&vfork:0)
-> >     [E] complete(&vfork:0)
-> > 
-> > [S] (unknown)(&vfork:0):
-> > (N/A)
-> > 
-> > [W] wait_for_completion_killable(&vfork:0):
-> > [<ffffffc00802204c>] kernel_clone+0x25c/0x2b8
-> > stacktrace:
-> >       dept_wait+0x74/0x88
-> >       wait_for_completion_killable+0x60/0xa0
-> >       kernel_clone+0x25c/0x2b8
-> >       __do_sys_clone+0x5c/0x74
-> >       __arm64_sys_clone+0x18/0x20
-> >       invoke_syscall.constprop.0+0x78/0xc4
-> >       do_el0_svc+0x98/0xd0
-> >       el0_svc+0x44/0xe4
-> >       el0t_64_sync_handler+0xb0/0x12c
-> >       el0t_64_sync+0x158/0x15c
-> > 
-> > [E] complete(&vfork:0):
-> > [<ffffffc00801f49c>] mm_release+0x7c/0x90
-> > stacktrace:
-> >       dept_event+0xe0/0x100
-> >       complete+0x48/0x98
-> >       mm_release+0x7c/0x90
-> >       exit_mm_release+0xc/0x14
-> >       do_exit+0x1b4/0x81c
-> >       do_group_exit+0x30/0x9c
-> >       __wake_up_parent+0x0/0x24
-> >       invoke_syscall.constprop.0+0x78/0xc4
-> >       do_el0_svc+0x98/0xd0
-> >       el0_svc+0x44/0xe4
-> >       el0t_64_sync_handler+0xb0/0x12c
-> >       el0t_64_sync+0x158/0x15c
-> > ---------------------------------------------------
-> > information that might be helpful
-> > ---------------------------------------------------
-> > CPU: 6 PID: 229 Comm: start-stop-daem Tainted: G        W         5.17.0-rc1+ #3
-> > Hardware name: linux,dummy-virt (DT)
-> > Call trace:
-> >  dump_backtrace.part.0+0x9c/0xc4
-> >  show_stack+0x14/0x28
-> >  dump_stack_lvl+0x9c/0xcc
-> >  dump_stack+0x14/0x2c
-> >  print_circle+0x2d4/0x438
-> >  cb_check_dl+0x44/0x70
-> >  bfs+0x60/0x168
-> >  add_dep+0x88/0x11c
-> >  do_event.constprop.0+0x19c/0x2c0
-> >  dept_event+0xe0/0x100
-> >  complete+0x48/0x98
-> >  mm_release+0x7c/0x90
-> >  exit_mm_release+0xc/0x14
-> >  do_exit+0x1b4/0x81c
-> >  do_group_exit+0x30/0x9c
-> >  __wake_up_parent+0x0/0x24
-> >  invoke_syscall.constprop.0+0x78/0xc4
-> >  do_el0_svc+0x98/0xd0
-> >  el0_svc+0x44/0xe4
-> >  el0t_64_sync_handler+0xb0/0x12c
-> >  el0t_64_sync+0x158/0x15c
-> > 
-> > 
-> > 
-> > 
-> > ===================================================
-> > DEPT: Circular dependency has been detected.
-> > 5.17.0-rc1+ #3 Tainted: G        W        
-> > ---------------------------------------------------
-> > summary
-> > ---------------------------------------------------
-> > *** AA DEADLOCK ***
-> > 
-> > context A
-> >     [S] (unknown)(&try_completion:0)
-> >     [W] wait_for_completion_timeout(&try_completion:0)
-> >     [E] complete(&try_completion:0)
-> > 
-> > [S]: start of the event context
-> > [W]: the wait blocked
-> > [E]: the event not reachable
-> > ---------------------------------------------------
-> > context A's detail
-> > ---------------------------------------------------
-> > context A
-> >     [S] (unknown)(&try_completion:0)
-> >     [W] wait_for_completion_timeout(&try_completion:0)
-> >     [E] complete(&try_completion:0)
-> > 
-> > [S] (unknown)(&try_completion:0):
-> > (N/A)
-> > 
-> > [W] wait_for_completion_timeout(&try_completion:0):
-> > [<ffffffc008166bf4>] kunit_try_catch_run+0xb4/0x160
-> > stacktrace:
-> >       dept_wait+0x74/0x88
-> >       wait_for_completion_timeout+0x64/0xa0
-> >       kunit_try_catch_run+0xb4/0x160
-> >       kunit_test_try_catch_successful_try_no_catch+0x3c/0x98
-> >       kunit_try_run_case+0x9c/0xa0
-> >       kunit_generic_run_threadfn_adapter+0x1c/0x28
-> >       kthread+0xd4/0xe4
-> >       ret_from_fork+0x10/0x20
-> > 
-> > [E] complete(&try_completion:0):
-> > [<ffffffc00803dce4>] kthread_complete_and_exit+0x18/0x20
-> > stacktrace:
-> >       dept_event+0xe0/0x100
-> >       complete+0x48/0x98
-> >       kthread_complete_and_exit+0x18/0x20
-> >       kunit_try_catch_throw+0x0/0x1c
-> >       kthread+0xd4/0xe4
-> >       ret_from_fork+0x10/0x20
-> > 
-> > ---------------------------------------------------
-> > information that might be helpful
-> > ---------------------------------------------------
-> > CPU: 15 PID: 132 Comm: kunit_try_catch Tainted: G        W         5.17.0-rc1+ #3
-> > Hardware name: linux,dummy-virt (DT)
-> > Call trace:
-> >  dump_backtrace.part.0+0x9c/0xc4
-> >  show_stack+0x14/0x28
-> >  dump_stack_lvl+0x9c/0xcc
-> >  dump_stack+0x14/0x2c
-> >  print_circle+0x2d4/0x438
-> >  cb_check_dl+0x44/0x70
-> >  bfs+0x60/0x168
-> >  add_dep+0x88/0x11c
-> >  do_event.constprop.0+0x19c/0x2c0
-> >  dept_event+0xe0/0x100
-> >  complete+0x48/0x98
-> >  kthread_complete_and_exit+0x18/0x20
-> >  kunit_try_catch_throw+0x0/0x1c
-> >  kthread+0xd4/0xe4
-> >  ret_from_fork+0x10/0x20
-> > 
-> > 
-> > > Benifit:
-> > > 
-> > > 	0. Works with all lock primitives.
-> > > 	1. Works with wait_for_completion()/complete().
-> > > 	2. Works with 'wait' on PG_locked.
-> > > 	3. Works with 'wait' on PG_writeback.
-> > > 	4. Works with swait/wakeup.
-> > > 	5. Works with waitqueue.
-> > > 	6. Multiple reports are allowed.
-> > > 	7. Deduplication control on multiple reports.
-> > > 	8. Withstand false positives thanks to 6.
-> > > 	9. Easy to tag any wait/event.
-> > > 
-> > > Future work:
-> > 
-> > [...]
-> > 
-> > > -- 
-> > > 1.9.1
-> > > 
-> > 
-> > -- 
-> > Thank you, You are awesome!
-> > Hyeonggon :-)
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
