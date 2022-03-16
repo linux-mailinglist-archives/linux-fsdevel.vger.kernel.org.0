@@ -2,124 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 662A64DA833
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Mar 2022 03:29:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BDF04DA898
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Mar 2022 03:48:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351419AbiCPC3r (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Mar 2022 22:29:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55256 "EHLO
+        id S1351467AbiCPCtW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Mar 2022 22:49:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353162AbiCPC2g (ORCPT
+        with ESMTP id S232440AbiCPCtV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Mar 2022 22:28:36 -0400
-Received: from lgeamrelo11.lge.com (lgeamrelo12.lge.com [156.147.23.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2EACB5EBFE
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Mar 2022 19:27:15 -0700 (PDT)
-Received: from unknown (HELO lgemrelse7q.lge.com) (156.147.1.151)
-        by 156.147.23.52 with ESMTP; 16 Mar 2022 11:27:12 +0900
-X-Original-SENDERIP: 156.147.1.151
-X-Original-MAILFROM: byungchul.park@lge.com
-Received: from unknown (HELO localhost.localdomain) (10.177.244.38)
-        by 156.147.1.151 with ESMTP; 16 Mar 2022 11:27:12 +0900
-X-Original-SENDERIP: 10.177.244.38
-X-Original-MAILFROM: byungchul.park@lge.com
-From:   Byungchul Park <byungchul.park@lge.com>
-To:     torvalds@linux-foundation.org
-Cc:     damien.lemoal@opensource.wdc.com, linux-ide@vger.kernel.org,
-        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        mingo@redhat.com, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, will@kernel.org, tglx@linutronix.de,
-        rostedt@goodmis.org, joel@joelfernandes.org, sashal@kernel.org,
-        daniel.vetter@ffwll.ch, chris@chris-wilson.co.uk,
-        duyuyang@gmail.com, johannes.berg@intel.com, tj@kernel.org,
-        tytso@mit.edu, willy@infradead.org, david@fromorbit.com,
-        amir73il@gmail.com, bfields@fieldses.org,
-        gregkh@linuxfoundation.org, kernel-team@lge.com,
-        linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
-        minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
-        sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
-        penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
-        ngupta@vflare.org, linux-block@vger.kernel.org,
-        paolo.valente@linaro.org, josef@toxicpanda.com,
-        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        jack@suse.cz, jack@suse.com, jlayton@kernel.org,
-        dan.j.williams@intel.com, hch@infradead.org, djwong@kernel.org,
-        dri-devel@lists.freedesktop.org, airlied@linux.ie,
-        rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
-        hamohammed.sa@gmail.com
-Subject: [PATCH RFC v5 21/21] dept: Don't create dependencies between different depths in any case
-Date:   Wed, 16 Mar 2022 11:26:33 +0900
-Message-Id: <1647397593-16747-22-git-send-email-byungchul.park@lge.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1647397593-16747-1-git-send-email-byungchul.park@lge.com>
-References: <1647397593-16747-1-git-send-email-byungchul.park@lge.com>
-X-Spam-Status: No, score=-6.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_HI,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        Tue, 15 Mar 2022 22:49:21 -0400
+Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25328BF65
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Mar 2022 19:48:06 -0700 (PDT)
+Received: by mail-pf1-x429.google.com with SMTP id t2so1944927pfj.10
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Mar 2022 19:48:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=VEjMUxikC5c2N/1mDp5apiWJgO+0KneP5geVjKUCm/c=;
+        b=Sfk8Zv6ImcdViWjE/jqLY3Rz2H6Kuwl24swdtM6ZbReefQTrgCe55TfG8ko1Cv1VW8
+         hEaL+XS1fzmObSueOuh4gmkYaBX/6Bvdwax//V0/RtWRSYCtUludbx/hHl8kZlKcTpJy
+         jrzNkSzA9XfMNO6N0TnmPNnlsOjqc9+xXBXLk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=VEjMUxikC5c2N/1mDp5apiWJgO+0KneP5geVjKUCm/c=;
+        b=l1g6XclxgJqHpxZwiuiRmRFP3r+0ZfAPemTJX8F1VOJc8WtYTvbkwyRZEK81T7en8e
+         E6jOYaFksxYYLf3WZCBOyW1l6K9DR6CfA8CKbBwC5YpWg8aEWCJOSWuLg2YB1AJq49Jt
+         xAZpBsMR0Kle621OjQLVhwpzo5PJIj5ezCFQDj5KWjykxAm4lEXQbT6O38ocLmhHsHES
+         hm6CbRqwWfC/nKhshqswShoEnStB50X6KKRZF6wD8k1m5WkKEo8BhUNoJI5ftzh7Lj2E
+         rsMX4Z6wOA9nYsHk2g4zM3STOmBYrxQgFWUAEVAloXjwI08XRKWmj3Ix3MGskZLJ7unX
+         BVFg==
+X-Gm-Message-State: AOAM5321+jx2Y6gNCITTI8Zaq0Ly7qfYY5NRVB8BqH6Z16K/NJVHybhZ
+        7q9kStcnm3Jv8iwRh3Z5rz74Bg==
+X-Google-Smtp-Source: ABdhPJxIAmZOdaBx6oEg40uGn9u8aGZEfDalrJGlGNchOrj64K5ZbVuuMp2iwEVVQmvPG1/aj1q1qA==
+X-Received: by 2002:a63:464d:0:b0:380:f8fd:50c5 with SMTP id v13-20020a63464d000000b00380f8fd50c5mr23325446pgk.475.1647398886492;
+        Tue, 15 Mar 2022 19:48:06 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id s6-20020a056a0008c600b004f667b8a6b6sm519438pfu.193.2022.03.15.19.48.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Mar 2022 19:48:06 -0700 (PDT)
+Date:   Tue, 15 Mar 2022 19:48:05 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Yu, Yu-cheng" <yu-cheng.yu@intel.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "Williams, Dan J" <dan.j.williams@intel.com>,
+        "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
+        "ebiederm@xmission.com" <ebiederm@xmission.com>,
+        "Chatre, Reinette" <reinette.chatre@intel.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "Luck, Tony" <tony.luck@intel.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "Brown, Len" <len.brown@intel.com>
+Subject: Re: [PATCH 3/3] elf: Don't write past end of notes for regset gap
+Message-ID: <202203151946.0ECF6FC@keescook>
+References: <20220315201706.7576-1-rick.p.edgecombe@intel.com>
+ <20220315201706.7576-4-rick.p.edgecombe@intel.com>
+ <202203151329.0483BED@keescook>
+ <983f20076ae02f0b33d4609b19cb22ab379174f1.camel@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <983f20076ae02f0b33d4609b19cb22ab379174f1.camel@intel.com>
+X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dept already prevents creating dependencies between different depths of
-the class indicated by *_lock_nested() when the lock acquisitions happen
-consecutively. For example:
+On Tue, Mar 15, 2022 at 09:48:29PM +0000, Edgecombe, Rick P wrote:
+> On Tue, 2022-03-15 at 13:37 -0700, Kees Cook wrote:
+> > >        /*
+> > >         * Each other regset might generate a note too.  For each
+> > > regset
+> > > -      * that has no core_note_type or is inactive, we leave t-
+> > > >notes[i]
+> > > -      * all zero and we'll know to skip writing it later.
+> > > +      * that has no core_note_type or is inactive, skip it.
+> > >         */
+> > > -     for (i = 1; i < view->n; ++i) {
+> > > -             const struct user_regset *regset = &view->regsets[i];
+> > > +     note_iter = 1;
+> > > +     for (view_iter = 1; view_iter < view->n; ++view_iter) {
+> > > +             const struct user_regset *regset = &view-
+> > > >regsets[view_iter];
+> > >                int note_type = regset->core_note_type;
+> > >                bool is_fpreg = note_type == NT_PRFPREG;
+> > >                void *data;
+> > > @@ -1800,10 +1800,11 @@ static int fill_thread_core_info(struct
+> > > elf_thread_core_info *t,
+> > >                if (is_fpreg)
+> > >                        SET_PR_FPVALID(&t->prstatus);
+> > >   
+> > 
+> > info->thread_notes contains the count. Since fill_thread_core_info()
+> > passes a info member by reference, it might make sense to just pass
+> > info
+> > itself, then the size can be written and a bounds-check can be added
+> > here:
+> > 
+> >                 if (WARN_ON_ONCE(i >= info->thread_notes))
+> >                         continue;
+> 
+> Hi Kees,
+> 
+> Thanks for the quick response.
+> 
+> Are you saying in addition to utilizing the allocation better, also
+> catch if the allocation is still too small? Or do this check instead of
+> the change in how to utilize the array, and then maintain the
+> restriction on having gaps in the regsets?
 
-   lock A0 with depth
-   lock_nested A1 with depth + 1
+What I want is to have writers of dynamically-sized arrays able to do
+the bounds check in the same place the write happens, so passing "info"
+makes sense to me.
 
-   ...
-
-   unlock A1
-   unlock A0
-
-Dept does not create A0 -> A1 dependency in this case. However, once
-another class cut in, the code becomes problematic. When Dept tries to
-create real dependencies, it does not only create real ones but also
-wrong ones between different depths of the class. For example:
-
-   lock A0 with depth
-   lock B
-   lock_nested A1 with depth + 1
-
-   ...
-
-   unlock A1
-   unlock B
-   unlock A0
-
-Even in this case, Dept should not create A0 -> A1 dependency but it
-does. Let Dept not create wrong dependencies between different depths
-of the class in any case.
-
-Reported-by: 42.hyeyoo@gmail.com
-Signed-off-by: Byungchul Park <byungchul.park@lge.com>
----
- kernel/dependency/dept.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
-
-diff --git a/kernel/dependency/dept.c b/kernel/dependency/dept.c
-index 10801783..a2088685 100644
---- a/kernel/dependency/dept.c
-+++ b/kernel/dependency/dept.c
-@@ -1458,14 +1458,7 @@ static void add_wait(struct dept_class *c, unsigned long ip,
- 
- 		eh = dt->ecxt_held + i;
- 		if (eh->ecxt->class != c || eh->nest == ne)
--			break;
--	}
--
--	for (; i >= 0; i--) {
--		struct dept_ecxt_held *eh;
--
--		eh = dt->ecxt_held + i;
--		add_dep(eh->ecxt, w);
-+			add_dep(eh->ecxt, w);
- 	}
- 
- 	if (!wait_consumed(w) && !rich_stack) {
 -- 
-1.9.1
-
+Kees Cook
