@@ -2,101 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B48A4DB153
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Mar 2022 14:23:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F8724DB1BE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Mar 2022 14:43:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356210AbiCPNY3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Mar 2022 09:24:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40202 "EHLO
+        id S243471AbiCPNoP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Mar 2022 09:44:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348686AbiCPNYZ (ORCPT
+        with ESMTP id S1352902AbiCPNoO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Mar 2022 09:24:25 -0400
-Received: from esa2.hgst.iphmx.com (esa2.hgst.iphmx.com [68.232.143.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F044E140FE;
-        Wed, 16 Mar 2022 06:23:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1647436991; x=1678972991;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=QjZyVW2Vmz9PfM7KmmbwgSWBd6UhTpv2ye+92Bbx6tI=;
-  b=Xziow4cuik54hi8blkhJ1tB5szf7Et8jbdb46UUoKiQuNlRSU5mUzn5Y
-   aZSiZzr+SLMLWfS1dAB7LHT7Z2SegCr8ZgqJ2l4cOEN4lA11POD9xjnQ7
-   ir2W7+TCck3XQ/gxG9dB0mcYISUK3KCm2pK+n68do/ZNURZqhwEWNhBMX
-   soLEOAC7Cf9KybIGJWvO//HqFaSESCP+nSnKLJLSm2OnLk6ZVUEvrqhGX
-   kSxEyKIWs4+AGeLuNEfU6FSBMXJiXQlO6gTR/GEaSSzvsZjqKEq2Xj9Qm
-   HrwwwbSOV0oel/tM38enbqCIRWePw6rKGmp/IqO4UQfzPbuUwMXq+Fc6A
-   A==;
-X-IronPort-AV: E=Sophos;i="5.90,186,1643644800"; 
-   d="scan'208";a="299654891"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 16 Mar 2022 21:23:10 +0800
-IronPort-SDR: VIZpG+hzxKsXV83zWAoKKWRCw4fZnpCRZEunrq7EKTImnL0y0UvQdKYvVqpiQ/sYe416G2Vcyf
- x8mfdF4CAv/P6EcLS9mt4DvDPx5lHEqyT5cVpSlL9Jz3ZSFO2x/JCV9SrLnvOEsbsKMHBOsD+e
- W4nPl9jTNkLxtnApS/GR+ol/as83lpNHTqnlXoJLu6b2sRzy/IQGK42GLloAl6guT1CCvbO942
- E1LR+5/RJhcpVlEftfry6lBT4kM/fj/n1df3YsljyFIUONK3L2z2AG5ptZkMWT5SqqZKKljDFh
- aI5swdztAc00DDv6eaJu8Lu7
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Mar 2022 05:54:17 -0700
-IronPort-SDR: GMps7eOP8mqHYSEz31iuKTv3l681MnxrtnrOd/maTu+qcgCfi6QvSUyfr9JNPUbkdqLAwGAEFr
- YhBkU1hLv26k3a/+EXb5ydpWtQGw/dSyd9dSyCjsCbZmTIndlAPz1GayCPVeAtW0M8GJkMaRPT
- NxI8EuN2V4EsOt0Sl8iFI2mb/mPOecDo0ji+6waGOvGaVmzO42yNaCCJiBVPuCo/ZpnpvAMkdX
- 2hpQyyPsgMVMymyloZTmQFavxZ2boBQkW1fuaidco+sWVMJcg14Go1D8qhN8XsV0umIzL1UOzR
- scs=
-WDCIronportException: Internal
-Received: from d2bbl13.ad.shared (HELO naota-xeon.wdc.com) ([10.225.55.209])
-  by uls-op-cesaip01.wdc.com with ESMTP; 16 Mar 2022 06:23:10 -0700
-From:   Naohiro Aota <naohiro.aota@wdc.com>
-To:     linux-btrfs@vger.kernel.org
-Cc:     johannes.thumshirn@wdc.com, linux-fsdevel@vger.kernel.org,
-        viro@zeniv.linux.org.uk, david@fromorbit.com,
-        Naohiro Aota <naohiro.aota@wdc.com>,
-        Filipe Manana <fdmanana@suse.com>
-Subject: [PATCH v2 4/4] btrfs: assert that relocation is protected with sb_start_write()
-Date:   Wed, 16 Mar 2022 22:22:40 +0900
-Message-Id: <3f88d51b35da92bf2391febd7186973cc9539e95.1647436353.git.naohiro.aota@wdc.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <cover.1647436353.git.naohiro.aota@wdc.com>
-References: <cover.1647436353.git.naohiro.aota@wdc.com>
+        Wed, 16 Mar 2022 09:44:14 -0400
+Received: from mail-oo1-xc2a.google.com (mail-oo1-xc2a.google.com [IPv6:2607:f8b0:4864:20::c2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CEE1E0B9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Mar 2022 06:42:56 -0700 (PDT)
+Received: by mail-oo1-xc2a.google.com with SMTP id x26-20020a4a9b9a000000b003211029e80fso2715387ooj.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Mar 2022 06:42:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0tDTcec0DtXdLxeAhHSGkebHZpjAyRASUyWI4GvlCUY=;
+        b=EYMwr10bdHmjKsFpJjPV1vRiMVOk5hfcFBxP58BvSXeDes0yICfxJboz0ptv8qZGVg
+         Gz82upP6vfxP4ZSzXP/Gka7ZLvoFSWmSA3rfOO69wf5g3H8hsLPFmFgLaNoUfmsC+G3q
+         eIo1v4+tOo0V3tWuF+debs+wp1r/u8eAfbH0RVf3eWwNREcI/4wbsU0rOO5r2oWlIox8
+         YOyfNhJ73vvjxRaj8VwA0n/mWRh1Qvz9xsDqw33rJ4nn1inwmmJFnNNwSLxVIFue36Ff
+         SZF2uuLE/vELTOST8bDmAz8zwR+DTD8ym0jJOqJDAr7AlTA+TPe+VHwXeeCt6EcLIeIw
+         cmcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0tDTcec0DtXdLxeAhHSGkebHZpjAyRASUyWI4GvlCUY=;
+        b=IiTIYqU2grPrz2CFD3glosxSjVzNmYuxbPnzUJNWPda2OqD7nqmhqSoONOQy36f4oo
+         C+p6jO6tVC0VfmZaYfp5BQKHttEnlXQ2TV3U4vJrsz7ibG6i3IHmH4jqJM8uiUKn3r7Y
+         U+2zG6giFp6YS9hbMk+dvA2uo+/p/E4wCoTpXnWgAecGmpv14vsQjIXTaEg38nsOJeLC
+         rreyVkQlF/lXzZZVjhc+jPdynVDc6Pjx2i2GtdeGbgUdbgB0jCcH+JqkZxaJ6P+q/WBf
+         3nulGCmSaHAL60FaO09xjcoLoRKIot1/fb7hkYXOeSGucOCVx2LsFdzpBktwxlOBozs8
+         7BZQ==
+X-Gm-Message-State: AOAM532HsSRFgEURvUZ05zEHvdSj5lh9k1o9pNGsvl/2R1nGXnRjPJ3R
+        9+72vCIrpGI3iikJ6ZF/An0BvTWl8MRmc+UF31zaifAi8hQ=
+X-Google-Smtp-Source: ABdhPJytjTK0Ln5L+m0oXb5rJz8OmlIfgZCRkjVNuGqV3Pg8fbfDi9NS9Kax6ZmdBmmx5TAUs0PvJyXkfFRUE9POyPo=
+X-Received: by 2002:a05:6820:174:b0:320:fbeb:da58 with SMTP id
+ k20-20020a056820017400b00320fbebda58mr12709488ood.22.1647438175854; Wed, 16
+ Mar 2022 06:42:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+References: <1357949524.990839.1647084149724.ref@mail.yahoo.com>
+ <1357949524.990839.1647084149724@mail.yahoo.com> <20220314084706.ncsk754gjywkcqxq@quack3.lan>
+ <CAOQ4uxiDubhONM3w502anndtbqy73q_Kt5bOQ07zbATb8ndvVA@mail.gmail.com>
+ <20220314113337.j7slrb5srxukztje@quack3.lan> <CAOQ4uxhwXgqbMKMSQJwNqQpKi-iAtS4dsFwkeDDMv=Y0ewp=og@mail.gmail.com>
+ <20220315111536.jlnid26rv5pxjpas@quack3.lan> <CAOQ4uxhSKk=rPtF4vwiW0u1Yy4p8Rhdd+wKC2BLJxHR8Q9V9AA@mail.gmail.com>
+ <20220316115058.a2ki6injgdp7xjf7@quack3.lan>
+In-Reply-To: <20220316115058.a2ki6injgdp7xjf7@quack3.lan>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 16 Mar 2022 15:42:44 +0200
+Message-ID: <CAOQ4uxgG37z7h-OYtGsZ-1=oQNu-DVvQgbN5wNbLXf0ktY1htg@mail.gmail.com>
+Subject: Re: Fanotify Directory exclusion not working when using FAN_MARK_MOUNT
+To:     Jan Kara <jack@suse.cz>
+Cc:     Srinivas <talkwithsrinivas@yahoo.co.in>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-btrfs_relocate_chunk() initiates new ordered extents. They can cause a
-hang when a process is trying to thaw the filesystem.
+> > The only thing is, as you wrote to Srinivas, there is really no practical
+> > way to make ignore mask with ON_CHILD work on old kernels, so
+> > what can users do if they want to write a portable program?
+> > Add this mark and hope for the best?
+>
+> OK, this objection probably tipped the balace towards a new flag for me :)
+>
+> > If users had FAN_MARK_PARENT, the outcome at least would
+> > have been predictable.
+> > Maybe FAN_MARK_PARENT is an overkill.
+> > Maybe what we need is FAN_MARK_IGNORED_ON_CHILD.
+> > It's not very pretty, but it is clear.
+>
+> Or how about FAN_MARK_IGNORED_MASK_CHECKED which would properly check for
+> supported bits in the ignore mask and then we can use ON_CHILD as I wanted
+> and we would regain ONDIR bit for future use as well?
+>
 
-We should have called sb_start_write(), so the filesystem is not being
-frozen. Add an ASSERT to check it is protected.
+I don't follow the reasoning behind the name MASK_CHECKED.
+If anything, I would rather introduce FAN_IGNORE_MARK.
+The reasoning is that users may think of this "ignore mark"
+as a separate mark from the "inode mark", so on this "mark" the
+meaning of ON_CHILD flags would be pretty clear.
 
-Reviewed-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
----
- fs/btrfs/volumes.c | 3 +++
- 1 file changed, 3 insertions(+)
+The fact that they are implemented as a single mark with two masks
+and that each mask also has some flags is an implementation detail.
 
-diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-index 3471698fd831..393fc7db99d3 100644
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -3230,6 +3230,9 @@ int btrfs_relocate_chunk(struct btrfs_fs_info *fs_info, u64 chunk_offset)
- 	u64 length;
- 	int ret;
- 
-+	/* Assert we called sb_start_write(), not to race with FS freezing */
-+	ASSERT(sb_write_started(fs_info->sb));
-+
- 	if (btrfs_fs_incompat(fs_info, EXTENT_TREE_V2)) {
- 		btrfs_err(fs_info,
- 			  "relocate: not supported on extent tree v2 yet");
--- 
-2.35.1
+If we go for FAN_IGNORE_MARK, we would disallow the combination
+  fanotify_mark(FAN_IGNORE_MARK, FAN_MARK_IGNORED_MASK, ...
+and I am also in favor of disallowing FAN_MARK_IGNORED_SURV_MODIFY.
+I find it completely useless for watching children and if people still need
+the ignored mask that does not survive modify, they can use the old API.
 
+> > > With ONDIR I agree things are not as obvious. Historically we have applied
+> > > ignore mask even for events coming from directories regardless of ONDIR
+> > > flag in the ignore mask. So ignore mask without any special flag has the
+> > > implicit meaning of "apply to all events regardless of type of originating
+> > > inode". I don't think we can change that meaning at this point. We could
+> > > define meaning of ONDIR in ignore mask to either "ignore only events from
+> > > directories" or to "ignore only events from ordinary files". But neither
+> > > seems particularly natural or useful.
+> > >
+> >
+> > TBH, I always found it annoying that fanotify cannot be used to specify
+> > a filter to get only mkdirs, which is a pretty common thing to want to be
+> > notified of (i.e. for recursive watch).
+> > But I have no intention to propose API changes to fix that.
+>
+> I see, so we could repurpose ONDIR bit in ignore mask for EVENT_IGNORE_NONDIR
+> feature or something like that. But as you say, no pressing need...
+>
+
+Alas, that does not fit nicely with the FAN_IGNORE_MARK abstraction.
+The inverse does:
+The "mark" with ONDIR captures all the create events and the "ignore mark"
+without ONDIR filters out the non-mkdir.
+
+Thanks,
+Amir.
