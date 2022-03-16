@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EC394DA7FA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Mar 2022 03:27:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A6334DA822
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Mar 2022 03:27:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352758AbiCPC22 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Mar 2022 22:28:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55150 "EHLO
+        id S1353057AbiCPC3B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Mar 2022 22:29:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55554 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350946AbiCPC21 (ORCPT
+        with ESMTP id S1353113AbiCPC2f (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Mar 2022 22:28:27 -0400
-Received: from lgeamrelo11.lge.com (lgeamrelo12.lge.com [156.147.23.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 77DBD5DA5D
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Mar 2022 19:27:10 -0700 (PDT)
+        Tue, 15 Mar 2022 22:28:35 -0400
+Received: from lgeamrelo11.lge.com (lgeamrelo13.lge.com [156.147.23.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 198C85E762
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Mar 2022 19:27:11 -0700 (PDT)
 Received: from unknown (HELO lgemrelse7q.lge.com) (156.147.1.151)
-        by 156.147.23.52 with ESMTP; 16 Mar 2022 11:27:10 +0900
+        by 156.147.23.53 with ESMTP; 16 Mar 2022 11:27:10 +0900
 X-Original-SENDERIP: 156.147.1.151
 X-Original-MAILFROM: byungchul.park@lge.com
 Received: from unknown (HELO localhost.localdomain) (10.177.244.38)
@@ -47,152 +47,172 @@ Cc:     damien.lemoal@opensource.wdc.com, linux-ide@vger.kernel.org,
         dri-devel@lists.freedesktop.org, airlied@linux.ie,
         rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
         hamohammed.sa@gmail.com
-Subject: [PATCH RFC v5 07/21] dept: Apply Dept to wait_for_completion()/complete()
-Date:   Wed, 16 Mar 2022 11:26:19 +0900
-Message-Id: <1647397593-16747-8-git-send-email-byungchul.park@lge.com>
+Subject: [PATCH RFC v5 08/21] dept: Apply Dept to seqlock
+Date:   Wed, 16 Mar 2022 11:26:20 +0900
+Message-Id: <1647397593-16747-9-git-send-email-byungchul.park@lge.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1647397593-16747-1-git-send-email-byungchul.park@lge.com>
 References: <1647397593-16747-1-git-send-email-byungchul.park@lge.com>
 X-Spam-Status: No, score=-6.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_HI,
         RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Makes Dept able to track dependencies by
-wait_for_completion()/complete().
+Makes Dept able to track dependencies by seqlock with adding wait
+annotation on read side of seqlock.
 
 Signed-off-by: Byungchul Park <byungchul.park@lge.com>
 ---
- include/linux/completion.h | 42 ++++++++++++++++++++++++++++++++++++++++--
- kernel/sched/completion.c  | 12 ++++++++++--
- 2 files changed, 50 insertions(+), 4 deletions(-)
+ include/linux/seqlock.h | 68 +++++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 66 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/completion.h b/include/linux/completion.h
-index 51d9ab0..76b4a2d 100644
---- a/include/linux/completion.h
-+++ b/include/linux/completion.h
-@@ -26,14 +26,48 @@
- struct completion {
- 	unsigned int done;
- 	struct swait_queue_head wait;
-+	struct dept_map dmap;
- };
+diff --git a/include/linux/seqlock.h b/include/linux/seqlock.h
+index 37ded6b..585f45c 100644
+--- a/include/linux/seqlock.h
++++ b/include/linux/seqlock.h
+@@ -23,6 +23,31 @@
+ 
+ #include <asm/processor.h>
  
 +#ifdef CONFIG_DEPT
-+#define dept_wfc_init(m, k, s, n)		dept_map_init(m, k, s, n)
-+#define dept_wfc_reinit(m)			dept_map_reinit(m)
-+#define dept_wfc_wait(m, ip)						\
-+do {									\
-+	dept_ask_event(m);						\
-+	dept_wait(m, 1UL, ip, __func__, 0);				\
++#define DEPT_EVT_ALL		((1UL << DEPT_MAX_SUBCLASSES_EVT) - 1)
++#define dept_seq_wait(m, ip)	dept_wait(m, DEPT_EVT_ALL, ip, __func__, 0)
++#define dept_seq_writebegin(m, ip)				\
++do {								\
++	dept_ecxt_enter(m, 1UL, ip, __func__, "write_seqcount_end", 0);\
++	dept_ask_event(m);					\
 +} while (0)
-+#define dept_wfc_complete(m, ip)		dept_event(m, 1UL, ip, __func__)
-+#define dept_wfc_enter(m, ip)			dept_ecxt_enter(m, 1UL, ip, "completion_context_enter", "complete", 0)
-+#define dept_wfc_exit(m, ip)			dept_ecxt_exit(m, 1UL, ip)
++#define dept_seq_writeend(m, ip)				\
++do {								\
++	dept_event(m, 1UL, ip, __func__);			\
++	dept_ecxt_exit(m, 1UL, ip);				\
++} while (0)
 +#else
-+#define dept_wfc_init(m, k, s, n)		do { (void)(n); (void)(k); } while (0)
-+#define dept_wfc_reinit(m)			do { } while (0)
-+#define dept_wfc_wait(m, ip)			do { } while (0)
-+#define dept_wfc_complete(m, ip)		do { } while (0)
-+#define dept_wfc_enter(m, ip)			do { } while (0)
-+#define dept_wfc_exit(m, ip)			do { } while (0)
++#define dept_seq_wait(m, ip)		do { } while (0)
++#define dept_seq_writebegin(m, ip)	do { } while (0)
++#define dept_seq_writeend(m, ip)	do { } while (0)
 +#endif
 +
 +#ifdef CONFIG_DEPT
-+#define WFC_DEPT_MAP_INIT(work) .dmap = { .name = #work }
++#define SEQ_DMAP_INIT(lockname) .dmap = { .name = #lockname }
 +#else
-+#define WFC_DEPT_MAP_INIT(work)
++#define SEQ_DMAP_INIT(lockname)
 +#endif
 +
-+#define init_completion(x)					\
-+	do {							\
-+		static struct dept_key __dkey;			\
-+		__init_completion(x, &__dkey, #x);		\
-+	} while (0)
-+
- #define init_completion_map(x, m) init_completion(x)
- static inline void complete_acquire(struct completion *x) {}
- static inline void complete_release(struct completion *x) {}
+ /*
+  * The seqlock seqcount_t interface does not prescribe a precise sequence of
+  * read begin/retry/end. For readers, typically there is a call to
+@@ -82,7 +107,8 @@ static inline void __seqcount_init(seqcount_t *s, const char *name,
+ #ifdef CONFIG_DEBUG_LOCK_ALLOC
  
- #define COMPLETION_INITIALIZER(work) \
--	{ 0, __SWAIT_QUEUE_HEAD_INITIALIZER((work).wait) }
-+	{ 0, __SWAIT_QUEUE_HEAD_INITIALIZER((work).wait), \
-+	WFC_DEPT_MAP_INIT(work) }
+ # define SEQCOUNT_DEP_MAP_INIT(lockname)				\
+-		.dep_map = { .name = #lockname }
++		.dep_map = { .name = #lockname, \
++			     SEQ_DMAP_INIT(lockname) }
  
- #define COMPLETION_INITIALIZER_ONSTACK_MAP(work, map) \
- 	(*({ init_completion_map(&(work), &(map)); &(work); }))
-@@ -81,9 +115,12 @@ static inline void complete_release(struct completion *x) {}
-  * This inline function will initialize a dynamically created completion
-  * structure.
-  */
--static inline void init_completion(struct completion *x)
-+static inline void __init_completion(struct completion *x,
-+				     struct dept_key *dkey,
-+				     const char *name)
- {
- 	x->done = 0;
-+	dept_wfc_init(&x->dmap, dkey, 0, name);
- 	init_swait_queue_head(&x->wait);
- }
- 
-@@ -97,6 +134,7 @@ static inline void init_completion(struct completion *x)
- static inline void reinit_completion(struct completion *x)
- {
- 	x->done = 0;
-+	dept_wfc_reinit(&x->dmap);
- }
- 
- extern void wait_for_completion(struct completion *);
-diff --git a/kernel/sched/completion.c b/kernel/sched/completion.c
-index a778554..6e31cc0 100644
---- a/kernel/sched/completion.c
-+++ b/kernel/sched/completion.c
-@@ -29,6 +29,7 @@ void complete(struct completion *x)
- {
- 	unsigned long flags;
- 
-+	dept_wfc_complete(&x->dmap, _RET_IP_);
- 	raw_spin_lock_irqsave(&x->wait.lock, flags);
- 
- 	if (x->done != UINT_MAX)
-@@ -58,6 +59,7 @@ void complete_all(struct completion *x)
- {
- 	unsigned long flags;
- 
-+	dept_wfc_complete(&x->dmap, _RET_IP_);
- 	lockdep_assert_RT_in_threaded_ctx();
- 
- 	raw_spin_lock_irqsave(&x->wait.lock, flags);
-@@ -112,17 +114,23 @@ void complete_all(struct completion *x)
- }
- 
- static long __sched
--wait_for_common(struct completion *x, long timeout, int state)
-+_wait_for_common(struct completion *x, long timeout, int state)
- {
- 	return __wait_for_common(x, schedule_timeout, timeout, state);
- }
- 
- static long __sched
--wait_for_common_io(struct completion *x, long timeout, int state)
-+_wait_for_common_io(struct completion *x, long timeout, int state)
- {
- 	return __wait_for_common(x, io_schedule_timeout, timeout, state);
- }
- 
-+#define wait_for_common(x, t, s)					\
-+({ dept_wfc_wait(&(x)->dmap, _RET_IP_); _wait_for_common(x, t, s); })
-+
-+#define wait_for_common_io(x, t, s)					\
-+({ dept_wfc_wait(&(x)->dmap, _RET_IP_); _wait_for_common_io(x, t, s); })
-+
  /**
-  * wait_for_completion: - waits for completion of a task
-  * @x:  holds the state of this particular completion
+  * seqcount_init() - runtime initializer for seqcount_t
+@@ -148,7 +174,7 @@ static inline void seqcount_lockdep_reader_access(const seqcount_t *s)
+  * This lock-unlock technique must be implemented for all of PREEMPT_RT
+  * sleeping locks.  See Documentation/locking/locktypes.rst
+  */
+-#if defined(CONFIG_LOCKDEP) || defined(CONFIG_PREEMPT_RT)
++#if defined(CONFIG_LOCKDEP) || defined(CONFIG_DEPT) || defined(CONFIG_PREEMPT_RT)
+ #define __SEQ_LOCK(expr)	expr
+ #else
+ #define __SEQ_LOCK(expr)
+@@ -203,6 +229,22 @@ static inline void seqcount_lockdep_reader_access(const seqcount_t *s)
+ 	__SEQ_LOCK(locktype	*lock);					\
+ } seqcount_##lockname##_t;						\
+ 									\
++static __always_inline void						\
++__seqprop_##lockname##_wait(const seqcount_##lockname##_t *s)		\
++{									\
++	__SEQ_LOCK(dept_seq_wait(&(lockmember)->dep_map.dmap, _RET_IP_));\
++}									\
++									\
++static __always_inline void						\
++__seqprop_##lockname##_writebegin(const seqcount_##lockname##_t *s)	\
++{									\
++}									\
++									\
++static __always_inline void						\
++__seqprop_##lockname##_writeend(const seqcount_##lockname##_t *s)	\
++{									\
++}									\
++									\
+ static __always_inline seqcount_t *					\
+ __seqprop_##lockname##_ptr(seqcount_##lockname##_t *s)			\
+ {									\
+@@ -271,6 +313,21 @@ static inline void __seqprop_assert(const seqcount_t *s)
+ 	lockdep_assert_preemption_disabled();
+ }
+ 
++static inline void __seqprop_wait(seqcount_t *s)
++{
++	dept_seq_wait(&s->dep_map.dmap, _RET_IP_);
++}
++
++static inline void __seqprop_writebegin(seqcount_t *s)
++{
++	dept_seq_writebegin(&s->dep_map.dmap, _RET_IP_);
++}
++
++static inline void __seqprop_writeend(seqcount_t *s)
++{
++	dept_seq_writeend(&s->dep_map.dmap, _RET_IP_);
++}
++
+ #define __SEQ_RT	IS_ENABLED(CONFIG_PREEMPT_RT)
+ 
+ SEQCOUNT_LOCKNAME(raw_spinlock, raw_spinlock_t,  false,    s->lock,        raw_spin, raw_spin_lock(s->lock))
+@@ -311,6 +368,9 @@ static inline void __seqprop_assert(const seqcount_t *s)
+ #define seqprop_sequence(s)		__seqprop(s, sequence)
+ #define seqprop_preemptible(s)		__seqprop(s, preemptible)
+ #define seqprop_assert(s)		__seqprop(s, assert)
++#define seqprop_dept_wait(s)		__seqprop(s, wait)
++#define seqprop_dept_writebegin(s)	__seqprop(s, writebegin)
++#define seqprop_dept_writeend(s)	__seqprop(s, writeend)
+ 
+ /**
+  * __read_seqcount_begin() - begin a seqcount_t read section w/o barrier
+@@ -360,6 +420,7 @@ static inline void __seqprop_assert(const seqcount_t *s)
+ #define read_seqcount_begin(s)						\
+ ({									\
+ 	seqcount_lockdep_reader_access(seqprop_ptr(s));			\
++	seqprop_dept_wait(s);						\
+ 	raw_read_seqcount_begin(s);					\
+ })
+ 
+@@ -512,6 +573,7 @@ static inline void do_raw_write_seqcount_end(seqcount_t *s)
+ 		preempt_disable();					\
+ 									\
+ 	do_write_seqcount_begin_nested(seqprop_ptr(s), subclass);	\
++	seqprop_dept_writebegin(s);					\
+ } while (0)
+ 
+ static inline void do_write_seqcount_begin_nested(seqcount_t *s, int subclass)
+@@ -538,6 +600,7 @@ static inline void do_write_seqcount_begin_nested(seqcount_t *s, int subclass)
+ 		preempt_disable();					\
+ 									\
+ 	do_write_seqcount_begin(seqprop_ptr(s));			\
++	seqprop_dept_writebegin(s);					\
+ } while (0)
+ 
+ static inline void do_write_seqcount_begin(seqcount_t *s)
+@@ -554,6 +617,7 @@ static inline void do_write_seqcount_begin(seqcount_t *s)
+  */
+ #define write_seqcount_end(s)						\
+ do {									\
++	seqprop_dept_writeend(s);					\
+ 	do_write_seqcount_end(seqprop_ptr(s));				\
+ 									\
+ 	if (seqprop_preemptible(s))					\
 -- 
 1.9.1
 
