@@ -2,75 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BB9134DA89A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Mar 2022 03:49:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E8C154DA8A7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Mar 2022 03:52:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353335AbiCPCuJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Mar 2022 22:50:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49094 "EHLO
+        id S1350506AbiCPCxm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Mar 2022 22:53:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353331AbiCPCuH (ORCPT
+        with ESMTP id S238226AbiCPCxl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Mar 2022 22:50:07 -0400
-Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2F8513FBD
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Mar 2022 19:48:53 -0700 (PDT)
-Received: by mail-pf1-x430.google.com with SMTP id z16so2004099pfh.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Mar 2022 19:48:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=c0M/K+1eFLxLow4mbMiKmCtwBH2b7Lm5/YgoYLc2Jig=;
-        b=ccnR7riMJqNwgZKJTM2DdghxvC0pBG+VaqFAgWWSVY3XbJo1wzpiYHpMGXq6otq1N5
-         iV8gtOwV9NKjqsLy/hqESzwgOkqPUwSvvHuU1SEZFxe1rNeyGRIg+UIJQLfaOLdcICtO
-         tv3bmG2kU2UvPdFt56vzYO6xr5RC+UdbajNEk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=c0M/K+1eFLxLow4mbMiKmCtwBH2b7Lm5/YgoYLc2Jig=;
-        b=uOcrNu6FVprz+Uh1tC7+dHEqApb/cZCmRu9QOp6UgPy4eNZeBAxdrCjFJPWLjX10sZ
-         3r5gXSZJgyM4I8j+DdlJvyKEos5DSXXcHtJGfJtvs3dWtmVhG5wtR+8p1k7CO68sjP2F
-         v+yHSaSJt5zVfWcbRaE22M4k1YuT2UqyiO8nx7va0Y43r0RyDrjRwATQWKkHdyQ7ksVR
-         3OFZh1LuZjwVQnb5UKC4uSvbCJfwAFbCTC2AfLoK76nd4HfcmI1APKmcxU9veXra8X6r
-         1Va1IftHQeNch9Jtfc2br5AFOoc5XZFpcpFyrPaJFkearGy903hjR6DbL0CC3AqQJNqh
-         AVoQ==
-X-Gm-Message-State: AOAM533mPI3dk45syhfW0Zc2z1w2fkDOPvOZnxjU/Ezw+gLJ3B/kXGrn
-        CTeZaUIH/E77f1SqeP6SbZYEpQ==
-X-Google-Smtp-Source: ABdhPJzVMfVBFpio8c9aEyIZlnXkq8spdnH7j/vo6Y0rcslj0Xy3iCQRbPgKW1yb2pCz+OY5DqegAg==
-X-Received: by 2002:a05:6a00:1350:b0:4f7:8c4f:cfca with SMTP id k16-20020a056a00135000b004f78c4fcfcamr24609313pfu.45.1647398933483;
-        Tue, 15 Mar 2022 19:48:53 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id k3-20020a056a00168300b004f7e60da26csm503648pfc.182.2022.03.15.19.48.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Mar 2022 19:48:53 -0700 (PDT)
-Date:   Tue, 15 Mar 2022 19:48:52 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "Williams, Dan J" <dan.j.williams@intel.com>,
-        "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
-        "ebiederm@xmission.com" <ebiederm@xmission.com>,
-        "Chatre, Reinette" <reinette.chatre@intel.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "Luck, Tony" <tony.luck@intel.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "Brown, Len" <len.brown@intel.com>
-Subject: Re: [PATCH 1/3] x86: Separate out x86_regset for 32 and 64 bit
-Message-ID: <202203151948.E5076F4BB@keescook>
-References: <20220315201706.7576-1-rick.p.edgecombe@intel.com>
- <20220315201706.7576-2-rick.p.edgecombe@intel.com>
- <202203151340.7447F75BDC@keescook>
- <fe7ce2ae1011b240e3a6ee8b0425ff3e2c675b6d.camel@intel.com>
+        Tue, 15 Mar 2022 22:53:41 -0400
+Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4521D5C352
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Mar 2022 19:52:28 -0700 (PDT)
+Received: from dread.disaster.area (pa49-186-150-27.pa.vic.optusnet.com.au [49.186.150.27])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id D691010E5699;
+        Wed, 16 Mar 2022 13:52:24 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1nUJlv-005zO8-FH; Wed, 16 Mar 2022 13:52:23 +1100
+Date:   Wed, 16 Mar 2022 13:52:23 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Roman Gushchin <roman.gushchin@linux.dev>,
+        Matthew Wilcox <willy@infradead.org>,
+        Stephen Brennan <stephen.s.brennan@oracle.com>,
+        lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org,
+        Gautham Ananthakrishna <gautham.ananthakrishna@oracle.com>,
+        khlebnikov@yandex-team.ru
+Subject: Re: [LSF/MM TOPIC] Better handling of negative dentries
+Message-ID: <20220316025223.GR661808@dread.disaster.area>
+References: <YjDvRPuxPN0GsxLB@casper.infradead.org>
+ <A35C545C-1926-4AA9-BFC7-0CF11669EA9E@linux.dev>
+ <YjFGVxImP/nVyprQ@B-P7TQMD6M-0146.local>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <fe7ce2ae1011b240e3a6ee8b0425ff3e2c675b6d.camel@intel.com>
-X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <YjFGVxImP/nVyprQ@B-P7TQMD6M-0146.local>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=VuxAv86n c=1 sm=1 tr=0 ts=623150eb
+        a=sPqof0Mm7fxWrhYUF33ZaQ==:117 a=sPqof0Mm7fxWrhYUF33ZaQ==:17
+        a=IkcTkHD0fZMA:10 a=o8Y5sQTvuykA:10 a=JfrnYn6hAAAA:8 a=7-415B0cAAAA:8
+        a=7N29KvIgx71kk7lOLegA:9 a=QEXdDO2ut3YA:10 a=1CNFftbPRP8L7MoqJWF3:22
+        a=biEYGPWJfzWAr4FL6Ov7:22
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -78,19 +55,87 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 15, 2022 at 09:53:13PM +0000, Edgecombe, Rick P wrote:
-> On Tue, 2022-03-15 at 13:41 -0700, Kees Cook wrote:
-> > Have you verified there's no binary difference in machine code
-> > output?
+On Wed, Mar 16, 2022 at 10:07:19AM +0800, Gao Xiang wrote:
+> On Tue, Mar 15, 2022 at 01:56:18PM -0700, Roman Gushchin wrote:
+> > 
+> > > On Mar 15, 2022, at 12:56 PM, Matthew Wilcox <willy@infradead.org> wrote:
+> > > 
+> > > The number of negative dentries is effectively constrained only by memory
+> > > size.  Systems which do not experience significant memory pressure for
+> > > an extended period can build up millions of negative dentries which
+> > > clog the dcache.  That can have different symptoms, such as inotify
+> > > taking a long time [1], high memory usage [2] and even just poor lookup
+> > > performance [3].  We've also seen problems with cgroups being pinned
+> > > by negative dentries, though I think we now reparent those dentries to
+> > > their parent cgroup instead.
+> > 
+> > Yes, it should be fixed already.
+> > 
+> > > 
+> > > We don't have a really good solution yet, and maybe some focused
+> > > brainstorming on the problem would lead to something that actually works.
+> > 
+> > I’d be happy to join this discussion. And in my opinion it’s going beyond negative dentries: there are other types of objects which tend to grow beyond any reasonable limits if there is no memory pressure.
 > 
-> There actually was a different in the binaries. I investigated a bit,
-> and it seemed at least part of it was due to the line numbers changing
-> the WARN_ON()s. But otherwise, I assumed some compiler optimization
-> must have been bumped.
+> +1, we once had a similar issue as well, and agree that is not only
+> limited to negative dentries but all too many LRU-ed dentries and inodes.
 
-Right, you can ignore all the debugging line number changes.
-"diffoscope" should help see the difference by section. As long as the
-actual object code isn't changing, you should be good.
+Yup, any discussion solely about managing buildup of negative
+dentries doesn't acknowledge that it is just a symptom of larger
+problems that need to be addressed.
 
+> Limited the total number may benefit to avoid shrink spiking for servers.
+
+No, we don't want to set hard limits on object counts - that's just
+asking for systems that need frequent hand tuning and are impossible
+to get right under changing workloads. Caches need to auto size
+according to workload's working set to find a steady state balance,
+not be bound by artitrary limits.
+
+But even cache sizing isn't the problem here - it's just another
+symptom.
+
+> > A perfect example when it happens is when a machine is almost
+> > idle for some period of time. Periodically running processes
+> > creating various kernel objects (mostly vfs cache) which over
+> > time are filling significant portions of the total memory. And
+> > when the need for memory arises, we realize that the memory is
+> > heavily fragmented and it’s costly to reclaim it back.
+
+Yup, the underlying issue here is that memory reclaim does nothing
+to manage long term build-up of single use cached objects when
+*there is no memory pressure*. There's of idle time and spare
+resources to manage caches sanely, but we don't. e.g. there is no
+periodic rotation of caches that could lead to detection and reclaim
+of single use objects (say over a period of minutes) and hence
+prevent them from filling up all of memory unnecessarily and
+creating transient memory reclaim and allocation latency spikes when
+memory finally fills up.
+
+IOWs, negative dentries getting out of hand and shrinker spikes are
+both a symptom of the same problem: while memory allocation is free,
+memory reclaim does nothing to manage cache aging. Hence we only
+find out we've got a badly aged cache when we finally realise
+it has filled all of memory, and then we have heaps of work to do
+before memory can be made available for allocation again....
+
+And then if you're going to talk memory reclaim, the elephant in the
+room is the lack of integration between shrinkers and the main
+reclaim infrastructure.  There's no priority determination, there's
+no progress feedback, there's no mechanism to allow shrinkers to
+throttle reclaim rather than have the reclaim infrastructure wind up
+priority and OOM kill when a shrinker cannot make progress quickly,
+etc. Then there's direct reclaim hammering shrinkers with unbound
+concurrency so individual shrinkers have no chance of determining
+how much memory pressure there really is by themselves, not to
+mention the lock contention problems that unbound reclaim
+concurrency on things like LRU lists can cause. And, of course,
+memcg based reclaim is still only tacked onto the side of the
+shrinker infrastructure...
+
+Cheers,
+
+Dave.
 -- 
-Kees Cook
+Dave Chinner
+david@fromorbit.com
