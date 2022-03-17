@@ -2,154 +2,197 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 38AB54DC9C8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Mar 2022 16:22:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C41E94DC9F3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Mar 2022 16:28:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235714AbiCQPXz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Mar 2022 11:23:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60778 "EHLO
+        id S235759AbiCQP3D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Mar 2022 11:29:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231197AbiCQPXy (ORCPT
+        with ESMTP id S235849AbiCQP3C (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Mar 2022 11:23:54 -0400
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07436204CBB;
-        Thu, 17 Mar 2022 08:22:37 -0700 (PDT)
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 22HEQXUS019786;
-        Thu, 17 Mar 2022 15:22:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : references : date : in-reply-to : message-id : content-type :
- mime-version; s=pp1; bh=o5tYtAYH9ZLRvKcAuo+UUHJSCQ2sWyYgcu96LXqzj6g=;
- b=Wu5aeTMjcgo7+9TYR47yNtrL/h70MzJgHVkXlyLgMTo2ByO3mEV4WC59ej1fAD9uf07r
- yZtlH9kObFqTgRt9A8EDyjjKg+wc2jbXOL7+7xMc48VDO5ayUoLujXUqaja6RsUOOXjD
- PkWjp+l29E30Ddx4f+TmoiOZBPUtn9biIbH4Hp04uslpi9RE89YJQV/jG0RSHE8TDRMd
- ZUjJNtNyn4tjruRMBtc61vGCKABkmO+vKnuk4OZpu1s51Iol1Tbuektt71PRxWVLMVwd
- fIkXm5yHwSkKbYm0rLKqNvVEcvK1jcMtgUi4mkidN3X2cwxYUuULqcgEsXSG3gsLZ0oW 8w== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3euwuhm118-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 17 Mar 2022 15:22:13 +0000
-Received: from m0098417.ppops.net (m0098417.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 22HEmMRi022114;
-        Thu, 17 Mar 2022 15:22:13 GMT
-Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3euwuhm10r-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 17 Mar 2022 15:22:13 +0000
-Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
-        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 22HFIsEO030039;
-        Thu, 17 Mar 2022 15:22:11 GMT
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
-        by ppma06ams.nl.ibm.com with ESMTP id 3euc6r35sj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 17 Mar 2022 15:22:11 +0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 22HFM92Z46662014
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 17 Mar 2022 15:22:09 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0A1A55204E;
-        Thu, 17 Mar 2022 15:22:09 +0000 (GMT)
-Received: from tuxmaker.linux.ibm.com (unknown [9.152.85.9])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id B2D6D52050;
-        Thu, 17 Mar 2022 15:22:08 +0000 (GMT)
-From:   Sven Schnelle <svens@linux.ibm.com>
-To:     Ritesh Harjani <riteshh@linux.ibm.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>, linux-ext4@vger.kernel.org,
-        Jan Kara <jack@suse.cz>, "Theodore Ts'o" <tytso@mit.edu>,
-        Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@kernel.org
-Subject: Re: [PATCHv3 02/10] ext4: Fix ext4_fc_stats trace point
-References: <cover.1647057583.git.riteshh@linux.ibm.com>
-        <b4b9691414c35c62e570b723e661c80674169f9a.1647057583.git.riteshh@linux.ibm.com>
-        <yt9dr1706b4i.fsf@linux.ibm.com>
-        <20220317145008.73nm7hqtccyjy353@riteshh-domain>
-Date:   Thu, 17 Mar 2022 16:22:08 +0100
-In-Reply-To: <20220317145008.73nm7hqtccyjy353@riteshh-domain> (Ritesh
-        Harjani's message of "Thu, 17 Mar 2022 20:20:08 +0530")
-Message-ID: <yt9dee3061un.fsf@linux.ibm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.0.50 (gnu/linux)
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: evvHnrFyu6NCdeG_d3g4uSJ9oQP78KAe
-X-Proofpoint-GUID: zw6WPDayHorAsJtTfPc1xMQsxA0J-I5y
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Thu, 17 Mar 2022 11:29:02 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 095D3207A03
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Mar 2022 08:27:45 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 9DB8F1F37F;
+        Thu, 17 Mar 2022 15:27:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1647530864; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Ba37Sn5Isnfr1xb5UZN0sl6DsctIfjmQRjzTGypIhb8=;
+        b=RgcFzjkOVkmBmwimRDiFOteMbwBl1uRmghnHZlHmwTXfzN/Qda69B4LvQtk41KXsH15lyt
+        XNNljeieFgpJrLU4jdJuGUM6MC8wYDxunxlryFGx7wk9Cl7WjF6ncR+5bByV6Y3TxR4xJL
+        NIRSnwA96eL2M7kvbGzyH7rmk507yqw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1647530864;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Ba37Sn5Isnfr1xb5UZN0sl6DsctIfjmQRjzTGypIhb8=;
+        b=RNZn8LyvL92aHgBWugvf08+AJYA8CqV0MFXnVzo6o09to9g49Sl+ej73TmGyFcnfZTNi30
+        318hSKtxRXNn++CQ==
+Received: from quack3.suse.cz (unknown [10.100.200.198])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 6C2F3A3B83;
+        Thu, 17 Mar 2022 15:27:44 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 1FA2CA0615; Thu, 17 Mar 2022 16:27:41 +0100 (CET)
+Date:   Thu, 17 Mar 2022 16:27:41 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 3/5] fsnotify: allow adding an inode mark without pinning
+ inode
+Message-ID: <20220317152741.mzd5u2larfhrs2cg@quack3.lan>
+References: <20220307155741.1352405-1-amir73il@gmail.com>
+ <20220307155741.1352405-4-amir73il@gmail.com>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.850,Hydra:6.0.425,FMLib:17.11.64.514
- definitions=2022-03-17_06,2022-03-15_01,2022-02-23_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
- lowpriorityscore=0 adultscore=0 priorityscore=1501 impostorscore=0
- clxscore=1015 mlxlogscore=799 phishscore=0 mlxscore=0 malwarescore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2202240000 definitions=main-2203170085
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220307155741.1352405-4-amir73il@gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Mon 07-03-22 17:57:39, Amir Goldstein wrote:
+> fsnotify_add_mark() and variants implicitly take a reference on inode
+> when attaching a mark to an inode.
+> 
+> Make that behavior opt-out with the flag FSNOTIFY_ADD_MARK_NO_IREF.
+> 
+> Instead of taking the inode reference when attaching connector to inode
+> and dropping the inode reference when detaching connector from inode,
+> take the inode reference on attach of the first mark that wants to hold
+> an inode reference and drop the inode reference on detach of the last
+> mark that wants to hold an inode reference.
+> 
+> This leaves the choice to the backend whether or not to pin the inode
+> when adding an inode mark.
+> 
+> This is intended to be used when adding a mark with ignored mask that is
+> used for optimization in cases where group can afford getting unneeded
+> events and reinstate the mark with ignored mask when inode is accessed
+> again after being evicted.
+> 
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 
-Ritesh Harjani <riteshh@linux.ibm.com> writes:
+Couple of notes below.
 
-> On 22/03/17 01:01PM, Sven Schnelle wrote:
->> Ritesh Harjani <riteshh@linux.ibm.com> writes:
->> I'm getting the following oops with that patch:
->>
->> [    0.937455] VFS: Disk quotas dquot_6.6.0
->> [    0.937474] VFS: Dquot-cache hash table entries: 512 (order 0, 4096 bytes)
->> [    0.958347] Unable to handle kernel pointer dereference in virtual kernel address space
->> [    0.958350] Failing address: 00000000010de000 TEID: 00000000010de407
->> [    0.958353] Fault in home space mode while using kernel ASCE.
->> [    0.958357] AS:0000000001ed0007 R3:00000002ffff0007 S:0000000001003701
->> [    0.958388] Oops: 0004 ilc:3 [#1] SMP
->> [    0.958393] Modules linked in:
->> [    0.958398] CPU: 0 PID: 8 Comm: kworker/u128:0 Not tainted 5.17.0-rc8-next-20220317 #396
->
-> I tried running this master branch of linux-next from here [1].
-> But I started facing build failures with it.
->
-> [1]: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
->
->> [    0.958403] Hardware name: IBM 3906 M04 704 (z/VM 7.1.0)
->> [    0.958407] Workqueue: eval_map_wq eval_map_work_func
->>
->> [    0.958446] Krnl PSW : 0704e00180000000 000000000090a9d6 (number+0x25e/0x3c0)
->> [    0.958456]            R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:0 AS:3 CC:2 PM:0 RI:0 EA:3
->> [    0.958461] Krnl GPRS: 0000000000000058 00000000010de0ac 0000000000000001 00000000fffffffc
->> [    0.958467]            0000038000047b80 0affffff010de0ab 0000000000000000 0000000000000000
->> [    0.958481]            0000000000000020 0000038000000000 00000000010de0ad 00000000010de0ab
->> [    0.958484]            0000000080312100 0000000000e68910 0000038000047b50 0000038000047ab8
->> [    0.958494] Krnl Code: 000000000090a9c6: f0c84112b001        srp     274(13,%r4),1(%r11),8
->> [    0.958494]            000000000090a9cc: 41202001            la      %r2,1(%r2)
->> [    0.958494]           #000000000090a9d0: ecab0006c065        clgrj   %r10,%r11,12,000000000090a9dc
->> [    0.958494]           >000000000090a9d6: d200b0004000        mvc     0(1,%r11),0(%r4)
->> [    0.958494]            000000000090a9dc: 41b0b001            la      %r11,1(%r11)
->> [    0.958494]            000000000090a9e0: a74bffff
->>             aghi    %r4,-1
->> [    0.958494]            000000000090a9e4: a727fff6            brctg   %r2,000000000090a9d0
->> [    0.958494]            000000000090a9e8: a73affff            ahi     %r3,-1
->> [    0.958575] Call Trace:
->> [    0.958580]  [<000000000090a9d6>] number+0x25e/0x3c0
->> [    0.958594] ([<0000000000289516>] update_event_printk+0xde/0x200)
->> [    0.958602]  [<0000000000910020>] vsnprintf+0x4b0/0x7c8
->> [    0.958606]  [<00000000009103e8>] snprintf+0x40/0x50
->> [    0.958610]  [<00000000002893d2>] eval_replace+0x62/0xc8
->> [    0.958614]  [<000000000028e2fe>] trace_event_eval_update+0x206/0x248
->
-> This looks like you must have this patch from Steven as well [2].
+> diff --git a/fs/notify/mark.c b/fs/notify/mark.c
+> index 190df435919f..f71b6814bfa7 100644
+> --- a/fs/notify/mark.c
+> +++ b/fs/notify/mark.c
+> @@ -213,6 +213,17 @@ static void *fsnotify_detach_connector_from_object(
+>  	if (conn->type == FSNOTIFY_OBJ_TYPE_INODE) {
+>  		inode = fsnotify_conn_inode(conn);
+>  		inode->i_fsnotify_mask = 0;
+> +
+> +		pr_debug("%s: inode=%p iref=%u sb_connectors=%lu icount=%u\n",
+> +			 __func__, inode, atomic_read(&conn->proxy_iref),
+> +			 atomic_long_read(&inode->i_sb->s_fsnotify_connectors),
+> +			 atomic_read(&inode->i_count));
 
-Yes, i used vanilla linux-next from 20220317. So i have that one as well.
-Looking at that patch it looks like TRACE_DEFINE_ENUM(EXT4_FC_REASON_MAX);
-is indeed wanted. Lets wait wether Steve knows what's going on,
-otherwise i have to dig into the code and figure out what the problem is.
+Are these pr_debug() prints that useful? My experience is they get rarely used
+after the code is debugged... If you think some places are useful longer
+term, tracepoints are probably easier to use these days?
 
-Thanks
-Sven
+> +
+> +		/* Unpin inode when detaching from connector */
+> +		if (atomic_read(&conn->proxy_iref))
+> +			atomic_set(&conn->proxy_iref, 0);
+> +		else
+> +			inode = NULL;
+
+proxy_iref is always manipulated under conn->lock so there's no need for
+atomic operations here.
+
+>  	} else if (conn->type == FSNOTIFY_OBJ_TYPE_VFSMOUNT) {
+>  		fsnotify_conn_mount(conn)->mnt_fsnotify_mask = 0;
+>  	} else if (conn->type == FSNOTIFY_OBJ_TYPE_SB) {
+> @@ -240,12 +251,43 @@ static void fsnotify_final_mark_destroy(struct fsnotify_mark *mark)
+>  /* Drop object reference originally held by a connector */
+>  static void fsnotify_drop_object(unsigned int type, void *objp)
+>  {
+> +	struct inode *inode = objp;
+> +
+>  	if (!objp)
+>  		return;
+>  	/* Currently only inode references are passed to be dropped */
+>  	if (WARN_ON_ONCE(type != FSNOTIFY_OBJ_TYPE_INODE))
+>  		return;
+> -	fsnotify_put_inode_ref(objp);
+> +
+> +	pr_debug("%s: inode=%p sb_connectors=%lu, icount=%u\n", __func__,
+> +		 inode, atomic_long_read(&inode->i_sb->s_fsnotify_connectors),
+> +		 atomic_read(&inode->i_count));
+> +
+> +	fsnotify_put_inode_ref(inode);
+> +}
+> +
+> +/* Drop the proxy refcount on inode maintainted by connector */
+> +static struct inode *fsnotify_drop_iref(struct fsnotify_mark_connector *conn,
+> +					unsigned int *type)
+> +{
+> +	struct inode *inode = fsnotify_conn_inode(conn);
+> +
+> +	if (WARN_ON_ONCE(!inode || conn->type != FSNOTIFY_OBJ_TYPE_INODE))
+> +		return NULL;
+> +
+> +	pr_debug("%s: inode=%p iref=%u sb_connectors=%lu icount=%u\n",
+> +		 __func__, inode, atomic_read(&conn->proxy_iref),
+> +		 atomic_long_read(&inode->i_sb->s_fsnotify_connectors),
+> +		 atomic_read(&inode->i_count));
+> +
+> +	if (WARN_ON_ONCE(!atomic_read(&conn->proxy_iref)) ||
+> +	    !atomic_dec_and_test(&conn->proxy_iref))
+> +		return NULL;
+> +
+> +	fsnotify_put_inode_ref(inode);
+
+You cannot call fsnotify_put_inode_ref() here because the function is
+called under conn->lock and iput() can sleep... You need to play similar
+game with passing inode pointer like
+fsnotify_detach_connector_from_object() does.
+
+> +	*type = FSNOTIFY_OBJ_TYPE_INODE;
+> +
+> +	return inode;
+>  }
+>  
+>  void fsnotify_put_mark(struct fsnotify_mark *mark)
+> @@ -275,6 +317,9 @@ void fsnotify_put_mark(struct fsnotify_mark *mark)
+>  		free_conn = true;
+>  	} else {
+>  		__fsnotify_recalc_mask(conn);
+> +		/* Unpin inode on last mark that wants inode refcount held */
+> +		if (mark->flags & FSNOTIFY_MARK_FLAG_HAS_IREF)
+> +			objp = fsnotify_drop_iref(conn, &type);
+>  	}
+
+This is going to be interesting. What if the connector got detached from
+the inode before fsnotify_put_mark() was called? Then iref_proxy would be
+already 0 and we would barf? I think
+fsnotify_detach_connector_from_object() needs to drop inode reference but
+leave iref_proxy alone for this to work. fsnotify_drop_iref() would then
+drop inode reference only if iref_proxy reaches 0 and conn->objp != NULL...
+
+
+>  	WRITE_ONCE(mark->connector, NULL);
+>  	spin_unlock(&conn->lock);
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
