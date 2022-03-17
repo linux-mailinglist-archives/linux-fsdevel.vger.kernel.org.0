@@ -2,131 +2,231 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 54B9B4DC161
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Mar 2022 09:34:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AA994DC1DC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Mar 2022 09:50:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231335AbiCQIfk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Mar 2022 04:35:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53502 "EHLO
+        id S231470AbiCQIvA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Mar 2022 04:51:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229963AbiCQIfj (ORCPT
+        with ESMTP id S231469AbiCQIu6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Mar 2022 04:35:39 -0400
-Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2F48A147AFA;
-        Thu, 17 Mar 2022 01:34:22 -0700 (PDT)
-Received: from dread.disaster.area (pa49-186-150-27.pa.vic.optusnet.com.au [49.186.150.27])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id C29F310E4B5B;
-        Thu, 17 Mar 2022 19:34:20 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1nUlaO-006Tqn-0l; Thu, 17 Mar 2022 19:34:20 +1100
-Date:   Thu, 17 Mar 2022 19:34:20 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Naohiro Aota <naohiro.aota@wdc.com>
-Cc:     linux-btrfs@vger.kernel.org, johannes.thumshirn@wdc.com,
-        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        Filipe Manana <fdmanana@suse.com>
-Subject: Re: [PATCH v2 3/4] fs: add check functions for
- sb_start_{write,pagefault,intwrite}
-Message-ID: <20220317083420.GA1544202@dread.disaster.area>
-References: <cover.1647436353.git.naohiro.aota@wdc.com>
- <0737603ecc6baf785843d6e91992e6ef202c308c.1647436353.git.naohiro.aota@wdc.com>
+        Thu, 17 Mar 2022 04:50:58 -0400
+Received: from smtp-42ac.mail.infomaniak.ch (smtp-42ac.mail.infomaniak.ch [84.16.66.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F28CEA742
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Mar 2022 01:49:41 -0700 (PDT)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4KK0pf5LWCzMq31C;
+        Thu, 17 Mar 2022 09:35:54 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4KK0pd1DtQzlhRV1;
+        Thu, 17 Mar 2022 09:35:53 +0100 (CET)
+Message-ID: <ed8467f2-dcd0-bc2f-8e98-1d9129fb2c30@digikod.net>
+Date:   Thu, 17 Mar 2022 09:36:36 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0737603ecc6baf785843d6e91992e6ef202c308c.1647436353.git.naohiro.aota@wdc.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=6232f28d
-        a=sPqof0Mm7fxWrhYUF33ZaQ==:117 a=sPqof0Mm7fxWrhYUF33ZaQ==:17
-        a=kj9zAlcOel0A:10 a=o8Y5sQTvuykA:10 a=iox4zFpeAAAA:8 a=JF9118EUAAAA:8
-        a=7-415B0cAAAA:8 a=zkEiViQQ1w_MH5clXOgA:9 a=CjuIK1q_8ugA:10
-        a=WzC6qhA0u3u7Ye7llzcV:22 a=xVlTc564ipvMDusKsbsT:22
-        a=biEYGPWJfzWAr4FL6Ov7:22
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: 
+Content-Language: en-US
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        Shuah Khan <shuah@kernel.org>, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
+References: <20220221212522.320243-1-mic@digikod.net>
+ <20220221212522.320243-2-mic@digikod.net>
+ <CAHC9VhQEEKGgCn7fYgUt-_WhXc-vrKq9TVm=cfwJUyWaUgY2Vw@mail.gmail.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Subject: Re: [PATCH v1 01/11] landlock: Define access_mask_t to enforce a
+ consistent access mask size
+In-Reply-To: <CAHC9VhQEEKGgCn7fYgUt-_WhXc-vrKq9TVm=cfwJUyWaUgY2Vw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 16, 2022 at 10:22:39PM +0900, Naohiro Aota wrote:
-> Add a function sb_write_started() to return if sb_start_write() is
-> properly called. It is used in the next commit.
+
+On 17/03/2022 02:26, Paul Moore wrote:
+> On Mon, Feb 21, 2022 at 4:15 PM Mickaël Salaün <mic@digikod.net> wrote:
+>>
+>> From: Mickaël Salaün <mic@linux.microsoft.com>
+>>
+>> Create and use the access_mask_t typedef to enforce a consistent access
+>> mask size and uniformly use a 16-bits type.  This will helps transition
+>> to a 32-bits value one day.
+>>
+>> Add a build check to make sure all (filesystem) access rights fit in.
+>> This will be extended with a following commit.
+>>
+>> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
+>> Link: https://lore.kernel.org/r/20220221212522.320243-2-mic@digikod.net
+>> ---
+>>   security/landlock/fs.c      | 19 ++++++++++---------
+>>   security/landlock/fs.h      |  2 +-
+>>   security/landlock/limits.h  |  2 ++
+>>   security/landlock/ruleset.c |  6 ++++--
+>>   security/landlock/ruleset.h | 17 +++++++++++++----
+>>   5 files changed, 30 insertions(+), 16 deletions(-)
+>>
+>> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+>> index 97b8e421f617..9de2a460a762 100644
+>> --- a/security/landlock/fs.c
+>> +++ b/security/landlock/fs.c
+>> @@ -150,7 +150,7 @@ static struct landlock_object *get_inode_object(struct inode *const inode)
+>>    * @path: Should have been checked by get_path_from_fd().
+>>    */
+>>   int landlock_append_fs_rule(struct landlock_ruleset *const ruleset,
+>> -               const struct path *const path, u32 access_rights)
+>> +               const struct path *const path, access_mask_t access_rights)
+>>   {
+>>          int err;
+>>          struct landlock_object *object;
+>> @@ -182,8 +182,8 @@ int landlock_append_fs_rule(struct landlock_ruleset *const ruleset,
+>>
+>>   static inline u64 unmask_layers(
+>>                  const struct landlock_ruleset *const domain,
+>> -               const struct path *const path, const u32 access_request,
+>> -               u64 layer_mask)
+>> +               const struct path *const path,
+>> +               const access_mask_t access_request, u64 layer_mask)
+>>   {
+>>          const struct landlock_rule *rule;
+>>          const struct inode *inode;
+>> @@ -223,7 +223,8 @@ static inline u64 unmask_layers(
+>>   }
+>>
+>>   static int check_access_path(const struct landlock_ruleset *const domain,
+>> -               const struct path *const path, u32 access_request)
+>> +               const struct path *const path,
+>> +               const access_mask_t access_request)
+>>   {
+>>          bool allowed = false;
+>>          struct path walker_path;
+>> @@ -308,7 +309,7 @@ static int check_access_path(const struct landlock_ruleset *const domain,
+>>   }
+>>
+>>   static inline int current_check_access_path(const struct path *const path,
+>> -               const u32 access_request)
+>> +               const access_mask_t access_request)
+>>   {
+>>          const struct landlock_ruleset *const dom =
+>>                  landlock_get_current_domain();
+>> @@ -511,7 +512,7 @@ static int hook_sb_pivotroot(const struct path *const old_path,
+>>
+>>   /* Path hooks */
+>>
+>> -static inline u32 get_mode_access(const umode_t mode)
+>> +static inline access_mask_t get_mode_access(const umode_t mode)
+>>   {
+>>          switch (mode & S_IFMT) {
+>>          case S_IFLNK:
+>> @@ -563,7 +564,7 @@ static int hook_path_link(struct dentry *const old_dentry,
+>>                          get_mode_access(d_backing_inode(old_dentry)->i_mode));
+>>   }
+>>
+>> -static inline u32 maybe_remove(const struct dentry *const dentry)
+>> +static inline access_mask_t maybe_remove(const struct dentry *const dentry)
+>>   {
+>>          if (d_is_negative(dentry))
+>>                  return 0;
+>> @@ -631,9 +632,9 @@ static int hook_path_rmdir(const struct path *const dir,
+>>
+>>   /* File hooks */
+>>
+>> -static inline u32 get_file_access(const struct file *const file)
+>> +static inline access_mask_t get_file_access(const struct file *const file)
+>>   {
+>> -       u32 access = 0;
+>> +       access_mask_t access = 0;
+>>
+>>          if (file->f_mode & FMODE_READ) {
+>>                  /* A directory can only be opened in read mode. */
+>> diff --git a/security/landlock/fs.h b/security/landlock/fs.h
+>> index 187284b421c9..74be312aad96 100644
+>> --- a/security/landlock/fs.h
+>> +++ b/security/landlock/fs.h
+>> @@ -65,6 +65,6 @@ static inline struct landlock_superblock_security *landlock_superblock(
+>>   __init void landlock_add_fs_hooks(void);
+>>
+>>   int landlock_append_fs_rule(struct landlock_ruleset *const ruleset,
+>> -               const struct path *const path, u32 access_hierarchy);
+>> +               const struct path *const path, access_mask_t access_hierarchy);
+>>
+>>   #endif /* _SECURITY_LANDLOCK_FS_H */
+>> diff --git a/security/landlock/limits.h b/security/landlock/limits.h
+>> index 2a0a1095ee27..458d1de32ed5 100644
+>> --- a/security/landlock/limits.h
+>> +++ b/security/landlock/limits.h
+>> @@ -9,6 +9,7 @@
+>>   #ifndef _SECURITY_LANDLOCK_LIMITS_H
+>>   #define _SECURITY_LANDLOCK_LIMITS_H
+>>
+>> +#include <linux/bitops.h>
+>>   #include <linux/limits.h>
+>>   #include <uapi/linux/landlock.h>
+>>
+>> @@ -17,5 +18,6 @@
+>>
+>>   #define LANDLOCK_LAST_ACCESS_FS                LANDLOCK_ACCESS_FS_MAKE_SYM
+>>   #define LANDLOCK_MASK_ACCESS_FS                ((LANDLOCK_LAST_ACCESS_FS << 1) - 1)
+>> +#define LANDLOCK_NUM_ACCESS_FS         __const_hweight64(LANDLOCK_MASK_ACCESS_FS)
 > 
-> Also, add the similar functions for sb_start_pagefault() and
-> sb_start_intwrite().
+> The line above, and the static_assert() in ruleset.h are clever.  I'll
+> admit I didn't even know the hweightX() macros existed until looking
+> at this code :)
 > 
-> Reviewed-by: Filipe Manana <fdmanana@suse.com>
-> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
-> ---
->  include/linux/fs.h | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
+> However, the LANDLOCK_NUM_ACCESS_FS is never really going to be used
+> outside the static_assert() in ruleset.h is it?  I wonder if it would
+> be better to skip the extra macro and rewrite the static_assert like
+> this:
 > 
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 27746a3da8fd..0c8714d64169 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1732,6 +1732,11 @@ static inline bool __sb_start_write_trylock(struct super_block *sb, int level)
->  #define __sb_writers_release(sb, lev)	\
->  	percpu_rwsem_release(&(sb)->s_writers.rw_sem[(lev)-1], 1, _THIS_IP_)
->  
-> +static inline bool __sb_write_started(struct super_block *sb, int level)
-> +{
-> +	return lockdep_is_held_type(sb->s_writers.rw_sem + level - 1, 1);
-> +}
-> +
->  /**
->   * sb_end_write - drop write access to a superblock
->   * @sb: the super we wrote to
-> @@ -1797,6 +1802,11 @@ static inline bool sb_start_write_trylock(struct super_block *sb)
->  	return __sb_start_write_trylock(sb, SB_FREEZE_WRITE);
->  }
->  
-> +static inline bool sb_write_started(struct super_block *sb)
-> +{
-> +	return __sb_write_started(sb, SB_FREEZE_WRITE);
-> +}
-> +
->  /**
->   * sb_start_pagefault - get write access to a superblock from a page fault
->   * @sb: the super we write to
-> @@ -1821,6 +1831,11 @@ static inline void sb_start_pagefault(struct super_block *sb)
->  	__sb_start_write(sb, SB_FREEZE_PAGEFAULT);
->  }
->  
-> +static inline bool sb_pagefault_started(struct super_block *sb)
-> +{
-> +	return __sb_write_started(sb, SB_FREEZE_PAGEFAULT);
-> +}
-> +
->  /**
->   * sb_start_intwrite - get write access to a superblock for internal fs purposes
->   * @sb: the super we write to
-> @@ -1844,6 +1859,11 @@ static inline bool sb_start_intwrite_trylock(struct super_block *sb)
->  	return __sb_start_write_trylock(sb, SB_FREEZE_FS);
->  }
->  
-> +static inline bool sb_intwrite_started(struct super_block *sb)
-> +{
-> +	return __sb_write_started(sb, SB_FREEZE_FS);
-> +}
-> +
->  bool inode_owner_or_capable(struct user_namespace *mnt_userns,
->  			    const struct inode *inode);
->  
+> static_assert(BITS_PER_TYPE(access_mask_t) >=
+> __const_hweight64(LANDLOCK_MASK_ACCESS_FS));
+> 
+> If not, I might suggest changing LANDLOCK_NUM_ACCESS_FS to
+> LANDLOCK_BITS_ACCESS_FS or something similar.
 
-We should not be adding completely unused code to the VFS APIs.
+I declared LANDLOCK_NUM_ACCESS_FS in this patch to be able to have the 
+static_assert() here and ease the review, but LANDLOCK_NUM_ACCESS_FS is 
+really used in patch 6/11 to define an array size: 
+get_handled_acceses(), init_layer_masks(), is_superset(), 
+check_access_path_dual()…
 
-Just rename __sb_write_started() to sb_write_started() and pass
-SB_FREEZE_WRITE directly from the single debug assert that you've
-added that needs this check.
 
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+> 
+> 
+>> diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
+>> index 2d3ed7ec5a0a..7e7cac68e443 100644
+>> --- a/security/landlock/ruleset.h
+>> +++ b/security/landlock/ruleset.h
+>> @@ -9,13 +9,20 @@
+>>   #ifndef _SECURITY_LANDLOCK_RULESET_H
+>>   #define _SECURITY_LANDLOCK_RULESET_H
+>>
+>> +#include <linux/bitops.h>
+>> +#include <linux/build_bug.h>
+>>   #include <linux/mutex.h>
+>>   #include <linux/rbtree.h>
+>>   #include <linux/refcount.h>
+>>   #include <linux/workqueue.h>
+>>
+>> +#include "limits.h"
+>>   #include "object.h"
+>>
+>> +typedef u16 access_mask_t;
+>> +/* Makes sure all filesystem access rights can be stored. */
+>> +static_assert(BITS_PER_TYPE(access_mask_t) >= LANDLOCK_NUM_ACCESS_FS);
+> 
+> --
+> paul-moore.com
