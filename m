@@ -2,72 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8291B4DC1F2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Mar 2022 09:53:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AF5C4DC268
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Mar 2022 10:15:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231551AbiCQIyu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Mar 2022 04:54:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47594 "EHLO
+        id S231772AbiCQJQW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Mar 2022 05:16:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231548AbiCQIyp (ORCPT
+        with ESMTP id S229666AbiCQJQV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Mar 2022 04:54:45 -0400
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95B8FB7C51
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Mar 2022 01:53:27 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id b28so7852866lfc.4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Mar 2022 01:53:27 -0700 (PDT)
+        Thu, 17 Mar 2022 05:16:21 -0400
+Received: from mx05.melco.co.jp (mx05.melco.co.jp [192.218.140.145])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AAB8100769;
+        Thu, 17 Mar 2022 02:15:05 -0700 (PDT)
+Received: from mr05.melco.co.jp (mr05 [133.141.98.165])
+        by mx05.melco.co.jp (Postfix) with ESMTP id 4KK1gq2lRlzMw5jh;
+        Thu, 17 Mar 2022 18:15:03 +0900 (JST)
+Received: from mr05.melco.co.jp (unknown [127.0.0.1])
+        by mr05.imss (Postfix) with ESMTP id 4KK1gq2LSdzN0W82;
+        Thu, 17 Mar 2022 18:15:03 +0900 (JST)
+Received: from mf04_second.melco.co.jp (unknown [192.168.20.184])
+        by mr05.melco.co.jp (Postfix) with ESMTP id 4KK1gq21YszMs9gF;
+        Thu, 17 Mar 2022 18:15:03 +0900 (JST)
+Received: from mf04.melco.co.jp (unknown [133.141.98.184])
+        by mf04_second.melco.co.jp (Postfix) with ESMTP id 4KK1gq1vszzMr4pj;
+        Thu, 17 Mar 2022 18:15:03 +0900 (JST)
+Received: from JPN01-TYC-obe.outbound.protection.outlook.com (unknown [104.47.23.169])
+        by mf04.melco.co.jp (Postfix) with ESMTP id 4KK1gq1gbzzMr4p5;
+        Thu, 17 Mar 2022 18:15:03 +0900 (JST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=AwaGRSMUths5DswxyeYOy2gZRPdU2onB4v5XzC9yLMTIJeS/W+egCa1DAIffZlEslv0OSOUFgQA9J2pzAX0UXc3XCFYaALJZt+RuX1C1nEJEqFf7IB+9mSaDB8v6LRZ2GBJtS4fcZ8tqHMtbFrA3vE6La+PdfdqlzREAzUGHcBZf8GHfgWdTgdotSqiKEZCY9zqjuZQBAvPO54vivpIFFSpql2YRCjnQDGQuMFE7OsrLQ0GUDtag4xVjALkdFhrP0B+IdZG4hCO1dO9dZClP49IoF4+K8ZaVBth4Y0gTueytjXulmHuH65/h+uW6Gk1fKBFXHnGFYI19Df+LhzX8vg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hUWFg0NA4yWpKmk7Vv5P32dcMUuLfP5QvRPn5FNkTz8=;
+ b=Iqy/CQ63nlvTjTzNWaJDBgvJdQ8WWugKqorIvtMhQwPctZ5cIvnAwNZTW4RcG+gdlQOwqVZ413QhpqI5ib8kPLKelw5oTAYYEU15vWgsEZB5uJ1jywVbFS45ylxOU4ftDmnn3x2qE94BFHm8zAxw7milaH0q2F6Qhm4VC8olmAFFxGntoKN6LLPC1nxPZxVKvfFGCPfkNC5mGMnj0kO9P14mqTX18Tvurh+lLFJrWPj92w/GrQqG3banR04pvDP6IvyZ12iNLhayMITrg4f6Dw5fl+p/AsCOLyNTr8W0uJBva4pUbaqt7eOLdA+OBCYwth1iG9WmhsYdrZval7Jezw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=dc.mitsubishielectric.co.jp; dmarc=pass action=none
+ header.from=dc.mitsubishielectric.co.jp; dkim=pass
+ header.d=dc.mitsubishielectric.co.jp; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=simula-no.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:to:cc:references
-         :content-language:from:organization:subject:in-reply-to;
-        bh=Pn2D/XphWFQAwpS423iqLudPmYtfFoZr+7o3QGz3CKo=;
-        b=kTDDGQYXXGfzsw8EoZ/vCu6OzYxTo9nOgNJ/FfYGdzQSec7CZTEq5iUvsEgbaP0rDT
-         f6wLv9uifjGDusp1xgKgxlMAF6BwKbPsWtUbzkEaSTRL9Y2nvpIMpTFxtLOcjMs+BGc0
-         KFf6cuDLJXV3ShVA5FnTgkSU2qEuwGmlfvdy/mXmowcfvuQ9wfOfW4hmkIA42zNWUUoZ
-         tAmJEvhmbQmjj6yazqkt7cXUsFE99sgFZk4fN6jfZLpdu6jTsRzTERANIXx4Oe77TwWn
-         sXv+N5G3pxytZgUmIgEw/tRy7h7JTnTAf2B6UlRCZycAjJK5hUXT/tdoRopqZtALwWwS
-         HwUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:to:cc
-         :references:content-language:from:organization:subject:in-reply-to;
-        bh=Pn2D/XphWFQAwpS423iqLudPmYtfFoZr+7o3QGz3CKo=;
-        b=tBlRB1F7NFxVM99a/K1WUWqRc+r+2S8bqFeRPy6kUIEBOviUdKZPYUp/K1FtRzlibs
-         z/RTiFnSdLB9jsKCAVJ7jnvPTpJqyxhsME/DSpWS5YKKbgXwQu/j16UbFSYy2/3QkC1h
-         JYmIxt2f3x2yGKNEe2N0ABYlhRkv6irtfJXW35X/3WRGdIkc86J2G6QTcdQrMaSD1BKD
-         wEAIOIDun+12bqJfCXGbSq9k8h8u5lMT/JujMRK6mclj3FgbpxMmhWkALlQBYggk+FO/
-         bAK41aGLq1+8wR1iqAGdckGWyjx0NfmzLkDOAsjlghu2IhzPh9HnHvgvaxS8za3Shue5
-         53cA==
-X-Gm-Message-State: AOAM533Guujulpjz1JZlqG7w271nDl7wpl8yIpD8nqVMMes3FerZgDZx
-        5T107Xxq351Gdn8H5kowD9wb81IMg2DAoroN
-X-Google-Smtp-Source: ABdhPJwSFyMCzN5mlk7yFiQLgcl/hTXM1xfoNpUwIVULzFD5cXl+9x9/YlTr5nDpfEuAL0sJF37qLQ==
-X-Received: by 2002:ac2:54ad:0:b0:443:153e:97fc with SMTP id w13-20020ac254ad000000b00443153e97fcmr2278224lfk.252.1647507205884;
-        Thu, 17 Mar 2022 01:53:25 -0700 (PDT)
-Received: from ?IPV6:2001:700:702:c052:92e2:baff:fe48:bde1? ([2001:700:702:c052:92e2:baff:fe48:bde1])
-        by smtp.googlemail.com with ESMTPSA id b2-20020a196442000000b00443c5b81ce0sm391970lfj.180.2022.03.17.01.53.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 17 Mar 2022 01:53:25 -0700 (PDT)
-Message-ID: <842c582a-ecb6-31a1-fad1-54a4e9c05b94@simula.no>
-Date:   Thu, 17 Mar 2022 09:53:22 +0100
+ d=mitsubishielectricgroup.onmicrosoft.com;
+ s=selector2-mitsubishielectricgroup-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hUWFg0NA4yWpKmk7Vv5P32dcMUuLfP5QvRPn5FNkTz8=;
+ b=S4fxWpmZfX2F451wUFohRZTZhEXcQWKGlNlFAEMibLmvDG5HJYTCHqyYuAfrrm5MMBe7wYa5906UVoeUSXMJQRzIiNgSJ/jp8zysTFZZrZnh66X0Hn0iCGpux7jMKEgecP5S1K1QuYQisH5HiFkQbZAdrUmyBd9nt0ODRzsasXA=
+Received: from TYAPR01MB5353.jpnprd01.prod.outlook.com (2603:1096:404:803d::8)
+ by OSAPR01MB2401.jpnprd01.prod.outlook.com (2603:1096:603:3a::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5081.14; Thu, 17 Mar
+ 2022 09:15:02 +0000
+Received: from TYAPR01MB5353.jpnprd01.prod.outlook.com
+ ([fe80::493e:4ed3:1705:ee86]) by TYAPR01MB5353.jpnprd01.prod.outlook.com
+ ([fe80::493e:4ed3:1705:ee86%2]) with mapi id 15.20.5081.016; Thu, 17 Mar 2022
+ 09:15:02 +0000
+From:   "Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp" 
+        <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
+To:     David Disseldorp <ddiss@suse.de>,
+        "\"Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp\\\"
+        <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>\"@imap2.suse-dmz.suse.de" 
+        <"Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp\" <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>"@imap2.suse-dmz.suse.de>
+CC:     'Vasant Karasulli' <vkarasulli@suse.de>,
+        'Sungjong Seo' <sj1557.seo@samsung.com>,
+        "'linux-fsdevel@vger.kernel.org'" <linux-fsdevel@vger.kernel.org>,
+        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
+        'Takashi Iwai' <tiwai@suse.de>,
+        'Namjae Jeon' <linkinjeon@kernel.org>
+Subject: Re: [PATCH v2 2/2] exfat currently unconditionally strips trailing
+ periods '.' when performing path lookup, but allows them in the filenames
+ during file creation. This is done intentionally, loosely following Windows
+ behaviour and specifications which ...
+Thread-Topic: [PATCH v2 2/2] exfat currently unconditionally strips trailing
+ periods '.' when performing path lookup, but allows them in the filenames
+ during file creation. This is done intentionally, loosely following Windows
+ behaviour and specifications which ...
+Thread-Index: AQHYNLplcevRMz/jOUuuvmG0JvLRkKy55GyAgAAFMQCABE5KoIAD1uoAgAFFV0U=
+Date:   Thu, 17 Mar 2022 09:15:01 +0000
+Message-ID: <TYAPR01MB5353E2F8E11EF7AF3149AA5A90129@TYAPR01MB5353.jpnprd01.prod.outlook.com>
+References: <20220310142455.23127-1-vkarasulli@suse.de>
+        <20220310142455.23127-3-vkarasulli@suse.de>     <20220310210633.095f0245@suse.de>
+        <CAKYAXd_ij3WqJHQZvH458XRwLBtboiJnr-fK0hVPDi_j_8XDZQ@mail.gmail.com>
+        <YisU2FA7EBeguwN5@vasant-suse>
+        <TYAPR01MB535314A6E1FB0CB1BAD621C2900F9@TYAPR01MB5353.jpnprd01.prod.outlook.com>
+ <20220316144546.2da266c3@suse.de>
+In-Reply-To: <20220316144546.2da266c3@suse.de>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+suggested_attachment_session_id: db0871f6-288a-8603-1085-96ead3901986
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=dc.MitsubishiElectric.co.jp;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: de947c7e-a677-42dc-7d83-08da07f69e02
+x-ms-traffictypediagnostic: OSAPR01MB2401:EE_
+x-microsoft-antispam-prvs: <OSAPR01MB2401E6C80AE0E5F81D187C1590129@OSAPR01MB2401.jpnprd01.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: YzyvfrbNAXtNS2GuecSpMnqMsFrY8K0r9BkByjJU5GjPWVxhjlcJwg3OEh4cyeaffVgxgzKaqMsbsoAkBk4gPz/rQ2sJasXilcUhzOrgUO+IcVjTTC2OC+ZexUH0QkManzCckjrTkOcU9wPr94cjTGe8fVk+POzATMdsRFxSwHboE/c1PR3Bg8HIgQH49rBPYKIUOiEdTF65O8LLQxCeyJXJGaxk4NlCkuCf9esZBNWpwVR70cgCHuVQSZqovtnCn2WWfqe7UJb4iPUwcKJoOYHeh5WXhaTYbjLAywyO8Hrws+qCuoIR9XRrB+G+N6+b8BLCM2pTvPSycpmTLwQIrNQwVnk7isOj5BoqCB+BDXFUJGhBITBsCsD8ZtdmaAVpyiNsQTmikQx3a0IfSKQdjpbu2r3JuIGGjX7xuu4iMyb/4zUoS8xrNT7mO9n8JLJ/Cru0Xul5hXeCNsASiwTinquy2BtJdmqkfBTMQ8W4qDgVw1JZICbEphmGmg7ujamxjJb9WjHnwlR1M5s1waPcXOOjpMuzSRJlXLxe+0th3MZiCzniaki9XRwacB2U9pY+S58BFVkyM5KXqbvlOJbz3L4ja2HwEO1ovdybxWRkJ2pwN7BcsFIyxO0OKN9rpcDBe8YChhLgxs+xkSdolAxlZ6qCBxsIE5ufifQkTiHWRaMs1sIdSpZqIAaNbCRJBwHs8Q9EwQx8SzzCIC9gpUzQqh5EVTV7LhHuGrHIIKyq+LFw8C2UWPHKzu1shn6LoPxmN53OP3guTExJ2gHNqrzyrzox+8gR0eRQqLlokK5Fk2Xzq7QBaGsc5kKEgx7CD64RZvLVGstxWCcne4KAVa0AIeWr4NqPiEycBiL7nqbhC7jE9oZFyo1AnItzQ3hbtQ/Z6lVjnxHG3plwh5xi7EvlJZqQW/IlinUB5bjVFRVslT0=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYAPR01MB5353.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(33656002)(8936002)(86362001)(508600001)(4744005)(52536014)(122000001)(83380400001)(186003)(7696005)(7416002)(6506007)(2906002)(9686003)(55016003)(76116006)(91956017)(38100700002)(4326008)(5660300002)(66946007)(316002)(64756008)(66446008)(66556008)(66476007)(8676002)(38070700005)(54906003)(110136005)(966005)(71200400001)(2611002)(219693004)(95630200002);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-2022-jp?B?Q3c3M1kzVlFmcjlpQkZnZEN5WDhVSmtubHkra0NPT1JFTFcyOHFBRWFi?=
+ =?iso-2022-jp?B?WGZveWp3SG9Bc2hqWGJSYiszOWNGNFV4TWlwM0U3S1NjL0RjV0FibkZD?=
+ =?iso-2022-jp?B?YmJjaEtGMDBjZlVUckNYZ1BET1Z2czBCYkl0T2grWUtOVEg0TWtwWTJF?=
+ =?iso-2022-jp?B?c3U3SG9BWllqUHRpTE5rUHN3L21zd3pkU2ZCU2ZxYTZqV1ppN01oSlp2?=
+ =?iso-2022-jp?B?UnV5cllmRTBTbFdOZVlHWSs1N3E1N2lnZzdReWRwckoweFp5QlJWcm5N?=
+ =?iso-2022-jp?B?aE9aM3dnT3VmSEcrdlcyYVNJMU1ZL0tXQ0R6UTh2YU0yckZBaXZPdXcz?=
+ =?iso-2022-jp?B?VWFLYWZ6YmtFbkJYTDV5MlB2cXN4NFpRZkE5eUNPTlV4NnRhdzFUb3d2?=
+ =?iso-2022-jp?B?Z2ZIdmVHc2NwNHdyK25RZk1WcU9YVUtqQXVDcHM5VFJwSlpncFFiVDJo?=
+ =?iso-2022-jp?B?TXRDN08xM3Q0NFk1d0VRL0YwQ1lSZENmVVE5VHdDNmdWNXh2MWRwdXk0?=
+ =?iso-2022-jp?B?ZGx6TlNySFNMOFVPSGYyMmxUeXEzNitnNkFDeFA2UkFhQk9TdHZtLzFj?=
+ =?iso-2022-jp?B?Y1V1VnR4L2l2S2pVY3ZhSTZUYTVJd3RpL1NPanVHUmZTQWhIYmkrOS92?=
+ =?iso-2022-jp?B?ZVZ5YVJrd0F2TW1WMzVrZlJHbWMvdENHTTJETmhmVlZCcGxsUTl1dUhY?=
+ =?iso-2022-jp?B?dVFxL1JpdzVqZWlnWVJkYUYxK3JDaHgwV0pjR0xSeUJEY1RqZHNCRGFD?=
+ =?iso-2022-jp?B?TkxML0taRWZIbVBOQm1lOVJJVm00TUswY25CK05aRFlSQkhEMlEzcnhD?=
+ =?iso-2022-jp?B?YmlvQm5YTXZLRDRhTzZmRFh1MmlEOEoyOTBobkpmMDJ2dkJZVFNkcXQ4?=
+ =?iso-2022-jp?B?cGFqajQ5ZUJTM2tZUUg1SkF5WjcrYWE4MmRIVTlEZWpzTndOc2dQbDNa?=
+ =?iso-2022-jp?B?STgydWtWNHZUdUt6Mk1uUnFKanZFVitOdDlVZ2xiNEcrSjQ0QnkxOXNs?=
+ =?iso-2022-jp?B?cFl0NmMwKzdaZlNGOU9YWDFLQitZaHVqWXlvZnNmVy92MGUyYlFGdE9U?=
+ =?iso-2022-jp?B?c1FON05QTGpUY1ZBb0dKeFRXMitOb1hGaXF0ZUVtcllHbDVaNzgyeWNa?=
+ =?iso-2022-jp?B?eThRZXV4VnVrZWMwVnFjS1RVOFQrTTJpeFp0elEzUVFCNUgzdkxSTlJa?=
+ =?iso-2022-jp?B?Wm9SUkcza0RqaGl5K3NqdTJVeUhYWUtrSWpOWUViL2QwRVpONlFnVC9a?=
+ =?iso-2022-jp?B?Tzl0UUJubElMYk1zUVRxV3p4cnAvUVQ1TElmNjE1bzRYaHdTOWVmUmRy?=
+ =?iso-2022-jp?B?eDQ2VlZ1M1ZEbVB3QXYzbTdrQWZmNWxuSnMwajBPcnZsTDliRksyS1BC?=
+ =?iso-2022-jp?B?RWtXTEtSSFRhTjljZ2NiNEF0Ui9pem9GaWFNNHdqcXYzMnpMaFRQaU5O?=
+ =?iso-2022-jp?B?a1NoTWdGSXR1Yk9remR3Z1hXR3Z5WlUrbGg2aUY4TTM0a3hwY2pjQlBs?=
+ =?iso-2022-jp?B?OU1HeXN0Yld0c2N0TUt1M3JOQS9UWGhNYU9JUnlMdElRNUhTQ0NVSTlB?=
+ =?iso-2022-jp?B?YUUxOG9ObFZmVWluN3pYUFRxenQ5SXhPVWFrS1RkUnB0QXZ3aGIzUWN2?=
+ =?iso-2022-jp?B?aG1EUUZUQ05wZ3VEQU1rNU1ZeHI0WFdzOExBcUE0UGhMU0gveEVIVGZR?=
+ =?iso-2022-jp?B?eHA0dnJZYlZCSE9STy94NHhuYkNnNU55bE9hMHJ6VXpKU08za1JHcFFl?=
+ =?iso-2022-jp?B?MlVzNE51M0hqYmhyVFZDUGI0MHI5b3U1K3k5Yko0RitwaHJ6WXBtR052?=
+ =?iso-2022-jp?B?LzcvS3pkNmxKVDB4UGl6Ri9aUng5SHc3aXk0cENESTViVGliTkVOZ1lO?=
+ =?iso-2022-jp?B?dm9OVWRyY1dtZWhvM0sxUWtQRTRyWmU3UTRxWmJVY0VlNWVBNENCdHNz?=
+ =?iso-2022-jp?B?S0xIcUdlRnNHdy9pRGdtQ1dnb2ZPaUlPWmp0VDZtWmpOMy91c0xXL3Fn?=
+ =?iso-2022-jp?B?NHZQYlI1YmE5UjAreUxxaXBCVlowUkRJcUZVSzVCVXdkTDhTbVZ2Zlpy?=
+ =?iso-2022-jp?B?VU9KK0Q0K0p1cVpOWmNNUlBBd2o0eUVINlB3MVpNQkQxYSttVnByNGJY?=
+ =?iso-2022-jp?B?UXNHekdqdlA5c1lPL092bHhUWGlrd0tsSU1GZmJkbDNER2NmNFpQUlhT?=
+ =?iso-2022-jp?B?ekIxaEhoYnRXendWNC9MeFJLTWxxTVR3?=
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-To:     gandalf@winds.org
-Cc:     david@fromorbit.com, jack@suse.cz, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org,
-        willy@infradead.org
-References: <1a5cd8ce-e7c7-5aa8-e475-ad7810e2f057@winds.org>
-Content-Language: en-US
-From:   Thomas Dreibholz <dreibh@simula.no>
-Organization: Simula Research Laboratory
-Subject: Re: Is it time to remove reiserfs?
-In-Reply-To: <1a5cd8ce-e7c7-5aa8-e475-ad7810e2f057@winds.org>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------lYU50J0IIPINxUeuakBpVoTc"
+X-OriginatorOrg: dc.MitsubishiElectric.co.jp
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYAPR01MB5353.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: de947c7e-a677-42dc-7d83-08da07f69e02
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Mar 2022 09:15:02.0190
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: c5a75b62-4bff-4c96-a720-6621ce9978e5
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: QdoL94l/3LJp2OM01fRbFO8zWuQJWrlFsIf89cPzE6TSzXJQmv8cGb78rpRByY6Fz930oqfur+fOqO6j9/RkKA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB2401
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_PASS,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -75,95 +163,23 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------lYU50J0IIPINxUeuakBpVoTc
-Content-Type: multipart/mixed; boundary="------------kHUxQknlySGba1WR4J6Hs01n";
- protected-headers="v1"
-From: Thomas Dreibholz <dreibh@simula.no>
-To: gandalf@winds.org
-Cc: david@fromorbit.com, jack@suse.cz, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org,
- willy@infradead.org
-Message-ID: <842c582a-ecb6-31a1-fad1-54a4e9c05b94@simula.no>
-Subject: Re: Is it time to remove reiserfs?
-References: <1a5cd8ce-e7c7-5aa8-e475-ad7810e2f057@winds.org>
-In-Reply-To: <1a5cd8ce-e7c7-5aa8-e475-ad7810e2f057@winds.org>
-
---------------kHUxQknlySGba1WR4J6Hs01n
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
-
-SGksDQoNCkkganVzdCBub3RpY2VkIHRoZSB0aHJlYWQgYWJvdXQgUmVpc2VyRlMgZGVwcmVj
-YXRpb24uIFdlIGFyZSBjdXJyZW50bHkgDQpzdGlsbCB1c2luZyBSZWlzZXJGUyBvbiBjYS4g
-NTAgcHJvZHVjdGlvbiBtYWNoaW5lcyBvZiB0aGUgTm9yTmV0IENvcmUgDQppbmZyYXN0cnVj
-dHVyZSAoaHR0cHM6Ly93d3cubm50Yi5uby8pLiBXaGlsZSBuZXdlciBtYWNoaW5lcyB1c2Ug
-QlRSRlMgDQppbnN0ZWFkLCB0aGUgb2xkZXIgbWFjaGluZXMgaGFkIFJlaXNlckZTIHVzZWQs
-IGR1ZSB0byBpdHMgc3RhYmlsaXR5IGFuZCANCmJldHRlciBwZXJmb3JtYW5jZSBpbiBjb21w
-YXJpc29uIHRvIGV4dDQuIEF0IHRoZWlyIGluc3RhbGxhdGlvbiB0aW1lLCB3ZSANCmRpZCBu
-b3QgY29uc2lkZXIgQlRSRlMgYmVpbmcgbWF0dXJlIGVub3VnaC4gQSBkZXByZWNhdGlvbiBw
-ZXJpb2Qgb2YgY2EuIA0KNSB5ZWFycyBmcm9tIG5vdyBzZWVtcyB0byBiZSByZWFzb25hYmxl
-LCBhbHRob3VnaCBpdCB3b3VsZCBiZSBuaWNlIHRvIA0KaGF2ZSBhdCBsZWFzdCBhIHJlYWQt
-b25seSBjYXBhYmlsaXR5IGF2YWlsYWJsZSBmb3Igc29tZSBsb25nZXIgdGltZSwgZm9yIA0K
-dGhlIGNhc2UgaXQgYmVjb21lcyBuZWNlc3NhcnkgdG8gcmVhZCBhbiBvbGQgUmVpc2VyRlMg
-ZmlsZSBzeXN0ZW0gb24gYSANCm5ld2VyIHN5c3RlbS4NCg0KLS0gDQpCZXN0IHJlZ2FyZHMg
-LyBNaXQgZnJldW5kbGljaGVuIEdyw7zDn2VuIC8gTWVkIHZlbm5saWcgaGlsc2VuDQoNCj09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09DQogIFRob21hcyBEcmVpYmhvbHoNCg0KICBTaW11bGFNZXQg4oCU
-IFNpbXVsYSBNZXRyb3BvbGl0YW4gQ2VudHJlIGZvciBEaWdpdGFsIEVuZ2luZWVyaW5nDQog
-IENlbnRyZSBmb3IgUmVzaWxpZW50IE5ldHdvcmtzIGFuZCBBcHBsaWNhdGlvbnMNCiAgUGls
-ZXN0cmVkZXQgNTINCiAgMDE2NyBPc2xvLCBOb3J3YXkNCi0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQog
-IEUtTWFpbDogICAgIGRyZWliaEBzaW11bGEubm8NCiAgSG9tZXBhZ2U6ICAgaHR0cDovL3Np
-bXVsYS5uby9wZW9wbGUvZHJlaWJoDQo9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQ0KDQo=
-
---------------kHUxQknlySGba1WR4J6Hs01n--
-
---------------lYU50J0IIPINxUeuakBpVoTc
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature"
-
------BEGIN PGP SIGNATURE-----
-
-wsd5BAABCAAjFiEEIUEmclGNiy0YYu/vXNXRKqCHe0kFAmIy9wIFAwAAAAAACgkQXNXRKqCHe0mi
-aT/9FiQPt7sAQPq7cnCmHsLmmQ3c0+bYFgrSrPNMh3e+ZerzDa3Y+eRCFJUWwKm1co0qbxn7qNuP
-Y5xmJhtx4i83QgZMBMnr3fxTIxvf3A2n+0FOpmbHxTLj4m8k1EjtZjBUU6DKRb206diNK0bcatVg
-kv6uWmJphI4nvxxwlGnokZZhJNQJHYtQpQwBE0pg9y5qtb4NTJ2B1JRh/kgfQC4kVEgkXA/qsF2R
-+Zd8l8wJSnwEaCZ3wzc+tcaby/0xyn37OkwJnCMwQOwrAXfUIk9QE+vdfAVv0LPpeZzXqq4Uh3fD
-8uarxIHT5FWwCaru2GXkMmqbut+TaR2NB81KgTM7em0320giv7Y3ODXESbdxP70ppX6EPuW0mi/j
-30PKFmrLLFxBNSv4aP/+WdMZan69q8RRYEdYJWG4METBShbJGOuJjSG0jgGHkSCPOHj45DoMTJLs
-sBknNgnvu0FvkdpnlqqWHPCoAcIFJv72kJz6Hr0AGxWhHdXxhMPW7gIvz3AckbUAFqOhIZT7fkvy
-xWfurme+9DOnf2ri39Ma3D2BYYCYMiBSNcF3wW3zHlSOdRGBXw/gxpVsSRlDb/qU5emg4Iy8ALy0
-0bLwixV/t5Y2pBehThW1il2CJ0RcRTfumyF6x9WiM+OAJ30VP3FaXFrjyMXX+tOXfYiGDjMzcoF0
-stjZxKMLOWwMWKWkMvszMOq6KREsU5nhIny8vEeobijkP5ADX9rxuv9F4TxnGBb9NbBdI0ojoxIj
-nsJoECUQ8+LgaOaw8QYwE8805oFfy+NpDmtNWXWUpT79GcbFY1gMg21u7IXXselFogTRmVzW190a
-M6gSvrV8N9vNKhuxSe4YXzj6BsJfAmHdSDqVFsKETlb6jyw/GNHR+a4kLmCTjlwigtrNvP96JVgK
-7ca8LZObh21GkPlm+6eKq745zOzov9KJdqK3/eVpsFzHlypxg9MrZRXXpVrpUspst3lKinJpRaiz
-UgAK5Kd1w/u2rOupwymVQOQnmKo+awFBvfQELOGlNhyIuRhlPqT9XxewkroxvyI/818vwZfMBCf1
-WcQq3EQsI4oASUu7mU449FjG/ZWR1mJO/I40R0kZ9XwA77r7E/bgSM4+UI0hXrovfwmtFly9rOj0
-q7nYOwIGQykGYUwLVYcxx2cduI5TfMCYu5xUN0AjGpVr5/diafjBsZbB+1MRSypos5/B6FLN0E9H
-Bh5jFl8O7vx+aBBomZ3drRvxCYJ7PPdsGtXqDCs+UcT7B+PutNeaRMChq7Z6+zMYqWXJOeSCHUCB
-GH6P7IT9QS+i7HGorTBlZJFLRRLRn+2cdZ8AQtoWswzGI4RsjIm/In+HKY7JkbDLJIuJxKD7zfpC
-gq8BH4ohycXpi3JWhKG2h9qwTnhXeEHWRCNiYpmQX4ddfUe4R2cBlTKRsq02HuKsR/cjjqBMRxWL
-G5BzpI0PIPWeLqCPIYH5OZmA6+emv0gROptBTHpAyXonIrRuTZIja6uWv7EHAUJwd2p87vPZfE9m
-no0pi/r1zwXhGSr1ehPQpj02y2cWo6GnEfzcvC7q2M0T+OQbW02iuli69gP2OBPc3CryX7e+Mpdu
-Hn7HE45dj2g/LNDH3fMYDCji1yDeTRUqEUlK1/rWbFc5zBMELywO3EsQ8S21PCJvdVoSN3BkFA4a
-1Fs0+cSNAuCnbhOTY4xDbnodKR5skIhgx+c/EDdQeV4WijVqx6xJeO9sPyTtPmaycOdGcYY9/uz9
-rHacR3Oc8GVXqHwQfuV58C93EMig3kFnBBbebfJzLIWt7Kwx82QK/9f2jZ6pImurpYNlU2wsKI+Y
-Ox84MT/pz9mKMWZ70ijk2pfDCmYAPcCZEAFdxlsQtxDWendegW0D5lF5EYGkcVCUBBuzc7kMZTd9
-Mwn7eFcsakA1IroGkVb0y2GKaTl6bJdXViuPZI8kMtAop8G2byw14w/iQCKdA6Ie78fgwXT9El9O
-ljUZ7rAw/7XatbfYTqUQ8fNc5ocn4z0sSx8pwKt4zau7BP2Bz1bYKYSR2YtyQoBHFYZ8HVX2W7dM
-2hGtf6AWvA29DwUm1Y5Wfp3JzA9W6OJVvRVHdGyB1FmEGYJ8aHqMb9yK+AcDWNFSidt9wp1SZYx+
-orhL4bKbKevn4EIDcLZ3NtknXPWQqfC6bK2sbyqOeh3ltNKXi2aRkpOv3zt8mnnscSzajW8C+cWW
-SyDlqfAlfxW0kXhK/siMqwkMvizm0/mKswmEguCo+cFpICqk2rBdyh7jFj5nz/jF9eVwVxkaUL07
-Xod+YQ5Vv7TcnBrP8mqNET4RCK3dj35PJx6KY45nlLjBpLTxtYIlHY6/HVZaW3fV3Wt2Wj7G5SX4
-AH1nph5IQo1c2+2RgdInDJLXZ0vebejGAvE6AXXFMkXWA+9iXCN9bsMsYJvr9ncFCdT8twQI9i9T
-jvuAnA3bxc66nC5KRAKojhPqyZbCBVyo9M3ipIzejsDAPeYAcJUeOAAxPTbzDZqfHtN3B0JSEonC
-RPYK+fRBcqqPMXXEWbeF6lMEECZZlG11Qhcmz8txdZiJhHa1XwMnQ8w8f61+kv8mY7113mv52FGp
-nodNffjmczeN8sE2oF9BkpgOrWdfIVuePHY1uS8soXrUxVmVtNp+DgYMTPJAZjpaZdG32VfaV3pD
-QFics2Z+M5h1xOX8eY7cn5NtzFn3jR7aMs0Cr5X7l2IyEo5tpevhLtyBIXZpqN/qci3H/+BJCyo=
-=vaHh
------END PGP SIGNATURE-----
-
---------------lYU50J0IIPINxUeuakBpVoTc--
+Hi, David.=0A=
+=0A=
+Thank you for confirming the actual behavior.=0A=
+=0A=
+> Please explain how you came to that conclusion.=0A=
+> I did some further tests using the win32 CopyFile() API directly[1] on=0A=
+> Windows10 and observe that both trailing periods and trailing spaces are=
+=0A=
+> trimmed for an exfat destination path.=0A=
+=0A=
+I'm using the native api to investigate the behavior of the filesystem on w=
+indows.=0A=
+This time, I verified it using NtCreateFile().=0A=
+https://docs.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/nf-ntif=
+s-ntcreatefile=0A=
+=0A=
+Cygwin and some tools can also create filenames with a trailing dot.=0A=
+=0A=
+BR=0A=
+T.Kohada=
