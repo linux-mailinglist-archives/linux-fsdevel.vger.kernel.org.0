@@ -2,79 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 834564DCA03
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Mar 2022 16:32:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 401A84DCA15
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Mar 2022 16:35:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235730AbiCQPdZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Mar 2022 11:33:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39592 "EHLO
+        id S235759AbiCQPgC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Mar 2022 11:36:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234996AbiCQPdX (ORCPT
+        with ESMTP id S234055AbiCQPgB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Mar 2022 11:33:23 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E00E7208C34
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Mar 2022 08:32:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1647531125;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+        Thu, 17 Mar 2022 11:36:01 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 425B317ECFF
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Mar 2022 08:34:45 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id F27991F38D;
+        Thu, 17 Mar 2022 15:34:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1647531283; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=FxOX+RAN4v4Lf/VXH38aBDUMX82mgpHDsamZJ2eKXbI=;
-        b=F7P9c8DLRCGPLFTfTeKbSvL/yt5QIOCm1XNVsXuOBcrrTR2T2+zuj6mkmTuMbMAPZIEavV
-        XijtC5bjVuHwcP3fs/kPcQZdRxQzgoAZURaLbyacUd3JXcnfbcO5s3LgYIf8dbLX1SEi0r
-        CAadNMx9TpCaoAh0otAZg/qEZv4HEuE=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-569-OWB7P_QzNd6JY8PSAbIKxw-1; Thu, 17 Mar 2022 11:32:02 -0400
-X-MC-Unique: OWB7P_QzNd6JY8PSAbIKxw-1
-Received: by mail-qt1-f200.google.com with SMTP id e28-20020ac8415c000000b002c5e43ca6b7so3752727qtm.9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Mar 2022 08:32:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=FxOX+RAN4v4Lf/VXH38aBDUMX82mgpHDsamZJ2eKXbI=;
-        b=OIeXYmW8zWfGMclvW4w62QXpEyDMs+WWkn/T3YYHJkPdyPZtbLXwL3OtvIhVIMCjm0
-         tFHldKC/okZPT25x3J8ywOKIzxdWEv9UoUtpXx89T2xe/M0OBNxZZxdqdyXwOQ1RuEvf
-         3WDbj+u0e5up0+PcSSDG5M8sOjmSEZuhvihY5kGLAHjcDanWyjukZgdinzqZx4QJTODX
-         /BaWCHll20Egt0SpNTRiFkEulWa75afvS3odVeqaB+XBVvoXNax+pmgbRjps+F9Ascdf
-         EKx+39dKV7Og3TvlKF7MwbrfB1YbrLX5HxFWWyCJERT13nhIsOYIz0O2U51A/2n4WfgL
-         mf6g==
-X-Gm-Message-State: AOAM530PO+G3YtDAMDwNHMmlJbfK4jd4+dEGEVZGZQdVUwm2j4/luTvd
-        mkVD2CrA6+NFSj1n1L0S6qO6wxZJIXom5coycJhnYQgL6qNOcdz/qw6NLR9wPl8c7C/cdS1a4Rf
-        IIpii2nuKXuu2sghx28i0J+Qetg==
-X-Received: by 2002:ac8:5a4f:0:b0:2e1:a7be:2d13 with SMTP id o15-20020ac85a4f000000b002e1a7be2d13mr4151328qta.598.1647531121903;
-        Thu, 17 Mar 2022 08:32:01 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwHBjIab8EPVWX036RD6/D6zYUhmHxCkiYYMe9+aHBCL5A94LdRhl0wHn0trVhn0vS+XUvhGA==
-X-Received: by 2002:ac8:5a4f:0:b0:2e1:a7be:2d13 with SMTP id o15-20020ac85a4f000000b002e1a7be2d13mr4151286qta.598.1647531121500;
-        Thu, 17 Mar 2022 08:32:01 -0700 (PDT)
-Received: from bfoster (c-24-61-119-116.hsd1.ma.comcast.net. [24.61.119.116])
-        by smtp.gmail.com with ESMTPSA id x6-20020ac86b46000000b002e02be9c0easm3432036qts.69.2022.03.17.08.32.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Mar 2022 08:32:01 -0700 (PDT)
-Date:   Thu, 17 Mar 2022 11:31:59 -0400
-From:   Brian Foster <bfoster@redhat.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Hugh Dickins <hughd@google.com>
-Subject: Re: writeback completion soft lockup BUG in folio_wake_bit()
-Message-ID: <YjNUb1tk3YVg3GNy@bfoster>
-References: <YjDj3lvlNJK/IPiU@bfoster>
- <YjJPu/3tYnuKK888@casper.infradead.org>
- <CAHk-=wgPTWoXCa=JembExs8Y7fw7YUi9XR0zn1xaxWLSXBN_vg@mail.gmail.com>
+        bh=7RgZfjA58A/Gpo0urw+HucUe1bvmy37GMZuEnJjwAJc=;
+        b=W80oqnJOYlVAnqSc4ZPn+i5roHFJtaZsLAtyl7WLne0Xlc/0NuaxysmDDXB6hGetGBnkYw
+        /9GdkUg8wiZyZI36M91mFgT1zuTILbh48YZx2iqtf32PAs9gpUia7HzOWWZSZpAP/EVyY0
+        UUuB9VgHbvQuKmfl0pSr4BhkwWf7+ZU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1647531284;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=7RgZfjA58A/Gpo0urw+HucUe1bvmy37GMZuEnJjwAJc=;
+        b=Mhn2DBP0Ek2U/+KYS5cndgVhq5K23wS1Bn0faO3eMECF6Sqv5UxKn6HjGgawMPaPwAw/lI
+        Mmp25lXfp6Q/ffDQ==
+Received: from quack3.suse.cz (unknown [10.100.200.198])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id DE905A3B88;
+        Thu, 17 Mar 2022 15:34:43 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 7134FA0615; Thu, 17 Mar 2022 16:34:43 +0100 (CET)
+Date:   Thu, 17 Mar 2022 16:34:43 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 4/5] fanotify: add support for exclusive create of mark
+Message-ID: <20220317153443.iy5rvns5nwxlxx43@quack3.lan>
+References: <20220307155741.1352405-1-amir73il@gmail.com>
+ <20220307155741.1352405-5-amir73il@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wgPTWoXCa=JembExs8Y7fw7YUi9XR0zn1xaxWLSXBN_vg@mail.gmail.com>
-X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+In-Reply-To: <20220307155741.1352405-5-amir73il@gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -82,95 +65,119 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 16, 2022 at 04:35:10PM -0700, Linus Torvalds wrote:
-> On Wed, Mar 16, 2022 at 1:59 PM Matthew Wilcox <willy@infradead.org> wrote:
-> >
-> > As I recall, the bookmark hack was introduced in order to handle
-> > lock_page() problems.  It wasn't really supposed to handle writeback,
-> > but nobody thought it would cause any harm (and indeed, it didn't at the
-> > time).  So how about we only use bookmarks for lock_page(), since
-> > lock_page() usually doesn't have the multiple-waker semantics that
-> > writeback has?
+On Mon 07-03-22 17:57:40, Amir Goldstein wrote:
+> Similar to inotify's IN_MARK_CREATE, adding an fanotify mark with flag
+> FAN_MARK_CREATE will fail with error EEXIST if an fanotify mark already
+> exists on the object.
 > 
-> I was hoping that some of the page lock problems are gone and we could
-> maybe try to get rid of the bookmarks entirely.
+> Unlike inotify's IN_MARK_CREATE, FAN_MARK_CREATE has to supplied in
+> combination with FAN_MARK_ADD (FAN_MARK_ADD is like inotify_add_watch()
+> and the behavior of IN_MARK_ADD is the default for fanotify_mark()).
 > 
-> But the page lock issues only ever showed up on some private
-> proprietary load and machine, so we never really got confirmation that
-> they are fixed. There were lots of strong signs to them being related
-> to the migration page locking, and it may be that the bookmark code is
-> only hurting these days.
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+
+What I'm missing in this changelog is "why". Is it just about feature
+parity with inotify? I don't find this feature particularly useful...
+
+								Honza
+
+> ---
+>  fs/notify/fanotify/fanotify_user.c | 13 ++++++++++---
+>  include/linux/fanotify.h           |  8 +++++---
+>  include/uapi/linux/fanotify.h      |  1 +
+>  3 files changed, 16 insertions(+), 6 deletions(-)
 > 
-> See for example commit 9a1ea439b16b ("mm:
-> put_and_wait_on_page_locked() while page is migrated") which doesn't
-> actually change the *locking* side, but drops the page reference when
-> waiting for the locked page to be unlocked, which in turn removes a
-> "loop and try again when migration". And that may have been the real
-> _fix_ for the problem.
+> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+> index 9b32b76a9c30..99c5ced6abd8 100644
+> --- a/fs/notify/fanotify/fanotify_user.c
+> +++ b/fs/notify/fanotify/fanotify_user.c
+> @@ -1185,6 +1185,9 @@ static int fanotify_add_mark(struct fsnotify_group *group,
+>  			mutex_unlock(&group->mark_mutex);
+>  			return PTR_ERR(fsn_mark);
+>  		}
+> +	} else if (flags & FAN_MARK_CREATE) {
+> +		ret = -EEXIST;
+> +		goto out;
+>  	}
+>  
+>  	/*
+> @@ -1510,6 +1513,7 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+>  	__kernel_fsid_t __fsid, *fsid = NULL;
+>  	u32 valid_mask = FANOTIFY_EVENTS | FANOTIFY_EVENT_FLAGS;
+>  	unsigned int mark_type = flags & FANOTIFY_MARK_TYPE_BITS;
+> +	unsigned int mark_cmd = flags & FANOTIFY_MARK_CMD_BITS;
+>  	bool ignored = flags & FAN_MARK_IGNORED_MASK;
+>  	unsigned int obj_type, fid_mode;
+>  	u32 umask = 0;
+> @@ -1539,7 +1543,10 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+>  		return -EINVAL;
+>  	}
+>  
+> -	switch (flags & (FAN_MARK_ADD | FAN_MARK_REMOVE | FAN_MARK_FLUSH)) {
+> +	if (flags & FAN_MARK_CREATE && mark_cmd != FAN_MARK_ADD)
+> +		return -EINVAL;
+> +
+> +	switch (mark_cmd) {
+>  	case FAN_MARK_ADD:
+>  	case FAN_MARK_REMOVE:
+>  		if (!mask)
+> @@ -1671,7 +1678,7 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+>  	}
+>  
+>  	/* create/update an inode mark */
+> -	switch (flags & (FAN_MARK_ADD | FAN_MARK_REMOVE)) {
+> +	switch (mark_cmd) {
+>  	case FAN_MARK_ADD:
+>  		if (mark_type == FAN_MARK_MOUNT)
+>  			ret = fanotify_add_vfsmount_mark(group, mnt, mask,
+> @@ -1749,7 +1756,7 @@ static int __init fanotify_user_setup(void)
+>  
+>  	BUILD_BUG_ON(FANOTIFY_INIT_FLAGS & FANOTIFY_INTERNAL_GROUP_FLAGS);
+>  	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_INIT_FLAGS) != 12);
+> -	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_MARK_FLAGS) != 9);
+> +	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_MARK_FLAGS) != 10);
+>  
+>  	fanotify_mark_cache = KMEM_CACHE(fsnotify_mark,
+>  					 SLAB_PANIC|SLAB_ACCOUNT);
+> diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
+> index 419cadcd7ff5..780f4b17d4c9 100644
+> --- a/include/linux/fanotify.h
+> +++ b/include/linux/fanotify.h
+> @@ -59,14 +59,16 @@
+>  #define FANOTIFY_MARK_TYPE_BITS	(FAN_MARK_INODE | FAN_MARK_MOUNT | \
+>  				 FAN_MARK_FILESYSTEM)
+>  
+> +#define FANOTIFY_MARK_CMD_BITS	(FAN_MARK_ADD | FAN_MARK_REMOVE | \
+> +				 FAN_MARK_FLUSH)
+> +
+>  #define FANOTIFY_MARK_FLAGS	(FANOTIFY_MARK_TYPE_BITS | \
+> -				 FAN_MARK_ADD | \
+> -				 FAN_MARK_REMOVE | \
+> +				 FANOTIFY_MARK_CMD_BITS | \
+>  				 FAN_MARK_DONT_FOLLOW | \
+>  				 FAN_MARK_ONLYDIR | \
+>  				 FAN_MARK_IGNORED_MASK | \
+>  				 FAN_MARK_IGNORED_SURV_MODIFY | \
+> -				 FAN_MARK_FLUSH)
+> +				 FAN_MARK_CREATE)
+>  
+>  /*
+>   * Events that can be reported with data type FSNOTIFY_EVENT_PATH.
+> diff --git a/include/uapi/linux/fanotify.h b/include/uapi/linux/fanotify.h
+> index e8ac38cc2fd6..c41feac21fe9 100644
+> --- a/include/uapi/linux/fanotify.h
+> +++ b/include/uapi/linux/fanotify.h
+> @@ -82,6 +82,7 @@
+>  #define FAN_MARK_IGNORED_SURV_MODIFY	0x00000040
+>  #define FAN_MARK_FLUSH		0x00000080
+>  /* FAN_MARK_FILESYSTEM is	0x00000100 */
+> +#define FAN_MARK_CREATE		0x00000200
+>  
+>  /* These are NOT bitwise flags.  Both bits can be used togther.  */
+>  #define FAN_MARK_INODE		0x00000000
+> -- 
+> 2.25.1
 > 
-> Because while the bookmark thing avoids the NMI lockup detector firing
-> due to excessive hold times, the bookmarking also _causes_ that "we
-> now will see the same page multiple times because we dropped the lock
-> and somebody re-added it at the end of the queue" issue. Which seems
-> to be the problem here.
-> 
-> Ugh. I wish we had some way to test "could we just remove the bookmark
-> code entirely again".
-> 
-> Of course, the PG_lock case also works fairly hard to not actually
-> remove and re-add the lock waiter to the queue, but having an actual
-> "wait for and get the lock" operation. The writeback bit isn't done
-> that way.
-> 
-> I do hate how we had to make folio_wait_writeback{_killable}() use
-> "while" rather than an "if". It *almost* works with just a "wait for
-> current writeback", but not quite. See commit c2407cf7d22d ("mm: make
-> wait_on_page_writeback() wait for multiple pending writebacks") for
-> why we have to loop. Ugly, ugly.
-> 
-
-Right.. In case you missed it in my too long of a description (sorry), I
-pointed out that this problem seems to manifest most recently as of that
-commit. In fact looking through the past discussion for that patch, it
-wouldn't surprise me a ton of this problem is some pathological
-manifestation of the perf issue that you described here [1].
-
-Indeed most of the waiters in this case come from fsync() -> ... ->
-__filemap_fdatawait_range(), and your test patch in that email performs
-a similar sort of trick to skip out of the wake up side (I'm curious if
-that was ever determined to help?) to things that I was playing with to
-try and narrow this down.
-
-> Because I do think that "while" in the writeback waiting is a problem.
-> Maybe _the_ problem.
-> 
-
-FWIW, Matthew's patch does seem to address this problem. My current test
-of that patch is past the point where I usually expect to see the soft
-lockup warning, but I'm going to let it continue to run (and then run it
-through some xfs regression if the approach is agreeable).
-
-Getting back to the loop thing (and seeing Matthew's latest reply wrt to
-wait_and_set())...
-
-If we wanted to go back to non-looping in folio_wait_writeback() to
-avoid the unserialized wait queue build up or whatever, would it make
-any sense to lift the looping writeback check to write_cache_pages()? We
-hold the page lock and have checked PageDirty() by that point, so ISTM
-that would address the BUG_ON(PageWriteback()) race caused by the
-delayed/unserialized wakeup without producing the excess wait queue
-buildup caused by waiters in the __filemap_fdatawait_range() path.
-
-Then presumably that "wait for writeback to clear" loop in
-write_cache_pages() is eventually replaced by the "wait and set
-writeback" thing when the rest of the fs code is fixed up appropriately.
-Hm? Of course I haven't tested that so it could be completely bogus, but
-I can if it makes any sort of sense as an incremental step..
-
-Brian
-
-[1] https://lore.kernel.org/linux-mm/CAHk-=wgD9GK5CeHopYmRHoYS9cNuCmDMsc=+MbM_KgJ0KB+=ng@mail.gmail.com/
-
->                         Linus
-> 
-
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
