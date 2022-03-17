@@ -2,165 +2,192 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 848B14DC50F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Mar 2022 12:53:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CCAEA4DC569
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Mar 2022 13:02:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233139AbiCQLzL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Mar 2022 07:55:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49990 "EHLO
+        id S233297AbiCQMDi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Mar 2022 08:03:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57342 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233061AbiCQLzJ (ORCPT
+        with ESMTP id S233195AbiCQMDh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Mar 2022 07:55:09 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CF282628
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Mar 2022 04:53:53 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id E253E1F390;
-        Thu, 17 Mar 2022 11:53:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1647518031; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=1eKLJeRfpPbOGuXYwsOx3RTvTH3V7ea6MyzBnbvGfiU=;
-        b=2j/fZzwYED8nk7HW9+B3xxU2k3HPrtgVyYeGrFtnXDjqXkbn3ZA0TEbLgpkwJIXlQavDtF
-        snftWzsltG7aY1Enn07i1rEZCBUBLmucIga4C2StFkULrkcPJuisTmAAaK+08nPtQZrxK4
-        mCcOLZazozEpFnLFDcmhETIe05RjWqs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1647518031;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=1eKLJeRfpPbOGuXYwsOx3RTvTH3V7ea6MyzBnbvGfiU=;
-        b=SjAhwaKr8infJ7h7eouGAEdS0hGk/HCsc/mQMjOCsHIo4Ja4vLzgEWVXSR7JUpEb/sFyeR
-        vIY7LxNA412L+MCg==
-Received: from quack3.suse.cz (unknown [10.100.200.198])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 7A644A3B88;
-        Thu, 17 Mar 2022 11:53:51 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id C851DA0615; Thu, 17 Mar 2022 12:53:46 +0100 (CET)
-Date:   Thu, 17 Mar 2022 12:53:46 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, Srinivas <talkwithsrinivas@yahoo.co.in>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: Fanotify Directory exclusion not working when using
- FAN_MARK_MOUNT
-Message-ID: <20220317115346.ztz2g7tdvudx7ujd@quack3.lan>
-References: <1357949524.990839.1647084149724.ref@mail.yahoo.com>
- <1357949524.990839.1647084149724@mail.yahoo.com>
- <20220314084706.ncsk754gjywkcqxq@quack3.lan>
- <CAOQ4uxiDubhONM3w502anndtbqy73q_Kt5bOQ07zbATb8ndvVA@mail.gmail.com>
- <20220314113337.j7slrb5srxukztje@quack3.lan>
- <CAOQ4uxhwXgqbMKMSQJwNqQpKi-iAtS4dsFwkeDDMv=Y0ewp=og@mail.gmail.com>
- <20220315111536.jlnid26rv5pxjpas@quack3.lan>
- <CAOQ4uxhSKk=rPtF4vwiW0u1Yy4p8Rhdd+wKC2BLJxHR8Q9V9AA@mail.gmail.com>
- <20220316115058.a2ki6injgdp7xjf7@quack3.lan>
- <CAOQ4uxgG37z7h-OYtGsZ-1=oQNu-DVvQgbN5wNbLXf0ktY1htg@mail.gmail.com>
+        Thu, 17 Mar 2022 08:03:37 -0400
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A97F61E95CE;
+        Thu, 17 Mar 2022 05:02:20 -0700 (PDT)
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 22H9cmH9008529;
+        Thu, 17 Mar 2022 12:01:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=pp1; bh=vfIXFVzBYVYCGJ9paDohUySVCQL2EjCszKhxvr9T5hE=;
+ b=A3kvDZtIURAt7ojq1h4+YH63/I04UlyKABS0CI3gcgaRaWnKgM/QSHr7NduPQGiED1Ks
+ Ily+r7RTDKSQm02cv1lTUEXIdHDBnl4HdRBb6vCOf+5T4NFQnCKFwWtEpspQz6un6Ndd
+ JXvkDyc3CfXRbcDijhsox5sH6g8g2xdIPspCB2DlQSPxy/vIfHKDmG3JlazoYVjoLQHp
+ wHclXgN/LRqts5UhFw0Gk1zKKNG8M1zTZnyrkA6BMDLEhTSjjs+0xPL5jmDkJKurCASX
+ 6FnDj9wT+RUtDak00Y1mxeixPcHhw+0cYtMkTzW7KVWwLH49rP/EDSC9pAT5O+9FxALj ww== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3ev0m5vkrj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 17 Mar 2022 12:01:55 +0000
+Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 22HBtrQJ021011;
+        Thu, 17 Mar 2022 12:01:55 GMT
+Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3ev0m5vkqt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 17 Mar 2022 12:01:54 +0000
+Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
+        by ppma06fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 22HBqkhb004603;
+        Thu, 17 Mar 2022 12:01:53 GMT
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
+        by ppma06fra.de.ibm.com with ESMTP id 3erjshskwx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 17 Mar 2022 12:01:52 +0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 22HC1oci45875640
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 17 Mar 2022 12:01:50 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 85360A405D;
+        Thu, 17 Mar 2022 12:01:50 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3A537A4053;
+        Thu, 17 Mar 2022 12:01:50 +0000 (GMT)
+Received: from tuxmaker.linux.ibm.com (unknown [9.152.85.9])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Thu, 17 Mar 2022 12:01:50 +0000 (GMT)
+From:   Sven Schnelle <svens@linux.ibm.com>
+To:     Ritesh Harjani <riteshh@linux.ibm.com>
+Cc:     linux-ext4@vger.kernel.org, Jan Kara <jack@suse.cz>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@kernel.org, Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCHv3 02/10] ext4: Fix ext4_fc_stats trace point
+References: <cover.1647057583.git.riteshh@linux.ibm.com>
+        <b4b9691414c35c62e570b723e661c80674169f9a.1647057583.git.riteshh@linux.ibm.com>
+Date:   Thu, 17 Mar 2022 13:01:49 +0100
+In-Reply-To: <b4b9691414c35c62e570b723e661c80674169f9a.1647057583.git.riteshh@linux.ibm.com>
+        (Ritesh Harjani's message of "Sat, 12 Mar 2022 11:09:47 +0530")
+Message-ID: <yt9dr1706b4i.fsf@linux.ibm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.0.50 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxgG37z7h-OYtGsZ-1=oQNu-DVvQgbN5wNbLXf0ktY1htg@mail.gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: I05qBJXbb_wl6wSZAWMPX25f2BRaoFU1
+X-Proofpoint-ORIG-GUID: Rpr6UriCIbwTRJQf1XkiMSwaP8I7My-O
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.850,Hydra:6.0.425,FMLib:17.11.64.514
+ definitions=2022-03-17_04,2022-03-15_01,2022-02-23_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=991 adultscore=0
+ bulkscore=0 mlxscore=0 lowpriorityscore=0 malwarescore=0
+ priorityscore=1501 spamscore=0 clxscore=1011 impostorscore=0 phishscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2202240000 definitions=main-2203170070
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 16-03-22 15:42:44, Amir Goldstein wrote:
-> > > The only thing is, as you wrote to Srinivas, there is really no practical
-> > > way to make ignore mask with ON_CHILD work on old kernels, so
-> > > what can users do if they want to write a portable program?
-> > > Add this mark and hope for the best?
-> >
-> > OK, this objection probably tipped the balace towards a new flag for me :)
-> >
-> > > If users had FAN_MARK_PARENT, the outcome at least would
-> > > have been predictable.
-> > > Maybe FAN_MARK_PARENT is an overkill.
-> > > Maybe what we need is FAN_MARK_IGNORED_ON_CHILD.
-> > > It's not very pretty, but it is clear.
-> >
-> > Or how about FAN_MARK_IGNORED_MASK_CHECKED which would properly check for
-> > supported bits in the ignore mask and then we can use ON_CHILD as I wanted
-> > and we would regain ONDIR bit for future use as well?
-> >
-> 
-> I don't follow the reasoning behind the name MASK_CHECKED.
+Ritesh Harjani <riteshh@linux.ibm.com> writes:
 
-My idea was that with FAN_IGNORED_MASK we did the mistake that passed
-arguments (mask in particular) are not properly checked because we let
-userspace set bits which are not really used in the ignore mask. So let's
-fix this by properly checking the arguments and to do that safely we need a
-new variant of FAN_IGNORED_MASK, hence FAN_IGNORED_MASK_CHECKED...
+> ftrace's __print_symbolic() requires that any enum values used in the
+> symbol to string translation table be wrapped in a TRACE_DEFINE_ENUM
+> so that the enum value can be decoded from the ftrace ring buffer by
+> user space tooling.
+>
+> This patch also fixes few other problems found in this trace point.
+> e.g. dereferencing structures in TP_printk which should not be done
+> at any cost.
+>
+> Also to avoid checkpatch warnings, this patch removes those
+> whitespaces/tab stops issues.
+>
+> Cc: stable@kernel.org
+> Fixes: commit aa75f4d3daae ("ext4: main fast-commit commit path")
+> Reported-by: Steven Rostedt <rostedt@goodmis.org>
+> Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> Reviewed-by: Harshad Shirwadkar <harshadshirwadkar@gmail.com>
+> ---
+>  include/trace/events/ext4.h | 78 +++++++++++++++++++++++--------------
+>  1 file changed, 49 insertions(+), 29 deletions(-)
+>
+> diff --git a/include/trace/events/ext4.h b/include/trace/events/ext4.h
+> index 19e957b7f941..1a0b7030f72a 100644
+> --- a/include/trace/events/ext4.h
+> +++ b/include/trace/events/ext4.h
+> @@ -95,6 +95,17 @@ TRACE_DEFINE_ENUM(ES_REFERENCED_B);
+>  	{ FALLOC_FL_COLLAPSE_RANGE,	"COLLAPSE_RANGE"},	\
+>  	{ FALLOC_FL_ZERO_RANGE,		"ZERO_RANGE"})
+>
+> +TRACE_DEFINE_ENUM(EXT4_FC_REASON_XATTR);
+> +TRACE_DEFINE_ENUM(EXT4_FC_REASON_CROSS_RENAME);
+> +TRACE_DEFINE_ENUM(EXT4_FC_REASON_JOURNAL_FLAG_CHANGE);
+> +TRACE_DEFINE_ENUM(EXT4_FC_REASON_NOMEM);
+> +TRACE_DEFINE_ENUM(EXT4_FC_REASON_SWAP_BOOT);
+> +TRACE_DEFINE_ENUM(EXT4_FC_REASON_RESIZE);
+> +TRACE_DEFINE_ENUM(EXT4_FC_REASON_RENAME_DIR);
+> +TRACE_DEFINE_ENUM(EXT4_FC_REASON_FALLOC_RANGE);
+> +TRACE_DEFINE_ENUM(EXT4_FC_REASON_INODE_JOURNAL_DATA);
+> +TRACE_DEFINE_ENUM(EXT4_FC_REASON_MAX);
 
-> If anything, I would rather introduce FAN_IGNORE_MARK.
-> The reasoning is that users may think of this "ignore mark"
-> as a separate mark from the "inode mark", so on this "mark" the
-> meaning of ON_CHILD flags would be pretty clear.
+I'm getting the following oops with that patch:
 
-Well, yes, you are speaking about effectively the same flag just under a
-different name :) I agree my name is poor so I'm happy if we pick another
-one. The only small reservation I have against the name FAN_IGNORE_MARK is
-that we would now have to explain in the manpage a new concept of ignore
-mark and tell this is just a new name for ignore mask which looks a bit
-silly and perhaps confusing to developers used to the old naming.
+[    0.937455] VFS: Disk quotas dquot_6.6.0
+[    0.937474] VFS: Dquot-cache hash table entries: 512 (order 0, 4096 bytes)
+[    0.958347] Unable to handle kernel pointer dereference in virtual kernel address space
+[    0.958350] Failing address: 00000000010de000 TEID: 00000000010de407
+[    0.958353] Fault in home space mode while using kernel ASCE.
+[    0.958357] AS:0000000001ed0007 R3:00000002ffff0007 S:0000000001003701
+[    0.958388] Oops: 0004 ilc:3 [#1] SMP
+[    0.958393] Modules linked in:
+[    0.958398] CPU: 0 PID: 8 Comm: kworker/u128:0 Not tainted 5.17.0-rc8-next-20220317 #396
+[    0.958403] Hardware name: IBM 3906 M04 704 (z/VM 7.1.0)
+[    0.958407] Workqueue: eval_map_wq eval_map_work_func
 
-> The fact that they are implemented as a single mark with two masks
-> and that each mask also has some flags is an implementation detail.
-> 
-> If we go for FAN_IGNORE_MARK, we would disallow the combination
->   fanotify_mark(FAN_IGNORE_MARK, FAN_MARK_IGNORED_MASK, ...
+[    0.958446] Krnl PSW : 0704e00180000000 000000000090a9d6 (number+0x25e/0x3c0)
+[    0.958456]            R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:0 AS:3 CC:2 PM:0 RI:0 EA:3
+[    0.958461] Krnl GPRS: 0000000000000058 00000000010de0ac 0000000000000001 00000000fffffffc
+[    0.958467]            0000038000047b80 0affffff010de0ab 0000000000000000 0000000000000000
+[    0.958481]            0000000000000020 0000038000000000 00000000010de0ad 00000000010de0ab
+[    0.958484]            0000000080312100 0000000000e68910 0000038000047b50 0000038000047ab8
+[    0.958494] Krnl Code: 000000000090a9c6: f0c84112b001        srp     274(13,%r4),1(%r11),8
+[    0.958494]            000000000090a9cc: 41202001            la      %r2,1(%r2)
+[    0.958494]           #000000000090a9d0: ecab0006c065        clgrj   %r10,%r11,12,000000000090a9dc
+[    0.958494]           >000000000090a9d6: d200b0004000        mvc     0(1,%r11),0(%r4)
+[    0.958494]            000000000090a9dc: 41b0b001            la      %r11,1(%r11)
+[    0.958494]            000000000090a9e0: a74bffff
+            aghi    %r4,-1
+[    0.958494]            000000000090a9e4: a727fff6            brctg   %r2,000000000090a9d0
+[    0.958494]            000000000090a9e8: a73affff            ahi     %r3,-1
+[    0.958575] Call Trace:
+[    0.958580]  [<000000000090a9d6>] number+0x25e/0x3c0
+[    0.958594] ([<0000000000289516>] update_event_printk+0xde/0x200)
+[    0.958602]  [<0000000000910020>] vsnprintf+0x4b0/0x7c8
+[    0.958606]  [<00000000009103e8>] snprintf+0x40/0x50
+[    0.958610]  [<00000000002893d2>] eval_replace+0x62/0xc8
+[    0.958614]  [<000000000028e2fe>] trace_event_eval_update+0x206/0x248
+[    0.958619]  [<0000000000171bba>] process_one_work+0x1fa/0x460
+[    0.958625]  [<000000000017234c>] worker_thread+0x64/0x468
+[    0.958629]  [<000000000017af90>] kthread+0x108/0x110
+[    0.958634]  [<00000000001032ec>] __ret_from_fork+0x3c/0x58
+[    0.958640]  [<0000000000cce43a>] ret_from_fork+0xa/0x40
+[    0.958648] Last Breaking-Event-Address:
+[    0.958652]  [<000000000090a99c>] number+0x224/0x3c0
+[    0.958661] Kernel panic - not syncing: Fatal exception: panic_on_oops
 
-Certainly.
+I haven't really checked what TRACE_DEFINE_ENUM() does, but removing the
+last line ("TRACE_DEFINE_ENUM(EXT4_FC_REASON_MAX);") makes the oops go
+away. Looking at all the other defines looks like the _MAX enum
+shouldn't be added there?
 
-> and I am also in favor of disallowing FAN_MARK_IGNORED_SURV_MODIFY.
-> I find it completely useless for watching children and if people still need
-> the ignored mask that does not survive modify, they can use the old API.
-
-Well, but FAN_IGNORE_MARK is not just for watching children. You can still
-ignore a single file with FAN_IGNORE_MARK. As much as I understand that
-FAN_MARK_IGNORED_SURV_MODIFY complicates our life, I don't think we'll ever
-be able to get rid of it completely so I don't see any value in disallowing
-it with FAN_IGNORE_MARK.
-
-> > > > With ONDIR I agree things are not as obvious. Historically we have applied
-> > > > ignore mask even for events coming from directories regardless of ONDIR
-> > > > flag in the ignore mask. So ignore mask without any special flag has the
-> > > > implicit meaning of "apply to all events regardless of type of originating
-> > > > inode". I don't think we can change that meaning at this point. We could
-> > > > define meaning of ONDIR in ignore mask to either "ignore only events from
-> > > > directories" or to "ignore only events from ordinary files". But neither
-> > > > seems particularly natural or useful.
-> > > >
-> > >
-> > > TBH, I always found it annoying that fanotify cannot be used to specify
-> > > a filter to get only mkdirs, which is a pretty common thing to want to be
-> > > notified of (i.e. for recursive watch).
-> > > But I have no intention to propose API changes to fix that.
-> >
-> > I see, so we could repurpose ONDIR bit in ignore mask for EVENT_IGNORE_NONDIR
-> > feature or something like that. But as you say, no pressing need...
-> >
-> 
-> Alas, that does not fit nicely with the FAN_IGNORE_MARK abstraction.
-> The inverse does:
-> The "mark" with ONDIR captures all the create events and the "ignore mark"
-> without ONDIR filters out the non-mkdir.
-
-Yeah, I actually like the consistency here - the ordinary mask causes
-the event to be generated IFF the same ignore mask/mark causes the event to be
-discarded. It would mean that without ONDIR events from directories are not
-ignored so that's a difference to current meaning of ignore masks but we
-can do that modification with the new flag.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks
+Sven
