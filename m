@@ -2,59 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EC45F4DC795
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Mar 2022 14:30:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5A234DC7C8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Mar 2022 14:43:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234537AbiCQNbt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Mar 2022 09:31:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45698 "EHLO
+        id S234664AbiCQNot (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Mar 2022 09:44:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231908AbiCQNbs (ORCPT
+        with ESMTP id S234662AbiCQNos (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Mar 2022 09:31:48 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50BF31D12F1;
-        Thu, 17 Mar 2022 06:30:32 -0700 (PDT)
+        Thu, 17 Mar 2022 09:44:48 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79D36D5EBF;
+        Thu, 17 Mar 2022 06:43:25 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id DC9F761724;
-        Thu, 17 Mar 2022 13:30:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 426AEC340ED;
-        Thu, 17 Mar 2022 13:30:31 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6C48761763;
+        Thu, 17 Mar 2022 13:43:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF95BC340E9;
+        Thu, 17 Mar 2022 13:43:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647523831;
-        bh=Uu5CkIWWF14coD7DKlpKDiTH2dlwQPEA+Tj8rqU+Das=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=Um87riZEnp0qBiWxCGgY+6FtjuLBQnEteOBZ+h0vTsv27Tc3sCUz5sAmLOJ1B6exr
-         fuC3mUakoRAnjTThvm7hMbZKzjRf6QCDRNCvN3W1FODaJXqsYtk7SBhwj0Mr8gX+eB
-         JHDdxyqB2rEBiUjYktnrx381RzEqS/gdE9xLTjD8QlbFQiGLwRK40C8ANrtTmAQBJm
-         UzGZMZP7tf+6ZoQMAgK9c18py2Apb5bq7PbwiE/w6uF5w2pnS8sxoLKzBh9HW9WmLY
-         YU3TNzYb27T3jQnq8MRbCw3VFCFytpX587CvMGAOZopP44P6c7XAg4mvFjT5/21i7g
-         tCzpQReSegN+g==
-Received: by mail-wm1-f52.google.com with SMTP id v130-20020a1cac88000000b00389d0a5c511so4937580wme.5;
-        Thu, 17 Mar 2022 06:30:31 -0700 (PDT)
-X-Gm-Message-State: AOAM5308HrDfZ9m5JICtUErNutJqoKUcsvUwGMO9ZoZ9RVV/jEuAGEWU
-        ecgf2oKZdC5KwLtZ5AQ3dpCO4NqRrdhZIEOKR9w=
-X-Google-Smtp-Source: ABdhPJwVuy7loI1z2F93M+YreKFlFZjfVu/54lxs2OuCDCACUdi6A8oExsog4SWwtjwNNJM0CtQpWoPzSqBomBiqMsI=
-X-Received: by 2002:a7b:ce0f:0:b0:389:a4eb:2520 with SMTP id
- m15-20020a7bce0f000000b00389a4eb2520mr11883578wmc.9.1647523829545; Thu, 17
- Mar 2022 06:30:29 -0700 (PDT)
+        s=k20201202; t=1647524604;
+        bh=ZGwhFr4HMMiHVx6F/dnRpUBbs08BVQzkS3x8lW+YnKw=;
+        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+        b=NzwiKeaJ+eZMgsLnO3UZb4GnQOeUQzt6QXy9qaN94dGXjNCEZ/QTeoNu+OKWCd+jy
+         fLRW8X7E61VI8jSfzuj8K/68zk1XJYUkyEKuONcd0bBXM6hsyzxYnTKKi5GPnYIh03
+         6vvEGiY+fLioIBr7P7LBIlcJUx71thHGUAMr24CNAwNX6TOk8aMCl76G57rwHB1Ksf
+         IDigUZKfFtWKRRT4LGeSXhny//SJQu2Jhk1BVDY1vr3iotmdd/dgdC0CFPZe1RWyt9
+         NGOxBSegOf8pKGcm7rrDw/sQMZdGoypJepNf8brGjD28HvLtom+amC1+5R+bIaRmuS
+         MYJnWNh5FdcFg==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+        id 715905C0341; Thu, 17 Mar 2022 06:43:24 -0700 (PDT)
+Date:   Thu, 17 Mar 2022 06:43:24 -0700
+From:   "Paul E. McKenney" <paulmck@kernel.org>
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, broonie@kernel.org,
+        mhocko@suse.cz, sfr@canb.auug.org.au, linux-next@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org,
+        linux-um <linux-um@lists.infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        Johannes Berg <johannes@sipsolutions.net>
+Subject: Re: mmotm 2022-03-16-17-42 uploaded (uml sub-x86_64, sched/fair, RCU)
+Message-ID: <20220317134324.GN4285@paulmck-ThinkPad-P17-Gen-1>
+Reply-To: paulmck@kernel.org
+References: <20220317004304.95F89C340E9@smtp.kernel.org>
+ <0f622499-36e1-ea43-ddc3-a8b3bb08d34b@infradead.org>
+ <20220316213011.8cac447e692283a4b5d97f3d@linux-foundation.org>
+ <917e9ce0-c8cf-61b2-d1ba-ebf25bbd979d@infradead.org>
 MIME-Version: 1.0
-Received: by 2002:a05:6000:1d93:0:0:0:0 with HTTP; Thu, 17 Mar 2022 06:30:28
- -0700 (PDT)
-In-Reply-To: <20220317095047.11992-2-vkarasulli@suse.de>
-References: <20220317095047.11992-1-vkarasulli@suse.de> <20220317095047.11992-2-vkarasulli@suse.de>
-From:   Namjae Jeon <linkinjeon@kernel.org>
-Date:   Thu, 17 Mar 2022 22:30:28 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd-BZgy-gVAPhLhGNc31q-+8t18A=ho_Q6STmEBoGCoW0w@mail.gmail.com>
-Message-ID: <CAKYAXd-BZgy-gVAPhLhGNc31q-+8t18A=ho_Q6STmEBoGCoW0w@mail.gmail.com>
-Subject: Re: [PATCH v5 1/1] exfat: allow access to paths with trailing dots
-To:     Vasant Karasulli <vkarasulli@suse.de>
-Cc:     David Disseldorp <ddiss@suse.de>, linux-fsdevel@vger.kernel.org,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <917e9ce0-c8cf-61b2-d1ba-ebf25bbd979d@infradead.org>
 X-Spam-Status: No, score=-8.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -65,84 +66,77 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-2022-03-17 18:50 GMT+09:00, Vasant Karasulli <vkarasulli@suse.de>:
->  The Linux kernel exfat driver currently unconditionally strips
->  trailing periods '.' from path components. This isdone intentionally,
->  loosely following Windows behaviour and specifications
->  which state:
->
->   #exFAT
->   The concatenated file name has the same set of illegal characters as
->   other FAT-based file systems (see Table 31).
->
->   #FAT
->   ...
->   Leading and trailing spaces in a long name are ignored.
->   Leading and embedded periods are allowed in a name and are stored in
->   the long name. Trailing periods are ignored.
->
-> Note: Leading and trailing space ' ' characters are currently retained
-> by Linux kernel exfat, in conflict with the above specification.
-> On Windows 10, trailing and leading space ' ' characters are stripped
-> from the filenames.
-> Some implementations, such as fuse-exfat, don't perform path trailer
-> removal. When mounting images which contain trailing-dot paths, these
-> paths are unreachable, e.g.:
->
->   + mount.exfat-fuse /dev/zram0 /mnt/test/
->   FUSE exfat 1.3.0
->   + cd /mnt/test/
->   + touch fuse_created_dots... '  fuse_created_spaces  '
->   + ls -l
->   total 0
->   -rwxrwxrwx 1 root 0 0 Aug 18 09:45 '  fuse_created_spaces  '
->   -rwxrwxrwx 1 root 0 0 Aug 18 09:45  fuse_created_dots...
->   + cd /
->   + umount /mnt/test/
->   + mount -t exfat /dev/zram0 /mnt/test
->   + cd /mnt/test
->   + ls -l
->   ls: cannot access 'fuse_created_dots...': No such file or directory
->   total 0
->   -rwxr-xr-x 1 root 0 0 Aug 18 09:45 '  fuse_created_spaces  '
->   -????????? ? ?    ? ?            ?  fuse_created_dots...
->   + touch kexfat_created_dots... '  kexfat_created_spaces  '
->   + ls -l
->   ls: cannot access 'fuse_created_dots...': No such file or directory
->   total 0
->   -rwxr-xr-x 1 root 0 0 Aug 18 09:45 '  fuse_created_spaces  '
->   -rwxr-xr-x 1 root 0 0 Aug 18 09:45 '  kexfat_created_spaces  '
->   -????????? ? ?    ? ?            ?  fuse_created_dots...
->   -rwxr-xr-x 1 root 0 0 Aug 18 09:45  kexfat_created_dots
->   + cd /
->   + umount /mnt/test/
->
-> This commit adds "keep_last_dots" mount option that controls whether or
-> not trailing periods '.' are stripped
-> from path components during file lookup or file creation.
-> This mount option can be used to access
-> paths with trailing periods and disallow creating files with names with
-> trailing periods. E.g. continuing from the previous example:
->
->   + mount -t exfat -o keep_last_dots /dev/zram0 /mnt/test
->   + cd /mnt/test
->   + ls -l
->   total 0
->   -rwxr-xr-x 1 root 0 0 Aug 18 10:32 '  fuse_created_spaces  '
->   -rwxr-xr-x 1 root 0 0 Aug 18 10:32 '  kexfat_created_spaces  '
->   -rwxr-xr-x 1 root 0 0 Aug 18 10:32  fuse_created_dots...
->   -rwxr-xr-x 1 root 0 0 Aug 18 10:32  kexfat_created_dots
->
->   + echo > kexfat_created_dots_again...
->   sh: kexfat_created_dots_again...: Invalid argument
->
-> Link: https://bugzilla.suse.com/show_bug.cgi?id=1188964
-> Link: https://lore.kernel.org/linux-fsdevel/003b01d755e4$31fb0d80$95f12880$
-> @samsung.com/
-> Link:
-> https://docs.microsoft.com/en-us/windows/win32/fileio/exfat-specification
-> Suggested-by: Takashi Iwai <tiwai@suse.de>
-> Signed-off-by: Vasant Karasulli <vkarasulli@suse.de>
-> Co-developed-by: David Disseldorp <ddiss@suse.de>
-> Signed-off-by: David Disseldorp <ddiss@suse.de>
-Applied, Thanks for your patch!
+On Wed, Mar 16, 2022 at 09:52:44PM -0700, Randy Dunlap wrote:
+> 
+> 
+> On 3/16/22 21:30, Andrew Morton wrote:
+> > On Wed, 16 Mar 2022 21:21:16 -0700 Randy Dunlap <rdunlap@infradead.org> wrote:
+> > 
+> >>
+> >>
+> >> On 3/16/22 17:43, Andrew Morton wrote:
+> >>> The mm-of-the-moment snapshot 2022-03-16-17-42 has been uploaded to
+> >>>
+> >>>    https://www.ozlabs.org/~akpm/mmotm/
+> >>>
+> >>> mmotm-readme.txt says
+> >>>
+> >>> README for mm-of-the-moment:
+> >>>
+> >>> https://www.ozlabs.org/~akpm/mmotm/
+> >>>
+> >>> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> >>> more than once a week.
+> >>>
+> >>> You will need quilt to apply these patches to the latest Linus release (5.x
+> >>> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+> >>> https://ozlabs.org/~akpm/mmotm/series
+> >>
+> >>
+> >> UML for x86_64, defconfig:
+> >>
+> >> In file included from ./arch/x86/include/generated/asm/rwonce.h:1:0,
+> >>                  from ../include/linux/compiler.h:248,
+> >>                  from ../include/linux/kernel.h:20,
+> >>                  from ../include/linux/cpumask.h:10,
+> >>                  from ../include/linux/energy_model.h:4,
+> >>                  from ../kernel/sched/fair.c:23:
+> >> ../include/linux/psi.h: In function ‘cgroup_move_task’:
+> >> ../include/linux/rcupdate.h:414:36: error: dereferencing pointer to incomplete type ‘struct css_set’
+> >>  #define RCU_INITIALIZER(v) (typeof(*(v)) __force __rcu *)(v)
+> >>                                     ^~~~
+> > 
+> > Works For Me.  I tried `make x86_64_defconfig' and `make i386_defconfig' too.
+> > 
+> > Can you please share that .config, or debug a bit?
+> 
+> $ make ARCH=um SUBARCH=x86_64 defconfig
+> 
+> 
+> 
+> This fixes the build error for me when CONFIG_PSI=n.
+
+Looks better than my approach of converting cgroup_move_task() to be
+a macro.  ;-)
+
+							Thanx, Paul
+
+> ---
+>  include/linux/psi.h |    3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> --- mmotm-2022-0316-1742.orig/include/linux/psi.h
+> +++ mmotm-2022-0316-1742/include/linux/psi.h
+> @@ -53,6 +53,9 @@ static inline int psi_cgroup_alloc(struc
+>  static inline void psi_cgroup_free(struct cgroup *cgrp)
+>  {
+>  }
+> +
+> +#include <linux/cgroup-defs.h>
+> +
+>  static inline void cgroup_move_task(struct task_struct *p, struct css_set *to)
+>  {
+>  	rcu_assign_pointer(p->cgroups, to);
+> 
+> -- 
+> ~Randy
