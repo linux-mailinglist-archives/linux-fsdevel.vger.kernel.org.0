@@ -2,176 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 87C114DC348
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Mar 2022 10:47:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EAEE34DC357
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Mar 2022 10:51:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232231AbiCQJtF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Mar 2022 05:49:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59050 "EHLO
+        id S232285AbiCQJwL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Mar 2022 05:52:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44200 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232235AbiCQJtD (ORCPT
+        with ESMTP id S230308AbiCQJwI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Mar 2022 05:49:03 -0400
-Received: from mx04.melco.co.jp (mx04.melco.co.jp [192.218.140.144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 722A81D7DA5;
-        Thu, 17 Mar 2022 02:47:45 -0700 (PDT)
-Received: from mr04.melco.co.jp (mr04 [133.141.98.166])
-        by mx04.melco.co.jp (Postfix) with ESMTP id 4KK2PX3hfpzMvyX0;
-        Thu, 17 Mar 2022 18:47:44 +0900 (JST)
-Received: from mr04.melco.co.jp (unknown [127.0.0.1])
-        by mr04.imss (Postfix) with ESMTP id 4KK2PX3GgSzMrCxp;
-        Thu, 17 Mar 2022 18:47:44 +0900 (JST)
-Received: from mf03_second.melco.co.jp (unknown [192.168.20.183])
-        by mr04.melco.co.jp (Postfix) with ESMTP id 4KK2PX2xb2zMvr25;
-        Thu, 17 Mar 2022 18:47:44 +0900 (JST)
-Received: from mf03.melco.co.jp (unknown [133.141.98.183])
-        by mf03_second.melco.co.jp (Postfix) with ESMTP id 4KK2PX2r7Dz6tCP;
-        Thu, 17 Mar 2022 18:47:44 +0900 (JST)
-Received: from JPN01-TYC-obe.outbound.protection.outlook.com (unknown [104.47.23.172])
-        by mf03.melco.co.jp (Postfix) with ESMTP id 4KK2PX2hHhzMstpp;
-        Thu, 17 Mar 2022 18:47:44 +0900 (JST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=KVXyN/9RFW6qPFxdJhhyYJniZkXzCDmPePhoeZU5iyUFAVs7P6Napr+TdQC7dfjV1/3f7VRx4b3sR7m5SbcvlnNw+KLL7cyKJrfV2mG+5ePdrtILpVyjIHvvSMA3OWMdcGhuphx4pTZN3Tf/QTSoRCXv4gnf/o81+bXgluXKTf9cXS7ZTUlqjL1t1FdLYhsHl/qFkuZmv4wJPo8AiK6W44dlR/aUsJM0+E72P+XUrmk2Mywne+BvUtbK2HQ9JJhAuoPAkKWki4nEGt4SVAZK5DNWPQ25TqsfTKX6uxMeR2buQRqtD7G7AvsCxup0at1bZEBvZXSs9JLckSZdPYcOaw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JGTRrILzlQZfWzzCwE0Tv8y0v93QxsEMf0NV8IB6hxg=;
- b=NEUamXNUUN6DtaOZ/4OjzXbCqVGrbOSlb+e/yAXvhUwvX0wk5qwPvsJSdXpplHR3mgACbPukDeMFN1WN17RxjMtbgq5FTcYo8avf7Xrm3Q+etZKC68VDxnFzsXdvq7PQKIMzyPSyTeH0DvZFQnS4xJLSHiwC9J/M799MXejdXxLkMz2pJM4oL2z8xHL0jtFiRKULeCcwS2IVNidjGtTDV0bquUw0Y07BQodo06kRc/3emOLP0gF0xnSAq/eS+nG/ZGw1fDBPxBfrxSZa2qTWB8+KGJTEZfjLbaNT7UEx1OXkpEy+TX2U5V5tJziKqjSgaRR1rt4Em6mFglhzsRpXZg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=dc.mitsubishielectric.co.jp; dmarc=pass action=none
- header.from=dc.mitsubishielectric.co.jp; dkim=pass
- header.d=dc.mitsubishielectric.co.jp; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mitsubishielectricgroup.onmicrosoft.com;
- s=selector2-mitsubishielectricgroup-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JGTRrILzlQZfWzzCwE0Tv8y0v93QxsEMf0NV8IB6hxg=;
- b=iHflNW7CULBK+lPuh6WKsivCrbxvA2H5ps6Tqvz1hi5/bnYgyi+a16Y70xjXgM0YZ89Qghlf9h9yHlKPz7vpafTXWN3hJ52V8cXTjeW3078UUxOaxaRsn7Xr+d5JFxxoqD5uCNFwQ4z/vVKjZpsIavwRCzxKee6MHp+VGjzqVzA=
-Received: from TYAPR01MB5353.jpnprd01.prod.outlook.com (2603:1096:404:803d::8)
- by TYAPR01MB2367.jpnprd01.prod.outlook.com (2603:1096:404:8e::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5081.14; Thu, 17 Mar
- 2022 09:47:42 +0000
-Received: from TYAPR01MB5353.jpnprd01.prod.outlook.com
- ([fe80::493e:4ed3:1705:ee86]) by TYAPR01MB5353.jpnprd01.prod.outlook.com
- ([fe80::493e:4ed3:1705:ee86%2]) with mapi id 15.20.5081.016; Thu, 17 Mar 2022
- 09:47:42 +0000
-From:   "Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp" 
-        <Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp>
-To:     "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>,
-        Namjae Jeon <linkinjeon@kernel.org>
-CC:     "sj1557.seo@samsung.com" <sj1557.seo@samsung.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Andy.Wu@sony.com" <Andy.Wu@sony.com>,
-        "Wataru.Aoyama@sony.com" <Wataru.Aoyama@sony.com>
-Subject: Re: [PATCH v2] exfat: do not clear VolumeDirty in writeback
-Thread-Topic: [PATCH v2] exfat: do not clear VolumeDirty in writeback
-Thread-Index: Adg0Vskc+T+8E+65Sm+jIEZBsmb4mgAqgpIBAL5OAAAARKJNoAA1uDUS
-Date:   Thu, 17 Mar 2022 09:47:42 +0000
-Message-ID: <TYAPR01MB5353C2C84F4006C2BEE20DC090129@TYAPR01MB5353.jpnprd01.prod.outlook.com>
-References: <HK2PR04MB3891D1D0AFAD9CA98B67706B810B9@HK2PR04MB3891.apcprd04.prod.outlook.com>
- <TYAPR01MB5353A452BE48880A1D4778B5900C9@TYAPR01MB5353.jpnprd01.prod.outlook.com>
- <CAKYAXd9BO1LipYx1EtOK=Uo11dY3beBc_0mh_t=opWXPibutBQ@mail.gmail.com>
- <HK2PR04MB389107EDB293B91E9750CEEE81119@HK2PR04MB3891.apcprd04.prod.outlook.com>
-In-Reply-To: <HK2PR04MB389107EDB293B91E9750CEEE81119@HK2PR04MB3891.apcprd04.prod.outlook.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-suggested_attachment_session_id: 1e844303-d81c-f841-f417-3ca11b29e18d
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=dc.MitsubishiElectric.co.jp;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 84707fd1-7faa-434c-a3dd-08da07fb2ec0
-x-ms-traffictypediagnostic: TYAPR01MB2367:EE_
-x-microsoft-antispam-prvs: <TYAPR01MB2367917F463C9A4FBB76095790129@TYAPR01MB2367.jpnprd01.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 1P8zze68Hl7lGVPJnhgGiXXc2xYSU0PCcuZnsBwGAsFI5d01Q8GfUP/oBlcxw9T6WkEP9AelmygALZp1nDZfn51pkMq80TktpGESsHA1VQ9ZzgObNZS5MfxQLqvo0n64vmJzUt8ttDaO2OYFtHKtj9dofOiwKomrHZkD/MYJXQ8J3IGpKrjcuNRj2fulFQKhdeXDRi7nzauTkhsK8BxbWXr7B7VSD2NRoVBP45NgmaJmCmLNJYT1GpU3jYBskDMr6suCSI1D1dsdInmEjGFeIVFy497LcBxx45lD+YaW/6uvq3YFJBjCfZYKjJQErQRh7WphSG4OK7PCHiw7t+BG3epJl/axsUNKWIRPxC3S25DsG6119gYOnEgfcFgmtH0lVSvWgCh4UuuZn5jRRDcTpQz6XSDAR+rWw0/TcaFH7Tzc7QtDgMMelDRdixQ4ZXbG9kN7aWex+5Ru/rBI6NN3QnI14S6LDqUzyGbDrVQpvqjODiTTdaHsSAMfSSCVuLW0Xd5bp2HwNk/Z3xMj1XC13Hvw68wG2DIeQykkLmX4/7ZK0vPeCz416LYRvUU4A/+t6+BToX5lyyOQTAEkErLV+HMcYpnTILaNfo+BsUhhQgbdd4V24LLTV7oBh2J6H5DT0A16H8TjGvEtVbUYzdn1EszgN5EU35hgeB5mbxITyWJTTUXQW/XOHNGvqjfx+8Fg0HIOik+nTDeUWnA2YgIuWfE2/q8oHaEfAojixnTpJVcy9Mu00nDfRkyEsSl5QXt0
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYAPR01MB5353.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(122000001)(316002)(110136005)(6506007)(7696005)(54906003)(5660300002)(33656002)(38070700005)(66446008)(64756008)(9686003)(66946007)(8676002)(38100700002)(4326008)(66476007)(66556008)(91956017)(55016003)(71200400001)(76116006)(508600001)(86362001)(4744005)(186003)(8936002)(2906002)(83380400001)(52536014)(95630200002);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-2022-jp?B?emNhV3FHSHNsUTlWVWozT3F5TWNlL3lLa1hJcm1JbUMwVWhqOTM5dS83?=
- =?iso-2022-jp?B?UUZ6SGZGTTFKcHJXYnZUYzd6YUlHUlhMT1B6ZmtIcTAyczVjNmZNaXd0?=
- =?iso-2022-jp?B?QlNFR0ZHT3VkYlZvSmVSQnFsWld4OGV3WTd4WXRuV0E3eXAxZHRLU2xh?=
- =?iso-2022-jp?B?S1hWbWhOek5RK3FlMkRxMlBrdG5RWmZrTDdRRVJoOUdESDNqWi9aTmRF?=
- =?iso-2022-jp?B?L1luWkZrNDllaG1lQlNCWUkyT01IaEhUdEVrdUliazVhSitpMnJYVHBa?=
- =?iso-2022-jp?B?b0RtaFlkVVBWV05BeVdtZDdZNE1CSGRGYS9ZZGgrelh6TS9yc0lxWEtQ?=
- =?iso-2022-jp?B?NkhSK2pxbXJoTG5RWUpVN25OQlFpVEdGaUZVVFU2c0Q1ajZCS3pWeEJE?=
- =?iso-2022-jp?B?b1c2ZGZDSmlKMEFIRUFvbGFKK1FQK2Q4YzFSSGFBaVdkbU9oVjViZ3Aw?=
- =?iso-2022-jp?B?bmNWbnJZN0xyUVBCN09zSVp4R2txeUs4RlhZUUV6S2xaSUFFVC8wdnBB?=
- =?iso-2022-jp?B?WXRScHM3Q0NTZ0ZBTDB0SGRNbCs1bThBbVp3ZG5lKzBwWm9SVnVxMDN0?=
- =?iso-2022-jp?B?Qm43MTZYZHdwZWNaczN5djRkVUNUdjQyWml0cGlRUGl2c2dNT1A1Wis1?=
- =?iso-2022-jp?B?a1F4ZEhISXFINFltRnI1Z3krTVdJSlgxUUxBcHZROUpMY1VxNkJYYlpT?=
- =?iso-2022-jp?B?TTZDaFVXZEhtbUEvaHk5ZzJNd0FMWU9XZEdTMVpYQmdaVkt1R1hwUUFC?=
- =?iso-2022-jp?B?UjVITEVWK2lGMTIwaWFwWjZLQXdTTjM3UTNlQUI1RXMrTEc4NFpQa2c5?=
- =?iso-2022-jp?B?WjFjZUJFR2dSNFMwbzh6dkd6eGVBNlYvTDJnb1hsU2Vsc0IrM29KTjM0?=
- =?iso-2022-jp?B?YUptdldzM1B4UFRsTW94cCsvbGhzSjN0MUxUZHhIdW1kWFFDRkI2dk1q?=
- =?iso-2022-jp?B?UDB1dTF2cHFjb1BlaHZKQ0tjNDVKVC9zZ0t5c1NBbTk3RStyRThJMk0y?=
- =?iso-2022-jp?B?TGp6UHBVQkU1M0Jwbm41MklnSDlqRjVxRUFkRGpVc0pJd1VoNDJnQnNt?=
- =?iso-2022-jp?B?NWYxNUJnUmJDZnBHUmg3aVdCWElXNWo3OVh5M2RQcnpONHJNSzRDK0p1?=
- =?iso-2022-jp?B?Q24rNngycFpYdWRLRGZYZVhqQ0QwMG1FbDdDYmNEOXNSSTRLaXQ0T2tT?=
- =?iso-2022-jp?B?UkVTZUc4TTRiblpzZ3pXUk1lYllmUzJ4cUJIQmZMdFJ0Mi91ZjFUTDhs?=
- =?iso-2022-jp?B?Z0hWY25WTmVBLzQ2UjI0dFo2N29Ubmo1VThwZmo1VzREWVBjRnVzT2ZE?=
- =?iso-2022-jp?B?Q3JweHg3bEdLd2V6aGlubTlQWEpERFVJTkxtWkNTTHA4V0l3V3pJUlVL?=
- =?iso-2022-jp?B?UWtTNjc0TjIrT2hjNlJrNEV2SXdkMDRjM1VGMnkwVlF5TWU3QTIyN2FQ?=
- =?iso-2022-jp?B?bmhqMCtoSjUzV3B5dTVzQlloTW5CcWFqeFZ2dXpQS0dyVDFTREJ3STVk?=
- =?iso-2022-jp?B?NTU3eHNtbWYxL2IrT1RTcjFYUzBLdHdweG9NT1lQNXplaFp0eUZGRTFF?=
- =?iso-2022-jp?B?TUFFZWxQK0FlV3NKOFBjbGhFaGk2VHprc1JhZTFpa0xOSmhVM2VUY1NX?=
- =?iso-2022-jp?B?U1dSZ0VuM0orUXRvVEVwbERCL0JFZkQ2c2FCdURBLzVNMXE1Rithazh4?=
- =?iso-2022-jp?B?d05WVWhSRWwySlc3K1VuSzBqVFdaWXZ1b0g3Ylc3Wm9HdzE0a0Z0TDBI?=
- =?iso-2022-jp?B?VVlJNVZzcnFDY29wZmJOeFdxTXZhYXcxWHFHWFBOM01ucDE1eVk2N1c1?=
- =?iso-2022-jp?B?bFpFSmNGNk5EVHMxbER3OURrTVZuQW42akVFbVNnMi9SSFFYTlB0MDMy?=
- =?iso-2022-jp?B?ZjRoc1NzcjRpc25YNHk3YWNBSU82eENvN1FkSytvT0NxUFFBWGVBVUFX?=
- =?iso-2022-jp?B?MXNGbytycWFBalR2MjRxbTZaakROdTRhOFgweUZtK1RsbmFXbHBPSVpY?=
- =?iso-2022-jp?B?N3dwWHZ6a2hGT3hkTnZOOFNFamZhTXpRZHFpNE84RnNmWlhidmRkL3Fo?=
- =?iso-2022-jp?B?V3QxYVJjZS9ycGlIcWZnaUVmbWFWMmpXWVJ1TmMrSDVzdWp2T1oxZ1k5?=
- =?iso-2022-jp?B?VWxFeHlKZFZkODlPUWwvQkk2UmJhUFFYN0tRbUlkRmpRNUdHMHdjaWJZ?=
- =?iso-2022-jp?B?VVV5OFA5eTUzZUhJUWlmWTYrL2JUb3RK?=
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 17 Mar 2022 05:52:08 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 644241BB7B0;
+        Thu, 17 Mar 2022 02:50:52 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 21BEE210FD;
+        Thu, 17 Mar 2022 09:50:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1647510651; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=sl9yNVJ6/P4Vyfi+qHUCEit0jH2LKpoB2KQF+Tc6tnM=;
+        b=dcmp7yOwD7AOtJMsaAns4wA7hQEUAiFkThaJYczqMTZlUtkxC+90gQa1QlCLXlLBK96bS/
+        MKImO1uf0uqUWZ1IH9aT2rXx5Zw3/mmI2JNcw4w6NJ58esDEz8+vr6mIb5flDcNxeE6cVd
+        8guNWVfTIZX1vNXi89s4izlfTWOBjcc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1647510651;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=sl9yNVJ6/P4Vyfi+qHUCEit0jH2LKpoB2KQF+Tc6tnM=;
+        b=a/xArFO3uHBXHpe0dULk2KaguXIOAokydQZC57JAtvVvPkjylaw6qTCx7JVXa3sqF61ru0
+        VzYIDrM/ILY+kLBw==
+Received: from vasant-suse.fritz.box (unknown [10.163.24.178])
+        by relay2.suse.de (Postfix) with ESMTP id 7B7B5A3B88;
+        Thu, 17 Mar 2022 09:50:50 +0000 (UTC)
+From:   Vasant Karasulli <vkarasulli@suse.de>
+To:     David Disseldorp <ddiss@suse.de>, linux-fsdevel@vger.kernel.org
+Cc:     Namjae Jeon <linkinjeon@kernel.org>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
+        Vasant Karasulli <vkarasulli@suse.de>
+Subject: [PATCH v5 0/1] exfat: allow access to paths with trailing dots
+Date:   Thu, 17 Mar 2022 10:50:46 +0100
+Message-Id: <20220317095047.11992-1-vkarasulli@suse.de>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-X-OriginatorOrg: dc.MitsubishiElectric.co.jp
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYAPR01MB5353.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 84707fd1-7faa-434c-a3dd-08da07fb2ec0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Mar 2022 09:47:42.8116
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: c5a75b62-4bff-4c96-a720-6621ce9978e5
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: egTDhGywEx2NQFFRODerLKBeHW2N0+Tm4IYWKJ13EC5yJMxAromZPmCqnTFp03+A6cBieM9WE949fDQe0WVRqg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB2367
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Yuezhang.Mo=0A=
-=0A=
-> exfat_clear_volume_dirty() is only called in sync or umount context.=0A=
-> In sync or umount context, all requests will be issued with REQ_SYNC rega=
-rdless of whether REQ_SYNC is=0A=
-> set when submitting buffer.=0A=
-> =0A=
-> And since the request of set VolumeDirty is issued with REQ_SYNC. So for =
-simplicity, call sync_dirty_buffer()=0A=
-> unconditionally.=0A=
-=0A=
-REQ_FUA and REQ_PREFLUSH may not make much sense on SD cards or USB sticks.=
-=0A=
-However, the behavior of SCSI/ATAPI type devices with lazy write cache is=
-=0A=
- - Issue the SYNCHRONIZE_CACHE command to write all the data to the medium.=
-=0A=
- - Issue a WRITE command with FORCE_UNIT_ACCESS (device does not use write =
-cache) for the boot sector.=0A=
-This guarantees a strict write order.=0A=
-=0A=
-BR=0A=
-T.Kohada=0A=
+This is the version 5 of the patch that introduces
+a new exfat mount option 'keep_last_dots'. In this
+version commit message of the patch is improved
+according to the review comments in
+https://lore.kernel.org/linux-fsdevel/20220311114746.7643-1-vkarasulli@suse.de/T/#t
+
+Version 4 of the patch:
+https://lore.kernel.org/linux-fsdevel/20220316151846.12685-1-vkarasulli@suse.de/T/#t
+
+Vasant Karasulli (1):
+  The Linux kernel exfat driver currently unconditionally strips
+    trailing periods '.' from path components. This is done
+    intentionally, loosely following Windows behaviour and
+    specifications which state:
+
+ fs/exfat/exfat_fs.h |  3 ++-
+ fs/exfat/namei.c    | 50 ++++++++++++++++++++++++++++++++-------------
+ fs/exfat/super.c    |  7 +++++++
+ 3 files changed, 45 insertions(+), 15 deletions(-)
+
+
+base-commit: ffb217a13a2eaf6d5bd974fc83036a53ca69f1e2
+prerequisite-patch-id: aa89fed0f25e0593bd930cb1925a61318970af3b
+prerequisite-patch-id: b82d57cf11a808fd91ebce196ad90742f266ae39
+prerequisite-patch-id: 8fb922007d8da42e7d8915ad4192c3a881384720
+prerequisite-patch-id: 80a740f0cc838892abca091667fa5b407611ea39
+prerequisite-patch-id: 70a6044affdfcfba97c7651fb2150fa42cf01805
+prerequisite-patch-id: a017bdbdcc66df4dd3a66ba03a37714b8e68d253
+prerequisite-patch-id: 52771ab4aa8cbdafed3594d7d9a0c75b8a53f6e4
+prerequisite-patch-id: fe388ead9e78b2e67bfb1ddfd5cd60a496c12d1c
+prerequisite-patch-id: fb7ef4d34a652d20b3c6edefaf72ca6298d1e8f4
+prerequisite-patch-id: 4194bee4bb9ee6eaeb6ee1ddd82cb84cdcab8d38
+prerequisite-patch-id: e178f0c524a65e855ffb7861f1b9a9b2d56a2428
+prerequisite-patch-id: e35925ec691c2fa8c167c19844cb40ef090845aa
+prerequisite-patch-id: 6f54f7183bb0c519f9f76d8645da5a881ca71458
+prerequisite-patch-id: b2d2dc9c206fbfc0c80f1be3d9ab031ba2dfd279
+prerequisite-patch-id: 47a6c9093808e07f6ff561d011566a4ee4e7465a
+prerequisite-patch-id: 70b5f29b3208d4e0b8bd27900618aeaba901d19a
+prerequisite-patch-id: 56b6ad48cc9999893d34e7378ad1bbad293ca52b
+prerequisite-patch-id: 3318f5c0bb1dac4c932e892329c52c1a118633b4
+prerequisite-patch-id: e6aa617911d8647d1b7764c6916e3a01ffed1371
+prerequisite-patch-id: 60f8292acf6a200ce4b8f0080a4e7e6429f0f78f
+prerequisite-patch-id: e2f2b35b6e7c1aaa6a9b22e563c0f753df5fbe88
+prerequisite-patch-id: 70880c12ac3be19b196165cf4a06baf3b6074072
+prerequisite-patch-id: 55d302be95eccc06e20360e5b392f72e7249ea76
+prerequisite-patch-id: 0fc645d44f0354b6217c3a713d1ac144de7c786f
+prerequisite-patch-id: ebf526d3226975950e8997ed5f83f9b11d631aa5
+prerequisite-patch-id: ddb73fe6ea6d1e72b379f480b47ec60162352eb7
+prerequisite-patch-id: 091d1b77db64fcd1832dbe1db820fd4685f5651b
+prerequisite-patch-id: 30006d3af6ae601664ddee4c468520dc800b27bf
+prerequisite-patch-id: fcfb1b6ee7b1c7ab5cdd02d71113551c710a21ca
+prerequisite-patch-id: 8f225e2d574ffabb6ed842e92543fd0aab52fa19
+prerequisite-patch-id: cf3c7778997c4ca97ab08b195cfe861c565f504c
+prerequisite-patch-id: 0757c9df4b98726a778f260c4c8ac12f764a2a66
+prerequisite-patch-id: 60d1cbbfad4650cce75ffea3253629e8bd9a512c
+prerequisite-patch-id: 6657313f73334d9d56215ce286cb0d96674a9c9d
+prerequisite-patch-id: 352c99d07523c55e000b9df37a938da22bfedb9f
+prerequisite-patch-id: 27176966d0b2d1b98804f3de159a39fcbff0dc9a
+prerequisite-patch-id: 6d0311021d93c54e5a306af2d40f43b482a7ee66
+prerequisite-patch-id: b5d02eeea8fd63acf76bf7ad5235c20e68858d16
+prerequisite-patch-id: f169a13a30c2b09839055a91dd8853c476e8c3f7
+prerequisite-patch-id: 14df2ff4090dc2b7518be5a48feec7711628e0d4
+prerequisite-patch-id: f4d3503460646e4accd4c54f44f9593816fc62a0
+prerequisite-patch-id: 9205bc688a48d7ab778b6bd8454890e1fb7cc039
+prerequisite-patch-id: 48513af66ec62d400de1d559f7e75327610b5686
+prerequisite-patch-id: 2169938ae51c00399f010f88027bf70b05a1d90f
+prerequisite-patch-id: 2b9450e957e69b30414bbf0e1cc3caebd334f654
+prerequisite-patch-id: 0c7d6e599af288ca298bbc59a08246715982a7ab
+prerequisite-patch-id: a2c1416d88c502ef5b7d621325e2f6712e56a3f4
+prerequisite-patch-id: bb6d17d263aa6dab21e87887c98b535595e25c1f
+prerequisite-patch-id: f7fa011b9e279104d8c8e2bf09fb5d3ab3f34b67
+prerequisite-patch-id: 8358ac66a9d65695fb2bc02637cfddf4695ddeaa
+prerequisite-patch-id: 665d9352bf8e6ffc4b7c0ff25659468b5262d4e7
+prerequisite-patch-id: 307e544949317538681dc124fdf2b33df538d897
+prerequisite-patch-id: 31616804feb9f7b6d5e010d5306b0304005d5efe
+prerequisite-patch-id: f8065fb1765262737c2222ad80d2f3d60454e955
+prerequisite-patch-id: d99c3d909e24f1ca3269c1e08034f7936f3a5622
+prerequisite-patch-id: 0e1efe816412e68314ec226f80b2ded7d2fb33a0
+prerequisite-patch-id: 1cf9b69fe0847e9961756cbd69858aecbdab9d1e
+--
+2.32.0
+
