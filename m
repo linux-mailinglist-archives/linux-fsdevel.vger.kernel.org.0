@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F0224DBC7B
+	by mail.lfdr.de (Postfix) with ESMTP id A9AA24DBC7C
 	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Mar 2022 02:28:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1358434AbiCQB3G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Mar 2022 21:29:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41178 "EHLO
+        id S1358318AbiCQB3P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Mar 2022 21:29:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358383AbiCQB25 (ORCPT
+        with ESMTP id S1358402AbiCQB26 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Mar 2022 21:28:57 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2246E1E3F5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Mar 2022 18:27:20 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id z92so3851911ede.13
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Mar 2022 18:27:20 -0700 (PDT)
+        Wed, 16 Mar 2022 21:28:58 -0400
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DE221F630
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Mar 2022 18:27:29 -0700 (PDT)
+Received: by mail-ed1-x530.google.com with SMTP id x34so3647939ede.8
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Mar 2022 18:27:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=VOxKsTGlBiXPbLWsRjfTqw/sHWeUi1uspD6WChZvBGc=;
-        b=LNQndeOSXW/bAWh7JNokNGhZ5eqGvlPxbUsfct7uX8e652+AZTZFl6ZnbKhzWsZnR1
-         F98RG8Wz1O2VsVCedS3lzBDewtqbBDLRgtzBBR4D0o7EZvQZNJjxyuAKcQhdfpXgs2kj
-         KIIyEkSMSMqcOZyYfIPhbZTyng29T83GGHYU2CJJoH9IK8oJWnuaI8G4WSTUQr7ENP5L
-         TNY2t+1Q1U69nlq1sH6hKoMoKg1JCpnaIZSqb3up1G95PvRLagrF6NifKl20EyuOChZ9
-         J7dAHfJVKkdxD77XohB1NZlmtuNEsAZkWX2IGX4KCaGAcTbIRASL5NQ6BYDQFt4YerPo
-         B6Cw==
+        bh=LlTH+G09rcVN0vQqtM5Msv7WROSZnwcaeBZzTdA/4gI=;
+        b=Gta4TIZXLILirF7gfnrO7YgWEjB3SLjF0xn5PYqWfkcU3f2rCNOTAwttJ5RaOUYcEN
+         IL/KnKuzVML6tmQ5vNx6Ap7s9sIoztvAx0gKaohJj92FgLpdit9Te1NW94nXasoZy5Fb
+         Qt84EU51en3oFiIXYSC+LJ7o492gVsRWdYkYBopUBjvX5GKfniK5s/L+OJvs3ryFORot
+         iXYxbSOi+POCJUOGGgHqeR5CFkYkdDqODzhAKpdLp8MIIOb7aRdnaFMMtsVtHoWABfka
+         4LyicoGjRjJle5hDeV8yCwzQtUfAGLoC+FEpsveRZo15DyCtpJqy1/TCHChSDv3/XpNE
+         /R/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=VOxKsTGlBiXPbLWsRjfTqw/sHWeUi1uspD6WChZvBGc=;
-        b=u70qVtZ4xC/+Gjhb2RTpRvSzyxB+HLkKe9UgBA08fiSj9qV2ZLYUHjRB+pvBKhFpPx
-         Rk7ldEhUPtXVHNcAG3fp9YSA5HrEP3Cpv+MhvSd8nRCvtbn5trMu/Dp0LCPhybIgCxtr
-         isoXPKsZ/bQFmKytKdWiqPn2Qngt/IjdAIdUEafFvnvs30JXGlSlb6b8c8wMMZVx+NbR
-         Tg6D7T88nDcHCfNfmOoG+EM52JTq+1n2EHOfHaW/CWwqEKe2cW+8ZvWMQLhW+HpSHlFZ
-         k8/0kYQ1GssX8cgoH6KnTAHiFJyfpCfFI2K36s1MmJbOo9+pljEpEx7KYDS0Z3HD4wC0
-         raIQ==
-X-Gm-Message-State: AOAM5311Tu2MPFuoGp8mF5aTzSaELWVUH3QgPjeTEZBeFXZtkPpMgMjz
-        uP7V48awilxkUxEiciwezx+WQcSSVFU7vGy93pHMw+FTXg==
-X-Google-Smtp-Source: ABdhPJzKzxlZ+0pm3CY5Kl7j8CFXMcoRrP56pFWJh+04iR0sxvt0PPoz+ZQBE4MeZ3T3Tg/mmXPL96Pxy2osfTaCu6E=
-X-Received: by 2002:a05:6402:1746:b0:418:d816:14e0 with SMTP id
- v6-20020a056402174600b00418d81614e0mr2016945edx.340.1647480439041; Wed, 16
- Mar 2022 18:27:19 -0700 (PDT)
+        bh=LlTH+G09rcVN0vQqtM5Msv7WROSZnwcaeBZzTdA/4gI=;
+        b=a7VoprLra9bbxHKSjLq9ZKZHCpfzKG9Qrh4R664KIgEYLwhXZIaH8D3WVf6eH1gg7O
+         NmHJs3OccFBILn/jT83ui6FwEoV9A7FUpjiOkwXkjYIm9HxwOCmBQRJ64Vn0MkkWybH/
+         Y4qDe373xuf9MJJsn+jK5E0lMDGDWfL+nqTKDZrwJcUEG8oXbEaYME7M2f49tJtBwFK2
+         +6s8caqKHEDFQANvTlDFwDbfWAQlCjEf/xb/2ugj7J8mCurtc68AcvHevZWCyGM4pJA5
+         pd8hUmMtWDQvuoXebEWICWjFmSU/Y6jsvTfC2QeIlKrMzufeKVHfBm1oLZvcKH7mYvua
+         6Pmg==
+X-Gm-Message-State: AOAM5314YjcyPtSBt+DSdOfF+HirVDkZiVhI3qcecx0AoRN8r7UUF0yk
+        5xUFyVIPYwOe4Dl3TiTk0iThR4F8wyH1CytE9IAw
+X-Google-Smtp-Source: ABdhPJyQf6Sx+VLp9Inh3suxXELVVTMqKA2vmRoPnOq/6Us7RHLzOl0j0BC6mxnVRiSybuRb3t6MQT+Nyca7bV1qfBA=
+X-Received: by 2002:a05:6402:27ca:b0:418:93fe:da71 with SMTP id
+ c10-20020a05640227ca00b0041893feda71mr1941793ede.409.1647480447687; Wed, 16
+ Mar 2022 18:27:27 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220221212522.320243-1-mic@digikod.net> <20220221212522.320243-11-mic@digikod.net>
-In-Reply-To: <20220221212522.320243-11-mic@digikod.net>
+References: <20220221212522.320243-1-mic@digikod.net> <20220221212522.320243-12-mic@digikod.net>
+In-Reply-To: <20220221212522.320243-12-mic@digikod.net>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 16 Mar 2022 21:27:07 -0400
-Message-ID: <CAHC9VhTSTkOLx_CfB9DsG1GqZm87o2Ds0urZv+gS+sA4gMjfFA@mail.gmail.com>
-Subject: Re: [PATCH v1 10/11] landlock: Document good practices about
- filesystem policies
+Date:   Wed, 16 Mar 2022 21:27:16 -0400
+Message-ID: <CAHC9VhQM99=OVFBcpO72QM-9NSk5dBXy3_jVrwmG304ugjzSdQ@mail.gmail.com>
+Subject: Re: [PATCH v1 11/11] landlock: Add design choices documentation for
+ filesystem access rights
 To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
 Cc:     James Morris <jmorris@namei.org>,
         "Serge E . Hallyn" <serge@hallyn.com>,
@@ -82,13 +82,12 @@ wrote:
 > From: Micka=C3=ABl Sala=C3=BCn <mic@linux.microsoft.com>
 >
 > Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@linux.microsoft.com>
-> Link: https://lore.kernel.org/r/20220221212522.320243-11-mic@digikod.net
+> Link: https://lore.kernel.org/r/20220221212522.320243-12-mic@digikod.net
 > ---
->  Documentation/userspace-api/landlock.rst | 21 +++++++++++++++++++++
->  1 file changed, 21 insertions(+)
+>  Documentation/security/landlock.rst | 17 ++++++++++++++++-
+>  1 file changed, 16 insertions(+), 1 deletion(-)
 
 Reviewed-by: Paul Moore <paul@paul-moore.com>
-
 
 --
 paul-moore.com
