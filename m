@@ -2,117 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AD2DF4DCF75
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Mar 2022 21:37:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E51D54DD007
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Mar 2022 22:16:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229691AbiCQUjA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Mar 2022 16:39:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48914 "EHLO
+        id S230179AbiCQVRq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Mar 2022 17:17:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229760AbiCQUi7 (ORCPT
+        with ESMTP id S230135AbiCQVRq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Mar 2022 16:38:59 -0400
-X-Greylist: delayed 165 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 17 Mar 2022 13:37:42 PDT
-Received: from p3plwbeout23-06.prod.phx3.secureserver.net (p3plsmtp23-06-2.prod.phx3.secureserver.net [68.178.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AE33EAD
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Mar 2022 13:37:42 -0700 (PDT)
-Received: from mailex.mailcore.me ([94.136.40.145])
-        by :WBEOUT: with ESMTP
-        id UwpknH3Fjx8HrUwplnnUjh; Thu, 17 Mar 2022 13:34:57 -0700
-X-CMAE-Analysis: v=2.4 cv=Mo6XV0We c=1 sm=1 tr=0 ts=62339b71
- a=7e6w4QD8YWtpVJ/7+iiidw==:117 a=84ok6UeoqCVsigPHarzEiQ==:17
- a=ggZhUymU-5wA:10 a=o8Y5sQTvuykA:10 a=FP58Ms26AAAA:8 a=NEAV23lmAAAA:8
- a=ryZrMDmbnnAo0_BphGwA:9
-X-SECURESERVER-ACCT: phillip@squashfs.org.uk  
-X-SID:  UwpknH3Fjx8Hr
-Received: from 82-69-79-175.dsl.in-addr.zen.co.uk ([82.69.79.175] helo=linux.fritz.box)
-        by smtp12.mailcore.me with esmtpa (Exim 4.94.2)
-        (envelope-from <phillip@squashfs.org.uk>)
-        id 1nUwpj-0005dN-QB; Thu, 17 Mar 2022 20:34:56 +0000
-From:   Phillip Lougher <phillip@squashfs.org.uk>
-To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        squashfs-devel@lists.sourceforge.net
-Cc:     phillip.lougher@gmail.com
-Subject: [ANN] Squashfs-tools 4.5.1 released
-Date:   Thu, 17 Mar 2022 20:34:46 +0000
-Message-Id: <20220317203446.22444-1-phillip@squashfs.org.uk>
-X-Mailer: git-send-email 2.34.1
+        Thu, 17 Mar 2022 17:17:46 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65F0A1A7770;
+        Thu, 17 Mar 2022 14:16:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=mQVi/8AUGelccD6B82H7IX/Q4dG4lWAcNI5AMJjQ7Ww=; b=hJe+x6ypYZMPRYM+nzGb+mzE3o
+        M4G15eQPY+WAdTrlxvOCmJxVkqSZvod7K8f+G3t1ZECiN/R9M9rrWjBJymo282e1laNhQutHt8jE3
+        eaJAmEcmTMVF3VAi8UZALMXOSsqaA2iDoghRHxTzSil6AMVmdndedIPoecexanjGyfPJuviG1gGce
+        l8MIKXuzvBfPYYSDo3bv47PYE0zQDThYogTCLghFBfK6Ph6cp7lYNFQQfMq65hF6Vpfjmw9zB806A
+        B4Wf4GAQMQ598uNZ+qDtoA7Wxj+OJFt27QVkKml6t4YMiBuC1wUNAW/XEYNwij4+//zDgcsGCDI4y
+        TLkcR+GQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nUxTo-007KMx-A5; Thu, 17 Mar 2022 21:16:20 +0000
+Date:   Thu, 17 Mar 2022 21:16:20 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Brian Foster <bfoster@redhat.com>, Linux-MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Hugh Dickins <hughd@google.com>,
+        Namjae Jeon <namjae.jeon@samsung.com>,
+        Ashish Sangwan <a.sangwan@samsung.com>,
+        Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        linux-ext4@vger.kernel.org
+Subject: Re: writeback completion soft lockup BUG in folio_wake_bit()
+Message-ID: <YjOlJL7xwktKoLFN@casper.infradead.org>
+References: <YjDj3lvlNJK/IPiU@bfoster>
+ <YjJPu/3tYnuKK888@casper.infradead.org>
+ <CAHk-=wgPTWoXCa=JembExs8Y7fw7YUi9XR0zn1xaxWLSXBN_vg@mail.gmail.com>
+ <YjNN5SzHELGig+U4@casper.infradead.org>
+ <CAHk-=wiZvOpaP0DVyqOnspFqpXRaT6q53=gnA2psxnf5dbt7bw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Mailcore-Auth: 439999529
-X-Mailcore-Domain: 1394945
-X-123-reg-Authenticated:  phillip@squashfs.org.uk  
-X-Originating-IP: 82.69.79.175
-X-CMAE-Envelope: MS4xfAQABWY7q5ZTXBs++O6iHQlLRByHuBk0QyCqXxGP8lNZr9//PemnJTk0UQT+XFhj2lMNOWSYzA5RMmjLEFYH5RftUDoRhbMEGKWCS++WEl6jg/VsZFI4
- AgIlBbdRqAogkLaLaCAga0BPcIB0CjW8QJLRr8fBFXWGKrGTzT1oXE8jD7eCilI0Dn7Zt/NZgFklOHgqSwSEN06k5NgvTeafJ6JK13gIN4udqyt08XcbdLR2
- tw7a27aXv3TRJdpU2gBvQw==
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wiZvOpaP0DVyqOnspFqpXRaT6q53=gnA2psxnf5dbt7bw@mail.gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Thu, Mar 17, 2022 at 12:26:35PM -0700, Linus Torvalds wrote:
+> On Thu, Mar 17, 2022 at 8:04 AM Matthew Wilcox <willy@infradead.org> wrote:
+> >
+> > So how about we do something like this:
+> >
+> >  - Make folio_start_writeback() and set_page_writeback() return void,
+> >    fixing up AFS and NFS.
+> >  - Add a folio_wait_start_writeback() to use in the VFS
+> >  - Remove the calls to set_page_writeback() in the filesystems
+> 
+> That sounds lovely, but it does worry me a bit. Not just the odd
+> 'keepwrite' thing, but also the whole ordering between the folio bit
+> and the tagging bits. Does the ordering possibly matter?
 
-I'm pleased to announce the release of Squashfs tools 4.5.1.
-This is a point release which adds Manpages, a fix for
-CVE-2021-41072, and the usual minor improvements and bug fixes.
+I wouldn't change the ordering of setting the xarray bits and the
+writeback flag; they'd just be set a little earlier.  It'd all be done
+while the page was still locked.  But you're right, there's lots of
+subtle interactions here.
 
-The release can be downloaded either from Sourceforge, or GitHub.
+> That whole "xyz_writeback_keepwrite()" thing seems odd. It's used in
+> only one place (the folio version isn't used at all):
+> 
+>   ext4_writepage():
+> 
+>      ext4_walk_page_buffers() fails:
+>                 redirty_page_for_writepage(wbc, page);
+>                 keep_towrite = true;
+>       ext4_bio_write_page().
+> 
+> which just looks odd. Why does it even try to continue to do the
+> writepage when the page buffer thing has failed?
+> 
+> In the regular write path (ie ext4_write_begin()), a
+> ext4_walk_page_buffers() failure is fatal or causes a retry). Why is
+> ext4_writepage() any different? Particularly since it wants to keep
+> the page dirty, then trying to do the writeback just seems wrong.
+> 
+> So this code is all a bit odd, I suspect there are decades of "people
+> continued to do what they historically did" changes, and it is all
+> worrisome.
 
-https://sourceforge.net/projects/squashfs/files/latest/download
-
-https://github.com/plougher/squashfs-tools/archive/refs/tags/4.5.1.tar.gz
-
-A summary of the changes is below.
-
-Phillip
-
-	1. Major improvements
-
-		1.1 This release adds Manpages for Mksquashfs(1), Unsquashfs(1),
-		    Sqfstar(1) and Sqfscat(1).
-		1.2 The -help text output from the utilities has been improved
-		    and extended as well (but the Manpages are now more
-		    comprehensive).
-		1.3 CVE-2021-41072 which is a writing outside of destination
-		    exploit, has been fixed.
-
-	2. Minor improvements
-
-		2.1 The number of hard-links in the filesystem is now also
-		    displayed by Mksquashfs in the output summary.
-		2.2 The number of hard-links written by Unsquashfs is now
-		    also displayed in the output summary.
-		2.3 Unsquashfs will now write to a pre-existing destination
-		    directory, rather than aborting.
-		2.4 Unsquashfs now allows "." to used as the destination, to
-		    extract to the current directory.
-		2.5 The Unsquashfs progress bar now tracks empty files and
-		    hardlinks, in addition to data blocks.
-		2.6 -no-hardlinks option has been implemented for Sqfstar.
-		2.7 More sanity checking for "corrupted" filesystems, including
-		    checks for multiply linked directories and directory loops.
-		2.8 Options that may cause filesystems to be unmountable have
-		    been moved into a new "experts" category in the Mksquashfs
-		    help text (and Manpage).
-
-	3. Bug fixes
-
-		3.1 Maximum cpiostyle filename limited to PATH_MAX.  This
-		    prevents attempts to overflow the stack, or cause system
-		    calls to fail with a too long pathname.
-		3.2 Don't always use "max open file limit" when calculating
-		    length of queues, as a very large file limit can cause
-		    Unsquashfs to abort.  Instead use the smaller of max open
-		    file limit and cache size.
-		3.3 Fix Mksquashfs silently ignoring Pseudo file definitions
-		    when appending.
-		3.4 Don't abort if no XATTR support has been built in, and
-		    there's XATTRs in the filesystem.  This is a regression
-		    introduced in 2019 in Version 4.4.
-		3.5 Fix duplicate check when the last file block is sparse.
-
+I found the commit: 1c8349a17137 ("ext4: fix data integrity sync in
+ordered mode").  Fortunately, we have a documented test for this,
+generic/127, so we'll know if we've broken it.
