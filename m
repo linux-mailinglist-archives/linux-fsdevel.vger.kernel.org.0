@@ -2,142 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 937904DC494
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Mar 2022 12:13:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 848B14DC50F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Mar 2022 12:53:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231905AbiCQLOf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Mar 2022 07:14:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56340 "EHLO
+        id S233139AbiCQLzL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Mar 2022 07:55:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230417AbiCQLOe (ORCPT
+        with ESMTP id S233061AbiCQLzJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Mar 2022 07:14:34 -0400
-Received: from esa6.hgst.iphmx.com (esa6.hgst.iphmx.com [216.71.154.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A9A7ABF47;
-        Thu, 17 Mar 2022 04:13:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1647515598; x=1679051598;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=yUA8asYcx7d/5wUdrrH+aPLbPKwfgFjX7XcFnP97up4=;
-  b=DQoVZ7z1v44JdWlwk73Dvu4rdtJeXmcKmj0FTTcg0uv82qRLLg0uMQFu
-   3U1sTYuH08HUD0Ief8vq5lw8Xdgi7QD999IPOWbmNOCGjGax0OL86d6eZ
-   ltC+umtNu/8ZryhUEs6Il9sJDVtMT4N4jcl5aCpogfIYSWuLpYdLevP+W
-   vvoCr+HtzJJGZBgG2j/qf8evGi1icPdffX11IjNpn8kMRuzBkrHfig13L
-   ByeN7sReMS95BBhcb3UyHWAOhH5cSsRlHH+QKdSsdt1yekP8r2HPL6mKB
-   Aj/c2co7xB+zxUbZIfAqvu/Ye8yJLiu1DwVdCrqWtgYyIzTgjaQ0EhYAB
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.90,188,1643644800"; 
-   d="scan'208";a="196529987"
-Received: from mail-mw2nam12lp2048.outbound.protection.outlook.com (HELO NAM12-MW2-obe.outbound.protection.outlook.com) ([104.47.66.48])
-  by ob1.hgst.iphmx.com with ESMTP; 17 Mar 2022 19:13:09 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=irN+7AZk0z73rXSF6X0nCHpq0DtjlwKeOv0AXVvuuXqZTy7SEro1tMOO5cpzJAYOAsf+3kPDJNuRoN1ysynCELZE6vOTknYk3V5Ri4GxBR8WIHbwY+9cqKUwmVbvMoDocDQN1MRPjeA8v7heBQ5hZAaqy7jnDznts5yETqIdnl9pT0HLrb6g1g25cBqFW3TOxq617w7L/z2/xV/l/56KkdXF/+Yo5ndeBOvQr88IrEcFb19A/PHRXc0yXgK9T/Zzb9n4JcSWiCvENf8aizH1g9xm6zJGvIUGoEd78EJDmJMXbqdutcuwdBQK24GzWXvJ15TpqIyErjSreQ9EbE34jQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=F9l/elPISwXWkNva3uck3M4wJk3AcEB1UNdzWnMjt4I=;
- b=CUX3J7PU/gUq4Y72Ygc6mTNXT2YF2nnKhWk4A+QsnvJin70EUzjt+ze/B0TgppEOjdpiFimiLiTm78zvMkk+r1QeEfyd5qj2dXninefaTGAG2RuD9T/UxUB/b7y6rYw7Lmdsy4XTuaYh4S7MX0X2ZDOPtQITbPkbjWlVvqEQ8lmVQfJ8KuwKdx34mlQaRnnWUBu8UuASfjN2WvWZ2FgkXcVC2y9m7820NaICxL19LvVjZckwtx0KUm/5DYAGi1WcHwKxqJuhpX1yuKXHaSbHiwjOh5IoVRF9DDx/Q0amS9xXslyit5LAGDQxZTjVK4m3ZtSLUFI+FXahvgA8xNgX3Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=F9l/elPISwXWkNva3uck3M4wJk3AcEB1UNdzWnMjt4I=;
- b=cswjnPNjJYQsqWWiSVfqGpnMWc0xA6fq3/6hPtgfCpWWuoABs1X4PPAcmfA0dePhLLvCsJtmwAeM3QuslNkZBaodsHJ2XM4FDH/4jnjQh9R+hSbToDd7oPWotwwA5fsNhDOoo1STJxEr3qVby2LqFHHTM/poZNueESWxSYQ2L5I=
-Received: from SJ0PR04MB7776.namprd04.prod.outlook.com (2603:10b6:a03:300::11)
- by CO6PR04MB8329.namprd04.prod.outlook.com (2603:10b6:303:134::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5038.14; Thu, 17 Mar
- 2022 11:13:07 +0000
-Received: from SJ0PR04MB7776.namprd04.prod.outlook.com
- ([fe80::8d96:4526:8820:de4f]) by SJ0PR04MB7776.namprd04.prod.outlook.com
- ([fe80::8d96:4526:8820:de4f%5]) with mapi id 15.20.5081.017; Thu, 17 Mar 2022
- 11:13:07 +0000
-From:   Naohiro Aota <Naohiro.Aota@wdc.com>
-To:     Dave Chinner <david@fromorbit.com>
-CC:     "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        Filipe Manana <fdmanana@suse.com>
-Subject: Re: [PATCH v2 3/4] fs: add check functions for
- sb_start_{write,pagefault,intwrite}
-Thread-Topic: [PATCH v2 3/4] fs: add check functions for
- sb_start_{write,pagefault,intwrite}
-Thread-Index: AQHYOTj/5+ga/Ksn+E+blZR2k5+Mx6zDQSUAgAAsXAA=
-Date:   Thu, 17 Mar 2022 11:13:07 +0000
-Message-ID: <20220317111306.gpunvfyuvadgguyq@naota-xeon>
-References: <cover.1647436353.git.naohiro.aota@wdc.com>
- <0737603ecc6baf785843d6e91992e6ef202c308c.1647436353.git.naohiro.aota@wdc.com>
- <20220317083420.GA1544202@dread.disaster.area>
-In-Reply-To: <20220317083420.GA1544202@dread.disaster.area>
-Accept-Language: ja-JP, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=wdc.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 0fdd2ad2-34d6-4edf-7824-08da08071d50
-x-ms-traffictypediagnostic: CO6PR04MB8329:EE_
-x-microsoft-antispam-prvs: <CO6PR04MB8329E27E861177B899B356E08C129@CO6PR04MB8329.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: tMEMj7ef6e98TCl5GV+7tXIarMpzjDR64YOj3xu9NmpCskYY0Ly8PacU5vMx7VCL2I+FahKGpWdxMUU1/4pDXFrUL5EuguyC8YChCLPXXoN/cmD1vHMYixf7zHqdxRgyxGyENVZKI8lZqza+XOMiULD2hjaj4CT6Fb3hdUaj46GvoYvezcinSIW0TRJYyY05O3sr/Egbzv5El2/aLxlH4/41598JuPEJmcytw6o6pBqcTffZ+TXNTNDo4/VMpxoU9FG3oLt6mCvKTy48f0Vk1iLpRFmJSW7Q23vlZbQQZybSCrw+ZcVBo8bfROlxd1hQOtsyHJr6vfb/4mAxR3xfliGW4suMH+mL2fH+TSM/FS8Q0JYM/rnmX9vPMe2JbT9OCrac7I3etdm878ahqc19Gq9RPfDXASzkSEphnkmBvjGlxnAaHfOuLrXkBFki9/5U34kXS4MRkCaMyAEMyI4Fmng+p37IH/ltPRxPYnd4tIgBPpAg/w5N7O2mucm6KjkjAa4CfB2f4+TKxCqZhfmHhUTfEaZql5B/m49bzY7TMRdwC+vrEqeBPYZiUpN0rq/DymWO0qXf03QHUVS49tbjyRHzc+i2eLfxwHEC3XYUM/8ueInAySdpgdEDStSVyP1cP7puv8f+jRRCX1li/BovqfY5LfB1+Xsz/zlBUt87ny7UkvgiElki+VJq3SfRMdmkoRUdrG7ZPVd3LoJbl4268Q==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR04MB7776.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(7916004)(366004)(66946007)(54906003)(83380400001)(8676002)(6506007)(64756008)(91956017)(76116006)(33716001)(66446008)(66556008)(9686003)(6512007)(508600001)(66476007)(4326008)(6486002)(71200400001)(26005)(86362001)(6916009)(316002)(186003)(1076003)(8936002)(38070700005)(3716004)(2906002)(38100700002)(82960400001)(5660300002)(122000001);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?hjdfpeQMj1jrAMGDcZF7D0slz6hgIjUrWzHmURE/Irq+vjUdMTAvU88feNRe?=
- =?us-ascii?Q?n2Xw5AStpwzGf9krpp/Yq/iKJsx6VKpEc7t257YNVPJr9NBOraH7qTCYDPbT?=
- =?us-ascii?Q?wtslLFX6zWm6oingLFbEE3QZe1tdA8BB39QIjJXAc/Ycb6H/VEoRFhgnxkhf?=
- =?us-ascii?Q?JHHI+WAo/Ubgwoc4HQfzkUGNIVyu7nRnL4hmVOKu8nWHS+ikzvzsY8Wxr130?=
- =?us-ascii?Q?l2JmYh/QnbhiNSEWlBrf4z7rnh2GnDWwx2Mr14MLiAa4hc1V5uZ7vEQ3rukd?=
- =?us-ascii?Q?f6+5lenkpzrXVMDTfWM/FHqkT+3U70j9Attvs23Fjm6ioMa80lf5WRSlIXuY?=
- =?us-ascii?Q?e3bQEpknys9JP2KC8/AxzWGQ0Kh5WYMuXfIblxgYSvzfUGliZLD8zji8xq9N?=
- =?us-ascii?Q?p26wtfSusqhU88h4cc/bXFpxRtOmGFNRpK1Ibw6BzD/vOL6ULQoGtMYiuOg7?=
- =?us-ascii?Q?ujrBn9korR0Vy1w+d5OYh0h+4mQxPXDKijcEQF1lFzZ5GAE7EgTY+vjTxkll?=
- =?us-ascii?Q?E0HCQox3hLu4BgL9ruevgjvgYwYc/nHouA2N2c3kD2nAKCYWKe0+EKA4VtFk?=
- =?us-ascii?Q?vyYadTG47y1SPJfe++foFIaQnnBWocSSlMPMmYbbJJDgkEJH/1cmt0lrp8ZK?=
- =?us-ascii?Q?UY/Mq8bw3qjr6Amnzy3YzEc4st+8zHH425WTZXnvaSEF29FHNREWW9UrgrNw?=
- =?us-ascii?Q?M3sPt1dBZHO28bI63bX1Gm11Qq2A9Sfds0QLIsMycCS0ij05+sMTwFQ7uTze?=
- =?us-ascii?Q?pk5IJCt8SdW/Bz4WCVAvxNnqzdnr75LxVoI/2L2ZVbCrOVhO1VlIA/Kc2U47?=
- =?us-ascii?Q?+ZjTjsmrhT7Jyd0qTuPIltYCQCkNJbJCp9ckjNYCmLyNrQVIrzpQ8xu9nhjk?=
- =?us-ascii?Q?fVrCi2YkN0X8ftvBatulhrvIcIwjbRLlP1Ay+CF9ujfXFA724/gan4tndKHw?=
- =?us-ascii?Q?eOAyF0HWSvSSQ74vwSW1rjRY93eCWCRZV5CZO/iDmzIqX7IDi0grBbJJpp5N?=
- =?us-ascii?Q?6meif+tpA6ADiJloUmpaJ8w44Gf4bJhK3gwWZzusspwts05uzOLIEMZbag7J?=
- =?us-ascii?Q?Jzocv8A3B3l10GrJcfp/3zdlM1DH4PhmIwtc5qDT8rxzCTZaDpN2VABSrCI0?=
- =?us-ascii?Q?UkEsgOChBkuSK8SbfP1co8IsG2An0L+UwpBVXOFyEhRC1dPqrRThq9m2y6TL?=
- =?us-ascii?Q?B0yFrHjVbEWkx1Bx3uVxtqB52HIgRk+6OYeK5x7dVy621U8+oF82RdA29Rhc?=
- =?us-ascii?Q?a81iEC/prAwRLFGltzc8pAZXT4Gbszwz/fCHX3q5JKnRtOe3lLsWJH4Am6Kp?=
- =?us-ascii?Q?C41z80J+ESpGVmcxbAzoHQjK3QXZ4yWpRFuaM50B+Ye8dPE1zuTjZH3akOs0?=
- =?us-ascii?Q?tOUvKiVRO4tuGinv2S/tqHovOr3h4DQDb7ic4G/i/77bXLfUvG/JBDLpXPHk?=
- =?us-ascii?Q?mScGKPoqXa49pSLAQ3+XHGiK/AP33KOaa5ZgIGohPuxgmVlpCX9hTAwuAh+H?=
- =?us-ascii?Q?JYASTPyHFj0bePlgJXkdkWf7NmV5Ds42OjvrOcht9tvBA09426mTuCj9PW4S?=
- =?us-ascii?Q?F9OnIJ8IMi3G6Hp9nIKk8T+OuQ1fmOSxP0SPYCIgUc54yCNkxhN9OnFSd7nX?=
- =?us-ascii?Q?IeKm6AEtOgbce5jHbLp/Sys=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <926F0169D5A4CA4D9CBB257470CAADAB@namprd04.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Thu, 17 Mar 2022 07:55:09 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CF282628
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Mar 2022 04:53:53 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id E253E1F390;
+        Thu, 17 Mar 2022 11:53:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1647518031; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=1eKLJeRfpPbOGuXYwsOx3RTvTH3V7ea6MyzBnbvGfiU=;
+        b=2j/fZzwYED8nk7HW9+B3xxU2k3HPrtgVyYeGrFtnXDjqXkbn3ZA0TEbLgpkwJIXlQavDtF
+        snftWzsltG7aY1Enn07i1rEZCBUBLmucIga4C2StFkULrkcPJuisTmAAaK+08nPtQZrxK4
+        mCcOLZazozEpFnLFDcmhETIe05RjWqs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1647518031;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=1eKLJeRfpPbOGuXYwsOx3RTvTH3V7ea6MyzBnbvGfiU=;
+        b=SjAhwaKr8infJ7h7eouGAEdS0hGk/HCsc/mQMjOCsHIo4Ja4vLzgEWVXSR7JUpEb/sFyeR
+        vIY7LxNA412L+MCg==
+Received: from quack3.suse.cz (unknown [10.100.200.198])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 7A644A3B88;
+        Thu, 17 Mar 2022 11:53:51 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id C851DA0615; Thu, 17 Mar 2022 12:53:46 +0100 (CET)
+Date:   Thu, 17 Mar 2022 12:53:46 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, Srinivas <talkwithsrinivas@yahoo.co.in>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: Fanotify Directory exclusion not working when using
+ FAN_MARK_MOUNT
+Message-ID: <20220317115346.ztz2g7tdvudx7ujd@quack3.lan>
+References: <1357949524.990839.1647084149724.ref@mail.yahoo.com>
+ <1357949524.990839.1647084149724@mail.yahoo.com>
+ <20220314084706.ncsk754gjywkcqxq@quack3.lan>
+ <CAOQ4uxiDubhONM3w502anndtbqy73q_Kt5bOQ07zbATb8ndvVA@mail.gmail.com>
+ <20220314113337.j7slrb5srxukztje@quack3.lan>
+ <CAOQ4uxhwXgqbMKMSQJwNqQpKi-iAtS4dsFwkeDDMv=Y0ewp=og@mail.gmail.com>
+ <20220315111536.jlnid26rv5pxjpas@quack3.lan>
+ <CAOQ4uxhSKk=rPtF4vwiW0u1Yy4p8Rhdd+wKC2BLJxHR8Q9V9AA@mail.gmail.com>
+ <20220316115058.a2ki6injgdp7xjf7@quack3.lan>
+ <CAOQ4uxgG37z7h-OYtGsZ-1=oQNu-DVvQgbN5wNbLXf0ktY1htg@mail.gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR04MB7776.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0fdd2ad2-34d6-4edf-7824-08da08071d50
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Mar 2022 11:13:07.4376
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: zkdUyEJyYhrqJmhq94amOPk779N0LLQe/JD1LykBhtofuYPWbaSn8KnM5VV5eZlg63mN9mxriKleX4eHNliONg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO6PR04MB8329
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxgG37z7h-OYtGsZ-1=oQNu-DVvQgbN5wNbLXf0ktY1htg@mail.gmail.com>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -145,92 +73,94 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 17, 2022 at 07:34:20PM +1100, Dave Chinner wrote:
-> On Wed, Mar 16, 2022 at 10:22:39PM +0900, Naohiro Aota wrote:
-> > Add a function sb_write_started() to return if sb_start_write() is
-> > properly called. It is used in the next commit.
-> >=20
-> > Also, add the similar functions for sb_start_pagefault() and
-> > sb_start_intwrite().
-> >=20
-> > Reviewed-by: Filipe Manana <fdmanana@suse.com>
-> > Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
-> > ---
-> >  include/linux/fs.h | 20 ++++++++++++++++++++
-> >  1 file changed, 20 insertions(+)
-> >=20
-> > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > index 27746a3da8fd..0c8714d64169 100644
-> > --- a/include/linux/fs.h
-> > +++ b/include/linux/fs.h
-> > @@ -1732,6 +1732,11 @@ static inline bool __sb_start_write_trylock(stru=
-ct super_block *sb, int level)
-> >  #define __sb_writers_release(sb, lev)	\
-> >  	percpu_rwsem_release(&(sb)->s_writers.rw_sem[(lev)-1], 1, _THIS_IP_)
-> > =20
-> > +static inline bool __sb_write_started(struct super_block *sb, int leve=
-l)
-> > +{
-> > +	return lockdep_is_held_type(sb->s_writers.rw_sem + level - 1, 1);
-> > +}
-> > +
-> >  /**
-> >   * sb_end_write - drop write access to a superblock
-> >   * @sb: the super we wrote to
-> > @@ -1797,6 +1802,11 @@ static inline bool sb_start_write_trylock(struct=
- super_block *sb)
-> >  	return __sb_start_write_trylock(sb, SB_FREEZE_WRITE);
-> >  }
-> > =20
-> > +static inline bool sb_write_started(struct super_block *sb)
-> > +{
-> > +	return __sb_write_started(sb, SB_FREEZE_WRITE);
-> > +}
-> > +
-> >  /**
-> >   * sb_start_pagefault - get write access to a superblock from a page f=
-ault
-> >   * @sb: the super we write to
-> > @@ -1821,6 +1831,11 @@ static inline void sb_start_pagefault(struct sup=
-er_block *sb)
-> >  	__sb_start_write(sb, SB_FREEZE_PAGEFAULT);
-> >  }
-> > =20
-> > +static inline bool sb_pagefault_started(struct super_block *sb)
-> > +{
-> > +	return __sb_write_started(sb, SB_FREEZE_PAGEFAULT);
-> > +}
-> > +
-> >  /**
-> >   * sb_start_intwrite - get write access to a superblock for internal f=
-s purposes
-> >   * @sb: the super we write to
-> > @@ -1844,6 +1859,11 @@ static inline bool sb_start_intwrite_trylock(str=
-uct super_block *sb)
-> >  	return __sb_start_write_trylock(sb, SB_FREEZE_FS);
-> >  }
-> > =20
-> > +static inline bool sb_intwrite_started(struct super_block *sb)
-> > +{
-> > +	return __sb_write_started(sb, SB_FREEZE_FS);
-> > +}
-> > +
-> >  bool inode_owner_or_capable(struct user_namespace *mnt_userns,
-> >  			    const struct inode *inode);
-> > =20
->=20
-> We should not be adding completely unused code to the VFS APIs.
->=20
-> Just rename __sb_write_started() to sb_write_started() and pass
-> SB_FREEZE_WRITE directly from the single debug assert that you've
-> added that needs this check.
+On Wed 16-03-22 15:42:44, Amir Goldstein wrote:
+> > > The only thing is, as you wrote to Srinivas, there is really no practical
+> > > way to make ignore mask with ON_CHILD work on old kernels, so
+> > > what can users do if they want to write a portable program?
+> > > Add this mark and hope for the best?
+> >
+> > OK, this objection probably tipped the balace towards a new flag for me :)
+> >
+> > > If users had FAN_MARK_PARENT, the outcome at least would
+> > > have been predictable.
+> > > Maybe FAN_MARK_PARENT is an overkill.
+> > > Maybe what we need is FAN_MARK_IGNORED_ON_CHILD.
+> > > It's not very pretty, but it is clear.
+> >
+> > Or how about FAN_MARK_IGNORED_MASK_CHECKED which would properly check for
+> > supported bits in the ignore mask and then we can use ON_CHILD as I wanted
+> > and we would regain ONDIR bit for future use as well?
+> >
+> 
+> I don't follow the reasoning behind the name MASK_CHECKED.
 
-Sure, I will drop them in the next version. I just added them for
-completeness.
+My idea was that with FAN_IGNORED_MASK we did the mistake that passed
+arguments (mask in particular) are not properly checked because we let
+userspace set bits which are not really used in the ignore mask. So let's
+fix this by properly checking the arguments and to do that safely we need a
+new variant of FAN_IGNORED_MASK, hence FAN_IGNORED_MASK_CHECKED...
 
-> Cheers,
->=20
-> Dave.
-> --=20
-> Dave Chinner
-> david@fromorbit.com=
+> If anything, I would rather introduce FAN_IGNORE_MARK.
+> The reasoning is that users may think of this "ignore mark"
+> as a separate mark from the "inode mark", so on this "mark" the
+> meaning of ON_CHILD flags would be pretty clear.
+
+Well, yes, you are speaking about effectively the same flag just under a
+different name :) I agree my name is poor so I'm happy if we pick another
+one. The only small reservation I have against the name FAN_IGNORE_MARK is
+that we would now have to explain in the manpage a new concept of ignore
+mark and tell this is just a new name for ignore mask which looks a bit
+silly and perhaps confusing to developers used to the old naming.
+
+> The fact that they are implemented as a single mark with two masks
+> and that each mask also has some flags is an implementation detail.
+> 
+> If we go for FAN_IGNORE_MARK, we would disallow the combination
+>   fanotify_mark(FAN_IGNORE_MARK, FAN_MARK_IGNORED_MASK, ...
+
+Certainly.
+
+> and I am also in favor of disallowing FAN_MARK_IGNORED_SURV_MODIFY.
+> I find it completely useless for watching children and if people still need
+> the ignored mask that does not survive modify, they can use the old API.
+
+Well, but FAN_IGNORE_MARK is not just for watching children. You can still
+ignore a single file with FAN_IGNORE_MARK. As much as I understand that
+FAN_MARK_IGNORED_SURV_MODIFY complicates our life, I don't think we'll ever
+be able to get rid of it completely so I don't see any value in disallowing
+it with FAN_IGNORE_MARK.
+
+> > > > With ONDIR I agree things are not as obvious. Historically we have applied
+> > > > ignore mask even for events coming from directories regardless of ONDIR
+> > > > flag in the ignore mask. So ignore mask without any special flag has the
+> > > > implicit meaning of "apply to all events regardless of type of originating
+> > > > inode". I don't think we can change that meaning at this point. We could
+> > > > define meaning of ONDIR in ignore mask to either "ignore only events from
+> > > > directories" or to "ignore only events from ordinary files". But neither
+> > > > seems particularly natural or useful.
+> > > >
+> > >
+> > > TBH, I always found it annoying that fanotify cannot be used to specify
+> > > a filter to get only mkdirs, which is a pretty common thing to want to be
+> > > notified of (i.e. for recursive watch).
+> > > But I have no intention to propose API changes to fix that.
+> >
+> > I see, so we could repurpose ONDIR bit in ignore mask for EVENT_IGNORE_NONDIR
+> > feature or something like that. But as you say, no pressing need...
+> >
+> 
+> Alas, that does not fit nicely with the FAN_IGNORE_MARK abstraction.
+> The inverse does:
+> The "mark" with ONDIR captures all the create events and the "ignore mark"
+> without ONDIR filters out the non-mkdir.
+
+Yeah, I actually like the consistency here - the ordinary mask causes
+the event to be generated IFF the same ignore mask/mark causes the event to be
+discarded. It would mean that without ONDIR events from directories are not
+ignored so that's a difference to current meaning of ignore masks but we
+can do that modification with the new flag.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
