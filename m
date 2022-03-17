@@ -2,192 +2,477 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CCAEA4DC569
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Mar 2022 13:02:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C46B74DC571
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Mar 2022 13:03:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233297AbiCQMDi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Mar 2022 08:03:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57342 "EHLO
+        id S233380AbiCQMFK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Mar 2022 08:05:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33548 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233195AbiCQMDh (ORCPT
+        with ESMTP id S233314AbiCQMFJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Mar 2022 08:03:37 -0400
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A97F61E95CE;
-        Thu, 17 Mar 2022 05:02:20 -0700 (PDT)
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 22H9cmH9008529;
-        Thu, 17 Mar 2022 12:01:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : references : date : in-reply-to : message-id : mime-version :
- content-type; s=pp1; bh=vfIXFVzBYVYCGJ9paDohUySVCQL2EjCszKhxvr9T5hE=;
- b=A3kvDZtIURAt7ojq1h4+YH63/I04UlyKABS0CI3gcgaRaWnKgM/QSHr7NduPQGiED1Ks
- Ily+r7RTDKSQm02cv1lTUEXIdHDBnl4HdRBb6vCOf+5T4NFQnCKFwWtEpspQz6un6Ndd
- JXvkDyc3CfXRbcDijhsox5sH6g8g2xdIPspCB2DlQSPxy/vIfHKDmG3JlazoYVjoLQHp
- wHclXgN/LRqts5UhFw0Gk1zKKNG8M1zTZnyrkA6BMDLEhTSjjs+0xPL5jmDkJKurCASX
- 6FnDj9wT+RUtDak00Y1mxeixPcHhw+0cYtMkTzW7KVWwLH49rP/EDSC9pAT5O+9FxALj ww== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3ev0m5vkrj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 17 Mar 2022 12:01:55 +0000
-Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 22HBtrQJ021011;
-        Thu, 17 Mar 2022 12:01:55 GMT
-Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3ev0m5vkqt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 17 Mar 2022 12:01:54 +0000
-Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
-        by ppma06fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 22HBqkhb004603;
-        Thu, 17 Mar 2022 12:01:53 GMT
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (d06relay12.portsmouth.uk.ibm.com [9.149.109.197])
-        by ppma06fra.de.ibm.com with ESMTP id 3erjshskwx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 17 Mar 2022 12:01:52 +0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 22HC1oci45875640
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 17 Mar 2022 12:01:50 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 85360A405D;
-        Thu, 17 Mar 2022 12:01:50 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3A537A4053;
-        Thu, 17 Mar 2022 12:01:50 +0000 (GMT)
-Received: from tuxmaker.linux.ibm.com (unknown [9.152.85.9])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Thu, 17 Mar 2022 12:01:50 +0000 (GMT)
-From:   Sven Schnelle <svens@linux.ibm.com>
-To:     Ritesh Harjani <riteshh@linux.ibm.com>
-Cc:     linux-ext4@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@kernel.org, Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCHv3 02/10] ext4: Fix ext4_fc_stats trace point
-References: <cover.1647057583.git.riteshh@linux.ibm.com>
-        <b4b9691414c35c62e570b723e661c80674169f9a.1647057583.git.riteshh@linux.ibm.com>
-Date:   Thu, 17 Mar 2022 13:01:49 +0100
-In-Reply-To: <b4b9691414c35c62e570b723e661c80674169f9a.1647057583.git.riteshh@linux.ibm.com>
-        (Ritesh Harjani's message of "Sat, 12 Mar 2022 11:09:47 +0530")
-Message-ID: <yt9dr1706b4i.fsf@linux.ibm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.0.50 (gnu/linux)
+        Thu, 17 Mar 2022 08:05:09 -0400
+Received: from smtp-bc0d.mail.infomaniak.ch (smtp-bc0d.mail.infomaniak.ch [IPv6:2001:1600:3:17::bc0d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A531191416
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Mar 2022 05:03:51 -0700 (PDT)
+Received: from smtp-2-0001.mail.infomaniak.ch (unknown [10.5.36.108])
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4KK5QY4xB8zMqNfM;
+        Thu, 17 Mar 2022 13:03:49 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4KK5QT668mzljsTT;
+        Thu, 17 Mar 2022 13:03:45 +0100 (CET)
+Message-ID: <588e0fec-6a45-db81-e411-ae488b29e533@digikod.net>
+Date:   Thu, 17 Mar 2022 13:04:29 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: I05qBJXbb_wl6wSZAWMPX25f2BRaoFU1
-X-Proofpoint-ORIG-GUID: Rpr6UriCIbwTRJQf1XkiMSwaP8I7My-O
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.850,Hydra:6.0.425,FMLib:17.11.64.514
- definitions=2022-03-17_04,2022-03-15_01,2022-02-23_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=991 adultscore=0
- bulkscore=0 mlxscore=0 lowpriorityscore=0 malwarescore=0
- priorityscore=1501 spamscore=0 clxscore=1011 impostorscore=0 phishscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2202240000 definitions=main-2203170070
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: 
+Content-Language: en-US
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        Shuah Khan <shuah@kernel.org>, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@linux.microsoft.com>
+References: <20220221212522.320243-1-mic@digikod.net>
+ <20220221212522.320243-7-mic@digikod.net>
+ <CAHC9VhSFXN39EuVG5aVK0jtgCOmzM2FSCoVa2Xrs=oJQ4AkWMQ@mail.gmail.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+Subject: Re: [PATCH v1 06/11] landlock: Add support for file reparenting with
+ LANDLOCK_ACCESS_FS_REFER
+In-Reply-To: <CAHC9VhSFXN39EuVG5aVK0jtgCOmzM2FSCoVa2Xrs=oJQ4AkWMQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Ritesh Harjani <riteshh@linux.ibm.com> writes:
 
-> ftrace's __print_symbolic() requires that any enum values used in the
-> symbol to string translation table be wrapped in a TRACE_DEFINE_ENUM
-> so that the enum value can be decoded from the ftrace ring buffer by
-> user space tooling.
->
-> This patch also fixes few other problems found in this trace point.
-> e.g. dereferencing structures in TP_printk which should not be done
-> at any cost.
->
-> Also to avoid checkpatch warnings, this patch removes those
-> whitespaces/tab stops issues.
->
-> Cc: stable@kernel.org
-> Fixes: commit aa75f4d3daae ("ext4: main fast-commit commit path")
-> Reported-by: Steven Rostedt <rostedt@goodmis.org>
-> Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
-> Reviewed-by: Jan Kara <jack@suse.cz>
-> Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> Reviewed-by: Harshad Shirwadkar <harshadshirwadkar@gmail.com>
-> ---
->  include/trace/events/ext4.h | 78 +++++++++++++++++++++++--------------
->  1 file changed, 49 insertions(+), 29 deletions(-)
->
-> diff --git a/include/trace/events/ext4.h b/include/trace/events/ext4.h
-> index 19e957b7f941..1a0b7030f72a 100644
-> --- a/include/trace/events/ext4.h
-> +++ b/include/trace/events/ext4.h
-> @@ -95,6 +95,17 @@ TRACE_DEFINE_ENUM(ES_REFERENCED_B);
->  	{ FALLOC_FL_COLLAPSE_RANGE,	"COLLAPSE_RANGE"},	\
->  	{ FALLOC_FL_ZERO_RANGE,		"ZERO_RANGE"})
->
-> +TRACE_DEFINE_ENUM(EXT4_FC_REASON_XATTR);
-> +TRACE_DEFINE_ENUM(EXT4_FC_REASON_CROSS_RENAME);
-> +TRACE_DEFINE_ENUM(EXT4_FC_REASON_JOURNAL_FLAG_CHANGE);
-> +TRACE_DEFINE_ENUM(EXT4_FC_REASON_NOMEM);
-> +TRACE_DEFINE_ENUM(EXT4_FC_REASON_SWAP_BOOT);
-> +TRACE_DEFINE_ENUM(EXT4_FC_REASON_RESIZE);
-> +TRACE_DEFINE_ENUM(EXT4_FC_REASON_RENAME_DIR);
-> +TRACE_DEFINE_ENUM(EXT4_FC_REASON_FALLOC_RANGE);
-> +TRACE_DEFINE_ENUM(EXT4_FC_REASON_INODE_JOURNAL_DATA);
-> +TRACE_DEFINE_ENUM(EXT4_FC_REASON_MAX);
+On 17/03/2022 02:26, Paul Moore wrote:
+> On Mon, Feb 21, 2022 at 4:15 PM Mickaël Salaün <mic@digikod.net> wrote:
+>>
+>> From: Mickaël Salaün <mic@linux.microsoft.com>
+>>
+>> Add a new LANDLOCK_ACCESS_FS_REFER access right to enable policy writers
+>> to allow sandboxed processes to link and rename files from and to a
+>> specific set of file hierarchies.  This access right should be composed
+>> with LANDLOCK_ACCESS_FS_MAKE_* for the destination of a link or rename,
+>> and with LANDLOCK_ACCESS_FS_REMOVE_* for a source of a rename.  This
+>> lift a Landlock limitation that always denied changing the parent of an
+>> inode.
+>>
+>> Renaming or linking to the same directory is still always allowed,
+>> whatever LANDLOCK_ACCESS_FS_REFER is used or not, because it is not
+>> considered a threat to user data.
+>>
+>> However, creating multiple links or renaming to a different parent
+>> directory may lead to privilege escalations if not handled properly.
+>> Indeed, we must be sure that the source doesn't gain more privileges by
+>> being accessible from the destination.  This is handled by making sure
+>> that the source hierarchy (including the referenced file or directory
+>> itself) restricts at least as much the destination hierarchy.  If it is
+>> not the case, an EXDEV error is returned, making it potentially possible
+>> for user space to copy the file hierarchy instead of moving or linking
+>> it.
+>>
+>> Instead of creating different access rights for the source and the
+>> destination, we choose to make it simple and consistent for users.
+>> Indeed, considering the previous constraint, it would be weird to
+>> require such destination access right to be also granted to the source
+>> (to make it a superset).
+>>
+>> See the provided documentation for additional details.
+>>
+>> New tests are provided with a following commit.
+>>
+>> Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
+>> Link: https://lore.kernel.org/r/20220221212522.320243-7-mic@digikod.net
+>> ---
+>>   include/uapi/linux/landlock.h                |  27 +-
+>>   security/landlock/fs.c                       | 550 ++++++++++++++++---
+>>   security/landlock/limits.h                   |   2 +-
+>>   security/landlock/syscalls.c                 |   2 +-
+>>   tools/testing/selftests/landlock/base_test.c |   2 +-
+>>   tools/testing/selftests/landlock/fs_test.c   |   3 +-
+>>   6 files changed, 516 insertions(+), 70 deletions(-)
+> 
+> ...
+> 
+>> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+>> index 3886f9ad1a60..c7c7ce4e7cd5 100644
+>> --- a/security/landlock/fs.c
+>> +++ b/security/landlock/fs.c
+>> @@ -4,6 +4,7 @@
+>>    *
+>>    * Copyright © 2016-2020 Mickaël Salaün <mic@digikod.net>
+>>    * Copyright © 2018-2020 ANSSI
+>> + * Copyright © 2021-2022 Microsoft Corporation
+>>    */
+>>
+>>   #include <linux/atomic.h>
+>> @@ -269,16 +270,188 @@ static inline bool is_nouser_or_private(const struct dentry *dentry)
+>>                           unlikely(IS_PRIVATE(d_backing_inode(dentry))));
+>>   }
+>>
+>> -static int check_access_path(const struct landlock_ruleset *const domain,
+>> -               const struct path *const path,
+>> +static inline access_mask_t get_handled_accesses(
+>> +               const struct landlock_ruleset *const domain)
+>> +{
+>> +       access_mask_t access_dom = 0;
+>> +       unsigned long access_bit;
+> 
+> Would it be better to declare @access_bit as an access_mask_t type?
+> You're not using any macros like for_each_set_bit() in this function
+> so I believe it should be safe.
 
-I'm getting the following oops with that patch:
+Right, I'll change that.
 
-[    0.937455] VFS: Disk quotas dquot_6.6.0
-[    0.937474] VFS: Dquot-cache hash table entries: 512 (order 0, 4096 bytes)
-[    0.958347] Unable to handle kernel pointer dereference in virtual kernel address space
-[    0.958350] Failing address: 00000000010de000 TEID: 00000000010de407
-[    0.958353] Fault in home space mode while using kernel ASCE.
-[    0.958357] AS:0000000001ed0007 R3:00000002ffff0007 S:0000000001003701
-[    0.958388] Oops: 0004 ilc:3 [#1] SMP
-[    0.958393] Modules linked in:
-[    0.958398] CPU: 0 PID: 8 Comm: kworker/u128:0 Not tainted 5.17.0-rc8-next-20220317 #396
-[    0.958403] Hardware name: IBM 3906 M04 704 (z/VM 7.1.0)
-[    0.958407] Workqueue: eval_map_wq eval_map_work_func
 
-[    0.958446] Krnl PSW : 0704e00180000000 000000000090a9d6 (number+0x25e/0x3c0)
-[    0.958456]            R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:0 AS:3 CC:2 PM:0 RI:0 EA:3
-[    0.958461] Krnl GPRS: 0000000000000058 00000000010de0ac 0000000000000001 00000000fffffffc
-[    0.958467]            0000038000047b80 0affffff010de0ab 0000000000000000 0000000000000000
-[    0.958481]            0000000000000020 0000038000000000 00000000010de0ad 00000000010de0ab
-[    0.958484]            0000000080312100 0000000000e68910 0000038000047b50 0000038000047ab8
-[    0.958494] Krnl Code: 000000000090a9c6: f0c84112b001        srp     274(13,%r4),1(%r11),8
-[    0.958494]            000000000090a9cc: 41202001            la      %r2,1(%r2)
-[    0.958494]           #000000000090a9d0: ecab0006c065        clgrj   %r10,%r11,12,000000000090a9dc
-[    0.958494]           >000000000090a9d6: d200b0004000        mvc     0(1,%r11),0(%r4)
-[    0.958494]            000000000090a9dc: 41b0b001            la      %r11,1(%r11)
-[    0.958494]            000000000090a9e0: a74bffff
-            aghi    %r4,-1
-[    0.958494]            000000000090a9e4: a727fff6            brctg   %r2,000000000090a9d0
-[    0.958494]            000000000090a9e8: a73affff            ahi     %r3,-1
-[    0.958575] Call Trace:
-[    0.958580]  [<000000000090a9d6>] number+0x25e/0x3c0
-[    0.958594] ([<0000000000289516>] update_event_printk+0xde/0x200)
-[    0.958602]  [<0000000000910020>] vsnprintf+0x4b0/0x7c8
-[    0.958606]  [<00000000009103e8>] snprintf+0x40/0x50
-[    0.958610]  [<00000000002893d2>] eval_replace+0x62/0xc8
-[    0.958614]  [<000000000028e2fe>] trace_event_eval_update+0x206/0x248
-[    0.958619]  [<0000000000171bba>] process_one_work+0x1fa/0x460
-[    0.958625]  [<000000000017234c>] worker_thread+0x64/0x468
-[    0.958629]  [<000000000017af90>] kthread+0x108/0x110
-[    0.958634]  [<00000000001032ec>] __ret_from_fork+0x3c/0x58
-[    0.958640]  [<0000000000cce43a>] ret_from_fork+0xa/0x40
-[    0.958648] Last Breaking-Event-Address:
-[    0.958652]  [<000000000090a99c>] number+0x224/0x3c0
-[    0.958661] Kernel panic - not syncing: Fatal exception: panic_on_oops
+> 
+>> +       for (access_bit = 0; access_bit < LANDLOCK_NUM_ACCESS_FS;
+>> +                       access_bit++) {
+>> +               size_t layer_level;
+> 
+> Considering the number of layers has dropped down to 16, it seems like
+> a normal unsigned int might be big enough for @layer_level :)
 
-I haven't really checked what TRACE_DEFINE_ENUM() does, but removing the
-last line ("TRACE_DEFINE_ENUM(EXT4_FC_REASON_MAX);") makes the oops go
-away. Looking at all the other defines looks like the _MAX enum
-shouldn't be added there?
+We could switch to u8, but I prefer to stick to size_t for array indexes 
+which enable to reduce the cognitive workload related to the size of 
+such array. ;) I guess there is enough info for compilers to optimize 
+such code anyway.
 
-Thanks
-Sven
+
+> 
+>> +               for (layer_level = 0; layer_level < domain->num_layers;
+>> +                               layer_level++) {
+>> +                       if (domain->fs_access_masks[layer_level] &
+>> +                                       BIT_ULL(access_bit)) {
+>> +                               access_dom |= BIT_ULL(access_bit);
+>> +                               break;
+>> +                       }
+>> +               }
+>> +       }
+>> +       return access_dom;
+>> +}
+>> +
+>> +static inline access_mask_t init_layer_masks(
+>> +               const struct landlock_ruleset *const domain,
+>> +               const access_mask_t access_request,
+>> +               layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_FS])
+>> +{
+>> +       access_mask_t handled_accesses = 0;
+>> +       size_t layer_level;
+>> +
+>> +       memset(layer_masks, 0, sizeof(*layer_masks));
+>> +       if (WARN_ON_ONCE(!access_request))
+>> +               return 0;
+>> +
+>> +       /* Saves all handled accesses per layer. */
+>> +       for (layer_level = 0; layer_level < domain->num_layers;
+>> +                       layer_level++) {
+>> +               const unsigned long access_req = access_request;
+>> +               unsigned long access_bit;
+>> +
+>> +               for_each_set_bit(access_bit, &access_req,
+>> +                               ARRAY_SIZE(*layer_masks)) {
+>> +                       if (domain->fs_access_masks[layer_level] &
+>> +                                       BIT_ULL(access_bit)) {
+>> +                               (*layer_masks)[access_bit] |=
+>> +                                       BIT_ULL(layer_level);
+>> +                               handled_accesses |= BIT_ULL(access_bit);
+>> +                       }
+>> +               }
+>> +       }
+>> +       return handled_accesses;
+>> +}
+>> +
+>> +/*
+>> + * Check that a destination file hierarchy has more restrictions than a source
+>> + * file hierarchy.  This is only used for link and rename actions.
+>> + */
+>> +static inline bool is_superset(bool child_is_directory,
+>> +               const layer_mask_t (*const
+>> +                       layer_masks_dst_parent)[LANDLOCK_NUM_ACCESS_FS],
+>> +               const layer_mask_t (*const
+>> +                       layer_masks_src_parent)[LANDLOCK_NUM_ACCESS_FS],
+>> +               const layer_mask_t (*const
+>> +                       layer_masks_child)[LANDLOCK_NUM_ACCESS_FS])
+>> +{
+>> +       unsigned long access_bit;
+>> +
+>> +       for (access_bit = 0; access_bit < ARRAY_SIZE(*layer_masks_dst_parent);
+>> +                       access_bit++) {
+>> +               /* Ignores accesses that only make sense for directories. */
+>> +               if (!child_is_directory && !(BIT_ULL(access_bit) & ACCESS_FILE))
+>> +                       continue;
+>> +
+>> +               /*
+>> +                * Checks if the destination restrictions are a superset of the
+>> +                * source ones (i.e. inherited access rights without child
+>> +                * exceptions).
+>> +                */
+>> +               if ((((*layer_masks_src_parent)[access_bit] & (*layer_masks_child)[access_bit]) |
+>> +                                       (*layer_masks_dst_parent)[access_bit]) !=
+>> +                               (*layer_masks_dst_parent)[access_bit])
+>> +                       return false;
+>> +       }
+>> +       return true;
+>> +}
+>> +
+>> +/*
+>> + * Removes @layer_masks accesses that are not requested.
+>> + *
+>> + * Returns true if the request is allowed, false otherwise.
+>> + */
+>> +static inline bool scope_to_request(const access_mask_t access_request,
+>> +               layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_FS])
+>> +{
+>> +       const unsigned long access_req = access_request;
+>> +       unsigned long access_bit;
+>> +
+>> +       if (WARN_ON_ONCE(!layer_masks))
+>> +               return true;
+>> +
+>> +       for_each_clear_bit(access_bit, &access_req, ARRAY_SIZE(*layer_masks))
+>> +               (*layer_masks)[access_bit] = 0;
+>> +       return !memchr_inv(layer_masks, 0, sizeof(*layer_masks));
+>> +}
+>> +
+>> +/*
+>> + * Returns true if there is at least one access right different than
+>> + * LANDLOCK_ACCESS_FS_REFER.
+>> + */
+>> +static inline bool is_eacces(
+>> +               const layer_mask_t (*const
+>> +                       layer_masks)[LANDLOCK_NUM_ACCESS_FS],
+>>                  const access_mask_t access_request)
+>>   {
+> 
+> Granted, I don't have as deep of an understanding of Landlock as you
+> do, but the function name "is_eacces" seems a little odd given the
+> nature of the function.  Perhaps "is_fsrefer"?
+
+Hmm, this helper does multiple things which are necessary to know if we 
+need to return -EACCES or -EXDEV. Renaming it to is_fsrefer() would 
+require to inverse the logic and use boolean negations in the callers 
+(because of ordering). Renaming to something like without_fs_refer() 
+would not be completely correct because we also check if there is no 
+layer_masks, which indicated that it doesn't contain an access right 
+that should return -EACCES. This helper is named as such because the 
+underlying semantic is to check for such error code, which is a tricky. 
+I can rename it co contains_eacces() or something, but a longer name 
+would require to cut the caller lines to fit 80 columns. :|
+
+
+> 
+>> -       layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] = {};
+>> -       bool allowed = false, has_access = false;
+>> +       unsigned long access_bit;
+>> +       /* LANDLOCK_ACCESS_FS_REFER alone must return -EXDEV. */
+>> +       const unsigned long access_check = access_request &
+>> +               ~LANDLOCK_ACCESS_FS_REFER;
+>> +
+>> +       if (!layer_masks)
+>> +               return false;
+>> +
+>> +       for_each_set_bit(access_bit, &access_check, ARRAY_SIZE(*layer_masks)) {
+>> +               if ((*layer_masks)[access_bit])
+>> +                       return true;
+>> +       }
+> 
+> Is calling for_each_set_bit() overkill here?  @access_check should
+> only ever have at most one bit set (LANDLOCK_ACCESS_FS_REFER), yes?
+
+No, it is the contrary, the bitmask is inverted and this loop check for 
+non-FS_REFER access rights that should then return -EACCES. For 
+instance, if a sandbox handles (and then restricts) MAKE_REG and REFER, 
+a request to link a regular file would contains both of these bits, and 
+the kernel should return -EACCES if MAKE_REG is not granted or -EXDEV if 
+the request is only denied because of REFER. The reparent_* tests check 
+the consistency of this behavior (with the exception of a 
+RENAME_EXCHANGE case, see [1]).
+
+[1] https://lore.kernel.org/r/20220222175332.384545-1-mic@digikod.net
+
+
+> 
+>> +       return false;
+>> +}
+>> +
+>> +/**
+>> + * check_access_path_dual - Check a source and a destination accesses
+>> + *
+>> + * @domain: Domain to check against.
+>> + * @path: File hierarchy to walk through.
+>> + * @child_is_directory: Must be set to true if the (original) leaf is a
+>> + *     directory, false otherwise.
+>> + * @access_request_dst_parent: Accesses to check, once @layer_masks_dst_parent
+>> + *     is equal to @layer_masks_src_parent (if any).
+>> + * @layer_masks_dst_parent: Pointer to a matrix of layer masks per access
+>> + *     masks, identifying the layers that forbid a specific access.  Bits from
+>> + *     this matrix can be unset according to the @path walk.  An empty matrix
+>> + *     means that @domain allows all possible Landlock accesses (i.e. not only
+>> + *     those identified by @access_request_dst_parent).  This matrix can
+>> + *     initially refer to domain layer masks and, when the accesses for the
+>> + *     destination and source are the same, to request layer masks.
+>> + * @access_request_src_parent: Similar to @access_request_dst_parent but for an
+>> + *     initial source path request.  Only taken into account if
+>> + *     @layer_masks_src_parent is not NULL.
+>> + * @layer_masks_src_parent: Similar to @layer_masks_dst_parent but for an
+>> + *     initial source path walk.  This can be NULL if only dealing with a
+>> + *     destination access request (i.e. not a rename nor a link action).
+>> + * @layer_masks_child: Similar to @layer_masks_src_parent but only for the
+>> + *     linked or renamed inode (without hierarchy).  This is only used if
+>> + *     @layer_masks_src_parent is not NULL.
+>> + *
+>> + * This helper first checks that the destination has a superset of restrictions
+>> + * compared to the source (if any) for a common path.  It then checks that the
+>> + * collected accesses and the remaining ones are enough to allow the request.
+>> + *
+>> + * Returns:
+>> + * - 0 if the access request is granted;
+>> + * - -EACCES if it is denied because of access right other than
+>> + *   LANDLOCK_ACCESS_FS_REFER;
+>> + * - -EXDEV if the renaming or linking would be a privileged escalation
+>> + *   (according to each layered policies), or if LANDLOCK_ACCESS_FS_REFER is
+>> + *   not allowed by the source or the destination.
+>> + */
+>> +static int check_access_path_dual(const struct landlock_ruleset *const domain,
+>> +               const struct path *const path,
+>> +               bool child_is_directory,
+>> +               const access_mask_t access_request_dst_parent,
+>> +               layer_mask_t (*const
+>> +                       layer_masks_dst_parent)[LANDLOCK_NUM_ACCESS_FS],
+>> +               const access_mask_t access_request_src_parent,
+>> +               layer_mask_t (*layer_masks_src_parent)[LANDLOCK_NUM_ACCESS_FS],
+>> +               layer_mask_t (*layer_masks_child)[LANDLOCK_NUM_ACCESS_FS])
+>> +{
+>> +       bool allowed_dst_parent = false, allowed_src_parent = false, is_dom_check;
+>>          struct path walker_path;
+>> -       size_t i;
+>> +       access_mask_t access_masked_dst_parent, access_masked_src_parent;
+>>
+>> -       if (!access_request)
+>> +       if (!access_request_dst_parent && !access_request_src_parent)
+>>                  return 0;
+>>          if (WARN_ON_ONCE(!domain || !path))
+>>                  return 0;
+>> @@ -287,22 +460,20 @@ static int check_access_path(const struct landlock_ruleset *const domain,
+>>          if (WARN_ON_ONCE(domain->num_layers < 1))
+>>                  return -EACCES;
+>>
+>> -       /* Saves all layers handling a subset of requested accesses. */
+>> -       for (i = 0; i < domain->num_layers; i++) {
+>> -               const unsigned long access_req = access_request;
+>> -               unsigned long access_bit;
+>> -
+>> -               for_each_set_bit(access_bit, &access_req,
+>> -                               ARRAY_SIZE(layer_masks)) {
+>> -                       if (domain->fs_access_masks[i] & BIT_ULL(access_bit)) {
+>> -                               layer_masks[access_bit] |= BIT_ULL(i);
+>> -                               has_access = true;
+>> -                       }
+>> -               }
+>> +       BUILD_BUG_ON(!layer_masks_dst_parent);
+> 
+> I know the kbuild robot already flagged this, but checking function
+> parameters with BUILD_BUG_ON() does seem a bit ... unusual :)
+
+Yeah, I like such guarantee but it may not work without __always_inline. 
+I moved this check in the previous WARN_ON_ONCE().
+
+
+> 
+>> +       if (layer_masks_src_parent) {
+>> +               if (WARN_ON_ONCE(!layer_masks_child))
+>> +                       return -EACCES;
+>> +               access_masked_dst_parent = access_masked_src_parent =
+>> +                       get_handled_accesses(domain);
+>> +               is_dom_check = true;
+>> +       } else {
+>> +               if (WARN_ON_ONCE(layer_masks_child))
+>> +                       return -EACCES;
+>> +               access_masked_dst_parent = access_request_dst_parent;
+>> +               access_masked_src_parent = access_request_src_parent;
+>> +               is_dom_check = false;
+>>          }
+>> -       /* An access request not handled by the domain is allowed. */
+>> -       if (!has_access)
+>> -               return 0;
+>>
+>>          walker_path = *path;
+>>          path_get(&walker_path);
+>> @@ -312,11 +483,50 @@ static int check_access_path(const struct landlock_ruleset *const domain,
+>>           */
+>>          while (true) {
+>>                  struct dentry *parent_dentry;
+>> +               const struct landlock_rule *rule;
+>> +
+>> +               /*
+>> +                * If at least all accesses allowed on the destination are
+>> +                * already allowed on the source, respectively if there is at
+>> +                * least as much as restrictions on the destination than on the
+>> +                * source, then we can safely refer files from the source to
+>> +                * the destination without risking a privilege escalation.
+>> +                * This is crucial for standalone multilayered security
+>> +                * policies.  Furthermore, this helps avoid policy writers to
+>> +                * shoot themselves in the foot.
+>> +                */
+>> +               if (is_dom_check && is_superset(child_is_directory,
+>> +                                       layer_masks_dst_parent,
+>> +                                       layer_masks_src_parent,
+>> +                                       layer_masks_child)) {
+>> +                       allowed_dst_parent =
+>> +                               scope_to_request(access_request_dst_parent,
+>> +                                               layer_masks_dst_parent);
+>> +                       allowed_src_parent =
+>> +                               scope_to_request(access_request_src_parent,
+>> +                                               layer_masks_src_parent);
+>> +
+>> +                       /* Stops when all accesses are granted. */
+>> +                       if (allowed_dst_parent && allowed_src_parent)
+>> +                               break;
+>> +
+>> +                       /*
+>> +                        * Downgrades checks from domain handled accesses to
+>> +                        * requested accesses.
+>> +                        */
+>> +                       is_dom_check = false;
+>> +                       access_masked_dst_parent = access_request_dst_parent;
+>> +                       access_masked_src_parent = access_request_src_parent;
+>> +               }
+>> +
+>> +               rule = find_rule(domain, walker_path.dentry);
+>> +               allowed_dst_parent = unmask_layers(rule, access_masked_dst_parent,
+>> +                               layer_masks_dst_parent);
+>> +               allowed_src_parent = unmask_layers(rule, access_masked_src_parent,
+>> +                               layer_masks_src_parent);
+>>
+>> -               allowed = unmask_layers(find_rule(domain, walker_path.dentry),
+>> -                               access_request, &layer_masks);
+>> -               if (allowed)
+>> -                       /* Stops when a rule from each layer grants access. */
+>> +               /* Stops when a rule from each layer grants access. */
+>> +               if (allowed_dst_parent && allowed_src_parent)
+>>                          break;
+> 
+> If "(allowed_dst_parent && allowed_src_parent)" is true, you break out
+> of the while loop only to do a path_put(), check the two booleans once
+> more, and then return zero, yes?  Why not just do the path_put() and
+> return zero here?
+
+Correct, that would work, but I prefer not to duplicate the logic of 
+granting access if it doesn't make the code more complex, which I think 
+is not the case here, and I'm reluctant to duplicate path_get/put() 
+calls. This loop break is a small optimization to avoid walking the path 
+one more step, and writing it this way looks cleaner and less 
+error-prone from my point of view.
