@@ -2,110 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EA664DC731
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Mar 2022 14:04:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EC45F4DC795
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Mar 2022 14:30:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231437AbiCQNFa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Mar 2022 09:05:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52412 "EHLO
+        id S234537AbiCQNbt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Mar 2022 09:31:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235572AbiCQNEc (ORCPT
+        with ESMTP id S231908AbiCQNbs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Mar 2022 09:04:32 -0400
-Received: from mail-oi1-x229.google.com (mail-oi1-x229.google.com [IPv6:2607:f8b0:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73F10ADD67
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Mar 2022 06:03:15 -0700 (PDT)
-Received: by mail-oi1-x229.google.com with SMTP id w127so5476211oig.10
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Mar 2022 06:03:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=U0EcSAAJ4HRcVVrEONWcv5y7g0com8oiKod16b9QT4s=;
-        b=MmlQc+uS316bd8nDCmEj139QepHj/bgHCUEPSGj4ospzEulqEdnfnu2YITo4fJ/F7c
-         7VMEh2cPpW1GuldeX0N353cXv+bm7wWeAbW5fxYxf73a67RtFUzfkfLCLhneB1sBb3My
-         wPxPwQz1wG0LfHxlkHN8PVIJSsV9NZIw4n4GAHnENGAYf7r3uyF2K7Q1PyYyp3qzMoyF
-         tBJbYStCBut5iVsHOwVPv1h8oJqdHRl5DLIbnAkK2Lhg00Am+lZElyIduj2VxbNhTP1W
-         s5t7DTJ1WwlR88NNKLByc1So/TAeHak8VsI9jTHtWMBo8NbwO/XMji/8mjRgSe1h/sit
-         BC5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=U0EcSAAJ4HRcVVrEONWcv5y7g0com8oiKod16b9QT4s=;
-        b=pVKNp5Fb9xlDdTkZIoyHw37L9WTYjOC4pM+gEFHsmgc+knDUeVQ+tNOQ4eB9HGFDyI
-         5ZHCX+7pjr88hryxf23C/FzYpy55hN1QcSVOLi/QkP6LrGE6Yz47lKr7D7PfP7piYqPm
-         r2gYmchZIE9V27pyYCyZ2T2l1NeaM2uzs8iJJJjmVtv503eR0Fv+6Yn+HSdZTDO67LgP
-         Y9QJWFwP3h2lsGlErIu1n1qIRmvS0bfR/z5tnI4jgv6VjtZhUIRhxAGBugzaMdX1bv6w
-         5fRKz5aCXKS1L8+kDNYzseozd3CdwYtamFyvWQOQ+UhunGjUMgwSrsyawcuLx4vcqlcR
-         KL4Q==
-X-Gm-Message-State: AOAM530TQt1PUickxm79fi+pXQINvRIXbpcJPw4ptoifxtwrnCV6/44r
-        uATwC7S1DKmtgsYNfjMK/nhBiS/Uia4iAQcxj6I=
-X-Google-Smtp-Source: ABdhPJzqBfEFdnu6QbsI/ghZv08aaoPpH+p2OcuonDExxls22vANh784ikgounQQsqyPnvMAHsqx0H4PrDnZO1MyrEE=
-X-Received: by 2002:a05:6808:23c1:b0:2da:30fd:34d9 with SMTP id
- bq1-20020a05680823c100b002da30fd34d9mr5570923oib.203.1647522194729; Thu, 17
- Mar 2022 06:03:14 -0700 (PDT)
+        Thu, 17 Mar 2022 09:31:48 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50BF31D12F1;
+        Thu, 17 Mar 2022 06:30:32 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DC9F761724;
+        Thu, 17 Mar 2022 13:30:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 426AEC340ED;
+        Thu, 17 Mar 2022 13:30:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1647523831;
+        bh=Uu5CkIWWF14coD7DKlpKDiTH2dlwQPEA+Tj8rqU+Das=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=Um87riZEnp0qBiWxCGgY+6FtjuLBQnEteOBZ+h0vTsv27Tc3sCUz5sAmLOJ1B6exr
+         fuC3mUakoRAnjTThvm7hMbZKzjRf6QCDRNCvN3W1FODaJXqsYtk7SBhwj0Mr8gX+eB
+         JHDdxyqB2rEBiUjYktnrx381RzEqS/gdE9xLTjD8QlbFQiGLwRK40C8ANrtTmAQBJm
+         UzGZMZP7tf+6ZoQMAgK9c18py2Apb5bq7PbwiE/w6uF5w2pnS8sxoLKzBh9HW9WmLY
+         YU3TNzYb27T3jQnq8MRbCw3VFCFytpX587CvMGAOZopP44P6c7XAg4mvFjT5/21i7g
+         tCzpQReSegN+g==
+Received: by mail-wm1-f52.google.com with SMTP id v130-20020a1cac88000000b00389d0a5c511so4937580wme.5;
+        Thu, 17 Mar 2022 06:30:31 -0700 (PDT)
+X-Gm-Message-State: AOAM5308HrDfZ9m5JICtUErNutJqoKUcsvUwGMO9ZoZ9RVV/jEuAGEWU
+        ecgf2oKZdC5KwLtZ5AQ3dpCO4NqRrdhZIEOKR9w=
+X-Google-Smtp-Source: ABdhPJwVuy7loI1z2F93M+YreKFlFZjfVu/54lxs2OuCDCACUdi6A8oExsog4SWwtjwNNJM0CtQpWoPzSqBomBiqMsI=
+X-Received: by 2002:a7b:ce0f:0:b0:389:a4eb:2520 with SMTP id
+ m15-20020a7bce0f000000b00389a4eb2520mr11883578wmc.9.1647523829545; Thu, 17
+ Mar 2022 06:30:29 -0700 (PDT)
 MIME-Version: 1.0
-References: <1357949524.990839.1647084149724.ref@mail.yahoo.com>
- <1357949524.990839.1647084149724@mail.yahoo.com> <20220314084706.ncsk754gjywkcqxq@quack3.lan>
- <CAOQ4uxiDubhONM3w502anndtbqy73q_Kt5bOQ07zbATb8ndvVA@mail.gmail.com>
- <20220314113337.j7slrb5srxukztje@quack3.lan> <CAOQ4uxhwXgqbMKMSQJwNqQpKi-iAtS4dsFwkeDDMv=Y0ewp=og@mail.gmail.com>
- <20220315111536.jlnid26rv5pxjpas@quack3.lan> <CAOQ4uxhSKk=rPtF4vwiW0u1Yy4p8Rhdd+wKC2BLJxHR8Q9V9AA@mail.gmail.com>
- <20220316115058.a2ki6injgdp7xjf7@quack3.lan> <CAOQ4uxgG37z7h-OYtGsZ-1=oQNu-DVvQgbN5wNbLXf0ktY1htg@mail.gmail.com>
- <20220317115346.ztz2g7tdvudx7ujd@quack3.lan>
-In-Reply-To: <20220317115346.ztz2g7tdvudx7ujd@quack3.lan>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 17 Mar 2022 15:03:03 +0200
-Message-ID: <CAOQ4uxgupVpDSwN0EKw8hWVdyzK06DYyV9wBhmySz42nb_oNMA@mail.gmail.com>
-Subject: Re: Fanotify Directory exclusion not working when using FAN_MARK_MOUNT
-To:     Jan Kara <jack@suse.cz>
-Cc:     Srinivas <talkwithsrinivas@yahoo.co.in>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Received: by 2002:a05:6000:1d93:0:0:0:0 with HTTP; Thu, 17 Mar 2022 06:30:28
+ -0700 (PDT)
+In-Reply-To: <20220317095047.11992-2-vkarasulli@suse.de>
+References: <20220317095047.11992-1-vkarasulli@suse.de> <20220317095047.11992-2-vkarasulli@suse.de>
+From:   Namjae Jeon <linkinjeon@kernel.org>
+Date:   Thu, 17 Mar 2022 22:30:28 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd-BZgy-gVAPhLhGNc31q-+8t18A=ho_Q6STmEBoGCoW0w@mail.gmail.com>
+Message-ID: <CAKYAXd-BZgy-gVAPhLhGNc31q-+8t18A=ho_Q6STmEBoGCoW0w@mail.gmail.com>
+Subject: Re: [PATCH v5 1/1] exfat: allow access to paths with trailing dots
+To:     Vasant Karasulli <vkarasulli@suse.de>
+Cc:     David Disseldorp <ddiss@suse.de>, linux-fsdevel@vger.kernel.org,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-8.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> > If anything, I would rather introduce FAN_IGNORE_MARK.
-> > The reasoning is that users may think of this "ignore mark"
-> > as a separate mark from the "inode mark", so on this "mark" the
-> > meaning of ON_CHILD flags would be pretty clear.
+2022-03-17 18:50 GMT+09:00, Vasant Karasulli <vkarasulli@suse.de>:
+>  The Linux kernel exfat driver currently unconditionally strips
+>  trailing periods '.' from path components. This isdone intentionally,
+>  loosely following Windows behaviour and specifications
+>  which state:
 >
-> Well, yes, you are speaking about effectively the same flag just under a
-> different name :) I agree my name is poor so I'm happy if we pick another
-> one. The only small reservation I have against the name FAN_IGNORE_MARK is
-> that we would now have to explain in the manpage a new concept of ignore
-> mark and tell this is just a new name for ignore mask which looks a bit
-> silly and perhaps confusing to developers used to the old naming.
-
-Right. here is a first go at that (along with a name change):
-
-"FAN_MARK_IGNORE - This flag has a similar effect as setting the
- FAN_MARK_IGNORED_MASK flag - the events in mask shall be added
- to or removed from the ignore mask.
- Unlike the FAN_MARK_IGNORED_MASK flag, this flag also has the effect
- that the FAN_EVENT_ON_CHILD and FAN_ONDIR flags take effect on the
- ignored mask, because with FAN_MARK_IGNORED_MASK, those flags
- have no effect. Note that unlike the FAN_MARK_IGNORED_MASK flag,
- unless FAN_ONDIR flag is set with FAN_MARK_IGNORE, events on
- directories will not be ignored."
-
-What I like about this name is that the command
-fanotify_mark(FAN_MARK_ADD | FAN_MARK_IGNORE,
-                       FAN_MARK_OPEN | FAN_EVENT_ON_CHILD, ...
-sounds like spoken English ("add a rule to ignore open events (also)
-on children").
-
-Please let me know if you agree with that flag name.
-
-Apropos man page, after I am done with that, I will try to shake the dust
-from all the man page update patches sitting in my queue and re-submit them.
-
-Thanks,
-Amir.
+>   #exFAT
+>   The concatenated file name has the same set of illegal characters as
+>   other FAT-based file systems (see Table 31).
+>
+>   #FAT
+>   ...
+>   Leading and trailing spaces in a long name are ignored.
+>   Leading and embedded periods are allowed in a name and are stored in
+>   the long name. Trailing periods are ignored.
+>
+> Note: Leading and trailing space ' ' characters are currently retained
+> by Linux kernel exfat, in conflict with the above specification.
+> On Windows 10, trailing and leading space ' ' characters are stripped
+> from the filenames.
+> Some implementations, such as fuse-exfat, don't perform path trailer
+> removal. When mounting images which contain trailing-dot paths, these
+> paths are unreachable, e.g.:
+>
+>   + mount.exfat-fuse /dev/zram0 /mnt/test/
+>   FUSE exfat 1.3.0
+>   + cd /mnt/test/
+>   + touch fuse_created_dots... '  fuse_created_spaces  '
+>   + ls -l
+>   total 0
+>   -rwxrwxrwx 1 root 0 0 Aug 18 09:45 '  fuse_created_spaces  '
+>   -rwxrwxrwx 1 root 0 0 Aug 18 09:45  fuse_created_dots...
+>   + cd /
+>   + umount /mnt/test/
+>   + mount -t exfat /dev/zram0 /mnt/test
+>   + cd /mnt/test
+>   + ls -l
+>   ls: cannot access 'fuse_created_dots...': No such file or directory
+>   total 0
+>   -rwxr-xr-x 1 root 0 0 Aug 18 09:45 '  fuse_created_spaces  '
+>   -????????? ? ?    ? ?            ?  fuse_created_dots...
+>   + touch kexfat_created_dots... '  kexfat_created_spaces  '
+>   + ls -l
+>   ls: cannot access 'fuse_created_dots...': No such file or directory
+>   total 0
+>   -rwxr-xr-x 1 root 0 0 Aug 18 09:45 '  fuse_created_spaces  '
+>   -rwxr-xr-x 1 root 0 0 Aug 18 09:45 '  kexfat_created_spaces  '
+>   -????????? ? ?    ? ?            ?  fuse_created_dots...
+>   -rwxr-xr-x 1 root 0 0 Aug 18 09:45  kexfat_created_dots
+>   + cd /
+>   + umount /mnt/test/
+>
+> This commit adds "keep_last_dots" mount option that controls whether or
+> not trailing periods '.' are stripped
+> from path components during file lookup or file creation.
+> This mount option can be used to access
+> paths with trailing periods and disallow creating files with names with
+> trailing periods. E.g. continuing from the previous example:
+>
+>   + mount -t exfat -o keep_last_dots /dev/zram0 /mnt/test
+>   + cd /mnt/test
+>   + ls -l
+>   total 0
+>   -rwxr-xr-x 1 root 0 0 Aug 18 10:32 '  fuse_created_spaces  '
+>   -rwxr-xr-x 1 root 0 0 Aug 18 10:32 '  kexfat_created_spaces  '
+>   -rwxr-xr-x 1 root 0 0 Aug 18 10:32  fuse_created_dots...
+>   -rwxr-xr-x 1 root 0 0 Aug 18 10:32  kexfat_created_dots
+>
+>   + echo > kexfat_created_dots_again...
+>   sh: kexfat_created_dots_again...: Invalid argument
+>
+> Link: https://bugzilla.suse.com/show_bug.cgi?id=1188964
+> Link: https://lore.kernel.org/linux-fsdevel/003b01d755e4$31fb0d80$95f12880$
+> @samsung.com/
+> Link:
+> https://docs.microsoft.com/en-us/windows/win32/fileio/exfat-specification
+> Suggested-by: Takashi Iwai <tiwai@suse.de>
+> Signed-off-by: Vasant Karasulli <vkarasulli@suse.de>
+> Co-developed-by: David Disseldorp <ddiss@suse.de>
+> Signed-off-by: David Disseldorp <ddiss@suse.de>
+Applied, Thanks for your patch!
