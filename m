@@ -2,302 +2,341 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E0CC4DC03D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Mar 2022 08:36:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E48044DC04E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Mar 2022 08:43:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230352AbiCQHiG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Mar 2022 03:38:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46682 "EHLO
+        id S230265AbiCQHpL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Mar 2022 03:45:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229727AbiCQHhu (ORCPT
+        with ESMTP id S229609AbiCQHpL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Mar 2022 03:37:50 -0400
-Received: from esa2.hgst.iphmx.com (esa2.hgst.iphmx.com [68.232.143.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C7C8EA742;
-        Thu, 17 Mar 2022 00:36:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1647502593; x=1679038593;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=lmTctuGy666HCgqxvDo5ysANvspSnwEVexvJRTSbKDo=;
-  b=WL5nw9+fZNeGRaabF/AtG2nwHOqqidfEkt3JvwZ5mGKdHeqlNG6MMJBW
-   8izucDPWfV09Yh5bo05+G405EY0LVZnyBNlxXzoq8mV2x0VEyru+ot2Ys
-   lQ2Z+hQ5ONok7VstMmsBslh5okEZ/Bo3l752BJvd0q25B0yfxkk7/Va11
-   FkJ0KewF+On8Owh/+hB4oZrEsU8Tq7BMmpeVoZ5z0RaB3UODCJ6mRxK1u
-   E0MRpKiZ9VKb7iaDTlNbdNOOFbMRsRR8pf5Snzpwql6S34vVcm6mp0TT2
-   yRH/Z4JA7eBzFaz4JzSQJADUbycjAjJj/eKSk5lfKwaoHs/T+AAbEyq47
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.90,188,1643644800"; 
-   d="scan'208";a="299728475"
-Received: from mail-dm6nam11lp2177.outbound.protection.outlook.com (HELO NAM11-DM6-obe.outbound.protection.outlook.com) ([104.47.57.177])
-  by ob1.hgst.iphmx.com with ESMTP; 17 Mar 2022 15:36:31 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=d1ZjrvPtmxP/xFpSY4NsEGdqxqjL3ZLcz+RezGLEEDBJ0nq3nERZAG9pd074TcKhlc3V19Ie06ea/JALvCK+MGU2X+KASt+dlCw0x1hFY2qWMhiCa7MUfny7cw2/zznHLvc0FZzerK0CMfOrXvtazrvSC7st/Vq6wMuQnG3lX/emq4RCFU9y3lR9xMq0oM6/8dJiV9qTLJnfkG7J2MQD5oo6K0urkOjFNf71C1V1MkwEJD6TekMLiP3Qvlwb2zYXQmm1SbYps5jbRSQrAR0yKh8B/pmHuOUxbrAHknZeZZAg9sysn2luWRZHssEDzi3TFQik621YAFM9gwttNuibTA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YoHBH9tHJkJEOjv26ma3/wgmDMdd2jIhwGPYGud3OHY=;
- b=RD+dLPlK9bs17aF86bKPluc1zIV0vBsFyZYrmCnz8dfS5URUKZO539eECldWzdnYJx5ywV/eUiKiZc6Y8QTFIFKp5N83Ijupdh32WdH2eGwIF0xtHwOUu5p3n01+U4sXG2sjOqWHf7Qs6r5ucPgamuSwpukL7Ez/uQOQ8/jsJmdexoIaI+Tjh/pfrP3MlpdAqCxhFmXRvmwVCbUQEgIJNUv/xLHEI+D39RBisULXndYYArDYZfJEhEf1MXkVWail5Ms9avApDB7AO7rrAM9BUvsMfZOcT+gty4Av0J7CSDKmfu1gz8lfNQuLPiGxm7TXS3YgrZCxdItfQzbc3EDp8A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YoHBH9tHJkJEOjv26ma3/wgmDMdd2jIhwGPYGud3OHY=;
- b=els3R+ASzyoueKIgTvHZMVHE+EXTLH6G+VEjHGy2982RVwDTdUL1SeHJQ+WLIJCbicYxULej3kihUoRWTHh6GcgLuchqNwJ+wKm4YeMSbtTu4I/KVB7TSyRBa7AOkwOeDqrxgJgO1vpYU8q3qDsWMFiA+ptbBSIFp5zsc5mKuAo=
-Received: from SJ0PR04MB7776.namprd04.prod.outlook.com (2603:10b6:a03:300::11)
- by BN6PR04MB0674.namprd04.prod.outlook.com (2603:10b6:404:d5::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5081.14; Thu, 17 Mar
- 2022 07:36:29 +0000
-Received: from SJ0PR04MB7776.namprd04.prod.outlook.com
- ([fe80::8d96:4526:8820:de4f]) by SJ0PR04MB7776.namprd04.prod.outlook.com
- ([fe80::8d96:4526:8820:de4f%5]) with mapi id 15.20.5081.017; Thu, 17 Mar 2022
- 07:36:29 +0000
-From:   Naohiro Aota <Naohiro.Aota@wdc.com>
-To:     Filipe Manana <fdmanana@kernel.org>
-CC:     "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "david@fromorbit.com" <david@fromorbit.com>
-Subject: Re: [PATCH v2 2/4] btrfs: mark device addition as mnt_want_write_file
-Thread-Topic: [PATCH v2 2/4] btrfs: mark device addition as
- mnt_want_write_file
-Thread-Index: AQHYOTj/hKwZmfYHbUmaDCBwHOvDCqzCLSEAgAED2QA=
-Date:   Thu, 17 Mar 2022 07:36:29 +0000
-Message-ID: <20220317073628.slh4iyexpen7lmjh@naota-xeon>
-References: <cover.1647436353.git.naohiro.aota@wdc.com>
- <4b8a439c276e774ab2402cbd5395061ea0bd3cde.1647436353.git.naohiro.aota@wdc.com>
- <YjILAo2ueZsnhza/@debian9.Home>
-In-Reply-To: <YjILAo2ueZsnhza/@debian9.Home>
-Accept-Language: ja-JP, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=wdc.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 6adcc31c-d3b3-46c0-0efb-08da07e8d9aa
-x-ms-traffictypediagnostic: BN6PR04MB0674:EE_
-x-microsoft-antispam-prvs: <BN6PR04MB06746CB309739AEA052CFE888C129@BN6PR04MB0674.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: oBUFpWVXPeWlwi8fpW43IfA9v1mzuuAx70rdcEG3WFgpXRJrU01DFybxN61bQ/lWXHnMxP0qGHJ/kbmKzmREd3BhVhnl1QIw7T/V7jLDYeO2335QaKJ/VXI5hUVOCRlQV334QU224ifBIX1if1H+6KIJ9tVjoJJO1dZPy/sXrQKEaakwqxm81LjVWx1Y1VC8nAXmYe9yGF6mQLJne1vP+YLMQHXmbaj2jtvqCIP41WMaf1vQf6LwUzVVdFzGXepW04K0hiuHmkd8zM4EgvsMvs67sX4Q+b5FusgxGnoo6RwnPk+ZjooLZk9xbI3NCrVVf67s6f2SwU4el//YwLqSyKJOxd1k357D+c/jb4P6GU4cbHDNcnkTz98MlU99mRTcpxJS08e7dh+Ja9oucqBLeVMs+lOsSqwYE1w+a/QE8pnjeHikb2aCSI18au+Fu/1mNqXD1kXMs+9rjLWM+8DUCNU/X9umSIFyTs5GvR6WUSLDORmGcC70hEGfNOYoJGJQXbWiQIBS9iIhqjo7TZpZM8Z4b/f+wQW0/NYGiRykq0lRTHi5j+LvhJIOBE1jf5L/nT2VQTt2ZYNIy9KLbGqd7wkjrpE7igvaONZq8L44QRoTL5i5vCdNA595IrwjowqpEN4yvuPIHxaQx7BtQ5d0LiBf8H/LKA7g0uY7V7fj++RRNRVcfbCeKNK74mLqvKNSnS2uMXcHZGCiQvAu9jnC5A==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR04MB7776.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(7916004)(366004)(8936002)(5660300002)(26005)(6506007)(9686003)(316002)(83380400001)(6512007)(2906002)(64756008)(66446008)(66476007)(66556008)(4326008)(8676002)(66946007)(91956017)(76116006)(186003)(86362001)(33716001)(38070700005)(122000001)(82960400001)(71200400001)(1076003)(6916009)(54906003)(6486002)(508600001)(38100700002);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?X4m9eDOe+d6AlOEjsV/N9wJjI3dh5HykdRLXP/8mkBGmWz5B51C2qxUa1yKB?=
- =?us-ascii?Q?uTs66ebOQnaFmCUUmPdhdcQlx6idHRn0qJgD3k429acyLkh3IBPYm9Ygr2ND?=
- =?us-ascii?Q?DIIk96LBg1uPmfVn+/fYvG7PPa5JHrBDmY5COdO9pXjgJ/vxC42YaivN3lsx?=
- =?us-ascii?Q?1wRHCiWsmxFRuFc6TTkfgocQlgzBQ47rsIF7Asn/CpzyCuZvc1lkcQeDhyjP?=
- =?us-ascii?Q?QZnstoeOOuUhzdaR6XXQtGaNNERhYUgMzGXgCMvrCuLChBKjb0uuF9PBYYL6?=
- =?us-ascii?Q?XiHTI3nhYXcYVOePgZJs8A8xjnFE39FTb0AJiFlGCbeH0TXJRaCcc4aN2BPr?=
- =?us-ascii?Q?+MmjTSvwYXD/8CgL/CEmby00R5m+cZfPE9hSYgcjyIsTB+YH+rzKHwmKzJQD?=
- =?us-ascii?Q?TemMpWHEcAcbkTKmgiSJ+7a/9rpUZPGRWK2kjzrjcmIva9G+vaMkwi6a7mJN?=
- =?us-ascii?Q?MDeoZasHY6w3GkVC2XNO7li2lA/4VHbpuX5hH+VZLFwrHAeWqFStdFEZ3W4B?=
- =?us-ascii?Q?Mrof5NJd8gURr92AXftcNygHGoTo5O5tlZnw709rRAMK/3PCT52i8k0zIYq2?=
- =?us-ascii?Q?lM+6nrG7HoPJxTudvmNBIsEG+8P6p8ELOGjGgJdXiMTrM0AEiIpO5HEP0j2C?=
- =?us-ascii?Q?9DDYunc9nmTcT1FvV3ygMCB9A/CU5tWpOamKz6+Vz0NvCse4vANQaFuko7ik?=
- =?us-ascii?Q?fa9Bk5hVUHhhc18LaHG0eWOTUuhTqJYB2NzioOWrUgJWSlAM3P9VZqMcWc01?=
- =?us-ascii?Q?G3NiyE/bHtVpbnRsBB3A+XXy9xoDbXxXMkdKQe9LMyod+S7KhsbohMJzQ0hp?=
- =?us-ascii?Q?BWteuamNCZBkGR7kz+ff31np0hRIBXNnV2N0FBXAWWv1+ZkkHAWM3sgWvtYM?=
- =?us-ascii?Q?LiN0fatMDw5wED9SW1bBrfW8ocGOvKcdWsupQeZ9zoFJ8+NoKgIDrK5Y1sSi?=
- =?us-ascii?Q?eOGNI0bKWoex1YkJ0iYI0hmkZasO6/+jTidGIUIF7ZMvWc+QifHATqdnQd3V?=
- =?us-ascii?Q?AiBYQEGE2mZUG/b/uF2yRNwUKz+OR0hzOtRVQL4Eq1bRwT0BeqSoIb3D5DrW?=
- =?us-ascii?Q?gVLzok2LArR0z9EhI1GKm3fy1JxmZVTJxHPiGMsZcRo4tKAITvVix4KtIe99?=
- =?us-ascii?Q?Bve+Mrf6qN+l7ZagHl5cDQkelFS9riXrovNvxVB50ptbjfMptWynN7smBMFU?=
- =?us-ascii?Q?c188JTEZEoQMEebeZrEtlnJTdtKCzKNhT0F4JcnGrt5Mmfdg5lCX6V1+Kzu8?=
- =?us-ascii?Q?SxmyJUvSlAQ2zdEeHaESfxrN92gtPVLZqnyAl9D//KrgewLcpWe6ootxP+K2?=
- =?us-ascii?Q?DFvck/1Ix2ls3ZDTyEvJLcjGWEBtmBYm4ssk8CP7keOqoMGHU6VRgEUupICv?=
- =?us-ascii?Q?1TOHjq3acUcpCPvqiIglvrIJcS+MGXhT81Bo7Q/GgSHeXzMzlRM7adtWJohA?=
- =?us-ascii?Q?J1dki+it5hnIlwQE4t/8GC2x7wqfcimN5DzfmaxcYjkLqkGZ3iEJPw=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <8BC29704E8B5E44B962D7DAAEAB73F32@namprd04.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR04MB7776.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6adcc31c-d3b3-46c0-0efb-08da07e8d9aa
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Mar 2022 07:36:29.0704
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Jh/m06GO4c5JMvZqDwECgU3pCyHTYQC8lY9aiDPEmIqIxWJu1sjuPLKyIpGGR9lU33cjFHDLhAXTaYm1XCUT8w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR04MB0674
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+        Thu, 17 Mar 2022 03:45:11 -0400
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C06D6BBE11;
+        Thu, 17 Mar 2022 00:43:54 -0700 (PDT)
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 22H3TG8M011949;
+        Thu, 17 Mar 2022 07:43:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2021-07-09;
+ bh=7L5ny47kzJAT9SGJHPMNFw6yhDYkSkLkorzZYnB5f0Y=;
+ b=fWoa8ajwhLflE8WRHVJP8wZowBMP5OHMCI1CqOZSPnlFEdWxEryMwuRVOnvy1fp/H38c
+ U3mhNZ4SMtyQVfoceMiGPj+V0/dNU9us8ltLy2lU2ZBm4/3ll06eGSV+9u47WSk8fgSp
+ m7KNxrOdBwiYYo/OWQUAelXEozl7L+phRoWy7MfbiIBoY02AdAB8BMY70QHz1Z5YAuzu
+ 9ryCHQWh0bnUX3l4Hw0zKvNZJ5q2D0l3W+p2Z14wTx0+5aJtf8vwHn366I5352B1c7CQ
+ 3eGhGCaYdh38eVknms/kMlU7GHmQcNc6xGD+lIN0XmbC1mKPknEX3ssLGK0llohGSyMN ng== 
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3et60rg6yt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 17 Mar 2022 07:43:51 +0000
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.16.1.2/8.16.1.2) with SMTP id 22H7fncS034998;
+        Thu, 17 Mar 2022 07:43:51 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com with ESMTP id 3erhy2wqvq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 17 Mar 2022 07:43:51 +0000
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 22H7hoGb038783;
+        Thu, 17 Mar 2022 07:43:50 GMT
+Received: from ca-common-hq.us.oracle.com (ca-common-hq.us.oracle.com [10.211.9.209])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com with ESMTP id 3erhy2wqv5-1;
+        Thu, 17 Mar 2022 07:43:50 +0000
+From:   Dai Ngo <dai.ngo@oracle.com>
+To:     chuck.lever@oracle.com, bfields@fieldses.org
+Cc:     jlayton@redhat.com, viro@zeniv.linux.org.uk,
+        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH RFC v17 0/11] NFSD: Initial implementation of NFSv4 Courteous Server
+Date:   Thu, 17 Mar 2022 00:43:37 -0700
+Message-Id: <1647503028-11966-1-git-send-email-dai.ngo@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-GUID: 7yg7g5XYKl6yytnKofQZIym10yEOB3JR
+X-Proofpoint-ORIG-GUID: 7yg7g5XYKl6yytnKofQZIym10yEOB3JR
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 16, 2022 at 04:06:26PM +0000, Filipe Manana wrote:
-> On Wed, Mar 16, 2022 at 10:22:38PM +0900, Naohiro Aota wrote:
-> > btrfs_init_new_device() calls btrfs_relocate_sys_chunk() which incurs
-> > file-system internal writing. That writing can cause a deadlock with
-> > FS freezing like as described in like as described in commit
-> > 26559780b953 ("btrfs: zoned: mark relocation as writing").
-> >=20
-> > Mark the device addition as mnt_want_write_file. This is also consisten=
-t
-> > with the removing device ioctl counterpart.
-> >=20
-> > Cc: stable@vger.kernel.org # 4.9+
-> > Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
-> > ---
-> >  fs/btrfs/ioctl.c | 11 +++++++++--
-> >  1 file changed, 9 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-> > index 60c907b14547..a6982a1fde65 100644
-> > --- a/fs/btrfs/ioctl.c
-> > +++ b/fs/btrfs/ioctl.c
-> > @@ -3474,8 +3474,10 @@ static int btrfs_ioctl_defrag(struct file *file,=
- void __user *argp)
-> >  	return ret;
-> >  }
-> > =20
-> > -static long btrfs_ioctl_add_dev(struct btrfs_fs_info *fs_info, void __=
-user *arg)
-> > +static long btrfs_ioctl_add_dev(struct file *file, void __user *arg)
-> >  {
-> > +	struct inode *inode =3D file_inode(file);
-> > +	struct btrfs_fs_info *fs_info =3D btrfs_sb(inode->i_sb);
-> >  	struct btrfs_ioctl_vol_args *vol_args;
-> >  	bool restore_op =3D false;
-> >  	int ret;
-> > @@ -3488,6 +3490,10 @@ static long btrfs_ioctl_add_dev(struct btrfs_fs_=
-info *fs_info, void __user *arg)
-> >  		return -EINVAL;
-> >  	}
-> > =20
-> > +	ret =3D mnt_want_write_file(file);
-> > +	if (ret)
-> > +		return ret;
->=20
-> So, this now breaks all test cases that exercise device seeding, and I cl=
-early
-> forgot about seeding when I asked about why not use mnt_want_write_file()
-> instead of a bare call to sb_start_write():
+Hi Chuck, Bruce
 
-Ah, yes, I also confirmed they fail.
+This series of patches implement the NFSv4 Courteous Server.
 
->=20
-> $ ./check btrfs/161 btrfs/162 btrfs/163 btrfs/164 btrfs/248
-><snip>
-> Ran: btrfs/161 btrfs/162 btrfs/163 btrfs/164 btrfs/248
-> Failures: btrfs/161 btrfs/162 btrfs/163 btrfs/164 btrfs/248
-> Failed 5 of 5 tests
->=20
-> So device seeding introduces a special case. If we mount a seeding
-> filesystem, it's RO, so the mnt_want_write_file() fails.
+A server which does not immediately expunge the state on lease expiration
+is known as a Courteous Server.  A Courteous Server continues to recognize
+previously generated state tokens as valid until conflict arises between
+the expired state and the requests from another client, or the server
+reboots.
 
-Yeah, so we are in a mixed state here. It's RO with a seeding
-device. Or, it must be RW otherwise (checked in
-btrfs_init_new_device()).
+v2 patch includes:
 
-> Something like this deals with it and it makes the tests pass:
->=20
-><snip>
->=20
-> We are also changing the semantics as we no longer allow for adding a dev=
-ice
-> to a RO filesystem. So the lack of a mnt_want_write_file() was intentiona=
-l
-> to deal with the seeding filesystem case. But calling mnt_want_write_file=
-()
-> if we are not seeding, changes the semantics - I'm not sure if anyone rel=
-ies
-> on the ability to add a device to a fs mounted RO, I'm not seeing if it's=
- an
-> useful use case.
+. add new callback, lm_expire_lock, to lock_manager_operations to
+  allow the lock manager to take appropriate action with conflict lock.
 
-Adding a device to RO FS anyway returns -EROFS from
-btrfs_init_new_device(). So, there is no change.
+. handle conflicts of NFSv4 locks with NFSv3/NLM and local locks.
 
-> So either we do that special casing like in that diff, or we always do th=
-e
-> sb_start_write() / sb_end_write() - in any case please add a comment expl=
-aining
-> why we do it like that, why we can't use mnt_want_write_file().
+. expire courtesy client after 24hr if client has not reconnected.
 
-The conditional using of sb_start_write() or mnt_want_write_file()
-seems a bit dirty. And, I just thought, marking the FS "writing" when
-it's read-only also seems odd.
+. do not allow expired client to become courtesy client if there are
+  waiters for client's locks.
 
-I'm now thinking we should have sb_start_write() around here where the
-FS is surely RW.
+. modify client_info_show to show courtesy client and seconds from
+  last renew.
 
-diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-index 393fc7db99d3..50e02dc4e2b2 100644
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -2731,6 +2731,8 @@ int btrfs_init_new_device(struct btrfs_fs_info *fs_in=
-fo, const char *device_path
-=20
- 	mutex_unlock(&fs_devices->device_list_mutex);
-=20
-+	sb_start_write(fs_info->sb);
-+
- 	if (seeding_dev) {
- 		mutex_lock(&fs_info->chunk_mutex);
- 		ret =3D init_first_rw_device(trans);
-@@ -2786,6 +2788,8 @@ int btrfs_init_new_device(struct btrfs_fs_info *fs_in=
-fo, const char *device_path
- 		ret =3D btrfs_commit_transaction(trans);
- 	}
-=20
-+	sb_end_write(fs_info->sb);
-+
- 	/*
- 	 * Now that we have written a new super block to this device, check all
- 	 * other fs_devices list if device_path alienates any other scanned
-@@ -2801,6 +2805,8 @@ int btrfs_init_new_device(struct btrfs_fs_info *fs_in=
-fo, const char *device_path
- 	return ret;
-=20
- error_sysfs:
-+	sb_end_write(fs_info->sb);
-+
- 	btrfs_sysfs_remove_device(device);
- 	mutex_lock(&fs_info->fs_devices->device_list_mutex);
- 	mutex_lock(&fs_info->chunk_mutex);
+. fix a problem with NFSv4.1 server where the it keeps returning
+  SEQ4_STATUS_CB_PATH_DOWN in the successful SEQUENCE reply, after
+  the courtesy client reconnects, causing the client to keep sending
+  BCTS requests to server.
 
-> Thanks.
->=20
->=20
-> > +
-> >  	if (!btrfs_exclop_start(fs_info, BTRFS_EXCLOP_DEV_ADD)) {
-> >  		if (!btrfs_exclop_start_try_lock(fs_info, BTRFS_EXCLOP_DEV_ADD))
-> >  			return BTRFS_ERROR_DEV_EXCL_RUN_IN_PROGRESS;
-> > @@ -3520,6 +3526,7 @@ static long btrfs_ioctl_add_dev(struct btrfs_fs_i=
-nfo *fs_info, void __user *arg)
-> >  		btrfs_exclop_balance(fs_info, BTRFS_EXCLOP_BALANCE_PAUSED);
-> >  	else
-> >  		btrfs_exclop_finish(fs_info);
-> > +	mnt_drop_write_file(file);
-> >  	return ret;
-> >  }
-> > =20
-> > @@ -5443,7 +5450,7 @@ long btrfs_ioctl(struct file *file, unsigned int
-> >  	case BTRFS_IOC_RESIZE:
-> >  		return btrfs_ioctl_resize(file, argp);
-> >  	case BTRFS_IOC_ADD_DEV:
-> > -		return btrfs_ioctl_add_dev(fs_info, argp);
-> > +		return btrfs_ioctl_add_dev(file, argp);
-> >  	case BTRFS_IOC_RM_DEV:
-> >  		return btrfs_ioctl_rm_dev(file, argp);
-> >  	case BTRFS_IOC_RM_DEV_V2:
-> > --=20
-> > 2.35.1
-> > =
+v3 patch includes:
+
+. modified posix_test_lock to check and resolve conflict locks
+  to handle NLM TEST and NFSv4 LOCKT requests.
+
+. separate out fix for back channel stuck in SEQ4_STATUS_CB_PATH_DOWN.
+
+v4 patch includes:
+
+. rework nfsd_check_courtesy to avoid dead lock of fl_lock and client_lock
+  by asking the laudromat thread to destroy the courtesy client.
+
+. handle NFSv4 share reservation conflicts with courtesy client. This
+  includes conflicts between access mode and deny mode and vice versa.
+
+. drop the patch for back channel stuck in SEQ4_STATUS_CB_PATH_DOWN.
+
+v5 patch includes:
+
+. fix recursive locking of file_rwsem from posix_lock_file. 
+
+. retest with LOCKDEP enabled.
+
+v6 patch includes:
+
+. merge witn 5.15-rc7
+
+. fix a bug in nfs4_check_deny_bmap that did not check for matched
+  nfs4_file before checking for access/deny conflict. This bug causes
+  pynfs OPEN18 to fail since the server taking too long to release
+  lots of un-conflict clients' state.
+
+. enhance share reservation conflict handler to handle case where
+  a large number of conflict courtesy clients need to be expired.
+  The 1st 100 clients are expired synchronously and the rest are
+  expired in the background by the laundromat and NFS4ERR_DELAY
+  is returned to the NFS client. This is needed to prevent the
+  NFS client from timing out waiting got the reply.
+
+v7 patch includes:
+
+. Fix race condition in posix_test_lock and posix_lock_inode after
+  dropping spinlock.
+
+. Enhance nfsd4_fl_expire_lock to work with with new lm_expire_lock
+  callback
+
+. Always resolve share reservation conflicts asynchrously.
+
+. Fix bug in nfs4_laundromat where spinlock is not used when
+  scanning cl_ownerstr_hashtbl.
+
+. Fix bug in nfs4_laundromat where idr_get_next was called
+  with incorrect 'id'. 
+
+. Merge nfs4_destroy_courtesy_client into nfsd4_fl_expire_lock.
+
+v8 patch includes:
+
+. Fix warning in nfsd4_fl_expire_lock reported by test robot.
+
+v9 patch includes:
+
+. Simplify lm_expire_lock API by (1) remove the 'testonly' flag
+  and (2) specifying return value as true/false to indicate
+  whether conflict was succesfully resolved.
+
+. Rework nfsd4_fl_expire_lock to mark client with
+  NFSD4_DESTROY_COURTESY_CLIENT then tell the laundromat to expire
+  the client in the background.
+
+. Add a spinlock in nfs4_client to synchronize access to the
+  NFSD4_COURTESY_CLIENT and NFSD4_DESTROY_COURTESY_CLIENT flag to
+  handle race conditions when resolving lock and share reservation
+  conflict.
+
+. Courtesy client that was marked as NFSD4_DESTROY_COURTESY_CLIENT
+  are now consisdered 'dead', waiting for the laundromat to expire
+  it. This client is no longer allowed to use its states if it
+  reconnects before the laundromat finishes expiring the client.
+
+  For v4.1 client, the detection is done in the processing of the
+  SEQUENCE op and returns NFS4ERR_BAD_SESSION to force the client
+  to re-establish new clientid and session.
+  For v4.0 client, the detection is done in the processing of the
+  RENEW and state-related ops and return NFS4ERR_EXPIRE to force
+  the client to re-establish new clientid.
+
+v10 patch includes:
+
+  Resolve deadlock in v9 by avoiding getting cl_client and
+  cl_cs_lock together. The laundromat needs to determine whether
+  the expired client has any state and also has no blockers on
+  its locks. Both of these conditions are allowed to change after
+  the laundromat transits an expired client to courtesy client.
+  When this happens, the laundromat will detect it on the next
+  run and and expire the courtesy client.
+
+  Remove client persistent record before marking it as COURTESY_CLIENT
+  and add client persistent record before clearing the COURTESY_CLIENT
+  flag to allow the courtesy client to transist to normal client to
+  continue to use its state.
+
+  Lock/delegation/share reversation conflict with courtesy client is
+  resolved by marking the courtesy client as DESTROY_COURTESY_CLIENT,
+  effectively disable it, then allow the current request to proceed
+  immediately.
+  
+  Courtesy client marked as DESTROY_COURTESY_CLIENT is not allowed
+  to reconnect to reuse itsstate. It is expired by the laundromat
+  asynchronously in the background.
+
+  Move processing of expired clients from nfs4_laudromat to a
+  separate function, nfs4_get_client_reaplist, that creates the
+  reaplist and also to process courtesy clients.
+
+  Update Documentation/filesystems/locking.rst to include new
+  lm_lock_conflict call.
+
+  Modify leases_conflict to call lm_breaker_owns_lease only if
+  there is real conflict.  This is to allow the lock manager to
+  resolve the delegation conflict if possible.
+
+v11 patch includes:
+
+  Add comment for lm_lock_conflict callback.
+
+  Replace static const courtesy_client_expiry with macro.
+
+  Remove courtesy_clnt argument from find_in_sessionid_hashtbl.
+  Callers use nfs4_client->cl_cs_client boolean to determined if
+  it's the courtesy client and take appropriate actions.
+
+  Rename NFSD4_COURTESY_CLIENT and NFSD4_DESTROY_COURTESY_CLIENT
+  with NFSD4_CLIENT_COURTESY and NFSD4_CLIENT_DESTROY_COURTESY.
+
+v12 patch includes:
+
+  Remove unnecessary comment in nfs4_get_client_reaplist.
+
+  Replace nfs4_client->cl_cs_client boolean with
+  NFSD4_CLIENT_COURTESY_CLNT flag.
+
+  Remove courtesy_clnt argument from find_client_in_id_table and
+  find_clp_in_name_tree. Callers use NFSD4_CLIENT_COURTESY_CLNT to
+  determined if it's the courtesy client and take appropriate actions.
+
+v13 patch includes:
+
+  Merge with 5.17-rc3.
+
+  Cleanup Documentation/filesystems/locking.rst: replace i_lock
+  with flc_lock, update API's that use flc_lock.
+
+  Rename lm_lock_conflict to lm_lock_expired().
+
+  Remove comment of lm_lock_expired API in lock_manager_operations.
+  Same information is in patch description.
+
+  Update commit messages of 4/4.
+
+  Add some comment for NFSD4_CLIENT_COURTESY_CLNT.
+
+  Add nfsd4_discard_courtesy_clnt() to eliminate duplicate code of
+  discarding courtesy client; setting NFSD4_DESTROY_COURTESY_CLIENT.
+
+v14 patch includes:
+
+. merge with Chuck's public for-next branch.
+
+. remove courtesy_client_expiry, use client's last renew time.
+
+. simplify comment of nfs4_check_access_deny_bmap.
+
+. add comment about race condition in nfs4_get_client_reaplist.
+
+. add list_del when walking cslist in nfs4_get_client_reaplist.
+
+. remove duplicate INIT_LIST_HEAD(&reaplist) from nfs4_laundromat
+
+. Modify find_confirmed_client and find_confirmed_client_by_name
+  to detect courtesy client and destroy it.
+
+. refactor lookup_clientid to use find_client_in_id_table
+  directly instead of find_confirmed_client.
+
+. refactor nfsd4_setclientid to call find_clp_in_name_tree
+  directly instead of find_confirmed_client_by_name.
+
+. remove comment of NFSD4_CLIENT_COURTESY.
+
+. replace NFSD4_CLIENT_DESTROY_COURTESY with NFSD4_CLIENT_EXPIRED.
+
+. replace NFSD4_CLIENT_COURTESY_CLNT with NFSD4_CLIENT_RECONNECTED.
+
+v15 patch includes:
+
+. add helper locks_has_blockers_locked in fs.h to check for
+  lock blockers
+
+. rename nfs4_conflict_clients to nfs4_resolve_deny_conflicts_locked
+
+. update nfs4_upgrade_open() to handle courtesy clients.
+
+. add helper nfs4_check_and_expire_courtesy_client and
+  nfs4_is_courtesy_client_expired to deduplicate some code.
+
+. update nfs4_anylock_blocker:
+   . replace list_for_each_entry_safe with list_for_each_entry
+   . break nfs4_anylock_blocker into 2 smaller functions.
+
+. update nfs4_get_client_reaplist:
+   . remove unnecessary commets
+   . acquire cl_cs_lock before setting NFSD4_CLIENT_COURTESY flag
+
+. update client_info_show to show 'time since last renew: 00:00:38'
+  instead of 'seconds from last renew: 38'.
+
+v16 patch includes:
+
+. update client_info_show to display 'status' as
+  'confirmed/unconfirmed/courtesy'
+
+. replace helper locks_has_blockers_locked in fs.h in v15 with new
+  locks_owner_has_blockers call in fs/locks.c
+
+. update nfs4_lockowner_has_blockers to use locks_owner_has_blockers
+
+. move nfs4_check_and_expire_courtesy_client from 5/11 to 4/11
+
+. remove unnecessary check for NULL clp in find_in_sessionid_hashtb
+
+. fix typo in commit messages
+
+v17 patch includes:
+
+. replace flags used for courtesy client with enum courtesy_client_state
+
+. add state table in nfsd/state.h
+
+. make nfsd4_expire_courtesy_clnt, nfsd4_discard_courtesy_clnt and
+  nfsd4_courtesy_clnt_expired as static inline.
+
+. update nfsd_breaker_owns_lease to use dl->dl_stid.sc_client directly
+
+. fix kernel test robot warning when CONFIG_FILE_LOCKING not defined.
+
