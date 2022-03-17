@@ -2,110 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B56244DC064
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Mar 2022 08:44:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 54B9B4DC161
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Mar 2022 09:34:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230306AbiCQHpy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Mar 2022 03:45:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59622 "EHLO
+        id S231335AbiCQIfk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Mar 2022 04:35:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229447AbiCQHpn (ORCPT
+        with ESMTP id S229963AbiCQIfj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Mar 2022 03:45:43 -0400
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0072C12E7;
-        Thu, 17 Mar 2022 00:44:07 -0700 (PDT)
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 22H3W24d001976;
-        Thu, 17 Mar 2022 07:44:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2021-07-09;
- bh=sGLHwlXW4JJkK+NaiBRn1/20D/aBsY2DOOTzDkUli40=;
- b=YXSj0KKVxL0rmRXMv4+tniAx4xy9HLb87KHrXvBK831yjMePwdq4X+wpPD5j83MJm5/H
- 5iQSsi4G7O/GFm2zJJKSvi7qZgFPDyabLtlGknieQnXxi1PxQW6Rws3DbKHE/MzSD8lr
- DoXv+v+K066OnUEO38+AlJoy/WLsZB6oB7+IX8yrITbCqvXA82a7/EpmPKR4MoJeQvOp
- d6+fpAGoFXpRRk/lsIF7pK6n/gUUzKsqUlQ+aSLLrZG1E87S255WQJngyHuIiGHPLlP5
- pMR/5XmRPZnocRZpyUo1U9HxgyMIVQKaDHPLrDubeR1mUiprfHXU9ml7EAbkxRm2mC2+ lA== 
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-        by mx0b-00069f02.pphosted.com with ESMTP id 3et5xwr5ea-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 17 Mar 2022 07:44:04 +0000
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.16.1.2/8.16.1.2) with SMTP id 22H7fnaV034963;
-        Thu, 17 Mar 2022 07:44:03 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com with ESMTP id 3erhy2wr1h-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 17 Mar 2022 07:44:03 +0000
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 22H7hoGx038783;
-        Thu, 17 Mar 2022 07:44:03 GMT
-Received: from ca-common-hq.us.oracle.com (ca-common-hq.us.oracle.com [10.211.9.209])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com with ESMTP id 3erhy2wqv5-12;
-        Thu, 17 Mar 2022 07:44:03 +0000
-From:   Dai Ngo <dai.ngo@oracle.com>
-To:     chuck.lever@oracle.com, bfields@fieldses.org
-Cc:     jlayton@redhat.com, viro@zeniv.linux.org.uk,
-        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH RFC v17 11/11] NFSD: Show state of courtesy clients in client info
-Date:   Thu, 17 Mar 2022 00:43:48 -0700
-Message-Id: <1647503028-11966-12-git-send-email-dai.ngo@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1647503028-11966-1-git-send-email-dai.ngo@oracle.com>
-References: <1647503028-11966-1-git-send-email-dai.ngo@oracle.com>
-X-Proofpoint-GUID: nz9pNEjQvZ2uPcJuxRzZJlfZUC90HKLr
-X-Proofpoint-ORIG-GUID: nz9pNEjQvZ2uPcJuxRzZJlfZUC90HKLr
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        Thu, 17 Mar 2022 04:35:39 -0400
+Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2F48A147AFA;
+        Thu, 17 Mar 2022 01:34:22 -0700 (PDT)
+Received: from dread.disaster.area (pa49-186-150-27.pa.vic.optusnet.com.au [49.186.150.27])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id C29F310E4B5B;
+        Thu, 17 Mar 2022 19:34:20 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1nUlaO-006Tqn-0l; Thu, 17 Mar 2022 19:34:20 +1100
+Date:   Thu, 17 Mar 2022 19:34:20 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Naohiro Aota <naohiro.aota@wdc.com>
+Cc:     linux-btrfs@vger.kernel.org, johannes.thumshirn@wdc.com,
+        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        Filipe Manana <fdmanana@suse.com>
+Subject: Re: [PATCH v2 3/4] fs: add check functions for
+ sb_start_{write,pagefault,intwrite}
+Message-ID: <20220317083420.GA1544202@dread.disaster.area>
+References: <cover.1647436353.git.naohiro.aota@wdc.com>
+ <0737603ecc6baf785843d6e91992e6ef202c308c.1647436353.git.naohiro.aota@wdc.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0737603ecc6baf785843d6e91992e6ef202c308c.1647436353.git.naohiro.aota@wdc.com>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=6232f28d
+        a=sPqof0Mm7fxWrhYUF33ZaQ==:117 a=sPqof0Mm7fxWrhYUF33ZaQ==:17
+        a=kj9zAlcOel0A:10 a=o8Y5sQTvuykA:10 a=iox4zFpeAAAA:8 a=JF9118EUAAAA:8
+        a=7-415B0cAAAA:8 a=zkEiViQQ1w_MH5clXOgA:9 a=CjuIK1q_8ugA:10
+        a=WzC6qhA0u3u7Ye7llzcV:22 a=xVlTc564ipvMDusKsbsT:22
+        a=biEYGPWJfzWAr4FL6Ov7:22
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Update client_info_show to show state of courtesy client
-and time since last renew.
+On Wed, Mar 16, 2022 at 10:22:39PM +0900, Naohiro Aota wrote:
+> Add a function sb_write_started() to return if sb_start_write() is
+> properly called. It is used in the next commit.
+> 
+> Also, add the similar functions for sb_start_pagefault() and
+> sb_start_intwrite().
+> 
+> Reviewed-by: Filipe Manana <fdmanana@suse.com>
+> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
+> ---
+>  include/linux/fs.h | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+> 
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 27746a3da8fd..0c8714d64169 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -1732,6 +1732,11 @@ static inline bool __sb_start_write_trylock(struct super_block *sb, int level)
+>  #define __sb_writers_release(sb, lev)	\
+>  	percpu_rwsem_release(&(sb)->s_writers.rw_sem[(lev)-1], 1, _THIS_IP_)
+>  
+> +static inline bool __sb_write_started(struct super_block *sb, int level)
+> +{
+> +	return lockdep_is_held_type(sb->s_writers.rw_sem + level - 1, 1);
+> +}
+> +
+>  /**
+>   * sb_end_write - drop write access to a superblock
+>   * @sb: the super we wrote to
+> @@ -1797,6 +1802,11 @@ static inline bool sb_start_write_trylock(struct super_block *sb)
+>  	return __sb_start_write_trylock(sb, SB_FREEZE_WRITE);
+>  }
+>  
+> +static inline bool sb_write_started(struct super_block *sb)
+> +{
+> +	return __sb_write_started(sb, SB_FREEZE_WRITE);
+> +}
+> +
+>  /**
+>   * sb_start_pagefault - get write access to a superblock from a page fault
+>   * @sb: the super we write to
+> @@ -1821,6 +1831,11 @@ static inline void sb_start_pagefault(struct super_block *sb)
+>  	__sb_start_write(sb, SB_FREEZE_PAGEFAULT);
+>  }
+>  
+> +static inline bool sb_pagefault_started(struct super_block *sb)
+> +{
+> +	return __sb_write_started(sb, SB_FREEZE_PAGEFAULT);
+> +}
+> +
+>  /**
+>   * sb_start_intwrite - get write access to a superblock for internal fs purposes
+>   * @sb: the super we write to
+> @@ -1844,6 +1859,11 @@ static inline bool sb_start_intwrite_trylock(struct super_block *sb)
+>  	return __sb_start_write_trylock(sb, SB_FREEZE_FS);
+>  }
+>  
+> +static inline bool sb_intwrite_started(struct super_block *sb)
+> +{
+> +	return __sb_write_started(sb, SB_FREEZE_FS);
+> +}
+> +
+>  bool inode_owner_or_capable(struct user_namespace *mnt_userns,
+>  			    const struct inode *inode);
+>  
 
-Signed-off-by: Dai Ngo <dai.ngo@oracle.com>
----
- fs/nfsd/nfs4state.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+We should not be adding completely unused code to the VFS APIs.
 
-diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-index d5758c7101dc..21dd8265bef8 100644
---- a/fs/nfsd/nfs4state.c
-+++ b/fs/nfsd/nfs4state.c
-@@ -2411,7 +2411,8 @@ static int client_info_show(struct seq_file *m, void *v)
- {
- 	struct inode *inode = m->private;
- 	struct nfs4_client *clp;
--	u64 clid;
-+	u64 clid, hrs;
-+	u32 mins, secs;
- 
- 	clp = get_nfsdfs_clp(inode);
- 	if (!clp)
-@@ -2419,10 +2420,17 @@ static int client_info_show(struct seq_file *m, void *v)
- 	memcpy(&clid, &clp->cl_clientid, sizeof(clid));
- 	seq_printf(m, "clientid: 0x%llx\n", clid);
- 	seq_printf(m, "address: \"%pISpc\"\n", (struct sockaddr *)&clp->cl_addr);
--	if (test_bit(NFSD4_CLIENT_CONFIRMED, &clp->cl_flags))
-+
-+	if (clp->cl_cs_client_state == NFSD4_CLIENT_COURTESY)
-+		seq_puts(m, "status: courtesy\n");
-+	else if (clp->cl_cs_client_state == NFSD4_CLIENT_CONFIRMED)
- 		seq_puts(m, "status: confirmed\n");
- 	else
- 		seq_puts(m, "status: unconfirmed\n");
-+	hrs = div_u64_rem(ktime_get_boottime_seconds() - clp->cl_time,
-+				3600, &secs);
-+	mins = div_u64_rem((u64)secs, 60, &secs);
-+	seq_printf(m, "time since last renew: %llu:%02u:%02u\n", hrs, mins, secs);
- 	seq_printf(m, "name: ");
- 	seq_quote_mem(m, clp->cl_name.data, clp->cl_name.len);
- 	seq_printf(m, "\nminor version: %d\n", clp->cl_minorversion);
+Just rename __sb_write_started() to sb_write_started() and pass
+SB_FREEZE_WRITE directly from the single debug assert that you've
+added that needs this check.
+
+Cheers,
+
+Dave.
 -- 
-2.9.5
-
+Dave Chinner
+david@fromorbit.com
