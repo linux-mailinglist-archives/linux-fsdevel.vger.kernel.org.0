@@ -2,54 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AE7D4DD52D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Mar 2022 08:21:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF5AF4DD56F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Mar 2022 08:47:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233010AbiCRHWp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Mar 2022 03:22:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58174 "EHLO
+        id S233240AbiCRHsh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Mar 2022 03:48:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232971AbiCRHWo (ORCPT
+        with ESMTP id S233222AbiCRHsh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Mar 2022 03:22:44 -0400
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C0872B882C;
-        Fri, 18 Mar 2022 00:21:26 -0700 (PDT)
-Received: from kwepemi100009.china.huawei.com (unknown [172.30.72.54])
-        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4KKb1p008Nz9sfJ;
-        Fri, 18 Mar 2022 15:17:33 +0800 (CST)
-Received: from kwepemm600004.china.huawei.com (7.193.23.242) by
- kwepemi100009.china.huawei.com (7.221.188.242) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.21; Fri, 18 Mar 2022 15:21:24 +0800
-Received: from [10.174.177.238] (10.174.177.238) by
- kwepemm600004.china.huawei.com (7.193.23.242) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.21; Fri, 18 Mar 2022 15:21:23 +0800
-Message-ID: <165cff82-6210-9acf-c104-b6cae5d2a92e@huawei.com>
-Date:   Fri, 18 Mar 2022 15:21:23 +0800
+        Fri, 18 Mar 2022 03:48:37 -0400
+Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 048332BAE5D
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Mar 2022 00:47:19 -0700 (PDT)
+Received: by mail-pf1-x435.google.com with SMTP id a5so8849267pfv.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Mar 2022 00:47:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=i2Kxzfqa17JeX6zvSFdcAC9AxQ0uSV/1LhJKBQM+dBo=;
+        b=UaEE+RkmBrZgxg3Qvjtn9RTTC4YPIXWjUW3Bx10IPJLn++s9nnBXRZniYrNY6COzIK
+         IWkHYHzSzSedHDyCgxfuemUSGpOTx5zN1JmXRIf53whpuiafHr/G2sS4UNAIPiCXouCX
+         f7NU6IrexwNDdBmpVYRxBti1K01eoKRwavqtWnUNoWhKtBI3epsNz0UTwPO8TZNuRlwc
+         rP7AVwj8FBWqc8Z4X6K04uw11sUXFWJGOw0tKuSKZ36JJTwHaE+ZqQywCT0hkJ+t3rCz
+         dzFLUASMTSnQiZLWAimXIDIH94ns8HwpLb+C1q7OsjG3Mg72Y/9acnbkxQYG62WGtgNm
+         i8zQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=i2Kxzfqa17JeX6zvSFdcAC9AxQ0uSV/1LhJKBQM+dBo=;
+        b=De3Gu91UbRPVN36rpKoqUvpkYPstazX9luGyJReuXFPGTqgezYZtwYZZKgmfoG3Wpn
+         5t18ehblRSVvLGkoXJwsi035vsyioqwgH7na4OEp8t2tOAg66hky18je7lDykC10N1HH
+         drGcSlcMI9JkpdaZidUvXoGBme7e+/HUhH6MhJLPgSZbPPW0knhXYiokWS+Y5b7aY+kB
+         fsPeS/H1F760YaHXQWhHeo9ALIUqXfZV4hANk/nrslPo+OUauiwubRjpvMGx9+cUZl+0
+         Z88q4CAjDbeXwquc0NkmLNXNPSJu8YbQf9iVMrk6F/xiNhI4nbdgGKuvEDqoaCxI0aWU
+         eA7A==
+X-Gm-Message-State: AOAM530Efgb9uzDukyG/xxPZgBAylF3nw+KEmbTCyY21l/izEYVxmtVP
+        J+WbfFkuz/hnN0tHZlv1AOpUQw==
+X-Google-Smtp-Source: ABdhPJzB6PRnA27+IVJTkfrLIjmVsbIVOijMyvlx7Btwx9xnKrLpV9UgKC2XAfpJ48RfsZJJk7x5bQ==
+X-Received: by 2002:a62:684:0:b0:4f7:803:d1b0 with SMTP id 126-20020a620684000000b004f70803d1b0mr8966912pfg.10.1647589638495;
+        Fri, 18 Mar 2022 00:47:18 -0700 (PDT)
+Received: from localhost.localdomain ([139.177.225.233])
+        by smtp.gmail.com with ESMTPSA id a38-20020a056a001d2600b004f72acd4dadsm8770941pfx.81.2022.03.18.00.47.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Mar 2022 00:47:18 -0700 (PDT)
+From:   Muchun Song <songmuchun@bytedance.com>
+To:     dan.j.williams@intel.com, willy@infradead.org, jack@suse.cz,
+        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        apopple@nvidia.com, shy828301@gmail.com, rcampbell@nvidia.com,
+        hughd@google.com, xiyuyang19@fudan.edu.cn,
+        kirill.shutemov@linux.intel.com, zwisler@kernel.org,
+        hch@infradead.org
+Cc:     linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        duanxiongchun@bytedance.com, smuchun@gmail.com,
+        Muchun Song <songmuchun@bytedance.com>
+Subject: [PATCH v5 0/6] Fix some bugs related to ramp and dax
+Date:   Fri, 18 Mar 2022 15:45:23 +0800
+Message-Id: <20220318074529.5261-1-songmuchun@bytedance.com>
+X-Mailer: git-send-email 2.32.0 (Apple Git-132)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.0.2
-Subject: Re: [PATCH] iomap: fix an infinite loop in iomap_fiemap
-To:     "Darrick J. Wong" <djwong@kernel.org>
-CC:     <willy@infradead.org>, <viro@zeniv.linux.org.uk>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <houtao1@huawei.com>, <fangwei1@huawei.com>,
-        <hsiangkao@linux.alibaba.com>
-References: <20220315065745.3441989-1-guoxuenan@huawei.com>
- <20220317220511.GA8182@magnolia>
-From:   Guo Xuenan <guoxuenan@huawei.com>
-In-Reply-To: <20220317220511.GA8182@magnolia>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.174.177.238]
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemm600004.china.huawei.com (7.193.23.242)
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -57,99 +75,47 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Darrick,
+This series is based on next-20220225.
 
-在 2022/3/18 6:05, Darrick J. Wong wrote:
-> On Tue, Mar 15, 2022 at 02:57:45PM +0800, Guo Xuenan wrote:
->> when get fiemap starting from MAX_LFS_FILESIZE, (maxbytes - *len) < start
->> will always true , then *len set zero. because of start offset is byhond
->> file size, for erofs filesystem it will always return iomap.length with
->> zero,iomap iterate will be infinite loop.
->>
->> In order to avoid this situation, it is better to calculate the actual
->> mapping length at first. If the len is 0, there is no need to continue
->> the operation.
->>
->> ------------[ cut here ]------------
->> WARNING: CPU: 7 PID: 905 at fs/iomap/iter.c:35 iomap_iter+0x97f/0xc70
->> Modules linked in: xfs erofs
->> CPU: 7 PID: 905 Comm: iomap Tainted: G        W         5.17.0-rc8 #27
->> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubuntu1.1 04/01/2014
->> RIP: 0010:iomap_iter+0x97f/0xc70
->> Code: 85 a1 fc ff ff e8 71 be 9c ff 0f 1f 44 00 00 e9 92 fc ff ff e8 62 be 9c ff 0f 0b b8 fb ff ff ff e9 fc f8 ff ff e8 51 be 9c ff <0f> 0b e9 2b fc ff ff e8 45 be 9c ff 0f 0b e9 e1 fb ff ff e8 39 be
->> RSP: 0018:ffff888060a37ab0 EFLAGS: 00010293
->> RAX: 0000000000000000 RBX: ffff888060a37bb0 RCX: 0000000000000000
->> RDX: ffff88807e19a900 RSI: ffffffff81a7da7f RDI: ffff888060a37be0
->> RBP: 7fffffffffffffff R08: 0000000000000000 R09: ffff888060a37c20
->> R10: ffff888060a37c67 R11: ffffed100c146f8c R12: 7fffffffffffffff
->> R13: 0000000000000000 R14: ffff888060a37bd8 R15: ffff888060a37c20
->> FS:  00007fd3cca01540(0000) GS:ffff888108780000(0000) knlGS:0000000000000000
->> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> CR2: 0000000020010820 CR3: 0000000054b92000 CR4: 00000000000006e0
->> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->> Call Trace:
->>   <TASK>
->>   iomap_fiemap+0x1c9/0x2f0
->>   erofs_fiemap+0x64/0x90 [erofs]
->>   do_vfs_ioctl+0x40d/0x12e0
->>   __x64_sys_ioctl+0xaa/0x1c0
->>   do_syscall_64+0x35/0x80
->>   entry_SYSCALL_64_after_hwframe+0x44/0xae
->>   </TASK>
->> ---[ end trace 0000000000000000 ]---
->> watchdog: BUG: soft lockup - CPU#7 stuck for 26s! [iomap:905]
->>
->> Reported-by: Hulk Robot <hulkci@huawei.com>
->> Signed-off-by: Guo Xuenan <guoxuenan@huawei.com>
->> ---
->>   fs/ioctl.c | 5 +++--
->>   1 file changed, 3 insertions(+), 2 deletions(-)
->>
->> diff --git a/fs/ioctl.c b/fs/ioctl.c
->> index 1ed097e94af2..7f70e90766ed 100644
->> --- a/fs/ioctl.c
->> +++ b/fs/ioctl.c
->> @@ -171,8 +171,6 @@ int fiemap_prep(struct inode *inode, struct fiemap_extent_info *fieinfo,
->>   	u32 incompat_flags;
->>   	int ret = 0;
->>   
->> -	if (*len == 0)
->> -		return -EINVAL;
->>   	if (start > maxbytes)
->>   		return -EFBIG;
->>   
->> @@ -182,6 +180,9 @@ int fiemap_prep(struct inode *inode, struct fiemap_extent_info *fieinfo,
->>   	if (*len > maxbytes || (maxbytes - *len) < start)
->>   		*len = maxbytes - start;
->>   
->> +	if (*len == 0)
->> +		return -EINVAL;
-> Looks fine to me (and I don't even really mind pulling this in) but this
-> isn't a patch to fs/iomap/ -- doesn't the same issue potentially affect
-> the fiemap implementations that do not use iomap?
->
-> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
->
-> --D
+Patch 1-2 fix a cache flush bug, because subsequent patches depend on
+those on those changes, there are placed in this series.  Patch 3-4
+are preparation for fixing a dax bug in patch 5.  Patch 6 is code cleanup
+since the previous patch remove the usage of follow_invalidate_pte().
 
-Thanks Darrick, you're right,there is something wrong with my statement. 
-In a strict sense, this modification here does not belong to fs/iomap, i 
-can change it to fs/vfs in v2 :) I have looked into the code of those 
-filesystem(btrfs,ext4,f2fs,nilfs2,ntfs3..) which don't use iomap, and 
-did some test. when start=0x7fffffffffffffff, and len = 0; btrfs: while 
-len==0, return -EINVAL directly; ext4: 
-ext4_get_es_cache->ext4_fiemap_check_ranges, return -EFBIG; f2fs: return 
--EFBIG; nilfs2: while len==0, do nothing and return 0; ntfs3: return 
--EFBIG directly; so, as far as i can see, just return -EINVAL earlyier in fiemap_prep has no side effect.
+v5:
+- Collect Reviewed-by from Dan Williams.
+- Fix panic reported by kernel test robot <oliver.sang@intel.com>.
+- Remove pmdpp parameter from follow_invalidate_pte() and fold it into follow_pte().
 
-Thanks.
+v4:
+- Fix compilation error on riscv.
 
->> +
->>   	supported_flags |= FIEMAP_FLAG_SYNC;
->>   	supported_flags &= FIEMAP_FLAGS_COMPAT;
->>   	incompat_flags = fieinfo->fi_flags & ~supported_flags;
->> -- 
->> 2.22.0
->>
-> .
+v3:
+- Based on next-20220225.
+
+v2:
+- Avoid the overly long line in lots of places suggested by Christoph.
+- Fix a compiler warning reported by kernel test robot since pmd_pfn()
+  is not defined when !CONFIG_TRANSPARENT_HUGEPAGE on powerpc architecture.
+- Split a new patch 4 for preparation of fixing the dax bug.
+
+Muchun Song (6):
+  mm: rmap: fix cache flush on THP pages
+  dax: fix cache flush on PMD-mapped pages
+  mm: rmap: introduce pfn_mkclean_range() to cleans PTEs
+  mm: pvmw: add support for walking devmap pages
+  dax: fix missing writeprotect the pte entry
+  mm: simplify follow_invalidate_pte()
+
+ fs/dax.c             | 82 +++++-----------------------------------------------
+ include/linux/mm.h   |  3 --
+ include/linux/rmap.h |  3 ++
+ mm/internal.h        | 26 +++++++++++------
+ mm/memory.c          | 81 +++++++++++++++------------------------------------
+ mm/page_vma_mapped.c | 16 +++++-----
+ mm/rmap.c            | 68 +++++++++++++++++++++++++++++++++++--------
+ 7 files changed, 114 insertions(+), 165 deletions(-)
+
+-- 
+2.11.0
+
