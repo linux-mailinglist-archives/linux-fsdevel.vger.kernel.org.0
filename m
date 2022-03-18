@@ -2,67 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CBC84DDB4C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Mar 2022 15:10:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1283A4DDB5E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Mar 2022 15:14:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237095AbiCROLN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Mar 2022 10:11:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50930 "EHLO
+        id S237136AbiCROP3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Mar 2022 10:15:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38008 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237024AbiCROLN (ORCPT
+        with ESMTP id S237139AbiCROP1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Mar 2022 10:11:13 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57B7D1EA5F5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Mar 2022 07:09:54 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id E2C301F37F;
-        Fri, 18 Mar 2022 14:09:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1647612592; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        Fri, 18 Mar 2022 10:15:27 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id EC88E21C079
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Mar 2022 07:14:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1647612847;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=wssZDuetQ6c1JayzpT2JjIL3BIrieVTqq3387hoXdrw=;
-        b=NH3kZKP7GWjaCZ4ss5eo8CZ+jXZWsoyuDNNLRShflqaMhJvAsQI2n6xwl96Y+ugL3lNzyj
-        MMYwZn0XLQ8X4ugxcoxF3AWf28v//Qzw5z8dRQWlgKgF8ztegK9B4MgfKbhPUEBswOwd2j
-        QJ8Z6a3Ymxv1KSEnAUjcjcBkkGtPybY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1647612592;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=wssZDuetQ6c1JayzpT2JjIL3BIrieVTqq3387hoXdrw=;
-        b=Tv07QEkuwvLvN0xK8FHEvhKXqg4LM1HfYefFPKGpJ7EC4ONTOCSa7PXEG+XAJ4buVrNS/E
-        pVRp44pHa+1tsECA==
-Received: from quack3.suse.cz (unknown [10.163.28.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id C4AD2A3B8A;
-        Fri, 18 Mar 2022 14:09:52 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id EAFD8A0608; Fri, 18 Mar 2022 15:09:51 +0100 (CET)
-Date:   Fri, 18 Mar 2022 15:09:51 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 4/5] fanotify: add support for exclusive create of mark
-Message-ID: <20220318140951.oly4ummcuu2snat5@quack3.lan>
-References: <20220307155741.1352405-1-amir73il@gmail.com>
- <20220307155741.1352405-5-amir73il@gmail.com>
- <20220317153443.iy5rvns5nwxlxx43@quack3.lan>
- <20220317154550.y3rvxmmfcaf5n5st@quack3.lan>
- <CAOQ4uxi85LV7upQuBUjL==aaWoY8WGMG4DRQToj6Y-JCn-Ex=g@mail.gmail.com>
- <20220318103219.j744o5g5bmsneihz@quack3.lan>
- <CAOQ4uxj_-pYg4g6V8OrF8rD-8R+Mn1tMsPBq52WnfkvjZWYVrw@mail.gmail.com>
+        bh=xVu+mDTPb464jas0MF+N3kLKCYSGhLNWfvQBrQWtjhY=;
+        b=NSY5k6CrS8NF8HFBKTnG+8GFRBrwAErF/DHleHCqD9lBEDh9abUURtB/fALHIP26pbNPJJ
+        5BnpYl52BQW/AjTYxf2lsaIcsZOGp4H4YuIeXB8yy+fbjB1Uzg+pqxl/8WHj4OFr5VEtkN
+        EqsHLSJWVSAc0A1K3cztr3yCg+BiYSU=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-257-38IljzVeON2u0DynbMRKhg-1; Fri, 18 Mar 2022 10:14:06 -0400
+X-MC-Unique: 38IljzVeON2u0DynbMRKhg-1
+Received: by mail-qv1-f71.google.com with SMTP id g1-20020ad446c1000000b00440c9327221so6322538qvw.6
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Mar 2022 07:14:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=xVu+mDTPb464jas0MF+N3kLKCYSGhLNWfvQBrQWtjhY=;
+        b=63DkmdFyBmT3qlTKQ5PnEGregzE2jC2AHDkU+USCyPNtFUCXi6qydTTbSwzRHK2rk3
+         dUVYOgB19tgzhKgjfnKXKGcWuzf+CqeRzj3sZYVCTka8gDq8iZvcGuhXAt4SIEea5mYX
+         JYPCIAv/zZmVYEe1Jvr/G7QZ2JmwlNGH7Ol7pgsHpswL41k0+BW5OgRtsYPmpx0QjPjs
+         F1iUhWYNvDY3vsRNj08Zkzs4QylnigKT9ks+skswMCO99VLlp4eGM9DiSiHOvMT1Ic8r
+         baZgP1irxgLw6iIc1wFVX1a9rkN+wlwJ3spwJ/9QWdW11/JYSVWekWlWHsaPg31ykyHe
+         FtgA==
+X-Gm-Message-State: AOAM533s+eA5WhkVds/hTZV0/hxBgeLynjqnd8cr8cBH9+3k9v11jJD/
+        U8STbmGcZ9HYB1w+Xs2ZaRPGZC5EzEIt9u3ejZVbJZMb7EKdn+5fUkPoxSnVteAPkgu4JHR+jUS
+        VlY6D5JzzzPu2Qi2vLJ9VudLyhQ==
+X-Received: by 2002:a37:a4f:0:b0:67c:a5c0:1648 with SMTP id 76-20020a370a4f000000b0067ca5c01648mr5972311qkk.192.1647612845796;
+        Fri, 18 Mar 2022 07:14:05 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJy2yd4wU7zf90tU0xLYFOAIwdyNu2ueVxqX0kLDNar2X3NKO47u2vgSd0dj8IEeVgx4GnlF4w==
+X-Received: by 2002:a37:a4f:0:b0:67c:a5c0:1648 with SMTP id 76-20020a370a4f000000b0067ca5c01648mr5972289qkk.192.1647612845370;
+        Fri, 18 Mar 2022 07:14:05 -0700 (PDT)
+Received: from bfoster (c-24-61-119-116.hsd1.ma.comcast.net. [24.61.119.116])
+        by smtp.gmail.com with ESMTPSA id f17-20020ac87f11000000b002e1e831366asm5760454qtk.77.2022.03.18.07.14.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Mar 2022 07:14:05 -0700 (PDT)
+Date:   Fri, 18 Mar 2022 10:14:03 -0400
+From:   Brian Foster <bfoster@redhat.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Hugh Dickins <hughd@google.com>
+Subject: Re: writeback completion soft lockup BUG in folio_wake_bit()
+Message-ID: <YjSTq4roN/LJ7Xsy@bfoster>
+References: <YjDj3lvlNJK/IPiU@bfoster>
+ <YjJPu/3tYnuKK888@casper.infradead.org>
+ <YjM88OwoccZOKp86@bfoster>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAOQ4uxj_-pYg4g6V8OrF8rD-8R+Mn1tMsPBq52WnfkvjZWYVrw@mail.gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+In-Reply-To: <YjM88OwoccZOKp86@bfoster>
+X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -70,67 +81,145 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 18-03-22 13:04:51, Amir Goldstein wrote:
-> > > The problem that I was trying to avoid with FAN_MARK_VOLATILE is similar
-> > > to an existing UAPI problem with FAN_MARK_IGNORED_SURV_MODIFY -
-> > > This flag can only be set and not cleared and when set it affects all the events
-> > > set in the mask prior to that time, leading to unpredictable results.
-> > >
-> > > Let's say a user sets FAN_CLOSE in ignored mask without _SURV_MODIFY
-> > > and later sets FAN_OPEN  in ignored mask with _SURV_MODIFY.
-> > > Does the ignored mask now include FAN_CLOSE? That depends
-> > > whether or not FAN_MODIFY event took place between the two calls.
-> >
-> > Yeah, but with FAN_MARK_VOLATILE the problem also goes the other way
-> > around. If I set FAN_MARK_VOLATILE on some inode and later add something to
-> > a normal mask, I might be rightfully surprised when the mark gets evicted
-> > and thus I will not get events I'm expecting. Granted the application would
-> > be stepping on its own toes because marks are "merged" only for the same
-> > notification group but still it could be surprising and avoiding such
-> > mishaps would probably involve extra tracking on the application side.
-> >
-> > The problem essentially lies in mixing mark "flags" (ONDIR, ON_CHILD,
-> > VOLATILE, SURV_MODIFY) with mark mask. Mark operations with identical set
-> > of flags can be merged without troubles but once flags are different
-> > results of the merge are always "interesting". So far the consequences were
-> > mostly benign (getting more events than the application may have expected)
-> > but with FAN_MARK_VOLATILE we can also start loosing events and that is
-> > more serious.
-> >
-> > So far my thinking is that we either follow the path of possibly generating
-> > more events than necessary (i.e., any merge of two masks that do not both
-> > have FAN_MARK_VOLATILE set will clear FAN_MARK_VOLATILE) or we rework the
-> > whole mark API (and implementation!) to completely avoid these strange
-> > effects of flag merging. I don't like FAN_MARK_CREATE much because IMO it
-> > solves only half of the problem - when new mark with a flag wants to merge
-> > with an existing mark, but does not solve the other half when some other
-> > mark wants to merge to a mark with a flag. Thoughts?
-> >
+On Thu, Mar 17, 2022 at 09:51:44AM -0400, Brian Foster wrote:
+> On Wed, Mar 16, 2022 at 08:59:39PM +0000, Matthew Wilcox wrote:
+> > On Tue, Mar 15, 2022 at 03:07:10PM -0400, Brian Foster wrote:
+> > > What seems to happen is that the majority of the fsync calls end up
+> > > waiting on writeback of a particular page, the wakeup of the writeback
+> > > bit on that page wakes a task that immediately resets PG_writeback on
+> > > the page such that N other folio_wait_writeback() waiters see the bit
+> > > still set and immediately place themselves back onto the tail of the
+> > > wait queue.  Meanwhile the waker task spins in the WQ_FLAG_BOOKMARK loop
+> > > in folio_wake_bit() (backing off the lock for a cycle or so in each
+> > > iteration) only to find the same bunch of tasks in the queue. This
+> > > process repeats for a long enough amount of time to trigger the soft
+> > > lockup warning. I've confirmed this spinning behavior with a tracepoint
+> > > in the bookmark loop that indicates we're stuck for many hundreds of
+> > > thousands of iterations (at least) of this loop when the soft lockup
+> > > warning triggers.
+> > 
+> > [...]
+> > 
+> > > I've run a few quick experiments to try and corroborate this analysis.
+> > > The problem goes away completely if I either back out the loop change in
+> > > folio_wait_writeback() or bump WAITQUEUE_WALK_BREAK_CNT to something
+> > > like 128 (i.e. greater than the total possible number of waiter tasks in
+> > > this test). I've also played a few games with bookmark behavior mostly
+> > > out of curiosity, but usually end up introducing other problems like
+> > > missed wakeups, etc.
+> > 
+> > As I recall, the bookmark hack was introduced in order to handle
+> > lock_page() problems.  It wasn't really supposed to handle writeback,
+> > but nobody thought it would cause any harm (and indeed, it didn't at the
+> > time).  So how about we only use bookmarks for lock_page(), since
+> > lock_page() usually doesn't have the multiple-waker semantics that
+> > writeback has?
+> > 
 > 
-> Yes. Just one thought.
-> My applications never needed to change the mark mask after it was
-> set and I don't really see a huge use case for changing the mask
-> once it was set (besides removing the entire mark).
+> Oh, interesting. I wasn't aware of the tenuous status of the bookmark
+> code. This is indeed much nicer than anything I was playing with. I
+> suspect it will address the problem, but I'll throw it at my test env
+> for a while and follow up.. thanks!
 > 
-> So instead of FAN_MARK_CREATE, we may try to see if FAN_MARK_CONST
-> results in something that is useful and not too complicated to implement
-> and document.
+
+So I'm not clear on where we're at with this patch vs. something that
+moves (or drops) the wb wait loop vs. the wait and set thing (which
+seems more invasive and longer term), but FWIW.. this patch survived
+over 10k iterations of the reproducer test yesterday (the problem
+typically reproduces in ~1k or so iterations on average) and an
+overnight fstests run without regression.
+
+Brian
+
+> Brian
 > 
-> IMO using a "const" initialization for the "volatile" mark is not such a big
-> limitation and should not cripple the feature.
+> > (this is more in the spirit of "minimal patch" -- I think
+> > initialising the bookmark should be moved to folio_unlock()).
+> > 
+> > diff --git a/mm/filemap.c b/mm/filemap.c index
+> > b2728eb52407..9ee3c5f1f489 100644
+> > --- a/mm/filemap.c
+> > +++ b/mm/filemap.c
+> > @@ -1146,26 +1146,28 @@ static int wake_page_function(wait_queue_entry_t *wait, unsigned mode, int sync,
+> >  	return (flags & WQ_FLAG_EXCLUSIVE) != 0;
+> >  }
+> >  
+> > -static void folio_wake_bit(struct folio *folio, int bit_nr)
+> > +static void folio_wake_bit(struct folio *folio, int bit_nr,
+> > +		wait_queue_entry_t *bookmark)
+> >  {
+> >  	wait_queue_head_t *q = folio_waitqueue(folio);
+> >  	struct wait_page_key key;
+> >  	unsigned long flags;
+> > -	wait_queue_entry_t bookmark;
+> >  
+> >  	key.folio = folio;
+> >  	key.bit_nr = bit_nr;
+> >  	key.page_match = 0;
+> >  
+> > -	bookmark.flags = 0;
+> > -	bookmark.private = NULL;
+> > -	bookmark.func = NULL;
+> > -	INIT_LIST_HEAD(&bookmark.entry);
+> > +	if (bookmark) {
+> > +		bookmark->flags = 0;
+> > +		bookmark->private = NULL;
+> > +		bookmark->func = NULL;
+> > +		INIT_LIST_HEAD(&bookmark->entry);
+> > +	}
+> >  
+> >  	spin_lock_irqsave(&q->lock, flags);
+> > -	__wake_up_locked_key_bookmark(q, TASK_NORMAL, &key, &bookmark);
+> > +	__wake_up_locked_key_bookmark(q, TASK_NORMAL, &key, bookmark);
+> >  
+> > -	while (bookmark.flags & WQ_FLAG_BOOKMARK) {
+> > +	while (bookmark && (bookmark->flags & WQ_FLAG_BOOKMARK)) {
+> >  		/*
+> >  		 * Take a breather from holding the lock,
+> >  		 * allow pages that finish wake up asynchronously
+> > @@ -1175,7 +1177,7 @@ static void folio_wake_bit(struct folio *folio, int bit_nr)
+> >  		spin_unlock_irqrestore(&q->lock, flags);
+> >  		cpu_relax();
+> >  		spin_lock_irqsave(&q->lock, flags);
+> > -		__wake_up_locked_key_bookmark(q, TASK_NORMAL, &key, &bookmark);
+> > +		__wake_up_locked_key_bookmark(q, TASK_NORMAL, &key, bookmark);
+> >  	}
+> >  
+> >  	/*
+> > @@ -1204,7 +1206,7 @@ static void folio_wake(struct folio *folio, int bit)
+> >  {
+> >  	if (!folio_test_waiters(folio))
+> >  		return;
+> > -	folio_wake_bit(folio, bit);
+> > +	folio_wake_bit(folio, bit, NULL);
+> >  }
+> >  
+> >  /*
+> > @@ -1554,12 +1556,15 @@ static inline bool clear_bit_unlock_is_negative_byte(long nr, volatile void *mem
+> >   */
+> >  void folio_unlock(struct folio *folio)
+> >  {
+> > +	wait_queue_entry_t bookmark;
+> > +
+> >  	/* Bit 7 allows x86 to check the byte's sign bit */
+> >  	BUILD_BUG_ON(PG_waiters != 7);
+> >  	BUILD_BUG_ON(PG_locked > 7);
+> >  	VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
+> > +
+> >  	if (clear_bit_unlock_is_negative_byte(PG_locked, folio_flags(folio, 0)))
+> > -		folio_wake_bit(folio, PG_locked);
+> > +		folio_wake_bit(folio, PG_locked, &bookmark);
+> >  }
+> >  EXPORT_SYMBOL(folio_unlock);
+> >  
+> > @@ -1578,7 +1583,7 @@ void folio_end_private_2(struct folio *folio)
+> >  {
+> >  	VM_BUG_ON_FOLIO(!folio_test_private_2(folio), folio);
+> >  	clear_bit_unlock(PG_private_2, folio_flags(folio, 0));
+> > -	folio_wake_bit(folio, PG_private_2);
+> > +	folio_wake_bit(folio, PG_private_2, NULL);
+> >  	folio_put(folio);
+> >  }
+> >  EXPORT_SYMBOL(folio_end_private_2);
+> > 
 
-OK, so basically if there's mark already placed at the inode and we try to
-add FAN_MARK_CONST, the addition would fail, and similarly if we later tried
-to add further mark to the inode with FAN_MARK_CONST mark, it would fail?
-
-Thinking out loud: What does FAN_MARK_CONST bring compared to the
-suggestion to go via the path of possibly generating more events by
-clearing FAN_MARK_VOLATILE? I guess some additional safety if you would add
-another mark to the same inode by an accident. Because if you never update
-marks, there's no problem with additional mark flags. Is the new flag worth
-it? Not sure...  :)
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
