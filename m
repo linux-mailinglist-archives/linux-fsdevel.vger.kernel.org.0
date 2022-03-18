@@ -2,62 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 715F54DE3D3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Mar 2022 22:59:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD5544DE3D6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Mar 2022 22:59:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241225AbiCRWAo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Mar 2022 18:00:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51694 "EHLO
+        id S241228AbiCRWA4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Mar 2022 18:00:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241221AbiCRWAn (ORCPT
+        with ESMTP id S241220AbiCRWAz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Mar 2022 18:00:43 -0400
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EEB2FD6EA
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Mar 2022 14:59:23 -0700 (PDT)
-Received: by mail-pl1-x632.google.com with SMTP id p17so8105616plo.9
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Mar 2022 14:59:23 -0700 (PDT)
+        Fri, 18 Mar 2022 18:00:55 -0400
+Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 389DAF9549
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Mar 2022 14:59:36 -0700 (PDT)
+Received: by mail-pf1-x436.google.com with SMTP id s8so10559935pfk.12
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Mar 2022 14:59:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
         h=message-id:date:mime-version:user-agent:from:subject:to:cc
          :content-language:content-transfer-encoding;
-        bh=eS/kbomdd3FHQNxJRBFlfO3AesqzVfWuApTQZGEYdDE=;
-        b=rCNGvuQzUwwvwYrIGN0z8p3Buw6SLSonhM0QKzVC9MWJm7rfqtXni9UQ6provnrAFW
-         tsdfkXiud9J4WmrFXQZnEp6apAiZH1I9n3BzzMS34X6v04wP81ayIRFQUpi8VeSyxJMy
-         pqT6ZE7qNPIdCizQTxBtowCnUDEiJg9NNX2ULSJxjv2HVkJdVuR8T0zmeXck6vktGCEt
-         5Gy1klRB5ehF8UZu54s51Z5A0BIPdDvn82gt6Fx3uQt4Rp+MiEq1xLf4xZ1WmWy66d8H
-         hzd10jPeV6h5X+aCpLvOt1tuOtL1wm6Q9sglWjIDXHxul5BfTX7woynuFHWqYe0QhZDM
-         SYaA==
+        bh=TMeyZ9NnVRM5GREL8gFa0wSK7oQqM4TfIg29eo0Xlc8=;
+        b=VGABW2s0R5TfwfeDe8ybLbH1k5L+My8+JAIm0UNuuKF7kDM1Azc8telsmTF8Bl126a
+         9BYJbAdjxkZUu+8Ni1YlzzR7JSTXUg5hFUrT5U/GRngayw4PIsKm8dYNfZtDuxWXqJdy
+         MF2LrYk0n688uf1Gd/3iKXUwwFUYC8ARiHcZxvyAYhl3dG5ydAuZWKyjpQbnV4ehseCB
+         s+4uUoycFZiV+1ZUqTHxo3QZoIVgKlTXKfQEabDjha442yr82x/OJhVvalOjBLsFGXn9
+         UYMS/z3/9+96qtQPJ7C8mPTy+6qFbfec2CZLQ+mMcFLH5S+EF0ZW1Xnl5VCG5ecVyM3T
+         mVDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:from
          :subject:to:cc:content-language:content-transfer-encoding;
-        bh=eS/kbomdd3FHQNxJRBFlfO3AesqzVfWuApTQZGEYdDE=;
-        b=4p7qsl0utJo7lv/rS+VrCV6VkfefDAIAt1LarK3k+hve5SpSIkf+JMDI38yWfLAXIe
-         MuvwQMRzIKS8W8wPHUsNSJEJY39e7Px7TeSCeYucNK3ZEit2SlUDyekvISX5RMm+L+vU
-         N5hwLYt8kQHBiHoE+LloG8k+dI2pJCuRO4wRNybin+lMeW6SqHKxycsU4+m6jPOlqnuQ
-         Yb5MdNUNakysFPr8ufO+xvuz1+FYIC8IHyWHfjQUBDaJ7T1H1+QuAD19wegtsvBLVRK7
-         eGu/60XisDld80bpoyOZM+cD9iboDQxoBHYYQN9H07Lc4bf8E8/nMuzbW8E+7aePCmAt
-         oOzw==
-X-Gm-Message-State: AOAM530Xsck+05ON9txOVjNWozCrMUt0cmBGCSKkvkZODcq0mT8Xpk7X
-        2RGY5A25oFW72crv1BKuVkplBw==
-X-Google-Smtp-Source: ABdhPJzsTiFamjP8XgLGt11h2jWXH3H9KCs31R9zz8GCmFw/Z/9PtG357vPuJhGp4zEoTiMfTPdp6Q==
-X-Received: by 2002:a17:90a:aa84:b0:1c5:f4e3:c69d with SMTP id l4-20020a17090aaa8400b001c5f4e3c69dmr23956079pjq.169.1647640762825;
-        Fri, 18 Mar 2022 14:59:22 -0700 (PDT)
+        bh=TMeyZ9NnVRM5GREL8gFa0wSK7oQqM4TfIg29eo0Xlc8=;
+        b=zkoHNFb+VHNasKwXYSqobP6KFtKC2yXjuksLWThPmfGtLDpdxFw7rLnVm0gR/bWuv6
+         gIkBt/cplmkTMpWnO80Ey6QtFgGLd2brkVFuV42S0lX+WwJt5R3605fPwblCCwaXopsP
+         B0VpzDSsvHo0QrKStk0NnHNJ41MseweJXaIwrai1x0TjY4KFokX83xVGgP3SjIVW3h19
+         5Psio8j7u9uNmle7LZH32N8q0P62cOxlJFUJJfkHrODqy44U7l/Hk+rmJJpy5bYSZJ9S
+         zryfWMDcTa6RpAm8gK7BfqczZLklvOEO3UI2XSPaDigHdrx5+FZSuicVt+xtiQIfDy0X
+         OY9g==
+X-Gm-Message-State: AOAM530tRy956cpb3rcU/xuD5rGNYeMexVvjga3v6hBj3bTukkRYp1PN
+        3IZJS4e4XjrotLNEE0LyqgelfA==
+X-Google-Smtp-Source: ABdhPJwstiJLeh3J1jqEV65XlkLuUjE3fTbLTq9jczVR8TvRS5c+HHT6m20zD3QyYwfdhMX2IcsqyQ==
+X-Received: by 2002:a63:6b81:0:b0:380:4fc1:ee7b with SMTP id g123-20020a636b81000000b003804fc1ee7bmr9497789pgc.298.1647640775660;
+        Fri, 18 Mar 2022 14:59:35 -0700 (PDT)
 Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id k14-20020a056a00134e00b004f83f05608esm10846735pfu.31.2022.03.18.14.59.21
+        by smtp.gmail.com with ESMTPSA id w12-20020a056a0014cc00b004f790cdbf9dsm11212815pfu.183.2022.03.18.14.59.34
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Mar 2022 14:59:22 -0700 (PDT)
-Message-ID: <1fbbd612-79bd-8a7b-8021-b8d46c3b8ac7@kernel.dk>
-Date:   Fri, 18 Mar 2022 15:59:21 -0600
+        Fri, 18 Mar 2022 14:59:35 -0700 (PDT)
+Message-ID: <212e39c2-2e2a-24af-647b-67f3168ea558@kernel.dk>
+Date:   Fri, 18 Mar 2022 15:59:34 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
  Thunderbird/91.6.2
 From:   Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring statx fix for 5.18-rc1
+Subject: [GIT PULL] File system related bio_alloc() cleanups
 To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        io-uring <io-uring@vger.kernel.org>,
+Cc:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8
@@ -74,36 +73,41 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Hi Linus,
 
-On top of the main io_uring branch, this pull request is for ensuring
-that the filename component of statx is stable after submit. That
-requires a few VFS related changes.
+On top of the core block driver branch, here are a set of fs related
+cleanups to bio allocations.
 
 Please pull!
 
 
-The following changes since commit adc8682ec69012b68d5ab7123e246d2ad9a6f94b:
+The following changes since commit 451f0b6f4c44d7b649ae609157b114b71f6d7875:
 
-  io_uring: Add support for napi_busy_poll (2022-03-10 09:18:30 -0700)
+  block: default BLOCK_LEGACY_AUTOLOAD to y (2022-02-27 14:49:23 -0700)
 
 are available in the Git repository at:
 
-  git://git.kernel.dk/linux-block.git tags/for-5.18/io_uring-statx-2022-03-18
+  git://git.kernel.dk/linux-block.git tags/for-5.18/alloc-cleanups-2022-03-18
 
-for you to fetch changes up to 1b6fe6e0dfecf8c82a64fb87148ad9333fa2f62e:
+for you to fetch changes up to 64bf0eef0171912f7c2f3ea30ee6ad7a2ad0a511:
 
-  io-uring: Make statx API stable (2022-03-10 09:33:55 -0700)
-
-----------------------------------------------------------------
-for-5.18/io_uring-statx-2022-03-18
+  f2fs: pass the bio operation to bio_alloc_bioset (2022-03-08 17:59:03 -0700)
 
 ----------------------------------------------------------------
-Stefan Roesch (1):
-      io-uring: Make statx API stable
+for-5.18/alloc-cleanups-2022-03-18
 
- fs/internal.h |  4 +++-
- fs/io_uring.c | 22 ++++++++++++++++++++--
- fs/stat.c     | 49 +++++++++++++++++++++++++++++++++++--------------
- 3 files changed, 58 insertions(+), 17 deletions(-)
+----------------------------------------------------------------
+Christoph Hellwig (5):
+      mpage: pass the operation to bio_alloc
+      ext4: pass the operation to bio_alloc
+      nilfs2: pass the operation to bio_alloc
+      f2fs: don't pass a bio to f2fs_target_device
+      f2fs: pass the bio operation to bio_alloc_bioset
+
+ fs/ext4/page-io.c  |  7 ++---
+ fs/f2fs/data.c     | 89 ++++++++++++++++++++++++------------------------------
+ fs/f2fs/f2fs.h     |  2 +-
+ fs/mpage.c         | 50 +++++++++++++-----------------
+ fs/nilfs2/segbuf.c | 20 ++++++------
+ 5 files changed, 73 insertions(+), 95 deletions(-)
 
 -- 
 Jens Axboe
