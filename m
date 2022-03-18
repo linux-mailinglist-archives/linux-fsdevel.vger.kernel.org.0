@@ -2,44 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C4754DE1D5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Mar 2022 20:34:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 32EFE4DE251
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Mar 2022 21:19:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240327AbiCRTf7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Mar 2022 15:35:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46988 "EHLO
+        id S240568AbiCRUUe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Mar 2022 16:20:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59034 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235675AbiCRTf5 (ORCPT
+        with ESMTP id S240356AbiCRUUd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Mar 2022 15:35:57 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0A2A2E9C7;
-        Fri, 18 Mar 2022 12:34:37 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 60FA8B82535;
-        Fri, 18 Mar 2022 19:34:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6E70C340EF;
-        Fri, 18 Mar 2022 19:34:33 +0000 (UTC)
-Date:   Fri, 18 Mar 2022 15:34:32 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Ritesh Harjani <riteshh@linux.ibm.com>,
-        Jan Kara <jack@suse.cz>, "Theodore Ts'o" <tytso@mit.edu>,
-        Harshad Shirwadkar <harshadshirwadkar@gmail.com>
-Subject: [PATCH] tracing: Have type enum modifications copy the strings
-Message-ID: <20220318153432.3984b871@gandalf.local.home>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+        Fri, 18 Mar 2022 16:20:33 -0400
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55A5AB2455;
+        Fri, 18 Mar 2022 13:19:13 -0700 (PDT)
+Received: by mail-pj1-x1034.google.com with SMTP id v4so8279560pjh.2;
+        Fri, 18 Mar 2022 13:19:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HV4U7qntOGnpJQ2Afj++lgXG3IzP1EpW8jb1OgmKEbs=;
+        b=cv/wFbgGRgnZTrAo2iSw2ZYNZUvLSvO2ykavsVExcgFHItqQBTyFH7XfiGSzuYmgwA
+         Ed/JqSZs6k0xhbTvukrPZxEZWV4jv5BtS4zuCxqFqhs2oXgCojO8M1opGbEwTKSG4awU
+         lhBbN+i+NnMlCgMprP9pR+cCkED5e/56cGEarkY/Ah0B68BqRb4VcQ/YZN/fWJ6ZzWgb
+         sKicUq3R3HPPAKLMthT1J6DFsMHC27D8b35u/5XMiKH/TJ8FAXlzqZHDmEBL2uIpHWSa
+         MnyPKyGIYzKEJiYv7difK79cDiFRCJnz5WPIfDR2pzRioPQmcDWorTSHCivvHfRSseRM
+         TBSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HV4U7qntOGnpJQ2Afj++lgXG3IzP1EpW8jb1OgmKEbs=;
+        b=TpIz/hXueDbtS/AIxi1Vp/VzvwJbsmSnkPfxlOJUlSPG9o+1C7NOSZQvixMMMyWYMm
+         i4k8s5q5md/omP86IZ9nXPk1qNj9VNIaNb9wieD54FpPRdUyRP64op3YYirZeJ/ZHwcO
+         k5LchIgvLxn2hmAOsTRIeyWoCdJ/RUCT/kcoXCXmCdP143Rv8yImboCsEkaYUzkQC2Ac
+         eHiGPEd6pKpdrucQw15qFgS33BA4++LWAdV+IIh5D5fNx3Ot6nMKXPlXkK9QYFUkHRp+
+         WZ/b5liDxL3NgcSRm0PQGJIMqA4evkPfEfWB1SrHGVLRtPn0OZZefPWvtSskHJZWrSiq
+         2lvQ==
+X-Gm-Message-State: AOAM533VaUt7wxBkQ64eGqhfEXU9Y5TRLFUGSiQuVosGS+p+N/eWyRpe
+        e8HL0cul/0IhITtOVgKpYRKTQTDHQhN/gIVZkAk=
+X-Google-Smtp-Source: ABdhPJzS7VKxms885c65Z+VAIRBodeDJ9R0QcxFh8fU+8LTK7EQHr7jWlQVtwvzDdeaT2HcKmVDeVupzLGpfuzOqFwo=
+X-Received: by 2002:a17:90a:3906:b0:1bf:a0a6:d208 with SMTP id
+ y6-20020a17090a390600b001bfa0a6d208mr23331916pjb.21.1647634752753; Fri, 18
+ Mar 2022 13:19:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-6.7 required=5.0 tests=BAYES_00,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS,
+References: <20220317234827.447799-1-shy828301@gmail.com> <20220318012948.GE1544202@dread.disaster.area>
+ <YjP+oyoT9Y2SFt8L@casper.infradead.org> <CAHbLzkonVj63+up4-BCPm29yjaf_29asMFJHpXiZp96UjGGNSg@mail.gmail.com>
+ <YjTT5Meqdn8fiuC2@casper.infradead.org>
+In-Reply-To: <YjTT5Meqdn8fiuC2@casper.infradead.org>
+From:   Yang Shi <shy828301@gmail.com>
+Date:   Fri, 18 Mar 2022 13:19:00 -0700
+Message-ID: <CAHbLzkrE1sF2bcv=eB8szx047pUgMZzo9JuyADTCBzZ9V-+7XA@mail.gmail.com>
+Subject: Re: [v2 PATCH 0/8] Make khugepaged collapse readonly FS THP more consistent
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Dave Chinner <david@fromorbit.com>, vbabka@suse.cz,
+        kirill.shutemov@linux.intel.com, linmiaohe@huawei.com,
+        songliubraving@fb.com, riel@surriel.com, ziy@nvidia.com,
+        akpm@linux-foundation.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+        darrick.wong@oracle.com, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -47,152 +73,72 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
+On Fri, Mar 18, 2022 at 11:48 AM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Fri, Mar 18, 2022 at 11:04:29AM -0700, Yang Shi wrote:
+> > I agree once page cache huge page is fully supported,
+> > READ_ONLY_THP_FOR_FS could be deprecated. But actually this patchset
+> > makes khugepaged collapse file THP more consistently. It guarantees
+> > the THP could be collapsed as long as file THP is supported and
+> > configured properly and there is suitable file vmas, it is not
+> > guaranteed by the current code. So it should be useful even though
+> > READ_ONLY_THP_FOR_FS is gone IMHO.
+>
+> I don't know if it's a good thing or not.  Experiments with 64k
+> PAGE_SIZE on arm64 shows some benchmarks improving and others regressing.
+> Just because we _can_ collapse a 2MB range of pages into a single 2MB
+> page doesn't mean we _should_.  I suspect the right size folio for any
+> given file will depend on the access pattern.  For example, dirtying a
+> few bytes in a folio will result in the entire folio being written back.
+> Is that what you want?  Maybe!  It may prompt the filesystem to defragment
+> that range, which would be good.  On the other hand, if you're bandwidth
+> limited, it may decrease your performance.  And if your media has limited
+> write endurance, it may result in your drive wearing out more quickly.
+>
+> Changing the heuristics should come with data.  Preferably from a wide
+> range of systems and use cases.  I know that's hard to do, but how else
+> can we proceed?
 
-When an enum is used in the visible parts of a trace event that is
-exported to user space, the user space applications like perf and
-trace-cmd do not have a way to know what the value of the enum is. To
-solve this, at boot up (or module load) the printk formats are modified to
-replace the enum with their numeric value in the string output.
+TBH I don't think it belongs to "change the heuristics". Its users'
+decision if their workloads could benefit from huge pages or not. They
+could set THP to always/madivse/never per their workloads. The
+patchset is aimed to fix the misbehavior. The user visible issue is
+even though users enable READ_ONLY_THP_FOR_FS and configure THP to
+"always" (khugepaged always runs) and do expect their huge text
+section is backed by THP but THP may not be collapsed.
 
-Array fields of the event are defined by [<nr-elements>] in the type
-portion of the format file so that the user space parsers can correctly
-parse the array into the appropriate size chunks. But in some trace
-events, an enum is used in defining the size of the array, which once
-again breaks the parsing of user space tooling.
+>
+> And I think you ignored my point that READ_ONLY_THP_FOR_FS required
+> no changes to filesystems.  It was completely invisible to them, by
+> design.  Now this patchset requires each filesystem to do something.
+> That's not a great step.
 
-This was solved the same way as the print formats were, but it modified
-the type strings of the trace event. This caused crashes in some
-architectures because, as supposed to the print string, is a const string
-value. This was not detected on x86, as it appears that const strings are
-still writable (at least in boot up), but other architectures this is not
-the case, and writing to a const string will cause a kernel fault.
+I don't mean to ignore your point. I do understand it is not perfect.
+I was thinking about making it FS agnostic in the first place. But I
+didn't think of a perfect way to do it at that time, so I followed
+what tmpfs does.
 
-To fix this, use kstrdup() to copy the type before modifying it. If the
-trace event is for the core kernel there's no need to free it because the
-string will be in use for the life of the machine being on line. For
-modules, create a link list to store all the strings being allocated for
-modules and when the module is removed, free them.
+However, by rethinking this we may be able to call
+khugepaged_enter_file() in filemap_fault(). I was concerned about the
+overhead in the page fault path. But it may be neglectable since
+khugepaged_enter_file() does bail out in the first place if the mm is
+already registered in khugepaged, just the first page fault needs to
+go through all the check, but the first page fault is typically a
+major fault so the overhead should be not noticeable comparing to the
+overhead of I/O. Calling khugepaged_enter() in page fault path is the
+approach used by anonymous THP too.
 
-Link: https://lore.kernel.org/all/yt9dr1706b4i.fsf@linux.ibm.com/
+>
+> P.S. khugepaged currently does nothing if a range contains a compound
+> page.  It assumes that the page is compound because it's now a THP.
+> Large folios break that assumption, so khugepaged will now never
+> collapse a range which includes large folios.  Thanks to commit
+>     mm/filemap: Support VM_HUGEPAGE for file mappings
+> we'll always try to bring in PMD-sized pages for MADV_HUGEPAGE, so
+> it _probably_ doesn't matter.  But it's something we should watch
+> for as filesystems grow support for large folios.
 
-Fixes: b3bc8547d3be ("tracing: Have TRACE_DEFINE_ENUM affect trace event types as well")
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- kernel/trace/trace_events.c | 62 ++++++++++++++++++++++++++++++++++++-
- 1 file changed, 61 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
-index ae9a3b8481f5..0d91152172c9 100644
---- a/kernel/trace/trace_events.c
-+++ b/kernel/trace/trace_events.c
-@@ -40,6 +40,14 @@ static LIST_HEAD(ftrace_generic_fields);
- static LIST_HEAD(ftrace_common_fields);
- static bool eventdir_initialized;
- 
-+static LIST_HEAD(module_strings);
-+
-+struct module_string {
-+	struct list_head	next;
-+	struct module		*module;
-+	char			*str;
-+};
-+
- #define GFP_TRACE (GFP_KERNEL | __GFP_ZERO)
- 
- static struct kmem_cache *field_cachep;
-@@ -2633,14 +2641,40 @@ static void update_event_printk(struct trace_event_call *call,
- 	}
- }
- 
-+static void add_str_to_module(struct module *module, char *str)
-+{
-+	struct module_string *modstr;
-+
-+	modstr = kmalloc(sizeof(*modstr), GFP_KERNEL);
-+
-+	/*
-+	 * If we failed to allocate memory here, then we'll just
-+	 * let the str memory leak when the module is removed.
-+	 * If this fails to allocate, there's worse problems than
-+	 * a leaked string on module removal.
-+	 */
-+	if (WARN_ON_ONCE(!modstr))
-+		return;
-+
-+	modstr->module = module;
-+	modstr->str = str;
-+
-+	list_add(&modstr->next, &module_strings);
-+}
-+
- static void update_event_fields(struct trace_event_call *call,
- 				struct trace_eval_map *map)
- {
- 	struct ftrace_event_field *field;
- 	struct list_head *head;
- 	char *ptr;
-+	char *str;
- 	int len = strlen(map->eval_string);
- 
-+	/* Dynamic events should never have field maps */
-+	if (WARN_ON_ONCE(call->flags & TRACE_EVENT_FL_DYNAMIC))
-+		return;
-+
- 	head = trace_get_fields(call);
- 	list_for_each_entry(field, head, link) {
- 		ptr = strchr(field->type, '[');
-@@ -2654,9 +2688,26 @@ static void update_event_fields(struct trace_event_call *call,
- 		if (strncmp(map->eval_string, ptr, len) != 0)
- 			continue;
- 
-+		str = kstrdup(field->type, GFP_KERNEL);
-+		if (WARN_ON_ONCE(!str))
-+			return;
-+		ptr = str + (ptr - field->type);
- 		ptr = eval_replace(ptr, map, len);
- 		/* enum/sizeof string smaller than value */
--		WARN_ON_ONCE(!ptr);
-+		if (WARN_ON_ONCE(!ptr)) {
-+			kfree(str);
-+			continue;
-+		}
-+
-+		/*
-+		 * If the event is part of a module, then we need to free the string
-+		 * when the module is removed. Otherwise, it will stay allocated
-+		 * until a reboot.
-+		 */
-+		if (call->module)
-+			add_str_to_module(call->module, str);
-+
-+		field->type = str;
- 	}
- }
- 
-@@ -2883,6 +2934,7 @@ static void trace_module_add_events(struct module *mod)
- static void trace_module_remove_events(struct module *mod)
- {
- 	struct trace_event_call *call, *p;
-+	struct module_string *modstr, *m;
- 
- 	down_write(&trace_event_sem);
- 	list_for_each_entry_safe(call, p, &ftrace_events, list) {
-@@ -2891,6 +2943,14 @@ static void trace_module_remove_events(struct module *mod)
- 		if (call->module == mod)
- 			__trace_remove_event_call(call);
- 	}
-+	/* Check for any strings allocade for this module */
-+	list_for_each_entry_safe(modstr, m, &module_strings, next) {
-+		if (modstr->module != mod)
-+			continue;
-+		list_del(&modstr->next);
-+		kfree(modstr->str);
-+		kfree(modstr);
-+	}
- 	up_write(&trace_event_sem);
- 
- 	/*
--- 
-2.35.1
-
+Yeah, I agree, thanks for reminding this. In addition I think the
+users of READ_ONLY_THP_FOR_FS should also expect the PMD-sized THP to
+be collapsed for their usecase with full page cache THP support since
+their benefits come from reduced TLB miss.
