@@ -2,96 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DD334DDC25
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Mar 2022 15:49:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1031D4DDCCF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Mar 2022 16:26:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237812AbiCROuh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Mar 2022 10:50:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37856 "EHLO
+        id S235023AbiCRP1d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Mar 2022 11:27:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237845AbiCROuZ (ORCPT
+        with ESMTP id S237991AbiCRP1b (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Mar 2022 10:50:25 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D15C41C8858
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Mar 2022 07:48:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1647614894;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=AXh1kXJA2Arm+k9zVpD08NoMYuNv/3gU6u7CxBA2E8s=;
-        b=GDWuPfhfR4RmL1qjwQsntfRuWmDRSDtQTRKQYHVyYCujqNiv6M73BUhNRv0YmfTnerRWxF
-        pALo0Iajjxh5xVHjd0Q9k8RoPFVHL/mEQk/EgwVG6wn8bMnBapIZQ7DdgdfR14H+2i8fVV
-        qdeG3g1ktcYajqSz5QatEXD2nzTcy7Q=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-622-ZiK8pNwNPmCjf2x7J_dSuQ-1; Fri, 18 Mar 2022 10:48:13 -0400
-X-MC-Unique: ZiK8pNwNPmCjf2x7J_dSuQ-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 80D99296A625;
-        Fri, 18 Mar 2022 14:48:12 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 16A4040D282F;
-        Fri, 18 Mar 2022 14:48:09 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <f5633dea0bfabd40ba548fc8502e5838c033fbae.camel@kernel.org>
-References: <f5633dea0bfabd40ba548fc8502e5838c033fbae.camel@kernel.org> <164692909854.2099075.9535537286264248057.stgit@warthog.procyon.org.uk> <164692883658.2099075.5745824552116419504.stgit@warthog.procyon.org.uk> <306388.1647595110@warthog.procyon.org.uk>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     dhowells@redhat.com, linux-cachefs@redhat.com,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        David Wysochanski <dwysocha@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jeffle Xu <jefflexu@linux.alibaba.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 13/20] netfs: Add a netfs inode context
+        Fri, 18 Mar 2022 11:27:31 -0400
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56020BB91F
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Mar 2022 08:26:08 -0700 (PDT)
+Received: by mail-il1-f198.google.com with SMTP id x6-20020a923006000000b002bea39c3974so4971427ile.12
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Mar 2022 08:26:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=2GcyEVDtaG4XJgxlAGsnMFK5mtyDq2UaQEceNXYuEec=;
+        b=WiyczZRQLLTaRB3Gr+eZhGIPAhKE4dq5TPSR3YjpmdnGpBWZZaui2Lt+8kU9QQee0S
+         NDPhQi/zndrnb5I7whzMsC6075giSaEw2WKUz+ZwF6JSg4EOQrEV97Y+MVcihVXGPGDI
+         JihH5b8ppuE02ZjsRZiysOqvXFBdhTxTNKumz00BnLvANc1FHLrFBGQSMzh4XHAPbLWm
+         W8h91NXAj3sdn7j137YSCvu/9NRXSZVX/b9FPa0XB8R/jWkIbNvRVUej5dePp8OVxkBm
+         RxAyVxXhCSU/KN8cKij0EP3czOsBduruhwivq6AD7W9+HNF/UYb8p88O6wmoTcDK8ONu
+         jhDQ==
+X-Gm-Message-State: AOAM531Ot1g+3qjxbFaruuiuSpzBXnE1Sa5B2b9oWhxXbjz9zRWyWoW0
+        VGtOoID1Rp3Z6ZZlmu10zgtCD2KYCHjrI6xwwFirJvhrEDAq
+X-Google-Smtp-Source: ABdhPJyjV/jp17TBgjpyaiGsK0E0XDL32GzByadldQzT+jf/M2CW5BGSJoANsHs2E6Ac1lQpsDjFmVWWmY/Zems2gDB1ORCAWnCk
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <666407.1647614889.1@warthog.procyon.org.uk>
-Date:   Fri, 18 Mar 2022 14:48:09 +0000
-Message-ID: <666408.1647614889@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.11.54.2
-X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a02:6204:0:b0:31a:6f2c:b5f7 with SMTP id
+ d4-20020a026204000000b0031a6f2cb5f7mr2930746jac.21.1647617166023; Fri, 18 Mar
+ 2022 08:26:06 -0700 (PDT)
+Date:   Fri, 18 Mar 2022 08:26:06 -0700
+In-Reply-To: <20220318151034.2395-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e8202805da7fc37b@google.com>
+Subject: Re: [syzbot] WARNING in inc_nlink (3)
+From:   syzbot <syzbot+2b3af42c0644df1e4da9@syzkaller.appspotmail.com>
+To:     hdanton@sina.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Jeff Layton <jlayton@kernel.org> wrote:
+Hello,
 
-> > +static inline bool netfs_is_cache_enabled(struct netfs_i_context *ctx)
-> > +{
-> > +#if IS_ENABLED(CONFIG_FSCACHE)
-> > +	struct fscache_cookie *cookie = ctx->cache;
-> > +
-> > +	return fscache_cookie_valid(cookie) && cookie->cache_priv &&
-> > +		fscache_cookie_enabled(cookie);
-> 
-> 
-> As you mentioned in the other thread, it may be cleaner to move the
-> cookie->cache_priv check into fscache_cookie_enabled. Is there ever a
-> case where you'd need to separate the two checks?
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-I'm not sure, but I'd prefer not to do it in this series as it would affect
-NFS plus some other operations, so will need retesting thoroughly.  I'd prefer
-to defer it.
+Reported-and-tested-by: syzbot+2b3af42c0644df1e4da9@syzkaller.appspotmail.com
 
-David
+Tested on:
 
+commit:         aad611a8 Merge tag 'perf-tools-fixes-for-v5.17-2022-03..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/
+kernel config:  https://syzkaller.appspot.com/x/.config?x=aba0ab2928a512c2
+dashboard link: https://syzkaller.appspot.com/bug?extid=2b3af42c0644df1e4da9
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=13edf28d700000
+
+Note: testing is done by a robot and is best-effort only.
