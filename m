@@ -2,59 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C4194DD7E5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Mar 2022 11:26:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E4974DD7F0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Mar 2022 11:32:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234981AbiCRK1Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Mar 2022 06:27:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54868 "EHLO
+        id S234975AbiCRKdn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Mar 2022 06:33:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47288 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234973AbiCRK1Z (ORCPT
+        with ESMTP id S234297AbiCRKdm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Mar 2022 06:27:25 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 96C0121D7D1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Mar 2022 03:26:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1647599165;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+        Fri, 18 Mar 2022 06:33:42 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF5C324F28E
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Mar 2022 03:32:22 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 69936210EA;
+        Fri, 18 Mar 2022 10:32:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1647599541; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=cPahNlL5NyYIZItK9gqEZnfxGSGcjbqtGMEovTIJSaI=;
-        b=N2+FO7b2rZYh5BwlsxOBAFQH8xoDVRlkyhpBDBcOYcHpoRxx9FMHQ3rlUSntSH3mCS/UH2
-        Hx+VMET3HaE//jNPRFbIDpJJhjlZD6YWysWJOnI16n0Xz61dZD5K6EFb6DsvNBvPMomqvh
-        J1IdD1E+xNUyYG1f6Ck7p4UKb1QVpBI=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-584-oAxVD0cnOu6GHVR8iL81jw-1; Fri, 18 Mar 2022 06:26:00 -0400
-X-MC-Unique: oAxVD0cnOu6GHVR8iL81jw-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        bh=W4fhOyCXrndOa/3NEfTqbGLfFL9s3wutIX/A7ddRYu4=;
+        b=Qo52uYTYO/6wdXjoPQqhHk2F+a7ADu4N24XdZqFgqGvElYzZa794f0/CMOoCdLDVjwND2R
+        Z/FqWuwEXYXQtlpIjO0SkU0K35TP9zBC0smiold2Xq15uWt9xEB+wJzt9kjghMojTtQJSO
+        75M3jKpfuY0YrZTEcBGgx4l/SsafBEY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1647599541;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=W4fhOyCXrndOa/3NEfTqbGLfFL9s3wutIX/A7ddRYu4=;
+        b=OXyuSb5ngEi96EtEFr9gcvfR2EDe077Lyv1Told8RpXiQMe+RkR7m2CzheTJJghdH6X0pC
+        BXt+W7s5qMQ6GiBw==
+Received: from quack3.suse.cz (unknown [10.163.28.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 24A43866DFA;
-        Fri, 18 Mar 2022 10:26:00 +0000 (UTC)
-Received: from localhost (ovpn-13-174.pek2.redhat.com [10.72.13.174])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A71F6401474;
-        Fri, 18 Mar 2022 10:25:58 +0000 (UTC)
-Date:   Fri, 18 Mar 2022 18:25:54 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org
-Cc:     willy@infradead.org, kexec@lists.infradead.org,
-        yangtiezhu@loongson.cn, amit.kachhap@arm.com, hch@lst.de,
-        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
-Subject: Re: [PATCH v4 0/4] Convert vmcore to use an iov_iter
-Message-ID: <YjReMozc2vY4bn7K@MiWiFi-R3L-srv>
-References: <20220318093706.161534-1-bhe@redhat.com>
+        by relay2.suse.de (Postfix) with ESMTPS id 442D1A3B83;
+        Fri, 18 Mar 2022 10:32:21 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id D161EA0615; Fri, 18 Mar 2022 11:32:19 +0100 (CET)
+Date:   Fri, 18 Mar 2022 11:32:19 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 4/5] fanotify: add support for exclusive create of mark
+Message-ID: <20220318103219.j744o5g5bmsneihz@quack3.lan>
+References: <20220307155741.1352405-1-amir73il@gmail.com>
+ <20220307155741.1352405-5-amir73il@gmail.com>
+ <20220317153443.iy5rvns5nwxlxx43@quack3.lan>
+ <20220317154550.y3rvxmmfcaf5n5st@quack3.lan>
+ <CAOQ4uxi85LV7upQuBUjL==aaWoY8WGMG4DRQToj6Y-JCn-Ex=g@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220318093706.161534-1-bhe@redhat.com>
-X-Scanned-By: MIMEDefang 2.85 on 10.11.54.10
-X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+In-Reply-To: <CAOQ4uxi85LV7upQuBUjL==aaWoY8WGMG4DRQToj6Y-JCn-Ex=g@mail.gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -62,70 +68,69 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Forgot adding Andrew to CC, add him.
+On Fri 18-03-22 05:13:01, Amir Goldstein wrote:
+> On Thu, Mar 17, 2022 at 5:45 PM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Thu 17-03-22 16:34:43, Jan Kara wrote:
+> > > On Mon 07-03-22 17:57:40, Amir Goldstein wrote:
+> > > > Similar to inotify's IN_MARK_CREATE, adding an fanotify mark with flag
+> > > > FAN_MARK_CREATE will fail with error EEXIST if an fanotify mark already
+> > > > exists on the object.
+> > > >
+> > > > Unlike inotify's IN_MARK_CREATE, FAN_MARK_CREATE has to supplied in
+> > > > combination with FAN_MARK_ADD (FAN_MARK_ADD is like inotify_add_watch()
+> > > > and the behavior of IN_MARK_ADD is the default for fanotify_mark()).
+> > > >
+> > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > >
+> > > What I'm missing in this changelog is "why". Is it just about feature
+> > > parity with inotify? I don't find this feature particularly useful...
+> >
+> > OK, now I understand after reading patch 5/5. Hum, but I'm not quite happy
+> > about the limitation to non-existing mark as much as I understand why you
+> > need it. Let me think...
+> >
+> 
+> Sorry for not articulating the problem better.
+> Let me write up the problem and maybe someone can come up with a better
+> solution than I did.
+> 
+> The problem that I was trying to avoid with FAN_MARK_VOLATILE is similar
+> to an existing UAPI problem with FAN_MARK_IGNORED_SURV_MODIFY -
+> This flag can only be set and not cleared and when set it affects all the events
+> set in the mask prior to that time, leading to unpredictable results.
+>
+> Let's say a user sets FAN_CLOSE in ignored mask without _SURV_MODIFY
+> and later sets FAN_OPEN  in ignored mask with _SURV_MODIFY.
+> Does the ignored mask now include FAN_CLOSE? That depends
+> whether or not FAN_MODIFY event took place between the two calls.
 
-On 03/18/22 at 05:37pm, Baoquan He wrote:
-> Copy the description of v3 cover letter from Willy:
-> ===
-> For some reason several people have been sending bad patches to fix
-> compiler warnings in vmcore recently.  Here's how it should be done.
-> Compile-tested only on x86.  As noted in the first patch, s390 should
-> take this conversion a bit further, but I'm not inclined to do that
-> work myself.
-> 
-> This series resends Willy's v3 patches which includes patch 1~3, and
-> append one patch to clean up the open code pointed out by Al.
-> 
-> Al's concerns to v3 patches and my reply after investigation:
-> https://lore.kernel.org/all/YhiTN0MORoQmFFkO@MiWiFi-R3L-srv/T/#u
-> 
-> Willy's v3 patchset:
-> [PATCH v3 0/3] Convert vmcore to use an iov_iter
-> https://lore.kernel.org/all/20211213143927.3069508-1-willy@infradead.org/T/#u
-> 
-> Changelog:
-> ===
-> v4:
->  - Append one patch to replace the open code with iov_iter_count().
->    This is suggested by Al.
->  - Fix a indentation error by replacing space with tab in
->    arch/sh/kernel/crash_dump.c of patch 1 reported by checkpatch. The
->    rest of patch 1~3 are untouched.
->  - Add Christopy's Reviewed-by and my Acked-by for patch 1~3.
-> v3:
->  - Send the correct patches this time
-> v2:
->  - Removed unnecessary kernel-doc
->  - Included uio.h to fix compilation problems
->  - Made read_from_oldmem_iter static to avoid compile warnings during the
->    conversion
->  - Use iov_iter_truncate() (Christoph)
-> 
-> 
-> 
-> Baoquan He (1):
->   fs/proc/vmcore: Use iov_iter_count()
-> 
-> Matthew Wilcox (Oracle) (3):
->   vmcore: Convert copy_oldmem_page() to take an iov_iter
->   vmcore: Convert __read_vmcore to use an iov_iter
->   vmcore: Convert read_from_oldmem() to take an iov_iter
-> 
->  arch/arm/kernel/crash_dump.c     |  27 +------
->  arch/arm64/kernel/crash_dump.c   |  29 +------
->  arch/ia64/kernel/crash_dump.c    |  32 +-------
->  arch/mips/kernel/crash_dump.c    |  27 +------
->  arch/powerpc/kernel/crash_dump.c |  35 ++-------
->  arch/riscv/kernel/crash_dump.c   |  26 +------
->  arch/s390/kernel/crash_dump.c    |  13 ++--
->  arch/sh/kernel/crash_dump.c      |  29 ++-----
->  arch/x86/kernel/crash_dump_32.c  |  29 +------
->  arch/x86/kernel/crash_dump_64.c  |  48 ++++--------
->  fs/proc/vmcore.c                 | 130 +++++++++++++------------------
->  include/linux/crash_dump.h       |  19 ++---
->  12 files changed, 123 insertions(+), 321 deletions(-)
-> 
-> -- 
-> 2.34.1
-> 
+Yeah, but with FAN_MARK_VOLATILE the problem also goes the other way
+around. If I set FAN_MARK_VOLATILE on some inode and later add something to
+a normal mask, I might be rightfully surprised when the mark gets evicted
+and thus I will not get events I'm expecting. Granted the application would
+be stepping on its own toes because marks are "merged" only for the same
+notification group but still it could be surprising and avoiding such
+mishaps would probably involve extra tracking on the application side.
 
+The problem essentially lies in mixing mark "flags" (ONDIR, ON_CHILD,
+VOLATILE, SURV_MODIFY) with mark mask. Mark operations with identical set
+of flags can be merged without troubles but once flags are different
+results of the merge are always "interesting". So far the consequences were
+mostly benign (getting more events than the application may have expected)
+but with FAN_MARK_VOLATILE we can also start loosing events and that is
+more serious.
+
+So far my thinking is that we either follow the path of possibly generating
+more events than necessary (i.e., any merge of two masks that do not both
+have FAN_MARK_VOLATILE set will clear FAN_MARK_VOLATILE) or we rework the
+whole mark API (and implementation!) to completely avoid these strange
+effects of flag merging. I don't like FAN_MARK_CREATE much because IMO it
+solves only half of the problem - when new mark with a flag wants to merge
+with an existing mark, but does not solve the other half when some other
+mark wants to merge to a mark with a flag. Thoughts?
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
