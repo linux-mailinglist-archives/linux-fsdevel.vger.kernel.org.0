@@ -2,88 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C89B64DE185
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Mar 2022 19:58:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BAA74DE1C1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Mar 2022 20:25:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240258AbiCRS7x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Mar 2022 14:59:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32878 "EHLO
+        id S240351AbiCRT0a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Mar 2022 15:26:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237336AbiCRS7x (ORCPT
+        with ESMTP id S238443AbiCRT0a (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Mar 2022 14:59:53 -0400
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1FE8BD895
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Mar 2022 11:58:33 -0700 (PDT)
-Received: by mail-lf1-x12b.google.com with SMTP id a25so2122647lfm.10
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Mar 2022 11:58:33 -0700 (PDT)
+        Fri, 18 Mar 2022 15:26:30 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49C1B30CAB0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Mar 2022 12:25:08 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id pv16so18981006ejb.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Mar 2022 12:25:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=szeredi.hu; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ZDmW+p2ypjT1HjKWJx8fh+7ifv3HKZNMXtvuE6nm2qs=;
-        b=XHm5zI8ZBbpkWBIg6jHxN78K61Pegw6nnLu5ZR3iY8VEia03dmDXc3bRlF28jroE23
-         doUqgjtYjvMH/budaSJuXxwTsP9wm1X3caE0hvtLwEj1Yzt9y1nJKLAZWQpSC1IyN0hj
-         mypuoFL+N7hevvkbbmj5/rf2VzcZF7ajqMqyI=
+        bh=hXH9ELMuDY+iN+HFjZXoGFqlOaPPrjOGTbi3JNMxxVA=;
+        b=AVhQunjEnglxMNGkZ1ERYHtyQHblgxV8GZOCiAQAeZLEeFQ2gTXP6yTA0fG2AKamls
+         zRLXL+1ze6sD7aCthHCmdGBcTEBpeZHGP19fWFmWj3QRm4Ec8LapG9NigrYV8klby38u
+         IPpvH0OOkM+dkHvOxrYmon+uvdEfwhxxt37o4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ZDmW+p2ypjT1HjKWJx8fh+7ifv3HKZNMXtvuE6nm2qs=;
-        b=jZH5fxySXWcQ2Vvnk3H/UA4/LQkkhqS0m1wdf/k5+H5RT+jsnCkI117EuYgQAL4o5y
-         1YHJ/e3fhklwOJSCmzyI8u++P9NeR+yAWiyRMKYj5AwdmYaIaMgZnrUeahfyMFJm42c1
-         SGyc2Z15vLDJbK8b1H0vr7Guuyn0V9sUcMfyHQ81GdBe6dES7fsNa8Zg8QIPIoEY4V0M
-         12drKHqbJUCv4r/fOPQqa+7KHxronUC2S8L4eJGA3CGHkhVOUQ3x/41hpl3UM3ioZs1M
-         xB54wUCjl6wHEchAUZo4u0PvsDgScPBIMwynVZAw7rK1lufK1rB4hiG+eMET6jIUb7n1
-         yJOA==
-X-Gm-Message-State: AOAM533sYRCjqoK32W0sEtxwbZSxTIHIgeBpaX8esxNOIYeKU4+fjYDV
-        GW/ovnK2BkNMCGwzQXmqPJWGcKQhLq9m018RYHE=
-X-Google-Smtp-Source: ABdhPJxVlV3U0yvfruor7bAKenwxXtQAED3GqH68ajXkV40/JrAnXaLbL/H+xGpyQQjZ5stIHtIZww==
-X-Received: by 2002:a05:6512:3984:b0:447:6097:fb8f with SMTP id j4-20020a056512398400b004476097fb8fmr6814925lfu.166.1647629911984;
-        Fri, 18 Mar 2022 11:58:31 -0700 (PDT)
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
-        by smtp.gmail.com with ESMTPSA id y31-20020a0565123f1f00b004487c89c46dsm966396lfa.66.2022.03.18.11.58.31
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Mar 2022 11:58:31 -0700 (PDT)
-Received: by mail-lj1-f172.google.com with SMTP id r22so12454291ljd.4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Mar 2022 11:58:31 -0700 (PDT)
-X-Received: by 2002:a2e:a78f:0:b0:249:21ce:6d53 with SMTP id
- c15-20020a2ea78f000000b0024921ce6d53mr6973185ljf.164.1647629910974; Fri, 18
- Mar 2022 11:58:30 -0700 (PDT)
+        bh=hXH9ELMuDY+iN+HFjZXoGFqlOaPPrjOGTbi3JNMxxVA=;
+        b=2fC0cGh1UiP1ZlpwwW1goKNewcaftaRfWuT/LznDN2tuVAzUgpvaBGf96QjJqkU6Ym
+         AKMjDSyzERf7dC711oi9lpxdHoo0bEHV/c58SRD+h/gYymmNKXk/QATTM+hI8KJCXxv3
+         5KLNZLFy/pdULYnXWc8VHjULEK1DHWOJKDRBraRDnobhftKEdBdrsh8P1qEeERuWMJsz
+         qwneDzlXoQmr3EXHQcTMRr4lgXrzsYqElfCxIycj1h/TAADzPspxx8ke+0D4xNQh5Yad
+         f/F0OXo+qLlAG0PxVmjYnehVIvZOJEWX8O9rq7cOqtJLwx26uSapXQgQ5hK06GYqOMdh
+         LO2w==
+X-Gm-Message-State: AOAM533/6smq+EKc+KwbH4PfAI1T8e/rySloGpggKqsLSLxLeuRRtNtd
+        cTaiR9HE8Gmix7dJwHRy8XGQ/frfVJ58ArbD2RDkAx0XYFJGnw==
+X-Google-Smtp-Source: ABdhPJz+V9DZGjtY86DMYeyi3wTfGJ9WSF8zTZpI/KQBMaQZ5GADOS5tu4yWcHopXE3+Co3KTkyZHEqdfLmv5lcqISs=
+X-Received: by 2002:a17:906:7948:b0:6da:64ed:178e with SMTP id
+ l8-20020a170906794800b006da64ed178emr10705575ejo.523.1647631506866; Fri, 18
+ Mar 2022 12:25:06 -0700 (PDT)
 MIME-Version: 1.0
-References: <YjDj3lvlNJK/IPiU@bfoster> <YjJPu/3tYnuKK888@casper.infradead.org>
- <YjM88OwoccZOKp86@bfoster> <YjSTq4roN/LJ7Xsy@bfoster> <YjSbHp6B9a1G3tuQ@casper.infradead.org>
-In-Reply-To: <YjSbHp6B9a1G3tuQ@casper.infradead.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 18 Mar 2022 11:58:14 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wh6V6TZjjnqBvktbaho_wqfjZYQ9zcKJTV8EP2Kygn0uQ@mail.gmail.com>
-Message-ID: <CAHk-=wh6V6TZjjnqBvktbaho_wqfjZYQ9zcKJTV8EP2Kygn0uQ@mail.gmail.com>
-Subject: Re: writeback completion soft lockup BUG in folio_wake_bit()
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Brian Foster <bfoster@redhat.com>, Linux-MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Hugh Dickins <hughd@google.com>
+References: <20220318171405.2728855-1-cmllamas@google.com>
+In-Reply-To: <20220318171405.2728855-1-cmllamas@google.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Fri, 18 Mar 2022 20:24:55 +0100
+Message-ID: <CAJfpegsT6BO5P122wrKbni3qFkyHuq_0Qq4ibr05_SOa7gfvcw@mail.gmail.com>
+Subject: Re: [PATCH] fuse: fix integer type usage in uapi header
+To:     Carlos Llamas <cmllamas@google.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alessio Balsini <balsini@android.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        kernel-team <kernel-team@android.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
+        DKIM_SIGNED,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 18, 2022 at 7:45 AM Matthew Wilcox <willy@infradead.org> wrote:
+On Fri, 18 Mar 2022 at 18:14, Carlos Llamas <cmllamas@google.com> wrote:
 >
-> Excellent!  I'm going to propose these two patches for -rc1 (I don't
-> think we want to be playing with this after -rc8)
+> Kernel uapi headers are supposed to use __[us]{8,16,32,64} defined by
+> <linux/types.h> instead of 'uint32_t' and similar. This patch changes
+> all the definitions in this header to use the correct type. Previous
+> discussion of this topic can be found here:
+>
+>   https://lkml.org/lkml/2019/6/5/18
 
-Ack. I think your commit message may be a bit too optimistic (who
-knows if other loads can trigger the over-long page locking wait-queue
-latencies), but since I don't see any other ways to really check this
-than just trying it, let's do it.
+This is effectively a revert of these two commits:
 
-                 Linus
+4c82456eeb4d ("fuse: fix type definitions in uapi header")
+7e98d53086d1 ("Synchronize fuse header with one used in library")
+
+And so we've gone full circle and back to having to modify the header
+to be usable in the cross platform library...
+
+And also made lots of churn for what reason exactly?
+
+Thanks,
+Miklos
