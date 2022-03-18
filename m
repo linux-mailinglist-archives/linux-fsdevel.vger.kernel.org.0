@@ -2,126 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E7C784DD26E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Mar 2022 02:29:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE5D24DD378
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Mar 2022 04:13:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231500AbiCRBbM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Mar 2022 21:31:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38436 "EHLO
+        id S232135AbiCRDOe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Mar 2022 23:14:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229642AbiCRBbL (ORCPT
+        with ESMTP id S231670AbiCRDOb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Mar 2022 21:31:11 -0400
-Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D4BBD114DDA;
-        Thu, 17 Mar 2022 18:29:53 -0700 (PDT)
-Received: from dread.disaster.area (pa49-186-150-27.pa.vic.optusnet.com.au [49.186.150.27])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 5D8DF533D8B;
-        Fri, 18 Mar 2022 12:29:50 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1nV1R6-006lEJ-WE; Fri, 18 Mar 2022 12:29:49 +1100
-Date:   Fri, 18 Mar 2022 12:29:48 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Yang Shi <shy828301@gmail.com>
-Cc:     vbabka@suse.cz, kirill.shutemov@linux.intel.com,
-        linmiaohe@huawei.com, songliubraving@fb.com, riel@surriel.com,
-        willy@infradead.org, ziy@nvidia.com, akpm@linux-foundation.org,
-        tytso@mit.edu, adilger.kernel@dilger.ca, darrick.wong@oracle.com,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [v2 PATCH 0/8] Make khugepaged collapse readonly FS THP more
- consistent
-Message-ID: <20220318012948.GE1544202@dread.disaster.area>
-References: <20220317234827.447799-1-shy828301@gmail.com>
+        Thu, 17 Mar 2022 23:14:31 -0400
+Received: from mail-oi1-x232.google.com (mail-oi1-x232.google.com [IPv6:2607:f8b0:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D8BA160C3D
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Mar 2022 20:13:13 -0700 (PDT)
+Received: by mail-oi1-x232.google.com with SMTP id b188so7623925oia.13
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Mar 2022 20:13:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+MqWuGyKH6iqelg4Vyv4vFILDv2MwkA5g0eFgkvoDiM=;
+        b=S+JdU91orazTiiUcl2i4YkFYPgz+Nmx26zjXU5o8Mf9h/EgWcyZgnntNGrC0YYlk7U
+         h7oPIKn2iRmfnmg4h+5z6+hd5yl3mrH3YRKLge3eOqOGSUGcR5xly1efu0EQurwW+GSK
+         LoIR/OppmNMk44aihDc75Ol62g6kbD4EtZL49XEZAzgUMh4FUzsQnUhQC22vrikZNFKc
+         PrvIl0jaWoVyj2L/xdnw8A5Eil3KpXsfigBkeboOoScKdZ2oGgjKqM20kISeBkGW8lAX
+         WLXOBc0wLGDo0j98cvn3nfR8f4AKD1qENAQZmBzVNAnkUlI/PZHTSamZQtWWiWMD9NZA
+         l1dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+MqWuGyKH6iqelg4Vyv4vFILDv2MwkA5g0eFgkvoDiM=;
+        b=o84pEFxxPfidxWiHzFx98u/a6BcP5BTEV9wtXne3pIS99kxFUTAKKRYVlqljV92bYr
+         9kklgX7HroOOmHJRQV0UhwMDZEAOzjMgH7sExZ17AXfq80Kjb78AAk+YRBUtmUeNv12s
+         0LwiWOds2O/0UJv1PxWawN9g+bzNCPqam9+MoQeldcwyDL9DkPz94AukZ+FRRHpNXcul
+         p+hXkI9aWYBi+9tQiCR5BNSkSg7Clx4gQbhIz2CpQM0nowbBDodGI95p8swKSF3rTTEq
+         C8ECl7X32BWEMRAAQzhpgrI02LjUwm8LcOUusoBRBnyO1YUo/NCxAvY4/opBWde/FC9Y
+         IVNQ==
+X-Gm-Message-State: AOAM531IPv1HsSloIBJ8bmGHQ/cFk5tk+pJdgQJrItzeojfw+9ygjwGE
+        HYABDMpRJ1OnUn877o+YQ19HukzDVsYNOl0y4CQ+9uDlWDk=
+X-Google-Smtp-Source: ABdhPJxnBV4AU+132HGNwAq+x2eIpogD++GiNV8m1HGHHCxOn4WcZ4aMxpZY8zKbuczYyr+63AsGljl1jzJZgKcq59o=
+X-Received: by 2002:a05:6808:994:b0:2ee:f9f3:99ec with SMTP id
+ a20-20020a056808099400b002eef9f399ecmr4406212oic.98.1647573192873; Thu, 17
+ Mar 2022 20:13:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220317234827.447799-1-shy828301@gmail.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=6233e091
-        a=sPqof0Mm7fxWrhYUF33ZaQ==:117 a=sPqof0Mm7fxWrhYUF33ZaQ==:17
-        a=kj9zAlcOel0A:10 a=o8Y5sQTvuykA:10 a=VwQbUJbxAAAA:8 a=7-415B0cAAAA:8
-        a=_g2WV56Gx8CI_Xe-bs8A:9 a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22
-        a=biEYGPWJfzWAr4FL6Ov7:22
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20220307155741.1352405-1-amir73il@gmail.com> <20220307155741.1352405-5-amir73il@gmail.com>
+ <20220317153443.iy5rvns5nwxlxx43@quack3.lan> <20220317154550.y3rvxmmfcaf5n5st@quack3.lan>
+In-Reply-To: <20220317154550.y3rvxmmfcaf5n5st@quack3.lan>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 18 Mar 2022 05:13:01 +0200
+Message-ID: <CAOQ4uxi85LV7upQuBUjL==aaWoY8WGMG4DRQToj6Y-JCn-Ex=g@mail.gmail.com>
+Subject: Re: [PATCH 4/5] fanotify: add support for exclusive create of mark
+To:     Jan Kara <jack@suse.cz>
+Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 17, 2022 at 04:48:19PM -0700, Yang Shi wrote:
-> 
-> Changelog
-> v2: * Collected reviewed-by tags from Miaohe Lin.
->     * Fixed build error for patch 4/8.
-> 
-> The readonly FS THP relies on khugepaged to collapse THP for suitable
-> vmas.  But it is kind of "random luck" for khugepaged to see the
-> readonly FS vmas (see report: https://lore.kernel.org/linux-mm/00f195d4-d039-3cf2-d3a1-a2c88de397a0@suse.cz/) since currently the vmas are registered to khugepaged when:
->   - Anon huge pmd page fault
->   - VMA merge
->   - MADV_HUGEPAGE
->   - Shmem mmap
-> 
-> If the above conditions are not met, even though khugepaged is enabled
-> it won't see readonly FS vmas at all.  MADV_HUGEPAGE could be specified
-> explicitly to tell khugepaged to collapse this area, but when khugepaged
-> mode is "always" it should scan suitable vmas as long as VM_NOHUGEPAGE
-> is not set.
-> 
-> So make sure readonly FS vmas are registered to khugepaged to make the
-> behavior more consistent.
-> 
-> Registering the vmas in mmap path seems more preferred from performance
-> point of view since page fault path is definitely hot path.
-> 
-> 
-> The patch 1 ~ 7 are minor bug fixes, clean up and preparation patches.
-> The patch 8 converts ext4 and xfs.  We may need convert more filesystems,
-> but I'd like to hear some comments before doing that.
+On Thu, Mar 17, 2022 at 5:45 PM Jan Kara <jack@suse.cz> wrote:
+>
+> On Thu 17-03-22 16:34:43, Jan Kara wrote:
+> > On Mon 07-03-22 17:57:40, Amir Goldstein wrote:
+> > > Similar to inotify's IN_MARK_CREATE, adding an fanotify mark with flag
+> > > FAN_MARK_CREATE will fail with error EEXIST if an fanotify mark already
+> > > exists on the object.
+> > >
+> > > Unlike inotify's IN_MARK_CREATE, FAN_MARK_CREATE has to supplied in
+> > > combination with FAN_MARK_ADD (FAN_MARK_ADD is like inotify_add_watch()
+> > > and the behavior of IN_MARK_ADD is the default for fanotify_mark()).
+> > >
+> > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> >
+> > What I'm missing in this changelog is "why". Is it just about feature
+> > parity with inotify? I don't find this feature particularly useful...
+>
+> OK, now I understand after reading patch 5/5. Hum, but I'm not quite happy
+> about the limitation to non-existing mark as much as I understand why you
+> need it. Let me think...
+>
 
-After reading through the patchset, I have no idea what this is even
-doing or enabling. I can't comment on the last patch and it's effect
-on XFS because there's no high level explanation of the
-functionality or feature to provide me with the context in which I
-should be reviewing this patchset.
+Sorry for not articulating the problem better.
+Let me write up the problem and maybe someone can come up with a better
+solution than I did.
 
-I understand this has something to do with hugepages, but there's no
-explaination of exactly where huge pages are going to be used in the
-filesystem, what the problems with khugepaged and filesystems are
-that this apparently solves, what constraints it places on
-filesystems to enable huge pages to be used, etc.
+The problem that I was trying to avoid with FAN_MARK_VOLATILE is similar
+to an existing UAPI problem with FAN_MARK_IGNORED_SURV_MODIFY -
+This flag can only be set and not cleared and when set it affects all the events
+set in the mask prior to that time, leading to unpredictable results.
 
-I'm guessing that the result is that we'll suddenly see huge pages
-in the page cache for some undefined set of files in some undefined
-set of workloads. But that doesn't help me understand any of the
-impacts it may have. e.g:
+Let's say a user sets FAN_CLOSE in ignored mask without _SURV_MODIFY
+and later sets FAN_OPEN  in ignored mask with _SURV_MODIFY.
+Does the ignored mask now include FAN_CLOSE? That depends
+whether or not FAN_MODIFY event took place between the two calls.
 
-- how does this relate to the folio conversion and use of large
-  pages in the page cache?
-- why do we want two completely separate large page mechanisms in
-  the page cache?
-- why is this limited to "read only VMAs" and how does the
-  filesystem actually ensure that the VMAs are read only?
-- what happens if we have a file that huge pages mapped into the
-  page cache via read only VMAs then has write() called on it via a
-  different file descriptor and so we need to dirty the page cache
-  that has huge pages in it?
+That is one of the reasons I was trying to get rid of _SURV_MODIFY with
+new FAN_MARK_IGNORE flag. The trickery in FAN_MARK_CREATE is
+that the problem is averted - if a mark property can only be set and never
+cleared and if it affects all past and future changes to mask, allow to set
+this property during mark creation time and only during mark creation time.
 
-I've got a lot more questions, but to save me having to ask them,
-how about you explain what this new functionality actually does, why
-we need to support it, and why it is better than the fully writeable
-huge page support via folios that we already have in the works...
+I don't think there is a real use case for changing the _SURV_MODIFY
+nor _VOLATILE property of a mark and indeed with new FAN_MARK_IGNORE
+semantics, we may only allow to set _SURV_MODIFY along with
+FAN_MARK_CREATE, so there are two problems solved using this method.
 
-Cheers,
+The fact that FAN_MARK_CREATE has feature parity with inotify is not
+the reason to add it, but it does help to swallow this somewhat awkward
+solution. And it is certainly easy to document.
 
-Dave.
+As the commit message implies, I was contemplating whether
+FAN_MARK_CREATE should be an alternative to FAN_MARK_ADD
+or an ORed flag.
+Semantics-wise we could decide either way.
+I chose the option that seemed easier to implement and document
+the behavior of FAN_MARK_VOLATILE.
+Using FAN_MARK_CREATE as an alternative to FAN_MARK_ADD may
+be a bit more elegant for UAPI though.
+We could use a macro to get UAPI elegance without compromising simplicity:
 
--- 
-Dave Chinner
-david@fromorbit.com
+#define FAN_MARK_NEW (FAN_MARK_ADD | FAN_MARK_CREATE)
+
+Thanks,
+Amir.
