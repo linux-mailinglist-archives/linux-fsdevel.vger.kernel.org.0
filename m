@@ -2,119 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B36A64DDA56
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Mar 2022 14:16:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 050624DDAD5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Mar 2022 14:48:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236595AbiCRNR2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Mar 2022 09:17:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44006 "EHLO
+        id S236821AbiCRNtb convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Mar 2022 09:49:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229896AbiCRNR1 (ORCPT
+        with ESMTP id S236798AbiCRNta (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Mar 2022 09:17:27 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89ECF2DD988;
-        Fri, 18 Mar 2022 06:16:08 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 4754F21101;
-        Fri, 18 Mar 2022 13:16:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1647609367; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=f3kv0AiWNbv68LeKn1hsglF0Wmdg9GUXlOxnUzosnJE=;
-        b=RK4Lrt9+CnrVCuQbkXrZvk5QH0vUSOjRUd7C+Ln3z0RmN1oYZuIH4Bu4rjLqpRetncL8OD
-        KG64pV77vbFy92MPEtx4ZyQaB54ufzgzMG7rYRZrCUXkkrVsheQFzZs4zNAHAYRgabSebV
-        /K6+C8WFYtSwLA6AxvWlF7lvcry/RK0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1647609367;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=f3kv0AiWNbv68LeKn1hsglF0Wmdg9GUXlOxnUzosnJE=;
-        b=1Y3jQ8OtUy1BzZ6aMZOd8GtTDjO5qg9IFlggqVA4rKJsXb0vV9+Bbv5EoIr+0SUymPvHwF
-        7X/IPap+IsNs/uCw==
-Received: from quack3.suse.cz (unknown [10.163.28.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id D008EA3B9E;
-        Fri, 18 Mar 2022 13:16:06 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id E0483A0615; Fri, 18 Mar 2022 14:16:00 +0100 (CET)
-Date:   Fri, 18 Mar 2022 14:16:00 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Brian Foster <bfoster@redhat.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Hugh Dickins <hughd@google.com>,
-        Namjae Jeon <namjae.jeon@samsung.com>,
-        Ashish Sangwan <a.sangwan@samsung.com>,
-        Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        linux-ext4@vger.kernel.org
-Subject: Re: writeback completion soft lockup BUG in folio_wake_bit()
-Message-ID: <20220318131600.iv7ct2m4o52plkhl@quack3.lan>
-References: <YjDj3lvlNJK/IPiU@bfoster>
- <YjJPu/3tYnuKK888@casper.infradead.org>
- <CAHk-=wgPTWoXCa=JembExs8Y7fw7YUi9XR0zn1xaxWLSXBN_vg@mail.gmail.com>
- <YjNN5SzHELGig+U4@casper.infradead.org>
- <CAHk-=wiZvOpaP0DVyqOnspFqpXRaT6q53=gnA2psxnf5dbt7bw@mail.gmail.com>
- <YjOlJL7xwktKoLFN@casper.infradead.org>
+        Fri, 18 Mar 2022 09:49:30 -0400
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A6E3C3DA4C
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Mar 2022 06:48:11 -0700 (PDT)
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-230-7BPTG6E3OgCK3NW-RJ4mhA-1; Fri, 18 Mar 2022 13:48:08 +0000
+X-MC-Unique: 7BPTG6E3OgCK3NW-RJ4mhA-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) with Microsoft SMTP
+ Server (TLS) id 15.0.1497.32; Fri, 18 Mar 2022 13:48:07 +0000
+Received: from AcuMS.Aculab.com ([fe80::994c:f5c2:35d6:9b65]) by
+ AcuMS.aculab.com ([fe80::994c:f5c2:35d6:9b65%12]) with mapi id
+ 15.00.1497.033; Fri, 18 Mar 2022 13:48:07 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Baoquan He' <bhe@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "willy@infradead.org" <willy@infradead.org>,
+        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
+        "yangtiezhu@loongson.cn" <yangtiezhu@loongson.cn>,
+        "amit.kachhap@arm.com" <amit.kachhap@arm.com>,
+        "hch@lst.de" <hch@lst.de>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
+Subject: RE: [PATCH v4 4/4] fs/proc/vmcore: Use iov_iter_count()
+Thread-Topic: [PATCH v4 4/4] fs/proc/vmcore: Use iov_iter_count()
+Thread-Index: AQHYOqvdJiWddWfO9ESrhwkm/5kbyKzFJutw
+Date:   Fri, 18 Mar 2022 13:48:07 +0000
+Message-ID: <1592a861bd9e46e5adf1431ad6bbd25c@AcuMS.aculab.com>
+References: <20220318093706.161534-1-bhe@redhat.com>
+ <20220318093706.161534-5-bhe@redhat.com>
+In-Reply-To: <20220318093706.161534-5-bhe@redhat.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YjOlJL7xwktKoLFN@casper.infradead.org>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Authentication-Results: relay.mimecast.com;
+        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 17-03-22 21:16:20, Matthew Wilcox wrote:
-> On Thu, Mar 17, 2022 at 12:26:35PM -0700, Linus Torvalds wrote:
-> > That whole "xyz_writeback_keepwrite()" thing seems odd. It's used in
-> > only one place (the folio version isn't used at all):
-> > 
-> >   ext4_writepage():
-> > 
-> >      ext4_walk_page_buffers() fails:
-> >                 redirty_page_for_writepage(wbc, page);
-> >                 keep_towrite = true;
-> >       ext4_bio_write_page().
-> > 
-> > which just looks odd. Why does it even try to continue to do the
-> > writepage when the page buffer thing has failed?
-> > 
-> > In the regular write path (ie ext4_write_begin()), a
-> > ext4_walk_page_buffers() failure is fatal or causes a retry). Why is
-> > ext4_writepage() any different? Particularly since it wants to keep
-> > the page dirty, then trying to do the writeback just seems wrong.
-> > 
-> > So this code is all a bit odd, I suspect there are decades of "people
-> > continued to do what they historically did" changes, and it is all
-> > worrisome.
+From: Baoquan He
+> Sent: 18 March 2022 09:37
 > 
-> I found the commit: 1c8349a17137 ("ext4: fix data integrity sync in
-> ordered mode").  Fortunately, we have a documented test for this,
-> generic/127, so we'll know if we've broken it.
+> To replace open coded iter->count. This makes code cleaner.
+...
+> diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
+> index 4cbb8db7c507..ed58a7edc821 100644
+> --- a/fs/proc/vmcore.c
+> +++ b/fs/proc/vmcore.c
+> @@ -319,21 +319,21 @@ static ssize_t __read_vmcore(struct iov_iter *iter, loff_t *fpos)
+>  	u64 start;
+>  	struct vmcore *m = NULL;
+> 
+> -	if (iter->count == 0 || *fpos >= vmcore_size)
+> +	if (!iov_iter_count(iter) || *fpos >= vmcore_size)
 
-I agree with Dave that 'keep_towrite' thing is kind of self-inflicted
-damage on the ext4 side (we need to write out some blocks underlying the
-page but cannot write all from the transaction commit code, so we need to
-keep xarray tags intact so that data integrity sync cannot miss the page).
-Also it is no longer needed in the current default ext4 setup. But if you
-have blocksize < pagesize and mount the fs with 'dioreadlock,data=ordered'
-mount options, the hack is still needed AFAIK and we don't have a
-reasonable way around it.
+For some definition of 'cleaner' :-)
 
-								Honza
+iter->count is clearly a simple, cheap structure member lookup.
+OTOH iov_iter_count(iter) might be an expensive traversal of
+the vector (or worse).
 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+So a quick read of the code by someone who isn't an expert
+in the iov functions leaves them wondering what is going on
+or having to spend time locating the definition ...
+
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
+
