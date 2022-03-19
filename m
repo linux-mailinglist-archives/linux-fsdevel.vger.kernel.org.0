@@ -2,53 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2480C4DE94B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Mar 2022 17:23:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 51FAA4E18E0
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Mar 2022 23:49:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243630AbiCSQZC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 19 Mar 2022 12:25:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36558 "EHLO
+        id S244312AbiCSWug (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 19 Mar 2022 18:50:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229707AbiCSQZB (ORCPT
+        with ESMTP id S244305AbiCSWuf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 19 Mar 2022 12:25:01 -0400
+        Sat, 19 Mar 2022 18:50:35 -0400
 Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8E7B8BF4D;
-        Sat, 19 Mar 2022 09:23:39 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5BAB49912;
+        Sat, 19 Mar 2022 15:49:11 -0700 (PDT)
 Received: from cwcc.thunk.org (pool-108-7-220-252.bstnma.fios.verizon.net [108.7.220.252])
         (authenticated bits=0)
         (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 22JGN4VN007569
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 22JMn9qk026585
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 19 Mar 2022 12:23:05 -0400
+        Sat, 19 Mar 2022 18:49:10 -0400
 Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id 49E8815C0038; Sat, 19 Mar 2022 12:23:04 -0400 (EDT)
-Date:   Sat, 19 Mar 2022 12:23:04 -0400
+        id 6AFEB15C0038; Sat, 19 Mar 2022 18:49:09 -0400 (EDT)
+Date:   Sat, 19 Mar 2022 18:49:09 -0400
 From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
-        Brian Foster <bfoster@redhat.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Hugh Dickins <hughd@google.com>,
-        Namjae Jeon <namjae.jeon@samsung.com>,
-        Ashish Sangwan <a.sangwan@samsung.com>,
-        Ext4 Developers List <linux-ext4@vger.kernel.org>
-Subject: Re: writeback completion soft lockup BUG in folio_wake_bit()
-Message-ID: <YjYDaBnN36zggeGa@mit.edu>
-References: <YjDj3lvlNJK/IPiU@bfoster>
- <YjJPu/3tYnuKK888@casper.infradead.org>
- <CAHk-=wgPTWoXCa=JembExs8Y7fw7YUi9XR0zn1xaxWLSXBN_vg@mail.gmail.com>
- <YjNN5SzHELGig+U4@casper.infradead.org>
- <CAHk-=wiZvOpaP0DVyqOnspFqpXRaT6q53=gnA2psxnf5dbt7bw@mail.gmail.com>
- <YjOlJL7xwktKoLFN@casper.infradead.org>
- <20220318131600.iv7ct2m4o52plkhl@quack3.lan>
- <CAHk-=wiky+cT7xF_2S94ToEjm=XNX73CsFHaQJH3tzYQ+Vb1mw@mail.gmail.com>
+To:     Byungchul Park <byungchul.park@lge.com>
+Cc:     torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
+        linux-ide@vger.kernel.org, adilger.kernel@dilger.ca,
+        linux-ext4@vger.kernel.org, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, peterz@infradead.org,
+        will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
+        joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
+        chris@chris-wilson.co.uk, duyuyang@gmail.com,
+        johannes.berg@intel.com, tj@kernel.org, willy@infradead.org,
+        david@fromorbit.com, amir73il@gmail.com, bfields@fieldses.org,
+        gregkh@linuxfoundation.org, kernel-team@lge.com,
+        linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
+        minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
+        sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
+        penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
+        ngupta@vflare.org, linux-block@vger.kernel.org,
+        paolo.valente@linaro.org, josef@toxicpanda.com,
+        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        jack@suse.cz, jack@suse.com, jlayton@kernel.org,
+        dan.j.williams@intel.com, hch@infradead.org, djwong@kernel.org,
+        dri-devel@lists.freedesktop.org, airlied@linux.ie,
+        rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
+        hamohammed.sa@gmail.com
+Subject: Re: [PATCH RFC v5 00/21] DEPT(Dependency Tracker)
+Message-ID: <YjZd5ff1DiKQnsrv@mit.edu>
+References: <1647397593-16747-1-git-send-email-byungchul.park@lge.com>
+ <YjKtZxjIKDJqsSrP@mit.edu>
+ <20220318074945.GA17484@X58A-UD3R>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wiky+cT7xF_2S94ToEjm=XNX73CsFHaQJH3tzYQ+Vb1mw@mail.gmail.com>
+In-Reply-To: <20220318074945.GA17484@X58A-UD3R>
 X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
@@ -58,79 +66,32 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 18, 2022 at 11:56:04AM -0700, Linus Torvalds wrote:
-> On Fri, Mar 18, 2022 at 6:16 AM Jan Kara <jack@suse.cz> wrote:
-> >
-> > I agree with Dave that 'keep_towrite' thing is kind of self-inflicted
-> > damage on the ext4 side (we need to write out some blocks underlying the
-> > page but cannot write all from the transaction commit code, so we need to
-> > keep xarray tags intact so that data integrity sync cannot miss the page).
-> > Also it is no longer needed in the current default ext4 setup. But if you
-> > have blocksize < pagesize and mount the fs with 'dioreadlock,data=ordered'
-> > mount options, the hack is still needed AFAIK and we don't have a
-> > reasonable way around it.
+On Fri, Mar 18, 2022 at 04:49:45PM +0900, Byungchul Park wrote:
 > 
-> I assume you meant 'dioread_lock'.
-> 
-> Which seems to be the default (even if 'data=ordered' is not).
+> I guess it was becasue of the commit b1fca27d384e8("kernel debug:
+> support resetting WARN*_ONCE"). Your script seems to reset WARN*_ONCE
+> repeatedly.
 
-That's not quite right.  data=ordered is the default, and that has
-been the case since ext3 was introduced.
+I wasn't aware this was being done, but your guess was correct.  The
+WARN_ONCE state is getting cleared between each test in xfstests, with
+the rationale (which IMO is quite reasonable) why this done in the
+xfstests commit descrition:
 
-"dioread_lock" was the default in the days of ext3; "dioread_nolock"
-was added to allow parallel Direct I/O reads (hence "nolock").  A
-while back, we tried to make dioread_nolock the default since it tends
-improve performance for workloads that have a mix of writes that
-should be affected by fsyncs, and those that shouldn't.
+commit c67ea2347454aebbe8eb6e825e9314d099b683da
+Author: Lukas Czerner <lczerner@redhat.com>
+Date:   Wed Jul 15 13:42:19 2020 +0200
 
-Howevver, we had to revert that change when blocksize < pagesize to
-work around a problem found on Power machines where "echo 3 >
-drop_caches" on the host appears to cause file system corruptions on
-the guest.  (Commit 626b035b816b "ext4: don't set dioread_nolock by
-default for blocksize < pagesize").
+    check: clear WARN_ONCE state before each test
+    
+    clear WARN_ONCE state before each test to allow a potential problem
+    to be reported for each test
+    
+    [Eryu: replace "/sys/kernel/debug" with $DEBUGFS_MNT ]
+    
+    Signed-off-by: Lukas Czerner <lczerner@redhat.com>
+    Reviewed-by: Zorro Lang <zlang@redhat.com>
+    Signed-off-by: Eryu Guan <guaneryu@gmail.com>
 
-> IOW, we could simply warn about "data=ordered is no longer supported"
-> and turn it into data=journal.
-> 
-> Obviously *only* do this for the case of "blocksize < PAGE_SIZE".
-
-Actiavelly, we've discussed a number of times doing the reverse ---
-removing data=journal entirely, since it's (a) rarely used, and (b)
-data=journal disables a bunch of optimizations, including
-preallocation, and so its performance is pretty awful for most
-workloads.  The main reason why haven't until now is that we believe
-there is a small number of people who do find data=journal useful for
-their workload, and at least _so_ far it's not been that hard to keep
-it limping along --- although in most cases, data=journal doesn't get
-supported for new features or performance optimizations, and it
-definitely does note get as much testing.
-
-
-So the thing that I've been waiting to do for a while is to replace
-the whole data=ordered vs data=writeback and dioread_nolock and
-dioread_lock is a complete reworking of the ext4 buffered writeback
-path, where we write the data blocks *first*, and only then update the
-ext4 metadata.
-
-Historically, going as far back as ext2, we've always allocated data
-blocks and updatted the metadata blocks, and only then updated the
-buffer or page cache for the data blocks.  All of the complexities
-around data=ordered, data=writeback, dioread_nolock, etc., is because
-we haven't done the fundamental work of reversing the order in which
-we do buffered writeback.   What we *should* be doing is:
-
-*) Determining where the new allocated data blockblocks should be, and
-   preventing those blocks from being used for any other purposes, but
-   *not* updating the file system metadata to reflect that change.
-
-*) Submit the data block write
-
-*) On write completion, update the metadata blocks in a kernel thread.
-
-Over time, we've been finding more and more reasons why I need to do
-this work, so it's something I'm going to have to prioritize in the
-next few months.
-
-Cheerse,
+Cheers,
 
 						- Ted
