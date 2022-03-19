@@ -2,66 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 686594DE67D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Mar 2022 07:30:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FEC34DE683
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Mar 2022 07:30:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242325AbiCSGbz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 19 Mar 2022 02:31:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43742 "EHLO
+        id S242331AbiCSGbj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 19 Mar 2022 02:31:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242320AbiCSGbh (ORCPT
+        with ESMTP id S242293AbiCSGbX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 19 Mar 2022 02:31:37 -0400
+        Sat, 19 Mar 2022 02:31:23 -0400
 Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EC1F2D5A38;
-        Fri, 18 Mar 2022 23:30:05 -0700 (PDT)
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 22J1hWKI001709;
-        Sat, 19 Mar 2022 06:29:10 GMT
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7DC11AA8EB;
+        Fri, 18 Mar 2022 23:30:02 -0700 (PDT)
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 22J3vT3G008826;
+        Sat, 19 Mar 2022 06:29:15 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
  date : message-id : in-reply-to : references : content-type :
  mime-version; s=corp-2021-07-09;
- bh=nSEyfhezoAwlNyvhBjZH9FdND1rQ/6a4aYmOeSPmj0s=;
- b=SwObJ1fvIhv+6LgWZHxU+5jGRB8hjLHF6yMBxVss7WaMsSVRaVDu9Qhfu2YfLtmYcuOM
- 0mFV6kJBhs7ALaK4YXvuL7ylsqngyiUGY3Bb94OEZlQXYgzDF/zZti3zUk/kJnuY0l4i
- wKXhgK37RHdaE2kDqnrMosMMHRA0exGg+kXV/1eCD+Vb4m76O7PwRsnL6J8TO4tKCH5U
- hM1JdIR42fnsJX6wCWLrXxfbdrLm4RZ1houIEudGCK05zDe2uNZTCAVj9ETVpulWqDJx
- ZgzVmalH8J1XcYa7XM5Wk9WkrFzvnDitWay+HRAdEBvtJlcMgDgBf61JrXp+5mfnPzZN 7w== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by mx0b-00069f02.pphosted.com with ESMTP id 3ew5s0g5k1-1
+ bh=WQKHDFQRLfFyRpEZMEyBctbWgbBoX4FGjzPfRUszb30=;
+ b=t1R1skXFl0/py/dFvPrVZIuN/L88yN/JhbV11zNNKItaHWe3d2xVKxJw+kJJe3klFSd3
+ DU6LbVFHv/ov8urretgjBcjxySjeJf/1ya6MGugutAF5M39MEp2XzNSAFnj1FeDdbioD
+ Iz2PxgfvZD5NfKTCFdSdNON4O49agES8F67p5y4nceuNZRnQisfkl0X7GRvH19yZtlQK
+ NHK6r7pd/fdBxf0/FrU9nH3rUnrSu3zb3jS8r6dSeMw+pcANjlRM7tzQiR9HMriLuEhl
+ t1zbZLV5K69NDA/1AfOPiaMdVbZoOJsKKxPQOyQbOLH9fH5JRnLE3phGkZXS0G8D0HEM fA== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80] (may be forged))
+        by mx0b-00069f02.pphosted.com with ESMTP id 3ew7qt0354-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 19 Mar 2022 06:29:10 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 22J6MkAJ028031;
-        Sat, 19 Mar 2022 06:29:08 GMT
-Received: from nam02-dm3-obe.outbound.protection.outlook.com (mail-dm3nam07lp2044.outbound.protection.outlook.com [104.47.56.44])
-        by userp3020.oracle.com with ESMTP id 3ew8mfrwjn-1
+        Sat, 19 Mar 2022 06:29:14 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 22J6NKgK011462;
+        Sat, 19 Mar 2022 06:29:13 GMT
+Received: from nam02-dm3-obe.outbound.protection.outlook.com (mail-dm3nam07lp2045.outbound.protection.outlook.com [104.47.56.45])
+        by userp3030.oracle.com with ESMTP id 3ew49r0aqy-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 19 Mar 2022 06:29:08 +0000
+        Sat, 19 Mar 2022 06:29:13 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=FftQFY9KhE2S8hSfnqZNoWS3LWFO/9Erx5IxGPJ3NszF8tsa+qvuXEdJj+AUGkQ0v3diIxelFENbCKRx8qoOFxcLPxQ9egv9suL8+Eqlhvc+Afw12PKjjmJWJGNW0f2BNadEV6Nq1XVYZY9ojl1fhGFzVyt1HgMeAh0UcEQYb2g8wczgOh7nj9kN6r+JMs9pRNM0Nlhpux2BL/UeTFU2JakfUMCJDRVHzufeTd19myXFK0tsFTdokJ3J4Bo4OwOR0LdfsUMlpqxvL3WfobPLy8dxidNOMTJh2nWYrnePySK3HkywK8XsIiqRbmBvDqI2ZubggBGmT6WQq9qU8aX8Kg==
+ b=Jc/JfKrIre9Fz+46SPaOPsf1VDhrGsVne8S4b6ECJ8ANbdrfDk9d+fZBCYlIZh5iBFTmWbtjNSxE8Qi0UAPgaw2TLKG87Y6JRBroWvsykpsUZglrLPoNIQj7VfSmxuaZ4cuEmZLG2rRxaJWUcveOixPv/SjurnxaPNfjzzfXtXRj59MZ6F+oBhm4ISVCAuhy5S8mjsJR/OxZx4JJTf5A68JhX6Yj9bCYmNR90G611qT+c8bSgxbiVkbU4/MV6KPMfTTJb5j8Ertg0JMSslai4lXzX7qawDp5UlZjMkyGTSzGIDFIoe6ihhjgDWr8zLhu5n2QcNkV23odwueD4wkuBQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nSEyfhezoAwlNyvhBjZH9FdND1rQ/6a4aYmOeSPmj0s=;
- b=U8spj0KAvtL1Kfkn3qnZn+M1GeKkjM6+Eyl232YykQ+wct/RTuYg7zxugGCr3Q0djAjnqVXT7ZXE9jJT6bDe42PZKJjf94O/iiWoBQELPOE+rgZ9c9A9oPiCZXcIVP3OtNY5fj0HF1FSkJYcjz2qFP8I3DhGCv3rsVcus0FM4w3++4DbLL+gJ8rBxEMNnsejFZrXK/cGXteivzG9Lb+SPxjkYbXUHxR1/0cQx59c/j6cTHsOM36rMVJzR1esC52umVeRUgW/LaRyOz/1HimcyFnORFqGMSukGakSbKoxxiV/zvgjUKBGuCAyqtW+HQLQRuibCor9eSDZejBT3Rs0gw==
+ bh=WQKHDFQRLfFyRpEZMEyBctbWgbBoX4FGjzPfRUszb30=;
+ b=oYxPXSa/gF4hbSgvzO+mTgPZnQsU7sviNHA01EF2HaUdpyYAkk2mYfTsRYW90yGLBpSIXcLFAQLEM+jJ+oyT3FpFrBfXyqCVn+d4HY2EMsybYvzJOsLVXDcxNZo8R5/phiAIEtkmlnwOpPtg52R/FLOQt+eFw+LG/2/lkwuWRgWzQHB8LXBbtcBWLq5wsZl2shYX+gyJ+ElP5K1eMUFAKUQgTwT3TveOmlOTCrwVaumILD6hXZhgEeKWJZv6p06jzmZyTPRa9eg0qVQEyQfrl5VVDy6AMyPm8Vz0wvDHCuyJHRJLuejr96tMx1ibm/kmpBpvlgx+vE1hZOPawFQSUg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nSEyfhezoAwlNyvhBjZH9FdND1rQ/6a4aYmOeSPmj0s=;
- b=kjZGA1/Yz9512345bpkexLBeqv5W/HEw2Ot+dTL4jly97qkBlfMwWal84G//w4n2aQ+l2TAtY9nOW7KD5kMoL++8tBxUh/hLXUQt810MtSl9+8TAqPWzfblhUMh22ZfMdKIcbY10nRWlfmUoQTmlx2KF2maC1/WoO7r2S1J1mdc=
+ bh=WQKHDFQRLfFyRpEZMEyBctbWgbBoX4FGjzPfRUszb30=;
+ b=jOkggDncy4ABO/2FGl/PThoP2QZOiitPoYj+l58y2VUrNvvjoA3m/GBrybgDZz39dmIA1fHprCWxH/hGxBecZE63lzKGTKIwNGhMnfmej8Filk/5ZySL4i1j6/W24OoTm1kPS6fGMSA7rzMl65KLYzmideML9Cl2HkuwN8aTDDs=
 Received: from SJ0PR10MB4429.namprd10.prod.outlook.com (2603:10b6:a03:2d1::14)
  by CY4PR10MB1798.namprd10.prod.outlook.com (2603:10b6:903:126::17) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5081.17; Sat, 19 Mar
- 2022 06:29:06 +0000
+ 2022 06:29:11 +0000
 Received: from SJ0PR10MB4429.namprd10.prod.outlook.com
  ([fe80::2092:8e36:64c0:a336]) by SJ0PR10MB4429.namprd10.prod.outlook.com
  ([fe80::2092:8e36:64c0:a336%8]) with mapi id 15.20.5081.019; Sat, 19 Mar 2022
- 06:29:06 +0000
+ 06:29:11 +0000
 From:   Jane Chu <jane.chu@oracle.com>
 To:     david@fromorbit.com, djwong@kernel.org, dan.j.williams@intel.com,
         hch@infradead.org, vishal.l.verma@intel.com, dave.jiang@intel.com,
@@ -69,9 +69,9 @@ To:     david@fromorbit.com, djwong@kernel.org, dan.j.williams@intel.com,
         ira.weiny@intel.com, willy@infradead.org, vgoyal@redhat.com,
         linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
         linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: [PATCH v6 1/6] x86/mm: fix comment
-Date:   Sat, 19 Mar 2022 00:28:28 -0600
-Message-Id: <20220319062833.3136528-2-jane.chu@oracle.com>
+Subject: [PATCH v6 2/6] x86/mce: relocate set{clear}_mce_nospec() functions
+Date:   Sat, 19 Mar 2022 00:28:29 -0600
+Message-Id: <20220319062833.3136528-3-jane.chu@oracle.com>
 X-Mailer: git-send-email 2.18.4
 In-Reply-To: <20220319062833.3136528-1-jane.chu@oracle.com>
 References: <20220319062833.3136528-1-jane.chu@oracle.com>
@@ -81,59 +81,59 @@ X-ClientProxiedBy: BY5PR16CA0025.namprd16.prod.outlook.com
  (2603:10b6:a03:2d1::14)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: b9caddc3-7e76-46d1-809e-08da0971c4bb
+X-MS-Office365-Filtering-Correlation-Id: 6e4c18c2-78bc-4be2-def2-08da0971c786
 X-MS-TrafficTypeDiagnostic: CY4PR10MB1798:EE_
-X-Microsoft-Antispam-PRVS: <CY4PR10MB1798CAC8F55A764B3050D216F3149@CY4PR10MB1798.namprd10.prod.outlook.com>
+X-Microsoft-Antispam-PRVS: <CY4PR10MB17984982AC80E7485C28D72AF3149@CY4PR10MB1798.namprd10.prod.outlook.com>
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: N5bGlc+erw/EVNfrGAuQsEybCZ3gcdK69SDlfloAagjkZnFIrVgrcGv2mLxIvuuwOaica3k2TVXwvQ2oKomCKSKdhiHfQydvQ4caQ7ZtT1tS/1X3q8EtBMGHAOiwYahakTJNhBLb+NDRRVJi/Uzccm0THsE4mub5enIDM3ntXv58bSxyE8pMY7MBnG343x42zbTAXlqBwYSdb4B7faucg3OlGW0xIULRb/pGkvUmyKRLETck4fzX6xO/vRtKBxngEDux2gxeckUa2WVCheWXDIK1oUwfhAXVM0mA5hJaxOIvjQzyx2I2mLtSXixzdN4EGXDkOWlpXy7Q1pO3e4v6iZKSJ5LO9zN0GsxtUnVMxtdCXm68RCj/FLFYOSjawgx7ZUnxVBCedybNo5/ZpOpCTUoNxlmqokFbal4slS0aN9zRl3wPgAw/Xwl08+O42iPw3yLDIeiIQM/d+x/TCbnS2eyvwkPgcOB4LoOX9hL49NY3LUC0eWBVgggDOt3HgMeSQ+PmdkuFO7IHW6/P2+F20JMcR+evlmIvFDdGkAMiy9w+3/2r3y/wxI2btBs0jLnkLWYOmGK2B/iWNuopNDKESet9zwzG1PecVcxxSPcgNjKe/DTeHl9rMD58XifusdGli/GWmLvwDcsjaXMvecK0ZAjmDi3YSsAaJMqEBcqaE/HmBoTVngA2FHSiIbBNMhRg9Wsd8fMJtPc09WS4J17CIg==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB4429.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(366004)(52116002)(6512007)(66476007)(8676002)(83380400001)(66556008)(316002)(6506007)(2906002)(38100700002)(66946007)(508600001)(44832011)(5660300002)(8936002)(7416002)(4744005)(36756003)(1076003)(6486002)(86362001)(186003)(2616005)(921005)(6666004);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam-Message-Info: dJzPb5HF6sq8LUjs1TWk9/2M/m32buQlX4rTuFYsjI+StLR6OVnNA26XiwQs9kf0+l6Hn2R8HbZHvJnndfhY3BFGdaHfyHG941TFlezBvqsHMN/wBw3pwOqXy/+SYBMfGftbYV8Ltrn3rn+h1bz/zY3qbAFhtck+6Q9aakaZiHdbDId5rMhBGHvOb8GEcPrwP5eLVkvPFIkY6c6i3SojPboJUZV62NyEGfVD2OJbZbXl4oSc27u5kLFT9GsMJUWoIyFI1t9glpBRwKBmx2L9uVy110sEX8cCd2hCTp4l1kUZtNaAT4oBjqz4SH2nUOxbnT5ibZMCxjEWXPVtdiXInJPX8OiQWD0nJF2DI8HCEapB13/zhbpI2vQK01Lkh2gKGGFkV4Io9ErC0sGnHvRrH/AfBUWOK9+QJrA+lJ4wcaNgpth4IWMoZ6/iXxTU+RODm580relGjEYyWOFDp2cWtqGvj/9bXZzHSgNpX+w2QqW+T/rYPqXP6wl8a0b+uQ46LQVw5GIwnPImP+PQAqQz4vxk5KcnyfCMKxVeHxxF9WX2wRna2o1UrUaiMtTQC8yAlc67RD3XcAxL7yW+MZqSOkPpeIflFg4IZ2RJ8IR6OtYMQEuKLMnYEVN5J56DfiD1ZCmlJOlyGrjt6FvOVfsxz5V3mRhutg3ih4/zvGzN+lzcaxM0KdELNOIMeljbYo0CvbnrS0nAwTDBSYYa3USsmQ==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB4429.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(366004)(52116002)(6512007)(66476007)(8676002)(83380400001)(66556008)(316002)(6506007)(2906002)(38100700002)(66946007)(508600001)(44832011)(5660300002)(8936002)(7416002)(36756003)(1076003)(6486002)(86362001)(186003)(2616005)(921005)(6666004);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?mwYwvJZo19hXF07BhyUXxGivvBuBW0S+2vhfW2Gzn1c48V+6gu3IFpzhbk+a?=
- =?us-ascii?Q?en3Af7rJQgq+IszkMR4LTUfllaILZWyZNEDC+W0nTS9tucHPU7Sybh9RJqE/?=
- =?us-ascii?Q?cFPULaVDDromGdJ6jf3bA6vGgrpavB5Cc6hHu+fokfNBTI27GH/D6qmTfpc/?=
- =?us-ascii?Q?1TfHbj3o3plTtiDQxg3pKs+IQM/w31QCSA1rrgqmt6OtUXeLVlUvlln1a9OL?=
- =?us-ascii?Q?GSuSsm9H3jYCp0JgqRrXJDfmqIHQxLxM+VyQ6wh1tHzmqpb8FYh+/EfgwPRI?=
- =?us-ascii?Q?GB6bzDSn4YBZFww5YLY89Suv93pmfmpBmoXPadsDtmT4BRqKwgZBxkj4k1yQ?=
- =?us-ascii?Q?y0MIMAys8UzneQNYKiz+fP8F8mFvgysAuMQVsCXTmhN4B/7KinjekED3nv+y?=
- =?us-ascii?Q?rktPNImC9BBjByTnoi125mtwEseei2XIehBKi6Ifrb60Ex3VDUVdU9n0CeWQ?=
- =?us-ascii?Q?VKM6V0aXrLvq0MT3hIlD6Ofl6HVqTW74ig85RpY2YQHE0w3ghA+TW/BIVPre?=
- =?us-ascii?Q?CQz1sG43pZ92eu0ZNpdjq99nfQ1vRy3uf5s4ABdPH5kZonWGO9XEkbKnAS53?=
- =?us-ascii?Q?VziJdkULsWTbGhm1c7MUyMWaxDDBYIA3RfEP9QuSvo36XxtScskxzh7Xr3/L?=
- =?us-ascii?Q?vpkJOPi1T8kzE0gZBB4Iq/7CBjNKpTNqjwNChwHIHLs6KHs+JXT298fyJqy9?=
- =?us-ascii?Q?G/JaAJPTRhO1Hdyy7pR3pfDA9dcDZU8k0E36VjfNcnrHZ/Cjr6RHJtY6Ffjv?=
- =?us-ascii?Q?6PR9Jko8qR4PzBHMNQ0UHHVhx/l36b6nPVZRgJSVaKkzZAc5PlSISFCFNT8L?=
- =?us-ascii?Q?vfAC7JQe2GCXawZGYtkm3R/ZaB+URoN+4/rypJ9T6lqmWlvBtM9babLfFXUl?=
- =?us-ascii?Q?/Fw05OojyP7hnrHWig6RB78MprVL3Pb9hA2xOJ3g7A/yLWHyN5JhXU2AGGZ4?=
- =?us-ascii?Q?jK1t5XNF2rT9xvKIpjDfwb+qVidAa6pRTZAROvlcSjcGJcI/90RLW9NhAcXe?=
- =?us-ascii?Q?iBQM+ALB+myyYD0WNHBkQc7/r+IbGtiMEQDLDgwKoy8ZnQu8s4s+CVTKMcPE?=
- =?us-ascii?Q?+K86pkbGXce5e81BtH1swhkn7CY602WHba4jm0puWEjiYrT7KQ2ix7u1kopH?=
- =?us-ascii?Q?hs7/+/E8d2aNZ5i6bFphJav9vG1D5m7UTIHwlQZGptTdaKb0IBO7p0+kKOkk?=
- =?us-ascii?Q?WGdeZm6CptGr481KR8C0dfmJ/bSM99+G8YTzVAuQ4AD3uOvjq89EkPDYOnQP?=
- =?us-ascii?Q?pSA0UdUvW5aDHnSC9CZNeSzZN2nMZ/TBSHR8JClMMXpiRHQh91TMt5STMi4L?=
- =?us-ascii?Q?aeLR6tsH3D2rfiXgznSn/bMK4IWBesrkjHcdDyrkYKCigpQKmsMj7RYjufg4?=
- =?us-ascii?Q?oSsE62T8GcGmWAPymAd5EMj8rk0A7wi3XcpzFf+QD5ten1zai35Ixaf7/Cnw?=
- =?us-ascii?Q?VcGgYJZ1qy+HNzeYKlVIIrKn8Il1t3ouBeYa4OA3df3hnMJRYcVMNUo/toqb?=
- =?us-ascii?Q?3519Qq1Oz+d4CeI=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?PrMeU8AxzAbXdLKkzUKZ/8otCZ2GB72QbcGg53PtAuPzSPTOF368LZzh3Q2o?=
+ =?us-ascii?Q?p210pajmrzz9wNlIrUZKzmc+R+TDGMnk4HKMJ2E+jIJ2lBUOLo6WdSCgU9Kj?=
+ =?us-ascii?Q?hg82GBmgxXxaKAe9lB5qMmQ1Rv36xTLoTuOqIxLu02ZBj8lenqE2DXGlYbNy?=
+ =?us-ascii?Q?uq/ApYQk5hjA24dJaEGadr3gSGK9z+MwQ2duhNSJXlrY0HuJiDFnEJRk4xMS?=
+ =?us-ascii?Q?/7GD2gEt3XZzjn2JLGbwCkGRkqRH6cZJinxxbVDx44nFNIg4qv/4AOdGnUQZ?=
+ =?us-ascii?Q?Hs4EFa+qlQz0yPz4y7bub5I/kxIzD3I85WgHJzsGXlUmpBACcKxM+nFMT3/I?=
+ =?us-ascii?Q?gEK3lSbN/kFygCrK+9G0PIROlwO4DmgPlr27L3FNcm4aAeQEwP68eTfk29iZ?=
+ =?us-ascii?Q?f++oN9xErVpueMriQlv5HO7I80D0o33ca3+K7/t7L/jtYxJIt1d/F4c+vto4?=
+ =?us-ascii?Q?W0N3JfLgabb2wEsvk31b5XL58h3aIPIO6oaNvey51Vfof5enqeg7mTheY8zQ?=
+ =?us-ascii?Q?65x9orQu2tzGcy3qYmo6gWt+RWurUYIlKc3WhkC9FpjFJn9QzsJfyDX/iLXs?=
+ =?us-ascii?Q?YyWljCJ8wcx51bdxaqSiq/ixGrdkXzrl+RKod3VPl7VZg46wHAoVNWqCTMsL?=
+ =?us-ascii?Q?CUmOY/OnZ7DqWyQ/klMzQxl3y6d8wyFJCu/i7pYNU5wD3swXf6ZUSvyHzYHe?=
+ =?us-ascii?Q?lMURRis/t4Dk0rEDFMFYhHMWaT5tdfGqROrJFderoOa+2xt+Cao1www2cid9?=
+ =?us-ascii?Q?j7ExdYy7U6Vc9W2PpKQAmFiL4YIE98zq/mwtLdqt5CgQvOLN3Z12DEj52hWZ?=
+ =?us-ascii?Q?CFn2XCi30ZIy0z/edX2ww3knPx0M1gGHkSNKzu9lBDkT9lK8f5MALPbUCLlZ?=
+ =?us-ascii?Q?U80kTBTfcs0q5pBu0o/CgTxMRHkVVOKCdJkqbY25TuzGUJeU1Abi0kIRGs7J?=
+ =?us-ascii?Q?/3QkMgpAz0ozRr9hxjXJFDBJ/GHtsXcpHA+any+z8JDlPXWACtSV7/WkHjwb?=
+ =?us-ascii?Q?k3GcHfrXKiMBu5KiyqnIsgySEc06oja8pR2K+tisk1fBN8GkX9DC97mg22Md?=
+ =?us-ascii?Q?8gRbNiHtPfkz8vH5xqEqnn5t7QnRBStO4xdEMV73i4ZGEvcSlFsV5GOruhka?=
+ =?us-ascii?Q?OFRX25ZAcJOXWbqzqp4p9EsFtztA93qD1jm86XHlKPNVprIFE4zYfc3C+HbA?=
+ =?us-ascii?Q?kjYTvUXnMerVABtsNuhFAz2n4wAg/sPk9ClauqlstyOYUZuk9HTmaNTrmRjq?=
+ =?us-ascii?Q?hX3yOsjlCG69uXnizJcgpA2oKKTO0ciNwXbDiiPvo/dLVLjLRD30+ihtRKko?=
+ =?us-ascii?Q?Z6s+BQmMF+Z+bc+ANnwP/xj7ft7gW3BWzVVrPtHLgLE+EKMCuWEA7UwvlkiS?=
+ =?us-ascii?Q?MEWvw4juW17TXcrnSPBNsK1eFNAnE/Pb7KVi0Zcw9/axFNHr8iRJTyEtntCt?=
+ =?us-ascii?Q?iKmKNkr6TbYKKDHjmKxOY793OtOGM/UIJivXTIVrcausGnCqhKMPf2imhP6y?=
+ =?us-ascii?Q?TX86xdeePr/9a5Y=3D?=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b9caddc3-7e76-46d1-809e-08da0971c4bb
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6e4c18c2-78bc-4be2-def2-08da0971c786
 X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB4429.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2022 06:29:06.6495
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2022 06:29:11.1211
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bQQsYdQeD6pUtDnOf4J+sI3axJsdWuvKFK8pzJTMVHu4WgQyWozFWqfJla0inFnkA2sUTPJS9dzo31vfLsuQSw==
+X-MS-Exchange-CrossTenant-UserPrincipalName: C+ii/Utbdphpt5o61LBD6WW0BbzQpKItzZvYxtL4774C7KwqJY0FAScfZJADsdM0QKId5kbqoKlcMZH0CuOlmg==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR10MB1798
 X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10290 signatures=694221
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 adultscore=0 bulkscore=0
- malwarescore=0 mlxlogscore=826 phishscore=0 spamscore=0 mlxscore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0 mlxscore=0
+ bulkscore=0 phishscore=0 spamscore=0 mlxlogscore=999 suspectscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2202240000
  definitions=main-2203190038
-X-Proofpoint-GUID: ilkLvOq1iKrCtLQGpAotQwpPApzqyRw0
-X-Proofpoint-ORIG-GUID: ilkLvOq1iKrCtLQGpAotQwpPApzqyRw0
+X-Proofpoint-GUID: DE_shnLN9dgY0rLACOAvIoz8_7VtjjNW
+X-Proofpoint-ORIG-GUID: DE_shnLN9dgY0rLACOAvIoz8_7VtjjNW
 X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
         RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
@@ -144,27 +144,166 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-There is no _set_memory_prot internal helper, while coming across
-the code, might as well fix the comment.
+Relocate the twin mce functions to arch/x86/mm/pat/set_memory.c
+file where they belong.
 
 Signed-off-by: Jane Chu <jane.chu@oracle.com>
 ---
- arch/x86/mm/pat/set_memory.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/include/asm/set_memory.h | 52 -------------------------------
+ arch/x86/mm/pat/set_memory.c      | 48 ++++++++++++++++++++++++++++
+ include/linux/set_memory.h        |  9 +++---
+ 3 files changed, 53 insertions(+), 56 deletions(-)
 
+diff --git a/arch/x86/include/asm/set_memory.h b/arch/x86/include/asm/set_memory.h
+index ff0f2d90338a..648be0bd20df 100644
+--- a/arch/x86/include/asm/set_memory.h
++++ b/arch/x86/include/asm/set_memory.h
+@@ -88,56 +88,4 @@ void notify_range_enc_status_changed(unsigned long vaddr, int npages, bool enc);
+ 
+ extern int kernel_set_to_readonly;
+ 
+-#ifdef CONFIG_X86_64
+-/*
+- * Prevent speculative access to the page by either unmapping
+- * it (if we do not require access to any part of the page) or
+- * marking it uncacheable (if we want to try to retrieve data
+- * from non-poisoned lines in the page).
+- */
+-static inline int set_mce_nospec(unsigned long pfn, bool unmap)
+-{
+-	unsigned long decoy_addr;
+-	int rc;
+-
+-	/* SGX pages are not in the 1:1 map */
+-	if (arch_is_platform_page(pfn << PAGE_SHIFT))
+-		return 0;
+-	/*
+-	 * We would like to just call:
+-	 *      set_memory_XX((unsigned long)pfn_to_kaddr(pfn), 1);
+-	 * but doing that would radically increase the odds of a
+-	 * speculative access to the poison page because we'd have
+-	 * the virtual address of the kernel 1:1 mapping sitting
+-	 * around in registers.
+-	 * Instead we get tricky.  We create a non-canonical address
+-	 * that looks just like the one we want, but has bit 63 flipped.
+-	 * This relies on set_memory_XX() properly sanitizing any __pa()
+-	 * results with __PHYSICAL_MASK or PTE_PFN_MASK.
+-	 */
+-	decoy_addr = (pfn << PAGE_SHIFT) + (PAGE_OFFSET ^ BIT(63));
+-
+-	if (unmap)
+-		rc = set_memory_np(decoy_addr, 1);
+-	else
+-		rc = set_memory_uc(decoy_addr, 1);
+-	if (rc)
+-		pr_warn("Could not invalidate pfn=0x%lx from 1:1 map\n", pfn);
+-	return rc;
+-}
+-#define set_mce_nospec set_mce_nospec
+-
+-/* Restore full speculative operation to the pfn. */
+-static inline int clear_mce_nospec(unsigned long pfn)
+-{
+-	return set_memory_wb((unsigned long) pfn_to_kaddr(pfn), 1);
+-}
+-#define clear_mce_nospec clear_mce_nospec
+-#else
+-/*
+- * Few people would run a 32-bit kernel on a machine that supports
+- * recoverable errors because they have too much memory to boot 32-bit.
+- */
+-#endif
+-
+ #endif /* _ASM_X86_SET_MEMORY_H */
 diff --git a/arch/x86/mm/pat/set_memory.c b/arch/x86/mm/pat/set_memory.c
-index b4072115c8ef..042cfac6272b 100644
+index 042cfac6272b..9abc6077d768 100644
 --- a/arch/x86/mm/pat/set_memory.c
 +++ b/arch/x86/mm/pat/set_memory.c
-@@ -1816,7 +1816,7 @@ static inline int cpa_clear_pages_array(struct page **pages, int numpages,
+@@ -1925,6 +1925,54 @@ int set_memory_wb(unsigned long addr, int numpages)
  }
+ EXPORT_SYMBOL(set_memory_wb);
  
- /*
-- * _set_memory_prot is an internal helper for callers that have been passed
-+ * __set_memory_prot is an internal helper for callers that have been passed
-  * a pgprot_t value from upper layers and a reservation has already been taken.
-  * If you want to set the pgprot to a specific page protocol, use the
-  * set_memory_xx() functions.
++#ifdef CONFIG_X86_64
++/*
++ * Prevent speculative access to the page by either unmapping
++ * it (if we do not require access to any part of the page) or
++ * marking it uncacheable (if we want to try to retrieve data
++ * from non-poisoned lines in the page).
++ */
++int set_mce_nospec(unsigned long pfn, bool unmap)
++{
++	unsigned long decoy_addr;
++	int rc;
++
++	/* SGX pages are not in the 1:1 map */
++	if (arch_is_platform_page(pfn << PAGE_SHIFT))
++		return 0;
++	/*
++	 * We would like to just call:
++	 *      set_memory_XX((unsigned long)pfn_to_kaddr(pfn), 1);
++	 * but doing that would radically increase the odds of a
++	 * speculative access to the poison page because we'd have
++	 * the virtual address of the kernel 1:1 mapping sitting
++	 * around in registers.
++	 * Instead we get tricky.  We create a non-canonical address
++	 * that looks just like the one we want, but has bit 63 flipped.
++	 * This relies on set_memory_XX() properly sanitizing any __pa()
++	 * results with __PHYSICAL_MASK or PTE_PFN_MASK.
++	 */
++	decoy_addr = (pfn << PAGE_SHIFT) + (PAGE_OFFSET ^ BIT(63));
++
++	if (unmap)
++		rc = set_memory_np(decoy_addr, 1);
++	else
++		rc = set_memory_uc(decoy_addr, 1);
++	if (rc)
++		pr_warn("Could not invalidate pfn=0x%lx from 1:1 map\n", pfn);
++	return rc;
++}
++EXPORT_SYMBOL(set_mce_nospec);
++
++/* Restore full speculative operation to the pfn. */
++int clear_mce_nospec(unsigned long pfn)
++{
++	return set_memory_wb((unsigned long) pfn_to_kaddr(pfn), 1);
++}
++EXPORT_SYMBOL(clear_mce_nospec);
++
++#endif
++
+ int set_memory_x(unsigned long addr, int numpages)
+ {
+ 	if (!(__supported_pte_mask & _PAGE_NX))
+diff --git a/include/linux/set_memory.h b/include/linux/set_memory.h
+index f36be5166c19..d6263d7afb55 100644
+--- a/include/linux/set_memory.h
++++ b/include/linux/set_memory.h
+@@ -42,20 +42,21 @@ static inline bool can_set_direct_map(void)
+ #endif
+ #endif /* CONFIG_ARCH_HAS_SET_DIRECT_MAP */
+ 
+-#ifndef set_mce_nospec
++#ifdef CONFIG_X86_64
++int set_mce_nospec(unsigned long pfn, bool unmap);
++int clear_mce_nospec(unsigned long pfn);
++#else
+ static inline int set_mce_nospec(unsigned long pfn, bool unmap)
+ {
+ 	return 0;
+ }
+-#endif
+-
+-#ifndef clear_mce_nospec
+ static inline int clear_mce_nospec(unsigned long pfn)
+ {
+ 	return 0;
+ }
+ #endif
+ 
++
+ #ifndef CONFIG_ARCH_HAS_MEM_ENCRYPT
+ static inline int set_memory_encrypted(unsigned long addr, int numpages)
+ {
 -- 
 2.18.4
 
