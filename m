@@ -2,46 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 412474DE6EC
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Mar 2022 09:14:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 950A14DE706
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Mar 2022 09:25:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237430AbiCSIPb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 19 Mar 2022 04:15:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56722 "EHLO
+        id S242497AbiCSI0a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 19 Mar 2022 04:26:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42194 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233088AbiCSIPa (ORCPT
+        with ESMTP id S230237AbiCSI03 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 19 Mar 2022 04:15:30 -0400
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A834A1F634E;
-        Sat, 19 Mar 2022 01:14:09 -0700 (PDT)
+        Sat, 19 Mar 2022 04:26:29 -0400
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13E8227CE2B;
+        Sat, 19 Mar 2022 01:25:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1647677649; x=1679213649;
+  t=1647678309; x=1679214309;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=5/j8SFIJOg+tuUIcMYd0AoAB00s/OJZR63GPCgz2T7U=;
-  b=cm5JPduv9EzaGjf0A+41iIDDDzbznVjpCtXS5EMOK+t3LTyftbi6LCof
-   RxGmI22renaR/ellaLGmR9hBZdyi0Tq9zQXjdfYmNMY60O7MkSDwaY7MX
-   rjjHuMgCC0FYC/6a78VYpny1235gY8cMeP7D49CNgRVIYh1w7k678NUxa
-   8AsfD8oWDhxd6RRRAX24PV3rkusZ+UwtoopotSi6IrWC1EBaACqhMJ9gf
-   vuKq6YLSODovomEB52UpwypNh5WzGwSTl/LgkoSLe4siueRhOmFHdEk2O
-   ERHUBHZeb1N/pkevKqgIavGHJXsZVPUvICyO7ON8TbR7TNS8hEmsXbk2u
-   A==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10290"; a="320491412"
+  bh=i+1zm1x8DRcSoIN75++M5iWMiGIew0eux02TG+zKjXU=;
+  b=lCAyfGQKb1EYRJ3s0T/pZv/U4CH9c9HCROuuzrfGGH8x9LTX3hJ0buU9
+   cxRW/tzUmhpY6j2+/FKl4kKhoydkLDXkY0a5iYbm8RMQCVrCexAdu53Nb
+   mYSRd5JwQZodfZAL59IRSgOaqDU3QxIn08gpaS1xPQfkeulGzOFAUq02t
+   DhVVQCtOp50IVZsUHK9Yt+TBw1xMIlHLq1GHi5JlI72vUblP2orjK6MjG
+   KgCmy9T/b4kC5u4yhLTgQqgEIRUKBwwRnvIw75P86ogX+5u+/QhqjCNg8
+   tL3Ha9kQ8mY+cOey9vdbCE4J8F0LVgM/Ceq1Wu71mv695dSbPvx5L3m6n
+   Q==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10290"; a="254855227"
 X-IronPort-AV: E=Sophos;i="5.90,194,1643702400"; 
-   d="scan'208";a="320491412"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2022 01:14:08 -0700
+   d="scan'208";a="254855227"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Mar 2022 01:25:08 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.90,194,1643702400"; 
-   d="scan'208";a="691598370"
+   d="scan'208";a="647829406"
 Received: from lkp-server02.sh.intel.com (HELO 89b41b6ae01c) ([10.239.97.151])
-  by fmsmga001.fm.intel.com with ESMTP; 19 Mar 2022 01:14:04 -0700
+  by orsmga004.jf.intel.com with ESMTP; 19 Mar 2022 01:25:04 -0700
 Received: from kbuild by 89b41b6ae01c with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1nVUDr-000Fiu-9z; Sat, 19 Mar 2022 08:14:03 +0000
-Date:   Sat, 19 Mar 2022 16:13:44 +0800
+        id 1nVUOV-000FjS-DO; Sat, 19 Mar 2022 08:25:03 +0000
+Date:   Sat, 19 Mar 2022 16:24:04 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Jane Chu <jane.chu@oracle.com>, david@fromorbit.com,
         djwong@kernel.org, dan.j.williams@intel.com, hch@infradead.org,
@@ -51,17 +51,17 @@ To:     Jane Chu <jane.chu@oracle.com>, david@fromorbit.com,
         linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
         linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org
 Cc:     kbuild-all@lists.01.org
-Subject: Re: [PATCH v6 2/6] x86/mce: relocate set{clear}_mce_nospec()
- functions
-Message-ID: <202203191637.PK2oJUeq-lkp@intel.com>
-References: <20220319062833.3136528-3-jane.chu@oracle.com>
+Subject: Re: [PATCH v6 4/6] dax: add DAX_RECOVERY flag and .recovery_write
+ dev_pgmap_ops
+Message-ID: <202203191610.umg0CGkh-lkp@intel.com>
+References: <20220319062833.3136528-5-jane.chu@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220319062833.3136528-3-jane.chu@oracle.com>
+In-Reply-To: <20220319062833.3136528-5-jane.chu@oracle.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+X-Spam-Status: No, score=-8.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -83,79 +83,66 @@ https://git-scm.com/docs/git-format-patch]
 
 url:    https://github.com/0day-ci/linux/commits/Jane-Chu/DAX-poison-recovery/20220319-143144
 base:   https://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm.git libnvdimm-for-next
-config: x86_64-randconfig-a015 (https://download.01.org/0day-ci/archive/20220319/202203191637.PK2oJUeq-lkp@intel.com/config)
-compiler: gcc-9 (Ubuntu 9.4.0-1ubuntu1~20.04) 9.4.0
+config: s390-randconfig-r044-20220317 (https://download.01.org/0day-ci/archive/20220319/202203191610.umg0CGkh-lkp@intel.com/config)
+compiler: s390-linux-gcc (GCC) 11.2.0
 reproduce (this is a W=1 build):
-        # https://github.com/0day-ci/linux/commit/71b9b09529b207ce15667c1f5fba4b727b6754e6
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/0day-ci/linux/commit/203570f765a6ad07eb5809850478a25a5257f7e2
         git remote add linux-review https://github.com/0day-ci/linux
         git fetch --no-tags linux-review Jane-Chu/DAX-poison-recovery/20220319-143144
-        git checkout 71b9b09529b207ce15667c1f5fba4b727b6754e6
+        git checkout 203570f765a6ad07eb5809850478a25a5257f7e2
         # save the config file to linux build tree
         mkdir build_dir
-        make W=1 O=build_dir ARCH=x86_64 SHELL=/bin/bash arch/x86/mm/pat/ fs/fuse/
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross O=build_dir ARCH=s390 SHELL=/bin/bash fs/fuse/
 
 If you fix the issue, kindly add following tag as appropriate
 Reported-by: kernel test robot <lkp@intel.com>
 
 All warnings (new ones prefixed by >>):
 
->> arch/x86/mm/pat/set_memory.c:1935:5: warning: no previous prototype for 'set_mce_nospec' [-Wmissing-prototypes]
-    1935 | int set_mce_nospec(unsigned long pfn, bool unmap)
-         |     ^~~~~~~~~~~~~~
->> arch/x86/mm/pat/set_memory.c:1968:5: warning: no previous prototype for 'clear_mce_nospec' [-Wmissing-prototypes]
-    1968 | int clear_mce_nospec(unsigned long pfn)
-         |     ^~~~~~~~~~~~~~~~
+   fs/fuse/virtio_fs.c: In function 'virtio_fs_zero_page_range':
+>> fs/fuse/virtio_fs.c:774:58: warning: passing argument 4 of 'dax_direct_access' makes integer from pointer without a cast [-Wint-conversion]
+     774 |         rc = dax_direct_access(dax_dev, pgoff, nr_pages, &kaddr, NULL);
+         |                                                          ^~~~~~
+         |                                                          |
+         |                                                          void **
+   In file included from fs/fuse/virtio_fs.c:8:
+   include/linux/dax.h:187:21: note: expected 'int' but argument is of type 'void **'
+     187 |                 int flags, void **kaddr, pfn_t *pfn);
+         |                 ~~~~^~~~~
+   fs/fuse/virtio_fs.c:774:14: error: too few arguments to function 'dax_direct_access'
+     774 |         rc = dax_direct_access(dax_dev, pgoff, nr_pages, &kaddr, NULL);
+         |              ^~~~~~~~~~~~~~~~~
+   In file included from fs/fuse/virtio_fs.c:8:
+   include/linux/dax.h:186:6: note: declared here
+     186 | long dax_direct_access(struct dax_device *dax_dev, pgoff_t pgoff, long nr_pages,
+         |      ^~~~~~~~~~~~~~~~~
+   fs/fuse/virtio_fs.c: At top level:
+   fs/fuse/virtio_fs.c:783:26: error: initialization of 'long int (*)(struct dax_device *, long unsigned int,  long int,  int,  void **, pfn_t *)' from incompatible pointer type 'long int (*)(struct dax_device *, long unsigned int,  long int,  void **, pfn_t *)' [-Werror=incompatible-pointer-types]
+     783 |         .direct_access = virtio_fs_direct_access,
+         |                          ^~~~~~~~~~~~~~~~~~~~~~~
+   fs/fuse/virtio_fs.c:783:26: note: (near initialization for 'virtio_fs_dax_ops.direct_access')
+   cc1: some warnings being treated as errors
 
 
-vim +/set_mce_nospec +1935 arch/x86/mm/pat/set_memory.c
+vim +/dax_direct_access +774 fs/fuse/virtio_fs.c
 
-  1927	
-  1928	#ifdef CONFIG_X86_64
-  1929	/*
-  1930	 * Prevent speculative access to the page by either unmapping
-  1931	 * it (if we do not require access to any part of the page) or
-  1932	 * marking it uncacheable (if we want to try to retrieve data
-  1933	 * from non-poisoned lines in the page).
-  1934	 */
-> 1935	int set_mce_nospec(unsigned long pfn, bool unmap)
-  1936	{
-  1937		unsigned long decoy_addr;
-  1938		int rc;
-  1939	
-  1940		/* SGX pages are not in the 1:1 map */
-  1941		if (arch_is_platform_page(pfn << PAGE_SHIFT))
-  1942			return 0;
-  1943		/*
-  1944		 * We would like to just call:
-  1945		 *      set_memory_XX((unsigned long)pfn_to_kaddr(pfn), 1);
-  1946		 * but doing that would radically increase the odds of a
-  1947		 * speculative access to the poison page because we'd have
-  1948		 * the virtual address of the kernel 1:1 mapping sitting
-  1949		 * around in registers.
-  1950		 * Instead we get tricky.  We create a non-canonical address
-  1951		 * that looks just like the one we want, but has bit 63 flipped.
-  1952		 * This relies on set_memory_XX() properly sanitizing any __pa()
-  1953		 * results with __PHYSICAL_MASK or PTE_PFN_MASK.
-  1954		 */
-  1955		decoy_addr = (pfn << PAGE_SHIFT) + (PAGE_OFFSET ^ BIT(63));
-  1956	
-  1957		if (unmap)
-  1958			rc = set_memory_np(decoy_addr, 1);
-  1959		else
-  1960			rc = set_memory_uc(decoy_addr, 1);
-  1961		if (rc)
-  1962			pr_warn("Could not invalidate pfn=0x%lx from 1:1 map\n", pfn);
-  1963		return rc;
-  1964	}
-  1965	EXPORT_SYMBOL(set_mce_nospec);
-  1966	
-  1967	/* Restore full speculative operation to the pfn. */
-> 1968	int clear_mce_nospec(unsigned long pfn)
-  1969	{
-  1970		return set_memory_wb((unsigned long) pfn_to_kaddr(pfn), 1);
-  1971	}
-  1972	EXPORT_SYMBOL(clear_mce_nospec);
-  1973	
+22f3787e9d95e7 Stefan Hajnoczi 2020-08-19  767  
+22f3787e9d95e7 Stefan Hajnoczi 2020-08-19  768  static int virtio_fs_zero_page_range(struct dax_device *dax_dev,
+22f3787e9d95e7 Stefan Hajnoczi 2020-08-19  769  				     pgoff_t pgoff, size_t nr_pages)
+22f3787e9d95e7 Stefan Hajnoczi 2020-08-19  770  {
+22f3787e9d95e7 Stefan Hajnoczi 2020-08-19  771  	long rc;
+22f3787e9d95e7 Stefan Hajnoczi 2020-08-19  772  	void *kaddr;
+22f3787e9d95e7 Stefan Hajnoczi 2020-08-19  773  
+22f3787e9d95e7 Stefan Hajnoczi 2020-08-19 @774  	rc = dax_direct_access(dax_dev, pgoff, nr_pages, &kaddr, NULL);
+22f3787e9d95e7 Stefan Hajnoczi 2020-08-19  775  	if (rc < 0)
+22f3787e9d95e7 Stefan Hajnoczi 2020-08-19  776  		return rc;
+22f3787e9d95e7 Stefan Hajnoczi 2020-08-19  777  	memset(kaddr, 0, nr_pages << PAGE_SHIFT);
+22f3787e9d95e7 Stefan Hajnoczi 2020-08-19  778  	dax_flush(dax_dev, kaddr, nr_pages << PAGE_SHIFT);
+22f3787e9d95e7 Stefan Hajnoczi 2020-08-19  779  	return 0;
+22f3787e9d95e7 Stefan Hajnoczi 2020-08-19  780  }
+22f3787e9d95e7 Stefan Hajnoczi 2020-08-19  781  
 
 ---
 0-DAY CI Kernel Test Service
