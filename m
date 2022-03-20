@@ -2,60 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DDCE04E1BC5
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Mar 2022 14:00:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EFB224E1BC9
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Mar 2022 14:07:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245113AbiCTNCC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 20 Mar 2022 09:02:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35586 "EHLO
+        id S245115AbiCTNIe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 20 Mar 2022 09:08:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235848AbiCTNCB (ORCPT
+        with ESMTP id S235848AbiCTNId (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 20 Mar 2022 09:02:01 -0400
-Received: from mail-ot1-x32e.google.com (mail-ot1-x32e.google.com [IPv6:2607:f8b0:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14A654B844
-        for <linux-fsdevel@vger.kernel.org>; Sun, 20 Mar 2022 06:00:39 -0700 (PDT)
-Received: by mail-ot1-x32e.google.com with SMTP id e25-20020a0568301e5900b005b236d5d74fso8898468otj.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 20 Mar 2022 06:00:39 -0700 (PDT)
+        Sun, 20 Mar 2022 09:08:33 -0400
+Received: from mail-oo1-xc35.google.com (mail-oo1-xc35.google.com [IPv6:2607:f8b0:4864:20::c35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33090ABF4E
+        for <linux-fsdevel@vger.kernel.org>; Sun, 20 Mar 2022 06:07:10 -0700 (PDT)
+Received: by mail-oo1-xc35.google.com with SMTP id r6-20020a056820038600b0032487f52effso2328416ooj.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 20 Mar 2022 06:07:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Z64TnHAXth2Q+YHvDxO37JZgeHRVouUHm272HjvkenY=;
-        b=giWQ8aBoGVT3idIy3u/If2kfJsnLqwkMYzV4afaeM8WgOdrrSMtjetmk9KpZaBFu7F
-         0YYLAd/onm4pV4Vff7BSI5QvBgR5kvY0WPYyTpiR6UCDLUkQH0fFn93GU8iND633+Qfm
-         fjbLHKvM944l/P0Nnka/IKs1OLBlwBzSfYIKdabqZIKlX7aSw1xRByvpJiyP3UZotG5v
-         ijCDHd3R5UGGAZq+z9UtGAHErgOuVNtyEMDWeRaXetqAXkCk4ds8psprNkWyaRkbpQ1k
-         Jct3rE/OWdq954laPXaPJPTM+ZOgEm3UGQQX/zWuuyYQ59r8FX86EDMvwZtyAZ3LPPDH
-         yb0w==
+        bh=IuWwjtC/TLFLxCiJJDaWj+mLL9c44Skevcyx/zZbu9Y=;
+        b=As8Vvw/ET0LUiiZiGwQuo475SombauzyqpCYcN99Hv/74t6BOkssVRqthIpokceAqY
+         3xh5l5U/fVOi0NgQj4W0iBSrt9XiqEivElsDupMHT6hc/h+2Bv9tPnvGci65veaBzuz6
+         /VtstA5Vry9LM6k2mYbtQphmt5j9flrTw6U6ER/lkDxHzU7aMALSY5RASRLXEz5Ipc6t
+         QM66meNEJi5G03i0ALUfW7Uc6daUTX2un2cAd9kTpe7SnEreNeRNDpAftKgLPCys/4gT
+         I9sBM7HYYcngZPBXOzifYobNzGkNv2H4PO+DcBSGvAYo6lhyVhp7ZELIv0ocRuOiEyS5
+         qMgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Z64TnHAXth2Q+YHvDxO37JZgeHRVouUHm272HjvkenY=;
-        b=JfTCW3O3p1Ve3T3r0wDMYFGCI1r7WWds5plDzGTUsatXI2y1agHEo4cf9A4faWdbGm
-         E0EGHhqdrK4jNlGldiqK1qhuX3Y8iPa12uN+84ywXABmCYBu+o5ZqOCj6ShuX5SST+Pr
-         fX+BoTPSspmoV3bY/y1SN0wuBcgJ7dBSu2O8AErRsdo79ufCcRLU8wgfSy594x2S7kdH
-         H+/EeXQanKeZery6MzgzzeyS8+ySLctyLSTXZH/7Aw8l/b4TsnvSeyHFC++sDdXfyBTJ
-         +/74PzdErW99dYt78YeAFi5/5OuapuqbUZu5BSwgi8RBY2SczhbpTMMAy9Kh9pxaTy8O
-         4Jrg==
-X-Gm-Message-State: AOAM530jJOXLSvALHJQ3fo66oT7h3VRLxli1EMruzfuxpdAjvsirlUZs
-        iUffcBAMylA4WVfAE2spUHncRfTaY2ZuMuCRrWqcwbr2S4M=
-X-Google-Smtp-Source: ABdhPJxmkOK06N36mgm0tDaoEgZrbGZdCewZ5jIey2iLbp2UbJUtGcSL8Ax5/52cwG6rXn5PliefaSynotFmWW4GvMY=
-X-Received: by 2002:a9d:5cc8:0:b0:5b2:35ae:7ad6 with SMTP id
- r8-20020a9d5cc8000000b005b235ae7ad6mr6195406oti.275.1647781236834; Sun, 20
- Mar 2022 06:00:36 -0700 (PDT)
+        bh=IuWwjtC/TLFLxCiJJDaWj+mLL9c44Skevcyx/zZbu9Y=;
+        b=ZNAirWEw6fP1F1NvDSzqfJJm4CBdUYlfxAaS/h0rSqfHQHKPqSLQYgAByBT/mUVsVE
+         ljww+RbtI+CEdrquphj2U4nvnpscWx3AZZKJYPFQTNBD9PL9efOPLNSU66au72hlXLPF
+         eyTJrU9ALpIUQ4wCpTh1lkeitVfQVZ6ZWEValK+AoIxOnNWVbZZHJsg26AsaVoCIgtPD
+         +4f0IjPIjm0LBBAMSycGPtT9+Hs1t3WxR0je9hyg/2D3r3HxKCDpwKdqHOsfPAxETATP
+         Uy+XcPg6R8kWuax7e5OfE9HBy+R91u8VQ/0oAg6ATPCLisMu45JIxcQOg0HZMI59ym70
+         E0Lw==
+X-Gm-Message-State: AOAM532MiY4GhyJpzYaK0AOb7kxw7eHzCop4uK43/vFWXlOqiQ4HL/fw
+        qSxRLo8h9oB6pRUKCAL4OXJGVqrkkubuQZ/sPB9byx88l3o=
+X-Google-Smtp-Source: ABdhPJy5Ou91kue9dVlacYsd5SUjP/4NO/khC9jWT7Ee2yO9zKZ1HM/xMMIp60M+hDO43oJWiQRnvFlqa1Mq3bayfyM=
+X-Received: by 2002:a05:6870:d20b:b0:da:b3f:2b2c with SMTP id
+ g11-20020a056870d20b00b000da0b3f2b2cmr9957091oac.203.1647781629600; Sun, 20
+ Mar 2022 06:07:09 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220307155741.1352405-1-amir73il@gmail.com> <20220307155741.1352405-5-amir73il@gmail.com>
- <20220317153443.iy5rvns5nwxlxx43@quack3.lan> <20220317154550.y3rvxmmfcaf5n5st@quack3.lan>
- <CAOQ4uxi85LV7upQuBUjL==aaWoY8WGMG4DRQToj6Y-JCn-Ex=g@mail.gmail.com>
- <20220318103219.j744o5g5bmsneihz@quack3.lan> <CAOQ4uxj_-pYg4g6V8OrF8rD-8R+Mn1tMsPBq52WnfkvjZWYVrw@mail.gmail.com>
- <20220318140951.oly4ummcuu2snat5@quack3.lan> <CAOQ4uxisrc_u761uv9_EwgiENz4J6SNk=hPxpr7Nn=vC1S2gLg@mail.gmail.com>
-In-Reply-To: <CAOQ4uxisrc_u761uv9_EwgiENz4J6SNk=hPxpr7Nn=vC1S2gLg@mail.gmail.com>
+References: <20220307155741.1352405-1-amir73il@gmail.com> <20220307155741.1352405-4-amir73il@gmail.com>
+ <20220317152741.mzd5u2larfhrs2cg@quack3.lan> <CAOQ4uxhgJumhenn_KT6YRPvRQPaOyNOTQa359xwCugVc8dtbqA@mail.gmail.com>
+In-Reply-To: <CAOQ4uxhgJumhenn_KT6YRPvRQPaOyNOTQa359xwCugVc8dtbqA@mail.gmail.com>
 From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Sun, 20 Mar 2022 15:00:25 +0200
-Message-ID: <CAOQ4uxgqZzsNhfpxDYomK19+ADqtfOgPNn4B1tG_4kupEhD05w@mail.gmail.com>
-Subject: Re: [PATCH 4/5] fanotify: add support for exclusive create of mark
+Date:   Sun, 20 Mar 2022 15:06:58 +0200
+Message-ID: <CAOQ4uxg8dF4ZHwPo8KE+FidJe1EjzFq_L9PHeumTgzKr28JXjg@mail.gmail.com>
+Subject: Re: [PATCH 3/5] fsnotify: allow adding an inode mark without pinning inode
 To:     Jan Kara <jack@suse.cz>
 Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>
@@ -70,59 +67,46 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 18, 2022 at 6:06 PM Amir Goldstein <amir73il@gmail.com> wrote:
+> > >  void fsnotify_put_mark(struct fsnotify_mark *mark)
+> > > @@ -275,6 +317,9 @@ void fsnotify_put_mark(struct fsnotify_mark *mark)
+> > >               free_conn = true;
+> > >       } else {
+> > >               __fsnotify_recalc_mask(conn);
+> > > +             /* Unpin inode on last mark that wants inode refcount held */
+> > > +             if (mark->flags & FSNOTIFY_MARK_FLAG_HAS_IREF)
+> > > +                     objp = fsnotify_drop_iref(conn, &type);
+> > >       }
+> >
+> > This is going to be interesting. What if the connector got detached from
+> > the inode before fsnotify_put_mark() was called? Then iref_proxy would be
+> > already 0 and we would barf? I think
+> > fsnotify_detach_connector_from_object() needs to drop inode reference but
+> > leave iref_proxy alone for this to work. fsnotify_drop_iref() would then
+> > drop inode reference only if iref_proxy reaches 0 and conn->objp != NULL...
+> >
 >
-> > > > So far my thinking is that we either follow the path of possibly generating
-> > > > more events than necessary (i.e., any merge of two masks that do not both
-> > > > have FAN_MARK_VOLATILE set will clear FAN_MARK_VOLATILE)
+> Good catch! but solution I think the is way simpler:
 >
-> I agree that would provide predictable behavior which is also similar to
-> that of _SURV_MODIFY.
-> But IMO, this is very weird to explain/document in the wider sense.
-> However, if we only document that
-> "FAN_MARK_VOLATILE cannot be set on an existing mark and any update
->  of the mask without FAN_MARK_VOLATILE clears that flag"
-> (i.e. we make _VOLATILE imply the _CREATE behavior)
-> then the merge logic is the same as you suggested, but easier to explain.
+> +               /* Unpin inode on last mark that wants inode refcount held */
+> +               if (conn->type == FSNOTIFY_OBJ_TYPE_INODE &&
+> +                   mark->flags & FSNOTIFY_MARK_FLAG_HAS_IREF)
+> +                       objp = fsnotify_drop_iref(conn, &type);
 >
-
-[...]
-
->
-> To summarize my last proposal:
->
-> 1. On fanotify_mark() with FAN_MARK_VOLATILE
-> 1.a. If the mark is new, the HAS_IREF flag is not set and no ihold()
-> 1.b. If mark already exists without HAS_IREF flag, mask is updated
-> 1.c. If mark already exists with HAS_IREF flag, mark add fails with EEXISTS
->
-> 2. On fanotify_mark() without FAN_MARK_VOLATILE
-> 2.a. If the mark is new or exists without HAS_IREF, the HAS_IREF flag
-> is set and ihold()
-> 2.b. If mark already exists with HAS_IREF flag, mask is updated
->
-> Do we have a winner?
+> (iref_proxy > 0) always infers a single i_count reference, so it makes
+> fsnotify_detach_connector_from_object() sets iref_proxy = 0 and
+> conn->type = FSNOTIFY_OBJ_TYPE_DETACHED, so we should be good here.
 >
 
-FYI, I've implemented the above and pushed to branch fan_evictable.
-Yes, I also changed the name of the flag to be more coherent with the
-documented behavior:
+FWIW, I completely changed the proxy iref tracking in v2 (branch fan_evictable).
+There is no iref_proxy, only FSNOTIFY_CONN_FLAG_HAS_IREF flag on the
+connector which is aligned with elevated inode reference.
 
-    fanotify: add support for "evictable" inode marks
-
-    When an inode mark is created with flag FAN_MARK_EVICTABLE, it will not
-    pin the marked inode to inode cache, so when inode is evicted from cache
-    due to memory pressure, the mark will be lost.
-
-    When an inode mark with flag FAN_MARK_EVICATBLE is updated without using
-    this flag, the marked inode is pinned to inode cache.
-
-    When an inode mark is updated with flag FAN_MARK_EVICTABLE but an
-    existing mark already has the inode pinned, the mark update fails with
-    error EEXIST.
-
-I also took care of avoiding direct reclaim deadlocks from fanotify_add_mark().
-If you agree to the proposed UAPI I will post v2 patches.
+The "virtual iref_proxy" is recalculated in __fsnotify_recalc_mask()
+which allows
+for the "upgrade to pinned inode" logic, but iput() is only called on
+detach of mark
+or detach of object, if connector had FSNOTIFY_CONN_FLAG_HAS_IREF and
+the  "virtual iref_proxy" dropped to 0.
 
 Thanks,
 Amir.
