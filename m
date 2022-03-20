@@ -2,111 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EFB224E1BC9
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Mar 2022 14:07:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A5B8B4E1BD1
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Mar 2022 14:15:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245115AbiCTNIe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 20 Mar 2022 09:08:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58042 "EHLO
+        id S245139AbiCTNQp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 20 Mar 2022 09:16:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235848AbiCTNId (ORCPT
+        with ESMTP id S236759AbiCTNQp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 20 Mar 2022 09:08:33 -0400
-Received: from mail-oo1-xc35.google.com (mail-oo1-xc35.google.com [IPv6:2607:f8b0:4864:20::c35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33090ABF4E
-        for <linux-fsdevel@vger.kernel.org>; Sun, 20 Mar 2022 06:07:10 -0700 (PDT)
-Received: by mail-oo1-xc35.google.com with SMTP id r6-20020a056820038600b0032487f52effso2328416ooj.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 20 Mar 2022 06:07:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IuWwjtC/TLFLxCiJJDaWj+mLL9c44Skevcyx/zZbu9Y=;
-        b=As8Vvw/ET0LUiiZiGwQuo475SombauzyqpCYcN99Hv/74t6BOkssVRqthIpokceAqY
-         3xh5l5U/fVOi0NgQj4W0iBSrt9XiqEivElsDupMHT6hc/h+2Bv9tPnvGci65veaBzuz6
-         /VtstA5Vry9LM6k2mYbtQphmt5j9flrTw6U6ER/lkDxHzU7aMALSY5RASRLXEz5Ipc6t
-         QM66meNEJi5G03i0ALUfW7Uc6daUTX2un2cAd9kTpe7SnEreNeRNDpAftKgLPCys/4gT
-         I9sBM7HYYcngZPBXOzifYobNzGkNv2H4PO+DcBSGvAYo6lhyVhp7ZELIv0ocRuOiEyS5
-         qMgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IuWwjtC/TLFLxCiJJDaWj+mLL9c44Skevcyx/zZbu9Y=;
-        b=ZNAirWEw6fP1F1NvDSzqfJJm4CBdUYlfxAaS/h0rSqfHQHKPqSLQYgAByBT/mUVsVE
-         ljww+RbtI+CEdrquphj2U4nvnpscWx3AZZKJYPFQTNBD9PL9efOPLNSU66au72hlXLPF
-         eyTJrU9ALpIUQ4wCpTh1lkeitVfQVZ6ZWEValK+AoIxOnNWVbZZHJsg26AsaVoCIgtPD
-         +4f0IjPIjm0LBBAMSycGPtT9+Hs1t3WxR0je9hyg/2D3r3HxKCDpwKdqHOsfPAxETATP
-         Uy+XcPg6R8kWuax7e5OfE9HBy+R91u8VQ/0oAg6ATPCLisMu45JIxcQOg0HZMI59ym70
-         E0Lw==
-X-Gm-Message-State: AOAM532MiY4GhyJpzYaK0AOb7kxw7eHzCop4uK43/vFWXlOqiQ4HL/fw
-        qSxRLo8h9oB6pRUKCAL4OXJGVqrkkubuQZ/sPB9byx88l3o=
-X-Google-Smtp-Source: ABdhPJy5Ou91kue9dVlacYsd5SUjP/4NO/khC9jWT7Ee2yO9zKZ1HM/xMMIp60M+hDO43oJWiQRnvFlqa1Mq3bayfyM=
-X-Received: by 2002:a05:6870:d20b:b0:da:b3f:2b2c with SMTP id
- g11-20020a056870d20b00b000da0b3f2b2cmr9957091oac.203.1647781629600; Sun, 20
- Mar 2022 06:07:09 -0700 (PDT)
+        Sun, 20 Mar 2022 09:16:45 -0400
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19B7B3192F;
+        Sun, 20 Mar 2022 06:15:22 -0700 (PDT)
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 22K8NxdQ029675;
+        Sun, 20 Mar 2022 13:14:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : references : date : in-reply-to : message-id : content-type :
+ mime-version; s=pp1; bh=cFVIwF9yYVTiRJkYUmq32sKgvro0yz9kJgAFCojfzyE=;
+ b=so/Uaj6ZCzt4OFV6op3z5XC0Aniqmm5+98hrVGILSgLA/UlXYfVnwvyE7BfWfXNYyoan
+ MGQlo+y7r46oWYgDGCfswciOe+3oBHIdiWJKrN6IsCwAoa6SwxehqfkffQMRu7EzkmWi
+ IWz1YzJ7fys6j1Z1hcgiYJEZyObi4I5yIOwpbFnbxjccrV7kf+FQgLSHlgWtNyYdS5qr
+ qYXJTyI2Zy6NUlttro2YbqFKsyQ7aS2glAcYF8U3cRUv1tOI25CQ18oxcGhrerhKe1OI
+ BMF39Mkylr3tEaCABUxM4RQ09IZKXESFyk5byGNjG/GJth5WXW60xghTtZvJPtAEveqL Yg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3ewrtkqjew-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 20 Mar 2022 13:14:52 +0000
+Received: from m0098417.ppops.net (m0098417.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 22KDEpfq003716;
+        Sun, 20 Mar 2022 13:14:51 GMT
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 3ewrtkqjem-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 20 Mar 2022 13:14:51 +0000
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 22KDACFt007130;
+        Sun, 20 Mar 2022 13:14:49 GMT
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
+        by ppma03ams.nl.ibm.com with ESMTP id 3ew6t8t1hy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 20 Mar 2022 13:14:49 +0000
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 22KDElB739715298
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 20 Mar 2022 13:14:47 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 506CE42042;
+        Sun, 20 Mar 2022 13:14:47 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 048414203F;
+        Sun, 20 Mar 2022 13:14:47 +0000 (GMT)
+Received: from tuxmaker.linux.ibm.com (unknown [9.152.85.9])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Sun, 20 Mar 2022 13:14:46 +0000 (GMT)
+From:   Sven Schnelle <svens@linux.ibm.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        Jan Kara <jack@suse.cz>, "Theodore Ts'o" <tytso@mit.edu>,
+        Harshad Shirwadkar <harshadshirwadkar@gmail.com>
+Subject: Re: [PATCH] tracing: Have type enum modifications copy the strings
+References: <20220318153432.3984b871@gandalf.local.home>
+Date:   Sun, 20 Mar 2022 14:14:46 +0100
+In-Reply-To: <20220318153432.3984b871@gandalf.local.home> (Steven Rostedt's
+        message of "Fri, 18 Mar 2022 15:34:32 -0400")
+Message-ID: <yt9d5yo8rcjd.fsf@linux.ibm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.0.50 (gnu/linux)
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: uJEVLYBGmTLnaGnqHzkeM2KjkP3M5DtT
+X-Proofpoint-ORIG-GUID: XAsz1rZJpP9cI-IyYaa037Z8NuzOM3RY
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-References: <20220307155741.1352405-1-amir73il@gmail.com> <20220307155741.1352405-4-amir73il@gmail.com>
- <20220317152741.mzd5u2larfhrs2cg@quack3.lan> <CAOQ4uxhgJumhenn_KT6YRPvRQPaOyNOTQa359xwCugVc8dtbqA@mail.gmail.com>
-In-Reply-To: <CAOQ4uxhgJumhenn_KT6YRPvRQPaOyNOTQa359xwCugVc8dtbqA@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Sun, 20 Mar 2022 15:06:58 +0200
-Message-ID: <CAOQ4uxg8dF4ZHwPo8KE+FidJe1EjzFq_L9PHeumTgzKr28JXjg@mail.gmail.com>
-Subject: Re: [PATCH 3/5] fsnotify: allow adding an inode mark without pinning inode
-To:     Jan Kara <jack@suse.cz>
-Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.850,Hydra:6.0.425,FMLib:17.11.64.514
+ definitions=2022-03-20_04,2022-03-15_01,2022-02-23_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
+ impostorscore=0 mlxlogscore=999 malwarescore=0 clxscore=1011 phishscore=0
+ spamscore=0 suspectscore=0 priorityscore=1501 lowpriorityscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2202240000 definitions=main-2203200097
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> > >  void fsnotify_put_mark(struct fsnotify_mark *mark)
-> > > @@ -275,6 +317,9 @@ void fsnotify_put_mark(struct fsnotify_mark *mark)
-> > >               free_conn = true;
-> > >       } else {
-> > >               __fsnotify_recalc_mask(conn);
-> > > +             /* Unpin inode on last mark that wants inode refcount held */
-> > > +             if (mark->flags & FSNOTIFY_MARK_FLAG_HAS_IREF)
-> > > +                     objp = fsnotify_drop_iref(conn, &type);
-> > >       }
-> >
-> > This is going to be interesting. What if the connector got detached from
-> > the inode before fsnotify_put_mark() was called? Then iref_proxy would be
-> > already 0 and we would barf? I think
-> > fsnotify_detach_connector_from_object() needs to drop inode reference but
-> > leave iref_proxy alone for this to work. fsnotify_drop_iref() would then
-> > drop inode reference only if iref_proxy reaches 0 and conn->objp != NULL...
-> >
->
-> Good catch! but solution I think the is way simpler:
->
-> +               /* Unpin inode on last mark that wants inode refcount held */
-> +               if (conn->type == FSNOTIFY_OBJ_TYPE_INODE &&
-> +                   mark->flags & FSNOTIFY_MARK_FLAG_HAS_IREF)
-> +                       objp = fsnotify_drop_iref(conn, &type);
->
-> (iref_proxy > 0) always infers a single i_count reference, so it makes
-> fsnotify_detach_connector_from_object() sets iref_proxy = 0 and
-> conn->type = FSNOTIFY_OBJ_TYPE_DETACHED, so we should be good here.
->
+Hi Steve,
 
-FWIW, I completely changed the proxy iref tracking in v2 (branch fan_evictable).
-There is no iref_proxy, only FSNOTIFY_CONN_FLAG_HAS_IREF flag on the
-connector which is aligned with elevated inode reference.
+Steven Rostedt <rostedt@goodmis.org> writes:
 
-The "virtual iref_proxy" is recalculated in __fsnotify_recalc_mask()
-which allows
-for the "upgrade to pinned inode" logic, but iput() is only called on
-detach of mark
-or detach of object, if connector had FSNOTIFY_CONN_FLAG_HAS_IREF and
-the  "virtual iref_proxy" dropped to 0.
+> From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
+>
+> When an enum is used in the visible parts of a trace event that is
+> exported to user space, the user space applications like perf and
+> trace-cmd do not have a way to know what the value of the enum is. To
+> solve this, at boot up (or module load) the printk formats are modified to
+> replace the enum with their numeric value in the string output.
+>
+> Array fields of the event are defined by [<nr-elements>] in the type
+> portion of the format file so that the user space parsers can correctly
+> parse the array into the appropriate size chunks. But in some trace
+> events, an enum is used in defining the size of the array, which once
+> again breaks the parsing of user space tooling.
+>
+> This was solved the same way as the print formats were, but it modified
+> the type strings of the trace event. This caused crashes in some
+> architectures because, as supposed to the print string, is a const string
+> value. This was not detected on x86, as it appears that const strings are
+> still writable (at least in boot up), but other architectures this is not
+> the case, and writing to a const string will cause a kernel fault.
+>
+> To fix this, use kstrdup() to copy the type before modifying it. If the
+> trace event is for the core kernel there's no need to free it because the
+> string will be in use for the life of the machine being on line. For
+> modules, create a link list to store all the strings being allocated for
+> modules and when the module is removed, free them.
+>
+> Link: https://lore.kernel.org/all/yt9dr1706b4i.fsf@linux.ibm.com/
+>
+> Fixes: b3bc8547d3be ("tracing: Have TRACE_DEFINE_ENUM affect trace event types as well")
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 
-Thanks,
-Amir.
+This fixes the crash seen on s390. Thanks!
+
+Tested-by: Sven Schnelle <svens@linux.ibm.com>
