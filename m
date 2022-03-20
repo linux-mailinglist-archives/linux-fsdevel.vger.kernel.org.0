@@ -2,137 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A5B8B4E1BD1
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Mar 2022 14:15:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F7FA4E1C89
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Mar 2022 17:24:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245139AbiCTNQp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 20 Mar 2022 09:16:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51738 "EHLO
+        id S245432AbiCTQZ1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 20 Mar 2022 12:25:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236759AbiCTNQp (ORCPT
+        with ESMTP id S230242AbiCTQZ1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 20 Mar 2022 09:16:45 -0400
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19B7B3192F;
-        Sun, 20 Mar 2022 06:15:22 -0700 (PDT)
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 22K8NxdQ029675;
-        Sun, 20 Mar 2022 13:14:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : references : date : in-reply-to : message-id : content-type :
- mime-version; s=pp1; bh=cFVIwF9yYVTiRJkYUmq32sKgvro0yz9kJgAFCojfzyE=;
- b=so/Uaj6ZCzt4OFV6op3z5XC0Aniqmm5+98hrVGILSgLA/UlXYfVnwvyE7BfWfXNYyoan
- MGQlo+y7r46oWYgDGCfswciOe+3oBHIdiWJKrN6IsCwAoa6SwxehqfkffQMRu7EzkmWi
- IWz1YzJ7fys6j1Z1hcgiYJEZyObi4I5yIOwpbFnbxjccrV7kf+FQgLSHlgWtNyYdS5qr
- qYXJTyI2Zy6NUlttro2YbqFKsyQ7aS2glAcYF8U3cRUv1tOI25CQ18oxcGhrerhKe1OI
- BMF39Mkylr3tEaCABUxM4RQ09IZKXESFyk5byGNjG/GJth5WXW60xghTtZvJPtAEveqL Yg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3ewrtkqjew-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 20 Mar 2022 13:14:52 +0000
-Received: from m0098417.ppops.net (m0098417.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 22KDEpfq003716;
-        Sun, 20 Mar 2022 13:14:51 GMT
-Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3ewrtkqjem-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 20 Mar 2022 13:14:51 +0000
-Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
-        by ppma03ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 22KDACFt007130;
-        Sun, 20 Mar 2022 13:14:49 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma03ams.nl.ibm.com with ESMTP id 3ew6t8t1hy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 20 Mar 2022 13:14:49 +0000
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 22KDElB739715298
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 20 Mar 2022 13:14:47 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 506CE42042;
-        Sun, 20 Mar 2022 13:14:47 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 048414203F;
-        Sun, 20 Mar 2022 13:14:47 +0000 (GMT)
-Received: from tuxmaker.linux.ibm.com (unknown [9.152.85.9])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Sun, 20 Mar 2022 13:14:46 +0000 (GMT)
-From:   Sven Schnelle <svens@linux.ibm.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        Ritesh Harjani <riteshh@linux.ibm.com>,
-        Jan Kara <jack@suse.cz>, "Theodore Ts'o" <tytso@mit.edu>,
-        Harshad Shirwadkar <harshadshirwadkar@gmail.com>
-Subject: Re: [PATCH] tracing: Have type enum modifications copy the strings
-References: <20220318153432.3984b871@gandalf.local.home>
-Date:   Sun, 20 Mar 2022 14:14:46 +0100
-In-Reply-To: <20220318153432.3984b871@gandalf.local.home> (Steven Rostedt's
-        message of "Fri, 18 Mar 2022 15:34:32 -0400")
-Message-ID: <yt9d5yo8rcjd.fsf@linux.ibm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.0.50 (gnu/linux)
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: uJEVLYBGmTLnaGnqHzkeM2KjkP3M5DtT
-X-Proofpoint-ORIG-GUID: XAsz1rZJpP9cI-IyYaa037Z8NuzOM3RY
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Sun, 20 Mar 2022 12:25:27 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A4E318A3FC;
+        Sun, 20 Mar 2022 09:24:02 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id v22so3944225wra.2;
+        Sun, 20 Mar 2022 09:24:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=iO9ghiHrWRwldt1lRbZ9gFcjDUVBAIs+eEsTLY6nEqs=;
+        b=IPbIBlY4XwqKgt1vMEvAZpb9XHnbiJ3gFus4DdaW843VNh0F0Qjb1yPaw7QstdZgtQ
+         J/Ibx4HHlnRQcATjjZdMQEdUGdS6OMSdtk0R3lQ9ic5gTvdSjq4i88XOACxkPOQ4zEH5
+         qhYae06LEP/zwt68oYGmk84BrJBlvMR16HXVOJMRnFc3VozM8sHzEMzKvIJfDUmduZr9
+         XKNpJNtlVU4ExcSgFys6bSa8rgF2KvyBOu+cCEnI0cesMjwrMwAHPmnKlte82Cy0GoxJ
+         q+u1hf65BkqUO/uJCivlK7lQkKL8h8BOQ8f6Bewufhl6j3rwxgy47JXr69yv2cHx6xhv
+         q7Vg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=iO9ghiHrWRwldt1lRbZ9gFcjDUVBAIs+eEsTLY6nEqs=;
+        b=YZrhOAPwYVN1DD7vze5QOo4khuvxZG/JRV0OOYlDed9h8hjhcy4q0+ooWye8h3Zhb2
+         7v6XRYqQV7QoosdCCjhRZ092NJzpFIuj3Fula8TRb84EAQR1YxDqOcqmR86FID9Q5A2d
+         pob0c9rtVUeK4XsO986G1jwUiUAwpfKx0ipL83jCQI1C4kDB6WNb8sIkrigAwOmUaoXj
+         fVmpQW+cSfn/nOZKcNtDx4WQVkYEhYFL5BtIlEIq0X9ZZ4Vang6k/7htVKgyg6rrbZ/o
+         sRbdfXzd8SiNc29fzFJDk0+SOENrwUVsMVLItoemIJf6MwrhxFHAQlu50072seFrOMIg
+         X11w==
+X-Gm-Message-State: AOAM531EH9k022XhlYTG95fPLp2rG5rM5yeHDISl2ZoGr8OQfzyxhdiU
+        2k3QPUWsEOxEpWzdyaBX+w==
+X-Google-Smtp-Source: ABdhPJzWrg6AC/uaSvnYbuOa/xRIrOJMyIqV3YXji759re76caJF0Wyb6S5ewPMNWS31h7e53OYg0w==
+X-Received: by 2002:a05:6000:1d82:b0:203:e5cc:c19b with SMTP id bk2-20020a0560001d8200b00203e5ccc19bmr15195700wrb.553.1647793440713;
+        Sun, 20 Mar 2022 09:24:00 -0700 (PDT)
+Received: from localhost.localdomain ([46.53.252.217])
+        by smtp.gmail.com with ESMTPSA id a14-20020a05600c348e00b00389ab74c033sm11517293wmq.4.2022.03.20.09.23.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Mar 2022 09:24:00 -0700 (PDT)
+Date:   Sun, 20 Mar 2022 19:23:58 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     akpm@linux-foundation.org
+Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
+        hui li <juanfengpy@gmail.com>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH] proc: fix dentry/inode overinstantiating under
+ /proc/${pid}/net
+Message-ID: <YjdVHgildbWO7diJ@localhost.localdomain>
+References: <CAPmgiUJVaACDyWkEhpC5Tfk233t-Tw6_f-Y99KLUDqv6dEq0tw@mail.gmail.com>
+ <YjMFTSKZp9eX/c4k@localhost.localdomain>
+ <CAPmgiUJsd-gdq=JG1rF8BHfpADeS45rcVWwnC2qKE=7W1EryiQ@mail.gmail.com>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.850,Hydra:6.0.425,FMLib:17.11.64.514
- definitions=2022-03-20_04,2022-03-15_01,2022-02-23_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
- impostorscore=0 mlxlogscore=999 malwarescore=0 clxscore=1011 phishscore=0
- spamscore=0 suspectscore=0 priorityscore=1501 lowpriorityscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2202240000 definitions=main-2203200097
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAPmgiUJsd-gdq=JG1rF8BHfpADeS45rcVWwnC2qKE=7W1EryiQ@mail.gmail.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Steve,
+When a process exits, /proc/${pid}, and /proc/${pid}/net dentries are flushed.
+However some leaf dentries like /proc/${pid}/net/arp_cache aren't.
+That's because respective PDEs have proc_misc_d_revalidate() hook which
+returns 1 and leaves dentries/inodes in the LRU.
 
-Steven Rostedt <rostedt@goodmis.org> writes:
+Force revalidation/lookup on everything under /proc/${pid}/net by inheriting
+proc_net_dentry_ops.
 
-> From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
->
-> When an enum is used in the visible parts of a trace event that is
-> exported to user space, the user space applications like perf and
-> trace-cmd do not have a way to know what the value of the enum is. To
-> solve this, at boot up (or module load) the printk formats are modified to
-> replace the enum with their numeric value in the string output.
->
-> Array fields of the event are defined by [<nr-elements>] in the type
-> portion of the format file so that the user space parsers can correctly
-> parse the array into the appropriate size chunks. But in some trace
-> events, an enum is used in defining the size of the array, which once
-> again breaks the parsing of user space tooling.
->
-> This was solved the same way as the print formats were, but it modified
-> the type strings of the trace event. This caused crashes in some
-> architectures because, as supposed to the print string, is a const string
-> value. This was not detected on x86, as it appears that const strings are
-> still writable (at least in boot up), but other architectures this is not
-> the case, and writing to a const string will cause a kernel fault.
->
-> To fix this, use kstrdup() to copy the type before modifying it. If the
-> trace event is for the core kernel there's no need to free it because the
-> string will be in use for the life of the machine being on line. For
-> modules, create a link list to store all the strings being allocated for
-> modules and when the module is removed, free them.
->
-> Link: https://lore.kernel.org/all/yt9dr1706b4i.fsf@linux.ibm.com/
->
-> Fixes: b3bc8547d3be ("tracing: Have TRACE_DEFINE_ENUM affect trace event types as well")
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Fixes: c6c75deda813 ("proc: fix lookup in /proc/net subdirectories after setns(2)")
+Reported-by: hui li <juanfengpy@gmail.com>
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+---
 
-This fixes the crash seen on s390. Thanks!
+ fs/proc/generic.c  |    4 ++++
+ fs/proc/proc_net.c |    3 +++
+ 2 files changed, 7 insertions(+)
 
-Tested-by: Sven Schnelle <svens@linux.ibm.com>
+--- a/fs/proc/generic.c
++++ b/fs/proc/generic.c
+@@ -448,6 +448,10 @@ static struct proc_dir_entry *__proc_create(struct proc_dir_entry **parent,
+ 	proc_set_user(ent, (*parent)->uid, (*parent)->gid);
+ 
+ 	ent->proc_dops = &proc_misc_dentry_ops;
++	/* Revalidate everything under /proc/${pid}/net */
++	if ((*parent)->proc_dops == &proc_net_dentry_ops) {
++		pde_force_lookup(ent);
++	}
+ 
+ out:
+ 	return ent;
+--- a/fs/proc/proc_net.c
++++ b/fs/proc/proc_net.c
+@@ -376,6 +376,9 @@ static __net_init int proc_net_ns_init(struct net *net)
+ 
+ 	proc_set_user(netd, uid, gid);
+ 
++	/* Seed dentry revalidation for /proc/${pid}/net */
++	pde_force_lookup(netd);
++
+ 	err = -EEXIST;
+ 	net_statd = proc_net_mkdir(net, "stat", netd);
+ 	if (!net_statd)
