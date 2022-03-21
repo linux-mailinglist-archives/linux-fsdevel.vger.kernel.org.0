@@ -2,64 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B1D04E2D18
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Mar 2022 17:04:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E4E3D4E2DAA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Mar 2022 17:15:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350626AbiCUQFX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Mar 2022 12:05:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41220 "EHLO
+        id S1350963AbiCUQQd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Mar 2022 12:16:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350624AbiCUQFW (ORCPT
+        with ESMTP id S1350949AbiCUQQb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Mar 2022 12:05:22 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0AED31BEB5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Mar 2022 09:03:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1647878636;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=DJyMtVQ5+0AfNUolDd6Lt5IE2lynsgQekcoq9taq1eE=;
-        b=iJyQuhadbBEbAoVDfgWKGCC85eUcU4ZdeewPBBjUN0B37iSMx9RBEvPRBD66eq4V0oYin7
-        b8CQYK+9UvU18V9oaZbukbyGhR4IFPw8+mY/LvwUE5QVbDsnucjZRnOHl1SP+guq1Nls6C
-        JUOqfFd7C3svEKHQKDJmumxVfZg3WBo=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-279-tqlhcQEaOwuiuk4cCIL_Kg-1; Mon, 21 Mar 2022 12:03:51 -0400
-X-MC-Unique: tqlhcQEaOwuiuk4cCIL_Kg-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 6ABC8811E84;
-        Mon, 21 Mar 2022 16:03:50 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6BC0C2166B40;
-        Mon, 21 Mar 2022 16:03:49 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAG48ez2AAk6JpZAA6GPVgvCmKimXHJXO906e=r=WGU06k=HB3A@mail.gmail.com>
-References: <CAG48ez2AAk6JpZAA6GPVgvCmKimXHJXO906e=r=WGU06k=HB3A@mail.gmail.com> <000000000000778f1005dab1558e@google.com>
-To:     Jann Horn <jannh@google.com>
-Cc:     dhowells@redhat.com,
-        syzbot <syzbot+011e4ea1da6692cf881c@syzkaller.appspotmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Subject: Re: [syzbot] possible deadlock in pipe_write
+        Mon, 21 Mar 2022 12:16:31 -0400
+Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [IPv6:2001:1600:4:17::190a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A2376371;
+        Mon, 21 Mar 2022 09:15:05 -0700 (PDT)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4KMfpY1xlxzMptNy;
+        Mon, 21 Mar 2022 17:15:01 +0100 (CET)
+Received: from localhost (unknown [23.97.221.149])
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4KMfpV5pNCzlhRVJ;
+        Mon, 21 Mar 2022 17:14:58 +0100 (CET)
+From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Heimes <christian@python.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        James Morris <jmorris@namei.org>,
+        Kees Cook <keescook@chromium.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Paul Moore <paul@paul-moore.com>,
+        =?UTF-8?q?Philippe=20Tr=C3=A9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Steve Dower <steve.dower@python.org>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: [GIT PULL] Add trusted_for(2) (was O_MAYEXEC)
+Date:   Mon, 21 Mar 2022 17:15:57 +0100
+Message-Id: <20220321161557.495388-1-mic@digikod.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1037988.1647878628.1@warthog.procyon.org.uk>
-Date:   Mon, 21 Mar 2022 16:03:48 +0000
-Message-ID: <1037989.1647878628@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -67,30 +57,130 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Jann Horn <jannh@google.com> wrote:
+Hi Linus,
 
-> The syz reproducer is:
-> 
-> #{"threaded":true,"procs":1,"slowdown":1,"sandbox":"","close_fds":false}
-> pipe(&(0x7f0000000240)={<r0=>0xffffffffffffffff, <r1=>0xffffffffffffffff})
-> pipe2(&(0x7f00000001c0)={0xffffffffffffffff, <r2=>0xffffffffffffffff}, 0x80)
-> splice(r0, 0x0, r2, 0x0, 0x1ff, 0x0)
-> vmsplice(r1, &(0x7f00000006c0)=[{&(0x7f0000000080)="b5", 0x1}], 0x1, 0x0)
-> 
-> That 0x80 is O_NOTIFICATION_PIPE (==O_EXCL).
-> 
-> It looks like the bug is that when you try to splice between a normal
-> pipe and a notification pipe, get_pipe_info(..., true) fails, so
-> splice() falls back to treating the notification pipe like a normal
-> pipe - so we end up in iter_file_splice_write(), which first locks the
-> input pipe, then calls vfs_iter_write(), which locks the output pipe.
-> 
-> I think this probably (?) can't actually lead to deadlocks, since
-> you'd need another way to nest locking a normal pipe into locking a
-> watch_queue pipe, but the lockdep annotations don't make that clear.
+This patch series adds a new syscall named trusted_for.  It enables user
+space to ask the kernel: is this file descriptor's content trusted to be
+used for this purpose?  The set of usage currently only contains
+execution, but other may follow (e.g. configuration, sensitive data).
+If the kernel identifies the file descriptor as trustworthy for this
+usage, user space should then take this information into account.  The
+"execution" usage means that the content of the file descriptor is
+trusted according to the system policy to be executed by user space,
+which means that it interprets the content or (try to) maps it as
+executable memory.
 
-Is this then a bug/feature in iter_file_splice_write() rather than in the
-watch queue code, per se?
+A simple system-wide security policy can be set by the system
+administrator through a sysctl configuration consistent with the mount
+points or the file access rights.  The documentation explains the
+prerequisites.
 
-David
+It is important to note that this can only enable to extend access
+control managed by the kernel.  Hence it enables current access control
+mechanism to be extended and become a superset of what they can
+currently control.  Indeed, the security policy could also be delegated
+to an LSM, either a MAC system or an integrity system.  For instance,
+this is required to close a major IMA measurement/appraisal interpreter
+integrity gap by bringing the ability to check the use of scripts.
+Other uses are expected as well.
 
+For further details, please see the latest cover letter:
+https://lore.kernel.org/r/20220104155024.48023-1-mic@digikod.net
+
+Commit dae71698b6c5 ("printk: Move back proc_dointvec_minmax_sysadmin()
+to sysctl.c") was recently added due to the sysctl refactoring.
+
+Commit e674341a90b9 ("selftests/interpreter: fix separate directory
+build") will fix some test build cases as explained here:
+https://lore.kernel.org/r/20220119101531.2850400-1-usama.anjum@collabora.com
+Merging this commit without the new KHDR_INCLUDES is not an issue.
+The upcoming kselftest pull request is ready:
+https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git/log/?h=next
+
+This patch series has been open for review for more than three years and
+got a lot of feedbacks (and bikeshedding) which were all considered.
+Since I heard no objection, please consider to pull this code for
+v5.18-rc1 .  These five patches have been successfully tested in the
+latest linux-next releases for several weeks.
+
+Regards,
+ Mickaël
+
+--
+The following changes since commit dcb85f85fa6f142aae1fe86f399d4503d49f2b60:
+
+  gcc-plugins/stackleak: Use noinstr in favor of notrace (2022-02-03 17:02:21 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/trusted-for-v18
+
+for you to fetch changes up to e674341a90b95c3458d684ae25e6891afc3e03ad:
+
+  selftests/interpreter: fix separate directory build (2022-03-04 10:56:25 +0100)
+
+----------------------------------------------------------------
+Add the trusted_for system call (v18)
+
+The final goal of this patch series is to enable the kernel to be a
+global policy manager by entrusting processes with access control at
+their level.  To reach this goal, two complementary parts are required:
+* user space needs to be able to know if it can trust some file
+  descriptor content for a specific usage;
+* and the kernel needs to make available some part of the policy
+  configured by the system administrator.
+
+In a nutshell, this is a required building block to control script
+execution.
+
+For further details see the latest cover letter:
+https://lore.kernel.org/r/20220104155024.48023-1-mic@digikod.net
+
+----------------------------------------------------------------
+Mickaël Salaün (4):
+      printk: Move back proc_dointvec_minmax_sysadmin() to sysctl.c
+      fs: Add trusted_for(2) syscall implementation and related sysctl
+      arch: Wire up trusted_for(2)
+      selftest/interpreter: Add tests for trusted_for(2) policies
+
+Muhammad Usama Anjum (1):
+      selftests/interpreter: fix separate directory build
+
+ Documentation/admin-guide/sysctl/fs.rst            |  50 +++
+ arch/alpha/kernel/syscalls/syscall.tbl             |   1 +
+ arch/arm/tools/syscall.tbl                         |   1 +
+ arch/arm64/include/asm/unistd.h                    |   2 +-
+ arch/arm64/include/asm/unistd32.h                  |   2 +
+ arch/ia64/kernel/syscalls/syscall.tbl              |   1 +
+ arch/m68k/kernel/syscalls/syscall.tbl              |   1 +
+ arch/microblaze/kernel/syscalls/syscall.tbl        |   1 +
+ arch/mips/kernel/syscalls/syscall_n32.tbl          |   1 +
+ arch/mips/kernel/syscalls/syscall_n64.tbl          |   1 +
+ arch/mips/kernel/syscalls/syscall_o32.tbl          |   1 +
+ arch/parisc/kernel/syscalls/syscall.tbl            |   1 +
+ arch/powerpc/kernel/syscalls/syscall.tbl           |   1 +
+ arch/s390/kernel/syscalls/syscall.tbl              |   1 +
+ arch/sh/kernel/syscalls/syscall.tbl                |   1 +
+ arch/sparc/kernel/syscalls/syscall.tbl             |   1 +
+ arch/x86/entry/syscalls/syscall_32.tbl             |   1 +
+ arch/x86/entry/syscalls/syscall_64.tbl             |   1 +
+ arch/xtensa/kernel/syscalls/syscall.tbl            |   1 +
+ fs/open.c                                          | 133 ++++++++
+ fs/proc/proc_sysctl.c                              |   2 +-
+ include/linux/syscalls.h                           |   1 +
+ include/linux/sysctl.h                             |   3 +
+ include/uapi/asm-generic/unistd.h                  |   5 +-
+ include/uapi/linux/trusted-for.h                   |  18 +
+ kernel/printk/sysctl.c                             |   9 -
+ kernel/sysctl.c                                    |   9 +
+ tools/testing/selftests/Makefile                   |   1 +
+ tools/testing/selftests/interpreter/.gitignore     |   2 +
+ tools/testing/selftests/interpreter/Makefile       |  21 ++
+ tools/testing/selftests/interpreter/config         |   1 +
+ .../selftests/interpreter/trust_policy_test.c      | 362 +++++++++++++++++++++
+ 32 files changed, 625 insertions(+), 12 deletions(-)
+ create mode 100644 include/uapi/linux/trusted-for.h
+ create mode 100644 tools/testing/selftests/interpreter/.gitignore
+ create mode 100644 tools/testing/selftests/interpreter/Makefile
+ create mode 100644 tools/testing/selftests/interpreter/config
+ create mode 100644 tools/testing/selftests/interpreter/trust_policy_test.c
