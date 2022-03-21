@@ -2,90 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CEB04E346D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Mar 2022 00:33:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 611374E34A5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Mar 2022 00:49:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232806AbiCUXel (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Mar 2022 19:34:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51364 "EHLO
+        id S233403AbiCUXsz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Mar 2022 19:48:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232834AbiCUXeh (ORCPT
+        with ESMTP id S233456AbiCUXsx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Mar 2022 19:34:37 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2EBD5577D;
-        Mon, 21 Mar 2022 16:33:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:
-        Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
-        bh=8INTyMSFBrX1EJ+aoDBL+ySWd7+IvZDAvs379S+ikME=; b=aLSfJs7R8GRGCLwR+bJOKO7Nb6
-        F1TSYPL+zA2r9J2yLcffA10yBBQtSQ/upF+xpW42/Dj7ELLUpNckJZOD4TZWcRsKE7ArM0todtkWu
-        7GCW7VJkm2+VgQH5SZbXxNVxSGyOZd3dwOveQS8LL/a5lRRXqqrJEhemc7yua2+Ob3AgEu5U1kala
-        7QuJPq1NQSEj6dSqpnDmPU/KScnYham+fku06RDaxWBwE4Uvrzd0QDr7TC6VIkRj95pD6brp+J+EC
-        2wLcn5Z61YHDkP+7h+1FC+b2BpEQzKaZxZZvxTNF2OizXmjcw2UzGny/zBNsa81dIucRheCCYASEn
-        8j2FNP6Q==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nWRW7-009QAL-Q6; Mon, 21 Mar 2022 23:32:51 +0000
-Date:   Mon, 21 Mar 2022 16:32:51 -0700
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Heimes <christian@python.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        James Morris <jmorris@namei.org>,
-        Kees Cook <keescook@chromium.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Steve Dower <steve.dower@python.org>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [GIT PULL] Add trusted_for(2) (was O_MAYEXEC)
-Message-ID: <YjkLI4D+ek9shkqL@bombadil.infradead.org>
-References: <20220321161557.495388-1-mic@digikod.net>
- <Yji3/ejSErupJZtO@bombadil.infradead.org>
- <cfa15768-ebf4-d198-fb1b-5a6ab47caedb@digikod.net>
+        Mon, 21 Mar 2022 19:48:53 -0400
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 808725BE66
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Mar 2022 16:47:26 -0700 (PDT)
+Received: by mail-lf1-x12a.google.com with SMTP id e16so12932449lfc.13
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Mar 2022 16:47:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WXgWyp4Um3StwShymSK+s9+iMp7Pr8uzLZsD+EflGPM=;
+        b=P45BR3xuiRSoedW8haJjsNx4hmUVitDZGbtShFVyQlOoStCJ0MWeqwYDjCIdCNByBi
+         ax4UawZVvZZ8onSffdFCjnu4lySW6OTnI/luDqVOkks1dWhmHytFf8eVJ532KYOviCFt
+         ylvChZ1iyoqK0MEu81vBEyfvl8rYa7BuVJ/yI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WXgWyp4Um3StwShymSK+s9+iMp7Pr8uzLZsD+EflGPM=;
+        b=tGK71pPsxE2Ob+errZQUiyldX1419EoKzpl1zVpejTbz2/qzNdZTT4jZHFVmc1B2f1
+         OJSlttAjs5XqqhSF8BYHdKeBsyixJP61jRAmEA224ggQkb7FKLF1itxTxYQ9SuqfzT+h
+         YUbiytimpw/7XfYk2JtM8Ug37Jei4f5wYkE7HHxkaz2gEGRSyvbpJ4co2Sa8Y625lQhz
+         WxKQfrkfebltjwcSjuQhw1sMihvGFQsERLCDA7ENgn5tUZOa5NF8o48GFEnjpcdboJ5o
+         qGmEBuiRYzbrLimgwMA3xzdf9dZqIspUokG60PYCDFAFhQJhZ15cGpnXnahAKpkbgagp
+         +KEQ==
+X-Gm-Message-State: AOAM533EKNdlhjmbxIn1u7cSF82y5tP/DhlalAvpc33iPdUb7izDrLKb
+        V+lyUJXNeH4TfqLFiraFB8JQz0/yIRXH+BS5kKI=
+X-Google-Smtp-Source: ABdhPJzVSJEuv0iCZ8Yeiy0RtgyBpT5Oo8Q4P321cJbCha4jfvy/sLdbZStcR6zz4YuaAKfrCXj2VA==
+X-Received: by 2002:a05:6512:3619:b0:443:1597:8293 with SMTP id f25-20020a056512361900b0044315978293mr16626792lfs.439.1647906444514;
+        Mon, 21 Mar 2022 16:47:24 -0700 (PDT)
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
+        by smtp.gmail.com with ESMTPSA id i25-20020a0565123e1900b0044a2908b040sm533580lfv.115.2022.03.21.16.47.23
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Mar 2022 16:47:23 -0700 (PDT)
+Received: by mail-lf1-f52.google.com with SMTP id k21so10608623lfe.4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Mar 2022 16:47:23 -0700 (PDT)
+X-Received: by 2002:ac2:4f92:0:b0:448:7eab:c004 with SMTP id
+ z18-20020ac24f92000000b004487eabc004mr16006296lfs.27.1647906443612; Mon, 21
+ Mar 2022 16:47:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cfa15768-ebf4-d198-fb1b-5a6ab47caedb@digikod.net>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+References: <1fbbd612-79bd-8a7b-8021-b8d46c3b8ac7@kernel.dk>
+In-Reply-To: <1fbbd612-79bd-8a7b-8021-b8d46c3b8ac7@kernel.dk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 21 Mar 2022 16:47:07 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgLwrtFeJ-sitq6f162v1st3GPF7x5BOWJFcn_OHyMYpA@mail.gmail.com>
+Message-ID: <CAHk-=wgLwrtFeJ-sitq6f162v1st3GPF7x5BOWJFcn_OHyMYpA@mail.gmail.com>
+Subject: Re: [GIT PULL] io_uring statx fix for 5.18-rc1
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        io-uring <io-uring@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Mar 21, 2022 at 07:05:42PM +0100, Mickaël Salaün wrote:
-> 
-> On 21/03/2022 18:38, Luis Chamberlain wrote:
-> > On Mon, Mar 21, 2022 at 05:15:57PM +0100, Mickaël Salaün wrote:
-> > > Since I heard no objection, please consider to pull this code for
-> > > v5.18-rc1 .  These five patches have been successfully tested in the
-> > > latest linux-next releases for several weeks.
-> > 
-> > >   kernel/sysctl.c                                    |   9 +
-> > 
-> > Please don't add more sysctls there. We're slowly trying to move
-> > all these to their respective places so this does not become a larger
-> > kitchen sink mess.
-> 
-> It is not a new sysctl but proc_dointvec_minmax_sysadmin(). This helper is
-> shared between printk and fs subsystems.
+On Fri, Mar 18, 2022 at 2:59 PM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On top of the main io_uring branch, this pull request is for ensuring
+> that the filename component of statx is stable after submit. That
+> requires a few VFS related changes.
 
-That should be good then, thanks!
+Ugh, I've pulled this, but I hate how it does that
 
-  Luis
+    int getname_statx_lookup_flags(int);
+
+thing with 'int' for both the incoming and outgoing flags.
+
+And I don't say that just because the existing path lookup functions
+actually use 'unsigned int', and the code strives to do things like
+
+        unsigned int lookup_flags = LOOKUP_FOLLOW | LOOKUP_DIRECTORY;
+
+So 'int' is ugly, but the _really_ ugly part is how we should have a
+separate type for the LOOKUP_xyz flags.
+
+That part isn't new to this change, but this change really highlights
+how lacking in type safety that thing is.
+
+The vfs code has a huge pile of different types of 'flags'. Half of
+them are various variations of mount flags, I feel, with the whole
+MS_xyz -> MNT_xyz thing going on. This is more of that horrid pattern.
+
+At least the mnt code tried to call the variables that keep MNT_xyz
+flags 'mnt_flags'. I'm not sure how consistent the code is about it,
+but there's _some_ attempt at it.
+
+I do wonder if we should at least try to have a special integer type
+for these things that could be checked with sparse (which nobody does)
+or at least used as documentation in the function prototypes to show
+"this returns a flag of type 'lookup_flag_t' rather than just
+'unsigned int' (or worse yet, 'int').
+
+Anyway, I've pulled it, I just wanted to make my reaction to it public
+in the hope that some bored vfs person goes "yeah, we should do that"
+and works on it.
+
+                Linus
