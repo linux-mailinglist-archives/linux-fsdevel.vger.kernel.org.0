@@ -2,126 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B82CA4E231B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Mar 2022 10:15:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E9C714E236C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Mar 2022 10:36:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345761AbiCUJQj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Mar 2022 05:16:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59816 "EHLO
+        id S1345982AbiCUJiL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Mar 2022 05:38:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236571AbiCUJQj (ORCPT
+        with ESMTP id S1345934AbiCUJh6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Mar 2022 05:16:39 -0400
-Received: from mail-qt1-x82e.google.com (mail-qt1-x82e.google.com [IPv6:2607:f8b0:4864:20::82e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A360F33EA1;
-        Mon, 21 Mar 2022 02:15:14 -0700 (PDT)
-Received: by mail-qt1-x82e.google.com with SMTP id a11so7484251qtb.12;
-        Mon, 21 Mar 2022 02:15:14 -0700 (PDT)
+        Mon, 21 Mar 2022 05:37:58 -0400
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CC4763BEE
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Mar 2022 02:36:33 -0700 (PDT)
+Received: by mail-ej1-x62c.google.com with SMTP id qa43so28499024ejc.12
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Mar 2022 02:36:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
+        d=szeredi.hu; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=UDlYPAQBAOlLXBbFBOerVAwIN2CtIDqxO6mOQnxtBt8=;
-        b=W8Byhw7YaHbu5C9YCddrrjz9P8+J4EhFPoPEWcsXXW1b7sOaCfegJrcK6DZhkDyc9b
-         oLOXTXJK4Zwtr09FZhmSM8CvJC5UsvlUnD4+gFWtW5P3H/4mED8PfbagF4rpjrP4sscJ
-         TkFrT6KdhDKZbE5V3ifobaWetZJN+m9cbwz+7y8nvt6J7CEzH9FqnT5xZZRw0lDnwOkB
-         ElqLVe8UQ7xPH3U4QDaagnvdD4rWNWZ8KjVFyqt30SqRzPlCSvdmE6QBH0NV97FP4+sX
-         lTYsw79fgdj/V5IaeeTP1GQLrCOaMuxsmm2VHRFR1+Ebk39iDKdaOMkS7tBnujXM5+9+
-         TmMg==
+         :cc;
+        bh=ogrhRXR+AVdt3mfgPz8CUVBxI7B5+eAIXFaggH9T3eY=;
+        b=JTdeK1AYQxPLk0QC4MPXc65N/+9KLmUz6bikgdSXHUYI1p9r2xyaAC87MAdfYFwnjX
+         SBcIYVRVP+XrwcjVGS++LI/xdkXEGR/RfOz7lYc9NYGt5ThG2cWE7ZZrlTctS0fsSm4n
+         iHHZnYjhB4CoSF55F68VVh93gpvkr+4GcL2jw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=UDlYPAQBAOlLXBbFBOerVAwIN2CtIDqxO6mOQnxtBt8=;
-        b=MOmIY+3//3H6DrWMaMtUOTLfxRscQYZsVmU2C7wJvEfmDhNK/6A/cxjA0W7Eg1BI2Q
-         A0s1f9Ombd8dPnE9g3ldSv6zqwv0dP9vaLMIAO4V/Sfw316gE+tA9GfopL0ksmoqv8V9
-         xvQ2ZD2lmlKUchfGpXqZrA8xWYxQOGospJ0KQ0bi7JfX8SabZNHPQZ9bg+jx0Id5XK1U
-         7W/cOB4U6mQ6bIehiwL6HMWo9flj6nOeL8k5rTFss1EBiIg8HeqrFD+3O3TVkL5sG2Uv
-         RDu6ZChHaQr3lxxmbYW24gtlAqci1jXWkN/eva5wVXZNA3bubAADAA8Q0Qf8SIqw7+4L
-         oxog==
-X-Gm-Message-State: AOAM5315wCDWa7felJqPDRlF9O7zPxxCDBybiyl6SF7Hr3RX00yJUK5V
-        KbsI/cH/1a+qEhM4xn9ik1vHXtdmri7xt4G5BligHGM6tuc=
-X-Google-Smtp-Source: ABdhPJx6afM3anilCbMCFrKf4jg+CYfcVO0zYYZm56r5PmbeJlvV/EOJLyPGEyQCfRZG2xHq9Ghe76SJ3VlQC5uOtsY=
-X-Received: by 2002:a05:622a:143:b0:2e0:b7c8:3057 with SMTP id
- v3-20020a05622a014300b002e0b7c83057mr15557151qtw.179.1647854113688; Mon, 21
- Mar 2022 02:15:13 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=ogrhRXR+AVdt3mfgPz8CUVBxI7B5+eAIXFaggH9T3eY=;
+        b=dIyHDDpJbH+dbivExdn5tmIheKdjc9Do/LZ9uPIoOkN+q5HgxLpcg2UHHzMiBiDJ/W
+         R78+9hBKmZGtVHJ6IYknjn3kCH/b4lE5Dthj7LQ6BMsOIO7JsBts9rdjnOUmSkWkRLFo
+         M3pCYKdUT2RNOE01iAHu212T0uGV76mogAOHIFrC89IUdHSr7wzk+zwwYbWw2pMt7fhI
+         p0V+U0Fw0XZCjOqd1aKKphfxOtNbKBsJHZUm1Kb+6gxtawTlcJ0Ootv0krNIxgcwDft1
+         nBD6jtUoujhp/d3dA9UPvoChmz1iar1v+iyhRDhNSxjmXLMOwe7UhlgXaQ7tNHhmYXmN
+         fz2w==
+X-Gm-Message-State: AOAM5304/diM89zBTYXZKBoPY9/ZAZXANJJqBoFFlHo13H3Q/0XeVG6t
+        Ke9uCSuZo9hSpukpTLvbtSeyUYzGO7CgIGrd0gH+tg==
+X-Google-Smtp-Source: ABdhPJw/xfXVim0fva3bC9a3lXSZs/6Jqd/qOjzzPhc6BW9eY8sIeleI+X0vFnNDwscOC3H/fugKA3B7QsQkWDW0q+M=
+X-Received: by 2002:a17:906:c259:b0:6ce:a165:cd0d with SMTP id
+ bl25-20020a170906c25900b006cea165cd0dmr19443119ejb.270.1647855392023; Mon, 21
+ Mar 2022 02:36:32 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAPmgiUJVaACDyWkEhpC5Tfk233t-Tw6_f-Y99KLUDqv6dEq0tw@mail.gmail.com>
- <YjMFTSKZp9eX/c4k@localhost.localdomain> <CAPmgiUJsd-gdq=JG1rF8BHfpADeS45rcVWwnC2qKE=7W1EryiQ@mail.gmail.com>
- <YjdVHgildbWO7diJ@localhost.localdomain>
-In-Reply-To: <YjdVHgildbWO7diJ@localhost.localdomain>
-From:   hui li <juanfengpy@gmail.com>
-Date:   Mon, 21 Mar 2022 17:15:02 +0800
-Message-ID: <CAPmgiUK90T212icXkSJ2vSiCjXbUqO-fptNLL7NF6SMDAyTtRg@mail.gmail.com>
-Subject: Re: [PATCH] proc: fix dentry/inode overinstantiating under /proc/${pid}/net
-To:     Alexey Dobriyan <adobriyan@gmail.com>
-Cc:     akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20220318171405.2728855-1-cmllamas@google.com> <CAJfpegsT6BO5P122wrKbni3qFkyHuq_0Qq4ibr05_SOa7gfvcw@mail.gmail.com>
+ <Yjfd1+k83U+meSbi@google.com> <CAJfpeguoFHgG9Jm3hVqWnta3DB6toPRp_vD3EK74y90Aj3w+8Q@mail.gmail.com>
+ <Yjg8TVQZ6TeTSQxj@kroah.com>
+In-Reply-To: <Yjg8TVQZ6TeTSQxj@kroah.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 21 Mar 2022 10:36:20 +0100
+Message-ID: <CAJfpegsj94__xdBe8aH+VFdY5fJg515vG0XY-Qu0RXwEAUhM3A@mail.gmail.com>
+Subject: Re: [PATCH] fuse: fix integer type usage in uapi header
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Carlos Llamas <cmllamas@google.com>,
+        Alessio Balsini <balsini@android.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        kernel-team <kernel-team@android.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
+        DKIM_SIGNED,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-proc_misc_dentry_ops is a general ops for dentry under /proc, except
-for "/proc/${pid}/net"=EF=BC=8Cother dentries may also use there own ops to=
-o,
-so I think change proc_misc_d_delete may be better?
-see patch under: https://lkml.org/lkml/2022/3/17/319
+On Mon, 21 Mar 2022 at 09:50, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Mon, Mar 21, 2022 at 09:40:56AM +0100, Miklos Szeredi wrote:
+> > On Mon, 21 Mar 2022 at 03:07, Carlos Llamas <cmllamas@google.com> wrote:
+> > >
+> > > On Fri, Mar 18, 2022 at 08:24:55PM +0100, Miklos Szeredi wrote:
+> > > > On Fri, 18 Mar 2022 at 18:14, Carlos Llamas <cmllamas@google.com> wrote:
+> > > > >
+> > > > > Kernel uapi headers are supposed to use __[us]{8,16,32,64} defined by
+> > > > > <linux/types.h> instead of 'uint32_t' and similar. This patch changes
+> > > > > all the definitions in this header to use the correct type. Previous
+> > > > > discussion of this topic can be found here:
+> > > > >
+> > > > >   https://lkml.org/lkml/2019/6/5/18
+> > > >
+> > > > This is effectively a revert of these two commits:
+> > > >
+> > > > 4c82456eeb4d ("fuse: fix type definitions in uapi header")
+> > > > 7e98d53086d1 ("Synchronize fuse header with one used in library")
+> > > >
+> > > > And so we've gone full circle and back to having to modify the header
+> > > > to be usable in the cross platform library...
+> > > >
+> > > > And also made lots of churn for what reason exactly?
+> > >
+> > > There are currently only two uapi headers making use of C99 types and
+> > > one is <linux/fuse.h>. This approach results in different typedefs being
+> > > selected when compiling for userspace vs the kernel.
+> >
+> > Why is this a problem if the size of the resulting types is the same?
+>
+> uint* are not "valid" variable types to cross the user/kernel boundary.
+> They are part of the userspace variable type namespace, not the kernel
+> variable type namespace.  Linus wrong a long post about this somewhere
+> in the past, I'm sure someone can dig it up...
 
-Alexey Dobriyan <adobriyan@gmail.com> =E4=BA=8E2022=E5=B9=B43=E6=9C=8821=E6=
-=97=A5=E5=91=A8=E4=B8=80 00:24=E5=86=99=E9=81=93=EF=BC=9A
->
-> When a process exits, /proc/${pid}, and /proc/${pid}/net dentries are flu=
-shed.
-> However some leaf dentries like /proc/${pid}/net/arp_cache aren't.
-> That's because respective PDEs have proc_misc_d_revalidate() hook which
-> returns 1 and leaves dentries/inodes in the LRU.
->
-> Force revalidation/lookup on everything under /proc/${pid}/net by inherit=
-ing
-> proc_net_dentry_ops.
->
-> Fixes: c6c75deda813 ("proc: fix lookup in /proc/net subdirectories after =
-setns(2)")
-> Reported-by: hui li <juanfengpy@gmail.com>
-> Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
-> ---
->
->  fs/proc/generic.c  |    4 ++++
->  fs/proc/proc_net.c |    3 +++
->  2 files changed, 7 insertions(+)
->
-> --- a/fs/proc/generic.c
-> +++ b/fs/proc/generic.c
-> @@ -448,6 +448,10 @@ static struct proc_dir_entry *__proc_create(struct p=
-roc_dir_entry **parent,
->         proc_set_user(ent, (*parent)->uid, (*parent)->gid);
->
->         ent->proc_dops =3D &proc_misc_dentry_ops;
-> +       /* Revalidate everything under /proc/${pid}/net */
-> +       if ((*parent)->proc_dops =3D=3D &proc_net_dentry_ops) {
-> +               pde_force_lookup(ent);
-> +       }
->
->  out:
->         return ent;
-> --- a/fs/proc/proc_net.c
-> +++ b/fs/proc/proc_net.c
-> @@ -376,6 +376,9 @@ static __net_init int proc_net_ns_init(struct net *ne=
-t)
->
->         proc_set_user(netd, uid, gid);
->
-> +       /* Seed dentry revalidation for /proc/${pid}/net */
-> +       pde_force_lookup(netd);
-> +
->         err =3D -EEXIST;
->         net_statd =3D proc_net_mkdir(net, "stat", netd);
->         if (!net_statd)
+Looking forward to the details.  I cannot imagine why this would matter...
+
+Thanks,
+Miklos
