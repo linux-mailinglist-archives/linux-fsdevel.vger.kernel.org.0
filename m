@@ -2,183 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A944C4E1C8B
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Mar 2022 17:26:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A1CE54E1EF6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Mar 2022 03:07:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235658AbiCTQ2I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 20 Mar 2022 12:28:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37350 "EHLO
+        id S1344141AbiCUCIv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 20 Mar 2022 22:08:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230242AbiCTQ2H (ORCPT
+        with ESMTP id S1344138AbiCUCIt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 20 Mar 2022 12:28:07 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6781E19BFE3;
-        Sun, 20 Mar 2022 09:26:44 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 0FA22B80E50;
-        Sun, 20 Mar 2022 16:26:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0C16C340E9;
-        Sun, 20 Mar 2022 16:26:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647793601;
-        bh=vRLeqo0sF0b8wjVTss0xPtrmuKURf7SPqtOYIKGR4dg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ibyoK0aX4MHfRfk9qT/3ejFcQNT6P2oWIC/ZG0dRmLGwCFa4LDyzf5FWeGyNU/Igr
-         ScmQ4H5vyzUdVPX+ABu73npV/8cZ5xsgI+U9NOnQVCmqzukP8a6ft3cfqaPHwiMDaL
-         vZDqHSQ2X9dz9Holvhwd+fMe2/k1BU2N78ADMXutrPHE+BC3xnrAWnPnfFdjqsh68V
-         es6tPYTJdpqD20IksdCT8NyZYwclgRANgNoGiTRLCOX2r2bg5lU/LfhG87ePOQjfvs
-         Ci8TVGHKfpCEy1M2X7nxj3JCyNj3SdUe38oseN70F9WCmxoC3P9O1CDlSNBMYN4MR7
-         /S6PXylmgy/ZA==
-Date:   Sun, 20 Mar 2022 09:26:41 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Guo Xuenan <guoxuenan@huawei.com>
-Cc:     willy@infradead.org, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        houtao1@huawei.com, fangwei1@huawei.com,
-        hsiangkao@linux.alibaba.com
-Subject: Re: [PATCH] iomap: fix an infinite loop in iomap_fiemap
-Message-ID: <20220320162641.GB8182@magnolia>
-References: <20220315065745.3441989-1-guoxuenan@huawei.com>
- <20220317220511.GA8182@magnolia>
- <165cff82-6210-9acf-c104-b6cae5d2a92e@huawei.com>
+        Sun, 20 Mar 2022 22:08:49 -0400
+Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A946654F9C
+        for <linux-fsdevel@vger.kernel.org>; Sun, 20 Mar 2022 19:07:24 -0700 (PDT)
+Received: by mail-pg1-x52f.google.com with SMTP id e6so9299623pgn.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 20 Mar 2022 19:07:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=2dJnNJv7tm7UdVVNql3/erHAUxpmpE++s8tQq8p65Yc=;
+        b=mu/10eV1z+dHYGAsdcf9q8Aabh+EEP6gv8Zlf8rKwMJHk9e89FS7GS5uLHgRyQrQW4
+         Ct/aNefRA3L4NHnVFXVksmW8dLFKvbTMZSYFPPDYxCwUmCcBUy8FQqXo4jU9aW4O5LNL
+         G28HpkWyi5RSqomgMMNT5F65J/9pb9x4mvI9Wvk56nFgf0OvB1Xmou9y4oC1KoySzTmP
+         o1EFEcERaW48bE/dogVZvCPvtDIYtQlGmwXIvgcBrAcCa2S4WwnGd2ktgy+Dxb2oLNsb
+         uRmu8RLWe9yXUp7yoSeuMNWDpyCHoI1pgWpwFayu8/g4yEia74hMkvsOmUIm05MsRg2z
+         B6vA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=2dJnNJv7tm7UdVVNql3/erHAUxpmpE++s8tQq8p65Yc=;
+        b=3a3WK3u5vYBTmMy/LFG09Np2R3U0Iq6UKQfR6zJQRSIgN0OcQ7JnUPKWFkzCao7zM4
+         fUXfyWI64Un4vCFBCsntZezjn0YaDMjXc1DkhoEbn3+Uz2vnDhAvoQjJQoo4JKIKsfwx
+         WbgbQJmaCjBPcPS6MZJTfoNehd+OA0hdiNJIedslXXjqQa1VRRCwP+uBkcBxiieLF7Lf
+         mbbpO44JhL+lhMeXURz9RPamWC5MocQXXZUaIh+XfcifUjY3Sy9XJhRF58T1HYDLPXbe
+         +RLDnmFLFHV+BwarbJJQBK1OZ/73/gLn+JeB7N5WADBAuKw54yLloZ67eqYOKrBsEyUX
+         ozmg==
+X-Gm-Message-State: AOAM5320Srf3Ksuwrt1Kd4Sy7qARD12SL5Zwp22yFvv0ECsDxp/ungWG
+        AROQyeuNiK25Y2otE9DhZgbPAw==
+X-Google-Smtp-Source: ABdhPJzq6K073T30dDUYD8wJP7MMTAw+cUTD/IS/UWpKHIhyrTvuoP/jdZkYeB94PcZPbbr/gShQEg==
+X-Received: by 2002:a65:6202:0:b0:382:1fbd:5bb3 with SMTP id d2-20020a656202000000b003821fbd5bb3mr13319263pgv.194.1647828443928;
+        Sun, 20 Mar 2022 19:07:23 -0700 (PDT)
+Received: from google.com (201.59.83.34.bc.googleusercontent.com. [34.83.59.201])
+        by smtp.gmail.com with ESMTPSA id b9-20020a056a000cc900b004f7a986fc78sm17867328pfv.11.2022.03.20.19.07.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 20 Mar 2022 19:07:23 -0700 (PDT)
+Date:   Mon, 21 Mar 2022 02:07:19 +0000
+From:   Carlos Llamas <cmllamas@google.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alessio Balsini <balsini@android.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        kernel-team <kernel-team@android.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fuse: fix integer type usage in uapi header
+Message-ID: <Yjfd1+k83U+meSbi@google.com>
+References: <20220318171405.2728855-1-cmllamas@google.com>
+ <CAJfpegsT6BO5P122wrKbni3qFkyHuq_0Qq4ibr05_SOa7gfvcw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <165cff82-6210-9acf-c104-b6cae5d2a92e@huawei.com>
-X-Spam-Status: No, score=-8.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <CAJfpegsT6BO5P122wrKbni3qFkyHuq_0Qq4ibr05_SOa7gfvcw@mail.gmail.com>
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 18, 2022 at 03:21:23PM +0800, Guo Xuenan wrote:
-> Hi Darrick,
+On Fri, Mar 18, 2022 at 08:24:55PM +0100, Miklos Szeredi wrote:
+> On Fri, 18 Mar 2022 at 18:14, Carlos Llamas <cmllamas@google.com> wrote:
+> >
+> > Kernel uapi headers are supposed to use __[us]{8,16,32,64} defined by
+> > <linux/types.h> instead of 'uint32_t' and similar. This patch changes
+> > all the definitions in this header to use the correct type. Previous
+> > discussion of this topic can be found here:
+> >
+> >   https://lkml.org/lkml/2019/6/5/18
 > 
-> 在 2022/3/18 6:05, Darrick J. Wong wrote:
-> > On Tue, Mar 15, 2022 at 02:57:45PM +0800, Guo Xuenan wrote:
-> > > when get fiemap starting from MAX_LFS_FILESIZE, (maxbytes - *len) < start
-> > > will always true , then *len set zero. because of start offset is byhond
-> > > file size, for erofs filesystem it will always return iomap.length with
-> > > zero,iomap iterate will be infinite loop.
-> > > 
-> > > In order to avoid this situation, it is better to calculate the actual
-> > > mapping length at first. If the len is 0, there is no need to continue
-> > > the operation.
-> > > 
-> > > ------------[ cut here ]------------
-> > > WARNING: CPU: 7 PID: 905 at fs/iomap/iter.c:35 iomap_iter+0x97f/0xc70
-> > > Modules linked in: xfs erofs
-> > > CPU: 7 PID: 905 Comm: iomap Tainted: G        W         5.17.0-rc8 #27
-> > > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubuntu1.1 04/01/2014
-> > > RIP: 0010:iomap_iter+0x97f/0xc70
-> > > Code: 85 a1 fc ff ff e8 71 be 9c ff 0f 1f 44 00 00 e9 92 fc ff ff e8 62 be 9c ff 0f 0b b8 fb ff ff ff e9 fc f8 ff ff e8 51 be 9c ff <0f> 0b e9 2b fc ff ff e8 45 be 9c ff 0f 0b e9 e1 fb ff ff e8 39 be
-> > > RSP: 0018:ffff888060a37ab0 EFLAGS: 00010293
-> > > RAX: 0000000000000000 RBX: ffff888060a37bb0 RCX: 0000000000000000
-> > > RDX: ffff88807e19a900 RSI: ffffffff81a7da7f RDI: ffff888060a37be0
-> > > RBP: 7fffffffffffffff R08: 0000000000000000 R09: ffff888060a37c20
-> > > R10: ffff888060a37c67 R11: ffffed100c146f8c R12: 7fffffffffffffff
-> > > R13: 0000000000000000 R14: ffff888060a37bd8 R15: ffff888060a37c20
-> > > FS:  00007fd3cca01540(0000) GS:ffff888108780000(0000) knlGS:0000000000000000
-> > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > CR2: 0000000020010820 CR3: 0000000054b92000 CR4: 00000000000006e0
-> > > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > > Call Trace:
-> > >   <TASK>
-> > >   iomap_fiemap+0x1c9/0x2f0
-> > >   erofs_fiemap+0x64/0x90 [erofs]
-> > >   do_vfs_ioctl+0x40d/0x12e0
-> > >   __x64_sys_ioctl+0xaa/0x1c0
-> > >   do_syscall_64+0x35/0x80
-> > >   entry_SYSCALL_64_after_hwframe+0x44/0xae
-> > >   </TASK>
-> > > ---[ end trace 0000000000000000 ]---
-> > > watchdog: BUG: soft lockup - CPU#7 stuck for 26s! [iomap:905]
-> > > 
-> > > Reported-by: Hulk Robot <hulkci@huawei.com>
-> > > Signed-off-by: Guo Xuenan <guoxuenan@huawei.com>
-> > > ---
-> > >   fs/ioctl.c | 5 +++--
-> > >   1 file changed, 3 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/fs/ioctl.c b/fs/ioctl.c
-> > > index 1ed097e94af2..7f70e90766ed 100644
-> > > --- a/fs/ioctl.c
-> > > +++ b/fs/ioctl.c
-> > > @@ -171,8 +171,6 @@ int fiemap_prep(struct inode *inode, struct fiemap_extent_info *fieinfo,
-> > >   	u32 incompat_flags;
-> > >   	int ret = 0;
-> > > -	if (*len == 0)
-> > > -		return -EINVAL;
-> > >   	if (start > maxbytes)
-> > >   		return -EFBIG;
-> > > @@ -182,6 +180,9 @@ int fiemap_prep(struct inode *inode, struct fiemap_extent_info *fieinfo,
-> > >   	if (*len > maxbytes || (maxbytes - *len) < start)
-> > >   		*len = maxbytes - start;
-> > > +	if (*len == 0)
-> > > +		return -EINVAL;
-> > Looks fine to me (and I don't even really mind pulling this in) but this
-> > isn't a patch to fs/iomap/ -- doesn't the same issue potentially affect
-> > the fiemap implementations that do not use iomap?
-> > 
-> > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-> > 
-> > --D
+> This is effectively a revert of these two commits:
 > 
-> Thanks Darrick, you're right,there is something wrong with my statement. In
-> a strict sense, this modification here does not belong to fs/iomap, i can
-> change it to fs/vfs in v2 :) I have looked into the code of those
-> filesystem(btrfs,ext4,f2fs,nilfs2,ntfs3..) which don't use iomap, and did
-> some test. when start=0x7fffffffffffffff, and len = 0; btrfs: while len==0,
-> return -EINVAL directly; ext4: ext4_get_es_cache->ext4_fiemap_check_ranges,
-> return -EFBIG; f2fs: return -EFBIG; nilfs2: while len==0, do nothing and
-> return 0; ntfs3: return -EFBIG directly; so, as far as i can see, just
-> return -EINVAL earlyier in fiemap_prep has no side effect.
-
-It's dangerous for patch reviewers to think more about patches. :)
-
-But-- thinking further, why do we return EINVAL for a query length of
-zero?  Why doesn't FIEMAP set fi_extents_mapped = 0 and return
-immediately?
-
-Oh, right, because the documentation (a) doesn't say much about return
-codes and (b) the current implementation returns *some* error code
-(EINVAL or EFBIG), so now people probably expect that.
-
-That said ... I think "File too large" is a more appropriate message
-than "Invalid argument" for when we truncated the request to maxbytes
-but then ended up with a zero-length request.
-
-Does changing the check at the top of the function to:
-
-	if (*len == 0)
-		return -EINVAL;
-	if (start >= maxbytes)
-		return -EFBIG;
-
-Cover this infinite loop case?
-
-(Admittedly, it is Sunday morning and the parts of my brain that handle
-integer rollover issues are still asleep.)
-
---D
-
+> 4c82456eeb4d ("fuse: fix type definitions in uapi header")
+> 7e98d53086d1 ("Synchronize fuse header with one used in library")
 > 
-> Thanks.
+> And so we've gone full circle and back to having to modify the header
+> to be usable in the cross platform library...
 > 
-> > > +
-> > >   	supported_flags |= FIEMAP_FLAG_SYNC;
-> > >   	supported_flags &= FIEMAP_FLAGS_COMPAT;
-> > >   	incompat_flags = fieinfo->fi_flags & ~supported_flags;
-> > > -- 
-> > > 2.22.0
-> > > 
-> > .
+> And also made lots of churn for what reason exactly?
+
+There are currently only two uapi headers making use of C99 types and
+one is <linux/fuse.h>. This approach results in different typedefs being
+selected when compiling for userspace vs the kernel. Plus only __u32 and
+similar types align with the coding style as described in 5(e).
+
+Yet, there is still the cross platform concern you mention. I think the
+best way to accommodate this while still conforming with the __u32 types
+is to follow something similar to 1a95916f5465 ("drm: Add compatibility
+#ifdefs for *BSD"). Basically doing this:
+
+  #if defined(__KERNEL__) || defined(__linux__)
+  #include <linux/types.h>
+  #else
+  #include <stdint.h>
+  typedef uint16_t __u16;
+  typedef int32_t  __s32;
+  typedef uint32_t __u32;
+  typedef int64_t  __s64;
+  typedef uint64_t __u64;
+  #endif
+
+This alternative selects the correct uapi types for both __KERNEL__ and
+__linux__ cases which is the main goal of this patch and it's just minor
+fixes from 7e98d53086d1 ("Synchronize header with one used in library").
+
+I see there where previous attempts to address similar changes here:
+  https://lkml.org/lkml/2013/3/11/620
+  https://lkml.org/lkml/2013/4/15/487
+
+So, if you agree with the approach above I'd be happy to send a separate
+patch on top to address the *BSD compatibility.
+
+Thanks,
+Carlos Llamas
