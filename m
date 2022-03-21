@@ -2,43 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6512D4E23F6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Mar 2022 11:06:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 397234E23E1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Mar 2022 11:02:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346184AbiCUKH6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Mar 2022 06:07:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50354 "EHLO
+        id S1346118AbiCUKD0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Mar 2022 06:03:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346162AbiCUKH4 (ORCPT
+        with ESMTP id S1346152AbiCUKCz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Mar 2022 06:07:56 -0400
-Received: from synology.com (mail.synology.com [211.23.38.101])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36B7414867D
-        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Mar 2022 03:06:30 -0700 (PDT)
-From:   Chung-Chiang Cheng <cccheng@synology.com>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synology.com; s=123;
-        t=1647856697; bh=7ysLmeLADbVAREm93wqx8BX8llMQvaUce49FSfAlosY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=RFFuMFSTeTmCQXV+ktJuMnbyWdkYGxCDrorm/URohR1xrdf+CFHa716jb0sGmiAW5
-         1+dZ6IoXO5utc7RTuSvzqkC20psSDkQ+xHMTwnEncmMosAsIoLEliTepnzmcWoBF5u
-         oeUUgaPE1lWIOt3kYytSVkBhlpeWFReMXW2mLC/c=
-To:     hirofumi@mail.parknet.co.jp
-Cc:     linux-fsdevel@vger.kernel.org, shepjeng@gmail.com,
-        kernel@cccheng.net, Chung-Chiang Cheng <cccheng@synology.com>
-Subject: [PATCH 2/2] fat: introduce creation time
-Date:   Mon, 21 Mar 2022 17:58:14 +0800
-Message-Id: <20220321095814.175891-2-cccheng@synology.com>
-In-Reply-To: <20220321095814.175891-1-cccheng@synology.com>
-References: <20220321095814.175891-1-cccheng@synology.com>
+        Mon, 21 Mar 2022 06:02:55 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29C73A76F2;
+        Mon, 21 Mar 2022 03:01:30 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B9E41612EC;
+        Mon, 21 Mar 2022 10:01:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80947C340ED;
+        Mon, 21 Mar 2022 10:01:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1647856889;
+        bh=wdbi2VTR/6EnOH98OJIzcSlXpTD0lK64z90gLmxW3IU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=0W7kuXR3smZYcZpTUHe2Whd9BvPzbhEBBeZVAQEHFbgEanCt/AP9jXVLFfKLvi1TC
+         bw+xutcH2tkQects92jDXPM2EjZutYgCEM6vqsLh1w7OFO4Qi7XRpgMDMfzJwfZv9W
+         sOfYPdhrUfyi1NINrMYGexKCJAaUOosTcoqQVcNI=
+Date:   Mon, 21 Mar 2022 11:01:25 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Carlos Llamas <cmllamas@google.com>,
+        Alessio Balsini <balsini@android.com>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        kernel-team <kernel-team@android.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fuse: fix integer type usage in uapi header
+Message-ID: <YjhM9UMKs+1H8eIe@kroah.com>
+References: <20220318171405.2728855-1-cmllamas@google.com>
+ <CAJfpegsT6BO5P122wrKbni3qFkyHuq_0Qq4ibr05_SOa7gfvcw@mail.gmail.com>
+ <Yjfd1+k83U+meSbi@google.com>
+ <CAJfpeguoFHgG9Jm3hVqWnta3DB6toPRp_vD3EK74y90Aj3w+8Q@mail.gmail.com>
+ <Yjg8TVQZ6TeTSQxj@kroah.com>
+ <CAJfpegsj94__xdBe8aH+VFdY5fJg515vG0XY-Qu0RXwEAUhM3A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Synology-MCP-Status: no
-X-Synology-Spam-Flag: no
-X-Synology-Spam-Status: score=0, required 6, WHITELIST_FROM_ADDRESS 0
-X-Synology-Virus-Status: no
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegsj94__xdBe8aH+VFdY5fJg515vG0XY-Qu0RXwEAUhM3A@mail.gmail.com>
+X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -46,111 +60,54 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In the old days, FAT supports creation time, but there's no corresponding
-timestamp in VFS. The implementation mixed the meaning of change time and
-creation time into a single ctime field.
+On Mon, Mar 21, 2022 at 10:36:20AM +0100, Miklos Szeredi wrote:
+> On Mon, 21 Mar 2022 at 09:50, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Mon, Mar 21, 2022 at 09:40:56AM +0100, Miklos Szeredi wrote:
+> > > On Mon, 21 Mar 2022 at 03:07, Carlos Llamas <cmllamas@google.com> wrote:
+> > > >
+> > > > On Fri, Mar 18, 2022 at 08:24:55PM +0100, Miklos Szeredi wrote:
+> > > > > On Fri, 18 Mar 2022 at 18:14, Carlos Llamas <cmllamas@google.com> wrote:
+> > > > > >
+> > > > > > Kernel uapi headers are supposed to use __[us]{8,16,32,64} defined by
+> > > > > > <linux/types.h> instead of 'uint32_t' and similar. This patch changes
+> > > > > > all the definitions in this header to use the correct type. Previous
+> > > > > > discussion of this topic can be found here:
+> > > > > >
+> > > > > >   https://lkml.org/lkml/2019/6/5/18
+> > > > >
+> > > > > This is effectively a revert of these two commits:
+> > > > >
+> > > > > 4c82456eeb4d ("fuse: fix type definitions in uapi header")
+> > > > > 7e98d53086d1 ("Synchronize fuse header with one used in library")
+> > > > >
+> > > > > And so we've gone full circle and back to having to modify the header
+> > > > > to be usable in the cross platform library...
+> > > > >
+> > > > > And also made lots of churn for what reason exactly?
+> > > >
+> > > > There are currently only two uapi headers making use of C99 types and
+> > > > one is <linux/fuse.h>. This approach results in different typedefs being
+> > > > selected when compiling for userspace vs the kernel.
+> > >
+> > > Why is this a problem if the size of the resulting types is the same?
+> >
+> > uint* are not "valid" variable types to cross the user/kernel boundary.
+> > They are part of the userspace variable type namespace, not the kernel
+> > variable type namespace.  Linus wrong a long post about this somewhere
+> > in the past, I'm sure someone can dig it up...
+> 
+> Looking forward to the details.  I cannot imagine why this would matter...
 
-This patch introduces a new field for creation time, and reports it in
-statx. The original ctime doesn't stand for create time any more. All
-the behaviors of ctime (change time) follow mtime, as exfat does.
+Here's the huge thread on the issue:
+	https://lore.kernel.org/all/19865.1101395592@redhat.com/
+and specifically here's Linus's answer:
+	https://lore.kernel.org/all/Pine.LNX.4.58.0411281710490.22796@ppc970.osdl.org/
 
-Signed-off-by: Chung-Chiang Cheng <cccheng@synology.com>
----
- fs/fat/fat.h   |  1 +
- fs/fat/file.c  |  6 ++++++
- fs/fat/inode.c | 15 ++++++++++-----
- fs/fat/misc.c  |  6 +++---
- 4 files changed, 20 insertions(+), 8 deletions(-)
+The whole thread is actually relevant for this .h file as well.  Some
+things never change :)
 
-diff --git a/fs/fat/fat.h b/fs/fat/fat.h
-index 508b4f2a1ffb..e4409ee82ea9 100644
---- a/fs/fat/fat.h
-+++ b/fs/fat/fat.h
-@@ -126,6 +126,7 @@ struct msdos_inode_info {
- 	struct hlist_node i_fat_hash;	/* hash by i_location */
- 	struct hlist_node i_dir_hash;	/* hash by i_logstart */
- 	struct rw_semaphore truncate_lock; /* protect bmap against truncate */
-+	struct timespec64 i_crtime;	/* File creation (birth) time */
- 	struct inode vfs_inode;
- };
- 
-diff --git a/fs/fat/file.c b/fs/fat/file.c
-index 13855ba49cd9..184fa0375152 100644
---- a/fs/fat/file.c
-+++ b/fs/fat/file.c
-@@ -405,6 +405,12 @@ int fat_getattr(struct user_namespace *mnt_userns, const struct path *path,
- 		/* Use i_pos for ino. This is used as fileid of nfs. */
- 		stat->ino = fat_i_pos_read(MSDOS_SB(inode->i_sb), inode);
- 	}
-+
-+	if (request_mask & STATX_BTIME) {
-+		stat->result_mask |= STATX_BTIME;
-+		stat->btime = MSDOS_I(inode)->i_crtime;
-+	}
-+
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(fat_getattr);
-diff --git a/fs/fat/inode.c b/fs/fat/inode.c
-index a6f1c6d426d1..41b85b95ee9d 100644
---- a/fs/fat/inode.c
-+++ b/fs/fat/inode.c
-@@ -566,12 +566,15 @@ int fat_fill_inode(struct inode *inode, struct msdos_dir_entry *de)
- 			   & ~((loff_t)sbi->cluster_size - 1)) >> 9;
- 
- 	fat_time_fat2unix(sbi, &inode->i_mtime, de->time, de->date, 0);
-+	inode->i_ctime = inode->i_mtime;
- 	if (sbi->options.isvfat) {
--		fat_time_fat2unix(sbi, &inode->i_ctime, de->ctime,
--				  de->cdate, de->ctime_cs);
- 		fat_time_fat2unix(sbi, &inode->i_atime, 0, de->adate, 0);
--	} else
--		fat_truncate_time(inode, &inode->i_mtime, S_ATIME|S_CTIME);
-+		fat_time_fat2unix(sbi, &MSDOS_I(inode)->i_crtime, de->ctime,
-+				  de->cdate, de->ctime_cs);
-+	} else {
-+		fat_truncate_atime(sbi, &inode->i_mtime, &inode->i_atime);
-+		fat_truncate_crtime(sbi, &inode->i_mtime, &MSDOS_I(inode)->i_crtime);
-+	}
- 
- 	return 0;
- }
-@@ -756,6 +759,8 @@ static struct inode *fat_alloc_inode(struct super_block *sb)
- 	ei->i_logstart = 0;
- 	ei->i_attrs = 0;
- 	ei->i_pos = 0;
-+	ei->i_crtime.tv_sec = 0;
-+	ei->i_crtime.tv_nsec = 0;
- 
- 	return &ei->vfs_inode;
- }
-@@ -887,7 +892,7 @@ static int __fat_write_inode(struct inode *inode, int wait)
- 			  &raw_entry->date, NULL);
- 	if (sbi->options.isvfat) {
- 		__le16 atime;
--		fat_time_unix2fat(sbi, &inode->i_ctime, &raw_entry->ctime,
-+		fat_time_unix2fat(sbi, &MSDOS_I(inode)->i_crtime, &raw_entry->ctime,
- 				  &raw_entry->cdate, &raw_entry->ctime_cs);
- 		fat_time_unix2fat(sbi, &inode->i_atime, &atime,
- 				  &raw_entry->adate, NULL);
-diff --git a/fs/fat/misc.c b/fs/fat/misc.c
-index c87df64f8b2b..36b6da6461cc 100644
---- a/fs/fat/misc.c
-+++ b/fs/fat/misc.c
-@@ -341,10 +341,10 @@ int fat_truncate_time(struct inode *inode, struct timespec64 *now, int flags)
- 
- 	if (flags & S_ATIME)
- 		fat_truncate_atime(sbi, now, &inode->i_atime);
--	if (flags & S_CTIME)
--		fat_truncate_crtime(sbi, now, &inode->i_ctime);
--	if (flags & S_MTIME)
-+	if (flags & (S_CTIME | S_MTIME)) {
- 		fat_truncate_mtime(sbi, now, &inode->i_mtime);
-+		inode->i_ctime = inode->i_mtime;
-+	}
- 
- 	return 0;
- }
--- 
-2.34.1
+thanks,
 
+greg k-h
