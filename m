@@ -2,131 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A1CE54E1EF6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Mar 2022 03:07:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 127514E1F0F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Mar 2022 03:34:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344141AbiCUCIv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 20 Mar 2022 22:08:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46890 "EHLO
+        id S1344200AbiCUCfs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 20 Mar 2022 22:35:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344138AbiCUCIt (ORCPT
+        with ESMTP id S242162AbiCUCfr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 20 Mar 2022 22:08:49 -0400
-Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A946654F9C
-        for <linux-fsdevel@vger.kernel.org>; Sun, 20 Mar 2022 19:07:24 -0700 (PDT)
-Received: by mail-pg1-x52f.google.com with SMTP id e6so9299623pgn.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 20 Mar 2022 19:07:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=2dJnNJv7tm7UdVVNql3/erHAUxpmpE++s8tQq8p65Yc=;
-        b=mu/10eV1z+dHYGAsdcf9q8Aabh+EEP6gv8Zlf8rKwMJHk9e89FS7GS5uLHgRyQrQW4
-         Ct/aNefRA3L4NHnVFXVksmW8dLFKvbTMZSYFPPDYxCwUmCcBUy8FQqXo4jU9aW4O5LNL
-         G28HpkWyi5RSqomgMMNT5F65J/9pb9x4mvI9Wvk56nFgf0OvB1Xmou9y4oC1KoySzTmP
-         o1EFEcERaW48bE/dogVZvCPvtDIYtQlGmwXIvgcBrAcCa2S4WwnGd2ktgy+Dxb2oLNsb
-         uRmu8RLWe9yXUp7yoSeuMNWDpyCHoI1pgWpwFayu8/g4yEia74hMkvsOmUIm05MsRg2z
-         B6vA==
+        Sun, 20 Mar 2022 22:35:47 -0400
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35E1E1CB38
+        for <linux-fsdevel@vger.kernel.org>; Sun, 20 Mar 2022 19:34:22 -0700 (PDT)
+Received: by mail-il1-f199.google.com with SMTP id f18-20020a926a12000000b002be48b02bc6so6731090ilc.17
+        for <linux-fsdevel@vger.kernel.org>; Sun, 20 Mar 2022 19:34:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=2dJnNJv7tm7UdVVNql3/erHAUxpmpE++s8tQq8p65Yc=;
-        b=3a3WK3u5vYBTmMy/LFG09Np2R3U0Iq6UKQfR6zJQRSIgN0OcQ7JnUPKWFkzCao7zM4
-         fUXfyWI64Un4vCFBCsntZezjn0YaDMjXc1DkhoEbn3+Uz2vnDhAvoQjJQoo4JKIKsfwx
-         WbgbQJmaCjBPcPS6MZJTfoNehd+OA0hdiNJIedslXXjqQa1VRRCwP+uBkcBxiieLF7Lf
-         mbbpO44JhL+lhMeXURz9RPamWC5MocQXXZUaIh+XfcifUjY3Sy9XJhRF58T1HYDLPXbe
-         +RLDnmFLFHV+BwarbJJQBK1OZ/73/gLn+JeB7N5WADBAuKw54yLloZ67eqYOKrBsEyUX
-         ozmg==
-X-Gm-Message-State: AOAM5320Srf3Ksuwrt1Kd4Sy7qARD12SL5Zwp22yFvv0ECsDxp/ungWG
-        AROQyeuNiK25Y2otE9DhZgbPAw==
-X-Google-Smtp-Source: ABdhPJzq6K073T30dDUYD8wJP7MMTAw+cUTD/IS/UWpKHIhyrTvuoP/jdZkYeB94PcZPbbr/gShQEg==
-X-Received: by 2002:a65:6202:0:b0:382:1fbd:5bb3 with SMTP id d2-20020a656202000000b003821fbd5bb3mr13319263pgv.194.1647828443928;
-        Sun, 20 Mar 2022 19:07:23 -0700 (PDT)
-Received: from google.com (201.59.83.34.bc.googleusercontent.com. [34.83.59.201])
-        by smtp.gmail.com with ESMTPSA id b9-20020a056a000cc900b004f7a986fc78sm17867328pfv.11.2022.03.20.19.07.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 20 Mar 2022 19:07:23 -0700 (PDT)
-Date:   Mon, 21 Mar 2022 02:07:19 +0000
-From:   Carlos Llamas <cmllamas@google.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alessio Balsini <balsini@android.com>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        kernel-team <kernel-team@android.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fuse: fix integer type usage in uapi header
-Message-ID: <Yjfd1+k83U+meSbi@google.com>
-References: <20220318171405.2728855-1-cmllamas@google.com>
- <CAJfpegsT6BO5P122wrKbni3qFkyHuq_0Qq4ibr05_SOa7gfvcw@mail.gmail.com>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=QUoEilwGQJjP61Rbh2F5H2HodIumWRf1OPJbJQ3Sj30=;
+        b=DZ67FFRtsqfurl0CBeRQlqNu0c9vpbtBggNArGuvcUq7i5OmRPoupXKan0F4d6msCg
+         8HjzzF7pdN8t4VjxpuQ8BwgT4BwRJCU/z2ZWtPTi8uwjFnVtT4Kd+EWWVxM4p+lp3VoP
+         sH12rkkA4Hm2I/pItyoujeBiOY9Bbz82Rjb3JjgMW1DnxWFTXyiulYt2+/wTZik/AmSq
+         AT7COnCeVFelFFiz+RKspFmZeHcYuaYmFwPsBob24+GToxy0h8ykbQhWENLUa+N1wtJT
+         oXu1bMzTOZgIONjobJaoZVzxycUB+iMMz9hiAO084C3zq1eApaoELKULeeXCnO4fMsja
+         1oaw==
+X-Gm-Message-State: AOAM531ffOnSpSNHHq/SR0uZ6SYFiKK9yQnRjbS1bA2nFgFEFkNeHWNG
+        3vO5wwmLMO24shmBJbbvAX8mgzavvCgv+YkyLswD6ja0vbAg
+X-Google-Smtp-Source: ABdhPJzAK13m+gUK9RaNc20ucH1OYiQqrDun+TrkHcBIsnzAAFBfFE6CgTLlnkUGXF+BZkdkQ2Bly31xNhTpgQ/hQ3vLEbT9M2Ea
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegsT6BO5P122wrKbni3qFkyHuq_0Qq4ibr05_SOa7gfvcw@mail.gmail.com>
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+X-Received: by 2002:a02:5b85:0:b0:319:ff85:ff5 with SMTP id
+ g127-20020a025b85000000b00319ff850ff5mr10161038jab.250.1647830061515; Sun, 20
+ Mar 2022 19:34:21 -0700 (PDT)
+Date:   Sun, 20 Mar 2022 19:34:21 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000778f1005dab1558e@google.com>
+Subject: [syzbot] possible deadlock in pipe_write
+From:   syzbot <syzbot+011e4ea1da6692cf881c@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Mar 18, 2022 at 08:24:55PM +0100, Miklos Szeredi wrote:
-> On Fri, 18 Mar 2022 at 18:14, Carlos Llamas <cmllamas@google.com> wrote:
-> >
-> > Kernel uapi headers are supposed to use __[us]{8,16,32,64} defined by
-> > <linux/types.h> instead of 'uint32_t' and similar. This patch changes
-> > all the definitions in this header to use the correct type. Previous
-> > discussion of this topic can be found here:
-> >
-> >   https://lkml.org/lkml/2019/6/5/18
-> 
-> This is effectively a revert of these two commits:
-> 
-> 4c82456eeb4d ("fuse: fix type definitions in uapi header")
-> 7e98d53086d1 ("Synchronize fuse header with one used in library")
-> 
-> And so we've gone full circle and back to having to modify the header
-> to be usable in the cross platform library...
-> 
-> And also made lots of churn for what reason exactly?
+Hello,
 
-There are currently only two uapi headers making use of C99 types and
-one is <linux/fuse.h>. This approach results in different typedefs being
-selected when compiling for userspace vs the kernel. Plus only __u32 and
-similar types align with the coding style as described in 5(e).
+syzbot found the following issue on:
 
-Yet, there is still the cross platform concern you mention. I think the
-best way to accommodate this while still conforming with the __u32 types
-is to follow something similar to 1a95916f5465 ("drm: Add compatibility
-#ifdefs for *BSD"). Basically doing this:
+HEAD commit:    56e337f2cf13 Revert "gpio: Revert regression in sysfs-gpio..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13f00f7e700000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d35f9bc6884af6c9
+dashboard link: https://syzkaller.appspot.com/bug?extid=011e4ea1da6692cf881c
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=133235c5700000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1248ca89700000
 
-  #if defined(__KERNEL__) || defined(__linux__)
-  #include <linux/types.h>
-  #else
-  #include <stdint.h>
-  typedef uint16_t __u16;
-  typedef int32_t  __s32;
-  typedef uint32_t __u32;
-  typedef int64_t  __s64;
-  typedef uint64_t __u64;
-  #endif
+Bisection is inconclusive: the issue happens on the oldest tested release.
 
-This alternative selects the correct uapi types for both __KERNEL__ and
-__linux__ cases which is the main goal of this patch and it's just minor
-fixes from 7e98d53086d1 ("Synchronize header with one used in library").
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12f235c5700000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=11f235c5700000
+console output: https://syzkaller.appspot.com/x/log.txt?x=16f235c5700000
 
-I see there where previous attempts to address similar changes here:
-  https://lkml.org/lkml/2013/3/11/620
-  https://lkml.org/lkml/2013/4/15/487
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+011e4ea1da6692cf881c@syzkaller.appspotmail.com
 
-So, if you agree with the approach above I'd be happy to send a separate
-patch on top to address the *BSD compatibility.
+============================================
+WARNING: possible recursive locking detected
+5.17.0-rc8-syzkaller-00003-g56e337f2cf13 #0 Not tainted
+--------------------------------------------
+syz-executor190/3593 is trying to acquire lock:
+ffff888078020868 (&pipe->mutex/1){+.+.}-{3:3}, at: __pipe_lock fs/pipe.c:103 [inline]
+ffff888078020868 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_write+0x132/0x1c00 fs/pipe.c:431
 
-Thanks,
-Carlos Llamas
+but task is already holding lock:
+ffff888078020468 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_lock_nested fs/pipe.c:82 [inline]
+ffff888078020468 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_lock fs/pipe.c:90 [inline]
+ffff888078020468 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_wait_readable+0x39b/0x420 fs/pipe.c:1049
+
+other info that might help us debug this:
+ Possible unsafe locking scenario:
+
+       CPU0
+       ----
+  lock(&pipe->mutex/1);
+  lock(&pipe->mutex/1);
+
+ *** DEADLOCK ***
+
+ May be due to missing lock nesting notation
+
+1 lock held by syz-executor190/3593:
+ #0: ffff888078020468 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_lock_nested fs/pipe.c:82 [inline]
+ #0: ffff888078020468 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_lock fs/pipe.c:90 [inline]
+ #0: ffff888078020468 (&pipe->mutex/1){+.+.}-{3:3}, at: pipe_wait_readable+0x39b/0x420 fs/pipe.c:1049
+
+stack backtrace:
+CPU: 1 PID: 3593 Comm: syz-executor190 Not tainted 5.17.0-rc8-syzkaller-00003-g56e337f2cf13 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:106
+ print_deadlock_bug kernel/locking/lockdep.c:2956 [inline]
+ check_deadlock kernel/locking/lockdep.c:2999 [inline]
+ validate_chain kernel/locking/lockdep.c:3788 [inline]
+ __lock_acquire.cold+0x213/0x3a9 kernel/locking/lockdep.c:5027
+ lock_acquire kernel/locking/lockdep.c:5639 [inline]
+ lock_acquire+0x1ab/0x510 kernel/locking/lockdep.c:5604
+ __mutex_lock_common kernel/locking/mutex.c:600 [inline]
+ __mutex_lock+0x12f/0x12f0 kernel/locking/mutex.c:733
+ __pipe_lock fs/pipe.c:103 [inline]
+ pipe_write+0x132/0x1c00 fs/pipe.c:431
+ call_write_iter include/linux/fs.h:2074 [inline]
+ do_iter_readv_writev+0x47a/0x750 fs/read_write.c:725
+ do_iter_write+0x188/0x710 fs/read_write.c:851
+ vfs_iter_write+0x70/0xa0 fs/read_write.c:892
+ iter_file_splice_write+0x723/0xc70 fs/splice.c:689
+ do_splice_from fs/splice.c:767 [inline]
+ do_splice+0xb7e/0x1960 fs/splice.c:1079
+ __do_splice+0x134/0x250 fs/splice.c:1144
+ __do_sys_splice fs/splice.c:1350 [inline]
+ __se_sys_splice fs/splice.c:1332 [inline]
+ __x64_sys_splice+0x198/0x250 fs/splice.c:1332
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x7fb9ac14bca9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 81 14 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fb9ac0fe308 EFLAGS: 00000246 ORIG_RAX: 0000000000000113
+RAX: fffffff
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
