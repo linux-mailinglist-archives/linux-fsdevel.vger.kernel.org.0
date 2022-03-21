@@ -2,112 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A648E4E1F5F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Mar 2022 04:55:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD7E34E1F9F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Mar 2022 05:50:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240804AbiCUD4Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 20 Mar 2022 23:56:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37996 "EHLO
+        id S1344359AbiCUEv7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Mar 2022 00:51:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239028AbiCUD4Y (ORCPT
+        with ESMTP id S233041AbiCUEv5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 20 Mar 2022 23:56:24 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 36EEF13EB5
-        for <linux-fsdevel@vger.kernel.org>; Sun, 20 Mar 2022 20:55:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1647834899;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=MEC5W64mg/dChPmSON3+rx/2O3+zfOyzeqWukrfjHaE=;
-        b=UhK0TEdFoY19+49qHdVGXN0WVXurJPqOOIWy6eahW6Qq4zVZNQr0NcrF7L66/sr+Kxq5Np
-        Kbl5jj1fF4r07XCuuLVb5N4f3OWWlD7HL9XedAWYF05gP0EVIdQ2OIpsZoBo/ohlwsJAkO
-        heUwlfBvHdh6sxDxbS3MjZ6nWOVSzQs=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-657-d0wMJBzJPc23XLU06H5n6Q-1; Sun, 20 Mar 2022 23:54:55 -0400
-X-MC-Unique: d0wMJBzJPc23XLU06H5n6Q-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Mon, 21 Mar 2022 00:51:57 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B58E5714D;
+        Sun, 20 Mar 2022 21:50:33 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 50332802C16;
-        Mon, 21 Mar 2022 03:54:55 +0000 (UTC)
-Received: from localhost (ovpn-12-54.pek2.redhat.com [10.72.12.54])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1B9E02166B2D;
-        Mon, 21 Mar 2022 03:54:53 +0000 (UTC)
-Date:   Mon, 21 Mar 2022 11:54:50 +0800
-From:   'Baoquan He' <bhe@redhat.com>
-To:     David Laight <David.Laight@aculab.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
-        "yangtiezhu@loongson.cn" <yangtiezhu@loongson.cn>,
-        "amit.kachhap@arm.com" <amit.kachhap@arm.com>,
-        "hch@lst.de" <hch@lst.de>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH v4 4/4] fs/proc/vmcore: Use iov_iter_count()
-Message-ID: <Yjf3CivCFMNE/Hbs@MiWiFi-R3L-srv>
-References: <20220318093706.161534-1-bhe@redhat.com>
- <20220318093706.161534-5-bhe@redhat.com>
- <1592a861bd9e46e5adf1431ad6bbd25c@AcuMS.aculab.com>
+        by ams.source.kernel.org (Postfix) with ESMTPS id D3B64B80F02;
+        Mon, 21 Mar 2022 04:50:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DB4DC340E8;
+        Mon, 21 Mar 2022 04:50:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1647838230;
+        bh=wAeBu2wVEWNd56Ntd/skPbNlVoTIPyziMX0Vn/MA9BE=;
+        h=Date:From:To:Cc:Subject:From;
+        b=PO07ElUgyX0HLnjM792j3I+Uw0JgvpqFcopDw0zvhkuC3iEtN6NYedGVXsJmrOJGL
+         GlY+u5zmAtw9ZOFXPU7JcCzFPsg4bo7yjJXHfaSTbbHxp94tjGWx3KSbgDS7UJC69H
+         GGOd+ez+2utQX8K6bSmoqOxjcBDqhzl8ldgmmjCM2/KWfUN3I1WCUQ7n4uI/o7OvzC
+         oloms+pm4cJHKP5fohcQIhjZIEJp+M1lSD0s3wjieppaehu1R+UMdmXsoc9Q2b7OZM
+         UUUn2i+j2+J6toQPzD/HJnCeMsyDelDjJBffo/oQv1SI6TXqgiTh40xtlWqR7eWEGv
+         zl/XViTJPIcHQ==
+Date:   Sun, 20 Mar 2022 21:50:19 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Theodore Ts'o <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [GIT PULL] fscrypt updates for 5.18
+Message-ID: <YjgEC8Nw9PDmdY0O@sol.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1592a861bd9e46e5adf1431ad6bbd25c@AcuMS.aculab.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Spam-Status: No, score=-3.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-8.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi David,
+The following changes since commit dfd42facf1e4ada021b939b4e19c935dcdd55566:
 
-On 03/18/22 at 01:48pm, David Laight wrote:
-> From: Baoquan He
-> > Sent: 18 March 2022 09:37
-> > 
-> > To replace open coded iter->count. This makes code cleaner.
-> ...
-> > diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
-> > index 4cbb8db7c507..ed58a7edc821 100644
-> > --- a/fs/proc/vmcore.c
-> > +++ b/fs/proc/vmcore.c
-> > @@ -319,21 +319,21 @@ static ssize_t __read_vmcore(struct iov_iter *iter, loff_t *fpos)
-> >  	u64 start;
-> >  	struct vmcore *m = NULL;
-> > 
-> > -	if (iter->count == 0 || *fpos >= vmcore_size)
-> > +	if (!iov_iter_count(iter) || *fpos >= vmcore_size)
-> 
-> For some definition of 'cleaner' :-)
-> 
-> iter->count is clearly a simple, cheap structure member lookup.
-> OTOH iov_iter_count(iter) might be an expensive traversal of
-> the vector (or worse).
-> 
-> So a quick read of the code by someone who isn't an expert
-> in the iov functions leaves them wondering what is going on
-> or having to spend time locating the definition ...
+  Linux 5.17-rc3 (2022-02-06 12:20:50 -0800)
 
-Thanks for reviewing and looking into this.
+are available in the Git repository at:
 
-People may have the same feeling as you when looking at codes at the
-first glance. While usually we all use editor to explore codes, so.
+  https://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git tags/fscrypt-for-linus
 
-Basically, I noticed putting open code into wrapper is a tendency, see a
-lot of patches to clean up open code in sub component. About the extra
-cost of wrapper, I believe it does have. It should be one of reasons
-in some places open code is necessary. However, in fs/proc/vmcore, I
-don't have the worry since it's very tiny and can be ignorable.
+for you to fetch changes up to cdaa1b1941f667814300799ddb74f3079517cd5a:
 
-Thanks
-Baoquan
+  fscrypt: update documentation for direct I/O support (2022-02-08 11:02:18 -0800)
 
+----------------------------------------------------------------
+
+Add support for direct I/O on encrypted files when blk-crypto (inline
+encryption) is being used for file contents encryption.
+
+There will be a merge conflict with the block pull request in
+fs/iomap/direct-io.c, due to some bio interface cleanups.  The merge
+resolution is straightforward and can be found in linux-next.
+
+----------------------------------------------------------------
+Eric Biggers (5):
+      fscrypt: add functions for direct I/O support
+      iomap: support direct I/O with fscrypt using blk-crypto
+      ext4: support direct I/O with fscrypt using blk-crypto
+      f2fs: support direct I/O with fscrypt using blk-crypto
+      fscrypt: update documentation for direct I/O support
+
+ Documentation/filesystems/fscrypt.rst | 25 +++++++++-
+ fs/crypto/crypto.c                    |  8 +++
+ fs/crypto/inline_crypt.c              | 93 +++++++++++++++++++++++++++++++++++
+ fs/ext4/file.c                        | 10 ++--
+ fs/ext4/inode.c                       |  7 +++
+ fs/f2fs/data.c                        |  7 +++
+ fs/f2fs/f2fs.h                        |  6 ++-
+ fs/iomap/direct-io.c                  |  6 +++
+ include/linux/fscrypt.h               | 18 +++++++
+ 9 files changed, 173 insertions(+), 7 deletions(-)
