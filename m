@@ -2,44 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E2BC4E408F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Mar 2022 15:16:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0719A4E40A6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Mar 2022 15:16:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237184AbiCVOQP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Mar 2022 10:16:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56434 "EHLO
+        id S237414AbiCVOQf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Mar 2022 10:16:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56526 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237164AbiCVOQI (ORCPT
+        with ESMTP id S237191AbiCVOQJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Mar 2022 10:16:08 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F172389302;
-        Tue, 22 Mar 2022 07:14:01 -0700 (PDT)
+        Tue, 22 Mar 2022 10:16:09 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C93E88B3A;
+        Tue, 22 Mar 2022 07:14:00 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 4C7E8B81D08;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 67895615F4;
         Tue, 22 Mar 2022 14:14:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EF5EC36AE5;
-        Tue, 22 Mar 2022 14:13:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2ADADC36AE3;
+        Tue, 22 Mar 2022 14:13:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647958438;
-        bh=fIQCTp9Y7kfKaBrUj+OULhWKUXCgvBtogiNxMmypJws=;
+        s=k20201202; t=1647958439;
+        bh=thdTSvnL9t+JNdyQt+BDJ6gQRdqq5+/Toh6CWdLwPrU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z8b3GxtRc+f0w14hNQIndEdzTWQr8sRPgEBnpilcVyborBSQaEiS+2lfZHn7wnYVE
-         9/bV9NONU1+AFuak6jcuuRK4fAZ5u8YIhbm4svks5f0Mg6jK60UggUs0zd52W7Xudf
-         fG9KVC9N0SmJOtpGPxg2US4l870QJTH0Pdy2lt4P4mRMNPuVL/ZTzpZFjTNwgOm4Vz
-         UDBb1kOk8Nz9dnNqFSsBILPAepfakUK1Nwxv0tPl4Vp9HjC0W7itvxyjghTP0mL9y/
-         LQODQudqtI8Y5zXsHQJ8OJOIX+/N1HOp3wqC6zC/VfiV9jJEgzKLwJOnscPu22wK/C
-         N1Eu/bCIDhmcQ==
+        b=D4iqNxzxUA+Lxuc/Hl4RTlfJcY6o0f+36/FrNLqyaG22yGIgoQkbnKqBqZTMZml/k
+         Py0vOYrPpF+7p4oQUkKvhBJgEcLuSi4jmsL3T9WxYF2nr3zkdr+FmluPPgp42DAjPq
+         +udqC0ljqpKX6EFsEF2ZvPA5k7HIs/zyGBuGXTVo7ybjAFytw1z3Fn2B1k9VhTd+2m
+         3wJCL69wZovOvQf9mB7mIUaiM+W2kHLVM043rqaO+BRmuzoaVXEep+0Eb3JXEWxzSg
+         fo8HXAkCon/jUMVIemnZQvXrWjQD553gq5Zcr8O1KgabfTOZKszXlb3X3XiwZdVNYR
+         23mzorelD5TYg==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     idryomov@gmail.com, xiubli@redhat.com
 Cc:     ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-fscrypt@vger.kernel.org, linux-kernel@vger.kernel.org,
         lhenriques@suse.de
-Subject: [RFC PATCH v11 42/51] ceph: disable fallocate for encrypted inodes
-Date:   Tue, 22 Mar 2022 10:13:07 -0400
-Message-Id: <20220322141316.41325-43-jlayton@kernel.org>
+Subject: [RFC PATCH v11 43/51] ceph: disable copy offload on encrypted inodes
+Date:   Tue, 22 Mar 2022 10:13:08 -0400
+Message-Id: <20220322141316.41325-44-jlayton@kernel.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220322141316.41325-1-jlayton@kernel.org>
 References: <20220322141316.41325-1-jlayton@kernel.org>
@@ -55,27 +55,30 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-...hopefully, just for now.
+If we have an encrypted inode, then the client will need to re-encrypt
+the contents of the new object. Disable copy offload to or from
+encrypted inodes.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ceph/file.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/ceph/file.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index 1985e3102533..00e6a5bc37c8 100644
+index 00e6a5bc37c8..ba17288b1db3 100644
 --- a/fs/ceph/file.c
 +++ b/fs/ceph/file.c
-@@ -2203,6 +2203,9 @@ static long ceph_fallocate(struct file *file, int mode,
- 	if (!S_ISREG(inode->i_mode))
+@@ -2522,6 +2522,10 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
  		return -EOPNOTSUPP;
+ 	}
  
-+	if (IS_ENCRYPTED(inode))
++	/* Every encrypted inode gets its own key, so we can't offload them */
++	if (IS_ENCRYPTED(src_inode) || IS_ENCRYPTED(dst_inode))
 +		return -EOPNOTSUPP;
 +
- 	prealloc_cf = ceph_alloc_cap_flush();
- 	if (!prealloc_cf)
- 		return -ENOMEM;
+ 	if (len < src_ci->i_layout.object_size)
+ 		return -EOPNOTSUPP; /* no remote copy will be done */
+ 
 -- 
 2.35.1
 
