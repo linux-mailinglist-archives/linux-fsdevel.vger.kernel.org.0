@@ -2,107 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 028E54E35B7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Mar 2022 01:52:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A0834E3689
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Mar 2022 03:21:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234418AbiCVAwd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Mar 2022 20:52:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41256 "EHLO
+        id S235326AbiCVCP6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Mar 2022 22:15:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234389AbiCVAwc (ORCPT
+        with ESMTP id S235318AbiCVCP4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Mar 2022 20:52:32 -0400
-Received: from mail-qv1-xf34.google.com (mail-qv1-xf34.google.com [IPv6:2607:f8b0:4864:20::f34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6C8D275C2;
-        Mon, 21 Mar 2022 17:51:04 -0700 (PDT)
-Received: by mail-qv1-xf34.google.com with SMTP id kk12so1284543qvb.13;
-        Mon, 21 Mar 2022 17:51:04 -0700 (PDT)
+        Mon, 21 Mar 2022 22:15:56 -0400
+Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8060A2C65C
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Mar 2022 19:13:12 -0700 (PDT)
+Received: by mail-pj1-x102f.google.com with SMTP id l4-20020a17090a49c400b001c6840df4a3so939212pjm.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Mar 2022 19:13:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:subject:message-id:mime-version:content-disposition;
-        bh=2yh3eeY6mtNkWo8Z5mBcuKeO1GX7Ddd7cVaBFvCLdqY=;
-        b=T1AELz7TXpicUIyDb5QZbA+4pQnpQWobSFXoQ2oGtPnx/PNHES0PpfTNln/mzS9+cE
-         jZ32TaAssTlfIkmAYzpUS2/jXB3TsJlCXZB1Nn943LxRVYI9IG6M0sPcfPF0ySlPHzm3
-         gAnLQivzAkgi2YQvhKmi21SFYRDWq4/E3QygKLTWi7z5pKtOeTKsB+mDfzq2pAe2iwQ4
-         GAPdKN9JsQanuFxmSkYEihQQBNqxCkRDFH2LqxAYLAJlVBVVCALCgVT+/CccZ4vqUrtl
-         /ECmO3eKRwmLBLxT//6YO9dbGwEvGxj8sQ8q5nr38Z5+AIt2WKquf7KM2F5Gkcb3sPSp
-         g9UA==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language
+         :from:to:cc:references:in-reply-to:content-transfer-encoding;
+        bh=/P5OxnbhR7ZamFX8YYhdx2mwWRK3X+/iFJvuu8S48vM=;
+        b=NGSKX/X2mKuUyToosxIS5+0WGOeH6xO2NjvXT2cYuoflZZ/P/WiIXlGIQtN02Upp17
+         A7DBJ8v/QjGQJul0eXdlJaG4ctmIcMT55c5YupMT198Na/PeRVZIvL45M1qECr6TP3Xo
+         XL4XgFL+Doswxa6cUUhkLEZ9XeSbLVyFkUQXRf/SM2vEU97jDFug9Sa+UmfPMnotF5NC
+         pUgjQQ5JqWncjm1j6jlWZwjuo6mBD0XMvS0NQUyIsYqt1GuQLFnLAG3ElL/jieTwbkcc
+         BR4SunEIes66nKmKDLC3LqmJ2RMpAqIcjrAdFqirgf2g+KTXkT/E2tkDYkQ+/Iv27/I4
+         PUyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
-         :content-disposition;
-        bh=2yh3eeY6mtNkWo8Z5mBcuKeO1GX7Ddd7cVaBFvCLdqY=;
-        b=mctVM0bnCuOm6SMMLCq/ek1UJPg+ULv7uxUdNXdpZLUbI91aWLPXBSKeCKJUptiydk
-         gHxGFh1cT6UQXEV2AdtRwkcZakDyHyosGacVVcvE1mlDXVgN72zSqDFmCMIwUq09yTlJ
-         w787lvql0cV39rq0pq0I/7SL2AKv5KzjO+SzrhQT3IbshLZBeErT5AvHvP/jT9tHpY3g
-         eNiQIsndmodhmJtcTypekn3zBInA8DZZqhRI4YvAx2KFN4tWggaArfMzld+q8zDT11aO
-         lxH7BF7RGzIv7RtavdNZtjg5bp1BsHsZX1jBhG3+/mrHmqK+JEkYcKe8k8e9Di6KArsO
-         S+rw==
-X-Gm-Message-State: AOAM5314C2F2o1wXIiY5Vea7J5tza1wfrjJ1MZ22m456wJ/n3LZVyrQv
-        lNwiFvNbcNqCjZt7grvkYs3EJEq9w8e5
-X-Google-Smtp-Source: ABdhPJyi1+KUHGTwPd9f7MTj0Iy15QPqAMe7NH2nWXXVcPZ2VNiKCcWGMKm6ugMmcUrXiUKHlCQw+g==
-X-Received: by 2002:a05:6214:19e3:b0:440:da81:34e9 with SMTP id q3-20020a05621419e300b00440da8134e9mr18153251qvc.31.1647910263462;
-        Mon, 21 Mar 2022 17:51:03 -0700 (PDT)
-Received: from moria.home.lan (c-73-219-103-14.hsd1.vt.comcast.net. [73.219.103.14])
-        by smtp.gmail.com with ESMTPSA id z8-20020ac87f88000000b002e1cecad0e4sm12658207qtj.33.2022.03.21.17.51.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Mar 2022 17:51:02 -0700 (PDT)
-Date:   Mon, 21 Mar 2022 20:51:01 -0400
-From:   Kent Overstreet <kent.overstreet@gmail.com>
-To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, lsf-pc@lists.linux-foundation.org
-Subject: [LSF/MM TOPIC] Improving OOM debugging
-Message-ID: <20220322005101.actefn6nttzeo2qr@moria.home.lan>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:from:to:cc:references:in-reply-to
+         :content-transfer-encoding;
+        bh=/P5OxnbhR7ZamFX8YYhdx2mwWRK3X+/iFJvuu8S48vM=;
+        b=6H2tIR2F8AbdZus+jTKmdo+WSZRi7rjR21w2hVH4SFC6Vtvp2GauQ8XvQ/y7M3nbNO
+         RdNauNj9fWcujR7fn7VgoWUzupstAOzHc/MM/d4vf0FcFvrcIjz/DfFoWJlc7+oEhHCu
+         Kug2M1Fdv5ADbwdJ37B3m3amEDfMtTRnP7EFGpUIX+aMOGwvlBoP50ROYGfTLaDSeDjZ
+         52qyhYZplyy2nXSPWu9IoJoZqGLfhc8Tvv5x8V1POg7jeGgQQmOhAjiTpDzme/dTrX2+
+         MGTRZbVB/kWIQBQHRZezYcTYXSPUlZZvcFqco7tWZfPQhmd8fA3/xHtYBLs+mAOYHbpk
+         ZrZw==
+X-Gm-Message-State: AOAM5318yxClsHhDfUCLd/YhbXfKnqVp/9l/xMnxhnEmiAF8GcJmIoqL
+        Msm8pTX3YG6BP2yobFihMT8Nww==
+X-Google-Smtp-Source: ABdhPJzplrucW/7UezO/Un55ans41N13Nr5a+oBs0xCS/lvmLB3S9aGEDvHKbAi1A5AC/7B0uXAkow==
+X-Received: by 2002:a17:902:b590:b0:153:a243:3331 with SMTP id a16-20020a170902b59000b00153a2433331mr16410436pls.129.1647915191809;
+        Mon, 21 Mar 2022 19:13:11 -0700 (PDT)
+Received: from [192.168.1.100] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id k185-20020a6384c2000000b003821dcd9020sm11321713pgd.27.2022.03.21.19.13.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Mar 2022 19:13:11 -0700 (PDT)
+Message-ID: <d28979ca-2433-01b0-a764-1288e5909421@kernel.dk>
+Date:   Mon, 21 Mar 2022 20:13:10 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH 1/2] fs: remove kiocb.ki_hint
+Content-Language: en-US
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20220308060529.736277-1-hch@lst.de>
+ <20220308060529.736277-2-hch@lst.de>
+ <164678732353.405180.15951772868993926898.b4-ty@kernel.dk>
+In-Reply-To: <164678732353.405180.15951772868993926898.b4-ty@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Frustration when debugging OOMs, memory usage, and memory reclaim behaviour is a
-topic I think a lot of us can relate to.
+On 3/8/22 5:55 PM, Jens Axboe wrote:
+> On Tue, 8 Mar 2022 07:05:28 +0100, Christoph Hellwig wrote:
+>> This field is entirely unused now except for a tracepoint in f2fs, so
+>> remove it.
+>>
+>>
+> 
+> Applied, thanks!
+> 
+> [1/2] fs: remove kiocb.ki_hint
+>       commit: 41d36a9f3e5336f5b48c3adba0777b8e217020d7
+> [2/2] fs: remove fs.f_write_hint
+>       commit: 7b12e49669c99f63bc12351c57e581f1f14d4adf
 
-I think it might be worth having a talk to collectively air our frustrations and
-collect ideas for improvements.
+Upon thinking about the EINVAL solution a bit more, I do have a one
+worry - if you're currently using write_hints in your application,
+nobody should expect upgrading the kernel to break it. It's a fine
+solution for anything else, but that particular point does annoy me.
 
-To start with: on memory allocation failure or OOM, we currently don't have a
-lot to go on. We get information about the allocation that failed, and only very
-coarse grained information about how memory is being tied up - page granural
-informatian aka show_mem() is nigh useless in most situations, and slab granural
-information is only slightly better.
+So perhaps it is better after all to simply pretend we set the
+hint just fine? That should always be safe.
 
-I have a couple ideas I want to float:
- - An old idea I've had and mentioned to some people before is to steal dynamic
-   debug's trick of statically allocating tracking structs in a special elf
-   section, and use it to wrap kmalloc(), alloc_pages() etc. calls for memory
-   allocation tracking _per call site_, and then available in debugs broken out
-   by file and line number.
+What do you think?
 
-   This would be cheap enough that it could be always on in production, unlike
-   doing the same sort of thing with tracepoints. The cost would be another
-   pointer of overhead for each allocation - for page allocations we've got
-   CONFIG_PAGE_OWNER that does something like this (in a much more expensive
-   fashion), and the pointer it uses could be repurposed. For slub/slab I think
-   something analogous exists, but last I looked it'd probably need help from
-   those developers (in both cases, really; mm code is hairy).
+-- 
+Jens Axboe
 
- - In bcachefs, I've been evolving a 'printbuf' thingy - heap allocated strings
-   that you can pass around and append to. They make it really convenient to
-   write pretty-printers for lots of things and pass them around, which in turn
-   has made my life considerably easier in the debugging realm.
-
-   I think that could be useful here: On a typical system shrinkers own a
-   signifcant fraction of non-pagecache kernel memory, and shrinkers have
-   internal state that's particular to each shrinker that's relevant to how much
-   memory is currently freeable (dirtyness, locking issues).
-
-   Imagine if shrinkers all had .to_text() methods, and then on memory
-   allocation failure we could call those and print them for top-10 shrinkers by
-   memory owned - in addition to sticking it in sysfs or debugfs.
