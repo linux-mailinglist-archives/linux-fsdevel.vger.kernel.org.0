@@ -2,172 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 44AD24E358B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Mar 2022 01:37:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 028E54E35B7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Mar 2022 01:52:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234286AbiCVAaT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Mar 2022 20:30:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43828 "EHLO
+        id S234418AbiCVAwd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Mar 2022 20:52:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234272AbiCVAaS (ORCPT
+        with ESMTP id S234389AbiCVAwc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Mar 2022 20:30:18 -0400
-Received: from smtp-fw-9102.amazon.com (smtp-fw-9102.amazon.com [207.171.184.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB18F361A85;
-        Mon, 21 Mar 2022 17:28:51 -0700 (PDT)
+        Mon, 21 Mar 2022 20:52:32 -0400
+Received: from mail-qv1-xf34.google.com (mail-qv1-xf34.google.com [IPv6:2607:f8b0:4864:20::f34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6C8D275C2;
+        Mon, 21 Mar 2022 17:51:04 -0700 (PDT)
+Received: by mail-qv1-xf34.google.com with SMTP id kk12so1284543qvb.13;
+        Mon, 21 Mar 2022 17:51:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.co.jp; i=@amazon.co.jp; q=dns/txt;
-  s=amazon201209; t=1647908932; x=1679444932;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=z1/Lf01ROKGSKNl7HGZbZ1PwqeyhtCw4pQnh4qOJV1o=;
-  b=goHa8vW8O/L5Ngmo0JEZmZkEjF7NNaHxHL+zQGDRcjpg0GURk3EoaWlQ
-   BOvLbENejDU+xO8G7q/6BVVybe027bD3jsHKwFL7DvDgHLBKHF7dK8h7x
-   97bTnE0pLNttRR0R/xrrffvaTlq/6+Mb23TXgWkBjdbdvGahicXmX2W1/
-   s=;
-X-IronPort-AV: E=Sophos;i="5.90,200,1643673600"; 
-   d="scan'208";a="204241028"
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO email-inbound-relay-iad-1a-2d7489a4.us-east-1.amazon.com) ([10.25.36.214])
-  by smtp-border-fw-9102.sea19.amazon.com with ESMTP; 22 Mar 2022 00:28:50 +0000
-Received: from EX13MTAUWB001.ant.amazon.com (iad12-ws-svc-p26-lb9-vlan2.iad.amazon.com [10.40.163.34])
-        by email-inbound-relay-iad-1a-2d7489a4.us-east-1.amazon.com (Postfix) with ESMTPS id D0E9497D1A;
-        Tue, 22 Mar 2022 00:28:47 +0000 (UTC)
-Received: from EX13D04ANC001.ant.amazon.com (10.43.157.89) by
- EX13MTAUWB001.ant.amazon.com (10.43.161.207) with Microsoft SMTP Server (TLS)
- id 15.0.1497.32; Tue, 22 Mar 2022 00:28:46 +0000
-Received: from 88665a182662.ant.amazon.com (10.43.160.180) by
- EX13D04ANC001.ant.amazon.com (10.43.157.89) with Microsoft SMTP Server (TLS)
- id 15.0.1497.32; Tue, 22 Mar 2022 00:28:42 +0000
-From:   Kuniyuki Iwashima <kuniyu@amazon.co.jp>
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>
-CC:     Kuniyuki Iwashima <kuniyu@amazon.co.jp>,
-        Kuniyuki Iwashima <kuni1840@gmail.com>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <syzbot+bdd6e38a1ed5ee58d8bd@syzkaller.appspotmail.com>,
-        "Soheil Hassas Yeganeh" <soheil@google.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        "Sridhar Samudrala" <sridhar.samudrala@intel.com>,
-        Alexander Duyck <alexander.h.duyck@intel.com>
-Subject: [PATCH 2/2] list: Fix a data-race around ep->rdllist.
-Date:   Tue, 22 Mar 2022 09:26:53 +0900
-Message-ID: <20220322002653.33865-3-kuniyu@amazon.co.jp>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20220322002653.33865-1-kuniyu@amazon.co.jp>
-References: <20220322002653.33865-1-kuniyu@amazon.co.jp>
+        d=gmail.com; s=20210112;
+        h=date:from:to:subject:message-id:mime-version:content-disposition;
+        bh=2yh3eeY6mtNkWo8Z5mBcuKeO1GX7Ddd7cVaBFvCLdqY=;
+        b=T1AELz7TXpicUIyDb5QZbA+4pQnpQWobSFXoQ2oGtPnx/PNHES0PpfTNln/mzS9+cE
+         jZ32TaAssTlfIkmAYzpUS2/jXB3TsJlCXZB1Nn943LxRVYI9IG6M0sPcfPF0ySlPHzm3
+         gAnLQivzAkgi2YQvhKmi21SFYRDWq4/E3QygKLTWi7z5pKtOeTKsB+mDfzq2pAe2iwQ4
+         GAPdKN9JsQanuFxmSkYEihQQBNqxCkRDFH2LqxAYLAJlVBVVCALCgVT+/CccZ4vqUrtl
+         /ECmO3eKRwmLBLxT//6YO9dbGwEvGxj8sQ8q5nr38Z5+AIt2WKquf7KM2F5Gkcb3sPSp
+         g9UA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
+         :content-disposition;
+        bh=2yh3eeY6mtNkWo8Z5mBcuKeO1GX7Ddd7cVaBFvCLdqY=;
+        b=mctVM0bnCuOm6SMMLCq/ek1UJPg+ULv7uxUdNXdpZLUbI91aWLPXBSKeCKJUptiydk
+         gHxGFh1cT6UQXEV2AdtRwkcZakDyHyosGacVVcvE1mlDXVgN72zSqDFmCMIwUq09yTlJ
+         w787lvql0cV39rq0pq0I/7SL2AKv5KzjO+SzrhQT3IbshLZBeErT5AvHvP/jT9tHpY3g
+         eNiQIsndmodhmJtcTypekn3zBInA8DZZqhRI4YvAx2KFN4tWggaArfMzld+q8zDT11aO
+         lxH7BF7RGzIv7RtavdNZtjg5bp1BsHsZX1jBhG3+/mrHmqK+JEkYcKe8k8e9Di6KArsO
+         S+rw==
+X-Gm-Message-State: AOAM5314C2F2o1wXIiY5Vea7J5tza1wfrjJ1MZ22m456wJ/n3LZVyrQv
+        lNwiFvNbcNqCjZt7grvkYs3EJEq9w8e5
+X-Google-Smtp-Source: ABdhPJyi1+KUHGTwPd9f7MTj0Iy15QPqAMe7NH2nWXXVcPZ2VNiKCcWGMKm6ugMmcUrXiUKHlCQw+g==
+X-Received: by 2002:a05:6214:19e3:b0:440:da81:34e9 with SMTP id q3-20020a05621419e300b00440da8134e9mr18153251qvc.31.1647910263462;
+        Mon, 21 Mar 2022 17:51:03 -0700 (PDT)
+Received: from moria.home.lan (c-73-219-103-14.hsd1.vt.comcast.net. [73.219.103.14])
+        by smtp.gmail.com with ESMTPSA id z8-20020ac87f88000000b002e1cecad0e4sm12658207qtj.33.2022.03.21.17.51.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Mar 2022 17:51:02 -0700 (PDT)
+Date:   Mon, 21 Mar 2022 20:51:01 -0400
+From:   Kent Overstreet <kent.overstreet@gmail.com>
+To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, lsf-pc@lists.linux-foundation.org
+Subject: [LSF/MM TOPIC] Improving OOM debugging
+Message-ID: <20220322005101.actefn6nttzeo2qr@moria.home.lan>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.43.160.180]
-X-ClientProxiedBy: EX13D45UWA004.ant.amazon.com (10.43.160.151) To
- EX13D04ANC001.ant.amazon.com (10.43.157.89)
-X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-ep_poll() first calls ep_events_available() with no lock held and
-checks if ep->rdllist is empty by list_empty_careful(), which reads
-rdllist->prev.  Thus all accesses to it need some protection to avoid
-store/load-tearing.
+Frustration when debugging OOMs, memory usage, and memory reclaim behaviour is a
+topic I think a lot of us can relate to.
 
-Note INIT_LIST_HEAD_RCU() already has the annotation for both prev
-and next.
+I think it might be worth having a talk to collectively air our frustrations and
+collect ideas for improvements.
 
-Commit bf3b9f6372c4 ("epoll: Add busy poll support to epoll with
-socket fds.") added the first lockless ep_events_available(), and
-commit c5a282e9635e ("fs/epoll: reduce the scope of wq lock in
-epoll_wait()") made some ep_events_available() calls lockless and
-added single call under a lock, finally commit e59d3c64cba6 ("epoll:
-eliminate unnecessary lock for zero timeout") made the last
-ep_events_available() lockless.
+To start with: on memory allocation failure or OOM, we currently don't have a
+lot to go on. We get information about the allocation that failed, and only very
+coarse grained information about how memory is being tied up - page granural
+informatian aka show_mem() is nigh useless in most situations, and slab granural
+information is only slightly better.
 
-BUG: KCSAN: data-race in do_epoll_wait / do_epoll_wait
+I have a couple ideas I want to float:
+ - An old idea I've had and mentioned to some people before is to steal dynamic
+   debug's trick of statically allocating tracking structs in a special elf
+   section, and use it to wrap kmalloc(), alloc_pages() etc. calls for memory
+   allocation tracking _per call site_, and then available in debugs broken out
+   by file and line number.
 
-write to 0xffff88810480c7d8 of 8 bytes by task 1802 on cpu 0:
- INIT_LIST_HEAD include/linux/list.h:38 [inline]
- list_splice_init include/linux/list.h:492 [inline]
- ep_start_scan fs/eventpoll.c:622 [inline]
- ep_send_events fs/eventpoll.c:1656 [inline]
- ep_poll fs/eventpoll.c:1806 [inline]
- do_epoll_wait+0x4eb/0xf40 fs/eventpoll.c:2234
- do_epoll_pwait fs/eventpoll.c:2268 [inline]
- __do_sys_epoll_pwait fs/eventpoll.c:2281 [inline]
- __se_sys_epoll_pwait+0x12b/0x240 fs/eventpoll.c:2275
- __x64_sys_epoll_pwait+0x74/0x80 fs/eventpoll.c:2275
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x44/0xd0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x44/0xae
+   This would be cheap enough that it could be always on in production, unlike
+   doing the same sort of thing with tracepoints. The cost would be another
+   pointer of overhead for each allocation - for page allocations we've got
+   CONFIG_PAGE_OWNER that does something like this (in a much more expensive
+   fashion), and the pointer it uses could be repurposed. For slub/slab I think
+   something analogous exists, but last I looked it'd probably need help from
+   those developers (in both cases, really; mm code is hairy).
 
-read to 0xffff88810480c7d8 of 8 bytes by task 1799 on cpu 1:
- list_empty_careful include/linux/list.h:329 [inline]
- ep_events_available fs/eventpoll.c:381 [inline]
- ep_poll fs/eventpoll.c:1797 [inline]
- do_epoll_wait+0x279/0xf40 fs/eventpoll.c:2234
- do_epoll_pwait fs/eventpoll.c:2268 [inline]
- __do_sys_epoll_pwait fs/eventpoll.c:2281 [inline]
- __se_sys_epoll_pwait+0x12b/0x240 fs/eventpoll.c:2275
- __x64_sys_epoll_pwait+0x74/0x80 fs/eventpoll.c:2275
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x44/0xd0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x44/0xae
+ - In bcachefs, I've been evolving a 'printbuf' thingy - heap allocated strings
+   that you can pass around and append to. They make it really convenient to
+   write pretty-printers for lots of things and pass them around, which in turn
+   has made my life considerably easier in the debugging realm.
 
-value changed: 0xffff88810480c7d0 -> 0xffff888103c15098
+   I think that could be useful here: On a typical system shrinkers own a
+   signifcant fraction of non-pagecache kernel memory, and shrinkers have
+   internal state that's particular to each shrinker that's relevant to how much
+   memory is currently freeable (dirtyness, locking issues).
 
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 1 PID: 1799 Comm: syz-fuzzer Tainted: G        W         5.17.0-rc7-syzkaller-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-
-Fixes: e59d3c64cba6 ("epoll: eliminate unnecessary lock for zero timeout")
-Fixes: c5a282e9635e ("fs/epoll: reduce the scope of wq lock in epoll_wait()")
-Fixes: bf3b9f6372c4 ("epoll: Add busy poll support to epoll with socket fds.")
-Reported-by: syzbot+bdd6e38a1ed5ee58d8bd@syzkaller.appspotmail.com
-Signed-off-by: Kuniyuki Iwashima <kuniyu@amazon.co.jp>
----
-CC: Soheil Hassas Yeganeh <soheil@google.com>
-CC: Davidlohr Bueso <dave@stgolabs.net>
-CC: Sridhar Samudrala <sridhar.samudrala@intel.com>
-CC: Alexander Duyck <alexander.h.duyck@intel.com>
----
- include/linux/list.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/include/linux/list.h b/include/linux/list.h
-index dd6c2041d..d7d2bfa1a 100644
---- a/include/linux/list.h
-+++ b/include/linux/list.h
-@@ -35,7 +35,7 @@
- static inline void INIT_LIST_HEAD(struct list_head *list)
- {
- 	WRITE_ONCE(list->next, list);
--	list->prev = list;
-+	WRITE_ONCE(list->prev, list);
- }
- 
- #ifdef CONFIG_DEBUG_LIST
-@@ -306,7 +306,7 @@ static inline int list_empty(const struct list_head *head)
- static inline void list_del_init_careful(struct list_head *entry)
- {
- 	__list_del_entry(entry);
--	entry->prev = entry;
-+	WRITE_ONCE(entry->prev, entry);
- 	smp_store_release(&entry->next, entry);
- }
- 
-@@ -326,7 +326,7 @@ static inline void list_del_init_careful(struct list_head *entry)
- static inline int list_empty_careful(const struct list_head *head)
- {
- 	struct list_head *next = smp_load_acquire(&head->next);
--	return list_is_head(next, head) && (next == head->prev);
-+	return list_is_head(next, head) && (next == READ_ONCE(head->prev));
- }
- 
- /**
--- 
-2.30.2
-
+   Imagine if shrinkers all had .to_text() methods, and then on memory
+   allocation failure we could call those and print them for top-10 shrinkers by
+   memory owned - in addition to sticking it in sysfs or debugfs.
