@@ -2,138 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 826A94E3B5A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Mar 2022 10:01:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 58CD14E3C5D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Mar 2022 11:22:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232106AbiCVJDQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Mar 2022 05:03:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49204 "EHLO
+        id S232906AbiCVKXL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Mar 2022 06:23:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230511AbiCVJDP (ORCPT
+        with ESMTP id S232909AbiCVKXK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Mar 2022 05:03:15 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FCE1BE0F;
-        Tue, 22 Mar 2022 02:01:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=LtO7Gpa8ASYKqY1/CwdSfVaPTW3C+ci3qYUk5dRycGQ=; b=yAiokzCaLy/awcMQcpRXrqiDEr
-        rqCdbpdl2Es5oSNKzpIVb/wnI1luKtmRXGg9ffOjP4DFsCyTiGlOv2Q1YoX6jPRYUey9D1UMxJS1i
-        noIpsbSasVzmopVGv21VsYoBKqixj7eKTXKwF3LeRFoAJTaCT22a2hDXONsP4FOOR9rpeR8kFf3ZM
-        FMwMiYzXBuxQ0Ig/zd2nBVLZz3mCjJVOV/Fo8I1Sq68vaMqRdjUsA33xa/DYUUf+WatbKTpg6ylvl
-        94x+Xdb16f+LFzi6AJg5khLgub2Sz4MrrlMaY3eYm8BO4hIc7WbhNy1WFH95HL5kYwwJqyyoC0AB0
-        Ka2e8mdw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nWaOa-00AVwe-GZ; Tue, 22 Mar 2022 09:01:40 +0000
-Date:   Tue, 22 Mar 2022 02:01:40 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Jane Chu <jane.chu@oracle.com>
-Cc:     david@fromorbit.com, djwong@kernel.org, dan.j.williams@intel.com,
-        hch@infradead.org, vishal.l.verma@intel.com, dave.jiang@intel.com,
-        agk@redhat.com, snitzer@redhat.com, dm-devel@redhat.com,
-        ira.weiny@intel.com, willy@infradead.org, vgoyal@redhat.com,
-        linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v6 4/6] dax: add DAX_RECOVERY flag and .recovery_write
- dev_pgmap_ops
-Message-ID: <YjmQdJdOWUr2IYIP@infradead.org>
-References: <20220319062833.3136528-1-jane.chu@oracle.com>
- <20220319062833.3136528-5-jane.chu@oracle.com>
+        Tue, 22 Mar 2022 06:23:10 -0400
+Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 539C47EB3B
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Mar 2022 03:21:43 -0700 (PDT)
+Received: by mail-wm1-x330.google.com with SMTP id v130-20020a1cac88000000b00389d0a5c511so1351115wme.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Mar 2022 03:21:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:mime-version:content-transfer-encoding
+         :content-description:subject:to:from:date:reply-to;
+        bh=Pm04dP0+P83KVn44y+vrJDsQ3iwP6pKc5n+Js9E3oKk=;
+        b=JjnIVmBbZ0iWaCEDIrbuJrwSZY+Ns9Kk9e9xXurXu0BazfvTjq5zDF3p+tmpVKiPaX
+         gK2ypGEdLUsiAAzKPkvxBzqeZStdtEpp8YiQr4ZZwfa2Gxsf7NxLogMSaKxr2xOf4RYT
+         u14rm3uFmxGOolrlS8EeC4HRvNwQ+mruJhXqvNrTV2rCA8qCQt3AiPAU59kwjE/8gOtl
+         Wx+MxqCUPZmYhuFU8bTAEz1zvcou3XEtCkma10gLAuuP+I+DvfJLgCvQtHWQWutawtUn
+         kSRb18uwQnUJPjpNCthG0JUSDwa5dRFWOgfp+czLvU5X2TJuq9ROjiT4/c8WgHCmBa3P
+         wa5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:mime-version
+         :content-transfer-encoding:content-description:subject:to:from:date
+         :reply-to;
+        bh=Pm04dP0+P83KVn44y+vrJDsQ3iwP6pKc5n+Js9E3oKk=;
+        b=cV/q41Z3IAyzzvtZDl6d5UD15RXSvFYwH6USq+TqrvTQzGtusAIwapIgtY6MQK8or1
+         09CBiuW+r3e4zvh+jV6Do3+/hWk5d4uZCXOqE/zJCuye92Kl6G4aLx/xANaz8Pm8L0vc
+         WJfFQYkzlduTrL1/Fnx2aDE1n954QHu0fWpbgSAwWiBg2qC+rOxzjOkN/rMCdi4Q/QmM
+         fQlRj8kuOleqknCzEV1io2U5MM32OtrJgiFb8hMehfRMDRBVWCQMMhRARIfyUcp50ifO
+         X5oIP5k4aZNti16svSHy985E0Pg275m7TSCyuFYRLzIlzefCHQDYB+yZOaflsWkw9gOB
+         kA8g==
+X-Gm-Message-State: AOAM530Z4xXLIIF43S0AS8OpCibZlOZG4GOl5/llzB+75MbQjnZuEbKM
+        6zopzHcO3RNVUWGfFzNLKR0=
+X-Google-Smtp-Source: ABdhPJy1KeYPOkQL1PGcckLhROc022wazuHhV9Kkt9Jejd/K/CR91BPw3vNaxQt1kvp0Zftkuy5w1Q==
+X-Received: by 2002:a05:600c:1d1e:b0:38c:a58f:3037 with SMTP id l30-20020a05600c1d1e00b0038ca58f3037mr3001593wms.200.1647944501948;
+        Tue, 22 Mar 2022 03:21:41 -0700 (PDT)
+Received: from [192.168.43.30] ([197.211.61.62])
+        by smtp.gmail.com with ESMTPSA id l20-20020a05600c1d1400b0038cba2f88c0sm982753wms.26.2022.03.22.03.21.34
+        (version=TLS1 cipher=AES128-SHA bits=128/128);
+        Tue, 22 Mar 2022 03:21:41 -0700 (PDT)
+Message-ID: <6239a335.1c69fb81.2e30.3f3d@mx.google.com>
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220319062833.3136528-5-jane.chu@oracle.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+Content-Description: Mail message body
+Subject: meine Spende
+To:     kehindeomowumi974@gmail.com
+From:   kehindeomowumi974@gmail.com
+Date:   Tue, 22 Mar 2022 03:21:27 -0700
+Reply-To: mariaelisabethschaeffler70@gmail.com
+X-Spam-Status: No, score=3.6 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,FREEMAIL_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT,
+        LOTS_OF_MONEY,MONEY_FREEMAIL_REPTO,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_SORBS_WEB,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Level: ***
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Mar 19, 2022 at 12:28:31AM -0600, Jane Chu wrote:
-> Introduce DAX_RECOVERY flag to dax_direct_access(). The flag is
-> not set by default in dax_direct_access() such that the helper
-> does not translate a pmem range to kernel virtual address if the
-> range contains uncorrectable errors.  When the flag is set,
-> the helper ignores the UEs and return kernel virtual adderss so
-> that the caller may get on with data recovery via write.
+ Hallo,
 
-This DAX_RECOVERY doesn't actually seem to be used anywhere here or
-in the subsequent patches.  Did I miss something?
+Ich bin Frau Maria Elisabeth Schaeffler, eine deutsche Gesch=E4ftsmagnatin,=
+ Investorin und Philanthropin. Ich bin der Vorsitzende von Wipro Limited. I=
+ch habe 25 Prozent meines pers=F6nlichen Verm=F6gens f=FCr wohlt=E4tige Zwe=
+cke ausgegeben. Und ich habe auch versprochen, den Rest von 25% in diesem J=
+ahr 2021 an Einzelpersonen zu verschenken. Ich habe beschlossen, Ihnen 1.50=
+0.000,00 Euro zu spenden. Wenn Sie an meiner Spende interessiert sind, kont=
+aktieren Sie mich f=FCr weitere Informationen.
 
-> Also introduce a new dev_pagemap_ops .recovery_write function.
-> The function is applicable to FSDAX device only. The device
-> page backend driver provides .recovery_write function if the
-> device has underlying mechanism to clear the uncorrectable
-> errors on the fly.
 
-Why is this not in struct dax_operations?
+Sie k=F6nnen auch mehr =FCber mich =FCber den unten stehenden Link lesen
 
->  
-> +size_t dax_recovery_write(struct dax_device *dax_dev, pgoff_t pgoff,
-> +		void *addr, size_t bytes, struct iov_iter *iter)
-> +{
-> +	struct dev_pagemap *pgmap = dax_dev->pgmap;
-> +
-> +	if (!pgmap || !pgmap->ops->recovery_write)
-> +		return -EIO;
-> +	return pgmap->ops->recovery_write(pgmap, pgoff, addr, bytes,
-> +				(void *)iter);
+https://en.wikipedia.org/wiki/Maria-Elisabeth_Schaeffler
 
-No need to cast a type pointer to a void pointer.  But more importantly
-losing the type information here and passing it as void seems very
-wrong.
+Sch=F6ne Gr=FC=DFe
 
-> +static size_t pmem_recovery_write(struct dev_pagemap *pgmap, pgoff_t pgoff,
-> +		void *addr, size_t bytes, void *iter)
-> +{
-> +	struct pmem_device *pmem = pgmap->owner;
-> +
-> +	dev_warn(pmem->bb.dev, "%s: not yet implemented\n", __func__);
-> +
-> +	/* XXX more later */
-> +	return 0;
-> +}
+Gesch=E4ftsf=FChrer Wipro Limited
 
-This shuld not be added here - the core code can cope with a NULL
-method just fine.
+Maria Elisabeth Schaeffler
 
-> +		recov = 0;
-> +		flags = 0;
-> +		nrpg = PHYS_PFN(size);
-
-Please spell out the words.  The recovery flag can also be
-a bool to make the code more readable.
-
-> +		map_len = dax_direct_access(dax_dev, pgoff, nrpg, flags,
-> +					&kaddr, NULL);
-> +		if ((map_len == -EIO) && (iov_iter_rw(iter) == WRITE)) {
-
-No need for the inner braces.
-
-> +			flags |= DAX_RECOVERY;
-> +			map_len = dax_direct_access(dax_dev, pgoff, nrpg,
-> +						flags, &kaddr, NULL);
-
-And noneed for the flags variable at all really.
-
->  			xfer = dax_copy_from_iter(dax_dev, pgoff, kaddr,
->  					map_len, iter);
->  		else
-> @@ -1271,6 +1286,11 @@ static loff_t dax_iomap_iter(const struct iomap_iter *iomi,
->  		length -= xfer;
->  		done += xfer;
->  
-> +		if (recov && (xfer == (ssize_t) -EIO)) {
-> +			pr_warn("dax_recovery_write failed\n");
-> +			ret = -EIO;
-> +			break;
-
-And no, we can't just use an unsigned variable to communicate a
-negative error code.
+E-Mail: mariaelisabethschaeffler70@gmail.com
