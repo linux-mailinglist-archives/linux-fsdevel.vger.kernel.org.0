@@ -2,181 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 582F44E4911
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Mar 2022 23:19:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2065C4E4919
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Mar 2022 23:21:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237745AbiCVWVI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Mar 2022 18:21:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39270 "EHLO
+        id S229690AbiCVWWt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Mar 2022 18:22:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229665AbiCVWVF (ORCPT
+        with ESMTP id S230336AbiCVWWs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Mar 2022 18:21:05 -0400
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8A90554AF;
-        Tue, 22 Mar 2022 15:19:37 -0700 (PDT)
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 22MKxaMD012125;
-        Tue, 22 Mar 2022 22:19:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-id : content-transfer-encoding : mime-version; s=corp-2021-07-09;
- bh=0fsiwdG4c6x4V6+KYtIyFId2KECv648I/FyybFMd/N8=;
- b=N1UpbtQAB6nFtu+3iJS0E+YR7eJMJzZ2zdYqY9VL607TCz8GFrJ3izgJMpivPjKZ62rR
- Q1fc+RJHASg3EUMEEzFOW/tWKpllGfDwv9rQUEaUDPXQ+LR8yexg7IJivDruewKZPwI5
- Ty7aN2cx11gCtBVegVHTjTVL0J8LRs5VQSZT4Uluh7wDod+Ym7MV1z8rLn22DObRsppG
- 53anZox8/zcnRafagAYO14hYZR7OacSE358ojTQBQCSl9o4/lks92S9jjxF5307roItN
- o9nt8zOgsKu3H7NUI7bdmqPQUaemOy/g68ZecLquqrnpbFQukiTOJbgw5EMGyI0iLGIt ig== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80] (may be forged))
-        by mx0b-00069f02.pphosted.com with ESMTP id 3ew5s0qxj4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 22 Mar 2022 22:19:26 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.1.2/8.16.1.2) with SMTP id 22MMCDxH068420;
-        Tue, 22 Mar 2022 22:19:25 GMT
-Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2175.outbound.protection.outlook.com [104.47.58.175])
-        by userp3030.oracle.com with ESMTP id 3ew49r84pe-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 22 Mar 2022 22:19:25 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=XYcaiU9d4fnmmydjPFeOQ9wloeD9vl1Z3uVJGpYEjyh0JQY9zgSJc7152UX+aIj9+6ExavwKPkNUf80lpMEJRKHm0DwTGBQ1mlFIX1fvJawAVy+xavnNyxgZ9Hyjg14DSl6yw+rRtxu2jTO+fc5Psqt2KvJqtoOYRWyQXEAKN0z2urJUf8n4TlpCi0SmSoDA1Om52z7C+QxkO5WVJ3XGQkyz6A8rlemOEj2j59+u6x7WycrE6VSGWrAdNyyRQF0ZKo1z2WwpKdjdti0EtrkAbpo67Voxo3T7ptwMIvIRkP/l8xUxhbEGEfD0NoiJMC2bdp5yGw4J6MGEQ3gia0RWPQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0fsiwdG4c6x4V6+KYtIyFId2KECv648I/FyybFMd/N8=;
- b=FrraQIw41ME9PTrD+7dIxFCpaMNuu9yadqYF3ovXt4Z0UjkneVq8mNY22gzwuwXGUX+FdXoCKSHQ2SpGm8+YRQu7ZrGq7wXCrzFCUod+Z2F1MFrxpDO0h8j018NyVXN2ifoVD+6coil1cidbBC3RDW/GsvPEVCxybBoOF48TnX5Fu2W0RTXw6LU9d8j4LHztRwKF/9NAAno7Amor2QGzeiLof4MPzAfse+wsjvx601wB566Zbf2Y65L4Vdvz/4CH2Nv96b/IDMx/hiZW1z+WmFIESs7F0znA/2gtgVBNat4OaK8XXmOtH2K2Oio2S53qr+17gXDh7PU1ASjhu3pywA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0fsiwdG4c6x4V6+KYtIyFId2KECv648I/FyybFMd/N8=;
- b=Ol9+IHU+JjKZE+ssEzavp1puE3a+iNoudK4wQCBGOQu02k31h2sD/orMUgUH7xmoZEfuFW7r7neKuLkcv9fU9wtsrBYRSmQCx3nMLkGiegYOiSjj931az+N6a/X983yyKM+vWYo4vJu8W/DfCkbERsAmEEjMmFDfPe21wO2GDK4=
-Received: from SJ0PR10MB4429.namprd10.prod.outlook.com (2603:10b6:a03:2d1::14)
- by DM6PR10MB2970.namprd10.prod.outlook.com (2603:10b6:5:64::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5081.16; Tue, 22 Mar
- 2022 22:19:23 +0000
-Received: from SJ0PR10MB4429.namprd10.prod.outlook.com
- ([fe80::2092:8e36:64c0:a336]) by SJ0PR10MB4429.namprd10.prod.outlook.com
- ([fe80::2092:8e36:64c0:a336%7]) with mapi id 15.20.5102.016; Tue, 22 Mar 2022
- 22:19:23 +0000
-From:   Jane Chu <jane.chu@oracle.com>
-To:     Christoph Hellwig <hch@infradead.org>
-CC:     "david@fromorbit.com" <david@fromorbit.com>,
-        "djwong@kernel.org" <djwong@kernel.org>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "vishal.l.verma@intel.com" <vishal.l.verma@intel.com>,
-        "dave.jiang@intel.com" <dave.jiang@intel.com>,
-        "agk@redhat.com" <agk@redhat.com>,
-        "snitzer@redhat.com" <snitzer@redhat.com>,
-        "dm-devel@redhat.com" <dm-devel@redhat.com>,
-        "ira.weiny@intel.com" <ira.weiny@intel.com>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "vgoyal@redhat.com" <vgoyal@redhat.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>
-Subject: Re: [PATCH v6 2/6] x86/mce: relocate set{clear}_mce_nospec()
- functions
-Thread-Topic: [PATCH v6 2/6] x86/mce: relocate set{clear}_mce_nospec()
- functions
-Thread-Index: AQHYO1ql070j1sj5n0uvCqd0wwFVgKzLGuoAgADkIwA=
-Date:   Tue, 22 Mar 2022 22:19:23 +0000
-Message-ID: <24879c61-2ca9-491d-d308-ece8e697db30@oracle.com>
-References: <20220319062833.3136528-1-jane.chu@oracle.com>
- <20220319062833.3136528-3-jane.chu@oracle.com>
- <YjmMCjDuakvTzRRc@infradead.org>
-In-Reply-To: <YjmMCjDuakvTzRRc@infradead.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: e0ac9513-06ea-4879-c1bf-08da0c5204ad
-x-ms-traffictypediagnostic: DM6PR10MB2970:EE_
-x-microsoft-antispam-prvs: <DM6PR10MB297022902A26862389CB3E09F3179@DM6PR10MB2970.namprd10.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: jJpLJwrusjXJVUCffw9AhBFLfOzhBtZS3mBVJMkyr8dipav5tuEHqLo8vMdnwUWQfQ/QnrbJ+dlKWR46krZyedCRtY9JV/G8q4CB1ewyTleceztSplJ4InwFHT2RLF5kbTmzVP2RF5Cw9ro1MyxhHWcq01yssIA4NDUnikdMVEJo+bDzj9VXpqvCQTfGAQPSPXFexZTFHXHdzlCUbaa6l3X1Z1jPCFmr0QsuDKhfhbtzKC0KfRzCQ3upNNXHACj/KQZ2sIYT5tyCG3YRoRgMsDbs32NPGSqPLqV6Txu+kGFbtFT3tte3mAFkowRqRjsilN6qZcXyUaQuMez8McphUvvjyli9Vexn3urXvRClCTVV2m71rzsI5CTjTiUEYOnRsy33KP5Q1ez21sFse6Ne6AIjefku8ZGpinrcx7rE4ziMqvnvezFmJbKr3KDAvJ/J6NBTbOFdHHBGpYRN4FsvL1xFLmvnAEqHQr4/wlMvEMW/TebDDOCqBq0bQQ33deoeHxAPMJrXQxUn/nT6tT1vtOKAgYzGy5ylKADF/UsagxvHe+6WbY6s77I3PrJG/thpaiwCf4I2IGnzwFVGuD22ORyVVPf/e5SqWD7lLKo0CP0f+gRu09nOHxrzMSi+hk+DFhIgxN6sWXsImJHWAEPwO5iYG/3VshQh+YtN2fOUWoJEPCMYAXoVpNn/PaX27ypteEncNkSeV5PwH8dZ9AvZdErklCu6sAhjs+nOPgunDx4OVltYFsgGjmhyGQKK6hgU7dD713FmP6d9m/+xAoSrQg==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB4429.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(366004)(71200400001)(6512007)(44832011)(83380400001)(66446008)(64756008)(66946007)(8676002)(66556008)(66476007)(4326008)(76116006)(53546011)(122000001)(6486002)(6506007)(508600001)(2906002)(316002)(31686004)(2616005)(38070700005)(186003)(26005)(8936002)(54906003)(6916009)(5660300002)(38100700002)(4744005)(31696002)(36756003)(86362001)(7416002)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?S3dnYUxvbjJvUVdSb2dEZUxSVFBRSjg0cjFKcTVYUXNlNThXUGZxSWpiNWpl?=
- =?utf-8?B?Vlp1ellzQTl1V2JxNUh5YzlpM0NhbVNmbzZsVFlNK3JnSG5wa1QvLzFQa09K?=
- =?utf-8?B?dzZEb2FUTklmdkYvOGlBczBuQXZybmVjRW5tOUhUeGc1cXpmNGN4dkRZcmJN?=
- =?utf-8?B?SzhoV0c2amovcThoSXYvZTBwTUJvd2ZxN0N6bUdVZkZTWUhVMVlVSEZzQXNP?=
- =?utf-8?B?M3ZsQUtZaEs0Qzd6dmVDUlQySllnK1NaNHlzK1picmdvL2hMdVhoZTJ1SytP?=
- =?utf-8?B?QU9iOTVuUi8zNmowU2NJRHZMT25tcm9jYnBlVDlieFRleGt3MVNVcXdQMTND?=
- =?utf-8?B?QkRLMVkzUlpIZjVwcTYrb0M1N1VXSWsxM2I1K3lsM3phT2VBVlE4ZUVkRkpJ?=
- =?utf-8?B?OWZqSHMza2t1ejV4YTRqTHk5Q0dOUmZrSG1OWnRjNjFHZUxUbkdRU1BwVXda?=
- =?utf-8?B?N0xVRVpqUW02a3JCMzhDUmZNS2MwbEU4a3B4dDBmVjlObThmRjJJaUdIWS9j?=
- =?utf-8?B?YXNoZUdwN1NHcnpySUVsRjF3WW5aY1dqS2hFR1hDd0RQd0dEWjhmWGJJK2pF?=
- =?utf-8?B?YXVCaHIybEFNc1BDamFxdklWUkFNb01rbXVraDNRSWFEeHNaQ09NVm5FNUs5?=
- =?utf-8?B?VEFBckp3OXQ1SWY0bE8vMDBWdDAwQWdtbDBXMmN2SkxWVWdNOFVnaVhJckxu?=
- =?utf-8?B?dlp0YUlIdC94SUdrMlBjVXVaTy9FWXFBcU93OFI4KzVFNW9ESXVxYVdXeFRJ?=
- =?utf-8?B?RC90aUZjM3owc3k0MCtoNkFPK3kvMzYrQ0ZQbnZpRmhkajZiVTIyYWdsL0pU?=
- =?utf-8?B?dWlsT1U1b3RMTWtuNERMcWJsMTBmVTQ5eldXc2lNYkNLZXFXd2I1VkFPdlI5?=
- =?utf-8?B?UmR4VUJjMnFjMG9qc3JTS1dIeDlNclJ0ZmdsQUowL0pxY3lZMlZqRmVOenNm?=
- =?utf-8?B?OXZySGcwMTE1akRIUlcwdm9uSjNIQU9TMzE2aVk5RVFLNm1vZzRGdE9DMXVm?=
- =?utf-8?B?TEg3R0ExRDcrOUpLQU5oZlVUU2xYNUJxNXF1eElkZ0dmRzBrNDNlbzAxUWpr?=
- =?utf-8?B?ZHd2emJQWmtaVGsrRVV3QjBYUW1mYnJEM0tUdUlOV3hMWFR1SFV3MVdqWS9m?=
- =?utf-8?B?UVJqek1qOFo3SXZMNVJuUnFvUGJ4WlBLNThjSFNyVkVidU1uQU92dGV3dEZj?=
- =?utf-8?B?Z1BlYUJpQVJQZUh2Z1g2NGZGOWVLMWwvUUlBeTczS2ZvQkhNTVdoaE9rWlRs?=
- =?utf-8?B?SlByeWhsTDJXWWxWVGc3NHhESHZkUmpZT1JyRVFxam1oZmk5Wk9abVZiWHVN?=
- =?utf-8?B?cWRUSWwxaXVxVkNwdm94UndoMkQ5c0h4UkZ2YWh0cEtldVZmeEUveFZhUDlo?=
- =?utf-8?B?dmlwMFdVem1YdUZPREluTWgwRXEyYXNDc0I0RDYwYVZsQjhKaWFVSjI5N0xS?=
- =?utf-8?B?RXhrQU4vc3c5RGNBUVNHdWJxNlVlZk5MeUxoREhHalhOZDRlZ2k4UEJVL1Ex?=
- =?utf-8?B?WEg5ZGZSKzRra0dVd2JFYnZheTNVajlYbTRNM0tadk1heHNmRFF3S3lhS0Fw?=
- =?utf-8?B?akJDMkYwU0FzQW93dE43KzcwUDlCaTNvaCtZdkZURTg5YXdBci9RK0xjRTBL?=
- =?utf-8?B?VGpDanJsbnpGdnpxblNLZU1aclF0ZkJZWGlrckdGemxCQUFkTlhqNWFDYU00?=
- =?utf-8?B?SDlhSi8vNlkwUkNQcXh5ODNoZ2Q1WHE1NVdwNnFreFZESGpjQjNnbnRmNndY?=
- =?utf-8?B?NnpKSWxSRzg0UGZ1TDU3a0xoRXA5V0tFVDJOV0gyR3UxRzk1cHRNMzNTcDYy?=
- =?utf-8?B?aXJDcVlFT05EOEEyeTVmM2dXL2FVWkwzbHhoaG5veGNXbk9OMjFCNW1ycGFX?=
- =?utf-8?B?MVRXM0JySytuSDB0eStaK2Q2WXBSNmdPaEMrcHdWQjJ2bkI2RHBRemtDZ2lI?=
- =?utf-8?Q?1NGTxqslPKRE4z8D12qYwdcjCxjrLdMT?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <43B9F707AFBDBC4D99FE4370CD727EA7@namprd10.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Tue, 22 Mar 2022 18:22:48 -0400
+Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 68604BF61
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Mar 2022 15:21:19 -0700 (PDT)
+Received: from dread.disaster.area (pa49-186-150-27.pa.vic.optusnet.com.au [49.186.150.27])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 227D4533BA4;
+        Wed, 23 Mar 2022 09:21:16 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1nWmsM-008g01-Ez; Wed, 23 Mar 2022 09:21:14 +1100
+Date:   Wed, 23 Mar 2022 09:21:14 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Roman Gushchin <roman.gushchin@linux.dev>,
+        Stephen Brennan <stephen.s.brennan@oracle.com>,
+        lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org,
+        Gautham Ananthakrishna <gautham.ananthakrishna@oracle.com>,
+        khlebnikov@yandex-team.ru
+Subject: Re: [LSF/MM TOPIC] Better handling of negative dentries
+Message-ID: <20220322222114.GE1609613@dread.disaster.area>
+References: <YjDvRPuxPN0GsxLB@casper.infradead.org>
+ <A35C545C-1926-4AA9-BFC7-0CF11669EA9E@linux.dev>
+ <YjFGVxImP/nVyprQ@B-P7TQMD6M-0146.local>
+ <20220316025223.GR661808@dread.disaster.area>
+ <YjnmcaHhE1F2oTcH@casper.infradead.org>
 MIME-Version: 1.0
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB4429.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e0ac9513-06ea-4879-c1bf-08da0c5204ad
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Mar 2022 22:19:23.0913
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: fk1Kx61/u3Mf/RpByLp8zojoJiDx2nYCb24z50mrbAs7rp8JlqAeqTJOEjfJwqBJfFVPLQJeaztP2yxu6w9/Tw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR10MB2970
-X-Proofpoint-Virus-Version: vendor=nai engine=6300 definitions=10294 signatures=694350
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0 mlxscore=0
- bulkscore=0 phishscore=0 spamscore=0 mlxlogscore=851 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2202240000
- definitions=main-2203220112
-X-Proofpoint-GUID: b9i48SWmYCjRP21DO05xMn5nHZr3rWod
-X-Proofpoint-ORIG-GUID: b9i48SWmYCjRP21DO05xMn5nHZr3rWod
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <YjnmcaHhE1F2oTcH@casper.infradead.org>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=VuxAv86n c=1 sm=1 tr=0 ts=623a4bde
+        a=sPqof0Mm7fxWrhYUF33ZaQ==:117 a=sPqof0Mm7fxWrhYUF33ZaQ==:17
+        a=IkcTkHD0fZMA:10 a=o8Y5sQTvuykA:10 a=JfrnYn6hAAAA:8 a=7-415B0cAAAA:8
+        a=FGYgVTa-rSrcW4m-z4sA:9 a=QEXdDO2ut3YA:10 a=1CNFftbPRP8L7MoqJWF3:22
+        a=biEYGPWJfzWAr4FL6Ov7:22
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-T24gMy8yMi8yMDIyIDE6NDIgQU0sIENocmlzdG9waCBIZWxsd2lnIHdyb3RlOg0KPj4gK0VYUE9S
-VF9TWU1CT0woc2V0X21jZV9ub3NwZWMpOw0KPiANCj4gTm8gbmVlZCBmb3IgdGhpcyBleHBvcnQg
-YXQgYWxsLg0KDQpJbmRlZWQsIG15IGJhZCwgd2lsbCByZW1vdmUgaXQuDQoNCj4gDQo+PiArDQo+
-PiArLyogUmVzdG9yZSBmdWxsIHNwZWN1bGF0aXZlIG9wZXJhdGlvbiB0byB0aGUgcGZuLiAqLw0K
-Pj4gK2ludCBjbGVhcl9tY2Vfbm9zcGVjKHVuc2lnbmVkIGxvbmcgcGZuKQ0KPj4gK3sNCj4+ICsJ
-cmV0dXJuIHNldF9tZW1vcnlfd2IoKHVuc2lnbmVkIGxvbmcpIHBmbl90b19rYWRkcihwZm4pLCAx
-KTsNCj4+ICt9DQo+PiArRVhQT1JUX1NZTUJPTChjbGVhcl9tY2Vfbm9zcGVjKTsNCj4gDQo+IEFu
-ZCB0aGlzIHNob3VsZCBiZSBFWFBPUlRfU1lNQk9MX0dQTC4NCg0KWWVzLg0KDQpUaGFua3MhDQot
-amFuZQ0KDQo=
+On Tue, Mar 22, 2022 at 03:08:33PM +0000, Matthew Wilcox wrote:
+> On Wed, Mar 16, 2022 at 01:52:23PM +1100, Dave Chinner wrote:
+> > On Wed, Mar 16, 2022 at 10:07:19AM +0800, Gao Xiang wrote:
+> > > On Tue, Mar 15, 2022 at 01:56:18PM -0700, Roman Gushchin wrote:
+> > > > 
+> > > > > On Mar 15, 2022, at 12:56 PM, Matthew Wilcox <willy@infradead.org> wrote:
+> > > > > 
+> > > > > The number of negative dentries is effectively constrained only by memory
+> > > > > size.  Systems which do not experience significant memory pressure for
+> > > > > an extended period can build up millions of negative dentries which
+> > > > > clog the dcache.  That can have different symptoms, such as inotify
+> > > > > taking a long time [1], high memory usage [2] and even just poor lookup
+> > > > > performance [3].  We've also seen problems with cgroups being pinned
+> > > > > by negative dentries, though I think we now reparent those dentries to
+> > > > > their parent cgroup instead.
+> > > > 
+> > > > Yes, it should be fixed already.
+> > > > 
+> > > > > 
+> > > > > We don't have a really good solution yet, and maybe some focused
+> > > > > brainstorming on the problem would lead to something that actually works.
+> > > > 
+> > > > I’d be happy to join this discussion. And in my opinion it’s going beyond negative dentries: there are other types of objects which tend to grow beyond any reasonable limits if there is no memory pressure.
+> > > 
+> > > +1, we once had a similar issue as well, and agree that is not only
+> > > limited to negative dentries but all too many LRU-ed dentries and inodes.
+> > 
+> > Yup, any discussion solely about managing buildup of negative
+> > dentries doesn't acknowledge that it is just a symptom of larger
+> > problems that need to be addressed.
+> 
+> Yes, but let's not make this _so_ broad a discussion that it becomes
+> unsolvable.  Rather, let's look for a solution to this particular problem
+> that can be adopted by other caches that share a similar problem.
+> 
+> For example, we might be seduced into saying "this is a slab problem"
+> because all the instances we have here allocate from slab.  But slab
+> doesn't have enough information to solve the problem.  Maybe the working
+> set of the current workload really needs 6 million dentries to perform
+> optimally.  Maybe it needs 600.  Slab can't know that.  Maybe slab can
+> play a role here, but the only component which can know the appropriate
+> size for a cache is the cache itself.
+
+Yes, that's correct, but it also misses the fact that we need to
+replicate this for inodes, various filesystem caches that have LRUs
+and shrinkers because they can grow very large very quickly (e.g.
+the xfs buffer and dquot caches, the ext4 extent cache shrinker, nfs
+has several shrinkable caches, etc)
+
+> I think the logic needs to be in d_alloc().  Before it calls __d_alloc(),
+> it should check ... something ... to see if it should try to shrink
+> the LRU list.
+
+ANd therein lies the issue - the dcache, inode cache, the xfs buffer
+cache, the xfs dquot cache, the gfs2 dquot cache, and the nfsv4 xattr
+cache all use list_lru for LRU reclaim of objects via a shrinker.
+
+See the commonality in functionality and requirements all these
+caches already have? They all allocate from a slab, all use the same
+LRU infratructure to age the cache, and all have shrinkers that use
+list_lru_shrink_walk() to do the shrinker iteration of the LRU.
+Using list-lru infrastructure is effectively a requirement for any
+shrinkable cache that wants to be memcg aware, too.
+
+What they all need is a common method of hooking list_lru management
+to allocation and/or periodic scanning mechanisms. Fix the problem
+for the dcache via list-lru, and all the other caches that need the
+same feedback/control mechanisms get them as well. We kill at least
+6 birds with one stone, and provide the infrastructure for new
+caches to manage these same problems without having to write tehir
+own infrastructure to do it.
+
+IOWs, you're still missing the bigger picture here by continuing to
+focus on negative dentries and the dcache rather than the common
+infrastructure that shrinkable caches use.
+
+> The devil is in what that something should be.  I'm no
+> expert on the dcache; do we just want to call prune_dcache_sb() for
+> every 1/1000 time?  Rely on DCACHE_REFERENCED to make sure that we're
+> not over-pruning the list?  If so, what do we set nr_to_scan to?  1000 so
+> that we try to keep the dentry list the same size?  1500 so that it
+> actually tries to shrink?
+
+The numbers themselves are largely irrelevant and should be set by
+the subsystem after careful analysis. What we need first is the
+common infrastructure to do the periodic/demand driven list
+maintenance, then individual subsystems can set the limits and
+triggers according to their individual needs.
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
