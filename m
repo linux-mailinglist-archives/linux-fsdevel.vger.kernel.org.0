@@ -2,44 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0719A4E40A6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Mar 2022 15:16:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82E684E409C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Mar 2022 15:16:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237414AbiCVOQf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Mar 2022 10:16:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56526 "EHLO
+        id S237138AbiCVOQV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Mar 2022 10:16:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237191AbiCVOQJ (ORCPT
+        with ESMTP id S237087AbiCVOPu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Mar 2022 10:16:09 -0400
+        Tue, 22 Mar 2022 10:15:50 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C93E88B3A;
-        Tue, 22 Mar 2022 07:14:00 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09F0C88B16;
+        Tue, 22 Mar 2022 07:14:01 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 67895615F4;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 57D9361617;
+        Tue, 22 Mar 2022 14:14:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1ACACC340EE;
         Tue, 22 Mar 2022 14:14:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2ADADC36AE3;
-        Tue, 22 Mar 2022 14:13:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647958439;
-        bh=thdTSvnL9t+JNdyQt+BDJ6gQRdqq5+/Toh6CWdLwPrU=;
+        s=k20201202; t=1647958440;
+        bh=/gxeEbNRrhQUUKat+3pmAKrCE5MwF5L1g1xQKvPeLuE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D4iqNxzxUA+Lxuc/Hl4RTlfJcY6o0f+36/FrNLqyaG22yGIgoQkbnKqBqZTMZml/k
-         Py0vOYrPpF+7p4oQUkKvhBJgEcLuSi4jmsL3T9WxYF2nr3zkdr+FmluPPgp42DAjPq
-         +udqC0ljqpKX6EFsEF2ZvPA5k7HIs/zyGBuGXTVo7ybjAFytw1z3Fn2B1k9VhTd+2m
-         3wJCL69wZovOvQf9mB7mIUaiM+W2kHLVM043rqaO+BRmuzoaVXEep+0Eb3JXEWxzSg
-         fo8HXAkCon/jUMVIemnZQvXrWjQD553gq5Zcr8O1KgabfTOZKszXlb3X3XiwZdVNYR
-         23mzorelD5TYg==
+        b=MukAyGxPuQ9w/fFYYg1FiprSCI4ckndR1qX/Hjika5sBjMMrWImc6LxFp6q7RoXxV
+         FJTOakYzd8cACm/Y8FVHuEhzwbcUWG7TEeKAMEBdSUhQx86c8T4JHoEzj9x97dBT+q
+         8CoEQaQotc9OepA1AlIowb3oky9atZDhiOhuMChdwNnpy9niCGfaTp0501ytonAR/z
+         Gp3tPE/10rjxE2D2RlgWnOCjPZhqpz345gvdKazwm6znFqF3nuVfxx7E2PjPi4jBdJ
+         JwhfXmty6BFFd8xlN04cGicnt/ffYU8WQdrbMCFWmWUDrgIvtw0iJvsAWTeeha9/I+
+         /YVuxnDeGudJA==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     idryomov@gmail.com, xiubli@redhat.com
 Cc:     ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-fscrypt@vger.kernel.org, linux-kernel@vger.kernel.org,
         lhenriques@suse.de
-Subject: [RFC PATCH v11 43/51] ceph: disable copy offload on encrypted inodes
-Date:   Tue, 22 Mar 2022 10:13:08 -0400
-Message-Id: <20220322141316.41325-44-jlayton@kernel.org>
+Subject: [RFC PATCH v11 44/51] ceph: don't use special DIO path for encrypted inodes
+Date:   Tue, 22 Mar 2022 10:13:09 -0400
+Message-Id: <20220322141316.41325-45-jlayton@kernel.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220322141316.41325-1-jlayton@kernel.org>
 References: <20220322141316.41325-1-jlayton@kernel.org>
@@ -55,30 +55,39 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-If we have an encrypted inode, then the client will need to re-encrypt
-the contents of the new object. Disable copy offload to or from
-encrypted inodes.
+Eventually I want to merge the synchronous and direct read codepaths,
+possibly via new netfs infrastructure. For now, the direct path is not
+crypto-enabled, so use the sync read/write paths instead.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ceph/file.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ fs/ceph/file.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index 00e6a5bc37c8..ba17288b1db3 100644
+index ba17288b1db3..5a637158f9c5 100644
 --- a/fs/ceph/file.c
 +++ b/fs/ceph/file.c
-@@ -2522,6 +2522,10 @@ static ssize_t __ceph_copy_file_range(struct file *src_file, loff_t src_off,
- 		return -EOPNOTSUPP;
- 	}
+@@ -1705,7 +1705,9 @@ static ssize_t ceph_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 		     ceph_cap_string(got));
  
-+	/* Every encrypted inode gets its own key, so we can't offload them */
-+	if (IS_ENCRYPTED(src_inode) || IS_ENCRYPTED(dst_inode))
-+		return -EOPNOTSUPP;
-+
- 	if (len < src_ci->i_layout.object_size)
- 		return -EOPNOTSUPP; /* no remote copy will be done */
+ 		if (ci->i_inline_version == CEPH_INLINE_NONE) {
+-			if (!retry_op && (iocb->ki_flags & IOCB_DIRECT)) {
++			if (!retry_op &&
++			    (iocb->ki_flags & IOCB_DIRECT) &&
++			    !IS_ENCRYPTED(inode)) {
+ 				ret = ceph_direct_read_write(iocb, to,
+ 							     NULL, NULL);
+ 				if (ret >= 0 && ret < len)
+@@ -1931,7 +1933,7 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
  
+ 		/* we might need to revert back to that point */
+ 		data = *from;
+-		if (iocb->ki_flags & IOCB_DIRECT)
++		if ((iocb->ki_flags & IOCB_DIRECT) && !IS_ENCRYPTED(inode))
+ 			written = ceph_direct_read_write(iocb, &data, snapc,
+ 							 &prealloc_cf);
+ 		else
 -- 
 2.35.1
 
