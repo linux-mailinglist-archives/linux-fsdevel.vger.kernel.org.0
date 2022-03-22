@@ -2,44 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C83FF4E40C2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Mar 2022 15:16:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C3F524E40C5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Mar 2022 15:16:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236924AbiCVOP5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Mar 2022 10:15:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52206 "EHLO
+        id S237157AbiCVOQH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Mar 2022 10:16:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236946AbiCVOPd (ORCPT
+        with ESMTP id S236830AbiCVOP2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Mar 2022 10:15:33 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DD307EB0E;
-        Tue, 22 Mar 2022 07:13:53 -0700 (PDT)
+        Tue, 22 Mar 2022 10:15:28 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 746616C1D4;
+        Tue, 22 Mar 2022 07:13:52 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id ECCC7CE1E18;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E2DE2615C7;
         Tue, 22 Mar 2022 14:13:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2B13C340EC;
-        Tue, 22 Mar 2022 14:13:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3DA1C340F0;
+        Tue, 22 Mar 2022 14:13:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647958430;
-        bh=Zl375pRQCbRH4n2sSEDXRkXGO4gq68+coMqfdO7e67Q=;
+        s=k20201202; t=1647958431;
+        bh=g+3TErgpBR+P4iTf0U+5WmixGEzQBkI4DHrS3H3uW10=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gpvarF70YCCR/XMB7zeWJF1i2ujcrpskNMMIb/KMJ2HxfUrKATQQvOYLZTWt1MHnO
-         pWlaiHlB8lVNOZ/s5A9U7Y6+isD0x7kwbWYHGkGWev4m3mtNEBJll3eMIwZNvmvk9r
-         9CLA2F6PifJ7VWfyyCM9p2itjidLALdDD566y7oB/KQHIUdZMYddkH6KpkfkMZ63/Q
-         khohkn2NYQi07uuWHo4zVEF5g4UNNAEzHJ+jfCyCwdT3GiQcsEhrCi/stdprvrlK6F
-         jdqpqnNpTpLZYVmJA9qQKVSDNdR6AhAM8HmWue+bMcuSk8sQstDv9e+ejW7Dg55ahk
-         dPbPgViGo7ZrQ==
+        b=t235VQFqIY+9hsTVQcnEz0YG3+5X4TZ4tNTxv3yXtE9yBDh1eG66wWHCfFGzyp+mN
+         CZ9omUyTa/2F9AeNrZ3zT/ingpo/x3YK5g2mWPdnu1vxHPy2s2sGLESKZ4zarg8vv/
+         cZa5t42hMnl9B28UJDxxMFfQId55MthciD7dzABijvfIA2+5Ub9/tOkQAZCkJtABSl
+         Ia0wNNOD/hI5QGDsGKjtBpX5IyzbHXKnF+FbU49a0J5EP4CT4BcnNrxL3YrkX3G1YG
+         G3gIRSwtxp58e7DP4LXkEyQt3HHCDhubwJVN/CIKMhxpvDHjSzxVJ5BVme8mk4y7Ex
+         coFbBrketKHcQ==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     idryomov@gmail.com, xiubli@redhat.com
 Cc:     ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-fscrypt@vger.kernel.org, linux-kernel@vger.kernel.org,
         lhenriques@suse.de
-Subject: [RFC PATCH v11 33/51] ceph: fscrypt_file field handling in MClientRequest messages
-Date:   Tue, 22 Mar 2022 10:12:58 -0400
-Message-Id: <20220322141316.41325-34-jlayton@kernel.org>
+Subject: [RFC PATCH v11 34/51] ceph: get file size from fscrypt_file when present in inode traces
+Date:   Tue, 22 Mar 2022 10:12:59 -0400
+Message-Id: <20220322141316.41325-35-jlayton@kernel.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220322141316.41325-1-jlayton@kernel.org>
 References: <20220322141316.41325-1-jlayton@kernel.org>
@@ -55,126 +55,86 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-For encrypted inodes, transmit a rounded-up size to the MDS as the
-normal file size and send the real inode size in fscrypt_file field.
-
-Also, fix up creates and truncates to also transmit fscrypt_file.
+When we get an inode trace from the MDS, grab the fscrypt_file field if
+the inode is encrypted, and use it to populate the i_size field instead
+of the regular inode size field.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ceph/dir.c        |  3 +++
- fs/ceph/file.c       |  2 ++
- fs/ceph/inode.c      | 18 ++++++++++++++++--
- fs/ceph/mds_client.c |  9 ++++++++-
- fs/ceph/mds_client.h |  2 ++
- 5 files changed, 31 insertions(+), 3 deletions(-)
+ fs/ceph/inode.c | 38 +++++++++++++++++++++++++-------------
+ 1 file changed, 25 insertions(+), 13 deletions(-)
 
-diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-index 8a9f916bfc6c..5ccf6453f02f 100644
---- a/fs/ceph/dir.c
-+++ b/fs/ceph/dir.c
-@@ -910,6 +910,9 @@ static int ceph_mknod(struct user_namespace *mnt_userns, struct inode *dir,
- 		goto out_req;
- 	}
- 
-+	if (S_ISREG(mode) && IS_ENCRYPTED(dir))
-+		set_bit(CEPH_MDS_R_FSCRYPT_FILE, &req->r_req_flags);
-+
- 	req->r_dentry = dget(dentry);
- 	req->r_num_caps = 2;
- 	req->r_parent = dir;
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index 8a222ce5f8ce..df790317bedb 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -765,6 +765,8 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
- 	req->r_args.open.mask = cpu_to_le32(mask);
- 	req->r_parent = dir;
- 	ihold(dir);
-+	if (IS_ENCRYPTED(dir))
-+		set_bit(CEPH_MDS_R_FSCRYPT_FILE, &req->r_req_flags);
- 
- 	if (flags & O_CREAT) {
- 		struct ceph_file_layout lo;
 diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 35e7ef462136..599e27dae8c8 100644
+index 599e27dae8c8..b905c49fc7a9 100644
 --- a/fs/ceph/inode.c
 +++ b/fs/ceph/inode.c
-@@ -2374,11 +2374,25 @@ int __ceph_setattr(struct inode *inode, struct iattr *attr, struct ceph_iattr *c
- 			}
- 		} else if ((issued & CEPH_CAP_FILE_SHARED) == 0 ||
- 			   attr->ia_size != isize) {
--			req->r_args.setattr.size = cpu_to_le64(attr->ia_size);
--			req->r_args.setattr.old_size = cpu_to_le64(isize);
- 			mask |= CEPH_SETATTR_SIZE;
- 			release |= CEPH_CAP_FILE_SHARED | CEPH_CAP_FILE_EXCL |
- 				   CEPH_CAP_FILE_RD | CEPH_CAP_FILE_WR;
-+			if (IS_ENCRYPTED(inode) && attr->ia_size) {
-+				set_bit(CEPH_MDS_R_FSCRYPT_FILE, &req->r_req_flags);
-+				mask |= CEPH_SETATTR_FSCRYPT_FILE;
-+				req->r_args.setattr.size =
-+					cpu_to_le64(round_up(attr->ia_size,
-+							     CEPH_FSCRYPT_BLOCK_SIZE));
-+				req->r_args.setattr.old_size =
-+					cpu_to_le64(round_up(isize,
-+							     CEPH_FSCRYPT_BLOCK_SIZE));
-+				req->r_fscrypt_file = attr->ia_size;
-+				/* FIXME: client must zero out any partial blocks! */
+@@ -989,6 +989,16 @@ int ceph_fill_inode(struct inode *inode, struct page *locked_page,
+ 		     from_kgid(&init_user_ns, inode->i_gid));
+ 		ceph_decode_timespec64(&ci->i_btime, &iinfo->btime);
+ 		ceph_decode_timespec64(&ci->i_snap_btime, &iinfo->snap_btime);
++
++#ifdef CONFIG_FS_ENCRYPTION
++		if (iinfo->fscrypt_auth_len && !ci->fscrypt_auth) {
++			ci->fscrypt_auth_len = iinfo->fscrypt_auth_len;
++			ci->fscrypt_auth = iinfo->fscrypt_auth;
++			iinfo->fscrypt_auth = NULL;
++			iinfo->fscrypt_auth_len = 0;
++			inode_set_flags(inode, S_ENCRYPTED, S_ENCRYPTED);
++		}
++#endif
+ 	}
+ 
+ 	if ((new_version || (new_issued & CEPH_CAP_LINK_SHARED)) &&
+@@ -1012,6 +1022,7 @@ int ceph_fill_inode(struct inode *inode, struct page *locked_page,
+ 
+ 	if (new_version ||
+ 	    (new_issued & (CEPH_CAP_ANY_FILE_RD | CEPH_CAP_ANY_FILE_WR))) {
++		u64 size = le64_to_cpu(info->size);
+ 		s64 old_pool = ci->i_layout.pool_id;
+ 		struct ceph_string *old_ns;
+ 
+@@ -1025,10 +1036,21 @@ int ceph_fill_inode(struct inode *inode, struct page *locked_page,
+ 
+ 		pool_ns = old_ns;
+ 
++		if (IS_ENCRYPTED(inode) && size && (iinfo->fscrypt_file_len == sizeof(__le64))) {
++			u64 fsize = __le64_to_cpu(*(__le64 *)iinfo->fscrypt_file);
++
++			if (size == round_up(fsize, CEPH_FSCRYPT_BLOCK_SIZE)) {
++				size = fsize;
 +			} else {
-+				req->r_args.setattr.size = cpu_to_le64(attr->ia_size);
-+				req->r_args.setattr.old_size = cpu_to_le64(isize);
-+				req->r_fscrypt_file = 0;
++				pr_warn("fscrypt size mismatch: size=%llu fscrypt_file=%llu, discarding fscrypt_file size.\n",
++					info->size, size);
 +			}
- 		}
++		}
++
+ 		queue_trunc = ceph_fill_file_size(inode, issued,
+-					le32_to_cpu(info->truncate_seq),
+-					le64_to_cpu(info->truncate_size),
+-					le64_to_cpu(info->size));
++						  le32_to_cpu(info->truncate_seq),
++						  le64_to_cpu(info->truncate_size),
++						  size);
+ 		/* only update max_size on auth cap */
+ 		if ((info->cap.flags & CEPH_CAP_FLAG_AUTH) &&
+ 		    ci->i_max_size != le64_to_cpu(info->max_size)) {
+@@ -1068,16 +1090,6 @@ int ceph_fill_inode(struct inode *inode, struct page *locked_page,
+ 		xattr_blob = NULL;
  	}
- 	if (ia_valid & ATTR_MTIME) {
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index a747ea7b7647..cd0c780a6f84 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -2752,7 +2752,12 @@ static void encode_mclientrequest_tail(void **p, const struct ceph_mds_request *
- 	} else {
- 		ceph_encode_32(p, 0);
- 	}
--	ceph_encode_32(p, 0); // fscrypt_file for now
-+	if (test_bit(CEPH_MDS_R_FSCRYPT_FILE, &req->r_req_flags)) {
-+		ceph_encode_32(p, sizeof(__le64));
-+		ceph_encode_64(p, req->r_fscrypt_file);
-+	} else {
-+		ceph_encode_32(p, 0);
-+	}
- }
  
- /*
-@@ -2838,6 +2843,8 @@ static struct ceph_msg *create_request_message(struct ceph_mds_session *session,
- 
- 	/* fscrypt_file */
- 	len += sizeof(u32);
-+	if (test_bit(CEPH_MDS_R_FSCRYPT_FILE, &req->r_req_flags))
-+		len += sizeof(__le64);
- 
- 	msg = ceph_msg_new2(CEPH_MSG_CLIENT_REQUEST, len, 1, GFP_NOFS, false);
- 	if (!msg) {
-diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-index 046a9368c4a9..e297bf98c39f 100644
---- a/fs/ceph/mds_client.h
-+++ b/fs/ceph/mds_client.h
-@@ -282,6 +282,7 @@ struct ceph_mds_request {
- #define CEPH_MDS_R_DID_PREPOPULATE	(6) /* prepopulated readdir */
- #define CEPH_MDS_R_PARENT_LOCKED	(7) /* is r_parent->i_rwsem wlocked? */
- #define CEPH_MDS_R_ASYNC		(8) /* async request */
-+#define CEPH_MDS_R_FSCRYPT_FILE		(9) /* must marshal fscrypt_file field */
- 	unsigned long	r_req_flags;
- 
- 	struct mutex r_fill_mutex;
-@@ -289,6 +290,7 @@ struct ceph_mds_request {
- 	union ceph_mds_request_args r_args;
- 
- 	struct ceph_fscrypt_auth *r_fscrypt_auth;
-+	u64	r_fscrypt_file;
- 
- 	u8 *r_altname;		    /* fscrypt binary crypttext for long filenames */
- 	u32 r_altname_len;	    /* length of r_altname */
+-#ifdef CONFIG_FS_ENCRYPTION
+-	if (iinfo->fscrypt_auth_len && !ci->fscrypt_auth) {
+-		ci->fscrypt_auth_len = iinfo->fscrypt_auth_len;
+-		ci->fscrypt_auth = iinfo->fscrypt_auth;
+-		iinfo->fscrypt_auth = NULL;
+-		iinfo->fscrypt_auth_len = 0;
+-		inode_set_flags(inode, S_ENCRYPTED, S_ENCRYPTED);
+-	}
+-#endif
+-
+ 	/* finally update i_version */
+ 	if (le64_to_cpu(info->version) > ci->i_version)
+ 		ci->i_version = le64_to_cpu(info->version);
 -- 
 2.35.1
 
