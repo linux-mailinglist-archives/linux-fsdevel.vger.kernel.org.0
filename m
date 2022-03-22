@@ -2,40 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D4AEB4E4396
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Mar 2022 16:57:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA8764E4399
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Mar 2022 16:57:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236653AbiCVP6n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Mar 2022 11:58:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39774 "EHLO
+        id S238858AbiCVP6r (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Mar 2022 11:58:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238795AbiCVP6f (ORCPT
+        with ESMTP id S238874AbiCVP6h (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Mar 2022 11:58:35 -0400
+        Tue, 22 Mar 2022 11:58:37 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAA886D959;
-        Tue, 22 Mar 2022 08:57:07 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA2386E78E;
+        Tue, 22 Mar 2022 08:57:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=ik896SM15cBFFrcSr02Qjkcxw7YRxIqbkmqoQS+DrXE=; b=HfygAPlgDTGffr49CZveobTuuJ
-        5BeVs3Ek1nhL7RQ2L60JvG/aLX9b1tnWyqFwWjqyjQvldERPImlWtZi6JjtVL6bXyzuJ0uYXPuJyp
-        H4VD8vMRg/XkiT7aUxWkmomciMJhQx/S/Eu3/igbh8h8qxeI9AzEdZ9Kqu7JvdMBssEYkRy9AwQdB
-        sgvq+tp4xd7NpLOA1R92TMoPNmkFqMhZ4Yse3B5ii/QGFI6skUQQ2NBGCAcp9WYRO7QFMQpAfV6i7
-        i1vbAoTev4Ebt/lvUrx0Y+l/1373wCkfGhN/aXxiRWO7OdzFzJ0wnB/bvpwHzFF8OIyplMpUhlmAt
-        Dq9dPMAA==;
+        bh=4UxaZPb00R8Sj3xNXNP2gocttdDvhdz2pSlEQ5Lx12Q=; b=K3iydrV9W0y9z/RdBWZ29njfu3
+        LsA4GKNLQ4whtbI2MVqxA0RRBQ89SSdvKpuh7YEJMejqsnVAKUoykKpYqg6zderJg/9dqMfwHfuUl
+        iBaH/JgCTwHTM++edtsej+i0djZHzu0XC2YKc6GqmY7lcBQ2uq3xzTO3cUDWKJxBvnivwr6i2K9Zj
+        wMUNs+DbpvIiKFIqlLkzBozFc6GufYwT+kYXFgFCypx/djz822JZ/o1furnN3qUQtXaFGykNOzv80
+        yO/IBeMlZmJU1FmqsNt5MYY8bSc/VQkLmw64i8JKkHrnL+i+XuUMwRnPXd9tdVfjcJI69B0brC5Fn
+        ybu4ThGw==;
 Received: from [2001:4bb8:19a:b822:6444:5366:9486:4da] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nWgsZ-00Bar6-24; Tue, 22 Mar 2022 15:57:03 +0000
+        id 1nWgsb-00Basj-Kk; Tue, 22 Mar 2022 15:57:06 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Josef Bacik <josef@toxicpanda.com>,
         David Sterba <dsterba@suse.com>, Qu Wenruo <wqu@suse.com>
 Cc:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH 21/40] btrfs: cleanup btrfs_submit_data_bio
-Date:   Tue, 22 Mar 2022 16:55:47 +0100
-Message-Id: <20220322155606.1267165-22-hch@lst.de>
+Subject: [PATCH 22/40] btrfs: cleanup btrfs_submit_dio_bio
+Date:   Tue, 22 Mar 2022 16:55:48 +0100
+Message-Id: <20220322155606.1267165-23-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220322155606.1267165-1-hch@lst.de>
 References: <20220322155606.1267165-1-hch@lst.de>
@@ -52,119 +52,90 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Clean up the code flow to be straight forward.
+Remove the pointless goto just to return err and clean up the code flow
+to be a little more straight forward.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/btrfs/inode.c | 85 +++++++++++++++++++++---------------------------
- 1 file changed, 37 insertions(+), 48 deletions(-)
+ fs/btrfs/inode.c | 59 ++++++++++++++++++++++--------------------------
+ 1 file changed, 27 insertions(+), 32 deletions(-)
 
 diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 325e773c6e880..a54b7fd4658d0 100644
+index a54b7fd4658d0..5c9d8e8a98466 100644
 --- a/fs/btrfs/inode.c
 +++ b/fs/btrfs/inode.c
-@@ -2511,67 +2511,56 @@ blk_status_t btrfs_submit_data_bio(struct inode *inode, struct bio *bio,
- 
+@@ -7844,47 +7844,42 @@ static inline blk_status_t btrfs_submit_dio_bio(struct bio *bio,
+ 		struct inode *inode, u64 file_offset, int async_submit)
  {
  	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
--	struct btrfs_root *root = BTRFS_I(inode)->root;
--	enum btrfs_wq_endio_type metadata = BTRFS_WQ_ENDIO_DATA;
--	blk_status_t ret = 0;
--	int skip_sum;
--	int async = !atomic_read(&BTRFS_I(inode)->sync_writers);
--
--	skip_sum = (BTRFS_I(inode)->flags & BTRFS_INODE_NODATASUM) ||
--		test_bit(BTRFS_FS_STATE_NO_CSUMS, &fs_info->fs_state);
--
--	if (btrfs_is_free_space_inode(BTRFS_I(inode)))
--		metadata = BTRFS_WQ_ENDIO_FREE_SPACE;
 +	struct btrfs_inode *bi = BTRFS_I(inode);
-+	blk_status_t ret;
+ 	struct btrfs_dio_private *dip = bio->bi_private;
+-	bool write = btrfs_op(bio) == BTRFS_MAP_WRITE;
+ 	blk_status_t ret;
  
- 	if (bio_op(bio) == REQ_OP_ZONE_APPEND) {
--		struct page *page = bio_first_bvec_all(bio)->bv_page;
--		loff_t file_offset = page_offset(page);
--
--		ret = extract_ordered_extent(BTRFS_I(inode), bio, file_offset);
-+		ret = extract_ordered_extent(bi, bio,
-+				page_offset(bio_first_bvec_all(bio)->bv_page));
- 		if (ret)
--			goto out;
-+			return ret;
- 	}
- 
--	if (btrfs_op(bio) != BTRFS_MAP_WRITE) {
+-	/* Check btrfs_submit_bio_hook() for rules about async submit. */
+-	if (async_submit)
+-		async_submit = !atomic_read(&BTRFS_I(inode)->sync_writers);
 +	if (btrfs_op(bio) == BTRFS_MAP_WRITE) {
-+		if ((bi->flags & BTRFS_INODE_NODATASUM) ||
-+		    test_bit(BTRFS_FS_STATE_NO_CSUMS, &fs_info->fs_state))
-+			goto mapit;
-+
-+		if (!atomic_read(&bi->sync_writers)) {
-+			/* csum items have already been cloned */
-+			if (btrfs_is_data_reloc_root(bi->root))
-+				goto mapit;
-+			return btrfs_wq_submit_bio(inode, bio, mirror_num, bio_flags,
-+						  0, btrfs_submit_bio_start);
++		if (!(bi->flags & BTRFS_INODE_NODATASUM)) {
++			/* See btrfs_submit_data_bio for async submit rules */
++			if (async_submit && !atomic_read(&bi->sync_writers))
++				return btrfs_wq_submit_bio(inode, bio, 0, 0,
++					file_offset,
++					btrfs_submit_bio_start_direct_io);
+ 
+-	if (!write) {
++			/*
++			 * If we aren't doing async submit, calculate the csum of the
++			 * bio now.
++			 */
++			ret = btrfs_csum_one_bio(bi, bio, file_offset, 1);
++			if (ret)
++				return ret;
 +		}
-+		ret = btrfs_csum_one_bio(bi, bio, 0, 0);
-+		if (ret)
-+			return ret;
 +	} else {
-+		enum btrfs_wq_endio_type metadata = BTRFS_WQ_ENDIO_DATA;
-+
-+		if (btrfs_is_free_space_inode(bi))
-+			metadata = BTRFS_WQ_ENDIO_FREE_SPACE;
-+
- 		ret = btrfs_bio_wq_end_io(fs_info, bio, metadata);
+ 		ret = btrfs_bio_wq_end_io(fs_info, bio, BTRFS_WQ_ENDIO_DATA);
  		if (ret)
--			goto out;
+-			goto err;
+-	}
+-
+-	if (BTRFS_I(inode)->flags & BTRFS_INODE_NODATASUM)
+-		goto map;
 +			return ret;
  
--		if (bio_flags & EXTENT_BIO_COMPRESSED) {
--			ret = btrfs_submit_compressed_read(inode, bio,
-+		if (bio_flags & EXTENT_BIO_COMPRESSED)
-+			return btrfs_submit_compressed_read(inode, bio,
- 							   mirror_num,
- 							   bio_flags);
--			goto out;
--		} else {
--			/*
--			 * Lookup bio sums does extra checks around whether we
--			 * need to csum or not, which is why we ignore skip_sum
--			 * here.
--			 */
--			ret = btrfs_lookup_bio_sums(inode, bio, NULL);
--			if (ret)
--				goto out;
--		}
--		goto mapit;
--	} else if (async && !skip_sum) {
--		/* csum items have already been cloned */
--		if (btrfs_is_data_reloc_root(root))
--			goto mapit;
--		/* we're doing a write, do the async checksumming */
--		ret = btrfs_wq_submit_bio(inode, bio, mirror_num, bio_flags,
--					  0, btrfs_submit_bio_start);
--		goto out;
--	} else if (!skip_sum) {
--		ret = btrfs_csum_one_bio(BTRFS_I(inode), bio, 0, 0);
-+
-+		/*
-+		 * Lookup bio sums does extra checks around whether we need to
-+		 * csum or not, which is why we ignore skip_sum here.
-+		 */
-+		ret = btrfs_lookup_bio_sums(inode, bio, NULL);
- 		if (ret)
--			goto out;
-+			return ret;
+-	if (write && async_submit) {
+-		ret = btrfs_wq_submit_bio(inode, bio, 0, 0, file_offset,
+-					  btrfs_submit_bio_start_direct_io);
+-		goto err;
+-	} else if (write) {
+-		/*
+-		 * If we aren't doing async submit, calculate the csum of the
+-		 * bio now.
+-		 */
+-		ret = btrfs_csum_one_bio(BTRFS_I(inode), bio, file_offset, 1);
+-		if (ret)
+-			goto err;
+-	} else {
+-		u64 csum_offset;
++		if (!(bi->flags & BTRFS_INODE_NODATASUM)) {
++			u64 csum_offset;
+ 
+-		csum_offset = file_offset - dip->file_offset;
+-		csum_offset >>= fs_info->sectorsize_bits;
+-		csum_offset *= fs_info->csum_size;
+-		btrfs_bio(bio)->csum = dip->csums + csum_offset;
++			csum_offset = file_offset - dip->file_offset;
++			csum_offset >>= fs_info->sectorsize_bits;
++			csum_offset *= fs_info->csum_size;
++			btrfs_bio(bio)->csum = dip->csums + csum_offset;
++		}
  	}
--
- mapit:
--	ret = btrfs_map_bio(fs_info, bio, mirror_num);
--
--out:
+-map:
+-	ret = btrfs_map_bio(fs_info, bio, 0);
+-err:
 -	return ret;
-+	return btrfs_map_bio(fs_info, bio, mirror_num);
++
++	return btrfs_map_bio(fs_info, bio, 0);
  }
  
  /*
