@@ -2,44 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 41BBF4E4065
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Mar 2022 15:16:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AD454E4069
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Mar 2022 15:16:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236636AbiCVOP0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Mar 2022 10:15:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49658 "EHLO
+        id S236729AbiCVOPV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Mar 2022 10:15:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234986AbiCVOPF (ORCPT
+        with ESMTP id S236464AbiCVOPI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Mar 2022 10:15:05 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4804826AF6;
-        Tue, 22 Mar 2022 07:13:37 -0700 (PDT)
+        Tue, 22 Mar 2022 10:15:08 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79D0633E17;
+        Tue, 22 Mar 2022 07:13:40 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D8057615B3;
+        by sin.source.kernel.org (Postfix) with ESMTPS id E0843CE1E18;
+        Tue, 22 Mar 2022 14:13:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87F56C340EC;
         Tue, 22 Mar 2022 14:13:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9631DC340F0;
-        Tue, 22 Mar 2022 14:13:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647958416;
-        bh=40bz7fgcSkfmSJmWJDKxd9JZxineBbUvX30XOIb7qbk=;
+        s=k20201202; t=1647958417;
+        bh=QSQJwXnQ26aopltanKUAuklulNeW880EC3N09Fc3UKo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IxsHf9AGpsGQLsIM1weCldPNi2YSpDXFKCUPlXdmVaLU7ruhDDfSBrHzeaMcvcKbr
-         ZWFkfbM9fYPTMDXnXrth4eFsQKzChYney9BIgVHBhm/dr5/LvvH1Y8xYYukcl+itUC
-         FuiIkvp/LPXjyM0OlWTlF7ZFmNUap6cdASs1pXJZEHTQCUZ6sUx5YPty4xUC+FXdC1
-         0eatO66f/czyPaBcmCEmz5h4h1+m7piBXgmyMg+R717f9GgQO4DxgP9DQkKnP2gjkV
-         yDQCScQLvdCJiv5yG8CLd1oS0Pzu3SPktBiESbbYvJJ/Ftsd8tb11afh4bMPb/wJOb
-         9xT4JWKSLLTDw==
+        b=gEPCIZVYnuuQDdjpMt1OFyWdbDEs5y3GQ0T0M/0ugQTBGi9emliQJKaXrOyEQ9VFi
+         CS72iLeIsE7NP7rkqB9TcHfrpnzsN+Q2hZcOodmBYSni0rYLDdSPId4Dkb/1OUJSgk
+         2P2GIrRLfPmA4vhBBW/pbcnBiXLSfY3I/Qzzg0Mdj+3aZstBnF/ohzmA5akqhpJrav
+         WSsvlKG83CIPTNV0ImpLtBEK8lwewHg7sSQ8GyiLufCIRBZJN9k23wVyb09mBqRpqA
+         81Zn0zakoqRbJPA2w7id6BtriFL0nISs8r4l9atT2NaMnm6HDE4aE+Kva86ZPVVuVa
+         0AV71nbN9DpJA==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     idryomov@gmail.com, xiubli@redhat.com
 Cc:     ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-fscrypt@vger.kernel.org, linux-kernel@vger.kernel.org,
         lhenriques@suse.de
-Subject: [RFC PATCH v11 18/51] ceph: properly set DCACHE_NOKEY_NAME flag in lookup
-Date:   Tue, 22 Mar 2022 10:12:43 -0400
-Message-Id: <20220322141316.41325-19-jlayton@kernel.org>
+Subject: [RFC PATCH v11 19/51] ceph: make d_revalidate call fscrypt revalidator for encrypted dentries
+Date:   Tue, 22 Mar 2022 10:12:44 -0400
+Message-Id: <20220322141316.41325-20-jlayton@kernel.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220322141316.41325-1-jlayton@kernel.org>
 References: <20220322141316.41325-1-jlayton@kernel.org>
@@ -55,36 +55,41 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is required so that we know to invalidate these dentries when the
-directory is unlocked.
+If we have a dentry which represents a no-key name, then we need to test
+whether the parent directory's encryption key has since been added.  Do
+that before we test anything else about the dentry.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ceph/dir.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ fs/ceph/dir.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
 diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-index 8cc7a49ee508..897f8618151b 100644
+index 897f8618151b..caf2547c3fe1 100644
 --- a/fs/ceph/dir.c
 +++ b/fs/ceph/dir.c
-@@ -760,6 +760,17 @@ static struct dentry *ceph_lookup(struct inode *dir, struct dentry *dentry,
- 	if (dentry->d_name.len > NAME_MAX)
- 		return ERR_PTR(-ENAMETOOLONG);
+@@ -1709,6 +1709,10 @@ static int ceph_d_revalidate(struct dentry *dentry, unsigned int flags)
+ 	struct inode *dir, *inode;
+ 	struct ceph_mds_client *mdsc;
  
-+	if (IS_ENCRYPTED(dir)) {
-+		err = __fscrypt_prepare_readdir(dir);
-+		if (err)
-+			return ERR_PTR(err);
-+		if (!fscrypt_has_encryption_key(dir)) {
-+			spin_lock(&dentry->d_lock);
-+			dentry->d_flags |= DCACHE_NOKEY_NAME;
-+			spin_unlock(&dentry->d_lock);
-+		}
-+	}
++	valid = fscrypt_d_revalidate(dentry, flags);
++	if (valid <= 0)
++		return valid;
 +
- 	/* can we conclude ENOENT locally? */
- 	if (d_really_is_negative(dentry)) {
- 		struct ceph_inode_info *ci = ceph_inode(dir);
+ 	if (flags & LOOKUP_RCU) {
+ 		parent = READ_ONCE(dentry->d_parent);
+ 		dir = d_inode_rcu(parent);
+@@ -1721,8 +1725,8 @@ static int ceph_d_revalidate(struct dentry *dentry, unsigned int flags)
+ 		inode = d_inode(dentry);
+ 	}
+ 
+-	dout("d_revalidate %p '%pd' inode %p offset 0x%llx\n", dentry,
+-	     dentry, inode, ceph_dentry(dentry)->offset);
++	dout("d_revalidate %p '%pd' inode %p offset 0x%llx nokey %d\n", dentry,
++	     dentry, inode, ceph_dentry(dentry)->offset, !!(dentry->d_flags & DCACHE_NOKEY_NAME));
+ 
+ 	mdsc = ceph_sb_to_client(dir->i_sb)->mdsc;
+ 
 -- 
 2.35.1
 
