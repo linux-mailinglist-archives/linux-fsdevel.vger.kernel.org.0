@@ -2,145 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 132C44E3E30
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Mar 2022 13:12:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A07CB4E3ED3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Mar 2022 13:53:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233233AbiCVMNy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Mar 2022 08:13:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49564 "EHLO
+        id S233763AbiCVMym (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Mar 2022 08:54:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232249AbiCVMNy (ORCPT
+        with ESMTP id S233832AbiCVMyl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Mar 2022 08:13:54 -0400
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 727B0814B7;
-        Tue, 22 Mar 2022 05:12:26 -0700 (PDT)
-Received: by mail-pj1-x102d.google.com with SMTP id mj15-20020a17090b368f00b001c637aa358eso2493591pjb.0;
-        Tue, 22 Mar 2022 05:12:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=IPjgN3VpyqWKrThD0C2Vv68XFS2hlHNg6yKh9JHRBog=;
-        b=i4DYvQFQdyo/5cGeJC8YCDIAwZGR/35Ev0FGHGhqm4PmaXZhwqDqwpV56iN1d1CTjM
-         VZcf5qQ2rZQuZD4p238kBM0r6GFWxmT0hhew6gUmKBqreUkeulpNBPqtI0nLW48qVUwX
-         vgETrP1DEGJLzakL+r4z/w2UrP8Tc2xqJ2KFYBM1vP+8OEogx8uhjTC5shiNlXoTye9l
-         skl36slIW/bDhZA+UWpwoWIBsUFLikYa+XVyNnhFIMM215ET9iW6u3r5K/lNbwcW7E4T
-         LMl+gqC363rYdTVb4DO6hb5Y31gf65C5arsrIbHXymKFHP9IwLbGl+hNHlovnCTlcziL
-         jw6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=IPjgN3VpyqWKrThD0C2Vv68XFS2hlHNg6yKh9JHRBog=;
-        b=GknEa54wvS/NjUBeBfkD4rS6tuByYwO4/ImiIxwXuulQrNO7LcUwrd45ekYWulflwU
-         3SHS/039+8W2eDZl5O/7xdI5Hc6zzTjG/3KiNmOfb2+iD8UTxDq05qZGeSt7uSayEUuq
-         BIFgDJ1bbpZ+5Eqt1vjoU+wJfWwMuswCfIAHQ2nJtT9zJugDpAQjh7scOZGoiuCIrh5p
-         73qAfMhRDtFFuoOy3ggrd2JuisOHoHwEs+PzrmKyCADULX5Wr2WqroVXxIqWxFE1MRty
-         1fCykfySyDMcQyRSlnLYI7fAkhdyZw1Jk0ku15J1x8lEeTEPbK9QIlvIh5HBg2oYCyin
-         RPjA==
-X-Gm-Message-State: AOAM530oweC/AP/bb9Y0dby3mC76raz7nSkU88ydiec6yunI35sHEuVr
-        P9lix1k4M/AiTgZs/Rd2BOU=
-X-Google-Smtp-Source: ABdhPJxUF1F8+qJ3SlHYJaeCDF9cQ1MjbET2UM6ubThZHeCEwWI9y8r1CoVnmEtudVQLijl65PtVsg==
-X-Received: by 2002:a17:902:b18a:b0:153:758e:c1 with SMTP id s10-20020a170902b18a00b00153758e00c1mr17757017plr.37.1647951145750;
-        Tue, 22 Mar 2022 05:12:25 -0700 (PDT)
-Received: from localhost.localdomain ([2409:4053:719:67ea:fc62:7f30:7002:e0c2])
-        by smtp.googlemail.com with ESMTPSA id b20-20020a17090a991400b001befe07ae5csm2708380pjp.22.2022.03.22.05.12.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Mar 2022 05:12:25 -0700 (PDT)
-From:   Dharmendra Singh <dharamhans87@gmail.com>
-Cc:     fuse-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, miklos@szeredi.hu,
-        dharamhans87@gmail.com, bshubert@ddn.com, amir73il@gmail.com
-Subject: Re: [PATCH v2 0/2] FUSE: Atomic lookup + open performance numbers
-Date:   Tue, 22 Mar 2022 17:42:12 +0530
-Message-Id: <20220322121212.5087-1-dharamhans87@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220322115148.3870-1-dharamhans87@gmail.com>
-References: <20220322115148.3870-1-dharamhans87@gmail.com>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        Tue, 22 Mar 2022 08:54:41 -0400
+X-Greylist: delayed 1323 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 22 Mar 2022 05:53:13 PDT
+Received: from gateway31.websitewelcome.com (gateway31.websitewelcome.com [192.185.144.80])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D81325589
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Mar 2022 05:53:11 -0700 (PDT)
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway31.websitewelcome.com (Postfix) with ESMTP id 522C29545F7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Mar 2022 07:31:08 -0500 (CDT)
+Received: from 162-215-252-75.unifiedlayer.com ([208.91.199.152])
+        by cmsmtp with SMTP
+        id WdfHn79x7RnrrWdfInTe1c; Tue, 22 Mar 2022 07:31:08 -0500
+X-Authority-Reason: nr=8
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=roeck-us.net; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=E5Aows6fzjBhdYfTnbSqfUWzSiW9YfHAmPUHEbpwWJo=; b=PnuDbzlG5Hb7/SDAr+eaO1WhIQ
+        Q6BIijqhYFQBjt7yjZ3FMOOwS28Ak8FhVwKW+z+dlTMHhzyAxFztOQOV8HnkluXKGaB4ym0KmwanN
+        gMOuoqxxcro2voHlUaKIOW1mYxnOVBRytcSk8hA8l+enCVIuzL9ZGzpGuKGzGvUnGyQmxdKWfOygz
+        spqWBZBvXLypBX6OMagJdROR+Opg2Cn7nJutE7maFdp7trq4vFzRYrgJQFD2bEIjkloWw4/aX+9q9
+        z44ceBNeRezKB6jc9TWTR6HJ+2ayNh6ylxP1eojwLQIRQ7FRE5oH8SwKN1gqKJOeHcvZYQxg9D40u
+        Yht5/cKg==;
+Received: from 108-223-40-66.lightspeed.sntcca.sbcglobal.net ([108.223.40.66]:54390)
+        by bh-25.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.94.2)
+        (envelope-from <linux@roeck-us.net>)
+        id 1nWdfH-002AJg-HW; Tue, 22 Mar 2022 12:31:07 +0000
+Message-ID: <15b83842-60d9-78b8-54e9-3a27211caded@roeck-us.net>
+Date:   Tue, 22 Mar 2022 05:31:06 -0700
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: linux resetting when the usb storage was removed while copying
+Content-Language: en-US
+To:     qianfan <qianfanguijin@163.com>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Cc:     linux-watchdog@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-usb@vger.kernel.org
+References: <1cc135e3-741f-e7d6-5d0a-fef319832a4c@163.com>
+ <87pmmee9kr.fsf@mail.parknet.co.jp>
+ <06ebc7fb-e7eb-b994-78fd-df07155ef4b5@163.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+In-Reply-To: <06ebc7fb-e7eb-b994-78fd-df07155ef4b5@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - roeck-us.net
+X-BWhitelist: no
+X-Source-IP: 108.223.40.66
+X-Source-L: No
+X-Exim-ID: 1nWdfH-002AJg-HW
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: 108-223-40-66.lightspeed.sntcca.sbcglobal.net [108.223.40.66]:54390
+X-Source-Auth: linux@roeck-us.net
+X-Email-Count: 2
+X-Source-Cap: cm9lY2s7YWN0aXZzdG07YmgtMjUud2ViaG9zdGJveC5uZXQ=
+X-Local-Domain: yes
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_PASS,SPF_SOFTFAIL,T_SCC_BODY_TEXT_LINE autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
-To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Subject: 'Re: [PATCH v2 0/2] FUSE: Atomic lookup + open performance numbers'
+On 3/22/22 01:42, qianfan wrote:
+> 
+> 在 2022/3/22 15:21, OGAWA Hirofumi 写道:
+>> qianfan <qianfanguijin@163.com> writes:
+>>
+>>> Hi:
+>>>
+>>> I am tesing usb storage on linux v5.15, found that the system is resetting when the
+>>> usb storage(fat32 format) was removed while copying. Besides my custom board
+>>> has a gpio-watchdog with 1.6s timeout.
+>> Looks like I/O error by unplugging usb while reading data pages for
+>> readahead, then your watchdog detected some state to reset system.
+>>
+>> If you disabled watchdog, it works as normal soon or later? If so, FAT
+>> would not be able to do much (maybe ratelimit I/O error to mitigate
+>> serial console overhead), request is from userspace or upper layer in
+>> kernel.
+> 
+> I had changed console to ttynull and the system doesn't reset again.  kernel driver generate lots of error messages when usb storage is disconnected:
+> 
+> $ dmesg | grep 'FAT read failed' | wc -l
+> 
+> 608
+> 
+> usb storage can work again when reconnected.
+> 
+> The gpio watchdog depends on hrtimer, maybe printk in ISR delayed hrtimer that cause watchdog reset.
+> 
 
-Thanks, Miklos. For measuring the performance, bonnie++ was used over passthrough_ll mount on tmpfs.
-When taking numbers on vm, I could see non-deterministic behaviour in the results. Therefore core
-binding was used for passthrough_ll and bonnie++, keeping them on separate cores.
+Exactly. We had a similar problem recently, also related to the gpio watchdog.
+I think the system ends up in a loop, retrying block 1162. Key for fixing
+the problem will be to find the function causing the loop.
 
-Here are the google sheets having performance numbers.
-https://docs.google.com/spreadsheets/d/1JRgF8DTR9xk5zz3_azmLcyy5kW3bgjjItmS8CYsAoT4/edit#gid=0
-https://docs.google.com/spreadsheets/d/1JRgF8DTR9xk5zz3_azmLcyy5kW3bgjjItmS8CYsAoT4/edit#gid=1833203226
-
-Following are the libfuse patches(commit on March 7 and March 8 in first link) which were used to test
-these changes
-https://github.com/aakefbs/libfuse/commits/atomic-open-and-no-flush
-https://github.com/libfuse/libfuse/pull/644
-
-Parameters used in mounting passthrough_ll:
- numactl --localalloc --physcpubind=16-23 passthrough_ll -f -osource=/tmp/source,allow_other,allow_root,
- cache=never -o max_idle_threads=1 /tmp/dest
-     (Here cache=never results in direct-io on the file)
-
-Parameters used in bonnie++:
-In sheet 0B:
-numactl --localalloc --physcpubind=0-7  bonnie++ -x 4 -q -s0  -d /tmp/dest/ -n 10:0:0:10 -r 0 -u 0 2>/dev/null
-
-in sheet 1B:
-numactl --localalloc --physcpubind=0-7 bonnie++ -x 4 -q -s0 -d /tmp/dest/ -n 10:1:1:10 -r 0 -u 0 2>/dev/null
-
-Additional settings done on the testing machine:
-cpupower frequency-set -g performance
-
-Running bonnie++ gives us results for Create/s,  Read/s and Delete/s. Below table summarises the numbers
-for  these three operations. Please note that for read of 0 bytes, bonnie++ does ops in order of create-open,
-close and stat but no atomic open.  Therefore performance results  in the sheet 0B had overhead of extra
-stat calls.  Whereas in sheet 1B, we directed bonnie++ to read 1 byte and this triggered atomic open call but
-numbers for this run involve overhead for read operation itself instead of just plain open/close.
-
-Here is the table summarising the performance numbers
-
-Table: 0B
-                                               Sequential                  |            Random
-                                           Creat/s       Read/s    Del/s   |    Creat/s     Read/s      Del/s
-Patched Libfuse                                -3.55%    -4.9%    -4.43%   |    -0.4%      -1.6%       -1.0%
-Patched Libfuse + No-Flush                     +22.3%    +6%       +5.15%  |    +27.9%     +14.5%       +2.8%
-Patched Libfuse + Patched FuseK                +22.9%    +6.1%     +5.3%   |    +28.3%     +14.5%       +2.3%
-Patched Libfuse + Patched FuseK + No-Flush     +33.4%    -4.4%     -3.73%  |    +38.8%     -2.5%        -2.0%
-
-
-
- Table: 1B
-                                                  Sequential                    |                  Random
-                                           Create/s       Read/s       Del/s    |      Create/s     Read/s     Del/s
-Patched Libfuse                            -0.22%        -0.35%       -0.7%     |      -0.27%        -0.78%    -2.35%
-Patched Libfuse + No-Flush                 +2.5%         +2.6%        -9.6%     |      +2.5%         -8.6%     -6.26%
-Patched Libfuse + Patched FuseK            +1.63%        -1.0%        -11.45%   |      +4.48%        -6.84%    -4.0%
-Patched Libfuse + Patched FuseK + No-Flush  +32.43%      +26.61%      +076%     |      +33.2%       +14.7%     -0.40%
-
-Here
-No-Flush = No flush trigger from fuse kernel into libfuse
-
-In Table 1B, we see 4th row has good improvements for both create and Read whereas Del seems to be almost not
-changed. In Table 0B, 4th row we have Read perf reduced, it was found out that this was caused by some changes
-in libfuse. So this was fixed and in Table 1B, same row, we can see increased numbers.
-
-In Table 0B, 3rd row, we have good numbers because bonnie++ used 0 bytes to read  and this changed behaviour
-and impacted perf whereas for the same row, Table 1B we have reduced numbers because it involved flush
-calls for 1 byte from the fuse kernel into libfuse.
-
-These changes are not for fuse kernel/users-space context switches only, but our main goal is to have improvement performance
-for network file systems
-   - Number network round trips
-   - Reduce load on meta servers with thousands of clients
-
-Reduced kernel/userspace context switches is 'just' a side effect.
-
-Thanks,
-Dharmendra
+Guenter
