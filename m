@@ -2,44 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C9C584E4094
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Mar 2022 15:16:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B4DBC4E4053
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Mar 2022 15:16:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234189AbiCVOPb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Mar 2022 10:15:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52194 "EHLO
+        id S236798AbiCVOPk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Mar 2022 10:15:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236618AbiCVOPP (ORCPT
+        with ESMTP id S236594AbiCVOPP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Tue, 22 Mar 2022 10:15:15 -0400
 Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43E9C140A1;
-        Tue, 22 Mar 2022 07:13:45 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5803C4E3B4;
+        Tue, 22 Mar 2022 07:13:46 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 94628CE1E22;
-        Tue, 22 Mar 2022 14:13:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E4EFC340F0;
-        Tue, 22 Mar 2022 14:13:41 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 6843ECE1E27;
+        Tue, 22 Mar 2022 14:13:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F526C340F2;
+        Tue, 22 Mar 2022 14:13:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1647958421;
-        bh=+gRzqyCT8opSF9C50+LafLaC81QcPvoC9e2YA+al/TU=;
+        s=k20201202; t=1647958422;
+        bh=3bN47df6xfMYN8H89L9p4azHPAx75RjJ8rkJbvmKRNI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mskWwbvSqug0wjMP13SwBbdEOUcol4J1lRz++hvSvFxUCOF21YWgw0RgekU+Vo3A2
-         M/ue0PC+72Oh+G6kiTFC1kPERDd/loKakbx/M6X+0joiMFxMWyLmtVIHv+0LqXsiyP
-         morEUQr4QpiGPoSIoXbYH35hnkE6rzN1gGFsYcWKSR0s0h2CCjUV9DHjKf3kv7du4w
-         9MMvpn2s+c9QAsXePQ6sJNjQJXHgjnrN9Zk2epxFDgR12uEfcZTkO75dfKFLhOCUKW
-         Bw/WAuqoyC0Ca8FU5h4Da8oEUSHkpF03II2QY3OwDcYn0Erf8EzLN8opjhUys2NNgk
-         Q4hiWFEKGU9fg==
+        b=tHCmp7FUYQ+WcP3NieOmfbXfrWQQFWKU6hSHxiuJZyUbksKfImQUlNftpNxXFZoUk
+         VWZya+fR1JUqqCVBIrkeXmXP6XhtZiycv16LWYCMzg0xQTHoKVarQQwF8DUtDQ11yL
+         t43iYJaVWkzmQ3FQ79UHm+Yjmyn01LVtivhCzyYg1KfPMf4qIfOsfuICBjADkGDjV9
+         vXpdsWT3sen58NDIQ0M8xFENET+NzSv/etLL4fmJM7J/1tbeHlX7H5XdgqAU6pHBfn
+         ZOaWdQH0Ub+p0CXz//uX3j2MTqvAcl+E1ce9u3ZhmLkdDqkldsE+xQzlaANVSOGQV5
+         wrx0mlwpOfF7g==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     idryomov@gmail.com, xiubli@redhat.com
 Cc:     ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-fscrypt@vger.kernel.org, linux-kernel@vger.kernel.org,
         lhenriques@suse.de
-Subject: [RFC PATCH v11 24/51] ceph: add ceph_encode_encrypted_dname() helper
-Date:   Tue, 22 Mar 2022 10:12:49 -0400
-Message-Id: <20220322141316.41325-25-jlayton@kernel.org>
+Subject: [RFC PATCH v11 25/51] ceph: add support to readdir for encrypted filenames
+Date:   Tue, 22 Mar 2022 10:12:50 -0400
+Message-Id: <20220322141316.41325-26-jlayton@kernel.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220322141316.41325-1-jlayton@kernel.org>
 References: <20220322141316.41325-1-jlayton@kernel.org>
@@ -47,8 +47,8 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-7.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+        SPF_HELO_NONE,SPF_PASS,T_FILL_THIS_FORM_SHORT,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -57,86 +57,339 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Xiubo Li <xiubli@redhat.com>
 
-Add a new helper that basically calls ceph_encode_encrypted_fname, but
-with a qstr pointer instead of a dentry pointer. This will make it
-simpler to decrypt names in a readdir reply, before we have a dentry.
+Once we've decrypted the names in a readdir reply, we no longer need the
+crypttext, so overwrite them in ceph_mds_reply_dir_entry with the
+unencrypted names. Then in both ceph_readdir_prepopulate() and
+ceph_readdir() we will use the dencrypted name directly.
+
+[ jlayton: convert some BUG_ONs into error returns ]
 
 Signed-off-by: Xiubo Li <xiubli@redhat.com>
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ceph/crypto.c | 11 ++++++++---
- fs/ceph/crypto.h |  8 ++++++++
- 2 files changed, 16 insertions(+), 3 deletions(-)
+ fs/ceph/crypto.c     | 12 +++++--
+ fs/ceph/crypto.h     |  1 +
+ fs/ceph/dir.c        | 35 +++++++++++++++----
+ fs/ceph/inode.c      | 12 ++++---
+ fs/ceph/mds_client.c | 81 ++++++++++++++++++++++++++++++++++++++++----
+ fs/ceph/mds_client.h |  4 +--
+ 6 files changed, 124 insertions(+), 21 deletions(-)
 
 diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
-index e56017d66354..420a2cc1a8e5 100644
+index 420a2cc1a8e5..c331b895c430 100644
 --- a/fs/ceph/crypto.c
 +++ b/fs/ceph/crypto.c
-@@ -128,7 +128,7 @@ void ceph_fscrypt_as_ctx_to_req(struct ceph_mds_request *req, struct ceph_acl_se
- 	swap(req->r_fscrypt_auth, as->fscrypt_auth);
- }
+@@ -135,7 +135,10 @@ int ceph_encode_encrypted_dname(const struct inode *parent, struct qstr *d_name,
+ 	int ret;
+ 	u8 *cryptbuf;
  
--int ceph_encode_encrypted_fname(const struct inode *parent, struct dentry *dentry, char *buf)
-+int ceph_encode_encrypted_dname(const struct inode *parent, struct qstr *d_name, char *buf)
+-	WARN_ON_ONCE(!fscrypt_has_encryption_key(parent));
++	if (!fscrypt_has_encryption_key(parent)) {
++		memcpy(buf, d_name->name, d_name->len);
++		return d_name->len;
++	}
+ 
+ 	/*
+ 	 * Convert cleartext d_name to ciphertext. If result is longer than
+@@ -177,6 +180,8 @@ int ceph_encode_encrypted_dname(const struct inode *parent, struct qstr *d_name,
+ 
+ int ceph_encode_encrypted_fname(const struct inode *parent, struct dentry *dentry, char *buf)
  {
- 	u32 len;
- 	int elen;
-@@ -143,7 +143,7 @@ int ceph_encode_encrypted_fname(const struct inode *parent, struct dentry *dentr
- 	 *
- 	 * See: fscrypt_setup_filename
- 	 */
--	if (!fscrypt_fname_encrypted_size(parent, dentry->d_name.len, NAME_MAX, &len))
-+	if (!fscrypt_fname_encrypted_size(parent, d_name->len, NAME_MAX, &len))
- 		return -ENAMETOOLONG;
- 
- 	/* Allocate a buffer appropriate to hold the result */
-@@ -151,7 +151,7 @@ int ceph_encode_encrypted_fname(const struct inode *parent, struct dentry *dentr
- 	if (!cryptbuf)
- 		return -ENOMEM;
- 
--	ret = fscrypt_fname_encrypt(parent, &dentry->d_name, cryptbuf, len);
-+	ret = fscrypt_fname_encrypt(parent, d_name, cryptbuf, len);
- 	if (ret) {
- 		kfree(cryptbuf);
- 		return ret;
-@@ -175,6 +175,11 @@ int ceph_encode_encrypted_fname(const struct inode *parent, struct dentry *dentr
- 	return elen;
++	WARN_ON_ONCE(!fscrypt_has_encryption_key(parent));
++
+ 	return ceph_encode_encrypted_dname(parent, &dentry->d_name, buf);
  }
  
-+int ceph_encode_encrypted_fname(const struct inode *parent, struct dentry *dentry, char *buf)
-+{
-+	return ceph_encode_encrypted_dname(parent, &dentry->d_name, buf);
-+}
-+
- /**
-  * ceph_fname_to_usr - convert a filename for userland presentation
-  * @fname: ceph_fname to be converted
+@@ -221,7 +226,10 @@ int ceph_fname_to_usr(const struct ceph_fname *fname, struct fscrypt_str *tname,
+ 	 * generating a nokey name via fscrypt.
+ 	 */
+ 	if (!fscrypt_has_encryption_key(fname->dir)) {
+-		memcpy(oname->name, fname->name, fname->name_len);
++		if (fname->no_copy)
++			oname->name = fname->name;
++		else
++			memcpy(oname->name, fname->name, fname->name_len);
+ 		oname->len = fname->name_len;
+ 		if (is_nokey)
+ 			*is_nokey = true;
 diff --git a/fs/ceph/crypto.h b/fs/ceph/crypto.h
-index 7e56aded5124..e54150260eba 100644
+index e54150260eba..080905b0c73c 100644
 --- a/fs/ceph/crypto.h
 +++ b/fs/ceph/crypto.h
-@@ -67,6 +67,7 @@ void ceph_fscrypt_free_dummy_policy(struct ceph_fs_client *fsc);
- int ceph_fscrypt_prepare_context(struct inode *dir, struct inode *inode,
- 				 struct ceph_acl_sec_ctx *as);
- void ceph_fscrypt_as_ctx_to_req(struct ceph_mds_request *req, struct ceph_acl_sec_ctx *as);
-+int ceph_encode_encrypted_dname(const struct inode *parent, struct qstr *d_name, char *buf);
- int ceph_encode_encrypted_fname(const struct inode *parent, struct dentry *dentry, char *buf);
+@@ -19,6 +19,7 @@ struct ceph_fname {
+ 	unsigned char	*ctext;		// binary crypttext (if any)
+ 	u32		name_len;	// length of name buffer
+ 	u32		ctext_len;	// length of crypttext
++	bool		no_copy;
+ };
  
- static inline int ceph_fname_alloc_buffer(struct inode *parent, struct fscrypt_str *fname)
-@@ -108,6 +109,13 @@ static inline void ceph_fscrypt_as_ctx_to_req(struct ceph_mds_request *req,
- {
- }
+ struct ceph_fscrypt_auth {
+diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+index caf2547c3fe1..5ce2a6384e55 100644
+--- a/fs/ceph/dir.c
++++ b/fs/ceph/dir.c
+@@ -9,6 +9,7 @@
  
-+static inline int ceph_encode_encrypted_dname(const struct inode *parent,
-+					      struct qstr *d_name, char *buf)
-+{
-+	memcpy(buf, d_name->name, d_name->len);
-+	return d_name->len;
-+}
+ #include "super.h"
+ #include "mds_client.h"
++#include "crypto.h"
+ 
+ /*
+  * Directory operations: readdir, lookup, create, link, unlink,
+@@ -241,7 +242,9 @@ static int __dcache_readdir(struct file *file,  struct dir_context *ctx,
+ 		di = ceph_dentry(dentry);
+ 		if (d_unhashed(dentry) ||
+ 		    d_really_is_negative(dentry) ||
+-		    di->lease_shared_gen != shared_gen) {
++		    di->lease_shared_gen != shared_gen ||
++		    ((dentry->d_flags & DCACHE_NOKEY_NAME) &&
++		     fscrypt_has_encryption_key(dir))) {
+ 			spin_unlock(&dentry->d_lock);
+ 			dput(dentry);
+ 			err = -EAGAIN;
+@@ -340,6 +343,10 @@ static int ceph_readdir(struct file *file, struct dir_context *ctx)
+ 		ctx->pos = 2;
+ 	}
+ 
++	err = fscrypt_prepare_readdir(inode);
++	if (err)
++		return err;
 +
- static inline int ceph_encode_encrypted_fname(const struct inode *parent,
- 						struct dentry *dentry, char *buf)
+ 	spin_lock(&ci->i_ceph_lock);
+ 	/* request Fx cap. if have Fx, we don't need to release Fs cap
+ 	 * for later create/unlink. */
+@@ -389,6 +396,7 @@ static int ceph_readdir(struct file *file, struct dir_context *ctx)
+ 		req = ceph_mdsc_create_request(mdsc, op, USE_AUTH_MDS);
+ 		if (IS_ERR(req))
+ 			return PTR_ERR(req);
++
+ 		err = ceph_alloc_readdir_reply_buffer(req, inode);
+ 		if (err) {
+ 			ceph_mdsc_put_request(req);
+@@ -402,11 +410,20 @@ static int ceph_readdir(struct file *file, struct dir_context *ctx)
+ 			req->r_inode_drop = CEPH_CAP_FILE_EXCL;
+ 		}
+ 		if (dfi->last_name) {
+-			req->r_path2 = kstrdup(dfi->last_name, GFP_KERNEL);
++			struct qstr d_name = { .name = dfi->last_name,
++					       .len = strlen(dfi->last_name) };
++
++			req->r_path2 = kzalloc(NAME_MAX + 1, GFP_KERNEL);
+ 			if (!req->r_path2) {
+ 				ceph_mdsc_put_request(req);
+ 				return -ENOMEM;
+ 			}
++
++			err = ceph_encode_encrypted_dname(inode, &d_name, req->r_path2);
++			if (err < 0) {
++				ceph_mdsc_put_request(req);
++				return err;
++			}
+ 		} else if (is_hash_order(ctx->pos)) {
+ 			req->r_args.readdir.offset_hash =
+ 				cpu_to_le32(fpos_hash(ctx->pos));
+@@ -511,15 +528,20 @@ static int ceph_readdir(struct file *file, struct dir_context *ctx)
+ 	for (; i < rinfo->dir_nr; i++) {
+ 		struct ceph_mds_reply_dir_entry *rde = rinfo->dir_entries + i;
+ 
+-		BUG_ON(rde->offset < ctx->pos);
++		if (rde->offset < ctx->pos) {
++			pr_warn("%s: rde->offset 0x%llx ctx->pos 0x%llx\n",
++				__func__, rde->offset, ctx->pos);
++			return -EIO;
++		}
++
++		if (WARN_ON_ONCE(!rde->inode.in))
++			return -EIO;
+ 
+ 		ctx->pos = rde->offset;
+ 		dout("readdir (%d/%d) -> %llx '%.*s' %p\n",
+ 		     i, rinfo->dir_nr, ctx->pos,
+ 		     rde->name_len, rde->name, &rde->inode.in);
+ 
+-		BUG_ON(!rde->inode.in);
+-
+ 		if (!dir_emit(ctx, rde->name, rde->name_len,
+ 			      ceph_present_ino(inode->i_sb, le64_to_cpu(rde->inode.in->ino)),
+ 			      le32_to_cpu(rde->inode.in->mode) >> 12)) {
+@@ -532,6 +554,8 @@ static int ceph_readdir(struct file *file, struct dir_context *ctx)
+ 			dout("filldir stopping us...\n");
+ 			return 0;
+ 		}
++
++		/* Reset the lengths to their original allocated vals */
+ 		ctx->pos++;
+ 	}
+ 
+@@ -586,7 +610,6 @@ static int ceph_readdir(struct file *file, struct dir_context *ctx)
+ 					dfi->dir_ordered_count);
+ 		spin_unlock(&ci->i_ceph_lock);
+ 	}
+-
+ 	dout("readdir %p file %p done.\n", inode, file);
+ 	return 0;
+ }
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index 9585162200f6..8f0ba67ec78f 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -1747,7 +1747,8 @@ int ceph_readdir_prepopulate(struct ceph_mds_request *req,
+ 			     struct ceph_mds_session *session)
  {
+ 	struct dentry *parent = req->r_dentry;
+-	struct ceph_inode_info *ci = ceph_inode(d_inode(parent));
++	struct inode *inode = d_inode(parent);
++	struct ceph_inode_info *ci = ceph_inode(inode);
+ 	struct ceph_mds_reply_info_parsed *rinfo = &req->r_reply_info;
+ 	struct qstr dname;
+ 	struct dentry *dn;
+@@ -1821,9 +1822,7 @@ int ceph_readdir_prepopulate(struct ceph_mds_request *req,
+ 		tvino.snap = le64_to_cpu(rde->inode.in->snapid);
+ 
+ 		if (rinfo->hash_order) {
+-			u32 hash = ceph_str_hash(ci->i_dir_layout.dl_dir_hash,
+-						 rde->name, rde->name_len);
+-			hash = ceph_frag_value(hash);
++			u32 hash = ceph_frag_value(rde->raw_hash);
+ 			if (hash != last_hash)
+ 				fpos_offset = 2;
+ 			last_hash = hash;
+@@ -1846,6 +1845,11 @@ int ceph_readdir_prepopulate(struct ceph_mds_request *req,
+ 				err = -ENOMEM;
+ 				goto out;
+ 			}
++			if (rde->is_nokey) {
++				spin_lock(&dn->d_lock);
++				dn->d_flags |= DCACHE_NOKEY_NAME;
++				spin_unlock(&dn->d_lock);
++			}
+ 		} else if (d_really_is_positive(dn) &&
+ 			   (ceph_ino(d_inode(dn)) != tvino.ino ||
+ 			    ceph_snap(d_inode(dn)) != tvino.snap)) {
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index d11599bb85f6..a747ea7b7647 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -439,20 +439,87 @@ static int parse_reply_info_readdir(void **p, void *end,
+ 
+ 	info->dir_nr = num;
+ 	while (num) {
++		struct inode *inode = d_inode(req->r_dentry);
++		struct ceph_inode_info *ci = ceph_inode(inode);
+ 		struct ceph_mds_reply_dir_entry *rde = info->dir_entries + i;
++		struct fscrypt_str tname = FSTR_INIT(NULL, 0);
++		struct fscrypt_str oname = FSTR_INIT(NULL, 0);
++		struct ceph_fname fname;
++		u32 altname_len, _name_len;
++		u8 *altname, *_name;
++
+ 		/* dentry */
+-		ceph_decode_32_safe(p, end, rde->name_len, bad);
+-		ceph_decode_need(p, end, rde->name_len, bad);
+-		rde->name = *p;
+-		*p += rde->name_len;
+-		dout("parsed dir dname '%.*s'\n", rde->name_len, rde->name);
++		ceph_decode_32_safe(p, end, _name_len, bad);
++		ceph_decode_need(p, end, _name_len, bad);
++		_name = *p;
++		*p += _name_len;
++		dout("parsed dir dname '%.*s'\n", _name_len, _name);
++
++		if (info->hash_order)
++			rde->raw_hash = ceph_str_hash(ci->i_dir_layout.dl_dir_hash,
++						      _name, _name_len);
+ 
+ 		/* dentry lease */
+ 		err = parse_reply_info_lease(p, end, &rde->lease, features,
+-					     &rde->altname_len, &rde->altname);
++					     &altname_len, &altname);
+ 		if (err)
+ 			goto out_bad;
+ 
++		/*
++		 * Try to dencrypt the dentry names and update them
++		 * in the ceph_mds_reply_dir_entry struct.
++		 */
++		fname.dir = inode;
++		fname.name = _name;
++		fname.name_len = _name_len;
++		fname.ctext = altname;
++		fname.ctext_len = altname_len;
++		/*
++		 * The _name_len maybe larger than altname_len, such as
++		 * when the human readable name length is in range of
++		 * (CEPH_NOHASH_NAME_MAX, CEPH_NOHASH_NAME_MAX + SHA256_DIGEST_SIZE),
++		 * then the copy in ceph_fname_to_usr will corrupt the
++		 * data if there has no encryption key.
++		 *
++		 * Just set the no_copy flag and then if there has no
++		 * encryption key the oname.name will be assigned to
++		 * _name always.
++		 */
++		fname.no_copy = true;
++		if (altname_len == 0) {
++			/*
++			 * Set tname to _name, and this will be used
++			 * to do the base64_decode in-place. It's
++			 * safe because the decoded string should
++			 * always be shorter, which is 3/4 of origin
++			 * string.
++			 */
++			tname.name = _name;
++
++			/*
++			 * Set oname to _name too, and this will be
++			 * used to do the dencryption in-place.
++			 */
++			oname.name = _name;
++			oname.len = _name_len;
++		} else {
++			/*
++			 * This will do the decryption only in-place
++			 * from altname cryptext directly.
++			 */
++			oname.name = altname;
++			oname.len = altname_len;
++		}
++		rde->is_nokey = false;
++		err = ceph_fname_to_usr(&fname, &tname, &oname, &rde->is_nokey);
++		if (err) {
++			pr_err("%s unable to decode %.*s, got %d\n", __func__,
++			       _name_len, _name, err);
++			goto out_bad;
++		}
++		rde->name = oname.name;
++		rde->name_len = oname.len;
++
+ 		/* inode */
+ 		err = parse_reply_info_in(p, end, &rde->inode, features);
+ 		if (err < 0)
+@@ -3472,7 +3539,7 @@ static void handle_reply(struct ceph_mds_session *session, struct ceph_msg *msg)
+ 	if (err == 0) {
+ 		if (result == 0 && (req->r_op == CEPH_MDS_OP_READDIR ||
+ 				    req->r_op == CEPH_MDS_OP_LSSNAP))
+-			ceph_readdir_prepopulate(req, req->r_session);
++			err = ceph_readdir_prepopulate(req, req->r_session);
+ 	}
+ 	current->journal_info = NULL;
+ 	mutex_unlock(&req->r_fill_mutex);
+diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+index cd719691a86d..046a9368c4a9 100644
+--- a/fs/ceph/mds_client.h
++++ b/fs/ceph/mds_client.h
+@@ -96,10 +96,10 @@ struct ceph_mds_reply_info_in {
+ };
+ 
+ struct ceph_mds_reply_dir_entry {
++	bool			      is_nokey;
+ 	char                          *name;
+-	u8			      *altname;
+ 	u32                           name_len;
+-	u32			      altname_len;
++	u32			      raw_hash;
+ 	struct ceph_mds_reply_lease   *lease;
+ 	struct ceph_mds_reply_info_in inode;
+ 	loff_t			      offset;
 -- 
 2.35.1
 
