@@ -2,68 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C51F4E4A37
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Mar 2022 01:54:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43F7F4E4A3E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Mar 2022 01:57:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240981AbiCWA4E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Mar 2022 20:56:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59182 "EHLO
+        id S234001AbiCWA6o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Mar 2022 20:58:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231238AbiCWA4D (ORCPT
+        with ESMTP id S231292AbiCWA6o (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Mar 2022 20:56:03 -0400
+        Tue, 22 Mar 2022 20:58:44 -0400
 Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6C6EDF83;
-        Tue, 22 Mar 2022 17:54:32 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9723B22B32;
+        Tue, 22 Mar 2022 17:57:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1647996866;
-        bh=Hy00S/9FCWStDFkCJIPtXkimLYZvipnqVmgQwtBcnP4=;
+        s=badeba3b8450; t=1647997028;
+        bh=57arried7sbe+HDIzxAWn822gqQrZaz/GzT5YCt5yuA=;
         h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=j5RbSEqTz1PQRVTf1t8r4tu+qasqCXANWlHlt6973tJeLhjG9lWlLTvOOBcHXJsbZ
-         tkae0Qz6Uhu1OpAKNBnsxit3MXPvs0k2necJwvxjwHO0HxTSYfIRtVQQwtNu365GAt
-         LByYzvQa7vSDktoLMncitYS0n7ONobGyhRCTS+mA=
+        b=YpFZSjS08QB5QlG0DbkZwXVoAc2WVCr7eUORIJ7c/Ujyyn3Sf/Qr1CyOxpLLR2ZCo
+         IFd6IkAcNogGV5RKOQEL0NoBm5MzVqKfPLOUIhDFlX+6i/46NR4/4jx/cIJGpArOir
+         4DKNtGKVebeR2qK/LbA46s/NeVNYK/JYAChtHusY=
 X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
 Received: from [0.0.0.0] ([149.28.201.231]) by mail.gmx.net (mrgmx104
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1Mkpex-1nvw5e2rj5-00mGVW; Wed, 23
- Mar 2022 01:54:26 +0100
-Message-ID: <35f1ef04-53b4-83ec-2f2f-be8893ffd258@gmx.com>
-Date:   Wed, 23 Mar 2022 08:54:21 +0800
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1MAONX-1nLWtk2KKJ-00BpGD; Wed, 23
+ Mar 2022 01:57:08 +0100
+Message-ID: <1c79e3ba-b9eb-d0df-748a-438abe705384@gmx.com>
+Date:   Wed, 23 Mar 2022 08:57:03 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.7.0
-Subject: Re: [PATCH 23/40] btrfs: store an inode pointer in struct btrfs_bio
+Subject: Re: [PATCH 24/40] btrfs: remove btrfs_end_io_wq
 Content-Language: en-US
 To:     Christoph Hellwig <hch@lst.de>, Josef Bacik <josef@toxicpanda.com>,
         David Sterba <dsterba@suse.com>, Qu Wenruo <wqu@suse.com>
 Cc:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
 References: <20220322155606.1267165-1-hch@lst.de>
- <20220322155606.1267165-24-hch@lst.de>
+ <20220322155606.1267165-25-hch@lst.de>
 From:   Qu Wenruo <quwenruo.btrfs@gmx.com>
-In-Reply-To: <20220322155606.1267165-24-hch@lst.de>
+In-Reply-To: <20220322155606.1267165-25-hch@lst.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Et88YU5ZVlGs/YxXZPlMZMlj9IxKrNUunKz+16vQqb2tFuWPrCv
- v5zI8yiZHFhprHafWYHXD2YxmCXdGjdOj08M3OLrdoqQ45JMMMFFS/C3vx7PPOd5xAkxjfA
- 0dY4a6Tr81PnghL+kBVzTsOvqdVWGzWybXJhsV0rDRI7xMIDYXeQmGU/jrkp8CgVuVJKGBh
- o6CkxGpIz+rIRlU8hwLaA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:mFUkaqT/rUA=:9zLil0pR8+OW/OM74AK5qg
- 3ih06tZzgVZ6QlxL8pe2y6tZTGWf+ud7PvWRhhMHkKOH8Etx1YYvZQR81lAPfnpatfJom25PM
- 1+yxabi1ibQBfO1SPKHa3gFc9aaW3fDrgZvVsaRz7ajcVLZ+GbK4TEuO7Q+jiQIyoKFPa8zZM
- qEa6hAJz3pnHDon3UrM1dK0ZmwxjRg9Zv5aCr93KG6rPg0+9vHnDrNy2TdjISPbhREC+xVuum
- 5dcWGyw8cMcPJpdGbBuZOPdw36camNV/7vi2MOBCEwSZNfyUJSir1RYMk0NjtWiyzgi1Iuauh
- 0XAYBC7ghFuzvaUWOC1TYkYZ9UNC24zz9vNqa248uSD55vfGvUWnIA6DEUlni6oCrgjwOsJ5g
- rIKKHOZOPpVexV7MmOTOkCp93uoyo/hWRu3YgmVUxE5c/IutQE+i2HGP9IijOwKQc+twRD+9g
- gFizVtG/kMDfln9piQDBD3ccKXYkj95Mn37dAzsWysUI+6RUM352i/eOCDW0fmRb7HN4vNS5R
- 7R0NaJUzs+ER92uaatMmLVwoA0PbwWJQ1LdIysTFGwXnQLDuXO+Wc6BZrVSg93Lcrj4YzQJA/
- cp8NwsJZPSOwUhUN8s9Ww7YrzPmumhmvMZnY7SMs53ZwD94vqtWuJK2Y5uHTQeQYsBQrXXZxT
- QvzkoIfBsWsPH0eeQVDpgbDrUhoYMBdefTO4JDmMGeCweK5kl9koIu7QsNamc1un/YjyDWl3p
- FReQXmHxZgfr+LfziGBO1QaBi5zlSYFC4i7fqnFadu1klqy7EkTkB8I6829y6RbNI7bME+OFU
- KXW9WHL8vHeW1BlD/VEH1RxOS1Zyz/Qi6hvCh2HGuHGNAWE37RLENPvydfvQXQDRNslC6xxgA
- oh0kqD0ZY0JtnCGHTaFg6zSn0u2IK5/ie9n/IS0n6MR29Z5GEae5Ec5z/Aqgi9eL7PXn/oC4D
- sT0IOJPHcazJOiTmKlv/IWv/SgDSwj+UG+tGcKJJM5I2nrusHbOikPE4Vn1pdlsZ4bOpeJ3xY
- MAQK6sqm0Ei8iRg7WmuhsX7/9sdb/c7+N4R5UtCFS1MKMp7/2J+XIaJfKdXV4rqRZyV9aENp2
- 0gMKlVFYuoMi+s=
+X-Provags-ID: V03:K1:kZqWZLJq4/wwLq+PLqRhyT+ZBEUsb5O4lQ0tOCjEVaQh2FIVDys
+ 6ce2+asYGCdgAzYyZGn9hdsZi4aRgvn1TPxCBFadiMJflPmX+RiReS5tgELllo+itiI9jEr
+ qa9huFyvTJ3FFVHyyeW83tqRooRzg4s4btjP6mJ6pDgoe3eaoWz949SJmsZftIZvZW03M8Z
+ Tf0rzDSTvaCHsfdV09b7A==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:i1aJZEyVjMI=:86KoRTq8qk6g+RiT7UZRti
+ nmjg0RDed6Dz0A7OqWPY03EoK3flysEdZyhgdnRjTeARSykX1RBUGwz3ZmBRvHTGZdVWQzo0J
+ qJw9oEac9x2W1J0hkSqQWz+FminpPxYspQd//E6fYDg6cgBkOxTUHerF8Gq3yFPv+XZtUuiJD
+ zk/ezUsveewRyDDID/c71OfqkZCEu/alptixZ5U9b8H5yJugeD2Rs8l78CLcGaBvwYknMPvxi
+ WmbOpoR4swh8YzUJEJPcalkZPUjwIu6ri8gzfdKRvc7Eok6CQjsqOP/wpwnQPI2rZqo7/eWhR
+ Ow7zhyEx0x/zLnwGwEXhQgRLIteT8VEcMWap+KHZjBo8CA17J0EgAmjGGWyxqi+UkNQz6GTYP
+ 22TewWZMOqgMIOVprW9N8LrrrGmwnTbuTt47bG6U4OUwAPmZ8fUYeliMtUdgDSVxli1qcAvuF
+ eYLlK/ntxBivmoK2rH9r/mXZ0sv+Xel79PW93OqV4xosPvLUes5Z5vzvf+hSmtwe6GUqeElYz
+ w17MpjRm44DTiR+NkymVWEMMXOhbyZSACPU8yjs2U4iVJw+IqRPfRWd6G44fHJKN8j5ZuLLMF
+ GWMXB558ourEu492fdsNjo3SQZInPuIG7bhAobHGFQ4amGU7x8JF0tQjLQLKZLPJbqsllDXE1
+ xbj0WA3B5fynn5oTOinVuKealDO7UTXkxEv0WeQHsnZWsObKHW7MwF4pasJLiKbVElMIX0lUD
+ e8vQyJNlxqu2T70vfGpr3XDU9crbA0bLbDzhjrl6ILMvO3cypThlW/cAl1Xv/tIb4SWjJDlHD
+ fIF0H0J5w4vEh9N7sSmeu2WZXdOfpQ5XXjddvhCAvXUt9G6L75q8UsxO62+Vxvq/tpiTwksRR
+ t2E4ENjCL+aK41pUuiZu8yinyg8fU7qQXPtJ1tc3ErnoG+DPb8xaQtF13VbCO6CpuI4K6VmgY
+ Rolrx0S5JZVUIoW0lhNcQ2U0hjr9HxmeYmG+EPpYQ1CcCeQd2qqVRDTBPW0kmwrh6MkwXqWx+
+ CKDFAA38fDO5dBAOtzUlIVO6N2swlPupJEBAqBegFUjjkjHU+wb68opAVDVmDZ6UPE4P3G7cK
+ fcxz1oOLQS7THo=
 X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,FREEMAIL_FROM,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,
         RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
@@ -77,201 +77,542 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
 On 2022/3/22 23:55, Christoph Hellwig wrote:
-> All the I/O going through the btrfs_bio based path are associated with a=
-n
-> inode.  Add a pointer to it to simplify a few things soon.  Also pass th=
-e
-> bio operation to btrfs_bio_alloc given that we have to touch it anyway.
+> Avoid the extra allocation for all read bios by embedding a btrfs_work
+> and I/O end type into the btrfs_bio structure.
 >
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-Something I want to avoid is to futher increasing the size of btrfs_bio.
+Do we really need to bump the size of btrfs_bio furthermore?
 
-For buffered uncompressed IO, we can grab the inode from the first page.
-For direct IO we have bio->bi_private (btrfs_dio_private).
-For compressed IO, it's bio->bi_private again (compressed_bio).
-
-Do the saved code lines really validate the memory usage for all bios?
+Especially btrfs_bio is allocated for each 64K stripe...
 
 Thanks,
 Qu
-
 > ---
->   fs/btrfs/compression.c |  4 +---
->   fs/btrfs/extent_io.c   | 23 ++++++++++++-----------
->   fs/btrfs/extent_io.h   |  6 ++++--
->   fs/btrfs/inode.c       |  3 ++-
->   fs/btrfs/volumes.h     |  2 ++
->   5 files changed, 21 insertions(+), 17 deletions(-)
+>   fs/btrfs/compression.c |  24 +++------
+>   fs/btrfs/ctree.h       |   1 -
+>   fs/btrfs/disk-io.c     | 112 +----------------------------------------
+>   fs/btrfs/disk-io.h     |  10 ----
+>   fs/btrfs/inode.c       |  19 +++----
+>   fs/btrfs/super.c       |  11 +---
+>   fs/btrfs/volumes.c     |  44 ++++++++++++++--
+>   fs/btrfs/volumes.h     |  11 ++++
+>   8 files changed, 66 insertions(+), 166 deletions(-)
 >
 > diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
-> index 71e5b2e9a1ba8..419a09d924290 100644
+> index 419a09d924290..ae6f986058c75 100644
 > --- a/fs/btrfs/compression.c
 > +++ b/fs/btrfs/compression.c
-> @@ -464,10 +464,8 @@ static struct bio *alloc_compressed_bio(struct comp=
-ressed_bio *cb, u64 disk_byte
->   	struct bio *bio;
->   	int ret;
+> @@ -423,20 +423,6 @@ static void end_compressed_bio_write(struct bio *bi=
+o)
+>   	bio_put(bio);
+>   }
 >
-> -	bio =3D btrfs_bio_alloc(BIO_MAX_VECS);
+> -static blk_status_t submit_compressed_bio(struct btrfs_fs_info *fs_info=
+,
+> -					  struct compressed_bio *cb,
+> -					  struct bio *bio, int mirror_num)
+> -{
+> -	blk_status_t ret;
 > -
-> +	bio =3D btrfs_bio_alloc(cb->inode, BIO_MAX_VECS, opf);
+> -	ASSERT(bio->bi_iter.bi_size);
+> -	ret =3D btrfs_bio_wq_end_io(fs_info, bio, BTRFS_WQ_ENDIO_DATA);
+> -	if (ret)
+> -		return ret;
+> -	ret =3D btrfs_map_bio(fs_info, bio, mirror_num);
+> -	return ret;
+> -}
+> -
+>   /*
+>    * Allocate a compressed_bio, which will be used to read/write on-disk
+>    * (aka, compressed) * data.
+> @@ -468,6 +454,10 @@ static struct bio *alloc_compressed_bio(struct comp=
+ressed_bio *cb, u64 disk_byte
 >   	bio->bi_iter.bi_sector =3D disk_bytenr >> SECTOR_SHIFT;
-> -	bio->bi_opf =3D opf;
 >   	bio->bi_private =3D cb;
 >   	bio->bi_end_io =3D endio_func;
+> +	if (btrfs_op(bio) =3D=3D BTRFS_MAP_WRITE)
+> +		btrfs_bio(bio)->end_io_type =3D BTRFS_ENDIO_WQ_DATA_WRITE;
+> +	else
+> +		btrfs_bio(bio)->end_io_type =3D BTRFS_ENDIO_WQ_DATA_READ;
 >
-> diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-> index 58ef0f4fca361..116a65787e314 100644
-> --- a/fs/btrfs/extent_io.c
-> +++ b/fs/btrfs/extent_io.c
-> @@ -2657,10 +2657,9 @@ int btrfs_repair_one_sector(struct inode *inode,
->   		return -EIO;
+>   	em =3D btrfs_get_chunk_map(fs_info, disk_bytenr, fs_info->sectorsize)=
+;
+>   	if (IS_ERR(em)) {
+> @@ -594,7 +584,8 @@ blk_status_t btrfs_submit_compressed_write(struct bt=
+rfs_inode *inode, u64 start,
+>   					goto finish_cb;
+>   			}
+>
+> -			ret =3D submit_compressed_bio(fs_info, cb, bio, 0);
+> +			ASSERT(bio->bi_iter.bi_size);
+> +			ret =3D btrfs_map_bio(fs_info, bio, 0);
+>   			if (ret)
+>   				goto finish_cb;
+>   			bio =3D NULL;
+> @@ -930,7 +921,8 @@ blk_status_t btrfs_submit_compressed_read(struct ino=
+de *inode, struct bio *bio,
+>   						  fs_info->sectorsize);
+>   			sums +=3D fs_info->csum_size * nr_sectors;
+>
+> -			ret =3D submit_compressed_bio(fs_info, cb, comp_bio, mirror_num);
+> +			ASSERT(comp_bio->bi_iter.bi_size);
+> +			ret =3D btrfs_map_bio(fs_info, comp_bio, mirror_num);
+>   			if (ret)
+>   				goto finish_cb;
+>   			comp_bio =3D NULL;
+> diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
+> index ebb2d109e8bb2..c22a24ca81652 100644
+> --- a/fs/btrfs/ctree.h
+> +++ b/fs/btrfs/ctree.h
+> @@ -823,7 +823,6 @@ struct btrfs_fs_info {
+>   	struct btrfs_workqueue *endio_meta_workers;
+>   	struct btrfs_workqueue *endio_raid56_workers;
+>   	struct btrfs_workqueue *rmw_workers;
+> -	struct btrfs_workqueue *endio_meta_write_workers;
+>   	struct btrfs_workqueue *endio_write_workers;
+>   	struct btrfs_workqueue *endio_freespace_worker;
+>   	struct btrfs_workqueue *caching_workers;
+> diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
+> index f43c9ab86e617..bb910b78bbc82 100644
+> --- a/fs/btrfs/disk-io.c
+> +++ b/fs/btrfs/disk-io.c
+> @@ -51,7 +51,6 @@
+>   				 BTRFS_SUPER_FLAG_METADUMP |\
+>   				 BTRFS_SUPER_FLAG_METADUMP_V2)
+>
+> -static void end_workqueue_fn(struct btrfs_work *work);
+>   static void btrfs_destroy_ordered_extents(struct btrfs_root *root);
+>   static int btrfs_destroy_delayed_refs(struct btrfs_transaction *trans,
+>   				      struct btrfs_fs_info *fs_info);
+> @@ -64,40 +63,6 @@ static int btrfs_destroy_pinned_extent(struct btrfs_f=
+s_info *fs_info,
+>   static int btrfs_cleanup_transaction(struct btrfs_fs_info *fs_info);
+>   static void btrfs_error_commit_super(struct btrfs_fs_info *fs_info);
+>
+> -/*
+> - * btrfs_end_io_wq structs are used to do processing in task context wh=
+en an IO
+> - * is complete.  This is used during reads to verify checksums, and it =
+is used
+> - * by writes to insert metadata for new file extents after IO is comple=
+te.
+> - */
+> -struct btrfs_end_io_wq {
+> -	struct bio *bio;
+> -	bio_end_io_t *end_io;
+> -	void *private;
+> -	struct btrfs_fs_info *info;
+> -	blk_status_t status;
+> -	enum btrfs_wq_endio_type metadata;
+> -	struct btrfs_work work;
+> -};
+> -
+> -static struct kmem_cache *btrfs_end_io_wq_cache;
+> -
+> -int __init btrfs_end_io_wq_init(void)
+> -{
+> -	btrfs_end_io_wq_cache =3D kmem_cache_create("btrfs_end_io_wq",
+> -					sizeof(struct btrfs_end_io_wq),
+> -					0,
+> -					SLAB_MEM_SPREAD,
+> -					NULL);
+> -	if (!btrfs_end_io_wq_cache)
+> -		return -ENOMEM;
+> -	return 0;
+> -}
+> -
+> -void __cold btrfs_end_io_wq_exit(void)
+> -{
+> -	kmem_cache_destroy(btrfs_end_io_wq_cache);
+> -}
+> -
+>   static void btrfs_free_csum_hash(struct btrfs_fs_info *fs_info)
+>   {
+>   	if (fs_info->csum_shash)
+> @@ -726,54 +691,6 @@ int btrfs_validate_metadata_buffer(struct btrfs_bio=
+ *bbio,
+>   	return ret;
+>   }
+>
+> -static void end_workqueue_bio(struct bio *bio)
+> -{
+> -	struct btrfs_end_io_wq *end_io_wq =3D bio->bi_private;
+> -	struct btrfs_fs_info *fs_info;
+> -	struct btrfs_workqueue *wq;
+> -
+> -	fs_info =3D end_io_wq->info;
+> -	end_io_wq->status =3D bio->bi_status;
+> -
+> -	if (btrfs_op(bio) =3D=3D BTRFS_MAP_WRITE) {
+> -		if (end_io_wq->metadata =3D=3D BTRFS_WQ_ENDIO_METADATA)
+> -			wq =3D fs_info->endio_meta_write_workers;
+> -		else if (end_io_wq->metadata =3D=3D BTRFS_WQ_ENDIO_FREE_SPACE)
+> -			wq =3D fs_info->endio_freespace_worker;
+> -		else
+> -			wq =3D fs_info->endio_write_workers;
+> -	} else {
+> -		if (end_io_wq->metadata)
+> -			wq =3D fs_info->endio_meta_workers;
+> -		else
+> -			wq =3D fs_info->endio_workers;
+> -	}
+> -
+> -	btrfs_init_work(&end_io_wq->work, end_workqueue_fn, NULL, NULL);
+> -	btrfs_queue_work(wq, &end_io_wq->work);
+> -}
+> -
+> -blk_status_t btrfs_bio_wq_end_io(struct btrfs_fs_info *info, struct bio=
+ *bio,
+> -			enum btrfs_wq_endio_type metadata)
+> -{
+> -	struct btrfs_end_io_wq *end_io_wq;
+> -
+> -	end_io_wq =3D kmem_cache_alloc(btrfs_end_io_wq_cache, GFP_NOFS);
+> -	if (!end_io_wq)
+> -		return BLK_STS_RESOURCE;
+> -
+> -	end_io_wq->private =3D bio->bi_private;
+> -	end_io_wq->end_io =3D bio->bi_end_io;
+> -	end_io_wq->info =3D info;
+> -	end_io_wq->status =3D 0;
+> -	end_io_wq->bio =3D bio;
+> -	end_io_wq->metadata =3D metadata;
+> -
+> -	bio->bi_private =3D end_io_wq;
+> -	bio->bi_end_io =3D end_workqueue_bio;
+> -	return 0;
+> -}
+> -
+>   static void run_one_async_start(struct btrfs_work *work)
+>   {
+>   	struct async_submit_bio *async;
+> @@ -921,10 +838,7 @@ blk_status_t btrfs_submit_metadata_bio(struct inode=
+ *inode, struct bio *bio,
+>   			return ret;
+>   	} else {
+>   		/* checksum validation should happen in async threads: */
+> -		ret =3D btrfs_bio_wq_end_io(fs_info, bio,
+> -					  BTRFS_WQ_ENDIO_METADATA);
+> -		if (ret)
+> -			return ret;
+> +		btrfs_bio(bio)->end_io_type =3D BTRFS_ENDIO_WQ_METADATA_READ;
 >   	}
 >
-> -	repair_bio =3D btrfs_bio_alloc(1);
-> +	repair_bio =3D btrfs_bio_alloc(inode, 1, REQ_OP_READ);
->   	repair_bbio =3D btrfs_bio(repair_bio);
->   	repair_bbio->file_offset =3D start;
-> -	repair_bio->bi_opf =3D REQ_OP_READ;
->   	repair_bio->bi_end_io =3D failed_bio->bi_end_io;
->   	repair_bio->bi_iter.bi_sector =3D failrec->logical >> 9;
->   	repair_bio->bi_private =3D failed_bio->bi_private;
-> @@ -3128,9 +3127,10 @@ static void end_bio_extent_readpage(struct bio *b=
-io)
->    * new bio by bio_alloc_bioset as it does not initialize the bytes out=
-side of
->    * 'bio' because use of __GFP_ZERO is not supported.
+>   	return btrfs_map_bio(fs_info, bio, mirror_num);
+> @@ -1888,25 +1802,6 @@ struct btrfs_root *btrfs_get_fs_root_commit_root(=
+struct btrfs_fs_info *fs_info,
+>   	return root;
+>   }
+>
+> -/*
+> - * called by the kthread helper functions to finally call the bio end_i=
+o
+> - * functions.  This is where read checksum verification actually happen=
+s
+> - */
+> -static void end_workqueue_fn(struct btrfs_work *work)
+> -{
+> -	struct bio *bio;
+> -	struct btrfs_end_io_wq *end_io_wq;
+> -
+> -	end_io_wq =3D container_of(work, struct btrfs_end_io_wq, work);
+> -	bio =3D end_io_wq->bio;
+> -
+> -	bio->bi_status =3D end_io_wq->status;
+> -	bio->bi_private =3D end_io_wq->private;
+> -	bio->bi_end_io =3D end_io_wq->end_io;
+> -	bio_endio(bio);
+> -	kmem_cache_free(btrfs_end_io_wq_cache, end_io_wq);
+> -}
+> -
+>   static int cleaner_kthread(void *arg)
+>   {
+>   	struct btrfs_root *root =3D arg;
+> @@ -2219,7 +2114,6 @@ static void btrfs_stop_all_workers(struct btrfs_fs=
+_info *fs_info)
+>   	 * queues can do metadata I/O operations.
+>   	 */
+>   	btrfs_destroy_workqueue(fs_info->endio_meta_workers);
+> -	btrfs_destroy_workqueue(fs_info->endio_meta_write_workers);
+>   }
+>
+>   static void free_root_extent_buffers(struct btrfs_root *root)
+> @@ -2404,9 +2298,6 @@ static int btrfs_init_workqueues(struct btrfs_fs_i=
+nfo *fs_info)
+>   	fs_info->endio_meta_workers =3D
+>   		btrfs_alloc_workqueue(fs_info, "endio-meta", flags,
+>   				      max_active, 4);
+> -	fs_info->endio_meta_write_workers =3D
+> -		btrfs_alloc_workqueue(fs_info, "endio-meta-write", flags,
+> -				      max_active, 2);
+>   	fs_info->endio_raid56_workers =3D
+>   		btrfs_alloc_workqueue(fs_info, "endio-raid56", flags,
+>   				      max_active, 4);
+> @@ -2429,7 +2320,6 @@ static int btrfs_init_workqueues(struct btrfs_fs_i=
+nfo *fs_info)
+>   	if (!(fs_info->workers && fs_info->delalloc_workers &&
+>   	      fs_info->flush_workers &&
+>   	      fs_info->endio_workers && fs_info->endio_meta_workers &&
+> -	      fs_info->endio_meta_write_workers &&
+>   	      fs_info->endio_write_workers && fs_info->endio_raid56_workers &=
+&
+>   	      fs_info->endio_freespace_worker && fs_info->rmw_workers &&
+>   	      fs_info->caching_workers && fs_info->fixup_workers &&
+> diff --git a/fs/btrfs/disk-io.h b/fs/btrfs/disk-io.h
+> index afe3bb96616c9..e8900c1b71664 100644
+> --- a/fs/btrfs/disk-io.h
+> +++ b/fs/btrfs/disk-io.h
+> @@ -17,12 +17,6 @@
 >    */
-> -static inline void btrfs_bio_init(struct btrfs_bio *bbio)
-> +static inline void btrfs_bio_init(struct btrfs_bio *bbio, struct inode =
-*inode)
+>   #define BTRFS_BDEV_BLOCKSIZE	(4096)
+>
+> -enum btrfs_wq_endio_type {
+> -	BTRFS_WQ_ENDIO_DATA,
+> -	BTRFS_WQ_ENDIO_METADATA,
+> -	BTRFS_WQ_ENDIO_FREE_SPACE,
+> -};
+> -
+>   static inline u64 btrfs_sb_offset(int mirror)
 >   {
->   	memset(bbio, 0, offsetof(struct btrfs_bio, bio));
-> +	bbio->inode =3D inode;
->   }
+>   	u64 start =3D SZ_16K;
+> @@ -119,8 +113,6 @@ int btrfs_buffer_uptodate(struct extent_buffer *buf,=
+ u64 parent_transid,
+>   			  int atomic);
+>   int btrfs_read_buffer(struct extent_buffer *buf, u64 parent_transid, i=
+nt level,
+>   		      struct btrfs_key *first_key);
+> -blk_status_t btrfs_bio_wq_end_io(struct btrfs_fs_info *info, struct bio=
+ *bio,
+> -			enum btrfs_wq_endio_type metadata);
+>   blk_status_t btrfs_wq_submit_bio(struct inode *inode, struct bio *bio,
+>   				 int mirror_num, unsigned long bio_flags,
+>   				 u64 dio_file_offset,
+> @@ -144,8 +136,6 @@ int btree_lock_page_hook(struct page *page, void *da=
+ta,
+>   int btrfs_get_num_tolerated_disk_barrier_failures(u64 flags);
+>   int btrfs_get_free_objectid(struct btrfs_root *root, u64 *objectid);
+>   int btrfs_init_root_free_objectid(struct btrfs_root *root);
+> -int __init btrfs_end_io_wq_init(void);
+> -void __cold btrfs_end_io_wq_exit(void);
 >
->   /*
-> @@ -3138,13 +3138,14 @@ static inline void btrfs_bio_init(struct btrfs_b=
-io *bbio)
->    *
->    * The bio allocation is backed by bioset and does not fail.
->    */
-> -struct bio *btrfs_bio_alloc(unsigned int nr_iovecs)
-> +struct bio *btrfs_bio_alloc(struct inode *inode, unsigned int nr_iovecs=
-,
-> +		unsigned int opf)
->   {
->   	struct bio *bio;
->
->   	ASSERT(0 < nr_iovecs && nr_iovecs <=3D BIO_MAX_VECS);
-> -	bio =3D bio_alloc_bioset(NULL, nr_iovecs, 0, GFP_NOFS, &btrfs_bioset);
-> -	btrfs_bio_init(btrfs_bio(bio));
-> +	bio =3D bio_alloc_bioset(NULL, nr_iovecs, opf, GFP_NOFS, &btrfs_bioset=
-);
-> +	btrfs_bio_init(btrfs_bio(bio), inode);
->   	return bio;
->   }
->
-> @@ -3156,12 +3157,13 @@ struct bio *btrfs_bio_clone(struct block_device =
-*bdev, struct bio *bio)
->   	/* Bio allocation backed by a bioset does not fail */
->   	new =3D bio_alloc_clone(bdev, bio, GFP_NOFS, &btrfs_bioset);
->   	bbio =3D btrfs_bio(new);
-> -	btrfs_bio_init(bbio);
-> +	btrfs_bio_init(btrfs_bio(new), btrfs_bio(bio)->inode);
->   	bbio->iter =3D bio->bi_iter;
->   	return new;
->   }
->
-> -struct bio *btrfs_bio_clone_partial(struct bio *orig, u64 offset, u64 s=
-ize)
-> +struct bio *btrfs_bio_clone_partial(struct inode *inode, struct bio *or=
-ig,
-> +		u64 offset, u64 size)
->   {
->   	struct bio *bio;
->   	struct btrfs_bio *bbio;
-> @@ -3173,7 +3175,7 @@ struct bio *btrfs_bio_clone_partial(struct bio *or=
-ig, u64 offset, u64 size)
->   	ASSERT(bio);
->
->   	bbio =3D btrfs_bio(bio);
-> -	btrfs_bio_init(bbio);
-> +	btrfs_bio_init(btrfs_bio(bio), inode);
->
->   	bio_trim(bio, offset >> 9, size >> 9);
->   	bbio->iter =3D bio->bi_iter;
-> @@ -3308,7 +3310,7 @@ static int alloc_new_bio(struct btrfs_inode *inode=
-,
->   	struct bio *bio;
->   	int ret;
->
-> -	bio =3D btrfs_bio_alloc(BIO_MAX_VECS);
-> +	bio =3D btrfs_bio_alloc(&inode->vfs_inode, BIO_MAX_VECS, opf);
->   	/*
->   	 * For compressed page range, its disk_bytenr is always @disk_bytenr
->   	 * passed in, no matter if we have added any range into previous bio.
-> @@ -3321,7 +3323,6 @@ static int alloc_new_bio(struct btrfs_inode *inode=
-,
->   	bio_ctrl->bio_flags =3D bio_flags;
->   	bio->bi_end_io =3D end_io_func;
->   	bio->bi_private =3D &inode->io_tree;
-> -	bio->bi_opf =3D opf;
->   	ret =3D calc_bio_boundaries(bio_ctrl, inode, file_offset);
->   	if (ret < 0)
->   		goto error;
-> diff --git a/fs/btrfs/extent_io.h b/fs/btrfs/extent_io.h
-> index 72d86f228c56e..d5f3d9692ea29 100644
-> --- a/fs/btrfs/extent_io.h
-> +++ b/fs/btrfs/extent_io.h
-> @@ -277,9 +277,11 @@ void extent_range_redirty_for_io(struct inode *inod=
-e, u64 start, u64 end);
->   void extent_clear_unlock_delalloc(struct btrfs_inode *inode, u64 start=
-, u64 end,
->   				  struct page *locked_page,
->   				  u32 bits_to_clear, unsigned long page_ops);
-> -struct bio *btrfs_bio_alloc(unsigned int nr_iovecs);
-> +struct bio *btrfs_bio_alloc(struct inode *inode, unsigned int nr_iovecs=
-,
-> +		unsigned int opf);
->   struct bio *btrfs_bio_clone(struct block_device *bdev, struct bio *bio=
-);
-> -struct bio *btrfs_bio_clone_partial(struct bio *orig, u64 offset, u64 s=
-ize);
-> +struct bio *btrfs_bio_clone_partial(struct inode *inode, struct bio *or=
-ig,
-> +		u64 offset, u64 size);
->
->   void end_extent_writepage(struct page *page, int err, u64 start, u64 e=
-nd);
->   int btrfs_repair_eb_io_failure(const struct extent_buffer *eb, int mir=
-ror_num);
+>   #ifdef CONFIG_DEBUG_LOCK_ALLOC
+>   void btrfs_set_buffer_lockdep_class(u64 objectid,
 > diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-> index 5c9d8e8a98466..18d54cfedf829 100644
+> index 18d54cfedf829..5a5474fac0b28 100644
 > --- a/fs/btrfs/inode.c
 > +++ b/fs/btrfs/inode.c
-> @@ -7987,7 +7987,8 @@ static void btrfs_submit_direct(const struct iomap=
-_iter *iter,
->   		 * This will never fail as it's passing GPF_NOFS and
->   		 * the allocation is backed by btrfs_bioset.
->   		 */
-> -		bio =3D btrfs_bio_clone_partial(dio_bio, clone_offset, clone_len);
-> +		bio =3D btrfs_bio_clone_partial(inode, dio_bio, clone_offset,
-> +					      clone_len);
->   		bio->bi_private =3D dip;
->   		bio->bi_end_io =3D btrfs_end_dio_bio;
->   		btrfs_bio(bio)->file_offset =3D file_offset;
+> @@ -2512,6 +2512,7 @@ blk_status_t btrfs_submit_data_bio(struct inode *i=
+node, struct bio *bio,
+>   {
+>   	struct btrfs_fs_info *fs_info =3D btrfs_sb(inode->i_sb);
+>   	struct btrfs_inode *bi =3D BTRFS_I(inode);
+> +	struct btrfs_bio *bbio =3D btrfs_bio(bio);
+>   	blk_status_t ret;
+>
+>   	if (bio_op(bio) =3D=3D REQ_OP_ZONE_APPEND) {
+> @@ -2537,14 +2538,10 @@ blk_status_t btrfs_submit_data_bio(struct inode =
+*inode, struct bio *bio,
+>   		if (ret)
+>   			return ret;
+>   	} else {
+> -		enum btrfs_wq_endio_type metadata =3D BTRFS_WQ_ENDIO_DATA;
+> -embedding a btrfs_work
+and I/O end type
+>   		if (btrfs_is_free_space_inode(bi))
+> -			metadata =3D BTRFS_WQ_ENDIO_FREE_SPACE;
+> -
+> -		ret =3D btrfs_bio_wq_end_io(fs_info, bio, metadata);
+> -		if (ret)
+> -			return ret;
+> +			bbio->end_io_type =3D BTRFS_ENDIO_WQ_FREE_SPACE_READ;
+> +		else
+> +			bbio->end_io_type =3D BTRFS_ENDIO_WQ_DATA_READ;
+>
+>   		if (bio_flags & EXTENT_BIO_COMPRESSED)
+>   			return btrfs_submit_compressed_read(inode, bio,
+> @@ -7739,9 +7736,7 @@ static blk_status_t submit_dio_repair_bio(struct i=
+node *inode, struct bio *bio,
+>
+>   	BUG_ON(bio_op(bio) =3D=3D REQ_OP_WRITE);
+>
+> -	ret =3D btrfs_bio_wq_end_io(fs_info, bio, BTRFS_WQ_ENDIO_DATA);
+> -	if (ret)
+> -		return ret;
+> +	btrfs_bio(bio)->end_io_type =3D BTRFS_ENDIO_WQ_DATA_WRITE;
+>
+>   	refcount_inc(&dip->refs);
+>   	ret =3D btrfs_map_bio(fs_info, bio, mirror_num);
+> @@ -7865,9 +7860,7 @@ static inline blk_status_t btrfs_submit_dio_bio(st=
+ruct bio *bio,
+>   				return ret;
+>   		}
+>   	} else {
+> -		ret =3D btrfs_bio_wq_end_io(fs_info, bio, BTRFS_WQ_ENDIO_DATA);
+> -		if (ret)
+> -			return ret;
+> +		btrfs_bio(bio)->end_io_type =3D BTRFS_ENDIO_WQ_DATA_READ;
+>
+>   		if (!(bi->flags & BTRFS_INODE_NODATASUM)) {
+>   			u64 csum_offset;
+> diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+> index 4d947ba32da9d..33dedca4f0862 100644
+> --- a/fs/btrfs/super.c
+> +++ b/fs/btrfs/super.c
+> @@ -1835,8 +1835,6 @@ static void btrfs_resize_thread_pool(struct btrfs_=
+fs_info *fs_info,
+>   	btrfs_workqueue_set_max(fs_info->caching_workers, new_pool_size);
+>   	btrfs_workqueue_set_max(fs_info->endio_workers, new_pool_size);
+>   	btrfs_workqueue_set_max(fs_info->endio_meta_workers, new_pool_size);
+> -	btrfs_workqueue_set_max(fs_info->endio_meta_write_workers,
+> -				new_pool_size);
+>   	btrfs_workqueue_set_max(fs_info->endio_write_workers, new_pool_size);
+>   	btrfs_workqueue_set_max(fs_info->endio_freespace_worker, new_pool_siz=
+e);
+>   	btrfs_workqueue_set_max(fs_info->delayed_workers, new_pool_size);
+> @@ -2593,13 +2591,9 @@ static int __init init_btrfs_fs(void)
+>   	if (err)
+>   		goto free_delayed_ref;
+>
+> -	err =3D btrfs_end_io_wq_init();
+> -	if (err)
+> -		goto free_prelim_ref;
+> -
+>   	err =3D btrfs_interface_init();
+>   	if (err)
+> -		goto free_end_io_wq;
+> +		goto free_prelim_ref;
+>
+>   	btrfs_print_mod_info();
+>
+> @@ -2615,8 +2609,6 @@ static int __init init_btrfs_fs(void)
+>
+>   unregister_ioctl:
+>   	btrfs_interface_exit();
+> -free_end_io_wq:
+> -	btrfs_end_io_wq_exit();
+>   free_prelim_ref:
+>   	btrfs_prelim_ref_exit();
+>   free_delayed_ref:
+> @@ -2654,7 +2646,6 @@ static void __exit exit_btrfs_fs(void)
+>   	extent_state_cache_exit();
+>   	extent_io_exit();
+>   	btrfs_interface_exit();
+> -	btrfs_end_io_wq_exit();
+>   	unregister_filesystem(&btrfs_fs_type);
+>   	btrfs_exit_sysfs();
+>   	btrfs_cleanup_fs_uuids();
+> diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+> index 9d1f8c27eff33..9a1eb1166d72f 100644
+> --- a/fs/btrfs/volumes.c
+> +++ b/fs/btrfs/volumes.c
+> @@ -6659,11 +6659,38 @@ int btrfs_map_sblock(struct btrfs_fs_info *fs_in=
+fo, enum btrfs_map_op op,
+>   	return __btrfs_map_block(fs_info, op, logical, length, bioc_ret, 0, 1=
+);
+>   }
+>
+> -static inline void btrfs_end_bioc(struct btrfs_io_context *bioc)
+> +static struct btrfs_workqueue *btrfs_end_io_wq(struct btrfs_io_context =
+*bioc)
+>   {
+> +	struct btrfs_fs_info *fs_info =3D bioc->fs_info;
+> +
+> +	switch (btrfs_bio(bioc->orig_bio)->end_io_type) {
+> +	case BTRFS_ENDIO_WQ_DATA_READ:
+> +		return fs_info->endio_workers;
+> +	case BTRFS_ENDIO_WQ_DATA_WRITE:
+> +		return fs_info->endio_write_workers;
+> +	case BTRFS_ENDIO_WQ_METADATA_READ:
+> +		return fs_info->endio_meta_workers;
+> +	case BTRFS_ENDIO_WQ_FREE_SPACE_READ:
+> +		return fs_info->endio_freespace_worker;
+> +	default:
+> +		return NULL;
+> +	}
+> +}
+> +
+> +static void btrfs_end_bio_work(struct btrfs_work *work)
+> +{
+> +	struct btrfs_bio *bbio =3D container_of(work, struct btrfs_bio, work);
+> +
+> +	bio_endio(&bbio->bio);
+> +}
+> +
+> +static void btrfs_end_bioc(struct btrfs_io_context *bioc, bool async)
+> +{
+> +	struct btrfs_workqueue *wq =3D async ? btrfs_end_io_wq(bioc) : NULL;
+>   	struct bio *bio =3D bioc->orig_bio;
+> +	struct btrfs_bio *bbio =3D btrfs_bio(bio);
+>
+> -	btrfs_bio(bio)->mirror_num =3D bioc->mirror_num;
+> +	bbio->mirror_num =3D bioc->mirror_num;
+>   	bio->bi_private =3D bioc->private;
+>   	bio->bi_end_io =3D bioc->end_io;
+>
+> @@ -6675,7 +6702,14 @@ static inline void btrfs_end_bioc(struct btrfs_io=
+_context *bioc)
+>   		bio->bi_status =3D BLK_STS_IOERR;
+>   	else
+>   		bio->bi_status =3D BLK_STS_OK;
+> -	bio_endio(bio);
+> +
+> +	if (wq) {
+> +		btrfs_init_work(&bbio->work, btrfs_end_bio_work, NULL, NULL);
+> +		btrfs_queue_work(wq, &bbio->work);
+> +	} else {
+> +		bio_endio(bio);
+> +	}
+> +
+>   	btrfs_put_bioc(bioc);
+>   }
+>
+> @@ -6707,7 +6741,7 @@ static void btrfs_end_bio(struct bio *bio)
+>
+>   	btrfs_bio_counter_dec(bioc->fs_info);
+>   	if (atomic_dec_and_test(&bioc->stripes_pending))
+> -		btrfs_end_bioc(bioc);
+> +		btrfs_end_bioc(bioc, true);
+>   }
+>
+>   static void submit_stripe_bio(struct btrfs_io_context *bioc, struct bi=
+o *bio,
+> @@ -6805,7 +6839,7 @@ blk_status_t btrfs_map_bio(struct btrfs_fs_info *f=
+s_info, struct bio *bio,
+>   		    !test_bit(BTRFS_DEV_STATE_WRITEABLE, &dev->dev_state))) {
+>   			atomic_inc(&bioc->error);
+>   			if (atomic_dec_and_test(&bioc->stripes_pending))
+> -				btrfs_end_bioc(bioc);
+> +				btrfs_end_bioc(bioc, false);
+>   			continue;
+>   		}
+>
 > diff --git a/fs/btrfs/volumes.h b/fs/btrfs/volumes.h
-> index c22148bebc2f5..a4f942547002e 100644
+> index a4f942547002e..51a27180004eb 100644
 > --- a/fs/btrfs/volumes.h
 > +++ b/fs/btrfs/volumes.h
-> @@ -321,6 +321,8 @@ struct btrfs_fs_devices {
->    * Mostly for btrfs specific features like csum and mirror_num.
->    */
->   struct btrfs_bio {
-> +	struct inode *inode;
+> @@ -315,6 +315,14 @@ struct btrfs_fs_devices {
+>   				- 2 * sizeof(struct btrfs_chunk))	\
+>   				/ sizeof(struct btrfs_stripe) + 1)
+>
+> +enum btrfs_endio_type {
+> +	BTRFS_ENDIO_NONE =3D 0,
+> +	BTRFS_ENDIO_WQ_DATA_READ,
+> +	BTRFS_ENDIO_WQ_DATA_WRITE,
+> +	BTRFS_ENDIO_WQ_METADATA_READ,
+> +	BTRFS_ENDIO_WQ_FREE_SPACE_READ,
+> +};
 > +
+>   /*
+>    * Additional info to pass along bio.
+>    *
+> @@ -324,6 +332,9 @@ struct btrfs_bio {
+>   	struct inode *inode;
+>
 >   	unsigned int mirror_num;
+> +
+> +	enum btrfs_endio_type end_io_type;
+> +	struct btrfs_work work;
 >
 >   	/* for direct I/O */
+>   	u64 file_offset;
