@@ -2,100 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ED6DA4E5560
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Mar 2022 16:37:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 25B7B4E556C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Mar 2022 16:40:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237058AbiCWPio (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Mar 2022 11:38:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49318 "EHLO
+        id S238108AbiCWPl2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Mar 2022 11:41:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232483AbiCWPio (ORCPT
+        with ESMTP id S238053AbiCWPl0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Mar 2022 11:38:44 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE8D26245
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Mar 2022 08:37:13 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 7D5D8210F6;
-        Wed, 23 Mar 2022 15:37:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1648049832; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type;
-        bh=soBuA80xsDH8VOJ/JoeFtL6JQDQQpaLTK5D//Ypey2I=;
-        b=l857lWwTGRD1Sf1Qw3C9UXD4ZP1qLPKStZnFVM5DPVF7M9Og6NYWPsLcmP3rTDxJI5x36A
-        +yxUwjjrofenmxaBKNyZVCavGZVhGpTa5/ubMH8xDKc8m8za5gwkU9ywO4lR7Zw7/5GhZ2
-        lPNUMKKzUOvPOfwAl+HYkOXdhU9ppB4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1648049832;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type;
-        bh=soBuA80xsDH8VOJ/JoeFtL6JQDQQpaLTK5D//Ypey2I=;
-        b=8Nf15BgcQJajwbAvIp8XeZpV6EVng2PV5glDBOsq5KSsfClHOxL+Luf3TmT8IpHr0X0Wcg
-        i660PJVAY9xOp0CA==
-Received: from quack3.suse.cz (unknown [10.100.224.230])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 6FB96A3B89;
-        Wed, 23 Mar 2022 15:37:12 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 257F7A0610; Wed, 23 Mar 2022 16:37:12 +0100 (CET)
-Date:   Wed, 23 Mar 2022 16:37:12 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: [GIT PULL] Reiserfs, udf, ext2 fixes and cleanups for 5.18-rc1
-Message-ID: <20220323153712.csh5pme32z5aqx4e@quack3.lan>
+        Wed, 23 Mar 2022 11:41:26 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 898EC29C8D;
+        Wed, 23 Mar 2022 08:39:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=3fBdSQ100xHcTSrCs45lHCLpgmg9lIU1s69LGZJCCrw=; b=Qcp+yp+ZH2DjkIeqC6ZDqGrtcP
+        F7/NWPNevkcyYIejSZYUTqB6puAcw5bHBSaP4QUyN/cK1KbMjwr4JKHv5OrvFIEXVbyt1rR1x3MDJ
+        RwH3bDWIy9yjm3eUstE4XGRjrJdGqUVKmdSvJoOJzQErAGLQOva9Ip8RFyL6qItPD2Bsp8lHeMVbl
+        mzeBA+BARA4sGPFjaknpYsmE4cCVNUp+UV5yRotLlUosWK70SjimbrZMhjBJd9Qtkfh7CcQ3FoQDU
+        LUQM061YdN5DUpidBL/FRN9cJovRKvMOSLrdli81rrqBggDqebC2Y61fXMFtpUDCcj4DgeUGPnVC/
+        C3POyhPw==;
+Received: from [2001:4bb8:19a:b822:f080:d126:bfe4:c36c] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nX35W-00E9LT-P0; Wed, 23 Mar 2022 15:39:55 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     axboe@kernel.dk
+Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Guenter Roeck <linux@roeck-us.net>,
+        Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Subject: [PATCH] fs: do not pass __GFP_HIGHMEM to bio_alloc in do_mpage_readpage
+Date:   Wed, 23 Mar 2022 16:39:52 +0100
+Message-Id: <20220323153952.1418560-1-hch@lst.de>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-  Hello Linus,
+The mpage bio alloc cleanup accidentally removed clearing ~GFP_KERNEL
+bits from the mask passed to bio_alloc.  Fix this up in a slightly
+less obsfucated way that mirrors what iomap does in its readpage code.
 
-  could you please pull from
+Fixes: 77c436de01c0 ("mpage: pass the operation to bio_alloc")
+Reported-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Tested-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+---
+ fs/mpage.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fs_for_v5.18-rc1
-
-The biggest change in this pull is the addition of a deprecation message
-about reiserfs with the outlook that we'd eventually be able to remove it
-from the kernel. Because it is practically unmaintained and untested and
-odd enough that people don't want to bother with it anymore... Otherwise
-there are small udf and ext2 fixes.
-
-Top of the tree is 31e9dc49c2c0. The full shortlog is:
-
-Colin Ian King (1):
-      udf: remove redundant assignment of variable etype
-
-Edward Shishkin (1):
-      reiserfs: get rid of AOP_FLAG_CONT_EXPAND flag
-
-Jan Kara (1):
-      reiserfs: Deprecate reiserfs
-
-Zhang Yi (1):
-      ext2: correct max file size computing
-
-The diffstat is
-
- fs/ext2/super.c     |  6 +++++-
- fs/reiserfs/Kconfig | 10 +++++++---
- fs/reiserfs/inode.c | 16 +++++-----------
- fs/reiserfs/super.c |  2 ++
- fs/udf/super.c      |  3 +--
- 5 files changed, 20 insertions(+), 17 deletions(-)
-
-							Thanks
-								Honza
-
+diff --git a/fs/mpage.c b/fs/mpage.c
+index 9ed1e58e8d70b..d465883edf719 100644
+--- a/fs/mpage.c
++++ b/fs/mpage.c
+@@ -148,13 +148,11 @@ static struct bio *do_mpage_readpage(struct mpage_readpage_args *args)
+ 	int op = REQ_OP_READ;
+ 	unsigned nblocks;
+ 	unsigned relative_block;
+-	gfp_t gfp;
++	gfp_t gfp = mapping_gfp_constraint(page->mapping, GFP_KERNEL);
+ 
+ 	if (args->is_readahead) {
+ 		op |= REQ_RAHEAD;
+-		gfp = readahead_gfp_mask(page->mapping);
+-	} else {
+-		gfp = mapping_gfp_constraint(page->mapping, GFP_KERNEL);
++		gfp |= __GFP_NORETRY | __GFP_NOWARN;
+ 	}
+ 
+ 	if (page_has_buffers(page))
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.30.2
+
