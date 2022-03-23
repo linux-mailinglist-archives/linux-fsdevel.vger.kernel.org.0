@@ -2,52 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 51D564E50C6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Mar 2022 11:57:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F023B4E50F0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Mar 2022 12:02:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243636AbiCWK6z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Mar 2022 06:58:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52044 "EHLO
+        id S243696AbiCWLEB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Mar 2022 07:04:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243639AbiCWK6x (ORCPT
+        with ESMTP id S243690AbiCWLD7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Mar 2022 06:58:53 -0400
-Received: from mail.parknet.co.jp (mail.parknet.co.jp [210.171.160.6])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1D84F78060
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Mar 2022 03:57:19 -0700 (PDT)
-Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
-        by mail.parknet.co.jp (Postfix) with ESMTPSA id 8A34115F939;
-        Wed, 23 Mar 2022 19:57:18 +0900 (JST)
-Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
-        by ibmpc.myhome.or.jp (8.16.1/8.16.1/Debian-2) with ESMTPS id 22NAvHkh109821
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-        Wed, 23 Mar 2022 19:57:18 +0900
-Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
-        by devron.myhome.or.jp (8.16.1/8.16.1/Debian-2) with ESMTPS id 22NAvHZm375873
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-        Wed, 23 Mar 2022 19:57:17 +0900
-Received: (from hirofumi@localhost)
-        by devron.myhome.or.jp (8.16.1/8.16.1/Submit) id 22NAvGrg375872;
-        Wed, 23 Mar 2022 19:57:16 +0900
-From:   OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-To:     Chung-Chiang Cheng <shepjeng@gmail.com>
-Cc:     Chung-Chiang Cheng <cccheng@synology.com>,
-        linux-fsdevel@vger.kernel.org, kernel@cccheng.net
-Subject: Re: [PATCH 2/2] fat: introduce creation time
-References: <20220321095814.175891-1-cccheng@synology.com>
-        <20220321095814.175891-2-cccheng@synology.com>
-        <87lex2e91h.fsf@mail.parknet.co.jp>
-        <CAHuHWtkvt4wOdwaoyYv0B4862pSYttMBh6BUz3vHbERv+CEGaw@mail.gmail.com>
-        <87sfr917hr.fsf@mail.parknet.co.jp>
-        <CAHuHWtk1-AdKoa-SBOb=sJAM=32reVzcUQYjrrxvOPYwFZJqXQ@mail.gmail.com>
-Date:   Wed, 23 Mar 2022 19:57:16 +0900
-In-Reply-To: <CAHuHWtk1-AdKoa-SBOb=sJAM=32reVzcUQYjrrxvOPYwFZJqXQ@mail.gmail.com>
-        (Chung-Chiang Cheng's message of "Wed, 23 Mar 2022 18:27:43 +0800")
-Message-ID: <87o81x0wdv.fsf@mail.parknet.co.jp>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/29.0.50 (gnu/linux)
+        Wed, 23 Mar 2022 07:03:59 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5ED6240E66;
+        Wed, 23 Mar 2022 04:02:28 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 524CE612C6;
+        Wed, 23 Mar 2022 11:02:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F274C340E8;
+        Wed, 23 Mar 2022 11:02:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1648033347;
+        bh=sg4q872OUuXQuf/NinFOiVBav/JGmM4AocI/ddhr9pQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=XLOq242XNSBHLZDDuVsJ8T+6eJB/xp9lUx2MnxwXDg2+WtveP+2wXM0UA7rdzvlUK
+         wyJTzMzsPkjIIHwinha6BYBFhn5AYPopDy998IdIKDfB0csdjv81+9dHmxWgofEIjm
+         hF3zBKuu2WfKHIIYA57smPGwqdKHOAURgpl5PloS/vCqKaOcsvBoQkOldBNsVKBFP6
+         gKqKvCCmj4G35wYtK1a5+RbvhPgTs+owv8qQby9uTAr019hZl26eVL/aaQHCgb+K/I
+         8NpJeML7+kxhU/3so6+YxCmOuT3qglmUMFvygv8tzUKnsohKeacWVrJtNOs4OsaIs5
+         BlPVEx+YLZgPg==
+From:   Christian Brauner <brauner@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] fs/mount_setattr updates
+Date:   Wed, 23 Mar 2022 12:02:09 +0100
+Message-Id: <20220323110209.858041-1-brauner@kernel.org>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -56,24 +51,55 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Chung-Chiang Cheng <shepjeng@gmail.com> writes:
+Hey Linus,
 
-> I got your point. Correctly speaking ctime is not really dropped but mixed
-> with mtime after my patch. They share the same field on disk. Before that
-> ctime is mixed with crtime.
->
-> I choose this new behavior because ctime and mtime are similar concepts.
-> ctime is the update time for file attributes, and mtime is the one for file
-> contents. They are updated together most of the time with few exceptions
-> (rename, rmdir, unlink) in the current FAT implementation.
+/* Summary */
+This contains a few more patches to massage the mount_setattr() codepaths and
+one minor fix to reuse a helper we added some time back. The final two patches
+do similar cleanups in different ways. One patch is mine and the other is Al's
+who was nice enough to give me a branch for it. Since his came in later and my
+branch had been sitting in -next for quite some time we just put his on top
+instead of swap them.
 
-No, a user can change the ctime to arbitrary time, and after the your
-patch, the changed ctime only hold on a memory inode. So a user sees
-ctime jump backward and forward when a memory inode is expired. (Of
-course, this happens just by "cp -a" in real world use case.)
+/* Testing */
+All patches are based on v5.17-rc2 and have been sitting in linux-next. No
+build failures or warnings were observed and fstests and selftests have seen no
+regressions caused by this patchset.
 
-I'm pointing about this introduced new behavior by your patch.
+/* Conflicts */
+At the time of creating this PR no merge conflicts were reported from
+linux-next and no merge conflicts showed up doing a test-merge with current
+mainline.
 
-Thanks.
--- 
-OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+The following changes since commit 538f4f022a4612f969d5324ee227403c9f8b1d72:
+
+  fs: add kernel doc for mnt_{hold,unhold}_writers() (2022-02-14 08:35:32 +0100)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/brauner/linux tags/fs.v5.18
+
+for you to fetch changes up to e257039f0fc7da36ac3a522ef9a5cb4ae7852e67:
+
+  mount_setattr(): clean the control flow and calling conventions (2022-03-15 19:17:13 -0400)
+
+Please consider pulling these changes from the signed fs.v5.18 tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+fs.v5.18
+
+----------------------------------------------------------------
+Al Viro (1):
+      mount_setattr(): clean the control flow and calling conventions
+
+Christian Brauner (4):
+      fs: add mnt_allow_writers() and simplify mount_setattr_prepare()
+      fs: simplify check in mount_setattr_commit()
+      fs: don't open-code mnt_hold_writers()
+      fs: clean up mount_setattr control flow
+
+ fs/namespace.c | 148 ++++++++++++++++++++++++++++++---------------------------
+ 1 file changed, 78 insertions(+), 70 deletions(-)
