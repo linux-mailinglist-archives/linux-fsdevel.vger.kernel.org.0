@@ -2,86 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 25B7B4E556C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Mar 2022 16:40:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D91894E5584
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Mar 2022 16:42:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238108AbiCWPl2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Mar 2022 11:41:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55446 "EHLO
+        id S238252AbiCWPoP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Mar 2022 11:44:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238053AbiCWPl0 (ORCPT
+        with ESMTP id S233403AbiCWPoN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Mar 2022 11:41:26 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 898EC29C8D;
-        Wed, 23 Mar 2022 08:39:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-        Content-ID:Content-Description:In-Reply-To:References;
-        bh=3fBdSQ100xHcTSrCs45lHCLpgmg9lIU1s69LGZJCCrw=; b=Qcp+yp+ZH2DjkIeqC6ZDqGrtcP
-        F7/NWPNevkcyYIejSZYUTqB6puAcw5bHBSaP4QUyN/cK1KbMjwr4JKHv5OrvFIEXVbyt1rR1x3MDJ
-        RwH3bDWIy9yjm3eUstE4XGRjrJdGqUVKmdSvJoOJzQErAGLQOva9Ip8RFyL6qItPD2Bsp8lHeMVbl
-        mzeBA+BARA4sGPFjaknpYsmE4cCVNUp+UV5yRotLlUosWK70SjimbrZMhjBJd9Qtkfh7CcQ3FoQDU
-        LUQM061YdN5DUpidBL/FRN9cJovRKvMOSLrdli81rrqBggDqebC2Y61fXMFtpUDCcj4DgeUGPnVC/
-        C3POyhPw==;
-Received: from [2001:4bb8:19a:b822:f080:d126:bfe4:c36c] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nX35W-00E9LT-P0; Wed, 23 Mar 2022 15:39:55 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     axboe@kernel.dk
-Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Guenter Roeck <linux@roeck-us.net>,
-        Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Subject: [PATCH] fs: do not pass __GFP_HIGHMEM to bio_alloc in do_mpage_readpage
-Date:   Wed, 23 Mar 2022 16:39:52 +0100
-Message-Id: <20220323153952.1418560-1-hch@lst.de>
-X-Mailer: git-send-email 2.30.2
+        Wed, 23 Mar 2022 11:44:13 -0400
+Received: from mail-il1-x135.google.com (mail-il1-x135.google.com [IPv6:2607:f8b0:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C85015642D
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Mar 2022 08:42:43 -0700 (PDT)
+Received: by mail-il1-x135.google.com with SMTP id e18so1279222ilr.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Mar 2022 08:42:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=from:to:cc:in-reply-to:references:subject:message-id:date
+         :mime-version:content-transfer-encoding;
+        bh=Q+QWIODRunL1kZDxkGcjubr7xZYCTkjXBoQ6GHBjdng=;
+        b=rKJPBrT/fwB5RPRTSrN7oyA4l4lLXNdlw8m1cbxtLtf/aCb6lmXP8ecNKCnz5QvAzG
+         6yTZ8Bo/YzAFHSjxWer0zagiDNtTWGTMTX+idSWuwknAEoSzUj8u2byB+1gGo7TNCYlz
+         IAuM0KmU/X+jYN1uLNNhaJJCuIizwT5ZvWFPraeHsWW4PBy+iJaaRKA7pjdjm4l315II
+         AOqidbWncNwJby8i51Y2uYKAC16/Rl8Phw4gEnMqf7wOlgJmzpO8eXdnAL9FfJ4Z9PPZ
+         PbGgP1JQyZbuaLHRYYS9G7urf6o/8Ehts8d4jLY9UVkrNLpxAWRaCJ4hfyox2NkPvmkS
+         bm+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject
+         :message-id:date:mime-version:content-transfer-encoding;
+        bh=Q+QWIODRunL1kZDxkGcjubr7xZYCTkjXBoQ6GHBjdng=;
+        b=btpu8/enLs+nd9QW+q9yIs0h7SlUpaKG0zYQcynuJD6QTB8ixZcAPnn5HCkrS25PBO
+         WpU+KiHaWq823PlQVdj6Puiz+mffcrt9vu1gHCa5rF39T4gjivs91igKzV7Pb2+Vg01G
+         YF2tFT3/WmM48rf46F0UTRk5DuhD+ysfmv5zJFghNJU66NhW52VzF/nRGf0F7gPh6UDR
+         vFz9R1ScAcBMGiD2o9GbOa045XDohujBHxeeE2+YTRt8COFZ6R35YM+j6bEgFKeWSWg0
+         bQIouyt2Bnw9ocvSR6SZn+Fqz4L4QPu7VWIwMXvNmjoF/vKzytQjG4AxeZcstke/Wf6H
+         s0Bg==
+X-Gm-Message-State: AOAM530d6rSNTnaOr6h4dq+ukpYWAVMiW6y1HyG6fC0bky28wu3Q9E/e
+        abOTgWw9r1rjM4+LWJKidKspGg==
+X-Google-Smtp-Source: ABdhPJw1zXcF2NHArvdixZyJ6ySe9N67vs6A+LOFqBlJhkit10ZNhV9WGnkHqlxliaasGuo/R8ooyw==
+X-Received: by 2002:a05:6e02:1c0a:b0:2c7:75de:d84 with SMTP id l10-20020a056e021c0a00b002c775de0d84mr337284ilh.186.1648050163113;
+        Wed, 23 Mar 2022 08:42:43 -0700 (PDT)
+Received: from [127.0.1.1] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id c15-20020a056e020ccf00b002c865ea7babsm192178ilj.51.2022.03.23.08.42.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Mar 2022 08:42:42 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Ryusuke Konishi <konishi.ryusuke@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        Guenter Roeck <linux@roeck-us.net>
+In-Reply-To: <20220323153952.1418560-1-hch@lst.de>
+References: <20220323153952.1418560-1-hch@lst.de>
+Subject: Re: [PATCH] fs: do not pass __GFP_HIGHMEM to bio_alloc in do_mpage_readpage
+Message-Id: <164805016256.144972.11275037637375213496.b4-ty@kernel.dk>
+Date:   Wed, 23 Mar 2022 09:42:42 -0600
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The mpage bio alloc cleanup accidentally removed clearing ~GFP_KERNEL
-bits from the mask passed to bio_alloc.  Fix this up in a slightly
-less obsfucated way that mirrors what iomap does in its readpage code.
+On Wed, 23 Mar 2022 16:39:52 +0100, Christoph Hellwig wrote:
+> The mpage bio alloc cleanup accidentally removed clearing ~GFP_KERNEL
+> bits from the mask passed to bio_alloc.  Fix this up in a slightly
+> less obsfucated way that mirrors what iomap does in its readpage code.
+> 
+> 
 
-Fixes: 77c436de01c0 ("mpage: pass the operation to bio_alloc")
-Reported-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Tested-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
----
- fs/mpage.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Applied, thanks!
 
-diff --git a/fs/mpage.c b/fs/mpage.c
-index 9ed1e58e8d70b..d465883edf719 100644
---- a/fs/mpage.c
-+++ b/fs/mpage.c
-@@ -148,13 +148,11 @@ static struct bio *do_mpage_readpage(struct mpage_readpage_args *args)
- 	int op = REQ_OP_READ;
- 	unsigned nblocks;
- 	unsigned relative_block;
--	gfp_t gfp;
-+	gfp_t gfp = mapping_gfp_constraint(page->mapping, GFP_KERNEL);
- 
- 	if (args->is_readahead) {
- 		op |= REQ_RAHEAD;
--		gfp = readahead_gfp_mask(page->mapping);
--	} else {
--		gfp = mapping_gfp_constraint(page->mapping, GFP_KERNEL);
-+		gfp |= __GFP_NORETRY | __GFP_NOWARN;
- 	}
- 
- 	if (page_has_buffers(page))
+[1/1] fs: do not pass __GFP_HIGHMEM to bio_alloc in do_mpage_readpage
+      commit: 61285ff72ae59e1603f908b13363e99883d67e09
+
+Best regards,
 -- 
-2.30.2
+Jens Axboe
+
 
