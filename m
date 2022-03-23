@@ -2,92 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F05AD4E5B5A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Mar 2022 23:39:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 321AC4E5B9D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Mar 2022 23:58:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345282AbiCWWlN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Mar 2022 18:41:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40100 "EHLO
+        id S1345352AbiCWXAY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Mar 2022 19:00:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240410AbiCWWlM (ORCPT
+        with ESMTP id S234809AbiCWXAW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Mar 2022 18:41:12 -0400
-Received: from sonic304-28.consmr.mail.ne1.yahoo.com (sonic304-28.consmr.mail.ne1.yahoo.com [66.163.191.154])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C62C225C6E
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Mar 2022 15:39:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1648075181; bh=mC20+7TfRW6SdSbJR6fvSbCljYYikadz3XaqubTXWoY=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=PH0HRAXD67YIpmWyafy9rFOEVuYUyIq8X//OYb2DMN04faT0PnlF3KwpR8mZXy8AclhocXmwgKUmE0fKsCNQND35nq3Rf/CjFpMOI9RiVsI6NaO2C1BSauVCjct/N9mKpvjLvQ1n8N3oa9amr3PsOwn8N95yB8Bp0xb1mSMBl5RDnNlVuQ1+QVfmxH2FSKT/lt8OGQEM7IazaB/OGzj9ppAt4KAlbILYebbQjvXclM0mBb3snFQZEjJI7L/yO47jjcXT6BJ9hEQ/SUd/8rQAN7xtSmCv3dZ0Jrx9nsEtqa0eeK6bkJji0f2JEM8xOt5ecpiwr4ofvs7vzX0d7wMeew==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1648075181; bh=bT1BWLYh3huKi4ud4dqj1HI4/AEBVypxzPWNmAT4ids=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=ZX5EYmTz68twxKEGZE7p0+9qxsYKa8pv/0rYZljKAo0VuVCxZVHxXIIppkGgBxoh41+t7gaxd8DTZq36Ivcd6f425SQ/ZDgIvAtkCJ081k2m8bENMBgy9Tj17oKC+28OwT2sEPkyvhb7o2X4IyLxxeFzCRJHsVqU3Di3sjCfhkVjSnpuP4kf2Z/RDiJ+8AHAgbo6SGpjFfHUw/fKSZ2mDUF2LbNrPUE4PYE2J3PHAue9HC/bU6gnReLkdFuVTJTd/RstSw3ajf7vdtqVFBoz+9OJyNWEqAwqd5NLs6xs/P6UOsv6L7Kt2igZOQroFaSo48xvwbYjLihRCr5nGI4dCg==
-X-YMail-OSG: aRtVYpIVM1mcjJ.GzVEao9yrcefHqRuQJJQV5bnHobGLoSqFv6ixDYNnp33Q6J4
- O6wcg61HZXxIrKh241.ARyjgYLW_BZomXhC_fm69liIfuCNgSw1o1DlDZDY7ckpx4EL1YHxQfvba
- 0XRp42brli2U0GaB2fAuhRvaIEGc1VInOFbQXm6NVyrDr6AsNnv1YZUaJcMK_dDnXLWQ3lwx_zLh
- kwHtfz3K0ji6zY3n20TtVlEgs9BPwHwRM6wS4gfQ16biZ8avXe9Z6rhr59OQ.dXNmjPKCsFWD.Xi
- xhZ9lj0t2MzC2sZB960gp84Q.akfi8hGua17Puz6ioV27GvZbXvaUbqJ80CpaFrhwxfKGTKShRKB
- jSvZprgBol6j4dempnAM2iKgA98CJvkldDBA6GM0T5okKvqNkTL45.KGOusVUbAJR1nkNWSAobXl
- GK6njZuBvUQcTuyTE63ga6cgEzelkb.gVOjHxmjh7aLI5Y5uAHySk2tBI.SimdyqdtKnkNDHgy3g
- XBTfuOSLVRbA0mniu2TlzejhAo_YsTPpkIqs6OOGwKGZwCxkKC3efipTNYgCrVbCDds08_RLsx.i
- HqWkUWiBno3pFuuCvAxuwHG5HMyyBpjmkqBaLrlbHRIM9ihEWg6rucQb_XakkuNR1VRq9llMJnlL
- anUyC23w4vtzTnFSAJVS31w.ninIpS2VLKFW.9U_SqdJgV7WqAZ9BbfujN.wfmVk.clQGLEEZK9B
- B3hsv2XXwZA72U9x212vkvZbWUz5eRoTBjHKpzvfwm7.jVv58VrKa824ICtGIpGalaW_iwitcJ9C
- XdWEvoIy4PI8QvXmoVFdYh7BerDemLMoprEWs9JC75iv2NSsQyDn1gC0efsIE.ZgtNjtEgCf87B8
- qpQwHdp7Rnw3G.eKNXMo.1794KwjoguOezCkXY33IsCtMJamdFZFYUH6cWoNTOWxFMjiza_9N4r9
- MPBzhKSL1iKNxchhGSBQ7FXEgoc4CSuWTB..nECTIVAwKpx4wgF5MhFfcqCu5F7lOduRO.wChuVY
- KZ4RDENm5T0HkVudv0ofQCzLXXa4b4WIItpY84auduRcTOUQldAugaU7JURuuwLSOxNDAeru9QYm
- orTqQ5aYYgHAjF0VVnoCOh1H5wemxTzAFTYEA0.YbIP6IEpjX3N82nHoq_QJyjbFM6rNM6gVD.Lc
- 05rtS0IjAhJ3IL2JctbsQhsT4qf.1kS6rFh3YbYrzeRoW6wSbpdGe2aTDXsxkI5i8luyKENR5eD0
- MgQIgqKOhuRh_74U1l5symqEYNVNZRJsbaAHWgvUdsARiEGVk39ZYj5Yz2LqGKagf3imPz8FNipo
- j1.kQdU1T93ztMARo6H96TeOsUts6G45x34qxbur5GCIGse5zliFl.Bo.h.94kEn2szypcE7k8WB
- babF_qk5q2fgFbEJQpj26vKusCE0iSbvM8HdyliVqBtoUZLDcpnLqjR.Fbs37aQQyZhrJLVpqKdC
- c1yBpLKXir_SN9vh6zidi20ngxIPufZS0n9GZcLb0aXhwxEcbPaIGz36n6iTQvMmQcQCgylqBId8
- _8vUW_OJDPfaIW1JpKMhdjuNxUZSClHaNH1n9_TfnEq8kkwaonY.SOpS6V8.KC4nrQUReic3006X
- Oc6FQQToxZvB4hn2tC_iZZm2.ByWF.dbItfjhfc9RqJG7B_lg2PVIcCvGkzBrVkIjLTqctqKg6pR
- JvzEMQ1t.m4BUonAq1uR1Vf6qRld8z6WENRqKHdFLlGp57Mmt7XakLMM3LgcufyPcEQjxyG_9q3y
- PndMF6uMxlPt6_ajanYVkD4Jh6S.XF8FhIyaK8gZMMP3tV8BnnjYhHoBqFAn1VEIp0.FwvcSbuDc
- zJMg8.gbg3p3ElWDAUfWNnvXu5B0IGpzJwwVDcrzuJn_pJMi4wCbfQDSrESMdgjwuyH3jpDkRDHR
- QK0tdrrLc1a392lJoneXeGEZQdBFHg_gt1DLzrnANQmHfFDBTCx_lRXG.Fy6iRnQAn5n4cmZyUx.
- Kd0OxdwrE_3gdqYKVQTpY_EcdJa7lcgNdZMmXUgzNWCqhqr7._zek7BabXejjTbmGs40OhGyGn6U
- hTZdhxuOtqtMFIbgNE2aDeR.MOzJmW2bCRXe4dobJB4Pmyl9PFnI9VQkfFUjbKbxaR25QJTopStF
- UzJ6lWFMHacHE9ZMU9s.Vfg43Fms27uHaroreo1N6ZqYxSI21ja7YG8cs0krHtQleUSMsYf6nIWF
- 1XTsNFEA5wF9PVf.tcuFoUttjcCRyUPwjWVQ0P.nOmRmDet7TprAe7XkZHdY2u3XDhyL.rP_USiC
- YpfERr0INimq_.KnTrTs-
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.ne1.yahoo.com with HTTP; Wed, 23 Mar 2022 22:39:41 +0000
-Received: by hermes--canary-production-bf1-665cdb9985-6p9bt (VZM Hermes SMTP Server) with ESMTPA ID 39a8b820c79283304b7db448c9a80e45;
-          Wed, 23 Mar 2022 22:39:39 +0000 (UTC)
-Message-ID: <d0894565-9783-b398-0faf-60bfb96837ce@schaufler-ca.com>
-Date:   Wed, 23 Mar 2022 15:39:36 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [RFC PATCH] getvalues(2) prototype
-Content-Language: en-US
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Karel Zak <kzak@redhat.com>, Ian Kent <raven@themaw.net>,
+        Wed, 23 Mar 2022 19:00:22 -0400
+Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id ED1FC90256;
+        Wed, 23 Mar 2022 15:58:49 -0700 (PDT)
+Received: from dread.disaster.area (pa49-186-150-27.pa.vic.optusnet.com.au [49.186.150.27])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 72EA3533E65;
+        Thu, 24 Mar 2022 09:58:45 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1nX9wB-0095L5-JH; Thu, 24 Mar 2022 09:58:43 +1100
+Date:   Thu, 24 Mar 2022 09:58:43 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Miklos Szeredi <mszeredi@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-man@vger.kernel.org,
+        linux-security-module@vger.kernel.org, Karel Zak <kzak@redhat.com>,
+        Ian Kent <raven@themaw.net>,
         David Howells <dhowells@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <christian@brauner.io>,
         Amir Goldstein <amir73il@gmail.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
+        James Bottomley <James.Bottomley@hansenpartnership.com>
+Subject: Re: [RFC PATCH] getvalues(2) prototype
+Message-ID: <20220323225843.GI1609613@dread.disaster.area>
 References: <20220322192712.709170-1-mszeredi@redhat.com>
- <20220323114215.pfrxy2b6vsvqig6a@wittgenstein>
- <CAJfpegsCKEx41KA1S2QJ9gX9BEBG4_d8igA0DT66GFH2ZanspA@mail.gmail.com>
- <d3333dbe-b4b7-8eb9-4a50-8526d95b5394@schaufler-ca.com>
- <CAJfpegvwTmaw0bp70-nYQAvs8T=wYyxnDEoA=rOvX8HDZnxCTg@mail.gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAJfpegvwTmaw0bp70-nYQAvs8T=wYyxnDEoA=rOvX8HDZnxCTg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.19987 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220322192712.709170-1-mszeredi@redhat.com>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=623ba628
+        a=sPqof0Mm7fxWrhYUF33ZaQ==:117 a=sPqof0Mm7fxWrhYUF33ZaQ==:17
+        a=kj9zAlcOel0A:10 a=o8Y5sQTvuykA:10 a=GumQ9EM2AAAA:8 a=7-415B0cAAAA:8
+        a=63ntfpr2ZaCgDPseocQA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -95,40 +55,95 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 3/23/2022 7:00 AM, Miklos Szeredi wrote:
-> On Wed, 23 Mar 2022 at 14:51, Casey Schaufler <casey@schaufler-ca.com> wrote:
->
->> You also need a way to get a list off what attributes are available
->> and/or a way to get all available attributes. Applications and especially
->> libraries shouldn't have to guess what information is relevant. If the
->> attributes change depending on the filesystem and/or LSM involved, and
->> they do, how can a general purpose library function know what data to
->> ask for?
-> Oh, yes.  Even the current prototype does that:
->
-> # ~/getvalues / ""
-> [] = "mnt" "mntns" "xattr" "data" (len=21)
-> # ~/getvalues / "mnt"
-> [mnt] = "id" "parentid" "root" "mountpoint" "options" "shared"
-> "master" "propagate_from" "unbindable" (len=76)
-> # ~/getvalues / "mntns"
-> [mntns] = "21" "22" "24" "25" "23" "26" "27" "28" "29" "30" "31" "32" (len=36)
->   ~/getvalues / "mntns:21"
-> [mntns:21] = "id" "parentid" "root" "mountpoint" "options" "shared"
-> "master" "propagate_from" "unbindable" (len=76)
+On Tue, Mar 22, 2022 at 08:27:12PM +0100, Miklos Szeredi wrote:
+> Add a new userspace API that allows getting multiple short values in a
+> single syscall.
+> 
+> This would be useful for the following reasons:
+> 
+> - Calling open/read/close for many small files is inefficient.  E.g. on my
+>   desktop invoking lsof(1) results in ~60k open + read + close calls under
+>   /proc and 90% of those are 128 bytes or less.
 
-That requires multiple calls and hierarchy tracking by the caller.
-Not to mention that in this case the caller needs to understand
-how mount namespaces are being used. I don't see that you've made
-anything cleaner. You have discarded the type checking provided
-by the "classic" APIs. Elsewhere in this thread the claims of
-improved performance have been questioned, but I can't say boo
-about that. Is this interface targeted for languages other than C
-for which the paradigm might provide (more?) value?
+How does doing the open/read/close in a single syscall make this any
+more efficient? All it saves is the overhead of a couple of
+syscalls, it doesn't reduce any of the setup or teardown overhead
+needed to read the data itself....
 
->
-> I didn't implement enumeration for "data" and "xattr" but that is
-> certainly possible and not even difficult to do.
->
-> Thanks,
-> Miklos
+> - Interfaces for getting various attributes and statistics are fragmented.
+>   For files we have basic stat, statx, extended attributes, file attributes
+>   (for which there are two overlapping ioctl interfaces).  For mounts and
+>   superblocks we have stat*fs as well as /proc/$PID/{mountinfo,mountstats}.
+>   The latter also has the problem on not allowing queries on a specific
+>   mount.
+
+https://xkcd.com/927/
+
+> - Some attributes are cheap to generate, some are expensive.  Allowing
+>   userspace to select which ones it needs should allow optimizing queries.
+> 
+> - Adding an ascii namespace should allow easy extension and self
+>   description.
+> 
+> - The values can be text or binary, whichever is fits best.
+> 
+> The interface definition is:
+> 
+> struct name_val {
+> 	const char *name;	/* in */
+> 	struct iovec value_in;	/* in */
+> 	struct iovec value_out;	/* out */
+> 	uint32_t error;		/* out */
+> 	uint32_t reserved;
+> };
+
+Ahhh, XFS_IOC_ATTRMULTI_BY_HANDLE reborn. This is how xfsdump gets
+and sets attributes efficiently when dumping and restoring files -
+it's an interface that allows batches of xattr operations to be run
+on a file in a single syscall.
+
+I've said in the past when discussing things like statx() that maybe
+everything should be addressable via the xattr namespace and
+set/queried via xattr names regardless of how the filesystem stores
+the data. The VFS/filesystem simply translates the name to the
+storage location of the information. It might be held in xattrs, but
+it could just be a flag bit in an inode field.
+
+Then we just get named xattrs in batches from an open fd.
+
+> int getvalues(int dfd, const char *path, struct name_val *vec, size_t num,
+> 	      unsigned int flags);
+> 
+> @dfd and @path are used to lookup object $ORIGIN.  @vec contains @num
+> name/value descriptors.  @flags contains lookup flags for @path.
+> 
+> The syscall returns the number of values filled or an error.
+> 
+> A single name/value descriptor has the following fields:
+> 
+> @name describes the object whose value is to be returned.  E.g.
+> 
+> mnt                    - list of mount parameters
+> mnt:mountpoint         - the mountpoint of the mount of $ORIGIN
+> mntns                  - list of mount ID's reachable from the current root
+> mntns:21:parentid      - parent ID of the mount with ID of 21
+> xattr:security.selinux - the security.selinux extended attribute
+> data:foo/bar           - the data contained in file $ORIGIN/foo/bar
+
+How are these different from just declaring new xattr namespaces for
+these things. e.g. open any file and list the xattrs in the
+xattr:mount.mnt namespace to get the list of mount parameters for
+that mount.
+
+Why do we need a new "xattr in everything but name" interface when
+we could just extend the one we've already got and formalise a new,
+cleaner version of xattr batch APIs that have been around for 20-odd
+years already?
+
+Cheers,
+
+Dave.
+
+-- 
+Dave Chinner
+david@fromorbit.com
