@@ -2,123 +2,157 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B3F94E559F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Mar 2022 16:47:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E2FB64E56E1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Mar 2022 17:48:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245222AbiCWPsl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Mar 2022 11:48:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45648 "EHLO
+        id S245553AbiCWQuE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Mar 2022 12:50:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237554AbiCWPsi (ORCPT
+        with ESMTP id S245573AbiCWQuA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Mar 2022 11:48:38 -0400
-Received: from mail-oi1-x229.google.com (mail-oi1-x229.google.com [IPv6:2607:f8b0:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94D9170F70
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Mar 2022 08:47:08 -0700 (PDT)
-Received: by mail-oi1-x229.google.com with SMTP id j83so2025058oih.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Mar 2022 08:47:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=B0ZfOEGucAEYJU64kilp/BJv2UxyExEyaxEs/s4tJVc=;
-        b=McfOI6NVTS79eqz5CyeXfr9SBfkIqJhEa0udr5opLjk61INr3bGTaUeTPo+G1Txkxk
-         2jkpvhuxb+AwfrOb4IMMq+QTijC/1N2jeGMRVJx6eg7U8/PrpFrRY1NoUBAAVzSVjAmr
-         FUWmjVkZnaViCt/6RTg1+omM7HqaeT2mquSC5HZ9EeOEw22Dif2bn2ukj1IkIU7jF5mi
-         sRzoUsFzLvshNdKCfviPmwmWK6+lhE01X6dSfhA2wbn7fSWxGhJwe5W8g0jHEzLeXOvc
-         ust5mKhKAryQqaabg93eQVUepbgPQytLijANRgPi9T156n8UaRweOHU5LOUq9mPscv7q
-         BRzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=B0ZfOEGucAEYJU64kilp/BJv2UxyExEyaxEs/s4tJVc=;
-        b=KtWdyy/k5u04DIt1AZW1416bDI0KGxItSXp1Bkyt0XmOjO+HLPcMJVLuJQkKCbevWN
-         j196OEhs39GhDNtOqwuzZv7tt8699e3S0iRF53dQZvzCVCwoUOr9t25bFyFoiCvYPaXc
-         jeWZtjUmW6qLLFJbZwgQ4880yvgdmOkYDjHJy/tXPMy0xrNOKCEv8lvI6uLgQ6FctuXk
-         F+Eac20TO6zIjtwfBgBdkrZN3Ks3syeFOQUcHvqpWszKXSU4I6iY7sUomdhrv846We47
-         4Ao9EoEa1Xm97GD6G0xGNTjBv31lEp3vn/8liWR0DurbM+BQejECL1XCT0sVNc+50l/U
-         F8TA==
-X-Gm-Message-State: AOAM531yZ0wlQSMqGKP3Vkp92j+se1wK+sMiHJpRCtndIRocddPVFH6f
-        JOW9eaj+Iqki1e+AKehyxE+JzCQuMG7lksALiRCB4/bamn0=
-X-Google-Smtp-Source: ABdhPJxEOLGEqeY4vJj2jFkOckWeF8KjTYyMs+8a3W7Gk4rdAtpuroIGtzMOGiJB4PpJhd7zdCvE0dC6Zc3CZxckckI=
-X-Received: by 2002:a05:6808:23c1:b0:2da:30fd:34d9 with SMTP id
- bq1-20020a05680823c100b002da30fd34d9mr4899106oib.203.1648050427956; Wed, 23
- Mar 2022 08:47:07 -0700 (PDT)
+        Wed, 23 Mar 2022 12:50:00 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB115BF5B;
+        Wed, 23 Mar 2022 09:48:24 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 663F4B81FB1;
+        Wed, 23 Mar 2022 16:48:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FB37C340EE;
+        Wed, 23 Mar 2022 16:48:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1648054102;
+        bh=FoMqu2BEYnX3aJox5RSpcdoi3KAm34IMLWdtQd02tvU=;
+        h=Date:From:To:Cc:Subject:From;
+        b=p4cqQd83k7Fo6EiX+ZyI1r2HWIdZN1JELau8kSctO6NhxQQ95hN8PoQrwat+RnwMO
+         LwvtWmvc0Szd3j8dhS+ID5BCEqfoZaZpjBNWSkom3Kg/eljkuWLBG2iyTnpvK56Dm/
+         oEwN8S/0iNPYzy2nC/17F10PsOyrMCJsbHc8Al9omSUZkduwWkePHLx2CFbrEBKein
+         U1tNlIDAAm0iUv8VfQUFJvzo5orz0rMcS0NHDAPKtlHcGqw/nKSRes/PAiRbWAKtkn
+         QGk8saZlWUpqeYY/WjmaceVVjq9pEJ93gcAYlB1iKcH18oZNF2TgW+qk1eMPyAGZII
+         R8XxiWOEfXhyA==
+Date:   Wed, 23 Mar 2022 09:48:21 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        david@fromorbit.com, linux-kernel@vger.kernel.org,
+        sandeen@sandeen.net, hch@lst.de
+Subject: [GIT PULL] xfs: new code for 5.18
+Message-ID: <20220323164821.GP8224@magnolia>
 MIME-Version: 1.0
-References: <ea2afc67b92f33dbf406c3ebf49a0da9c6ec1e5b.camel@hammerspace.com>
- <CAOQ4uxgTJdcO-xZbtTSUkjD2g0vSHr=PLFc6-T6RgO0u5DS=0g@mail.gmail.com>
- <20220321112310.vpr7oxro2xkz5llh@quack3.lan> <CAOQ4uxiLXqmAC=769ufLA2dKKfHxm=c_8B0N2y4c-aZ5Qci2hg@mail.gmail.com>
- <20220321145111.qz3bngofoi5r5cmh@quack3.lan> <CAOQ4uxgOpfezQ4ydjP4SPA8-7x9xSXjTmTyZOYQE3d24c2Zf7Q@mail.gmail.com>
- <20220323104129.k4djfxtjwdgoz3ci@quack3.lan> <CAOQ4uxgH3aCKnXfUFuyC7JXGtuprzWr6U9Y2T1rTQT3COoZtzw@mail.gmail.com>
- <20220323134851.px6s4i6iiaj4zlju@quack3.lan> <CAOQ4uxhBH_0UqEmOdcUaV0E8oGTGF7arr+Q_EZPuQ=KWfvJWoQ@mail.gmail.com>
- <20220323142835.epitipiq7zc55vgb@quack3.lan>
-In-Reply-To: <20220323142835.epitipiq7zc55vgb@quack3.lan>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 23 Mar 2022 17:46:56 +0200
-Message-ID: <CAOQ4uxjEj4FWsd87cuYHR+vKb0ogb=zqrKHJLapqaPovUhgfFQ@mail.gmail.com>
-Subject: Re: [PATCH RFC] nfsd: avoid recursive locking through fsnotify
-To:     Jan Kara <jack@suse.cz>
-Cc:     "khazhy@google.com" <khazhy@google.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 23, 2022 at 4:28 PM Jan Kara <jack@suse.cz> wrote:
->
-> On Wed 23-03-22 16:00:30, Amir Goldstein wrote:
-> > > Well, but reclaim from kswapd is always the main and preferred source of
-> > > memory reclaim. And we will kick kswapd to do work if we are running out of
-> > > memory. Doing direct filesystem slab reclaim from mark allocation is useful
-> > > only to throttle possibly aggressive mark allocations to the speed of
-> > > reclaim (instead of getting ENOMEM). So I'm still not convinced this is a
-> > > big issue but I certainly won't stop you from implementing more fine
-> > > grained GFP mode selection and lockdep annotations if you want to go that
-> > > way :).
-> >
-> > Well it was just two lines of code to annotate the fanotify mutex as its own
-> > class, so I just did that:
-> >
-> > https://github.com/amir73il/linux/commit/7b4b6e2c0bd1942cd130e9202c4b187a8fb468c6
->
-> But this implicitely assumes there isn't any allocation under mark_mutex
-> anywhere else where it is held. Which is likely true (I didn't check) but
-> it is kind of fragile. So I was rather imagining we would have per-group
-> "NOFS" flag and fsnotify_group_lock/unlock() would call
-> memalloc_nofs_save() based on the flag. And we would use
-> fsnotify_group_lock/unlock() uniformly across the whole fsnotify codebase.
->
+Hi Linus,
 
-I see what you mean, but looking at the code it seems quite a bit of churn to go
-over all the old backends and convert the locks to use wrappers where we "know"
-those backends are fs reclaim safe (because we did not get reports of deadlocks
-over the decades they existed).
+Please pull this branch containing bug fixes for XFS for 5.18.  The
+biggest change this cycle is bringing XFS' inode attribute setting code
+back towards alignment with what the VFS does.  IOWs, setgid bit
+handling should be a closer match with ext4 and btrfs behavior.
 
-I think I will sleep better with a conversion to three flavors:
+The rest of the branch is bug fixes around the filesystem -- patching
+gaps in quota enforcement, removing bogus selinux audit messages, and
+fixing log corruption and problems with log recovery.  There will be a
+second pull request later on in the merge window with more bug fixes.
 
-1. pflags = fsnotify_group_nofs_lock(fanotify_group);
-2. fsnotify_group_lock(dnotify_group) =>
-    WARN_ON_ONCE(group->flags & FSNOTIFY_NOFS)
-    mutex_lock(&group->mark_mutex)
-3. fsnotify_group_lock_nested(group) =>
-    mutex_lock_nested(&group->mark_mutex, SINGLE_DEPTH_NESTING)
+Dave Chinner will be taking over as XFS maintainer for one release
+cycle, starting from the day 5.18-rc1 drops until 5.19-rc1 is tagged so
+that I can focus on starting a massive design review for the (feature
+complete after five years) online repair feature.
 
-Thoughts?
+As usual, I did a test-merge with upstream master as of a few minutes
+ago, and didn't see any conflicts.  Please let me know if you encounter
+any problems.
 
-One more UAPI question.
-Do you think we should require user to opt-in to NOFS and evictable marks with
-FAN_SHRINKABLE? If we don't, it will be harder to fix regressions in legacy
-fanotify workloads if those are reported without breaking the evictable marks
-UAPI.
+--D
 
-Thanks,
-Amir.
+The following changes since commit 7e57714cd0ad2d5bb90e50b5096a0e671dec1ef3:
+
+  Linux 5.17-rc6 (2022-02-27 14:36:33 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-5.18-merge-2
+
+for you to fetch changes up to 01728b44ef1b714756607be0210fbcf60c78efce:
+
+  xfs: xfs_is_shutdown vs xlog_is_shutdown cage fight (2022-03-20 08:59:50 -0700)
+
+----------------------------------------------------------------
+New code for 5.18:
+ - Fix some incorrect mapping state being passed to iomap during COW
+ - Don't create bogus selinux audit messages when deciding to degrade
+   gracefully due to lack of privilege
+ - Fix setattr implementation to use VFS helpers so that we drop setgid
+   consistently with the other filesystems
+ - Fix link/unlink/rename to check quota limits
+ - Constify xfs_name_dotdot to prevent abuse of in-kernel symbols
+ - Fix log livelock between the AIL and inodegc threads during recovery
+ - Fix a log stall when the AIL races with pushers
+ - Fix stalls in CIL flushes due to pinned inode cluster buffers during
+   recovery
+ - Fix log corruption due to incorrect usage of xfs_is_shutdown vs
+   xlog_is_shutdown because during an induced fs shutdown, AIL writeback
+   must continue until the log is shut down, even if the filesystem has
+   already shut down
+
+----------------------------------------------------------------
+Darrick J. Wong (7):
+      xfs: don't generate selinux audit messages for capability testing
+      xfs: use setattr_copy to set vfs inode attributes
+      xfs: refactor user/group quota chown in xfs_setattr_nonsize
+      xfs: reserve quota for dir expansion when linking/unlinking files
+      xfs: reserve quota for target dir expansion when renaming files
+      xfs: constify the name argument to various directory functions
+      xfs: constify xfs_name_dotdot
+
+Dave Chinner (7):
+      xfs: log worker needs to start before intent/unlink recovery
+      xfs: check buffer pin state after locking in delwri_submit
+      xfs: xfs_ail_push_all_sync() stalls when racing with updates
+      xfs: async CIL flushes need pending pushes to be made stable
+      xfs: log items should have a xlog pointer, not a mount
+      xfs: AIL should be log centric
+      xfs: xfs_is_shutdown vs xlog_is_shutdown cage fight
+
+Gao Xiang (1):
+      xfs: add missing cmap->br_state = XFS_EXT_NORM update
+
+ fs/xfs/libxfs/xfs_dir2.c      |  36 +++++++------
+ fs/xfs/libxfs/xfs_dir2.h      |   8 +--
+ fs/xfs/libxfs/xfs_dir2_priv.h |   5 +-
+ fs/xfs/xfs_bmap_item.c        |   2 +-
+ fs/xfs/xfs_buf.c              |  45 ++++++++++++----
+ fs/xfs/xfs_buf_item.c         |   5 +-
+ fs/xfs/xfs_extfree_item.c     |   2 +-
+ fs/xfs/xfs_fsmap.c            |   4 +-
+ fs/xfs/xfs_icache.c           |  10 +++-
+ fs/xfs/xfs_inode.c            | 100 ++++++++++++++++++++++-------------
+ fs/xfs/xfs_inode.h            |   2 +-
+ fs/xfs/xfs_inode_item.c       |  12 +++++
+ fs/xfs/xfs_ioctl.c            |   2 +-
+ fs/xfs/xfs_iops.c             | 118 +++++++++---------------------------------
+ fs/xfs/xfs_log.c              |   5 +-
+ fs/xfs/xfs_log_cil.c          |  24 +++++++--
+ fs/xfs/xfs_pnfs.c             |   3 +-
+ fs/xfs/xfs_qm.c               |   8 +--
+ fs/xfs/xfs_refcount_item.c    |   2 +-
+ fs/xfs/xfs_reflink.c          |   5 +-
+ fs/xfs/xfs_rmap_item.c        |   2 +-
+ fs/xfs/xfs_trace.h            |   8 +--
+ fs/xfs/xfs_trans.c            |  90 +++++++++++++++++++++++++++++++-
+ fs/xfs/xfs_trans.h            |   6 ++-
+ fs/xfs/xfs_trans_ail.c        |  47 ++++++++++-------
+ fs/xfs/xfs_trans_priv.h       |   3 +-
+ kernel/capability.c           |   1 +
+ 27 files changed, 344 insertions(+), 211 deletions(-)
