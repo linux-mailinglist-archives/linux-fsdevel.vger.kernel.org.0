@@ -2,86 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DDF94E4CD9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Mar 2022 07:42:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 692364E4CFC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Mar 2022 07:57:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241981AbiCWGoW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Mar 2022 02:44:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49518 "EHLO
+        id S241989AbiCWG65 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Mar 2022 02:58:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231617AbiCWGoV (ORCPT
+        with ESMTP id S234794AbiCWG6z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Mar 2022 02:44:21 -0400
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3DA370044;
-        Tue, 22 Mar 2022 23:42:52 -0700 (PDT)
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 8DA2C68AFE; Wed, 23 Mar 2022 07:42:48 +0100 (CET)
-Date:   Wed, 23 Mar 2022 07:42:48 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Guenter Roeck <linux@roeck-us.net>,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-nfs@vger.kernel.org,
-        linux-nilfs <linux-nilfs@vger.kernel.org>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Philipp Reisner <philipp.reisner@linbit.com>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Roger Pau =?iso-8859-1?Q?Monn=E9?= <roger.pau@citrix.co>,
-        device-mapper development <dm-devel@redhat.com>,
-        "Md . Haris Iqbal" <haris.iqbal@ionos.com>,
-        Lars Ellenberg <lars.ellenberg@linbit.com>,
-        linux-fsdevel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        ntfs3@lists.linux.dev, Jack Wang <jinpu.wang@ionos.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        drbd-dev@lists.linbit.com
-Subject: Re: [dm-devel] [PATCH 01/19] fs: remove mpage_alloc
-Message-ID: <20220323064248.GA24874@lst.de>
-References: <20220124091107.642561-1-hch@lst.de> <20220124091107.642561-2-hch@lst.de> <20220322211915.GA2413063@roeck-us.net> <CAKFNMonRd5QQMzLoH3T=M=C=2Q_j9d86EYzZeY4DU2HQAE3E8w@mail.gmail.com>
+        Wed, 23 Mar 2022 02:58:55 -0400
+Received: from mail.parknet.co.jp (mail.parknet.co.jp [210.171.160.6])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C542071EF0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Mar 2022 23:57:26 -0700 (PDT)
+Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
+        by mail.parknet.co.jp (Postfix) with ESMTPSA id B623915F939;
+        Wed, 23 Mar 2022 15:57:25 +0900 (JST)
+Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
+        by ibmpc.myhome.or.jp (8.16.1/8.16.1/Debian-2) with ESMTPS id 22N6vLaG107150
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+        Wed, 23 Mar 2022 15:57:22 +0900
+Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
+        by devron.myhome.or.jp (8.16.1/8.16.1/Debian-2) with ESMTPS id 22N6vLW3364540
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+        Wed, 23 Mar 2022 15:57:21 +0900
+Received: (from hirofumi@localhost)
+        by devron.myhome.or.jp (8.16.1/8.16.1/Submit) id 22N6vKLB364539;
+        Wed, 23 Mar 2022 15:57:20 +0900
+From:   OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+To:     Chung-Chiang Cheng <shepjeng@gmail.com>
+Cc:     Chung-Chiang Cheng <cccheng@synology.com>,
+        linux-fsdevel@vger.kernel.org, kernel@cccheng.net
+Subject: Re: [PATCH 2/2] fat: introduce creation time
+References: <20220321095814.175891-1-cccheng@synology.com>
+        <20220321095814.175891-2-cccheng@synology.com>
+        <87lex2e91h.fsf@mail.parknet.co.jp>
+        <CAHuHWtkvt4wOdwaoyYv0B4862pSYttMBh6BUz3vHbERv+CEGaw@mail.gmail.com>
+Date:   Wed, 23 Mar 2022 15:57:20 +0900
+In-Reply-To: <CAHuHWtkvt4wOdwaoyYv0B4862pSYttMBh6BUz3vHbERv+CEGaw@mail.gmail.com>
+        (Chung-Chiang Cheng's message of "Wed, 23 Mar 2022 10:14:14 +0800")
+Message-ID: <87sfr917hr.fsf@mail.parknet.co.jp>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/29.0.50 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKFNMonRd5QQMzLoH3T=M=C=2Q_j9d86EYzZeY4DU2HQAE3E8w@mail.gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 23, 2022 at 06:38:22AM +0900, Ryusuke Konishi wrote:
-> This looks because the mask of GFP_KERNEL is removed along with
-> the removal of mpage_alloc().
-> 
+Chung-Chiang Cheng <shepjeng@gmail.com> writes:
 
-> The default value of the gfp flag is set to GFP_HIGHUSER_MOVABLE by
-> inode_init_always().
-> So, __GFP_HIGHMEM hits the gfp warning at bio_alloc() that
-> do_mpage_readpage() calls.
+>> Yes, ctime is issue (include compatibility issue when changing) from
+>> original author of this driver. And there is no perfect solution and
+>> subtle issue I think.
+>>
+>> I'm not against about this change though, this behavior makes utimes(2)
+>> behavior strange, e.g. user can change ctime, but FAT forget it anytime,
+>> because FAT can't save it.
+>>
+>> Did you consider about those behavior and choose this?
+>
+> Yes. I think it's not perfect but a better choice to distinguish between
+> change-time and creation-time. While change-time is no longer saved to
+> disk, the new behavior maintains the semantic of "creation" and is more
+> compatible with non-linux systems.
 
-Yeah.  Let's try this to match the iomap code:
+Ok, right, creation time is good. But what I'm saying is about new ctime
+behavior.
 
-diff --git a/fs/mpage.c b/fs/mpage.c
-index 9ed1e58e8d70b..d465883edf719 100644
---- a/fs/mpage.c
-+++ b/fs/mpage.c
-@@ -148,13 +148,11 @@ static struct bio *do_mpage_readpage(struct mpage_readpage_args *args)
- 	int op = REQ_OP_READ;
- 	unsigned nblocks;
- 	unsigned relative_block;
--	gfp_t gfp;
-+	gfp_t gfp = mapping_gfp_constraint(page->mapping, GFP_KERNEL);
- 
- 	if (args->is_readahead) {
- 		op |= REQ_RAHEAD;
--		gfp = readahead_gfp_mask(page->mapping);
--	} else {
--		gfp = mapping_gfp_constraint(page->mapping, GFP_KERNEL);
-+		gfp |= __GFP_NORETRY | __GFP_NOWARN;
- 	}
- 
- 	if (page_has_buffers(page))
+Now, you allow to change ctime as old behavior, but it is not saved. Why
+this behavior was preferred?
+
+Just for example, I think we can ignore ctime change, and define new
+behavior is as ctime==mtime always. This will prevent time wrap/backward
+etc.
+
+Thanks.
+-- 
+OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
