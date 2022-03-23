@@ -2,35 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BDDD4E4CA7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Mar 2022 07:18:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DDF94E4CD9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Mar 2022 07:42:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234294AbiCWGTb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Mar 2022 02:19:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40710 "EHLO
+        id S241981AbiCWGoW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Mar 2022 02:44:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232462AbiCWGTa (ORCPT
+        with ESMTP id S231617AbiCWGoV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Mar 2022 02:19:30 -0400
+        Wed, 23 Mar 2022 02:44:21 -0400
 Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91634D96;
-        Tue, 22 Mar 2022 23:18:00 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3DA370044;
+        Tue, 22 Mar 2022 23:42:52 -0700 (PDT)
 Received: by verein.lst.de (Postfix, from userid 2407)
-        id CCED568AFE; Wed, 23 Mar 2022 07:17:56 +0100 (CET)
-Date:   Wed, 23 Mar 2022 07:17:56 +0100
+        id 8DA2C68AFE; Wed, 23 Mar 2022 07:42:48 +0100 (CET)
+Date:   Wed, 23 Mar 2022 07:42:48 +0100
 From:   Christoph Hellwig <hch@lst.de>
-To:     Qu Wenruo <quwenruo.btrfs@gmx.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, Qu Wenruo <wqu@suse.com>,
-        Naohiro Aota <naohiro.aota@wdc.com>,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 40/40] btrfs: use the iomap direct I/O bio directly
-Message-ID: <20220323061756.GA24589@lst.de>
-References: <20220322155606.1267165-1-hch@lst.de> <20220322155606.1267165-41-hch@lst.de> <37a6e06f-c8ac-37dc-2f3b-b469e2410a97@gmx.com>
+To:     Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Guenter Roeck <linux@roeck-us.net>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-nfs@vger.kernel.org,
+        linux-nilfs <linux-nilfs@vger.kernel.org>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Philipp Reisner <philipp.reisner@linbit.com>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        Roger Pau =?iso-8859-1?Q?Monn=E9?= <roger.pau@citrix.co>,
+        device-mapper development <dm-devel@redhat.com>,
+        "Md . Haris Iqbal" <haris.iqbal@ionos.com>,
+        Lars Ellenberg <lars.ellenberg@linbit.com>,
+        linux-fsdevel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        ntfs3@lists.linux.dev, Jack Wang <jinpu.wang@ionos.com>,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        drbd-dev@lists.linbit.com
+Subject: Re: [dm-devel] [PATCH 01/19] fs: remove mpage_alloc
+Message-ID: <20220323064248.GA24874@lst.de>
+References: <20220124091107.642561-1-hch@lst.de> <20220124091107.642561-2-hch@lst.de> <20220322211915.GA2413063@roeck-us.net> <CAKFNMonRd5QQMzLoH3T=M=C=2Q_j9d86EYzZeY4DU2HQAE3E8w@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <37a6e06f-c8ac-37dc-2f3b-b469e2410a97@gmx.com>
+In-Reply-To: <CAKFNMonRd5QQMzLoH3T=M=C=2Q_j9d86EYzZeY4DU2HQAE3E8w@mail.gmail.com>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
         SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
@@ -41,22 +53,35 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 23, 2022 at 09:39:24AM +0800, Qu Wenruo wrote:
-> Not familar with iomap thus I can be totally wrong, but isn't the idea
-> of iomap to separate more code from fs?
+On Wed, Mar 23, 2022 at 06:38:22AM +0900, Ryusuke Konishi wrote:
+> This looks because the mask of GFP_KERNEL is removed along with
+> the removal of mpage_alloc().
+> 
 
-Well, to share more code, which requires a certain abstraction, yes.
+> The default value of the gfp flag is set to GFP_HIGHUSER_MOVABLE by
+> inode_init_always().
+> So, __GFP_HIGHMEM hits the gfp warning at bio_alloc() that
+> do_mpage_readpage() calls.
 
-> I'm really not sure if it's a good idea to expose btrfs internal bio_set
-> just for iomap.
+Yeah.  Let's try this to match the iomap code:
 
-We don't.  iomap still purely operates on the generic bio.  It just
-allocates additional space for btrfs to use after ->submit_io is called.
-Just like how e.g. VFS inodes can come with extra space for file
-system use.
-
-> Personally speaking I didn't see much problem of cloning an iomap bio,
-> it only causes extra memory of btrfs_bio, which is pretty small previously.
-
-It is yet another pointless memory allocation in something considered very
-much a fast path.
+diff --git a/fs/mpage.c b/fs/mpage.c
+index 9ed1e58e8d70b..d465883edf719 100644
+--- a/fs/mpage.c
++++ b/fs/mpage.c
+@@ -148,13 +148,11 @@ static struct bio *do_mpage_readpage(struct mpage_readpage_args *args)
+ 	int op = REQ_OP_READ;
+ 	unsigned nblocks;
+ 	unsigned relative_block;
+-	gfp_t gfp;
++	gfp_t gfp = mapping_gfp_constraint(page->mapping, GFP_KERNEL);
+ 
+ 	if (args->is_readahead) {
+ 		op |= REQ_RAHEAD;
+-		gfp = readahead_gfp_mask(page->mapping);
+-	} else {
+-		gfp = mapping_gfp_constraint(page->mapping, GFP_KERNEL);
++		gfp |= __GFP_NORETRY | __GFP_NOWARN;
+ 	}
+ 
+ 	if (page_has_buffers(page))
