@@ -2,68 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 72B714E49FA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Mar 2022 01:12:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA3D44E49FF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Mar 2022 01:16:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240892AbiCWANx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Mar 2022 20:13:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36722 "EHLO
+        id S240903AbiCWASK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Mar 2022 20:18:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230174AbiCWANw (ORCPT
+        with ESMTP id S230174AbiCWASK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Mar 2022 20:13:52 -0400
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D0356D1B9;
-        Tue, 22 Mar 2022 17:12:24 -0700 (PDT)
+        Tue, 22 Mar 2022 20:18:10 -0400
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A94296E8FB;
+        Tue, 22 Mar 2022 17:16:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1647994337;
-        bh=ZiNmQTc7CZHmIy+Wn+zB9VS+Bv405CkFmfWWnck8MKE=;
+        s=badeba3b8450; t=1647994595;
+        bh=Lmv7gJQ4OtTJmtWag6k61rhKF5+or/S/h13XFp2lObw=;
         h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=QYQ7tE16hzC0icWHsu4exHLdXIAtlFJ6dmN+SOo0EFOlWnWAWUaBqUXZrx+7hvD/q
-         lrgsVSrgeKCYipes/LknoCAXEsa9FMuQFPx0eQYu1btt/RIyfPUxnJTRyRn5o0k1hz
-         PGzvv37OxbHYLmP33Y/zhzD7UIzhKqSCdHhyrLCQ=
+        b=W3G7zWHzDvQ+0DzOkHt0wW/S6k673TG25Cc0aSqe9UtRPvFUQsPnV4Peff4FpQbx1
+         NePuK1RPUn0tFk9ZuwqiFwDKClF0uVccEs5LqfIUVC9SpJJnDwXxK4MPhThqlQthv7
+         wdARDHe55YZALF7x2rBym/dcCNBUXURsv5dbY5o0=
 X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
 Received: from [0.0.0.0] ([149.28.201.231]) by mail.gmx.net (mrgmx004
- [212.227.17.184]) with ESMTPSA (Nemesis) id 1M8QS2-1nSQtc00bQ-004Rj4; Wed, 23
- Mar 2022 01:12:16 +0100
-Message-ID: <d1c8f520-db6d-8a8f-5717-e1845de9dd25@gmx.com>
-Date:   Wed, 23 Mar 2022 08:12:11 +0800
+ [212.227.17.184]) with ESMTPSA (Nemesis) id 1N8XTv-1oAjyd0oHB-014UHv; Wed, 23
+ Mar 2022 01:16:35 +0100
+Message-ID: <0ecd3ad4-e1be-d08d-4093-fe03fd480a59@gmx.com>
+Date:   Wed, 23 Mar 2022 08:16:29 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.7.0
-Subject: Re: [PATCH 10/40] btrfs: simplify scrub_repair_page_from_good_copy
+Subject: Re: [PATCH 14/40] btrfs: don't allocate a btrfs_bio for raid56
+ per-stripe bios
 Content-Language: en-US
 To:     Christoph Hellwig <hch@lst.de>, Josef Bacik <josef@toxicpanda.com>,
         David Sterba <dsterba@suse.com>, Qu Wenruo <wqu@suse.com>
 Cc:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
 References: <20220322155606.1267165-1-hch@lst.de>
- <20220322155606.1267165-11-hch@lst.de>
+ <20220322155606.1267165-15-hch@lst.de>
 From:   Qu Wenruo <quwenruo.btrfs@gmx.com>
-In-Reply-To: <20220322155606.1267165-11-hch@lst.de>
+In-Reply-To: <20220322155606.1267165-15-hch@lst.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:A+/UdUPTOuk10arqCk2tDdJrwWaFukFXfRjU0/Ya3LAZw5jpE4U
- qtALWx2q4iSsV2keTgmbK0SG6iw0RB7xTHa+pKzsgRYJsG1HA1tsJqxhq1GTOqv45ICfZAC
- z8OJEO+64qmpr1QW7QlIO5iZlmeFt72wbJt1kdjFDw+CDP0MeRB3eh9wMFc3JOVKWmCK03b
- odZRY37K8+IKUH9YOmhoA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:+9RWJzXTL2k=:dFr5V/Tpkwrkpj6JGlQ44e
- cMVzSx/QbTdfwpZr5dxw8uzuNT6ZFGOXLIpQdX3JEWy9D4aTvh0usiqmOhM27N9IjlAGiFWXN
- rcndiRhxjxxr/UNDy4PNHcq1U19ZBiDxCQTvDlNb/crOpe58Z5M+RWUcO3nOBUg2xJuBCVTgr
- 9m9bhJqSuPtCn9XKQLIqaHNIvsFutE8TILU55BPWMc1El3ek2DF0QeBaL+MAXJWb1PqK1R7bQ
- YhfQQAxiRM8Jk1zxgWJk/Zymw5AFN5CcFpE7CoaSVTQuMU374A4ogA3x/a7Bvwgo6HurYjNZa
- rnASzFau8zbtJSvBbrBt1nLDkB00UznrUvAlNNuSv/bBcUmZvNG91GLgdrhavXY3gpwTEvmpb
- y0JdsI4GA+NuUbtYnZuoK3jj+ds4okJlFq4bPYDGD47cE9RQQUIu1Nd2v5wG+aNqdCZBXAXYG
- ZCY+Va3G1Hn+eNpqv9oE586TTcVVqnz4y8IE11634e3TM3SYcHp4IDbt0lwOCnjtChhhV0WPm
- UhwujiB7OEfwSxkJodb/roO732utjMlBT1knVhqvAZgJQ6M16+a4s/BwGWW54BcOh5PMAMAEq
- dNgT/1skDzPV3nMGbD9WI06fW7QO1LAQfAG8ZunWEyQ+2kWp1tlvQC4gUi5tk7+CkWuLtbQOr
- TLXSkyvPLFsDmDhpsKAT4IkSCSWq2ed2ToWrKoLhzFy7VxbUvtqeVHV6+gpZLJ9TW1nTXv3RH
- atJrfww0qYFQ3TlkJX//4WzuK6IcxQwK/YZbDpCxPuvLwKkP3lBytUQFgrM41pwZEKHcVjAMU
- igamed+nCMORGA0V53aXZm83ZXDdRhQJr2FvvWIC5PgIGFlh0/SXUKq89/nmbmFUTcitX01Oz
- /eW/GlV8HGKM4HXGr1TVBnzbQfMARaKVrmYaA0Ir8FfT2aBv67OHx0FUsWUbLlSlXtA9a0WSW
- h1p5geryrnrWTOdBylxEWrmp3sVo6/KMKongPHcxPD/ed5Cpf4t8VgcknZ/FS1+V88nc7EWfR
- 5EHi1SH8VKA3Go6053cQJW7+YNIEcDQPz4q5fAojJwZSi/pSDr0sW9u3b5AVZGrnJPGjlUPG3
- JLz9SeuBdsoiN0=
+X-Provags-ID: V03:K1:Vrza/qRASFZJmIRnas2Cj4weqEqkAd1wqUos8iapVhjfAgpAks1
+ JWZWj89mpivcYLbh3ab+sE/qnkTN5S/dmunzBxFSTuTeziZ+wb0Ap/CoPsRa+4cO4EtOfm3
+ Z0RFZ70ssn+Im22URNFl+43bMoSufDuTM689KSvOL/du/BJNozrQOI3QdEsLDNc/HmbKY0K
+ Py5ieMfiWA7e9oC/qM7SQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:04noAKnM8Ws=:AbnARXfswYvO5yWXWc2Fu2
+ iX2cNiNO5pMBZrYjaBlAVwDXuSv161gi/0Re05CYG4s8t87gOmAlj/CszM6OIn17ecOit3oPu
+ B/TIMoMm5U5MPetwSsraLSejWZYpHl7xffNOeCQqQwtfE3V2UCjA9/GEieNkgBlvGew4vwzyt
+ +AFIelCVyXNag+6R+p0voAhMt7KxKleuySb+l6W8OAXGJkxIVK2/Tkl8Zu65CvO5r1B5tyq0d
+ IggcOMqg9UgtXIBZPDLK+GkS3A2k1fW8HmKg4RaDY9EeJW7KBYNt/snouivuUJ7r8jBArJ0Z8
+ AJJUBWj3ochnnEVBnnnSJMjFmMdMrkoU3WRHcPFQvD65HBtRKeXfllzybkvjtDwdIPRoeeH6+
+ TsmKE89zmD+gP8MrpXFK5IXulVQaGful5dr9psFU6xkYA+HFsnGHHVK+R04J7493du1/x5Mby
+ pFJba9QFYBCBoECgJiD68ku3B+jhjN30FjUFZv7ZfKVaCAtSl42dGwm8KRaRFqGeUrrIb3Zrw
+ vwsgRGhSAZA8pBqhtzoFhG6y+/BjmxOw7PGzthCWT0mwXzCnRisUupedgmze1hbC+oCjIxnbJ
+ nYuP/33LGb7A4guFxyK+ubnR4A08+3KDJ2aq4U72JadxMnboVc89n00erusd1VMjJDFIm8Myz
+ IQtjE26xKwWKwmn4z8mKfJ+9UDGJulK6JzNGrpPwle5QsKscT1fdK6y4sundybe+DWj/7m4PV
+ 9R/VPF+kCKaWcuVIf9M2LQAWK1d6LbjsLq+L1fqVa/7DBzbmY/8LWn3wPrw0oCBNahfpopwb1
+ 5EQXFdHiSX9jMyBFsQHQ1fJyNGPR+LYI3inlVRPsjJ6udscyUeHF9z3z7Sn8We6fDHN86XZAO
+ Cer7Zdv5bGTfqjIqWxG7ibX8fVgMVbgsPr/8a6gqEWvEIEwM03D23a4nIkQTS06AziK4SN+kd
+ S4Ty7XqXFrdpxpYKXRjSvoOiHySkGm5cTh2AcJH7LvwXm1g0kGpjrj7zc6NT4B0Rj6t3TFirG
+ Ry+Z3t0g/opGvvR1/OnXgUip2MbUXTs5bsIe/RWIVVwtpPFfK3gEaejqiWehtK1ai/Gi7IffY
+ 4UpTPJObtsaV2o=
 X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,FREEMAIL_FROM,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,
         RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
@@ -77,66 +78,40 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
 On 2022/3/22 23:55, Christoph Hellwig wrote:
-> The I/O in repair_io_failue is synchronous and doesn't need a btrfs_bio,
-> so just use an on-stack bio.
+> Except for the spurious initialization of ->device just after allocation
+> nothing uses the btrfs_bio, so just allocate a normal bio without extra
+> data.
 >
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-Reviewed-by: Qu Wenruo <wqu@suse.com>
+RAID56 layer doesn't need to bother special things like mirror_num nor
+checksum, as it's at a lower layer under logical layer.
 
-Thanks,
-Qu
+So this is completely fine, and save quite some cleanup I'm going to do
+related to RAID56.
+
+Reviewed-by: Qu Wenruo <wqu@suse.com>
 > ---
->   fs/btrfs/scrub.c | 23 +++++++++--------------
->   1 file changed, 9 insertions(+), 14 deletions(-)
+>   fs/btrfs/raid56.c | 7 ++-----
+>   1 file changed, 2 insertions(+), 5 deletions(-)
 >
-> diff --git a/fs/btrfs/scrub.c b/fs/btrfs/scrub.c
-> index 508c91e26b6e9..bb9382c02714f 100644
-> --- a/fs/btrfs/scrub.c
-> +++ b/fs/btrfs/scrub.c
-> @@ -1544,7 +1544,8 @@ static int scrub_repair_page_from_good_copy(struct=
- scrub_block *sblock_bad,
->   	BUG_ON(spage_good->page =3D=3D NULL);
->   	if (force_write || sblock_bad->header_error ||
->   	    sblock_bad->checksum_error || spage_bad->io_error) {
-> -		struct bio *bio;
-> +		struct bio bio;
-> +		struct bio_vec bvec;
->   		int ret;
->
->   		if (!spage_bad->dev->bdev) {
-> @@ -1553,26 +1554,20 @@ static int scrub_repair_page_from_good_copy(stru=
-ct scrub_block *sblock_bad,
->   			return -EIO;
->   		}
->
-> -		bio =3D btrfs_bio_alloc(1);
-> -		bio_set_dev(bio, spage_bad->dev->bdev);
-> -		bio->bi_iter.bi_sector =3D spage_bad->physical >> 9;
-> -		bio->bi_opf =3D REQ_OP_WRITE;
-> +		bio_init(&bio, spage_bad->dev->bdev, &bvec, 1, REQ_OP_WRITE);
-> +		bio.bi_iter.bi_sector =3D spage_bad->physical >> 9;
-> +		__bio_add_page(&bio, spage_good->page, sectorsize, 0);
->
-> -		ret =3D bio_add_page(bio, spage_good->page, sectorsize, 0);
-> -		if (ret !=3D sectorsize) {
-> -			bio_put(bio);
-> -			return -EIO;
-> -		}
-> +		btrfsic_check_bio(&bio);
-> +		ret =3D submit_bio_wait(&bio);
-> +		bio_uninit(&bio);
->
-> -		btrfsic_check_bio(bio);
-> -		if (submit_bio_wait(bio)) {
-> +		if (ret) {
->   			btrfs_dev_stat_inc_and_print(spage_bad->dev,
->   				BTRFS_DEV_STAT_WRITE_ERRS);
->   			atomic64_inc(&fs_info->dev_replace.num_write_errors);
-> -			bio_put(bio);
->   			return -EIO;
->   		}
-> -		bio_put(bio);
+> diff --git a/fs/btrfs/raid56.c b/fs/btrfs/raid56.c
+> index 2f1f7ca27acd5..a0d65f4b2b258 100644
+> --- a/fs/btrfs/raid56.c
+> +++ b/fs/btrfs/raid56.c
+> @@ -1103,11 +1103,8 @@ static int rbio_add_io_page(struct btrfs_raid_bio=
+ *rbio,
 >   	}
 >
->   	return 0;
+>   	/* put a new bio on the list */
+> -	bio =3D btrfs_bio_alloc(bio_max_len >> PAGE_SHIFT ?: 1);
+> -	btrfs_bio(bio)->device =3D stripe->dev;
+> -	bio->bi_iter.bi_size =3D 0;
+> -	bio_set_dev(bio, stripe->dev->bdev);
+> -	bio->bi_opf =3D opf;
+> +	bio =3D bio_alloc(stripe->dev->bdev, max(bio_max_len >> PAGE_SHIFT, 1U=
+L),
+> +			opf, GFP_NOFS);
+>   	bio->bi_iter.bi_sector =3D disk_start >> 9;
+>   	bio->bi_private =3D rbio;
+>
