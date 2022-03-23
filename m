@@ -2,60 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 51B794E505E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Mar 2022 11:35:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FBC64E5089
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Mar 2022 11:41:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243560AbiCWKg3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Mar 2022 06:36:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57646 "EHLO
+        id S243589AbiCWKnF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Mar 2022 06:43:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234425AbiCWKg2 (ORCPT
+        with ESMTP id S229940AbiCWKnE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Mar 2022 06:36:28 -0400
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B4E925E81;
-        Wed, 23 Mar 2022 03:34:58 -0700 (PDT)
-Received: from dggpemm500022.china.huawei.com (unknown [172.30.72.54])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4KNl7R2yBxzfYqr;
-        Wed, 23 Mar 2022 18:33:23 +0800 (CST)
-Received: from dggpemm500016.china.huawei.com (7.185.36.25) by
- dggpemm500022.china.huawei.com (7.185.36.162) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2308.21; Wed, 23 Mar 2022 18:34:56 +0800
-Received: from [10.67.108.26] (10.67.108.26) by dggpemm500016.china.huawei.com
- (7.185.36.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2308.21; Wed, 23 Mar
- 2022 18:34:56 +0800
-Subject: Re: [PATCH -next] uaccess: fix __access_ok limit setup in compat mode
-To:     Arnd Bergmann <arnd@arndb.de>
-CC:     "Eric W . Biederman" <ebiederm@xmission.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Stafford Horne <shorne@gmail.com>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>
-References: <20220318071130.163942-1-chenjiahao16@huawei.com>
- <CAK8P3a3==vLKZUOceuMh3X1U5_sN82Vpm8J_3P-H-+q3sKKMxg@mail.gmail.com>
- <88ff36b3-558b-9c3f-f21d-5ef05b3227c5@huawei.com>
- <CAK8P3a3_iZihNmgRNz7Ntrp8sj0hB_Yrpu5iT++ivMjsUXH7+w@mail.gmail.com>
-From:   "chenjiahao (C)" <chenjiahao16@huawei.com>
-Message-ID: <6517b497-f85e-c4dd-98b9-39997ad120d5@huawei.com>
-Date:   Wed, 23 Mar 2022 18:34:56 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.2
+        Wed, 23 Mar 2022 06:43:04 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B729D6D19F
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Mar 2022 03:41:33 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 1F7A0210F7;
+        Wed, 23 Mar 2022 10:41:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1648032092; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=5jjMw1OU2eTNe2eHZa1ec1S4YWY4HDe5N66JBMTGekM=;
+        b=v9tNXpgmuKOU4qVEk2DZPOu89sB0TtMPcuJzB0KAjpERDiRrtemeq4Jilhl18D/d1le1Pr
+        BpDK+opazIVag9m4TCCr7J7wy2DCtWr2LXq7Sh1NmiSWbPq6LpaijAKvovE0PLtHS/0uZx
+        FrNPD8lKBJ2DasaWjrYL3j9qRhtz0Fw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1648032092;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=5jjMw1OU2eTNe2eHZa1ec1S4YWY4HDe5N66JBMTGekM=;
+        b=5+NbSgfx/lvg3yguu/zj/Gt26AIZslztX2fjoCaWJhFI7rBIOPWlpk0rQnCRJgxyxmnsYp
+        7x/tCaxZBNWqqYBg==
+Received: from quack3.suse.cz (unknown [10.100.224.230])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 0EAD8A3B87;
+        Wed, 23 Mar 2022 10:41:32 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 4AF4EA0610; Wed, 23 Mar 2022 11:41:29 +0100 (CET)
+Date:   Wed, 23 Mar 2022 11:41:29 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, "khazhy@google.com" <khazhy@google.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH RFC] nfsd: avoid recursive locking through fsnotify
+Message-ID: <20220323104129.k4djfxtjwdgoz3ci@quack3.lan>
+References: <20220319001635.4097742-1-khazhy@google.com>
+ <ea2afc67b92f33dbf406c3ebf49a0da9c6ec1e5b.camel@hammerspace.com>
+ <CAOQ4uxgTJdcO-xZbtTSUkjD2g0vSHr=PLFc6-T6RgO0u5DS=0g@mail.gmail.com>
+ <20220321112310.vpr7oxro2xkz5llh@quack3.lan>
+ <CAOQ4uxiLXqmAC=769ufLA2dKKfHxm=c_8B0N2y4c-aZ5Qci2hg@mail.gmail.com>
+ <20220321145111.qz3bngofoi5r5cmh@quack3.lan>
+ <CAOQ4uxgOpfezQ4ydjP4SPA8-7x9xSXjTmTyZOYQE3d24c2Zf7Q@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a3_iZihNmgRNz7Ntrp8sj0hB_Yrpu5iT++ivMjsUXH7+w@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.67.108.26]
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpemm500016.china.huawei.com (7.185.36.25)
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxgOpfezQ4ydjP4SPA8-7x9xSXjTmTyZOYQE3d24c2Zf7Q@mail.gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
         SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -64,134 +70,58 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed 23-03-22 00:41:28, Amir Goldstein wrote:
+> > > > So the cleanest solution I currently see is
+> > > > to come up with helpers like "fsnotify_lock_group() &
+> > > > fsnotify_unlock_group()" which will lock/unlock mark_mutex and also do
+> > > > memalloc_nofs_save / restore magic.
+> > > >
+> > >
+> > > Sounds good. Won't this cause a regression - more failures to setup new mark
+> > > under memory pressure?
+> >
+> > Well, yes, the chances of hitting ENOMEM under heavy memory pressure are
+> > higher. But I don't think that much memory is consumed by connectors or
+> > marks that the reduced chances for direct reclaim would really
+> > substantially matter for the system as a whole.
+> >
+> > > Should we maintain a flag in the group FSNOTIFY_GROUP_SHRINKABLE?
+> > > and set NOFS state only in that case, so at least we don't cause regression
+> > > for existing applications?
+> >
+> > So that's a possibility I've left in my sleeve ;). We could do it but then
+> > we'd also have to tell lockdep that there are two kinds of mark_mutex locks
+> > so that it does not complain about possible reclaim deadlocks. Doable but
+> > at this point I didn't consider it worth it unless someone comes with a bug
+> > report from a real user scenario.
+> 
+> Are you sure about that?
 
-在 2022/3/22 22:41, Arnd Bergmann 写道:
-> On Tue, Mar 22, 2022 at 1:55 PM chenjiahao (C) <chenjiahao16@huawei.com> wrote:
->> 在 2022/3/18 15:44, Arnd Bergmann 写道:
->>> This should not result in any user visible difference, in both cases
->>> user process will see a -EFAULT return code from its system call.
->>> Are you able to come up with a test case that shows an observable
->>> difference in behavior?
->> Actually, this patch do comes from a testcase failure, the code is
->> pasted below:
-> Thank you for the test case!
->
->> #define TMPFILE "__1234567890"
->> #define BUF_SIZE    1024
->>
->> int main()
->> {
->>       char buf[BUF_SIZE] = {0};
->>       int fd;
->>       int ret;
->>       int err;
->>
->>       fd = open(TMPFILE, O_CREAT | O_RDWR);
->>       if(-1 == fd)
->>       {
->>           perror("open");
->>           return 1;
->>       }
->>
->>       ret = pread64(fd, buf, -1, 1);
->>       if((-1 == ret) && (EFAULT == errno))
->>       {
->>           close(fd);
->>           unlink(TMPFILE);
->>           printf("PASS\n");
->>           return 0;
->>       }
->>       err = errno;
->>       perror("pread64");
->>       printf("err = %d\n", err);
->>       close(fd);
->>       unlink(TMPFILE);
->>       printf("FAIL\n");
->>
->>       return 1;
->>    }
->>
->> The expected result is:
->>
->> PASS
->>
->> but the result of 32-bit testcase running in x86-64 kernel with compat
->> mode is:
->>
->> pread64: Success
->> err = 0
->> FAIL
->>
->>
->> In my explanation, pread64 is called with count '0xffffffffull' and
->> offset '1', which might still not trigger
->>
->> page fault in 64-bit kernel.
->>
->>
->> This patch uses TASK_SIZE as the addr_limit to performance a stricter
->> address check and intercepts
-> I see. So while the kernel behavior was not meant to change from
-> my patch, it clearly did, which may cause problems. However, I'm
-> not sure if the changed behavior is actually wrong.
->
->> the illegal pointer address from 32-bit userspace at a very early time.
->> Which is roughly the same
->>
->> address limit check as __access_ok in arch/ia64.
->>
->>
->> This is why this fixes my testcase failure above, or have I missed
->> anything else?
-> My interpretation of what is going on here is that the pread64() call
-> still behaves according to the documented behavior, returning a small
-> number of bytes from the file, up to the first faulting address.
->
-> As the manual page for pread64() describes,
->
->         On  success,  pread()  returns  the  number  of  bytes read
->         (a return of zero indicates end of file) and pwrite() returns
->         the number of bytes written.
->         Note that it is not an error for a successful call to transfer
->         fewer bytes than requested  (see  read(2)
->         and write(2)).
+Feel free to try it, I can be wrong...
 
-I have really missed this point. The behavior here is and should
+> Note that fsnotify_destroy_mark() and friends already use lockdep class
+> SINGLE_DEPTH_NESTING, so I think the lockdep annotation already
+> assumes that deadlock from direct reclaim cannot happen and it is that
+> assumption that was nearly broken by evictable inode marks.
+> 
+> IIUC that means that we only need to wrap the fanotify allocations
+> with GFP_NOFS (technically only after the first evictable mark)?
 
-be aligned with the manual definition.
+Well, the dependencies lockdep will infer are: Once fsnotify_destroy_mark()
+is called from inode reclaim, it will record mark_mutex as
+'fs-reclaim-unsafe' (essentially fs_reclaim->mark_mutex dependency). Once
+filesystem direct reclaim happens from an allocation under mark_mutex,
+lockdep will record mark_mutex as 'need-to-be-fs-reclaim-safe'
+(mark_mutex->fs_reclaim) dependency. Hence a loop. Now I agree that
+SINGLE_DEPTH_NESTING (which is BTW used in several other places for unclear
+reasons - we should clean that up) might defeat this lockdep detection but
+in that case it would also defeat detection of real potential deadlocks
+(because the deadlock scenario you've found is real). Proper lockdep
+annotation needs to distinguish mark_locks which can be acquired from under
+fs reclaim and mark_locks which cannot be.
 
->
-> The difference after my patch is that originally it returned
-> -EFAULT because part of the buffer is outside of the
-> addressable memory, but now it returns success because
-> part of the buffer is inside the addressable memory ;-)
->
-> I'm also not sure about which patch caused the change in
-> behavior, can you double-check that? The one you cited,
-> 967747bbc084 ("uaccess: remove CONFIG_SET_FS"), does
-> not actually touch the x86 implementation, and commit
-> 36903abedfe8 ("x86: remove __range_not_ok()") does touch
-> x86 but the limit was already TASK_SIZE_MAX since commit
-> 47058bb54b57 ("x86: remove address space overrides using
-> set_fs()") back in linux-5.10.
+								Honza
 
-I have performed the testcase on the same environment with
-
-several old LTS kernel versions, all the results are "fault".
-
-The behavior before and after your patches should be consistent.
-
-
-So the fault should due to the disagreement between the
-
-testcase's intention and the real pread64 definition. I have been
-
-misled by the former one. Thanks for your interpretation.
-
-
-Jiahao
-
->
->          Arnd
->
-> .
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
