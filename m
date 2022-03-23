@@ -2,72 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 638874E4A72
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Mar 2022 02:23:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A73B4E4A7A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Mar 2022 02:28:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241098AbiCWBYm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Mar 2022 21:24:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36520 "EHLO
+        id S234209AbiCWBaO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Mar 2022 21:30:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241099AbiCWBYl (ORCPT
+        with ESMTP id S231480AbiCWBaN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Mar 2022 21:24:41 -0400
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1441B6D867;
-        Tue, 22 Mar 2022 18:23:11 -0700 (PDT)
+        Tue, 22 Mar 2022 21:30:13 -0400
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 550E333E3D;
+        Tue, 22 Mar 2022 18:28:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1647998585;
-        bh=pT3B7gqUJGVn/N/yFkw2a83x/1kgjkxVWShE+09AVGs=;
+        s=badeba3b8450; t=1647998918;
+        bh=BacUzfzBf7e5yOac9Eib1Pye4apR1aZl9W7xr+kd5bg=;
         h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=HAkIq7XybkFU6vY0nbDeA/hPb92guo2fNfUNBn1WkEp6f2U/YjrR0j6wXK76R0M50
-         1UBXXdf6ZxeTz1/RpUVZBCv/Hv4l91zsd70rhUCO/z/Hvhgq6sQmpBfmwOsZ5Y8PQN
-         8/QYWUye9j/YYDKdWVkFyk7UTy9HYe+rJWF9EJts=
+        b=DXWi25mUOhJJzCuvf3G/OtSuPXcNr6YvyYYT+zVMrWe0g/9rxt+fZA/N0s4guEgk9
+         DCNY8EGOIQSYbmg30pQk3psXZgX9b6Bd/Gr2yxiNtWwe97DJEFzTE7X3FI5H/CqGkH
+         PGECERhm25xsbyLGs+3NCTkyh3g+agx7k+RhCKtk=
 X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from [0.0.0.0] ([149.28.201.231]) by mail.gmx.net (mrgmx004
- [212.227.17.184]) with ESMTPSA (Nemesis) id 1MK3Rs-1nmiP823Di-00LZeq; Wed, 23
- Mar 2022 02:23:05 +0100
-Message-ID: <1341dbf4-3552-12e4-9e8d-0d4e58fdb821@gmx.com>
-Date:   Wed, 23 Mar 2022 09:23:00 +0800
+Received: from [0.0.0.0] ([149.28.201.231]) by mail.gmx.net (mrgmx005
+ [212.227.17.184]) with ESMTPSA (Nemesis) id 1MAfYw-1nLoFx1edU-00B0vt; Wed, 23
+ Mar 2022 02:28:38 +0100
+Message-ID: <7d24309f-6851-da18-efab-36eb4b65e130@gmx.com>
+Date:   Wed, 23 Mar 2022 09:28:31 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.7.0
-Subject: Re: [PATCH 37/40] btrfs: add a btrfs_get_stripe_info helper
+Subject: Re: [PATCH 39/40] btrfs: pass private data end end_io handler to
+ btrfs_repair_one_sector
 Content-Language: en-US
 To:     Christoph Hellwig <hch@lst.de>, Josef Bacik <josef@toxicpanda.com>,
         David Sterba <dsterba@suse.com>, Qu Wenruo <wqu@suse.com>
 Cc:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
 References: <20220322155606.1267165-1-hch@lst.de>
- <20220322155606.1267165-38-hch@lst.de>
+ <20220322155606.1267165-40-hch@lst.de>
 From:   Qu Wenruo <quwenruo.btrfs@gmx.com>
-In-Reply-To: <20220322155606.1267165-38-hch@lst.de>
+In-Reply-To: <20220322155606.1267165-40-hch@lst.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:E/oV8F3/2BxpYSQEZmfUYfEowMUXnAAqZA4KNSHsRE4hZRwvYbn
- GsblHN4K3JgGgNScYTsrl6stfYjwcRmBNPuzC5E9P4KB1Lee/tlglg4AC2qwCT0/PE9T2FZ
- iKXlH+MxAJpHoy0aSlyCodB6yfVyh8ue1yO2BnInnpHJZMVF3dCDE84FZey8R75JjehNk5j
- F2c0HYankMt8SH9B/xXhw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:ERt38xMFByQ=:FNeLmgwDj4vW+oqAyFfdR8
- 8ccAPyBXWLbwzMF+1+WXUjoPVUXbWZm5UFalnDFsdL7o0zriwJ+YlPU6zZ9852ZzmpQjRMAIn
- cjz0pr6x//g7ImLVvUhWzuVjIjzSUSrJtOhx2GtrhZBBr9eMNuQRuk8/CJPp8ssbEYqQfKHUG
- /tJEhLT6zaj5L1U8c740UojreglSCOvuJ2OL691vCqVF5woVmTxhX00QMxI4oPjPQEbEsBhnH
- zhheev/20TA/POWzbyuCkVRZR+u7OLUF57WcZq2F7omg+HJ/4wIN+bjSD0ItJRFfILvOQIuEE
- jg1apDTFBiOVrXupGJV+mMQdYApwYEJMu275waa4jTHKBYYthPa9bMSsKci8Lj9FlWWo59WM4
- LA9gKkzo9U/DceB1Rx4gyssw+ie9nTABvBbGuKYaBIhuMU01E0JmENmRus3j1X6iB6EjQ0x1m
- Gf/lVjtiJz8RW0pvPSXNnsZBKsyzSKUzCnE+hE+y8NI3+6SeWDeQLjX2AurMOo+D69MOjgOIu
- i4MrhkebQlHlScUfiRTL9l3WthY4sdZfmlEnUnVTj7GkH9z4hX65abptH3N7qqo/+0CkP5Pj4
- hpFnHZRPaQHMDzvyM18jXor10CV1lFT/aCV1n1lqjhMWhg+rjeuFvdtZeMKnQT7Vex6HHx2kV
- Z5tBhc01iKP5tpKV2WKMjzY8NgP6JRPZoqAyNGqhX7RLvPF5TbNrKE4LAxAv4shcWFVR6m7WN
- w53IwHhhE/D4u0e0RNzCJwcG08xW7fMtP5fz04qABCVwmRdLmS2Xb64ToEQV6CGCRJlR0fbrZ
- 44AsLrTC4TPOmB5G4ux3/0x3VjfRnzHEG2EwF1gdkpaNggJV9xYd5pGsxhQcqhvBSxC1BLUro
- Bf8pSNB07/RDZ0FatXMrosi7iUtTsLzuAODqmv+E12Nv0HBTaE5yeXqCDWBt5e5ar78O1f5sB
- +jrPjcS2pqiz2srwj+tzrguTOuLNICJFpzDky0kX7roJhwGruE942ChZlY2fkLZg9vElyS5fg
- DvNnQXt73U58ba2GiBSuDPUziU8k/xAITFhsZ7BMCItSZf84ZNfmY++SjHOjQn0V/FG8326ZO
- QiAtcuDEaWaef8=
+X-Provags-ID: V03:K1:T+oYpreXt3NHe3JYZjG77uJreb9k3xaGHTdgSm+cFRpMY1dc5tO
+ HEU3qC+BrJF6udYUDqcnvvUf98eBPiueMk5YGaLKKJgdXv/5WvwsW2EnW3xvO93086PobXy
+ c9nB6JgkRMH+wqF5AJlvLgZmqd4ZdXcVugt7Wp3kHmOP1i468005rsTaRQnfvUy7Fq+rgSy
+ WEN4nHs5blUVx5shBgNUw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:YQFBpcmw34E=:M3FNntCgTg0YxwNv08/O6T
+ pd4BP99kimQQCYHyrbU2pP+Sh6308jKc7dBn7t/aYZqQ53p5tePM2g6OS7luNYmrDYq6Z88bK
+ Xd4XWl5/NWwhGQIgRiiGxsm5w+39sdxWS5EtFmYOtWYI7LApPcefj4zFSXwLGWJlgi3xl5dJh
+ TlzlveObe1B0VcNjwb3THFYBW8uKXKE5qKpaKSpLB1J9LgRgBPYubOalaz9da051QAO25MLBD
+ mbbbRBmMurHe4/zLrYqknE2duzGHCoJ/NGjucgqzcbh7PgMmaZ3ZQHsc7VuNGSYaP7Fq4HhkF
+ HRDPh5tGPuDWqqK1Y65RCkDQIXDYttIOD0m375dHN6yEpNrEQ3CeJxcm0hK/OmBFEXbhkWWaG
+ HvkDNEDMXA6wHAfV61MNmihBBsDYpcwQT+P3lNsxlUBf39H/EcYtijEKdze1hlD6YXN0LPeW3
+ bmXubb8ignPWJWuMJ8SlwFPVUf2gnaXOvLJ7qFFoLi+QAh+strrwXXi0N1/uJskUw8SvgMERU
+ kefnsX7gk+X8aYZQKTpgYIlVMLdyGCa9z6k/9MmOyFJJz3K6uipy7PadzNQQKatyBhuzWuHdr
+ 30Bb/pfw39IekOwBhlSt1U6MXN3+BCKxhT+2sKdGhvI4w+zQ+dkyr02PqxYrr6DPxbKcAFVIf
+ 8xRQ9xLgMAy8f7hwpffai8+qhAwG7xGD2tOg0UKmbF7fhj7EKBKrKOfOS/JYTsrwtw4bJaKsk
+ R6OWg84DANTw6p7fsnA90DslKkBF4ucPItNgpUaGnJArhY80FTljySrKA1Ldoo6TrvK1iBFCg
+ 7coO42bVCS2TUpphkr1y3X7LjkoUiUB2szSdHI7TEUTkrFf7NnEGCE3iGv3mdchGao2l7sCLg
+ eesqw/FKJzxMg1DlZLm/VGUFtMOD23fdDEv8soG6b0yHMdFAtbjYbRmg852f7ZTr/JMKL9M4L
+ yRKHd465vgYQsMs6DJS9tbaF2c9uZ8++QT1nVxPDogIZKWj67HSehzEAxo85CC5etDzDJkv7S
+ GhzdMe4yicaeGPiM/O3U88/aq0eg8wTX41WD3wOqe1BLop2ni8za7LFsmgSIVd769pW9U/8Rk
+ DxaKIX4Hri7q9g=
 X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,FREEMAIL_FROM,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -77,306 +78,109 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
 On 2022/3/22 23:56, Christoph Hellwig wrote:
+> Allow the caller to control what happens when the repair bio completes.
+> This will be needed streamline the direct I/O path.
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
+>   fs/btrfs/extent_io.c | 15 ++++++++-------
+>   fs/btrfs/extent_io.h |  8 ++++----
+>   fs/btrfs/inode.c     |  4 +++-
+>   3 files changed, 15 insertions(+), 12 deletions(-)
+>
+> diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+> index 2fdb5d7dd51e1..5a1447db28228 100644
+> --- a/fs/btrfs/extent_io.c
+> +++ b/fs/btrfs/extent_io.c
+> @@ -2627,10 +2627,10 @@ static bool btrfs_check_repairable(struct inode =
+*inode,
+>   }
+>
+>   blk_status_t btrfs_repair_one_sector(struct inode *inode,
+> -			    struct bio *failed_bio, u32 bio_offset,
+> -			    struct page *page, unsigned int pgoff,
+> -			    u64 start, int failed_mirror,
+> -			    submit_bio_hook_t *submit_bio_hook)
+> +		struct bio *failed_bio, u32 bio_offset, struct page *page,
+> +		unsigned int pgoff, u64 start, int failed_mirror,
+> +		submit_bio_hook_t *submit_bio_hook,
+> +		void *bi_private, void (*bi_end_io)(struct bio *bio))
 
-Reviewed-by: Qu Wenruo <wqu@suse.com>
+Not a big fan of extra parameters for a function which already had enough.=
+..
+
+And I always have a question on repair (aka read from extra copy).
+
+Can't we just make the repair part to be synchronous?
+Instead of putting everything into another endio call back, and wait for
+the read and re-check in the same context.
+
+That would definitely streamline the workload way more than this.
+
+And I don't think users would complain about btrfs is slow on reading
+when correcting the corrupted data.
 
 Thanks,
 Qu
->   fs/btrfs/compression.c | 26 ++++++++-----------------
->   fs/btrfs/extent_io.c   | 24 ++++++++---------------
->   fs/btrfs/inode.c       | 32 ++++++++++--------------------
->   fs/btrfs/volumes.c     | 44 +++++++++++++++++++++++++++++++++++++++---
->   fs/btrfs/volumes.h     | 20 ++-----------------
->   5 files changed, 69 insertions(+), 77 deletions(-)
->
-> diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
-> index ae6f986058c75..fca025c327a7e 100644
-> --- a/fs/btrfs/compression.c
-> +++ b/fs/btrfs/compression.c
-> @@ -445,10 +445,9 @@ static struct bio *alloc_compressed_bio(struct comp=
-ressed_bio *cb, u64 disk_byte
->   					u64 *next_stripe_start)
 >   {
->   	struct btrfs_fs_info *fs_info =3D btrfs_sb(cb->inode->i_sb);
-> -	struct btrfs_io_geometry geom;
-> -	struct extent_map *em;
-> +	struct block_device *bdev;
->   	struct bio *bio;
-> -	int ret;
-> +	u64 len;
+>   	struct io_failure_record *failrec;
+>   	struct btrfs_fs_info *fs_info =3D btrfs_sb(inode->i_sb);
+> @@ -2660,9 +2660,9 @@ blk_status_t btrfs_repair_one_sector(struct inode =
+*inode,
+>   	repair_bio =3D btrfs_bio_alloc(inode, 1, REQ_OP_READ);
+>   	repair_bbio =3D btrfs_bio(repair_bio);
+>   	repair_bbio->file_offset =3D start;
+> -	repair_bio->bi_end_io =3D failed_bio->bi_end_io;
+>   	repair_bio->bi_iter.bi_sector =3D failrec->logical >> 9;
+> -	repair_bio->bi_private =3D failed_bio->bi_private;
+> +	repair_bio->bi_private =3D bi_private;
+> +	repair_bio->bi_end_io =3D bi_end_io;
 >
->   	bio =3D btrfs_bio_alloc(cb->inode, BIO_MAX_VECS, opf);
->   	bio->bi_iter.bi_sector =3D disk_bytenr >> SECTOR_SHIFT;
-> @@ -459,23 +458,14 @@ static struct bio *alloc_compressed_bio(struct com=
-pressed_bio *cb, u64 disk_byte
->   	else
->   		btrfs_bio(bio)->end_io_type =3D BTRFS_ENDIO_WQ_DATA_READ;
+>   	if (failed_bbio->csum) {
+>   		const u32 csum_size =3D fs_info->csum_size;
+> @@ -2758,7 +2758,8 @@ static blk_status_t submit_read_repair(struct inod=
+e *inode,
+>   		ret =3D btrfs_repair_one_sector(inode, failed_bio,
+>   				bio_offset + offset,
+>   				page, pgoff + offset, start + offset,
+> -				failed_mirror, btrfs_submit_data_bio);
+> +				failed_mirror, btrfs_submit_data_bio,
+> +				failed_bio->bi_private, failed_bio->bi_end_io);
+>   		if (!ret) {
+>   			/*
+>   			 * We have submitted the read repair, the page release
+> diff --git a/fs/btrfs/extent_io.h b/fs/btrfs/extent_io.h
+> index 0239b26d5170a..54e54269cfdba 100644
+> --- a/fs/btrfs/extent_io.h
+> +++ b/fs/btrfs/extent_io.h
+> @@ -304,10 +304,10 @@ struct io_failure_record {
+>   };
 >
-> -	em =3D btrfs_get_chunk_map(fs_info, disk_bytenr, fs_info->sectorsize);
-> -	if (IS_ERR(em)) {
-> -		bio_put(bio);
-> -		return ERR_CAST(em);
-> -	}
-> +	bdev =3D btrfs_get_stripe_info(fs_info, btrfs_op(bio), disk_bytenr,
-> +			      fs_info->sectorsize, &len);
-> +	if (IS_ERR(bdev))
-> +		return ERR_CAST(bdev);
+>   blk_status_t btrfs_repair_one_sector(struct inode *inode,
+> -			    struct bio *failed_bio, u32 bio_offset,
+> -			    struct page *page, unsigned int pgoff,
+> -			    u64 start, int failed_mirror,
+> -			    submit_bio_hook_t *submit_bio_hook);
+> +		struct bio *failed_bio, u32 bio_offset, struct page *page,
+> +		unsigned int pgoff, u64 start, int failed_mirror,
+> +		submit_bio_hook_t *submit_bio_hook,
+> +		void *bi_private, void (*bi_end_io)(struct bio *bio));
 >
->   	if (bio_op(bio) =3D=3D REQ_OP_ZONE_APPEND)
-> -		bio_set_dev(bio, em->map_lookup->stripes[0].dev->bdev);
-> -
-> -	ret =3D btrfs_get_io_geometry(fs_info, em, btrfs_op(bio), disk_bytenr,=
- &geom);
-> -	free_extent_map(em);
-> -	if (ret < 0) {
-> -		bio_put(bio);
-> -		return ERR_PTR(ret);
-> -	}
-> -	*next_stripe_start =3D disk_bytenr + geom.len;
-> -
-> +		bio_set_dev(bio, bdev);
-> +	*next_stripe_start =3D disk_bytenr + len;
->   	return bio;
->   }
->
-> diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-> index bfd91ed27bd14..10fc5e4dd14a3 100644
-> --- a/fs/btrfs/extent_io.c
-> +++ b/fs/btrfs/extent_io.c
-> @@ -3235,11 +3235,10 @@ static int calc_bio_boundaries(struct btrfs_bio_=
-ctrl *bio_ctrl,
->   			       struct btrfs_inode *inode, u64 file_offset)
->   {
->   	struct btrfs_fs_info *fs_info =3D inode->root->fs_info;
-> -	struct btrfs_io_geometry geom;
->   	struct btrfs_ordered_extent *ordered;
-> -	struct extent_map *em;
->   	u64 logical =3D (bio_ctrl->bio->bi_iter.bi_sector << SECTOR_SHIFT);
-> -	int ret;
-> +	struct block_device *bdev;
-> +	u64 len;
->
->   	/*
->   	 * Pages for compressed extent are never submitted to disk directly,
-> @@ -3253,19 +3252,12 @@ static int calc_bio_boundaries(struct btrfs_bio_=
-ctrl *bio_ctrl,
->   		bio_ctrl->len_to_stripe_boundary =3D U32_MAX;
->   		return 0;
->   	}
-> -	em =3D btrfs_get_chunk_map(fs_info, logical, fs_info->sectorsize);
-> -	if (IS_ERR(em))
-> -		return PTR_ERR(em);
-> -	ret =3D btrfs_get_io_geometry(fs_info, em, btrfs_op(bio_ctrl->bio),
-> -				    logical, &geom);
-> -	free_extent_map(em);
-> -	if (ret < 0) {
-> -		return ret;
-> -	}
-> -	if (geom.len > U32_MAX)
-> -		bio_ctrl->len_to_stripe_boundary =3D U32_MAX;
-> -	else
-> -		bio_ctrl->len_to_stripe_boundary =3D (u32)geom.len;
-> +
-> +	bdev =3D btrfs_get_stripe_info(fs_info, btrfs_op(bio_ctrl->bio), logic=
-al,
-> +			      fs_info->sectorsize, &len);
-> +	if (IS_ERR(bdev))
-> +		return PTR_ERR(bdev);
-> +	bio_ctrl->len_to_stripe_boundary =3D min(len, (u64)U32_MAX);
->
->   	if (bio_op(bio_ctrl->bio) !=3D REQ_OP_ZONE_APPEND) {
->   		bio_ctrl->len_to_oe_boundary =3D U32_MAX;
+>   #ifdef CONFIG_BTRFS_FS_RUN_SANITY_TESTS
+>   bool find_lock_delalloc_range(struct inode *inode,
 > diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-> index d4faed31d36a4..3f7e1779ff19f 100644
+> index 93b3ef48cea2f..e25d9d860c679 100644
 > --- a/fs/btrfs/inode.c
 > +++ b/fs/btrfs/inode.c
-> @@ -7944,12 +7944,9 @@ static void btrfs_submit_direct(const struct ioma=
-p_iter *iter,
->   	u64 submit_len;
->   	u64 clone_offset =3D 0;
->   	u64 clone_len;
-> -	u64 logical;
-> -	int ret;
->   	blk_status_t status;
-> -	struct btrfs_io_geometry geom;
->   	struct btrfs_dio_data *dio_data =3D iter->private;
-> -	struct extent_map *em =3D NULL;
-> +	u64 len;
->
->   	dip =3D btrfs_create_dio_private(dio_bio, inode, file_offset);
->   	if (!dip) {
-> @@ -7978,21 +7975,16 @@ static void btrfs_submit_direct(const struct iom=
-ap_iter *iter,
->   	submit_len =3D dio_bio->bi_iter.bi_size;
->
->   	do {
-> -		logical =3D start_sector << 9;
-> -		em =3D btrfs_get_chunk_map(fs_info, logical, submit_len);
-> -		if (IS_ERR(em)) {
-> -			status =3D errno_to_blk_status(PTR_ERR(em));
-> -			em =3D NULL;
-> -			goto out_err_em;
-> -		}
-> -		ret =3D btrfs_get_io_geometry(fs_info, em, btrfs_op(dio_bio),
-> -					    logical, &geom);
-> -		if (ret) {
-> -			status =3D errno_to_blk_status(ret);
-> -			goto out_err_em;
-> +		struct block_device *bdev;
-> +
-> +		bdev =3D btrfs_get_stripe_info(fs_info, btrfs_op(dio_bio),
-> +				      start_sector << 9, submit_len, &len);
-> +		if (IS_ERR(bdev)) {
-> +			status =3D errno_to_blk_status(PTR_ERR(bdev));
-> +			goto out_err;
->   		}
->
-> -		clone_len =3D min(submit_len, geom.len);
-> +		clone_len =3D min(submit_len, len);
->   		ASSERT(clone_len <=3D UINT_MAX);
->
->   		/*
-> @@ -8044,20 +8036,16 @@ static void btrfs_submit_direct(const struct iom=
-ap_iter *iter,
->   			bio_put(bio);
->   			if (submit_len > 0)
->   				refcount_dec(&dip->refs);
-> -			goto out_err_em;
-> +			goto out_err;
->   		}
->
->   		dio_data->submitted +=3D clone_len;
->   		clone_offset +=3D clone_len;
->   		start_sector +=3D clone_len >> 9;
->   		file_offset +=3D clone_len;
-> -
-> -		free_extent_map(em);
->   	} while (submit_len > 0);
->   	return;
->
-> -out_err_em:
-> -	free_extent_map(em);
->   out_err:
->   	dip->dio_bio->bi_status =3D status;
->   	btrfs_dio_private_put(dip);
-> diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-> index 7392b9f2a3323..f70bb3569a7ae 100644
-> --- a/fs/btrfs/volumes.c
-> +++ b/fs/btrfs/volumes.c
-> @@ -6301,6 +6301,21 @@ static bool need_full_stripe(enum btrfs_map_op op=
-)
->   	return (op =3D=3D BTRFS_MAP_WRITE || op =3D=3D BTRFS_MAP_GET_READ_MIR=
-RORS);
->   }
->
-> +struct btrfs_io_geometry {
-> +	/* remaining bytes before crossing a stripe */
-> +	u64 len;
-> +	/* offset of logical address in chunk */
-> +	u64 offset;
-> +	/* length of single IO stripe */
-> +	u64 stripe_len;
-> +	/* number of stripe where address falls */
-> +	u64 stripe_nr;
-> +	/* offset of address in stripe */
-> +	u64 stripe_offset;
-> +	/* offset of raid56 stripe into the chunk */
-> +	u64 raid56_stripe_offset;
-> +};
-> +
->   /*
->    * Calculate the geometry of a particular (address, len) tuple. This
->    * information is used to calculate how big a particular bio can get b=
-efore it
-> @@ -6315,9 +6330,10 @@ static bool need_full_stripe(enum btrfs_map_op op=
-)
->    * Returns < 0 in case a chunk for the given logical address cannot be=
- found,
->    * usually shouldn't happen unless @logical is corrupted, 0 otherwise.
->    */
-> -int btrfs_get_io_geometry(struct btrfs_fs_info *fs_info, struct extent_=
-map *em,
-> -			  enum btrfs_map_op op, u64 logical,
-> -			  struct btrfs_io_geometry *io_geom)
-> +static int btrfs_get_io_geometry(struct btrfs_fs_info *fs_info,
-> +		struct extent_map *em,
-> +		enum btrfs_map_op op, u64 logical,
-> +		struct btrfs_io_geometry *io_geom)
->   {
->   	struct map_lookup *map;
->   	u64 len;
-> @@ -6394,6 +6410,28 @@ int btrfs_get_io_geometry(struct btrfs_fs_info *f=
-s_info, struct extent_map *em,
->   	return 0;
->   }
->
-> +struct block_device *btrfs_get_stripe_info(struct btrfs_fs_info *fs_inf=
-o,
-> +		enum btrfs_map_op op, u64 logical, u64 len, u64 *lenp)
-> +{
-> +	struct btrfs_io_geometry geom;
-> +	struct block_device *bdev;
-> +	struct extent_map *em;
-> +	int ret;
-> +
-> +	em =3D btrfs_get_chunk_map(fs_info, logical, len);
-> +	if (IS_ERR(em))
-> +		return ERR_CAST(em);
-> +
-> +	bdev =3D em->map_lookup->stripes[0].dev->bdev;
-> +
-> +	ret =3D btrfs_get_io_geometry(fs_info, em, op, logical, &geom);
-> +	free_extent_map(em);
-> +	if (ret < 0)
-> +		return ERR_PTR(ret);
-> +	*lenp =3D geom.len;
-> +	return bdev;
-> +}
-> +
->   static int __btrfs_map_block(struct btrfs_fs_info *fs_info,
->   		enum btrfs_map_op op, u64 logical, u64 *length,
->   		struct btrfs_io_context **bioc_ret, struct btrfs_bio *bbio,
-> diff --git a/fs/btrfs/volumes.h b/fs/btrfs/volumes.h
-> index 5b0e7602434b0..c6425760f69da 100644
-> --- a/fs/btrfs/volumes.h
-> +++ b/fs/btrfs/volumes.h
-> @@ -17,21 +17,6 @@ extern struct mutex uuid_mutex;
->
->   #define BTRFS_STRIPE_LEN	SZ_64K
->
-> -struct btrfs_io_geometry {
-> -	/* remaining bytes before crossing a stripe */
-> -	u64 len;
-> -	/* offset of logical address in chunk */
-> -	u64 offset;
-> -	/* length of single IO stripe */
-> -	u64 stripe_len;
-> -	/* number of stripe where address falls */
-> -	u64 stripe_nr;
-> -	/* offset of address in stripe */
-> -	u64 stripe_offset;
-> -	/* offset of raid56 stripe into the chunk */
-> -	u64 raid56_stripe_offset;
-> -};
-> -
->   /*
->    * Use sequence counter to get consistent device stat data on
->    * 32-bit processors.
-> @@ -520,9 +505,8 @@ int btrfs_map_block(struct btrfs_fs_info *fs_info, e=
-num btrfs_map_op op,
->   int btrfs_map_sblock(struct btrfs_fs_info *fs_info, enum btrfs_map_op =
-op,
->   		     u64 logical, u64 *length,
->   		     struct btrfs_io_context **bioc_ret);
-> -int btrfs_get_io_geometry(struct btrfs_fs_info *fs_info, struct extent_=
-map *map,
-> -			  enum btrfs_map_op op, u64 logical,
-> -			  struct btrfs_io_geometry *io_geom);
-> +struct block_device *btrfs_get_stripe_info(struct btrfs_fs_info *fs_inf=
-o,
-> +		enum btrfs_map_op op, u64 logical, u64 length, u64 *lenp);
->   int btrfs_read_sys_array(struct btrfs_fs_info *fs_info);
->   int btrfs_read_chunk_tree(struct btrfs_fs_info *fs_info);
->   struct btrfs_block_group *btrfs_create_chunk(struct btrfs_trans_handle=
- *trans,
+> @@ -7799,7 +7799,9 @@ static blk_status_t btrfs_check_read_dio_bio(struc=
+t btrfs_dio_private *dip,
+>   				ret =3D btrfs_repair_one_sector(inode, &bbio->bio,
+>   						bio_offset, bvec.bv_page, pgoff,
+>   						start, bbio->mirror_num,
+> -						submit_dio_repair_bio);
+> +						submit_dio_repair_bio,
+> +						bbio->bio.bi_private,
+> +						bbio->bio.bi_end_io);
+>   				if (ret)
+>   					err =3D ret;
+>   			}
