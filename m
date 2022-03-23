@@ -2,180 +2,220 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D549F4E4A0B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Mar 2022 01:24:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C74D34E4A14
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Mar 2022 01:29:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231133AbiCWA0I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Mar 2022 20:26:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36574 "EHLO
+        id S240918AbiCWAbL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Mar 2022 20:31:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230174AbiCWA0H (ORCPT
+        with ESMTP id S230174AbiCWAbK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Mar 2022 20:26:07 -0400
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AEEA1E3C3;
-        Tue, 22 Mar 2022 17:24:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1647995078; x=1679531078;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Z1llhhRuUYu0p3KZy5HGXMGXTBwJ6iG5YHp4KNFFhZQ=;
-  b=SL+vQdvottMuaA9g10IXLv6RZ9vxUxsd6Q4fpc7s3asOoccDKqnkGB/V
-   J4KG4Xpr3x5VPZgQDFqd2bRm91VfBm5Z16yip/VJ+3YnN19yZiIgwaogp
-   //5k4jtAubnreKeO/gN3Ybp3ME0LXHAN9r0RO2OYIyGCl/45VLMBUJ3/T
-   8qbWGTDUQlOktpgRm0wy1gZufk+jRfPu8Z/nytkBkPiP6qI+vXaGi10TT
-   xsYuJek1aBnXT8C315C2Fzhzy9EIcRNGiKGXMl25CotRyqoVLHMDNKP0Z
-   IZJu4jRMDb9ioKglblOI9/iouxLQN1IPMY6JNMDRlZonhdVTCdP5dtoQq
-   Q==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10294"; a="321186639"
-X-IronPort-AV: E=Sophos;i="5.90,203,1643702400"; 
-   d="scan'208";a="321186639"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Mar 2022 17:24:38 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.90,203,1643702400"; 
-   d="scan'208";a="543960020"
-Received: from lkp-server02.sh.intel.com (HELO 89b41b6ae01c) ([10.239.97.151])
-  by orsmga007.jf.intel.com with ESMTP; 22 Mar 2022 17:24:36 -0700
-Received: from kbuild by 89b41b6ae01c with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1nWonj-000JS7-K5; Wed, 23 Mar 2022 00:24:35 +0000
-Date:   Wed, 23 Mar 2022 08:24:15 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Stephen Kitt <steve@sk2.org>, Matthew Wilcox <willy@infradead.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     kbuild-all@lists.01.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Stephen Kitt <steve@sk2.org>
-Subject: Re: [PATCH] idr: Remove unused ida_simple_{get,remove}
-Message-ID: <202203230845.E0LTB8eP-lkp@intel.com>
-References: <20220322220602.985011-1-steve@sk2.org>
+        Tue, 22 Mar 2022 20:31:10 -0400
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF6B52D1FA;
+        Tue, 22 Mar 2022 17:29:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1647995375;
+        bh=WqxLOU0CxpvzOIvs8f609g2mFCcYNo2rqWGb3QscDW8=;
+        h=X-UI-Sender-Class:Date:To:Cc:References:From:Subject:In-Reply-To;
+        b=U3Sfk8Ee0Xx+Toc/MwbbT6Z6vDAtQNCBuooGkYNFP7/7VkBJesTPZtZlVPmRMWAvI
+         EfTIbIhjCkpXH1NjPQTFf0aVTFQJ0+t2siyAUOgkB8tnHcy/UcZVgGbf+YGgp9eorw
+         7cBdDoL08WIfgmYiDwdppFDQHaRhtuuk9rxhJLf0=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [0.0.0.0] ([149.28.201.231]) by mail.gmx.net (mrgmx004
+ [212.227.17.184]) with ESMTPSA (Nemesis) id 1MeCtZ-1o6z6n1IDX-00bK1Q; Wed, 23
+ Mar 2022 01:29:35 +0100
+Message-ID: <5c6320e4-a130-79bf-4229-e5e12bedd921@gmx.com>
+Date:   Wed, 23 Mar 2022 08:29:29 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220322220602.985011-1-steve@sk2.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Content-Language: en-US
+To:     Christoph Hellwig <hch@lst.de>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, Qu Wenruo <wqu@suse.com>
+Cc:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+References: <20220322155606.1267165-1-hch@lst.de>
+ <20220322155606.1267165-19-hch@lst.de>
+From:   Qu Wenruo <quwenruo.btrfs@gmx.com>
+Subject: Re: [PATCH 18/40] btrfs: move more work into btrfs_end_bioc
+In-Reply-To: <20220322155606.1267165-19-hch@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:jXxdJEg/4y9ZWOTSvSDW1TOXbYlUY12G1dwQglM6FVSNCKbBWr1
+ HCLRsPqnc2z8mSiKXxRkPQkQWSue7cAozVdBhfSW7yj+bgc49nuTpRZBrw4xdIJ8qjoJ7Oh
+ ndQsE/AXi+k+SbnUUyQAQ7r3vj6Z9NoAYUwRfDx+/ZaS3Q7W3HbNaWzKieLopoQIpNNPGv0
+ 0pTlvyfvvk3vqjDEuEeYw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:l9K6+b2kyg0=:+gUXFNqHZQMl2sEqzaHoZQ
+ r/jBlZVqbju4V37gKmJw6FQXY18gRW9oypscI7JP7H2trVLlmAFM9Er/DYYJL/VOlScyMvmBL
+ eLyZ6fg6dD72SMOd4fGUY9CipcS12HCgpTpH1bl7KmRlJHA8aI3sN932vkz6o4+gkp5iy7FXE
+ qRDdyZWITEPOnUzpyUTbrSx1xdzkbu5EQZVD7AkLi/p+zOOzQiyB6kVi+EdbmVfvDyS8C6rd5
+ t8TgBBZVFjhYZiHGyyQ3C+JX/kVo1J6QiWsUCMGz/ZPTedNJeKrLlzC9s2p5iZe9RRjSqr6sl
+ ST6upFvibINU7gPLhtl8HC8klZOkwBCPG4S7f7gQb3Xhz7v/3inzw62p8o+WprYVNcNiDfxBv
+ ChKVzwAcSOQixE5Uf4N1txH0fmCEHCsAxvvt7Kn9upB8mt+Wg1/eLGyzPlUH0uu1SLkGYwEv5
+ /+DpO8lXXlGs5+VW1a2txp5xa6ZRz7JGwQcqM7BjwiRLBIi/6j8znDwbW8VmvB+IGNuGUhXpp
+ FVJFNFx7ftvf/55HiDW2ThBcqWKNZKG6N+wccvvBsV6zw3XSfeHXui+pgm34kTUaWKwXZzT2j
+ j0zFDwQH4DOGdU5+c7JD0Jv/0N2j9BXYOp5aNc6tJ3VnmZHiSIxxAJtX6bMM3a27sKU3ReLF8
+ 4ENNsqK2RHioxSPi8sHmgHBs9/a3y3cA3YUVnNFTMpxx0UGi8nF61ns5VK+Q7NAoNON//Robi
+ q1QplPWq/D/IlLOw57et/f95xQzfJ/rw5xpVumdeY1ZzSsSd8oHoWZbr1jE+RoExgYO2MUO4v
+ s1aE9TeN25RAf9944JaN/+gL+vNatAI43CtsXt+8IhqDQZC8qKvwmzivcWh9irFbvWNslspKQ
+ 0AWdlGpGby/IOQbOEU+O3GT6JOSJafOyCQp+eGAqWaC/VWW9p+Z9Xcvv2iCGALeXlbipJr24T
+ vdo8xGygdppxBlARctWNZShmJnuK5bk697np+GtKwKYViduUQ75jH1jeXjWjyIkUSLOJdUTlY
+ x27wpB+6DnwU9i0BKQvwgBC7ihvIKu4+rD3RXA7cdxSzNlbmPUDrnXOUq17nja1ERm2zi1Xd0
+ rg+oPzOVbrxyJA=
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,FREEMAIL_FROM,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Stephen,
-
-Thank you for the patch! Yet something to improve:
-
-[auto build test ERROR on 5191290407668028179f2544a11ae9b57f0bcf07]
-
-url:    https://github.com/0day-ci/linux/commits/Stephen-Kitt/idr-Remove-unused-ida_simple_-get-remove/20220323-062521
-base:   5191290407668028179f2544a11ae9b57f0bcf07
-config: um-i386_defconfig (https://download.01.org/0day-ci/archive/20220323/202203230845.E0LTB8eP-lkp@intel.com/config)
-compiler: gcc-9 (Ubuntu 9.4.0-1ubuntu1~20.04) 9.4.0
-reproduce (this is a W=1 build):
-        # https://github.com/0day-ci/linux/commit/13945a32161b59a82eca06de385ea0f38b88439e
-        git remote add linux-review https://github.com/0day-ci/linux
-        git fetch --no-tags linux-review Stephen-Kitt/idr-Remove-unused-ida_simple_-get-remove/20220323-062521
-        git checkout 13945a32161b59a82eca06de385ea0f38b88439e
-        # save the config file to linux build tree
-        mkdir build_dir
-        make W=1 O=build_dir ARCH=um SUBARCH=i386 SHELL=/bin/bash
-
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
-
-All errors (new ones prefixed by >>):
-
-   fs/eventfd.c: In function 'eventfd_free_ctx':
->> fs/eventfd.c:92:3: error: implicit declaration of function 'ida_simple_remove' [-Werror=implicit-function-declaration]
-      92 |   ida_simple_remove(&eventfd_ida, ctx->id);
-         |   ^~~~~~~~~~~~~~~~~
-   fs/eventfd.c: In function 'do_eventfd':
->> fs/eventfd.c:426:12: error: implicit declaration of function 'ida_simple_get' [-Werror=implicit-function-declaration]
-     426 |  ctx->id = ida_simple_get(&eventfd_ida, 0, 0, GFP_KERNEL);
-         |            ^~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
---
-   fs/proc/generic.c: In function 'proc_alloc_inum':
->> fs/proc/generic.c:206:6: error: implicit declaration of function 'ida_simple_get' [-Werror=implicit-function-declaration]
-     206 |  i = ida_simple_get(&proc_inum_ida, 0, UINT_MAX - PROC_DYNAMIC_FIRST + 1,
-         |      ^~~~~~~~~~~~~~
-   fs/proc/generic.c: In function 'proc_free_inum':
->> fs/proc/generic.c:217:2: error: implicit declaration of function 'ida_simple_remove' [-Werror=implicit-function-declaration]
-     217 |  ida_simple_remove(&proc_inum_ida, inum - PROC_DYNAMIC_FIRST);
-         |  ^~~~~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
---
-   block/blk-core.c: In function 'blk_alloc_queue':
->> block/blk-core.c:456:10: error: implicit declaration of function 'ida_simple_get' [-Werror=implicit-function-declaration]
-     456 |  q->id = ida_simple_get(&blk_queue_ida, 0, 0, GFP_KERNEL);
-         |          ^~~~~~~~~~~~~~
->> block/blk-core.c:506:2: error: implicit declaration of function 'ida_simple_remove' [-Werror=implicit-function-declaration]
-     506 |  ida_simple_remove(&blk_queue_ida, q->id);
-         |  ^~~~~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
---
-   block/blk-sysfs.c: In function 'blk_release_queue':
->> block/blk-sysfs.c:796:2: error: implicit declaration of function 'ida_simple_remove' [-Werror=implicit-function-declaration]
-     796 |  ida_simple_remove(&blk_queue_ida, q->id);
-         |  ^~~~~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
---
-   drivers/base/swnode.c: In function 'software_node_release':
->> drivers/base/swnode.c:750:3: error: implicit declaration of function 'ida_simple_remove' [-Werror=implicit-function-declaration]
-     750 |   ida_simple_remove(&swnode->parent->child_ids, swnode->id);
-         |   ^~~~~~~~~~~~~~~~~
-   drivers/base/swnode.c: In function 'swnode_register':
->> drivers/base/swnode.c:779:8: error: implicit declaration of function 'ida_simple_get' [-Werror=implicit-function-declaration]
-     779 |  ret = ida_simple_get(parent ? &parent->child_ids : &swnode_root_ids,
-         |        ^~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
---
-   drivers/input/input.c: In function 'input_get_new_minor':
->> drivers/input/input.c:2577:15: error: implicit declaration of function 'ida_simple_get' [-Werror=implicit-function-declaration]
-    2577 |   int minor = ida_simple_get(&input_ida,
-         |               ^~~~~~~~~~~~~~
-   drivers/input/input.c: In function 'input_free_minor':
->> drivers/input/input.c:2600:2: error: implicit declaration of function 'ida_simple_remove' [-Werror=implicit-function-declaration]
-    2600 |  ida_simple_remove(&input_ida, minor);
-         |  ^~~~~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
---
-   drivers/ptp/ptp_clock.c: In function 'ptp_clock_release':
->> drivers/ptp/ptp_clock.c:177:2: error: implicit declaration of function 'ida_simple_remove' [-Werror=implicit-function-declaration]
-     177 |  ida_simple_remove(&ptp_clocks_map, ptp->index);
-         |  ^~~~~~~~~~~~~~~~~
-   drivers/ptp/ptp_clock.c: In function 'ptp_clock_register':
->> drivers/ptp/ptp_clock.c:212:10: error: implicit declaration of function 'ida_simple_get' [-Werror=implicit-function-declaration]
-     212 |  index = ida_simple_get(&ptp_clocks_map, 0, MINORMASK + 1, GFP_KERNEL);
-         |          ^~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
---
-   net/core/xdp.c: In function '__xdp_mem_allocator_rcu_free':
->> net/core/xdp.c:76:2: error: implicit declaration of function 'ida_simple_remove' [-Werror=implicit-function-declaration]
-      76 |  ida_simple_remove(&mem_id_pool, xa->mem.id);
-         |  ^~~~~~~~~~~~~~~~~
-   net/core/xdp.c: In function '__mem_id_cyclic_get':
->> net/core/xdp.c:241:7: error: implicit declaration of function 'ida_simple_get' [-Werror=implicit-function-declaration]
-     241 |  id = ida_simple_get(&mem_id_pool, mem_id_next, MEM_ID_MAX, gfp);
-         |       ^~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
 
 
-vim +/ida_simple_remove +92 fs/eventfd.c
+On 2022/3/22 23:55, Christoph Hellwig wrote:
+> Assign ->mirror_num and ->bi_status in btrfs_end_bioc instead of
+> duplicating the logic in the callers.  Also remove the bio argument as
+> it always must be bioc->orig_bio and the now pointless bioc_error that
+> did nothing but assign bi_sector to the same value just sampled in the
+> caller.
 
-e1ad7468c77ddb Davide Libenzi  2007-05-10  88  
-562787a5c32ccd Davide Libenzi  2009-09-22  89  static void eventfd_free_ctx(struct eventfd_ctx *ctx)
-562787a5c32ccd Davide Libenzi  2009-09-22  90  {
-b556db17b0e7c4 Masatake YAMATO 2019-05-14  91  	if (ctx->id >= 0)
-b556db17b0e7c4 Masatake YAMATO 2019-05-14 @92  		ida_simple_remove(&eventfd_ida, ctx->id);
-562787a5c32ccd Davide Libenzi  2009-09-22  93  	kfree(ctx);
-562787a5c32ccd Davide Libenzi  2009-09-22  94  }
-562787a5c32ccd Davide Libenzi  2009-09-22  95  
+Reviewed-by: Qu Wenruo <wqu@suse.com>
 
--- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+It may be better to rename @first_bio or the @bio parameter, as it takes
+me several seconds to realize that @bio get reused for RAID1*/DUP bio
+cloned submission.
+
+Thanks,
+Qu
+
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>   fs/btrfs/volumes.c | 68 ++++++++++++++--------------------------------
+>   1 file changed, 20 insertions(+), 48 deletions(-)
+>
+> diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+> index 4dd54b80dac81..9d1f8c27eff33 100644
+> --- a/fs/btrfs/volumes.c
+> +++ b/fs/btrfs/volumes.c
+> @@ -6659,19 +6659,29 @@ int btrfs_map_sblock(struct btrfs_fs_info *fs_in=
+fo, enum btrfs_map_op op,
+>   	return __btrfs_map_block(fs_info, op, logical, length, bioc_ret, 0, 1=
+);
+>   }
+>
+> -static inline void btrfs_end_bioc(struct btrfs_io_context *bioc, struct=
+ bio *bio)
+> +static inline void btrfs_end_bioc(struct btrfs_io_context *bioc)
+>   {
+> +	struct bio *bio =3D bioc->orig_bio;
+> +
+> +	btrfs_bio(bio)->mirror_num =3D bioc->mirror_num;
+>   	bio->bi_private =3D bioc->private;
+>   	bio->bi_end_io =3D bioc->end_io;
+> -	bio_endio(bio);
+>
+> +	/*
+> +	 * Only send an error to the higher layers if it is beyond the toleran=
+ce
+> +	 * threshold.
+> +	 */
+> +	if (atomic_read(&bioc->error) > bioc->max_errors)
+> +		bio->bi_status =3D BLK_STS_IOERR;
+> +	else
+> +		bio->bi_status =3D BLK_STS_OK;
+> +	bio_endio(bio);
+>   	btrfs_put_bioc(bioc);
+>   }
+>
+>   static void btrfs_end_bio(struct bio *bio)
+>   {
+>   	struct btrfs_io_context *bioc =3D bio->bi_private;
+> -	int is_orig_bio =3D 0;
+>
+>   	if (bio->bi_status) {
+>   		atomic_inc(&bioc->error);
+> @@ -6692,35 +6702,12 @@ static void btrfs_end_bio(struct bio *bio)
+>   		}
+>   	}
+>
+> -	if (bio =3D=3D bioc->orig_bio)
+> -		is_orig_bio =3D 1;
+> +	if (bio !=3D bioc->orig_bio)
+> +		bio_put(bio);
+>
+>   	btrfs_bio_counter_dec(bioc->fs_info);
+> -
+> -	if (atomic_dec_and_test(&bioc->stripes_pending)) {
+> -		if (!is_orig_bio) {
+> -			bio_put(bio);
+> -			bio =3D bioc->orig_bio;
+> -		}
+> -
+> -		btrfs_bio(bio)->mirror_num =3D bioc->mirror_num;
+> -		/* only send an error to the higher layers if it is
+> -		 * beyond the tolerance of the btrfs bio
+> -		 */
+> -		if (atomic_read(&bioc->error) > bioc->max_errors) {
+> -			bio->bi_status =3D BLK_STS_IOERR;
+> -		} else {
+> -			/*
+> -			 * this bio is actually up to date, we didn't
+> -			 * go over the max number of errors
+> -			 */
+> -			bio->bi_status =3D BLK_STS_OK;
+> -		}
+> -
+> -		btrfs_end_bioc(bioc, bio);
+> -	} else if (!is_orig_bio) {
+> -		bio_put(bio);
+> -	}
+> +	if (atomic_dec_and_test(&bioc->stripes_pending))
+> +		btrfs_end_bioc(bioc);
+>   }
+>
+>   static void submit_stripe_bio(struct btrfs_io_context *bioc, struct bi=
+o *bio,
+> @@ -6758,23 +6745,6 @@ static void submit_stripe_bio(struct btrfs_io_con=
+text *bioc, struct bio *bio,
+>   	submit_bio(bio);
+>   }
+>
+> -static void bioc_error(struct btrfs_io_context *bioc, struct bio *bio, =
+u64 logical)
+> -{
+> -	atomic_inc(&bioc->error);
+> -	if (atomic_dec_and_test(&bioc->stripes_pending)) {
+> -		/* Should be the original bio. */
+> -		WARN_ON(bio !=3D bioc->orig_bio);
+> -
+> -		btrfs_bio(bio)->mirror_num =3D bioc->mirror_num;
+> -		bio->bi_iter.bi_sector =3D logical >> 9;
+> -		if (atomic_read(&bioc->error) > bioc->max_errors)
+> -			bio->bi_status =3D BLK_STS_IOERR;
+> -		else
+> -			bio->bi_status =3D BLK_STS_OK;
+> -		btrfs_end_bioc(bioc, bio);
+> -	}
+> -}
+> -
+>   blk_status_t btrfs_map_bio(struct btrfs_fs_info *fs_info, struct bio *=
+bio,
+>   			   int mirror_num)
+>   {
+> @@ -6833,7 +6803,9 @@ blk_status_t btrfs_map_bio(struct btrfs_fs_info *f=
+s_info, struct bio *bio,
+>   						   &dev->dev_state) ||
+>   		    (btrfs_op(first_bio) =3D=3D BTRFS_MAP_WRITE &&
+>   		    !test_bit(BTRFS_DEV_STATE_WRITEABLE, &dev->dev_state))) {
+> -			bioc_error(bioc, first_bio, logical);
+> +			atomic_inc(&bioc->error);
+> +			if (atomic_dec_and_test(&bioc->stripes_pending))
+> +				btrfs_end_bioc(bioc);
+>   			continue;
+>   		}
+>
