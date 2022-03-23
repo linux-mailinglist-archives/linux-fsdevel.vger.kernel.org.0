@@ -2,131 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F337E4E55F4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Mar 2022 17:06:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 66B1E4E558F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Mar 2022 16:44:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245370AbiCWQII (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Mar 2022 12:08:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43684 "EHLO
+        id S242398AbiCWPqD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Mar 2022 11:46:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245444AbiCWQIB (ORCPT
+        with ESMTP id S238172AbiCWPp7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Mar 2022 12:08:01 -0400
-X-Greylist: delayed 1389 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 23 Mar 2022 09:06:31 PDT
-Received: from gateway30.websitewelcome.com (gateway30.websitewelcome.com [192.185.197.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 666601706C
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Mar 2022 09:06:31 -0700 (PDT)
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id 35E158D50
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Mar 2022 10:43:22 -0500 (CDT)
-Received: from 162-215-252-75.unifiedlayer.com ([208.91.199.152])
-        by cmsmtp with SMTP
-        id X38rnuzgj22u3X38snJOxG; Wed, 23 Mar 2022 10:43:22 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=roeck-us.net; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:Cc:
-        To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=lagRXHohghy8kR3woCuBBmkrcJ/jzmeeFU/A5c+1noo=; b=SKVgFgGANbObFf6amjfV24eu+h
-        n0xWMkM27kPmvFAgvKcqFv+hfIHThLfoWcRnd1X8xFUcQP3HR13LA4VzmRqW+O6FeAgRVxjx27KSe
-        hl2iN+faBt50LA0zMJAn8QRAKthN0v2Vcku3E5ajko0c30LSgmQO+U3vw8gVUULYf32KGgJo+PCIE
-        flVfEntmD6Pxj237DGMtNbwdJvCMhuo0fSfOesmqg5BySHh87KeT7TljcegAXg6iNDlRbUWxBpB1P
-        33QYer1vvhIIEQ4VhMb6a9eCkP1nCGe/5sBMPEQF8lCzmBRQ54ViRtb5zi3O8POeIPCXsSH7hXR8d
-        33EJ51dQ==;
-Received: from 108-223-40-66.lightspeed.sntcca.sbcglobal.net ([108.223.40.66]:57638 helo=localhost)
-        by bh-25.webhostbox.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.94.2)
-        (envelope-from <linux@roeck-us.net>)
-        id 1nX38q-0034li-Mc; Wed, 23 Mar 2022 15:43:20 +0000
-Date:   Wed, 23 Mar 2022 08:43:19 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-nfs@vger.kernel.org,
-        linux-nilfs <linux-nilfs@vger.kernel.org>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Philipp Reisner <philipp.reisner@linbit.com>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Roger Pau =?iso-8859-1?Q?Monn=E9?= <roger.pau@citrix.co>,
-        device-mapper development <dm-devel@redhat.com>,
-        "Md . Haris Iqbal" <haris.iqbal@ionos.com>,
-        Lars Ellenberg <lars.ellenberg@linbit.com>,
-        linux-fsdevel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        ntfs3@lists.linux.dev, Jack Wang <jinpu.wang@ionos.com>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        drbd-dev@lists.linbit.com
-Subject: Re: [dm-devel] [PATCH 01/19] fs: remove mpage_alloc
-Message-ID: <20220323154319.GA2268247@roeck-us.net>
+        Wed, 23 Mar 2022 11:45:59 -0400
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EC213B014
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Mar 2022 08:44:29 -0700 (PDT)
+Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 22N6FhI9000907
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Mar 2022 08:44:29 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=facebook; bh=zp+NEeTEPAGApicR5pW/0sbJQp2itw7lAhiHpnEuHYw=;
+ b=W3IvGYWPdTrge/lEQcLHONRKXVGBC3t9HBCScQMBt+bUKDy5zIE0gVWhLzhAy8ztj0lO
+ MBSnEPrD6cf+eQUNQo6FXP2iHVtiK6Ru6ky7q6UZTMihG4A7vLLYU0f5zD7A0+KquxVX
+ emAk+E9woFiHAklDaoQ24Cqif8y6oYw0+Ac= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3ey6ddmtxj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Mar 2022 08:44:28 -0700
+Received: from twshared37304.07.ash9.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:83::4) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.21; Wed, 23 Mar 2022 08:44:27 -0700
+Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
+        id 78364CA024C3; Wed, 23 Mar 2022 08:44:22 -0700 (PDT)
+From:   Stefan Roesch <shr@fb.com>
+To:     <io-uring@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <kernel-team@fb.com>
+CC:     <viro@zeniv.linux.org.uk>, <christian.brauner@ubuntu.com>,
+        <shr@fb.com>
+Subject: [PATCH v13 0/4] io_uring: add xattr support
+Date:   Wed, 23 Mar 2022 08:44:16 -0700
+Message-ID: <20220323154420.3301504-1-shr@fb.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - roeck-us.net
-X-BWhitelist: no
-X-Source-IP: 108.223.40.66
-X-Source-L: No
-X-Exim-ID: 1nX38q-0034li-Mc
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: 108-223-40-66.lightspeed.sntcca.sbcglobal.net (localhost) [108.223.40.66]:57638
-X-Source-Auth: guenter@roeck-us.net
-X-Email-Count: 19
-X-Source-Cap: cm9lY2s7YWN0aXZzdG07YmgtMjUud2ViaG9zdGJveC5uZXQ=
-X-Local-Domain: yes
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_PASS,SPF_SOFTFAIL,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-GUID: H8opznS3RviPSnf_RHXCD9QBFmX1TWSZ
+X-Proofpoint-ORIG-GUID: H8opznS3RviPSnf_RHXCD9QBFmX1TWSZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.850,Hydra:6.0.425,FMLib:17.11.64.514
+ definitions=2022-03-23_07,2022-03-23_01,2022-02-23_01
+X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 23, 2022 at 07:42:48AM +0100, Christoph Hellwig wrote:
-> On Wed, Mar 23, 2022 at 06:38:22AM +0900, Ryusuke Konishi wrote:
-> > This looks because the mask of GFP_KERNEL is removed along with
-> > the removal of mpage_alloc().
-> > 
-> 
-> > The default value of the gfp flag is set to GFP_HIGHUSER_MOVABLE by
-> > inode_init_always().
-> > So, __GFP_HIGHMEM hits the gfp warning at bio_alloc() that
-> > do_mpage_readpage() calls.
-> 
-> Yeah.  Let's try this to match the iomap code:
-> 
-> diff --git a/fs/mpage.c b/fs/mpage.c
-> index 9ed1e58e8d70b..d465883edf719 100644
-> --- a/fs/mpage.c
-> +++ b/fs/mpage.c
-> @@ -148,13 +148,11 @@ static struct bio *do_mpage_readpage(struct mpage_readpage_args *args)
->  	int op = REQ_OP_READ;
->  	unsigned nblocks;
->  	unsigned relative_block;
-> -	gfp_t gfp;
-> +	gfp_t gfp = mapping_gfp_constraint(page->mapping, GFP_KERNEL);
->  
->  	if (args->is_readahead) {
->  		op |= REQ_RAHEAD;
-> -		gfp = readahead_gfp_mask(page->mapping);
-> -	} else {
-> -		gfp = mapping_gfp_constraint(page->mapping, GFP_KERNEL);
-> +		gfp |= __GFP_NORETRY | __GFP_NOWARN;
->  	}
->  
->  	if (page_has_buffers(page))
+This adds the xattr support to io_uring. The intent is to have a more
+complete support for file operations in io_uring.
 
-That fixes the problem for me.
+This change adds support for the following functions to io_uring:
+- fgetxattr
+- fsetxattr
+- getxattr
+- setxattr
 
-Tested-by: Guenter Roeck <linux@roeck-us.net>
+Patch 1: fs: split off setxattr_copy and do_setxattr function from setxat=
+tr
+  Split off the setup part of the setxattr function in the setxattr_copy
+  function. Split off the processing part in do_setxattr.
 
-Guenter
+Patch 2: fs: split off do_getxattr from getxattr
+  Split of the do_getxattr part from getxattr. This will
+  allow it to be invoked it from io_uring.
+
+Patch 3: io_uring: add fsetxattr and setxattr support
+  This adds new functions to support the fsetxattr and setxattr
+  functions.
+
+Patch 4: io_uring: add fgetxattr and getxattr support
+  This adds new functions to support the fgetxattr and getxattr
+  functions.
+
+
+There are two additional patches:
+  liburing: Add support for xattr api's.
+            This also includes the tests for the new code.
+  xfstests: Add support for io_uring xattr support.
+
+
+Changes:
+V13: - refreshed the code
+     - Review comments mentioned that the statx api in io_uring was
+       not following the same pattern as the xattr api. This has
+       been fixed by a previous patch (using the same pattern as
+       this patch)
+V12: - add union to xattr_ctx structure. The getxattr api requires
+       a pointer to value and the setxattr requires a const pointer
+       to value (with a union this can be unified).
+     - use xattr_ctx structure in do_getxattr call.
+V11: - removed the do_user_path_at_empty function and directly
+       call filename_lookup
+     - introduce __io_xattr_finish and io_xattr_finish functions
+       to unify the cleanup code
+     - remove the older __io_setxattr_finish function
+V10: - move do_user_path_at_empty definition to fs/internal.h
+     - introduce __io_setxattr_finish function
+     - introduce __io_getxattr_finish function
+V9 : - keep kvalue in struct xattr_ctx
+V8 : - introduce xattr_name struct as advised by Linus
+     - remove kname_sz field in xattr_ctx
+V7 : - split off setxattr in two functions as recommeneded by
+       Christian.
+V6 : - reverted addition of kname array to xattr_ctx structure
+       Adding the kname array increases the io_kiocb beyond 64 bytes
+       (increases it to 224 bytes). We try hard to limit it to 64 bytes.
+       Keeping the original interface also is a bit more efficient.
+     - addressed Pavel's reordering comment
+     - addressed Pavel's putname comment
+     - addressed Pavel's kvfree comment
+     - rebased on for-5.17/io_uring-getdents64
+V5 : - add kname array to xattr_ctx structure
+V4 : - rebased patch series
+V3 : - remove req->file checks in prep functions
+     - change size parameter in do_xattr
+V2 : - split off function do_user_path_empty instead of changing
+       the function signature of user_path_at
+     - Fix datatype size problem in do_getxattr
+
+
+Stefan Roesch (4):
+  fs: split off setxattr_copy and do_setxattr function from setxattr
+  fs: split off do_getxattr from getxattr
+  io_uring: add fsetxattr and setxattr support
+  io_uring: add fgetxattr and getxattr support
+
+ fs/internal.h                 |  29 ++++
+ fs/io_uring.c                 | 294 ++++++++++++++++++++++++++++++++++
+ fs/xattr.c                    | 141 ++++++++++------
+ include/uapi/linux/io_uring.h |   8 +-
+ 4 files changed, 426 insertions(+), 46 deletions(-)
+
+
+base-commit: ad9c6ee642a61adae93dfa35582b5af16dc5173a
+--=20
+2.30.2
+
