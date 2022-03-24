@@ -2,102 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A928C4E6159
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Mar 2022 10:54:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 51BB74E618A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Mar 2022 11:11:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349372AbiCXJzk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Mar 2022 05:55:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55498 "EHLO
+        id S1349407AbiCXKMl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Mar 2022 06:12:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48440 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241065AbiCXJzj (ORCPT
+        with ESMTP id S1349354AbiCXKMk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Mar 2022 05:55:39 -0400
-Received: from mail-vs1-xe35.google.com (mail-vs1-xe35.google.com [IPv6:2607:f8b0:4864:20::e35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A176F9F6C7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Mar 2022 02:54:07 -0700 (PDT)
-Received: by mail-vs1-xe35.google.com with SMTP id y198so4286427vsy.10
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Mar 2022 02:54:07 -0700 (PDT)
+        Thu, 24 Mar 2022 06:12:40 -0400
+Received: from mail-ot1-x32a.google.com (mail-ot1-x32a.google.com [IPv6:2607:f8b0:4864:20::32a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17513A0BC0;
+        Thu, 24 Mar 2022 03:11:09 -0700 (PDT)
+Received: by mail-ot1-x32a.google.com with SMTP id k25-20020a056830151900b005b25d8588dbso2948304otp.4;
+        Thu, 24 Mar 2022 03:11:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=13+rXwGRPr4a9k2vxA2bU+fJEZZ58Un4R7s1pCG1lS8=;
-        b=pCqWJ6IEwu7H3b21M6lq+dvU7KcWEFQXW27HSvhLVqkPIWfnScMDIznjzeHY1Xr/Cv
-         55ZuLtP2jdmG3QSehqyHH0kuEMDnb3Qtp2et43HmoQLF07HfQu2lE2+C3N+xyrZaqGbj
-         T4s+M73Go7/u/mAw/v6bZ0mD8SLaTVqSbiZtRiFgjV0eLlBt0jA2yU0C7Xb77O5FBPBs
-         lTJv5zW7nsvyyRFh5gCEDxLQm30fj9nmLTeieOawV22TZZ85rr6HeeRC0NO2AZ0Kmgbe
-         YHs/PmYW/awPgHnVdvodLHHHqkPFcpg/Zk+T64BuoiqrN7zyKk5ftgmtLx9Y4y3iEDYy
-         UgMg==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=S+w5gQeWrpb/XbqkaI0BNbmlQiC1qWCEcAULViUkDF4=;
+        b=UuAlTa02hJYOlFS+gD4t++HAdmJo2ODYTrKaQqD5kqH7Xact6W0VT+lkcKstNg3WPq
+         rjD4ESaZGyY4lC0b8TaelNWAZpc+WXAamWMxzKMrZhlDHGH1Sl7m7UEJlx3kj8iupzBq
+         fUVJIdnPD9UC6xhwViaMU8HJDvIGBbjbBnOtloVB4MTgMy+4Oa0CkrOgUmC4ifBAmKrd
+         mB1f9hKjdut3hkTPUT863E1u3uOwfDXwIrhYXYYU//fIKnkYvOPKRAbIBMWHF/zU3bwF
+         5yrezpFA95i1uNcngrt/P+LMIDFFZOXTtXCl8C02XlS+PSZFkWh8sEqVgYKTr88jmHiF
+         523Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=13+rXwGRPr4a9k2vxA2bU+fJEZZ58Un4R7s1pCG1lS8=;
-        b=VFlJYUOoSbJf4t4/lB1D6FX8EBE+1vSMGNUR9f33yrl2X86SeQYAL7fHpwb4TFqTtr
-         w3rRPM4Hzcsn78VbMeiivG5eLv0lLk5X9q3h9pTeaXUqsjcyoxTfwXAv3CnAq53epQAZ
-         EXe40Pxruueg2g7u0UHeVdfiTIEDX7NekcKARXSZGQMYxGAHaH1bTNq1tNeKljgdAbbD
-         84fMAtKzReSTNwoHbn5y1zBZjtcmIvG1Wxxd5uxt4xY63HAZPTWFZazYej+8zadXUu3y
-         H+sUz+3y0c+I3n3z3FYrKWR8W2/9Y64o6E4AuWkmD9DQA9+01aEbfDuQaQYoqqDftPlj
-         /hAw==
-X-Gm-Message-State: AOAM533LmmP8+TQWLZEgdE3l9eSR+Z8wbGb7ZQ0b89rgqBeHh7V7KWrk
-        cjEiWlZy/wxZWyf1eIvjG76ihpw9DV+qNdftnDU=
-X-Google-Smtp-Source: ABdhPJw1WdongvX6cLj4accQ9JY6898x77nQqf/nyqhNrVP3DL+lMweVws+zRrqLv+M6shfeJovU3Xw1fXo7FCxwxvs=
-X-Received: by 2002:a67:eaca:0:b0:31b:f480:6de2 with SMTP id
- s10-20020a67eaca000000b0031bf4806de2mr2045479vso.24.1648115646656; Thu, 24
- Mar 2022 02:54:06 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=S+w5gQeWrpb/XbqkaI0BNbmlQiC1qWCEcAULViUkDF4=;
+        b=GZ075ZI0+hSJrTXKd55HWqr8pXP4pcdzUltCbXwCEDzATQofQGV1GOQHasvzUPm68L
+         Nn2NbB6KqRr3yiiZ6eSiup+cmYN8v4zeyi7KcxtN+h+0f6l0uXk2SYXJvKawoKhwauRy
+         ZLHiESvTe7Qcznp6cVIn40NuryRmHqsOqQeY9NR0Mz8yjIDN213ahPltw3KhCwcEPDTk
+         JEaEdTty+UXsnpYOqK4Km+LUnTh5iVUQyiLbrnkea+5czWfhXfQQ6s5tCHQoXPxiBKXH
+         onihfdsY0XHKK24yUdvefOky9fNtNiRM1mkh5oX+0MD/ogxqHbSJxhhEUDZqo9E5XXpo
+         DpAQ==
+X-Gm-Message-State: AOAM533mtCV6BSaCE5u6bsyzcyIob9oo4Zmbr6R52O78qfWcT3tdlDTk
+        B1gXdBCK3ZcHEaSedMnuNzPfyWU+UdiaOS2FE6hqroS834Q=
+X-Google-Smtp-Source: ABdhPJzU1+OD5UkRqIzwow6OKyn6w/fDLznCKTx2tFUwkDnoAsQ30/1TOVtoypACpsI6vCc/p6rEOTJtV/8/31tZIw8=
+X-Received: by 2002:a9d:5cc8:0:b0:5b2:35ae:7ad6 with SMTP id
+ r8-20020a9d5cc8000000b005b235ae7ad6mr1658484oti.275.1648116668030; Thu, 24
+ Mar 2022 03:11:08 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a59:5c12:0:b0:2a3:1110:6996 with HTTP; Thu, 24 Mar 2022
- 02:54:06 -0700 (PDT)
-Reply-To: ozkansahin.gbbva@gmail.com
-From:   OZKAN SAHIN <ahmeddiarra25@gmail.com>
-Date:   Thu, 24 Mar 2022 12:54:06 +0300
-Message-ID: <CAMpRB37ektaDdT_H7KzOV36sq3mADrNJQyELZRbhQ-ROx-9Qxg@mail.gmail.com>
-Subject: Greetings to You
-To:     undisclosed-recipients:;
+References: <cover.1647894991.git.dsterba@suse.com> <CAADWXX-uX74SETx8QNnGDyBGMJHY-6wr8jC9Sjpv4ARqUca0Xw@mail.gmail.com>
+ <Yjo3tQO+fNNlZ4/i@localhost.localdomain> <20220322211935.GC8182@magnolia>
+In-Reply-To: <20220322211935.GC8182@magnolia>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 24 Mar 2022 12:10:56 +0200
+Message-ID: <CAOQ4uxjNqNxF6YQK7Euo9qCg3sTHrWESw+H_G0c8QaXFDQhGRA@mail.gmail.com>
+Subject: Re: [GIT PULL] Btrfs updates for 5.18
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Josef Bacik <josef@toxicpanda.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        David Sterba <dsterba@suse.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: Yes, score=5.6 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,FREEMAIL_REPLYTO,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,UNDISC_FREEM autolearn=no
-        autolearn_force=no version=3.4.6
-X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
-        *      https://www.dnswl.org/, no trust
-        *      [2607:f8b0:4864:20:0:0:0:e35 listed in]
-        [list.dnswl.org]
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4250]
-        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
-        *      provider
-        *      [ahmeddiarra25[at]gmail.com]
-        * -0.0 SPF_PASS SPF: sender matches SPF record
-        *  0.2 FREEMAIL_ENVFROM_END_DIGIT Envelope-from freemail username ends
-        *       in digit
-        *      [ahmeddiarra25[at]gmail.com]
-        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
-        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
-        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
-        *       valid
-        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
-        *      envelope-from domain
-        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
-        *      author's domain
-        * -0.0 T_SCC_BODY_TEXT_LINE No description available.
-        *  3.8 UNDISC_FREEM Undisclosed recipients + freemail reply-to
-        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
-        *      different freemails
-X-Spam-Level: *****
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Greetings,
-I'm  Ozkan Sahin, and I work as a Financial Management Consultant. I'm
-thrilled to approach you and present you with a lucrative offer I've
-prepared. If you're interested in learning more, Please reply as soon
-as possible.
+On Thu, Mar 24, 2022 at 1:35 AM Darrick J. Wong <djwong@kernel.org> wrote:
+>
+> On Tue, Mar 22, 2022 at 04:55:17PM -0400, Josef Bacik wrote:
+> > On Tue, Mar 22, 2022 at 11:23:21AM -0700, Linus Torvalds wrote:
+> > > On Mon, Mar 21, 2022 at 2:37 PM David Sterba <dsterba@suse.com> wrote:
+> > > >
+> > > > - allow reflinks/deduplication from two different mounts of the same
+> > > >   filesystem
+> > >
+> > > So I've pulled this, and it looks ok, but I'm not getting the warm and fuzzies.
+> > >
+> > > In particular, I'm not seeing any commentary about different
+> > > filesystems for this.
+> > >
+> > > There are several filesystems that use that ->remap_file_range()
+> > > operation, so these relaxed rules don't just affect btrfs.
+> > >
+> > > Yes, yes, checking for i_sb matching does seem sensible, but I'd
+> > > *really* have liked some sign that people checked with other
+> > > filesystem maintainers and this is ok for all of them, and they didn't
+> > > make assumptions about "always same mount" rather than "always same
+> > > filesystem".
+> > >
+> >
+> > > This affects at least cifs, nfs, overlayfs and ocfs2.
+> >
+> > I had a talk with Darrick Wong about this on IRC, and his Reviewed-by is on the
+> > patch.  This did surprise nfsd when xfstests started failing, but talking with
+> > Bruce he didn't complain once he understood what was going on.
+>
+> FWIW, I remember talking about this with Bruce and (probably Anna too)
+> during a hallway BOF at the last LSFMMBPFBBQ that I went to, which was
+> 2018(?)  At the time, I think we resolved that nfs42_remap_file_range
+> was capable of detecting and dealing with unsupported requests, so a
+> direct comparison of the ->remap_file_range or ->f_op wasn't necessary
+> for them.
+>
+> > Believe me I
+> > have 0 interest in getting the other maintainers upset with me by sneaking
+> > something by them, I made sure to run it by people first, tho I probably should
+> > have checked with people directly other than Darrick.
+>
+> I /am/ a little curious what Steve French has to say w.r.t CIFS.
+>
+> AFAICT overlayfs passes the request down to the appropriate fs
+> under-layer, so its correctness mostly depends on the under-layer's
+> implementation.  But I'll let Amir or someone chime in on that. ;)
+>
 
-Please contact me at (ozkansahin.gbbva@gmail.com).
-Respectfully,
-Ozkan Sahin
-Financial Management Consultant
+The thing is, overlayfs ALREADY does cross-mnt clone_file_range()
+on underlying layers. So if there was a bug with allowing cross mnt
+clones on xfs it would have been in the wild for a long time already.
+
+OTOH, overlayfs doesn't support nfs/cifs/ocfs2 as upper fs.
+
+If you mount an overlay with lower and upper layer on the same
+xfs/btrfs sb the original mnt of lower path and upper patch is irrelevant.
+
+Overlayfs uses different private mnt per layer anyway, so if the source
+file is on lower layer then even if originally the overlay mount was done
+with different upper/lower mounts of the same sb, clone via overlayfs
+would work.
+
+Allowing cross overlayfs mount clone makes very little difference.
+
+Thanks,
+Amir.
