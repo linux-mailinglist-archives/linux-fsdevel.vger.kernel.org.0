@@ -2,129 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 61F364E60C1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Mar 2022 09:57:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A928C4E6159
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Mar 2022 10:54:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349084AbiCXI7P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Mar 2022 04:59:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60306 "EHLO
+        id S1349372AbiCXJzk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Mar 2022 05:55:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345266AbiCXI7K (ORCPT
+        with ESMTP id S241065AbiCXJzj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Mar 2022 04:59:10 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBE7A9D0CC
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Mar 2022 01:57:38 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id yy13so7763747ejb.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Mar 2022 01:57:38 -0700 (PDT)
+        Thu, 24 Mar 2022 05:55:39 -0400
+Received: from mail-vs1-xe35.google.com (mail-vs1-xe35.google.com [IPv6:2607:f8b0:4864:20::e35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A176F9F6C7
+        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Mar 2022 02:54:07 -0700 (PDT)
+Received: by mail-vs1-xe35.google.com with SMTP id y198so4286427vsy.10
+        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Mar 2022 02:54:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TZ6s65rDvN8Tqn0qDZEB8Ijp4jvPh0GyNpSk/ZtB3pI=;
-        b=m8uvN3vl8Uzj9zAwWsZQwJeD4SgdTCd74DSTmwxQoZYwKcDUMIa06VjnueJ49ViSg6
-         AH6m1oASGMxV+L7gbdqnZl0DsC1kLdBlx0tkhj9scA0ROyULs+xnhqKjG+EjiECTe9v9
-         fHLplZ4INS5E2/hQbGf40wOuvgjoBCnl4uueQ=
+        d=gmail.com; s=20210112;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=13+rXwGRPr4a9k2vxA2bU+fJEZZ58Un4R7s1pCG1lS8=;
+        b=pCqWJ6IEwu7H3b21M6lq+dvU7KcWEFQXW27HSvhLVqkPIWfnScMDIznjzeHY1Xr/Cv
+         55ZuLtP2jdmG3QSehqyHH0kuEMDnb3Qtp2et43HmoQLF07HfQu2lE2+C3N+xyrZaqGbj
+         T4s+M73Go7/u/mAw/v6bZ0mD8SLaTVqSbiZtRiFgjV0eLlBt0jA2yU0C7Xb77O5FBPBs
+         lTJv5zW7nsvyyRFh5gCEDxLQm30fj9nmLTeieOawV22TZZ85rr6HeeRC0NO2AZ0Kmgbe
+         YHs/PmYW/awPgHnVdvodLHHHqkPFcpg/Zk+T64BuoiqrN7zyKk5ftgmtLx9Y4y3iEDYy
+         UgMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TZ6s65rDvN8Tqn0qDZEB8Ijp4jvPh0GyNpSk/ZtB3pI=;
-        b=409TYz1eFJuN5YDjZfOjJJHeQqORVc6aLb4jj5g+0O4EROLX8ADPh5HWZY/Tf2uudL
-         k4Nvee4Po8xiwx6pt+wHFKkeEr/EU9Pp52qiFzrTDb/FWSNFxNV3pDRfp2QHNLIre+6v
-         +xKbVvKg4s81EDreQLy1fn+P+BQVPO5Dth8A8zD5OO+4JrqrRxnDXApoZ9tlTO9VriKr
-         eOLGnJHKNYGoDdpf7OlQFwUlLjD8nZVkYSTjj0pSVMfV6eaAZBu8CaFEtMXUFp1iV7SS
-         717QXLOxhl6piPVNKakVzCKZ0K2xwLbQiARpKQnNBYek0j/BiqBge8glvs8rzWTgc8eH
-         i4Cw==
-X-Gm-Message-State: AOAM5303scFibRc2vHvXzXRU4yioxIS1Ml1f+GvvQw7LfFejCYXC8xL9
-        x/rlosRScnqRqdq+aoi9oiA4jKEr477+j8ydNoQsew==
-X-Google-Smtp-Source: ABdhPJz7TgZDeh0+kDj2ymXCRjzBF8dMmiYeu1yauoVqNwsy2kRkXd9LUCYEVYbpcsr51BEAZ9P7D4i0qDYXH2dm+jA=
-X-Received: by 2002:a17:907:c16:b0:6db:1dfc:ca73 with SMTP id
- ga22-20020a1709070c1600b006db1dfcca73mr4602838ejc.192.1648112257373; Thu, 24
- Mar 2022 01:57:37 -0700 (PDT)
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=13+rXwGRPr4a9k2vxA2bU+fJEZZ58Un4R7s1pCG1lS8=;
+        b=VFlJYUOoSbJf4t4/lB1D6FX8EBE+1vSMGNUR9f33yrl2X86SeQYAL7fHpwb4TFqTtr
+         w3rRPM4Hzcsn78VbMeiivG5eLv0lLk5X9q3h9pTeaXUqsjcyoxTfwXAv3CnAq53epQAZ
+         EXe40Pxruueg2g7u0UHeVdfiTIEDX7NekcKARXSZGQMYxGAHaH1bTNq1tNeKljgdAbbD
+         84fMAtKzReSTNwoHbn5y1zBZjtcmIvG1Wxxd5uxt4xY63HAZPTWFZazYej+8zadXUu3y
+         H+sUz+3y0c+I3n3z3FYrKWR8W2/9Y64o6E4AuWkmD9DQA9+01aEbfDuQaQYoqqDftPlj
+         /hAw==
+X-Gm-Message-State: AOAM533LmmP8+TQWLZEgdE3l9eSR+Z8wbGb7ZQ0b89rgqBeHh7V7KWrk
+        cjEiWlZy/wxZWyf1eIvjG76ihpw9DV+qNdftnDU=
+X-Google-Smtp-Source: ABdhPJw1WdongvX6cLj4accQ9JY6898x77nQqf/nyqhNrVP3DL+lMweVws+zRrqLv+M6shfeJovU3Xw1fXo7FCxwxvs=
+X-Received: by 2002:a67:eaca:0:b0:31b:f480:6de2 with SMTP id
+ s10-20020a67eaca000000b0031bf4806de2mr2045479vso.24.1648115646656; Thu, 24
+ Mar 2022 02:54:06 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220322192712.709170-1-mszeredi@redhat.com> <20220323225843.GI1609613@dread.disaster.area>
-In-Reply-To: <20220323225843.GI1609613@dread.disaster.area>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 24 Mar 2022 09:57:26 +0100
-Message-ID: <CAJfpegv6PmZ_RXipBs9UEjv_WfEUtTDE1uNZq+9fBkCzWPvXkw@mail.gmail.com>
-Subject: Re: [RFC PATCH] getvalues(2) prototype
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Karel Zak <kzak@redhat.com>, Ian Kent <raven@themaw.net>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Amir Goldstein <amir73il@gmail.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>
+Received: by 2002:a59:5c12:0:b0:2a3:1110:6996 with HTTP; Thu, 24 Mar 2022
+ 02:54:06 -0700 (PDT)
+Reply-To: ozkansahin.gbbva@gmail.com
+From:   OZKAN SAHIN <ahmeddiarra25@gmail.com>
+Date:   Thu, 24 Mar 2022 12:54:06 +0300
+Message-ID: <CAMpRB37ektaDdT_H7KzOV36sq3mADrNJQyELZRbhQ-ROx-9Qxg@mail.gmail.com>
+Subject: Greetings to You
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Status: Yes, score=5.6 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,FREEMAIL_REPLYTO,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,UNDISC_FREEM autolearn=no
+        autolearn_force=no version=3.4.6
+X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
+        *      https://www.dnswl.org/, no trust
+        *      [2607:f8b0:4864:20:0:0:0:e35 listed in]
+        [list.dnswl.org]
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4250]
+        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
+        *      provider
+        *      [ahmeddiarra25[at]gmail.com]
+        * -0.0 SPF_PASS SPF: sender matches SPF record
+        *  0.2 FREEMAIL_ENVFROM_END_DIGIT Envelope-from freemail username ends
+        *       in digit
+        *      [ahmeddiarra25[at]gmail.com]
+        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
+        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
+        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
+        *       valid
+        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
+        *      envelope-from domain
+        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
+        *      author's domain
+        * -0.0 T_SCC_BODY_TEXT_LINE No description available.
+        *  3.8 UNDISC_FREEM Undisclosed recipients + freemail reply-to
+        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
+        *      different freemails
+X-Spam-Level: *****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 23 Mar 2022 at 23:58, Dave Chinner <david@fromorbit.com> wrote:
->
-> On Tue, Mar 22, 2022 at 08:27:12PM +0100, Miklos Szeredi wrote:
+Greetings,
+I'm  Ozkan Sahin, and I work as a Financial Management Consultant. I'm
+thrilled to approach you and present you with a lucrative offer I've
+prepared. If you're interested in learning more, Please reply as soon
+as possible.
 
-> > - Interfaces for getting various attributes and statistics are fragmented.
-> >   For files we have basic stat, statx, extended attributes, file attributes
-> >   (for which there are two overlapping ioctl interfaces).  For mounts and
-> >   superblocks we have stat*fs as well as /proc/$PID/{mountinfo,mountstats}.
-> >   The latter also has the problem on not allowing queries on a specific
-> >   mount.
->
-> https://xkcd.com/927/
-
-Haha!
-
-> I've said in the past when discussing things like statx() that maybe
-> everything should be addressable via the xattr namespace and
-> set/queried via xattr names regardless of how the filesystem stores
-> the data. The VFS/filesystem simply translates the name to the
-> storage location of the information. It might be held in xattrs, but
-> it could just be a flag bit in an inode field.
-
-Right, that would definitely make sense for inode attributes.
-
-What about other objects' attributes, statistics?   Remember this
-started out as a way to replace /proc/self/mountinfo with something
-that can query individual mount.
-
-> > mnt                    - list of mount parameters
-> > mnt:mountpoint         - the mountpoint of the mount of $ORIGIN
-> > mntns                  - list of mount ID's reachable from the current root
-> > mntns:21:parentid      - parent ID of the mount with ID of 21
-> > xattr:security.selinux - the security.selinux extended attribute
-> > data:foo/bar           - the data contained in file $ORIGIN/foo/bar
->
-> How are these different from just declaring new xattr namespaces for
-> these things. e.g. open any file and list the xattrs in the
-> xattr:mount.mnt namespace to get the list of mount parameters for
-> that mount.
-
-Okay.
-
-> Why do we need a new "xattr in everything but name" interface when
-> we could just extend the one we've already got and formalise a new,
-> cleaner version of xattr batch APIs that have been around for 20-odd
-> years already?
-
-Seems to make sense. But...will listxattr list everyting recursively?
-I guess that won't work, better just list traditional xattrs,
-otherwise we'll likely get regressions, and anyway the point of a
-hierarchical namespace is to be able to list nodes on each level.  We
-can use getxattr() for this purpose, just like getvalues() does in the
-above example.
-
-Thanks,
-Miklos
+Please contact me at (ozkansahin.gbbva@gmail.com).
+Respectfully,
+Ozkan Sahin
+Financial Management Consultant
