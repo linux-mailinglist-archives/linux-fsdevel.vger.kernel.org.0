@@ -2,144 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CCAC4E61D3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Mar 2022 11:34:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F05D4E631E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Mar 2022 13:19:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349538AbiCXKg2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Mar 2022 06:36:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46728 "EHLO
+        id S237339AbiCXMUZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Mar 2022 08:20:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54962 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234052AbiCXKg1 (ORCPT
+        with ESMTP id S1350089AbiCXMUU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Mar 2022 06:36:27 -0400
-Received: from mail-ot1-x332.google.com (mail-ot1-x332.google.com [IPv6:2607:f8b0:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7698A6D955;
-        Thu, 24 Mar 2022 03:34:55 -0700 (PDT)
-Received: by mail-ot1-x332.google.com with SMTP id x8-20020a9d6288000000b005b22c373759so2977128otk.8;
-        Thu, 24 Mar 2022 03:34:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rkUOtyTHE/TYF3m2vqOCfIm2T9ySzNIzBEKj/tfGQiA=;
-        b=IjGlTehpEGtuYtSpr81vczsx73SdQa/f7uvnLaVxETKjnKAUSvlzJEnv/BiHQMRZ0n
-         n1F96baOYoQNOFo6YmOcPq5nw7v9sq/bnT5xIbTzA9OQEbLdSwjwbyyRmsDVCHYhltLi
-         wU20EnegAcKOUheWyZAYk1p5OLZUnY5K4ULqL0NOPNWMj+2Vya3W3Rn1sM8GOxohMzSY
-         tuvbYMaq5Ix/137uTdxfusAwDk6ztd+fmdbN058ynV/JjWBbKdtxm/vxZ05qNQZZUJoP
-         PYHH91cMRp289yd4itig77E6QdTlxk2F6wKIyXGDVhnf0XMpxWaNtafX5LuSKlSbErcp
-         G2kA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rkUOtyTHE/TYF3m2vqOCfIm2T9ySzNIzBEKj/tfGQiA=;
-        b=VX7urL+W/0zctLzsvd1MB6FycMQLnaLsfnU2rGQpPx5Qu9rcygJi1TOKsRVb82RMxs
-         /j09rG7+Bs95g5fMexQv65g85cXAvRfhq2oau85+r6yhDvUqTtQiCXT5Ga0Wd/uskBV9
-         GyX+cqdQZ73joz+7I+iR1BCRjFAQJwVF+BFOsU0skQi3LqWEEdsZULjd35V8OUU/7zoz
-         x/i7oewEFEmvy/E037XvJp12orNOyI+OHtI06RlTl75X6LM6m+yhB3HUFXuNa3XiiDrP
-         rw7FwXlxZAp3/HlHGDp9w00fPbwcKLhYXhv0aBIgfMeuKFln7CmkPVEKfFODgUfxCfp8
-         GvCg==
-X-Gm-Message-State: AOAM5332W9GixEZVa/KSqWK6mRiMUMxmnu43THK4BQwQPJX17vgZLR5K
-        Eau2chewcM+Ie0xN8NLY2pjPKHaV4op8+I8e7yeKxqJMP/Y=
-X-Google-Smtp-Source: ABdhPJy7l9oWwPJ6OBUoAM36bkcS3M/p+SgBdY21YnbhlrHpkdnSvtMHV60SdyXuXWDEemHIwn3a/agyAEnhEiMyBKI=
-X-Received: by 2002:a9d:5cc8:0:b0:5b2:35ae:7ad6 with SMTP id
- r8-20020a9d5cc8000000b005b235ae7ad6mr1700616oti.275.1648118094832; Thu, 24
- Mar 2022 03:34:54 -0700 (PDT)
+        Thu, 24 Mar 2022 08:20:20 -0400
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [IPv6:2a01:488:42:1000:50ed:8234::])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AD833137E
+        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Mar 2022 05:18:34 -0700 (PDT)
+Received: from ip4d144895.dynamic.kabel-deutschland.de ([77.20.72.149] helo=[192.168.66.200]); authenticated
+        by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        id 1nXMQC-0007XD-DU; Thu, 24 Mar 2022 13:18:32 +0100
+Message-ID: <07bb78be-1d58-7d88-288b-6516790f3b5d@leemhuis.info>
+Date:   Thu, 24 Mar 2022 13:18:31 +0100
 MIME-Version: 1.0
-References: <20220322192712.709170-1-mszeredi@redhat.com> <20220323225843.GI1609613@dread.disaster.area>
- <CAJfpegv6PmZ_RXipBs9UEjv_WfEUtTDE1uNZq+9fBkCzWPvXkw@mail.gmail.com>
-In-Reply-To: <CAJfpegv6PmZ_RXipBs9UEjv_WfEUtTDE1uNZq+9fBkCzWPvXkw@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 24 Mar 2022 12:34:43 +0200
-Message-ID: <CAOQ4uxhbm2mtTp8PmgEq5KmwTe0n6MRRGhShXM=Ot6Bz87HXjA@mail.gmail.com>
-Subject: Re: [RFC PATCH] getvalues(2) prototype
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Karel Zak <kzak@redhat.com>, Ian Kent <raven@themaw.net>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.0
+Subject: Re: [regression] 5.15 kernel triggering 100x more inode evictions
+Content-Language: en-US
+To:     Bruno Damasceno Freire <bdamasceno@hotmail.com.br>
+References: <MN2PR20MB2512314446801B92562E26B5D2169@MN2PR20MB2512.namprd20.prod.outlook.com>
+Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "regressions@lists.linux.dev" <regressions@lists.linux.dev>
+From:   Thorsten Leemhuis <regressions@leemhuis.info>
+In-Reply-To: <MN2PR20MB2512314446801B92562E26B5D2169@MN2PR20MB2512.namprd20.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1648124315;ceeb3a61;
+X-HE-SMSGID: 1nXMQC-0007XD-DU
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> > I've said in the past when discussing things like statx() that maybe
-> > everything should be addressable via the xattr namespace and
-> > set/queried via xattr names regardless of how the filesystem stores
-> > the data. The VFS/filesystem simply translates the name to the
-> > storage location of the information. It might be held in xattrs, but
-> > it could just be a flag bit in an inode field.
+Hi, this is your Linux kernel regression tracker.
+
+CCing the regression mailing list, as it should be in the loop for all
+regressions, as explained here:
+https://www.kernel.org/doc/html/latest/admin-guide/reporting-issues.html
+
+On 21.03.22 05:53, Bruno Damasceno Freire wrote:
+> Hello everybody;
+> 
+> This regression was first found during rpm operations with specific packages that became A LOT slower to update ranging from 4 to 30 minutes.
+> 
+> The slowness results from:
+> a_ the kernel regression: specific system calls touching files with btrfs compression property will generate higher inode eviction on 5.15 kernels.
+> b_ the inode eviction generating btrfs inode logging and directory logging.
+> c_ the btrfs directory logging on the 5.15 kernel not being particulary efficient in the presence of high inode eviction.
+> 
+> There is already an ongoing work [1] to improve "c" on newer kernels but I was told they are not elegible for the 5.15 version due to backporting policy restrictions.
+> AFAIK there isn't any work for "a" yet.
+> The consequence is that btrfs users running the 5.15 LTS kernel may experience severely degraded performance for specific I/O workloads on files with the compression property enabled.
+> 
+> ___How to reproduce:
+> After some research I learned how to reproduce the regression without rpm.
 >
-> Right, that would definitely make sense for inode attributes.
+> 1st option)
+> I made a script specifically to research this regression [2].
+> It has more information, more test results and several options.
+> The scrip does a little too much so I'm just linking it here.
+> I hope it can help.
+> 
+> 2nd option)
+> boot a 5.15 kernel,
+> setup and mount a RAM disk with btrfs,
+> create a folder and set its compression property,
+> populate the folder,
+> make a loop that:
+> -rename a file,
+> -unlink the renamed file,
+> -create a new file.
+> 
+> [1] https://bugzilla.opensuse.org/show_bug.cgi?id=1193549
+> [2] https://github.com/bdamascen0/s3e
+> 
+> ___Test results
+> These tests were done on a virtual machine (kvm) with Ubuntu Jammy Jellyfish.
+> The kernel is 5.15.0.23 that relates to the 5.15.27 upstream kernel.
 
-Why limit to inode attributes?
-The argument of getxattr()/fgetxattr() is exactly the same as
-the argument for statfs()fstatfs() and the latter returns the attributes
-of the sb and the mnt (i.e. calculate_f_flags()).
+Please repeat this with a vanilla kernel, Ubuntu's kernel are heavily
+patched and one of their patches might be causing your problem.
 
-I don't see a problem with querying attributes of a mount/sb the same
-way as long as the namespace is clear about what is the object that
-is being queried (e.g. getxattr(path, "fsinfo.sbiostats.rchar",...).
+> Main results (x86_64):
+> 250 files - zstd:         17521 ms @inode_evictions: 31375
+> 250 files - lzo:          17114 ms @inode_evictions: 31375
+> 250 files - uncompressed:  1138 ms @inode_evictions: 499
+> 
+> Load test results (x86_64):
+> 1000 files - 51.6 x more inode evictions - 18.1 x more time
+> 250  files - 62.9 x more inode evictions - 15.2 x more time
+> 100  files - 25.4 x more inode evictions -  3.7 x more time
+> 50   files - 12.8 x more inode evictions -  2.0 x more time
+> 10   files -  2.8 x more inode evictions -  1.3 x more time
 
->
-> What about other objects' attributes, statistics?   Remember this
-> started out as a way to replace /proc/self/mountinfo with something
-> that can query individual mount.
->
-> > > mnt                    - list of mount parameters
-> > > mnt:mountpoint         - the mountpoint of the mount of $ORIGIN
-> > > mntns                  - list of mount ID's reachable from the current root
-> > > mntns:21:parentid      - parent ID of the mount with ID of 21
-> > > xattr:security.selinux - the security.selinux extended attribute
-> > > data:foo/bar           - the data contained in file $ORIGIN/foo/bar
-> >
-> > How are these different from just declaring new xattr namespaces for
-> > these things. e.g. open any file and list the xattrs in the
-> > xattr:mount.mnt namespace to get the list of mount parameters for
-> > that mount.
->
-> Okay.
->
-> > Why do we need a new "xattr in everything but name" interface when
-> > we could just extend the one we've already got and formalise a new,
-> > cleaner version of xattr batch APIs that have been around for 20-odd
-> > years already?
->
-> Seems to make sense. But...will listxattr list everyting recursively?
-> I guess that won't work, better just list traditional xattrs,
-> otherwise we'll likely get regressions, and anyway the point of a
-> hierarchical namespace is to be able to list nodes on each level.  We
-> can use getxattr() for this purpose, just like getvalues() does in the
-> above example.
->
+I'm missing something: more inode evictions when compared to what? A
+5.14 vanilla kernel?
 
-FYI, there are already precedents for "virtual" xattrs, see the user.smb3.*
-family in fs/cifs/xattr.c for example.
+> CPU usage results (x86_64):
+> 1000 files - zstd:           137841 ms
+> real    2m17,881s
+> user    0m1,704s
+> sys     2m11,937s
+> 1000 files - lzo:            135456 ms
+> real    2m15,478s
+> user    0m1,805s
+> sys	2m9,758s
+> 1000 files - uncompressed:     7496 ms
+> real    0m7,517s
+> user    0m1,386s
+> sys     0m4,899s
+> 
+> I'm sending this message to the linux-fsdevel mailing list first.
+> Please tell if you think this subject would be of interest of another kernel subsystem.
+> PS: I'm not subscribed to this list.
 
-Those cifs "virtual" (or "remote") xattrs are not listed by listxattr, even
-though they ARE properties of the file which are very relevant for backup.
+We need to get Btrfs people into the boat, but please clarify first if
+this really is a regression with the upstream kernel.
 
-Currently, they use the user.* namespace, but the values could be
-also exposed via a more generic fsinfo.* namespace that is dedicated
-to these sort of things and then, as you suggest, getxattr(path, "fsinfo",...)
-can list "smb3" for cifs.
-
-I like where this is going :)
-
-Thanks,
-Amir.
+Ciao, Thorsten
