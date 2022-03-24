@@ -2,131 +2,196 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F05D4E631E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Mar 2022 13:19:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 76B414E6651
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Mar 2022 16:52:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237339AbiCXMUZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Mar 2022 08:20:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54962 "EHLO
+        id S1351408AbiCXPxa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Mar 2022 11:53:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43772 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350089AbiCXMUU (ORCPT
+        with ESMTP id S1345698AbiCXPx3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Mar 2022 08:20:20 -0400
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [IPv6:2a01:488:42:1000:50ed:8234::])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AD833137E
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Mar 2022 05:18:34 -0700 (PDT)
-Received: from ip4d144895.dynamic.kabel-deutschland.de ([77.20.72.149] helo=[192.168.66.200]); authenticated
-        by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        id 1nXMQC-0007XD-DU; Thu, 24 Mar 2022 13:18:32 +0100
-Message-ID: <07bb78be-1d58-7d88-288b-6516790f3b5d@leemhuis.info>
-Date:   Thu, 24 Mar 2022 13:18:31 +0100
+        Thu, 24 Mar 2022 11:53:29 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B33198F43
+        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Mar 2022 08:51:54 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id bi13-20020a05600c3d8d00b0038c2c33d8f3so7477552wmb.4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Mar 2022 08:51:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=NEtaF19RLk3IuGGWvhhX/z9a33LLQAJ182dON6UK5Yo=;
+        b=fk9RkDsYVyolj4TSgLqmrYuEXdokpvUU9jaV0JAO9n+wmTm4I2wgbn37yCP2KfXBWI
+         /2WqZepo3GcWY397TcvebHgjb3u1LCH+XB9TxdoIB3HsM02i0vXyZ51l25KENYsebBZB
+         QbTnr2t8ehr+TLPj7+dmYDh6R8fCKi7yxBgoArhQu4dZbntaUZ1LBgcwvG5trGBp1A56
+         W+b4dCBOtKMZ3YZueQKIC57OQp6xiYvcBVHV3A/C4PLGpqp2vi4+Ry8IOI2z1wZxIy3O
+         C7pTxWtH0Fh0R0Nw9NrQNwKE2s6PQE6Nl1IN7bH79+T+kGNjIm0Ol7dDbMJr62zC41Tt
+         NK4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=NEtaF19RLk3IuGGWvhhX/z9a33LLQAJ182dON6UK5Yo=;
+        b=ym/WyvVUcuUwT0W4dgv6gtPN/oYK3T0uso/6KP7AurvD91KqfVabcegweDUXEnUriP
+         eesNeg+zmaHe7NMEBaIb6XeJvVW+SHVpjQGU5U2wOtYnjPT7miVHu3i1MiD/BgSPNgCl
+         ZfYnyY8w2+JPhCuBM4P31AGMKllIGIS65dh1Bb1FfpKzisWrQs+w6eOqQ4tWZ5p52/Dw
+         rCUkZvf62Vbmu3645PdRZutGspMZz0LIi1SoxsCdVPhozJfR6VpStbkdjrMt3TzO1aNF
+         /XTJNfIWsQ5n1phfKZCHxYJnN8L0WPO6HD3igRd3/JLpjAyLHoTe/oJxd3HuFViWSJbv
+         KFSA==
+X-Gm-Message-State: AOAM532H1aj1puNpVcpHilO1KfXDaLvxwHL8RxalAtpvGrD4QDy0c3+q
+        my+tzUsO4vCfcQK+GKvPjHQcuQ==
+X-Google-Smtp-Source: ABdhPJyoUHp29/XUyIZlxpqS/7kDffVwFSGviWgbTb92w3/eFRlsR7S6xMVteMn3CazvbWUm8x2Sjw==
+X-Received: by 2002:a05:600c:4e8b:b0:38c:90cf:1158 with SMTP id f11-20020a05600c4e8b00b0038c90cf1158mr15120363wmq.107.1648137112585;
+        Thu, 24 Mar 2022 08:51:52 -0700 (PDT)
+Received: from google.com ([2a00:79e0:d:210:6aea:58cf:f2e0:7796])
+        by smtp.gmail.com with ESMTPSA id y13-20020adffa4d000000b00203e3ca2701sm4051307wrr.45.2022.03.24.08.51.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Mar 2022 08:51:52 -0700 (PDT)
+Date:   Thu, 24 Mar 2022 15:51:48 +0000
+From:   Quentin Perret <qperret@google.com>
+To:     Chao Peng <chao.p.peng@linux.intel.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, maz@kernel.org,
+        will@kernel.org
+Subject: Re: [PATCH v5 00/13] KVM: mm: fd-based approach for supporting KVM
+ guest private memory
+Message-ID: <YjyS6A0o4JASQK+B@google.com>
+References: <20220310140911.50924-1-chao.p.peng@linux.intel.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [regression] 5.15 kernel triggering 100x more inode evictions
-Content-Language: en-US
-To:     Bruno Damasceno Freire <bdamasceno@hotmail.com.br>
-References: <MN2PR20MB2512314446801B92562E26B5D2169@MN2PR20MB2512.namprd20.prod.outlook.com>
-Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "regressions@lists.linux.dev" <regressions@lists.linux.dev>
-From:   Thorsten Leemhuis <regressions@leemhuis.info>
-In-Reply-To: <MN2PR20MB2512314446801B92562E26B5D2169@MN2PR20MB2512.namprd20.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1648124315;ceeb3a61;
-X-HE-SMSGID: 1nXMQC-0007XD-DU
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220310140911.50924-1-chao.p.peng@linux.intel.com>
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi, this is your Linux kernel regression tracker.
+Hi Chao,
 
-CCing the regression mailing list, as it should be in the loop for all
-regressions, as explained here:
-https://www.kernel.org/doc/html/latest/admin-guide/reporting-issues.html
++CC Will and Marc for visibility.
 
-On 21.03.22 05:53, Bruno Damasceno Freire wrote:
-> Hello everybody;
+On Thursday 10 Mar 2022 at 22:08:58 (+0800), Chao Peng wrote:
+> This is the v5 of this series which tries to implement the fd-based KVM
+> guest private memory. The patches are based on latest kvm/queue branch
+> commit:
 > 
-> This regression was first found during rpm operations with specific packages that became A LOT slower to update ranging from 4 to 30 minutes.
+>   d5089416b7fb KVM: x86: Introduce KVM_CAP_DISABLE_QUIRKS2
+>  
+> Introduction
+> ------------
+> In general this patch series introduce fd-based memslot which provides
+> guest memory through memory file descriptor fd[offset,size] instead of
+> hva/size. The fd can be created from a supported memory filesystem
+> like tmpfs/hugetlbfs etc. which we refer as memory backing store. KVM
+> and the the memory backing store exchange callbacks when such memslot
+> gets created. At runtime KVM will call into callbacks provided by the
+> backing store to get the pfn with the fd+offset. Memory backing store
+> will also call into KVM callbacks when userspace fallocate/punch hole
+> on the fd to notify KVM to map/unmap secondary MMU page tables.
 > 
-> The slowness results from:
-> a_ the kernel regression: specific system calls touching files with btrfs compression property will generate higher inode eviction on 5.15 kernels.
-> b_ the inode eviction generating btrfs inode logging and directory logging.
-> c_ the btrfs directory logging on the 5.15 kernel not being particulary efficient in the presence of high inode eviction.
+> Comparing to existing hva-based memslot, this new type of memslot allows
+> guest memory unmapped from host userspace like QEMU and even the kernel
+> itself, therefore reduce attack surface and prevent bugs.
 > 
-> There is already an ongoing work [1] to improve "c" on newer kernels but I was told they are not elegible for the 5.15 version due to backporting policy restrictions.
-> AFAIK there isn't any work for "a" yet.
-> The consequence is that btrfs users running the 5.15 LTS kernel may experience severely degraded performance for specific I/O workloads on files with the compression property enabled.
+> Based on this fd-based memslot, we can build guest private memory that
+> is going to be used in confidential computing environments such as Intel
+> TDX and AMD SEV. When supported, the memory backing store can provide
+> more enforcement on the fd and KVM can use a single memslot to hold both
+> the private and shared part of the guest memory. 
 > 
-> ___How to reproduce:
-> After some research I learned how to reproduce the regression without rpm.
->
-> 1st option)
-> I made a script specifically to research this regression [2].
-> It has more information, more test results and several options.
-> The scrip does a little too much so I'm just linking it here.
-> I hope it can help.
+> mm extension
+> ---------------------
+> Introduces new MFD_INACCESSIBLE flag for memfd_create(), the file created
+> with these flags cannot read(), write() or mmap() etc via normal
+> MMU operations. The file content can only be used with the newly
+> introduced memfile_notifier extension.
 > 
-> 2nd option)
-> boot a 5.15 kernel,
-> setup and mount a RAM disk with btrfs,
-> create a folder and set its compression property,
-> populate the folder,
-> make a loop that:
-> -rename a file,
-> -unlink the renamed file,
-> -create a new file.
+> The memfile_notifier extension provides two sets of callbacks for KVM to
+> interact with the memory backing store:
+>   - memfile_notifier_ops: callbacks for memory backing store to notify
+>     KVM when memory gets allocated/invalidated.
+>   - memfile_pfn_ops: callbacks for KVM to call into memory backing store
+>     to request memory pages for guest private memory.
 > 
-> [1] https://bugzilla.opensuse.org/show_bug.cgi?id=1193549
-> [2] https://github.com/bdamascen0/s3e
+> The memfile_notifier extension also provides APIs for memory backing
+> store to register/unregister itself and to trigger the notifier when the
+> bookmarked memory gets fallocated/invalidated.
 > 
-> ___Test results
-> These tests were done on a virtual machine (kvm) with Ubuntu Jammy Jellyfish.
-> The kernel is 5.15.0.23 that relates to the 5.15.27 upstream kernel.
+> memslot extension
+> -----------------
+> Add the private fd and the fd offset to existing 'shared' memslot so that
+> both private/shared guest memory can live in one single memslot. A page in
+> the memslot is either private or shared. A page is private only when it's
+> already allocated in the backing store fd, all the other cases it's treated
+> as shared, this includes those already mapped as shared as well as those
+> having not been mapped. This means the memory backing store is the place
+> which tells the truth of which page is private.
+> 
+> Private memory map/unmap and conversion
+> ---------------------------------------
+> Userspace's map/unmap operations are done by fallocate() ioctl on the
+> backing store fd.
+>   - map: default fallocate() with mode=0.
+>   - unmap: fallocate() with FALLOC_FL_PUNCH_HOLE.
+> The map/unmap will trigger above memfile_notifier_ops to let KVM map/unmap
+> secondary MMU page tables.
 
-Please repeat this with a vanilla kernel, Ubuntu's kernel are heavily
-patched and one of their patches might be causing your problem.
+I recently came across this series which is interesting for the
+Protected KVM work that's currently ongoing in the Android world (see
+[1], [2] or [3] for more details). The idea is similar in a number of
+ways to the Intel TDX stuff (from what I understand, but I'm clearly not
+understanding it all so, ...) or the Arm CCA solution, but using stage-2
+MMUs instead of encryption; and leverages the caveat of the nVHE
+KVM/arm64 implementation to isolate the control of stage-2 MMUs from the
+host.
 
-> Main results (x86_64):
-> 250 files - zstd:         17521 ms @inode_evictions: 31375
-> 250 files - lzo:          17114 ms @inode_evictions: 31375
-> 250 files - uncompressed:  1138 ms @inode_evictions: 499
-> 
-> Load test results (x86_64):
-> 1000 files - 51.6 x more inode evictions - 18.1 x more time
-> 250  files - 62.9 x more inode evictions - 15.2 x more time
-> 100  files - 25.4 x more inode evictions -  3.7 x more time
-> 50   files - 12.8 x more inode evictions -  2.0 x more time
-> 10   files -  2.8 x more inode evictions -  1.3 x more time
+For Protected KVM (and I suspect most other confidential computing
+solutions), guests have the ability to share some of their pages back
+with the host kernel using a dedicated hypercall. This is necessary
+for e.g. virtio communications, so these shared pages need to be mapped
+back into the VMM's address space. I'm a bit confused about how that
+would work with the approach proposed here. What is going to be the
+approach for TDX?
 
-I'm missing something: more inode evictions when compared to what? A
-5.14 vanilla kernel?
+It feels like the most 'natural' thing would be to have a KVM exit
+reason describing which pages have been shared back by the guest, and to
+then allow the VMM to mmap those specific pages in response in the
+memfd. Is this something that has been discussed or considered?
 
-> CPU usage results (x86_64):
-> 1000 files - zstd:           137841 ms
-> real    2m17,881s
-> user    0m1,704s
-> sys     2m11,937s
-> 1000 files - lzo:            135456 ms
-> real    2m15,478s
-> user    0m1,805s
-> sys	2m9,758s
-> 1000 files - uncompressed:     7496 ms
-> real    0m7,517s
-> user    0m1,386s
-> sys     0m4,899s
-> 
-> I'm sending this message to the linux-fsdevel mailing list first.
-> Please tell if you think this subject would be of interest of another kernel subsystem.
-> PS: I'm not subscribed to this list.
+Thanks,
+Quentin
 
-We need to get Btrfs people into the boat, but please clarify first if
-this really is a regression with the upstream kernel.
-
-Ciao, Thorsten
+[1] https://lwn.net/Articles/836693/
+[2] https://www.youtube.com/watch?v=wY-u6n75iXc
+[3] https://www.youtube.com/watch?v=54q6RzS9BpQ&t=10862s
