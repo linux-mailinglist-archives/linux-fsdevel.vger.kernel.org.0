@@ -2,52 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 833E34E5C97
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Mar 2022 02:07:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C3FF24E5CEB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Mar 2022 02:48:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245493AbiCXBId (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Mar 2022 21:08:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45264 "EHLO
+        id S1346263AbiCXBuQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Mar 2022 21:50:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239850AbiCXBIc (ORCPT
+        with ESMTP id S239149AbiCXBuO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Mar 2022 21:08:32 -0400
-X-Greylist: delayed 564 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 23 Mar 2022 18:07:02 PDT
-Received: from box.fidei.email (box.fidei.email [IPv6:2605:2700:0:2:a800:ff:feba:dc44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FC136E286
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Mar 2022 18:07:01 -0700 (PDT)
-Received: from authenticated-user (box.fidei.email [71.19.144.250])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-        (No client certificate requested)
-        by box.fidei.email (Postfix) with ESMTPSA id 30DF180531;
-        Wed, 23 Mar 2022 20:57:36 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=dorminy.me; s=mail;
-        t=1648083456; bh=PQLE0b00BpHeOacDrb/7gwnxAouwJFMivJSQlhDeO9Y=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=M/YTH7He7BokCtvdI1C83O9oSX9+724kAVRFLAJAV9kp8VeOF75gbIBClU05RnCfA
-         AEjG1hJoej2pzxjr+ujVFVLBq7DBoTF1zo9xXhXljMrVLPqcmrB0CSzojIf78jpryS
-         gJcZDKs5A5gHZ5snN0skfVbhviSRWnZaYh/oJO4j+T032M624Jnn6I3kTlnU23fauK
-         RQ4+qb0Xqs1jsD8X6boJ3iNswzNFbXEx9CYaSI2huTFC0t3EKXhCqvWrcN1qqTyq5b
-         kSpfq0ILZI3Pp/eaFUD9BqXP+IYzLx56BwdkkBrXO1D967EClIXCvAiJ56X6nKl95Y
-         zGI7BOPbWs8pA==
-Message-ID: <5d1dd5ba-be39-0e9b-637b-92274650f304@dorminy.me>
-Date:   Wed, 23 Mar 2022 20:57:35 -0400
+        Wed, 23 Mar 2022 21:50:14 -0400
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDA8C2B1BF;
+        Wed, 23 Mar 2022 18:48:43 -0700 (PDT)
+Received: from cwcc.thunk.org (pool-108-7-220-252.bstnma.fios.verizon.net [108.7.220.252])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 22O1lwh9019980
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 23 Mar 2022 21:47:59 -0400
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id 71AB615C0038; Wed, 23 Mar 2022 21:47:58 -0400 (EDT)
+Date:   Wed, 23 Mar 2022 21:47:58 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Yang Shi <shy828301@gmail.com>
+Cc:     vbabka@suse.cz, kirill.shutemov@linux.intel.com,
+        linmiaohe@huawei.com, songliubraving@fb.com, riel@surriel.com,
+        willy@infradead.org, ziy@nvidia.com, akpm@linux-foundation.org,
+        adilger.kernel@dilger.ca, darrick.wong@oracle.com,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [v2 PATCH 0/8] Make khugepaged collapse readonly FS THP more
+ consistent
+Message-ID: <YjvNzvdcagflTejJ@mit.edu>
+References: <20220317234827.447799-1-shy828301@gmail.com>
 MIME-Version: 1.0
-Subject: Re: [PATCH 39/40] btrfs: pass private data end end_io handler to
- btrfs_repair_one_sector
-Content-Language: en-US
-To:     Christoph Hellwig <hch@lst.de>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, Qu Wenruo <wqu@suse.com>
-Cc:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-References: <20220322155606.1267165-1-hch@lst.de>
- <20220322155606.1267165-40-hch@lst.de>
-From:   Sweet Tea Dorminy <sweettea-kernel@dorminy.me>
-In-Reply-To: <20220322155606.1267165-40-hch@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220317234827.447799-1-shy828301@gmail.com>
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -55,6 +50,14 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Thu, Mar 17, 2022 at 04:48:19PM -0700, Yang Shi wrote:
+> 
+> The patch 1 ~ 7 are minor bug fixes, clean up and preparation patches.
+> The patch 8 converts ext4 and xfs.  We may need convert more filesystems,
+> but I'd like to hear some comments before doing that.
 
-> +		void *bi_private, void (*bi_end_io)(struct bio *bio))
-Maybe the last parameter can just be "bio_end_io_t bi_end_io"?
+Adding a hard-coded call to khugepage_enter_file() in ext4 and xfs,
+and potentially, each file system, seems kludgy as all heck.  Is there
+any reason not to simply call it in the mm code which calls f_op->mmap()?
+
+    	       	  	      	 - Ted
