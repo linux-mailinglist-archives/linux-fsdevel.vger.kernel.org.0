@@ -2,196 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 76B414E6651
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Mar 2022 16:52:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B5DC74E66D0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Mar 2022 17:15:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351408AbiCXPxa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Mar 2022 11:53:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43772 "EHLO
+        id S1351600AbiCXQR0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Mar 2022 12:17:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345698AbiCXPx3 (ORCPT
+        with ESMTP id S238822AbiCXQRZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Mar 2022 11:53:29 -0400
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B33198F43
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Mar 2022 08:51:54 -0700 (PDT)
-Received: by mail-wm1-x335.google.com with SMTP id bi13-20020a05600c3d8d00b0038c2c33d8f3so7477552wmb.4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Mar 2022 08:51:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=NEtaF19RLk3IuGGWvhhX/z9a33LLQAJ182dON6UK5Yo=;
-        b=fk9RkDsYVyolj4TSgLqmrYuEXdokpvUU9jaV0JAO9n+wmTm4I2wgbn37yCP2KfXBWI
-         /2WqZepo3GcWY397TcvebHgjb3u1LCH+XB9TxdoIB3HsM02i0vXyZ51l25KENYsebBZB
-         QbTnr2t8ehr+TLPj7+dmYDh6R8fCKi7yxBgoArhQu4dZbntaUZ1LBgcwvG5trGBp1A56
-         W+b4dCBOtKMZ3YZueQKIC57OQp6xiYvcBVHV3A/C4PLGpqp2vi4+Ry8IOI2z1wZxIy3O
-         C7pTxWtH0Fh0R0Nw9NrQNwKE2s6PQE6Nl1IN7bH79+T+kGNjIm0Ol7dDbMJr62zC41Tt
-         NK4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=NEtaF19RLk3IuGGWvhhX/z9a33LLQAJ182dON6UK5Yo=;
-        b=ym/WyvVUcuUwT0W4dgv6gtPN/oYK3T0uso/6KP7AurvD91KqfVabcegweDUXEnUriP
-         eesNeg+zmaHe7NMEBaIb6XeJvVW+SHVpjQGU5U2wOtYnjPT7miVHu3i1MiD/BgSPNgCl
-         ZfYnyY8w2+JPhCuBM4P31AGMKllIGIS65dh1Bb1FfpKzisWrQs+w6eOqQ4tWZ5p52/Dw
-         rCUkZvf62Vbmu3645PdRZutGspMZz0LIi1SoxsCdVPhozJfR6VpStbkdjrMt3TzO1aNF
-         /XTJNfIWsQ5n1phfKZCHxYJnN8L0WPO6HD3igRd3/JLpjAyLHoTe/oJxd3HuFViWSJbv
-         KFSA==
-X-Gm-Message-State: AOAM532H1aj1puNpVcpHilO1KfXDaLvxwHL8RxalAtpvGrD4QDy0c3+q
-        my+tzUsO4vCfcQK+GKvPjHQcuQ==
-X-Google-Smtp-Source: ABdhPJyoUHp29/XUyIZlxpqS/7kDffVwFSGviWgbTb92w3/eFRlsR7S6xMVteMn3CazvbWUm8x2Sjw==
-X-Received: by 2002:a05:600c:4e8b:b0:38c:90cf:1158 with SMTP id f11-20020a05600c4e8b00b0038c90cf1158mr15120363wmq.107.1648137112585;
-        Thu, 24 Mar 2022 08:51:52 -0700 (PDT)
-Received: from google.com ([2a00:79e0:d:210:6aea:58cf:f2e0:7796])
-        by smtp.gmail.com with ESMTPSA id y13-20020adffa4d000000b00203e3ca2701sm4051307wrr.45.2022.03.24.08.51.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Mar 2022 08:51:52 -0700 (PDT)
-Date:   Thu, 24 Mar 2022 15:51:48 +0000
-From:   Quentin Perret <qperret@google.com>
-To:     Chao Peng <chao.p.peng@linux.intel.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com, maz@kernel.org,
-        will@kernel.org
-Subject: Re: [PATCH v5 00/13] KVM: mm: fd-based approach for supporting KVM
- guest private memory
-Message-ID: <YjyS6A0o4JASQK+B@google.com>
-References: <20220310140911.50924-1-chao.p.peng@linux.intel.com>
+        Thu, 24 Mar 2022 12:17:25 -0400
+Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55888A94DE;
+        Thu, 24 Mar 2022 09:15:52 -0700 (PDT)
+Received: from in01.mta.xmission.com ([166.70.13.51]:44942)
+        by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1nXQ7o-00FoyY-PD; Thu, 24 Mar 2022 10:15:49 -0600
+Received: from ip68-227-174-4.om.om.cox.net ([68.227.174.4]:35326 helo=email.froward.int.ebiederm.org.xmission.com)
+        by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1nXQ7n-007zWn-MU; Thu, 24 Mar 2022 10:15:48 -0600
+From:   "Eric W. Biederman" <ebiederm@xmission.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     "Theodore Ts'o" <tytso@mit.edu>,
+        Christian Brauner <brauner@kernel.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Karel Zak <kzak@redhat.com>, Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>
+References: <20220322192712.709170-1-mszeredi@redhat.com>
+        <20220323114215.pfrxy2b6vsvqig6a@wittgenstein>
+        <CAJfpegsCKEx41KA1S2QJ9gX9BEBG4_d8igA0DT66GFH2ZanspA@mail.gmail.com>
+        <YjudB7XARLlRtBiR@mit.edu>
+        <CAJfpegtiRx6jRFUuPeXDxwJpBhYn0ekKkwYbGowUehGZkqVmAw@mail.gmail.com>
+Date:   Thu, 24 Mar 2022 11:15:29 -0500
+In-Reply-To: <CAJfpegtiRx6jRFUuPeXDxwJpBhYn0ekKkwYbGowUehGZkqVmAw@mail.gmail.com>
+        (Miklos Szeredi's message of "Thu, 24 Mar 2022 09:44:38 +0100")
+Message-ID: <87k0cje38e.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220310140911.50924-1-chao.p.peng@linux.intel.com>
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain
+X-XM-SPF: eid=1nXQ7n-007zWn-MU;;;mid=<87k0cje38e.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.174.4;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19vB1678/9LcB58fcqerljPtrf744I8h3E=
+X-SA-Exim-Connect-IP: 68.227.174.4
+X-SA-Exim-Mail-From: ebiederm@xmission.com
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Miklos Szeredi <miklos@szeredi.hu>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 472 ms - load_scoreonly_sql: 0.06 (0.0%),
+        signal_user_changed: 11 (2.4%), b_tie_ro: 10 (2.0%), parse: 0.89
+        (0.2%), extract_message_metadata: 12 (2.5%), get_uri_detail_list: 1.72
+        (0.4%), tests_pri_-1000: 10 (2.1%), tests_pri_-950: 1.27 (0.3%),
+        tests_pri_-900: 1.01 (0.2%), tests_pri_-90: 93 (19.7%), check_bayes:
+        90 (19.2%), b_tokenize: 8 (1.8%), b_tok_get_all: 21 (4.5%),
+        b_comp_prob: 3.1 (0.7%), b_tok_touch_all: 53 (11.3%), b_finish: 1.08
+        (0.2%), tests_pri_0: 323 (68.6%), check_dkim_signature: 0.51 (0.1%),
+        check_dkim_adsp: 3.0 (0.6%), poll_dns_idle: 1.09 (0.2%), tests_pri_10:
+        2.4 (0.5%), tests_pri_500: 14 (2.9%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [RFC PATCH] getvalues(2) prototype
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Chao,
+Miklos Szeredi <miklos@szeredi.hu> writes:
 
-+CC Will and Marc for visibility.
+> On Wed, 23 Mar 2022 at 23:20, Theodore Ts'o <tytso@mit.edu> wrote:
+>>
+>> On Wed, Mar 23, 2022 at 02:24:40PM +0100, Miklos Szeredi wrote:
+>> > The reason I stated thinking about this is that Amir wanted a per-sb
+>> > iostat interface and dumped it into /proc/PID/mountstats.  And that is
+>> > definitely not the right way to go about this.
+>> >
+>> > So we could add a statfsx() and start filling in new stuff, and that's
+>> > what Linus suggested.  But then we might need to add stuff that is not
+>> > representable in a flat structure (like for example the stuff that
+>> > nfs_show_stats does) and that again needs new infrastructure.
+>> >
+>> > Another example is task info in /proc.  Utilities are doing a crazy
+>> > number of syscalls to get trivial information.  Why don't we have a
+>> > procx(2) syscall?  I guess because lots of that is difficult to
+>> > represent in a flat structure.  Just take the lsof example: tt's doing
+>> > hundreds of thousands of syscalls on a desktop computer with just a
+>> > few hundred processes.
+>>
+>> I'm still a bit puzzled about the reason for getvalues(2) beyond,
+>> "reduce the number of system calls".  Is this a performance argument?
+>
+> One argument that can't be worked around without batchingis atomicity.
+> Not sure how important that is, but IIRC it was one of the
+> requirements relating to the proposed fsinfo syscall, which this API
+> is meant to supersede.   Performance was also oft repeated regarding
+> the fsinfo API, but I'm less bought into that.
 
-On Thursday 10 Mar 2022 at 22:08:58 (+0800), Chao Peng wrote:
-> This is the v5 of this series which tries to implement the fd-based KVM
-> guest private memory. The patches are based on latest kvm/queue branch
-> commit:
-> 
->   d5089416b7fb KVM: x86: Introduce KVM_CAP_DISABLE_QUIRKS2
->  
-> Introduction
-> ------------
-> In general this patch series introduce fd-based memslot which provides
-> guest memory through memory file descriptor fd[offset,size] instead of
-> hva/size. The fd can be created from a supported memory filesystem
-> like tmpfs/hugetlbfs etc. which we refer as memory backing store. KVM
-> and the the memory backing store exchange callbacks when such memslot
-> gets created. At runtime KVM will call into callbacks provided by the
-> backing store to get the pfn with the fd+offset. Memory backing store
-> will also call into KVM callbacks when userspace fallocate/punch hole
-> on the fd to notify KVM to map/unmap secondary MMU page tables.
-> 
-> Comparing to existing hva-based memslot, this new type of memslot allows
-> guest memory unmapped from host userspace like QEMU and even the kernel
-> itself, therefore reduce attack surface and prevent bugs.
-> 
-> Based on this fd-based memslot, we can build guest private memory that
-> is going to be used in confidential computing environments such as Intel
-> TDX and AMD SEV. When supported, the memory backing store can provide
-> more enforcement on the fd and KVM can use a single memslot to hold both
-> the private and shared part of the guest memory. 
-> 
-> mm extension
-> ---------------------
-> Introduces new MFD_INACCESSIBLE flag for memfd_create(), the file created
-> with these flags cannot read(), write() or mmap() etc via normal
-> MMU operations. The file content can only be used with the newly
-> introduced memfile_notifier extension.
-> 
-> The memfile_notifier extension provides two sets of callbacks for KVM to
-> interact with the memory backing store:
->   - memfile_notifier_ops: callbacks for memory backing store to notify
->     KVM when memory gets allocated/invalidated.
->   - memfile_pfn_ops: callbacks for KVM to call into memory backing store
->     to request memory pages for guest private memory.
-> 
-> The memfile_notifier extension also provides APIs for memory backing
-> store to register/unregister itself and to trigger the notifier when the
-> bookmarked memory gets fallocated/invalidated.
-> 
-> memslot extension
-> -----------------
-> Add the private fd and the fd offset to existing 'shared' memslot so that
-> both private/shared guest memory can live in one single memslot. A page in
-> the memslot is either private or shared. A page is private only when it's
-> already allocated in the backing store fd, all the other cases it's treated
-> as shared, this includes those already mapped as shared as well as those
-> having not been mapped. This means the memory backing store is the place
-> which tells the truth of which page is private.
-> 
-> Private memory map/unmap and conversion
-> ---------------------------------------
-> Userspace's map/unmap operations are done by fallocate() ioctl on the
-> backing store fd.
->   - map: default fallocate() with mode=0.
->   - unmap: fallocate() with FALLOC_FL_PUNCH_HOLE.
-> The map/unmap will trigger above memfile_notifier_ops to let KVM map/unmap
-> secondary MMU page tables.
+A silly question.  Have you looked to see if you can perform this work
+with io_uring?
 
-I recently came across this series which is interesting for the
-Protected KVM work that's currently ongoing in the Android world (see
-[1], [2] or [3] for more details). The idea is similar in a number of
-ways to the Intel TDX stuff (from what I understand, but I'm clearly not
-understanding it all so, ...) or the Arm CCA solution, but using stage-2
-MMUs instead of encryption; and leverages the caveat of the nVHE
-KVM/arm64 implementation to isolate the control of stage-2 MMUs from the
-host.
+I know io_uring does all of the batching already, so I think io_uring is
+as ready as anything is to solve the performance issues, and the general
+small file problem.  There is also the bpf information extractor (Sorry
+I forget what it's proper name is) that also can solve many of the small
+read problems.
 
-For Protected KVM (and I suspect most other confidential computing
-solutions), guests have the ability to share some of their pages back
-with the host kernel using a dedicated hypercall. This is necessary
-for e.g. virtio communications, so these shared pages need to be mapped
-back into the VMM's address space. I'm a bit confused about how that
-would work with the approach proposed here. What is going to be the
-approach for TDX?
+I am very confused you mention atomicity but I don't see any new
+filesystem hooks or anyway you could implement atomicity for reads
+much less writes in the patch you posted.
 
-It feels like the most 'natural' thing would be to have a KVM exit
-reason describing which pages have been shared back by the guest, and to
-then allow the VMM to mmap those specific pages in response in the
-memfd. Is this something that has been discussed or considered?
+If the real target is something like fsinfo that is returning
+information that is not currently available except by possibly
+processing /proc/self/mountinfo perhaps a more targeted name would
+help.
 
-Thanks,
-Quentin
+I certainly did not get the impression when skimming your introduction
+to this that you were trying to solve anything except reading a number
+of small files.
 
-[1] https://lwn.net/Articles/836693/
-[2] https://www.youtube.com/watch?v=wY-u6n75iXc
-[3] https://www.youtube.com/watch?v=54q6RzS9BpQ&t=10862s
+Eric
