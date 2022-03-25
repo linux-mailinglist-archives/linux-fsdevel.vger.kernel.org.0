@@ -2,57 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7918E4E7527
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Mar 2022 15:37:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C7D094E7549
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Mar 2022 15:44:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353828AbiCYOjG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Mar 2022 10:39:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46902 "EHLO
+        id S1359365AbiCYOqT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Mar 2022 10:46:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237056AbiCYOjF (ORCPT
+        with ESMTP id S1346031AbiCYOqS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Mar 2022 10:39:05 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B7893C4E00
-        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Mar 2022 07:37:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1648219050;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=APpOKgLW/XVuuqFg3wnuG5e3Lqz2v9rBU7f5RVBpsJ8=;
-        b=YY2Exp0zPJHFJgToEJ3JZOLAnnZnbrri9s6RxdO1ETQSedK6QUZ3XVMyx7Vin/aSdmhXy+
-        Jpu5jzBsVxALWhBU+c/HDyhUK8BMxktwXDnm+RHQSe8haquKHtSUybgE8awAjQfjRMVaKy
-        gIL9hSgAB18jtum7TP+WGjedFm37uOc=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-629-oIfWOIjkMvC_G_uwpkZLcQ-1; Fri, 25 Mar 2022 10:37:27 -0400
-X-MC-Unique: oIfWOIjkMvC_G_uwpkZLcQ-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A67D695471B;
-        Fri, 25 Mar 2022 14:37:26 +0000 (UTC)
-Received: from max.com (unknown [10.40.195.36])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 35ABC200B66E;
-        Fri, 25 Mar 2022 14:37:03 +0000 (UTC)
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
-        cluster-devel@redhat.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: [GIT PULL] fs/iomap: Fix buffered write page prefaulting
-Date:   Fri, 25 Mar 2022 15:37:01 +0100
-Message-Id: <20220325143701.144731-1-agruenba@redhat.com>
+        Fri, 25 Mar 2022 10:46:18 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64F33694AF
+        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Mar 2022 07:44:43 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id pv16so15896363ejb.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Mar 2022 07:44:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=urG7wJTk7cfW0/ofN6lIZchUSJr5GfrgF/MGHRkbzfo=;
+        b=0uRg1QezADBC/ILzIwNBoyspyE+c44iE0EV74wopWYwfcdaPLR0/iOlOqkaJD04K4m
+         nJtf5lzxRfppUzB2TFGhB0T/LLpP1vPtgzoCPIboXORxHHDSaKop2nuyROd4PIkctcO3
+         zrMS7kndvdEf+wg4lAsQ6NzHWdnzbk+X5DHQWuqQV10/4hgymFy2xthTzcsf5ipTTyyF
+         qQ+kG14vRSkBK9VzKb5mdIzU8SiwKFpWBGZD7Kucer6GHbbYWaCBxAnLwJBzph+eIWbF
+         hYsvNoNP617PWdyyv5a3ucJlptVhA7PJ8Sz5nZ0t0e81jkgL0KH88AOd+u8xVbtNpb86
+         ry+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=urG7wJTk7cfW0/ofN6lIZchUSJr5GfrgF/MGHRkbzfo=;
+        b=qQBrwWhi+Twhc2cUD39T8L21LI/tQWptuhm6CpcheEKNHH6XcQ1LNQtLtheI70KAE9
+         3ORv7KHpHz/GvV9TkscqmY0suufw464iqJ6jaiz7E1zFyu19xtxaMDQuSZcDZHfZ/Z4f
+         SEkRUDlW+XEQxXqZmxbsjbdZxexkcHDqUp2bqCgzNMasuKpy9rMfVIMzyAnWiJWqKEZF
+         ACapf0ikcOSjqYT3qhbKkFzbU7qz8WfDgvJCkieOM+PIDloHFmFY6gF3qlIrRKhIymL3
+         WAdsCPGyWtAQWLrJ0G5ZNBHPNFWGcMQfuELJiHP8YVX7eUHVmENthhHiNq9fLqBqSMsp
+         JH5Q==
+X-Gm-Message-State: AOAM533LLbefPPg30wHbCV29wioB3xQyK2/LlJT543mEqlhOcMBopNMA
+        LFaLINPIeifjtjTKyG8gzfmTuW0yCvGQz28N7agr
+X-Google-Smtp-Source: ABdhPJwgb34PQtxZiwkjD2cnEoZdlxAKPwCbK/YF6t1Jz/L6Ghi/seTC93M+pUkxGnTVXRpSNFIKVtrTIKR6bm39X4w=
+X-Received: by 2002:a17:907:7202:b0:6df:83a9:67d2 with SMTP id
+ dr2-20020a170907720200b006df83a967d2mr11765091ejc.327.1648219481881; Fri, 25
+ Mar 2022 07:44:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+References: <20211117015806.2192263-2-dvander@google.com> <CISWB5OO4TSD.1YIUVDSVYSIF0@otso>
+In-Reply-To: <CISWB5OO4TSD.1YIUVDSVYSIF0@otso>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Fri, 25 Mar 2022 10:44:31 -0400
+Message-ID: <CAHC9VhRs95Be484hqDm8SW=dyYtziHSwo=7Eb5kwYxT1HxG7_Q@mail.gmail.com>
+Subject: Re: [PATCH v19 1/4] Add flags option to get xattr method paired to __vfs_getxattr
+To:     Luca Weiss <luca.weiss@fairphone.com>
+Cc:     dvander@google.com, Luca.Boccassi@microsoft.com,
+        darrick.wong@oracle.com, dsterba@suse.com, hubcap@omnibond.com,
+        jack@suse.cz, jlayton@kernel.org, kernel-team@android.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-unionfs@vger.kernel.org, paulmoore@microsoft.com,
+        salyzyn@android.com, sds@tycho.nsa.gov, selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
         T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -61,39 +71,28 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello Linus,=0D
-=0D
-please consider pulling the following fix, which I've forgotten to send=0D
-in the previous merge window.  I've only improved the patch description=0D
-since.=0D
-=0D
-Thank you very much,=0D
-Andreas=0D
-=0D
-The following changes since commit 42eb8fdac2fc5d62392dcfcf0253753e821a97b0=
-:=0D
-=0D
-  Merge tag 'gfs2-v5.16-rc2-fixes' of git://git.kernel.org/pub/scm/linux/ke=
-rnel/git/gfs2/linux-gfs2 (2021-11-17 15:55:07 -0800)=0D
-=0D
-are available in the Git repository at:=0D
-=0D
-  https://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2.git tags/=
-write-page-prefaulting=0D
-=0D
-for you to fetch changes up to 631f871f071746789e9242e514ab0f49067fa97a:=0D
-=0D
-  fs/iomap: Fix buffered write page prefaulting (2022-03-25 15:14:03 +0100)=
-=0D
-=0D
-----------------------------------------------------------------=0D
-Fix buffered write page prefaulting=0D
-=0D
-----------------------------------------------------------------=0D
-Andreas Gruenbacher (1):=0D
-      fs/iomap: Fix buffered write page prefaulting=0D
-=0D
- fs/iomap/buffered-io.c | 2 +-=0D
- mm/filemap.c           | 2 +-=0D
- 2 files changed, 2 insertions(+), 2 deletions(-)=0D
+On Fri, Mar 25, 2022 at 7:02 AM Luca Weiss <luca.weiss@fairphone.com> wrote:
+>
+> Hi David,
+>
+> this patch doesn't compile with CONFIG_SECURITY=n:
+>
+> ./include/linux/security.h: In function 'security_inode_need_killpriv':
+> ./include/linux/security.h:893:40: error: passing argument 1 of 'cap_inode_need_killpriv' from incompatible pointer type [-Werror=incompatible-pointer-types]
+>   893 |         return cap_inode_need_killpriv(dentry);
+>       |                                        ^~~~~~
+>       |                                        |
+>       |                                        struct dentry *
+> ./include/linux/security.h:153:52: note: expected 'struct user_namespace *' but argument is of type 'struct dentry *'
+>   153 | int cap_inode_need_killpriv(struct user_namespace *mnt_userns,
+>       |                             ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~
+>
+> I applied the patch on linux-next tag next-20220318, but the relevant part
+> doesn't seem to have changed lately.
 
+I believe David (and Google) have abandoned this patchset in favor of
+another approach.  I'm possibly going to recycle some of the ideas in
+this patchset for some future work, but the details are still TBD.
+
+-- 
+paul-moore.com
