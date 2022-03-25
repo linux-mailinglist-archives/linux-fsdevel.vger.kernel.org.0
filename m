@@ -2,159 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C81D04E7661
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Mar 2022 16:14:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E79594E7880
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Mar 2022 16:58:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354494AbiCYPMr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Mar 2022 11:12:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44528 "EHLO
+        id S1359865AbiCYP7u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Mar 2022 11:59:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1359828AbiCYPMa (ORCPT
+        with ESMTP id S1354373AbiCYP7r (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Mar 2022 11:12:30 -0400
-Received: from mail-il1-x134.google.com (mail-il1-x134.google.com [IPv6:2607:f8b0:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E9A36351C
-        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Mar 2022 08:09:08 -0700 (PDT)
-Received: by mail-il1-x134.google.com with SMTP id d3so5393763ilr.10
-        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Mar 2022 08:09:08 -0700 (PDT)
+        Fri, 25 Mar 2022 11:59:47 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C7C32BED
+        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Mar 2022 08:58:11 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id p15so16234018ejc.7
+        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Mar 2022 08:58:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:content-language:to:cc:from
-         :subject:content-transfer-encoding;
-        bh=4KU9QslOAVWxuqXxDoOPa6tZMrdFj2dmg2ltYNCcHwg=;
-        b=2z9gtalMXBlLV91/8mVRq3pQ2THZ7964EGtVWTb65+n+qWYpimyvo06QxW8Mvzf+5T
-         q8kymLAGuLkkZ+fFlcc8sC0WExCHvDGeptMf4onz8oH72F+G5DH5kbUdnF1YbIUsGhWP
-         FRWnccdSaXUTLog4jHGB45bKLXN7Mw4j3dD5rRgPea8PXsuVUnv6roPsvpkWe6gjqKay
-         w5Mm+VRgrG+37gyyp+06EbWlRBANRnvvRodtJ9spxaYtR1/wGASgwfAUcMJicfVztoVj
-         SPgplmys+VF9kpFyIjH9mFJQuweixuvf69gLXqywvLyuyScp6lIboCtGgjgKWwHnCDfl
-         ZzOQ==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vjCwVKHInkYZOFvCXl5F/8irvVzXQKz9So+Ci2sABwA=;
+        b=NMp4rsHHEXk8g/POoZFFTUizV17UY+9wSy7x5dg7sZozadTXMD9WyFq8GTw7Kz4wA8
+         SpWE/tZ2noPTMjHAeolFtuGuWeCh3B8gP8VxKsgLcwdE7gpxduOe7j4QCv4uMFeiAT56
+         FvJAcD5BLMpkPWnJBX1enNqNq92T4Qs2sn2cJPcDCxykTC/hC85ATCMauPkIf/JvIOOm
+         Gtd94/qd25h+5sjYl6LQuGNwPGhw9Gd8Hded62kggmHR0U5HzT1Ry+glhlJ35b9mFI91
+         Z3JuGWcTBeiZ4rIAWWsbEvQRLf+zs4wCLbdKGE33ptYGQTiF53r3LV+AS3YTjipd/Q5D
+         TJZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent
-         :content-language:to:cc:from:subject:content-transfer-encoding;
-        bh=4KU9QslOAVWxuqXxDoOPa6tZMrdFj2dmg2ltYNCcHwg=;
-        b=SUKXJ5t9zalqtxIvR76ewFMSP/wVAjN+FSfGsaga0+xXXmNh9QvUqk8M70XCDThql3
-         HxJJbNhOCRHAikfCniYKKoz/ZrQqNcqr8oLJs841Y3SoevIo3VG+bN/b7RhwxDPyAp6u
-         OLOWly0/nyqs150wXiT6pe8WZGHXkcptYa7lFac3qpHlHe/rOkjgTcb47ZXEvVi/eqEh
-         dszldg28Q5pC8qmYEu67UM4NBRSgW9Ay13Tfv0ZcRnzqPlDCu59Wiwm7jhYZ/RqXAt+A
-         wG1kY6R/hnpdLgXh/XmgcFuv/+FHR80ntw9v8gjVafg6PLqNqkkQ1EaaeN8xI9ubKvYu
-         LLfw==
-X-Gm-Message-State: AOAM530nPl50U78WY4vMYOEOswe4mJ+bv1/yjJnjWKh0t1ehG4m7oj7S
-        LGZ2zKFJ9CyMDgtyAMlVpLsZ0A==
-X-Google-Smtp-Source: ABdhPJzbddq3HHrOS3Cxn8Zvx6U2HJyF3Wo0BTl1UlvBMBnuZOqiU+VOHUFEs9flVdOCQKzaWPL3pw==
-X-Received: by 2002:a05:6e02:170d:b0:2c8:5b9:fa67 with SMTP id u13-20020a056e02170d00b002c805b9fa67mr5231937ill.300.1648220940970;
-        Fri, 25 Mar 2022 08:09:00 -0700 (PDT)
-Received: from [192.168.1.172] ([207.135.234.126])
-        by smtp.gmail.com with ESMTPSA id t6-20020a6b0906000000b0064963285af2sm3009538ioi.51.2022.03.25.08.09.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Mar 2022 08:09:00 -0700 (PDT)
-Message-ID: <72c1ee9c-2abb-3ee7-7511-e6d972f4413f@kernel.dk>
-Date:   Fri, 25 Mar 2022 09:08:59 -0600
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vjCwVKHInkYZOFvCXl5F/8irvVzXQKz9So+Ci2sABwA=;
+        b=XLCNcDEkmM2HbH6G/fgMYD5AXq3jra01HjesjVpZ+KLdYBWBMLvxLxllxNKJIYLO+N
+         VYph58XLysRK6qtn0vSzztWNfc73HQbLEdtXCmbEVR4HnB4bBEt+zC/cMb8K3t/Qy9Hl
+         xOjExAflrMH+dE9sPZKuBdXTBpF0IOS9vj+amDrgldr49EBdLH0Zg6xZuLEzRYZe468y
+         6OMfoeq0kxi2kcD/cPgybIxOitxBTbl8GDCLzHFacdSfXGjpkwNoGuq69v3YpGfNpvb/
+         kyDfUxxyUZ+kIjLGc9IqiYKiYyP5IxygripXH5TC4IhnxF6Td2NCJ/J6IHtVlJoUwfvM
+         y1og==
+X-Gm-Message-State: AOAM530PiuxUaW0L9DhPUSjMvESe0i0zq259+1lQo1+21o0h/viUqYvA
+        z9vH2ycmlQ2TRN9gNV3HS2nG+OXaYONRxg==
+X-Google-Smtp-Source: ABdhPJymmP3C6QVZiUZ1G60vdKCKxvxLWCUamOYE3q8DwvFKnKuUH37CGIWLL77Xo4yIldsoxVUD8w==
+X-Received: by 2002:a17:906:6a27:b0:6e0:3017:d3c2 with SMTP id qw39-20020a1709066a2700b006e03017d3c2mr12564107ejc.358.1648223889632;
+        Fri, 25 Mar 2022 08:58:09 -0700 (PDT)
+Received: from nlaptop.localdomain (ptr-dtfv0poj8u7zblqwbt6.18120a2.ip6.access.telenet.be. [2a02:1811:cc83:eef0:f2b6:6987:9238:41ca])
+        by smtp.gmail.com with ESMTPSA id hb6-20020a170907160600b006dff6a979fdsm2554934ejc.51.2022.03.25.08.58.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Mar 2022 08:58:09 -0700 (PDT)
+From:   Niels Dossche <dossche.niels@gmail.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Niels Dossche <dossche.niels@gmail.com>
+Subject: [PATCH] fs/dcache: use write lock in the fallback instead of read lock
+Date:   Fri, 25 Mar 2022 16:58:04 +0100
+Message-Id: <20220325155804.10811-1-dossche.niels@gmail.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Content-Language: en-US
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] Remove write streams support
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+Currently, there is a fallback with a WARN that uses down_read_trylock
+as a safety measure for when there is no lock taken. The current
+callsites expect a write lock to be taken. Moreover, the s_root field
+is written to, which is not allowed under a read lock.
+This code safety fallback should not be executed unless there is an
+issue somewhere else.
+The fix is to change the read lock to a write lock in the fallback.
 
-This removes the write streams support in NVMe. No vendor ever really
-shipped working support for this, and they are not interested in
-supporting it.
+Note:
+I am currently working on a static analyser to detect missing locks
+using type-based static analysis as my master's thesis
+in order to obtain my master's degree.
+If you would like to have more details, please let me know.
+This was a reported case. I manually verified the report by looking
+at the code, so that I do not send wrong information or patches.
+After concluding that this seems to be a true positive, I created
+this patch. I have both compile-tested this patch and runtime-tested
+this patch on x86_64. The effect on a running system could be a
+potential race condition in exceptional cases.
+This issue was found on Linux v5.17.
 
-With the NVMe support gone, we have nothing in the tree that supports
-this. Remove passing around of the hints.
+Fixes: c636ebdb186bf ("VFS: Destroy the dentries contributed by a superblock on unmounting")
+Signed-off-by: Niels Dossche <dossche.niels@gmail.com>
+---
+ fs/dcache.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The only discussion point in this patchset imho is the fact that the
-file specific write hint setting/getting fcntl helpers will now return
--1/EINVAL like they did before we supported write hints. No known
-applications use these functions, I only know of one prototype that I
-help do for RocksDB, and that's not used. That said, with a change like
-this, it's always a bit controversial. Alternatively, we could just make
-them return 0 and pretend it worked. It's placement based hints after
-all.
-
-Diffstat manually generated, as git pull-request doesn't like that it's
-based on merges. It will merge cleanly with your current tree.
-
-Please pull!
-
-
-The following changes since commit 97939610b893de068c82c347d06319cd231a4602:
-
-  block: remove bio_devname (2022-03-07 06:42:33 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.dk/linux-block.git tags/for-5.18/write-streams-2022-03-18
-
-for you to fetch changes up to 7b12e49669c99f63bc12351c57e581f1f14d4adf:
-
-  fs: remove fs.f_write_hint (2022-03-08 17:55:03 -0700)
-
-----------------------------------------------------------------
-for-5.18/write-streams-2022-03-18
-
-----------------------------------------------------------------
-Christoph Hellwig (4):
-      nvme: remove support or stream based temperature hint
-      block: remove the per-bio/request write hint
-      fs: remove kiocb.ki_hint
-      fs: remove fs.f_write_hint
-
-Jens Axboe (3):
-      Merge branch 'for-5.18/block' into for-5.18/write-streams
-      Merge branch 'for-5.18/drivers' into for-5.18/write-streams
-      Merge branch 'for-5.18/alloc-cleanups' into for-5.18/write-streams
-
- block/bio.c                 |   2 -
- block/blk-crypto-fallback.c |   1 -
- block/blk-merge.c           |  14 -----
- block/blk-mq-debugfs.c      |  24 --------
- block/blk-mq.c              |   1 -
- block/bounce.c              |   1 -
- block/fops.c                |   3 -
- drivers/md/raid1.c          |   2 -
- drivers/md/raid5-ppl.c      |  28 +---------
- drivers/md/raid5.c          |   6 --
- drivers/nvme/host/core.c    | 143 -----------------------------------------------
- drivers/nvme/host/nvme.h    |   1 -
- fs/aio.c                    |   1 -
- fs/btrfs/extent_io.c        |   1 -
- fs/buffer.c                 |  13 ++---
- fs/cachefiles/io.c          |   2 -
- fs/direct-io.c              |   3 -
- fs/ext4/page-io.c           |   5 +-
- fs/f2fs/data.c              |   2 -
- fs/f2fs/file.c              |   6 --
- fs/fcntl.c                  |  18 ------
- fs/gfs2/lops.c              |   1 -
- fs/io_uring.c               |   1 -
- fs/iomap/buffered-io.c      |   2 -
- fs/iomap/direct-io.c        |   1 -
- fs/mpage.c                  |   1 -
- fs/open.c                   |   1 -
- fs/zonefs/super.c           |   1 -
- include/linux/blk_types.h   |   1 -
- include/linux/blkdev.h      |   3 -
- include/linux/fs.h          |  21 -------
- include/trace/events/f2fs.h |   3 +-
- 32 files changed, 10 insertions(+), 303 deletions(-)
-
+diff --git a/fs/dcache.c b/fs/dcache.c
+index c84269c6e8bf..d81f5b9c2bce 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -1692,7 +1692,7 @@ void shrink_dcache_for_umount(struct super_block *sb)
+ {
+ 	struct dentry *dentry;
+ 
+-	WARN(down_read_trylock(&sb->s_umount), "s_umount should've been locked");
++	WARN(down_write_trylock(&sb->s_umount), "s_umount should've been locked");
+ 
+ 	dentry = sb->s_root;
+ 	sb->s_root = NULL;
 -- 
-Jens Axboe
+2.35.1
 
