@@ -2,69 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C9A104E7DD6
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Mar 2022 01:23:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D6674E7DFA
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Mar 2022 01:23:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232378AbiCYUyF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Mar 2022 16:54:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42774 "EHLO
+        id S233389AbiCYV1S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Mar 2022 17:27:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232369AbiCYUyE (ORCPT
+        with ESMTP id S233390AbiCYV1Q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Mar 2022 16:54:04 -0400
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C17C550E16;
-        Fri, 25 Mar 2022 13:52:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1648241549; x=1679777549;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=P3gwNXe0u8BsPFKCZRFA9VltWIcjiuRgNKGEuiruPN4=;
-  b=EpRaQlMnz3FJSTYspef0y0Z+QDbk3Hjm8KhHZVPY4BlRHstE14+DKenD
-   +74Q2LMPMLWmiJIHJuKrD9AjYRkIlY8wTxMrNe9gTwfTGezUfk/ltzlLE
-   9i9lkhaOMJlM0EDXUnT0BEm9r/IgJK8X8ieLtcUihYVaDTMeKCN9dWqVk
-   J9NXQ2dveElqz9hAkdNNC4Wamx6DVGawZwXXW8f1J3pJkYn0TI5jW4AOv
-   3BZd9gMsifVmxCHKI3hOewBBNdXrGO3J2GlgXlPvZl4WSoE2++BtiQ6MO
-   pJAnrGilI2WelGuOfjY73R6/WzYpEZISLR5y033RA0BJlU15J6e6+g4yq
-   A==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10297"; a="238653260"
-X-IronPort-AV: E=Sophos;i="5.90,211,1643702400"; 
-   d="scan'208";a="238653260"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Mar 2022 13:52:29 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.90,211,1643702400"; 
-   d="scan'208";a="826145419"
-Received: from lkp-server02.sh.intel.com (HELO 89b41b6ae01c) ([10.239.97.151])
-  by fmsmga005.fm.intel.com with ESMTP; 25 Mar 2022 13:52:24 -0700
-Received: from kbuild by 89b41b6ae01c with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1nXqv2-000Mad-9K; Fri, 25 Mar 2022 20:52:24 +0000
-Date:   Sat, 26 Mar 2022 04:52:21 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Jeffle Xu <jefflexu@linux.alibaba.com>, dhowells@redhat.com,
-        linux-cachefs@redhat.com, xiang@kernel.org, chao@kernel.org,
-        linux-erofs@lists.ozlabs.org
-Cc:     kbuild-all@lists.01.org, torvalds@linux-foundation.org,
-        gregkh@linuxfoundation.org, willy@infradead.org,
-        linux-fsdevel@vger.kernel.org, joseph.qi@linux.alibaba.com,
-        bo.liu@linux.alibaba.com, tao.peng@linux.alibaba.com,
-        gerry@linux.alibaba.com, eguan@linux.alibaba.com,
-        linux-kernel@vger.kernel.org, luodaowen.backend@bytedance.com,
-        tianzichen@kuaishou.com, fannaihao@baidu.com
-Subject: Re: [PATCH v6 03/22] cachefiles: notify user daemon with anon_fd
- when looking up cookie
-Message-ID: <202203260406.Ay5o7T9U-lkp@intel.com>
-References: <20220325122223.102958-4-jefflexu@linux.alibaba.com>
+        Fri, 25 Mar 2022 17:27:16 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA80B23C0EC
+        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Mar 2022 14:25:41 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: krisman)
+        with ESMTPSA id B6D2E1F467F3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1648243540;
+        bh=HXeqRMeQE7R6n2ndddhQlyV94EIUHcEA4j5aKNJbKiA=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=cgNbsUIx6OwXBs3omsY+8iI3cXeFj+zeqJTXDTFwHW0tnjbtszuac7SMLYrWaKxCW
+         ih3/uhsZHWLADspwx7Xc+Lf7LgAwje2BR53RIu+Y6OEmzIx9VD3juJcLzUOzCHa9Th
+         xNzFoHdrBl3cL37xgSWlIFt+6BNntMXwm2oyXyYHAji4kDKC+WfWbwYhg5Jdi9CtSh
+         CXhjvu+rRtXa4hp+F9PgV7c0yLZBgaHlwynFagIHJz3UDZZj9Cpg6o+00PtnDpWwVq
+         nKUWkrM/74z0swALxf0xlsG/U2A84ZwC9UxfmGl+rTXH9nafIIXoVXyXKqBeqLcom4
+         clmdyI72L99tQ==
+From:   Gabriel Krisman Bertazi <krisman@collabora.com>
+To:     jianchunfu <jianchunfu@cmss.chinamobile.com>
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC] fs:unicode:mkutf8data.c: Fix the potential stack overflow
+ risk
+Organization: Collabora
+References: <20220325091443.59677-1-jianchunfu@cmss.chinamobile.com>
+Date:   Fri, 25 Mar 2022 17:25:35 -0400
+In-Reply-To: <20220325091443.59677-1-jianchunfu@cmss.chinamobile.com>
+        (jianchunfu@cmss.chinamobile.com's message of "Fri, 25 Mar 2022
+        17:14:43 +0800")
+Message-ID: <87o81tpvw0.fsf@collabora.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.2 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220325122223.102958-4-jefflexu@linux.alibaba.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Spam-Status: No, score=-5.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+Content-Type: text/plain
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -72,56 +53,28 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Jeffle,
+jianchunfu <jianchunfu@cmss.chinamobile.com> writes:
 
-Thank you for the patch! Yet something to improve:
+> I'm not sure why there are so many missing checks of the malloc function,
+> is it because the memory allocated is only a few bytes
+> so no checks are needed?
+>
+> Signed-off-by: jianchunfu <jianchunfu@cmss.chinamobile.com>
 
-[auto build test ERROR on trondmy-nfs/linux-next]
-[also build test ERROR on rostedt-trace/for-next linus/master v5.17]
-[cannot apply to xiang-erofs/dev-test dhowells-fs/fscache-next next-20220325]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
+Hi jianchunfu,
 
-url:    https://github.com/0day-ci/linux/commits/Jeffle-Xu/fscache-erofs-fscache-based-on-demand-read-semantics/20220325-203555
-base:   git://git.linux-nfs.org/projects/trondmy/linux-nfs.git linux-next
-config: csky-defconfig (https://download.01.org/0day-ci/archive/20220326/202203260406.Ay5o7T9U-lkp@intel.com/config)
-compiler: csky-linux-gcc (GCC) 11.2.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/0day-ci/linux/commit/ec8aa2f84eb47244377e4b822dd77d82ee54714a
-        git remote add linux-review https://github.com/0day-ci/linux
-        git fetch --no-tags linux-review Jeffle-Xu/fscache-erofs-fscache-based-on-demand-read-semantics/20220325-203555
-        git checkout ec8aa2f84eb47244377e4b822dd77d82ee54714a
-        # save the config file to linux build tree
-        mkdir build_dir
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross O=build_dir ARCH=csky SHELL=/bin/bash
+Thanks for the patch.
 
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
+Beyond what Eric said, the patch prefix should be just "unicode:".  When
+in doubt you can see the previous patches to the subsystem in the git
+log.  Also, I think these are not really  stack overflows, but a bad
+memory access if malloc fails.  What do you think of something like
 
-All errors (new ones prefixed by >>):
+unicode: Handle memory allocation failures in mkutf8data
 
-   csky-linux-ld: fs/cachefiles/daemon.o: in function `cachefiles_ondemand_daemon_read':
->> daemon.c:(.text+0x97c): multiple definition of `cachefiles_ondemand_daemon_read'; fs/cachefiles/cache.o:cache.c:(.text+0x18): first defined here
-   csky-linux-ld: fs/cachefiles/interface.o: in function `cachefiles_ondemand_daemon_read':
-   interface.c:(.text+0x1ec): multiple definition of `cachefiles_ondemand_daemon_read'; fs/cachefiles/cache.o:cache.c:(.text+0x18): first defined here
-   csky-linux-ld: fs/cachefiles/io.o: in function `cachefiles_ondemand_daemon_read':
-   io.c:(.text+0x720): multiple definition of `cachefiles_ondemand_daemon_read'; fs/cachefiles/cache.o:cache.c:(.text+0x18): first defined here
-   csky-linux-ld: fs/cachefiles/key.o: in function `cachefiles_ondemand_daemon_read':
-   key.c:(.text+0x0): multiple definition of `cachefiles_ondemand_daemon_read'; fs/cachefiles/cache.o:cache.c:(.text+0x18): first defined here
-   csky-linux-ld: fs/cachefiles/main.o: in function `cachefiles_ondemand_daemon_read':
-   main.c:(.text+0x0): multiple definition of `cachefiles_ondemand_daemon_read'; fs/cachefiles/cache.o:cache.c:(.text+0x18): first defined here
-   csky-linux-ld: fs/cachefiles/namei.o: in function `cachefiles_ondemand_daemon_read':
-   namei.c:(.text+0xf8): multiple definition of `cachefiles_ondemand_daemon_read'; fs/cachefiles/cache.o:cache.c:(.text+0x18): first defined here
-   csky-linux-ld: fs/cachefiles/security.o: in function `cachefiles_ondemand_daemon_read':
-   security.c:(.text+0x24): multiple definition of `cachefiles_ondemand_daemon_read'; fs/cachefiles/cache.o:cache.c:(.text+0x18): first defined here
-   csky-linux-ld: fs/cachefiles/volume.o: in function `cachefiles_ondemand_daemon_read':
-   volume.c:(.text+0x0): multiple definition of `cachefiles_ondemand_daemon_read'; fs/cachefiles/cache.o:cache.c:(.text+0x18): first defined here
-   csky-linux-ld: fs/cachefiles/xattr.o: in function `cachefiles_ondemand_daemon_read':
-   xattr.c:(.text+0x0): multiple definition of `cachefiles_ondemand_daemon_read'; fs/cachefiles/cache.o:cache.c:(.text+0x18): first defined here
+or something like that.
+
+Thanks,
 
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+Gabriel Krisman Bertazi
