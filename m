@@ -2,50 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D6674E7DFA
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Mar 2022 01:23:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EBEB4E7C1A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Mar 2022 01:21:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233389AbiCYV1S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Mar 2022 17:27:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55476 "EHLO
+        id S233721AbiCYWN0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Mar 2022 18:13:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233390AbiCYV1Q (ORCPT
+        with ESMTP id S233710AbiCYWNZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Mar 2022 17:27:16 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA80B23C0EC
-        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Mar 2022 14:25:41 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: krisman)
-        with ESMTPSA id B6D2E1F467F3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1648243540;
-        bh=HXeqRMeQE7R6n2ndddhQlyV94EIUHcEA4j5aKNJbKiA=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=cgNbsUIx6OwXBs3omsY+8iI3cXeFj+zeqJTXDTFwHW0tnjbtszuac7SMLYrWaKxCW
-         ih3/uhsZHWLADspwx7Xc+Lf7LgAwje2BR53RIu+Y6OEmzIx9VD3juJcLzUOzCHa9Th
-         xNzFoHdrBl3cL37xgSWlIFt+6BNntMXwm2oyXyYHAji4kDKC+WfWbwYhg5Jdi9CtSh
-         CXhjvu+rRtXa4hp+F9PgV7c0yLZBgaHlwynFagIHJz3UDZZj9Cpg6o+00PtnDpWwVq
-         nKUWkrM/74z0swALxf0xlsG/U2A84ZwC9UxfmGl+rTXH9nafIIXoVXyXKqBeqLcom4
-         clmdyI72L99tQ==
-From:   Gabriel Krisman Bertazi <krisman@collabora.com>
-To:     jianchunfu <jianchunfu@cmss.chinamobile.com>
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC] fs:unicode:mkutf8data.c: Fix the potential stack overflow
- risk
-Organization: Collabora
-References: <20220325091443.59677-1-jianchunfu@cmss.chinamobile.com>
-Date:   Fri, 25 Mar 2022 17:25:35 -0400
-In-Reply-To: <20220325091443.59677-1-jianchunfu@cmss.chinamobile.com>
-        (jianchunfu@cmss.chinamobile.com's message of "Fri, 25 Mar 2022
-        17:14:43 +0800")
-Message-ID: <87o81tpvw0.fsf@collabora.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.2 (gnu/linux)
+        Fri, 25 Mar 2022 18:13:25 -0400
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 246CA5FE6;
+        Fri, 25 Mar 2022 15:11:49 -0700 (PDT)
+Received: from cwcc.thunk.org (pool-108-7-220-252.bstnma.fios.verizon.net [108.7.220.252])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 22PMBkTc022969
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 25 Mar 2022 18:11:46 -0400
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id 0A05415C0038; Fri, 25 Mar 2022 18:11:46 -0400 (EDT)
+Date:   Fri, 25 Mar 2022 18:11:46 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Fariya F <fariya.fatima03@gmail.com>
+Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: df returns incorrect size of partition due to huge overhead
+ block count in ext4 partition
+Message-ID: <Yj4+IqC6FPzEOhcW@mit.edu>
+References: <CACA3K+i8nZRBxeTfdy7Uq5LHAsbZEHTNati7-RRybsj_4ckUyw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY autolearn=ham
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACA3K+i8nZRBxeTfdy7Uq5LHAsbZEHTNati7-RRybsj_4ckUyw@mail.gmail.com>
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -53,28 +44,42 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-jianchunfu <jianchunfu@cmss.chinamobile.com> writes:
+On Fri, Mar 25, 2022 at 12:12:30PM +0530, Fariya F wrote:
+> The output dumpe2fs returns the following
+> 
+>     Block count:              102400
+>     Reserved block count:     5120
+>     Overhead blocks:          50343939
 
-> I'm not sure why there are so many missing checks of the malloc function,
-> is it because the memory allocated is only a few bytes
-> so no checks are needed?
->
-> Signed-off-by: jianchunfu <jianchunfu@cmss.chinamobile.com>
+Yeah, that value is obviously wrong; I'm not sure how it got
+corrupted, but that's the cause of the your problem.
 
-Hi jianchunfu,
+> a) Where does overhead blocks get set?
 
-Thanks for the patch.
+The kernel can calculate the overhead value, but it can be slow for
+very large file systems.  For that reason, it is cached in the
+superblock.  So if the s_overhead_clusters is zero, the kernel will
+calculate the overhead value, and then update the superblock.
 
-Beyond what Eric said, the patch prefix should be just "unicode:".  When
-in doubt you can see the previous patches to the subsystem in the git
-log.  Also, I think these are not really  stack overflows, but a bad
-memory access if malloc fails.  What do you think of something like
+In newer versions of e2fsprogs, mkfs.ext4 / mke2fs will write the
+overhead value into the superblock.
 
-unicode: Handle memory allocation failures in mkutf8data
+> b) Why is this value huge for my partition and how to correct it
+> considering fsck is also not correcting this
 
-or something like that.
+The simpleest way is to run the following command with the file system
+unmounted:
 
-Thanks,
+debugfs -w -R "set_super_value overhead_clusters 0" /dev/sdXX
 
--- 
-Gabriel Krisman Bertazi
+Then the next time you mount the file system, the correct value should
+get caluclated and filled in.
+
+It's a bug that fsck isn't notcing the problem and correcting it.
+I'll work on getting that fixed in a future version of e2fsprogs.
+
+My apologies for the inconvenience.
+
+Cheers,
+
+					- Ted
