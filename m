@@ -2,57 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E9D094E7E72
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Mar 2022 02:41:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D5284E7EDD
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Mar 2022 05:19:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229820AbiCZBnX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Mar 2022 21:43:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40990 "EHLO
+        id S231159AbiCZEVQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 26 Mar 2022 00:21:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229456AbiCZBnW (ORCPT
+        with ESMTP id S229686AbiCZEVP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Mar 2022 21:43:22 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D6A12DC0;
-        Fri, 25 Mar 2022 18:41:47 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 96F0361917;
-        Sat, 26 Mar 2022 01:41:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB6BAC004DD;
-        Sat, 26 Mar 2022 01:41:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648258906;
-        bh=jGW6PmBImEhptd1gLKtaCQuGjGNEySz4ZTmfr35uDDo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WOoSOxA7eJ5a2mSatazhUFrvSoihLmhSyReNqGit9f/GcWRVva/v1hsFislZCcvHm
-         tuYJnVgbexMaxODUx+v+5uweMEVu2bZDL2gP037u7297bkqVtGEY7SabVtrIhWlnid
-         g8MrsWm0ZrMlp2k1DIYsQZDSbRWurNMLwe3+mvJwV5eQ3tiDi0DRweNgkX8iTLf9f2
-         J7IQ+QpAjHVU+p8o5EoiZGj/lKd5yG/BznDQ//S7FRNEblI19fOZrlgVMT9lwsf0pw
-         LDCsP2DwPAYQL0bc2HrPafUGlnLySv6lO7dhqiUEPOybIWjg5fZHOrfzANR9YGSZTs
-         Z0cPEpuIq7hAg==
-Date:   Fri, 25 Mar 2022 18:41:45 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        cluster-devel <cluster-devel@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [GIT PULL] fs/iomap: Fix buffered write page prefaulting
-Message-ID: <20220326014145.GE8182@magnolia>
-References: <20220325143701.144731-1-agruenba@redhat.com>
- <20220326000337.GD8182@magnolia>
- <CAHc6FU6ys6gQjqpT-p0b+9pRzQPGemvviAMJNgBvmXaM27k7jA@mail.gmail.com>
+        Sat, 26 Mar 2022 00:21:15 -0400
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2197723F3F9;
+        Fri, 25 Mar 2022 21:19:38 -0700 (PDT)
+Received: from cwcc.thunk.org (pool-108-7-220-252.bstnma.fios.verizon.net [108.7.220.252])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 22Q4JAos018812
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sat, 26 Mar 2022 00:19:11 -0400
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id D60DD15C0038; Sat, 26 Mar 2022 00:19:10 -0400 (EDT)
+Date:   Sat, 26 Mar 2022 00:19:10 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Karel Zak <kzak@redhat.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Christian Brauner <brauner@kernel.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>
+Subject: Re: [RFC PATCH] getvalues(2) prototype
+Message-ID: <Yj6UPi6SDc7wMtCA@mit.edu>
+References: <20220322192712.709170-1-mszeredi@redhat.com>
+ <20220323114215.pfrxy2b6vsvqig6a@wittgenstein>
+ <CAJfpegsCKEx41KA1S2QJ9gX9BEBG4_d8igA0DT66GFH2ZanspA@mail.gmail.com>
+ <YjudB7XARLlRtBiR@mit.edu>
+ <CAJfpegtiRx6jRFUuPeXDxwJpBhYn0ekKkwYbGowUehGZkqVmAw@mail.gmail.com>
+ <20220325084646.7g6oto2ce3vou54x@ws.net.home>
+ <Yj2DPRusMAzV/N5U@kroah.com>
+ <20220325092553.rncxqrjslv6e4c7v@ws.net.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHc6FU6ys6gQjqpT-p0b+9pRzQPGemvviAMJNgBvmXaM27k7jA@mail.gmail.com>
-X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+In-Reply-To: <20220325092553.rncxqrjslv6e4c7v@ws.net.home>
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -60,43 +64,49 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Mar 26, 2022 at 01:22:17AM +0100, Andreas Gruenbacher wrote:
-> On Sat, Mar 26, 2022 at 1:03 AM Darrick J. Wong <djwong@kernel.org> wrote:
-> > On Fri, Mar 25, 2022 at 03:37:01PM +0100, Andreas Gruenbacher wrote:
-> > > Hello Linus,
-> > >
-> > > please consider pulling the following fix, which I've forgotten to send
-> > > in the previous merge window.  I've only improved the patch description
-> > > since.
-> > >
-> > > Thank you very much,
-> > > Andreas
-> > >
-> > > The following changes since commit 42eb8fdac2fc5d62392dcfcf0253753e821a97b0:
-> > >
-> > >   Merge tag 'gfs2-v5.16-rc2-fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2 (2021-11-17 15:55:07 -0800)
-> > >
-> > > are available in the Git repository at:
-> > >
-> > >   https://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2.git tags/write-page-prefaulting
-> > >
-> > > for you to fetch changes up to 631f871f071746789e9242e514ab0f49067fa97a:
-> > >
-> > >   fs/iomap: Fix buffered write page prefaulting (2022-03-25 15:14:03 +0100)
-> >
-> > When was this sent to fsdevel for public consideration?  The last time I
-> > saw any patches related to prefaulting in iomap was November.
+On Fri, Mar 25, 2022 at 10:25:53AM +0100, Karel Zak wrote:
 > 
-> On November 23, exact same patch:
+> Right, the speed of ps(1) or lsof(1) is not important. IMHO the current
+> discussion about getvalues() goes in wrong direction :-)
 > 
-> https://lore.kernel.org/linux-fsdevel/20211123151812.361624-1-agruenba@redhat.com/
+> I guess the primary motivation is not to replace open+read+close, but
+> provide to userspace something usable to get information from mount
+> table, because the current /proc/#/mountinfo and notification by
+> poll() is horrible.
 
-Ah, ok, so I just missed it then.  Sorry about that, I seem to suck as
-maintainer more and more by the day. :( :(
+I think that's because the getvalues(2) prototype *only* optimizes
+away open+read+close, and doesn't do a *thing* with respect to
+/proc/<pid>/mountinfo.
 
-(Hey, at least you got the other maintainer to RVB it...)
+> Don't forget that the previous attempt was fsinfo() from David Howells
+> (unfortunately, it was too complex and rejected by Linus).
 
---D
+fsinfo() tried to do a lot more than solving the /proc/<pid>/mountinfo
+problem; perhaps that was the cause of the complexity.
 
-> Andreas
-> 
+Ignoring the notification problem (which I suspect we could solve with
+an extension of fsnotify), if the goal is to find a cleaner way to
+fetch information about a process's mount namespace and the mounts in
+that namespace, why not trying to export that information via sysfs?
+Information about devices are just as complex, after all.
+
+We could make mount namespaces to be their own first class object, so
+there would be an entry in /proc/<pid> which returns the mount
+namespace id used by a particular process.  Similarly, let each
+mounted file system be its own first class object.  Information about
+each mount namespace would be in /sys/mnt_ns, and information about
+each mounted file system would be in /sys/superblock.  Then in
+/sys/mnt_ns there would be a directory for each (superblock,
+mountpoint) pair.
+
+Given how quickly programs like lsof can open tens of thousands of
+small files, and typically there are't that many mounted file systems
+in a particular mount namespace, performance really shouldn't be a
+problem.
+
+If it works well enough for other kernel objects that are accessed via
+sysfs, and fsinfo() is way to complex, why don't we try a pattern
+which has worked and is "native" to Linux?
+
+					- Ted
+
