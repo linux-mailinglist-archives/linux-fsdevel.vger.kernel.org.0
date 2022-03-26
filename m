@@ -2,82 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 581A44E7E39
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Mar 2022 01:44:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 13CC44E7E4D
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Mar 2022 02:00:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229489AbiCZAp7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Mar 2022 20:45:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37494 "EHLO
+        id S229895AbiCZBBQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Mar 2022 21:01:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37396 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229472AbiCZAp6 (ORCPT
+        with ESMTP id S229882AbiCZBBM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Mar 2022 20:45:58 -0400
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4AAA40915
-        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Mar 2022 17:44:22 -0700 (PDT)
-Received: by mail-pl1-x631.google.com with SMTP id k6so9896139plg.12
-        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Mar 2022 17:44:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=94bZ8x1Q7nTpZFPXEyWHGvFt2Awbfow/+NrxSOgACok=;
-        b=R6hivrzTvp4LePDOadbPe3dFOajjYpUwNoSgW7jLyXp6W8Ac/oN1vJdiFVyZYi5a+a
-         ErU+cQw6xaX5V1LXVrxvEP/GXEiyC7UUB5NjeqLBBirDx8MqP6ZsfHy9oVJNjSiZ0K97
-         zOsZ9TAg91mFeTyLO34/EVVHvZgCfqMdZ2Jcs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=94bZ8x1Q7nTpZFPXEyWHGvFt2Awbfow/+NrxSOgACok=;
-        b=bPaMz8GCiO1u8J0ArZ5cUrwgjAOdo2jBKFjdG2Y/8Baopc3QEfjCDOvo4KnhAUj5QI
-         4vBkfj16b0KtQdGdFAJu1IaUJ2yC/3RFA8QHD/FTS67GAqk3x9kwN38M+pcJKYFiXx/8
-         Q2E5UiziwDnPkExWFPYiM9Z++qLGUFg8banu60AeUDBadSr2CuSkBNUmZAuYPdU46rdO
-         kLXbd1RRzkywISqzka3Mq1ymV7EorDRxDsC4rlYrHuRCcbkojma1ATvhrgqPxlhXzzkX
-         Temy/OYZHgeuI4vmK0MssTWL4WB/uFjgPJg/2yJuJ1r75SY2iUMsXlrrNfEGevVWKaCu
-         eeLw==
-X-Gm-Message-State: AOAM530lnQXAcEy8eBr+ppEMirThR6RalA6EKy8fymgFj50iEzPaNaN1
-        D5RyNAW0GUTwYe7inEhXIEnWL7v79xxiq8J3F5no334O3imFqkfq
-X-Google-Smtp-Source: ABdhPJy/BxTZlhcYIY65xpT8plAgoLHEXzIqiynq/mwldpYeh/3hqd/0CpjgoSRpMFCJDTic5vR5NXcTjejFRwVhGHU=
-X-Received: by 2002:a17:90a:5ae2:b0:1c6:7168:1164 with SMTP id
- n89-20020a17090a5ae200b001c671681164mr15573377pji.119.1648255462408; Fri, 25
- Mar 2022 17:44:22 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220323153712.csh5pme32z5aqx4e@quack3.lan>
-In-Reply-To: <20220323153712.csh5pme32z5aqx4e@quack3.lan>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 25 Mar 2022 17:44:11 -0700
-Message-ID: <CAADWXX_FmHu6xb1tUEbwNZKtJ-dDe0uCpR94q6j0BRt3SxQxnQ@mail.gmail.com>
-Subject: Re: [GIT PULL] Reiserfs, udf, ext2 fixes and cleanups for 5.18-rc1
+        Fri, 25 Mar 2022 21:01:12 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6469E4990B
+        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Mar 2022 17:59:36 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 457E1617F4
+        for <linux-fsdevel@vger.kernel.org>; Sat, 26 Mar 2022 00:59:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A6CBFC2BBE4;
+        Sat, 26 Mar 2022 00:59:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1648256375;
+        bh=g02lc30eBVL2Fg9ALpEeYnfkxPoGgz3zAwFPLUnlLhs=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=ctXDmYhw+g7PugMPFJcoOcPEAis61eFsA0k5dm5Kt6FXe0XHyhros1nANa3KiXIVa
+         wQuWwp35YMovdtTaQsTgNAalfrx5vgUntNH8aBnZ0lh9BJ/DThAZV/n2RodIS02M5h
+         7aWJeODRDRsaJG4kE9ZBdrXzJFeflvXhuOtHmMKv2JaCS5mM2xW/ZpuNaqk2Js2WRc
+         4q3eO9OVKAzrtVPXrDQTHOraG9CQV6OUtVVyU6EnqdVhFCbSlW8l8nskcqyAFy6Xtl
+         UeAD6nc3Tvnp+DuGKiMAppeeUuGH3Onx94zs1z6Vt+WKDP5rYFvQA63dC2hKrfidQA
+         Fh5KxTljy6uGA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 94397E7BB0B;
+        Sat, 26 Mar 2022 00:59:35 +0000 (UTC)
+Subject: Re: [GIT PULL] fsnotify changes for 5.18-rc1
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20220323153125.p7fpgaeze6etunwa@quack3.lan>
+References: <20220323153125.p7fpgaeze6etunwa@quack3.lan>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20220323153125.p7fpgaeze6etunwa@quack3.lan>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fsnotify_for_v5.18-rc1
+X-PR-Tracked-Commit-Id: f92ca72b0263d601807bbd23ed25cbe6f4da89f4
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: a8988507e577a89ccaf66b48ea645bcf6e861270
+Message-Id: <164825637559.25400.3145932988949713921.pr-tracker-bot@kernel.org>
+Date:   Sat, 26 Mar 2022 00:59:35 +0000
 To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=no autolearn_force=no version=3.4.6
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org
+X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 23, 2022 at 8:37 AM Jan Kara <jack@suse.cz> wrote:
->
-> The biggest change in this pull is the addition of a deprecation message
-> about reiserfs with the outlook that we'd eventually be able to remove it
-> from the kernel. Because it is practically unmaintained and untested and
-> odd enough that people don't want to bother with it anymore...
+The pull request you sent on Wed, 23 Mar 2022 16:31:25 +0100:
 
-Pulled.
+> git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fsnotify_for_v5.18-rc1
 
-I have this memory of seeing somebody suggest the eventual removal be
-a bit more gradual with a "turn it read-only" first, as perhaps a
-slightly  less drastic "remove entirely" maintainability option.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/a8988507e577a89ccaf66b48ea645bcf6e861270
 
-But maybe I'm just confused and mis-remember - and maybe nobody is
-willing to maintain even just a read-only form. But being at least
-able to read old filesystem images might help *some* people if they
-notice much too late that "oh, it's gone".
+Thank you!
 
-                Linus
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
