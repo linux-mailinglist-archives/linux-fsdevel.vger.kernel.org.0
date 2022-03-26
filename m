@@ -2,62 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C3B974E8480
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Mar 2022 23:15:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 901694E848C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Mar 2022 23:38:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229561AbiCZWRR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 26 Mar 2022 18:17:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40442 "EHLO
+        id S233819AbiCZWjl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 26 Mar 2022 18:39:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229464AbiCZWRQ (ORCPT
+        with ESMTP id S232718AbiCZWji (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 26 Mar 2022 18:17:16 -0400
-Received: from mail-lj1-x22a.google.com (mail-lj1-x22a.google.com [IPv6:2a00:1450:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EE5C314
-        for <linux-fsdevel@vger.kernel.org>; Sat, 26 Mar 2022 15:15:39 -0700 (PDT)
-Received: by mail-lj1-x22a.google.com with SMTP id g24so14541336lja.7
-        for <linux-fsdevel@vger.kernel.org>; Sat, 26 Mar 2022 15:15:38 -0700 (PDT)
+        Sat, 26 Mar 2022 18:39:38 -0400
+Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5D611CFC6
+        for <linux-fsdevel@vger.kernel.org>; Sat, 26 Mar 2022 15:37:58 -0700 (PDT)
+Received: by mail-lf1-x12a.google.com with SMTP id h7so19006666lfl.2
+        for <linux-fsdevel@vger.kernel.org>; Sat, 26 Mar 2022 15:37:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=646eEJy3R0M/KTVuEwo8ILglC9PMb/NEGSld3GpAxEM=;
-        b=VmaZt/FdSU9IxWnJT+n7WMNSAm9QhaWnXKkwGBa+wTkkHVbNrq8oqd2DQI4iCl0wG/
-         iy7E3AujkyX5NaVU4BcnOT1fn+xKdpfC9DwBzr+NshauWtc6lfNeDSfelnnG9h7FbBG8
-         I7KA+6jENZZ4Gnz9h8WRtq8IQ0/ZxgCw4o6Ug=
+        bh=QdYgy+BZM/qprtUrSJtz2sLcoAPvMOpRAnQOyOkfks0=;
+        b=Jw6DrHMuxeWP0GsAMFasqVTu7gc9fm8+5bPEimBbfJItCEfvOpQ/SAoW7oVnVF8h1a
+         zyOY7FXwzMtDYPN/IqO7UjNlKkJDjQVO/UdkwXT3p6KGmfYsyTyFgPP620KyAmS8NxFK
+         XxdhThFmIC2+Ii7SVeQvHg685M9picsPpRRLA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=646eEJy3R0M/KTVuEwo8ILglC9PMb/NEGSld3GpAxEM=;
-        b=BnvJK2s5s4QZXIX4xU1mzO2xOkLddrSPUlJk0XfaJNimusIuESdNpCaAw8v4uIvaJw
-         je6lfFffK1+jIRaoiPYnOcgD0JyWiH8/4WJpAaX6uetBDTscSLScbtiLcaCY/xVtYLQm
-         Rt9hx6nDWVZdacNILd48QxeC5fm41U08VoyqE7fuWGCF3MGQDDmH6eNWM72pfjcED2k2
-         QFVvAxrBxCn9IEcv0fy2NyA3Ld75774FOQIRE4mH17yWYCBNk5tE0rk5kJFgiLoIg9DZ
-         kthanzujhWvmICBTRFSUGBXCp7GO3vWU3JC6fdxmasOJtw6DCRMGd6kfzdrl+QANwe/J
-         flgw==
-X-Gm-Message-State: AOAM530GdnWOt366rtmmI5G74BnZPGD+B2fl+8oHMBbLuvBzL3AKTmyl
-        +CJOMpQWnvWFTIfyCyZhi9VPzrHSAyDy9G8QYWY=
-X-Google-Smtp-Source: ABdhPJzSOGYaFYSCYu2qt5cxvHo4Vzc9AEUy3Lkba08a240eHZPpMaD38UAX2O7CH+HOO5QPwLJzMw==
-X-Received: by 2002:a05:651c:2109:b0:249:907a:9560 with SMTP id a9-20020a05651c210900b00249907a9560mr13736713ljq.295.1648332936952;
-        Sat, 26 Mar 2022 15:15:36 -0700 (PDT)
+        bh=QdYgy+BZM/qprtUrSJtz2sLcoAPvMOpRAnQOyOkfks0=;
+        b=j3X9s2yk1+LGOfr3pYvfjfvcW8ywn1i7em/o6yotNOZdhUQ3map+fYiEewJFSfesjE
+         biGiOvzvb45aSIhBMsbtMfb+04pYIRiofFlpmk8gcaJP4KejwQ8pPxG+aMQlTJptJP+0
+         cAlzwio5xgNgxB4Ca7HuugzJcrIk+BOQ1Sh3lnJM69XAONpp/q5pKXlQ41erjpya5QaA
+         6mMKypmRf2UdLG9SPNKqe/IBSMABb2LT/9nxhw5000JkF6PBYV8C9qFlEAmU7TzMh64P
+         5qhDu4n8gFwWlMIjcxTpIwtWKxMLuXW4CXIjwcKSEvba485EhmVW5BbO7JiHsVEM+Tea
+         +yvw==
+X-Gm-Message-State: AOAM530nV45UUPSnJtzUKtomDfTMEGZLwYNX7oyP4zY4BXaNNMTPEO+m
+        RfdITk9LWHjW1Q+4D7yBCoS8tx0kOKS7eNgP1TU=
+X-Google-Smtp-Source: ABdhPJxQ9BQfO9ZrdJ674+r8PzXRraEEvtmHAOr3rRFJJ++I3xyqHTbcvjsQNjhNv9oh3nFTzQC0ew==
+X-Received: by 2002:ac2:4c42:0:b0:448:622e:5e81 with SMTP id o2-20020ac24c42000000b00448622e5e81mr13728820lfk.425.1648334276707;
+        Sat, 26 Mar 2022 15:37:56 -0700 (PDT)
 Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
-        by smtp.gmail.com with ESMTPSA id o11-20020ac2434b000000b004481eafa257sm1186055lfl.285.2022.03.26.15.15.35
+        by smtp.gmail.com with ESMTPSA id z26-20020ac2419a000000b004484bf6d1e6sm1187417lfh.233.2022.03.26.15.37.54
         for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 26 Mar 2022 15:15:36 -0700 (PDT)
-Received: by mail-lj1-f174.google.com with SMTP id a30so7098927ljq.13
-        for <linux-fsdevel@vger.kernel.org>; Sat, 26 Mar 2022 15:15:35 -0700 (PDT)
-X-Received: by 2002:a2e:9b10:0:b0:247:f28c:ffd3 with SMTP id
- u16-20020a2e9b10000000b00247f28cffd3mr13362606lji.152.1648332935415; Sat, 26
- Mar 2022 15:15:35 -0700 (PDT)
+        Sat, 26 Mar 2022 15:37:55 -0700 (PDT)
+Received: by mail-lj1-f174.google.com with SMTP id r22so14606819ljd.4
+        for <linux-fsdevel@vger.kernel.org>; Sat, 26 Mar 2022 15:37:54 -0700 (PDT)
+X-Received: by 2002:a2e:a790:0:b0:249:906a:c6f1 with SMTP id
+ c16-20020a2ea790000000b00249906ac6f1mr13650380ljf.164.1648334274351; Sat, 26
+ Mar 2022 15:37:54 -0700 (PDT)
 MIME-Version: 1.0
 References: <20220326114009.1690-1-aissur0002@gmail.com> <c7fcaccf-7ac0-fae8-3f41-d6552b689a70@ispras.ru>
-In-Reply-To: <c7fcaccf-7ac0-fae8-3f41-d6552b689a70@ispras.ru>
+ <CAHk-=wijnsoGpoXRvY9o-MYow_xNXxaHg5vWJ5Z3GaXiWeg+dg@mail.gmail.com>
+In-Reply-To: <CAHk-=wijnsoGpoXRvY9o-MYow_xNXxaHg5vWJ5Z3GaXiWeg+dg@mail.gmail.com>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sat, 26 Mar 2022 15:15:19 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wijnsoGpoXRvY9o-MYow_xNXxaHg5vWJ5Z3GaXiWeg+dg@mail.gmail.com>
-Message-ID: <CAHk-=wijnsoGpoXRvY9o-MYow_xNXxaHg5vWJ5Z3GaXiWeg+dg@mail.gmail.com>
+Date:   Sat, 26 Mar 2022 15:37:38 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgiTa-Cf+CyChsSHe-zrsps=GMwsEqFE3b_cgWUjxUSmw@mail.gmail.com>
+Message-ID: <CAHk-=wgiTa-Cf+CyChsSHe-zrsps=GMwsEqFE3b_cgWUjxUSmw@mail.gmail.com>
 Subject: Re: [PATCH 4/4] file: Fix file descriptor leak in copy_fd_bitmaps()
 To:     Alexey Khoroshilov <khoroshilov@ispras.ru>,
         Eric Biggers <ebiggers@kernel.org>,
@@ -77,93 +78,82 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Sorry, quoting everything below to bring in Eric Biggers because he
-touched that particular code last.
+On Sat, Mar 26, 2022 at 3:15 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> but maybe I'm missing something.
 
-And Christian Brauner, because he worked on all teh bitmap code with
-the whole close_range thing.
+Side note: the thing I'm _definitely_ missing is context for this patch.
 
-I think this is all ok because the number of files aren't just
-byte-aligned, they are long-aligned:
+I'm seeing "4/4" in the subject, but I can't find 1-3.
 
-         * We make sure that nr remains a multiple of BITS_PER_LONG - otherwise
+And the patch most definitely doesn't apply as-is, because that
+'add_byte' logic that it removes lines around doesn't exist in my tree
+at least.
+
+And I _do_ think that regardless of anything else, having those
+calculations use BITS_PER_BYTE - as if byte level operations were
+valid - is misleading.
+
+I do find something dodgy: alloc_fdtable().
+
+That function very much tries to keep things to that multiple of
+BITS_PER_LONG, and even has a comment to that effect, but I wonder if
+it is broken.
+
+In particular, that
+
+  nr = ... | (BITS_PER_LONG - 1)) + 1;
+
+case is only done for the "nr > sysctl_nr_open" case. The other case
+*DOES* align things up, but not necessarily sufficiently, in that it
+does
+
+        nr /= (1024 / sizeof(struct file *));
+        nr = roundup_pow_of_two(nr + 1);
+        nr *= (1024 / sizeof(struct file *));
+
+and I think that despite the round-up, it could easily be a smaller
+power-of-two than BITS_PER_LONG.
+
+So I think that code _intended_ for things to always be a multiple of
+BITS_PER_LONG, but I'm not convinced it is.
+
+It would be a good idea to just make it very explicit that it's
+properly aligned, using
+
+    --- a/fs/file.c
+    +++ b/fs/file.c
+    @@ -111,7 +111,8 @@ static struct fdtable * alloc_fdtable(unsigned int nr)
          * bitmaps handling below becomes unpleasant, to put it mildly...
+         */
+        if (unlikely(nr > sysctl_nr_open))
+    -           nr = ((sysctl_nr_open - 1) | (BITS_PER_LONG - 1)) + 1;
+    +           nr = sysctl_nr_open;
+    +   nr = ALIGN(nr, BITS_PER_LONG);
 
-but maybe I'm missing something.
+        fdt = kmalloc(sizeof(struct fdtable), GFP_KERNEL_ACCOUNT);
+        if (!fdt)
 
-The fact that there's a
+although that would perhaps break the whole "we try to allocate in
+comfortable page-tuned chunks" code, so that obvious patch may be
+doing non-obvious bad things.
 
-     Found by Syzkaller (https://github.com/google/syzkaller).
+Maybe it's the roundup_pow_of_two() that should be fixed to be that
+proper BITS_PER_LONG alignment instead?
 
-thing in that suggested commit message makes me think there _is_
-something I'm missing.
+And related to this all, we do have that BITS_PER_BYTE thing in a few
+places, and they are all a bit dodgy:
 
-Certainly NR_OPEN_DEFAULT, sane_fdtable_size() and max_fds should
-always be a multiple of BITS_PER_LONG.
+ - copy_fd_bitmaps() uses BITS_PER_BYTE, but I do think that all the
+values it operates on _should_ be BITS_PER_LONG aligned
 
-So I don't _think_ there is any bug here, although it might be good to
+ - alloc_fdtable() again does "2 * nr / BITS_PER_BYTE" for the bitmap
+allocations
 
- (a) document that "we explicitly do things in BITS_PER_LONG chunks"
-even more in places
+and we should make really really sure that we're always doing
+BITS_PER_LONG, and that alloc_fdtable() calculation should be checked.
 
- (b) have people double-check my thinking because clearly that
-syzcaller thing implies I'm full of crap
+Hmm?
 
-Eric, Christian?
-
-Can somebody point to the actual syzkaller report?
-
-                Linus
-
-On Sat, Mar 26, 2022 at 7:17 AM Alexey Khoroshilov
-<khoroshilov@ispras.ru> wrote:
->
-> Looks like bfp has a set of macro suitable for such cases:
->
-> #define BITS_PER_BYTE_MASKED(bits) ((bits) & BITS_PER_BYTE_MASK)
-> #define BITS_ROUNDDOWN_BYTES(bits) ((bits) >> 3)
-> #define BITS_ROUNDUP_BYTES(bits) \
->         (BITS_ROUNDDOWN_BYTES(bits) + !!BITS_PER_BYTE_MASKED(bits))
->
-> May be it makes sense to move them to a generic header and to use here?
->
-> --
-> Alexey Khoroshilov
->
->
-> On 26.03.2022 14:40, Fedor Pchelkin wrote:
-> > If count argument in copy_fd_bitmaps() is not a multiple of
-> > BITS_PER_BYTE, then one byte is lost and is not used in further
-> > manipulations with cpy value in memcpy() and memset()
-> > causing a leak. The leak was introduced with close_range() call
-> > using CLOSE_RANGE_UNSHARE flag.
-> >
-> > The patch suggests implementing an indicator (named add_byte)
-> > of count being multiple of BITS_PER_BYTE and adding it to the
-> > cpy value.
-> >
-> > Found by Syzkaller (https://github.com/google/syzkaller).
-> >
-> > Signed-off-by: Fedor Pchelkin <aissur0002@gmail.com>
-> > Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
-> > ---
-> >  fs/file.c | 2 --
-> >  1 file changed, 2 deletions(-)
-> >
-> > diff --git a/fs/file.c b/fs/file.c
-> > index 3ef1479df203..3c64a6423604 100644
-> > --- a/fs/file.c
-> > +++ b/fs/file.c
-> > @@ -56,10 +56,8 @@ static void copy_fd_bitmaps(struct fdtable *nfdt, struct fdtable *ofdt,
-> >  {
-> >       unsigned int cpy, set;
-> >       unsigned int add_byte = 0;
-> > -
-> >       if (count % BITS_PER_BYTE != 0)
-> >               add_byte = 1;
-> > -
-> >       cpy = count / BITS_PER_BYTE + add_byte;
-> >       set = (nfdt->max_fds - count) / BITS_PER_BYTE;
-> >       memcpy(nfdt->open_fds, ofdt->open_fds, cpy);
-> >
->
+                   Linus
