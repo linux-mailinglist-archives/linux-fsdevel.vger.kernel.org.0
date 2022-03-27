@@ -2,100 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DA114E8916
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Mar 2022 19:15:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 602AF4E894D
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Mar 2022 20:15:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235992AbiC0RRQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 27 Mar 2022 13:17:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60276 "EHLO
+        id S232360AbiC0SQw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 27 Mar 2022 14:16:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233819AbiC0RRQ (ORCPT
+        with ESMTP id S230008AbiC0SQv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 27 Mar 2022 13:17:16 -0400
-Received: from beige.elm.relay.mailchannels.net (beige.elm.relay.mailchannels.net [23.83.212.16])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7E3C10D8;
-        Sun, 27 Mar 2022 10:15:36 -0700 (PDT)
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-        by relay.mailchannels.net (Postfix) with ESMTP id 77D458205CD;
-        Sun, 27 Mar 2022 17:15:35 +0000 (UTC)
-Received: from pdx1-sub0-mail-a238.dreamhost.com (unknown [127.0.0.6])
-        (Authenticated sender: dreamhost)
-        by relay.mailchannels.net (Postfix) with ESMTPA id E3DE1820967;
-        Sun, 27 Mar 2022 17:15:34 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1648401335; a=rsa-sha256;
-        cv=none;
-        b=mASLVU82rm04FvTtwR5TrFfus09d7x/uyne0+hA6ZJjosKuWNLRYUbf3MmldFBai+aicli
-        4+iZz6aLQ/N3yOg5HN6oGDmZ2rSRduwxNBxesQlLbf5w+eViBJBcuTo9/gc+XQMSOgZhX0
-        GR9afCKsUDEqRmxOwnNIpp0ILF+/KKIN7A0IriEKtpyU0u4heI1d6MZOGrFEBvZvVXzh2+
-        QsJ+qzI+Ur8lRkrGRimRC+7/CFzaYOBA7BQRamcv9mTHL4mtSGaLlrgdPckCJSPd4mqaag
-        DhViuiSP0nt+2KIu3PpAZ3Km4H4UakutzlH8+JM6Q/OKDCDKV4Ax3ILOko9Mrg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-        s=arc-2022; t=1648401335;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references:dkim-signature;
-        bh=w1fiPFDj2EpQaIQHXWoKn3h6vJnDYTtbXYGB2AtQB/M=;
-        b=putNwyg+Awl4ppVfSdMmbl9jW6lMqWhMDbAbpoLNrdZpZ9DjbaxhK7aQVF73p81muhS55u
-        itbB3/ysDs2pl/4e3b49mOrP3YV/ufQ1hUHZOicbLKt1HZlpNUC6HcryLg9hQRb8MP4ANn
-        5VztJKsKOBUwnmxesQl5VByj/D3v0BIKzNMFHWZUW9WvMUnR1mSGvSPFaep9qEwEJ/4e6L
-        4EKhf+mXOXxGSOuMqGzPBMLlxDDwpzcB5k2gVG89oJYVtHDC9mrjfTkSkMcMq5QbtszkJF
-        bao5lRcsMmdq5hmxtUv8ApPMZjtPnICH/pLlVjzOeWJZWmp827P4N4KrTghr4Q==
-ARC-Authentication-Results: i=1;
-        rspamd-cf7f5c5bf-jv2nd;
-        auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-Received: from pdx1-sub0-mail-a238.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-        by 100.125.123.11 (trex/6.5.3);
-        Sun, 27 Mar 2022 17:15:35 +0000
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
-X-MailChannels-Auth-Id: dreamhost
-X-Wide-Eyed-Reaction: 4ad0f3d36db091d2_1648401335307_1738802150
-X-MC-Loop-Signature: 1648401335307:4236116255
-X-MC-Ingress-Time: 1648401335307
-Received: from offworld (unknown [104.36.25.8])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: dave@stgolabs.net)
-        by pdx1-sub0-mail-a238.dreamhost.com (Postfix) with ESMTPSA id 4KRMsf0Bryz1Nr;
-        Sun, 27 Mar 2022 10:15:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
-        s=dreamhost; t=1648401334;
-        bh=w1fiPFDj2EpQaIQHXWoKn3h6vJnDYTtbXYGB2AtQB/M=;
-        h=Date:From:To:Cc:Subject:Content-Type;
-        b=JUHQZg3eVPW8q+YSmOiGPFv7tFcXH5OIUnb9WfpNxom52k8suKMAqjHkxMGnwNrrd
-         bkicK+dtXF/BV12JTR0P9gD6dvz96zeIlWjkWF32nMt/pxz3gTWEHGnwyomC3ODAj3
-         dEiYlObkZdB1Fn/7uWiCKyNPf+KbLHn0qZMjDa7IVYbAVCiwAAKiQJA8vBlO8oPKE5
-         zzxu0d9GV1c2VxokOSOI4sg9Qo57m0Yge24QCJVPBXOIe5LGmoywTr+Cdj6GyZFhHD
-         ADdoF0Hu5MSgsSk9FidNMBN8J8HYQY68zcGLwpSY1uKlM/RGtTZyWebYku0gJovW1O
-         zQDX5A7pzt9jw==
-Date:   Sun, 27 Mar 2022 10:15:30 -0700
-From:   Davidlohr Bueso <dave@stgolabs.net>
-To:     Kuniyuki Iwashima <kuniyu@amazon.co.jp>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Kuniyuki Iwashima <kuni1840@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzbot+19480160ef25c9ffa29d@syzkaller.appspotmail.com,
-        Soheil Hassas Yeganeh <soheil@google.com>,
-        Sridhar Samudrala <sridhar.samudrala@intel.com>,
-        Alexander Duyck <alexander.h.duyck@intel.com>
-Subject: Re: [PATCH] list: Fix another data-race around ep->rdllist.
-Message-ID: <20220327171530.sbx63nw7h72bjucw@offworld>
-References: <20220326063558.89906-1-kuniyu@amazon.co.jp>
+        Sun, 27 Mar 2022 14:16:51 -0400
+Received: from mail-qt1-x829.google.com (mail-qt1-x829.google.com [IPv6:2607:f8b0:4864:20::829])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F6ED193EC
+        for <linux-fsdevel@vger.kernel.org>; Sun, 27 Mar 2022 11:15:12 -0700 (PDT)
+Received: by mail-qt1-x829.google.com with SMTP id t7so10612478qta.10
+        for <linux-fsdevel@vger.kernel.org>; Sun, 27 Mar 2022 11:15:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xzh21Ro6IEaZ5p55vH/LLx6bOR50txHPSwPIloDfM0c=;
+        b=S2QLdptwVR+e1f9C7KEJNO12yiHPDUOmfaVLlI+rGVxqgvPQtkrifHShz5Xi4eUFtt
+         OIgwb02KOVVGhUAr8NcvxTdGXiCLfbe9cRPP74UUm6Shta48y3A4Ga5lKVFjEcnd/72z
+         A3bR3+f6wLftmUAUJEubJrBlukd+BIRQ9CWOynwfWsKDtZ9zHVb7aBuaitTSyVL9aVrO
+         d7uzOkuDGypU1WXlDT53cnwUQt20s9tEsmZOBbwaaQn9JlitQzlFVZohvRV6N0KoxAQA
+         wUY4IdI7tfF2eRjoNGcasmBSrN8TGN9imUH/sVHtQebzm5NEgOYc9DpvCUNe/EbIgQpP
+         8UsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xzh21Ro6IEaZ5p55vH/LLx6bOR50txHPSwPIloDfM0c=;
+        b=UPExV2ygUMlXTl2F7DVJLXlzYguVqIuaqo5dz802L5qpCSP+iv9kG0KTNqU8/DNWkW
+         EzRmPlioH00FJdHFNzptTwVD1ZWVAt+yNmoC33zv8DicSNlYkRJZNeBM0vHxT35cTAY6
+         TRQZjZlJCMJfVz65BuuHcvfIAzoBO9QSEO/JdxlH/Isxmn7jyPPUNfrewKjfh/wMGLRA
+         Lg4Rh3BxIuDHS8wlZvwH3v5T0Kn18muXTreQo+yjcaj59g9c5LQLuznEMV2RqbPENvOQ
+         hk3pQ5O0u6YaM2PTYnaDxkApmD2lYaz33ucaLlW/rK5UTw4qjCHe7fYXT3UTKBdku4HU
+         ZehQ==
+X-Gm-Message-State: AOAM530/nX00JjD12H9DpgQnOO35kP+wQx8W+AWIwrJ4/VqXwDvNb8cH
+        yhCCXWDj1WwstAeF7GqnegV7h1mis0H4jFaTvFcXyNiJVOg=
+X-Google-Smtp-Source: ABdhPJwgOksmRTAiMobQcjPhf6FYRXAJCcSbk0siks775H89KdKS2FPWFtS1oUoPN/QNWkg13Hju07LL9sse0UzroAE=
+X-Received: by 2002:a05:622a:18a4:b0:2e1:e7a5:98ba with SMTP id
+ v36-20020a05622a18a400b002e1e7a598bamr18587078qtc.424.1648404911251; Sun, 27
+ Mar 2022 11:15:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20220326063558.89906-1-kuniyu@amazon.co.jp>
-User-Agent: NeoMutt/20201120
+References: <CAOQ4uxiLXqmAC=769ufLA2dKKfHxm=c_8B0N2y4c-aZ5Qci2hg@mail.gmail.com>
+ <20220321145111.qz3bngofoi5r5cmh@quack3.lan> <CAOQ4uxgOpfezQ4ydjP4SPA8-7x9xSXjTmTyZOYQE3d24c2Zf7Q@mail.gmail.com>
+ <20220323104129.k4djfxtjwdgoz3ci@quack3.lan> <CAOQ4uxgH3aCKnXfUFuyC7JXGtuprzWr6U9Y2T1rTQT3COoZtzw@mail.gmail.com>
+ <20220323134851.px6s4i6iiaj4zlju@quack3.lan> <CAOQ4uxhBH_0UqEmOdcUaV0E8oGTGF7arr+Q_EZPuQ=KWfvJWoQ@mail.gmail.com>
+ <20220323142835.epitipiq7zc55vgb@quack3.lan> <CAOQ4uxjEj4FWsd87cuYHR+vKb0ogb=zqrKHJLapqaPovUhgfFQ@mail.gmail.com>
+ <CAOQ4uxgkV8ULePEuxgMp2zSsYR_N0UPdGZcCJzB49Ndeyo2paw@mail.gmail.com> <20220325092911.fnttlyrvw7qzggc7@quack3.lan>
+In-Reply-To: <20220325092911.fnttlyrvw7qzggc7@quack3.lan>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Sun, 27 Mar 2022 21:14:59 +0300
+Message-ID: <CAOQ4uxi6G+VtPzKQwrvZfo_cCF8067vgOAPHrYB6ZZAqujKF1A@mail.gmail.com>
+Subject: Re: [PATCH RFC] nfsd: avoid recursive locking through fsnotify
+To:     Jan Kara <jack@suse.cz>
+Cc:     "khazhy@google.com" <khazhy@google.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -103,24 +72,40 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, 26 Mar 2022, Kuniyuki Iwashima wrote:
+> > I think I might have misunderstood you and you meant that the
+> > SINGLE_DEPTH_NESTING subcalls should be eliminated and then
+> > we are left with two lock classes.
+> > Correct?
+>
+> Yeah, at least at this point I don't see a good reason for using
+> SINGLE_DEPTH_NESTING lockdep annotation. In my opinion it has just a
+> potential of silencing reports of real locking problems. So removing it and
+> seeing what complains would be IMO a way to go.
+>
 
->syzbot had reported another race around ep->rdllist.  ep_poll() calls
->list_empty_careful() locklessly to check if the list is empty or not
->by testing rdllist->prev == rdllist->next.
->
->When the list does not have any nodes, the next and prev arguments of
->__list_add() is the same head pointer.  Thus the write to head->prev
->there is racy with lockless list_empty_careful() and needs WRITE_ONCE()
->to avoid store-tearing.
->
->Note that the reader side is already fixed in the patch [0].
->
->[0]: https://lore.kernel.org/mm-commits/20220326031647.DD24EC004DD@smtp.kernel.org/
->
->BUG: KCSAN: data-race in do_epoll_ctl / do_epoll_wait
+Agreed. In fact, the reason it was added is based on a misunderstanding
+of mutex_lock_nested():
 
-I think this needs to be part of the same list-fix-a-data-race-around-ep-rdllist.patch
+Commit 6960b0d909cd ("fsnotify: change locking order") changed some
+    of the mark_mutex locks in direct reclaim path to use:
+      mutex_lock_nested(&group->mark_mutex, SINGLE_DEPTH_NESTING);
+
+    This change is explained:
+     "...It uses nested locking to avoid deadlock in case we do the final
+      iput() on an inode which still holds marks and thus would take the
+      mutex again when calling fsnotify_inode_delete() in destroy_inode()."
+
+Pushed the fix along with conversion of all backends to fsnotify_group_lock()
+to fan_evictable branch, which I am still testing.
+
+It's worth noting that I found dnotify to be not fs reclaim safe, because
+dnotify_flush() is called from any filp_close() (problem is explained in the
+commit message), which contradicts my earlier argument that legacy
+backends "must be deadlock safe or we would have gotten deadlock
+reports by now".
+
+So yeh, eventually, we may set all legacy backends NOFS, but I would like
+to try and exempt inotify and audit for now to reduce the chance of regressions.
 
 Thanks,
-Davidlohr
+Amir.
