@@ -2,74 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 079664E8A69
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Mar 2022 00:14:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3282A4E8A77
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Mar 2022 00:21:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236879AbiC0WPu convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 27 Mar 2022 18:15:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37992 "EHLO
+        id S236908AbiC0WXW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 27 Mar 2022 18:23:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236872AbiC0WPs (ORCPT
+        with ESMTP id S236901AbiC0WXU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 27 Mar 2022 18:15:48 -0400
-X-Greylist: delayed 64 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sun, 27 Mar 2022 15:14:07 PDT
-Received: from webmail.zap.co.ao (webmail.zap.co.ao [212.0.160.234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F08B94CD64;
-        Sun, 27 Mar 2022 15:14:07 -0700 (PDT)
-Received: from info.hysyjpwpcsguvijbr5pp1pvnge.lx.internal.cloudapp.net
- (20.188.24.200) by FINMBX01.zap.co.ao (10.192.55.20) with Microsoft SMTP
- Server (TLS) id 15.0.1497.2; Sun, 27 Mar 2022 23:12:55 +0100
-Content-Type: text/plain; charset="iso-8859-1"
+        Sun, 27 Mar 2022 18:23:20 -0400
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE394E0DC
+        for <linux-fsdevel@vger.kernel.org>; Sun, 27 Mar 2022 15:21:40 -0700 (PDT)
+Received: by mail-lf1-x135.google.com with SMTP id 5so21804101lfp.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 27 Mar 2022 15:21:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=S+XGXg2Rv7JERtxGIutirLnuoE1LsDWr7jV2Cgxp6Qg=;
+        b=gFAofLg0jrpLSfWOSn6NF8CK/5FJeiqmvdtprA+Ls1Mv6ONwz0i3nBjywYz0dzLHzf
+         W/CiYgXmm+GTA48OjFKdGNGGbYL87ct6SDyeJZPV+KZ73BJy1mRn+IXxWXx04TQZltmb
+         lX69SAdTaAFtQrCmfgUk8ezpJltZM3CTyzlaQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=S+XGXg2Rv7JERtxGIutirLnuoE1LsDWr7jV2Cgxp6Qg=;
+        b=LDFldPB40T1VcVGwu/zOdwv5NqqVe5zLncGCMXbLDkr5iX/rFzc3c/ITvZ0VfZGrDb
+         olLgny6k+Y4uf3ZnaRiVdPsDPi9l28PSLDw/8ovDjw7ns6pURy5Uiv7UHCxn7Kg+qjUg
+         OFDm3TeXdWz9F2WqZzL1xdM6AuWpe+RzLyGAhVC7S+wmY6Ge0a7gl/A7uMZ+diWMZnKq
+         w/C+Up9rwC8s3e+cpt2LKG4JO0CsHnUGG2LF0Gz+y4napPG+4nNoGzfbqGVHJ180KZFQ
+         1YbYfSWHQoADhumrsGsuIGAV0WLoyXJv1jRtpdIElleNZVARUlcjHKNaPMz6bQyMwzIZ
+         yQ2w==
+X-Gm-Message-State: AOAM531t+jUAVJ3B0gma6/xoWdcb2AGLMiDOv8UD884fOKHWsWAWkk0K
+        8mHh79I+iiz+DKwZ8DzCV6fohwL+YmkSQaAJ6o0=
+X-Google-Smtp-Source: ABdhPJzxi66/ySVsGDSbn3IX2TCJYLQ7mo7Oc5Qxjj2GA4sQvZ7pSv1Yn6Cm6nfyybA9isGK5EgZ7Q==
+X-Received: by 2002:a19:e048:0:b0:448:2caa:7ed2 with SMTP id g8-20020a19e048000000b004482caa7ed2mr17500940lfj.449.1648419698597;
+        Sun, 27 Mar 2022 15:21:38 -0700 (PDT)
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
+        by smtp.gmail.com with ESMTPSA id br32-20020a056512402000b0044a1fdb8e85sm1459362lfb.134.2022.03.27.15.21.34
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 27 Mar 2022 15:21:35 -0700 (PDT)
+Received: by mail-lf1-f50.google.com with SMTP id p10so15919739lfa.12
+        for <linux-fsdevel@vger.kernel.org>; Sun, 27 Mar 2022 15:21:34 -0700 (PDT)
+X-Received: by 2002:a05:6512:3ca1:b0:44a:93f1:45cf with SMTP id
+ h33-20020a0565123ca100b0044a93f145cfmr2930787lfv.542.1648419694374; Sun, 27
+ Mar 2022 15:21:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: Re: Assist People of Ukarine
-To:     Recipients <zap@zap.co.ao>
-From:   Alexei Navalny <zap@zap.co.ao>
-Date:   Sun, 27 Mar 2022 22:12:49 +0000
-Reply-To: <wetttttwwttrttr@yandex.com>
-Message-ID: <0569d50434af41bf981748743b7be669@FINMBX01.zap.co.ao>
-X-ClientProxiedBy: FINCAS01.zap.co.ao (10.192.55.18) To FINMBX01.zap.co.ao
- (10.192.55.20)
-X-Spam-Status: Yes, score=5.5 required=5.0 tests=ADVANCE_FEE_5_NEW,BAYES_50,
-        FREEMAIL_FORGED_REPLYTO,FREEMAIL_REPLYTO,HK_RANDOM_REPLYTO,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Report: *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5000]
-        *  1.0 HK_RANDOM_REPLYTO Reply-To username looks random
-        * -0.0 RCVD_IN_MSPIKE_H3 RBL: Good reputation (+3)
-        *      [212.0.160.234 listed in wl.mailspike.net]
-        * -0.0 SPF_PASS SPF: sender matches SPF record
-        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
-        * -0.0 T_SCC_BODY_TEXT_LINE No description available.
-        * -0.0 RCVD_IN_MSPIKE_WL Mailspike good senders
-        *  2.1 FREEMAIL_FORGED_REPLYTO Freemail in Reply-To, but not From
-        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
-        *      different freemails
-        *  0.6 ADVANCE_FEE_5_NEW Appears to be advance fee fraud (Nigerian
-        *      419)
-X-Spam-Level: *****
+References: <20220326114009.1690-1-aissur0002@gmail.com> <CAHk-=wijnsoGpoXRvY9o-MYow_xNXxaHg5vWJ5Z3GaXiWeg+dg@mail.gmail.com>
+ <CAHk-=wgiTa-Cf+CyChsSHe-zrsps=GMwsEqFE3b_cgWUjxUSmw@mail.gmail.com> <2698031.BEx9A2HvPv@fedor-zhuzhzhalka67>
+In-Reply-To: <2698031.BEx9A2HvPv@fedor-zhuzhzhalka67>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun, 27 Mar 2022 15:21:18 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wh2Ao+OgnWSxHsJodXiLwtaUndXSkuhh9yKnA3iXyBLEA@mail.gmail.com>
+Message-ID: <CAHk-=wh2Ao+OgnWSxHsJodXiLwtaUndXSkuhh9yKnA3iXyBLEA@mail.gmail.com>
+Subject: Re: [PATCH 4/4] file: Fix file descriptor leak in copy_fd_bitmaps()
+To:     Fedor Pchelkin <aissur0002@gmail.com>
+Cc:     Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-My name is Alexei Navalny from Russia whom Vladimir Putin President of Russia the detects  is jailing me because I'm against his evil war plans against Ukraine. killing of Russia people  and the world in general.
+On Sun, Mar 27, 2022 at 2:53 PM <aissur0002@gmail.com> wrote:
+>
+> I am sorry, that was my first attempt to contribute to the kernel and
+> I messed up a little bit with the patch tag: it is actually a single,
+> standalone patch and there has been nothing posted previously.
 
-You can read more with below links:
-https://www.bbc.com/news/world-europe-16057045
-https://www.theguardian.com/world/2022/feb/15/alexei-navalny-faces-10-more-years-prison-focus-ukraine-crisis-russia
+No problem, thanks for clarifying.
 
- I will be happy to serve the 15 years in jail imposed by Putin but I need to assist Ukraine's displaced people around the world with the money I secretly deposited in one of the Turkish private  banks, now such money will be returned to Russian because d western world has blocked Russia . If you agreed to assist me 25% of the total sum will be for your assistance and the 75% will be used to assist the Ukraine displaced by Putin war.
+But the patch itself in that case is missing some detail, since it
+clearly doesn't apply to upstream.
 
-If you agreed and are also willing to keep  this transaction confidential, I will send you all the details to approach the bank.
+Anyway:
 
-I contacted you because I need somebody out of Russia to do this job.
+> In few words, an error occurs while executing close_range() call with
+> CLOSE_RANGE_UNSHARE flag: in __close_range() the value of
+> max_unshare_fds (later used as max_fds in dup_fd() and copy_fd_bitmaps())
+> can be an arbitrary number.
+>
+>   if (max_fd >= last_fd(files_fdtable(cur_fds)))
+>     max_unshare_fds = fd;
+>
+> and not be a multiple of BITS_PER_LONG or BITS_PER_BYTE.
 
-Please reply me here: aleshkanav@yandex.ru
+Very good, that's the piece I was missing. I only looked in fs/file.c,
+and missed how that max_unshare_fds gets passed from __close_range()
+into fork.c for unshare_fd() and then back to file.c and dup_fd(). And
+then affects sane_fdtable_size().
 
-Regards,
-Alexei Navalny
+I _think_ it should be sufficient to just do something like
+
+       max_fds = ALIGN(max_fds, BITS_PER_LONG)
+
+in sane_fdtable_size(), but honestly, I haven't actually thought about
+it all that much. That's just a gut feel without really analyzing
+things - sane_fdtable_size() really should never return a value that
+isn't BITS_PER_LONG aligned.
+
+And that whole close_range() is why I added Christian Brauner to the
+participant list, though, so let's see if Christian has any comments.
+
+Christian?
+
+Btw, do you have a pointer to the syzbot report? I see the repro and
+the crashlog you attached, but it would be good to have that pointer
+to the syzbot original too.
+
+Or did you just do this by running syzkaller yourself and there is no
+external report?
+
+                 Linus
