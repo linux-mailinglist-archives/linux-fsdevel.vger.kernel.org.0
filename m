@@ -2,144 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EC574E8BDE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Mar 2022 04:05:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8DEE4E8C40
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Mar 2022 04:42:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237445AbiC1CHD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 27 Mar 2022 22:07:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47434 "EHLO
+        id S237647AbiC1Coa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 27 Mar 2022 22:44:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230063AbiC1CHA (ORCPT
+        with ESMTP id S230198AbiC1Co2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 27 Mar 2022 22:07:00 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D086D3584B
-        for <linux-fsdevel@vger.kernel.org>; Sun, 27 Mar 2022 19:05:20 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: krisman)
-        with ESMTPSA id 0E0871F42F39
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1648433119;
-        bh=ZuYFeCaQsdCLMnheFQIhRwZM/6Dp8P5T0ofZ9ffnljU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OpKlwQbUsbiGz9srskJ/3nqOzIbZXlgHVztihj0ecgMDmeNf62bcnUSwIWus9YmDZ
-         To17IlqTy2bhlznE9VMfT0H+wpFrfh8f8116L5F+hLN9T7TSYHYJSOnijb+bh72GaH
-         l80SSkUdHf9TB+yQxW8m2dkjwaf1AaE0u4PoXcmMY9JLOszwwCyvEAQ0SYIhka5bwK
-         /cMdEdFTgmOSsuVR8XKJEeO+BQN2n8/98cYtP1E/qahVAwXFF7sfJ1v2ngf3tyW5kC
-         les9PY7NXk2BA4yGUzqD09dPkbuj2OVc0hbRpXGm9WeTQdmxu+XBsTrUvk87QGHu/O
-         +VHbSv40Q1Piw==
-From:   Gabriel Krisman Bertazi <krisman@collabora.com>
-To:     Hugh Dickins <hughd@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Amir Goldstein <amir73il@gmail.com>
-Cc:     Gabriel Krisman Bertazi <krisman@collabora.com>,
-        kernel@collabora.com, Khazhismel Kumykov <khazhy@google.com>,
-        Linux MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: [PATCH v2 3/3] shmem: Expose space and accounting error count
-Date:   Sun, 27 Mar 2022 22:04:43 -0400
-Message-Id: <20220328020443.820797-4-krisman@collabora.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220328020443.820797-1-krisman@collabora.com>
-References: <20220328020443.820797-1-krisman@collabora.com>
+        Sun, 27 Mar 2022 22:44:28 -0400
+Received: from out30-57.freemail.mail.aliyun.com (out30-57.freemail.mail.aliyun.com [115.124.30.57])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D81813FBC6;
+        Sun, 27 Mar 2022 19:42:48 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R281e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=19;SR=0;TI=SMTPD_---0V8KfwCN_1648435362;
+Received: from B-P7TQMD6M-0146.local(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0V8KfwCN_1648435362)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 28 Mar 2022 10:42:44 +0800
+Date:   Mon, 28 Mar 2022 10:42:42 +0800
+From:   Gao Xiang <hsiangkao@linux.alibaba.com>
+To:     Jeffle Xu <jefflexu@linux.alibaba.com>
+Cc:     dhowells@redhat.com, linux-cachefs@redhat.com, xiang@kernel.org,
+        chao@kernel.org, linux-erofs@lists.ozlabs.org,
+        torvalds@linux-foundation.org, gregkh@linuxfoundation.org,
+        willy@infradead.org, linux-fsdevel@vger.kernel.org,
+        joseph.qi@linux.alibaba.com, bo.liu@linux.alibaba.com,
+        tao.peng@linux.alibaba.com, gerry@linux.alibaba.com,
+        eguan@linux.alibaba.com, linux-kernel@vger.kernel.org,
+        luodaowen.backend@bytedance.com, tianzichen@kuaishou.com,
+        fannaihao@baidu.com
+Subject: Re: [PATCH v6 10/22] erofs: add mode checking helper
+Message-ID: <YkEgoqAKNTf45lJa@B-P7TQMD6M-0146.local>
+Mail-Followup-To: Jeffle Xu <jefflexu@linux.alibaba.com>,
+        dhowells@redhat.com, linux-cachefs@redhat.com, xiang@kernel.org,
+        chao@kernel.org, linux-erofs@lists.ozlabs.org,
+        torvalds@linux-foundation.org, gregkh@linuxfoundation.org,
+        willy@infradead.org, linux-fsdevel@vger.kernel.org,
+        joseph.qi@linux.alibaba.com, bo.liu@linux.alibaba.com,
+        tao.peng@linux.alibaba.com, gerry@linux.alibaba.com,
+        eguan@linux.alibaba.com, linux-kernel@vger.kernel.org,
+        luodaowen.backend@bytedance.com, tianzichen@kuaishou.com,
+        fannaihao@baidu.com
+References: <20220325122223.102958-1-jefflexu@linux.alibaba.com>
+ <20220325122223.102958-11-jefflexu@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20220325122223.102958-11-jefflexu@linux.alibaba.com>
+X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H4,
+        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Exposing these shmem counters through sysfs is particularly useful for
-container provisioning, to allow administrators to differentiate between
-insufficiently provisioned fs size vs. running out of memory.
+On Fri, Mar 25, 2022 at 08:22:11PM +0800, Jeffle Xu wrote:
+> Until then erofs is exactly blockdev based filesystem. In other using
+> scenarios (e.g. container image), erofs needs to run upon files.
+> 
+> This patch set is going to introduces a new nodev mode, in which erofs
+> could be mounted from a bootstrap blob file containing complete erofs
+> image.
+> 
+> Add a helper checking which mode erofs works in.
+> 
+> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
+> ---
+>  fs/erofs/internal.h | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
+> index e424293f47a2..1486e2573667 100644
+> --- a/fs/erofs/internal.h
+> +++ b/fs/erofs/internal.h
+> @@ -161,6 +161,11 @@ struct erofs_sb_info {
+>  #define set_opt(opt, option)	((opt)->mount_opt |= EROFS_MOUNT_##option)
+>  #define test_opt(opt, option)	((opt)->mount_opt & EROFS_MOUNT_##option)
+>  
+> +static inline bool erofs_is_nodev_mode(struct super_block *sb)
 
-Suggested-by: Amir Goldstein <amir73il@gmail.com>
-Suggested-by: Khazhy Kumykov <khazhy@google.com>
-Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
----
- Documentation/ABI/testing/sysfs-fs-tmpfs | 13 ++++++++++++
- mm/shmem.c                               | 25 ++++++++++++++++++++++++
- 2 files changed, 38 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-fs-tmpfs
+I've seen a lot of such
 
-diff --git a/Documentation/ABI/testing/sysfs-fs-tmpfs b/Documentation/ABI/testing/sysfs-fs-tmpfs
-new file mode 100644
-index 000000000000..d32b90949710
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-fs-tmpfs
-@@ -0,0 +1,13 @@
-+What:		/sys/fs/tmpfs/<disk>/acct_errors
-+Date:		March 2022
-+Contact:	"Gabriel Krisman Bertazi" <krisman@collabora.com>
-+Description:
-+		Track the number of IO errors caused by lack of memory to
-+		perform the allocation of a tmpfs block.
-+
-+What:		/sys/fs/tmpfs/<disk>/space_errors
-+Date:		March 2022
-+Contact:	"Gabriel Krisman Bertazi" <krisman@collabora.com>
-+Description:
-+		Track the number of IO errors caused by lack of space
-+		in the filesystem to perform the allocation of a tmpfs block.
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 665d417ba8a8..50d22449d99e 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -214,6 +214,7 @@ static inline bool shmem_inode_acct_block(struct inode *inode, long pages)
- 
- 	if (shmem_acct_block(info->flags, pages)) {
- 		sbinfo->acct_errors += 1;
-+		sysfs_notify(&sbinfo->s_kobj, NULL, "acct_errors");
- 		return false;
- 	}
- 
-@@ -228,6 +229,7 @@ static inline bool shmem_inode_acct_block(struct inode *inode, long pages)
- 
- unacct:
- 	sbinfo->space_errors += 1;
-+	sysfs_notify(&sbinfo->s_kobj, NULL, "space_errors");
- 	shmem_unacct_blocks(info->flags, pages);
- 	return false;
- }
-@@ -3586,10 +3588,33 @@ static int shmem_show_options(struct seq_file *seq, struct dentry *root)
- #endif /* CONFIG_TMPFS */
- 
- #if defined(CONFIG_TMPFS) && defined(CONFIG_SYSFS)
-+static ssize_t acct_errors_show(struct kobject *kobj,
-+				struct kobj_attribute *attr, char *page)
-+{
-+	struct shmem_sb_info *sbinfo =
-+		container_of(kobj, struct shmem_sb_info, s_kobj);
-+
-+	return sysfs_emit(page, "%lu\n", sbinfo->acct_errors);
-+}
-+
-+static ssize_t space_errors_show(struct kobject *kobj,
-+				struct kobj_attribute *attr, char *page)
-+{
-+	struct shmem_sb_info *sbinfo =
-+		container_of(kobj, struct shmem_sb_info, s_kobj);
-+
-+	return sysfs_emit(page, "%lu\n", sbinfo->space_errors);
-+}
-+
- #define TMPFS_SB_ATTR_RO(name)	\
- 	static struct kobj_attribute tmpfs_sb_attr_##name = __ATTR_RO(name)
- 
-+TMPFS_SB_ATTR_RO(acct_errors);
-+TMPFS_SB_ATTR_RO(space_errors);
-+
- static struct attribute *tmpfs_attrs[] = {
-+	&tmpfs_sb_attr_acct_errors.attr,
-+	&tmpfs_sb_attr_space_errors.attr,
- 	NULL
- };
- ATTRIBUTE_GROUPS(tmpfs);
--- 
-2.35.1
++		if (IS_ENABLED(CONFIG_EROFS_FS_ONDEMAND) &&
++		    erofs_is_nodev_mode(sb)) {
 
+usages in the followup patches, which makes me wonder if the configuration
+can be checked in the helper as well. Also maybe rename it as
+erofs_is_fscache_mode()?
+
+Thanks,
+Gao Xiang
+
+> +{
+> +	return !sb->s_bdev;
+> +}
+> +
+>  enum {
+>  	EROFS_ZIP_CACHE_DISABLED,
+>  	EROFS_ZIP_CACHE_READAHEAD,
+> -- 
+> 2.27.0
