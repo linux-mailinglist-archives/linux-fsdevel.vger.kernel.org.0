@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 21F5B4E93C2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Mar 2022 13:23:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DB774E93BE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Mar 2022 13:23:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241064AbiC1LYx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Mar 2022 07:24:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60176 "EHLO
+        id S241049AbiC1LYq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Mar 2022 07:24:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57340 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240763AbiC1LVm (ORCPT
+        with ESMTP id S241455AbiC1LXv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Mar 2022 07:21:42 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D4C85640D;
-        Mon, 28 Mar 2022 04:19:23 -0700 (PDT)
+        Mon, 28 Mar 2022 07:23:51 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95C995A09D;
+        Mon, 28 Mar 2022 04:20:57 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id A410F61147;
-        Mon, 28 Mar 2022 11:19:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FF4AC340EC;
-        Mon, 28 Mar 2022 11:19:21 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 4F34AB81061;
+        Mon, 28 Mar 2022 11:20:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FD78C34110;
+        Mon, 28 Mar 2022 11:20:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648466362;
-        bh=uKfwxnRdGV6bnGFbOE1aukn5+0ttKyN7SN8ugucYkHg=;
+        s=k20201202; t=1648466455;
+        bh=Y0U/1oukvFPpkPm6qQ6VpXiB5QKiZkyncQiMEoo+SMs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rmRect7lTI3Sl9agiX7kYZvzn9/jKunAU9OpxXcEPOWa21PwGm9TYdvWsprmUfMc1
-         ks5qTuSnxqqQ9hzYULRqtrczH4CYdNnJ/4n4/zUBGhIri8TKwwFQhxYNy6KTLoi53V
-         5CN/d2suhSyJZMmAMmod0D7iuKw8k/AXW9rwHPFi0fCjSwP5Lyp0GKchv9DVSHJJYg
-         VHLrAOtbayV1K+LXHEkk5jNxeMHvDJYHoZUvovjtH6QqrgfVVEJuhdOKvkfC4oqPq8
-         +4SJ1M9Voku+1I9WNSYhdcYk90iNBQ8dgD0dosxwKomkXjbXJWe5Adyxil0zmuq4w/
-         EHgUi6D1KVugA==
+        b=kqMurqdtlKikrGkUkgSlVqh9B3X/wbZQk6cSiqPlVoQj4wE3SUbEzq5/DE+vAmVVu
+         /8sBOUG5UGo9HmDjXVr98gnmjgoXY6trS7dJtd7EJwsfxYMullLoB90VSAXyT32fo4
+         jf2fHX5vU0F5CcHOr/QGxsU3qfkkB42ZEj96KnZMqanwrRO6T95krT6G85yJoDXs8P
+         U+bCcxTnXMquU/G+RVJXpDTL7m7TLRQ2A6al38/8DWt55PjM+bI2+QndPCxVFsrQhY
+         24AVmfM4NAu9jo7dEjhXyoQTz3Fx+p1FdfAKiWFwfxBP8TA8+KxIH9EvwWq218mAjC
+         Ka+uFT328HdKg==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Akira Kawata <akirakawata1@gmail.com>,
@@ -39,12 +39,12 @@ Cc:     Akira Kawata <akirakawata1@gmail.com>,
         Kees Cook <keescook@chromium.org>,
         Sasha Levin <sashal@kernel.org>, viro@zeniv.linux.org.uk,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: [PATCH AUTOSEL 5.17 27/43] fs/binfmt_elf: Fix AT_PHDR for unusual ELF files
-Date:   Mon, 28 Mar 2022 07:18:11 -0400
-Message-Id: <20220328111828.1554086-27-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.16 22/35] fs/binfmt_elf: Fix AT_PHDR for unusual ELF files
+Date:   Mon, 28 Mar 2022 07:19:58 -0400
+Message-Id: <20220328112011.1555169-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220328111828.1554086-1-sashal@kernel.org>
-References: <20220328111828.1554086-1-sashal@kernel.org>
+In-Reply-To: <20220328112011.1555169-1-sashal@kernel.org>
+References: <20220328112011.1555169-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -101,7 +101,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 18 insertions(+), 6 deletions(-)
 
 diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index d61543fbd652..af0965c10619 100644
+index d19762dc90fe..c4de845f86c8 100644
 --- a/fs/binfmt_elf.c
 +++ b/fs/binfmt_elf.c
 @@ -170,8 +170,8 @@ static int padzero(unsigned long elf_bss)
