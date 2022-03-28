@@ -2,111 +2,197 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A96944E921F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Mar 2022 11:58:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ACE044E92D7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Mar 2022 12:55:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240107AbiC1J7t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Mar 2022 05:59:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44540 "EHLO
+        id S240394AbiC1K50 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Mar 2022 06:57:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240108AbiC1J7s (ORCPT
+        with ESMTP id S240386AbiC1K50 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Mar 2022 05:59:48 -0400
-Received: from mail1.bemta34.messagelabs.com (mail1.bemta34.messagelabs.com [195.245.231.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EB77B3F;
-        Mon, 28 Mar 2022 02:58:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
-        s=170520fj; t=1648461485; i=@fujitsu.com;
-        bh=tIPy4adwYZIuoOjNmuljqHfyDRJc1g60N4qT6SaNBec=;
-        h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type;
-        b=Y1s6vN3gC6Qf+fIMHENMqG6brvL6y8AjKhk1PnQKp9U1C70QCIV7ovdfLC7FTSIyC
-         4dXejIpnIKnfzlVwgDd/GfCiIl8PfkiuIoNFxxRiRP34sXKfkC081h8qAUR5NyISZN
-         BfTeNc1tAa70NPfYPFXNwiSDmP7BQjWJToTXZLogyFzxPE5OUWaJKrqCxxt3E68sOK
-         o7aM3qE1potG3wX7/XOwMldfDGTxWDIqvJa70AOswMjMxeaZpckr4bOZ23uYJOVnYG
-         3rLIviJcSNpVYLWsujZhIF4N1CDsZd979foP8gEUnYwdNTs6q+UNYJngRsEwndwtH8
-         RnkRxjYMLZW7g==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrMIsWRWlGSWpSXmKPExsViZ8MxSXdtm2O
-  SwdE2eYsPNycxWWw5do/R4ueyVewWe/aeZLE4//c4qwOrx6lFEh6bVnWyeXzeJOex6clbpgCW
-  KNbMvKT8igTWjNOrvjMV9LJVdCzxamDsZe1i5OIQEtjCKPHqxlEmCGcBk8TXKQvZIJw9jBJPO
-  2aydzFycrAJaEo861zADGKLCDhKvGifwQJiMwsUSNw9M5cVxBYWCJZ4cWw5WA2LgKrE0/XtQI
-  M4OHgFPCQmdhaChCUEFCSmPHwPVsIrIChxcuYTqDESEgdfvGCGqFGUuNTxjRHCrpCYNauNCcJ
-  Wk7h6bhPzBEb+WUjaZyFpX8DItIrROqkoMz2jJDcxM0fX0MBA19DQVNfYXNfQzEgvsUo3US+1
-  VLc8tbhEF8gtL9ZLLS7WK67MTc5J0ctLLdnECAzrlGLVRTsY96/6qXeIUZKDSUmU1yjTMUmIL
-  yk/pTIjsTgjvqg0J7X4EKMMB4eSBO+tZqCcYFFqempFWmYOMMZg0hIcPEoivKZNQGne4oLE3O
-  LMdIjUKUZFKXHehlaghABIIqM0D64NFteXGGWlhHkZGRgYhHgKUotyM0tQ5V8xinMwKgnzurQ
-  ATeHJzCuBm/4KaDET0OK172xBFpckIqSkGpgWhOoEHDH826fyYPFLqXV3V6X/L9ws8b7my9FI
-  v78VjX67sjfm52pc4hRaumXyCaVlZ1Uv1+/6cqOZS/Xv5X3mXA4zngo6W6o0TfrA6PEgeU3A4
-  Q8O9pKWTVzx7a7RbbJ6+0x3W36bIdDCMO+iSGii4+XQnXHl8pvl+3xmqk7btPQpe9vZWTd+Kd
-  w5xMYR3TT9K/dum9SnXLfTftc/l8kwS+I7dULpHSPbpzszLZds1ixRFYqIT5Xhuae6stav68O
-  ax6uiW/lnZv3sXbytvTtJd6WvjlNJZ9qBS3EPc2Nbdy2dNlHq+S3Vjbv2pXfXbj40aeMDuQeJ
-  X8JO/Lp5mSNr0671b+xvpfw6svRh68wqJZbijERDLeai4kQAHBxUwGYDAAA=
-X-Env-Sender: xuyang2018.jy@fujitsu.com
-X-Msg-Ref: server-19.tower-565.messagelabs.com!1648461485!185071!1
-X-Originating-IP: [62.60.8.146]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.85.5; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 26699 invoked from network); 28 Mar 2022 09:58:05 -0000
-Received: from unknown (HELO n03ukasimr02.n03.fujitsu.local) (62.60.8.146)
-  by server-19.tower-565.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 28 Mar 2022 09:58:05 -0000
-Received: from n03ukasimr02.n03.fujitsu.local (localhost [127.0.0.1])
-        by n03ukasimr02.n03.fujitsu.local (Postfix) with ESMTP id 19A2E100440;
-        Mon, 28 Mar 2022 10:58:05 +0100 (BST)
-Received: from R01UKEXCASM126.r01.fujitsu.local (unknown [10.183.43.178])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by n03ukasimr02.n03.fujitsu.local (Postfix) with ESMTPS id 0CDDD100331;
-        Mon, 28 Mar 2022 10:58:05 +0100 (BST)
-Received: from localhost.localdomain (10.167.220.84) by
- R01UKEXCASM126.r01.fujitsu.local (10.183.43.178) with Microsoft SMTP Server
- (TLS) id 15.0.1497.32; Mon, 28 Mar 2022 10:57:52 +0100
-From:   Yang Xu <xuyang2018.jy@fujitsu.com>
-To:     <linux-fsdevel@vger.kernel.org>, <ceph-devel@vger.kernel.org>
-CC:     <viro@zeniv.linux.org.uk>, <david@fromorbit.com>,
-        <jlayton@kernel.org>, Yang Xu <xuyang2018.jy@fujitsu.com>
-Subject: [PATCH v1 3/3] ceph: Remove S_ISGID clear code in ceph_finish_async_create
-Date:   Mon, 28 Mar 2022 17:58:29 +0800
-Message-ID: <1648461509-2330-1-git-send-email-xuyang2018.jy@fujitsu.com>
-X-Mailer: git-send-email 1.8.3.1
+        Mon, 28 Mar 2022 06:57:26 -0400
+Received: from out30-57.freemail.mail.aliyun.com (out30-57.freemail.mail.aliyun.com [115.124.30.57])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF01C24F1C;
+        Mon, 28 Mar 2022 03:55:44 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=19;SR=0;TI=SMTPD_---0V8R4iF-_1648464938;
+Received: from B-P7TQMD6M-0146.local(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0V8R4iF-_1648464938)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 28 Mar 2022 18:55:40 +0800
+Date:   Mon, 28 Mar 2022 18:55:38 +0800
+From:   Gao Xiang <hsiangkao@linux.alibaba.com>
+To:     Jeffle Xu <jefflexu@linux.alibaba.com>
+Cc:     dhowells@redhat.com, linux-cachefs@redhat.com, xiang@kernel.org,
+        chao@kernel.org, linux-erofs@lists.ozlabs.org,
+        torvalds@linux-foundation.org, gregkh@linuxfoundation.org,
+        willy@infradead.org, linux-fsdevel@vger.kernel.org,
+        joseph.qi@linux.alibaba.com, bo.liu@linux.alibaba.com,
+        tao.peng@linux.alibaba.com, gerry@linux.alibaba.com,
+        eguan@linux.alibaba.com, linux-kernel@vger.kernel.org,
+        luodaowen.backend@bytedance.com, tianzichen@kuaishou.com,
+        fannaihao@baidu.com
+Subject: Re: [PATCH v6 21/22] erofs: implement fscache-based data readahead
+Message-ID: <YkGUKlCstdl9TnY+@B-P7TQMD6M-0146.local>
+Mail-Followup-To: Jeffle Xu <jefflexu@linux.alibaba.com>,
+        dhowells@redhat.com, linux-cachefs@redhat.com, xiang@kernel.org,
+        chao@kernel.org, linux-erofs@lists.ozlabs.org,
+        torvalds@linux-foundation.org, gregkh@linuxfoundation.org,
+        willy@infradead.org, linux-fsdevel@vger.kernel.org,
+        joseph.qi@linux.alibaba.com, bo.liu@linux.alibaba.com,
+        tao.peng@linux.alibaba.com, gerry@linux.alibaba.com,
+        eguan@linux.alibaba.com, linux-kernel@vger.kernel.org,
+        luodaowen.backend@bytedance.com, tianzichen@kuaishou.com,
+        fannaihao@baidu.com
+References: <20220325122223.102958-1-jefflexu@linux.alibaba.com>
+ <20220325122223.102958-22-jefflexu@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.167.220.84]
-X-ClientProxiedBy: G08CNEXCHPEKD07.g08.fujitsu.local (10.167.33.80) To
- R01UKEXCASM126.r01.fujitsu.local (10.183.43.178)
-X-Virus-Scanned: ClamAV using ClamSMTP
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20220325122223.102958-22-jefflexu@linux.alibaba.com>
+X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H4,
+        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Since vfs has stripped S_ISGID, we don't need this code any more.
+On Fri, Mar 25, 2022 at 08:22:22PM +0800, Jeffle Xu wrote:
+> Implements fscache-based data readahead. Also registers an individual
+> bdi for each erofs instance to enable readahead.
+> 
+> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
+> ---
+>  fs/erofs/fscache.c | 114 +++++++++++++++++++++++++++++++++++++++++++++
+>  fs/erofs/super.c   |   4 ++
+>  2 files changed, 118 insertions(+)
+> 
+> diff --git a/fs/erofs/fscache.c b/fs/erofs/fscache.c
+> index cbb39657615e..589d1e7c2b1b 100644
+> --- a/fs/erofs/fscache.c
+> +++ b/fs/erofs/fscache.c
+> @@ -191,12 +191,126 @@ static int erofs_fscache_readpage(struct file *file, struct page *page)
+>  	return ret;
+>  }
+>  
+> +static inline size_t erofs_fscache_calc_len(struct erofs_map_blocks *map,
+> +					    size_t len, size_t done)
+> +{
+> +	/*
+> +	 * 1) For CHUNK_BASED layout, the output m_la is rounded down to the
+> +	 * nearest chunk boundary, and the output m_llen actually starts from
+> +	 * the start of the containing chunk.
+> +	 * 2) For other cases, the output m_la is equal to o_la.
+> +	 */
+> +	size_t length = map->m_llen - (map->o_la - map->m_la);
+> +
+> +	return min_t(size_t, length, len - done);
 
-Signed-off-by: Yang Xu <xuyang2018.jy@fujitsu.com>
----
- fs/ceph/file.c | 4 ----
- 1 file changed, 4 deletions(-)
+This helper can be folded too.
 
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index bbed3224ad68..f69dafabb65b 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -620,10 +620,6 @@ static int ceph_finish_async_create(struct inode *dir, struct dentry *dentry,
- 		/* Directories always inherit the setgid bit. */
- 		if (S_ISDIR(mode))
- 			mode |= S_ISGID;
--		else if ((mode & (S_ISGID | S_IXGRP)) == (S_ISGID | S_IXGRP) &&
--			 !in_group_p(dir->i_gid) &&
--			 !capable_wrt_inode_uidgid(&init_user_ns, dir, CAP_FSETID))
--			mode &= ~S_ISGID;
- 	} else {
- 		in.gid = cpu_to_le32(from_kgid(&init_user_ns, current_fsgid()));
- 	}
--- 
-2.27.0
+> +}
+> +
+> +static inline void erofs_fscache_unlock_folios(struct readahead_control *rac,
+> +					       size_t len)
+> +{
+> +	while (len) {
+> +		struct folio *folio = readahead_folio(rac);
+> +
+> +		len -= folio_size(folio);
+> +		folio_mark_uptodate(folio);
+> +		folio_unlock(folio);
+> +	}
+> +}
+> +
+> +static void erofs_fscache_readahead(struct readahead_control *rac)
+> +{
+> +	struct inode *inode = rac->mapping->host;
+> +	struct erofs_inode *vi = EROFS_I(inode);
+> +	struct super_block *sb = inode->i_sb;
+> +	size_t len, done = 0;
+> +	loff_t start;
+> +	int ret;
+> +
+> +	if (erofs_inode_is_data_compressed(vi->datalayout)) {
+> +		erofs_info(sb, "compressed layout not supported yet");
+> +		return;
+> +	}
 
+Redundant check.
+
+> +
+> +	if (!readahead_count(rac))
+> +		return;
+> +
+> +	start = readahead_pos(rac);
+> +	len = readahead_length(rac);
+> +
+> +	do {
+> +		struct erofs_map_blocks map;
+> +
+> +		map.m_la = map.o_la = start + done;
+> +
+> +		ret = erofs_map_blocks(inode, &map, EROFS_GET_BLOCKS_RAW);
+> +		if (ret)
+> +			return;
+> +
+> +		/* Read-ahead Hole
+> +		 * Two cases will hit this:
+> +		 * 1) EOF. Imposibble in readahead routine;
+> +		 * 2) hole. Only CHUNK_BASED layout supports hole.
+> +		 */
+
+/*
+ *
+ */
+
+and typo `Imposibble'. Also I think this comment may not be useful
+though.
+
+> +		if (!(map.m_flags & EROFS_MAP_MAPPED)) {
+> +			struct iov_iter iter;
+> +			loff_t offset = start + done;
+> +			size_t count = erofs_fscache_calc_len(&map, len, done);
+> +
+> +			iov_iter_xarray(&iter, READ, &rac->mapping->i_pages, offset, count);
+> +			iov_iter_zero(count, &iter);
+> +
+> +			erofs_fscache_unlock_folios(rac, count);
+> +			ret = count;
+> +			continue;
+> +		}
+> +
+> +		ret = erofs_fscache_get_map(&map, sb);
+> +		if (ret)
+> +			return;
+> +
+> +		/* Read-ahead Inline */
+> +		if (map.m_flags & EROFS_MAP_META) {
+> +			struct folio *folio = readahead_folio(rac);
+> +
+> +			ret = erofs_fscache_readpage_inline(folio, &map);
+> +			if (!ret) {
+> +				folio_mark_uptodate(folio);
+> +				ret = folio_size(folio);
+> +			}
+> +
+> +			folio_unlock(folio);
+> +			continue;
+> +		}
+> +
+> +		/* Read-ahead No-inline */
+> +		if (vi->datalayout == EROFS_INODE_FLAT_PLAIN ||
+> +		    vi->datalayout == EROFS_INODE_FLAT_INLINE ||
+> +		    vi->datalayout == EROFS_INODE_CHUNK_BASED) {
+> +			struct fscache_cookie *cookie = map.m_fscache->cookie;
+> +			loff_t offset = start + done;
+> +			size_t count = erofs_fscache_calc_len(&map, len, done);
+
+You could promote `offset' and `count' to the outer block. So another
+`offset' and `count' in !EROFS_MAP_MAPPED can be dropped then.
+
+Thanks,
+Gao Xiang
