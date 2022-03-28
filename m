@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D8324E8BDD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Mar 2022 04:05:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EC574E8BDE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Mar 2022 04:05:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237457AbiC1CHA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 27 Mar 2022 22:07:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47098 "EHLO
+        id S237445AbiC1CHD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 27 Mar 2022 22:07:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237442AbiC1CGz (ORCPT
+        with ESMTP id S230063AbiC1CHA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 27 Mar 2022 22:06:55 -0400
+        Sun, 27 Mar 2022 22:07:00 -0400
 Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E566EDF79
-        for <linux-fsdevel@vger.kernel.org>; Sun, 27 Mar 2022 19:05:15 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D086D3584B
+        for <linux-fsdevel@vger.kernel.org>; Sun, 27 Mar 2022 19:05:20 -0700 (PDT)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: krisman)
-        with ESMTPSA id 233901F42F39
+        with ESMTPSA id 0E0871F42F39
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1648433114;
-        bh=Q62XHry7RU5EKa0FvuVG2Xq8LLMlLOBVxsPhfZeA3sU=;
+        s=mail; t=1648433119;
+        bh=ZuYFeCaQsdCLMnheFQIhRwZM/6Dp8P5T0ofZ9ffnljU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jW2zzB7ORocN8C1ijmbQkuvJsc0EU8z+Auxskdap3qLbjlTXqBNU0PRQet2cKt1ey
-         fo8BQ5aRXRgKgoeWi0QUdm3EWIv1lz+EGKrirvMyU+bKIepMU3PSFWuk7ElVtIP+qC
-         fr+AubKu+8d45EzLXtRrJfTE7xiYZBqY4iebxXo9/vaLaPj1gKseh10P8OkBhTiEZN
-         e9sq8itFEqIUMvTTDdBklVlEhp4RE/W8CWHtEAVslAAtceorXzlu3F8MNvH0J/gVxr
-         RdkVmPrxZspVCs3Q5/7YwTLxLdpAr0aXdS8agezk8TJQL9MsHNc2MIDJ7F554q/Ckl
-         QwSFZC6+0/+gw==
+        b=OpKlwQbUsbiGz9srskJ/3nqOzIbZXlgHVztihj0ecgMDmeNf62bcnUSwIWus9YmDZ
+         To17IlqTy2bhlznE9VMfT0H+wpFrfh8f8116L5F+hLN9T7TSYHYJSOnijb+bh72GaH
+         l80SSkUdHf9TB+yQxW8m2dkjwaf1AaE0u4PoXcmMY9JLOszwwCyvEAQ0SYIhka5bwK
+         /cMdEdFTgmOSsuVR8XKJEeO+BQN2n8/98cYtP1E/qahVAwXFF7sfJ1v2ngf3tyW5kC
+         les9PY7NXk2BA4yGUzqD09dPkbuj2OVc0hbRpXGm9WeTQdmxu+XBsTrUvk87QGHu/O
+         +VHbSv40Q1Piw==
 From:   Gabriel Krisman Bertazi <krisman@collabora.com>
 To:     Hugh Dickins <hughd@google.com>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -36,9 +36,9 @@ Cc:     Gabriel Krisman Bertazi <krisman@collabora.com>,
         kernel@collabora.com, Khazhismel Kumykov <khazhy@google.com>,
         Linux MM <linux-mm@kvack.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: [PATCH v2 2/3] shmem: Introduce /sys/fs/tmpfs support
-Date:   Sun, 27 Mar 2022 22:04:42 -0400
-Message-Id: <20220328020443.820797-3-krisman@collabora.com>
+Subject: [PATCH v2 3/3] shmem: Expose space and accounting error count
+Date:   Sun, 27 Mar 2022 22:04:43 -0400
+Message-Id: <20220328020443.820797-4-krisman@collabora.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220328020443.820797-1-krisman@collabora.com>
 References: <20220328020443.820797-1-krisman@collabora.com>
@@ -54,161 +54,92 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In order to expose tmpfs statistics on sysfs, add the boilerplate code
-to create the /sys/fs/tmpfs structure.  As suggested on a previous
-review, this uses the minor as the volume directory in /sys/fs/.
+Exposing these shmem counters through sysfs is particularly useful for
+container provisioning, to allow administrators to differentiate between
+insufficiently provisioned fs size vs. running out of memory.
 
-This takes care of not exposing SB_NOUSER mounts.  I don't think we have
-a usecase for showing them and, since they don't appear elsewhere, they
-might be confusing to users.
-
+Suggested-by: Amir Goldstein <amir73il@gmail.com>
+Suggested-by: Khazhy Kumykov <khazhy@google.com>
 Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-
 ---
-Changes since v1:
-  - Use minor instead of fsid for directory in sysfs. (Amir)
----
- include/linux/shmem_fs.h |  4 +++
- mm/shmem.c               | 72 +++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 75 insertions(+), 1 deletion(-)
+ Documentation/ABI/testing/sysfs-fs-tmpfs | 13 ++++++++++++
+ mm/shmem.c                               | 25 ++++++++++++++++++++++++
+ 2 files changed, 38 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-fs-tmpfs
 
-diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
-index 1a7cd9ea9107..c27ecf0e1b3b 100644
---- a/include/linux/shmem_fs.h
-+++ b/include/linux/shmem_fs.h
-@@ -47,6 +47,10 @@ struct shmem_sb_info {
- 
- 	unsigned long acct_errors;
- 	unsigned long space_errors;
+diff --git a/Documentation/ABI/testing/sysfs-fs-tmpfs b/Documentation/ABI/testing/sysfs-fs-tmpfs
+new file mode 100644
+index 000000000000..d32b90949710
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-fs-tmpfs
+@@ -0,0 +1,13 @@
++What:		/sys/fs/tmpfs/<disk>/acct_errors
++Date:		March 2022
++Contact:	"Gabriel Krisman Bertazi" <krisman@collabora.com>
++Description:
++		Track the number of IO errors caused by lack of memory to
++		perform the allocation of a tmpfs block.
 +
-+	/* sysfs */
-+	struct kobject s_kobj;		/* /sys/fs/tmpfs/<uuid> */
-+	struct completion s_kobj_unregister;
- };
- 
- static inline struct shmem_inode_info *SHMEM_I(struct inode *inode)
++What:		/sys/fs/tmpfs/<disk>/space_errors
++Date:		March 2022
++Contact:	"Gabriel Krisman Bertazi" <krisman@collabora.com>
++Description:
++		Track the number of IO errors caused by lack of space
++		in the filesystem to perform the allocation of a tmpfs block.
 diff --git a/mm/shmem.c b/mm/shmem.c
-index c350fa0a0fff..665d417ba8a8 100644
+index 665d417ba8a8..50d22449d99e 100644
 --- a/mm/shmem.c
 +++ b/mm/shmem.c
-@@ -250,6 +250,7 @@ static const struct inode_operations shmem_dir_inode_operations;
- static const struct inode_operations shmem_special_inode_operations;
- static const struct vm_operations_struct shmem_vm_ops;
- static struct file_system_type shmem_fs_type;
-+static struct kobject *shmem_root;
+@@ -214,6 +214,7 @@ static inline bool shmem_inode_acct_block(struct inode *inode, long pages)
  
- bool vma_is_shmem(struct vm_area_struct *vma)
- {
-@@ -3584,6 +3585,56 @@ static int shmem_show_options(struct seq_file *seq, struct dentry *root)
+ 	if (shmem_acct_block(info->flags, pages)) {
+ 		sbinfo->acct_errors += 1;
++		sysfs_notify(&sbinfo->s_kobj, NULL, "acct_errors");
+ 		return false;
+ 	}
  
+@@ -228,6 +229,7 @@ static inline bool shmem_inode_acct_block(struct inode *inode, long pages)
+ 
+ unacct:
+ 	sbinfo->space_errors += 1;
++	sysfs_notify(&sbinfo->s_kobj, NULL, "space_errors");
+ 	shmem_unacct_blocks(info->flags, pages);
+ 	return false;
+ }
+@@ -3586,10 +3588,33 @@ static int shmem_show_options(struct seq_file *seq, struct dentry *root)
  #endif /* CONFIG_TMPFS */
  
-+#if defined(CONFIG_TMPFS) && defined(CONFIG_SYSFS)
-+#define TMPFS_SB_ATTR_RO(name)	\
-+	static struct kobj_attribute tmpfs_sb_attr_##name = __ATTR_RO(name)
-+
-+static struct attribute *tmpfs_attrs[] = {
-+	NULL
-+};
-+ATTRIBUTE_GROUPS(tmpfs);
-+
-+static void tmpfs_sb_release(struct kobject *kobj)
+ #if defined(CONFIG_TMPFS) && defined(CONFIG_SYSFS)
++static ssize_t acct_errors_show(struct kobject *kobj,
++				struct kobj_attribute *attr, char *page)
 +{
 +	struct shmem_sb_info *sbinfo =
 +		container_of(kobj, struct shmem_sb_info, s_kobj);
 +
-+	complete(&sbinfo->s_kobj_unregister);
++	return sysfs_emit(page, "%lu\n", sbinfo->acct_errors);
 +}
 +
-+static struct kobj_type tmpfs_sb_ktype = {
-+	.default_groups = tmpfs_groups,
-+	.sysfs_ops	= &kobj_sysfs_ops,
-+	.release	= tmpfs_sb_release,
-+};
-+
-+static void shmem_unregister_sysfs(struct super_block *sb)
++static ssize_t space_errors_show(struct kobject *kobj,
++				struct kobj_attribute *attr, char *page)
 +{
-+	struct shmem_sb_info *sbinfo = SHMEM_SB(sb);
++	struct shmem_sb_info *sbinfo =
++		container_of(kobj, struct shmem_sb_info, s_kobj);
 +
-+	kobject_del(&sbinfo->s_kobj);
-+	kobject_put(&sbinfo->s_kobj);
-+	wait_for_completion(&sbinfo->s_kobj_unregister);
++	return sysfs_emit(page, "%lu\n", sbinfo->space_errors);
 +}
 +
-+static int shmem_register_sysfs(struct super_block *sb)
-+{
-+	int err;
-+	struct shmem_sb_info *sbinfo = SHMEM_SB(sb);
-+
-+	init_completion(&sbinfo->s_kobj_unregister);
-+	err = kobject_init_and_add(&sbinfo->s_kobj, &tmpfs_sb_ktype,
-+				   shmem_root, "%d", MINOR(sb->s_dev));
-+	if (err) {
-+		kobject_put(&sbinfo->s_kobj);
-+		wait_for_completion(&sbinfo->s_kobj_unregister);
-+		return err;
-+	}
-+
-+	return 0;
-+}
-+#endif /* CONFIG_TMPFS && CONFIG_SYSFS */
-+
- static void shmem_put_super(struct super_block *sb)
- {
- 	struct shmem_sb_info *sbinfo = SHMEM_SB(sb);
-@@ -3591,6 +3642,12 @@ static void shmem_put_super(struct super_block *sb)
- 	free_percpu(sbinfo->ino_batch);
- 	percpu_counter_destroy(&sbinfo->used_blocks);
- 	mpol_put(sbinfo->mpol);
-+
-+#if IS_ENABLED(CONFIG_TMPFS) && IS_ENABLED(CONFIG_SYSFS)
-+	if (!(sb->s_flags & SB_NOUSER))
-+		shmem_unregister_sysfs(sb);
-+#endif
-+
- 	kfree(sbinfo);
- 	sb->s_fs_info = NULL;
- }
-@@ -3673,6 +3730,13 @@ static int shmem_fill_super(struct super_block *sb, struct fs_context *fc)
- 	sb->s_root = d_make_root(inode);
- 	if (!sb->s_root)
- 		goto failed;
-+
-+#if IS_ENABLED(CONFIG_TMPFS) && IS_ENABLED(CONFIG_SYSFS)
-+	if (!(sb->s_flags & SB_NOUSER))
-+		if (shmem_register_sysfs(sb))
-+			goto failed;
-+#endif
-+
- 	return 0;
+ #define TMPFS_SB_ATTR_RO(name)	\
+ 	static struct kobj_attribute tmpfs_sb_attr_##name = __ATTR_RO(name)
  
- failed:
-@@ -3889,11 +3953,15 @@ int __init shmem_init(void)
- 		goto out2;
- 	}
- 
-+	shmem_root = kobject_create_and_add("tmpfs", fs_kobj);
-+	if (!shmem_root)
-+		goto out1;
++TMPFS_SB_ATTR_RO(acct_errors);
++TMPFS_SB_ATTR_RO(space_errors);
 +
- 	shm_mnt = kern_mount(&shmem_fs_type);
- 	if (IS_ERR(shm_mnt)) {
- 		error = PTR_ERR(shm_mnt);
- 		pr_err("Could not kern_mount tmpfs\n");
--		goto out1;
-+		goto put_kobj;
- 	}
- 
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-@@ -3904,6 +3972,8 @@ int __init shmem_init(void)
- #endif
- 	return 0;
- 
-+put_kobj:
-+	kobject_put(shmem_root);
- out1:
- 	unregister_filesystem(&shmem_fs_type);
- out2:
+ static struct attribute *tmpfs_attrs[] = {
++	&tmpfs_sb_attr_acct_errors.attr,
++	&tmpfs_sb_attr_space_errors.attr,
+ 	NULL
+ };
+ ATTRIBUTE_GROUPS(tmpfs);
 -- 
 2.35.1
 
