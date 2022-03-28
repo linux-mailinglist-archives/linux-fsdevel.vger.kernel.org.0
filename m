@@ -2,246 +2,183 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 04E444E9E71
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Mar 2022 19:57:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F1D44E9E92
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Mar 2022 20:07:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240204AbiC1R5q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Mar 2022 13:57:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45592 "EHLO
+        id S245339AbiC1SEB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Mar 2022 14:04:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245011AbiC1R4y (ORCPT
+        with ESMTP id S244902AbiC1SCw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Mar 2022 13:56:54 -0400
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0441224594;
-        Mon, 28 Mar 2022 10:55:07 -0700 (PDT)
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.226])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4KS0dt6lWgz67sj9;
-        Tue, 29 Mar 2022 01:52:34 +0800 (CST)
-Received: from roberto-ThinkStation-P620.huawei.com (10.204.63.22) by
- fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Mon, 28 Mar 2022 19:55:04 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     <corbet@lwn.net>, <viro@zeniv.linux.org.uk>, <ast@kernel.org>,
-        <daniel@iogearbox.net>, <andrii@kernel.org>, <kpsingh@kernel.org>,
-        <shuah@kernel.org>, <mcoquelin.stm32@gmail.com>,
-        <alexandre.torgue@foss.st.com>, <zohar@linux.ibm.com>
-CC:     <linux-doc@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <bpf@vger.kernel.org>,
-        <linux-kselftest@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH 18/18] bpf-preload/selftests: Preload a test eBPF program and check pinned objects
-Date:   Mon, 28 Mar 2022 19:50:33 +0200
-Message-ID: <20220328175033.2437312-19-roberto.sassu@huawei.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220328175033.2437312-1-roberto.sassu@huawei.com>
-References: <20220328175033.2437312-1-roberto.sassu@huawei.com>
+        Mon, 28 Mar 2022 14:02:52 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0ACD04839F
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Mar 2022 11:01:06 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id w21so16958123wra.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Mar 2022 11:01:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=ytrSkwXUDSFcv9NwzDcZHJvhwX8Ip28tSIzF/72ZJ1Q=;
+        b=VcyTOLVPq+V1OSY1Zl84llZUOW1+DiM07S87IWjY6+20V2jBdQ1vm+S2GV9qIJPtqv
+         pLK4CJ9etgGbTHFOsHk97o/HxvnmIVI4mMk+EGHbRX6CJrIFhyvnSC6Rfimd+X/hl2uA
+         a6RBgH4fTtSovkIx/LH5QsjPzVnFtvX03n05rdHb2Niy7y93hqADUsfUaEgwWTWY0DGl
+         GeMqskNlS97LRMAsvI02JTysyyghYlfjb9mf6gG4HlbTYhYnGIBhn3XdBYfTYXBaOwsF
+         95L6ejUjlhIht89eN92IqbUGGnk20Xbj3EaFlV+lYxgRhw/js5pXwNxfvBz/LaSuxyZ9
+         fpdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ytrSkwXUDSFcv9NwzDcZHJvhwX8Ip28tSIzF/72ZJ1Q=;
+        b=FdxSvxjmC4cYw5PxS1svxcBKNQ21J2MZTMCHbZDnO2gaQSw6NepZaoRfSMrb9tsXC0
+         DaxFTwVrn0h2zMiL2GQ+q2piB9WY9jJ2HZd6CxNu8XL7cUduSpvwN9HyYLAVSGYAC6vw
+         V8HzDkJVTez79QpKO03jedAIhPUHBq2QqjLS5jz2BPEA20vVhReLUsm5rzumzB0mxoyW
+         rmkjKhdoC4BX/6eAdUPX6X6SuFUz1q9T+T+FL8341QrvVoN+9/VfuvOZ96YAx/JZdAlT
+         vP2OD4FbHEM8PUfehACqiYJC4rSKr4sexuIAtYmoXUu5x1+7om4V8JgmyxUzdKeobVCs
+         8bvg==
+X-Gm-Message-State: AOAM533ugSsamldd/rw/C5cA3U+7YXeFo8qGa/9Hw86rH7NrsyJKPBYK
+        02yeYj80zaHVH+Atge8loPfIkA==
+X-Google-Smtp-Source: ABdhPJz/DFJ+XVXhJNrPMlWXh7xu5l3qH4Q/QymhLpFp1U0q32kHVhkRByS9xkteULaLyJt8VbhF/w==
+X-Received: by 2002:adf:fac8:0:b0:203:fb08:ff7 with SMTP id a8-20020adffac8000000b00203fb080ff7mr24674238wrs.648.1648490463028;
+        Mon, 28 Mar 2022 11:01:03 -0700 (PDT)
+Received: from google.com ([2a00:79e0:d:210:2cfc:d300:5bbc:f8a0])
+        by smtp.gmail.com with ESMTPSA id bi20-20020a05600c3d9400b0038cfe80eeddsm142468wmb.29.2022.03.28.11.01.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Mar 2022 11:01:02 -0700 (PDT)
+Date:   Mon, 28 Mar 2022 19:00:58 +0100
+From:   Quentin Perret <qperret@google.com>
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, maz@kernel.org,
+        will@kernel.org
+Subject: Re: [PATCH v5 00/13] KVM: mm: fd-based approach for supporting KVM
+ guest private memory
+Message-ID: <YkH32nx+YsJuUbmZ@google.com>
+References: <20220310140911.50924-1-chao.p.peng@linux.intel.com>
+ <YjyS6A0o4JASQK+B@google.com>
+ <YkHspg+YzOsbUaCf@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.204.63.22]
-X-ClientProxiedBy: lhreml754-chm.china.huawei.com (10.201.108.204) To
- fraeml714-chm.china.huawei.com (10.206.15.33)
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YkHspg+YzOsbUaCf@google.com>
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,ENV_AND_HDR_SPF_MATCH,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Introduce the 'preload_methods' test, which loads the new kernel module
-bpf_testmod_preload.ko (with the light skeleton from
-gen_preload_methods.c), mounts a new instance of the bpf filesystem, and
-checks if the pinned objects exist.
+Hi Sean,
 
-The test requires to include 'gen_preload_methods_lskel' among the list of
-eBPF programs to preload.
+Thanks for the reply, this helps a lot.
 
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- tools/testing/selftests/bpf/Makefile          | 17 ++++-
- .../bpf/bpf_testmod_preload/.gitignore        |  7 ++
- .../bpf/bpf_testmod_preload/Makefile          | 20 ++++++
- .../bpf/prog_tests/test_preload_methods.c     | 69 +++++++++++++++++++
- 4 files changed, 110 insertions(+), 3 deletions(-)
- create mode 100644 tools/testing/selftests/bpf/bpf_testmod_preload/.gitignore
- create mode 100644 tools/testing/selftests/bpf/bpf_testmod_preload/Makefile
- create mode 100644 tools/testing/selftests/bpf/prog_tests/test_preload_methods.c
+On Monday 28 Mar 2022 at 17:13:10 (+0000), Sean Christopherson wrote:
+> On Thu, Mar 24, 2022, Quentin Perret wrote:
+> > For Protected KVM (and I suspect most other confidential computing
+> > solutions), guests have the ability to share some of their pages back
+> > with the host kernel using a dedicated hypercall. This is necessary
+> > for e.g. virtio communications, so these shared pages need to be mapped
+> > back into the VMM's address space. I'm a bit confused about how that
+> > would work with the approach proposed here. What is going to be the
+> > approach for TDX?
+> > 
+> > It feels like the most 'natural' thing would be to have a KVM exit
+> > reason describing which pages have been shared back by the guest, and to
+> > then allow the VMM to mmap those specific pages in response in the
+> > memfd. Is this something that has been discussed or considered?
+> 
+> The proposed solution is to exit to userspace with a new exit reason, KVM_EXIT_MEMORY_ERROR,
+> when the guest makes the hypercall to request conversion[1].  The private fd itself
+> will never allow mapping memory into userspace, instead userspace will need to punch
+> a hole in the private fd backing store.  The absense of a valid mapping in the private
+> fd is how KVM detects that a pfn is "shared" (memslots without a private fd are always
+> shared)[2].
 
-diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
-index de81779e90e3..ca419b0a083c 100644
---- a/tools/testing/selftests/bpf/Makefile
-+++ b/tools/testing/selftests/bpf/Makefile
-@@ -82,7 +82,7 @@ TEST_PROGS_EXTENDED := with_addr.sh \
- TEST_GEN_PROGS_EXTENDED = test_sock_addr test_skb_cgroup_id_user \
- 	flow_dissector_load test_flow_dissector test_tcp_check_syncookie_user \
- 	test_lirc_mode2_user xdping test_cpp runqslower bench bpf_testmod.ko \
--	xdpxceiver xdp_redirect_multi
-+	xdpxceiver xdp_redirect_multi bpf_testmod_preload.ko
- 
- TEST_CUSTOM_PROGS = $(OUTPUT)/urandom_read
- 
-@@ -110,6 +110,7 @@ override define CLEAN
- 	$(Q)$(RM) -r $(TEST_GEN_FILES)
- 	$(Q)$(RM) -r $(EXTRA_CLEAN)
- 	$(Q)$(MAKE) -C bpf_testmod clean
-+	$(Q)$(MAKE) -C bpf_testmod_preload clean
- 	$(Q)$(MAKE) docs-clean
- endef
- 
-@@ -502,7 +503,7 @@ TRUNNER_EXTRA_SOURCES := test_progs.c cgroup_helpers.c trace_helpers.c	\
- 			 btf_helpers.c flow_dissector_load.h		\
- 			 cap_helpers.c
- TRUNNER_EXTRA_FILES := $(OUTPUT)/urandom_read $(OUTPUT)/bpf_testmod.ko	\
--		       ima_setup.sh					\
-+		       ima_setup.sh $(OUTPUT)/bpf_testmod_preload.ko	\
- 		       $(wildcard progs/btf_dump_test_case_*.c)
- TRUNNER_BPF_BUILD_RULE := CLANG_BPF_BUILD_RULE
- TRUNNER_BPF_CFLAGS := $(BPF_CFLAGS) $(CLANG_CFLAGS) -DENABLE_ATOMICS_TESTS
-@@ -575,9 +576,19 @@ $(OUTPUT)/bench: $(OUTPUT)/bench.o \
- 	$(call msg,BINARY,,$@)
- 	$(Q)$(CC) $(CFLAGS) $(LDFLAGS) $(filter %.a %.o,$^) $(LDLIBS) -o $@
- 
-+bpf_testmod_preload/bpf_testmod_preload.c: $(OUTPUT)/gen_preload_methods.preload.lskel.h $(BPFTOOL) $(TRUNNER_BPF_LSKELSP)
-+	$(call msg,GEN-MOD,,$@)
-+	$(BPFTOOL) gen module $< > $@
-+
-+$(OUTPUT)/bpf_testmod_preload.ko: bpf_testmod_preload/bpf_testmod_preload.c
-+	$(call msg,MOD,,$@)
-+	$(Q)$(RM) bpf_testmod_preload/bpf_testmod_preload.ko # force re-compilation
-+	$(Q)$(MAKE) $(submake_extras) -C bpf_testmod_preload
-+	$(Q)cp bpf_testmod_preload/bpf_testmod_preload.ko $@
-+
- EXTRA_CLEAN := $(TEST_CUSTOM_PROGS) $(SCRATCH_DIR) $(HOST_SCRATCH_DIR)	\
- 	prog_tests/tests.h map_tests/tests.h verifier/tests.h		\
- 	feature bpftool							\
--	$(addprefix $(OUTPUT)/,*.o *.skel.h *.lskel.h *.subskel.h no_alu32 bpf_gcc bpf_testmod.ko)
-+	$(addprefix $(OUTPUT)/,*.o *.skel.h *.lskel.h *.subskel.h no_alu32 bpf_gcc bpf_testmod.ko bpf_testmod_preload.ko)
- 
- .PHONY: docs docs-clean
-diff --git a/tools/testing/selftests/bpf/bpf_testmod_preload/.gitignore b/tools/testing/selftests/bpf/bpf_testmod_preload/.gitignore
-new file mode 100644
-index 000000000000..989530ffc79f
---- /dev/null
-+++ b/tools/testing/selftests/bpf/bpf_testmod_preload/.gitignore
-@@ -0,0 +1,7 @@
-+*.mod
-+*.mod.c
-+*.o
-+.ko
-+/Module.symvers
-+/modules.order
-+bpf_testmod_preload.c
-diff --git a/tools/testing/selftests/bpf/bpf_testmod_preload/Makefile b/tools/testing/selftests/bpf/bpf_testmod_preload/Makefile
-new file mode 100644
-index 000000000000..d17ac6670974
---- /dev/null
-+++ b/tools/testing/selftests/bpf/bpf_testmod_preload/Makefile
-@@ -0,0 +1,20 @@
-+BPF_TESTMOD_PRELOAD_DIR := $(realpath $(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
-+KDIR ?= $(abspath $(BPF_TESTMOD_PRELOAD_DIR)/../../../../..)
-+
-+ifeq ($(V),1)
-+Q =
-+else
-+Q = @
-+endif
-+
-+MODULES = bpf_testmod_preload.ko
-+
-+obj-m += bpf_testmod_preload.o
-+CFLAGS_bpf_testmod_preload.o = -I$(BPF_TESTMOD_PRELOAD_DIR)/../tools/include
-+
-+all:
-+	+$(Q)make -C $(KDIR) M=$(BPF_TESTMOD_PRELOAD_DIR) modules
-+
-+clean:
-+	+$(Q)make -C $(KDIR) M=$(BPF_TESTMOD_PRELOAD_DIR) clean
-+
-diff --git a/tools/testing/selftests/bpf/prog_tests/test_preload_methods.c b/tools/testing/selftests/bpf/prog_tests/test_preload_methods.c
-new file mode 100644
-index 000000000000..bad3b187794b
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/test_preload_methods.c
-@@ -0,0 +1,69 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * Copyright (C) 2022 Huawei Technologies Duesseldorf GmbH
-+ */
-+
-+#include <errno.h>
-+#include <limits.h>
-+#include <test_progs.h>
-+#include <sys/mount.h>
-+#include <sys/stat.h>
-+
-+#define MOUNT_FLAGS (MS_NOSUID | MS_NODEV | MS_NOEXEC | MS_RELATIME)
-+
-+static int duration;
-+
-+void test_test_preload_methods(void)
-+{
-+	char bpf_mntpoint[] = "/tmp/bpf_mntpointXXXXXX", *dir;
-+	char path[PATH_MAX];
-+	struct stat st;
-+	int err;
-+
-+	system("rmmod bpf_testmod_preload 2> /dev/null");
-+
-+	err = system("insmod bpf_testmod_preload.ko");
-+	if (CHECK(err, "insmod",
-+		  "cannot load bpf_testmod_preload.ko, err=%d\n", err))
-+		return;
-+
-+	dir = mkdtemp(bpf_mntpoint);
-+	if (CHECK(!dir, "mkstemp", "cannot create temp file, err=%d\n",
-+		  -errno))
-+		goto out_rmmod;
-+
-+	err = mount(bpf_mntpoint, bpf_mntpoint, "bpf", MOUNT_FLAGS, NULL);
-+	if (CHECK(err, "mount",
-+		  "cannot mount bpf filesystem to %s, err=%d\n", bpf_mntpoint,
-+		  err))
-+		goto out_unlink;
-+
-+	snprintf(path, sizeof(path), "%s/gen_preload_methods_lskel",
-+		 bpf_mntpoint);
-+
-+	err = stat(path, &st);
-+	if (CHECK(err, "stat", "cannot find %s\n", path))
-+		goto out_unmount;
-+
-+	snprintf(path, sizeof(path),
-+		 "%s/gen_preload_methods_lskel/dump_bpf_map", bpf_mntpoint);
-+
-+	err = stat(path, &st);
-+	if (CHECK(err, "stat", "cannot find %s\n", path))
-+		goto out_unmount;
-+
-+	snprintf(path, sizeof(path), "%s/gen_preload_methods_lskel/ringbuf",
-+		 bpf_mntpoint);
-+
-+	err = stat(path, &st);
-+	if (CHECK(err, "stat", "cannot find %s\n", path))
-+		goto out_unmount;
-+
-+out_unmount:
-+	umount(bpf_mntpoint);
-+out_unlink:
-+	rmdir(bpf_mntpoint);
-+out_rmmod:
-+	system("rmmod bpf_testmod_preload");
-+}
--- 
-2.32.0
+Right. I'm still a bit confused about how the VMM is going to get the
+shared page mapped in its page-table. Once it has punched a hole into
+the private fd, how is it supposed to access the actual physical page
+that the guest shared? Is there an assumption somewhere that the VMM
+should have this page mapped in via an alias that it can legally access
+only once it has punched a hole at the corresponding offset in the
+private fd or something along those lines?
 
+> The key point is that KVM never decides to convert between shared and private, it's
+> always a userspace decision.  Like normal memslots, where userspace has full control
+> over what gfns are a valid, this gives userspace full control over whether a gfn is
+> shared or private at any given time.
+
+I'm understanding this as 'the VMM is allowed to punch holes in the
+private fd whenever it wants'. Is this correct? What happens if it does
+so for a page that a guest hasn't shared back?
+
+> Another important detail is that this approach means the kernel and KVM treat the
+> shared backing store and private backing store as independent, albeit related,
+> entities.  This is very deliberate as it makes it easier to reason about what is
+> and isn't allowed/required.  E.g. the kernel only needs to handle freeing private
+> memory, there is no special handling for conversion to shared because no such path
+> exists as far as host pfns are concerned.  And userspace doesn't need any new "rules"
+> for protecting itself against a malicious guest, e.g. userspace already needs to
+> ensure that it has a valid mapping prior to accessing guest memory (or be able to
+> handle any resulting signals).  A malicious guest can DoS itself by instructing
+> userspace to communicate over memory that is currently mapped private, but there
+> are no new novel attack vectors from the host's perspective as coercing the host
+> into accessing an invalid mapping after shared=>private conversion is just a variant
+> of a use-after-free.
+
+Interesting. I was (maybe incorrectly) assuming that it would be
+difficult to handle illegal host accesses w/ TDX. IOW, this would
+essentially crash the host. Is this remotely correct or did I get that
+wrong?
+
+> One potential conversions that's TBD (at least, I think it is, I haven't read through
+> this most recent version) is how to support populating guest private memory with
+> non-zero data, e.g. to allow in-place conversion of the initial guest firmware instead
+> of having to an extra memcpy().
+
+Right. FWIW, in the pKVM case we should be pretty immune to this I
+think. The initial firmware is loaded in guest memory by the hypervisor
+itself (the EL2 code in arm64 speak) as the first vCPU starts running.
+And that firmware can then use e.g. virtio to load the guest payload and
+measure/check it. IOW, we currently don't have expectations regarding
+the initial state of guest memory, but it might be handy to have support
+for pre-loading the payload in the future (should save a copy as you
+said).
+
+> [1] KVM will also exit to userspace with the same info on "implicit" conversions,
+>     i.e. if the guest accesses the "wrong" GPA.  Neither SEV-SNP nor TDX mandate
+>     explicit conversions in their guest<->host ABIs, so KVM has to support implicit
+>     conversions :-/
+> 
+> [2] Ideally (IMO), KVM would require userspace to completely remove the private memslot,
+>     but that's too slow due to use of SRCU in both KVM and userspace (QEMU at least uses
+>     SRCU for memslot changes).
