@@ -2,129 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3282A4E8A77
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Mar 2022 00:21:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26E7E4E8B57
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Mar 2022 02:57:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236908AbiC0WXW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 27 Mar 2022 18:23:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54424 "EHLO
+        id S232506AbiC1A6h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 27 Mar 2022 20:58:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236901AbiC0WXU (ORCPT
+        with ESMTP id S233105AbiC1A6f (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 27 Mar 2022 18:23:20 -0400
-Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE394E0DC
-        for <linux-fsdevel@vger.kernel.org>; Sun, 27 Mar 2022 15:21:40 -0700 (PDT)
-Received: by mail-lf1-x135.google.com with SMTP id 5so21804101lfp.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 27 Mar 2022 15:21:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=S+XGXg2Rv7JERtxGIutirLnuoE1LsDWr7jV2Cgxp6Qg=;
-        b=gFAofLg0jrpLSfWOSn6NF8CK/5FJeiqmvdtprA+Ls1Mv6ONwz0i3nBjywYz0dzLHzf
-         W/CiYgXmm+GTA48OjFKdGNGGbYL87ct6SDyeJZPV+KZ73BJy1mRn+IXxWXx04TQZltmb
-         lX69SAdTaAFtQrCmfgUk8ezpJltZM3CTyzlaQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=S+XGXg2Rv7JERtxGIutirLnuoE1LsDWr7jV2Cgxp6Qg=;
-        b=LDFldPB40T1VcVGwu/zOdwv5NqqVe5zLncGCMXbLDkr5iX/rFzc3c/ITvZ0VfZGrDb
-         olLgny6k+Y4uf3ZnaRiVdPsDPi9l28PSLDw/8ovDjw7ns6pURy5Uiv7UHCxn7Kg+qjUg
-         OFDm3TeXdWz9F2WqZzL1xdM6AuWpe+RzLyGAhVC7S+wmY6Ge0a7gl/A7uMZ+diWMZnKq
-         w/C+Up9rwC8s3e+cpt2LKG4JO0CsHnUGG2LF0Gz+y4napPG+4nNoGzfbqGVHJ180KZFQ
-         1YbYfSWHQoADhumrsGsuIGAV0WLoyXJv1jRtpdIElleNZVARUlcjHKNaPMz6bQyMwzIZ
-         yQ2w==
-X-Gm-Message-State: AOAM531t+jUAVJ3B0gma6/xoWdcb2AGLMiDOv8UD884fOKHWsWAWkk0K
-        8mHh79I+iiz+DKwZ8DzCV6fohwL+YmkSQaAJ6o0=
-X-Google-Smtp-Source: ABdhPJzxi66/ySVsGDSbn3IX2TCJYLQ7mo7Oc5Qxjj2GA4sQvZ7pSv1Yn6Cm6nfyybA9isGK5EgZ7Q==
-X-Received: by 2002:a19:e048:0:b0:448:2caa:7ed2 with SMTP id g8-20020a19e048000000b004482caa7ed2mr17500940lfj.449.1648419698597;
-        Sun, 27 Mar 2022 15:21:38 -0700 (PDT)
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
-        by smtp.gmail.com with ESMTPSA id br32-20020a056512402000b0044a1fdb8e85sm1459362lfb.134.2022.03.27.15.21.34
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 27 Mar 2022 15:21:35 -0700 (PDT)
-Received: by mail-lf1-f50.google.com with SMTP id p10so15919739lfa.12
-        for <linux-fsdevel@vger.kernel.org>; Sun, 27 Mar 2022 15:21:34 -0700 (PDT)
-X-Received: by 2002:a05:6512:3ca1:b0:44a:93f1:45cf with SMTP id
- h33-20020a0565123ca100b0044a93f145cfmr2930787lfv.542.1648419694374; Sun, 27
- Mar 2022 15:21:34 -0700 (PDT)
+        Sun, 27 Mar 2022 20:58:35 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 270F01E3DB;
+        Sun, 27 Mar 2022 17:56:55 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 3B5C6210DC;
+        Mon, 28 Mar 2022 00:56:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1648429014; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=oey14VnM0lqn7DuaY04BOcOUPaGD3+e90gcYRjgmGd4=;
+        b=2Cp5uTfL8j0hN/FhrpXLFFgATThyr7pue7+bPKJLMywuTEACXT0BIpmCz/aS2vnMh1IzAE
+        O2fK8MEqfMBVHWG2y2yOlzZxA0qIQdeYGpOYXGfcqFPe6O80IbS+LyRBRUy01QIgbrTg1t
+        T05p+2IdgnAwAYthugG4tLWNnq7oELA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1648429014;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=oey14VnM0lqn7DuaY04BOcOUPaGD3+e90gcYRjgmGd4=;
+        b=mBBHQUvkEWVrCVr6/i5W0bEkotsmUXIRk0dcmiWsBqIsbsXt6r0crFHehThwIfj3DYBlGY
+        ht5FL6lljkj4xsBA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id C9C5513A72;
+        Mon, 28 Mar 2022 00:56:52 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id abkyIdQHQWJKKAAAMHmgww
+        (envelope-from <neilb@suse.de>); Mon, 28 Mar 2022 00:56:52 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20220326114009.1690-1-aissur0002@gmail.com> <CAHk-=wijnsoGpoXRvY9o-MYow_xNXxaHg5vWJ5Z3GaXiWeg+dg@mail.gmail.com>
- <CAHk-=wgiTa-Cf+CyChsSHe-zrsps=GMwsEqFE3b_cgWUjxUSmw@mail.gmail.com> <2698031.BEx9A2HvPv@fedor-zhuzhzhalka67>
-In-Reply-To: <2698031.BEx9A2HvPv@fedor-zhuzhzhalka67>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sun, 27 Mar 2022 15:21:18 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wh2Ao+OgnWSxHsJodXiLwtaUndXSkuhh9yKnA3iXyBLEA@mail.gmail.com>
-Message-ID: <CAHk-=wh2Ao+OgnWSxHsJodXiLwtaUndXSkuhh9yKnA3iXyBLEA@mail.gmail.com>
-Subject: Re: [PATCH 4/4] file: Fix file descriptor leak in copy_fd_bitmaps()
-To:     Fedor Pchelkin <aissur0002@gmail.com>
-Cc:     Alexey Khoroshilov <khoroshilov@ispras.ru>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=no autolearn_force=no version=3.4.6
+From:   "NeilBrown" <neilb@suse.de>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH] VFS: filename_create(): fix incorrect intent.
+Date:   Mon, 28 Mar 2022 11:56:48 +1100
+Message-id: <164842900895.6096.10753358086437966517@noble.neil.brown.name>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Mar 27, 2022 at 2:53 PM <aissur0002@gmail.com> wrote:
->
-> I am sorry, that was my first attempt to contribute to the kernel and
-> I messed up a little bit with the patch tag: it is actually a single,
-> standalone patch and there has been nothing posted previously.
 
-No problem, thanks for clarifying.
+When asked to create a path ending '/', but which is not to be a
+directory (LOOKUP_DIRECTORY not set), filename_create() will never try
+to create the file.  If it doesn't exist, -ENOENT is reported.
 
-But the patch itself in that case is missing some detail, since it
-clearly doesn't apply to upstream.
+However, it still passes LOOKUP_CREATE|LOOKUP_EXCL to the filesystems
+->lookup() function, even though there is no intent to create.  This is
+misleading and can cause incorrect behaviour.
 
-Anyway:
+If you try
+   ln -s foo /path/dir/
 
-> In few words, an error occurs while executing close_range() call with
-> CLOSE_RANGE_UNSHARE flag: in __close_range() the value of
-> max_unshare_fds (later used as max_fds in dup_fd() and copy_fd_bitmaps())
-> can be an arbitrary number.
->
->   if (max_fd >= last_fd(files_fdtable(cur_fds)))
->     max_unshare_fds = fd;
->
-> and not be a multiple of BITS_PER_LONG or BITS_PER_BYTE.
+where 'dir' is a directory on an NFS filesystem which is not currently
+known in the dcache, this will fail with ENOENT.
+As the name is not in the dcache, nfs_lookup gets called with
+LOOKUP_CREATE|LOOKUP_EXCL and so it returns NULL without performing any
+lookup, with the expectation that as subsequent call to create the
+target will be made, and the lookup can be combined with the creation.
+In the case with a trailing '/' and no LOOKUP_DIRECTORY, that call is never
+made.  Instead filename_create() sees that the dentry is not (yet)
+positive and returns -ENOENT - even though the directory actually
+exists.
 
-Very good, that's the piece I was missing. I only looked in fs/file.c,
-and missed how that max_unshare_fds gets passed from __close_range()
-into fork.c for unshare_fd() and then back to file.c and dup_fd(). And
-then affects sane_fdtable_size().
+So only set LOOKUP_CREATE|LOOKUP_EXCL if there really is an intent
+to create, and use the absence of these flags to decide if -ENOENT
+should be returned.
 
-I _think_ it should be sufficient to just do something like
+Signed-off-by: NeilBrown <neilb@suse.de>
+---
+ fs/namei.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-       max_fds = ALIGN(max_fds, BITS_PER_LONG)
+diff --git a/fs/namei.c b/fs/namei.c
+index 3f1829b3ab5b..3ffb42e56a8e 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3676,7 +3676,6 @@ static struct dentry *filename_create(int dfd, struct f=
+ilename *name,
+ 	int type;
+ 	int err2;
+ 	int error;
+-	bool is_dir =3D (lookup_flags & LOOKUP_DIRECTORY);
+=20
+ 	/*
+ 	 * Note that only LOOKUP_REVAL and LOOKUP_DIRECTORY matter here. Any
+@@ -3698,9 +3697,11 @@ static struct dentry *filename_create(int dfd, struct =
+filename *name,
+ 	/* don't fail immediately if it's r/o, at least try to report other errors =
+*/
+ 	err2 =3D mnt_want_write(path->mnt);
+ 	/*
+-	 * Do the final lookup.
++	 * Do the final lookup.  Request 'create' only if there is no trailing
++	 * '/', or if directory is requested.
+ 	 */
+-	lookup_flags |=3D LOOKUP_CREATE | LOOKUP_EXCL;
++	if (!last.name[last.len] || (lookup_flags & LOOKUP_DIRECTORY))
++		lookup_flags |=3D LOOKUP_CREATE | LOOKUP_EXCL;
+ 	inode_lock_nested(path->dentry->d_inode, I_MUTEX_PARENT);
+ 	dentry =3D __lookup_hash(&last, path->dentry, lookup_flags);
+ 	if (IS_ERR(dentry))
+@@ -3716,7 +3717,7 @@ static struct dentry *filename_create(int dfd, struct f=
+ilename *name,
+ 	 * all is fine. Let's be bastards - you had / on the end, you've
+ 	 * been asking for (non-existent) directory. -ENOENT for you.
+ 	 */
+-	if (unlikely(!is_dir && last.name[last.len])) {
++	if (!likely(lookup_flags & LOOKUP_CREATE)) {
+ 		error =3D -ENOENT;
+ 		goto fail;
+ 	}
+--=20
+2.35.1
 
-in sane_fdtable_size(), but honestly, I haven't actually thought about
-it all that much. That's just a gut feel without really analyzing
-things - sane_fdtable_size() really should never return a value that
-isn't BITS_PER_LONG aligned.
-
-And that whole close_range() is why I added Christian Brauner to the
-participant list, though, so let's see if Christian has any comments.
-
-Christian?
-
-Btw, do you have a pointer to the syzbot report? I see the repro and
-the crashlog you attached, but it would be good to have that pointer
-to the syzbot original too.
-
-Or did you just do this by running syzkaller yourself and there is no
-external report?
-
-                 Linus
