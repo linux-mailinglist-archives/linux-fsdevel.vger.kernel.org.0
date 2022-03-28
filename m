@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D9EAF4E93C7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Mar 2022 13:23:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 031214E9414
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Mar 2022 13:24:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239478AbiC1LY5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Mar 2022 07:24:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59838 "EHLO
+        id S236663AbiC1L0V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Mar 2022 07:26:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46402 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241742AbiC1LYK (ORCPT
+        with ESMTP id S241123AbiC1LZT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Mar 2022 07:24:10 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0D5A56221;
-        Mon, 28 Mar 2022 04:22:11 -0700 (PDT)
+        Mon, 28 Mar 2022 07:25:19 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EE08C46;
+        Mon, 28 Mar 2022 04:23:25 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id B0E8BB81055;
-        Mon, 28 Mar 2022 11:22:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CAF1C340F3;
-        Mon, 28 Mar 2022 11:22:08 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 6F0BFB81063;
+        Mon, 28 Mar 2022 11:23:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F441C34110;
+        Mon, 28 Mar 2022 11:23:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648466529;
-        bh=v1V7OgQ9ZfL/uDAaRTe7sePn9Z+Wh9PgpBSkw0TQrrs=;
+        s=k20201202; t=1648466603;
+        bh=uVvsxXcsuV/zpwAblQs5D1i0APRLwni14f7UeSMlovg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OlrrB902ZxzHBTk0R44eSnykZvfMdJX2LkbLefvv85KLCxOobVURIdqHNFSD/NaM4
-         osYXNn9uxfBCHRlULrEok1wcUYQu8cTfhn+i18UCsGMWu4aMHVwV7H1/c01zIwISgF
-         OGkWBp85qoFj/EdM5zDiTXnOJizciQFGYDNnfp/P7VCMBKhW1AL1NiT4phKo+ARo/I
-         YLOa0B+HQqjuzRE5Tc6yK4Ce2GRaSFGgwBUZjg4VY9eKhPbUNeWTHJ9muLAeSU4g6Y
-         CRafvZU9wa8W6Nq2UafD20FpjlmBgnvXF76VeQN825itIA6DCj/91UbOl17MY8LSj/
-         ot4blSWHHhEvg==
+        b=VOmReTl1Z/0FSv5czi3SumGYxKpoIzPrdIvav+s9Ei+DrSJfsTkXWRIDW4s23nPHh
+         5ZF4PQItDatu+1OzIs6b0vwmdrDMrhrNy8OxqZNvcfTs7WnDM5NxiDcHbXCDc2V4EX
+         iOjKEkqANO6wDDpjwjkN9NqUzkUSO7E/aOiPZ+LE5FiSP2pikaMsyyCJ0d+IM8RwrN
+         fu7meCS4t1wBm8yAsevlfYjXyTZ91AEUdrdEy4sK0CWULb4G7g8svJXuHP2UfSIAQD
+         HO1yl3mdQVV+Oqi/suInlQG7zbgydvaeDY5ACcNHZGDhRQ3/DxnZrpvfMldnUath2i
+         JP6SR+NrG9Bwg==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Akira Kawata <akirakawata1@gmail.com>,
@@ -39,12 +39,12 @@ Cc:     Akira Kawata <akirakawata1@gmail.com>,
         Kees Cook <keescook@chromium.org>,
         Sasha Levin <sashal@kernel.org>, viro@zeniv.linux.org.uk,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: [PATCH AUTOSEL 5.15 18/29] fs/binfmt_elf: Fix AT_PHDR for unusual ELF files
-Date:   Mon, 28 Mar 2022 07:21:20 -0400
-Message-Id: <20220328112132.1555683-18-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.10 12/21] fs/binfmt_elf: Fix AT_PHDR for unusual ELF files
+Date:   Mon, 28 Mar 2022 07:22:45 -0400
+Message-Id: <20220328112254.1556286-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220328112132.1555683-1-sashal@kernel.org>
-References: <20220328112132.1555683-1-sashal@kernel.org>
+In-Reply-To: <20220328112254.1556286-1-sashal@kernel.org>
+References: <20220328112254.1556286-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -101,7 +101,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 18 insertions(+), 6 deletions(-)
 
 diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index a813b70f594e..3f6a7cac68fd 100644
+index 04c4aa7a1df2..ed507d27034b 100644
 --- a/fs/binfmt_elf.c
 +++ b/fs/binfmt_elf.c
 @@ -170,8 +170,8 @@ static int padzero(unsigned long elf_bss)
@@ -115,7 +115,7 @@ index a813b70f594e..3f6a7cac68fd 100644
  {
  	struct mm_struct *mm = current->mm;
  	unsigned long p = bprm->p;
-@@ -257,7 +257,7 @@ create_elf_tables(struct linux_binprm *bprm, const struct elfhdr *exec,
+@@ -256,7 +256,7 @@ create_elf_tables(struct linux_binprm *bprm, const struct elfhdr *exec,
  	NEW_AUX_ENT(AT_HWCAP, ELF_HWCAP);
  	NEW_AUX_ENT(AT_PAGESZ, ELF_EXEC_PAGESIZE);
  	NEW_AUX_ENT(AT_CLKTCK, CLOCKS_PER_SEC);
@@ -124,7 +124,7 @@ index a813b70f594e..3f6a7cac68fd 100644
  	NEW_AUX_ENT(AT_PHENT, sizeof(struct elf_phdr));
  	NEW_AUX_ENT(AT_PHNUM, exec->e_phnum);
  	NEW_AUX_ENT(AT_BASE, interp_load_addr);
-@@ -823,7 +823,7 @@ static int parse_elf_properties(struct file *f, const struct elf_phdr *phdr,
+@@ -820,7 +820,7 @@ static int parse_elf_properties(struct file *f, const struct elf_phdr *phdr,
  static int load_elf_binary(struct linux_binprm *bprm)
  {
  	struct file *interpreter = NULL; /* to shut gcc up */
@@ -133,7 +133,7 @@ index a813b70f594e..3f6a7cac68fd 100644
  	int load_addr_set = 0;
  	unsigned long error;
  	struct elf_phdr *elf_ppnt, *elf_phdata, *interp_elf_phdata = NULL;
-@@ -1156,6 +1156,17 @@ static int load_elf_binary(struct linux_binprm *bprm)
+@@ -1153,6 +1153,17 @@ static int load_elf_binary(struct linux_binprm *bprm)
  				reloc_func_desc = load_bias;
  			}
  		}
@@ -151,7 +151,7 @@ index a813b70f594e..3f6a7cac68fd 100644
  		k = elf_ppnt->p_vaddr;
  		if ((elf_ppnt->p_flags & PF_X) && k < start_code)
  			start_code = k;
-@@ -1191,6 +1202,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+@@ -1188,6 +1199,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
  	}
  
  	e_entry = elf_ex->e_entry + load_bias;
@@ -159,7 +159,7 @@ index a813b70f594e..3f6a7cac68fd 100644
  	elf_bss += load_bias;
  	elf_brk += load_bias;
  	start_code += load_bias;
-@@ -1254,8 +1266,8 @@ static int load_elf_binary(struct linux_binprm *bprm)
+@@ -1251,8 +1263,8 @@ static int load_elf_binary(struct linux_binprm *bprm)
  		goto out;
  #endif /* ARCH_HAS_SETUP_ADDITIONAL_PAGES */
  
