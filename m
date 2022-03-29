@@ -2,98 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 521094EA7B8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Mar 2022 08:14:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AC2A4EA7C1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Mar 2022 08:17:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232943AbiC2GQW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Mar 2022 02:16:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49442 "EHLO
+        id S232959AbiC2GTU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Mar 2022 02:19:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34028 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232939AbiC2GQV (ORCPT
+        with ESMTP id S231860AbiC2GTT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Mar 2022 02:16:21 -0400
-Received: from out30-43.freemail.mail.aliyun.com (out30-43.freemail.mail.aliyun.com [115.124.30.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF354247C33;
-        Mon, 28 Mar 2022 23:14:38 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R621e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=18;SR=0;TI=SMTPD_---0V8XENYr_1648534472;
-Received: from 30.225.24.46(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0V8XENYr_1648534472)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 29 Mar 2022 14:14:34 +0800
-Message-ID: <597372bf-06dc-defa-0628-a1c140235c1e@linux.alibaba.com>
-Date:   Tue, 29 Mar 2022 14:14:32 +0800
+        Tue, 29 Mar 2022 02:19:19 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77FFD248780;
+        Mon, 28 Mar 2022 23:17:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=l2WBiCb5duYJRA9nKpihqrJOH1Qjg6utSrFiu8qAdtc=; b=J5UAbNwy8KlDnn+Z4/t0iMzruC
+        viTKtpQIAJZ5Yg8JzRqiQnooLTwegYOzcl9zxfL0X3cRZdjEboF/RsB2oV4FAb6vq6hJ6sK/iEsnA
+        y1qP8xYjbucxYkeXbWwa6U2R//uYyEmpWy1bxTUiH/E3Zrxizw9ftzNHQW71oHC94naSzlvxuZf8v
+        ZMOgcNKfm6Gi5bm4Is59j51rVHtwt6zu0HSt1ksVoOhvDus3cwFPdMzZQHVrxCY0j9ze6N7U8tkGp
+        xWEwTQzyQDShIj0xLAsghV7PLPUsvSjkyzBmC5xiGw51etwrVGSC1KKEq3c6hB8qOYazA+QOerBv+
+        mRQJs4Zg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nZ5AX-00BBTB-Eg; Tue, 29 Mar 2022 06:17:29 +0000
+Date:   Mon, 28 Mar 2022 23:17:29 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Guo Xuenan <guoxuenan@huawei.com>
+Cc:     djwong@kernel.org, fangwei1@huawei.com, houtao1@huawei.com,
+        hsiangkao@linux.alibaba.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, hch@infradead.org,
+        viro@zeniv.linux.org.uk
+Subject: Re: [PATCH v2] fs: fix an infinite loop in iomap_fiemap
+Message-ID: <YkKkeW48ZMBQKapS@infradead.org>
+References: <20220320162641.GB8182@magnolia>
+ <20220329032957.2694944-1-guoxuenan@huawei.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.6.1
-Subject: Re: [Linux-cachefs] [PATCH v6 03/22] cachefiles: notify user daemon
- with anon_fd when looking up cookie
-Content-Language: en-US
-From:   JeffleXu <jefflexu@linux.alibaba.com>
-To:     dhowells@redhat.com, linux-cachefs@redhat.com, xiang@kernel.org,
-        chao@kernel.org, linux-erofs@lists.ozlabs.org
-Cc:     gregkh@linuxfoundation.org, fannaihao@baidu.com,
-        tao.peng@linux.alibaba.com, willy@infradead.org,
-        linux-kernel@vger.kernel.org, tianzichen@kuaishou.com,
-        joseph.qi@linux.alibaba.com, bo.liu@linux.alibaba.com,
-        linux-fsdevel@vger.kernel.org, luodaowen.backend@bytedance.com,
-        eguan@linux.alibaba.com, gerry@linux.alibaba.com,
-        torvalds@linux-foundation.org
-References: <20220325122223.102958-1-jefflexu@linux.alibaba.com>
- <20220325122223.102958-4-jefflexu@linux.alibaba.com>
-In-Reply-To: <20220325122223.102958-4-jefflexu@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-10.9 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220329032957.2694944-1-guoxuenan@huawei.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Looks good,
 
-
-On 3/25/22 8:22 PM, Jeffle Xu wrote:
-
-> diff --git a/fs/cachefiles/internal.h b/fs/cachefiles/internal.h
-> index e80673d0ab97..8a0f1b691aca 100644
-> --- a/fs/cachefiles/internal.h
-> +++ b/fs/cachefiles/internal.h
-> @@ -15,6 +15,8 @@
->  
-> +/*
-> + * ondemand.c
-> + */
-> +#ifdef CONFIG_CACHEFILES_ONDEMAND
-> +extern ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
-> +					       char __user *_buffer,
-> +					       size_t buflen);
-> +
-> +extern int cachefiles_ondemand_cinit(struct cachefiles_cache *cache,
-> +				     char *args);
-> +
-> +extern int cachefiles_ondemand_init_object(struct cachefiles_object *object);
-> +
-> +#else
-
-> +ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
-> +					char __user *_buffer, size_t buflen)
-
-Needs to be declared as static inline ...
-
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +
-> +static inline int cachefiles_ondemand_init_object(struct cachefiles_object *object)
-> +{
-> +	return 0;
-> +}
-> +#endif
-
-
--- 
-Thanks,
-Jeffle
+Reviewed-by: Christoph Hellwig <hch@lst.de>
