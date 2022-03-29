@@ -2,43 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 509614EAF25
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Mar 2022 16:21:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6DC14EAF3D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Mar 2022 16:31:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237825AbiC2OX2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Mar 2022 10:23:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50972 "EHLO
+        id S231230AbiC2Ocm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Mar 2022 10:32:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59470 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236576AbiC2OX0 (ORCPT
+        with ESMTP id S230270AbiC2Ocl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Mar 2022 10:23:26 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47A84122222;
-        Tue, 29 Mar 2022 07:21:43 -0700 (PDT)
+        Tue, 29 Mar 2022 10:32:41 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 185A71AF35;
+        Tue, 29 Mar 2022 07:30:59 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B3D3161638;
-        Tue, 29 Mar 2022 14:21:41 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAA87C3410F;
-        Tue, 29 Mar 2022 14:21:39 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9F0376163C;
+        Tue, 29 Mar 2022 14:30:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CCCDC340ED;
+        Tue, 29 Mar 2022 14:30:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648563701;
-        bh=VVwm5sRxqTtRExOkYAMV6MNiuhhqErOVTCMWlhLuUdg=;
+        s=k20201202; t=1648564257;
+        bh=YGBCDwu20aYXceHDsziZY/5cKNx33SODcdFmgKmTk0E=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=bTo4imMBl22nJx/aU/x3311Ww/V+MRrKVct7hdnteuF4DxXTzOMyHoCnikSGfwYQb
-         +x2xVRDTxyLZViA6A+IgYfIznefpkMr2Eyozhw1ZQr9GNR0sMtmj2SZLmg5/u5fIth
-         S3pOVS6RdwvUjWTmpNlkq2xnNbTYAsvCYlB8dI4THd6CVCcAd9LJ7DSfIvU6Z17UWc
-         BfzzDlOpgnuLvkrys9mGW92Af4afeTnaXqejzBcKmWJWpOyUDd+GiDCzDfthBpfDJw
-         iQiLhyBzzAyo4bh9FssR4DTRlFaZrWxIL+7lqNMHrTByPQMTxI99rTOPac5DBIW8w3
-         r2vpNqPKVPyaA==
-Date:   Tue, 29 Mar 2022 23:21:37 +0900
+        b=LKaRD1/k84sNuoq0SvqUflcATp6zSiHt9JegnZDIP0tI5pRmi/8iOIDMqNP9md5Lo
+         jm0bF6tnCRfBdNeiBMdY5qJ7IwSnTsSkuDYatdDzPv6bx2GaW5bc9Mpz1KwYLRBeTu
+         ehNI5Q8+04Mz+uXpsZnvY/YWgR7zWCLH13TOCcEHVG+lrrEUTJ56716KsmQK65MWvh
+         NH4cNK4qrH0vx+bCl4gvl11JeGEWo/3w2Oeffyi3Oeghdfv7djNtMEVT5tGf+6hDI4
+         ai204mBep8gMQ+TtRorFuwCt7uirxaKoGuiRIkKsOwirgEx1dtzLUYwoHq4rz3YZVg
+         Dsvgb7YLO4Iuw==
+Date:   Tue, 29 Mar 2022 23:30:53 +0900
 From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     cgel.zte@gmail.com
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Lv Ruyi <lv.ruyi@zte.com.cn>, Zeal Robot <zealci@zte.com.cn>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     cgel.zte@gmail.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Lv Ruyi <lv.ruyi@zte.com.cn>,
+        Zeal Robot <zealci@zte.com.cn>
 Subject: Re: [PATCH] proc: bootconfig: add null pointer check
-Message-Id: <20220329232137.c63ea3258df2176667d6f846@kernel.org>
+Message-Id: <20220329233053.bf162ee2e15f742ac967213a@kernel.org>
 In-Reply-To: <20220329104004.2376879-1-lv.ruyi@zte.com.cn>
 References: <20220329104004.2376879-1-lv.ruyi@zte.com.cn>
 X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
@@ -55,6 +56,16 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi Steve,
+
+Can you pick this with below lines? This seems to be there from v5.6.
+
+Fixes: c1a3c36017d4 ("proc: bootconfig: Add /proc/bootconfig to show boot config list")
+Cc: stable@vger.kernel.org
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+
+Thank you,
+
 On Tue, 29 Mar 2022 10:40:04 +0000
 cgel.zte@gmail.com wrote:
 
@@ -62,13 +73,6 @@ cgel.zte@gmail.com wrote:
 > 
 > kzalloc is a memory allocation function which can return NULL when some
 > internal memory errors happen. It is safer to add null pointer check.
-
-Oops, yes.
-
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-
-Thank you!
-
 > 
 > Reported-by: Zeal Robot <zealci@zte.com.cn>
 > Signed-off-by: Lv Ruyi <lv.ruyi@zte.com.cn>
