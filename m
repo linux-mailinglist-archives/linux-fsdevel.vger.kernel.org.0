@@ -2,73 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D06984EA54D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Mar 2022 04:36:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2165D4EA577
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Mar 2022 04:50:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230171AbiC2Cie (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Mar 2022 22:38:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52880 "EHLO
+        id S231222AbiC2Cvy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Mar 2022 22:51:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230478AbiC2Cib (ORCPT
+        with ESMTP id S230033AbiC2Cvx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Mar 2022 22:38:31 -0400
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40F632467DD;
-        Mon, 28 Mar 2022 19:36:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1648521409; x=1680057409;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=LNHgqLDR8PycGfDeEiYuRN193gJyruOeIO57tRrWPxs=;
-  b=QtNizHn0ORe+GwXpIORa1Os+CFrzOaLghkdtU30LxgQ+ss28GI+Sm3hz
-   hVEkkyZWNh8BE/b72RuS8fvWh1NBtL2BfMAsykGLz2oWiXCLMxcE0Vwgi
-   Xbl+b3hkwJx+UCIRMHZig4FbAFcYUzYXDOdFZ2vcag0B5el/SN9ZsoWV3
-   TCTPTB+nYksrI5KfK67elg75DdrzS8jkL2EjhkW0Yn2TbydDuQTmAGCom
-   c+1E/rJpZwlpSPmXlNOT17dct0MhSKFJzfQtMYXEQNVXKNuNgX3DUcQq6
-   EqCmi/+CoixIxr14WtqiDfg2cNqhwJfu6ll8H2xt1prCWlrjXbmj4aJjA
-   A==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10300"; a="239077896"
-X-IronPort-AV: E=Sophos;i="5.90,219,1643702400"; 
-   d="scan'208";a="239077896"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Mar 2022 19:36:48 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.90,219,1643702400"; 
-   d="scan'208";a="518615068"
-Received: from lkp-server02.sh.intel.com (HELO 89b41b6ae01c) ([10.239.97.151])
-  by orsmga002.jf.intel.com with ESMTP; 28 Mar 2022 19:36:43 -0700
-Received: from kbuild by 89b41b6ae01c with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1nZ1is-0002Xv-FZ; Tue, 29 Mar 2022 02:36:42 +0000
-Date:   Tue, 29 Mar 2022 10:35:58 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>, corbet@lwn.net,
-        viro@zeniv.linux.org.uk, ast@kernel.org, daniel@iogearbox.net,
-        andrii@kernel.org, kpsingh@kernel.org, shuah@kernel.org,
-        mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
-        zohar@linux.ibm.com
-Cc:     kbuild-all@lists.01.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: Re: [PATCH 14/18] bpf-preload: Switch to new preload registration
- method
-Message-ID: <202203291042.8dll5BFm-lkp@intel.com>
-References: <20220328175033.2437312-15-roberto.sassu@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220328175033.2437312-15-roberto.sassu@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        Mon, 28 Mar 2022 22:51:53 -0400
+Received: from cmccmta2.chinamobile.com (cmccmta2.chinamobile.com [221.176.66.80])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D82B21B2C7E
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Mar 2022 19:50:08 -0700 (PDT)
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG: 00000000
+Received: from spf.mail.chinamobile.com (unknown[172.16.121.1])
+        by rmmx-syy-dmz-app07-12007 (RichMail) with SMTP id 2ee7624273de4e6-a6e3f;
+        Tue, 29 Mar 2022 10:50:06 +0800 (CST)
+X-RM-TRANSID: 2ee7624273de4e6-a6e3f
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG: 00000000
+Received: from localhost.localdomain (unknown[223.108.79.97])
+        by rmsmtp-syy-appsvr01-12001 (RichMail) with SMTP id 2ee1624273d7365-c47dc;
+        Tue, 29 Mar 2022 10:50:06 +0800 (CST)
+X-RM-TRANSID: 2ee1624273d7365-c47dc
+From:   jianchunfu <jianchunfu@cmss.chinamobile.com>
+To:     krisman@collabora.com, ebiggers@kernel.org
+Cc:     linux-fsdevel@vger.kernel.org,
+        jianchunfu <jianchunfu@cmss.chinamobile.com>
+Subject: [PATCH] unicode: Handle memory allocation failures in mkutf8data
+Date:   Tue, 29 Mar 2022 10:49:54 +0800
+Message-Id: <20220329024954.12721-1-jianchunfu@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.18.4
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -76,46 +44,150 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Roberto,
+Adding and using a helper function "xmalloc()"
+to handle memory allocation failures.
 
-Thank you for the patch! Yet something to improve:
+Signed-off-by: jianchunfu <jianchunfu@cmss.chinamobile.com>
+---
+ fs/unicode/mkutf8data.c | 38 ++++++++++++++++++++++++--------------
+ 1 file changed, 24 insertions(+), 14 deletions(-)
 
-[auto build test ERROR on bpf-next/master]
-[also build test ERROR on linus/master next-20220328]
-[cannot apply to bpf/master v5.17]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Roberto-Sassu/bpf-Secure-and-authenticated-preloading-of-eBPF-programs/20220329-015829
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
-config: i386-randconfig-c001 (https://download.01.org/0day-ci/archive/20220329/202203291042.8dll5BFm-lkp@intel.com/config)
-compiler: gcc-9 (Ubuntu 9.4.0-1ubuntu1~20.04.1) 9.4.0
-reproduce (this is a W=1 build):
-        # https://github.com/intel-lab-lkp/linux/commit/2e0e81b0296abc384efb2a73520ce03c2a5344ea
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Roberto-Sassu/bpf-Secure-and-authenticated-preloading-of-eBPF-programs/20220329-015829
-        git checkout 2e0e81b0296abc384efb2a73520ce03c2a5344ea
-        # save the config file to linux build tree
-        mkdir build_dir
-        make W=1 O=build_dir ARCH=i386 SHELL=/bin/bash
-
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
-
-All errors (new ones prefixed by >>):
-
->> kernel/bpf/inode.c:25:37: error: 'CONFIG_BPF_PRELOAD_LIST' undeclared here (not in a function)
-      25 | static char *bpf_preload_list_str = CONFIG_BPF_PRELOAD_LIST;
-         |                                     ^~~~~~~~~~~~~~~~~~~~~~~
-
-
-vim +/CONFIG_BPF_PRELOAD_LIST +25 kernel/bpf/inode.c
-
-    24	
-  > 25	static char *bpf_preload_list_str = CONFIG_BPF_PRELOAD_LIST;
-    26	
-
+diff --git a/fs/unicode/mkutf8data.c b/fs/unicode/mkutf8data.c
+index bc1a7c8b5..baf1d7eda 100644
+--- a/fs/unicode/mkutf8data.c
++++ b/fs/unicode/mkutf8data.c
+@@ -486,6 +486,16 @@ static void tree_walk(struct tree *tree)
+ 	       nodes, leaves, singletons);
+ }
+ 
++static void *xmalloc(size_t size)
++{
++	void *p = malloc(size);
++
++	if (p)
++		return p;
++	fprintf(stderr, "Out of memory.\n");
++	exit(1);
++}
++
+ /*
+  * Allocate an initialize a new internal node.
+  */
+@@ -494,7 +504,7 @@ static struct node *alloc_node(struct node *parent)
+ 	struct node *node;
+ 	int bitnum;
+ 
+-	node = malloc(sizeof(*node));
++	node = xmalloc(sizeof(*node));
+ 	node->left = node->right = NULL;
+ 	node->parent = parent;
+ 	node->leftnode = NODE;
+@@ -2159,7 +2169,7 @@ static void nfdi_init(void)
+ 		}
+ 		mapping[i++] = 0;
+ 
+-		um = malloc(i * sizeof(unsigned int));
++		um = xmalloc(i * sizeof(unsigned int));
+ 		memcpy(um, mapping, i * sizeof(unsigned int));
+ 		unicode_data[unichar].utf32nfdi = um;
+ 
+@@ -2215,7 +2225,7 @@ static void nfdicf_init(void)
+ 		}
+ 		mapping[i++] = 0;
+ 
+-		um = malloc(i * sizeof(unsigned int));
++		um = xmalloc(i * sizeof(unsigned int));
+ 		memcpy(um, mapping, i * sizeof(unsigned int));
+ 		unicode_data[unichar].utf32nfdicf = um;
+ 
+@@ -2256,11 +2266,11 @@ static void ignore_init(void)
+ 				line_fail(prop_name, line);
+ 			for (unichar = first; unichar <= last; unichar++) {
+ 				free(unicode_data[unichar].utf32nfdi);
+-				um = malloc(sizeof(unsigned int));
++				um = xmalloc(sizeof(unsigned int));
+ 				*um = 0;
+ 				unicode_data[unichar].utf32nfdi = um;
+ 				free(unicode_data[unichar].utf32nfdicf);
+-				um = malloc(sizeof(unsigned int));
++				um = xmalloc(sizeof(unsigned int));
+ 				*um = 0;
+ 				unicode_data[unichar].utf32nfdicf = um;
+ 				count++;
+@@ -2277,11 +2287,11 @@ static void ignore_init(void)
+ 			if (!utf32valid(unichar))
+ 				line_fail(prop_name, line);
+ 			free(unicode_data[unichar].utf32nfdi);
+-			um = malloc(sizeof(unsigned int));
++			um = xmalloc(sizeof(unsigned int));
+ 			*um = 0;
+ 			unicode_data[unichar].utf32nfdi = um;
+ 			free(unicode_data[unichar].utf32nfdicf);
+-			um = malloc(sizeof(unsigned int));
++			um = xmalloc(sizeof(unsigned int));
+ 			*um = 0;
+ 			unicode_data[unichar].utf32nfdicf = um;
+ 			if (verbose > 1)
+@@ -2359,7 +2369,7 @@ static void corrections_init(void)
+ 		}
+ 		mapping[i++] = 0;
+ 
+-		um = malloc(i * sizeof(unsigned int));
++		um = xmalloc(i * sizeof(unsigned int));
+ 		memcpy(um, mapping, i * sizeof(unsigned int));
+ 		corrections[count].utf32nfdi = um;
+ 
+@@ -2459,12 +2469,12 @@ static void hangul_decompose(void)
+ 		mapping[i++] = 0;
+ 
+ 		assert(!unicode_data[unichar].utf32nfdi);
+-		um = malloc(i * sizeof(unsigned int));
++		um = xmalloc(i * sizeof(unsigned int));
+ 		memcpy(um, mapping, i * sizeof(unsigned int));
+ 		unicode_data[unichar].utf32nfdi = um;
+ 
+ 		assert(!unicode_data[unichar].utf32nfdicf);
+-		um = malloc(i * sizeof(unsigned int));
++		um = xmalloc(i * sizeof(unsigned int));
+ 		memcpy(um, mapping, i * sizeof(unsigned int));
+ 		unicode_data[unichar].utf32nfdicf = um;
+ 
+@@ -2473,7 +2483,7 @@ static void hangul_decompose(void)
+ 		 * decompositions must not be stored in the generated
+ 		 * trie.
+ 		 */
+-		unicode_data[unichar].utf8nfdi = malloc(2);
++		unicode_data[unichar].utf8nfdi = xmalloc(2);
+ 		unicode_data[unichar].utf8nfdi[0] = HANGUL;
+ 		unicode_data[unichar].utf8nfdi[1] = '\0';
+ 
+@@ -2523,13 +2533,13 @@ static void nfdi_decompose(void)
+ 			if (ret)
+ 				break;
+ 			free(unicode_data[unichar].utf32nfdi);
+-			um = malloc(i * sizeof(unsigned int));
++			um = xmalloc(i * sizeof(unsigned int));
+ 			memcpy(um, mapping, i * sizeof(unsigned int));
+ 			unicode_data[unichar].utf32nfdi = um;
+ 		}
+ 		/* Add this decomposition to nfdicf if there is no entry. */
+ 		if (!unicode_data[unichar].utf32nfdicf) {
+-			um = malloc(i * sizeof(unsigned int));
++			um = xmalloc(i * sizeof(unsigned int));
+ 			memcpy(um, mapping, i * sizeof(unsigned int));
+ 			unicode_data[unichar].utf32nfdicf = um;
+ 		}
+@@ -2577,7 +2587,7 @@ static void nfdicf_decompose(void)
+ 			if (ret)
+ 				break;
+ 			free(unicode_data[unichar].utf32nfdicf);
+-			um = malloc(i * sizeof(unsigned int));
++			um = xmalloc(i * sizeof(unsigned int));
+ 			memcpy(um, mapping, i * sizeof(unsigned int));
+ 			unicode_data[unichar].utf32nfdicf = um;
+ 		}
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+2.18.4
+
+
+
