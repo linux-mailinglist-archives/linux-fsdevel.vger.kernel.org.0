@@ -2,97 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 59F574EAB80
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Mar 2022 12:40:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 088FE4EAB8E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Mar 2022 12:45:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235301AbiC2Kly (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Mar 2022 06:41:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52912 "EHLO
+        id S235346AbiC2KrN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Mar 2022 06:47:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38130 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231955AbiC2Klx (ORCPT
+        with ESMTP id S235003AbiC2KrL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Mar 2022 06:41:53 -0400
-Received: from mail-qt1-x82b.google.com (mail-qt1-x82b.google.com [IPv6:2607:f8b0:4864:20::82b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF097385;
-        Tue, 29 Mar 2022 03:40:10 -0700 (PDT)
-Received: by mail-qt1-x82b.google.com with SMTP id a11so14812553qtb.12;
-        Tue, 29 Mar 2022 03:40:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=s+fLpNYO75AAoy7NNFLD86hgUAL4EoVoOHLoqhAWagI=;
-        b=jjavy4KLUVboSTXFMStOFALet2MVBYBBv03s2XU7VKfYedVrJ9YDSnqZicppw7nmRu
-         ki1hX/HiG1EjmJHPZ8T1pQ9tpEfmht3Up98KVDhANapTGSV0hq8bi9kG8ZRa7O2SyABB
-         ziAoR5Q7qxk5lBBivQ7FMyvnTvcSRfLFx4z9sAWXcbiUgafXi4CgH6zSddfrsI8MWJsF
-         tsClG9SsKDvg5jgNbSDd8v0KVawqCWFlNTzWlNsZTmWqjm6qj50tdqY/fO5lHEdwTcBl
-         7KKYhsZuPQdseJyKGteo9j2zRhtZJsETjas1bEJk35LxjhlZ+sG8xxzFOPxBQyB7ysGh
-         tFng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=s+fLpNYO75AAoy7NNFLD86hgUAL4EoVoOHLoqhAWagI=;
-        b=2wxN1YCF32UhZHnibM2iOS7QDpBxemkbFd9wEFvQfPpr0cpIRB7IbSb9w79Mduns3e
-         srxie+EfIHskQLoB/teyHQH0zRsLNEEDde7MSP40wrV4ZORSeqk35Yg1+25MdV1i/ve3
-         e4TGjAgO4EH/SmTWxratAo3+4DOScXc4095q3li1J3+00Cvubnbwl4DSxdlkRNAvu62E
-         Cn1pFl5GapKvm/raiO6jm/U8OUCxXvnKzWmHIqYFMz4lU6sFiRgHKikma14UwVQAOYLL
-         QJegErtTbNgkWC6be8pf/4FgLMRxHHqnpFeI+qqwJrjMRgY1gEQmHbzSDZc/Jc5/BJY0
-         VEHA==
-X-Gm-Message-State: AOAM531/VrQ16pUiFeoVMI1g9e00jhtdZQAA0Mq8iCBOFMC+LrZoCdw7
-        FJSMaajBK5pcZMzDmRQM0Bk=
-X-Google-Smtp-Source: ABdhPJzTGaITHPstV0dRg6D95rqg2Iq0pDT+OUsIw//+lmiNMElrqv1C91w8HoKNrVuf9o2+UeLAPA==
-X-Received: by 2002:ac8:66cc:0:b0:2e2:160d:7e06 with SMTP id m12-20020ac866cc000000b002e2160d7e06mr26821295qtp.673.1648550409897;
-        Tue, 29 Mar 2022 03:40:09 -0700 (PDT)
-Received: from localhost.localdomain ([193.203.214.57])
-        by smtp.gmail.com with ESMTPSA id bm21-20020a05620a199500b0067d5e6c7bd8sm9420563qkb.56.2022.03.29.03.40.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Mar 2022 03:40:09 -0700 (PDT)
-From:   cgel.zte@gmail.com
-X-Google-Original-From: lv.ruyi@zte.com.cn
-To:     mhiramat@kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Lv Ruyi <lv.ruyi@zte.com.cn>, Zeal Robot <zealci@zte.com.cn>
-Subject: [PATCH] proc: bootconfig: add null pointer check
-Date:   Tue, 29 Mar 2022 10:40:04 +0000
-Message-Id: <20220329104004.2376879-1-lv.ruyi@zte.com.cn>
-X-Mailer: git-send-email 2.25.1
+        Tue, 29 Mar 2022 06:47:11 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AFA42487BA;
+        Tue, 29 Mar 2022 03:45:28 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 30FD2B816A6;
+        Tue, 29 Mar 2022 10:45:27 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D3E2C340ED;
+        Tue, 29 Mar 2022 10:45:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1648550725;
+        bh=+YNyKx/L/x3uEnutmIsoVTmComt7A9LE7ougq/mpTmE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=EhbMryAgtln9LuknVRIJQ539cXJ4uITTNJZvmzIl5lq7sCXanwDT74iamovKaJgEq
+         5gdLjco6Dyv41W9Ccdjl+8wcmrDRZQKWrz0zysXh4f5CdJxG1KentKUibaHiafy073
+         UfGyuPKPWyZYwta7ylHmXLTC4gzZAAobx3gRAAY43ZwBujxaG9PlDqNQEhFUoUC3RZ
+         CnGPNUwYyCvD2MLm4yqNgiCsd5bnB45Q4HakYHGCGhFd3QKbX5BcoMm1ukV8y1epZD
+         7WKzLm+o3yT0yZ+84ZNpe02e3fGqPQXX9JSPlJyuPI7zeKAQ9SBudkDninxlrMTBf2
+         aAcAIJFOJcXZQ==
+Date:   Tue, 29 Mar 2022 12:45:16 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Yang Xu <xuyang2018.jy@fujitsu.com>
+Cc:     linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, david@fromorbit.com, jlayton@kernel.org
+Subject: Re: [PATCH v1 1/3] vfs: Add inode_sgid_strip() api
+Message-ID: <20220329104516.luheugjurxsx5fdq@wittgenstein>
+References: <1648461389-2225-1-git-send-email-xuyang2018.jy@fujitsu.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1648461389-2225-1-git-send-email-xuyang2018.jy@fujitsu.com>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Lv Ruyi <lv.ruyi@zte.com.cn>
+On Mon, Mar 28, 2022 at 05:56:27PM +0800, Yang Xu wrote:
+> inode_sgid_strip() function is used to strip S_ISGID mode
+> when creat/open/mknod file.
+> 
+> Suggested-by: Dave Chinner <david@fromorbit.com>
+> Signed-off-by: Yang Xu <xuyang2018.jy@fujitsu.com>
+> ---
 
-kzalloc is a memory allocation function which can return NULL when some
-internal memory errors happen. It is safer to add null pointer check.
-
-Reported-by: Zeal Robot <zealci@zte.com.cn>
-Signed-off-by: Lv Ruyi <lv.ruyi@zte.com.cn>
----
- fs/proc/bootconfig.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/fs/proc/bootconfig.c b/fs/proc/bootconfig.c
-index 6d8d4bf20837..2e244ada1f97 100644
---- a/fs/proc/bootconfig.c
-+++ b/fs/proc/bootconfig.c
-@@ -32,6 +32,8 @@ static int __init copy_xbc_key_value_list(char *dst, size_t size)
- 	int ret = 0;
- 
- 	key = kzalloc(XBC_KEYLEN_MAX, GFP_KERNEL);
-+	if (!key)
-+		return -ENOMEM;
- 
- 	xbc_for_each_key_value(leaf, val) {
- 		ret = xbc_node_compose_key(leaf, key, XBC_KEYLEN_MAX);
--- 
-2.25.1
-
+I would've personally gone for returning umode_t but this work for me
+too.
+Reviewed-by: Christian Brauner (Microsoft) <brauner@kernel.org>
