@@ -2,115 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 719204EADC8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Mar 2022 14:51:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DE684EAEBE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Mar 2022 15:49:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236917AbiC2MxX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Mar 2022 08:53:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35550 "EHLO
+        id S237112AbiC2NvT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Mar 2022 09:51:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237214AbiC2MxD (ORCPT
+        with ESMTP id S234982AbiC2NvS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Mar 2022 08:53:03 -0400
-Received: from smtp-bc08.mail.infomaniak.ch (smtp-bc08.mail.infomaniak.ch [IPv6:2001:1600:4:17::bc08])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 474411AF2B;
-        Tue, 29 Mar 2022 05:51:09 -0700 (PDT)
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [10.4.36.108])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4KSTvc1kLVzMq173;
-        Tue, 29 Mar 2022 14:51:08 +0200 (CEST)
-Received: from localhost (unknown [23.97.221.149])
-        by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4KSTvb754VzlhMbh;
-        Tue, 29 Mar 2022 14:51:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1648558268;
-        bh=smcHkSzsHA9UZrPxO4w4wuj0alDdabBqgJAayQUQddQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0Spx8mfvteAOpN5mHxVWCFqncvkCGz4WPO4np6Z2DNZsi685wIXBij4Q3qpCU9Ld2
-         FYuOBVwBQZf04SFcEHQwAnZS+4Nwf8pOPhvrFsZI9Vl11zKUyHZvi0UwUZpKkk05T9
-         e4rIBNgAen+ssbWfvNqAQUta5mFhqHmg5KMuu870=
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jann Horn <jannh@google.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@linux.microsoft.com>
-Subject: [PATCH v2 12/12] landlock: Add design choices documentation for filesystem access rights
-Date:   Tue, 29 Mar 2022 14:51:17 +0200
-Message-Id: <20220329125117.1393824-13-mic@digikod.net>
-In-Reply-To: <20220329125117.1393824-1-mic@digikod.net>
-References: <20220329125117.1393824-1-mic@digikod.net>
+        Tue, 29 Mar 2022 09:51:18 -0400
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CB6731368
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Mar 2022 06:49:35 -0700 (PDT)
+Received: by mail-pj1-x1036.google.com with SMTP id o3-20020a17090a3d4300b001c6bc749227so2919879pjf.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Mar 2022 06:49:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=DdqwlImXrfao84vCHBrZYdsfDtapi0otjvjw/TD7gAs=;
+        b=iqmBctwaR3RnMvlGbfAY9TefMgdpgPs5uTFnScOMAg7WCye0WWGUkpPFAhBNOx6r7X
+         7xbZLOsB1kf93MKkXiauUeHte6cMJQCWg8asM67oms0HaCmzDyQIXBOb84j+6oJthZNW
+         NGw3IQOqZD0a3q/6QqOXLCTkJC5iXA/i1gb4icEhNapcEGT4XYNP3m4EWTCdI4dHz2Vk
+         wyxu0v8qqP24AnkXN9DxEJdRfba89K846CIvOrB94f/L5wC4PKYmrr+1/BcyhjNlHdlT
+         7YOMNiaENUWkeJEkji8G+ikHaeuCX17BWmjKWjOjM4F5ReBHm5idgE8oiFkBuBnH1aXZ
+         yk0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=DdqwlImXrfao84vCHBrZYdsfDtapi0otjvjw/TD7gAs=;
+        b=mIkt6lpZDVsx3/DdGSGoprZrPE1Fpx2QhHWGcc0Frx7tptHWbTeDe706+SU3BhSFp1
+         XqymZBh/M110zZM4s9jCbzfRUoPSYzHluPbNPDj+kIWHf0y+c/tG7KmmnkGCDGe+TQUj
+         8mvPtiIQeZtyV6izMkP6DcXJg7kfvv3lNxP//cDpthflny70P4qJdMfW87RULf8GNT1l
+         Bdp0rZqlETXJdI3vmbCTb+sL/PUZBPEG6qwtqa3N2d6mQofmKx5D+vsLZ5FFtAHmjydD
+         LKst0zZ/swq7Nr4J1/F0NxgBGXNWXWWhKVB7R6kZo1cjyZNRfT6NKMnCZVjyIrNxfgdW
+         ElBA==
+X-Gm-Message-State: AOAM53191QV8FlQpnhi0Y12RTfWaxVsM9Y9BVYV0dEsI/+GOMmGb8Ix9
+        PNgY2N6eK76fqiSJGePimNbJlQ==
+X-Google-Smtp-Source: ABdhPJxpMRY/A3rB7g8dnvTTe8NY23xQXPqq1uhJ9JnzOsx7Vi++6ue4mirhtJluGTHkVJDk33bdkA==
+X-Received: by 2002:a17:902:e5cc:b0:154:1c96:2e5b with SMTP id u12-20020a170902e5cc00b001541c962e5bmr30655333plf.94.1648561774945;
+        Tue, 29 Mar 2022 06:49:34 -0700 (PDT)
+Received: from FVFYT0MHHV2J.bytedance.net ([139.177.225.239])
+        by smtp.gmail.com with ESMTPSA id o14-20020a056a0015ce00b004fab49cd65csm20911293pfu.205.2022.03.29.06.49.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Mar 2022 06:49:34 -0700 (PDT)
+From:   Muchun Song <songmuchun@bytedance.com>
+To:     dan.j.williams@intel.com, willy@infradead.org, jack@suse.cz,
+        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        apopple@nvidia.com, shy828301@gmail.com, rcampbell@nvidia.com,
+        hughd@google.com, xiyuyang19@fudan.edu.cn,
+        kirill.shutemov@linux.intel.com, zwisler@kernel.org,
+        hch@infradead.org
+Cc:     linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        duanxiongchun@bytedance.com, smuchun@gmail.com,
+        Muchun Song <songmuchun@bytedance.com>
+Subject: [PATCH v6 0/6] Fix some bugs related to ramp and dax
+Date:   Tue, 29 Mar 2022 21:48:47 +0800
+Message-Id: <20220329134853.68403-1-songmuchun@bytedance.com>
+X-Mailer: git-send-email 2.32.0 (Apple Git-132)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Mickaël Salaün <mic@linux.microsoft.com>
+This series is based on next-20220225.
 
-Reviewed-by: Paul Moore <paul@paul-moore.com>
-Signed-off-by: Mickaël Salaün <mic@linux.microsoft.com>
-Link: https://lore.kernel.org/r/20220329125117.1393824-13-mic@digikod.net
----
+Patch 1-2 fix a cache flush bug, because subsequent patches depend on
+those on those changes, there are placed in this series.  Patch 3-4
+are preparation for fixing a dax bug in patch 5.  Patch 6 is code cleanup
+since the previous patch remove the usage of follow_invalidate_pte().
 
-Changes since v1:
-* Add Reviewed-by: Paul Moore.
-* Update date.
----
- Documentation/security/landlock.rst | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+v6:
+- Collect Reviewed-by from Christoph Hellwig.
+- Fold dax_entry_mkclean() into dax_writeback_one().
 
-diff --git a/Documentation/security/landlock.rst b/Documentation/security/landlock.rst
-index 3df68cb1d10f..eb4905993a59 100644
---- a/Documentation/security/landlock.rst
-+++ b/Documentation/security/landlock.rst
-@@ -7,7 +7,7 @@ Landlock LSM: kernel documentation
- ==================================
- 
- :Author: Mickaël Salaün
--:Date: March 2021
-+:Date: March 2022
- 
- Landlock's goal is to create scoped access-control (i.e. sandboxing).  To
- harden a whole system, this feature should be available to any process,
-@@ -42,6 +42,21 @@ Guiding principles for safe access controls
- * Computation related to Landlock operations (e.g. enforcing a ruleset) shall
-   only impact the processes requesting them.
- 
-+Design choices
-+==============
-+
-+Filesystem access rights
-+------------------------
-+
-+All access rights are tied to an inode and what can be accessed through it.
-+Reading the content of a directory doesn't imply to be allowed to read the
-+content of a listed inode.  Indeed, a file name is local to its parent
-+directory, and an inode can be referenced by multiple file names thanks to
-+(hard) links.  Being able to unlink a file only has a direct impact on the
-+directory, not the unlinked inode.  This is the reason why
-+`LANDLOCK_ACCESS_FS_REMOVE_FILE` or `LANDLOCK_ACCESS_FS_REFER` are not allowed
-+to be tied to files but only to directories.
-+
- Tests
- =====
- 
+v5:
+- Collect Reviewed-by from Dan Williams.
+- Fix panic reported by kernel test robot <oliver.sang@intel.com>.
+- Remove pmdpp parameter from follow_invalidate_pte() and fold it into follow_pte().
+
+v4:
+- Fix compilation error on riscv.
+
+v3:
+- Based on next-20220225.
+
+v2:
+- Avoid the overly long line in lots of places suggested by Christoph.
+- Fix a compiler warning reported by kernel test robot since pmd_pfn()
+  is not defined when !CONFIG_TRANSPARENT_HUGEPAGE on powerpc architecture.
+- Split a new patch 4 for preparation of fixing the dax bug.
+
+Muchun Song (6):
+  mm: rmap: fix cache flush on THP pages
+  dax: fix cache flush on PMD-mapped pages
+  mm: rmap: introduce pfn_mkclean_range() to cleans PTEs
+  mm: pvmw: add support for walking devmap pages
+  dax: fix missing writeprotect the pte entry
+  mm: simplify follow_invalidate_pte()
+
+ fs/dax.c             | 98 +++++++---------------------------------------------
+ include/linux/mm.h   |  3 --
+ include/linux/rmap.h |  3 ++
+ mm/internal.h        | 26 +++++++++-----
+ mm/memory.c          | 81 ++++++++++++-------------------------------
+ mm/page_vma_mapped.c | 16 ++++-----
+ mm/rmap.c            | 68 +++++++++++++++++++++++++++++-------
+ 7 files changed, 119 insertions(+), 176 deletions(-)
+
 -- 
-2.35.1
+2.11.0
 
