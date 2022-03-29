@@ -2,64 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 973F74EB5C9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Mar 2022 00:19:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C15C14EB5D6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Mar 2022 00:23:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236622AbiC2WVI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Mar 2022 18:21:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59212 "EHLO
+        id S236622AbiC2WZR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Mar 2022 18:25:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46740 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236718AbiC2WVG (ORCPT
+        with ESMTP id S235847AbiC2WZP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Mar 2022 18:21:06 -0400
-Received: from mail-lj1-x231.google.com (mail-lj1-x231.google.com [IPv6:2a00:1450:4864:20::231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80479B7C75
-        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Mar 2022 15:19:16 -0700 (PDT)
-Received: by mail-lj1-x231.google.com with SMTP id r22so25316634ljd.4
-        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Mar 2022 15:19:16 -0700 (PDT)
+        Tue, 29 Mar 2022 18:25:15 -0400
+Received: from mail-lf1-x133.google.com (mail-lf1-x133.google.com [IPv6:2a00:1450:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91496165BF
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Mar 2022 15:23:30 -0700 (PDT)
+Received: by mail-lf1-x133.google.com with SMTP id h7so32735377lfl.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Mar 2022 15:23:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=a5OB5pHS7XJuBLYJkh+9Vs+P+P9M21m6mivUcEssFFI=;
-        b=GlpBOFT/bsDCmj07YCY59rgZpXNEykhL6zCcAj9zH1EW6EoBPpHcAQz1yvylcfJKL2
-         5Pr4pScdLIDktbIos7WlkIzgwlF6FmFxJ1pb8Mu+WJWvWFX6y+L9I5PjYmMMmHv17KVU
-         L1lKmOMMBPwU08MLvKzZ/v45iwA8dE9DsaO6k=
+        bh=5Dqci59lOGmtJ083V8k97ZYbp+giAEnmUDvP8kvIUkQ=;
+        b=VT+r9uwHTgcY2d+uPwopx2P2879A0JSJ2gtfFxXD746GNnk+z6kMC9bmyoI1CnXMDl
+         NcVjvjzkleAw9ej5n9U29kxGsWaLtCwRJW1vgaE0d8bTR07Nj77+TxMI/kwQpYcYPvN1
+         odJbyA0ON7CIneCs1/wSlaM0123GCIo/jGohw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=a5OB5pHS7XJuBLYJkh+9Vs+P+P9M21m6mivUcEssFFI=;
-        b=SqD2bLCkXE2PfmtL4OiRuRG2X4nc/bB3tpS2wVnXaDt4TlvguCJeO7akWdSsNzvhYh
-         nVqmB1biVB57DT+w6nD+Q8kBwcf9ZrC0cya3x/E5Psl2lOHOciX+iC9eU/OHEGtYRb0T
-         YNdlnxId5k8isgTiHeDD+Q6hvyb03DbrrQgWUO5iYDu9efHp+QPfJUdUcK6l3X9qscJo
-         67NtXBdWX7EycNCksT1rsPNHH2fjRNs/PG0UX57C06xFp69BvNOkvJ/wCnswW8UdwjPO
-         ZK3raR1cy3pDlRf+oqrfDaRl0MGO0btiP9luIHPltvaKhCv5LyUlPos/dZDMb6ausfvq
-         b4Hg==
-X-Gm-Message-State: AOAM533pyjWriowzfM5SKfrf/ljSQqDYxeeNCo9Z0PlNpFWyzl3WW2bG
-        Cl+BwUt8yNTxjQg/SUiZvFMo6IHFiVqKzeUc
-X-Google-Smtp-Source: ABdhPJxHx4P7C2HrHtD/aPkwLOUladB1pRuH4l0U6yqJrxpymDBeEPp23Hj1oh2/izeWm8XJVWW/oA==
-X-Received: by 2002:a2e:a58c:0:b0:249:7ecf:6075 with SMTP id m12-20020a2ea58c000000b002497ecf6075mr4321351ljp.460.1648592354385;
-        Tue, 29 Mar 2022 15:19:14 -0700 (PDT)
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
-        by smtp.gmail.com with ESMTPSA id t17-20020a192d51000000b0044a5a9960f9sm2122044lft.236.2022.03.29.15.19.12
+        bh=5Dqci59lOGmtJ083V8k97ZYbp+giAEnmUDvP8kvIUkQ=;
+        b=xO7Clilqjpwn+dl6EjsBs1D6w+XAhvpc+5V8eQycKxN47ybI/JU7w4emNCuKt5GqUX
+         RHDMbeWkZ5ZVHQ4i81O2ZPbYRMZF3h4oGOvO/vHUbHQzJjoO9Q4SO8vPR5glbLIFwpGq
+         EPo5ig5nccfeeu1ZFQkU4alwqq2p/byPgnwJuGR4oDYnnRwlm/uzWzObB2POwgldk2Sb
+         Vwf1iquBLt0u7CEhzSs2pVAtxOp20rGxzLMHFxJOkqUE25OX60Fhv0yJxhFA3bVl2Ijm
+         Nh1C/nxMy2tC/85J8ZJSB4RkJMYRLl4021u7Jo9kjqUbd3VXSi6fnDo7v+uwjk/iiQ3q
+         kQ2A==
+X-Gm-Message-State: AOAM531lY8IpKyUlrACa7Prfm3zrs1/zxU0K494HH3WdjiX6bkDnYnMy
+        ry1JEf1wFPco4xxgnCoL+q+j3al+Ql52kKCy
+X-Google-Smtp-Source: ABdhPJwJ3IHuszpKUgs/mYA/Wgfn1bimKoW744kbG3cTguZUESbxuKHZQruVBF87drv8XTRfwZyevQ==
+X-Received: by 2002:a05:6512:304c:b0:44a:5bad:820f with SMTP id b12-20020a056512304c00b0044a5bad820fmr4527011lfb.68.1648592608478;
+        Tue, 29 Mar 2022 15:23:28 -0700 (PDT)
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
+        by smtp.gmail.com with ESMTPSA id t4-20020a2e9c44000000b0024ac62a66d9sm1273506ljj.60.2022.03.29.15.23.27
         for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Mar 2022 15:19:13 -0700 (PDT)
-Received: by mail-lf1-f52.google.com with SMTP id z12so18917494lfu.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Mar 2022 15:19:12 -0700 (PDT)
-X-Received: by 2002:a05:6512:b12:b0:44a:ba81:f874 with SMTP id
- w18-20020a0565120b1200b0044aba81f874mr1173972lfu.449.1648592352243; Tue, 29
- Mar 2022 15:19:12 -0700 (PDT)
+        Tue, 29 Mar 2022 15:23:27 -0700 (PDT)
+Received: by mail-lj1-f179.google.com with SMTP id c15so25300849ljr.9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Mar 2022 15:23:27 -0700 (PDT)
+X-Received: by 2002:a2e:9b10:0:b0:247:f28c:ffd3 with SMTP id
+ u16-20020a2e9b10000000b00247f28cffd3mr4407592lji.152.1648592606822; Tue, 29
+ Mar 2022 15:23:26 -0700 (PDT)
 MIME-Version: 1.0
 References: <20220326114009.1690-1-aissur0002@gmail.com> <2698031.BEx9A2HvPv@fedor-zhuzhzhalka67>
  <CAHk-=wh2Ao+OgnWSxHsJodXiLwtaUndXSkuhh9yKnA3iXyBLEA@mail.gmail.com>
  <4705670.GXAFRqVoOG@fedor-zhuzhzhalka67> <CAHk-=wiKhn+VsvK8CiNbC27+f+GsPWvxMVbf7QET+7PQVPadwA@mail.gmail.com>
-In-Reply-To: <CAHk-=wiKhn+VsvK8CiNbC27+f+GsPWvxMVbf7QET+7PQVPadwA@mail.gmail.com>
+ <CAHk-=wjRwwUywAa9TzQUxhqNrQzZJQZvwn1JSET3h=U+3xi8Pg@mail.gmail.com>
+In-Reply-To: <CAHk-=wjRwwUywAa9TzQUxhqNrQzZJQZvwn1JSET3h=U+3xi8Pg@mail.gmail.com>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 29 Mar 2022 15:18:56 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjRwwUywAa9TzQUxhqNrQzZJQZvwn1JSET3h=U+3xi8Pg@mail.gmail.com>
-Message-ID: <CAHk-=wjRwwUywAa9TzQUxhqNrQzZJQZvwn1JSET3h=U+3xi8Pg@mail.gmail.com>
+Date:   Tue, 29 Mar 2022 15:23:10 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjsdDBmaD-sS5FSb3ngn820z3x=1Ny+36agbEXhDuGOsg@mail.gmail.com>
+Message-ID: <CAHk-=wjsdDBmaD-sS5FSb3ngn820z3x=1Ny+36agbEXhDuGOsg@mail.gmail.com>
 Subject: Re: [PATCH 4/4] file: Fix file descriptor leak in copy_fd_bitmaps()
 To:     Fedor Pchelkin <aissur0002@gmail.com>
 Cc:     Alexey Khoroshilov <khoroshilov@ispras.ru>,
@@ -79,21 +80,26 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 29, 2022 at 2:02 PM Linus Torvalds
+On Tue, Mar 29, 2022 at 3:18 PM Linus Torvalds
 <torvalds@linux-foundation.org> wrote:
 >
-> I will apply that ALIGN() thing since Christian could confirm it fixes
-> things, and try to add a few more comments about how bitmaps are
-> fundamentally in chunks of BITS_PER_LONG.
+> Ok, applied as commit 1c24a186398f ("fs: fd tables have to be
+> multiples of BITS_PER_LONG").
 
-Ok, applied as commit 1c24a186398f ("fs: fd tables have to be
-multiples of BITS_PER_LONG").
+Oh, forgot to mention...
 
-I tried to add reasonable commentary too, both to the commit and the
-file.c code.
+Christian - it strikes me that the whole "min(count, max_fds)" in
+sane_fdtable_size() is a bit stupid.
 
-Christian already tested that added ALIGN() for his test-case (that's
-obviously assuming the obvious patch was identical - it can go in
-multiple places), but the more the merrier, of course.
+A _smarter_ approach might be to pass in 'max_fds' to
+count_open_files(), and simply not count past that value.
 
-                 Linus
+I didn't do that, because I wanted to keep the patch obvious. And it
+probably doesn't matter, but it's kind of silly to possibly count a
+lot of open files that we want to close anyway, when we already know
+the place we should stop counting.
+
+Whatever. I just wanted to mention it in case you decide you want to
+clean that part up. This is mostly your code anyway.
+
+               Linus
