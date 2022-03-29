@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B5BE04EB3A6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Mar 2022 20:45:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B00C44EB3D2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Mar 2022 21:02:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240679AbiC2SrI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Mar 2022 14:47:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48852 "EHLO
+        id S240799AbiC2TDn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Mar 2022 15:03:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234950AbiC2SrF (ORCPT
+        with ESMTP id S240790AbiC2TDm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Mar 2022 14:47:05 -0400
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8EC89287F
-        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Mar 2022 11:45:21 -0700 (PDT)
-Received: by mail-pj1-x102e.google.com with SMTP id jx9so18353986pjb.5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Mar 2022 11:45:21 -0700 (PDT)
+        Tue, 29 Mar 2022 15:03:42 -0400
+Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10E62E1250
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Mar 2022 12:01:58 -0700 (PDT)
+Received: by mail-pg1-x536.google.com with SMTP id t4so12543305pgc.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Mar 2022 12:01:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20210112;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=o1qcZR1LxJ/8GbkW+1o65vv0lkJ0fy//rk2/1UscmDw=;
-        b=dwjAFyr79FlAvZN4oVDM+cROGwXKgWD+GjzFyXRXAgE8FAWQh0f0I0kd8X5DA7Ic5Y
-         VwRjT+3EqrXkzzX/nA4ayJfSyv2gITG1hZSatG1ilG804HuNYYziRhjIGD8PzrzW2dTC
-         qt0ANVSElJX0JYkgUfFNeD60WWqInSK4r/B5RxaF5Zl5+LoHWKn0N40sfo5Ea2m3RSsS
-         Sxu4L76R4KPju1vfaBBeh6+oYASNnMU2wyIvIHabuxRCp2MOIvLjmk1Z8I5EaQodk5kP
-         ANAl4mN5q+r0q0fvNS/WILwuTETHBqUREYH8mUVFLgxLgkLiIpXMRtvAHqwl/fH3x5YO
-         W5fQ==
+        bh=2XeIM1SVjYsGalPDLQxopalWmUCHnrUjVEEJ+tulJdw=;
+        b=fkATFbG5P1QdsRl3f5I5TTNI5ChWdFQqj0PejuKROxLUJnUOxzgKe+W4LhC5IZAI4H
+         YtsmX3rK45fXNWubfbpZPqb9DnxrrAbfux1L4qkhlnrcAasThinipJ2Q3eV/AR/L8pQY
+         cRcROodkTR03YOK9g3nobLnLQ905Gk1gr+g/5/aOMWcSLRh80tKrndhIfqqoN+N3vRsS
+         DIOkXafKz0QlgKRKQ9CcqexPq7225Bm1SKVztp6KtFJXqZwd53geDw7ldIZ4DNNPAqx+
+         3sIDGdLWnk5KF2cMv6hxUP0l3WPVCea9ErtR4WnbKShs+t9nnnof7J9xgjZLKizrsTPW
+         Bp7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=o1qcZR1LxJ/8GbkW+1o65vv0lkJ0fy//rk2/1UscmDw=;
-        b=DAugW4mbEn0lNJHnagzE/xfjG9mt/ys+C6K1sS6+y3d4Bz+YJ8GnpF2rCpGhM4k6WI
-         XTdtoTjeTf+/UN46sjINQ+6Z96Qr8hh/CQWJFeghXA2iYmDlWvaTyjjUXbWFGeV89oi4
-         sMNlLu/PXhHycBKR5P3pAnD/qmBibPNCQAjisS2l0pVRJoVtHQdLT9WkF2q7AmGH+vqy
-         Hr4c4qn9TbmYE6OXMEwR8pXViefwZz81XWTpeOTcxuekZhN6ks1PXe5Ft0U9KIP9+9sZ
-         dYstOlwfPCOXtH6Bf+xw158b0vCSQyvXUWlglrBVm2MJZHu3RmIYLQPjvwnEjmtVTsTb
-         zFbg==
-X-Gm-Message-State: AOAM530SLZfIjC3Zccle5qF7UA5PoqhC/CFhGFpvKxefZwhcHe7U7q65
-        Ew0xo3j6TbAZRy21yJbnwaNmXvXJOSjRIA==
-X-Google-Smtp-Source: ABdhPJyI/2yF5j0Y4c6Rg7cy0zvMkWFf2rvkH3lV+0xBToveJFcYf3GobqOkuMkXZjAqYWlysTz2jw==
-X-Received: by 2002:a17:902:d717:b0:156:20a9:d388 with SMTP id w23-20020a170902d71700b0015620a9d388mr7038650ply.19.1648579521129;
-        Tue, 29 Mar 2022 11:45:21 -0700 (PDT)
+        bh=2XeIM1SVjYsGalPDLQxopalWmUCHnrUjVEEJ+tulJdw=;
+        b=P0CjfBA5bqctzuNQma0znG2wkLtDWkx1PBHr7Z+FBAFRamIez4ZuGWbrqkyG0qzC/c
+         30k4VITJmK7U5pObdF5WFhYiTq5mMczgKYkFHplz8r2tWFhrZBY9Z5//mjWnm3sRhWK4
+         QWd2Z2RR/2wGgGcKmVS1WWnLm5sXPQTlgMBOOWKC+mfBIrxNnIQC7yocaldVvjJTQCkY
+         NMY0EIYKdpI44fagzfHGqksUOVCCLwVwG6Ux5KkRRhcCs82OTNPcNmqGUyYIUIC2WAgn
+         v453ciHncZ9McqELU5AXwsxHdCg2XMar3ZYuSxluwwoEGpk5nplKjyPt+4kMnjBGpmkA
+         u/bw==
+X-Gm-Message-State: AOAM532IFNBt8k12CRTnMO8M9BhyT35F378ZSz1DIIMhpRMkQVvf9xLB
+        rVG7yV8a6rhgFT7b9p8GzYwnoQ==
+X-Google-Smtp-Source: ABdhPJzEpA97rJvGQuEnxLNNeV8mQMFbR/iU9G4YS04U64x9rSctBZQKrTxpUvsX+m2/3qlD8psMvg==
+X-Received: by 2002:a63:7888:0:b0:398:91:7b5e with SMTP id t130-20020a637888000000b0039800917b5emr3047768pgc.212.1648580517007;
+        Tue, 29 Mar 2022 12:01:57 -0700 (PDT)
 Received: from google.com (157.214.185.35.bc.googleusercontent.com. [35.185.214.157])
-        by smtp.gmail.com with ESMTPSA id c5-20020a056a00248500b004f6b5ddcc65sm20916192pfv.199.2022.03.29.11.45.20
+        by smtp.gmail.com with ESMTPSA id ip1-20020a17090b314100b001c7b10fe359sm3975575pjb.5.2022.03.29.12.01.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Mar 2022 11:45:20 -0700 (PDT)
-Date:   Tue, 29 Mar 2022 18:45:16 +0000
+        Tue, 29 Mar 2022 12:01:55 -0700 (PDT)
+Date:   Tue, 29 Mar 2022 19:01:52 +0000
 From:   Sean Christopherson <seanjc@google.com>
 To:     Chao Peng <chao.p.peng@linux.intel.com>
 Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -76,14 +76,15 @@ Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
         luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
         ak@linux.intel.com, david@redhat.com
-Subject: Re: [PATCH v5 02/13] mm: Introduce memfile_notifier
-Message-ID: <YkNTvFqWI5F5w+DW@google.com>
+Subject: Re: [PATCH v5 10/13] KVM: Register private memslot to memory backing
+ store
+Message-ID: <YkNXoCBjfpfI67QF@google.com>
 References: <20220310140911.50924-1-chao.p.peng@linux.intel.com>
- <20220310140911.50924-3-chao.p.peng@linux.intel.com>
+ <20220310140911.50924-11-chao.p.peng@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220310140911.50924-3-chao.p.peng@linux.intel.com>
+In-Reply-To: <20220310140911.50924-11-chao.p.peng@linux.intel.com>
 X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
         ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
@@ -96,175 +97,242 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Thu, Mar 10, 2022, Chao Peng wrote:
-> diff --git a/mm/Makefile b/mm/Makefile
-> index 70d4309c9ce3..f628256dce0d 100644
-> +void memfile_notifier_invalidate(struct memfile_notifier_list *list,
-> +				 pgoff_t start, pgoff_t end)
+> Add 'notifier' to memslot to make it a memfile_notifier node and then
+> register it to memory backing store via memfile_register_notifier() when
+> memslot gets created. When memslot is deleted, do the reverse with
+> memfile_unregister_notifier(). Note each KVM memslot can be registered
+> to different memory backing stores (or the same backing store but at
+> different offset) independently.
+> 
+> Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
+> Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
+> ---
+>  include/linux/kvm_host.h |  1 +
+>  virt/kvm/kvm_main.c      | 75 ++++++++++++++++++++++++++++++++++++----
+>  2 files changed, 70 insertions(+), 6 deletions(-)
+> 
+> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> index 6e1d770d6bf8..9b175aeca63f 100644
+> --- a/include/linux/kvm_host.h
+> +++ b/include/linux/kvm_host.h
+> @@ -567,6 +567,7 @@ struct kvm_memory_slot {
+>  	struct file *private_file;
+>  	loff_t private_offset;
+>  	struct memfile_pfn_ops *pfn_ops;
+> +	struct memfile_notifier notifier;
+>  };
+>  
+>  static inline bool kvm_slot_is_private(const struct kvm_memory_slot *slot)
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index d11a2628b548..67349421eae3 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -840,6 +840,37 @@ static int kvm_init_mmu_notifier(struct kvm *kvm)
+>  
+>  #endif /* CONFIG_MMU_NOTIFIER && KVM_ARCH_WANT_MMU_NOTIFIER */
+>  
+> +#ifdef CONFIG_MEMFILE_NOTIFIER
+> +static inline int kvm_memfile_register(struct kvm_memory_slot *slot)
+
+This is a good oppurtunity to hide away the memfile details a bit.  Maybe
+kvm_private_mem_{,un}register()?
+
 > +{
-> +	struct memfile_notifier *notifier;
-> +	int id;
+> +	return memfile_register_notifier(file_inode(slot->private_file),
+> +					 &slot->notifier,
+> +					 &slot->pfn_ops);
+> +}
 > +
-> +	id = srcu_read_lock(&srcu);
-> +	list_for_each_entry_srcu(notifier, &list->head, list,
-> +				 srcu_read_lock_held(&srcu)) {
-> +		if (notifier->ops && notifier->ops->invalidate)
+> +static inline void kvm_memfile_unregister(struct kvm_memory_slot *slot)
+> +{
+> +	if (slot->private_file) {
+> +		memfile_unregister_notifier(file_inode(slot->private_file),
+> +					    &slot->notifier);
+> +		fput(slot->private_file);
 
-Any reason notifier->ops isn't mandatory?
+This should not do fput(), it makes the helper imbalanced with respect to the
+register path and will likely lead to double fput().  Indeed, if preparing the
+region fails, __kvm_set_memory_region() will double up on fput() due to checking
+its local "file" for null, not slot->private for null.
 
-> +			notifier->ops->invalidate(notifier, start, end);
+> +		slot->private_file = NULL;
 > +	}
-> +	srcu_read_unlock(&srcu, id);
 > +}
 > +
-> +void memfile_notifier_fallocate(struct memfile_notifier_list *list,
-> +				pgoff_t start, pgoff_t end)
+> +#else /* !CONFIG_MEMFILE_NOTIFIER */
+> +
+> +static inline int kvm_memfile_register(struct kvm_memory_slot *slot)
 > +{
-> +	struct memfile_notifier *notifier;
-> +	int id;
-> +
-> +	id = srcu_read_lock(&srcu);
-> +	list_for_each_entry_srcu(notifier, &list->head, list,
-> +				 srcu_read_lock_held(&srcu)) {
-> +		if (notifier->ops && notifier->ops->fallocate)
-> +			notifier->ops->fallocate(notifier, start, end);
-> +	}
-> +	srcu_read_unlock(&srcu, id);
-> +}
-> +
-> +void memfile_register_backing_store(struct memfile_backing_store *bs)
-> +{
-> +	BUG_ON(!bs || !bs->get_notifier_list);
-> +
-> +	list_add_tail(&bs->list, &backing_store_list);
-> +}
-> +
-> +void memfile_unregister_backing_store(struct memfile_backing_store *bs)
-> +{
-> +	list_del(&bs->list);
 
-Allowing unregistration of a backing store is broken.  Using the _safe() variant
-is not sufficient to guard against concurrent modification.  I don't see any reason
-to support this out of the gate, the only reason to support unregistering a backing
-store is if the backing store is implemented as a module, and AFAIK none of the
-backing stores we plan on supporting initially support being built as a module.
-These aren't exported, so it's not like that's even possible.  Registration would
-also be broken if modules are allowed, I'm pretty sure module init doesn't run
-under a global lock.
+This should WARN_ON_ONCE().  Ditto for unregister.
 
-We can always add this complexity if it's needed in the future, but for now the
-easiest thing would be to tag memfile_register_backing_store() with __init and
-make backing_store_list __ro_after_init.
-
-> +}
-> +
-> +static int memfile_get_notifier_info(struct inode *inode,
-> +				     struct memfile_notifier_list **list,
-> +				     struct memfile_pfn_ops **ops)
-> +{
-> +	struct memfile_backing_store *bs, *iter;
-> +	struct memfile_notifier_list *tmp;
-> +
-> +	list_for_each_entry_safe(bs, iter, &backing_store_list, list) {
-> +		tmp = bs->get_notifier_list(inode);
-> +		if (tmp) {
-> +			*list = tmp;
-> +			if (ops)
-> +				*ops = &bs->pfn_ops;
-> +			return 0;
-> +		}
-> +	}
 > +	return -EOPNOTSUPP;
 > +}
 > +
-> +int memfile_register_notifier(struct inode *inode,
-
-Taking an inode is a bit odd from a user perspective.  Any reason not to take a
-"struct file *" and get the inode here?  That would give callers a hint that they
-need to hold a reference to the file for the lifetime of the registration.
-
-> +			      struct memfile_notifier *notifier,
-> +			      struct memfile_pfn_ops **pfn_ops)
+> +static inline void kvm_memfile_unregister(struct kvm_memory_slot *slot)
 > +{
-> +	struct memfile_notifier_list *list;
-> +	int ret;
-> +
-> +	if (!inode || !notifier | !pfn_ops)
-
-Bitwise | instead of logical ||.  But IMO taking in a pfn_ops pointer is silly.
-More below.
-
-> +		return -EINVAL;
-> +
-> +	ret = memfile_get_notifier_info(inode, &list, pfn_ops);
-> +	if (ret)
-> +		return ret;
-> +
-> +	spin_lock(&list->lock);
-> +	list_add_rcu(&notifier->list, &list->head);
-> +	spin_unlock(&list->lock);
-> +
-> +	return 0;
 > +}
-> +EXPORT_SYMBOL_GPL(memfile_register_notifier);
 > +
-> +void memfile_unregister_notifier(struct inode *inode,
-> +				 struct memfile_notifier *notifier)
-> +{
-> +	struct memfile_notifier_list *list;
+> +#endif /* CONFIG_MEMFILE_NOTIFIER */
 > +
-> +	if (!inode || !notifier)
-> +		return;
+>  #ifdef CONFIG_HAVE_KVM_PM_NOTIFIER
+>  static int kvm_pm_notifier_call(struct notifier_block *bl,
+>  				unsigned long state,
+> @@ -884,6 +915,9 @@ static void kvm_destroy_dirty_bitmap(struct kvm_memory_slot *memslot)
+>  /* This does not remove the slot from struct kvm_memslots data structures */
+>  static void kvm_free_memslot(struct kvm *kvm, struct kvm_memory_slot *slot)
+>  {
+> +	if (slot->flags & KVM_MEM_PRIVATE)
+> +		kvm_memfile_unregister(slot);
+
+With fput() move out of unregister, this needs to be:
+
+	if (slot->flags & KVM_MEM_PRIVATE) {
+		kvm_private_mem_unregister(slot);
+		fput(slot->private_file);
+	}
 > +
-> +	BUG_ON(memfile_get_notifier_info(inode, &list, NULL));
+>  	kvm_destroy_dirty_bitmap(slot);
+>  
+>  	kvm_arch_free_memslot(kvm, slot);
+> @@ -1738,6 +1772,12 @@ static int kvm_set_memslot(struct kvm *kvm,
+>  		kvm_invalidate_memslot(kvm, old, invalid_slot);
+>  	}
+>  
+> +	if (new->flags & KVM_MEM_PRIVATE && change == KVM_MR_CREATE) {
+> +		r = kvm_memfile_register(new);
+> +		if (r)
+> +			return r;
+> +	}
 
-Eww.  Rather than force the caller to provide the inode/file and the notifier,
-what about grabbing the backing store itself in the notifier?
+This belongs in kvm_prepare_memory_region().  The shenanigans for DELETE and MOVE
+are special.
 
-	struct memfile_notifier {
-		struct list_head list;
-		struct memfile_notifier_ops *ops;
+> +
+>  	r = kvm_prepare_memory_region(kvm, old, new, change);
+>  	if (r) {
+>  		/*
+> @@ -1752,6 +1792,10 @@ static int kvm_set_memslot(struct kvm *kvm,
+>  		} else {
+>  			mutex_unlock(&kvm->slots_arch_lock);
+>  		}
+> +
+> +		if (new->flags & KVM_MEM_PRIVATE && change == KVM_MR_CREATE)
+> +			kvm_memfile_unregister(new);
+> +
+>  		return r;
+>  	}
+>  
+> @@ -1817,6 +1861,7 @@ int __kvm_set_memory_region(struct kvm *kvm,
+>  	enum kvm_mr_change change;
+>  	unsigned long npages;
+>  	gfn_t base_gfn;
+> +	struct file *file = NULL;
 
-		struct memfile_backing_store *bs;
-	};
+Nit, naming this private_file would help understand its use.  Though I think it's
+easier to not have a local variable.  More below.
 
-That also helps avoid confusing between "ops" and "pfn_ops".  IMO, exposing
-memfile_backing_store to the caller isn't a big deal, and is preferable to having
-to rewalk multiple lists just to delete a notifier.
+>  	int as_id, id;
+>  	int r;
+>  
+> @@ -1890,14 +1935,24 @@ int __kvm_set_memory_region(struct kvm *kvm,
+>  			return 0;
+>  	}
+>  
+> +	if (mem->flags & KVM_MEM_PRIVATE) {
+> +		file = fdget(region_ext->private_fd).file;
 
-Then this can become:
+This can use fget() instead of fdget().
 
-  void memfile_unregister_notifier(struct memfile_notifier *notifier)
-  {
-	spin_lock(&notifier->bs->list->lock);
-	list_del_rcu(&notifier->list);
-	spin_unlock(&notifier->bs->list->lock);
+> +		if (!file)
+> +			return -EINVAL;
+> +	}
+> +
+>  	if ((change == KVM_MR_CREATE || change == KVM_MR_MOVE) &&
+> -	    kvm_check_memslot_overlap(slots, id, base_gfn, base_gfn + npages))
+> -		return -EEXIST;
+> +	    kvm_check_memslot_overlap(slots, id, base_gfn, base_gfn + npages)) {
+> +		r = -EEXIST;
+> +		goto out;
+> +	}
+>  
+>  	/* Allocate a slot that will persist in the memslot. */
+>  	new = kzalloc(sizeof(*new), GFP_KERNEL_ACCOUNT);
+> -	if (!new)
+> -		return -ENOMEM;
+> +	if (!new) {
+> +		r = -ENOMEM;
+> +		goto out;
+> +	}
+>  
+>  	new->as_id = as_id;
+>  	new->id = id;
+> @@ -1905,10 +1960,18 @@ int __kvm_set_memory_region(struct kvm *kvm,
+>  	new->npages = npages;
+>  	new->flags = mem->flags;
+>  	new->userspace_addr = mem->userspace_addr;
+> +	new->private_file = file;
+> +	new->private_offset = mem->flags & KVM_MEM_PRIVATE ?
+> +			      region_ext->private_offset : 0;
 
-	synchronize_srcu(&srcu);
-  }
+"new" is zero-allocated, so all the private stuff, including the fget(), can be
+wrapped in a single KVM_MEM_PRIVATE check.  Moving fget() eliminates the number
+of gotos needed (the above -EEXIST and -ENOMEM paths don't need to be modified).
 
-and registration can be:
+>  	r = kvm_set_memslot(kvm, old, new, change);
+> -	if (r)
+> -		kfree(new);
+> +	if (!r)
+> +		return r;
 
-  int memfile_register_notifier(const struct file *file,
-			      struct memfile_notifier *notifier)
-  {
-	struct memfile_notifier_list *list;
-	struct memfile_backing_store *bs;
-	int ret;
+Use goto, e.g.
 
-	if (!file || !notifier)
-		return -EINVAL;
+	if (r)
+		goto out;
 
-	list_for_each_entry(bs, &backing_store_list, list) {
-		list = bs->get_notifier_list(file_inode(file));
-		if (list) {
-			notifier->bs = bs;
+	return 0;
 
-			spin_lock(&list->lock);
-			list_add_rcu(&notifier->list, &list->head);
-			spin_unlock(&list->lock);
-			return 0;
+Burying the happy path in a taken if-statement is confusing and error prone,
+mostly because it breaks well-established kernel patterns.  Note, there's no need
+for a separate out_free since new->private_file will be NULL in either case.  I
+don't have a strong preference, I just find it easier to read code that's more
+explicit, but I'm a-ok collapsing them into a single label.
+
+	if ((change == KVM_MR_CREATE || change == KVM_MR_MOVE) &&
+	    kvm_check_memslot_overlap(slots, id, base_gfn, base_gfn + npages))
+		return -EEXIST;
+
+	/* Allocate a slot that will persist in the memslot. */
+	new = kzalloc(sizeof(*new), GFP_KERNEL_ACCOUNT);
+	if (!new)
+		return -ENOMEM;
+
+	new->as_id = as_id;
+	new->id = id;
+	new->base_gfn = base_gfn;
+	new->npages = npages;
+	new->flags = mem->flags;
+	new->userspace_addr = mem->userspace_addr;
+
+	if (mem->flags & KVM_MEM_PRIVATE) {
+		new->private_file = fget(mem->private_fd);
+		if (!new->private_file) {
+			r = -EINVAL;
+			goto out_free;
 		}
+		new->private_offset = mem->private_offset;
 	}
 
-	return -EOPNOTSUPP;
-  }
+	r = kvm_set_memslot(kvm, old, new, change);
+	if (r)
+		goto out;
+
+	return 0;
+
+out:
+	if (new->private_file)
+		fput(new->private_file);
+
+out_free:
+	kfree(new);
+	return r;
