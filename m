@@ -2,51 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B8774EAB0E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Mar 2022 12:10:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 372DA4EAB2F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Mar 2022 12:23:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235012AbiC2KMU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Mar 2022 06:12:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35394 "EHLO
+        id S234154AbiC2KZi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Mar 2022 06:25:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233879AbiC2KMT (ORCPT
+        with ESMTP id S233905AbiC2KZf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Mar 2022 06:12:19 -0400
+        Tue, 29 Mar 2022 06:25:35 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D1A01D306F;
-        Tue, 29 Mar 2022 03:10:37 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69E462A251;
+        Tue, 29 Mar 2022 03:23:53 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CD52861175;
-        Tue, 29 Mar 2022 10:10:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA2D3C340ED;
-        Tue, 29 Mar 2022 10:10:35 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 040CF611DF;
+        Tue, 29 Mar 2022 10:23:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 871E5C340ED;
+        Tue, 29 Mar 2022 10:23:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648548636;
-        bh=8ZB4+m0cBb+PTExehPxjGEI3iJeJ4mAnnHPkbw/jvwA=;
+        s=k20201202; t=1648549432;
+        bh=XJLnOhavV8EgimN80lCNvH8tMMHjSYGDC4GO3Sa86+Y=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=U9qjZpg6nVAqS5Iia7V+3i8K/l7l9nfjLudOSkoc43Mmd6255oMwf1CISxfJ0ImRO
-         FnJaf1EQb7CykLHvJYmjzRPVK9yw0r+y1EMh/qDDKHDCxCyo0UBHQAzlIue5oGp/b1
-         pUwrA3u4/+QuEVD+KBtLjuE7BA7UnELyHQ1rmrqwY1LpDWvRAqTxsQVaMbSNP7Te5G
-         WdbXIgbIlQofpO6EYANW1MMwpDf4pD2s15FXhZxPvHmxxRmR182zxAl7/fgaFOWk41
-         VSiVI7dJzx0Is2RY+abyhNKl/r7C+tZEKFwqpTlPeJJkbGwX4RxSyLP0lmbuULGVMv
-         cfm6UZktD4lKQ==
-Date:   Tue, 29 Mar 2022 11:10:33 +0100
-From:   Filipe Manana <fdmanana@kernel.org>
-To:     Naohiro Aota <naohiro.aota@wdc.com>
-Cc:     linux-btrfs@vger.kernel.org, johannes.thumshirn@wdc.com,
-        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        david@fromorbit.com
-Subject: Re: [PATCH v4 3/3] btrfs: assert that relocation is protected with
- sb_start_write()
-Message-ID: <YkLbGYSbJg5Gkl2Q@debian9.Home>
-References: <cover.1648535838.git.naohiro.aota@wdc.com>
- <28e3e02ed14fe7c0859707e1a10a447fe4338c16.1648535838.git.naohiro.aota@wdc.com>
+        b=TfFXzVSxU4r6703Rsr5iLbRlNhe4Jfbhy7sMLarQXy1M2/LHRZNZ3uJTR6+T9VOxc
+         OUs3nWeF7CZ8ELRK06MGP8gRp8bxeeJyvGrM8HwJ6bzk9aehX0T5zm/5ZYIO0eH3WB
+         2Cp9nGFw/zSyRW3Bf0T9eze0s9yF4aEtV3tlk35ElsSrvAl2SXaPj1qNu81LgokOTu
+         +skCc2O7iWVLFAdMQ2+mqXrKWQyAWEL5by70VQiyjqt9KVzK+xZpMZpqH+EFvGZhGI
+         XDuP2jiNDvUTd805YI+qc+1be4zKqxzwEoJZg+s9vwEMOhocpTr/XnaXy571ftL+eX
+         W/hv/mQelwSnQ==
+Date:   Tue, 29 Mar 2022 12:23:47 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Fedor Pchelkin <aissur0002@gmail.com>,
+        Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/4] file: Fix file descriptor leak in copy_fd_bitmaps()
+Message-ID: <20220329102347.iu6mlbv5c76ci3j7@wittgenstein>
+References: <20220326114009.1690-1-aissur0002@gmail.com>
+ <CAHk-=wijnsoGpoXRvY9o-MYow_xNXxaHg5vWJ5Z3GaXiWeg+dg@mail.gmail.com>
+ <CAHk-=wgiTa-Cf+CyChsSHe-zrsps=GMwsEqFE3b_cgWUjxUSmw@mail.gmail.com>
+ <2698031.BEx9A2HvPv@fedor-zhuzhzhalka67>
+ <CAHk-=wh2Ao+OgnWSxHsJodXiLwtaUndXSkuhh9yKnA3iXyBLEA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <28e3e02ed14fe7c0859707e1a10a447fe4338c16.1648535838.git.naohiro.aota@wdc.com>
+In-Reply-To: <CAHk-=wh2Ao+OgnWSxHsJodXiLwtaUndXSkuhh9yKnA3iXyBLEA@mail.gmail.com>
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -57,53 +62,66 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 29, 2022 at 03:56:00PM +0900, Naohiro Aota wrote:
-> Relocation of a data block group creates ordered extents. They can cause a
-> hang when a process is trying to thaw the filesystem.
+On Sun, Mar 27, 2022 at 03:21:18PM -0700, Linus Torvalds wrote:
+> On Sun, Mar 27, 2022 at 2:53 PM <aissur0002@gmail.com> wrote:
+> >
+> > I am sorry, that was my first attempt to contribute to the kernel and
+> > I messed up a little bit with the patch tag: it is actually a single,
+> > standalone patch and there has been nothing posted previously.
 > 
-> We should have called sb_start_write(), so the filesystem is not being
-> frozen. Add an ASSERT to check it is protected.
+> No problem, thanks for clarifying.
 > 
-> Signed-off-by: Naohiro Aota <naohiro.aota@wdc.com>
-> ---
->  fs/btrfs/relocation.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+> But the patch itself in that case is missing some detail, since it
+> clearly doesn't apply to upstream.
 > 
-> diff --git a/fs/btrfs/relocation.c b/fs/btrfs/relocation.c
-> index fdc2c4b411f0..5e52cd8d5f23 100644
-> --- a/fs/btrfs/relocation.c
-> +++ b/fs/btrfs/relocation.c
-> @@ -3977,6 +3977,16 @@ int btrfs_relocate_block_group(struct btrfs_fs_info *fs_info, u64 group_start)
->  	if (!bg)
->  		return -ENOENT;
->  
-> +	/*
-> +	 * Relocation of a data block group creates ordered extents.
-> +	 * Without sb_start_write(), we can freeze the FS while unfinished
-> +	 * ordered extents are left. Such ordered extents can cause a
-> +	 * deadlock e.g, when syncfs() is trying to finish them because
-
-syncfs() is not trying to finish them, it's waiting for them to complete.
-
-> +	 * they never finish as the FS is already frozen.
-
-More specifically they can't finish because they block when joining a transaction,
-due to the fact that the freeze locks are being held in write mode.
-
-Anyway, I won't make you send yet another version. Perhaps this is something
-David can fixup when he picks the patch.
-
-Reviewed-by: Filipe Manana <fdmanana@suse.com>
-
-Thanks.
-
-> +	 */
-> +	if (bg->flags & BTRFS_BLOCK_GROUP_DATA)
-> +		ASSERT(sb_write_started(fs_info->sb));
-> +
->  	if (btrfs_pinned_by_swapfile(fs_info, bg)) {
->  		btrfs_put_block_group(bg);
->  		return -ETXTBSY;
-> -- 
-> 2.35.1
+> Anyway:
 > 
+> > In few words, an error occurs while executing close_range() call with
+> > CLOSE_RANGE_UNSHARE flag: in __close_range() the value of
+> > max_unshare_fds (later used as max_fds in dup_fd() and copy_fd_bitmaps())
+> > can be an arbitrary number.
+> >
+> >   if (max_fd >= last_fd(files_fdtable(cur_fds)))
+> >     max_unshare_fds = fd;
+> >
+> > and not be a multiple of BITS_PER_LONG or BITS_PER_BYTE.
+> 
+> Very good, that's the piece I was missing. I only looked in fs/file.c,
+> and missed how that max_unshare_fds gets passed from __close_range()
+> into fork.c for unshare_fd() and then back to file.c and dup_fd(). And
+> then affects sane_fdtable_size().
+> 
+> I _think_ it should be sufficient to just do something like
+> 
+>        max_fds = ALIGN(max_fds, BITS_PER_LONG)
+> 
+> in sane_fdtable_size(), but honestly, I haven't actually thought about
+> it all that much. That's just a gut feel without really analyzing
+> things - sane_fdtable_size() really should never return a value that
+> isn't BITS_PER_LONG aligned.
+> 
+> And that whole close_range() is why I added Christian Brauner to the
+> participant list, though, so let's see if Christian has any comments.
+> 
+> Christian?
+
+(Sorry, I was heads-deep in some other fs work and went into airplaine
+mode. I'm back.)
+
+So I investigated a similar report a little while back and I spent quite
+a lot of time trying to track this down but didn't find the cause.
+If you'd call:
+
+close_range(131, -1, CLOSE_RANGE_UNSHARE);
+
+for an fdtable that is smaller than 131 then we'd call:
+
+unshare_fd(..., 131)
+\dup_fd(..., 131)
+  \sane_fdtable_size(..., 131)
+
+So sane_fdtable_size() would return 131 which is not aligned. This
+couldn't happen before CLOSE_RANGE_UNSHARE afaict. I'll try to do a
+repro with this with your suggested fix applied.
+
+Christian
