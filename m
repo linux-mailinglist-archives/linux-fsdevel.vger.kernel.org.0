@@ -2,59 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B43934EA8BA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Mar 2022 09:52:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 386954EA8C2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Mar 2022 09:53:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233609AbiC2HvZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S233612AbiC2HvZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Tue, 29 Mar 2022 03:51:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60008 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233591AbiC2HvL (ORCPT
+        with ESMTP id S233585AbiC2HvL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Tue, 29 Mar 2022 03:51:11 -0400
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98FD51E95DB
-        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Mar 2022 00:49:27 -0700 (PDT)
-Received: by mail-wr1-x42f.google.com with SMTP id b19so23487448wrh.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Mar 2022 00:49:27 -0700 (PDT)
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01F511E5221
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Mar 2022 00:49:29 -0700 (PDT)
+Received: by mail-wm1-x32d.google.com with SMTP id p26-20020a05600c1d9a00b0038ccbff1951so598986wms.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Mar 2022 00:49:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=7Xee4LQq4xG5i5yaYMFWrpevH6Upht1xrdhxPOrxCR0=;
-        b=MLMefGBiaGnER1HtulwdRzbsoJ+EGnjNhuV3EUQTomnRTxQMOdmIqux73Hopa5jdks
-         SLBGAKxz+1TFdhPJu1OIKdFG1h/Wo3I9tAfl/SB6Dhp8JEr8NSEwdOHF+lRfzrwnFUDK
-         tJT/tVRyrAefOVIOqFRhgZFcMTmReUhpejlup5vzGNXmfMM5xFmYLepPBvvgmjVclTtu
-         FcGBuLjGBznOjbGKlQWR80z+XgQlLRPyPmQOgdRI6OdL20+A2wX2HqCf+oG7oFlIi8l+
-         MuK/bTRh77081Iz/Hd+KMuIwhQB/ezQUCPiZA8xedBxoPURVbBgzn1hFRlElC0yMWdK4
-         2L1w==
+        bh=ghLob7pz1z6BVvec+MhphEZOFMWIi6TQWa4rgtOFJik=;
+        b=DUVxAPYarFHXJphSyMv3+yUz3X3BwudNNfBpRQn0PJfnzmcomE+hLNjMqrAsiduWWV
+         OpupioN/1lKhjlzOGsOtmSeeziH/c3R0NclOjsBKtw1SYXcMGm+4KoUBcVibmNdD+yLn
+         DehU78HORsqWAteBYeOH14W2bVK/z9nInuelGcU88K3Wp9PWePAaA3VUw0La1a3PBMNi
+         2o6wEhM4deeQopYCjLTYl1iMfDu2gp8UdWE+UT5Ki32/1YX8DDYpge9oq6T6TCLbqK2Q
+         hquvoPi2G+Zb4AYn8XztYyKJMyiRuORHhVofHvsFgm4JSFZADtlTM5bV9Z1t0EGrzXjN
+         wliQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=7Xee4LQq4xG5i5yaYMFWrpevH6Upht1xrdhxPOrxCR0=;
-        b=0mdKhvSKdbqDkAgqdzm6YeQ3EpyF/zjJQfVYicQD4fETd5GAL6eOpHesJGGSRlgQp8
-         AZj26GQ6ovDsbidWEQvT2et2XJuAJeH3ed/blFcDvHCWprvQk6uGknVIA1NKJL/mUMv8
-         Ly02L9G5ote1eIf4hLQg2/V0jHUCe85ypxEiPRJsmSFJWI4tDMvdYIkhg1v/zHXNy3FB
-         44v2m24kYX9tStx8otSkJmlXsboq70IKlDwjV8GR9wU3eOD1wtoPQAx7fSgQTeFCNgu1
-         C7gK1qNiwYJt0/JgeiyA4eMrj9ATeAk7Bs+oRBufeZAn2/o9ZcWLfRhfTlQJqlBa45yD
-         J6og==
-X-Gm-Message-State: AOAM5311ocVloxHmEiJAVVNUWNakbFEUYMs8aslX0TBnIrHBtSbvBoqK
-        3ekgGb/e+vIIcwlzV88YexbD+yVuFBA=
-X-Google-Smtp-Source: ABdhPJwlETquIhqVemuxVeDZi1gS9HUlSY85DYnlwhaYu2/XNZipgElMyaQu+BhGy8iZFjO9nyQ1xQ==
-X-Received: by 2002:a05:6000:508:b0:1e4:a027:d147 with SMTP id a8-20020a056000050800b001e4a027d147mr29392796wrf.315.1648540166166;
-        Tue, 29 Mar 2022 00:49:26 -0700 (PDT)
+        bh=ghLob7pz1z6BVvec+MhphEZOFMWIi6TQWa4rgtOFJik=;
+        b=7z29K8rjz7tqof5ojOjrRxAFd66CRS9FCcUsuzfGFX2Ha51jOehP4SjAEobbhmO8AU
+         8rCkKSGYJ7jqjtnGKRUarTlBk3t/qRKZKtFxVp5+jNIfsNrGEkMI0wxcIfKgCM84VCJA
+         Dpr0GWT4lNV8OFgGOi48bvopniWPRTE2QyH6UxObRGbkIEwEdBNOUfArxvIoNx12lv6v
+         xBoPJnTke5E8IxnwF6TXsFYMuFAlWVwf31f24J3geUSdBAlBp3pv+zfzmsIk95W98XbY
+         d6pCc+7/w3qt4OT/q0ml8HPmTy+nhQu4iqMiwv6zNhS4At1DdNezR9bfHdAL7X/QHhuI
+         +xjA==
+X-Gm-Message-State: AOAM533JShB7N3HadAAL85bTCd2CVzO5/1IeoucpLOOpKmiceVYcoMqn
+        sHqNRIln6jZie14C/J8ximdOG3N+Sb0=
+X-Google-Smtp-Source: ABdhPJwv1dG4W6DEk+WADCnMrrUDf8/mN2TjKCt3w6JBZG9msnWbbOYXtdbpq2l8sYkl5MvDm7Y+Zg==
+X-Received: by 2002:a1c:6a15:0:b0:38b:57e8:dd5c with SMTP id f21-20020a1c6a15000000b0038b57e8dd5cmr5191610wmc.160.1648540167523;
+        Tue, 29 Mar 2022 00:49:27 -0700 (PDT)
 Received: from localhost.localdomain ([77.137.71.203])
-        by smtp.gmail.com with ESMTPSA id k40-20020a05600c1ca800b0038c6c8b7fa8sm1534342wms.25.2022.03.29.00.49.24
+        by smtp.gmail.com with ESMTPSA id k40-20020a05600c1ca800b0038c6c8b7fa8sm1534342wms.25.2022.03.29.00.49.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Mar 2022 00:49:25 -0700 (PDT)
+        Tue, 29 Mar 2022 00:49:27 -0700 (PDT)
 From:   Amir Goldstein <amir73il@gmail.com>
 To:     Jan Kara <jack@suse.cz>
 Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 12/16] fanotify: factor out helper fanotify_mark_update_flags()
-Date:   Tue, 29 Mar 2022 10:49:00 +0300
-Message-Id: <20220329074904.2980320-13-amir73il@gmail.com>
+Subject: [PATCH v2 13/16] fanotify: implement "evictable" inode marks
+Date:   Tue, 29 Mar 2022 10:49:01 +0300
+Message-Id: <20220329074904.2980320-14-amir73il@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220329074904.2980320-1-amir73il@gmail.com>
 References: <20220329074904.2980320-1-amir73il@gmail.com>
@@ -70,153 +70,137 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Handle FAN_MARK_IGNORED_SURV_MODIFY flag change in a helper that
-is called after updating the mark mask.
+When an inode mark is created with flag FAN_MARK_EVICTABLE, it will not
+pin the marked inode to inode cache, so when inode is evicted from cache
+due to memory pressure, the mark will be lost.
 
-Move recalc of object mask inside fanotify_mark_add_to_mask() which
-makes the code a bit simpler to follow.
+When an inode mark with flag FAN_MARK_EVICATBLE is updated without using
+this flag, the marked inode is pinned to inode cache.
 
-Add also helper to translate fsnotify mark flags to user visible
-fanotify mark flags.
+When an inode mark is updated with flag FAN_MARK_EVICTABLE but an
+existing mark already has the inode pinned, the mark update fails with
+error EEXIST.
 
+Evictable inode marks can be used to setup inode marks with ignored mask
+to suppress events from uninteresting files or directories in a lazy
+manner, upon receiving the first event, without having to iterate all
+the uninteresting files or directories before hand.
+
+The evictbale inode mark feature allows performing this lazy marks setup
+without exhausting the system memory with pinned inodes.
+
+This change does not enable the feature yet.
+
+Link: https://lore.kernel.org/linux-fsdevel/CAOQ4uxiRDpuS=2uA6+ZUM7yG9vVU-u212tkunBmSnP_u=mkv=Q@mail.gmail.com/
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/notify/fanotify/fanotify.h      | 10 ++++++++
- fs/notify/fanotify/fanotify_user.c | 39 +++++++++++++++++-------------
- fs/notify/fdinfo.c                 |  6 ++---
- 3 files changed, 34 insertions(+), 21 deletions(-)
+ fs/notify/fanotify/fanotify.h      |  2 ++
+ fs/notify/fanotify/fanotify_user.c | 31 +++++++++++++++++++++++++++++-
+ include/uapi/linux/fanotify.h      |  1 +
+ 3 files changed, 33 insertions(+), 1 deletion(-)
 
 diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.h
-index a3d5b751cac5..87142bc0131a 100644
+index 87142bc0131a..80e0ec95b113 100644
 --- a/fs/notify/fanotify/fanotify.h
 +++ b/fs/notify/fanotify/fanotify.h
-@@ -490,3 +490,13 @@ static inline unsigned int fanotify_event_hash_bucket(
- {
- 	return event->hash & FANOTIFY_HTABLE_MASK;
+@@ -497,6 +497,8 @@ static inline unsigned int fanotify_mark_user_flags(struct fsnotify_mark *mark)
+ 
+ 	if (mark->flags & FSNOTIFY_MARK_FLAG_IGNORED_SURV_MODIFY)
+ 		mflags |= FAN_MARK_IGNORED_SURV_MODIFY;
++	if (mark->flags & FSNOTIFY_MARK_FLAG_NO_IREF)
++		mflags |= FAN_MARK_EVICTABLE;
+ 
+ 	return mflags;
  }
-+
-+static inline unsigned int fanotify_mark_user_flags(struct fsnotify_mark *mark)
-+{
-+	unsigned int mflags = 0;
-+
-+	if (mark->flags & FSNOTIFY_MARK_FLAG_IGNORED_SURV_MODIFY)
-+		mflags |= FAN_MARK_IGNORED_SURV_MODIFY;
-+
-+	return mflags;
-+}
 diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index 0f0db1efa379..6e78ea12239c 100644
+index 6e78ea12239c..2c65038da4ce 100644
 --- a/fs/notify/fanotify/fanotify_user.c
 +++ b/fs/notify/fanotify/fanotify_user.c
-@@ -1081,42 +1081,50 @@ static int fanotify_remove_inode_mark(struct fsnotify_group *group,
- 				    flags, umask);
- }
- 
--static void fanotify_mark_add_ignored_mask(struct fsnotify_mark *fsn_mark,
--					   __u32 mask, unsigned int flags,
--					   __u32 *removed)
-+static int fanotify_mark_update_flags(struct fsnotify_mark *fsn_mark,
-+				      unsigned int flags, bool *recalc)
+@@ -1084,6 +1084,8 @@ static int fanotify_remove_inode_mark(struct fsnotify_group *group,
+ static int fanotify_mark_update_flags(struct fsnotify_mark *fsn_mark,
+ 				      unsigned int flags, bool *recalc)
  {
--	fsn_mark->ignored_mask |= mask;
--
++	bool want_iref = !(flags & FAN_MARK_EVICTABLE);
++
  	/*
  	 * Setting FAN_MARK_IGNORED_SURV_MODIFY for the first time may lead to
  	 * the removal of the FS_MODIFY bit in calculated mask if it was set
- 	 * because of an ignored mask that is now going to survive FS_MODIFY.
- 	 */
- 	if ((flags & FAN_MARK_IGNORED_SURV_MODIFY) &&
-+	    (flags & FAN_MARK_IGNORED_MASK) &&
- 	    !(fsn_mark->flags & FSNOTIFY_MARK_FLAG_IGNORED_SURV_MODIFY)) {
- 		fsn_mark->flags |= FSNOTIFY_MARK_FLAG_IGNORED_SURV_MODIFY;
- 		if (!(fsn_mark->mask & FS_MODIFY))
--			*removed = FS_MODIFY;
-+			*recalc = true;
+@@ -1097,6 +1099,20 @@ static int fanotify_mark_update_flags(struct fsnotify_mark *fsn_mark,
+ 			*recalc = true;
  	}
+ 
++	if (fsn_mark->connector->type != FSNOTIFY_OBJ_TYPE_INODE ||
++	    want_iref == !(fsn_mark->flags & FSNOTIFY_MARK_FLAG_NO_IREF))
++		return 0;
 +
-+	return 0;
++	/*
++	 * NO_IREF may be removed from a mark, but not added.
++	 * When removed, fsnotify_recalc_mask() will take the inode ref.
++	 */
++	if (!want_iref)
++		return -EEXIST;
++
++	fsn_mark->flags &= ~FSNOTIFY_MARK_FLAG_NO_IREF;
++	*recalc = true;
++
+ 	return 0;
  }
  
--static __u32 fanotify_mark_add_to_mask(struct fsnotify_mark *fsn_mark,
--				       __u32 mask, unsigned int flags,
--				       __u32 *removed)
-+static int fanotify_mark_add_to_mask(struct fsnotify_mark *fsn_mark,
-+				     __u32 mask, unsigned int flags)
- {
--	__u32 oldmask, newmask;
-+	__u32 oldmask;
-+	bool recalc = false;
-+	int ret;
- 
- 	spin_lock(&fsn_mark->lock);
- 	oldmask = fsnotify_calc_mask(fsn_mark);
- 	if (!(flags & FAN_MARK_IGNORED_MASK)) {
- 		fsn_mark->mask |= mask;
- 	} else {
--		fanotify_mark_add_ignored_mask(fsn_mark, mask, flags, removed);
-+		fsn_mark->ignored_mask |= mask;
- 	}
--	newmask = fsnotify_calc_mask(fsn_mark);
-+
-+	recalc = fsnotify_calc_mask(fsn_mark) & ~oldmask &
-+		~fsnotify_conn_mask(fsn_mark->connector);
-+
-+	ret = fanotify_mark_update_flags(fsn_mark, flags, &recalc);
- 	spin_unlock(&fsn_mark->lock);
- 
--	return newmask & ~oldmask;
-+	if (recalc)
-+		fsnotify_recalc_mask(fsn_mark->connector);
-+
-+	return ret;
- }
- 
+@@ -1130,6 +1146,7 @@ static int fanotify_mark_add_to_mask(struct fsnotify_mark *fsn_mark,
  static struct fsnotify_mark *fanotify_add_new_mark(struct fsnotify_group *group,
-@@ -1174,7 +1182,6 @@ static int fanotify_add_mark(struct fsnotify_group *group,
- 			     __kernel_fsid_t *fsid)
+ 						   fsnotify_connp_t *connp,
+ 						   unsigned int obj_type,
++						   unsigned int fan_flags,
+ 						   __kernel_fsid_t *fsid)
  {
- 	struct fsnotify_mark *fsn_mark;
--	__u32 added, removed = 0;
- 	int ret = 0;
- 
- 	mutex_lock(&group->mark_mutex);
-@@ -1197,9 +1204,7 @@ static int fanotify_add_mark(struct fsnotify_group *group,
- 			goto out;
+ 	struct ucounts *ucounts = group->fanotify_data.ucounts;
+@@ -1152,6 +1169,9 @@ static struct fsnotify_mark *fanotify_add_new_mark(struct fsnotify_group *group,
  	}
  
--	added = fanotify_mark_add_to_mask(fsn_mark, mask, flags, &removed);
--	if (removed || (added & ~fsnotify_conn_mask(fsn_mark->connector)))
--		fsnotify_recalc_mask(fsn_mark->connector);
-+	ret = fanotify_mark_add_to_mask(fsn_mark, mask, flags);
+ 	fsnotify_init_mark(mark, group);
++	if (fan_flags & FAN_MARK_EVICTABLE)
++		mark->flags |= FSNOTIFY_MARK_FLAG_NO_IREF;
++
+ 	ret = fsnotify_add_mark_locked(mark, connp, obj_type, fsid);
+ 	if (ret) {
+ 		fsnotify_put_mark(mark);
+@@ -1187,7 +1207,8 @@ static int fanotify_add_mark(struct fsnotify_group *group,
+ 	mutex_lock(&group->mark_mutex);
+ 	fsn_mark = fsnotify_find_mark(connp, group);
+ 	if (!fsn_mark) {
+-		fsn_mark = fanotify_add_new_mark(group, connp, obj_type, fsid);
++		fsn_mark = fanotify_add_new_mark(group, connp, obj_type, flags,
++						 fsid);
+ 		if (IS_ERR(fsn_mark)) {
+ 			mutex_unlock(&group->mark_mutex);
+ 			return PTR_ERR(fsn_mark);
+@@ -1602,6 +1623,14 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+ 	    mark_type != FAN_MARK_FILESYSTEM)
+ 		goto fput_and_out;
  
- out:
- 	mutex_unlock(&group->mark_mutex);
-diff --git a/fs/notify/fdinfo.c b/fs/notify/fdinfo.c
-index 754a546d647d..9f81adada3c8 100644
---- a/fs/notify/fdinfo.c
-+++ b/fs/notify/fdinfo.c
-@@ -14,6 +14,7 @@
- #include <linux/exportfs.h>
++	/*
++	 * Evictable is only relevant for inode marks, because only inode object
++	 * can be evicted on memory pressure.
++	 */
++	if (flags & FAN_MARK_EVICTABLE &&
++	     mark_type != FAN_MARK_INODE)
++		goto fput_and_out;
++
+ 	/*
+ 	 * Events that do not carry enough information to report
+ 	 * event->fd require a group that supports reporting fid.  Those
+diff --git a/include/uapi/linux/fanotify.h b/include/uapi/linux/fanotify.h
+index e8ac38cc2fd6..f1f89132d60e 100644
+--- a/include/uapi/linux/fanotify.h
++++ b/include/uapi/linux/fanotify.h
+@@ -82,6 +82,7 @@
+ #define FAN_MARK_IGNORED_SURV_MODIFY	0x00000040
+ #define FAN_MARK_FLUSH		0x00000080
+ /* FAN_MARK_FILESYSTEM is	0x00000100 */
++#define FAN_MARK_EVICTABLE	0x00000200
  
- #include "inotify/inotify.h"
-+#include "fanotify/fanotify.h"
- #include "fdinfo.h"
- #include "fsnotify.h"
- 
-@@ -104,12 +105,9 @@ void inotify_show_fdinfo(struct seq_file *m, struct file *f)
- 
- static void fanotify_fdinfo(struct seq_file *m, struct fsnotify_mark *mark)
- {
--	unsigned int mflags = 0;
-+	unsigned int mflags = fanotify_mark_user_flags(mark);
- 	struct inode *inode;
- 
--	if (mark->flags & FSNOTIFY_MARK_FLAG_IGNORED_SURV_MODIFY)
--		mflags |= FAN_MARK_IGNORED_SURV_MODIFY;
--
- 	if (mark->connector->type == FSNOTIFY_OBJ_TYPE_INODE) {
- 		inode = igrab(fsnotify_conn_inode(mark->connector));
- 		if (!inode)
+ /* These are NOT bitwise flags.  Both bits can be used togther.  */
+ #define FAN_MARK_INODE		0x00000000
 -- 
 2.25.1
 
