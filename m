@@ -2,98 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DD5F44EABEE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Mar 2022 13:07:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 284B64EABF2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Mar 2022 13:08:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235546AbiC2LJL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Mar 2022 07:09:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38670 "EHLO
+        id S235564AbiC2LKD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Mar 2022 07:10:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42158 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235556AbiC2LJJ (ORCPT
+        with ESMTP id S235545AbiC2LKC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Mar 2022 07:09:09 -0400
-Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C617026107;
-        Tue, 29 Mar 2022 04:07:24 -0700 (PDT)
-Received: by mail-yb1-xb29.google.com with SMTP id e203so22089219ybc.12;
-        Tue, 29 Mar 2022 04:07:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DKGDPd33h/ATv4J4XO1IkueCMjSvnZm6IMyLd4ES814=;
-        b=EQgZe02QCAY+nUAJ0SZq3XSr76Pwa0LWYCsFzPtNPEsdyZWX/YZDQXl0sSHB56c4mu
-         UE4kMswtjyAVryNti07QpKbb3R3H2/8+iJpY+zesF1diqwsB1PjtZAlv0X2ogJ/TYtmV
-         ncbzf+VY0n2Ik7V5iA+gGXMdr+0bDOenxA6qm5rOoD4iVPtRHkhDFu3m9/Dokcpl7nay
-         YqMLpaV6SrB5vRy+/K4RGymo7BN084l34Fvx18N3s4UaVkgdEfnReJKHmtSndr+E8+jl
-         /yJqU9LmScIWoOW4/H9bZUKxayurvgnunlQWP2Qwnc1st8SRTHRKwIs2QlejtvFxdopG
-         QqnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DKGDPd33h/ATv4J4XO1IkueCMjSvnZm6IMyLd4ES814=;
-        b=dyNbvAzCZxwi+eBScWLQj68ZNRI5PbwlcEFR/3TobWN51q8halAgrVXg4R6oz/xpmh
-         xWGuZA73/5/LTXlS4xXfpirZneqin8jXuu+la/cNwhRDVTQQpo4/JCsyxRu8RpLpm7xL
-         22RLsuq7kiYPowG6//ywHwwUe92ku1RlvGqvOzGtVerUg6Oy8XIVRpPTdS18I+0GuzbT
-         fB92snnBViPdUM6GpJKAUKZwrb6uCnp52NJerZqeFFFzdah2+0HgQ/92eNcTDuG2rlog
-         wkaFrgz0bPcJQzbVZo0IUM/6ifU/Vs7LhonAckxDsz9Xr4io9nlyleQUa4VicKxmDmWy
-         Aydg==
-X-Gm-Message-State: AOAM533at5PLXlgy18qwzpyVWEioR48UPhiNkPJWLxd+N8OFtjKOjqpu
-        KvQfgKXoXWdILZEvkQM70Y6WZ6TjKzKsMGQ6qbY=
-X-Google-Smtp-Source: ABdhPJxugplLaRknO6i+6leR0kQkRWR95XOSCEZHfh0swZ29OBN2fFErEAmzySovfJhahdvuW1vYDGkOOxk6pQa42R4=
-X-Received: by 2002:a5b:906:0:b0:633:93a1:32c4 with SMTP id
- a6-20020a5b0906000000b0063393a132c4mr26481002ybq.376.1648552043867; Tue, 29
- Mar 2022 04:07:23 -0700 (PDT)
+        Tue, 29 Mar 2022 07:10:02 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 231AA10E5;
+        Tue, 29 Mar 2022 04:08:14 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id D2D87B815A3;
+        Tue, 29 Mar 2022 11:08:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE86FC340ED;
+        Tue, 29 Mar 2022 11:08:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1648552091;
+        bh=LR+SDMflhdiC4ms2kEyojNy8qc/Y76arJjBc8dfUuBc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=U0EiYlEHm8RPS90tc7fQQH43AlVaPxVh5rui2mY3ok18GE1qnJTNQqErOKZ7k7yCM
+         j/LSXEYkxpOmMciFkt5hoRtbo1cVE1aBCNK3Kb389hOh8GZFPsVwjMPYpA804ILUIT
+         w1kuTizQeimA7I+D1wAzKZNQTN00wxnO3+GxbBYx74qbrJZ2cWGGoLsHB4EmnvCkTk
+         rJfnHirk21AlzkQV8MRgc5w05bsj7TKv+Xsq65EiURWRutWccsGT+DqGo05FsNkkvm
+         VkRnS1330ytF7lrAPbUJynEv/r7SHluJiG5yYSDCFPnUrvNrbHpeMbFQ+eMWbGwF+d
+         2uhmaVsTG/RHA==
+Date:   Tue, 29 Mar 2022 13:08:06 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Yang Xu <xuyang2018.jy@fujitsu.com>
+Cc:     linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, david@fromorbit.com, jlayton@kernel.org
+Subject: Re: [PATCH v1 2/3] vfs: strip file's S_ISGID mode on vfs instead of
+ on filesystem
+Message-ID: <20220329110806.mgdflsavlnc4e6jr@wittgenstein>
+References: <1648461389-2225-1-git-send-email-xuyang2018.jy@fujitsu.com>
+ <1648461389-2225-2-git-send-email-xuyang2018.jy@fujitsu.com>
 MIME-Version: 1.0
-References: <20220322115148.3870-1-dharamhans87@gmail.com>
-In-Reply-To: <20220322115148.3870-1-dharamhans87@gmail.com>
-From:   Dharmendra Hans <dharamhans87@gmail.com>
-Date:   Tue, 29 Mar 2022 16:37:12 +0530
-Message-ID: <CACUYsyG=RmUkX0b_0_1PmC4B_Oute5DnAf-xxFOr6h95ArPZDg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] FUSE: Implement atomic lookup + open
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-fsdevel@vger.kernel.org,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1648461389-2225-2-git-send-email-xuyang2018.jy@fujitsu.com>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 22, 2022 at 5:22 PM Dharmendra Singh <dharamhans87@gmail.com> wrote:
->
-> In FUSE, as of now, uncached lookups are expensive over the wire.
-> E.g additional latencies and stressing (meta data) servers from
-> thousands of clients. These lookup calls possibly can be avoided
-> in some cases. Incoming two patches addresses this issue.
->
-> First patch handles the case where we open first time a file/dir or create
-> a file (O_CREAT) but do a lookup first on it. After lookup is performed
-> we make another call into libfuse to open the file. Now these two separate
-> calls into libfuse can be combined and performed as a single call into
-> libfuse.
->
-> Second patch handles the case when we are opening an already existing file
-> (positive dentry). Before this open call, we re-validate the inode and
-> this re-validation does a lookup on the file and verify the inode.
-> This separate lookup also can be avoided (for non-dir) and combined
-> with open call into libfuse.
->
-> Here is the link to the libfuse pull request which implements atomic open
-> https://github.com/libfuse/libfuse/pull/644
->
-> I am going to post performance results shortly.
->
->
-> Dharmendra Singh (2):
->   FUSE: Implement atomic lookup + open
->   FUSE: Avoid lookup in d_revalidate()
+On Mon, Mar 28, 2022 at 05:56:28PM +0800, Yang Xu wrote:
+> Currently, vfs only passes mode argument to filesystem, then use inode_init_owner()
+> to strip S_ISGID. Some filesystem(ie ext4/btrfs) will call inode_init_owner
+> firstly, then posxi acl setup, but xfs uses the contrary order. It will affect
+> S_ISGID clear especially umask with S_IXGRP.
+> 
+> Vfs has all the info it needs - it doesn't need the filesystems to do everything
+> correctly with the mode and ensuring that they order things like posix acl setup
+> functions correctly with inode_init_owner() to strip the SGID bit.
+> 
+> Just strip the SGID bit at the VFS, and then the filesystems can't get it wrong.
+> 
+> Also, the inode_sgid_strip() api should be used before IS_POSIXACL() because
+> this api may change mode by using umask but S_ISGID clear isn't related to
+> SB_POSIXACL flag.
+> 
+> Suggested-by: Dave Chinner <david@fromorbit.com>
+> Signed-off-by: Yang Xu <xuyang2018.jy@fujitsu.com>
+> ---
 
-A gentle reminder to look into the above patch set.
+I think adding that helper and using it in the vfs already is a good
+idea. But I wonder whether leaving this in inode_init_owner() might be
+desirable as well. I don't know how likely it is but if any filesystem
+is somehow internally creating a new inode without using vfs_*() helpers
+and botches the job then inode_init_owner() would still correctly strip
+the setgid bit currently for them.
+
+If we think it's a rather low risk then we can simply move the
+strippping completely out of inode_init_owner(). If we think that that's
+too risky it might be worth adding a new inode_owner() helper that is
+called from inode_init_owner() and that filesystem can be switched to
+that we know are safe in that regard?
