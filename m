@@ -2,59 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1FDC24EA8C8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Mar 2022 09:53:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C94E4EA8BB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Mar 2022 09:52:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233675AbiC2Hvw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Mar 2022 03:51:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60296 "EHLO
+        id S233597AbiC2Hv4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Mar 2022 03:51:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232813AbiC2HvO (ORCPT
+        with ESMTP id S233614AbiC2Hvf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Mar 2022 03:51:14 -0400
-Received: from mail-wm1-x32e.google.com (mail-wm1-x32e.google.com [IPv6:2a00:1450:4864:20::32e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 778281EB82D
-        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Mar 2022 00:49:31 -0700 (PDT)
-Received: by mail-wm1-x32e.google.com with SMTP id 125-20020a1c0283000000b0038d043aac51so807257wmc.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Mar 2022 00:49:31 -0700 (PDT)
+        Tue, 29 Mar 2022 03:51:35 -0400
+Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4F1C1EC639
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Mar 2022 00:49:32 -0700 (PDT)
+Received: by mail-wm1-x331.google.com with SMTP id p184-20020a1c29c1000000b0037f76d8b484so919109wmp.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Mar 2022 00:49:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=d43EZ7u0/J+yBXaYIqN+17PXgNgwdii5Sde1yDCMQz0=;
-        b=qT9aMX3z00ZAGJL8NwcxMb4R/ejNHxDYNDYtdGK+gHBf+DEA0jQJCuYn0X+aG9rOxP
-         FVcCqayWsagIaN/yXKZjsCJEbaB6kUPWd9ihCJC/2PH7WIUmgQXBCzys5HZ3iyhrNW38
-         9ShZdOk74cq5x6I9ElEcukqX8zpF5Tf8mF1cx2kR0+uo09IlVqbqPo54lpBLKpwyv2a5
-         jK9Y6yAmDcz5dmL9HFtWVkHqBvNv+jXk7T/WEMxIzApTibeooxw2bgk7ZeAqpibg48gg
-         uk5wWl47Jz4YF7jCDqijhh1yqNtPB7+Qsx20qhFWd7eXgVyuXsyxcffV3szuLqXo3bBG
-         ssaQ==
+        bh=w5A1yiZw+L1K6U44DKTZa4QH85ywxk7I8QqZCQCmDCw=;
+        b=EuyZQUz0OPwl00Rjs026c/rnJJCbgvXXm5tgWTJigLdNdF9RnvhiZn7hUWGBOXIjDn
+         +mdwR1fm6NLRZaVlTlOnGDwwkThqGUCBQH4GUbCUWVvpsoI3siNg4FtoVZFEL864QMYh
+         5znQwwKX10Egy8GesC7sooPZgl9OwFNp0pUJGC28dogBiFPmW4rGbAE9PjuxjNpQyhZ2
+         XrAktZutrLjRxDzIBi3q94qvJnXmib5BfCJwZs9+Vqk47qKjPfkvAxeI/qvEmVGY52Ex
+         1+MicLMHdEBb6EkLS6oISXI1fYLnlPD0X6x4yxMqOWsxqdPCKM8IZw3AVbKgYHILBXVp
+         t0Tw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=d43EZ7u0/J+yBXaYIqN+17PXgNgwdii5Sde1yDCMQz0=;
-        b=zuR6zceL8LlvzQT08qaWUFdgmZ8Ue0u53q+eJZ/ltJE9SDYtRhzUkbyGwtJCjxfnJC
-         iiBztmOIimxHkMPJr71hA7o0C03ddkADhkGDsVo3eyw1Y1ZsOX62Z1Tw6VxziIn+9zds
-         DaEzvUTkJ1KgQ8LgBCY4GwZxryeyNy+dpk2AJEss0Ev7wl619yS6Hd8PfX+Oz+d752Gb
-         yY0ZY8TnocoNgZLQ9KyGzjJBSr/aXanvojlU5N5CeXfR37loeCyQWPQPsLap1rVoJzvh
-         P2QoEsLEQ/NPD49yK6kKmGkCATnCY1vled5vKZ3QcqfgsYjCzadCc5Mc7cVbygua5WfQ
-         gxaQ==
-X-Gm-Message-State: AOAM5310Th/GrS+zlFEFwU9nRzMMe8uOCRrGEjdWpNTq24h1S4Wbg1If
-        3p5343divDQwmT9zaIPj0/8=
-X-Google-Smtp-Source: ABdhPJz+3moLq8ywzrHKPHGNFgd6YV2v0QJASvBmdywKaMmlzWeg7uDkg6G2kn07voLk5GZMXnJnZQ==
-X-Received: by 2002:a05:600c:240b:b0:38c:eb99:8276 with SMTP id 11-20020a05600c240b00b0038ceb998276mr5132601wmp.82.1648540170057;
-        Tue, 29 Mar 2022 00:49:30 -0700 (PDT)
+        bh=w5A1yiZw+L1K6U44DKTZa4QH85ywxk7I8QqZCQCmDCw=;
+        b=pmm6qVqAGfxQ2AkOWVD5leH3H18myYIqIgHyp3Cl9WOyzN6PLGEUx+yEvl5TGB/WWn
+         UhDdq0yr/2Lv4P/6AKWO6JCJDZpwoaZGrvl58gqLBCIIzlfHeASikvL1WgeDpkQ+jY2g
+         70v4LbR9dorWFBpa9QaksM9qHoUO6BHU9SwxzuEnSaxjCeyIFDB2BjHx01w6Z7w8DLvl
+         HUHu6FlbixII+mu9mZKUgngQNwOMLP1CEqoMDQAqXmE8R/LwzR+ZQu5VEYd+bNJU5O0f
+         GMK5iJ5RhAGyXRI5qJwI7FRIM2Qt34A00mvCIDcLY9stJysBweBlMtnt/ULzh6bW3Lkf
+         NMXw==
+X-Gm-Message-State: AOAM531ftBEWrMMH9sSxokXQGBZfPDjXwD4QRLwKgpqhVNmTKxqCzuE4
+        cQsQh+7p5CE1Iate6E/FCiw=
+X-Google-Smtp-Source: ABdhPJzll6haXDFBh5oTCIeCu8E6GsqQ4NcGyCmG/6eXr27SBJMe6q8C1MQm1yXW7HquesgVpzMerA==
+X-Received: by 2002:a05:600c:3586:b0:38c:a92f:1744 with SMTP id p6-20020a05600c358600b0038ca92f1744mr5030455wmq.126.1648540171370;
+        Tue, 29 Mar 2022 00:49:31 -0700 (PDT)
 Received: from localhost.localdomain ([77.137.71.203])
-        by smtp.gmail.com with ESMTPSA id k40-20020a05600c1ca800b0038c6c8b7fa8sm1534342wms.25.2022.03.29.00.49.28
+        by smtp.gmail.com with ESMTPSA id k40-20020a05600c1ca800b0038c6c8b7fa8sm1534342wms.25.2022.03.29.00.49.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Mar 2022 00:49:29 -0700 (PDT)
+        Tue, 29 Mar 2022 00:49:30 -0700 (PDT)
 From:   Amir Goldstein <amir73il@gmail.com>
 To:     Jan Kara <jack@suse.cz>
 Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 15/16] fanotify: use fsnotify group lock helpers
-Date:   Tue, 29 Mar 2022 10:49:03 +0300
-Message-Id: <20220329074904.2980320-16-amir73il@gmail.com>
+Subject: [PATCH v2 16/16] fanotify: enable "evictable" inode marks
+Date:   Tue, 29 Mar 2022 10:49:04 +0300
+Message-Id: <20220329074904.2980320-17-amir73il@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220329074904.2980320-1-amir73il@gmail.com>
 References: <20220329074904.2980320-1-amir73il@gmail.com>
@@ -70,129 +70,40 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Direct reclaim from fanotify mark allocation context may try to evict
-inodes with evictable marks of the same group and hit this deadlock:
+Now that the direct reclaim path is handled we can enable evictable
+inode marks.
 
-[<0>] fsnotify_destroy_mark+0x1f/0x3a
-[<0>] fsnotify_destroy_marks+0x71/0xd9
-[<0>] __destroy_inode+0x24/0x7e
-[<0>] destroy_inode+0x2c/0x67
-[<0>] dispose_list+0x49/0x68
-[<0>] prune_icache_sb+0x5b/0x79
-[<0>] super_cache_scan+0x11c/0x16f
-[<0>] shrink_slab.constprop.0+0x23e/0x40f
-[<0>] shrink_node+0x218/0x3e7
-[<0>] do_try_to_free_pages+0x12a/0x2d2
-[<0>] try_to_free_pages+0x166/0x242
-[<0>] __alloc_pages_slowpath.constprop.0+0x30c/0x903
-[<0>] __alloc_pages+0xeb/0x1c7
-[<0>] cache_grow_begin+0x6f/0x31e
-[<0>] fallback_alloc+0xe0/0x12d
-[<0>] ____cache_alloc_node+0x15a/0x17e
-[<0>] kmem_cache_alloc_trace+0xa1/0x143
-[<0>] fanotify_add_mark+0xd5/0x2b2
-[<0>] do_fanotify_mark+0x566/0x5eb
-[<0>] __x64_sys_fanotify_mark+0x21/0x24
-[<0>] do_syscall_64+0x6d/0x80
-[<0>] entry_SYSCALL_64_after_hwframe+0x44/0xae
-
-Set the FSNOTIFY_GROUP_NOFS flag to prevent going into direct reclaim
-from allocations under fanotify group lock and use the nofs group lock
-helpers.
-
-Suggested-by: Jan Kara <jack@suse.cz>
-Link: https://lore.kernel.org/r/20220321112310.vpr7oxro2xkz5llh@quack3.lan/
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/notify/fanotify/fanotify.c      |  1 +
- fs/notify/fanotify/fanotify_user.c | 18 ++++++++++--------
- 2 files changed, 11 insertions(+), 8 deletions(-)
+ fs/notify/fanotify/fanotify_user.c | 2 +-
+ include/linux/fanotify.h           | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-index 02990a6b1b65..c7bcada371cb 100644
---- a/fs/notify/fanotify/fanotify.c
-+++ b/fs/notify/fanotify/fanotify.c
-@@ -1082,6 +1082,7 @@ static void fanotify_free_mark(struct fsnotify_mark *fsn_mark)
- }
- 
- const struct fsnotify_ops fanotify_fsnotify_ops = {
-+	.group_flags = FSNOTIFY_GROUP_NOFS,
- 	.handle_event = fanotify_handle_event,
- 	.free_group_priv = fanotify_free_group_priv,
- 	.free_event = fanotify_free_event,
 diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index a3539bd8e443..5c857bfe8c3e 100644
+index 5c857bfe8c3e..4ea36659addc 100644
 --- a/fs/notify/fanotify/fanotify_user.c
 +++ b/fs/notify/fanotify/fanotify_user.c
-@@ -931,12 +931,12 @@ static long fanotify_ioctl(struct file *file, unsigned int cmd, unsigned long ar
- 	case FAN_IOC_SET_MARK_PAGE_ORDER:
- 		if (!capable(CAP_SYS_ADMIN))
- 			return -EPERM;
--		mutex_lock(&group->mark_mutex);
-+		fsnotify_group_lock(group);
- 		group->fanotify_data.mark_page_order = (unsigned int)arg;
- 		pr_info("fanotify: set mark size page order to %u",
- 			group->fanotify_data.mark_page_order);
- 		ret = 0;
--		mutex_unlock(&group->mark_mutex);
-+		fsnotify_group_unlock(group);
- 		break;
- 	}
+@@ -1821,7 +1821,7 @@ static int __init fanotify_user_setup(void)
  
-@@ -1044,11 +1044,12 @@ static int fanotify_remove_mark(struct fsnotify_group *group,
- 	struct fsnotify_mark *fsn_mark = NULL;
- 	__u32 removed;
- 	int destroy_mark;
-+	unsigned int nofs;
+ 	BUILD_BUG_ON(FANOTIFY_INIT_FLAGS & FANOTIFY_INTERNAL_GROUP_FLAGS);
+ 	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_INIT_FLAGS) != 12);
+-	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_MARK_FLAGS) != 9);
++	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_MARK_FLAGS) != 10);
  
--	mutex_lock(&group->mark_mutex);
-+	nofs = fsnotify_group_nofs_lock(group);
- 	fsn_mark = fsnotify_find_mark(connp, group);
- 	if (!fsn_mark) {
--		mutex_unlock(&group->mark_mutex);
-+		fsnotify_group_nofs_unlock(group, nofs);
- 		return -ENOENT;
- 	}
+ 	fanotify_mark_cache = KMEM_CACHE(fsnotify_mark,
+ 					 SLAB_PANIC|SLAB_ACCOUNT);
+diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
+index 419cadcd7ff5..edc28555814c 100644
+--- a/include/linux/fanotify.h
++++ b/include/linux/fanotify.h
+@@ -66,6 +66,7 @@
+ 				 FAN_MARK_ONLYDIR | \
+ 				 FAN_MARK_IGNORED_MASK | \
+ 				 FAN_MARK_IGNORED_SURV_MODIFY | \
++				 FAN_MARK_EVICTABLE | \
+ 				 FAN_MARK_FLUSH)
  
-@@ -1058,7 +1059,7 @@ static int fanotify_remove_mark(struct fsnotify_group *group,
- 		fsnotify_recalc_mask(fsn_mark->connector);
- 	if (destroy_mark)
- 		fsnotify_detach_mark(fsn_mark);
--	mutex_unlock(&group->mark_mutex);
-+	fsnotify_group_nofs_unlock(group, nofs);
- 	if (destroy_mark)
- 		fsnotify_free_mark(fsn_mark);
- 
-@@ -1236,9 +1237,10 @@ static int fanotify_add_mark(struct fsnotify_group *group,
- 			     __kernel_fsid_t *fsid)
- {
- 	struct fsnotify_mark *fsn_mark = NULL;
-+	unsigned int nofs;
- 	int ret = 0;
- 
--	mutex_lock(&group->mark_mutex);
-+	nofs = fsnotify_group_nofs_lock(group);
- 	/* Allow adding multiple large marks per object for testing */
- 	if (!group->fanotify_data.mark_page_order)
- 		fsn_mark = fsnotify_find_mark(connp, group);
-@@ -1246,7 +1248,7 @@ static int fanotify_add_mark(struct fsnotify_group *group,
- 		fsn_mark = fanotify_add_new_mark(group, connp, obj_type, flags,
- 						 fsid);
- 		if (IS_ERR(fsn_mark)) {
--			mutex_unlock(&group->mark_mutex);
-+			fsnotify_group_nofs_unlock(group, nofs);
- 			return PTR_ERR(fsn_mark);
- 		}
- 	}
-@@ -1264,7 +1266,7 @@ static int fanotify_add_mark(struct fsnotify_group *group,
- 	ret = fanotify_mark_add_to_mask(fsn_mark, mask, flags);
- 
- out:
--	mutex_unlock(&group->mark_mutex);
-+	fsnotify_group_nofs_unlock(group, nofs);
- 
- 	fsnotify_put_mark(fsn_mark);
- 	return ret;
+ /*
 -- 
 2.25.1
 
