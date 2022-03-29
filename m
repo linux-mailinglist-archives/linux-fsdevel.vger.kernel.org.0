@@ -2,214 +2,269 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EFEC54EB376
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Mar 2022 20:39:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5BE04EB3A6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Mar 2022 20:45:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240616AbiC2SlC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Mar 2022 14:41:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52856 "EHLO
+        id S240679AbiC2SrI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Mar 2022 14:47:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240150AbiC2SlA (ORCPT
+        with ESMTP id S234950AbiC2SrF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Mar 2022 14:41:00 -0400
-Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99A3C186E3;
-        Tue, 29 Mar 2022 11:39:17 -0700 (PDT)
-Received: by fieldses.org (Postfix, from userid 2815)
-        id EAE8F7216; Tue, 29 Mar 2022 14:39:16 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org EAE8F7216
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
-        s=default; t=1648579156;
-        bh=l7hf+/hY3z2Okl7yVX+MQI2MxCbnIn5XMHfzb0XYAfQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CXyGzrpPzfOgQD26/tvFUX1jZxJlNrClmD7rl0rveX35xnui2bsN3wShzYdeEas90
-         +annabIY58ziGSDYNGzTmznrISzoJSjXHX7xZ1asNmwyLK94gjTW2nO7Tltv87D/ZE
-         f7lB1mfOlcw+17HQOiAaDSNfnFjqr2dgfapb2lvI=
-Date:   Tue, 29 Mar 2022 14:39:16 -0400
-From:   "J. Bruce Fields" <bfields@fieldses.org>
-To:     dai.ngo@oracle.com
-Cc:     chuck.lever@oracle.com, jlayton@redhat.com,
-        viro@zeniv.linux.org.uk, linux-nfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH RFC v18 02/11] NFSD: Add courtesy client state, macro and
- spinlock to support courteous server
-Message-ID: <20220329183916.GC32217@fieldses.org>
-References: <1648182891-32599-1-git-send-email-dai.ngo@oracle.com>
- <1648182891-32599-3-git-send-email-dai.ngo@oracle.com>
- <20220329154750.GE29634@fieldses.org>
- <612ef738-20f6-55f0-1677-cc035ba2fd0d@oracle.com>
- <20220329163011.GG29634@fieldses.org>
- <5cddab8d-dd92-6863-78fd-a4608a722927@oracle.com>
+        Tue, 29 Mar 2022 14:47:05 -0400
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8EC89287F
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Mar 2022 11:45:21 -0700 (PDT)
+Received: by mail-pj1-x102e.google.com with SMTP id jx9so18353986pjb.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Mar 2022 11:45:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=o1qcZR1LxJ/8GbkW+1o65vv0lkJ0fy//rk2/1UscmDw=;
+        b=dwjAFyr79FlAvZN4oVDM+cROGwXKgWD+GjzFyXRXAgE8FAWQh0f0I0kd8X5DA7Ic5Y
+         VwRjT+3EqrXkzzX/nA4ayJfSyv2gITG1hZSatG1ilG804HuNYYziRhjIGD8PzrzW2dTC
+         qt0ANVSElJX0JYkgUfFNeD60WWqInSK4r/B5RxaF5Zl5+LoHWKn0N40sfo5Ea2m3RSsS
+         Sxu4L76R4KPju1vfaBBeh6+oYASNnMU2wyIvIHabuxRCp2MOIvLjmk1Z8I5EaQodk5kP
+         ANAl4mN5q+r0q0fvNS/WILwuTETHBqUREYH8mUVFLgxLgkLiIpXMRtvAHqwl/fH3x5YO
+         W5fQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=o1qcZR1LxJ/8GbkW+1o65vv0lkJ0fy//rk2/1UscmDw=;
+        b=DAugW4mbEn0lNJHnagzE/xfjG9mt/ys+C6K1sS6+y3d4Bz+YJ8GnpF2rCpGhM4k6WI
+         XTdtoTjeTf+/UN46sjINQ+6Z96Qr8hh/CQWJFeghXA2iYmDlWvaTyjjUXbWFGeV89oi4
+         sMNlLu/PXhHycBKR5P3pAnD/qmBibPNCQAjisS2l0pVRJoVtHQdLT9WkF2q7AmGH+vqy
+         Hr4c4qn9TbmYE6OXMEwR8pXViefwZz81XWTpeOTcxuekZhN6ks1PXe5Ft0U9KIP9+9sZ
+         dYstOlwfPCOXtH6Bf+xw158b0vCSQyvXUWlglrBVm2MJZHu3RmIYLQPjvwnEjmtVTsTb
+         zFbg==
+X-Gm-Message-State: AOAM530SLZfIjC3Zccle5qF7UA5PoqhC/CFhGFpvKxefZwhcHe7U7q65
+        Ew0xo3j6TbAZRy21yJbnwaNmXvXJOSjRIA==
+X-Google-Smtp-Source: ABdhPJyI/2yF5j0Y4c6Rg7cy0zvMkWFf2rvkH3lV+0xBToveJFcYf3GobqOkuMkXZjAqYWlysTz2jw==
+X-Received: by 2002:a17:902:d717:b0:156:20a9:d388 with SMTP id w23-20020a170902d71700b0015620a9d388mr7038650ply.19.1648579521129;
+        Tue, 29 Mar 2022 11:45:21 -0700 (PDT)
+Received: from google.com (157.214.185.35.bc.googleusercontent.com. [35.185.214.157])
+        by smtp.gmail.com with ESMTPSA id c5-20020a056a00248500b004f6b5ddcc65sm20916192pfv.199.2022.03.29.11.45.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Mar 2022 11:45:20 -0700 (PDT)
+Date:   Tue, 29 Mar 2022 18:45:16 +0000
+From:   Sean Christopherson <seanjc@google.com>
+To:     Chao Peng <chao.p.peng@linux.intel.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com
+Subject: Re: [PATCH v5 02/13] mm: Introduce memfile_notifier
+Message-ID: <YkNTvFqWI5F5w+DW@google.com>
+References: <20220310140911.50924-1-chao.p.peng@linux.intel.com>
+ <20220310140911.50924-3-chao.p.peng@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5cddab8d-dd92-6863-78fd-a4608a722927@oracle.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20220310140911.50924-3-chao.p.peng@linux.intel.com>
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 29, 2022 at 11:19:51AM -0700, dai.ngo@oracle.com wrote:
-> 
-> On 3/29/22 9:30 AM, J. Bruce Fields wrote:
-> >On Tue, Mar 29, 2022 at 09:20:02AM -0700, dai.ngo@oracle.com wrote:
-> >>On 3/29/22 8:47 AM, J. Bruce Fields wrote:
-> >>>On Thu, Mar 24, 2022 at 09:34:42PM -0700, Dai Ngo wrote:
-> >>>>Update nfs4_client to add:
-> >>>>  . cl_cs_client_state: courtesy client state
-> >>>>  . cl_cs_lock: spinlock to synchronize access to cl_cs_client_state
-> >>>>  . cl_cs_list: list used by laundromat to process courtesy clients
-> >>>>
-> >>>>Modify alloc_client to initialize these fields.
-> >>>>
-> >>>>Signed-off-by: Dai Ngo <dai.ngo@oracle.com>
-> >>>>---
-> >>>>  fs/nfsd/nfs4state.c |  2 ++
-> >>>>  fs/nfsd/nfsd.h      |  1 +
-> >>>>  fs/nfsd/state.h     | 33 +++++++++++++++++++++++++++++++++
-> >>>>  3 files changed, 36 insertions(+)
-> >>>>
-> >>>>diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-> >>>>index 234e852fcdfa..a65d59510681 100644
-> >>>>--- a/fs/nfsd/nfs4state.c
-> >>>>+++ b/fs/nfsd/nfs4state.c
-> >>>>@@ -2009,12 +2009,14 @@ static struct nfs4_client *alloc_client(struct xdr_netobj name)
-> >>>>  	INIT_LIST_HEAD(&clp->cl_delegations);
-> >>>>  	INIT_LIST_HEAD(&clp->cl_lru);
-> >>>>  	INIT_LIST_HEAD(&clp->cl_revoked);
-> >>>>+	INIT_LIST_HEAD(&clp->cl_cs_list);
-> >>>>  #ifdef CONFIG_NFSD_PNFS
-> >>>>  	INIT_LIST_HEAD(&clp->cl_lo_states);
-> >>>>  #endif
-> >>>>  	INIT_LIST_HEAD(&clp->async_copies);
-> >>>>  	spin_lock_init(&clp->async_lock);
-> >>>>  	spin_lock_init(&clp->cl_lock);
-> >>>>+	spin_lock_init(&clp->cl_cs_lock);
-> >>>>  	rpc_init_wait_queue(&clp->cl_cb_waitq, "Backchannel slot table");
-> >>>>  	return clp;
-> >>>>  err_no_hashtbl:
-> >>>>diff --git a/fs/nfsd/nfsd.h b/fs/nfsd/nfsd.h
-> >>>>index 4fc1fd639527..23996c6ca75e 100644
-> >>>>--- a/fs/nfsd/nfsd.h
-> >>>>+++ b/fs/nfsd/nfsd.h
-> >>>>@@ -336,6 +336,7 @@ void		nfsd_lockd_shutdown(void);
-> >>>>  #define COMPOUND_ERR_SLACK_SPACE	16     /* OP_SETATTR */
-> >>>>  #define NFSD_LAUNDROMAT_MINTIMEOUT      1   /* seconds */
-> >>>>+#define	NFSD_COURTESY_CLIENT_TIMEOUT	(24 * 60 * 60)	/* seconds */
-> >>>>  /*
-> >>>>   * The following attributes are currently not supported by the NFSv4 server:
-> >>>>diff --git a/fs/nfsd/state.h b/fs/nfsd/state.h
-> >>>>index 95457cfd37fc..40e390abc842 100644
-> >>>>--- a/fs/nfsd/state.h
-> >>>>+++ b/fs/nfsd/state.h
-> >>>>@@ -283,6 +283,35 @@ struct nfsd4_sessionid {
-> >>>>  #define HEXDIR_LEN     33 /* hex version of 16 byte md5 of cl_name plus '\0' */
-> >>>>  /*
-> >>>>+ * CLIENT_  CLIENT_ CLIENT_
-> >>>>+ * COURTESY EXPIRED RECONNECTED      Meaning                  Where set
-> >>>>+ * -----------------------------------------------------------------------------
-> >>>>+ * | false | false | false | Confirmed, active    | Default                    |
-> >>>>+ * |---------------------------------------------------------------------------|
-> >>>>+ * | true  | false | false | Courtesy state.      | nfs4_get_client_reaplist   |
-> >>>>+ * |       |       |       | Lease/lock/share     |                            |
-> >>>>+ * |       |       |       | reservation conflict |                            |
-> >>>>+ * |       |       |       | can cause Courtesy   |                            |
-> >>>>+ * |       |       |       | client to be expired |                            |
-> >>>>+ * |---------------------------------------------------------------------------|
-> >>>>+ * | false | true  | false | Courtesy client to be| nfs4_laundromat            |
-> >>>>+ * |       |       |       | expired by Laundromat| nfsd4_lm_lock_expired      |
-> >>>>+ * |       |       |       | due to conflict     | nfsd4_discard_courtesy_clnt |
-> >>>>+ * |       |       |       |                      | nfsd4_expire_courtesy_clnt |
-> >>>>+ * |---------------------------------------------------------------------------|
-> >>>>+ * | false | false | true  | Courtesy client      | nfsd4_courtesy_clnt_expired|
-> >>>>+ * |       |       |       | reconnected,         |                            |
-> >>>>+ * |       |       |       | becoming active      |                            |
-> >>>>+ * -----------------------------------------------------------------------------
-> >By the way, where is a client returned to the normal (0) state?  That
-> >has to happen at some point.
-> 
-> For 4.1 courtesy client reconnects is detected in nfsd4_sequence,
-> nfsd4_bind_conn_to_session.
+On Thu, Mar 10, 2022, Chao Peng wrote:
+> diff --git a/mm/Makefile b/mm/Makefile
+> index 70d4309c9ce3..f628256dce0d 100644
+> +void memfile_notifier_invalidate(struct memfile_notifier_list *list,
+> +				 pgoff_t start, pgoff_t end)
+> +{
+> +	struct memfile_notifier *notifier;
+> +	int id;
+> +
+> +	id = srcu_read_lock(&srcu);
+> +	list_for_each_entry_srcu(notifier, &list->head, list,
+> +				 srcu_read_lock_held(&srcu)) {
+> +		if (notifier->ops && notifier->ops->invalidate)
 
-Those are the places where NFSD54_CLIENT_RECONNECTED is set, which isn't
-the question I asked.
+Any reason notifier->ops isn't mandatory?
 
-> >Why are RECONNECTED clients discarded in so many cases?  (E.g. whenever
-> >a bind_conn_to_session fails).
-> 
-> find_in_sessionid_hashtbl: we discard the courtesy client when it
-> reconnects and there is error from nfsd4_get_session_locked. This
-> should be a rare condition so rather than reverting the client
-> state back to courtesy, it is simpler just to discard it.
+> +			notifier->ops->invalidate(notifier, start, end);
+> +	}
+> +	srcu_read_unlock(&srcu, id);
+> +}
+> +
+> +void memfile_notifier_fallocate(struct memfile_notifier_list *list,
+> +				pgoff_t start, pgoff_t end)
+> +{
+> +	struct memfile_notifier *notifier;
+> +	int id;
+> +
+> +	id = srcu_read_lock(&srcu);
+> +	list_for_each_entry_srcu(notifier, &list->head, list,
+> +				 srcu_read_lock_held(&srcu)) {
+> +		if (notifier->ops && notifier->ops->fallocate)
+> +			notifier->ops->fallocate(notifier, start, end);
+> +	}
+> +	srcu_read_unlock(&srcu, id);
+> +}
+> +
+> +void memfile_register_backing_store(struct memfile_backing_store *bs)
+> +{
+> +	BUG_ON(!bs || !bs->get_notifier_list);
+> +
+> +	list_add_tail(&bs->list, &backing_store_list);
+> +}
+> +
+> +void memfile_unregister_backing_store(struct memfile_backing_store *bs)
+> +{
+> +	list_del(&bs->list);
 
-That may be a rare situation, but I don't believe the behavior of
-discarding the client in this case is correct.
+Allowing unregistration of a backing store is broken.  Using the _safe() variant
+is not sufficient to guard against concurrent modification.  I don't see any reason
+to support this out of the gate, the only reason to support unregistering a backing
+store is if the backing store is implemented as a module, and AFAIK none of the
+backing stores we plan on supporting initially support being built as a module.
+These aren't exported, so it's not like that's even possible.  Registration would
+also be broken if modules are allowed, I'm pretty sure module init doesn't run
+under a global lock.
 
-> nfsd4_create_session/find_confirmed_client: I think the only time
-> the courtesy client sends CREATE_SESSION, before sending the SEQUENCE
-> to reconnect after missing its leases, is when it wants to do clientid
-> trunking. This should be a rare condition so instead of dealing
-> with it we just do not allow it and discard the client for now.
+We can always add this complexity if it's needed in the future, but for now the
+easiest thing would be to tag memfile_register_backing_store() with __init and
+make backing_store_list __ro_after_init.
 
-We can't wave away incorrect behavior with "but it's rare".  Users with
-heavy and/or unusual workloads hit rare conditions.  Clients may change
-their behavior over time.  (E.g., trunking may become more common.)
+> +}
+> +
+> +static int memfile_get_notifier_info(struct inode *inode,
+> +				     struct memfile_notifier_list **list,
+> +				     struct memfile_pfn_ops **ops)
+> +{
+> +	struct memfile_backing_store *bs, *iter;
+> +	struct memfile_notifier_list *tmp;
+> +
+> +	list_for_each_entry_safe(bs, iter, &backing_store_list, list) {
+> +		tmp = bs->get_notifier_list(inode);
+> +		if (tmp) {
+> +			*list = tmp;
+> +			if (ops)
+> +				*ops = &bs->pfn_ops;
+> +			return 0;
+> +		}
+> +	}
+> +	return -EOPNOTSUPP;
+> +}
+> +
+> +int memfile_register_notifier(struct inode *inode,
 
---b.
+Taking an inode is a bit odd from a user perspective.  Any reason not to take a
+"struct file *" and get the inode here?  That would give callers a hint that they
+need to hold a reference to the file for the lifetime of the registration.
 
-> nfsd4_destroy_clientid/find_confirmed_client: instead of destroy
-> the courtesy client here we just let the laundromat destroy it
-> as if the client already expired.
-> 
-> nfsd4_setclientid_confirm/find_confirmed_client: there should not
-> be any courtesy client found from nfsd4_setclientid_confirm, it
-> should be detected and discarded in nfsd4_setclientid.
-> 
-> -Dai
-> 
-> >>>These are mutually exclusive values, not bits that may set to 0 or 1, so
-> >>>the three boolean columns are confusing.  I'd just structure the table
-> >>>like:
-> >>>
-> >>>	client state	meaning			where set
-> >>>	0		Confirmed, active	Default
-> >>>	CLIENT_COURTESY	Courtesy state....	nfs4_get_client_reaplist
-> >>>	CLIENT_EXPIRED	Courtesy client to be..	nfs4_laundromat
-> >>>
-> >>>etc.
-> >>will fix in v19.
-> >>
-> >>Thanks,
-> >>-Dai
-> >>
-> >>>--b.
-> >>>
-> >>>>+ */
-> >>>>+
-> >>>>+enum courtesy_client_state {
-> >>>>+	NFSD4_CLIENT_COURTESY = 1,
-> >>>>+	NFSD4_CLIENT_EXPIRED,
-> >>>>+	NFSD4_CLIENT_RECONNECTED,
-> >>>>+};
-> >>>>+
-> >>>>+/*
-> >>>>   * struct nfs4_client - one per client.  Clientids live here.
-> >>>>   *
-> >>>>   * The initial object created by an NFS client using SETCLIENTID (for NFSv4.0)
-> >>>>@@ -385,6 +414,10 @@ struct nfs4_client {
-> >>>>  	struct list_head	async_copies;	/* list of async copies */
-> >>>>  	spinlock_t		async_lock;	/* lock for async copies */
-> >>>>  	atomic_t		cl_cb_inflight;	/* Outstanding callbacks */
-> >>>>+
-> >>>>+	enum courtesy_client_state	cl_cs_client_state;
-> >>>>+	spinlock_t		cl_cs_lock;
-> >>>>+	struct list_head	cl_cs_list;
-> >>>>  };
-> >>>>  /* struct nfs4_client_reset
-> >>>>-- 
-> >>>>2.9.5
+> +			      struct memfile_notifier *notifier,
+> +			      struct memfile_pfn_ops **pfn_ops)
+> +{
+> +	struct memfile_notifier_list *list;
+> +	int ret;
+> +
+> +	if (!inode || !notifier | !pfn_ops)
+
+Bitwise | instead of logical ||.  But IMO taking in a pfn_ops pointer is silly.
+More below.
+
+> +		return -EINVAL;
+> +
+> +	ret = memfile_get_notifier_info(inode, &list, pfn_ops);
+> +	if (ret)
+> +		return ret;
+> +
+> +	spin_lock(&list->lock);
+> +	list_add_rcu(&notifier->list, &list->head);
+> +	spin_unlock(&list->lock);
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(memfile_register_notifier);
+> +
+> +void memfile_unregister_notifier(struct inode *inode,
+> +				 struct memfile_notifier *notifier)
+> +{
+> +	struct memfile_notifier_list *list;
+> +
+> +	if (!inode || !notifier)
+> +		return;
+> +
+> +	BUG_ON(memfile_get_notifier_info(inode, &list, NULL));
+
+Eww.  Rather than force the caller to provide the inode/file and the notifier,
+what about grabbing the backing store itself in the notifier?
+
+	struct memfile_notifier {
+		struct list_head list;
+		struct memfile_notifier_ops *ops;
+
+		struct memfile_backing_store *bs;
+	};
+
+That also helps avoid confusing between "ops" and "pfn_ops".  IMO, exposing
+memfile_backing_store to the caller isn't a big deal, and is preferable to having
+to rewalk multiple lists just to delete a notifier.
+
+Then this can become:
+
+  void memfile_unregister_notifier(struct memfile_notifier *notifier)
+  {
+	spin_lock(&notifier->bs->list->lock);
+	list_del_rcu(&notifier->list);
+	spin_unlock(&notifier->bs->list->lock);
+
+	synchronize_srcu(&srcu);
+  }
+
+and registration can be:
+
+  int memfile_register_notifier(const struct file *file,
+			      struct memfile_notifier *notifier)
+  {
+	struct memfile_notifier_list *list;
+	struct memfile_backing_store *bs;
+	int ret;
+
+	if (!file || !notifier)
+		return -EINVAL;
+
+	list_for_each_entry(bs, &backing_store_list, list) {
+		list = bs->get_notifier_list(file_inode(file));
+		if (list) {
+			notifier->bs = bs;
+
+			spin_lock(&list->lock);
+			list_add_rcu(&notifier->list, &list->head);
+			spin_unlock(&list->lock);
+			return 0;
+		}
+	}
+
+	return -EOPNOTSUPP;
+  }
