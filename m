@@ -2,59 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BB474EA8C9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Mar 2022 09:53:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 747454EA8C6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Mar 2022 09:53:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233592AbiC2HvL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Mar 2022 03:51:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59424 "EHLO
+        id S233582AbiC2HvO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Mar 2022 03:51:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233574AbiC2HvA (ORCPT
+        with ESMTP id S233577AbiC2HvB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Mar 2022 03:51:00 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 562FF1E3E2B
-        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Mar 2022 00:49:17 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id h4so23491893wrc.13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Mar 2022 00:49:17 -0700 (PDT)
+        Tue, 29 Mar 2022 03:51:01 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A2B081E5221
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Mar 2022 00:49:18 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id m30so23544865wrb.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Mar 2022 00:49:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=4c3DGo6tjgx4VrE0f1pQ13QNGFWI5EFvnHPKPJcp//8=;
-        b=pcmZg3C0BmCACPs/SePkZ9knBAOzPhj/EPrT18VcFjOsdLAYrtXaOih1sBELsvu7Pd
-         4RxrzznPUzYalLO9WJ4uzwZO//xfM8FQTMVP4Bh8Ak6+0NGR2XxgH6qhCtc1YA3C8/l3
-         iIo1YFDGccq+wKqfVSHI0z4DDFerZXba4+Q5yqxjsy9cxAUfpyddM9FMkl/zELmUbOwy
-         73xnd3vApOfK+RSWAFaCzmaV/sIz4WP/qsCBqMGP5AIYMNRytmGusvSgvt/rW0zQcPL7
-         PwG7JwkzWPOMMU6KEfOF1DyetQiQywOvUZsiyNIyKe6FEjgkjrLwWCChB0gWXU6v+Lgy
-         YmIw==
+        bh=/XoWmjl6KVYrZaYzowYJtOxfIHq+80q2tmcN4NfcC50=;
+        b=bXPIXfMW9QM+ElhDNsNwA0ksXwkmCqcQVk0eC5Ozsfu6jB4W7eLH60nU869gjIAh2C
+         rn7cgWYg8PP7TNtXuP5YmRTJWrNGftwKCeZZXrv17uhMLzG47ecgG0xuqwP0wZt19PiJ
+         Ve1YKKOJ7wuGUskAn57w1Rcesm5GyYOpwWOjyqn9FIV8zepR7U+5j4LpjEhJ4/qOnc8D
+         0K9lryjqgzxNXuCfZKqw8Z6UqqRtpfVi9oVy6/hCXPzXJHvFn2x6BO9j8gAoOFJNF648
+         L9QEIsAW8ThU6HhUU+vJuWuOhJMNHLkxJkY2c++d4moQ3h65rghW/kGnvDUYcUuaB0Y8
+         Mdtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=4c3DGo6tjgx4VrE0f1pQ13QNGFWI5EFvnHPKPJcp//8=;
-        b=Y8DG6F7CbKiC5sPXgRRM6jthk5iRbaEEiTUqSCsTULifRJNMK4XCpoMb/a3ZH4abbd
-         jsU1UMC0fxp2EfGPabHQjC7MsgLI10zIVpBrbNXhiunpZVbGKTZCWlFAvhsctgounlE3
-         M1Su8SvxdA9WOgq4GprDpl4+T9nGnC9ZeqapYGOk3DFD4N/Rq4/gV4BUKvb/nBh8lPwc
-         dJ1ff5WQW4HXhfMHUIIrTbdd6G3cI6fEfEt7katOFnkRguIQ5AS6H7oIrITWoD9S2FMS
-         /PXF6RO0N6ugTfO8QRsl1DJsAnAVx3lAakyzVeYXeT9dROPYIYhkbt4GJ0HP5BmZS457
-         BQnw==
-X-Gm-Message-State: AOAM533VfOZTB7xRq0aQo1MNjZzKE0yE0J6lnwdDOLAwCp4eFVu4bLZk
-        XnpTtSLdzEEXl708JhLY/nc=
-X-Google-Smtp-Source: ABdhPJyTR8G3P/XTL2imaHuNtJI88liNV4JLqhuPW6b7BfR/kl+FRIaQhGS9xegGU7aqKzcMREvE3A==
-X-Received: by 2002:a5d:5507:0:b0:203:e0a3:7016 with SMTP id b7-20020a5d5507000000b00203e0a37016mr28380748wrv.575.1648540155859;
-        Tue, 29 Mar 2022 00:49:15 -0700 (PDT)
+        bh=/XoWmjl6KVYrZaYzowYJtOxfIHq+80q2tmcN4NfcC50=;
+        b=FRHiX0dYWpBySBL71gfU9vIc8bZwLvaaDMYdcf7Lqa1vrIVcHOnCkA6sdNXS3oOUqi
+         LflNrPpsM5Meewb80B/enHi9o5U2ZUt8Dz7FGHFA52DlwrFIyTmW+JdD4CqEFaJAf/4h
+         Sh+nHurrdEPyZbTAl7fImlbT58eymTRrFrHa607bJuK18GMC2AcH9e/IZkeFO+shZ4R8
+         7xvyZmgexgBD0EIJATylD2s3wkWw6BrKbzkfz4k+RQWZfLqcy//PUVD8RYLvJp7Dxu6Y
+         k+QonlACW0UJpJ+POBlPSPI7G4Vjq0f1Fo62VgYSEJCTmj18BeNt7RHYHK4iaxyfLcn8
+         oRMA==
+X-Gm-Message-State: AOAM530FGERm0LO/lDlCSnZ589vTBmxHpBcu85ijbqiaNWmvRlAwxLpm
+        lE59IfFp+w43Y6g5Gx87qg9bbdM5uJI=
+X-Google-Smtp-Source: ABdhPJw25aSwc/I1xS/H7f0Jz0nfo97PGe5DBf7JfusGg5lWW/Yd+e5f1uc5ZZmzI2aZLEiuY6Bacg==
+X-Received: by 2002:a5d:59a2:0:b0:204:19bc:42ff with SMTP id p2-20020a5d59a2000000b0020419bc42ffmr28958713wrr.687.1648540157102;
+        Tue, 29 Mar 2022 00:49:17 -0700 (PDT)
 Received: from localhost.localdomain ([77.137.71.203])
-        by smtp.gmail.com with ESMTPSA id k40-20020a05600c1ca800b0038c6c8b7fa8sm1534342wms.25.2022.03.29.00.49.14
+        by smtp.gmail.com with ESMTPSA id k40-20020a05600c1ca800b0038c6c8b7fa8sm1534342wms.25.2022.03.29.00.49.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Mar 2022 00:49:15 -0700 (PDT)
+        Tue, 29 Mar 2022 00:49:16 -0700 (PDT)
 From:   Amir Goldstein <amir73il@gmail.com>
 To:     Jan Kara <jack@suse.cz>
 Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 04/16] fsnotify: remove unneeded refcounts of s_fsnotify_connectors
-Date:   Tue, 29 Mar 2022 10:48:52 +0300
-Message-Id: <20220329074904.2980320-5-amir73il@gmail.com>
+Subject: [PATCH v2 05/16] fsnotify: fix wrong lockdep annotations
+Date:   Tue, 29 Mar 2022 10:48:53 +0300
+Message-Id: <20220329074904.2980320-6-amir73il@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220329074904.2980320-1-amir73il@gmail.com>
 References: <20220329074904.2980320-1-amir73il@gmail.com>
@@ -70,70 +70,65 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-s_fsnotify_connectors is elevated for every inode mark in addition to
-the refcount already taken by the inode connector.
+Commit 6960b0d909cd ("fsnotify: change locking order") changed some
+of the mark_mutex locks in direct reclaim path to use:
+  mutex_lock_nested(&group->mark_mutex, SINGLE_DEPTH_NESTING);
 
-This is a relic from s_fsnotify_inode_refs pre connector era.
-Remove those unneeded recounts.
+This change is explained:
+ "...It uses nested locking to avoid deadlock in case we do the final
+  iput() on an inode which still holds marks and thus would take the
+  mutex again when calling fsnotify_inode_delete() in destroy_inode()."
 
+The problem is that the mutex_lock_nested() is not a nested lock at
+all. In fact, it has the opposite effect of preventing lockdep from
+warning about a very possible deadlock.
+
+Due to these wrong annotations, a deadlock that was introduced with
+nfsd filecache in kernel v5.4 went unnoticed in v5.4.y for over two
+years until it was reported recently by Khazhismel Kumykov, only to
+find out that the deadlock was already fixed in kernel v5.5.
+
+Fix the wrong lockdep annotations.
+
+Cc: Khazhismel Kumykov <khazhy@google.com>
+Fixes: 6960b0d909cd ("fsnotify: change locking order")
+Link: https://lore.kernel.org/r/20220321112310.vpr7oxro2xkz5llh@quack3.lan/
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/notify/mark.c | 21 +++------------------
- 1 file changed, 3 insertions(+), 18 deletions(-)
+ fs/notify/mark.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/fs/notify/mark.c b/fs/notify/mark.c
-index b1443e66ba26..698ed0a1a47e 100644
+index 698ed0a1a47e..3faf47def7d8 100644
 --- a/fs/notify/mark.c
 +++ b/fs/notify/mark.c
-@@ -169,21 +169,6 @@ static void fsnotify_connector_destroy_workfn(struct work_struct *work)
- 	}
- }
- 
--static void fsnotify_get_inode_ref(struct inode *inode)
--{
--	ihold(inode);
--	atomic_long_inc(&inode->i_sb->s_fsnotify_connectors);
--}
--
--static void fsnotify_put_inode_ref(struct inode *inode)
--{
--	struct super_block *sb = inode->i_sb;
--
--	iput(inode);
--	if (atomic_long_dec_and_test(&sb->s_fsnotify_connectors))
--		wake_up_var(&sb->s_fsnotify_connectors);
--}
--
- static void fsnotify_get_sb_connectors(struct fsnotify_mark_connector *conn)
+@@ -437,7 +437,7 @@ void fsnotify_free_mark(struct fsnotify_mark *mark)
+ void fsnotify_destroy_mark(struct fsnotify_mark *mark,
+ 			   struct fsnotify_group *group)
  {
- 	struct super_block *sb = fsnotify_connector_sb(conn);
-@@ -245,7 +230,7 @@ static void fsnotify_drop_object(unsigned int type, void *objp)
- 	/* Currently only inode references are passed to be dropped */
- 	if (WARN_ON_ONCE(type != FSNOTIFY_OBJ_TYPE_INODE))
- 		return;
--	fsnotify_put_inode_ref(objp);
-+	iput(objp);
- }
+-	mutex_lock_nested(&group->mark_mutex, SINGLE_DEPTH_NESTING);
++	mutex_lock(&group->mark_mutex);
+ 	fsnotify_detach_mark(mark);
+ 	mutex_unlock(&group->mark_mutex);
+ 	fsnotify_free_mark(mark);
+@@ -754,7 +754,7 @@ void fsnotify_clear_marks_by_group(struct fsnotify_group *group,
+ 	 * move marks to free to to_free list in one go and then free marks in
+ 	 * to_free list one by one.
+ 	 */
+-	mutex_lock_nested(&group->mark_mutex, SINGLE_DEPTH_NESTING);
++	mutex_lock(&group->mark_mutex);
+ 	list_for_each_entry_safe(mark, lmark, &group->marks_list, g_list) {
+ 		if (mark->connector->type == obj_type)
+ 			list_move(&mark->g_list, &to_free);
+@@ -763,7 +763,7 @@ void fsnotify_clear_marks_by_group(struct fsnotify_group *group,
  
- void fsnotify_put_mark(struct fsnotify_mark *mark)
-@@ -519,7 +504,7 @@ static int fsnotify_attach_connector_to_object(fsnotify_connp_t *connp,
- 	}
- 	if (conn->type == FSNOTIFY_OBJ_TYPE_INODE) {
- 		inode = fsnotify_conn_inode(conn);
--		fsnotify_get_inode_ref(inode);
-+		ihold(inode);
- 	}
- 	fsnotify_get_sb_connectors(conn);
- 
-@@ -530,7 +515,7 @@ static int fsnotify_attach_connector_to_object(fsnotify_connp_t *connp,
- 	if (cmpxchg(connp, NULL, conn)) {
- 		/* Someone else created list structure for us */
- 		if (inode)
--			fsnotify_put_inode_ref(inode);
-+			iput(inode);
- 		fsnotify_put_sb_connectors(conn);
- 		kmem_cache_free(fsnotify_mark_connector_cachep, conn);
- 	}
+ clear:
+ 	while (1) {
+-		mutex_lock_nested(&group->mark_mutex, SINGLE_DEPTH_NESTING);
++		mutex_lock(&group->mark_mutex);
+ 		if (list_empty(head)) {
+ 			mutex_unlock(&group->mark_mutex);
+ 			break;
 -- 
 2.25.1
 
