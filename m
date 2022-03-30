@@ -2,157 +2,212 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 994EA4ECAE8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Mar 2022 19:42:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6751C4ECB2A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Mar 2022 19:58:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349251AbiC3RoP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Mar 2022 13:44:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40736 "EHLO
+        id S1349574AbiC3SAf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Mar 2022 14:00:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50886 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237384AbiC3RoO (ORCPT
+        with ESMTP id S1349589AbiC3SAe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Mar 2022 13:44:14 -0400
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00C18F47CF
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Mar 2022 10:42:28 -0700 (PDT)
-Received: by mail-il1-f197.google.com with SMTP id o17-20020a92c691000000b002c2c04aebe7so11857542ilg.8
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Mar 2022 10:42:28 -0700 (PDT)
+        Wed, 30 Mar 2022 14:00:34 -0400
+Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA92EEF0B0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Mar 2022 10:58:47 -0700 (PDT)
+Received: by mail-pf1-x42f.google.com with SMTP id w7so16805762pfu.11
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Mar 2022 10:58:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=qRdDzcsR6tHaU83Zu+AB6iaBkt7tf4uVxesheVO+k04=;
+        b=fmINK1FWWmoLOoYP7UthQGhftrRGdNFBc+IlK+NV5/Ok9ERGA+qLeK6Qc2wTVLtgAA
+         9LQ/i0EUSMCyjEaFKyIhIb7cMmbwQz9Y8BcfXLRuoN6ajRH59AuxXHA3EMGdoKl2VTSg
+         p24YHpEbjdk+uT0CBOdjzzYlBeDTZ3F7gpj4hM7l1TBMoGnLiRy7iLYUHQWybuBMUn3o
+         +79Dbrk0SFPljaZd36P/MkFhRRizQhSn53CNrK2P1EbC2v9I9Kv5K+rfi43xESLumhbH
+         68CiFZAIDCb11Ijcxh9K1W3GQjeukR3sJTsN4+zlgHn1NYrxdXEcaVCJINP6zp/PmCKt
+         vRnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=U40YE8MyDVJ6rCvboVaEPduii3oIujdQd6D7pF2XnG4=;
-        b=YdEHn3Tfa8xzSjQ3WBwJYP+kR0QqGOab51nf6Qlgrlu4c74aX0ZvHICHqpe9yH529z
-         43TPeaPYDFriJwK1haJYpnpe35xOTzkJDJQqBnhRyzNyORXH/inqlC+IMbd7aLbao87N
-         pzqUxIIua4LBmMqGg+fHrTT3TW7xuI4YQwHO6Np4qoJAd1eMCj+vEVRCsB6xrBxU0wze
-         ewr9vGk4J3PVALffXZid3AorBUxx3CNR/0BlN13jKRa0gSyBm+7lxaFP/6diWwyH8/fb
-         gSl1lxqnzDjpDGZgwGZzESDOrIOtT6NOmhOyjseUhBkpFyapAbB/uTz7fYnV2OWgqTNj
-         Uiag==
-X-Gm-Message-State: AOAM532XDgfub8zpSr9fiSafkkO3n5pbqw2TEUDlUTgGjd8Yt7CZ4dL8
-        9yPJp/HusgdrlzmV3k0VYYH5nEooh0Ex8ZQypDGsRKs85enX
-X-Google-Smtp-Source: ABdhPJz0aMYNE/tm9tWFc8+jYPzCR0q1siLpnbYfRae8zUyRaU42AyiRzuKiSJYAxCtwEG2IAQgJq+Q7TK5gcm8BGUcdR69RCB87
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=qRdDzcsR6tHaU83Zu+AB6iaBkt7tf4uVxesheVO+k04=;
+        b=pp2T9AWiKChR6Vidi/LjpeuC5ofNcDAWhYB80PqefC96eGBC3Bs0fjGuJDUNqImrmH
+         HEfwEOApucGqHP+L1fKf6oM2GUHmzG7U+C7TsmV5OlR9bThe7ZMfU5UtwX4ml3+n2HUo
+         92ralIbrcC8kScRNh56+IfQcAU5QeuN9OSBud94JBIsJcY5Q6saXC0ZFKK2EUrZWXx8H
+         u0RuM4jRCp2KwT4Gj2WWuKxfqaGktc4uYTRvARm8ZQSRDKrwRdyUzUkCKWe3/1RpVmBL
+         wqN4YeTL1RFFhaV9cR3RSoxa3gUZenXlGrz9CaK05Y6Q12MUeTajttnJpy8QbDPwPSzI
+         y4KA==
+X-Gm-Message-State: AOAM5308l7dSh6aGUwKD4DOnneRU5VUuc+glBszh51WMgglaI7oTX3/4
+        ob2f0IZ9z7jZyBMqScNk3RKVDg==
+X-Google-Smtp-Source: ABdhPJw5RZDHzkmYWQnqaCR/pP7fkWu0K1pHE0zmJg/ZBWnJ2OplQYKLUcCZisuEeybmIa1wsGUd6g==
+X-Received: by 2002:a65:674b:0:b0:381:6565:26fc with SMTP id c11-20020a65674b000000b00381656526fcmr7064146pgu.618.1648663126803;
+        Wed, 30 Mar 2022 10:58:46 -0700 (PDT)
+Received: from google.com (157.214.185.35.bc.googleusercontent.com. [35.185.214.157])
+        by smtp.gmail.com with ESMTPSA id y3-20020a17090a8b0300b001c735089cc2sm6710778pjn.54.2022.03.30.10.58.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Mar 2022 10:58:45 -0700 (PDT)
+Date:   Wed, 30 Mar 2022 17:58:41 +0000
+From:   Sean Christopherson <seanjc@google.com>
+To:     Quentin Perret <qperret@google.com>
+Cc:     Steven Price <steven.price@arm.com>,
+        Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, maz@kernel.org,
+        will@kernel.org
+Subject: Re: [PATCH v5 00/13] KVM: mm: fd-based approach for supporting KVM
+ guest private memory
+Message-ID: <YkSaUQX89ZEojsQb@google.com>
+References: <20220310140911.50924-1-chao.p.peng@linux.intel.com>
+ <YjyS6A0o4JASQK+B@google.com>
+ <YkHspg+YzOsbUaCf@google.com>
+ <YkH32nx+YsJuUbmZ@google.com>
+ <YkIFW25WgV2WIQHb@google.com>
+ <YkM7eHCHEBe5NkNH@google.com>
+ <88620519-029e-342b-0a85-ce2a20eaf41b@arm.com>
+ <YkQzfjgTQaDd2E2T@google.com>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:34a9:b0:323:600c:e42c with SMTP id
- t41-20020a05663834a900b00323600ce42cmr496343jal.75.1648662148315; Wed, 30 Mar
- 2022 10:42:28 -0700 (PDT)
-Date:   Wed, 30 Mar 2022 10:42:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b4802405db731170@google.com>
-Subject: [syzbot] BUG: scheduling while atomic: syz-fuzzer/NUM/ADDR
-From:   syzbot <syzbot+4631483f85171c561f39@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YkQzfjgTQaDd2E2T@google.com>
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Wed, Mar 30, 2022, Quentin Perret wrote:
+> On Wednesday 30 Mar 2022 at 09:58:27 (+0100), Steven Price wrote:
+> > On 29/03/2022 18:01, Quentin Perret wrote:
+> > > Is implicit sharing a thing? E.g., if a guest makes a memory access in
+> > > the shared gpa range at an address that doesn't have a backing memslot,
+> > > will KVM check whether there is a corresponding private memslot at the
+> > > right offset with a hole punched and report a KVM_EXIT_MEMORY_ERROR? Or
+> > > would that just generate an MMIO exit as usual?
+> > 
+> > My understanding is that the guest needs some way of tagging whether a
+> > page is expected to be shared or private. On the architectures I'm aware
+> > of this is done by effectively stealing a bit from the IPA space and
+> > pretending it's a flag bit.
+> 
+> Right, and that is in fact the main point of divergence we have I think.
+> While I understand this might be necessary for TDX and the likes, this
+> makes little sense for pKVM. This would effectively embed into the IPA a
+> purely software-defined non-architectural property/protocol although we
+> don't actually need to: we (pKVM) can reasonably expect the guest to
+> explicitly issue hypercalls to share pages in-place. So I'd be really
+> keen to avoid baking in assumptions about that model too deep in the
+> host mm bits if at all possible.
 
-syzbot found the following issue on:
+There is no assumption about stealing PA bits baked into this API.  Even within
+x86 KVM, I consider it a hard requirement that the common flows not assume the
+private vs. shared information is communicated through the PA.
 
-HEAD commit:    f022814633e1 Merge tag 'trace-v5.18-1' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1511883d700000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2f78c0e92b7fea54
-dashboard link: https://syzkaller.appspot.com/bug?extid=4631483f85171c561f39
-compiler:       aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-userspace arch: arm64
+> > > I'm overall inclined to think that while this abstraction works nicely
+> > > for TDX and the likes, it might not suit pKVM all that well in the
+> > > current form, but it's close.
+> > > 
+> > > What do you think of extending the model proposed here to also address
+> > > the needs of implementations that support in-place sharing? One option
+> > > would be to have KVM notify the private-fd backing store when a page is
+> > > shared back by a guest, which would then allow host userspace to mmap
+> > > that particular page in the private fd instead of punching a hole.
+> > > 
+> > > This should retain the main property you're after: private pages that
+> > > are actually mapped in the guest SPTE aren't mmap-able, but all the
+> > > others are fair game.
+> > > 
+> > > Thoughts?
+> > How do you propose this works if the page shared by the guest then needs
+> > to be made private again? If there's no hole punched then it's not
+> > possible to just repopulate the private-fd. I'm struggling to see how
+> > that could work.
+> 
+> Yes, some discussion might be required, but I was thinking about
+> something along those lines:
+> 
+>  - a guest requests a shared->private page conversion;
+> 
+>  - the conversion request is routed all the way back to the VMM;
+> 
+>  - the VMM is expected to either decline the conversion (which may be
+>    fatal for the guest if it can't handle this), or to tear-down its
+>    mappings (via munmap()) of the shared page, and accept the
+>    conversion;
+> 
+>  - upon return from the VMM, KVM will be expected to check how many
+>    references to the shared page are still held (probably by asking the
+>    fd backing store) to check that userspace has indeed torn down its
+>    mappings. If all is fine, KVM will instruct the hypervisor to
+>    repopulate the private range of the guest, otherwise it'll return an
+>    error to the VMM;
+> 
+>  - if the conversion has been successful, the guest can resume its
+>    execution normally.
+> 
+> Note: this should still allow to use the hole-punching method just fine
+> on systems that require it. The invariant here is just that KVM (with
+> help from the backing store) is now responsible for refusing to
+> instruct the hypervisor (or TDX module, or RMM, or whatever) to map a
+> private page if there are existing mappings to it.
+> 
+> > Having said that; if we can work out a way to safely
+> > mmap() pages from the private-fd there's definitely some benefits to be
+> > had - e.g. it could be used to populate the initial memory before the
+> > guest is started.
+> 
+> Right, so assuming the approach proposed above isn't entirely bogus,
+> this might now become possible by having the VMM mmap the private-fd,
+> load the payload, and then unmap it all, and only then instruct the
+> hypervisor to use this as private memory.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Hard "no" on mapping the private-fd.  Having the invariant tha the private-fd
+can never be mapped greatly simplifies the responsibilities of the backing store,
+as well as the interface between the private-fd and the in-kernel consumers of the
+memory (KVM in this case).
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+4631483f85171c561f39@syzkaller.appspotmail.com
+What is the use case for shared->private conversion?  x86, both TDX and SNP,
+effectively do have a flavor of shared->private conversion; SNP can definitely
+be in-place, and I think TDX too.  But the only use case in x86 is to populate
+the initial guest image, and due to other performance bottlenecks, it's strongly
+recommended to keep the initial image as small as possible.  Based on your previous
+response about the guest firmware loading the full guest image, my understanding is
+that pKVM will also utilize a minimal initial image.
 
-BUG: scheduling while atomic: syz-fuzzer/2188/0x00000101
-Modules linked in:
-CPU: 0 PID: 2188 Comm: syz-fuzzer Not tainted 5.17.0-syzkaller-11138-gf022814633e1 #0
-Hardware name: linux,dummy-virt (DT)
-Call trace:
- dump_backtrace.part.0+0xcc/0xe0 arch/arm64/kernel/stacktrace.c:184
- dump_backtrace arch/arm64/kernel/stacktrace.c:190 [inline]
- show_stack+0x18/0x6c arch/arm64/kernel/stacktrace.c:191
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x68/0x84 lib/dump_stack.c:106
- dump_stack+0x18/0x34 lib/dump_stack.c:113
- __schedule_bug+0x60/0x80 kernel/sched/core.c:5617
- schedule_debug kernel/sched/core.c:5644 [inline]
- __schedule+0x74c/0x7f0 kernel/sched/core.c:6273
- schedule+0x54/0xd0 kernel/sched/core.c:6454
- rwsem_down_write_slowpath+0x29c/0x5a0 kernel/locking/rwsem.c:1142
- __down_write_common kernel/locking/rwsem.c:1259 [inline]
- __down_write_common kernel/locking/rwsem.c:1256 [inline]
- __down_write kernel/locking/rwsem.c:1268 [inline]
- down_write+0x58/0x64 kernel/locking/rwsem.c:1515
- inode_lock include/linux/fs.h:777 [inline]
- simple_recursive_removal+0x124/0x270 fs/libfs.c:288
- debugfs_remove fs/debugfs/inode.c:732 [inline]
- debugfs_remove+0x5c/0x80 fs/debugfs/inode.c:726
- blk_release_queue+0x7c/0xf0 block/blk-sysfs.c:784
- kobject_cleanup lib/kobject.c:705 [inline]
- kobject_release lib/kobject.c:736 [inline]
- kref_put include/linux/kref.h:65 [inline]
- kobject_put+0x98/0x114 lib/kobject.c:753
- blk_put_queue+0x14/0x20 block/blk-core.c:270
- blkg_free.part.0+0x54/0x80 block/blk-cgroup.c:86
- blkg_free block/blk-cgroup.c:78 [inline]
- __blkg_release+0x44/0x70 block/blk-cgroup.c:102
- rcu_do_batch kernel/rcu/tree.c:2535 [inline]
- rcu_core+0x324/0x590 kernel/rcu/tree.c:2786
- rcu_core_si+0x10/0x20 kernel/rcu/tree.c:2803
- _stext+0x124/0x2a0
- do_softirq_own_stack include/asm-generic/softirq_stack.h:10 [inline]
- invoke_softirq kernel/softirq.c:439 [inline]
- __irq_exit_rcu+0xe4/0x100 kernel/softirq.c:637
- irq_exit_rcu+0x10/0x1c kernel/softirq.c:649
- el0_interrupt+0x6c/0x104 arch/arm64/kernel/entry-common.c:693
- __el0_irq_handler_common+0x18/0x2c arch/arm64/kernel/entry-common.c:700
- el0t_64_irq_handler+0x10/0x20 arch/arm64/kernel/entry-common.c:705
- el0t_64_irq+0x198/0x19c arch/arm64/kernel/entry.S:582
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 13 at kernel/rcu/tree.c:2592 rcu_do_batch kernel/rcu/tree.c:2592 [inline]
-WARNING: CPU: 0 PID: 13 at kernel/rcu/tree.c:2592 rcu_core+0x4d4/0x590 kernel/rcu/tree.c:2786
-Modules linked in:
-CPU: 0 PID: 13 Comm: ksoftirqd/0 Tainted: G        W         5.17.0-syzkaller-11138-gf022814633e1 #0
-Hardware name: linux,dummy-virt (DT)
-pstate: a04000c9 (NzCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : rcu_do_batch kernel/rcu/tree.c:2592 [inline]
-pc : rcu_core+0x4d4/0x590 kernel/rcu/tree.c:2786
-lr : rcu_do_batch kernel/rcu/tree.c:2572 [inline]
-lr : rcu_core+0x38c/0x590 kernel/rcu/tree.c:2786
-sp : ffff80000a69bd00
-x29: ffff80000a69bd00 x28: ffff800008121498 x27: 0000000000000000
-x26: 000000000000000a x25: fffffffffffffffd x24: ffff80000a69bd60
-x23: ffff80000a36cc00 x22: ffff00007fbc39b8 x21: 0000000000000000
-x20: ffff00007fbc3940 x19: 0000000000000000 x18: 0000000000000014
-x17: ffff800075981000 x16: ffff800008004000 x15: 000002fbb92ae146
-x14: 00000000000000c7 x13: 00000000000000c7 x12: ffff800009e7d710
-x11: ffff80000a25fee8 x10: ffff800075981000 x9 : 5759a1e949bd4693
-x8 : ffff8000080102a0 x7 : ffff80000a69b9e4 x6 : 00000000002e47d8
-x5 : f1ff00002157a500 x4 : ffff00007fbc75a0 x3 : 00000000002e47e0
-x2 : 0000000000002710 x1 : ffffffffffffd8f0 x0 : 0000000000000001
-Call trace:
- rcu_do_batch kernel/rcu/tree.c:2592 [inline]
- rcu_core+0x4d4/0x590 kernel/rcu/tree.c:2786
- rcu_core_si+0x10/0x20 kernel/rcu/tree.c:2803
- _stext+0x124/0x2a0
- run_ksoftirqd+0x4c/0x60 kernel/softirq.c:921
- smpboot_thread_fn+0x23c/0x270 kernel/smpboot.c:164
- kthread+0x108/0x10c kernel/kthread.c:376
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:867
----[ end trace 0000000000000000 ]---
+As a result, true in-place conversion to reduce the number of memcpy()s is low
+priority, i.e. not planned at this time.  Unless the use case expects to convert
+large swaths of memory, the simplest approach would be to have pKVM memcpy() between
+the private and shared backing pages during conversion.
 
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+In-place conversion that preserves data needs to be a separate and/or additional
+hypercall, because "I want to map this page as private/shared" is very, very different
+than "I want to map this page as private/shared and consume/expose non-zero data".
+I.e. the host is guaranteed to get an explicit request to do the memcpy(), so there
+shouldn't be a need to implicitly allow this on any conversion.
