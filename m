@@ -2,79 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D749B4EB75D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Mar 2022 02:12:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 169914EB7A2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Mar 2022 03:10:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241383AbiC3AOZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Mar 2022 20:14:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43254 "EHLO
+        id S241543AbiC3BMS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Mar 2022 21:12:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231715AbiC3AOX (ORCPT
+        with ESMTP id S241265AbiC3BMR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Mar 2022 20:14:23 -0400
-Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25C3669CCE;
-        Tue, 29 Mar 2022 17:12:40 -0700 (PDT)
-Received: by fieldses.org (Postfix, from userid 2815)
-        id 6A40C7216; Tue, 29 Mar 2022 20:12:39 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org 6A40C7216
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
-        s=default; t=1648599159;
-        bh=L8mTxGHAKryAac8wkg0Ftio66gd7FXWDoRKhQQ5flQk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=O0f3EAgz63ZySIk0Zut+j59uK/j2zC0wO1Y3/2bi/VLDW1boPVpX4ueo87s4WRcrM
-         L1EK0elCrlxDGppP85Gp3Tsvlr9sj1R4bijWI6O17p4UXC8CR63A8a6UpCJQeXkaGa
-         s/o6aSLO4SRGP9HyiTeAYoK6ULxGIYxk+ZKXXrS8=
-Date:   Tue, 29 Mar 2022 20:12:39 -0400
-From:   "J. Bruce Fields" <bfields@fieldses.org>
-To:     dai.ngo@oracle.com
-Cc:     chuck.lever@oracle.com, jlayton@redhat.com,
-        viro@zeniv.linux.org.uk, linux-nfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH RFC v18 02/11] NFSD: Add courtesy client state, macro and
- spinlock to support courteous server
-Message-ID: <20220330001239.GG32217@fieldses.org>
-References: <1648182891-32599-1-git-send-email-dai.ngo@oracle.com>
- <1648182891-32599-3-git-send-email-dai.ngo@oracle.com>
- <20220329154750.GE29634@fieldses.org>
- <612ef738-20f6-55f0-1677-cc035ba2fd0d@oracle.com>
- <20220329163011.GG29634@fieldses.org>
- <5cddab8d-dd92-6863-78fd-a4608a722927@oracle.com>
- <20220329183916.GC32217@fieldses.org>
- <593317f2-b4d6-eac1-7886-48a7271871e8@oracle.com>
+        Tue, 29 Mar 2022 21:12:17 -0400
+Received: from m12-11.163.com (m12-11.163.com [220.181.12.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4003B3204F;
+        Tue, 29 Mar 2022 18:10:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=Message-ID:Date:MIME-Version:Subject:From; bh=atFJa
+        Ri5msGe8CVKy3LOTDOJSQ345/ooI9jAkmzAIiE=; b=jVK9nsIGrt12YRiSDBxGU
+        kprKAsDlDBjIQ1FXS8kOohl9Ivgfl4gOaUvWFOwQkA4iYCcYDiubnULs/UpYYTqb
+        YSGXiInf6GbQAX78GCT5eWhan3VW/RhaX8nCDHSN8OuO/RFFbyTYcEEGX9vIGDeR
+        OCp/i4P6kk1lV3T2PAs8aQ=
+Received: from [192.168.3.109] (unknown [218.201.129.19])
+        by smtp7 (Coremail) with SMTP id C8CowABnCnX0rUNiN1F3AA--.5469S2;
+        Wed, 30 Mar 2022 09:10:13 +0800 (CST)
+Message-ID: <7ea53bf4-9f2f-2120-d7eb-b2292fa9f156@163.com>
+Date:   Wed, 30 Mar 2022 09:10:06 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <593317f2-b4d6-eac1-7886-48a7271871e8@oracle.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: linux resetting when the usb storage was removed while copying
+Content-Language: en-US
+To:     OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Cc:     Guenter Roeck <linux@roeck-us.net>, linux-watchdog@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-usb@vger.kernel.org
+References: <1cc135e3-741f-e7d6-5d0a-fef319832a4c@163.com>
+ <87pmmee9kr.fsf@mail.parknet.co.jp>
+ <06ebc7fb-e7eb-b994-78fd-df07155ef4b5@163.com>
+ <15b83842-60d9-78b8-54e9-3a27211caded@roeck-us.net>
+ <87pmm6hbk9.fsf@mail.parknet.co.jp>
+ <e69813b2-9b60-02de-dbec-414c2baf42c8@163.com>
+ <87ilrxgibb.fsf@mail.parknet.co.jp>
+From:   qianfan <qianfanguijin@163.com>
+In-Reply-To: <87ilrxgibb.fsf@mail.parknet.co.jp>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: C8CowABnCnX0rUNiN1F3AA--.5469S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxXF1ruF4fuw4fuw1DZryxKrg_yoW5GFykpr
+        W7AF4Fga9Yqrya9F1fJw1kCw1vq3yIkFn5GrnrWas8uan8uF1Fya1DJFyjvFW2kFs5u3Z8
+        XF1qk3srAFWDtaUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j0XdbUUUUU=
+X-Originating-IP: [218.201.129.19]
+X-CM-SenderInfo: htld0w5dqj3xxmlqqiywtou0bp/1tbiQhHT7VaEBYhpbwABs1
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 29, 2022 at 02:45:28PM -0700, dai.ngo@oracle.com wrote:
-> This does not prevent the courtesy client from doing trunking in all
-> cases. It is only prevent the courtesy client from doing trunking without
-> first reconnect to the server.
-> 
-> I think this behavior is the same as if the server does not support courtesy
-> client; the server can expire the courtesy anytime it wants. If the
-> courtesy client reconnected successfully then by the time nfsd4_create_session/
-> find_confirmed_client is called the client already becomes active
-> so the server will process the request normally.
 
-I'm not sure what you mean here.  All a client has to do to reconnect is
-succesfully renew its lease.  That doesn't necessarily require calling
-CREATE_SESSION again.
+在 2022/3/29 18:32, OGAWA Hirofumi 写道:
+> qianfan <qianfanguijin@163.com> writes:
+>
+>>> This limits the rate of messages. Can you try if a this patch fixes behavior?
+>> Yes, this patch fixed the problem and watchdog doesn't reset again.
+>>
+>> Next is the console log when usb storage disconnected:
+> [...]
+>
+>> cp: read error: Input/output error
+>> # [  218.253995] FAT-fs (sda1): FAT read failed (blocknr 1130)
+>>
+>> 'FAT read failed' error message printed only once.
+>>
+>> Interesting.
+> Hm, message should print 10 times, then is suppressed. So this time, the
+> test may not reproduced. Can your test reproduces the issue reliably?
 
-> Also to handle cases when the courtesy client reconnects after it was in
-> EXPIRED state, we want to force the client to recover its state starting
-> with EXCHANGE_ID so we have to return BAD_SESSION on CREATE_SESSION request.
+Right.
 
-The client should not have to send EXCHANGE_ID.
+I found copy file from usb storage to tmpfs or ubifs has the different 
+behaviors. I got only one error message when copy to tmpfs and got 10 error 
+messages when copy to ubifs. Next is the log when copy to ubifs:
 
---b.
+[  313.767873] musb-hdrc musb-hdrc.0: ep2 RX three-strikes error
+[  314.594767] sd 0:0:0:0: [sda] tag#0 UNKNOWN(0x2003) Result: hostbyte=0x07 
+driverbyte=DRIVER_OK cmd_age=0s
+[  314.604930] sd 0:0:0:0: [sda] tag#0 CDB: opcode=0x28 28 00 00 03 92 b6 00 00 
+f0 00
+[  314.612882] blk_update_request: I/O error, dev sda, sector 234166 op 
+0x0:(READ) flags 0x84700 phys_seg 2 prio class 0
+[  314.625613] sd 0:0:0:0: [sda] tag#0 UNKNOWN(0x2003) Result: hostbyte=0x07 
+driverbyte=DRIVER_OK cmd_age=0s
+[  314.635768] sd 0:0:0:0: [sda] tag#0 CDB: opcode=0x28 28 00 00 03 93 a6 00 00 
+10 00
+[  314.643746] blk_update_request: I/O error, dev sda, sector 234406 op 
+0x0:(READ) flags 0x80700 phys_seg 1 prio class 0
+[  314.656025] usb 1-1: USB disconnect, device number 4
+[  314.674700] blk_update_request: I/O error, dev sda, sector 1405 op 0x0:(READ) 
+flags 0x0 phys_seg 1 prio class 0
+[  314.685673] FAT-fs (sda1): FAT read failed (blocknr 1343)
+[  314.691490] FAT-fs (sda1): FAT read failed (blocknr 1343)
+[  314.697294] FAT-fs (sda1): FAT read failed (blocknr 1343)
+[  314.702987] FAT-fs (sda1): FAT read failed (blocknr 1343)
+[  314.708685] FAT-fs (sda1): FAT read failed (blocknr 1343)
+[  314.714377] FAT-fs (sda1): FAT read failed (blocknr 1343)
+[  314.720074] FAT-fs (sda1): FAT read failed (blocknr 1343)
+[  314.725799] FAT-fs (sda1): FAT read failed (blocknr 1343)
+[  314.731480] FAT-fs (sda1): FAT read failed (blocknr 1343)
+[  314.737186] FAT-fs (sda1): FAT read failed (blocknr 1343)
+
+My gpio watchdog toggle every 100ms and I sniffer watchdog toggle signal and 
+uart console, watchdog toggle time is 119ms when those message printed, delayed 
+19ms.
+
+This patch can really solve this problem, thanks.
+
+>
+> Well, anyway, the patch looks like working.
+>
+> Thanks.
+
