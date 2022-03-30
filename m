@@ -2,44 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F9CD4ECAD7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Mar 2022 19:38:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 994EA4ECAE8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Mar 2022 19:42:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230080AbiC3RjJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Mar 2022 13:39:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48020 "EHLO
+        id S1349251AbiC3RoP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Mar 2022 13:44:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349355AbiC3RjI (ORCPT
+        with ESMTP id S237384AbiC3RoO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Mar 2022 13:39:08 -0400
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD352C6808
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Mar 2022 10:37:22 -0700 (PDT)
-Received: by mail-io1-f69.google.com with SMTP id g16-20020a05660226d000b00638d8e1828bso14886957ioo.13
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Mar 2022 10:37:22 -0700 (PDT)
+        Wed, 30 Mar 2022 13:44:14 -0400
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00C18F47CF
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Mar 2022 10:42:28 -0700 (PDT)
+Received: by mail-il1-f197.google.com with SMTP id o17-20020a92c691000000b002c2c04aebe7so11857542ilg.8
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Mar 2022 10:42:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=PH06CLYLNtDuJaUnGCG4ZMntweeLF8hwfojOH0wrh9c=;
-        b=DAoiD+MP8a3aNUWeCAspoGy+Ef8+TL5s9H9Q1Hvh8iJqx5uHdxod9dPmipw17iYLYV
-         Tc852Tc+KggqJPN5cSRK2xBzsdsohmLj4FV5v8dYOvx3/tlfZ8SenV6hvKV1HCKcyE+G
-         mncTPy0dlV5oD3J6Ipb3B7eO8Td/ZnpHQ9Zqnc8mVgRsH2vWnEXcsXdZfFeBBqgmfvkZ
-         Lw8aEKLa817k5JH24GqIak8rqW1hp9rhWGYZhoybtfqdHlQ9yezxgTh9uqnBhnnv60U/
-         VlyixCGmewEjwYWqJIeiFHlj3RU/egvfZ29/A5BzGf42324VdPhlN166TmFqZN0sVlwZ
-         3K6Q==
-X-Gm-Message-State: AOAM532eAfKosB5CFpZScWwM2EtzekNw87uujLUfrbLZrDe3DU4eTcLe
-        dY+848ZeyPiBRKx20puCgHT8nR56L+UQA1udqLhzEWZ7Hxhy
-X-Google-Smtp-Source: ABdhPJw7Tr8nja4VuZqAAahGQuc2mos7zYzH9Fqn2+fSTiKylJOd2r8BbaRiIdC80dgpqVJQDK5umunEXktzF+kw+mur/NDqEyCX
+        bh=U40YE8MyDVJ6rCvboVaEPduii3oIujdQd6D7pF2XnG4=;
+        b=YdEHn3Tfa8xzSjQ3WBwJYP+kR0QqGOab51nf6Qlgrlu4c74aX0ZvHICHqpe9yH529z
+         43TPeaPYDFriJwK1haJYpnpe35xOTzkJDJQqBnhRyzNyORXH/inqlC+IMbd7aLbao87N
+         pzqUxIIua4LBmMqGg+fHrTT3TW7xuI4YQwHO6Np4qoJAd1eMCj+vEVRCsB6xrBxU0wze
+         ewr9vGk4J3PVALffXZid3AorBUxx3CNR/0BlN13jKRa0gSyBm+7lxaFP/6diWwyH8/fb
+         gSl1lxqnzDjpDGZgwGZzESDOrIOtT6NOmhOyjseUhBkpFyapAbB/uTz7fYnV2OWgqTNj
+         Uiag==
+X-Gm-Message-State: AOAM532XDgfub8zpSr9fiSafkkO3n5pbqw2TEUDlUTgGjd8Yt7CZ4dL8
+        9yPJp/HusgdrlzmV3k0VYYH5nEooh0Ex8ZQypDGsRKs85enX
+X-Google-Smtp-Source: ABdhPJz0aMYNE/tm9tWFc8+jYPzCR0q1siLpnbYfRae8zUyRaU42AyiRzuKiSJYAxCtwEG2IAQgJq+Q7TK5gcm8BGUcdR69RCB87
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:2c4e:b0:648:c654:fb0c with SMTP id
- x14-20020a0566022c4e00b00648c654fb0cmr12553577iov.137.1648661842190; Wed, 30
- Mar 2022 10:37:22 -0700 (PDT)
-Date:   Wed, 30 Mar 2022 10:37:22 -0700
+X-Received: by 2002:a05:6638:34a9:b0:323:600c:e42c with SMTP id
+ t41-20020a05663834a900b00323600ce42cmr496343jal.75.1648662148315; Wed, 30 Mar
+ 2022 10:42:28 -0700 (PDT)
+Date:   Wed, 30 Mar 2022 10:42:28 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007564ac05db72ff58@google.com>
-Subject: [syzbot] BUG: scheduling while atomic in simple_recursive_removal
-From:   syzbot <syzbot+2778a29e60b4982065a0@syzkaller.appspotmail.com>
+Message-ID: <000000000000b4802405db731170@google.com>
+Subject: [syzbot] BUG: scheduling while atomic: syz-fuzzer/NUM/ADDR
+From:   syzbot <syzbot+4631483f85171c561f39@syzkaller.appspotmail.com>
 To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
@@ -57,22 +57,22 @@ Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    d888c83fcec7 fs: fix fd table size alignment properly
+HEAD commit:    f022814633e1 Merge tag 'trace-v5.18-1' of git://git.kernel..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=103e7b53700000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=cadd7063134e07bc
-dashboard link: https://syzkaller.appspot.com/bug?extid=2778a29e60b4982065a0
+console output: https://syzkaller.appspot.com/x/log.txt?x=1511883d700000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2f78c0e92b7fea54
+dashboard link: https://syzkaller.appspot.com/bug?extid=4631483f85171c561f39
 compiler:       aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
 userspace arch: arm64
 
 Unfortunately, I don't have any reproducer for this issue yet.
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+2778a29e60b4982065a0@syzkaller.appspotmail.com
+Reported-by: syzbot+4631483f85171c561f39@syzkaller.appspotmail.com
 
-BUG: scheduling while atomic: syz-executor.0/2197/0x00000101
+BUG: scheduling while atomic: syz-fuzzer/2188/0x00000101
 Modules linked in:
-CPU: 0 PID: 2197 Comm: syz-executor.0 Not tainted 5.17.0-syzkaller-13034-gd888c83fcec7 #0
+CPU: 0 PID: 2188 Comm: syz-fuzzer Not tainted 5.17.0-syzkaller-11138-gf022814633e1 #0
 Hardware name: linux,dummy-virt (DT)
 Call trace:
  dump_backtrace.part.0+0xcc/0xe0 arch/arm64/kernel/stacktrace.c:184
@@ -92,8 +92,8 @@ Call trace:
  down_write+0x58/0x64 kernel/locking/rwsem.c:1515
  inode_lock include/linux/fs.h:777 [inline]
  simple_recursive_removal+0x124/0x270 fs/libfs.c:288
- debugfs_remove fs/debugfs/inode.c:742 [inline]
- debugfs_remove+0x5c/0x80 fs/debugfs/inode.c:736
+ debugfs_remove fs/debugfs/inode.c:732 [inline]
+ debugfs_remove+0x5c/0x80 fs/debugfs/inode.c:726
  blk_release_queue+0x7c/0xf0 block/blk-sysfs.c:784
  kobject_cleanup lib/kobject.c:705 [inline]
  kobject_release lib/kobject.c:736 [inline]
@@ -111,43 +111,42 @@ Call trace:
  invoke_softirq kernel/softirq.c:439 [inline]
  __irq_exit_rcu+0xe4/0x100 kernel/softirq.c:637
  irq_exit_rcu+0x10/0x1c kernel/softirq.c:649
- __el1_irq arch/arm64/kernel/entry-common.c:459 [inline]
- el1_interrupt+0x38/0x64 arch/arm64/kernel/entry-common.c:473
- el1h_64_irq_handler+0x18/0x24 arch/arm64/kernel/entry-common.c:478
- el1h_64_irq+0x64/0x68 arch/arm64/kernel/entry.S:577
- walk_stackframe arch/arm64/kernel/stacktrace.c:153 [inline]
- arch_stack_walk+0x68/0x280 arch/arm64/kernel/stacktrace.c:211
- stack_trace_save+0x50/0x80 kernel/stacktrace.c:122
- kasan_save_stack+0x2c/0x5c mm/kasan/common.c:38
- kasan_set_track mm/kasan/common.c:45 [inline]
- set_alloc_info mm/kasan/common.c:436 [inline]
- ____kasan_kmalloc mm/kasan/common.c:515 [inline]
- ____kasan_kmalloc mm/kasan/common.c:474 [inline]
- __kasan_kmalloc+0xb0/0xd0 mm/kasan/common.c:524
- kasan_kmalloc include/linux/kasan.h:234 [inline]
- kmem_cache_alloc_node_trace include/linux/slab.h:488 [inline]
- kmalloc_node include/linux/slab.h:599 [inline]
- kzalloc_node include/linux/slab.h:725 [inline]
- __get_vm_area_node.constprop.0+0xf8/0x224 mm/vmalloc.c:2459
- __vmalloc_node_range+0xa4/0x5c0 mm/vmalloc.c:3132
- __vmalloc_node mm/vmalloc.c:3237 [inline]
- vzalloc+0x74/0x90 mm/vmalloc.c:3307
- do_ip6t_get_ctl+0x290/0x4d0 net/ipv6/netfilter/ip6_tables.c:817
- nf_getsockopt+0x60/0x8c net/netfilter/nf_sockopt.c:116
- ipv6_getsockopt+0x140/0x1c4 net/ipv6/ipv6_sockglue.c:1504
- tcp_getsockopt+0x20/0x50 net/ipv4/tcp.c:4295
- sock_common_getsockopt+0x1c/0x30 net/core/sock.c:3478
- __sys_getsockopt+0xa4/0x214 net/socket.c:2224
- __do_sys_getsockopt net/socket.c:2239 [inline]
- __se_sys_getsockopt net/socket.c:2236 [inline]
- __arm64_sys_getsockopt+0x28/0x3c net/socket.c:2236
- __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
- invoke_syscall+0x48/0x114 arch/arm64/kernel/syscall.c:52
- el0_svc_common.constprop.0+0x44/0xec arch/arm64/kernel/syscall.c:142
- do_el0_svc+0x6c/0x84 arch/arm64/kernel/syscall.c:181
- el0_svc+0x44/0xb0 arch/arm64/kernel/entry-common.c:616
- el0t_64_sync_handler+0x1a4/0x1b0 arch/arm64/kernel/entry-common.c:634
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:581
+ el0_interrupt+0x6c/0x104 arch/arm64/kernel/entry-common.c:693
+ __el0_irq_handler_common+0x18/0x2c arch/arm64/kernel/entry-common.c:700
+ el0t_64_irq_handler+0x10/0x20 arch/arm64/kernel/entry-common.c:705
+ el0t_64_irq+0x198/0x19c arch/arm64/kernel/entry.S:582
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 13 at kernel/rcu/tree.c:2592 rcu_do_batch kernel/rcu/tree.c:2592 [inline]
+WARNING: CPU: 0 PID: 13 at kernel/rcu/tree.c:2592 rcu_core+0x4d4/0x590 kernel/rcu/tree.c:2786
+Modules linked in:
+CPU: 0 PID: 13 Comm: ksoftirqd/0 Tainted: G        W         5.17.0-syzkaller-11138-gf022814633e1 #0
+Hardware name: linux,dummy-virt (DT)
+pstate: a04000c9 (NzCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : rcu_do_batch kernel/rcu/tree.c:2592 [inline]
+pc : rcu_core+0x4d4/0x590 kernel/rcu/tree.c:2786
+lr : rcu_do_batch kernel/rcu/tree.c:2572 [inline]
+lr : rcu_core+0x38c/0x590 kernel/rcu/tree.c:2786
+sp : ffff80000a69bd00
+x29: ffff80000a69bd00 x28: ffff800008121498 x27: 0000000000000000
+x26: 000000000000000a x25: fffffffffffffffd x24: ffff80000a69bd60
+x23: ffff80000a36cc00 x22: ffff00007fbc39b8 x21: 0000000000000000
+x20: ffff00007fbc3940 x19: 0000000000000000 x18: 0000000000000014
+x17: ffff800075981000 x16: ffff800008004000 x15: 000002fbb92ae146
+x14: 00000000000000c7 x13: 00000000000000c7 x12: ffff800009e7d710
+x11: ffff80000a25fee8 x10: ffff800075981000 x9 : 5759a1e949bd4693
+x8 : ffff8000080102a0 x7 : ffff80000a69b9e4 x6 : 00000000002e47d8
+x5 : f1ff00002157a500 x4 : ffff00007fbc75a0 x3 : 00000000002e47e0
+x2 : 0000000000002710 x1 : ffffffffffffd8f0 x0 : 0000000000000001
+Call trace:
+ rcu_do_batch kernel/rcu/tree.c:2592 [inline]
+ rcu_core+0x4d4/0x590 kernel/rcu/tree.c:2786
+ rcu_core_si+0x10/0x20 kernel/rcu/tree.c:2803
+ _stext+0x124/0x2a0
+ run_ksoftirqd+0x4c/0x60 kernel/softirq.c:921
+ smpboot_thread_fn+0x23c/0x270 kernel/smpboot.c:164
+ kthread+0x108/0x10c kernel/kthread.c:376
+ ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:867
+---[ end trace 0000000000000000 ]---
 
 
 ---
