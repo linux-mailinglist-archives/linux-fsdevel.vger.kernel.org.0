@@ -2,66 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 62E0D4EC66E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Mar 2022 16:23:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4770D4EC713
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Mar 2022 16:49:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346787AbiC3OZM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Mar 2022 10:25:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35644 "EHLO
+        id S1347216AbiC3OvT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Mar 2022 10:51:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47418 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243476AbiC3OZK (ORCPT
+        with ESMTP id S1347210AbiC3OvT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Mar 2022 10:25:10 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13694205BD7;
-        Wed, 30 Mar 2022 07:23:25 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id C3FEA210F4;
-        Wed, 30 Mar 2022 14:23:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1648650203;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=xR5hf8kIREKN6X6wVSaN/NHYaZGL1s9/pqLKR+/n3kA=;
-        b=2oFrZTB/YYZFSPML86/A2KkRqmQhRe8KJotT8rW9Yc0zf3o181BQUwNqq7m7/yrzTdLfla
-        pJh9q9s5CO4Ja3M/qJZdkF0pgUFT95bU+/PMtcvHWlC5yc17SipkyKPgGIQCj/GmcZt88d
-        cFtnyH8ReevsWxGav3EoUZA802c8wxY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1648650203;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=xR5hf8kIREKN6X6wVSaN/NHYaZGL1s9/pqLKR+/n3kA=;
-        b=pVf6UFYU4dy3pu3QUJVFodxzlrii4muWBxIakCsfZ5VoJaXAQTJoWFmwvrPn2R42yHsLm7
-        Gm51a5cuKy5h9wBw==
-Received: from ds.suse.cz (ds.suse.cz [10.100.12.205])
-        by relay2.suse.de (Postfix) with ESMTP id 77DC5A3B88;
-        Wed, 30 Mar 2022 14:23:23 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 4923FDA7F3; Wed, 30 Mar 2022 16:19:25 +0200 (CEST)
-Date:   Wed, 30 Mar 2022 16:19:25 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     Naohiro Aota <naohiro.aota@wdc.com>
-Cc:     linux-btrfs@vger.kernel.org, johannes.thumshirn@wdc.com,
-        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        david@fromorbit.com
-Subject: Re: [PATCH v4 0/3] protect relocation with sb_start_write
-Message-ID: <20220330141924.GE2237@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Naohiro Aota <naohiro.aota@wdc.com>,
-        linux-btrfs@vger.kernel.org, johannes.thumshirn@wdc.com,
-        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        david@fromorbit.com
-References: <cover.1648535838.git.naohiro.aota@wdc.com>
+        Wed, 30 Mar 2022 10:51:19 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A07A015A13
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Mar 2022 07:49:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=m+GZBmqKDGa2Dt6KxAV/wOP4s9s9AeBToskwE8yANwk=; b=gZFS4FA59rX+T9VCflROulwDby
+        sPLAU4/7TC34zpvTMS7enydSeHcsRpr34dgFHaCIwdKvspBLaLYRMVVFzslyUt8sK3X26p7rLIpBW
+        EkbwrhJPLZEWmRUYozY4kpl5/D0EM5vFBjBZMg6yvftSBRoA+eDO3xH/jLSsLc9FKc73c8OuhkoTd
+        zLXLBcI4mQgI5NN/5A3542mwECfmsQBunmsc4jexcoqyj96C8QfiFEJvt2nR12PWXNk0+HkAxyocV
+        Bq/VxVJ80D04asMDZaZn58o2e0XHAUOS1uVBYxPX70/Hxb3HiV6/Zhh2dEZMhO9RflDkvLY3dE6D6
+        biIpUVqQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nZZdb-001KCq-KI; Wed, 30 Mar 2022 14:49:31 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Subject: [PATCH 00/12] Additional patches for 5.18
+Date:   Wed, 30 Mar 2022 15:49:18 +0100
+Message-Id: <20220330144930.315951-1-willy@infradead.org>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1648535838.git.naohiro.aota@wdc.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -69,45 +46,56 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 29, 2022 at 03:55:57PM +0900, Naohiro Aota wrote:
-> This series is a follow-up to the series below [1]. The old series added
-> an assertion to btrfs_relocate_chunk() to check if it is protected
-> with sb_start_write(). However, it revealed another location we need
-> to add sb_start_write() [2].
-> 
-> Also, this series moved the ASSERT from btrfs_relocate_chunk() to
-> btrfs_relocate_block_group() because we do not need to call
-> sb_start_write() on a non-data block group [3].
-> 
-> [1] https://lore.kernel.org/linux-btrfs/cover.1645157220.git.naohiro.aota@wdc.com/T/
-> 
-> [2] https://lore.kernel.org/linux-btrfs/cover.1645157220.git.naohiro.aota@wdc.com/T/#e06eecc07ce1cd1e45bfd30a374bd2d15b4fd76d8
-> 
-> [3] https://lore.kernel.org/linux-btrfs/YjMSaLIhKNcKUuHM@debian9.Home/
-> 
-> Patch 1 adds sb_{start,end}_write() to the resumed async balancing.
-> 
-> Patches 2 and 3 add an ASSERT to catch a future error.
-> 
-> --
-> v4:
->   - Fix subject of patch 2 (Filipe)
->   - Revise the comment for the ASSERT (Filipe)
-> v3:
->   - Only add sb_write_started(), which we really use. (Dave Chinner)
->   - Drop patch "btrfs: mark device addition as mnt_want_write_file" (Filipe Manana)
->   - Narrow asserting region to btrfs_relocate_block_group() and check only
->     when the BG is data BG. (Filipe Manana)
-> v2:
->   - Use mnt_want_write_file() instead of sb_start_write() for
->     btrfs_ioctl_add_dev()
->   - Drop bogus fixes tag
->   - Change the stable target to meaningful 4.9+
-> 
-> Naohiro Aota (3):
->   btrfs: mark resumed async balance as writing
->   fs: add a check function for sb_start_write()
->   btrfs: assert that relocation is protected with sb_start_write()
+These are some misc patches that I'm going to send to Linus in a
+couple of days.  Nothing earth-shattering, but no reason to delay them
+to the next merge window.  I've pushed them out to
+https://git.infradead.org/users/willy/pagecache.git/shortlog/refs/heads/for-next
+so they'll get a bit of testing in -next.
 
-Added to misc-next, with the comment of 3/3 updated according to
-Filipe's suggestion. Thanks.
+Matthew Wilcox (Oracle) (12):
+  readahead: Remove read_cache_pages()
+  fs: Remove ->readpages address space operation
+  iomap: Simplify is_partially_uptodate a little
+  fs: Remove read_actor_t
+  fs, net: Move read_descriptor_t to net.h
+  fs: Pass an iocb to generic_perform_write()
+  filemap: Remove AOP_FLAG_CONT_EXPAND
+  ext4: Correct ext4_journalled_dirty_folio() conversion
+  f2fs: Correct f2fs_dirty_data_folio() conversion
+  f2fs: Get the superblock from the mapping instead of the page
+  ntfs: Correct mark_ntfs_record_dirty() folio conversion
+  btrfs: Remove a use of PAGE_SIZE in btrfs_invalidate_folio()
+
+ Documentation/filesystems/fsverity.rst |  6 +-
+ Documentation/filesystems/locking.rst  |  6 --
+ Documentation/filesystems/vfs.rst      | 11 ----
+ fs/btrfs/inode.c                       |  2 +-
+ fs/btrfs/reflink.c                     |  4 +-
+ fs/buffer.c                            |  3 +-
+ fs/ceph/file.c                         |  2 +-
+ fs/cifs/cifssmb.c                      |  2 +-
+ fs/cifs/inode.c                        |  2 +-
+ fs/crypto/crypto.c                     |  2 +-
+ fs/ext4/file.c                         |  2 +-
+ fs/ext4/inode.c                        |  2 +-
+ fs/ext4/readpage.c                     |  2 +-
+ fs/f2fs/checkpoint.c                   |  2 +-
+ fs/f2fs/data.c                         |  6 +-
+ fs/f2fs/file.c                         |  2 +-
+ fs/f2fs/node.c                         |  4 +-
+ fs/fuse/fuse_i.h                       |  2 +-
+ fs/iomap/buffered-io.c                 |  9 ++-
+ fs/nfs/file.c                          |  2 +-
+ fs/ntfs/aops.c                         |  2 +-
+ fs/verity/verify.c                     |  4 +-
+ include/linux/fs.h                     | 31 +--------
+ include/linux/fsverity.h               |  2 +-
+ include/linux/net.h                    | 19 ++++++
+ include/linux/pagemap.h                |  2 -
+ mm/filemap.c                           | 12 ++--
+ mm/readahead.c                         | 91 +-------------------------
+ 28 files changed, 60 insertions(+), 176 deletions(-)
+
+-- 
+2.34.1
+
