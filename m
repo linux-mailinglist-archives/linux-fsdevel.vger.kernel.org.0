@@ -2,99 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DF7124EB7F4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Mar 2022 03:49:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AB014EBA13
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Mar 2022 07:22:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241720AbiC3Bu0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Mar 2022 21:50:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55124 "EHLO
+        id S242945AbiC3FX2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Mar 2022 01:23:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233672AbiC3Bu0 (ORCPT
+        with ESMTP id S243010AbiC3FXV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Mar 2022 21:50:26 -0400
-Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAAE11260E;
-        Tue, 29 Mar 2022 18:48:39 -0700 (PDT)
-Received: by fieldses.org (Postfix, from userid 2815)
-        id 1CD497113; Tue, 29 Mar 2022 21:48:39 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org 1CD497113
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
-        s=default; t=1648604919;
-        bh=l9GumFcfnlmaNWcSMrOGkOAd+cs63zZNeRtR5T9YlIM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Rm0+h9oeeFazJ7wvJdOtHbtwwZEQ9UC4IQIG+Cg6yeBW7yzYOVcqp43VZXjTddG3E
-         IYiqhlecLNkREkkc8+Mgp8J3GUgzQqmPtaP4x8XYeG2DMgVQ3ZARRrcie/JqE9XY/J
-         8lo1xcAwaolg8n9jDAdHC7ZGb8JP1/RokJ7CUDRo=
-Date:   Tue, 29 Mar 2022 21:48:39 -0400
-From:   "J. Bruce Fields" <bfields@fieldses.org>
-To:     dai.ngo@oracle.com
-Cc:     chuck.lever@oracle.com, jlayton@redhat.com,
-        viro@zeniv.linux.org.uk, linux-nfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH RFC v18 02/11] NFSD: Add courtesy client state, macro and
- spinlock to support courteous server
-Message-ID: <20220330014839.GH32217@fieldses.org>
-References: <1648182891-32599-1-git-send-email-dai.ngo@oracle.com>
- <1648182891-32599-3-git-send-email-dai.ngo@oracle.com>
- <20220329154750.GE29634@fieldses.org>
- <612ef738-20f6-55f0-1677-cc035ba2fd0d@oracle.com>
- <20220329163011.GG29634@fieldses.org>
- <5cddab8d-dd92-6863-78fd-a4608a722927@oracle.com>
- <20220329183916.GC32217@fieldses.org>
- <593317f2-b4d6-eac1-7886-48a7271871e8@oracle.com>
- <20220330001239.GG32217@fieldses.org>
- <24d6dcff-33fd-99c1-c920-9bf56f672a6e@oracle.com>
+        Wed, 30 Mar 2022 01:23:21 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A59F1480E8;
+        Tue, 29 Mar 2022 22:21:25 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 13A2F615D9;
+        Wed, 30 Mar 2022 05:21:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 793BAC340EC;
+        Wed, 30 Mar 2022 05:21:23 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+        dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="EWx80GcI"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+        t=1648617681;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=9uzCxmb6i4Vo8+AFdyD/kL3n4v054lqayW48puql9H8=;
+        b=EWx80GcI7TD1DoS2Vm4HaYn+c5nAQrEiBRPse3R7LpWPaDc5V08VD/2P9H1JXT3PVH0BG9
+        CYOz+fLf7jLdsKcCWhHI7SLGw5hFIkr+xQagOlsN4r0iA1DXdqzFf+Rem09E786EtjukJO
+        jJ+vPNLgTJxTj2rdjk/88iGovmoCKzI=
+Received: by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id df7ade0d (TLSv1.3:AEAD-AES256-GCM-SHA384:256:NO);
+        Wed, 30 Mar 2022 05:21:21 +0000 (UTC)
+Date:   Wed, 30 Mar 2022 01:21:20 -0400
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Fedor Pchelkin <aissur0002@gmail.com>,
+        Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/4] file: Fix file descriptor leak in copy_fd_bitmaps()
+Message-ID: <YkPo0N/CVHFDlB6v@zx2c4.com>
+References: <20220326114009.1690-1-aissur0002@gmail.com>
+ <2698031.BEx9A2HvPv@fedor-zhuzhzhalka67>
+ <CAHk-=wh2Ao+OgnWSxHsJodXiLwtaUndXSkuhh9yKnA3iXyBLEA@mail.gmail.com>
+ <4705670.GXAFRqVoOG@fedor-zhuzhzhalka67>
+ <CAHk-=wiKhn+VsvK8CiNbC27+f+GsPWvxMVbf7QET+7PQVPadwA@mail.gmail.com>
+ <CAHk-=wjRwwUywAa9TzQUxhqNrQzZJQZvwn1JSET3h=U+3xi8Pg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <24d6dcff-33fd-99c1-c920-9bf56f672a6e@oracle.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <CAHk-=wjRwwUywAa9TzQUxhqNrQzZJQZvwn1JSET3h=U+3xi8Pg@mail.gmail.com>
+X-Spam-Status: No, score=-6.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Mar 29, 2022 at 06:17:29PM -0700, dai.ngo@oracle.com wrote:
-> 
-> On 3/29/22 5:12 PM, J. Bruce Fields wrote:
-> >On Tue, Mar 29, 2022 at 02:45:28PM -0700, dai.ngo@oracle.com wrote:
-> >>This does not prevent the courtesy client from doing trunking in all
-> >>cases. It is only prevent the courtesy client from doing trunking without
-> >>first reconnect to the server.
-> >>
-> >>I think this behavior is the same as if the server does not support courtesy
-> >>client; the server can expire the courtesy anytime it wants. If the
-> >>courtesy client reconnected successfully then by the time nfsd4_create_session/
-> >>find_confirmed_client is called the client already becomes active
-> >>so the server will process the request normally.
-> >I'm not sure what you mean here.  All a client has to do to reconnect is
-> >succesfully renew its lease.
-> 
-> For 4.1 the client renews its lease via the SEQUENCE, either stand-alone
-> or in a compound. Once the SEQUENCE completes successfully then the
-> subsequent CREATE_SESSION is processed normally. However, if the client
-> did not send the SEQUENCE first then server returns BAD_SESSION for the
-> CREATE_SESSION request.
-> 
-> >   That doesn't necessarily require calling
-> >CREATE_SESSION again.
+Hi Linus,
+
+On Tue, Mar 29, 2022 at 03:18:56PM -0700, Linus Torvalds wrote:
+> On Tue, Mar 29, 2022 at 2:02 PM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
 > >
-> >>Also to handle cases when the courtesy client reconnects after it was in
-> >>EXPIRED state, we want to force the client to recover its state starting
-> >>with EXCHANGE_ID so we have to return BAD_SESSION on CREATE_SESSION request.
-> >The client should not have to send EXCHANGE_ID.
+> > I will apply that ALIGN() thing since Christian could confirm it fixes
+> > things, and try to add a few more comments about how bitmaps are
+> > fundamentally in chunks of BITS_PER_LONG.
 > 
-> For 4.1 the expired courtesy client must send EXCHANGE_ID to reconnect
-> to start new session. I don't see how the *expired* courtesy client can
-> access the export again without sending the EXCHANGE_ID. Attached is the
-> pcap that shows how the courtesy client recovers once it's in
-> CLIENT_EXPIRED state.
+> Ok, applied as commit 1c24a186398f ("fs: fd tables have to be
+> multiples of BITS_PER_LONG").
 
-Oh, sorry, sure, we're talking about an actual expired client.  That's
-fine.
+This broke the WireGuard test suite, <https://www.wireguard.com/build-status/>,
+on 32-bit archs with a line like:
 
---b.
+[+] NS1: wg set wg0 private-key /dev/fd/63 listen-port 1 peer xb6I3yo5N/A9PXGeqSVdMywrogPz82Ug5vWTdqQJRF8= preshared-key /dev/fd/62 allowed-ips 192.168.241.2/32,fd00::2/128
+fopen: No such file or directory
+
+Those /dev/fd/63 and /dev/fd/62 are coming from bash process
+redirection:
+
+n1 wg set wg0 private-key <(echo "$key1") peer "$pub2" preshared-key <(echo "$psk") allowed-ips 192.168.241.2/32 endpoint 127.0.0.1:2
+
+Peppering some printks, it looks like in `max_fds = ALIGN(max_fds,
+BITS_PER_LONG);`, max_fds is sometimes 4294967295 before the call, and
+that ALIGN winds up bringing it to 0.
+
+Jason
