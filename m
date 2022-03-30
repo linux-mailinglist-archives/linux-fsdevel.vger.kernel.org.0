@@ -2,84 +2,179 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 821B54EC987
+	by mail.lfdr.de (Postfix) with ESMTP id 117EC4EC986
 	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Mar 2022 18:18:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346960AbiC3QUC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Mar 2022 12:20:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50374 "EHLO
+        id S1348740AbiC3QUL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Mar 2022 12:20:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50758 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238269AbiC3QUB (ORCPT
+        with ESMTP id S1348729AbiC3QUG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Mar 2022 12:20:01 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E872DE001;
-        Wed, 30 Mar 2022 09:18:15 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id A6608B81D6E;
-        Wed, 30 Mar 2022 16:18:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51A51C340EC;
-        Wed, 30 Mar 2022 16:18:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648657093;
-        bh=cjFQuqoRMfu2TXAsiXRv9EQjKvH+MdFIXY9uc5fhIeE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qL9r9Yws/hUGzKuvIFY+RbuwntrMSK4P43CyL2/dnXSTyynijAjGxTx5jk0MciJBS
-         ZU3K1UIDqMzxA88epboJ1p59x5irJJj2JLdT3IY0tPJYmpTuab09WoUfTrxDR16Dfq
-         r8N4tXQdQIaPnia1AslHnGmOplVqsKsaI34w3RLi6u1e7bfXjxM+6aYBDQb0MMyTSr
-         YPN+3zKng+bKVx0qXsPftkro+4iih8aIVgkJzS6owkJGyF1RHMzDG9okK9EYv0u6/k
-         DPUA6Xn7fDXsQPvseUvtae8Ads0cYctEDf9QDUz5BscGpr2wMHyw7xssUbm6ZRtK/f
-         ndefofeH+jTig==
-Date:   Wed, 30 Mar 2022 09:18:12 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Shiyang Ruan <ruansy.fnst@fujitsu.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Linux NVDIMM <nvdimm@lists.linux.dev>,
-        Linux MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        david <david@fromorbit.com>, Jane Chu <jane.chu@oracle.com>
-Subject: Re: [PATCH v11 1/8] dax: Introduce holder for dax_device
-Message-ID: <20220330161812.GA27649@magnolia>
-References: <20220227120747.711169-1-ruansy.fnst@fujitsu.com>
- <20220227120747.711169-2-ruansy.fnst@fujitsu.com>
- <CAPcyv4jAqV7dZdmGcKrG=f8sYmUXaL7YCQtME6GANywncwd+zg@mail.gmail.com>
- <4fd95f0b-106f-6933-7bc6-9f0890012b53@fujitsu.com>
- <YkPtptNljNcJc1g/@infradead.org>
- <15a635d6-2069-2af5-15f8-1c0513487a2f@fujitsu.com>
- <YkQtOO/Z3SZ2Pksg@infradead.org>
- <4ed8baf7-7eb9-71e5-58ea-7c73b7e5bb73@fujitsu.com>
- <YkR8CUdkScEjMte2@infradead.org>
+        Wed, 30 Mar 2022 12:20:06 -0400
+Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1764140A6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Mar 2022 09:18:20 -0700 (PDT)
+Received: by mail-pj1-x102f.google.com with SMTP id bx24-20020a17090af49800b001c6872a9e4eso473313pjb.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Mar 2022 09:18:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=nLFu3lC46wywpXjsuIK0ZHIhaIdPVQVthjLJWcG1bqs=;
+        b=ObdhiCZmnQ357m81FhFtTehR9aYW6P4+BOjn381CbSMHEsU1E7K3XcewtQe3sJCPWQ
+         Csyxq34Lypg3+bYvidjj+H3qoa/rNI7SuZbTd3AoCwOk6Mqd2uRtxKjVcVzSJoZodMTf
+         D/y6FT6RGJsMSbkAlI8a0sPYLgZwkMMWyNwRd4fxHKehurrHJxHet0aUP9LncDJtE3cQ
+         UPOz+IFAmZ6u0RgCGDhAInm8qhjfecUTWrGa0uueQmXiVf0afirovk1cfrPKwTF9EAHS
+         gOr/NoP4PJTR2EKpDT/fo37IVT+5E6uWqx4jWGTeL/5PLf3qFXEVzRH+FzhiYJwPOXLr
+         Ejdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=nLFu3lC46wywpXjsuIK0ZHIhaIdPVQVthjLJWcG1bqs=;
+        b=tG3y6EgsmeEMxjjh9YHahR/pwx7HC5fKfHLlkOa/BfmlJJojxWGuCyAzguBEyvj7F1
+         AQUJE1mBzJuBIrWfDoG6qoDeDi8MkcWHIvI8fgFtTe1uKEF3oUIuC0Jn8ZRnM15rW44L
+         9/1MNxzpDbufJ3rpggGevcjoGWsVQW7N55fLjtstvSv3nPGmrLX0hLIsFUPnxDn948Yg
+         cyh6fm2JOL10oGWuKpLe6n8Jr9g5WEjL2XrLq6Ejf5YjDUQKmbvwbMR6VoDRWzkdjwmI
+         Uk2IxXdWr+RnC9F8Zeovaxuz6dsldYf979LWnCmRPzp1T7s6NDbThH3jHlO6dTSJsjvB
+         i5zA==
+X-Gm-Message-State: AOAM533gwXOyy34pq6ylmv7711wGu0ofBFc0TAmbqqvWZl2m1CfHjGif
+        pP+EPrCHvnbzLlty+F0zt7fPaA==
+X-Google-Smtp-Source: ABdhPJzu0B5xizLOKCwUOp7QXz7jXFJn2pPNsklxdxdBWzWCsDjkD8HDdgo8h4C6dlF1WJ0c8QhdzA==
+X-Received: by 2002:a17:903:2305:b0:154:4aa2:e800 with SMTP id d5-20020a170903230500b001544aa2e800mr29560plh.167.1648657099936;
+        Wed, 30 Mar 2022 09:18:19 -0700 (PDT)
+Received: from google.com (157.214.185.35.bc.googleusercontent.com. [35.185.214.157])
+        by smtp.gmail.com with ESMTPSA id b14-20020a056a000cce00b004fabc39519esm25365204pfv.5.2022.03.30.09.18.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Mar 2022 09:18:19 -0700 (PDT)
+Date:   Wed, 30 Mar 2022 16:18:15 +0000
+From:   Sean Christopherson <seanjc@google.com>
+To:     Steven Price <steven.price@arm.com>
+Cc:     Quentin Perret <qperret@google.com>,
+        Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, maz@kernel.org,
+        will@kernel.org
+Subject: Re: [PATCH v5 00/13] KVM: mm: fd-based approach for supporting KVM
+ guest private memory
+Message-ID: <YkSCx7q4Dl25mSp8@google.com>
+References: <20220310140911.50924-1-chao.p.peng@linux.intel.com>
+ <YjyS6A0o4JASQK+B@google.com>
+ <YkHspg+YzOsbUaCf@google.com>
+ <YkH32nx+YsJuUbmZ@google.com>
+ <YkIFW25WgV2WIQHb@google.com>
+ <YkM7eHCHEBe5NkNH@google.com>
+ <88620519-029e-342b-0a85-ce2a20eaf41b@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YkR8CUdkScEjMte2@infradead.org>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <88620519-029e-342b-0a85-ce2a20eaf41b@arm.com>
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 30, 2022 at 08:49:29AM -0700, Christoph Hellwig wrote:
-> On Wed, Mar 30, 2022 at 06:58:21PM +0800, Shiyang Ruan wrote:
-> > As the code I pasted before, pmem driver will subtract its ->data_offset,
-> > which is byte-based. And the filesystem who implements ->notify_failure()
-> > will calculate the offset in unit of byte again.
-> > 
-> > So, leave its function signature byte-based, to avoid repeated conversions.
+On Wed, Mar 30, 2022, Steven Price wrote:
+> On 29/03/2022 18:01, Quentin Perret wrote:
+> > Is implicit sharing a thing? E.g., if a guest makes a memory access in
+> > the shared gpa range at an address that doesn't have a backing memslot,
+> > will KVM check whether there is a corresponding private memslot at the
+> > right offset with a hole punched and report a KVM_EXIT_MEMORY_ERROR? Or
+> > would that just generate an MMIO exit as usual?
 > 
-> I'm actually fine either way, so I'll wait for Dan to comment.
+> My understanding is that the guest needs some way of tagging whether a
+> page is expected to be shared or private. On the architectures I'm aware
+> of this is done by effectively stealing a bit from the IPA space and
+> pretending it's a flag bit.
+> 
+> So when a guest access causes a fault, the flag bit (really part of the
+> intermediate physical address) is compared against whether the page is
+> present in the private fd. If they correspond (i.e. a private access and
+> the private fd has a page, or a shared access and there's a hole in the
+> private fd) then the appropriate page is mapped and the guest continues.
+> If there's a mismatch then a KVM_EXIT_MEMORY_ERROR exit is trigged and
+> the VMM is expected to fix up the situation (either convert the page or
+> kill the guest if this was unexpected).
 
-FWIW I'd convinced myself that the reason for using byte units is to
-make it possible to reduce the pmem failure blast radius to subpage
-units... but then I've also been distracted for months. :/
+x86 architectures do steal a bit, but it's not strictly required.  The guest can
+communicate its desired private vs. shared state via hypercall.  I refer to the
+hypercall method as explicit conversion, and reacting to a page fault due to
+accessing the "wrong" PA variant as implicit conversion.
 
---D
+I have dreams of supporting a software-only implementation on x86, a la pKVM, if
+only for testing and debug purposes.  In that case, only explicit conversion is
+supported.
+
+I'd actually prefer TDX and SNP only allow explicit conversion, i.e. let the host
+treat accesses to the "wrong" PA as illegal, but sadly the guest/host ABIs for
+both TDX and SNP require the host to support implicit conversions.
+
+> >>>> The key point is that KVM never decides to convert between shared and private, it's
+> >>>> always a userspace decision.  Like normal memslots, where userspace has full control
+> >>>> over what gfns are a valid, this gives userspace full control over whether a gfn is
+> >>>> shared or private at any given time.
+> >>>
+> >>> I'm understanding this as 'the VMM is allowed to punch holes in the
+> >>> private fd whenever it wants'. Is this correct?
+> >>
+> >> From the kernel's perspective, yes, the VMM can punch holes at any time.  From a
+> >> "do I want to DoS my guest" perspective, the VMM must honor its contract with the
+> >> guest and not spuriously unmap private memory.
+> >>
+> >>> What happens if it does so for a page that a guest hasn't shared back?
+> >>
+> >> When the hole is punched, KVM will unmap the corresponding private SPTEs.  If the
+> >> guest is still accessing the page as private, the next access will fault and KVM
+> >> will exit to userspace with KVM_EXIT_MEMORY_ERROR.  Of course the guest is probably
+> >> hosed if the hole punch was truly spurious, as at least hardware-based protected VMs
+> >> effectively destroy data when a private page is unmapped from the guest private SPTEs.
+> >>
+> >> E.g. Linux guests for TDX and SNP will panic/terminate in such a scenario as they
+> >> will get a fault (injected by trusted hardware/firmware) saying that the guest is
+> >> trying to access an unaccepted/unvalidated page (TDX and SNP require the guest to
+> >> explicit accept all private pages that aren't part of the guest's initial pre-boot
+> >> image).
+> > 
+> > I suppose this is necessary is to prevent the VMM from re-fallocating
+> > in a hole it previously punched and re-entering the guest without
+> > notifying it?
+> 
+> I don't know specifically about TDX/SNP, but one thing we want to
+> prevent with CCA is the VMM deallocating/reallocating a private page
+> without the guest being aware (i.e. corrupting the guest's state).So
+> punching a hole will taint the address such that a future access by the
+> guest is fatal (unless the guest first jumps through the right hoops to
+> acknowledge that it was expecting such a thing).
+
+Yep, both TDX and SNP will trigger a fault in the guest if the host removes and
+reinserts a private page.  The current plan for Linux guests is to track whether
+or not a given page has been accepted as private, and panic/die if a fault due
+to unaccepted private page occurs.
