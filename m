@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D1324EC908
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Mar 2022 18:02:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 623554EC93E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Mar 2022 18:05:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348092AbiC3QEJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Mar 2022 12:04:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45494 "EHLO
+        id S1348599AbiC3QGq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Mar 2022 12:06:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54344 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241968AbiC3QEH (ORCPT
+        with ESMTP id S245352AbiC3QGm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Mar 2022 12:04:07 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66DE3CD331;
-        Wed, 30 Mar 2022 09:02:22 -0700 (PDT)
+        Wed, 30 Mar 2022 12:06:42 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3655238D30;
+        Wed, 30 Mar 2022 09:04:55 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 13806B81D7F;
-        Wed, 30 Mar 2022 16:02:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05ECEC340EC;
-        Wed, 30 Mar 2022 16:02:16 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8549B61773;
+        Wed, 30 Mar 2022 16:04:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 955C6C340EC;
+        Wed, 30 Mar 2022 16:04:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648656139;
-        bh=rCFLVfwP2YYZR/07SXYzxszKe7a3kQtFKBEZm2TvXSE=;
+        s=k20201202; t=1648656294;
+        bh=SgjhWVJpkYUealo7YVxtMaf9+1We6QkbgJfT05eWG9g=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NYt83dqShVp1l9pMm76ILYhOSUFPYxiBB38hZ1iMMkZAnYeYlr0giSL9Pma8GznaZ
-         wLh7L+znuNPja45SGjcL+ObLifstjCJwGrifXChDds+GAhgEsAlvP+EgozPf5kY97H
-         k1uMAeWC4b4CsOtp86tsiGM/K3S70JsbD+YWnJ8r1WKXBllo5moeSRnVtlG8+X3kIC
-         /Vnr+IFZj139iA9sdxgq0L1vuh9H57ISEdhLsVSaDe1+n0W7IEiaMAhQEHrNNimKcD
-         Yjd0JsXIwXai8udFWDpBvlZEXMAw5wTfTBMfLuykwA/PdGjBcnce01wRdsTkXm/S3t
-         tg3PTjnJUfTtg==
-Date:   Wed, 30 Mar 2022 18:02:14 +0200
+        b=a/CBu2B+ZaBcm1qbcCKFoSEuNQz5F58uclL4ZNf3MtXuifcgcMKdDb2dLzkAqExgP
+         HgYoyHiYSZnqDH8WfrI322KgbFkujKSlitt2YwIpBSZqm7OUyVdGRI2Qp/ZQTlR812
+         lho5Y8Tf1YtW510S/hFK/bN7WIFg61aWiMgi8TMP+y7Ko1VFGv1uOWxq/ZCppzLFrd
+         IDL1pheFLn99KK7WvgPYt0QMNsijG2uzj7tN5ALRShGY+Kc7m5q8SoMPji4H/t2Twe
+         IQp5wHjn+A0XRxnKiFne4Gj0+YQyuodpe7bbWJ3o46aIXWZTtnAZdz9DTcwOfbhWZ9
+         BO1vpBiLO4VZw==
+Date:   Wed, 30 Mar 2022 18:04:48 +0200
 From:   Christian Brauner <brauner@kernel.org>
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Amir Goldstein <amir73il@gmail.com>,
@@ -45,16 +45,17 @@ Cc:     Amir Goldstein <amir73il@gmail.com>,
         Seth Forshee <sforshee@digitalocean.com>,
         Luca Bocassi <luca.boccassi@microsoft.com>,
         Lennart Poettering <mzxreary@0pointer.de>,
-        =?utf-8?B?U3TDqXBoYW5l?= Graber <stgraber@ubuntu.com>
-Subject: Re: [PATCH v2 01/19] fs: add two trivial lookup helpers
-Message-ID: <20220330160214.acs4tegiomjn3amg@wittgenstein>
+        =?utf-8?B?U3TDqXBoYW5l?= Graber <stgraber@ubuntu.com>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v2 02/19] exportfs: support idmapped mounts
+Message-ID: <20220330160448.bugfza2akk3zsici@wittgenstein>
 References: <20220330102409.1290850-1-brauner@kernel.org>
- <20220330102409.1290850-2-brauner@kernel.org>
- <20220330152532.GA4835@lst.de>
+ <20220330102409.1290850-3-brauner@kernel.org>
+ <20220330152635.GB4835@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20220330152532.GA4835@lst.de>
+In-Reply-To: <20220330152635.GB4835@lst.de>
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -65,28 +66,28 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 30, 2022 at 05:25:32PM +0200, Christoph Hellwig wrote:
-> > +
-> > +/*
-> > + * Like lookup_positive_unlocked() but takes a mount's idmapping into account.
-> > + */
+On Wed, Mar 30, 2022 at 05:26:35PM +0200, Christoph Hellwig wrote:
+> On Wed, Mar 30, 2022 at 12:23:50PM +0200, Christian Brauner wrote:
+> > Make the two locations where exportfs helpers check permission to lookup
+> > a given inode idmapped mount aware by switching it to the lookup_one()
+> > helper. This is a bugfix for the open_by_handle_at() system call which
+> > doesn't take idmapped mounts into account currently. It's not tied to a
+> > specific commit so we'll just Cc stable.
+> > 
+> > In addition this is required to support idmapped base layers in overlay.
+> > The overlay filesystem uses exportfs to encode and decode file handles
+> > for its index=on mount option and when nfs_export=on.
 > 
-> Can you add a real kerneldoc comment here instead of referring to
-> another function that will hopefully be removed rather sooner than
-> later?
+> This probably wants a Fixes tag, as without it NFS exporting idmapped
+> file will give slightly unexpected results.
 
-Done.
-
-> 
-> > +struct dentry *lookup_one_unlocked(struct user_namespace *, const char *, struct dentry *, int);
-> > +struct dentry *lookup_one_positive_unlocked(struct user_namespace *, const char *, struct dentry *, int);
-> 
-> Please spellt out the parameter names and avoid the overy long lines.
-
-Done.
+I made it so that the nfs kernel server will refuse to be mounted on top
+of idmapped mounts in check_export() similar to what I did originally do
+for overlayfs. It's unclear what the Fixes: tag would be so I'll just Cc
+stable.
 
 > 
-> Otherwise looks good:
+> Otherwise looks fine:
 > 
 > Reviewed-by: Christoph Hellwig <hch@lst.de>
 
