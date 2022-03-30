@@ -2,211 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 16B6A4EBF16
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Mar 2022 12:44:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A064F4EBF5B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Mar 2022 12:58:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245543AbiC3KqN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Mar 2022 06:46:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48756 "EHLO
+        id S245651AbiC3LAS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Mar 2022 07:00:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46362 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245524AbiC3KqM (ORCPT
+        with ESMTP id S240799AbiC3LAQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Mar 2022 06:46:12 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A03981262F;
-        Wed, 30 Mar 2022 03:44:26 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 4677FB81BC1;
-        Wed, 30 Mar 2022 10:44:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58023C340EC;
-        Wed, 30 Mar 2022 10:44:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648637063;
-        bh=lfSEHL7fg6oV9uL5dH9Dtc5NS3Boz05b8/p+vW+NBow=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tQ14XWNu9WVAiqzDSMbkCKPafII1n9BpIkiOhY+u6GOw9kR1fByH8v8TFkHFoOK94
-         39azIDo8vgzF6HlNuvXy3S4vpAFkxOemu3yKnhsKP8Fitn1Ai6wqRwT9mZbnSEZyoC
-         OejM5XxHv7E54H1/I/nU0wRIiRjnXUDYyRCe2pmHqqSdrU/zk/koMBs4BH7QRyi7Ju
-         zZH7KGuqVTKmeYLl4uW/XNlx6Kto5Z60bCrzLsgKk2+kDmnq1WxSxVodg0QnHUGENK
-         1J8l8QSjSXaG9bjIKVtrVUinrSp3jQWtizcyzFvJ+pYZTsF/tChPvtZ0UFDbrdFrEP
-         dOdfXobKM3dGA==
-Date:   Wed, 30 Mar 2022 12:44:19 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Jeff Layton <jlayton@kernel.org>,
-        Yang Xu <xuyang2018.jy@fujitsu.com>,
-        linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org,
-        viro@zeniv.linux.org.uk
-Subject: Re: [PATCH v1 2/3] vfs: strip file's S_ISGID mode on vfs instead of
- on filesystem
-Message-ID: <20220330104419.j7qwcf465hyms2tv@wittgenstein>
-References: <1648461389-2225-1-git-send-email-xuyang2018.jy@fujitsu.com>
- <1648461389-2225-2-git-send-email-xuyang2018.jy@fujitsu.com>
- <4250135d7321841ee6bdf0487c576f311aa583aa.camel@kernel.org>
- <20220329221059.GN1609613@dread.disaster.area>
+        Wed, 30 Mar 2022 07:00:16 -0400
+Received: from heian.cn.fujitsu.com (mail.cn.fujitsu.com [183.91.158.132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 70CD6DF70;
+        Wed, 30 Mar 2022 03:58:29 -0700 (PDT)
+IronPort-Data: =?us-ascii?q?A9a23=3AgNM4v69uJjWCds008lY+DrUD63+TJUtcMsCJ2f8?=
+ =?us-ascii?q?bfWQNrUog1TAPymEXX2+EOv6PYjP9KNokaYqy8UwPvZHdzYIwTVdlrnsFo1Bi8?=
+ =?us-ascii?q?5ScXYvDRqvT04J+FuWaFQQ/qZx2huDodKjYdVeB4Ef9WlTdhSMkj/vQHOKlULe?=
+ =?us-ascii?q?s1h1ZHmeIdg9w0HqPpMZp2uaEsfDha++8kYuaT//3YTdJ6BYoWo4g0J9vnTs01?=
+ =?us-ascii?q?BjEVJz0iXRlDRxDlAe2e3D4l/vzL4npR5fzatE88uJX24/+IL+FEmPxp3/BC/u?=
+ =?us-ascii?q?ulPD1b08LXqXPewOJjxK6WYD72l4b+HN0if19aZLwam8O49mNt8pswdNWpNq+T?=
+ =?us-ascii?q?xw1FqPRmuUBSAQeGCZ7VUFD0OadeiDu6JzNnyUqdFOpmZ2CFnoeMYQG++pfD3t?=
+ =?us-ascii?q?J8PsCIjERKBuEgoqewLm7YuhqiN4qIMTiMMUYoH4I5T3QC7AkB4/CR6HL7NpD9?=
+ =?us-ascii?q?DY2ms1KW/3ZYqIxZThwaxLPSx5CIFEaDNQ5hujArn3+dSBI7VeQjakp6mPQigt?=
+ =?us-ascii?q?r39DFNsTZe9mPbcFUhVqD4GbH+XnpRB0XKrS3yzOD/zSnhvLnmjnyU4YfUra/8?=
+ =?us-ascii?q?5ZChFyV23xWBgYaWEW2pdGnhUOkHdFSMUoZ/mwpt6da3EiqSMTtGh61uniJujY?=
+ =?us-ascii?q?CVNdKVe438geAzuzT+QnxLmwFSCNRLcwor+coSjEwkFyEhdXkAXpoqrL9dJ433?=
+ =?us-ascii?q?t94thvrYW5MczBEPnRCEGM4DxDYiNlbpnryohxLScZZVuHIJAw=3D?=
+IronPort-HdrOrdr: =?us-ascii?q?A9a23=3A7pXWoarUc0yRRXUzYrKOZWAaV5oUeYIsimQD?=
+ =?us-ascii?q?101hICG9vPbo7vxG/c5rrSMc7Qx6ZJhOo6HkBEDtewK/yXcx2/hzAV7AZmjbUQ?=
+ =?us-ascii?q?mTXeVfBOLZqlWKJ8S9zI5gPMxbAs9D4bPLfD5HZAXBjDVQ0exM/DBKys+VbC7l?=
+ =?us-ascii?q?oUtQcQ=3D=3D?=
+X-IronPort-AV: E=Sophos;i="5.88,333,1635177600"; 
+   d="scan'208";a="123091868"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 30 Mar 2022 18:58:28 +0800
+Received: from G08CNEXMBPEKD05.g08.fujitsu.local (unknown [10.167.33.204])
+        by cn.fujitsu.com (Postfix) with ESMTP id E2D7E4D17160;
+        Wed, 30 Mar 2022 18:58:22 +0800 (CST)
+Received: from G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.85) by
+ G08CNEXMBPEKD05.g08.fujitsu.local (10.167.33.204) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.23; Wed, 30 Mar 2022 18:58:22 +0800
+Received: from [10.167.201.8] (10.167.201.8) by
+ G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
+ id 15.0.1497.23 via Frontend Transport; Wed, 30 Mar 2022 18:58:22 +0800
+Message-ID: <4ed8baf7-7eb9-71e5-58ea-7c73b7e5bb73@fujitsu.com>
+Date:   Wed, 30 Mar 2022 18:58:21 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20220329221059.GN1609613@dread.disaster.area>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH v11 1/8] dax: Introduce holder for dax_device
+To:     Christoph Hellwig <hch@infradead.org>
+CC:     Dan Williams <dan.j.williams@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Linux NVDIMM <nvdimm@lists.linux.dev>,
+        Linux MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "Darrick J. Wong" <djwong@kernel.org>, david <david@fromorbit.com>,
+        Jane Chu <jane.chu@oracle.com>
+References: <20220227120747.711169-1-ruansy.fnst@fujitsu.com>
+ <20220227120747.711169-2-ruansy.fnst@fujitsu.com>
+ <CAPcyv4jAqV7dZdmGcKrG=f8sYmUXaL7YCQtME6GANywncwd+zg@mail.gmail.com>
+ <4fd95f0b-106f-6933-7bc6-9f0890012b53@fujitsu.com>
+ <YkPtptNljNcJc1g/@infradead.org>
+ <15a635d6-2069-2af5-15f8-1c0513487a2f@fujitsu.com>
+ <YkQtOO/Z3SZ2Pksg@infradead.org>
+From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
+In-Reply-To: <YkQtOO/Z3SZ2Pksg@infradead.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-yoursite-MailScanner-ID: E2D7E4D17160.A1BE2
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: ruansy.fnst@fujitsu.com
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 30, 2022 at 09:10:59AM +1100, Dave Chinner wrote:
-> On Tue, Mar 29, 2022 at 07:12:11AM -0400, Jeff Layton wrote:
-> > On Mon, 2022-03-28 at 17:56 +0800, Yang Xu wrote:
-> > > Currently, vfs only passes mode argument to filesystem, then use inode_init_owner()
-> > > to strip S_ISGID. Some filesystem(ie ext4/btrfs) will call inode_init_owner
-> > > firstly, then posxi acl setup, but xfs uses the contrary order. It will affect
-> > > S_ISGID clear especially umask with S_IXGRP.
-> > > 
-> > > Vfs has all the info it needs - it doesn't need the filesystems to do everything
-> > > correctly with the mode and ensuring that they order things like posix acl setup
-> > > functions correctly with inode_init_owner() to strip the SGID bit.
-> > > 
-> > > Just strip the SGID bit at the VFS, and then the filesystems can't get it wrong.
-> > > 
-> > > Also, the inode_sgid_strip() api should be used before IS_POSIXACL() because
-> > > this api may change mode by using umask but S_ISGID clear isn't related to
-> > > SB_POSIXACL flag.
-> > > 
-> > > Suggested-by: Dave Chinner <david@fromorbit.com>
-> > > Signed-off-by: Yang Xu <xuyang2018.jy@fujitsu.com>
-> > > ---
-> > >  fs/inode.c | 4 ----
-> > >  fs/namei.c | 7 +++++--
-> > >  2 files changed, 5 insertions(+), 6 deletions(-)
-> > > 
-> > > diff --git a/fs/inode.c b/fs/inode.c
-> > > index 1f964e7f9698..a2dd71c2437e 100644
-> > > --- a/fs/inode.c
-> > > +++ b/fs/inode.c
-> > > @@ -2246,10 +2246,6 @@ void inode_init_owner(struct user_namespace *mnt_userns, struct inode *inode,
-> > >  		/* Directories are special, and always inherit S_ISGID */
-> > >  		if (S_ISDIR(mode))
-> > >  			mode |= S_ISGID;
-> > > -		else if ((mode & (S_ISGID | S_IXGRP)) == (S_ISGID | S_IXGRP) &&
-> > > -			 !in_group_p(i_gid_into_mnt(mnt_userns, dir)) &&
-> > > -			 !capable_wrt_inode_uidgid(mnt_userns, dir, CAP_FSETID))
-> > > -			mode &= ~S_ISGID;
-> > >  	} else
-> > >  		inode_fsgid_set(inode, mnt_userns);
-> > >  	inode->i_mode = mode;
-> > > diff --git a/fs/namei.c b/fs/namei.c
-> > > index 3f1829b3ab5b..e68a99e0ac96 100644
-> > > --- a/fs/namei.c
-> > > +++ b/fs/namei.c
-> > > @@ -3287,6 +3287,7 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
-> > >  	if (open_flag & O_CREAT) {
-> > >  		if (open_flag & O_EXCL)
-> > >  			open_flag &= ~O_TRUNC;
-> > > +		inode_sgid_strip(mnt_userns, dir->d_inode, &mode);
-> > >  		if (!IS_POSIXACL(dir->d_inode))
-> > >  			mode &= ~current_umask();
-> > >  		if (likely(got_write))
-> > > @@ -3521,6 +3522,8 @@ struct dentry *vfs_tmpfile(struct user_namespace *mnt_userns,
-> > >  	child = d_alloc(dentry, &slash_name);
-> > >  	if (unlikely(!child))
-> > >  		goto out_err;
-> > > +	inode_sgid_strip(mnt_userns, dir, &mode);
-> > > +
-> > >  	error = dir->i_op->tmpfile(mnt_userns, dir, child, mode);
-> > >  	if (error)
-> > >  		goto out_err;
-> > > @@ -3849,14 +3852,14 @@ static int do_mknodat(int dfd, struct filename *name, umode_t mode,
-> > >  	error = PTR_ERR(dentry);
-> > >  	if (IS_ERR(dentry))
-> > >  		goto out1;
-> > > -
-> > > +	mnt_userns = mnt_user_ns(path.mnt);
-> > > +	inode_sgid_strip(mnt_userns, path.dentry->d_inode, &mode);
-> > >  	if (!IS_POSIXACL(path.dentry->d_inode))
-> > >  		mode &= ~current_umask();
-> > >  	error = security_path_mknod(&path, dentry, mode, dev);
-> > >  	if (error)
-> > >  		goto out2;
-> > >  
-> > > -	mnt_userns = mnt_user_ns(path.mnt);
-> > >  	switch (mode & S_IFMT) {
-> > >  		case 0: case S_IFREG:
-> > >  			error = vfs_create(mnt_userns, path.dentry->d_inode,
-> > 
-> > I haven't gone over this in detail, but have you tested this with NFS at
-> > all?
-> > 
-> > IIRC, NFS has to leave setuid/gid stripping to the server, so I wonder
-> > if this may end up running afoul of that by forcing the client to try
-> > and strip these bits.
-> 
-> All it means is that the mode passed to the NFS server for the
-> create already has the SGID bit stripped from it. It means the
-> client is no longer reliant on the server behaving correctly to
-> close this security hole.
-> 
-> That is, failing to strip the SGID bit appropriately in the local
-> context is a security issue. Hence local machine security requires
-> that the NFS client should try to strip the SGID to defend against
-> buggy/unfixed servers that fail to strip it appropriately and
-> thereby continute to expose the local machine to this SGID security
-> issue.
-> 
-> That's the problem here - the SGID stripping in inode_init_owner()
-> is not documented, wasn't reviewed, doesn't work correctly
-> across all filesystems and leaves nasty security landmines when the VFS
-> create mode and the stripped inode mode differ.
-> 
-> Various filesystems have workarounds, partial fixes or no fixes for
-> these issues and landmines. Hence we have a situation where we are
-> playing whack-a-mole to discover and slap band-aids over all the
-> places that inode_init_owner() based stripping does not work
-> correctly.
-> 
-> In XFS, this meant the problem was not orginally fixed by the
-> silent, unreviewed change to inode_init_owner() in 2018
-> because it didn't call inode_init_owner() at all. So 4 years after
-> the bug was "fixed" and the CVE released, we are still exposed to
-> the bug because *no filesystem people knew about it* and *nobody wrote a
-> regression test* to check that the probelm was fixed and stayed
-> fixed.
-> 
-> And now that XFS does call inode_init_owner(), we've subsequently
-> discovered that XFS still fail when default acls are enabled because
-> we create the ACL from the mode passed from the VFS, not the
-> stripped mode that results from inode_init_owner() being called.
-> 
-> See what I mean about landmines?
-> 
-> The fact is this: regardless of which filesystem is in use, failure
-> to strip the SGID correctly is considered a security failure that
-> needs to be fixed. The current VFS infrastructure requires the
-> filesystem to do everything right and not step on any landmines to
-> strip the SGID bit, when in fact it can easily be done at the VFS
-> and the filesystems then don't even need to be aware that the SGID
-> needs to be (or has been stripped) by the operation the user asked
-> to be done.
-> 
-> We need the architecture to be *secure by design*, not tacked onto
-> the side like it is now.  We need to stop trying to dance around
-> these landmines - it is *not working* and we are blowing our own
-> feet off repeatedly. This hurts a lot (especially in distro land)
-> so we need to take the responsibility for stripping SGID properly
-> away from the filesystems and put it where it belongs: in the VFS.
 
-I agree. When I added tests for set*id stripping to xfstests for the
-sake of getting complete vfs coverage of idmapped mounts in generic/633
-I immediately found bugs. Once I made the testsuite useable by all
-filesystems we started seeing more.
 
-I think we should add and use the new proposed stripping helper in the
-vfs - albeit with a slightly changed api and also use it in
-inode_init_owner(). While it is a delicate change in the worst case we
-end up removing additional privileges that's an acceptable regression
-risk to take.
+在 2022/3/30 18:13, Christoph Hellwig 写道:
+> On Wed, Mar 30, 2022 at 06:03:01PM +0800, Shiyang Ruan wrote:
+>>
+>> Because I am not sure if the offset between each layer is page aligned.  For
+>> example, when pmem dirver handles ->memory_failure(), it should subtract its
+>> ->data_offset when it calls dax_holder_notify_failure().
+> 
+> If they aren't, none of the DAX machinery would work.
+
+OK. Got it.
+
+So, use page-based function signature for ->memory_failure():
+
+int (*memory_failure)(struct dev_pagemap *pgmap, unsigned long pfn,
+		      unsigned long nr_pfns, int flags);
+
+
+As the code I pasted before, pmem driver will subtract its 
+->data_offset, which is byte-based. And the filesystem who implements 
+->notify_failure() will calculate the offset in unit of byte again.
+
+So, leave its function signature byte-based, to avoid repeated conversions.
+
+int (*notify_failure)(struct dax_device *dax_dev, u64 offset,
+		      u64 len, int mf_flags);
+
+What do you think?
+
+
+--
+Thanks,
+Ruan.
+
+
