@@ -2,97 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AB014EBA13
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Mar 2022 07:22:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B11194EBA44
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Mar 2022 07:41:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242945AbiC3FX2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Mar 2022 01:23:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56720 "EHLO
+        id S235738AbiC3FnB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Mar 2022 01:43:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243010AbiC3FXV (ORCPT
+        with ESMTP id S232274AbiC3Fmz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Mar 2022 01:23:21 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A59F1480E8;
-        Tue, 29 Mar 2022 22:21:25 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 13A2F615D9;
-        Wed, 30 Mar 2022 05:21:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 793BAC340EC;
-        Wed, 30 Mar 2022 05:21:23 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-        dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="EWx80GcI"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-        t=1648617681;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=9uzCxmb6i4Vo8+AFdyD/kL3n4v054lqayW48puql9H8=;
-        b=EWx80GcI7TD1DoS2Vm4HaYn+c5nAQrEiBRPse3R7LpWPaDc5V08VD/2P9H1JXT3PVH0BG9
-        CYOz+fLf7jLdsKcCWhHI7SLGw5hFIkr+xQagOlsN4r0iA1DXdqzFf+Rem09E786EtjukJO
-        jJ+vPNLgTJxTj2rdjk/88iGovmoCKzI=
-Received: by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id df7ade0d (TLSv1.3:AEAD-AES256-GCM-SHA384:256:NO);
-        Wed, 30 Mar 2022 05:21:21 +0000 (UTC)
-Date:   Wed, 30 Mar 2022 01:21:20 -0400
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Fedor Pchelkin <aissur0002@gmail.com>,
-        Alexey Khoroshilov <khoroshilov@ispras.ru>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Wed, 30 Mar 2022 01:42:55 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3F5F23456F;
+        Tue, 29 Mar 2022 22:41:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=U3pUixfOOyFDbSr6FLtB7sBVi31jP+6M8OaYOXBoQgY=; b=YgkVogJU/RAOp5Vbz1tQf4mfAl
+        twoURvNPtgJv/390tOp5vwOPGOjLzJH0kO4pcTfkrhAL82DiizugQQzJRhGU4FtAzw8R5Ht3Sx2PC
+        nVusu3NraQKshMa4PCspAXFM2QJPCrMsa0hQsLSywVYRBfV1g7CXIvbqJm4IYybionOqFDrPR0lJi
+        j7uOFnfl7ZLiepwL7kFDz0xDg7BmAL5FYiw1PpMQnpLivu60/US0g2KD155oDYyBwtveVWTx6AMjA
+        GmzFDlZ6AQ8+yoYdyNhh/PD7/b9QDrqVzsVvpf0GPO67LyTKNVUS7QLSTfNgFheLe4dymNKMKm5I9
+        5T9W6GQA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nZR4q-00EMY0-QJ; Wed, 30 Mar 2022 05:41:04 +0000
+Date:   Tue, 29 Mar 2022 22:41:04 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Shiyang Ruan <ruansy.fnst@fujitsu.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Linux NVDIMM <nvdimm@lists.linux.dev>,
+        Linux MM <linux-mm@kvack.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/4] file: Fix file descriptor leak in copy_fd_bitmaps()
-Message-ID: <YkPo0N/CVHFDlB6v@zx2c4.com>
-References: <20220326114009.1690-1-aissur0002@gmail.com>
- <2698031.BEx9A2HvPv@fedor-zhuzhzhalka67>
- <CAHk-=wh2Ao+OgnWSxHsJodXiLwtaUndXSkuhh9yKnA3iXyBLEA@mail.gmail.com>
- <4705670.GXAFRqVoOG@fedor-zhuzhzhalka67>
- <CAHk-=wiKhn+VsvK8CiNbC27+f+GsPWvxMVbf7QET+7PQVPadwA@mail.gmail.com>
- <CAHk-=wjRwwUywAa9TzQUxhqNrQzZJQZvwn1JSET3h=U+3xi8Pg@mail.gmail.com>
+        "Darrick J. Wong" <djwong@kernel.org>, david <david@fromorbit.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jane Chu <jane.chu@oracle.com>
+Subject: Re: [PATCH v11 1/8] dax: Introduce holder for dax_device
+Message-ID: <YkPtcJdP4s0m17hY@infradead.org>
+References: <20220227120747.711169-1-ruansy.fnst@fujitsu.com>
+ <20220227120747.711169-2-ruansy.fnst@fujitsu.com>
+ <CAPcyv4jAqV7dZdmGcKrG=f8sYmUXaL7YCQtME6GANywncwd+zg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wjRwwUywAa9TzQUxhqNrQzZJQZvwn1JSET3h=U+3xi8Pg@mail.gmail.com>
-X-Spam-Status: No, score=-6.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <CAPcyv4jAqV7dZdmGcKrG=f8sYmUXaL7YCQtME6GANywncwd+zg@mail.gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
-
-On Tue, Mar 29, 2022 at 03:18:56PM -0700, Linus Torvalds wrote:
-> On Tue, Mar 29, 2022 at 2:02 PM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > I will apply that ALIGN() thing since Christian could confirm it fixes
-> > things, and try to add a few more comments about how bitmaps are
-> > fundamentally in chunks of BITS_PER_LONG.
+On Fri, Mar 11, 2022 at 03:35:13PM -0800, Dan Williams wrote:
+> > +       if (!dax_dev->holder_ops) {
+> > +               rc = -EOPNOTSUPP;
 > 
-> Ok, applied as commit 1c24a186398f ("fs: fd tables have to be
-> multiples of BITS_PER_LONG").
+> I think it is ok to return success (0) for this case. All the caller
+> of dax_holder_notify_failure() wants to know is if the notification
+> was successfully delivered to the holder. If there is no holder
+> present then there is nothing to report. This is minor enough for me
+> to fix up locally if nothing else needs to be changed.
 
-This broke the WireGuard test suite, <https://www.wireguard.com/build-status/>,
-on 32-bit archs with a line like:
+The caller needs to know there are no holder ops to fall back to
+different path.
 
-[+] NS1: wg set wg0 private-key /dev/fd/63 listen-port 1 peer xb6I3yo5N/A9PXGeqSVdMywrogPz82Ug5vWTdqQJRF8= preshared-key /dev/fd/62 allowed-ips 192.168.241.2/32,fd00::2/128
-fopen: No such file or directory
+> Isn't this another failure scenario? If kill_dax() is called while a
+> holder is still holding the dax_device that seems to be another
+> ->notify_failure scenario to tell the holder that the device is going
+> away and the holder has not released the device yet.
 
-Those /dev/fd/63 and /dev/fd/62 are coming from bash process
-redirection:
-
-n1 wg set wg0 private-key <(echo "$key1") peer "$pub2" preshared-key <(echo "$psk") allowed-ips 192.168.241.2/32 endpoint 127.0.0.1:2
-
-Peppering some printks, it looks like in `max_fds = ALIGN(max_fds,
-BITS_PER_LONG);`, max_fds is sometimes 4294967295 before the call, and
-that ALIGN winds up bringing it to 0.
-
-Jason
+Yes.
