@@ -2,44 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 64D224ECACF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Mar 2022 19:37:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F9CD4ECAD7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Mar 2022 19:38:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349360AbiC3RiV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Mar 2022 13:38:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44232 "EHLO
+        id S230080AbiC3RjJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Mar 2022 13:39:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349344AbiC3RiQ (ORCPT
+        with ESMTP id S1349355AbiC3RjI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Mar 2022 13:38:16 -0400
+        Wed, 30 Mar 2022 13:39:08 -0400
 Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6D3EB7C71
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Mar 2022 10:36:29 -0700 (PDT)
-Received: by mail-io1-f69.google.com with SMTP id x16-20020a6bfe10000000b006409f03e39eso14912334ioh.7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Mar 2022 10:36:29 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD352C6808
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Mar 2022 10:37:22 -0700 (PDT)
+Received: by mail-io1-f69.google.com with SMTP id g16-20020a05660226d000b00638d8e1828bso14886957ioo.13
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Mar 2022 10:37:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=ElkwXdyBtZpqMcTtCYj/rl3uueZMI0r+f6ZIrCyGxKw=;
-        b=1NwYjo8JCJNvojD70N8wcYkHg+fzA3Yal/bTflu/e/ijhVRH/8SLkzKrh2dGTEabeP
-         RYJMPQ+1ZizSd3gA6NBuPVNezEPPC7CIBDZjpDw1X5dIphHL+tw+Vt09dhQKqwQtoGSA
-         5YGtKg/AvYm0k57Dt3JhDcVbsrn5fD4vdH58uK5bvYM7PDqe8sAKa1fe2xIbM2JmSKij
-         DS6SeEwQcf506H+VgTTCF2uol6QcTEA4zy0hABC3byRYzeSakEHqhPLynsPQSthH7ALG
-         3g8MBP1Z88JmfpSDZid3AeEM80Dvfr3fAS4TCbTdu7RHUNFjPdDQwFDfkUsulkXQRy/r
-         0Gkg==
-X-Gm-Message-State: AOAM531sxMTbRPIpXAOBFHlbUs+xV88ruL10Sxya9k/evvfJIGCNhDQG
-        HmAU15TA7unSR7yLnY+EXtOwuzh4sqVPhsx53y4VhNBxO6qE
-X-Google-Smtp-Source: ABdhPJx85cE4K8421PBymS0PHNkJgFK9/jwOKP+4i1g/gFmQcemLa5buwduleP0b7Eqa5ENlBHvGgXULQpybO9gNS928xE1zlicC
+        bh=PH06CLYLNtDuJaUnGCG4ZMntweeLF8hwfojOH0wrh9c=;
+        b=DAoiD+MP8a3aNUWeCAspoGy+Ef8+TL5s9H9Q1Hvh8iJqx5uHdxod9dPmipw17iYLYV
+         Tc852Tc+KggqJPN5cSRK2xBzsdsohmLj4FV5v8dYOvx3/tlfZ8SenV6hvKV1HCKcyE+G
+         mncTPy0dlV5oD3J6Ipb3B7eO8Td/ZnpHQ9Zqnc8mVgRsH2vWnEXcsXdZfFeBBqgmfvkZ
+         Lw8aEKLa817k5JH24GqIak8rqW1hp9rhWGYZhoybtfqdHlQ9yezxgTh9uqnBhnnv60U/
+         VlyixCGmewEjwYWqJIeiFHlj3RU/egvfZ29/A5BzGf42324VdPhlN166TmFqZN0sVlwZ
+         3K6Q==
+X-Gm-Message-State: AOAM532eAfKosB5CFpZScWwM2EtzekNw87uujLUfrbLZrDe3DU4eTcLe
+        dY+848ZeyPiBRKx20puCgHT8nR56L+UQA1udqLhzEWZ7Hxhy
+X-Google-Smtp-Source: ABdhPJw7Tr8nja4VuZqAAahGQuc2mos7zYzH9Fqn2+fSTiKylJOd2r8BbaRiIdC80dgpqVJQDK5umunEXktzF+kw+mur/NDqEyCX
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:260d:b0:323:8d31:d61b with SMTP id
- m13-20020a056638260d00b003238d31d61bmr477982jat.111.1648661789170; Wed, 30
- Mar 2022 10:36:29 -0700 (PDT)
-Date:   Wed, 30 Mar 2022 10:36:29 -0700
+X-Received: by 2002:a05:6602:2c4e:b0:648:c654:fb0c with SMTP id
+ x14-20020a0566022c4e00b00648c654fb0cmr12553577iov.137.1648661842190; Wed, 30
+ Mar 2022 10:37:22 -0700 (PDT)
+Date:   Wed, 30 Mar 2022 10:37:22 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004c66c305db72fc50@google.com>
-Subject: [syzbot] possible deadlock in iterate_supers
-From:   syzbot <syzbot+2289e1c10dde387e671e@syzkaller.appspotmail.com>
+Message-ID: <0000000000007564ac05db72ff58@google.com>
+Subject: [syzbot] BUG: scheduling while atomic in simple_recursive_removal
+From:   syzbot <syzbot+2778a29e60b4982065a0@syzkaller.appspotmail.com>
 To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
@@ -57,166 +57,97 @@ Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    a67ba3cf9551 Add linux-next specific files for 20220330
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1636ed53700000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=994543c31e941639
-dashboard link: https://syzkaller.appspot.com/bug?extid=2289e1c10dde387e671e
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+HEAD commit:    d888c83fcec7 fs: fix fd table size alignment properly
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=103e7b53700000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=cadd7063134e07bc
+dashboard link: https://syzkaller.appspot.com/bug?extid=2778a29e60b4982065a0
+compiler:       aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+userspace arch: arm64
 
 Unfortunately, I don't have any reproducer for this issue yet.
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+2289e1c10dde387e671e@syzkaller.appspotmail.com
+Reported-by: syzbot+2778a29e60b4982065a0@syzkaller.appspotmail.com
 
-======================================================
-WARNING: possible circular locking dependency detected
-5.17.0-next-20220330-syzkaller #0 Not tainted
-------------------------------------------------------
-syz-executor.2/1465 is trying to acquire lock:
-ffff88807f0520e0 (&type->s_umount_key#32){++++}-{3:3}, at: iterate_supers+0xdb/0x290 fs/super.c:692
-
-but task is already holding lock:
-ffff88807f344460 (sb_writers#3){.+.+}-{0:0}, at: __do_sys_sendfile64 fs/read_write.c:1305 [inline]
-ffff88807f344460 (sb_writers#3){.+.+}-{0:0}, at: __se_sys_sendfile64 fs/read_write.c:1297 [inline]
-ffff88807f344460 (sb_writers#3){.+.+}-{0:0}, at: __x64_sys_sendfile64+0x149/0x210 fs/read_write.c:1297
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #3 (sb_writers#3){.+.+}-{0:0}:
-       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
-       __sb_start_write include/linux/fs.h:1728 [inline]
-       sb_start_write include/linux/fs.h:1798 [inline]
-       file_start_write include/linux/fs.h:2815 [inline]
-       kernel_write fs/read_write.c:564 [inline]
-       kernel_write+0x2ac/0x540 fs/read_write.c:555
-       p9_fd_write net/9p/trans_fd.c:428 [inline]
-       p9_write_work+0x25e/0xca0 net/9p/trans_fd.c:479
-       process_one_work+0x996/0x1610 kernel/workqueue.c:2289
-       worker_thread+0x665/0x1080 kernel/workqueue.c:2436
-       kthread+0x2e9/0x3a0 kernel/kthread.c:376
-       ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:298
-
--> #2 ((work_completion)(&m->wq)){+.+.}-{0:0}:
-       process_one_work+0x905/0x1610 kernel/workqueue.c:2265
-       worker_thread+0x665/0x1080 kernel/workqueue.c:2436
-       kthread+0x2e9/0x3a0 kernel/kthread.c:376
-       ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:298
-
--> #1 ((wq_completion)events){+.+.}-{0:0}:
-       flush_workqueue+0x164/0x1440 kernel/workqueue.c:2831
-       flush_scheduled_work include/linux/workqueue.h:583 [inline]
-       ext4_put_super+0x99/0x1150 fs/ext4/super.c:1202
-       generic_shutdown_super+0x14c/0x400 fs/super.c:462
-       kill_block_super+0x97/0xf0 fs/super.c:1394
-       deactivate_locked_super+0x94/0x160 fs/super.c:332
-       deactivate_super+0xad/0xd0 fs/super.c:363
-       cleanup_mnt+0x3a2/0x540 fs/namespace.c:1186
-       task_work_run+0xdd/0x1a0 kernel/task_work.c:164
-       resume_user_mode_work include/linux/resume_user_mode.h:49 [inline]
-       exit_to_user_mode_loop kernel/entry/common.c:183 [inline]
-       exit_to_user_mode_prepare+0x23c/0x250 kernel/entry/common.c:215
-       __syscall_exit_to_user_mode_work kernel/entry/common.c:297 [inline]
-       syscall_exit_to_user_mode+0x19/0x60 kernel/entry/common.c:308
-       do_syscall_64+0x42/0x80 arch/x86/entry/common.c:86
-       entry_SYSCALL_64_after_hwframe+0x44/0xae
-
--> #0 (&type->s_umount_key#32){++++}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3096 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3219 [inline]
-       validate_chain kernel/locking/lockdep.c:3834 [inline]
-       __lock_acquire+0x2ac6/0x56c0 kernel/locking/lockdep.c:5060
-       lock_acquire kernel/locking/lockdep.c:5672 [inline]
-       lock_acquire+0x1ab/0x510 kernel/locking/lockdep.c:5637
-       down_read+0x98/0x440 kernel/locking/rwsem.c:1461
-       iterate_supers+0xdb/0x290 fs/super.c:692
-       drop_caches_sysctl_handler+0xdb/0x110 fs/drop_caches.c:62
-       proc_sys_call_handler+0x4a1/0x6e0 fs/proc/proc_sysctl.c:604
-       call_write_iter include/linux/fs.h:2080 [inline]
-       do_iter_readv_writev+0x3d1/0x640 fs/read_write.c:726
-       do_iter_write+0x182/0x700 fs/read_write.c:852
-       vfs_iter_write+0x70/0xa0 fs/read_write.c:893
-       iter_file_splice_write+0x723/0xc70 fs/splice.c:689
-       do_splice_from fs/splice.c:767 [inline]
-       direct_splice_actor+0x110/0x180 fs/splice.c:936
-       splice_direct_to_actor+0x34b/0x8c0 fs/splice.c:891
-       do_splice_direct+0x1a7/0x270 fs/splice.c:979
-       do_sendfile+0xae0/0x1240 fs/read_write.c:1246
-       __do_sys_sendfile64 fs/read_write.c:1305 [inline]
-       __se_sys_sendfile64 fs/read_write.c:1297 [inline]
-       __x64_sys_sendfile64+0x149/0x210 fs/read_write.c:1297
-       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-       do_syscall_64+0x35/0x80 arch/x86/entry/common.c:80
-       entry_SYSCALL_64_after_hwframe+0x44/0xae
-
-other info that might help us debug this:
-
-Chain exists of:
-  &type->s_umount_key#32 --> (work_completion)(&m->wq) --> sb_writers#3
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(sb_writers#3);
-                               lock((work_completion)(&m->wq));
-                               lock(sb_writers#3);
-  lock(&type->s_umount_key#32);
-
- *** DEADLOCK ***
-
-1 lock held by syz-executor.2/1465:
- #0: ffff88807f344460 (sb_writers#3){.+.+}-{0:0}, at: __do_sys_sendfile64 fs/read_write.c:1305 [inline]
- #0: ffff88807f344460 (sb_writers#3){.+.+}-{0:0}, at: __se_sys_sendfile64 fs/read_write.c:1297 [inline]
- #0: ffff88807f344460 (sb_writers#3){.+.+}-{0:0}, at: __x64_sys_sendfile64+0x149/0x210 fs/read_write.c:1297
-
-stack backtrace:
-CPU: 1 PID: 1465 Comm: syz-executor.2 Not tainted 5.17.0-next-20220330-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- <TASK>
+BUG: scheduling while atomic: syz-executor.0/2197/0x00000101
+Modules linked in:
+CPU: 0 PID: 2197 Comm: syz-executor.0 Not tainted 5.17.0-syzkaller-13034-gd888c83fcec7 #0
+Hardware name: linux,dummy-virt (DT)
+Call trace:
+ dump_backtrace.part.0+0xcc/0xe0 arch/arm64/kernel/stacktrace.c:184
+ dump_backtrace arch/arm64/kernel/stacktrace.c:190 [inline]
+ show_stack+0x18/0x6c arch/arm64/kernel/stacktrace.c:191
  __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:106
- check_noncircular+0x25f/0x2e0 kernel/locking/lockdep.c:2176
- check_prev_add kernel/locking/lockdep.c:3096 [inline]
- check_prevs_add kernel/locking/lockdep.c:3219 [inline]
- validate_chain kernel/locking/lockdep.c:3834 [inline]
- __lock_acquire+0x2ac6/0x56c0 kernel/locking/lockdep.c:5060
- lock_acquire kernel/locking/lockdep.c:5672 [inline]
- lock_acquire+0x1ab/0x510 kernel/locking/lockdep.c:5637
- down_read+0x98/0x440 kernel/locking/rwsem.c:1461
- iterate_supers+0xdb/0x290 fs/super.c:692
- drop_caches_sysctl_handler+0xdb/0x110 fs/drop_caches.c:62
- proc_sys_call_handler+0x4a1/0x6e0 fs/proc/proc_sysctl.c:604
- call_write_iter include/linux/fs.h:2080 [inline]
- do_iter_readv_writev+0x3d1/0x640 fs/read_write.c:726
- do_iter_write+0x182/0x700 fs/read_write.c:852
- vfs_iter_write+0x70/0xa0 fs/read_write.c:893
- iter_file_splice_write+0x723/0xc70 fs/splice.c:689
- do_splice_from fs/splice.c:767 [inline]
- direct_splice_actor+0x110/0x180 fs/splice.c:936
- splice_direct_to_actor+0x34b/0x8c0 fs/splice.c:891
- do_splice_direct+0x1a7/0x270 fs/splice.c:979
- do_sendfile+0xae0/0x1240 fs/read_write.c:1246
- __do_sys_sendfile64 fs/read_write.c:1305 [inline]
- __se_sys_sendfile64 fs/read_write.c:1297 [inline]
- __x64_sys_sendfile64+0x149/0x210 fs/read_write.c:1297
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0x80 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-RIP: 0033:0x7f88f7889049
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f88f89e1168 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
-RAX: ffffffffffffffda RBX: 00007f88f799bf60 RCX: 00007f88f7889049
-RDX: 00000000200000c0 RSI: 0000000000000003 RDI: 0000000000000004
-RBP: 00007f88f78e308d R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000262 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007ffc47da187f R14: 00007f88f89e1300 R15: 0000000000022000
- </TASK>
-syz-executor.2 (1465): drop_caches: 1
+ dump_stack_lvl+0x68/0x84 lib/dump_stack.c:106
+ dump_stack+0x18/0x34 lib/dump_stack.c:113
+ __schedule_bug+0x60/0x80 kernel/sched/core.c:5617
+ schedule_debug kernel/sched/core.c:5644 [inline]
+ __schedule+0x74c/0x7f0 kernel/sched/core.c:6273
+ schedule+0x54/0xd0 kernel/sched/core.c:6454
+ rwsem_down_write_slowpath+0x29c/0x5a0 kernel/locking/rwsem.c:1142
+ __down_write_common kernel/locking/rwsem.c:1259 [inline]
+ __down_write_common kernel/locking/rwsem.c:1256 [inline]
+ __down_write kernel/locking/rwsem.c:1268 [inline]
+ down_write+0x58/0x64 kernel/locking/rwsem.c:1515
+ inode_lock include/linux/fs.h:777 [inline]
+ simple_recursive_removal+0x124/0x270 fs/libfs.c:288
+ debugfs_remove fs/debugfs/inode.c:742 [inline]
+ debugfs_remove+0x5c/0x80 fs/debugfs/inode.c:736
+ blk_release_queue+0x7c/0xf0 block/blk-sysfs.c:784
+ kobject_cleanup lib/kobject.c:705 [inline]
+ kobject_release lib/kobject.c:736 [inline]
+ kref_put include/linux/kref.h:65 [inline]
+ kobject_put+0x98/0x114 lib/kobject.c:753
+ blk_put_queue+0x14/0x20 block/blk-core.c:270
+ blkg_free.part.0+0x54/0x80 block/blk-cgroup.c:86
+ blkg_free block/blk-cgroup.c:78 [inline]
+ __blkg_release+0x44/0x70 block/blk-cgroup.c:102
+ rcu_do_batch kernel/rcu/tree.c:2535 [inline]
+ rcu_core+0x324/0x590 kernel/rcu/tree.c:2786
+ rcu_core_si+0x10/0x20 kernel/rcu/tree.c:2803
+ _stext+0x124/0x2a0
+ do_softirq_own_stack include/asm-generic/softirq_stack.h:10 [inline]
+ invoke_softirq kernel/softirq.c:439 [inline]
+ __irq_exit_rcu+0xe4/0x100 kernel/softirq.c:637
+ irq_exit_rcu+0x10/0x1c kernel/softirq.c:649
+ __el1_irq arch/arm64/kernel/entry-common.c:459 [inline]
+ el1_interrupt+0x38/0x64 arch/arm64/kernel/entry-common.c:473
+ el1h_64_irq_handler+0x18/0x24 arch/arm64/kernel/entry-common.c:478
+ el1h_64_irq+0x64/0x68 arch/arm64/kernel/entry.S:577
+ walk_stackframe arch/arm64/kernel/stacktrace.c:153 [inline]
+ arch_stack_walk+0x68/0x280 arch/arm64/kernel/stacktrace.c:211
+ stack_trace_save+0x50/0x80 kernel/stacktrace.c:122
+ kasan_save_stack+0x2c/0x5c mm/kasan/common.c:38
+ kasan_set_track mm/kasan/common.c:45 [inline]
+ set_alloc_info mm/kasan/common.c:436 [inline]
+ ____kasan_kmalloc mm/kasan/common.c:515 [inline]
+ ____kasan_kmalloc mm/kasan/common.c:474 [inline]
+ __kasan_kmalloc+0xb0/0xd0 mm/kasan/common.c:524
+ kasan_kmalloc include/linux/kasan.h:234 [inline]
+ kmem_cache_alloc_node_trace include/linux/slab.h:488 [inline]
+ kmalloc_node include/linux/slab.h:599 [inline]
+ kzalloc_node include/linux/slab.h:725 [inline]
+ __get_vm_area_node.constprop.0+0xf8/0x224 mm/vmalloc.c:2459
+ __vmalloc_node_range+0xa4/0x5c0 mm/vmalloc.c:3132
+ __vmalloc_node mm/vmalloc.c:3237 [inline]
+ vzalloc+0x74/0x90 mm/vmalloc.c:3307
+ do_ip6t_get_ctl+0x290/0x4d0 net/ipv6/netfilter/ip6_tables.c:817
+ nf_getsockopt+0x60/0x8c net/netfilter/nf_sockopt.c:116
+ ipv6_getsockopt+0x140/0x1c4 net/ipv6/ipv6_sockglue.c:1504
+ tcp_getsockopt+0x20/0x50 net/ipv4/tcp.c:4295
+ sock_common_getsockopt+0x1c/0x30 net/core/sock.c:3478
+ __sys_getsockopt+0xa4/0x214 net/socket.c:2224
+ __do_sys_getsockopt net/socket.c:2239 [inline]
+ __se_sys_getsockopt net/socket.c:2236 [inline]
+ __arm64_sys_getsockopt+0x28/0x3c net/socket.c:2236
+ __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
+ invoke_syscall+0x48/0x114 arch/arm64/kernel/syscall.c:52
+ el0_svc_common.constprop.0+0x44/0xec arch/arm64/kernel/syscall.c:142
+ do_el0_svc+0x6c/0x84 arch/arm64/kernel/syscall.c:181
+ el0_svc+0x44/0xb0 arch/arm64/kernel/entry-common.c:616
+ el0t_64_sync_handler+0x1a4/0x1b0 arch/arm64/kernel/entry-common.c:634
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:581
 
 
 ---
