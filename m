@@ -2,158 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E51864EBA85
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Mar 2022 08:00:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34F904EBA9A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Mar 2022 08:09:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243123AbiC3GCY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Mar 2022 02:02:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53022 "EHLO
+        id S229950AbiC3GLO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Mar 2022 02:11:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243113AbiC3GCX (ORCPT
+        with ESMTP id S243179AbiC3GLK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Mar 2022 02:02:23 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02A151CB16;
-        Tue, 29 Mar 2022 23:00:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=QMWT9HOFh5h5bvyOmnUYIuCvOmb24iZ90JHmyrXWtdo=; b=fWu9IeRU6R+CIOuIVc1iq4v3F8
-        o1yGvrNp8FVx+vlixl02Vx1dsdjeypdTZlUnRQh+2d2LE83IKTIZjfWKZolNiHNA9Oaqg/6efFIsG
-        QufkwCnXL9nWfpefvi8DTsNdLqN9jgrR2ZaRxpCll+rFbN/bFbKb8uIW/ejYLukpyYWtqlmELsfVr
-        YnKPaeyjMk11SIIIYIs0IufLZx1SmrjujoiOx4YNQBv4yglpTBwqNJN+rq/OYyiaxKX970E0MtOcg
-        k6ii+xG0NMpXrDwOa9Cg0+l5wgoXcCA/Mb6YDGhJKMN9ACpM/uFI913Nu6EcaaTSwWGXLUQbSAMTR
-        LtAWwbeA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nZRNl-00EO6f-Iv; Wed, 30 Mar 2022 06:00:37 +0000
-Date:   Tue, 29 Mar 2022 23:00:37 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
-Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        nvdimm@lists.linux.dev, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, djwong@kernel.org,
-        dan.j.williams@intel.com, david@fromorbit.com, hch@infradead.org,
-        jane.chu@oracle.com
-Subject: Re: [PATCH v11 7/8] xfs: Implement ->notify_failure() for XFS
-Message-ID: <YkPyBQer+KRiregd@infradead.org>
-References: <20220227120747.711169-1-ruansy.fnst@fujitsu.com>
- <20220227120747.711169-8-ruansy.fnst@fujitsu.com>
+        Wed, 30 Mar 2022 02:11:10 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28FF02AC5D
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Mar 2022 23:09:22 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id z12so20196775lfu.10
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Mar 2022 23:09:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pT4t7FiXDpWEJ+Gdcq9jt19cTP349yR9JVwGjR03zUk=;
+        b=BEuTLZKeQP6zu3UJzSFP7JaR2YwCnRUrlJkQv4WtpxMCRumMmrfBnrFjl/HB01zmNV
+         ZNzoks2Vuw2ELa4dCEgIM1XblYrH7/XoF7IiRGR7U+RHP6QUiZKMtRF4TvGIHB+ibVBm
+         fuYfCI2pn1BpPo4Fadjzf9jWh6DrCFMQFbGXU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pT4t7FiXDpWEJ+Gdcq9jt19cTP349yR9JVwGjR03zUk=;
+        b=DTQVRaKSO30WRYP/D3LwsLsuPUohwYLH7KAyyKdmWa5n8NRSvyGo2i5/3oqYW0fpTK
+         lOzVCD/kUQgpmiGhsds8p1psZKAW8MuhmWubmFBpCS/OHbXVakvwvwL+XqakuF3fNo71
+         3znS6/Cwyh5baEaOK8rn1pTpUjDUB6ljx7UjqUu4MBnl8345rnE5BurSpr4Ue7qjTtnj
+         zDMBqg4Kf2Qwses9KaEJs4Y61Dq2Eb2p+12qgWaarM1PSUpZ6ruc7+lmfelUloxhE9/q
+         6yNGJTnQSrk5B2B0+skaz4OhIMLkxZUitqhOBgM397GxgOTxpKNS20rTfHEqNTfVWrK2
+         S3OQ==
+X-Gm-Message-State: AOAM531R1g1A8SHpwVsJJvMo+bjSRlzzn2oDmXJDjamSEUQuPxspapV0
+        /Z4SHD2f3pJttbAG7JiQlIu9Ptbb5GeSsFvy
+X-Google-Smtp-Source: ABdhPJy54IKf1iac4QbchcCbI+2T1R+P9HfWT4eHQpL0jz8z0Xtn3DJ0nqwcY2+ION+oNhHSnOqP/g==
+X-Received: by 2002:a19:6709:0:b0:448:3162:d843 with SMTP id b9-20020a196709000000b004483162d843mr5602294lfc.95.1648620557128;
+        Tue, 29 Mar 2022 23:09:17 -0700 (PDT)
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
+        by smtp.gmail.com with ESMTPSA id g11-20020ac24d8b000000b0044a3454c858sm2224618lfe.81.2022.03.29.23.09.12
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Mar 2022 23:09:13 -0700 (PDT)
+Received: by mail-lf1-f52.google.com with SMTP id t25so33973820lfg.7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Mar 2022 23:09:12 -0700 (PDT)
+X-Received: by 2002:a05:6512:3055:b0:44a:3914:6603 with SMTP id
+ b21-20020a056512305500b0044a39146603mr5600655lfb.435.1648620551380; Tue, 29
+ Mar 2022 23:09:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220227120747.711169-8-ruansy.fnst@fujitsu.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+References: <20220326114009.1690-1-aissur0002@gmail.com> <2698031.BEx9A2HvPv@fedor-zhuzhzhalka67>
+ <CAHk-=wh2Ao+OgnWSxHsJodXiLwtaUndXSkuhh9yKnA3iXyBLEA@mail.gmail.com>
+ <4705670.GXAFRqVoOG@fedor-zhuzhzhalka67> <CAHk-=wiKhn+VsvK8CiNbC27+f+GsPWvxMVbf7QET+7PQVPadwA@mail.gmail.com>
+ <CAHk-=wjRwwUywAa9TzQUxhqNrQzZJQZvwn1JSET3h=U+3xi8Pg@mail.gmail.com> <YkPo0N/CVHFDlB6v@zx2c4.com>
+In-Reply-To: <YkPo0N/CVHFDlB6v@zx2c4.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 29 Mar 2022 23:08:55 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgPwyQTnSF2s7WSb+KnGn4FTM58NJ+-v-561W7xnDk2OA@mail.gmail.com>
+Message-ID: <CAHk-=wgPwyQTnSF2s7WSb+KnGn4FTM58NJ+-v-561W7xnDk2OA@mail.gmail.com>
+Subject: Re: [PATCH 4/4] file: Fix file descriptor leak in copy_fd_bitmaps()
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     Fedor Pchelkin <aissur0002@gmail.com>,
+        Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> @@ -1892,6 +1893,8 @@ xfs_free_buftarg(
->  	list_lru_destroy(&btp->bt_lru);
->  
->  	blkdev_issue_flush(btp->bt_bdev);
-> +	if (btp->bt_daxdev)
-> +		dax_unregister_holder(btp->bt_daxdev, btp->bt_mount);
->  	fs_put_dax(btp->bt_daxdev);
->  
->  	kmem_free(btp);
-> @@ -1939,6 +1942,7 @@ xfs_alloc_buftarg(
->  	struct block_device	*bdev)
->  {
->  	xfs_buftarg_t		*btp;
-> +	int			error;
->  
->  	btp = kmem_zalloc(sizeof(*btp), KM_NOFS);
->  
-> @@ -1946,6 +1950,14 @@ xfs_alloc_buftarg(
->  	btp->bt_dev =  bdev->bd_dev;
->  	btp->bt_bdev = bdev;
->  	btp->bt_daxdev = fs_dax_get_by_bdev(bdev, &btp->bt_dax_part_off);
-> +	if (btp->bt_daxdev) {
-> +		error = dax_register_holder(btp->bt_daxdev, mp,
-> +				&xfs_dax_holder_operations);
-> +		if (error) {
-> +			xfs_err(mp, "DAX device already in use?!");
-> +			goto error_free;
-> +		}
-> +	}
+On Tue, Mar 29, 2022 at 10:21 PM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+>
+> Peppering some printks, it looks like in `max_fds = ALIGN(max_fds,
+> BITS_PER_LONG);`, max_fds is sometimes 4294967295 before the call, and
+> that ALIGN winds up bringing it to 0.
 
-It seems to me that just passing the holder and holder ops to
-fs_dax_get_by_bdev and the holder to dax_unregister_holder would
-significantly simply the interface here.
+Gaah. I actually went back and forth on the location of the ALIGN().
 
-Dan, what do you think?
+And then ended up putting it where it is for just a "smallest patch"
+reason, which was clearly not the right thing to do.
 
-> +#if IS_ENABLED(CONFIG_MEMORY_FAILURE) && IS_ENABLED(CONFIG_FS_DAX)
+The easier and more obvious fix was to just make the ALIGN() be at the
+final 'return' statement, but I ended up moving it up just because I
+didn't like how complicated the expression looked.
 
-No real need for the IS_ENABLED.  Also any reason to even build this
-file if the options are not set?  It seems like
-xfs_dax_holder_operations should just be defined to NULL and the
-whole file not supported if we can't support the functionality.
+That was obviously very very wrong of me.
 
-Dan: not for this series, but is there any reason not to require
-MEMORY_FAILURE for DAX to start with?
+So does it help if you just remove that
 
-> +
-> +	ddev_start = mp->m_ddev_targp->bt_dax_part_off;
-> +	ddev_end = ddev_start +
-> +		(mp->m_ddev_targp->bt_bdev->bd_nr_sectors << SECTOR_SHIFT) - 1;
+        max_fds = ALIGN(max_fds, BITS_PER_LONG);
 
-This should use bdev_nr_bytes.
+and instead make the final return be
 
-But didn't we say we don't want to support notifications on partitioned
-devices and thus don't actually need all this?
+        return ALIGN(min(count, max_fds), BITS_PER_LONG);
 
-> +
-> +	/* Ignore the range out of filesystem area */
-> +	if ((offset + len) < ddev_start)
+instead?
 
-No need for the inner braces.
+And now I feel like I should as penance just do what I tried to get
+Christian to do, which was to just integrate the whole "don't even
+bother looking past that passed-in max_fds" in count_open_files().
 
-> +	if ((offset + len) > ddev_end)
+The whole organization of that "calculate current highest fd, only to
+then ignore it if we didn't want that many file descriptors" is just
+historical baggage.
 
-No need for the braces either.
-
-> diff --git a/fs/xfs/xfs_notify_failure.h b/fs/xfs/xfs_notify_failure.h
-> new file mode 100644
-> index 000000000000..76187b9620f9
-> --- /dev/null
-> +++ b/fs/xfs/xfs_notify_failure.h
-> @@ -0,0 +1,10 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2022 Fujitsu.  All Rights Reserved.
-> + */
-> +#ifndef __XFS_NOTIFY_FAILURE_H__
-> +#define __XFS_NOTIFY_FAILURE_H__
-> +
-> +extern const struct dax_holder_operations xfs_dax_holder_operations;
-> +
-> +#endif  /* __XFS_NOTIFY_FAILURE_H__ */
-
-Dowe really need a new header for this vs just sequeezing it into
-xfs_super.h or something like that?
-
-> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-> index e8f37bdc8354..b8de6ed2c888 100644
-> --- a/fs/xfs/xfs_super.c
-> +++ b/fs/xfs/xfs_super.c
-> @@ -353,6 +353,12 @@ xfs_setup_dax_always(
->  		return -EINVAL;
->  	}
->  
-> +	if (xfs_has_reflink(mp) && !xfs_has_rmapbt(mp)) {
-> +		xfs_alert(mp,
-> +			"need rmapbt when both DAX and reflink enabled.");
-> +		return -EINVAL;
-> +	}
-
-Right now we can't even enable reflink with DAX yet, so adding this
-here seems premature - it should go into the patch allowing DAX+reflink.
-
+                 Linus
