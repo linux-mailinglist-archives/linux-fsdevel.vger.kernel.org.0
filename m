@@ -2,44 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C265A4ECACD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Mar 2022 19:37:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64D224ECACF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Mar 2022 19:37:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349337AbiC3RiW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Mar 2022 13:38:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44190 "EHLO
+        id S1349360AbiC3RiV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Mar 2022 13:38:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349336AbiC3RiP (ORCPT
+        with ESMTP id S1349344AbiC3RiQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Mar 2022 13:38:15 -0400
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95D42B8202
+        Wed, 30 Mar 2022 13:38:16 -0400
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6D3EB7C71
         for <linux-fsdevel@vger.kernel.org>; Wed, 30 Mar 2022 10:36:29 -0700 (PDT)
-Received: by mail-io1-f70.google.com with SMTP id u18-20020a5d8712000000b0064c7a7c497aso6079385iom.18
+Received: by mail-io1-f69.google.com with SMTP id x16-20020a6bfe10000000b006409f03e39eso14912334ioh.7
         for <linux-fsdevel@vger.kernel.org>; Wed, 30 Mar 2022 10:36:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=NnWQsXw1ZTIntCkZPjGnAGxTYe0oZYJwswahLRe1MQY=;
-        b=qt0M/JRkjQgsmQm1P8obl6jwECzjCWCBUW2NkND1qZIPokdMzdBXc513eu22mzyjgz
-         GfO5qYYwgTFmBVPMAH0BcuuKipDKGXciMkUIkgTTNqsaqaAjkqyuWbhS5z8BnlTlnUC7
-         yQywFz+YDv+RPrlghhKqs3PuMJ40oo3Dz6lP4fkILs3oZROOwJvVR6Lt/Uq0PFyjJIB8
-         ZupqrTqnHK5knX8UJxOvSbC3vzJDdVpJUEkLmPlLY5a/E8IY06nghFMPIPGQ4d03rXcm
-         /03nZ5StzfQwJhN1cFrupjAbHFGdnpp9faEfULklgC3N94Bp30qofSUdZ88YpbEyhVAO
-         yW/w==
-X-Gm-Message-State: AOAM531mvnTQiISWiYuMzZlhzvm1Qx+cgfw5qmO8iYEbF+O2S5W8BsAw
-        aDu7OGFdy/NgQAdaXhqcZU68kfRjzOtvsYNeeVS/vaoHfmzg
-X-Google-Smtp-Source: ABdhPJxTb1MD0lsR99SUT1yPR+FFFDpANVCDQZQ76AAtWRh4rtgb2h+MDJlMAQMlhXDXpdoRHjXfek1YqlsSUnHlIgDfd7eZChTh
+        bh=ElkwXdyBtZpqMcTtCYj/rl3uueZMI0r+f6ZIrCyGxKw=;
+        b=1NwYjo8JCJNvojD70N8wcYkHg+fzA3Yal/bTflu/e/ijhVRH/8SLkzKrh2dGTEabeP
+         RYJMPQ+1ZizSd3gA6NBuPVNezEPPC7CIBDZjpDw1X5dIphHL+tw+Vt09dhQKqwQtoGSA
+         5YGtKg/AvYm0k57Dt3JhDcVbsrn5fD4vdH58uK5bvYM7PDqe8sAKa1fe2xIbM2JmSKij
+         DS6SeEwQcf506H+VgTTCF2uol6QcTEA4zy0hABC3byRYzeSakEHqhPLynsPQSthH7ALG
+         3g8MBP1Z88JmfpSDZid3AeEM80Dvfr3fAS4TCbTdu7RHUNFjPdDQwFDfkUsulkXQRy/r
+         0Gkg==
+X-Gm-Message-State: AOAM531sxMTbRPIpXAOBFHlbUs+xV88ruL10Sxya9k/evvfJIGCNhDQG
+        HmAU15TA7unSR7yLnY+EXtOwuzh4sqVPhsx53y4VhNBxO6qE
+X-Google-Smtp-Source: ABdhPJx85cE4K8421PBymS0PHNkJgFK9/jwOKP+4i1g/gFmQcemLa5buwduleP0b7Eqa5ENlBHvGgXULQpybO9gNS928xE1zlicC
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:1918:b0:323:a4de:296 with SMTP id
- p24-20020a056638191800b00323a4de0296mr157592jal.212.1648661788910; Wed, 30
- Mar 2022 10:36:28 -0700 (PDT)
-Date:   Wed, 30 Mar 2022 10:36:28 -0700
+X-Received: by 2002:a05:6638:260d:b0:323:8d31:d61b with SMTP id
+ m13-20020a056638260d00b003238d31d61bmr477982jat.111.1648661789170; Wed, 30
+ Mar 2022 10:36:29 -0700 (PDT)
+Date:   Wed, 30 Mar 2022 10:36:29 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000048681f05db72fc45@google.com>
-Subject: [syzbot] possible deadlock in deactivate_super
-From:   syzbot <syzbot+df9d057e38be100ccbbe@syzkaller.appspotmail.com>
+Message-ID: <0000000000004c66c305db72fc50@google.com>
+Subject: [syzbot] possible deadlock in iterate_supers
+From:   syzbot <syzbot+2289e1c10dde387e671e@syzkaller.appspotmail.com>
 To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
@@ -59,36 +59,78 @@ syzbot found the following issue on:
 
 HEAD commit:    a67ba3cf9551 Add linux-next specific files for 20220330
 git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=10ab1377700000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1636ed53700000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=994543c31e941639
-dashboard link: https://syzkaller.appspot.com/bug?extid=df9d057e38be100ccbbe
+dashboard link: https://syzkaller.appspot.com/bug?extid=2289e1c10dde387e671e
 compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10b3d027700000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=159db307700000
+
+Unfortunately, I don't have any reproducer for this issue yet.
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+df9d057e38be100ccbbe@syzkaller.appspotmail.com
+Reported-by: syzbot+2289e1c10dde387e671e@syzkaller.appspotmail.com
 
-RBP: 00007ffc747c2860 R08: 00000000ffffffff R09: 00007ffc747c2640
-R10: 0000555555879653 R11: 0000000000000202 R12: 00007ffc747c38d0
-R13: 00005555558795f0 R14: 00007ffc747c27d0 R15: 0000000000000001
- </TASK>
 ======================================================
 WARNING: possible circular locking dependency detected
 5.17.0-next-20220330-syzkaller #0 Not tainted
 ------------------------------------------------------
-syz-executor314/3590 is trying to acquire lock:
-ffff888010c64d38 ((wq_completion)events){+.+.}-{0:0}, at: flush_workqueue+0x135/0x1440 kernel/workqueue.c:2828
+syz-executor.2/1465 is trying to acquire lock:
+ffff88807f0520e0 (&type->s_umount_key#32){++++}-{3:3}, at: iterate_supers+0xdb/0x290 fs/super.c:692
 
 but task is already holding lock:
-ffff88801df760e0 (&type->s_umount_key#32){++++}-{3:3}, at: deactivate_super+0xa5/0xd0 fs/super.c:362
+ffff88807f344460 (sb_writers#3){.+.+}-{0:0}, at: __do_sys_sendfile64 fs/read_write.c:1305 [inline]
+ffff88807f344460 (sb_writers#3){.+.+}-{0:0}, at: __se_sys_sendfile64 fs/read_write.c:1297 [inline]
+ffff88807f344460 (sb_writers#3){.+.+}-{0:0}, at: __x64_sys_sendfile64+0x149/0x210 fs/read_write.c:1297
 
 which lock already depends on the new lock.
 
 
 the existing dependency chain (in reverse order) is:
 
--> #3 (&type->s_umount_key#32){++++}-{3:3}:
+-> #3 (sb_writers#3){.+.+}-{0:0}:
+       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
+       __sb_start_write include/linux/fs.h:1728 [inline]
+       sb_start_write include/linux/fs.h:1798 [inline]
+       file_start_write include/linux/fs.h:2815 [inline]
+       kernel_write fs/read_write.c:564 [inline]
+       kernel_write+0x2ac/0x540 fs/read_write.c:555
+       p9_fd_write net/9p/trans_fd.c:428 [inline]
+       p9_write_work+0x25e/0xca0 net/9p/trans_fd.c:479
+       process_one_work+0x996/0x1610 kernel/workqueue.c:2289
+       worker_thread+0x665/0x1080 kernel/workqueue.c:2436
+       kthread+0x2e9/0x3a0 kernel/kthread.c:376
+       ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:298
+
+-> #2 ((work_completion)(&m->wq)){+.+.}-{0:0}:
+       process_one_work+0x905/0x1610 kernel/workqueue.c:2265
+       worker_thread+0x665/0x1080 kernel/workqueue.c:2436
+       kthread+0x2e9/0x3a0 kernel/kthread.c:376
+       ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:298
+
+-> #1 ((wq_completion)events){+.+.}-{0:0}:
+       flush_workqueue+0x164/0x1440 kernel/workqueue.c:2831
+       flush_scheduled_work include/linux/workqueue.h:583 [inline]
+       ext4_put_super+0x99/0x1150 fs/ext4/super.c:1202
+       generic_shutdown_super+0x14c/0x400 fs/super.c:462
+       kill_block_super+0x97/0xf0 fs/super.c:1394
+       deactivate_locked_super+0x94/0x160 fs/super.c:332
+       deactivate_super+0xad/0xd0 fs/super.c:363
+       cleanup_mnt+0x3a2/0x540 fs/namespace.c:1186
+       task_work_run+0xdd/0x1a0 kernel/task_work.c:164
+       resume_user_mode_work include/linux/resume_user_mode.h:49 [inline]
+       exit_to_user_mode_loop kernel/entry/common.c:183 [inline]
+       exit_to_user_mode_prepare+0x23c/0x250 kernel/entry/common.c:215
+       __syscall_exit_to_user_mode_work kernel/entry/common.c:297 [inline]
+       syscall_exit_to_user_mode+0x19/0x60 kernel/entry/common.c:308
+       do_syscall_64+0x42/0x80 arch/x86/entry/common.c:86
+       entry_SYSCALL_64_after_hwframe+0x44/0xae
+
+-> #0 (&type->s_umount_key#32){++++}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3096 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3219 [inline]
+       validate_chain kernel/locking/lockdep.c:3834 [inline]
+       __lock_acquire+0x2ac6/0x56c0 kernel/locking/lockdep.c:5060
+       lock_acquire kernel/locking/lockdep.c:5672 [inline]
+       lock_acquire+0x1ab/0x510 kernel/locking/lockdep.c:5637
        down_read+0x98/0x440 kernel/locking/rwsem.c:1461
        iterate_supers+0xdb/0x290 fs/super.c:692
        drop_caches_sysctl_handler+0xdb/0x110 fs/drop_caches.c:62
@@ -110,71 +152,29 @@ the existing dependency chain (in reverse order) is:
        do_syscall_64+0x35/0x80 arch/x86/entry/common.c:80
        entry_SYSCALL_64_after_hwframe+0x44/0xae
 
--> #2 (sb_writers#3){.+.+}-{0:0}:
-       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
-       __sb_start_write include/linux/fs.h:1728 [inline]
-       sb_start_write include/linux/fs.h:1798 [inline]
-       file_start_write include/linux/fs.h:2815 [inline]
-       kernel_write fs/read_write.c:564 [inline]
-       kernel_write+0x2ac/0x540 fs/read_write.c:555
-       p9_fd_write net/9p/trans_fd.c:428 [inline]
-       p9_write_work+0x25e/0xca0 net/9p/trans_fd.c:479
-       process_one_work+0x996/0x1610 kernel/workqueue.c:2289
-       worker_thread+0x665/0x1080 kernel/workqueue.c:2436
-       kthread+0x2e9/0x3a0 kernel/kthread.c:376
-       ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:298
-
--> #1 ((work_completion)(&m->wq)){+.+.}-{0:0}:
-       process_one_work+0x905/0x1610 kernel/workqueue.c:2265
-       worker_thread+0x665/0x1080 kernel/workqueue.c:2436
-       kthread+0x2e9/0x3a0 kernel/kthread.c:376
-       ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:298
-
--> #0 ((wq_completion)events){+.+.}-{0:0}:
-       check_prev_add kernel/locking/lockdep.c:3096 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3219 [inline]
-       validate_chain kernel/locking/lockdep.c:3834 [inline]
-       __lock_acquire+0x2ac6/0x56c0 kernel/locking/lockdep.c:5060
-       lock_acquire kernel/locking/lockdep.c:5672 [inline]
-       lock_acquire+0x1ab/0x510 kernel/locking/lockdep.c:5637
-       flush_workqueue+0x164/0x1440 kernel/workqueue.c:2831
-       flush_scheduled_work include/linux/workqueue.h:583 [inline]
-       ext4_put_super+0x99/0x1150 fs/ext4/super.c:1202
-       generic_shutdown_super+0x14c/0x400 fs/super.c:462
-       kill_block_super+0x97/0xf0 fs/super.c:1394
-       deactivate_locked_super+0x94/0x160 fs/super.c:332
-       deactivate_super+0xad/0xd0 fs/super.c:363
-       cleanup_mnt+0x3a2/0x540 fs/namespace.c:1186
-       task_work_run+0xdd/0x1a0 kernel/task_work.c:164
-       resume_user_mode_work include/linux/resume_user_mode.h:49 [inline]
-       exit_to_user_mode_loop kernel/entry/common.c:183 [inline]
-       exit_to_user_mode_prepare+0x23c/0x250 kernel/entry/common.c:215
-       __syscall_exit_to_user_mode_work kernel/entry/common.c:297 [inline]
-       syscall_exit_to_user_mode+0x19/0x60 kernel/entry/common.c:308
-       do_syscall_64+0x42/0x80 arch/x86/entry/common.c:86
-       entry_SYSCALL_64_after_hwframe+0x44/0xae
-
 other info that might help us debug this:
 
 Chain exists of:
-  (wq_completion)events --> sb_writers#3 --> &type->s_umount_key#32
+  &type->s_umount_key#32 --> (work_completion)(&m->wq) --> sb_writers#3
 
  Possible unsafe locking scenario:
 
        CPU0                    CPU1
        ----                    ----
-  lock(&type->s_umount_key#32);
+  lock(sb_writers#3);
+                               lock((work_completion)(&m->wq));
                                lock(sb_writers#3);
-                               lock(&type->s_umount_key#32);
-  lock((wq_completion)events);
+  lock(&type->s_umount_key#32);
 
  *** DEADLOCK ***
 
-1 lock held by syz-executor314/3590:
- #0: ffff88801df760e0 (&type->s_umount_key#32){++++}-{3:3}, at: deactivate_super+0xa5/0xd0 fs/super.c:362
+1 lock held by syz-executor.2/1465:
+ #0: ffff88807f344460 (sb_writers#3){.+.+}-{0:0}, at: __do_sys_sendfile64 fs/read_write.c:1305 [inline]
+ #0: ffff88807f344460 (sb_writers#3){.+.+}-{0:0}, at: __se_sys_sendfile64 fs/read_write.c:1297 [inline]
+ #0: ffff88807f344460 (sb_writers#3){.+.+}-{0:0}, at: __x64_sys_sendfile64+0x149/0x210 fs/read_write.c:1297
 
 stack backtrace:
-CPU: 1 PID: 3590 Comm: syz-executor314 Not tainted 5.17.0-next-20220330-syzkaller #0
+CPU: 1 PID: 1465 Comm: syz-executor.2 Not tainted 5.17.0-next-20220330-syzkaller #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
 Call Trace:
  <TASK>
@@ -187,31 +187,36 @@ Call Trace:
  __lock_acquire+0x2ac6/0x56c0 kernel/locking/lockdep.c:5060
  lock_acquire kernel/locking/lockdep.c:5672 [inline]
  lock_acquire+0x1ab/0x510 kernel/locking/lockdep.c:5637
- flush_workqueue+0x164/0x1440 kernel/workqueue.c:2831
- flush_scheduled_work include/linux/workqueue.h:583 [inline]
- ext4_put_super+0x99/0x1150 fs/ext4/super.c:1202
- generic_shutdown_super+0x14c/0x400 fs/super.c:462
- kill_block_super+0x97/0xf0 fs/super.c:1394
- deactivate_locked_super+0x94/0x160 fs/super.c:332
- deactivate_super+0xad/0xd0 fs/super.c:363
- cleanup_mnt+0x3a2/0x540 fs/namespace.c:1186
- task_work_run+0xdd/0x1a0 kernel/task_work.c:164
- resume_user_mode_work include/linux/resume_user_mode.h:49 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:183 [inline]
- exit_to_user_mode_prepare+0x23c/0x250 kernel/entry/common.c:215
- __syscall_exit_to_user_mode_work kernel/entry/common.c:297 [inline]
- syscall_exit_to_user_mode+0x19/0x60 kernel/entry/common.c:308
- do_syscall_64+0x42/0x80 arch/x86/entry/common.c:86
+ down_read+0x98/0x440 kernel/locking/rwsem.c:1461
+ iterate_supers+0xdb/0x290 fs/super.c:692
+ drop_caches_sysctl_handler+0xdb/0x110 fs/drop_caches.c:62
+ proc_sys_call_handler+0x4a1/0x6e0 fs/proc/proc_sysctl.c:604
+ call_write_iter include/linux/fs.h:2080 [inline]
+ do_iter_readv_writev+0x3d1/0x640 fs/read_write.c:726
+ do_iter_write+0x182/0x700 fs/read_write.c:852
+ vfs_iter_write+0x70/0xa0 fs/read_write.c:893
+ iter_file_splice_write+0x723/0xc70 fs/splice.c:689
+ do_splice_from fs/splice.c:767 [inline]
+ direct_splice_actor+0x110/0x180 fs/splice.c:936
+ splice_direct_to_actor+0x34b/0x8c0 fs/splice.c:891
+ do_splice_direct+0x1a7/0x270 fs/splice.c:979
+ do_sendfile+0xae0/0x1240 fs/read_write.c:1246
+ __do_sys_sendfile64 fs/read_write.c:1305 [inline]
+ __se_sys_sendfile64 fs/read_write.c:1297 [inline]
+ __x64_sys_sendfile64+0x149/0x210 fs/read_write.c:1297
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x35/0x80 arch/x86/entry/common.c:80
  entry_SYSCALL_64_after_hwframe+0x44/0xae
-RIP: 0033:0x7f2437452687
-Code: 07 00 48 83 c4 08 5b 5d c3 66 2e 0f 1f 84 00 00 00 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 a6 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffc747c27a8 EFLAGS: 00000202 ORIG_RAX: 00000000000000a6
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007f2437452687
-RDX: 00007ffc747c2869 RSI: 000000000000000a RDI: 00007ffc747c2860
-RBP: 00007ffc747c2860 R08: 00000000ffffffff R09: 00007ffc747c2640
-R10: 0000555555879653 R11: 0000000000000202 R12: 00007ffc747c38d0
-R13: 00005555558795f0 R14: 00007ffc747c27d0 R15: 0000000000000001
+RIP: 0033:0x7f88f7889049
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f88f89e1168 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
+RAX: ffffffffffffffda RBX: 00007f88f799bf60 RCX: 00007f88f7889049
+RDX: 00000000200000c0 RSI: 0000000000000003 RDI: 0000000000000004
+RBP: 00007f88f78e308d R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000262 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007ffc47da187f R14: 00007f88f89e1300 R15: 0000000000022000
  </TASK>
+syz-executor.2 (1465): drop_caches: 1
 
 
 ---
@@ -221,5 +226,3 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 
 syzbot will keep track of this issue. See:
 https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
