@@ -2,120 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A064F4EBF5B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Mar 2022 12:58:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C35E4EC515
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Mar 2022 15:00:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245651AbiC3LAS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Mar 2022 07:00:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46362 "EHLO
+        id S1345532AbiC3NCf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Mar 2022 09:02:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44198 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240799AbiC3LAQ (ORCPT
+        with ESMTP id S1345552AbiC3NCe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Mar 2022 07:00:16 -0400
-Received: from heian.cn.fujitsu.com (mail.cn.fujitsu.com [183.91.158.132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 70CD6DF70;
-        Wed, 30 Mar 2022 03:58:29 -0700 (PDT)
-IronPort-Data: =?us-ascii?q?A9a23=3AgNM4v69uJjWCds008lY+DrUD63+TJUtcMsCJ2f8?=
- =?us-ascii?q?bfWQNrUog1TAPymEXX2+EOv6PYjP9KNokaYqy8UwPvZHdzYIwTVdlrnsFo1Bi8?=
- =?us-ascii?q?5ScXYvDRqvT04J+FuWaFQQ/qZx2huDodKjYdVeB4Ef9WlTdhSMkj/vQHOKlULe?=
- =?us-ascii?q?s1h1ZHmeIdg9w0HqPpMZp2uaEsfDha++8kYuaT//3YTdJ6BYoWo4g0J9vnTs01?=
- =?us-ascii?q?BjEVJz0iXRlDRxDlAe2e3D4l/vzL4npR5fzatE88uJX24/+IL+FEmPxp3/BC/u?=
- =?us-ascii?q?ulPD1b08LXqXPewOJjxK6WYD72l4b+HN0if19aZLwam8O49mNt8pswdNWpNq+T?=
- =?us-ascii?q?xw1FqPRmuUBSAQeGCZ7VUFD0OadeiDu6JzNnyUqdFOpmZ2CFnoeMYQG++pfD3t?=
- =?us-ascii?q?J8PsCIjERKBuEgoqewLm7YuhqiN4qIMTiMMUYoH4I5T3QC7AkB4/CR6HL7NpD9?=
- =?us-ascii?q?DY2ms1KW/3ZYqIxZThwaxLPSx5CIFEaDNQ5hujArn3+dSBI7VeQjakp6mPQigt?=
- =?us-ascii?q?r39DFNsTZe9mPbcFUhVqD4GbH+XnpRB0XKrS3yzOD/zSnhvLnmjnyU4YfUra/8?=
- =?us-ascii?q?5ZChFyV23xWBgYaWEW2pdGnhUOkHdFSMUoZ/mwpt6da3EiqSMTtGh61uniJujY?=
- =?us-ascii?q?CVNdKVe438geAzuzT+QnxLmwFSCNRLcwor+coSjEwkFyEhdXkAXpoqrL9dJ433?=
- =?us-ascii?q?t94thvrYW5MczBEPnRCEGM4DxDYiNlbpnryohxLScZZVuHIJAw=3D?=
-IronPort-HdrOrdr: =?us-ascii?q?A9a23=3A7pXWoarUc0yRRXUzYrKOZWAaV5oUeYIsimQD?=
- =?us-ascii?q?101hICG9vPbo7vxG/c5rrSMc7Qx6ZJhOo6HkBEDtewK/yXcx2/hzAV7AZmjbUQ?=
- =?us-ascii?q?mTXeVfBOLZqlWKJ8S9zI5gPMxbAs9D4bPLfD5HZAXBjDVQ0exM/DBKys+VbC7l?=
- =?us-ascii?q?oUtQcQ=3D=3D?=
-X-IronPort-AV: E=Sophos;i="5.88,333,1635177600"; 
-   d="scan'208";a="123091868"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 30 Mar 2022 18:58:28 +0800
-Received: from G08CNEXMBPEKD05.g08.fujitsu.local (unknown [10.167.33.204])
-        by cn.fujitsu.com (Postfix) with ESMTP id E2D7E4D17160;
-        Wed, 30 Mar 2022 18:58:22 +0800 (CST)
-Received: from G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.85) by
- G08CNEXMBPEKD05.g08.fujitsu.local (10.167.33.204) with Microsoft SMTP Server
- (TLS) id 15.0.1497.23; Wed, 30 Mar 2022 18:58:22 +0800
-Received: from [10.167.201.8] (10.167.201.8) by
- G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
- id 15.0.1497.23 via Frontend Transport; Wed, 30 Mar 2022 18:58:22 +0800
-Message-ID: <4ed8baf7-7eb9-71e5-58ea-7c73b7e5bb73@fujitsu.com>
-Date:   Wed, 30 Mar 2022 18:58:21 +0800
+        Wed, 30 Mar 2022 09:02:34 -0400
+Received: from mail-qk1-x731.google.com (mail-qk1-x731.google.com [IPv6:2607:f8b0:4864:20::731])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80D74165B90
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Mar 2022 06:00:48 -0700 (PDT)
+Received: by mail-qk1-x731.google.com with SMTP id v15so16492758qkg.8
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Mar 2022 06:00:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20210112.gappssmtp.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=JKBEI+rTrucdMmAykodBJnjRrK7pFFvDZ/jgsyxJpqM=;
+        b=ZdgvW8LjgNL6YoqgHEh9gCT/a5BIEEXhlqaP97vLxTw5UtMyWwZgMFoScg41CskVB5
+         tfMc3uKjFABrduUmfVVkRLPZMnDclwcFUEMNSYizSlVlLS4Cd1MArP6pc0/518t70bGn
+         bpXnOF4LwesYzcGZuUUFRmY5SJ04C+LezJNIr4BgOJ5Sczzn/GnzoKITfFSLprFCsTyx
+         zZO8/lzwF0pNVYBojwrJCtCG9mmLOAuLtcz+TfGA4ArRPEXMlYYFYPHJblLHUZqqQPNQ
+         oJKncFZRx8keTMZvVHfEluKg6hVvsYHpFxir/BDXwROVBfk7CLo3OHP5QpZ5nvfSqsXF
+         a5Eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=JKBEI+rTrucdMmAykodBJnjRrK7pFFvDZ/jgsyxJpqM=;
+        b=PeMVJykHS7bsKEa4kZEfwLZ0iydYX6ekZT29PVfKpgpnHP4MkN2sOjqDAXMFECqkef
+         vwqPJXkaTswYYeWKcb0z4/5AxrTSlOZUAThF1OvqH6qilb2cTdOBXmBbfJ7tjItguL0A
+         x3iEq8xsaScib2GBIVi6DR50lH6duOq3HG9Gs1X/1otZaKCfapfgk11dLUaK5MXruQHG
+         4QgHLylnEb/mNcLUBhYzKzx9Ed0mIlcrfalycJKpCTsjww1GS29RV1RQ37FsYBgu/ytw
+         BwOAg5x8Ls0t5c1oTr6YLvxahrrlsqDsKEqmMXsR9oq2SmKETxkstQZT1rFLouJ1Bbhu
+         4lzg==
+X-Gm-Message-State: AOAM530v5P7IB9r+UyqSe0KmKrfsZGkxbmNDwFMg6D8kSgy0X9aWUFO5
+        Fd5OQqi6yfbnnfm1Ue7uhan4Zg==
+X-Google-Smtp-Source: ABdhPJyv3AWwhtvS2UE867VEhAMipuhh9WVFgBcj0BauMpWiZotNv82wxTieALZfY6uEjLrGUXMVxw==
+X-Received: by 2002:a37:9d7:0:b0:67e:85d2:2417 with SMTP id 206-20020a3709d7000000b0067e85d22417mr23645632qkj.753.1648645247377;
+        Wed, 30 Mar 2022 06:00:47 -0700 (PDT)
+Received: from localhost (cpe-98-15-154-102.hvc.res.rr.com. [98.15.154.102])
+        by smtp.gmail.com with ESMTPSA id b202-20020ae9ebd3000000b0067b11d53365sm10850997qkg.47.2022.03.30.06.00.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Mar 2022 06:00:46 -0700 (PDT)
+Date:   Wed, 30 Mar 2022 09:00:46 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     CGEL <cgel.zte@gmail.com>
+Cc:     axboe@kernel.dk, viro@zeniv.linux.org.uk,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, akpm@linux-foundation.org,
+        Yang Yang <yang.yang29@zte.com.cn>,
+        Ran Xiaokai <ran.xiaokai@zte.com.cn>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH] block/psi: make PSI annotations of submit_bio only work
+ for file pages
+Message-ID: <YkRUfuT3jGcqSw1Q@cmpxchg.org>
+References: <20220316063927.2128383-1-yang.yang29@zte.com.cn>
+ <YjiMsGoXoDU+FwsS@cmpxchg.org>
+ <623938d1.1c69fb81.52716.030f@mx.google.com>
+ <YjnO3p6vvAjeMCFC@cmpxchg.org>
+ <20220323061058.GA2343452@cgel.zte@gmail.com>
+ <62441603.1c69fb81.4b06b.5a29@mx.google.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH v11 1/8] dax: Introduce holder for dax_device
-To:     Christoph Hellwig <hch@infradead.org>
-CC:     Dan Williams <dan.j.williams@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Linux NVDIMM <nvdimm@lists.linux.dev>,
-        Linux MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "Darrick J. Wong" <djwong@kernel.org>, david <david@fromorbit.com>,
-        Jane Chu <jane.chu@oracle.com>
-References: <20220227120747.711169-1-ruansy.fnst@fujitsu.com>
- <20220227120747.711169-2-ruansy.fnst@fujitsu.com>
- <CAPcyv4jAqV7dZdmGcKrG=f8sYmUXaL7YCQtME6GANywncwd+zg@mail.gmail.com>
- <4fd95f0b-106f-6933-7bc6-9f0890012b53@fujitsu.com>
- <YkPtptNljNcJc1g/@infradead.org>
- <15a635d6-2069-2af5-15f8-1c0513487a2f@fujitsu.com>
- <YkQtOO/Z3SZ2Pksg@infradead.org>
-From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
-In-Reply-To: <YkQtOO/Z3SZ2Pksg@infradead.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-yoursite-MailScanner-ID: E2D7E4D17160.A1BE2
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: ruansy.fnst@fujitsu.com
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <62441603.1c69fb81.4b06b.5a29@mx.google.com>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, Mar 30, 2022 at 08:34:08AM +0000, CGEL wrote:
+> On Wed, Mar 23, 2022 at 06:11:03AM +0000, CGEL wrote:
+> > On Tue, Mar 22, 2022 at 09:27:58AM -0400, Johannes Weiner wrote:
+> > > On Tue, Mar 22, 2022 at 02:47:42AM +0000, CGEL wrote:
+> > > > On Mon, Mar 21, 2022 at 10:33:20AM -0400, Johannes Weiner wrote:
+> > > > > On Wed, Mar 16, 2022 at 06:39:28AM +0000, cgel.zte@gmail.com wrote:
+> > > > > > From: Yang Yang <yang.yang29@zte.com.cn>
+> > > > > > 
+> > > > > > psi tracks the time spent on submitting the IO of refaulting file pages
+> > > > > > and anonymous pages[1]. But after we tracks refaulting anonymous pages
+> > > > > > in swap_readpage[2][3], there is no need to track refaulting anonymous
+> > > > > > pages in submit_bio.
+> > > > > > 
+> > > > > > So this patch can reduce redundant calling of psi_memstall_enter. And
+> > > > > > make it easier to track refaulting file pages and anonymous pages
+> > > > > > separately.
+> > > > > 
+> > > > > I don't think this is an improvement.
+> > > > > 
+> > > > > psi_memstall_enter() will check current->in_memstall once, detect the
+> > > > > nested call, and bail. Your patch checks PageSwapBacked for every page
+> > > > > being added. It's more branches for less robust code.
+> > > > 
+> > > > We are also working for a new patch to classify different reasons cause
+> > > > psi_memstall_enter(): reclaim, thrashing, compact, etc. This will help
+> > > > user to tuning sysctl, for example, if user see high compact delay, he
+> > > > may try do adjust THP sysctl to reduce the compact delay.
+> > > > 
+> > > > To support that, we should distinguish what's the reason cause psi in
+> > > > submit_io(), this patch does the job.
+> > > 
+> > > Please submit these patches together then. On its own, this patch
+> > > isn't desirable.
+> > I think this patch has it's independent value, I try to make a better
+> > explain.
 
+You missed the point about it complicating semantics.
 
-在 2022/3/30 18:13, Christoph Hellwig 写道:
-> On Wed, Mar 30, 2022 at 06:03:01PM +0800, Shiyang Ruan wrote:
->>
->> Because I am not sure if the offset between each layer is page aligned.  For
->> example, when pmem dirver handles ->memory_failure(), it should subtract its
->> ->data_offset when it calls dax_holder_notify_failure().
-> 
-> If they aren't, none of the DAX machinery would work.
+Right now, the bio layer annotates stalls from queue contention. This
+is very simple. The swap code has relied on it in the past. It doesn't
+now, but that doesn't change what the concept is at the bio layer.
 
-OK. Got it.
+You patch explicitly codifies that the MM handles swap IOs, and the
+lower bio layer handles files. This asymmetry is ugly and error prone.
 
-So, use page-based function signature for ->memory_failure():
+If you want type distinction, we should move it all into MM code, like
+Christoph is saying. Were swap code handles anon refaults and the page
+cache code handles file refaults. This would be my preferred layering,
+and my original patch did that: https://lkml.org/lkml/2019/7/22/1070.
 
-int (*memory_failure)(struct dev_pagemap *pgmap, unsigned long pfn,
-		      unsigned long nr_pfns, int flags);
+But it was NAKed, and I had to agree with the argument. The page cache
+code is not very centralized, and the place where we deal with
+individual pages (and detect refaults) and where we submit bios (where
+the stalls occur) is spread out into multiple filesystems. There are
+180 submit_bio() calls in fs/; you'd have to audit which ones are for
+page cache submissions, and then add stall annotations or use a new
+submit_bio_cache() wrapper that handles it. Changes in the filesystem
+could easily miss this protocol and silently break pressure detection.
 
-
-As the code I pasted before, pmem driver will subtract its 
-->data_offset, which is byte-based. And the filesystem who implements 
-->notify_failure() will calculate the offset in unit of byte again.
-
-So, leave its function signature byte-based, to avoid repeated conversions.
-
-int (*notify_failure)(struct dax_device *dax_dev, u64 offset,
-		      u64 len, int mf_flags);
-
-What do you think?
-
-
---
-Thanks,
-Ruan.
-
-
+I would prefer the annotations to be at this level, I just don't see
+how to do it cleanly/robustly. Maybe Christoph has an idea, he
+understands the fs side much better than I do.
