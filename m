@@ -2,43 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D3F2A4EDD26
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Mar 2022 17:34:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 14D334EDD08
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Mar 2022 17:34:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238680AbiCaPfB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 31 Mar 2022 11:35:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53122 "EHLO
+        id S238383AbiCaPfA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 31 Mar 2022 11:35:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238494AbiCaPd4 (ORCPT
+        with ESMTP id S238506AbiCaPd5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 31 Mar 2022 11:33:56 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFCE4223871;
+        Thu, 31 Mar 2022 11:33:57 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5161922386D;
         Thu, 31 Mar 2022 08:31:49 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id C2AB8B82011;
-        Thu, 31 Mar 2022 15:31:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6F2DC340ED;
-        Thu, 31 Mar 2022 15:31:45 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id CBD10B82175;
+        Thu, 31 Mar 2022 15:31:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD165C34110;
+        Thu, 31 Mar 2022 15:31:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648740706;
-        bh=Xr5WwpOdJDLAwJ1HnaAMUsOMgwdZ2fjReZF8iNdzeus=;
+        s=k20201202; t=1648740707;
+        bh=4gK8ZAn+TacGcAjwCDK5lhYYnjJ7LL+dT0yZHFaadd0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Vw15f3KsXC3n02/BLXyyDnvvdOXhhEYsbW3u4sGs24FkMMQPpqZqXfrZjgiDY0m9T
-         GPUjcpRT5aGzNdhS70rjDd93tL9twYRLBBJ/XqxGKz9vJQkCJQfC00WwffOFZ9fewj
-         gsGsMnkqR81Eg+Sccix8t5MXwsbeIjpkK3EiUw2Z8rd1hlsSJ+9tXvNlAta609k/Vp
-         3wXsRom5mknSbJxvfc+TSme0o91L8eDsAuKIiR2s0mZSGuZ7Lg1TOZKkF5lSf0FPKw
-         uHB+5RRy9NMHhkBQ/6dLFvWtvwE6Xvb6eoNHRlidoGQvSLqrqIXkk0bzyQNRezo54X
-         8y35rsokThb/A==
+        b=U6ZccbOpbyashDeTNOehOpxpbjrCGT46WGK10viyRWGj0927AYP8CNkrLFB8OS1Fw
+         mp7AhA3/j7A1hsW3R4itfgljDcCuoZRXyDxTsEFE2j1BXvD8zS/zKp8UycVZqoZyT1
+         zLeZnbzSw+sXkcfmC2qc0UCZzT3XuzOk3GOKMDVSHNoPyN6F9qcHwW636PQmWFAy6C
+         URyjkVwbW++IAMvzMrK4dCldoh8EDpTBcMUA/ZdNKyy5JID+SzyWkFRAJBuAy7nad4
+         WaGPPghBhXdEfV7zzCLmE7PBb60ugo0cNy220M3BnW6yvuM3TKVmEwfRfnPcGeaLJf
+         fHa8Nu7eSdv1g==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     ceph-devel@vger.kernel.org
 Cc:     xiubli@redhat.com, idryomov@gmail.com, lhenriques@suse.de,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v12 15/54] ceph: make the ioctl cmd more readable in debug log
-Date:   Thu, 31 Mar 2022 11:30:51 -0400
-Message-Id: <20220331153130.41287-16-jlayton@kernel.org>
+Subject: [PATCH v12 16/54] ceph: make ceph_msdc_build_path use ref-walk
+Date:   Thu, 31 Mar 2022 11:30:52 -0400
+Message-Id: <20220331153130.41287-17-jlayton@kernel.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220331153130.41287-1-jlayton@kernel.org>
 References: <20220331153130.41287-1-jlayton@kernel.org>
@@ -54,73 +54,94 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+Encryption potentially requires allocation, at which point we'll need to
+be in a non-atomic context. Convert ceph_msdc_build_path to take dentry
+spinlocks and references instead of using rcu_read_lock to walk the
+path.
 
-    ioctl file 0000000004e6b054 cmd 2148296211 arg 824635143532
+This is slightly less efficient, and we may want to eventually allow
+using RCU when the leaf dentry isn't encrypted.
 
-The numerical cmd valye in the ioctl debug log message is too hard to
-understand even when you look at it in the code. Make it more readable.
-
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ceph/ioctl.c | 39 ++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 38 insertions(+), 1 deletion(-)
+ fs/ceph/mds_client.c | 35 +++++++++++++++++++----------------
+ 1 file changed, 19 insertions(+), 16 deletions(-)
 
-diff --git a/fs/ceph/ioctl.c b/fs/ceph/ioctl.c
-index 477ecc667aee..b9f0f4e460ab 100644
---- a/fs/ceph/ioctl.c
-+++ b/fs/ceph/ioctl.c
-@@ -313,11 +313,48 @@ static long ceph_set_encryption_policy(struct file *file, unsigned long arg)
- 	return ret;
- }
- 
-+static const char *ceph_ioctl_cmd_name(const unsigned int cmd)
-+{
-+	switch (cmd) {
-+	case CEPH_IOC_GET_LAYOUT:
-+		return "get_layout";
-+	case CEPH_IOC_SET_LAYOUT:
-+		return "set_layout";
-+	case CEPH_IOC_SET_LAYOUT_POLICY:
-+		return "set_layout_policy";
-+	case CEPH_IOC_GET_DATALOC:
-+		return "get_dataloc";
-+	case CEPH_IOC_LAZYIO:
-+		return "lazyio";
-+	case CEPH_IOC_SYNCIO:
-+		return "syncio";
-+	case FS_IOC_SET_ENCRYPTION_POLICY:
-+		return "set encryption_policy";
-+	case FS_IOC_GET_ENCRYPTION_POLICY:
-+		return "get_encryption_policy";
-+	case FS_IOC_GET_ENCRYPTION_POLICY_EX:
-+		return "get_encryption_policy_ex";
-+	case FS_IOC_ADD_ENCRYPTION_KEY:
-+		return "add_encryption_key";
-+	case FS_IOC_REMOVE_ENCRYPTION_KEY:
-+		return "remove_encryption_key";
-+	case FS_IOC_REMOVE_ENCRYPTION_KEY_ALL_USERS:
-+		return "remove_encryption_key_all_users";
-+	case FS_IOC_GET_ENCRYPTION_KEY_STATUS:
-+		return "get_encryption_key_status";
-+	case FS_IOC_GET_ENCRYPTION_NONCE:
-+		return "get_encryption_nonce";
-+	default:
-+		return "unknown";
-+	}
-+}
-+
- long ceph_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index 2f2f8221eb25..28315053e116 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -2398,7 +2398,8 @@ static inline  u64 __get_oldest_tid(struct ceph_mds_client *mdsc)
+ char *ceph_mdsc_build_path(struct dentry *dentry, int *plen, u64 *pbase,
+ 			   int stop_on_nosnap)
  {
- 	int ret;
+-	struct dentry *temp;
++	struct dentry *cur;
++	struct inode *inode;
+ 	char *path;
+ 	int pos;
+ 	unsigned seq;
+@@ -2415,34 +2416,35 @@ char *ceph_mdsc_build_path(struct dentry *dentry, int *plen, u64 *pbase,
+ 	path[pos] = '\0';
  
--	dout("ioctl file %p cmd %u arg %lu\n", file, cmd, arg);
-+	dout("ioctl file %p cmd %s arg %lu\n", file,
-+	     ceph_ioctl_cmd_name(cmd), arg);
- 	switch (cmd) {
- 	case CEPH_IOC_GET_LAYOUT:
- 		return ceph_ioctl_get_layout(file, (void __user *)arg);
+ 	seq = read_seqbegin(&rename_lock);
+-	rcu_read_lock();
+-	temp = dentry;
++	cur = dget(dentry);
+ 	for (;;) {
+-		struct inode *inode;
++		struct dentry *temp;
+ 
+-		spin_lock(&temp->d_lock);
+-		inode = d_inode(temp);
++		spin_lock(&cur->d_lock);
++		inode = d_inode(cur);
+ 		if (inode && ceph_snap(inode) == CEPH_SNAPDIR) {
+ 			dout("build_path path+%d: %p SNAPDIR\n",
+-			     pos, temp);
+-		} else if (stop_on_nosnap && inode && dentry != temp &&
++			     pos, cur);
++		} else if (stop_on_nosnap && inode && dentry != cur &&
+ 			   ceph_snap(inode) == CEPH_NOSNAP) {
+-			spin_unlock(&temp->d_lock);
++			spin_unlock(&cur->d_lock);
+ 			pos++; /* get rid of any prepended '/' */
+ 			break;
+ 		} else {
+-			pos -= temp->d_name.len;
++			pos -= cur->d_name.len;
+ 			if (pos < 0) {
+-				spin_unlock(&temp->d_lock);
++				spin_unlock(&cur->d_lock);
+ 				break;
+ 			}
+-			memcpy(path + pos, temp->d_name.name, temp->d_name.len);
++			memcpy(path + pos, cur->d_name.name, cur->d_name.len);
+ 		}
++		temp = cur;
+ 		spin_unlock(&temp->d_lock);
+-		temp = READ_ONCE(temp->d_parent);
++		cur = dget_parent(temp);
++		dput(temp);
+ 
+ 		/* Are we at the root? */
+-		if (IS_ROOT(temp))
++		if (IS_ROOT(cur))
+ 			break;
+ 
+ 		/* Are we out of buffer? */
+@@ -2451,8 +2453,9 @@ char *ceph_mdsc_build_path(struct dentry *dentry, int *plen, u64 *pbase,
+ 
+ 		path[pos] = '/';
+ 	}
+-	base = ceph_ino(d_inode(temp));
+-	rcu_read_unlock();
++	inode = d_inode(cur);
++	base = inode ? ceph_ino(inode) : 0;
++	dput(cur);
+ 
+ 	if (read_seqretry(&rename_lock, seq))
+ 		goto retry;
 -- 
 2.35.1
 
