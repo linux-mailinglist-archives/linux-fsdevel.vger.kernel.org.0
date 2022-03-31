@@ -2,106 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 52C7A4EE457
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Apr 2022 00:49:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1CD24EE462
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Apr 2022 00:56:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235451AbiCaWuz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 31 Mar 2022 18:50:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46812 "EHLO
+        id S242691AbiCaW6Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 31 Mar 2022 18:58:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233953AbiCaWuw (ORCPT
+        with ESMTP id S239309AbiCaW6X (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 31 Mar 2022 18:50:52 -0400
-Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F80A3EA83;
-        Thu, 31 Mar 2022 15:49:00 -0700 (PDT)
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        Thu, 31 Mar 2022 18:58:23 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD7A22325D6;
+        Thu, 31 Mar 2022 15:56:35 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4KTz4R3pVzz4xNm;
-        Fri,  1 Apr 2022 09:48:55 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-        s=201702; t=1648766939;
-        bh=aCINHo9aji2F1GB8wO1FkUovXMk3qb0+GTDDR4ex5/0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=dlUEQiCcWq10xVDmBrRso2Emc/0wrNv0ndsF/2+QGo4Y5jyiyKuInvQ/BEi+zCd+i
-         b+Z5mps0KRuEVkHmh3cekVX8fuFXleSSrDMdw3WXzHcQ7HPnRHFsBr1pfROJFwm3a7
-         80dBeBdlPyFuihhzJoi6cV6e5bhziV1UFSMNhcEw72MJNcxYg5yIZgs7HYy31YNWaE
-         3vSSFHL6wEAGhGckOrYe+vLIA4rDbZKwV7M17cDAV4HVmNXZ0pzPpoKEhUGciP4ju5
-         1DDyeh8/jmIX1SY6KHUFpz2xhMZM8656+TSSgkxBdApiQDlYAoJt79yAoopB0qNJDa
-         +NhAj87+PZkvQ==
-Date:   Fri, 1 Apr 2022 09:48:54 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Qian Cai <quic_qiancai@quicinc.com>,
-        Muchun Song <songmuchun@bytedance.com>,
-        <dan.j.williams@intel.com>, <willy@infradead.org>, <jack@suse.cz>,
-        <viro@zeniv.linux.org.uk>, <apopple@nvidia.com>,
-        <shy828301@gmail.com>, <rcampbell@nvidia.com>, <hughd@google.com>,
-        <xiyuyang19@fudan.edu.cn>, <kirill.shutemov@linux.intel.com>,
-        <zwisler@kernel.org>, <hch@infradead.org>,
-        <linux-fsdevel@vger.kernel.org>, <nvdimm@lists.linux.dev>,
-        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <duanxiongchun@bytedance.com>, <smuchun@gmail.com>
-Subject: Re: [PATCH v5 0/6] Fix some bugs related to ramp and dax
-Message-ID: <20220401094854.56615a65@canb.auug.org.au>
-In-Reply-To: <20220331153604.da723f3546fa8adabd7a74ae@linux-foundation.org>
-References: <20220318074529.5261-1-songmuchun@bytedance.com>
-        <YkXPA69iLBDHFtjn@qian>
-        <20220331153604.da723f3546fa8adabd7a74ae@linux-foundation.org>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5846361660;
+        Thu, 31 Mar 2022 22:56:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B302C340ED;
+        Thu, 31 Mar 2022 22:56:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1648767394;
+        bh=QThZI7tHhBglWLB+tvKaUGnhtbdylP2EGYTJaJlJio4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=J8JMzh4VJmddMyni9deTyx+5xAOEZMrVJqRn5OpAGfNxCl25S4PU+kOGwaeP5th7I
+         PFHpGI0Jd7D6poVg7TjGwDlJWbDz/QWr3iQMJiDqK2DFiVth8/hDEhDmh9G9cv5L6q
+         NmDfec+Md9goHnugcNR6kJJHVpzSkwRrdQpIB/KRy/ckIRZx6fCAEao72HgwPJA8fT
+         teOfdU0DxJAN6CFkVm2LAgd4aTEQt4hOI6p4K/zwkQ6FR21EHxnKbkhN8YZ1y42PXG
+         eFHJaXQCZKesogajnbqgTVf3BFmXZM6ZjmIl9U4YFIZeGqZvZhwjiGgYOLxiu1rAKH
+         XdO8bCnUj3d6Q==
+From:   Jeff Layton <jlayton@kernel.org>
+To:     viro@zeniv.linux.org.uk
+Cc:     ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] fs: change test in inode_insert5 for adding to the sb list
+Date:   Thu, 31 Mar 2022 18:56:32 -0400
+Message-Id: <20220331225632.247244-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/nIhTqK6YrZqOjv9JOjZ_kms";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---Sig_/nIhTqK6YrZqOjv9JOjZ_kms
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+The inode_insert5 currently looks at I_CREATING to decide whether to
+insert the inode into the sb list. This test is a bit ambiguous though
+as I_CREATING state is not directly related to that list.
 
-Hi Andrew,
+This test is also problematic for some upcoming ceph changes to add
+fscrypt support. We need to be able to allocate an inode using new_inode
+and insert it into the hash later if we end up using it, and doing that
+now means that we double add it and corrupt the list.
 
-On Thu, 31 Mar 2022 15:36:04 -0700 Andrew Morton <akpm@linux-foundation.org=
-> wrote:
->
-> Thanks.  I'll drop
->=20
-> mm-rmap-fix-cache-flush-on-thp-pages.patch
-> dax-fix-cache-flush-on-pmd-mapped-pages.patch
-> mm-rmap-introduce-pfn_mkclean_range-to-cleans-ptes.patch
-> mm-rmap-introduce-pfn_mkclean_range-to-cleans-ptes-fix.patch
-> mm-pvmw-add-support-for-walking-devmap-pages.patch
-> dax-fix-missing-writeprotect-the-pte-entry.patch
-> dax-fix-missing-writeprotect-the-pte-entry-v6.patch
-> mm-simplify-follow_invalidate_pte.patch
+What we really want to know in this test is whether the inode is already
+in its superblock list, and then add it if it isn't. Have it test for
+list_empty instead and ensure that we always initialize the list by
+doing it in inode_init_once. It's only ever removed from the list with
+list_del_init, so that should be sufficient.
 
-I have removed those and the 4 patches that I had to revert yesterday.
+Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/inode.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
---=20
-Cheers,
-Stephen Rothwell
+This is the alternate approach that Al suggested to me on IRC. I think
+this is likely to be more robust in the long run, and we can avoid
+exporting another symbol.
 
---Sig_/nIhTqK6YrZqOjv9JOjZ_kms
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Al, if you're ok with this, would you mind taking this in via your tree?
+I'd like to see this in sit in linux-next for a bit so we can see if any
+benchmarks get dinged.
 
------BEGIN PGP SIGNATURE-----
+diff --git a/fs/inode.c b/fs/inode.c
+index 63324df6fa27..e10cff5102d4 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -422,6 +422,7 @@ void inode_init_once(struct inode *inode)
+ 	INIT_LIST_HEAD(&inode->i_io_list);
+ 	INIT_LIST_HEAD(&inode->i_wb_list);
+ 	INIT_LIST_HEAD(&inode->i_lru);
++	INIT_LIST_HEAD(&inode->i_sb_list);
+ 	__address_space_init_once(&inode->i_data);
+ 	i_size_ordered_init(inode);
+ }
+@@ -1021,7 +1022,6 @@ struct inode *new_inode_pseudo(struct super_block *sb)
+ 		spin_lock(&inode->i_lock);
+ 		inode->i_state = 0;
+ 		spin_unlock(&inode->i_lock);
+-		INIT_LIST_HEAD(&inode->i_sb_list);
+ 	}
+ 	return inode;
+ }
+@@ -1165,7 +1165,6 @@ struct inode *inode_insert5(struct inode *inode, unsigned long hashval,
+ {
+ 	struct hlist_head *head = inode_hashtable + hash(inode->i_sb, hashval);
+ 	struct inode *old;
+-	bool creating = inode->i_state & I_CREATING;
+ 
+ again:
+ 	spin_lock(&inode_hash_lock);
+@@ -1199,7 +1198,13 @@ struct inode *inode_insert5(struct inode *inode, unsigned long hashval,
+ 	inode->i_state |= I_NEW;
+ 	hlist_add_head_rcu(&inode->i_hash, head);
+ 	spin_unlock(&inode->i_lock);
+-	if (!creating)
++
++	/*
++	 * Add it to the list if it wasn't already in,
++	 * e.g. new_inode. We hold I_NEW at this point, so
++	 * we should be safe to test i_sb_list locklessly.
++	 */
++	if (list_empty(&inode->i_sb_list))
+ 		inode_sb_list_add(inode);
+ unlock:
+ 	spin_unlock(&inode_hash_lock);
+-- 
+2.35.1
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmJGL9YACgkQAVBC80lX
-0GyePgf+LiEn85D2IxTfAf8/DAtAZbCjQ30Nl29rv31sOL0T1vsVkFibp8yQrNvI
-TlEBWUiti1ls7bc3c+v5yLAfxYKSyvSp9i9oSBYW9c8fZ1ihm8F6R8+hLZgu3foU
-gUw3PaIFi6KI0dMGvAadN5rYuhvvMqUwlZHo02nYOt2bGjr3DQWGrZm0qa6jiQNC
-a1Mu5zqoOA3fVY7VakijGvZ7YM/qYik+TrbpYKhlzoRlKaPW/Ddijsn+lqm24W1T
-tz3lV9AoXTUZ8TOsUOqfNtEbs0s8ivmhAmdLiJ08+REpONzNQr4QO9W6Xw6ZKnaR
-12qE+W2r83Rbjj2BTSoNXL5pJEeOKg==
-=vrD8
------END PGP SIGNATURE-----
-
---Sig_/nIhTqK6YrZqOjv9JOjZ_kms--
