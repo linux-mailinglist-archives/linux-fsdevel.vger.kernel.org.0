@@ -2,228 +2,382 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A9B104ED58A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Mar 2022 10:25:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0808E4ED6F0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Mar 2022 11:30:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232814AbiCaI1d convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 31 Mar 2022 04:27:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56590 "EHLO
+        id S234004AbiCaJas (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 31 Mar 2022 05:30:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37062 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232819AbiCaI1V (ORCPT
+        with ESMTP id S233909AbiCaJai (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 31 Mar 2022 04:27:21 -0400
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D9C41C391A;
-        Thu, 31 Mar 2022 01:25:25 -0700 (PDT)
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.207])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4KTbtK51ctz67KsG;
-        Thu, 31 Mar 2022 16:23:53 +0800 (CST)
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Thu, 31 Mar 2022 10:25:23 +0200
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2375.024;
- Thu, 31 Mar 2022 10:25:23 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-CC:     "corbet@lwn.net" <corbet@lwn.net>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "andrii@kernel.org" <andrii@kernel.org>,
-        "kpsingh@kernel.org" <kpsingh@kernel.org>,
-        "shuah@kernel.org" <shuah@kernel.org>,
-        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
-        "alexandre.torgue@foss.st.com" <alexandre.torgue@foss.st.com>,
-        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 00/18] bpf: Secure and authenticated preloading of eBPF
- programs
-Thread-Topic: [PATCH 00/18] bpf: Secure and authenticated preloading of eBPF
- programs
-Thread-Index: AQHYQsxoL5kXhl8+JE6PJPNWV+NOTqzYppqAgABrSsA=
-Date:   Thu, 31 Mar 2022 08:25:22 +0000
-Message-ID: <b9f5995f96da447c851f7c9db8232a9b@huawei.com>
-References: <20220328175033.2437312-1-roberto.sassu@huawei.com>
- <20220331022727.ybj4rui4raxmsdpu@MBP-98dd607d3435.dhcp.thefacebook.com>
-In-Reply-To: <20220331022727.ybj4rui4raxmsdpu@MBP-98dd607d3435.dhcp.thefacebook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.81.200.158]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Thu, 31 Mar 2022 05:30:38 -0400
+Received: from mail1.bemta36.messagelabs.com (mail1.bemta36.messagelabs.com [85.158.142.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05B22203A7D;
+        Thu, 31 Mar 2022 02:28:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
+        s=170520fj; t=1648718888; i=@fujitsu.com;
+        bh=11hHL51oJKIRRxJ2cKGm8qGia+vQkgT71xo8XfL1lYk=;
+        h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type;
+        b=WZmObQvO69zpIC7M7M3usxpDbuHb1Z0wBMdsokqyEUoI0mSfhJJr7ieOg7y3YbyjG
+         Dpvk2Vshf1uwiW3wyxPfGkInbB9KbsMBviDQlAeRSm27izwaqeXbp4joC4QxXBp6yg
+         48asTRlrFwynYBGgEOOH3xLft29bGjZcEkcI2uAirFCTSZ6K3p+lfvaEOziJxMzMol
+         9AafxkIZHBdBqo3w9WFnf9DLGKSFXJa0EIul+z2JchS5sorqr3RDX+wlxuxrjBJlH0
+         uWxjuqNPfMkZoTISgsdf20hdTnpTdhFtnKqXCIgzrv+V6rJFg6PgKLyBx8xUcUlHIY
+         vS+rHNkFu8M1Q==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrLIsWRWlGSWpSXmKPExsViZ8ORqKte4pp
+  k8GaSgcXrw58YLbYcu8docfkJn8Xplr3sFnv2nmRxYPU4tUjCY9OqTjaPz5vkApijWDPzkvIr
+  Elgz/lxeylIw373iw/NmpgbG+1ZdjFwcQgJbGCX2fL3HDOEsYJLo6fvCAuHsYZTY/WI5axcjJ
+  webgKbEs84FzCC2iICLxLf9f9lAbGaBFImG802MILawgK/EwoWvgOo5OFgEVCVO9TmDhHkFPC
+  Ra915mAbElBBQkpjx8zwwRF5Q4OfMJC8QYCYmDL14wQ9QoSlzq+MYIYVdIzJrVxgRhq0lcPbe
+  JeQIj/ywk7bOQtC9gZFrFaJdUlJmeUZKbmJmja2hgoGtoaKprZqZrZGShl1ilm6iXWqqbnJpX
+  UpQIlNZLLC/WSy0u1iuuzE3OSdHLSy3ZxAgM6ZRipyc7GF/3/dQ7xCjJwaQkyusU4JokxJeUn
+  1KZkVicEV9UmpNafIhRhoNDSYK3vgAoJ1iUmp5akZaZA4wvmLQEB4+SCG8oSJq3uCAxtzgzHS
+  J1ilGX4++nv3uZhVjy8vNSpcR5ZxcCFQmAFGWU5sGNgMX6JUZZKWFeRgYGBiGegtSi3MwSVPl
+  XjOIcjErCvFeLgKbwZOaVwG16BXQEE9ARdY8dQY4oSURISTUwhT2953lm+6yFNRF5614vl7aY
+  u27zMTFF9892SS/jGk8/aTrM9UP/84eToRNij/mpKk7LW/9g8pofK+/VLJC7ck5lquK5+Ja97
+  3skZVne1WluK2L98viOYMJbj9+TEw4cDXvCetpXW+i/68qFlfJ/T17K2Zh6soVH6c2qQyt3L4
+  wRVc++eWPzY7abM8+0z4zJcHH7vUNKwKbdg1P8pS7ru2Of1rWdcpcO6QyXur+UoWm1q4DKn0P
+  njzhns7lssmKynVE9V3pzVaf0nDr+k/Xrn16x/LD3ycrrmzdXtM6Wvzdn4ZsAsXBzFta5z+++
+  eOG/IjZHNX7dDOconcN58jqcDlc+sL7iaI97XjthtUZllYoSS3FGoqEWc1FxIgABoqgVcAMAA
+  A==
+X-Env-Sender: xuyang2018.jy@fujitsu.com
+X-Msg-Ref: server-3.tower-545.messagelabs.com!1648718887!135975!1
+X-Originating-IP: [62.60.8.97]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.85.5; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 15602 invoked from network); 31 Mar 2022 09:28:07 -0000
+Received: from unknown (HELO n03ukasimr01.n03.fujitsu.local) (62.60.8.97)
+  by server-3.tower-545.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 31 Mar 2022 09:28:07 -0000
+Received: from n03ukasimr01.n03.fujitsu.local (localhost [127.0.0.1])
+        by n03ukasimr01.n03.fujitsu.local (Postfix) with ESMTP id 065721001B8;
+        Thu, 31 Mar 2022 10:28:07 +0100 (BST)
+Received: from R01UKEXCASM126.r01.fujitsu.local (unknown [10.183.43.178])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by n03ukasimr01.n03.fujitsu.local (Postfix) with ESMTPS id B291B1001AE;
+        Thu, 31 Mar 2022 10:28:06 +0100 (BST)
+Received: from localhost.localdomain (10.167.220.84) by
+ R01UKEXCASM126.r01.fujitsu.local (10.183.43.178) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.32; Thu, 31 Mar 2022 10:27:53 +0100
+From:   Yang Xu <xuyang2018.jy@fujitsu.com>
+To:     <david@fromorbit.com>, <brauner@kernel.org>, <djwong@kernel.org>
+CC:     <linux-fsdevel@vger.kernel.org>, <fstests@vger.kernel.org>,
+        Yang Xu <xuyang2018.jy@fujitsu.com>
+Subject: [PATCH v1 1/2] idmapped-mounts: Add mknodat operation in setgid test
+Date:   Thu, 31 Mar 2022 17:28:21 +0800
+Message-ID: <1648718902-2319-1-git-send-email-xuyang2018.jy@fujitsu.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain
+X-Originating-IP: [10.167.220.84]
+X-ClientProxiedBy: G08CNEXCHPEKD07.g08.fujitsu.local (10.167.33.80) To
+ R01UKEXCASM126.r01.fujitsu.local (10.183.43.178)
+X-Virus-Scanned: ClamAV using ClamSMTP
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> From: Alexei Starovoitov [mailto:alexei.starovoitov@gmail.com]
-> Sent: Thursday, March 31, 2022 4:27 AM
-> On Mon, Mar 28, 2022 at 07:50:15PM +0200, Roberto Sassu wrote:
-> > eBPF already allows programs to be preloaded and kept running without
-> > intervention from user space. There is a dedicated kernel module called
-> > bpf_preload, which contains the light skeleton of the iterators_bpf eBPF
-> > program. If this module is enabled in the kernel configuration, its loading
-> > will be triggered when the bpf filesystem is mounted (unless the module is
-> > built-in), and the links of iterators_bpf are pinned in that filesystem
-> > (they will appear as the progs.debug and maps.debug files).
-> >
-> > However, the current mechanism, if used to preload an LSM, would not
-> offer
-> > the same security guarantees of LSMs integrated in the security
-> subsystem.
-> > Also, it is not generic enough to be used for preloading arbitrary eBPF
-> > programs, unless the bpf_preload code is heavily modified.
-> >
-> > More specifically, the security problems are:
-> > - any program can be pinned to the bpf filesystem without limitations
-> >   (unless a MAC mechanism enforces some restrictions);
-> > - programs being executed can be terminated at any time by deleting the
-> >   pinned objects or unmounting the bpf filesystem.
-> 
-> So many things to untangle here.
+Since mknodat can create file, we should also check whether strip S_ISGID.
+Also add new helper caps_down_fsetid to drop CAP_FSETID because strip S_ISGID
+depond on this cap and keep other cap(ie CAP_MKNOD) because create character device
+needs it when using mknod.
 
-Hi Alexei
+Only test mknod with character device in setgid_create function because the another
+two functions will hit EPERM error.
 
-thanks for taking the time to provide such detailed
-explanation.
+Signed-off-by: Yang Xu <xuyang2018.jy@fujitsu.com>
+---
+ src/idmapped-mounts/idmapped-mounts.c | 154 ++++++++++++++++++++++++--
+ 1 file changed, 147 insertions(+), 7 deletions(-)
 
-> The above paragraphs are misleading and incorrect.
-> The commit log sounds like there are security issues that this
-> patch set is fixing.
-> This is not true.
+diff --git a/src/idmapped-mounts/idmapped-mounts.c b/src/idmapped-mounts/idmapped-mounts.c
+index 4cf6c3bb..1e2f3904 100644
+--- a/src/idmapped-mounts/idmapped-mounts.c
++++ b/src/idmapped-mounts/idmapped-mounts.c
+@@ -241,6 +241,34 @@ static inline bool caps_supported(void)
+ 	return ret;
+ }
+ 
++static int caps_down_fsetid(void)
++{
++	bool fret = false;
++#ifdef HAVE_SYS_CAPABILITY_H
++	cap_t caps = NULL;
++	cap_value_t cap = CAP_FSETID;
++	int ret = -1;
++
++	caps = cap_get_proc();
++	if (!caps)
++		goto out;
++
++	ret = cap_set_flag(caps, CAP_EFFECTIVE, 1, &cap, 0);
++	if (ret)
++		goto out;
++
++	ret = cap_set_proc(caps);
++	if (ret)
++		goto out;
++
++	fret = true;
++
++out:
++	cap_free(caps);
++#endif
++	return fret;
++}
++
+ /* caps_down - lower all effective caps */
+ static int caps_down(void)
+ {
+@@ -7805,8 +7833,8 @@ out_unmap:
+ #endif /* HAVE_LIBURING_H */
+ 
+ /* The following tests are concerned with setgid inheritance. These can be
+- * filesystem type specific. For xfs, if a new file or directory is created
+- * within a setgid directory and irix_sgid_inhiert is set then inherit the
++ * filesystem type specific. For xfs, if a new file or directory or node is
++ * created within a setgid directory and irix_sgid_inhiert is set then inherit the
+  * setgid bit if the caller is in the group of the directory.
+  */
+ static int setgid_create(void)
+@@ -7863,15 +7891,41 @@ static int setgid_create(void)
+ 		if (!is_setgid(t_dir1_fd, DIR1, 0))
+ 			die("failure: is_setgid");
+ 
++		/* create a special file via mknodat() vfs_create */
++		if (mknodat(t_dir1_fd, DIR1 "/" FILE1, S_IFREG | S_ISGID | 0755, 0))
++			die("failure: mknodat");
++
++		if (!is_setgid(t_dir1_fd, DIR1 "/" FILE1, 0))
++			die("failure: is_setgid");
++
++		/* create a character device via mknodat() vfs_mknod */
++		if (mknodat(t_dir1_fd, CHRDEV1, S_IFCHR | S_ISGID | 0755, makedev(5, 1)))
++			die("failure: mknodat");
++
++		if (!is_setgid(t_dir1_fd, CHRDEV1, 0))
++			die("failure: is_setgid");
++
+ 		if (!expected_uid_gid(t_dir1_fd, FILE1, 0, 0, 0))
+ 			die("failure: check ownership");
+ 
++		if (!expected_uid_gid(t_dir1_fd, DIR1 "/" FILE1, 0, 0, 0))
++			die("failure: check ownership");
++
++		if (!expected_uid_gid(t_dir1_fd, CHRDEV1, 0, 0, 0))
++			die("failure: check ownership");
++
+ 		if (!expected_uid_gid(t_dir1_fd, DIR1, 0, 0, 0))
+ 			die("failure: check ownership");
+ 
+ 		if (unlinkat(t_dir1_fd, FILE1, 0))
+ 			die("failure: delete");
+ 
++		if (unlinkat(t_dir1_fd, DIR1 "/" FILE1, 0))
++			die("failure: delete");
++
++		if (unlinkat(t_dir1_fd, CHRDEV1, 0))
++			die("failure: delete");
++
+ 		if (unlinkat(t_dir1_fd, DIR1, AT_REMOVEDIR))
+ 			die("failure: delete");
+ 
+@@ -7889,8 +7943,8 @@ static int setgid_create(void)
+ 		if (!switch_ids(0, 10000))
+ 			die("failure: switch_ids");
+ 
+-		if (!caps_down())
+-			die("failure: caps_down");
++		if (!caps_down_fsetid())
++			die("failure: caps_down_fsetid");
+ 
+ 		/* create regular file via open() */
+ 		file1_fd = openat(t_dir1_fd, FILE1, O_CREAT | O_EXCL | O_CLOEXEC, S_IXGRP | S_ISGID);
+@@ -7917,6 +7971,19 @@ static int setgid_create(void)
+ 				die("failure: is_setgid");
+ 		}
+ 
++		/* create a special file via mknodat() vfs_create */
++		if (mknodat(t_dir1_fd, DIR1 "/" FILE1, S_IFREG | S_ISGID | 0755, 0))
++			die("failure: mknodat");
++
++		if (is_setgid(t_dir1_fd, DIR1 "/" FILE1, 0))
++			die("failure: is_setgid");
++
++		/* create a character device via mknodat() vfs_mknod */
++		if (mknodat(t_dir1_fd, CHRDEV1, S_IFCHR | S_ISGID | 0755, makedev(5, 1)))
++			die("failure: mknodat");
++
++		if (is_setgid(t_dir1_fd, CHRDEV1, 0))
++			die("failure: is_setgid");
+ 		/*
+ 		 * In setgid directories newly created files always inherit the
+ 		 * gid from the parent directory. Verify that the file is owned
+@@ -7933,6 +8000,24 @@ static int setgid_create(void)
+ 		if (!expected_uid_gid(t_dir1_fd, DIR1, 0, 0, 0))
+ 			die("failure: check ownership");
+ 
++		if (!expected_uid_gid(t_dir1_fd, DIR1 "/" FILE1, 0, 0, 0))
++			die("failure: check ownership");
++
++		if (!expected_uid_gid(t_dir1_fd, CHRDEV1, 0, 0, 0))
++			die("failure: check ownership");
++
++		if (unlinkat(t_dir1_fd, FILE1, 0))
++			die("failure: delete");
++
++		if (unlinkat(t_dir1_fd, DIR1 "/" FILE1, 0))
++			die("failure: delete");
++
++		if (unlinkat(t_dir1_fd, CHRDEV1, 0))
++			die("failure: delete");
++
++		if (unlinkat(t_dir1_fd, DIR1, AT_REMOVEDIR))
++			die("failure: delete");
++
+ 		exit(EXIT_SUCCESS);
+ 	}
+ 	if (wait_for_pid(pid))
+@@ -8051,6 +8136,12 @@ static int setgid_create_idmapped(void)
+ 		if (!expected_uid_gid(open_tree_fd, DIR1, 0, 10000, 10000))
+ 			die("failure: check ownership");
+ 
++		if (unlinkat(t_dir1_fd, FILE1, 0))
++			die("failure: delete");
++
++		if (unlinkat(t_dir1_fd, DIR1, AT_REMOVEDIR))
++			die("failure: delete");
++
+ 		exit(EXIT_SUCCESS);
+ 	}
+ 	if (wait_for_pid(pid))
+@@ -8149,15 +8240,26 @@ static int setgid_create_idmapped_in_userns(void)
+ 		if (!is_setgid(open_tree_fd, DIR1, 0))
+ 			die("failure: is_setgid");
+ 
++		/* create a special file via mknodat() vfs_create */
++		if (mknodat(open_tree_fd, DIR1 "/" FILE1, S_IFREG | S_ISGID | 755, 0))
++			die("failure: mknodat");
++
++		if (!is_setgid(open_tree_fd, DIR1 "/" FILE1, 0))
++			die("failure: is_setgid");
++
+ 		if (!expected_uid_gid(open_tree_fd, FILE1, 0, 0, 0))
+ 			die("failure: check ownership");
+ 
+ 		if (!expected_uid_gid(open_tree_fd, DIR1, 0, 0, 0))
+ 			die("failure: check ownership");
+ 
++		if (!expected_uid_gid(open_tree_fd, DIR1 "/" FILE1, 0, 0, 0))
++			die("failure: check ownership");
++
+ 		if (unlinkat(open_tree_fd, FILE1, 0))
+ 			die("failure: delete");
+-
++		if (unlinkat(open_tree_fd, DIR1 "/" FILE1, 0))
++			die("failure: delete");
+ 		if (unlinkat(open_tree_fd, DIR1, AT_REMOVEDIR))
+ 			die("failure: delete");
+ 
+@@ -8190,9 +8292,12 @@ static int setgid_create_idmapped_in_userns(void)
+ 			exit(EXIT_SUCCESS);
+ 		}
+ 
+-		if (!switch_userns(attr.userns_fd, 0, 0, true))
++		if (!switch_userns(attr.userns_fd, 0, 0, false))
+ 			die("failure: switch_userns");
+ 
++		if (!caps_down_fsetid())
++			die("failure: caps_down_fsetid");
++
+ 		/* create regular file via open() */
+ 		file1_fd = openat(open_tree_fd, FILE1, O_CREAT | O_EXCL | O_CLOEXEC, S_IXGRP | S_ISGID);
+ 		if (file1_fd < 0)
+@@ -8218,6 +8323,13 @@ static int setgid_create_idmapped_in_userns(void)
+ 				die("failure: is_setgid");
+ 		}
+ 
++		/* create a special file via mknodat() vfs_create */
++		if (mknodat(open_tree_fd, DIR1 "/" FILE1, S_IFREG | S_ISGID | 0755, 0))
++			die("failure: mknodat");
++
++		if (is_setgid(open_tree_fd, DIR1 "/" FILE1, 0))
++			die("failure: is_setgid");
++
+ 		/*
+ 		 * In setgid directories newly created files always inherit the
+ 		 * gid from the parent directory. Verify that the file is owned
+@@ -8234,9 +8346,15 @@ static int setgid_create_idmapped_in_userns(void)
+ 		if (!expected_uid_gid(open_tree_fd, DIR1, 0, 0, 1000))
+ 			die("failure: check ownership");
+ 
++		if (!expected_uid_gid(open_tree_fd, DIR1 "/" FILE1, 0, 0, 1000))
++			die("failure: check ownership");
++
+ 		if (unlinkat(open_tree_fd, FILE1, 0))
+ 			die("failure: delete");
+ 
++		if (unlinkat(open_tree_fd, DIR1 "/" FILE1, 0))
++			die("failure: delete");
++
+ 		if (unlinkat(open_tree_fd, DIR1, AT_REMOVEDIR))
+ 			die("failure: delete");
+ 
+@@ -8266,9 +8384,12 @@ static int setgid_create_idmapped_in_userns(void)
+ 			exit(EXIT_SUCCESS);
+ 		}
+ 
+-		if (!switch_userns(attr.userns_fd, 0, 1000, true))
++		if (!switch_userns(attr.userns_fd, 0, 1000, false))
+ 			die("failure: switch_userns");
+ 
++		if (!caps_down_fsetid())
++			die("failure: caps_down_fsetid");
++
+ 		/* create regular file via open() */
+ 		file1_fd = openat(open_tree_fd, FILE1, O_CREAT | O_EXCL | O_CLOEXEC, S_IXGRP | S_ISGID);
+ 		if (file1_fd < 0)
+@@ -8295,12 +8416,31 @@ static int setgid_create_idmapped_in_userns(void)
+ 				die("failure: is_setgid");
+ 		}
+ 
++		/* create a special file via mknodat() vfs_create */
++		if (mknodat(open_tree_fd, DIR1 "/" FILE1, S_IFREG | S_ISGID | 0755, 0))
++			die("failure: mknodat");
++
++		if (is_setgid(open_tree_fd, DIR1 "/" FILE1, 0))
++			die("failure: is_setgid");
++
+ 		if (!expected_uid_gid(open_tree_fd, FILE1, 0, 0, 0))
+ 			die("failure: check ownership");
+ 
++		if (!expected_uid_gid(open_tree_fd, DIR1 "/" FILE1, 0, 0, 0))
++			die("failure: check ownership");
++
+ 		if (!expected_uid_gid(open_tree_fd, DIR1, 0, 0, 0))
+ 			die("failure: check ownership");
+ 
++		if (unlinkat(open_tree_fd, FILE1, 0))
++			die("failure: delete");
++
++		if (unlinkat(open_tree_fd, DIR1 "/" FILE1, 0))
++			die("failure: delete");
++
++		if (unlinkat(open_tree_fd, DIR1, AT_REMOVEDIR))
++			die("failure: delete");
++
+ 		exit(EXIT_SUCCESS);
+ 	}
+ 	if (wait_for_pid(pid))
+-- 
+2.27.0
 
-I reiterate the goal: enforce a mandatory policy with
-an out-of-tree LSM (a kernel module is fine), with the
-same guarantees of LSMs integrated in the security
-subsystem.
-
-The root user is not part of the TCB (i.e. is untrusted),
-all the changes that user wants to make must be subject
-of decision by the LSM enforcing the mandatory policy.
-
-I thought about adding support for LSMs from kernel
-modules via a new built-in LSM (called LoadLSM), but
-to me it looks that the bpf LSM is closer to achieve the
-same goal. And in addition, eBPF significantly simplifies
-with its helpers writing an LSM.
-
-> Looks like there is a massive misunderstanding on what bpffs is.
-> It's a file system to pin and get bpf objects with normal
-> file access permissions. Nothing else.
-> Do NOT use it to pin LSM or any other security sensitive bpf programs
-> and then complain that root can unpin them.
-> Yes. Root can and should be able to 'rm -rf' anything in bpffs instance.
-> 
-> > The usability problems are:
-> > - only a fixed amount of links can be pinned;
-> 
-> where do you see this limit?
-
-static int populate_bpffs(struct dentry *parent)
-{
-        struct bpf_preload_info objs[BPF_PRELOAD_LINKS] = {};
-
-#define BPF_PRELOAD_LINKS 2
-
-> > - only links can be pinned, other object types are not supported;
-> 
-> really? progs, maps can be pinned as well.
-
-struct bpf_preload_info {
-        char link_name[16];
-        struct bpf_link *link;
-};
-
-> > - code to pin objects has to be written manually;
-> 
-> huh?
-
-I meant if you want to extend the bpf_preload kernel
-module.
-
-> > Solve the security problems by mounting the bpf filesystem from the
-> kernel,
-> > by preloading authenticated kernel modules (e.g. with
-> module.sig_enforce)
-> > and by pinning objects to that filesystem. This particular filesystem
-> > instance guarantees that desired eBPF programs run until the very end of
-> > the kernel lifecycle, since even root cannot interfere with it.
-> 
-> No.
-
-Ok. How can the goal I stated above be achieved properly?
-
-> I suspect there is huge confusion on what these two "progs.debug"
-> and "maps.debug" files are in a bpffs instance.
-> They are debug files to pretty pring loaded maps and progs for folks who
-> like to use 'cat' to examine the state of the system instead of 'bpftool'.
-> The root can remove these files from bpffs.
-> 
-> There is no reason for kernel module to pin its bpf progs.
-> If you want to develop DIGLIM as a kernel module that uses light skeleton
-> just do:
-> #include <linux/init.h>
-> #include <linux/module.h>
-> #include "diglim.lskel.h"
-> 
-> static struct diglim_bpf *skel;
-> 
-> static int __init load(void)
-> {
->         skel = diglim_bpf__open_and_load();
->         err = diglim_bpf__attach(skel);
-> }
-> /* detach skel in __fini */
-> 
-> It's really that short.
-> 
-> Then you will be able to
-> - insmod diglim.ko -> will load and attach bpf progs.
-> - rmmod diglim -> will detach them.
-
-root can stop the LSM without consulting the security
-policy. The goal of having root untrusted is not achieved.
-
-Maybe there is another way to prevent unloading
-the kernel module. I didn't find it yet. If there was an
-LSM hook called when kernel modules are unloaded,
-that would be sufficient, I guess.
-
-My point was that pinning progs seems to be the
-recommended way of keeping them running. Pinning
-them to unreachable inodes intuitively looked the
-way to go for achieving the stated goal. Or maybe I
-should just increment the reference count of links
-and don't decrement during an rmmod?
-
-If there is something I'm missing, please let me know.
-
-Thanks
-
-Roberto
-
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Li Peng, Zhong Ronghua
