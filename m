@@ -2,23 +2,23 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E7F7A4ED8FB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Mar 2022 13:59:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA1004ED8FD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 31 Mar 2022 13:59:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235464AbiCaMAW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 31 Mar 2022 08:00:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45368 "EHLO
+        id S235481AbiCaMAZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 31 Mar 2022 08:00:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235418AbiCaMAR (ORCPT
+        with ESMTP id S235419AbiCaMAR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Thu, 31 Mar 2022 08:00:17 -0400
-Received: from out30-43.freemail.mail.aliyun.com (out30-43.freemail.mail.aliyun.com [115.124.30.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95C5C208C28;
-        Thu, 31 Mar 2022 04:58:09 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=18;SR=0;TI=SMTPD_---0V8iqyEU_1648727884;
-Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0V8iqyEU_1648727884)
+Received: from out30-44.freemail.mail.aliyun.com (out30-44.freemail.mail.aliyun.com [115.124.30.44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFE4C209A45;
+        Thu, 31 Mar 2022 04:58:10 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R991e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=18;SR=0;TI=SMTPD_---0V8imrrw_1648727885;
+Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0V8imrrw_1648727885)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 31 Mar 2022 19:58:05 +0800
+          Thu, 31 Mar 2022 19:58:06 +0800
 From:   Jeffle Xu <jefflexu@linux.alibaba.com>
 To:     dhowells@redhat.com, linux-cachefs@redhat.com, xiang@kernel.org,
         chao@kernel.org, linux-erofs@lists.ozlabs.org
@@ -29,9 +29,9 @@ Cc:     torvalds@linux-foundation.org, gregkh@linuxfoundation.org,
         eguan@linux.alibaba.com, linux-kernel@vger.kernel.org,
         luodaowen.backend@bytedance.com, tianzichen@kuaishou.com,
         fannaihao@baidu.com
-Subject: [PATCH v7 07/19] erofs: make erofs_map_blocks() generally available
-Date:   Thu, 31 Mar 2022 19:57:41 +0800
-Message-Id: <20220331115753.89431-8-jefflexu@linux.alibaba.com>
+Subject: [PATCH v7 08/19] erofs: add mode checking helper
+Date:   Thu, 31 Mar 2022 19:57:42 +0800
+Message-Id: <20220331115753.89431-9-jefflexu@linux.alibaba.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20220331115753.89431-1-jefflexu@linux.alibaba.com>
 References: <20220331115753.89431-1-jefflexu@linux.alibaba.com>
@@ -48,42 +48,36 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-... so that it can be used in the following introduced fscache mode.
+Until then erofs is exactly blockdev based filesystem.
+
+A new fscache-based mode is going to be introduced for erofs to support
+scenarios where on-demand read semantics is needed, e.g. container
+image distribution. In this case, erofs could be mounted from data blobs
+through fscache.
+
+Add a helper checking which mode erofs works in.
 
 Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
 ---
- fs/erofs/data.c     | 4 ++--
- fs/erofs/internal.h | 2 ++
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ fs/erofs/internal.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/fs/erofs/data.c b/fs/erofs/data.c
-index 780db1e5f4b7..bc22642358ec 100644
---- a/fs/erofs/data.c
-+++ b/fs/erofs/data.c
-@@ -110,8 +110,8 @@ static int erofs_map_blocks_flatmode(struct inode *inode,
- 	return 0;
- }
- 
--static int erofs_map_blocks(struct inode *inode,
--			    struct erofs_map_blocks *map, int flags)
-+int erofs_map_blocks(struct inode *inode,
-+		     struct erofs_map_blocks *map, int flags)
- {
- 	struct super_block *sb = inode->i_sb;
- 	struct erofs_inode *vi = EROFS_I(inode);
 diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-index 5298c4ee277d..fe9564e5091e 100644
+index fe9564e5091e..05a97533b1e9 100644
 --- a/fs/erofs/internal.h
 +++ b/fs/erofs/internal.h
-@@ -486,6 +486,8 @@ void *erofs_read_metabuf(struct erofs_buf *buf, struct super_block *sb,
- int erofs_map_dev(struct super_block *sb, struct erofs_map_dev *dev);
- int erofs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
- 		 u64 start, u64 len);
-+int erofs_map_blocks(struct inode *inode,
-+		     struct erofs_map_blocks *map, int flags);
+@@ -161,6 +161,11 @@ struct erofs_sb_info {
+ #define set_opt(opt, option)	((opt)->mount_opt |= EROFS_MOUNT_##option)
+ #define test_opt(opt, option)	((opt)->mount_opt & EROFS_MOUNT_##option)
  
- /* inode.c */
- static inline unsigned long erofs_inode_hash(erofs_nid_t nid)
++static inline bool erofs_is_fscache_mode(struct super_block *sb)
++{
++	return IS_ENABLED(CONFIG_EROFS_FS_ONDEMAND) && !sb->s_bdev;
++}
++
+ enum {
+ 	EROFS_ZIP_CACHE_DISABLED,
+ 	EROFS_ZIP_CACHE_READAHEAD,
 -- 
 2.27.0
 
