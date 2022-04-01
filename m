@@ -2,71 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A1C654EE70C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Apr 2022 06:09:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A42B34EE7B6
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Apr 2022 07:16:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242891AbiDAEK3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 Apr 2022 00:10:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37712 "EHLO
+        id S245071AbiDAFRg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 Apr 2022 01:17:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45492 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233930AbiDAEK1 (ORCPT
+        with ESMTP id S234653AbiDAFRd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 Apr 2022 00:10:27 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A618211A34;
-        Thu, 31 Mar 2022 21:08:37 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id CE8F61FCFE;
-        Fri,  1 Apr 2022 04:08:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1648786115; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=stAERTlZOXYQ8hqsal36CeupS9MT75dVPrFy0RCK54s=;
-        b=AUd75ipOMfa7Ou4lvyPzy5YPdhfzhXVa5zlb2nrs2HKqOVpgSRCTocADY2TuMBAd6EbvvI
-        5uQeItZX4XQ9mJfPxKyLXXgNpyrIbCU5MEvI+/7vV5hPHKAGH/g6sJqTeFdA0LCCznWgZY
-        WXGDrGF8YJybUHurirpcxQQXcPdDdOI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1648786115;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=stAERTlZOXYQ8hqsal36CeupS9MT75dVPrFy0RCK54s=;
-        b=HyWglv2bDxDqsK3EXqhXiPukE4oiciqPNMZk6YAhyvn9m0yew2BiDM39UDIphPEWCbPZUo
-        xrnirHgg6cBkW0Dw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id B790B13B0C;
-        Fri,  1 Apr 2022 04:08:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 9+9YHMF6RmLmXgAAMHmgww
-        (envelope-from <neilb@suse.de>); Fri, 01 Apr 2022 04:08:33 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 1 Apr 2022 01:17:33 -0400
+Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A899B261337;
+        Thu, 31 Mar 2022 22:15:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+        :In-Reply-To:From:References:To:Subject:MIME-Version:Date:Message-ID:Sender:
+        Reply-To:Cc:Content-ID:Content-Description;
+        bh=XY2BFJBYWtB/i6G9kwzJq4ajFFAn49+17pDObTzzXt4=; b=XVo35RMV8F1tiLiNR/KLocttT8
+        ut72fCLln9RQWuF6OVDURQr60hqoZmN/laAqm8UOwbzTYB2JR39YaheRyGhkiyj61GaMbMwrLIElv
+        2a0eTYJrqwkXFPxX5AQx13fum/0seodnygY+T78SaYkoNJn0PWd87QnITuACgddUW+XoOZhmEYStQ
+        Ka9w1u2Pkx/Srr/4h2uDDnDWT8fwZ9czKLzbuCohEND9FjV0WwMZcvIhhlugqKDZFUsNh2XqU81vo
+        D8JCfixqDz9iCulyOLAuNfjH4iyToQEUHWeYW+3fqies0/3ELneLbnbCShaJZLxrmWQ/gfXrMvUY4
+        kV88Fl4Q==;
+Received: from [2601:1c0:6280:3f0::aa0b]
+        by desiato.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1na9d5-000HWh-Qw; Fri, 01 Apr 2022 05:15:25 +0000
+Message-ID: <048945eb-dd6b-c1b6-1430-973f70b4dda5@infradead.org>
+Date:   Thu, 31 Mar 2022 22:15:15 -0700
 MIME-Version: 1.0
-From:   "NeilBrown" <neilb@suse.de>
-To:     "Al Viro" <viro@zeniv.linux.org.uk>
-Cc:     linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        "LKML" <linux-kernel@vger.kernel.org>,
-        "Jeff Layton" <jlayton@kernel.org>,
-        "David Disseldorp" <ddiss@suse.de>
-Subject: [PATCH v4] VFS: filename_create(): fix incorrect intent.
-In-reply-to: <164877264126.25542.1271530843099472952@noble.neil.brown.name>
-References: <164877264126.25542.1271530843099472952@noble.neil.brown.name>
-Date:   Fri, 01 Apr 2022 15:08:30 +1100
-Message-id: <164878611050.25542.6758961460499392000@noble.neil.brown.name>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: mmotm 2022-03-31-20-37 uploaded
+ (drivers/net/ethernet/fungible/funcore/fun_dev.o)
+Content-Language: en-US
+To:     Andrew Morton <akpm@linux-foundation.org>, broonie@kernel.org,
+        mhocko@suse.cz, sfr@canb.auug.org.au, linux-next@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org,
+        Network Development <netdev@vger.kernel.org>,
+        Dimitris Michailidis <dmichail@fungible.com>
+References: <20220401033845.8359AC2BBE4@smtp.kernel.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20220401033845.8359AC2BBE4@smtp.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -74,101 +58,31 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
-When asked to create a path ending '/', but which is not to be a
-directory (LOOKUP_DIRECTORY not set), filename_create() will never try
-to create the file.  If it doesn't exist, -ENOENT is reported.
 
-However, it still passes LOOKUP_CREATE|LOOKUP_EXCL to the filesystems
-->lookup() function, even though there is no intent to create.  This is
-misleading and can cause incorrect behaviour.
+On 3/31/22 20:38, Andrew Morton wrote:
+> The mm-of-the-moment snapshot 2022-03-31-20-37 has been uploaded to
+> 
+>    https://www.ozlabs.org/~akpm/mmotm/
+> 
+> mmotm-readme.txt says
+> 
+> README for mm-of-the-moment:
+> 
+> https://www.ozlabs.org/~akpm/mmotm/
+> 
+> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> more than once a week.
+> 
+> You will need quilt to apply these patches to the latest Linus release (5.x
+> or 5.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+> https://ozlabs.org/~akpm/mmotm/series
+> 
 
-If you try
-   ln -s foo /path/dir/
+on i386:
 
-where 'dir' is a directory on an NFS filesystem which is not currently
-known in the dcache, this will fail with ENOENT.
-As the name is not in the dcache, nfs_lookup gets called with
-LOOKUP_CREATE|LOOKUP_EXCL and so it returns NULL without performing any
-lookup, with the expectation that a subsequent call to create the
-target will be made, and the lookup can be combined with the creation.
-In the case with a trailing '/' and no LOOKUP_DIRECTORY, that call is never
-made.  Instead filename_create() sees that the dentry is not (yet)
-positive and returns -ENOENT - even though the directory actually
-exists.
+ld: drivers/net/ethernet/fungible/funcore/fun_dev.o: in function `fun_dev_enable':
+(.text+0xe1a): undefined reference to `__udivdi3'
 
-So only set LOOKUP_CREATE|LOOKUP_EXCL if there really is an intent
-to create, and use the absence of these flags to decide if -ENOENT
-should be returned.
 
-Note that filename_parentat() is only interested in LOOKUP_REVAL, so we
-split that out and store it in 'reval_flag'.
-__looku_hash() then gets reval_flag combined with whatever create flags
-were determined to be needed.
-
-Signed-off-by: NeilBrown <neilb@suse.de>
----
- fs/namei.c | 22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
-
-ARG - v3 had a missing semi-colon.  Sorry.
-
-diff --git a/fs/namei.c b/fs/namei.c
-index 3f1829b3ab5b..509657fdf4f5 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3673,18 +3673,14 @@ static struct dentry *filename_create(int dfd, struct=
- filename *name,
- {
- 	struct dentry *dentry =3D ERR_PTR(-EEXIST);
- 	struct qstr last;
-+	bool want_dir =3D lookup_flags & LOOKUP_DIRECTORY;
-+	unsigned int reval_flag =3D lookup_flags & LOOKUP_REVAL;
-+	unsigned int create_flags =3D LOOKUP_CREATE | LOOKUP_EXCL;
- 	int type;
- 	int err2;
- 	int error;
--	bool is_dir =3D (lookup_flags & LOOKUP_DIRECTORY);
-=20
--	/*
--	 * Note that only LOOKUP_REVAL and LOOKUP_DIRECTORY matter here. Any
--	 * other flags passed in are ignored!
--	 */
--	lookup_flags &=3D LOOKUP_REVAL;
--
--	error =3D filename_parentat(dfd, name, lookup_flags, path, &last, &type);
-+	error =3D filename_parentat(dfd, name, reval_flag, path, &last, &type);
- 	if (error)
- 		return ERR_PTR(error);
-=20
-@@ -3698,11 +3694,13 @@ static struct dentry *filename_create(int dfd, struct=
- filename *name,
- 	/* don't fail immediately if it's r/o, at least try to report other errors =
-*/
- 	err2 =3D mnt_want_write(path->mnt);
- 	/*
--	 * Do the final lookup.
-+	 * Do the final lookup.  Suppress 'create' if there is a trailing
-+	 * '/', and a directory wasn't requested.
- 	 */
--	lookup_flags |=3D LOOKUP_CREATE | LOOKUP_EXCL;
-+	if (last.name[last.len] && !want_dir)
-+		create_flags =3D 0;
- 	inode_lock_nested(path->dentry->d_inode, I_MUTEX_PARENT);
--	dentry =3D __lookup_hash(&last, path->dentry, lookup_flags);
-+	dentry =3D __lookup_hash(&last, path->dentry, reval_flag | create_flags);
- 	if (IS_ERR(dentry))
- 		goto unlock;
-=20
-@@ -3716,7 +3714,7 @@ static struct dentry *filename_create(int dfd, struct f=
-ilename *name,
- 	 * all is fine. Let's be bastards - you had / on the end, you've
- 	 * been asking for (non-existent) directory. -ENOENT for you.
- 	 */
--	if (unlikely(!is_dir && last.name[last.len])) {
-+	if (unlikely(!create_flags)) {
- 		error =3D -ENOENT;
- 		goto fail;
- 	}
---=20
-2.35.1
-
+-- 
+~Randy
