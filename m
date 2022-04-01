@@ -2,112 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C7264EFA2A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Apr 2022 20:51:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 221D54EFA32
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Apr 2022 20:55:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351394AbiDASxm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 Apr 2022 14:53:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48838 "EHLO
+        id S1351416AbiDAS4x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 Apr 2022 14:56:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233785AbiDASxl (ORCPT
+        with ESMTP id S236377AbiDAS4w (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 Apr 2022 14:53:41 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A08AD40922;
-        Fri,  1 Apr 2022 11:51:51 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 36E1161501;
-        Fri,  1 Apr 2022 18:51:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DECDAC340EC;
-        Fri,  1 Apr 2022 18:51:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648839110;
-        bh=GE/McCjK3IGVMdGkmFi2pR048UwzrFF4XF6/lfZGdDk=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=kxITNO7glrtSZRHpI/hJmZ0fHEwLkhSAoc2bRa/5YNP6dfmobC2NUUNTA/devjXtS
-         daqtl1y3U941PoOyfIkWtbBs42b9jy2IuVS52qV4ySIDA1CvKE1qwnuJtisorWIWvY
-         dOxDODal3Uxqpt6POaCBsjlyjfL2GS1o7VivnUgIlrZ1Y2vqs9H0kYZ6IO5Hbsd9TR
-         X5C65ph0gp8XHL0wM8SWqtIJG379iaRWBkl+SVll3lrvDHOf3eDg5/eVnLjRjcxkgU
-         Yg8LrV0A9uTVUOku8lLagfWM6i4DSdzEGv+fwJf1Jv1y6iIZO9ZP7ZS9LLnEoOT9Dt
-         L43w3ADPe08wQ==
-Message-ID: <9204ba17ec7eff56d4789c35f99fc6bf6a2edbc7.camel@kernel.org>
-Subject: Re: [PATCH v12 08/54] ceph: add a has_stable_inodes operation for
- ceph
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     ceph-devel@vger.kernel.org, xiubli@redhat.com, idryomov@gmail.com,
-        lhenriques@suse.de, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 01 Apr 2022 14:51:48 -0400
-In-Reply-To: <YkdBfkqlSUzJlNHD@gmail.com>
-References: <20220331153130.41287-1-jlayton@kernel.org>
-         <20220331153130.41287-9-jlayton@kernel.org> <YkYJF07WdQZoucQ5@gmail.com>
-         <0d9311b16cae47f7a1eb417d589adc093d9dc5b9.camel@kernel.org>
-         <YkdBfkqlSUzJlNHD@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.42.4 (3.42.4-1.fc35) 
+        Fri, 1 Apr 2022 14:56:52 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7F9B16E7DD;
+        Fri,  1 Apr 2022 11:55:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=XJOrGSYKrpUl9P2lPia9/j6W+jG3jYIdXlwX/9aolig=; b=KXmbrtA6cve8ospoF0xCATPBnS
+        69TOJVSsG59t6tR9ysHMuyLR7Ov4Fk/D1vAomEge1/lvRnlaJWlxNTlpybDSd2ACZ5Jqm6qlrhUzC
+        nNYaqb/mVMx1ECXF5CT7Kjenfqzqa0IyZ2G0VHgCRkcQ+mPo9tmDV5ri4HW1E1royqOKAdXJxilnK
+        E7LITeQU1sguywYOJfyqP6UkRoOIPTJ29QepPTrOIAv0VX8T3QWDTfIKMEO0Nklueos22YKeOvvxo
+        Bm6hqxZ0fXdtM/L+wo6jLUJYGMji8WpJU5DLp1o1UpdSburjv7Bj2Lq+g4xGxcXTDrtQrfrIRwuH1
+        iIFUqFMg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1naMQF-003UqQ-Vy; Fri, 01 Apr 2022 18:55:00 +0000
+Date:   Fri, 1 Apr 2022 19:54:59 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [GIT PULL] Folio fixes for 5.18
+Message-ID: <YkdKgzil38iyc7rX@casper.infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 2022-04-01 at 18:16 +0000, Eric Biggers wrote:
-> On Fri, Apr 01, 2022 at 06:37:10AM -0400, Jeff Layton wrote:
-> > On Thu, 2022-03-31 at 20:03 +0000, Eric Biggers wrote:
-> > > On Thu, Mar 31, 2022 at 11:30:44AM -0400, Jeff Layton wrote:
-> > > >  static struct fscrypt_operations ceph_fscrypt_ops = {
-> > > >  	.key_prefix		= "ceph:",
-> > > >  	.get_context		= ceph_crypt_get_context,
-> > > >  	.set_context		= ceph_crypt_set_context,
-> > > >  	.empty_dir		= ceph_crypt_empty_dir,
-> > > > +	.has_stable_inodes	= ceph_crypt_has_stable_inodes,
-> > > >  };
-> > > 
-> > > What is the use case for implementing this?  Note the comment in the struct
-> > > definition:
-> > > 
-> > >        /*
-> > >          * Check whether the filesystem's inode numbers and UUID are stable,
-> > >          * meaning that they will never be changed even by offline operations
-> > >          * such as filesystem shrinking and therefore can be used in the
-> > >          * encryption without the possibility of files becoming unreadable.
-> > >          *
-> > >          * Filesystems only need to implement this function if they want to
-> > >          * support the FSCRYPT_POLICY_FLAG_IV_INO_LBLK_{32,64} flags.  These
-> > >          * flags are designed to work around the limitations of UFS and eMMC
-> > >          * inline crypto hardware, and they shouldn't be used in scenarios where
-> > >          * such hardware isn't being used.
-> > >          *
-> > >          * Leaving this NULL is equivalent to always returning false.
-> > >          */
-> > >         bool (*has_stable_inodes)(struct super_block *sb);
-> > > 
-> > > I think you should just leave this NULL for now.
-> > > 
-> > 
-> > Mostly we were just looking for ways to make all of the -g encrypt
-> > xfstests pass. I'll plan to drop this patch and 07/54. I don't see any
-> > need to support legacy modes or stuff that involves special storage hw.
-> 
-> Do generic/592 and generic/602 fail without this patch?  If so, that would be a
-> test bug, since they should be skipped if the filesystem doesn't support
-> FSCRYPT_POLICY_FLAG_IV_INO_LBLK_{64,32}.  I think that
-> _require_encryption_policy_support() should be already taking care of that,
-> though?
-> 
+A mixture of odd changes that didn't quite make it into the original
+pull and fixes for things that did.  Also the readpages changes had to
+wait for the NFS tree to be pulled first.
+
+The following changes since commit d888c83fcec75194a8a48ccd283953bdba7b2550:
+
+  fs: fix fd table size alignment properly (2022-03-29 23:29:18 -0700)
+
+are available in the Git repository at:
+
+  git://git.infradead.org/users/willy/pagecache.git tags/folio-5.18d
+
+for you to fetch changes up to 5a60542c61f3cce6e5dff2a38c8fb08a852a517b:
+
+  btrfs: Remove a use of PAGE_SIZE in btrfs_invalidate_folio() (2022-04-01 14:40:44 -0400)
+
+----------------------------------------------------------------
+Filesystem/VFS changes for 5.18, part two
+
+ - Remove ->readpages infrastructure
+ - Remove AOP_FLAG_CONT_EXPAND
+ - Move read_descriptor_t to networking code
+ - Pass the iocb to generic_perform_write
+ - Minor updates to iomap, btrfs, ext4, f2fs, ntfs
+
+----------------------------------------------------------------
+Christoph Hellwig (2):
+      mm: remove the pages argument to read_pages
+      mm: remove the skip_page argument to read_pages
+
+Matthew Wilcox (Oracle) (13):
+      readahead: Remove read_cache_pages()
+      fs: Remove ->readpages address space operation
+      readahead: Update comments
+      iomap: Simplify is_partially_uptodate a little
+      fs: Remove read_actor_t
+      fs, net: Move read_descriptor_t to net.h
+      fs: Pass an iocb to generic_perform_write()
+      filemap: Remove AOP_FLAG_CONT_EXPAND
+      ext4: Correct ext4_journalled_dirty_folio() conversion
+      f2fs: Correct f2fs_dirty_data_folio() conversion
+      f2fs: Get the superblock from the mapping instead of the page
+      ntfs: Correct mark_ntfs_record_dirty() folio conversion
+      btrfs: Remove a use of PAGE_SIZE in btrfs_invalidate_folio()
+
+ Documentation/filesystems/fsverity.rst |   6 +-
+ Documentation/filesystems/locking.rst  |   6 -
+ Documentation/filesystems/vfs.rst      |  11 --
+ fs/btrfs/inode.c                       |   2 +-
+ fs/btrfs/reflink.c                     |   4 +-
+ fs/buffer.c                            |   3 +-
+ fs/ceph/file.c                         |   2 +-
+ fs/cifs/cifssmb.c                      |   2 +-
+ fs/cifs/inode.c                        |   2 +-
+ fs/crypto/crypto.c                     |   2 +-
+ fs/ext4/file.c                         |   2 +-
+ fs/ext4/inode.c                        |   2 +-
+ fs/ext4/readpage.c                     |   2 +-
+ fs/f2fs/checkpoint.c                   |   2 +-
+ fs/f2fs/data.c                         |   6 +-
+ fs/f2fs/file.c                         |   2 +-
+ fs/f2fs/node.c                         |   4 +-
+ fs/fuse/fuse_i.h                       |   2 +-
+ fs/iomap/buffered-io.c                 |   9 +-
+ fs/nfs/file.c                          |   2 +-
+ fs/ntfs/aops.c                         |   2 +-
+ fs/verity/verify.c                     |   4 +-
+ include/linux/fs.h                     |  31 +----
+ include/linux/fsverity.h               |   2 +-
+ include/linux/net.h                    |  19 +++
+ include/linux/pagemap.h                |   2 -
+ mm/filemap.c                           |  12 +-
+ mm/readahead.c                         | 204 +++++++++------------------------
+ 28 files changed, 113 insertions(+), 236 deletions(-)
 
 
-My mistake. Those are just skipped with that patch dropped.
-
-Thanks,
--- 
-Jeff Layton <jlayton@kernel.org>
