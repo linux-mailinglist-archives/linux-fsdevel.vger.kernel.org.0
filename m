@@ -2,63 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A71D4EE60D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Apr 2022 04:30:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C83AE4EE6AD
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  1 Apr 2022 05:24:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244088AbiDACbx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 31 Mar 2022 22:31:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40720 "EHLO
+        id S244524AbiDADZe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 31 Mar 2022 23:25:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43034 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244079AbiDACbw (ORCPT
+        with ESMTP id S244543AbiDADZ3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 31 Mar 2022 22:31:52 -0400
-Received: from mail-yb1-xb34.google.com (mail-yb1-xb34.google.com [IPv6:2607:f8b0:4864:20::b34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBAF3255AA9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Mar 2022 19:30:03 -0700 (PDT)
-Received: by mail-yb1-xb34.google.com with SMTP id t11so2644511ybi.6
-        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Mar 2022 19:30:03 -0700 (PDT)
+        Thu, 31 Mar 2022 23:25:29 -0400
+Received: from mail-yw1-x1134.google.com (mail-yw1-x1134.google.com [IPv6:2607:f8b0:4864:20::1134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B31692D1F8
+        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Mar 2022 20:23:37 -0700 (PDT)
+Received: by mail-yw1-x1134.google.com with SMTP id 00721157ae682-2e64a6b20eeso19257907b3.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 31 Mar 2022 20:23:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20210112.gappssmtp.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=X8cwDlYjnxCV3IxzT3v3QEWgrMQiVq0GE+zAs4nW3SA=;
-        b=rikRS/GxwOHHVJquulYr9sEM7JfhAU8lhASRbchygaEUbfO7bShrfIZ6xZCSTFMtEw
-         BLu3HJKZYlqMLoI/b3V+GiWUV+i2s2XEIkaJpiCLww0rNWnEcQixmZKMBjB1hGJeg4YQ
-         ZEuUKigI11Bpnqwl/MarLJpenSrxlQSDM57lG2QmYc62fsbsIY8W9AKyY3JMkyG+TEIF
-         QOPxk6ruqlNyOMqRjFC0HdzkD7ApjZ/iOT0Uv39n8GyNgw4TWpSgUXhSylpXyu5MsZcl
-         aUuzKo0mcQJmE0s+oVKcjND1adWDIu3tPv5qyuJEGquxFT2taDugRt1cD4ofBSngJwI+
-         aR+w==
+        bh=VQmEc11aIbx+ZtNr6xhDNIOvDmC310KGZSAfuh7/n4o=;
+        b=U2sd5IBeDZM9I11jk51mO17fAqz78NJ9AkSAFGNgkLDMHoTwPcuzlCX0EJbmd9bb/H
+         fP4CvGZIHZj4HHO5u90gNLl3WMM6i3r468t2r4byAfmm2eMWDnVBZ/zkIq/aCvYjWtKS
+         71Iw8C3q63aPogvu4Rp2N3lhiYPzCqEOTu3zrLJ0tA/wKS3Pzihb34DdzTTMtGW6wwsm
+         9PvekKjKqPVnHzp2WlDmgVJzU4eP0AKp2zaTKnakYKifBbiVSape10kLEbT6je8VLFOF
+         aaNnqaFeXKLP2wDuS8/I2cRd07mwfhzDgGaOmp1+dsRhNRdzxyl+f1jFuiXITaE384Zr
+         Pygg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=X8cwDlYjnxCV3IxzT3v3QEWgrMQiVq0GE+zAs4nW3SA=;
-        b=CQs6xmL8VCpyvStpkAvRSbAadAK2wXoaNp9M9eu6BH+crjTw5WkUkwfLwEOIs2esjj
-         cColjm2gHjWquhyhqYh08kgeL1skz4os9TBjLY0FuIHCdyrwVOYCMQfJ+Qi2uFGoc/49
-         UYD+fr28JfHjVG3DaHOVByBI35VcvwrXubkfHCYpehRusmHDIdFBmk5xNJgi9cH7WyO1
-         Ac3XT0oddCGmqWYDltpivLPeRy8zpnQTw0ndj5es+H4tS+8FDKc6f0eYTxfjBl33XaaD
-         L6/E7CSy9ITg11jl+IP8IP90IVevSM/81eRnyPHO5P+pFB4Zq5QzsfKeP2fCbcCRA8Xc
-         VK2A==
-X-Gm-Message-State: AOAM53207IE00oppx3epwuOo5XMlZOSQtQp9uyRrJQbQvUVM0oVg4/IU
-        eP1bRGsmG+4UhST6RYFWKRT3z8Ov4EM7JTGj2OMbGg==
-X-Google-Smtp-Source: ABdhPJxXWN2EeImfs4Xf8QoUFCxpUijqGlRatJFfKNDTVsQyfVCNS5IVCFQPfVXarhLay5xdzlHUWNlAGqUh6kC8ec8=
-X-Received: by 2002:a25:24d:0:b0:633:6b37:bea1 with SMTP id
- 74-20020a25024d000000b006336b37bea1mr6516276ybc.427.1648780203076; Thu, 31
- Mar 2022 19:30:03 -0700 (PDT)
+        bh=VQmEc11aIbx+ZtNr6xhDNIOvDmC310KGZSAfuh7/n4o=;
+        b=3RF2dWbCMmGElSgJ320bG6lfEhuCS8OhJh0xGH8rlezImucRQv6++/WwXgQcJpRGqs
+         Yt89gCungg0CTq48k9c8fc5B0qXuueu/Q6hB09vUhV9VYE2LXdB5LLvRRJNmsoMUqSb7
+         VSb6jFCR7K7q0BzhH7faCLj6mrYOXH2oOHRUEP2BmOo10/Tgvj4HPWbzqEwGQCaljjzr
+         ERTvyX48ccCL8wuS9Zj1ACJ/lRcaggihsj/AqEqEF7reyNxqKLM8T6Wjs3BqAFOrsXO7
+         nEslrl3wqHSX1JL0zZI8izOgn5d+1iXt9vpPd/aZnIjviMP1W77QcG0ztph7i70BeVFc
+         8D4Q==
+X-Gm-Message-State: AOAM530v8kpmMh/gm0yL9BLs5XRodg4N8siAj6omU9QI3VDOHeN5uLyc
+        PCY8MoleYw9PdjS7ngpN45SgMyZsK3qj7eRXgKwbEg==
+X-Google-Smtp-Source: ABdhPJyfBNiFGOcyCVVnQq3QlsWIGX+YGW+qL+Jm/E/uL9rdKI+a88ky2Pv25kLFMeoOO0k8ts7UGdkHow0gWNpe3hE=
+X-Received: by 2002:a0d:f685:0:b0:2e2:22e6:52d7 with SMTP id
+ g127-20020a0df685000000b002e222e652d7mr8046178ywf.418.1648783416948; Thu, 31
+ Mar 2022 20:23:36 -0700 (PDT)
 MIME-Version: 1.0
 References: <20220228122126.37293-1-songmuchun@bytedance.com>
- <20220228122126.37293-13-songmuchun@bytedance.com> <164869718565.25542.15818719940772238394@noble.neil.brown.name>
- <CAMZfGtUSA9f3k9jF5U-y+NVt8cpmB9_mk1F9-vmm4JOuWFF_Bw@mail.gmail.com>
- <164870069595.25542.17292003658915487357@noble.neil.brown.name>
- <CAMZfGtX9pkWYf40RwDALZLKGDc+Dt2UJA7wZFjTagf0AyWyCiw@mail.gmail.com> <164876616694.25542.14010655277238655246@noble.neil.brown.name>
-In-Reply-To: <164876616694.25542.14010655277238655246@noble.neil.brown.name>
+ <20220228122126.37293-13-songmuchun@bytedance.com> <YkXCWW7ru9Gxyy6G@casper.infradead.org>
+In-Reply-To: <YkXCWW7ru9Gxyy6G@casper.infradead.org>
 From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Fri, 1 Apr 2022 10:29:26 +0800
-Message-ID: <CAMZfGtUMyag7MHxmg7E1_xmyZ7NDPt62e-qXbqa8nJHFC72=3w@mail.gmail.com>
+Date:   Fri, 1 Apr 2022 11:23:01 +0800
+Message-ID: <CAMZfGtXiVDxO1hqiOChR2a_nwK5kUiWafEXML7=YfuPBy0zH5w@mail.gmail.com>
 Subject: Re: [PATCH v6 12/16] mm: list_lru: replace linear array with xarray
-To:     NeilBrown <neilb@suse.de>
+To:     Matthew Wilcox <willy@infradead.org>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
         Johannes Weiner <hannes@cmpxchg.org>,
         Michal Hocko <mhocko@kernel.org>,
         Vladimir Davydov <vdavydov.dev@gmail.com>,
@@ -88,71 +84,80 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 1, 2022 at 6:36 AM NeilBrown <neilb@suse.de> wrote:
+On Thu, Mar 31, 2022 at 11:01 PM Matthew Wilcox <willy@infradead.org> wrote:
 >
-> On Thu, 31 Mar 2022, Muchun Song wrote:
+> On Mon, Feb 28, 2022 at 08:21:22PM +0800, Muchun Song wrote:
+> > @@ -586,27 +508,48 @@ int memcg_list_lru_alloc(struct mem_cgroup *memcg, struct list_lru *lru,
+> >               }
+> >       }
 > >
-> > Thanks for your report.  I knew the reason. It is because the following
-> > patch in this series was missed upstream.  Could you help me test if it
-> > works properly?
+> > +     xas_lock_irqsave(&xas, flags);
+> >       while (i--) {
+> > +             int index = READ_ONCE(table[i].memcg->kmemcg_id);
+> >               struct list_lru_per_memcg *mlru = table[i].mlru;
 > >
-> > [v6,06/16] nfs42: use a specific kmem_cache to allocate nfs4_xattr_entry
+> > +             xas_set(&xas, index);
+> > +retry:
+> > +             if (unlikely(index < 0 || xas_error(&xas) || xas_load(&xas))) {
+> >                       kfree(mlru);
+> > +             } else {
+> > +                     xas_store(&xas, mlru);
+> > +                     if (xas_error(&xas) == -ENOMEM) {
+> > +                             xas_unlock_irqrestore(&xas, flags);
+> > +                             if (xas_nomem(&xas, gfp))
+> > +                                     xas_set_err(&xas, 0);
+> > +                             xas_lock_irqsave(&xas, flags);
+> > +                             /*
+> > +                              * The xas lock has been released, this memcg
+> > +                              * can be reparented before us. So reload
+> > +                              * memcg id. More details see the comments
+> > +                              * in memcg_reparent_list_lrus().
+> > +                              */
+> > +                             index = READ_ONCE(table[i].memcg->kmemcg_id);
+> > +                             if (index < 0)
+> > +                                     xas_set_err(&xas, 0);
+> > +                             else if (!xas_error(&xas) && index != xas.xa_index)
+> > +                                     xas_set(&xas, index);
+> > +                             goto retry;
+> > +                     }
+> > +             }
+> >       }
+> > +     /* xas_nomem() is used to free memory instead of memory allocation. */
+> > +     if (xas.xa_alloc)
+> > +             xas_nomem(&xas, gfp);
+> > +     xas_unlock_irqrestore(&xas, flags);
+> >       kfree(table);
 > >
+> > +     return xas_error(&xas);
+> >  }
 >
-> Thanks for the quick response!  That patch helps, but has a bug.  My
-> testing resulted in refcount underflow errors.
+> This is really unidiomatic.  And so much more complicated than it needs
+> to be.
 >
-> Problem is that kref_init() is called in nfs4_xattr_entry_init_once().
-> This means that it is initialised to '1' the first time an entry is
-> allocated, but it is left as zero the second time.
-> I applied:
-> --- a/fs/nfs/nfs42xattr.c
-> +++ b/fs/nfs/nfs42xattr.c
-> @@ -191,6 +191,7 @@ nfs4_xattr_alloc_entry(const char *name, const void *value,
->         entry = kmem_cache_alloc_lru(nfs4_xattr_entry_cachep, lru, gfp);
->         if (!entry)
->                 return NULL;
-> +       kref_init(&entry->ref);
->         namep = kstrdup_const(name, gfp);
->         if (!namep && name)
->                 goto free_buf;
-> @@ -974,7 +975,6 @@ static void nfs4_xattr_entry_init_once(void *p)
->  {
->         struct nfs4_xattr_entry *entry = p;
+>         while (i--) {
+>                 do {
+>                         int index = READ_ONCE(table[i].memcg->kmemcg_id);
+>                         struct list_lru_per_memcg *mlru = table[i].mlru;
 >
-> -       kref_init(&entry->ref);
->         entry->bucket = NULL;
->         INIT_LIST_HEAD(&entry->lru);
->         INIT_LIST_HEAD(&entry->dispose);
+>                         xas_set(&xas, index);
+>                         xas_lock_irqsave(&xas, flags);
+>                         if (index < 0 || xas_load(&xas))
+>                                 xas_set_err(&xas, -EBUSY);
+>                         xas_store(&xas, mlru);
+>                         if (!xas_error(&xas))
+>                                 break;
+>                         xas_unlock_irqrestore(&xas, flags);
+>                 } while (xas_nomem(&xas, gfp));
 >
-> and now it seems to work.
+>                 if (xas_error(&xas))
+>                         kfree(mlru);
+>         }
 >
-> The complete patch that I applied is below.  I haven't reviewed it, just
-> tested it.
->   Tested-by: NeilBrown <neilb@suse.de>
+>         kfree(table);
+>         return xas_error(&xas);
+>
+> (you might want to mask out the EBUSY error here)
 >
 
-Thanks for your test.  I have looked at the latest code.
-I found the following patch has removed GFP_ACCOUNT
-on allocation.
-
-5c60e89e71f8 ("NFSv4.2: Fix up an invalid combination of memory
-allocation flags")
-
-But this commit forgot to remove SLAB_ACCOUNT when creating
-nfs4_xattr_cache_cachep (I think it is a bug).  So I think the following
-patch could work.
-
-diff --git a/fs/nfs/nfs42xattr.c b/fs/nfs/nfs42xattr.c
-index ad3405c64b9e..e7b34f7e0614 100644
---- a/fs/nfs/nfs42xattr.c
-+++ b/fs/nfs/nfs42xattr.c
-@@ -997,7 +997,7 @@ int __init nfs4_xattr_cache_init(void)
-
-        nfs4_xattr_cache_cachep = kmem_cache_create("nfs4_xattr_cache_cache",
-            sizeof(struct nfs4_xattr_cache), 0,
--           (SLAB_RECLAIM_ACCOUNT|SLAB_MEM_SPREAD|SLAB_ACCOUNT),
-+           (SLAB_RECLAIM_ACCOUNT|SLAB_MEM_SPREAD),
-            nfs4_xattr_cache_init_once);
-        if (nfs4_xattr_cache_cachep == NULL)
-                return -ENOMEM;
+I'm not familiar with xarray APIs.  I'll dig deeper to see if this code works
+properly.  Thanks for your suggestions.
