@@ -2,105 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7001D4F01F0
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Apr 2022 15:04:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59AC24F03B2
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Apr 2022 16:02:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354979AbiDBNGd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 2 Apr 2022 09:06:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38754 "EHLO
+        id S1345509AbiDBOEa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 2 Apr 2022 10:04:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40536 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354973AbiDBNGb (ORCPT
+        with ESMTP id S235277AbiDBOE3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 2 Apr 2022 09:06:31 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 298796548B;
-        Sat,  2 Apr 2022 06:04:38 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4BD606149F;
-        Sat,  2 Apr 2022 13:04:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01528C340EE;
-        Sat,  2 Apr 2022 13:04:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648904677;
-        bh=YeyJTjeUzRFfKXdl59MUSFMYpruHVEiGvG1DK+lObhw=;
-        h=From:To:Cc:Subject:Date:From;
-        b=I3tYUGA3ifeZUHr/DaGOHctUMa9zdkXd4Wuq1SgKCe1WQCMse4gnoV1c+e1ZLgqcv
-         RGlQld5vjelbK482BgcUxulKPLYbeXJdHEHimvhWcsSRbHLkv5kg4Jr0NobhNua9/d
-         Kwzpv36j4ne7zRP7x5O1yZKnpSLgAt18TrVowPglEVy+vVnIqM+T6NZ8RrZQcj9qDH
-         8igJ0nUD6IvDfpDaZcL4X9naHwwts4JS/Cb6ol/Rx7E5+Pbr/6KxlxssdDZMXYLM8m
-         XU9SKj7yR9DdhXJzWt2dLV5Xb6BO12gvMT1H27FXfQ3aEGfDv82e5Lyxf8kqd5uvsB
-         az3EJ+/It8icA==
-From:   Sasha Levin <sashal@kernel.org>
-To:     stable-commits@vger.kernel.org, willy@infradead.org
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Patch "iomap: Fix iomap_invalidatepage tracepoint" has been added to the 5.17-stable tree
-Date:   Sat,  2 Apr 2022 09:04:35 -0400
-Message-Id: <20220402130435.2055998-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.34.1
+        Sat, 2 Apr 2022 10:04:29 -0400
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B360E1877CF;
+        Sat,  2 Apr 2022 07:02:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=icAzEvW9eshnhDDfO4k2r0xUbbSJoCJF2BriJcmZNbs=; b=T2f5fscevlWSEb+/xhKV5fAIlF
+        wpTfSa4ML3NUQn7Iy4w0Cl+WmkLxWaCwKZjCghK+UY3ec6GKTY3Dtju3O3r9RI7nhzCPVIqH+fnlH
+        QvklxrbXyWJspyn/YcMmekOM/Nh1Iybs+P+2WQQqA9Uu7d/FmPo34+BxVaYspiZFaUtJ3Oju5oQVq
+        Oyj9h+sR9w+Xzs0rTsg1ultpfEA5VgXRtfI6yOSAVNj3siEvv67mYnZ8ZGZjSfRzTj5XKzjBGDkl4
+        kEae9d4Ols3FfRk0gXyTpI/v0B67+W74Rnic+6Az+L/pFPMmlnA3SK/+DsJ+r6om94wQMglZ+mLgo
+        sw5jmdlw==;
+Received: from [177.138.180.15] (helo=[192.168.1.60])
+        by fanzine2.igalia.com with esmtpsa 
+        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+        id 1naeKT-0006Wc-Lz; Sat, 02 Apr 2022 16:02:14 +0200
+Message-ID: <f2fe220f-70c9-7b95-a9cb-4709752e4bdc@igalia.com>
+Date:   Sat, 2 Apr 2022 11:01:51 -0300
 MIME-Version: 1.0
-X-Patchwork-Hint: ignore
-X-stable: review
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [RFC 0/1] Add sysctl entry for controlling
+ crash_kexec_post_notifiers
+Content-Language: en-US
+To:     Alejandro Jimenez <alejandro.j.jimenez@oracle.com>, corbet@lwn.net,
+        mcgrof@kernel.org, keescook@chromium.org, yzaikin@google.com,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     akpm@linux-foundation.org, linux@rasmusvillemoes.dk,
+        ebiggers@google.com, peterz@infradead.org, ying.huang@intel.com,
+        mchehab+huawei@kernel.org, Jason@zx2c4.com, daniel@iogearbox.net,
+        robh@kernel.org, wangqing@vivo.com, prestwoj@gmail.com,
+        dsahern@kernel.org, stephen.s.brennan@oracle.com
+References: <20220401202300.12660-1-alejandro.j.jimenez@oracle.com>
+From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+In-Reply-To: <20220401202300.12660-1-alejandro.j.jimenez@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is a note to let you know that I've just added the patch titled
+On 01/04/2022 17:22, Alejandro Jimenez wrote:
+> I noticed that in contrast to other kernel core parameters (e.g. kernel.panic,
+> kernel.panic_on_warn, kernel.panic_print) crash_kexec_post_notifiers is not
+> available as a sysctl tunable. I am aware that because it is a kernel core
+> parameter, there is already an entry under:
+> 
+>   /sys/module/kernel/parameters/crash_kexec_post_notifiers
+> 
+> and that allows us to read/modify it at runtime. However, I thought it should
+> also be available via sysctl, since users that want to read/set this value at
+> runtime might look there first.
+> 
+> I believe there is an ongoing effort to clean up kernel/sysctl.c, but it wasn't
+> clear to me if this entry (and perhaps the other panic related entries too)
+> should be placed on kernel/panic.c. I wanted to verify first that this change
+> would be welcomed before doing additional refactoring work.
+> 
+> I'd appreciate any comments or suggestions.
+> 
+> Thank you,
+> Alejandro
 
-    iomap: Fix iomap_invalidatepage tracepoint
+Hi Alejandro, thanks for you patch. I have a "selfish" concern though,
+I'll expose it here.
 
-to the 5.17-stable tree which can be found at:
-    http://www.kernel.org/git/?p=linux/kernel/git/stable/stable-queue.git;a=summary
+I'm working a panic refactor, in order to split the panic notifiers in
+more lists - good summary of this discussion at [0].
+I'm in the half of the patches, hopefully next 2 weeks I have something
+ready to submit (I'll be out next week).
 
-The filename of the patch is:
-     iomap-fix-iomap_invalidatepage-tracepoint.patch
-and it can be found in the queue-5.17 subdirectory.
+As part of this effort, I plan to have a more fine-grained control of
+this parameter, and it's going to be a sysctl, but not
+"crash_kexec_post_notifiers" - this one should be kept I guess due to
+retro-compatibility, but it'd be a layer on top oh the new one.
+With that said, unless you have urgent needs for this patch to be
+reviewed/merged , I'd like to ask you to wait the series and I can loop
+you there, so you may review/comment and see if it fits your use case.
 
-If you, or anyone else, feels it should not be added to the stable tree,
-please let <stable@vger.kernel.org> know about it.
+Thanks,
 
 
+Guilherme
 
-commit 8f9b67c3d57e4cabb1f03a0e28a806b082cd683e
-Author: Matthew Wilcox (Oracle) <willy@infradead.org>
-Date:   Wed Feb 9 20:21:22 2022 +0000
 
-    iomap: Fix iomap_invalidatepage tracepoint
-    
-    [ Upstream commit 1241ebeca3f94b417751cb3ff62454cefdac75bc ]
-    
-    This tracepoint is defined to take an offset in the file, not an
-    offset in the folio.
-    
-    Fixes: 1ac994525b9d ("iomap: Remove pgoff from tracepoints")
-    Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-    Tested-by: Damien Le Moal <damien.lemoal@opensource.wdc.com>
-    Acked-by: Damien Le Moal <damien.lemoal@opensource.wdc.com>
-    Tested-by: Mike Marshall <hubcap@omnibond.com> # orangefs
-    Tested-by: David Howells <dhowells@redhat.com> # afs
-    Signed-off-by: Sasha Levin <sashal@kernel.org>
-
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 6c51a75d0be6..d020a2e81a24 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -480,7 +480,8 @@ EXPORT_SYMBOL_GPL(iomap_releasepage);
- 
- void iomap_invalidate_folio(struct folio *folio, size_t offset, size_t len)
- {
--	trace_iomap_invalidatepage(folio->mapping->host, offset, len);
-+	trace_iomap_invalidatepage(folio->mapping->host,
-+					folio_pos(folio) + offset, len);
- 
- 	/*
- 	 * If we're invalidating the entire folio, clear the dirty state
+[0] https://lore.kernel.org/lkml/YfPxvzSzDLjO5ldp@alley/
