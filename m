@@ -2,102 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 412384EFFA9
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Apr 2022 10:22:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F75E4EFFD0
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Apr 2022 10:52:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239203AbiDBIYX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 2 Apr 2022 04:24:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41518 "EHLO
+        id S1349511AbiDBItq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 2 Apr 2022 04:49:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239213AbiDBIYV (ORCPT
+        with ESMTP id S230100AbiDBItp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 2 Apr 2022 04:24:21 -0400
-Received: from out199-8.us.a.mail.aliyun.com (out199-8.us.a.mail.aliyun.com [47.90.199.8])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C17F92228C;
-        Sat,  2 Apr 2022 01:22:28 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R961e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=yang.lee@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0V8ygiC._1648887744;
-Received: from localhost(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0V8ygiC._1648887744)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Sat, 02 Apr 2022 16:22:25 +0800
-From:   Yang Li <yang.lee@linux.alibaba.com>
+        Sat, 2 Apr 2022 04:49:45 -0400
+Received: from mail-qt1-x834.google.com (mail-qt1-x834.google.com [IPv6:2607:f8b0:4864:20::834])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A16781AA8F1;
+        Sat,  2 Apr 2022 01:47:54 -0700 (PDT)
+Received: by mail-qt1-x834.google.com with SMTP id 10so3972230qtz.11;
+        Sat, 02 Apr 2022 01:47:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Fsubz5SlxAuGM72VzibPMlOmxFez1kWGrcQSufu8qOM=;
+        b=IsmaR8ABleRm+6oVe1mXzrlLfe3Bw4vh73ABlIp1KaXMC5Nwfxn+4XU94FiEQnS3gI
+         AiINyw49kmdfDR9pziKbUf3jP4S/0Mlk03KDKQUCajsPA/wyw9JBAyg9EqkWQ+0AXKWs
+         MbVNgVM/JU9d/d+N/VAJ0giIHkUX7ry1WaqZpCxy5+dsxxiribXc3jjyrXQCsIAlIHPh
+         yP204MCS660glqc2IV4YfZ8ywvLwkcN9AxhlolvokhB27PlL4iQltqUaC2MjLGZRNssf
+         hS05niVcV0jZT7nPnoC4Ns/hfENGD6CVO2Iv804tMpeSkVlXUeVtjDhIy+gyW5Br10tU
+         B+Eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Fsubz5SlxAuGM72VzibPMlOmxFez1kWGrcQSufu8qOM=;
+        b=kfZ/xxoeHbbaPZlqdJ7YURKcOrt7uQm3VNMBHSwBYR8ELcMwUkPPieAfc4Wd/pET8W
+         yTX4rMGz3W0KbFzfFdX/C5K721o92RfsJHJCE2Y+BMErjNVakdE64WUpcGS4fvVxkHL5
+         DlinNIqdOmiXIFt62jiz+QLmV3zaTOQbQ5dsUyGp2xNCbiejVbW9/XXvOlfeMsYnr/A/
+         JloZ/bgAg4IdiYxZqdThSPLGfastju8i9EccsEy/VbTgH7UcYtB2g3lf1d5lSX4MJVqx
+         8XNVvAcXfjENoZM3Cga3mERx4qtAAnkB2L5PDhfK5APxSqEbKxNWQemOZMx8nOnuC6DZ
+         w87g==
+X-Gm-Message-State: AOAM5336wOPTdQ6GBCs5mN5eL7fcD5l/Qx7vZVBG4+SymTnFquzbc5yf
+        vP4+O0VOU+MOo4YKeOH4UJM=
+X-Google-Smtp-Source: ABdhPJw5YqJ8EEi0P5ochvddolehJ2oQojL0Sdm9i1qI8ofY4WUdoMNRhtyAS63jEvr8ZfyD7WIG5A==
+X-Received: by 2002:ac8:4417:0:b0:2e1:a82c:1a6f with SMTP id j23-20020ac84417000000b002e1a82c1a6fmr11148476qtn.375.1648889273627;
+        Sat, 02 Apr 2022 01:47:53 -0700 (PDT)
+Received: from localhost.localdomain ([193.203.214.57])
+        by smtp.gmail.com with ESMTPSA id x12-20020a05620a12ac00b0067d4bfffc59sm2510938qki.118.2022.04.02.01.47.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 02 Apr 2022 01:47:53 -0700 (PDT)
+From:   cgel.zte@gmail.com
+X-Google-Original-From: lv.ruyi@zte.com.cn
 To:     viro@zeniv.linux.org.uk
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yang Li <yang.lee@linux.alibaba.com>,
-        Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH -next] vfs: fs_context: Fix some kernel-doc comments
-Date:   Sat,  2 Apr 2022 16:22:22 +0800
-Message-Id: <20220402082222.114428-1-yang.lee@linux.alibaba.com>
-X-Mailer: git-send-email 2.20.1.7.g153144c
+Cc:     nathan@kernel.org, ndesaulniers@google.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        llvm@lists.linux.dev, Lv Ruyi <lv.ruyi@zte.com.cn>,
+        Zeal Robot <zealci@zte.com.cn>
+Subject: [PATCH] fs/buffer.c: remove unneeded code
+Date:   Sat,  2 Apr 2022 08:47:46 +0000
+Message-Id: <20220402084746.2413549-1-lv.ruyi@zte.com.cn>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Remove some warnings found by running scripts/kernel-doc,
-which is caused by using 'make W=1'.
+From: Lv Ruyi <lv.ruyi@zte.com.cn>
 
-fs/fs_context.c:202: warning: Function parameter or member 'fc' not
-described in 'generic_parse_monolithic'
-fs/fs_context.c:202: warning: Excess function parameter 'ctx'
-description in 'generic_parse_monolithic'
-fs/fs_context.c:340: warning: expecting prototype for
-vfs_dup_fc_config(). Prototype was for vfs_dup_fs_context() instead
-fs/fs_context.c:386: warning: Function parameter or member 'log' not
-described in 'logfc'
-fs/fs_context.c:386: warning: Function parameter or member 'prefix' not
-described in 'logfc'
-fs/fs_context.c:386: warning: Function parameter or member 'level' not
-described in 'logfc'
-fs/fs_context.c:386: warning: Excess function parameter 'fc' description
-in 'logfc'
+fix clang warning: Value stored to 'err' is never read in line 2944.
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+Reported-by: Zeal Robot <zealci@zte.com.cn>
+Signed-off-by: Lv Ruyi <lv.ruyi@zte.com.cn>
 ---
- fs/fs_context.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ fs/buffer.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/fs/fs_context.c b/fs/fs_context.c
-index 24ce12f0db32..be2bce5fe66d 100644
---- a/fs/fs_context.c
-+++ b/fs/fs_context.c
-@@ -189,7 +189,8 @@ EXPORT_SYMBOL(vfs_parse_fs_string);
+diff --git a/fs/buffer.c b/fs/buffer.c
+index bfc566de36e5..b2045871e81c 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -2941,7 +2941,6 @@ int block_truncate_page(struct address_space *mapping,
+ 		pos += blocksize;
+ 	}
  
- /**
-  * generic_parse_monolithic - Parse key[=val][,key[=val]]* mount data
-- * @ctx: The superblock configuration to fill in.
-+ * @fc: Filesystem context for holding the parameters used in the creation or
-+ *	reconfiguration of a superblock.
-  * @data: The data to parse
-  *
-  * Parse a blob of data that's in key[=val][,key[=val]]* form.  This can be
-@@ -333,7 +334,7 @@ void fc_drop_locked(struct fs_context *fc)
- static void legacy_fs_context_free(struct fs_context *fc);
- 
- /**
-- * vfs_dup_fc_config: Duplicate a filesystem context.
-+ * vfs_dup_fs_context: Duplicate a filesystem context.
-  * @src_fc: The context to copy.
-  */
- struct fs_context *vfs_dup_fs_context(struct fs_context *src_fc)
-@@ -379,7 +380,9 @@ EXPORT_SYMBOL(vfs_dup_fs_context);
- 
- /**
-  * logfc - Log a message to a filesystem context
-- * @fc: The filesystem context to log to.
-+ * @log: The filesystem context to log to.
-+ * @prefix: The log prefix.
-+ * @level: The log level.
-  * @fmt: The format of the buffer.
-  */
- void logfc(struct fc_log *log, const char *prefix, char level, const char *fmt, ...)
+-	err = 0;
+ 	if (!buffer_mapped(bh)) {
+ 		WARN_ON(bh->b_size != blocksize);
+ 		err = get_block(inode, iblock, bh, 0);
 -- 
-2.20.1.7.g153144c
+2.25.1
 
