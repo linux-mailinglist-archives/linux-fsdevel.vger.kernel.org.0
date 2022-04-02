@@ -2,47 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C9114EFD88
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Apr 2022 02:57:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35E2E4EFD8B
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  2 Apr 2022 03:03:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240279AbiDBA7P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 1 Apr 2022 20:59:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59064 "EHLO
+        id S229517AbiDBBFP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 1 Apr 2022 21:05:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229560AbiDBA7O (ORCPT
+        with ESMTP id S229548AbiDBBFO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 1 Apr 2022 20:59:14 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B10D200967;
-        Fri,  1 Apr 2022 17:57:24 -0700 (PDT)
+        Fri, 1 Apr 2022 21:05:14 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B3561140
+        for <linux-fsdevel@vger.kernel.org>; Fri,  1 Apr 2022 18:03:22 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id F2ED260C42;
-        Sat,  2 Apr 2022 00:57:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FCB5C3410F;
-        Sat,  2 Apr 2022 00:57:22 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A254E61C31
+        for <linux-fsdevel@vger.kernel.org>; Sat,  2 Apr 2022 01:03:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 070CFC3411A
+        for <linux-fsdevel@vger.kernel.org>; Sat,  2 Apr 2022 01:03:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1648861042;
-        bh=IFDwE594DCzQsjq0x5FHSp+rW4qKz3sHzkIG9fgrfmE=;
-        h=Date:From:To:Cc:Subject:From;
-        b=WtWvxvjafEr07RE05fbUzMD/naoKD8oMvA61OaHALbc7kwo+VzC9L1Q/eq8cKIsQQ
-         jVb7f8Yfl4RQyqqEf4neU43Kt5IhSv40x5EsOKjuykOyh8x5nGGb/MC8QHrOp35bzI
-         BYsUp/9beLuYdAsF1Y5y7TxW9BD3XArifUmUC18S3cHW7KSyqqqFHrGQ+ujEII9EUW
-         xgM8BlYRn5X4NGrub7RLxaUCK8cI7fS3K6Of8MrVJTFHnObWISL9ghgqTUzsVPbB+H
-         tPNO6U3pUDSRZ95s/jlS+kkfjVUCETp5s/VmX1j62o+iNWaZYRpiwjZ+WViMrjSp8I
-         V6Y1axZFWigAQ==
-Date:   Fri, 1 Apr 2022 17:57:21 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        david@fromorbit.com, linux-kernel@vger.kernel.org,
-        sandeen@sandeen.net, hch@lst.de, fstests <fstests@vger.kernel.org>
-Subject: [GIT PULL] xfs: bug fixes for 5.18-rc1
-Message-ID: <20220402005721.GO27690@magnolia>
+        s=k20201202; t=1648861401;
+        bh=IbghA2dqiYhWXecxL6uJJ7n1Ce58U1f1jXhOOf0w2DA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=qPl5O8et+RIxSlDAMF72fgkZo7E89yXN33hp7R1sFEJRZZh6BeuGyYbe31+nsWmEc
+         lychCTK8y19hzo5zGw/lQUyLA5bXYC+qm8B/x1xWmXJghINq1ML6faKem1ZKnr3Fzc
+         E4cQrFis0nHEZi3xseZkYRPa7elL5NcohH7lQQ7r+2iEzl1P0tMRmgHDZHLzsErNtJ
+         KmjV23iGdMxELFec+B39s1RFnuv2CDg0FC9xCqwdGsndiKVJ79eqpVFPnT1bZab+iP
+         ma3WLnbA+HHVnjUB12xWtiKT9qYsEOKIaAyJ9tPqbEp8SekXaLpN+ybqnhsVVVhbE/
+         ro2upEuXCL9lw==
+Received: by mail-ej1-f51.google.com with SMTP id bh17so9168852ejb.8
+        for <linux-fsdevel@vger.kernel.org>; Fri, 01 Apr 2022 18:03:20 -0700 (PDT)
+X-Gm-Message-State: AOAM532gwKvpYqwP0WOWN2bW9bs9IIz8HTPSnVAFLE/fMhwPQWvQx10H
+        gq0ijq/+gKIZUhb4PkMBmqzam+UKmZ4qiLAjJph2Aw==
+X-Google-Smtp-Source: ABdhPJzC1xfADMf8KlFXGnU+O10yqjuLNdQMD6B8hDbX9K5RYwHPXDVlmYgGwvXzZmJ1+ZDG91LG6SDOelwAvnQH2J4=
+X-Received: by 2002:a17:907:3f9e:b0:6da:842e:873e with SMTP id
+ hr30-20020a1709073f9e00b006da842e873emr2038636ejc.383.1648861399066; Fri, 01
+ Apr 2022 18:03:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20220328175033.2437312-1-roberto.sassu@huawei.com>
+ <20220331022727.ybj4rui4raxmsdpu@MBP-98dd607d3435.dhcp.thefacebook.com>
+ <b9f5995f96da447c851f7c9db8232a9b@huawei.com> <20220401235537.mwziwuo4n53m5cxp@MBP-98dd607d3435.dhcp.thefacebook.com>
+In-Reply-To: <20220401235537.mwziwuo4n53m5cxp@MBP-98dd607d3435.dhcp.thefacebook.com>
+From:   KP Singh <kpsingh@kernel.org>
+Date:   Sat, 2 Apr 2022 03:03:08 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ5QgkucL3HZ4bY5Rcme4ey6U3FW4w2Gz-9rdWq0_RHvgA@mail.gmail.com>
+Message-ID: <CACYkzJ5QgkucL3HZ4bY5Rcme4ey6U3FW4w2Gz-9rdWq0_RHvgA@mail.gmail.com>
+Subject: Re: [PATCH 00/18] bpf: Secure and authenticated preloading of eBPF programs
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     Roberto Sassu <roberto.sassu@huawei.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "ast@kernel.org" <ast@kernel.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        "andrii@kernel.org" <andrii@kernel.org>,
+        "shuah@kernel.org" <shuah@kernel.org>,
+        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
+        "alexandre.torgue@foss.st.com" <alexandre.torgue@foss.st.com>,
+        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -53,111 +85,159 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+On Sat, Apr 2, 2022 at 1:55 AM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+>
+> On Thu, Mar 31, 2022 at 08:25:22AM +0000, Roberto Sassu wrote:
+> > > From: Alexei Starovoitov [mailto:alexei.starovoitov@gmail.com]
+> > > Sent: Thursday, March 31, 2022 4:27 AM
+> > > On Mon, Mar 28, 2022 at 07:50:15PM +0200, Roberto Sassu wrote:
+> > > > eBPF already allows programs to be preloaded and kept running without
+> > > > intervention from user space. There is a dedicated kernel module called
+> > > > bpf_preload, which contains the light skeleton of the iterators_bpf eBPF
+> > > > program. If this module is enabled in the kernel configuration, its loading
+> > > > will be triggered when the bpf filesystem is mounted (unless the module is
+> > > > built-in), and the links of iterators_bpf are pinned in that filesystem
+> > > > (they will appear as the progs.debug and maps.debug files).
+> > > >
+> > > > However, the current mechanism, if used to preload an LSM, would not
+> > > offer
+> > > > the same security guarantees of LSMs integrated in the security
+> > > subsystem.
+> > > > Also, it is not generic enough to be used for preloading arbitrary eBPF
+> > > > programs, unless the bpf_preload code is heavily modified.
+> > > >
+> > > > More specifically, the security problems are:
+> > > > - any program can be pinned to the bpf filesystem without limitations
+> > > >   (unless a MAC mechanism enforces some restrictions);
+> > > > - programs being executed can be terminated at any time by deleting the
+> > > >   pinned objects or unmounting the bpf filesystem.
+> > >
+> > > So many things to untangle here.
+> >
+> > Hi Alexei
+> >
+> > thanks for taking the time to provide such detailed
+> > explanation.
+> >
+> > > The above paragraphs are misleading and incorrect.
+> > > The commit log sounds like there are security issues that this
+> > > patch set is fixing.
+> > > This is not true.
 
-Please pull this second branch containing more bug fixes for XFS for
-5.18-rc1.  This branch fixes multiple problems in the reserve pool
-sizing functions: an incorrect free space calculation, a pointless
-infinite loop, and even more braindamage that could result in the pool
-being overfilled.  The pile of patches from Dave fix myriad races and
-UAF bugs in the log recovery code that much to our mutual surprise
-nobody's tripped over.  Dave also fixed a performance optimization that
-had turned into a regression.
++1 these are not security issues. They are limitations of your MAC policy.
 
-Dave Chinner is taking over as XFS maintainer starting Sunday and
-lasting until 5.19-rc1 is tagged so that I can focus on starting a
-massive design review for the (feature complete after five years) online
-repair feature.  From then on, he and I will be moving XFS to a
-co-maintainership model by trading duties every other release.
+> >
+> > I reiterate the goal: enforce a mandatory policy with
+> > an out-of-tree LSM (a kernel module is fine), with the
+> > same guarantees of LSMs integrated in the security
+> > subsystem.
+>
+> To make it 100% clear:
+> Any in-kernel feature that benefits out-of-tree module will be rejected.
+>
+> > The root user is not part of the TCB (i.e. is untrusted),
+> > all the changes that user wants to make must be subject
+> > of decision by the LSM enforcing the mandatory policy.
+> >
+> > I thought about adding support for LSMs from kernel
+> > modules via a new built-in LSM (called LoadLSM), but
 
-NOTE: I hope very strongly that the other pieces of the (X)FS ecosystem
-(fstests and xfsprogs) will make similar changes to spread their
-maintenance load.
+Kernel modules cannot implement LSMs, this has already been
+proposed on the lists and has been rejected.
 
-As usual, I did a test-merge with upstream master as of a few minutes
-ago.  Stephen Rothwell reported a merge conflict[1] with the "drop async
-cache flushes" patch, which I think you can resolve by deleting
-xfs_flush_bdev_async_endio and xfs_flush_bdev_async no matter what their
-contents.  At least, it worked for me.
+>
+> Such approach will be rejected. See above.
+>
+> > > I suspect there is huge confusion on what these two "progs.debug"
+> > > and "maps.debug" files are in a bpffs instance.
+> > > They are debug files to pretty pring loaded maps and progs for folks who
+> > > like to use 'cat' to examine the state of the system instead of 'bpftool'.
+> > > The root can remove these files from bpffs.
+> > >
+> > > There is no reason for kernel module to pin its bpf progs.
+> > > If you want to develop DIGLIM as a kernel module that uses light skeleton
+> > > just do:
+> > > #include <linux/init.h>
+> > > #include <linux/module.h>
+> > > #include "diglim.lskel.h"
+> > >
+> > > static struct diglim_bpf *skel;
+> > >
+> > > static int __init load(void)
+> > > {
+> > >         skel = diglim_bpf__open_and_load();
+> > >         err = diglim_bpf__attach(skel);
+> > > }
+> > > /* detach skel in __fini */
+> > >
+> > > It's really that short.
+> > >
+> > > Then you will be able to
+> > > - insmod diglim.ko -> will load and attach bpf progs.
+> > > - rmmod diglim -> will detach them.
+> >
+> > root can stop the LSM without consulting the security
+> > policy. The goal of having root untrusted is not achieved.
 
-Please let me know if you encounter any problems.  At worst, we can
-rebase the branch against -rc1 and resubmit.
+Ofcourse, this is an issue, if you are using BPF to define a MAC
+policy, the policy
+needs to be comprehensive to prevent itself from being overridden. This is why
+We have so many LSM hooks. If you think some are missing, let's add them.
 
---D
+This is why implementing a policy is not trivial, but we need to allow
+users to build
+such policies with the help from the kernel and not by using
+out-of-tree modules.
 
-[1] https://lore.kernel.org/linux-xfs/20220331090047.7c6f2e1e@canb.auug.org.au/T/#u
+I do think we can add some more helpers (e.g. for modifying xattrs
+from BPF) that
+would help us build complex policies.
 
-The following changes since commit 01728b44ef1b714756607be0210fbcf60c78efce:
+>
+> Out-of-tree module can do any hack.
+> For example:
+> 1. don't do detach skel in __fini
+>   rmmod will remove the module, but bpf progs will keep running.
+> 2. do module_get(THIS_MODULE) in __init
+>   rmmod will return EBUSY
+>   and have some out-of-band way of dropping mod refcnt.
+> 3. hack into sys_delete_module. if module_name==diglem return EBUSY.
+> 4. add proper LSM hook to delete_module
 
-  xfs: xfs_is_shutdown vs xlog_is_shutdown cage fight (2022-03-20 08:59:50 -0700)
++1 I recommend this (but not from an out of tree module)
 
-are available in the Git repository at:
+>
+> > My point was that pinning progs seems to be the
+> > recommended way of keeping them running.
+>
+> Not quite. bpf_link refcnt is what keeps progs attached.
+> bpffs is mainly used for:
+> - to pass maps/links from one process to another
+> when passing fd is not possible.
+> - to solve the case of crashing user space.
+> The user space agent will restart and will pick up where
+> it's left by reading map, link, prog FDs from bpffs.
+> - pinning bpf iterators that are later used to 'cat' such files.
+> That is what bpf_preload is doing by creating two debug
+> files "maps.debug" and "progs.debug".
+>
+> > Pinning
+> > them to unreachable inodes intuitively looked the
+> > way to go for achieving the stated goal.
+>
+> We can consider inodes in bpffs that are not unlinkable by root
+> in the future, but certainly not for this use case.
 
-  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-5.18-merge-4
+Can this not be already done by adding a BPF_LSM program to the
+inode_unlink LSM hook?
 
-for you to fetch changes up to 919edbadebe17a67193533f531c2920c03e40fa4:
+>
+> > Or maybe I
+> > should just increment the reference count of links
+> > and don't decrement during an rmmod?
+>
+> I suggest to abandon out-of-tree goal.
+> Only then we can help and continue this discussion.
 
-  xfs: drop async cache flushes from CIL commits. (2022-03-29 18:22:02 -0700)
-
-----------------------------------------------------------------
-Bug fixes for 5.18:
-- Fix an incorrect free space calculation in xfs_reserve_blocks that
-  could lead to a request for free blocks that will never succeed.
-- Fix a hang in xfs_reserve_blocks caused by an infinite loop and the
-  incorrect free space calculation.
-- Fix yet a third problem in xfs_reserve_blocks where multiple racing
-  threads can overfill the reserve pool.
-- Fix an accounting error that lead to us reporting reserved space as
-  "available".
-- Fix a race condition during abnormal fs shutdown that could cause UAF
-  problems when memory reclaim and log shutdown try to clean up inodes.
-- Fix a bug where log shutdown can race with unmount to tear down the
-  log, thereby causing UAF errors.
-- Disentangle log and filesystem shutdown to reduce confusion.
-- Fix some confusion in xfs_trans_commit such that a race between
-  transaction commit and filesystem shutdown can cause unlogged dirty
-  inode metadata to be committed, thereby corrupting the filesystem.
-- Remove a performance optimization in the log as it was discovered that
-  certain storage hardware handle async log flushes so poorly as to
-  cause serious performance regressions.  Recent restructuring of other
-  parts of the logging code mean that no performance benefit is seen on
-  hardware that handle it well.
-
-----------------------------------------------------------------
-Darrick J. Wong (6):
-      xfs: document the XFS_ALLOC_AGFL_RESERVE constant
-      xfs: don't include bnobt blocks when reserving free block pool
-      xfs: remove infinite loop when reserving free block pool
-      xfs: always succeed at setting the reserve pool size
-      xfs: fix overfilling of reserve pool
-      xfs: don't report reserved bnobt space as available
-
-Dave Chinner (8):
-      xfs: aborting inodes on shutdown may need buffer lock
-      xfs: shutdown in intent recovery has non-intent items in the AIL
-      xfs: run callbacks before waking waiters in xlog_state_shutdown_callbacks
-      xfs: log shutdown triggers should only shut down the log
-      xfs: xfs_do_force_shutdown needs to block racing shutdowns
-      xfs: xfs_trans_commit() path must check for log shutdown
-      xfs: shutdown during log recovery needs to mark the log shutdown
-      xfs: drop async cache flushes from CIL commits.
-
- fs/xfs/libxfs/xfs_alloc.c |  28 ++++++--
- fs/xfs/libxfs/xfs_alloc.h |   1 -
- fs/xfs/xfs_bio_io.c       |  35 ----------
- fs/xfs/xfs_fsops.c        |  60 ++++++++---------
- fs/xfs/xfs_icache.c       |   2 +-
- fs/xfs/xfs_inode.c        |   2 +-
- fs/xfs/xfs_inode_item.c   | 164 +++++++++++++++++++++++++++++++++++++---------
- fs/xfs/xfs_inode_item.h   |   1 +
- fs/xfs/xfs_linux.h        |   2 -
- fs/xfs/xfs_log.c          | 109 ++++++++++++++++--------------
- fs/xfs/xfs_log_cil.c      |  46 +++++--------
- fs/xfs/xfs_log_priv.h     |  14 +++-
- fs/xfs/xfs_log_recover.c  |  56 ++++++----------
- fs/xfs/xfs_mount.c        |   3 +-
- fs/xfs/xfs_mount.h        |  15 +++++
- fs/xfs/xfs_super.c        |   3 +-
- fs/xfs/xfs_trans.c        |  48 +++++++++-----
- fs/xfs/xfs_trans_ail.c    |   8 +--
- 18 files changed, 348 insertions(+), 249 deletions(-)
++1
