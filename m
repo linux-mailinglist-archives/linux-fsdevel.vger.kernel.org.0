@@ -2,129 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BD13B4F1B48
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Apr 2022 23:19:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39F5B4F1B16
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Apr 2022 23:18:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379576AbiDDVT6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Apr 2022 17:19:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52082 "EHLO
+        id S1379445AbiDDVTj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Apr 2022 17:19:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1380056AbiDDSts (ORCPT
+        with ESMTP id S1380149AbiDDTEi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Apr 2022 14:49:48 -0400
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08CEF30F7F
-        for <linux-fsdevel@vger.kernel.org>; Mon,  4 Apr 2022 11:47:50 -0700 (PDT)
-Received: by mail-lf1-x12a.google.com with SMTP id 5so19053608lfp.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Apr 2022 11:47:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=gE1myDBwoMMXv/sqmeeTtdtKANbFnGzqW1O8e9pC9SM=;
-        b=Yw1ZNqApekZ8AeL0PldgD9VjhOHOy85q4fAqhpYMwGIKsvyjwUgV3+tfYqgx/Hct6n
-         jD5U2/G9z45ZzVG+RK48MiJA/vGEl6/n1PrVgO3E4okVxoNB71vm3JXzkpG1pNnI8dPy
-         LprtMmSxkZJ8rgeVf8rwgvz2/P8kEtbmNFRow=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=gE1myDBwoMMXv/sqmeeTtdtKANbFnGzqW1O8e9pC9SM=;
-        b=4D2yBJxqZHlcIBMeXOlMUrRyGjzrFCZXkV1lwmJve6Ln6Agb+uicWtObVCGG9WDCOR
-         C4slvAtEKJT9Dodxq6UmshYJ77g9lTkC/6Ci1wc/QjNMjOAKHel7PkpM3K3y7MRhlJ+t
-         hSbZnLBPzulw0WNkZpTPB1HZ/5hdPRFrSpNC1Sy/u+H/UgqCenQseNSP4RKL3FVHjkLP
-         weFyHnkpFVXdzq+XxU1mIY9QstGnjdYfq5m+xVwTqWPTDDwjFFHjjirRccfR4N+Rq+z0
-         QZkheF2QUCJWPkLA9GMWlN+A4xbhwoy/2CivgAGas+98HUPPGTiPox5BXXNGv3nUAxUe
-         NESw==
-X-Gm-Message-State: AOAM531HxXd6ZH8MQUMEcQ1VsIqgvhYjWYwQi8iyJqsHlvNLZHv2iiPa
-        ziyIjZ6j3w5mKe/43cyV30uMVm+APKLbcRHH
-X-Google-Smtp-Source: ABdhPJzFDxe6GlkmhLmQ4t3yTzoa5uSVxQkig4De9QIbudE5emu0ovgDVmI6ytUC1WOO7CLyxrs1sg==
-X-Received: by 2002:a05:6512:2292:b0:44a:43b4:4687 with SMTP id f18-20020a056512229200b0044a43b44687mr579611lfu.450.1649098067437;
-        Mon, 04 Apr 2022 11:47:47 -0700 (PDT)
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
-        by smtp.gmail.com with ESMTPSA id k19-20020a056512331300b0044a8470fe29sm1224783lfe.19.2022.04.04.11.47.45
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Apr 2022 11:47:46 -0700 (PDT)
-Received: by mail-lj1-f171.google.com with SMTP id m12so2437884ljp.8
-        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Apr 2022 11:47:45 -0700 (PDT)
-X-Received: by 2002:a2e:a790:0:b0:249:906a:c6f1 with SMTP id
- c16-20020a2ea790000000b00249906ac6f1mr638041ljf.164.1649098065631; Mon, 04
- Apr 2022 11:47:45 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220321161557.495388-1-mic@digikod.net> <202204041130.F649632@keescook>
-In-Reply-To: <202204041130.F649632@keescook>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 4 Apr 2022 11:47:29 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgoC76v-4s0xVr1Xvnx-8xZ8M+LWgyq5qGLA5UBimEXtQ@mail.gmail.com>
-Message-ID: <CAHk-=wgoC76v-4s0xVr1Xvnx-8xZ8M+LWgyq5qGLA5UBimEXtQ@mail.gmail.com>
-Subject: Re: [GIT PULL] Add trusted_for(2) (was O_MAYEXEC)
-To:     Kees Cook <keescook@chromium.org>
-Cc:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
+        Mon, 4 Apr 2022 15:04:38 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D1D033E02
+        for <linux-fsdevel@vger.kernel.org>; Mon,  4 Apr 2022 12:02:41 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: krisman)
+        with ESMTPSA id 110771F43E62
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1649098959;
+        bh=pugn5S7VdO0wPmpW5A+fiykzDKMwMJaojdp9rrctdjg=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=V2Mtng0FH8rgFWWh2tF4JhSoJ82sMvzu+bm6UN+TTwa8/krDm95V/KDoX/sqEkfft
+         QCMMAT1Q4yX5U2de/zN7a1yvJIHiuhLFU2tmHhmyLaAdfQnEfo1aaWAvFRyNP91DEN
+         WRohmDSKIJJlDbImVQuLO+ON8QHV/4Q043N2dKqvIPHrcUYpLGGCew20XIoUaKRGpr
+         hXhRZfxH22JPIpPom7UKwwc/4nMe59mEwp1yqPsktf8HKLHEo8WvW9bvpvRCy9FmCO
+         4urdTe/uKl/M/Szhsr4C3BspCP2djA4H5zxlma7rjlKK5Y44p8BWfWVwvGh3+AjCYu
+         4A/OXHS8m9UeQ==
+From:   Gabriel Krisman Bertazi <krisman@collabora.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Hugh Dickins <hughd@google.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Christian Heimes <christian@python.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        James Morris <jmorris@namei.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Paul Moore <paul@paul-moore.com>,
-        =?UTF-8?Q?Philippe_Tr=C3=A9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Steve Dower <steve.dower@python.org>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=no autolearn_force=no version=3.4.6
+        Amir Goldstein <amir73il@gmail.com>, kernel@collabora.com,
+        Khazhismel Kumykov <khazhy@google.com>,
+        Linux MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH RESEND 2/3] shmem: Introduce /sys/fs/tmpfs support
+Organization: Collabora
+References: <20220404134137.26284-1-krisman@collabora.com>
+        <20220404134137.26284-3-krisman@collabora.com>
+        <Ykr6fmRjMwEhIjtk@zeniv-ca.linux.org.uk>
+Date:   Mon, 04 Apr 2022 15:02:35 -0400
+In-Reply-To: <Ykr6fmRjMwEhIjtk@zeniv-ca.linux.org.uk> (Al Viro's message of
+        "Mon, 4 Apr 2022 14:02:38 +0000")
+Message-ID: <87zgl0y8ms.fsf@collabora.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.2 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 4, 2022 at 11:40 AM Kees Cook <keescook@chromium.org> wrote:
+Al Viro <viro@zeniv.linux.org.uk> writes:
+
+> On Mon, Apr 04, 2022 at 09:41:36AM -0400, Gabriel Krisman Bertazi wrote:
+>> In order to expose tmpfs statistics on sysfs, add the boilerplate code
+>> to create the /sys/fs/tmpfs structure.  As suggested on a previous
+>> review, this uses the minor as the volume directory in /sys/fs/.
+>> 
+>> This takes care of not exposing SB_NOUSER mounts.  I don't think we have
+>> a usecase for showing them and, since they don't appear elsewhere, they
+>> might be confusing to users.
+>> 
+>> Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
 >
-> It looks like this didn't get pulled for -rc1 even though it was sent
-> during the merge window and has been in -next for a while. It would be
-> really nice to get this landed since userspace can't make any forward
-> progress without the kernel support.
+>> +static void shmem_unregister_sysfs(struct super_block *sb)
+>> +{
+>> +	struct shmem_sb_info *sbinfo = SHMEM_SB(sb);
+>> +
+>> +	kobject_del(&sbinfo->s_kobj);
+>> +	kobject_put(&sbinfo->s_kobj);
+>> +	wait_for_completion(&sbinfo->s_kobj_unregister);
+>> +}
+>
+> If you embed kobject into something, you basically commit to
+> having the lifetime rules maintained by that kobject...
 
-Honestly, I need a *lot* better reasoning for random new non-standard
-system calls than this had.
+Hi Viro,
 
-And this kind of "completely random interface with no semantics except
-for random 'future flags'" I will not pull even *with* good reasoning.
+The way I'm doing it seems to be a pattern used by at least Ext4, f2fs
+and Btrfs. Is there a problem with embedding it in the superblock,
+holding a reference and then waiting for completion when umounting the
+fs?
 
-I already told Micka=C3=ABl in private that I wouldn't pull this.
-
-Honestly, we have a *horrible* history with non-standard system calls,
-and that's been true even for well-designed stuff that actually
-matters, that people asked for.
-
-Something  like this, which adds one very special system call and
-where the whole thing is designed for "let's add something random
-later because we don't even know what we want" is right out.
-
-What the system call seems to actually *want* is basically a new flag
-to access() (and faccessat()). One that is very close to what X_OK
-already is.
-
-But that wasn't how it was sold.
-
-So no. No way will this ever get merged, and whoever came up with that
-disgusting "trusted_for()" (for WHAT? WHO TRUSTS? WHY?) should look
-themselves in the mirror.
-
-If you add a new X_OK variant to access(), maybe that could fly.
-
-                Linus
+-- 
+Gabriel Krisman Bertazi
