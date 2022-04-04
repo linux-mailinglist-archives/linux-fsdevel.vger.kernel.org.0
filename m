@@ -2,40 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 513884F0E3E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Apr 2022 06:47:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E11F24F0E49
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Apr 2022 06:47:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377176AbiDDEsD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Apr 2022 00:48:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57648 "EHLO
+        id S1377168AbiDDEsF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Apr 2022 00:48:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377165AbiDDErz (ORCPT
+        with ESMTP id S1377179AbiDDEsD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Apr 2022 00:47:55 -0400
+        Mon, 4 Apr 2022 00:48:03 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9918632EEB;
-        Sun,  3 Apr 2022 21:46:00 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9712733E16;
+        Sun,  3 Apr 2022 21:46:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=IOgh46zGWR57WcPl1hUIMzPNs0Sl23XQjbsmMbaLo6E=; b=09WECZ5O8xcRQhLejUbvXlqWks
-        Z3tzypAuoaKV6eb3B24b4/Gq2SwDNAKxoduB2YmW0ShT3hTel+U8LG6KcyUpdQ0sw97hDO0i+IeQQ
-        PmaUyvA2VRR40d+6HhRBf+HvfF25gaUOSyecG4JnnoBScD55dsqPWXem05QAMsQK1maD/NBo5qmTm
-        Z3kgphMFzNwbyOR+qrnWqT24VGnz9VU5T9OKPDHfzMrv/FSfSLHeCfeI10zdn4SP3RMCeYbXJq5DL
-        o0yMceVety7734v+EBiYH8tpDZ6WaIO3T/cy4fdrVGNPa4IkFSEppbtgjnr7UsceZV6sBwhmr2Jo5
-        mKSw2slA==;
+        bh=Fx7jZlyqZDr9QDjQrJ2uRvV3BbZE9kqhIwHYKFMawl4=; b=ZEXeHoV87MTwY9lNLmMRbdO4FS
+        Wao5bHvC6mHgVfBqZOVulEk7rYS6VPLJxr1fzsmwP+EzSZUIFsp/q3EJnEEzQAWkVSzwxWqsMx8/t
+        YWK2zYJHynIZQmLV3m4QsdknZQosHXX2T+P0wHclNvVzhQzS7Ky0OOFuUIqeaBqF532SaSE25qKQp
+        T8kfnSfkGsbmzvNW0WKKBQtIFTiFZD35YkQuENbGj+jEzQRxxisdKvcjyDRo7yo6ldWZb0umRrDaU
+        025gK4izYFHCTcuYEzIQWUxtHEq7gyziJdJ1XObttw9opUxdl7BieKPUzrHy72oqUYiqNcGM6Bxjn
+        K+C3w59Q==;
 Received: from 089144211060.atnat0020.highway.a1.net ([89.144.211.60] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nbEbF-00D3f3-Vc; Mon, 04 Apr 2022 04:45:58 +0000
+        id 1nbEbI-00D3gI-OY; Mon, 04 Apr 2022 04:46:01 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Josef Bacik <josef@toxicpanda.com>,
         David Sterba <dsterba@suse.com>, Qu Wenruo <wqu@suse.com>
 Cc:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH 08/12] btrfs: pass a block_device to btrfs_bio_clone
-Date:   Mon,  4 Apr 2022 06:45:24 +0200
-Message-Id: <20220404044528.71167-9-hch@lst.de>
+Subject: [PATCH 09/12] btrfs: initialize ->bi_opf and ->bi_private in rbio_add_io_page
+Date:   Mon,  4 Apr 2022 06:45:25 +0200
+Message-Id: <20220404044528.71167-10-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220404044528.71167-1-hch@lst.de>
 References: <20220404044528.71167-1-hch@lst.de>
@@ -52,70 +52,160 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Pass the block_device to bio_alloc_clone instead of setting it later.
+Prepare for further refactoring by moving this initialization to a single
+place.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/btrfs/extent_io.c | 4 ++--
- fs/btrfs/extent_io.h | 2 +-
- fs/btrfs/volumes.c   | 9 +++++----
- 3 files changed, 8 insertions(+), 7 deletions(-)
+ fs/btrfs/raid56.c | 38 ++++++++++++++++++--------------------
+ 1 file changed, 18 insertions(+), 20 deletions(-)
 
-diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-index e4af9a0935ca0..b625e1e865b6d 100644
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@ -3153,13 +3153,13 @@ struct bio *btrfs_bio_alloc(unsigned int nr_iovecs)
- 	return bio;
- }
- 
--struct bio *btrfs_bio_clone(struct bio *bio)
-+struct bio *btrfs_bio_clone(struct block_device *bdev, struct bio *bio)
+diff --git a/fs/btrfs/raid56.c b/fs/btrfs/raid56.c
+index 0e239a4c3b264..2f1f7ca27acd5 100644
+--- a/fs/btrfs/raid56.c
++++ b/fs/btrfs/raid56.c
+@@ -1069,7 +1069,8 @@ static int rbio_add_io_page(struct btrfs_raid_bio *rbio,
+ 			    struct page *page,
+ 			    int stripe_nr,
+ 			    unsigned long page_index,
+-			    unsigned long bio_max_len)
++			    unsigned long bio_max_len,
++			    unsigned int opf)
  {
- 	struct btrfs_bio *bbio;
- 	struct bio *new;
+ 	struct bio *last = bio_list->tail;
+ 	int ret;
+@@ -1106,7 +1107,9 @@ static int rbio_add_io_page(struct btrfs_raid_bio *rbio,
+ 	btrfs_bio(bio)->device = stripe->dev;
+ 	bio->bi_iter.bi_size = 0;
+ 	bio_set_dev(bio, stripe->dev->bdev);
++	bio->bi_opf = opf;
+ 	bio->bi_iter.bi_sector = disk_start >> 9;
++	bio->bi_private = rbio;
  
- 	/* Bio allocation backed by a bioset does not fail */
--	new = bio_alloc_clone(bio->bi_bdev, bio, GFP_NOFS, &btrfs_bioset);
-+	new = bio_alloc_clone(bdev, bio, GFP_NOFS, &btrfs_bioset);
- 	bbio = btrfs_bio(new);
- 	btrfs_bio_init(bbio);
- 	bbio->iter = bio->bi_iter;
-diff --git a/fs/btrfs/extent_io.h b/fs/btrfs/extent_io.h
-index 0399cf8e3c32c..72d86f228c56e 100644
---- a/fs/btrfs/extent_io.h
-+++ b/fs/btrfs/extent_io.h
-@@ -278,7 +278,7 @@ void extent_clear_unlock_delalloc(struct btrfs_inode *inode, u64 start, u64 end,
- 				  struct page *locked_page,
- 				  u32 bits_to_clear, unsigned long page_ops);
- struct bio *btrfs_bio_alloc(unsigned int nr_iovecs);
--struct bio *btrfs_bio_clone(struct bio *bio);
-+struct bio *btrfs_bio_clone(struct block_device *bdev, struct bio *bio);
- struct bio *btrfs_bio_clone_partial(struct bio *orig, u64 offset, u64 size);
+ 	bio_add_page(bio, page, PAGE_SIZE, 0);
+ 	bio_list_add(bio_list, bio);
+@@ -1275,7 +1278,8 @@ static noinline void finish_rmw(struct btrfs_raid_bio *rbio)
+ 			}
  
- void end_extent_writepage(struct page *page, int err, u64 start, u64 end);
-diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-index 5b72038d1530a..540b1f7f82449 100644
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -6831,12 +6831,13 @@ blk_status_t btrfs_map_bio(struct btrfs_fs_info *fs_info, struct bio *bio,
- 			continue;
+ 			ret = rbio_add_io_page(rbio, &bio_list,
+-				       page, stripe, pagenr, rbio->stripe_len);
++				       page, stripe, pagenr, rbio->stripe_len,
++				       REQ_OP_WRITE);
+ 			if (ret)
+ 				goto cleanup;
  		}
+@@ -1300,7 +1304,8 @@ static noinline void finish_rmw(struct btrfs_raid_bio *rbio)
  
--		if (dev_nr < total_devs - 1)
--			bio = btrfs_bio_clone(first_bio);
--		else
-+		if (dev_nr < total_devs - 1) {
-+			bio = btrfs_bio_clone(dev->bdev, first_bio);
-+		} else {
- 			bio = first_bio;
-+			bio_set_dev(bio, dev->bdev);
-+		}
+ 			ret = rbio_add_io_page(rbio, &bio_list, page,
+ 					       rbio->bioc->tgtdev_map[stripe],
+-					       pagenr, rbio->stripe_len);
++					       pagenr, rbio->stripe_len,
++					       REQ_OP_WRITE);
+ 			if (ret)
+ 				goto cleanup;
+ 		}
+@@ -1311,9 +1316,7 @@ static noinline void finish_rmw(struct btrfs_raid_bio *rbio)
+ 	BUG_ON(atomic_read(&rbio->stripes_pending) == 0);
  
--		bio_set_dev(bio, dev->bdev);
- 		submit_stripe_bio(bioc, bio, bioc->stripes[dev_nr].physical, dev);
+ 	while ((bio = bio_list_pop(&bio_list))) {
+-		bio->bi_private = rbio;
+ 		bio->bi_end_io = raid_write_end_io;
+-		bio->bi_opf = REQ_OP_WRITE;
+ 
+ 		submit_bio(bio);
  	}
- 	btrfs_bio_counter_dec(fs_info);
+@@ -1517,7 +1520,8 @@ static int raid56_rmw_stripe(struct btrfs_raid_bio *rbio)
+ 				continue;
+ 
+ 			ret = rbio_add_io_page(rbio, &bio_list, page,
+-				       stripe, pagenr, rbio->stripe_len);
++				       stripe, pagenr, rbio->stripe_len,
++				       REQ_OP_READ);
+ 			if (ret)
+ 				goto cleanup;
+ 		}
+@@ -1540,9 +1544,7 @@ static int raid56_rmw_stripe(struct btrfs_raid_bio *rbio)
+ 	 */
+ 	atomic_set(&rbio->stripes_pending, bios_to_read);
+ 	while ((bio = bio_list_pop(&bio_list))) {
+-		bio->bi_private = rbio;
+ 		bio->bi_end_io = raid_rmw_end_io;
+-		bio->bi_opf = REQ_OP_READ;
+ 
+ 		btrfs_bio_wq_end_io(rbio->bioc->fs_info, bio, BTRFS_WQ_ENDIO_RAID56);
+ 
+@@ -2059,7 +2061,8 @@ static int __raid56_parity_recover(struct btrfs_raid_bio *rbio)
+ 
+ 			ret = rbio_add_io_page(rbio, &bio_list,
+ 				       rbio_stripe_page(rbio, stripe, pagenr),
+-				       stripe, pagenr, rbio->stripe_len);
++				       stripe, pagenr, rbio->stripe_len,
++				       REQ_OP_READ);
+ 			if (ret < 0)
+ 				goto cleanup;
+ 		}
+@@ -2086,9 +2089,7 @@ static int __raid56_parity_recover(struct btrfs_raid_bio *rbio)
+ 	 */
+ 	atomic_set(&rbio->stripes_pending, bios_to_read);
+ 	while ((bio = bio_list_pop(&bio_list))) {
+-		bio->bi_private = rbio;
+ 		bio->bi_end_io = raid_recover_end_io;
+-		bio->bi_opf = REQ_OP_READ;
+ 
+ 		btrfs_bio_wq_end_io(rbio->bioc->fs_info, bio, BTRFS_WQ_ENDIO_RAID56);
+ 
+@@ -2419,8 +2420,8 @@ static noinline void finish_parity_scrub(struct btrfs_raid_bio *rbio,
+ 		struct page *page;
+ 
+ 		page = rbio_stripe_page(rbio, rbio->scrubp, pagenr);
+-		ret = rbio_add_io_page(rbio, &bio_list,
+-			       page, rbio->scrubp, pagenr, rbio->stripe_len);
++		ret = rbio_add_io_page(rbio, &bio_list, page, rbio->scrubp,
++				       pagenr, rbio->stripe_len, REQ_OP_WRITE);
+ 		if (ret)
+ 			goto cleanup;
+ 	}
+@@ -2434,7 +2435,7 @@ static noinline void finish_parity_scrub(struct btrfs_raid_bio *rbio,
+ 		page = rbio_stripe_page(rbio, rbio->scrubp, pagenr);
+ 		ret = rbio_add_io_page(rbio, &bio_list, page,
+ 				       bioc->tgtdev_map[rbio->scrubp],
+-				       pagenr, rbio->stripe_len);
++				       pagenr, rbio->stripe_len, REQ_OP_WRITE);
+ 		if (ret)
+ 			goto cleanup;
+ 	}
+@@ -2450,9 +2451,7 @@ static noinline void finish_parity_scrub(struct btrfs_raid_bio *rbio,
+ 	atomic_set(&rbio->stripes_pending, nr_data);
+ 
+ 	while ((bio = bio_list_pop(&bio_list))) {
+-		bio->bi_private = rbio;
+ 		bio->bi_end_io = raid_write_end_io;
+-		bio->bi_opf = REQ_OP_WRITE;
+ 
+ 		submit_bio(bio);
+ 	}
+@@ -2604,8 +2603,9 @@ static void raid56_parity_scrub_stripe(struct btrfs_raid_bio *rbio)
+ 			if (PageUptodate(page))
+ 				continue;
+ 
+-			ret = rbio_add_io_page(rbio, &bio_list, page,
+-				       stripe, pagenr, rbio->stripe_len);
++			ret = rbio_add_io_page(rbio, &bio_list, page, stripe,
++					       pagenr, rbio->stripe_len,
++					       REQ_OP_READ);
+ 			if (ret)
+ 				goto cleanup;
+ 		}
+@@ -2628,9 +2628,7 @@ static void raid56_parity_scrub_stripe(struct btrfs_raid_bio *rbio)
+ 	 */
+ 	atomic_set(&rbio->stripes_pending, bios_to_read);
+ 	while ((bio = bio_list_pop(&bio_list))) {
+-		bio->bi_private = rbio;
+ 		bio->bi_end_io = raid56_parity_scrub_end_io;
+-		bio->bi_opf = REQ_OP_READ;
+ 
+ 		btrfs_bio_wq_end_io(rbio->bioc->fs_info, bio, BTRFS_WQ_ENDIO_RAID56);
+ 
 -- 
 2.30.2
 
