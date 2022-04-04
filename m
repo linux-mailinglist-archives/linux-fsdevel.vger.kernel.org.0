@@ -2,79 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 761BE4F0E43
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Apr 2022 06:47:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 683CF4F0E65
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Apr 2022 06:53:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377188AbiDDEsT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Apr 2022 00:48:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58776 "EHLO
+        id S1377204AbiDDEyg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Apr 2022 00:54:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346224AbiDDEsJ (ORCPT
+        with ESMTP id S1377287AbiDDEyU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Apr 2022 00:48:09 -0400
+        Mon, 4 Apr 2022 00:54:20 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65ADE33885;
-        Sun,  3 Apr 2022 21:46:14 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99F153B299;
+        Sun,  3 Apr 2022 21:52:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=3d6WnvoTZ+PsVqRzozji9/pP+F953nsqfC/6WxafsSE=; b=eMwL0HHrx1kwPC5Ct7a5jq0Grn
-        ZaXalrm7Y0Ipk1Wek5GvL7AqbNlA7GoqWOf/KV11h80HIrXstgmX69vMm9xVk5uFQaj0twnisZFAa
-        /baeA1irvRUMCRkV7YDUR/cUsv9uMpZvDC8vMGeRwdNdfj8BNBtxv3VcCWrzvgDrfYeNTZKnJdw7U
-        fkhVKN9kvzAWw4V4EI2CObpNvS+nLDb41IHakS5Siqe440r34AVi86QnSEkiyCK+k64QZON7wWh3x
-        bCmDxnFmo3DuGHUnGZM+g8IbW2jp2ircyYkziJyUEZu9pSLDaI6jmkE2vKGCAanU7U3pTbRDekQii
-        ol5zi1iw==;
-Received: from 089144211060.atnat0020.highway.a1.net ([89.144.211.60] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nbEbR-00D3lZ-V4; Mon, 04 Apr 2022 04:46:10 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, Qu Wenruo <wqu@suse.com>
-Cc:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH 12/12] btrfs: stop using the btrfs_bio saved iter in index_rbio_pages
-Date:   Mon,  4 Apr 2022 06:45:28 +0200
-Message-Id: <20220404044528.71167-13-hch@lst.de>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20220404044528.71167-1-hch@lst.de>
-References: <20220404044528.71167-1-hch@lst.de>
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=b5rvgKHQBrxUjxrXC1n/6ZmRlGY5pOrxtPmT3z1PEjc=; b=SlZcwtx7AAAee889K+zl49LOb9
+        oV6PrhY+KekPy01nguN00WX7mhZwuYAm38m0y6xm2BW33Wz8fASnXyAdwPNQt5wbQdvfLdIhjZmdc
+        wmMfGoqckxzjpwJVo7iY9EIHrDYxEpJug//AV/69EiHp07dx72GjnnAl5l6DRHH01+lxPTBfjLItY
+        8h5XY1wF2I4AbmO2ndxmfnQkKtWWJL/9VGeG2SgFOuBkqsUzz82z4VyeKRaYBu0nP35uRzZffOFpq
+        i/4soywdERhe1oWmrVjnNpdJ7QQB1+hsg95r5wpBH1I/sJyngnq8q2Hwwx0mHUoo80mTAR34+RKr6
+        1Ku5c33Q==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nbEh8-00D5Dg-TI; Mon, 04 Apr 2022 04:52:02 +0000
+Date:   Sun, 3 Apr 2022 21:52:02 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
+Cc:     Namjae Jeon <linkinjeon@kernel.org>,
+        "sj1557.seo@samsung.com" <sj1557.seo@samsung.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "Andy.Wu@sony.com" <Andy.Wu@sony.com>,
+        "Wataru.Aoyama@sony.com" <Wataru.Aoyama@sony.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH v2 1/2] block: add sync_blockdev_range()
+Message-ID: <Ykp5cmdP3nV8XTFj@infradead.org>
+References: <HK2PR04MB38914CCBCA891B82060B659281E39@HK2PR04MB3891.apcprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <HK2PR04MB38914CCBCA891B82060B659281E39@HK2PR04MB3891.apcprd04.prod.outlook.com>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The bios added to ->bio_list are the original bios fed into
-btrfs_map_bio, which are never advanced.  Just use the iter in the
-bio itself.
+On Sat, Apr 02, 2022 at 03:28:00AM +0000, Yuezhang.Mo@sony.com wrote:
+> sync_blockdev_range() is to support syncing multiple sectors
+> with as few block device requests as possible, it is helpful
+> to make the block device to give full play to its performance.
+> 
+> Signed-off-by: Yuezhang Mo <Yuezhang.Mo@sony.com>
+> Suggested-by: Christoph Hellwig <hch@infradead.org>
+> Reviewed-by: Andy Wu <Andy.Wu@sony.com>
+> Reviewed-by: Aoyama Wataru <wataru.aoyama@sony.com>
+> cc: Jens Axboe <axboe@kernel.dk>
+> ---
+>  block/bdev.c           | 10 ++++++++++
+>  include/linux/blkdev.h |  6 ++++++
+>  2 files changed, 16 insertions(+)
+> 
+> diff --git a/block/bdev.c b/block/bdev.c
+> index 102837a37051..57043e4f3322 100644
+> --- a/block/bdev.c
+> +++ b/block/bdev.c
+> @@ -200,6 +200,16 @@ int sync_blockdev(struct block_device *bdev)
+>  }
+>  EXPORT_SYMBOL(sync_blockdev);
+>  
+> +int sync_blockdev_range(struct block_device *bdev, loff_t lstart, loff_t lend)
+> +{
+> +	if (!bdev)
+> +		return 0;
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- fs/btrfs/raid56.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/fs/btrfs/raid56.c b/fs/btrfs/raid56.c
-index a0d65f4b2b258..0c96e91e9ee03 100644
---- a/fs/btrfs/raid56.c
-+++ b/fs/btrfs/raid56.c
-@@ -1155,9 +1155,6 @@ static void index_rbio_pages(struct btrfs_raid_bio *rbio)
- 		stripe_offset = start - rbio->bioc->raid_map[0];
- 		page_index = stripe_offset >> PAGE_SHIFT;
- 
--		if (bio_flagged(bio, BIO_CLONED))
--			bio->bi_iter = btrfs_bio(bio)->iter;
--
- 		bio_for_each_segment(bvec, bio, iter) {
- 			rbio->bio_pages[page_index + i] = bvec.bv_page;
- 			i++;
--- 
-2.30.2
-
+This check isn't really needed, and I don't think we need a
+!CONFIG_BLOCK stub for this either.
