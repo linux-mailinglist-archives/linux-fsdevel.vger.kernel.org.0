@@ -2,123 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AA7D4F135F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Apr 2022 12:53:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B39DE4F1387
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Apr 2022 12:58:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1358571AbiDDKzG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Apr 2022 06:55:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57774 "EHLO
+        id S1358950AbiDDLA1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Apr 2022 07:00:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40526 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358561AbiDDKzE (ORCPT
+        with ESMTP id S1358911AbiDDLA0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Apr 2022 06:55:04 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 288BD3CFED;
-        Mon,  4 Apr 2022 03:53:09 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B846B60AE8;
-        Mon,  4 Apr 2022 10:53:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEA4CC34110;
-        Mon,  4 Apr 2022 10:53:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649069588;
-        bh=DxTthHQCW6asftQXjQGow73DCTtmUV2NMx0blS7OttM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KO4XTTGUiNiUJPuDvhahZ+xPDpp8AWdRuz9QFPnTkzN166mdCocCUhkJkXuJptv2p
-         qlTiElBVuM9rZuGVpb9//WEcSjjJHR5MuxwGDgXJeo4shmqT+864SrAePB/vDcnuZQ
-         936yJiXFZktHtS1mQky66QazsPpMNvoSfA+38Ezc5C1TYvUDgaUyvPQco63Vb5gVFm
-         JXzZsG+QFjFHrzQF2pck+r7Eqg7mt9HGIfK6ow0Ui4JSG+4jt9srQ1DT4ccSxhCF6r
-         wh16gjrqsA8sXsHKhjDbKxGzsEwksY/rDHupe9oVW9PHWYGkC+KCsm68zKCC+3M2zZ
-         TbtBBRmqCZ+KA==
-From:   Christian Brauner <brauner@kernel.org>
-To:     Amir Goldstein <amir73il@gmail.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Giuseppe Scrivano <gscrivan@redhat.com>,
-        Rodrigo Campos Catelin <rodrigo@sdfg.com.ar>,
-        Seth Forshee <sforshee@digitalocean.com>,
-        Luca Bocassi <luca.boccassi@microsoft.com>,
-        Lennart Poettering <mzxreary@0pointer.de>,
-        =?UTF-8?q?St=C3=A9phane=20Graber?= <stgraber@ubuntu.com>,
-        stable@vger.kernel.org
-Subject: [PATCH v4 02/19] exportfs: support idmapped mounts
-Date:   Mon,  4 Apr 2022 12:51:41 +0200
-Message-Id: <20220404105159.1567595-3-brauner@kernel.org>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <20220404105159.1567595-1-brauner@kernel.org>
-References: <20220404105159.1567595-1-brauner@kernel.org>
+        Mon, 4 Apr 2022 07:00:26 -0400
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38BCCC24;
+        Mon,  4 Apr 2022 03:58:30 -0700 (PDT)
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id D52F21C0B66; Mon,  4 Apr 2022 12:58:28 +0200 (CEST)
+Date:   Mon, 4 Apr 2022 12:58:28 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Willy Tarreau <w@1wt.eu>
+Cc:     Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        reiserfs-devel@vger.kernel.org
+Subject: Re: Is it time to remove reiserfs?
+Message-ID: <20220404105828.GA7162@duo.ucw.cz>
+References: <YhIwUEpymVzmytdp@casper.infradead.org>
+ <20220222100408.cyrdjsv5eun5pzij@quack3.lan>
+ <20220402105454.GA16346@amd>
+ <20220404085535.g2qr4s7itfunlrqb@quack3.lan>
+ <20220404100732.GB1476@duo.ucw.cz>
+ <20220404101802.GB8279@1wt.eu>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1950; h=from:subject; bh=DxTthHQCW6asftQXjQGow73DCTtmUV2NMx0blS7OttM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSR5nT30tu6CB7eLT3D0/wUcTAesIq2t5ZjmLwzP3Vof0elt 2cbYUcrCIMbFICumyOLQbhIut5ynYrNRpgbMHFYmkCEMXJwCMJEj6Qz/81t2rvw8d/+Kaa4Jm7a7Xw qwNV3SYbZrW0bXBt6kU1emX2NkOLlL7+XJlus3hRVTFB99nf+xu2ebbvfU3iqPZevOnTy2hRcA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="SLDf9lqlvOQaIe6s"
+Content-Disposition: inline
+In-Reply-To: <20220404101802.GB8279@1wt.eu>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Make the two locations where exportfs helpers check permission to lookup
-a given inode idmapped mount aware by switching it to the lookup_one()
-helper. This is a bugfix for the open_by_handle_at() system call which
-doesn't take idmapped mounts into account currently. It's not tied to a
-specific commit so we'll just Cc stable.
 
-In addition this is required to support idmapped base layers in overlay.
-The overlay filesystem uses exportfs to encode and decode file handles
-for its index=on mount option and when nfs_export=on.
+--SLDf9lqlvOQaIe6s
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Cc: <stable@vger.kernel.org>
-Cc: <linux-fsdevel@vger.kernel.org>
-Tested-by: Giuseppe Scrivano <gscrivan@redhat.com>
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
----
-/* v2 */
-unchanged
+Hi!
 
-/* v3 */
-unchanged
+> > But I believe userbase is bigger than you think and it will not be
+> > possible to remove reiserfs anytime soon.
+>=20
+> I was about to say the opposite until I noticed that one of my main
+> dev machine has its kernel git dir on it because it's an old FS from
+> a previous instance of this machine before an upgrade and it turns out
+> that this FS still had lots of available space to store git trees
+> :-/
 
-/* v4 */
-unchanged
----
- fs/exportfs/expfs.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+:-).
 
-diff --git a/fs/exportfs/expfs.c b/fs/exportfs/expfs.c
-index 0106eba46d5a..3ef80d000e13 100644
---- a/fs/exportfs/expfs.c
-+++ b/fs/exportfs/expfs.c
-@@ -145,7 +145,7 @@ static struct dentry *reconnect_one(struct vfsmount *mnt,
- 	if (err)
- 		goto out_err;
- 	dprintk("%s: found name: %s\n", __func__, nbuf);
--	tmp = lookup_one_len_unlocked(nbuf, parent, strlen(nbuf));
-+	tmp = lookup_one_unlocked(mnt_user_ns(mnt), nbuf, parent, strlen(nbuf));
- 	if (IS_ERR(tmp)) {
- 		dprintk("%s: lookup failed: %d\n", __func__, PTR_ERR(tmp));
- 		err = PTR_ERR(tmp);
-@@ -525,7 +525,8 @@ exportfs_decode_fh_raw(struct vfsmount *mnt, struct fid *fid, int fh_len,
- 		}
- 
- 		inode_lock(target_dir->d_inode);
--		nresult = lookup_one_len(nbuf, target_dir, strlen(nbuf));
-+		nresult = lookup_one(mnt_user_ns(mnt), nbuf,
-+				     target_dir, strlen(nbuf));
- 		if (!IS_ERR(nresult)) {
- 			if (unlikely(nresult->d_inode != result->d_inode)) {
- 				dput(nresult);
--- 
-2.32.0
+> So maybe you're right and there are still a bit more than expected out
+> there. However I really think that most users who still have one are in
+> the same situation as I am, they're not aware of it. So aside big fat
+> warnings at mount time (possibly with an extra delay), there's nothing
+> that will make that situation change.
+>=20
+> At the very least disabling it by default in Kconfig and in distros
+> should be effective. I really don't think that there are still users
+> who regularly update their system and who have it on their rootfs, but
+> still having data on it, yes, possibly. The earlier they're warned,
+> the better.
 
+I guess we should start by making sure that distributions don't use it
+by default. Big fat warning + delay is a bit harsh for that, talking
+to them should be enough at this point :-).
+
+Someone start with Arch Linux ARM.
+								Pavel
+--=20
+People of Russia, stop Putin before his war on Ukraine escalates.
+
+--SLDf9lqlvOQaIe6s
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCYkrPVAAKCRAw5/Bqldv6
+8g5wAKCDB3UaDOu3F7C3rsVOlJEEkyYU7wCgtmRSLlZxl4muNPrcFe98v6ML2GU=
+=akzK
+-----END PGP SIGNATURE-----
+
+--SLDf9lqlvOQaIe6s--
