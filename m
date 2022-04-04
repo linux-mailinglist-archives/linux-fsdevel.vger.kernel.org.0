@@ -2,40 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A6424F0E39
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Apr 2022 06:45:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BDD14F0E4C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Apr 2022 06:47:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377146AbiDDEro (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Apr 2022 00:47:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56592 "EHLO
+        id S1377150AbiDDErv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Apr 2022 00:47:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56800 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377142AbiDDErm (ORCPT
+        with ESMTP id S1377142AbiDDErp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Apr 2022 00:47:42 -0400
+        Mon, 4 Apr 2022 00:47:45 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4031C32EED;
-        Sun,  3 Apr 2022 21:45:47 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17D4432EEB;
+        Sun,  3 Apr 2022 21:45:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=g+ZMzme6kz75KUekAyhRpwVmQW7rPPcw33xPjfVCTbI=; b=NkMbvHdoZ7ratUYipZwWnsv6My
-        Qd/asoCL1l+cPB0pi1Q2kxTwCepjAArGhsKav/ZnExT/vRzQ/ZGAbH8UdijLHnbtFxPsuDlp3r+pQ
-        qBJA0043UCzVLBZGjQux4Qe9bMJqzF5jLhEdNegXg3RQsjBI9nxgHOzXT83EXyMWpV/yKZZJUFWUz
-        QeU7vC67I6LN1A+On80zES1JyUsNDk4bvCkcKdjjMAfxhHwHXL84Xz9xmvx/rSKpHdm7NxLvJfrBm
-        NBIzW7P0es7sdUlzP44a+R7L7/xPeGKI3iJzLm78x5llbFMjP6AaOuu0aO16XDnI7+vYGI8w4BSO3
-        THWFJazw==;
+        bh=xuD6+ubfjLGD77PtcNObyK7VoDf8VbASzFZro4tX/2s=; b=gaJ/dGp2R0JAKAMKYAyQTbMmxI
+        zlTSh4/oN2VOERx1izwhmLjo9FMCILJwK/mTG648BkrjCEydjqU0jRBvkLnO3pFhUVA5I2kt/BJaz
+        gxj4rIT6MhblQ3Z18rvHJIemRgDJE8WoolZ45q2Y53z1yAy7dVU2GYQ6Tym8caqoOtDMVXCk4XQho
+        cE5RGOF7FfoDM7TuiAeNuf6anwilUF+dMxLU+k97klO4WAxQ9vshhoENAh/N+ro6GmS8NO1878dDf
+        Yjg5D2gY3lelF6XCuo6ZOTKerVdVDeKDe8wYyiirQGRcxEKCTgX4aGsWFNeCEaGVhe1iLGyd2z/KW
+        GXE1VI/A==;
 Received: from 089144211060.atnat0020.highway.a1.net ([89.144.211.60] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nbEb1-00D3Wl-0w; Mon, 04 Apr 2022 04:45:43 +0000
+        id 1nbEb4-00D3XX-3Q; Mon, 04 Apr 2022 04:45:46 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Josef Bacik <josef@toxicpanda.com>,
         David Sterba <dsterba@suse.com>, Qu Wenruo <wqu@suse.com>
 Cc:     Naohiro Aota <naohiro.aota@wdc.com>, linux-btrfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH 03/12] btrfs: simplify btrfsic_read_block
-Date:   Mon,  4 Apr 2022 06:45:19 +0200
-Message-Id: <20220404044528.71167-4-hch@lst.de>
+Subject: [PATCH 04/12] btrfs: simplify repair_io_failure
+Date:   Mon,  4 Apr 2022 06:45:20 +0200
+Message-Id: <20220404044528.71167-5-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220404044528.71167-1-hch@lst.de>
 References: <20220404044528.71167-1-hch@lst.de>
@@ -52,31 +52,120 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-btrfsic_read_block does not need the btrfs_bio structure, so switch to
-plain bio_alloc.
+The I/O in repair_io_failue is synchronous and doesn't need a btrfs_bio,
+so just use an on-stack bio.  Also cleanup the error handling to use goto
+labels and not discard the actual return values.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Qu Wenruo <wqu@suse.com>
 ---
- fs/btrfs/check-integrity.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ fs/btrfs/extent_io.c | 52 ++++++++++++++++++++------------------------
+ 1 file changed, 24 insertions(+), 28 deletions(-)
 
-diff --git a/fs/btrfs/check-integrity.c b/fs/btrfs/check-integrity.c
-index 49f9954f1438f..0fd3ca10ec569 100644
---- a/fs/btrfs/check-integrity.c
-+++ b/fs/btrfs/check-integrity.c
-@@ -1563,10 +1563,9 @@ static int btrfsic_read_block(struct btrfsic_state *state,
- 		struct bio *bio;
- 		unsigned int j;
+diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+index 3f77abefebde0..e4af9a0935ca0 100644
+--- a/fs/btrfs/extent_io.c
++++ b/fs/btrfs/extent_io.c
+@@ -2303,12 +2303,13 @@ static int repair_io_failure(struct btrfs_fs_info *fs_info, u64 ino, u64 start,
+ 			     u64 length, u64 logical, struct page *page,
+ 			     unsigned int pg_offset, int mirror_num)
+ {
+-	struct bio *bio;
+ 	struct btrfs_device *dev;
++	struct bio_vec bvec;
++	struct bio bio;
+ 	u64 map_length = 0;
+ 	u64 sector;
+ 	struct btrfs_io_context *bioc = NULL;
+-	int ret;
++	int ret = 0;
  
--		bio = btrfs_bio_alloc(num_pages - i);
--		bio_set_dev(bio, block_ctx->dev->bdev);
-+		bio = bio_alloc(block_ctx->dev->bdev, num_pages - i,
-+				REQ_OP_READ, GFP_NOFS);
- 		bio->bi_iter.bi_sector = dev_bytenr >> 9;
--		bio->bi_opf = REQ_OP_READ;
+ 	ASSERT(!(fs_info->sb->s_flags & SB_RDONLY));
+ 	BUG_ON(!mirror_num);
+@@ -2316,8 +2317,6 @@ static int repair_io_failure(struct btrfs_fs_info *fs_info, u64 ino, u64 start,
+ 	if (btrfs_repair_one_zone(fs_info, logical))
+ 		return 0;
  
- 		for (j = i; j < num_pages; j++) {
- 			ret = bio_add_page(bio, block_ctx->pagev[j],
+-	bio = btrfs_bio_alloc(1);
+-	bio->bi_iter.bi_size = 0;
+ 	map_length = length;
+ 
+ 	/*
+@@ -2335,53 +2334,50 @@ static int repair_io_failure(struct btrfs_fs_info *fs_info, u64 ino, u64 start,
+ 		 */
+ 		ret = btrfs_map_block(fs_info, BTRFS_MAP_READ, logical,
+ 				      &map_length, &bioc, 0);
+-		if (ret) {
+-			btrfs_bio_counter_dec(fs_info);
+-			bio_put(bio);
+-			return -EIO;
+-		}
++		if (ret)
++			goto out_counter_dec;
+ 		ASSERT(bioc->mirror_num == 1);
+ 	} else {
+ 		ret = btrfs_map_block(fs_info, BTRFS_MAP_WRITE, logical,
+ 				      &map_length, &bioc, mirror_num);
+-		if (ret) {
+-			btrfs_bio_counter_dec(fs_info);
+-			bio_put(bio);
+-			return -EIO;
+-		}
++		if (ret)
++			goto out_counter_dec;
+ 		BUG_ON(mirror_num != bioc->mirror_num);
+ 	}
+ 
+ 	sector = bioc->stripes[bioc->mirror_num - 1].physical >> 9;
+-	bio->bi_iter.bi_sector = sector;
+ 	dev = bioc->stripes[bioc->mirror_num - 1].dev;
+ 	btrfs_put_bioc(bioc);
++
+ 	if (!dev || !dev->bdev ||
+ 	    !test_bit(BTRFS_DEV_STATE_WRITEABLE, &dev->dev_state)) {
+-		btrfs_bio_counter_dec(fs_info);
+-		bio_put(bio);
+-		return -EIO;
++		ret = -EIO;
++		goto out_counter_dec;
+ 	}
+-	bio_set_dev(bio, dev->bdev);
+-	bio->bi_opf = REQ_OP_WRITE | REQ_SYNC;
+-	bio_add_page(bio, page, length, pg_offset);
+ 
+-	btrfsic_check_bio(bio);
+-	if (submit_bio_wait(bio)) {
++	bio_init(&bio, dev->bdev, &bvec, 1, REQ_OP_WRITE | REQ_SYNC);
++	bio.bi_iter.bi_sector = sector;
++	__bio_add_page(&bio, page, length, pg_offset);
++
++	btrfsic_check_bio(&bio);
++	ret = submit_bio_wait(&bio);
++	if (ret) {
+ 		/* try to remap that extent elsewhere? */
+-		btrfs_bio_counter_dec(fs_info);
+-		bio_put(bio);
+ 		btrfs_dev_stat_inc_and_print(dev, BTRFS_DEV_STAT_WRITE_ERRS);
+-		return -EIO;
++		goto out_bio_uninit;
+ 	}
+ 
+ 	btrfs_info_rl_in_rcu(fs_info,
+ 		"read error corrected: ino %llu off %llu (dev %s sector %llu)",
+ 				  ino, start,
+ 				  rcu_str_deref(dev->name), sector);
++	ret = 0;
++
++out_bio_uninit:
++	bio_uninit(&bio);
++out_counter_dec:
+ 	btrfs_bio_counter_dec(fs_info);
+-	bio_put(bio);
+-	return 0;
++	return ret;
+ }
+ 
+ int btrfs_repair_eb_io_failure(const struct extent_buffer *eb, int mirror_num)
 -- 
 2.30.2
 
