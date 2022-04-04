@@ -2,174 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D1C474F0D3A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Apr 2022 02:22:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFC084F0DA8
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Apr 2022 05:11:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376800AbiDDAYp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 3 Apr 2022 20:24:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34188 "EHLO
+        id S1376972AbiDDDM5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 3 Apr 2022 23:12:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235549AbiDDAYo (ORCPT
+        with ESMTP id S1376978AbiDDDMz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 3 Apr 2022 20:24:44 -0400
-Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74471326CD;
-        Sun,  3 Apr 2022 17:22:49 -0700 (PDT)
-Received: by mail-io1-xd35.google.com with SMTP id b16so9495689ioz.3;
-        Sun, 03 Apr 2022 17:22:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=aRWK0On/yQrY9JPjv44yF0LPcIjibwFg2byMQWbxmME=;
-        b=m7QLUo7hQJc1gPKTRFWKJMyYxQRJoEUmN6fETczH5jCn8d4R/oKkYo4UWK5g0IY8VI
-         p3ASRZ02UvqPNVj+uwGFqGiODMN6dX6xYvtxF/oHx0i35GLATYzqXnBFSkFxu9M+VwmT
-         xb3/PdwR/s2kmyLi8ZTlpA/KcTv06dxnrjjglAUHXQxajJSS8bnqhbz2FmR6/t8zypGb
-         rWAs86RwysW+2t2E+czeksUfo2S/bXGIkEc033ZcgZqbViqFeZFRNYHaiLflYRTwulO1
-         ZWtK+SF68AjzHfD8eqQz6vsUP5GICjDbkWh+xyUyzHSFtaNFAsqcM27Y0U6kks0IQu+2
-         Mq4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aRWK0On/yQrY9JPjv44yF0LPcIjibwFg2byMQWbxmME=;
-        b=DGsTerQtAAe5fUrlSs9IuAJKE6jVg3+ghoHO6OMHadRcCmznqDZHhizh7EFso/XVW6
-         QYBjZMIH17aXUlrGB9CzKzu4LeZJZY7aLSHaYUnqFEZBar+WjV5N/jH5fiHuaCzs0BR7
-         F4kWoJLShOdDSuozwB+47l6KrbPaFla7ODqRh5fzGneDUli2UU+2l8UCVjyDD7Vowxv4
-         JldHYDFTr6IuVO431P+CTnkzmBkY6fdwstZd3OUyGmZmf1insP4z1Tlr91CJsiSq9Yl4
-         3v4oCmHHFkIctSMwAt5HHFdx3CQDbxcqY6tbukN9KaxlRshn+9ovgSnDKA640i16F5Z3
-         GbcA==
-X-Gm-Message-State: AOAM532sidG7ISiK++nBHF/Wflqy0ZkuMZdHb6u1e6uA/Gskz1Wrc6L1
-        Z/V1R+vDftvP7wiFRNsJ7Z9O1Quw77GwWBPKGbs=
-X-Google-Smtp-Source: ABdhPJw3GVx6VRlTw8pIT6ieOqU7bki+fDz8/uu6pPoGbccqm8oEHB/k+fnnlta0vSZ4NcUV23zKg08MWe65dXoOuPU=
-X-Received: by 2002:a05:6638:2105:b0:323:68db:2e4e with SMTP id
- n5-20020a056638210500b0032368db2e4emr11000299jaj.234.1649031768898; Sun, 03
- Apr 2022 17:22:48 -0700 (PDT)
+        Sun, 3 Apr 2022 23:12:55 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 858472CE16;
+        Sun,  3 Apr 2022 20:11:00 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DC0BE61001;
+        Mon,  4 Apr 2022 03:10:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42DA2C34111;
+        Mon,  4 Apr 2022 03:10:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1649041859;
+        bh=WnI3wJJrpF3J4fgQkw88XFffWu+S8qyrSAo4X5/dF0Q=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=HUw26i7MdMdgoWEFHNvBZFE2ceBT6BU9p8GnN0cRseX8y0FuRfraODG8omFqQBN5U
+         SaUCbZREmqM+fiWeA22cx2Ec95aPlaG42eJnipXcG5D3hYyGgLG4vy68jsg0mWQXtR
+         BAJw07xio8A/+v+GF4p9tvsjuN/vgOuV8wHYgqEL07OR2Q6OykY9Vmrwy2gaS0EgYG
+         My8lMHSKBWin2cgveX0jbMJZcn7sVG40xQBAaxbB0nQ7nf+PTfhEs9gGsRgZ264Ior
+         KYgWzE1z78l+6esE2WZ5dHEtqbpwEWsQA9jLusOqDNzpBYZnrZYHFw4SMA5wHa5Tl0
+         2m4s/t++IwoHg==
+Received: by mail-wr1-f47.google.com with SMTP id w21so12472174wra.2;
+        Sun, 03 Apr 2022 20:10:59 -0700 (PDT)
+X-Gm-Message-State: AOAM531fduVBjsFrItfEzgLXuPhlqpOL7YrznOw2M7fJ1A0Fm+8BVH73
+        0Zir4ukOrHUMhbZ5DbV2q3ZhqDqFN02vfz7fpvc=
+X-Google-Smtp-Source: ABdhPJzBgFK/zNrvvxfmgebxuYtV+t3d0QoITB3yhHk4SiYCDLeM0rZdEKTqeElDWXPUWmCdK22mQ3XvuqG1Cdb/cHY=
+X-Received: by 2002:a05:6000:1184:b0:203:ff46:1d72 with SMTP id
+ g4-20020a056000118400b00203ff461d72mr15722276wrx.165.1649041857496; Sun, 03
+ Apr 2022 20:10:57 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220328175033.2437312-1-roberto.sassu@huawei.com>
- <20220328175033.2437312-6-roberto.sassu@huawei.com> <CAEf4BzY9d0pUP2TFkOY41dbjyYrsr5S+sNCpynPtg_9XZHFb-Q@mail.gmail.com>
- <4621def6171f4ca5948a59a7e714d25f@huawei.com>
-In-Reply-To: <4621def6171f4ca5948a59a7e714d25f@huawei.com>
-From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date:   Sun, 3 Apr 2022 17:22:38 -0700
-Message-ID: <CAEf4BzZB=aLA23xysFBm50AKZ72p0PBDeL5j1d0mmNCGW2VKwA@mail.gmail.com>
-Subject: Re: [PATCH 05/18] bpf-preload: Generate static variables
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        KP Singh <kpsingh@kernel.org>, Shuah Khan <shuah@kernel.org>,
-        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
-        "alexandre.torgue@foss.st.com" <alexandre.torgue@foss.st.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+Received: by 2002:a05:6000:2c1:0:0:0:0 with HTTP; Sun, 3 Apr 2022 20:10:56
+ -0700 (PDT)
+In-Reply-To: <HK2PR04MB3891851AB34913F3CC2561F2811A9@HK2PR04MB3891.apcprd04.prod.outlook.com>
+References: <HK2PR04MB3891851AB34913F3CC2561F2811A9@HK2PR04MB3891.apcprd04.prod.outlook.com>
+From:   Namjae Jeon <linkinjeon@kernel.org>
+Date:   Mon, 4 Apr 2022 12:10:56 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd8ztRK9bOo3dtEjx+3sZoFLpa2yfdCczND3bFvrQ=i9Nw@mail.gmail.com>
+Message-ID: <CAKYAXd8ztRK9bOo3dtEjx+3sZoFLpa2yfdCczND3bFvrQ=i9Nw@mail.gmail.com>
+Subject: Re: [PATCH 0/2] fix referencing wrong parent dir info after renaming
+To:     "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
+Cc:     "sj1557.seo@samsung.com" <sj1557.seo@samsung.com>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Andy.Wu@sony.com" <Andy.Wu@sony.com>,
+        "Wataru.Aoyama@sony.com" <Wataru.Aoyama@sony.com>,
+        "Kohada.Tetsuhiro@dc.MitsubishiElectric.co.jp" 
+        <Kohada.Tetsuhiro@dc.mitsubishielectric.co.jp>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Mar 30, 2022 at 12:44 AM Roberto Sassu <roberto.sassu@huawei.com> wrote:
+2022-03-25 18:42 GMT+09:00, Yuezhang.Mo@sony.com <Yuezhang.Mo@sony.com>:
+> exfat_update_parent_info() is a workaround for the bug, but it only
+> fixes the rename system call, not by fixing the root cause, the bug
+> still causes other system calls to fail.
 >
-> > From: Andrii Nakryiko [mailto:andrii.nakryiko@gmail.com]
-> > Sent: Wednesday, March 30, 2022 1:52 AM
-> > On Mon, Mar 28, 2022 at 10:52 AM Roberto Sassu
-> > <roberto.sassu@huawei.com> wrote:
-> > >
-> > > The first part of the preload code generation consists in generating the
-> > > static variables to be used by the code itself: the links and maps to be
-> > > pinned, and the skeleton. Generation of the preload variables and
-> > methods
-> > > is enabled with the option -P added to 'bpftool gen skeleton'.
-> > >
-> > > The existing variables maps_link and progs_links in bpf_preload_kern.c
-> > have
-> > > been renamed respectively to dump_bpf_map_link and
-> > dump_bpf_prog_link, to
-> > > match the name of the variables in the main structure of the light
-> > > skeleton.
-> > >
-> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > ---
-> > >  kernel/bpf/preload/bpf_preload_kern.c         |  35 +-
-> > >  kernel/bpf/preload/iterators/Makefile         |   2 +-
-> > >  .../bpf/preload/iterators/iterators.lskel.h   | 378 +++++++++---------
-> > >  .../bpf/bpftool/Documentation/bpftool-gen.rst |   5 +
-> > >  tools/bpf/bpftool/bash-completion/bpftool     |   2 +-
-> > >  tools/bpf/bpftool/gen.c                       |  27 ++
-> > >  tools/bpf/bpftool/main.c                      |   7 +-
-> > >  tools/bpf/bpftool/main.h                      |   1 +
-> > >  8 files changed, 254 insertions(+), 203 deletions(-)
-> > >
-> >
-> > [...]
-> >
-> > > +__attribute__((unused)) static void
-> > > +iterators_bpf__assert(struct iterators_bpf *s)
-> > > +{
-> > > +#ifdef __cplusplus
-> > > +#define _Static_assert static_assert
-> > > +#endif
-> > > +#ifdef __cplusplus
-> > > +#undef _Static_assert
-> > > +#endif
-> > > +}
-> > > +
-> > > +static struct bpf_link *dump_bpf_map_link;
-> > > +static struct bpf_link *dump_bpf_prog_link;
-> > > +static struct iterators_bpf *skel;
-> >
-> > I don't understand what is this and what for? You are making an
-> > assumption that light skeleton can be instantiated just once, why? And
-> > adding extra bpftool option to light skeleton codegen just to save a
-> > bit of typing at the place where light skeleton is actually
-> > instantiated and used doesn't seems like a right approach.
+> In this patch series, the first patch fixes the bug by fixing the root
+> cause. After it, exfat_update_parent_info() is no longer needed. So the
+> second patch removes exfat_update_parent_info().
 >
-> True, iterator_bpf is simple. Writing the preloading code
-> for it is simple. But, what if you wanted to preload an LSM
-> with 10 hooks or more?
-
-I suppose you'd write a straightforward code to do pinning ten times
-for ten different programs to ten different paths. But with this you
-don't have to establish a random set of conventions that might not
-apply in all the situations to anyone that would try to use this
-feature.
-
-Worst case, light skeleton can be extended to provide a way to iterate
-all programs programmatically.
-
+> Yuezhang Mo (2):
+>   exfat: fix referencing wrong parent directory information after
+>     renaming
+>   exfat: remove exfat_update_parent_info()
 >
-> Ok, regarding where the preloading code should be, I will
-> try to move the generated code to the kernel module instead
-> of the light skeleton.
+>  fs/exfat/namei.c | 27 +--------------------------
+>  1 file changed, 1 insertion(+), 26 deletions(-)
+Applied, Thanks for your patch!
 >
-> Thanks
+> --
+> 2.25.1
 >
-> Roberto
 >
-> HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-> Managing Director: Li Peng, Zhong Ronghua
->
-> > Further, even if this is the way to go, please split out bpftool
-> > changes from kernel changes. There is nothing requiring them to be
-> > coupled together.
-> >
-> > [...]
