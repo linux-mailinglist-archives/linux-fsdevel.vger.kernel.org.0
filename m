@@ -2,119 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5809C4F1039
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Apr 2022 09:46:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D32F64F1153
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Apr 2022 10:49:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376739AbiDDHrY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Apr 2022 03:47:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37316 "EHLO
+        id S243175AbiDDIvT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Apr 2022 04:51:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50700 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353876AbiDDHrX (ORCPT
+        with ESMTP id S1345697AbiDDIvK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Apr 2022 03:47:23 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F2223B014;
-        Mon,  4 Apr 2022 00:45:27 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id f18so4902612edc.5;
-        Mon, 04 Apr 2022 00:45:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Tlai9C8cCZiFfKZnTMXZTtbcv2bOhWWExoRE23jJ3PQ=;
-        b=hnpZqkQvRmhcgBpVq1K7rI1j3GvBGkZU/uMd3O9XQIvlRWmpAJ2xY9AdPT9g4u3G+A
-         P7lEhSmfAdelj8ntCpmVIrCXpgVb/lguNVtMkyfAVq8btERTg+bgi7ZDBwKqJydzyvHE
-         Y2qfyNt09y62V9e5Ouh5e5pKEC/gUUZc5b8W9ti8xscMHRMXyl/olrhO5ZlNyKfQrEZq
-         Y/A0VvvlA0cR1O5pCB1k3dJUbPWEIHrUwNA/TqaAeN03DUwjmKKg+cRDsxls+RSL0bEy
-         7aYIkTUGW7LgBiFNcNAPPU38W7jJq4lJZlBg/O7ztgO0XNlbCYMFvZtEeV74dvMrlXJt
-         ynMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Tlai9C8cCZiFfKZnTMXZTtbcv2bOhWWExoRE23jJ3PQ=;
-        b=DsW58/rgbf/tzW7ik879+qiq6eowzupckGfP2t03DVJMQuB8yHWeRMM++I5IG3a2C1
-         Xl98NLGEbGoB1CkM/c72rQkn5jEfGet4F/HeK43T/neOkR3b8kZiMIMeFVja3FZzyAkq
-         L04WSDVMj0CMFGVvuP7ST1OLW0kSFqzMioQ1KD2mGwP5sRai6K0pkV6kanrg6eM+dTez
-         YN4fOCRgXK/Y9Mg8NBvF4u90U1LJmaJwzuJlraPDq4COdmprNuXeWONK5GREeNWT6OSd
-         DdVePLh24k5Rtzu5U5c48NtIu1fsNs48HlrfKc6ybI2dhV4lJRtWjtJkOVMbpbwslYFG
-         VYNQ==
-X-Gm-Message-State: AOAM531Ng2kBrvzReepCWMVC1Y2FjsJUs22z3FhknmueVZ31Xu06jXjA
-        4g7BPurIQfXse1H5iDfrknEAS1n/p1AqDgzLoPc=
-X-Google-Smtp-Source: ABdhPJyWJ0a9eaELFNxUdBnwfDWskCppbdAyhqtxj0984BUGh7eK26sPOBWWPUumUd+bfO25fkAYIOEIoHyeCUw06E8=
-X-Received: by 2002:aa7:c98c:0:b0:41c:bfbd:380 with SMTP id
- c12-20020aa7c98c000000b0041cbfbd0380mr6001495edt.313.1649058325913; Mon, 04
- Apr 2022 00:45:25 -0700 (PDT)
+        Mon, 4 Apr 2022 04:51:10 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7A50E15FCF
+        for <linux-fsdevel@vger.kernel.org>; Mon,  4 Apr 2022 01:49:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1649062150;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=0RJO4YOIckljaxC1WSdxpeWFwKQ7UkOt90RkMFXKO4k=;
+        b=Uah/bACm+Qzw0BmALKvx9MYopfFxCNKy5zFX6B8FlfR8QkFX2cXqSoe5Uds0cyPOalDvRa
+        0CRXJPVrraX28S6gFv0zL9NayWntlDFaJgZMgyIIYP4QjJ0NOJmI9/PY+pSpPNnPOGmKFp
+        32S5nQ65lK31XagzhdgAIlKM85pcj7w=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-451-EPhsp-OiMlabi_TXNoruqw-1; Mon, 04 Apr 2022 04:49:07 -0400
+X-MC-Unique: EPhsp-OiMlabi_TXNoruqw-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id AC8ED83395E;
+        Mon,  4 Apr 2022 08:49:06 +0000 (UTC)
+Received: from localhost (unknown [10.39.194.2])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2B8111468973;
+        Mon,  4 Apr 2022 08:49:05 +0000 (UTC)
+Date:   Mon, 4 Apr 2022 09:49:04 +0100
+From:   Stefan Hajnoczi <stefanha@redhat.com>
+To:     Jeffle Xu <jefflexu@linux.alibaba.com>
+Cc:     miklos@szeredi.hu, vgoyal@redhat.com,
+        virtualization@lists.linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, gerry@linux.alibaba.com
+Subject: Re: [PATCH] fuse: avoid unnecessary spinlock bump
+Message-ID: <YkqxAA9tKikFf6iX@stefanha-x1.localdomain>
+References: <20220402103250.68027-1-jefflexu@linux.alibaba.com>
 MIME-Version: 1.0
-References: <20220328175033.2437312-1-roberto.sassu@huawei.com>
- <20220331022727.ybj4rui4raxmsdpu@MBP-98dd607d3435.dhcp.thefacebook.com>
- <b9f5995f96da447c851f7c9db8232a9b@huawei.com> <20220401235537.mwziwuo4n53m5cxp@MBP-98dd607d3435.dhcp.thefacebook.com>
- <CACYkzJ5QgkucL3HZ4bY5Rcme4ey6U3FW4w2Gz-9rdWq0_RHvgA@mail.gmail.com>
-In-Reply-To: <CACYkzJ5QgkucL3HZ4bY5Rcme4ey6U3FW4w2Gz-9rdWq0_RHvgA@mail.gmail.com>
-From:   Djalal Harouni <tixxdz@gmail.com>
-Date:   Mon, 4 Apr 2022 09:44:59 +0200
-Message-ID: <CAEiveUcx1KHoJ421Cv+52t=0U+Uy2VF51VC_zfTSftQ4wVYOPw@mail.gmail.com>
-Subject: Re: [PATCH 00/18] bpf: Secure and authenticated preloading of eBPF programs
-To:     KP Singh <kpsingh@kernel.org>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "andrii@kernel.org" <andrii@kernel.org>,
-        "shuah@kernel.org" <shuah@kernel.org>,
-        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
-        "alexandre.torgue@foss.st.com" <alexandre.torgue@foss.st.com>,
-        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="johlXlSqV4WB+rsv"
+Content-Disposition: inline
+In-Reply-To: <20220402103250.68027-1-jefflexu@linux.alibaba.com>
+X-Scanned-By: MIMEDefang 2.85 on 10.11.54.7
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Apr 3, 2022 at 5:42 PM KP Singh <kpsingh@kernel.org> wrote:
->
-> On Sat, Apr 2, 2022 at 1:55 AM Alexei Starovoitov
-> <alexei.starovoitov@gmail.com> wrote:
-...
-> >
-> > > Pinning
-> > > them to unreachable inodes intuitively looked the
-> > > way to go for achieving the stated goal.
-> >
-> > We can consider inodes in bpffs that are not unlinkable by root
-> > in the future, but certainly not for this use case.
->
-> Can this not be already done by adding a BPF_LSM program to the
-> inode_unlink LSM hook?
->
 
-Also, beside of the inode_unlink... and out of curiosity: making sysfs/bpffs/
-readonly after pinning, then using bpf LSM hooks sb_mount|remount|unmount...
-family combining bpf() LSM hook... isn't this enough to:
-1. Restrict who can pin to bpffs without using a full MAC
-2. Restrict who can delete or unmount bpf filesystem
+--johlXlSqV4WB+rsv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-?
+On Sat, Apr 02, 2022 at 06:32:50PM +0800, Jeffle Xu wrote:
+> Move dmap free worker kicker inside the critical region, so that extra
+> spinlock lock/unlock could be avoided.
+>=20
+> Suggested-by: Liu Jiang <gerry@linux.alibaba.com>
+> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
+> ---
+>  fs/fuse/dax.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
--- 
-https://djalal.opendz.org/
+Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
+
+--johlXlSqV4WB+rsv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmJKsQAACgkQnKSrs4Gr
+c8i0SQgAiiCpauRR/VRZdej/Av1FxtiygazikyP74EifydRA7XuvYtXXTBsEUJvP
+ZA03bAV0zFAqyG1EIjvGbXtjzw0zjsmbFYugfdIMwnv36drNn6tnSKT73+iEE7/b
+iGsJWY/kLB8Muo+N4sZ0JpIfp3NsOFb14V/iLKFQfbH+hEClkoP9wM1etdkY3ogZ
+NUgSmWRgk570CHDF85/CFu1zg7wG4KTeLWMa0o+uNSqXBPjOji90z/RsP5EZs6QT
+Pk5Mmr/XRlgN0s0TR+NZc7EuP7Efgh4kZsViz9VkFEl+TPCDOvigsCTjDRTVRIgc
+76EOklRhkCrNLaHJGUz7jL2GrHElIw==
+=zLYr
+-----END PGP SIGNATURE-----
+
+--johlXlSqV4WB+rsv--
+
