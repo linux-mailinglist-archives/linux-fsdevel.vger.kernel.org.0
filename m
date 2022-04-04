@@ -2,122 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D5BA4F1B07
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Apr 2022 23:18:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1C1D4F1B0E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Apr 2022 23:18:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243417AbiDDVTa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Apr 2022 17:19:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41494 "EHLO
+        id S1379404AbiDDVTf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Apr 2022 17:19:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41872 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379526AbiDDRW7 (ORCPT
+        with ESMTP id S1379530AbiDDRYh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Apr 2022 13:22:59 -0400
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A4081E3E9;
-        Mon,  4 Apr 2022 10:21:02 -0700 (PDT)
-Received: from fraeml714-chm.china.huawei.com (unknown [172.18.147.226])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4KXHYv3f92z67MtS;
-        Tue,  5 Apr 2022 01:18:59 +0800 (CST)
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml714-chm.china.huawei.com (10.206.15.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Mon, 4 Apr 2022 19:20:59 +0200
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2375.024;
- Mon, 4 Apr 2022 19:20:59 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Djalal Harouni <tixxdz@gmail.com>, KP Singh <kpsingh@kernel.org>
-CC:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "andrii@kernel.org" <andrii@kernel.org>,
-        "shuah@kernel.org" <shuah@kernel.org>,
-        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
-        "alexandre.torgue@foss.st.com" <alexandre.torgue@foss.st.com>,
-        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 00/18] bpf: Secure and authenticated preloading of eBPF
- programs
-Thread-Topic: [PATCH 00/18] bpf: Secure and authenticated preloading of eBPF
- programs
-Thread-Index: AQHYQsxoL5kXhl8+JE6PJPNWV+NOTqzYppqAgABrSsCAAo7zgIAAEt0AgAOU8YCAALoz0A==
-Date:   Mon, 4 Apr 2022 17:20:59 +0000
-Message-ID: <c2e57f10b62940eba3cfcae996e20e3c@huawei.com>
-References: <20220328175033.2437312-1-roberto.sassu@huawei.com>
- <20220331022727.ybj4rui4raxmsdpu@MBP-98dd607d3435.dhcp.thefacebook.com>
- <b9f5995f96da447c851f7c9db8232a9b@huawei.com>
- <20220401235537.mwziwuo4n53m5cxp@MBP-98dd607d3435.dhcp.thefacebook.com>
- <CACYkzJ5QgkucL3HZ4bY5Rcme4ey6U3FW4w2Gz-9rdWq0_RHvgA@mail.gmail.com>
- <CAEiveUcx1KHoJ421Cv+52t=0U+Uy2VF51VC_zfTSftQ4wVYOPw@mail.gmail.com>
-In-Reply-To: <CAEiveUcx1KHoJ421Cv+52t=0U+Uy2VF51VC_zfTSftQ4wVYOPw@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.81.208.245]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 4 Apr 2022 13:24:37 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C66C21E3E9;
+        Mon,  4 Apr 2022 10:22:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=WDmJkzTOV5prGKHUXnERasOZdVdKCXK3OjDlEOEABJc=; b=iWojZFEXJ3Tl8QRYvsfIwbtRiG
+        m+GXCj5t1/iaGiXDjdTwSbEX5AylKweLk7pVDRDRHMPgCDYMTtal8uqRaAmNeZ5hHiHf96eFklEFP
+        tVCvbFA4PmgIPnH75yc4L73oX3dY2ITGV5FlvR+2PQJzO4+LCn1mEjkumILoSzBn7XWqtjVauGKwq
+        Qn86GUMtaEBnpcu7HB1y48Y3h0+f54ICyb8N7/aZGjpNmdXZMsGMglishjW1DJJBCW6KKVoAERi29
+        u7MPL84TP4KDNGX/imbgNDzdd5RrAhNHwVnEDhHANyjzbDAGW4P+/LQmOeC922QavueASF1yZaE1B
+        NDQBZE4g==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nbQPT-005uxA-WC; Mon, 04 Apr 2022 17:22:36 +0000
+Date:   Mon, 4 Apr 2022 18:22:35 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     Miaohe Lin <linmiaohe@huawei.com>, NeilBrown <neilb@suse.de>
+Subject: [RFC] Documentation for folio_lock() and friends
+Message-ID: <YkspW4HDL54xEg69@casper.infradead.org>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-PiBGcm9tOiBEamFsYWwgSGFyb3VuaSBbbWFpbHRvOnRpeHhkekBnbWFpbC5jb21dDQo+IFNlbnQ6
-IE1vbmRheSwgQXByaWwgNCwgMjAyMiA5OjQ1IEFNDQo+IE9uIFN1biwgQXByIDMsIDIwMjIgYXQg
-NTo0MiBQTSBLUCBTaW5naCA8a3BzaW5naEBrZXJuZWwub3JnPiB3cm90ZToNCj4gPg0KPiA+IE9u
-IFNhdCwgQXByIDIsIDIwMjIgYXQgMTo1NSBBTSBBbGV4ZWkgU3Rhcm92b2l0b3YNCj4gPiA8YWxl
-eGVpLnN0YXJvdm9pdG92QGdtYWlsLmNvbT4gd3JvdGU6DQo+IC4uLg0KPiA+ID4NCj4gPiA+ID4g
-UGlubmluZw0KPiA+ID4gPiB0aGVtIHRvIHVucmVhY2hhYmxlIGlub2RlcyBpbnR1aXRpdmVseSBs
-b29rZWQgdGhlDQo+ID4gPiA+IHdheSB0byBnbyBmb3IgYWNoaWV2aW5nIHRoZSBzdGF0ZWQgZ29h
-bC4NCj4gPiA+DQo+ID4gPiBXZSBjYW4gY29uc2lkZXIgaW5vZGVzIGluIGJwZmZzIHRoYXQgYXJl
-IG5vdCB1bmxpbmthYmxlIGJ5IHJvb3QNCj4gPiA+IGluIHRoZSBmdXR1cmUsIGJ1dCBjZXJ0YWlu
-bHkgbm90IGZvciB0aGlzIHVzZSBjYXNlLg0KPiA+DQo+ID4gQ2FuIHRoaXMgbm90IGJlIGFscmVh
-ZHkgZG9uZSBieSBhZGRpbmcgYSBCUEZfTFNNIHByb2dyYW0gdG8gdGhlDQo+ID4gaW5vZGVfdW5s
-aW5rIExTTSBob29rPw0KPiA+DQo+IA0KPiBBbHNvLCBiZXNpZGUgb2YgdGhlIGlub2RlX3VubGlu
-ay4uLiBhbmQgb3V0IG9mIGN1cmlvc2l0eTogbWFraW5nIHN5c2ZzL2JwZmZzLw0KPiByZWFkb25s
-eSBhZnRlciBwaW5uaW5nLCB0aGVuIHVzaW5nIGJwZiBMU00gaG9va3MNCj4gc2JfbW91bnR8cmVt
-b3VudHx1bm1vdW50Li4uDQo+IGZhbWlseSBjb21iaW5pbmcgYnBmKCkgTFNNIGhvb2suLi4gaXNu
-J3QgdGhpcyBlbm91Z2ggdG86DQo+IDEuIFJlc3RyaWN0IHdobyBjYW4gcGluIHRvIGJwZmZzIHdp
-dGhvdXQgdXNpbmcgYSBmdWxsIE1BQw0KPiAyLiBSZXN0cmljdCB3aG8gY2FuIGRlbGV0ZSBvciB1
-bm1vdW50IGJwZiBmaWxlc3lzdGVtDQo+IA0KPiA/DQoNCkknbSB0aGlua2luZyB0byBpbXBsZW1l
-bnQgc29tZXRoaW5nIGxpa2UgdGhpcy4NCg0KRmlyc3QsIEkgYWRkIGEgbmV3IHByb2dyYW0gZmxh
-ZyBjYWxsZWQNCkJQRl9GX1NUT1BfT05DT05GSVJNLCB3aGljaCBjYXVzZXMgdGhlIHJlZiBjb3Vu
-dA0Kb2YgdGhlIGxpbmsgdG8gaW5jcmVhc2UgdHdpY2UgYXQgY3JlYXRpb24gdGltZS4gSW4gdGhp
-cyB3YXksDQp1c2VyIHNwYWNlIGNhbm5vdCBtYWtlIHRoZSBsaW5rIGRpc2FwcGVhciwgdW5sZXNz
-IGENCmNvbmZpcm1hdGlvbiBpcyBleHBsaWNpdGx5IHNlbnQgdmlhIHRoZSBicGYoKSBzeXN0ZW0g
-Y2FsbC4NCg0KQW5vdGhlciBhZHZhbnRhZ2UgaXMgdGhhdCBvdGhlciBMU01zIGNhbiBkZWNpZGUN
-CndoZXRoZXIgb3Igbm90IHRoZXkgYWxsb3cgYSBwcm9ncmFtIHdpdGggdGhpcyBmbGFnDQooaW4g
-dGhlIGJwZiBzZWN1cml0eSBob29rKS4NCg0KVGhpcyB3b3VsZCB3b3JrIHJlZ2FyZGxlc3Mgb2Yg
-dGhlIG1ldGhvZCB1c2VkIHRvDQpsb2FkIHRoZSBlQlBGIHByb2dyYW0gKHVzZXIgc3BhY2Ugb3Ig
-a2VybmVsIHNwYWNlKS4NCg0KU2Vjb25kLCBJIGV4dGVuZCB0aGUgYnBmKCkgc3lzdGVtIGNhbGwg
-d2l0aCBhIG5ldw0Kc3ViY29tbWFuZCwgQlBGX0xJTktfQ09ORklSTV9TVE9QLCB3aGljaA0KZGVj
-cmVhc2VzIHRoZSByZWYgY291bnQgZm9yIHRoZSBsaW5rIG9mIHRoZSBwcm9ncmFtcw0Kd2l0aCB0
-aGUgQlBGX0ZfU1RPUF9PTkNPTkZJUk0gZmxhZy4gSSB3aWxsIGFsc28NCmludHJvZHVjZSBhIG5l
-dyBzZWN1cml0eSBob29rIChzb21ldGhpbmcgbGlrZQ0Kc2VjdXJpdHlfbGlua19jb25maXJtX3N0
-b3ApLCBzbyB0aGF0IGFuIExTTSBoYXMgdGhlDQpvcHBvcnR1bml0eSB0byBkZW55IHRoZSBzdG9w
-ICh0aGUgYnBmIHNlY3VyaXR5IGhvb2sNCndvdWxkIG5vdCBiZSBzdWZmaWNpZW50IHRvIGRldGVy
-bWluZSBleGFjdGx5IGZvcg0Kd2hpY2ggbGluayB0aGUgY29uZmlybWF0aW9uIGlzIGdpdmVuLCBh
-biBMU00gc2hvdWxkDQpiZSBhYmxlIHRvIGRlbnkgdGhlIHN0b3AgZm9yIGl0cyBvd24gcHJvZ3Jh
-bXMpLg0KDQpXaGF0IGRvIHlvdSB0aGluaz8NCg0KVGhhbmtzDQoNClJvYmVydG8NCg0KSFVBV0VJ
-IFRFQ0hOT0xPR0lFUyBEdWVzc2VsZG9yZiBHbWJILCBIUkIgNTYwNjMNCk1hbmFnaW5nIERpcmVj
-dG9yOiBMaSBQZW5nLCBaaG9uZyBSb25naHVhDQo=
+It's a shame to not have these functions documented.  I'm sure I've
+missed a few things that would be useful to document here.
+
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index ab47579af434..47b7851f1b64 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -888,6 +888,18 @@ bool __folio_lock_or_retry(struct folio *folio, struct mm_struct *mm,
+ void unlock_page(struct page *page);
+ void folio_unlock(struct folio *folio);
+ 
++/**
++ * folio_trylock() - Attempt to lock a folio.
++ * @folio: The folio to attempt to lock.
++ *
++ * Sometimes it is undesirable to wait for a folio to be unlocked (eg
++ * when the locks are being taken in the wrong order, or if making
++ * progress through a batch of folios is more important than processing
++ * them in order).  Usually folio_lock() is the correct function to call.
++ *
++ * Context: Any context.
++ * Return: Whether the lock was successfully acquired.
++ */
+ static inline bool folio_trylock(struct folio *folio)
+ {
+ 	return likely(!test_and_set_bit_lock(PG_locked, folio_flags(folio, 0)));
+@@ -901,6 +913,26 @@ static inline int trylock_page(struct page *page)
+ 	return folio_trylock(page_folio(page));
+ }
+ 
++/**
++ * folio_lock() - Lock this folio.
++ * @folio: The folio to lock.
++ *
++ * The folio lock protects against many things, probably more than it
++ * should.  It is primarily held while a folio is being read from storage,
++ * either from its backing file or from swap.  It is also held while a
++ * folio is being truncated from its address_space.
++ *
++ * Holding the lock usually prevents the contents of the folio from being
++ * modified by other kernel users, although it does not prevent userspace
++ * from modifying data if it's mapped.  The lock is not consistently held
++ * while a folio is being modified by DMA.
++ *
++ * Context: May sleep.  If you need to acquire the locks of two or
++ * more folios, they must be in order of ascending index, if they are
++ * in the same address_space.  If they are in different address_spaces,
++ * acquire the lock of the folio which belongs to the address_space which
++ * has the lowest address in memory first.
++ */
+ static inline void folio_lock(struct folio *folio)
+ {
+ 	might_sleep();
+@@ -908,6 +940,17 @@ static inline void folio_lock(struct folio *folio)
+ 		__folio_lock(folio);
+ }
+ 
++/**
++ * lock_page() - Lock the folio containing this page.
++ * @page: The page to lock.
++ *
++ * See folio_lock() for a description of what the lock protects.
++ * This is a legacy function and new code should probably use folio_lock()
++ * instead.
++ *
++ * Context: May sleep.  Pages in the same folio share a lock, so do not
++ * attempt to lock two pages which share a folio.
++ */
+ static inline void lock_page(struct page *page)
+ {
+ 	struct folio *folio;
+@@ -918,6 +961,16 @@ static inline void lock_page(struct page *page)
+ 		__folio_lock(folio);
+ }
+ 
++/**
++ * folio_lock_killable() - Lock this folio, interruptible by a fatal signal.
++ * @folio: The folio to lock.
++ *
++ * Attempts to lock the folio, like folio_lock(), except that the sleep
++ * to acquire the lock is interruptible by a fatal signal.
++ *
++ * Context: May sleep; see folio_lock().
++ * Return: 0 if the lock was acquired; -EINTR if a fatal signal was received.
++ */
+ static inline int folio_lock_killable(struct folio *folio)
+ {
+ 	might_sleep();
+@@ -964,8 +1017,8 @@ int folio_wait_bit_killable(struct folio *folio, int bit_nr);
+  * Wait for a folio to be unlocked.
+  *
+  * This must be called with the caller "holding" the folio,
+- * ie with increased "page->count" so that the folio won't
+- * go away during the wait..
++ * ie with increased folio reference count so that the folio won't
++ * go away during the wait.
+  */
+ static inline void folio_wait_locked(struct folio *folio)
+ {
+
