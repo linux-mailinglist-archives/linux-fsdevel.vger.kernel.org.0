@@ -2,98 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D32F64F1153
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Apr 2022 10:49:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 123364F1173
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  4 Apr 2022 10:55:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243175AbiDDIvT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Apr 2022 04:51:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50700 "EHLO
+        id S244576AbiDDI5g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Apr 2022 04:57:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345697AbiDDIvK (ORCPT
+        with ESMTP id S232881AbiDDI5f (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Apr 2022 04:51:10 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7A50E15FCF
-        for <linux-fsdevel@vger.kernel.org>; Mon,  4 Apr 2022 01:49:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1649062150;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+        Mon, 4 Apr 2022 04:57:35 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 345DC3BA4D;
+        Mon,  4 Apr 2022 01:55:40 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id E9B8E1F37E;
+        Mon,  4 Apr 2022 08:55:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1649062538; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=0RJO4YOIckljaxC1WSdxpeWFwKQ7UkOt90RkMFXKO4k=;
-        b=Uah/bACm+Qzw0BmALKvx9MYopfFxCNKy5zFX6B8FlfR8QkFX2cXqSoe5Uds0cyPOalDvRa
-        0CRXJPVrraX28S6gFv0zL9NayWntlDFaJgZMgyIIYP4QjJ0NOJmI9/PY+pSpPNnPOGmKFp
-        32S5nQ65lK31XagzhdgAIlKM85pcj7w=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-451-EPhsp-OiMlabi_TXNoruqw-1; Mon, 04 Apr 2022 04:49:07 -0400
-X-MC-Unique: EPhsp-OiMlabi_TXNoruqw-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        bh=kY/sFAjkRuSr9SzS2qZmCVG0Hlopzp38fTG/CHvJ2jc=;
+        b=TasKbmu/n1IUYJFmDMQsEy+BBf3khn33iVJQT4VKf1BUvZ6y9RYPl3jrQtydsBTyZ6Vrej
+        9FpJoEEEK6OT9t5N42XWn7mRDNA5SfT8q6AuIgLePIxjgbZZdyG6tfrTClIg6tv/9D2DbT
+        wuKm0s58O8sp9fJ31BgOw7dyo1NjC94=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1649062538;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=kY/sFAjkRuSr9SzS2qZmCVG0Hlopzp38fTG/CHvJ2jc=;
+        b=eiURE+SEuasfHCDv84WkUWVOz4SY7GwrBlnkFdDdLy1TWbcahItaOBrtdGeWX17VdDI6VF
+        QQBX9OE4Lmc6GgDA==
+Received: from quack3.suse.cz (unknown [10.100.224.230])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id AC8ED83395E;
-        Mon,  4 Apr 2022 08:49:06 +0000 (UTC)
-Received: from localhost (unknown [10.39.194.2])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2B8111468973;
-        Mon,  4 Apr 2022 08:49:05 +0000 (UTC)
-Date:   Mon, 4 Apr 2022 09:49:04 +0100
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     Jeffle Xu <jefflexu@linux.alibaba.com>
-Cc:     miklos@szeredi.hu, vgoyal@redhat.com,
-        virtualization@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, gerry@linux.alibaba.com
-Subject: Re: [PATCH] fuse: avoid unnecessary spinlock bump
-Message-ID: <YkqxAA9tKikFf6iX@stefanha-x1.localdomain>
-References: <20220402103250.68027-1-jefflexu@linux.alibaba.com>
+        by relay2.suse.de (Postfix) with ESMTPS id DC6B4A3B83;
+        Mon,  4 Apr 2022 08:55:38 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 8C4E9A0615; Mon,  4 Apr 2022 10:55:35 +0200 (CEST)
+Date:   Mon, 4 Apr 2022 10:55:35 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        reiserfs-devel@vger.kernel.org
+Subject: Re: Is it time to remove reiserfs?
+Message-ID: <20220404085535.g2qr4s7itfunlrqb@quack3.lan>
+References: <YhIwUEpymVzmytdp@casper.infradead.org>
+ <20220222100408.cyrdjsv5eun5pzij@quack3.lan>
+ <20220402105454.GA16346@amd>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="johlXlSqV4WB+rsv"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220402103250.68027-1-jefflexu@linux.alibaba.com>
-X-Scanned-By: MIMEDefang 2.85 on 10.11.54.7
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20220402105454.GA16346@amd>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hello!
 
---johlXlSqV4WB+rsv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Sat 02-04-22 12:54:55, Pavel Machek wrote:
+> > > Keeping reiserfs in the tree has certain costs.  For example, I would
+> > > very much like to remove the 'flags' argument to ->write_begin.  We have
+> > > the infrastructure in place to handle AOP_FLAG_NOFS differently, but
+> > > AOP_FLAG_CONT_EXPAND is still around, used only by reiserfs.
+> > > 
+> > > Looking over the patches to reiserfs over the past couple of years, there
+> > > are fixes for a few syzbot reports and treewide changes.  There don't
+> > > seem to be any fixes for user-spotted bugs since 2019.  Does reiserfs
+> > > still have a large install base that is just very happy with an old
+> > > stable filesystem?  Or have all its users migrated to new and exciting
+> > > filesystems with active feature development?
+> > > 
+> > > We've removed support for senescent filesystems before (ext, xiafs), so
+> > > it's not unprecedented.  But while I have a clear idea of the benefits to
+> > > other developers of removing reiserfs, I don't have enough information to
+> > > weigh the costs to users.  Maybe they're happy with having 5.15 support
+> > > for their reiserfs filesystems and can migrate to another filesystem
+> > > before they upgrade their kernel after 5.15.
+> > > 
+> > > Another possibility beyond outright removal would be to trim the kernel
+> > > code down to read-only support for reiserfs.  Most of the quirks of
+> > > reiserfs have to do with write support, so this could be a useful way
+> > > forward.  Again, I don't have a clear picture of how people actually
+> > > use reiserfs, so I don't know whether it is useful or not.
+> > > 
+> > > NB: Please don't discuss the personalities involved.  This is purely a
+> > > "we have old code using old APIs" discussion.
+> > 
+> > So from my distro experience installed userbase of reiserfs is pretty small
+> > and shrinking. We still do build reiserfs in openSUSE / SLES kernels but
+> > for enterprise offerings it is unsupported (for like 3-4 years) and the module
+> > is not in the default kernel rpm anymore.
+> 
+> I believe I've seen reiserfs in recent Arch Linux ARM installation on
+> PinePhone. I don't really think you can remove a feature people are
+> using.
 
-On Sat, Apr 02, 2022 at 06:32:50PM +0800, Jeffle Xu wrote:
-> Move dmap free worker kicker inside the critical region, so that extra
-> spinlock lock/unlock could be avoided.
->=20
-> Suggested-by: Liu Jiang <gerry@linux.alibaba.com>
-> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
-> ---
->  fs/fuse/dax.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Well, if someone uses Reiserfs they better either migrate to some other
+filesystem or start maintaining it. It is as simple as that because
+currently there's nobody willing to invest resources in it for quite a few
+years and so it is just a question of time before it starts eating people's
+data (probably it already does in some cornercases, as an example there are
+quite some syzbot reports for it)...
 
-Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
-
---johlXlSqV4WB+rsv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmJKsQAACgkQnKSrs4Gr
-c8i0SQgAiiCpauRR/VRZdej/Av1FxtiygazikyP74EifydRA7XuvYtXXTBsEUJvP
-ZA03bAV0zFAqyG1EIjvGbXtjzw0zjsmbFYugfdIMwnv36drNn6tnSKT73+iEE7/b
-iGsJWY/kLB8Muo+N4sZ0JpIfp3NsOFb14V/iLKFQfbH+hEClkoP9wM1etdkY3ogZ
-NUgSmWRgk570CHDF85/CFu1zg7wG4KTeLWMa0o+uNSqXBPjOji90z/RsP5EZs6QT
-Pk5Mmr/XRlgN0s0TR+NZc7EuP7Efgh4kZsViz9VkFEl+TPCDOvigsCTjDRTVRIgc
-76EOklRhkCrNLaHJGUz7jL2GrHElIw==
-=zLYr
------END PGP SIGNATURE-----
-
---johlXlSqV4WB+rsv--
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
