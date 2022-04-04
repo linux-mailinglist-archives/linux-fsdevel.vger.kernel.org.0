@@ -2,113 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 85F824F1F5A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Apr 2022 00:51:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3FB94F1FB7
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Apr 2022 01:02:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236882AbiDDWwH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Apr 2022 18:52:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39544 "EHLO
+        id S240881AbiDDXEd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Apr 2022 19:04:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238042AbiDDWvw (ORCPT
+        with ESMTP id S234865AbiDDXEQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Apr 2022 18:51:52 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F25B162105;
-        Mon,  4 Apr 2022 15:05:03 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8F63E615E9;
-        Mon,  4 Apr 2022 22:05:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 527C5C34110;
-        Mon,  4 Apr 2022 22:05:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649109902;
-        bh=crI8OWa/ILQsosVqMgWDeCCHWKp1heV2rpDD9+ltpjk=;
-        h=In-Reply-To:References:Date:From:To:Cc:Subject:From;
-        b=VSS0WYvCh8U/wTA1tky+XNuhgT9ZBOQSihN2yC977jGLr7A4FIdpX8DHWg3Xwp+94
-         4mnoqR12GB1qEYr4lsd2B0DWz0J7J+6xxdg1XLixgxZZfw7318LkINdU3v8BPjvGJ7
-         DArHMpmCjlvsLUTajVXcgDPMxNYV0xVSyCHhluHKuMFkYjr640tISjOj3dKwiy2rgX
-         S1/PXqn3kPkcqjNn62evu/NVfVHISL+lgZEnNdXsayL5cm7khfiVfUS6F2h/kIoOA4
-         VJ5scAYLwR0ySDPXZx0xV5V5spGuHRNORpc3PFFnnQT0h0zKa483p5VIQnW08XKVcK
-         A5ySxn3g4LBxQ==
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailauth.nyi.internal (Postfix) with ESMTP id E91D827C005C;
-        Mon,  4 Apr 2022 18:04:59 -0400 (EDT)
-Received: from imap48 ([10.202.2.98])
-  by compute2.internal (MEProxy); Mon, 04 Apr 2022 18:04:59 -0400
-X-ME-Sender: <xms:imtLYtbmuXBb-CR_X_doiTrPKcKWg4NNZfEo0QSYuGGNzrWlFCh8ag>
-    <xme:imtLYkapya1yCRkOmevv2zLb3QY9mqtqV1FsUEiD7QcwgBazL00LiEzuVdvBBAFMk
-    SMuE79NU7zn4AMtg_I>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrudejfedgtdejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvffutgesthdtredtreertdenucfhrhhomhepfdetnhgu
-    hicunfhuthhomhhirhhskhhifdcuoehluhhtoheskhgvrhhnvghlrdhorhhgqeenucggtf
-    frrghtthgvrhhnpedthfehtedtvdetvdetudfgueeuhfdtudegvdelveelfedvteelfffg
-    fedvkeegfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
-    hmpegrnhguhidomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqudduiedukeeh
-    ieefvddqvdeifeduieeitdekqdhluhhtoheppehkvghrnhgvlhdrohhrgheslhhinhhugi
-    drlhhuthhordhush
-X-ME-Proxy: <xmx:imtLYv9O2uTJPGfIAprEk78SSKii49ihDteleFopSC9LOBdDLc7JNA>
-    <xmx:imtLYroo5M1o1eUy4GHtpHG0qQT3ccZnrnE5qrgORNPjETQmuS01Zg>
-    <xmx:imtLYoo3eLpLZOIqK255uDXkBNwKmkll3HfP2NPulU8SHrKPTL1f2Q>
-    <xmx:i2tLYlLE5fv_MDSQnedDEY1S9wLK9aHDsm-OZcMYWBwQp1uIEZI2kg>
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id B623D21E0073; Mon,  4 Apr 2022 18:04:58 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.7.0-alpha0-385-g3a17909f9e-fm-20220404.001-g3a17909f
-Mime-Version: 1.0
-Message-Id: <eefc3c74-acca-419c-8947-726ce2458446@www.fastmail.com>
-In-Reply-To: <Ykslo2eo2eRXrpFR@google.com>
-References: <YkH32nx+YsJuUbmZ@google.com> <YkIFW25WgV2WIQHb@google.com>
- <YkM7eHCHEBe5NkNH@google.com> <88620519-029e-342b-0a85-ce2a20eaf41b@arm.com>
- <YkQzfjgTQaDd2E2T@google.com> <YkSaUQX89ZEojsQb@google.com>
- <80aad2f9-9612-4e87-a27a-755d3fa97c92@www.fastmail.com>
- <YkcTTY4YjQs5BRhE@google.com>
- <83fd55f8-cd42-4588-9bf6-199cbce70f33@www.fastmail.com>
- <YksIQYdG41v3KWkr@google.com> <Ykslo2eo2eRXrpFR@google.com>
-Date:   Mon, 04 Apr 2022 15:04:17 -0700
-From:   "Andy Lutomirski" <luto@kernel.org>
-To:     "Sean Christopherson" <seanjc@google.com>,
-        "Quentin Perret" <qperret@google.com>
-Cc:     "Steven Price" <steven.price@arm.com>,
-        "Chao Peng" <chao.p.peng@linux.intel.com>,
-        "kvm list" <kvm@vger.kernel.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        "Linux API" <linux-api@vger.kernel.org>, qemu-devel@nongnu.org,
-        "Paolo Bonzini" <pbonzini@redhat.com>,
-        "Jonathan Corbet" <corbet@lwn.net>,
-        "Vitaly Kuznetsov" <vkuznets@redhat.com>,
-        "Wanpeng Li" <wanpengli@tencent.com>,
-        "Jim Mattson" <jmattson@google.com>,
-        "Joerg Roedel" <joro@8bytes.org>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "Hugh Dickins" <hughd@google.com>,
-        "Jeff Layton" <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        "Andrew Morton" <akpm@linux-foundation.org>,
-        "Mike Rapoport" <rppt@kernel.org>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        "Vlastimil Babka" <vbabka@suse.cz>,
-        "Vishal Annapurve" <vannapurve@google.com>,
-        "Yu Zhang" <yu.c.zhang@linux.intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        "Nakajima, Jun" <jun.nakajima@intel.com>,
-        "Dave Hansen" <dave.hansen@intel.com>,
-        "Andi Kleen" <ak@linux.intel.com>,
-        "David Hildenbrand" <david@redhat.com>,
-        "Marc Zyngier" <maz@kernel.org>, "Will Deacon" <will@kernel.org>
-Subject: Re: [PATCH v5 00/13] KVM: mm: fd-based approach for supporting KVM guest
- private memory
-Content-Type: text/plain
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        Mon, 4 Apr 2022 19:04:16 -0400
+Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D4F348885
+        for <linux-fsdevel@vger.kernel.org>; Mon,  4 Apr 2022 15:25:22 -0700 (PDT)
+Received: by mail-pf1-x432.google.com with SMTP id b13so10377616pfv.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Apr 2022 15:25:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=gk7YExpjD17yvmNb1YnkwGsNAfvivwtdanWcpr+eU8Y=;
+        b=b4kGzhYdOOBuJA+ydGgqp1rlD/EHbApMFe6NjPa2BcD1b0AjYblro2TW6cHiJwXv1j
+         cIHnWLN+29p+1lVvytOTxUDuVRYGoz8mHzrqWSCMqfa4dNIB3FqIE70xRvHTuuJ9+Prg
+         IMeR3KfPWdMGhvmBnaqnoUY8yhUtgAAzPiOJQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=gk7YExpjD17yvmNb1YnkwGsNAfvivwtdanWcpr+eU8Y=;
+        b=6zK9RyzBQlmET+1lUw+pV+0ofh5R+zr7gaxjgD4PYdcOJ1VP0pmMUz6dWYZ2KRLVR0
+         OOA0HsYMaCNbz5pxSARVYrqz2oOa+ojgV0t7FNkDAMhDWKmcBHULhReDNG42W2/wjivo
+         nNg8+Syob64nQaXihTo33oULOeOvCqdh78DjDlawwGl+t+eKBTsGzKYtKYq8dxSTH9yV
+         iWwYvP9yI55h+sOFP/4rAL2DjW5EdAxz9Xl7YqmFNPVQdCOwrJ2Qe1d7g2yE8tUoUow3
+         nZhkx04yleFIcx5Kqd+35b1lBhGVLV/rWk2ah3X9VQRVRTOP0X6mu9ys+yUaAeYvl6Lf
+         cqDA==
+X-Gm-Message-State: AOAM533WFwB31p62EzhXhDvbWbetEtYnRxX5GG2e5HxvYFNsUGoACHCe
+        CRt0HbNym3TSX6TQMrJhzyKRwA==
+X-Google-Smtp-Source: ABdhPJxRptxXnfZI/YYw0ccjtfFSL+7+tWY8HL5HqZoAtkFBK4XdlYUkLt5bpzJtf2Kd+v7xUr+vhw==
+X-Received: by 2002:a62:7b43:0:b0:4fa:6936:6986 with SMTP id w64-20020a627b43000000b004fa69366986mr318150pfc.13.1649111121830;
+        Mon, 04 Apr 2022 15:25:21 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id q9-20020a056a0002a900b004fde4893cf8sm8710271pfs.200.2022.04.04.15.25.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Apr 2022 15:25:21 -0700 (PDT)
+Date:   Mon, 4 Apr 2022 15:25:19 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Heimes <christian@python.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        James Morris <jmorris@namei.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Steve Dower <steve.dower@python.org>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Christian Brauner <brauner@kernel.org>
+Subject: Re: [GIT PULL] Add trusted_for(2) (was O_MAYEXEC)
+Message-ID: <202204041451.CC4F6BF@keescook>
+References: <20220321161557.495388-1-mic@digikod.net>
+ <202204041130.F649632@keescook>
+ <CAHk-=wgoC76v-4s0xVr1Xvnx-8xZ8M+LWgyq5qGLA5UBimEXtQ@mail.gmail.com>
+ <816667d8-2a6c-6334-94a4-6127699d4144@digikod.net>
+ <CAHk-=wjPuRi5uYs9SuQ2Xn+8+RnhoKgjPEwNm42+AGKDrjTU5g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHk-=wjPuRi5uYs9SuQ2Xn+8+RnhoKgjPEwNm42+AGKDrjTU5g@mail.gmail.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -116,55 +92,54 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Mon, Apr 04, 2022 at 02:28:19PM -0700, Linus Torvalds wrote:
+> Now, what I *think* you mean is
+> 
+>  (1) user-space executable loaders want to be able to test the *same*
+> policy as the kernel does for execve()
 
+Right. The script interpreter wants to ask "if this file were actually
+an ELF going through execve(), would the kernel allow it?"
 
-On Mon, Apr 4, 2022, at 10:06 AM, Sean Christopherson wrote:
-> On Mon, Apr 04, 2022, Quentin Perret wrote:
->> On Friday 01 Apr 2022 at 12:56:50 (-0700), Andy Lutomirski wrote:
->> FWIW, there are a couple of reasons why I'd like to have in-place
->> conversions:
->> 
->>  - one goal of pKVM is to migrate some things away from the Arm
->>    Trustzone environment (e.g. DRM and the likes) and into protected VMs
->>    instead. This will give Linux a fighting chance to defend itself
->>    against these things -- they currently have access to _all_ memory.
->>    And transitioning pages between Linux and Trustzone (donations and
->>    shares) is fast and non-destructive, so we really do not want pKVM to
->>    regress by requiring the hypervisor to memcpy things;
->
-> Is there actually a _need_ for the conversion to be non-destructive?  
-> E.g. I assume
-> the "trusted" side of things will need to be reworked to run as a pKVM 
-> guest, at
-> which point reworking its logic to understand that conversions are 
-> destructive and
-> slow-ish doesn't seem too onerous.
->
->>  - it can be very useful for protected VMs to do shared=>private
->>    conversions. Think of a VM receiving some data from the host in a
->>    shared buffer, and then it wants to operate on that buffer without
->>    risking to leak confidential informations in a transient state. In
->>    that case the most logical thing to do is to convert the buffer back
->>    to private, do whatever needs to be done on that buffer (decrypting a
->>    frame, ...), and then share it back with the host to consume it;
->
-> If performance is a motivation, why would the guest want to do two 
-> conversions
-> instead of just doing internal memcpy() to/from a private page?  I 
-> would be quite
-> surprised if multiple exits and TLB shootdowns is actually faster, 
-> especially at
-> any kind of scale where zapping stage-2 PTEs will cause lock contention 
-> and IPIs.
+>  (2) access(path, EXECVE_OK) will do the same permission checks as
+> "execve()" would do for that path
 
-I don't know the numbers or all the details, but this is arm64, which is a rather better architecture than x86 in this regard.  So maybe it's not so bad, at least in very simple cases, ignoring all implementation details.  (But see below.)  Also the systems in question tend to have fewer CPUs than some of the massive x86 systems out there.
+Maybe. I defer to Mickaël here, but my instinct is to avoid creating an
+API that can be accidentally misused. I'd like this to be fd-only based,
+since that removes path name races. (e.g. trusted_for() required an fd.)
 
-If we actually wanted to support transitioning the same page between shared and private, though, we have a bit of an awkward situation.  Private to shared is conceptually easy -- do some bookkeeping, reconstitute the direct map entry, and it's done.  The other direction is a mess: all existing uses of the page need to be torn down.  If the page has been recently used for DMA, this includes IOMMU entries.
+>  (3) if you already have the fd open, use "faccess(fd, NULL,
+> F_OK_TO_EXECUTE, AT_EMPTY_PATH)"
 
-Quentin: let's ignore any API issues for now.  Do you have a concept of how a nondestructive shared -> private transition could work well, even in principle?  The best I can come up with is a special type of shared page that is not GUP-able and maybe not even mmappable, having a clear option for transitions to fail, and generally preventing the nasty cases from happening in the first place.
+Yes, specifically faccessat2(). (And continuing the race thought above,
+yes, there could still be races if the content of the file could be
+changed, but that case is less problematic under real-world conditions.)
 
-Maybe there could be a special mode for the private memory fds in which specific pages are marked as "managed by this fd but actually shared".  pread() and pwrite() would work on those pages, but not mmap().  (Or maybe mmap() but the resulting mappings would not permit GUP.)  And transitioning them would be a special operation on the fd that is specific to pKVM and wouldn't work on TDX or SEV.
+>  (4) maybe we want to add a flag for the "euid vs real uid", and that
+> would be in the "flags" field, since that changes the actual *lookup*
+> semantics
+> 
+> Note that that (4) is something that some normal user space has wanted
+> in the past too (GNU libcs has a "eaccess()" thing for "effective uid
+> access").
 
-Hmm.  Sean and Chao, are we making a bit of a mistake by making these fds technology-agnostic?  That is, would we want to distinguish between a TDX backing fd, a SEV backing fd, a software-based backing fd, etc?  API-wise this could work by requiring the fd to be bound to a KVM VM instance and possibly even configured a bit before any other operations would be allowed.
+I think this already exists as AT_EACCESS? It was added with
+faccessat2() itself, if I'm reading the history correctly.
 
-(Destructive transitions nicely avoid all the nasty cases.  If something is still pinning a shared page when it's "transitioned" to private (really just replaced with a new page), then the old page continues existing for as long as needed as a separate object.)
+And I just need to say that the thought of setuid script interpreters
+still makes me sad. :)
+
+>  - I really want the exact semantics very clearly defined. I think
+> it's ok to say "exact same security check as for 'execve()'", but even
+> then we need to have that discussion about
+> 
+>     (a) "what about suid bits that user space cannot react to"
+
+What do you mean here? Do you mean setid bits on the file itself?
+
+>     (b) that whole "effective vs real" discussion
+
+I think this is handled with AT_EACCESS?
+
+-- 
+Kees Cook
