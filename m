@@ -2,194 +2,188 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0AFBA4F22AF
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Apr 2022 07:48:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62C664F2532
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Apr 2022 09:46:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229938AbiDEFuY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 Apr 2022 01:50:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56582 "EHLO
+        id S231643AbiDEHsj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 Apr 2022 03:48:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48318 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229731AbiDEFuX (ORCPT
+        with ESMTP id S233569AbiDEHr6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 Apr 2022 01:50:23 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A36C491;
-        Mon,  4 Apr 2022 22:48:25 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        Tue, 5 Apr 2022 03:47:58 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52A12229;
+        Tue,  5 Apr 2022 00:45:57 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 59FF91F38C;
-        Tue,  5 Apr 2022 05:48:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1649137704; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=1r2orMrVQp/4ILk838S1tDzUbcjwXJeLpgvBNYW22Ck=;
-        b=HC72URascQxUqzcuXkfB+sEZA54o97vGoK5spXM0ibpz+w23NT1NuCASZtgNDsN+6T6N03
-        9U3bPZKROCgLzp6OKRhIx1UlawtZRAafvcyaSqpXw+9GFLtimOiMLHbegz3+DD6fbHVB79
-        GsHVeMWiOkRmbt0uvvTXSXTZ7FwNd+A=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1649137704;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=1r2orMrVQp/4ILk838S1tDzUbcjwXJeLpgvBNYW22Ck=;
-        b=5wcdIsL9plpl8ZiUGcInouKSsFfnwSu1Ty4HkDbJZLsVBGtcSmEWnrpY/GfvfwnzcHRXiv
-        yy19/2oPrV+i7zBg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id C070913216;
-        Tue,  5 Apr 2022 05:48:22 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id gqqVHybYS2KaSAAAMHmgww
-        (envelope-from <neilb@suse.de>); Tue, 05 Apr 2022 05:48:22 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+        by ams.source.kernel.org (Postfix) with ESMTPS id 065F5B81A22;
+        Tue,  5 Apr 2022 07:45:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 438E9C340EE;
+        Tue,  5 Apr 2022 07:45:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1649144754;
+        bh=Uup66fe9U42GW/CL9Li8fks4q1jkU37HfQqNHFuGopI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=n25FOGAec0Sb5izZhIZA8k/Q+IG3Q7w8BZJ6DwqTbboD12k3qEp5KLwzPSZm0hffI
+         6d2y2AjVerC2widGygCaNE0jzHB1vdER5kNp8lvsH15pTKUpXx8aU2Y6ECfE4xxvXp
+         Tz7llfsdhrZ9fBindFpITPrSm6lSncWbZbQuxCmM=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Ariadne Conill <ariadne@dereferenced.org>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Rich Felker <dalias@libc.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: [PATCH 5.17 0159/1126] exec: Force single empty string when argv is empty
+Date:   Tue,  5 Apr 2022 09:15:06 +0200
+Message-Id: <20220405070412.257121465@linuxfoundation.org>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220405070407.513532867@linuxfoundation.org>
+References: <20220405070407.513532867@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-From:   "NeilBrown" <neilb@suse.de>
-To:     "Matthew Wilcox" <willy@infradead.org>
-Cc:     linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, "Miaohe Lin" <linmiaohe@huawei.com>
-Subject: Re: [RFC] Documentation for folio_lock() and friends
-In-reply-to: <YkspW4HDL54xEg69@casper.infradead.org>
-References: <YkspW4HDL54xEg69@casper.infradead.org>
-Date:   Tue, 05 Apr 2022 15:48:19 +1000
-Message-id: <164913769939.10985.13675614818955421206@noble.neil.brown.name>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 05 Apr 2022, Matthew Wilcox wrote:
-> It's a shame to not have these functions documented.  I'm sure I've
-> missed a few things that would be useful to document here.
->=20
-> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-> index ab47579af434..47b7851f1b64 100644
-> --- a/include/linux/pagemap.h
-> +++ b/include/linux/pagemap.h
-> @@ -888,6 +888,18 @@ bool __folio_lock_or_retry(struct folio *folio, struct=
- mm_struct *mm,
->  void unlock_page(struct page *page);
->  void folio_unlock(struct folio *folio);
-> =20
-> +/**
-> + * folio_trylock() - Attempt to lock a folio.
-> + * @folio: The folio to attempt to lock.
-> + *
-> + * Sometimes it is undesirable to wait for a folio to be unlocked (eg
-> + * when the locks are being taken in the wrong order, or if making
-> + * progress through a batch of folios is more important than processing
-> + * them in order).  Usually folio_lock() is the correct function to call.
+From: Kees Cook <keescook@chromium.org>
 
-Usually?
-I think a "see also" type reference to folio_lock() is useful, but I
-don't think "usually" is helpful.
+commit dcd46d897adb70d63e025f175a00a89797d31a43 upstream.
 
-> + *
-> + * Context: Any context.
-> + * Return: Whether the lock was successfully acquired.
-> + */
->  static inline bool folio_trylock(struct folio *folio)
->  {
->  	return likely(!test_and_set_bit_lock(PG_locked, folio_flags(folio, 0)));
-> @@ -901,6 +913,26 @@ static inline int trylock_page(struct page *page)
->  	return folio_trylock(page_folio(page));
->  }
-> =20
-> +/**
-> + * folio_lock() - Lock this folio.
-> + * @folio: The folio to lock.
-> + *
-> + * The folio lock protects against many things, probably more than it
-> + * should.  It is primarily held while a folio is being read from storage,
-> + * either from its backing file or from swap.  It is also held while a
-> + * folio is being truncated from its address_space.
-> + *
-> + * Holding the lock usually prevents the contents of the folio from being
-> + * modified by other kernel users, although it does not prevent userspace
-> + * from modifying data if it's mapped.  The lock is not consistently held
-> + * while a folio is being modified by DMA.
+Quoting[1] Ariadne Conill:
 
-I don't think this paragraph is helpful...  maybe if it listed which
-change *are* prevented by the lock, rather than a few which aren't?
+"In several other operating systems, it is a hard requirement that the
+second argument to execve(2) be the name of a program, thus prohibiting
+a scenario where argc < 1. POSIX 2017 also recommends this behaviour,
+but it is not an explicit requirement[2]:
 
-I think it is significant that the lock prevents removal from the page
-cache, and so ->mapping is only stable while the lock is held.  It might
-be worth adding something about that.
+    The argument arg0 should point to a filename string that is
+    associated with the process being started by one of the exec
+    functions.
+...
+Interestingly, Michael Kerrisk opened an issue about this in 2008[3],
+but there was no consensus to support fixing this issue then.
+Hopefully now that CVE-2021-4034 shows practical exploitative use[4]
+of this bug in a shellcode, we can reconsider.
 
-> + *
-> + * Context: May sleep.  If you need to acquire the locks of two or
-> + * more folios, they must be in order of ascending index, if they are
-> + * in the same address_space.  If they are in different address_spaces,
-> + * acquire the lock of the folio which belongs to the address_space which
-> + * has the lowest address in memory first.
-> + */
->  static inline void folio_lock(struct folio *folio)
->  {
->  	might_sleep();
-> @@ -908,6 +940,17 @@ static inline void folio_lock(struct folio *folio)
->  		__folio_lock(folio);
->  }
-> =20
-> +/**
-> + * lock_page() - Lock the folio containing this page.
-> + * @page: The page to lock.
-> + *
-> + * See folio_lock() for a description of what the lock protects.
-> + * This is a legacy function and new code should probably use folio_lock()
-> + * instead.
-> + *
-> + * Context: May sleep.  Pages in the same folio share a lock, so do not
-> + * attempt to lock two pages which share a folio.
-> + */
->  static inline void lock_page(struct page *page)
->  {
->  	struct folio *folio;
-> @@ -918,6 +961,16 @@ static inline void lock_page(struct page *page)
->  		__folio_lock(folio);
->  }
-> =20
-> +/**
-> + * folio_lock_killable() - Lock this folio, interruptible by a fatal signa=
-l.
-> + * @folio: The folio to lock.
-> + *
-> + * Attempts to lock the folio, like folio_lock(), except that the sleep
-> + * to acquire the lock is interruptible by a fatal signal.
-> + *
-> + * Context: May sleep; see folio_lock().
-> + * Return: 0 if the lock was acquired; -EINTR if a fatal signal was receiv=
-ed.
-> + */
->  static inline int folio_lock_killable(struct folio *folio)
->  {
->  	might_sleep();
-> @@ -964,8 +1017,8 @@ int folio_wait_bit_killable(struct folio *folio, int b=
-it_nr);
->   * Wait for a folio to be unlocked.
->   *
->   * This must be called with the caller "holding" the folio,
-> - * ie with increased "page->count" so that the folio won't
-> - * go away during the wait..
-> + * ie with increased folio reference count so that the folio won't
-> + * go away during the wait.
->   */
->  static inline void folio_wait_locked(struct folio *folio)
->  {
->=20
->=20
+This issue is being tracked in the KSPP issue tracker[5]."
 
-Thanks,
-NeilBrown
+While the initial code searches[6][7] turned up what appeared to be
+mostly corner case tests, trying to that just reject argv == NULL
+(or an immediately terminated pointer list) quickly started tripping[8]
+existing userspace programs.
+
+The next best approach is forcing a single empty string into argv and
+adjusting argc to match. The number of programs depending on argc == 0
+seems a smaller set than those calling execve with a NULL argv.
+
+Account for the additional stack space in bprm_stack_limits(). Inject an
+empty string when argc == 0 (and set argc = 1). Warn about the case so
+userspace has some notice about the change:
+
+    process './argc0' launched './argc0' with NULL argv: empty string added
+
+Additionally WARN() and reject NULL argv usage for kernel threads.
+
+[1] https://lore.kernel.org/lkml/20220127000724.15106-1-ariadne@dereferenced.org/
+[2] https://pubs.opengroup.org/onlinepubs/9699919799/functions/exec.html
+[3] https://bugzilla.kernel.org/show_bug.cgi?id=8408
+[4] https://www.qualys.com/2022/01/25/cve-2021-4034/pwnkit.txt
+[5] https://github.com/KSPP/linux/issues/176
+[6] https://codesearch.debian.net/search?q=execve%5C+*%5C%28%5B%5E%2C%5D%2B%2C+*NULL&literal=0
+[7] https://codesearch.debian.net/search?q=execlp%3F%5Cs*%5C%28%5B%5E%2C%5D%2B%2C%5Cs*NULL&literal=0
+[8] https://lore.kernel.org/lkml/20220131144352.GE16385@xsang-OptiPlex-9020/
+
+Reported-by: Ariadne Conill <ariadne@dereferenced.org>
+Reported-by: Michael Kerrisk <mtk.manpages@gmail.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Rich Felker <dalias@libc.org>
+Cc: Eric Biederman <ebiederm@xmission.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: stable@vger.kernel.org
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Acked-by: Christian Brauner <brauner@kernel.org>
+Acked-by: Ariadne Conill <ariadne@dereferenced.org>
+Acked-by: Andy Lutomirski <luto@kernel.org>
+Link: https://lore.kernel.org/r/20220201000947.2453721-1-keescook@chromium.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ fs/exec.c |   26 +++++++++++++++++++++++++-
+ 1 file changed, 25 insertions(+), 1 deletion(-)
+
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -495,8 +495,14 @@ static int bprm_stack_limits(struct linu
+ 	 * the stack. They aren't stored until much later when we can't
+ 	 * signal to the parent that the child has run out of stack space.
+ 	 * Instead, calculate it here so it's possible to fail gracefully.
++	 *
++	 * In the case of argc = 0, make sure there is space for adding a
++	 * empty string (which will bump argc to 1), to ensure confused
++	 * userspace programs don't start processing from argv[1], thinking
++	 * argc can never be 0, to keep them from walking envp by accident.
++	 * See do_execveat_common().
+ 	 */
+-	ptr_size = (bprm->argc + bprm->envc) * sizeof(void *);
++	ptr_size = (max(bprm->argc, 1) + bprm->envc) * sizeof(void *);
+ 	if (limit <= ptr_size)
+ 		return -E2BIG;
+ 	limit -= ptr_size;
+@@ -1897,6 +1903,9 @@ static int do_execveat_common(int fd, st
+ 	}
+ 
+ 	retval = count(argv, MAX_ARG_STRINGS);
++	if (retval == 0)
++		pr_warn_once("process '%s' launched '%s' with NULL argv: empty string added\n",
++			     current->comm, bprm->filename);
+ 	if (retval < 0)
+ 		goto out_free;
+ 	bprm->argc = retval;
+@@ -1923,6 +1932,19 @@ static int do_execveat_common(int fd, st
+ 	if (retval < 0)
+ 		goto out_free;
+ 
++	/*
++	 * When argv is empty, add an empty string ("") as argv[0] to
++	 * ensure confused userspace programs that start processing
++	 * from argv[1] won't end up walking envp. See also
++	 * bprm_stack_limits().
++	 */
++	if (bprm->argc == 0) {
++		retval = copy_string_kernel("", bprm);
++		if (retval < 0)
++			goto out_free;
++		bprm->argc = 1;
++	}
++
+ 	retval = bprm_execve(bprm, fd, filename, flags);
+ out_free:
+ 	free_bprm(bprm);
+@@ -1951,6 +1973,8 @@ int kernel_execve(const char *kernel_fil
+ 	}
+ 
+ 	retval = count_strings_kernel(argv);
++	if (WARN_ON_ONCE(retval == 0))
++		retval = -EINVAL;
+ 	if (retval < 0)
+ 		goto out_free;
+ 	bprm->argc = retval;
+
+
