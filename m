@@ -2,105 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C50D4F4D1C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Apr 2022 03:26:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B56F24F4D51
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Apr 2022 03:28:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1581488AbiDEXjW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 Apr 2022 19:39:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35234 "EHLO
+        id S1581897AbiDEXlV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 Apr 2022 19:41:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1452046AbiDEPyU (ORCPT
+        with ESMTP id S1452408AbiDEPyx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 Apr 2022 11:54:20 -0400
-Received: from sonic314-26.consmr.mail.ne1.yahoo.com (sonic314-26.consmr.mail.ne1.yahoo.com [66.163.189.152])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CA9F1D192E
-        for <linux-fsdevel@vger.kernel.org>; Tue,  5 Apr 2022 07:50:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1649170201; bh=wj9b4EM96Nw9uy/BlR8A+kRsw+NxU/IGvlc7WNtaG6Y=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=szLTqN29hH0Fplkr6uAe+MXF5PEA5fsJqTjRbZbWpnvC0Al5xHpu2TN4ooBY38wWJ8uiTpimodlROdpLS5wh+w/cRUkreeUOk4IRrNYkk0oRW0v4kPNiuhgPw1X5zsHOt/MDQkQXGnSVaNgfhv762MM6O896isbhEQuhBvsq1ESOUk/TvdnN2GUdrLh5aQ5PKEy7nh36gPUebwxqWz//ak3Yuw61QLtypYZo2v+UhhO4ojX1rvbwuZSNQau/+CPl1qE7BLh8g5V3Oflo+FP9jLuvjXqyU3z15HyXJgvy6iIksyrZovyQwmLa6sOUWH8w5VOCGholry/lqUHaRfRKYQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1649170201; bh=3ZN3cB5DrA9X/nY5OB/U+58iiXHAjbJw4aWJEs1+cuQ=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=DR1WkSMA58A7/84XbZe7tMPfrRoaKZfEofoTrXU55nzLbY4vyUCbCqDRR9vTC/Uadze+3Ih+fk9/OmEKXlLppRWnckXs7yEoDdbb1WxeA2BD+pBqa9ECHGxmWnpbUTNDe1t0cqQNPdRzvApbSFo59cOpx7FQiPfJ45QLXI6P3V1tLvseXsla3JhAphQvqPfea+KVBdU4EfvwaWyXsIKvq9+Q1xBRonm8LG2UkuJEo/kC6kyrnbt/cBHxXPlbLCTtK/dxx9qrMMl1Wm4gBUD0Zkw7Xm6NU1wxUyPD3d1PcroVIC0uhVcDjmLLYKx7g8iQESNTKTMCxrHzntqKfbbmRQ==
-X-YMail-OSG: CFOYxhkVM1m8ajYW0_qAcFcSymFYK7L2a6qwzT9OQ2UUlnv.BUpaBF0wlxuQwal
- Id7mxXvbyHI3SKjYGp5dT0n84hYQnlM1pHkE4PFSYGPgBksboFZsw7oyD2lk5ECMCbr9SWtAVmH0
- .d_7i9b6VeRrpvgGKNa1LydWgjhZ1aF1j0WCXmVAvxhuASrx4AcSwEbxIrf02ZzIpdkF0tRIDiGA
- fIiLtCbvL7HMF.6JTu0hqKSkEm800._UKU74Zj1c8CSy3J6teokbUoLkU9l7KOyyfqPed71COGc.
- Uk6.j4EupI6yx7AEAnyNrmRVsu.lfDRd0uLTdnaAKNWCzNHP0Rk81z_8._7QaZOYHEjwEpEZXCpK
- zI2AD45g77679.Ja5Ys2GLvFXjX3.xp7aclyNNvofR7Jh067Y2gXqzIBDSu87zaEdP2MK837M.xB
- 1OfFnJdnAvbWt_H_q3.Q1tMwL3Kixm_AgnvjlHbLwHBbqA5JOFNcArx5haZqok5xRTl2mf0F1D6l
- .FzSfaWxY3OLo.mtM7g8kOFRLw0CvXlG4TIfXPLXErAlD6mRLM2xXPDwG1nR1vqd_xRYbS9xlKjK
- TuOonIiTKMvOhrUQC02h69nK_tpOB8yYlI4k7YiEMslyPBbGWOFMwySUOrpRH.vBxhe.l6oheiYx
- o5NBcl7BgAa1X3ivsn5SA.3767Hce6hgpq.yEFeQs06Ap8HcIVM14Y7deXwZmV1GWFltSdN_pJF2
- UG58DzAejc8YGRZBu6lz5tuJrea9nd0slrvU3mECSMxrEbsyUTmunNoMIk0rA.aRSWtwaxhHGzuE
- 5DgTgrWYaNzOwZ4VJJOYi.I9idvbKTmuLsXnnv.GOl.FDes9fM1fDSPMyMqXOnQWmSt2QuGgkxiX
- O3J3CdGHIe2rsXRPr.0Wfe80l9txzoYyLA8ixpWlcmwY4mQ_Vp1oIgPvoKW8xWZfwbNjYoK.tVc9
- DtYt_F4pHOqWb50NMKpHgAoi71Doo1u06ukfMzUSZyXaMjeTVIRzpEPEWCbLExiAl0aFBdB5KRBJ
- te6O8QwP6VrOI6itfgkCtp3fEiaVJVMr47S.xuFOxzyKMGKcbgS.ruL8Rhe5lC5utwjw3f0BH0Nx
- buLatAE2DDGm7V3HuuKQpFk1bD_ji9UZYRpnYQzSa7D71taZFqyWUmJWrX7vmBcQv_VN7PkLsFN7
- 5sAQHk0sECA0_fB_g.iQ9WymiEErRe0kN7smNXq4tH.aejcBKLjJ24APkm4dTV1YtYomr_bMNfIv
- nCFfXnwwZJlekUqNVA2hf35UraNh2atZDH4TiV59UQA.MCuGRsJYJqKAN_.CsrXt4u.vY4xBMxSR
- 0u8G8TDu93_d3KzrzuvQ8XAvJl5mGkARGoICNoUrt_93L0kweQfUu97iBOpE7GlVkQXISdhck.eb
- uG3dpWlu2E.v.iFKX4QlMWTlQoWgIfInZY4EB5qlB42SWHhNnJVPQOjEVWIP8ifbVbsZe1l5D04S
- zkOUkmqknYyJhcamDu4OZHYL2IEPc5uiCroAgyfnYpJyyIeebSuq34rjsMoyh7tRQJpuWzizAbyu
- bzNKtWQSCidx6SSyCGFQOCkA_8jUU04P_Xc0CmQk2ex_ev.N6JN3Y.4DoJD1jrqVUt5aphZ6taBL
- hzeQ_wzrLft1yBBY0l2yuxwtSmxLiWmggDDoJA0Ii4HDpiqvKaRUenUxclO3D08BliBCrSyjvWbQ
- sI.Mt6vM9CMIzGrRat4F_GcnzV65o3Y6a4UQ0BR49h2i8dZ9ibBUDd4ZOnCKmgu5ihRalDhHq.Lh
- rDkyZs1_j2MiXKArIEu9GpzofL3tW2XdoYrwJ26iDh.EzUD03dUjgh4I0p0qEw4T4ahxw5BqeoOw
- 4FHGancMHvTfphor.ZGF1SlwVQsXdsYbNebOirRY98B8SaXUn8n0EVeBYFTbp9WnTV_er1Z_HOo6
- e4OSDMPR5Je3vjvIkLFrvbJzkAY5i2ZgAqaqyTn3Qx3ps2lX.ezpy64VwRHmfHzpt_jI2wElf24c
- g4qW1E2DfMNs_nVIhc9rNzqBLSBtdAvROBR18UrN.ss97iy5jq0l.tL1OlKryQTzuvn9Z5oeeg6d
- 5taNSsD3C8P83uZ5Nmlr4jusTx_GmTYgQrZVwfwIPG4piGX3vXgcpSuDdUSLCJqMSr2vUtELUu0N
- iaXJ.aM7Zy3DgaMbDGql5Lp4CxMtioPoU.ZHG.XyM4z5fpCXl_pwMrMic2cooJQ_ylp09Z6_MEB9
- j1_dDjzqt2Yo.6W58FqK16PgxUbxQG6_rkZpUVbZBZ0pvRlI58g--
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ne1.yahoo.com with HTTP; Tue, 5 Apr 2022 14:50:01 +0000
-Received: by hermes--canary-production-bf1-665cdb9985-zm65g (VZM Hermes SMTP Server) with ESMTPA ID 7d2721fd225af1eb62abd539103a7a7f;
-          Tue, 05 Apr 2022 14:49:54 +0000 (UTC)
-Message-ID: <385e4cf4-4cd1-8f41-5352-ea87a1f419ad@schaufler-ca.com>
-Date:   Tue, 5 Apr 2022 07:49:49 -0700
+        Tue, 5 Apr 2022 11:54:53 -0400
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C83891177;
+        Tue,  5 Apr 2022 07:55:03 -0700 (PDT)
+Received: from cwcc.thunk.org (pool-108-7-220-252.bstnma.fios.verizon.net [108.7.220.252])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 235EsMot006873
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 5 Apr 2022 10:54:23 -0400
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id 9237D15C3EB6; Tue,  5 Apr 2022 10:54:22 -0400 (EDT)
+Date:   Tue, 5 Apr 2022 10:54:22 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Heimes <christian@python.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        James Morris <jmorris@namei.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Steve Dower <steve.dower@python.org>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Christian Brauner <brauner@kernel.org>
+Subject: Re: [GIT PULL] Add trusted_for(2) (was O_MAYEXEC)
+Message-ID: <YkxYHqLqTEKFrCeg@mit.edu>
+References: <20220321161557.495388-1-mic@digikod.net>
+ <202204041130.F649632@keescook>
+ <CAHk-=wgoC76v-4s0xVr1Xvnx-8xZ8M+LWgyq5qGLA5UBimEXtQ@mail.gmail.com>
+ <816667d8-2a6c-6334-94a4-6127699d4144@digikod.net>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH 00/18] bpf: Secure and authenticated preloading of eBPF
- programs
-Content-Language: en-US
-To:     Roberto Sassu <roberto.sassu@huawei.com>,
-        Djalal Harouni <tixxdz@gmail.com>,
-        KP Singh <kpsingh@kernel.org>
-Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "andrii@kernel.org" <andrii@kernel.org>,
-        "shuah@kernel.org" <shuah@kernel.org>,
-        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
-        "alexandre.torgue@foss.st.com" <alexandre.torgue@foss.st.com>,
-        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20220328175033.2437312-1-roberto.sassu@huawei.com>
- <20220331022727.ybj4rui4raxmsdpu@MBP-98dd607d3435.dhcp.thefacebook.com>
- <b9f5995f96da447c851f7c9db8232a9b@huawei.com>
- <20220401235537.mwziwuo4n53m5cxp@MBP-98dd607d3435.dhcp.thefacebook.com>
- <CACYkzJ5QgkucL3HZ4bY5Rcme4ey6U3FW4w2Gz-9rdWq0_RHvgA@mail.gmail.com>
- <CAEiveUcx1KHoJ421Cv+52t=0U+Uy2VF51VC_zfTSftQ4wVYOPw@mail.gmail.com>
- <c2e57f10b62940eba3cfcae996e20e3c@huawei.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <c2e57f10b62940eba3cfcae996e20e3c@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.20001 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
-X-Spam-Status: No, score=-2.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <816667d8-2a6c-6334-94a4-6127699d4144@digikod.net>
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -109,68 +68,63 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/4/2022 10:20 AM, Roberto Sassu wrote:
->> From: Djalal Harouni [mailto:tixxdz@gmail.com]
->> Sent: Monday, April 4, 2022 9:45 AM
->> On Sun, Apr 3, 2022 at 5:42 PM KP Singh <kpsingh@kernel.org> wrote:
->>> On Sat, Apr 2, 2022 at 1:55 AM Alexei Starovoitov
->>> <alexei.starovoitov@gmail.com> wrote:
->> ...
->>>>> Pinning
->>>>> them to unreachable inodes intuitively looked the
->>>>> way to go for achieving the stated goal.
->>>> We can consider inodes in bpffs that are not unlinkable by root
->>>> in the future, but certainly not for this use case.
->>> Can this not be already done by adding a BPF_LSM program to the
->>> inode_unlink LSM hook?
->>>
->> Also, beside of the inode_unlink... and out of curiosity: making sysfs/bpffs/
->> readonly after pinning, then using bpf LSM hooks
->> sb_mount|remount|unmount...
->> family combining bpf() LSM hook... isn't this enough to:
->> 1. Restrict who can pin to bpffs without using a full MAC
->> 2. Restrict who can delete or unmount bpf filesystem
->>
->> ?
-> I'm thinking to implement something like this.
->
-> First, I add a new program flag called
-> BPF_F_STOP_ONCONFIRM, which causes the ref count
-> of the link to increase twice at creation time. In this way,
-> user space cannot make the link disappear, unless a
-> confirmation is explicitly sent via the bpf() system call.
->
-> Another advantage is that other LSMs can decide
-> whether or not they allow a program with this flag
-> (in the bpf security hook).
->
-> This would work regardless of the method used to
-> load the eBPF program (user space or kernel space).
->
-> Second, I extend the bpf() system call with a new
-> subcommand, BPF_LINK_CONFIRM_STOP, which
-> decreasres the ref count for the link of the programs
-> with the BPF_F_STOP_ONCONFIRM flag. I will also
-> introduce a new security hook (something like
-> security_link_confirm_stop), so that an LSM has the
-> opportunity to deny the stop (the bpf security hook
-> would not be sufficient to determine exactly for
-> which link the confirmation is given, an LSM should
-> be able to deny the stop for its own programs).
+On Mon, Apr 04, 2022 at 10:30:13PM +0200, Mickaël Salaün wrote:
+> > If you add a new X_OK variant to access(), maybe that could fly.
+> 
+> As answered in private, that was the approach I took for one of the early
+> versions but a dedicated syscall was requested by Al Viro:
+> https://lore.kernel.org/r/2ed377c4-3500-3ddc-7181-a5bc114ddf94@digikod.net
+> The main reason behind this request was that it doesn't have the exact same
+> semantic as faccessat(2). The changes for this syscall are documented here:
+> https://lore.kernel.org/all/20220104155024.48023-3-mic@digikod.net/
+> The whole history is linked in the cover letter:
+> https://lore.kernel.org/all/2ed377c4-3500-3ddc-7181-a5bc114ddf94@digikod.net/
 
-Would you please stop referring to a set of eBPF programs
-loaded into the BPF LSM as an LSM? Call it a BPF security
-module (BSM) if you must use an abbreviation. An LSM is a
-provider of security_ hooks. In your case that is BPF. When
-you call the set of eBPF programs an LSM it is like calling
-an SELinux policy an LSM.
+As a suggestion, something that can be helpful for something which has
+been as heavily bike-sheded as this concept might be to write a
+"legislative history", or perhaps, a "bike shed history".
 
->
-> What do you think?
->
-> Thanks
->
-> Roberto
->
-> HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-> Managing Director: Li Peng, Zhong Ronghua
+And not just with links to mailing list discussions, but a short
+summary of why, for example, we moved from the open flag O_MAYEXEC to
+the faccessat(2) approach.  I looked, but I couldn't find the
+reasoning while diving into the mail archives.  And there was some
+kind of request for some new functionality for IMA and other LSM's
+that I couldn't follow that is why the new AT_INTERETED flag, but at
+this point my time quantuum for mailing list archeology most
+definitely expired.  :-)
+
+It might be that when all of this is laid out, we can either revisit
+prior design decisions as "that bike-shed request to support this
+corner case was unreasonable", or "oh, OK, this is why we need as
+fully general a solution as this".
+
+Also, some of examples of potential future use cases such as "magic
+links" that were linked in the cover letter, it's not clear to me
+actually make sense in the context of a "trusted for" system call
+(although might make more sense in the context of an open flag).  So
+revisiting some of those other cases to see whether they actually
+*could* be implemented as new "TRUSTED_FOR" flags might be
+instructive.
+
+Personally, I'm a bit skeptical about the prospct of additional use
+cases, since trusted_for(2) is essentially a mother_should_I(2)
+request where userspace is asking the kernel whether they should go
+ahead and do some particular policy thing.  And it's not clear to me
+how many of these policy questions exist where (a) the kernel is in
+the past position to answer that question, and (b) there isn't some
+additional information that the kernel doesn't have that might be
+needed to answer that question.
+
+For example, "Mother should I use that private key file" might require
+information about whether the SRE is currently on pager duty or not,
+at least for some policies, and the kernel isn't going to have that
+information.
+
+Other examples of TRUSTED_FOR flags that really make sense and would
+be useful might help alleviate my skepticsm.  And the "bike shed
+history" would help with my question about why some folks didn't like
+the original O_MAYEXEC flag?
+
+Cheers,
+
+					- Ted
