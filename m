@@ -2,113 +2,166 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 754424F20A3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Apr 2022 04:06:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 071F54F2110
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Apr 2022 06:08:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229560AbiDECF2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 4 Apr 2022 22:05:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47050 "EHLO
+        id S229853AbiDECi1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 4 Apr 2022 22:38:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229563AbiDECF0 (ORCPT
+        with ESMTP id S229852AbiDECiN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 4 Apr 2022 22:05:26 -0400
-Received: from mail-oi1-x236.google.com (mail-oi1-x236.google.com [IPv6:2607:f8b0:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70FA8135081;
-        Mon,  4 Apr 2022 18:22:13 -0700 (PDT)
-Received: by mail-oi1-x236.google.com with SMTP id t21so11901663oie.11;
-        Mon, 04 Apr 2022 18:22:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=y7CfRmOu2mFNhlP27BBXPAgEnRTv2JAfJlw4FzS8AkI=;
-        b=Z/ADUipXSo6cCCoApgoWmuri8ib7Z2ZRmbnR54h8/VrIGaueK5QGu/WZtyWNFshPcu
-         iAUxF22NOgckmUzcLG64u90kuydHGTVHt9OYXf690baDj9sOYSCj/jaZkbYXeWXHpMmB
-         fAHEsMsaWg7XOguwyTv9/4z8MTuyMLKrHnwV08vQpUkIZUwgrbHKz3AVmSD3jtcNlM/x
-         0UinNkINbSntmhwlU0tlzyGj/QAvnPpxiM0jFhKpPSABVsY/8/XIx1H5kYyTNNFKFogR
-         jNANubjJDZQhCftsvAm3pWtbim5rG5UTWikV3yCU0eXPRTt1v5MNXIOEz9cyijS6kP55
-         XDvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=y7CfRmOu2mFNhlP27BBXPAgEnRTv2JAfJlw4FzS8AkI=;
-        b=LP6A0w0tgaMTEoQt/CdUYE9qBQGsBNo8Z8vLuS1o6ayplFYbJkgXfpjiEJBQxTFFi0
-         3mLGOevxCl0Boeg3O9XU3vXF7wA+GIxscRcvhwPdp82+jZz7tElpf/TfHhSrUHkXGAq6
-         WgGgq7VZny1ApersE8krX2x/FJIQ6kqDOyqAF5ffCi+SoLDRn/5m5xBynQ/a57xkMoVu
-         XC7o8KVTX7GKXtgLrKFGYbGEFokgX6zSo8puN0Hq6WAlQ4JrCgcDu633lI+DhJUspOL+
-         NJOEzWTt4a1L0JgLrD2uqSD7mYT0h7tDkV9Ibz0shwdKw6HfMgp9ZSyVxRH+giCXTYV2
-         CRfw==
-X-Gm-Message-State: AOAM530rmVfmY6W3K8TkJ6OG7BU288KIniTRaJ6ZMm4jBTWEnAsoS/fX
-        WUNj4NyB7KSdmCOF5NMT8j51dUJYBEwLoMu6qa2UkD5rZSc=
-X-Google-Smtp-Source: ABdhPJyefORiL8A7gzvpS7dFgoDZqSwDNKY91Ji/hlxmeFS27O7LqO1jBzOIggw1AkXZ8Y44Dm+GJ8fQng2R1BpN3QQ=
-X-Received: by 2002:a17:90a:5298:b0:1ca:7fb3:145 with SMTP id
- w24-20020a17090a529800b001ca7fb30145mr1036706pjh.200.1649119741666; Mon, 04
- Apr 2022 17:49:01 -0700 (PDT)
+        Mon, 4 Apr 2022 22:38:13 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A5D11CB168
+        for <linux-fsdevel@vger.kernel.org>; Mon,  4 Apr 2022 18:37:39 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 8EB5AB81B03
+        for <linux-fsdevel@vger.kernel.org>; Tue,  5 Apr 2022 00:00:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AA7BC3411E
+        for <linux-fsdevel@vger.kernel.org>; Tue,  5 Apr 2022 00:00:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1649116837;
+        bh=zFyw1VrfGv7NEuMWOTezqzL8GubbV0WO1PDpwo/w7kk=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=IzT8pKglPQrYQePYYNDTTvWosEy8MxZkq3wR0piD8u7iSz63ghJ7anCpsXVy8rPww
+         h8sb6BeBAosTUPJfJSBf5tC/Uc9Zc7IhUFp3EN+3Y4bey3Juna89uPMBgdz3W6AXN8
+         KvMFgfyNzawLqWgHmU50yAJKNxBLRXw3d+NWJeiFYcgugGX/GADSzk/5G8g9++kPxr
+         OpF27iOsOSCNOr0NIjmDYXJCtgmcKH1aCT/Qss+bZqX0jw6YqWJZnXdaS1BIF6FzjI
+         YW3kHL8sWBe0nwkHW+VswjM/Okte+nrlOhP3czPdm/y4SX3zE8ViE7mZZZHIzCb+Y/
+         aCTsH/tzvnYAg==
+Received: by mail-ed1-f42.google.com with SMTP id p23so5443454edi.8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 04 Apr 2022 17:00:37 -0700 (PDT)
+X-Gm-Message-State: AOAM532wCe39AvwwSwZM8WZrg1qDOa1HbybD4ZnJqxKyOtCVo6/lgXLV
+        5//iG1x/g3PnGwcmaSk7SlPE5w4+dYD4qy0zRlCaMA==
+X-Google-Smtp-Source: ABdhPJx00CBmV+NQNnGWVZ6pCbTPeYWoi7t9WNITl4M8WQe+QSjOqLEi5/uSRAkUXHVhCjpjoCKilOkyYU4kDA3K4zE=
+X-Received: by 2002:aa7:c157:0:b0:418:f8e3:4c87 with SMTP id
+ r23-20020aa7c157000000b00418f8e34c87mr671966edp.271.1649116835186; Mon, 04
+ Apr 2022 17:00:35 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220404200250.321455-1-shy828301@gmail.com> <YkuKbMbSecBVsa1k@casper.infradead.org>
-In-Reply-To: <YkuKbMbSecBVsa1k@casper.infradead.org>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Mon, 4 Apr 2022 17:48:49 -0700
-Message-ID: <CAHbLzkoWPN+ahrvu2JrvoDpf8J_QGR6Ug6BbPnC11C82Lb-NaA@mail.gmail.com>
-Subject: Re: [v3 PATCH 0/8] Make khugepaged collapse readonly FS THP more consistent
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Vlastimil Babka <vbabka@suse.cz>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        Song Liu <songliubraving@fb.com>,
-        Rik van Riel <riel@surriel.com>, Zi Yan <ziy@nvidia.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20220328175033.2437312-1-roberto.sassu@huawei.com>
+ <20220331022727.ybj4rui4raxmsdpu@MBP-98dd607d3435.dhcp.thefacebook.com>
+ <b9f5995f96da447c851f7c9db8232a9b@huawei.com> <20220401235537.mwziwuo4n53m5cxp@MBP-98dd607d3435.dhcp.thefacebook.com>
+ <CACYkzJ5QgkucL3HZ4bY5Rcme4ey6U3FW4w2Gz-9rdWq0_RHvgA@mail.gmail.com>
+ <CAEiveUcx1KHoJ421Cv+52t=0U+Uy2VF51VC_zfTSftQ4wVYOPw@mail.gmail.com>
+ <c2e57f10b62940eba3cfcae996e20e3c@huawei.com> <CAADnVQJSso+GSXC-QmNmj0GBPZzxRCRfqAcQbqD-6y0CtMSopQ@mail.gmail.com>
+In-Reply-To: <CAADnVQJSso+GSXC-QmNmj0GBPZzxRCRfqAcQbqD-6y0CtMSopQ@mail.gmail.com>
+From:   KP Singh <kpsingh@kernel.org>
+Date:   Tue, 5 Apr 2022 02:00:24 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ7ZVbL2MG7ugmDEfogSPAHkYYMCHxRO_eBCJJmBZyn6Rw@mail.gmail.com>
+Message-ID: <CACYkzJ7ZVbL2MG7ugmDEfogSPAHkYYMCHxRO_eBCJJmBZyn6Rw@mail.gmail.com>
+Subject: Re: [PATCH 00/18] bpf: Secure and authenticated preloading of eBPF programs
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     Roberto Sassu <roberto.sassu@huawei.com>,
+        Djalal Harouni <tixxdz@gmail.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "ast@kernel.org" <ast@kernel.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        "andrii@kernel.org" <andrii@kernel.org>,
+        "shuah@kernel.org" <shuah@kernel.org>,
+        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
+        "alexandre.torgue@foss.st.com" <alexandre.torgue@foss.st.com>,
+        "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 4, 2022 at 5:16 PM Matthew Wilcox <willy@infradead.org> wrote:
+On Tue, Apr 5, 2022 at 12:49 AM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
 >
-> On Mon, Apr 04, 2022 at 01:02:42PM -0700, Yang Shi wrote:
-> > The readonly FS THP relies on khugepaged to collapse THP for suitable
-> > vmas.  But it is kind of "random luck" for khugepaged to see the
-> > readonly FS vmas (see report: https://lore.kernel.org/linux-mm/00f195d4-d039-3cf2-d3a1-a2c88de397a0@suse.cz/) since currently the vmas are registered to khugepaged when:
+> On Mon, Apr 4, 2022 at 10:21 AM Roberto Sassu <roberto.sassu@huawei.com> wrote:
+> >
+> > > From: Djalal Harouni [mailto:tixxdz@gmail.com]
+> > > Sent: Monday, April 4, 2022 9:45 AM
+> > > On Sun, Apr 3, 2022 at 5:42 PM KP Singh <kpsingh@kernel.org> wrote:
+> > > >
+> > > > On Sat, Apr 2, 2022 at 1:55 AM Alexei Starovoitov
+> > > > <alexei.starovoitov@gmail.com> wrote:
+> > > ...
+> > > > >
+> > > > > > Pinning
+> > > > > > them to unreachable inodes intuitively looked the
+> > > > > > way to go for achieving the stated goal.
+> > > > >
+> > > > > We can consider inodes in bpffs that are not unlinkable by root
+> > > > > in the future, but certainly not for this use case.
+> > > >
+> > > > Can this not be already done by adding a BPF_LSM program to the
+> > > > inode_unlink LSM hook?
+> > > >
+> > >
+> > > Also, beside of the inode_unlink... and out of curiosity: making sysfs/bpffs/
+> > > readonly after pinning, then using bpf LSM hooks
+> > > sb_mount|remount|unmount...
+> > > family combining bpf() LSM hook... isn't this enough to:
+> > > 1. Restrict who can pin to bpffs without using a full MAC
+> > > 2. Restrict who can delete or unmount bpf filesystem
+> > >
+
+I like this approach better, you will have to restrict the BPF, if you
+want to implement MAC policy using BPF.
+
+Can you please try implementing something using these hooks?
+
+> > > ?
+> >
+> > I'm thinking to implement something like this.
+> >
+> > First, I add a new program flag called
+> > BPF_F_STOP_ONCONFIRM, which causes the ref count
+> > of the link to increase twice at creation time. In this way,
+> > user space cannot make the link disappear, unless a
+> > confirmation is explicitly sent via the bpf() system call.
+
+I don't like this approach, this just sounds like an intentional
+dangling reference, prone to refcounting errors and it does not
+really solve the purpose you want to achieve.
+
+And you will still need a policy around the BPF syscall,
+so why not just use the LSM hooks as suggested above?
+
+> >
+> > Another advantage is that other LSMs can decide
+> > whether or not they allow a program with this flag
+> > (in the bpf security hook).
+> >
+> > This would work regardless of the method used to
+> > load the eBPF program (user space or kernel space).
+> >
+> > Second, I extend the bpf() system call with a new
+> > subcommand, BPF_LINK_CONFIRM_STOP, which
+> > decreases the ref count for the link of the programs
+> > with the BPF_F_STOP_ONCONFIRM flag. I will also
+> > introduce a new security hook (something like
+> > security_link_confirm_stop), so that an LSM has the
+> > opportunity to deny the stop (the bpf security hook
+> > would not be sufficient to determine exactly for
+> > which link the confirmation is given, an LSM should
+> > be able to deny the stop for its own programs).
+> >
+> > What do you think?
 >
-> I still don't see the point.  The effort should be put into
-> supporting large folios, not in making this hack work better.
-
-The series makes sense even though the hack is replaced by large
-folios IMHO. The problem is the file VMAs may be not registered by
-khugepaged consistently for some THP modes, for example, always,
-regardless of whether it's readonly or the hack is gone or not. IIUC
-even though the hack is replaced by the large folios, we still have
-khugepaged to collapse pmd-mappable huge pages for both anonymous vmas
-and file vmas, right? Or are you thinking about killing khugepaged
-soon with supporting large folios?
-
-Anyway it may make things clearer if the cover letter is rephrased to:
-
-When khugepaged collapses file THPs, its behavior is not consistent.
-It is kind of "random luck" for khugepaged to see the file vmas (see
-report: https://lore.kernel.org/linux-mm/00f195d4-d039-3cf2-d3a1-a2c88de397a0@suse.cz/)
-since currently the vmas are registered to khugepaged when:
-  - Anon huge pmd page fault
-  - VMA merge
-  - MADV_HUGEPAGE
-  - Shmem mmap
-
-If the above conditions are not met, even though khugepaged is enabled
-it won't see any file vma at all.  MADV_HUGEPAGE could be specified
-explicitly to tell khugepaged to collapse this area, but when
-khugepaged mode is "always" it should scan suitable vmas as long as
-VM_NOHUGEPAGE is not set.
-
-So make sure file vmas are registered to khugepaged to make the
-behavior more consistent.
+> Hack upon a hack? Makes no sense.
