@@ -2,44 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D0CDA4F4D2E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Apr 2022 03:27:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BEFD74F4D0B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Apr 2022 03:22:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1581674AbiDEXkZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 Apr 2022 19:40:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35276 "EHLO
+        id S1454213AbiDEXi3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 Apr 2022 19:38:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1573551AbiDETWf (ORCPT
+        with ESMTP id S1573550AbiDETWf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Tue, 5 Apr 2022 15:22:35 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C65443B2B0;
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D1053A70D;
         Tue,  5 Apr 2022 12:20:36 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 59D9EB81F6B;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8D09061899;
         Tue,  5 Apr 2022 19:20:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 611E1C385A0;
-        Tue,  5 Apr 2022 19:20:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A4A3C385A1;
+        Tue,  5 Apr 2022 19:20:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649186434;
-        bh=WUMUKws9bRjZTrkHwsGynA7tUQA6j+UO+nipvx8/Pxc=;
+        s=k20201202; t=1649186435;
+        bh=nG8CJQgJdJ6uZY6N3B9ES84bNWIgTJ4luknQQSBEL7g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ViqzZ1njQjHURsQFB+bQws/EXFJXBVZ0713Vy6dx/7ZW2JLu/xJiUvM59gv19WtuH
-         jfUpil6gly2i2pNknMzzqQLgdSP/9zSp1jWAsMzq31/yBk1ZmtSHwQo8W93YF+gpoH
-         q6gA5ImURC+5w6E7ZP7KxFXbq5yPmvGsDpR55YX9rpAnUorWYz8YyWWxca89/CYEGb
-         dCmAQsLRhI+xEKB9lYpcxr7hUR7Dp1hQy01Plzo+DQB9eu66rhzwF1tqLuh0RVcn/E
-         8dUtp6FjBKqDcfNtEjqOTl56bgrKgfjt0ySudygn2hIFJ1pt3dBuGefss3n3vS2CxR
-         5uhc00PJzXdlQ==
+        b=PfD92Pe5GDQkkwdKIR07YoHmc/+qwtcF5k1GyDiZ9NSsNfFNXtdEoZhAEs+0kHO7f
+         D87/tGhmK7Yay22hndvV1yjkAybmgu1rMZFmYzZpq3cIAQGC72SsSAy+vv6maCSADL
+         o8rGvMWFiGjZcsUBKzAB5GaJ3915DNz8VXltDe/0mT55LsZL4o3CCkKtMedI5utFyC
+         BevPuBXPwxuqqL5WKGSYZLbRnyHa0shBl8Kj29n6oyeBaIUK31dzyaO+QjQtfUVMjm
+         H9wF04lZy+TXYUBek0FLlwOZKB8HGLOppRZsoFvf6wOHgqp+6FHtEX1TyeJQ5DUEWO
+         oaHoFo/yL2vGg==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     idryomov@gmail.com, xiubli@redhat.com
 Cc:     ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-fscrypt@vger.kernel.org, linux-kernel@vger.kernel.org,
         lhenriques@suse.de
-Subject: [PATCH v13 02/59] libceph: define struct ceph_sparse_extent and add some helpers
-Date:   Tue,  5 Apr 2022 15:19:33 -0400
-Message-Id: <20220405192030.178326-3-jlayton@kernel.org>
+Subject: [PATCH v13 03/59] libceph: add sparse read support to msgr2 crc state machine
+Date:   Tue,  5 Apr 2022 15:19:34 -0400
+Message-Id: <20220405192030.178326-4-jlayton@kernel.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220405192030.178326-1-jlayton@kernel.org>
 References: <20220405192030.178326-1-jlayton@kernel.org>
@@ -55,124 +55,337 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When the OSD sends back a sparse read reply, it contains an array of
-these structures. Define the structure and add a couple of helpers for
-dealing with them.
+Add support for a new sparse_read ceph_connection operation. The idea is
+that the client driver can define this operation use it to do special
+handling for incoming reads.
 
-Also add a place in struct ceph_osd_req_op to store the extent buffer,
-and code to free it if it's populated when the req is torn down.
+The alloc_msg routine will look at the request and determine whether the
+reply is expected to be sparse. If it is, then we'll dispatch to a
+different set of state machine states that will repeatedly call the
+driver's sparse_read op to get length and placement info for reading the
+extent map, and the extents themselves.
+
+This necessitates adding some new field to some other structs:
+
+- The msg gets a new bool to track whether it's a sparse_read request.
+
+- A new field is added to the cursor to track the amount remaining in the
+current extent. This is used to cap the read from the socket into the
+msg_data
+
+- Handing a revoke with all of this is particularly difficult, so I've
+added a new data_len_remain field to the v2 connection info, and then
+use that to skip that much on a revoke. We may want to expand the use of
+that to the normal read path as well, just for consistency's sake.
 
 Reviewed-by: Xiubo Li <xiubli@redhat.com>
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- include/linux/ceph/osd_client.h | 43 ++++++++++++++++++++++++++++++++-
- net/ceph/osd_client.c           | 13 ++++++++++
- 2 files changed, 55 insertions(+), 1 deletion(-)
+ include/linux/ceph/messenger.h |  28 ++++++
+ net/ceph/messenger.c           |   1 +
+ net/ceph/messenger_v2.c        | 168 +++++++++++++++++++++++++++++++--
+ 3 files changed, 188 insertions(+), 9 deletions(-)
 
-diff --git a/include/linux/ceph/osd_client.h b/include/linux/ceph/osd_client.h
-index 3122c1a3205f..1dd02240d00d 100644
---- a/include/linux/ceph/osd_client.h
-+++ b/include/linux/ceph/osd_client.h
-@@ -29,6 +29,17 @@ typedef void (*ceph_osdc_callback_t)(struct ceph_osd_request *);
+diff --git a/include/linux/ceph/messenger.h b/include/linux/ceph/messenger.h
+index e7f2fb2fc207..7f09a4213834 100644
+--- a/include/linux/ceph/messenger.h
++++ b/include/linux/ceph/messenger.h
+@@ -17,6 +17,7 @@
  
- #define CEPH_HOMELESS_OSD	-1
+ struct ceph_msg;
+ struct ceph_connection;
++struct ceph_msg_data_cursor;
  
-+/*
-+ * A single extent in a SPARSE_READ reply.
-+ *
-+ * Note that these come from the OSD as little-endian values. On BE arches,
-+ * we convert them in-place after receipt.
-+ */
-+struct ceph_sparse_extent {
-+	u64	off;
-+	u64	len;
-+} __packed;
-+
  /*
-  * A given osd we're communicating with.
-  *
-@@ -104,6 +115,8 @@ struct ceph_osd_req_op {
- 			u64 offset, length;
- 			u64 truncate_size;
- 			u32 truncate_seq;
-+			int sparse_ext_cnt;
-+			struct ceph_sparse_extent *sparse_ext;
- 			struct ceph_osd_data osd_data;
- 		} extent;
- 		struct {
-@@ -507,6 +520,20 @@ extern struct ceph_osd_request *ceph_osdc_new_request(struct ceph_osd_client *,
- 				      u32 truncate_seq, u64 truncate_size,
- 				      bool use_mempool);
+  * Ceph defines these callbacks for handling connection events.
+@@ -70,6 +71,30 @@ struct ceph_connection_operations {
+ 				      int used_proto, int result,
+ 				      const int *allowed_protos, int proto_cnt,
+ 				      const int *allowed_modes, int mode_cnt);
++
++	/**
++	 * sparse_read: read sparse data
++	 * @con: connection we're reading from
++	 * @cursor: data cursor for reading extents
++	 * @buf: optional buffer to read into
++	 *
++	 * This should be called more than once, each time setting up to
++	 * receive an extent into the current cursor position, and zeroing
++	 * the holes between them.
++	 *
++	 * Returns amount of data to be read (in bytes), 0 if reading is
++	 * complete, or -errno if there was an error.
++	 *
++	 * If @buf is set on a >0 return, then the data should be read into
++	 * the provided buffer. Otherwise, it should be read into the cursor.
++	 *
++	 * The sparse read operation is expected to initialize the cursor
++	 * with a length covering up to the end of the last extent.
++	 */
++	int (*sparse_read)(struct ceph_connection *con,
++			   struct ceph_msg_data_cursor *cursor,
++			   char **buf);
++
+ };
  
-+int __ceph_alloc_sparse_ext_map(struct ceph_osd_req_op *op, int cnt);
-+
-+/*
-+ * How big an extent array should we preallocate for a sparse read? This is
-+ * just a starting value.  If we get more than this back from the OSD, the
-+ * receiver will reallocate.
-+ */
-+#define CEPH_SPARSE_EXT_ARRAY_INITIAL  16
-+
-+static inline int ceph_alloc_sparse_ext_map(struct ceph_osd_req_op *op)
-+{
-+	return __ceph_alloc_sparse_ext_map(op, CEPH_SPARSE_EXT_ARRAY_INITIAL);
-+}
-+
- extern void ceph_osdc_get_request(struct ceph_osd_request *req);
- extern void ceph_osdc_put_request(struct ceph_osd_request *req);
+ /* use format string %s%lld */
+@@ -207,6 +232,7 @@ struct ceph_msg_data_cursor {
  
-@@ -562,5 +589,19 @@ int ceph_osdc_list_watchers(struct ceph_osd_client *osdc,
- 			    struct ceph_object_locator *oloc,
- 			    struct ceph_watch_item **watchers,
- 			    u32 *num_watchers);
--#endif
+ 	struct ceph_msg_data	*data;		/* current data item */
+ 	size_t			resid;		/* bytes not yet consumed */
++	int			sr_resid;	/* residual sparse_read len */
+ 	bool			last_piece;	/* current is last piece */
+ 	bool			need_crc;	/* crc update needed */
+ 	union {
+@@ -252,6 +278,7 @@ struct ceph_msg {
+ 	struct kref kref;
+ 	bool more_to_follow;
+ 	bool needs_out_seq;
++	bool sparse_read;
+ 	int front_alloc_len;
  
-+/* Find offset into the buffer of the end of the extent map */
-+static inline u64 ceph_sparse_ext_map_end(struct ceph_osd_req_op *op)
-+{
-+	struct ceph_sparse_extent *ext;
-+
-+	/* No extents? No data */
-+	if (op->extent.sparse_ext_cnt == 0)
-+		return 0;
-+
-+	ext = &op->extent.sparse_ext[op->extent.sparse_ext_cnt - 1];
-+
-+	return ext->off + ext->len - op->extent.offset;
-+}
-+
-+#endif
-diff --git a/net/ceph/osd_client.c b/net/ceph/osd_client.c
-index 17c792b32343..c150683f2a2f 100644
---- a/net/ceph/osd_client.c
-+++ b/net/ceph/osd_client.c
-@@ -378,6 +378,7 @@ static void osd_req_op_data_release(struct ceph_osd_request *osd_req,
- 	case CEPH_OSD_OP_READ:
- 	case CEPH_OSD_OP_WRITE:
- 	case CEPH_OSD_OP_WRITEFULL:
-+		kfree(op->extent.sparse_ext);
- 		ceph_osd_data_release(&op->extent.osd_data);
- 		break;
- 	case CEPH_OSD_OP_CALL:
-@@ -1141,6 +1142,18 @@ struct ceph_osd_request *ceph_osdc_new_request(struct ceph_osd_client *osdc,
+ 	struct ceph_msgpool *pool;
+@@ -396,6 +423,7 @@ struct ceph_connection_v2_info {
+ 
+ 	void *conn_bufs[16];
+ 	int conn_buf_cnt;
++	int data_len_remain;
+ 
+ 	struct kvec in_sign_kvecs[8];
+ 	struct kvec out_sign_kvecs[8];
+diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
+index d3bb656308b4..bf4e7f5751ee 100644
+--- a/net/ceph/messenger.c
++++ b/net/ceph/messenger.c
+@@ -1034,6 +1034,7 @@ void ceph_msg_data_cursor_init(struct ceph_msg_data_cursor *cursor,
+ 
+ 	cursor->total_resid = length;
+ 	cursor->data = msg->data;
++	cursor->sr_resid = 0;
+ 
+ 	__ceph_msg_data_cursor_init(cursor);
  }
- EXPORT_SYMBOL(ceph_osdc_new_request);
+diff --git a/net/ceph/messenger_v2.c b/net/ceph/messenger_v2.c
+index c6e5bfc717d5..d527777af584 100644
+--- a/net/ceph/messenger_v2.c
++++ b/net/ceph/messenger_v2.c
+@@ -52,14 +52,16 @@
+ #define FRAME_LATE_STATUS_COMPLETE	0xe
+ #define FRAME_LATE_STATUS_ABORTED_MASK	0xf
  
-+int __ceph_alloc_sparse_ext_map(struct ceph_osd_req_op *op, int cnt)
+-#define IN_S_HANDLE_PREAMBLE		1
+-#define IN_S_HANDLE_CONTROL		2
+-#define IN_S_HANDLE_CONTROL_REMAINDER	3
+-#define IN_S_PREPARE_READ_DATA		4
+-#define IN_S_PREPARE_READ_DATA_CONT	5
+-#define IN_S_PREPARE_READ_ENC_PAGE	6
+-#define IN_S_HANDLE_EPILOGUE		7
+-#define IN_S_FINISH_SKIP		8
++#define IN_S_HANDLE_PREAMBLE			1
++#define IN_S_HANDLE_CONTROL			2
++#define IN_S_HANDLE_CONTROL_REMAINDER		3
++#define IN_S_PREPARE_READ_DATA			4
++#define IN_S_PREPARE_READ_DATA_CONT		5
++#define IN_S_PREPARE_READ_ENC_PAGE		6
++#define IN_S_PREPARE_SPARSE_DATA		7
++#define IN_S_PREPARE_SPARSE_DATA_CONT		8
++#define IN_S_HANDLE_EPILOGUE			9
++#define IN_S_FINISH_SKIP			10
+ 
+ #define OUT_S_QUEUE_DATA		1
+ #define OUT_S_QUEUE_DATA_CONT		2
+@@ -1819,6 +1821,124 @@ static void prepare_read_data_cont(struct ceph_connection *con)
+ 	con->v2.in_state = IN_S_HANDLE_EPILOGUE;
+ }
+ 
++static int prepare_sparse_read_cont(struct ceph_connection *con)
 +{
-+	op->extent.sparse_ext_cnt = cnt;
-+	op->extent.sparse_ext = kmalloc_array(cnt,
-+					      sizeof(*op->extent.sparse_ext),
-+					      GFP_NOFS);
-+	if (!op->extent.sparse_ext)
-+		return -ENOMEM;
-+	return 0;
-+}
-+EXPORT_SYMBOL(__ceph_alloc_sparse_ext_map);
++	int ret;
++	struct bio_vec bv;
++	char *buf = NULL;
++	struct ceph_msg_data_cursor *cursor = &con->v2.in_cursor;
 +
- /*
-  * We keep osd requests in an rbtree, sorted by ->r_tid.
-  */
++	WARN_ON(con->v2.in_state != IN_S_PREPARE_SPARSE_DATA_CONT);
++
++	if (iov_iter_is_bvec(&con->v2.in_iter)) {
++		if (ceph_test_opt(from_msgr(con->msgr), RXBOUNCE)) {
++			con->in_data_crc = crc32c(con->in_data_crc,
++						  page_address(con->bounce_page),
++						  con->v2.in_bvec.bv_len);
++			get_bvec_at(cursor, &bv);
++			memcpy_to_page(bv.bv_page, bv.bv_offset,
++				       page_address(con->bounce_page),
++				       con->v2.in_bvec.bv_len);
++		} else {
++			con->in_data_crc = ceph_crc32c_page(con->in_data_crc,
++							    con->v2.in_bvec.bv_page,
++							    con->v2.in_bvec.bv_offset,
++							    con->v2.in_bvec.bv_len);
++		}
++
++		ceph_msg_data_advance(cursor, con->v2.in_bvec.bv_len);
++		cursor->sr_resid -= con->v2.in_bvec.bv_len;
++		dout("%s: advance by 0x%x sr_resid 0x%x\n", __func__,
++		     con->v2.in_bvec.bv_len, cursor->sr_resid);
++		WARN_ON_ONCE(cursor->sr_resid > cursor->total_resid);
++		if (cursor->sr_resid) {
++			get_bvec_at(cursor, &bv);
++			if (bv.bv_len > cursor->sr_resid)
++				bv.bv_len = cursor->sr_resid;
++			if (ceph_test_opt(from_msgr(con->msgr), RXBOUNCE)) {
++				bv.bv_page = con->bounce_page;
++				bv.bv_offset = 0;
++			}
++			set_in_bvec(con, &bv);
++			con->v2.data_len_remain -= bv.bv_len;
++			return 0;
++		}
++	} else if (iov_iter_is_kvec(&con->v2.in_iter)) {
++		/* On first call, we have no kvec so don't compute crc */
++		if (con->v2.in_kvec_cnt) {
++			WARN_ON_ONCE(con->v2.in_kvec_cnt > 1);
++			con->in_data_crc = crc32c(con->in_data_crc,
++						  con->v2.in_kvecs[0].iov_base,
++						  con->v2.in_kvecs[0].iov_len);
++		}
++	} else {
++		return -EIO;
++	}
++
++	/* get next extent */
++	ret = con->ops->sparse_read(con, cursor, &buf);
++	if (ret <= 0) {
++		if (ret < 0)
++			return ret;
++
++		reset_in_kvecs(con);
++		add_in_kvec(con, con->v2.in_buf, CEPH_EPILOGUE_PLAIN_LEN);
++		con->v2.in_state = IN_S_HANDLE_EPILOGUE;
++		return 0;
++	}
++
++	if (buf) {
++		/* receive into buffer */
++		reset_in_kvecs(con);
++		add_in_kvec(con, buf, ret);
++		con->v2.data_len_remain -= ret;
++		return 0;
++	}
++
++	if (ret > cursor->total_resid) {
++		pr_warn("%s: ret 0x%x total_resid 0x%zx resid 0x%zx last %d\n",
++			__func__, ret, cursor->total_resid, cursor->resid,
++			cursor->last_piece);
++		return -EIO;
++	}
++	get_bvec_at(cursor, &bv);
++	if (bv.bv_len > cursor->sr_resid)
++		bv.bv_len = cursor->sr_resid;
++	if (ceph_test_opt(from_msgr(con->msgr), RXBOUNCE)) {
++		if (unlikely(!con->bounce_page)) {
++			con->bounce_page = alloc_page(GFP_NOIO);
++			if (!con->bounce_page) {
++				pr_err("failed to allocate bounce page\n");
++				return -ENOMEM;
++			}
++		}
++
++		bv.bv_page = con->bounce_page;
++		bv.bv_offset = 0;
++	}
++	set_in_bvec(con, &bv);
++	con->v2.data_len_remain -= ret;
++	return ret;
++}
++
++static int prepare_sparse_read_data(struct ceph_connection *con)
++{
++	struct ceph_msg *msg = con->in_msg;
++
++	dout("%s: starting sparse read\n", __func__);
++
++	if (WARN_ON_ONCE(!con->ops->sparse_read))
++		return -EOPNOTSUPP;
++
++	if (!con_secure(con))
++		con->in_data_crc = -1;
++
++	reset_in_kvecs(con);
++	con->v2.in_state = IN_S_PREPARE_SPARSE_DATA_CONT;
++	con->v2.data_len_remain = data_len(msg);
++	return prepare_sparse_read_cont(con);
++}
++
+ static int prepare_read_tail_plain(struct ceph_connection *con)
+ {
+ 	struct ceph_msg *msg = con->in_msg;
+@@ -1839,7 +1959,10 @@ static int prepare_read_tail_plain(struct ceph_connection *con)
+ 	}
+ 
+ 	if (data_len(msg)) {
+-		con->v2.in_state = IN_S_PREPARE_READ_DATA;
++		if (msg->sparse_read)
++			con->v2.in_state = IN_S_PREPARE_SPARSE_DATA;
++		else
++			con->v2.in_state = IN_S_PREPARE_READ_DATA;
+ 	} else {
+ 		add_in_kvec(con, con->v2.in_buf, CEPH_EPILOGUE_PLAIN_LEN);
+ 		con->v2.in_state = IN_S_HANDLE_EPILOGUE;
+@@ -2893,6 +3016,12 @@ static int populate_in_iter(struct ceph_connection *con)
+ 			prepare_read_enc_page(con);
+ 			ret = 0;
+ 			break;
++		case IN_S_PREPARE_SPARSE_DATA:
++			ret = prepare_sparse_read_data(con);
++			break;
++		case IN_S_PREPARE_SPARSE_DATA_CONT:
++			ret = prepare_sparse_read_cont(con);
++			break;
+ 		case IN_S_HANDLE_EPILOGUE:
+ 			ret = handle_epilogue(con);
+ 			break;
+@@ -3485,6 +3614,23 @@ static void revoke_at_prepare_read_enc_page(struct ceph_connection *con)
+ 	con->v2.in_state = IN_S_FINISH_SKIP;
+ }
+ 
++static void revoke_at_prepare_sparse_data(struct ceph_connection *con)
++{
++	int resid;  /* current piece of data */
++	int remaining;
++
++	WARN_ON(con_secure(con));
++	WARN_ON(!data_len(con->in_msg));
++	WARN_ON(!iov_iter_is_bvec(&con->v2.in_iter));
++	resid = iov_iter_count(&con->v2.in_iter);
++	dout("%s con %p resid %d\n", __func__, con, resid);
++
++	remaining = CEPH_EPILOGUE_PLAIN_LEN + con->v2.data_len_remain;
++	con->v2.in_iter.count -= resid;
++	set_in_skip(con, resid + remaining);
++	con->v2.in_state = IN_S_FINISH_SKIP;
++}
++
+ static void revoke_at_handle_epilogue(struct ceph_connection *con)
+ {
+ 	int resid;
+@@ -3501,6 +3647,7 @@ static void revoke_at_handle_epilogue(struct ceph_connection *con)
+ void ceph_con_v2_revoke_incoming(struct ceph_connection *con)
+ {
+ 	switch (con->v2.in_state) {
++	case IN_S_PREPARE_SPARSE_DATA:
+ 	case IN_S_PREPARE_READ_DATA:
+ 		revoke_at_prepare_read_data(con);
+ 		break;
+@@ -3510,6 +3657,9 @@ void ceph_con_v2_revoke_incoming(struct ceph_connection *con)
+ 	case IN_S_PREPARE_READ_ENC_PAGE:
+ 		revoke_at_prepare_read_enc_page(con);
+ 		break;
++	case IN_S_PREPARE_SPARSE_DATA_CONT:
++		revoke_at_prepare_sparse_data(con);
++		break;
+ 	case IN_S_HANDLE_EPILOGUE:
+ 		revoke_at_handle_epilogue(con);
+ 		break;
 -- 
 2.35.1
 
