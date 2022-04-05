@@ -2,44 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 173A44F4D16
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Apr 2022 03:25:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 529024F4CAB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Apr 2022 03:20:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1457861AbiDEXi4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 Apr 2022 19:38:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37710 "EHLO
+        id S232127AbiDEX1U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 Apr 2022 19:27:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1573591AbiDETXL (ORCPT
+        with ESMTP id S1573593AbiDETXO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 Apr 2022 15:23:11 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D7E64BB9E;
-        Tue,  5 Apr 2022 12:21:12 -0700 (PDT)
+        Tue, 5 Apr 2022 15:23:14 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EFF14C432;
+        Tue,  5 Apr 2022 12:21:15 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2A8C9618CD;
-        Tue,  5 Apr 2022 19:21:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6F01C385A3;
-        Tue,  5 Apr 2022 19:21:10 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id D6F69B81FA4;
+        Tue,  5 Apr 2022 19:21:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0B88C385A0;
+        Tue,  5 Apr 2022 19:21:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649186471;
-        bh=jKwrnkur/UZMWNKLAXoBHYovRwFcYZx33jY+OjyVk3E=;
+        s=k20201202; t=1649186472;
+        bh=BuPDaFFHn9DI+S2jJNJ0UstMiP6cacU6yo5802iH8rs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RPdd6h+UwAmG5ptt3N35Odgi0Sooj/kK0G16AHRqHv8TZlXi147IQ4ahU1akYUygP
-         Vqr5OVJt0PsE/dtEc68wxF6mXwNpdMLn7vKQImajKbCCdNw3gtsyoDWVOXzKU10OnM
-         IMXtG1oQ1+LpDIs4zFpHdt1IqTgJ8ullm1HdOE0GlHqN1ISu6dwNvbe+d2u9A99uPx
-         XHSRP8R4wTkdJ6nb4xVoAXfZBRMXmk9kYEhdiCf60k4jbr9CNPH3iddgP22SjkQ8XE
-         lVS96ElhxKCb6rfdRV/2wiT/Tcy7JjNfVPkAOPaBhLyo/exVWmrPwwQRxRDkcCTlOx
-         zbho0Ojtgx3Xw==
+        b=tdMW82DnD5bTmA5CqP5EzSXRVOMUszinsLxMfqiNz9OVYhh54+e8ZFVqi+XAj7QXE
+         nnR0bjnC3+DpVo5VV7EcHVGJ6AQHQnB/J82A4cVarwg5fdzyyvDVGV0R5uaJWhUXBo
+         z15clcrY0/kbyQqt9DzJQrDFrDllwUk77es0gIP0TydIoiUMEF+VXWE7BVRLEyCSgO
+         ohRW0JyTukIOAkSmNL5P3vyRUh2c4qIi4IjoQziLPetustN+IVkcNtwBRFWrhWku0v
+         dH14LoanPrI4wBObU98yR2Ie45WWFMwQVV+i7nUn8A2bB25A+i4Px1m0X5aJyJ0zCe
+         w8AfxTrsKRwVA==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     idryomov@gmail.com, xiubli@redhat.com
 Cc:     ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-fscrypt@vger.kernel.org, linux-kernel@vger.kernel.org,
         lhenriques@suse.de
-Subject: [PATCH v13 43/59] ceph: update WARN_ON message to pr_warn
-Date:   Tue,  5 Apr 2022 15:20:14 -0400
-Message-Id: <20220405192030.178326-44-jlayton@kernel.org>
+Subject: [PATCH v13 44/59] ceph: add __ceph_get_caps helper support
+Date:   Tue,  5 Apr 2022 15:20:15 -0400
+Message-Id: <20220405192030.178326-45-jlayton@kernel.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220405192030.178326-1-jlayton@kernel.org>
 References: <20220405192030.178326-1-jlayton@kernel.org>
@@ -55,35 +55,90 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Give some more helpful info
+From: Xiubo Li <xiubli@redhat.com>
 
+Break out the guts of ceph_get_caps into a helper that takes an inode
+and ceph_file_info instead of a file pointer.
+
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ceph/caps.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ fs/ceph/caps.c  | 19 +++++++++++++------
+ fs/ceph/super.h |  2 ++
+ 2 files changed, 15 insertions(+), 6 deletions(-)
 
 diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
-index 1f3a2135214c..cb2c18d43946 100644
+index cb2c18d43946..69af17df59be 100644
 --- a/fs/ceph/caps.c
 +++ b/fs/ceph/caps.c
-@@ -3473,10 +3473,13 @@ static void handle_cap_grant(struct inode *inode,
- 		dout("%p mode 0%o uid.gid %d.%d\n", inode, inode->i_mode,
- 		     from_kuid(&init_user_ns, inode->i_uid),
- 		     from_kgid(&init_user_ns, inode->i_gid));
--
--		WARN_ON_ONCE(ci->fscrypt_auth_len != extra_info->fscrypt_auth_len ||
--			     memcmp(ci->fscrypt_auth, extra_info->fscrypt_auth,
--				     ci->fscrypt_auth_len));
-+#if IS_ENABLED(CONFIG_FS_ENCRYPTION)
-+		if (ci->fscrypt_auth_len != extra_info->fscrypt_auth_len ||
-+		    memcmp(ci->fscrypt_auth, extra_info->fscrypt_auth,
-+			   ci->fscrypt_auth_len))
-+			pr_warn_ratelimited("%s: cap grant attempt to change fscrypt_auth on non-I_NEW inode (old len %d new len %d)\n",
-+				__func__, ci->fscrypt_auth_len, extra_info->fscrypt_auth_len);
-+#endif
- 	}
+@@ -2947,10 +2947,9 @@ int ceph_try_get_caps(struct inode *inode, int need, int want,
+  * due to a small max_size, make sure we check_max_size (and possibly
+  * ask the mds) so we don't get hung up indefinitely.
+  */
+-int ceph_get_caps(struct file *filp, int need, int want, loff_t endoff, int *got)
++int __ceph_get_caps(struct inode *inode, struct ceph_file_info *fi, int need,
++		    int want, loff_t endoff, int *got)
+ {
+-	struct ceph_file_info *fi = filp->private_data;
+-	struct inode *inode = file_inode(filp);
+ 	struct ceph_inode_info *ci = ceph_inode(inode);
+ 	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
+ 	int ret, _got, flags;
+@@ -2959,7 +2958,7 @@ int ceph_get_caps(struct file *filp, int need, int want, loff_t endoff, int *got
+ 	if (ret < 0)
+ 		return ret;
  
- 	if ((newcaps & CEPH_CAP_LINK_SHARED) &&
+-	if ((fi->fmode & CEPH_FILE_MODE_WR) &&
++	if (fi && (fi->fmode & CEPH_FILE_MODE_WR) &&
+ 	    fi->filp_gen != READ_ONCE(fsc->filp_gen))
+ 		return -EBADF;
+ 
+@@ -2967,7 +2966,7 @@ int ceph_get_caps(struct file *filp, int need, int want, loff_t endoff, int *got
+ 
+ 	while (true) {
+ 		flags &= CEPH_FILE_MODE_MASK;
+-		if (atomic_read(&fi->num_locks))
++		if (fi && atomic_read(&fi->num_locks))
+ 			flags |= CHECK_FILELOCK;
+ 		_got = 0;
+ 		ret = try_get_cap_refs(inode, need, want, endoff,
+@@ -3012,7 +3011,7 @@ int ceph_get_caps(struct file *filp, int need, int want, loff_t endoff, int *got
+ 				continue;
+ 		}
+ 
+-		if ((fi->fmode & CEPH_FILE_MODE_WR) &&
++		if (fi && (fi->fmode & CEPH_FILE_MODE_WR) &&
+ 		    fi->filp_gen != READ_ONCE(fsc->filp_gen)) {
+ 			if (ret >= 0 && _got)
+ 				ceph_put_cap_refs(ci, _got);
+@@ -3075,6 +3074,14 @@ int ceph_get_caps(struct file *filp, int need, int want, loff_t endoff, int *got
+ 	return 0;
+ }
+ 
++int ceph_get_caps(struct file *filp, int need, int want, loff_t endoff, int *got)
++{
++	struct ceph_file_info *fi = filp->private_data;
++	struct inode *inode = file_inode(filp);
++
++	return __ceph_get_caps(inode, fi, need, want, endoff, got);
++}
++
+ /*
+  * Take cap refs.  Caller must already know we hold at least one ref
+  * on the caps in question or we don't know this is safe.
+diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+index a97a6f6f3089..752bc3c820ca 100644
+--- a/fs/ceph/super.h
++++ b/fs/ceph/super.h
+@@ -1229,6 +1229,8 @@ extern int ceph_encode_dentry_release(void **p, struct dentry *dn,
+ 				      struct inode *dir,
+ 				      int mds, int drop, int unless);
+ 
++extern int __ceph_get_caps(struct inode *inode, struct ceph_file_info *fi,
++			   int need, int want, loff_t endoff, int *got);
+ extern int ceph_get_caps(struct file *filp, int need, int want,
+ 			 loff_t endoff, int *got);
+ extern int ceph_try_get_caps(struct inode *inode,
 -- 
 2.35.1
 
