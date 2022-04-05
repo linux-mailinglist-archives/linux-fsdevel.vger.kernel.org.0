@@ -2,33 +2,33 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DFA034F2A9B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Apr 2022 13:05:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDAFE4F2D45
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  5 Apr 2022 13:36:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243509AbiDEJPX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 5 Apr 2022 05:15:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40844 "EHLO
+        id S239257AbiDEJxN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 5 Apr 2022 05:53:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243573AbiDEIum (ORCPT
+        with ESMTP id S244165AbiDEJlJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 5 Apr 2022 04:50:42 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 094FC2B185;
-        Tue,  5 Apr 2022 01:39:07 -0700 (PDT)
+        Tue, 5 Apr 2022 05:41:09 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 850F2BABB2;
+        Tue,  5 Apr 2022 02:25:23 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1331261504;
-        Tue,  5 Apr 2022 08:38:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E124DC385A1;
-        Tue,  5 Apr 2022 08:38:22 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 22EE96164E;
+        Tue,  5 Apr 2022 09:25:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CD8CC385A0;
+        Tue,  5 Apr 2022 09:25:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1649147903;
-        bh=nUdG9sji+HHpyKss5nh330neNkb69pmGzJ2od0OzyyI=;
+        s=korg; t=1649150722;
+        bh=qf4ZwozjSQoZIc83YqsJxUrUHToM2owTQGjbfuCX/KU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vnY44ff6W2xJ1g+xYS1TaUOnaCDfAOfMGe5Il3xVEwGcdM08aLzxQ4w4XByYQbCsH
-         tpQt3SxvTkWwPUk6JWnz2CneYZwFAzdQcwnQEx5zW6ux9QoRbjYG47hrSx/plQUFI8
-         stuHZmBHdDRzsb3gkXLWkSc08m/1pI/N5cmDSC2w=
+        b=EmoXBARIZ7xj0IZzawdm+k2cqzZUTo02txyP3HbmeUr0tnpVHvpOv8iyaRHSDqDIT
+         oxshoyUled4saJ8wtvS23eix+wsNAIxnVZxyKgzK9okkofqFaP8z7epYM2E2CTdvri
+         Z9+o4OYgR8+NsWhxpi8Zk8dOR+SNyRLqEDP82Dfo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -41,12 +41,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         linux-fsdevel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
         Andy Lutomirski <luto@kernel.org>
-Subject: [PATCH 5.16 0164/1017] exec: Force single empty string when argv is empty
-Date:   Tue,  5 Apr 2022 09:17:57 +0200
-Message-Id: <20220405070359.089401665@linuxfoundation.org>
+Subject: [PATCH 5.15 156/913] exec: Force single empty string when argv is empty
+Date:   Tue,  5 Apr 2022 09:20:18 +0200
+Message-Id: <20220405070344.514801608@linuxfoundation.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220405070354.155796697@linuxfoundation.org>
-References: <20220405070354.155796697@linuxfoundation.org>
+In-Reply-To: <20220405070339.801210740@linuxfoundation.org>
+References: <20220405070339.801210740@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -146,7 +146,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  	if (limit <= ptr_size)
  		return -E2BIG;
  	limit -= ptr_size;
-@@ -1893,6 +1899,9 @@ static int do_execveat_common(int fd, st
+@@ -1895,6 +1901,9 @@ static int do_execveat_common(int fd, st
  	}
  
  	retval = count(argv, MAX_ARG_STRINGS);
@@ -156,7 +156,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  	if (retval < 0)
  		goto out_free;
  	bprm->argc = retval;
-@@ -1919,6 +1928,19 @@ static int do_execveat_common(int fd, st
+@@ -1921,6 +1930,19 @@ static int do_execveat_common(int fd, st
  	if (retval < 0)
  		goto out_free;
  
@@ -176,7 +176,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  	retval = bprm_execve(bprm, fd, filename, flags);
  out_free:
  	free_bprm(bprm);
-@@ -1947,6 +1969,8 @@ int kernel_execve(const char *kernel_fil
+@@ -1949,6 +1971,8 @@ int kernel_execve(const char *kernel_fil
  	}
  
  	retval = count_strings_kernel(argv);
