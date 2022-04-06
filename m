@@ -2,178 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 40F004F63B3
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Apr 2022 17:48:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F15A14F6595
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Apr 2022 18:43:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236440AbiDFPs1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Apr 2022 11:48:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45774 "EHLO
+        id S237784AbiDFQdo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Apr 2022 12:33:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53440 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236934AbiDFPry (ORCPT
+        with ESMTP id S238362AbiDFQc7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Apr 2022 11:47:54 -0400
-Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3A2B263677
-        for <linux-fsdevel@vger.kernel.org>; Wed,  6 Apr 2022 06:05:24 -0700 (PDT)
-Received: by mail-ed1-x535.google.com with SMTP id b24so2516260edu.10
-        for <linux-fsdevel@vger.kernel.org>; Wed, 06 Apr 2022 06:05:24 -0700 (PDT)
+        Wed, 6 Apr 2022 12:32:59 -0400
+Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22D321FAA2A
+        for <linux-fsdevel@vger.kernel.org>; Tue,  5 Apr 2022 18:22:59 -0700 (PDT)
+Received: by mail-pl1-x636.google.com with SMTP id d15so631369pll.10
+        for <linux-fsdevel@vger.kernel.org>; Tue, 05 Apr 2022 18:22:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=PM54LwgT2Mgw5AMkSV1qMvIZs90k76HVAm+mIhFW/Ko=;
-        b=dDSmSxNu4cKou0wKKJy2RxvoXv2oI6xKR2vY3pb3rpGtbFJSq+v9Sour4amtkG8OmK
-         /mIlDVEuFioJxUYt/uLZELUgdXQw0ov1GNV1lrpYe6lLXJddt79EqvJAQITLd3WaNVH7
-         RZkDvqmMSe65o+jVNmIxDSjYRyulxd4z4O6RUWbk8rC6zzIUeWQYB0okxXTU0SvhHXZA
-         FOlx5xH2zFxCf3OE8/9JHhuxHDnwAY1LJRZbWwasq6aNf43sSQc+pAeLfaWwXG6joBqH
-         7NUBr0fvlYsspSPTWRfWfZ9QRS8Vfkb6O9IoizmZOkjDfsVP23+M9cveQTa0tzHjUgJl
-         d64Q==
+        d=intel-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GpAHmbeaClOABfDOq4xnFecCsaGHIekoRhkFacwUlXs=;
+        b=DTGX679OZ1qKODLoERzJPs9u5x0CQ7BYYUpa2ouElTHNgAKbPpKoCPRTExB81qQ2US
+         94dbMKZq/YmOeyWFp2JbpnvKA0jH4iSww8lz1A4p4C92e1wGL/hPVnaXi1g1ADkUAp6P
+         RNhUno+35Z8wecDtsPPgH+m4yLNmQXPQLqx3+K7wiP9W7njPgLJqsTd3C7bY0GOn3iL4
+         DU1KcaQsM6ar/F3C6nMFoc7ou3I3CvJEUZey03r8p0CmPUzHrg/bmaACtqdejQJ4iant
+         V/TCZoYpa1rMEzqemePJkaBICzpAtqcCLdOPBkkwkXyPjciIJJUh7pdnmRJymCr3P0SZ
+         hABQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=PM54LwgT2Mgw5AMkSV1qMvIZs90k76HVAm+mIhFW/Ko=;
-        b=BpYZeyog1oMGmAamLlaHLVlhXoWcwSkm9Dg6WBuvLkTekwEBAqCYfmIfUBDFPJQmve
-         36OGPM4UmseXtUmQ89LznsJcRgzn3gFxobzdrnPlE9YTUMyYZ+LHfa1L0f8ojK4238x+
-         GpsUg4rfl4hLqbGettZOC4By8Oh8rBrDsSzPbONyeSkPvt90/VRadLafzeyGxzgOUApB
-         80TC5x2Ha8o0PfEJ6OfzqdXmZ1DnG/uBslf8wXKAfHPHJxw8p0ZzA7+6s1XKiCsVMrsd
-         pfJ4GQ634qJknSZwObLm/ngLSq6+mIXe8dHqJVwxT9f3WubPJqpob6fTju3MrF2XupLB
-         qYIQ==
-X-Gm-Message-State: AOAM530qFnbhHKhOuoiTS2luw6/xlN5+i3BMX2MtDUjMpx8AkkIinpJ1
-        L1EjqZIBaT2IM7OmtEKpzMRlJsqV04DzCW/T
-X-Google-Smtp-Source: ABdhPJyAEVGuwpVr2eJbNmM3Bn7rwdqn15Yyq6WvWvI8cuWdHW0Fh3+ITY+ecK+a12QzHGzVyv/MtQ==
-X-Received: by 2002:a05:6402:34cf:b0:419:75b1:99ad with SMTP id w15-20020a05640234cf00b0041975b199admr8672622edc.228.1649250322915;
-        Wed, 06 Apr 2022 06:05:22 -0700 (PDT)
-Received: from google.com (30.171.91.34.bc.googleusercontent.com. [34.91.171.30])
-        by smtp.gmail.com with ESMTPSA id j22-20020a50ed16000000b00419366b2146sm8158326eds.43.2022.04.06.06.05.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Apr 2022 06:05:22 -0700 (PDT)
-Date:   Wed, 6 Apr 2022 13:05:18 +0000
-From:   Quentin Perret <qperret@google.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Sean Christopherson <seanjc@google.com>,
-        Steven Price <steven.price@arm.com>,
-        Chao Peng <chao.p.peng@linux.intel.com>,
-        kvm list <kvm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        Linux API <linux-api@vger.kernel.org>, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@kernel.org>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        "Nakajima, Jun" <jun.nakajima@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>
-Subject: Re: [PATCH v5 00/13] KVM: mm: fd-based approach for supporting KVM
- guest private memory
-Message-ID: <Yk2QDmvKR2ipsA29@google.com>
-References: <YkQzfjgTQaDd2E2T@google.com>
- <YkSaUQX89ZEojsQb@google.com>
- <80aad2f9-9612-4e87-a27a-755d3fa97c92@www.fastmail.com>
- <YkcTTY4YjQs5BRhE@google.com>
- <83fd55f8-cd42-4588-9bf6-199cbce70f33@www.fastmail.com>
- <YksIQYdG41v3KWkr@google.com>
- <Ykslo2eo2eRXrpFR@google.com>
- <eefc3c74-acca-419c-8947-726ce2458446@www.fastmail.com>
- <Ykwbqv90C7+8K+Ao@google.com>
- <54acbba9-f4fd-48c1-9028-d596d9f63069@www.fastmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GpAHmbeaClOABfDOq4xnFecCsaGHIekoRhkFacwUlXs=;
+        b=uYft6mRBEqWMILR5nlNdow3//6JZlI0ARlHkLU7GP+Cmal/kHVaKM320oqwKK2+Zv5
+         ssSI14/jTrNEzCMaEyag3vWbojlqxrSpO/7KQfXnkxzAHB5J0Q9Tye6yLiN6ifS9jWRs
+         It/FtWHXVSliVpxH/0qxK+maZ9AQG0KC7IjAzhhrrW7WVbm21XNMiyeOtBviNspOuF9l
+         Bl71F9nSFMusSD0RYGTaZ0rCWAUdFAYZB++C49K2dO7SXN1Z9oPnwAxgyhUCBhT4rwE7
+         X5fp5YW7PRurefpz8r9ULbOqpztgQP59HLcN4IHlVhdJaXpKv33n3V8hVh4oomkEGaM/
+         zCkw==
+X-Gm-Message-State: AOAM532i7nk4kXc/cOdRWHNZ7+d1yKwEdsO/4S3pg441reDPM6njz8St
+        euBXWN0XAkGqwMv8CwQ2mq6j21wY4b2Kttlz3SnfEg==
+X-Google-Smtp-Source: ABdhPJy2l3ev5j2Q7pkZUUiX17H1f2uX0JiaFPO6bc09C7QOxwwhFdxA05PXl7UqsyY9sLkpv+RVessbAtwzpZwLwNA=
+X-Received: by 2002:a17:902:d512:b0:156:b23f:ed62 with SMTP id
+ b18-20020a170902d51200b00156b23fed62mr6252643plg.147.1649208179456; Tue, 05
+ Apr 2022 18:22:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <54acbba9-f4fd-48c1-9028-d596d9f63069@www.fastmail.com>
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+References: <20220227120747.711169-1-ruansy.fnst@fujitsu.com>
+ <20220227120747.711169-2-ruansy.fnst@fujitsu.com> <CAPcyv4jAqV7dZdmGcKrG=f8sYmUXaL7YCQtME6GANywncwd+zg@mail.gmail.com>
+ <4fd95f0b-106f-6933-7bc6-9f0890012b53@fujitsu.com> <YkPtptNljNcJc1g/@infradead.org>
+ <15a635d6-2069-2af5-15f8-1c0513487a2f@fujitsu.com> <YkQtOO/Z3SZ2Pksg@infradead.org>
+ <4ed8baf7-7eb9-71e5-58ea-7c73b7e5bb73@fujitsu.com> <YkR8CUdkScEjMte2@infradead.org>
+ <20220330161812.GA27649@magnolia> <fd37cde6-318a-9faf-9bff-70bb8e5d3241@oracle.com>
+In-Reply-To: <fd37cde6-318a-9faf-9bff-70bb8e5d3241@oracle.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Tue, 5 Apr 2022 18:22:48 -0700
+Message-ID: <CAPcyv4gqBmGCQM_u40cR6GVror6NjhxV5Xd7pdHedE2kHwueoQ@mail.gmail.com>
+Subject: Re: [PATCH v11 1/8] dax: Introduce holder for dax_device
+To:     Jane Chu <jane.chu@oracle.com>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Shiyang Ruan <ruansy.fnst@fujitsu.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Linux NVDIMM <nvdimm@lists.linux.dev>,
+        Linux MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        david <david@fromorbit.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tuesday 05 Apr 2022 at 10:51:36 (-0700), Andy Lutomirski wrote:
-> Let's try actually counting syscalls and mode transitions, at least approximately.  For non-direct IO (DMA allocation on guest side, not straight to/from pagecache or similar):
-> 
-> Guest writes to shared DMA buffer.  Assume the guest is smart and reuses the buffer.
-> Guest writes descriptor to shared virtio ring.
-> Guest rings virtio doorbell, which causes an exit.
-> *** guest -> hypervisor -> host ***
-> host reads virtio ring (mmaped shared memory)
-> host does pread() to read the DMA buffer or reads mmapped buffer
-> host does the IO
-> resume guest
-> *** host -> hypervisor -> guest ***
-> 
-> This is essentially optimal in terms of transitions.  The data is copied on the guest side (which may well be mandatory depending on what guest userspace did to initiate the IO) and on the host (which may well be mandatory depending on what the host is doing with the data).
-> 
-> Now let's try straight-from-guest-pagecache or otherwise zero-copy on the guest side.  Without nondestructive changes, the guest needs a bounce buffer and it looks just like the above.  One extra copy, zero extra mode transitions.  With nondestructive changes, it's a bit more like physical hardware with an IOMMU:
-> 
-> Guest shares the page.
-> *** guest -> hypervisor ***
-> Hypervisor adds a PTE.  Let's assume we're being very optimal and the host is not synchronously notified.
-> *** hypervisor -> guest ***
-> Guest writes descriptor to shared virtio ring.
-> Guest rings virtio doorbell, which causes an exit.
-> *** guest -> hypervisor -> host ***
-> host reads virtio ring (mmaped shared memory)
-> 
-> mmap  *** syscall ***
-> host does the IO
-> munmap *** syscall, TLBI ***
-> 
-> resume guest
-> *** host -> hypervisor -> guest ***
-> Guest unshares the page.
-> *** guest -> hypervisor ***
-> Hypervisor removes PTE.  TLBI.
-> *** hypervisor -> guest ***
-> 
-> This is quite expensive.  For small IO, pread() or splice() in the host may be a lot faster.  Even for large IO, splice() may still win.
+On Tue, Apr 5, 2022 at 5:55 PM Jane Chu <jane.chu@oracle.com> wrote:
+>
+> On 3/30/2022 9:18 AM, Darrick J. Wong wrote:
+> > On Wed, Mar 30, 2022 at 08:49:29AM -0700, Christoph Hellwig wrote:
+> >> On Wed, Mar 30, 2022 at 06:58:21PM +0800, Shiyang Ruan wrote:
+> >>> As the code I pasted before, pmem driver will subtract its ->data_offset,
+> >>> which is byte-based. And the filesystem who implements ->notify_failure()
+> >>> will calculate the offset in unit of byte again.
+> >>>
+> >>> So, leave its function signature byte-based, to avoid repeated conversions.
+> >>
+> >> I'm actually fine either way, so I'll wait for Dan to comment.
+> >
+> > FWIW I'd convinced myself that the reason for using byte units is to
+> > make it possible to reduce the pmem failure blast radius to subpage
+> > units... but then I've also been distracted for months. :/
+> >
+>
+> Yes, thanks Darrick!  I recall that.
+> Maybe just add a comment about why byte unit is used?
 
-Right, that would work nicely for pages that are shared transiently, but
-less so for long-term shares. But I guess your proposal below should do
-the trick.
-
-> I can imagine clever improvements.  First, let's get rid of mmap() + munmap().  Instead use a special device mapping with special semantics, not regular memory.  (mmap and munmap are expensive even ignoring any arch and TLB stuff.)  The rule is that, if the page is shared, access works, and if private, access doesn't, but it's still mapped.  The hypervisor and the host cooperate to make it so.
-
-As long as the page can't be GUP'd I _think_ this shouldn't be a
-problem. We can have the hypervisor re-inject the fault in the host. And
-the host fault handler will deal with it just fine if the fault was
-taken from userspace (inject a SEGV), or from the kernel through uaccess
-macros. But we do get into issues if the host kernel can be tricked into
-accessing the page via e.g. kmap(). I've been able to trigger this by
-strace-ing a userspace process which passes a pointer to private memory
-to a syscall. strace will inspect the syscall argument using
-process_vm_readv(), which will pin_user_pages_remote() and access the
-page via kmap(), and then we're in trouble. But preventing GUP would
-prevent this by construction I think?
-
-FWIW memfd_secret() did look like a good solution to this, but it lacks
-the bidirectional notifiers with KVM that is offered by this patch
-series, which is needed to allow KVM to handle guest faults, and also
-offers a good framework to support future extensions (e.g.
-hypervisor-assisted page migration, swap, ...). So yes, ideally
-pKVM would use a kind of hybrid between memfd_secret and the private fd
-proposed here, or something else providing similar properties.
-
-Thanks,
-Quentin
+I think we start with page failure notification and then figure out
+how to get finer grained through the dax interface in follow-on
+changes. Otherwise, for finer grained error handling support,
+memory_failure() would also need to be converted to stop upcasting
+cache-line granularity to page granularity failures. The native MCE
+notification communicates a 'struct mce' that can be in terms of
+sub-page bytes, but the memory management implications are all page
+based. I assume the FS implications are all FS-block-size based?
