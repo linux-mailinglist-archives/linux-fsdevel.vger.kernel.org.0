@@ -2,205 +2,278 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AC9D4F5B9A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Apr 2022 12:43:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59FB84F5CDC
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Apr 2022 13:57:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350686AbiDFKeo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Apr 2022 06:34:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58772 "EHLO
+        id S230191AbiDFLxQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Apr 2022 07:53:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344608AbiDFKeA (ORCPT
+        with ESMTP id S230510AbiDFLw2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Apr 2022 06:34:00 -0400
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BD25491D9B;
-        Tue,  5 Apr 2022 23:55:54 -0700 (PDT)
-Received: from fraeml712-chm.china.huawei.com (unknown [172.18.147.207])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4KYFbx609Tz67VyR;
-        Wed,  6 Apr 2022 14:54:05 +0800 (CST)
-Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
- fraeml712-chm.china.huawei.com (10.206.15.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Wed, 6 Apr 2022 08:55:52 +0200
-Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
- fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2375.024;
- Wed, 6 Apr 2022 08:55:52 +0200
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "andrii@kernel.org" <andrii@kernel.org>,
-        "kpsingh@kernel.org" <kpsingh@kernel.org>,
-        "tixxdz@gmail.com" <tixxdz@gmail.com>,
-        "shuah@kernel.org" <shuah@kernel.org>,
-        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
-        "alexandre.torgue@foss.st.com" <alexandre.torgue@foss.st.com>,
-        "zohar@linux.ibm.com" <zohar@linux.ibm.com>
-CC:     "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [POC][USER SPACE][PATCH] Introduce LSM to protect pinned objects
-Thread-Topic: [POC][USER SPACE][PATCH] Introduce LSM to protect pinned objects
-Thread-Index: AQHYSO6qHvGxtTZjlkOpBqG6raB3mazhyt4AgACodAA=
-Date:   Wed, 6 Apr 2022 06:55:51 +0000
-Message-ID: <5ed9f7c8fab7426daf400756b2d8ea89@huawei.com>
-References: <CACYkzJ7ZVbL2MG7ugmDEfogSPAHkYYMCHxRO_eBCJJmBZyn6Rw@mail.gmail.com>
-        <20220405131116.3810418-1-roberto.sassu@huawei.com>
- <5ce85845-824c-32fb-3807-6f9ab95ad6fe@schaufler-ca.com>
-In-Reply-To: <5ce85845-824c-32fb-3807-6f9ab95ad6fe@schaufler-ca.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.81.215.171]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Wed, 6 Apr 2022 07:52:28 -0400
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B5DE1578DF;
+        Wed,  6 Apr 2022 00:02:18 -0700 (PDT)
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.1.2/8.16.1.2) with ESMTP id 2361wpMD012380;
+        Wed, 6 Apr 2022 09:01:19 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=selector1;
+ bh=PdnnQJRXavXSh3CmzKzX/kx5oqJ1f3QD+6IefacJ2r0=;
+ b=w/H69w7mAuCvvoP9FW0DmISJg6T2wcSTdeCf2aKfpS+Eu6cNrdxe5ctmWuHoEX2dlqMF
+ Rb7d7JcvxFLUy1ZFas6e2NdNizvpStG9lLIvmhJAm2ahv8i61mlr52hnGNWSAz/lSD5z
+ PbiUkApo3yn2ZUmp6No2Yq1sDZi0Y7LEMpB3/hygQfwqYbplNKKKrniwiSAwnu9qdev+
+ zQies66XuPIHQIpUG/MidMlvbZkjpLVQzZ9g2PmnKJkxnda1nInqaeY/5O3M7lHkWu6X
+ JOoqqyrwuNR1maXyA/lpLOwWc1SVP3p60Hi9kWt9aNRl6EKMrojMks3p4CDTBg238NvP lw== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3f6du0uh1x-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 06 Apr 2022 09:01:19 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 5CE6110002A;
+        Wed,  6 Apr 2022 09:01:15 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 4ED00222227;
+        Wed,  6 Apr 2022 09:01:15 +0200 (CEST)
+Received: from [10.201.21.201] (10.75.127.48) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.2308.20; Wed, 6 Apr
+ 2022 09:01:14 +0200
+Message-ID: <3695dc2a-7518-dee4-a647-821c7cda4a0f@foss.st.com>
+Date:   Wed, 6 Apr 2022 09:01:13 +0200
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: Regression with v5.18-rc1 tag on STM32F7 and STM32H7 based boards
+Content-Language: en-US
+To:     Hugh Dickins <hughd@google.com>, Arnd Bergmann <arnd@arndb.de>
+CC:     Hugh Dickins <hughd@googl.com>, <mpatocka@redhat.com>,
+        <lczerner@redhat.com>, <djwong@kernel.org>, <hch@lst.de>,
+        <zkabelac@redhat.com>, <miklos@szeredi.hu>, <bp@suse.de>,
+        <akpm@linux-foundation.org>,
+        Alexandre TORGUE - foss <alexandre.torgue@foss.st.com>,
+        Valentin CARON - foss <valentin.caron@foss.st.com>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-mm@kvack.org>, <linux-arch@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <uclinux-h8-devel@lists.sourceforge.jp>,
+        <linux-m68k@lists.linux-m68k.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Russell King <linux@armlinux.org.uk>
+References: <481a13f8-d339-f726-0418-ab4258228e91@foss.st.com>
+ <95a0d1dd-bcce-76c7-97b9-8374c9913321@google.com>
+ <7f2993a9-adc5-2b90-9218-c4ca8239c3e@google.com>
+From:   Patrice CHOTARD <patrice.chotard@foss.st.com>
+In-Reply-To: <7f2993a9-adc5-2b90-9218-c4ca8239c3e@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.48]
+X-ClientProxiedBy: SFHDAG2NODE3.st.com (10.75.127.6) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.850,Hydra:6.0.425,FMLib:17.11.64.514
+ definitions=2022-04-06_02,2022-04-05_01,2022-02-23_01
+X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-PiBGcm9tOiBDYXNleSBTY2hhdWZsZXIgW21haWx0bzpjYXNleUBzY2hhdWZsZXItY2EuY29tXQ0K
-PiBTZW50OiBXZWRuZXNkYXksIEFwcmlsIDYsIDIwMjIgMTI6NDggQU0NCj4gT24gNC81LzIwMjIg
-NjoxMSBBTSwgUm9iZXJ0byBTYXNzdSB3cm90ZToNCj4gPiBJbnRyb2R1Y2UgYSBuZXcgTFNNIHRv
-IHByb3RlY3QgcGlubmVkIG9iamVjdHMgaW4gYSBicGYgZmlsZXN5c3RlbQ0KPiANCj4gVGhpcyBp
-cyAqbm90IGFuIExTTSouIERvIG5vdCBjYWxsIGl0IGFuIExTTS4gSXQgaXMgYSBzZXQgb2YNCj4g
-ZUJQRiBwcm9ncmFtcy4gV2UgaGF2ZSBhbGwgdGhlIG9wcG9ydHVuaXRpZXMgZm9yIGNvbmZ1c2lv
-bg0KPiB0aGF0IHdlIG5lZWQuIEkgc3VnZ2VzdGVkIHRoYXQgeW91IGNhbGwgdGhpcyBhIEJQRiBz
-ZWN1cml0eQ0KPiBtb2R1bGUgKEJTTSkgZWFybGllciB0b2RheS4gWW91IGhhdmUgYW55IG51bWJl
-ciBvZiB0aGluZ3MNCj4geW91IGNhbiBjYWxsIHRoaXMgdGhhdCB3b24ndCBiZSBvYmplY3Rpb25h
-YmxlLg0KPiANCj4gPiBpbnN0YW5jZS4gVGhpcyBpcyB1c2VmdWwgZm9yIGV4YW1wbGUgdG8gZW5z
-dXJlIHRoYXQgYW4gTFNNIHdpbGwgYWx3YXlzDQo+ID4gZW5mb3JjZSBpdHMgcG9saWN5LCBldmVu
-IGRlc3BpdGUgcm9vdCB0cmllcyB0byB1bmxvYWQgdGhlIGNvcnJlc3BvbmRpbmcNCj4gPiBlQlBG
-IHByb2dyYW0uDQo+IA0KPiBIb3cgaXMgdGhpcyBnb2luZyB0byBlbnN1cmUgdGhhdCBTRUxpbnV4
-IGVuZm9yY2VzIGl0cyBwb2xpY3k/DQoNCkkgc2hvdWxkIGhhdmUgc2FpZCBhYm92ZTogdGhhdCBh
-biBMU00gaW1wbGVtZW50ZWQgd2l0aCBlQlBGLg0KQnVpbHQtaW4gTFNNcyBhcmUgbm90IGFmZmVj
-dGVkIGJ5IHRoaXMgY2hhbmdlLg0KDQpPaywgbmV4dCB0aW1lIEkgY2FsbCBpdCBCU00uDQoNClRo
-YW5rcw0KDQpSb2JlcnRvDQoNCkhVQVdFSSBURUNITk9MT0dJRVMgRHVlc3NlbGRvcmYgR21iSCwg
-SFJCIDU2MDYzDQpNYW5hZ2luZyBEaXJlY3RvcjogTGkgUGVuZywgWmhvbmcgUm9uZ2h1YQ0KDQo+
-IEFwcEFybW9yIGhhcyBubyBlQlBGIHByb2dyYW0gdGhhdCBjb3JyZXNwb25kcyB0byBpdHMgcG9s
-aWN5LA0KPiBuZWl0aGVyIGRvZXMgYW55IG90aGVyIGV4aXN0aW5nIExTTSwgc2F2ZSBCUEYuIFlv
-dXIgY2xhaW0gaXMNCj4gbm9uc2Vuc2ljYWwgaW4gdGhlIGZhY2Ugb2YgTFNNIGJlaGF2aW9yLg0K
-PiANCj4gPiBBY2hpZXZlIHRoZSBwcm90ZWN0aW9uIGJ5IGRlbnlpbmcgaW5vZGUgdW5saW5rIGFu
-ZCB1bm1vdW50IG9mIHRoZQ0KPiA+IHByb3RlY3RlZCBicGYgZmlsZXN5c3RlbSBpbnN0YW5jZS4g
-U2luY2UgcHJvdGVjdGVkIGlub2RlcyBob2xkIGENCj4gPiByZWZlcmVuY2Ugb2YgdGhlIGxpbmsg
-b2YgbG9hZGVkIHByb2dyYW1zIChlLmcuIExTTSBob29rcyksIGRlbnlpbmcNCj4gPiBvcGVyYXRp
-b25zIG9uIHRoZW0gd2lsbCBwcmV2ZW50IHRoZSByZWYgY291bnQgb2YgdGhlIGxpbmtzIGZyb20g
-cmVhY2hpbmcNCj4gPiB6ZXJvLCBlbnN1cmluZyB0aGF0IHRoZSBwcm9ncmFtcyByZW1haW4gYWx3
-YXlzIGFjdGl2ZS4NCj4gPg0KPiA+IEVuYWJsZSB0aGUgcHJvdGVjdGlvbiBvbmx5IGZvciB0aGUg
-aW5zdGFuY2UgY3JlYXRlZCBieSB0aGUgdXNlciBzcGFjZQ0KPiA+IGNvdW50ZXJwYXJ0IG9mIHRo
-ZSBMU00sIGFuZCBkb24ndCBpbnRlcmZlcmUgd2l0aCBvdGhlciBpbnN0YW5jZXMsIHNvDQo+ID4g
-dGhhdCB0aGVpciBiZWhhdmlvciByZW1haW5zIHVuY2hhbmdlZC4NCj4gPg0KPiA+IFN1Z2dlc3Rl
-ZC1ieTogRGphbGFsIEhhcm91bmkgPHRpeHhkekBnbWFpbC5jb20+DQo+ID4gU2lnbmVkLW9mZi1i
-eTogUm9iZXJ0byBTYXNzdSA8cm9iZXJ0by5zYXNzdUBodWF3ZWkuY29tPg0KPiA+IC0tLQ0KPiA+
-ICAgLmdpdGlnbm9yZSAgICAgICB8ICA0ICsrKw0KPiA+ICAgTWFrZWZpbGUgICAgICAgICB8IDE4
-ICsrKysrKysrKysrKysrDQo+ID4gICBicGZmc19sc21fa2Vybi5jIHwgNjMNCj4gKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrDQo+ID4gICBicGZmc19sc21f
-dXNlci5jIHwgNjANCj4gKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrDQo+ID4gICA0IGZpbGVzIGNoYW5nZWQsIDE0NSBpbnNlcnRpb25zKCspDQo+ID4gICBjcmVh
-dGUgbW9kZSAxMDA2NDQgLmdpdGlnbm9yZQ0KPiA+ICAgY3JlYXRlIG1vZGUgMTAwNjQ0IE1ha2Vm
-aWxlDQo+ID4gICBjcmVhdGUgbW9kZSAxMDA2NDQgYnBmZnNfbHNtX2tlcm4uYw0KPiA+ICAgY3Jl
-YXRlIG1vZGUgMTAwNjQ0IGJwZmZzX2xzbV91c2VyLmMNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS8u
-Z2l0aWdub3JlIGIvLmdpdGlnbm9yZQ0KPiA+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0DQo+ID4gaW5k
-ZXggMDAwMDAwMDAwMDAwLi43ZmEwMjk2NGYxZGMNCj4gPiAtLS0gL2Rldi9udWxsDQo+ID4gKysr
-IGIvLmdpdGlnbm9yZQ0KPiA+IEBAIC0wLDAgKzEsNCBAQA0KPiA+ICsqLm8NCj4gPiArdm1saW51
-eC5oDQo+ID4gK2JwZmZzX2xzbV9rZXJuLnNrZWwuaA0KPiA+ICticGZmc19sc21fdXNlcg0KPiA+
-IGRpZmYgLS1naXQgYS9NYWtlZmlsZSBiL01ha2VmaWxlDQo+ID4gbmV3IGZpbGUgbW9kZSAxMDA2
-NDQNCj4gPiBpbmRleCAwMDAwMDAwMDAwMDAuLmMzZDgwNTc1OWRiMw0KPiA+IC0tLSAvZGV2L251
-bGwNCj4gPiArKysgYi9NYWtlZmlsZQ0KPiA+IEBAIC0wLDAgKzEsMTggQEANCj4gPiArIyBTUERY
-LUxpY2Vuc2UtSWRlbnRpZmllcjogR1BMLTIuMA0KPiA+ICthbGw6IGJwZmZzX2xzbV91c2VyDQo+
-ID4gKw0KPiA+ICtjbGVhbjoNCj4gPiArCXJtIC1yZiBicGZmc19sc20uc2tlbC5oIHZtbGludXgu
-aCBicGZmc19sc21fa2Vybi5vIGJwZmZzX2xzbV91c2VyDQo+ID4gKw0KPiA+ICt2bWxpbnV4Lmg6
-DQo+ID4gKwkvdXNyL3NiaW4vYnBmdG9vbCBidGYgZHVtcCBmaWxlIC9zeXMva2VybmVsL2J0Zi92
-bWxpbnV4IGZvcm1hdCBjID4gXA0KPiA+ICsJCQkgIHZtbGludXguaA0KPiA+ICsNCj4gPiArYnBm
-ZnNfbHNtX2tlcm4uc2tlbC5oOiBicGZmc19sc21fa2Vybi5vDQo+ID4gKwlicGZ0b29sIGdlbiBz
-a2VsZXRvbiAkPCA+ICRADQo+ID4gKw0KPiA+ICticGZmc19sc21fa2Vybi5vOiBicGZmc19sc21f
-a2Vybi5jIHZtbGludXguaA0KPiA+ICsJY2xhbmcgLVdhbGwgLVdlcnJvciAtZyAtTzIgLXRhcmdl
-dCBicGYgLWMgJDwgLW8gJEANCj4gPiArDQo+ID4gK2JwZmZzX2xzbV91c2VyOiBicGZmc19sc21f
-dXNlci5jIGJwZmZzX2xzbV9rZXJuLnNrZWwuaA0KPiBicGZmc19sc21fa2Vybi5vDQo+ID4gKwlj
-YyAtV2FsbCAtV2Vycm9yIC1nIC1vICRAICQ8IC1sYnBmDQo+ID4gZGlmZiAtLWdpdCBhL2JwZmZz
-X2xzbV9rZXJuLmMgYi9icGZmc19sc21fa2Vybi5jDQo+ID4gbmV3IGZpbGUgbW9kZSAxMDA2NDQN
-Cj4gPiBpbmRleCAwMDAwMDAwMDAwMDAuLmIzY2NiMmE3NWM5NQ0KPiA+IC0tLSAvZGV2L251bGwN
-Cj4gPiArKysgYi9icGZmc19sc21fa2Vybi5jDQo+ID4gQEAgLTAsMCArMSw2MyBAQA0KPiA+ICsv
-LyBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogR1BMLTIuMA0KPiA+ICsvKg0KPiA+ICsgKiBDb3B5
-cmlnaHQgKEMpIDIwMjIgSHVhd2VpIFRlY2hub2xvZ2llcyBEdWVzc2VsZG9yZiBHbWJIDQo+ID4g
-KyAqDQo+ID4gKyAqIEF1dGhvcnM6DQo+ID4gKyAqIFJvYmVydG8gU2Fzc3UgPHJvYmVydG8uc2Fz
-c3VAaHVhd2VpLmNvbT4NCj4gPiArICoNCj4gPiArICogSW1wbGVtZW50IGFuIExTTSB0byBwcm90
-ZWN0IGEgYnBmIGZpbGVzeXN0ZW0gaW5zdGFuY2UuDQo+ID4gKyAqLw0KPiA+ICsNCj4gPiArI2lu
-Y2x1ZGUgInZtbGludXguaCINCj4gPiArI2luY2x1ZGUgPGVycm5vLmg+DQo+ID4gKyNpbmNsdWRl
-IDxicGYvYnBmX2hlbHBlcnMuaD4NCj4gPiArI2luY2x1ZGUgPGJwZi9icGZfdHJhY2luZy5oPg0K
-PiA+ICsjaW5jbHVkZSA8YnBmL2JwZl9jb3JlX3JlYWQuaD4NCj4gPiArDQo+ID4gK2NoYXIgX2xp
-Y2Vuc2VbXSBTRUMoImxpY2Vuc2UiKSA9ICJHUEwiOw0KPiA+ICsNCj4gPiArdWludDMyX3QgbW9u
-aXRvcmVkX3BpZCA9IDA7DQo+ID4gKw0KPiA+ICtzdHJ1Y3Qgew0KPiA+ICsJX191aW50KHR5cGUs
-IEJQRl9NQVBfVFlQRV9JTk9ERV9TVE9SQUdFKTsNCj4gPiArCV9fdWludChtYXBfZmxhZ3MsIEJQ
-Rl9GX05PX1BSRUFMTE9DKTsNCj4gPiArCV9fdHlwZShrZXksIGludCk7DQo+ID4gKwlfX3R5cGUo
-dmFsdWUsIHNpemVvZih1aW50OF90KSk7DQo+ID4gK30gaW5vZGVfc3RvcmFnZV9tYXAgU0VDKCIu
-bWFwcyIpOw0KPiA+ICsNCj4gPiArU0VDKCJsc20vc2Jfc2V0X21udF9vcHRzIikNCj4gPiAraW50
-IEJQRl9QUk9HKHNiX3NldF9tbnRfb3B0cywgc3RydWN0IHN1cGVyX2Jsb2NrICpzYiwgdm9pZA0K
-PiAqbW50X29wdHMsDQo+ID4gKwkgICAgIHVuc2lnbmVkIGxvbmcga2Vybl9mbGFncywgdW5zaWdu
-ZWQgbG9uZyAqc2V0X2tlcm5fZmxhZ3MpDQo+ID4gK3sNCj4gPiArCXUzMiBwaWQ7DQo+ID4gKw0K
-PiA+ICsJcGlkID0gYnBmX2dldF9jdXJyZW50X3BpZF90Z2lkKCkgPj4gMzI7DQo+ID4gKwlpZiAo
-cGlkICE9IG1vbml0b3JlZF9waWQpDQo+ID4gKwkJcmV0dXJuIDA7DQo+ID4gKw0KPiA+ICsJaWYg
-KCFicGZfaW5vZGVfc3RvcmFnZV9nZXQoJmlub2RlX3N0b3JhZ2VfbWFwLCBzYi0+c19yb290LQ0K
-PiA+ZF9pbm9kZSwgMCwNCj4gPiArCQkJCSAgIEJQRl9MT0NBTF9TVE9SQUdFX0dFVF9GX0NSRUFU
-RSkpDQo+ID4gKwkJcmV0dXJuIC1FUEVSTTsNCj4gPiArDQo+ID4gKwlyZXR1cm4gMDsNCj4gPiAr
-fQ0KPiA+ICsNCj4gPiArU0VDKCJsc20vaW5vZGVfdW5saW5rIikNCj4gPiAraW50IEJQRl9QUk9H
-KGlub2RlX3VubGluaywgc3RydWN0IGlub2RlICpkaXIsIHN0cnVjdCBkZW50cnkgKmRlbnRyeSkN
-Cj4gPiArew0KPiA+ICsJaWYgKGJwZl9pbm9kZV9zdG9yYWdlX2dldCgmaW5vZGVfc3RvcmFnZV9t
-YXAsDQo+ID4gKwkJCQkgIGRpci0+aV9zYi0+c19yb290LT5kX2lub2RlLCAwLCAwKSkNCj4gPiAr
-CQlyZXR1cm4gLUVQRVJNOw0KPiA+ICsNCj4gPiArCXJldHVybiAwOw0KPiA+ICt9DQo+ID4gKw0K
-PiA+ICtTRUMoImxzbS9zYl91bW91bnQiKQ0KPiA+ICtpbnQgQlBGX1BST0coc2JfdW1vdW50LCBz
-dHJ1Y3QgdmZzbW91bnQgKm1udCwgaW50IGZsYWdzKQ0KPiA+ICt7DQo+ID4gKwlpZiAoYnBmX2lu
-b2RlX3N0b3JhZ2VfZ2V0KCZpbm9kZV9zdG9yYWdlX21hcCwNCj4gPiArCQkJCSAgbW50LT5tbnRf
-c2ItPnNfcm9vdC0+ZF9pbm9kZSwgMCwgMCkpDQo+ID4gKwkJcmV0dXJuIC1FUEVSTTsNCj4gPiAr
-DQo+ID4gKwlyZXR1cm4gMDsNCj4gPiArfQ0KPiA+IGRpZmYgLS1naXQgYS9icGZmc19sc21fdXNl
-ci5jIGIvYnBmZnNfbHNtX3VzZXIuYw0KPiA+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0DQo+ID4gaW5k
-ZXggMDAwMDAwMDAwMDAwLi5lMjAxODBjYzVkYjkNCj4gPiAtLS0gL2Rldi9udWxsDQo+ID4gKysr
-IGIvYnBmZnNfbHNtX3VzZXIuYw0KPiA+IEBAIC0wLDAgKzEsNjAgQEANCj4gPiArLy8gU1BEWC1M
-aWNlbnNlLUlkZW50aWZpZXI6IEdQTC0yLjANCj4gPiArLyoNCj4gPiArICogQ29weXJpZ2h0IChD
-KSAyMDIyIEh1YXdlaSBUZWNobm9sb2dpZXMgRHVlc3NlbGRvcmYgR21iSA0KPiA+ICsgKg0KPiA+
-ICsgKiBBdXRob3I6IFJvYmVydG8gU2Fzc3UgPHJvYmVydG8uc2Fzc3VAaHVhd2VpLmNvbT4NCj4g
-PiArICoNCj4gPiArICogSW1wbGVtZW50IHRoZSB1c2VyIHNwYWNlIHNpZGUgb2YgdGhlIExTTSBm
-b3IgYnBmZnMuDQo+ID4gKyAqLw0KPiA+ICsNCj4gPiArI2luY2x1ZGUgPGZjbnRsLmg+DQo+ID4g
-KyNpbmNsdWRlIDx1bmlzdGQuaD4NCj4gPiArI2luY2x1ZGUgPHN0ZGlvLmg+DQo+ID4gKyNpbmNs
-dWRlIDxlcnJuby5oPg0KPiA+ICsjaW5jbHVkZSA8c3RkbGliLmg+DQo+ID4gKyNpbmNsdWRlIDx1
-bmlzdGQuaD4NCj4gPiArI2luY2x1ZGUgPGxpbWl0cy5oPg0KPiA+ICsjaW5jbHVkZSA8c3lzL21v
-dW50Lmg+DQo+ID4gKyNpbmNsdWRlIDxzeXMvc3RhdC5oPg0KPiA+ICsNCj4gPiArI2luY2x1ZGUg
-ImJwZmZzX2xzbV9rZXJuLnNrZWwuaCINCj4gPiArDQo+ID4gKyNkZWZpbmUgTU9VTlRfRkxBR1Mg
-KE1TX05PU1VJRCB8IE1TX05PREVWIHwgTVNfTk9FWEVDIHwNCj4gTVNfUkVMQVRJTUUpDQo+ID4g
-Kw0KPiA+ICtpbnQgbWFpbihpbnQgYXJnYywgY2hhciAqYXJndltdKQ0KPiA+ICt7DQo+ID4gKwlj
-aGFyIG1udHBvaW50W10gPSAiL3RtcC9icGZfcHJpdmF0ZV9tb3VudFhYWFhYWCI7DQo+ID4gKwlj
-aGFyIHBhdGhbUEFUSF9NQVhdOw0KPiA+ICsJc3RydWN0IGJwZmZzX2xzbV9rZXJuICpza2VsOw0K
-PiA+ICsJaW50IHJldCwgaTsNCj4gPiArDQo+ID4gKwlza2VsID0gYnBmZnNfbHNtX2tlcm5fX29w
-ZW5fYW5kX2xvYWQoKTsNCj4gPiArCWlmICghc2tlbCkNCj4gPiArCQlyZXR1cm4gLUVJTlZBTDsN
-Cj4gPiArDQo+ID4gKwlyZXQgPSBicGZmc19sc21fa2Vybl9fYXR0YWNoKHNrZWwpOw0KPiA+ICsJ
-aWYgKHJldCA8IDApDQo+ID4gKwkJZ290byBvdXRfZGVzdHJveTsNCj4gPiArDQo+ID4gKwlta2R0
-ZW1wKG1udHBvaW50KTsNCj4gPiArDQo+ID4gKwlza2VsLT5ic3MtPm1vbml0b3JlZF9waWQgPSBn
-ZXRwaWQoKTsNCj4gPiArCXJldCA9IG1vdW50KG1udHBvaW50LCBtbnRwb2ludCwgImJwZiIsIE1P
-VU5UX0ZMQUdTLCBOVUxMKTsNCj4gPiArCXNrZWwtPmJzcy0+bW9uaXRvcmVkX3BpZCA9IDA7DQo+
-ID4gKw0KPiA+ICsJaWYgKHJldCA8IDApDQo+ID4gKwkJZ290byBvdXRfZGVzdHJveTsNCj4gPiAr
-DQo+ID4gKwlmb3IgKGkgPSAwOyBpIDwgc2tlbC0+c2tlbGV0b24tPnByb2dfY250OyBpKyspIHsN
-Cj4gPiArCQlzbnByaW50ZihwYXRoLCBzaXplb2YocGF0aCksICIlcy8lcyIsIG1udHBvaW50LA0K
-PiA+ICsJCQkgc2tlbC0+c2tlbGV0b24tPnByb2dzW2ldLm5hbWUpOw0KPiA+ICsJCXJldCA9IGJw
-Zl9saW5rX19waW4oKnNrZWwtPnNrZWxldG9uLT5wcm9nc1tpXS5saW5rLCBwYXRoKTsNCj4gPiAr
-CQlpZiAocmV0IDwgMCkNCj4gPiArCQkJZ290byBvdXRfZGVzdHJveTsNCj4gPiArCX0NCj4gPiAr
-DQo+ID4gKwlyZXQgPSAwOw0KPiA+ICtvdXRfZGVzdHJveToNCj4gPiArCWJwZmZzX2xzbV9rZXJu
-X19kZXN0cm95KHNrZWwpOw0KPiA+ICsJcmV0dXJuIHJldDsNCj4gPiArfQ0KDQo=
+Hugh, 
+
+On 4/6/22 08:22, Hugh Dickins wrote:
+> Asking Arnd and others below: should noMMU arches have a good ZERO_PAGE?
+> 
+> On Tue, 5 Apr 2022, Hugh Dickins wrote:
+>> On Tue, 5 Apr 2022, Patrice CHOTARD wrote:
+>>>
+>>> We found an issue with last kernel tag v5.18-rc1 on stm32f746-disco and 
+>>> stm32h743-disco boards (ARMV7-M SoCs).
+>>>
+>>> Kernel hangs when executing SetPageUptodate(ZERO_PAGE(0)); in mm/filemap.c.
+>>>
+>>> By reverting commit 56a8c8eb1eaf ("tmpfs: do not allocate pages on read"), 
+>>> kernel boots without any issue.
+>>
+>> Sorry about that, thanks a lot for finding.
+>>
+>> I see that arch/arm/configs/stm32_defconfig says CONFIG_MMU is not set:
+>> please confirm that is the case here.
+>>
+>> Yes, it looks as if NOMMU platforms are liable to have a bogus (that's my
+>> reading, but it may be unfair) definition for ZERO_PAGE(vaddr), and I was
+>> walking on ice to touch it without regard for !CONFIG_MMU.
+>>
+>> CONFIG_SHMEM depends on CONFIG_MMU, so that PageUptodate is only needed
+>> when CONFIG_MMU.
+>>
+>> Easily fixed by an #ifdef CONFIG_MMU there in mm/filemap.c, but I'll hunt
+>> around (again) for a better place to do it - though I won't want to touch
+>> all the architectures for it.  I'll post later today.
+> 
+> I could put #ifdef CONFIG_MMU around the SetPageUptodate(ZERO_PAGE(0))
+> added to pagecache_init(); or if that's considered distasteful, I could
+> skip making it potentially useful to other filesystems, revert the change
+> to pagecache_init(), and just do it in mm/shmem.c's CONFIG_SHMEM (hence
+> CONFIG_MMU) instance of shmem_init().
+> 
+> But I wonder if it's safe for noMMU architectures to go on without a
+> working ZERO_PAGE(0).  It has uses scattered throughout the tree, in
+> drivers, fs, crypto and more, and it's not at all obvious (to me) that
+> they all depend on CONFIG_MMU.  Some might cause (unreported) crashes,
+> some might use an unzeroed page in place of a pageful of zeroes.
+> 
+> arm noMMU and h8300 noMMU and m68k noMMU each has
+> #define ZERO_PAGE(vaddr)	(virt_to_page(0))
+> which seems riskily wrong to me.
+> 
+> h8300 and m68k actually go to the trouble of allocating an empty_zero_page
+> for this, but then forget to link it up to the ZERO_PAGE(vaddr) definition,
+> which is what all the common code uses.
+> 
+> arm noMMU does not presently allocate such a page; and I do not feel
+> entitled to steal a page from arm noMMU platforms, for a hypothetical
+> case, without agreement.
+> 
+> But here's an unbuilt and untested patch for consideration - which of
+> course should be split in three if agreed (and perhaps the h8300 part
+> quietly forgotten if h8300 is already on its way out).
+> 
+> (Yes, arm uses empty_zero_page in a different way from all the other
+> architectures; but that's okay, and I think arm's way, with virt_to_page()
+> already baked in, is better than the others; but I've no wish to get into
+> changing them.)
+> 
+> Patrice, does this patch build and run for you? I have no appreciation
+> of arm early startup issues, and may have got it horribly wrong.
+
+This patch is okay on my side on both boards (STM32F7 and STM32H7), boot are OK.
+
+Thanks for your reactivity ;-)
+Patrice
+
+> 
+> Thanks,
+> Hugh
+> 
+>  arch/arm/include/asm/pgtable-nommu.h |    3 ++-
+>  arch/arm/mm/nommu.c                  |   16 ++++++++++++++++
+>  arch/h8300/include/asm/pgtable.h     |    6 +++++-
+>  arch/h8300/mm/init.c                 |    5 +++--
+>  arch/m68k/include/asm/pgtable_no.h   |    5 ++++-
+>  5 files changed, 30 insertions(+), 5 deletions(-)
+> 
+> --- a/arch/arm/include/asm/pgtable-nommu.h
+> +++ b/arch/arm/include/asm/pgtable-nommu.h
+> @@ -48,7 +48,8 @@ typedef pte_t *pte_addr_t;
+>   * ZERO_PAGE is a global shared page that is always zero: used
+>   * for zero-mapped memory areas etc..
+>   */
+> -#define ZERO_PAGE(vaddr)	(virt_to_page(0))
+> +extern struct page *empty_zero_page;
+> +#define ZERO_PAGE(vaddr)	(empty_zero_page)
+>  
+>  /*
+>   * Mark the prot value as uncacheable and unbufferable.
+> --- a/arch/arm/mm/nommu.c
+> +++ b/arch/arm/mm/nommu.c
+> @@ -24,6 +24,13 @@
+>  
+>  #include "mm.h"
+>  
+> +/*
+> + * empty_zero_page is a special page that is used for
+> + * zero-initialized data and COW.
+> + */
+> +struct page *empty_zero_page;
+> +EXPORT_SYMBOL(empty_zero_page);
+> +
+>  unsigned long vectors_base;
+>  
+>  #ifdef CONFIG_ARM_MPU
+> @@ -148,9 +155,18 @@ void __init adjust_lowmem_bounds(void)
+>   */
+>  void __init paging_init(const struct machine_desc *mdesc)
+>  {
+> +	void *zero_page;
+> +
+>  	early_trap_init((void *)vectors_base);
+>  	mpu_setup();
+>  	bootmem_init();
+> +
+> +	zero_page = memblock_alloc(PAGE_SIZE, PAGE_SIZE);
+> +	if (!zero_page)
+> +		panic("%s: Failed to allocate %lu bytes align=0x%lx\n",
+> +		      __func__, PAGE_SIZE, PAGE_SIZE);
+> +	empty_zero_page = virt_to_page(zero_page);
+> +	flush_dcache_page(empty_zero_page);
+>  }
+>  
+>  /*
+> --- a/arch/h8300/include/asm/pgtable.h
+> +++ b/arch/h8300/include/asm/pgtable.h
+> @@ -19,11 +19,15 @@ extern void paging_init(void);
+>  
+>  static inline int pte_file(pte_t pte) { return 0; }
+>  #define swapper_pg_dir ((pgd_t *) 0)
+> +
+> +/* zero page used for uninitialized stuff */
+> +extern void *empty_zero_page;
+> +
+>  /*
+>   * ZERO_PAGE is a global shared page that is always zero: used
+>   * for zero-mapped memory areas etc..
+>   */
+> -#define ZERO_PAGE(vaddr)	(virt_to_page(0))
+> +#define ZERO_PAGE(vaddr)	(virt_to_page(empty_zero_page))
+>  
+>  /*
+>   * These would be in other places but having them here reduces the diffs.
+> --- a/arch/h8300/mm/init.c
+> +++ b/arch/h8300/mm/init.c
+> @@ -41,7 +41,8 @@
+>   * ZERO_PAGE is a special page that is used for zero-initialized
+>   * data and COW.
+>   */
+> -unsigned long empty_zero_page;
+> +void *empty_zero_page;
+> +EXPORT_SYMBOL(empty_zero_page);
+>  
+>  /*
+>   * paging_init() continues the virtual memory environment setup which
+> @@ -65,7 +66,7 @@ void __init paging_init(void)
+>  	 * Initialize the bad page table and bad page to point
+>  	 * to a couple of allocated pages.
+>  	 */
+> -	empty_zero_page = (unsigned long)memblock_alloc(PAGE_SIZE, PAGE_SIZE);
+> +	empty_zero_page = memblock_alloc(PAGE_SIZE, PAGE_SIZE);
+>  	if (!empty_zero_page)
+>  		panic("%s: Failed to allocate %lu bytes align=0x%lx\n",
+>  		      __func__, PAGE_SIZE, PAGE_SIZE);
+> --- a/arch/m68k/include/asm/pgtable_no.h
+> +++ b/arch/m68k/include/asm/pgtable_no.h
+> @@ -38,11 +38,14 @@ extern void paging_init(void);
+>  #define __pte_to_swp_entry(pte)	((swp_entry_t) { pte_val(pte) })
+>  #define __swp_entry_to_pte(x)	((pte_t) { (x).val })
+>  
+> +/* zero page used for uninitialized stuff */
+> +extern void *empty_zero_page;
+> +
+>  /*
+>   * ZERO_PAGE is a global shared page that is always zero: used
+>   * for zero-mapped memory areas etc..
+>   */
+> -#define ZERO_PAGE(vaddr)	(virt_to_page(0))
+> +#define ZERO_PAGE(vaddr)	(virt_to_page(empty_zero_page))
+>  
+>  /*
+>   * All 32bit addresses are effectively valid for vmalloc...
