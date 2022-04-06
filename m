@@ -2,26 +2,26 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 563194F61CA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Apr 2022 16:37:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B8FB4F61BE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Apr 2022 16:37:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235098AbiDFOfr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Apr 2022 10:35:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55618 "EHLO
+        id S234573AbiDFOUW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Apr 2022 10:20:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41034 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235206AbiDFOfY (ORCPT
+        with ESMTP id S234610AbiDFOTi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Apr 2022 10:35:24 -0400
+        Wed, 6 Apr 2022 10:19:38 -0400
 Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0D38329261;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E258932925B;
         Tue,  5 Apr 2022 19:53:37 -0700 (PDT)
-Received: from kwepemi500012.china.huawei.com (unknown [172.30.72.55])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4KY8DN2BWCzgYF8;
-        Wed,  6 Apr 2022 10:51:48 +0800 (CST)
+Received: from kwepemi500012.china.huawei.com (unknown [172.30.72.53])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4KY8DP23QhzgYMw;
+        Wed,  6 Apr 2022 10:51:49 +0800 (CST)
 Received: from huawei.com (10.67.174.53) by kwepemi500012.china.huawei.com
  (7.221.188.12) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Wed, 6 Apr
- 2022 10:53:31 +0800
+ 2022 10:53:32 +0800
 From:   Liao Chang <liaochang1@huawei.com>
 To:     <mcgrof@kernel.org>, <keescook@chromium.org>, <yzaikin@google.com>,
         <liaochang1@huawei.com>, <tglx@linutronix.de>, <clg@kaod.org>,
@@ -35,9 +35,9 @@ To:     <mcgrof@kernel.org>, <keescook@chromium.org>, <yzaikin@google.com>,
 CC:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
         <heying24@huawei.com>, <guohanjun@huawei.com>,
         <weiyongjun1@huawei.com>
-Subject: [RFC 2/3] softirq: Do throttling when softirqs use up its bandwidth
-Date:   Wed, 6 Apr 2022 10:52:40 +0800
-Message-ID: <20220406025241.191300-3-liaochang1@huawei.com>
+Subject: [RFC 3/3] softirq: Introduce statistics about softirq throttling
+Date:   Wed, 6 Apr 2022 10:52:41 +0800
+Message-ID: <20220406025241.191300-4-liaochang1@huawei.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220406025241.191300-1-liaochang1@huawei.com>
 References: <20220406025241.191300-1-liaochang1@huawei.com>
@@ -56,136 +56,174 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When kernel is about to handle pending softirqs, it will check firstly
-whether softirq already use up its CPU bandwidth, Once the total duration
-of softirq handling exceed the max value in the user-specified time window,
-softirq will be throttled for a while, the throttling will be removed
-when time window expires.
+This patch introduces counting the number of time spent on softirqs for
+each CPU and the number of time that softirqs has been throttled for
+each CPU, which are reported in /proc/softirqs, for example:
 
-On then other hand, kernel will update the runtime of softirq on given CPU
-before __do_softirq() function returns.
+$cat /proc/softirqs
+                    CPU0       CPU1       CPU2       CPU3
+          HI:          0          0          0          0
+       TIMER:       1088        855        197       4862
+      NET_TX:          0          0          0          0
+      NET_RX:         15          1          0          0
+       BLOCK:         14         11         86         75
+    IRQ_POLL:          0          0          0          0
+     TASKLET:    5926026    6133070    5646523    6149053
+       SCHED:      18061      15939      15746      16004
+     HRTIMER:          0          0          0          0
+         RCU:        668        778        939        720
+                    CPU0       CPU1       CPU2       CPU3
+ DURATION_MS:      91556      69888      66784      73772
+ THROTTLE_MS:      77820       7328       5828       8904
+
+Row starts with "DURATION_MS:" indicates how many milliseconds used for
+softirqs on each CPU. Row starts with "THROTTLE_MS:" indicates how many
+milliseconds softirq throttling lasted on each CPU.
+
+Notice: the rate of "THROTTLE_MS" increase is controlled by parameter
+"kernel.softirq_period_ms" and "kernel.softirq_runtime_ms", generally
+speaking, the smaller softirq CPU bandwidth is, the faster "THROTTLE_MS"
+increase, especially when pending softirq workload is very heavy.
 
 Signed-off-by: Liao Chang <liaochang1@huawei.com>
 ---
- kernel/softirq.c | 70 ++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 70 insertions(+)
+ fs/proc/softirqs.c          | 18 ++++++++++++++++++
+ include/linux/kernel_stat.h | 27 +++++++++++++++++++++++++++
+ kernel/softirq.c            | 15 +++++++++++++--
+ 3 files changed, 58 insertions(+), 2 deletions(-)
 
+diff --git a/fs/proc/softirqs.c b/fs/proc/softirqs.c
+index 12901dcf57e2..5ea3ede9833e 100644
+--- a/fs/proc/softirqs.c
++++ b/fs/proc/softirqs.c
+@@ -22,6 +22,24 @@ static int show_softirqs(struct seq_file *p, void *v)
+ 			seq_printf(p, " %10u", kstat_softirqs_cpu(i, j));
+ 		seq_putc(p, '\n');
+ 	}
++
++#ifdef CONFIG_SOFTIRQ_THROTTLE
++	seq_puts(p, "                    ");
++	for_each_possible_cpu(i)
++		seq_printf(p, "CPU%-8d", i);
++	seq_putc(p, '\n');
++
++	seq_printf(p, "%12s:", "DURATION_MS");
++	for_each_possible_cpu(j)
++		seq_printf(p, " %10lu", kstat_softirq_duration(j));
++	seq_putc(p, '\n');
++
++	seq_printf(p, "%12s:", "THROTTLE_MS");
++	for_each_possible_cpu(j)
++		seq_printf(p, " %10lu", kstat_softirq_throttle(j));
++	seq_putc(p, '\n');
++#endif
++
+ 	return 0;
+ }
+ 
+diff --git a/include/linux/kernel_stat.h b/include/linux/kernel_stat.h
+index 69ae6b278464..bbb52c55aad4 100644
+--- a/include/linux/kernel_stat.h
++++ b/include/linux/kernel_stat.h
+@@ -38,6 +38,11 @@ struct kernel_cpustat {
+ struct kernel_stat {
+ 	unsigned long irqs_sum;
+ 	unsigned int softirqs[NR_SOFTIRQS];
++
++#ifdef CONFIG_SOFTIRQ_THROTTLE
++	unsigned long softirq_duration;
++	unsigned long softirq_throttle;
++#endif
+ };
+ 
+ DECLARE_PER_CPU(struct kernel_stat, kstat);
+@@ -64,6 +69,28 @@ static inline unsigned int kstat_softirqs_cpu(unsigned int irq, int cpu)
+        return kstat_cpu(cpu).softirqs[irq];
+ }
+ 
++#ifdef CONFIG_SOFTIRQ_THROTTLE
++static inline unsigned long kstat_softirq_duration(int cpu)
++{
++	return jiffies_to_msecs(kstat_cpu(cpu).softirq_duration);
++}
++
++static inline unsigned long kstat_softirq_throttle(int cpu)
++{
++	return jiffies_to_msecs(kstat_cpu(cpu).softirq_throttle);
++}
++
++static inline unsigned long kstat_incr_softirq_duration(unsigned long delta)
++{
++	return kstat_this_cpu->softirq_duration += delta;
++}
++
++static inline unsigned long kstat_incr_softirq_throttle(unsigned long delta)
++{
++	return kstat_this_cpu->softirq_throttle += delta;
++}
++#endif
++
+ /*
+  * Number of interrupts per specific IRQ source, since bootup
+  */
 diff --git a/kernel/softirq.c b/kernel/softirq.c
-index 8aac9e2631fd..6de6db794ac5 100644
+index 6de6db794ac5..7fc0dc39f788 100644
 --- a/kernel/softirq.c
 +++ b/kernel/softirq.c
-@@ -75,6 +75,49 @@ struct softirq_throttle {
+@@ -79,6 +79,7 @@ struct softirq_runtime {
+ 	bool	throttled;
+ 	unsigned long	duration;
+ 	unsigned long	expires;
++	unsigned long	throttled_ts;
  	raw_spinlock_t lock;
- } si_throttle;
- 
-+struct softirq_runtime {
-+	bool	throttled;
-+	unsigned long	duration;
-+	unsigned long	expires;
-+	raw_spinlock_t lock;
-+};
-+static DEFINE_PER_CPU(struct softirq_runtime, softirq_runtime);
-+
-+static void forward_softirq_expires(struct softirq_runtime *si_runtime)
-+{
-+	si_runtime->throttled = false;
-+	si_runtime->duration = 0UL;
-+	si_runtime->expires = jiffies +
-+		msecs_to_jiffies(si_throttle.period - si_throttle.runtime);
-+}
-+
-+static void update_softirq_runtime(unsigned long duration)
-+{
-+	struct softirq_runtime *si_runtime = this_cpu_ptr(&softirq_runtime);
-+
-+	raw_spin_lock(&si_runtime->lock);
-+	si_runtime->duration += jiffies_to_msecs(duration);
-+	if ((si_runtime->duration >= si_throttle.runtime) &&
-+		time_before(jiffies, si_runtime->expires)) {
-+		si_runtime->throttled = true;
-+	}
-+	raw_spin_unlock(&si_runtime->lock);
-+}
-+
-+static bool softirq_runtime_exceeded(void)
-+{
-+	struct softirq_runtime *si_runtime = this_cpu_ptr(&softirq_runtime);
-+
-+	if ((unsigned int)si_throttle.runtime >= si_throttle.period)
-+		return false;
-+
-+	raw_spin_lock(&si_runtime->lock);
-+	if (!time_before(jiffies, si_runtime->expires))
-+		forward_softirq_expires(si_runtime);
-+	raw_spin_unlock(&si_runtime->lock);
-+	return si_runtime->throttled;
-+}
-+
- static int softirq_throttle_validate(void)
+ };
+ static DEFINE_PER_CPU(struct softirq_runtime, softirq_runtime);
+@@ -94,12 +95,16 @@ static void forward_softirq_expires(struct softirq_runtime *si_runtime)
+ static void update_softirq_runtime(unsigned long duration)
  {
- 	if (((int)sysctl_softirq_period_ms <= 0) ||
-@@ -88,10 +131,18 @@ static int softirq_throttle_validate(void)
- static void softirq_throttle_update(void)
- {
- 	unsigned long flags;
-+	struct softirq_runtime *si_runtime;
- 
- 	raw_spin_lock_irqsave(&si_throttle.lock, flags);
- 	si_throttle.period = sysctl_softirq_period_ms;
- 	si_throttle.runtime = sysctl_softirq_runtime_ms;
+ 	struct softirq_runtime *si_runtime = this_cpu_ptr(&softirq_runtime);
++	unsigned long now = jiffies;
 +
-+	for_each_possible_cpu(cpu, &) {
-+		si_runtime = per_cpu_ptr(&softirq_runtime, cpu);
-+		raw_spin_lock(&si_runtime->lock);
-+		forward_softirq_expires(si_runtime);
-+		raw_spin_unlock(&si_runtime->lock);
-+	}
- 	raw_spin_unlock_irqrestore(&si_throttle.lock, flags);
- }
++	kstat_incr_softirq_duration(duration);
  
-@@ -129,9 +180,17 @@ int softirq_throttle_handler(struct ctl_table *table, int write, void *buffer,
- 
- static void softirq_throttle_init(void)
- {
-+	struct softirq_runtime *si_runtime;
-+
- 	si_throttle.period = sysctl_softirq_period_ms;
- 	si_throttle.runtime = sysctl_softirq_runtime_ms;
- 	raw_spin_lock_init(&si_throttle.lock);
-+
-+	for_each_possible_cpu(cpu) {
-+		si_runtime = per_cpu_ptr(&softirq_runtime, cpu);
-+		forward_softirq_expires(si_runtime);
-+		raw_spin_lock_init(&si_runtime->lock);
-+	}
- }
- #endif
- 
-@@ -592,6 +651,13 @@ asmlinkage __visible void __softirq_entry __do_softirq(void)
- 	__u32 pending;
- 	int softirq_bit;
- 
-+#ifdef CONFIG_SOFTIRQ_THROTTLE
-+	bool exceeded = softirq_runtime_exceeded();
-+
-+	if (exceeded)
-+		return;
-+#endif
-+
- 	/*
- 	 * Mask out PF_MEMALLOC as the current task context is borrowed for the
- 	 * softirq. A softirq handled, such as network RX, might set PF_MEMALLOC
-@@ -652,6 +718,10 @@ asmlinkage __visible void __softirq_entry __do_softirq(void)
- 		wakeup_softirqd();
+ 	raw_spin_lock(&si_runtime->lock);
+ 	si_runtime->duration += jiffies_to_msecs(duration);
+ 	if ((si_runtime->duration >= si_throttle.runtime) &&
+-		time_before(jiffies, si_runtime->expires)) {
++		time_before(now, si_runtime->expires)) {
+ 		si_runtime->throttled = true;
++		si_runtime->throttled_ts = now;
  	}
+ 	raw_spin_unlock(&si_runtime->lock);
+ }
+@@ -107,13 +112,17 @@ static void update_softirq_runtime(unsigned long duration)
+ static bool softirq_runtime_exceeded(void)
+ {
+ 	struct softirq_runtime *si_runtime = this_cpu_ptr(&softirq_runtime);
++	unsigned long now = jiffies;
  
-+#ifdef CONFIG_SOFTIRQ_THROTTLE
-+	update_softirq_runtime(jiffies - (end - MAX_SOFTIRQ_TIME));
-+#endif
-+
- 	account_softirq_exit(current);
- 	lockdep_softirq_end(in_hardirq);
- 	softirq_handle_end();
+ 	if ((unsigned int)si_throttle.runtime >= si_throttle.period)
+ 		return false;
+ 
+ 	raw_spin_lock(&si_runtime->lock);
+-	if (!time_before(jiffies, si_runtime->expires))
++	if (!time_before(now, si_runtime->expires)) {
++		if (si_runtime->throttled)
++			kstat_incr_softirq_throttle(now - si_runtime->throttled_ts);
+ 		forward_softirq_expires(si_runtime);
++	}
+ 	raw_spin_unlock(&si_runtime->lock);
+ 	return si_runtime->throttled;
+ }
+@@ -140,6 +149,8 @@ static void softirq_throttle_update(void)
+ 	for_each_possible_cpu(cpu, &) {
+ 		si_runtime = per_cpu_ptr(&softirq_runtime, cpu);
+ 		raw_spin_lock(&si_runtime->lock);
++		if (si_runtime->throttled)
++			kstat_incr_softirq_throttle(jiffies - si_runtime->throttled_ts);
+ 		forward_softirq_expires(si_runtime);
+ 		raw_spin_unlock(&si_runtime->lock);
+ 	}
 -- 
 2.17.1
 
