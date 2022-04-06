@@ -2,178 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EC6EA4F5C23
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Apr 2022 13:26:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3ADCF4F5FE8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Apr 2022 15:30:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242060AbiDFL1E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Apr 2022 07:27:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51256 "EHLO
+        id S232957AbiDFNKN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Apr 2022 09:10:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241115AbiDFL0f (ORCPT
+        with ESMTP id S232464AbiDFNKF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Apr 2022 07:26:35 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D309355CFE8;
-        Wed,  6 Apr 2022 01:13:15 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 4DED31F38A;
-        Wed,  6 Apr 2022 08:13:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1649232794; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=/rBcyoDoTq/ouUuDrmZ5BU4RlZeCyQlpcb/fLfqi5+g=;
-        b=dJ+xoXpY08wKZSxp4z1Y5Osm1Twl7YrbmzMZrDi+X2woMiKeABbNRwulYBc2qOF6dH3brs
-        MNTVdkTWKIpEhYzVo45ZPk4swaf0E52Z+v/2uKVyVQI5xbozxEx46EpwHv1IkCHg1/P9MJ
-        oeOBCZNuC7mWz+jnAtWnLkdd6TkHf0M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1649232794;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=/rBcyoDoTq/ouUuDrmZ5BU4RlZeCyQlpcb/fLfqi5+g=;
-        b=+cHhjmj0LF7iVvf9KUfF3wuUVkHwKWOHOJ0OtTa9gm6FBswBsRelBd0noj2RXLYYVFYpeZ
-        Z7ZFBZ+7OjnqgnCA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 1266A13A8E;
-        Wed,  6 Apr 2022 08:13:14 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id Ik0hA5pLTWJeYAAAMHmgww
-        (envelope-from <ddiss@suse.de>); Wed, 06 Apr 2022 08:13:14 +0000
-Date:   Wed, 6 Apr 2022 10:13:11 +0200
-From:   David Disseldorp <ddiss@suse.de>
-To:     "NeilBrown" <neilb@suse.de>
-Cc:     "Al Viro" <viro@zeniv.linux.org.uk>, linux-nfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        "LKML" <linux-kernel@vger.kernel.org>,
-        "Jeff Layton" <jlayton@kernel.org>
-Subject: Re: [PATCH v4] VFS: filename_create(): fix incorrect intent.
-Message-ID: <20220406101311.502aa172@suse.de>
-In-Reply-To: <164878611050.25542.6758961460499392000@noble.neil.brown.name>
-References: <164877264126.25542.1271530843099472952@noble.neil.brown.name>
-        <164878611050.25542.6758961460499392000@noble.neil.brown.name>
+        Wed, 6 Apr 2022 09:10:05 -0400
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA8E523009C;
+        Tue,  5 Apr 2022 19:28:41 -0700 (PDT)
+Received: from kwepemi500012.china.huawei.com (unknown [172.30.72.54])
+        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4KY7cr2lkyzBrX0;
+        Wed,  6 Apr 2022 10:24:28 +0800 (CST)
+Received: from huawei.com (10.67.174.53) by kwepemi500012.china.huawei.com
+ (7.221.188.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Wed, 6 Apr
+ 2022 10:28:37 +0800
+From:   Liao Chang <liaochang1@huawei.com>
+To:     <mcgrof@kernel.org>, <keescook@chromium.org>, <yzaikin@google.com>,
+        <liaochang1@huawei.com>, <tglx@linutronix.de>, <nitesh@redhat.com>,
+        <edumazet@google.com>, <clg@kaod.org>, <tannerlove@google.com>,
+        <peterz@infradead.org>, <joshdon@google.com>,
+        <masahiroy@kernel.org>, <nathan@kernel.org>, <vbabka@suse.cz>,
+        <akpm@linux-foundation.org>, <gustavoars@kernel.org>,
+        <arnd@arndb.de>, <chris@chrisdown.name>,
+        <dmitry.torokhov@gmail.com>, <linux@rasmusvillemoes.dk>,
+        <daniel@iogearbox.net>, <john.ogness@linutronix.de>,
+        <will@kernel.org>, <dave@stgolabs.net>, <frederic@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <heying24@huawei.com>, <guohanjun@huawei.com>,
+        <weiyongjun1@huawei.com>
+Subject: [RFC 0/3] softirq: Introduce softirq throttling
+Date:   Wed, 6 Apr 2022 10:27:46 +0800
+Message-ID: <20220406022749.184807-1-liaochang1@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain
+X-Originating-IP: [10.67.174.53]
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemi500012.china.huawei.com (7.221.188.12)
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 01 Apr 2022 15:08:30 +1100, NeilBrown wrote:
+Kernel check for pending softirqs periodically, they are performed in a
+few points of kernel code, such as irq_exit() and __local_bh_enable_ip(),
+softirqs that have been activated by a given CPU must be executed on the
+same CPU, this characteristic of softirq is always a potentially
+"dangerous" operation, because one CPU might be end up very busy while
+the other are most idle.
 
-> When asked to create a path ending '/', but which is not to be a
-> directory (LOOKUP_DIRECTORY not set), filename_create() will never try
-> to create the file.  If it doesn't exist, -ENOENT is reported.
-> 
-> However, it still passes LOOKUP_CREATE|LOOKUP_EXCL to the filesystems
-> ->lookup() function, even though there is no intent to create.  This is  
-> misleading and can cause incorrect behaviour.
-> 
-> If you try
->    ln -s foo /path/dir/
+Above concern is proven in a networking user case: recenlty, we
+engineer find out the time used for connection re-establishment on
+kernel v5.10 is 300 times larger than v4.19, meanwhile, softirq
+monopolize almost 99% of CPU. This problem stem from that the connection
+between Sender and Receiver node get lost, the NIC driver on Sender node
+will keep raising NET_TX softirq before connection recovery. The system
+log show that most of softirq is performed from __local_bh_enable_ip(),
+since __local_bh_enable_ip is used widley in kernel code, it is very
+easy to run out most of CPU, and the user-mode application can't obtain
+enough CPU cycles to establish connection as soon as possible.
 
-It'd be helpful if we could run these sorts of tests from the xfstests
-suite. I wonder whether some sort of other-client ssh backchannel would
-be useful (for cifs.ko and cephfs too).
+Although kernel limit the running time of __do_softirq(), it does not
+control the running time of entire softirqs on given CPU, so this
+patchset introduce a safeguard mechanism that allows the system
+administrator to allocate bandwidth for used by softirqs, this safeguard
+mechanism is known as Sofitrq Throttling and is controlled by two
+parameters in the /proc file system:
 
-> where 'dir' is a directory on an NFS filesystem which is not currently
-> known in the dcache, this will fail with ENOENT.
-> As the name is not in the dcache, nfs_lookup gets called with
-> LOOKUP_CREATE|LOOKUP_EXCL and so it returns NULL without performing any
-> lookup, with the expectation that a subsequent call to create the
-> target will be made, and the lookup can be combined with the creation.
-> In the case with a trailing '/' and no LOOKUP_DIRECTORY, that call is never
-> made.  Instead filename_create() sees that the dentry is not (yet)
-> positive and returns -ENOENT - even though the directory actually
-> exists.
-> 
-> So only set LOOKUP_CREATE|LOOKUP_EXCL if there really is an intent
-> to create, and use the absence of these flags to decide if -ENOENT
-> should be returned.
-> 
-> Note that filename_parentat() is only interested in LOOKUP_REVAL, so we
-> split that out and store it in 'reval_flag'.
-> __looku_hash() then gets reval_flag combined with whatever create flags
-> were determined to be needed.
+/proc/sys/kernel/sofitrq_period_ms
+  Defines the period in ms(millisecond) to be considered as 100% of CPU
+  bandwidth, the default value is 1,000 ms(1second). Changes to the
+  value of the period must be very well thought out, as too long or too
+  short are beyond one's expectation.
 
-nit: __lookup_hash()
+/proc/sys/kernel/softirq_runtime_ms
+  Define the bandwidth available to softirqs on each CPU, the default
+  values is 950 ms(0.95 second) or, in other words, 95% of the CPU
+  bandwidth. Setting negative integer to this value means that softirqs
+  my use up to 100% CPU times.
 
-> 
-> Signed-off-by: NeilBrown <neilb@suse.de>
-> ---
->  fs/namei.c | 22 ++++++++++------------
->  1 file changed, 10 insertions(+), 12 deletions(-)
-> 
-> ARG - v3 had a missing semi-colon.  Sorry.
-> 
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 3f1829b3ab5b..509657fdf4f5 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -3673,18 +3673,14 @@ static struct dentry *filename_create(int dfd, struct filename *name,
->  {
->  	struct dentry *dentry = ERR_PTR(-EEXIST);
->  	struct qstr last;
-> +	bool want_dir = lookup_flags & LOOKUP_DIRECTORY;
-> +	unsigned int reval_flag = lookup_flags & LOOKUP_REVAL;
-> +	unsigned int create_flags = LOOKUP_CREATE | LOOKUP_EXCL;
->  	int type;
->  	int err2;
->  	int error;
-> -	bool is_dir = (lookup_flags & LOOKUP_DIRECTORY);
->  
-> -	/*
-> -	 * Note that only LOOKUP_REVAL and LOOKUP_DIRECTORY matter here. Any
-> -	 * other flags passed in are ignored!
-> -	 */
-> -	lookup_flags &= LOOKUP_REVAL;
-> -
-> -	error = filename_parentat(dfd, name, lookup_flags, path, &last, &type);
-> +	error = filename_parentat(dfd, name, reval_flag, path, &last, &type);
->  	if (error)
->  		return ERR_PTR(error);
->  
-> @@ -3698,11 +3694,13 @@ static struct dentry *filename_create(int dfd, struct filename *name,
->  	/* don't fail immediately if it's r/o, at least try to report other errors */
->  	err2 = mnt_want_write(path->mnt);
->  	/*
-> -	 * Do the final lookup.
-> +	 * Do the final lookup.  Suppress 'create' if there is a trailing
-> +	 * '/', and a directory wasn't requested.
->  	 */
-> -	lookup_flags |= LOOKUP_CREATE | LOOKUP_EXCL;
-> +	if (last.name[last.len] && !want_dir)
-> +		create_flags = 0;
->  	inode_lock_nested(path->dentry->d_inode, I_MUTEX_PARENT);
-> -	dentry = __lookup_hash(&last, path->dentry, lookup_flags);
-> +	dentry = __lookup_hash(&last, path->dentry, reval_flag | create_flags);
->  	if (IS_ERR(dentry))
->  		goto unlock;
->  
-> @@ -3716,7 +3714,7 @@ static struct dentry *filename_create(int dfd, struct filename *name,
->  	 * all is fine. Let's be bastards - you had / on the end, you've
->  	 * been asking for (non-existent) directory. -ENOENT for you.
->  	 */
-> -	if (unlikely(!is_dir && last.name[last.len])) {
-> +	if (unlikely(!create_flags)) {
->  		error = -ENOENT;
->  		goto fail;
->  	}
+The default values for softirq throttling mechanism define that 95% of
+the CPU time can be used by softirqs. The remaing 5% will be devoted to
+other kinds of tasks, such as syscall, interrupt, exception, real-time
+processes and normal processes when the softirqs workload in system are
+very heavy. System administrator can tune above two parameters to
+satifies the need of system performance and stability.
 
-Looks good and works for me.
-Reviewed-by: David Disseldorp <ddiss@suse.de>
+Liao Chang (3):
+  softirq: Add two parameters to control CPU bandwidth for use by
+    softirq
+  softirq: Do throttling when softirqs use up its bandwidth
+  softirq: Introduce statistics about softirq throttling
+
+ fs/proc/softirqs.c          |  18 +++++
+ include/linux/interrupt.h   |   7 ++
+ include/linux/kernel_stat.h |  27 +++++++
+ init/Kconfig                |  10 +++
+ kernel/softirq.c            | 155 ++++++++++++++++++++++++++++++++++++
+ kernel/sysctl.c             |  16 ++++
+ 6 files changed, 233 insertions(+)
+
+-- 
+2.17.1
+
