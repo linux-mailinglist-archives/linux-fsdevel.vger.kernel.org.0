@@ -2,197 +2,182 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B796D4F5D39
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Apr 2022 14:20:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F5EA4F5E5A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Apr 2022 14:46:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229942AbiDFMQF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Apr 2022 08:16:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51990 "EHLO
+        id S230251AbiDFMsu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Apr 2022 08:48:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231673AbiDFMOj (ORCPT
+        with ESMTP id S229920AbiDFMsY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Apr 2022 08:14:39 -0400
-Received: from out30-42.freemail.mail.aliyun.com (out30-42.freemail.mail.aliyun.com [115.124.30.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 087881EA5F9;
-        Wed,  6 Apr 2022 00:56:48 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=18;SR=0;TI=SMTPD_---0V9L1BOu_1649231803;
-Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0V9L1BOu_1649231803)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 06 Apr 2022 15:56:44 +0800
-From:   Jeffle Xu <jefflexu@linux.alibaba.com>
-To:     dhowells@redhat.com, linux-cachefs@redhat.com, xiang@kernel.org,
-        chao@kernel.org, linux-erofs@lists.ozlabs.org
-Cc:     torvalds@linux-foundation.org, gregkh@linuxfoundation.org,
-        willy@infradead.org, linux-fsdevel@vger.kernel.org,
-        joseph.qi@linux.alibaba.com, bo.liu@linux.alibaba.com,
-        tao.peng@linux.alibaba.com, gerry@linux.alibaba.com,
-        eguan@linux.alibaba.com, linux-kernel@vger.kernel.org,
-        luodaowen.backend@bytedance.com, tianzichen@kuaishou.com,
-        fannaihao@baidu.com
-Subject: [PATCH v8 20/20] erofs: add 'fsid' mount option
-Date:   Wed,  6 Apr 2022 15:56:12 +0800
-Message-Id: <20220406075612.60298-21-jefflexu@linux.alibaba.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20220406075612.60298-1-jefflexu@linux.alibaba.com>
-References: <20220406075612.60298-1-jefflexu@linux.alibaba.com>
+        Wed, 6 Apr 2022 08:48:24 -0400
+Received: from esa5.hgst.iphmx.com (esa5.hgst.iphmx.com [216.71.153.144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A7CA4AF781
+        for <linux-fsdevel@vger.kernel.org>; Wed,  6 Apr 2022 01:52:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1649235162; x=1680771162;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=LFM3dJ4XtmmQmpjm/ADKwYliPf/iPacGMSt9/3x5IFU=;
+  b=ojFY4yb27o4X5BsYo4VL4HCfneARBHq+b6TIZETdYkCzRsEqssK9/WD/
+   MJfK+Jgnd4//m2XKAGHJMmws3J0HVieespFs0vF5KQT0uKEJfVSiA+7G+
+   xS/LcA2sDGikEJxaf+gsHKkW/bMmBA/MNB/DUDIYeswaDTEMGQlvgPAsZ
+   4zTxzwAXOLHLu16kK4pueo41CFA6TBoo8hLmjTGdxSPo9bvbZteaD9y45
+   e6hwMys4s3tV3siihop/FczFDPJlrXHpBydiXfYnbE9PsgifmiXCzekTN
+   Yc9dzMmThJNIXbBxkUW7+ScrznlhKojWVKsjCmdbrOLgBDtgNtPV7QCk+
+   A==;
+X-IronPort-AV: E=Sophos;i="5.90,239,1643644800"; 
+   d="scan'208";a="197223418"
+Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 06 Apr 2022 16:52:42 +0800
+IronPort-SDR: z8/0EynePU1WjTj2XpN8LLGXoBD69II2S29m/5klCJMWPVcHg92HghVxXFEH/avPuQFwQfljLC
+ zvBAG9iVifooeUiZTZVi1Ku8IXNZvCq/WUI7xaq6XC97FDbk2IiUzTTtWsP/8sgt4s+TGHBpMI
+ OgCRnUkXa270G2J18PoCNZQ4JAFwfKtz6ZIAA1gl1BGQ7J2ekkOE4OF+jLhGs3mlbHEuUrW6XK
+ g8WtAjYdGTzb6FjVPpF3cgL7dRHkEKJ3wIC6jMImDtfcuHGF0etz81v5PW8ca8sGOdwzUIlBPr
+ fhHs1KSVhUIa+PBFcVpNW80M
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 06 Apr 2022 01:24:14 -0700
+IronPort-SDR: Y1rOm/sYb0Eh0BgEBa+eGor2x/XJO8bxisPV56Zbcb1+6OpXqvuy26n3r6uV4qt80KYJwssJhr
+ tPHBzXaJr2XDziKoqXznQsT4lfkzSHNSuF+OcvsCZArCxXD1fyMQvtKCcbxyhQSV8a2yR2AUZY
+ weOD9jmJAWKvdvhkAG5POdJqMxlDivpOyW9DHNuYNJHB5Ph4gttDcbrfraZXSXpvp3XdcT6KKn
+ G9RLDUAOSeWTJavbwUCjlG0LTt9XmyRocPaDoCNiFebyRdGmlYAFrve/nvpicO7Brntam3wNYD
+ +uQ=
+WDCIronportException: Internal
+Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
+  by uls-op-cesaip01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 06 Apr 2022 01:52:43 -0700
+Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4KYJDn1rHjz1SVp6
+        for <linux-fsdevel@vger.kernel.org>; Wed,  6 Apr 2022 01:52:41 -0700 (PDT)
+Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)"
+        header.d=opensource.wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
+        opensource.wdc.com; h=content-transfer-encoding:content-type
+        :in-reply-to:organization:from:references:to:content-language
+        :subject:user-agent:mime-version:date:message-id; s=dkim; t=
+        1649235160; x=1651827161; bh=LFM3dJ4XtmmQmpjm/ADKwYliPf/iPacGMSt
+        9/3x5IFU=; b=FzUociJ5h7WAQTsg6/of1WcVO/OsM8WZr8TGwq4XsiCjPsWYnIG
+        8/w+gKZQabfM5/6lPmJQreKk5Ou6wFCFKuKzU34LNEBfiEEQgQdKgaFRiQjCbS+v
+        bXmYOK12GNp/Ja0XBlu9I1309M6iplipC0iSH4zUASq/4DY1Z1ntJWZZ2gnz7v04
+        gr+tHwiyI12IKqfvshI8zep4+bgj/F03PH6lDam0sCy+54uxyIAUOpes7fa1mbqW
+        oKbTS+GZl8C4hDtpg8QtlcOVicbeOAAs2w8xnnXnZGy/42U80yMH8z7K4uMfNY4W
+        C4OWYxx5B6+JAZVIxV0TMfw3Lljnnr2SA9w==
+X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
+Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
+        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id d-p6kLrdkiKJ for <linux-fsdevel@vger.kernel.org>;
+        Wed,  6 Apr 2022 01:52:40 -0700 (PDT)
+Received: from [10.149.53.254] (washi.fujisawa.hgst.com [10.149.53.254])
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4KYJDg4WyPz1Rvlx;
+        Wed,  6 Apr 2022 01:52:35 -0700 (PDT)
+Message-ID: <ea3d14cb-00ea-8d7b-4615-9347fdd7aa27@opensource.wdc.com>
+Date:   Wed, 6 Apr 2022 17:52:34 +0900
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H5,
-        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH 14/27] block: add a bdev_max_zone_append_sectors helper
+Content-Language: en-US
+To:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
+Cc:     dm-devel@redhat.com, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-um@lists.infradead.org,
+        linux-block@vger.kernel.org, drbd-dev@lists.linbit.com,
+        nbd@other.debian.org, ceph-devel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
+        linux-raid@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org,
+        linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
+        target-devel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        cluster-devel@redhat.com, jfs-discussion@lists.sourceforge.net,
+        linux-nilfs@vger.kernel.org, ntfs3@lists.linux.dev,
+        ocfs2-devel@oss.oracle.com, linux-mm@kvack.org
+References: <20220406060516.409838-1-hch@lst.de>
+ <20220406060516.409838-15-hch@lst.de>
+From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
+Organization: Western Digital Research
+In-Reply-To: <20220406060516.409838-15-hch@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-7.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Introduce 'fsid' mount option to enable on-demand read sementics, in
-which case, erofs will be mounted from data blobs. Users could specify
-the name of primary data blob by this mount option.
+On 4/6/22 15:05, Christoph Hellwig wrote:
+> Add a helper to check the max supported sectors for zone append based on
+> the block_device instead of having to poke into the block layer internal
+> request_queue.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>   drivers/nvme/target/zns.c | 3 +--
+>   fs/zonefs/super.c         | 3 +--
+>   include/linux/blkdev.h    | 6 ++++++
+>   3 files changed, 8 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/nvme/target/zns.c b/drivers/nvme/target/zns.c
+> index e34718b095504..82b61acf7a72b 100644
+> --- a/drivers/nvme/target/zns.c
+> +++ b/drivers/nvme/target/zns.c
+> @@ -34,8 +34,7 @@ static int validate_conv_zones_cb(struct blk_zone *z,
+>   
+>   bool nvmet_bdev_zns_enable(struct nvmet_ns *ns)
+>   {
+> -	struct request_queue *q = ns->bdev->bd_disk->queue;
+> -	u8 zasl = nvmet_zasl(queue_max_zone_append_sectors(q));
+> +	u8 zasl = nvmet_zasl(bdev_max_zone_append_sectors(ns->bdev));
+>   	struct gendisk *bd_disk = ns->bdev->bd_disk;
+>   	int ret;
+>   
+> diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
+> index 3614c7834007d..7a63807b736c4 100644
+> --- a/fs/zonefs/super.c
+> +++ b/fs/zonefs/super.c
+> @@ -678,13 +678,12 @@ static ssize_t zonefs_file_dio_append(struct kiocb *iocb, struct iov_iter *from)
+>   	struct inode *inode = file_inode(iocb->ki_filp);
+>   	struct zonefs_inode_info *zi = ZONEFS_I(inode);
+>   	struct block_device *bdev = inode->i_sb->s_bdev;
+> -	unsigned int max;
+> +	unsigned int max = bdev_max_zone_append_sectors(bdev);
+>   	struct bio *bio;
+>   	ssize_t size;
+>   	int nr_pages;
+>   	ssize_t ret;
+>   
+> -	max = queue_max_zone_append_sectors(bdev_get_queue(bdev));
+>   	max = ALIGN_DOWN(max << SECTOR_SHIFT, inode->i_sb->s_blocksize);
+>   	iov_iter_truncate(from, max);
+>   
+> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+> index a433798c3343e..f8c50b77543eb 100644
+> --- a/include/linux/blkdev.h
+> +++ b/include/linux/blkdev.h
+> @@ -1188,6 +1188,12 @@ static inline unsigned int queue_max_zone_append_sectors(const struct request_qu
+>   	return min(l->max_zone_append_sectors, l->max_sectors);
+>   }
+>   
+> +static inline unsigned int
+> +bdev_max_zone_append_sectors(struct block_device *bdev)
+> +{
+> +	return queue_max_zone_append_sectors(bdev_get_queue(bdev));
+> +}
+> +
+>   static inline unsigned queue_logical_block_size(const struct request_queue *q)
+>   {
+>   	int retval = 512;
 
-Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
----
- fs/erofs/super.c | 48 ++++++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 42 insertions(+), 6 deletions(-)
+Looks good.
 
-diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index a5e4de60a0d8..292b4a70ce19 100644
---- a/fs/erofs/super.c
-+++ b/fs/erofs/super.c
-@@ -398,6 +398,7 @@ enum {
- 	Opt_dax,
- 	Opt_dax_enum,
- 	Opt_device,
-+	Opt_fsid,
- 	Opt_err
- };
- 
-@@ -422,6 +423,7 @@ static const struct fs_parameter_spec erofs_fs_parameters[] = {
- 	fsparam_flag("dax",             Opt_dax),
- 	fsparam_enum("dax",		Opt_dax_enum, erofs_dax_param_enums),
- 	fsparam_string("device",	Opt_device),
-+	fsparam_string("fsid",		Opt_fsid),
- 	{}
- };
- 
-@@ -517,6 +519,16 @@ static int erofs_fc_parse_param(struct fs_context *fc,
- 		}
- 		++ctx->devs->extra_devices;
- 		break;
-+	case Opt_fsid:
-+#ifdef CONFIG_EROFS_FS_ONDEMAND
-+		kfree(ctx->opt.fsid);
-+		ctx->opt.fsid = kstrdup(param->string, GFP_KERNEL);
-+		if (!ctx->opt.fsid)
-+			return -ENOMEM;
-+#else
-+		errorfc(fc, "fsid option not supported");
-+#endif
-+		break;
- 	default:
- 		return -ENOPARAM;
- 	}
-@@ -597,9 +609,14 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
- 	sb->s_maxbytes = MAX_LFS_FILESIZE;
- 	sb->s_op = &erofs_sops;
- 
--	if (!sb_set_blocksize(sb, EROFS_BLKSIZ)) {
--		erofs_err(sb, "failed to set erofs blksize");
--		return -EINVAL;
-+	if (erofs_is_fscache_mode(sb)) {
-+		sb->s_blocksize = EROFS_BLKSIZ;
-+		sb->s_blocksize_bits = LOG_BLOCK_SIZE;
-+	} else {
-+		if (!sb_set_blocksize(sb, EROFS_BLKSIZ)) {
-+			erofs_err(sb, "failed to set erofs blksize");
-+			return -EINVAL;
-+		}
- 	}
- 
- 	sbi = kzalloc(sizeof(*sbi), GFP_KERNEL);
-@@ -608,7 +625,7 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
- 
- 	sb->s_fs_info = sbi;
- 	sbi->opt = ctx->opt;
--	sbi->dax_dev = fs_dax_get_by_bdev(sb->s_bdev, &sbi->dax_part_off);
-+	ctx->opt.fsid = NULL;
- 	sbi->devs = ctx->devs;
- 	ctx->devs = NULL;
- 
-@@ -625,6 +642,8 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
- 		err = super_setup_bdi(sb);
- 		if (err)
- 			return err;
-+	} else {
-+		sbi->dax_dev = fs_dax_get_by_bdev(sb->s_bdev, &sbi->dax_part_off);
- 	}
- 
- 	err = erofs_read_superblock(sb);
-@@ -684,6 +703,11 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
- 
- static int erofs_fc_get_tree(struct fs_context *fc)
- {
-+	struct erofs_fs_context *ctx = fc->fs_private;
-+
-+	if (IS_ENABLED(CONFIG_EROFS_FS_ONDEMAND) && ctx->opt.fsid)
-+		return get_tree_nodev(fc, erofs_fc_fill_super);
-+
- 	return get_tree_bdev(fc, erofs_fc_fill_super);
- }
- 
-@@ -733,6 +757,7 @@ static void erofs_fc_free(struct fs_context *fc)
- 	struct erofs_fs_context *ctx = fc->fs_private;
- 
- 	erofs_free_dev_context(ctx->devs);
-+	kfree(ctx->opt.fsid);
- 	kfree(ctx);
- }
- 
-@@ -773,7 +798,10 @@ static void erofs_kill_sb(struct super_block *sb)
- 
- 	WARN_ON(sb->s_magic != EROFS_SUPER_MAGIC);
- 
--	kill_block_super(sb);
-+	if (erofs_is_fscache_mode(sb))
-+		generic_shutdown_super(sb);
-+	else
-+		kill_block_super(sb);
- 
- 	sbi = EROFS_SB(sb);
- 	if (!sbi)
-@@ -783,6 +811,7 @@ static void erofs_kill_sb(struct super_block *sb)
- 	fs_put_dax(sbi->dax_dev);
- 	erofs_fscache_unregister_cookie(&sbi->s_fscache);
- 	erofs_fscache_unregister_fs(sb);
-+	kfree(sbi->opt.fsid);
- 	kfree(sbi);
- 	sb->s_fs_info = NULL;
- }
-@@ -884,7 +913,10 @@ static int erofs_statfs(struct dentry *dentry, struct kstatfs *buf)
- {
- 	struct super_block *sb = dentry->d_sb;
- 	struct erofs_sb_info *sbi = EROFS_SB(sb);
--	u64 id = huge_encode_dev(sb->s_bdev->bd_dev);
-+	u64 id = 0;
-+
-+	if (!erofs_is_fscache_mode(sb))
-+		id = huge_encode_dev(sb->s_bdev->bd_dev);
- 
- 	buf->f_type = sb->s_magic;
- 	buf->f_bsize = EROFS_BLKSIZ;
-@@ -929,6 +961,10 @@ static int erofs_show_options(struct seq_file *seq, struct dentry *root)
- 		seq_puts(seq, ",dax=always");
- 	if (test_opt(opt, DAX_NEVER))
- 		seq_puts(seq, ",dax=never");
-+#ifdef CONFIG_EROFS_FS_ONDEMAND
-+	if (opt->fsid)
-+		seq_printf(seq, ",fsid=%s", opt->fsid);
-+#endif
- 	return 0;
- }
- 
+Acked-by: Damien Le Moal <damien.lemoal@opensource.wdc.com>
+
 -- 
-2.27.0
-
+Damien Le Moal
+Western Digital Research
