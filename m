@@ -2,77 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 948174F5688
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Apr 2022 08:38:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EA484F58BE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Apr 2022 11:16:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232627AbiDFGYB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Apr 2022 02:24:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48086 "EHLO
+        id S239943AbiDFJBu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Apr 2022 05:01:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1386973AbiDFGTp (ORCPT
+        with ESMTP id S1450849AbiDFI6D (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Apr 2022 02:19:45 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87C161B757E;
-        Tue,  5 Apr 2022 22:21:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=xkKN41eLVrIheZpH/2SH1i+aJL00RRx4irbbX94rx9Q=; b=Q/3lDXWd19Mt0b3/k3Rb7zcP5h
-        p5Eze/s2YucUMuPYsP3/q20TplDhpywYDITWcq7DW8bCL9f9peotPecyp39tdZIQ1ExUkalAybXyS
-        Sxt54IpLbAnxVjk06D6a2NNMvqpMHsxgMeosQjblK8oh9AW6ILrD0OEcrPhOIK4bCqie2ImxZgB4X
-        gS/zqX5LtXLSyVWRgAmLMMXXDrccEDWzqicolNHUqaDXH8PiWuHSYpqXNQ8jCr6Cn3U5UgMr7P2gH
-        bzB3VhlCqf6aRtj6S9vDNsm1YM8SxrSXMJeCnnlVBFrEDH/mbtk/QwMI4mI6duvxeYNJiTCqNnT1B
-        dCRczSmQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nby6y-003oOR-F6; Wed, 06 Apr 2022 05:21:44 +0000
-Date:   Tue, 5 Apr 2022 22:21:44 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Jane Chu <jane.chu@oracle.com>
-Cc:     david@fromorbit.com, djwong@kernel.org, dan.j.williams@intel.com,
-        hch@infradead.org, vishal.l.verma@intel.com, dave.jiang@intel.com,
-        agk@redhat.com, snitzer@redhat.com, dm-devel@redhat.com,
-        ira.weiny@intel.com, willy@infradead.org, vgoyal@redhat.com,
-        linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        x86@kernel.org
-Subject: Re: [PATCH v7 6/6] pmem: implement pmem_recovery_write()
-Message-ID: <Yk0jaC9rHwwoEV11@infradead.org>
-References: <20220405194747.2386619-1-jane.chu@oracle.com>
- <20220405194747.2386619-7-jane.chu@oracle.com>
+        Wed, 6 Apr 2022 04:58:03 -0400
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61318329253;
+        Tue,  5 Apr 2022 19:53:36 -0700 (PDT)
+Received: from kwepemi500012.china.huawei.com (unknown [172.30.72.55])
+        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4KY8Fr2Fk9z1HBRp;
+        Wed,  6 Apr 2022 10:53:04 +0800 (CST)
+Received: from huawei.com (10.67.174.53) by kwepemi500012.china.huawei.com
+ (7.221.188.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Wed, 6 Apr
+ 2022 10:53:29 +0800
+From:   Liao Chang <liaochang1@huawei.com>
+To:     <mcgrof@kernel.org>, <keescook@chromium.org>, <yzaikin@google.com>,
+        <liaochang1@huawei.com>, <tglx@linutronix.de>, <clg@kaod.org>,
+        <nitesh@redhat.com>, <edumazet@google.com>, <peterz@infradead.org>,
+        <joshdon@google.com>, <masahiroy@kernel.org>, <nathan@kernel.org>,
+        <akpm@linux-foundation.org>, <vbabka@suse.cz>,
+        <gustavoars@kernel.org>, <arnd@arndb.de>, <chris@chrisdown.name>,
+        <dmitry.torokhov@gmail.com>, <linux@rasmusvillemoes.dk>,
+        <daniel@iogearbox.net>, <john.ogness@linutronix.de>,
+        <will@kernel.org>, <dave@stgolabs.net>, <frederic@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <heying24@huawei.com>, <guohanjun@huawei.com>,
+        <weiyongjun1@huawei.com>
+Subject: [RFC 0/3] softirq: Introduce softirq throttling
+Date:   Wed, 6 Apr 2022 10:52:38 +0800
+Message-ID: <20220406025241.191300-1-liaochang1@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220405194747.2386619-7-jane.chu@oracle.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain
+X-Originating-IP: [10.67.174.53]
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemi500012.china.huawei.com (7.221.188.12)
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 05, 2022 at 01:47:47PM -0600, Jane Chu wrote:
-> +	off = (unsigned long)addr & ~PAGE_MASK;
+Kernel check for pending softirqs periodically, they are performed in a
+few points of kernel code, such as irq_exit() and __local_bh_enable_ip(),
+softirqs that have been activated by a given CPU must be executed on the
+same CPU, this characteristic of softirq is always a potentially
+"dangerous" operation, because one CPU might be end up very busy while
+the other are most idle.
 
-offset_inpage()
+Above concern is proven in a networking user case: recenlty, we
+engineer find out the time used for connection re-establishment on
+kernel v5.10 is 300 times larger than v4.19, meanwhile, softirq
+monopolize almost 99% of CPU. This problem stem from that the connection
+between Sender and Receiver node get lost, the NIC driver on Sender node
+will keep raising NET_TX softirq before connection recovery. The system
+log show that most of softirq is performed from __local_bh_enable_ip(),
+since __local_bh_enable_ip is used widley in kernel code, it is very
+easy to run out most of CPU, and the user-mode application can't obtain
+enough CPU cycles to establish connection as soon as possible.
 
-> +	if (off || !(PAGE_ALIGNED(bytes))) {
+Although kernel limit the running time of __do_softirq(), it does not
+control the running time of entire softirqs on given CPU, so this
+patchset introduce a safeguard mechanism that allows the system
+administrator to allocate bandwidth for used by softirqs, this safeguard
+mechanism is known as Sofitrq Throttling and is controlled by two
+parameters in the /proc file system:
 
-No need for the inner braces.
+/proc/sys/kernel/sofitrq_period_ms
+  Defines the period in ms(millisecond) to be considered as 100% of CPU
+  bandwidth, the default value is 1,000 ms(1second). Changes to the
+  value of the period must be very well thought out, as too long or too
+  short are beyond one's expectation.
 
-> +	mutex_lock(&pmem->recovery_lock);
-> +	pmem_off = PFN_PHYS(pgoff) + pmem->data_offset;
-> +	cleared = __pmem_clear_poison(pmem, pmem_off, len);
-> +	if (cleared > 0 && cleared < len) {
-> +		dev_warn(dev, "poison cleared only %ld out of %lu\n",
-> +			cleared, len);
-> +		mutex_unlock(&pmem->recovery_lock);
-> +		return 0;
-> +	} else if (cleared < 0) {
+/proc/sys/kernel/softirq_runtime_ms
+  Define the bandwidth available to softirqs on each CPU, the default
+  values is 950 ms(0.95 second) or, in other words, 95% of the CPU
+  bandwidth. Setting negative integer to this value means that softirqs
+  my use up to 100% CPU times.
 
-No need for an else after a return.
+The default values for softirq throttling mechanism define that 95% of
+the CPU time can be used by softirqs. The remaing 5% will be devoted to
+other kinds of tasks, such as syscall, interrupt, exception, real-time
+processes and normal processes when the softirqs workload in system are
+very heavy. System administrator can tune above two parameters to
+satifies the need of system performance and stability.
+
+Liao Chang (3):
+  softirq: Add two parameters to control CPU bandwidth for use by
+    softirq
+  softirq: Do throttling when softirqs use up its bandwidth
+  softirq: Introduce statistics about softirq throttling
+
+ fs/proc/softirqs.c          |  18 +++++
+ include/linux/interrupt.h   |   7 ++
+ include/linux/kernel_stat.h |  27 +++++++
+ init/Kconfig                |  10 +++
+ kernel/softirq.c            | 155 ++++++++++++++++++++++++++++++++++++
+ kernel/sysctl.c             |  16 ++++
+ 6 files changed, 233 insertions(+)
+
+-- 
+2.17.1
+
