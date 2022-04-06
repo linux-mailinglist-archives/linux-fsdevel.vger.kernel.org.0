@@ -2,116 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EA484F58BE
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Apr 2022 11:16:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D98514F57E2
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Apr 2022 10:44:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239943AbiDFJBu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Apr 2022 05:01:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36842 "EHLO
+        id S1350356AbiDFIgN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Apr 2022 04:36:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1450849AbiDFI6D (ORCPT
+        with ESMTP id S1386180AbiDFIeK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Apr 2022 04:58:03 -0400
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61318329253;
-        Tue,  5 Apr 2022 19:53:36 -0700 (PDT)
-Received: from kwepemi500012.china.huawei.com (unknown [172.30.72.55])
-        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4KY8Fr2Fk9z1HBRp;
-        Wed,  6 Apr 2022 10:53:04 +0800 (CST)
-Received: from huawei.com (10.67.174.53) by kwepemi500012.china.huawei.com
- (7.221.188.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Wed, 6 Apr
- 2022 10:53:29 +0800
-From:   Liao Chang <liaochang1@huawei.com>
-To:     <mcgrof@kernel.org>, <keescook@chromium.org>, <yzaikin@google.com>,
-        <liaochang1@huawei.com>, <tglx@linutronix.de>, <clg@kaod.org>,
-        <nitesh@redhat.com>, <edumazet@google.com>, <peterz@infradead.org>,
-        <joshdon@google.com>, <masahiroy@kernel.org>, <nathan@kernel.org>,
-        <akpm@linux-foundation.org>, <vbabka@suse.cz>,
-        <gustavoars@kernel.org>, <arnd@arndb.de>, <chris@chrisdown.name>,
-        <dmitry.torokhov@gmail.com>, <linux@rasmusvillemoes.dk>,
-        <daniel@iogearbox.net>, <john.ogness@linutronix.de>,
-        <will@kernel.org>, <dave@stgolabs.net>, <frederic@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <heying24@huawei.com>, <guohanjun@huawei.com>,
-        <weiyongjun1@huawei.com>
-Subject: [RFC 0/3] softirq: Introduce softirq throttling
-Date:   Wed, 6 Apr 2022 10:52:38 +0800
-Message-ID: <20220406025241.191300-1-liaochang1@huawei.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 6 Apr 2022 04:34:10 -0400
+Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 567853A7ABF;
+        Tue,  5 Apr 2022 21:05:11 -0700 (PDT)
+Received: from dread.disaster.area (pa49-186-233-190.pa.vic.optusnet.com.au [49.186.233.190])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 0ACAE534493;
+        Wed,  6 Apr 2022 14:05:10 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1nbwuq-00EJao-I2; Wed, 06 Apr 2022 14:05:08 +1000
+Date:   Wed, 6 Apr 2022 14:05:08 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Ritesh Harjani <ritesh.list@gmail.com>
+Cc:     fstests <fstests@vger.kernel.org>, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Ritesh Harjani <riteshh@linux.ibm.com>
+Subject: Re: [PATCHv3 1/4] generic/468: Add another falloc test entry
+Message-ID: <20220406040508.GC1609613@dread.disaster.area>
+References: <cover.1648730443.git.ritesh.list@gmail.com>
+ <75f4c780e8402a8f993cb987e85a31e4895f13de.1648730443.git.ritesh.list@gmail.com>
+ <20220403232823.GS1609613@dread.disaster.area>
+ <20220405110603.qqxyivpo4vzj5tlt@riteshh-domain>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.174.53]
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemi500012.china.huawei.com (7.221.188.12)
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220405110603.qqxyivpo4vzj5tlt@riteshh-domain>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=VuxAv86n c=1 sm=1 tr=0 ts=624d1176
+        a=bHAvQTfMiaNt/bo4vVGwyA==:117 a=bHAvQTfMiaNt/bo4vVGwyA==:17
+        a=kj9zAlcOel0A:10 a=z0gMJWrwH1QA:10 a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8
+        a=7-415B0cAAAA:8 a=YONGHUKn3BUHUCDE1yQA:9 a=CjuIK1q_8ugA:10
+        a=AjGcO6oz07-iQ99wixmX:22 a=biEYGPWJfzWAr4FL6Ov7:22
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Kernel check for pending softirqs periodically, they are performed in a
-few points of kernel code, such as irq_exit() and __local_bh_enable_ip(),
-softirqs that have been activated by a given CPU must be executed on the
-same CPU, this characteristic of softirq is always a potentially
-"dangerous" operation, because one CPU might be end up very busy while
-the other are most idle.
+On Tue, Apr 05, 2022 at 04:36:03PM +0530, Ritesh Harjani wrote:
+> On 22/04/04 09:28AM, Dave Chinner wrote:
+> > On Thu, Mar 31, 2022 at 06:24:20PM +0530, Ritesh Harjani wrote:
+> > > From: Ritesh Harjani <riteshh@linux.ibm.com>
+> > >
+> > > Add another falloc test entry which could hit a kernel bug
+> > > with ext4 fast_commit feature w/o below kernel commit [1].
+> > >
+> > > <log>
+> > > [  410.888496][ T2743] BUG: KASAN: use-after-free in ext4_mb_mark_bb+0x26a/0x6c0
+> > > [  410.890432][ T2743] Read of size 8 at addr ffff888171886000 by task mount/2743
+> > >
+> > > This happens when falloc -k size is huge which spans across more than
+> > > 1 flex block group in ext4. This causes a bug in fast_commit replay
+> > > code which is fixed by kernel commit at [1].
+> > >
+> > > [1]: https://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git/commit/?h=dev&id=bfdc502a4a4c058bf4cbb1df0c297761d528f54d
+> > >
+> > > Signed-off-by: Ritesh Harjani <riteshh@linux.ibm.com>
+> > > ---
+> > >  tests/generic/468     | 8 ++++++++
+> > >  tests/generic/468.out | 2 ++
+> > >  2 files changed, 10 insertions(+)
+> > >
+> > > diff --git a/tests/generic/468 b/tests/generic/468
+> > > index 95752d3b..5e73cff9 100755
+> > > --- a/tests/generic/468
+> > > +++ b/tests/generic/468
+> > > @@ -34,6 +34,13 @@ _scratch_mkfs >/dev/null 2>&1
+> > >  _require_metadata_journaling $SCRATCH_DEV
+> > >  _scratch_mount
+> > >
+> > > +# blocksize and fact are used in the last case of the fsync/fdatasync test.
+> > > +# This is mainly trying to test recovery operation in case where the data
+> > > +# blocks written, exceeds the default flex group size (32768*4096*16) in ext4.
+> > > +blocks=32768
+> > > +blocksize=4096
+> >
+> > Block size can change based on mkfs parameters. You should extract
+> > this dynamically from the filesystem the test is being run on.
+> >
+> 
+> Yes, but we still have kept just 4096 because, anything bigger than that like
+> 65536 might require a bigger disk size itself to test. The overall size
+> requirement of the disk will then become ~36G (32768 * 65536 * 18)
+> Hence I went ahead with 4096 which is good enough for testing.
 
-Above concern is proven in a networking user case: recenlty, we
-engineer find out the time used for connection re-establishment on
-kernel v5.10 is 300 times larger than v4.19, meanwhile, softirq
-monopolize almost 99% of CPU. This problem stem from that the connection
-between Sender and Receiver node get lost, the NIC driver on Sender node
-will keep raising NET_TX softirq before connection recovery. The system
-log show that most of softirq is performed from __local_bh_enable_ip(),
-since __local_bh_enable_ip is used widley in kernel code, it is very
-easy to run out most of CPU, and the user-mode application can't obtain
-enough CPU cycles to establish connection as soon as possible.
+If the test setup doesn't have a disk large enough, then the test
+should be skipped. That's what '_require_scratch_size' is for.
 
-Although kernel limit the running time of __do_softirq(), it does not
-control the running time of entire softirqs on given CPU, so this
-patchset introduce a safeguard mechanism that allows the system
-administrator to allocate bandwidth for used by softirqs, this safeguard
-mechanism is known as Sofitrq Throttling and is controlled by two
-parameters in the /proc file system:
+i.e. _require_scratch_size $larger_than_ext4_fg_size
 
-/proc/sys/kernel/sofitrq_period_ms
-  Defines the period in ms(millisecond) to be considered as 100% of CPU
-  bandwidth, the default value is 1,000 ms(1second). Changes to the
-  value of the period must be very well thought out, as too long or too
-  short are beyond one's expectation.
+Will do that check once we've calculated the size needed.
 
-/proc/sys/kernel/softirq_runtime_ms
-  Define the bandwidth available to softirqs on each CPU, the default
-  values is 950 ms(0.95 second) or, in other words, 95% of the CPU
-  bandwidth. Setting negative integer to this value means that softirqs
-  my use up to 100% CPU times.
+> But sure, I will add a comment explaining why we have hardcoded it to 4096
+> so that others don't get confused. Larger than this size disk anyway doesn't get
+> tested much right?
 
-The default values for softirq throttling mechanism define that 95% of
-the CPU time can be used by softirqs. The remaing 5% will be devoted to
-other kinds of tasks, such as syscall, interrupt, exception, real-time
-processes and normal processes when the softirqs workload in system are
-very heavy. System administrator can tune above two parameters to
-satifies the need of system performance and stability.
+You shouldn't be constricting the test based on assumptions about
+test configurations. If someone decides to test 64k block size, then
+they can size their devices appropriately for the configuration they
+want to test.  If a 64kB block size filesystem can overrun the
+on-disk structure and fail, then the test should exercise that and
+fail appropriately.
 
-Liao Chang (3):
-  softirq: Add two parameters to control CPU bandwidth for use by
-    softirq
-  softirq: Do throttling when softirqs use up its bandwidth
-  softirq: Introduce statistics about softirq throttling
+Cheers,
 
- fs/proc/softirqs.c          |  18 +++++
- include/linux/interrupt.h   |   7 ++
- include/linux/kernel_stat.h |  27 +++++++
- init/Kconfig                |  10 +++
- kernel/softirq.c            | 155 ++++++++++++++++++++++++++++++++++++
- kernel/sysctl.c             |  16 ++++
- 6 files changed, 233 insertions(+)
-
+Dave.
 -- 
-2.17.1
-
+Dave Chinner
+david@fromorbit.com
