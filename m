@@ -2,97 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 10B164F6DA4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Apr 2022 00:03:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C47684F6DCE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Apr 2022 00:25:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233673AbiDFWFQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Apr 2022 18:05:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43566 "EHLO
+        id S231316AbiDFW1u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Apr 2022 18:27:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41778 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232022AbiDFWFP (ORCPT
+        with ESMTP id S229939AbiDFW1t (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Apr 2022 18:05:15 -0400
-Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E9841D08C2;
-        Wed,  6 Apr 2022 15:03:17 -0700 (PDT)
+        Wed, 6 Apr 2022 18:27:49 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E6E1208C13;
+        Wed,  6 Apr 2022 15:25:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-        :In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
-        Sender:Reply-To:Content-ID:Content-Description;
-        bh=unkOFpWexeS4UT/zByCK3fk3pwE1DaNzuN7U1pkMO9g=; b=lD7Wp/r5wkfLJQAA4TcMK5XO94
-        FNv9lPDi6F8UvSYBnZPcQh9KFtHbxQr8Zp1GIxePCzjodAazY9wZyVviXDw2hIIvTqtGPLg9o80km
-        hebv0JKJwQJlBNhzZmJG2O+aSuwHo07ViTxc2MZZxlEQsUp7lnT70sxFz36CHYKvextrrOf9pLUbM
-        l17jHRf/KlCKNmKS6KFys/3xefP0U+832A44yDHVD0MB737CY6uF68lfFkdBojAwTDcl1wjkYFAKv
-        QdWbmbNExfilCVEe1dGwOivkaOvuCb2E1KzTXA/YwRS/Khpx+TW6Ouq4/HPFscydla8bajiAjVu44
-        nlpXp32w==;
-Received: from [2601:1c0:6280:3f0::aa0b]
-        by desiato.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1ncDjH-002Hwi-Q6; Wed, 06 Apr 2022 22:02:20 +0000
-Message-ID: <1a4cdfbd-8056-8cf0-373d-272ea0568577@infradead.org>
-Date:   Wed, 6 Apr 2022 15:02:08 -0700
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:
+        Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+        bh=MjQLm5nfhITl+A+kGiB/u0iJl9TpEsfjfRBNBNc7vN8=; b=tMmcIUHKkBdtg7T7s9K67UPUG7
+        zXuomUFHe0YMuv7OC+i6C02oSFzYR5lTRzE/SCn/ZgAeeRbjZSYL63VrRfSTlfaCHqtf3Kww/r59U
+        YvF/F+NyYhAUBJK14kT7HaYa/VXBDxpFZdiKVtsOFbsAH5iudMS0IqiRQgS051UZAqI40pv1FNi5F
+        fIBUltS2SKbJuM+4gD8fUBk9Cx/vOYkiqoYYI91Eh9cmGGiCp9Nf4m8cM/Ju/cdQ+YM2Hj7f9Fw3v
+        J0rvG/sVLc6SKEyTk+JLybWl0XkVY5h+nGGxAReQSXVUF4+Zg1p5Fjwhp+FPE10J6lhGSmJZyiLRy
+        NDvdlXzA==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1ncE5w-0088EA-Jw; Wed, 06 Apr 2022 22:25:44 +0000
+Date:   Wed, 6 Apr 2022 15:25:44 -0700
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     tangmeng <tangmeng@uniontech.com>
+Cc:     viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        keescook@chromium.org, yzaikin@google.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        nizhen@uniontech.com, zhanglianjie@uniontech.com,
+        nixiaoming@huawei.com
+Subject: Re: [PATCH v2 10/11] fs/drop_caches: move drop_caches sysctls to its
+ own file
+Message-ID: <Yk4TaF0js35rRlVF@bombadil.infradead.org>
+References: <20220221061018.10472-1-tangmeng@uniontech.com>
+ <YhqVW972rnF5L22U@bombadil.infradead.org>
+ <d610e715-7806-18db-8551-0d0c2f71cbb6@uniontech.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [RFC 1/3] softirq: Add two parameters to control CPU bandwidth
- for use by softirq
-Content-Language: en-US
-To:     Liao Chang <liaochang1@huawei.com>, mcgrof@kernel.org,
-        keescook@chromium.org, yzaikin@google.com, tglx@linutronix.de,
-        nitesh@redhat.com, edumazet@google.com, clg@kaod.org,
-        tannerlove@google.com, peterz@infradead.org, joshdon@google.com,
-        masahiroy@kernel.org, nathan@kernel.org, vbabka@suse.cz,
-        akpm@linux-foundation.org, gustavoars@kernel.org, arnd@arndb.de,
-        chris@chrisdown.name, dmitry.torokhov@gmail.com,
-        linux@rasmusvillemoes.dk, daniel@iogearbox.net,
-        john.ogness@linutronix.de, will@kernel.org, dave@stgolabs.net,
-        frederic@kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        heying24@huawei.com, guohanjun@huawei.com, weiyongjun1@huawei.com
-References: <20220406022749.184807-1-liaochang1@huawei.com>
- <20220406022749.184807-2-liaochang1@huawei.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20220406022749.184807-2-liaochang1@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-7.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d610e715-7806-18db-8551-0d0c2f71cbb6@uniontech.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi--
+On Wed, Mar 02, 2022 at 10:48:06AM +0800, tangmeng wrote:
+> 
+> 
+> On 2022/2/27 05:02, Luis Chamberlain wrote:
+> 
+> > 
+> > Thanks but please send a v3 including all the other patches as well
+> > and collecting the Reviewed/Acked-bys, etc. This can be sent *after*
+> > your v3 of the optimization work.
+> > 
+> I have noticed that there is a conflict between sysctl-next and linux-next.
+> Do I resubmit the patch based on linux-next, or after you deal with the
+> conflict between sysctl-next and linux-next, I resubmit based on
+> sysctl-next？
 
-On 4/5/22 19:27, Liao Chang wrote:
-> diff --git a/init/Kconfig b/init/Kconfig
-> index e9119bf54b1f..a63ebc88a199 100644
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -2393,3 +2393,13 @@ config ARCH_HAS_SYNC_CORE_BEFORE_USERMODE
->  # <asm/syscall_wrapper.h>.
->  config ARCH_HAS_SYSCALL_WRAPPER
->  	def_bool n
-> +
-> +config SOFTIRQ_THROTTLE
-> +	bool "Softirq Throttling Feature"
-> +	help
-> +	  Allow to allocate bandwidth for use by softirq handling. This
-> +	  saftguard machanism is known as softirq throttling and is controlled
+You can use sysctl-next now to base your development changes. Feel free
+to send more changes.
 
-typos:
-	  safeguard mechanism
-
-> +	  by two parameters in the /proc/ file system:
-> +
-> +	  /proc/sysctl/kernel/softirq_period_ms
-> +	  /proc/sysctl/kernel/softirq_runtime_ms
-
-These should be documented in...
-I guess    Documentation/admin-guide/sysctl/kernel.rst
-
-thanks.
--- 
-~Randy
+  Luis
