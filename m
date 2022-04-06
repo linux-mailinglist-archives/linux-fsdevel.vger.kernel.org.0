@@ -2,190 +2,178 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DD6B84F5BB4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Apr 2022 12:44:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC6EA4F5C23
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Apr 2022 13:26:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349829AbiDFKlZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Apr 2022 06:41:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50886 "EHLO
+        id S242060AbiDFL1E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Apr 2022 07:27:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239971AbiDFKkB (ORCPT
+        with ESMTP id S241115AbiDFL0f (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Apr 2022 06:40:01 -0400
-Received: from mail1.bemta34.messagelabs.com (mail1.bemta34.messagelabs.com [195.245.231.4])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CBC04F994D;
-        Wed,  6 Apr 2022 00:05:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
-        s=170520fj; t=1649228714; i=@fujitsu.com;
-        bh=05cGtA6yxrBEXr8TsKfNblRw+Bdby9YhP92PsT290U4=;
-        h=Date:To:Cc:Subject:Message-ID:Reply-To:References:MIME-Version:
-         Content-Type:In-Reply-To:From;
-        b=BJDFFQHg7gw8WYACPIsS5IO7QZ2Et0/snRy0O1P7sPcx3klPBjnAcFB0x5vQmkc7B
-         wdj7sgZsarcq07EkkN9Uk7cWaXRM4BHIkDNaIuDnoDW/xdWPN+yfeRQ0VLd0GPd0XX
-         YqbordNSTrdttI2gAjHO+G0BfdXM58RE64W8BbUe7mviFWROX5XjUVwj2GTsNCRtCK
-         2WJ4V8hKwe8nmUuYA+n39zIapfnu0J3NGApl7UCEEBLyvU7tS2BrmjwMlFpa9b2hDX
-         gUaY7GvBudukN14SBUkBadO1YF+sMHYk2wGdlkRTCLILZZ+pMjV2no6kK1JlP7i/NG
-         hrGSl+X1ARJQg==
-X-Brightmail-Tracker: H4sIAAAAAAAAA1WSf1CTdRzH+T4bzx5hDz38iq9L8ljCH3ibDDW
-  +ilh6lk8nFJfJJVfZgyy2GsjteThnXAdKKIcRKiTHVFDHrwFhB6OIOQ60BDwhGM6BFxWyGU4R
-  kwqMX+1p54/+e3/u9fq8P/98CEFAPS4hlDpOqc1gNFLcR7h5E8HI6mITUqJcB19GDaPFOHowc
-  gJDvQ3jOLLcP+WNxmx1QmRs+BFDg3/kY+jKtzcwZLm5GlnH60SovOJnHFnPb0cXLb1C9Evjkj
-  f6YakYIPOhGhGaL1uHKmucInSksh2gY+fyBOiovQ1HRfXxqH2+TYTmnF9jyDjeiqH2e/0ilF8
-  9iaHavgoczZhKsFdD6aG+LLr54QkR3VKVQ3/+22GcLhmuBfRESzmgzWenMfryg+tC2jySi9MD
-  Nfdw2vZ3noCe6rDh9HTzi4lksrc6I2Wf7kNv1dRoF5Y56KNrt1zGc8E8UQiWEQGUCcBbV94sB
-  D7ubASwqMMkKASEe8iChp/EvCOkVkFLpRnwOYiSQqerD/C+gGoiYZfTIeL9QCoZLt6O5x2Sio
-  Z/3jJgnv6X4BnbAs77JDVLwuq2CW8PyIZHf50Uehb8YW+5478soCLh8OIdjO8UUC/A2kWCj8u
-  oJJh/XMobkFoB54wzOJ+D3fVNhl7AKzi1BrqKGI8SAW39zYJjIFD/TL/+mX790/6zQFAPNqZo
-  1WkqLp1Ra2SKqCiZQrFetjZGptggZz6VMXJllmy/kuVk0XJmPytXsqycPZC+V5Mqz1ByzcD9Q
-  qlseGAbKDA+kl8CywlMGkz6KhJSAvxS9qUeUDGsao82S6NkL4EVBCGFZBxyM3+tMk2p+0itcT
-  /iYwwJsTSIrNroxiSbyaSz6jQPugrCJCHkyAY3oHigysp4svb4ha0gVBJIAi8vrwBxplKbrub
-  +z10ghADSQHIHXy9WZ3BP2l3uw5j78P1rb/CHOeYpkuRiOVWl7x8SfveXV2mR5OTzV3PqoheN
-  8ht3LNyuk9zUZwMLSQn2nG7ZBY2j9fXj4/Xh6J+Y0PeSaktax4Y6d4cFOZ7z//LgrtqvDm/2t
-  W9dWnvb3L/tiNrwdkfbzTDCd94gjg5/95FjbO+gZtI+y5ozcZk43XrBOln9+2vFBZvW567Z9r
-  1f6qzuA8KkHzrTOXG3xfXJW3si49dl55zK18VVrPzm9FJB8kxZ07XEPMeA3frKF82dFysL5hq
-  Dd6++a1ie0POwZ2DnaGwMN709Qp+4yh63My4WdkU4sod7ulc6TeLr3X51WxpLqKCwyK0maam1
-  qj6pbOGdEGdhiVl3Pu3jc0Nb9JxUyKoYRaRAyzL/Akr/LJA9BAAA
-X-Env-Sender: Alan.Robinson@fujitsu.com
-X-Msg-Ref: server-8.tower-548.messagelabs.com!1649228712!85085!1
-X-Originating-IP: [62.60.8.97]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.85.5; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 31866 invoked from network); 6 Apr 2022 07:05:12 -0000
-Received: from unknown (HELO n03ukasimr01.n03.fujitsu.local) (62.60.8.97)
-  by server-8.tower-548.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 6 Apr 2022 07:05:12 -0000
-Received: from n03ukasimr01.n03.fujitsu.local (localhost [127.0.0.1])
-        by n03ukasimr01.n03.fujitsu.local (Postfix) with ESMTP id 3681F100190;
-        Wed,  6 Apr 2022 08:05:12 +0100 (BST)
-Received: from nera.osd.abg.fsc.net (unknown [172.17.20.8])
-        by n03ukasimr01.n03.fujitsu.local (Postfix) with SMTP id 07836100181;
-        Wed,  6 Apr 2022 08:05:10 +0100 (BST)
-Received: by nera.osd.abg.fsc.net (Postfix, from userid 5004)
-        id B86E417478B; Wed,  6 Apr 2022 09:04:46 +0200 (CEST)
-Date:   Wed, 6 Apr 2022 09:04:46 +0200
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        "jfs-discussion@lists.sourceforge.net" 
-        <jfs-discussion@lists.sourceforge.net>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "dm-devel@redhat.com" <dm-devel@redhat.com>,
-        "target-devel@vger.kernel.org" <target-devel@vger.kernel.org>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "drbd-dev@lists.linbit.com" <drbd-dev@lists.linbit.com>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "linux-nilfs@vger.kernel.org" <linux-nilfs@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "cluster-devel@redhat.com" <cluster-devel@redhat.com>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        "linux-um@lists.infradead.org" <linux-um@lists.infradead.org>,
-        "nbd@other.debian.org" <nbd@other.debian.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-        "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-f2fs-devel@lists.sourceforge.net" 
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "ntfs3@lists.linux.dev" <ntfs3@lists.linux.dev>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
-Subject: Re: [PATCH 15/27] block: use bdev_alignment_offset in
- part_alignment_offset_show
-Message-ID: <20220406070446.GA1722@ts.fujitsu.com>
-Reply-To: Alan.Robinson@fujitsu.com
-Mail-Followup-To: Alan.Robinson@fujitsu.com, Christoph Hellwig <hch@lst.de>,
-        Jens Axboe <axboe@kernel.dk>,
-        "jfs-discussion@lists.sourceforge.net" <jfs-discussion@lists.sourceforge.net>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "virtualization@lists.linux-foundation.org" <virtualization@lists.linux-foundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "dm-devel@redhat.com" <dm-devel@redhat.com>,
-        "target-devel@vger.kernel.org" <target-devel@vger.kernel.org>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "drbd-dev@lists.linbit.com" <drbd-dev@lists.linbit.com>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "linux-nilfs@vger.kernel.org" <linux-nilfs@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "cluster-devel@redhat.com" <cluster-devel@redhat.com>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        "linux-um@lists.infradead.org" <linux-um@lists.infradead.org>,
-        "nbd@other.debian.org" <nbd@other.debian.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-        "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-f2fs-devel@lists.sourceforge.net" <linux-f2fs-devel@lists.sourceforge.net>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "ocfs2-devel@oss.oracle.com" <ocfs2-devel@oss.oracle.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "ntfs3@lists.linux.dev" <ntfs3@lists.linux.dev>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>
-References: <20220406060516.409838-1-hch@lst.de>
- <0b7ae3df301c4fdd8d37f773d8d1eb93@FR3P281MB0843.DEUP281.PROD.OUTLOOK.COM>
+        Wed, 6 Apr 2022 07:26:35 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D309355CFE8;
+        Wed,  6 Apr 2022 01:13:15 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 4DED31F38A;
+        Wed,  6 Apr 2022 08:13:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1649232794; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=/rBcyoDoTq/ouUuDrmZ5BU4RlZeCyQlpcb/fLfqi5+g=;
+        b=dJ+xoXpY08wKZSxp4z1Y5Osm1Twl7YrbmzMZrDi+X2woMiKeABbNRwulYBc2qOF6dH3brs
+        MNTVdkTWKIpEhYzVo45ZPk4swaf0E52Z+v/2uKVyVQI5xbozxEx46EpwHv1IkCHg1/P9MJ
+        oeOBCZNuC7mWz+jnAtWnLkdd6TkHf0M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1649232794;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=/rBcyoDoTq/ouUuDrmZ5BU4RlZeCyQlpcb/fLfqi5+g=;
+        b=+cHhjmj0LF7iVvf9KUfF3wuUVkHwKWOHOJ0OtTa9gm6FBswBsRelBd0noj2RXLYYVFYpeZ
+        Z7ZFBZ+7OjnqgnCA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 1266A13A8E;
+        Wed,  6 Apr 2022 08:13:14 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id Ik0hA5pLTWJeYAAAMHmgww
+        (envelope-from <ddiss@suse.de>); Wed, 06 Apr 2022 08:13:14 +0000
+Date:   Wed, 6 Apr 2022 10:13:11 +0200
+From:   David Disseldorp <ddiss@suse.de>
+To:     "NeilBrown" <neilb@suse.de>
+Cc:     "Al Viro" <viro@zeniv.linux.org.uk>, linux-nfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        "LKML" <linux-kernel@vger.kernel.org>,
+        "Jeff Layton" <jlayton@kernel.org>
+Subject: Re: [PATCH v4] VFS: filename_create(): fix incorrect intent.
+Message-ID: <20220406101311.502aa172@suse.de>
+In-Reply-To: <164878611050.25542.6758961460499392000@noble.neil.brown.name>
+References: <164877264126.25542.1271530843099472952@noble.neil.brown.name>
+        <164878611050.25542.6758961460499392000@noble.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0b7ae3df301c4fdd8d37f773d8d1eb93@FR3P281MB0843.DEUP281.PROD.OUTLOOK.COM>
-X-sent-by-me: robin@sanpedro
-User-Agent: Mutt/1.9.3 (2018-01-21)
-From:   Alan.Robinson@fujitsu.com (Alan Robinson)
-X-Virus-Scanned: ClamAV using ClamSMTP
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Christoph,
+On Fri, 01 Apr 2022 15:08:30 +1100, NeilBrown wrote:
 
-On Wed, Apr 06, 2022 at 06:05:04AM +0000, Christoph Hellwig wrote:
-> From: Christoph Hellwig <hch@lst.de>
-> Subject: [PATCH 15/27] block: use bdev_alignment_offset in
->  part_alignment_offset_show
+> When asked to create a path ending '/', but which is not to be a
+> directory (LOOKUP_DIRECTORY not set), filename_create() will never try
+> to create the file.  If it doesn't exist, -ENOENT is reported.
 > 
-> Replace the open coded offset calculation with the proper helper.
-> This is an ABI change in that the -1 for a misaligned partition is
-> properly propagated, which can be considered a bug fix and maches
-
-s/maches/matches/
-
-> what is done on the whole device.
+> However, it still passes LOOKUP_CREATE|LOOKUP_EXCL to the filesystems
+> ->lookup() function, even though there is no intent to create.  This is  
+> misleading and can cause incorrect behaviour.
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> If you try
+>    ln -s foo /path/dir/
+
+It'd be helpful if we could run these sorts of tests from the xfstests
+suite. I wonder whether some sort of other-client ssh backchannel would
+be useful (for cifs.ko and cephfs too).
+
+> where 'dir' is a directory on an NFS filesystem which is not currently
+> known in the dcache, this will fail with ENOENT.
+> As the name is not in the dcache, nfs_lookup gets called with
+> LOOKUP_CREATE|LOOKUP_EXCL and so it returns NULL without performing any
+> lookup, with the expectation that a subsequent call to create the
+> target will be made, and the lookup can be combined with the creation.
+> In the case with a trailing '/' and no LOOKUP_DIRECTORY, that call is never
+> made.  Instead filename_create() sees that the dentry is not (yet)
+> positive and returns -ENOENT - even though the directory actually
+> exists.
+> 
+> So only set LOOKUP_CREATE|LOOKUP_EXCL if there really is an intent
+> to create, and use the absence of these flags to decide if -ENOENT
+> should be returned.
+> 
+> Note that filename_parentat() is only interested in LOOKUP_REVAL, so we
+> split that out and store it in 'reval_flag'.
+> __looku_hash() then gets reval_flag combined with whatever create flags
+> were determined to be needed.
+
+nit: __lookup_hash()
+
+> 
+> Signed-off-by: NeilBrown <neilb@suse.de>
 > ---
->  block/partitions/core.c | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
+>  fs/namei.c | 22 ++++++++++------------
+>  1 file changed, 10 insertions(+), 12 deletions(-)
 > 
-> diff --git a/block/partitions/core.c b/block/partitions/core.c
-> index 2ef8dfa1e5c85..240b3fff521e4 100644
-> --- a/block/partitions/core.c
-> +++ b/block/partitions/core.c
-> @@ -200,11 +200,7 @@ static ssize_t part_ro_show(struct device *dev,
->  static ssize_t part_alignment_offset_show(struct device *dev,
->  					  struct device_attribute *attr, char *buf)
+> ARG - v3 had a missing semi-colon.  Sorry.
+> 
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 3f1829b3ab5b..509657fdf4f5 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -3673,18 +3673,14 @@ static struct dentry *filename_create(int dfd, struct filename *name,
 >  {
-> -	struct block_device *bdev = dev_to_bdev(dev);
+>  	struct dentry *dentry = ERR_PTR(-EEXIST);
+>  	struct qstr last;
+> +	bool want_dir = lookup_flags & LOOKUP_DIRECTORY;
+> +	unsigned int reval_flag = lookup_flags & LOOKUP_REVAL;
+> +	unsigned int create_flags = LOOKUP_CREATE | LOOKUP_EXCL;
+>  	int type;
+>  	int err2;
+>  	int error;
+> -	bool is_dir = (lookup_flags & LOOKUP_DIRECTORY);
+>  
+> -	/*
+> -	 * Note that only LOOKUP_REVAL and LOOKUP_DIRECTORY matter here. Any
+> -	 * other flags passed in are ignored!
+> -	 */
+> -	lookup_flags &= LOOKUP_REVAL;
 > -
-> -	return sprintf(buf, "%u\n",
-> -		queue_limit_alignment_offset(&bdev_get_queue(bdev)->limits,
-> -				bdev->bd_start_sect));
-> +	return sprintf(buf, "%u\n", bdev_alignment_offset(dev_to_bdev(dev)));
+> -	error = filename_parentat(dfd, name, lookup_flags, path, &last, &type);
+> +	error = filename_parentat(dfd, name, reval_flag, path, &last, &type);
+>  	if (error)
+>  		return ERR_PTR(error);
+>  
+> @@ -3698,11 +3694,13 @@ static struct dentry *filename_create(int dfd, struct filename *name,
+>  	/* don't fail immediately if it's r/o, at least try to report other errors */
+>  	err2 = mnt_want_write(path->mnt);
+>  	/*
+> -	 * Do the final lookup.
+> +	 * Do the final lookup.  Suppress 'create' if there is a trailing
+> +	 * '/', and a directory wasn't requested.
+>  	 */
+> -	lookup_flags |= LOOKUP_CREATE | LOOKUP_EXCL;
+> +	if (last.name[last.len] && !want_dir)
+> +		create_flags = 0;
+>  	inode_lock_nested(path->dentry->d_inode, I_MUTEX_PARENT);
+> -	dentry = __lookup_hash(&last, path->dentry, lookup_flags);
+> +	dentry = __lookup_hash(&last, path->dentry, reval_flag | create_flags);
+>  	if (IS_ERR(dentry))
+>  		goto unlock;
+>  
+> @@ -3716,7 +3714,7 @@ static struct dentry *filename_create(int dfd, struct filename *name,
+>  	 * all is fine. Let's be bastards - you had / on the end, you've
+>  	 * been asking for (non-existent) directory. -ENOENT for you.
+>  	 */
+> -	if (unlikely(!is_dir && last.name[last.len])) {
+> +	if (unlikely(!create_flags)) {
+>  		error = -ENOENT;
+>  		goto fail;
+>  	}
 
-Should this now be %d instead of %u, there are one or two examples of
-both in the rest of the patch series.
-
-Alan
-
+Looks good and works for me.
+Reviewed-by: David Disseldorp <ddiss@suse.de>
