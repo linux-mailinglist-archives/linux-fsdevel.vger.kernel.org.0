@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 87AE74F5940
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Apr 2022 11:22:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 274164F5914
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Apr 2022 11:21:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1382080AbiDFJR6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Apr 2022 05:17:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53438 "EHLO
+        id S1350984AbiDFJQ4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Apr 2022 05:16:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52062 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1445321AbiDFJEg (ORCPT
+        with ESMTP id S1447763AbiDFJEi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Apr 2022 05:04:36 -0400
+        Wed, 6 Apr 2022 05:04:38 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE7CC480C12;
-        Tue,  5 Apr 2022 23:07:01 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFD68482513;
+        Tue,  5 Apr 2022 23:07:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=8jSK8C/5ZUWGyg6hINYTsDIF1yeJGnFfAVVm7oGFGxU=; b=T/sY9fCgXhfmGZBEJLPCm1oMXz
-        42vIbExPonBY8A2PxyvZvo+9LPj1W8f6uTfL1SNYRA7AHmqs/6e219bjnu0ZPesd6sC7dWswQbx/V
-        q7IkMCCGg3Ze574iLqq8xs+ZETJUQqNHbalvhjKqNr0WBWNva4LVeQbx/++5vLZaqH+8q09l03F9V
-        8cZ4jrfFJ6k5rFFuwk2EvMgT04gwGtK1wRmbCLSYg/DAnI4aW2XPIQpf/DFMLPl8kfYL2eFCsDyuC
-        XPYaJiuvjAn5vzrt0fALEz7Eziuc+7w0Edqii+dr6LmhynkOxTPJnS/sxRGMv8MoM+aqCRkZPmPkN
-        fOI4XODQ==;
+        bh=NOp84q6++z+7Q8uHeg5Eo+6RpSy907DQLMlmJxz0jNA=; b=x0wNRTcLaeYftxiAQHKnjFl7Vn
+        /hNIgg5ccry8wDU5TCE6WgYOjTiZp9YqujuI++whmFTqsw0fREkq1tH7klAVk3pmLAa/vHev3jFYr
+        5Uo3rvvo1MWb8QwRAP1dZFxhI0Bfnu3BhYUA18htho7Gml6Q9eqPi5Sf4OizAOcOpoH+YZW1H8RhC
+        099eZsjue0ogmbtNemjif1xsWLrKF+3Ham/efjGVY9mH4VelWmsVaGjlStwrG8r8LKRw52oTWsFAM
+        Fx2izGgUXVgVMYfVg1h9A89tjacutX9KXFnHjFje4IpvhhHqLIBqpqsszQ64x2qdAggtSvuRGQNGP
+        5ZrfWKSw==;
 Received: from 213-225-3-188.nat.highway.a1.net ([213.225.3.188] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nbyof-003vuU-Et; Wed, 06 Apr 2022 06:06:54 +0000
+        id 1nbyoj-003vxb-Ew; Wed, 06 Apr 2022 06:06:58 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     dm-devel@redhat.com, linux-xfs@vger.kernel.org,
@@ -44,9 +44,9 @@ Cc:     dm-devel@redhat.com, linux-xfs@vger.kernel.org,
         cluster-devel@redhat.com, jfs-discussion@lists.sourceforge.net,
         linux-nilfs@vger.kernel.org, ntfs3@lists.linux.dev,
         ocfs2-devel@oss.oracle.com, linux-mm@kvack.org
-Subject: [PATCH 24/27] block: add a bdev_discard_granularity helper
-Date:   Wed,  6 Apr 2022 08:05:13 +0200
-Message-Id: <20220406060516.409838-25-hch@lst.de>
+Subject: [PATCH 25/27] block: remove QUEUE_FLAG_DISCARD
+Date:   Wed,  6 Apr 2022 08:05:14 +0200
+Message-Id: <20220406060516.409838-26-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220406060516.409838-1-hch@lst.de>
 References: <20220406060516.409838-1-hch@lst.de>
@@ -63,431 +63,568 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Abstract away implementation details from file systems by providing a
-block_device based helper to retreive the discard granularity.
+Just use a non-zero max_discard_sectors as an indicator for discard
+support, similar to what is done for write zeroes.
+
+The only places where needs special attention is the RAID5 driver,
+which must clear discard support for security reasons by default,
+even if the default stacking rules would allow for it.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- block/blk-lib.c                     |  5 ++---
- drivers/block/drbd/drbd_nl.c        |  9 +++++----
- drivers/block/drbd/drbd_receiver.c  |  3 +--
- drivers/block/loop.c                |  2 +-
- drivers/target/target_core_device.c |  3 +--
- fs/btrfs/ioctl.c                    | 12 ++++--------
- fs/exfat/file.c                     |  3 +--
- fs/ext4/mballoc.c                   |  6 +++---
- fs/f2fs/file.c                      |  3 +--
- fs/fat/file.c                       |  3 +--
- fs/gfs2/rgrp.c                      |  7 +++----
- fs/jfs/ioctl.c                      |  3 +--
- fs/nilfs2/ioctl.c                   |  4 ++--
- fs/ntfs3/file.c                     |  4 ++--
- fs/ntfs3/super.c                    |  6 ++----
- fs/ocfs2/ioctl.c                    |  3 +--
- fs/xfs/xfs_discard.c                |  4 ++--
- include/linux/blkdev.h              |  5 +++++
- 18 files changed, 38 insertions(+), 47 deletions(-)
+ arch/um/drivers/ubd_kern.c    |  2 --
+ block/blk-mq-debugfs.c        |  1 -
+ drivers/block/drbd/drbd_nl.c  | 15 ---------------
+ drivers/block/loop.c          |  2 --
+ drivers/block/nbd.c           |  3 ---
+ drivers/block/null_blk/main.c |  1 -
+ drivers/block/rbd.c           |  1 -
+ drivers/block/rnbd/rnbd-clt.c |  2 --
+ drivers/block/virtio_blk.c    |  2 --
+ drivers/block/xen-blkfront.c  |  2 --
+ drivers/block/zram/zram_drv.c |  1 -
+ drivers/md/bcache/super.c     |  1 -
+ drivers/md/dm-table.c         |  5 +----
+ drivers/md/dm-thin.c          |  2 --
+ drivers/md/dm.c               |  1 -
+ drivers/md/md-linear.c        |  9 ---------
+ drivers/md/raid0.c            |  7 -------
+ drivers/md/raid1.c            | 14 --------------
+ drivers/md/raid10.c           | 14 --------------
+ drivers/md/raid5.c            | 12 ++++--------
+ drivers/mmc/core/queue.c      |  1 -
+ drivers/mtd/mtd_blkdevs.c     |  1 -
+ drivers/nvme/host/core.c      |  6 ++----
+ drivers/s390/block/dasd_fba.c |  1 -
+ drivers/scsi/sd.c             |  2 --
+ include/linux/blkdev.h        |  2 --
+ 26 files changed, 7 insertions(+), 103 deletions(-)
 
-diff --git a/block/blk-lib.c b/block/blk-lib.c
-index 8b4b66d3a9bfc..43aa4d7fe859f 100644
---- a/block/blk-lib.c
-+++ b/block/blk-lib.c
-@@ -12,8 +12,7 @@
- 
- static sector_t bio_discard_limit(struct block_device *bdev, sector_t sector)
- {
--	unsigned int discard_granularity =
--		bdev_get_queue(bdev)->limits.discard_granularity;
-+	unsigned int discard_granularity = bdev_discard_granularity(bdev);
- 	sector_t granularity_aligned_sector;
- 
- 	if (bdev_is_partition(bdev))
-@@ -59,7 +58,7 @@ int __blkdev_issue_discard(struct block_device *bdev, sector_t sector,
+diff --git a/arch/um/drivers/ubd_kern.c b/arch/um/drivers/ubd_kern.c
+index b03269faef714..085ffdf98e57e 100644
+--- a/arch/um/drivers/ubd_kern.c
++++ b/arch/um/drivers/ubd_kern.c
+@@ -483,7 +483,6 @@ static void ubd_handler(void)
+ 			if ((io_req->error == BLK_STS_NOTSUPP) && (req_op(io_req->req) == REQ_OP_DISCARD)) {
+ 				blk_queue_max_discard_sectors(io_req->req->q, 0);
+ 				blk_queue_max_write_zeroes_sectors(io_req->req->q, 0);
+-				blk_queue_flag_clear(QUEUE_FLAG_DISCARD, io_req->req->q);
+ 			}
+ 			blk_mq_end_request(io_req->req, io_req->error);
+ 			kfree(io_req);
+@@ -803,7 +802,6 @@ static int ubd_open_dev(struct ubd *ubd_dev)
+ 		ubd_dev->queue->limits.discard_alignment = SECTOR_SIZE;
+ 		blk_queue_max_discard_sectors(ubd_dev->queue, UBD_MAX_REQUEST);
+ 		blk_queue_max_write_zeroes_sectors(ubd_dev->queue, UBD_MAX_REQUEST);
+-		blk_queue_flag_set(QUEUE_FLAG_DISCARD, ubd_dev->queue);
  	}
- 
- 	/* In case the discard granularity isn't set by buggy device driver */
--	if (WARN_ON_ONCE(!q->limits.discard_granularity)) {
-+	if (WARN_ON_ONCE(!bdev_discard_granularity(bdev))) {
- 		char dev_name[BDEVNAME_SIZE];
- 
- 		bdevname(bdev, dev_name);
+ 	blk_queue_flag_set(QUEUE_FLAG_NONROT, ubd_dev->queue);
+ 	return 0;
+diff --git a/block/blk-mq-debugfs.c b/block/blk-mq-debugfs.c
+index aa0349e9f083b..fd111c5001256 100644
+--- a/block/blk-mq-debugfs.c
++++ b/block/blk-mq-debugfs.c
+@@ -113,7 +113,6 @@ static const char *const blk_queue_flag_name[] = {
+ 	QUEUE_FLAG_NAME(FAIL_IO),
+ 	QUEUE_FLAG_NAME(NONROT),
+ 	QUEUE_FLAG_NAME(IO_STAT),
+-	QUEUE_FLAG_NAME(DISCARD),
+ 	QUEUE_FLAG_NAME(NOXMERGES),
+ 	QUEUE_FLAG_NAME(ADD_RANDOM),
+ 	QUEUE_FLAG_NAME(SECERASE),
 diff --git a/drivers/block/drbd/drbd_nl.c b/drivers/block/drbd/drbd_nl.c
-index 8e28e0a8e5e41..94ac3737723a8 100644
+index 94ac3737723a8..0b3e43be6414d 100644
 --- a/drivers/block/drbd/drbd_nl.c
 +++ b/drivers/block/drbd/drbd_nl.c
-@@ -1440,7 +1440,6 @@ static void sanitize_disk_conf(struct drbd_device *device, struct disk_conf *dis
- 			       struct drbd_backing_dev *nbc)
+@@ -1230,30 +1230,16 @@ static void decide_on_discard_support(struct drbd_device *device,
+ 	 */
+ 	blk_queue_discard_granularity(q, 512);
+ 	q->limits.max_discard_sectors = drbd_max_discard_sectors(connection);
+-	blk_queue_flag_set(QUEUE_FLAG_DISCARD, q);
+ 	q->limits.max_write_zeroes_sectors =
+ 		drbd_max_discard_sectors(connection);
+ 	return;
+ 
+ not_supported:
+-	blk_queue_flag_clear(QUEUE_FLAG_DISCARD, q);
+ 	blk_queue_discard_granularity(q, 0);
+ 	q->limits.max_discard_sectors = 0;
+ 	q->limits.max_write_zeroes_sectors = 0;
+ }
+ 
+-static void fixup_discard_if_not_supported(struct request_queue *q)
+-{
+-	/* To avoid confusion, if this queue does not support discard, clear
+-	 * max_discard_sectors, which is what lsblk -D reports to the user.
+-	 * Older kernels got this wrong in "stack limits".
+-	 * */
+-	if (!blk_queue_discard(q)) {
+-		blk_queue_max_discard_sectors(q, 0);
+-		blk_queue_discard_granularity(q, 0);
+-	}
+-}
+-
+ static void fixup_write_zeroes(struct drbd_device *device, struct request_queue *q)
  {
- 	struct block_device *bdev = nbc->backing_bdev;
--	struct request_queue *q = bdev->bd_disk->queue;
+ 	/* Fixup max_write_zeroes_sectors after blk_stack_limits():
+@@ -1300,7 +1286,6 @@ static void drbd_setup_queue_param(struct drbd_device *device, struct drbd_backi
+ 		blk_stack_limits(&q->limits, &b->limits, 0);
+ 		disk_update_readahead(device->vdisk);
+ 	}
+-	fixup_discard_if_not_supported(q);
+ 	fixup_write_zeroes(device, q);
+ }
  
- 	if (disk_conf->al_extents < DRBD_AL_EXTENTS_MIN)
- 		disk_conf->al_extents = DRBD_AL_EXTENTS_MIN;
-@@ -1457,12 +1456,14 @@ static void sanitize_disk_conf(struct drbd_device *device, struct disk_conf *dis
- 	if (disk_conf->rs_discard_granularity) {
- 		int orig_value = disk_conf->rs_discard_granularity;
- 		sector_t discard_size = bdev_max_discard_sectors(bdev) << 9;
-+		unsigned int discard_granularity = bdev_discard_granularity(bdev);
- 		int remainder;
- 
--		if (q->limits.discard_granularity > disk_conf->rs_discard_granularity)
--			disk_conf->rs_discard_granularity = q->limits.discard_granularity;
-+		if (discard_granularity > disk_conf->rs_discard_granularity)
-+			disk_conf->rs_discard_granularity = discard_granularity;
- 
--		remainder = disk_conf->rs_discard_granularity % q->limits.discard_granularity;
-+		remainder = disk_conf->rs_discard_granularity %
-+				discard_granularity;
- 		disk_conf->rs_discard_granularity += remainder;
- 
- 		if (disk_conf->rs_discard_granularity > discard_size)
-diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
-index 8a4a47da56fe9..275c53c7b629e 100644
---- a/drivers/block/drbd/drbd_receiver.c
-+++ b/drivers/block/drbd/drbd_receiver.c
-@@ -1511,7 +1511,6 @@ void drbd_bump_write_ordering(struct drbd_resource *resource, struct drbd_backin
- int drbd_issue_discard_or_zero_out(struct drbd_device *device, sector_t start, unsigned int nr_sectors, int flags)
- {
- 	struct block_device *bdev = device->ldev->backing_bdev;
--	struct request_queue *q = bdev_get_queue(bdev);
- 	sector_t tmp, nr;
- 	unsigned int max_discard_sectors, granularity;
- 	int alignment;
-@@ -1521,7 +1520,7 @@ int drbd_issue_discard_or_zero_out(struct drbd_device *device, sector_t start, u
- 		goto zero_out;
- 
- 	/* Zero-sector (unknown) and one-sector granularities are the same.  */
--	granularity = max(q->limits.discard_granularity >> 9, 1U);
-+	granularity = max(bdev_discard_granularity(bdev) >> 9, 1U);
- 	alignment = (bdev_discard_alignment(bdev) >> 9) % granularity;
- 
- 	max_discard_sectors = min(bdev_max_discard_sectors(bdev), (1U << 22));
 diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index 4b919b75205a7..d5499795a1fec 100644
+index d5499795a1fec..976cf987b3920 100644
 --- a/drivers/block/loop.c
 +++ b/drivers/block/loop.c
-@@ -759,7 +759,7 @@ static void loop_config_discard(struct loop_device *lo)
- 		struct request_queue *backingq = bdev_get_queue(I_BDEV(inode));
+@@ -784,12 +784,10 @@ static void loop_config_discard(struct loop_device *lo)
+ 		q->limits.discard_granularity = granularity;
+ 		blk_queue_max_discard_sectors(q, max_discard_sectors);
+ 		blk_queue_max_write_zeroes_sectors(q, max_discard_sectors);
+-		blk_queue_flag_set(QUEUE_FLAG_DISCARD, q);
+ 	} else {
+ 		q->limits.discard_granularity = 0;
+ 		blk_queue_max_discard_sectors(q, 0);
+ 		blk_queue_max_write_zeroes_sectors(q, 0);
+-		blk_queue_flag_clear(QUEUE_FLAG_DISCARD, q);
+ 	}
+ 	q->limits.discard_alignment = 0;
+ }
+diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
+index 5a1f98494dddf..c7e03eabd205f 100644
+--- a/drivers/block/nbd.c
++++ b/drivers/block/nbd.c
+@@ -1231,8 +1231,6 @@ static void nbd_parse_flags(struct nbd_device *nbd)
+ 		set_disk_ro(nbd->disk, true);
+ 	else
+ 		set_disk_ro(nbd->disk, false);
+-	if (config->flags & NBD_FLAG_SEND_TRIM)
+-		blk_queue_flag_set(QUEUE_FLAG_DISCARD, nbd->disk->queue);
+ 	if (config->flags & NBD_FLAG_SEND_FLUSH) {
+ 		if (config->flags & NBD_FLAG_SEND_FUA)
+ 			blk_queue_write_cache(nbd->disk->queue, true, true);
+@@ -1320,7 +1318,6 @@ static void nbd_config_put(struct nbd_device *nbd)
+ 		nbd->disk->queue->limits.discard_granularity = 0;
+ 		nbd->disk->queue->limits.discard_alignment = 0;
+ 		blk_queue_max_discard_sectors(nbd->disk->queue, UINT_MAX);
+-		blk_queue_flag_clear(QUEUE_FLAG_DISCARD, nbd->disk->queue);
  
- 		max_discard_sectors = backingq->limits.max_write_zeroes_sectors;
--		granularity = backingq->limits.discard_granularity ?:
-+		granularity = bdev_discard_granularity(I_BDEV(inode)) ?:
- 			queue_physical_block_size(backingq);
+ 		mutex_unlock(&nbd->config_lock);
+ 		nbd_put(nbd);
+diff --git a/drivers/block/null_blk/main.c b/drivers/block/null_blk/main.c
+index 05b1120e66234..f6493a9e85ed3 100644
+--- a/drivers/block/null_blk/main.c
++++ b/drivers/block/null_blk/main.c
+@@ -1767,7 +1767,6 @@ static void null_config_discard(struct nullb *nullb)
+ 	nullb->q->limits.discard_granularity = nullb->dev->blocksize;
+ 	nullb->q->limits.discard_alignment = nullb->dev->blocksize;
+ 	blk_queue_max_discard_sectors(nullb->q, UINT_MAX >> 9);
+-	blk_queue_flag_set(QUEUE_FLAG_DISCARD, nullb->q);
+ }
+ 
+ static const struct block_device_operations null_bio_ops = {
+diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+index b844432bad20b..2b21f717cce1a 100644
+--- a/drivers/block/rbd.c
++++ b/drivers/block/rbd.c
+@@ -4942,7 +4942,6 @@ static int rbd_init_disk(struct rbd_device *rbd_dev)
+ 	blk_queue_io_opt(q, rbd_dev->opts->alloc_size);
+ 
+ 	if (rbd_dev->opts->trim) {
+-		blk_queue_flag_set(QUEUE_FLAG_DISCARD, q);
+ 		q->limits.discard_granularity = rbd_dev->opts->alloc_size;
+ 		blk_queue_max_discard_sectors(q, objset_bytes >> SECTOR_SHIFT);
+ 		blk_queue_max_write_zeroes_sectors(q, objset_bytes >> SECTOR_SHIFT);
+diff --git a/drivers/block/rnbd/rnbd-clt.c b/drivers/block/rnbd/rnbd-clt.c
+index b66e8840b94b8..efa99a3884507 100644
+--- a/drivers/block/rnbd/rnbd-clt.c
++++ b/drivers/block/rnbd/rnbd-clt.c
+@@ -1364,8 +1364,6 @@ static void setup_request_queue(struct rnbd_clt_dev *dev)
+ 	blk_queue_max_discard_sectors(dev->queue, dev->max_discard_sectors);
+ 	dev->queue->limits.discard_granularity	= dev->discard_granularity;
+ 	dev->queue->limits.discard_alignment	= dev->discard_alignment;
+-	if (dev->max_discard_sectors)
+-		blk_queue_flag_set(QUEUE_FLAG_DISCARD, dev->queue);
+ 	if (dev->secure_discard)
+ 		blk_queue_flag_set(QUEUE_FLAG_SECERASE, dev->queue);
+ 
+diff --git a/drivers/block/virtio_blk.c b/drivers/block/virtio_blk.c
+index a8bcf3f664af1..6ccf15253dee1 100644
+--- a/drivers/block/virtio_blk.c
++++ b/drivers/block/virtio_blk.c
+@@ -888,8 +888,6 @@ static int virtblk_probe(struct virtio_device *vdev)
+ 			v = sg_elems;
+ 		blk_queue_max_discard_segments(q,
+ 					       min(v, MAX_DISCARD_SEGMENTS));
+-
+-		blk_queue_flag_set(QUEUE_FLAG_DISCARD, q);
+ 	}
+ 
+ 	if (virtio_has_feature(vdev, VIRTIO_BLK_F_WRITE_ZEROES)) {
+diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
+index 003056d4f7f5f..253bf835aca1f 100644
+--- a/drivers/block/xen-blkfront.c
++++ b/drivers/block/xen-blkfront.c
+@@ -944,7 +944,6 @@ static void blkif_set_queue_limits(struct blkfront_info *info)
+ 	blk_queue_flag_set(QUEUE_FLAG_VIRT, rq);
+ 
+ 	if (info->feature_discard) {
+-		blk_queue_flag_set(QUEUE_FLAG_DISCARD, rq);
+ 		blk_queue_max_discard_sectors(rq, get_capacity(gd));
+ 		rq->limits.discard_granularity = info->discard_granularity ?:
+ 						 info->physical_sector_size;
+@@ -1606,7 +1605,6 @@ static irqreturn_t blkif_interrupt(int irq, void *dev_id)
+ 				blkif_req(req)->error = BLK_STS_NOTSUPP;
+ 				info->feature_discard = 0;
+ 				info->feature_secdiscard = 0;
+-				blk_queue_flag_clear(QUEUE_FLAG_DISCARD, rq);
+ 				blk_queue_flag_clear(QUEUE_FLAG_SECERASE, rq);
+ 			}
+ 			break;
+diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
+index e9474b02012de..59ff444bf6c76 100644
+--- a/drivers/block/zram/zram_drv.c
++++ b/drivers/block/zram/zram_drv.c
+@@ -1952,7 +1952,6 @@ static int zram_add(void)
+ 	blk_queue_io_opt(zram->disk->queue, PAGE_SIZE);
+ 	zram->disk->queue->limits.discard_granularity = PAGE_SIZE;
+ 	blk_queue_max_discard_sectors(zram->disk->queue, UINT_MAX);
+-	blk_queue_flag_set(QUEUE_FLAG_DISCARD, zram->disk->queue);
  
  	/*
-diff --git a/drivers/target/target_core_device.c b/drivers/target/target_core_device.c
-index 7d510e4231713..ee93f0cca4228 100644
---- a/drivers/target/target_core_device.c
-+++ b/drivers/target/target_core_device.c
-@@ -834,7 +834,6 @@ struct se_device *target_alloc_device(struct se_hba *hba, const char *name)
- bool target_configure_unmap_from_queue(struct se_dev_attrib *attrib,
- 				       struct block_device *bdev)
- {
--	struct request_queue *q = bdev_get_queue(bdev);
- 	int block_size = bdev_logical_block_size(bdev);
+ 	 * zram_bio_discard() will clear all logical blocks if logical block
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index 296f200b2e208..2f49e31142f62 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -973,7 +973,6 @@ static int bcache_device_init(struct bcache_device *d, unsigned int block_size,
  
- 	if (!bdev_max_discard_sectors(bdev))
-@@ -846,7 +845,7 @@ bool target_configure_unmap_from_queue(struct se_dev_attrib *attrib,
- 	 * Currently hardcoded to 1 in Linux/SCSI code..
- 	 */
- 	attrib->max_unmap_block_desc_count = 1;
--	attrib->unmap_granularity = q->limits.discard_granularity / block_size;
-+	attrib->unmap_granularity = bdev_discard_granularity(bdev) / block_size;
- 	attrib->unmap_granularity_alignment =
- 		bdev_discard_alignment(bdev) / block_size;
- 	return true;
-diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-index fc7953755fd8b..f1a1e9519808e 100644
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -468,7 +468,6 @@ static noinline int btrfs_ioctl_fitrim(struct btrfs_fs_info *fs_info,
- 					void __user *arg)
- {
- 	struct btrfs_device *device;
--	struct request_queue *q;
- 	struct fstrim_range range;
- 	u64 minlen = ULLONG_MAX;
- 	u64 num_devices = 0;
-@@ -498,14 +497,11 @@ static noinline int btrfs_ioctl_fitrim(struct btrfs_fs_info *fs_info,
- 	rcu_read_lock();
- 	list_for_each_entry_rcu(device, &fs_info->fs_devices->devices,
- 				dev_list) {
--		if (!device->bdev)
-+		if (!device->bdev || !bdev_max_discard_sectors(device->bdev))
- 			continue;
--		q = bdev_get_queue(device->bdev);
--		if (bdev_max_discard_sectors(device->bdev)) {
--			num_devices++;
--			minlen = min_t(u64, q->limits.discard_granularity,
--				     minlen);
--		}
-+		num_devices++;
-+		minlen = min_t(u64, bdev_discard_granularity(device->bdev),
-+				    minlen);
+ 	blk_queue_flag_set(QUEUE_FLAG_NONROT, d->disk->queue);
+ 	blk_queue_flag_clear(QUEUE_FLAG_ADD_RANDOM, d->disk->queue);
+-	blk_queue_flag_set(QUEUE_FLAG_DISCARD, d->disk->queue);
+ 
+ 	blk_queue_write_cache(q, true, true);
+ 
+diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
+index 4297c38328a9b..0dff6907fd00d 100644
+--- a/drivers/md/dm-table.c
++++ b/drivers/md/dm-table.c
+@@ -1968,15 +1968,12 @@ int dm_table_set_restrictions(struct dm_table *t, struct request_queue *q,
+ 		blk_queue_flag_clear(QUEUE_FLAG_NOWAIT, q);
+ 
+ 	if (!dm_table_supports_discards(t)) {
+-		blk_queue_flag_clear(QUEUE_FLAG_DISCARD, q);
+-		/* Must also clear discard limits... */
+ 		q->limits.max_discard_sectors = 0;
+ 		q->limits.max_hw_discard_sectors = 0;
+ 		q->limits.discard_granularity = 0;
+ 		q->limits.discard_alignment = 0;
+ 		q->limits.discard_misaligned = 0;
+-	} else
+-		blk_queue_flag_set(QUEUE_FLAG_DISCARD, q);
++	}
+ 
+ 	if (dm_table_supports_secure_erase(t))
+ 		blk_queue_flag_set(QUEUE_FLAG_SECERASE, q);
+diff --git a/drivers/md/dm-thin.c b/drivers/md/dm-thin.c
+index cd333a3e4c33b..eded4bcc4545f 100644
+--- a/drivers/md/dm-thin.c
++++ b/drivers/md/dm-thin.c
+@@ -4050,8 +4050,6 @@ static void pool_io_hints(struct dm_target *ti, struct queue_limits *limits)
+ 		/*
+ 		 * Must explicitly disallow stacking discard limits otherwise the
+ 		 * block layer will stack them if pool's data device has support.
+-		 * QUEUE_FLAG_DISCARD wouldn't be set but there is no way for the
+-		 * user to see that, so make sure to set all discard limits to 0.
+ 		 */
+ 		limits->discard_granularity = 0;
+ 		return;
+diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+index ba75933cc22ca..dbbf64ce7e927 100644
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -955,7 +955,6 @@ void disable_discard(struct mapped_device *md)
+ 
+ 	/* device doesn't really support DISCARD, disable it */
+ 	limits->max_discard_sectors = 0;
+-	blk_queue_flag_clear(QUEUE_FLAG_DISCARD, md->queue);
+ }
+ 
+ void disable_write_zeroes(struct mapped_device *md)
+diff --git a/drivers/md/md-linear.c b/drivers/md/md-linear.c
+index 4dd5afff72844..138a3b25c5c82 100644
+--- a/drivers/md/md-linear.c
++++ b/drivers/md/md-linear.c
+@@ -64,7 +64,6 @@ static struct linear_conf *linear_conf(struct mddev *mddev, int raid_disks)
+ 	struct linear_conf *conf;
+ 	struct md_rdev *rdev;
+ 	int i, cnt;
+-	bool discard_supported = false;
+ 
+ 	conf = kzalloc(struct_size(conf, disks, raid_disks), GFP_KERNEL);
+ 	if (!conf)
+@@ -96,9 +95,6 @@ static struct linear_conf *linear_conf(struct mddev *mddev, int raid_disks)
+ 
+ 		conf->array_sectors += rdev->sectors;
+ 		cnt++;
+-
+-		if (bdev_max_discard_sectors(rdev->bdev))
+-			discard_supported = true;
  	}
- 	rcu_read_unlock();
- 
-diff --git a/fs/exfat/file.c b/fs/exfat/file.c
-index 765e4f63dd18d..20d4e47f57ab2 100644
---- a/fs/exfat/file.c
-+++ b/fs/exfat/file.c
-@@ -351,7 +351,6 @@ int exfat_setattr(struct user_namespace *mnt_userns, struct dentry *dentry,
- 
- static int exfat_ioctl_fitrim(struct inode *inode, unsigned long arg)
- {
--	struct request_queue *q = bdev_get_queue(inode->i_sb->s_bdev);
- 	struct fstrim_range range;
- 	int ret = 0;
- 
-@@ -365,7 +364,7 @@ static int exfat_ioctl_fitrim(struct inode *inode, unsigned long arg)
- 		return -EFAULT;
- 
- 	range.minlen = max_t(unsigned int, range.minlen,
--				q->limits.discard_granularity);
-+				bdev_discard_granularity(inode->i_sb->s_bdev));
- 
- 	ret = exfat_trim_fs(inode, &range);
- 	if (ret < 0)
-diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-index c3668c977cd99..6d1820536d88d 100644
---- a/fs/ext4/mballoc.c
-+++ b/fs/ext4/mballoc.c
-@@ -6455,7 +6455,7 @@ ext4_trim_all_free(struct super_block *sb, ext4_group_t group,
-  */
- int ext4_trim_fs(struct super_block *sb, struct fstrim_range *range)
- {
--	struct request_queue *q = bdev_get_queue(sb->s_bdev);
-+	unsigned int discard_granularity = bdev_discard_granularity(sb->s_bdev);
- 	struct ext4_group_info *grp;
- 	ext4_group_t group, first_group, last_group;
- 	ext4_grpblk_t cnt = 0, first_cluster, last_cluster;
-@@ -6475,9 +6475,9 @@ int ext4_trim_fs(struct super_block *sb, struct fstrim_range *range)
- 	    range->len < sb->s_blocksize)
- 		return -EINVAL;
- 	/* No point to try to trim less than discard granularity */
--	if (range->minlen < q->limits.discard_granularity) {
-+	if (range->minlen < discard_granularity) {
- 		minlen = EXT4_NUM_B2C(EXT4_SB(sb),
--			q->limits.discard_granularity >> sb->s_blocksize_bits);
-+				discard_granularity >> sb->s_blocksize_bits);
- 		if (minlen > EXT4_CLUSTERS_PER_GROUP(sb))
- 			goto out;
- 	}
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 5b89af0f27f05..8053d99f3920b 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -2285,7 +2285,6 @@ static int f2fs_ioc_fitrim(struct file *filp, unsigned long arg)
- {
- 	struct inode *inode = file_inode(filp);
- 	struct super_block *sb = inode->i_sb;
--	struct request_queue *q = bdev_get_queue(sb->s_bdev);
- 	struct fstrim_range range;
- 	int ret;
- 
-@@ -2304,7 +2303,7 @@ static int f2fs_ioc_fitrim(struct file *filp, unsigned long arg)
- 		return ret;
- 
- 	range.minlen = max((unsigned int)range.minlen,
--				q->limits.discard_granularity);
-+			   bdev_discard_granularity(sb->s_bdev));
- 	ret = f2fs_trim_fs(F2FS_SB(sb), &range);
- 	mnt_drop_write_file(filp);
- 	if (ret < 0)
-diff --git a/fs/fat/file.c b/fs/fat/file.c
-index e4c7d10e80129..bf91f977debea 100644
---- a/fs/fat/file.c
-+++ b/fs/fat/file.c
-@@ -127,7 +127,6 @@ static int fat_ioctl_fitrim(struct inode *inode, unsigned long arg)
- 	struct super_block *sb = inode->i_sb;
- 	struct fstrim_range __user *user_range;
- 	struct fstrim_range range;
--	struct request_queue *q = bdev_get_queue(sb->s_bdev);
- 	int err;
- 
- 	if (!capable(CAP_SYS_ADMIN))
-@@ -141,7 +140,7 @@ static int fat_ioctl_fitrim(struct inode *inode, unsigned long arg)
- 		return -EFAULT;
- 
- 	range.minlen = max_t(unsigned int, range.minlen,
--			     q->limits.discard_granularity);
-+			     bdev_discard_granularity(sb->s_bdev));
- 
- 	err = fat_trim_fs(inode, &range);
- 	if (err < 0)
-diff --git a/fs/gfs2/rgrp.c b/fs/gfs2/rgrp.c
-index 7f20ac9133bc6..6d26bb5254844 100644
---- a/fs/gfs2/rgrp.c
-+++ b/fs/gfs2/rgrp.c
-@@ -1386,7 +1386,7 @@ int gfs2_fitrim(struct file *filp, void __user *argp)
- {
- 	struct inode *inode = file_inode(filp);
- 	struct gfs2_sbd *sdp = GFS2_SB(inode);
--	struct request_queue *q = bdev_get_queue(sdp->sd_vfs->s_bdev);
-+	struct block_device *bdev = sdp->sd_vfs->s_bdev;
- 	struct buffer_head *bh;
- 	struct gfs2_rgrpd *rgd;
- 	struct gfs2_rgrpd *rgd_end;
-@@ -1405,7 +1405,7 @@ int gfs2_fitrim(struct file *filp, void __user *argp)
- 	if (!test_bit(SDF_JOURNAL_LIVE, &sdp->sd_flags))
- 		return -EROFS;
- 
--	if (!bdev_max_discard_sectors(sdp->sd_vfs->s_bdev))
-+	if (!bdev_max_discard_sectors(bdev))
- 		return -EOPNOTSUPP;
- 
- 	if (copy_from_user(&r, argp, sizeof(r)))
-@@ -1418,8 +1418,7 @@ int gfs2_fitrim(struct file *filp, void __user *argp)
- 	start = r.start >> bs_shift;
- 	end = start + (r.len >> bs_shift);
- 	minlen = max_t(u64, r.minlen, sdp->sd_sb.sb_bsize);
--	minlen = max_t(u64, minlen,
--		       q->limits.discard_granularity) >> bs_shift;
-+	minlen = max_t(u64, minlen, bdev_discard_granularity(bdev)) >> bs_shift;
- 
- 	if (end <= start || minlen > sdp->sd_max_rg_data)
- 		return -EINVAL;
-diff --git a/fs/jfs/ioctl.c b/fs/jfs/ioctl.c
-index 357ae6e5c36ec..1e7b177ece605 100644
---- a/fs/jfs/ioctl.c
-+++ b/fs/jfs/ioctl.c
-@@ -110,7 +110,6 @@ long jfs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 	case FITRIM:
- 	{
- 		struct super_block *sb = inode->i_sb;
--		struct request_queue *q = bdev_get_queue(sb->s_bdev);
- 		struct fstrim_range range;
- 		s64 ret = 0;
- 
-@@ -127,7 +126,7 @@ long jfs_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 			return -EFAULT;
- 
- 		range.minlen = max_t(unsigned int, range.minlen,
--			q->limits.discard_granularity);
-+				     bdev_discard_granularity(sb->s_bdev));
- 
- 		ret = jfs_ioc_trim(inode, &range);
- 		if (ret < 0)
-diff --git a/fs/nilfs2/ioctl.c b/fs/nilfs2/ioctl.c
-index 52b73f558fcb1..87e1004b606d2 100644
---- a/fs/nilfs2/ioctl.c
-+++ b/fs/nilfs2/ioctl.c
-@@ -1052,7 +1052,6 @@ static int nilfs_ioctl_resize(struct inode *inode, struct file *filp,
- static int nilfs_ioctl_trim_fs(struct inode *inode, void __user *argp)
- {
- 	struct the_nilfs *nilfs = inode->i_sb->s_fs_info;
--	struct request_queue *q = bdev_get_queue(nilfs->ns_bdev);
- 	struct fstrim_range range;
- 	int ret;
- 
-@@ -1065,7 +1064,8 @@ static int nilfs_ioctl_trim_fs(struct inode *inode, void __user *argp)
- 	if (copy_from_user(&range, argp, sizeof(range)))
- 		return -EFAULT;
- 
--	range.minlen = max_t(u64, range.minlen, q->limits.discard_granularity);
-+	range.minlen = max_t(u64, range.minlen,
-+			     bdev_discard_granularity(nilfs->ns_bdev));
- 
- 	down_read(&nilfs->ns_segctor_sem);
- 	ret = nilfs_sufile_trim_fs(nilfs->ns_sufile, &range);
-diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
-index e763236169331..15806eeae217a 100644
---- a/fs/ntfs3/file.c
-+++ b/fs/ntfs3/file.c
-@@ -22,7 +22,6 @@ static int ntfs_ioctl_fitrim(struct ntfs_sb_info *sbi, unsigned long arg)
- {
- 	struct fstrim_range __user *user_range;
- 	struct fstrim_range range;
--	struct request_queue *q = bdev_get_queue(sbi->sb->s_bdev);
- 	int err;
- 
- 	if (!capable(CAP_SYS_ADMIN))
-@@ -35,7 +34,8 @@ static int ntfs_ioctl_fitrim(struct ntfs_sb_info *sbi, unsigned long arg)
- 	if (copy_from_user(&range, user_range, sizeof(range)))
- 		return -EFAULT;
- 
--	range.minlen = max_t(u32, range.minlen, q->limits.discard_granularity);
-+	range.minlen = max_t(u32, range.minlen,
-+			     bdev_discard_granularity(sbi->sb->s_bdev));
- 
- 	err = ntfs_trim_fs(sbi, &range);
- 	if (err < 0)
-diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
-index c734085bcce4a..5f2e414cfa79b 100644
---- a/fs/ntfs3/super.c
-+++ b/fs/ntfs3/super.c
-@@ -882,7 +882,6 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
- 	int err;
- 	struct ntfs_sb_info *sbi = sb->s_fs_info;
- 	struct block_device *bdev = sb->s_bdev;
--	struct request_queue *rq;
- 	struct inode *inode;
- 	struct ntfs_inode *ni;
- 	size_t i, tt;
-@@ -912,9 +911,8 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	if (cnt != raid_disks) {
+ 		pr_warn("md/linear:%s: not enough drives present. Aborting!\n",
+@@ -106,11 +102,6 @@ static struct linear_conf *linear_conf(struct mddev *mddev, int raid_disks)
  		goto out;
  	}
  
--	rq = bdev_get_queue(bdev);
--	if (bdev_max_discard_sectors(bdev) && rq->limits.discard_granularity) {
--		sbi->discard_granularity = rq->limits.discard_granularity;
-+	if (bdev_max_discard_sectors(bdev) && bdev_discard_granularity(bdev)) {
-+		sbi->discard_granularity = bdev_discard_granularity(bdev);
- 		sbi->discard_granularity_mask_inv =
- 			~(u64)(sbi->discard_granularity - 1);
+-	if (!discard_supported)
+-		blk_queue_flag_clear(QUEUE_FLAG_DISCARD, mddev->queue);
+-	else
+-		blk_queue_flag_set(QUEUE_FLAG_DISCARD, mddev->queue);
+-
+ 	/*
+ 	 * Here we calculate the device offsets.
+ 	 */
+diff --git a/drivers/md/raid0.c b/drivers/md/raid0.c
+index 02ac3ab213c72..7231f5e1eaa73 100644
+--- a/drivers/md/raid0.c
++++ b/drivers/md/raid0.c
+@@ -399,7 +399,6 @@ static int raid0_run(struct mddev *mddev)
+ 	conf = mddev->private;
+ 	if (mddev->queue) {
+ 		struct md_rdev *rdev;
+-		bool discard_supported = false;
+ 
+ 		blk_queue_max_hw_sectors(mddev->queue, mddev->chunk_sectors);
+ 		blk_queue_max_write_zeroes_sectors(mddev->queue, mddev->chunk_sectors);
+@@ -412,13 +411,7 @@ static int raid0_run(struct mddev *mddev)
+ 		rdev_for_each(rdev, mddev) {
+ 			disk_stack_limits(mddev->gendisk, rdev->bdev,
+ 					  rdev->data_offset << 9);
+-			if (bdev_max_discard_sectors(rdev->bdev))
+-				discard_supported = true;
+ 		}
+-		if (!discard_supported)
+-			blk_queue_flag_clear(QUEUE_FLAG_DISCARD, mddev->queue);
+-		else
+-			blk_queue_flag_set(QUEUE_FLAG_DISCARD, mddev->queue);
  	}
-diff --git a/fs/ocfs2/ioctl.c b/fs/ocfs2/ioctl.c
-index 9b78ef103ada6..afd54ec661030 100644
---- a/fs/ocfs2/ioctl.c
-+++ b/fs/ocfs2/ioctl.c
-@@ -903,7 +903,6 @@ long ocfs2_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 	case FITRIM:
- 	{
- 		struct super_block *sb = inode->i_sb;
--		struct request_queue *q = bdev_get_queue(sb->s_bdev);
- 		struct fstrim_range range;
- 		int ret = 0;
  
-@@ -916,7 +915,7 @@ long ocfs2_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 		if (copy_from_user(&range, argp, sizeof(range)))
- 			return -EFAULT;
+ 	/* calculate array device size */
+diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+index 39b9cb4d54ee0..3da749d150a17 100644
+--- a/drivers/md/raid1.c
++++ b/drivers/md/raid1.c
+@@ -1826,8 +1826,6 @@ static int raid1_add_disk(struct mddev *mddev, struct md_rdev *rdev)
+ 			break;
+ 		}
+ 	}
+-	if (mddev->queue && bdev_max_discard_sectors(rdev->bdev))
+-		blk_queue_flag_set(QUEUE_FLAG_DISCARD, mddev->queue);
+ 	print_conf(conf);
+ 	return err;
+ }
+@@ -3106,7 +3104,6 @@ static int raid1_run(struct mddev *mddev)
+ 	int i;
+ 	struct md_rdev *rdev;
+ 	int ret;
+-	bool discard_supported = false;
  
--		range.minlen = max_t(u64, q->limits.discard_granularity,
-+		range.minlen = max_t(u64, bdev_discard_granularity(sb->s_bdev),
- 				     range.minlen);
- 		ret = ocfs2_trim_fs(sb, &range);
- 		if (ret < 0)
-diff --git a/fs/xfs/xfs_discard.c b/fs/xfs/xfs_discard.c
-index a4e6609d616b7..e2ada115c23f9 100644
---- a/fs/xfs/xfs_discard.c
-+++ b/fs/xfs/xfs_discard.c
-@@ -152,8 +152,8 @@ xfs_ioc_trim(
- 	struct xfs_mount		*mp,
- 	struct fstrim_range __user	*urange)
- {
--	struct request_queue	*q = bdev_get_queue(mp->m_ddev_targp->bt_bdev);
--	unsigned int		granularity = q->limits.discard_granularity;
-+	unsigned int		granularity =
-+		bdev_discard_granularity(mp->m_ddev_targp->bt_bdev);
- 	struct fstrim_range	range;
- 	xfs_daddr_t		start, end, minlen;
- 	xfs_agnumber_t		start_agno, end_agno, agno;
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index ce16247d3afab..7b9c0cf95d2d5 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -1259,6 +1259,11 @@ static inline unsigned int bdev_max_discard_sectors(struct block_device *bdev)
- 	return bdev_get_queue(bdev)->limits.max_discard_sectors;
+ 	if (mddev->level != 1) {
+ 		pr_warn("md/raid1:%s: raid level not set to mirroring (%d)\n",
+@@ -3141,8 +3138,6 @@ static int raid1_run(struct mddev *mddev)
+ 			continue;
+ 		disk_stack_limits(mddev->gendisk, rdev->bdev,
+ 				  rdev->data_offset << 9);
+-		if (bdev_max_discard_sectors(rdev->bdev))
+-			discard_supported = true;
+ 	}
+ 
+ 	mddev->degraded = 0;
+@@ -3179,15 +3174,6 @@ static int raid1_run(struct mddev *mddev)
+ 
+ 	md_set_array_sectors(mddev, raid1_size(mddev, 0, 0));
+ 
+-	if (mddev->queue) {
+-		if (discard_supported)
+-			blk_queue_flag_set(QUEUE_FLAG_DISCARD,
+-						mddev->queue);
+-		else
+-			blk_queue_flag_clear(QUEUE_FLAG_DISCARD,
+-						  mddev->queue);
+-	}
+-
+ 	ret = md_integrity_register(mddev);
+ 	if (ret) {
+ 		md_unregister_thread(&mddev->thread);
+diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+index eaa86c6a35a55..36a460015cf58 100644
+--- a/drivers/md/raid10.c
++++ b/drivers/md/raid10.c
+@@ -2144,8 +2144,6 @@ static int raid10_add_disk(struct mddev *mddev, struct md_rdev *rdev)
+ 		rcu_assign_pointer(p->rdev, rdev);
+ 		break;
+ 	}
+-	if (mddev->queue && bdev_max_discard_sectors(rdev->bdev))
+-		blk_queue_flag_set(QUEUE_FLAG_DISCARD, mddev->queue);
+ 
+ 	print_conf(conf);
+ 	return err;
+@@ -4069,7 +4067,6 @@ static int raid10_run(struct mddev *mddev)
+ 	sector_t size;
+ 	sector_t min_offset_diff = 0;
+ 	int first = 1;
+-	bool discard_supported = false;
+ 
+ 	if (mddev_init_writes_pending(mddev) < 0)
+ 		return -ENOMEM;
+@@ -4140,20 +4137,9 @@ static int raid10_run(struct mddev *mddev)
+ 					  rdev->data_offset << 9);
+ 
+ 		disk->head_position = 0;
+-
+-		if (bdev_max_discard_sectors(rdev->bdev))
+-			discard_supported = true;
+ 		first = 0;
+ 	}
+ 
+-	if (mddev->queue) {
+-		if (discard_supported)
+-			blk_queue_flag_set(QUEUE_FLAG_DISCARD,
+-						mddev->queue);
+-		else
+-			blk_queue_flag_clear(QUEUE_FLAG_DISCARD,
+-						  mddev->queue);
+-	}
+ 	/* need to check that every block has at least one working mirror */
+ 	if (!enough(conf, -1)) {
+ 		pr_err("md/raid10:%s: not enough operational mirrors.\n",
+diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
+index 0bbae0e638666..59f91e392a2ae 100644
+--- a/drivers/md/raid5.c
++++ b/drivers/md/raid5.c
+@@ -7776,14 +7776,10 @@ static int raid5_run(struct mddev *mddev)
+ 		 * A better idea might be to turn DISCARD into WRITE_ZEROES
+ 		 * requests, as that is required to be safe.
+ 		 */
+-		if (devices_handle_discard_safely &&
+-		    mddev->queue->limits.max_discard_sectors >= (stripe >> 9) &&
+-		    mddev->queue->limits.discard_granularity >= stripe)
+-			blk_queue_flag_set(QUEUE_FLAG_DISCARD,
+-						mddev->queue);
+-		else
+-			blk_queue_flag_clear(QUEUE_FLAG_DISCARD,
+-						mddev->queue);
++		if (!devices_handle_discard_safely ||
++		    mddev->queue->limits.max_discard_sectors < (stripe >> 9) ||
++		    mddev->queue->limits.discard_granularity < stripe)
++			blk_queue_max_discard_sectors(mddev->queue, 0);
+ 
+ 		blk_queue_max_hw_sectors(mddev->queue, UINT_MAX);
+ 	}
+diff --git a/drivers/mmc/core/queue.c b/drivers/mmc/core/queue.c
+index c69b2d9df6f16..cac6315010a3d 100644
+--- a/drivers/mmc/core/queue.c
++++ b/drivers/mmc/core/queue.c
+@@ -183,7 +183,6 @@ static void mmc_queue_setup_discard(struct request_queue *q,
+ 	if (!max_discard)
+ 		return;
+ 
+-	blk_queue_flag_set(QUEUE_FLAG_DISCARD, q);
+ 	blk_queue_max_discard_sectors(q, max_discard);
+ 	q->limits.discard_granularity = card->pref_erase << 9;
+ 	/* granularity must not be greater than max. discard */
+diff --git a/drivers/mtd/mtd_blkdevs.c b/drivers/mtd/mtd_blkdevs.c
+index 64d2b093f114b..f731721114655 100644
+--- a/drivers/mtd/mtd_blkdevs.c
++++ b/drivers/mtd/mtd_blkdevs.c
+@@ -377,7 +377,6 @@ int add_mtd_blktrans_dev(struct mtd_blktrans_dev *new)
+ 	blk_queue_flag_clear(QUEUE_FLAG_ADD_RANDOM, new->rq);
+ 
+ 	if (tr->discard) {
+-		blk_queue_flag_set(QUEUE_FLAG_DISCARD, new->rq);
+ 		blk_queue_max_discard_sectors(new->rq, UINT_MAX);
+ 		new->rq->limits.discard_granularity = tr->blksize;
+ 	}
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index efb85c6d8e2d5..7e07dd69262a7 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -1607,10 +1607,8 @@ static void nvme_config_discard(struct gendisk *disk, struct nvme_ns *ns)
+ 	struct request_queue *queue = disk->queue;
+ 	u32 size = queue_logical_block_size(queue);
+ 
+-	if (ctrl->max_discard_sectors == 0) {
+-		blk_queue_flag_clear(QUEUE_FLAG_DISCARD, queue);
++	if (ctrl->max_discard_sectors == 0)
+ 		return;
+-	}
+ 
+ 	BUILD_BUG_ON(PAGE_SIZE / sizeof(struct nvme_dsm_range) <
+ 			NVME_DSM_MAX_RANGES);
+@@ -1619,7 +1617,7 @@ static void nvme_config_discard(struct gendisk *disk, struct nvme_ns *ns)
+ 	queue->limits.discard_granularity = size;
+ 
+ 	/* If discard is already enabled, don't reset queue limits */
+-	if (blk_queue_flag_test_and_set(QUEUE_FLAG_DISCARD, queue))
++	if (queue->limits.max_discard_sectors)
+ 		return;
+ 
+ 	blk_queue_max_discard_sectors(queue, ctrl->max_discard_sectors);
+diff --git a/drivers/s390/block/dasd_fba.c b/drivers/s390/block/dasd_fba.c
+index e084f4deddddd..8bd5665db9198 100644
+--- a/drivers/s390/block/dasd_fba.c
++++ b/drivers/s390/block/dasd_fba.c
+@@ -791,7 +791,6 @@ static void dasd_fba_setup_blk_queue(struct dasd_block *block)
+ 
+ 	blk_queue_max_discard_sectors(q, max_discard_sectors);
+ 	blk_queue_max_write_zeroes_sectors(q, max_discard_sectors);
+-	blk_queue_flag_set(QUEUE_FLAG_DISCARD, q);
  }
  
-+static inline unsigned int bdev_discard_granularity(struct block_device *bdev)
-+{
-+	return bdev_get_queue(bdev)->limits.discard_granularity;
-+}
-+
- static inline unsigned int bdev_write_zeroes_sectors(struct block_device *bdev)
- {
- 	struct request_queue *q = bdev_get_queue(bdev);
+ static int dasd_fba_pe_handler(struct dasd_device *device,
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index a390679cf4584..444479657b7fd 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -797,7 +797,6 @@ static void sd_config_discard(struct scsi_disk *sdkp, unsigned int mode)
+ 	case SD_LBP_FULL:
+ 	case SD_LBP_DISABLE:
+ 		blk_queue_max_discard_sectors(q, 0);
+-		blk_queue_flag_clear(QUEUE_FLAG_DISCARD, q);
+ 		return;
+ 
+ 	case SD_LBP_UNMAP:
+@@ -830,7 +829,6 @@ static void sd_config_discard(struct scsi_disk *sdkp, unsigned int mode)
+ 	}
+ 
+ 	blk_queue_max_discard_sectors(q, max_blocks * (logical_block_size >> 9));
+-	blk_queue_flag_set(QUEUE_FLAG_DISCARD, q);
+ }
+ 
+ static blk_status_t sd_setup_unmap_cmnd(struct scsi_cmnd *cmd)
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index 7b9c0cf95d2d5..f1cf557ea20ef 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -540,7 +540,6 @@ struct request_queue {
+ #define QUEUE_FLAG_NONROT	6	/* non-rotational device (SSD) */
+ #define QUEUE_FLAG_VIRT		QUEUE_FLAG_NONROT /* paravirt device */
+ #define QUEUE_FLAG_IO_STAT	7	/* do disk/partitions IO accounting */
+-#define QUEUE_FLAG_DISCARD	8	/* supports DISCARD */
+ #define QUEUE_FLAG_NOXMERGES	9	/* No extended merges */
+ #define QUEUE_FLAG_ADD_RANDOM	10	/* Contributes to random pool */
+ #define QUEUE_FLAG_SECERASE	11	/* supports secure erase */
+@@ -582,7 +581,6 @@ bool blk_queue_flag_test_and_set(unsigned int flag, struct request_queue *q);
+ 	test_bit(QUEUE_FLAG_STABLE_WRITES, &(q)->queue_flags)
+ #define blk_queue_io_stat(q)	test_bit(QUEUE_FLAG_IO_STAT, &(q)->queue_flags)
+ #define blk_queue_add_random(q)	test_bit(QUEUE_FLAG_ADD_RANDOM, &(q)->queue_flags)
+-#define blk_queue_discard(q)	test_bit(QUEUE_FLAG_DISCARD, &(q)->queue_flags)
+ #define blk_queue_zone_resetall(q)	\
+ 	test_bit(QUEUE_FLAG_ZONE_RESETALL, &(q)->queue_flags)
+ #define blk_queue_secure_erase(q) \
 -- 
 2.30.2
 
