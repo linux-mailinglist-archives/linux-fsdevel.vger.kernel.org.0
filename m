@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CA53F4F592D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Apr 2022 11:21:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA49E4F595E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Apr 2022 11:23:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230448AbiDFJRe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Apr 2022 05:17:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52082 "EHLO
+        id S1392547AbiDFJSi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Apr 2022 05:18:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52344 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1389884AbiDFJEN (ORCPT
+        with ESMTP id S1441971AbiDFJEX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Apr 2022 05:04:13 -0400
+        Wed, 6 Apr 2022 05:04:23 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 445DF485E5D;
-        Tue,  5 Apr 2022 23:06:49 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91A5147D58B;
+        Tue,  5 Apr 2022 23:06:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=M87611C6i/ov1/eZb42tZHfhB+4TDGyoM3tVyFqdBW8=; b=K8zhFyJNpfgn61EWvQNSpZGhoz
-        IsW4d6jPg/o8RKdUEsY2I/0tp3DUigRRARrtQZS25XHPg6Ev8uZ5v/1QUVxcxn0UGRSq3QsUvtq8v
-        m/wMNTUuZ0otna4wKyCKR9KuxhJuJrTxMCeQTsVHCLUaBLTq/yY7C/2YjXGPofV9QR6/pigrTQvyL
-        +7FqGR+5akCXPC49M0KmVYykqYBaCN6qbVITFsaW/p3jcsFmAJQrrYOqAHtx2ogkbDQplnGNGSG9t
-        hp4bnoEMlp1dxurHyPf38IfpaJHQv16bHjbw1cMsHDW5/ZArceH5PRjetepYbBzoAtUPy5j6Xetj9
-        Onlv8nZg==;
+        bh=QrovNweyJZRj1GFp6iCnhs45fbus+PzPDKXpCmbtDwo=; b=z5LFDFUbPWb3WO37mO8MwjoQU9
+        uS3ZTdwAnf66Lx+zcAQQUC3qALjNiBk8vq/QdAnBrT+kiIx7+bGfq0K3/JsrX94g6GOI1PxnGLDP0
+        TpbSMnVMCM12vlH2ieULysyOQ8eqGhAM7WSZgubyaijH46PkBLtZHwMl/DJ+SL/fL62RhXRHRBZ07
+        gPidH4d0GBhOycIbS6/qs679s/JDzVaH5pxN2YMNY1qvOfu3TMWQ9LeQbRMDybW1HFyANyEbyeoY8
+        bjiiLGRwO/33fN9Ma7LaMPzza6Yu9DF6RQqn94ZGs2knBiL0yIxk5iak06Qk6gWjflRAaNPj9+l6R
+        kccMsInA==;
 Received: from 213-225-3-188.nat.highway.a1.net ([213.225.3.188] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nbyoS-003vjO-9L; Wed, 06 Apr 2022 06:06:41 +0000
+        id 1nbyoX-003vn4-0d; Wed, 06 Apr 2022 06:06:45 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     dm-devel@redhat.com, linux-xfs@vger.kernel.org,
@@ -44,9 +44,9 @@ Cc:     dm-devel@redhat.com, linux-xfs@vger.kernel.org,
         cluster-devel@redhat.com, jfs-discussion@lists.sourceforge.net,
         linux-nilfs@vger.kernel.org, ntfs3@lists.linux.dev,
         ocfs2-devel@oss.oracle.com, linux-mm@kvack.org
-Subject: [PATCH 21/27] block: move {bdev,queue_limit}_discard_alignment out of line
-Date:   Wed,  6 Apr 2022 08:05:10 +0200
-Message-Id: <20220406060516.409838-22-hch@lst.de>
+Subject: [PATCH 22/27] block: refactor discard bio size limiting
+Date:   Wed,  6 Apr 2022 08:05:11 +0200
+Message-Id: <20220406060516.409838-23-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220406060516.409838-1-hch@lst.de>
 References: <20220406060516.409838-1-hch@lst.de>
@@ -63,110 +63,125 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-No need to inline these fairly larger helpers.  Also fix the return value
-to be unsigned, just like the field in struct queue_limits.
+Move all the logic to limit the discard bio size into a common helper
+so that it is better documented.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- block/blk-settings.c   | 35 +++++++++++++++++++++++++++++++++++
- include/linux/blkdev.h | 34 +---------------------------------
- 2 files changed, 36 insertions(+), 33 deletions(-)
+ block/blk-lib.c | 59 ++++++++++++++++++++++++-------------------------
+ block/blk.h     | 14 ------------
+ 2 files changed, 29 insertions(+), 44 deletions(-)
 
-diff --git a/block/blk-settings.c b/block/blk-settings.c
-index 94410a13c0dee..fd83d674afd0a 100644
---- a/block/blk-settings.c
-+++ b/block/blk-settings.c
-@@ -478,6 +478,30 @@ static int queue_limit_alignment_offset(struct queue_limits *lim,
- 	return (granularity + lim->alignment_offset - alignment) % granularity;
- }
+diff --git a/block/blk-lib.c b/block/blk-lib.c
+index 237d60d8b5857..2ae32a722851c 100644
+--- a/block/blk-lib.c
++++ b/block/blk-lib.c
+@@ -10,6 +10,32 @@
  
-+static unsigned int queue_limit_discard_alignment(struct queue_limits *lim,
-+		sector_t sector)
+ #include "blk.h"
+ 
++static sector_t bio_discard_limit(struct block_device *bdev, sector_t sector)
 +{
-+	unsigned int alignment, granularity, offset;
-+
-+	if (!lim->max_discard_sectors)
-+		return 0;
-+
-+	/* Why are these in bytes, not sectors? */
-+	alignment = lim->discard_alignment >> SECTOR_SHIFT;
-+	granularity = lim->discard_granularity >> SECTOR_SHIFT;
-+	if (!granularity)
-+		return 0;
-+
-+	/* Offset of the partition start in 'granularity' sectors */
-+	offset = sector_div(sector, granularity);
-+
-+	/* And why do we do this modulus *again* in blkdev_issue_discard()? */
-+	offset = (granularity + alignment - offset) % granularity;
-+
-+	/* Turn it back into bytes, gaah */
-+	return offset << SECTOR_SHIFT;
-+}
-+
- static unsigned int blk_round_down_sectors(unsigned int sectors, unsigned int lbs)
- {
- 	sectors = round_down(sectors, lbs >> SECTOR_SHIFT);
-@@ -924,3 +948,14 @@ int bdev_alignment_offset(struct block_device *bdev)
- 	return q->limits.alignment_offset;
- }
- EXPORT_SYMBOL_GPL(bdev_alignment_offset);
-+
-+unsigned int bdev_discard_alignment(struct block_device *bdev)
-+{
-+	struct request_queue *q = bdev_get_queue(bdev);
++	unsigned int discard_granularity =
++		bdev_get_queue(bdev)->limits.discard_granularity;
++	sector_t granularity_aligned_sector;
 +
 +	if (bdev_is_partition(bdev))
-+		return queue_limit_discard_alignment(&q->limits,
-+				bdev->bd_start_sect);
-+	return q->limits.discard_alignment;
++		sector += bdev->bd_start_sect;
++
++	granularity_aligned_sector =
++		round_up(sector, discard_granularity >> SECTOR_SHIFT);
++
++	/*
++	 * Make sure subsequent bios start aligned to the discard granularity if
++	 * it needs to be split.
++	 */
++	if (granularity_aligned_sector != sector)
++		return granularity_aligned_sector - sector;
++
++	/*
++	 * Align the bio size to the discard granularity to make splitting the bio
++	 * at discard granularity boundaries easier in the driver if needed.
++	 */
++	return round_down(UINT_MAX, discard_granularity) >> SECTOR_SHIFT;
 +}
-+EXPORT_SYMBOL_GPL(bdev_discard_alignment);
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 5a9b7aeda010b..34b1cfd067421 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -1252,39 +1252,7 @@ bdev_zone_write_granularity(struct block_device *bdev)
++
+ int __blkdev_issue_discard(struct block_device *bdev, sector_t sector,
+ 		sector_t nr_sects, gfp_t gfp_mask, int flags,
+ 		struct bio **biop)
+@@ -17,7 +43,7 @@ int __blkdev_issue_discard(struct block_device *bdev, sector_t sector,
+ 	struct request_queue *q = bdev_get_queue(bdev);
+ 	struct bio *bio = *biop;
+ 	unsigned int op;
+-	sector_t bs_mask, part_offset = 0;
++	sector_t bs_mask;
+ 
+ 	if (bdev_read_only(bdev))
+ 		return -EPERM;
+@@ -48,36 +74,9 @@ int __blkdev_issue_discard(struct block_device *bdev, sector_t sector,
+ 	if (!nr_sects)
+ 		return -EINVAL;
+ 
+-	/* In case the discard request is in a partition */
+-	if (bdev_is_partition(bdev))
+-		part_offset = bdev->bd_start_sect;
+-
+ 	while (nr_sects) {
+-		sector_t granularity_aligned_lba, req_sects;
+-		sector_t sector_mapped = sector + part_offset;
+-
+-		granularity_aligned_lba = round_up(sector_mapped,
+-				q->limits.discard_granularity >> SECTOR_SHIFT);
+-
+-		/*
+-		 * Check whether the discard bio starts at a discard_granularity
+-		 * aligned LBA,
+-		 * - If no: set (granularity_aligned_lba - sector_mapped) to
+-		 *   bi_size of the first split bio, then the second bio will
+-		 *   start at a discard_granularity aligned LBA on the device.
+-		 * - If yes: use bio_aligned_discard_max_sectors() as the max
+-		 *   possible bi_size of the first split bio. Then when this bio
+-		 *   is split in device drive, the split ones are very probably
+-		 *   to be aligned to discard_granularity of the device's queue.
+-		 */
+-		if (granularity_aligned_lba == sector_mapped)
+-			req_sects = min_t(sector_t, nr_sects,
+-					  bio_aligned_discard_max_sectors(q));
+-		else
+-			req_sects = min_t(sector_t, nr_sects,
+-					  granularity_aligned_lba - sector_mapped);
+-
+-		WARN_ON_ONCE((req_sects << 9) > UINT_MAX);
++		sector_t req_sects =
++			min(nr_sects, bio_discard_limit(bdev, sector));
+ 
+ 		bio = blk_next_bio(bio, bdev, 0, op, gfp_mask);
+ 		bio->bi_iter.bi_sector = sector;
+diff --git a/block/blk.h b/block/blk.h
+index 8ccbc6e076369..1fdc1d28e6d60 100644
+--- a/block/blk.h
++++ b/block/blk.h
+@@ -346,20 +346,6 @@ static inline unsigned int bio_allowed_max_sectors(struct request_queue *q)
+ 	return round_down(UINT_MAX, queue_logical_block_size(q)) >> 9;
  }
  
- int bdev_alignment_offset(struct block_device *bdev);
--
--static inline int queue_limit_discard_alignment(struct queue_limits *lim, sector_t sector)
+-/*
+- * The max bio size which is aligned to q->limits.discard_granularity. This
+- * is a hint to split large discard bio in generic block layer, then if device
+- * driver needs to split the discard bio into smaller ones, their bi_size can
+- * be very probably and easily aligned to discard_granularity of the device's
+- * queue.
+- */
+-static inline unsigned int bio_aligned_discard_max_sectors(
+-					struct request_queue *q)
 -{
--	unsigned int alignment, granularity, offset;
--
--	if (!lim->max_discard_sectors)
--		return 0;
--
--	/* Why are these in bytes, not sectors? */
--	alignment = lim->discard_alignment >> SECTOR_SHIFT;
--	granularity = lim->discard_granularity >> SECTOR_SHIFT;
--	if (!granularity)
--		return 0;
--
--	/* Offset of the partition start in 'granularity' sectors */
--	offset = sector_div(sector, granularity);
--
--	/* And why do we do this modulus *again* in blkdev_issue_discard()? */
--	offset = (granularity + alignment - offset) % granularity;
--
--	/* Turn it back into bytes, gaah */
--	return offset << SECTOR_SHIFT;
+-	return round_down(UINT_MAX, q->limits.discard_granularity) >>
+-			SECTOR_SHIFT;
 -}
 -
--static inline int bdev_discard_alignment(struct block_device *bdev)
--{
--	struct request_queue *q = bdev_get_queue(bdev);
--
--	if (bdev_is_partition(bdev))
--		return queue_limit_discard_alignment(&q->limits,
--				bdev->bd_start_sect);
--	return q->limits.discard_alignment;
--}
-+unsigned int bdev_discard_alignment(struct block_device *bdev);
- 
- static inline unsigned int bdev_write_zeroes_sectors(struct block_device *bdev)
- {
+ /*
+  * Internal io_context interface
+  */
 -- 
 2.30.2
 
