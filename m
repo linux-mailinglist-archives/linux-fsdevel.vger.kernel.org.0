@@ -2,44 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 08D4C4F6DE5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Apr 2022 00:40:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17F414F6DEA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Apr 2022 00:41:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236301AbiDFWl4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Apr 2022 18:41:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38322 "EHLO
+        id S237140AbiDFWnc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Apr 2022 18:43:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229957AbiDFWlz (ORCPT
+        with ESMTP id S229957AbiDFWnb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Apr 2022 18:41:55 -0400
+        Wed, 6 Apr 2022 18:43:31 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC378A88AD;
-        Wed,  6 Apr 2022 15:39:57 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D41D9D95C8;
+        Wed,  6 Apr 2022 15:41:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
         MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=idC6pWqopksYm3NGMnw9eBdiv+RE1amfMyzk2187tLE=; b=WgwbXRyfvz5QsQmPVdpFr7wl2M
-        dJwhAVrsEtq228j5L1Fi/GKKwIgeJegiDDf1lPOrU4CSKK7WvkGaK7dgB/cspm4VLkZaE0R1Xoux1
-        0C4mEDoM6yN0lKSujNNU8nOZtJsrRJlam15SNyvmZge+lqBLO2Xe4ZobOLCokJvzVJ7oadeT5uvL7
-        psLIIcngozql9DOGaDV7tFvWffFM0f3MKXoXwgv4Jo3VBKDfNQ0nDr+hAHC5Mc528i+1bXVlgHQKE
-        P0Fy2H0aTJcDdMwBNuixJqz4I5/rIFH7wji8l/GGZZUy5ynY/2LurjqJ1unK/3teqptGIhEld2gL7
-        RsQxWmuQ==;
+        bh=+WIA2q0pmyXTrZ0eOlA9UZBi8s5TS5ILt11uq0tkv4M=; b=gpwnf3R91zYcnEE8S+QFl4Pyj8
+        rO/0fZBeKQ9GsdWtpD5cre6S+irKUoOhJ5bq4HUb5K4rxkIGv8ZNMc0LFhRgT6tSnUjC802MqJeK+
+        gmHC2v4eKWMX9ajIkyiJtB7oT+DKpTysfX+CWNVo72qLKtczkUpOcp8hqTX4/3lJ+bj0yDrklmUGh
+        KOPzXJv8WZthp74yQV7tIet98IgKZkvQLd6REiTjTRVk4lU2vX+jQykweMK2BDohchavVLXwywxij
+        sLwEuCW7x5KC3ECovNLHguysxCA/06V9B9P0HnMW1vCiW0X/UGHpW/mDmQ+5h+KBVAFE9bFVw3Nci
+        0pQwyEOA==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1ncEJb-0089XL-4k; Wed, 06 Apr 2022 22:39:51 +0000
-Date:   Wed, 6 Apr 2022 15:39:51 -0700
+        id 1ncEL5-0089eh-7f; Wed, 06 Apr 2022 22:41:23 +0000
+Date:   Wed, 6 Apr 2022 15:41:23 -0700
 From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Liao Hua <liaohua4@huawei.com>
-Cc:     keescook@chromium.org, yzaikin@google.com, nixiaoming@huawei.com,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        wangfangpeng1@huawei.com
-Subject: Re: [PATCH sysctl-next v2] latencytop: move sysctl to its own file
-Message-ID: <Yk4Wt4sVICvW+ksa@bombadil.infradead.org>
-References: <20220223094710.103378-1-liaohua4@huawei.com>
+To:     Daniel Borkmann <daniel@iogearbox.net>
+Cc:     Yan Zhu <zhuyan34@huawei.com>, andrii@kernel.org, ast@kernel.org,
+        bpf@vger.kernel.org, john.fastabend@gmail.com, kafai@fb.com,
+        keescook@chromium.org, kpsingh@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        liucheng32@huawei.com, netdev@vger.kernel.org,
+        nixiaoming@huawei.com, songliubraving@fb.com,
+        xiechengliang1@huawei.com, yhs@fb.com, yzaikin@google.com,
+        zengweilin@huawei.com
+Subject: Re: [PATCH v3 sysctl-next] bpf: move bpf sysctls from
+ kernel/sysctl.c to bpf module
+Message-ID: <Yk4XE/hKGOQs5oq0@bombadil.infradead.org>
+References: <Yh1dtBTeRtjD0eGp@bombadil.infradead.org>
+ <20220302020412.128772-1-zhuyan34@huawei.com>
+ <Yh/V5QN1OhN9IKsI@bombadil.infradead.org>
+ <d8843ebe-b8df-8aa0-a930-c0742af98157@iogearbox.net>
+ <YiFb/lZzPDIIf2rC@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220223094710.103378-1-liaohua4@huawei.com>
+In-Reply-To: <YiFb/lZzPDIIf2rC@bombadil.infradead.org>
 Sender: Luis Chamberlain <mcgrof@infradead.org>
 X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
@@ -51,14 +61,40 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Feb 23, 2022 at 05:47:10PM +0800, Liao Hua wrote:
-> From: liaohua <liaohua4@huawei.com>
+On Thu, Mar 03, 2022 at 04:23:26PM -0800, Luis Chamberlain wrote:
+> On Fri, Mar 04, 2022 at 12:44:48AM +0100, Daniel Borkmann wrote:
+> > On 3/2/22 9:39 PM, Luis Chamberlain wrote:
+> > > On Wed, Mar 02, 2022 at 10:04:12AM +0800, Yan Zhu wrote:
+> > > > We're moving sysctls out of kernel/sysctl.c as its a mess. We
+> > > > already moved all filesystem sysctls out. And with time the goal is
+> > > > to move all sysctls out to their own susbsystem/actual user.
+> > > > 
+> > > > kernel/sysctl.c has grown to an insane mess and its easy to run
+> > > > into conflicts with it. The effort to move them out is part of this.
+> > > > 
+> > > > Signed-off-by: Yan Zhu <zhuyan34@huawei.com>
+> > > 
+> > > Daniel, let me know if this makes more sense now, and if so I can
+> > > offer take it through sysctl-next to avoid conflicts more sysctl knobs
+> > > get moved out from kernel/sysctl.c.
+> > 
+> > If this is a whole ongoing effort rather than drive-by patch,
 > 
-> This moves latencytop sysctl to kernel/latencytop.c
+> It is ongoing effort, but it will take many releases before we tidy
+> this whole thing up.
 > 
-> Signed-off-by: liaohua <liaohua4@huawei.com>
+> > then it's
+> > fine with me. 
+> 
+> OK great. Thanks for understanding the mess.
+> 
+> > Btw, the patch itself should also drop the linux/bpf.h
+> > include from kernel/sysctl.c since nothing else is using it after the
+> > patch.
+> 
+> I'll let Yan deal with that.
 
-Please base your patch on the latest sysctl-next and resubmit.
+Yan, feel free to resubmit based on sysctl-next [0].
 
 [0] https://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux.git/log/?h=sysctl-next
 
