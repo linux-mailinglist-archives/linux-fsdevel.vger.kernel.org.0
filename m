@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 584914F591E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Apr 2022 11:21:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2E704F5944
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  6 Apr 2022 11:22:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238159AbiDFJRJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Apr 2022 05:17:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52402 "EHLO
+        id S1385602AbiDFJSB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Apr 2022 05:18:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353845AbiDFJCt (ORCPT
+        with ESMTP id S1354378AbiDFJCu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Apr 2022 05:02:49 -0400
+        Wed, 6 Apr 2022 05:02:50 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D1E645C21B;
-        Tue,  5 Apr 2022 23:05:53 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4878B45C21D;
+        Tue,  5 Apr 2022 23:05:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=tRabeefOvFWuX0UGmN5W80/SEitu80or+ujXPxbBifU=; b=AOm4sjiAlP6tD5BDPG+nlvSOnr
-        a+eqmQqJ44Gu3hNVff0rp/i9EstWS6YUe61HZmqK+NgAP9RCVrUroq8zVL8cKV3zpQ5XL0vyJlmRK
-        NzewYB+71v3WGLpgxvDoCFkqDQNPtIyV060z8fdSvtAa8bXvOhTJAGc1uVeds1Z8SanWEw05KGQ3W
-        UFB/Fg7NmKib5Uv9tykTUx2ZTObJAhnLIWQguQ08ldvRIaVpq8BqAf/QlCjLYPeugVNgGqcQ31x4x
-        JN/Z3K777fE2OazN7ZPpQSN18xdxSBZinMwtnPgc6nyTQwlijNE+ESpNHGBXjEkXAjangL33mjfc5
-        dZArx7ow==;
+        bh=OGJvHxXgCvw9/l2/0Y6T0ivupEa5/VICLVgDi4pj6zk=; b=SGjGHiHxXhTBb30pFVsmtYoofW
+        AXRkPwj9L+IToaoBSWN/RSxSSuBK+pJDBU/ojpwlgCD+rUR4zw9pN8EFDE29pkKOW63auHTvvxwCA
+        PC6e0Da7Eiu1hFS/uIysLLSexy3aaIErbCMYeQH3HFSJ8bABmb6owDVYICpwPc9JKy6Ef8YTyDd/h
+        SpNQxuUWxQhBUfv6Iv5iH1SH6hdeTIk5hPArvSrbVe9a1T+UDbpIkKauh2JPDG7p1MdAcg6ES2qNP
+        pANlA2vT9XhPzqH+DYD3Rh3z9Pdg8L6xQ3HlNdFcmLcX+EpDCJ45aTaIIck6oVGd/w30i6T7ad6VR
+        N9+UdC5Q==;
 Received: from 213-225-3-188.nat.highway.a1.net ([213.225.3.188] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nbyne-003v04-Nu; Wed, 06 Apr 2022 06:05:51 +0000
+        id 1nbyni-003v3I-Ik; Wed, 06 Apr 2022 06:05:55 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     dm-devel@redhat.com, linux-xfs@vger.kernel.org,
@@ -44,9 +44,9 @@ Cc:     dm-devel@redhat.com, linux-xfs@vger.kernel.org,
         cluster-devel@redhat.com, jfs-discussion@lists.sourceforge.net,
         linux-nilfs@vger.kernel.org, ntfs3@lists.linux.dev,
         ocfs2-devel@oss.oracle.com, linux-mm@kvack.org
-Subject: [PATCH 08/27] ntfs3: use bdev_logical_block_size instead of open coding it
-Date:   Wed,  6 Apr 2022 08:04:57 +0200
-Message-Id: <20220406060516.409838-9-hch@lst.de>
+Subject: [PATCH 09/27] mm: use bdev_is_zoned in claim_swapfile
+Date:   Wed,  6 Apr 2022 08:04:58 +0200
+Message-Id: <20220406060516.409838-10-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220406060516.409838-1-hch@lst.de>
 References: <20220406060516.409838-1-hch@lst.de>
@@ -63,24 +63,26 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Use the bdev based helper instead of poking into the queue.
+
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/ntfs3/super.c | 2 +-
+ mm/swapfile.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
-index 278dcf5024102..cd30e81abbce0 100644
---- a/fs/ntfs3/super.c
-+++ b/fs/ntfs3/super.c
-@@ -920,7 +920,7 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
- 	}
- 
- 	/* Parse boot. */
--	err = ntfs_init_from_boot(sb, rq ? queue_logical_block_size(rq) : 512,
-+	err = ntfs_init_from_boot(sb, bdev_logical_block_size(bdev),
- 				  bdev_nr_bytes(bdev));
- 	if (err)
- 		goto out;
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index 63c61f8b26118..4c7537162af5e 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -2761,7 +2761,7 @@ static int claim_swapfile(struct swap_info_struct *p, struct inode *inode)
+ 		 * write only restriction.  Hence zoned block devices are not
+ 		 * suitable for swapping.  Disallow them here.
+ 		 */
+-		if (blk_queue_is_zoned(p->bdev->bd_disk->queue))
++		if (bdev_is_zoned(p->bdev))
+ 			return -EINVAL;
+ 		p->flags |= SWP_BLKDEV;
+ 	} else if (S_ISREG(inode->i_mode)) {
 -- 
 2.30.2
 
