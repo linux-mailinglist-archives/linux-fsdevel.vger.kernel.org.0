@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D25CE4F6FBF
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Apr 2022 03:13:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 976C44F705E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Apr 2022 03:19:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236014AbiDGBPG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Apr 2022 21:15:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35156 "EHLO
+        id S238373AbiDGBV2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Apr 2022 21:21:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234590AbiDGBOd (ORCPT
+        with ESMTP id S237747AbiDGBRZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Apr 2022 21:14:33 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B95818649C;
-        Wed,  6 Apr 2022 18:11:25 -0700 (PDT)
+        Wed, 6 Apr 2022 21:17:25 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86304181DAB;
+        Wed,  6 Apr 2022 18:12:37 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 5D5E8CE2684;
-        Thu,  7 Apr 2022 01:11:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA948C385A3;
-        Thu,  7 Apr 2022 01:11:21 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 3D7E2B82692;
+        Thu,  7 Apr 2022 01:12:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF0E8C385A7;
+        Thu,  7 Apr 2022 01:12:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649293882;
-        bh=zeyKZE8740RxC0fLVa0ngmzOPV4kdSKGulQZT2SyRhU=;
+        s=k20201202; t=1649293955;
+        bh=VSRO70TZ199k17jJUOnogiQ4vnu5h92bYdL2dcM1m8Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QRImdtlKzCkcxpHCXJMnxLQV9oK+iiKN8MDv6qkCH+fx7BDGoc6IeG4KWOHNzXd4R
-         9xFzZaSHA4CMU707HMqNywJaCi8YvTnXhFH4a1P4t3nVNkqM49hCPO8fl598QMEVSS
-         GTAtaN59qsd8iZhxRl2H+XkXsEI0UwFH4gbUUH3U5I3XuSgk6w0bRnD9vfEOsgLsxc
-         z2wrBbbFOXwAsZ3nS0gkIA/FRT1CvoI/yCLG64LA+6O865TRTq+jX3K8DnfuVayZdv
-         2SUcs5GxsJfvdQZnmrprrLEKbA6m+08Jn42WESg8C6EtwkpniU7OFnUvmXPmUmoU6/
-         ruUMdzCOGv3rA==
+        b=BSOsiALsourhw6PyIrSiqfR5CBxijJxRsVi7tMxq2DnzwAB23BzIScTS7bX4t2YkP
+         F4w6F1VWe8kdLWDxTgLLP3BMJVjBUT+BMz/TJLA+RaHjzbC7Q7fkSqbqsLRW+IBSZl
+         xnDr+AM/Tk61KERHHiL0m8CGz5MznGU0fTmMpVw+va0ZOJoZGPG3G6Rzb49BZnLezt
+         uKWwzvbCYS82WUqabBLVUv6pXux9d4E/+e0S42wSdG2PB9gP1n7807TVcmsmap6RGf
+         hpjzYHLTyZtAUkPK7D/wuaMcCZq8MWGItt6FsdofhwGmnneECft+Jj7x0fh8+tPyin
+         0qg0PiafllbTA==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Guo Xuenan <guoxuenan@huawei.com>, Hulk Robot <hulkci@huawei.com>,
@@ -39,12 +39,12 @@ Cc:     Guo Xuenan <guoxuenan@huawei.com>, Hulk Robot <hulkci@huawei.com>,
         "Darrick J . Wong" <djwong@kernel.org>,
         Sasha Levin <sashal@kernel.org>, viro@zeniv.linux.org.uk,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.17 25/31] fs: fix an infinite loop in iomap_fiemap
-Date:   Wed,  6 Apr 2022 21:10:23 -0400
-Message-Id: <20220407011029.113321-25-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.16 24/30] fs: fix an infinite loop in iomap_fiemap
+Date:   Wed,  6 Apr 2022 21:11:34 -0400
+Message-Id: <20220407011140.113856-24-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220407011029.113321-1-sashal@kernel.org>
-References: <20220407011029.113321-1-sashal@kernel.org>
+In-Reply-To: <20220407011140.113856-1-sashal@kernel.org>
+References: <20220407011140.113856-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -111,7 +111,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/fs/ioctl.c b/fs/ioctl.c
-index 1ed097e94af2..85f7e4ee6924 100644
+index 504e69578112..e0a3455f9a0f 100644
 --- a/fs/ioctl.c
 +++ b/fs/ioctl.c
 @@ -173,7 +173,7 @@ int fiemap_prep(struct inode *inode, struct fiemap_extent_info *fieinfo,
