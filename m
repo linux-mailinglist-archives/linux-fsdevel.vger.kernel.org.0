@@ -2,160 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7945B4F75A5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Apr 2022 08:09:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 156B14F7676
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Apr 2022 08:42:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236896AbiDGGLl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Apr 2022 02:11:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59462 "EHLO
+        id S238723AbiDGGoF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Apr 2022 02:44:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229698AbiDGGLi (ORCPT
+        with ESMTP id S231828AbiDGGoE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Apr 2022 02:11:38 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED00B190B5A;
-        Wed,  6 Apr 2022 23:09:38 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id A29E1210E4;
-        Thu,  7 Apr 2022 06:09:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1649311777; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        Thu, 7 Apr 2022 02:44:04 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1DD8411BD97
+        for <linux-fsdevel@vger.kernel.org>; Wed,  6 Apr 2022 23:42:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1649313724;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=JT4UvlPRTF1rf1PNVYTQl5oxY75vXHbMm6cxI+vJlzM=;
-        b=wOiyRM1WKAijaiXA/6UPpDOabfmgWyFiXfUydWL/10ZCv7yghtyaXvUcoBtsxJ2dnhBhf4
-        MXxBRV2J27Fs0oBPGyW3Bcz1OeFP7yQybfPi0d2TDSS1Rp6Pn1IPyM3ErNotkeHAJf1Ysz
-        2ylrrplM7mJGkpksfcE/0PXv/RJ0b84=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1649311777;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=JT4UvlPRTF1rf1PNVYTQl5oxY75vXHbMm6cxI+vJlzM=;
-        b=qH6/6KvekVW7yUEoPIXC0j8Nl8eBqt7dLT/vdiczEh3nQdRmXIIFkTLVPwnvPg8wyiCLJm
-        FUCApLKkaSIR8qDQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        bh=ghX0s+qnM0zTWcdVKam262S3A8knYr1UnlFhPf0e+YY=;
+        b=VFiNnRWi1NcGMCujg3ydJvn5O9/GB5O91eNT4Q8hVL01LubHGoCltJ+ja7GT6O71hRmV8A
+        TVgxdmnoOjnH6rVj52W9E4aAqUzNAfmF7p7B1o+3vsHAh2wxgn4OZCJxWZOBBJ6fDex3EH
+        n6Zbpsv9SFL/5l+BCZEX4FB88npX1Fc=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-79-HESEfiTVOlu5reogbnkCLQ-1; Thu, 07 Apr 2022 02:42:01 -0400
+X-MC-Unique: HESEfiTVOlu5reogbnkCLQ-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4017213485;
-        Thu,  7 Apr 2022 06:09:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id kE04BRyATmI2UQAAMHmgww
-        (envelope-from <colyli@suse.de>); Thu, 07 Apr 2022 06:09:32 +0000
-Message-ID: <ac88801d-c1f9-e8a4-e0cf-e5f7cbdfbfc3@suse.de>
-Date:   Thu, 7 Apr 2022 14:09:30 +0800
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 9B4DA811E80;
+        Thu,  7 Apr 2022 06:41:54 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.37.45])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E753D401E2B;
+        Thu,  7 Apr 2022 06:41:48 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <Yk5W6zvvftOB+80D@casper.infradead.org>
+References: <Yk5W6zvvftOB+80D@casper.infradead.org> <164928615045.457102.10607899252434268982.stgit@warthog.procyon.org.uk> <164928630577.457102.8519251179327601178.stgit@warthog.procyon.org.uk>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     dhowells@redhat.com, linux-cachefs@redhat.com,
+        Rohith Surabattula <rohiths.msft@gmail.com>,
+        Steve French <sfrench@samba.org>,
+        Shyam Prasad N <nspmangalore@gmail.com>,
+        linux-cifs@vger.kernel.org, Jeff Layton <jlayton@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH 14/14] mm, netfs, fscache: Stop read optimisation when folio removed from pagecache
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.7.0
-Subject: Re: [PATCH 26/27] block: uncouple REQ_OP_SECURE_ERASE from
- REQ_OP_DISCARD
-Content-Language: en-US
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     dm-devel@redhat.com, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-um@lists.infradead.org,
-        linux-block@vger.kernel.org, drbd-dev@lists.linbit.com,
-        nbd@other.debian.org, ceph-devel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
-        linux-raid@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org,
-        linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
-        target-devel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        cluster-devel@redhat.com, jfs-discussion@lists.sourceforge.net,
-        linux-nilfs@vger.kernel.org, ntfs3@lists.linux.dev,
-        ocfs2-devel@oss.oracle.com, linux-mm@kvack.org,
-        Jens Axboe <axboe@kernel.dk>
-References: <20220406060516.409838-1-hch@lst.de>
- <20220406060516.409838-27-hch@lst.de>
-From:   Coly Li <colyli@suse.de>
-In-Reply-To: <20220406060516.409838-27-hch@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-7.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <469868.1649313707.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Thu, 07 Apr 2022 07:41:47 +0100
+Message-ID: <469869.1649313707@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.85 on 10.11.54.10
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/6/22 2:05 PM, Christoph Hellwig wrote:
-> Secure erase is a very different operation from discard in that it is
-> a data integrity operation vs hint.  Fully split the limits and helper
-> infrastructure to make the separation more clear.
->
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+Matthew Wilcox <willy@infradead.org> wrote:
 
-For the bcache part,
+> On Thu, Apr 07, 2022 at 12:05:05AM +0100, David Howells wrote:
+> > Fix this by adding an extra address_space operation, ->removing folio(=
+),
+> > and flag, AS_NOTIFY_REMOVING_FOLIO.  The operation is called if the fl=
+ag is
+> > set when a folio is removed from the pagecache.  The flag should be se=
+t if
+> > a non-NULL cookie is obtained from fscache and cleared in ->evict_inod=
+e()
+> > before truncate_inode_pages_final() is called.
+> =
 
-Acked-by: Coly Li <colyli@suse.de>
+> What's wrong with ->freepage?
 
+It's too late.  The optimisation must be cancelled before there's a chance
+that a new page can be allocated and attached to the pagecache - but
+->freepage() is called after the folio has been removed.  Doing it in
+->freepage() would allow ->readahead(), ->readpage() or ->write_begin() to
+jump in and start a new read (which gets skipped because the optimisation =
+is
+still in play).
 
-Thanks.
+Another possibility could be that the FSCACHE_COOKIE_HAVE_DATA and
+FSCACHE_COOKIE_NO_DATA_TO_READ flags could be moved from cookie->flags to
+mapping->flags and the VM could do the twiddling itself (no aop required) =
+-
+except that fscache can't currently then find them (maybe use an aop for
+that?).
 
-Coly Li
-
-
-> ---
->   block/blk-core.c                    |  2 +-
->   block/blk-lib.c                     | 64 ++++++++++++++++++++---------
->   block/blk-mq-debugfs.c              |  1 -
->   block/blk-settings.c                | 16 +++++++-
->   block/fops.c                        |  2 +-
->   block/ioctl.c                       | 43 +++++++++++++++----
->   drivers/block/drbd/drbd_receiver.c  |  5 ++-
->   drivers/block/rnbd/rnbd-clt.c       |  4 +-
->   drivers/block/rnbd/rnbd-srv-dev.h   |  2 +-
->   drivers/block/xen-blkback/blkback.c | 15 +++----
->   drivers/block/xen-blkback/xenbus.c  |  5 +--
->   drivers/block/xen-blkfront.c        |  5 ++-
->   drivers/md/bcache/alloc.c           |  2 +-
->   drivers/md/dm-table.c               |  8 ++--
->   drivers/md/dm-thin.c                |  4 +-
->   drivers/md/md.c                     |  2 +-
->   drivers/md/raid5-cache.c            |  6 +--
->   drivers/mmc/core/queue.c            |  2 +-
->   drivers/nvme/target/io-cmd-bdev.c   |  2 +-
->   drivers/target/target_core_file.c   |  2 +-
->   drivers/target/target_core_iblock.c |  2 +-
->   fs/btrfs/extent-tree.c              |  4 +-
->   fs/ext4/mballoc.c                   |  2 +-
->   fs/f2fs/file.c                      | 16 ++++----
->   fs/f2fs/segment.c                   |  2 +-
->   fs/jbd2/journal.c                   |  2 +-
->   fs/nilfs2/sufile.c                  |  4 +-
->   fs/nilfs2/the_nilfs.c               |  4 +-
->   fs/ntfs3/super.c                    |  2 +-
->   fs/xfs/xfs_discard.c                |  2 +-
->   fs/xfs/xfs_log_cil.c                |  2 +-
->   include/linux/blkdev.h              | 27 +++++++-----
->   mm/swapfile.c                       |  6 +--
->   33 files changed, 168 insertions(+), 99 deletions(-)
-[snipped]
-> diff --git a/drivers/md/bcache/alloc.c b/drivers/md/bcache/alloc.c
-> index 097577ae3c471..ce13c272c3872 100644
-> --- a/drivers/md/bcache/alloc.c
-> +++ b/drivers/md/bcache/alloc.c
-> @@ -336,7 +336,7 @@ static int bch_allocator_thread(void *arg)
->   				mutex_unlock(&ca->set->bucket_lock);
->   				blkdev_issue_discard(ca->bdev,
->   					bucket_to_sector(ca->set, bucket),
-> -					ca->sb.bucket_size, GFP_KERNEL, 0);
-> +					ca->sb.bucket_size, GFP_KERNEL);
->   				mutex_lock(&ca->set->bucket_lock);
->   			}
->   
-
-
-[snipped]
+David
 
