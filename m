@@ -2,283 +2,183 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CC354F76CF
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Apr 2022 09:08:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70D394F777C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Apr 2022 09:30:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240357AbiDGHKQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Apr 2022 03:10:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49474 "EHLO
+        id S241773AbiDGHb5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Apr 2022 03:31:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240393AbiDGHKM (ORCPT
+        with ESMTP id S234761AbiDGHb4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Apr 2022 03:10:12 -0400
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FCE321836;
-        Thu,  7 Apr 2022 00:08:09 -0700 (PDT)
-Received: from kwepemi500017.china.huawei.com (unknown [172.30.72.53])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4KYss60v2WzdZhQ;
-        Thu,  7 Apr 2022 15:07:38 +0800 (CST)
-Received: from linux-suse12sp5.huawei.com (10.67.133.175) by
- kwepemi500017.china.huawei.com (7.221.188.110) with Microsoft SMTP Server
+        Thu, 7 Apr 2022 03:31:56 -0400
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97EA04ECF2;
+        Thu,  7 Apr 2022 00:29:55 -0700 (PDT)
+Received: from kwepemi500025.china.huawei.com (unknown [172.30.72.57])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4KYtJl1dzNzgYWg;
+        Thu,  7 Apr 2022 15:28:07 +0800 (CST)
+Received: from kwepemm600010.china.huawei.com (7.193.23.86) by
+ kwepemi500025.china.huawei.com (7.221.188.170) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Thu, 7 Apr 2022 15:08:05 +0800
-From:   Yan Zhu <zhuyan34@huawei.com>
-To:     <mcgrof@kernel.org>
-CC:     <andrii@kernel.org>, <ast@kernel.org>, <bpf@vger.kernel.org>,
-        <daniel@iogearbox.net>, <john.fastabend@gmail.com>, <kafai@fb.com>,
-        <keescook@chromium.org>, <kpsingh@kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <liucheng32@huawei.com>, <netdev@vger.kernel.org>,
-        <nixiaoming@huawei.com>, <songliubraving@fb.com>,
-        <xiechengliang1@huawei.com>, <yhs@fb.com>, <yzaikin@google.com>,
-        <zengweilin@huawei.com>, <zhuyan34@huawei.com>,
-        <leeyou.li@huawei.com>, <laiyuanyuan.lai@huawei.com>
-Subject: [PATCH v4 sysctl-next] bpf: move bpf sysctls from kernel/sysctl.c to bpf module
-Date:   Thu, 7 Apr 2022 15:07:59 +0800
-Message-ID: <20220407070759.29506-1-zhuyan34@huawei.com>
+ 15.1.2375.24; Thu, 7 Apr 2022 15:29:52 +0800
+Received: from linux_suse_sp4_work.huawei.com (10.67.133.232) by
+ kwepemm600010.china.huawei.com (7.193.23.86) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2308.21; Thu, 7 Apr 2022 15:29:51 +0800
+From:   Liao Hua <liaohua4@huawei.com>
+To:     <mcgrof@kernel.org>, <keescook@chromium.org>, <yzaikin@google.com>,
+        <nixiaoming@huawei.com>
+CC:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <wangfangpeng1@huawei.com>
+Subject: [PATCH sysctl-next v3] latencytop: move sysctl to its own file
+Date:   Thu, 7 Apr 2022 15:29:48 +0800
+Message-ID: <20220407072948.55820-1-liaohua4@huawei.com>
 X-Mailer: git-send-email 2.12.3
-In-Reply-To: <Yk4XE/hKGOQs5oq0@bombadil.infradead.org>
-References: <Yk4XE/hKGOQs5oq0@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.67.133.175]
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemi500017.china.huawei.com (7.221.188.110)
+X-Originating-IP: [10.67.133.232]
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemm600010.china.huawei.com (7.193.23.86)
 X-CFilter-Loop: Reflected
 X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
         RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We're moving sysctls out of kernel/sysctl.c as its a mess. We
-already moved all filesystem sysctls out. And with time the goal is
-to move all sysctls out to their own subsystem/actual user.
+From: liaohua <liaohua4@huawei.com>
 
-kernel/sysctl.c has grown to an insane mess and its easy to run
-into conflicts with it. The effort to move them out is part of this.
+This moves latencytop sysctl to kernel/latencytop.c
 
-Signed-off-by: Yan Zhu <zhuyan34@huawei.com>
+Signed-off-by: liaohua <liaohua4@huawei.com>
 
+------
+v3:
+  Base the patch on the latest sysctl-next and resubmit.
+
+v2: https://lore.kernel.org/lkml/20220223094710.103378-1-liaohua4@huawei.com/
+  Move latencytop sysctl to its own file base based on sysctl-next.
+
+v1: https://lore.kernel.org/lkml/20220219072433.86983-1-liaohua4@huawei.com/
+  Move latencytop sysctl to its own file base based on linux master.
 ---
-v1->v2:
-  1.Added patch branch identifier sysctl-next.
-  2.Re-describe the reason for the patch submission.
+ include/linux/latencytop.h |  3 ---
+ kernel/latencytop.c        | 41 +++++++++++++++++++++++++++++------------
+ kernel/sysctl.c            | 10 ----------
+ 3 files changed, 29 insertions(+), 25 deletions(-)
 
-v2->v3:
-  Re-describe the reason for the patch submission.
-
-v3->v4:
-  1.Remove '#include <linux/bpf.h>' in kernel/sysctl.c
-  2.re-adaptive the patch
----
- kernel/bpf/syscall.c | 87 ++++++++++++++++++++++++++++++++++++++++++++++++++++
- kernel/sysctl.c      | 79 -----------------------------------------------
- 2 files changed, 87 insertions(+), 79 deletions(-)
-
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index cdaa1152436a..e9621cfa09f2 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -4908,3 +4908,90 @@ const struct bpf_verifier_ops bpf_syscall_verifier_ops = {
- const struct bpf_prog_ops bpf_syscall_prog_ops = {
- 	.test_run = bpf_prog_test_run_syscall,
- };
-+
+diff --git a/include/linux/latencytop.h b/include/linux/latencytop.h
+index abe3d95f795b..84f1053cf2a8 100644
+--- a/include/linux/latencytop.h
++++ b/include/linux/latencytop.h
+@@ -38,9 +38,6 @@ account_scheduler_latency(struct task_struct *task, int usecs, int inter)
+ 
+ void clear_tsk_latency_tracing(struct task_struct *p);
+ 
+-int sysctl_latencytop(struct ctl_table *table, int write, void *buffer,
+-		size_t *lenp, loff_t *ppos);
+-
+ #else
+ 
+ static inline void
+diff --git a/kernel/latencytop.c b/kernel/latencytop.c
+index 166d7bf49666..76166df011a4 100644
+--- a/kernel/latencytop.c
++++ b/kernel/latencytop.c
+@@ -55,6 +55,7 @@
+ #include <linux/sched/stat.h>
+ #include <linux/list.h>
+ #include <linux/stacktrace.h>
++#include <linux/sysctl.h>
+ 
+ static DEFINE_RAW_SPINLOCK(latency_lock);
+ 
+@@ -63,6 +64,31 @@ static struct latency_record latency_record[MAXLR];
+ 
+ int latencytop_enabled;
+ 
 +#ifdef CONFIG_SYSCTL
-+static int bpf_stats_handler(struct ctl_table *table, int write,
-+			     void *buffer, size_t *lenp, loff_t *ppos)
++static int sysctl_latencytop(struct ctl_table *table, int write, void *buffer,
++		size_t *lenp, loff_t *ppos)
 +{
-+	struct static_key *key = (struct static_key *)table->data;
-+	static int saved_val;
-+	int val, ret;
-+	struct ctl_table tmp = {
-+		.data   = &val,
-+		.maxlen = sizeof(val),
-+		.mode   = table->mode,
-+		.extra1 = SYSCTL_ZERO,
-+		.extra2 = SYSCTL_ONE,
-+	};
++	int err;
 +
-+	if (write && !capable(CAP_SYS_ADMIN))
-+		return -EPERM;
++	err = proc_dointvec(table, write, buffer, lenp, ppos);
++	if (latencytop_enabled)
++		force_schedstat_enabled();
 +
-+	mutex_lock(&bpf_stats_enabled_mutex);
-+	val = saved_val;
-+	ret = proc_dointvec_minmax(&tmp, write, buffer, lenp, ppos);
-+	if (write && !ret && val != saved_val) {
-+		if (val)
-+			static_key_slow_inc(key);
-+		else
-+			static_key_slow_dec(key);
-+		saved_val = val;
-+	}
-+	mutex_unlock(&bpf_stats_enabled_mutex);
-+	return ret;
++	return err;
 +}
 +
-+void __weak unpriv_ebpf_notify(int new_state)
-+{
-+}
-+
-+static int bpf_unpriv_handler(struct ctl_table *table, int write,
-+			      void *buffer, size_t *lenp, loff_t *ppos)
-+{
-+	int ret, unpriv_enable = *(int *)table->data;
-+	bool locked_state = unpriv_enable == 1;
-+	struct ctl_table tmp = *table;
-+
-+	if (write && !capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	tmp.data = &unpriv_enable;
-+	ret = proc_dointvec_minmax(&tmp, write, buffer, lenp, ppos);
-+	if (write && !ret) {
-+		if (locked_state && unpriv_enable != 1)
-+			return -EPERM;
-+		*(int *)table->data = unpriv_enable;
-+	}
-+
-+	unpriv_ebpf_notify(unpriv_enable);
-+
-+	return ret;
-+}
-+
-+static struct ctl_table bpf_syscall_table[] = {
++static struct ctl_table latencytop_sysctl[] = {
 +	{
-+		.procname	= "unprivileged_bpf_disabled",
-+		.data		= &sysctl_unprivileged_bpf_disabled,
-+		.maxlen		= sizeof(sysctl_unprivileged_bpf_disabled),
-+		.mode		= 0644,
-+		.proc_handler	= bpf_unpriv_handler,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= SYSCTL_TWO,
++		.procname   = "latencytop",
++		.data       = &latencytop_enabled,
++		.maxlen     = sizeof(int),
++		.mode       = 0644,
++		.proc_handler   = sysctl_latencytop,
 +	},
-+	{
-+		.procname	= "bpf_stats_enabled",
-+		.data		= &bpf_stats_enabled_key.key,
-+		.maxlen		= sizeof(bpf_stats_enabled_key),
-+		.mode		= 0644,
-+		.proc_handler	= bpf_stats_handler,
-+	},
-+	{ }
++	{}
 +};
++#endif
 +
-+static int __init bpf_syscall_sysctl_init(void)
-+{
-+	register_sysctl_init("kernel", bpf_syscall_table);
-+	return 0;
-+}
-+late_initcall(bpf_syscall_sysctl_init);
-+#endif /* CONFIG_SYSCTL */
+ void clear_tsk_latency_tracing(struct task_struct *p)
+ {
+ 	unsigned long flags;
+@@ -266,18 +292,9 @@ static const struct proc_ops lstats_proc_ops = {
+ static int __init init_lstats_procfs(void)
+ {
+ 	proc_create("latency_stats", 0644, NULL, &lstats_proc_ops);
++#ifdef CONFIG_SYSCTL
++	register_sysctl_init("kernel", latencytop_sysctl);
++#endif
+ 	return 0;
+ }
+-
+-int sysctl_latencytop(struct ctl_table *table, int write, void *buffer,
+-		size_t *lenp, loff_t *ppos)
+-{
+-	int err;
+-
+-	err = proc_dointvec(table, write, buffer, lenp, ppos);
+-	if (latencytop_enabled)
+-		force_schedstat_enabled();
+-
+-	return err;
+-}
+ device_initcall(init_lstats_procfs);
 diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 21172d3dad6e..c0fdf465a93d 100644
+index 21172d3dad6e..2db637ca91c9 100644
 --- a/kernel/sysctl.c
 +++ b/kernel/sysctl.c
-@@ -62,7 +62,6 @@
- #include <linux/binfmts.h>
- #include <linux/sched/sysctl.h>
- #include <linux/kexec.h>
--#include <linux/bpf.h>
+@@ -65,7 +65,6 @@
+ #include <linux/bpf.h>
  #include <linux/mount.h>
  #include <linux/userfaultfd_k.h>
- #include <linux/latencytop.h>
-@@ -139,66 +138,6 @@ static const int max_extfrag_threshold = 1000;
+-#include <linux/latencytop.h>
+ #include <linux/pid.h>
  
- #endif /* CONFIG_SYSCTL */
- 
--#if defined(CONFIG_BPF_SYSCALL) && defined(CONFIG_SYSCTL)
--static int bpf_stats_handler(struct ctl_table *table, int write,
--			     void *buffer, size_t *lenp, loff_t *ppos)
--{
--	struct static_key *key = (struct static_key *)table->data;
--	static int saved_val;
--	int val, ret;
--	struct ctl_table tmp = {
--		.data   = &val,
--		.maxlen = sizeof(val),
--		.mode   = table->mode,
--		.extra1 = SYSCTL_ZERO,
--		.extra2 = SYSCTL_ONE,
--	};
--
--	if (write && !capable(CAP_SYS_ADMIN))
--		return -EPERM;
--
--	mutex_lock(&bpf_stats_enabled_mutex);
--	val = saved_val;
--	ret = proc_dointvec_minmax(&tmp, write, buffer, lenp, ppos);
--	if (write && !ret && val != saved_val) {
--		if (val)
--			static_key_slow_inc(key);
--		else
--			static_key_slow_dec(key);
--		saved_val = val;
--	}
--	mutex_unlock(&bpf_stats_enabled_mutex);
--	return ret;
--}
--
--void __weak unpriv_ebpf_notify(int new_state)
--{
--}
--
--static int bpf_unpriv_handler(struct ctl_table *table, int write,
--			      void *buffer, size_t *lenp, loff_t *ppos)
--{
--	int ret, unpriv_enable = *(int *)table->data;
--	bool locked_state = unpriv_enable == 1;
--	struct ctl_table tmp = *table;
--
--	if (write && !capable(CAP_SYS_ADMIN))
--		return -EPERM;
--
--	tmp.data = &unpriv_enable;
--	ret = proc_dointvec_minmax(&tmp, write, buffer, lenp, ppos);
--	if (write && !ret) {
--		if (locked_state && unpriv_enable != 1)
--			return -EPERM;
--		*(int *)table->data = unpriv_enable;
--	}
--
--	unpriv_ebpf_notify(unpriv_enable);
--
--	return ret;
--}
--#endif /* CONFIG_BPF_SYSCALL && CONFIG_SYSCTL */
--
- /*
-  * /proc/sys support
-  */
-@@ -2112,24 +2051,6 @@ static struct ctl_table kern_table[] = {
+ #include "../lib/kstrtox.h"
+@@ -1685,15 +1684,6 @@ static struct ctl_table kern_table[] = {
  		.extra2		= SYSCTL_ONE,
  	},
  #endif
--#ifdef CONFIG_BPF_SYSCALL
+-#ifdef CONFIG_LATENCYTOP
 -	{
--		.procname	= "unprivileged_bpf_disabled",
--		.data		= &sysctl_unprivileged_bpf_disabled,
--		.maxlen		= sizeof(sysctl_unprivileged_bpf_disabled),
+-		.procname	= "latencytop",
+-		.data		= &latencytop_enabled,
+-		.maxlen		= sizeof(int),
 -		.mode		= 0644,
--		.proc_handler	= bpf_unpriv_handler,
--		.extra1		= SYSCTL_ZERO,
--		.extra2		= SYSCTL_TWO,
--	},
--	{
--		.procname	= "bpf_stats_enabled",
--		.data		= &bpf_stats_enabled_key.key,
--		.maxlen		= sizeof(bpf_stats_enabled_key),
--		.mode		= 0644,
--		.proc_handler	= bpf_stats_handler,
+-		.proc_handler	= sysctl_latencytop,
 -	},
 -#endif
- #if defined(CONFIG_TREE_RCU)
  	{
- 		.procname	= "panic_on_rcu_stall",
+ 		.procname	= "print-fatal-signals",
+ 		.data		= &print_fatal_signals,
 -- 
 2.12.3
 
