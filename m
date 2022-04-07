@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C28A4F818B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Apr 2022 16:26:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A9294F81B5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Apr 2022 16:33:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343904AbiDGO1H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Apr 2022 10:27:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36514 "EHLO
+        id S1343984AbiDGOeO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Apr 2022 10:34:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49818 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229533AbiDGO1F (ORCPT
+        with ESMTP id S1343977AbiDGOeG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Apr 2022 10:27:05 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42C33189A03;
-        Thu,  7 Apr 2022 07:24:16 -0700 (PDT)
+        Thu, 7 Apr 2022 10:34:06 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B68D31A4D55;
+        Thu,  7 Apr 2022 07:32:03 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D015561C65;
-        Thu,  7 Apr 2022 14:24:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19C17C385A4;
-        Thu,  7 Apr 2022 14:24:09 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4985161CC0;
+        Thu,  7 Apr 2022 14:32:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20DF6C385A0;
+        Thu,  7 Apr 2022 14:31:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649341455;
-        bh=w14ZPYdK01Rmbqc8luZ4J6X6VeW7r2KK5+F7YTyBwz4=;
+        s=k20201202; t=1649341922;
+        bh=1mo8AG4FIR1/02YpFR4zJU4OcpMYkIGir1YVgUBVtjM=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TAywI+GpgGL/Hf8yI/GiNlm9V0dtjIj9Bvl5Gu4n2WRg/h7qkd/wJYaCSqlt9cqQe
-         fmNv865oCZado3Q6vyk2+lOqad6zUlSl/UsBVWG0hNDkQvL4wDTOrnXozI8fHJggof
-         rs1HdivX/eU+DNFyI7xMA/CKAls9YF/shkA24ZcFnDaOTQOtB3RLxQHyvsUNMLoq2Z
-         l5djZGerUM2bENo/OBKaLrS8agNtgFPak3QAFtgFBUHj5QJmaVTySEvpWKXKVdUwkr
-         D28tWH1kajSkzEUI+goASr/y2KNmCtXje9f+geWHPshF6yubJii+Gb9xHwC3PJ7N5Z
-         BgMvOFK3AWovA==
-Date:   Thu, 7 Apr 2022 22:24:05 +0800
+        b=inxngaAvGk4ci4lL9D9ebkrGzcMpUuh0DxcHhPClkg9ctSXRjUR+WDfkTT1nVwwAt
+         hTrjaa7ywrI4/z+Mzm+XFo7OKykHYTfaUGj9wY6tvuuVo5glndB2vBfM/6JZonyuAx
+         us5csSm0foMRHB+fOnpT5tBy1jPaDO5maUHCK/jHcRUVWv2veIyZCSIvWSH3/Vly0Z
+         WCZLy6y3URLTMcrRfaTGyhEWrYjAAMEMMcWdXEuMlADTwGpCHCb/gx9Ir3dgYHZiLg
+         ouQpoqYiFYo4txOAeu9SJj2Jhc++HixksTam/lMcrGo9TaGLIFS002BA17+j2kcood
+         8fQvGjtOcWTCg==
+Date:   Thu, 7 Apr 2022 22:31:54 +0800
 From:   Gao Xiang <xiang@kernel.org>
 To:     Jeffle Xu <jefflexu@linux.alibaba.com>
 Cc:     dhowells@redhat.com, linux-cachefs@redhat.com, xiang@kernel.org,
@@ -44,9 +44,9 @@ Cc:     dhowells@redhat.com, linux-cachefs@redhat.com, xiang@kernel.org,
         eguan@linux.alibaba.com, linux-kernel@vger.kernel.org,
         luodaowen.backend@bytedance.com, tianzichen@kuaishou.com,
         fannaihao@baidu.com
-Subject: Re: [PATCH v8 17/20] erofs: implement fscache-based data read for
- non-inline layout
-Message-ID: <Yk70BTzzoaOvET5c@debian>
+Subject: Re: [PATCH v8 18/20] erofs: implement fscache-based data read for
+ inline layout
+Message-ID: <Yk712oM2xrEUmbhZ@debian>
 Mail-Followup-To: Jeffle Xu <jefflexu@linux.alibaba.com>,
         dhowells@redhat.com, linux-cachefs@redhat.com, xiang@kernel.org,
         chao@kernel.org, linux-erofs@lists.ozlabs.org,
@@ -58,138 +58,103 @@ Mail-Followup-To: Jeffle Xu <jefflexu@linux.alibaba.com>,
         luodaowen.backend@bytedance.com, tianzichen@kuaishou.com,
         fannaihao@baidu.com
 References: <20220406075612.60298-1-jefflexu@linux.alibaba.com>
- <20220406075612.60298-18-jefflexu@linux.alibaba.com>
+ <20220406075612.60298-19-jefflexu@linux.alibaba.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20220406075612.60298-18-jefflexu@linux.alibaba.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,
-        T_SCC_BODY_TEXT_LINE,T_SPF_TEMPERROR autolearn=ham autolearn_force=no
-        version=3.4.6
+In-Reply-To: <20220406075612.60298-19-jefflexu@linux.alibaba.com>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 06, 2022 at 03:56:09PM +0800, Jeffle Xu wrote:
+On Wed, Apr 06, 2022 at 03:56:10PM +0800, Jeffle Xu wrote:
 > Implement the data plane of reading data from data blobs over fscache
-> for non-inline layout.
+> for inline layout.
+> 
+> For the heading non-inline part, the data plane for non-inline layout is
+> reused, while only the tail packing part needs special handling.
 > 
 > Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
 > ---
->  fs/erofs/fscache.c  | 52 +++++++++++++++++++++++++++++++++++++++++++++
->  fs/erofs/inode.c    |  5 +++++
->  fs/erofs/internal.h |  2 ++
->  3 files changed, 59 insertions(+)
+>  fs/erofs/fscache.c | 40 ++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 40 insertions(+)
 > 
 > diff --git a/fs/erofs/fscache.c b/fs/erofs/fscache.c
-> index 158cc273f8fb..65de1c754e80 100644
+> index 65de1c754e80..d32cb5840c6d 100644
 > --- a/fs/erofs/fscache.c
 > +++ b/fs/erofs/fscache.c
-> @@ -60,10 +60,62 @@ static int erofs_fscache_meta_readpage(struct file *data, struct page *page)
+> @@ -60,6 +60,40 @@ static int erofs_fscache_meta_readpage(struct file *data, struct page *page)
 >  	return ret;
 >  }
 >  
-> +static int erofs_fscache_readpage(struct file *file, struct page *page)
+> +static int erofs_fscache_readpage_inline(struct folio *folio,
+> +					 struct erofs_map_blocks *map)
 > +{
-> +	struct folio *folio = page_folio(page);
 > +	struct inode *inode = folio_file_mapping(folio)->host;
 > +	struct super_block *sb = inode->i_sb;
-> +	struct erofs_map_blocks map;
-> +	struct erofs_map_dev mdev;
-> +	erofs_off_t pos;
-> +	loff_t pstart;
-> +	int ret = 0;
+> +	struct erofs_buf buf = __EROFS_BUF_INITIALIZER;
+> +	erofs_blk_t blknr;
+> +	size_t offset, len;
+> +	void *src, *dst;
 > +
-> +	DBG_BUGON(folio_size(folio) != EROFS_BLKSIZ);
+> +	/*
+> +	 * For inline (tail packing) layout, the offset may be non-zero, which
+> +	 * can be calculated from corresponding physical address directly.
+> +	 */
+> +	offset = erofs_blkoff(map->m_pa);
+> +	blknr = erofs_blknr(map->m_pa);
+> +	len = map->m_llen;
 > +
-> +	pos = folio_pos(folio);
-> +	map.m_la = pos;
+> +	src = erofs_read_metabuf(&buf, sb, blknr, EROFS_KMAP);
+> +	if (IS_ERR(src))
+> +		return PTR_ERR(src);
 > +
-> +	ret = erofs_map_blocks(inode, &map, EROFS_GET_BLOCKS_RAW);
-> +	if (ret)
-> +		goto out_unlock;
+> +	DBG_BUGON(folio_size(folio) != PAGE_SIZE);
 > +
-> +	if (!(map.m_flags & EROFS_MAP_MAPPED)) {
-> +		folio_zero_range(folio, 0, folio_size(folio));
+> +	dst = kmap(folio_page(folio, 0));
+
+kmap_local_folio?
+
+> +	memcpy(dst, src + offset, len);
+> +	memset(dst + len, 0, PAGE_SIZE - len);
+> +	kunmap(folio_page(folio, 0));
+> +
+> +	erofs_put_metabuf(&buf);
+> +
+> +	return 0;
+> +}
+> +
+>  static int erofs_fscache_readpage(struct file *file, struct page *page)
+>  {
+>  	struct folio *folio = page_folio(page);
+> @@ -85,6 +119,12 @@ static int erofs_fscache_readpage(struct file *file, struct page *page)
+>  		goto out_uptodate;
+>  	}
+>  
+> +	/* inline readpage */
+
+I think the code below is self-explained.
+
+> +	if (map.m_flags & EROFS_MAP_META) {
+> +		ret = erofs_fscache_readpage_inline(folio, &map);
 > +		goto out_uptodate;
 > +	}
 > +
-> +	/* no-inline readpage */
-> +	mdev = (struct erofs_map_dev) {
-> +		.m_deviceid = map.m_deviceid,
-> +		.m_pa = map.m_pa,
-> +	};
-> +
-> +	ret = erofs_map_dev(sb, &mdev);
-> +	if (ret)
-> +		goto out_unlock;
-> +
-> +	pstart = mdev.m_pa + (pos - map.m_la);
-> +	ret = erofs_fscache_read_folios(mdev.m_fscache->cookie,
-> +			folio_file_mapping(folio), folio_pos(folio),
-> +			folio_size(folio), pstart);
-> +
-> +out_uptodate:
-> +	if (!ret)
-> +		folio_mark_uptodate(folio);
-> +out_unlock:
-> +	folio_unlock(folio);
-> +	return ret;
-> +}
-> +
->  static const struct address_space_operations erofs_fscache_meta_aops = {
->  	.readpage = erofs_fscache_meta_readpage,
->  };
->  
-> +const struct address_space_operations erofs_fscache_access_aops = {
-> +	.readpage = erofs_fscache_readpage,
-> +};
-> +
->  /*
->   * Get the page cache of data blob at the index offset.
->   * Return: up to date page on success, ERR_PTR() on failure.
-> diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
-> index e8b37ba5e9ad..88b51b5fb53f 100644
-> --- a/fs/erofs/inode.c
-> +++ b/fs/erofs/inode.c
-> @@ -296,7 +296,12 @@ static int erofs_fill_inode(struct inode *inode, int isdir)
->  		err = z_erofs_fill_inode(inode);
->  		goto out_unlock;
->  	}
-> +
+>  	/* no-inline readpage */
 
-unnecessary modification.
-
-Otherwise looks good:
-Reviewed-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+Same here.
 
 Thanks,
 Gao Xiang
 
->  	inode->i_mapping->a_ops = &erofs_raw_access_aops;
-> +#ifdef CONFIG_EROFS_FS_ONDEMAND
-> +	if (erofs_is_fscache_mode(inode->i_sb))
-> +		inode->i_mapping->a_ops = &erofs_fscache_access_aops;
-> +#endif
->  
->  out_unlock:
->  	erofs_put_metabuf(&buf);
-> diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-> index e186051f0640..336d19647c96 100644
-> --- a/fs/erofs/internal.h
-> +++ b/fs/erofs/internal.h
-> @@ -642,6 +642,8 @@ int erofs_fscache_register_cookie(struct super_block *sb,
->  void erofs_fscache_unregister_cookie(struct erofs_fscache **fscache);
->  
->  struct folio *erofs_fscache_get_folio(struct super_block *sb, pgoff_t index);
-> +
-> +extern const struct address_space_operations erofs_fscache_access_aops;
->  #else
->  static inline int erofs_fscache_register_fs(struct super_block *sb) { return 0; }
->  static inline void erofs_fscache_unregister_fs(struct super_block *sb) {}
+>  	mdev = (struct erofs_map_dev) {
+>  		.m_deviceid = map.m_deviceid,
 > -- 
 > 2.27.0
 > 
