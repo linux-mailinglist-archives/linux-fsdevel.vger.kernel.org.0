@@ -2,74 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EBAF4F7DA2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Apr 2022 13:10:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99C094F7DA4
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Apr 2022 13:11:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238554AbiDGLMm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Apr 2022 07:12:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33724 "EHLO
+        id S237823AbiDGLNZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Apr 2022 07:13:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236691AbiDGLMl (ORCPT
+        with ESMTP id S232102AbiDGLNX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Apr 2022 07:12:41 -0400
-Received: from mail1.bemta34.messagelabs.com (mail1.bemta34.messagelabs.com [195.245.231.4])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86EF32AC9;
-        Thu,  7 Apr 2022 04:10:40 -0700 (PDT)
+        Thu, 7 Apr 2022 07:13:23 -0400
+Received: from mail1.bemta36.messagelabs.com (mail1.bemta36.messagelabs.com [85.158.142.113])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08ACD16592;
+        Thu,  7 Apr 2022 04:11:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
-        s=170520fj; t=1649329839; i=@fujitsu.com;
-        bh=ldhkgmh+x9ZpMfMk06uXxU34VsAmVCDbQY1Nmni+etc=;
+        s=170520fj; t=1649329880; i=@fujitsu.com;
+        bh=FJuR1EOUMji0eqnLNa4QcheQalD0sFicovpWA0I+gTs=;
         h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
          MIME-Version:Content-Type;
-        b=P1yWJ2VP5MkWzkR3pmxIuQtm2awSGXdvgA1klDsZeVi5y9zcTIhr2q0BIXhGoFayC
-         PAtye1qM22+ezPnV7MCvejXrXiShJnpKURFv4EUe1w1s6YwQqMtsEQdcLXsoKDyshV
-         7ssfLhDN26oAOjP7l/xfx9H5CWBPLrKzcGtNg+y8nTvUHhJpUpDBRkc/MG3UvzGGDU
-         DdS4neIqS7N6HlioL/LyR6aoqNY6QIq3jWTzR+3hkJdOKivSKpnRmV+l0dO/blIHXz
-         hy32cQ5Gr0B3utIU264tgVh1t+WamoYvqr4ngIbTpL91cpMz99ZgwXaKMKCW9byLwS
-         4FHaGA5SgEDNQ==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGIsWRWlGSWpSXmKPExsViZ8MxSXfdMb8
-  kgwtX1CxeH/7EaLHl2D1Gi8tP+CxOt+xlt9iz9ySLA6vHqUUSHptWdbJ5fN4kF8AcxZqZl5Rf
-  kcCa0XxmI2NBl2zF6YkXmRoYt0p0MXJyCAlsYZSYfq+8i5ELyF7AJHF90h4mCGc3o8TujlvMI
-  FVsApoSzzoXgNkiAi4S3/b/ZQOxmQVSJBrONzGC2MICcRIrf8wAs1kEVCTW/NwNZvMKeEgs27
-  kbrF5CQEFiysP3YHM4BTwl7j7+zgZxhYdE840ZUPWCEidnPmGBmC8hcfDFC2aIXkWJSx3fGCH
-  sColZs9qYIGw1iavnNjFPYBSchaR9FpL2BYxMqxitk4oy0zNKchMzc3QNDQx0DQ1NdY1NdQ1N
-  LPUSq3QT9VJLdctTi0t0jfQSy4v1UouL9Yorc5NzUvTyUks2MQKDP6VYeeoOxtOrfuodYpTkY
-  FIS5W3Y6ZckxJeUn1KZkVicEV9UmpNafIhRhoNDSYI38QhQTrAoNT21Ii0zBxiJMGkJDh4lEd
-  6jh4HSvMUFibnFmekQqVOMilLivO+PAiUEQBIZpXlwbbDov8QoKyXMy8jAwCDEU5BalJtZgir
-  /ilGcg1FJmFccmEqEeDLzSuCmvwJazAS0uO6gL8jikkSElFQDU2KxR1bN/tSiXddeP5zzoEXk
-  +zK1c5+Pd7q8iNywYdGr6yd7SyRaff/rbHFJ2mOz7q3XnF97v5fdWvxJ/uq0+omh7xR49ngdF
-  N1qsm+C3+UKIWvFiuD6dX6xG2zZfyQeXX/+8fkHnoGS7sZTTGcmnP/Qcd7Y71K0yyftmYdClr
-  UVXsrxspq30zL3ifnBd3GNOyv31vt6qnu8fyDaa1x28P/fj4lfGv7e5at4I+4d11lb92DZx/o
-  DP+e/uvzoycEK3+dWzzZK/t0y9Xh/4oqCIG9u7nCjCUlezzikNCdd837abvnux3nfENMNXn+e
-  rn54co5H11Z3/iRe7S92N2YmyRXZl4rlxHe+XbjCVWjC914lluKMREMt5qLiRAALVClxeQMAA
-  A==
+        b=dsAV8imnrLDfC/bm5GAmBJnxGCV4q42EoIqr9/IzoXmY2J50u1Z3xxuvFcUTLEJht
+         wb6L2k9Ksp6SF+Fexr6jABMecSPcNgdq0PwqVO5cw+qQ9gAFNYcRnb6CJGoElWyYZW
+         PheKSYaT6IUleRWMoUB4TcEl5yPduSZNzYF1y6gFGOJihrVyyWgnD27FsykIN7dd+j
+         sXi3+Tss39sxm+hRamhyHQ0plVTYmH043w7FMYdCs/QtigAOEwQgQPYq2H+KEcGqol
+         2j5EgKNE43PBbbi+0UTHZatY0bWVSk1z6OlQfq1/ev3inLcdj7x8HT1b7Z0LUfF2O1
+         69Xy0B9BddrZw==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBIsWRWlGSWpSXmKPExsViZ8ORqHv9mF+
+  SwblJKhavD39itNhy7B6jxeUnfBanW/ayW+zZe5LFgdXj1CIJj02rOtk8Pm+SC2COYs3MS8qv
+  SGDN+D91N2vBgYiKt49vsDcwnvHoYuTkEBLYwijR+S6ri5ELyF7AJDF7y3omCGc3o8SFx3PYQ
+  arYBDQlnnUuYAaxRQRcJL7t/8sGYjMLpEg0nG9iBLGFBSIlls+7wgpiswioSCztPAYW5xXwkN
+  h14ylYvYSAgsSUh+/B5nAKeErcffydDeIKD4nmGzOg6gUlTs58wgIxX0Li4IsXzBC9ihKXOr4
+  xQtgVErNmtTFB2GoSV89tYp7AKDgLSfssJO0LGJlWMdomFWWmZ5TkJmbm6BoaGOgaGprqmpnp
+  WprpJVbpJuqlluomp+aVFCUCZfUSy4v1UouL9Yorc5NzUvTyUks2MQIjIKXYKWEH46O+n3qHG
+  CU5mJREeRt2+iUJ8SXlp1RmJBZnxBeV5qQWH2KU4eBQkuBNPAKUEyxKTU+tSMvMAUYjTFqCg0
+  dJhPfoYaA0b3FBYm5xZjpE6hSjopQ47/ujQAkBkERGaR5cGywBXGKUlRLmZWRgYBDiKUgtys0
+  sQZV/xSjOwagkzCsOTCdCPJl5JXDTXwEtZgJaXHfQF2RxSSJCSqqBqdBi/5/kJWtMTutWNr94
+  UP7+iFHJC35zTgkOleJzkoazbPd97ZzbqbSsaYGJav7TggXc77LtlFTv/t3oWrFg5ckdtZ2CA
+  SZcViIiV9al3NrS1Mqj9MPP6kHLLEWNiCV1bor6XpJZPxr8nrGmqAlrpk9Y/uE9s4SJxHmdgp
+  K/Z2tyj/d9Pu1edvide7CK3O2P51eu0A4Tvp+r+u3GjjneeuU16zW6FSZ+W1i3PU/Q6qCYqWH
+  UgbcfZpXd/hjPNmFb9L5e6y7u81pPY3dlPmB9Udu869EZPpZFDO/W/38kKbXCvXKxzMZXDKFb
+  Yp6/njVzg+NT3nmNKxTFv1xaUhH1juX3jPXMuyRi79Ys7H+rocRSnJFoqMVcVJwIAB1wATp7A
+  wAA
 X-Env-Sender: xuyang2018.jy@fujitsu.com
-X-Msg-Ref: server-20.tower-565.messagelabs.com!1649329838!1459!1
-X-Originating-IP: [62.60.8.146]
+X-Msg-Ref: server-25.tower-528.messagelabs.com!1649329879!1667!1
+X-Originating-IP: [62.60.8.97]
 X-SYMC-ESS-Client-Auth: outbound-route-from=pass
 X-StarScan-Received: 
 X-StarScan-Version: 9.85.5; banners=-,-,-
 X-VirusChecked: Checked
-Received: (qmail 3257 invoked from network); 7 Apr 2022 11:10:38 -0000
-Received: from unknown (HELO n03ukasimr02.n03.fujitsu.local) (62.60.8.146)
-  by server-20.tower-565.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 7 Apr 2022 11:10:38 -0000
-Received: from n03ukasimr02.n03.fujitsu.local (localhost [127.0.0.1])
-        by n03ukasimr02.n03.fujitsu.local (Postfix) with ESMTP id 3F275100468;
-        Thu,  7 Apr 2022 12:10:38 +0100 (BST)
+Received: (qmail 9134 invoked from network); 7 Apr 2022 11:11:19 -0000
+Received: from unknown (HELO n03ukasimr01.n03.fujitsu.local) (62.60.8.97)
+  by server-25.tower-528.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 7 Apr 2022 11:11:19 -0000
+Received: from n03ukasimr01.n03.fujitsu.local (localhost [127.0.0.1])
+        by n03ukasimr01.n03.fujitsu.local (Postfix) with ESMTP id 027EA100199;
+        Thu,  7 Apr 2022 12:11:19 +0100 (BST)
 Received: from R01UKEXCASM126.r01.fujitsu.local (unknown [10.183.43.178])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
         (No client certificate requested)
-        by n03ukasimr02.n03.fujitsu.local (Postfix) with ESMTPS id 31C03100451;
-        Thu,  7 Apr 2022 12:10:38 +0100 (BST)
+        by n03ukasimr01.n03.fujitsu.local (Postfix) with ESMTPS id CFFA1100190;
+        Thu,  7 Apr 2022 12:11:18 +0100 (BST)
 Received: from localhost.localdomain (10.167.220.84) by
  R01UKEXCASM126.r01.fujitsu.local (10.183.43.178) with Microsoft SMTP Server
- (TLS) id 15.0.1497.32; Thu, 7 Apr 2022 12:10:17 +0100
+ (TLS) id 15.0.1497.32; Thu, 7 Apr 2022 12:11:12 +0100
 From:   Yang Xu <xuyang2018.jy@fujitsu.com>
 To:     <david@fromorbit.com>, <brauner@kernel.org>, <djwong@kernel.org>
 CC:     <linux-fsdevel@vger.kernel.org>, <fstests@vger.kernel.org>,
         Yang Xu <xuyang2018.jy@fujitsu.com>
-Subject: [PATCH v2 5/6] idmapped-mounts: Add setfacl(S_IXGRP) wrapper for setgid_create* cases
-Date:   Thu, 7 Apr 2022 20:09:34 +0800
-Message-ID: <1649333375-2599-5-git-send-email-xuyang2018.jy@fujitsu.com>
+Subject: [PATCH v2 6/6] idmapped-mounts: Add open with O_TMPFILE operation in setgid test
+Date:   Thu, 7 Apr 2022 20:09:35 +0800
+Message-ID: <1649333375-2599-6-git-send-email-xuyang2018.jy@fujitsu.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1649333375-2599-1-git-send-email-xuyang2018.jy@fujitsu.com>
 References: <1649333375-2599-1-git-send-email-xuyang2018.jy@fujitsu.com>
@@ -89,125 +89,346 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Since stipping S_SIGID should check S_IXGRP, so using sefacl to umask it to
-check whether works well.
+Since we can create temp file by using O_TMPFILE flag and filesystem driver also
+has this api, we should also check this operation whether strip S_ISGID.
 
 Signed-off-by: Yang Xu <xuyang2018.jy@fujitsu.com>
 ---
- src/idmapped-mounts/idmapped-mounts.c | 75 +++++++++++++++++++++++++++
- 1 file changed, 75 insertions(+)
+ src/idmapped-mounts/idmapped-mounts.c | 155 +++++++++++++++++++++++++-
+ 1 file changed, 154 insertions(+), 1 deletion(-)
 
 diff --git a/src/idmapped-mounts/idmapped-mounts.c b/src/idmapped-mounts/idmapped-mounts.c
-index d6769f08..8f292228 100644
+index 8f292228..362b8820 100644
 --- a/src/idmapped-mounts/idmapped-mounts.c
 +++ b/src/idmapped-mounts/idmapped-mounts.c
-@@ -8052,6 +8052,30 @@ static int setgid_create_umask(void)
- 		return 0;
+@@ -337,6 +337,24 @@ out:
+ 	return fret;
  }
  
-+static int setgid_create_acl(void)
++static bool openat_tmpfile_supported(int dirfd)
 +{
-+	pid_t pid;
++	int fd = -1;
 +
-+	snprintf(t_buf, sizeof(t_buf), "setfacl -d -m u::rwx,g::rw,o::rwx %s/%s", t_mountpoint, T_DIR1);
-+	if (system(t_buf))
-+		die("failure: system");
-+
-+	pid = fork();
-+	if (pid < 0)
-+		die("failure: fork");
-+
-+	if (pid == 0) {
-+		if (setgid_create())
-+			die("failure: setgid");
-+		exit(EXIT_SUCCESS);
++	fd = openat(dirfd, ".", O_TMPFILE | O_RDWR, S_IXGRP | S_ISGID);
++	if (fd == -1) {
++		if (errno == ENOTSUP)
++			return false;
++		else
++			return log_errno(false, "failure: create");
 +	}
 +
-+	if (wait_for_pid(pid))
-+		return -1;
-+	else
-+		return 0;
++	if (close(fd))
++		log_stderr("failure: close");
++
++	return true;
 +}
 +
- static int setgid_create_idmapped(void)
+ /* __expected_uid_gid - check whether file is owned by the provided uid and gid */
+ static bool __expected_uid_gid(int dfd, const char *path, int flags,
+ 			       uid_t expected_uid, gid_t expected_gid, bool log)
+@@ -7841,7 +7859,10 @@ static int setgid_create(void)
  {
  	int fret = -1;
-@@ -8199,6 +8223,30 @@ static int setgid_create_idmapped_umask(void)
+ 	int file1_fd = -EBADF;
++	int tmpfile_fd = -EBADF;
+ 	pid_t pid;
++	bool supported = false;
++	char path[PATH_MAX];
+ 
+ 	if (!caps_supported())
  		return 0;
- }
+@@ -7866,6 +7887,8 @@ static int setgid_create(void)
+ 		goto out;
+ 	}
  
-+static int setgid_create_idmapped_acl(void)
-+{
-+	pid_t pid;
++	supported = openat_tmpfile_supported(t_dir1_fd);
 +
-+	snprintf(t_buf, sizeof(t_buf), "setfacl -d -m u::rwx,g::rw,o::rwx %s/%s", t_mountpoint, T_DIR1);
-+	if (system(t_buf))
-+		die("failure: system");
+ 	pid = fork();
+ 	if (pid < 0) {
+ 		log_stderr("failure: fork");
+@@ -7883,9 +7906,24 @@ static int setgid_create(void)
+ 		if (!is_setgid(t_dir1_fd, FILE1, 0))
+ 			die("failure: is_setgid");
+ 
++		/* create tmpfile via filesystem tmpfile api */
++		if (supported) {
++			tmpfile_fd = openat(t_dir1_fd, ".", O_TMPFILE | O_RDWR, S_IXGRP | S_ISGID);
++			if (tmpfile_fd < 0)
++				die("failure: create");
++			/* link the temporary file into the filesystem, making it permanent */
++			snprintf(path, PATH_MAX,  "/proc/self/fd/%d", tmpfile_fd);
++			if (linkat(AT_FDCWD, path, t_dir1_fd, FILE2, AT_SYMLINK_FOLLOW))
++				die("failure: linkat");
++			if (close(tmpfile_fd))
++				die("failure: close");
++			if (!is_setgid(t_dir1_fd, FILE2, 0))
++				die("failure: is_setgid");
++		}
 +
-+	pid = fork();
-+	if (pid < 0)
-+		die("failure: fork");
+ 		/* create directory */
+ 		if (mkdirat(t_dir1_fd, DIR1, 0000))
+-			die("failure: create");
++			die("failure: mkdirat");
+ 
+ 		/* Directories always inherit the setgid bit. */
+ 		if (!is_setgid(t_dir1_fd, DIR1, 0))
+@@ -7908,6 +7946,9 @@ static int setgid_create(void)
+ 		if (!expected_uid_gid(t_dir1_fd, FILE1, 0, 0, 0))
+ 			die("failure: check ownership");
+ 
++		if (supported && !expected_uid_gid(t_dir1_fd, FILE2, 0, 0, 0))
++			die("failure: check ownership");
 +
-+	if (pid == 0) {
-+		if (setgid_create_idmapped())
-+			die("failure: setgid");
-+		exit(EXIT_SUCCESS);
-+	}
+ 		if (!expected_uid_gid(t_dir1_fd, DIR1 "/" FILE1, 0, 0, 0))
+ 			die("failure: check ownership");
+ 
+@@ -7920,6 +7961,9 @@ static int setgid_create(void)
+ 		if (unlinkat(t_dir1_fd, FILE1, 0))
+ 			die("failure: delete");
+ 
++		if (supported && unlinkat(t_dir1_fd, FILE2, 0))
++			die("failure: delete");
 +
-+	if (wait_for_pid(pid))
-+		return -1;
-+	else
-+		return 0;
-+}
+ 		if (unlinkat(t_dir1_fd, DIR1 "/" FILE1, 0))
+ 			die("failure: delete");
+ 
+@@ -7957,6 +8001,21 @@ static int setgid_create(void)
+ 		if (is_setgid(t_dir1_fd, FILE1, 0))
+ 			die("failure: is_setgid");
+ 
++		/* create tmpfile via filesystem tmpfile api */
++		if (supported) {
++			tmpfile_fd = openat(t_dir1_fd, ".", O_TMPFILE | O_RDWR, S_IXGRP | S_ISGID);
++			if (tmpfile_fd < 0)
++				die("failure: create");
++			/* link the temporary file into the filesystem, making it permanent */
++			snprintf(path, PATH_MAX,  "/proc/self/fd/%d", tmpfile_fd);
++			if (linkat(AT_FDCWD, path, t_dir1_fd, FILE2, AT_SYMLINK_FOLLOW))
++				die("failure: linkat");
++			if (close(tmpfile_fd))
++				die("failure: close");
++			if (is_setgid(t_dir1_fd, FILE2, 0))
++				die("failure: is_setgid");
++		}
 +
- static int setgid_create_idmapped_in_userns(void)
- {
- 	int fret = -1;
-@@ -8555,6 +8603,30 @@ static int setgid_create_idmapped_in_userns_umask(void)
+ 		/* create directory */
+ 		if (mkdirat(t_dir1_fd, DIR1, 0000))
+ 			die("failure: create");
+@@ -7992,6 +8051,9 @@ static int setgid_create(void)
+ 		if (!expected_uid_gid(t_dir1_fd, FILE1, 0, 0, 0))
+ 			die("failure: check ownership");
+ 
++		if (supported && !expected_uid_gid(t_dir1_fd, FILE2, 0, 0, 0))
++			die("failure: check ownership");
++
+ 		/*
+ 		 * In setgid directories newly created directories always
+ 		 * inherit the gid from the parent directory. Verify that the
+@@ -8009,6 +8071,9 @@ static int setgid_create(void)
+ 		if (unlinkat(t_dir1_fd, FILE1, 0))
+ 			die("failure: delete");
+ 
++		if (supported && unlinkat(t_dir1_fd, FILE2, 0))
++			die("failure: delete");
++
+ 		if (unlinkat(t_dir1_fd, DIR1 "/" FILE1, 0))
+ 			die("failure: delete");
+ 
+@@ -8083,7 +8148,10 @@ static int setgid_create_idmapped(void)
+ 	struct mount_attr attr = {
+ 		.attr_set = MOUNT_ATTR_IDMAP,
+ 	};
++	int tmpfile_fd = -EBADF;
+ 	pid_t pid;
++	bool supported = false;
++	char path[PATH_MAX];
+ 
+ 	if (!caps_supported())
  		return 0;
- }
+@@ -8131,6 +8199,7 @@ static int setgid_create_idmapped(void)
+ 		goto out;
+ 	}
  
-+static int setgid_create_idmapped_in_userns_acl(void)
-+{
-+	pid_t pid;
-+
-+	snprintf(t_buf, sizeof(t_buf), "setfacl -d -m u::rwx,g::rw,o::rwx %s/%s", t_mountpoint, T_DIR1);
-+	if (system(t_buf))
-+		die("failure: system");
-+
-+	pid = fork();
-+	if (pid < 0)
-+		die("failure: fork");
-+
-+	if (pid == 0) {
-+		if (setgid_create_idmapped_in_userns())
-+			die("failure: setgid_create");
-+		exit(EXIT_SUCCESS);
-+	}
-+
-+	if (wait_for_pid(pid))
-+		return -1;
-+	else
-+		return 0;
-+}
-+
- #define PTR_TO_INT(p) ((int)((intptr_t)(p)))
- #define INT_TO_PTR(u) ((void *)((intptr_t)(u)))
++	supported = openat_tmpfile_supported(open_tree_fd);
+ 	pid = fork();
+ 	if (pid < 0) {
+ 		log_stderr("failure: fork");
+@@ -8151,6 +8220,21 @@ static int setgid_create_idmapped(void)
+ 		if (is_setgid(open_tree_fd, FILE1, 0))
+ 			die("failure: is_setgid");
  
-@@ -14164,10 +14236,13 @@ struct t_idmapped_mounts t_setattr_fix_968219708108[] = {
- struct t_idmapped_mounts t_setgid[] = {
- 	{ setgid_create,						false,	"create operations in directories with setgid bit set",						},
- 	{ setgid_create_umask,						false,	"create operations in directories with setgid bit set by umask(S_IXGRP)",			},
-+	{ setgid_create_acl,						false,	"create operations in directories with setgid bit set by setfacl(S_IXGRP)",			},
- 	{ setgid_create_idmapped,					true,	"create operations in directories with setgid bit set on idmapped mounts",			},
- 	{ setgid_create_idmapped_umask,					true,	"create operations in directories with setgid bit set on idmapped mounts by umask(S_IXGRP)",	},
-+	{ setgid_create_idmapped_acl,					true,	"create operations in directories with setgid bit set on idmapped mounts by setfacl(S_IXGRP)",	},
- 	{ setgid_create_idmapped_in_userns,				true,	"create operations in directories with setgid bit set on idmapped mounts in user namespace",	},
- 	{ setgid_create_idmapped_in_userns_umask,			true,   "create operations in directories with setgid bit set on idmapped mounts in user namespace by umask(S_IXGRP)",	},
-+	{ setgid_create_idmapped_in_userns_acl,				true,	"create operations in directories with setgid bit set on idmapped mounts in user namespace by setfacl(S_IXGRP)",},
- };
++		/* create tmpfile via filesystem tmpfile api */
++		if (supported) {
++			tmpfile_fd = openat(open_tree_fd, ".", O_TMPFILE | O_RDWR, S_IXGRP | S_ISGID);
++			if (tmpfile_fd < 0)
++				die("failure: create");
++			/* link the temporary file into the filesystem, making it permanent */
++			snprintf(path, PATH_MAX,  "/proc/self/fd/%d", tmpfile_fd);
++			if (linkat(AT_FDCWD, path, open_tree_fd, FILE2, AT_SYMLINK_FOLLOW))
++				die("failure: linkat");
++			if (close(tmpfile_fd))
++				die("failure: close");
++			if (is_setgid(open_tree_fd, FILE2, 0))
++				die("failure: is_setgid");
++		}
++
+ 		/* create directory */
+ 		if (mkdirat(open_tree_fd, DIR1, 0000))
+ 			die("failure: create");
+@@ -8173,6 +8257,9 @@ static int setgid_create_idmapped(void)
+ 		if (!expected_uid_gid(open_tree_fd, FILE1, 0, 10000, 10000))
+ 			die("failure: check ownership");
  
- static bool run_test(struct t_idmapped_mounts suite[], size_t suite_size)
++		if (supported && !expected_uid_gid(open_tree_fd, FILE2, 0, 10000, 10000))
++			die("failure: check ownership");
++
+ 		/*
+ 		 * In setgid directories newly created directories always
+ 		 * inherit the gid from the parent directory. Verify that the
+@@ -8254,7 +8341,10 @@ static int setgid_create_idmapped_in_userns(void)
+ 	struct mount_attr attr = {
+ 		.attr_set = MOUNT_ATTR_IDMAP,
+ 	};
++	int tmpfile_fd = -EBADF;
+ 	pid_t pid;
++	bool supported = false;
++	char path[PATH_MAX];
+ 
+ 	if (!caps_supported())
+ 		return 0;
+@@ -8302,6 +8392,7 @@ static int setgid_create_idmapped_in_userns(void)
+ 		goto out;
+ 	}
+ 
++	supported = openat_tmpfile_supported(open_tree_fd);
+ 	pid = fork();
+ 	if (pid < 0) {
+ 		log_stderr("failure: fork");
+@@ -8322,6 +8413,21 @@ static int setgid_create_idmapped_in_userns(void)
+ 		if (!is_setgid(open_tree_fd, FILE1, 0))
+ 			die("failure: is_setgid");
+ 
++		/* create tmpfile via filesystem tmpfile api */
++		if (supported) {
++			tmpfile_fd = openat(open_tree_fd, ".", O_TMPFILE | O_RDWR, S_IXGRP | S_ISGID);
++			if (tmpfile_fd < 0)
++				die("failure: create");
++			/* link the temporary file into the filesystem, making it permanent */
++			snprintf(path, PATH_MAX,  "/proc/self/fd/%d", tmpfile_fd);
++			if (linkat(AT_FDCWD, path, open_tree_fd, FILE2, AT_SYMLINK_FOLLOW))
++				die("failure: linkat");
++			if (close(tmpfile_fd))
++				die("failure: close");
++			if (!is_setgid(open_tree_fd, FILE2, 0))
++				die("failure: is_setgid");
++		}
++
+ 		/* create directory */
+ 		if (mkdirat(open_tree_fd, DIR1, 0000))
+ 			die("failure: create");
+@@ -8346,6 +8452,9 @@ static int setgid_create_idmapped_in_userns(void)
+ 		if (!expected_uid_gid(open_tree_fd, FILE1, 0, 0, 0))
+ 			die("failure: check ownership");
+ 
++		if (supported && !expected_uid_gid(open_tree_fd, FILE2, 0, 0, 0))
++			die("failure: check ownership");
++
+ 		if (!expected_uid_gid(open_tree_fd, DIR1, 0, 0, 0))
+ 			die("failure: check ownership");
+ 
+@@ -8357,6 +8466,8 @@ static int setgid_create_idmapped_in_userns(void)
+ 
+ 		if (unlinkat(open_tree_fd, FILE1, 0))
+ 			die("failure: delete");
++		if (supported && unlinkat(open_tree_fd, FILE2, 0))
++			die("failure: delete");
+ 		if (unlinkat(open_tree_fd, DIR1 "/" FILE1, 0))
+ 			die("failure: delete");
+ 		if (unlinkat(open_tree_fd, CHRDEV1, 0))
+@@ -8410,6 +8521,21 @@ static int setgid_create_idmapped_in_userns(void)
+ 		if (is_setgid(open_tree_fd, FILE1, 0))
+ 			die("failure: is_setgid");
+ 
++		/* create tmpfile via filesystem tmpfile api */
++		if (supported) {
++			tmpfile_fd = openat(open_tree_fd, ".", O_TMPFILE | O_RDWR, S_IXGRP | S_ISGID);
++			if (tmpfile_fd < 0)
++				die("failure: create");
++			/* link the temporary file into the filesystem, making it permanent */
++			snprintf(path, PATH_MAX,  "/proc/self/fd/%d", tmpfile_fd);
++			if (linkat(AT_FDCWD, path, open_tree_fd, FILE2, AT_SYMLINK_FOLLOW))
++				die("failure: linkat");
++			if (close(tmpfile_fd))
++				die("failure: close");
++			if (is_setgid(open_tree_fd, FILE2, 0))
++				die("failure: is_setgid");
++		}
++
+ 		/* create directory */
+ 		if (mkdirat(open_tree_fd, DIR1, 0000))
+ 			die("failure: create");
+@@ -8446,6 +8572,9 @@ static int setgid_create_idmapped_in_userns(void)
+ 		if (!expected_uid_gid(open_tree_fd, FILE1, 0, 0, 1000))
+ 			die("failure: check ownership");
+ 
++		if (supported && !expected_uid_gid(open_tree_fd, FILE2, 0, 0, 1000))
++			die("failure: check ownership");
++
+ 		/*
+ 		 * In setgid directories newly created directories always
+ 		 * inherit the gid from the parent directory. Verify that the
+@@ -8463,6 +8592,9 @@ static int setgid_create_idmapped_in_userns(void)
+ 		if (unlinkat(open_tree_fd, FILE1, 0))
+ 			die("failure: delete");
+ 
++		if (supported && unlinkat(open_tree_fd, FILE2, 0))
++			die("failure: delete");
++
+ 		if (unlinkat(open_tree_fd, DIR1 "/" FILE1, 0))
+ 			die("failure: delete");
+ 
+@@ -8515,6 +8647,21 @@ static int setgid_create_idmapped_in_userns(void)
+ 		if (is_setgid(open_tree_fd, FILE1, 0))
+ 			die("failure: is_setgid");
+ 
++		/* create tmpfile via filesystem tmpfile api */
++		if (supported) {
++			tmpfile_fd = openat(open_tree_fd, ".", O_TMPFILE | O_RDWR, S_IXGRP | S_ISGID);
++			if (tmpfile_fd < 0)
++				die("failure: create");
++			/* link the temporary file into the filesystem, making it permanent */
++			snprintf(path, PATH_MAX,  "/proc/self/fd/%d", tmpfile_fd);
++			if (linkat(AT_FDCWD, path, open_tree_fd, FILE2, AT_SYMLINK_FOLLOW))
++				die("failure: linkat");
++			if (close(tmpfile_fd))
++				die("failure: close");
++			if (is_setgid(open_tree_fd, FILE2, 0))
++				die("failure: is_setgid");
++		}
++
+ 		/* create directory */
+ 		if (mkdirat(open_tree_fd, DIR1, 0000))
+ 			die("failure: create");
+@@ -8546,6 +8693,9 @@ static int setgid_create_idmapped_in_userns(void)
+ 		if (!expected_uid_gid(open_tree_fd, FILE1, 0, 0, 0))
+ 			die("failure: check ownership");
+ 
++		if (supported && !expected_uid_gid(open_tree_fd, FILE2, 0, 0, 0))
++			die("failure: check ownership");
++
+ 		if (!expected_uid_gid(open_tree_fd, DIR1, 0, 0, 0))
+ 			die("failure: check ownership");
+ 
+@@ -8558,6 +8708,9 @@ static int setgid_create_idmapped_in_userns(void)
+ 		if (unlinkat(open_tree_fd, FILE1, 0))
+ 			die("failure: delete");
+ 
++		if (supported && unlinkat(open_tree_fd, FILE2, 0))
++			die("failure: delete");
++
+ 		if (unlinkat(open_tree_fd, DIR1 "/" FILE1, 0))
+ 			die("failure: delete");
+ 
 -- 
 2.27.0
 
