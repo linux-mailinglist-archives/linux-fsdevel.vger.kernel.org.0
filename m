@@ -2,124 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BABE4F7484
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Apr 2022 06:23:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 462274F74B0
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Apr 2022 06:26:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236211AbiDGEZL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Apr 2022 00:25:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48166 "EHLO
+        id S235729AbiDGE2F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Apr 2022 00:28:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229806AbiDGEZJ (ORCPT
+        with ESMTP id S229806AbiDGE2E (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Apr 2022 00:25:09 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 353F3764D;
-        Wed,  6 Apr 2022 21:23:06 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 795DD1F859;
-        Thu,  7 Apr 2022 04:23:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1649305385; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=2LjY7E5WI6EGhhDKTioLFymIZP0/l0i8h3H4GhAFZcA=;
-        b=F64T87FE/B/zTRK/zeGFkzYbcOYEpfk4hnza8TqQk86fb0axJLHNv5/xh8kYqv7ft0gVH8
-        E4jSlVrvNZLiNrz++QdRHQVn4EEJ3zqlEuJI9tcsOmTRHuGjgqtqrGC/4B5bZ34jlQ6VpB
-        ORtNpbLkZm7a0/adFulXHuY/VjPvj+4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1649305385;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=2LjY7E5WI6EGhhDKTioLFymIZP0/l0i8h3H4GhAFZcA=;
-        b=Pe5uAttmH0M6hNr5cKECyxYRW/m61uJ8W+AceMtxNsBGpXkrDfnp8bTpIjeKsG1ZJmKxAd
-        U4XNi9Yd5S2L5nCg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 820D313A66;
-        Thu,  7 Apr 2022 04:23:03 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id OHErDydnTmImMgAAMHmgww
-        (envelope-from <neilb@suse.de>); Thu, 07 Apr 2022 04:23:03 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 7 Apr 2022 00:28:04 -0400
+Received: from mail-ua1-x92a.google.com (mail-ua1-x92a.google.com [IPv6:2607:f8b0:4864:20::92a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1DB95E159;
+        Wed,  6 Apr 2022 21:26:02 -0700 (PDT)
+Received: by mail-ua1-x92a.google.com with SMTP id h7so3074104uan.4;
+        Wed, 06 Apr 2022 21:26:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZzyMjesxZrkAFOB6DXZrDGwnfcNbPaMjKymwklBUkhg=;
+        b=bBlnksobnNuVqb1lJSZBEikWKn0QnbqnyoWc8tn/yYpawolkxbsPXp75oMXMM3jB0x
+         lz76wTi/i95MtZa6WUC/fEzeFzkuyvHICKzTx2HgkwMkwug2BVpD8VMiVgqR16ZYWVvb
+         xXtd4S2jIBgPSFLk0yQmcHlXPk+03y7DyVcMeDORgsfWgw0RoG88z//Mk9yxZk+Fj56w
+         +v6JFkQ3X63htBVUzOQHfyJNA9yL49cW7V8vanIzGs3mgzHJJRC7dM/sfmujnDEnysTh
+         Fxo7iN2poGhN7hqvHMuWUlIxTjWcOxwzga84nwQjaU3nFSUtdwUKrBgY71SUMXoMKy7B
+         AZeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZzyMjesxZrkAFOB6DXZrDGwnfcNbPaMjKymwklBUkhg=;
+        b=ETlyHjnQT8T4YHC4fbwebXoP7A5gzAg1Sutb2Vriu3Xr3HFrROOI6M8hDaP9s2hy/w
+         h4jOKJUWJPE7HOD3yHOxZIx1HiQB2u7uOkd47acCpqJUWl9qJwLllpuioENn1MR3xZsv
+         YRHqzahNzJ4kfZ33AYEPo4qekxhIJwc5ynv/l2yJfzfwXbz5OlQjrk2nZhQrSyr2vR3N
+         Yn3TZPNsYbHecVPqkzLXwNfoaDyIRENspc5pfjC2vXrf8T/vp1UFbBFl/A9Q4iM0em3P
+         7C7TwyZGnBn2XC/bHZiek1YKRG3Td8XMIGE/jUg9BkvI+bqKmzP74bXse2I2BV6E7lEG
+         1jYQ==
+X-Gm-Message-State: AOAM530e4PryQrF1AAJfPmctp7FfxeNIsdiRlFvxGhkiT7c276PwJUzF
+        iMe/OlPCUramowp6Kh93cNUCj5/O4/fvth5ldJtnhu27KtU=
+X-Google-Smtp-Source: ABdhPJx/B2frk/TmaPzK1fHRk6zyCRzDsnUQtuYpFVwPiWeuW5ya0fj7g4a6WE3i5ToSqfdmeneldXBq5WwO3tdQPuo=
+X-Received: by 2002:a9f:2046:0:b0:35d:bfc:2c9 with SMTP id 64-20020a9f2046000000b0035d0bfc02c9mr74389uam.119.1649305561699;
+ Wed, 06 Apr 2022 21:26:01 -0700 (PDT)
 MIME-Version: 1.0
-From:   "NeilBrown" <neilb@suse.de>
-To:     "J. Bruce Fields" <bfields@fieldses.org>
-Cc:     "Dave Chinner" <david@fromorbit.com>,
-        "Trond Myklebust" <trondmy@hammerspace.com>,
-        "Chuck Lever" <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org,
+References: <673D708E-2DFA-4812-BB63-6A437E0C72EE@oracle.com> <11f319-c9a-4648-bfbb-dc5a83c774@google.com>
+In-Reply-To: <11f319-c9a-4648-bfbb-dc5a83c774@google.com>
+From:   Mark Hemment <markhemm@googlemail.com>
+Date:   Thu, 7 Apr 2022 05:25:49 +0100
+Message-ID: <CANe_+UhOQzGcz9hsKdc1N2=r-gALN6RK-fkBdBkoxD+cv1ZFnA@mail.gmail.com>
+Subject: Re: Regression in xfstests on tmpfs-backed NFS exports
+To:     Hugh Dickins <hughd@google.com>
+Cc:     Chuck Lever III <chuck.lever@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Patrice CHOTARD <patrice.chotard@foss.st.com>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        Lukas Czerner <lczerner@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
         linux-fsdevel@vger.kernel.org
-Subject: Re: sporadic hangs on generic/186
-In-reply-to: <20220407014939.GC1242@fieldses.org>
-References: <20220406195424.GA1242@fieldses.org>,
- <20220407001453.GE1609613@dread.disaster.area>,
- <164929126156.10985.11316778982526844125@noble.neil.brown.name>,
- <164929437439.10985.5253499040284089154@noble.neil.brown.name>,
- <20220407014939.GC1242@fieldses.org>
-Date:   Thu, 07 Apr 2022 14:23:00 +1000
-Message-id: <164930538057.10985.13909676315036428067@noble.neil.brown.name>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 07 Apr 2022, J. Bruce Fields wrote:
-> On Thu, Apr 07, 2022 at 11:19:34AM +1000, NeilBrown wrote:
-> > I had a look through the various places where alloc can now fail.
-> >=20
-> > I think xdr_alloc_bvec() in xprt_sent_pagedata() is the most likely
-> > cause of a problem here.  I don't think an -ENOMEM from there is caught,
-> > so it could likely filter up to NFS and result in the message you got.
-> >=20
-> > I don't think we can easily handle failure there.  We need to stay with
-> > GFP_KERNEL rely on PF_MEMALLOC to make forward progress for
-> > swap-over-NFS.
-> >=20
-> > Bruce: can you change that one line back to GFP_KERNEL and see if the
-> > problem goes away?
->=20
-> Like this?  Sure--might take me a day or two to run the tests and get
-> results back.--b.
->=20
-> diff --git a/net/sunrpc/socklib.c b/net/sunrpc/socklib.c
-> index 05b38bf68316..506627dc9a0f 100644
-> --- a/net/sunrpc/socklib.c
-> +++ b/net/sunrpc/socklib.c
-> @@ -223,7 +223,7 @@ static int xprt_send_pagedata(struct socket *sock, stru=
-ct msghdr *msg,
->  {
->  	int err;
-> =20
-> -	err =3D xdr_alloc_bvec(xdr, rpc_task_gfp_mask());
-> +	err =3D xdr_alloc_bvec(xdr, GFP_KERNEL);
->  	if (err < 0)
->  		return err;
-> =20
->=20
+On Thu, 7 Apr 2022 at 01:19, Hugh Dickins <hughd@google.com> wrote:
+>
+> On Wed, 6 Apr 2022, Chuck Lever III wrote:
+>
+> > Good day, Hugh-
+>
+> Huh! If you were really wishing me a good day, would you tell me this ;-?
+>
+> >
+> > I noticed that several fsx-related tests in the xfstests suite are
+> > failing after updating my NFS server to v5.18-rc1. I normally test
+> > against xfs, ext4, btrfs, and tmpfs exports. tmpfs is the only export
+> > that sees these new failures:
+> >
+[...]
+> > generic/075 fails almost immediately without any NFS-level errors.
+> > Likely this is data corruption rather than an overt I/O error.
+>
+> That's sad.  Thanks for bisecting and reporting.  Sorry for the nuisance.
+>
+> I suspect this patch is heading for a revert, because I shall not have
+> time to debug and investigate.  Cc'ing fsdevel and a few people who have
+> an interest in it, to warn of that likely upcoming revert.
+>
+> But if it's okay with everyone, please may we leave it in for -rc2?
+> Given that having it in -rc1 already smoked out another issue (problem
+> of SetPageUptodate(ZERO_PAGE(0)) without CONFIG_MMU), I think keeping
+> it in a little longer might smoke out even more.
+>
+> The xfstests info above doesn't actually tell very much, beyond that
+> generic/075 generic/091 generic/112 generic/127, each a test with fsx,
+> all fall at their first hurdle.  If you have time, please rerun and
+> tar up the results/generic directory (maybe filter just those failing)
+> and send as attachment.  But don't go to any trouble, it's unlikely
+> that I shall even untar it - it would be mainly to go on record if
+> anyone has time to look into it later.  And, frankly, it's unlikely
+> to tell us anything more enlightening, than that the data seen was
+> not as expected: which we do already know.
+>
+> I've had no problem with xfstests generic 075,091,112,127 testing
+> tmpfs here, not before and not in the month or two I've had that
+> patch in: so it's something in the way that NFS exercises tmpfs
+> that reveals it.  If I had time to duplicate your procedure, I'd be
+> asking for detailed instructions: but no, I won't have a chance.
+>
+> But I can sit here and try to guess.  I notice fs/nfsd checks
+> file->f_op->splice_read, and employs fallback if not available:
+> if you have time, please try rerunning those xfstests on an -rc1
+> kernel, but with mm/shmem.c's .splice_read line commented out.
+> My guess is that will then pass the tests, and we shall know more.
+>
+> What could be going wrong there?  I've thought of two possibilities.
+> A minor, hopefully easily fixed, issue would be if fs/nfsd has
+> trouble with seeing the same page twice in a row: since tmpfs is
+> now using the ZERO_PAGE(0) for all pages of a hole, and I think I
+> caught sight of code which looks to see if the latest page is the
+> same as the one before.  It's easy to imagine that might go wrong.
 
-That looks right.
+When I worked at Veritas, data corruption over NFS was hit when
+sending the same page in succession.  This was triggered via VxFS's
+shared page cache, after a file had been dedup'ed.
+I can't remember all the details (~15yrs ago), but the core issue was
+skb_can_coalesce() returning a false-positive for the 'same page' case
+(no check for crossing a page boundary).
 
-I instrumented my kernel to deliberately fail 10% of the time, and I got
-lots of
+> A more difficult issue would be, if fsx is racing writes and reads,
+> in a way that it can guarantee the correct result, but that correct
+> result is no longer delivered: because the writes go into freshly
+> allocated tmpfs cache pages, while reads are still delivering
+> stale ZERO_PAGEs from the pipe.  I'm hazy on the guarantees there.
+>
+> But unless someone has time to help out, we're heading for a revert.
+>
+> Thanks,
+> Hugh
 
-nfs: RPC call returned error 12
-
-so I'm fairly sure this explains that message.
-But you say the hangs were only occasionally accompanied by the message,
-so it probably doesn't explain the hangs.
-
-NeilBrown
+Cheers,
+Mark
