@@ -2,237 +2,189 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 22E8B4F71B9
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Apr 2022 03:51:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C88494F71C5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Apr 2022 03:54:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231996AbiDGBxf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 6 Apr 2022 21:53:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43456 "EHLO
+        id S231624AbiDGB4g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 6 Apr 2022 21:56:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229865AbiDGBxe (ORCPT
+        with ESMTP id S236542AbiDGB4b (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 6 Apr 2022 21:53:34 -0400
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3B14165ABA
-        for <linux-fsdevel@vger.kernel.org>; Wed,  6 Apr 2022 18:51:35 -0700 (PDT)
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20220407015132epoutp019ebbb8c87fd815630a6669e5612f0fd2~jej1m6evF2382623826epoutp01K
-        for <linux-fsdevel@vger.kernel.org>; Thu,  7 Apr 2022 01:51:32 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20220407015132epoutp019ebbb8c87fd815630a6669e5612f0fd2~jej1m6evF2382623826epoutp01K
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1649296292;
-        bh=xsV8vPUboovQGAmev436kkf9GfuEb8GqF1/R4lpVtHo=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=GyuWYx4jzvGpYajUChvSN8GigqojEtOxPvTvQ+eAJqGQ6bvwwA9IRDOCusufF00KU
-         5NaiN0sWwi+g6jGgrmRqHButHsrQm5zQ7r/g+eXK9B2Ytk26+qhxH3usv+gAP2F16P
-         pLi6v/6YG0lLGTSzJTIGKZAQn3RboFnv/H2TbD0c=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20220407015132epcas1p2ba5bfee70cac33fb85f4cfd6d830fe4f~jej1JAwHw1048710487epcas1p2J;
-        Thu,  7 Apr 2022 01:51:32 +0000 (GMT)
-Received: from epsmges1p5.samsung.com (unknown [182.195.38.240]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4KYkrM00QTz4x9QB; Thu,  7 Apr
-        2022 01:51:31 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
-        41.B7.28648.2A34E426; Thu,  7 Apr 2022 10:51:30 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20220407015130epcas1p3762726625bafcbee17234459296cc750~jejzMVaiO0689506895epcas1p3T;
-        Thu,  7 Apr 2022 01:51:30 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220407015130epsmtrp247028d69917da51de6d304a5a4b56e45~jejzLjewM0172901729epsmtrp2W;
-        Thu,  7 Apr 2022 01:51:30 +0000 (GMT)
-X-AuditID: b6c32a39-003ff70000006fe8-80-624e43a2ef81
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        C8.DD.24342.1A34E426; Thu,  7 Apr 2022 10:51:29 +0900 (KST)
-Received: from W10PB11329 (unknown [10.253.152.129]) by epsmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20220407015129epsmtip1377db94fb6783dbee3011872b8276c8a~jejzAL-dY0685406854epsmtip1S;
-        Thu,  7 Apr 2022 01:51:29 +0000 (GMT)
-From:   "Sungjong Seo" <sj1557.seo@samsung.com>
-To:     "'Chung-Chiang Cheng'" <cccheng@synology.com>,
-        <linkinjeon@kernel.org>
-Cc:     <linux-fsdevel@vger.kernel.org>, <shepjeng@gmail.com>,
-        <kernel@cccheng.net>, <sj1557.seo@samsung.com>
-In-Reply-To: <20220406095552.111869-1-cccheng@synology.com>
-Subject: RE: [PATCH] exfat: introduce mount option 'sys_tz'
-Date:   Thu, 7 Apr 2022 10:51:29 +0900
-Message-ID: <190001d84a22$001aced0$00506c70$@samsung.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AQE+GJ2wccyO29S7feeCqQ9FmJBUCQNuVNderfyfAmA=
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprKJsWRmVeSWpSXmKPExsWy7bCmru4iZ78kg54pVhZbnx1ntVi/+D6z
-        xcRpS5kt9uw9yWLROlvSYsu/I6wObB532g+xeOycdZfdY9OqTjaPvi2rGD1mfNjP6vF5k1wA
-        W1S2TUZqYkpqkUJqXnJ+SmZeuq2Sd3C8c7ypmYGhrqGlhbmSQl5ibqqtkotPgK5bZg7QFUoK
-        ZYk5pUChgMTiYiV9O5ui/NKSVIWM/OISW6XUgpScArMCveLE3OLSvHS9vNQSK0MDAyNToMKE
-        7IwbDxcwF/QpVqxdNYOxgfG1VBcjJ4eEgInE9vbrzF2MXBxCAjsYJeZvv8gG4XxilDg//RFU
-        5hujxKtbq1lgWnqWPmaBSOxllHjQMg3Kecko0bVkJytIFZuArsSTGz+ZQWwRAS+J282n2EBs
-        ZoFsiWcvV7GD2JwC1hJrz3UzgdjCQPb1W5/A6lkEVCQmrV0NZHNw8ApYSkyZ4AES5hUQlDg5
-        8wkLxBh5ie1v5zBDHKQgsfvTUVaIVVYS56ddYIeoEZGY3dkG9oGEwFQOidO/26E+cJFomtzK
-        BGELS7w6voUdwpaS+PxuLxuE3cwo0dxoBGF3MEo83SgLco+EgL3E+0sWICazgKbE+l36EBWK
-        Ejt/z2WEWMsn8e5rDytENa9ER5sQRImKxPcPO1lgFl35cZVpAqPSLCSPzULy2CwkD8xCWLaA
-        kWUVo1hqQXFuemqxYYEpPK6T83M3MYLTp5blDsbpbz/oHWJk4mA8xCjBwawkwluV65MkxJuS
-        WFmVWpQfX1Sak1p8iNEUGNITmaVEk/OBCTyvJN7QxNLAxMzIxMLY0thMSZx31bTTiUIC6Ykl
-        qdmpqQWpRTB9TBycUg1MbJMuxPjXdLMH3XhufPi+7HkH5UfPD+8uvHP38VGZvo32G5jFj0W5
-        zDycPrPiw5qlZTP1jFXvXk6WUrWd6GxYZPPy4pbfwWlaXSXhyRanJnOpuMuZLGWMaHpvrJNy
-        6LTZl9vtfy61nPq9z8J3ybePhpHzOAIK7C1XT5/PvPtIGatMy5rV7dq7Tu3vuyL08szKa1Nr
-        +CPUdp2a9ekAS8/sbdPlX7zcb//p5ISgX+YvCkzPFH14L6dxsfhsMNNKxx2ZYdl8wr3W3l8Y
-        tP5OZpv6Y/6Cxfd5u+7L2F733Z5+w9VRTeGcgZ3rPfv5Tybc/fb4owbX55n1S/bq/fexlL7K
-        Njl6xRzdfTFXlrr9VjottEiJpTgj0VCLuag4EQD3PC/DKAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrHLMWRmVeSWpSXmKPExsWy7bCSnO5CZ78kg6nrbSy2PjvOarF+8X1m
-        i4nTljJb7Nl7ksWidbakxZZ/R1gd2DzutB9i8dg56y67x6ZVnWwefVtWMXrM+LCf1ePzJrkA
-        tigum5TUnMyy1CJ9uwSujBsPFzAX9ClWrF01g7GB8bVUFyMnh4SAiUTP0scsXYxcHEICuxkl
-        dq79wdrFyAGUkJI4uE8TwhSWOHy4GKLkOaPE91v7WEF62QR0JZ7c+MkMYosI+EicfreREcRm
-        FsiXeLV/FjNEQw+jxNNjy8ASnALWEmvPdTOB2MJA9vVbn8CaWQRUJCatXc0MsoxXwFJiygQP
-        kDCvgKDEyZlPWEDCzAJ6Em0w4+Ultr+dwwxxvoLE7k9HWSFOsJI4P+0CO0SNiMTszjbmCYzC
-        s5BMmoUwaRaSSbOQdCxgZFnFKJlaUJybnltsWGCYl1quV5yYW1yal66XnJ+7iREcRVqaOxi3
-        r/qgd4iRiYPxEKMEB7OSCG9Vrk+SEG9KYmVValF+fFFpTmrxIUZpDhYlcd4LXSfjhQTSE0tS
-        s1NTC1KLYLJMHJxSDUweMXlr9A+qzsw+st1HWndJ7ROG5mXG8ZcZLt4NPpc0O2nnWYe2962L
-        cvZm1aq8srK4t/WGsJVv8tdts06ekvrx4eLHLIMsTaXK2QvyDSeHh5xbmXZ+yvHHO+Ji7LKM
-        vi9/uDs7UDitsDmBx+BCNHvoRuPUg3P+xascevL65uuyqFQXbsk5sWYba8VWzfg21yJa8h3n
-        H5GMOpU+oZlsr6z2dbp3FH498GquT/3ep8+EZ+tUBn2tX75Mwt2P5fqV4t3vvG4EPv15qPju
-        Nh5d/veZLHubLMWvXlr/8I4yj9Jn+XPR1g+kCoLbp6kc/G/81+bdm5mW516uSGYXCDuyOr1C
-        Memo6QmrWHvHm7cSl51VYinOSDTUYi4qTgQAzXM77REDAAA=
-X-CMS-MailID: 20220407015130epcas1p3762726625bafcbee17234459296cc750
-X-Msg-Generator: CA
+        Wed, 6 Apr 2022 21:56:31 -0400
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2105.outbound.protection.outlook.com [40.107.243.105])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33C5C1150;
+        Wed,  6 Apr 2022 18:54:23 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=kPxCmjtTqZegWi5g1OzPyjK2YB32UTb6U9XZOT2jUBCsY7FU48R1ioNMHy7GnusmiysmUp2JaNRom8M/WX3aZngpjLPERWTedGoxAno3F6jU3eTRkGiuNK11SGw0bsol9FdRQGElVlbR3hHQ5CrX85CNGfYzNzsVgy1nNu6yM2oePoY+MXn7/fz4iaFS6XVFkk4DI61NqVTT4DNmaPwkDAPDwvcB1x91XGOBzsriQEgxqc9qM6DJKwNrDH4xD0VdasjxDy/O/QZX1ixRRJYzcedLc/2V8FhYTTOvQo1bWk/hlFwHFMcyVVckFHdBdS+OwiZvqZ3NSl6+Ftek+Yr4Zg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tse3UCqCgnj8SwpsHLPnXPwZ1WdfqVBG1LAb571b/TI=;
+ b=eR3zICbE9d3isrXXusyL5DVVkoRlZvNnYcuzcj+b81GtJTJvRg3gi3E7Mvjnyq0u8D/1+OIxB7zxUY4Vtejq69LOt7hLTMP2IrRY4LsG0+LBxrUZxm73M4tGsngF3U/PuDe0PGryvpHy6xtgO0InpYCQA8ZOFP9Dj8frGVtPCf4gDLooFYziVukroXcUm3obfF92xotQEmpK3nJQBvct2z7josK/sPgF7IKCTSF3dPGfBnf4h+iducp95LbBECoI+P9In4ILJWi+QLndmgZB2H+xL8id0LGNlURnwiPm1PEVOrwZZ2gTcx4xTEePHz33tky5lyD9MufXSqs55xb+Xw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=hammerspace.com; dmarc=pass action=none
+ header.from=hammerspace.com; dkim=pass header.d=hammerspace.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hammerspace.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tse3UCqCgnj8SwpsHLPnXPwZ1WdfqVBG1LAb571b/TI=;
+ b=f5imWdOWnc75DZdyiYvn/tLgXVfgAcX/VMMxNnAJplBEOOttwqWAugmfAO4w9iuDGwWeIKvQoOPvIGUeAAXaXpoHdDy6qeMjV5NbEYtuWtA3eLT0DF2D9Trmpc+YEJ/KmiO6i5C+31NHfwwSk97y+geVF7ts4pEr4btDfOIVadc=
+Received: from CH0PR13MB5084.namprd13.prod.outlook.com (2603:10b6:610:111::7)
+ by SJ0PR13MB5500.namprd13.prod.outlook.com (2603:10b6:a03:421::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5123.31; Thu, 7 Apr
+ 2022 01:54:20 +0000
+Received: from CH0PR13MB5084.namprd13.prod.outlook.com
+ ([fe80::c0b:4fda:5713:9006]) by CH0PR13MB5084.namprd13.prod.outlook.com
+ ([fe80::c0b:4fda:5713:9006%6]) with mapi id 15.20.5144.019; Thu, 7 Apr 2022
+ 01:54:20 +0000
+From:   Trond Myklebust <trondmy@hammerspace.com>
+To:     "david@fromorbit.com" <david@fromorbit.com>,
+        "neilb@suse.de" <neilb@suse.de>
+CC:     "bfields@fieldses.org" <bfields@fieldses.org>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "chuck.lever@oracle.com" <chuck.lever@oracle.com>
+Subject: Re: sporadic hangs on generic/186
+Thread-Topic: sporadic hangs on generic/186
+Thread-Index: AQHYSfqw0+tgllXvcEWzJalDi9pcWazjlQyAgAADk4CAAA5/AIAACbaA
+Date:   Thu, 7 Apr 2022 01:54:20 +0000
+Message-ID: <b282c5b98c4518952f62662ea3ba1d4e6ef85f26.camel@hammerspace.com>
+References: <20220406195424.GA1242@fieldses.org>        ,
+ <20220407001453.GE1609613@dread.disaster.area> ,
+ <164929126156.10985.11316778982526844125@noble.neil.brown.name>
+         <164929437439.10985.5253499040284089154@noble.neil.brown.name>
+In-Reply-To: <164929437439.10985.5253499040284089154@noble.neil.brown.name>
+Accept-Language: en-US, en-GB
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=hammerspace.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 7dcc1c91-6d74-48c9-f660-08da1839885a
+x-ms-traffictypediagnostic: SJ0PR13MB5500:EE_
+x-microsoft-antispam-prvs: <SJ0PR13MB5500C76F4D80740693F76E34B8E69@SJ0PR13MB5500.namprd13.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: AcjRwWm/hf9XwmwIQL1RlZxK9qrAlZAfY46LkU51N0buQnQWRpwQXUBUuDqwGr5IGJaCNf5XnymhbmVTHGqrABni0bf5T9sNC43/vtR0aTadC8l0h0tcjN/iiKycfaMMgd1gnZlU/yI3TtMTDnYX3RK/+1TPlSb051XXT+tfze2KQBDvjmu7pQ7G1e5Yz0nvf4ObGncXQUNsM5jaYifQsVCWdHzNgg6ryrFpnp7qDx8Qxiw5COSZkFpdNLikDkmjCnTKNFz0cFpIcAKexCBjiNhXR2BcBcvD8K9a7YcxuNnfw5HsJDk9BWMp8SP//rhBfgl+N1+G1aaHBBbImya/pguIe48quYMeQw98X+nLyDzi7WmqtZugEl4EpQfQHukpZB5X37nW+XQRa/85+BbLQ0i/nYrgs2+L1IGeeVP23DbwztbHvk1DCuwubIwhnqvuaRnaLHCNscTzq62k3rlFE5WXA8b/ArI2SKGSOhxiW/BNbOepiSeZykOehrlvJJlJKQRBk1KTC324LhkLRLw2hD+/tbnovmwvN342MDflvZo+sMayJBRQcT0FOcaSiavsdBH6RJ1iAe2Cs9//q+BHpVz/CKG1LSRXA1538NFE9F2Vr0y3rkrhA2YpDS126saxR2TWLqvI+/TNxAIp6cNvvxqrUFIdLIH318bodAK8f/12CnR5cYCZYdPKsIO9mOfPxs2Vx/lom6NRwGX+nvXNjnHLMuvUGB7o5fsEqHaRho1gE2vAoDWW3LL/NMTzar2e5f61BwnXUzQd/80aVc7V3HItE8qqfuMgBoiplbZgwGM=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR13MB5084.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(366004)(38070700005)(36756003)(6512007)(26005)(2906002)(5660300002)(6506007)(186003)(8936002)(71200400001)(66476007)(66556008)(316002)(64756008)(66446008)(66946007)(86362001)(8676002)(6486002)(38100700002)(4326008)(54906003)(508600001)(110136005)(76116006)(83380400001)(122000001)(2616005)(41533002);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?ZENuQ2ZKaGVvMG45MjRIZlNpbnZtTnBJRGpSL1EzejNRblFrNGRBb1dWcDlw?=
+ =?utf-8?B?aGtrUjVOR0NwRVVmWmRPVEFFeWZSNHovY2RZY0VaOVRoMG1KYnNzNGJ3UW0y?=
+ =?utf-8?B?WG5JRHFtc0ljQWlmR3d1QmJzNGpRSzFHUmxmRCtxc29vVjNFZ0QxR3UzaGZj?=
+ =?utf-8?B?VkJIRFpOZWIybXluY1RXREhvNURZUTZUNWsvOE5OQkdWd1F0M2U4azJlbUs3?=
+ =?utf-8?B?b0JSVU8ySWFnRFRld0Y2QnA1MkZoUGd5MDVJNENGdHhZUG5VRXNQcWpVWUl1?=
+ =?utf-8?B?UEIxd3F3dUZ2RkptTXhGc21tKzhUVzhDUDBJVVRvdUlHSEQwbVFLdnJzd0dj?=
+ =?utf-8?B?dDJ4N3lrTTlmMmcwOTRPMEFZbDFBclZTUnRtV2FKVTlUMjlPUXQxcHVhNHo2?=
+ =?utf-8?B?WE1qSnlJY3NNQXdvYjF4SUJhTHRjS21yZjJkL2pmRkYrRE9TWnVDT0hnek11?=
+ =?utf-8?B?alJycEtQVWlzdEhTNTByNkt4dmRTckZmN1BSVTF2SEhKOUFxdFlLOUZ6Z0Iw?=
+ =?utf-8?B?MFZxNUd2UDlyYnZZN1dBNy9ZSVBVUzVJbENoNTAwY1h6a2x6cnM5b0pVSkg3?=
+ =?utf-8?B?dXJ4QkhORk03TUpwcnU4MWNjTGFBNTlwQ0xLZjZOUFdwbDNGeGNRVjk2VkJ4?=
+ =?utf-8?B?WGZEVEVUWjIwVFBnZTlqOHNTT2lKNnl2YmlBUGtBcllzcWtaTmNxeDlPZUtT?=
+ =?utf-8?B?c2RoNnJKcEgyRlJtdWdpUFNnbHQ2R0pOQmJ6dTFWdjNwdE4xcnpoN3JraEor?=
+ =?utf-8?B?a1V6QjVaVGlESTFFNk5iNTRjdS95aURrcnlDNEVMSXRoa0lQVCtGM2NaRGlD?=
+ =?utf-8?B?TkRlNlVaWmZ0Q24zMVlGVXJuM0REOTM1THZYd01US3ozemIycnRkQUhscVZm?=
+ =?utf-8?B?UEQ1ZnVHbGxJVnpNTWR6WmdmRDgyRUF3eUgwcFk2NmVSNGZ3SG9helJ1ZUNt?=
+ =?utf-8?B?QVp1azlMR29xejdZK3VzWEVXUEhsbUdURXljNDNnTkpkb0FWdHppaUZBU1Mv?=
+ =?utf-8?B?SmtZU1hHeThuVndPWmsvT3UySmEvVlRWM0Zua2ZkUFJ6RnJEQk1HYURCM294?=
+ =?utf-8?B?ckRyQmlSVlFVNnRxWW13L04rZm9yOTNoWDFpMmNQc3NmeEJvbWNzYlF6WlJs?=
+ =?utf-8?B?KzNJNkJlYkdjTGJYUGh2Sk9YQ1R4aVJPZmlZSnIzMjhNbDFNbUsrOEUwMnJ0?=
+ =?utf-8?B?cVZCa0prK2VxMjBuNXhlU3N0OURvdldFZk1vbUZ5MjU5Y3hlNFVkT3JXTCt4?=
+ =?utf-8?B?bFF6UnlKbEtPajdFaW1kZDA2eEx0OTlEMit5QTdnOSt4ZmxITzVrZ1NJb3BL?=
+ =?utf-8?B?QVE3OWtXajUvcXZwV0FmTUpydUFHcDBocGNUTVNEK255TzdoeThwNExlZU5v?=
+ =?utf-8?B?a1gzdExJRWRyREk3N2hjQ2NDRWtvMkxWUVhWOGNlRWppc0NBVi9DM1dPaUlZ?=
+ =?utf-8?B?alNGQkl3dmFXNU1pU1Q5dzdONDVSd1dwR0tBaXdac0JkK2hCalNQU1NoaUlX?=
+ =?utf-8?B?ajZldm5OOExyN3pvTGxtWHVPZUNWcXYvNEppTU9hNU9GeWgrTUxvVmhqTXRK?=
+ =?utf-8?B?bkhuaTErUkdFVmZabS9wTXBEZnVjME1KT0VxQ3l5UE1iVHRTUGZtQWZhKzRT?=
+ =?utf-8?B?L2wzNTRIeWNVa0xRWGZrR2t4dDhqNXhPYVhoOVBMQmR6MmFvVEtoU1U3WFRj?=
+ =?utf-8?B?MFIwK0MvY2NlOGIyUk8zaDQ1YkJvMTNWcWZkblMzdjUxeWF1a2VDb090ZFBj?=
+ =?utf-8?B?WGNkYnNmdzdlb1NDbStuNTZUYXBsWkF5SVZ4ZmJKSENxeS8rQ09PZzc3UE5l?=
+ =?utf-8?B?bFY1NVYxbWVLd1E1N3JVNW1mTWxQRjF6dWNTeEFkWVZXVzVid0w2S25aMXVa?=
+ =?utf-8?B?UDRFVmxYcmxrRnNGdmFmMWVsaUxIQkRBNXEzd1B4bUNNRHNDRURtUFRtYTBK?=
+ =?utf-8?B?UW1vWU5Wem53WW9FTWV6czZ5SjR1Yy9ITTlIbFBub1Nxd3ZoU29yNUsrK2x1?=
+ =?utf-8?B?SWR3SGdFK09HOFdIeTJLRTNCbGFwWE52L2txZE9sWk0zMElvYXVvUTZiM1BB?=
+ =?utf-8?B?TmM5cE1Bdm5kblorSXU4eDJ2UURNWFdQZnlLOGRYMUttWjRaL01Cd3ljL1Vi?=
+ =?utf-8?B?YTR0Z0ZuaXJZdlRjKzYvdlh3YytQUTMzV1RSckpheFlyTmcvcXJQRTlCNkMw?=
+ =?utf-8?B?elJMeDR5clZqaytoWGxGNDV1ejJvc1VLYlhQL2F1TERYSnhmYzNXWUNXNW84?=
+ =?utf-8?B?T2dQdG1ZYjl3Z1piU2ZMNjNrVmovOHd4di80eHc1a3pYZmZlRFNINkhFNlZo?=
+ =?utf-8?B?YUhZcjNuN3ZDK0w3RGhpV2JDNE0yb1Uzbi9KUHk2bVRDMFZ6djNaS05tL0pJ?=
+ =?utf-8?Q?R23OTM3ItNjpQEl4=3D?=
 Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220406095559epcas1p19621ef9dedda9cd51edbb40d12a40936
-References: <CGME20220406095559epcas1p19621ef9dedda9cd51edbb40d12a40936@epcas1p1.samsung.com>
-        <20220406095552.111869-1-cccheng@synology.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-ID: <B307DDE04B1D0E41B1E65725DEE8D692@namprd13.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: hammerspace.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CH0PR13MB5084.namprd13.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7dcc1c91-6d74-48c9-f660-08da1839885a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Apr 2022 01:54:20.4961
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 0d4fed5c-3a70-46fe-9430-ece41741f59e
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: WYp0mM0nU4dssg8WYnTXpMYaAdZK+W4ZLEG7m9ePfnQnSilgp4LM0hI9o8MO50foAqfTWRaqHAWrb3NRhZz5+Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR13MB5500
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> EXFAT_TZ_VALID bit in {create,modify,access}_tz is corresponding to
-> OffsetValid field in exfat specification [1]. When this bit isn't set,
-> timestamps should be treated as having the same UTC offset as the current
-> local time.
-> 
-> Currently, there is an option 'time_offset' for users to specify the UTC
-> offset for this issue. This patch introduces a new mount option 'sys_tz'
-> to use system timezone as time offset.
-> 
-> Link: [1] https://protect2.fireeye.com/v1/url?k=6c606ee0-0d1d8463-
-> 6c61e5af-74fe48600158-7870d6304b957d98&q=1&e=3704e121-39fa-4c75-a3c8-
-> a4e968c00dbf&u=https%3A%2F%2Fdocs.microsoft.com%2Fen-
-> us%2Fwindows%2Fwin32%2Ffileio%2Fexfat-specification%2374102-offsetvalid-
-> field
-> 
-> Signed-off-by: Chung-Chiang Cheng <cccheng@synology.com>
-
-Looks good!
-Acked-by: Sungjong Seo <sj1557.seo@samsung.com>
-
-> ---
->  fs/exfat/exfat_fs.h |  1 +
->  fs/exfat/misc.c     | 10 ++++++++--
->  fs/exfat/super.c    |  9 ++++++++-
->  3 files changed, 17 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h index
-> c6800b880920..82e507413291 100644
-> --- a/fs/exfat/exfat_fs.h
-> +++ b/fs/exfat/exfat_fs.h
-> @@ -203,6 +203,7 @@ struct exfat_mount_options {
->  	/* on error: continue, panic, remount-ro */
->  	enum exfat_error_mode errors;
->  	unsigned utf8:1, /* Use of UTF-8 character set */
-> +		 sys_tz:1, /* Use local timezone */
->  		 discard:1, /* Issue discard requests on deletions */
->  		 keep_last_dots:1; /* Keep trailing periods in paths */
->  	int time_offset; /* Offset of timestamps from UTC (in minutes) */
-> diff --git a/fs/exfat/misc.c b/fs/exfat/misc.c index
-> d5bd8e6d9741..9380e0188b55 100644
-> --- a/fs/exfat/misc.c
-> +++ b/fs/exfat/misc.c
-> @@ -74,6 +74,13 @@ static void exfat_adjust_tz(struct timespec64 *ts, u8
-> tz_off)
->  		ts->tv_sec += TIMEZONE_SEC(0x80 - tz_off);  }
-> 
-> +static inline int exfat_tz_offset(struct exfat_sb_info *sbi) {
-> +	if (sbi->options.sys_tz)
-> +		return -sys_tz.tz_minuteswest;
-> +	return sbi->options.time_offset;
-> +}
-> +
->  /* Convert a EXFAT time/date pair to a UNIX date (seconds since 1 1 70).
-> */  void exfat_get_entry_time(struct exfat_sb_info *sbi, struct timespec64
-> *ts,
->  		u8 tz, __le16 time, __le16 date, u8 time_cs) @@ -96,8 +103,7
-> @@ void exfat_get_entry_time(struct exfat_sb_info *sbi, struct timespec64
-> *ts,
->  		/* Adjust timezone to UTC0. */
->  		exfat_adjust_tz(ts, tz & ~EXFAT_TZ_VALID);
->  	else
-> -		/* Convert from local time to UTC using time_offset. */
-> -		ts->tv_sec -= sbi->options.time_offset * SECS_PER_MIN;
-> +		ts->tv_sec -= exfat_tz_offset(sbi) * SECS_PER_MIN;
->  }
-> 
->  /* Convert linear UNIX date to a EXFAT time/date pair. */ diff --git
-> a/fs/exfat/super.c b/fs/exfat/super.c index 8ca21e7917d1..3e0f67b2103e
-> 100644
-> --- a/fs/exfat/super.c
-> +++ b/fs/exfat/super.c
-> @@ -170,7 +170,9 @@ static int exfat_show_options(struct seq_file *m,
-> struct dentry *root)
->  		seq_puts(m, ",discard");
->  	if (opts->keep_last_dots)
->  		seq_puts(m, ",keep_last_dots");
-> -	if (opts->time_offset)
-> +	if (opts->sys_tz)
-> +		seq_puts(m, ",sys_tz");
-> +	else if (opts->time_offset)
->  		seq_printf(m, ",time_offset=%d", opts->time_offset);
->  	return 0;
->  }
-> @@ -214,6 +216,7 @@ enum {
->  	Opt_errors,
->  	Opt_discard,
->  	Opt_keep_last_dots,
-> +	Opt_sys_tz,
->  	Opt_time_offset,
-> 
->  	/* Deprecated options */
-> @@ -241,6 +244,7 @@ static const struct fs_parameter_spec
-> exfat_parameters[] = {
->  	fsparam_enum("errors",			Opt_errors,
-> exfat_param_enums),
->  	fsparam_flag("discard",			Opt_discard),
->  	fsparam_flag("keep_last_dots",		Opt_keep_last_dots),
-> +	fsparam_flag("sys_tz",			Opt_sys_tz),
->  	fsparam_s32("time_offset",		Opt_time_offset),
->  	__fsparam(NULL, "utf8",			Opt_utf8,
-> fs_param_deprecated,
->  		  NULL),
-> @@ -298,6 +302,9 @@ static int exfat_parse_param(struct fs_context *fc,
-> struct fs_parameter *param)
->  	case Opt_keep_last_dots:
->  		opts->keep_last_dots = 1;
->  		break;
-> +	case Opt_sys_tz:
-> +		opts->sys_tz = 1;
-> +		break;
->  	case Opt_time_offset:
->  		/*
->  		 * Make the limit 24 just in case someone invents something
-> --
-> 2.34.1
-
-
+T24gVGh1LCAyMDIyLTA0LTA3IGF0IDExOjE5ICsxMDAwLCBOZWlsQnJvd24gd3JvdGU6DQo+IE9u
+IFRodSwgMDcgQXByIDIwMjIsIE5laWxCcm93biB3cm90ZToNCj4gPiBPbiBUaHUsIDA3IEFwciAy
+MDIyLCBEYXZlIENoaW5uZXIgd3JvdGU6DQo+ID4gPiBPbiBXZWQsIEFwciAwNiwgMjAyMiBhdCAw
+Mzo1NDoyNFBNIC0wNDAwLCBKLiBCcnVjZSBGaWVsZHMgd3JvdGU6DQo+ID4gPiA+IEluIHRoZSBs
+YXN0IGNvdXBsZSBkYXlzIEkndmUgc3RhcnRlZCBnZXR0aW5nIGhhbmdzIG9uIHhmc3Rlc3RzDQo+
+ID4gPiA+IGdlbmVyaWMvMTg2IG9uIHVwc3RyZWFtLsKgIEkgYWxzbyBub3RpY2UgdGhlIHRlc3Qg
+Y29tcGxldGVzDQo+ID4gPiA+IGFmdGVyIDEwKw0KPiA+ID4gPiBob3VycyAodXN1YWxseSBpdCB0
+YWtlcyBhYm91dCA1IG1pbnV0ZXMpLsKgIFNvbWV0aW1lcyB0aGlzIGlzDQo+ID4gPiA+IGFjY29t
+cGFuaWVkDQo+ID4gPiA+IGJ5ICJuZnM6IFJQQyBjYWxsIHJldHVybmVkIGVycm9yIDEyIiBvbiB0
+aGUgY2xpZW50Lg0KPiA+ID4gDQo+ID4gPiAjZGVmaW5lIEVOT01FTcKgwqDCoMKgwqDCoMKgwqDC
+oCAxMsKgwqDCoMKgwqAgLyogT3V0IG9mIG1lbW9yeSAqLw0KPiA+ID4gDQo+ID4gPiBTbyBlaXRo
+ZXIgdGhlIGNsaWVudCBvciB0aGUgc2VydmVyIGlzIHJ1bm5pbmcgb3V0IG9mIG1lbW9yeQ0KPiA+
+ID4gc29tZXdoZXJlPw0KPiA+IA0KPiA+IFByb2JhYmx5IHRoZSBjbGllbnQuwqAgVGhlcmUgYXJl
+IGEgYnVuY2ggb2YgY2hhbmdlcyByZWNlbnRseSB3aGljaA0KPiA+IGFkZA0KPiA+IF9fR0ZQX05P
+UkVUUlkgdG8gbWVtb3J5IGFsbG9jYXRpb25zIGZyb20gUEZfV1FfV09SS0VScyBiZWNhdXNlIHRo
+YXQNCj4gPiBjYW4NCj4gPiByZXN1bHQgaW4gZGVhZGxvY2tzIHdoZW4gc3dhcHBpbmcgb3ZlciBO
+RlMuDQo+ID4gVGhpcyBtZWFucyB0aGF0IGttYWxsb2MgcmVxdWVzdCB0aGF0IHByZXZpb3VzbHkg
+bmV2ZXIgZmFpbGVkDQo+ID4gKGJlY2F1c2UNCj4gPiBHRlBfS0VSTkVMIG5ldmVyIGZhaWxzIGZv
+ciBrZXJuZWwgdGhyZWFkcyBJIHRoaW5rKSBjYW4gbm93IGZhaWwuwqANCj4gPiBUaGlzDQo+ID4g
+aGFzIHRpY2tsZWQgb25lIGJ1ZyB0aGF0IEkga25vdyBvZi7CoCBUaGVyZSBhcmUgbGlrZWx5IHRv
+IGJlIG1vcmUuDQo+ID4gDQo+ID4gVGhlIFJQQyBjb2RlIHNob3VsZCBzaW1wbHkgcmV0cnkgdGhl
+c2UgYWxsb2NhdGlvbnMgYWZ0ZXIgYSBzaG9ydA0KPiA+IGRlbGF5LiANCj4gPiBIWi80IGlzIHRo
+ZSBudW1iZXIgdGhhdCBpcyB1c2VkIGluIGEgY291cGxlIG9mIHBsYWNlcy7CoCBQb3NzaWJseQ0K
+PiA+IHRoZXJlDQo+ID4gYXJlIG1vcmUgcGxhY2VzIHRoYXQgbmVlZCB0byBoYW5kbGUgLUVOT01F
+TSB3aXRoIHJwY19kZWxheSgpLg0KPiANCj4gSSBoYWQgYSBsb29rIHRocm91Z2ggdGhlIHZhcmlv
+dXMgcGxhY2VzIHdoZXJlIGFsbG9jIGNhbiBub3cgZmFpbC4NCj4gDQo+IEkgdGhpbmsgeGRyX2Fs
+bG9jX2J2ZWMoKSBpbiB4cHJ0X3NlbnRfcGFnZWRhdGEoKSBpcyB0aGUgbW9zdCBsaWtlbHkNCj4g
+Y2F1c2Ugb2YgYSBwcm9ibGVtIGhlcmUuwqAgSSBkb24ndCB0aGluayBhbiAtRU5PTUVNIGZyb20g
+dGhlcmUgaXMNCj4gY2F1Z2h0LA0KPiBzbyBpdCBjb3VsZCBsaWtlbHkgZmlsdGVyIHVwIHRvIE5G
+UyBhbmQgcmVzdWx0IGluIHRoZSBtZXNzYWdlIHlvdQ0KPiBnb3QuDQo+IA0KPiBJIGRvbid0IHRo
+aW5rIHdlIGNhbiBlYXNpbHkgaGFuZGxlIGZhaWx1cmUgdGhlcmUuwqAgV2UgbmVlZCB0byBzdGF5
+DQo+IHdpdGgNCj4gR0ZQX0tFUk5FTCByZWx5IG9uIFBGX01FTUFMTE9DIHRvIG1ha2UgZm9yd2Fy
+ZCBwcm9ncmVzcyBmb3INCj4gc3dhcC1vdmVyLU5GUy4NCj4gDQo+IEJydWNlOiBjYW4geW91IGNo
+YW5nZSB0aGF0IG9uZSBsaW5lIGJhY2sgdG8gR0ZQX0tFUk5FTCBhbmQgc2VlIGlmIHRoZQ0KPiBw
+cm9ibGVtIGdvZXMgYXdheT8NCj4gDQoNCkNhbiB3ZSBwbGVhc2UganVzdCBtb3ZlIHRoZSBjYWxs
+IHRvIHhkcl9hbGxvY19idmVjKCkgb3V0IG9mDQp4cHJ0X3NlbmRfcGFnZWRhdGEoKT8gTW92ZSB0
+aGUgY2xpZW50IHNpZGUgYWxsb2NhdGlvbiBpbnRvDQp4c19zdHJlYW1fcHJlcGFyZV9yZXF1ZXN0
+KCkgYW5kIHhzX3VkcF9zZW5kX3JlcXVlc3QoKSwgdGhlbiBtb3ZlIHRoZQ0Kc2VydmVyIHNpZGUg
+YWxsb2NhdGlvbiBpbnRvIHN2Y191ZHBfc2VuZHRvKCkuDQoNClRoYXQgbWFrZXMgaXQgcG9zc2li
+bGUgdG8gaGFuZGxlIGVycm9ycy4NCg0KPiBUaGUgb3RoZXIgcHJvYmxlbSBJIGZvdW5kIGlzIHRo
+YXQgcnBjX2FsbG9jX3Rhc2soKSBjYW4gbm93IGZhaWwsIGJ1dA0KPiBycGNfbmV3X3Rhc2sgYXNz
+dW1lcyB0aGF0IGl0IG5ldmVyIHdpbGwuwqAgSWYgaXQgZG9lcywgdGhlbiB3ZSBnZXQgYQ0KPiBO
+VUxMDQo+IGRlcmVmLg0KPiANCj4gSSBkb24ndCB0aGluayBycGNfbmV3X3Rhc2soKSBjYW4gZXZl
+ciBiZSBjYWxsZWQgZnJvbSB0aGUgcnBjaW9kIHdvcmsNCj4gcXVldWUsIHNvIGl0IGlzIHNhZmUg
+dG8ganVzdCB1c2UgYSBtZW1wb29sIHdpdGggR0ZQX0tFUk5FTCBsaWtlIHdlDQo+IGRpZA0KPiBi
+ZWZvcmUuIA0KPiANCk5vLiBXZSBzaG91bGRuJ3QgZXZlciB1c2UgbWVtcG9vbHMgd2l0aCBHRlBf
+S0VSTkVMLg0KDQpNb3N0LCBpZiBub3QgYWxsIG9mIHRoZSBjYWxsZXJzIG9mIHJwY19ydW5fdGFz
+aygpIGFyZSBzdGlsbCBjYXBhYmxlIG9mDQpkZWFsaW5nIHdpdGggZXJyb3JzLCBhbmQgZGl0dG8g
+Zm9yIHRoZSBjYWxsZXJzIG9mIHJwY19ydW5fYmNfdGFzaygpLg0KDQotLSANClRyb25kIE15a2xl
+YnVzdA0KTGludXggTkZTIGNsaWVudCBtYWludGFpbmVyLCBIYW1tZXJzcGFjZQ0KdHJvbmQubXlr
+bGVidXN0QGhhbW1lcnNwYWNlLmNvbQ0KDQoNCg==
