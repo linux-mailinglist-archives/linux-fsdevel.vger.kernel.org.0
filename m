@@ -2,220 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3ECB64F78FF
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Apr 2022 10:05:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B435D4F792E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Apr 2022 10:11:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242906AbiDGIGc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Apr 2022 04:06:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48996 "EHLO
+        id S231268AbiDGINd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Apr 2022 04:13:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242826AbiDGIGW (ORCPT
+        with ESMTP id S232766AbiDGINN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Apr 2022 04:06:22 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54C34160468;
-        Thu,  7 Apr 2022 01:03:18 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id BA7481F859;
-        Thu,  7 Apr 2022 08:03:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1649318596; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=7k0z5t+RkWgzil40AtKwhJmpL0iBjAFtHXia6nIwjc8=;
-        b=BFj1weRWNO0gJwf1a0jytpVaNV2SIOQyml/DNHaVaAYv+GWtC9RRp3Nkr1QhUY/V7QdLG9
-        baoJsXmF2FufEolsvsTPwbwZ3Or5/MyPwA8jPnqPoYDtXH5U9TjRT7F8cNWLR3Nqx6fvJv
-        Ws2fOIHqbo98FqfWwnQjig+YJFloGxM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1649318596;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=7k0z5t+RkWgzil40AtKwhJmpL0iBjAFtHXia6nIwjc8=;
-        b=DjSOFiN41nmAx2XAVq/tnPaDKbkIhCw6FaIeWu9KyiZMi8ecy7DPyjacZPoBAIl6E7Jspy
-        2pyi9oy0n8T7WCDA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4CF8613485;
-        Thu,  7 Apr 2022 08:03:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id F2mtCL+aTmKlAgAAMHmgww
-        (envelope-from <colyli@suse.de>); Thu, 07 Apr 2022 08:03:11 +0000
-Message-ID: <9f91936a-7dd7-2ee6-3293-f199ada85210@suse.de>
-Date:   Thu, 7 Apr 2022 16:03:09 +0800
+        Thu, 7 Apr 2022 04:13:13 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 550673FD9E;
+        Thu,  7 Apr 2022 01:11:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=YSea+azCLlVibk6WtN+bQC5ZLuefUNq1U9p8LGAsefw=; b=s5JoQXtZ0ZBfVVwo8YuDOdZXfo
+        ZTf1iTaiLB6l8SU7IQiVOaxjyuZSMWy3wvU2rCDLUQDWnyKVA/j3CHn4s/7ak3kZTsLew1/DMQK3p
+        6+czEMANzRDZjFuvPhsIXwUgGLkK42flhsMUBsU7WJ9JtoF3sDJL2y+aqyTxwJTx65xEigyVg4yGf
+        vxUIGanMEgiGtiU0d3JREEJm1heHIWdXMODkG7zqKl4A/VMcV3hoFR7Cz7Cwo8X7HpK3xkmjoiCXR
+        4KsMWOeBb9Wq7n1JoaeJcyyv6L+lo9O0cFbBeL1Qe0Nxzn55iE+UxCPo2Ne/MWMYvGEzRFjEClaqA
+        5uTqFh+A==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1ncNET-00AGuj-7k; Thu, 07 Apr 2022 08:11:09 +0000
+Date:   Thu, 7 Apr 2022 01:11:09 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        "sj1557.seo@samsung.com" <sj1557.seo@samsung.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "Andy.Wu@sony.com" <Andy.Wu@sony.com>,
+        "Wataru.Aoyama@sony.com" <Wataru.Aoyama@sony.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>
+Subject: Re: [PATCH v2 1/2] block: add sync_blockdev_range()
+Message-ID: <Yk6cnX5eHrJYrVXQ@infradead.org>
+References: <HK2PR04MB38914CCBCA891B82060B659281E39@HK2PR04MB3891.apcprd04.prod.outlook.com>
+ <Ykp5cmdP3nV8XTFj@infradead.org>
+ <HK2PR04MB38910663E1666A0C74A5618781E79@HK2PR04MB3891.apcprd04.prod.outlook.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.7.0
-Subject: Re: [PATCH 22/27] block: refactor discard bio size limiting
-Content-Language: en-US
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     dm-devel@redhat.com, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-um@lists.infradead.org,
-        linux-block@vger.kernel.org, drbd-dev@lists.linbit.com,
-        nbd@other.debian.org, ceph-devel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
-        linux-raid@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org,
-        linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
-        target-devel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        cluster-devel@redhat.com, jfs-discussion@lists.sourceforge.net,
-        linux-nilfs@vger.kernel.org, ntfs3@lists.linux.dev,
-        ocfs2-devel@oss.oracle.com, linux-mm@kvack.org,
-        Jens Axboe <axboe@kernel.dk>
-References: <20220406060516.409838-1-hch@lst.de>
- <20220406060516.409838-23-hch@lst.de>
-From:   Coly Li <colyli@suse.de>
-In-Reply-To: <20220406060516.409838-23-hch@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-7.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <HK2PR04MB38910663E1666A0C74A5618781E79@HK2PR04MB3891.apcprd04.prod.outlook.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/6/22 2:05 PM, Christoph Hellwig wrote:
-> Move all the logic to limit the discard bio size into a common helper
-> so that it is better documented.
->
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+On Wed, Apr 06, 2022 at 10:21:15AM +0000, Yuezhang.Mo@sony.com wrote:
+> > From: Christoph Hellwig <hch@infradead.org>
+> > > --- a/block/bdev.c
+> > > +++ b/block/bdev.c
+> > > @@ -200,6 +200,16 @@ int sync_blockdev(struct block_device *bdev)  }
+> > > EXPORT_SYMBOL(sync_blockdev);
+> > >
+> > > +int sync_blockdev_range(struct block_device *bdev, loff_t lstart,
+> > > +loff_t lend) {
+> > > +	if (!bdev)
+> > > +		return 0;
+> > 
+> > This check isn't really needed, and I don't think we need a !CONFIG_BLOCK
+> > stub for this either.
+> 
+> sync_blockdev() and related helpers have this check and a !CONFIG_BLOCK stub.
+> I would like to understand the background of your comment, could you explain a little more?
 
-Acked-by: Coly Li <colyli@suse.de>
-
-
-Thanks for the change.
-
-Coly Li
-
-
-> ---
->   block/blk-lib.c | 59 ++++++++++++++++++++++++-------------------------
->   block/blk.h     | 14 ------------
->   2 files changed, 29 insertions(+), 44 deletions(-)
->
-> diff --git a/block/blk-lib.c b/block/blk-lib.c
-> index 237d60d8b5857..2ae32a722851c 100644
-> --- a/block/blk-lib.c
-> +++ b/block/blk-lib.c
-> @@ -10,6 +10,32 @@
->   
->   #include "blk.h"
->   
-> +static sector_t bio_discard_limit(struct block_device *bdev, sector_t sector)
-> +{
-> +	unsigned int discard_granularity =
-> +		bdev_get_queue(bdev)->limits.discard_granularity;
-> +	sector_t granularity_aligned_sector;
-> +
-> +	if (bdev_is_partition(bdev))
-> +		sector += bdev->bd_start_sect;
-> +
-> +	granularity_aligned_sector =
-> +		round_up(sector, discard_granularity >> SECTOR_SHIFT);
-> +
-> +	/*
-> +	 * Make sure subsequent bios start aligned to the discard granularity if
-> +	 * it needs to be split.
-> +	 */
-> +	if (granularity_aligned_sector != sector)
-> +		return granularity_aligned_sector - sector;
-> +
-> +	/*
-> +	 * Align the bio size to the discard granularity to make splitting the bio
-> +	 * at discard granularity boundaries easier in the driver if needed.
-> +	 */
-> +	return round_down(UINT_MAX, discard_granularity) >> SECTOR_SHIFT;
-> +}
-> +
->   int __blkdev_issue_discard(struct block_device *bdev, sector_t sector,
->   		sector_t nr_sects, gfp_t gfp_mask, int flags,
->   		struct bio **biop)
-> @@ -17,7 +43,7 @@ int __blkdev_issue_discard(struct block_device *bdev, sector_t sector,
->   	struct request_queue *q = bdev_get_queue(bdev);
->   	struct bio *bio = *biop;
->   	unsigned int op;
-> -	sector_t bs_mask, part_offset = 0;
-> +	sector_t bs_mask;
->   
->   	if (bdev_read_only(bdev))
->   		return -EPERM;
-> @@ -48,36 +74,9 @@ int __blkdev_issue_discard(struct block_device *bdev, sector_t sector,
->   	if (!nr_sects)
->   		return -EINVAL;
->   
-> -	/* In case the discard request is in a partition */
-> -	if (bdev_is_partition(bdev))
-> -		part_offset = bdev->bd_start_sect;
-> -
->   	while (nr_sects) {
-> -		sector_t granularity_aligned_lba, req_sects;
-> -		sector_t sector_mapped = sector + part_offset;
-> -
-> -		granularity_aligned_lba = round_up(sector_mapped,
-> -				q->limits.discard_granularity >> SECTOR_SHIFT);
-> -
-> -		/*
-> -		 * Check whether the discard bio starts at a discard_granularity
-> -		 * aligned LBA,
-> -		 * - If no: set (granularity_aligned_lba - sector_mapped) to
-> -		 *   bi_size of the first split bio, then the second bio will
-> -		 *   start at a discard_granularity aligned LBA on the device.
-> -		 * - If yes: use bio_aligned_discard_max_sectors() as the max
-> -		 *   possible bi_size of the first split bio. Then when this bio
-> -		 *   is split in device drive, the split ones are very probably
-> -		 *   to be aligned to discard_granularity of the device's queue.
-> -		 */
-> -		if (granularity_aligned_lba == sector_mapped)
-> -			req_sects = min_t(sector_t, nr_sects,
-> -					  bio_aligned_discard_max_sectors(q));
-> -		else
-> -			req_sects = min_t(sector_t, nr_sects,
-> -					  granularity_aligned_lba - sector_mapped);
-> -
-> -		WARN_ON_ONCE((req_sects << 9) > UINT_MAX);
-> +		sector_t req_sects =
-> +			min(nr_sects, bio_discard_limit(bdev, sector));
->   
->   		bio = blk_next_bio(bio, bdev, 0, op, gfp_mask);
->   		bio->bi_iter.bi_sector = sector;
-> diff --git a/block/blk.h b/block/blk.h
-> index 8ccbc6e076369..1fdc1d28e6d60 100644
-> --- a/block/blk.h
-> +++ b/block/blk.h
-> @@ -346,20 +346,6 @@ static inline unsigned int bio_allowed_max_sectors(struct request_queue *q)
->   	return round_down(UINT_MAX, queue_logical_block_size(q)) >> 9;
->   }
->   
-> -/*
-> - * The max bio size which is aligned to q->limits.discard_granularity. This
-> - * is a hint to split large discard bio in generic block layer, then if device
-> - * driver needs to split the discard bio into smaller ones, their bi_size can
-> - * be very probably and easily aligned to discard_granularity of the device's
-> - * queue.
-> - */
-> -static inline unsigned int bio_aligned_discard_max_sectors(
-> -					struct request_queue *q)
-> -{
-> -	return round_down(UINT_MAX, q->limits.discard_granularity) >>
-> -			SECTOR_SHIFT;
-> -}
-> -
->   /*
->    * Internal io_context interface
->    */
-
-
+sync_blockdev and sync_blockdev do that because they are unconditionally
+called from sync_filesystem, and not just from block-dependent code.
+Eventually that should be cleaned up as well, but please don't add it to
+new code.
