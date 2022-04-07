@@ -2,88 +2,199 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6524A4F7556
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Apr 2022 07:31:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AD894F7563
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  7 Apr 2022 07:34:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240883AbiDGFci (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Apr 2022 01:32:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38770 "EHLO
+        id S237986AbiDGFdL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Apr 2022 01:33:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40734 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237986AbiDGFcd (ORCPT
+        with ESMTP id S240906AbiDGFdJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Apr 2022 01:32:33 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CD9A2F2;
-        Wed,  6 Apr 2022 22:30:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=xe6Wh61D0dwQPHufcErxm0z4ibDB+THnfb9jDNUjPFM=; b=LkkPADU1q8U/0mpL3Zb6QAn9os
-        hxX9Dx4f/YFPryOx1G89Ukac7e+GnrZr6Vi7XptDrUVDdIoikVtZpwT5MhjVfjZxEPLqAB1riDhyb
-        JZXA/S+ygmQFq1H64CEkLk2IXZuciM5lwrz2RsOHh1A+cOBallCX9RbVEHszGh2Ctev3pG9Vqq7f0
-        nQ2RiVfpMq/6XTvvdVEJ3XrwHrwPh0EeFYX4xaWlK+xCWvdVq4FCvofnTm5fWE2yKlPrgCDO0JcOG
-        fZ8rHrx6AMQJGf003qWsVghyNQuae6pEVuMbIQW/ea2bLZCSy5pGWAcNfXXeMlZwT8qPSNiE+iKS1
-        th53VCdg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1ncKih-009YRE-V6; Thu, 07 Apr 2022 05:30:11 +0000
-Date:   Wed, 6 Apr 2022 22:30:11 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Jane Chu <jane.chu@oracle.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        "david@fromorbit.com" <david@fromorbit.com>,
-        "djwong@kernel.org" <djwong@kernel.org>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "vishal.l.verma@intel.com" <vishal.l.verma@intel.com>,
-        "dave.jiang@intel.com" <dave.jiang@intel.com>,
-        "agk@redhat.com" <agk@redhat.com>,
-        "snitzer@redhat.com" <snitzer@redhat.com>,
-        "dm-devel@redhat.com" <dm-devel@redhat.com>,
-        "ira.weiny@intel.com" <ira.weiny@intel.com>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "vgoyal@redhat.com" <vgoyal@redhat.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCH v7 4/6] dax: add DAX_RECOVERY flag and .recovery_write
- dev_pgmap_ops
-Message-ID: <Yk52415cnFa39qil@infradead.org>
-References: <20220405194747.2386619-1-jane.chu@oracle.com>
- <20220405194747.2386619-5-jane.chu@oracle.com>
- <Yk0i/pODntZ7lbDo@infradead.org>
- <196d51a3-b3cc-02ae-0d7d-ee6fbb4d50e4@oracle.com>
+        Thu, 7 Apr 2022 01:33:09 -0400
+Received: from out199-16.us.a.mail.aliyun.com (out199-16.us.a.mail.aliyun.com [47.90.199.16])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E3EB99EEC;
+        Wed,  6 Apr 2022 22:31:09 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04357;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=19;SR=0;TI=SMTPD_---0V9PKx-H_1649309460;
+Received: from B-P7TQMD6M-0146.local(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0V9PKx-H_1649309460)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 07 Apr 2022 13:31:03 +0800
+Date:   Thu, 7 Apr 2022 13:31:00 +0800
+From:   Gao Xiang <hsiangkao@linux.alibaba.com>
+To:     Jeffle Xu <jefflexu@linux.alibaba.com>
+Cc:     dhowells@redhat.com, linux-cachefs@redhat.com, xiang@kernel.org,
+        chao@kernel.org, linux-erofs@lists.ozlabs.org,
+        torvalds@linux-foundation.org, gregkh@linuxfoundation.org,
+        willy@infradead.org, linux-fsdevel@vger.kernel.org,
+        joseph.qi@linux.alibaba.com, bo.liu@linux.alibaba.com,
+        tao.peng@linux.alibaba.com, gerry@linux.alibaba.com,
+        eguan@linux.alibaba.com, linux-kernel@vger.kernel.org,
+        luodaowen.backend@bytedance.com, tianzichen@kuaishou.com,
+        fannaihao@baidu.com
+Subject: Re: [PATCH v8 12/20] erofs: add anonymous inode managing page cache
+ for data blob
+Message-ID: <Yk53FOjDLzN941b4@B-P7TQMD6M-0146.local>
+Mail-Followup-To: Jeffle Xu <jefflexu@linux.alibaba.com>,
+        dhowells@redhat.com, linux-cachefs@redhat.com, xiang@kernel.org,
+        chao@kernel.org, linux-erofs@lists.ozlabs.org,
+        torvalds@linux-foundation.org, gregkh@linuxfoundation.org,
+        willy@infradead.org, linux-fsdevel@vger.kernel.org,
+        joseph.qi@linux.alibaba.com, bo.liu@linux.alibaba.com,
+        tao.peng@linux.alibaba.com, gerry@linux.alibaba.com,
+        eguan@linux.alibaba.com, linux-kernel@vger.kernel.org,
+        luodaowen.backend@bytedance.com, tianzichen@kuaishou.com,
+        fannaihao@baidu.com
+References: <20220406075612.60298-1-jefflexu@linux.alibaba.com>
+ <20220406075612.60298-13-jefflexu@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <196d51a3-b3cc-02ae-0d7d-ee6fbb4d50e4@oracle.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <20220406075612.60298-13-jefflexu@linux.alibaba.com>
+X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 06, 2022 at 05:32:31PM +0000, Jane Chu wrote:
-> Yes, I believe Dan was motivated by avoiding the dm dance as a result of
-> adding .recovery_write to dax_operations.
-> 
-> I understand your point about .recovery_write is device specific and
-> thus not something appropriate for device agnostic ops.
-> 
-> I can see 2 options so far -
-> 
-> 1)  add .recovery_write to dax_operations and do the dm dance to hunt 
-> down to the base device that actually provides the recovery action
+On Wed, Apr 06, 2022 at 03:56:04PM +0800, Jeffle Xu wrote:
+> Introduce one anonymous inode managing page cache for data blob. Then
+> erofs could read directly from the address space of the anonymous inode
+> when cache hit.
 
-That would be my preference.  But I'll wait for Dan to chime in.
+Introduce one anonymous inode for data blobs so that erofs
+can cache metadata directly within such anonymous inode.
 
-> Okay, will run the checkpatch.pl test again.
+> 
+> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
 
-Unfortuntely checkpatch.pl is broken in that regard.  It treats the
-exception to occasionally go longer or readability as the default.
+Yeah, I think currently we can live with that:
+
+Reviewed-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+
+Thanks,
+Gao Xiang
+
+
+> ---
+>  fs/erofs/fscache.c  | 39 ++++++++++++++++++++++++++++++++++++---
+>  fs/erofs/internal.h |  6 ++++--
+>  2 files changed, 40 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/erofs/fscache.c b/fs/erofs/fscache.c
+> index 67a3c4935245..1c88614203d2 100644
+> --- a/fs/erofs/fscache.c
+> +++ b/fs/erofs/fscache.c
+> @@ -5,17 +5,22 @@
+>  #include <linux/fscache.h>
+>  #include "internal.h"
+>  
+> +static const struct address_space_operations erofs_fscache_meta_aops = {
+> +};
+> +
+>  /*
+>   * Create an fscache context for data blob.
+>   * Return: 0 on success and allocated fscache context is assigned to @fscache,
+>   *	   negative error number on failure.
+>   */
+>  int erofs_fscache_register_cookie(struct super_block *sb,
+> -				  struct erofs_fscache **fscache, char *name)
+> +				  struct erofs_fscache **fscache,
+> +				  char *name, bool need_inode)
+>  {
+>  	struct fscache_volume *volume = EROFS_SB(sb)->volume;
+>  	struct erofs_fscache *ctx;
+>  	struct fscache_cookie *cookie;
+> +	int ret;
+>  
+>  	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
+>  	if (!ctx)
+> @@ -25,15 +30,40 @@ int erofs_fscache_register_cookie(struct super_block *sb,
+>  					name, strlen(name), NULL, 0, 0);
+>  	if (!cookie) {
+>  		erofs_err(sb, "failed to get cookie for %s", name);
+> -		kfree(name);
+> -		return -EINVAL;
+> +		ret = -EINVAL;
+> +		goto err;
+>  	}
+>  
+>  	fscache_use_cookie(cookie, false);
+>  	ctx->cookie = cookie;
+>  
+> +	if (need_inode) {
+> +		struct inode *const inode = new_inode(sb);
+> +
+> +		if (!inode) {
+> +			erofs_err(sb, "failed to get anon inode for %s", name);
+> +			ret = -ENOMEM;
+> +			goto err_cookie;
+> +		}
+> +
+> +		set_nlink(inode, 1);
+> +		inode->i_size = OFFSET_MAX;
+> +		inode->i_mapping->a_ops = &erofs_fscache_meta_aops;
+> +		mapping_set_gfp_mask(inode->i_mapping, GFP_NOFS);
+> +
+> +		ctx->inode = inode;
+> +	}
+> +
+>  	*fscache = ctx;
+>  	return 0;
+> +
+> +err_cookie:
+> +	fscache_unuse_cookie(ctx->cookie, NULL, NULL);
+> +	fscache_relinquish_cookie(ctx->cookie, false);
+> +	ctx->cookie = NULL;
+> +err:
+> +	kfree(ctx);
+> +	return ret;
+>  }
+>  
+>  void erofs_fscache_unregister_cookie(struct erofs_fscache **fscache)
+> @@ -47,6 +77,9 @@ void erofs_fscache_unregister_cookie(struct erofs_fscache **fscache)
+>  	fscache_relinquish_cookie(ctx->cookie, false);
+>  	ctx->cookie = NULL;
+>  
+> +	iput(ctx->inode);
+> +	ctx->inode = NULL;
+> +
+>  	kfree(ctx);
+>  	*fscache = NULL;
+>  }
+> diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
+> index c6a3351a4d7d..3a4a344cfed3 100644
+> --- a/fs/erofs/internal.h
+> +++ b/fs/erofs/internal.h
+> @@ -99,6 +99,7 @@ struct erofs_sb_lz4_info {
+>  
+>  struct erofs_fscache {
+>  	struct fscache_cookie *cookie;
+> +	struct inode *inode;
+>  };
+>  
+>  struct erofs_sb_info {
+> @@ -632,7 +633,8 @@ int erofs_fscache_register_fs(struct super_block *sb);
+>  void erofs_fscache_unregister_fs(struct super_block *sb);
+>  
+>  int erofs_fscache_register_cookie(struct super_block *sb,
+> -				  struct erofs_fscache **fscache, char *name);
+> +				  struct erofs_fscache **fscache,
+> +				  char *name, bool need_inode);
+>  void erofs_fscache_unregister_cookie(struct erofs_fscache **fscache);
+>  #else
+>  static inline int erofs_fscache_register_fs(struct super_block *sb) { return 0; }
+> @@ -640,7 +642,7 @@ static inline void erofs_fscache_unregister_fs(struct super_block *sb) {}
+>  
+>  static inline int erofs_fscache_register_cookie(struct super_block *sb,
+>  						struct erofs_fscache **fscache,
+> -						char *name)
+> +						char *name, bool need_inode)
+>  {
+>  	return -EOPNOTSUPP;
+>  }
+> -- 
+> 2.27.0
