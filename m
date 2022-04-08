@@ -2,149 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FCF74F964A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Apr 2022 15:03:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBCEF4F9688
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Apr 2022 15:18:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236043AbiDHNFS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Apr 2022 09:05:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60698 "EHLO
+        id S236166AbiDHNUd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Apr 2022 09:20:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232621AbiDHNFR (ORCPT
+        with ESMTP id S236149AbiDHNUc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Apr 2022 09:05:17 -0400
-Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 774751E868C;
-        Fri,  8 Apr 2022 06:03:13 -0700 (PDT)
+        Fri, 8 Apr 2022 09:20:32 -0400
+Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5855ECC5E;
+        Fri,  8 Apr 2022 06:18:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1649422993; x=1680958993;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
+  t=1649423908; x=1680959908;
+  h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=fGTAiXBITEf6vhZtefTnJfo1Ql9L0wnvDyySANGwVrA=;
-  b=VImeqnQFsQyUuCRPDCbJI0VwXqNsrM93rbqct0nITwfbOLFGAfVcYnc7
-   MWggwbdwC7x+2YyvFCrHG1ewR8ekCYytgA7PiakRUQ+bvk791xwRER23P
-   oMQCDb+wuzhGZXS1GM3SnvtBIiwb6cdp56uJ9J4sU/bntxkZYzySEClMP
-   AmCw2UsRDJjK/8JuCkeAgk0EvJ6S7n5EWUkb6Is70uKAt7+5x74YJRUa/
-   wabL4YapZrjwggaXRXmEhIOIVmrvKLTvLpX7db/HkBEg9W1nZr+AmC3cW
-   5xwmSKUtes9mwNELZycnETTuXRjo28ANyie8lgMFfySkf5Uc1LFOfm+v9
-   w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10310"; a="242181296"
+  bh=v11wVOUBXjF91c7/a49xOWZxnE+WntSYIN4gsgCmFPE=;
+  b=SahQEznnpXn7SU6+7w5Gl25KsiyCrJSaNLPpch0lbrD1gcXH0I9Y5rTN
+   rWzYIesX0S/nHAuSCQ6bCgTV+nl22zFP/rpzPHq2+S9E7KSoqBl/F3o6T
+   ttdYrmaubql3eyubVMTfZFVtCGqUmOoV2j+xHiIp9ZOoUXhllN6AKvyh0
+   tOWZxMyLsZ2kx2OqGjaYqQDDsTPqxaDmWzwu0gJO12Pp0x60Zj0zsLRGW
+   Pc2S4yOUJeARXp1tCOYf3r7d6VAOtIlmJ5Ky/qLmE+jJwt4Y9a3fc9W9T
+   k6fTz5V89oVySBwB70G+zWNuoWNYyHb4MiPmXV+p5HtXV3MqmQGbshjfI
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10310"; a="286578786"
 X-IronPort-AV: E=Sophos;i="5.90,245,1643702400"; 
-   d="scan'208";a="242181296"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2022 06:03:13 -0700
+   d="scan'208";a="286578786"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Apr 2022 06:18:28 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.90,245,1643702400"; 
-   d="scan'208";a="698175603"
-Received: from chaop.bj.intel.com (HELO localhost) ([10.240.192.101])
-  by fmsmga001.fm.intel.com with ESMTP; 08 Apr 2022 06:03:05 -0700
-Date:   Fri, 8 Apr 2022 21:02:54 +0800
-From:   Chao Peng <chao.p.peng@linux.intel.com>
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com
-Subject: Re: [PATCH v5 04/13] mm/shmem: Restrict MFD_INACCESSIBLE memory
- against RLIMIT_MEMLOCK
-Message-ID: <20220408130254.GB57095@chaop.bj.intel.com>
-Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
-References: <20220310140911.50924-1-chao.p.peng@linux.intel.com>
- <20220310140911.50924-5-chao.p.peng@linux.intel.com>
- <Yk8L0CwKpTrv3Rg3@google.com>
+   d="scan'208";a="795089080"
+Received: from lkp-server02.sh.intel.com (HELO 7e80bc2a00a0) ([10.239.97.151])
+  by fmsmga006.fm.intel.com with ESMTP; 08 Apr 2022 06:18:25 -0700
+Received: from kbuild by 7e80bc2a00a0 with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1ncoVN-0000Hk-2Q;
+        Fri, 08 Apr 2022 13:18:25 +0000
+Date:   Fri, 8 Apr 2022 21:17:51 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Baoquan He <bhe@redhat.com>, akpm@linux-foundation.org,
+        willy@infradead.org
+Cc:     kbuild-all@lists.01.org, linux-kernel@vger.kernel.org,
+        kexec@lists.infradead.org, hch@lst.de, yangtiezhu@loongson.cn,
+        amit.kachhap@arm.com, linux-fsdevel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, bhe@redhat.com
+Subject: Re: [PATCH v5 RESEND 1/3] vmcore: Convert copy_oldmem_page() to take
+ an iov_iter
+Message-ID: <202204082128.JKXXDGpa-lkp@intel.com>
+References: <20220408090636.560886-2-bhe@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Yk8L0CwKpTrv3Rg3@google.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <20220408090636.560886-2-bhe@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 07, 2022 at 04:05:36PM +0000, Sean Christopherson wrote:
-> On Thu, Mar 10, 2022, Chao Peng wrote:
-> > Since page migration / swapping is not supported yet, MFD_INACCESSIBLE
-> > memory behave like longterm pinned pages and thus should be accounted to
-> > mm->pinned_vm and be restricted by RLIMIT_MEMLOCK.
-> > 
-> > Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
-> > ---
-> >  mm/shmem.c | 25 ++++++++++++++++++++++++-
-> >  1 file changed, 24 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/mm/shmem.c b/mm/shmem.c
-> > index 7b43e274c9a2..ae46fb96494b 100644
-> > --- a/mm/shmem.c
-> > +++ b/mm/shmem.c
-> > @@ -915,14 +915,17 @@ static void notify_fallocate(struct inode *inode, pgoff_t start, pgoff_t end)
-> >  static void notify_invalidate_page(struct inode *inode, struct folio *folio,
-> >  				   pgoff_t start, pgoff_t end)
-> >  {
-> > -#ifdef CONFIG_MEMFILE_NOTIFIER
-> >  	struct shmem_inode_info *info = SHMEM_I(inode);
-> >  
-> > +#ifdef CONFIG_MEMFILE_NOTIFIER
-> >  	start = max(start, folio->index);
-> >  	end = min(end, folio->index + folio_nr_pages(folio));
-> >  
-> >  	memfile_notifier_invalidate(&info->memfile_notifiers, start, end);
-> >  #endif
-> > +
-> > +	if (info->xflags & SHM_F_INACCESSIBLE)
-> > +		atomic64_sub(end - start, &current->mm->pinned_vm);
-> 
-> As Vishal's to-be-posted selftest discovered, this is broken as current->mm may
-> be NULL.  Or it may be a completely different mm, e.g. AFAICT there's nothing that
-> prevents a different process from punching hole in the shmem backing.
-> 
-> I don't see a sane way of tracking this in the backing store unless the inode is
-> associated with a single mm when it's created, and that opens up a giant can of
-> worms, e.g. what happens with the accounting if the creating process goes away?
+Hi Baoquan,
 
-Yes, I realized this.
+Thank you for the patch! Perhaps something to improve:
 
-> 
-> I think the correct approach is to not do the locking automatically for SHM_F_INACCESSIBLE,
-> and instead require userspace to do shmctl(.., SHM_LOCK, ...) if userspace knows the
-> consumers don't support migrate/swap.  That'd require wrapping migrate_page() and then
-> wiring up notifier hooks for migrate/swap, but IMO that's a good thing to get sorted
-> out sooner than later.  KVM isn't planning on support migrate/swap for TDX or SNP,
-> but supporting at least migrate for a software-only implementation a la pKVM should
-> be relatively straightforward.  On the notifiee side, KVM can terminate the VM if it
-> gets an unexpected migrate/swap, e.g. so that TDX/SEV VMs don't die later with
-> exceptions and/or data corruption (pre-SNP SEV guests) in the guest.
+[auto build test WARNING on powerpc/next]
+[also build test WARNING on s390/features linus/master v5.18-rc1 next-20220408]
+[cannot apply to tip/x86/core hnaz-mm/master arm64/for-next/core]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
-SHM_LOCK sounds like a good match.
+url:    https://github.com/intel-lab-lkp/linux/commits/Baoquan-He/Convert-vmcore-to-use-an-iov_iter/20220408-170846
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git next
+config: sh-randconfig-s032-20220408 (https://download.01.org/0day-ci/archive/20220408/202204082128.JKXXDGpa-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 11.2.0
+reproduce:
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # apt-get install sparse
+        # sparse version: v0.6.4-dirty
+        # https://github.com/intel-lab-lkp/linux/commit/a5e42962f5c0bea73aa382a2415094b4bd6c6c73
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Baoquan-He/Convert-vmcore-to-use-an-iov_iter/20220408-170846
+        git checkout a5e42962f5c0bea73aa382a2415094b4bd6c6c73
+        # save the config file to linux build tree
+        mkdir build_dir
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__' O=build_dir ARCH=sh SHELL=/bin/bash arch/sh/kernel/
 
-Thanks,
-Chao
-> 
-> Hmm, shmem_writepage() already handles SHM_F_INACCESSIBLE by rejecting the swap, so
-> maybe it's just the page migration path that needs to be updated?
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
+
+
+sparse warnings: (new ones prefixed by >>)
+>> arch/sh/kernel/crash_dump.c:23:36: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const *addr @@     got void [noderef] __iomem * @@
+   arch/sh/kernel/crash_dump.c:23:36: sparse:     expected void const *addr
+   arch/sh/kernel/crash_dump.c:23:36: sparse:     got void [noderef] __iomem *
+
+vim +23 arch/sh/kernel/crash_dump.c
+
+    13	
+    14	ssize_t copy_oldmem_page(struct iov_iter *iter, unsigned long pfn,
+    15				 size_t csize, unsigned long offset)
+    16	{
+    17		void  __iomem *vaddr;
+    18	
+    19		if (!csize)
+    20			return 0;
+    21	
+    22		vaddr = ioremap(pfn << PAGE_SHIFT, PAGE_SIZE);
+  > 23		csize = copy_to_iter(vaddr + offset, csize, iter);
+
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
