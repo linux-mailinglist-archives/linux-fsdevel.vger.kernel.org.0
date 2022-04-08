@@ -2,128 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3273C4F94FC
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Apr 2022 14:00:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C80C4F9559
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Apr 2022 14:06:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235356AbiDHMCL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Apr 2022 08:02:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55920 "EHLO
+        id S235291AbiDHMIn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Apr 2022 08:08:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55646 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235349AbiDHMCI (ORCPT
+        with ESMTP id S235288AbiDHMIk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Apr 2022 08:02:08 -0400
-Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAFB1888D3
-        for <linux-fsdevel@vger.kernel.org>; Fri,  8 Apr 2022 05:00:03 -0700 (PDT)
-Received: by mail-pf1-x42e.google.com with SMTP id h19so8213247pfv.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Apr 2022 05:00:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=fvPo7aaDG5VG3ITi2zcRGlHC3YD+uR68Dd9szGVfDjY=;
-        b=Ny0WQTksmMl9Y0G+5Ykcwv0IsQ8rnw7Dy27fJZ4F7/X5DdNAuZ6xefMeUC58Sxrc2o
-         vOFSPANg73HU1GE/cTfpq7pQK1ZKyk2LYqkcAB1IrTWR9Q41bxWTxH71xTK1adfwpFof
-         kW88RUH5JpzQE8ELrI7Huh0qVHHXJySNkAeogZCUMngju0aUWZs/8LNDZcUy9n8rVgFZ
-         Kle4SQt8wGHG9yuoOk+Wa5DDp65x6qUexWJGlmGXpzOzWZvmEYoukllCPC2voOCk3CJK
-         bcsTg002ZPOnLhguHs8WR8abYh0HBDb7rXSthyNQBFktGbeNbSCchpbeezem2lvpoK7D
-         vK5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=fvPo7aaDG5VG3ITi2zcRGlHC3YD+uR68Dd9szGVfDjY=;
-        b=SUEQRUHzzw5bTI/qcA7qtxkOpiaYb8EyWJ/fCpLpkouExwyjkPeAlxYpqBepIes9yd
-         st7Mp6Z2BBA17FX/EbHZh8VmbgwRoOWRsXLwNJvEJWJwjQlUxX4iMjDLWHtM1ozohl5K
-         JcXUx4e78oDStaBjRk1zxLje7ek9S8WtLOpyKSaujIMiRJhCWsvzipvTuPaFEwcdmEdi
-         HM4yHFyZLNxbDXLqAM5L1hY+adqj9Wth4QzlLBjKvT7qcNRmKHX2Gavxj6gz2a7/f2ZA
-         USgd2d9FnVRL3iEfVw9lMtCHA0MvwoJmwjU3aXWARJX7kCa/2266uMCr8pOg96OYGsm3
-         qR3g==
-X-Gm-Message-State: AOAM530/88UT+3mnwLv0z/3OPYTbMZm8l024bZ7yDscImSb2oG87DUXg
-        JQrUwia6+oCMXgpB562jSIs=
-X-Google-Smtp-Source: ABdhPJw1axRkH4b03qWDpDfjOxLXtM1bxclZW+rOA7PkO7Mi/EuYh6pB6GnqINXqufLRfQ6cnfH4Sg==
-X-Received: by 2002:a63:2cc4:0:b0:398:a2b7:469f with SMTP id s187-20020a632cc4000000b00398a2b7469fmr15299527pgs.73.1649419202866;
-        Fri, 08 Apr 2022 05:00:02 -0700 (PDT)
-Received: from localhost ([118.33.58.238])
-        by smtp.gmail.com with ESMTPSA id f187-20020a6251c4000000b005058e59604csm1766102pfb.217.2022.04.08.05.00.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Apr 2022 05:00:02 -0700 (PDT)
-Date:   Fri, 8 Apr 2022 21:00:01 +0900
-From:   Paran Lee <p4ranlee@gmail.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Austin Kim <austindh.kim@gmail.com>
-Subject: [PATCH] writeback: expired dirty inodes can lead to a NULL
- dereference kernel panic issue in 'move_expired_inodes' function
-Message-ID: <20220408120001.GA3113@DESKTOP-S4LJL03.localdomain>
+        Fri, 8 Apr 2022 08:08:40 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 12F15C6EC0
+        for <linux-fsdevel@vger.kernel.org>; Fri,  8 Apr 2022 05:06:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1649419593;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=D4PLxetJuketg91dT7MvrhWLO7O7hhlCogbjJFrKXZ8=;
+        b=R93bKC6Ot1YNIIUMEZ8Ha3vX+/g/pIhIJf1bT+I6XmwDWhyimLYgvIosgT57H3b9lxP3Wh
+        7OuTZBYTCXPqTuJUn7z8gIw/RhOtgbZjvTrQH4vp7J21IOUzEgI9tt+K31jZ1AOT92xKR4
+        xHVG9OLikt78d5cGlJXtm94/nQUEHG8=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-532-nVwcfuKJNcmOTrMRo0-tlw-1; Fri, 08 Apr 2022 08:06:32 -0400
+X-MC-Unique: nVwcfuKJNcmOTrMRo0-tlw-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 92B4285A5BE;
+        Fri,  8 Apr 2022 12:06:31 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.22.8.204])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7E536403179;
+        Fri,  8 Apr 2022 12:06:31 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 3F067220EFF; Fri,  8 Apr 2022 08:06:31 -0400 (EDT)
+Date:   Fri, 8 Apr 2022 08:06:31 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     JeffleXu <jefflexu@linux.alibaba.com>
+Cc:     miklos@szeredi.hu, stefanha@redhat.com,
+        virtualization@lists.linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, gerry@linux.alibaba.com
+Subject: Re: [PATCH] fuse: avoid unnecessary spinlock bump
+Message-ID: <YlAlR0xVDqQzl98w@redhat.com>
+References: <20220402103250.68027-1-jefflexu@linux.alibaba.com>
+ <Yk7w8L1f/yik+qrR@redhat.com>
+ <b7a50fac-0259-e56c-0445-cca3fbf99888@linux.alibaba.com>
+ <YlAbqF4Yts8Aju+W@redhat.com>
+ <586dd7bb-4218-63da-c7db-fe8d46f43cde@linux.alibaba.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <586dd7bb-4218-63da-c7db-fe8d46f43cde@linux.alibaba.com>
+X-Scanned-By: MIMEDefang 2.85 on 10.11.54.10
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-While tracing the null dereference kernel panic issue 
+On Fri, Apr 08, 2022 at 07:50:55PM +0800, JeffleXu wrote:
+> 
+> 
+> On 4/8/22 7:25 PM, Vivek Goyal wrote:
+> > On Fri, Apr 08, 2022 at 10:36:40AM +0800, JeffleXu wrote:
+> >>
+> >>
+> >> On 4/7/22 10:10 PM, Vivek Goyal wrote:
+> >>> On Sat, Apr 02, 2022 at 06:32:50PM +0800, Jeffle Xu wrote:
+> >>>> Move dmap free worker kicker inside the critical region, so that extra
+> >>>> spinlock lock/unlock could be avoided.
+> >>>>
+> >>>> Suggested-by: Liu Jiang <gerry@linux.alibaba.com>
+> >>>> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
+> >>>
+> >>> Looks good to me. Have you done any testing to make sure nothing is
+> >>> broken.
+> >>
+> >> xfstests -g quick shows no regression. The tested virtiofs is mounted
+> >> with "dax=always".
+> > 
+> > I think xfstests might not trigger reclaim. You probably will have to
+> > run something like blogbench with a small dax window like 1G so that
+> > heavy reclaim happens.
+> 
+> 
+> Actually, I configured the DAX window to 8MB, i.e. 4 slots when running
+> xfstests. Thus I think the reclaim path is most likely triggered.
+> 
+> 
+> > 
+> > For fun, I sometimes used to run it with a window of just say 16 dax
+> > ranges so that reclaim was so heavy that if there was a bug, it will
+> > show up.
+> > 
+> 
+> Yeah, my colleague had ever reported that a DAX window of 4KB will cause
+> hang in our internal OS (which is 4.19, we back ported virtiofs to
+> 4.19). But then I found that this issue doesn't exist in the latest
+> upstream. The reason seems that in the upstream kernel,
+> devm_memremap_pages() called in virtio_fs_setup_dax() will fail directly
+> since the dax window (4KB) is not aligned with the sparse memory section.
 
-during the stress-ng(stress-ng-proc) test,
+Given our default chunk size is 2MB (FUSE_DAX_SHIFT), may be it is not
+a bad idea to enforce some minimum cache window size. IIRC, even one
+range is not enough. Minimum 2 are required for reclaim to not deadlock.
 
-I found the inode code block that could cause 
+Hence, I guess it is not a bad idea to check for cache window size and
+if it is too small, reject it and disable dax.
 
-a null dereference kernel panic. 
-
-BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
-
-inode stack variable not initialized and not check on this code block. 
-
-but find entry in delaying_queue. then, there was something suspicious 
-
-temp inode loop that could cause a kernel panic in below code block.
-
-Signed-off-by: Paran Lee <p4ranlee@gmail.com>
----
- fs/fs-writeback.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index 591fe9cf1659..23a7a567e443 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -1357,12 +1357,14 @@ static int move_expired_inodes(struct list_head *delaying_queue,
- 	LIST_HEAD(tmp);
- 	struct list_head *pos, *node;
- 	struct super_block *sb = NULL;
--	struct inode *inode;
-+	struct inode *inode = NULL;
- 	int do_sb_sort = 0;
- 	int moved = 0;
- 
- 	while (!list_empty(delaying_queue)) {
- 		inode = wb_inode(delaying_queue->prev);
-+		if (!inode)
-+			continue;
- 		if (inode_dirtied_after(inode, dirtied_before))
- 			break;
- 		list_move(&inode->i_io_list, &tmp);
-@@ -1385,7 +1387,12 @@ static int move_expired_inodes(struct list_head *delaying_queue,
- 
- 	/* Move inodes from one superblock together */
- 	while (!list_empty(&tmp)) {
--		sb = wb_inode(tmp.prev)->i_sb;
-+		inode = wb_inode(tmp.prev);
-+		if (!inode)
-+			continue;
-+		sb = inode->i_sb;
-+		if (!sb)
-+			continue;
- 		list_for_each_prev_safe(pos, node, &tmp) {
- 			inode = wb_inode(pos);
- 			if (inode->i_sb == sb)
--- 
-2.25.1
+Thanks
+Vivek
 
