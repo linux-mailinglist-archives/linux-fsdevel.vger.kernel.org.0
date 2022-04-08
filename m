@@ -2,199 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F2804F9D56
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Apr 2022 20:54:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 35A0E4F9D86
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Apr 2022 21:09:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239072AbiDHS4S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Apr 2022 14:56:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52586 "EHLO
+        id S236514AbiDHTLx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Apr 2022 15:11:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54732 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238995AbiDHS4N (ORCPT
+        with ESMTP id S230398AbiDHTLv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Apr 2022 14:56:13 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2FD8C3C3DD2
-        for <linux-fsdevel@vger.kernel.org>; Fri,  8 Apr 2022 11:54:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1649444047;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=9uyU2VFoeBsyhZOJQIlctyu40TJSn7XsF2RPXyVl1do=;
-        b=bPbJpzFTWJ1kz+HbNC8CputV4kqjt3EqDmVP0l7nUYx4EsrhnA6u0XW00SgrmliA8NjrS6
-        Z00od8mtowCCuTEsXKXNA5/iNoZKTpKJzUFSquw7JcFOWojwUqSYA0azShz0qBGpN2IC2K
-        7KD05f5tQd02w3Ol4O/n4BAOCl4OHaE=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-58-OpEMWC-tMBOmdSoh9etQsA-1; Fri, 08 Apr 2022 14:54:06 -0400
-X-MC-Unique: OpEMWC-tMBOmdSoh9etQsA-1
-Received: by mail-wr1-f72.google.com with SMTP id p18-20020adfba92000000b001e8f7697cc7so2410112wrg.20
-        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Apr 2022 11:54:05 -0700 (PDT)
+        Fri, 8 Apr 2022 15:11:51 -0400
+Received: from mail-qt1-x830.google.com (mail-qt1-x830.google.com [IPv6:2607:f8b0:4864:20::830])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 607D0344C6
+        for <linux-fsdevel@vger.kernel.org>; Fri,  8 Apr 2022 12:09:46 -0700 (PDT)
+Received: by mail-qt1-x830.google.com with SMTP id z15so2231613qtj.13
+        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Apr 2022 12:09:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :mime-version;
+        bh=91CXBQ+QrrLDOnPHUKIzRlaTu5VpTvLlE8RRdbceTKE=;
+        b=Pea+YagxkPeueG0equs+40ADF1bGt2mGTubU7yEGQ9D5EZzlKZj3yLLBo1bo+tUp3t
+         l01fKxrkAr9RsNHd2kJktq57jwPNwMsRwRZv0HZ8L3ZNsD5+79fz0NJpBxfqFObARLyb
+         mpDpmII4pvnnZVMpYArpf51d82RzJwVat/cd59joy08nQkusIHZROV8kik/ENQmIW+h7
+         ntuwZdlOyF13ckkPtdzMThkDE5Au7ZOQEOA15QzEsP0GSoEzkN6qsyw9L8Yc6rrmM0Mp
+         DiSae7DtuJBTCpFMPMEmAQfNuTA8mQHb9uIpHIXe7PZj05pUCqhxSlfAO8L247TOo7aS
+         Km8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent
-         :content-language:to:cc:references:from:organization:subject
-         :in-reply-to:content-transfer-encoding;
-        bh=9uyU2VFoeBsyhZOJQIlctyu40TJSn7XsF2RPXyVl1do=;
-        b=VYQGCiZUfBPbEXlqrNf5BrzvCCNeCkX/lhppaIZoV1YtOBfc+1ajIXZW+ZOkqpvVSL
-         AQ9dp7qzX6vSVPR8blrHcOK0dvNYXD6tJDlfbOpXEkRKYlgIpb4+IAkr8EMyapmmlz6g
-         xqmdok/RYzFzIbRNEgLkqrR8JJz/X9C2pRa3f7gIpE2/D5hVvTHO/DQkgFs3TfZiIiyb
-         9V/6gNi7ezAt79AQBkOdYE5q6iCkrgyBcn0pWkhob3IYIoTEDbxtFVpi7cRqoUxpWg1t
-         rfIQ2bwB4o/qGcQglNlFU0dnxXEcZtxEidlJT1V63cii3ZYk22bKGDPMovHAVdI6DFCy
-         8Zpg==
-X-Gm-Message-State: AOAM532pWM+Fndt7SG3F1/Do42IQexUpG6Ej4E2ykziPAria6AmVPHkP
-        aRxu6jPY8E5jSHT4lC0oJ/0Uy8P7tTksbYYGhZBC//HfUULfaJNPmN1LGxBrNMlpFDD22cn5rZx
-        swfDnl5iTrc8KmkuGJDloDgcs7A==
-X-Received: by 2002:a05:600c:4f96:b0:38e:7dbf:f80b with SMTP id n22-20020a05600c4f9600b0038e7dbff80bmr18613226wmq.2.1649444044837;
-        Fri, 08 Apr 2022 11:54:04 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwfhFIN8L3LyDcNyYvbpwcm/BIFpkPDSLWEfCSbEb0j8Zms39cvKkg2Ev9kPXAaH+LcMXIctA==
-X-Received: by 2002:a05:600c:4f96:b0:38e:7dbf:f80b with SMTP id n22-20020a05600c4f9600b0038e7dbff80bmr18613189wmq.2.1649444044533;
-        Fri, 08 Apr 2022 11:54:04 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c704:fd00:612:f12b:a4a2:26b0? (p200300cbc704fd000612f12ba4a226b0.dip0.t-ipconnect.de. [2003:cb:c704:fd00:612:f12b:a4a2:26b0])
-        by smtp.gmail.com with ESMTPSA id o19-20020a05600c511300b0038d0d8f67e5sm10994785wms.16.2022.04.08.11.54.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 08 Apr 2022 11:54:04 -0700 (PDT)
-Message-ID: <7ab689e7-e04d-5693-f899-d2d785b09892@redhat.com>
-Date:   Fri, 8 Apr 2022 20:54:02 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.2
-Content-Language: en-US
-To:     Sean Christopherson <seanjc@google.com>,
-        Andy Lutomirski <luto@kernel.org>
-Cc:     Chao Peng <chao.p.peng@linux.intel.com>,
-        kvm list <kvm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        Linux API <linux-api@vger.kernel.org>, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:mime-version;
+        bh=91CXBQ+QrrLDOnPHUKIzRlaTu5VpTvLlE8RRdbceTKE=;
+        b=QK+OssTX1ML1wuuNnCvkVlnZn86IOUDr5//m45STntsnmmTpf7T6GJmMne+zp69nZE
+         8ARAIZG4aNDmjN0ysqrr5oPbXpH/a7S2WzxRCzIZw878BHgWOMUuJow+uiTvn5Dmf/cA
+         1Y6I3B2juzX/y0xgFL92SuxJI/fMzmLXkWwLjsEbiJDX6sR/gKSDyazRme/q3EhHaVdM
+         caPDLq3BaRnEql6KVm6k2Jne7hwAfmTCRuGpPTdjLl4LJTvnhS2wK8ioBwXe5mtaSngb
+         pvGDlc8/V3L9SxAcKtnXVI7IaH1ZbU86Kd9Yl2e+x2owAH7EDQ8NPLFn7voE9EhY++cA
+         F/7w==
+X-Gm-Message-State: AOAM5332L/g7+Ms158bOnqS6Md6odot1axaCLI9ELXDfPhdXnEZcPICw
+        DUbO9i69ksu/DUA5MRIcjwMX8w==
+X-Google-Smtp-Source: ABdhPJzea53eTcF7VeofLNU82BNlFWAWkd0eT1DoksHxj+Lxar1co0V5fVEZCpnUJtJil3Uog6zHIw==
+X-Received: by 2002:ac8:5c90:0:b0:2e2:15c0:a5f3 with SMTP id r16-20020ac85c90000000b002e215c0a5f3mr17316917qta.332.1649444985335;
+        Fri, 08 Apr 2022 12:09:45 -0700 (PDT)
+Received: from ripple.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id v3-20020a05622a014300b002e1dcd4cfa9sm19653356qtw.64.2022.04.08.12.09.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 08 Apr 2022 12:09:44 -0700 (PDT)
+Date:   Fri, 8 Apr 2022 12:09:32 -0700 (PDT)
+From:   Hugh Dickins <hughd@google.com>
+X-X-Sender: hugh@ripple.anvils
+To:     Chuck Lever III <chuck.lever@oracle.com>
+cc:     Hugh Dickins <hughd@google.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        "Nakajima, Jun" <jun.nakajima@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Andi Kleen <ak@linux.intel.com>
-References: <20220310140911.50924-1-chao.p.peng@linux.intel.com>
- <20220310140911.50924-5-chao.p.peng@linux.intel.com>
- <Yk8L0CwKpTrv3Rg3@google.com>
- <02e18c90-196e-409e-b2ac-822aceea8891@www.fastmail.com>
- <YlB3Z8fqJ+67a2Ck@google.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Subject: Re: [PATCH v5 04/13] mm/shmem: Restrict MFD_INACCESSIBLE memory
- against RLIMIT_MEMLOCK
-In-Reply-To: <YlB3Z8fqJ+67a2Ck@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-5.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        Mark Hemment <markhemm@googlemail.com>,
+        Patrice CHOTARD <patrice.chotard@foss.st.com>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        Lukas Czerner <lczerner@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: Regression in xfstests on tmpfs-backed NFS exports
+In-Reply-To: <C7966059-D583-4B20-A838-067BAE86FB3E@oracle.com>
+Message-ID: <8058d02d-d8b2-4d7a-a535-a78719e996@google.com>
+References: <673D708E-2DFA-4812-BB63-6A437E0C72EE@oracle.com> <11f319-c9a-4648-bfbb-dc5a83c774@google.com> <2B7AF707-67B1-4ED8-A29F-957C26B7F87A@oracle.com> <c5ea49a-1a76-8cf9-5c76-4bb31aa3d458@google.com> <C7966059-D583-4B20-A838-067BAE86FB3E@oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 08.04.22 19:56, Sean Christopherson wrote:
-> On Thu, Apr 07, 2022, Andy Lutomirski wrote:
->>
->> On Thu, Apr 7, 2022, at 9:05 AM, Sean Christopherson wrote:
->>> On Thu, Mar 10, 2022, Chao Peng wrote:
->>>> Since page migration / swapping is not supported yet, MFD_INACCESSIBLE
->>>> memory behave like longterm pinned pages and thus should be accounted to
->>>> mm->pinned_vm and be restricted by RLIMIT_MEMLOCK.
->>>>
->>>> Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
->>>> ---
->>>>  mm/shmem.c | 25 ++++++++++++++++++++++++-
->>>>  1 file changed, 24 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/mm/shmem.c b/mm/shmem.c
->>>> index 7b43e274c9a2..ae46fb96494b 100644
->>>> --- a/mm/shmem.c
->>>> +++ b/mm/shmem.c
->>>> @@ -915,14 +915,17 @@ static void notify_fallocate(struct inode *inode, pgoff_t start, pgoff_t end)
->>>>  static void notify_invalidate_page(struct inode *inode, struct folio *folio,
->>>>  				   pgoff_t start, pgoff_t end)
->>>>  {
->>>> -#ifdef CONFIG_MEMFILE_NOTIFIER
->>>>  	struct shmem_inode_info *info = SHMEM_I(inode);
->>>>  
->>>> +#ifdef CONFIG_MEMFILE_NOTIFIER
->>>>  	start = max(start, folio->index);
->>>>  	end = min(end, folio->index + folio_nr_pages(folio));
->>>>  
->>>>  	memfile_notifier_invalidate(&info->memfile_notifiers, start, end);
->>>>  #endif
->>>> +
->>>> +	if (info->xflags & SHM_F_INACCESSIBLE)
->>>> +		atomic64_sub(end - start, &current->mm->pinned_vm);
->>>
->>> As Vishal's to-be-posted selftest discovered, this is broken as current->mm
->>> may be NULL.  Or it may be a completely different mm, e.g. AFAICT there's
->>> nothing that prevents a different process from punching hole in the shmem
->>> backing.
->>>
->>
->> How about just not charging the mm in the first place?  There’s precedent:
->> ramfs and hugetlbfs (at least sometimes — I’ve lost track of the current
->> status).
->>
->> In any case, for an administrator to try to assemble the various rlimits into
->> a coherent policy is, and always has been, quite messy. ISTM cgroup limits,
->> which can actually add across processes usefully, are much better.
->>
->> So, aside from the fact that these fds aren’t in a filesystem and are thus
->> available by default, I’m not convinced that this accounting is useful or
->> necessary.
->>
->> Maybe we could just have some switch require to enable creation of private
->> memory in the first place, and anyone who flips that switch without
->> configuring cgroups is subject to DoS.
+On Fri, 8 Apr 2022, Chuck Lever III wrote:
+> > On Apr 7, 2022, at 6:26 PM, Hugh Dickins <hughd@google.com> wrote:
+> > On Thu, 7 Apr 2022, Chuck Lever III wrote:
+> >> 
+> >> 847 static int
+> >> 848 nfsd_splice_actor(struct pipe_inode_info *pipe, struct pipe_buffer *buf,
+> >> 849                   struct splice_desc *sd)
+> >> 850 {
+> >> 851         struct svc_rqst *rqstp = sd->u.data;
+> >> 852         struct page **pp = rqstp->rq_next_page;
+> >> 853         struct page *page = buf->page;
+> >> 854 
+> >> 855         if (rqstp->rq_res.page_len == 0) {
+> >> 856                 svc_rqst_replace_page(rqstp, page);
+> >> 857                 rqstp->rq_res.page_base = buf->offset;
+> >> 858         } else if (page != pp[-1]) {
+> >> 859                 svc_rqst_replace_page(rqstp, page);
+> >> 860         }
+> >> 861         rqstp->rq_res.page_len += sd->len;
+> >> 862 
+> >> 863         return sd->len;
+> >> 864 }
+> >> 
+> >> rq_next_page should point to the first unused element of
+> >> rqstp->rq_pages, so IIUC that check is looking for the
+> >> final page that is part of the READ payload.
+> >> 
+> >> But that does suggest that if page -> ZERO_PAGE and so does
+> >> pp[-1], then svc_rqst_replace_page() would not be invoked.
 > 
-> I personally have no objection to that, and I'm 99% certain Google doesn't rely
-> on RLIMIT_MEMLOCK.
+> To put a little more color on this, I think the idea here
+> is to prevent releasing the same page twice. It might be
+> possible that NFSD can add the same page to the rq_pages
+> array more than once, and we don't want to do a double
+> put_page().
 > 
+> The only time I can think this might happen is if the
+> READ payload is partially contained in the page that
+> contains the NFS header. I'm not sure that can ever
+> happen these days.
 
-It's unnacceptable for distributions to have random unprivileged users
-be able to allocate an unlimited amount of unmovable memory. And any
-kind of these "switches" won't help a thing because the distribution
-will have to enable them either way.
+I'd have thought that if a page were repeated, then its refcount would
+have been raised twice, and so require a double put_page().  But it's
+no concern of mine.  The only thing I'd say is, if you do find a good
+way to robustify that code for duplicates, please don't make it
+conditional on ZERO_PAGE - that's just a special case which I
+mis-introduced and is now about to go away.
 
-I raised in the past that accounting might be challenging, so it's no
-surprise that something popped up now.
+> > 
+> > We might be able to avoid that revert, and go the whole way to using
+> > iov_iter_zero() instead.  But the significant slowness of clear_user()
+> > relative to copy to user, on x86 at least, does ask for a hybrid.
+> > 
+> > Suggested patch below, on top of 5.18-rc1, passes my own testing:
+> > but will it pass yours?  It seems to me safe, and as fast as before,
+> > but we don't know yet if this iov_iter_zero() works right for you.
+> > Chuck, please give it a go and let us know.
+> 
+> Applied to stock v5.18-rc1. The tests pass as expected.
 
-RLIMIT_MEMLOCK was the obvious candidate, but as we discovered int he
-past already with secretmem, it's not 100% that good of a fit (unmovable
-is worth than mlocked). But it gets the job done for now at least.
+Great, thanks a lot, I'll move ahead with sending akpm the patch
+with a proper commit message.
 
-So I'm open for alternative to limit the amount of unmovable memory we
-might allocate for user space, and then we could convert seretmem as well.
-
-Random switches are not an option.
-
--- 
-Thanks,
-
-David / dhildenb
-
+Hugh
