@@ -2,178 +2,179 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7286C4F8CB2
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Apr 2022 05:27:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 505CF4F8C25
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Apr 2022 05:26:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233496AbiDHBkW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 7 Apr 2022 21:40:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52438 "EHLO
+        id S233495AbiDHBoR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 7 Apr 2022 21:44:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233472AbiDHBkT (ORCPT
+        with ESMTP id S233504AbiDHBoQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 7 Apr 2022 21:40:19 -0400
-Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21292140DF5
-        for <linux-fsdevel@vger.kernel.org>; Thu,  7 Apr 2022 18:38:17 -0700 (PDT)
-Received: by mail-pj1-x102b.google.com with SMTP id bx5so7256781pjb.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Apr 2022 18:38:17 -0700 (PDT)
+        Thu, 7 Apr 2022 21:44:16 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00D7F12F6C7
+        for <linux-fsdevel@vger.kernel.org>; Thu,  7 Apr 2022 18:42:13 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id r10so8438932eda.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Apr 2022 18:42:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20210112.gappssmtp.com; s=20210112;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Z4sY0ayTp/vh055DIkYLp+6K53mUbW2MVU3JridHXEo=;
-        b=GlkX8JS2+O2TND3PKWQRDu67IA5ihu3sqlHNXgHStSouS+fez9JOmMeuT9dhVf1iGZ
-         g6mZz/zyRTmvU7YTfzySSjqlcX3DTBxOhNqssrme6HaxS5QnfPtKZhRdDlda5PVj6EZi
-         kPnjnXx5jLHB+y9POYhyeGdbfeH0nExOGtt9GIdXbRm1+79UNNu+fcUn4ku5Kn2jnjiJ
-         tTpx9F3Y95JVfxGKUoV3/GHj+zoDWeeCp/0K5p62cCQ/CJvNHYE5MHGQUkgc4RQ4SkCl
-         7DLYmY+fTpC/vro+F82G7ueaAzJZNGy2Xa4Me8xo3DWRFX1KY3TXazMpb9dODLBCmd9B
-         NEKw==
+         :cc:content-transfer-encoding;
+        bh=xCv5DXX9ijy/PE+Fv/yKOblKDG06N2ROExnKPiddkiU=;
+        b=xHLU3VTS2ptDA+EsiDb9d9GAPmO0xeEyazs1bLbJ/QVB1T+jdO4hti7wvExaysx1NL
+         PoGR5EswnEEgQpsHXqcpfB85DFTiQZtd7CvTzp7uWaKp5nQCHJ3l8X9oAPUCtimQHu3B
+         AZGE59pcru7eafp+3nm5XPQEaX+9Xw03eyr1oylhuISY7jlV+ju4dh9i/JcZFQPOK3eL
+         eVH7g+HkVs0mEGJt9BKjzqCJwjMFrVDrG0/W8Ut9g0YWnbZRAbaBzHXIA9SRbV7DQX1l
+         irC4aEnS+ULqzznFCktV2CDAgS/sEUiWKedCnKSN5FBv5ztl4OmIUA07SK0fdLxONCZk
+         OjWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Z4sY0ayTp/vh055DIkYLp+6K53mUbW2MVU3JridHXEo=;
-        b=Ah8v4xJNo91qnFEeBTYgwT6AcutRAV6doSXdgC5DDFq9DBdINUgEKb+pmKn4zLr8OJ
-         x28xocuw3Zwg8o1qsd596/8MDQHL6OeIa4LU4EhcLPmJuTNSbKTGC7gDZ/yu95/9Nk2W
-         xCY35vprFJJ7iUsqoW9CPNbKPfAgiXaBeNp2pGAXDb0Caq8Lidi6u4J4tJbZYWObtTtL
-         RG3yNLTpDVZ+D0GfvvUm7fPqSKveFQ8U6WkGMyecc0sZLo0CrfKjFC714+2wicIxw8uB
-         IgX6kANjDU625Tk0CQeNJgUwz0SjgnMepcv5N0Zcpq6t01Kyulamt7z8lhrpzBFj23rF
-         arIQ==
-X-Gm-Message-State: AOAM532uL+N+YTEpEH9u6julaOyo/bylmDxXXkdt3yAFyVUktJpfpH3p
-        yXbgBbtixe/NKonQ6gfqpQBAGQS/htFQcy8bfiTV3w==
-X-Google-Smtp-Source: ABdhPJztLyXTASXggdUkSdPlx1wfhE5SGsYlFzDlQBIc8mWNp6TBFUqkzdGikFL17eKHOyVYX4Tzu3OXN0IKEKAhhQg=
-X-Received: by 2002:a17:90a:ca:b0:1ca:5253:b625 with SMTP id
- v10-20020a17090a00ca00b001ca5253b625mr19017847pjd.220.1649381896572; Thu, 07
- Apr 2022 18:38:16 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=xCv5DXX9ijy/PE+Fv/yKOblKDG06N2ROExnKPiddkiU=;
+        b=vPUdeHglA6fjkE9HvlzJIfdvG6xsyMJVVUF7Q9cEE8uqBdnQ/wbJqEqpi3kibliryM
+         1O9KptDpBKwFtqCOt8ftTBFrDJyoiF7dth5BcXZe45yE70srYZMqXrbHuTuER1aIeppG
+         tt49Q8c5xJjgP/g44o20L53eWxt6olGHyJuzFnfoUakQmKg7/kdQ+f125CR7b396h7jp
+         AOGvQZmKVWIVqbDVcmd3BhUIz3ItSy3kd9DBnaQ8ZXYfdS8x490qCYcQ9BJkJIyKUr/n
+         mtza28iTYfTsjtDJjzrEjD3WgL2sYwzSR1ER/r3ZKitDNhA3isyIx35px5oTVVcJyTdx
+         T22w==
+X-Gm-Message-State: AOAM531T6gYFfzx4+U9r+tZQCaMCDH69eSkkYgiKHNEz1o52p9ZUZFL2
+        0z/WNYn/fUFC2kl17tpL0fABxxBDcu1b6AyTQ8It
+X-Google-Smtp-Source: ABdhPJxO+N6oGriDELXQ6Ik1rLFnHwovOpG6Sz/8grFw7AbhwJUqwHvTAcztCZnXDsMAvXbi8gwPJkt7rR9hql0VoiI=
+X-Received: by 2002:a05:6402:35c9:b0:41d:1447:5f9f with SMTP id
+ z9-20020a05640235c900b0041d14475f9fmr3711479edc.343.1649382132419; Thu, 07
+ Apr 2022 18:42:12 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAPcyv4jAqV7dZdmGcKrG=f8sYmUXaL7YCQtME6GANywncwd+zg@mail.gmail.com>
- <4fd95f0b-106f-6933-7bc6-9f0890012b53@fujitsu.com> <YkPtptNljNcJc1g/@infradead.org>
- <15a635d6-2069-2af5-15f8-1c0513487a2f@fujitsu.com> <YkQtOO/Z3SZ2Pksg@infradead.org>
- <4ed8baf7-7eb9-71e5-58ea-7c73b7e5bb73@fujitsu.com> <YkR8CUdkScEjMte2@infradead.org>
- <20220330161812.GA27649@magnolia> <fd37cde6-318a-9faf-9bff-70bb8e5d3241@oracle.com>
- <CAPcyv4gqBmGCQM_u40cR6GVror6NjhxV5Xd7pdHedE2kHwueoQ@mail.gmail.com> <20220406203900.GR27690@magnolia>
-In-Reply-To: <20220406203900.GR27690@magnolia>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Thu, 7 Apr 2022 18:38:05 -0700
-Message-ID: <CAPcyv4g9m13VGq9mFHHhd301jZk-OQC47MGpB9nU=erA0i2ZCg@mail.gmail.com>
-Subject: Re: [PATCH v11 1/8] dax: Introduce holder for dax_device
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Jane Chu <jane.chu@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Shiyang Ruan <ruansy.fnst@fujitsu.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Linux NVDIMM <nvdimm@lists.linux.dev>,
-        Linux MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        david <david@fromorbit.com>, "Luck, Tony" <tony.luck@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
+References: <20220329125117.1393824-1-mic@digikod.net> <20220329125117.1393824-8-mic@digikod.net>
+In-Reply-To: <20220329125117.1393824-8-mic@digikod.net>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 7 Apr 2022 21:42:01 -0400
+Message-ID: <CAHC9VhQpZ12Chgd+xMibUxgvcPjTn9FMnCdMGYbLcWG3eTqDQg@mail.gmail.com>
+Subject: Re: [PATCH v2 07/12] landlock: Add support for file reparenting with LANDLOCK_ACCESS_FS_REFER
+To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc:     James Morris <jmorris@namei.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jann Horn <jannh@google.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@linux.microsoft.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[ add Mauro and Tony for RAS discussion ]
-
-On Wed, Apr 6, 2022 at 1:39 PM Darrick J. Wong <djwong@kernel.org> wrote:
+On Tue, Mar 29, 2022 at 8:51 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> =
+wrote:
 >
-> On Tue, Apr 05, 2022 at 06:22:48PM -0700, Dan Williams wrote:
-> > On Tue, Apr 5, 2022 at 5:55 PM Jane Chu <jane.chu@oracle.com> wrote:
-> > >
-> > > On 3/30/2022 9:18 AM, Darrick J. Wong wrote:
-> > > > On Wed, Mar 30, 2022 at 08:49:29AM -0700, Christoph Hellwig wrote:
-> > > >> On Wed, Mar 30, 2022 at 06:58:21PM +0800, Shiyang Ruan wrote:
-> > > >>> As the code I pasted before, pmem driver will subtract its ->data_offset,
-> > > >>> which is byte-based. And the filesystem who implements ->notify_failure()
-> > > >>> will calculate the offset in unit of byte again.
-> > > >>>
-> > > >>> So, leave its function signature byte-based, to avoid repeated conversions.
-> > > >>
-> > > >> I'm actually fine either way, so I'll wait for Dan to comment.
-> > > >
-> > > > FWIW I'd convinced myself that the reason for using byte units is to
-> > > > make it possible to reduce the pmem failure blast radius to subpage
-> > > > units... but then I've also been distracted for months. :/
-> > > >
-> > >
-> > > Yes, thanks Darrick!  I recall that.
-> > > Maybe just add a comment about why byte unit is used?
-> >
-> > I think we start with page failure notification and then figure out
-> > how to get finer grained through the dax interface in follow-on
-> > changes. Otherwise, for finer grained error handling support,
-> > memory_failure() would also need to be converted to stop upcasting
-> > cache-line granularity to page granularity failures. The native MCE
-> > notification communicates a 'struct mce' that can be in terms of
-> > sub-page bytes, but the memory management implications are all page
-> > based. I assume the FS implications are all FS-block-size based?
+> From: Micka=C3=ABl Sala=C3=BCn <mic@linux.microsoft.com>
 >
-> I wouldn't necessarily make that assumption -- for regular files, the
-> user program is in a better position to figure out how to reset the file
-> contents.
+> Add a new LANDLOCK_ACCESS_FS_REFER access right to enable policy writers
+> to allow sandboxed processes to link and rename files from and to a
+> specific set of file hierarchies.  This access right should be composed
+> with LANDLOCK_ACCESS_FS_MAKE_* for the destination of a link or rename,
+> and with LANDLOCK_ACCESS_FS_REMOVE_* for a source of a rename.  This
+> lift a Landlock limitation that always denied changing the parent of an
+> inode.
 >
-> For fs metadata, it really depends.  In principle, if (say) we could get
-> byte granularity poison info, we could look up the space usage within
-> the block to decide if the poisoned part was actually free space, in
-> which case we can correct the problem by (re)zeroing the affected bytes
-> to clear the poison.
+> Renaming or linking to the same directory is still always allowed,
+> whatever LANDLOCK_ACCESS_FS_REFER is used or not, because it is not
+> considered a threat to user data.
 >
-> Obviously, if the blast radius hits the internal space info or something
-> that was storing useful data, then you'd have to rebuild the whole block
-> (or the whole data structure), but that's not necessarily a given.
+> However, creating multiple links or renaming to a different parent
+> directory may lead to privilege escalations if not handled properly.
+> Indeed, we must be sure that the source doesn't gain more privileges by
+> being accessible from the destination.  This is handled by making sure
+> that the source hierarchy (including the referenced file or directory
+> itself) restricts at least as much the destination hierarchy.  If it is
+> not the case, an EXDEV error is returned, making it potentially possible
+> for user space to copy the file hierarchy instead of moving or linking
+> it.
+>
+> Instead of creating different access rights for the source and the
+> destination, we choose to make it simple and consistent for users.
+> Indeed, considering the previous constraint, it would be weird to
+> require such destination access right to be also granted to the source
+> (to make it a superset).  Moreover, RENAME_EXCHANGE would also add to
+> the confusion because of paths being both a source and a destination.
+>
+> See the provided documentation for additional details.
+>
+> New tests are provided with a following commit.
+>
+> Cc: Paul Moore <paul@paul-moore.com>
+> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@linux.microsoft.com>
+> Link: https://lore.kernel.org/r/20220329125117.1393824-8-mic@digikod.net
+> ---
+>
+> Changes since v1:
+> * Update current_check_access_path() to efficiently handle
+>   RENAME_EXCHANGE thanks to the updated LSM hook (see previous patch).
+>   Only one path walk is performed per rename arguments until their
+>   common mount point is reached.  Superset of access rights is correctly
+>   checked, including when exchanging a file with a directory.  This
+>   requires to store another matrix of layer masks.
+> * Reorder and rename check_access_path_dual() arguments in a more
+>   generic way: switch from src/dst to 1/2.  This makes it easier to
+>   understand the RENAME_EXCHANGE cases alongs with the others.  Update
+>   and improve check_access_path_dual() documentation accordingly.
+> * Clean up the check_access_path_dual() loop: set both allowed_parent*
+>   when reaching internal filesystems and remove a useless one.  This
+>   allows potential renames in internal filesystems (like for other
+>   operations).
+> * Move the function arguments checks from BUILD_BUG_ON() to
+>   WARN_ON_ONCE() to avoid clang build error.
+> * Rename is_superset() to no_more_access() and make it handle superset
+>   checks of source and destination for simple and exchange cases.
+> * Move the layer_masks_child* creation from current_check_refer_path()
+>   to check_access_path_dual(): this is simpler and less error-prone,
+>   especially with RENAME_EXCHANGE.
+> * Remove one optimization in current_check_refer_path() to make the code
+>   simpler, especially with the RENAME_EXCHANGE handling.
+> * Remove overzealous WARN_ON_ONCE() for !access_request check in
+>   init_layer_masks().
+> ---
+>  include/uapi/linux/landlock.h                |  27 +-
+>  security/landlock/fs.c                       | 607 ++++++++++++++++---
+>  security/landlock/limits.h                   |   2 +-
+>  security/landlock/syscalls.c                 |   2 +-
+>  tools/testing/selftests/landlock/base_test.c |   2 +-
+>  tools/testing/selftests/landlock/fs_test.c   |   3 +-
+>  6 files changed, 566 insertions(+), 77 deletions(-)
 
-tl;dr: dax_holder_notify_failure() != fs->notify_failure()
+I'm still not going to claim that I'm a Landlock expert, but this
+looks sane to me.
 
-So I think I see some confusion between what DAX->notify_failure()
-needs, memory_failure() needs, the raw information provided by the
-hardware, and the failure granularity the filesystem can make use of.
+Reviewed-by: Paul Moore <paul@paul-moore.com>
 
-DAX and memory_failure() need to make immediate page granularity
-decisions. They both need to map out whole pages (in the direct map
-and userspace respectively) to prevent future poison consumption, at
-least until the poison is repaired.
+> +static inline access_mask_t init_layer_masks(
+> +               const struct landlock_ruleset *const domain,
+> +               const access_mask_t access_request,
+> +               layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_FS]=
+)
+> +{
+> +       access_mask_t handled_accesses =3D 0;
+> +       size_t layer_level;
+> +
+> +       memset(layer_masks, 0, sizeof(*layer_masks));
+> +       /* An empty access request can happen because of O_WRONLY | O_RDW=
+R. */
 
-The event that leads to a page being failed can be triggered by a
-hardware error as small as an individual cacheline. While that is
-interesting to a filesystem it isn't information that memory_failure()
-and DAX can utilize.
+ ;)
 
-The reason DAX needs to have a callback into filesystem code is to map
-the page failure back to all the processes that might have that page
-mapped because reflink means that page->mapping is not sufficient to
-find all the affected 'struct address_space' instances. So it's more
-of an address-translation / "help me kill processes" service than a
-general failure notification service.
-
-Currently when raw hardware event happens there are mechanisms like
-arch-specific notifier chains, like powerpc::mce_register_notifier()
-and x86::mce_register_decode_chain(), or other platform firmware code
-like ghes_edac_report_mem_error() that uplevel the error to a coarse
-page granularity failure, while emitting the fine granularity error
-event to userspace.
-
-All of this to say that the interface to ask the fs to do the bottom
-half of memory_failure() (walking affected 'struct address_space'
-instances and killing processes (mf_dax_kill_procs())) is different
-than the general interface to tell the filesystem that memory has gone
-bad relative to a device. So if the only caller of
-fs->notify_failure() handler is this code:
-
-+       if (pgmap->ops->memory_failure) {
-+               rc = pgmap->ops->memory_failure(pgmap, PFN_PHYS(pfn), PAGE_SIZE,
-+                               flags);
-
-...then you'll never get fine-grained reports. So, I still think the
-DAX, pgmap and memory_failure() interface should be pfn based. The
-interface to the *filesystem* ->notify_failure() can still be
-byte-based, but the trigger for that byte based interface will likely
-need to be something driven by another agent. Perhaps like rasdaemon
-in userspace translating all the arch specific physical address events
-back into device-relative offsets and then calling a new ABI that is
-serviced by fs->notify_failure() on the backend.
+--=20
+paul-moore.com
