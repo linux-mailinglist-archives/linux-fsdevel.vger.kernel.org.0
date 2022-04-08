@@ -2,67 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B79714F8E37
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Apr 2022 08:26:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26D334F8EDF
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Apr 2022 08:27:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235078AbiDHGVC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Apr 2022 02:21:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37152 "EHLO
+        id S232977AbiDHG1Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Apr 2022 02:27:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33194 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231461AbiDHGVA (ORCPT
+        with ESMTP id S230204AbiDHG1W (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Apr 2022 02:21:00 -0400
-Received: from mail-wr1-x429.google.com (mail-wr1-x429.google.com [IPv6:2a00:1450:4864:20::429])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59492132E94;
-        Thu,  7 Apr 2022 23:18:57 -0700 (PDT)
-Received: by mail-wr1-x429.google.com with SMTP id c7so11378686wrd.0;
-        Thu, 07 Apr 2022 23:18:57 -0700 (PDT)
+        Fri, 8 Apr 2022 02:27:22 -0400
+Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D062716CE4F
+        for <linux-fsdevel@vger.kernel.org>; Thu,  7 Apr 2022 23:25:17 -0700 (PDT)
+Received: by mail-pl1-x632.google.com with SMTP id k13so1839978plk.12
+        for <linux-fsdevel@vger.kernel.org>; Thu, 07 Apr 2022 23:25:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :organization;
-        bh=sXrx2h/uKeuznM6QnZlvZ5gyDgWktcFuETr25SqnaH8=;
-        b=HfIgop56PzGbC34UKE3BY8YUKyPKULFKuCK+oSkBeVZMkrOEY2z0r/DbcKAPfSLi1K
-         NpLBJ2iKxwVuoVQ15NnIztVgSACudwkQ1Sfw73VjFHt7Pa4rgGeUAcxTIQ4Jyv58zTF1
-         8AaEIurs6v4Osii0UFHWwNvB99Em545hdCQR0jnV1x4+KMvFRs2PRVfC5dGZaOTl47kl
-         ocVMfMmRfnFoV/o+LlhjOFXFi2SvtaCHWC+m4BRx2oHn1sHo6+FTCsV4x+lBbILF0EIR
-         JVilz4HXSO09bUYiay0Blc9Mxoh9dzXXJa0YthUu6aL/+q35DyqKMNm82/QILMmUjBLD
-         Zu4Q==
+        d=intel-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gpTt04knjFi7/r4rdhBFpeWlnWTTiUe1d93mQq2Do3I=;
+        b=MAz6RPib3bcwbnw7VOzDKsX4M+0+QU+QgCQSRlXjmf8Y1j5E82C3MrTGAgpPQP7x2/
+         7b9XV/2KcaXsvw+GrapP/fImELYl5GNzN9cbv9exuPksDfOeysAV7CzrjAFcCFLdpyD4
+         cv20aVQbMuVGhrrBsMZl3Y8jzXtJorYiwaZ6s95JJpE0/CNVsbKtdGQ2lozCaCX2Z2jj
+         aCCws8x6/Q4nlxvNHMQu8EzHC848KqfeK37XWl/JO83aKLXIaLW6At4fR5a2AYuvw90o
+         YBWxQySI3dDSIpAkhSAUDAIqcG8Am5xjHEv3dQvB8v6T2tmLMTp34RjSYln0W0Mrb2aR
+         fI4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:organization;
-        bh=sXrx2h/uKeuznM6QnZlvZ5gyDgWktcFuETr25SqnaH8=;
-        b=pBsses+q7pmz0EFnBagImYJqxC8CuKd4x1YCAK1IjzBKS/M107yZJ5+g+9iPXeUpzR
-         q4KSMzItouB+K2AnQDpj8o5B2KqF5QybJWitSMH2vzFYikM4q6O2oE0CI1jAehrHGl7K
-         64Ztc7lqtPRSnHNvrHWRxACH4TayOhPowLjmv3+4/Z5pv0/simMyUkt7uKZ0giuP6+V6
-         A31xcQyfeeM31xjwPRtcRDyC3x8dCUGiwhTkp7HESbMisUPOqpYxYEy+7z2ifnCC6YLp
-         ZYAnYqMMuMXltzT8DL6+zLXiIwo6iKQxZHKsgGUcoSYuVjJEYfq89nMJeyzYPbkIMX+/
-         WuBQ==
-X-Gm-Message-State: AOAM5312Q6sTkRShJ1jQxbqiCpgr/eDq8u4ZvDkk9BxaU2fjkYEXIiQi
-        xU15Xu7dEDB2Sm8QHlmGP14=
-X-Google-Smtp-Source: ABdhPJzPo8N/pRLuDN4QeUvd0KsWCRctjfD1TwwHFYfadY/Tjf+94N4cF9qIuctjY+c9OfAMdTv5wg==
-X-Received: by 2002:a5d:452c:0:b0:207:9915:60b9 with SMTP id j12-20020a5d452c000000b00207991560b9mr685026wra.379.1649398735730;
-        Thu, 07 Apr 2022 23:18:55 -0700 (PDT)
-Received: from DDNINR0360.datadirect.datadirectnet.com ([123.201.116.157])
-        by smtp.googlemail.com with ESMTPSA id k13-20020a7bc40d000000b0038e9edf5e73sm1051695wmi.3.2022.04.07.23.18.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Apr 2022 23:18:55 -0700 (PDT)
-From:   Dharmendra Singh <dharamhans87@gmail.com>
-To:     bschubert@ddn.com, miklos@szeredi.hu
-Cc:     Dharmendra Singh <dharamhans87@gmail.com>,
-        linux-fsdevel@vger.kernel.org, fuse-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, Dharmendra Singh <dsingh@ddn.com>
-Subject: [PATCH 1/1] FUSE: Allow parallel direct writes on the same file
-Date:   Fri,  8 Apr 2022 11:48:09 +0530
-Message-Id: <20220408061809.12324-2-dharamhans87@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220408061809.12324-1-dharamhans87@gmail.com>
-References: <20220408061809.12324-1-dharamhans87@gmail.com>
-Organization: DDN STORAGE
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gpTt04knjFi7/r4rdhBFpeWlnWTTiUe1d93mQq2Do3I=;
+        b=6k3sGCunY84rNjmcsxPcNxeM7WBPyuMJtZYbM+bK6TmFQsyYGEFsxuA/AYsZKathnj
+         qigF0/FzCEZFsoFjmWdXyXbTBXdWtnZynCqNyDWcwOvh4MQcyeHwRQ0+g8tzkb64NV3X
+         WF+51LsqrRViYXr12yYhWy43O2DKkbZqB3cXtKouy0oyvpeh5XJnqTgAuuwuCakf1m0n
+         wQVc6bzZYgZwRV7W7qxHyuL3Yv0PxRpcNGe6zgw6QxlyslheKYfE7bw+iPgwzaSNlaWD
+         N4W3AzXai1URBeT4eS8X4CQouRCKG4OppTYfyqF04mJO2YqO+wVdswzPLCS06n671lRd
+         ToGg==
+X-Gm-Message-State: AOAM533w09eL7P+r8LoP513iawlWxDjMk+jDt9aV/O0WF520kCvzQBY5
+        oDNRueInskUd2SSeRtEyO0/BNqliaX0qLxYoYplFkg==
+X-Google-Smtp-Source: ABdhPJzID/VraWAFCvRtOjZrpYKIIRqJ1ed+REfBAOD4Tjags0hA+q9Oe2WNNyfILt9xFCTGNazEpbsu/uJg2gJ2j9Y=
+X-Received: by 2002:a17:90a:c083:b0:1c6:a164:fd5d with SMTP id
+ o3-20020a17090ac08300b001c6a164fd5dmr20043007pjs.8.1649399116938; Thu, 07 Apr
+ 2022 23:25:16 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220227120747.711169-1-ruansy.fnst@fujitsu.com>
+ <20220227120747.711169-8-ruansy.fnst@fujitsu.com> <YkPyBQer+KRiregd@infradead.org>
+In-Reply-To: <YkPyBQer+KRiregd@infradead.org>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Thu, 7 Apr 2022 23:25:06 -0700
+Message-ID: <CAPcyv4g5V-0bUXQEJjqxLg=Q-t4jzgx5XNO--iRuHiLkUvgcBQ@mail.gmail.com>
+Subject: Re: [PATCH v11 7/8] xfs: Implement ->notify_failure() for XFS
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Shiyang Ruan <ruansy.fnst@fujitsu.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Linux NVDIMM <nvdimm@lists.linux.dev>,
+        Linux MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "Darrick J. Wong" <djwong@kernel.org>, david <david@fromorbit.com>,
+        Jane Chu <jane.chu@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -70,148 +72,73 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-As of now, in Fuse, direct writes on the same file are serialized
-over inode lock i.e we hold inode lock for the whole duration of
-the write request. This serialization works pretty well for the FUSE
-user space implementations which rely on this inode lock for their
-cache/data integrity etc. But it hurts badly such FUSE implementations
-which has their own ways of mainting data/cache integrity and does not
-use this serialization at all.
+On Tue, Mar 29, 2022 at 11:01 PM Christoph Hellwig <hch@infradead.org> wrote:
+>
+> > @@ -1892,6 +1893,8 @@ xfs_free_buftarg(
+> >       list_lru_destroy(&btp->bt_lru);
+> >
+> >       blkdev_issue_flush(btp->bt_bdev);
+> > +     if (btp->bt_daxdev)
+> > +             dax_unregister_holder(btp->bt_daxdev, btp->bt_mount);
+> >       fs_put_dax(btp->bt_daxdev);
+> >
+> >       kmem_free(btp);
+> > @@ -1939,6 +1942,7 @@ xfs_alloc_buftarg(
+> >       struct block_device     *bdev)
+> >  {
+> >       xfs_buftarg_t           *btp;
+> > +     int                     error;
+> >
+> >       btp = kmem_zalloc(sizeof(*btp), KM_NOFS);
+> >
+> > @@ -1946,6 +1950,14 @@ xfs_alloc_buftarg(
+> >       btp->bt_dev =  bdev->bd_dev;
+> >       btp->bt_bdev = bdev;
+> >       btp->bt_daxdev = fs_dax_get_by_bdev(bdev, &btp->bt_dax_part_off);
+> > +     if (btp->bt_daxdev) {
+> > +             error = dax_register_holder(btp->bt_daxdev, mp,
+> > +                             &xfs_dax_holder_operations);
+> > +             if (error) {
+> > +                     xfs_err(mp, "DAX device already in use?!");
+> > +                     goto error_free;
+> > +             }
+> > +     }
+>
+> It seems to me that just passing the holder and holder ops to
+> fs_dax_get_by_bdev and the holder to dax_unregister_holder would
+> significantly simply the interface here.
+>
+> Dan, what do you think?
 
-This patch allows parallel direct writes on the same file with the
-help of a flag called FOPEN_PARALLEL_WRITES. If this flag is set on
-the file (flag is passed from libfuse to fuse kernel as part of file
-open/create), we do not hold inode lock for the whole duration of the
-request, instead acquire it only to protect updates on certain fields
-of the inode. FUSE implementations which rely on this inode lock can
-continue to do so and this is default behaviour.
+Yes, makes sense, just like the optional holder arguments to blkdev_get_by_*().
 
-Signed-off-by: Dharmendra Singh <dsingh@ddn.com>
----
- fs/fuse/file.c            | 38 ++++++++++++++++++++++++++++++++++----
- include/uapi/linux/fuse.h |  2 ++
- 2 files changed, 36 insertions(+), 4 deletions(-)
+>
+> > +#if IS_ENABLED(CONFIG_MEMORY_FAILURE) && IS_ENABLED(CONFIG_FS_DAX)
+>
+> No real need for the IS_ENABLED.  Also any reason to even build this
+> file if the options are not set?  It seems like
+> xfs_dax_holder_operations should just be defined to NULL and the
+> whole file not supported if we can't support the functionality.
+>
+> Dan: not for this series, but is there any reason not to require
+> MEMORY_FAILURE for DAX to start with?
 
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 37eebfb90500..d3e8f44c1228 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -1465,6 +1465,8 @@ ssize_t fuse_direct_io(struct fuse_io_priv *io, struct iov_iter *iter,
- 	int err = 0;
- 	struct fuse_io_args *ia;
- 	unsigned int max_pages;
-+	bool p_write = write &&
-+		(ff->open_flags & FOPEN_PARALLEL_WRITES) ? true : false;
- 
- 	max_pages = iov_iter_npages(iter, fc->max_pages);
- 	ia = fuse_io_alloc(io, max_pages);
-@@ -1472,10 +1474,11 @@ ssize_t fuse_direct_io(struct fuse_io_priv *io, struct iov_iter *iter,
- 		return -ENOMEM;
- 
- 	if (!cuse && fuse_range_is_writeback(inode, idx_from, idx_to)) {
--		if (!write)
-+		/* Parallel write does not come with inode lock held */
-+		if (!write || p_write)
- 			inode_lock(inode);
- 		fuse_sync_writes(inode);
--		if (!write)
-+		if (!write || p_write)
- 			inode_unlock(inode);
- 	}
- 
-@@ -1568,22 +1571,36 @@ static ssize_t fuse_direct_read_iter(struct kiocb *iocb, struct iov_iter *to)
- static ssize_t fuse_direct_write_iter(struct kiocb *iocb, struct iov_iter *from)
- {
- 	struct inode *inode = file_inode(iocb->ki_filp);
-+	struct file *file = iocb->ki_filp;
-+	struct fuse_file *ff = file->private_data;
- 	struct fuse_io_priv io = FUSE_IO_PRIV_SYNC(iocb);
- 	ssize_t res;
-+	bool p_write = ff->open_flags & FOPEN_PARALLEL_WRITES ? true : false;
-+	bool unlock_inode = true;
- 
- 	/* Don't allow parallel writes to the same file */
- 	inode_lock(inode);
- 	res = generic_write_checks(iocb, from);
- 	if (res > 0) {
-+		/* Allow parallel writes on the inode by unlocking it */
-+		if (p_write) {
-+			inode_unlock(inode);
-+			unlock_inode = false;
-+		}
- 		if (!is_sync_kiocb(iocb) && iocb->ki_flags & IOCB_DIRECT) {
- 			res = fuse_direct_IO(iocb, from);
- 		} else {
- 			res = fuse_direct_io(&io, from, &iocb->ki_pos,
- 					     FUSE_DIO_WRITE);
-+			if (p_write) {
-+				inode_lock(inode);
-+				unlock_inode = true;
-+			}
- 			fuse_write_update_attr(inode, iocb->ki_pos, res);
- 		}
- 	}
--	inode_unlock(inode);
-+	if (unlock_inode)
-+		inode_unlock(inode);
- 
- 	return res;
- }
-@@ -2850,10 +2867,16 @@ fuse_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- 	size_t count = iov_iter_count(iter), shortened = 0;
- 	loff_t offset = iocb->ki_pos;
- 	struct fuse_io_priv *io;
--
-+	bool p_write = (iov_iter_rw(iter) == WRITE &&
-+			ff->open_flags & FOPEN_PARALLEL_WRITES);
- 	pos = offset;
- 	inode = file->f_mapping->host;
-+
-+	if (p_write)
-+		inode_lock(inode);
- 	i_size = i_size_read(inode);
-+	if (p_write)
-+		inode_unlock(inode);
- 
- 	if ((iov_iter_rw(iter) == READ) && (offset >= i_size))
- 		return 0;
-@@ -2924,9 +2947,16 @@ fuse_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- 	kref_put(&io->refcnt, fuse_io_release);
- 
- 	if (iov_iter_rw(iter) == WRITE) {
-+
-+		if (p_write)
-+			inode_lock(inode);
-+
- 		fuse_write_update_attr(inode, pos, ret);
- 		if (ret < 0 && offset + count > i_size)
- 			fuse_do_truncate(file);
-+
-+		if (p_write)
-+			inode_unlock(inode);
- 	}
- 
- 	return ret;
-diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index a28dd60078ff..07f00dfeb0ce 100644
---- a/include/uapi/linux/fuse.h
-+++ b/include/uapi/linux/fuse.h
-@@ -301,6 +301,7 @@ struct fuse_file_lock {
-  * FOPEN_CACHE_DIR: allow caching this directory
-  * FOPEN_STREAM: the file is stream-like (no file position at all)
-  * FOPEN_NOFLUSH: don't flush data cache on close (unless FUSE_WRITEBACK_CACHE)
-+ * FOPEN_PARALLEL_WRITES: Allow concurrent writes on the same inode
-  */
- #define FOPEN_DIRECT_IO		(1 << 0)
- #define FOPEN_KEEP_CACHE	(1 << 1)
-@@ -308,6 +309,7 @@ struct fuse_file_lock {
- #define FOPEN_CACHE_DIR		(1 << 3)
- #define FOPEN_STREAM		(1 << 4)
- #define FOPEN_NOFLUSH		(1 << 5)
-+#define FOPEN_PARALLEL_WRITES	(1 << 6)
- 
- /**
-  * INIT request/reply flags
--- 
-2.17.1
+Given that DAX ties some storage semantics to memory and storage
+supports EIO I can see an argument to require memory_failure() for
+DAX, and especially for DAX on CXL where hotplug is supported it will
+be necessary. Linux currently has no facility to consult PCI drivers
+about removal actions, so the only recourse for a force removed CXL
+device is mass memory_failure().
 
+>
+> > +
+> > +     ddev_start = mp->m_ddev_targp->bt_dax_part_off;
+> > +     ddev_end = ddev_start +
+> > +             (mp->m_ddev_targp->bt_bdev->bd_nr_sectors << SECTOR_SHIFT) - 1;
+>
+> This should use bdev_nr_bytes.
+>
+> But didn't we say we don't want to support notifications on partitioned
+> devices and thus don't actually need all this?
+
+Right.
