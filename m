@@ -2,186 +2,202 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 462904F8DC0
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Apr 2022 08:25:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C62DF4F8E15
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Apr 2022 08:26:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233273AbiDHFeu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Apr 2022 01:34:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43726 "EHLO
+        id S235032AbiDHGBM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Apr 2022 02:01:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229933AbiDHFet (ORCPT
+        with ESMTP id S229484AbiDHGBL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Apr 2022 01:34:49 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0523C3A8;
-        Thu,  7 Apr 2022 22:32:45 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 7F8EE1F85F;
-        Fri,  8 Apr 2022 05:32:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1649395964; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=QdTW7COGvmCgK+LD5zU9u4m949ZH/XIvxLPVYTKkNWg=;
-        b=COgZgDyt/iHlm/IOD0lhgw3zwv9X4kcDBRtS26ARUbM9IZ/E996GgZQH9RJ7as4uWKNGro
-        HuCLZIqBravRjZLbHWWa0f2vUEQ1zqko5wM9Xb8zPDk/2BLKMrZa2vOq/LVyx/BIHDUg67
-        HZr3wuyjEo2ywX2oeBiWLMrrQBe2bUc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1649395964;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=QdTW7COGvmCgK+LD5zU9u4m949ZH/XIvxLPVYTKkNWg=;
-        b=occToaFpUIV8dbC+VqS2dzVKUTzPpeEdjVxmFix1qtBWVv5L/uHRuqTmBCmtnkrwXCBrUw
-        EdT+JNmWdqyjroBQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 96A4813A9C;
-        Fri,  8 Apr 2022 05:32:42 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id yzJEFfrIT2IlawAAMHmgww
-        (envelope-from <neilb@suse.de>); Fri, 08 Apr 2022 05:32:42 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        Fri, 8 Apr 2022 02:01:11 -0400
+Received: from heian.cn.fujitsu.com (mail.cn.fujitsu.com [183.91.158.132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7FDEF4CD42;
+        Thu,  7 Apr 2022 22:59:07 -0700 (PDT)
+IronPort-Data: =?us-ascii?q?A9a23=3AcjdB/KC7/4fbDRVW/zviw5YqxClBgxIJ4g17XOL?=
+ =?us-ascii?q?fAQm81WwigjUFm2sXDDyPM6qDYWamft1+a4yxpBhSvsOAx9UxeLYW3SszFioV8?=
+ =?us-ascii?q?6IpJjg4wn/YZnrUdouaJK5ex512huLocYZkHhcwmj/3auK79SMkjPnRLlbBILW?=
+ =?us-ascii?q?s1h5ZFFYMpBgJ2UoLd94R2uaEsPDha++/kYqaT/73ZDdJ7wVJ3lc8sMpvnv/AU?=
+ =?us-ascii?q?MPa41v0tnRmDRxCUcS3e3M9VPrzLonpR5f0rxU9IwK0ewrD5OnREmLx9BFrBM6?=
+ =?us-ascii?q?nk6rgbwsBRbu60Qqm0yIQAvb9xEMZ4HFaPqUTbZLwbW9NljyPhME3xtNWqbS+V?=
+ =?us-ascii?q?AUoIrbR3u8aVnG0FgknZ/YaoeWfeyfXXcu7iheun2HX6/lnEkA6FYMC/eNwG2t?=
+ =?us-ascii?q?P6boTLzVlRhCIh8q3xryhQ+Vhj8hlK9PkVKsTs3cmz3fGDPIiQJnGWI3L48NV2?=
+ =?us-ascii?q?HE7gcUmNerZYdtfbSdkbzzBZQFCPhEcD5dWtOuqmX75fBVbpUiTqK5x5HLcpCR?=
+ =?us-ascii?q?027jgMNPfUt+HX8NYmgCfvG2u12D4BAwKcdma4Tmb+3mvwOjVkkvTXpweFbi93?=
+ =?us-ascii?q?vprm0GIgGgSDgAGE1e2v5GRiEe4VpRUK1E8/TAnpqw/skesS7HVWxy+vW7BsAU?=
+ =?us-ascii?q?QVsRdF8Uk5wyXjKnZ+QCUAi4DVDEpQNgnstImAD8nzFmEm/v3CjF19r6YU3SQ8?=
+ =?us-ascii?q?vGTtzzaESwUK3ISID8KViMb7NT55oI+lBTCSpBkCqHdszFfMVkc2BjT9G5n2ep?=
+ =?us-ascii?q?V1pVNis2GEZn8q2rEjvD0osQdv207hl6Y0z4=3D?=
+IronPort-HdrOrdr: =?us-ascii?q?A9a23=3ATGLtuKg7gkn9+eaczY5+DH2LxHBQXj4ji2hC?=
+ =?us-ascii?q?6mlwRA09TySZ//re/sjzsiWE8Qr5OUtQ/+xoV5PufZqxz+8Q3WBVB8bEYOCEgg?=
+ =?us-ascii?q?WVxeNZgbcKqgeIc0aVm9K1l50QFpSWY+eRMbEVt7eY3OD1KbcdKce8gd2VrNab?=
+ =?us-ascii?q?33FwVhtrdq0lyw94DzyQGkpwSBIuP+tDKLOsotpAuyG7eWkaKuCyBnw+VeDFoN?=
+ =?us-ascii?q?HR0L38ZxpuPW9c1CC+ySOv9KXhEwWVmjMXUzZ0y78k9mTf1yzVj5/Ty82G9g?=
+ =?us-ascii?q?=3D=3D?=
+X-IronPort-AV: E=Sophos;i="5.88,333,1635177600"; 
+   d="scan'208";a="123412027"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 08 Apr 2022 13:59:06 +0800
+Received: from G08CNEXMBPEKD05.g08.fujitsu.local (unknown [10.167.33.204])
+        by cn.fujitsu.com (Postfix) with ESMTP id B9BD64D17163;
+        Fri,  8 Apr 2022 13:59:01 +0800 (CST)
+Received: from G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.85) by
+ G08CNEXMBPEKD05.g08.fujitsu.local (10.167.33.204) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.23; Fri, 8 Apr 2022 13:59:02 +0800
+Received: from [192.168.22.28] (10.167.225.141) by
+ G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
+ id 15.0.1497.23 via Frontend Transport; Fri, 8 Apr 2022 13:59:00 +0800
+Message-ID: <7f13413d-e7a4-4ac2-46ad-1e1955fa42ee@fujitsu.com>
+Date:   Fri, 8 Apr 2022 13:59:00 +0800
 MIME-Version: 1.0
-From:   "NeilBrown" <neilb@suse.de>
-To:     "Dave Chinner" <david@fromorbit.com>
-Cc:     "Trond Myklebust" <trondmy@hammerspace.com>,
-        "bfields@fieldses.org" <bfields@fieldses.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "chuck.lever@oracle.com" <chuck.lever@oracle.com>
-Subject: Re: sporadic hangs on generic/186
-In-reply-to: <20220408050321.GF1609613@dread.disaster.area>
-References: <20220406195424.GA1242@fieldses.org>,
- <20220407001453.GE1609613@dread.disaster.area>,
- <164929126156.10985.11316778982526844125@noble.neil.brown.name>,
- <164929437439.10985.5253499040284089154@noble.neil.brown.name>,
- <b282c5b98c4518952f62662ea3ba1d4e6ef85f26.camel@hammerspace.com>,
- <164930468885.10985.9905950866720150663@noble.neil.brown.name>,
- <43aace26d3a09f868f732b2ad94ca2dbf90f50bd.camel@hammerspace.com>,
- <164938596863.10985.998515507989861871@noble.neil.brown.name>,
- <20220408050321.GF1609613@dread.disaster.area>
-Date:   Fri, 08 Apr 2022 15:32:38 +1000
-Message-id: <164939595866.10985.2936909905164009297@noble.neil.brown.name>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH v11 1/8] dax: Introduce holder for dax_device
+To:     Dan Williams <dan.j.williams@intel.com>,
+        "Darrick J. Wong" <djwong@kernel.org>
+CC:     Jane Chu <jane.chu@oracle.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Linux NVDIMM <nvdimm@lists.linux.dev>,
+        Linux MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        david <david@fromorbit.com>, "Luck, Tony" <tony.luck@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+References: <CAPcyv4jAqV7dZdmGcKrG=f8sYmUXaL7YCQtME6GANywncwd+zg@mail.gmail.com>
+ <4fd95f0b-106f-6933-7bc6-9f0890012b53@fujitsu.com>
+ <YkPtptNljNcJc1g/@infradead.org>
+ <15a635d6-2069-2af5-15f8-1c0513487a2f@fujitsu.com>
+ <YkQtOO/Z3SZ2Pksg@infradead.org>
+ <4ed8baf7-7eb9-71e5-58ea-7c73b7e5bb73@fujitsu.com>
+ <YkR8CUdkScEjMte2@infradead.org> <20220330161812.GA27649@magnolia>
+ <fd37cde6-318a-9faf-9bff-70bb8e5d3241@oracle.com>
+ <CAPcyv4gqBmGCQM_u40cR6GVror6NjhxV5Xd7pdHedE2kHwueoQ@mail.gmail.com>
+ <20220406203900.GR27690@magnolia>
+ <CAPcyv4g9m13VGq9mFHHhd301jZk-OQC47MGpB9nU=erA0i2ZCg@mail.gmail.com>
+From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
+In-Reply-To: <CAPcyv4g9m13VGq9mFHHhd301jZk-OQC47MGpB9nU=erA0i2ZCg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-yoursite-MailScanner-ID: B9BD64D17163.A0D3F
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: ruansy.fnst@fujitsu.com
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 08 Apr 2022, Dave Chinner wrote:
-> On Fri, Apr 08, 2022 at 12:46:08PM +1000, NeilBrown wrote:
-> > On Thu, 07 Apr 2022, Trond Myklebust wrote:
-> > > The bottom line is that we use ordinary GFP_KERNEL memory allocations
-> > > where we can. The new code follows that rule, breaking it only in cases
-> > > where the specific rules of rpciod/xprtiod/nfsiod make it impossible to
-> > > wait forever in the memory manager.
-> > 
-> > It is not safe to use GFP_KERNEL for an allocation that is needed in
-> > order to free memory - and so any allocation that is needed to write out
-> > data from the page cache.
+
+
+在 2022/4/8 9:38, Dan Williams 写道:
+> [ add Mauro and Tony for RAS discussion ]
 > 
-> Except that same page cache writeback path can be called from
-> syscall context (e.g.  fsync()) which has nothing to do with memory
-> reclaim. In that case GFP_KERNEL is the correct allocation context
-> to use because there are no constraints on what memory reclaim can
-> be performed from this path.
+> On Wed, Apr 6, 2022 at 1:39 PM Darrick J. Wong <djwong@kernel.org> wrote:
+>>
+>> On Tue, Apr 05, 2022 at 06:22:48PM -0700, Dan Williams wrote:
+>>> On Tue, Apr 5, 2022 at 5:55 PM Jane Chu <jane.chu@oracle.com> wrote:
+>>>>
+>>>> On 3/30/2022 9:18 AM, Darrick J. Wong wrote:
+>>>>> On Wed, Mar 30, 2022 at 08:49:29AM -0700, Christoph Hellwig wrote:
+>>>>>> On Wed, Mar 30, 2022 at 06:58:21PM +0800, Shiyang Ruan wrote:
+>>>>>>> As the code I pasted before, pmem driver will subtract its ->data_offset,
+>>>>>>> which is byte-based. And the filesystem who implements ->notify_failure()
+>>>>>>> will calculate the offset in unit of byte again.
+>>>>>>>
+>>>>>>> So, leave its function signature byte-based, to avoid repeated conversions.
+>>>>>>
+>>>>>> I'm actually fine either way, so I'll wait for Dan to comment.
+>>>>>
+>>>>> FWIW I'd convinced myself that the reason for using byte units is to
+>>>>> make it possible to reduce the pmem failure blast radius to subpage
+>>>>> units... but then I've also been distracted for months. :/
+>>>>>
+>>>>
+>>>> Yes, thanks Darrick!  I recall that.
+>>>> Maybe just add a comment about why byte unit is used?
+>>>
+>>> I think we start with page failure notification and then figure out
+>>> how to get finer grained through the dax interface in follow-on
+>>> changes. Otherwise, for finer grained error handling support,
+>>> memory_failure() would also need to be converted to stop upcasting
+>>> cache-line granularity to page granularity failures. The native MCE
+>>> notification communicates a 'struct mce' that can be in terms of
+>>> sub-page bytes, but the memory management implications are all page
+>>> based. I assume the FS implications are all FS-block-size based?
+>>
+>> I wouldn't necessarily make that assumption -- for regular files, the
+>> user program is in a better position to figure out how to reset the file
+>> contents.
+>>
+>> For fs metadata, it really depends.  In principle, if (say) we could get
+>> byte granularity poison info, we could look up the space usage within
+>> the block to decide if the poisoned part was actually free space, in
+>> which case we can correct the problem by (re)zeroing the affected bytes
+>> to clear the poison.
+>>
+>> Obviously, if the blast radius hits the internal space info or something
+>> that was storing useful data, then you'd have to rebuild the whole block
+>> (or the whole data structure), but that's not necessarily a given.
 > 
-> IOWs, if the context initiating data writeback doesn't allow
-> GFP_KERNEL allocations, then it should be calling
-> memalloc_nofs_save() or memalloc_noio_save() to constrain all
-> allocations to the required context. We should not be requiring the
-> filesystem (or any other subsystem) to magically infer that the IO
-> is being done in a constrained allocation context and modify the
-> context they use appropriately.
+> tl;dr: dax_holder_notify_failure() != fs->notify_failure()
 > 
-> If we this, then all filesystems would simply use GFP_NOIO
-> everywhere because the loop device layers the entire filesystem IO
-> path under block device context (i.e. requiring GFP_NOIO allocation
-> context). We don't do this - the loop device sets PF_MEMALLOC_NOIO
-> instead so all allocations in that path run with at least GFP_NOIO
-> constraints and filesystems are none the wiser about the constraints
-> of the calling context.
+> So I think I see some confusion between what DAX->notify_failure()
+> needs, memory_failure() needs, the raw information provided by the
+> hardware, and the failure granularity the filesystem can make use of.
 > 
-> IOWs, GFP_KERNEL is generally right context to be using in
-> filesystem IO paths and callers need to restrict allocation contexts
-> via task flags if they cannot allow certain types of reclaim
-> recursion to occur...
+> DAX and memory_failure() need to make immediate page granularity
+> decisions. They both need to map out whole pages (in the direct map
+> and userspace respectively) to prevent future poison consumption, at
+> least until the poison is repaired.
+> 
+> The event that leads to a page being failed can be triggered by a
+> hardware error as small as an individual cacheline. While that is
+> interesting to a filesystem it isn't information that memory_failure()
+> and DAX can utilize.
+> 
+> The reason DAX needs to have a callback into filesystem code is to map
+> the page failure back to all the processes that might have that page
+> mapped because reflink means that page->mapping is not sufficient to
+> find all the affected 'struct address_space' instances. So it's more
+> of an address-translation / "help me kill processes" service than a
+> general failure notification service.
+> 
+> Currently when raw hardware event happens there are mechanisms like
+> arch-specific notifier chains, like powerpc::mce_register_notifier()
+> and x86::mce_register_decode_chain(), or other platform firmware code
+> like ghes_edac_report_mem_error() that uplevel the error to a coarse
+> page granularity failure, while emitting the fine granularity error
+> event to userspace.
+> 
+> All of this to say that the interface to ask the fs to do the bottom
+> half of memory_failure() (walking affected 'struct address_space'
+> instances and killing processes (mf_dax_kill_procs())) is different
+> than the general interface to tell the filesystem that memory has gone
+> bad relative to a device. So if the only caller of
+> fs->notify_failure() handler is this code:
+> 
+> +       if (pgmap->ops->memory_failure) {
+> +               rc = pgmap->ops->memory_failure(pgmap, PFN_PHYS(pfn), PAGE_SIZE,
+> +                               flags);
+> 
+> ...then you'll never get fine-grained reports. So, I still think the
+> DAX, pgmap and memory_failure() interface should be pfn based. The
+> interface to the *filesystem* ->notify_failure() can still be
+> byte-based, but the trigger for that byte based interface will likely
+> need to be something driven by another agent. Perhaps like rasdaemon
+> in userspace translating all the arch specific physical address events
+> back into device-relative offsets and then calling a new ABI that is
+> serviced by fs->notify_failure() on the backend.
 
-NOIO and NOFS are not the issue here.  We all agree that
-memalloc_noXX_save() is the right thing to do.
+Understood.  I'll do as your advise.  Thanks!
 
-The issue is that memalloc can block indefinitely in low-memory
-situations, and any code that has to make progress in low-memory
-situations - like writeout - needs to be careful.
 
-This is why the block layer uses mempools for request headers etc - so
-that progress is guaranteed without depending on alloc_page() to
-succeed.
+--
+Ruan.
 
-File systems do often get away with using GFP_KERNEL because the
-important paths has PF_MEMALLOC and hence __GFP_MEMALLOC in effect and
-that provides access to some shared reserves.  Shared reserves are risky
-- the other users you are sharing with might steal it all.
 
-File systems tend to survive anyway because there is a limit on the
-mount of dirty filesystem data - so there is lots of non-filesystem data
-around, and a good chance that some of that can be freed.
-
-I say "tend to" because I believe the is no real guarantee.  It seems to
-actually work 99.999% of the time, and maybe that is enough.
-
-I suspect you might be able to deadlock filesystem writeout by
-memlocking lots of memory while there are lots of dirty pages.  It
-probably wouldn't be easy though.
-
-swap-out is different.  There is no limit the the amount of dirty anon
-data, so it is fairly easy to get a situation where you absolutely must
-write out some anon pages before alloc_page() can succeed. 
-Most filesystems don't handle swap-out directly - they just tell the MM
-which disk addresses to use and submit_bio() is used for writing.
-The bio is allocated from a mempool, and nothing below submit_bio() uses
-GFP_KERNEL to alloc_page() - they all use mempools (or accept failure in
-some other way).  A separate mempool at each level - they aren't shared
-(so they are quite different from __GFP_MEMALLOC).
-
-NFS is different.  NFS handles swap using the same paths as other
-writes, so it is much more likely to face indefinite waits in
-alloc_page() - it least when handling swap.  __GFP_MEMALLOC helps to a
-degree but there a lots of levels, and the more levels we have have
-local reserves (even if the mempool only reserves a single element), the
-better.
-
-The networking people refuse to use mempools (or at least, they did once
-some years ago) and I cannot entirely blame them as there are lots of
-moving parts - lots of different things that might need to be allocated
-(arp table entries?) but usually aren't.  So for everything in the
-socket layer and below we rely on __GFP_MEMALLOC (and recommend
-increasing the reserves a bit above the default, just in case).
-
-But in NFS and particularly in SUNRPC we already have the mempool, and
-there is only a small number of things that we need to allocate to
-ensure forward progress.  So using a mempool as designed, rather than
-relying on MEMALLOC reserves is the sensible thing to do, and leaves
-more of the reserves for the networking layer.
-
-In fact, the allocation that SUNRPC now does before trying a mempool
-should really be using __GFP_NOMEMALLOC so that they don't take from the
-shared reserves (even when PF_MEMALLOC is set).  As it has a private
-reserve (the mempool) it should leave the common reserve for other
-layers (sockets etc).
-
-NeilBrown
