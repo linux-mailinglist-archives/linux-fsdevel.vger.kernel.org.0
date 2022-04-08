@@ -2,119 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 722E74F90FD
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Apr 2022 10:39:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CD4D4F9159
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  8 Apr 2022 11:07:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232119AbiDHIlP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Apr 2022 04:41:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43030 "EHLO
+        id S232640AbiDHJI6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Apr 2022 05:08:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229638AbiDHIlO (ORCPT
+        with ESMTP id S232632AbiDHJIz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Apr 2022 04:41:14 -0400
-Received: from mail-qk1-x734.google.com (mail-qk1-x734.google.com [IPv6:2607:f8b0:4864:20::734])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D35589CC8
-        for <linux-fsdevel@vger.kernel.org>; Fri,  8 Apr 2022 01:39:11 -0700 (PDT)
-Received: by mail-qk1-x734.google.com with SMTP id e10so2633433qka.6
-        for <linux-fsdevel@vger.kernel.org>; Fri, 08 Apr 2022 01:39:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NKVMzxlAs1qZoOgRsJr7tIRfzwAvoAMF4B55kJAk49g=;
-        b=K84+XgK5mk4WpxBwe9tiM8QauNsCfusRchZMzlJzylAtl/0OKCj7dGeRCkYcoIUurC
-         ddFTHdcPlsQzFkrW6SrmikXMx8zzxwf4tNGkhpr4YG9bylKyYGciGXiSQK8QPg8ssVwW
-         030IjfD1xKWY1FMAuDhtW8O28sucXACqFhadny5zjFN47Uhhk650SZaGupdaJuio5qi1
-         9U3s4xZaH7T/aYEDOdEyfv5/K/6O/Vni+3YclQAmwqePmqFnwjeh/nLsjLNTgPWwEBhg
-         k+558y9+4HqeXYrsI29GBSqf59/VYsH/0LaTVB3Ns0vZwyJCNnrSIQPEC+2vSZ0ER9p+
-         0mvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NKVMzxlAs1qZoOgRsJr7tIRfzwAvoAMF4B55kJAk49g=;
-        b=gJpQLQgyZTfCV5eJqvDVOsR1jaBCBC+w3AmCKEaqjZQTxgkJBGcG+Q26JAnlot0Oxo
-         uBTmOCfsxXiLIy0D8A3vRQQZv6iQbC7FOrKGMvVT+echIORjBOAlFhXDUgeg0uNd+U0j
-         uFmLCd8BM/Bvj2T9ueUd8dRlLCgx5TDBE/FOgeUML786x113VDOFX84RjrC92DUPYsgt
-         lp/EAtNBUubJBom9Ahn7ckaRRE9RvU3yIfRKrhBINeXynWOniyscF/41yo2VUUWteKvR
-         4nJFtRCKvLfqwQNvPaaeG0Niu04lXjVP8pxFFHxOCHveM0csNNLwcrwOrk2RAM9ajZVN
-         aw4g==
-X-Gm-Message-State: AOAM531wH1smOklL7UB49CFfpNnnZ1GoI9ISzcz3aatHq5hxqRfbLpqG
-        n5BWshZ2sYcfRDDuFtb3axgat9CFJIE9OVIF9/u2g9QlW2U=
-X-Google-Smtp-Source: ABdhPJy+VAjKPOxVkHtmrUYDB8zfLNp16JBzxQsbvoBnfDy3NaC9nfjikHr1QcyGMxDZ+o0zg7AsFKwKUv4xbA0/MPE=
-X-Received: by 2002:a37:6143:0:b0:69a:11e6:a974 with SMTP id
- v64-20020a376143000000b0069a11e6a974mr3604005qkb.722.1649407150450; Fri, 08
- Apr 2022 01:39:10 -0700 (PDT)
+        Fri, 8 Apr 2022 05:08:55 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id CB4B3100764
+        for <linux-fsdevel@vger.kernel.org>; Fri,  8 Apr 2022 02:06:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1649408808;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=UIJ8W4kbN7C/kjzP9MVB+P9ZEFTMhxLK2LQH7IyF0lI=;
+        b=A96IW47wEXhm0wE6TweuGE6RJdye1WfiKSXRlk7YOy+z6vrKE/wqidyCxXDZrmr36vB4hd
+        URlsarWs7/0eR3jJ51hWiS+Xk3TbIluhT8/W1Xt+5J6jlRLg2DOcj9dmvhFo+mHytHaMmT
+        pF+GRCzv3j9JwdYzEcBzvzF3XeysNgE=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-170-4iiUBieZMQ2BkXETTv797A-1; Fri, 08 Apr 2022 05:06:45 -0400
+X-MC-Unique: 4iiUBieZMQ2BkXETTv797A-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A6539811E75;
+        Fri,  8 Apr 2022 09:06:44 +0000 (UTC)
+Received: from MiWiFi-R3L-srv.redhat.com (ovpn-12-202.pek2.redhat.com [10.72.12.202])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E945640E80E0;
+        Fri,  8 Apr 2022 09:06:39 +0000 (UTC)
+From:   Baoquan He <bhe@redhat.com>
+To:     akpm@linux-foundation.org, willy@infradead.org
+Cc:     linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
+        hch@lst.de, yangtiezhu@loongson.cn, amit.kachhap@arm.com,
+        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        bhe@redhat.com
+Subject: [PATCH v5 RESEND 0/3] Convert vmcore to use an iov_iter
+Date:   Fri,  8 Apr 2022 17:06:33 +0800
+Message-Id: <20220408090636.560886-1-bhe@redhat.com>
 MIME-Version: 1.0
-References: <20220329074904.2980320-1-amir73il@gmail.com> <20220329074904.2980320-7-amir73il@gmail.com>
- <20220407143552.c6cddwtus6eaut2j@quack3.lan> <CAOQ4uxi1MFjyGT84RCfgjyanuLCKq+G630ufx1J69RQXCygPbg@mail.gmail.com>
-In-Reply-To: <CAOQ4uxi1MFjyGT84RCfgjyanuLCKq+G630ufx1J69RQXCygPbg@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 8 Apr 2022 11:38:59 +0300
-Message-ID: <CAOQ4uxgxgoPaT_Gk3CA+i+6+EDiSmrV45F+AQ133tAakYOG0qQ@mail.gmail.com>
-Subject: Re: [PATCH v2 06/16] fsnotify: create helpers for group mark_mutex lock
-To:     Jan Kara <jack@suse.cz>
-Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.11.54.2
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 7, 2022 at 5:53 PM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> On Thu, Apr 7, 2022 at 5:35 PM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Tue 29-03-22 10:48:54, Amir Goldstein wrote:
-> > > Create helpers to take and release the group mark_mutex lock.
-> > >
-> > > Define a flag FSNOTIFY_GROUP_NOFS in fsnotify backend operations struct
-> > > that determines if the mark_mutex lock is fs reclaim safe or not.
-> > > If not safe, the nofs lock helpers should be used to take the lock and
-> > > disable direct fs reclaim.
-> > >
-> > > In that case we annotate the mutex with different lockdep class to
-> > > express to lockdep that an allocation of mark of an fs reclaim safe group
-> > > may take the group lock of another "NOFS" group to evict inodes.
-> > >
-> > > For now, converted only the callers in common code and no backend
-> > > defines the NOFS flag.  It is intended to be set by fanotify for
-> > > evictable marks support.
-> > >
-> > > Suggested-by: Jan Kara <jack@suse.cz>
-> > > Link: https://lore.kernel.org/r/20220321112310.vpr7oxro2xkz5llh@quack3.lan/
-> > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> >
-> > A few design question here:
-> >
-> > 1) Why do you store the FSNOTIFY_GROUP_NOFS flag in ops? Sure, this
-> > particular flag is probably going to be the same per backend type but it
-> > seems a bit strange to have it in ops instead of in the group itself...
->
-> I followed the pattern of struct file_system_type.
-> I didn't think per-group NOFS made much sense,
-> so it was easier this way.
->
-> >
-> > 2) Why do we have fsnotify_group_nofs_lock() as well as
-> > fsnotify_group_lock()? We could detect whether we should set nofs based on
-> > group flag anyway. Is that so that callers don't have to bother with passing
-> > around the 'nofs'? Is it too bad? We could also store the old value of
-> > 'nofs' inside the group itself after locking it and then unlock can restore
-> > it without the caller needing to care about anything...
->
-> Yes because it created unneeded code.
-> storing the local thread state in the group seems odd...
->
+Copy the description of v3 cover letter from Willy:
+===
+For some reason several people have been sending bad patches to fix
+compiler warnings in vmcore recently.  Here's how it should be done.
+Compile-tested only on x86.  As noted in the first patch, s390 should
+take this conversion a bit further, but I'm not inclined to do that
+work myself.
 
-I followed your suggestions and the result looks much better.
-Pushed result to fan_evictable branch.
+V4:
+[PATCH v4 0/3] Convert vmcore to use an iov_iter
+https://lore.kernel.org/all/20220318093706.161534-1-bhe@redhat.com/T/#u
 
-Thanks,
-Amir.
+v3:
+[PATCH v3 0/3] Convert vmcore to use an iov_iter
+https://lore.kernel.org/all/20211213143927.3069508-1-willy@infradead.org/T/#u
+
+
+Changelog:
+===
+v5 RESEND:
+ - Add my own Signed-off-by, no code or log change related in this round.
+
+v5:
+ - Rebased on Linus's latest master branch.
+ - Merge the patch 4 of v4 into patch 2.
+v4:
+ - Append one patch to replace the open code with iov_iter_count().
+   This is suggested by Al.
+ - Fix a indentation error by replacing space with tab in
+   arch/sh/kernel/crash_dump.c of patch 1 reported by checkpatch. The
+   rest of patch 1~3 are untouched.
+ - Add Christopy's Reviewed-by and my Acked-by for patch 1~3.
+v3:
+ - Send the correct patches this time
+v2:
+ - Removed unnecessary kernel-doc
+ - Included uio.h to fix compilation problems
+ - Made read_from_oldmem_iter static to avoid compile warnings during the
+   conversion
+ - Use iov_iter_truncate() (Christoph)
+
+
+Matthew Wilcox (Oracle) (3):
+  vmcore: Convert copy_oldmem_page() to take an iov_iter
+  vmcore: Convert __read_vmcore to use an iov_iter
+  vmcore: Convert read_from_oldmem() to take an iov_iter
+
+ arch/arm/kernel/crash_dump.c     |  27 +------
+ arch/arm64/kernel/crash_dump.c   |  29 +------
+ arch/ia64/kernel/crash_dump.c    |  32 +-------
+ arch/mips/kernel/crash_dump.c    |  27 +------
+ arch/powerpc/kernel/crash_dump.c |  35 ++-------
+ arch/riscv/kernel/crash_dump.c   |  26 +------
+ arch/s390/kernel/crash_dump.c    |  13 ++--
+ arch/sh/kernel/crash_dump.c      |  29 ++-----
+ arch/x86/kernel/crash_dump_32.c  |  29 +------
+ arch/x86/kernel/crash_dump_64.c  |  48 ++++--------
+ fs/proc/vmcore.c                 | 130 +++++++++++++------------------
+ include/linux/crash_dump.h       |  19 ++---
+ 12 files changed, 123 insertions(+), 321 deletions(-)
+
+-- 
+2.34.1
+
