@@ -2,123 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A19C74FA8FB
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Apr 2022 16:33:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2FD74FA973
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Apr 2022 18:13:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242305AbiDIOfS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 9 Apr 2022 10:35:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56930 "EHLO
+        id S235822AbiDIQPI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 9 Apr 2022 12:15:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48166 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229567AbiDIOfP (ORCPT
+        with ESMTP id S232701AbiDIQPI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 9 Apr 2022 10:35:15 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2512A35879;
-        Sat,  9 Apr 2022 07:33:07 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 207A11F864;
-        Sat,  9 Apr 2022 14:33:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1649514786; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=BmOfl4NqddautzOtQrZ0dLuhiQSp1fB0SDxF8v7gYBA=;
-        b=SJlQufjnXjTQtqgkhM6MsOUPDPwOMZ6xGLQ76UNS6RR1cEGIg2CW/GZ7A0Nq9xE2LKzjCQ
-        zm4gbJFRwGS5ZR58/OOlzltxzH57NlfDQ1MS9kgXiNk7elM8N3NSClk0AEwvrheO6NCJzw
-        l51uuNG8cURr+Q1l6/il4XbIWcEO2Fg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1649514786;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=BmOfl4NqddautzOtQrZ0dLuhiQSp1fB0SDxF8v7gYBA=;
-        b=yiH+qx8I6hbeCP31rtrhbZE5qxMo8OqYiXG+UWOpJ9wghAOQqadl62X34RS7V0fnDyonaX
-        HzX10h1d2uotqQBQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 3F41913AA1;
-        Sat,  9 Apr 2022 14:32:56 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id m2GpARiZUWLHIgAAMHmgww
-        (envelope-from <colyli@suse.de>); Sat, 09 Apr 2022 14:32:56 +0000
-Message-ID: <f01ac878-9b0d-972b-70dc-6f3f61b9947b@suse.de>
-Date:   Sat, 9 Apr 2022 22:32:52 +0800
+        Sat, 9 Apr 2022 12:15:08 -0400
+Received: from mail-qv1-xf34.google.com (mail-qv1-xf34.google.com [IPv6:2607:f8b0:4864:20::f34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A1A63A6
+        for <linux-fsdevel@vger.kernel.org>; Sat,  9 Apr 2022 09:13:00 -0700 (PDT)
+Received: by mail-qv1-xf34.google.com with SMTP id p8so9846892qvv.5
+        for <linux-fsdevel@vger.kernel.org>; Sat, 09 Apr 2022 09:13:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZY4VkjSviGBqUtQ915TWrSdiPXMVE1Mr2PV3/3xCmVk=;
+        b=bqOMGSQbkcnxoLHiW0amrXvSw6r5DSG39kO+p8PRtDCK3lKDehOHSAnq08gykjl61p
+         9eATpM+TO9DEo2baHF2AygN3hxNqnS/yJN64txNhFkWMt1eTh0v9VImOFO9fmh3Z+4ZH
+         mDN8Jnvrm4FU0fg/zAek0yI0zMYKR1aUVML9Sd+QjOMRtmNvGBxIAhSefNHzl0HjPAmR
+         OHfv1rt+FDTVdYa52fT9JN0LBGoB4XAz+3mvR+/eJpXb+02vDjlKlCgqgMyS2j5o0/rN
+         XMotmDZ7pHxenYs22xkdCWgGFsqFe2CAu+kj9u/iMMMyaIOVNXLOE7lEdzYlSfSeNjAX
+         BALg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZY4VkjSviGBqUtQ915TWrSdiPXMVE1Mr2PV3/3xCmVk=;
+        b=eqeoSPRcQ14lZ8VCRu7mWVdBD3qRdlb011ez2/w44Tys5htM8xsEII3ikAyBdHLWsj
+         48BJZvBAuR5DQNT/PPZZCGBrJeU139AK5zSAAw6zJhXlWh32s8Hz7XBnok180JVDE4Uz
+         sbviq5hLZjFRevICya5Rh05U3DSNVRVMU6lHCFAcg4LRTu+3fmHKV6vjLUS+eySrIux9
+         FxHDAVhjRAaquWMzS7eP2WZe3M+1pt+aGktdRq/6NK+4yP07lCokLG2y2msHuGYEmlQi
+         lmIwiceYzdlQt62STGvuqvoPc2OqCMYrfbKpUc0zaC1VckV9qEu3m09rD1+ad277q5Iy
+         JMew==
+X-Gm-Message-State: AOAM533ILGqIT39/nYufpiplaFyaAssnl1LkoY/cK8I9j0DXTDGZQfs/
+        KGv3tHUCcQlEezOpetR7GgVsrUUkfFq7ZRyAUjmm6nMtSV8=
+X-Google-Smtp-Source: ABdhPJwaYH0IvzeVbqR8B9yN4r0iXevhlommq5qUsUXrb8yRkVNxYS7B8UZzR/gvlgKnf13nSDD2FO0ninRizd74rtw=
+X-Received: by 2002:a05:6214:1cc4:b0:435:35c3:f0f1 with SMTP id
+ g4-20020a0562141cc400b0043535c3f0f1mr20311896qvd.0.1649520778968; Sat, 09 Apr
+ 2022 09:12:58 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.7.0
-Subject: Re: [PATCH 26/27] block: decouple REQ_OP_SECURE_ERASE from
- REQ_OP_DISCARD
-Content-Language: en-US
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     dm-devel@redhat.com, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-um@lists.infradead.org,
-        linux-block@vger.kernel.org, drbd-dev@lists.linbit.com,
-        nbd@other.debian.org, ceph-devel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        xen-devel@lists.xenproject.org, Jens Axboe <axboe@kernel.dk>,
-        linux-bcache@vger.kernel.org, linux-raid@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-nvme@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        jfs-discussion@lists.sourceforge.net, linux-nilfs@vger.kernel.org,
-        ntfs3@lists.linux.dev, ocfs2-devel@oss.oracle.com,
-        linux-mm@kvack.org,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        =?UTF-8?Q?Christoph_B=c3=b6hmwalder?= 
-        <christoph.boehmwalder@linbit.com>,
-        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-        David Sterba <dsterba@suse.com>
-References: <20220409045043.23593-1-hch@lst.de>
- <20220409045043.23593-27-hch@lst.de>
-From:   Coly Li <colyli@suse.de>
-In-Reply-To: <20220409045043.23593-27-hch@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20220329074904.2980320-1-amir73il@gmail.com>
+In-Reply-To: <20220329074904.2980320-1-amir73il@gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Sat, 9 Apr 2022 19:12:47 +0300
+Message-ID: <CAOQ4uxiT0Og3nsGSwKZZApCTPSwm+uRaYGA-j3Grq6xz6UFWmw@mail.gmail.com>
+Subject: Re: [PATCH v2 00/16] Evictable fanotify marks
+To:     Jan Kara <jack@suse.cz>
+Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/9/22 12:50 PM, Christoph Hellwig wrote:
-> Secure erase is a very different operation from discard in that it is
-> a data integrity operation vs hint.  Fully split the limits and helper
-> infrastructure to make the separation more clear.
+On Tue, Mar 29, 2022 at 10:49 AM Amir Goldstein <amir73il@gmail.com> wrote:
 >
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
-> Acked-by: Christoph Böhmwalder <christoph.boehmwalder@linbit.com> [drbd]
-> Acked-by: Ryusuke Konishi <konishi.ryusuke@gmail.com> [nifs2]
-> Acked-by: Coly Li <colyli@suse.de> [drbd]
+> Jan,
+>
+> Following the discussion on direct reclaim of fsnotify marks [2],
+> this patch set includes your suggested fixes to core code along with
+> implementation of fanotify evictable marks (rebrand of volatile marks).
+>
+> The LTP test I wrote [3] reproduces that deadlock within seconds on my
+> small test VM if the FSNOTIFY_GROUP_NOFS flag is removed from fanotify.
+>
+> To be more exact, depending on the value of vfs_cache_pressure set by
+> the test, either a deadlock or lockdep warning (or both) are reproduced.
+> I chose a high value of 500, which usually reproduces only the lockdep
+> warning, but worked better and faster on several systems I tested on.
+>
+> Thanks,
+> Amir.
+>
+> Changes since v1 [1]:
+> - Fixes for direct reclaim deadlock
+> - Add ioctl for direct reclaim test
+> - Rebrand as FAN_MARK_EVICTABLE
+> - Remove FAN_MARK_CREATE and allow clearing FAN_MARK_EVICTABLE
+> - Replace connector proxy_iref with HAS_IREF flag
+> - Take iref in fsnotify_reclac_mark() rather than on add mark to list
+> - Remove fsnotify_add_mark() allow_dups/flags argument
+> - Remove pr_debug() prints
+>
+> [1] https://lore.kernel.org/r/20220307155741.1352405-1-amir73il@gmail.com/
+> [2] https://lore.kernel.org/r/20220321112310.vpr7oxro2xkz5llh@quack3.lan/
+> [3] https://github.com/amir73il/ltp/commits/fan_evictable
 
-Hi Christoph,
+And here is a first man-page draft:
 
-My ACK is for bcache, not drbd here.
+https://github.com/amir73il/man-pages/commits/fan_evictable
 
-Thanks.
-
-
-Coly Li
-
-
-
-> Acked-by: David Sterba <dsterba@suse.com> [btrfs]
-
-
-
-
-
+Thanks,
+Amir.
