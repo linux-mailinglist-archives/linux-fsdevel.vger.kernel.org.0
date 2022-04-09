@@ -2,66 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FEFA4F9FF3
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Apr 2022 01:08:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2870F4FA0E3
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Apr 2022 03:03:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240074AbiDHXJe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 8 Apr 2022 19:09:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37108 "EHLO
+        id S237420AbiDIBEo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 8 Apr 2022 21:04:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240065AbiDHXJ3 (ORCPT
+        with ESMTP id S232344AbiDIBEo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 8 Apr 2022 19:09:29 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9E0202179AE
-        for <linux-fsdevel@vger.kernel.org>; Fri,  8 Apr 2022 16:07:23 -0700 (PDT)
+        Fri, 8 Apr 2022 21:04:44 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D3B512CB3B1
+        for <linux-fsdevel@vger.kernel.org>; Fri,  8 Apr 2022 18:02:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1649459242;
+        s=mimecast20190719; t=1649466157;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=kF5xhxnWQ9HTmzExGgIu30spIsftwP3X1+IT/nsbEWE=;
-        b=EH1JCyPmHfyzjZElbjqCIELBemXOPgaALZneHQWcrBo8iqJ1gZMRQTN0LzzufAxXeQiwiZ
-        8u0FXOfXW2/ED0JiTbNthVuE86IMe7oW830C3stXCGyZNdbq5U6p5tzhs0NWZWGfDxKNVT
-        i3TzQSxLhdeNetRZKtWwM7zNXNKBUqM=
+        bh=RbsAzZvTljYo+RBJswsnAR5lYXPWhOrtFUVWlHUhygc=;
+        b=aF5cMbJ0KTGzUFcr8O6W6KQ1wtTwCTALG8AEJuMqHzfh5QttYw0QPDOZnasxsn0TeV8j7V
+        DOsL7qazhKYMG4T6OjdNjFFPhIzAfIW2h0J83/72Vj3iBfaugRnPBdxMy3Dln/T7RZXcUU
+        O7UdBrWV+FIljTvXt8ym1BgGwjEIYyQ=
 Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
  [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-264-ABY17IbcORWnnZ3NaN7jvg-1; Fri, 08 Apr 2022 19:07:19 -0400
-X-MC-Unique: ABY17IbcORWnnZ3NaN7jvg-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+ us-mta-183-4QYPejBPMdmQgr3pUtPhmw-1; Fri, 08 Apr 2022 21:02:34 -0400
+X-MC-Unique: 4QYPejBPMdmQgr3pUtPhmw-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 35E78282B7F5;
-        Fri,  8 Apr 2022 23:07:19 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.37.45])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 11B6C40317B;
-        Fri,  8 Apr 2022 23:07:17 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 8/8] fscache: remove FSCACHE_OLD_API Kconfig option
-From:   David Howells <dhowells@redhat.com>
-To:     linux-cachefs@redhat.com
-Cc:     Yue Hu <huyue2@coolpad.com>, dhowells@redhat.com,
-        Jeff Layton <jlayton@kernel.org>,
-        Jeffle Xu <jefflexu@linux.alibaba.com>,
-        Yue Hu <huyue2@coolpad.com>, linux-fsdevel@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Date:   Sat, 09 Apr 2022 00:07:17 +0100
-Message-ID: <164945923735.773423.9314584149728650918.stgit@warthog.procyon.org.uk>
-In-Reply-To: <164945915630.773423.14655306154231712324.stgit@warthog.procyon.org.uk>
-References: <164945915630.773423.14655306154231712324.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/1.4
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 44E792999B23;
+        Sat,  9 Apr 2022 01:02:34 +0000 (UTC)
+Received: from localhost (ovpn-12-19.pek2.redhat.com [10.72.12.19])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id EAB83C44CC0;
+        Sat,  9 Apr 2022 01:02:32 +0000 (UTC)
+Date:   Sat, 9 Apr 2022 09:02:29 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     kernel test robot <lkp@intel.com>
+Cc:     akpm@linux-foundation.org, willy@infradead.org,
+        kbuild-all@lists.01.org, linux-kernel@vger.kernel.org,
+        kexec@lists.infradead.org, hch@lst.de, yangtiezhu@loongson.cn,
+        amit.kachhap@arm.com, linux-fsdevel@vger.kernel.org,
+        viro@zeniv.linux.org.uk
+Subject: Re: [PATCH v5 RESEND 1/3] vmcore: Convert copy_oldmem_page() to take
+ an iov_iter
+Message-ID: <YlDbJSy4AI3/cODr@MiWiFi-R3L-srv>
+References: <20220408090636.560886-2-bhe@redhat.com>
+ <202204082128.JKXXDGpa-lkp@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.85 on 10.11.54.10
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202204082128.JKXXDGpa-lkp@intel.com>
+X-Scanned-By: MIMEDefang 2.85 on 10.11.54.8
 X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -69,31 +65,73 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Yue Hu <huyue2@coolpad.com>
+On 04/08/22 at 09:17pm, kernel test robot wrote:
+> Hi Baoquan,
+> 
+> Thank you for the patch! Perhaps something to improve:
+> 
+> [auto build test WARNING on powerpc/next]
+> [also build test WARNING on s390/features linus/master v5.18-rc1 next-20220408]
+> [cannot apply to tip/x86/core hnaz-mm/master arm64/for-next/core]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Baoquan-He/Convert-vmcore-to-use-an-iov_iter/20220408-170846
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git next
+> config: sh-randconfig-s032-20220408 (https://download.01.org/0day-ci/archive/20220408/202204082128.JKXXDGpa-lkp@intel.com/config)
+> compiler: sh4-linux-gcc (GCC) 11.2.0
+> reproduce:
+>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
 
-Commit 01491a756578 ("fscache, cachefiles: Disable configuration") added
-the FSCACHE_OLD_API configuration when rewritten. Now, it's not used any
-more. Remove it.
+Thanks for reporting this, do I need to try this on ppc system?
 
-Signed-off-by: Yue Hu <huyue2@coolpad.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: linux-cachefs@redhat.com
-Link: https://listman.redhat.com/archives/linux-cachefs/2022-March/006647.html # v1
----
+I tried on x86_64 system, for the 1st step, I got this:
 
- fs/fscache/Kconfig |    3 ---
- 1 file changed, 3 deletions(-)
+[ ~]# wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+/root/bin/make.cross: No such file or directory
 
-diff --git a/fs/fscache/Kconfig b/fs/fscache/Kconfig
-index 76316c4a3fb7..b313a978ae0a 100644
---- a/fs/fscache/Kconfig
-+++ b/fs/fscache/Kconfig
-@@ -38,6 +38,3 @@ config FSCACHE_DEBUG
- 	  enabled by setting bits in /sys/modules/fscache/parameter/debug.
- 
- 	  See Documentation/filesystems/caching/fscache.rst for more information.
--
--config FSCACHE_OLD_API
--	bool
+What else should I do to proceed?
 
+Thanks
+Baoquan
+
+>         chmod +x ~/bin/make.cross
+>         # apt-get install sparse
+>         # sparse version: v0.6.4-dirty
+>         # https://github.com/intel-lab-lkp/linux/commit/a5e42962f5c0bea73aa382a2415094b4bd6c6c73
+>         git remote add linux-review https://github.com/intel-lab-lkp/linux
+>         git fetch --no-tags linux-review Baoquan-He/Convert-vmcore-to-use-an-iov_iter/20220408-170846
+>         git checkout a5e42962f5c0bea73aa382a2415094b4bd6c6c73
+>         # save the config file to linux build tree
+>         mkdir build_dir
+>         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__' O=build_dir ARCH=sh SHELL=/bin/bash arch/sh/kernel/
+> 
+> If you fix the issue, kindly add following tag as appropriate
+> Reported-by: kernel test robot <lkp@intel.com>
+> 
+> 
+> sparse warnings: (new ones prefixed by >>)
+> >> arch/sh/kernel/crash_dump.c:23:36: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const *addr @@     got void [noderef] __iomem * @@
+>    arch/sh/kernel/crash_dump.c:23:36: sparse:     expected void const *addr
+>    arch/sh/kernel/crash_dump.c:23:36: sparse:     got void [noderef] __iomem *
+> 
+> vim +23 arch/sh/kernel/crash_dump.c
+> 
+>     13	
+>     14	ssize_t copy_oldmem_page(struct iov_iter *iter, unsigned long pfn,
+>     15				 size_t csize, unsigned long offset)
+>     16	{
+>     17		void  __iomem *vaddr;
+>     18	
+>     19		if (!csize)
+>     20			return 0;
+>     21	
+>     22		vaddr = ioremap(pfn << PAGE_SHIFT, PAGE_SIZE);
+>   > 23		csize = copy_to_iter(vaddr + offset, csize, iter);
+> 
+> -- 
+> 0-DAY CI Kernel Test Service
+> https://01.org/lkp
+> 
 
