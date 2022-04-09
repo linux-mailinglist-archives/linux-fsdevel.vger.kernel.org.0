@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B737F4FA387
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Apr 2022 06:52:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 118384FA372
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  9 Apr 2022 06:52:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241023AbiDIEyX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 9 Apr 2022 00:54:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48906 "EHLO
+        id S240971AbiDIEyB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 9 Apr 2022 00:54:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240868AbiDIExo (ORCPT
+        with ESMTP id S240943AbiDIExf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 9 Apr 2022 00:53:44 -0400
+        Sat, 9 Apr 2022 00:53:35 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D2F7B8991;
-        Fri,  8 Apr 2022 21:51:10 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3C62BB08C;
+        Fri,  8 Apr 2022 21:51:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         Content-Type:MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:
         To:From:Sender:Reply-To:Content-ID:Content-Description;
-        bh=mSb0+dwzgM6VKYFxP/SxijH+ZlgC/mCnwmCWElH9Px8=; b=GeHiEC33kqU3XVD5nL4JSSzw9j
-        UuYbGyM2BXXR+stmsdf5DjhZy4DmQUWQMFN0vSfrL8aUhBe+6Ofrgbj+Dbx5uxEAqYOBhWREkppXD
-        kdRzxDavbe8DbbMc6qyOhN2cA6i5obcc9Wc+hP+sVKryA1uBRUfBVDOlYnio24jRKSkCpFo+tSiXl
-        6u0gF+2q2d7oaysxI+ClBO5UEjKSEG5mJBDObnDrEZKJSMP7hUVOwIlO/C7MDHMssw01IKDI4CTXp
-        PRCDWE+Bw8zXMLtTw0QbfZSkAUMsYs8Kzz9wpJlJkYu9q6ou7iULbQ0RWrchfFLVlYlgnHKpBsjXJ
-        gpZHWQ4w==;
+        bh=fe1mhxHvUNcHX31X2/v6QhlWCpL7rHNmKlyfX6pAQx8=; b=Ln3yxSObowNxJM1FMrhr+K57R6
+        b4hm67oQXj8QHYSsDtTeswkmQMzhTUbmcFXZ8wSKANWZ3f2uawh1SArLLQwyfG/9xFBJpY85CXdw2
+        ds/PrbeW2qhvBxLbQUlZJnupwwXSwTpD5oVVdXoHNH+XQIFpfq6JutVFrQurNrlSwXfXPm8nAVF8g
+        3O6uBqOGhFXMyQobgkP5h+IgaBO6+coY7mEesusFLc5Uf97qVgiCBrdqIzpOVhA93gJW7XwjtIRj9
+        o9pUqGiB3fZ23DPiIOWZiMJonzuJNE4ezkBUWAzOu6pd1udnLd7cjlnkVEEt0MQfIsCBUce9aPyz9
+        Bxbzzdhw==;
 Received: from 213-147-167-116.nat.highway.webapn.at ([213.147.167.116] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nd33z-0020bF-0B; Sat, 09 Apr 2022 04:51:07 +0000
+        id 1nd341-0020d9-Mx; Sat, 09 Apr 2022 04:51:10 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     dm-devel@redhat.com, linux-xfs@vger.kernel.org,
@@ -46,9 +46,9 @@ Cc:     dm-devel@redhat.com, linux-xfs@vger.kernel.org,
         ocfs2-devel@oss.oracle.com, linux-mm@kvack.org,
         =?UTF-8?q?Christoph=20B=C3=B6hmwalder?= 
         <christoph.boehmwalder@linbit.com>
-Subject: [PATCH 06/27] drbd: use bdev_alignment_offset instead of queue_alignment_offset
-Date:   Sat,  9 Apr 2022 06:50:22 +0200
-Message-Id: <20220409045043.23593-7-hch@lst.de>
+Subject: [PATCH 07/27] drbd: cleanup decide_on_discard_support
+Date:   Sat,  9 Apr 2022 06:50:23 +0200
+Message-Id: <20220409045043.23593-8-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220409045043.23593-1-hch@lst.de>
 References: <20220409045043.23593-1-hch@lst.de>
@@ -66,28 +66,117 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The bdev version does the right thing for partitions, so use that.
+Sanitize the calling conventions and use a goto label to cleanup the
+code flow.
 
-Fixes: 9104d31a759f ("drbd: introduce WRITE_SAME support")
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Acked-by: Christoph Böhmwalder <christoph.boehmwalder@linbit.com>
 ---
- drivers/block/drbd/drbd_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/block/drbd/drbd_nl.c | 68 +++++++++++++++++++-----------------
+ 1 file changed, 35 insertions(+), 33 deletions(-)
 
-diff --git a/drivers/block/drbd/drbd_main.c b/drivers/block/drbd/drbd_main.c
-index aa2c21aeb747c..eae629c4f6eaf 100644
---- a/drivers/block/drbd/drbd_main.c
-+++ b/drivers/block/drbd/drbd_main.c
-@@ -939,7 +939,7 @@ int drbd_send_sizes(struct drbd_peer_device *peer_device, int trigger_reply, enu
- 		p->qlim->logical_block_size =
- 			cpu_to_be32(bdev_logical_block_size(bdev));
- 		p->qlim->alignment_offset =
--			cpu_to_be32(queue_alignment_offset(q));
-+			cpu_to_be32(bdev_alignment_offset(bdev));
- 		p->qlim->io_min = cpu_to_be32(bdev_io_min(bdev));
- 		p->qlim->io_opt = cpu_to_be32(bdev_io_opt(bdev));
- 		p->qlim->discard_enabled = blk_queue_discard(q);
+diff --git a/drivers/block/drbd/drbd_nl.c b/drivers/block/drbd/drbd_nl.c
+index 02030c9c4d3b1..40bb0b356a6d6 100644
+--- a/drivers/block/drbd/drbd_nl.c
++++ b/drivers/block/drbd/drbd_nl.c
+@@ -1204,38 +1204,42 @@ static unsigned int drbd_max_discard_sectors(struct drbd_connection *connection)
+ }
+ 
+ static void decide_on_discard_support(struct drbd_device *device,
+-			struct request_queue *q,
+-			struct request_queue *b,
+-			bool discard_zeroes_if_aligned)
++		struct drbd_backing_dev *bdev)
+ {
+-	/* q = drbd device queue (device->rq_queue)
+-	 * b = backing device queue (device->ldev->backing_bdev->bd_disk->queue),
+-	 *     or NULL if diskless
+-	 */
+-	struct drbd_connection *connection = first_peer_device(device)->connection;
+-	bool can_do = b ? blk_queue_discard(b) : true;
+-
+-	if (can_do && connection->cstate >= C_CONNECTED && !(connection->agreed_features & DRBD_FF_TRIM)) {
+-		can_do = false;
+-		drbd_info(connection, "peer DRBD too old, does not support TRIM: disabling discards\n");
+-	}
+-	if (can_do) {
+-		/* We don't care for the granularity, really.
+-		 * Stacking limits below should fix it for the local
+-		 * device.  Whether or not it is a suitable granularity
+-		 * on the remote device is not our problem, really. If
+-		 * you care, you need to use devices with similar
+-		 * topology on all peers. */
+-		blk_queue_discard_granularity(q, 512);
+-		q->limits.max_discard_sectors = drbd_max_discard_sectors(connection);
+-		blk_queue_flag_set(QUEUE_FLAG_DISCARD, q);
+-		q->limits.max_write_zeroes_sectors = drbd_max_discard_sectors(connection);
+-	} else {
+-		blk_queue_flag_clear(QUEUE_FLAG_DISCARD, q);
+-		blk_queue_discard_granularity(q, 0);
+-		q->limits.max_discard_sectors = 0;
+-		q->limits.max_write_zeroes_sectors = 0;
++	struct drbd_connection *connection =
++		first_peer_device(device)->connection;
++	struct request_queue *q = device->rq_queue;
++
++	if (bdev && !blk_queue_discard(bdev->backing_bdev->bd_disk->queue))
++		goto not_supported;
++
++	if (connection->cstate >= C_CONNECTED &&
++	    !(connection->agreed_features & DRBD_FF_TRIM)) {
++		drbd_info(connection,
++			"peer DRBD too old, does not support TRIM: disabling discards\n");
++		goto not_supported;
+ 	}
++
++	/*
++	 * We don't care for the granularity, really.
++	 *
++	 * Stacking limits below should fix it for the local device.  Whether or
++	 * not it is a suitable granularity on the remote device is not our
++	 * problem, really. If you care, you need to use devices with similar
++	 * topology on all peers.
++	 */
++	blk_queue_discard_granularity(q, 512);
++	q->limits.max_discard_sectors = drbd_max_discard_sectors(connection);
++	blk_queue_flag_set(QUEUE_FLAG_DISCARD, q);
++	q->limits.max_write_zeroes_sectors =
++		drbd_max_discard_sectors(connection);
++	return;
++
++not_supported:
++	blk_queue_flag_clear(QUEUE_FLAG_DISCARD, q);
++	blk_queue_discard_granularity(q, 0);
++	q->limits.max_discard_sectors = 0;
++	q->limits.max_write_zeroes_sectors = 0;
+ }
+ 
+ static void fixup_discard_if_not_supported(struct request_queue *q)
+@@ -1273,7 +1277,6 @@ static void drbd_setup_queue_param(struct drbd_device *device, struct drbd_backi
+ 	unsigned int max_segments = 0;
+ 	struct request_queue *b = NULL;
+ 	struct disk_conf *dc;
+-	bool discard_zeroes_if_aligned = true;
+ 
+ 	if (bdev) {
+ 		b = bdev->backing_bdev->bd_disk->queue;
+@@ -1282,7 +1285,6 @@ static void drbd_setup_queue_param(struct drbd_device *device, struct drbd_backi
+ 		rcu_read_lock();
+ 		dc = rcu_dereference(device->ldev->disk_conf);
+ 		max_segments = dc->max_bio_bvecs;
+-		discard_zeroes_if_aligned = dc->discard_zeroes_if_aligned;
+ 		rcu_read_unlock();
+ 
+ 		blk_set_stacking_limits(&q->limits);
+@@ -1292,7 +1294,7 @@ static void drbd_setup_queue_param(struct drbd_device *device, struct drbd_backi
+ 	/* This is the workaround for "bio would need to, but cannot, be split" */
+ 	blk_queue_max_segments(q, max_segments ? max_segments : BLK_MAX_SEGMENTS);
+ 	blk_queue_segment_boundary(q, PAGE_SIZE-1);
+-	decide_on_discard_support(device, q, b, discard_zeroes_if_aligned);
++	decide_on_discard_support(device, bdev);
+ 
+ 	if (b) {
+ 		blk_stack_limits(&q->limits, &b->limits, 0);
 -- 
 2.30.2
 
