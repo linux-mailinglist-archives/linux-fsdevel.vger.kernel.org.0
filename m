@@ -2,51 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E04B34FAEA7
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Apr 2022 18:09:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDDFD4FAEB8
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Apr 2022 18:09:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239804AbiDJQLY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 10 Apr 2022 12:11:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50078 "EHLO
+        id S243526AbiDJQLj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 10 Apr 2022 12:11:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230406AbiDJQLV (ORCPT
+        with ESMTP id S243490AbiDJQLa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 10 Apr 2022 12:11:21 -0400
+        Sun, 10 Apr 2022 12:11:30 -0400
 Received: from heian.cn.fujitsu.com (mail.cn.fujitsu.com [183.91.158.132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2E7C76470;
-        Sun, 10 Apr 2022 09:09:08 -0700 (PDT)
-IronPort-Data: =?us-ascii?q?A9a23=3ANRJWMap7LJOyu1k1cgxZW9IXCp9eBmJnZBIvgKr?=
- =?us-ascii?q?LsJaIsI5as4F+vjFKWjiOPP6DM2ujfdhyPI3j9E1VsMeDnIBlTQFs+Xs1QiMRo?=
- =?us-ascii?q?6IpJ/zDcB6oYHn6wu4v7a5fx5xHLIGGdajYd1eEzvuWGuWn/SkUOZ2gHOKmUra?=
- =?us-ascii?q?eYnkpHGeIdQ964f5ds79g6mJXqYjha++9kYuaT/z3YDdJ6RYtWo4nw/7rRCdUg?=
- =?us-ascii?q?RjHkGhwUmrSyhx8lAS2e3E9VPrzLEwqRpfyatE88uWSH44vwFwll1418SvBCvv?=
- =?us-ascii?q?9+lr6WkYMBLDPPwmSkWcQUK+n6vRAjnVqlP9la7xHMgEK49mKt4kZJNFlr4G5T?=
- =?us-ascii?q?xw4eKPKg/g1XQRaEj1lIOtN/7qvzX2X6JbIkxCdIyK9qxlpJARsVWECwc57CH9?=
- =?us-ascii?q?P+dQWMjcIaQqJhv7wy7W+IsFsjcQLLc/lJooTt3hsizbDAp4OTZnFBaeM+t5c2?=
- =?us-ascii?q?DY5g9tmHPDCas5fYj1qBDzMYQJIPFg/C58kmuqswH7lfFVwrFOTuLpy5m37zxJ?=
- =?us-ascii?q?427urN8DaEvSMW8lUm0OwomPd43+/BhAcKczZxTebmlqsje/nmTjnHo4ffJW6/?=
- =?us-ascii?q?/hnxlaT20QUEhQdUVb9qv684ma6WtRCOwka4SYjs6U23FKkQ8O7XBCipnOA+Bk?=
- =?us-ascii?q?GVLJ4F+w89RHIyafO5QudLnYLQyQHa9E8ssIyAzsw2Tehm9LvGCwqoLOOYWyS+?=
- =?us-ascii?q?63Srj6oPyURa2gYakc5oaEtizX4iNhryEuREZA4S+jo5uAZ0ArYm1iixBXSTZ1?=
- =?us-ascii?q?K5SLT65iGwA=3D=3D?=
-IronPort-HdrOrdr: =?us-ascii?q?A9a23=3AxbmQbaCjPgHmaJzlHelI55DYdb4zR+YMi2TC?=
- =?us-ascii?q?1yhKJyC9Ffbo8fxG/c5rrCMc5wxwZJhNo7y90ey7MBbhHP1OkO4s1NWZLWrbUQ?=
- =?us-ascii?q?KTRekIh+bfKn/baknDH4VmtJuIHZIQNDSJNykZsS/l2njEL/8QhMmA7LuzhfrT?=
- =?us-ascii?q?i1NkTQRRYalm6AtjYzzraXFedU1XA4YjDpqA6o5irzqkQ34eacO2HT0rRO7Gzu?=
- =?us-ascii?q?e77q7OUFoXAQI98gmSgXeN4L7+KRKR2RATSHdu7N4ZgBD4rzA=3D?=
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id AC1022126C;
+        Sun, 10 Apr 2022 09:09:18 -0700 (PDT)
+IronPort-Data: =?us-ascii?q?A9a23=3AdJVMt6sgi77g3nfW6un2/wR/J+fnVClfMUV32f8?=
+ =?us-ascii?q?akzHdYEJGY0x3mmZNDT3TOvaKZ2HwLdwjao2zpxxTvMTQzNAyQVY9qyBgHilAw?=
+ =?us-ascii?q?SbnLY7Hdx+vZUt+DSFioHpPtpxYMp+ZRCwNZie0SiyFb/6x/RGQ6YnSHuCmULS?=
+ =?us-ascii?q?cY3goLeNZYHxJZSxLyrdRbrFA0YDR7zOl4bsekuWHULOX82cc3lE8t8pvnChSU?=
+ =?us-ascii?q?MHa41v0iLCRicdj5zcyn1FNZH4WyDrYw3HQGuG4FcbiLwrPIS3Qw4/Xw/stIov?=
+ =?us-ascii?q?NfrfTeUtMTKPQPBSVlzxdXK3Kbhpq/3R0i/hkcqFHLxo/ZzahxridzP1XqJW2U?=
+ =?us-ascii?q?hZvMKvXhMwTThtZDzpje6ZB/dcrJFDm65fPkhaWKSaEL/JGSRte0Zcj0up+H2B?=
+ =?us-ascii?q?C3fICLzUKdBqCm6S9x7fTYulnhuwiKsfxNY8Ss30myivWZd4qSJaFQePV5Ntc3?=
+ =?us-ascii?q?T41nehPG+rTY4wSbj8HRBjCfBpJNX8UBYg4kePugWPwGxVcqVSIte8y5kDQ0gV?=
+ =?us-ascii?q?60/7qKtW9UtqUScRQm26cp3na5CL9AxcHJJqTxCTt2nKnhsfLhj+9VI96PL+x8?=
+ =?us-ascii?q?PMsi12O7msJARYSWB2wpvzRokq/Xc9PbkIP9icwoKwa6kOmVJ/+Uge+rXrCuQQ?=
+ =?us-ascii?q?TM/JUEusn+ESOx7DS7gKxGGcJVHhCZcYguctwQiYlvneNntX0FXl/vqa9V32Q7?=
+ =?us-ascii?q?PGXoCm0NCxTKnUNDRLo5yNtD8LL+dl110yQCI04VvPdszE8IhmoqxjikcT0r+l?=
+ =?us-ascii?q?7YRY36piG?=
+IronPort-HdrOrdr: =?us-ascii?q?A9a23=3APzkseaEOnCFFHz4/pLqE1MeALOsnbusQ8zAX?=
+ =?us-ascii?q?PiFKOHhom6mj+vxG88506faKslwssR0b+OxoW5PwJE80l6QFgrX5VI3KNGbbUQ?=
+ =?us-ascii?q?CTXeNfBOXZowHIKmnX8+5x8eNaebFiNduYNzNHpPe/zA6mM9tI+rW6zJw=3D?=
 X-IronPort-AV: E=Sophos;i="5.88,333,1635177600"; 
-   d="scan'208";a="123453819"
+   d="scan'208";a="123453825"
 Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 11 Apr 2022 00:09:08 +0800
+  by heian.cn.fujitsu.com with ESMTP; 11 Apr 2022 00:09:14 +0800
 Received: from G08CNEXMBPEKD04.g08.fujitsu.local (unknown [10.167.33.201])
-        by cn.fujitsu.com (Postfix) with ESMTP id 3F9104D17165;
+        by cn.fujitsu.com (Postfix) with ESMTP id DB49A4D16FF4;
         Mon, 11 Apr 2022 00:09:07 +0800 (CST)
 Received: from G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.85) by
  G08CNEXMBPEKD04.g08.fujitsu.local (10.167.33.201) with Microsoft SMTP Server
- (TLS) id 15.0.1497.23; Mon, 11 Apr 2022 00:09:10 +0800
+ (TLS) id 15.0.1497.23; Mon, 11 Apr 2022 00:09:11 +0800
 Received: from irides.mr.mr (10.167.225.141) by
  G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
- id 15.0.1497.23 via Frontend Transport; Mon, 11 Apr 2022 00:09:05 +0800
+ id 15.0.1497.23 via Frontend Transport; Mon, 11 Apr 2022 00:09:06 +0800
 From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
 To:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
         <nvdimm@lists.linux.dev>, <linux-mm@kvack.org>,
@@ -54,16 +52,16 @@ To:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
 CC:     <djwong@kernel.org>, <dan.j.williams@intel.com>,
         <david@fromorbit.com>, <hch@infradead.org>, <jane.chu@oracle.com>,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v12 2/7] mm: factor helpers for memory_failure_dev_pagemap
-Date:   Mon, 11 Apr 2022 00:08:59 +0800
-Message-ID: <20220410160904.3758789-3-ruansy.fnst@fujitsu.com>
+Subject: [PATCH v12 3/7] pagemap,pmem: Introduce ->memory_failure()
+Date:   Mon, 11 Apr 2022 00:09:00 +0800
+Message-ID: <20220410160904.3758789-4-ruansy.fnst@fujitsu.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220410160904.3758789-1-ruansy.fnst@fujitsu.com>
 References: <20220410160904.3758789-1-ruansy.fnst@fujitsu.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
-X-yoursite-MailScanner-ID: 3F9104D17165.A02EF
+X-yoursite-MailScanner-ID: DB49A4D16FF4.A5EAD
 X-yoursite-MailScanner: Found to be clean
 X-yoursite-MailScanner-From: ruansy.fnst@fujitsu.com
 X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
@@ -75,203 +73,114 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-memory_failure_dev_pagemap code is a bit complex before introduce RMAP
-feature for fsdax.  So it is needed to factor some helper functions to
-simplify these code.
+When memory-failure occurs, we call this function which is implemented
+by each kind of devices.  For the fsdax case, pmem device driver
+implements it.  Pmem device driver will find out the filesystem in which
+the corrupted page located in.
+
+With dax_holder notify support, we are able to notify the memory failure
+from pmem driver to upper layers.  If there is something not support in
+the notify routine, memory_failure will fall back to the generic hanlder.
 
 Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Dan Williams <dan.j.williams@intel.com>
 ---
- mm/memory-failure.c | 157 ++++++++++++++++++++++++--------------------
- 1 file changed, 87 insertions(+), 70 deletions(-)
+ drivers/nvdimm/pmem.c    | 17 +++++++++++++++++
+ include/linux/memremap.h | 12 ++++++++++++
+ mm/memory-failure.c      | 14 ++++++++++++++
+ 3 files changed, 43 insertions(+)
 
-diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-index ef402b490663..f1cdd39f01f7 100644
---- a/mm/memory-failure.c
-+++ b/mm/memory-failure.c
-@@ -1499,6 +1499,90 @@ static int try_to_split_thp_page(struct page *page, const char *msg)
- 	return 0;
+diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+index 58d95242a836..bd502957cfdf 100644
+--- a/drivers/nvdimm/pmem.c
++++ b/drivers/nvdimm/pmem.c
+@@ -366,6 +366,21 @@ static void pmem_release_disk(void *__pmem)
+ 	blk_cleanup_disk(pmem->disk);
  }
  
-+static void unmap_and_kill(struct list_head *to_kill, unsigned long pfn,
-+		struct address_space *mapping, pgoff_t index, int flags)
++static int pmem_pagemap_memory_failure(struct dev_pagemap *pgmap,
++		unsigned long pfn, unsigned long nr_pages, int mf_flags)
 +{
-+	struct to_kill *tk;
-+	unsigned long size = 0;
++	struct pmem_device *pmem =
++			container_of(pgmap, struct pmem_device, pgmap);
++	u64 offset = PFN_PHYS(pfn) - pmem->phys_addr - pmem->data_offset;
++	u64 len = nr_pages << PAGE_SHIFT;
 +
-+	list_for_each_entry(tk, to_kill, nd)
-+		if (tk->size_shift)
-+			size = max(size, 1UL << tk->size_shift);
-+
-+	if (size) {
-+		/*
-+		 * Unmap the largest mapping to avoid breaking up device-dax
-+		 * mappings which are constant size. The actual size of the
-+		 * mapping being torn down is communicated in siginfo, see
-+		 * kill_proc()
-+		 */
-+		loff_t start = (index << PAGE_SHIFT) & ~(size - 1);
-+
-+		unmap_mapping_range(mapping, start, size, 0);
-+	}
-+
-+	kill_procs(to_kill, flags & MF_MUST_KILL, false, pfn, flags);
++	return dax_holder_notify_failure(pmem->dax_dev, offset, len, mf_flags);
 +}
 +
-+static int mf_generic_kill_procs(unsigned long long pfn, int flags,
-+		struct dev_pagemap *pgmap)
-+{
-+	struct page *page = pfn_to_page(pfn);
-+	LIST_HEAD(to_kill);
-+	dax_entry_t cookie;
-+	int rc = 0;
++static const struct dev_pagemap_ops fsdax_pagemap_ops = {
++	.memory_failure		= pmem_pagemap_memory_failure,
++};
 +
-+	/*
-+	 * Pages instantiated by device-dax (not filesystem-dax)
-+	 * may be compound pages.
-+	 */
-+	page = compound_head(page);
-+
-+	/*
-+	 * Prevent the inode from being freed while we are interrogating
-+	 * the address_space, typically this would be handled by
-+	 * lock_page(), but dax pages do not use the page lock. This
-+	 * also prevents changes to the mapping of this pfn until
-+	 * poison signaling is complete.
-+	 */
-+	cookie = dax_lock_page(page);
-+	if (!cookie)
-+		return -EBUSY;
-+
-+	if (hwpoison_filter(page)) {
-+		rc = -EOPNOTSUPP;
-+		goto unlock;
-+	}
-+
-+	if (pgmap->type == MEMORY_DEVICE_PRIVATE) {
-+		/*
-+		 * TODO: Handle HMM pages which may need coordination
-+		 * with device-side memory.
-+		 */
-+		return -EBUSY;
-+	}
-+
-+	/*
-+	 * Use this flag as an indication that the dax page has been
-+	 * remapped UC to prevent speculative consumption of poison.
-+	 */
-+	SetPageHWPoison(page);
-+
-+	/*
-+	 * Unlike System-RAM there is no possibility to swap in a
-+	 * different physical page at a given virtual address, so all
-+	 * userspace consumption of ZONE_DEVICE memory necessitates
-+	 * SIGBUS (i.e. MF_MUST_KILL)
-+	 */
-+	flags |= MF_ACTION_REQUIRED | MF_MUST_KILL;
-+	collect_procs(page, &to_kill, true);
-+
-+	unmap_and_kill(&to_kill, pfn, page->mapping, page->index, flags);
-+unlock:
-+	dax_unlock_page(page, cookie);
-+	return 0;
-+}
-+
- /*
-  * Called from hugetlb code with hugetlb_lock held.
-  * If a hugepage is successfully grabbed (so it's determined to handle
-@@ -1663,12 +1747,8 @@ static int memory_failure_dev_pagemap(unsigned long pfn, int flags,
- 		struct dev_pagemap *pgmap)
+ static int pmem_attach_disk(struct device *dev,
+ 		struct nd_namespace_common *ndns)
  {
- 	struct page *page = pfn_to_page(pfn);
--	unsigned long size = 0;
--	struct to_kill *tk;
- 	LIST_HEAD(tokill);
--	int rc = -EBUSY;
--	loff_t start;
--	dax_entry_t cookie;
-+	int rc = -ENXIO;
+@@ -427,6 +442,7 @@ static int pmem_attach_disk(struct device *dev,
+ 	pmem->pfn_flags = PFN_DEV;
+ 	if (is_nd_pfn(dev)) {
+ 		pmem->pgmap.type = MEMORY_DEVICE_FS_DAX;
++		pmem->pgmap.ops = &fsdax_pagemap_ops;
+ 		addr = devm_memremap_pages(dev, &pmem->pgmap);
+ 		pfn_sb = nd_pfn->pfn_sb;
+ 		pmem->data_offset = le64_to_cpu(pfn_sb->dataoff);
+@@ -440,6 +456,7 @@ static int pmem_attach_disk(struct device *dev,
+ 		pmem->pgmap.range.end = res->end;
+ 		pmem->pgmap.nr_range = 1;
+ 		pmem->pgmap.type = MEMORY_DEVICE_FS_DAX;
++		pmem->pgmap.ops = &fsdax_pagemap_ops;
+ 		addr = devm_memremap_pages(dev, &pmem->pgmap);
+ 		pmem->pfn_flags |= PFN_MAP;
+ 		bb_range = pmem->pgmap.range;
+diff --git a/include/linux/memremap.h b/include/linux/memremap.h
+index ad6062d736cd..bcfb6bf4ce5a 100644
+--- a/include/linux/memremap.h
++++ b/include/linux/memremap.h
+@@ -79,6 +79,18 @@ struct dev_pagemap_ops {
+ 	 * the page back to a CPU accessible page.
+ 	 */
+ 	vm_fault_t (*migrate_to_ram)(struct vm_fault *vmf);
++
++	/*
++	 * Handle the memory failure happens on a range of pfns.  Notify the
++	 * processes who are using these pfns, and try to recover the data on
++	 * them if necessary.  The mf_flags is finally passed to the recover
++	 * function through the whole notify routine.
++	 *
++	 * When this is not implemented, or it returns -EOPNOTSUPP, the caller
++	 * will fall back to a common handler called mf_generic_kill_procs().
++	 */
++	int (*memory_failure)(struct dev_pagemap *pgmap, unsigned long pfn,
++			      unsigned long nr_pages, int mf_flags);
+ };
  
- 	if (flags & MF_COUNT_INCREASED)
- 		/*
-@@ -1677,73 +1757,10 @@ static int memory_failure_dev_pagemap(unsigned long pfn, int flags,
- 		put_page(page);
- 
- 	/* device metadata space is not recoverable */
--	if (!pgmap_pfn_valid(pgmap, pfn)) {
--		rc = -ENXIO;
--		goto out;
--	}
--
--	/*
--	 * Pages instantiated by device-dax (not filesystem-dax)
--	 * may be compound pages.
--	 */
--	page = compound_head(page);
--
--	/*
--	 * Prevent the inode from being freed while we are interrogating
--	 * the address_space, typically this would be handled by
--	 * lock_page(), but dax pages do not use the page lock. This
--	 * also prevents changes to the mapping of this pfn until
--	 * poison signaling is complete.
--	 */
--	cookie = dax_lock_page(page);
--	if (!cookie)
-+	if (!pgmap_pfn_valid(pgmap, pfn))
+ #define PGMAP_ALTMAP_VALID	(1 << 0)
+diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+index f1cdd39f01f7..c8c898669c75 100644
+--- a/mm/memory-failure.c
++++ b/mm/memory-failure.c
+@@ -1760,6 +1760,20 @@ static int memory_failure_dev_pagemap(unsigned long pfn, int flags,
+ 	if (!pgmap_pfn_valid(pgmap, pfn))
  		goto out;
  
--	if (hwpoison_filter(page)) {
--		rc = -EOPNOTSUPP;
--		goto unlock;
--	}
--
--	if (pgmap->type == MEMORY_DEVICE_PRIVATE) {
--		/*
--		 * TODO: Handle HMM pages which may need coordination
--		 * with device-side memory.
--		 */
--		goto unlock;
--	}
--
--	/*
--	 * Use this flag as an indication that the dax page has been
--	 * remapped UC to prevent speculative consumption of poison.
--	 */
--	SetPageHWPoison(page);
--
--	/*
--	 * Unlike System-RAM there is no possibility to swap in a
--	 * different physical page at a given virtual address, so all
--	 * userspace consumption of ZONE_DEVICE memory necessitates
--	 * SIGBUS (i.e. MF_MUST_KILL)
--	 */
--	flags |= MF_ACTION_REQUIRED | MF_MUST_KILL;
--	collect_procs(page, &tokill, true);
--
--	list_for_each_entry(tk, &tokill, nd)
--		if (tk->size_shift)
--			size = max(size, 1UL << tk->size_shift);
--	if (size) {
--		/*
--		 * Unmap the largest mapping to avoid breaking up
--		 * device-dax mappings which are constant size. The
--		 * actual size of the mapping being torn down is
--		 * communicated in siginfo, see kill_proc()
--		 */
--		start = (page->index << PAGE_SHIFT) & ~(size - 1);
--		unmap_mapping_range(page->mapping, start, size, 0);
--	}
--	kill_procs(&tokill, true, false, pfn, flags);
--	rc = 0;
--unlock:
--	dax_unlock_page(page, cookie);
-+	rc = mf_generic_kill_procs(pfn, flags, pgmap);
++	/*
++	 * Call driver's implementation to handle the memory failure, otherwise
++	 * fall back to generic handler.
++	 */
++	if (pgmap->ops->memory_failure) {
++		rc = pgmap->ops->memory_failure(pgmap, pfn, 1, flags);
++		/*
++		 * Fall back to generic handler too if operation is not
++		 * supported inside the driver/device/filesystem.
++		 */
++		if (rc != -EOPNOTSUPP)
++			goto out;
++	}
++
+ 	rc = mf_generic_kill_procs(pfn, flags, pgmap);
  out:
  	/* drop pgmap ref acquired in caller */
- 	put_dev_pagemap(pgmap);
 -- 
 2.35.1
 
