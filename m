@@ -2,49 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2448E4FAE93
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Apr 2022 17:43:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE08E4FAEA8
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Apr 2022 18:09:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237759AbiDJPpq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 10 Apr 2022 11:45:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58784 "EHLO
+        id S242149AbiDJQL0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 10 Apr 2022 12:11:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234532AbiDJPpp (ORCPT
+        with ESMTP id S243045AbiDJQLY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 10 Apr 2022 11:45:45 -0400
-Received: from mail.parknet.co.jp (mail.parknet.co.jp [210.171.160.6])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3EEEE34B9B
-        for <linux-fsdevel@vger.kernel.org>; Sun, 10 Apr 2022 08:43:32 -0700 (PDT)
-Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
-        by mail.parknet.co.jp (Postfix) with ESMTPSA id 03D1215F93A;
-        Mon, 11 Apr 2022 00:43:32 +0900 (JST)
-Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
-        by ibmpc.myhome.or.jp (8.16.1/8.16.1/Debian-2) with ESMTPS id 23AFhT3i044711
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-        Mon, 11 Apr 2022 00:43:30 +0900
-Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
-        by devron.myhome.or.jp (8.16.1/8.16.1/Debian-2) with ESMTPS id 23AFhTNt170953
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-        Mon, 11 Apr 2022 00:43:29 +0900
-Received: (from hirofumi@localhost)
-        by devron.myhome.or.jp (8.16.1/8.16.1/Submit) id 23AFhSLp170950;
-        Mon, 11 Apr 2022 00:43:28 +0900
-From:   OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-To:     Chung-Chiang Cheng <cccheng@synology.com>
-Cc:     linux-fsdevel@vger.kernel.org, shepjeng@gmail.com,
-        kernel@cccheng.net
-Subject: Re: [PATCH v2 2/3] fat: make ctime and mtime identical explicitly
-References: <20220406085459.102691-1-cccheng@synology.com>
-        <20220406085459.102691-2-cccheng@synology.com>
-Date:   Mon, 11 Apr 2022 00:43:28 +0900
-In-Reply-To: <20220406085459.102691-2-cccheng@synology.com> (Chung-Chiang
-        Cheng's message of "Wed, 6 Apr 2022 16:54:58 +0800")
-Message-ID: <87h771ueov.fsf@mail.parknet.co.jp>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/29.0.50 (gnu/linux)
+        Sun, 10 Apr 2022 12:11:24 -0400
+Received: from heian.cn.fujitsu.com (mail.cn.fujitsu.com [183.91.158.132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 043456470;
+        Sun, 10 Apr 2022 09:09:12 -0700 (PDT)
+IronPort-Data: =?us-ascii?q?A9a23=3AUjr6dKvHp6u5eFJwS7zZCIx6lOfnVD1fMUV32f8?=
+ =?us-ascii?q?akzHdYEJGY0x3yjNJD2GEPa3eYmKjLY8iO42zoEhXvZeDmNc3T1c5qylgHilAw?=
+ =?us-ascii?q?SbnLY7Hdx+vZUt+DSFioHpPtpxYMp+ZRCwNZie0SiyFb/6x/RGQ6YnSHuCmULS?=
+ =?us-ascii?q?cY3goLeNZYHxJZSxLyrdRbrFA0YDR7zOl4bsekuWHULOX82cc3lE8t8pvnChSU?=
+ =?us-ascii?q?MHa41v0iLCRicdj5zcyn1FNZH4WyDrYw3HQGuG4FcbiLwrPIS3Qw4/Xw/stIov?=
+ =?us-ascii?q?NfrfTeUtMTKPQPBSVlzxdXK3Kbhpq/3R0i/hkcqFHLxo/ZzahxridzP1XqJW2U?=
+ =?us-ascii?q?hZvMKvXhMwTThtZDzpje6ZB/dcrJFDm65fPkhaWKSOEL/JGSRte0Zcj0up+H2B?=
+ =?us-ascii?q?C3fICLzUKdBqCm6S9x7fTYulnhuwiKsfxNY8Ss30myivWZd4qSJaFQePV5Ntc3?=
+ =?us-ascii?q?T41nehPG+rTY4wSbj8HRBjCfBpJNX8UBYg4kePugWPwGxVcqVSIte8y5kDQ0gV?=
+ =?us-ascii?q?60/7qKtW9UtqUScRQm26cp3na5CL9AxcHJJqTxCTt2nClgOKJliPmcIUIHba8+?=
+ =?us-ascii?q?7hhh1j77mgSDgAGEFWgrfSnh0qWRd1SMQoX9zAooKx081akJvH5XhulsDuHswQ?=
+ =?us-ascii?q?aVt54DeI38keOx7DS7gLfAXILJhZFado7pIomSycCyFCEhZXqCCZpvbnTTmiSn?=
+ =?us-ascii?q?op4Bxva1TM9dDdEPHFbC1BepYSLnW36tTqXJv4LLUJ/poad9enM/g23?=
+IronPort-HdrOrdr: =?us-ascii?q?A9a23=3ApSggPaOycVo3YMBcTimjsMiBIKoaSvp037Eq?=
+ =?us-ascii?q?v3oedfUzSL39qynOpoV96faaslYssR0b9exoW5PwJE80l6QFgrX5VI3KNGKN1V?=
+ =?us-ascii?q?dAR7sC0WKN+VLd8lXFh4xgPLlbAtNDIey1HV5nltz7/QX9N94hxeOM+Keuify2?=
+ =?us-ascii?q?9QYVcShaL7Fn8xxiChuWVml/RAx9D5I/E5aGouVdoT7IQwVuUu2LQmkCQ/PYp8?=
+ =?us-ascii?q?DG0LbvYRs9DRYh7wWUyROEgYSKdSSl4g=3D=3D?=
+X-IronPort-AV: E=Sophos;i="5.88,333,1635177600"; 
+   d="scan'208";a="123453820"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 11 Apr 2022 00:09:08 +0800
+Received: from G08CNEXMBPEKD05.g08.fujitsu.local (unknown [10.167.33.204])
+        by cn.fujitsu.com (Postfix) with ESMTP id DE4DC4D16FF4;
+        Mon, 11 Apr 2022 00:09:05 +0800 (CST)
+Received: from G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.85) by
+ G08CNEXMBPEKD05.g08.fujitsu.local (10.167.33.204) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.23; Mon, 11 Apr 2022 00:09:07 +0800
+Received: from irides.mr.mr (10.167.225.141) by
+ G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
+ id 15.0.1497.23 via Frontend Transport; Mon, 11 Apr 2022 00:09:04 +0800
+From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
+To:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
+        <nvdimm@lists.linux.dev>, <linux-mm@kvack.org>,
+        <linux-fsdevel@vger.kernel.org>
+CC:     <djwong@kernel.org>, <dan.j.williams@intel.com>,
+        <david@fromorbit.com>, <hch@infradead.org>, <jane.chu@oracle.com>
+Subject: [PATCH v12 0/7] fsdax: introduce fs query to support reflink
+Date:   Mon, 11 Apr 2022 00:08:57 +0800
+Message-ID: <20220410160904.3758789-1-ruansy.fnst@fujitsu.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-yoursite-MailScanner-ID: DE4DC4D16FF4.A3DF7
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: ruansy.fnst@fujitsu.com
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -52,185 +71,83 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Chung-Chiang Cheng <cccheng@synology.com> writes:
+This patchset is aimed to support shared pages tracking for fsdax.
 
-> FAT supports creation time but not change time, and there was no
-> corresponding timestamp for creation time in previous VFS. The
-> original implementation took the compromise of saving the in-memory
-> change time into the on-disk creation time field, but this would lead
-> to compatibility issues with non-linux systems.
->
-> In address this issue, this patch changes the behavior of ctime. ctime
-> will no longer be loaded and stored from the creation time on disk.
-> Instead of that, it'll be consistent with the in-memory mtime and
-> share the same on-disk field.
+Changes since V11:
+  - Rebased onto next-20220408
+  - Move dax_register_holder()'s job into fs_dax_get_by_bdev(),
+      and move dax_unregister_holder()'s job into fs_put_dax()
+  - Change ->memory_failure() signature to page-based
+  - Drop "mm: move pgoff_address() to vma_pgoff_address()"
+  - Fix #ifdef ... #endif wrappers
+  - Other minor fixes
 
-Hm, this changes mtime includes ctime update. So, the question is, this
-behavior is compatible with Windows's fatfs behavior? E.g. Windows
-updates mtime on rename?
+This patchset moves owner tracking from dax_assocaite_entry() to pmem
+device driver, by introducing an interface ->memory_failure() for struct
+pagemap.  This interface is called by memory_failure() in mm, and
+implemented by pmem device.
 
-If not same behavior with Windows, new behavior is new incompatible
-behavior, and looks break fundamental purpose of this.
+Then call holder operations to find the filesystem which the corrupted
+data located in, and call filesystem handler to track files or metadata
+associated with this page.
 
-I was thinking, we ignores ctime update (because fatfs doesn't have) and
-always same with mtime. What behavior was actually compatible with
-Windows?
+Finally we are able to try to fix the corrupted data in filesystem and
+do other necessary processing, such as killing processes who are using
+the files affected.
 
-Thanks.
+The call trace is like this:
+memory_failure()
+|* fsdax case
+|------------
+|pgmap->ops->memory_failure()      => pmem_pgmap_memory_failure()
+| dax_holder_notify_failure()      =>
+|  dax_device->holder_ops->notify_failure() =>
+|                                     - xfs_dax_notify_failure()
+|  |* xfs_dax_notify_failure()
+|  |--------------------------
+|  |   xfs_rmap_query_range()
+|  |    xfs_dax_failure_fn()
+|  |    * corrupted on metadata
+|  |       try to recover data, call xfs_force_shutdown()
+|  |    * corrupted on file data
+|  |       try to recover data, call mf_dax_kill_procs()
+|* normal case
+|-------------
+|mf_generic_kill_procs()
 
-> Signed-off-by: Chung-Chiang Cheng <cccheng@synology.com>
-> ---
->  fs/fat/dir.c         |  2 +-
->  fs/fat/file.c        |  4 ++++
->  fs/fat/inode.c       | 11 ++++-------
->  fs/fat/misc.c        | 11 ++++++++---
->  fs/fat/namei_msdos.c |  6 +++---
->  fs/fat/namei_vfat.c  |  6 +++---
->  6 files changed, 23 insertions(+), 17 deletions(-)
->
-> diff --git a/fs/fat/dir.c b/fs/fat/dir.c
-> index 249825017da7..0ae0dfe278fb 100644
-> --- a/fs/fat/dir.c
-> +++ b/fs/fat/dir.c
-> @@ -1068,7 +1068,7 @@ int fat_remove_entries(struct inode *dir, struct fat_slot_info *sinfo)
->  		}
->  	}
->  
-> -	fat_truncate_time(dir, NULL, S_ATIME|S_MTIME);
-> +	fat_truncate_time(dir, NULL, S_ATIME|S_CTIME|S_MTIME);
->  	if (IS_DIRSYNC(dir))
->  		(void)fat_sync_inode(dir);
->  	else
-> diff --git a/fs/fat/file.c b/fs/fat/file.c
-> index a5a309fcc7fa..178c1dde3488 100644
-> --- a/fs/fat/file.c
-> +++ b/fs/fat/file.c
-> @@ -544,6 +544,10 @@ int fat_setattr(struct user_namespace *mnt_userns, struct dentry *dentry,
->  	/*
->  	 * setattr_copy can't truncate these appropriately, so we'll
->  	 * copy them ourselves
-> +	 *
-> +	 * fat_truncate_time() keeps ctime and mtime the same. if both
-> +	 * ctime and mtime are need to update here, mtime will overwrite
-> +	 * ctime
->  	 */
->  	if (attr->ia_valid & ATTR_ATIME)
->  		fat_truncate_time(inode, &attr->ia_atime, S_ATIME);
-> diff --git a/fs/fat/inode.c b/fs/fat/inode.c
-> index bf6051bdf1d1..f2ac55cd4ea4 100644
-> --- a/fs/fat/inode.c
-> +++ b/fs/fat/inode.c
-> @@ -567,12 +567,11 @@ int fat_fill_inode(struct inode *inode, struct msdos_dir_entry *de)
->  			   & ~((loff_t)sbi->cluster_size - 1)) >> 9;
->  
->  	fat_time_fat2unix(sbi, &inode->i_mtime, de->time, de->date, 0);
-> -	if (sbi->options.isvfat) {
-> -		fat_time_fat2unix(sbi, &inode->i_ctime, de->ctime,
-> -				  de->cdate, de->ctime_cs);
-> +	inode->i_ctime = inode->i_mtime;
-> +	if (sbi->options.isvfat)
->  		fat_time_fat2unix(sbi, &inode->i_atime, 0, de->adate, 0);
-> -	} else
-> -		fat_truncate_time(inode, &inode->i_mtime, S_ATIME|S_CTIME);
-> +	else
-> +		fat_truncate_atime(sbi, &inode->i_mtime, &inode->i_atime);
->  
->  	return 0;
->  }
-> @@ -888,8 +887,6 @@ static int __fat_write_inode(struct inode *inode, int wait)
->  			  &raw_entry->date, NULL);
->  	if (sbi->options.isvfat) {
->  		__le16 atime;
-> -		fat_time_unix2fat(sbi, &inode->i_ctime, &raw_entry->ctime,
-> -				  &raw_entry->cdate, &raw_entry->ctime_cs);
->  		fat_time_unix2fat(sbi, &inode->i_atime, &atime,
->  				  &raw_entry->adate, NULL);
->  	}
-> diff --git a/fs/fat/misc.c b/fs/fat/misc.c
-> index c87df64f8b2b..71e6dadf12a2 100644
-> --- a/fs/fat/misc.c
-> +++ b/fs/fat/misc.c
-> @@ -341,10 +341,15 @@ int fat_truncate_time(struct inode *inode, struct timespec64 *now, int flags)
->  
->  	if (flags & S_ATIME)
->  		fat_truncate_atime(sbi, now, &inode->i_atime);
-> -	if (flags & S_CTIME)
-> -		fat_truncate_crtime(sbi, now, &inode->i_ctime);
-> -	if (flags & S_MTIME)
-> +
-> +	/*
-> +	 * ctime and mtime share the same on-disk field, and should be
-> +	 * identical in memory.
-> +	 */
-> +	if (flags & (S_CTIME|S_MTIME)) {
->  		fat_truncate_mtime(sbi, now, &inode->i_mtime);
-> +		inode->i_ctime = inode->i_mtime;
-> +	}
->  
->  	return 0;
->  }
-> diff --git a/fs/fat/namei_msdos.c b/fs/fat/namei_msdos.c
-> index efba301d68ae..b2760a716707 100644
-> --- a/fs/fat/namei_msdos.c
-> +++ b/fs/fat/namei_msdos.c
-> @@ -328,7 +328,7 @@ static int msdos_rmdir(struct inode *dir, struct dentry *dentry)
->  	drop_nlink(dir);
->  
->  	clear_nlink(inode);
-> -	fat_truncate_time(inode, NULL, S_CTIME);
-> +	fat_truncate_time(inode, NULL, S_CTIME|S_MTIME);
->  	fat_detach(inode);
->  out:
->  	mutex_unlock(&MSDOS_SB(sb)->s_lock);
-> @@ -415,7 +415,7 @@ static int msdos_unlink(struct inode *dir, struct dentry *dentry)
->  	if (err)
->  		goto out;
->  	clear_nlink(inode);
-> -	fat_truncate_time(inode, NULL, S_CTIME);
-> +	fat_truncate_time(inode, NULL, S_CTIME|S_MTIME);
->  	fat_detach(inode);
->  out:
->  	mutex_unlock(&MSDOS_SB(sb)->s_lock);
-> @@ -550,7 +550,7 @@ static int do_msdos_rename(struct inode *old_dir, unsigned char *old_name,
->  		drop_nlink(new_inode);
->  		if (is_dir)
->  			drop_nlink(new_inode);
-> -		fat_truncate_time(new_inode, &ts, S_CTIME);
-> +		fat_truncate_time(new_inode, &ts, S_CTIME|S_MTIME);
->  	}
->  out:
->  	brelse(sinfo.bh);
-> diff --git a/fs/fat/namei_vfat.c b/fs/fat/namei_vfat.c
-> index 5369d82e0bfb..b8deb859b2b5 100644
-> --- a/fs/fat/namei_vfat.c
-> +++ b/fs/fat/namei_vfat.c
-> @@ -811,7 +811,7 @@ static int vfat_rmdir(struct inode *dir, struct dentry *dentry)
->  	drop_nlink(dir);
->  
->  	clear_nlink(inode);
-> -	fat_truncate_time(inode, NULL, S_ATIME|S_MTIME);
-> +	fat_truncate_time(inode, NULL, S_ATIME|S_CTIME|S_MTIME);
->  	fat_detach(inode);
->  	vfat_d_version_set(dentry, inode_query_iversion(dir));
->  out:
-> @@ -837,7 +837,7 @@ static int vfat_unlink(struct inode *dir, struct dentry *dentry)
->  	if (err)
->  		goto out;
->  	clear_nlink(inode);
-> -	fat_truncate_time(inode, NULL, S_ATIME|S_MTIME);
-> +	fat_truncate_time(inode, NULL, S_ATIME|S_CTIME|S_MTIME);
->  	fat_detach(inode);
->  	vfat_d_version_set(dentry, inode_query_iversion(dir));
->  out:
-> @@ -981,7 +981,7 @@ static int vfat_rename(struct user_namespace *mnt_userns, struct inode *old_dir,
->  		drop_nlink(new_inode);
->  		if (is_dir)
->  			drop_nlink(new_inode);
-> -		fat_truncate_time(new_inode, &ts, S_CTIME);
-> +		fat_truncate_time(new_inode, &ts, S_CTIME|S_MTIME);
->  	}
->  out:
->  	brelse(sinfo.bh);
+==
+Shiyang Ruan (7):
+  dax: Introduce holder for dax_device
+  mm: factor helpers for memory_failure_dev_pagemap
+  pagemap,pmem: Introduce ->memory_failure()
+  fsdax: Introduce dax_lock_mapping_entry()
+  mm: Introduce mf_dax_kill_procs() for fsdax case
+  xfs: Implement ->notify_failure() for XFS
+  fsdax: set a CoW flag when associate reflink mappings
+
+ drivers/dax/super.c         |  66 +++++++++-
+ drivers/md/dm.c             |   2 +-
+ drivers/nvdimm/pmem.c       |  17 +++
+ fs/dax.c                    | 128 ++++++++++++++++--
+ fs/erofs/super.c            |  10 +-
+ fs/ext2/super.c             |   7 +-
+ fs/ext4/super.c             |   9 +-
+ fs/xfs/Makefile             |   5 +
+ fs/xfs/xfs_buf.c            |   6 +-
+ fs/xfs/xfs_fsops.c          |   3 +
+ fs/xfs/xfs_mount.h          |   1 +
+ fs/xfs/xfs_notify_failure.c | 219 +++++++++++++++++++++++++++++++
+ fs/xfs/xfs_super.h          |   1 +
+ include/linux/dax.h         |  48 +++++--
+ include/linux/memremap.h    |  12 ++
+ include/linux/mm.h          |   2 +
+ include/linux/page-flags.h  |   6 +
+ mm/memory-failure.c         | 255 +++++++++++++++++++++++++-----------
+ 18 files changed, 691 insertions(+), 106 deletions(-)
+ create mode 100644 fs/xfs/xfs_notify_failure.c
 
 -- 
-OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+2.35.1
+
+
+
