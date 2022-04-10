@@ -2,49 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EDDFD4FAEB8
+	by mail.lfdr.de (Postfix) with ESMTP id 399044FAEB6
 	for <lists+linux-fsdevel@lfdr.de>; Sun, 10 Apr 2022 18:09:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243526AbiDJQLj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 10 Apr 2022 12:11:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50666 "EHLO
+        id S238514AbiDJQLh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 10 Apr 2022 12:11:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243490AbiDJQLa (ORCPT
+        with ESMTP id S243489AbiDJQLa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Sun, 10 Apr 2022 12:11:30 -0400
 Received: from heian.cn.fujitsu.com (mail.cn.fujitsu.com [183.91.158.132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id AC1022126C;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id ABAA421267;
         Sun, 10 Apr 2022 09:09:18 -0700 (PDT)
-IronPort-Data: =?us-ascii?q?A9a23=3AdJVMt6sgi77g3nfW6un2/wR/J+fnVClfMUV32f8?=
- =?us-ascii?q?akzHdYEJGY0x3mmZNDT3TOvaKZ2HwLdwjao2zpxxTvMTQzNAyQVY9qyBgHilAw?=
- =?us-ascii?q?SbnLY7Hdx+vZUt+DSFioHpPtpxYMp+ZRCwNZie0SiyFb/6x/RGQ6YnSHuCmULS?=
- =?us-ascii?q?cY3goLeNZYHxJZSxLyrdRbrFA0YDR7zOl4bsekuWHULOX82cc3lE8t8pvnChSU?=
- =?us-ascii?q?MHa41v0iLCRicdj5zcyn1FNZH4WyDrYw3HQGuG4FcbiLwrPIS3Qw4/Xw/stIov?=
- =?us-ascii?q?NfrfTeUtMTKPQPBSVlzxdXK3Kbhpq/3R0i/hkcqFHLxo/ZzahxridzP1XqJW2U?=
- =?us-ascii?q?hZvMKvXhMwTThtZDzpje6ZB/dcrJFDm65fPkhaWKSaEL/JGSRte0Zcj0up+H2B?=
- =?us-ascii?q?C3fICLzUKdBqCm6S9x7fTYulnhuwiKsfxNY8Ss30myivWZd4qSJaFQePV5Ntc3?=
- =?us-ascii?q?T41nehPG+rTY4wSbj8HRBjCfBpJNX8UBYg4kePugWPwGxVcqVSIte8y5kDQ0gV?=
- =?us-ascii?q?60/7qKtW9UtqUScRQm26cp3na5CL9AxcHJJqTxCTt2nKnhsfLhj+9VI96PL+x8?=
- =?us-ascii?q?PMsi12O7msJARYSWB2wpvzRokq/Xc9PbkIP9icwoKwa6kOmVJ/+Uge+rXrCuQQ?=
- =?us-ascii?q?TM/JUEusn+ESOx7DS7gKxGGcJVHhCZcYguctwQiYlvneNntX0FXl/vqa9V32Q7?=
- =?us-ascii?q?PGXoCm0NCxTKnUNDRLo5yNtD8LL+dl110yQCI04VvPdszE8IhmoqxjikcT0r+l?=
- =?us-ascii?q?7YRY36piG?=
-IronPort-HdrOrdr: =?us-ascii?q?A9a23=3APzkseaEOnCFFHz4/pLqE1MeALOsnbusQ8zAX?=
- =?us-ascii?q?PiFKOHhom6mj+vxG88506faKslwssR0b+OxoW5PwJE80l6QFgrX5VI3KNGbbUQ?=
- =?us-ascii?q?CTXeNfBOXZowHIKmnX8+5x8eNaebFiNduYNzNHpPe/zA6mM9tI+rW6zJw=3D?=
+IronPort-Data: =?us-ascii?q?A9a23=3AChoaW6AtXsWcNxVW/1biw5YqxClBgxIJ4g17XOL?=
+ =?us-ascii?q?fUQex1G8lgzcOzjcdUGiFP/zfYmOke9AnbY++oR8FvJeAx9UxeLYW3SszFioV8?=
+ =?us-ascii?q?6IpJjg4wn/YZnrUdouaJK5ex512huLocYZkHhcwmj/3auK79SMkjPnRLlbBILW?=
+ =?us-ascii?q?s1h5ZFFYMpBgJ2UoLd94R2uaEsPDha++/kYqaT/73ZDdJ7wVJ3lc8sMpvnv/AU?=
+ =?us-ascii?q?MPa41v0tnRmDRxCUcS3e3M9VPrzLonpR5f0rxU9IwK0ewrD5OnREmLx9BFrBM6?=
+ =?us-ascii?q?nk6rgbwsBRbu60Qqm0yIQAvb9xEMZ4HFaPqUTbZLwbW9NljyPhME3xtNWqbS+V?=
+ =?us-ascii?q?AUoIrbR3u8aVnG0FgknZ/YapeSXeyPXXcu7iheun2HX6/lnEkA6FYMC/eNwG2t?=
+ =?us-ascii?q?P6boTLzVlRhCIh8q3xryhQ+Vhj8hlK9PkVKsTs3cmz3fGDPIiQJnGWI3L48NV2?=
+ =?us-ascii?q?HE7gcUmNfrceM0fZhJsYQ7GbhkJPU0YYLo6neG1ljz6dhVbtluepuww+We75Ap?=
+ =?us-ascii?q?v3LnoNfLRe8eWXoNRn0CFtiTK8nqRKhERNPSb0ibD/n/Eru3Gmy69U4IPPLqi/?=
+ =?us-ascii?q?/VujRuYwWl7IBkXU0ar5PeihkOgVtZ3NUMZ4GwtoLI0+UjtScPyNzW8oXiZrls?=
+ =?us-ascii?q?fVsBWHukS9g6A0OzX7hyfC2xCSSROAPQitckrVXk62EShgdzkH3psvaeTRHbb8?=
+ =?us-ascii?q?a2bxQ5ekwB9wXQqPHdCFFVapYK45txbs/4Gdf47eIbdszE/MW2YL+i2kRUD?=
+IronPort-HdrOrdr: =?us-ascii?q?A9a23=3AlD4Ai680vM+pUCyHVNtuk+A+I+orL9Y04lQ7?=
+ =?us-ascii?q?vn2YSXRuE/Bw8Pre5cjztCWE8Ar5N0tQ+uxoVJPufZqYz+8Q3WBzB8bFYOCFgh?=
+ =?us-ascii?q?rLEGgK1+KLqFeMdxEWtNQtspuIGJIfNDSfNzZHZL7BkWyF+sgbsaW62ZHtleHD?=
+ =?us-ascii?q?1G1sUA0vT6lh6j1yAgGdHlYefng9ObMJUIqb+tFcpyetPVAebsGADHEDWOTZ4/?=
+ =?us-ascii?q?LRkpaOW296OzcXrBmJkSiz6KP3VzyR3hIlWTtJxrs4tUjp+jaJnZmejw=3D=3D?=
 X-IronPort-AV: E=Sophos;i="5.88,333,1635177600"; 
-   d="scan'208";a="123453825"
+   d="scan'208";a="123453823"
 Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
   by heian.cn.fujitsu.com with ESMTP; 11 Apr 2022 00:09:14 +0800
-Received: from G08CNEXMBPEKD04.g08.fujitsu.local (unknown [10.167.33.201])
-        by cn.fujitsu.com (Postfix) with ESMTP id DB49A4D16FF4;
-        Mon, 11 Apr 2022 00:09:07 +0800 (CST)
+Received: from G08CNEXMBPEKD06.g08.fujitsu.local (unknown [10.167.33.206])
+        by cn.fujitsu.com (Postfix) with ESMTP id C00324D17163;
+        Mon, 11 Apr 2022 00:09:08 +0800 (CST)
+Received: from G08CNEXJMPEKD02.g08.fujitsu.local (10.167.33.202) by
+ G08CNEXMBPEKD06.g08.fujitsu.local (10.167.33.206) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.23; Mon, 11 Apr 2022 00:09:08 +0800
 Received: from G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.85) by
- G08CNEXMBPEKD04.g08.fujitsu.local (10.167.33.201) with Microsoft SMTP Server
+ G08CNEXJMPEKD02.g08.fujitsu.local (10.167.33.202) with Microsoft SMTP Server
  (TLS) id 15.0.1497.23; Mon, 11 Apr 2022 00:09:11 +0800
 Received: from irides.mr.mr (10.167.225.141) by
  G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
- id 15.0.1497.23 via Frontend Transport; Mon, 11 Apr 2022 00:09:06 +0800
+ id 15.0.1497.23 via Frontend Transport; Mon, 11 Apr 2022 00:09:07 +0800
 From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
 To:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
         <nvdimm@lists.linux.dev>, <linux-mm@kvack.org>,
@@ -52,16 +56,16 @@ To:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
 CC:     <djwong@kernel.org>, <dan.j.williams@intel.com>,
         <david@fromorbit.com>, <hch@infradead.org>, <jane.chu@oracle.com>,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v12 3/7] pagemap,pmem: Introduce ->memory_failure()
-Date:   Mon, 11 Apr 2022 00:09:00 +0800
-Message-ID: <20220410160904.3758789-4-ruansy.fnst@fujitsu.com>
+Subject: [PATCH v12 4/7] fsdax: Introduce dax_lock_mapping_entry()
+Date:   Mon, 11 Apr 2022 00:09:01 +0800
+Message-ID: <20220410160904.3758789-5-ruansy.fnst@fujitsu.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220410160904.3758789-1-ruansy.fnst@fujitsu.com>
 References: <20220410160904.3758789-1-ruansy.fnst@fujitsu.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
-X-yoursite-MailScanner-ID: DB49A4D16FF4.A5EAD
+X-yoursite-MailScanner-ID: C00324D17163.AF597
 X-yoursite-MailScanner: Found to be clean
 X-yoursite-MailScanner-From: ruansy.fnst@fujitsu.com
 X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
@@ -73,114 +77,126 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When memory-failure occurs, we call this function which is implemented
-by each kind of devices.  For the fsdax case, pmem device driver
-implements it.  Pmem device driver will find out the filesystem in which
-the corrupted page located in.
-
-With dax_holder notify support, we are able to notify the memory failure
-from pmem driver to upper layers.  If there is something not support in
-the notify routine, memory_failure will fall back to the generic hanlder.
+The current dax_lock_page() locks dax entry by obtaining mapping and
+index in page.  To support 1-to-N RMAP in NVDIMM, we need a new function
+to lock a specific dax entry corresponding to this file's mapping,index.
+And output the page corresponding to the specific dax entry for caller
+use.
 
 Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
 ---
- drivers/nvdimm/pmem.c    | 17 +++++++++++++++++
- include/linux/memremap.h | 12 ++++++++++++
- mm/memory-failure.c      | 14 ++++++++++++++
- 3 files changed, 43 insertions(+)
+ fs/dax.c            | 63 +++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/dax.h | 15 +++++++++++
+ 2 files changed, 78 insertions(+)
 
-diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
-index 58d95242a836..bd502957cfdf 100644
---- a/drivers/nvdimm/pmem.c
-+++ b/drivers/nvdimm/pmem.c
-@@ -366,6 +366,21 @@ static void pmem_release_disk(void *__pmem)
- 	blk_cleanup_disk(pmem->disk);
+diff --git a/fs/dax.c b/fs/dax.c
+index 1ac12e877f4f..57efd3f73655 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -455,6 +455,69 @@ void dax_unlock_page(struct page *page, dax_entry_t cookie)
+ 	dax_unlock_entry(&xas, (void *)cookie);
  }
  
-+static int pmem_pagemap_memory_failure(struct dev_pagemap *pgmap,
-+		unsigned long pfn, unsigned long nr_pages, int mf_flags)
++/*
++ * dax_lock_mapping_entry - Lock the DAX entry corresponding to a mapping
++ * @mapping: the file's mapping whose entry we want to lock
++ * @index: the offset within this file
++ * @page: output the dax page corresponding to this dax entry
++ *
++ * Return: A cookie to pass to dax_unlock_mapping_entry() or 0 if the entry
++ * could not be locked.
++ */
++dax_entry_t dax_lock_mapping_entry(struct address_space *mapping, pgoff_t index,
++		struct page **page)
 +{
-+	struct pmem_device *pmem =
-+			container_of(pgmap, struct pmem_device, pgmap);
-+	u64 offset = PFN_PHYS(pfn) - pmem->phys_addr - pmem->data_offset;
-+	u64 len = nr_pages << PAGE_SHIFT;
++	XA_STATE(xas, NULL, 0);
++	void *entry;
 +
-+	return dax_holder_notify_failure(pmem->dax_dev, offset, len, mf_flags);
++	rcu_read_lock();
++	for (;;) {
++		entry = NULL;
++		if (!dax_mapping(mapping))
++			break;
++
++		xas.xa = &mapping->i_pages;
++		xas_lock_irq(&xas);
++		xas_set(&xas, index);
++		entry = xas_load(&xas);
++		if (dax_is_locked(entry)) {
++			rcu_read_unlock();
++			wait_entry_unlocked(&xas, entry);
++			rcu_read_lock();
++			continue;
++		}
++		if (!entry ||
++		    dax_is_zero_entry(entry) || dax_is_empty_entry(entry)) {
++			/*
++			 * Because we are looking for entry from file's mapping
++			 * and index, so the entry may not be inserted for now,
++			 * or even a zero/empty entry.  We don't think this is
++			 * an error case.  So, return a special value and do
++			 * not output @page.
++			 */
++			entry = (void *)~0UL;
++		} else {
++			*page = pfn_to_page(dax_to_pfn(entry));
++			dax_lock_entry(&xas, entry);
++		}
++		xas_unlock_irq(&xas);
++		break;
++	}
++	rcu_read_unlock();
++	return (dax_entry_t)entry;
 +}
 +
-+static const struct dev_pagemap_ops fsdax_pagemap_ops = {
-+	.memory_failure		= pmem_pagemap_memory_failure,
-+};
++void dax_unlock_mapping_entry(struct address_space *mapping, pgoff_t index,
++		dax_entry_t cookie)
++{
++	XA_STATE(xas, &mapping->i_pages, index);
 +
- static int pmem_attach_disk(struct device *dev,
- 		struct nd_namespace_common *ndns)
++	if (cookie == ~0UL)
++		return;
++
++	dax_unlock_entry(&xas, (void *)cookie);
++}
++
+ /*
+  * Find page cache entry at given index. If it is a DAX entry, return it
+  * with the entry locked. If the page cache doesn't contain an entry at
+diff --git a/include/linux/dax.h b/include/linux/dax.h
+index 9c426a207ba8..c152f315d1c9 100644
+--- a/include/linux/dax.h
++++ b/include/linux/dax.h
+@@ -143,6 +143,10 @@ struct page *dax_layout_busy_page(struct address_space *mapping);
+ struct page *dax_layout_busy_page_range(struct address_space *mapping, loff_t start, loff_t end);
+ dax_entry_t dax_lock_page(struct page *page);
+ void dax_unlock_page(struct page *page, dax_entry_t cookie);
++dax_entry_t dax_lock_mapping_entry(struct address_space *mapping,
++		unsigned long index, struct page **page);
++void dax_unlock_mapping_entry(struct address_space *mapping,
++		unsigned long index, dax_entry_t cookie);
+ #else
+ static inline struct page *dax_layout_busy_page(struct address_space *mapping)
  {
-@@ -427,6 +442,7 @@ static int pmem_attach_disk(struct device *dev,
- 	pmem->pfn_flags = PFN_DEV;
- 	if (is_nd_pfn(dev)) {
- 		pmem->pgmap.type = MEMORY_DEVICE_FS_DAX;
-+		pmem->pgmap.ops = &fsdax_pagemap_ops;
- 		addr = devm_memremap_pages(dev, &pmem->pgmap);
- 		pfn_sb = nd_pfn->pfn_sb;
- 		pmem->data_offset = le64_to_cpu(pfn_sb->dataoff);
-@@ -440,6 +456,7 @@ static int pmem_attach_disk(struct device *dev,
- 		pmem->pgmap.range.end = res->end;
- 		pmem->pgmap.nr_range = 1;
- 		pmem->pgmap.type = MEMORY_DEVICE_FS_DAX;
-+		pmem->pgmap.ops = &fsdax_pagemap_ops;
- 		addr = devm_memremap_pages(dev, &pmem->pgmap);
- 		pmem->pfn_flags |= PFN_MAP;
- 		bb_range = pmem->pgmap.range;
-diff --git a/include/linux/memremap.h b/include/linux/memremap.h
-index ad6062d736cd..bcfb6bf4ce5a 100644
---- a/include/linux/memremap.h
-+++ b/include/linux/memremap.h
-@@ -79,6 +79,18 @@ struct dev_pagemap_ops {
- 	 * the page back to a CPU accessible page.
- 	 */
- 	vm_fault_t (*migrate_to_ram)(struct vm_fault *vmf);
+@@ -170,6 +174,17 @@ static inline dax_entry_t dax_lock_page(struct page *page)
+ static inline void dax_unlock_page(struct page *page, dax_entry_t cookie)
+ {
+ }
 +
-+	/*
-+	 * Handle the memory failure happens on a range of pfns.  Notify the
-+	 * processes who are using these pfns, and try to recover the data on
-+	 * them if necessary.  The mf_flags is finally passed to the recover
-+	 * function through the whole notify routine.
-+	 *
-+	 * When this is not implemented, or it returns -EOPNOTSUPP, the caller
-+	 * will fall back to a common handler called mf_generic_kill_procs().
-+	 */
-+	int (*memory_failure)(struct dev_pagemap *pgmap, unsigned long pfn,
-+			      unsigned long nr_pages, int mf_flags);
- };
- 
- #define PGMAP_ALTMAP_VALID	(1 << 0)
-diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-index f1cdd39f01f7..c8c898669c75 100644
---- a/mm/memory-failure.c
-+++ b/mm/memory-failure.c
-@@ -1760,6 +1760,20 @@ static int memory_failure_dev_pagemap(unsigned long pfn, int flags,
- 	if (!pgmap_pfn_valid(pgmap, pfn))
- 		goto out;
- 
-+	/*
-+	 * Call driver's implementation to handle the memory failure, otherwise
-+	 * fall back to generic handler.
-+	 */
-+	if (pgmap->ops->memory_failure) {
-+		rc = pgmap->ops->memory_failure(pgmap, pfn, 1, flags);
-+		/*
-+		 * Fall back to generic handler too if operation is not
-+		 * supported inside the driver/device/filesystem.
-+		 */
-+		if (rc != -EOPNOTSUPP)
-+			goto out;
-+	}
++static inline dax_entry_t dax_lock_mapping_entry(struct address_space *mapping,
++		unsigned long index, struct page **page)
++{
++	return 0;
++}
 +
- 	rc = mf_generic_kill_procs(pfn, flags, pgmap);
- out:
- 	/* drop pgmap ref acquired in caller */
++static inline void dax_unlock_mapping_entry(struct address_space *mapping,
++		unsigned long index, dax_entry_t cookie)
++{
++}
+ #endif
+ 
+ int dax_zero_range(struct inode *inode, loff_t pos, loff_t len, bool *did_zero,
 -- 
 2.35.1
 
