@@ -2,77 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ED4CE4FBE61
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Apr 2022 16:10:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 044964FBE2E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Apr 2022 16:02:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244749AbiDKOMr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Apr 2022 10:12:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35452 "EHLO
+        id S1346869AbiDKOEH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Apr 2022 10:04:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346954AbiDKOMq (ORCPT
+        with ESMTP id S1346841AbiDKOEF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Apr 2022 10:12:46 -0400
-X-Greylist: delayed 601 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 11 Apr 2022 07:10:31 PDT
-Received: from slim0.absotechline.com (slim.absotechline.com [159.89.120.150])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 971E0BE03
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Apr 2022 07:10:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; s=default; d=absotechline.com;
- h=Reply-To:From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:
- Content-Transfer-Encoding; i=Ramsey@absotechline.com;
- bh=4PWIIcpJ9Ft4JMARuR4PvQfwwBgI6Fi+OhhRwcXikwU=;
- b=OMvZSrP4J1lEuHsDaeixYa7CbdSV8+kTVSW3wL3/AKJVB0IqxQ7zgBAJQe4sUuTMLk/rRQJdbFIU
-   uTQ4pl5kiFSqeLuQsYqLYLxShYSveutFvbmIfvWXfOPadErcv+I4UWpR+ZKneyAaV7bsq4D1HGww
-   2b9fXteOX/MzzULallw=
-Reply-To: ramsey.taylor1@swift-investment.loan
-From:   Ramsey Taylor <Ramsey@absotechline.com>
-To:     linux-fsdevel@vger.kernel.org
-Subject: Re: INVESTMENT/LOAN OFFER
-Date:   11 Apr 2022 14:00:27 +0000
-Message-ID: <20220411140027.26FFA9B098495C56@absotechline.com>
+        Mon, 11 Apr 2022 10:04:05 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 379D731DEB;
+        Mon, 11 Apr 2022 07:01:49 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id F3CB6B8160D;
+        Mon, 11 Apr 2022 14:01:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60E77C385A4;
+        Mon, 11 Apr 2022 14:01:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1649685706;
+        bh=aoF5JI4oA+WPgt/y0IgsxtsbxAXaCuGafPntNOloKP4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Z3DJooO+lpgxb0V7M65iVrqmxI0PEssCJPh+vJ1dEw1YBTDUO4k0Ftowa06gEpR83
+         S1WtT+TAlqYOA3SV5oPOUKBv5r5Czq1jXlmgnBC2vlAsKUSP12Z7m3WPk2IIXa7ddE
+         7+rat37phwTAQkXhdDcOfyIkaP50hX9uWu9MCv3Yv354dhMqhNyhEKK5VIXvkcNSo/
+         Yw75O5ZXcRgYxwAIHqrZej/c3adf+HQOwXoAdC34I68eRF5zbda1Ysdnlbmc/q5KXa
+         +yAvml8INLRMKi4FRTZn17313igwH9BKq1x7zfZpQGp7kDf9WzbZnpQOZP3oofxBEN
+         wCj97MUpv05qA==
+Date:   Mon, 11 Apr 2022 08:01:41 -0600
+From:   Keith Busch <kbusch@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, dm-devel@redhat.com,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-block@vger.kernel.org,
+        drbd-dev@lists.linbit.com, nbd@other.debian.org,
+        ceph-devel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
+        linux-raid@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org,
+        linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
+        target-devel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        cluster-devel@redhat.com, jfs-discussion@lists.sourceforge.net,
+        linux-nilfs@vger.kernel.org, ntfs3@lists.linux.dev,
+        ocfs2-devel@oss.oracle.com, linux-mm@kvack.org,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Christoph =?iso-8859-1?Q?B=F6hmwalder?= 
+        <christoph.boehmwalder@linbit.com>, Coly Li <colyli@suse.de>
+Subject: Re: [PATCH 24/27] block: remove QUEUE_FLAG_DISCARD
+Message-ID: <YlQ0xbtIcf8gti43@kbusch-mbp.dhcp.thefacebook.com>
+References: <20220409045043.23593-1-hch@lst.de>
+ <20220409045043.23593-25-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: Yes, score=7.4 required=5.0 tests=BAYES_80,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,SPF_FAIL,
-        SPF_HELO_NONE,SUBJ_ALL_CAPS,T_SCC_BODY_TEXT_LINE,URG_BIZ,URIBL_BLACK,
-        URIBL_DBL_SPAM autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Report: *  1.7 URIBL_BLACK Contains an URL listed in the URIBL blacklist
-        *      [URIs: absotechline.com]
-        *  2.5 URIBL_DBL_SPAM Contains a spam URL listed in the Spamhaus DBL
-        *      blocklist
-        *      [URIs: absotechline.com]
-        *  2.0 BAYES_80 BODY: Bayes spam probability is 80 to 95%
-        *      [score: 0.8980]
-        *  0.0 SPF_FAIL SPF: sender does not match SPF record (fail)
-        *      [SPF failed: Please see http://www.openspf.org/Why?s=mfrom;id=tino%40cock.li;ip=159.89.120.150;r=lindbergh.monkeyblade.net]
-        *  0.5 SUBJ_ALL_CAPS Subject is all capitals
-        *  0.2 HEADER_FROM_DIFFERENT_DOMAINS From and EnvelopeFrom 2nd level
-        *      mail domains are different
-        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
-        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
-        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
-        *       valid
-        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
-        *      author's domain
-        * -0.0 T_SCC_BODY_TEXT_LINE No description available.
-        *  0.6 URG_BIZ Contains urgent matter
-X-Spam-Level: *******
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220409045043.23593-25-hch@lst.de>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dear linux-fsdevel@vger.kernel.org ,
+On Sat, Apr 09, 2022 at 06:50:40AM +0200, Christoph Hellwig wrote:
+> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+> index efb85c6d8e2d5..7e07dd69262a7 100644
+> --- a/drivers/nvme/host/core.c
+> +++ b/drivers/nvme/host/core.c
+> @@ -1607,10 +1607,8 @@ static void nvme_config_discard(struct gendisk *disk, struct nvme_ns *ns)
+>  	struct request_queue *queue = disk->queue;
+>  	u32 size = queue_logical_block_size(queue);
+>  
+> -	if (ctrl->max_discard_sectors == 0) {
+> -		blk_queue_flag_clear(QUEUE_FLAG_DISCARD, queue);
+> +	if (ctrl->max_discard_sectors == 0)
+>  		return;
+> -	}
 
-I have an URGENT Investment proposal that will benefit both of
-us, Details
-of the investment and funding will be furnished to you when I
-receive your
-response.
-
-Waiting for your quick response.
-
-Yours Sincerely,
-Ramsey Taylor
+I think we need to update the queue limit in this condition. While unlikley,
+the flag was cleared here in case the device changed support for discard from
+the previous reset. 
