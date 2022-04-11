@@ -2,83 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4962D4FB195
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Apr 2022 04:08:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5627C4FB19E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Apr 2022 04:10:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240286AbiDKCKb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 10 Apr 2022 22:10:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53126 "EHLO
+        id S240428AbiDKCMk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 10 Apr 2022 22:12:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239877AbiDKCKa (ORCPT
+        with ESMTP id S237639AbiDKCMj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 10 Apr 2022 22:10:30 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 558721AD8B;
-        Sun, 10 Apr 2022 19:08:14 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CB08A61034;
-        Mon, 11 Apr 2022 02:08:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BA4BC385A4;
-        Mon, 11 Apr 2022 02:08:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649642893;
-        bh=A2X4Ggu+fzkw8crm6TaebmjPFV7+g5bq3xcZ2A4fLCg=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=hgQ+OykPY+Sg8QF74TEL66QxdMP9rL89DLwn/OGuJgZIv41KC0hOlu8XGNTcJFVJy
-         0lLkjeb+x5lhH7+/QWwqc+rBa/4Qb6+lmNKzW7SIZS4YyahuLFWu86OopgmLhSmBqZ
-         UJHQk4JIKazosTkqQuhtK/ZM3NbhVnL5ITv67ovHuDSS6T8t3IOu5H4Isi/At15E6l
-         kt7SHJOxo100Rd/NLAQY3p2AVlCAzN0oPgy0AQVCd21CEn6wkQZLbsgQEanb82Au3n
-         o8DcYCLAqpTnR5KPBrclyx0/MlR4X8yW0aQ5p6gHLGJAR+phPlj3W59HA0JOuBRomj
-         awo5/ZM2N37Fg==
-Received: by mail-wr1-f41.google.com with SMTP id e8so4494118wra.7;
-        Sun, 10 Apr 2022 19:08:13 -0700 (PDT)
-X-Gm-Message-State: AOAM531qquvfUn5kt4tGcygYI+L9yUkFeFhMbdYHNVOTTz8wql1m94dr
-        gHuwmfRSXzrIrktf1TPmwl5Dz8MORLdhJpNSg4Y=
-X-Google-Smtp-Source: ABdhPJzxPJ+baW4cPTMyPKAV7kJwIZWzzyNnjB6PMm6df6YwIOiySr98tevUGgyHNUJ5ejCBTJdQb6GzaezF6x7EsFQ=
-X-Received: by 2002:adf:f78a:0:b0:207:a5a4:5043 with SMTP id
- q10-20020adff78a000000b00207a5a45043mr3114901wrp.229.1649642891494; Sun, 10
- Apr 2022 19:08:11 -0700 (PDT)
+        Sun, 10 Apr 2022 22:12:39 -0400
+Received: from out30-56.freemail.mail.aliyun.com (out30-56.freemail.mail.aliyun.com [115.124.30.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3CA9B865
+        for <linux-fsdevel@vger.kernel.org>; Sun, 10 Apr 2022 19:10:26 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R941e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0V9gdvlU_1649643023;
+Received: from 30.225.24.83(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0V9gdvlU_1649643023)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 11 Apr 2022 10:10:24 +0800
+Message-ID: <d5c1b2bc-78d1-c6f8-0fb0-512a702b6e3b@linux.alibaba.com>
+Date:   Mon, 11 Apr 2022 10:10:23 +0800
 MIME-Version: 1.0
-Received: by 2002:a05:6000:2c1:0:0:0:0 with HTTP; Sun, 10 Apr 2022 19:08:10
- -0700 (PDT)
-In-Reply-To: <Yk/DpSwR8kGKWJYl@infradead.org>
-References: <HK2PR04MB3891FCECADD7AECEEF5DD63081E99@HK2PR04MB3891.apcprd04.prod.outlook.com>
- <Yk/DpSwR8kGKWJYl@infradead.org>
-From:   Namjae Jeon <linkinjeon@kernel.org>
-Date:   Mon, 11 Apr 2022 11:08:10 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd9NAUjdxT2GOWGoPvH5nOXSFtD7u0t_9rCiZx7hSGC0PA@mail.gmail.com>
-Message-ID: <CAKYAXd9NAUjdxT2GOWGoPvH5nOXSFtD7u0t_9rCiZx7hSGC0PA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] block: add sync_blockdev_range()
-To:     Christoph Hellwig <hch@infradead.org>, Jens Axboe <axboe@kernel.dk>
-Cc:     "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>,
-        "sj1557.seo@samsung.com" <sj1557.seo@samsung.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "Andy.Wu@sony.com" <Andy.Wu@sony.com>,
-        "Wataru.Aoyama@sony.com" <Wataru.Aoyama@sony.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.6.1
+Subject: Re: [PATCH] fuse: avoid unnecessary spinlock bump
+Content-Language: en-US
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     miklos@szeredi.hu, stefanha@redhat.com,
+        virtualization@lists.linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, gerry@linux.alibaba.com
+References: <20220402103250.68027-1-jefflexu@linux.alibaba.com>
+ <Yk7w8L1f/yik+qrR@redhat.com>
+ <b7a50fac-0259-e56c-0445-cca3fbf99888@linux.alibaba.com>
+ <YlAbqF4Yts8Aju+W@redhat.com>
+ <586dd7bb-4218-63da-c7db-fe8d46f43cde@linux.alibaba.com>
+ <YlAlR0xVDqQzl98w@redhat.com>
+From:   JeffleXu <jefflexu@linux.alibaba.com>
+In-Reply-To: <YlAlR0xVDqQzl98w@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-14.0 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-2022-04-08 14:09 GMT+09:00, Christoph Hellwig <hch@infradead.org>:
-> Looks good:
->
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-Thanks for your review!
 
-Hi Jens,
 
-Can I apply this patch with your Ack to exfat #dev ?
+On 4/8/22 8:06 PM, Vivek Goyal wrote:
+> On Fri, Apr 08, 2022 at 07:50:55PM +0800, JeffleXu wrote:
+>>
+>>
+>> On 4/8/22 7:25 PM, Vivek Goyal wrote:
+>>> On Fri, Apr 08, 2022 at 10:36:40AM +0800, JeffleXu wrote:
+>>>>
+>>>>
+>>>> On 4/7/22 10:10 PM, Vivek Goyal wrote:
+>>>>> On Sat, Apr 02, 2022 at 06:32:50PM +0800, Jeffle Xu wrote:
+>>>>>> Move dmap free worker kicker inside the critical region, so that extra
+>>>>>> spinlock lock/unlock could be avoided.
+>>>>>>
+>>>>>> Suggested-by: Liu Jiang <gerry@linux.alibaba.com>
+>>>>>> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
+>>>>>
+>>>>> Looks good to me. Have you done any testing to make sure nothing is
+>>>>> broken.
+>>>>
+>>>> xfstests -g quick shows no regression. The tested virtiofs is mounted
+>>>> with "dax=always".
+>>>
+>>> I think xfstests might not trigger reclaim. You probably will have to
+>>> run something like blogbench with a small dax window like 1G so that
+>>> heavy reclaim happens.
+>>
+>>
+>> Actually, I configured the DAX window to 8MB, i.e. 4 slots when running
+>> xfstests. Thus I think the reclaim path is most likely triggered.
+>>
+>>
+>>>
+>>> For fun, I sometimes used to run it with a window of just say 16 dax
+>>> ranges so that reclaim was so heavy that if there was a bug, it will
+>>> show up.
+>>>
+>>
+>> Yeah, my colleague had ever reported that a DAX window of 4KB will cause
+>> hang in our internal OS (which is 4.19, we back ported virtiofs to
+>> 4.19). But then I found that this issue doesn't exist in the latest
+>> upstream. The reason seems that in the upstream kernel,
+>> devm_memremap_pages() called in virtio_fs_setup_dax() will fail directly
+>> since the dax window (4KB) is not aligned with the sparse memory section.
+> 
+> Given our default chunk size is 2MB (FUSE_DAX_SHIFT), may be it is not
+> a bad idea to enforce some minimum cache window size. IIRC, even one
+> range is not enough. Minimum 2 are required for reclaim to not deadlock.
 
-Thanks!
+Curiously, why minimum 1 range is not adequate? In which case minimum 2
+are required?
 
->
+
+-- 
+Thanks,
+Jeffle
