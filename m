@@ -2,56 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 98E3A4FC755
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Apr 2022 00:07:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A16324FC78F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Apr 2022 00:20:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347793AbiDKWJi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Apr 2022 18:09:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51874 "EHLO
+        id S1350505AbiDKWWu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Apr 2022 18:22:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245695AbiDKWJg (ORCPT
+        with ESMTP id S1350442AbiDKWWi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Apr 2022 18:09:36 -0400
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37FF920BFF
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Apr 2022 15:07:21 -0700 (PDT)
-Received: by mail-pl1-x636.google.com with SMTP id s14so5449800plk.8
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Apr 2022 15:07:21 -0700 (PDT)
+        Mon, 11 Apr 2022 18:22:38 -0400
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0902BF77
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Apr 2022 15:20:22 -0700 (PDT)
+Received: by mail-pj1-x102b.google.com with SMTP id a16-20020a17090a6d9000b001c7d6c1bb13so733324pjk.4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Apr 2022 15:20:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=intel-com.20210112.gappssmtp.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=uGTALhbZONK07EnTqNzLb5OFo7sOJ1WnH/JS/fksxZ4=;
-        b=qW44w090em7gPbYvbMftkAX4Kvke2EP4xsZopvyQYxJet+uD2q9FrkvME10M9tUtmO
-         X0ArALnU4GOM4RpFLYtr4bx0MpBZA554kHWbufBfTUNaqHhLHDjr51XHQdOPMxkQgCXg
-         NV0mdNXOuzxeZUNmauE//Xw4ily3/UjO/MvX7UN7+CVRdmJUV6HF15N4VgrrGumDREwQ
-         mQr7NBQxJVjAKI7QuaN+TbxUCnrDwve7/GDCashxgzsy+utUcS00v8RMdQzi18ZQO+sj
-         C3gytJIJs+P+LCAmm5F7B8ZgvVAvSUSOeGPK1NcM/2jE17EGM2aXjbAO22u5NH5fWlQJ
-         NrxA==
+        bh=ilC4hsjkYuKv6ebyejb/hqupiLMdVX0htffDOmrd7F4=;
+        b=FxqMOl+LQRjm4xHV3WMTnaWUoHHNIwNG2iGvDbblMfZ8JddwTKg3ZpTCrlFkBB6rBu
+         rSWbPPe9GjWLrChgxM3IBRCmVz5THofbIx0GGXctZmol6NievamWm9zkyAkJ24Cm0K9A
+         DCtKBvlvzxZRb7YquzNbT2PdlI832d7CHnSCwf1bN5nHFuq8QnFM4JqEliGFJoIQQMbh
+         jlPIO+ne9Hb8R7Ba1ZEnAjMWmLA+Qo6v4RY8WcEEkyOVuQrUjq+FZs7b6JFMuvp4LYVK
+         7gQv7b3itG0nRglCi6Aiz7vPQL4cblVgmQ9M0dGACks264GbH5DuU0YIA9ydPmcdahOM
+         Hryw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=uGTALhbZONK07EnTqNzLb5OFo7sOJ1WnH/JS/fksxZ4=;
-        b=D1F6Q/dLAAlViiOSXM+49pwbUzMNk/+f+0JDMrN3Rnv+sEotvgMwBB8bqy7pS3hbmm
-         iNWXlt2lzZjEsWq4Rh0jWSCMAgh0ujKmcX5Qa9wCJwR1fFKuap00zgERtnQdoJxIui5G
-         jqZrju3kZr4X7tFmzovNldmZDu+0Rpymj976ZNL3lwj7egbJ/NgT9/Be/hGh9aGiWF+k
-         OEciQTFaVQcs6CZJBDpLKoz+LZVAUu8El/Oq2iEb0sr/5gAlTD5djpkOsJCBmpraahLv
-         zJR8mHeFnx/ULsxEy0Oac/Y8tGaH9kc3BJWsdQ4uJarKiDUivEKCX02q7YrWbVqJeYvs
-         cE4w==
-X-Gm-Message-State: AOAM532SwwE3n/hVAVy1hCv4pWoKdUlxy8QP/G8yw19PwTMfMiRe/qWc
-        CTR5O3U9253fSBxF24IFXwC1NFFDolzs+C6QM+KiBg==
-X-Google-Smtp-Source: ABdhPJynx2l3cB2Gnxdh26yL6kd+AAVfXhzzqC3Ft2s9qeSNSOaR3yfL83lS+0+wlt4mWc4yp2miJE+sHJq1HcNQSls=
-X-Received: by 2002:a17:902:eb92:b0:158:4cc9:698e with SMTP id
- q18-20020a170902eb9200b001584cc9698emr11070951plg.147.1649714840717; Mon, 11
- Apr 2022 15:07:20 -0700 (PDT)
+        bh=ilC4hsjkYuKv6ebyejb/hqupiLMdVX0htffDOmrd7F4=;
+        b=ksRD5msFV2uDVuQJL2wuDPM4GSqWqyRNa+rX0d8g7YeAkGBroZxK5TGovcogyRK19y
+         /Y70sO3eXIvFWAxbEvI6ZMO8moc/lMHYn0ulHbEgvTo/DLg3DXoWqlvhWkbzFICJU54G
+         E5hVoIPWgfGhG8XWHrFFKGdoSt2AZ9tDXIJAvJ7HgGG1wPoWlUXvx5kFsZ0b+D/FSMm2
+         kSRMsVF3HnerZJ/xNqIImeTHJnvliuDyipC6SXHLHfnf8nLZ0WPsp/LcuCYsJOXhYCdG
+         UJ1Vdt0gYK527XC291tuEvV5zKjkS5YfnAh4YQpW9WHkDKqmEOxH+sVqCCV3hcdNX8KB
+         WBCw==
+X-Gm-Message-State: AOAM530vW7R7WDJixB8E/Mk0cRiV3QiFkXIwcqGC6cAxmYgpsPA9UPY9
+        CAp79FV5uPV91tTdCKFFrSpeOiD6mWWkhQnlhMhcJQ==
+X-Google-Smtp-Source: ABdhPJwobl8Twz9/+FJGw8iwZ7aqkX15fxktugOjY8lPoNQzuoJOzcOfQ2MMC/mpkqomhSOO2S1HZ/lhTWtwo8KT1ZQ=
+X-Received: by 2002:a17:90a:ca:b0:1ca:5253:b625 with SMTP id
+ v10-20020a17090a00ca00b001ca5253b625mr1484772pjd.220.1649715621869; Mon, 11
+ Apr 2022 15:20:21 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220405194747.2386619-1-jane.chu@oracle.com> <20220405194747.2386619-2-jane.chu@oracle.com>
-In-Reply-To: <20220405194747.2386619-2-jane.chu@oracle.com>
+References: <20220405194747.2386619-1-jane.chu@oracle.com> <20220405194747.2386619-3-jane.chu@oracle.com>
+In-Reply-To: <20220405194747.2386619-3-jane.chu@oracle.com>
 From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 11 Apr 2022 15:07:10 -0700
-Message-ID: <CAPcyv4gr7YzrmqNhA-S8h-nRhpr8OHhUkn16c8jiL1U3ypp1wQ@mail.gmail.com>
-Subject: Re: [PATCH v7 1/6] x86/mm: fix comment
+Date:   Mon, 11 Apr 2022 15:20:10 -0700
+Message-ID: <CAPcyv4iUWLsZRV4StCzHuVUhEsOB5WURD2r_w3L+LEjoQEheog@mail.gmail.com>
+Subject: Re: [PATCH v7 2/6] x86/mce: relocate set{clear}_mce_nospec() functions
 To:     Jane Chu <jane.chu@oracle.com>
 Cc:     david <david@fromorbit.com>, "Darrick J. Wong" <djwong@kernel.org>,
         Christoph Hellwig <hch@infradead.org>,
@@ -66,46 +66,114 @@ Cc:     david <david@fromorbit.com>, "Darrick J. Wong" <djwong@kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Linux NVDIMM <nvdimm@lists.linux.dev>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>, X86 ML <x86@kernel.org>
+        linux-xfs <linux-xfs@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 5, 2022 at 12:48 PM Jane Chu <jane.chu@oracle.com> wrote:
+I notice that none of the folks from "X86 MM" are on the cc, added.
+
+On Tue, Apr 5, 2022 at 12:49 PM Jane Chu <jane.chu@oracle.com> wrote:
 >
-> There is no _set_memory_prot internal helper, while coming across
-> the code, might as well fix the comment.
-
-Looks good,
-
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-
+> Relocate the twin mce functions to arch/x86/mm/pat/set_memory.c
+> file where they belong.
 >
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
 > Signed-off-by: Jane Chu <jane.chu@oracle.com>
 > ---
->  arch/x86/mm/pat/set_memory.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  arch/x86/include/asm/set_memory.h | 52 -------------------------------
+>  arch/x86/mm/pat/set_memory.c      | 47 ++++++++++++++++++++++++++++
+>  include/linux/set_memory.h        |  9 +++---
+>  3 files changed, 52 insertions(+), 56 deletions(-)
 >
+> diff --git a/arch/x86/include/asm/set_memory.h b/arch/x86/include/asm/set_memory.h
+> index 78ca53512486..b45c4d27fd46 100644
+> --- a/arch/x86/include/asm/set_memory.h
+> +++ b/arch/x86/include/asm/set_memory.h
+> @@ -86,56 +86,4 @@ bool kernel_page_present(struct page *page);
+>
+>  extern int kernel_set_to_readonly;
+>
+> -#ifdef CONFIG_X86_64
+> -/*
+> - * Prevent speculative access to the page by either unmapping
+> - * it (if we do not require access to any part of the page) or
+> - * marking it uncacheable (if we want to try to retrieve data
+> - * from non-poisoned lines in the page).
+> - */
+> -static inline int set_mce_nospec(unsigned long pfn, bool unmap)
+> -{
+> -       unsigned long decoy_addr;
+> -       int rc;
+> -
+> -       /* SGX pages are not in the 1:1 map */
+> -       if (arch_is_platform_page(pfn << PAGE_SHIFT))
+> -               return 0;
+> -       /*
+> -        * We would like to just call:
+> -        *      set_memory_XX((unsigned long)pfn_to_kaddr(pfn), 1);
+> -        * but doing that would radically increase the odds of a
+> -        * speculative access to the poison page because we'd have
+> -        * the virtual address of the kernel 1:1 mapping sitting
+> -        * around in registers.
+> -        * Instead we get tricky.  We create a non-canonical address
+> -        * that looks just like the one we want, but has bit 63 flipped.
+> -        * This relies on set_memory_XX() properly sanitizing any __pa()
+> -        * results with __PHYSICAL_MASK or PTE_PFN_MASK.
+> -        */
+> -       decoy_addr = (pfn << PAGE_SHIFT) + (PAGE_OFFSET ^ BIT(63));
+> -
+> -       if (unmap)
+> -               rc = set_memory_np(decoy_addr, 1);
+> -       else
+> -               rc = set_memory_uc(decoy_addr, 1);
+> -       if (rc)
+> -               pr_warn("Could not invalidate pfn=0x%lx from 1:1 map\n", pfn);
+> -       return rc;
+> -}
+> -#define set_mce_nospec set_mce_nospec
+> -
+> -/* Restore full speculative operation to the pfn. */
+> -static inline int clear_mce_nospec(unsigned long pfn)
+> -{
+> -       return set_memory_wb((unsigned long) pfn_to_kaddr(pfn), 1);
+> -}
+> -#define clear_mce_nospec clear_mce_nospec
+> -#else
+> -/*
+> - * Few people would run a 32-bit kernel on a machine that supports
+> - * recoverable errors because they have too much memory to boot 32-bit.
+> - */
+> -#endif
+> -
+>  #endif /* _ASM_X86_SET_MEMORY_H */
 > diff --git a/arch/x86/mm/pat/set_memory.c b/arch/x86/mm/pat/set_memory.c
-> index abf5ed76e4b7..38af155aaba9 100644
+> index 38af155aaba9..93dde949f224 100644
 > --- a/arch/x86/mm/pat/set_memory.c
 > +++ b/arch/x86/mm/pat/set_memory.c
-> @@ -1816,7 +1816,7 @@ static inline int cpa_clear_pages_array(struct page **pages, int numpages,
+> @@ -1925,6 +1925,53 @@ int set_memory_wb(unsigned long addr, int numpages)
 >  }
+>  EXPORT_SYMBOL(set_memory_wb);
 >
->  /*
-> - * _set_memory_prot is an internal helper for callers that have been passed
-> + * __set_memory_prot is an internal helper for callers that have been passed
->   * a pgprot_t value from upper layers and a reservation has already been taken.
->   * If you want to set the pgprot to a specific page protocol, use the
->   * set_memory_xx() functions.
-> --
-> 2.18.4
->
+> +#ifdef CONFIG_X86_64
+
+It seems like the only X86_64 dependency in this routine is the
+address bit 63 usage, so how about:
+
+if (!IS_ENABLED(CONFIG_64BIT))
+    return 0;
+
+...and drop the ifdef?
+
+Other than that you can add:
+
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
