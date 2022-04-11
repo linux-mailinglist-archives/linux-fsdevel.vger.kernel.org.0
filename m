@@ -2,103 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CFB2E4FC35A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Apr 2022 19:29:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5347A4FC38F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Apr 2022 19:38:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348931AbiDKRcD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Apr 2022 13:32:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46360 "EHLO
+        id S243215AbiDKRkP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Apr 2022 13:40:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348928AbiDKRb4 (ORCPT
+        with ESMTP id S231695AbiDKRkP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Apr 2022 13:31:56 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28931BE3F;
-        Mon, 11 Apr 2022 10:29:42 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id CB2971F38D;
-        Mon, 11 Apr 2022 17:29:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1649698180;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=y9/RDfYGC6K6KRC0KdrprIVWfIX/zpdTiz9ROrz551U=;
-        b=I9nwx9hrwiLBwY8Cn2rQGBPnpBriJmDMs1b8oNISqOpk754k7ib2Xve0iYAZqqPcSD2SgP
-        oZEA90HfyQ7ya+rehSXEh9k5AQbwstldp6HDVnl/WGBpQS17mVXtCGXXbsCypPUDUyaMdU
-        y+Peaf55gboQyV27R4kCRTuYgY7wFX4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1649698180;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=y9/RDfYGC6K6KRC0KdrprIVWfIX/zpdTiz9ROrz551U=;
-        b=AzkdKu96rYkAsjhpJavWNTiZGL3Agdt16W1llO8/BhnjKgsTeGvgPw66Q+CklEVPEpPHBk
-        JsD+WnrQfAy3whCQ==
-Received: from ds.suse.cz (ds.suse.cz [10.100.12.205])
-        by relay2.suse.de (Postfix) with ESMTP id B0827A3B87;
-        Mon, 11 Apr 2022 17:29:40 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 47973DA7F7; Mon, 11 Apr 2022 19:25:36 +0200 (CEST)
-Date:   Mon, 11 Apr 2022 19:25:36 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, dm-devel@redhat.com,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-block@vger.kernel.org,
-        drbd-dev@lists.linbit.com, nbd@other.debian.org,
-        ceph-devel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
-        linux-raid@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org,
-        linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
-        target-devel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        cluster-devel@redhat.com, jfs-discussion@lists.sourceforge.net,
-        linux-nilfs@vger.kernel.org, ntfs3@lists.linux.dev,
-        ocfs2-devel@oss.oracle.com, linux-mm@kvack.org,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Christoph =?iso-8859-1?Q?B=F6hmwalder?= 
-        <christoph.boehmwalder@linbit.com>,
-        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-        David Sterba <dsterba@suse.com>
-Subject: Re: [PATCH 25/27] block: add a bdev_discard_granularity helper
-Message-ID: <20220411172536.GV15609@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Christoph Hellwig <hch@lst.de>,
-        Jens Axboe <axboe@kernel.dk>, dm-devel@redhat.com,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-block@vger.kernel.org,
-        drbd-dev@lists.linbit.com, nbd@other.debian.org,
-        ceph-devel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        xen-devel@lists.xenproject.org, linux-bcache@vger.kernel.org,
-        linux-raid@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org,
-        linux-s390@vger.kernel.org, linux-scsi@vger.kernel.org,
-        target-devel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        cluster-devel@redhat.com, jfs-discussion@lists.sourceforge.net,
-        linux-nilfs@vger.kernel.org, ntfs3@lists.linux.dev,
-        ocfs2-devel@oss.oracle.com, linux-mm@kvack.org,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Christoph =?iso-8859-1?Q?B=F6hmwalder?= <christoph.boehmwalder@linbit.com>,
-        Ryusuke Konishi <konishi.ryusuke@gmail.com>,
-        David Sterba <dsterba@suse.com>
-References: <20220409045043.23593-1-hch@lst.de>
- <20220409045043.23593-26-hch@lst.de>
+        Mon, 11 Apr 2022 13:40:15 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBAA521834;
+        Mon, 11 Apr 2022 10:37:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=bMrJHV/z+bX/cuAH7pcyQOkcKK7bzLU7VyTOOCpZyb4=; b=erkRbNGLY+gX7G3uPm3SG0mTx3
+        Jdx7PliLE1m6zK4NNVitRkQJ6unZgko9E1n00r2oC94gRsCHlLsiGCswwo30LyKn8N3eyiV0eHzGK
+        KVQo5nx4BpZwhqUwnIow2CDwbB9TMMWDq5CJBWafSeNZYkXctNhJmdLRMiPKfS0wr8sH/Y3MkvOCu
+        I6C7teJwx6u095ud9PIjrshxJo1aZWTwEIXb+0lfYBvYJZsVtn4juZ7I/t1Dy8HbVWfv5MuWCO5fF
+        Uu/6C3J3litqwbHDD4o+p6RHN5Igw3cMd9w3oAoQfGeia3NmBkehIjhXciZ3tFpmt7WX/oWeThaxq
+        N/Ln3s2A==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1ndxyI-00CX12-Kx; Mon, 11 Apr 2022 17:37:02 +0000
+Date:   Mon, 11 Apr 2022 18:37:02 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Khalid Aziz <khalid.aziz@oracle.com>
+Cc:     akpm@linux-foundation.org, aneesh.kumar@linux.ibm.com,
+        arnd@arndb.de, 21cnbao@gmail.com, corbet@lwn.net,
+        dave.hansen@linux.intel.com, david@redhat.com,
+        ebiederm@xmission.com, hagen@jauu.net, jack@suse.cz,
+        keescook@chromium.org, kirill@shutemov.name, kucharsk@gmail.com,
+        linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        longpeng2@huawei.com, luto@kernel.org, markhemm@googlemail.com,
+        pcc@google.com, rppt@kernel.org, sieberf@amazon.com,
+        sjpark@amazon.de, surenb@google.com, tst@schoebel-theuer.de,
+        yzaikin@google.com
+Subject: Re: [PATCH v1 00/14] Add support for shared PTEs across processes
+Message-ID: <YlRnPstOywJzxUib@casper.infradead.org>
+References: <cover.1649370874.git.khalid.aziz@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20220409045043.23593-26-hch@lst.de>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+In-Reply-To: <cover.1649370874.git.khalid.aziz@oracle.com>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -106,15 +58,64 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Apr 09, 2022 at 06:50:41AM +0200, Christoph Hellwig wrote:
-> Abstract away implementation details from file systems by providing a
-> block_device based helper to retrieve the discard granularity.
+On Mon, Apr 11, 2022 at 10:05:44AM -0600, Khalid Aziz wrote:
+> Page tables in kernel consume some of the memory and as long as number
+> of mappings being maintained is small enough, this space consumed by
+> page tables is not objectionable. When very few memory pages are
+> shared between processes, the number of page table entries (PTEs) to
+> maintain is mostly constrained by the number of pages of memory on the
+> system. As the number of shared pages and the number of times pages
+> are shared goes up, amount of memory consumed by page tables starts to
+> become significant.
+
+All of this is true.  However, I've found a lot of people don't see this
+as compelling.  I've had more success explaining this from a different
+direction:
+
+--- 8< ---
+
+Linux supports processes which share all of their address space (threads)
+and processes that share none of their address space (tasks).  We propose
+a useful intermediate model where two or more cooperating processes
+can choose to share portions of their address space with each other.
+The shared portion is referred to by a file descriptor which processes
+can choose to attach to their own address space.
+
+Modifications to the shared region affect all processes sharing
+that region, just as changes by one thread affect all threads in a
+multithreaded program.  This implies a certain level of trust between
+the different processes (ie malicious processes should not be allowed
+access to the mshared region).
+
+--- 8< ---
+
+Another argument that MM developers find compelling is that we can reduce
+some of the complexity in hugetlbfs where it has the ability to share
+page tables between processes.
+
+One objection that was raised is that the mechanism for starting the
+shared region is a bit clunky.  Did you investigate the proposed approach
+of creating an empty address space, attaching to it and using an fd-based
+mmap to modify its contents?
+
+> int mshare_unlink(char *name)
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
-> Acked-by: Christoph Böhmwalder <christoph.boehmwalder@linbit.com> [btrfs]
+> A shared address range created by mshare() can be destroyed using
+> mshare_unlink() which removes the  shared named object. Once all
+> processes have unmapped the shared object, the shared address range
+> references are de-allocated and destroyed.
+> 
+> mshare_unlink() returns 0 on success or -1 on error.
 
-This ^^^^ is for drbd
+Can you explain why this is a syscall instead of being a library
+function which does
 
-> Acked-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-> Acked-by: David Sterba <dsterba@suse.com> [btrfs]
+	int dirfd = open("/sys/fs/mshare");
+	err = unlinkat(dirfd, name, 0);
+	close(dirfd);
+	return err;
+
+Does msharefs support creating directories, so that we can use file
+permissions to limit who can see the sharable files?  Or is it strictly
+a single-level-deep hierarchy?
+
