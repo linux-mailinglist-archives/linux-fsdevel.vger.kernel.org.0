@@ -2,58 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 28BC94FC0C2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Apr 2022 17:32:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D3634FC0D2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Apr 2022 17:33:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347839AbiDKPeR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Apr 2022 11:34:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41944 "EHLO
+        id S1347852AbiDKPfU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Apr 2022 11:35:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47060 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348183AbiDKPdS (ORCPT
+        with ESMTP id S1347970AbiDKPfS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Apr 2022 11:33:18 -0400
-Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A64F333EAE
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Apr 2022 08:31:03 -0700 (PDT)
-Received: by mail-lf1-x134.google.com with SMTP id bq30so14551676lfb.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Apr 2022 08:31:03 -0700 (PDT)
+        Mon, 11 Apr 2022 11:35:18 -0400
+Received: from mail-lj1-x232.google.com (mail-lj1-x232.google.com [IPv6:2a00:1450:4864:20::232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C66BD36B45
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Apr 2022 08:33:03 -0700 (PDT)
+Received: by mail-lj1-x232.google.com with SMTP id m8so3142081ljc.7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Apr 2022 08:33:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=shutemov-name.20210112.gappssmtp.com; s=20210112;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=xjS2P4qPRuklgAWHvx4nddXDONB01ig+sjZdob2rUZw=;
-        b=FV3bsbjWahU5dJ0sji7/IJLbsnx56//V4Rko+5Sg47dXy4c+ztKWDHA1RNVD7WvPgr
-         yK/qGVOHKnh25F0KE05KBV9H1r9OI30310p5PG2PDV1Va+D7E+zBPyJQ3GLPd+ArztSz
-         lrPNi8EiBdyRuWMQK80WfVgqDFmgS3k2Y9eK88CTC7O93hqJ35i8F5cEA6skMGujcbeA
-         8BD+pN6zgnu4xfwTVNBKJBt2m4qBDjJnaxI/fb85Yf6i+HshEOjYKqNAq3V5w99m67cG
-         eL4nyyZ+vUt0LJJW9FtrCg8OMzKVImZqDlCviEztwjVLYF/N6A1zGFbLaP9VZXnGa6f8
-         0s/g==
+        bh=xnPakWPy2yT3pIDHfh65ar6g/dls1kfh8Fm485ETQ5M=;
+        b=dQKM0d07whgvlC9oDhJtSUhDkTW4MoFSVg0vfgfBTGbnyj/vLpwIRlpTJbwhAy5wXy
+         t4NvGLtrVnALpqzfCg7AJJXugL5G+gxtpmDu4P3kfUwP/PxlbMFsvAkSX6LdhPrmqMXT
+         qiLuU+fH5rX1P4bRYOwwYVvuKX3ABpSSlgtg6Az3/bkGGCuw7OQsN/ELNNrrh8dksm+L
+         jdUaWuAeAK2VUjv+c+38AFbQNMQ+BBRMEFHjUicyzn/UUqkyKZ+8hd7a357wBJLh/+Ai
+         HUBjhhdQSdLifDKyLGXJgEw/B/MdcmTILkWCG50hI08mI+XNVGIswEXj19aZoHfNzVBJ
+         crnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=xjS2P4qPRuklgAWHvx4nddXDONB01ig+sjZdob2rUZw=;
-        b=Dwz19vWhVOd3/MpmFdorHEg7I+DX1epHQHqoRUmUgEKMIdd99q0iA9dhPUTK8MntMN
-         NtwU+qALUPawBvNyN4c/3aSM4c5YvufaOngzE+g1Y6N0u4S3mNHGK7wpY3D+wAPVnAol
-         fKfSajR6mBJVqEiUiDWF6w1qboodeBfhrD0LRZy2iUubN0PHGU82/4VxxjyiMTvOBcWO
-         eS6IJMKdsPaW1RXyLP5usCW/Uz71ekUXmbfhLwPS4kXIj3fiH0WQ8m2zh/XUgoogV8zN
-         lhYsoesBW2h7USU1AvkTcEZjY+BsTT5ZMC/usx3hP0BOMNu7iLyd3wnfjDpDLMfrEnpa
-         YDIA==
-X-Gm-Message-State: AOAM533nw3yNO6UVx8dXttpfcJd3Tt5V1safZsa4mZGrhi0rJbzQD9my
-        eTydEMvKtOTpw61naZM7gpa9VQ==
-X-Google-Smtp-Source: ABdhPJyyKel4+BxKnE8zItkwufzaPuu1o/Qdf3y9wLaeW/pMks9H6z/sxphXdamwlvCAG9JGwj2NPg==
-X-Received: by 2002:a19:674c:0:b0:448:3f49:e6d5 with SMTP id e12-20020a19674c000000b004483f49e6d5mr22543031lfj.518.1649691061797;
-        Mon, 11 Apr 2022 08:31:01 -0700 (PDT)
+        bh=xnPakWPy2yT3pIDHfh65ar6g/dls1kfh8Fm485ETQ5M=;
+        b=jfZkJ/aBB5V1HSf4wQSOjbwSfRj35pHFG3Y8KVwhKP5fRK22+Y8LCbGcanLOjGmIdH
+         +3P5D2skriE2ifCG1claDjZ3AxErz4SGR6o2FXji6HgC/EpABJ3CtD8jIcxZ7eNmmegF
+         iVYPycVEi0Epg21kI7lw0BGpsIQyNXkptKaxz6IHjU/uJhnEZ+7bn9jmGdjig2sD7aTr
+         7+xrOzbpiitk5iLbGsreq4h6J5IL2k2O/DknD3CTxlW8q54oZfwzBlPeub8E68spvKac
+         gi4HMMdhX6Ml4TER09RuflmCKWy4gY91JSZUGHYVTIZnbyUW8aZO+aSKq/f47iMmZlUL
+         j/fw==
+X-Gm-Message-State: AOAM530N6o6+BTOOd5Rmh4hTtnA79l5N0cpy60BizAMv0Gg+0X0b/kAu
+        qxdS68XY9frsEIm3+qgsk80dBw==
+X-Google-Smtp-Source: ABdhPJznGRs4U58z6UmE7zKZGIORoorFbfftosrGPlCNHfF3AfxicsXpipbZkrEfC0QnRLsaSTmPLw==
+X-Received: by 2002:a2e:3a02:0:b0:24b:6120:1be4 with SMTP id h2-20020a2e3a02000000b0024b61201be4mr4554362lja.451.1649691181857;
+        Mon, 11 Apr 2022 08:33:01 -0700 (PDT)
 Received: from box.localdomain ([86.57.175.117])
-        by smtp.gmail.com with ESMTPSA id j4-20020a05651231c400b0044ac20061ecsm3351801lfe.128.2022.04.11.08.31.00
+        by smtp.gmail.com with ESMTPSA id c25-20020a2e6819000000b00247de61d3fdsm3162062lja.113.2022.04.11.08.33.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Apr 2022 08:31:01 -0700 (PDT)
+        Mon, 11 Apr 2022 08:33:01 -0700 (PDT)
 Received: by box.localdomain (Postfix, from userid 1000)
-        id BF102103CE0; Mon, 11 Apr 2022 18:32:33 +0300 (+03)
-Date:   Mon, 11 Apr 2022 18:32:33 +0300
+        id E5DD4103CE0; Mon, 11 Apr 2022 18:34:33 +0300 (+03)
+Date:   Mon, 11 Apr 2022 18:34:33 +0300
 From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
+To:     Chao Peng <chao.p.peng@linux.intel.com>
+Cc:     Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
         qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
@@ -80,31 +80,40 @@ Cc:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
         ak@linux.intel.com, david@redhat.com
 Subject: Re: [PATCH v5 04/13] mm/shmem: Restrict MFD_INACCESSIBLE memory
  against RLIMIT_MEMLOCK
-Message-ID: <20220411153233.54ljmi7zgqovhgsn@box.shutemov.name>
+Message-ID: <20220411153433.6sqqqd6vzhyfjee6@box.shutemov.name>
 References: <20220310140911.50924-1-chao.p.peng@linux.intel.com>
  <20220310140911.50924-5-chao.p.peng@linux.intel.com>
  <Yk8L0CwKpTrv3Rg3@google.com>
+ <20220408130254.GB57095@chaop.bj.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Yk8L0CwKpTrv3Rg3@google.com>
+In-Reply-To: <20220408130254.GB57095@chaop.bj.intel.com>
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 07, 2022 at 04:05:36PM +0000, Sean Christopherson wrote:
-> Hmm, shmem_writepage() already handles SHM_F_INACCESSIBLE by rejecting the swap, so
-> maybe it's just the page migration path that needs to be updated?
+On Fri, Apr 08, 2022 at 09:02:54PM +0800, Chao Peng wrote:
+> > I think the correct approach is to not do the locking automatically for SHM_F_INACCESSIBLE,
+> > and instead require userspace to do shmctl(.., SHM_LOCK, ...) if userspace knows the
+> > consumers don't support migrate/swap.  That'd require wrapping migrate_page() and then
+> > wiring up notifier hooks for migrate/swap, but IMO that's a good thing to get sorted
+> > out sooner than later.  KVM isn't planning on support migrate/swap for TDX or SNP,
+> > but supporting at least migrate for a software-only implementation a la pKVM should
+> > be relatively straightforward.  On the notifiee side, KVM can terminate the VM if it
+> > gets an unexpected migrate/swap, e.g. so that TDX/SEV VMs don't die later with
+> > exceptions and/or data corruption (pre-SNP SEV guests) in the guest.
+> 
+> SHM_LOCK sounds like a good match.
 
-My early version prevented migration with -ENOTSUPP for
-address_space_operations::migratepage().
-
-What's wrong with that approach?
+Emm, no. shmctl(2) and SHM_LOCK are SysV IPC thing. I don't see how they
+fit here.
 
 -- 
  Kirill A. Shutemov
