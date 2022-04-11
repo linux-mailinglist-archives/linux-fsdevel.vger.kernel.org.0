@@ -2,117 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 293C94FBCC9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Apr 2022 15:08:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3532A4FBCEC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Apr 2022 15:20:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346358AbiDKNKT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Apr 2022 09:10:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48824 "EHLO
+        id S1346421AbiDKNWd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Apr 2022 09:22:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49194 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233939AbiDKNKS (ORCPT
+        with ESMTP id S1346435AbiDKNW2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Apr 2022 09:10:18 -0400
-Received: from mail-qv1-xf31.google.com (mail-qv1-xf31.google.com [IPv6:2607:f8b0:4864:20::f31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B95F2AE26
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Apr 2022 06:08:04 -0700 (PDT)
-Received: by mail-qv1-xf31.google.com with SMTP id c1so3709270qvl.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Apr 2022 06:08:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=z1NVtOyODcRgWvF6Zrh3KPe0Rk4GIJmlyj/e/JaJSSs=;
-        b=Q//JY3G/W3FwfFvJvkG69JkBzgu2d9QtUqQZz9XmHYYi8EgI4riacE7+8H7JOQn+5U
-         I849wmtiCjLtXIgarR/V5CqVk4YinCcgHmvUvlo2obgLpJo4QW/JJBhlVXrGDvTmxtPE
-         0qUY2v2ZY78ey+C4DeMGKBAUgc4RhfCXegO4sYYAKD1cJH4vOXSz+80jwXLSipoo2K5x
-         ng7+LaG+WhfGnK8YXJDHe8z1doAURJyU6pDuI/M3J7AFlz/F+mzAWm/8G0zG4BrRWZMj
-         9ZSXDD4xu9j9Fa2lyyZxiu/Ph5qrSr9UHr+mzKsGME4ELj57sWZFys+ntPm1k/dfolg8
-         t7yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=z1NVtOyODcRgWvF6Zrh3KPe0Rk4GIJmlyj/e/JaJSSs=;
-        b=VNfAShoH0Oa56z/3Y8FdOwEy/tS3u26ORVHH2/js+WHV1a2V1JqX9EOTQ/e228rjJY
-         mthOQwaAq6JIXsaFtDQSqaPtM7bYMWAg7KILTXNRXzHpLrCQ7jAj2rMrcCPM8u8/US6z
-         9VK/8YS1xNlprwNog0zTN8pASz5LbZegACA7pGmv9mN3S4vBVvtWdrKJMf3BOplYxGRs
-         fnCO6TNV44zlDbnVfwK14je7h/4Wh9FMSyCzlBwo6MgTC51gzi5RE+lg4mrgwnXcA0th
-         tbWVGCJiLx3TnuUM9DvhVa2r4qp1miQLk1naEJGyY+VZPeztSatDKdtjCkn5wSiktgoM
-         9dEg==
-X-Gm-Message-State: AOAM530y/rlfViyr5xsBelPjmpYFR39aoT0ELLOVefEJ2YJmGeE8hcOU
-        KGpkcBScd9nVkLwREZ/YBzLwN1AG9QqoimkAd/jRRNKLiQo=
-X-Google-Smtp-Source: ABdhPJxHXoaHrUJi80ssC0DoWTgBCtU0ojK65s+u3aygW3XF9Ns0I3siI9KcnOXxgotBzTdAYxsik3dV13g8RdwUzu8=
-X-Received: by 2002:a05:6214:2607:b0:444:3e1c:9491 with SMTP id
- gu7-20020a056214260700b004443e1c9491mr5899101qvb.12.1649682483664; Mon, 11
- Apr 2022 06:08:03 -0700 (PDT)
+        Mon, 11 Apr 2022 09:22:28 -0400
+Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 254AC3B555
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Apr 2022 06:20:11 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id E73835C01A9;
+        Mon, 11 Apr 2022 09:20:07 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Mon, 11 Apr 2022 09:20:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+        cc:cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to; s=fm3; t=1649683207; x=
+        1649769607; bh=Qcaue8cMMg5PtbNIB1AEaDX2BQHoo99wOpa/dWyMmuk=; b=V
+        jx56gmn4tUzq5HZkMgEKlML/C9gLHscBCJSU+1hu/V1iFfyyeErCNclAgR6pOA2u
+        OvZU6BlY54CsuboXRkogbJd2osy5uVv62CW5NiPNqquzloMvRJq7N3hlLg9t5rWg
+        UI2ubsWSWrddUjn1FHm61cEvKyEAm5/vW8TmeJlwOu8P3xlD6hDylofE4e4bs2e9
+        MhMRpYCNkRJ6s4Y4QJe8M5xcJl2zBCx2nkIvmXGUmPnaoHhTL03XUK8NNyK3B2y1
+        MgHN55zB83/JdLkWxG5XYdiT5b3gidL3HaTBNiIwClLSY83G818ufKXAFx41A7UL
+        q87kVYY9rANSQ+EEGh4+g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; t=1649683207; x=1649769607; bh=Qcaue8cMMg5Pt
+        bNIB1AEaDX2BQHoo99wOpa/dWyMmuk=; b=B6I7QkhrRfYa9ZKlFF9UnVKDyR4ue
+        3Q0OBmSxL6EVwwwCZ507Tb6t5RskqLUimEFOSOQjnrAcAkUCIfuthmZr0RCAApEK
+        jPvjrk9j4eMUrT/GzGR1ph8Ura3KyPvd8mxatZPAADRpjmkgbfz1R8NUaXSydqJW
+        Wo3Gj+WkqR2yZNzJb2IT6QkKfuAY9bequ/UeLrCG96naf8k6hBVcsTVmKRnFlBrD
+        dloJZ50Rd/sipzaYMWpLvPC6P4l1mrHpGheMvfWLqfAoEezwTiavUZhLB0+XO1Dz
+        mYgCVChEHNXTYzaIR2dHY9mdmSDv0B82V4DAPTHiXieXWe2cVzoEAdACQ==
+X-ME-Sender: <xms:BytUYiLFWyyP0XqFfg7CzbMJSsuPdznaZgTrbYJO9L8McHfH0-HRVw>
+    <xme:BytUYqKXfdVnLHQceLjJVhJ18P2G4AFY5W0yxMkvVIcGa9DgOaQ9axPGOG6fWgxuR
+    ihXN8UbVFvKds42>
+X-ME-Received: <xmr:BytUYit0bflxjNVZms1HdotzvN0QeFZ3rMdw1Y1edEmBuB0T_0wJ5H1XPLBWj1_CnvOLyohWXNoo6QvDisI4cItJeWH1Og5aIBFqUqeuTORRpHNLECpR>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrudekiedgieefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkfffgggfuffvfhfhjggtgfesthejredttdefjeenucfhrhhomhepuegvrhhn
+    ugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilh
+    drfhhmqeenucggtffrrghtthgvrhhnpeegffdutdegiefgteelleeggeeuueduteefiedu
+    vedvueefieejledvjeeuhfefgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrihhlrdhf
+    mh
+X-ME-Proxy: <xmx:BytUYnaEgDDFCQ16IYPQwwbtGiCTbDNLnmU2TIvlZT_Ni4RUEXA0ow>
+    <xmx:BytUYpYuxsp3Ln-9PWSFqkMYp9pqbSKL7bh9IbvGtIJRaJWqbr2p5w>
+    <xmx:BytUYjA2a-v-Rv6E1_1qtLjXXLhOS59PxAn3nfSarGa9gqqCf2rVbQ>
+    <xmx:BytUYuO2rLl3awyKuBnc-uUb75-ifhxG9vqGXLQrWumpvZdt9gmjsQ>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 11 Apr 2022 09:20:06 -0400 (EDT)
+Message-ID: <afc2f1ec-8aff-35fa-5fde-75852db7b4a8@fastmail.fm>
+Date:   Mon, 11 Apr 2022 15:20:05 +0200
 MIME-Version: 1.0
-References: <20220329074904.2980320-1-amir73il@gmail.com> <20220329074904.2980320-15-amir73il@gmail.com>
- <20220411125353.o2psnjccrqwcmhuw@quack3.lan>
-In-Reply-To: <20220411125353.o2psnjccrqwcmhuw@quack3.lan>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 11 Apr 2022 16:07:52 +0300
-Message-ID: <CAOQ4uxgk2rA6i+a3dopnrpj-gBmfBZ-j8DDPNAvoU1=oTocFKw@mail.gmail.com>
-Subject: Re: [PATCH v2 14/16] fanotify: add FAN_IOC_SET_MARK_PAGE_ORDER ioctl
- for testing
-To:     Jan Kara <jack@suse.cz>
-Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH] fuse: avoid unnecessary spinlock bump
+Content-Language: en-US
+To:     JeffleXu <jefflexu@linux.alibaba.com>,
+        Vivek Goyal <vgoyal@redhat.com>
+Cc:     miklos@szeredi.hu, stefanha@redhat.com,
+        virtualization@lists.linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, gerry@linux.alibaba.com,
+        Dharmendra Singh <dsingh@ddn.com>
+References: <20220402103250.68027-1-jefflexu@linux.alibaba.com>
+ <Yk7w8L1f/yik+qrR@redhat.com>
+ <b7a50fac-0259-e56c-0445-cca3fbf99888@linux.alibaba.com>
+ <YlAbqF4Yts8Aju+W@redhat.com>
+ <586dd7bb-4218-63da-c7db-fe8d46f43cde@linux.alibaba.com>
+ <YlAlR0xVDqQzl98w@redhat.com>
+ <d5c1b2bc-78d1-c6f8-0fb0-512a702b6e3b@linux.alibaba.com>
+ <YlQWkGl1YQ+ioDas@redhat.com>
+ <3f6a9a7a-90e3-e9fd-b985-3e067513ecea@linux.alibaba.com>
+From:   Bernd Schubert <bernd.schubert@fastmail.fm>
+In-Reply-To: <3f6a9a7a-90e3-e9fd-b985-3e067513ecea@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 11, 2022 at 3:53 PM Jan Kara <jack@suse.cz> wrote:
->
-> On Tue 29-03-22 10:49:02, Amir Goldstein wrote:
-> > The ioctl can be used to request allocation of marks with large size
-> > and attach them to an object, even if another mark already exists for
-> > the group on the marked object.
-> >
-> > These large marks serve no function other than testing direct reclaim
-> > in the context of mark allocation.
-> >
-> > Setting the value to 0 restores normal mark allocation.
-> >
-> > FAN_MARK_REMOVE refers to the first mark of the group on an object, so
-> > the number of FAN_MARK_REMOVE calls need to match the number of large
-> > marks on the object in order to remove all marks from the object or use
-> > FAN_MARK_FLUSH to remove all marks of that object type.
-> >
-> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
->
-> I understand this is useful as a debugging patch but I'm not sure we want
-> this permanently in the kernel. I'm wondering if generally more useful
-> approach would not be to improve error injection for page allocations to
-> allow easier stressing of direct reclaim...
 
-I think you are probably right, but I had to stay within time budget
-to create a reproducer and it took me a lot of time even with this hack
-so I don't see myself investing more time on a reproducer with improved
-error injections.
 
-So for me, it is an adequate solution to carry this patch out-of-tree
-along with a matching out-of tree patch for LTP test:
+On 4/11/22 13:54, JeffleXu wrote:
+> 
+> 
+> On 4/11/22 7:52 PM, Vivek Goyal wrote:
+>> On Mon, Apr 11, 2022 at 10:10:23AM +0800, JeffleXu wrote:
+>>>
+>>>
+>>> On 4/8/22 8:06 PM, Vivek Goyal wrote:
+>>> Curiously, why minimum 1 range is not adequate? In which case minimum 2
+>>> are required?
+>>
+>> Frankly speaking, right now I don't remember. I have vague memories
+>> of concluding in the past that 1 range is not sufficient. But if you
+>> like dive deeper, and try with one range and see if you can introduce
+>> deadlock.
+>>
+> 
+> Alright, thanks.
+> 
 
-https://github.com/amir73il/ltp/commit/383db59959c44bb27dbec81e74d1d9caba45b0f2
 
-For the community, we could rely on lockdep reports users now that
-we sorted out the lockdep annotations.
+Out of interest, how are you testing this at all? A patch from 
+Dharmendra had been merged last week into libfuse to let it know about 
+flags2, as we need that for our patches. But we didn't update the FLAGS 
+yet to add in DAX on the libfuse side.
 
-BTW, before resorting to this ioctl I also started going down the path of
-running the test inside a restricted memcg, only to figure out that it
-is the inodes
-that need to be evicted not the marks and inodes are not accounted to memcg.
-I think there may have been some work in the direction of somehow accounting
-inode cache to memcg, but not sure where this stands.
+Is this used by virtio fs? Or is there another libfuse out there that 
+should know about these flags (I think glusterfs has its own, but 
+probably not using dax?).
 
-I am open for other suggestions.
+Also, testing is always good, although I don't see how Jeffs patch would 
+be able break anything here.
+
+
 
 Thanks,
-Amir.
+Bernd
