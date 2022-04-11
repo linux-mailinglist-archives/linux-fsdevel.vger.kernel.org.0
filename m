@@ -2,122 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F1E84FB6AA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Apr 2022 11:00:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A24A24FB7DA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Apr 2022 11:41:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344016AbiDKJCY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Apr 2022 05:02:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45342 "EHLO
+        id S1344599AbiDKJlu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Apr 2022 05:41:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237360AbiDKJCV (ORCPT
+        with ESMTP id S237470AbiDKJls (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Apr 2022 05:02:21 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 567BA286C8;
-        Mon, 11 Apr 2022 02:00:08 -0700 (PDT)
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 23B8Bcn7031098;
-        Mon, 11 Apr 2022 08:59:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
- subject : message-id : references : mime-version : content-type :
- in-reply-to; s=pp1; bh=DjsrJjeJ8PHIWKaYX2vmwZHvDlbQvCEm9gFHkKk8TzU=;
- b=Tj8DOsKzr7OcwPkmDy/gVtIhuFcMwLPimdeKWYf+GM+d8Sn13yMb37ydeDGO5CxwazXH
- TuFIRzDcF+bp801ir3l4wtbk3TsWt6W6EdqWFmkz2OyYx6dl8B1iST+avN1aZXvlkfEG
- hG3yKrnrNq1yAtkKNuABQL5OxXSSc4uOC6jJeEgiVONocoQ9cyeoU7ujbrMszoXflTNK
- o+SxrOg5po5lzt4eAF9c4VzJBFUtvCM7ujXAoQGYBOhxCxwQDrJyYo6QiP5ZFZLgddZH
- tQxibRM47OOONHtajRZZ3Cu4HjAaEoUlH4gVHge/FMqEd2WnbBV1Zz0OVF+EyhxYFLqk vA== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3fcgknruya-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 11 Apr 2022 08:59:46 +0000
-Received: from m0098404.ppops.net (m0098404.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.43/8.16.0.43) with SMTP id 23B8xkxr007655;
-        Mon, 11 Apr 2022 08:59:46 GMT
-Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3fcgknruxr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 11 Apr 2022 08:59:46 +0000
-Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
-        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 23B8vW1r012240;
-        Mon, 11 Apr 2022 08:59:44 GMT
-Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
-        by ppma06ams.nl.ibm.com with ESMTP id 3fb1dj2sen-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 11 Apr 2022 08:59:43 +0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 23B8lETk42729854
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 11 Apr 2022 08:47:14 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 86C81AE04D;
-        Mon, 11 Apr 2022 08:59:41 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 20497AE045;
-        Mon, 11 Apr 2022 08:59:41 +0000 (GMT)
-Received: from osiris (unknown [9.145.53.187])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Mon, 11 Apr 2022 08:59:41 +0000 (GMT)
-Date:   Mon, 11 Apr 2022 10:59:39 +0200
-From:   Heiko Carstens <hca@linux.ibm.com>
-To:     Baoquan He <bhe@redhat.com>
-Cc:     akpm@linux-foundation.org, willy@infradead.org,
-        linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
-        hch@lst.de, yangtiezhu@loongson.cn, amit.kachhap@arm.com,
-        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
-Subject: Re: [PATCH v5 RESEND 0/3] Convert vmcore to use an iov_iter
-Message-ID: <YlPt+3R63XYP22um@osiris>
-References: <20220408090636.560886-1-bhe@redhat.com>
- <Yk//TCkucXiVD3s0@MiWiFi-R3L-srv>
+        Mon, 11 Apr 2022 05:41:48 -0400
+Received: from heian.cn.fujitsu.com (mail.cn.fujitsu.com [183.91.158.132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 28ADB1B7A6;
+        Mon, 11 Apr 2022 02:39:33 -0700 (PDT)
+IronPort-Data: =?us-ascii?q?A9a23=3AgRuiuqIDifFuNuOBFE+RrpQlxSXFcZb7ZxGrkP8?=
+ =?us-ascii?q?bfHDshjwh1zNSnGccC2/UaauCM2v9e4slYNni9UIEsJeBz4NqS1BcGVNFFSwT8?=
+ =?us-ascii?q?ZWfbTi6wuYcBwvLd4ubChsPA/w2MrEsF+hpCC+MzvuRGuK59yMkj/nRHuOU5NP?=
+ =?us-ascii?q?sYUideyc1EU/Ntjozw4bVsqYw6TSIK1vlVeHa+qUzC3f5s9JACV/43orYwP9ZU?=
+ =?us-ascii?q?FsejxtD1rA2TagjUFYzDBD5BrpHTU26ByOQroW5goeHq+j/ILGRpgs1/j8mDJW?=
+ =?us-ascii?q?rj7T6blYXBLXVOGBiiFIPA+773EcE/Xd0j87XN9JFAatToy+UltZq2ZNDs4esY?=
+ =?us-ascii?q?Qk0PKzQg/lbWB5de817FfQco+OYeSnn66R/yGWDKRMA2c5GAEgoPIEw9PxwBGZ?=
+ =?us-ascii?q?U//0EbjsKa3irh+m26LO9RPNliskqII/sJox3kn1py3fbS+knRZTCSqDRzd5ew?=
+ =?us-ascii?q?Do0wMtJGJ72a8gGbjxgRBfNeRtCPhEQEp1WtOOpgGTvNjhdgFGLrKE0pW/Jw2R?=
+ =?us-ascii?q?Z1qbhMd/QUtiLXtlO2EKZoH/WuWj0HHkyNNef4T6e7jSgi4fnnyr9VcQZFKCQ8?=
+ =?us-ascii?q?eRji1megGcUDXU+UVq9vOn8hFWyVsxSL2QK9Sc066s/7kqmSp/6RRLQiHqFuAM?=
+ =?us-ascii?q?MHtldCes37CmTxafOpQWUHG4JSnhGctNOnMs3QyE6k0+HhPv3CjF19r6YU3SQ8?=
+ =?us-ascii?q?vGTtzzaBMS/BQfufgddFU1cvYal+9p103ryoh9YOPbdprXI9fvYmFhmdBQDuog?=
+ =?us-ascii?q?=3D?=
+IronPort-HdrOrdr: =?us-ascii?q?A9a23=3ALopJ36zYdAy1BA3b1mhsKrPwyL1zdoMgy1kn?=
+ =?us-ascii?q?xilNoRw8SL37qynIpoVj6faUskd2ZJhOo7+90cW7MBfhHNtOkO4s1NSZMjUO2l?=
+ =?us-ascii?q?HFEGgK1+KLqFeMJ8S9zJ856U4KSchD4bPLfDtHZIrBgTVQDexQveWvweS5g/vE?=
+ =?us-ascii?q?1XdxQUVPY6Fk1Q1wDQGWCSRNNXJ7LKt8BJyB/dBGujblXXwWa/6wDn4DU/OGiM?=
+ =?us-ascii?q?bMkPvdEGQ7Li9i+A+Tlimp9bK/NxCZ2y0VWzRJzaxn0UWtqX2A2pme?=
+X-IronPort-AV: E=Sophos;i="5.88,333,1635177600"; 
+   d="scan'208";a="123470902"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 11 Apr 2022 17:39:25 +0800
+Received: from G08CNEXMBPEKD04.g08.fujitsu.local (unknown [10.167.33.201])
+        by cn.fujitsu.com (Postfix) with ESMTP id B6A434D17168;
+        Mon, 11 Apr 2022 17:39:23 +0800 (CST)
+Received: from G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.85) by
+ G08CNEXMBPEKD04.g08.fujitsu.local (10.167.33.201) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.23; Mon, 11 Apr 2022 17:39:27 +0800
+Received: from [192.168.22.28] (10.167.225.141) by
+ G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
+ id 15.0.1497.23 via Frontend Transport; Mon, 11 Apr 2022 17:39:22 +0800
+Message-ID: <38060b98-aa1c-1cef-5db5-9ad54f63b0aa@fujitsu.com>
+Date:   Mon, 11 Apr 2022 17:39:23 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Yk//TCkucXiVD3s0@MiWiFi-R3L-srv>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: UwAkwTCwA_DPTuZqkd-6Xyzh1WuIQ_Du
-X-Proofpoint-GUID: PT7yF1MGQ2mrCaJ_IUd3C1QfRpgQV42P
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.425,FMLib:17.11.64.514
- definitions=2022-04-11_03,2022-04-08_01,2022-02-23_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
- bulkscore=0 spamscore=0 lowpriorityscore=0 priorityscore=1501
- suspectscore=0 mlxscore=0 impostorscore=0 clxscore=1011 mlxlogscore=758
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2202240000 definitions=main-2204110045
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: [PATCH v12 2/7] mm: factor helpers for memory_failure_dev_pagemap
+To:     Christoph Hellwig <hch@infradead.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
+        <nvdimm@lists.linux.dev>, <linux-mm@kvack.org>,
+        <linux-fsdevel@vger.kernel.org>, <djwong@kernel.org>,
+        <dan.j.williams@intel.com>, <david@fromorbit.com>,
+        <jane.chu@oracle.com>, Christoph Hellwig <hch@lst.de>
+References: <20220410160904.3758789-1-ruansy.fnst@fujitsu.com>
+ <20220410160904.3758789-3-ruansy.fnst@fujitsu.com>
+ <YlPMn2DjbqzAVhrb@infradead.org>
+From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
+In-Reply-To: <YlPMn2DjbqzAVhrb@infradead.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-yoursite-MailScanner-ID: B6A434D17168.A32DF
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: ruansy.fnst@fujitsu.com
+X-Spam-Status: No, score=-5.8 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 08, 2022 at 05:24:28PM +0800, Baoquan He wrote:
-> Add Heiko to CC.
-> 
-> On 04/08/22 at 05:06pm, Baoquan He wrote:
-> > Copy the description of v3 cover letter from Willy:
-> > ===
-> > For some reason several people have been sending bad patches to fix
-> > compiler warnings in vmcore recently.  Here's how it should be done.
-> > Compile-tested only on x86.  As noted in the first patch, s390 should
-> > take this conversion a bit further, but I'm not inclined to do that
-> > work myself.
-> 
-> Forgot adding Heiko to CC again.
-> 
-> Hi Heiko,
-> 
-> Andrew worried you may miss the note, "As noted in the first patch,
-> s390 should take this conversion a bit further, but I'm not inclined
-> to do that work myself." written in cover letter from willy.
-> 
-> I told him you had already known this in v1 discussion. So add you in CC
-> list as Andrew required. Adding words to explain, just in case confusion.
 
-Thanks for letting me know again. I'm still aware of this, but would
-appreciate if I could be added to cc in the first patch of this
-series, so I get notified when Andrew sends this Linus.
 
-Thanks a lot!
+在 2022/4/11 14:37, Christoph Hellwig 写道:
+>> +	unmap_and_kill(&to_kill, pfn, page->mapping, page->index, flags);
+>> +unlock:
+>> +	dax_unlock_page(page, cookie);
+>> +	return 0;
+> 
+> As the buildbot points out this should probably be a "return rc".
+
+Yes, my mistake, when resolving the conflict with latest code.
+
+
+--
+Thanks,
+Ruan
+
+
