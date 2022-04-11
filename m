@@ -2,64 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FEB64FBEE8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Apr 2022 16:21:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 170514FBF6D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 11 Apr 2022 16:43:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245624AbiDKOWS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Apr 2022 10:22:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55546 "EHLO
+        id S1347395AbiDKOpy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Apr 2022 10:45:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347184AbiDKOWH (ORCPT
+        with ESMTP id S1347390AbiDKOpy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Apr 2022 10:22:07 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC850E0F7
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Apr 2022 07:19:19 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 87CAD210E3;
-        Mon, 11 Apr 2022 14:19:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1649686758; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=PcYqNYLePt52+e8simnJyvhTPYaauhvjQNEhEOtnPmA=;
-        b=eq7AwNDOeqLz1tvDHWSRbpFvzPb6HSRhPY5ljynmDeCNMGbZ+ZaUquBotP+zmYQRSKrYIv
-        DGJ/hFE7D00OPq41giq1V4MhcwjFbj0J5SL2xYbV/wxl9pOK9H8RqQUCnXHf6le9yzr+Zm
-        tyxpytySVLCJ/w9AVVrs/lkAZuYAPVI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1649686758;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=PcYqNYLePt52+e8simnJyvhTPYaauhvjQNEhEOtnPmA=;
-        b=t7jMnK9oeCrY/5o4bupj9AmYvD/uv0rIMY0sDOtxdm2nkmUQ8tXDCTpk0W7I3ZW7e+N856
-        dw5PjZV4afMr5XBA==
-Received: from quack3.suse.cz (unknown [10.163.28.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Mon, 11 Apr 2022 10:45:54 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5638613F28
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Apr 2022 07:43:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1649688219;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+        bh=D+XJaf7h6+3Eoi7jpfHr9ZIJMx44xBPQcMP6evn0mvM=;
+        b=FgpFEEDniPiUhV5ND49TCncK7QM++vBiD20cYixI5KHvVd1F3zSo5LtZgecljWJgW+BWIX
+        3Q2oGHQVv7Tf6gwuP1PmXBvKkPnN+0yAHTF1ysxrkMmGDr6G7XjtaaS+BXqFeqyZ4+N8ge
+        2TjUD/XDWUPNIyJothC6Cqq9VRIKOVc=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-662-lfMXun7DO--7UttZUDDmag-1; Mon, 11 Apr 2022 10:43:33 -0400
+X-MC-Unique: lfMXun7DO--7UttZUDDmag-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 69BB8A3B99;
-        Mon, 11 Apr 2022 14:19:18 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 93D10A061B; Mon, 11 Apr 2022 16:19:12 +0200 (CEST)
-Date:   Mon, 11 Apr 2022 16:19:12 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v2 13/16] fanotify: implement "evictable" inode marks
-Message-ID: <20220411141912.ery2uhg3gqyt32oa@quack3.lan>
-References: <20220329074904.2980320-1-amir73il@gmail.com>
- <20220329074904.2980320-14-amir73il@gmail.com>
- <20220411114752.jpn7kkxnqobriep3@quack3.lan>
- <CAOQ4uxjuYChExjsqPmczM9SzXapUR0bT8RTEbxaQsSacNOMV4A@mail.gmail.com>
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7F95183396D;
+        Mon, 11 Apr 2022 14:43:33 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7A16A40FF407;
+        Mon, 11 Apr 2022 14:43:33 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id 23BEhXra022612;
+        Mon, 11 Apr 2022 10:43:33 -0400
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id 23BEhXeM022608;
+        Mon, 11 Apr 2022 10:43:33 -0400
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Mon, 11 Apr 2022 10:43:33 -0400 (EDT)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] stat: don't fail if the major number is >= 256
+Message-ID: <alpine.LRH.2.02.2204111023230.6206@file01.intranet.prod.int.rdu2.redhat.com>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxjuYChExjsqPmczM9SzXapUR0bT8RTEbxaQsSacNOMV4A@mail.gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Scanned-By: MIMEDefang 2.84 on 10.11.54.2
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -67,62 +66,50 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 11-04-22 15:57:30, Amir Goldstein wrote:
-> On Mon, Apr 11, 2022 at 2:47 PM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Tue 29-03-22 10:49:01, Amir Goldstein wrote:
-> > > When an inode mark is created with flag FAN_MARK_EVICTABLE, it will not
-> > > pin the marked inode to inode cache, so when inode is evicted from cache
-> > > due to memory pressure, the mark will be lost.
-> > >
-> > > When an inode mark with flag FAN_MARK_EVICATBLE is updated without using
-> > > this flag, the marked inode is pinned to inode cache.
-> > >
-> > > When an inode mark is updated with flag FAN_MARK_EVICTABLE but an
-> > > existing mark already has the inode pinned, the mark update fails with
-> > > error EEXIST.
-> >
-> > I was thinking about this. FAN_MARK_EVICTABLE is effectively a hint to the
-> > kernel - you can drop this if you wish. So does it make sense to return
-> > error when we cannot follow the hint? Doesn't this just add unnecessary
-> > work (determining whether the mark should be evictable or not) to the
-> > userspace application using FAN_MARK_EVICTABLE?
-> 
-> I do not fully agree about your definition of  "hint to the kernel".
-> Yes, for a single inode it may be a hint, but for a million inodes it is pretty
-> much a directive that setting a very large number of evictable marks
-> CANNOT be used to choke the system.
-> 
-> It's true that the application should be able to avoid shooting its own
-> foot and we do not need to be the ones providing this protection, but
-> I rather prefer to keep the API more strict and safe than being sorry later.
-> After all, I don't think this complicates the implementation nor documentation
-> too much. Is it? see:
-> 
-> https://github.com/amir73il/man-pages/commit/b52eb7d1a8478cbd1456f4d9463902bbc4e80f0d
+If you run a program compiled with OpenWatcom for Linux on a filesystem on 
+NVMe, all "stat" syscalls fail with -EOVERFLOW. The reason is that the 
+NVMe driver allocates a device with the major number 259 and it doesn't 
+pass the "old_valid_dev" test.
 
-No, it is not complicating things too much and you're probably right that
-having things stricter now may pay off in the future. I was just thinking
-that app adding ignore mark now needs to remember whether it has already
-added something else for the inode or not to know whether it can use
-FAN_MARK_EVICTABLE. Which seemed like unnecessary complication.
+This patch removes the tests - it's better to wrap around than to return
+an error. (note that cp_old_stat also doesn't report an error and wraps
+the number around)
 
-> > I'd also note that FSNOTIFY_MARK_FLAG_NO_IREF needs to be stored only
-> > because of this error checking behavior. Otherwise it would be enough to
-> > have a flag on the connector (whether it holds iref or not) and
-> > fsnotify_add_mark() would update the connector as needed given the added
-> 
-> I am not sure I agree to that.
-> Maybe I am missing something, but the way fsnotify_recalc_mask() works now
-> is by checking if there is any mark without FSNOTIFY_MARK_FLAG_NO_IREF
-> attached to the object, so fsnotify_put_mark() knows to drop the inode when the
-> last non-evictable mark is removed.
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
 
-Right, I was confused and somehow thought that once connector has iref, it
-will drop it only when the mark list gets empty which is obviously not
-true.
+---
+ fs/stat.c |    6 ------
+ 1 file changed, 6 deletions(-)
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Index: linux-5.17.2/fs/stat.c
+===================================================================
+--- linux-5.17.2.orig/fs/stat.c	2022-04-10 21:39:27.000000000 +0200
++++ linux-5.17.2/fs/stat.c	2022-04-10 21:42:43.000000000 +0200
+@@ -334,7 +334,6 @@ SYSCALL_DEFINE2(fstat, unsigned int, fd,
+ #  define choose_32_64(a,b) b
+ #endif
+ 
+-#define valid_dev(x)  choose_32_64(old_valid_dev(x),true)
+ #define encode_dev(x) choose_32_64(old_encode_dev,new_encode_dev)(x)
+ 
+ #ifndef INIT_STRUCT_STAT_PADDING
+@@ -345,8 +344,6 @@ static int cp_new_stat(struct kstat *sta
+ {
+ 	struct stat tmp;
+ 
+-	if (!valid_dev(stat->dev) || !valid_dev(stat->rdev))
+-		return -EOVERFLOW;
+ #if BITS_PER_LONG == 32
+ 	if (stat->size > MAX_NON_LFS)
+ 		return -EOVERFLOW;
+@@ -644,9 +641,6 @@ static int cp_compat_stat(struct kstat *
+ {
+ 	struct compat_stat tmp;
+ 
+-	if (!old_valid_dev(stat->dev) || !old_valid_dev(stat->rdev))
+-		return -EOVERFLOW;
+-
+ 	memset(&tmp, 0, sizeof(tmp));
+ 	tmp.st_dev = old_encode_dev(stat->dev);
+ 	tmp.st_ino = stat->ino;
+
