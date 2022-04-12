@@ -2,65 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BB44D4FCD32
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Apr 2022 05:37:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BBEF4FCD35
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Apr 2022 05:39:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344575AbiDLDjz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 11 Apr 2022 23:39:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58356 "EHLO
+        id S245441AbiDLDlj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 11 Apr 2022 23:41:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238723AbiDLDjx (ORCPT
+        with ESMTP id S235994AbiDLDli (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 11 Apr 2022 23:39:53 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07BF0192B6;
-        Mon, 11 Apr 2022 20:37:37 -0700 (PDT)
+        Mon, 11 Apr 2022 23:41:38 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9BD710FF4;
+        Mon, 11 Apr 2022 20:39:20 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8CCB761739;
-        Tue, 12 Apr 2022 03:37:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECEA3C385AB;
-        Tue, 12 Apr 2022 03:37:36 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 6427EB81A79;
+        Tue, 12 Apr 2022 03:39:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27A97C385A6;
+        Tue, 12 Apr 2022 03:39:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649734657;
-        bh=mrnyWd53bMjtQiofKd1ZScd6fhayzsp2b2W3MoHNM2E=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=LAYKihxMKJhnXPTa4WZrVPzXkSQ4ejSv+VLVFkiuj3Eru0PQl9kBMjevSg6xsM+v2
-         FtanT70z7YqHF3wjZD00oCpQtZDHYtOcZZzel4991POxPZshKdW+/Gl3Vv6U9p7w+A
-         x3cv+EsDTmxhKJHgIBW4whnYppweYwBgPee+KAFshc5xwEIddIQzx/nMuq7mjABnka
-         I1h/p8jOE6qAE6LVEw7H0mLrryGlPwmVyaCfgEayjTvUsA8mJmMUYNQCVwBwN41g4P
-         TnSo9iMnLfv34CbEfa2JedDh0Sw6294d4S61z4OKpgb+vbPQ+CZqtYqZv+XCDl610S
-         vnXt1EdX21Rkw==
-Received: by mail-wr1-f50.google.com with SMTP id u3so25820246wrg.3;
-        Mon, 11 Apr 2022 20:37:36 -0700 (PDT)
-X-Gm-Message-State: AOAM530iZkitFGGo7ijzTHdG4EzLOAHAjAf64jp6aUqjxeSIXGGwGvTv
-        yVW8oUj6FnUqpwlTnd5vWetOZ3YwxRlPTuzIYL4=
-X-Google-Smtp-Source: ABdhPJz0KUn6IlpgNB3uSlVMKzj8lqhrvusdBUInVzLjf0fRn0xOig95EqNNIf17wcv5AUFXeQYozDt9L7lvUt+1E9k=
-X-Received: by 2002:a05:6000:1ca:b0:207:acc8:c153 with SMTP id
- t10-20020a05600001ca00b00207acc8c153mr1969999wrx.165.1649734655137; Mon, 11
- Apr 2022 20:37:35 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a05:6000:2c1:0:0:0:0 with HTTP; Mon, 11 Apr 2022 20:37:34
- -0700 (PDT)
-In-Reply-To: <01626f93-e982-8631-4196-112a8bb4a01a@kernel.dk>
-References: <HK2PR04MB3891FCECADD7AECEEF5DD63081E99@HK2PR04MB3891.apcprd04.prod.outlook.com>
- <Yk/DpSwR8kGKWJYl@infradead.org> <CAKYAXd9NAUjdxT2GOWGoPvH5nOXSFtD7u0t_9rCiZx7hSGC0PA@mail.gmail.com>
- <01626f93-e982-8631-4196-112a8bb4a01a@kernel.dk>
-From:   Namjae Jeon <linkinjeon@kernel.org>
-Date:   Tue, 12 Apr 2022 12:37:34 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd9D85wpwFOzii2yMfA9jZuRC0Q5XZ89OAHZYdHw0pyqWg@mail.gmail.com>
-Message-ID: <CAKYAXd9D85wpwFOzii2yMfA9jZuRC0Q5XZ89OAHZYdHw0pyqWg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] block: add sync_blockdev_range()
-To:     Jens Axboe <axboe@kernel.dk>
+        s=k20201202; t=1649734758;
+        bh=XKTSOxnMrDni6i3LUUuUGTdpqw5tt+0RPEAtIeuq9a4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=BefePy7pWHc300nwn5dnvouLFBqtnA5oSCPULUVqbBsk2tUwmMP6XB/L3cTYcLJNk
+         WRJJXD0KMAcRSe+JNIz8ds2XAlhSEXAyBHQRxkBhm9I7bZC+ob0Fqfz9Kw0/7Z7y3Z
+         BVuraeunKG+k5ZX5CfEcsepJ5Y3KczE6imFCPDbK//pozsnl5ed14+g7dw7k/vLke0
+         HoZ8XCWypHy3vW6Jf7vpUAEtGxghygkVeMK4zYz4vFVWM/A/W6bweOHbZO3qwfc+1E
+         ET4gI8L0bzjXysaPlciryhrhfnle/T4nRO1Km4GpjeyH/hiFMAP7SGqAZNCd+P52m0
+         /vVxRoo0poORw==
+Date:   Mon, 11 Apr 2022 20:39:17 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Tiezhu Yang <yangtiezhu@loongson.cn>
 Cc:     Christoph Hellwig <hch@infradead.org>,
-        "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>,
-        "sj1557.seo@samsung.com" <sj1557.seo@samsung.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "Andy.Wu@sony.com" <Andy.Wu@sony.com>,
-        "Wataru.Aoyama@sony.com" <Wataru.Aoyama@sony.com>
-Content-Type: text/plain; charset="UTF-8"
+        Dave Chinner <dchinner@redhat.com>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: update IOMAP FILESYSTEM LIBRARY and XFS
+ FILESYSTEM
+Message-ID: <20220412033917.GB16799@magnolia>
+References: <1649733686-6128-1-git-send-email-yangtiezhu@loongson.cn>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1649733686-6128-1-git-send-email-yangtiezhu@loongson.cn>
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -71,25 +57,53 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-2022-04-12 10:12 GMT+09:00, Jens Axboe <axboe@kernel.dk>:
-> On 4/10/22 8:08 PM, Namjae Jeon wrote:
->> 2022-04-08 14:09 GMT+09:00, Christoph Hellwig <hch@infradead.org>:
->>> Looks good:
->>>
->>> Reviewed-by: Christoph Hellwig <hch@lst.de>
->> Thanks for your review!
->>
->> Hi Jens,
->>
->> Can I apply this patch with your Ack to exfat #dev ?
->
-> Yes go ahead:
->
-> Reviewed-by: Jens Axboe <axboe@kernel.dk>
-Applied, Thanks for your review!
+On Tue, Apr 12, 2022 at 11:21:26AM +0800, Tiezhu Yang wrote:
+> Remove the following section entries of IOMAP FILESYSTEM LIBRARY:
+> 
+> M:	linux-xfs@vger.kernel.org
+> M:	linux-fsdevel@vger.kernel.org
+> 
+> Remove the following section entry of XFS FILESYSTEM:
+> 
+> M:	linux-xfs@vger.kernel.org
+> 
+> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
 
->
-> --
-> Jens Axboe
->
->
+WTF?
+
+ ▄▄   ▄   ▄▄   ▄    ▄
+ █▀▄  █   ██   █  ▄▀
+ █ █▄ █  █  █  █▄█
+ █  █ █  █▄▄█  █  █▄
+ █   ██ █    █ █   ▀▄
+
+--D
+
+> ---
+>  MAINTAINERS | 3 ---
+>  1 file changed, 3 deletions(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 61d9f11..726608f 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -10238,8 +10238,6 @@ F:	drivers/net/ethernet/sgi/ioc3-eth.c
+>  IOMAP FILESYSTEM LIBRARY
+>  M:	Christoph Hellwig <hch@infradead.org>
+>  M:	Darrick J. Wong <djwong@kernel.org>
+> -M:	linux-xfs@vger.kernel.org
+> -M:	linux-fsdevel@vger.kernel.org
+>  L:	linux-xfs@vger.kernel.org
+>  L:	linux-fsdevel@vger.kernel.org
+>  S:	Supported
+> @@ -21596,7 +21594,6 @@ F:	drivers/xen/*swiotlb*
+>  XFS FILESYSTEM
+>  C:	irc://irc.oftc.net/xfs
+>  M:	Darrick J. Wong <djwong@kernel.org>
+> -M:	linux-xfs@vger.kernel.org
+>  L:	linux-xfs@vger.kernel.org
+>  S:	Supported
+>  W:	http://xfs.org/
+> -- 
+> 2.1.0
+> 
