@@ -2,131 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 983784FCEA6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Apr 2022 07:14:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC68A4FCF02
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Apr 2022 07:38:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347628AbiDLFQj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Apr 2022 01:16:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41252 "EHLO
+        id S1348282AbiDLFkm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Apr 2022 01:40:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229593AbiDLFQh (ORCPT
+        with ESMTP id S229668AbiDLFki (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Apr 2022 01:16:37 -0400
-Received: from mail-oa1-x32.google.com (mail-oa1-x32.google.com [IPv6:2001:4860:4864:20::32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 199DB13F43
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Apr 2022 22:14:17 -0700 (PDT)
-Received: by mail-oa1-x32.google.com with SMTP id 586e51a60fabf-ddfa38f1c1so19657126fac.11
-        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Apr 2022 22:14:17 -0700 (PDT)
+        Tue, 12 Apr 2022 01:40:38 -0400
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31F263298E
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Apr 2022 22:38:22 -0700 (PDT)
+Received: by mail-lf1-x135.google.com with SMTP id p10so30229545lfa.12
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Apr 2022 22:38:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :mime-version;
-        bh=7AXHvKyDS+8sXsKK4DrpbEGpG8JmWPbR7ulEunl5/Pc=;
-        b=MIKtm3AFEh6CUVVNwUV8SeElPxDQU+nDCsyp+WcUsmZ4pYGMDS8fAcdOR85R0GnShf
-         Y4SvxZp6GJGIWSDO3Qz0y+u4ZcAKbd5h4QgxfwJ80V2XMN4GDeNiF7fIlHS12g+G1n/h
-         Kv7zR3bRSH86ipJifMek23BAEcPpsO3GQOK2qAQPq7d5D/TFRqQckEDpcn4OYWx7WoM9
-         lUklPUH6KUc5SlQqi1stBQ4I3bHiGY7ZT6LaR8lgLF5UeZqRnpzjDs527tWEzRy8OZZn
-         nmt6hJ/Qq1aIeTJZ8BRsG/eRuI5lX0MY/pv7AqCy9vDclBFJLYkpepT8CENCuRctsE08
-         JerA==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ll/XCn4eT+mWamanV6qNk4+X9BXYFUW6oQ8MurM5uWk=;
+        b=fgDQtBam00x6nb34pezhr9TPAf1bSvMtM9E7e+7/EJFJ0nDM4iVhYJw44irfk6xwVf
+         a/rZdmHC8yHQm0YKrnUgWgtnnIIt+39mjQLGJjZI9WcmYGULNEqjt8ngp9lF9MPtXJid
+         4JXvtH94CmaNaA67XvUEW5RqzRlX4VH/u8qsY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:mime-version;
-        bh=7AXHvKyDS+8sXsKK4DrpbEGpG8JmWPbR7ulEunl5/Pc=;
-        b=DkjvbYF/CoHduv7nNNaEz2dKV6paRlMODIL5fozdO+De7Xs/AMo8oJD09cO1E40n4Z
-         pmdFWPMJO9WIl6ONtIqoNaSSGKvZeq3fo5JgYYp4IDI697FM0xvUeli4e1DvPk1jBke8
-         SbDmc1wAzfdH8CNJTprq5evd0Z5CxqbBuwnD7mXg/sDljnw3G0THvPwrNNMiiocqYbP5
-         MWhH0XjZNAQ/cKQXWwsbOVteQQC544wEdT6cSGfEiSN2yI1mNMsx09n3nYSuj1b81g4I
-         U1HYqVIq4rvQ4vU9xsGzFTBoNdvA3kMyBqPOQEhOf7jBDjmztrM9ILZ+P+JfGSg1k0r6
-         72oQ==
-X-Gm-Message-State: AOAM532X33IEdcz00ior68X7B8f4LGXnbSOxUv5V9mhEn0kKZaL9uo9Q
-        MlD57dkZyDoteQkYycDxGcI+qg==
-X-Google-Smtp-Source: ABdhPJzGUlHADzn2yFu7M3obTMzPSe7EDZTZ3EDogaZbWHy2xdUqchu+tTmHlhlBd5Pwc/mriWkvvQ==
-X-Received: by 2002:a05:6870:5390:b0:de:f680:db03 with SMTP id h16-20020a056870539000b000def680db03mr1269177oan.237.1649740456270;
-        Mon, 11 Apr 2022 22:14:16 -0700 (PDT)
-Received: from ripple.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id e9-20020a056820060900b003216277bfdasm12481870oow.19.2022.04.11.22.14.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Apr 2022 22:14:15 -0700 (PDT)
-Date:   Mon, 11 Apr 2022 22:14:00 -0700 (PDT)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@ripple.anvils
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-cc:     Chao Peng <chao.p.peng@linux.intel.com>,
-        Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Shakeel Butt <shakeelb@google.com>, luto@kernel.org,
-        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
-        david@redhat.com
-Subject: Re: [PATCH v5 04/13] mm/shmem: Restrict MFD_INACCESSIBLE memory
- against RLIMIT_MEMLOCK
-In-Reply-To: <20220411153433.6sqqqd6vzhyfjee6@box.shutemov.name>
-Message-ID: <2c39702b-2a71-cda2-685-93908763912@google.com>
-References: <20220310140911.50924-1-chao.p.peng@linux.intel.com> <20220310140911.50924-5-chao.p.peng@linux.intel.com> <Yk8L0CwKpTrv3Rg3@google.com> <20220408130254.GB57095@chaop.bj.intel.com> <20220411153433.6sqqqd6vzhyfjee6@box.shutemov.name>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ll/XCn4eT+mWamanV6qNk4+X9BXYFUW6oQ8MurM5uWk=;
+        b=tb1SCbrK3fn2H1FyRkLuWYQMQWICTMNODGx5ZvekpYZgiWZkJNPmbwVa41TMj3KiIj
+         PtDJaPA+vFCe26XQSClGQOjC1TlarMcJu2VsiDQGzj14k2GJNkhiWwN+BzV/dbDOnTps
+         SHGmPoDWWgsu5OXmDCjKV4mINNwI6YbYzf4v+R0GBB8/aE9ZLQGV4IfK9L7XaaezFiRh
+         8APyBiVnRLg0wj2t95U6pFaqoEJ1dbliJEn2zgozdDmYstO7yaVyazha2zDtyCVxegJJ
+         1RVY47e9xQnJh+8HFxiCdbFLCzNaZ7qd0lRWJZUlcpBQQvCxLtMDe4mltixxmG+7dH4B
+         fKXQ==
+X-Gm-Message-State: AOAM530blDhwhYW/UqoDgASA2bezwHvlFUvaqXZ5DqUAUwJuCt8VDkGi
+        chhIXxqixqObOrKLZFoEqx24eBHffzy0pGS6
+X-Google-Smtp-Source: ABdhPJxRqzHrjZ5xBGu4VMrr5LuEcHFh0rhxkbPHpvTxhFukOngK37hOET7wDtVcnvuJWaAfbGlWSg==
+X-Received: by 2002:a05:6512:2252:b0:44a:3038:cbc with SMTP id i18-20020a056512225200b0044a30380cbcmr23973922lfu.252.1649741900173;
+        Mon, 11 Apr 2022 22:38:20 -0700 (PDT)
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
+        by smtp.gmail.com with ESMTPSA id m8-20020a194348000000b0046bae58249asm350829lfj.212.2022.04.11.22.38.19
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 11 Apr 2022 22:38:19 -0700 (PDT)
+Received: by mail-lf1-f53.google.com with SMTP id bq30so17528763lfb.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 11 Apr 2022 22:38:19 -0700 (PDT)
+X-Received: by 2002:ac2:5483:0:b0:46b:9dc3:cdd4 with SMTP id
+ t3-20020ac25483000000b0046b9dc3cdd4mr8854787lfk.542.1649741899091; Mon, 11
+ Apr 2022 22:38:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+References: <alpine.LRH.2.02.2204111023230.6206@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAHk-=wijDnLH2K3Rh2JJo-SmWL_ntgzQCDxPeXbJ9A-vTF3ZvA@mail.gmail.com> <alpine.LRH.2.02.2204111236390.31647@file01.intranet.prod.int.rdu2.redhat.com>
+In-Reply-To: <alpine.LRH.2.02.2204111236390.31647@file01.intranet.prod.int.rdu2.redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 11 Apr 2022 19:37:44 -1000
+X-Gmail-Original-Message-ID: <CAHk-=wgsHK4pDDoEgCyKgGyo-AMGpy1jg2QbstaCR0G-v568yg@mail.gmail.com>
+Message-ID: <CAHk-=wgsHK4pDDoEgCyKgGyo-AMGpy1jg2QbstaCR0G-v568yg@mail.gmail.com>
+Subject: Re: [PATCH] stat: don't fail if the major number is >= 256
+To:     Mikulas Patocka <mpatocka@redhat.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 11 Apr 2022, Kirill A. Shutemov wrote:
-> On Fri, Apr 08, 2022 at 09:02:54PM +0800, Chao Peng wrote:
-> > > I think the correct approach is to not do the locking automatically for SHM_F_INACCESSIBLE,
-> > > and instead require userspace to do shmctl(.., SHM_LOCK, ...) if userspace knows the
-> > > consumers don't support migrate/swap.  That'd require wrapping migrate_page() and then
-> > > wiring up notifier hooks for migrate/swap, but IMO that's a good thing to get sorted
-> > > out sooner than later.  KVM isn't planning on support migrate/swap for TDX or SNP,
-> > > but supporting at least migrate for a software-only implementation a la pKVM should
-> > > be relatively straightforward.  On the notifiee side, KVM can terminate the VM if it
-> > > gets an unexpected migrate/swap, e.g. so that TDX/SEV VMs don't die later with
-> > > exceptions and/or data corruption (pre-SNP SEV guests) in the guest.
-> > 
-> > SHM_LOCK sounds like a good match.
-> 
-> Emm, no. shmctl(2) and SHM_LOCK are SysV IPC thing. I don't see how they
-> fit here.
+On Mon, Apr 11, 2022 at 7:13 AM Mikulas Patocka <mpatocka@redhat.com> wrote:
+>
+> Should we perhaps hash the number, take 16 bits of the hash and hope
+> than the collision won't happen?
 
-I am still struggling to formulate a constructive response on
-MFD_INACCESSIBLE in general: but before doing so, let me jump in here
-to say that I'm firmly on the side of SHM_LOCK being the right model -
-but admittedly not through userspace calling shmctl(2).
+That would "work", but I think it would be incredibly annoying to
+users with basically random results.
 
-Please refer to our last year's posting "[PATCH 10/16] tmpfs: fcntl(fd,
-F_MEM_LOCK) to memlock a tmpfs file" for the example of how Shakeel did
-it then (though only a small part of that would be needed for this case):
-https://lore.kernel.org/linux-mm/54e03798-d836-ae64-f41-4a1d46bc115b@google.com/
+I think the solution is to just put the bits in the high bits. Yes,
+they might be masked off if people use 'MAJOR()' to pick them out, but
+the common "compare st_dev and st_ino" model at least works. That's
+the one that wants unique numbers.
 
-And until such time as swapping is enabled, this memlock accounting would
-be necessarily entailed by "MFD_INACCESSIBLE", or however that turns out
-to be implemented: not something that we could trust userspace to call
-separately.
+> For me, the failure happens in cp_compat_stat (I have a 64-bit kernel). In
+> struct compat_stat in arch/x86/include/asm/compat.h, st_dev and st_rdev
+> are compat_dev_t which is 16-bit. But they are followed by 16-bit
+> paddings, so they could be extended.
 
-Hugh
+Ok, that actually looks like a bug.
+
+The compat structure should match the native structure.  Those "u16
+__padX" fields seem to be just a symptom of the bug.
+
+The only user of that compat_stat structure is the kernel, so that
+should just be fixed.
+
+Of course, who knows what the libraries have done, so user space could
+still have screwed up.
+
+> If you have a native 32-bit kernel, it uses 'struct stat' defined at the
+> beginning of arch/x86/include/uapi/asm/stat.h that has 32-bit st_dev and
+> st_rdev.
+
+Correct. It's literally the compat structure that has no basis in reality.
+
+Or it might be some truly ancient thing, but I really don't think so.
+
+Regardless, if we fill in the high 16 bits of that field, in the
+_worst_ case things will act as if your patch had been applied, but in
+any sane case you'll have that working "unique st_dev" thing.
+
+I'd love to actually use the better "modern" 64-bit encoding (12+20
+bits, or whatever it is we do, too lazy to look it up), but hey, that
+historical thing is what it is.
+
+Realistically, nobody uses it. Apparently your OpenWatcom use is also
+really just fairly theoretical, not some "this app is used by people
+and doesn't work with a filesystem on NVMe".
+
+                 Linus
