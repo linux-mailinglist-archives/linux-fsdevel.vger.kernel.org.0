@@ -2,149 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 93D424FE11D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Apr 2022 14:53:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2202C4FE17E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Apr 2022 15:03:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354303AbiDLMyk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Apr 2022 08:54:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49446 "EHLO
+        id S1354979AbiDLNFR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Apr 2022 09:05:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355251AbiDLMxz (ORCPT
+        with ESMTP id S1354975AbiDLNCN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Apr 2022 08:53:55 -0400
-Received: from esa3.hgst.iphmx.com (esa3.hgst.iphmx.com [216.71.153.141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE072F4;
-        Tue, 12 Apr 2022 05:26:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1649766366; x=1681302366;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=pFldmPxT8RaCe+cHlQbK4WhWpYOM4nj9aL6JNncEsvU=;
-  b=PDiLTxxjeWl3/A3MdI+u8fT7kU14w/lURa9Z93s8jfgkLa8Ems/8zfp0
-   Xxc2Mr3yWgzYb/1M9Wu1qwtU/ubjUTknpk605nCw9W2UnUDA4pgiIvmLS
-   ijafWVoNbVK8XSfc0EAzN2wpARtEFG/s2waO1JC5GEgeGqdmGZBmswJpi
-   A5DRcSv2T3RpAbJDgWOBnM3OEiNxZPnvwQt30ZyylPpNgGXeA5e0RFUxM
-   mBERETvv0mAFakrE52mBSoDxIrfAu55tlcpT4M/VuYboXVMxrV+kgJzOY
-   953ExUwqf19wqqhCLfrUkm4/fKNe4uUmzQ4QtKZ6ed3U1775zNIeBnvND
-   A==;
-X-IronPort-AV: E=Sophos;i="5.90,253,1643644800"; 
-   d="scan'208";a="202579066"
-Received: from mail-dm6nam12lp2170.outbound.protection.outlook.com (HELO NAM12-DM6-obe.outbound.protection.outlook.com) ([104.47.59.170])
-  by ob1.hgst.iphmx.com with ESMTP; 12 Apr 2022 20:26:04 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=by556HFw6+Xb1Kb722f6oRsbreagUVGxMGFfAT41PRKpq4mrFgY7qHs2UL2uh4aeJ0hWEsWxMi8WQoB9J8TIwclnr//Z5yeAwfcVs1lXeMEMTOMY8gXnQQ7DoRM2NBsNh/LNdhbHoiUeT32nb8E1y9U8dkWfc8qdGdXSuTVlBy7akE+xWmiXgNOBZzfFi+NxhCM0Rrnms2AaDIYQ51VjJx0ANtDbxaDx/tMTRSKNJn+WYRZIWAMsZCWrVkHYNni0dN7kxH9up3Mb5r0pKlU8wV3Z4I9NqGYWaGyDMcQxmxoPqaLERO8uHJx0K3IO4joZJ83xF8AAbWx6tqIbs7FxUA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=F/s7P8iKZ2shj7r5cJZCEu7aKrfrV3CpuiA6bKSgLYM=;
- b=O31Sippfn+OdYfQlk4YKrtAp2f4oVSuZSugX6MuHJwAmThQEZafQlKuCGCYqqdEYJGWNFqNF9xU3+nrI+gY0i9XrJcV4iAj8CGO40c5/tdY2ggoJxFXZsv2zm38qYGZTvk26MUBuetitCjvME7SV1oeriMruL+IoeqVSAUY+rhnzT8LmdWaVRdhOPeaBqnSnl3OEOA4L5WoOEPVPws6JfdBEKvBQTmKVlJOzogP/VEpuQXShpMbYYDjpFKVKPCeWeSuUtDEHeRg5V8hfnejBOp9ck2WCptEnHFUeas5+fbg/qDIawb1IAlIrtKNjs/4j1jVq+RwV4fs627ZpfkrnWg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=F/s7P8iKZ2shj7r5cJZCEu7aKrfrV3CpuiA6bKSgLYM=;
- b=KDqgCoYRmD7IsJwSZm817mh40B4Su9G+UY6HAMvR5n4QaHjHTawelygFEmmfIUPjWFGY1eKFDadjKpsxeGMp9Ha3gBISLyGg1jPI7MyvS+KVZnjD/+JfdZH65BoKqfGxnKRGAWY44rt7mFwolOFAbDNj9tWgciJLL9b1BpbezUc=
-Received: from PH0PR04MB7158.namprd04.prod.outlook.com (2603:10b6:510:8::18)
- by SN6PR04MB4848.namprd04.prod.outlook.com (2603:10b6:805:af::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5144.29; Tue, 12 Apr
- 2022 12:26:04 +0000
-Received: from PH0PR04MB7158.namprd04.prod.outlook.com
- ([fe80::995b:363e:8d1c:49af]) by PH0PR04MB7158.namprd04.prod.outlook.com
- ([fe80::995b:363e:8d1c:49af%8]) with mapi id 15.20.5164.018; Tue, 12 Apr 2022
- 12:26:03 +0000
-From:   Niklas Cassel <Niklas.Cassel@wdc.com>
-To:     Damien Le Moal <damien.lemoal@opensource.wdc.com>
-CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Mike Frysinger <vapier@gentoo.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>
-Subject: Re: [PATCH] binfmt_flat: do not stop relocating GOT entries
- prematurely
-Thread-Topic: [PATCH] binfmt_flat: do not stop relocating GOT entries
- prematurely
-Thread-Index: AQHYTlSbKHqZCw+JvEK9UT79JBm95qzsJ4yAgAAMu4A=
-Date:   Tue, 12 Apr 2022 12:26:03 +0000
-Message-ID: <YlVv2Z5y9qhzu7X9@x1-carbon>
-References: <20220412100338.437308-1-niklas.cassel@wdc.com>
- <9437ce7f-0553-3688-5695-69add6b2971c@opensource.wdc.com>
-In-Reply-To: <9437ce7f-0553-3688-5695-69add6b2971c@opensource.wdc.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=wdc.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 5b5d6a46-daf4-4d1b-897e-08da1c7f9c74
-x-ms-traffictypediagnostic: SN6PR04MB4848:EE_
-x-microsoft-antispam-prvs: <SN6PR04MB4848DA9C48DAA58E8E2AC4BCF2ED9@SN6PR04MB4848.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: uaSWbzFTvj1cizuXsgh832W0IycEddJtQOg9yCpO/144XIkg3y2wNiGo0CYeqSZ4MazpWiXa7RIcUSIQWennjhhqz1tt0wtpOZ8K4SIjT6+p4i9y/WfjqkVgF4GL8l0+zfkdGZgHl9hNvgkDgnbr8FOuQc/zkGPSPgj3DdoRDZVBQtN5m/0tyZAGJ9TLMNZwXw4AjLarjGcfIj6HQUj5EgISu99+axNFpW9ygBj1Hz6rZ6GXinNuJLWG1rXu0aMd9QFZqV91naIqE9pdOGnZNBXIKJk6/5caUpQxuDBI/noqnuwhuqGIozJBRp8TgxYn0tHmDMTi6MpuhwCjA9QSdVg/oHYhy3ndJ+TIZmAqwWV5ECkQtge8uS0EAJErs+w9tqMh8i4xJaBUA1C4iwL1bndASoc/9Zn1kMBTuDZBam2oP//GPyMwMZfSpDpP1EZBk0ut2JuzGVPHiIVWStcjPApRBnwC0zkQvoDuRUEKL+e/cuwWLMtSjOM/C2XRY+3mmcX3lJiVgrWWKX5PGoezlHCcryQFXwQ5gyoqMSPYduTx/d3NoNQksEA0j/q22PpLbAEW7sU4Ie/xExigmA+Pp3ZDp2RE4R27avH5C0r64zzhQSQYlbcudQZ80vu8+A0fWStWkeAak3EJlQlHc4GuClSm2GkQfVxuolpVPHcqzdN45WtDkFpSSFTy8xI8u1R9PlTRSOyh6TzhqCpwHzQ1zBBMvGM8d/Vt+qyNbqnXCWdQuXdbMuunrULW0Goooi+wtYsL7Op4VvK1sCeQSr2vy9kSKoJnRZnMwCT7KsWhQuJ3/IPfQOhvN0hhsWQCZmT4mLMtcvhpegDu9hlXw+Kcfw==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR04MB7158.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(7916004)(366004)(26005)(508600001)(33716001)(186003)(83380400001)(6862004)(71200400001)(54906003)(9686003)(316002)(6512007)(53546011)(6506007)(8676002)(5660300002)(86362001)(8936002)(66446008)(64756008)(66556008)(76116006)(66946007)(91956017)(66476007)(82960400001)(38100700002)(966005)(6486002)(122000001)(7416002)(4326008)(2906002)(38070700005);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?VGEtxWZh5WQVn6ySoKjC4WpX1e0vuPtnkiDtL+pRqpl7fw5RpjVn6S50G3oc?=
- =?us-ascii?Q?scNna1HQb+ZuZNkicUaZASZtN5AztCyUkifEhLFlL3wZi/x+tnM9b82LKCqa?=
- =?us-ascii?Q?I5K8IU/2lJZbkre48/VMfm8c/HwgFlEpgoxLmXKAaC/jcks6Fso4fMUQWfc5?=
- =?us-ascii?Q?aL9mtP5YqwZgs9h5vBS3EUfxSExlDw5hmTDZibKfMIUjwmg+XqibnTcE81wv?=
- =?us-ascii?Q?bY9sFeUsR8HfommLdshaVnieMrxKH4pXiD7U+FZPywHxmsiey/L6lfwquAUO?=
- =?us-ascii?Q?h8DbTv9uom0xEemvgp9k2C2nMHwq06EvrCs92CLTmvvNA2Xw617hjnSAr9RK?=
- =?us-ascii?Q?72R2frmSNfvQyj14REAParJDSNDCNTlU8i/DtQsBMIQs2+sasToFZOst3SXz?=
- =?us-ascii?Q?foSBZA6GrbHDZ48FGWpVD4/O6db8Qp9Et2RSsKvbhMqTdP9EsdSNQrQj9kJP?=
- =?us-ascii?Q?Sqwwm83jsvlLvMIQFkYegJiMClqxxJ10JLn91Ix0U0yR8PPWVSIAd/98dTyE?=
- =?us-ascii?Q?ap9DLS+n8CcM34PUumBjs0V5joW4NisyzQsYqCypvbiukMHVL5l+Yx1WV3x6?=
- =?us-ascii?Q?gRa2YhJ+jkdWhJaitL4/+mCsybOzyGEgMQZWpCP7z5IVrLFivUuMeFmF3FV+?=
- =?us-ascii?Q?pV9ZZ3jX00F3aeIj0xt9RnNbHB0EAi7hqyhmcWPdA8eHTVwPatGiXVITBq46?=
- =?us-ascii?Q?E5SagvRps8NEuzFC3hVB+iitV6O9Rbieug0g5KsS5+mHOFfElqdrcF3XCOz7?=
- =?us-ascii?Q?tGnaCCiq953L8SxeAFgET/9HQ1zj9sToHmLtC9w/tf3BtFDU2dRufTLfwCoO?=
- =?us-ascii?Q?KFlZhpCG4EUo8KgABVDn/4Nh3hj18xcinFEM6pVqWIw9bHi4j1mAuGNupjc+?=
- =?us-ascii?Q?Uc5H0ffhuDrH2N0un58Psz5MS9pGunK2x1OIMgNKUV6Z0c/6i5VJwzComnjD?=
- =?us-ascii?Q?yGQOAcMWp5S0i/xxjm7vgveaCslSozdJ78MnQcKQEyuLlrWIaqDcrjtp/Vx+?=
- =?us-ascii?Q?AFwglCQKG+iWgxeyk4FuwYrrylMcX7CStQmOADxdIZtInBlXeD3NItXOvQhl?=
- =?us-ascii?Q?5gNJkaSW9tyG9NPtNEm1eQ52EpmVCKOuHGzhBhiKUNUZhaaghquEktOvveB8?=
- =?us-ascii?Q?jdhKsqiSJ6mp0TtaNPcwnAb0xFvKLwbl/F6hSWc+2d9ZllDZpTU6lWtliMlu?=
- =?us-ascii?Q?ozRsV8TsM3DD6QbjeDU6vaaw7HgqrDAd4a0iQgIzUgtmCVR8Z5bZvlVzoiYS?=
- =?us-ascii?Q?in2zLUeDppGRqjdsCRxq8igepbdw01gVi+j9WECb9Lh5vaHajMmxf+1iR9E/?=
- =?us-ascii?Q?IaxWZZNwLWVzm6Emq1AKDxJ06NEfwAzB26ZElqu5mCTdboE4B03AgpiApczD?=
- =?us-ascii?Q?onyDxW52ncMIpWVfet5KRiqkK4OcnVHPc5G2HNPx1GjNG79en/Bo/Ka653rQ?=
- =?us-ascii?Q?C+RUAVDoCY6yUVMws7m8GNUZ8KlH+rJZWoUiue/Ud2Ma6iVJoiHWtncuX80C?=
- =?us-ascii?Q?5cYzoVYdIyudjbW3PvNUuAtYkvrnMxqucWYjbNh0Q7yBOoYuBpzA7UB//KEw?=
- =?us-ascii?Q?VWajqTSEsgNl3P5gze7teEg0qxIzCAnuSyq0KBjpA/GV104gINrv08mYDpXR?=
- =?us-ascii?Q?X8LsIABpZVpolyLYtwEU/OhI7Zst9q2yWZDjiw0vEq3HJ1yZug+LvtH/fBlU?=
- =?us-ascii?Q?tuAwmyGSuLolKKZZd/2IrtqaDMJxkvCernsNa7Zs1wc5NaT5JdUGype1Wwba?=
- =?us-ascii?Q?rE/IilLJKxWztjbGXWz0TyWQjewzwTI=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <E90E97DF61AB134783DB3B75F6CFBFD0@namprd04.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Tue, 12 Apr 2022 09:02:13 -0400
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80C53198;
+        Tue, 12 Apr 2022 05:41:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1649767275; x=1681303275;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   mime-version:in-reply-to;
+  bh=eyXblfG/A5HWVja7fFUb4HNY/ZRRmFMXW6QIdjEei/o=;
+  b=Bf3bPc/YraGzPZAJmicdhLm+9cFkKE5cPUl/VANxPQgA3hCbaw/aB6ll
+   ZD7EkPG0pScmuSl8bC1F/ByShPpMM5XywO9YoXWFp9zvfIXxcyzSgWS4F
+   qyxkp/zKVIC/3GmZqUCgB7x+qYFGLluSh74zlGjxj6f1lrXnDJs5fwJWs
+   5XMLNJ5A1UHAYOu09dSrrcUuAzkdCavt3rCuJ5+iu+V/Zs1x/pSxcNTc7
+   QBDUWmUqLMDeznZPqx+8xmnEMikNLBFpndwHseJ6yV+jbb2BOrkUgaE83
+   CaVJNhneaOY8Y78bV1D5+4WR+eGxcJE6vIAMuaXV+5NjpdL8+R8BPMl6w
+   w==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10314"; a="262112433"
+X-IronPort-AV: E=Sophos;i="5.90,253,1643702400"; 
+   d="scan'208";a="262112433"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Apr 2022 05:41:15 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.90,253,1643702400"; 
+   d="scan'208";a="526023841"
+Received: from chaop.bj.intel.com (HELO localhost) ([10.240.192.101])
+  by orsmga002.jf.intel.com with ESMTP; 12 Apr 2022 05:41:06 -0700
+Date:   Tue, 12 Apr 2022 20:40:56 +0800
+From:   Chao Peng <chao.p.peng@linux.intel.com>
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com
+Subject: Re: [PATCH v5 10/13] KVM: Register private memslot to memory backing
+ store
+Message-ID: <20220412124056.GA8013@chaop.bj.intel.com>
+Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
+References: <20220310140911.50924-1-chao.p.peng@linux.intel.com>
+ <20220310140911.50924-11-chao.p.peng@linux.intel.com>
+ <YkNXoCBjfpfI67QF@google.com>
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR04MB7158.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5b5d6a46-daf4-4d1b-897e-08da1c7f9c74
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Apr 2022 12:26:03.5936
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 0RiK5Ao9vrNFmt974MorJk4v8ZvFp9FGCDA4yJ+yOyxlr547urUb0TPqqBEPbY0GY8YtH+DpKj/kOUI6CJHDNQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR04MB4848
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YkNXoCBjfpfI67QF@google.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,
         SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -153,130 +88,260 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 12, 2022 at 08:40:27PM +0900, Damien Le Moal wrote:
-> On 4/12/22 19:03, Niklas Cassel wrote:
-> > bFLT binaries are usually created using elf2flt.
-> >=20
-> > The linker script used by elf2flt has defined the .data section like th=
-e
-> > following for the last 19 years:
-> >=20
-> > .data : {
-> > 	_sdata =3D . ;
-> > 	__data_start =3D . ;
-> > 	data_start =3D . ;
-> > 	*(.got.plt)
-> > 	*(.got)
-> > 	FILL(0) ;
-> > 	. =3D ALIGN(0x20) ;
-> > 	LONG(-1)
-> > 	. =3D ALIGN(0x20) ;
-> > 	...
-> > }
-> >=20
-> > It places the .got.plt input section before the .got input section.
-> > The same is true for the default linker script (ld --verbose) on most
-> > architectures except x86/x86-64.
-> >=20
-> > The binfmt_flat loader should relocate all GOT entries until it encount=
-ers
-> > a -1 (the LONG(-1) in the linker script).
-> >=20
-> > The problem is that the .got.plt input section starts with a GOTPLT hea=
-der
-> > that has the first word (two u32 entries for 64-bit archs) set to -1.
-> > See e.g. the binutils implementation for architectures [1] [2] [3] [4].
-> >=20
-> > This causes the binfmt_flat loader to stop relocating GOT entries
-> > prematurely and thus causes the application to crash when running.
-> >=20
-> > Fix this by ignoring -1 in the first two u32 entries in the .data secti=
-on.
-> >=20
-> > A -1 will only be ignored for the first two entries for bFLT binaries w=
-ith
-> > FLAT_FLAG_GOTPIC set, which is unconditionally set by elf2flt if the
-> > supplied ELF binary had the symbol _GLOBAL_OFFSET_TABLE_ defined, there=
-fore
-> > ELF binaries without a .got input section should remain unaffected.
-> >=20
-> > Tested on RISC-V Canaan Kendryte K210 and RISC-V QEMU nommu_virt_defcon=
-fig.
-> >=20
-> > [1] https://sourceware.org/git/?p=3Dbinutils-gdb.git;a=3Dblob;f=3Dbfd/e=
-lfnn-riscv.c;hb=3Dbinutils-2_38#l3275
-> > [2] https://sourceware.org/git/?p=3Dbinutils-gdb.git;a=3Dblob;f=3Dbfd/e=
-lfxx-tilegx.c;hb=3Dbinutils-2_38#l4023
-> > [3] https://sourceware.org/git/?p=3Dbinutils-gdb.git;a=3Dblob;f=3Dbfd/e=
-lf32-tilepro.c;hb=3Dbinutils-2_38#l3633
-> > [4] https://sourceware.org/git/?p=3Dbinutils-gdb.git;a=3Dblob;f=3Dbfd/e=
-lfnn-loongarch.c;hb=3Dbinutils-2_38#l2978
-> >=20
-> > Cc: <stable@vger.kernel.org>
-> > Signed-off-by: Niklas Cassel <niklas.cassel@wdc.com>
+On Tue, Mar 29, 2022 at 07:01:52PM +0000, Sean Christopherson wrote:
+> On Thu, Mar 10, 2022, Chao Peng wrote:
+> > Add 'notifier' to memslot to make it a memfile_notifier node and then
+> > register it to memory backing store via memfile_register_notifier() when
+> > memslot gets created. When memslot is deleted, do the reverse with
+> > memfile_unregister_notifier(). Note each KVM memslot can be registered
+> > to different memory backing stores (or the same backing store but at
+> > different offset) independently.
+> > 
+> > Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
+> > Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
 > > ---
-> > RISC-V elf2flt patches are still not merged, they can be found here:
-> > https://github.com/floatious/elf2flt/tree/riscv
-> >=20
-> > buildroot branch for k210 nommu (including this patch and elf2flt patch=
-es):
-> > https://github.com/floatious/buildroot/tree/k210-v14
-> >=20
-> >  fs/binfmt_flat.c | 11 ++++++++++-
-> >  1 file changed, 10 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/fs/binfmt_flat.c b/fs/binfmt_flat.c
-> > index 626898150011..b80009e6392e 100644
-> > --- a/fs/binfmt_flat.c
-> > +++ b/fs/binfmt_flat.c
-> > @@ -793,8 +793,17 @@ static int load_flat_file(struct linux_binprm *bpr=
-m,
-> >  			u32 addr, rp_val;
-> >  			if (get_user(rp_val, rp))
-> >  				return -EFAULT;
-> > -			if (rp_val =3D=3D 0xffffffff)
-> > +			/*
-> > +			 * The first word in the GOTPLT header is -1 on certain
-> > +			 * architechtures. (On 64-bit, that is two u32 entries.)
-> > +			 * Ignore these entries, so that we stop relocating GOT
-> > +			 * entries first when we encounter the -1 after the GOT.
-> > +			 */
->=20
-> 		/*
-> 		 * The first word in the GOTPLT header is -1 on certain
-> 		 * architectures (on 64-bit, that is two u32 entries).
-> 		 * Ignore these entries so that we stop relocating GOT
-> 		 * entries when we encounter the first -1 entry after
-> 		 * the GOTPLT header.
-> 		 */
+> >  include/linux/kvm_host.h |  1 +
+> >  virt/kvm/kvm_main.c      | 75 ++++++++++++++++++++++++++++++++++++----
+> >  2 files changed, 70 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> > index 6e1d770d6bf8..9b175aeca63f 100644
+> > --- a/include/linux/kvm_host.h
+> > +++ b/include/linux/kvm_host.h
+> > @@ -567,6 +567,7 @@ struct kvm_memory_slot {
+> >  	struct file *private_file;
+> >  	loff_t private_offset;
+> >  	struct memfile_pfn_ops *pfn_ops;
+> > +	struct memfile_notifier notifier;
+> >  };
+> >  
+> >  static inline bool kvm_slot_is_private(const struct kvm_memory_slot *slot)
+> > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> > index d11a2628b548..67349421eae3 100644
+> > --- a/virt/kvm/kvm_main.c
+> > +++ b/virt/kvm/kvm_main.c
+> > @@ -840,6 +840,37 @@ static int kvm_init_mmu_notifier(struct kvm *kvm)
+> >  
+> >  #endif /* CONFIG_MMU_NOTIFIER && KVM_ARCH_WANT_MMU_NOTIFIER */
+> >  
+> > +#ifdef CONFIG_MEMFILE_NOTIFIER
+> > +static inline int kvm_memfile_register(struct kvm_memory_slot *slot)
+> 
+> This is a good oppurtunity to hide away the memfile details a bit.  Maybe
+> kvm_private_mem_{,un}register()?
 
-Sure, I can update the comment when I send a v2.
+Happy to change.
 
->=20
-> > +			if (rp_val =3D=3D 0xffffffff) {
-> > +				if (rp - (u32 __user *)datapos < 2)
-> > +					continue;
->=20
-> Would it be safer to check that the following rp_val is also -1 ? Also,
-> does this work with 32-bits arch ? Shouldn't the "< 2" be "< 1" for
-> 32-bits arch ?
+> 
+> > +{
+> > +	return memfile_register_notifier(file_inode(slot->private_file),
+> > +					 &slot->notifier,
+> > +					 &slot->pfn_ops);
+> > +}
+> > +
+> > +static inline void kvm_memfile_unregister(struct kvm_memory_slot *slot)
+> > +{
+> > +	if (slot->private_file) {
+> > +		memfile_unregister_notifier(file_inode(slot->private_file),
+> > +					    &slot->notifier);
+> > +		fput(slot->private_file);
+> 
+> This should not do fput(), it makes the helper imbalanced with respect to the
+> register path and will likely lead to double fput().  Indeed, if preparing the
+> region fails, __kvm_set_memory_region() will double up on fput() due to checking
+> its local "file" for null, not slot->private for null.
 
-I think that checking that the previous entry is also -1 will not work,
-as it will just be a single entry for 32-bit.
-And I don't see the need to complicate this logic by having a 64-bit
-and a 32-bit version of the check.
+Right.
 
-The whole GOT (.got.plt + .got) will be more than two words anyway, if
-there is a GOT (i.e. if flag FLAT_FLAG_GOTPIC is set in the bFLT binary),
-so the "end of GOT"/LONG(-1) will always come way after these first two
-entries anyway.
+> 
+> > +		slot->private_file = NULL;
+> > +	}
+> > +}
+> > +
+> > +#else /* !CONFIG_MEMFILE_NOTIFIER */
+> > +
+> > +static inline int kvm_memfile_register(struct kvm_memory_slot *slot)
+> > +{
+> 
+> This should WARN_ON_ONCE().  Ditto for unregister.
+> 
+> > +	return -EOPNOTSUPP;
+> > +}
+> > +
+> > +static inline void kvm_memfile_unregister(struct kvm_memory_slot *slot)
+> > +{
+> > +}
+> > +
+> > +#endif /* CONFIG_MEMFILE_NOTIFIER */
+> > +
+> >  #ifdef CONFIG_HAVE_KVM_PM_NOTIFIER
+> >  static int kvm_pm_notifier_call(struct notifier_block *bl,
+> >  				unsigned long state,
+> > @@ -884,6 +915,9 @@ static void kvm_destroy_dirty_bitmap(struct kvm_memory_slot *memslot)
+> >  /* This does not remove the slot from struct kvm_memslots data structures */
+> >  static void kvm_free_memslot(struct kvm *kvm, struct kvm_memory_slot *slot)
+> >  {
+> > +	if (slot->flags & KVM_MEM_PRIVATE)
+> > +		kvm_memfile_unregister(slot);
+> 
+> With fput() move out of unregister, this needs to be:
 
-Another reason why I don't fancy a 64-bit and 32-bit version is because
-some architectures might be 64-bit, but I assume that they can be running
-a 32-bit userland. (And in comparison with the ELF header that tells if
-the binary is 32-bit or 64-bit, I don't see something similar in the bFLT
-header.)
+Agreed.
 
+> 
+> 	if (slot->flags & KVM_MEM_PRIVATE) {
+> 		kvm_private_mem_unregister(slot);
+> 		fput(slot->private_file);
+> 	}
+> > +
+> >  	kvm_destroy_dirty_bitmap(slot);
+> >  
+> >  	kvm_arch_free_memslot(kvm, slot);
+> > @@ -1738,6 +1772,12 @@ static int kvm_set_memslot(struct kvm *kvm,
+> >  		kvm_invalidate_memslot(kvm, old, invalid_slot);
+> >  	}
+> >  
+> > +	if (new->flags & KVM_MEM_PRIVATE && change == KVM_MR_CREATE) {
+> > +		r = kvm_memfile_register(new);
+> > +		if (r)
+> > +			return r;
+> > +	}
+> 
+> This belongs in kvm_prepare_memory_region().  The shenanigans for DELETE and MOVE
+> are special.
 
-Kind regards,
-Niklas=
+Sure.
+
+> 
+> > +
+> >  	r = kvm_prepare_memory_region(kvm, old, new, change);
+> >  	if (r) {
+> >  		/*
+> > @@ -1752,6 +1792,10 @@ static int kvm_set_memslot(struct kvm *kvm,
+> >  		} else {
+> >  			mutex_unlock(&kvm->slots_arch_lock);
+> >  		}
+> > +
+> > +		if (new->flags & KVM_MEM_PRIVATE && change == KVM_MR_CREATE)
+> > +			kvm_memfile_unregister(new);
+> > +
+> >  		return r;
+> >  	}
+> >  
+> > @@ -1817,6 +1861,7 @@ int __kvm_set_memory_region(struct kvm *kvm,
+> >  	enum kvm_mr_change change;
+> >  	unsigned long npages;
+> >  	gfn_t base_gfn;
+> > +	struct file *file = NULL;
+> 
+> Nit, naming this private_file would help understand its use.  Though I think it's
+> easier to not have a local variable.  More below.
+> 
+> >  	int as_id, id;
+> >  	int r;
+> >  
+> > @@ -1890,14 +1935,24 @@ int __kvm_set_memory_region(struct kvm *kvm,
+> >  			return 0;
+> >  	}
+> >  
+> > +	if (mem->flags & KVM_MEM_PRIVATE) {
+> > +		file = fdget(region_ext->private_fd).file;
+> 
+> This can use fget() instead of fdget().
+> 
+> > +		if (!file)
+> > +			return -EINVAL;
+> > +	}
+> > +
+> >  	if ((change == KVM_MR_CREATE || change == KVM_MR_MOVE) &&
+> > -	    kvm_check_memslot_overlap(slots, id, base_gfn, base_gfn + npages))
+> > -		return -EEXIST;
+> > +	    kvm_check_memslot_overlap(slots, id, base_gfn, base_gfn + npages)) {
+> > +		r = -EEXIST;
+> > +		goto out;
+> > +	}
+> >  
+> >  	/* Allocate a slot that will persist in the memslot. */
+> >  	new = kzalloc(sizeof(*new), GFP_KERNEL_ACCOUNT);
+> > -	if (!new)
+> > -		return -ENOMEM;
+> > +	if (!new) {
+> > +		r = -ENOMEM;
+> > +		goto out;
+> > +	}
+> >  
+> >  	new->as_id = as_id;
+> >  	new->id = id;
+> > @@ -1905,10 +1960,18 @@ int __kvm_set_memory_region(struct kvm *kvm,
+> >  	new->npages = npages;
+> >  	new->flags = mem->flags;
+> >  	new->userspace_addr = mem->userspace_addr;
+> > +	new->private_file = file;
+> > +	new->private_offset = mem->flags & KVM_MEM_PRIVATE ?
+> > +			      region_ext->private_offset : 0;
+> 
+> "new" is zero-allocated, so all the private stuff, including the fget(), can be
+> wrapped in a single KVM_MEM_PRIVATE check.  Moving fget() eliminates the number
+> of gotos needed (the above -EEXIST and -ENOMEM paths don't need to be modified).
+> 
+> >  	r = kvm_set_memslot(kvm, old, new, change);
+> > -	if (r)
+> > -		kfree(new);
+> > +	if (!r)
+> > +		return r;
+> 
+> Use goto, e.g.
+> 
+> 	if (r)
+> 		goto out;
+> 
+> 	return 0;
+> 
+> Burying the happy path in a taken if-statement is confusing and error prone,
+> mostly because it breaks well-established kernel patterns.  Note, there's no need
+> for a separate out_free since new->private_file will be NULL in either case.  I
+> don't have a strong preference, I just find it easier to read code that's more
+> explicit, but I'm a-ok collapsing them into a single label.
+
+Will follow this, thanks for the detailed suggestion.
+
+Chao
+> 
+> 	if ((change == KVM_MR_CREATE || change == KVM_MR_MOVE) &&
+> 	    kvm_check_memslot_overlap(slots, id, base_gfn, base_gfn + npages))
+> 		return -EEXIST;
+> 
+> 	/* Allocate a slot that will persist in the memslot. */
+> 	new = kzalloc(sizeof(*new), GFP_KERNEL_ACCOUNT);
+> 	if (!new)
+> 		return -ENOMEM;
+> 
+> 	new->as_id = as_id;
+> 	new->id = id;
+> 	new->base_gfn = base_gfn;
+> 	new->npages = npages;
+> 	new->flags = mem->flags;
+> 	new->userspace_addr = mem->userspace_addr;
+> 
+> 	if (mem->flags & KVM_MEM_PRIVATE) {
+> 		new->private_file = fget(mem->private_fd);
+> 		if (!new->private_file) {
+> 			r = -EINVAL;
+> 			goto out_free;
+> 		}
+> 		new->private_offset = mem->private_offset;
+> 	}
+> 
+> 	r = kvm_set_memslot(kvm, old, new, change);
+> 	if (r)
+> 		goto out;
+> 
+> 	return 0;
+> 
+> out:
+> 	if (new->private_file)
+> 		fput(new->private_file);
+> 
+> out_free:
+> 	kfree(new);
+> 	return r;
