@@ -2,69 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 167A14FDE7D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Apr 2022 13:54:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B8D44FDE94
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 12 Apr 2022 13:54:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346822AbiDLLuo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Apr 2022 07:50:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47068 "EHLO
+        id S1349712AbiDLLu6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Apr 2022 07:50:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355050AbiDLLtJ (ORCPT
+        with ESMTP id S1355363AbiDLLtT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Apr 2022 07:49:09 -0400
+        Tue, 12 Apr 2022 07:49:19 -0400
 Received: from mail1.bemta34.messagelabs.com (mail1.bemta34.messagelabs.com [195.245.231.4])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 705DA9FEE;
-        Tue, 12 Apr 2022 03:33:50 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1746C19284;
+        Tue, 12 Apr 2022 03:34:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
-        s=170520fj; t=1649759628; i=@fujitsu.com;
-        bh=mAumIPc8r56GCBPV0WVMEx+GRmeDp0lAwL4fXJ/7Bn0=;
+        s=170520fj; t=1649759685; i=@fujitsu.com;
+        bh=WE0H8u6NMFZxVA6KQdMCLJqSSWftjC4J+9Oi8D1rfa8=;
         h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
          MIME-Version:Content-Type;
-        b=PloExhdnHyNytenD12Ov9pTvwAg7IfWoZ0EqdcSsgfC0VaQS7Swew6HmSFh6DuS89
-         DjoR9GKccSAmRw8AFSgMMDM320MSAWklBM2MCJ8bYI5QCYYEvRt3ITssiqzPXl+mXj
-         YPngodUeTY8aNJNTqLap5I6pdryY0Lz5af0RQwKYMxEzBrJx2q1oLLZMMokXyvFbY2
-         kVSJ+uiIZ4GdkYEXjqpqhzdBb78VivsBYkEVinvuye6CofJfNQGysTWPc/G7yd1LGg
-         KX4hCzMfCaPokheb5l7YQceY9m0IsiYCvQ6OIo04sUmxgrVrFLwrXtr24ayLEHrbea
-         qFCt3PFHOaO9Q==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrNIsWRWlGSWpSXmKPExsViZ8MxRbcnNDT
-  JYONEcYvXhz8xWmw5do/R4vITPovTLXvZLfbsPcniwOpxapGEx6ZVnWwenzfJBTBHsWbmJeVX
-  JLBmzFj0kLHgQTdjxe91T9gbGG8WdDFycQgJvGaUuNm/gRnC2cMocXnqGdYuRk4ONgFNiWedC
-  5hBbBEBF4lv+/+ygdjMAjkSDbt/MIHYwgKeEl1PToLVsAioStw5e5YRxOYV8JDo3ziJHcSWEF
-  CQmPLwPVgNJ1D9pCP7WEBsIaCaGa2r2SDqBSVOznzCAjFfQuLgixfMEL2KEpc6vjFC2BUSs2a
-  1MU1g5J+FpGUWkpYFjEyrGK2TijLTM0pyEzNzdA0NDHQNDU11jS10DU0M9BKrdBP1Ukt1y1OL
-  S3SN9BLLi/VSi4v1iitzk3NS9PJSSzYxAsM5pVitZwfjiVU/9Q4xSnIwKYnyGvCEJgnxJeWnV
-  GYkFmfEF5XmpBYfYpTh4FCS4JULBsoJFqWmp1akZeYAYwsmLcHBoyTCGxsIlOYtLkjMLc5Mh0
-  idYtTl+Pvp715mIZa8/LxUKXFezhCgIgGQoozSPLgRsDi/xCgrJczLyMDAIMRTkFqUm1mCKv+
-  KUZyDUUmYlx9kCk9mXgncpldARzABHRG6LRDkiJJEhJRUA1PeCf8mmZ3Hog9+y7opM58pdq2C
-  7jTH54w1DvOmP74/3c1uYYdv+a2E+Ksu7/d++qea7TiniaHV0+f+knX2eke8Jtz8psxRxi8/c
-  Z5vf7bwrgWTTX+5euh5fi7721fix/X4Xl0Z53Pjb8Yllqa677WW7NwqI7b1g94DrwTja24fb/
-  9ue3ai4j7vZNnv7+sa5y1ozsycs/pO8JVL26JYbi9XSe0XlLRoO/z4miFj5H+/hb1rJ/PN/lb
-  8Kmtmise0k82zl69o6v2l3HbS0Xt6XLr2tfdNnnd0V4WpLStuTvHhWOC/vvRAjXd9ykkxg4hp
-  Xk80wl56le54xxPfyvdcdFlAws/tz+PP6c6ozU0szVNiKc5INNRiLipOBADbHMS6bgMAAA==
+        b=qAUZxsIFrtumSqXZnvRkOf4/NOgMB83ef1tFriBzxcJ/SzwnJ1uK8VTYf+xALqOEw
+         cUy9SlK0ZN74+3goiXLj92+JlIzeq/L9OWMNNQMMCqWWOvQb7x2qxU0Fo/tcvTYrvF
+         nbFe5ZetPEh+jogeDtaPShsJB/mDrMlq+GlTORLqlC9rVxlEJUDAThfDZ3HUaQJzpg
+         XeCZPw36QaDig+JskXpyqhUC/mK/sY3la9gLR6HQHDGnJh7kGN1j5LdQY1GZIhbVZ0
+         vUSJdGX7J2IdPTIr+CHN8lswyDNbHq5TdX9ipmVe5EzpBZZgI26Ue7AHtjqED3rtvJ
+         Mg3RWxvWuqY9g==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrFIsWRWlGSWpSXmKPExsViZ8MxRfdIaGi
+  SwdXvGhavD39itNhy7B6jxeUnfBanW/ayW+zZe5LFgdXj1CIJj02rOtk8Pm+SC2COYs3MS8qv
+  SGDNeHnoAUtB313Giqb/q9kbGKdsZuxi5OIQEnjNKLF+5wXmLkZOIGcPo8TD/RUgNpuApsSzz
+  gVgcREBF4lv+/+ygdjMAjkSDbt/MIHYwgLuEutezACrYRFQlZh19QlYnFfAQ2LjmaUsILaEgI
+  LElIfvwWo4BTwlJh3ZxwKxy0NiRutqNoh6QYmTM5+wQMyXkDj44gUzRK+ixKWOb4wQdoXErFl
+  tTBMY+WchaZmFpGUBI9MqRqukosz0jJLcxMwcXUMDA11DQ1NdYyNdQxO9xCrdRL3UUt3y1OIS
+  XSO9xPJivdTiYr3iytzknBS9vNSSTYzAYE4pVuDbwdi86qfeIUZJDiYlUV4DntAkIb6k/JTKj
+  MTijPii0pzU4kOMMhwcShK8csFAOcGi1PTUirTMHGBkwaQlOHiURHhjA4HSvMUFibnFmekQqV
+  OMuhx/P/3dyyzEkpeflyolztsYAlQkAFKUUZoHNwIW5ZcYZaWEeRkZGBiEeApSi3IzS1DlXzG
+  KczAqCfPyg0zhycwrgdv0CugIJqAjQrcFghxRkoiQkmpgklF6tSXUcvabZ+Eri05OVZwxM3Li
+  VwF2M+WlNu/tg/v0TxSuZFTKyam9mHNUf8cqg3pTkSbn/x9d+Bam9hT1aEg/fiBacLrsxIN+0
+  xc7QoUYnR1EOCqzHrlf/32q8dkCobzb29bsjH4bXbcy8f//+r7pl7/raoac23CkqtnWovFrXt
+  fm6RPr73N2Hw26Lc3IyZeqdDLlylfT09pTyjMYvc9P2TU3cbr9v9SaH5Ltlkdsk9YsZgjZL/p
+  G+xnHlu7qiYo6mgdnSD+InF/uwsrxnE1EuTxuwu4GNd3WC/qHS57K/+xxrLgg6aE9IUE1ntOX
+  /1Dw9T0fNW99X7Z6vuonD8nWuisRnFtzWXrrdn1QYinOSDTUYi4qTgQAtH13MW0DAAA=
 X-Env-Sender: xuyang2018.jy@fujitsu.com
-X-Msg-Ref: server-16.tower-565.messagelabs.com!1649759628!58522!1
+X-Msg-Ref: server-10.tower-548.messagelabs.com!1649759684!54629!1
 X-Originating-IP: [62.60.8.148]
 X-SYMC-ESS-Client-Auth: outbound-route-from=pass
 X-StarScan-Received: 
 X-StarScan-Version: 9.85.8; banners=-,-,-
 X-VirusChecked: Checked
-Received: (qmail 31504 invoked from network); 12 Apr 2022 10:33:48 -0000
+Received: (qmail 14189 invoked from network); 12 Apr 2022 10:34:44 -0000
 Received: from unknown (HELO mailhost1.uk.fujitsu.com) (62.60.8.148)
-  by server-16.tower-565.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 12 Apr 2022 10:33:48 -0000
+  by server-10.tower-548.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 12 Apr 2022 10:34:44 -0000
 Received: from R01UKEXCASM126.r01.fujitsu.local ([10.183.43.178])
-        by mailhost1.uk.fujitsu.com (8.14.5/8.14.5) with ESMTP id 23CAXmvN004638
+        by mailhost1.uk.fujitsu.com (8.14.5/8.14.5) with ESMTP id 23CAYiKg004938
         (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
-        Tue, 12 Apr 2022 11:33:48 +0100
+        Tue, 12 Apr 2022 11:34:44 +0100
 Received: from localhost.localdomain (10.167.220.84) by
  R01UKEXCASM126.r01.fujitsu.local (10.183.43.178) with Microsoft SMTP Server
- (TLS) id 15.0.1497.32; Tue, 12 Apr 2022 11:33:45 +0100
+ (TLS) id 15.0.1497.32; Tue, 12 Apr 2022 11:34:41 +0100
 From:   Yang Xu <xuyang2018.jy@fujitsu.com>
 To:     <david@fromorbit.com>, <brauner@kernel.org>, <djwong@kernel.org>
 CC:     <linux-fsdevel@vger.kernel.org>, <fstests@vger.kernel.org>,
         Yang Xu <xuyang2018.jy@fujitsu.com>
-Subject: [PATCH v3 4/5] idmapped-mounts: Add new setgid_create_umask test
-Date:   Tue, 12 Apr 2022 19:33:45 +0800
-Message-ID: <1649763226-2329-4-git-send-email-xuyang2018.jy@fujitsu.com>
+Subject: [PATCH v3 5/5] idmapped-mounts: Add new setgid_create_acl test
+Date:   Tue, 12 Apr 2022 19:33:46 +0800
+Message-ID: <1649763226-2329-5-git-send-email-xuyang2018.jy@fujitsu.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1649763226-2329-1-git-send-email-xuyang2018.jy@fujitsu.com>
 References: <1649763226-2329-1-git-send-email-xuyang2018.jy@fujitsu.com>
@@ -92,23 +92,30 @@ deferred to posix_acl_create(). So when the filesystem calls
 posix_acl_create() and there are no acls set or not supported then
 current_umask() will be stripped.
 
-Here we only use umask(S_IXGRP) to check whether inode strip
-S_ISGID works correctly.
+If the parent directory has a default acl then permissions are based off
+of that and current_umask() is ignored. Specifically, if the ACL has an
+ACL_MASK entry, the group permissions correspond to the permissions of
+the ACL_MASK entry. Otherwise, if the ACL has no ACL_MASK entry, the
+group permissions correspond to the permissions of the ACL_GROUP_OBJ
+entry.
+
+Here we only use setfacl to set default acl or add ACL_MASK to check
+whether inode strip  S_ISGID works correctly.
 
 Signed-off-by: Yang Xu <xuyang2018.jy@fujitsu.com>
 ---
- src/idmapped-mounts/idmapped-mounts.c | 505 +++++++++++++++++++++++++-
- tests/generic/680                     |  26 ++
- tests/generic/680.out                 |   2 +
- 3 files changed, 532 insertions(+), 1 deletion(-)
- create mode 100755 tests/generic/680
- create mode 100644 tests/generic/680.out
+ src/idmapped-mounts/idmapped-mounts.c | 793 +++++++++++++++++++++++++-
+ tests/generic/681                     |  28 +
+ tests/generic/681.out                 |   2 +
+ 3 files changed, 822 insertions(+), 1 deletion(-)
+ create mode 100755 tests/generic/681
+ create mode 100644 tests/generic/681.out
 
 diff --git a/src/idmapped-mounts/idmapped-mounts.c b/src/idmapped-mounts/idmapped-mounts.c
-index 02f91558..e6c14586 100644
+index e6c14586..0dbbc64c 100644
 --- a/src/idmapped-mounts/idmapped-mounts.c
 +++ b/src/idmapped-mounts/idmapped-mounts.c
-@@ -14146,6 +14146,494 @@ out:
+@@ -14634,6 +14634,781 @@ out:
  	return fret;
  }
  
@@ -126,9 +133,16 @@ index 02f91558..e6c14586 100644
 + * posix_acl_create() and there are no acls set or not supported then
 + * current_umask() will be stripped.
 + *
-+ * Use umask(S_IXGRP) to check whether inode strip S_ISGID works correctly.
++ * If the parent directory has a default acl then permissions are based off
++ * of that and current_umask() is ignored. Specifically, if the ACL has an
++ * ACL_MASK entry, the group permissions correspond to the permissions of
++ * the ACL_MASK entry. Otherwise, if the ACL has no ACL_MASK entry, the
++ * group permissions correspond to the permissions of the ACL_GROUP_OBJ
++ * entry.
++ *
++ * Use setfacl to check whether inode strip S_ISGID works correctly.
 + */
-+static int setgid_create_umask(void)
++static int setgid_create_acl(void)
 +{
 +	int fret = -1;
 +	int file1_fd = -EBADF;
@@ -136,7 +150,6 @@ index 02f91558..e6c14586 100644
 +	pid_t pid;
 +	bool supported = false;
 +	char path[PATH_MAX];
-+	mode_t mode;
 +
 +	if (!caps_supported())
 +		return 0;
@@ -155,7 +168,7 @@ index 02f91558..e6c14586 100644
 +		goto out;
 +	}
 +
-+	   /* Verify that the setgid bit got raised. */
++	/* Verify that the setgid bit got raised. */
 +	if (!is_setgid(t_dir1_fd, "", AT_EMPTY_PATH)) {
 +		log_stderr("failure: is_setgid");
 +		goto out;
@@ -163,20 +176,22 @@ index 02f91558..e6c14586 100644
 +
 +	supported = openat_tmpfile_supported(t_dir1_fd);
 +
-+	/* Only umask with S_IXGRP because inode strip S_ISGID will check mode
-+	 * whether has group execute or search permission.
-+	 */
-+	umask(S_IXGRP);
-+	mode = umask(S_IXGRP);
-+	if (!(mode & S_IXGRP))
-+		die("failure: umask");
-+
 +	pid = fork();
 +	if (pid < 0) {
 +		log_stderr("failure: fork");
 +		goto out;
 +	}
 +	if (pid == 0) {
++		/* If the parent directory has a default acl then permissions are based off
++		 * of that and current_umask() is ignored. Specifically, if the ACL has an
++		 * ACL_MASK entry, the group permissions correspond to the permissions of
++		 * the ACL_MASK entry.
++		 */
++		umask(S_IXGRP);
++		snprintf(t_buf, sizeof(t_buf), "setfacl -d -m u::rwx,g::rwx,o::rwx,m:rw %s/%s", t_mountpoint, T_DIR1);
++		if (system(t_buf))
++			die("failure: system");
++
 +		if (!switch_ids(0, 10000))
 +			die("failure: switch_ids");
 +
@@ -250,7 +265,102 @@ index 02f91558..e6c14586 100644
 +			if (unlinkat(t_dir1_fd, FILE3, 0))
 +				die("failure: delete");
 +		}
++		exit(EXIT_SUCCESS);
++	}
++	if (wait_for_pid(pid))
++		goto out;
 +
++	pid = fork();
++	if (pid < 0) {
++		log_stderr("failure: fork");
++		goto out;
++	}
++	if (pid == 0) {
++		/* If the parent directory has a default acl then permissions are based off
++		 * of that and current_umask() is ignored. Specifically, if the ACL has an
++		 * ACL_MASK entry, the group permissions correspond to the permissions of
++		 * the ACL_MASK entry. Otherwise, if the ACL has no ACL_MASK entry, the
++		 * group permissions correspond to the permissions of the ACL_GROUP_OBJ
++		 * entry.
++		 */
++		umask(S_IXGRP);
++		snprintf(t_buf, sizeof(t_buf), "setfacl -d -m u::rwx,g::rw,o::rwx, %s/%s", t_mountpoint, T_DIR1);
++		if (system(t_buf))
++			die("failure: system");
++
++		if (!switch_ids(0, 10000))
++			die("failure: switch_ids");
++
++		if (!caps_down_fsetid())
++			die("failure: caps_down_fsetid");
++
++		/* create regular file via open() */
++		file1_fd = openat(t_dir1_fd, FILE1, O_CREAT | O_EXCL | O_CLOEXEC, S_IXGRP | S_ISGID);
++		if (file1_fd < 0)
++			die("failure: create");
++
++		/* Neither in_group_p() nor capable_wrt_inode_uidgid() so setgid
++		 * bit needs to be stripped.
++		 */
++		if (is_setgid(t_dir1_fd, FILE1, 0))
++			die("failure: is_setgid");
++
++		/* create directory */
++		if (mkdirat(t_dir1_fd, DIR1, 0000))
++			die("failure: create");
++
++		if (xfs_irix_sgid_inherit_enabled()) {
++			/* We're not in_group_p(). */
++			if (is_setgid(t_dir1_fd, DIR1, 0))
++				die("failure: is_setgid");
++		} else {
++			/* Directories always inherit the setgid bit. */
++			if (!is_setgid(t_dir1_fd, DIR1, 0))
++				die("failure: is_setgid");
++		}
++
++		/* create a special file via mknodat() vfs_create */
++		if (mknodat(t_dir1_fd, FILE2, S_IFREG | S_ISGID | S_IXGRP, 0))
++			die("failure: mknodat");
++
++		if (is_setgid(t_dir1_fd, FILE2, 0))
++			die("failure: is_setgid");
++
++		/* create a character device via mknodat() vfs_mknod */
++		if (mknodat(t_dir1_fd, CHRDEV1, S_IFCHR | S_ISGID | S_IXGRP, makedev(5, 1)))
++			die("failure: mknodat");
++
++		if (is_setgid(t_dir1_fd, CHRDEV1, 0))
++			die("failure: is_setgid");
++
++		if (unlinkat(t_dir1_fd, FILE1, 0))
++			die("failure: delete");
++
++		if (unlinkat(t_dir1_fd, DIR1, AT_REMOVEDIR))
++			die("failure: delete");
++
++		if (unlinkat(t_dir1_fd, FILE2, 0))
++			die("failure: delete");
++
++		if (unlinkat(t_dir1_fd, CHRDEV1, 0))
++			die("failure: delete");
++
++		/* create tmpfile via filesystem tmpfile api */
++		if (supported) {
++			tmpfile_fd = openat(t_dir1_fd, ".", O_TMPFILE | O_RDWR, S_IXGRP | S_ISGID);
++			if (tmpfile_fd < 0)
++				die("failure: create");
++			/* link the temporary file into the filesystem, making it permanent */
++			snprintf(path, PATH_MAX,  "/proc/self/fd/%d", tmpfile_fd);
++			if (linkat(AT_FDCWD, path, t_dir1_fd, FILE3, AT_SYMLINK_FOLLOW))
++				die("failure: linkat");
++			if (close(tmpfile_fd))
++				die("failure: close");
++			if (is_setgid(t_dir1_fd, FILE3, 0))
++				die("failure: is_setgid");
++			if (unlinkat(t_dir1_fd, FILE3, 0))
++				die("failure: delete");
++		}
 +		exit(EXIT_SUCCESS);
 +	}
 +	if (wait_for_pid(pid))
@@ -263,7 +373,7 @@ index 02f91558..e6c14586 100644
 +	return fret;
 +}
 +
-+static int setgid_create_umask_idmapped(void)
++static int setgid_create_acl_idmapped(void)
 +{
 +	int fret = -1;
 +	int file1_fd = -EBADF, open_tree_fd = -EBADF;
@@ -274,7 +384,6 @@ index 02f91558..e6c14586 100644
 +	int tmpfile_fd = -EBADF;
 +	bool supported = false;
 +	char path[PATH_MAX];
-+	mode_t mode;
 +
 +	if (!caps_supported())
 +		return 0;
@@ -293,13 +402,12 @@ index 02f91558..e6c14586 100644
 +		goto out;
 +	}
 +
-+	/* Verify that the sid bits got raised. */
++	/* Verify that the setgid bit got raised. */
 +	if (!is_setgid(t_dir1_fd, "", AT_EMPTY_PATH)) {
 +		log_stderr("failure: is_setgid");
 +		goto out;
 +	}
 +
-+	/* Changing mount properties on a detached mount. */
 +	attr.userns_fd  = get_userns_fd(0, 10000, 10000);
 +	if (attr.userns_fd < 0) {
 +		log_stderr("failure: get_userns_fd");
@@ -324,24 +432,25 @@ index 02f91558..e6c14586 100644
 +
 +	supported = openat_tmpfile_supported(open_tree_fd);
 +
-+	/* Only umask with S_IXGRP because inode strip S_ISGID will check mode
-+	 * whether has group execute or search permission.
-+	 */
-+	umask(S_IXGRP);
-+	mode = umask(S_IXGRP);
-+	if (!(mode & S_IXGRP))
-+		die("failure: umask");
-+
 +	pid = fork();
 +	if (pid < 0) {
 +		log_stderr("failure: fork");
 +		goto out;
 +	}
 +	if (pid == 0) {
-+		if (!switch_ids(10000, 11000))
-+			die("failure: switch fsids");
++		/* If the parent directory has a default acl then permissions are based off
++		 * of that and current_umask() is ignored. Specifically, if the ACL has an
++		 * ACL_MASK entry, the group permissions correspond to the permissions of
++		 * the ACL_MASK entry.
++		 */
++		umask(S_IXGRP);
++		snprintf(t_buf, sizeof(t_buf), "setfacl -d -m u::rwx,g::rwx,o::rwx,m:rw %s/%s", t_mountpoint, T_DIR1);
++		if (system(t_buf))
++			die("failure: system");
 +
-+		/* create regular file via open() */
++		if (!switch_ids(10000, 11000))
++			die("failure: switch_ids");
++
 +		file1_fd = openat(open_tree_fd, FILE1, O_CREAT | O_EXCL | O_CLOEXEC, S_IXGRP | S_ISGID);
 +		if (file1_fd < 0)
 +			die("failure: create");
@@ -408,7 +517,99 @@ index 02f91558..e6c14586 100644
 +			if (unlinkat(open_tree_fd, FILE3, 0))
 +				die("failure: delete");
 +		}
++		exit(EXIT_SUCCESS);
++	}
++	if (wait_for_pid(pid))
++		goto out;
 +
++	pid = fork();
++	if (pid < 0) {
++		log_stderr("failure: fork");
++		goto out;
++	}
++	if (pid == 0) {
++		/* If the parent directory has a default acl then permissions are based off
++		 * of that and current_umask() is ignored. Specifically, if the ACL has an
++		 * ACL_MASK entry, the group permissions correspond to the permissions of
++		 * the ACL_MASK entry. Otherwise, if the ACL has no ACL_MASK entry, the
++		 * group permissions correspond to the permissions of the ACL_GROUP_OBJ
++		 * entry.
++		 */
++		umask(S_IXGRP);
++		snprintf(t_buf, sizeof(t_buf), "setfacl -d -m u::rwx,g::rw,o::rwx, %s/%s", t_mountpoint, T_DIR1);
++		if (system(t_buf))
++			die("failure: system");
++
++		if (!switch_ids(10000, 11000))
++			die("failure: switch_ids");
++
++		/* create regular file via open() */
++		file1_fd = openat(open_tree_fd, FILE1, O_CREAT | O_EXCL | O_CLOEXEC, S_IXGRP | S_ISGID);
++		if (file1_fd < 0)
++			die("failure: create");
++
++		/* Neither in_group_p() nor capable_wrt_inode_uidgid() so setgid
++		 * bit needs to be stripped.
++		 */
++		if (is_setgid(open_tree_fd, FILE1, 0))
++			die("failure: is_setgid");
++
++		/* create directory */
++		if (mkdirat(open_tree_fd, DIR1, 0000))
++			die("failure: create");
++
++		if (xfs_irix_sgid_inherit_enabled()) {
++			/* We're not in_group_p(). */
++			if (is_setgid(open_tree_fd, DIR1, 0))
++				die("failure: is_setgid");
++		} else {
++			/* Directories always inherit the setgid bit. */
++			if (!is_setgid(open_tree_fd, DIR1, 0))
++				die("failure: is_setgid");
++		}
++
++		/* create a special file via mknodat() vfs_create */
++		if (mknodat(open_tree_fd, FILE2, S_IFREG | S_ISGID | S_IXGRP, 0))
++			die("failure: mknodat");
++
++		if (is_setgid(open_tree_fd, FILE2, 0))
++			die("failure: is_setgid");
++
++		/* create a character device via mknodat() vfs_mknod */
++		if (mknodat(open_tree_fd, CHRDEV1, S_IFCHR | S_ISGID | S_IXGRP, 0))
++			die("failure: mknodat");
++
++		if (is_setgid(open_tree_fd, CHRDEV1, 0))
++			die("failure: is_setgid");
++
++		if (unlinkat(open_tree_fd, FILE1, 0))
++			die("failure: delete");
++
++		if (unlinkat(open_tree_fd, DIR1, AT_REMOVEDIR))
++			die("failure: delete");
++
++		if (unlinkat(open_tree_fd, FILE2, 0))
++			die("failure: delete");
++
++		if (unlinkat(open_tree_fd, CHRDEV1, 0))
++			die("failure: delete");
++
++		/* create tmpfile via filesystem tmpfile api */
++		if (supported) {
++			tmpfile_fd = openat(open_tree_fd, ".", O_TMPFILE | O_RDWR, S_IXGRP | S_ISGID);
++			if (tmpfile_fd < 0)
++				die("failure: create");
++			/* link the temporary file into the filesystem, making it permanent */
++			snprintf(path, PATH_MAX,  "/proc/self/fd/%d", tmpfile_fd);
++			if (linkat(AT_FDCWD, path, open_tree_fd, FILE3, AT_SYMLINK_FOLLOW))
++				die("failure: linkat");
++			if (close(tmpfile_fd))
++				die("failure: close");
++			if (is_setgid(open_tree_fd, FILE3, 0))
++				die("failure: is_setgid");
++			if (unlinkat(open_tree_fd, FILE3, 0))
++				die("failure: delete");
++		}
 +		exit(EXIT_SUCCESS);
 +	}
 +	if (wait_for_pid(pid))
@@ -424,7 +625,7 @@ index 02f91558..e6c14586 100644
 +	return fret;
 +}
 +
-+static int setgid_create_umask_idmapped_in_userns(void)
++static int setgid_create_acl_idmapped_in_userns(void)
 +{
 +	int fret = -1;
 +	int file1_fd = -EBADF, open_tree_fd = -EBADF;
@@ -435,10 +636,6 @@ index 02f91558..e6c14586 100644
 +	int tmpfile_fd = -EBADF;
 +	bool supported = false;
 +	char path[PATH_MAX];
-+	mode_t mode;
-+
-+	if (!caps_supported())
-+		return 0;
 +
 +	if (fchmod(t_dir1_fd, S_IRUSR |
 +			      S_IWUSR |
@@ -485,14 +682,6 @@ index 02f91558..e6c14586 100644
 +
 +	supported = openat_tmpfile_supported(open_tree_fd);
 +
-+	/* Only umask with S_IXGRP because inode strip S_ISGID will check mode
-+	 * whether has group execute or search permission.
-+	 */
-+	umask(S_IXGRP);
-+	mode = umask(S_IXGRP);
-+	if (!(mode & S_IXGRP))
-+		die("failure: umask");
-+
 +	/* Below we verify that setgid inheritance for a newly created file or
 +	 * directory works correctly. As part of this we need to verify that
 +	 * newly created files or directories inherit their gid from their
@@ -511,6 +700,16 @@ index 02f91558..e6c14586 100644
 +		goto out;
 +	}
 +	if (pid == 0) {
++		/* If the parent directory has a default acl then permissions are based off
++		 * of that and current_umask() is ignored. Specifically, if the ACL has an
++		 * ACL_MASK entry, the group permissions correspond to the permissions of
++		 * the ACL_MASK entry.
++		 */
++		umask(S_IXGRP);
++		snprintf(t_buf, sizeof(t_buf), "setfacl -d -m u::rwx,g::rwx,o::rwx,m:rw %s/%s", t_mountpoint, T_DIR1);
++		if (system(t_buf))
++			die("failure: system");
++
 +		if (!switch_userns(attr.userns_fd, 0, 0, false))
 +			die("failure: switch_userns");
 +
@@ -584,7 +783,102 @@ index 02f91558..e6c14586 100644
 +			if (unlinkat(open_tree_fd, FILE3, 0))
 +				die("failure: delete");
 +		}
++		exit(EXIT_SUCCESS);
++	}
++	if (wait_for_pid(pid))
++		goto out;
 +
++	pid = fork();
++	if (pid < 0) {
++		log_stderr("failure: fork");
++		goto out;
++	}
++	if (pid == 0) {
++		/* If the parent directory has a default acl then permissions are based off
++		 * of that and current_umask() is ignored. Specifically, if the ACL has an
++		 * ACL_MASK entry, the group permissions correspond to the permissions of
++		 * the ACL_MASK entry. Otherwise, if the ACL has no ACL_MASK entry, the
++		 * group permissions correspond to the permissions of the ACL_GROUP_OBJ
++		 * entry.
++		 */
++		umask(S_IXGRP);
++		snprintf(t_buf, sizeof(t_buf), "setfacl -d -m u::rwx,g::rw,o::rwx %s/%s", t_mountpoint, T_DIR1);
++		if (system(t_buf))
++			die("failure: system");
++
++		if (!switch_userns(attr.userns_fd, 0, 0, false))
++			die("failure: switch_userns");
++
++		if (!caps_down_fsetid())
++			die("failure: caps_down_fsetid");
++
++		/* create regular file via open() */
++		file1_fd = openat(open_tree_fd, FILE1, O_CREAT | O_EXCL | O_CLOEXEC, S_IXGRP | S_ISGID);
++		if (file1_fd < 0)
++			die("failure: create");
++
++		/* Neither in_group_p() nor capable_wrt_inode_uidgid() so setgid
++		 * bit needs to be stripped.
++		 */
++		if (is_setgid(open_tree_fd, FILE1, 0))
++			die("failure: is_setgid");
++
++		/* create directory */
++		if (mkdirat(open_tree_fd, DIR1, 0000))
++			die("failure: create");
++
++		if (xfs_irix_sgid_inherit_enabled()) {
++			/* We're not in_group_p(). */
++			if (is_setgid(open_tree_fd, DIR1, 0))
++				die("failure: is_setgid");
++		} else {
++			/* Directories always inherit the setgid bit. */
++			if (!is_setgid(open_tree_fd, DIR1, 0))
++				die("failure: is_setgid");
++		}
++
++		/* create a special file via mknodat() vfs_create */
++		if (mknodat(open_tree_fd, FILE2, S_IFREG | S_ISGID | S_IXGRP, 0))
++			die("failure: mknodat");
++
++		if (is_setgid(open_tree_fd, FILE2, 0))
++			die("failure: is_setgid");
++
++		/* create a whiteout device via mknodat() vfs_mknod */
++		if (mknodat(open_tree_fd, CHRDEV1, S_IFCHR | S_ISGID | S_IXGRP, 0))
++			die("failure: mknodat");
++
++		if (is_setgid(open_tree_fd, CHRDEV1, 0))
++			die("failure: is_setgid");
++
++		if (unlinkat(open_tree_fd, FILE1, 0))
++			die("failure: delete");
++
++		if (unlinkat(open_tree_fd, DIR1, AT_REMOVEDIR))
++			die("failure: delete");
++
++		if (unlinkat(open_tree_fd, FILE2, 0))
++			die("failure: delete");
++
++		if (unlinkat(open_tree_fd, CHRDEV1, 0))
++			die("failure: delete");
++
++		/* create tmpfile via filesystem tmpfile api */
++		if (supported) {
++			tmpfile_fd = openat(open_tree_fd, ".", O_TMPFILE | O_RDWR, S_IXGRP | S_ISGID);
++			if (tmpfile_fd < 0)
++				die("failure: create");
++			/* link the temporary file into the filesystem, making it permanent */
++			snprintf(path, PATH_MAX,  "/proc/self/fd/%d", tmpfile_fd);
++			if (linkat(AT_FDCWD, path, open_tree_fd, FILE3, AT_SYMLINK_FOLLOW))
++				die("failure: linkat");
++			if (close(tmpfile_fd))
++				die("failure: close");
++			if (is_setgid(open_tree_fd, FILE3, 0))
++				die("failure: is_setgid");
++			if (unlinkat(open_tree_fd, FILE3, 0))
++				die("failure: delete");
++		}
 +		exit(EXIT_SUCCESS);
 +	}
 +	if (wait_for_pid(pid))
@@ -603,104 +897,107 @@ index 02f91558..e6c14586 100644
  static void usage(void)
  {
  	fprintf(stderr, "Description:\n");
-@@ -14164,6 +14652,7 @@ static void usage(void)
- 	fprintf(stderr, "--test-nested-userns                Run nested userns idmapped mount testsuite\n");
+@@ -14653,6 +15428,7 @@ static void usage(void)
  	fprintf(stderr, "--test-btrfs                        Run btrfs specific idmapped mount testsuite\n");
  	fprintf(stderr, "--test-setattr-fix-968219708108     Run setattr regression tests\n");
-+	fprintf(stderr, "--test-setgid-umask                 Run setgid create umask test\n");
+ 	fprintf(stderr, "--test-setgid-umask                 Run setgid create umask test\n");
++	fprintf(stderr, "--test-setgid-acl                   Run setgid create acl tests\n");
  
  	_exit(EXIT_SUCCESS);
  }
-@@ -14181,6 +14670,7 @@ static const struct option longopts[] = {
- 	{"test-nested-userns",			no_argument,		0,	'n'},
+@@ -14671,6 +15447,7 @@ static const struct option longopts[] = {
  	{"test-btrfs",				no_argument,		0,	'b'},
  	{"test-setattr-fix-968219708108",	no_argument,		0,	'i'},
-+	{"test-setgid-umask",			no_argument,		0,	'u'},
+ 	{"test-setgid-umask",			no_argument,		0,	'u'},
++	{"test-setgid-acl",			no_argument,		0,	'l'},
  	{NULL,					0,			0,	  0},
  };
  
-@@ -14278,6 +14768,12 @@ struct t_idmapped_mounts t_setattr_fix_968219708108[] = {
- 	{ setattr_fix_968219708108,					true,	"test that setattr works correctly",								},
+@@ -14774,6 +15551,12 @@ struct t_idmapped_mounts t_setgid_umask[] = {
+ 	{ setgid_create_umask_idmapped_in_userns,			true,	"create operations by using umask in directories with setgid bit set on idmapped mounts inside userns",	},
  };
  
-+struct t_idmapped_mounts t_setgid_umask[] = {
-+	{ setgid_create_umask,						false,	"create operations by using umask in directories with setgid bit set",					},
-+	{ setgid_create_umask_idmapped,					true,	"create operations by using umask in directories with setgid bit set on idmapped mount",		},
-+	{ setgid_create_umask_idmapped_in_userns,			true,	"create operations by using umask in directories with setgid bit set on idmapped mounts inside userns",	},
++struct t_idmapped_mounts t_setgid_acl[] = {
++	{ setgid_create_acl,						false,	"create operations by using acl in directories with setgid bit set",					},
++	{ setgid_create_acl_idmapped,					false,	"create operations by using acl in directories with setgid bit set on idmapped mount",			},
++	{ setgid_create_acl_idmapped_in_userns,				false,	"create operations by using acl in directories with setgid bit set on idmapped mount inside userns",	},
 +};
 +
  static bool run_test(struct t_idmapped_mounts suite[], size_t suite_size)
  {
  	int i;
-@@ -14355,7 +14851,7 @@ int main(int argc, char *argv[])
+@@ -14851,7 +15634,8 @@ int main(int argc, char *argv[])
  	int index = 0;
  	bool supported = false, test_btrfs = false, test_core = false,
  	     test_fscaps_regression = false, test_nested_userns = false,
--	     test_setattr_fix_968219708108 = false;
-+	     test_setattr_fix_968219708108 = false, test_setgid_umask = false;
+-	     test_setattr_fix_968219708108 = false, test_setgid_umask = false;
++	     test_setattr_fix_968219708108 = false, test_setgid_umask = false,
++	     test_setgid_acl = false;
  
  	while ((ret = getopt_long_only(argc, argv, "", longopts, &index)) != -1) {
  		switch (ret) {
-@@ -14392,6 +14888,9 @@ int main(int argc, char *argv[])
- 		case 'i':
- 			test_setattr_fix_968219708108 = true;
+@@ -14891,6 +15675,9 @@ int main(int argc, char *argv[])
+ 		case 'u':
+ 			test_setgid_umask = true;
  			break;
-+		case 'u':
-+			test_setgid_umask = true;
++		case 'l':
++			test_setgid_acl = true;
 +			break;
  		case 'h':
  			/* fallthrough */
  		default:
-@@ -14463,6 +14962,10 @@ int main(int argc, char *argv[])
- 		      ARRAY_SIZE(t_setattr_fix_968219708108)))
+@@ -14966,6 +15753,10 @@ int main(int argc, char *argv[])
+ 	    !run_test(t_setgid_umask, ARRAY_SIZE(t_setgid_umask)))
  		goto out;
  
-+	if (test_setgid_umask &&
-+	    !run_test(t_setgid_umask, ARRAY_SIZE(t_setgid_umask)))
++	if (test_setgid_acl &&
++	    !run_test(t_setgid_acl, ARRAY_SIZE(t_setgid_acl)))
 +		goto out;
 +
  	fret = EXIT_SUCCESS;
  
  out:
-diff --git a/tests/generic/680 b/tests/generic/680
+diff --git a/tests/generic/681 b/tests/generic/681
 new file mode 100755
-index 00000000..aa9c7375
+index 00000000..a78ca2d1
 --- /dev/null
-+++ b/tests/generic/680
-@@ -0,0 +1,26 @@
++++ b/tests/generic/681
+@@ -0,0 +1,28 @@
 +#! /bin/bash
 +# SPDX-License-Identifier: GPL-2.0
 +# Copyright (c) 2022 Fujitsu Limited. All Rights Reserved.
 +#
-+# FS QA Test 680
++# FS QA Test 681
 +#
-+# Test that idmapped mounts setgid's behave correctly when using umask.
++# Test that idmapped mounts setgid's behave correctly when using acl.
 +#
 +. ./common/preamble
-+_begin_fstest auto quick cap idmapped mount perms rw unlink
++_begin_fstest auto quick acl cap idmapped mount perms rw unlink
 +
 +# Import common functions.
 +. ./common/filter
++. ./common/attr
 +
 +# real QA test starts here
 +
 +_supported_fs generic
 +_require_test
++_require_acls
 +
 +echo "Silence is golden"
 +
-+$here/src/idmapped-mounts/idmapped-mounts --test-setgid-umask --device "$TEST_DEV" \
++$here/src/idmapped-mounts/idmapped-mounts --test-setgid-acl --device "$TEST_DEV" \
 +	--mount "$TEST_DIR" --fstype "$FSTYP"
 +
 +status=$?
 +exit
-diff --git a/tests/generic/680.out b/tests/generic/680.out
+diff --git a/tests/generic/681.out b/tests/generic/681.out
 new file mode 100644
-index 00000000..f4950cda
+index 00000000..15274cbc
 --- /dev/null
-+++ b/tests/generic/680.out
++++ b/tests/generic/681.out
 @@ -0,0 +1,2 @@
-+QA output created by 680
++QA output created by 681
 +Silence is golden
 -- 
 2.27.0
