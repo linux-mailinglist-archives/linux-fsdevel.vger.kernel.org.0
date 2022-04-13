@@ -2,191 +2,169 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C39DC4FEBBD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Apr 2022 02:04:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3EDE4FEBE1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Apr 2022 02:17:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229775AbiDMAGs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Apr 2022 20:06:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38592 "EHLO
+        id S230345AbiDMAUM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Apr 2022 20:20:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51114 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229772AbiDMAGr (ORCPT
+        with ESMTP id S230298AbiDMAUL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Apr 2022 20:06:47 -0400
-Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 97DC59FD1;
-        Tue, 12 Apr 2022 17:04:27 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-115-138.pa.nsw.optusnet.com.au [49.181.115.138])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 6345553451E;
-        Wed, 13 Apr 2022 10:04:24 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1neQUh-00H19U-LP; Wed, 13 Apr 2022 10:04:23 +1000
-Date:   Wed, 13 Apr 2022 10:04:23 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
-Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        nvdimm@lists.linux.dev, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, djwong@kernel.org,
-        dan.j.williams@intel.com, hch@infradead.org, jane.chu@oracle.com
-Subject: Re: [PATCH v12 6/7] xfs: Implement ->notify_failure() for XFS
-Message-ID: <20220413000423.GK1544202@dread.disaster.area>
-References: <20220410160904.3758789-1-ruansy.fnst@fujitsu.com>
- <20220410160904.3758789-7-ruansy.fnst@fujitsu.com>
+        Tue, 12 Apr 2022 20:20:11 -0400
+X-Greylist: delayed 72 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 12 Apr 2022 17:17:50 PDT
+Received: from cmx-torrgo001.bell.net (mta-tor-001.bell.net [209.71.212.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id CE86113D7D;
+        Tue, 12 Apr 2022 17:17:50 -0700 (PDT)
+X-RG-CM-BuS: 0
+X-RG-CM-SC: 0
+X-RG-CM: Clean
+X-Originating-IP: [69.156.160.174]
+X-RG-Env-Sender: nick.steeves@bell.net
+X-RG-Rigid: 624AF58700E129A7
+X-CM-Envelope: MS4xfMobgET0KJEPEy2rz+iImhfnpIh7TGu5qIG8IJ8tylJDUtj79/i41IApO8fQ6BJHy2zpATKD1qgVquPGS2jtTH9RYS9gFGuksIQN38J5OBGRFJTSjUMX
+ 8GADK057e0F3i+e7MWgFH6nDiyME/cQk80iJ66jGrnArgdcU2v+ow09HEy0sgdN/3N+knZI/Lh0wMMDNTW5cOiKd0CZzKeG5HF/JS60kUiNDy/wDm347zGlA
+ I36G3RhYzBelek6anN1W/E+eCGa6sGkwge9Z+qNRjslxCDUsj4Ca08GNhxznpYs//g22LDhsoC9/HOVYRgYAzwFCV34aBrdQQhmYL9qhk4E7LfyqaLxj/SLX
+ vczOHF2Fd8hKoW2IOG6HvSmoKZ8ww6hEQvRYnsN6aFCWRQst3NNKcQ+DibEr5nZFQH58prUzjwbhp8sMz3+w+thUCdo4DnS7AT79JpWQkzPqeSBBmDgmUOQk
+ UXf/4rwU1UwhFG7wH07qXokX1hlF1uSuLOvAT5eHY4eJuEuK0/x2dP//LnCcCEzpHt0SfRI0MZRHif3lAJCbcIrTgsp+0VwQRhx7ya5BEH7E85wD4ftJONCE
+ v7Z7GFNDXQnCELwP0zc86AtTfLmwlEECOemGo7GK6fxOzu4cjwUKzsNapcUgJAOP3jKQOxA1eDQGzQz2W9CeOvBfIwoiZoKUuR4WP0G+NVPQReykaGiY7uA1
+ GHepaPB99a8ip7xAvFNbX08OWihABKOiPXGTkWR72zh8lffBd1fytYUx0WUdGyodroxIUD5RyHxiAlFNqx/ClksiXDYHuLePfGHk7fgtJ491vbInIaiVCHlE
+ WoqOf0lX+vAtmYZ0WMWyV0QOdvgKXAhV20tzeIcT62SiT+UBECpK+Wl4zWA0DaiVpjAsdtqs7wFHBpDWw1VNm5/RwHPg9Uvch09UkiJan8dn70MkWY6yBGcs
+ IBSslcb8RrjcWiDWCkF806JELk2u31nIUKADP8yGtM502rl1MX1ZhtY6h5MbnftMqrUeaBtuitezcWkkdZw1cA00bmUCwcm6QEtuQn3upk4Ivcv0R1tvWkWc
+ gddCbzW66cofJ+Sv3i28pES85JHdkDERZzLLr8ioP8FazDkB67tRHI23B95LYAudAPg4PjHsz/T8Hg==
+X-CM-Analysis: v=2.4 cv=B8zabMhM c=1 sm=1 tr=0 ts=6256163a
+ a=MIeb/1XuSZkfF0zOzarnVA==:117 a=MIeb/1XuSZkfF0zOzarnVA==:17
+ a=z0gMJWrwH1QA:10 a=lAgNKBcoAAAA:8 a=VwQbUJbxAAAA:8 a=DbH0gPOPAAAA:8
+ a=7mOBRU54AAAA:8 a=fxJcL_dCAAAA:8 a=44LDQt12AAAA:8 a=ZC48hzh6CcCYWVy3ZBUA:9
+ a=wU2KtiTIgF-na1uTuREA:9 a=FfaGCDsud1wA:10 a=drE6d5tx1tjNRBs8zHOc:22
+ a=AjGcO6oz07-iQ99wixmX:22 a=amFcwBvv0bFiKrp1vszQ:22 a=wa9RWnbW_A1YIeRBVszw:22
+ a=Sbs2_LdxfKMdlVWN_trs:22
+Received: from DigitalMercury.freeddns.org (69.156.160.174) by cmx-torrgo001.bell.net (5.8.807) (authenticated as nick.steeves@bell.net)
+        id 624AF58700E129A7; Tue, 12 Apr 2022 20:15:54 -0400
+Received: by DigitalMercury.freeddns.org (Postfix, from userid 1000)
+        id 7FD77C41A95; Tue, 12 Apr 2022 20:15:51 -0400 (EDT)
+From:   Nicholas D Steeves <sten@debian.org>
+To:     Thorsten Leemhuis <regressions@leemhuis.info>,
+        Bruno Damasceno Freire <bdamasceno@hotmail.com.br>,
+        Filipe Manana <fdmanana@kernel.org>,
+        "dsterba@suse.cz" <dsterba@suse.cz>, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "regressions@lists.linux.dev" <regressions@lists.linux.dev>,
+        linux-btrfs <linux-btrfs@vger.kernel.org>,
+        "fdmanana@suse.com" <fdmanana@suse.com>
+Subject: Re: [regression] 5.15 kernel triggering 100x more inode evictions
+In-Reply-To: <3ab10248-be14-d161-14e6-bf19ac8cd998@leemhuis.info>
+References: <MN2PR20MB2512314446801B92562E26B5D2169@MN2PR20MB2512.namprd20.prod.outlook.com>
+ <07bb78be-1d58-7d88-288b-6516790f3b5d@leemhuis.info>
+ <MN2PR20MB251203B4B5445B4B0C4148C9D21D9@MN2PR20MB2512.namprd20.prod.outlook.com>
+ <35b62998-e386-2032-5a7a-07e3413b3bc1@leemhuis.info>
+ <MN2PR20MB251205164078C367C3FC4166D2E59@MN2PR20MB2512.namprd20.prod.outlook.com>
+ <9163b8a9-e852-5786-24fa-d324e3118890@leemhuis.info>
+ <20220408145222.GR15609@twin.jikos.cz> <YlBa/Rc0lvJCm5Rr@debian9.Home>
+ <74e4cc73-f16d-3e79-9927-1de3beea4a11@leemhuis.info>
+ <MN2PR20MB2512CEFB95106D91FD9F1717D2E89@MN2PR20MB2512.namprd20.prod.outlook.com>
+ <3ab10248-be14-d161-14e6-bf19ac8cd998@leemhuis.info>
+Date:   Tue, 12 Apr 2022 20:15:47 -0400
+Message-ID: <87r161zvm4.fsf@DigitalMercury.freeddns.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220410160904.3758789-7-ruansy.fnst@fujitsu.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=deDjYVbe c=1 sm=1 tr=0 ts=6256138a
-        a=/kVtbFzwtM2bJgxRVb+eeA==:117 a=/kVtbFzwtM2bJgxRVb+eeA==:17
-        a=kj9zAlcOel0A:10 a=z0gMJWrwH1QA:10 a=omOdbC7AAAAA:8 a=7-415B0cAAAA:8
-        a=4dCMZFeZnbfWj20spA0A:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
+X-Spam-Status: No, score=-0.9 required=5.0 tests=BAYES_00,FORGED_SPF_HELO,
+        KHOP_HELO_FCRDNS,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 11, 2022 at 12:09:03AM +0800, Shiyang Ruan wrote:
-> Introduce xfs_notify_failure.c to handle failure related works, such as
-> implement ->notify_failure(), register/unregister dax holder in xfs, and
-> so on.
-> 
-> If the rmap feature of XFS enabled, we can query it to find files and
-> metadata which are associated with the corrupt data.  For now all we do
-> is kill processes with that file mapped into their address spaces, but
-> future patches could actually do something about corrupt metadata.
-> 
-> After that, the memory failure needs to notify the processes who are
-> using those files.
-> 
-> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
-> ---
->  fs/xfs/Makefile             |   5 +
->  fs/xfs/xfs_buf.c            |   7 +-
->  fs/xfs/xfs_fsops.c          |   3 +
->  fs/xfs/xfs_mount.h          |   1 +
->  fs/xfs/xfs_notify_failure.c | 219 ++++++++++++++++++++++++++++++++++++
->  fs/xfs/xfs_super.h          |   1 +
->  6 files changed, 233 insertions(+), 3 deletions(-)
->  create mode 100644 fs/xfs/xfs_notify_failure.c
-> 
-> diff --git a/fs/xfs/Makefile b/fs/xfs/Makefile
-> index 04611a1068b4..09f5560e29f2 100644
-> --- a/fs/xfs/Makefile
-> +++ b/fs/xfs/Makefile
-> @@ -128,6 +128,11 @@ xfs-$(CONFIG_SYSCTL)		+= xfs_sysctl.o
->  xfs-$(CONFIG_COMPAT)		+= xfs_ioctl32.o
->  xfs-$(CONFIG_EXPORTFS_BLOCK_OPS)	+= xfs_pnfs.o
->  
-> +# notify failure
-> +ifeq ($(CONFIG_MEMORY_FAILURE),y)
-> +xfs-$(CONFIG_FS_DAX)		+= xfs_notify_failure.o
-> +endif
-> +
->  # online scrub/repair
->  ifeq ($(CONFIG_XFS_ONLINE_SCRUB),y)
->  
-> diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
-> index f9ca08398d32..9064b8dfbc66 100644
-> --- a/fs/xfs/xfs_buf.c
-> +++ b/fs/xfs/xfs_buf.c
-> @@ -5,6 +5,7 @@
->   */
->  #include "xfs.h"
->  #include <linux/backing-dev.h>
-> +#include <linux/dax.h>
->  
->  #include "xfs_shared.h"
->  #include "xfs_format.h"
-> @@ -1911,7 +1912,7 @@ xfs_free_buftarg(
->  	list_lru_destroy(&btp->bt_lru);
->  
->  	blkdev_issue_flush(btp->bt_bdev);
-> -	fs_put_dax(btp->bt_daxdev, NULL);
-> +	fs_put_dax(btp->bt_daxdev, btp->bt_mount);
->  
->  	kmem_free(btp);
->  }
-> @@ -1964,8 +1965,8 @@ xfs_alloc_buftarg(
->  	btp->bt_mount = mp;
->  	btp->bt_dev =  bdev->bd_dev;
->  	btp->bt_bdev = bdev;
-> -	btp->bt_daxdev = fs_dax_get_by_bdev(bdev, &btp->bt_dax_part_off, NULL,
-> -					    NULL);
-> +	btp->bt_daxdev = fs_dax_get_by_bdev(bdev, &btp->bt_dax_part_off, mp,
-> +					    &xfs_dax_holder_operations);
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-I see a problem with this: we are setting up notify callbacks before
-we've even read in the superblock during mount. i.e. we don't even
-kow yet if we've got an XFS filesystem on this block device.
+Hi Bruno,
 
-Hence if we get a notification immediately after registering this
-notification callback....
+Thorsten Leemhuis <regressions@leemhuis.info> writes:
 
-[...]
+> On 09.04.22 19:12, Bruno Damasceno Freire wrote:
+>> On 08.04.22 04:50, Thorsten Leemhuis wrote:
+>>> On 08.04.22 17:55, Filipe Manana wrote:
+>>>> On Fri, Apr 08, 2022 at 04:52:22PM +0200, David Sterba wrote:
+>>>>> On Fri, Apr 08, 2022 at 12:32:20PM +0200, Thorsten Leemhuis wrote:
+>>> Bruno, under these circumstances I'd say you need to bisect this to get
+>>> us closer to the root of the problem (and a fix for it). Sadly that how
+>>> it is sometimes, as briefly explained here:
+>>>
+>>> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tre=
+e/Documentation/admin-guide/reporting-regressions.rst#n140
+>>=20
+>> Ok Thorsten.
+>>=20
+>> It's not sad at all: I had a great time researching this regression and
+>> gained a lot of knowledge while doing so. The problem is that I am just a
+>> simple user at its limits here and additional bisection is probably beyo=
+nd my
+>> abilities.
+>
+> Maybe, but I think you underestimate yourself here. Give it a try, it's
+> not that hard once you figured out how to build and install a vanilla
+> kernel (which you did already afaics; and if not: it's not that hard and
+> you learn new stuff, too) and have some test case to check if the
+> problem is there or now (which you already have afaics).
+>
 
-> +
-> +static int
-> +xfs_dax_notify_ddev_failure(
-> +	struct xfs_mount	*mp,
-> +	xfs_daddr_t		daddr,
-> +	xfs_daddr_t		bblen,
-> +	int			mf_flags)
-> +{
-> +	struct xfs_trans	*tp = NULL;
-> +	struct xfs_btree_cur	*cur = NULL;
-> +	struct xfs_buf		*agf_bp = NULL;
-> +	int			error = 0;
-> +	xfs_fsblock_t		fsbno = XFS_DADDR_TO_FSB(mp, daddr);
-> +	xfs_agnumber_t		agno = XFS_FSB_TO_AGNO(mp, fsbno);
-> +	xfs_fsblock_t		end_fsbno = XFS_DADDR_TO_FSB(mp, daddr + bblen);
-> +	xfs_agnumber_t		end_agno = XFS_FSB_TO_AGNO(mp, end_fsbno);
+I also think it's something you can manage :-)
 
-.... none of this code is going to function correctly because it
-is dependent on the superblock having been read, validated and
-copied to the in-memory superblock.
+Something like:
 
-> +	error = xfs_trans_alloc_empty(mp, &tp);
-> +	if (error)
-> +		return error;
+1. Use the .config from /boot/config-ubuntu_5.14.x
+2. git bisect start
+3. git bisect good v5.14 (7d2a07b)
+4. git bisect bad v5.15 (8bb7eca)
+5. Open a guide like these ones on another device, or print it out:
+  https://www.metaltoad.com/blog/beginners-guide-git-bisect-process-elimina=
+tion
+  https://wiki.gentoo.org/wiki/Kernel_git-bisect
+  https://wiki.ubuntu.com/Kernel/KernelBisection
+  https://ldpreload.com/blog/git-bisect-run ("Finding a kernel
+  regression in half an hour with git bisect run")
+6. make oldconfig
+7. make bindeb-pkg
+8. Deb packages are in ../
+9. Install, reboot, run tests, confirm logs, iterate
 
-... and it's not valid to use transactions (even empty ones) before
-log recovery has completed and set the log up correctly.
+Thank you for running these tests.  By chance, would you have time to
+compare 5.10.x to 5.15.x, or have you already compared them?  I'm
+always the most curious about how the latest LTS kernel compares to
+latest_LTS-1 ;-)
 
-> +
-> +	for (; agno <= end_agno; agno++) {
-> +		struct xfs_rmap_irec	ri_low = { };
-> +		struct xfs_rmap_irec	ri_high;
-> +		struct failure_info	notify;
-> +		struct xfs_agf		*agf;
-> +		xfs_agblock_t		agend;
-> +
-> +		error = xfs_alloc_read_agf(mp, tp, agno, 0, &agf_bp);
-> +		if (error)
-> +			break;
-> +
-> +		cur = xfs_rmapbt_init_cursor(mp, tp, agf_bp, agf_bp->b_pag);
+Regards,
+Nicholas
 
-... and none of the structures this rmapbt walk is dependent on
-(e.g. perag structures) have been initialised yet so there's null
-pointer dereferences going to happen here.
+P.S. I'm sure you'll be able to find someone on IRC who'd be willing to
+help you, should any help be necessary!
 
-Perhaps even worse is that the rmapbt is not guaranteed to be in
-consistent state until after log recovery has completed, so this
-walk could get stuck forever in a stale on-disk cycle that
-recovery would have corrected....
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Hence these notifications need to be delayed until after the
-filesystem is mounted, all the internal structures have been set up
-and log recovery has completed.
+-----BEGIN PGP SIGNATURE-----
 
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+iQJEBAEBCgAuFiEE4qYmHjkArtfNxmcIWogwR199EGEFAmJWFjQQHHN0ZW5AZGVi
+aWFuLm9yZwAKCRBaiDBHX30QYRNWEACk2QT/FbL/b4WUYI6gl7xHgwMk82cU/Zpn
+dWRxvQXujZxWcShgdw3aji9nCt0vIWxaAMYh47ox9T0X6qbo4EirFTUmzOGjf9JM
+Pu08CyV+qqIB28itWtRvJTlg+5SPxENMFE7/vIVVcx13WxHQTpM7qtdsesqLBLYK
+fguEeow5qME57dmbwcF5Xkgn6WORq796/SkTtzRKh4H6Fz17Svpz2twD/TDF1Zmj
+wnCYP00SrFKfdBsUO2dYexuAHTUh5ORXQW4ZuB6K9aCUKZpgJK0/c2xNVClulNfq
+Td6LMtN35HyLez2VRnzfawbuQIQtm+OTviwAzehV8xqfsGTzeWbaq2k5SoQ3vdg8
+XCDNz/c5C+5ni4XVp706FpiIP4oMUcTOq/kr0e4+mwblVi4sAX1WLlTols6xYrr3
+luHkbIeqg5bfiwx6Z7lr0c979caHnV0XfnoWKEsgjnuYnpRK9UzPIua5Rf/PT8ZW
+JgF1Y/+8sNvutjx0vpSMT2oyX0kau97wNUmPCap9G+Mw7F/MEH57tndTdb8xizHO
+4pS55RSVLdE3ILpsv4t76NmC5HCYvwBpnYQu1+EIqyfAESBMuuyZVrYQNJxtIAbV
+ltp81CTzIf8aJqL+sjODXbRrg+oR+QBsz5Nz+3vynu9lsBGJVrB9rvpcE7q9Io0l
+iGY0rZsWcg==
+=YG5y
+-----END PGP SIGNATURE-----
+--=-=-=--
