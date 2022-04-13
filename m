@@ -2,94 +2,191 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D22124FEAB3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Apr 2022 01:46:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C39DC4FEBBD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Apr 2022 02:04:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229971AbiDLXoF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 12 Apr 2022 19:44:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36348 "EHLO
+        id S229775AbiDMAGs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 12 Apr 2022 20:06:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232109AbiDLXnc (ORCPT
+        with ESMTP id S229772AbiDMAGr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 12 Apr 2022 19:43:32 -0400
-Received: from mail-lf1-x12b.google.com (mail-lf1-x12b.google.com [IPv6:2a00:1450:4864:20::12b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 738A4EB0BA
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Apr 2022 16:25:21 -0700 (PDT)
-Received: by mail-lf1-x12b.google.com with SMTP id k5so485269lfg.9
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Apr 2022 16:25:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=sEf3ghNJkoFaoWuY+1wI1QnhHwrm43YYsrClV3MyqfI=;
-        b=REbi327RrkR6HSTgkHSf+nZ3SQfIOuOq2YEO+YINnAhIuEKbRbk23Oj4KWA5yWFdXF
-         pBvcZAq7HFUQl0JgP0of0X9f+/dcqWixfDipfytfFy4mshNdYQsjyIWrzcStRvzJxz72
-         pzBvPQjmX1wRRKbyjJuqOV/6DQkkGws4nvIkI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=sEf3ghNJkoFaoWuY+1wI1QnhHwrm43YYsrClV3MyqfI=;
-        b=lSNl3YRpecH0AjNg/yTGkUZOOYS0lxAWCCmDn2RZNebRetIyx4+KIslnV8R1Db8ETj
-         VUymaZpCOok8vDHm33270ZR3+42pBEbG8WVyfgwkys5jToM9bXAv8PWT0PUSXY8ge0AL
-         YLrRHUkh735CNyIcOUP2raZWjeuXiRirZyPGB2ny062McNHsdS5qHV2yq829dv0f4s7M
-         gwi4dKSjGUDXG9HhYZO2RLE7nxSImZDC74/953RVH9adRpMzxY7Qm7SUzNa5hc1/c0QW
-         eZOilW+xM0lWgWUgy+n8Ys6BXCFwPkVDybNoQXdHsq5Fyv3f5NH5fJpy7EHAMZfddSxm
-         zs0A==
-X-Gm-Message-State: AOAM530yVWNSitae/MjpEi7UTQojkCVl1SFdaIeAR13h3WZhfy6j0cR0
-        GQfcWC2s1dC+alH+AhSQ6IE3LMxTUDnLCa/H
-X-Google-Smtp-Source: ABdhPJybvIQa0eh56gVV4SB5XbuK7UXRBPtI0VfIjrQRoxYwiumAS6ngJ+ASiWBHxCjY7sKgR5CDQw==
-X-Received: by 2002:a05:6512:1054:b0:46b:e17f:e1eb with SMTP id c20-20020a056512105400b0046be17fe1ebmr814804lfb.269.1649805919459;
-        Tue, 12 Apr 2022 16:25:19 -0700 (PDT)
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
-        by smtp.gmail.com with ESMTPSA id m5-20020a197105000000b0046bab1edfddsm721147lfc.264.2022.04.12.16.25.18
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 12 Apr 2022 16:25:18 -0700 (PDT)
-Received: by mail-lf1-f53.google.com with SMTP id x17so480407lfa.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 12 Apr 2022 16:25:18 -0700 (PDT)
-X-Received: by 2002:ac2:5483:0:b0:46b:9dc3:cdd4 with SMTP id
- t3-20020ac25483000000b0046b9dc3cdd4mr11503890lfk.542.1649805918419; Tue, 12
- Apr 2022 16:25:18 -0700 (PDT)
+        Tue, 12 Apr 2022 20:06:47 -0400
+Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 97DC59FD1;
+        Tue, 12 Apr 2022 17:04:27 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-115-138.pa.nsw.optusnet.com.au [49.181.115.138])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 6345553451E;
+        Wed, 13 Apr 2022 10:04:24 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1neQUh-00H19U-LP; Wed, 13 Apr 2022 10:04:23 +1000
+Date:   Wed, 13 Apr 2022 10:04:23 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
+Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        nvdimm@lists.linux.dev, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, djwong@kernel.org,
+        dan.j.williams@intel.com, hch@infradead.org, jane.chu@oracle.com
+Subject: Re: [PATCH v12 6/7] xfs: Implement ->notify_failure() for XFS
+Message-ID: <20220413000423.GK1544202@dread.disaster.area>
+References: <20220410160904.3758789-1-ruansy.fnst@fujitsu.com>
+ <20220410160904.3758789-7-ruansy.fnst@fujitsu.com>
 MIME-Version: 1.0
-References: <alpine.LRH.2.02.2204111023230.6206@file01.intranet.prod.int.rdu2.redhat.com>
- <CAHk-=wijDnLH2K3Rh2JJo-SmWL_ntgzQCDxPeXbJ9A-vTF3ZvA@mail.gmail.com>
- <alpine.LRH.2.02.2204111236390.31647@file01.intranet.prod.int.rdu2.redhat.com>
- <CAHk-=wgsHK4pDDoEgCyKgGyo-AMGpy1jg2QbstaCR0G-v568yg@mail.gmail.com>
- <alpine.LRH.2.02.2204120520140.19025@file01.intranet.prod.int.rdu2.redhat.com>
- <CAHk-=wiJTqx4Pec653ZFKEiNv2jtfWsNyevoV9TYa05kD0vVsg@mail.gmail.com> <alpine.LRH.2.02.2204121253260.26107@file01.intranet.prod.int.rdu2.redhat.com>
-In-Reply-To: <alpine.LRH.2.02.2204121253260.26107@file01.intranet.prod.int.rdu2.redhat.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 12 Apr 2022 13:25:02 -1000
-X-Gmail-Original-Message-ID: <CAHk-=whu4qvXYPwh3HS1bcJMOuMiap_g8=EqcHb7P3TQyvM6Cw@mail.gmail.com>
-Message-ID: <CAHk-=whu4qvXYPwh3HS1bcJMOuMiap_g8=EqcHb7P3TQyvM6Cw@mail.gmail.com>
-Subject: Re: [PATCH] stat: fix inconsistency between struct stat and struct compat_stat
-To:     Mikulas Patocka <mpatocka@redhat.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220410160904.3758789-7-ruansy.fnst@fujitsu.com>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=deDjYVbe c=1 sm=1 tr=0 ts=6256138a
+        a=/kVtbFzwtM2bJgxRVb+eeA==:117 a=/kVtbFzwtM2bJgxRVb+eeA==:17
+        a=kj9zAlcOel0A:10 a=z0gMJWrwH1QA:10 a=omOdbC7AAAAA:8 a=7-415B0cAAAA:8
+        a=4dCMZFeZnbfWj20spA0A:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 12, 2022 at 7:42 AM Mikulas Patocka <mpatocka@redhat.com> wrote:
->
-> As long as both major and minor numbers are less than 256, these functions
-> return equivalent results. So, I think it's safe to replace old_encode_dev
-> with new_encode_dev.
+On Mon, Apr 11, 2022 at 12:09:03AM +0800, Shiyang Ruan wrote:
+> Introduce xfs_notify_failure.c to handle failure related works, such as
+> implement ->notify_failure(), register/unregister dax holder in xfs, and
+> so on.
+> 
+> If the rmap feature of XFS enabled, we can query it to find files and
+> metadata which are associated with the corrupt data.  For now all we do
+> is kill processes with that file mapped into their address spaces, but
+> future patches could actually do something about corrupt metadata.
+> 
+> After that, the memory failure needs to notify the processes who are
+> using those files.
+> 
+> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+> ---
+>  fs/xfs/Makefile             |   5 +
+>  fs/xfs/xfs_buf.c            |   7 +-
+>  fs/xfs/xfs_fsops.c          |   3 +
+>  fs/xfs/xfs_mount.h          |   1 +
+>  fs/xfs/xfs_notify_failure.c | 219 ++++++++++++++++++++++++++++++++++++
+>  fs/xfs/xfs_super.h          |   1 +
+>  6 files changed, 233 insertions(+), 3 deletions(-)
+>  create mode 100644 fs/xfs/xfs_notify_failure.c
+> 
+> diff --git a/fs/xfs/Makefile b/fs/xfs/Makefile
+> index 04611a1068b4..09f5560e29f2 100644
+> --- a/fs/xfs/Makefile
+> +++ b/fs/xfs/Makefile
+> @@ -128,6 +128,11 @@ xfs-$(CONFIG_SYSCTL)		+= xfs_sysctl.o
+>  xfs-$(CONFIG_COMPAT)		+= xfs_ioctl32.o
+>  xfs-$(CONFIG_EXPORTFS_BLOCK_OPS)	+= xfs_pnfs.o
+>  
+> +# notify failure
+> +ifeq ($(CONFIG_MEMORY_FAILURE),y)
+> +xfs-$(CONFIG_FS_DAX)		+= xfs_notify_failure.o
+> +endif
+> +
+>  # online scrub/repair
+>  ifeq ($(CONFIG_XFS_ONLINE_SCRUB),y)
+>  
+> diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
+> index f9ca08398d32..9064b8dfbc66 100644
+> --- a/fs/xfs/xfs_buf.c
+> +++ b/fs/xfs/xfs_buf.c
+> @@ -5,6 +5,7 @@
+>   */
+>  #include "xfs.h"
+>  #include <linux/backing-dev.h>
+> +#include <linux/dax.h>
+>  
+>  #include "xfs_shared.h"
+>  #include "xfs_format.h"
+> @@ -1911,7 +1912,7 @@ xfs_free_buftarg(
+>  	list_lru_destroy(&btp->bt_lru);
+>  
+>  	blkdev_issue_flush(btp->bt_bdev);
+> -	fs_put_dax(btp->bt_daxdev, NULL);
+> +	fs_put_dax(btp->bt_daxdev, btp->bt_mount);
+>  
+>  	kmem_free(btp);
+>  }
+> @@ -1964,8 +1965,8 @@ xfs_alloc_buftarg(
+>  	btp->bt_mount = mp;
+>  	btp->bt_dev =  bdev->bd_dev;
+>  	btp->bt_bdev = bdev;
+> -	btp->bt_daxdev = fs_dax_get_by_bdev(bdev, &btp->bt_dax_part_off, NULL,
+> -					    NULL);
+> +	btp->bt_daxdev = fs_dax_get_by_bdev(bdev, &btp->bt_dax_part_off, mp,
+> +					    &xfs_dax_holder_operations);
 
-You are of course 100% right, and I should have looked more closely at
-the code rather than going by my (broken) assumptions based on old
-memory of what we did when we did that "new" stat expansion.
+I see a problem with this: we are setting up notify callbacks before
+we've even read in the superblock during mount. i.e. we don't even
+kow yet if we've got an XFS filesystem on this block device.
 
-I take back all my objections that were completely bogus.
+Hence if we get a notification immediately after registering this
+notification callback....
 
-             Linus
+[...]
+
+> +
+> +static int
+> +xfs_dax_notify_ddev_failure(
+> +	struct xfs_mount	*mp,
+> +	xfs_daddr_t		daddr,
+> +	xfs_daddr_t		bblen,
+> +	int			mf_flags)
+> +{
+> +	struct xfs_trans	*tp = NULL;
+> +	struct xfs_btree_cur	*cur = NULL;
+> +	struct xfs_buf		*agf_bp = NULL;
+> +	int			error = 0;
+> +	xfs_fsblock_t		fsbno = XFS_DADDR_TO_FSB(mp, daddr);
+> +	xfs_agnumber_t		agno = XFS_FSB_TO_AGNO(mp, fsbno);
+> +	xfs_fsblock_t		end_fsbno = XFS_DADDR_TO_FSB(mp, daddr + bblen);
+> +	xfs_agnumber_t		end_agno = XFS_FSB_TO_AGNO(mp, end_fsbno);
+
+.... none of this code is going to function correctly because it
+is dependent on the superblock having been read, validated and
+copied to the in-memory superblock.
+
+> +	error = xfs_trans_alloc_empty(mp, &tp);
+> +	if (error)
+> +		return error;
+
+... and it's not valid to use transactions (even empty ones) before
+log recovery has completed and set the log up correctly.
+
+> +
+> +	for (; agno <= end_agno; agno++) {
+> +		struct xfs_rmap_irec	ri_low = { };
+> +		struct xfs_rmap_irec	ri_high;
+> +		struct failure_info	notify;
+> +		struct xfs_agf		*agf;
+> +		xfs_agblock_t		agend;
+> +
+> +		error = xfs_alloc_read_agf(mp, tp, agno, 0, &agf_bp);
+> +		if (error)
+> +			break;
+> +
+> +		cur = xfs_rmapbt_init_cursor(mp, tp, agf_bp, agf_bp->b_pag);
+
+... and none of the structures this rmapbt walk is dependent on
+(e.g. perag structures) have been initialised yet so there's null
+pointer dereferences going to happen here.
+
+Perhaps even worse is that the rmapbt is not guaranteed to be in
+consistent state until after log recovery has completed, so this
+walk could get stuck forever in a stale on-disk cycle that
+recovery would have corrected....
+
+Hence these notifications need to be delayed until after the
+filesystem is mounted, all the internal structures have been set up
+and log recovery has completed.
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
