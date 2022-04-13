@@ -2,108 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CBCCE4FF314
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Apr 2022 11:11:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C3944FF333
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Apr 2022 11:16:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234278AbiDMJNO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Apr 2022 05:13:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52180 "EHLO
+        id S234336AbiDMJSN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Apr 2022 05:18:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234339AbiDMJM2 (ORCPT
+        with ESMTP id S234324AbiDMJSM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Apr 2022 05:12:28 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF0703DDD0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Apr 2022 02:10:00 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id m14so1648350wrb.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Apr 2022 02:10:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=MXNZwzrbtI4Eu4i/LOeqiME138fc1RP1+sEhKATJ+qs=;
-        b=QwIS+Wlbhs++k9RgPI8+NvYdNn3ycIgGewaNLpgvCHQJ2LnEkEtZZ6G31Nd74lSC0g
-         ae8Odru0e/OoT82iFJAe4rdkZm5KLV5CB6KxNNNPZdhjwRfsQ2/H8MoNtB8r4nfWXdLg
-         zZRqKxpjWM69gjCsPiS35JGL16ob3MjCaEkrjq09UFsdf4IJ9h4hX8DpEAWRP6uM+45a
-         uunG0PYsSoPE3GDc2yZLEMml4BXCrTYFBaTDjFJ9qeVZCkfEHuADmXOSSd7gXqCkqxmd
-         ZCiqasgpSUivTsKLsHzBDwHp5+gt+4wFmkUnnlBFfV0dK5mnWOOuRD+VH387udQP3rJU
-         F3SQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=MXNZwzrbtI4Eu4i/LOeqiME138fc1RP1+sEhKATJ+qs=;
-        b=wabklOFOc/budT6StE+c++vV7uFA50O3wKidtU35hqDqCSrFx75gzX4rnNOUM2OuHj
-         r0IbVi9BfxuxJxQozT9RYtwKPWPyenOFBY2sp0JBjNGKI4F4vRIr2tvSiFWvhjF9nBmT
-         1ZaVl1lMknCgyQW2XVCmbyBFqr9UNfN2TK2VOmCsawKJt2KPv5FTw18TJW2aDktTul1b
-         ZQ63M/Hdi3EK/KTHG3vvHNWYYOSIZbGoB1D5SBB+hiGvH/LilG95GVERIu5C52mup2AR
-         7M8aON1kruQsdIygSBp0m+h6snGDKJgABichFj7oOlRHRIDBowrZ1AN8F9WI5X0lCZLC
-         J+tA==
-X-Gm-Message-State: AOAM5335LeuwpwPYaepLe2bFQEa2rNhy2nxuOxu2fuVhRyLV2f+KzdXu
-        XKpK4zZHUfQ50L0v2x+i1eEwi3Dezkc=
-X-Google-Smtp-Source: ABdhPJwtBC0nW0xb0bptjvivdsjxzVhmbvuTrektOtNSBuN6ta1sv/DFvHvScG5Mk0wfvU/9ffbB5g==
-X-Received: by 2002:a05:6000:1a85:b0:205:a234:d0a5 with SMTP id f5-20020a0560001a8500b00205a234d0a5mr32554598wry.126.1649840999417;
-        Wed, 13 Apr 2022 02:09:59 -0700 (PDT)
-Received: from localhost.localdomain ([5.29.13.154])
-        by smtp.gmail.com with ESMTPSA id bk1-20020a0560001d8100b002061d6bdfd0sm24050518wrb.63.2022.04.13.02.09.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Apr 2022 02:09:58 -0700 (PDT)
-From:   Amir Goldstein <amir73il@gmail.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Matthew Bobrowski <repnop@google.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH v3 16/16] fanotify: enable "evictable" inode marks
-Date:   Wed, 13 Apr 2022 12:09:35 +0300
-Message-Id: <20220413090935.3127107-17-amir73il@gmail.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220413090935.3127107-1-amir73il@gmail.com>
-References: <20220413090935.3127107-1-amir73il@gmail.com>
+        Wed, 13 Apr 2022 05:18:12 -0400
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D34A245B6;
+        Wed, 13 Apr 2022 02:15:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1649841351; x=1681377351;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   mime-version:in-reply-to;
+  bh=Qyg9qkfEOmRnd7ecWKODTY6fNCX00KNJAm/6F+S5OvQ=;
+  b=I8ypfzxbm0qwuSXuFG30iRhXH9mb0FjfoKFFb/P3h0hxXkAWUKgsUU9P
+   Jfi9yb+ddRDoH5iZ3QnhFkHB9Uz3zzYxETClclLkGdUF2/6QzFXpjxTZL
+   glOtAp9hTQ3C/cnMaKnMup0faGNBjbG25qU/KDFC/yhfDswniV1D2hlDm
+   OI4nxbp7vW/7iQmk4DkGTbmejeeRpvKCdwgiLGHeaVcC82SLInFiXoG98
+   4XaGa1yZ+tA0mjriZzJk10W88znaXn4bP7lFIfRhUmYvoflZN1RMfYsmW
+   u5qgqOoMd0WwqaJsam7d/JO3Cvrmv1tcFCR3wEpT435we3DXKyEc6wiea
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10315"; a="260213830"
+X-IronPort-AV: E=Sophos;i="5.90,256,1643702400"; 
+   d="scan'208";a="260213830"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Apr 2022 02:15:51 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.90,256,1643702400"; 
+   d="scan'208";a="700175232"
+Received: from chaop.bj.intel.com (HELO localhost) ([10.240.192.101])
+  by fmsmga001.fm.intel.com with ESMTP; 13 Apr 2022 02:15:43 -0700
+Date:   Wed, 13 Apr 2022 17:15:33 +0800
+From:   Chao Peng <chao.p.peng@linux.intel.com>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com
+Subject: Re: [PATCH v5 04/13] mm/shmem: Restrict MFD_INACCESSIBLE memory
+ against RLIMIT_MEMLOCK
+Message-ID: <20220413091533.GC10041@chaop.bj.intel.com>
+Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
+References: <20220310140911.50924-1-chao.p.peng@linux.intel.com>
+ <20220310140911.50924-5-chao.p.peng@linux.intel.com>
+ <Yk8L0CwKpTrv3Rg3@google.com>
+ <20220411153233.54ljmi7zgqovhgsn@box.shutemov.name>
+ <20220412133925.GG8013@chaop.bj.intel.com>
+ <20220412192821.xliop57sblvjx4t4@box.shutemov.name>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220412192821.xliop57sblvjx4t4@box.shutemov.name>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Spam-Status: No, score=-7.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Now that the direct reclaim path is handled we can enable evictable
-inode marks.
+On Tue, Apr 12, 2022 at 10:28:21PM +0300, Kirill A. Shutemov wrote:
+> On Tue, Apr 12, 2022 at 09:39:25PM +0800, Chao Peng wrote:
+> > On Mon, Apr 11, 2022 at 06:32:33PM +0300, Kirill A. Shutemov wrote:
+> > > On Thu, Apr 07, 2022 at 04:05:36PM +0000, Sean Christopherson wrote:
+> > > > Hmm, shmem_writepage() already handles SHM_F_INACCESSIBLE by rejecting the swap, so
+> > > > maybe it's just the page migration path that needs to be updated?
+> > > 
+> > > My early version prevented migration with -ENOTSUPP for
+> > > address_space_operations::migratepage().
+> > > 
+> > > What's wrong with that approach?
+> > 
+> > I previously thought migratepage will not be called since we already
+> > marked the pages as UNMOVABLE, sounds not correct?
+> 
+> Do you mean missing __GFP_MOVABLE?
 
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
----
- fs/notify/fanotify/fanotify_user.c | 2 +-
- include/linux/fanotify.h           | 1 +
- 2 files changed, 2 insertions(+), 1 deletion(-)
+Yes.
 
-diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index fe2534043c17..87756a015be9 100644
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -1788,7 +1788,7 @@ static int __init fanotify_user_setup(void)
- 
- 	BUILD_BUG_ON(FANOTIFY_INIT_FLAGS & FANOTIFY_INTERNAL_GROUP_FLAGS);
- 	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_INIT_FLAGS) != 12);
--	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_MARK_FLAGS) != 9);
-+	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_MARK_FLAGS) != 10);
- 
- 	fanotify_mark_cache = KMEM_CACHE(fsnotify_mark,
- 					 SLAB_PANIC|SLAB_ACCOUNT);
-diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
-index 419cadcd7ff5..edc28555814c 100644
---- a/include/linux/fanotify.h
-+++ b/include/linux/fanotify.h
-@@ -66,6 +66,7 @@
- 				 FAN_MARK_ONLYDIR | \
- 				 FAN_MARK_IGNORED_MASK | \
- 				 FAN_MARK_IGNORED_SURV_MODIFY | \
-+				 FAN_MARK_EVICTABLE | \
- 				 FAN_MARK_FLUSH)
- 
- /*
--- 
-2.35.1
+> I can be wrong, but I don't see that it
+> direclty affects if the page is migratable. It is a hint to page allocator
+> to group unmovable pages to separate page block and impove availablity of
+> higher order pages this way. Page allocator tries to allocate unmovable
+> pages from pages blocks that already have unmovable pages.
 
+OK, thanks.
+
+Chao
+> 
+> -- 
+>  Kirill A. Shutemov
