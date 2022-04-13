@@ -2,344 +2,395 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B35424FFD99
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Apr 2022 20:13:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E620C4FFDC5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Apr 2022 20:28:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237614AbiDMSPr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Apr 2022 14:15:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36608 "EHLO
+        id S234796AbiDMSal (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Apr 2022 14:30:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235006AbiDMSPq (ORCPT
+        with ESMTP id S232011AbiDMSak (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Apr 2022 14:15:46 -0400
-Received: from esa6.hgst.iphmx.com (esa6.hgst.iphmx.com [216.71.154.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08B01496BE;
-        Wed, 13 Apr 2022 11:13:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1649873604; x=1681409604;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=SzB0d7WiTUY/MZqJdvQr5qlPZZd6DRvWRXimBhv/lF4=;
-  b=hM7mOSSOmnapuF5qKK1hCWlRkXo8mni0NhUGjVG60TmrFo4HkOwMCwzw
-   fCB+CKwBv7mIevTYJc5fxNTD39tt1k6clshHC43LvpgzgH0w7iVr1eKMx
-   CUQ56MVzUhM4QMjzPtke89eO0J1zZWoV1tYdv1PMA2EtcKQ8iWjIH7CYP
-   nmnHcZc/FkJMkH2PdydwH4s4uS0Mg53ZC6XLGDcyqwNMhI+zTbXqD/7Zt
-   dksJsfa4G1agaf5XDVf+YaThdQ1a36x9oZ8ZcArtvuy2E7lQ0k+ZqjeUa
-   8ttM5Oy4+sajh5o/XYjkFvKqe+JzBsNGr9Glxb4Y/3K57PhoanztxJ12R
-   A==;
-X-IronPort-AV: E=Sophos;i="5.90,257,1643644800"; 
-   d="scan'208";a="198744309"
-Received: from mail-dm6nam12lp2168.outbound.protection.outlook.com (HELO NAM12-DM6-obe.outbound.protection.outlook.com) ([104.47.59.168])
-  by ob1.hgst.iphmx.com with ESMTP; 14 Apr 2022 02:13:22 +0800
+        Wed, 13 Apr 2022 14:30:40 -0400
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A699B50E39;
+        Wed, 13 Apr 2022 11:28:17 -0700 (PDT)
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 23DGHwAI018804;
+        Wed, 13 Apr 2022 18:28:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : date :
+ subject : to : cc : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=corp-2021-07-09;
+ bh=mfFZeS8w2FxgkGdmWZRv7xEtOZsR15TaSvMS0f/4WNE=;
+ b=pvty/wzDpUMmlROeNbbtf/WhgzdJiLu6lA39FhYzEIqW+7IMYcAgoi2U5XHRE7XYZK+d
+ gcXnmM0H5E/Jtbo9a/WuXfdu7je4ExhPbf2LC2Fek9GR8ynZrpnFEN/DLf7i5KBJXHed
+ Ge4BJTUIF8EFmPdt3NeUGHp/ZY0sr2laXcRNJRulbfc9RaWJRkzjtG7/1nb9TxxNVZRS
+ xIq57YxFfvsbAg/iYt+pg5RP9MaxyAPtRoAxiUOiYWoBJFn5ushkVz5564JbQiEeKXT0
+ D6tvF4+GdyUaF83efhDQKYP7pTKVncPnPQ0P9+RZf22W+YdGmzRXaXx0k+2NnX/l1url tw== 
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+        by mx0b-00069f02.pphosted.com with ESMTP id 3fb0r1jvc7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 13 Apr 2022 18:28:13 +0000
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.16.1.2/8.16.1.2) with SMTP id 23DIRhVW006374;
+        Wed, 13 Apr 2022 18:28:11 GMT
+Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2177.outbound.protection.outlook.com [104.47.58.177])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com with ESMTP id 3fb0k4981n-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 13 Apr 2022 18:28:11 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CWE3NZhBtNNRkXa1dRdrlwuflsTHFq2eGD8NfC9/JKr+RyrDSpec/YgTwYz1cnBGK2S2UJXQcfViaNBNFwmvg/INjV2mW01IgIIuqxbnFOXse6ClAiTc8U9BHLa3BqBCAHmfnxJbxKQeXHapzCjqzQy2tD+FOssJ27fNpk8q0hnttH0H2krxR97bWl44XNI5H9D/4Rzh3H6IECL/2aWVt18r2m9ZXXjGaHM7ep4Mlvmn0kdUYaU4zk9mLk/ESRpbY1MZTA95atE4jvYcElyxdkAfIJ2H5N3Zv0XD3jIRT3FWfd2PaV5RH3jW+PnOyenRZ8+VybVYqQrrQ5e2QB7eFg==
+ b=lExX+whjRb1eYiDOj9+ETHDC9pvIiweaCrs0M8GtVQX+2H1Df4gb6XXKgPmewWMCWvbXzZviTsU9Gk0JPVH2yPbBWA2o1R//09NUcfeJrh9+RyGS3IosezzuUVrLGRZQimOMomAXw8bxpOMLka8CUEqStY6A/p4fGCTtUl3SyCKXE95yC9UTynvmz+J8iYHC33XbAdKZ4mtFFobHVqPke/S4A5arkGBfutqQ/xyMi68mZ4lMLXOLr9Fjvw1vtq/l1wLwlVBClsh6uaoMGgm1MamfEkOxwOnEJD7bzYxFeRESDJfiLFATEgRQdYaoggNgswoAdrW0/gYfqmoiaBabrw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=toPTeenVBUQtMhwQiRzhPLrdlAoAMDY56IgBu3dDXUI=;
- b=Tv/8A33QJs5FG1oGhqmmFSG7C6hB4xNKK360YWuiVBw+bqEEmv3XO3pZUUECFZWpbcgeFlAbzjkFI7yleW2y7I/yNgg+xxm/EL2k57UhH9/yF4sBNTiod2rwySzKqISJKLHbHfrWQdywFxO4rIc9Rki3g0TMPxp7EBoxsMMql8KZG8CFPtocGq/m9t7PK7ZAvqrSF8s1NtpySvJw6KUWzpUPMKjvv64zyTMIAWno1V8cvJUJTjY+ZSMpM7CbY+VXG7mC4Y4LIgs/ucsTtnXXRmkUPz37ezgNdoMbS7b5JsSsqSr5qatO3XGYKkbW5kSwUOMdcs1sfhIG5MXb4IPcvw==
+ bh=mfFZeS8w2FxgkGdmWZRv7xEtOZsR15TaSvMS0f/4WNE=;
+ b=cObKiVQXwTqs8N/fdYk2cpO2YlMq/Om0QTyJVkGEDumJFuW3FqQRla2NO9IZabgfS+rbG8yQrWaN1g45W27GiLt6EVxy/q6WmfMwQrUE5N1vPpNEn5z2+nt/y8YNJFUY7iN38awTEr3R1F6490FdLZscpNp3HcY/a8nu6Hzs0bw8X4OH8xNnUjCHwYcouG7l5ypjw8aY37IgKUt/eTqXdNpAzEaeah727WoKv1v6S/SEv3BLn1+OtJb249VvDmlogNVVQgNnhNKfVE6cbZzjNa8RCFmWkla7xwcXOXjYX37/7/NS4LSzYwIujhubnaRqRpkRJie9rgjy3yImZnqBSg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=toPTeenVBUQtMhwQiRzhPLrdlAoAMDY56IgBu3dDXUI=;
- b=U5dk9dF1QAG9X7dvcBQoPa9GfsW0ggeTdD6e5+8/WiVyX6h8sfjxRLFq9FSoI6yOF5a2aZoIErUm++Kz2oZjdcMXQ8sCQagL8RgFGugPUY/6vFwean96DdaLbpK+tjK/D5dQ7/ZpF66cMlTKHDADTlDuqv4iaOEH4fc8+xtD604=
-Received: from PH0PR04MB7158.namprd04.prod.outlook.com (2603:10b6:510:8::18)
- by BN8PR04MB5476.namprd04.prod.outlook.com (2603:10b6:408:58::24) with
+ bh=mfFZeS8w2FxgkGdmWZRv7xEtOZsR15TaSvMS0f/4WNE=;
+ b=qpVfRbc8swynEKZA04PyvtfmQWhIQ4JGjXxF53kymH644jzun+9E/zVKwrnoHDL5CAyaeVwRYOJACUMNYFo0kArsGvsG6foFblfMeDIt204PkC3Qyfb/+SYQH3WTrhPFituEEzAVL/02uFsE14VdSB4NjzZ3C7yQ4mYIYTmm1nE=
+Received: from BY5PR10MB4257.namprd10.prod.outlook.com (2603:10b6:a03:211::21)
+ by DM5PR10MB1497.namprd10.prod.outlook.com (2603:10b6:3:13::17) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5164.18; Wed, 13 Apr
- 2022 18:13:20 +0000
-Received: from PH0PR04MB7158.namprd04.prod.outlook.com
- ([fe80::995b:363e:8d1c:49af]) by PH0PR04MB7158.namprd04.prod.outlook.com
- ([fe80::995b:363e:8d1c:49af%8]) with mapi id 15.20.5164.018; Wed, 13 Apr 2022
- 18:13:19 +0000
-From:   Niklas Cassel <Niklas.Cassel@wdc.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-CC:     Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Mike Frysinger <vapier@gentoo.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>
-Subject: Re: [PATCH] binfmt_flat: do not stop relocating GOT entries
- prematurely
-Thread-Topic: [PATCH] binfmt_flat: do not stop relocating GOT entries
- prematurely
-Thread-Index: AQHYTlSbKHqZCw+JvEK9UT79JBm95qzsJ4yAgAAMu4CAACkDVIABylkA
-Date:   Wed, 13 Apr 2022 18:13:19 +0000
-Message-ID: <YlcSvhXeUD89XEYn@x1-carbon>
-References: <20220412100338.437308-1-niklas.cassel@wdc.com>
- <9437ce7f-0553-3688-5695-69add6b2971c@opensource.wdc.com>
- <YlVv2Z5y9qhzu7X9@x1-carbon> <878rsatkv6.fsf@email.froward.int.ebiederm.org>
-In-Reply-To: <878rsatkv6.fsf@email.froward.int.ebiederm.org>
-Accept-Language: en-US
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5144.29; Wed, 13 Apr
+ 2022 18:28:10 +0000
+Received: from BY5PR10MB4257.namprd10.prod.outlook.com
+ ([fe80::52b:f017:38d1:fd14]) by BY5PR10MB4257.namprd10.prod.outlook.com
+ ([fe80::52b:f017:38d1:fd14%2]) with mapi id 15.20.5164.018; Wed, 13 Apr 2022
+ 18:28:09 +0000
+Message-ID: <a33fae1e-8991-cd5e-1fb7-cbc77165e55c@oracle.com>
+Date:   Wed, 13 Apr 2022 11:28:05 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.8.0
+Subject: Re: [PATCH RFC v19 06/11] NFSD: Update find_clp_in_name_tree() to
+ handle courtesy client
 Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=wdc.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 7119a920-f70c-40af-40a3-08da1d794a29
-x-ms-traffictypediagnostic: BN8PR04MB5476:EE_
-x-microsoft-antispam-prvs: <BN8PR04MB5476D92381C9C38B4A17991AF2EC9@BN8PR04MB5476.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: EnAhIukfqVllW8oQgm8fjG9kjPIdMoLpLYNq9dg8gg2ylXaA5I/Sht07gz8E06q81D+S9zAyLbOTZXmjo8pZ58JHxn6KYw9lMwK+g14H6W99tZ3HwALO1kXM4R3kHwxQk3D4wlDVJbXFJoAc04N+93AZiLrzVRcxtqdBpI5edFV6kD0QbPZ5Hbsmq1fI+IjM0aPfCVd97FCzMNyPXnqmTyvoIpBsxAYwt971VeKt7/+66Oqr+OX0DxLGPiaqK4jVo9p1pH1YAqW3MWf6CqqUgfXbW2uYs9GXEPM8S29XSb5ELP9XkpJVZbE9Qcqi5D5TxaN0JHAtX7EyVTOvlrAcYorfrqfWYcImMRd4K7Sohjl00X0rk2x2vl+rtJXmrFiDK4p6WUmmr2Pz4NNhxt5NkaPowiAjc17/s5Pzn0EH5MzTTr8Sx4hLFaAJo1a/qAafelaitPEDcKWGmGG42x1XjKSQ4i1EcF6/mKnR27OHMDCvLsVuK2gfitOY77j8eSP5L+GFv+eJexe2QiJYDty4MRBh3xFzmz+4uvCNtuenZXlfICB+eSQhBRTDGDHbtoDuDQbcq4AEqHeJoRWTQF5L/q4e1wUIVrwg/sHT9o1XX5mgPYHeJGS71EL+e/BETqd2h34KK3S12ZfKglJ1BJM9W4LCuLdLpSzMuBHZLBKxLoRocep9774BpFnQgKa9qz8dtYpQmd5v+J2u0JWHBLjLhFTXB2ERMQAWMAvSOgGeXNhIEdGhvBCkDPHv+pkCy/vqp/S9jzebXDNssdRiTNGaMfdytPRf/+WaeAEBqX3Lzi63W5eyT5PI2Su9+sdqiCQBGjpdCS6kaidh8/bWADfdZg==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR04MB7158.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(7916004)(4636009)(366004)(83380400001)(9686003)(6512007)(2906002)(4326008)(33716001)(26005)(82960400001)(38100700002)(122000001)(186003)(86362001)(38070700005)(5660300002)(508600001)(66556008)(66446008)(66476007)(316002)(71200400001)(64756008)(966005)(6486002)(7416002)(54906003)(6916009)(76116006)(6506007)(91956017)(8936002)(66946007)(8676002);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?gGakjFyGIG1qOjcsWcv/f9tgpNLO2NT6Xo18ifS2VGpPw0EzpSoqL971WEND?=
- =?us-ascii?Q?khcq9sER00ZYPTj9PiTmSTphDNmeyqDwTybxtiJJsxUnweB8nIa6YX2ibar8?=
- =?us-ascii?Q?U2mcHaLSIuOg3dwL6d8CNsZAPgP9dkuNDi2oRSlsFRcyI92+0ObKWZscT3uL?=
- =?us-ascii?Q?CnOGZDF4P0UhDwYgolFZGJ8kAc9KO11hABl1A/LUjczB+QBbDu+B5ZVMfIbc?=
- =?us-ascii?Q?bqio4n7YR6wBoEgEW2hWtX8JSWfhSj18m6m+y5u+2VWwe2cPkLTF8YpS/E8i?=
- =?us-ascii?Q?DhXo3WEyufbKv0jhCJFNMOwxqj04yfZ4EUcvHtoiGFQIRXSiHrq0cuOGhcVD?=
- =?us-ascii?Q?y0OxDBBZAFSgyjthrZGed3ilIhN4InXNmwDsaX+G3/g//6X5YVYvaLxmVlCI?=
- =?us-ascii?Q?Nz01sv4zHkUrCqkYX42C+TYOUHY6E4COfXJ9GyhUjzq1JYtenQ7Ueik+SYt3?=
- =?us-ascii?Q?SQcT6jyEtpzft6ZBB15aeoQ9Q6DL9sLDrs+YXhmOxiOOeDPLicPwHZjXFcuF?=
- =?us-ascii?Q?t5LBZ3goCJn6PtgYooLtcZHf67NTzpD43aiB2inGFYh4MPLfUm3r6MdOjpD4?=
- =?us-ascii?Q?8Qd8PE5pGh21RWJWLoNA98jeHkaUmpNNkDRzeGvUBHE+olC/d54KE5vdgusC?=
- =?us-ascii?Q?xYAqsvQdUajr4AJT3IHiUK0T82sJhRfg807lh9o0RY/H1/Pe6EodQwdRBo3R?=
- =?us-ascii?Q?Pyf09WaJwYA0L+TWyUGqLzdkxdeNNvuVPEPynGAOZNEsnh2hfSul80u5edGL?=
- =?us-ascii?Q?4VCJ8xFFNusMN569DamL0zABM8s8576UCqdeoZVGR20Chjel8QdU+DoHX/F+?=
- =?us-ascii?Q?MnoMNPlidgPMuolgcQuqSZFcAHfNms96QVbc1Q6gghBLq7yeyfynYnJCLOMr?=
- =?us-ascii?Q?G7GGn4vjCgdiplmIL9QzoxqjtqDT7UEmem0pDR8EyGosladmQdC0QWD1Snok?=
- =?us-ascii?Q?ED5mB+Pi40G/iRXsI/2SUBjyzcgBrcyI1fvNp7R6ssaPYgN61SJt05z7I4gh?=
- =?us-ascii?Q?bcWMGtFakMa3gJGMQPDRV++WQ5eaHVyk5A8MxGwNxsmhVfL/1LyJuEnjD80j?=
- =?us-ascii?Q?SpNr3N2kUXnvQ6j/AcONh0RbCJJJm8h8dhKq9UTWScSbMgs/khjOvo5WQ4lc?=
- =?us-ascii?Q?BO1irHFjxojApq8AsEPmZOLkV3zw7vneikrDJPQtf8meCUj3qshiT9e5P31W?=
- =?us-ascii?Q?ERRI6SrUAvffEojkm3RlXUt827V0EBVANgBh26NPpfbfTAHenBgjaSUyFCJ5?=
- =?us-ascii?Q?cDvBkUE3pPC7O1nI+E6FQMS7pRW2C1RJ1Mlut3mpqJQY52IjvalG1UuJUZO+?=
- =?us-ascii?Q?KHSMxd7Owks4qmKzJBAHcoGp/FPT8T9qeddgi8Fo+gOs5z+hhKc+3kThkBze?=
- =?us-ascii?Q?xiFiHXcSOefZmM2CQXLQ9k/KqAcZCRmzpdDaalKsuCOhXwwdssv9CunzvYBY?=
- =?us-ascii?Q?M5EZ/5hU6DMGT/oGU2hHF/Klps36gA8xBA/GZu3OE3YZANHn1E1GR+jmbzQs?=
- =?us-ascii?Q?vnvfLUiMTsqUW+Hazy8NpYxgKVQ9hWHjAMNQrib8eNiCgInmz6ka4c8T/+Zx?=
- =?us-ascii?Q?LWmGPYReOYIo2g12tWw/gGtvV/shpfX32sgmGlI0fjH5NrMDD2kxmcS6rHoS?=
- =?us-ascii?Q?LcbSPlAFUwW8wiOGXe2jaJ8sbIfSxZxE39VDoNyhvRrTmWOMEtGCBJ8c+Tkz?=
- =?us-ascii?Q?1cYiWlge4So75h0HXAuqOtpR/ipFhyFUADcDdA7VmRaobvR+fHJIj3ZBSMMW?=
- =?us-ascii?Q?NbApHV1Ha+T9rQtOG/GZFZc4MrTVFoM=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <D025504C4E004C438899B35B148A3A79@namprd04.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+To:     Bruce Fields <bfields@fieldses.org>
+Cc:     Chuck Lever III <chuck.lever@oracle.com>,
+        Jeff Layton <jlayton@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+References: <1648742529-28551-1-git-send-email-dai.ngo@oracle.com>
+ <1648742529-28551-7-git-send-email-dai.ngo@oracle.com>
+ <20220401152109.GB18534@fieldses.org>
+ <52CA1DBC-A0E2-4C1C-96DF-3E6114CDDFFD@oracle.com>
+ <8dc762fc-dac8-b323-d0bc-4dbeada8c279@oracle.com>
+ <20220413125550.GA29176@fieldses.org>
+From:   dai.ngo@oracle.com
+In-Reply-To: <20220413125550.GA29176@fieldses.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DM6PR02CA0051.namprd02.prod.outlook.com
+ (2603:10b6:5:177::28) To BY5PR10MB4257.namprd10.prod.outlook.com
+ (2603:10b6:a03:211::21)
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: ed21f99e-d212-479d-fd35-08da1d7b5c77
+X-MS-TrafficTypeDiagnostic: DM5PR10MB1497:EE_
+X-Microsoft-Antispam-PRVS: <DM5PR10MB1497B01F5133E5B78939C85E87EC9@DM5PR10MB1497.namprd10.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: fixYxt+bForDYF1B/YPFUeKGCPkPNTWwh76SikyPsBVTRGZNfAOfko4IQ6GQ5Okeob41A4n9+uc3z2fPackZdDSTwjTDwlKE3xGSmv2lQC1+/S2Q1M/oe0sNIMpiscILTubfEA298w7cv3yfukG79rCsUSCZRhBrq8+dK1EKxEimJcRYeHToliDCXXSdFxHtdq4oDjUdQwa6EEQjyupzAQewLCCM1U8nS8WFwxN9ETeQJhVsBv6pYlEzRTwldoMfqL9nWN10+EHbRNiu39B8YiHOGS0g79bK8IqdySDpSNXHbK/tc4R+3SGmj0jfHz539cPTN5sXMJtvgBtlcWcojdZAhBoMmLD4M8pGg0boQ2yB86Rdq/4jmPBkz58kCgV//CBwA9B1oyqoDpoVd7N+YBr/Ka/3LnvkCWyovLvJc0NpKPXNMf6zeIiCnk4Y7aA1q2MUfiPq3I/7OyeUaZLyN1VkuMLZdGpGH8cKmzrIv0IFxnSlZylSTIRC7ErEDY4ef/ke+hpPKj4JEp37cGFq1dTkw27fr9RUAZPl5K+qdfff8oHHcljivYvU8Ki5QuhjonFAemFiCubKgVDQtfS/OTAW5rcby0ew19GQyVnmavdG/L5H9lMv2MJeUqnVsHv8BKKwPBMAq7fds4ABUh3YLJ2KiI3dGffZPCdRcn3ehDvrNz/QgiYUwaJqC7eunPCjTnB8spOvB97zEChznSLDSw==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR10MB4257.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(366004)(508600001)(8676002)(6916009)(316002)(66476007)(4326008)(66946007)(2616005)(8936002)(6512007)(9686003)(6666004)(5660300002)(53546011)(31696002)(54906003)(6506007)(15650500001)(66556008)(31686004)(6486002)(38100700002)(36756003)(186003)(26005)(2906002)(83380400001)(86362001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?VVBrd3lHbWNjWEFsNzU3MUt0Rng5VXdJLzJMd21JdkpMRnRyc0gzbnIvU1o5?=
+ =?utf-8?B?MkkzRFhvNnhWdXlIeG1aWkZmdFlqY2ZCOWdXcUQwRis2d3hneVZIdnk2UVVL?=
+ =?utf-8?B?ZEpDYkl1U0hVdEhXWEM4b1cyWm9XSFdvbDZqSldaWkw3YkJhL2wrdlNVVkty?=
+ =?utf-8?B?QnRLVjlGWGxld3BFSTRrWUVPUzFSY0hKQ3BacVRJV3dtbVR5SnBscE1RYy9R?=
+ =?utf-8?B?OThHbEF5WjBKdmdtN2g1V2ZGMDZqbGx4WXNGWUxYN242a2toSzVnUE5LSzhm?=
+ =?utf-8?B?L2xuRmhtMGduWFhOTEdJbjhSUnh5a05ob2U4S2wyUHgvMzdaUHVZNWtROEk1?=
+ =?utf-8?B?ZzVoYkk0YTdiRVFmVjBycWVBQ1owN243bXl0bFlKYVkwRXExbGZoM0diV28y?=
+ =?utf-8?B?WW5ObTJVN2F5UUJHS3BqLzU3S2RmVXBqVzk5VHJaamxrMW9wcjdtMHc3Z1Q5?=
+ =?utf-8?B?ZU00Y3JrTkxZNkZEd0RTM0VOUWJtN245dDBKR0taVFN6Q0VBVitabmZXd1Ni?=
+ =?utf-8?B?eEh4aE1IM2JCd3BwaFgrT2tpMmhBV1hRdld1RlViY3EwYTMzM0kvNGxRMFdI?=
+ =?utf-8?B?M0lyclRGaUp4RDhyWmJOMzhYOHNGdTk4NlM0YzhyQ1NJU1BuZkFpSDlQeGd5?=
+ =?utf-8?B?OXN2OHpKRXViK2d5THJKT1ZvV0RobW16WmJSVFpHdW1hd05sZkFXWWJMdno2?=
+ =?utf-8?B?WGFLYS9MVk81Slg5dVJuM0JKSFpFa09GMjB2NkNDMEJpMklHeVdCZnNVU3ho?=
+ =?utf-8?B?eDEvZGNTa0ZGYWVoRE92M0ZoTkVYS2VDWEkzWE5samw4a0tpVktvTTNsbDZs?=
+ =?utf-8?B?L2JTa1YvZW16SWNMZ25CWE9ONWhhV1dvSWw2SkQwYi9OVGxNV2dzREdOK2h4?=
+ =?utf-8?B?blhZaXZBUXF6bFB6NHpraEZ6amJDT3I3VUJVQ0FPdmYveFl0VG1WYyt0Szd4?=
+ =?utf-8?B?QjFHNU8wd003Wm0xemFmSmRTem4vNXBzS3pOZlU4RTZmSGxZYWtqdzZFeGxt?=
+ =?utf-8?B?MDR3MHowSmN0L3RacDBDWHJiZlYzMXZYMDhWZE1CdWNuQjN4dWlSaFA3WGM4?=
+ =?utf-8?B?clZNcm1wdVNLZU9CSHY1RFR4c1l1VmRwZi8vYlZBK3dGeCtVMktlMUFocDBW?=
+ =?utf-8?B?d0pkeEpCQ3NEY2M1N1prYXNOb2pwdVJmYzdNcUNTMjU4WGJ0b3B1NnBtKzUr?=
+ =?utf-8?B?bmtSNHZCM1ZLMFJhZ1pNQ2RvbkJCSUZrSm5VN24rNGlSY1lKeXd1ZTlTWnBu?=
+ =?utf-8?B?RzZncFJQUlRkSnhqSUpyNngxdmloWGZYT1UzWHBML1Njdzg0WjhwdlRmbEc2?=
+ =?utf-8?B?aFV5R0lRR21aSSsyWlBxOGw0bWxvUlVSS3RZWndWeWpxUmZldUNTWlJlVnln?=
+ =?utf-8?B?bjd2QTdyTmErUXludVk3K3pFYnBhQjJJNUhPQnlqcUFOV1cvdUt5aDFlUlp6?=
+ =?utf-8?B?VEpvTjBRNmducXB1Y0lmcDc4YVRjODZYY0I3LzdWd2FJR2k1SFR0Ykt2Y0Vk?=
+ =?utf-8?B?NTFXY2xXbzJ6ckl4SEEreFYyWVNFdDI4dGk4YlJUVDBZVmtlMThiWWFqRHVU?=
+ =?utf-8?B?QTYvaTM5YmlaZ2pCZThlUlhrWlFURTRKeWhvL0JhQnpjdjY3ck9PQ2VIc0tX?=
+ =?utf-8?B?TXNXR1dEVkxNY2I5dTBHQm1lQTM2OFJpcjV0Nk41eXhDQnB6MFVhdTlDZElq?=
+ =?utf-8?B?eENINmd6YlQ3bllpb2dYMCtadm54SU5NTDg0biszVXBHczRreFZaZGhBbnN3?=
+ =?utf-8?B?NitqZkxpMzRXTkN1dVV3M1pCekI2cWNLN1E4dUlmU0RadEhZSjhqNE5xamJZ?=
+ =?utf-8?B?QzA2anVVckNSd1Rxck50V01mV056OVFPQmpqNVhoYlJUUXJKUGhVa2MvREJ5?=
+ =?utf-8?B?N3ptaU42MVRaMHVhemFwT2JtQy9NK1NrejAybWNjb0VuL0wzZkFSd0NiZ1Nv?=
+ =?utf-8?B?RmNaRVJvU09HZU9YN0hsY3ZSd1doaXFXcm9RWTBQREc2ZFlFOTErNk1CUEZH?=
+ =?utf-8?B?c2lpUWpZTUd6WjloM0JHUWtFeDYrckJ3ZGZPaS9qdkFWaU4yZXFYb3BxN3pq?=
+ =?utf-8?B?eC9VNU5PUnF5YmNLblN3ZTk3NnBIOHcrUGFsSjdHcGw0RS9BdWI0bDBYUnRN?=
+ =?utf-8?B?alV1emVVRlVlVVJTNGJza01KVm1ZemNseEdFRlNMcHJFTlpDYVlKUitUSW1L?=
+ =?utf-8?B?Y0E3bHk5eGwvVWhKZnNOanVORGdDVnVXZWhsLzdoeUgyR2JZS0xTTnJsUTFM?=
+ =?utf-8?B?YWx1OHdMK2RaZy9jVVBqVjBBZjN4TWVuVUJKMmcveTNjZlpzSW42RGNTSXVa?=
+ =?utf-8?B?N2gzOTRYVk1Ua2I0d0lHMWRKVFQ1VldERXhzZ1lnb1RZMTc5TitMdz09?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ed21f99e-d212-479d-fd35-08da1d7b5c77
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR10MB4257.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR04MB7158.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7119a920-f70c-40af-40a3-08da1d794a29
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Apr 2022 18:13:19.7250
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Apr 2022 18:28:09.9021
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: fHbLa9FLz6uKfZ+n6mH22nJcI4Y69pcGMrpqPNMsIvW3i2pFusoA5bQUIEALj71f68KKqJiovm9w7Rrlg5mwOg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR04MB5476
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8fzpHw4jpWXTJik7cJMni9nQ3H+tysI1IhRd0mLdVGz8IYvEgvpBRx8YgeIji9AaC1myxz+I1Dy1cRy/S5BeDg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR10MB1497
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.486,18.0.858
+ definitions=2022-04-13_03:2022-04-13,2022-04-13 signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0 bulkscore=0
+ suspectscore=0 mlxlogscore=999 mlxscore=0 spamscore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2202240000
+ definitions=main-2204130090
+X-Proofpoint-GUID: 1Q684CHdJmOAJpoKzZJlTMtF7hqin3UV
+X-Proofpoint-ORIG-GUID: 1Q684CHdJmOAJpoKzZJlTMtF7hqin3UV
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 12, 2022 at 09:52:13AM -0500, Eric W. Biederman wrote:
-> Niklas Cassel <Niklas.Cassel@wdc.com> writes:
 
-(snip)
+On 4/13/22 5:55 AM, Bruce Fields wrote:
+> On Fri, Apr 01, 2022 at 12:11:34PM -0700, dai.ngo@oracle.com wrote:
+>> On 4/1/22 8:57 AM, Chuck Lever III wrote:
+>>>> (And to be honest I'd still prefer the original approach where we expire
+>>>> clients from the posix locking code and then retry.  It handles an
+>>>> additional case (the one where reboot happens after a long network
+>>>> partition), and I don't think it requires adding these new client
+>>>> states....)
+>>> The locking of the earlier approach was unworkable.
+>>>
+>>> But, I'm happy to consider that again if you can come up with a way
+>>> of handling it properly and simply.
+>> I will wait for feedback from Bruce before sending v20 with the
+>> above change.
+> OK, I'd like to tweak the design in that direction.
+>
+> I'd like to handle the case where the network goes down for a while, and
+> the server gets power-cycled before the network comes back up.  I think
+> that could easily happen.  There's no reason clients couldn't reclaim
+> all their state in that case.  We should let them.
+>
+> To handle that case, we have to delay removing the client's stable
+> storage record until there's a lock conflict.  That means code that
+> checks for conflicts must be able to sleep.
+>
+> In each case (opens, locks, delegations), conflicts are first detected
+> while holding a spinlock.  So we need to unlock before waiting, and then
+> retry if necessary.
+>
+> We decided instead to remove the stable-storage record when first
+> converting a client to a courtesy client--then we can handle a conflict
+> by just setting a flag on the client that indicates it should no longer
+> be used, no need to drop any locks.
+>
+> That leaves the client in a state where it's still on a bunch of global
+> data structures, but has to be treated as if it no longer exists.  That
+> turns out to require more special handling than expected.  You've shown
+> admirable persistance in handling those cases, but I'm still not
+> completely convinced this is correct.
+>
+> We could avoid that complication, and also solve the
+> server-reboot-during-network-partition problem, if we went back to the
+> first plan and allowed ourselves to sleep at the time we detect a
+> conflict.  I don't think it's that complicated.
+>
+> We end up using a lot of the same logic regardless, so don't throw away
+> the existing patches.
+>
+> My basic plan is:
+>
+> Keep the client state, but with only three values: ACTIVE, COURTESY, and
+> EXPIRABLE.
+>
+> ACTIVE is the initial state, which we return to whenever we renew.  The
+> laundromat sets COURTESY whenever a client isn't renewed for a lease
+> period.  When we run into a conflict with a lock held by a client, we
+> call
+>
+>    static bool try_to_expire_client(struct nfs4_client *clp)
+>    {
+> 	return COURTESY == cmpxchg(clp->cl_state, COURTESY, EXPIRABLE);
+>    }
+>
+> If it returns true, that tells us the client was a courtesy client.  We
+> then call queue_work(laundry_wq, &nn->laundromat_work) to tell the
+> laundromat to actually expire the client.  Then if needed we can drop
+> locks, wait for the laundromat to do the work with
+> flush_workqueue(laundry_wq), and retry.
+>
+> All the EXPIRABLE state does is tell the laundromat to expire this
+> client.  It does *not* prevent the client from being renewed and
+> acquiring new locks--if that happens before the laundromat gets to the
+> client, that's fine, we let it return to ACTIVE state and if someone
+> retries the conflicing lock they'll just get a denial.
+>
+> Here's a suggested a rough patch ordering.  If you want to go above and
+> beyond, I also suggest some tests that should pass after each step:
+>
+>
+> PATCH 1
+> -------
+>
+> Implement courtesy behavior *only* for clients that have
+> delegations, but no actual opens or locks:
+>
+> Define new cl_state field with values ACTIVE, COURTESY, and EXPIRABLE.
+> Set to ACTIVE on renewal.  Modify the laundromat so that instead of
+> expiring any client that's too old, it first checks if a client has
+> state consisting only of unconflicted delegations, and, if so, it sets
+> COURTESY.
+>
+> Define try_to_expire_client as above.  In nfsd_break_deleg_cb, call
+> try_to_expire_client and queue_work.  (But also continue scheduling the
+> recall as we do in the current code, there's no harm to that.)
+>
+> Modify the laundromat to try to expire old clients with EXPIRED set.
+>
+> TESTS:
+> 	- Establish a client, open a file, get a delegation, close the
+> 	  file, wait 2 lease periods, verify that you can still use the
+> 	  delegation.
+> 	- Establish a client, open a file, get a delegation, close the
+> 	  file, wait 2 lease periods, establish a second client, request
+> 	  a conflicting open, verify that the open succeeds and that the
+> 	  first client is no longer able to use its delegation.
+>
+>
+> PATCH 2
+> -------
+>
+> Extend courtesy client behavior to clients that have opens or
+> delegations, but no locks:
+>
+> Modify the laundromat to set COURTESY on old clients with state
+> consisting only of opens or unconflicted delegations.
+>
+> Add in nfs4_resolve_deny_conflicts_locked and friends as in your patch
+> "Update nfs4_get_vfs_file()...", but in the case of a conflict, call
+> try_to_expire_client and queue_work(), then modify e.g.
+> nfs4_get_vfs_file to flush_workqueue() and then retry after unlocking
+> fi_lock.
+>
+> TESTS:
+> 	- establish a client, open a file, wait 2 lease periods, verify
+> 	  that you can still use the open stateid.
+> 	- establish a client, open a file, wait 2 lease periods,
+> 	  establish a second client, request an open with a share mode
+> 	  conflicting with the first open, verify that the open succeeds
+> 	  and that first client is no longer able to use its open.
+>
+> PATCH 3
+> -------
+>
+> Minor tweak to prevent the laundromat from being freed out from
+> under a thread processing a conflicting lock:
+>
+> Create and destroy the laundromat workqueue in init_nfsd/exit_nfsd
+> instead of where it's done currently.
+>
+> (That makes the laundromat's lifetime longer than strictly necessary.
+> We could do better with a little more work; I think this is OK for now.)
+>
+> TESTS:
+> 	- just rerun any regression tests; this patch shouldn't change
+> 	  behavior.
+>
+> PATCH 4
+> -------
+>
+> Extend courtesy client behavior to any client with state, including
+> locks:
+>
+> Modify the laundromat to set COURTESY on any old client with state.
+>
+> Add two new lock manager callbacks:
+>
+> 	void * (*lm_lock_expirable)(struct file_lock *);
+> 	bool (*lm_expire_lock)(void *);
+>
+> If lm_lock_expirable() is called and returns non-NULL, posix_lock_inode
+> should drop flc_lock, call lm_expire_lock() with the value returned from
+> lm_lock_expirable, and then restart the loop over flc_posix from the
+> beginning.
+>
+> For now, nfsd's lm_lock_expirable will basically just be
+>
+> 	if (try_to_expire_client()) {
+> 		queue_work()
+> 		return get_net();
+> 	}
+> 	return NULL;
+>
+> and lm_expire_lock will:
+>
+> 	flush_workqueue()
+> 	put_net()
+>
+> One more subtlety: the moment we drop the flc_lock, it's possible
+> another task could race in and free it.  Worse, the nfsd module could be
+> removed entirely--so nfsd's lm_expire_lock code could disappear out from
+> under us.  To prevent this, I think we need to add a struct module
+> *owner field to struct lock_manager_operations, and use it like:
+>
+> 	owner = fl->fl_lmops->owner;
+> 	__get_module(owner);
+> 	expire_lock = fl->fl_lmops->lm_expire_lock;
+> 	spin_unlock(&ctx->flc_lock);
+> 	expire_lock(...);
+> 	module_put(owner);
+>
+> Maybe there's some simpler way, but I don't see it.
+>
+> TESTS:
+> 	- retest courtesy client behavior using file locks this time.
+>
+> --
+>
+> That's the basic idea.  I think it should work--though I may have
+> overlooked something.
+>
+> This has us flush the laundromat workqueue while holding mutexes in a
+> couple cases.  We could avoid that with a little more work, I think.
+> But those mutexes should only be associated with the client requesting a
+> new open/lock, and such a client shouldn't be touched by the laundromat,
+> so I think we're OK.
+>
+> It'd also be helpful to update the info file with courtesy client
+> information, as you do in your current patches.
+>
+> Does this make sense?
 
-> >> Would it be safer to check that the following rp_val is also -1 ? Also=
-,
-> >> does this work with 32-bits arch ? Shouldn't the "< 2" be "< 1" for
-> >> 32-bits arch ?
-> >
-> > I think that checking that the previous entry is also -1 will not work,
-> > as it will just be a single entry for 32-bit.
-> > And I don't see the need to complicate this logic by having a 64-bit
-> > and a 32-bit version of the check.
->=20
-> Handling 64bit in this binfmt_flat appears wrong.  The code is
-> aggressively 32bit, and in at least some places does not have fields
-> large enough to handle a 64bit address.  I expect it would take
-> a significant rewrite to support 64bit.
+I think most of the complications in the current patches is due to the
+handling of race conditions when courtesy client reconnects as well as
+creating and removing client record (which I already addressed in v21).
+The new approach here does not cover these race conditions, I guess
+these are the details that will show up in the implementation.
 
-Running "file" on the ELF supplied to elf2flt shows:
-ELF 64-bit LSB executable, UCB RISC-V, RVC, double-float ABI, version 1 (SY=
-SV)
-(The code was compiled with -melf64lriscv.)
+I feel like we're going around in the circle but I will implement this
+new approach then we can compare to see if it's simpler than the current
+one.
 
-And the resulting bFLT works perfectly fine with the existing fs/binfmt_fla=
-t.c
-(with the minor fix in $subject applied).
-
-The current relocation code probably won't work on systems where it needs t=
-o
-relocate something to an address > 4 GB, but the systems running bFLT rarel=
-y
-have that much memory. The k210 I'm testing on has 8 MB of memory.
+-Dai
 
 
-So I'm not arguing that we should change the u32 pointers to something else=
-,
-my point was that:
-https://sourceware.org/git/?p=3Dbinutils-gdb.git;a=3Dblob;f=3Dbfd/elfnn-ris=
-cv.c;hb=3Dbinutils-2_38#l3275
-
-bfd_put_NN (output_bfd, (bfd_vma) -1, htab->elf.sgotplt->contents);
-bfd_put_NN (output_bfd, (bfd_vma) 0,
-            htab->elf.sgotplt->contents + GOT_ENTRY_SIZE);
-
-Where NN will be 64 for elf64-riscv and 32 for elf32-riscv:
-https://sourceware.org/git/?p=3Dbinutils-gdb.git;a=3Dblob;f=3Dbfd/Makefile.=
-am;hb=3Dbinutils-2_38#l878
-
-So while the GOTPLT header will always be two words,
-it will be 16 bytes ([0xffffffff 0xffffffff] [0x0 0x0]) on elf64-riscv
-and 8 bytes ([0xffffffff] [0x0]) on elf32-riscv.
-
-Both words are reserved for the dynamic linker (ld.so).
-
-
->=20
->=20
-> I think it would be better all-around if instead of applying the
-> adjustment in the loop, there was a test before the loop.
->=20
-> Something like:
->=20
-> static inline u32 __user *skip_got_header(u32 __user *rp)
-> {
-> 	if (IS_ENABLED(CONFIG_RISCV)) {
-> 	        /* RISCV has a 2 word GOT PLT header */
-> 		u32 rp_val;
-> 		if (get_user(rp_val, rp) =3D=3D 0) {
->         		if (rp_val =3D=3D 0xffffffff)
->                 		rp +=3D 2;
-> 		}
->         }
-> 	return rp;
-> }
-
-I like your suggestion, but perhaps change skip_got_header() to:
-
-static inline u32 __user *skip_got_header(u32 __user *rp)
-{
-	if (IS_ENABLED(CONFIG_RISCV)) {
-		/*
-		 * RISCV has a 16 byte GOT PLT header for elf64-riscv
-		 * and 8 byte GOT PLT header for elf32-riscv.
-		 * Skip the whole GOT PLT header, since it is reserved
-		 * for the dynamic linker (ld.so).
-		 */
-		u32 rp_val0, rp_val1;
-
-		if (get_user(rp_val0, rp))
-			return rp;
-		if (get_user(rp_val1, rp + 1))
-			return rp;
-
-		if (rp_val0 =3D=3D 0xffffffff && rp_val1 =3D=3D 0xffffffff)
-			rp +=3D 4;
-		else if (rp_val0 =3D=3D 0xffffffff)
-			rp +=3D 2;
-	}
-	return rp;
-}
-
-What do you guys think?
-
-
->=20
-> ....
->=20
-> 	if (flags & FLAT_FLAG_GOTPIC) {
-> 		rp =3D skip_got_header((u32 * __user) datapos);
-> 		for (; ; rp++) {
-> 			u32 addr, rp_val;
-> 			if (get_user(rp_val, rp))
-> 				return -EFAULT;
-> 			if (rp_val =3D=3D 0xffffffff)
-> 				break;
-> 			if (rp_val) {
->=20
->=20
-> Alternately if nothing in the binary uses the header it would probably
-> be a good idea for elf2flt to simply remove the header.
-
-It is used by the dynamic linker (ld.so), so I don't think that we can
-remove it.
-
-The bFLT format only supports shared libraries when CONFIG_BINFMT_SHARED_FL=
-AT.
-Looking at e.g. buildroot:
-https://github.com/buildroot/buildroot/blob/2022.02.1/arch/Config.in#L418
-it seems that perhaps only m68k supports shared libraries for bFLT, but I
-suppose that elf2flt wants to keep the linker script the same for all archs=
-.
-
-
-> Looking at the references you have given the only active architecture
-> supporting this header is riscv.  So I think it would be good
-> documentation to have the functionality conditional upon RISCV.
-
-Fine by me.
-
-
->=20
-> There is the very strange thing I see happening in the code.
-> Looking at the ordinary relocation code it appears that if
-> FLAT_FLAG_GOTPIC is set that first the address to relocate
-> is computed, then the address to relocate is read converted
-> from big endian to native endian (little endian on riscv?)
-> adjusted and written back.
-
-The relocation entries in the GOT are not converted using ntohl():
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/=
-binfmt_flat.c?h=3Dv5.18-rc2#n799
-
-The extra relocation entries tacked after the image's data segment
-are only converted using ntohl() if FLAT_FLAG_GOTPIC is _not_ set:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/=
-binfmt_flat.c?h=3Dv5.18-rc2#n851
-
-
->=20
-> Does elf2flt really change all of these values to big-endian on
-> little-endian platforms?
-
-Short answer, yes, but only for non-PIC code:
-https://github.com/uclinux-dev/elf2flt/blob/v2021.08/elf2flt.c#L826
-
-The code is horrible to read because of all the ifdefs,
-I had to compile it with -E to actually see anything.
-
-Basically the code ends up looking like this:
-
-	if (!pic_with_got) {
-		switch (q->howto->type) {
-		default:
-			/* The alignment of the build host
-			   might be stricter than that of the
-			   target, so be careful.  We store in
-			   network byte order. */
-			r_mem[0] =3D (sym_addr >> 24) & 0xff;
-			r_mem[1] =3D (sym_addr >> 16) & 0xff;
-			r_mem[2] =3D (sym_addr >> 8) & 0xff;
-			r_mem[3] =3D sym_addr & 0xff;
-		}
-	}
-
-
-Kind regards,
-Niklas=
+>
+> --b.
