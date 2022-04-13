@@ -2,291 +2,247 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BB1B34FF40C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Apr 2022 11:46:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F03304FF44D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Apr 2022 11:59:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231567AbiDMJtD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Apr 2022 05:49:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46250 "EHLO
+        id S234808AbiDMKBa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Apr 2022 06:01:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234829AbiDMJrk (ORCPT
+        with ESMTP id S234813AbiDMKB3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Apr 2022 05:47:40 -0400
-Received: from esa17.fujitsucc.c3s2.iphmx.com (esa17.fujitsucc.c3s2.iphmx.com [216.71.158.34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A78C73C4BD;
-        Wed, 13 Apr 2022 02:45:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj1;
-  t=1649843120; x=1681379120;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=ikhK/SFpoT21uhpgZ3KZaubrvQNvodAcPyboCYWIRoQ=;
-  b=KDPdcf64Cb7HWCNAxU8XKZDECLUGCyC8aHPKqyE5LqvOpeUeD6xtkQER
-   ZwmgQ88OGlTVypxN7qVKrgCv7gGe0Yx5MG7gLAu3MAugkRClgaVHyvevQ
-   Rf6bGPLnBsO2cM4EDx7+NzyKfU3eD5DOdqQQjXADzwgOFnK2lPNG1KIix
-   remXKB4Dfn1pNlUJkEVsSY6Nt8/OjTrWrlLBNoBmZVeIsn8gP17tpaT7w
-   HxSYGnhKrw6bYj2Y+FtRo++s3cz5SvxC+R+uH4A+p4gSBDCQzn92DYiYp
-   mqbqFDbmiv4RAFnGcpFUadyi29yPs+8C40foSJKhETzts1RgtllcdrtbK
-   g==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10315"; a="53818066"
-X-IronPort-AV: E=Sophos;i="5.90,256,1643641200"; 
-   d="scan'208";a="53818066"
-Received: from mail-os0jpn01lp2105.outbound.protection.outlook.com (HELO JPN01-OS0-obe.outbound.protection.outlook.com) ([104.47.23.105])
-  by ob1.fujitsucc.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Apr 2022 18:45:15 +0900
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Dclm4DYwkXG0oSX+iCNstTRjwQFxifCCVSwHJQ6gVnKE5F2rK0FhM7I3J57wE9iOeNNWpmV4hzkuskLm+8yuDQZB/HNllghDCBXotDyTByz66yFYqC3LO+C+/rqiIVOIJYB5op0WkQGW0G9frfh+cEgPrJsTJuq3FwVZUzVpd1yRVt6eP7rYuCGECoApSJuAiSQSBVdi614pxckkTn5T1XJPzSMt5ow58cu2KZpgZlhG0/AeWKBlYvHZmnrYBuwPlDOjDhy23uc89J/Ut/SY6XVtBKfs7x/W7ZUkmTdHrHKMocvp7VcAHoUJT3nasj1xGjmYE8y4WIHQSRyGWSR+DA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ikhK/SFpoT21uhpgZ3KZaubrvQNvodAcPyboCYWIRoQ=;
- b=IFBXwtRuuTQX9C3hKwzFbrqaVjv7eNBmeblIlrfn5cV2rD+iprZkSxGPI645/X44yNT1G1knVB5q8SpBkzj0xtkscs+FDqTA8CEQCHsWs7xoW9lmn0ERc+nqUo4B7ov+YFNR8Y2wlgaTwDKuS6QI0oi5AHdrD0OQD0O8VDnD8EEC5nqwjEUnP69WAMHyOoXTFA8g7phzsT05bl8hPv1R8r4S/KRd4Vx5wrrzSBU2nlXeJ/eh/hX75DXuflPOYL5jTIik0VxoC4iSur7+U1BY/0zx/Hx5XR3Y7fJ5bnAe67+8TljPHnmFUZLF1eJH+f8pplg3HBXKvt2RJpDbkFAUPg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fujitsu.com; dmarc=pass action=none header.from=fujitsu.com;
- dkim=pass header.d=fujitsu.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=fujitsu.onmicrosoft.com; s=selector2-fujitsu-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ikhK/SFpoT21uhpgZ3KZaubrvQNvodAcPyboCYWIRoQ=;
- b=FPXKyhw/ESmZVZHhIIpe+Ezf7mPtLx2JJnQ905MSxIH3mIguRcOX8U1w/+OY/aU3EtjvlQmRKF5747T7IZAHgHG4bFM2WeJvKjnL7ZY2MAJ+8lrwNn2C+jdwNxeGHDgsR3J/LzMOUx21vJXT0R2WPzYqWb1K+0+9W0e2q6Nc/uc=
-Received: from TY2PR01MB4427.jpnprd01.prod.outlook.com (2603:1096:404:10d::20)
- by OS0PR01MB6051.jpnprd01.prod.outlook.com (2603:1096:604:cf::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5164.18; Wed, 13 Apr
- 2022 09:45:11 +0000
-Received: from TY2PR01MB4427.jpnprd01.prod.outlook.com
- ([fe80::fca9:dcb9:88b4:40fd]) by TY2PR01MB4427.jpnprd01.prod.outlook.com
- ([fe80::fca9:dcb9:88b4:40fd%7]) with mapi id 15.20.5144.030; Wed, 13 Apr 2022
- 09:45:11 +0000
-From:   "xuyang2018.jy@fujitsu.com" <xuyang2018.jy@fujitsu.com>
-To:     Christian Brauner <brauner@kernel.org>
-CC:     "david@fromorbit.com" <david@fromorbit.com>,
+        Wed, 13 Apr 2022 06:01:29 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B16F56438;
+        Wed, 13 Apr 2022 02:59:08 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id B228BB8217B;
+        Wed, 13 Apr 2022 09:59:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 406C9C385A3;
+        Wed, 13 Apr 2022 09:59:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1649843945;
+        bh=ldbFSGNTBkIFTkAPcFAoicVHvb338QcoanqBzNI6jAo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mavmsIPYbgTplfim3SZisoTkZN9aUvuP/f8Qe0dM9OcINyMxTVPcJJWzBX6WasUV9
+         KzXHFR/nWfSDs4gDfMz2kYSmeTkZYyKGjRcy5lS1zYc/EgN9tAXIuYk2PJVY8X3EzM
+         M4CopndMGCi9JYmos6B3y6MY/sH6pojq5+PzrXzaJVVMm6LnLEi1dflXbJpyTDUhTa
+         w/8EGbhCW3JRSnXHD6w9vombYstvV/HRyDbYmzHO6/g3zNGtTzSYb4f2Cle8dmQYvQ
+         V4s1FM1tn+8jaIl9g8SvqAcVMiQx8vL6AgiukAG0r+fsDRtEbiCQLnHDrO6xGAeWcT
+         rVLAGysTHSo5Q==
+Date:   Wed, 13 Apr 2022 11:59:01 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     "xuyang2018.jy@fujitsu.com" <xuyang2018.jy@fujitsu.com>
+Cc:     "david@fromorbit.com" <david@fromorbit.com>,
         "djwong@kernel.org" <djwong@kernel.org>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
         "fstests@vger.kernel.org" <fstests@vger.kernel.org>
 Subject: Re: [PATCH v3 4/5] idmapped-mounts: Add new setgid_create_umask test
-Thread-Topic: [PATCH v3 4/5] idmapped-mounts: Add new setgid_create_umask test
-Thread-Index: AQHYTljV1XLIppAYZUyHKyMK/b7m8KztjPMAgAAduwA=
-Date:   Wed, 13 Apr 2022 09:45:11 +0000
-Message-ID: <6256A9F2.2030801@fujitsu.com>
+Message-ID: <20220413095901.2s7jeqyefovd7wok@wittgenstein>
 References: <1649763226-2329-1-git-send-email-xuyang2018.jy@fujitsu.com>
  <1649763226-2329-4-git-send-email-xuyang2018.jy@fujitsu.com>
  <20220413085946.bh2cii5q5isx2odr@wittgenstein>
-In-Reply-To: <20220413085946.bh2cii5q5isx2odr@wittgenstein>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=fujitsu.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 45aa5a0f-e023-485c-0a1b-08da1d324dbe
-x-ms-traffictypediagnostic: OS0PR01MB6051:EE_
-x-microsoft-antispam-prvs: <OS0PR01MB6051D2D6BA57240212570CE1FDEC9@OS0PR01MB6051.jpnprd01.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: f6Llgb03zcfy2uJ7m+UJpMQf/3A+LZXQMfFp+YIaM6gbKxJfW+kwPwKi3xqDqBtCI/bCe5aUKKPJHcrRLV+UwXedtnui4yLUyFDT3D067956wKC875ZuBMmel2Qs515Ly78qa0JhQGJs1qdl+v/P8YtvomgfIUiLiB9jR42jA0Y7b4ysZ9bRPfWSC423FfodBEduQmLHjW2iOok5uaQJxRgEHutDpkZlwy9MnwMRaouqBxTRX+R7k4F6/VS0LJow+Gt0xJdw7rgaTi7b/2KPMi0KxDOP3oaxPKY/UcD4vvyLO707F9yT8m1haovN6ZUz6eGKbOt53n6Sr3UL+Uzf7NKcLBLYQstcq2Rkn5ZqGiJm27QJWzMfXho72odd3dn7rynkAktMbGtqBkOSRQeMPWulu/ZbEjJhiaLOtimmfv/J6PqmY1UPs75t8EUgN3JEpVjaij71aD5dx7YwGL9KUNd3Eg+UN6+IPh0F/GyKuZazsgjlpP+D4buOHI4y4lSiBrd3hDgmYJYKS0UPw5xQqb/fkp1BAnwykxA+DhK+ofl0csebreD8S0Bpa3WpitwId4yDhOuCH1qq/gRAVHSObSxSbDt6LcJvqmPCDKNdMvQrGJmFh2Op25PlBUB0K41gd7YTny7RIDlkCxh4SdWpzsKp2Qu0Ufp9GnR/4YwDrLAkzO/1trRFLpD1pS9vu4irh/3ofzE3HOU3Aqje9xbBYa+UKF8doygRcm8ConIVlcokB/TzHifM5nuybz9gb46RucUXIKknYAj2Bh264pi+/xqyCn+rQimymWqvmKmUmkw=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY2PR01MB4427.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(87266011)(2906002)(186003)(2616005)(83380400001)(6506007)(6512007)(54906003)(85182001)(316002)(6916009)(86362001)(33656002)(36756003)(6486002)(966005)(508600001)(8936002)(91956017)(64756008)(8676002)(26005)(4326008)(66946007)(71200400001)(66446008)(38100700002)(82960400001)(38070700005)(66476007)(5660300002)(66556008)(122000001)(76116006);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?NW1MdVFDbEl0WVd2dFVlYWRZWFF6WkNaelBoZVdXTzlLWWY1ZjlwRlBobDdu?=
- =?utf-8?B?VTRwaVUvZ1JxTUlVdGVJSzFpNWx5aU9raTRWRSt2UjhuOHZsZUxuazY0STVW?=
- =?utf-8?B?Ukl5MHpSS0tNL256MEpHdXV6bFBQZU5EbW1GMmQrSG4vMjNvbE5nWWxHS056?=
- =?utf-8?B?TWJYditNODZJcDIyZm1GWWovK3VaSU1uT042cEVoQ3FQNG9zdUJqenpNem8y?=
- =?utf-8?B?TzlGYmpHejFxN0FvWUF0UkNCbStvM00xcTdtSW00MCt3cHNDMHgvcGo3ZkR5?=
- =?utf-8?B?TndVTzc1Ky8zc05XVjRKbHNhbUhPa3k1MitnZ2xWdlVpTWF4Q0FrcXh1Rmxa?=
- =?utf-8?B?U0xRSWNyVHp1aGlORnFGN1ZZQzcwUEtLcEFKWkFYaSttT05SajRobFoxcSts?=
- =?utf-8?B?WWMxZ0FldE9hS25aZEJrcXlqbFBXeXNBVG1NQmtyOXJsTGRoRW5kcTlYcTc4?=
- =?utf-8?B?N3ZtSGttNWdSWVZtQWI2VHd2MFR6alp2Z2NacHJwZWRleHJCUVNtbVhualhY?=
- =?utf-8?B?WWgrUkZVeTBHZjNEVGQrUTFqdVpsdHdJR2IybXh6dmRCYU12U3psdnM1cStH?=
- =?utf-8?B?aEdERWd2aUxTcE93NVhZcU5vTUpoMHVDaVFCMFV5amg0eGY4REZwTUZrYWg0?=
- =?utf-8?B?cmloMWVRUDlPYjdxdWF3ZG9uSW0xQkp2STltS0VkVUxDVFMrYkJycG5FemNZ?=
- =?utf-8?B?OHcwVjRvSjc1YUZEa1pBMHFTaHdPUE1WMjg0Z095cldrWjZuOW5OWnprdGtW?=
- =?utf-8?B?ckRwdUdxZnY0NTlEQTJGaDBGUUhkMmV2T3JGRmREYnFBdytsbnVDaW8wQ0I2?=
- =?utf-8?B?eFdob3l5R2Nia3hIZ1pMcE1YUGhaNGV1Vm5jdkxOQlFEZ0NJMCtybWd1MElC?=
- =?utf-8?B?MTN3c2k3TEExZW1XOFF6T1o5b3hwSjlSUVhocmlXOWIydHVDcUtBS2lMci9i?=
- =?utf-8?B?dzBWR1NXYVJaMmgxRTFnZk1uaHNOOCs4RjhsUm9tcUUySVk2UXNOVmVrUGtB?=
- =?utf-8?B?UVQ1S1VDdXp2YjRoZGpqSlc2WTRYREZ3Q1J5MGxzNmQvamxXTTI2VldpQjhJ?=
- =?utf-8?B?YkJjb0tCUUN2OC8vTSt3MnpmbVBCallBT1k1ZnNuMzRCbjJNK1Rza3N1V252?=
- =?utf-8?B?bm5NR2lCNHY1a2FaaDZxVjhlN3E1c1BCR1FYWUhsV05FMHdLTEpnN1lEVzJM?=
- =?utf-8?B?a2NCTitmNldmaThpdnFRTkRxTzZLYTN1cTNhR3BTUnpKVzFONWZMUEtUNTIv?=
- =?utf-8?B?KzduOGhGTUFsZFltcWhzTHlaT21tdGNaTzhEa08relkxMldXOVhaZ2ZYLzE0?=
- =?utf-8?B?STFURlYyVnBGNGp1NTNaNEVRa2IyRmd5V2IxeG1yVDliTXVHdWhMb0dnY1FQ?=
- =?utf-8?B?aEN4K0xVeUFabTdxT1gvZ05kdVZRbDBWNVVnV1JPdFRTTXFIWjg0RkNEV3Q4?=
- =?utf-8?B?cy90SDhuUGpDOUtueCtBTlN0NDZhZUlhZkJQeEE4aDNJcGp4V2V3NlA0NVJF?=
- =?utf-8?B?ZWs1S3l5aGl1YXRlZzdxdkRJUGZZYmZnZnJkRnJITWhrSGU0cnlUUGlrUGhF?=
- =?utf-8?B?bkwxd2ZJRm1Ob2FCR081aXlZRVRGU3FtQVhhajlFaC9KRDZYTTBhZW5UVWZX?=
- =?utf-8?B?U3ZWN3ErTVdMTnduY0pveEhOUDA2WU0ydVZnSW9hTWlmNUgydXZZR014QTlw?=
- =?utf-8?B?SnI5WWlBcno0MFhqRjNnTkRxWTRaMkdnOVEva0IyR3RTbXk1YVluSVA3TlRS?=
- =?utf-8?B?WTB2ZGlTL0xnQ2Q2WEE1T1RpK0p2MExyd1JPeEtQZVlIWGVQSUdxZ3N2OWVG?=
- =?utf-8?B?STltd3RFcFd3TllSK1VCaFk0d3QreU1ramZ0bmFZeXBIdHB2RHpFQjd4MjZJ?=
- =?utf-8?B?eGIwM2FjYkxnSTk3UkI5Zk1RZ0tKcEZNTlQ3b1BQMzNLOUZVM282Nys5eWVL?=
- =?utf-8?B?cVN2bEpoNEFTRWZua1lBVFRDSzkzRXdQWUdZaEhyZTlCWk9SZUxObWp2RzdC?=
- =?utf-8?B?WTRUc3hwZzRoeHpzRUM0d1M4NnlWODBkL0VtMk91SE80Mms4Wi94L1BOOVFJ?=
- =?utf-8?B?K3Rka2ppMHJIOGpQS2IwK3hlZ2FraTRLQW1SbDMvMmJIVTNDWitDRWNMVnBS?=
- =?utf-8?B?VHpMdE9KTmNXVWtQTk5aVHNJZDBVcTd5clRkVXhTL01KbzJwQ1JFcFhISzFY?=
- =?utf-8?B?enlFQno4K25sbFArUWl1UEpZSWo4cXhQbjl3SUwwYkVkazI0RDRGN1lWS2dq?=
- =?utf-8?B?dGxoc0xjUUEyVlZueGJGVGQ2UzhiVWRGSU0rZndvOFFCWUNzRlBIQXZpYkE3?=
- =?utf-8?B?VndNV3ZCMSttcDVEMEozKzRxVzdtRVRicjROUkF4YWcxQjlhSmppYUNnT2di?=
- =?utf-8?Q?og+Hp3IO6cQOQkW/rAbg+BEKRJEpAWf5xA3HE?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <637774A319BF67488A0ED93BC3C6497B@jpnprd01.prod.outlook.com>
-Content-Transfer-Encoding: base64
+ <6256A9F2.2030801@fujitsu.com>
 MIME-Version: 1.0
-X-OriginatorOrg: fujitsu.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY2PR01MB4427.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 45aa5a0f-e023-485c-0a1b-08da1d324dbe
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Apr 2022 09:45:11.5591
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a19f121d-81e1-4858-a9d8-736e267fd4c7
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: XKJACE53hkZfVWrY/AT/mz0eBsnrqtCLZeOjLEnPC5z71C0jFPlusZrGvM5n1mkScn/imM6SGTF4Rq9k9t7wmj/iirsFjQ79/LWUSOcF21s=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS0PR01MB6051
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <6256A9F2.2030801@fujitsu.com>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-b24gMjAyMi80LzEzIDE2OjU5LCBDaHJpc3RpYW4gQnJhdW5lciB3cm90ZToNCj4gT24gVHVlLCBB
-cHIgMTIsIDIwMjIgYXQgMDc6MzM6NDVQTSArMDgwMCwgWWFuZyBYdSB3cm90ZToNCj4+IFRoZSBj
-dXJyZW50X3VtYXNrKCkgaXMgc3RyaXBwZWQgZnJvbSB0aGUgbW9kZSBkaXJlY3RseSBpbiB0aGUg
-dmZzIGlmIHRoZQ0KPj4gZmlsZXN5c3RlbSBlaXRoZXIgZG9lc24ndCBzdXBwb3J0IGFjbHMgb3Ig
-dGhlIGZpbGVzeXN0ZW0gaGFzIGJlZW4NCj4+IG1vdW50ZWQgd2l0aG91dCBwb3NpYyBhY2wgc3Vw
-cG9ydC4NCj4+DQo+PiBJZiB0aGUgZmlsZXN5c3RlbSBkb2VzIHN1cHBvcnQgYWNscyB0aGVuIGN1
-cnJlbnRfdW1hc2soKSBzdHJpcHBpbmcgaXMNCj4+IGRlZmVycmVkIHRvIHBvc2l4X2FjbF9jcmVh
-dGUoKS4gU28gd2hlbiB0aGUgZmlsZXN5c3RlbSBjYWxscw0KPj4gcG9zaXhfYWNsX2NyZWF0ZSgp
-IGFuZCB0aGVyZSBhcmUgbm8gYWNscyBzZXQgb3Igbm90IHN1cHBvcnRlZCB0aGVuDQo+PiBjdXJy
-ZW50X3VtYXNrKCkgd2lsbCBiZSBzdHJpcHBlZC4NCj4+DQo+PiBIZXJlIHdlIG9ubHkgdXNlIHVt
-YXNrKFNfSVhHUlApIHRvIGNoZWNrIHdoZXRoZXIgaW5vZGUgc3RyaXANCj4+IFNfSVNHSUQgd29y
-a3MgY29ycmVjdGx5Lg0KPj4NCj4+IFNpZ25lZC1vZmYtYnk6IFlhbmcgWHU8eHV5YW5nMjAxOC5q
-eUBmdWppdHN1LmNvbT4NCj4+IC0tLQ0KPj4gICBzcmMvaWRtYXBwZWQtbW91bnRzL2lkbWFwcGVk
-LW1vdW50cy5jIHwgNTA1ICsrKysrKysrKysrKysrKysrKysrKysrKystDQo+PiAgIHRlc3RzL2dl
-bmVyaWMvNjgwICAgICAgICAgICAgICAgICAgICAgfCAgMjYgKysNCj4+ICAgdGVzdHMvZ2VuZXJp
-Yy82ODAub3V0ICAgICAgICAgICAgICAgICB8ICAgMiArDQo+PiAgIDMgZmlsZXMgY2hhbmdlZCwg
-NTMyIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCj4+ICAgY3JlYXRlIG1vZGUgMTAwNzU1
-IHRlc3RzL2dlbmVyaWMvNjgwDQo+PiAgIGNyZWF0ZSBtb2RlIDEwMDY0NCB0ZXN0cy9nZW5lcmlj
-LzY4MC5vdXQNCj4+DQo+PiBkaWZmIC0tZ2l0IGEvc3JjL2lkbWFwcGVkLW1vdW50cy9pZG1hcHBl
-ZC1tb3VudHMuYyBiL3NyYy9pZG1hcHBlZC1tb3VudHMvaWRtYXBwZWQtbW91bnRzLmMNCj4+IGlu
-ZGV4IDAyZjkxNTU4Li5lNmMxNDU4NiAxMDA2NDQNCj4+IC0tLSBhL3NyYy9pZG1hcHBlZC1tb3Vu
-dHMvaWRtYXBwZWQtbW91bnRzLmMNCj4+ICsrKyBiL3NyYy9pZG1hcHBlZC1tb3VudHMvaWRtYXBw
-ZWQtbW91bnRzLmMNCj4+IEBAIC0xNDE0Niw2ICsxNDE0Niw0OTQgQEAgb3V0Og0KPj4gICAJcmV0
-dXJuIGZyZXQ7DQo+PiAgIH0NCj4+DQo+PiArLyogVGhlIGZvbGxvd2luZyB0ZXN0cyBhcmUgY29u
-Y2VybmVkIHdpdGggc2V0Z2lkIGluaGVyaXRhbmNlLiBUaGVzZSBjYW4gYmUNCj4+ICsgKiBmaWxl
-c3lzdGVtIHR5cGUgc3BlY2lmaWMuIEZvciB4ZnMsIGlmIGEgbmV3IGZpbGUgb3IgZGlyZWN0b3J5
-IG9yIG5vZGUgaXMNCj4+ICsgKiBjcmVhdGVkIHdpdGhpbiBhIHNldGdpZCBkaXJlY3RvcnkgYW5k
-IGlyaXhfc2dpZF9pbmhpZXJ0IGlzIHNldCB0aGVuIGluaGVyaXR0aGUNCj4+ICsgKiBzZXRnaWQg
-Yml0IGlmIHRoZSBjYWxsZXIgaXMgaW4gdGhlIGdyb3VwIG9mIHRoZSBkaXJlY3RvcnkuDQo+PiAr
-ICoNCj4+ICsgKiBUaGUgY3VycmVudF91bWFzaygpIGlzIHN0cmlwcGVkIGZyb20gdGhlIG1vZGUg
-ZGlyZWN0bHkgaW4gdGhlIHZmcyBpZiB0aGUNCj4+ICsgKiBmaWxlc3lzdGVtIGVpdGhlciBkb2Vz
-bid0IHN1cHBvcnQgYWNscyBvciB0aGUgZmlsZXN5c3RlbSBoYXMgYmVlbg0KPj4gKyAqIG1vdW50
-ZWQgd2l0aG91dCBwb3NpYyBhY2wgc3VwcG9ydC4NCj4+ICsgKg0KPj4gKyAqIElmIHRoZSBmaWxl
-c3lzdGVtIGRvZXMgc3VwcG9ydCBhY2xzIHRoZW4gY3VycmVudF91bWFzaygpIHN0cmlwcGluZyBp
-cw0KPj4gKyAqIGRlZmVycmVkIHRvIHBvc2l4X2FjbF9jcmVhdGUoKS4gU28gd2hlbiB0aGUgZmls
-ZXN5c3RlbSBjYWxscw0KPj4gKyAqIHBvc2l4X2FjbF9jcmVhdGUoKSBhbmQgdGhlcmUgYXJlIG5v
-IGFjbHMgc2V0IG9yIG5vdCBzdXBwb3J0ZWQgdGhlbg0KPj4gKyAqIGN1cnJlbnRfdW1hc2soKSB3
-aWxsIGJlIHN0cmlwcGVkLg0KPj4gKyAqDQo+PiArICogVXNlIHVtYXNrKFNfSVhHUlApIHRvIGNo
-ZWNrIHdoZXRoZXIgaW5vZGUgc3RyaXAgU19JU0dJRCB3b3JrcyBjb3JyZWN0bHkuDQo+PiArICov
-DQo+PiArc3RhdGljIGludCBzZXRnaWRfY3JlYXRlX3VtYXNrKHZvaWQpDQo+PiArew0KPj4gKwlp
-bnQgZnJldCA9IC0xOw0KPj4gKwlpbnQgZmlsZTFfZmQgPSAtRUJBREY7DQo+PiArCWludCB0bXBm
-aWxlX2ZkID0gLUVCQURGOw0KPj4gKwlwaWRfdCBwaWQ7DQo+PiArCWJvb2wgc3VwcG9ydGVkID0g
-ZmFsc2U7DQo+PiArCWNoYXIgcGF0aFtQQVRIX01BWF07DQo+PiArCW1vZGVfdCBtb2RlOw0KPj4g
-Kw0KPj4gKwlpZiAoIWNhcHNfc3VwcG9ydGVkKCkpDQo+PiArCQlyZXR1cm4gMDsNCj4+ICsNCj4+
-ICsJaWYgKGZjaG1vZCh0X2RpcjFfZmQsIFNfSVJVU1IgfA0KPj4gKwkJCSAgICAgIFNfSVdVU1Ig
-fA0KPj4gKwkJCSAgICAgIFNfSVJHUlAgfA0KPj4gKwkJCSAgICAgIFNfSVdHUlAgfA0KPj4gKwkJ
-CSAgICAgIFNfSVJPVEggfA0KPj4gKwkJCSAgICAgIFNfSVdPVEggfA0KPj4gKwkJCSAgICAgIFNf
-SVhVU1IgfA0KPj4gKwkJCSAgICAgIFNfSVhHUlAgfA0KPj4gKwkJCSAgICAgIFNfSVhPVEggfA0K
-Pj4gKwkJCSAgICAgIFNfSVNHSUQpLCAwKSB7DQo+PiArCQlsb2dfc3RkZXJyKCJmYWlsdXJlOiBm
-Y2htb2QiKTsNCj4+ICsJCWdvdG8gb3V0Ow0KPj4gKwl9DQo+PiArDQo+PiArCSAgIC8qIFZlcmlm
-eSB0aGF0IHRoZSBzZXRnaWQgYml0IGdvdCByYWlzZWQuICovDQo+PiArCWlmICghaXNfc2V0Z2lk
-KHRfZGlyMV9mZCwgIiIsIEFUX0VNUFRZX1BBVEgpKSB7DQo+PiArCQlsb2dfc3RkZXJyKCJmYWls
-dXJlOiBpc19zZXRnaWQiKTsNCj4+ICsJCWdvdG8gb3V0Ow0KPj4gKwl9DQo+PiArDQo+PiArCXN1
-cHBvcnRlZCA9IG9wZW5hdF90bXBmaWxlX3N1cHBvcnRlZCh0X2RpcjFfZmQpOw0KPj4gKw0KPj4g
-KwkvKiBPbmx5IHVtYXNrIHdpdGggU19JWEdSUCBiZWNhdXNlIGlub2RlIHN0cmlwIFNfSVNHSUQg
-d2lsbCBjaGVjayBtb2RlDQo+PiArCSAqIHdoZXRoZXIgaGFzIGdyb3VwIGV4ZWN1dGUgb3Igc2Vh
-cmNoIHBlcm1pc3Npb24uDQo+PiArCSAqLw0KPj4gKwl1bWFzayhTX0lYR1JQKTsNCj4+ICsJbW9k
-ZSA9IHVtYXNrKFNfSVhHUlApOw0KPj4gKwlpZiAoIShtb2RlJiAgU19JWEdSUCkpDQo+PiArCQlk
-aWUoImZhaWx1cmU6IHVtYXNrIik7DQo+PiArDQo+PiArCXBpZCA9IGZvcmsoKTsNCj4+ICsJaWYg
-KHBpZDwgIDApIHsNCj4+ICsJCWxvZ19zdGRlcnIoImZhaWx1cmU6IGZvcmsiKTsNCj4+ICsJCWdv
-dG8gb3V0Ow0KPj4gKwl9DQo+PiArCWlmIChwaWQgPT0gMCkgew0KPj4gKwkJaWYgKCFzd2l0Y2hf
-aWRzKDAsIDEwMDAwKSkNCj4+ICsJCQlkaWUoImZhaWx1cmU6IHN3aXRjaF9pZHMiKTsNCj4+ICsN
-Cj4+ICsJCWlmICghY2Fwc19kb3duX2ZzZXRpZCgpKQ0KPj4gKwkJCWRpZSgiZmFpbHVyZTogY2Fw
-c19kb3duX2ZzZXRpZCIpOw0KPj4gKw0KPj4gKwkJLyogY3JlYXRlIHJlZ3VsYXIgZmlsZSB2aWEg
-b3BlbigpICovDQo+PiArCQlmaWxlMV9mZCA9IG9wZW5hdCh0X2RpcjFfZmQsIEZJTEUxLCBPX0NS
-RUFUIHwgT19FWENMIHwgT19DTE9FWEVDLCBTX0lYR1JQIHwgU19JU0dJRCk7DQo+PiArCQlpZiAo
-ZmlsZTFfZmQ8ICAwKQ0KPj4gKwkJCWRpZSgiZmFpbHVyZTogY3JlYXRlIik7DQo+PiArDQo+PiAr
-CQkvKiBOZWl0aGVyIGluX2dyb3VwX3AoKSBub3IgY2FwYWJsZV93cnRfaW5vZGVfdWlkZ2lkKCkg
-c28gc2V0Z2lkDQo+PiArCQkgKiBiaXQgbmVlZHMgdG8gYmUgc3RyaXBwZWQuDQo+PiArCQkgKi8N
-Cj4+ICsJCWlmIChpc19zZXRnaWQodF9kaXIxX2ZkLCBGSUxFMSwgMCkpDQo+PiArCQkJZGllKCJm
-YWlsdXJlOiBpc19zZXRnaWQiKTsNCj4NCj4gVGhpcyB0ZXN0IGlzIHdyb25nLiBTcGVjaWZpY2Fs
-bHksIGl0IGlzIGEgZmFsc2UgcG9zaXRpdmUuIEkgaGF2ZQ0KPiBleHBsYWluZWQgdGhpcyBpbiBt
-b3JlIGRldGFpbCBvbiB2MiBvZiB0aGlzIHBhdGNoc2V0Lg0KPg0KPiBZb3Ugd2FudCB0byB0ZXN0
-IHRoYXQgdW1hc2soU19JWEdSUCkgKyBzZXRnaWQgaW5oZXJpdGFuY2Ugd29yayB0b2dldGhlcg0K
-PiBjb3JyZWN0bHkuIEZpcnN0LCB3ZSBuZWVkIHRvIGVzdGFibGlzaCB3aGF0IHRoYXQgbWVhbnMg
-YmVjYXVzZSBmcm9tIHlvdXINCj4gcGF0Y2ggc2VyaWVzIGl0IGF0IGxlYXN0IHNlZW1zIHRvIG1l
-IGFzIHlvdSdyZSBub3QgY29tcGxldGVseSBjbGVhcg0KPiBhYm91dCB3aGF0IHlvdSB3YW50IHRv
-IHRlc3QganVzdCB5ZXQuDQo+DQo+IEEgcmVxdWVzdGVkIHNldGdpZCBiaXQgZm9yIGEgbm9uLWRp
-cmVjdG9yeSBvYmplY3QgaXMgb25seSBjb25zaWRlcmVkIGZvcg0KPiBzdHJpcHBpbmcgaWYgU19J
-WEdSUCBpcyBzaW11bHRhbmVvdXNseSByZXF1ZXN0ZWQuIEluIG90aGVyIHdvcmRzLCBib3RoDQo+
-IFNfU0lTR0lEIGFuZCBTX0lYR1JQIG11c3QgYmUgcmVxdWVzdGVkIGZvciB0aGUgbmV3IGZpbGUg
-aW4gb3JkZXIgZm9yDQo+IGFkZGl0aW9uYWwgY2hlY2tzIHN1Y2ggYXMgQ0FQX0ZTRVRJRCB0byBi
-ZWNvbWUgcmVsZXZhbnQuDQpZZXMsIG9ubHkga2VlcCBTX0lYR1JQLCB0aGVuIHdlIGNhbiBydW4g
-aW50byB0aGUgbmV4dCBqdWRnZW1lbnQgZm9yIA0KZ3JvdXAgYW5kIGNhcF9mc2V0aWQuDQo+DQo+
-IFdlIG5lZWQgdG8gZGlzdGluZ3Vpc2ggdHdvIGNhc2VzIGFmYWljdDoNCj4NCj4gMS4gVGhlIGZp
-bGVzeXN0ZW0gZG9lcyBzdXBwb3J0IEFDTHMgYW5kIGhhcyBhbiBhcHBsaWNhYmxlIEFDTA0KPiAt
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tDQo+DQo+IHVtYXNrKFNfSVhHUlApIGlzIG5vdCB1c2VkIGJ5IHRoZSBrZXJuZWwgYW5kIHRo
-dXMgU19JWEdSUCBpcyBub3QNCj4gc3RyaXBwZWQgKHVubGVzcyB0aGUgQUNMIGRvZXMgbWFrZSBp
-dCBzbykgYW5kIHNvIHdoZW4gZS5nLg0KPiBpbm9kZV9pbml0X293bmVyKCkgaXMgY2FsbGVkIHdl
-IGRvIG5vdCBleHBlY3QgdGhlIGZpbGUgdG8gaW5oZXJpdCB0aGUNCj4gc2V0Z2lkIGJpdC4NCj4N
-Cj4gVGhpcyBpcyB3aGF0IHlvdXIgdGVzdCBhYm92ZSBpcyBoYW5kbGluZyBjb3JyZWN0bHkuIEJ1
-dCBpdCBpcyBhIGZhbHNlDQo+IHBvc2l0aXZlIGJlY2F1c2Ugd2hhdCB5b3UncmUgdHJ5aW5nIHRv
-IHRlc3QgaXMgdGhlIGJlaGF2aW9yIG9mDQo+IHVtYXNrKFNfSVhHUlApIGJ1dCBpdCBpcyBtYWRl
-IGlycmVsZXZhbnQgYnkgQUNMIHN1cHBvcnQgb2YgdGhlDQo+IHVuZGVybHlpbmcgZmlsZXN5c3Rl
-bS4NCkkgdGVzdCB0aGlzIHNpdHVhdGlvbiBpbiB0aGUgbmV4dCBwYXRjaCBhcyBiZWxvdzoNCnVt
-YXNrKFNfSVhHUlApOw0Kc25wcmludGYodF9idWYsIHNpemVvZih0X2J1ZiksICJzZXRmYWNsIC1k
-IC1tIHU6OnJ3eCxnOjpyd3gsbzo6cnd4LG06cncgDQolcy8lcyIsIHRfbW91bnRwb2ludCwgVF9E
-SVIxKQ0KDQphbmQNCnVtYXNrKFNfSVhHUlApOw0Kc25wcmludGYodF9idWYsIHNpemVvZih0X2J1
-ZiksICJzZXRmYWNsIC1kIC1tIHU6OnJ3eCxnOjpydyxvOjpyd3gsIA0KJXMvJXMiLCB0X21vdW50
-cG9pbnQsIFRfRElSMQ0KDQo+DQo+IDIuIFRoZSBmaWxlc3lzdGVtIGRvZXMgbm90IHN1cHBvcnQg
-QUNMcywgaGFzIGJlZW4gbW91bnRlZCB3aXRob3V0DQo+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+IHN1cHBvcnQgZm9y
-IGl0LCBvciBoYXMgbm8gYXBwbGljYWJsZSBBQ0wNCj4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLQ0KPg0KPiB1bWFzayhTX0lYR1JQKSBpcyB1c2VkIGJ5IHRoZSBrZXJu
-ZWwgYW5kIHdpbGwgYmUgc3RyaXBwZWQgZnJvbSB0aGUgbW9kZS4NCj4gU28gd2hlbiBpbm9kZV9p
-bml0X293bmVyKCkgaXMgY2FsbGVkIHdlIGV4cGVjdCB0aGUgZmlsZSB0byBpbmhlcml0IHRoZQ0K
-PiBzZXRnaWQgYml0Lg0KVGhpcyBpcyB3aHkgbXkga2VybmVsIHBhdGNoIHB1dCBzdHJpcCBzZXRn
-aWQgY29kZSBpbnRvIHZmcy4NCnhmcyB3aWxsIGluaGVyaXQgdGhlIHNldGdpZCBiaXQgYnV0IGV4
-dDQgbm90IGJlY2F1c2UgdGhlIG5ld19pbm9kZSANCmZ1bmN0aW9uIGFuZCBwb3NpeF9hY2xfY3Jl
-YXRlIGZ1bmN0aW9uIG9yZGVyKFNfSVhHUlAgbW9kZSBoYXMgYmVlbiANCnN0cmlwcGVkIGJlZm9y
-ZSBwYXNzIHRvIGlub2RlX2luaXRfb3duZXIpLg0KPg0KPiBUaGlzIG1lYW5zIHRoZSB0ZXN0IGZv
-ciB0aGlzIGNhc2UgbmVlZHMgdG8gYmU6DQo+DQo+IAlmaWxlMV9mZCA9IG9wZW5hdCh0X2RpcjFf
-ZmQsIEZJTEUxLCBPX0NSRUFUIHwgT19FWENMIHwgT19DTE9FWEVDLCBTX0lYR1JQIHwgU19JU0dJ
-RCk7DQo+IAlpZiAoZmlsZTFfZmQ8ICAwKQ0KPiAJCWRpZSgiZmFpbHVyZTogY3JlYXRlIik7DQo+
-IAkNCj4gCS8qDQo+IAkgKiBTX0lYR1JQIHdpbGwgaGF2ZSBiZWVuIHJlbW92ZWQgZHVlIHRvIHVt
-YXNrKFNfSVhHUlApIHNvIHdlIGV4cGVjdCB0aGUNCj4gCSAqIG5ldyBmaWxlIHRvIGJlIFNfSVNH
-SUQuDQpObyBObyBObywgc2VlIHRoZSBrZXJuZWwgcGF0Y2ggdXJsDQpodHRwczovL3BhdGNod29y
-ay5rZXJuZWwub3JnL3Byb2plY3QvbGludXgtZnNkZXZlbC9wYXRjaC8xNjQ4NDYxMzg5LTIyMjUt
-Mi1naXQtc2VuZC1lbWFpbC14dXlhbmcyMDE4Lmp5QGZ1aml0c3UuY29tLw0KPiAJICovDQo+IAlp
-ZiAoIWlzX3NldGdpZCh0X2RpcjFfZmQsIEZJTEUxLCAwKSkNCj4gCQlkaWUoImZhaWx1cmU6IGlz
-X3NldGdpZCIpOw0KPg0KPiBBbmQgYWRkaXRpb25hbGx5IHlvdSBtaWdodCB3YW50IHRvIGFsc28g
-YWRkIGEgbmV3IGhlbHBlciBpc19peGdycCgpIHRvDQo+IGFkZCBhbiBhZGRpdGlvbmFsIGNoZWNr
-Og0KPg0KPiAvKg0KPiAgICogU19JWEdSUCB3aWxsIGhhdmUgYmVlbiByZW1vdmVkIGR1ZSB0byB1
-bWFzayhTX0lYR1JQKSBzbyB3ZSBleHBlY3QgdGhlDQo+ICAgKiBuZXcgZmlsZSB0byBub3QgYmUg
-U19JWEdSUC4NCj4gICAqLw0KPiBpZiAoaXNfaXhncnAodF9kaXIxX2ZkLCBGSUxFMSwgMCkpDQo+
-IAlkaWUoImZhaWx1cmU6IGlzX2l4Z3JwIik7DQpUaGlzIHNvdW5kIHJlYXNvbmFibGUuDQo+DQo+
-DQo+IC0tLQ0KPg0KPiBTbyBmb3IgdGhlIHVtYXNrKCkgdGVzdHMgeW91IG5lZWQgdG8gZmlyc3Qg
-Y2hlY2sgd2hldGhlciB0aGUgdW5kZXJseWluZw0KPiBmaWxlc3lzdGVtIGRvZXMgc3VwcG9ydCBB
-Q0xzIGFuZCByZW1lbWJlciB0aGF0IHNvbWV3aGVyZS4gSWYgaXQgZG9lcw0KPiBzdXBwb3J0IEFD
-THMsIHRoZW4geW91IHNob3VsZCBmaXJzdCByZW1vdmUgYW55IEFDTHMgc2V0IG9uIHRoZQ0KPiBk
-aXJlY3RvcmllcyB5b3UncmUgcGVyZm9ybWluZyB0aGUgdGVzdHMgb24uIFRoZW4geW91IGNhbiBy
-dW4geW91cg0KPiB1bWFzaygpIHRlc3RzLg0KWWVzLCBJIGNhbiBqdXN0IGFkZCBhIHJlbW92ZSBz
-dGVwIGluIHRoZSBiZWdpbm5pbmcuDQoNCnBzOiBXaGVuIEkgd3JpdGluZyBteSB2MiBrZXJuZWwg
-cGF0Y2gsIEkgZm91bmQgSSBzdGlsbCBtaXNzIHRoZSBHUlBJRCANCnRlc3RjYXNlIGluIGZzdGVz
-dHMuDQoNCkJlc3QgUmVncmFkcw0KWWFuZyBYdQ0K
+On Wed, Apr 13, 2022 at 09:45:11AM +0000, xuyang2018.jy@fujitsu.com wrote:
+> on 2022/4/13 16:59, Christian Brauner wrote:
+> > On Tue, Apr 12, 2022 at 07:33:45PM +0800, Yang Xu wrote:
+> >> The current_umask() is stripped from the mode directly in the vfs if the
+> >> filesystem either doesn't support acls or the filesystem has been
+> >> mounted without posic acl support.
+> >>
+> >> If the filesystem does support acls then current_umask() stripping is
+> >> deferred to posix_acl_create(). So when the filesystem calls
+> >> posix_acl_create() and there are no acls set or not supported then
+> >> current_umask() will be stripped.
+> >>
+> >> Here we only use umask(S_IXGRP) to check whether inode strip
+> >> S_ISGID works correctly.
+> >>
+> >> Signed-off-by: Yang Xu<xuyang2018.jy@fujitsu.com>
+> >> ---
+> >>   src/idmapped-mounts/idmapped-mounts.c | 505 +++++++++++++++++++++++++-
+> >>   tests/generic/680                     |  26 ++
+> >>   tests/generic/680.out                 |   2 +
+> >>   3 files changed, 532 insertions(+), 1 deletion(-)
+> >>   create mode 100755 tests/generic/680
+> >>   create mode 100644 tests/generic/680.out
+> >>
+> >> diff --git a/src/idmapped-mounts/idmapped-mounts.c b/src/idmapped-mounts/idmapped-mounts.c
+> >> index 02f91558..e6c14586 100644
+> >> --- a/src/idmapped-mounts/idmapped-mounts.c
+> >> +++ b/src/idmapped-mounts/idmapped-mounts.c
+> >> @@ -14146,6 +14146,494 @@ out:
+> >>   	return fret;
+> >>   }
+> >>
+> >> +/* The following tests are concerned with setgid inheritance. These can be
+> >> + * filesystem type specific. For xfs, if a new file or directory or node is
+> >> + * created within a setgid directory and irix_sgid_inhiert is set then inheritthe
+> >> + * setgid bit if the caller is in the group of the directory.
+> >> + *
+> >> + * The current_umask() is stripped from the mode directly in the vfs if the
+> >> + * filesystem either doesn't support acls or the filesystem has been
+> >> + * mounted without posic acl support.
+> >> + *
+> >> + * If the filesystem does support acls then current_umask() stripping is
+> >> + * deferred to posix_acl_create(). So when the filesystem calls
+> >> + * posix_acl_create() and there are no acls set or not supported then
+> >> + * current_umask() will be stripped.
+> >> + *
+> >> + * Use umask(S_IXGRP) to check whether inode strip S_ISGID works correctly.
+> >> + */
+> >> +static int setgid_create_umask(void)
+> >> +{
+> >> +	int fret = -1;
+> >> +	int file1_fd = -EBADF;
+> >> +	int tmpfile_fd = -EBADF;
+> >> +	pid_t pid;
+> >> +	bool supported = false;
+> >> +	char path[PATH_MAX];
+> >> +	mode_t mode;
+> >> +
+> >> +	if (!caps_supported())
+> >> +		return 0;
+> >> +
+> >> +	if (fchmod(t_dir1_fd, S_IRUSR |
+> >> +			      S_IWUSR |
+> >> +			      S_IRGRP |
+> >> +			      S_IWGRP |
+> >> +			      S_IROTH |
+> >> +			      S_IWOTH |
+> >> +			      S_IXUSR |
+> >> +			      S_IXGRP |
+> >> +			      S_IXOTH |
+> >> +			      S_ISGID), 0) {
+> >> +		log_stderr("failure: fchmod");
+> >> +		goto out;
+> >> +	}
+> >> +
+> >> +	   /* Verify that the setgid bit got raised. */
+> >> +	if (!is_setgid(t_dir1_fd, "", AT_EMPTY_PATH)) {
+> >> +		log_stderr("failure: is_setgid");
+> >> +		goto out;
+> >> +	}
+> >> +
+> >> +	supported = openat_tmpfile_supported(t_dir1_fd);
+> >> +
+> >> +	/* Only umask with S_IXGRP because inode strip S_ISGID will check mode
+> >> +	 * whether has group execute or search permission.
+> >> +	 */
+> >> +	umask(S_IXGRP);
+> >> +	mode = umask(S_IXGRP);
+> >> +	if (!(mode&  S_IXGRP))
+> >> +		die("failure: umask");
+> >> +
+> >> +	pid = fork();
+> >> +	if (pid<  0) {
+> >> +		log_stderr("failure: fork");
+> >> +		goto out;
+> >> +	}
+> >> +	if (pid == 0) {
+> >> +		if (!switch_ids(0, 10000))
+> >> +			die("failure: switch_ids");
+> >> +
+> >> +		if (!caps_down_fsetid())
+> >> +			die("failure: caps_down_fsetid");
+> >> +
+> >> +		/* create regular file via open() */
+> >> +		file1_fd = openat(t_dir1_fd, FILE1, O_CREAT | O_EXCL | O_CLOEXEC, S_IXGRP | S_ISGID);
+> >> +		if (file1_fd<  0)
+> >> +			die("failure: create");
+> >> +
+> >> +		/* Neither in_group_p() nor capable_wrt_inode_uidgid() so setgid
+> >> +		 * bit needs to be stripped.
+> >> +		 */
+> >> +		if (is_setgid(t_dir1_fd, FILE1, 0))
+> >> +			die("failure: is_setgid");
+> >
+> > This test is wrong. Specifically, it is a false positive. I have
+> > explained this in more detail on v2 of this patchset.
+> >
+> > You want to test that umask(S_IXGRP) + setgid inheritance work together
+> > correctly. First, we need to establish what that means because from your
+> > patch series it at least seems to me as you're not completely clear
+> > about what you want to test just yet.
+> >
+> > A requested setgid bit for a non-directory object is only considered for
+> > stripping if S_IXGRP is simultaneously requested. In other words, both
+> > S_SISGID and S_IXGRP must be requested for the new file in order for
+> > additional checks such as CAP_FSETID to become relevant.
+> Yes, only keep S_IXGRP, then we can run into the next judgement for 
+> group and cap_fsetid.
+> >
+> > We need to distinguish two cases afaict:
+> >
+> > 1. The filesystem does support ACLs and has an applicable ACL
+> > -------------------------------------------------------------
+> >
+> > umask(S_IXGRP) is not used by the kernel and thus S_IXGRP is not
+> > stripped (unless the ACL does make it so) and so when e.g.
+> > inode_init_owner() is called we do not expect the file to inherit the
+> > setgid bit.
+> >
+> > This is what your test above is handling correctly. But it is a false
+> > positive because what you're trying to test is the behavior of
+> > umask(S_IXGRP) but it is made irrelevant by ACL support of the
+> > underlying filesystem.
+> I test this situation in the next patch as below:
+> umask(S_IXGRP);
+> snprintf(t_buf, sizeof(t_buf), "setfacl -d -m u::rwx,g::rwx,o::rwx,m:rw 
+> %s/%s", t_mountpoint, T_DIR1)
+> 
+> and
+> umask(S_IXGRP);
+> snprintf(t_buf, sizeof(t_buf), "setfacl -d -m u::rwx,g::rw,o::rwx, 
+> %s/%s", t_mountpoint, T_DIR1
+> 
+> >
+> > 2. The filesystem does not support ACLs, has been mounted without
+> > -----------------------------------------------------------------
+> > support for it, or has no applicable ACL
+> > ----------------------------------------
+> >
+> > umask(S_IXGRP) is used by the kernel and will be stripped from the mode.
+> > So when inode_init_owner() is called we expect the file to inherit the
+> > setgid bit.
+> This is why my kernel patch put strip setgid code into vfs.
+> xfs will inherit the setgid bit but ext4 not because the new_inode 
+> function and posix_acl_create function order(S_IXGRP mode has been 
+> stripped before pass to inode_init_owner).
+> >
+> > This means the test for this case needs to be:
+> >
+> > 	file1_fd = openat(t_dir1_fd, FILE1, O_CREAT | O_EXCL | O_CLOEXEC, S_IXGRP | S_ISGID);
+> > 	if (file1_fd<  0)
+> > 		die("failure: create");
+> > 	
+> > 	/*
+> > 	 * S_IXGRP will have been removed due to umask(S_IXGRP) so we expect the
+> > 	 * new file to be S_ISGID.
+> No No No, see the kernel patch url
+> https://patchwork.kernel.org/project/linux-fsdevel/patch/1648461389-2225-2-git-send-email-xuyang2018.jy@fujitsu.com/
+
+Ok, so your testing patches are premised on your kernel patchset. That
+wasn't clear to me.
+
+The kernel patchset removes the setgid bit _before_ the umask is applied
+which is why you're expecting this file to not be setgid because you
+also dropped CAP_FSETID and you'r not in the group of the directory.
+
+(Ok, let's defer that discussion to the updated patchset.)
