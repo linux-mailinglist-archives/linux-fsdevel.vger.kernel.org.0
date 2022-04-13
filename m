@@ -2,71 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CF634FFB31
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Apr 2022 18:25:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EAC9C4FFB54
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Apr 2022 18:30:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236810AbiDMQ1s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Apr 2022 12:27:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49802 "EHLO
+        id S236873AbiDMQdR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Apr 2022 12:33:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236868AbiDMQ10 (ORCPT
+        with ESMTP id S230226AbiDMQdQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Apr 2022 12:27:26 -0400
+        Wed, 13 Apr 2022 12:33:16 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4CBEA4E389
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Apr 2022 09:25:02 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 428B846666
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Apr 2022 09:30:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1649867101;
+        s=mimecast20190719; t=1649867453;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=RgEcoM6U2AWPf465Xahivshzo2kZbOX7C4c0ahKp1Dw=;
-        b=Eplmut0vF4DlV6c+zkqOtHlqzpvGJ3v8k5+lbRl4yV4OIA9iFxRyXwgYXzb6KlsVO9QzW3
-        nl7HxNwJgX3oOvsp23Un2bK8WEuOBeDieMudWOsbppTnuMOa3/mJXAO8o3AjJSCeWGDNZi
-        qjYkdrvIe6mRigEbiz/xC4dFVOxgsL0=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=JpsTDUjpmmHkgiKCF75tJ9Qb2QqmtHwjLJW7Lijr6Ec=;
+        b=cNCbHTmqTb8bPVzu3CxkRyurrghpw3o5MLA01vLKGEsCpSreBiBEXUa5ImJDFNdZP1QIfx
+        SfRGVuteoZfl5E6SXQXu9LtzIk8UdNg0VIEZwONoBUbykOGy/AltUjbDXCZftYXpH8H+3x
+        imP2tsX6Lno33D2AYWaV22HNT5Hd/Dc=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-529-r3L4hPGTMemvA9HasGNm7A-1; Wed, 13 Apr 2022 12:25:00 -0400
-X-MC-Unique: r3L4hPGTMemvA9HasGNm7A-1
-Received: by mail-wm1-f72.google.com with SMTP id i66-20020a1c3b45000000b0038eab4e0feaso1085919wma.9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Apr 2022 09:24:59 -0700 (PDT)
+ us-mta-299-J3JT1fWwPGyfhBGTBK12DQ-1; Wed, 13 Apr 2022 12:30:51 -0400
+X-MC-Unique: J3JT1fWwPGyfhBGTBK12DQ-1
+Received: by mail-wm1-f71.google.com with SMTP id k16-20020a7bc310000000b0038e6cf00439so999608wmj.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Apr 2022 09:30:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:organization:in-reply-to
-         :content-transfer-encoding;
-        bh=RgEcoM6U2AWPf465Xahivshzo2kZbOX7C4c0ahKp1Dw=;
-        b=yzwoRftUxi1IZ64YtRTEtKEsu4A92qDzC+4dJ7JqBrufQfw8b012fjwkMPkrRrw8FJ
-         iAOXY2PL/ELz9GjKX7zItMktHjs7Fh/x/qNxpbdCAffwtQl88CejHWC5IZAD5blx+geJ
-         wQkteGRa0VuNspmU9QFkM7pv9bavPzNbKABmad0DbZbNdV+SWfYDRFoii9uyElGfQDWP
-         SHBEbAPcUCxvUsHNhbg7OTBEm4yFvb4nEDzgl0tsSLdGuRNnkk4L6t4hCyt++/ki1Hx0
-         sXEjP0b6TJYSBMZMd9QlurnfZPYcpfrQHjoPQl8dawoaTb7y+YkBf9SCA2h8Bwi6xTby
-         NCng==
-X-Gm-Message-State: AOAM533n/PR5creJYgts0Z4mnVKwCYnRhwE0/ktRLRDYTXGnwLPHKk4O
-        ggxtWmqFKR3KtpefQi1iTRCDUBI2znzdOWLMgV+pDurtektlVGDOIaA8lNUhLA0+rvyJsqj5Zs7
-        2ekwmmyY9s/heGrCXDTYeooF+BQ==
-X-Received: by 2002:a05:600c:3c8f:b0:38e:4e47:3e95 with SMTP id bg15-20020a05600c3c8f00b0038e4e473e95mr9076151wmb.173.1649867098881;
-        Wed, 13 Apr 2022 09:24:58 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJwylTIzzqJtz5EFX+MPmIPe9ZuRAk8yMJ3/juBgt0JzCyKFOBhzlfQN6ejdx28PKvB0mUKO0g==
-X-Received: by 2002:a05:600c:3c8f:b0:38e:4e47:3e95 with SMTP id bg15-20020a05600c3c8f00b0038e4e473e95mr9076112wmb.173.1649867098647;
-        Wed, 13 Apr 2022 09:24:58 -0700 (PDT)
+        h=x-gm-message-state:message-id:date:mime-version:user-agent
+         :content-language:to:cc:references:from:organization:subject
+         :in-reply-to:content-transfer-encoding;
+        bh=JpsTDUjpmmHkgiKCF75tJ9Qb2QqmtHwjLJW7Lijr6Ec=;
+        b=Oz6mNHDRn9cDG60F407VBgijDxUDOoe0Tw1Gmy0WU1x7X0O9s+BHxnTDvZQ/XBB1sp
+         5xJeywwy91X5a969x1P0p8xRBiVt76COT1vPSFbJuhxzNjAOekQLzysQfKtMdlS/C6+Y
+         U+Izmy9yq6PadUJ/GZZkNiqAe+4gAH1Iz/2fltFvb1otFD5gX9mFo14sCTA5TS5VKNf4
+         iMTXnsPHCkdNpZEcwUuA2HCoY4wQUxnLSK0PTwoghU4wQcOdywNOeRQ/R17ATPTm18ld
+         1ld7b/UiMD//2eq1Y5SIhduxQQWEAQoIoXeVHreOcRx2mxgBHZB/DSp4rojGyrFWa14p
+         9WEA==
+X-Gm-Message-State: AOAM531FjUQ5eam6RDI/1geazSHpgIUDKrUeaRbGHVcjSfd+TIDPoP6B
+        6TPPyfe7u8OAwW3QJUOUZIiYqbTln3H9E17y/d+A62oGbah7PD3w/X1b1cUrofAn4Qg5yBk+Hig
+        8lNN9+rG7zaO1POYZRVa0tms1fw==
+X-Received: by 2002:a05:600c:3512:b0:38c:be56:fc9c with SMTP id h18-20020a05600c351200b0038cbe56fc9cmr9458245wmq.197.1649867450693;
+        Wed, 13 Apr 2022 09:30:50 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwkytZT68ibSBKNJoHlOqbNjWnA9Zh1oDwEE8SJcMIkEgIwTu5PARnU1fLD1KJu/KXuQqJYmA==
+X-Received: by 2002:a05:600c:3512:b0:38c:be56:fc9c with SMTP id h18-20020a05600c351200b0038cbe56fc9cmr9458202wmq.197.1649867450341;
+        Wed, 13 Apr 2022 09:30:50 -0700 (PDT)
 Received: from ?IPV6:2003:cb:c704:5800:1078:ebb9:e2c3:ea8c? (p200300cbc70458001078ebb9e2c3ea8c.dip0.t-ipconnect.de. [2003:cb:c704:5800:1078:ebb9:e2c3:ea8c])
-        by smtp.gmail.com with ESMTPSA id n7-20020a5d5987000000b00207891050d4sm16274621wri.46.2022.04.13.09.24.56
+        by smtp.gmail.com with ESMTPSA id f9-20020a05600c154900b0038cb98076d6sm3269751wmg.10.2022.04.13.09.30.47
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Apr 2022 09:24:58 -0700 (PDT)
-Message-ID: <1686fd2d-d9c3-ec12-32df-8c4c5ae26b08@redhat.com>
-Date:   Wed, 13 Apr 2022 18:24:56 +0200
+        Wed, 13 Apr 2022 09:30:49 -0700 (PDT)
+Message-ID: <3b9effd9-4aba-e7ca-b3ca-6a474fd6469f@redhat.com>
+Date:   Wed, 13 Apr 2022 18:30:47 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.6.2
-Subject: Re: [PATCH v5 04/13] mm/shmem: Restrict MFD_INACCESSIBLE memory
- against RLIMIT_MEMLOCK
 Content-Language: en-US
-To:     Jason Gunthorpe <jgg@ziepe.ca>
+To:     Andy Lutomirski <luto@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>
 Cc:     Sean Christopherson <seanjc@google.com>,
-        Andy Lutomirski <luto@kernel.org>,
         Chao Peng <chao.p.peng@linux.intel.com>,
         kvm list <kvm@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
@@ -94,7 +91,8 @@ Cc:     Sean Christopherson <seanjc@google.com>,
         "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
         "Nakajima, Jun" <jun.nakajima@intel.com>,
         Dave Hansen <dave.hansen@intel.com>,
-        Andi Kleen <ak@linux.intel.com>
+        Andi Kleen <ak@linux.intel.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
 References: <20220310140911.50924-1-chao.p.peng@linux.intel.com>
  <20220310140911.50924-5-chao.p.peng@linux.intel.com>
  <Yk8L0CwKpTrv3Rg3@google.com>
@@ -102,15 +100,18 @@ References: <20220310140911.50924-1-chao.p.peng@linux.intel.com>
  <YlB3Z8fqJ+67a2Ck@google.com>
  <7ab689e7-e04d-5693-f899-d2d785b09892@redhat.com>
  <20220412143636.GG64706@ziepe.ca>
+ <6f44ddf9-6755-4120-be8b-7a62f0abc0e0@www.fastmail.com>
 From:   David Hildenbrand <david@redhat.com>
 Organization: Red Hat
-In-Reply-To: <20220412143636.GG64706@ziepe.ca>
+Subject: Re: [PATCH v5 04/13] mm/shmem: Restrict MFD_INACCESSIBLE memory
+ against RLIMIT_MEMLOCK
+In-Reply-To: <6f44ddf9-6755-4120-be8b-7a62f0abc0e0@www.fastmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
         RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -118,38 +119,43 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12.04.22 16:36, Jason Gunthorpe wrote:
-> On Fri, Apr 08, 2022 at 08:54:02PM +0200, David Hildenbrand wrote:
 > 
->> RLIMIT_MEMLOCK was the obvious candidate, but as we discovered int he
->> past already with secretmem, it's not 100% that good of a fit (unmovable
->> is worth than mlocked). But it gets the job done for now at least.
-> 
-> No, it doesn't. There are too many different interpretations how
-> MELOCK is supposed to work
-> 
-> eg VFIO accounts per-process so hostile users can just fork to go past
-> it.
-> 
-> RDMA is per-process but uses a different counter, so you can double up
-> 
-> iouring is per-user and users a 3rd counter, so it can triple up on
-> the above two
+> So this is another situation where the actual backend (TDX, SEV, pKVM, pure software) makes a difference -- depending on exactly what backend we're using, the memory may not be unmoveable.  It might even be swappable (in the potentially distant future).
 
-Thanks for that summary, very helpful.
+Right. And on a system without swap we don't particularly care about
+mlock, but we might (in most cases) care about fragmentation with
+unmovable memory.
 
 > 
->> So I'm open for alternative to limit the amount of unmovable memory we
->> might allocate for user space, and then we could convert seretmem as well.
+> Anyway, here's a concrete proposal, with a bit of handwaving:
+
+Thanks for investing some brainpower.
+
 > 
-> I think it has to be cgroup based considering where we are now :\
+> We add new cgroup limits:
+> 
+> memory.unmoveable
+> memory.locked
+> 
+> These can be set to an actual number or they can be set to the special value ROOT_CAP.  If they're set to ROOT_CAP, then anyone in the cgroup with capable(CAP_SYS_RESOURCE) (i.e. the global capability) can allocate movable or locked memory with this (and potentially other) new APIs.  If it's 0, then they can't.  If it's another value, then the memory can be allocated, charged to the cgroup, up to the limit, with no particular capability needed.  The default at boot is ROOT_CAP.  Anyone who wants to configure it differently is free to do so.  This avoids introducing a DoS, makes it easy to run tests without configuring cgroup, and lets serious users set up their cgroups.
 
-Most probably. I think the important lessons we learned are that
+I wonder what the implications are for existing user space.
 
-* mlocked != unmovable.
-* RLIMIT_MEMLOCK should most probably never have been abused for
-  unmovable memory (especially, long-term pinning)
+Assume we want to move page pinning (rdma, vfio, io_uring, ...) to the
+new model. How can we be sure
 
+a) We don't break existing user space
+b) We don't open the doors unnoticed for the admin to go crazy on
+   unmovable memory.
+
+Any ideas?
+
+> 
+> Nothing is charge per mm.
+> 
+> To make this fully sensible, we need to know what the backend is for the private memory before allocating any so that we can charge it accordingly.
+
+Right, the support for migration and/or swap defines how to account.
 
 -- 
 Thanks,
