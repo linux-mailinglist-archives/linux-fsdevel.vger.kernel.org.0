@@ -2,69 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FDAD4FF618
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Apr 2022 13:51:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C62E94FF740
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 13 Apr 2022 14:57:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232326AbiDMLxg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 13 Apr 2022 07:53:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49868 "EHLO
+        id S233409AbiDMNAO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 13 Apr 2022 09:00:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60244 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230072AbiDMLxf (ORCPT
+        with ESMTP id S229521AbiDMNAN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 13 Apr 2022 07:53:35 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EBC32DA96
-        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Apr 2022 04:51:14 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 4C9A6210EB;
-        Wed, 13 Apr 2022 11:51:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1649850673; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=2jQOEjOG8tZnH3GSxwIzWA5XiO/spC4FNKiwq/TKwDE=;
-        b=jexm85osa/My8EMhc1evzn05l9Y1ZyWgybDhoKyNcFzduTIQg+vJQZV+4Y1SDUtqIqlvCJ
-        7e28rXc9ZmR+JIEtj8a4nFisPTmDmp3C738fhAe9x0iMHd1p6x8KL2CsYBeoUjVg0D7eM/
-        vvE9ibaz4OuUMgc+ldI2BrrKBitF8rg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1649850673;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=2jQOEjOG8tZnH3GSxwIzWA5XiO/spC4FNKiwq/TKwDE=;
-        b=ov47ZM+yx3TOvyXRNVaPXJskHaRexvhi+Xnpe4A9lUKTbIx1qJno6G7nTXIyXXFkO2nIPY
-        at6ETF+6SCccMGCA==
-Received: from quack3.suse.cz (unknown [10.100.224.230])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 2531FA3B83;
-        Wed, 13 Apr 2022 11:51:13 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id D9459A0615; Wed, 13 Apr 2022 13:51:12 +0200 (CEST)
-Date:   Wed, 13 Apr 2022 13:51:12 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, Srinivas <talkwithsrinivas@yahoo.co.in>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: Fanotify Directory exclusion not working when using
- FAN_MARK_MOUNT
-Message-ID: <20220413115112.df3okrcutiqvsfry@quack3.lan>
-References: <1357949524.990839.1647084149724.ref@mail.yahoo.com>
- <1357949524.990839.1647084149724@mail.yahoo.com>
- <20220314084706.ncsk754gjywkcqxq@quack3.lan>
- <CAOQ4uxiDubhONM3w502anndtbqy73q_Kt5bOQ07zbATb8ndvVA@mail.gmail.com>
- <20220314113337.j7slrb5srxukztje@quack3.lan>
- <CAOQ4uxgSubkz84_21qa5mPpBn7qHJUsA35ciJ5JHOH2UmAnnbA@mail.gmail.com>
+        Wed, 13 Apr 2022 09:00:13 -0400
+X-Greylist: delayed 1773 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 13 Apr 2022 05:57:51 PDT
+Received: from bjm7-spam01.kuaishou.com (smtpcn03.kuaishou.com [103.107.217.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4BB85B3D3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Apr 2022 05:57:51 -0700 (PDT)
+Received: from bjm7-spam01.kuaishou.com (localhost [127.0.0.2] (may be forged))
+        by bjm7-spam01.kuaishou.com with ESMTP id 23DCSIwS089576
+        for <linux-fsdevel@vger.kernel.org>; Wed, 13 Apr 2022 20:28:18 +0800 (GMT-8)
+        (envelope-from tianzichen@kuaishou.com)
+Received: from bjm7-pm-mail26.kuaishou.com ([172.28.1.62])
+        by bjm7-spam01.kuaishou.com with ESMTPS id 23DCR75u089255
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 13 Apr 2022 20:27:07 +0800 (GMT-8)
+        (envelope-from tianzichen@kuaishou.com)
+Content-Language: zh-CN
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <F41F2052051878449E4DC01E52BCB8A1@kuaishou.com>
+Content-Transfer-Encoding: base64
+DKIM-Signature: v=1; a=rsa-sha256; d=kuaishou.com; s=dkim; c=relaxed/relaxed;
+        t=1649852827; h=from:subject:to:date:message-id;
+        bh=TnyptApGhZYqd8SJSRCUR+JWQamR+5AGe393lfj5Tao=;
+        b=ldsJrdMBrlcT9XZ2RBqOwGwnfTmsUQsL0PBjbpPq+xmgDQOPhNUEA1QGZh+K0MiQFFK/vXwSd/Y
+        Y9wxMF7xDL/ec/MrTw4w8pdR6/bUuapp/z46yqGsQxJpWXrP0vS82FNHAOhUW4qx+g+UTLEyPEan5
+        nUEHM0FTGUkeD7tnk50=
+Received: from bjfk-pm-mail30.kuaishou.com (172.29.5.62) by
+ bjm7-pm-mail26.kuaishou.com (172.28.1.62) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2176.14; Wed, 13 Apr 2022 20:27:07 +0800
+Received: from bjfk-pm-mail30.kuaishou.com ([fe80::2534:b256:58c3:b20]) by
+ bjfk-pm-mail30.kuaishou.com ([fe80::2534:b256:58c3:b20%17]) with mapi id
+ 15.01.2176.014; Wed, 13 Apr 2022 20:27:07 +0800
+From:   =?utf-8?B?55Sw5a2Q5pmo?= <tianzichen@kuaishou.com>
+To:     Gao Xiang <hsiangkao@linux.alibaba.com>,
+        "jefflexu@linux.alibaba.com" <jefflexu@linux.alibaba.com>
+CC:     Jeffle Xu <jefflexu@linux.alibaba.com>,
+        "linux-erofs@lists.ozlabs.org" <linux-erofs@lists.ozlabs.org>,
+        "fannaihao@baidu.com" <fannaihao@baidu.com>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dhowells@redhat.com" <dhowells@redhat.com>,
+        "joseph.qi@linux.alibaba.com" <joseph.qi@linux.alibaba.com>,
+        "linux-cachefs@redhat.com" <linux-cachefs@redhat.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "luodaowen.backend@bytedance.com" <luodaowen.backend@bytedance.com>,
+        "gerry@linux.alibaba.com" <gerry@linux.alibaba.com>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v8 00/20] fscache,erofs: fscache-based on-demand read
+ semantics
+Thread-Topic: [PATCH v8 00/20] fscache,erofs: fscache-based on-demand read
+ semantics
+Thread-Index: AQHYTzHKf6eBDuhir0CXwRoLEUpF1A==
+Date:   Wed, 13 Apr 2022 12:27:06 +0000
+Message-ID: <B58D56BF-4456-4AD4-A25F-0C9779355DEA@kuaishou.com>
+References: <20220406075612.60298-1-jefflexu@linux.alibaba.com>
+ <YlLS47A9TpHyZJQi@B-P7TQMD6M-0146.local>
+In-Reply-To: <YlLS47A9TpHyZJQi@B-P7TQMD6M-0146.local>
+Accept-Language: zh-CN, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.20.112.61]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxgSubkz84_21qa5mPpBn7qHJUsA35ciJ5JHOH2UmAnnbA@mail.gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+X-DNSRBL: 
+X-MAIL: bjm7-spam01.kuaishou.com 23DCSIwS089576
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -72,108 +85,34 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 13-04-22 14:09:12, Amir Goldstein wrote:
-> On Mon, Mar 14, 2022 at 1:33 PM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Mon 14-03-22 11:28:23, Amir Goldstein wrote:
-> > > On Mon, Mar 14, 2022 at 10:47 AM Jan Kara <jack@suse.cz> wrote:
-> > > >
-> > > > On Sat 12-03-22 11:22:29, Srinivas wrote:
-> > > > > If a  process calls fanotify_mark(fd, FAN_MARK_ADD | FAN_MARK_MOUNT,
-> > > > > FAN_OPEN_PERM, 0, "/mountpoint") no other directory exclusions can be
-> > > > > applied.
-> > > > >
-> > > > > However a path (file) exclusion can still be applied using
-> > > > >
-> > > > > fanotify_mark(fd, FAN_MARK_ADD | FAN_MARK_IGNORED_MASK |
-> > > > > FAN_MARK_IGNORED_SURV_MODIFY, FAN_OPEN_PERM | FAN_CLOSE_WRITE, AT_FDCWD,
-> > > > > "/tmp/fio/abc");  ===> path exclusion that works.
-> > > > >
-> > > > > I think the directory exclusion not working is a bug as otherwise AV
-> > > > > solutions cant exclude directories when using FAN_MARK_MOUNT.
-> > > > >
-> > > > > I believe the change should be simple since we are already supporting
-> > > > > path exclusions. So we should be able to add the same for the directory
-> > > > > inode.
-> > > > >
-> > > > > 215676 – fanotify Ignoring/Excluding a Directory not working with
-> > > > > FAN_MARK_MOUNT (kernel.org)
-> > > >
-> > > > Thanks for report! So I believe this should be fixed by commit 4f0b903ded
-> > > > ("fsnotify: fix merge with parent's ignored mask") which is currently
-> > > > sitting in my tree and will go to Linus during the merge (opening in a
-> > > > week).
-> > >
-> > > Actually, in a closer look, that fix alone is not enough.
-> > >
-> > > With the current upstream kernel this should work to exclude events
-> > > in a directory:
-> > >
-> > > fanotify_mark(fd, FAN_MARK_ADD, FAN_EVENT_ON_CHILD |
-> > >                        FAN_OPEN_PERM | FAN_CLOSE_WRITE,
-> > >                        AT_FDCWD, "/tmp/fio/");
-> > > fanotify_mark(fd, FAN_MARK_ADD | FAN_MARK_IGNORED_MASK |
-> > >                        FAN_MARK_IGNORED_SURV_MODIFY,
-> > >                        FAN_OPEN_PERM | FAN_CLOSE_WRITE,
-> > >                        AT_FDCWD, "/tmp/fio/");
-> > >
-> > > The first call tells fanotify that the inode mark on "/tmp/foo" is
-> > > interested in events on children (and not only on self).
-> > > The second call sets the ignored mark for open/close events.
-> > >
-> > > The fix only removed the need to include the events in the
-> > > first call.
-> > >
-> > > Should we also interpret FAN_EVENT_ON_CHILD correctly
-> > > in a call to fanotify_mark() to set an ignored mask?
-> > > Possibly. But that has not been done yet.
-> > > I can look into that if there is interest.
-> >
-> > Oh, right. I forgot about the need for FAN_EVENT_ON_CHILD in the
-> > mark->mask. It seems we can set FAN_EVENT_ON_CHILD in the ignored_mask as
-> > well but it just gets ignored currently. So we would need to propagate it
-> > even from ignore_mask to inode->i_fsnotify_mask. But send_to_group() would
-> > also need to be more careful now with ignore masks and apply them from
-> > parent only if the particular mark has FAN_EVENT_ON_CHILD in the ignore
-> > mask. Interestingly fanotify_group_event_mask() does explicitely apply
-> > ignore_mask from the parent regardless of FAN_EVENT_ON_CHILD flags. So
-> > there is some inconsistency there and it would need some tweaking...
-> >
-> 
-> Jan,
-> 
-> Just a heads up - you were right about this inconsistency and I have both
-> patches to fix it [1] and LTP test to reproduce the issue [2] and started work
-> on the new FAN_MARK_IGNORE API.
-> The new API has no tests yet, but it has a man page draft [3].
-> 
-> The description of the bugs as I wrote them in the fix commit message:
-> 
->     This results in several subtle changes of behavior, hopefully all
->     desired changes of behavior, for example:
-> 
->     - Group A has a mount mark with FS_MODIFY in mask
->     - Group A has a mark with ignored mask that does not survive FS_MODIFY
->       and does not watch children on directory D.
->     - Group B has a mark with FS_MODIFY in mask that does watch children
->       on directory D.
->     - FS_MODIFY event on file D/foo should not clear the ignored mask of
->       group A, but before this change it does
-> 
->     And if group A ignored mask was set to survive FS_MODIFY:
->     - FS_MODIFY event on file D/foo should be reported to group A on account
->       of the mount mark, but before this change it is wrongly ignored
-> 
->     Fixes: 2f02fd3fa13e ("fanotify: fix ignore mask logic for events
-> on child and on dir")
-
-Thanks for looking into this! Yeah, the change in behavior looks OK to me.
-
-								Honza
-
-> [1] https://github.com/amir73il/linux/commits/fan_mark_ignore
-> [2] https://github.com/amir73il/ltp/commits/fan_mark_ignore
-> [3] https://github.com/amir73il/man-pages/commits/fan_mark_ignore
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+DQoNCj4gMjAyMuW5tDTmnIgxMOaXpSDkuIvljYg4OjUx77yMR2FvIFhpYW5nIDxoc2lhbmdrYW9A
+bGludXguYWxpYmFiYS5jb20+IOWGmemBk++8mg0KPiANCj4gT24gV2VkLCBBcHIgMDYsIDIwMjIg
+YXQgMDM6NTU6NTJQTSArMDgwMCwgSmVmZmxlIFh1IHdyb3RlOg0KPj4gY2hhbmdlcyBzaW5jZSB2
+NzoNCj4+IC0gcmViYXNlZCB0byA1LjE4LXJjMQ0KPj4gLSBpbmNsdWRlICJjYWNoZWZpbGVzOiB1
+bm1hcmsgaW5vZGUgaW4gdXNlIGluIGVycm9yIHBhdGgiIHBhdGNoIGludG8NCj4+ICB0aGlzIHBh
+dGNoc2V0IHRvIGF2b2lkIHdhcm5pbmcgZnJvbSB0ZXN0IHJvYm90IChwYXRjaCAxKQ0KPj4gLSBj
+YWNoZWZpbGVzOiByZW5hbWUgW2Nvb2tpZXx2b2x1bWVdX2tleV9sZW4gZmllbGQgb2Ygc3RydWN0
+DQo+PiAgY2FjaGVmaWxlc19vcGVuIHRvIFtjb29raWV8dm9sdW1lXV9rZXlfc2l6ZSB0byBhdm9p
+ZCBwb3RlbnRpYWwNCj4+ICBtaXN1bmRlcnN0YW5kaW5nLiBBbHNvIGFkZCBtb3JlIGRvY3VtZW50
+YXRpb24gdG8NCj4+ICBpbmNsdWRlL3VhcGkvbGludXgvY2FjaGVmaWxlcy5oLiAocGF0Y2ggMykN
+Cj4+IC0gY2FjaGVmaWxlczogdmFsaWQgY2hlY2sgZm9yIGVycm9yIGNvZGUgcmV0dXJuZWQgZnJv
+bSB1c2VyIGRhZW1vbg0KPj4gIChwYXRjaCAzKQ0KPj4gLSBjYWNoZWZpbGVzOiBjaGFuZ2UgV0FS
+Tl9PTl9PTkNFKCkgdG8gcHJfaW5mb19vbmNlKCkgd2hlbiB1c2VyIGRhZW1vbg0KPj4gIGNsb3Nl
+cyBhbm9uX2ZkIHByZW1hdHVyZWx5IChwYXRjaCA0LzUpDQo+PiAtIHJlYWR5IGZvciBjb21wbGV0
+ZSByZXZpZXcNCj4+IA0KPj4gDQo+PiBLZXJuZWwgUGF0Y2hzZXQNCj4+IC0tLS0tLS0tLS0tLS0t
+LQ0KPj4gR2l0IHRyZWU6DQo+PiANCj4+ICAgIGh0dHBzOi8vZ2l0aHViLmNvbS9sb3N0amVmZmxl
+L2xpbnV4LmdpdCBqaW5nYm8vZGV2LWVyb2ZzLWZzY2FjaGUtdjgNCj4+IA0KPj4gR2l0d2ViOg0K
+Pj4gDQo+PiAgICBodHRwczovL2dpdGh1Yi5jb20vbG9zdGplZmZsZS9saW51eC9jb21taXRzL2pp
+bmdiby9kZXYtZXJvZnMtZnNjYWNoZS12OA0KPj4gDQo+PiANCj4+IFVzZXIgRGFlbW9uIGZvciBR
+dWljayBUZXN0DQo+PiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KPj4gR2l0IHRyZWU6DQo+
+PiANCj4+ICAgIGh0dHBzOi8vZ2l0aHViLmNvbS9sb3N0amVmZmxlL2RlbWFuZC1yZWFkLWNhY2hl
+ZmlsZXNkLmdpdCBtYWluDQo+PiANCj4+IEdpdHdlYjoNCj4+IA0KPj4gICAgaHR0cHM6Ly9naXRo
+dWIuY29tL2xvc3RqZWZmbGUvZGVtYW5kLXJlYWQtY2FjaGVmaWxlc2QNCj4+IA0KPiANCj4gQnR3
+LCB3ZSd2ZSBhbHNvIGZpbmlzaGVkIGEgcHJlbGltaW5hcnkgZW5kLXRvLWVuZCBvbi1kZW1hbmQg
+ZG93bmxvYWQNCj4gZGFlbW9uIGluIG9yZGVyIHRvIHRlc3QgdGhlIGZzY2FjaGUgb24tZGVtYW5k
+IGtlcm5lbCBjb2RlIGFzIGEgcmVhbA0KPiBlbmQtdG8tZW5kIHdvcmtsb2FkIGZvciBjb250YWlu
+ZXIgdXNlIGNhc2VzOg0KPiANCj4gVXNlciBndWlkZTogaHR0cHM6Ly9naXRodWIuY29tL2RyYWdv
+bmZseW9zcy9pbWFnZS1zZXJ2aWNlL2Jsb2IvZnNjYWNoZS9kb2NzL255ZHVzLWZzY2FjaGUubWQN
+Cj4gVmlkZW86IGh0dHBzOi8veW91dHUuYmUvRjRJRjJfREVOWG8NCg0KVGVzdGVkLWJ5OiBaaWNo
+ZW4gVGlhbiA8dGlhbnppY2hlbkBrdWFpc2hvdS5jb20+DQoNCj4gVGhhbmtzLA0KPiBHYW8gWGlh
+bmcNCj4gDQoNCg==
