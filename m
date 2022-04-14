@@ -2,82 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 727AB500676
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Apr 2022 08:56:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40DAA500678
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Apr 2022 08:57:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240170AbiDNG7N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Apr 2022 02:59:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50540 "EHLO
+        id S240170AbiDNG7g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Apr 2022 02:59:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51344 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239661AbiDNG7M (ORCPT
+        with ESMTP id S239661AbiDNG7f (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Apr 2022 02:59:12 -0400
-Received: from mail1.bemta34.messagelabs.com (mail1.bemta34.messagelabs.com [195.245.231.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2579553B6A;
-        Wed, 13 Apr 2022 23:56:46 -0700 (PDT)
+        Thu, 14 Apr 2022 02:59:35 -0400
+Received: from mail1.bemta34.messagelabs.com (mail1.bemta34.messagelabs.com [195.245.231.2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7DBE54BDB;
+        Wed, 13 Apr 2022 23:57:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
-        s=170520fj; t=1649919404; i=@fujitsu.com;
-        bh=smQK4tppl/0P9em1n4iYPJctoNQAJ0+xEhuhlGR6/yo=;
-        h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type;
-        b=dNssRrL8fwslrgqW+PO0yGjf9kORsjhaLDTfviMxuaZKFNz6npRlsUkRygC8ygEAH
-         0GvWr8VPlDf62bbfYzsqOhATAU7INj+TRMviadPB5hpdZkkRlQ/uKT2JntEQJCg0Uu
-         1WsO3K5QHCNx+KllaZGuD0bKB4hYDeNB3+YguNmdrnUKgeQtrwbzakLDrU4R5NAcJx
-         h2LeN46ITYIOh1KUxE26FBoce4k2B+Aj0a5aeknNT4Irt5K3olLtHvU8vkx6Vi2FGu
-         jNEMJB5bjsrIF3v6q0x2kAVfXjzZkd+fK3Hy6DaOID3WN+TmTZ34UoBSPS0sSqS35/
-         hA9etSp39u4NQ==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBIsWRWlGSWpSXmKPExsViZ8MxSXf10fA
-  kgyUzLSxeH/7EaPHh5iQmiy3H7jFaXH7CZ/Fz2Sp2iz17T7JY7Hpzjt3i/N/jrA4cHqcWSXhs
-  WtXJ5nFh2Rs2j8+b5Dw2PXnLFMAaxZqZl5RfkcCa0fRermAdb8W63YuZGxjXcXcxcnEICWxhl
-  Li3eB4rhLOASeLk5XmMEM4eRomnjdvZuhg5OdgENCWedS5gBrFFBBIkXt9azAxSxCwwh1Hi8Y
-  nbYEXCAuYSG7cfYwGxWQRUJf51zGYHsXkFPCR+vH0AViMhoCAx5eF7Zoi4oMTJmU/A6pkFJCQ
-  OvnjBDFGjKHGp4xsjhF0hMWtWGxOErSZx9dwm5gmM/LOQtM9C0r6AkWkVo3VSUWZ6RkluYmaO
-  rqGBga6hoamusZGuoYWlXmKVbqJeaqlueWpxia6RXmJ5sV5qcbFecWVuck6KXl5qySZGYASkF
-  Cvs3cF4eeVPvUOMkhxMSqK8TcDYEOJLyk+pzEgszogvKs1JLT7EKMPBoSTB+/8IUE6wKDU9tS
-  ItMwcYjTBpCQ4eJRFeP5BW3uKCxNzizHSI1ClGRSlx3tUgfQIgiYzSPLg2WAK4xCgrJczLyMD
-  AIMRTkFqUm1mCKv+KUZyDUUmY9wLIFJ7MvBK46a+AFjMBLf62KhRkcUkiQkqqgUn/3vOLi/O7
-  pZX7dq1a8ntJlvDHMnFnRYHgJ1Pl1+3uTj543P1B//28XckTPEOPFFy16OjOS/rR9+t90/WGu
-  Q/+mDB4lqlfuaJv33Sc21D5hZpFRH2Z99qKR743TeVzXxy6vLtFs2t6UsOjv9cKW3uncUcVsb
-  ncX3JOWM7+rIjk/SD/rcz5aWx6VldY5uj82BbnG9rlUPP5rrjnw0+beS9L3XRPvnyjZ7egL3N
-  H3Ow9Ljw/rnAuUGWYHCrMVhfFzfq/bZKQe7b48q3vFon5z6hVv5sYl/nqVefTMqH6u8z/FZyP
-  +zhYaRfONPWIl//YUsdQaP5ig2Zp15a9c07s2+5R3F2doiIf+Hl3eUWvEktxRqKhFnNRcSIAZ
-  wmOD3sDAAA=
+        s=170520fj; t=1649919422; i=@fujitsu.com;
+        bh=w6Q7o/IWhNXvK1HohCBprtiMbt9n3XqxXMz6F3igtm4=;
+        h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+         MIME-Version:Content-Type;
+        b=fS0XEOVzh2tbe7uX2WIosgk0v/3PRS23r29cCf76lMB2qXEiM7RU1eHVTMLMRUxhf
+         v/+spHb+7NdkoZy8yYoofP7w3MZlMoOxa1SK9XqUBSFsHMPbqpvzwaIFTARWbFwLL6
+         HiAQ3Vkw4izqXGRcgS8SfDzUW2cWl2n7h0ExtTZllG0cSNqe3VNjOA1eQF+1s6mJQU
+         eqE2nK30kSrqbb3/yNQnz1cs5ECuUzDix5uNmcyjghGsYldoUhyibZ10PJ6b8CTwTe
+         6F8wpiLUovxFDvkw+hIWda2/4U6JIN04f9acGnOqFCBFb9310hSSih/yeO+rfrgQln
+         tSAnVKqXFbCXg==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrLIsWRWlGSWpSXmKPExsViZ8MRorv3aHi
+  SwZvj5havD39itPhwcxKTxZZj9xgtLj/hs/i5bBW7xZ69J1ksdr05x25x/u9xVgcOj1OLJDw2
+  repk87iw7A2bx+dNch6bnrxlCmCNYs3MS8qvSGDNOPf6BHtBi0nF+XVrmRsYH2h3MXJyCAm8Z
+  pR4fUC0i5ELyN7DKDF/7k42kASbgKbEs84FzCC2iEC6xJy5V5lBipgFVjNKnJ6+nBEkISyQKP
+  FtSjdTFyMHB4uAqkTbXxYQk1fAQ2LKXS2QCgkBBYkpD9+DjeEU8JTo232XEWKvh8T2S3+ZQGx
+  eAUGJkzOfsIDYzAISEgdfvGCG6FWUuNTxjRHCrpCYNauNaQIj/ywkLbOQtCxgZFrFaJ1UlJme
+  UZKbmJmja2hgoGtoaKprbKFraGSul1ilm6iXWqpbnlpcomukl1herJdaXKxXXJmbnJOil5das
+  okRGPopxWr1OxhfrPypd4hRkoNJSZS3cHF4khBfUn5KZUZicUZ8UWlOavEhRhkODiUJXuGDQD
+  nBotT01Iq0zBxgHMKkJTh4lER4cw8DpXmLCxJzizPTIVKnGC05zu/cv5eZY23DASD599Pfvcx
+  CLHn5ealS4rwbQBoEQBoySvPgxsFSxSVGWSlhXkYGBgYhnoLUotzMElT5V4ziHIxKwrzhR4Cm
+  8GTmlcBtfQV0EBPQQd9WhYIcVJKIkJJqYBKoKMitXruJeXW34PIayQJb9g+KPz1KHHyOb8ooU
+  a3SMtt927LrcoT9Yk/1aeyvxUoMpm1Zxp5iKKe76uLxSxyRGYHH3t9b96Hz1LbMDQe26J+5IF
+  i05MC6TbwdwlnPr1xPzuD44T+RU3etlcz35m2ODuujhKddclK9kDxvjo7v8TdhW3fV1p57Hv1
+  06S7d7df0P8oevBSkustltqMn4wE9qfWrshPPB9U/iErMzjvpt1qxiOmkBespy1VNgY6hmVc4
+  b5WVun/P/V4g57H4lsenc4p8GbPD7jx2LevisxScMrcmc7fqiWzpkkcirVb/WE5v1O5feXpKh
+  qlL5e/W46d+713x3cJiR8WONBHlj0osxRmJhlrMRcWJANraXfGQAwAA
 X-Env-Sender: xuyang2018.jy@fujitsu.com
-X-Msg-Ref: server-11.tower-548.messagelabs.com!1649919403!222910!1
-X-Originating-IP: [62.60.8.146]
+X-Msg-Ref: server-13.tower-548.messagelabs.com!1649919421!184232!1
+X-Originating-IP: [62.60.8.84]
 X-SYMC-ESS-Client-Auth: outbound-route-from=pass
 X-StarScan-Received: 
 X-StarScan-Version: 9.85.8; banners=-,-,-
 X-VirusChecked: Checked
-Received: (qmail 22917 invoked from network); 14 Apr 2022 06:56:43 -0000
-Received: from unknown (HELO n03ukasimr02.n03.fujitsu.local) (62.60.8.146)
-  by server-11.tower-548.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 14 Apr 2022 06:56:43 -0000
-Received: from n03ukasimr02.n03.fujitsu.local (localhost [127.0.0.1])
-        by n03ukasimr02.n03.fujitsu.local (Postfix) with ESMTP id 818E7100472;
-        Thu, 14 Apr 2022 07:56:43 +0100 (BST)
-Received: from R01UKEXCASM126.r01.fujitsu.local (unknown [10.183.43.178])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by n03ukasimr02.n03.fujitsu.local (Postfix) with ESMTPS id 743A6100467;
-        Thu, 14 Apr 2022 07:56:43 +0100 (BST)
+Received: (qmail 24734 invoked from network); 14 Apr 2022 06:57:01 -0000
+Received: from unknown (HELO mailhost3.uk.fujitsu.com) (62.60.8.84)
+  by server-13.tower-548.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 14 Apr 2022 06:57:01 -0000
+Received: from R01UKEXCASM126.r01.fujitsu.local ([10.183.43.178])
+        by mailhost3.uk.fujitsu.com (8.14.5/8.14.5) with ESMTP id 23E6unTR031938
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
+        Thu, 14 Apr 2022 07:56:55 +0100
 Received: from localhost.localdomain (10.167.220.84) by
  R01UKEXCASM126.r01.fujitsu.local (10.183.43.178) with Microsoft SMTP Server
- (TLS) id 15.0.1497.32; Thu, 14 Apr 2022 07:56:32 +0100
+ (TLS) id 15.0.1497.32; Thu, 14 Apr 2022 07:56:45 +0100
 From:   Yang Xu <xuyang2018.jy@fujitsu.com>
 To:     <linux-fsdevel@vger.kernel.org>, <ceph-devel@vger.kernel.org>,
         <ocfs2-devel@oss.oracle.com>
 CC:     <viro@zeniv.linux.org.uk>, <david@fromorbit.com>,
         <brauner@kernel.org>, <djwong@kernel.org>, <jlayton@kernel.org>,
         Yang Xu <xuyang2018.jy@fujitsu.com>
-Subject: [PATCH v2 1/3] vfs: Add inode_sgid_strip() api
-Date:   Thu, 14 Apr 2022 15:57:17 +0800
-Message-ID: <1649923039-2273-1-git-send-email-xuyang2018.jy@fujitsu.com>
+Subject: [PATCH v2 2/3] vfs: strip file's S_ISGID mode on vfs instead of on underlying filesystem
+Date:   Thu, 14 Apr 2022 15:57:18 +0800
+Message-ID: <1649923039-2273-2-git-send-email-xuyang2018.jy@fujitsu.com>
 X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1649923039-2273-1-git-send-email-xuyang2018.jy@fujitsu.com>
+References: <1649923039-2273-1-git-send-email-xuyang2018.jy@fujitsu.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.167.220.84]
 X-ClientProxiedBy: G08CNEXCHPEKD07.g08.fujitsu.local (10.167.33.80) To
  R01UKEXCASM126.r01.fujitsu.local (10.183.43.178)
-X-Virus-Scanned: ClamAV using ClamSMTP
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
@@ -88,56 +86,148 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-inode_sgid_strip() function is used to strip S_ISGID mode
-when creat/open/mknod file.
+Currently, vfs only passes mode argument to filesystem, then use inode_init_owner()
+to strip S_ISGID. Some filesystem(ie ext4/btrfs) will call inode_init_owner
+firstly, then posxi acl setup, but xfs uses the contrary order. It will affect
+S_ISGID clear especially we filter S_IXGRP by umask or acl.
 
-Reviewed-by: Christian Brauner (Microsoft) <brauner@kernel.org>
+Regardless of which filesystem is in use, failure to strip the SGID correctly is
+considered a security failure that needs to be fixed. The current VFS infrastructure
+requires the filesystem to do everything right and not step on any landmines to
+strip the SGID bit, when in fact it can easily be done at the VFS and the filesystems
+then don't even need to be aware that the SGID needs to be (or has been stripped) by
+the operation the user asked to be done.
+
+Vfs has all the info it needs - it doesn't need the filesystems to do everything
+correctly with the mode and ensuring that they order things like posix acl setup
+functions correctly with inode_init_owner() to strip the SGID bit.
+
+Just strip the SGID bit at the VFS, and then the filesystems can't get it wrong.
+
+Also, the inode_sgid_strip() api should be used before IS_POSIXACL() because
+this api may change mode.
+
+Only the following places use inode_init_owner
+"hugetlbfs/inode.c:846:          inode_init_owner(&init_user_ns, inode, dir, mode);
+ nilfs2/inode.c:354:     inode_init_owner(&init_user_ns, inode, dir, mode);
+ zonefs/super.c:1289:    inode_init_owner(&init_user_ns, inode, parent, S_IFDIR | 0555);
+ reiserfs/namei.c:619:   inode_init_owner(&init_user_ns, inode, dir, mode);
+ jfs/jfs_inode.c:67:     inode_init_owner(&init_user_ns, inode, parent, mode);
+ f2fs/namei.c:50:        inode_init_owner(mnt_userns, inode, dir, mode);
+ ext2/ialloc.c:549:              inode_init_owner(&init_user_ns, inode, dir, mode);
+ overlayfs/dir.c:643:    inode_init_owner(&init_user_ns, inode, dentry->d_parent->d_inode, mode);
+ ufs/ialloc.c:292:       inode_init_owner(&init_user_ns, inode, dir, mode);
+ ntfs3/inode.c:1283:     inode_init_owner(mnt_userns, inode, dir, mode);
+ ramfs/inode.c:64:               inode_init_owner(&init_user_ns, inode, dir, mode);
+ 9p/vfs_inode.c:263:     inode_init_owner(&init_user_ns, inode, NULL, mode);
+ btrfs/tests/btrfs-tests.c:65:   inode_init_owner(&init_user_ns, inode, NULL, S_IFREG);
+ btrfs/inode.c:6215:     inode_init_owner(mnt_userns, inode, dir, mode);
+ sysv/ialloc.c:166:      inode_init_owner(&init_user_ns, inode, dir, mode);
+ omfs/inode.c:51:        inode_init_owner(&init_user_ns, inode, NULL, mode);
+ ubifs/dir.c:97: inode_init_owner(&init_user_ns, inode, dir, mode);
+ udf/ialloc.c:108:       inode_init_owner(&init_user_ns, inode, dir, mode);
+ ext4/ialloc.c:979:              inode_init_owner(mnt_userns, inode, dir, mode);
+ hfsplus/inode.c:393:    inode_init_owner(&init_user_ns, inode, dir, mode);
+ xfs/xfs_inode.c:840:            inode_init_owner(mnt_userns, inode, dir, mode);
+ ocfs2/dlmfs/dlmfs.c:331:                inode_init_owner(&init_user_ns, inode, NULL, mode);
+ ocfs2/dlmfs/dlmfs.c:354:        inode_init_owner(&init_user_ns, inode, parent, mode);
+ ocfs2/namei.c:200:      inode_init_owner(&init_user_ns, inode, dir, mode);
+ minix/bitmap.c:255:     inode_init_owner(&init_user_ns, inode, dir, mode);
+ bfs/dir.c:99:   inode_init_owner(&init_user_ns, inode, dir, mode);
+"
+
+They are used in filesystem init new inode function and these init inode functions are used
+by following operations:
+mkdir
+symlink
+mknod
+create
+tmpfile
+rename
+
+We don't care about mkdir because we don't strip SGID bit for directory except fs.xfs.irix_sgid_inherit.
+symlink and rename only use valid mode that doesn't have SGID bit.
+
+We have added inode_sgid_strip api for the remaining operations.
+
+In addition to the above six operations, two filesystems has a little difference
+1) btrfs has btrfs_create_subvol_root to create new inode but used non SGID bit mode and can ignore
+2) ocfs2 reflink function should add inode_sgid_strip api manually because we don't add it in vfs
+
+Last but not least, this patch also changed grpid behaviour for ext4/xfs because the mode passed to
+them may been changed by inode_sgid_strip.
+
+Suggested-by: Dave Chinner <david@fromorbit.com>
 Signed-off-by: Yang Xu <xuyang2018.jy@fujitsu.com>
 ---
- fs/inode.c         | 18 ++++++++++++++++++
- include/linux/fs.h |  3 ++-
- 2 files changed, 20 insertions(+), 1 deletion(-)
+ fs/inode.c       | 4 ----
+ fs/namei.c       | 5 ++++-
+ fs/ocfs2/namei.c | 1 +
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/fs/inode.c b/fs/inode.c
-index 9d9b422504d1..d63264998855 100644
+index d63264998855..b08bdd73e116 100644
 --- a/fs/inode.c
 +++ b/fs/inode.c
-@@ -2405,3 +2405,21 @@ struct timespec64 current_time(struct inode *inode)
- 	return timestamp_truncate(now, inode);
- }
- EXPORT_SYMBOL(current_time);
-+
-+void inode_sgid_strip(struct user_namespace *mnt_userns, struct inode *dir,
-+		      umode_t *mode)
-+{
-+	if (!dir || !(dir->i_mode & S_ISGID))
-+		return;
-+	if ((*mode & (S_ISGID | S_IXGRP)) != (S_ISGID | S_IXGRP))
-+		return;
-+	if (S_ISDIR(*mode))
-+		return;
-+	if (in_group_p(i_gid_into_mnt(mnt_userns, dir)))
-+		return;
-+	if (capable_wrt_inode_uidgid(mnt_userns, dir, CAP_FSETID))
-+		return;
-+
-+	*mode &= ~S_ISGID;
-+}
-+EXPORT_SYMBOL(inode_sgid_strip);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index bbde95387a23..94d94219fe7c 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1897,7 +1897,8 @@ extern long compat_ptr_ioctl(struct file *file, unsigned int cmd,
- void inode_init_owner(struct user_namespace *mnt_userns, struct inode *inode,
- 		      const struct inode *dir, umode_t mode);
- extern bool may_open_dev(const struct path *path);
--
-+void inode_sgid_strip(struct user_namespace *mnt_userns, struct inode *dir,
-+		      umode_t *mode);
- /*
-  * This is the "filldir" function type, used by readdir() to let
-  * the kernel specify what kind of dirent layout it wants to have.
+@@ -2246,10 +2246,6 @@ void inode_init_owner(struct user_namespace *mnt_userns, struct inode *inode,
+ 		/* Directories are special, and always inherit S_ISGID */
+ 		if (S_ISDIR(mode))
+ 			mode |= S_ISGID;
+-		else if ((mode & (S_ISGID | S_IXGRP)) == (S_ISGID | S_IXGRP) &&
+-			 !in_group_p(i_gid_into_mnt(mnt_userns, dir)) &&
+-			 !capable_wrt_inode_uidgid(mnt_userns, dir, CAP_FSETID))
+-			mode &= ~S_ISGID;
+ 	} else
+ 		inode_fsgid_set(inode, mnt_userns);
+ 	inode->i_mode = mode;
+diff --git a/fs/namei.c b/fs/namei.c
+index 3f1829b3ab5b..e03f7defdd30 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3287,6 +3287,7 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
+ 	if (open_flag & O_CREAT) {
+ 		if (open_flag & O_EXCL)
+ 			open_flag &= ~O_TRUNC;
++		inode_sgid_strip(mnt_userns, dir->d_inode, &mode);
+ 		if (!IS_POSIXACL(dir->d_inode))
+ 			mode &= ~current_umask();
+ 		if (likely(got_write))
+@@ -3521,6 +3522,7 @@ struct dentry *vfs_tmpfile(struct user_namespace *mnt_userns,
+ 	child = d_alloc(dentry, &slash_name);
+ 	if (unlikely(!child))
+ 		goto out_err;
++	inode_sgid_strip(mnt_userns, dir, &mode);
+ 	error = dir->i_op->tmpfile(mnt_userns, dir, child, mode);
+ 	if (error)
+ 		goto out_err;
+@@ -3850,13 +3852,14 @@ static int do_mknodat(int dfd, struct filename *name, umode_t mode,
+ 	if (IS_ERR(dentry))
+ 		goto out1;
+ 
++	mnt_userns = mnt_user_ns(path.mnt);
++	inode_sgid_strip(mnt_userns, path.dentry->d_inode, &mode);
+ 	if (!IS_POSIXACL(path.dentry->d_inode))
+ 		mode &= ~current_umask();
+ 	error = security_path_mknod(&path, dentry, mode, dev);
+ 	if (error)
+ 		goto out2;
+ 
+-	mnt_userns = mnt_user_ns(path.mnt);
+ 	switch (mode & S_IFMT) {
+ 		case 0: case S_IFREG:
+ 			error = vfs_create(mnt_userns, path.dentry->d_inode,
+diff --git a/fs/ocfs2/namei.c b/fs/ocfs2/namei.c
+index c75fd54b9185..f1d626697302 100644
+--- a/fs/ocfs2/namei.c
++++ b/fs/ocfs2/namei.c
+@@ -197,6 +197,7 @@ static struct inode *ocfs2_get_init_inode(struct inode *dir, umode_t mode)
+ 	 * callers. */
+ 	if (S_ISDIR(mode))
+ 		set_nlink(inode, 2);
++	inode_sgid_strip(&init_user_ns, dir, &mode);
+ 	inode_init_owner(&init_user_ns, inode, dir, mode);
+ 	status = dquot_initialize(inode);
+ 	if (status)
 -- 
 2.27.0
 
