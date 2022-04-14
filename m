@@ -2,49 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B65A850189D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Apr 2022 18:28:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3DC2501B70
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Apr 2022 21:01:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235711AbiDNQZm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Apr 2022 12:25:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40314 "EHLO
+        id S1344972AbiDNTBb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Apr 2022 15:01:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245622AbiDNQOR (ORCPT
+        with ESMTP id S1344820AbiDNTBa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Apr 2022 12:14:17 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6FFFBD2DF;
-        Thu, 14 Apr 2022 08:57:10 -0700 (PDT)
+        Thu, 14 Apr 2022 15:01:30 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D59AE8879;
+        Thu, 14 Apr 2022 11:59:05 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 4D316B82A72;
-        Thu, 14 Apr 2022 15:57:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1F99C385A1;
-        Thu, 14 Apr 2022 15:57:07 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id EDF87618AC;
+        Thu, 14 Apr 2022 18:59:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 52A6BC385A1;
+        Thu, 14 Apr 2022 18:59:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1649951827;
-        bh=rrDdBBie/SEw36K0QoVtzDbxKHphhFpbtbr+NG2+3Q8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SYYMtGHckNqbSD1lSXiWuexcwApUy6g53BtBbGzY47dAMQ9IjC4usLJlZoZ9dhOL2
-         dMhPVWvBeDVFwibTG7LCKv91HLJs5FtrgA1VSoej4Sa4/Iw/7qxmNGMUG+vSfVgtRJ
-         XujcplpCKVO1XTde7RAZArv2zar8JTOeUTarUVVh6tDvmbgcpIrwxR36dbq0pHNkOn
-         DB+X2+fBJPECr3bKjJrqVhwfHwiwt7uT33TNtPbLARVGt5IYifZ1rfwHSLnyLEQkm8
-         r4yjbYuIx3kouzlHwp6mw6z0Ou+Ts6eKzMTZarC/ehO0LLX5RZB5beKyQfAsQqzdz3
-         Xyvhn0/FxfVCg==
-Date:   Thu, 14 Apr 2022 08:57:07 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Yang Xu <xuyang2018.jy@fujitsu.com>
-Cc:     linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org,
-        ocfs2-devel@oss.oracle.com, viro@zeniv.linux.org.uk,
-        david@fromorbit.com, brauner@kernel.org, jlayton@kernel.org
-Subject: Re: [PATCH v2 1/3] vfs: Add inode_sgid_strip() api
-Message-ID: <20220414155707.GA17059@magnolia>
-References: <1649923039-2273-1-git-send-email-xuyang2018.jy@fujitsu.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1649923039-2273-1-git-send-email-xuyang2018.jy@fujitsu.com>
+        s=k20201202; t=1649962744;
+        bh=x/weOCQCdvFtzXlyiWa6EIeco2L9fkCRTJx4jP9BVB8=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=qZeSw6bL4FtjZRW3tzVe2uFuhoR3SUjEm3HOUGziwpkmqJ1Pk7NB1/leWB8ZiBMGt
+         Rft4mPS/efypPjma7PByAB+7ON1sYITnhY/WoUiy2AwgU/q/GdJ8YF2gQmgKUAyvLx
+         OCxTo0FxIjd3hwSmaKEmrqehfb8lBhOd1wqHt15t7RZlJDDeBVtb2W36+rlWGDuxOi
+         GQp2nMlwK8Brl6cK/rqWJ0r0eT2n0OMwsXHdv/Hed6T8cCOuwDJY8P4NN/56W8ueht
+         /ABZcHckXUHG/0zUMQ/dwP45qjN1bgAPCrHlaEAJC8VyhlaNahvzi95euV6qjAtopu
+         zyH9IFhcju24g==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 3E806E85D15;
+        Thu, 14 Apr 2022 18:59:04 +0000 (UTC)
+Subject: Re: [GIT PULL] fscache: Miscellaneous fixes
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <2266868.1649864097@warthog.procyon.org.uk>
+References: <2266868.1649864097@warthog.procyon.org.uk>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <2266868.1649864097@warthog.procyon.org.uk>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/fscache-fixes-20220413
+X-PR-Tracked-Commit-Id: 61132ceeda723d2c48cbc2610ca3213a7fcb083b
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: ec9c57a7328b178918aa3124f989060bc5624a3f
+Message-Id: <164996274424.15440.4867741345263392092.pr-tracker-bot@kernel.org>
+Date:   Thu, 14 Apr 2022 18:59:04 +0000
+To:     David Howells <dhowells@redhat.com>
+Cc:     torvalds@linux-foundation.org, dhowells@redhat.com,
+        Dave Wysochanski <dwysocha@redhat.com>,
+        Jeffle Xu <jefflexu@linux.alibaba.com>,
+        Gao Xiang <hsiangkao@linux.alibaba.com>,
+        Yue Hu <huyue2@coolpad.com>, Jeff Layton <jlayton@kernel.org>,
+        linux-cachefs@redhat.com, linux-erofs@lists.ozlabs.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -55,66 +66,15 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 14, 2022 at 03:57:17PM +0800, Yang Xu wrote:
-> inode_sgid_strip() function is used to strip S_ISGID mode
-> when creat/open/mknod file.
-> 
-> Reviewed-by: Christian Brauner (Microsoft) <brauner@kernel.org>
-> Signed-off-by: Yang Xu <xuyang2018.jy@fujitsu.com>
-> ---
->  fs/inode.c         | 18 ++++++++++++++++++
->  include/linux/fs.h |  3 ++-
->  2 files changed, 20 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 9d9b422504d1..d63264998855 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -2405,3 +2405,21 @@ struct timespec64 current_time(struct inode *inode)
->  	return timestamp_truncate(now, inode);
->  }
->  EXPORT_SYMBOL(current_time);
-> +
-> +void inode_sgid_strip(struct user_namespace *mnt_userns, struct inode *dir,
-> +		      umode_t *mode)
-> +{
-> +	if (!dir || !(dir->i_mode & S_ISGID))
-> +		return;
-> +	if ((*mode & (S_ISGID | S_IXGRP)) != (S_ISGID | S_IXGRP))
-> +		return;
-> +	if (S_ISDIR(*mode))
-> +		return;
-> +	if (in_group_p(i_gid_into_mnt(mnt_userns, dir)))
-> +		return;
-> +	if (capable_wrt_inode_uidgid(mnt_userns, dir, CAP_FSETID))
-> +		return;
-> +
-> +	*mode &= ~S_ISGID;
-> +}
+The pull request you sent on Wed, 13 Apr 2022 16:34:57 +0100:
 
-Thanks for cleaning up the multiple if statements from last time.
+> git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags/fscache-fixes-20220413
 
-I still would like to see patch 1 replace the code in inode_init_owner
-so that we can compare before and after in the same patch.  Patch 2 can
-then be solely about moving the callsite around the VFS.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/ec9c57a7328b178918aa3124f989060bc5624a3f
 
---D
+Thank you!
 
-> +EXPORT_SYMBOL(inode_sgid_strip);
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index bbde95387a23..94d94219fe7c 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1897,7 +1897,8 @@ extern long compat_ptr_ioctl(struct file *file, unsigned int cmd,
->  void inode_init_owner(struct user_namespace *mnt_userns, struct inode *inode,
->  		      const struct inode *dir, umode_t mode);
->  extern bool may_open_dev(const struct path *path);
-> -
-> +void inode_sgid_strip(struct user_namespace *mnt_userns, struct inode *dir,
-> +		      umode_t *mode);
->  /*
->   * This is the "filldir" function type, used by readdir() to let
->   * the kernel specify what kind of dirent layout it wants to have.
-> -- 
-> 2.27.0
-> 
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
