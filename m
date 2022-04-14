@@ -2,117 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E5CC150067A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Apr 2022 08:57:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11E26500804
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Apr 2022 10:10:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240182AbiDNG7t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Apr 2022 02:59:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51776 "EHLO
+        id S240633AbiDNIMu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Apr 2022 04:12:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48914 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239661AbiDNG7s (ORCPT
+        with ESMTP id S240996AbiDNIMq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Apr 2022 02:59:48 -0400
-Received: from mail1.bemta36.messagelabs.com (mail1.bemta36.messagelabs.com [85.158.142.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57EF4541AB;
-        Wed, 13 Apr 2022 23:57:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
-        s=170520fj; t=1649919442; i=@fujitsu.com;
-        bh=2BEBt+KtqG1w23kjA03oL0N4j7CMYSd/9MBWpZADdAw=;
-        h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-         MIME-Version:Content-Type;
-        b=iwSsDcpvAvkjUEu64lNDvisMQWbNpRIiqVDmoINWJgHiFAmbWxl/p2P6McLBslCpX
-         RAsKK6q2qBPEKXHYgs+sk4iVTRTvXxtX8WMY5etCjrKoA5ig8pK32FDjwJn4BDSxAD
-         4Ip2yRsrWRzu0lfRrOK1jhodvPBHx4WeRjBaagVEcnDV3HtLv6ZkrUlkhty7hNhlWx
-         2KT/pkYv1Vuj31v/ou+vJmTY77rOLlHgnYTAW7L1xSBp9W6RklHNzx5W+H5W+g429h
-         g4QbknfTmyzY5uRxT5v94SXJtoWGaPoU/S43i7m4Sj+SOnS6RMbFeCaYhJsTwJHanU
-         2xHprd+akkj9g==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmleJIrShJLcpLzFFi42Kxs+FI1L14NDz
-  JYOJiS4vXhz8xWny4OYnJYsuxe4wWl5/wWfxctordYs/ekywWu96cY7c4//c4qwOHx6lFEh6b
-  VnWyeVxY9obN4/MmOY9NT94yBbBGsWbmJeVXJLBmnOo8yVbQy1bx8MBFlgbGXtYuRi4OIYEtj
-  BLzf09mhnAWMElcWrWJCcLZwyhx4vt8oAwnB5uApsSzzgVgtohAgsTrW4vBOpgF5jBKPD5xmw
-  0kISwQLDGr/RRQNwcHi4CqxNI3PCBhXgEPic2f1oCVSAgoSEx5+B5sDqeAp0Tf7ruMILYQUM3
-  2S3+ZIOoFJU7OfMICYjMLSEgcfPGCGaJXUeJSxzdGCLtCYtasNiYIW03i6rlNzBMYBWchaZ+F
-  pH0BI9MqRrukosz0jJLcxMwcXUMDA11DQ1NdMzNdQwszvcQq3US91FLd5NS8kqJEoLReYnmxX
-  mpxsV5xZW5yTopeXmrJJkZg3KQUO+3awXiw76feIUZJDiYlUd4mYEQJ8SXlp1RmJBZnxBeV5q
-  QWH2KU4eBQkuD9fwQoJ1iUmp5akZaZA4xhmLQEB4+SCK8fSCtvcUFibnFmOkTqFKOilDjvapA
-  +AZBERmkeXBssbVxilJUS5mVkYGAQ4ilILcrNLEGVf8UozsGoJMx7AWQKT2ZeCdz0V0CLmYAW
-  f1sVCrK4JBEhJdXAFF7+6MOM3Kx2p2vzdJpkuf7ILtmSvVd1ruZWDu4Iiy0h+vaMp0tFt655w
-  pV3dMYzj+mBNzcuSQtzrlpu+fjbGdeHh1t4ZVs9bERuiSZLTg+U1bLdYLxkte+xcK2uuD+TBW
-  QerC9a8aueXVVzUbyocmPjB0tDF8Y3BfopLd/8k+W14972M0y4f2nZ9Ed3zvzQM1h/8bHxPx9
-  j96pjpSm1MuFOL+VaLKbkL3++8EiryFW3o1nnl06qPjHlq//7ZctUQzfMm2Ar4+3cK/XfUEaW
-  tYTxioeU3rVck0CzeXbnLd81bj/qvVas8+yeoNsn5aq4rddv/N8SsdxsBov63f0O/m/ZDiyUf
-  CTYKfx1jYyxEktxRqKhFnNRcSIA27pvNpYDAAA=
-X-Env-Sender: xuyang2018.jy@fujitsu.com
-X-Msg-Ref: server-23.tower-532.messagelabs.com!1649919441!33213!1
-X-Originating-IP: [62.60.8.97]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.85.8; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 17612 invoked from network); 14 Apr 2022 06:57:21 -0000
-Received: from unknown (HELO n03ukasimr01.n03.fujitsu.local) (62.60.8.97)
-  by server-23.tower-532.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 14 Apr 2022 06:57:21 -0000
-Received: from n03ukasimr01.n03.fujitsu.local (localhost [127.0.0.1])
-        by n03ukasimr01.n03.fujitsu.local (Postfix) with ESMTP id 61CB6100199;
-        Thu, 14 Apr 2022 07:57:21 +0100 (BST)
-Received: from R01UKEXCASM126.r01.fujitsu.local (unknown [10.183.43.178])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by n03ukasimr01.n03.fujitsu.local (Postfix) with ESMTPS id 54D7D100181;
-        Thu, 14 Apr 2022 07:57:21 +0100 (BST)
-Received: from localhost.localdomain (10.167.220.84) by
- R01UKEXCASM126.r01.fujitsu.local (10.183.43.178) with Microsoft SMTP Server
- (TLS) id 15.0.1497.32; Thu, 14 Apr 2022 07:56:53 +0100
-From:   Yang Xu <xuyang2018.jy@fujitsu.com>
-To:     <linux-fsdevel@vger.kernel.org>, <ceph-devel@vger.kernel.org>,
-        <ocfs2-devel@oss.oracle.com>
-CC:     <viro@zeniv.linux.org.uk>, <david@fromorbit.com>,
-        <brauner@kernel.org>, <djwong@kernel.org>, <jlayton@kernel.org>,
-        Yang Xu <xuyang2018.jy@fujitsu.com>
-Subject: [PATCH v2 3/3] ceph: Remove S_ISGID clear code in ceph_finish_async_create
-Date:   Thu, 14 Apr 2022 15:57:19 +0800
-Message-ID: <1649923039-2273-3-git-send-email-xuyang2018.jy@fujitsu.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1649923039-2273-1-git-send-email-xuyang2018.jy@fujitsu.com>
-References: <1649923039-2273-1-git-send-email-xuyang2018.jy@fujitsu.com>
+        Thu, 14 Apr 2022 04:12:46 -0400
+Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 439FF26136
+        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Apr 2022 01:10:22 -0700 (PDT)
+Received: by mail-io1-xd36.google.com with SMTP id b16so4604569ioz.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Apr 2022 01:10:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=80GuG9Z2OB5edjjpunkIyc1yhfEaarhhzGyq+14i704=;
+        b=M5KQ7mfZv6mFYhtnrBqG00dB7LnKFIRZKqw/pvrepjt7LV24VvlIxp5D7/Zz+9yyXR
+         pcPjKG43Q7cC/d27eRU9Uby1RPUAJagk37XLqjEYf0jrR3uZ0NTRg/BqxNix5DT830yN
+         blUsYDqUPI6g4xemqC5mcga57q1wFsimEU2d4ClWinFeFdloxNm4+KyNvyrmWGeB7TnC
+         xOngQ5jnzDeIF3XJ7SWRDm7xX90JSeRdnTrSeQO2u/JsNzoe4X1kiUvv2BWKzItBFiOn
+         VNF2kjjlqE1CGO8JP7USrdhkvHGrgL56OIwU5At1X5HRheWcOfAqA91iYGuCnSiVo0A1
+         mlsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=80GuG9Z2OB5edjjpunkIyc1yhfEaarhhzGyq+14i704=;
+        b=02GKB/sIfXwq+JJlnUhu9atapgT2CPdTEAnTT7Uk08M2iU1f2L7qy62SIHu/fmfuzI
+         iJAWr3NGUTTIVnBCB3Y+np3skTU57MZhUfOpPoMhyNDK69aGIKR8aWrp1Z+YymiuGJLC
+         njd5X8MsZvJfjXflLdaVlX0kjZkw3S/TQ+9GHEgQicUaJzmDorqCliUV3MmrmFwuPHUt
+         R+DOQSURXPYHI1rmRUgZii+SkTti2tbuBcu6er3K8dMDPD4bAjl+tnEF9YLoo3+vqhjN
+         gyuU0ajd+yOK8EYcuHl50Cp1rJIgMvAzpparWkrz/0HxmXxkG3pegDfsiXPTeDJ4UaVh
+         iB+A==
+X-Gm-Message-State: AOAM530LGOknAYEUxnqhDRKYf8AGf5smFeuZIwk7LCu0BoEh/xhJRFrC
+        i3i0uBVzU9NGeDlssuUxbeXmXdskW2YkIWXjVR++jQ==
+X-Google-Smtp-Source: ABdhPJyQyyUIJu7HSaI/sHH6jgGH90kBT3f1SyDRMUnKe+RNtKh/8DVg+hrLhzrO3qrrF7NYPZxCyZP+Y63gqiTXviI=
+X-Received: by 2002:a05:6638:3e8f:b0:326:72cb:2b49 with SMTP id
+ ch15-20020a0566383e8f00b0032672cb2b49mr715190jab.247.1649923821659; Thu, 14
+ Apr 2022 01:10:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.167.220.84]
-X-ClientProxiedBy: G08CNEXCHPEKD07.g08.fujitsu.local (10.167.33.80) To
- R01UKEXCASM126.r01.fujitsu.local (10.183.43.178)
-X-Virus-Scanned: ClamAV using ClamSMTP
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+References: <20220406075612.60298-1-jefflexu@linux.alibaba.com> <YlLS47A9TpHyZJQi@B-P7TQMD6M-0146.local>
+In-Reply-To: <YlLS47A9TpHyZJQi@B-P7TQMD6M-0146.local>
+From:   Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
+Date:   Thu, 14 Apr 2022 16:10:10 +0800
+Message-ID: <CAFQAk7iUuaUL40NGzOkCOL=P9d6PgsDjRoKLs_5KDycaA9RQ4w@mail.gmail.com>
+Subject: Re: Re: [PATCH v8 00/20] fscache,erofs: fscache-based on-demand read semantics
+To:     Jeffle Xu <jefflexu@linux.alibaba.com>, dhowells@redhat.com,
+        linux-cachefs@redhat.com, xiang@kernel.org, chao@kernel.org,
+        linux-erofs@lists.ozlabs.org, torvalds@linux-foundation.org,
+        gregkh@linuxfoundation.org, willy@infradead.org,
+        linux-fsdevel@vger.kernel.org, joseph.qi@linux.alibaba.com,
+        bo.liu@linux.alibaba.com, tao.peng@linux.alibaba.com,
+        gerry@linux.alibaba.com, eguan@linux.alibaba.com,
+        linux-kernel@vger.kernel.org, luodaowen.backend@bytedance.com,
+        tianzichen@kuaishou.com, fannaihao@baidu.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Since vfs has stripped S_ISGID, we don't need this code any more.
+On Sun, Apr 10, 2022 at 8:52 PM Gao Xiang <hsiangkao@linux.alibaba.com> wrote:
+>
+> On Wed, Apr 06, 2022 at 03:55:52PM +0800, Jeffle Xu wrote:
+> > changes since v7:
+> > - rebased to 5.18-rc1
+> > - include "cachefiles: unmark inode in use in error path" patch into
+> >   this patchset to avoid warning from test robot (patch 1)
+> > - cachefiles: rename [cookie|volume]_key_len field of struct
+> >   cachefiles_open to [cookie|volume]_key_size to avoid potential
+> >   misunderstanding. Also add more documentation to
+> >   include/uapi/linux/cachefiles.h. (patch 3)
+> > - cachefiles: valid check for error code returned from user daemon
+> >   (patch 3)
+> > - cachefiles: change WARN_ON_ONCE() to pr_info_once() when user daemon
+> >   closes anon_fd prematurely (patch 4/5)
+> > - ready for complete review
+> >
+> >
+> > Kernel Patchset
+> > ---------------
+> > Git tree:
+> >
+> >     https://github.com/lostjeffle/linux.git jingbo/dev-erofs-fscache-v8
+> >
+> > Gitweb:
+> >
+> >     https://github.com/lostjeffle/linux/commits/jingbo/dev-erofs-fscache-v8
+> >
+> >
+> > User Daemon for Quick Test
+> > --------------------------
+> > Git tree:
+> >
+> >     https://github.com/lostjeffle/demand-read-cachefilesd.git main
+> >
+> > Gitweb:
+> >
+> >     https://github.com/lostjeffle/demand-read-cachefilesd
+> >
+>
+> Btw, we've also finished a preliminary end-to-end on-demand download
+> daemon in order to test the fscache on-demand kernel code as a real
+> end-to-end workload for container use cases:
+>
+> User guide: https://github.com/dragonflyoss/image-service/blob/fscache/docs/nydus-fscache.md
+> Video: https://youtu.be/F4IF2_DENXo
+>
+> Thanks,
+> Gao Xiang
 
-Signed-off-by: Yang Xu <xuyang2018.jy@fujitsu.com>
----
- fs/ceph/file.c | 4 ----
- 1 file changed, 4 deletions(-)
+Hi Xiang,
 
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index 6c9e837aa1d3..8e3b99853333 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -651,10 +651,6 @@ static int ceph_finish_async_create(struct inode *dir, struct dentry *dentry,
- 		/* Directories always inherit the setgid bit. */
- 		if (S_ISDIR(mode))
- 			mode |= S_ISGID;
--		else if ((mode & (S_ISGID | S_IXGRP)) == (S_ISGID | S_IXGRP) &&
--			 !in_group_p(dir->i_gid) &&
--			 !capable_wrt_inode_uidgid(&init_user_ns, dir, CAP_FSETID))
--			mode &= ~S_ISGID;
- 	} else {
- 		in.gid = cpu_to_le32(from_kgid(&init_user_ns, current_fsgid()));
- 	}
--- 
-2.27.0
+I think this feature is interesting and promising. So I have performed
+some tests according to the user guide. Hope it can be an upstream
+feature.
 
+Thanks,
+Jiachen
