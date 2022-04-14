@@ -2,132 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 65287500BBC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Apr 2022 13:02:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98EB6500CB7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Apr 2022 14:02:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238272AbiDNLFH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Apr 2022 07:05:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35644 "EHLO
+        id S242918AbiDNMEs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Apr 2022 08:04:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235483AbiDNLFE (ORCPT
+        with ESMTP id S235738AbiDNMEr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Apr 2022 07:05:04 -0400
-Received: from mail-qk1-x731.google.com (mail-qk1-x731.google.com [IPv6:2607:f8b0:4864:20::731])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 552EA3C4B7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Apr 2022 04:02:40 -0700 (PDT)
-Received: by mail-qk1-x731.google.com with SMTP id j6so3548230qkp.9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Apr 2022 04:02:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qtrBGZoxqFU9jOlgs71IN9cqMVlUJhNPoL2pVNfqqnw=;
-        b=BV0xdzU2Y/ytwEP99Tt0MKlWuBNgpzq2eo+xkSFmhHqzcR/sCdbCfsmjQJSM5+iT/W
-         HUTj9XLZQdxR91rIW7iw1tPn3fexZF3PdGsN0Y1A+yjM6wOAEpeBtzipiBwm0aRt903c
-         niZ6r+ork/2zEVoEbHqhCSzZEulEQLfjFLiYTAP8ofxnya7GKqKHi8h8PUiMoUn6OHho
-         TlK5bb52oTOBpdYISwpAXtWxPpOM+jLb90fUsbb9wmRqewaA/TPRFRKKHPoOfvDnGYA+
-         fV/0s3ahKaMAdAdufGdKBh17eTHMG+PY/Cisb/4FVUiYKIXdGbxEY+3UvDNlwFw6DaKG
-         O77g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qtrBGZoxqFU9jOlgs71IN9cqMVlUJhNPoL2pVNfqqnw=;
-        b=4qCmWjcELRF0RF9xmKuK6qBa+IwQ2y6q3nZfGAbU5T+7bYU5gXHlEuRnECXdDoIPSn
-         YNkz+Pq/tLhLJb8jvDy/I1GW71E7GJRvfxUHy/zpIMSm/2ywf+Kf+yBzeFnIk2MnXlR7
-         0fdkh/+1SOlLcxPe/n5hm32P9yLpnXG2KxQjTh2Rgcy1d5cTCJPdo5xrxzsGRKFG/hW/
-         w4Q2TJLVXociAE1Qp8yo3pQ48XPy0goDMJKX+atHxYjye/uiwLU617mCareYxQkAj4o4
-         U0SXwShXDCH8Mopdg9zVoEl++YF7r1OdCb94x2IPCPg7LhDZLVtIF4IA90rKRc13xNPd
-         ScsA==
-X-Gm-Message-State: AOAM533ZD/dIpEzB+uC5VbPApnAer+pKzZjcdO8nNKLlqzgvZ0DS4nrz
-        g4AaINKmyc3aP2eBK0tGbmjAkf1Gs2gfNMarixPx5u7Ebj8=
-X-Google-Smtp-Source: ABdhPJxLetRPRKEUwHwpcPf+t4lcvI9QI/CxUf5GwAlP4U9Wnxlrs/ncOLfAwVIdIDwoJ74vGVfsnWtCGE9sYQMM280=
-X-Received: by 2002:a05:620a:10ac:b0:69c:7450:a56f with SMTP id
- h12-20020a05620a10ac00b0069c7450a56fmr1324601qkk.386.1649934159328; Thu, 14
- Apr 2022 04:02:39 -0700 (PDT)
+        Thu, 14 Apr 2022 08:04:47 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59D4FB1DF;
+        Thu, 14 Apr 2022 05:02:23 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C7BF761C41;
+        Thu, 14 Apr 2022 12:02:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53906C385A1;
+        Thu, 14 Apr 2022 12:02:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1649937742;
+        bh=qXt7WvSa23a3YeOZ9+ww8g01bRmkBlm1Ss5n2duByN4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dAog4BNMoH1vMP41Cot6uxE2DcprJtZa/J4JtOrb9Ssa/KeJMhnP+irLqwwnZEzN9
+         Yg5th0iSlgLS0EtVCw5i26+IRWPnW6SNMMuS/eIHY5sDzq0aZYiRaaGaInnozitSyZ
+         xPPLzgtj5OyGQIdz6hu8g0WRZ3gnm0vOfCpMzn9+ViUkwrfsoFgiuHRf29mVkYYr/E
+         BfEe2N+7FkzqzxWUy3WFGWPjuq31sKEgC7WrZ/taBZbd+DIW0Y05qg8gkOCh3C/Tr8
+         T2ihpqIALXzjcXAxbXPpL6zGaAu4tcUrdnyrnrz8Ti1l/fLDWf9KiFaKAprFuK8ZOI
+         Z4vlm22CNHvgg==
+Date:   Thu, 14 Apr 2022 14:02:17 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Yang Xu <xuyang2018.jy@fujitsu.com>
+Cc:     linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org,
+        ocfs2-devel@oss.oracle.com, viro@zeniv.linux.org.uk,
+        david@fromorbit.com, djwong@kernel.org, jlayton@kernel.org
+Subject: Re: [PATCH v2 1/3] vfs: Add inode_sgid_strip() api
+Message-ID: <20220414120217.fbsljr7alpvy5nmy@wittgenstein>
+References: <1649923039-2273-1-git-send-email-xuyang2018.jy@fujitsu.com>
 MIME-Version: 1.0
-References: <1357949524.990839.1647084149724.ref@mail.yahoo.com>
- <1357949524.990839.1647084149724@mail.yahoo.com> <20220314084706.ncsk754gjywkcqxq@quack3.lan>
- <CAOQ4uxiDubhONM3w502anndtbqy73q_Kt5bOQ07zbATb8ndvVA@mail.gmail.com>
- <20220314113337.j7slrb5srxukztje@quack3.lan> <CAOQ4uxgSubkz84_21qa5mPpBn7qHJUsA35ciJ5JHOH2UmAnnbA@mail.gmail.com>
- <20220413115112.df3okrcutiqvsfry@quack3.lan>
-In-Reply-To: <20220413115112.df3okrcutiqvsfry@quack3.lan>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 14 Apr 2022 14:02:27 +0300
-Message-ID: <CAOQ4uxhvR8Kr99V1gCmBxRWQqQuhCLz9h30YhEYjF-qkdOpjaQ@mail.gmail.com>
-Subject: Re: Fanotify Directory exclusion not working when using FAN_MARK_MOUNT
-To:     Jan Kara <jack@suse.cz>
-Cc:     Srinivas <talkwithsrinivas@yahoo.co.in>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1649923039-2273-1-git-send-email-xuyang2018.jy@fujitsu.com>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> > Jan,
-> >
-> > Just a heads up - you were right about this inconsistency and I have both
-> > patches to fix it [1] and LTP test to reproduce the issue [2] and started work
-> > on the new FAN_MARK_IGNORE API.
-> > The new API has no tests yet, but it has a man page draft [3].
-> >
-> > The description of the bugs as I wrote them in the fix commit message:
-> >
-> >     This results in several subtle changes of behavior, hopefully all
-> >     desired changes of behavior, for example:
-> >
-> >     - Group A has a mount mark with FS_MODIFY in mask
-> >     - Group A has a mark with ignored mask that does not survive FS_MODIFY
-> >       and does not watch children on directory D.
-> >     - Group B has a mark with FS_MODIFY in mask that does watch children
-> >       on directory D.
-> >     - FS_MODIFY event on file D/foo should not clear the ignored mask of
-> >       group A, but before this change it does
-> >
-> >     And if group A ignored mask was set to survive FS_MODIFY:
-> >     - FS_MODIFY event on file D/foo should be reported to group A on account
-> >       of the mount mark, but before this change it is wrongly ignored
-> >
-> >     Fixes: 2f02fd3fa13e ("fanotify: fix ignore mask logic for events
-> > on child and on dir")
->
-> Thanks for looking into this! Yeah, the change in behavior looks OK to me.
->
-
-And I got sufficiently annoyed by our mixed terminology of "ignored mask"
-and "ignore mask". Man pages only use the latter and also most of the
-comments in code and many of the commit messages but not all of them
-and variable name is of course the former, so I decided to take action:
-
-commit 6c6f07348c0c587e2bdcdb997caa30f852e818ef
-Author: Amir Goldstein <amir73il@gmail.com>
-Date:   Tue Apr 12 13:25:34 2022 +0300
-
-    fanotify: prepare for setting event flags in ignore mask
-
-[...]
-
-    To emphasize the change in terminology, also rename ignored_mask mark
-    member to ignore_mask and use accessor to get only ignored events or
-    events and flags.
-
-    This change in terminology finally aligns with the "ignore mark"
-    language in man pages and in most of the comments.
-
-I hope I didn't take it too far...
-
-Thanks,
-Amir.
+On Thu, Apr 14, 2022 at 03:57:17PM +0800, Yang Xu wrote:
+> inode_sgid_strip() function is used to strip S_ISGID mode
+> when creat/open/mknod file.
+> 
+> Reviewed-by: Christian Brauner (Microsoft) <brauner@kernel.org>
+> Signed-off-by: Yang Xu <xuyang2018.jy@fujitsu.com>
+> ---
+>  fs/inode.c         | 18 ++++++++++++++++++
+>  include/linux/fs.h |  3 ++-
+>  2 files changed, 20 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/inode.c b/fs/inode.c
+> index 9d9b422504d1..d63264998855 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -2405,3 +2405,21 @@ struct timespec64 current_time(struct inode *inode)
+>  	return timestamp_truncate(now, inode);
+>  }
+>  EXPORT_SYMBOL(current_time);
+> +
+> +void inode_sgid_strip(struct user_namespace *mnt_userns, struct inode *dir,
+> +		      umode_t *mode)
+> +{
+> +	if (!dir || !(dir->i_mode & S_ISGID))
+> +		return;
+> +	if ((*mode & (S_ISGID | S_IXGRP)) != (S_ISGID | S_IXGRP))
+> +		return;
+> +	if (S_ISDIR(*mode))
+> +		return;
+> +	if (in_group_p(i_gid_into_mnt(mnt_userns, dir)))
+> +		return;
+> +	if (capable_wrt_inode_uidgid(mnt_userns, dir, CAP_FSETID))
+> +		return;
+> +
+> +	*mode &= ~S_ISGID;
+> +}
+> +EXPORT_SYMBOL(inode_sgid_strip);
 
 
+I still think this should return umode_t with the setgid bit stripped
+instead of modifying the mode directly. I may have misunderstood Dave,
+but I thought he preferred to return umode_t too?
 
->
-> > [1] https://github.com/amir73il/linux/commits/fan_mark_ignore
-> > [2] https://github.com/amir73il/ltp/commits/fan_mark_ignore
-> > [3] https://github.com/amir73il/man-pages/commits/fan_mark_ignore
+umode_t inode_sgid_strip(struct user_namespace *mnt_userns, struct inode *dir, umode_t mode)
+{
+	if (S_ISDIR(mode))
+		return mode;
+
+	if (!dir || !(dir->i_mode & S_ISGID))
+		return;
+
+	if ((mode & (S_ISGID | S_IXGRP)) != (S_ISGID | S_IXGRP))
+		return;
+
+	if (in_group_p(i_gid_into_mnt(mnt_userns, dir)))
+		return;
+
+	if (capable_wrt_inode_uidgid(mnt_userns, dir, CAP_FSETID))
+		return;
+
+	return mode & ~S_ISGID;
+}
