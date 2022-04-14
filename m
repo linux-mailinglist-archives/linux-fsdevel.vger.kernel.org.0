@@ -2,91 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AB1AC501838
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Apr 2022 18:07:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3199F501835
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Apr 2022 18:07:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231690AbiDNQGF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Apr 2022 12:06:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53136 "EHLO
+        id S230168AbiDNQF4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Apr 2022 12:05:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349882AbiDNPkT (ORCPT
+        with ESMTP id S1358632AbiDNPmC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Apr 2022 11:40:19 -0400
-Received: from mx1.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF8F01EAF3;
-        Thu, 14 Apr 2022 08:19:51 -0700 (PDT)
-Received: from [192.168.0.175] (ip5f5aed13.dynamic.kabel-deutschland.de [95.90.237.19])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: buczek)
-        by mx.molgen.mpg.de (Postfix) with ESMTPSA id 36EBE61EA1928;
-        Thu, 14 Apr 2022 17:19:50 +0200 (CEST)
-Message-ID: <4e83fb26-4d4a-d482-640c-8104973b7ebf@molgen.mpg.de>
-Date:   Thu, 14 Apr 2022 17:19:49 +0200
+        Thu, 14 Apr 2022 11:42:02 -0400
+Received: from sonic307-55.consmr.mail.gq1.yahoo.com (sonic307-55.consmr.mail.gq1.yahoo.com [98.137.64.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05465C6EC0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Apr 2022 08:24:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.ca; s=s2048; t=1649949882; bh=l7uEf+zHfGuXlKA/7aMuUENHXKPZm3r3B51bsgI8f2Q=; h=Date:From:Subject:To:Cc:References:In-Reply-To:From:Subject:Reply-To; b=h+ZC2BvN8pcuEOWtR9p6QOwASKIVW8HY7x+GeFfL0FCDoMREsJoK+zDw/7f0u+vZ4AbUTDubeQ0yPJfna4JdMNkDqmyAnIJBLqoLKT4bv5BBBa7lUjBQYtDH6lRxlatEsLHcUPoCGl76yimjCoz6cnp+w/hu4PsEEZKwV+e7EZ5HosQ5gJBebML5FqlnYq/u1t8aQTe2VoZQCFMPy7w8cWTzqhvxZovuoKD9qwDTkFxH0CP40fUSjbd/CDuFjkKrjVe4bVxup5MOayb3ygXgbBiWb1NY2ZFVsWH3eAJLpJFwuVNJX68/3ZvsME4QHWJSK5gq4i80Gnf335fTyOoITA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1649949882; bh=c0PR5MdqQVMbrOS9QgNLeD581KVxI66+yo63nInVZPI=; h=X-Sonic-MF:Date:From:Subject:To:From:Subject; b=fv4lNBYS5pFRa2GLDlY0GtUPYkRBA738m2HwyXxbgv51t0GqjdERVrnXyu8xJEZkE/qP2gLP/R92EpOxF7Xm0CCqU2JHHa3Wk2VRmD1TB+ishh9xY2zHgssMFELAqjfBbLHshg4FGadUcNWN5+8hpbIzEgXwDTWLyF5N18ersnG9DeYBq+ZIIImGrSQ/0GIlhHUnf6oYX+7PkSwXDphOgxtUCIumcpHPq9tWPEr/n3iikz9GGKoeRXCuyUT4mC4iYHkaEPvWdtijVTxLCypbE3iEOUxjUZXs4vBPHfc4v4C+45SwpSEVlDjwUTQtlpkcEYRb53tYvy8B7m9oW1QPaQ==
+X-YMail-OSG: ixi72QsVM1ludGt1a_NOmZsL3Tw7Yf6Hu6LmOJvnhrp_Pg.OBrJkFUPM.k_p9uu
+ t2iM4LjQNAOcKrDdY019Q6RRB2xHaQcrOi8JoyXT1U7klhVvFGTyb8XfjOCLJRj2lNxJ8q2Jjvdh
+ 0RCoA4bNSaEglicQOBF6JijL1UyjdGqANkqNLMF8WTZHT8qAWKHUAdNOWprquOz2aip0gHtlfW.F
+ 0xWCdWi1JNQHgebpbqM2ehQx37fndADEArENjDbErQINW3gwXdV6.BHRZEncyo_O7lFejfXw8nAu
+ 8wZAWTa1WhwWGVdqzti_7lgINmDzf6PAvnC9sVTYakQdynskwkUSBRx28YrAfEvIbC2qH3rntOmP
+ cMa4KJ7f59etRXona43oI.tNprJz9MEd3HMvGgdsO1hRpIwM9ixzjhTUPLbMOSDD0YmFFy5AdaS8
+ rxom2dwujAZ7WldrKaLTDypL.tCaBPvoJx3YmdC6I8yK54rKwVc3Xvv.fjGKmR.TqtD4Tpf3mRh4
+ gU2T7phP0k_mNV3SfwBY5uyKiBVoTYH4tqARM9.T.0HaRuzw3ZrNbvvIiMGmmB0F5WuYcl4pygSJ
+ ccprenv8z5lX7mrLTvVDsUh43Q8aSLrll0t6jqbGf2yip8416VNNKHS2BARuun1b_z4sWmSo8_HS
+ ikDysAr6t5LyyrUiyqsCW5OoXI0d3pBTmuMlFdpWrOOAGBRBLOalciBwHxkbW_YlPZtUTCmsCLNW
+ eRRV5vs9bQYD.H4Wstf5ghG17lJkvCG2X0QgtqfLA737NdbzeIRVD8iFOxlmh_Y_zCZJ_2E4v0B.
+ xXgHnnCbGAxFuiFGr7WnSQCf1ne_hJf6bTaQKrNI3tPbJmjuX6QfhVZyqqeblBvD0asA5iIqP5ft
+ 4JuOcawECMqsLJUgBLWWOBw5YLGGQfAlsdfHWgLmbzvl8gy3rienmPLDZtQa.uFNVb8XpLLEh93J
+ AC3RCdzF9zOHQbZw39ZDQVeavhTMT1q_2UKxZZbmwGH6GNuNlrYwiQcaeOfSHRWDabId2ml4mUQR
+ RFFON__K84I9DPQQx5IyI3YvR46LhJwagtwWYJF_bBUE86W6kf3_f4epIb_wRXj.HIJ29k94FvF_
+ AgloODt10QIMUepFAQjRX8pJcRJBPNVc0I5HgV0bfiFpTNP3DQfM9HhJfoQWUYpfEgtZrnEZ0bYc
+ rXLV0aHPyjqTuJXwxwbBXiuk2uK7K5WbEJxvQ25fmdx0ODo1MCjBLCzMi.Jz9gK7w3toR9_YoELv
+ .jEWGSU78GfBVC8Bl1lII2VporKr09cqrtCuoho8WYVPiWZJEzowjBlETfBgriWEmd9Sy7pI9KEo
+ LyJwYL5dAz5n.JEukZ7FfzBCyf0yohXpY4mw1xighpeSnmeLHeqKQD6Noc.90esAHwxfaWdVzcqw
+ vdv6hCcKB.kYiA6wJvlXwAp2lSfpT4nSR70AdGnHlsVm1GRVdkX2D5Mpr6c3L9wBoa5_oesEpVo6
+ rXgpj7YZ.ptcghQwRXqa2ce4GrWpSFodvnyloFkoB2gWux.LQjoElUboRwNNWNbwYeQmP75CCr99
+ H3ix8fgwAZSoMFoSQJN0vbuWawRblVDxqfZ57_CnNuQWAcWCKnmcYcVVWh7rJpJoM.ZRakDakI3a
+ 7H49tOCA1OUP3GlfxuR28ypdhF5X.x0BCZ4gOUmlePbXGspmb.FoV3hR_3vskdEXg0s1zfF2fP1m
+ DQMb69kxOKu7MEtGDxMBuI3QJG.hSUJmwKEDhDQ8xy4C3v8yeuHXmt3i1dAva01wCdeaoI4o2HNp
+ xraygLZ5eiIfcCiOUjhR6xRbroLClVMtgJuSR_r0abBVIHBBfEVVxDmBWwBxcbx2n0J_eE8haMCL
+ hesR30KTb0GsDF8IZjlQeUWdyMoGZMQ9K5IfXX3_VO_4qA7TnpUayZAQcmEGZw4QDuCDhtPXTbg_
+ Lrq6imWqIqkLOa77ZyccZl_tVndLc3_bVv_Xb.4KcKkmNDl9CuC5aRL0wJ0jBXtf76Wr56I34xaY
+ HoK07z0oV1FVukmEeiqjLtH0Bi9SsF_7BV3B3gK5S3yy2fO2bfRdWdbVOLPL3HWQpSi7nWcv0Wq5
+ yHGlTGNSX5U2AipMpz90gBCIa3mM4TBeNgwChvHra0TO_5rxjsSPZOZKc.iKcizrrnETSFXAqGFd
+ 6e.B5t0ohwE8SO_600iyK5F0AD5RB30OaOuiZFrIoTwDN4o.OY0txDMPjHbSAIjVx7WLNXf45i2K
+ Dpo7wcPaJ5i3RFM7d4zoP3FsWFJKTf7MD9qKCNM86HojINd3evbgu7ZSfJrsRsva82arIk2UmcVD
+ p
+X-Sonic-MF: <alex_y_xu@yahoo.ca>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.gq1.yahoo.com with HTTP; Thu, 14 Apr 2022 15:24:42 +0000
+Received: by hermes--canary-production-gq1-cc54c7bb9-9gfh6 (VZM Hermes SMTP Server) with ESMTPA ID 70fcc1be1711c5a35768f5595215e0c4;
+          Thu, 14 Apr 2022 15:24:38 +0000 (UTC)
+Date:   Thu, 14 Apr 2022 11:24:35 -0400
+From:   "Alex Xu (Hello71)" <alex_y_xu@yahoo.ca>
+Subject: Re: [PATCH] mm/smaps_rollup: return empty file for kthreads instead
+ of ESRCH
+To:     Alexey Dobriyan <adobriyan@gmail.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Daniel Colascione <dancol@google.com>,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Vlastimil Babka <vbabka@suse.cz>
+References: <20220413211357.26938-1-alex_y_xu.ref@yahoo.ca>
+        <20220413211357.26938-1-alex_y_xu@yahoo.ca>
+        <20220413142748.a5796e31e567a6205c850ae7@linux-foundation.org>
+        <1649886492.rqei1nn3vm.none@localhost>
+        <20220413160613.385269bf45a9ebb2f7223ca8@linux-foundation.org>
+        <YleToQbgeRalHTwO@casper.infradead.org>
+        <YlfFaPhNFWNP+1Z7@localhost.localdomain>
+In-Reply-To: <YlfFaPhNFWNP+1Z7@localhost.localdomain>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Content-Language: en-US
-To:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        dm-devel@redhat.com
-Cc:     it+linux@molgen.mpg.de,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-From:   Donald Buczek <buczek@molgen.mpg.de>
-Subject: ext4_writepages: jbd2_start: 5120 pages, ino 11; err -5
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Message-Id: <1649949601.z8rr7ed5qb.none@localhost>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: WebService/1.1.20001 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We have a cluster scheduler which provides each cluster job with a private scratch filesystem (TMPDIR). These are created when a job starts and removed when a job completes. The setup works by fallocate, losetup, mkfs.ext4, mkdir, mount, "losetup -d", rm and the teardown just does a umount and rmdir.
+Excerpts from Alexey Dobriyan's message of April 14, 2022 2:55 am:
+> Returning ESRCH is better so that programs don't waste time reading and
+> closing empty files and instantiating useless inodes.
 
-This works but there is one nuisance: The systems usually have a lot of memory and some jobs write a lot of data to their scratch filesystems. So when a job finishes, there often is a lot to sync by umount which sometimes takes many minutes and wastes a lot of I/O bandwidth. Additionally, the reserved space can't be returned and reused until the umount is finished and the backing file is deleted.
+Yes, except ESRCH is not returned for open, it is returned for read.
 
-So I was looking for a way to avoid that but didn't find something straightforward. The workaround I've found so far is using a dm-device (linear target) between the filesystem and the loop device and then use this sequence for teardown:
+> Of course it is different if this patch was sent as response to a regress=
+ion.
 
-- fcntl EXT4_IOC_SHUTDOWN with EXT4_GOING_FLAGS_NOLOGFLUSH
-- dmestup reload $dmname --table "0 $sectors zero"
-- dmsetup resume $dmname --noflush
-- umount $mountpoint
-- dmsetup remove --deferred $dmname
-- rmdir $mountpoint
+I'm not sure I would classify it as a regression; I don't have an=20
+existing program which broke, it is a new program which happens to use=20
+some functionality which worked with a previous kernel. It is=20
+theoretically possible that some program exists that currently uses=20
+4.14, and will break if upgraded to 4.19+, but it is also possible that=20
+some program exists that currently uses 4.19+ and will break if this=20
+patch is applied.
 
-This seems to do what I want. The unnecessary flushing of the temporary data is redirected from the backing file into the zero target and it works really fast. There is one remaining problem though, which might be just a cosmetic one: Although ext4 is shut down to prevent it from writing, I sometimes get the error message from the subject in the logs:
-
-[2963044.462043] EXT4-fs (dm-1): mounted filesystem without journal. Opts: (null)
-[2963044.686994] EXT4-fs (dm-0): mounted filesystem without journal. Opts: (null)
-[2963044.728391] EXT4-fs (dm-2): mounted filesystem without journal. Opts: (null)
-[2963055.585198] EXT4-fs (dm-2): shut down requested (2)
-[2963064.821246] EXT4-fs (dm-2): mounted filesystem without journal. Opts: (null)
-[2963074.838259] EXT4-fs (dm-2): shut down requested (2)
-[2963095.979089] EXT4-fs (dm-0): shut down requested (2)
-[2963096.066376] EXT4-fs (dm-0): ext4_writepages: jbd2_start: 5120 pages, ino 11; err -5
-[2963108.636648] EXT4-fs (dm-0): mounted filesystem without journal. Opts: (null)
-[2963125.194740] EXT4-fs (dm-0): shut down requested (2)
-[2963166.708088] EXT4-fs (dm-1): shut down requested (2)
-[2963169.334437] EXT4-fs (dm-0): mounted filesystem without journal. Opts: (null)
-[2963227.515974] EXT4-fs (dm-0): shut down requested (2)
-[2966222.515143] EXT4-fs (dm-0): mounted filesystem without journal. Opts: (null)
-[2966222.523390] EXT4-fs (dm-1): mounted filesystem without journal. Opts: (null)
-[2966222.598071] EXT4-fs (dm-2): mounted filesystem without journal. Opts: (null)
-
-So I'd like to ask a few questions:
-
-- Is this error message expected or is it a bug?
-- Can it be ignored or is there a leak or something on that error path.
-- Is there a better way to do what I want? Something I've overlooked?
-- I consider to create a new dm target or add an option to an existing one, because I feel that "zero" underneath a filesystem asks for problems because a filesystem expects to read back the data that it wrote, and the "error" target would trigger lots of errors during the writeback attempts. What I really want is a target which silently discard writes and returns errors on reads. Any opinion about that?
-- But to use devicemapper to eat away the I/O is also just a workaround to the fact that we can't parse some flag to umount to say that we are okay to lose all data and leave the filesystem in a corrupted state if this was the last reference to it. Would this be a useful feature?
-
-Best
-   Donald
--- 
-Donald Buczek
-buczek@molgen.mpg.de
+Cheers,
+Alex.
