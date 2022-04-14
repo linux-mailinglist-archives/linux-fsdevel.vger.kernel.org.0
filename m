@@ -2,129 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B86C500719
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Apr 2022 09:38:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 727AB500676
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 14 Apr 2022 08:56:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240423AbiDNHkl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Apr 2022 03:40:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56560 "EHLO
+        id S240170AbiDNG7N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Apr 2022 02:59:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231998AbiDNHkk (ORCPT
+        with ESMTP id S239661AbiDNG7M (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Apr 2022 03:40:40 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4373256415;
-        Thu, 14 Apr 2022 00:38:16 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        Thu, 14 Apr 2022 02:59:12 -0400
+Received: from mail1.bemta34.messagelabs.com (mail1.bemta34.messagelabs.com [195.245.231.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2579553B6A;
+        Wed, 13 Apr 2022 23:56:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
+        s=170520fj; t=1649919404; i=@fujitsu.com;
+        bh=smQK4tppl/0P9em1n4iYPJctoNQAJ0+xEhuhlGR6/yo=;
+        h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type;
+        b=dNssRrL8fwslrgqW+PO0yGjf9kORsjhaLDTfviMxuaZKFNz6npRlsUkRygC8ygEAH
+         0GvWr8VPlDf62bbfYzsqOhATAU7INj+TRMviadPB5hpdZkkRlQ/uKT2JntEQJCg0Uu
+         1WsO3K5QHCNx+KllaZGuD0bKB4hYDeNB3+YguNmdrnUKgeQtrwbzakLDrU4R5NAcJx
+         h2LeN46ITYIOh1KUxE26FBoce4k2B+Aj0a5aeknNT4Irt5K3olLtHvU8vkx6Vi2FGu
+         jNEMJB5bjsrIF3v6q0x2kAVfXjzZkd+fK3Hy6DaOID3WN+TmTZ34UoBSPS0sSqS35/
+         hA9etSp39u4NQ==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBIsWRWlGSWpSXmKPExsViZ8MxSXf10fA
+  kgyUzLSxeH/7EaPHh5iQmiy3H7jFaXH7CZ/Fz2Sp2iz17T7JY7Hpzjt3i/N/jrA4cHqcWSXhs
+  WtXJ5nFh2Rs2j8+b5Dw2PXnLFMAaxZqZl5RfkcCa0fRermAdb8W63YuZGxjXcXcxcnEICWxhl
+  Li3eB4rhLOASeLk5XmMEM4eRomnjdvZuhg5OdgENCWedS5gBrFFBBIkXt9azAxSxCwwh1Hi8Y
+  nbYEXCAuYSG7cfYwGxWQRUJf51zGYHsXkFPCR+vH0AViMhoCAx5eF7Zoi4oMTJmU/A6pkFJCQ
+  OvnjBDFGjKHGp4xsjhF0hMWtWGxOErSZx9dwm5gmM/LOQtM9C0r6AkWkVo3VSUWZ6RkluYmaO
+  rqGBga6hoamusZGuoYWlXmKVbqJeaqlueWpxia6RXmJ5sV5qcbFecWVuck6KXl5qySZGYASkF
+  Cvs3cF4eeVPvUOMkhxMSqK8TcDYEOJLyk+pzEgszogvKs1JLT7EKMPBoSTB+/8IUE6wKDU9tS
+  ItMwcYjTBpCQ4eJRFeP5BW3uKCxNzizHSI1ClGRSlx3tUgfQIgiYzSPLg2WAK4xCgrJczLyMD
+  AIMRTkFqUm1mCKv+KUZyDUUmY9wLIFJ7MvBK46a+AFjMBLf62KhRkcUkiQkqqgUn/3vOLi/O7
+  pZX7dq1a8ntJlvDHMnFnRYHgJ1Pl1+3uTj543P1B//28XckTPEOPFFy16OjOS/rR9+t90/WGu
+  Q/+mDB4lqlfuaJv33Sc21D5hZpFRH2Z99qKR743TeVzXxy6vLtFs2t6UsOjv9cKW3uncUcVsb
+  ncX3JOWM7+rIjk/SD/rcz5aWx6VldY5uj82BbnG9rlUPP5rrjnw0+beS9L3XRPvnyjZ7egL3N
+  H3Ow9Ljw/rnAuUGWYHCrMVhfFzfq/bZKQe7b48q3vFon5z6hVv5sYl/nqVefTMqH6u8z/FZyP
+  +zhYaRfONPWIl//YUsdQaP5ig2Zp15a9c07s2+5R3F2doiIf+Hl3eUWvEktxRqKhFnNRcSIAZ
+  wmOD3sDAAA=
+X-Env-Sender: xuyang2018.jy@fujitsu.com
+X-Msg-Ref: server-11.tower-548.messagelabs.com!1649919403!222910!1
+X-Originating-IP: [62.60.8.146]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.85.8; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 22917 invoked from network); 14 Apr 2022 06:56:43 -0000
+Received: from unknown (HELO n03ukasimr02.n03.fujitsu.local) (62.60.8.146)
+  by server-11.tower-548.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 14 Apr 2022 06:56:43 -0000
+Received: from n03ukasimr02.n03.fujitsu.local (localhost [127.0.0.1])
+        by n03ukasimr02.n03.fujitsu.local (Postfix) with ESMTP id 818E7100472;
+        Thu, 14 Apr 2022 07:56:43 +0100 (BST)
+Received: from R01UKEXCASM126.r01.fujitsu.local (unknown [10.183.43.178])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id E274F1F747;
-        Thu, 14 Apr 2022 07:38:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1649921894; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=2hT+knE9TV0fknXqaP/vEB7WYsrSBA5fzZ7sExOr3dw=;
-        b=aohmTLrbVTD86oE7+SsZqDVi2lqtz1j7ogs4Cs0VA3kWhVeXC1v1VT/uihTvjq239SPx83
-        UQFu1pdc5HHKqIhkl2s1/RpLAlwtCDRaRj2lagdytLLT2nC/8KMqnpffEztqYD+FQF+iQk
-        xjdHGfYCmtyJt5ocwvGDVDJdvPoHCwY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1649921894;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=2hT+knE9TV0fknXqaP/vEB7WYsrSBA5fzZ7sExOr3dw=;
-        b=PUHpjk/daB3UV+CFagYStPsjIvjETQj66VwLW4WGwDDASth3HlZMI/i4ifeguZtftsatNH
-        +S5L0JtebkKn8jBg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id C48E113A86;
-        Thu, 14 Apr 2022 07:38:14 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id N+JQL2bPV2LNNQAAMHmgww
-        (envelope-from <vbabka@suse.cz>); Thu, 14 Apr 2022 07:38:14 +0000
-Message-ID: <83f49beb-52f7-15f6-3b53-97cac0030ca4@suse.cz>
-Date:   Thu, 14 Apr 2022 09:38:14 +0200
+        by n03ukasimr02.n03.fujitsu.local (Postfix) with ESMTPS id 743A6100467;
+        Thu, 14 Apr 2022 07:56:43 +0100 (BST)
+Received: from localhost.localdomain (10.167.220.84) by
+ R01UKEXCASM126.r01.fujitsu.local (10.183.43.178) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.32; Thu, 14 Apr 2022 07:56:32 +0100
+From:   Yang Xu <xuyang2018.jy@fujitsu.com>
+To:     <linux-fsdevel@vger.kernel.org>, <ceph-devel@vger.kernel.org>,
+        <ocfs2-devel@oss.oracle.com>
+CC:     <viro@zeniv.linux.org.uk>, <david@fromorbit.com>,
+        <brauner@kernel.org>, <djwong@kernel.org>, <jlayton@kernel.org>,
+        Yang Xu <xuyang2018.jy@fujitsu.com>
+Subject: [PATCH v2 1/3] vfs: Add inode_sgid_strip() api
+Date:   Thu, 14 Apr 2022 15:57:17 +0800
+Message-ID: <1649923039-2273-1-git-send-email-xuyang2018.jy@fujitsu.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH] mm/smaps_rollup: return empty file for kthreads instead
- of ESRCH
-Content-Language: en-US
-To:     Alexey Dobriyan <adobriyan@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        "Alex Xu (Hello71)" <alex_y_xu@yahoo.ca>,
-        Daniel Colascione <dancol@google.com>,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20220413211357.26938-1-alex_y_xu.ref@yahoo.ca>
- <20220413211357.26938-1-alex_y_xu@yahoo.ca>
- <20220413142748.a5796e31e567a6205c850ae7@linux-foundation.org>
- <1649886492.rqei1nn3vm.none@localhost>
- <20220413160613.385269bf45a9ebb2f7223ca8@linux-foundation.org>
- <YleToQbgeRalHTwO@casper.infradead.org>
- <YlfFaPhNFWNP+1Z7@localhost.localdomain>
-From:   Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <YlfFaPhNFWNP+1Z7@localhost.localdomain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-6.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain
+X-Originating-IP: [10.167.220.84]
+X-ClientProxiedBy: G08CNEXCHPEKD07.g08.fujitsu.local (10.167.33.80) To
+ R01UKEXCASM126.r01.fujitsu.local (10.183.43.178)
+X-Virus-Scanned: ClamAV using ClamSMTP
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/14/22 08:55, Alexey Dobriyan wrote:
-> On Thu, Apr 14, 2022 at 04:23:13AM +0100, Matthew Wilcox wrote:
->> On Wed, Apr 13, 2022 at 04:06:13PM -0700, Andrew Morton wrote:
->> > On Wed, 13 Apr 2022 18:25:53 -0400 "Alex Xu (Hello71)" <alex_y_xu@yahoo.ca> wrote:
->> > > > 258f669e7e88 was 4 years ago, so I guess a -stable backport isn't
->> > > > really needed.
->> > > 
->> > > Current behavior (4.19+):
->> [...]
->> > > Pre-4.19 and post-patch behavior:
->> > 
->> > I don't think this will work very well.  smaps_rollup is the sort of
->> > system tuning thing for which organizations will develop in-house
->> > tooling which never get relesaed externally.
->> > 
->> > > 3. As mentioned previously, this was already the behavior between 4.14 
->> > >    and 4.18 (inclusive).
->> > > 
->> > 
->> > Yup.  Hm, tricky.  I'd prefer to leave it alone if possible.  How
->> > serious a problem is this, really?  
->> 
->> I don't think "It's been like this for four years" is as solid an argument
->> as you might like.  Certain distributions (of the coloured millinery
->> variety, for example) haven't updated their kernel since then and so
->> there may well be many organisations who have not been exposed to the
->> current behaviour.  Even my employers distribution, while it offers a
->> 5.4 based kernel, still has many customers who have not moved from the
->> 4.14 kernel.  Inertia is a real thing, and restoring this older behaviour
->> might well be an improvement.
-> 
-> Returning ESRCH is better so that programs don't waste time reading and
-> closing empty files and instantiating useless inodes.
+inode_sgid_strip() function is used to strip S_ISGID mode
+when creat/open/mknod file.
 
-Hm, unfortunately I don't remember why I put return -ESRCH for this case in
-addition to get_proc_task() failing. I doubt it was a conscious decision to
-treat kthreads differently - I think I would have preferred consistency with
-maps/smaps.
+Reviewed-by: Christian Brauner (Microsoft) <brauner@kernel.org>
+Signed-off-by: Yang Xu <xuyang2018.jy@fujitsu.com>
+---
+ fs/inode.c         | 18 ++++++++++++++++++
+ include/linux/fs.h |  3 ++-
+ 2 files changed, 20 insertions(+), 1 deletion(-)
 
-Can the awk use case be fixed with some flag to make it ignore the errors?
-
-> Of course it is different if this patch was sent as response to a regression.
+diff --git a/fs/inode.c b/fs/inode.c
+index 9d9b422504d1..d63264998855 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -2405,3 +2405,21 @@ struct timespec64 current_time(struct inode *inode)
+ 	return timestamp_truncate(now, inode);
+ }
+ EXPORT_SYMBOL(current_time);
++
++void inode_sgid_strip(struct user_namespace *mnt_userns, struct inode *dir,
++		      umode_t *mode)
++{
++	if (!dir || !(dir->i_mode & S_ISGID))
++		return;
++	if ((*mode & (S_ISGID | S_IXGRP)) != (S_ISGID | S_IXGRP))
++		return;
++	if (S_ISDIR(*mode))
++		return;
++	if (in_group_p(i_gid_into_mnt(mnt_userns, dir)))
++		return;
++	if (capable_wrt_inode_uidgid(mnt_userns, dir, CAP_FSETID))
++		return;
++
++	*mode &= ~S_ISGID;
++}
++EXPORT_SYMBOL(inode_sgid_strip);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index bbde95387a23..94d94219fe7c 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1897,7 +1897,8 @@ extern long compat_ptr_ioctl(struct file *file, unsigned int cmd,
+ void inode_init_owner(struct user_namespace *mnt_userns, struct inode *inode,
+ 		      const struct inode *dir, umode_t mode);
+ extern bool may_open_dev(const struct path *path);
+-
++void inode_sgid_strip(struct user_namespace *mnt_userns, struct inode *dir,
++		      umode_t *mode);
+ /*
+  * This is the "filldir" function type, used by readdir() to let
+  * the kernel specify what kind of dirent layout it wants to have.
+-- 
+2.27.0
 
