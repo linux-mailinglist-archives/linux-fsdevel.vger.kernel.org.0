@@ -2,233 +2,216 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 03B9E501F4E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Apr 2022 01:51:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04E80501FA5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Apr 2022 02:31:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345979AbiDNXyB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 14 Apr 2022 19:54:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46480 "EHLO
+        id S1348034AbiDOAdh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 14 Apr 2022 20:33:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231537AbiDNXyA (ORCPT
+        with ESMTP id S1348030AbiDOAdf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 14 Apr 2022 19:54:00 -0400
-Received: from esa5.hgst.iphmx.com (esa5.hgst.iphmx.com [216.71.153.144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFE3048333
-        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Apr 2022 16:51:33 -0700 (PDT)
+        Thu, 14 Apr 2022 20:33:35 -0400
+Received: from esa6.hgst.iphmx.com (esa6.hgst.iphmx.com [216.71.154.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38095B0A4B;
+        Thu, 14 Apr 2022 17:31:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1649980292; x=1681516292;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=WbVM9cfScKKYc/EursZygzoF86dsBLIRg6xwYxy7W0E=;
-  b=YreF/bbDZYTF8ha4pUZii/VmyWQJYEaxRosEmIk/sJQCZq1SDuQffc5K
-   chCgSnbTyKXaLDVBg1FDWhJLMtEgOsKY9XYAulzgpFssMgHFypgdZKtwG
-   HPWEMRTbvY9BaIqp8cMdhr9SHlAkC/Cq1oHrG7jalaPN6QsxxFMYFDgsl
-   c+IdGHz/4FddHfxZPo7Yb85UcIw8lKfnJ3liq4cdHiy3rWb0EjrmJ/VZa
-   db4Yrul/8w/IN82XlduNPZ3A7JURm5+F3/cxKkmpiminV78uysJEs2OaH
-   6L+ygHf3qEJvEarq/4gZ06/gHHVZ/jtmW+PUe6lfpjNUC0DIiqgmQvBc5
-   A==;
+  t=1649982666; x=1681518666;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=by8WYiAWff5iBTPTfUiihuv7rXF+Wmvm8gg3usNY3dE=;
+  b=K1oKtQkIwgcKA8iEue/9m0VfFH/rziYWxcsmHCHaaWBtmnRQQICt2joH
+   XsCMNX0xbq4l/YKVrGEpNlp8o8SsbDXWK2ReArhw10UEM2ExfUTNTcrkk
+   LbqFcwBS52BLruR+Vc9CLZ7F23aCXuJjX12vm0ZQbR5bsH1egUEy6hys2
+   bBpcIBtPDayfMwAzZZshHiehKoUlihzC3xGmheZBPnlsLMPisXBG66b43
+   1GiK9F0j/KPp7mszb9K5KbolB/GEAhYbjrPxLu4EPaKnpwJDlB/8jV7zj
+   4EEEbxoWJJ3u/HLrdyk6cL9qPoIEPV/cjbCaZgy2PPalgKNfoTb0Medxi
+   w==;
 X-IronPort-AV: E=Sophos;i="5.90,261,1643644800"; 
-   d="scan'208";a="197954182"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 15 Apr 2022 07:51:31 +0800
-IronPort-SDR: jyOMypK/MrbXuAt1cf71p8pfRqFuEPJARCOXyFOrjbH2XuGYRZOaxVcGmqPJv35cVR/6R0VNOk
- KpFp/NtJK0VxwWfr5MHk3lSIYcs1szSolqpwmdwXOdbcc8teBq5Sumipx+3sOuy9+Hzn2W4AOU
- tN+p5abPbwTpeYWbBjQFtHUkhVEqMvoJs3Ph3l6dnLcQtVVmEmwzNuR+A9ButA8WwmRQLVJR1Q
- 6nXDjeP4FB2fl1xpz0OtFszIRiYbzrgwsrvjcWxDSZpBTYqvQzZONSJlpAuoWI3ArPEXDQIpNU
- EzzUJx6BNGdOSsbK46kapPNC
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 14 Apr 2022 16:22:45 -0700
-IronPort-SDR: U4/ZE6eMhWY6mB4O6KXH1UIXA1S3rrw+oM0RHHTzwmS7IYszqrU7klvqc+CK+egQCj1w7yNOnb
- 7vhBxsA+dyY6gwJ5KGYIfBLdE3BVTL6rnP2IyWIFfK+FtXXtVMY8SFjc9dDz7syMzeofNBuXpt
- CkMdx9Ae54kfLYBT8yRlqcBcgeQcoewtMqQ5h3ZWEUVtsY2lrb6ioROvcpP6iL5TiiF0F4kxd7
- 19kQu0d3hlo5dSqhmDILCTd+/rYAN2MXJtmtNUOEoyfXXo2FdQxOaAdB7OC3b+8LMJQRDus6fw
- e2g=
-WDCIronportException: Internal
-Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
-  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 14 Apr 2022 16:51:33 -0700
-Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4KfbpD5RDBz1SVny
-        for <linux-fsdevel@vger.kernel.org>; Thu, 14 Apr 2022 16:51:32 -0700 (PDT)
-Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)"
-        header.d=opensource.wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
-        opensource.wdc.com; h=content-transfer-encoding:content-type
-        :in-reply-to:organization:from:references:to:content-language
-        :subject:user-agent:mime-version:date:message-id; s=dkim; t=
-        1649980291; x=1652572292; bh=WbVM9cfScKKYc/EursZygzoF86dsBLIRg6x
-        wYxy7W0E=; b=cKEhB42giErCT2IlFVEQa2gh6lHnR8sHxTTUPuQWALBSpaAGvGT
-        mGL4PdrltRTNgGcZVQhmNWj+iOhhaj7raUOIsMozPAD3jvXBE4Y7rhE6kYmMW+GU
-        SqbqYrYbDcdJwswoJ2O7p/OylgnhOC4xbRfuY15N5vs8YrmxwMdkVq4zffFXHgY0
-        I/FAgjKzXKzRjN6jSnwKZA0MrTdAW2KKLPtvrD9a0EBVi3Vt/yPxqUCF4cBm7Xaa
-        UPjYAq3mJb+Z7jFuHA0DJkxAcDC3tz3bWT8y1s99lGuVm4JPrILm0NvTCS6AUgRb
-        9frurXIYEBUxcziyVQUXnkBzincyCOiaBLQ==
-X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
-Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
-        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id ciBU_hAS0uHw for <linux-fsdevel@vger.kernel.org>;
-        Thu, 14 Apr 2022 16:51:31 -0700 (PDT)
-Received: from [10.225.163.9] (unknown [10.225.163.9])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4Kfbp91f4qz1Rvlx;
-        Thu, 14 Apr 2022 16:51:29 -0700 (PDT)
-Message-ID: <f379cb56-6ff5-f256-d5f2-3718a47e976d@opensource.wdc.com>
-Date:   Fri, 15 Apr 2022 08:51:27 +0900
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH v2] binfmt_flat: do not stop relocating GOT entries
- prematurely on riscv
-Content-Language: en-US
-To:     Niklas Cassel <niklas.cassel@wdc.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+   d="scan'208";a="198853407"
+Received: from mail-mw2nam10lp2100.outbound.protection.outlook.com (HELO NAM10-MW2-obe.outbound.protection.outlook.com) ([104.47.55.100])
+  by ob1.hgst.iphmx.com with ESMTP; 15 Apr 2022 08:31:04 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Or1cGmEHIcevWHY2kabkU9vA6zajj5IToQIngwvcig4WqsaMNQcLk5oflJtuqHpaifaKzVuo5GMvQUDWHSr2JMZnfHqropUiigRgrSgupCebEezSFW9xGigeiVokjyVf474n62mIuuSbGZ/Z6HaVUvn4s8MBpbiEWHslUJL39JuK1h5YBOWPyYbBZeUbFQlkT9nYvzvURH+l55oRx8NKhN9rgzmWGNeYO8eawsXppZ2iq4JKZsC0kxNM6bazFeR6yczBDs0XhoBDQDrVEe4oolF0AKTpLwFrmUviKbJZ6SJRVnUCD6U6JRttihNahiKhuihCDsuIF4MKbllisVOI6w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/ffxEew5BtRanyTKghZXcdurZvjNYuBiDlsgLIJjxR0=;
+ b=eGCvvC+NBSRb748bDj2ba04CHGSbrW/m82ZnTSC/YQRuekuBsEFgnvUbzXb2iReEsfLcyfTlsY/GT4jh6tDu8WxSGwaNgVIjm3LIQQIL3O2Kf9lEpGRmfcrKmVbzcvJ9gdWNLsVNtdkOfOCqSw9BGLrVZyip2LOn5Tn8gcLq/WzDemfd7XODHIdZNMpNqQsq7kdrvV8Owya7PkZlcmpxoRyckHNehSxGKYevB7XvNaHA6qbDrOg9IpUDxS7CVA/Xtmpi4KWbeDQRmELSccQ8JPdurjPDiWWsLsn2Vv+bv+DseWZRHNLKnpDPRLeDFwaaH+I6x02fP6EHPo9ugc5PgA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/ffxEew5BtRanyTKghZXcdurZvjNYuBiDlsgLIJjxR0=;
+ b=ovStQ0mdIhvI8O+o90i8E2oaZ9g205lVi8Ygl4d8lzV8EzWQF+vRo1huEk4QtalfDFCbvRptc47EJwEANSk/EhWHKcw2lMVq4H20rq9JGQ37rP7FHUPQeQPlClj6Vma1tYXUXQxtq6LychU2O3e6/2p1RHCkIm3D3p8mp2/6XA0=
+Received: from PH0PR04MB7158.namprd04.prod.outlook.com (2603:10b6:510:8::18)
+ by BN0PR04MB7920.namprd04.prod.outlook.com (2603:10b6:408:153::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5144.29; Fri, 15 Apr
+ 2022 00:30:56 +0000
+Received: from PH0PR04MB7158.namprd04.prod.outlook.com
+ ([fe80::995b:363e:8d1c:49af]) by PH0PR04MB7158.namprd04.prod.outlook.com
+ ([fe80::995b:363e:8d1c:49af%8]) with mapi id 15.20.5164.021; Fri, 15 Apr 2022
+ 00:30:56 +0000
+From:   Niklas Cassel <Niklas.Cassel@wdc.com>
+To:     Damien Le Moal <damien.lemoal@opensource.wdc.com>
+CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Eric Biederman <ebiederm@xmission.com>,
         Kees Cook <keescook@chromium.org>,
         Paul Walmsley <paul.walmsley@sifive.com>,
         Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>
-Cc:     Greg Ungerer <gerg@linux-m68k.org>,
-        Mike Frysinger <vapier@gentoo.org>, stable@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-riscv@lists.infradead.org
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Mike Frysinger <vapier@gentoo.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>
+Subject: Re: [PATCH v2] binfmt_flat: do not stop relocating GOT entries
+ prematurely on riscv
+Thread-Topic: [PATCH v2] binfmt_flat: do not stop relocating GOT entries
+ prematurely on riscv
+Thread-Index: AQHYT9+B/BNFs63JH02JGuF3zm1OJqzwFV2AgAALBgA=
+Date:   Fri, 15 Apr 2022 00:30:56 +0000
+Message-ID: <Yli8voX7hw3EZ7E/@x1-carbon>
 References: <20220414091018.896737-1-niklas.cassel@wdc.com>
-From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
-Organization: Western Digital Research
-In-Reply-To: <20220414091018.896737-1-niklas.cassel@wdc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-6.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+ <f379cb56-6ff5-f256-d5f2-3718a47e976d@opensource.wdc.com>
+In-Reply-To: <f379cb56-6ff5-f256-d5f2-3718a47e976d@opensource.wdc.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=wdc.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: fbbfca7a-f80d-4d60-9142-08da1e773503
+x-ms-traffictypediagnostic: BN0PR04MB7920:EE_
+x-microsoft-antispam-prvs: <BN0PR04MB7920704355B4D7D9EB595865F2EE9@BN0PR04MB7920.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: M2kDI9rZBhYUN202ALZJEq6xED9s7rvyG5gE4pJXC8Tccok1W7TDpF2aleZwR5I9uTgbv0nX6adN07XYq5NX0UXwSx9N7N3LfpdVOg8157pbRgaQkMahsLi9n0ONex/dHPV4QULld6rhmHvsgEYOjZmQCAZ9CEVbVECkn9w6ZY/DY8ARkVH4eJ97/NMLubeAtxnd11qz2tm/sZ+/vtEhqGGYPuxEVBLPxaPV2PxBxNbZlUKUNz/sA8WYV8hDejKrXP740NQwqCruaLvc1wYjV3nMYlsdTWSvhgTyrByG7nkaVmGXoAhTjqsZGfSCX7ieETGtgVf0ZMvbTUhXd6dnAKAzJFIxpccj+CO3GCNbh8CqUQZIQMzKQJFrVY1O5FFiihOLx+fggbvTgU8f+hCjS5D1SfPJQpiYObVxfx8DohLTJ0tURdrzY395I12FeFXdVaZ+DfYfUCu3TaPkHjnDuVKopT3temQQH4nRSOJnmTOkMf+ULXEufS9xg+qmi2/2zEPmZrC3scJaB/HkcAXpecTI35jHxmvdVMfIIMBto+JUL+nQF2tSEtNkIREcjJdh6hOpuNszMN1dp0TsTvoowp1W36EIADiTBkA+GIstiv3N+2PIb0ULLExtl5l2c/5JwmqCj/3UXys5/fkINfWCUAgDaXcCWn6f7u09I9d9Yf+fuS0/ThigD54MLWo3I91GIKV+HY2tmxA40PEhMNSYZBeCawlA3feJfdZXRH/JMOagvkT6LCcVWNOlGiz/X3+w
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR04MB7158.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(7916004)(4636009)(366004)(38100700002)(6862004)(316002)(66946007)(76116006)(54906003)(66446008)(66476007)(64756008)(122000001)(5660300002)(8676002)(26005)(6512007)(186003)(86362001)(4326008)(6506007)(82960400001)(9686003)(53546011)(508600001)(33716001)(71200400001)(91956017)(66556008)(6486002)(2906002)(7416002)(8936002)(38070700005);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?EUTnFc20viBzgFR1USEtPyQBRjdS6Jw4xJzOjZccbH+g4dAF0xBpOoMKlF7s?=
+ =?us-ascii?Q?jaN7e1aYNd8mhH/6B+NuIuRFDghiT0W4lSdocT2mr3ir1xNbCKVQA6qI/Rlj?=
+ =?us-ascii?Q?kHUH9XXPBuq4TPeqWHOmzKDY2HrtDXJYyznza+LXwHDZ45s0EptuzDIMy0nV?=
+ =?us-ascii?Q?QZOpzFlELz7/yfivORM9xUpocdI0EppUAnbTNgsMXPY3KowDPqyirS6bv7Ql?=
+ =?us-ascii?Q?ZLthTvQc2Co7r0G8ls3iTE+ByviKNNs2Ow/Z+2H5nPIxwdtQMTmInraCM8ah?=
+ =?us-ascii?Q?o5tZf2aKpKA97L9RQKyihJ1TfXl91pmNLYFDpOR+Y8dRj2lsdUEZS2ngcB+t?=
+ =?us-ascii?Q?IKaEfCOQfQpI5NqerqAAcJUI/auJEYk2h2MYSJv6cCoIzsJuEbnprJeU1jAq?=
+ =?us-ascii?Q?oq9AA3pvWCT/zAff9zgBZdBYzAGwDXzCtTyr1/WFSlgqH9DfRWk/F3iYuOuR?=
+ =?us-ascii?Q?gEl9bEfjeQi5QhoqpPapa5QT8G4a5bgK5O/eMNfas0rJTFunQAs+4+pVO8oz?=
+ =?us-ascii?Q?lgYOI/hy5hsBnDtmD06giWoinKDSLTjXvV6koPH4M7IPYyo1IQ/W93nb7EuY?=
+ =?us-ascii?Q?mR1Sw0knCDn0C7rTABLYVUYHioWZUaAyJFet2/iw7Hpn6byM8jJScJ+rsHB6?=
+ =?us-ascii?Q?jtCVo+Oi4wDNRSFBrqwe17b96zoR+9dQDmChuBwAp+1vyxvcBtv8gmpXFqRZ?=
+ =?us-ascii?Q?eSylaVTzdsefaaaHpvWPdaai2/h8sTb0kTHPPf7E5Eu11OOWTX2M0CM58pQA?=
+ =?us-ascii?Q?hMhIWcIyKhpbQnRdyW1KA6vV3co1LBM6HEK0RnVziXBiaMAg5Bmara/5Wk6A?=
+ =?us-ascii?Q?lICReGc0CnFbWNcCy6HDyiMRTEvNJ/dyg8RhbbQCGqL0xtkyLNQ35hfKRVib?=
+ =?us-ascii?Q?lSmIC84S+rjFnZPJKdLHHS35orpGxlLGkuZJAo6PgDaYijNv5gEx222L4N95?=
+ =?us-ascii?Q?1vfIKik2f+kH5qARhpTF0EJCYyW4TLOSOcmCcxd1ymkmw83FLy/LBB1Gqwhs?=
+ =?us-ascii?Q?plfnSxcZFZU0sxu1QYmqGrMZxr0K8W6SQlBaqrUnC5wwsun6/9hyIHamd0hS?=
+ =?us-ascii?Q?bpaEZ7TuqwOmAT5+6AiexSX/hQZQ7e1PxaJYw+p9C4p3yO/6RsNLnt5S5kVa?=
+ =?us-ascii?Q?4QUuPqqF/AwoFoAkvPJHIlLwQu7nKZ+gJfBPv94X2Fe+kDZw01U5eQwYmN78?=
+ =?us-ascii?Q?eqTc9ubKiMfRg73faCrMpfqtwIjgl5CzZTns04tdr2z6Kyy4y05t64q8FD5q?=
+ =?us-ascii?Q?HnUQ5JTaXlBvxY0in+UzXlUxVJ3OF91vQpaHnIDJlMbtwr26ub+zk/Gh1+2u?=
+ =?us-ascii?Q?IWJK83NZczdDb9vgd94RYZaVXYZiAaYzei70o+QTdDFpM5dD5nrIe9Zs12Ax?=
+ =?us-ascii?Q?uiyR2XomyPdYxARe5PkA/T0wGZwtrpvbyqLc9WpiktduLm0pJ/eRiyRsspmf?=
+ =?us-ascii?Q?ddaA6wIqv6i3tdnRyYZ88DCUUmib4+xFF5jUis4nKy20BuKmwn9O5KoiSU2w?=
+ =?us-ascii?Q?JFsr+mbjyhBcOqxMA9VEvmO9a6wGjdgJQP4rombJhj3cXZeCaQ4MIRANiyme?=
+ =?us-ascii?Q?Y4BUWJy4OtZ0kiCZ1j3aTBiQTHlO4xX3XrYDUk2X3A+1rvoKA/jL2dcBvsEL?=
+ =?us-ascii?Q?Tph/dSjzPY2Qs1ySJh5KuSIzGRxoiJQwyImMWFOnt9WllY5WwDEq0bw7biei?=
+ =?us-ascii?Q?aaRwqmWMIeRnCMPCxHNytGNNFX3ThxBzTJR8qAzEFdeG46+1/Q5uSq+FopvN?=
+ =?us-ascii?Q?hY265Jwri15+KLwUeNHyOPZimC1Gxj4=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <FABFDA205275DB45B36EEBD1FEB6A860@namprd04.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR04MB7158.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fbbfca7a-f80d-4d60-9142-08da1e773503
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Apr 2022 00:30:56.4308
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: /qZ0ko+BTEbSWgAVMLs4I72aSoUwHkoysjNpm59YaOW+m5clR6HU0YXX7/6jFMcXLKQHnwB8YHoF0JMLdSm5MA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN0PR04MB7920
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/14/22 18:10, Niklas Cassel wrote:
-> bFLT binaries are usually created using elf2flt.
-> 
-> The linker script used by elf2flt has defined the .data section like the
-> following for the last 19 years:
-> 
-> .data : {
-> 	_sdata = . ;
-> 	__data_start = . ;
-> 	data_start = . ;
-> 	*(.got.plt)
-> 	*(.got)
-> 	FILL(0) ;
-> 	. = ALIGN(0x20) ;
-> 	LONG(-1)
-> 	. = ALIGN(0x20) ;
-> 	...
-> }
-> 
-> It places the .got.plt input section before the .got input section.
-> The same is true for the default linker script (ld --verbose) on most
-> architectures except x86/x86-64.
-> 
-> The binfmt_flat loader should relocate all GOT entries until it encounters
-> a -1 (the LONG(-1) in the linker script).
-> 
-> The problem is that the .got.plt input section starts with a GOTPLT header
-> (which has size 16 bytes on elf64-riscv and 8 bytes on elf32-riscv), where
-> the first word is set to -1. See the binutils implementation for riscv [1].
-> 
-> This causes the binfmt_flat loader to stop relocating GOT entries
-> prematurely and thus causes the application to crash when running.
-> 
-> Fix this by skipping the whole GOTPLT header, since the whole GOTPLT header
-> is reserved for the dynamic linker.
-> 
-> The GOTPLT header will only be skipped for bFLT binaries with flag
-> FLAT_FLAG_GOTPIC set. This flag is unconditionally set by elf2flt if the
-> supplied ELF binary has the symbol _GLOBAL_OFFSET_TABLE_ defined.
-> ELF binaries without a .got input section should thus remain unaffected.
-> 
-> Tested on RISC-V Canaan Kendryte K210 and RISC-V QEMU nommu_virt_defconfig.
-> 
-> [1] https://sourceware.org/git/?p=binutils-gdb.git;a=blob;f=bfd/elfnn-riscv.c;hb=binutils-2_38#l3275
-> 
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Niklas Cassel <niklas.cassel@wdc.com>
-> ---
-> Changes since v1:
-> -Incorporated review comments from Eric Biederman.
-> 
-> RISC-V elf2flt patches are still not merged, they can be found here:
-> https://github.com/floatious/elf2flt/tree/riscv
-> 
-> buildroot branch for k210 nommu (including this patch and elf2flt patches):
-> https://github.com/floatious/buildroot/tree/k210-v14
-> 
->  fs/binfmt_flat.c | 27 ++++++++++++++++++++++++++-
->  1 file changed, 26 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/binfmt_flat.c b/fs/binfmt_flat.c
-> index 626898150011..e5e2a03b39c1 100644
-> --- a/fs/binfmt_flat.c
-> +++ b/fs/binfmt_flat.c
-> @@ -440,6 +440,30 @@ static void old_reloc(unsigned long rl)
->  
->  /****************************************************************************/
->  
-> +static inline u32 __user *skip_got_header(u32 __user *rp)
-> +{
-> +	if (IS_ENABLED(CONFIG_RISCV)) {
-> +		/*
-> +		 * RISC-V has a 16 byte GOT PLT header for elf64-riscv
-> +		 * and 8 byte GOT PLT header for elf32-riscv.
-> +		 * Skip the whole GOT PLT header, since it is reserved
-> +		 * for the dynamic linker (ld.so).
-> +		 */
-> +		u32 rp_val0, rp_val1;
-> +
-> +		if (get_user(rp_val0, rp))
-> +			return rp;
-> +		if (get_user(rp_val1, rp + 1))
-> +			return rp;
-> +
-> +		if (rp_val0 == 0xffffffff && rp_val1 == 0xffffffff)
-> +			rp += 4;
-> +		else if (rp_val0 == 0xffffffff)
-> +			rp += 2;
+On Fri, Apr 15, 2022 at 08:51:27AM +0900, Damien Le Moal wrote:
+> On 4/14/22 18:10, Niklas Cassel wrote:
 
-This looks good to me. But thinking more about it, do we really need to
-check what the content of the header is ? Why not simply replace this
-entire hunk with:
+(snip)
 
-		return rp + sizeof(unsigned long) * 2;
+> This looks good to me. But thinking more about it, do we really need to
+> check what the content of the header is ? Why not simply replace this
+> entire hunk with:
+>=20
+> 		return rp + sizeof(unsigned long) * 2;
+>=20
+> to ignore the 16B (or 8B for 32-bits arch) header regardless of what the
+> header word values are ? Are there any case where the header is *not*
+> present ?
 
-to ignore the 16B (or 8B for 32-bits arch) header regardless of what the
-header word values are ? Are there any case where the header is *not*
-present ?
+Considering that I haven't been able to find any real specification that
+describes the bFLT format. (No, the elf2flt source is no specification.)
+This whole format seems kind of fragile.
 
-> +	}
-> +	return rp;
-> +}
-> +
->  static int load_flat_file(struct linux_binprm *bprm,
->  		struct lib_info *libinfo, int id, unsigned long *extra_stack)
->  {
-> @@ -789,7 +813,8 @@ static int load_flat_file(struct linux_binprm *bprm,
->  	 * image.
->  	 */
->  	if (flags & FLAT_FLAG_GOTPIC) {
-> -		for (rp = (u32 __user *)datapos; ; rp++) {
-> +		rp = skip_got_header((u32 * __user) datapos);
-> +		for (; ; rp++) {
->  			u32 addr, rp_val;
->  			if (get_user(rp_val, rp))
->  				return -EFAULT;
+I realize that checking the first one or two entries after data start is
+not the most robust thing, but I still prefer it over skipping blindly.
 
-Regardless of the above nit, feel free to add:
+Especially considering that only m68k seems to support shared libraries
+with bFLT. So even while this header is reserved for ld.so, it will most
+likely only be used on m68k bFLT binaries.. so perhaps elf2flt some day
+decides to strip away this header on all bFLT binaries except for m68k?
 
-Reviewed-by: Damien Le Moal <damien.lemoal@opensource.wdc.com>
+bFLT seems to currently be at version 4, perhaps such a change would
+require a version bump.. Or not? (Now, if there only was a spec.. :P)
 
 
--- 
-Damien Le Moal
-Western Digital Research
+Kind regards,
+Niklas
+
+>=20
+> > +	}
+> > +	return rp;
+> > +}
+> > +
+> >  static int load_flat_file(struct linux_binprm *bprm,
+> >  		struct lib_info *libinfo, int id, unsigned long *extra_stack)
+> >  {
+> > @@ -789,7 +813,8 @@ static int load_flat_file(struct linux_binprm *bprm=
+,
+> >  	 * image.
+> >  	 */
+> >  	if (flags & FLAT_FLAG_GOTPIC) {
+> > -		for (rp =3D (u32 __user *)datapos; ; rp++) {
+> > +		rp =3D skip_got_header((u32 * __user) datapos);
+> > +		for (; ; rp++) {
+> >  			u32 addr, rp_val;
+> >  			if (get_user(rp_val, rp))
+> >  				return -EFAULT;
+>=20
+> Regardless of the above nit, feel free to add:
+>=20
+> Reviewed-by: Damien Le Moal <damien.lemoal@opensource.wdc.com>
+>=20
+>=20
+> --=20
+> Damien Le Moal
+> Western Digital Research=
