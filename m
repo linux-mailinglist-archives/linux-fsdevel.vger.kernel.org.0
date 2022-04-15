@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2485E502264
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Apr 2022 06:56:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFE015022B3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 15 Apr 2022 06:57:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242406AbiDOE5M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 15 Apr 2022 00:57:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48098 "EHLO
+        id S1349956AbiDOE5k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 15 Apr 2022 00:57:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48022 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349744AbiDOE4U (ORCPT
+        with ESMTP id S1349810AbiDOE4b (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 15 Apr 2022 00:56:20 -0400
+        Fri, 15 Apr 2022 00:56:31 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8808275C16;
-        Thu, 14 Apr 2022 21:53:47 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25623716D1;
+        Thu, 14 Apr 2022 21:53:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=fsm4eQJmjNs7mthWl6aQ0QoznH4mW7xZq3krP8KP9Uc=; b=Kc0kFPKNrBsztP51rQrb436EpC
-        clkRG1c+RWauytSxyP1VZHzZm0k/n/bJiQF9offdgxlhFL9TpCe41mL4yiFXHZXG7NN3dZBqQWTyh
-        VS32YFvooKg6jmcfwAv8iLy6ibtMV7kgdq4kptYmhPm0Z6NWmVX2oFVQWm6WbZ6ctUwWMEvyxnK3Y
-        b9ovdNw4IiS4Q9grCcaQcJlT12XLY6ANDPyUjFzxFxy5R6sXbufEUiOBD2A9POWjPp9fJgc5BHmlx
-        btpCR9+B/FjoYWNox5ht1MfT6qlsZJ4E91t9jc1UTJI5F9kZQSgKF9QlK5aIdPlC3AU3hlr6Kf/BQ
-        9t86XlyA==;
+        bh=ZlX6tQSx9Ltba6eWidCjog7i9CmwA2DoDl+4xkJfBJs=; b=mK5Q76NpPUvc78f6UJP6DQWA/7
+        NKBjQM3eKggVVlsB90RP9nWbWfQQRf5B/jpgaA1Q9EfhEKM6lJIkbGZcu7PpXQpjIFw5FBt2pbsp/
+        MOoSSA4Ia9EScAPP1GzU9Z/ZQQucRFdEcK1J7IinCMg7xBNHzYM+zhxh9/8+JGCxjva2x2nAoCRtc
+        /jXC9gicBp3dw18FSq1x+PVYM/uSyKZyRhIEi86XF4FPTwvQg4pS+RVuHw79vZX329QreecldYuvL
+        XgVsFKXu2B19byXqlKObQtsOc9NysNwyvK+OIp8FWlGn58YTS0dBRTNV0sUd2V4lcvAVAxYH2RH2k
+        wQndRV7A==;
 Received: from [2a02:1205:504b:4280:f5dd:42a4:896c:d877] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nfDxn-008P9R-W4; Fri, 15 Apr 2022 04:53:44 +0000
+        id 1nfDxq-008PC1-Gz; Fri, 15 Apr 2022 04:53:47 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     dm-devel@redhat.com, linux-xfs@vger.kernel.org,
@@ -44,11 +44,10 @@ Cc:     dm-devel@redhat.com, linux-xfs@vger.kernel.org,
         cluster-devel@redhat.com, jfs-discussion@lists.sourceforge.net,
         linux-nilfs@vger.kernel.org, ntfs3@lists.linux.dev,
         ocfs2-devel@oss.oracle.com, linux-mm@kvack.org,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 12/27] block: add a bdev_write_cache helper
-Date:   Fri, 15 Apr 2022 06:52:43 +0200
-Message-Id: <20220415045258.199825-13-hch@lst.de>
+        "Martin K . Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 13/27] block: add a bdev_fua helper
+Date:   Fri, 15 Apr 2022 06:52:44 +0200
+Message-Id: <20220415045258.199825-14-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220415045258.199825-1-hch@lst.de>
 References: <20220415045258.199825-1-hch@lst.de>
@@ -65,97 +64,92 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a helper to check the write cache flag based on the block_device
-instead of having to poke into the block layer internal request_queue.
+Add a helper to check the FUA flag based on the block_device instead of
+having to poke into the block layer internal request_queue.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
-Acked-by: David Sterba <dsterba@suse.com> [btrfs]
 ---
- drivers/block/rnbd/rnbd-srv.c       | 2 +-
- drivers/block/xen-blkback/xenbus.c  | 2 +-
- drivers/target/target_core_iblock.c | 8 ++------
- fs/btrfs/disk-io.c                  | 3 +--
- include/linux/blkdev.h              | 5 +++++
- 5 files changed, 10 insertions(+), 10 deletions(-)
+ drivers/block/rnbd/rnbd-srv.c       | 3 +--
+ drivers/target/target_core_iblock.c | 3 +--
+ fs/iomap/direct-io.c                | 3 +--
+ include/linux/blkdev.h              | 6 +++++-
+ 4 files changed, 8 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/block/rnbd/rnbd-srv.c b/drivers/block/rnbd/rnbd-srv.c
-index f04df6294650b..f8cc3c5fecb4b 100644
+index f8cc3c5fecb4b..beaef43a67b9d 100644
 --- a/drivers/block/rnbd/rnbd-srv.c
 +++ b/drivers/block/rnbd/rnbd-srv.c
-@@ -558,7 +558,7 @@ static void rnbd_srv_fill_msg_open_rsp(struct rnbd_msg_open_rsp *rsp,
- 	rsp->secure_discard =
- 		cpu_to_le16(rnbd_dev_get_secure_discard(rnbd_dev));
+@@ -533,7 +533,6 @@ static void rnbd_srv_fill_msg_open_rsp(struct rnbd_msg_open_rsp *rsp,
+ 					struct rnbd_srv_sess_dev *sess_dev)
+ {
+ 	struct rnbd_dev *rnbd_dev = sess_dev->rnbd_dev;
+-	struct request_queue *q = bdev_get_queue(rnbd_dev->bdev);
+ 
+ 	rsp->hdr.type = cpu_to_le16(RNBD_MSG_OPEN_RSP);
+ 	rsp->device_id =
+@@ -560,7 +559,7 @@ static void rnbd_srv_fill_msg_open_rsp(struct rnbd_msg_open_rsp *rsp,
  	rsp->cache_policy = 0;
--	if (test_bit(QUEUE_FLAG_WC, &q->queue_flags))
-+	if (bdev_write_cache(rnbd_dev->bdev))
+ 	if (bdev_write_cache(rnbd_dev->bdev))
  		rsp->cache_policy |= RNBD_WRITEBACK;
- 	if (blk_queue_fua(q))
+-	if (blk_queue_fua(q))
++	if (bdev_fua(rnbd_dev->bdev))
  		rsp->cache_policy |= RNBD_FUA;
-diff --git a/drivers/block/xen-blkback/xenbus.c b/drivers/block/xen-blkback/xenbus.c
-index f09040435e2e5..8b691fe50475f 100644
---- a/drivers/block/xen-blkback/xenbus.c
-+++ b/drivers/block/xen-blkback/xenbus.c
-@@ -517,7 +517,7 @@ static int xen_vbd_create(struct xen_blkif *blkif, blkif_vdev_t handle,
- 		vbd->type |= VDISK_REMOVABLE;
+ }
  
- 	q = bdev_get_queue(bdev);
--	if (q && test_bit(QUEUE_FLAG_WC, &q->queue_flags))
-+	if (bdev_write_cache(bdev))
- 		vbd->flush_support = true;
- 
- 	if (q && blk_queue_secure_erase(q))
 diff --git a/drivers/target/target_core_iblock.c b/drivers/target/target_core_iblock.c
-index b41ee5c3b5b82..03013e85ffc03 100644
+index 03013e85ffc03..c4a903b8a47fc 100644
 --- a/drivers/target/target_core_iblock.c
 +++ b/drivers/target/target_core_iblock.c
-@@ -737,7 +737,7 @@ iblock_execute_rw(struct se_cmd *cmd, struct scatterlist *sgl, u32 sgl_nents,
- 		if (test_bit(QUEUE_FLAG_FUA, &q->queue_flags)) {
+@@ -727,14 +727,13 @@ iblock_execute_rw(struct se_cmd *cmd, struct scatterlist *sgl, u32 sgl_nents,
+ 
+ 	if (data_direction == DMA_TO_DEVICE) {
+ 		struct iblock_dev *ib_dev = IBLOCK_DEV(dev);
+-		struct request_queue *q = bdev_get_queue(ib_dev->ibd_bd);
+ 		/*
+ 		 * Force writethrough using REQ_FUA if a volatile write cache
+ 		 * is not enabled, or if initiator set the Force Unit Access bit.
+ 		 */
+ 		opf = REQ_OP_WRITE;
+ 		miter_dir = SG_MITER_TO_SG;
+-		if (test_bit(QUEUE_FLAG_FUA, &q->queue_flags)) {
++		if (bdev_fua(ib_dev->ibd_bd)) {
  			if (cmd->se_cmd_flags & SCF_FUA)
  				opf |= REQ_FUA;
--			else if (!test_bit(QUEUE_FLAG_WC, &q->queue_flags))
-+			else if (!bdev_write_cache(ib_dev->ibd_bd))
- 				opf |= REQ_FUA;
- 		}
- 	} else {
-@@ -886,11 +886,7 @@ iblock_parse_cdb(struct se_cmd *cmd)
- 
- static bool iblock_get_write_cache(struct se_device *dev)
- {
--	struct iblock_dev *ib_dev = IBLOCK_DEV(dev);
--	struct block_device *bd = ib_dev->ibd_bd;
--	struct request_queue *q = bdev_get_queue(bd);
--
--	return test_bit(QUEUE_FLAG_WC, &q->queue_flags);
-+	return bdev_write_cache(IBLOCK_DEV(dev)->ibd_bd);
- }
- 
- static const struct target_backend_ops iblock_ops = {
-diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-index b30309f187cf0..092e986b8e8ed 100644
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -4247,8 +4247,7 @@ static void write_dev_flush(struct btrfs_device *device)
- 	 * of simplicity, since this is a debug tool and not meant for use in
- 	 * non-debug builds.
- 	 */
--	struct request_queue *q = bdev_get_queue(device->bdev);
--	if (!test_bit(QUEUE_FLAG_WC, &q->queue_flags))
-+	if (!bdev_write_cache(device->bdev))
- 		return;
- #endif
+ 			else if (!bdev_write_cache(ib_dev->ibd_bd))
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index b08f5dc31780d..62da020d02a11 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -265,8 +265,7 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+ 		 * cache flushes on IO completion.
+ 		 */
+ 		if (!(iomap->flags & (IOMAP_F_SHARED|IOMAP_F_DIRTY)) &&
+-		    (dio->flags & IOMAP_DIO_WRITE_FUA) &&
+-		    blk_queue_fua(bdev_get_queue(iomap->bdev)))
++		    (dio->flags & IOMAP_DIO_WRITE_FUA) && bdev_fua(iomap->bdev))
+ 			use_fua = true;
+ 	}
  
 diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 3a9578e14a6b0..807a49aa5a27a 100644
+index 807a49aa5a27a..075b16d4560e7 100644
 --- a/include/linux/blkdev.h
 +++ b/include/linux/blkdev.h
-@@ -1331,6 +1331,11 @@ static inline bool bdev_nonrot(struct block_device *bdev)
- 	return blk_queue_nonrot(bdev_get_queue(bdev));
+@@ -602,7 +602,6 @@ bool blk_queue_flag_test_and_set(unsigned int flag, struct request_queue *q);
+ 			     REQ_FAILFAST_DRIVER))
+ #define blk_queue_quiesced(q)	test_bit(QUEUE_FLAG_QUIESCED, &(q)->queue_flags)
+ #define blk_queue_pm_only(q)	atomic_read(&(q)->pm_only)
+-#define blk_queue_fua(q)	test_bit(QUEUE_FLAG_FUA, &(q)->queue_flags)
+ #define blk_queue_registered(q)	test_bit(QUEUE_FLAG_REGISTERED, &(q)->queue_flags)
+ #define blk_queue_nowait(q)	test_bit(QUEUE_FLAG_NOWAIT, &(q)->queue_flags)
+ 
+@@ -1336,6 +1335,11 @@ static inline bool bdev_write_cache(struct block_device *bdev)
+ 	return test_bit(QUEUE_FLAG_WC, &bdev_get_queue(bdev)->queue_flags);
  }
  
-+static inline bool bdev_write_cache(struct block_device *bdev)
++static inline bool bdev_fua(struct block_device *bdev)
 +{
-+	return test_bit(QUEUE_FLAG_WC, &bdev_get_queue(bdev)->queue_flags);
++	return test_bit(QUEUE_FLAG_FUA, &bdev_get_queue(bdev)->queue_flags);
 +}
 +
  static inline enum blk_zoned_model bdev_zoned_model(struct block_device *bdev)
