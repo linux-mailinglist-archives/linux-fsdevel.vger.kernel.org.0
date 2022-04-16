@@ -2,85 +2,178 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 155B850354D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Apr 2022 10:42:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54075503661
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 16 Apr 2022 13:38:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230408AbiDPIoP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 16 Apr 2022 04:44:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45262 "EHLO
+        id S231799AbiDPLlL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 16 Apr 2022 07:41:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230398AbiDPIoL (ORCPT
+        with ESMTP id S229575AbiDPLlK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 16 Apr 2022 04:44:11 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0600B9D0C0;
-        Sat, 16 Apr 2022 01:41:39 -0700 (PDT)
-Received: from kwepemi100002.china.huawei.com (unknown [172.30.72.54])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4KgRSY6TfbzFpkC;
-        Sat, 16 Apr 2022 16:39:09 +0800 (CST)
-Received: from kwepemm600013.china.huawei.com (7.193.23.68) by
- kwepemi100002.china.huawei.com (7.221.188.188) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Sat, 16 Apr 2022 16:41:37 +0800
-Received: from [10.174.178.46] (10.174.178.46) by
- kwepemm600013.china.huawei.com (7.193.23.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Sat, 16 Apr 2022 16:41:36 +0800
-Subject: Re: [PATCH] fs-writeback: Flush plug before next iteration in
- wb_writeback()
-To:     Christoph Hellwig <hch@lst.de>
-CC:     <viro@zeniv.linux.org.uk>, <torvalds@linux-foundation.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <yukuai3@huawei.com>
-References: <20220415013735.1610091-1-chengzhihao1@huawei.com>
- <20220415063920.GB24262@lst.de>
- <cf500f73-6c89-0d48-c658-4185fbf54b2c@huawei.com>
- <20220416054214.GA7386@lst.de>
-From:   Zhihao Cheng <chengzhihao1@huawei.com>
-Message-ID: <71acc295-3a5b-176d-a58e-2aa3ba7627d6@huawei.com>
-Date:   Sat, 16 Apr 2022 16:41:35 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Sat, 16 Apr 2022 07:41:10 -0400
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [IPv6:2a01:488:42:1000:50ed:8234::])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3DD73F327;
+        Sat, 16 Apr 2022 04:38:38 -0700 (PDT)
+Received: from [2a02:8108:963f:de38:6624:6d8d:f790:d5c]; authenticated
+        by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        id 1nfgl9-0000mk-RE; Sat, 16 Apr 2022 13:38:35 +0200
+Message-ID: <c6b80014-846d-cd90-7e67-d72959ffabe1@leemhuis.info>
+Date:   Sat, 16 Apr 2022 13:38:35 +0200
 MIME-Version: 1.0
-In-Reply-To: <20220416054214.GA7386@lst.de>
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.174.178.46]
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemm600013.china.huawei.com (7.193.23.68)
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-8.1 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: Re: fscache corruption in Linux 5.17?
+Content-Language: en-US
+To:     Max Kellermann <mk@cm4all.com>, dhowells@redhat.com
+Cc:     linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "regressions@lists.linux.dev" <regressions@lists.linux.dev>
+References: <YlWWbpW5Foynjllo@rabbit.intern.cm-ag>
+From:   Thorsten Leemhuis <regressions@leemhuis.info>
+In-Reply-To: <YlWWbpW5Foynjllo@rabbit.intern.cm-ag>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1650109118;7865a6ba;
+X-HE-SMSGID: 1nfgl9-0000mk-RE
+X-Spam-Status: No, score=-5.8 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-ÔÚ 2022/4/16 13:42, Christoph Hellwig Ð´µÀ:
->> I think the root cause is fsync gets buffer head's lock without locking
->> corresponding page, fixing 'progess' and flushing plug are both
->> workarounds.
-> 
-> So let's fix that.
-> 
+[TLDR: I'm adding the regression report below to regzbot, the Linux
+kernel regression tracking bot; all text you find below is compiled from
+a few templates paragraphs you might have encountered already already
+from similar mails.]
 
-I think adding page lock before locking buffer head is a little 
-difficult and risky:
-1. There are too many places getting buffer head before submitting bio, 
-and not all filesystems behave same in readpage/writepage/write_inode. 
-For example, ntfs_read_block() has locked page before locking buffer 
-head and then submitting bh, ext4(no journal) and fat may lock buffer 
-head without locking page while writing inode. It's a huge work to check 
-all places.
-2. Import page lock before locking buffer head may bring new unknown 
-problem(other deadlocks about page ?). Taking page lock before locking 
-buffer head(in all processes which can be concurrent with wb_writeback) 
-is a dangerous thing.
+Hi, this is your Linux kernel regression tracker. CCing the regression
+mailing list, as it should be in the loop for all regressions, as
+explained here:
+https://www.kernel.org/doc/html/latest/admin-guide/reporting-issues.html
 
-So, how about applying the safe and simple method(flush plug) for the 
-time being?
-PS: Maybe someday buffer head is removed from all filesystems, then we 
-can remove this superfluous blk_flush_plug.
+On 12.04.22 17:10, Max Kellermann wrote:
+> Hi David,
+> 
+> two weeks ago, I updated a cluster of web servers to Linux kernel
+> 5.17.1 (5.16.x previously) which includes your rewrite of the fscache
+> code.
+> 
+> In the last few days, there were numerous complaints about broken
+> WordPress installations after WordPress was updated.  There were
+> PHP syntax errors everywhere.
+> 
+> Indeed there were broken PHP files, but the interesting part is: those
+> corruptions were only on one of the web servers; the others were fine,
+> the file contents were only broken on one of the servers.
+> 
+> File size and time stamp and everyhing in "stat" is identical, just
+> the file contents are corrupted; it looks like a mix of old and new
+> contents.  The corruptions always started at multiples of 4096 bytes.
+> 
+> An example diff:
+> 
+>  --- ok/wp-includes/media.php    2022-04-06 05:51:50.000000000 +0200
+>  +++ broken/wp-includes/media.php    2022-04-06 05:51:50.000000000 +0200
+>  @@ -5348,7 +5348,7 @@
+>                  /**
+>                   * Filters the threshold for how many of the first content media elements to not lazy-load.
+>                   *
+>  -                * For these first content media elements, the `loading` attribute will be omitted. By default, this is the case
+>  +                * For these first content media elements, the `loading` efault, this is the case
+>                   * for only the very first content media element.
+>                   *
+>                   * @since 5.9.0
+>  @@ -5377,3 +5377,4 @@
+>   
+>          return $content_media_count;
+>   }
+>  +^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@
+> 
+> The corruption can be explained by WordPress commit
+> https://github.com/WordPress/WordPress/commit/07855db0ee8d5cff2 which
+> makes the file 31 bytes longer (185055 -> 185086).  The "broken" web
+> server sees the new contents until offset 184320 (= 45 * 4096), but
+> sees the old contents from there on; followed by 31 null bytes
+> (because the kernel reads past the end of the cache?).
+> 
+> All web servers mount a storage via NFSv3 with fscache.
+> 
+> My suspicion is that this is caused by a fscache regression in Linux
+> 5.17.  What do you think?
+> 
+> What can I do to debug this further, is there any information you
+> need?  I don't know much about how fscache works internally and how to
+> obtain information.
+
+Thx for the report. Maybe a bisection is what's needed here, but lets
+see what David says, maybe he has a idea already.
+
+To be sure below issue doesn't fall through the cracks unnoticed, I'm
+adding it to regzbot, my Linux kernel regression tracking bot:
+
+#regzbot ^introduced v5.16..v5.17
+#regzbot title fscache: file contents are corrupted
+#regzbot ignore-activity
+
+If it turns out this isn't a regression, free free to remove it from the
+tracking by sending a reply to this thread containing a paragraph like
+"#regzbot invalid: reason why this is invalid" (without the quotes).
+
+Reminder for developers: when fixing the issue, please add a 'Link:'
+tags pointing to the report (the mail quoted above) using
+lore.kernel.org/r/, as explained in
+'Documentation/process/submitting-patches.rst' and
+'Documentation/process/5.Posting.rst'. Regzbot needs them to
+automatically connect reports with fixes, but they are useful in
+general, too.
+
+I'm sending this to everyone that got the initial report, to make
+everyone aware of the tracking. I also hope that messages like this
+motivate people to directly get at least the regression mailing list and
+ideally even regzbot involved when dealing with regressions, as messages
+like this wouldn't be needed then. And don't worry, if I need to send
+other mails regarding this regression only relevant for regzbot I'll
+send them to the regressions lists only (with a tag in the subject so
+people can filter them away). With a bit of luck no such messages will
+be needed anyway.
+
+Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+
+P.S.: As the Linux kernel's regression tracker I'm getting a lot of
+reports on my table. I can only look briefly into most of them and lack
+knowledge about most of the areas they concern. I thus unfortunately
+will sometimes get things wrong or miss something important. I hope
+that's not the case here; if you think it is, don't hesitate to tell me
+in a public reply, it's in everyone's interest to set the public record
+straight.
+
+-- 
+Additional information about regzbot:
+
+If you want to know more about regzbot, check out its web-interface, the
+getting start guide, and the references documentation:
+
+https://linux-regtracking.leemhuis.info/regzbot/
+https://gitlab.com/knurd42/regzbot/-/blob/main/docs/getting_started.md
+https://gitlab.com/knurd42/regzbot/-/blob/main/docs/reference.md
+
+The last two documents will explain how you can interact with regzbot
+yourself if your want to.
+
+Hint for reporters: when reporting a regression it's in your interest to
+CC the regression list and tell regzbot about the issue, as that ensures
+the regression makes it onto the radar of the Linux kernel's regression
+tracker -- that's in your interest, as it ensures your report won't fall
+through the cracks unnoticed.
+
+Hint for developers: you normally don't need to care about regzbot once
+it's involved. Fix the issue as you normally would, just remember to
+include 'Link:' tag in the patch descriptions pointing to all reports
+about the issue. This has been expected from developers even before
+regzbot showed up for reasons explained in
+'Documentation/process/submitting-patches.rst' and
+'Documentation/process/5.Posting.rst'.
