@@ -2,81 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 47536504A5A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Apr 2022 03:12:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F27C5504A59
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Apr 2022 03:12:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235516AbiDRBOy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 17 Apr 2022 21:14:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36464 "EHLO
+        id S234937AbiDRBOw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 17 Apr 2022 21:14:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36462 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233734AbiDRBOu (ORCPT
+        with ESMTP id S233563AbiDRBOu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Sun, 17 Apr 2022 21:14:50 -0400
 Received: from esa2.hgst.iphmx.com (esa2.hgst.iphmx.com [68.232.143.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EF7413E25
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4277F13E3C
         for <linux-fsdevel@vger.kernel.org>; Sun, 17 Apr 2022 18:12:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
   t=1650244333; x=1681780333;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=6OLTerLknJbjyMEr5mHtxRFysbEvb53mP1nCAb6D92s=;
-  b=kA5ajp2u1d17SwcVPMNhU/P1eZCfl5UG2Y/mXouUxFvXtxSVcKqW5SR5
-   XsJjc1XbQupxLt/y+a7/WGopaq3eNG9pU8UMrBPiZQrrwgN9oWxcu5fOJ
-   0tgs/GWl0jCAQKzk0zHAEVqFm83zhQxY6R+TCE/PXFmeo+igEGAAqOTmf
-   wgoY3YxBGQ5w2JDQcO/wKeAe90oYN94I5T7SjmrAIR/ydGEwKBNf8KhlS
-   vwW+pBC8XNNmHgLM8f4HWEgHhcQTtCxZLgiO8kYumuDbGii8SRM0Hw9w6
-   C/sbdDDbrfdWqWar0YHrXdoYCuaLI+KzB1Q8Tm0iNHwqISoMZwguBKxCU
-   g==;
+  bh=oOSi7P4nsBSx+gZTKuOcLlG+tlxO5KOYfgplYW3yXbY=;
+  b=KlzqS043rWG4tHWJW+3pJuLMnCU0xBl3borUvVaWWc0RvCdcBRzOGpy6
+   MHDdQ6JGQcRqmFwspdBmANl8YXVmdZO3san8AdhKcnit3IT++v6GOZ4wT
+   +tnT4mX9Nv6e/y4jU+K8ZnP01b4J5uCXilhgLyFAXAhD3QmBsxqFH3zbJ
+   oW+XS+kQzdaZFZaKzLG4NJ9JFtU3nEAnB43OuJwD06oZN6U9kj9m5yKDQ
+   Tmw/0BiOWxzFJequdW9HC9WG/gHXK9nlkN58ngv24YOxJHK6f39CwjIaY
+   g7sSy2OOZYay6d2HTYGF4G0VHxWFieddEeVNKL4R68yuKA6Hcb1q4QnDV
+   w==;
 X-IronPort-AV: E=Sophos;i="5.90,267,1643644800"; 
-   d="scan'208";a="302313767"
+   d="scan'208";a="302313768"
 Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
   by ob1.hgst.iphmx.com with ESMTP; 18 Apr 2022 09:12:12 +0800
-IronPort-SDR: 8zxNqhtfMNYdOfgbvC3P1IC3P3ZqAXFUdmfyI9ld8KwI4j7VwY5vw0RF1OWRmp8pWATYnJgeSy
- 5FCTDuDeO1WKcIJBkh059aI/98U5AWh19Bgl3RvVZ3/N68REaG1TSAjuE8ou891WcwEWlmq/HX
- XAtU5pgsJkopm/2Mhz0Khsu9Ega8U8NrwHQD43asuqoeD1T56Xt5SSoE1RNP8y3E2t+tQRAYF5
- yu84oVireBtAc8SeAmBpsIQKnHZ/f9KzhHbgaqoiX35Ex0wYMCSOAAYQpRSD0yqwJr2zu6Jb5k
- lg856VUGLct4ow9vU71EXo+s
+IronPort-SDR: aghzEzkQPmerhRZQxPhZ3H+5GKzusdn50wjOLkaa6oX3ROzIU2XjB6LdTrzuTwKB84FSZvyWDO
+ NZwcLhBSak1V3pqHVGhp2qEg6azbdwm0eV/mA1EXHp0gAPDVeeP7P16E4zhZcHEEyvKCDxYeBx
+ JKwvGdqNspPmbnoRFPBax5Rx4MxRe+0ifMzM32skhaOGbjDhv4TNGGeZpL5zPZd0xMnOMc539H
+ t3wgNGHsZfg8VzsyuGirlmMnJsYrr4EoMU484UcK7iHPtlm6TMR9IPPCZppvfXl4Of7RpEY2d3
+ 2Wcn2VpN/JUG5Xy0j7RwJfdd
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 17 Apr 2022 17:42:33 -0700
-IronPort-SDR: ZUSOcXYRyPb/vaapaS8myH9IfLrxHTLFv1E0dLJHrzJ8lN9V2Y2+kxRjN8PkG3RCax3FIiAcZo
- 7T/7IhvGi5tux198O9W/5ipm3lKLz8XToHu63ILoaTSirfpIX6HR7zXPUSLx61gGG0lGJvYTor
- bySS9c/9PcddGGnvlYSIrW0+cYI2jUFmX/JvRVysTMHERYzD+ClEwdkRA1LeAstQWOZAgZc+WT
- So87qBUdb6MOybnCbYFD57PIvVl+4FpnaW4kmJi3HE4ZwqTZ0gS9Q9Sz80lSxKaUIyMPCw9zZo
- 3UQ=
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 17 Apr 2022 17:42:34 -0700
+IronPort-SDR: xKzrYbp7C+rcLSZ5C2e22uA59ihA3ceYZSHe//6+TA5gmFbI02JW5FygREV8SEUM66iS/OnitE
+ BIqhtVxB9uucrDi9+bCOPvN9Zw4HglYRaR36HFLTuSTGTbeH6qq22H3Am3BaVN1LDPj/c9ypzE
+ OHhJwsaR644QmlwJZXDxEgL3QGs87qUSNYROw93G26vwon7mTL7oju6FgxwKYG4O5wh5bJuzmQ
+ PCSDm118UK5xaTCohPo46yKwVwTWEtv8CjHa6KTM681L5iLWNWxSfLM6MCCt/88TMQvYD8Rwzr
+ i/8=
 WDCIronportException: Internal
 Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
-  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 17 Apr 2022 18:12:13 -0700
+  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 17 Apr 2022 18:12:14 -0700
 Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4KhTRv63xPz1SHwl
-        for <linux-fsdevel@vger.kernel.org>; Sun, 17 Apr 2022 18:12:11 -0700 (PDT)
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4KhTRw41VHz1SVnx
+        for <linux-fsdevel@vger.kernel.org>; Sun, 17 Apr 2022 18:12:12 -0700 (PDT)
 Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
         reason="pass (just generated, assumed good)"
         header.d=opensource.wdc.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
         opensource.wdc.com; h=content-transfer-encoding:mime-version
         :references:in-reply-to:x-mailer:message-id:date:subject:to
-        :from; s=dkim; t=1650244331; x=1652836332; bh=6OLTerLknJbjyMEr5m
-        HtxRFysbEvb53mP1nCAb6D92s=; b=Uy9rdb+vtsqsUOP1fz62WuvqcMQ/GBKS6/
-        YiXTC4zAFv1MjwEKN46LBKDDTiKoBINEVV4CCnlGpvDG4lPJ4USrKlruUIldBE36
-        reX8DA9rDLKGpprsN9ZPz6PY6h/SwsKBSIK1L65QCQ54FlhwTNcx+TidN4fcrNI+
-        Ga7zJXYM/m7tw67QWw9+1JfQgUoCsEvi5BamJ9mg1+WUE4jhf0r24IllNBWWAMkD
-        DCbfOnTDI7dxp1uBZ1FAudbtiHPGRQCfBUpQzaEfHWCqnunaZ618NVowW9qCHj/v
-        2wknAKsJMZCPNT9a3pZoit008PWnvEYVKydFCYn3xEKQbuQAuvpA==
+        :from; s=dkim; t=1650244332; x=1652836333; bh=oOSi7P4nsBSx+gZTKu
+        OcLlG+tlxO5KOYfgplYW3yXbY=; b=jtlnqY313sjyJk7xdc2D31d6qrh+wKvRYI
+        81S4v52bbrvo/rNcfWfbb9lfO1BsVixaebxOiFMzehq5mt08AM/Y+CrNCUwMHkUg
+        XD3Ja7QgANra3hGC3cW613q+CFLuwU1BfcTiDlOEUUZz24b/z7qwz2NlcP47H8tV
+        oU09Vr3TZDYkfN24YoqhY+ozYwQ5nqJtRiNyAi+JmAz3d6wmvZn9OTiO6u0HvZkB
+        +sidST6zFCCpt3ed5gLjEQAHRDEWf3ROVUOg8nxB5WmXnuxs/ogRQOusrUIihm6q
+        xVYXdMsqHVUTUY3sc7VtQnzwjbvzjAPsN2AiQiYWSztvnkkqXo6g==
 X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
 Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
         by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id v6eRvEfApMfi for <linux-fsdevel@vger.kernel.org>;
-        Sun, 17 Apr 2022 18:12:11 -0700 (PDT)
+        with ESMTP id GdhzP-szQwpG for <linux-fsdevel@vger.kernel.org>;
+        Sun, 17 Apr 2022 18:12:12 -0700 (PDT)
 Received: from washi.fujisawa.hgst.com (washi.fujisawa.hgst.com [10.149.53.254])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4KhTRv0Sntz1Rvlx;
-        Sun, 17 Apr 2022 18:12:10 -0700 (PDT)
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4KhTRv5VJDz1Rwrw;
+        Sun, 17 Apr 2022 18:12:11 -0700 (PDT)
 From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: [PATCH 2/8] zonefs: Fix management of open zones
-Date:   Mon, 18 Apr 2022 10:12:01 +0900
-Message-Id: <20220418011207.2385416-3-damien.lemoal@opensource.wdc.com>
+Subject: [PATCH 3/8] zonefs: Rename super block information fields
+Date:   Mon, 18 Apr 2022 10:12:02 +0900
+Message-Id: <20220418011207.2385416-4-damien.lemoal@opensource.wdc.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220418011207.2385416-1-damien.lemoal@opensource.wdc.com>
 References: <20220418011207.2385416-1-damien.lemoal@opensource.wdc.com>
@@ -92,129 +92,89 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The mount option "explicit_open" manages the device open zone
-resources to ensure that if an application opens a sequential file for
-writing, the file zone can always be written by explicitly opening
-the zone and accounting for that state with the s_open_zones counter.
+The s_open_zones field of struct zonefs_sb_info is used to count the
+number of files that are open for writing and may not necessarilly
+correspond to the number of open zones on the device. For instance, an
+application may open for writing a sequential zone file, fully write it
+and keep the file open. In such case, the zone of the file is not open
+anymore (it is in the full state).
 
-However, if some zones are already open when mounting, the device open
-zone resource usage status will be larger than the initial s_open_zones
-value of 0. Ensure that this inconsistency does not happen by closing
-any sequential zone that is open when mounting.
+Avoid confusion about this counter meaning by renaming it to
+s_wro_seq_files. To keep things consistent, the field s_max_open_zones
+is renamed to s_max_wro_seq_files.
 
-Furthermore, with ZNS drives, closing an explicitly open zone that has
-not been written will change the zone state to "closed", that is, the
-zone will remain in an active state. Since this can then cause failures
-of explicit open operations on other zones if the drive active zone
-resources are exceeded, we need to make sure that the zone is not
-active anymore by resetting it instead of closing it. To address this,
-zonefs_zone_mgmt() is modified to change a REQ_OP_ZONE_CLOSE request
-into a REQ_OP_ZONE_RESET for sequential zones that have not been
-written.
-
-Fixes: b5c00e975779 ("zonefs: open/close zone on file open/close")
-Cc: <stable@vger.kernel.org>
 Signed-off-by: Damien Le Moal <damien.lemoal@opensource.wdc.com>
 ---
- fs/zonefs/super.c | 45 ++++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 40 insertions(+), 5 deletions(-)
+ fs/zonefs/super.c  | 17 ++++++++++-------
+ fs/zonefs/zonefs.h |  4 ++--
+ 2 files changed, 12 insertions(+), 9 deletions(-)
 
 diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
-index 75d8dabe0807..e20e7c841489 100644
+index e20e7c841489..dafacde65659 100644
 --- a/fs/zonefs/super.c
 +++ b/fs/zonefs/super.c
-@@ -35,6 +35,17 @@ static inline int zonefs_zone_mgmt(struct inode *inode=
-,
+@@ -1035,8 +1035,10 @@ static int zonefs_open_zone(struct inode *inode)
+ 	mutex_lock(&zi->i_truncate_mutex);
 =20
- 	lockdep_assert_held(&zi->i_truncate_mutex);
-=20
-+	/*
-+	 * With ZNS drives, closing an explicitly open zone that has not been
-+	 * written will change the zone state to "closed", that is, the zone
-+	 * will remain active. Since this can then cause failure of explicit
-+	 * open operation on other zones if the drive active zone resources
-+	 * are exceeded, make sure that the zone does not remain active by
-+	 * resetting it.
-+	 */
-+	if (op =3D=3D REQ_OP_ZONE_CLOSE && !zi->i_wpoffset)
-+		op =3D REQ_OP_ZONE_RESET;
+ 	if (!zi->i_wr_refcnt) {
+-		if (atomic_inc_return(&sbi->s_open_zones) > sbi->s_max_open_zones) {
+-			atomic_dec(&sbi->s_open_zones);
++		unsigned int wro =3D atomic_inc_return(&sbi->s_wro_seq_files);
 +
- 	trace_zonefs_zone_mgmt(inode, op);
- 	ret =3D blkdev_zone_mgmt(inode->i_sb->s_bdev, op, zi->i_zsector,
- 			       zi->i_zone_size >> SECTOR_SHIFT, GFP_NOFS);
-@@ -1294,12 +1305,13 @@ static void zonefs_init_dir_inode(struct inode *p=
-arent, struct inode *inode,
- 	inc_nlink(parent);
++		if (wro > sbi->s_max_wro_seq_files) {
++			atomic_dec(&sbi->s_wro_seq_files);
+ 			ret =3D -EBUSY;
+ 			goto unlock;
+ 		}
+@@ -1044,7 +1046,7 @@ static int zonefs_open_zone(struct inode *inode)
+ 		if (i_size_read(inode) < zi->i_max_size) {
+ 			ret =3D zonefs_zone_mgmt(inode, REQ_OP_ZONE_OPEN);
+ 			if (ret) {
+-				atomic_dec(&sbi->s_open_zones);
++				atomic_dec(&sbi->s_wro_seq_files);
+ 				goto unlock;
+ 			}
+ 			zi->i_flags |=3D ZONEFS_ZONE_OPEN;
+@@ -1108,7 +1110,7 @@ static void zonefs_close_zone(struct inode *inode)
+ 		}
+ 		zi->i_flags &=3D ~ZONEFS_ZONE_OPEN;
+ dec:
+-		atomic_dec(&sbi->s_open_zones);
++		atomic_dec(&sbi->s_wro_seq_files);
+ 	}
+ 	mutex_unlock(&zi->i_truncate_mutex);
  }
-=20
--static void zonefs_init_file_inode(struct inode *inode, struct blk_zone =
-*zone,
--				   enum zonefs_ztype type)
-+static int zonefs_init_file_inode(struct inode *inode, struct blk_zone *=
-zone,
-+				  enum zonefs_ztype type)
- {
- 	struct super_block *sb =3D inode->i_sb;
- 	struct zonefs_sb_info *sbi =3D ZONEFS_SB(sb);
- 	struct zonefs_inode_info *zi =3D ZONEFS_I(inode);
-+	int ret =3D 0;
-=20
- 	inode->i_ino =3D zone->start >> sbi->s_zone_sectors_shift;
- 	inode->i_mode =3D S_IFREG | sbi->s_perm;
-@@ -1324,6 +1336,22 @@ static void zonefs_init_file_inode(struct inode *i=
-node, struct blk_zone *zone,
- 	sb->s_maxbytes =3D max(zi->i_max_size, sb->s_maxbytes);
- 	sbi->s_blocks +=3D zi->i_max_size >> sb->s_blocksize_bits;
- 	sbi->s_used_blocks +=3D zi->i_wpoffset >> sb->s_blocksize_bits;
+@@ -1688,9 +1690,10 @@ static int zonefs_fill_super(struct super_block *s=
+b, void *data, int silent)
+ 	sbi->s_gid =3D GLOBAL_ROOT_GID;
+ 	sbi->s_perm =3D 0640;
+ 	sbi->s_mount_opts =3D ZONEFS_MNTOPT_ERRORS_RO;
+-	sbi->s_max_open_zones =3D bdev_max_open_zones(sb->s_bdev);
+-	atomic_set(&sbi->s_open_zones, 0);
+-	if (!sbi->s_max_open_zones &&
 +
-+	/*
-+	 * For sequential zones, make sure that any open zone is closed first
-+	 * to ensure that the initial number of open zones is 0, in sync with
-+	 * the open zone accounting done when the mount option
-+	 * ZONEFS_MNTOPT_EXPLICIT_OPEN is used.
-+	 */
-+	if (type =3D=3D ZONEFS_ZTYPE_SEQ &&
-+	    (zone->cond =3D=3D BLK_ZONE_COND_IMP_OPEN ||
-+	     zone->cond =3D=3D BLK_ZONE_COND_EXP_OPEN)) {
-+		mutex_lock(&zi->i_truncate_mutex);
-+		ret =3D zonefs_zone_mgmt(inode, REQ_OP_ZONE_CLOSE);
-+		mutex_unlock(&zi->i_truncate_mutex);
-+	}
-+
-+	return ret;
- }
++	atomic_set(&sbi->s_wro_seq_files, 0);
++	sbi->s_max_wro_seq_files =3D bdev_max_open_zones(sb->s_bdev);
++	if (!sbi->s_max_wro_seq_files &&
+ 	    sbi->s_mount_opts & ZONEFS_MNTOPT_EXPLICIT_OPEN) {
+ 		zonefs_info(sb, "No open zones limit. Ignoring explicit_open mount opt=
+ion\n");
+ 		sbi->s_mount_opts &=3D ~ZONEFS_MNTOPT_EXPLICIT_OPEN;
+diff --git a/fs/zonefs/zonefs.h b/fs/zonefs/zonefs.h
+index 7b147907c328..67fd00ab173f 100644
+--- a/fs/zonefs/zonefs.h
++++ b/fs/zonefs/zonefs.h
+@@ -182,8 +182,8 @@ struct zonefs_sb_info {
+ 	loff_t			s_blocks;
+ 	loff_t			s_used_blocks;
 =20
- static struct dentry *zonefs_create_inode(struct dentry *parent,
-@@ -1333,6 +1361,7 @@ static struct dentry *zonefs_create_inode(struct de=
-ntry *parent,
- 	struct inode *dir =3D d_inode(parent);
- 	struct dentry *dentry;
- 	struct inode *inode;
-+	int ret;
+-	unsigned int		s_max_open_zones;
+-	atomic_t		s_open_zones;
++	unsigned int		s_max_wro_seq_files;
++	atomic_t		s_wro_seq_files;
+ };
 =20
- 	dentry =3D d_alloc_name(parent, name);
- 	if (!dentry)
-@@ -1343,10 +1372,16 @@ static struct dentry *zonefs_create_inode(struct =
-dentry *parent,
- 		goto dput;
-=20
- 	inode->i_ctime =3D inode->i_mtime =3D inode->i_atime =3D dir->i_ctime;
--	if (zone)
--		zonefs_init_file_inode(inode, zone, type);
--	else
-+	if (zone) {
-+		ret =3D zonefs_init_file_inode(inode, zone, type);
-+		if (ret) {
-+			iput(inode);
-+			goto dput;
-+		}
-+	} else {
- 		zonefs_init_dir_inode(dir, inode, type);
-+	}
-+
- 	d_add(dentry, inode);
- 	dir->i_size++;
-=20
+ static inline struct zonefs_sb_info *ZONEFS_SB(struct super_block *sb)
 --=20
 2.35.1
 
