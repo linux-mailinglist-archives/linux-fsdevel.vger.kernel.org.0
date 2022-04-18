@@ -2,143 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 59980505F6F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Apr 2022 23:37:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B9EE505F90
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Apr 2022 00:00:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230156AbiDRVkR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Apr 2022 17:40:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51178 "EHLO
+        id S229959AbiDRWC3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Apr 2022 18:02:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230099AbiDRVkL (ORCPT
+        with ESMTP id S229968AbiDRWC2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Apr 2022 17:40:11 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6BC12ED63
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Apr 2022 14:37:30 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: krisman)
-        with ESMTPSA id 50DD11F41A0C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1650317849;
-        bh=GYECkxCByzaOM41HzDyvIHL8brH7A+F886nTQDaIBIs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bP+AZTJ2AO1MTsrZvoI7YCLQR55xXNgN/onPzok9ZwDu3pRPGvKiTAVExakDe/H/1
-         s9bHl/qImPN12s+ovALL0e5KBxnKMx0sv2ElEMxL1ICOVPicOsYqo7YVLV9hnGWf+e
-         Kbr7D1JwzaKr6KTl38sJ75FLDMH0m9D1ZBo4rY0jWwiNo5MHoRDNvaEqVaaUhaW/mg
-         mQUUn6Lu6tyCGEn+e6HgEyTASMHNTnu0JfeQgwqtMyybQSK4gPQmHyb3QH3j/8pmaQ
-         nGdo5b943LsozlDXjsA+ugy9jf6MZv78fW8V4iQqR27B4rFG1ReyEZdUiI7KnXWGOH
-         DnvGr7u2klyyg==
-From:   Gabriel Krisman Bertazi <krisman@collabora.com>
-To:     hughd@google.com, akpm@linux-foundation.org, amir73il@gmail.com
-Cc:     viro@zeniv.linux.org.uk,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        kernel@collabora.com, Khazhismel Kumykov <khazhy@google.com>,
-        Linux MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: [PATCH v3 3/3] shmem: Expose space and accounting error count
-Date:   Mon, 18 Apr 2022 17:37:13 -0400
-Message-Id: <20220418213713.273050-4-krisman@collabora.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220418213713.273050-1-krisman@collabora.com>
-References: <20220418213713.273050-1-krisman@collabora.com>
+        Mon, 18 Apr 2022 18:02:28 -0400
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2084.outbound.protection.outlook.com [40.107.94.84])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C400FC34;
+        Mon, 18 Apr 2022 14:59:46 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=YmHKB9N93JAxomD4ei7wNTX40fa9BS6BqjODW5Qzbeah7AG6KctrawLIJOJ5vSwdHJAJoPHwTC6R38FjJAyUq07T9tMq2zgjZyjHwFidtIxvDsBJAroCisKM/ko58lSwagt/cgbMEbO2vBWoj5a0hUPFwxKY/QolLTZ22JMelirLSgpR4L9B/P6rdLGcl4XG1JvhKCzHSZaovcBDL7Cu9Y5TIE0/Zi/5ehA7+xVUbUt9u7gITGov6GDaZcZ4k+whjPJ7tSawjtHWGvoIEE/QoFwAoSVqFzT+fHoVw1EeefNnRfVUyZA3irzduOpPCP+jla8wapFq42lGzr5Btjkh7w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CN+ucaa1WTCjEAPxWasIE4fuNt8jhU8GhppnLgHsWdA=;
+ b=OzTYHn0/7ZntcMOJeyS5Lhmz88XIxVbLZN44rXrKnPIpIbDaIPb9TB9R0zObPrV/pvj3y8cDqs78XlKKC4yq9648f6qqtiNwa/JgJJVi3cWoIkJjes1NRDeDEpPWq1STbwlfpm3v6TVe8omtz/HOqdsejwE3OK7Vjql8dJlL7ENdIs6URXW0K7PAxSn9AofvmvhgWAFGoMs6W8OZSYn/PCe0e0mtlMqcw1DNtzHczv0eVyY8rS1MOS9zoBHcWEhXmvoFO5pVheRw051N4qWykCDK+ehPnUamYHYkn7un70DxKHxYPdasaoEvBMp8tgf1pEoOWUVITubLHnampybJdg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CN+ucaa1WTCjEAPxWasIE4fuNt8jhU8GhppnLgHsWdA=;
+ b=bXicg2jcbhd6FDxogaAN6N50ZsnHpl4y67V+FroCkPmfh2+A6nGIToTyar1Ln0Y1QgQP55CJBpGiDruLN/QrFlI4MgLTSjok3P6aOyVW6hBMz9SfoSQAJJBRx9c6vcvvmfQs9CRYEhv08DDMzwNyXFOjBvCJ9YDkWbDPy6jN2+KVwhgZqD9lsbL01Wl1KGRghJ6ncpULkL319vXc+somx6iyPH5eJyNf0zZj7aWoiiFubiwDxsFD4NuRDlDqFSwb+oFQOjjJlKzb/aXJJCdAYFjGhML6mxeujqsCfd/wlMzepD2MY0yU8ZmBypYCuBNcNiV8OjUAcpYtffHIY+w8eg==
+Received: from MW2PR12MB4667.namprd12.prod.outlook.com (2603:10b6:302:12::28)
+ by DS7PR12MB5888.namprd12.prod.outlook.com (2603:10b6:8:7b::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5164.20; Mon, 18 Apr
+ 2022 21:59:44 +0000
+Received: from MW2PR12MB4667.namprd12.prod.outlook.com
+ ([fe80::a90b:9df2:370c:e76b]) by MW2PR12MB4667.namprd12.prod.outlook.com
+ ([fe80::a90b:9df2:370c:e76b%3]) with mapi id 15.20.5164.025; Mon, 18 Apr 2022
+ 21:59:44 +0000
+From:   Chaitanya Kulkarni <chaitanyak@nvidia.com>
+To:     Tiezhu Yang <yangtiezhu@loongson.cn>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Dave Chinner <dchinner@redhat.com>
+CC:     "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] MAINTAINERS: update IOMAP FILESYSTEM LIBRARY and XFS
+ FILESYSTEM
+Thread-Topic: [PATCH v2] MAINTAINERS: update IOMAP FILESYSTEM LIBRARY and XFS
+ FILESYSTEM
+Thread-Index: AQHYTtSqmQ5ZeBEO2k+qVa6UeV9De6z2QY6A
+Date:   Mon, 18 Apr 2022 21:59:44 +0000
+Message-ID: <10e7dc6d-331b-3467-79d2-df410f281ccf@nvidia.com>
+References: <1649812810-18189-1-git-send-email-yangtiezhu@loongson.cn>
+In-Reply-To: <1649812810-18189-1-git-send-email-yangtiezhu@loongson.cn>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: dea9c849-50a3-4656-0312-08da2186bf16
+x-ms-traffictypediagnostic: DS7PR12MB5888:EE_
+x-microsoft-antispam-prvs: <DS7PR12MB5888B93EBB0B69DA8FF3EFF8A3F39@DS7PR12MB5888.namprd12.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: ibAtKgRyw8P/lFm2p/tdI2yW17y7pfFRaqDTFXneAdT+Tp9m8KIk4z/UlaRauAxAA2os9kVAggMeBqLkks7PDaVvuKZ61M2wTlVe0uejR8R2Nhs3ECvN7PSEH3ieb8BNaevMHbKH6e2cCFww2Mpz4uIk1yLFDL2AlApuN7rWkuVID/kH/XgAB9w5O+UAbFix/eXhvpG5Y+YpIQ7iJcCCgDTG3I/kZsQmKJC5xL0yystc6QgIICw4DGu1O1QG0s6rZuNVWovx8gTdSb9KXHRaqu3zY17wbByJEj121qHsMUFiLjrzQftrwnkrQkEEkRcEfILSYzbLVMci/Xr98INg6TV5ttwrkjCpzmfPnFfepwQHk6SMxs1vmZq71/nmr3qvKCuQZqu+anHmBo/SIG/5jSRZls1rsh0D3ngG92fHpEYdX0B0I0OVky5NKUXYGIgjCGFluFm0AOmsrOfKAwU225MGI6vUACYZghHxSOovNdOW47cVGrMBszj5Gv27LCEjmPewuDAgyqf+TioBUedxJFJuZ/zGzPcJY1LxHdH/LQkxtGx2RNRSuEH7uQ1q8zOyOsaFy54KYTK5J10is9Z/wS8to3tOx2hz4CMOBRJekO2BA3qV13SiCL5oAdDEs6jLfVJf8Nw0t5mfLbaCbk3Y18nMC+7ZgwYRbA8I4zc3dkpz+uIpF9/Cw2EvTFvvID6pZjRvq554NdhfEcnVEwGgU4r4tA92iD0TreA5Nb/EEMxIe4MbGReQoH0f2h3aa1Ftpr7sX0sLqnLvUx4ZdeccEg==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW2PR12MB4667.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(122000001)(38070700005)(38100700002)(508600001)(5660300002)(110136005)(31686004)(71200400001)(6486002)(2906002)(66476007)(8676002)(4326008)(66446008)(91956017)(66946007)(76116006)(66556008)(64756008)(54906003)(86362001)(8936002)(31696002)(316002)(6506007)(6512007)(186003)(53546011)(558084003)(2616005)(36756003)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?RGExRVBjSlE4VURQaDBlRjNlbU9hbVVMakJyTElqdmFjd2M4MkZ3YzRTNUlO?=
+ =?utf-8?B?TGJML0U5eVpYbUl3STEyK1JEcjVRUU9ESGtnR0cyM2N6TmpQMU54ZGhQR0dj?=
+ =?utf-8?B?ays1amduUDQ0Z2xFUmkxS2o0ajRNbUNyTXhlODZjMmhsTTdxMEZ3cWxJYzRH?=
+ =?utf-8?B?SGhuQXZETEs4MytBZmVPRjNzTnhmbnJFbHUxcmplS2tqK1luQ2d0YVhPWWZR?=
+ =?utf-8?B?WWFvMUxHeW85cHNDQnZWb05xZWsyQjQ0amhQRXFFWjRpY2NFZ055b1Q3Nml1?=
+ =?utf-8?B?T3RCNFZRdzZEeUR4VFN6dlZlMCtxaGRPL21EOTJsWHUxS0dxQ1MrbHZnT3RV?=
+ =?utf-8?B?YkR5V29FV3JBTGxJRWRVc2FaZHNYdTkwQ0NPeFo3cmV5UU5XWW1DQjRTOWUw?=
+ =?utf-8?B?R09ZU1FuNDJONDlaWmNqaDBKdmhIVHpnYTdOaSs0L0VkbXZzYmE3VE1QaUhU?=
+ =?utf-8?B?eWpBYVVNTFA3aWgzc2JteDA3dVpoT0tGcTNDSlZrMnBQR2Y1VWk1NDAzWmdG?=
+ =?utf-8?B?UnVvOTNWUGZxdDdFQzZ1SkRWekhPV2FCcHRwWnRhUlBTRDR6RE5Hb2htNXVi?=
+ =?utf-8?B?S3JmMitCeXRMWFV6aGJkaWFYeHVHckdKYXR4Y29hY2dkVkpSejdoaENCbzRF?=
+ =?utf-8?B?WHVZM2NoZWwrN1RuT2dscVVDemlRWXQ5UlZUb29CMzRrNXVCTFhPMFJUTkxz?=
+ =?utf-8?B?VVFyWTJEZjZ4MjRya0doMzVLTXdnK2d4MFhNWUVId2hvK04zclZ4ZHRRR1lI?=
+ =?utf-8?B?M0VhR0dhalpTMUZxMXBCSTlMenF5U0tOQUJCY2kxS3JPcm44YjZySDlvTFB2?=
+ =?utf-8?B?Y0VKN0FZMmZLVzh3N1U5K0Q0ZFdlSXl4dmRCYU1aeE0rUThNWmttU1REOUlo?=
+ =?utf-8?B?YWtqM2ZvOTE4UzV0L2swbmVnRkY1WjUrNTFyLzY3WkdkOGlCaXBVdFRUWFRo?=
+ =?utf-8?B?c3ZXZjYrdHdoa2NIdHV5ZkFLaElLQTVmYVk3L0dxOGtadDhjYkt6SmQvQjdn?=
+ =?utf-8?B?ZEpXd05TNGdGMzRuVVE4MVQ4OGFlUUhWazBxUlFxMlFtdjVrUWQyYU9DeEN5?=
+ =?utf-8?B?MmozYXA3RUR0Q1A4UzdLeGY1ajVhSlU4ajNaWU1UWWVnZldyTXRNajVjUm9M?=
+ =?utf-8?B?Vm5nTGpJQUV2Y2tmRlhSbWhyQlVPRndOeXdiei90NVF0VUNONGFZczExWEYw?=
+ =?utf-8?B?OXZWTC9rQngwYklVdlY0NGZRWnVIV3AvSkxneWNnNzdlZzNWR09KaEdQZnNC?=
+ =?utf-8?B?azBTK25OeDRoVmJwVmhCdXZxQmw5eXNwRGpYZElqenlkS1RCYkQ0S2VCT25z?=
+ =?utf-8?B?bGpKUVhlOElMdGxMT3RuWUxHWmFCb2xmWFZTT3pSTUovV3VuRWlpVXFCLzhC?=
+ =?utf-8?B?bGZGRENRT2tWZWhJZEphcEx2UStSK2h1WGZYYXB5cWdTbkh4UHA5aHBuMVpS?=
+ =?utf-8?B?bkloUWFCS29zZlAwMjVFZFdmMGYxQzhrUCtwYWJUN2UyQnBYWWt5NEc3dHJ6?=
+ =?utf-8?B?aFNscGttY1FXVTZGTEQveEVUMnZwVjB1aUIyc3BWRDVmYlcrYkxXWUMzVk8y?=
+ =?utf-8?B?eTBwNzNISzFPMTd0Wm4rS1JDa2xLVFZRdUsybTFKekhQMGVTNVlOUVExcW5m?=
+ =?utf-8?B?SlhCR3IrSXI5czVwWkJ5QU1FYXR6cEdXYzZWUkFqb0NReFpWcW8xQmlGR1Yy?=
+ =?utf-8?B?d1JLcUNObXhrTWJZTlovVGVMUHVGb0JJNlYyeDJJYitWeG1qUFFySThSYXh5?=
+ =?utf-8?B?NDNHcXV4VzJLWVI3RkZ1Skl0MFY2MjBvNzFWSlJDRnV2bmMvRkRqZWIzWnds?=
+ =?utf-8?B?SUlxWm96cUFpakZKTnQxc3p2c0JhSnllSzAwSUJYS0ZFSVVURW91Y2tHN0Fk?=
+ =?utf-8?B?L054eVpaM3hEMXhnYmVrUFI3Ymg0S0E3M3pxN2dDZmRjRm9kejVNQldtWmFX?=
+ =?utf-8?B?MnpGdDR4d3k3dFp5RFg1VTNCeG9XZFAwL2JSNitaRlB2eWl5SGpEUEdZa05h?=
+ =?utf-8?B?aWt0cjVkRDJhWjJkTXZEMFZJNGc1a3VuYlZ4WURwa3EvelByNTdKWklqV2pl?=
+ =?utf-8?B?THF1WHFBa2xoTU4vY28yV1ZqZVhnVEQya0tKUjFpYVE5SGQxVnRJemlvdFlo?=
+ =?utf-8?B?QkhSNnhBMllyZ25xYk0zQjZKNzJ5WXZMSWNvdTZBNnpudWMvUm9hc3YrK0lB?=
+ =?utf-8?B?YmdpcGtjQk5hWVJIZmhEb00reitDQlJMR0JvQlBBcTROaWhXNVdWQndMdTE4?=
+ =?utf-8?B?QTRYVFdCV3E2YkVncUxBd0lGT2RvT3cvaitMZHV1dW16RnNLWi9nTTMrTWx1?=
+ =?utf-8?B?ODhHcldUMUpBUkprU1NvSmJ5N2tzQ0JsMHN2bU5XTUMrS0ZUdmJ4UENLSVVK?=
+ =?utf-8?Q?QQNL8O8FoKwBigl8=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <C982D3A9F6FBA040A09B77D0D55F7BEC@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY autolearn=ham
-        autolearn_force=no version=3.4.6
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MW2PR12MB4667.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dea9c849-50a3-4656-0312-08da2186bf16
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Apr 2022 21:59:44.0634
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: XOmTLjCPDMvVH94IK68KdRUltBw4XCRRF7dnmnejHAmEfUZSQa0t3bYnkZR8SWTkDK+0GgSTYuR6TrRs4Oyqng==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5888
+X-Spam-Status: No, score=-4.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
+        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Exposing these shmem counters through sysfs is particularly useful for
-container provisioning, to allow administrators to differentiate between
-insufficiently provisioned fs size vs. running out of memory.
-
-Suggested-by: Amir Goldstein <amir73il@gmail.com>
-Suggested-by: Khazhy Kumykov <khazhy@google.com>
-Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
----
- Documentation/ABI/testing/sysfs-fs-tmpfs | 13 ++++++++++++
- mm/shmem.c                               | 25 ++++++++++++++++++++++++
- 2 files changed, 38 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-fs-tmpfs
-
-diff --git a/Documentation/ABI/testing/sysfs-fs-tmpfs b/Documentation/ABI/testing/sysfs-fs-tmpfs
-new file mode 100644
-index 000000000000..d32b90949710
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-fs-tmpfs
-@@ -0,0 +1,13 @@
-+What:		/sys/fs/tmpfs/<disk>/acct_errors
-+Date:		March 2022
-+Contact:	"Gabriel Krisman Bertazi" <krisman@collabora.com>
-+Description:
-+		Track the number of IO errors caused by lack of memory to
-+		perform the allocation of a tmpfs block.
-+
-+What:		/sys/fs/tmpfs/<disk>/space_errors
-+Date:		March 2022
-+Contact:	"Gabriel Krisman Bertazi" <krisman@collabora.com>
-+Description:
-+		Track the number of IO errors caused by lack of space
-+		in the filesystem to perform the allocation of a tmpfs block.
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 8fe4a22e83a6..5c665b955ceb 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -214,6 +214,7 @@ static inline bool shmem_inode_acct_block(struct inode *inode, long pages)
- 
- 	if (shmem_acct_block(info->flags, pages)) {
- 		sbinfo->acct_errors += 1;
-+		sysfs_notify(&sbinfo->kobj, NULL, "acct_errors");
- 		return false;
- 	}
- 
-@@ -228,6 +229,7 @@ static inline bool shmem_inode_acct_block(struct inode *inode, long pages)
- 
- unacct:
- 	sbinfo->space_errors += 1;
-+	sysfs_notify(&sbinfo->kobj, NULL, "space_errors");
- 	shmem_unacct_blocks(info->flags, pages);
- 	return false;
- }
-@@ -3584,10 +3586,33 @@ static int shmem_show_options(struct seq_file *seq, struct dentry *root)
- }
- 
- #if defined(CONFIG_SYSFS)
-+static ssize_t acct_errors_show(struct kobject *kobj,
-+				struct kobj_attribute *attr, char *page)
-+{
-+	struct shmem_sb_info *sbinfo =
-+		container_of(kobj, struct shmem_sb_info, kobj);
-+
-+	return sysfs_emit(page, "%lu\n", sbinfo->acct_errors);
-+}
-+
-+static ssize_t space_errors_show(struct kobject *kobj,
-+				 struct kobj_attribute *attr, char *page)
-+{
-+	struct shmem_sb_info *sbinfo =
-+		container_of(kobj, struct shmem_sb_info, kobj);
-+
-+	return sysfs_emit(page, "%lu\n", sbinfo->space_errors);
-+}
-+
- #define TMPFS_SB_ATTR_RO(name)	\
- 	static struct kobj_attribute tmpfs_sb_attr_##name = __ATTR_RO(name)
- 
-+TMPFS_SB_ATTR_RO(acct_errors);
-+TMPFS_SB_ATTR_RO(space_errors);
-+
- static struct attribute *tmpfs_attrs[] = {
-+	&tmpfs_sb_attr_acct_errors.attr,
-+	&tmpfs_sb_attr_space_errors.attr,
- 	NULL
- };
- ATTRIBUTE_GROUPS(tmpfs);
--- 
-2.35.1
-
+T24gNC8xMi8yMiAxODoyMCwgVGllemh1IFlhbmcgd3JvdGU6DQo+IEluIElPTUFQIEZJTEVTWVNU
+RU0gTElCUkFSWSBhbmQgWEZTIEZJTEVTWVNURU0sIHRoZSBNKGFpbCk6IGVudHJ5IGlzDQo+IHJl
+ZHVuZGFudCB3aXRoIHRoZSBMKGlzdCk6IGVudHJ5LCByZW1vdmUgdGhlIHJlZHVuZGFudCBNKGFp
+bCk6IGVudHJ5Lg0KPiANCj4gU2lnbmVkLW9mZi1ieTogVGllemh1IFlhbmcgPHlhbmd0aWV6aHVA
+bG9vbmdzb24uY24+DQoNCkxvb2tzIGdvb2QuDQoNClJldmlld2VkLWJ5OiBDaGFpdGFueWEgS3Vs
+a2FybmkgPGtjaEBudmlkaWEuY29tPg0KDQotY2sNCg0K
