@@ -2,68 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BC21B505D92
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Apr 2022 19:39:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CDA0505DB0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Apr 2022 19:47:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347167AbiDRRmX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Apr 2022 13:42:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58984 "EHLO
+        id S235671AbiDRRuc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Apr 2022 13:50:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237393AbiDRRmW (ORCPT
+        with ESMTP id S229656AbiDRRub (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Apr 2022 13:42:22 -0400
-Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31EE334666
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Apr 2022 10:39:42 -0700 (PDT)
-Received: by mail-pl1-x62a.google.com with SMTP id q3so12923302plg.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Apr 2022 10:39:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=F/6jEswmwOAmnHJw/Z7NeFz92t2kSVNLzcVtS0Sf4kA=;
-        b=RIdfh/Cx5VQRx41iMREwtJZLMcZj0gF41mm2ff3l/BFEvW8d773E2rDfXT6Zj+p18P
-         wGUyW1kl9TUd9wp14H7XQTV/CR4M1q9fgf2giFEmt4e56IyhoHqQVKjEAtlo/Ha9mXey
-         bbUNisaaxbYWoQgdxdq7vmNibfYgXZkBoib8/ZdspXWolt45K7+jg4RGzQoP9OYhGDKI
-         KDhNbao0ELHEW2R/WXRIahnszeb/Y0B1PCwXWSa/Iv7W1VqpSs/J/2oDnrDFYwDcnVU1
-         LysHLHDVFf77gH3neJkj97FDN7mbJpKqrJt9Rb4IXWwK8g+ieNRJucPdnSjU/PlInR0c
-         YXGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=F/6jEswmwOAmnHJw/Z7NeFz92t2kSVNLzcVtS0Sf4kA=;
-        b=bOgSjCqSnTGYAn14IPDKUAuOK8nUNQ0EoG+SHwDkiGA3kz8MPkWBMJQsq0Doo6DKbN
-         ScbxL9oXCELofXY5SxVYVTaQt+1F9n8um28sXmUW3UFIvHpQX2axP2Dla3w/P2Thx0KH
-         gAM4q7QpuFyNpj7avggIgNtQRkZ3grIFPjgrxrAewUw6W/h29db2EtlKNs+BaEpqvL4g
-         xKE79HSTcVU8BckiDF3U2DT9Jl7J5dmShlRtqiJ9G7JiFr8R4lP1tSYVbAg4bRRoqDts
-         XY5stYgc3qDgyCkAPlFI1Obp1TT9jMqH72svrQK8+0ufS2Iye3M/NNxlMaD6g+djyYj2
-         bFpQ==
-X-Gm-Message-State: AOAM533ojl0+pQsfVxRPPisraEON7Fy1+LflSTKC/msme7vw/pwj5a5q
-        0k+gNmo87v7BfJHhlXDfcxvN0Q==
-X-Google-Smtp-Source: ABdhPJx7X8qxRF/0CUmEkmDMmpwMka7fQnEnV5qlU+xAcna/NC7jX6aXDDXnHzq5S4ArvSDg2uZBFQ==
-X-Received: by 2002:a17:90b:17c6:b0:1d2:8450:49b3 with SMTP id me6-20020a17090b17c600b001d2845049b3mr8724918pjb.246.1650303581711;
-        Mon, 18 Apr 2022 10:39:41 -0700 (PDT)
-Received: from localhost.localdomain ([50.39.160.154])
-        by smtp.gmail.com with ESMTPSA id x6-20020a17090a294600b001cba3274bd0sm17159326pjf.28.2022.04.18.10.39.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Apr 2022 10:39:41 -0700 (PDT)
-From:   Tadeusz Struk <tadeusz.struk@linaro.org>
-To:     Namjae Jeon <linkinjeon@kernel.org>
-Cc:     Tadeusz Struk <tadeusz.struk@linaro.org>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        syzbot+a4087e40b9c13aad7892@syzkaller.appspotmail.com
-Subject: [PATCH] exfat: check if cluster num is valid
-Date:   Mon, 18 Apr 2022 10:39:23 -0700
-Message-Id: <20220418173923.193173-1-tadeusz.struk@linaro.org>
-X-Mailer: git-send-email 2.35.1
+        Mon, 18 Apr 2022 13:50:31 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1F389FEE;
+        Mon, 18 Apr 2022 10:47:49 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 351AC611DA;
+        Mon, 18 Apr 2022 17:47:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A642C385AA;
+        Mon, 18 Apr 2022 17:47:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1650304068;
+        bh=WbLnQHpzkVDefpnU3Ge794JfCCPCsghoZNKvniJfD/A=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=OTPS2NKf83XD6xPGnHXvfUMsg4YsQwCv6fahu41kHPz7LOOc4RL86qCukxQNSIPyO
+         A+EcFDcYRul01dAhm8HS9sdrDQbCRBgmQEPPEapry9t3Qd4i4gufsYkwPmHNayVwmX
+         gNNVHWc6989J0H71LJxdwCKX3WHMGCerugViUkeNzFVtrkjvarDdT6leRpcMcdqaM4
+         DRj0EoLDIuorJdHzohN1wgAFyMTXASn5IMaLYI6IjR7ZoPEHEJXV4wVxK42S5FFB+B
+         mvzO5eHlfjQaxSWX8IetLiHLkplMYda/sPslilpc55Lw4zvUJiv0AIUmyIiAjGVse2
+         pyPqhXKZG5pgQ==
+Date:   Mon, 18 Apr 2022 10:47:47 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     xfs <linux-xfs@vger.kernel.org>, fstests <fstests@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: generic/068 crash on 5.18-rc2?
+Message-ID: <20220418174747.GF17025@magnolia>
+References: <20220413033425.GM16799@magnolia>
+ <YlbjOPEQP66gc1WQ@casper.infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YlbjOPEQP66gc1WQ@casper.infradead.org>
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -71,69 +55,208 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Syzbot reported slab-out-of-bounds read in exfat_clear_bitmap.
-This was triggered by reproducer calling truncate with size 0,
-which causes the following trace:
+On Wed, Apr 13, 2022 at 03:50:32PM +0100, Matthew Wilcox wrote:
+> On Tue, Apr 12, 2022 at 08:34:25PM -0700, Darrick J. Wong wrote:
+> > Hmm.  Two nights in a row I've seen the following crash.  Has anyone
+> > else seen this, or should I keep digging?  This is a fairly boring
+> > x86_64 VM with a XFS v5 filesystem + rmapbt.
+> 
+> I have not seen this before.  I test with:
+> MKFS_OPTIONS  -- -f -m reflink=1,rmapbt=1 -i sparse=1 -b size=1024 /dev/sdc
+> 
+> Maybe I should try a 4096 byte block size.
+> 
+> > mm/filemap.c:1653 is the BUG in:
+> > 
+> > void folio_end_writeback(struct folio *folio)
+> > {
+> > 	/*
+> > 	 * folio_test_clear_reclaim() could be used here but it is an
+> > 	 * atomic operation and overkill in this particular case.
+> > 	 * Failing to shuffle a folio marked for immediate reclaim is
+> > 	 * too mild a gain to justify taking an atomic operation penalty
+> > 	 * at the end of every folio writeback.
+> > 	 */
+> > 	if (folio_test_reclaim(folio)) {
+> > 		folio_clear_reclaim(folio);
+> > 		folio_rotate_reclaimable(folio);
+> > 	}
+> > 
+> > 	/*
+> > 	 * Writeback does not hold a folio reference of its own, relying
+> > 	 * on truncation to wait for the clearing of PG_writeback.
+> > 	 * But here we must make sure that the folio is not freed and
+> > 	 * reused before the folio_wake().
+> > 	 */
+> > 	folio_get(folio);
+> > 	if (!__folio_end_writeback(folio))
+> > >>>>		BUG();
+> 
+> Grr, that should have been a VM_BUG_ON_FOLIO(1, folio) so we get useful
+> information about the folio (like whether it has an iop, or what order
+> the folio is).  Can you make that change and try to reproduce?
 
-BUG: KASAN: slab-out-of-bounds in exfat_clear_bitmap+0x147/0x490 fs/exfat/balloc.c:174
-Read of size 8 at addr ffff888115aa9508 by task syz-executor251/365
+> What's going on here is that we've called folio_end_writeback() on a
+> folio which does not have the writeback flag set.  That _should_ be
+> impossible, hence the use of BUG().  Either we've called
+> folio_end_writeback() twice on the same folio, or we neglected to set
+> the writeback flag on the folio.  I don't immediately see why either
+> of those two things would happen.
 
+Well, I made that change and rebased to -rc3 to see if reverting that
+ZERO_PAGE thing would produce better results, I think I just got the
+same crash.  Curiously, the only VM that died this time was the one
+running the realtime configuration, but it's still generic/068:
+
+FSTYP         -- xfs (debug)
+PLATFORM      -- Linux/x86_64 oci-mtr28 5.18.0-rc3-djwx #rc3 SMP PREEMPT_DYNAMIC Sun Apr 17 14:42:49 PDT 2022
+MKFS_OPTIONS  -- -f -rrtdev=/dev/sdb4 -llogdev=/dev/sdb2 -m reflink=0,rmapbt=0, -d rtinherit=1, /dev/sda4
+MOUNT_OPTIONS -- -ortdev=/dev/sdb4 -ologdev=/dev/sdb2 /dev/sda4 /opt
+
+I don't know if it'll help, but here's the sequence of tests that we
+were running just prior to crashing:
+
+generic/445      3s
+generic/225      76s
+xfs/306  22s
+xfs/290  3s
+generic/155     [not run] Reflink not supported by test filesystem type: xfs
+generic/525      6s
+generic/269      89s
+generic/1206    [not run] xfs_io swapext -v vfs -s 64k -l 64k ioctl support is missing
+xfs/504  198s
+xfs/192 [not run] Reflink not supported by scratch filesystem type: xfs
+xfs/303  1s
+generic/346      6s
+generic/512      5s
+xfs/227  308s
+generic/147     [not run] Reflink not supported by test filesystem type: xfs
+generic/230     [not run] Quotas not supported on realtime test device
+generic/008      4s
+generic/108      4s
+xfs/264  12s
+generic/200     [not run] Reflink not supported by scratch filesystem type: xfs
+generic/493     [not run] Dedupe not supported by scratch filesystem type: xfs
+xfs/021  5s
+generic/672     [not run] Reflink not supported by scratch filesystem type: xfs
+xfs/493  5s
+xfs/146  13s
+xfs/315 [not run] Reflink not supported by scratch filesystem type: xfs
+generic/068     
+
+And the dmesg output:
+
+run fstests generic/068 at 2022-04-17 16:57:16
+XFS (sda4): Mounting V5 Filesystem
+XFS (sda4): Ending clean mount
+page:ffffea0004a39c40 refcount:0 mapcount:0 mapping:0000000000000000 index:0x1 pfn:0x128e71
+flags: 0x17ff80000000000(node=0|zone=2|lastcpupid=0xfff)
+raw: 017ff80000000000 0000000000000000 ffffffff00000203 0000000000000000
+raw: 0000000000000001 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: VM_BUG_ON_FOLIO(((unsigned int) folio_ref_count(folio) + 127u <= 127u))
+------------[ cut here ]------------
+kernel BUG at include/linux/mm.h:1164!
+invalid opcode: 0000 [#1] PREEMPT SMP
+CPU: 3 PID: 1094085 Comm: 3:0 Tainted: G        W         5.18.0-rc3-djwx #rc3 0a707744ee7c555d54e50726c5b02515710a6aae
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS ?-20171121_152543-x86-ol7-builder-01.us.oracle.com-4.el7.1 04/01/2014
+Workqueue: xfs-conv/sda4 xfs_end_io [xfs]
+RIP: 0010:folio_end_writeback+0xd0/0x110
+Code: 80 60 02 fb 48 89 ef e8 5e 6d 01 00 8b 45 34 83 c0 7f 83 f8 7f 0f 87 6a ff ff ff 48 c7 c6 40 c7 e2 81 48 89 ef e8 30 69 04 00 <0f> 0b 48 89 ee e8 b6 51 02 00 eb 9a 48 c7 c6 c0 ad e5 81 48 89 ef
+RSP: 0018:ffffc900084f3d48 EFLAGS: 00010246
+RAX: 000000000000005c RBX: 0000000000001000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff81e56da3 RDI: 00000000ffffffff
+RBP: ffffea0004a39c40 R08: 0000000000000000 R09: ffffffff8205fe40
+R10: 0000000000017578 R11: 00000000000175f0 R12: 0000000000004000
+R13: ffff88814dc5cd40 R14: 000000000000002e R15: ffffea0004a39c40
+FS:  0000000000000000(0000) GS:ffff88843fd80000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f2b0ea47010 CR3: 000000043f00c000 CR4: 00000000001506a0
 Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack_lvl+0x1e2/0x24b lib/dump_stack.c:118
- print_address_description+0x81/0x3c0 mm/kasan/report.c:233
- __kasan_report mm/kasan/report.c:419 [inline]
- kasan_report+0x1a4/0x1f0 mm/kasan/report.c:436
- __asan_report_load8_noabort+0x14/0x20 mm/kasan/report_generic.c:309
- exfat_clear_bitmap+0x147/0x490 fs/exfat/balloc.c:174
- exfat_free_cluster+0x25a/0x4a0 fs/exfat/fatent.c:181
- __exfat_truncate+0x99e/0xe00 fs/exfat/file.c:217
- exfat_truncate+0x11b/0x4f0 fs/exfat/file.c:243
- exfat_setattr+0xa03/0xd40 fs/exfat/file.c:339
- notify_change+0xb76/0xe10 fs/attr.c:336
- do_truncate+0x1ea/0x2d0 fs/open.c:65
+ <TASK>
+ iomap_finish_ioend+0x1ee/0x6a0
+ iomap_finish_ioends+0x69/0x100
+ xfs_end_ioend+0x5a/0x160 [xfs e8251de1111d7958449fd159d84af12a2afc12f2]
+ xfs_end_io+0xb1/0xf0 [xfs e8251de1111d7958449fd159d84af12a2afc12f2]
+ process_one_work+0x1df/0x3c0
+ ? rescuer_thread+0x3b0/0x3b0
+ worker_thread+0x53/0x3b0
+ ? rescuer_thread+0x3b0/0x3b0
+ kthread+0xea/0x110
+ ? kthread_complete_and_exit+0x20/0x20
+ ret_from_fork+0x1f/0x30
+ </TASK>
+Modules linked in: xfs dm_zero btrfs blake2b_generic xor lzo_compress lzo_decompress zlib_deflate raid6_pq zstd_compress dm_delay dm_snapshot dm_thin_pool dm_persistent_data dm_bio_prison dm_bufio dm_flakey libcrc32c xt_REDIRECT iptable_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 auth_rpcgss oid_registry xt_tcpudp ip_set_hash_ip ip_set_hash_net xt_set ip_set_hash_mac ip_set nfnetlink ip6table_filter ip6_tables iptable_filter bfq sch_fq_codel ip_tables x_tables overlay nfsv4 af_packet [last unloaded: scsi_debug]
+Dumping ftrace buffer:
+   (ftrace buffer empty)
+---[ end trace 0000000000000000 ]---
+RIP: 0010:folio_end_writeback+0xd0/0x110
+Code: 80 60 02 fb 48 89 ef e8 5e 6d 01 00 8b 45 34 83 c0 7f 83 f8 7f 0f 87 6a ff ff ff 48 c7 c6 40 c7 e2 81 48 89 ef e8 30 69 04 00 <0f> 0b 48 89 ee e8 b6 51 02 00 eb 9a 48 c7 c6 c0 ad e5 81 48 89 ef
+RSP: 0018:ffffc900084f3d48 EFLAGS: 00010246
+RAX: 000000000000005c RBX: 0000000000001000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff81e56da3 RDI: 00000000ffffffff
+RBP: ffffea0004a39c40 R08: 0000000000000000 R09: ffffffff8205fe40
+R10: 0000000000017578 R11: 00000000000175f0 R12: 0000000000004000
+R13: ffff88814dc5cd40 R14: 000000000000002e R15: ffffea0004a39c40
+FS:  0000000000000000(0000) GS:ffff88843fd80000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f2b0ea47010 CR3: 000000043f00c000 CR4: 00000000001506a0
 
-Add checks to validate if cluster number is within valid range in
-exfat_clear_bitmap() and exfat_set_bitmap()
+--D
 
-Cc: Namjae Jeon <linkinjeon@kernel.org>
-Cc: Sungjong Seo <sj1557.seo@samsung.com>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: stable@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-
-Link: https://syzkaller.appspot.com/bug?id=50381fc73821ecae743b8cf24b4c9a04776f767c
-Reported-by: syzbot+a4087e40b9c13aad7892@syzkaller.appspotmail.com
-Fixes: 1e49a94cf707 ("exfat: add bitmap operations")
-Signed-off-by: Tadeusz Struk <tadeusz.struk@linaro.org>
----
- fs/exfat/balloc.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/fs/exfat/balloc.c b/fs/exfat/balloc.c
-index 03f142307174..4ed81f86f993 100644
---- a/fs/exfat/balloc.c
-+++ b/fs/exfat/balloc.c
-@@ -149,6 +149,9 @@ int exfat_set_bitmap(struct inode *inode, unsigned int clu, bool sync)
- 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
- 
- 	WARN_ON(clu < EXFAT_FIRST_CLUSTER);
-+	if (clu > EXFAT_DATA_CLUSTER_COUNT(sbi))
-+		return -EINVAL;
-+
- 	ent_idx = CLUSTER_TO_BITMAP_ENT(clu);
- 	i = BITMAP_OFFSET_SECTOR_INDEX(sb, ent_idx);
- 	b = BITMAP_OFFSET_BIT_IN_SECTOR(sb, ent_idx);
-@@ -167,6 +170,9 @@ void exfat_clear_bitmap(struct inode *inode, unsigned int clu, bool sync)
- 	struct exfat_mount_options *opts = &sbi->options;
- 
- 	WARN_ON(clu < EXFAT_FIRST_CLUSTER);
-+	if (clu > EXFAT_DATA_CLUSTER_COUNT(sbi))
-+		return;
-+
- 	ent_idx = CLUSTER_TO_BITMAP_ENT(clu);
- 	i = BITMAP_OFFSET_SECTOR_INDEX(sb, ent_idx);
- 	b = BITMAP_OFFSET_BIT_IN_SECTOR(sb, ent_idx);
--- 
-2.35.1
-
+> 
+> > 
+> > 
+> > --D
+> > 
+> > run fstests generic/068 at 2022-04-12 17:57:11
+> > XFS (sda3): Mounting V5 Filesystem
+> > XFS (sda3): Ending clean mount
+> > XFS (sda4): Mounting V5 Filesystem
+> > XFS (sda4): Ending clean mount
+> > ------------[ cut here ]------------
+> > kernel BUG at mm/filemap.c:1653!
+> > invalid opcode: 0000 [#1] PREEMPT SMP
+> > CPU: 0 PID: 1349866 Comm: 0:116 Tainted: G        W         5.18.0-rc2-djwx #rc2 19cc48221d47ada6c8e5859639b6a0946c9a3777
+> > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS ?-20171121_152543-x86-ol7-builder-01.us.oracle.com-4.el7.1 04/01/2014
+> > Workqueue: xfs-conv/sda4 xfs_end_io [xfs]
+> > RIP: 0010:folio_end_writeback+0x79/0x80
+> > Code: d2 75 1d f0 ff 4d 34 74 0e 5d c3 f0 80 67 02 fb e8 ac 29 01 00 eb ad 48 89 ef 5d e9 a1 0f 01 00 48 89 ee e8 b9 e8 01 00 eb d9 <0f> 0b 0f 1f 44 00 00 0f 1f 44 00 00 53 48 89 fb e8 62 f7 ff ff 48
+> > RSP: 0018:ffffc9000286fd50 EFLAGS: 00010246
+> > RAX: 0000000000000000 RBX: ffffea0007376840 RCX: 000000000000000c
+> > RDX: ffff88810d2de000 RSI: ffffffff81e55f0b RDI: ffff88810d2de000
+> > RBP: ffffea0007376840 R08: ffffea000b82c308 R09: ffffea000b82c308
+> > R10: 0000000000000001 R11: 000000000000000c R12: 0000000000000000
+> > R13: 000000000000c000 R14: 0000000000000005 R15: 0000000000000001
+> > FS:  0000000000000000(0000) GS:ffff88843fc00000(0000) knlGS:0000000000000000
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > CR2: 00007f5b067d0000 CR3: 000000010d1bb000 CR4: 00000000001506b0
+> > Call Trace:
+> >  <TASK>
+> >  iomap_finish_ioend+0x19e/0x560
+> >  iomap_finish_ioends+0x69/0x100
+> >  xfs_end_ioend+0x5a/0x160 [xfs 513857e2ae300a835ce1fbd8065a84dc5382e649]
+> >  xfs_end_io+0xb1/0xf0 [xfs 513857e2ae300a835ce1fbd8065a84dc5382e649]
+> >  process_one_work+0x1df/0x3c0
+> >  ? rescuer_thread+0x3b0/0x3b0
+> >  worker_thread+0x53/0x3b0
+> >  ? rescuer_thread+0x3b0/0x3b0
+> >  kthread+0xea/0x110
+> >  ? kthread_complete_and_exit+0x20/0x20
+> >  ret_from_fork+0x1f/0x30
+> >  </TASK>
+> > Modules linked in: dm_snapshot dm_bufio dm_zero dm_flakey xfs libcrc32c xt_REDIRECT iptable_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 auth_rpcgss oid_registry xt_tcpudp ip_set_hash_ip ip_set_hash_net xt_set ip_set_hash_mac ip_set nfnetlink ip6table_filter ip6_tables iptable_filter bfq sch_fq_codel ip_tables x_tables overlay nfsv4 af_packet [last unloaded: scsi_debug]
+> > Dumping ftrace buffer:
+> >    (ftrace buffer empty)
+> > ---[ end trace 0000000000000000 ]---
+> > RIP: 0010:folio_end_writeback+0x79/0x80
+> > Code: d2 75 1d f0 ff 4d 34 74 0e 5d c3 f0 80 67 02 fb e8 ac 29 01 00 eb ad 48 89 ef 5d e9 a1 0f 01 00 48 89 ee e8 b9 e8 01 00 eb d9 <0f> 0b 0f 1f 44 00 00 0f 1f 44 00 00 53 48 89 fb e8 62 f7 ff ff 48
+> > RSP: 0018:ffffc9000286fd50 EFLAGS: 00010246
+> > RAX: 0000000000000000 RBX: ffffea0007376840 RCX: 000000000000000c
+> > RDX: ffff88810d2de000 RSI: ffffffff81e55f0b RDI: ffff88810d2de000
+> > RBP: ffffea0007376840 R08: ffffea000b82c308 R09: ffffea000b82c308
+> > R10: 0000000000000001 R11: 000000000000000c R12: 0000000000000000
+> > R13: 000000000000c000 R14: 0000000000000005 R15: 0000000000000001
+> > FS:  0000000000000000(0000) GS:ffff88843fc00000(0000) knlGS:0000000000000000
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > CR2: 00007f4b94008278 CR3: 0000000101ac9000 CR4: 00000000001506b0
+> > 
