@@ -2,189 +2,230 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 700FA505ED4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Apr 2022 22:09:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82113505F36
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Apr 2022 23:17:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237141AbiDRUL6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Apr 2022 16:11:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52870 "EHLO
+        id S1347988AbiDRVTd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Apr 2022 17:19:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53586 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231805AbiDRUL4 (ORCPT
+        with ESMTP id S1348049AbiDRVT3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Apr 2022 16:11:56 -0400
-Received: from esa5.hgst.iphmx.com (esa5.hgst.iphmx.com [216.71.153.144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A8962E0AB;
-        Mon, 18 Apr 2022 13:09:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1650312554; x=1681848554;
-  h=from:to:cc:subject:date:message-id:
-   content-transfer-encoding:mime-version;
-  bh=yhFDXspCVXCb5F4JI7NnpbnrX8FzaSIthfXgw7wdyZI=;
-  b=fNV9LvGCkERJQ33xvXEdreW3EVP08gPv+KnzZ+bROPAToLhmAEZgJycQ
-   qLW5zMI32pQpYXgLhmBS5OGkyyhU4O0uNBP6GwD45peFSyn3FUCULhLCn
-   Y3lxcoa+GA6oy7YzFnEmVeMRzCKKV15jzJ3/X9gJU8KqRp+/78EQKmek6
-   QmF3Y+lNRvAHghEdtgfI1GXxGoiKu34vjuV8CfezoxTyChBxikqAtMsAh
-   JuES2kc50bIm/NF4tt6nXVoHJoSG5FFRXSqyk2AGL0lEv0VsODeofjh9w
-   l1CLqgW75mRpwDI/oNc7pznws87tE7lFAkhiYslrZVN+SL6FWgrO97q/1
-   A==;
-X-IronPort-AV: E=Sophos;i="5.90,270,1643644800"; 
-   d="scan'208";a="198197451"
-Received: from mail-bn8nam12lp2170.outbound.protection.outlook.com (HELO NAM12-BN8-obe.outbound.protection.outlook.com) ([104.47.55.170])
-  by ob1.hgst.iphmx.com with ESMTP; 19 Apr 2022 04:09:13 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=KhBiGt6y9tSazMFpfVHEtnuRaP0uyUecx5M+hJ/ljKvpDw9XYFWlPTBbgSbYXICWqLSNBLEBhGaz1uOhvcwDkum8j5NvPPRpn8z/2eeEBNHQwhgTiorjQBY13xpz5igvRY0CHZAE3oDHRg7CwjuElPfzJDFx1QwVKMuPdu3w+ty0aqFDhiffP0XJ2rd0u3bWc240C3FDiqxXYrIxeUzY9ctq3iH/ai3pOwzg1g1ijVTnCJjwYu7g7ue4643LEoCJJvw7Tdyz0XDnBW8v88EQOWWar7urVxLqADXGVrjzSYRv0f4BckwJlSoboamjgmEehl7HBg+5h/BCkdD5HstgVg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HWdpgzDlX9Xj8rx8GPoMj6NCBBTnvqXrYvvH2rZoi3E=;
- b=GnCWJSTc1ie/u9LSdxwsI2NE9CEkeGW5AF9luazNCpe8BMFGlu1YgueABRz5EG5polRA1WkEvJ3clph4FJD5kRcW9MpieoeMbzE4TsBu5TEfSaZLmjGAJprBf6N6DIm1EGATdsySCCixJgnwy8IN0hUqFYvapWmjRI4x3+zkWPRCyso+T7PBlN0BPKap4lJoxkiDK75Tbz0gXBwN8fqQIi1EwJLUZIjWT0mkrTMACl3q8v5q3N8kZZm+QaFFXY3htMq43MQW61q6njICFsy1swESfPR7UJPhmiRjvunissum5CJuRoNJDW9wOO7yJCnUvlL75xqqlXHcMbSDKpoN5g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
+        Mon, 18 Apr 2022 17:19:29 -0400
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 298122DD5E
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Apr 2022 14:16:30 -0700 (PDT)
+Received: by mail-pl1-x630.google.com with SMTP id s17so2511660plg.9
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Apr 2022 14:16:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HWdpgzDlX9Xj8rx8GPoMj6NCBBTnvqXrYvvH2rZoi3E=;
- b=lFCjHrBEdfG8EG8cM+vYyU4fpvXcqkNwEa25t0XThW2JI1VDEi7BVHMjIbng5TEDTNFkFdlqFTSQiUDmrufcIjKPLADcpB6U1y0TI+gfpA99fn5I0aZ8/AynRxvFb+Q1N6ObY34G6BStcMBDEv+RHjKJnObDTmvFT2Prn78RGiE=
-Received: from PH0PR04MB7158.namprd04.prod.outlook.com (2603:10b6:510:8::18)
- by MN2PR04MB7022.namprd04.prod.outlook.com (2603:10b6:208:1eb::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5164.18; Mon, 18 Apr
- 2022 20:09:12 +0000
-Received: from PH0PR04MB7158.namprd04.prod.outlook.com
- ([fe80::995b:363e:8d1c:49af]) by PH0PR04MB7158.namprd04.prod.outlook.com
- ([fe80::995b:363e:8d1c:49af%8]) with mapi id 15.20.5164.025; Mon, 18 Apr 2022
- 20:09:12 +0000
-From:   Niklas Cassel <Niklas.Cassel@wdc.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>
-CC:     Greg Ungerer <gerg@linux-m68k.org>,
-        Mike Frysinger <vapier@gentoo.org>,
-        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-        Niklas Cassel <Niklas.Cassel@wdc.com>,
-        kernel test robot <lkp@intel.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: [PATCH] binfmt_flat: fix sparse annotation ordering
-Thread-Topic: [PATCH] binfmt_flat: fix sparse annotation ordering
-Thread-Index: AQHYU2ArT/6GP/7pQEy2Uc+2aJ024w==
-Date:   Mon, 18 Apr 2022 20:09:12 +0000
-Message-ID: <20220418200834.1501454-1-Niklas.Cassel@wdc.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.35.1
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=wdc.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: f7a934cc-be16-45a8-b2a3-08da21774e76
-x-ms-traffictypediagnostic: MN2PR04MB7022:EE_
-x-microsoft-antispam-prvs: <MN2PR04MB702273A1028C56A1374DD498F2F39@MN2PR04MB7022.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: cI4j8GQfMqevLBxbiOVJFCHc3P7Okd9cGjm2uOhJnZ+JLTmIh32wlIVi3/d+m4/UYFupYUvUoJM/aN81Zpa+popc8J2MD9GC7cX2NAdYchkFatENe/a2vxzattTLJpELrAs/cQI4kSaDp57GBcBHpd0OhXryWKFfjETWGOuQgTGYEpCVTsj+0BP8E4OUB0jUBoQbrHD8a9z2JFQaKweclRyL+pPiloGfuPBiGWUmnhopAgI8SgRlQKNJmI5gWcs3kHfnWmywFfwpTL/W6pplWQpqpvqojKiWCWbd6d29wjJW2RmPrVDNivw2/N+oNM2NYjcMTkscf79+c5iUgm5kuIGY9HipyPoC5qFLLwB6jvdQlpAJ+MPopIg50IVGJ2lnebYH8rvhjfJjTbxSOJOMkvIskUQL2+DFxPNyEcVz7WX0GRRuq63CWaMj1p63HbrNYLQMtfUEF1qimB9nGz7OoHOQdLyaGn/aunvwmT+rN12x/xQAh0gOCA8P7iXNfRmxP0TsZaGp6lAAt5mIeWWk05ZLLUdWsMQu4Bq4hvWejH1TJlcUVpoP8w+l4MN6xhN8ltBLBLp+sNojOujTifw5vsmEf/tMkRPsYujTms3zAIvXThAW7fUrhGhirpXc16b4HxKvBnFazTVc1hTfTTMKtfuUxV0UQ6m3rDjRJmlnayukvR6IJfdFcvSIHQup8CR3xoZXU3Xd6gP6iaKEIZJY2g==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR04MB7158.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(110136005)(66556008)(1076003)(186003)(6506007)(2616005)(64756008)(82960400001)(91956017)(66446008)(8676002)(4326008)(38100700002)(5660300002)(36756003)(122000001)(2906002)(86362001)(54906003)(316002)(71200400001)(38070700005)(6512007)(26005)(66946007)(66476007)(6486002)(8936002)(76116006)(508600001)(83380400001);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?wzs6FxtnNYxqERRog1/Fzx6e/HozBPQfhNyElIO9m/Ej1xhXVxS1ILSkMs?=
- =?iso-8859-1?Q?g5qiximkv/PfYdfaW25AVqORnRBYJvo2lBwMAlrFfAlXkelovHwRvg1AB9?=
- =?iso-8859-1?Q?RWKGSe+QYhlj3utAZ1N0TmJ6uh/MuVsZG4/9ZibxSx6voK1N03e4qxRK9Q?=
- =?iso-8859-1?Q?cYKBeiZDF+Ue6kT0vw4MNNJCfJ9H3TP92Y6NBHQqE7gJYSiFx9F54L0Ok5?=
- =?iso-8859-1?Q?VohPfVms6eEA5k7G+WA1fGLk2BpI4krrNXXVZvC9F7zoAVYxM0eM75vvvR?=
- =?iso-8859-1?Q?WAk+fC286RR+loHZAAmTLWsoq8EKT8+K+lt2y/79kR3H6SlFE+LPXrvAGk?=
- =?iso-8859-1?Q?5N92+iL2Uy+BJJ1rw7JqE/rHUhkA9HjDUtzWkYJkPb5QQIlZY+aHNDjwJp?=
- =?iso-8859-1?Q?mZ//BAhmjsJ3Ghq3ZziuTs1Uj2fzRjAn5ZeMBxrm4PE9/IfmCn/syH3jPn?=
- =?iso-8859-1?Q?9JpZGUE8swhqSzN8x32wYwW8IqtEB4vAgP53D3+vyn3HQKMqnP7sWWbwzn?=
- =?iso-8859-1?Q?8gjIgKsfoCNRQbBMeBTBZB7WwG844YReDJPJoUD2daLEl1NvdZrGrDg43g?=
- =?iso-8859-1?Q?0jX0EWcBIKXWg2cqDfNZ7BE/LIwvdhVqG+RASkFSYYZr4fjjlVtsSaDygK?=
- =?iso-8859-1?Q?uIiYfI+oOKC5updPWd3ZsbLl8I1C3fvmKOnaUi4r+G6rrtkhX702LRJ4OB?=
- =?iso-8859-1?Q?45CeWMrd+AgyZewPDiQpnAyFXX/8e0q92TA9xUaw6nwXw0k5qdi47ebJ9c?=
- =?iso-8859-1?Q?HGGH6e0lGLLKQUz8Ge/GT81WXqJ0tbdLiw13yAr5XhpoN4hU9BnEnks8sp?=
- =?iso-8859-1?Q?QjXlE8SNEpx/Ic7g+6JHWcnvSkebPcVJjFgRaBzKVjD44/obdtDhHdAKY6?=
- =?iso-8859-1?Q?c/X6cQO7/HojReVzeLEer79qkptBZF7B26kI1zkUlAw/bqaatZdxvulFib?=
- =?iso-8859-1?Q?J7E7R9DVHsTcd0sbbSICDGivv4peYRtsAUviiAlcdwm2RuO8KX/kvvOXbf?=
- =?iso-8859-1?Q?93HG5P5wUOd2h7RlszQPSvKinv6ctLQiIhjDqC6mITAqxA+dvuVqfDSplU?=
- =?iso-8859-1?Q?2Ck1/viIPEBM4i+fR0to9nB25gp6SQIq3fWyaJs4jz72HfEdT0l9owGoGc?=
- =?iso-8859-1?Q?m75R4BBEH6E0QQV0ggMqUR5sDnMCEMlsIAO+8/Ngp2IaBy4eE8Lx9dijL9?=
- =?iso-8859-1?Q?TmnNQEMgFxF+FrAxK6BU3iyqhMd6+Frxa2kQwPdI/RsW1YguzHb2LKHJPs?=
- =?iso-8859-1?Q?JdD+o3yBm61wEr6AZZ6SFR7lta97XULZPNUwKvh876V6Q9jooyqKkDUyEe?=
- =?iso-8859-1?Q?vn9F4fEs9DpSene4QFSK+BUbYcx8j167oe0E0p+0xBUJSzpvC4KrEwzNCS?=
- =?iso-8859-1?Q?tbKvZN3uDZbWbuoIwWN/hQ87JnVCluWs9FfNfJIf4vuSDUSqsVyDIQ3UoD?=
- =?iso-8859-1?Q?5c6D2Z9YMvRjQYZuYHY5JySiQiUo3TTbPyrL7nBfYVTvNvw1qNjxB5NOEM?=
- =?iso-8859-1?Q?gl4SrJxFbqxUX6THrKiZwRseuJnhtgM6JPzWmphaVc/8eXSs5UzbpTEntc?=
- =?iso-8859-1?Q?6Y4gSKb4juIPjfhPPT/FQzgDSdaXw6U9Z+4qVQ/nsszMqBMOI7SC/Qsu3K?=
- =?iso-8859-1?Q?9RMwAOJVQN9wyyKRurIdi991t9FBbAA2lu4ljFbBBfgshTnSKVgXki7ioE?=
- =?iso-8859-1?Q?KCnxy5Wz7xndzIRKD6y1KYiixxFJGqe18wreSN2hrfsT4M5Bpmt8jgNn/p?=
- =?iso-8859-1?Q?54rDFy9oj/fjsShTSGqkT3fA/t//jL1t1vCkviRrbU/Gs6jubpeasOrFHf?=
- =?iso-8859-1?Q?xvlYfeZYpXQa+zMaYhalrYezTlMJCec=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:from:subject:to:cc
+         :references:content-language:in-reply-to:content-transfer-encoding;
+        bh=JeF6dFxHRv4EIaBv8cKkcPRHUMeL96UEDwmtZ1fXv54=;
+        b=1AAWVTECxaWbSUoiq2CXrIj0TOMxk8MORZkys4b66OJqIJFvlv/t3pbBduJouhwgD6
+         A8ffXh8UjfLivM+dz7bCnGWwQVgKpcHP3wOBF7GNuGsdNzEpOLOkbPyvKIx1qCJPyqkT
+         Bs0q/1cEorW9Dvv1rnODQhepQj4NTywKOGhFcdjy++gMwi2tWwjBzfaXgQwHPcpNckzg
+         Yd5PMKo2Mq/ktgFwnrspyiAANqrepgBr8tuDRIxULjVU1u+5J/wq3i3Qm87A2/GypqeS
+         VSR2c+Qh01K4cjsf0HYHZ7dgq7QchVLC+SXXMUfpUk1qNemN+tvMN/kOPXerdFvh2j6e
+         Jg8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:from
+         :subject:to:cc:references:content-language:in-reply-to
+         :content-transfer-encoding;
+        bh=JeF6dFxHRv4EIaBv8cKkcPRHUMeL96UEDwmtZ1fXv54=;
+        b=xgc2/TOqMVYK7zMt2o+wLj0S0j0LsmX1nZ15+75AAALgU5b+8IE66p2kXNJ7h3OjeU
+         oZgQHJ3YleeLO2j+Q+4w1IKHIcg12WNhIq4KKKufvl5ukzKfcCAoNXbuPuh6HvykkwV7
+         /P1c6X968VPix5MaDghP38eJr437M63gwm3DpHUlCcdN6bdLyRz98+kY36MYfJqiUpvh
+         mbkItDH94Od1GfRI3d2XN+eq123iYvV35jbiB6yyfZCZ9h4qiBlXGpinyWlcgALGfp3G
+         DGQ4OaAWMWIsGngD9H4XHzSqgjsXjAglnoWWuFz/7IsvdIHgOMovw4g2QyJeHi8Uuf+X
+         lCZw==
+X-Gm-Message-State: AOAM530KAPG0LbxfUguUPP2RALFKh5mOkY1mqWrJ6mkRsL815oJyW2NB
+        4vaWM12BnAnod1aczVeNuETFy32qyIZ5dw==
+X-Google-Smtp-Source: ABdhPJxk7U7RL4Frks0mIAIQGhPEHMt9oGlyAXyk8mXVyo/6wjqAHCc5rBvlnVrXYP3t5eaew/lfig==
+X-Received: by 2002:a17:90a:e00b:b0:1cb:9bbe:b1f6 with SMTP id u11-20020a17090ae00b00b001cb9bbeb1f6mr20461779pjy.62.1650316589081;
+        Mon, 18 Apr 2022 14:16:29 -0700 (PDT)
+Received: from ?IPV6:2600:380:b43f:ca46:9ddf:3bd7:e35e:5d? ([2600:380:b43f:ca46:9ddf:3bd7:e35e:5d])
+        by smtp.gmail.com with ESMTPSA id f14-20020a17090a4a8e00b001cea3feaf29sm11986176pjh.56.2022.04.18.14.16.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 Apr 2022 14:16:28 -0700 (PDT)
+Message-ID: <587c1849-f81b-13d6-fb1a-f22588d8cc2d@kernel.dk>
+Date:   Mon, 18 Apr 2022 15:16:25 -0600
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR04MB7158.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f7a934cc-be16-45a8-b2a3-08da21774e76
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Apr 2022 20:09:12.6154
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: sqvYWR3G/Z3PnSplhd/2XowTy69ZLxPohVnhLcRSTVcuftBUUuRtk8TN8lAxdahhFHgvTER+GoVrBkBaD+tqcg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR04MB7022
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: =?UTF-8?Q?Re=3a_=5bPATCH_v2=5d_fs-writeback=3a_writeback=5fsb=5fino?=
+ =?UTF-8?Q?des=ef=bc=9aRecalculate_=27wrote=27_according_skipped_pages?=
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Zhihao Cheng <chengzhihao1@huawei.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Christoph Hellwig <hch@lst.de>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        yukuai3@huawei.com
+References: <20220418092824.3018714-1-chengzhihao1@huawei.com>
+ <CAHk-=wh7CqEu+34=jUsSaMcMHe4Uiz7JrgYjU+eE-SJ3MPS-Gg@mail.gmail.com>
+Content-Language: en-US
+In-Reply-To: <CAHk-=wh7CqEu+34=jUsSaMcMHe4Uiz7JrgYjU+eE-SJ3MPS-Gg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-5.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Niklas Cassel <niklas.cassel@wdc.com>
+On 4/18/22 1:43 PM, Linus Torvalds wrote:
+> [ Adding some scheduler people - the background here is a ABBA
+> deadlock because a plug never gets unplugged and the IO never starts
+> and the buffer lock thus never gets released. That's simplified, see
+>      https://lore.kernel.org/all/20220415013735.1610091-1-chengzhihao1@huawei.com/
+>   and
+>      https://bugzilla.kernel.org/show_bug.cgi?id=215837
+>    for details ]
+> 
+> On Mon, Apr 18, 2022 at 2:14 AM Zhihao Cheng <chengzhihao1@huawei.com> wrote:
+>>
+>> In my test, 'need_resched()' (which is imported by 590dca3a71 "fs-writeback:
+>> unplug before cond_resched in writeback_sb_inodes") in function
+>> 'writeback_sb_inodes()' seldom comes true, unless cond_resched() is deleted
+>> from write_cache_pages().
+> 
+> So I'm not reacting to the patch, but just to this part of the message...
+> 
+> I forget the exact history of plugging, but at some point (long long
+> ago - we're talking pre-git days) it was device-specific and always
+> released on a timeout (or, obviously, explicitly unplugged).
 
-The sparse annotation ordering inside the function call is swapped.
+That is correct, it used to be a tq_disk list and each queue could be
+added. This was back in the days when io_request_lock was a single
+spinlock around all of bdev queuing, so quite a while ago :-)
 
-Fix the ordering so that we silence the following sparse warnings:
-fs/binfmt_flat.c:816:39: warning: incorrect type in argument 1 (different a=
-ddress spaces)
-fs/binfmt_flat.c:816:39:    expected unsigned int [noderef] [usertype] __us=
-er *rp
-fs/binfmt_flat.c:816:39:    got unsigned int [usertype] *[noderef] __user
+> And then later it became per-process, and always released by task-work
+> on any schedule() call.
 
-No functional change as sparse annotations are ignored by the compiler.
+kblock kickoff from schedule, we never do task-work for unplug. It's
+either done in-line if not from schedule, or punted to kblockd. But not
+really relevant to the problem at hand...
 
-Fixes: a767e6fd68d2 ("binfmt_flat: do not stop relocating GOT entries prema=
-turely on riscv")
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Niklas Cassel <niklas.cassel@wdc.com>
-Cc: <stable@vger.kernel.org>
----
-Hello Kees,
+> But over time, that "any schedule" has gone away. It did so gradually,
+> over time, and long ago:
+> 
+>   73c101011926 ("block: initial patch for on-stack per-task plugging")
+>   6631e635c65d ("block: don't flush plugged IO on forced preemtion scheduling")
+> 
+> And that's *mostly* perfectly fine, but the problem ends up being that
+> not everything necessarily triggers the flushing at all.
+> 
+> In fact, if you call "__schedule()" directly (rather than
+> "schedule()") I think you may end up avoiding flush entirely. I'm
+> looking at  do_task_dead() and schedule_idle() and the
+> preempt_schedule() cases.
+> 
+> Similarly, tsk_is_pi_blocked() will disable the plug flush.
+> 
+> Back when it was a timer, the flushing was eventually guaranteed.
+> 
+> And then we would flush on any re-schedule, even if it was about
+> preemption and the process might stay on the CPU.
+> 
+> But these days we can be in the situation where we really don't flush
+> at all - the process may be scheduled away, but if it's still
+> runnable, the blk plug won't be flushed.
+> 
+> To make things *really* confusing, doing an io_schedule() will force a
+> plug flush, even  if the process might stay runnable. So io_schedule()
+> has those old legacy "unconditional flush" guarantees that a normal
+> schedule does not any more.
 
-Sorry about this.
-Feel free to squash it with the existing patch if you so like.
+I think that's mostly to avoid hitting it in the schedule path, as it
+involves a lock juggle at that point. If you're doing io_schedule(),
+presumable chances are high that you have queued IO.
 
- fs/binfmt_flat.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Also note how the plug is per-process, so when another process *does*
+> block (because it's waiting for some resource), that doesn't end up
+> really unplugging the actual IO which was started by somebody else.
+> Even if that other process is using io_schedule().
+> 
+> Which all brings us back to how we have that hacky thing in
+> writeback_sb_inodes() that does
+> 
+>         if (need_resched()) {
+>                 /*
+>                  * We're trying to balance between building up a nice
+>                  * long list of IOs to improve our merge rate, and
+>                  * getting those IOs out quickly for anyone throttling
+>                  * in balance_dirty_pages().  cond_resched() doesn't
+>                  * unplug, so get our IOs out the door before we
+>                  * give up the CPU.
+>                  */
+>                 blk_flush_plug(current->plug, false);
+>                 cond_resched();
+>         }
+> 
+> and that currently *mostly* ends up protecting us and flushing the
+> plug when doing big writebacks, but as you can see from the email I'm
+> quoting, it then doesn't always work very well, because
+> "need_resched()" may end up being cleared by some other scheduling
+> point, and is entirely meaningless when preemption is on anyway.
+> 
+> So I think that's basically just a random voodoo programming thing
+> that has protected us in the past in some situations.
+> 
+> Now, Zhihao has a patch that fixes the problem by limiting the
+> writeback by being better at accounting:
+> 
+>     https://lore.kernel.org/all/20220418092824.3018714-1-chengzhihao1@huawei.com/
+> 
+> which is the email I'm answering, but I did want to bring in the
+> scheduler people to the discussion to see if people have ideas.
+> 
+> I think the writeback accounting fix is the right thing to do
+> regardless, but that whole need_resched() dance in
+> writeback_sb_inodes() is, I think, a sign that we do have real issues
+> here. That whole "flush plug if we need to reschedule" is simply a
+> fundamentally broken concept, when there are other rescheduling
+> points.
+> 
+> Comments?
+> 
+> The answer may just be that "the code in writeback_sb_inodes() is
+> fundamentally broken and should be removed".
+> 
+> But the fact that we have that code at all makes me quite nervous
+> about this. And we clearly *do* have situations where the writeback
+> code seems to cause nasty unplugging delays.
+> 
+> So I'm not convinced that "fix up the writeback accounting" is the
+> real and final fix.
+> 
+> I don't really have answers or suggestions, I just wanted people to
+> look at this in case they have ideas.
 
-diff --git a/fs/binfmt_flat.c b/fs/binfmt_flat.c
-index e5e2a03b39c1..dca0b6875f9c 100644
---- a/fs/binfmt_flat.c
-+++ b/fs/binfmt_flat.c
-@@ -813,7 +813,7 @@ static int load_flat_file(struct linux_binprm *bprm,
- 	 * image.
- 	 */
- 	if (flags & FLAT_FLAG_GOTPIC) {
--		rp =3D skip_got_header((u32 * __user) datapos);
-+		rp =3D skip_got_header((u32 __user *) datapos);
- 		for (; ; rp++) {
- 			u32 addr, rp_val;
- 			if (get_user(rp_val, rp))
---=20
-2.35.1
+Unless I'm missing something, this exclusively seems to be a problem
+with being preempted (task scheduled out, still runnable) and the
+original patch did flush for preemption. I wasn't aware of the writeback
+work-around doing those need_resched() checks to explicitly work-around
+not flushing on preemption, that seems like a somewhat nasty
+work-around...
+
+So as far as I can tell, we really have two options:
+
+1) Don't preempt a task that has a plug active
+2) Flush for any schedule out, not just going to sleep
+
+1 may not be feasible if we're queueing lots of IO, which then leaves 2.
+Linus, do you remember what your original patch here was motivated by?
+I'm assuming it was an effiency thing, but do we really have a lot of
+cases of IO submissions being preempted a lot and hence making the plug
+less efficient than it should be at merging IO? Seems unlikely, but I
+could be wrong.
+
+-- 
+Jens Axboe
+
