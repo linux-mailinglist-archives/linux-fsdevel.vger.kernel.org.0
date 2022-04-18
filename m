@@ -2,278 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A51E50492C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 17 Apr 2022 21:07:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5A6B504A57
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 18 Apr 2022 03:12:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234896AbiDQTKF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 17 Apr 2022 15:10:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47060 "EHLO
+        id S234172AbiDRBOu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 17 Apr 2022 21:14:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232144AbiDQTKE (ORCPT
+        with ESMTP id S231761AbiDRBOt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 17 Apr 2022 15:10:04 -0400
-Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C951D35DFB;
-        Sun, 17 Apr 2022 12:07:27 -0700 (PDT)
-Received: by fieldses.org (Postfix, from userid 2815)
-        id 0EA8E6CCD; Sun, 17 Apr 2022 15:07:27 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org 0EA8E6CCD
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
-        s=default; t=1650222447;
-        bh=4BbwefQOJFg9IPpk+to3yXh1OSX0hIshtNwjd0t9TC0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JLCBit8DH6nzq+IhoYmUYC69X62KBAu95xzdznLlR31qWyhDmdZTuN+teZcQPryw7
-         bD8EbVEGmgl4XdUehDCgmoaOZe0HqaKlA8ZHzrUmlzxESc/6/yuQlKlzlFr101Yj/J
-         KSLBHIZIZ41xbC3WE1EoMsDPRFuBjfMJZacH9ocI=
-Date:   Sun, 17 Apr 2022 15:07:27 -0400
-From:   Bruce Fields <bfields@fieldses.org>
-To:     dai.ngo@oracle.com
-Cc:     Chuck Lever III <chuck.lever@oracle.com>,
-        Jeff Layton <jlayton@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH RFC v19 06/11] NFSD: Update find_clp_in_name_tree() to
- handle courtesy client
-Message-ID: <20220417190727.GA18120@fieldses.org>
-References: <1648742529-28551-1-git-send-email-dai.ngo@oracle.com>
- <1648742529-28551-7-git-send-email-dai.ngo@oracle.com>
- <20220401152109.GB18534@fieldses.org>
- <52CA1DBC-A0E2-4C1C-96DF-3E6114CDDFFD@oracle.com>
- <8dc762fc-dac8-b323-d0bc-4dbeada8c279@oracle.com>
- <20220413125550.GA29176@fieldses.org>
+        Sun, 17 Apr 2022 21:14:49 -0400
+Received: from esa2.hgst.iphmx.com (esa2.hgst.iphmx.com [68.232.143.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9365A12AE1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 17 Apr 2022 18:12:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1650244331; x=1681780331;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=HyuGdQFhmJj22wD+jStdwCkb/iLoObCZL50TUHdz5+c=;
+  b=L9yG5XzthjgyQF7EPZH24HhJQVG+ECRCcxYo7qpHJLoUHkOyvXGvz1Ar
+   BY44xi8hkYCyb9bTPqrAh9oObCeg6OQ8bkaOkrZItVkLXpWwyu6OP2LW9
+   RR6msDW15hyjkGFNwatORwrwJiFoc+zRf/yjXiVzm3roW0V69xbQ/c4mJ
+   ul5RYscqYCi3H6ucTgRScEhrnLYxcNW4XW/LToy0oyXbcEEWRtUscioWh
+   pldBzEA508gJU3fN4R8SbliVwJ/3D6FDuCe5l0mBInO5V5aE2cukB7zDU
+   YskA5b4eReRtQ1T6yEmBpbmZ7+DEKgh0Lb9PlzHOAYAi4j8Rloc2naJAc
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.90,267,1643644800"; 
+   d="scan'208";a="302313763"
+Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 18 Apr 2022 09:12:10 +0800
+IronPort-SDR: NQjbyJ2Zz2nKO9rhvh+Vc4iE8uPhCthQy1EMmcEIUJSR9OLgiUI/nWEljSMksq80Fmo7yGUjzc
+ w+oXnwgsPV4RNzTxmb+1K2iYOIbCxtY5kmUkA52IBXboLs0YLlyB0Cn5NzXs4uTD39ep5+dl/I
+ ciD6QbV3uxeHvbbT8/6+heiBiSDJ+IKIl0vzhgBU710VwP9V4qtI/jkSZQQjhLVr6CTWNB3Pzk
+ 4XwVQ6vy+waJ53d2FdUsCu9joYR7T+nBcx8/U8zDC1Kw85Td5p9iRojpaM+wUSCRol9HN1N92B
+ bLEejTVpwim2dt42b0+e+Qcq
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 17 Apr 2022 17:42:32 -0700
+IronPort-SDR: LbVO5AzkmUq0tpczUajD5qZr50j02PrlIjsqv/ppiZqrjNHx5NDKiKfax2wKm3E5t4gwhSt6Yd
+ jh8qqgfLFfEznbY9/tp86MLQ2asGbKf0Fjdcwl/9sdxW7ZJUTpyczClqeQCgP6IDFiJBcrSsKE
+ XJ3S1ijlLF0XIl2uGLWLc2ipTZUpAtRNI2s2wNruJeHdTGCF1J7ISenyqAlXBtzKYN0wlcuJbW
+ 6ontxhqaKXPCJbjzY3ZQrejEab7h7UY5DmVq1JcsPyJNrrOTckjRrw37qEeuGqh2Kn86zAmPmP
+ Zbo=
+WDCIronportException: Internal
+Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
+  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 17 Apr 2022 18:12:12 -0700
+Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4KhTRt41V0z1SVnx
+        for <linux-fsdevel@vger.kernel.org>; Sun, 17 Apr 2022 18:12:10 -0700 (PDT)
+Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)"
+        header.d=opensource.wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
+        opensource.wdc.com; h=content-transfer-encoding:mime-version
+        :x-mailer:message-id:date:subject:to:from; s=dkim; t=1650244330;
+         x=1652836331; bh=HyuGdQFhmJj22wD+jStdwCkb/iLoObCZL50TUHdz5+c=; b=
+        PRiEudTMf45YA7ITIoMQgzjfbuM1KGEjMXsRMwvN9eqUoJTej7A8RrnaEQLbwwHQ
+        dn7iRYd/M3MroC0zZ00VTwWF92DhCynkwMQpKoGn2++91c6lhsSQAvuuSMDDAbkM
+        gRlqmkOJXo0URVBdIc9U3Bfpeb3mcQlnZO1tZhBojZxiJk/ps4vFm7zagle3p055
+        kjCUyZG8posJlqGKszvWYiexh/VG0RGoIGg0+2sqdu4n+xXyyDuNuOYDNx63CGgR
+        DAfRaQ9YoALsUkeKwbunYYvULiXQWaN19hYONDBUfEdSzGGR0reBXKKLS9CgnBvS
+        XEKuh0ETt+XjhS8aAsX9CQ==
+X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
+Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
+        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id WQCyrXXjmjf8 for <linux-fsdevel@vger.kernel.org>;
+        Sun, 17 Apr 2022 18:12:10 -0700 (PDT)
+Received: from washi.fujisawa.hgst.com (washi.fujisawa.hgst.com [10.149.53.254])
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4KhTRs4Qrnz1Rvlx;
+        Sun, 17 Apr 2022 18:12:09 -0700 (PDT)
+From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: [PATCH 0/8] zonefs improvements
+Date:   Mon, 18 Apr 2022 10:11:59 +0900
+Message-Id: <20220418011207.2385416-1-damien.lemoal@opensource.wdc.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220413125550.GA29176@fieldses.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 13, 2022 at 08:55:50AM -0400, Bruce Fields wrote:
-> On Fri, Apr 01, 2022 at 12:11:34PM -0700, dai.ngo@oracle.com wrote:
-> > On 4/1/22 8:57 AM, Chuck Lever III wrote:
-> > >>(And to be honest I'd still prefer the original approach where we expire
-> > >>clients from the posix locking code and then retry.  It handles an
-> > >>additional case (the one where reboot happens after a long network
-> > >>partition), and I don't think it requires adding these new client
-> > >>states....)
-> > >The locking of the earlier approach was unworkable.
-> > >
-> > >But, I'm happy to consider that again if you can come up with a way
-> > >of handling it properly and simply.
-> > 
-> > I will wait for feedback from Bruce before sending v20 with the
-> > above change.
-> 
-> OK, I'd like to tweak the design in that direction.
-> 
-> I'd like to handle the case where the network goes down for a while, and
-> the server gets power-cycled before the network comes back up.  I think
-> that could easily happen.  There's no reason clients couldn't reclaim
-> all their state in that case.  We should let them.
-> 
-> To handle that case, we have to delay removing the client's stable
-> storage record until there's a lock conflict.  That means code that
-> checks for conflicts must be able to sleep.
-> 
-> In each case (opens, locks, delegations), conflicts are first detected
-> while holding a spinlock.  So we need to unlock before waiting, and then
-> retry if necessary.
-> 
-> We decided instead to remove the stable-storage record when first
-> converting a client to a courtesy client--then we can handle a conflict
-> by just setting a flag on the client that indicates it should no longer
-> be used, no need to drop any locks.
-> 
-> That leaves the client in a state where it's still on a bunch of global
-> data structures, but has to be treated as if it no longer exists.  That
-> turns out to require more special handling than expected.  You've shown
-> admirable persistance in handling those cases, but I'm still not
-> completely convinced this is correct.
-> 
-> We could avoid that complication, and also solve the
-> server-reboot-during-network-partition problem, if we went back to the
-> first plan and allowed ourselves to sleep at the time we detect a
-> conflict.  I don't think it's that complicated.
-> 
-> We end up using a lot of the same logic regardless, so don't throw away
-> the existing patches.
-> 
-> My basic plan is:
-> 
-> Keep the client state, but with only three values: ACTIVE, COURTESY, and
-> EXPIRABLE.
-> 
-> ACTIVE is the initial state, which we return to whenever we renew.  The
-> laundromat sets COURTESY whenever a client isn't renewed for a lease
-> period.  When we run into a conflict with a lock held by a client, we
-> call
-> 
->   static bool try_to_expire_client(struct nfs4_client *clp)
->   {
-> 	return COURTESY == cmpxchg(clp->cl_state, COURTESY, EXPIRABLE);
->   }
-> 
-> If it returns true, that tells us the client was a courtesy client.  We
-> then call queue_work(laundry_wq, &nn->laundromat_work) to tell the
-> laundromat to actually expire the client.  Then if needed we can drop
-> locks, wait for the laundromat to do the work with
-> flush_workqueue(laundry_wq), and retry.
-> 
-> All the EXPIRABLE state does is tell the laundromat to expire this
-> client.  It does *not* prevent the client from being renewed and
-> acquiring new locks--if that happens before the laundromat gets to the
-> client, that's fine, we let it return to ACTIVE state and if someone
-> retries the conflicing lock they'll just get a denial.
-> 
-> Here's a suggested a rough patch ordering.  If you want to go above and
-> beyond, I also suggest some tests that should pass after each step:
-> 
-> 
-> PATCH 1
-> -------
-> 
-> Implement courtesy behavior *only* for clients that have
-> delegations, but no actual opens or locks:
-> 
-> Define new cl_state field with values ACTIVE, COURTESY, and EXPIRABLE.
-> Set to ACTIVE on renewal.  Modify the laundromat so that instead of
-> expiring any client that's too old, it first checks if a client has
-> state consisting only of unconflicted delegations, and, if so, it sets
-> COURTESY.
-> 
-> Define try_to_expire_client as above.  In nfsd_break_deleg_cb, call
-> try_to_expire_client and queue_work.  (But also continue scheduling the
-> recall as we do in the current code, there's no harm to that.)
-> 
-> Modify the laundromat to try to expire old clients with EXPIRED set.
-> 
-> TESTS:
-> 	- Establish a client, open a file, get a delegation, close the
-> 	  file, wait 2 lease periods, verify that you can still use the
-> 	  delegation.
-> 	- Establish a client, open a file, get a delegation, close the
-> 	  file, wait 2 lease periods, establish a second client, request
-> 	  a conflicting open, verify that the open succeeds and that the
-> 	  first client is no longer able to use its delegation.
-> 
-> 
-> PATCH 2
-> -------
-> 
-> Extend courtesy client behavior to clients that have opens or
-> delegations, but no locks:
-> 
-> Modify the laundromat to set COURTESY on old clients with state
-> consisting only of opens or unconflicted delegations.
-> 
-> Add in nfs4_resolve_deny_conflicts_locked and friends as in your patch
-> "Update nfs4_get_vfs_file()...", but in the case of a conflict, call
-> try_to_expire_client and queue_work(), then modify e.g.
-> nfs4_get_vfs_file to flush_workqueue() and then retry after unlocking
-> fi_lock.
-> 
-> TESTS:
-> 	- establish a client, open a file, wait 2 lease periods, verify
-> 	  that you can still use the open stateid.
-> 	- establish a client, open a file, wait 2 lease periods,
-> 	  establish a second client, request an open with a share mode
-> 	  conflicting with the first open, verify that the open succeeds
-> 	  and that first client is no longer able to use its open.
-> 
-> PATCH 3
-> -------
-> 
-> Minor tweak to prevent the laundromat from being freed out from
-> under a thread processing a conflicting lock:
-> 
-> Create and destroy the laundromat workqueue in init_nfsd/exit_nfsd
-> instead of where it's done currently.
-> 
-> (That makes the laundromat's lifetime longer than strictly necessary.
-> We could do better with a little more work; I think this is OK for now.)
-> 
-> TESTS:
-> 	- just rerun any regression tests; this patch shouldn't change
-> 	  behavior.
-> 
-> PATCH 4
-> -------
-> 
-> Extend courtesy client behavior to any client with state, including
-> locks:
-> 
-> Modify the laundromat to set COURTESY on any old client with state.
-> 
-> Add two new lock manager callbacks:
-> 
-> 	void * (*lm_lock_expirable)(struct file_lock *);
-> 	bool (*lm_expire_lock)(void *);
-> 
-> If lm_lock_expirable() is called and returns non-NULL, posix_lock_inode
-> should drop flc_lock, call lm_expire_lock() with the value returned from
-> lm_lock_expirable, and then restart the loop over flc_posix from the
-> beginning.
-> 
-> For now, nfsd's lm_lock_expirable will basically just be
-> 
-> 	if (try_to_expire_client()) {
-> 		queue_work()
-> 		return get_net();
+The first 2 patches of this series are bug fixes intended for 5.18. The
+remaining patches improve zonefs zone resource accounting:
+* Accounting of the number of sequential zone files that are write open
+  is changed to be unconditional, regardless of the use of the
+  explicit-open mount option.
+* Add accounting for active sequential zone files, that is, maintian a
+  count of the number of sequential zone files that are not empty nor
+  full or that have an explicit open zone.
+* Add sysfs attributes to export the above 2 counters as well as the
+  device defined limits for open and active zone resources.
 
-Correction: I forgot that the laundromat is global, not per-net.  So, we
-can skip the put_net/get_net.  Also, lm_lock_expirable can just return
-bool instead of void *, and lm_expire_lock needs no arguments.
+Damien Le Moal (8):
+  zonefs: Clear inode information flags on inode creation
+  zonefs: Fix management of open zones
+  zonefs: Rename super block information fields
+  zonefs: Always do seq file write open accounting
+  zonefs: Export open zone resource information through sysfs
+  zonefs: Add active seq file accounting
+  documentation: zonefs: Cleanup the mount options section
+  documentation: zonefs: Document sysfs attributes
 
---b.
+ Documentation/filesystems/zonefs.rst |  52 ++++++-
+ fs/zonefs/Makefile                   |   2 +-
+ fs/zonefs/super.c                    | 219 +++++++++++++++++++++------
+ fs/zonefs/sysfs.c                    | 139 +++++++++++++++++
+ fs/zonefs/zonefs.h                   |  18 ++-
+ 5 files changed, 376 insertions(+), 54 deletions(-)
+ create mode 100644 fs/zonefs/sysfs.c
 
-> 	}
-> 	return NULL;
-> 
-> and lm_expire_lock will:
-> 
-> 	flush_workqueue()
-> 	put_net()
-> 
-> One more subtlety: the moment we drop the flc_lock, it's possible
-> another task could race in and free it.  Worse, the nfsd module could be
-> removed entirely--so nfsd's lm_expire_lock code could disappear out from
-> under us.  To prevent this, I think we need to add a struct module
-> *owner field to struct lock_manager_operations, and use it like:
-> 
-> 	owner = fl->fl_lmops->owner;
-> 	__get_module(owner);
-> 	expire_lock = fl->fl_lmops->lm_expire_lock;
-> 	spin_unlock(&ctx->flc_lock);
-> 	expire_lock(...);
-> 	module_put(owner);
-> 
-> Maybe there's some simpler way, but I don't see it.
-> 
-> TESTS:
-> 	- retest courtesy client behavior using file locks this time.
-> 
-> --
-> 
-> That's the basic idea.  I think it should work--though I may have
-> overlooked something.
-> 
-> This has us flush the laundromat workqueue while holding mutexes in a
-> couple cases.  We could avoid that with a little more work, I think.
-> But those mutexes should only be associated with the client requesting a
-> new open/lock, and such a client shouldn't be touched by the laundromat,
-> so I think we're OK.
-> 
-> It'd also be helpful to update the info file with courtesy client
-> information, as you do in your current patches.
-> 
-> Does this make sense?
-> 
-> --b.
+--=20
+2.35.1
+
