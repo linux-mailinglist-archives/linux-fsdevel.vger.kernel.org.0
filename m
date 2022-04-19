@@ -2,60 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C61BB507B0A
+	by mail.lfdr.de (Postfix) with ESMTP id 7D9CB507B09
 	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Apr 2022 22:33:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357667AbiDSUfG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Apr 2022 16:35:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53458 "EHLO
+        id S1357671AbiDSUfH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Apr 2022 16:35:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357656AbiDSUfA (ORCPT
+        with ESMTP id S1346295AbiDSUfB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Apr 2022 16:35:00 -0400
-Received: from mail-qt1-x836.google.com (mail-qt1-x836.google.com [IPv6:2607:f8b0:4864:20::836])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DD533C4AB;
-        Tue, 19 Apr 2022 13:32:16 -0700 (PDT)
-Received: by mail-qt1-x836.google.com with SMTP id f22so3956965qtp.13;
-        Tue, 19 Apr 2022 13:32:16 -0700 (PDT)
+        Tue, 19 Apr 2022 16:35:01 -0400
+Received: from mail-qk1-x736.google.com (mail-qk1-x736.google.com [IPv6:2607:f8b0:4864:20::736])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C10EA3C712;
+        Tue, 19 Apr 2022 13:32:17 -0700 (PDT)
+Received: by mail-qk1-x736.google.com with SMTP id d19so6594581qko.3;
+        Tue, 19 Apr 2022 13:32:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=hiSsrCjlwcoYpl0/USGlx4MhgXt3RiZFVish54MSnok=;
-        b=hicipdWXgw6rsxF8UJHDR0KaJKoyeokPF5PWR6GaAgrllERYJYI/Jg9xtgvUJfkGvD
-         eQ0Tn1RWY90G63yyb8TFRYK1YAyDoBqYZpHyMmkemad2g9WorHqYlLgIkxXqgDRyqSD3
-         JSI8HI1+65J/hvvAJjRj4sntggxxOZ35CeH1fwN12b0a+lmaR2pa08qEpc5yuHT97nwo
-         rTDx3GGrEAOAeBvQJvS2x/TyS3N3gOKoY3aPUB5OcYIP/JzWx6GZP2evEsfvj0XwtP2r
-         +AefnAe8wxhqx3vV9dqRsM92MSdMMBlq4LJeGesbsBBKRiRmTUekFCOF0vT4/ZK760CM
-         apfA==
+        bh=OJODyF/ajH9xOJK+4CIgokrEBufAgT0uT/ipe+iH5NU=;
+        b=QAsHvwzDiVLVrGcU+9jbXMpQHWpDKdMfj3bnaE6Fu/OB+mJ3UTI2COzzBz8F3B8PDY
+         QR/HlbQYkvX1wLqTHtrj09BO5gbHxfopW1/9ErRgVdLGBXmwB2vh783JIEf1zL6y8m+1
+         gOyPOGYrhW7b1BfPzQGL9EWo3jr7z4k0QgYVP2/c2gSoJpNHts8tIk6Y+KfQW/pB83A9
+         g6G7mq+Ri4BnZ0etWfdnCF6WkxD2F/lCKxbTpcoRuig61gE97c4evJaj8ypBbSFuTLw/
+         kkfwBHq79jHa+vLZ4y9nTlceUZJ9SRnkNEyvY/hJNAx/aS7t2tOy0ZcRWyCVKI+ZBv16
+         9bzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=hiSsrCjlwcoYpl0/USGlx4MhgXt3RiZFVish54MSnok=;
-        b=LzVnHLup+BREdCziZw1m6Zu//XcNS5lNP9MIrN5BXgfC252lI8e+P8sEgVFO+4gQNC
-         Z8pA9Y1ENXKBdinou/e+cBPDX+aVNGPxZb8vg170gHqgz5vQwIuGJOXMxkNMgiRdZazV
-         QrPZfMPuZSSGNoiPVQbMoHhdfomFNkat+Zy0PE8V6ClpEiGeDa2cqZ57Gi3MfgfFRyI7
-         iISek3PT+WnuQUC0R96KO4zDukM3fh0VhzDJ8/LnU724xOa/XtwWw5d8IUIIT/i1aR+/
-         djBcWt2mixDCMdMNEE1mDuYDGH9+8zU/tDdkg9+27D6DOtiJdren4PfFqp1WK+JDKUUP
-         WZJA==
-X-Gm-Message-State: AOAM531Xp9MdrMdKbahLRAY/5IQMf6TS6i2iFckTNR6ZzMhm67rPUDwI
-        DzzJnM1lLMHTSKH/OKcZAKCbDvR+gofB
-X-Google-Smtp-Source: ABdhPJygPQpglSpvnfxt1BNztNSw+CtWlN8E1Jml72FeiMubEvfSdNMiyDAjGy1m+t6bYuttfHO2lA==
-X-Received: by 2002:ac8:5a16:0:b0:2e1:ea00:b4e1 with SMTP id n22-20020ac85a16000000b002e1ea00b4e1mr11595006qta.329.1650400335194;
-        Tue, 19 Apr 2022 13:32:15 -0700 (PDT)
+        bh=OJODyF/ajH9xOJK+4CIgokrEBufAgT0uT/ipe+iH5NU=;
+        b=SGsGv0hsKQxs9OanlhnFHz4gJuIU2dVsKjbXpRjngA8XgDhTPXxwT68SEzswIOZVKE
+         Dl+MNWoREFH9plFoPejlPOmi21W0FP5Ijg4K5hZ/cT0muTibqnQnyFRZPOh4CbKe2ZtI
+         zNSCSUlSlqo1yJ5k4OYr951qESxEzrrvmfipTVscaeHmL/EKp8oHcRPkrW396i13WMEt
+         yN6QCemunGgYujfu2LiQpFLC6gOVh2y8G9i++/73N/Ist1Y1IaRVqrPx7wyy7IoXI5OW
+         LJSICkXjcBSF6Zsu6I2DEETwiFx9Huq6wgwisJVBEjBclGQFer34mKMzF29uXHVTUxJ9
+         ylBQ==
+X-Gm-Message-State: AOAM5302GdNpacyOHHV2jMRIIdewkluixUE/PAcUmX6fNpYU6e00BH8i
+        COmE9DRCru05FAGIgpa3mFFmbqVKjkGO
+X-Google-Smtp-Source: ABdhPJwglihygmVaHV5xfkCJRJUfFCN+9TSdbuDle94mmw3wMqPZlOg/eMDWhy7vp1WF0tcR+c+hZg==
+X-Received: by 2002:a05:620a:4711:b0:67e:6c24:2b2b with SMTP id bs17-20020a05620a471100b0067e6c242b2bmr10987093qkb.588.1650400336592;
+        Tue, 19 Apr 2022 13:32:16 -0700 (PDT)
 Received: from moria.home.lan (c-73-219-103-14.hsd1.vt.comcast.net. [73.219.103.14])
-        by smtp.gmail.com with ESMTPSA id e9-20020ac84e49000000b002f1fcda1ac7sm611180qtw.82.2022.04.19.13.32.13
+        by smtp.gmail.com with ESMTPSA id e9-20020ac84e49000000b002f1fcda1ac7sm611180qtw.82.2022.04.19.13.32.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Apr 2022 13:32:14 -0700 (PDT)
+        Tue, 19 Apr 2022 13:32:15 -0700 (PDT)
 From:   Kent Overstreet <kent.overstreet@gmail.com>
 To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org
 Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
-        roman.gushchin@linux.dev, hannes@cmpxchg.org
-Subject: [PATCH 3/4] mm: Centralize & improve oom reporting in show_mem.c
-Date:   Tue, 19 Apr 2022 16:32:01 -0400
-Message-Id: <20220419203202.2670193-4-kent.overstreet@gmail.com>
+        roman.gushchin@linux.dev
+Subject: [PATCH 4/4] bcachefs: shrinker.to_text() methods
+Date:   Tue, 19 Apr 2022 16:32:02 -0400
+Message-Id: <20220419203202.2670193-5-kent.overstreet@gmail.com>
 X-Mailer: git-send-email 2.35.2
 In-Reply-To: <20220419203202.2670193-1-kent.overstreet@gmail.com>
 References: <20220419203202.2670193-1-kent.overstreet@gmail.com>
@@ -71,243 +71,94 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch:
- - Moves lib/show_mem.c to mm/show_mem.c
- - Changes show_mem() to always report on slab usage
- - Instead of reporting on all slabs, we only report on top 10 slabs,
-   and in sorted order
- - Also reports on shrinkers, with the new shrinkers_to_text().
-
-More OOM reporting can be moved to show_mem.c and improved, this patch
-is only a small start.
-
 Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
 ---
- lib/Makefile           |  2 +-
- mm/Makefile            |  2 +-
- mm/oom_kill.c          | 23 ------------------
- {lib => mm}/show_mem.c | 14 +++++++++++
- mm/slab.h              |  6 +++--
- mm/slab_common.c       | 53 +++++++++++++++++++++++++++++++++++-------
- 6 files changed, 65 insertions(+), 35 deletions(-)
- rename {lib => mm}/show_mem.c (78%)
+ fs/bcachefs/btree_cache.c     | 18 +++++++++++++++---
+ fs/bcachefs/btree_key_cache.c | 18 +++++++++++++++---
+ 2 files changed, 30 insertions(+), 6 deletions(-)
 
-diff --git a/lib/Makefile b/lib/Makefile
-index 31a3904eda..c5041d33d0 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -30,7 +30,7 @@ endif
- lib-y := ctype.o string.o vsprintf.o cmdline.o \
- 	 rbtree.o radix-tree.o timerqueue.o xarray.o \
- 	 idr.o extable.o sha1.o irq_regs.o argv_split.o \
--	 flex_proportions.o ratelimit.o show_mem.o \
-+	 flex_proportions.o ratelimit.o \
- 	 is_single_threaded.o plist.o decompress.o kobject_uevent.o \
- 	 earlycpio.o seq_buf.o siphash.o dec_and_lock.o \
- 	 nmi_backtrace.o nodemask.o win_minmax.o memcat_p.o \
-diff --git a/mm/Makefile b/mm/Makefile
-index 70d4309c9c..97c0be12f3 100644
---- a/mm/Makefile
-+++ b/mm/Makefile
-@@ -54,7 +54,7 @@ obj-y			:= filemap.o mempool.o oom_kill.o fadvise.o \
- 			   mm_init.o percpu.o slab_common.o \
- 			   compaction.o vmacache.o \
- 			   interval_tree.o list_lru.o workingset.o \
--			   debug.o gup.o mmap_lock.o $(mmu-y)
-+			   debug.o gup.o mmap_lock.o show_mem.o $(mmu-y)
- 
- # Give 'page_alloc' its own module-parameter namespace
- page-alloc-y := page_alloc.o
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-index 832fb33037..659c7d6376 100644
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -171,27 +171,6 @@ static bool oom_unkillable_task(struct task_struct *p)
- 	return false;
+diff --git a/fs/bcachefs/btree_cache.c b/fs/bcachefs/btree_cache.c
+index 72f0587e4d..75ef3b5462 100644
+--- a/fs/bcachefs/btree_cache.c
++++ b/fs/bcachefs/btree_cache.c
+@@ -394,6 +394,14 @@ static unsigned long bch2_btree_cache_count(struct shrinker *shrink,
+ 	return btree_cache_can_free(bc);
  }
  
--/*
-- * Check whether unreclaimable slab amount is greater than
-- * all user memory(LRU pages).
-- * dump_unreclaimable_slab() could help in the case that
-- * oom due to too much unreclaimable slab used by kernel.
--*/
--static bool should_dump_unreclaim_slab(void)
--{
--	unsigned long nr_lru;
--
--	nr_lru = global_node_page_state(NR_ACTIVE_ANON) +
--		 global_node_page_state(NR_INACTIVE_ANON) +
--		 global_node_page_state(NR_ACTIVE_FILE) +
--		 global_node_page_state(NR_INACTIVE_FILE) +
--		 global_node_page_state(NR_ISOLATED_ANON) +
--		 global_node_page_state(NR_ISOLATED_FILE) +
--		 global_node_page_state(NR_UNEVICTABLE);
--
--	return (global_node_page_state_pages(NR_SLAB_UNRECLAIMABLE_B) > nr_lru);
--}
--
- /**
-  * oom_badness - heuristic function to determine which candidate task to kill
-  * @p: task struct of which task we should calculate
-@@ -465,8 +444,6 @@ static void dump_header(struct oom_control *oc, struct task_struct *p)
- 		mem_cgroup_print_oom_meminfo(oc->memcg);
- 	else {
- 		show_mem(SHOW_MEM_FILTER_NODES, oc->nodemask);
--		if (should_dump_unreclaim_slab())
--			dump_unreclaimable_slab();
- 	}
- 	if (sysctl_oom_dump_tasks)
- 		dump_tasks(oc);
-diff --git a/lib/show_mem.c b/mm/show_mem.c
-similarity index 78%
-rename from lib/show_mem.c
-rename to mm/show_mem.c
-index 1c26c14ffb..c9f37f13d6 100644
---- a/lib/show_mem.c
-+++ b/mm/show_mem.c
-@@ -7,11 +7,15 @@
- 
- #include <linux/mm.h>
- #include <linux/cma.h>
-+#include <linux/printbuf.h>
++static void bch2_btree_cache_shrinker_to_text(struct printbuf *out, struct shrinker *shrink)
++{
++	struct bch_fs *c = container_of(shrink, struct bch_fs,
++					btree_cache.shrink);
 +
-+#include "slab.h"
- 
- void show_mem(unsigned int filter, nodemask_t *nodemask)
++	bch2_btree_cache_to_text(out, c);
++}
++
+ void bch2_fs_btree_cache_exit(struct bch_fs *c)
  {
- 	pg_data_t *pgdat;
- 	unsigned long total = 0, reserved = 0, highmem = 0;
-+	struct printbuf buf = PRINTBUF;
+ 	struct btree_cache *bc = &c->btree_cache;
+@@ -477,6 +485,7 @@ int bch2_fs_btree_cache_init(struct bch_fs *c)
  
- 	printk("Mem-Info:\n");
- 	show_free_areas(filter, nodemask);
-@@ -41,4 +45,14 @@ void show_mem(unsigned int filter, nodemask_t *nodemask)
- #ifdef CONFIG_MEMORY_FAILURE
- 	printk("%lu pages hwpoisoned\n", atomic_long_read(&num_poisoned_pages));
- #endif
-+
-+	pr_info("Unreclaimable slab info:\n");
-+	dump_unreclaimable_slab(&buf);
-+	printk("%s", buf.buf);
-+	printbuf_reset(&buf);
-+
-+	printk("Shrinkers:\n");
-+	shrinkers_to_text(&buf);
-+	printk("%s", buf.buf);
-+	printbuf_exit(&buf);
- }
-diff --git a/mm/slab.h b/mm/slab.h
-index c7f2abc2b1..abefbf7674 100644
---- a/mm/slab.h
-+++ b/mm/slab.h
-@@ -788,10 +788,12 @@ static inline struct kmem_cache_node *get_node(struct kmem_cache *s, int node)
+ 	bc->shrink.count_objects	= bch2_btree_cache_count;
+ 	bc->shrink.scan_objects		= bch2_btree_cache_scan;
++	bc->shrink.to_text		= bch2_btree_cache_shrinker_to_text;
+ 	bc->shrink.seeks		= 4;
+ 	ret = register_shrinker(&bc->shrink);
+ out:
+@@ -1147,7 +1156,10 @@ void bch2_btree_node_to_text(struct printbuf *out, struct bch_fs *c,
  
- #endif
- 
-+struct printbuf;
-+
- #if defined(CONFIG_SLAB) || defined(CONFIG_SLUB_DEBUG)
--void dump_unreclaimable_slab(void);
-+void dump_unreclaimable_slab(struct printbuf *);
- #else
--static inline void dump_unreclaimable_slab(void)
-+static inline void dump_unreclaimable_slab(struct printbuf *out)
+ void bch2_btree_cache_to_text(struct printbuf *out, struct bch_fs *c)
  {
+-	pr_buf(out, "nr nodes:\t\t%u\n", c->btree_cache.used);
+-	pr_buf(out, "nr dirty:\t\t%u\n", atomic_read(&c->btree_cache.dirty));
+-	pr_buf(out, "cannibalize lock:\t%p\n", c->btree_cache.alloc_lock);
++	pr_buf(out, "nr nodes:          %u", c->btree_cache.used);
++	pr_newline(out);
++	pr_buf(out, "nr dirty:          %u", atomic_read(&c->btree_cache.dirty));
++	pr_newline(out);
++	pr_buf(out, "cannibalize lock:  %p", c->btree_cache.alloc_lock);
++	pr_newline(out);
  }
- #endif
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index 23f2ab0713..cb1c548c73 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -24,6 +24,7 @@
- #include <asm/tlbflush.h>
- #include <asm/page.h>
- #include <linux/memcontrol.h>
-+#include <linux/printbuf.h>
- 
- #define CREATE_TRACE_POINTS
- #include <trace/events/kmem.h>
-@@ -1084,10 +1085,15 @@ static int slab_show(struct seq_file *m, void *p)
- 	return 0;
+diff --git a/fs/bcachefs/btree_key_cache.c b/fs/bcachefs/btree_key_cache.c
+index a575189f35..32b5cb6042 100644
+--- a/fs/bcachefs/btree_key_cache.c
++++ b/fs/bcachefs/btree_key_cache.c
+@@ -711,6 +711,14 @@ void bch2_fs_btree_key_cache_init_early(struct btree_key_cache *c)
+ 	INIT_LIST_HEAD(&c->freed);
  }
  
--void dump_unreclaimable_slab(void)
-+void dump_unreclaimable_slab(struct printbuf *out)
++static void bch2_btree_key_cache_shrinker_to_text(struct printbuf *out, struct shrinker *shrink)
++{
++	struct btree_key_cache *bc =
++		container_of(shrink, struct btree_key_cache, shrink);
++
++	bch2_btree_key_cache_to_text(out, bc);
++}
++
+ int bch2_fs_btree_key_cache_init(struct btree_key_cache *c)
  {
- 	struct kmem_cache *s;
- 	struct slabinfo sinfo;
-+	struct slab_by_mem {
-+		struct kmem_cache *s;
-+		size_t total, active;
-+	} slabs_by_mem[10], n;
-+	int i, nr = 0;
- 
- 	/*
- 	 * Here acquiring slab_mutex is risky since we don't prefer to get
-@@ -1097,12 +1103,11 @@ void dump_unreclaimable_slab(void)
- 	 * without acquiring the mutex.
- 	 */
- 	if (!mutex_trylock(&slab_mutex)) {
--		pr_warn("excessive unreclaimable slab but cannot dump stats\n");
-+		pr_buf(out, "excessive unreclaimable slab but cannot dump stats\n");
- 		return;
- 	}
- 
--	pr_info("Unreclaimable slab info:\n");
--	pr_info("Name                      Used          Total\n");
-+	buf->atomic++;
- 
- 	list_for_each_entry(s, &slab_caches, list) {
- 		if (s->flags & SLAB_RECLAIM_ACCOUNT)
-@@ -1110,11 +1115,43 @@ void dump_unreclaimable_slab(void)
- 
- 		get_slabinfo(s, &sinfo);
- 
--		if (sinfo.num_objs > 0)
--			pr_info("%-17s %10luKB %10luKB\n", s->name,
--				(sinfo.active_objs * s->size) / 1024,
--				(sinfo.num_objs * s->size) / 1024);
-+		if (!sinfo.num_objs)
-+			continue;
-+
-+		n.s = s;
-+		n.total = sinfo.num_objs * s->size;
-+		n.active = sinfo.active_objs * s->size;
-+
-+		for (i = 0; i < nr; i++)
-+			if (n.total < slabs_by_mem[i].total)
-+				break;
-+
-+		if (nr < ARRAY_SIZE(slabs_by_mem)) {
-+			memmove(&slabs_by_mem[i + 1],
-+				&slabs_by_mem[i],
-+				sizeof(slabs_by_mem[0]) * (nr - i));
-+			nr++;
-+		} else if (i) {
-+			i--;
-+			memmove(&slabs_by_mem[0],
-+				&slabs_by_mem[1],
-+				sizeof(slabs_by_mem[0]) * i);
-+		} else {
-+			continue;
-+		}
-+
-+		slabs_by_mem[i] = n;
-+	}
-+
-+	for (i = nr - 1; i >= 0; --i) {
-+		pr_buf(out, "%-17s total: ", slabs_by_mem[i].s->name);
-+		pr_human_readable_u64(out, slabs_by_mem[i].total);
-+		pr_buf(out, " active: ");
-+		pr_human_readable_u64(out, slabs_by_mem[i].active);
-+		pr_newline(out);
- 	}
-+
-+	--buf->atomic;
- 	mutex_unlock(&slab_mutex);
+ 	int ret;
+@@ -724,14 +732,18 @@ int bch2_fs_btree_key_cache_init(struct btree_key_cache *c)
+ 	c->shrink.seeks			= 1;
+ 	c->shrink.count_objects		= bch2_btree_key_cache_count;
+ 	c->shrink.scan_objects		= bch2_btree_key_cache_scan;
++	c->shrink.to_text		= bch2_btree_key_cache_shrinker_to_text;
+ 	return register_shrinker(&c->shrink);
  }
  
+ void bch2_btree_key_cache_to_text(struct printbuf *out, struct btree_key_cache *c)
+ {
+-	pr_buf(out, "nr_freed:\t%zu\n",	c->nr_freed);
+-	pr_buf(out, "nr_keys:\t%lu\n",	atomic_long_read(&c->nr_keys));
+-	pr_buf(out, "nr_dirty:\t%lu\n",	atomic_long_read(&c->nr_dirty));
++	pr_buf(out, "nr_freed:  %zu",	c->nr_freed);
++	pr_newline(out);
++	pr_buf(out, "nr_keys:   %zu",	atomic_long_read(&c->nr_keys));
++	pr_newline(out);
++	pr_buf(out, "nr_dirty:  %zu",	atomic_long_read(&c->nr_dirty));
++	pr_newline(out);
+ }
+ 
+ void bch2_btree_key_cache_exit(void)
 -- 
 2.35.2
 
