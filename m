@@ -2,134 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 845BF506A5F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Apr 2022 13:27:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69A705068F6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Apr 2022 12:46:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349435AbiDSL31 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Apr 2022 07:29:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33896 "EHLO
+        id S1348928AbiDSKtY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Apr 2022 06:49:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239095AbiDSL30 (ORCPT
+        with ESMTP id S237759AbiDSKtX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Apr 2022 07:29:26 -0400
-Received: from esa6.hgst.iphmx.com (esa6.hgst.iphmx.com [216.71.154.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 413E624F33
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Apr 2022 04:26:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1650367604; x=1681903604;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=bv1tQez+k/eBrpPJulhybP0533RPoK0vWJlDE9Azgc8=;
-  b=K8ikVA8GfaojtbJ3r3sEX85g4hE4fvO2tXATDENyJ1r+DR+QftCsFq6K
-   yXQMGNHARJVMKzzEPB+Yjft85IbOnF1ZCSLmG7nOumgjEOmx4zrOmFW55
-   +5TSEacApdPtdQhKSkSjzpqpi68Utr+Y0cJacbME9N/1G4/TjTdOpdrSn
-   RjQtQW1sr3cNbR4ORvJGmGO4LAOtEGMuxL6TepSkpiu/sP3H+hsjgAkKo
-   VFGelv0eIZq2BVvSzND1opP5cuJbv+oSLFfIR0hi52TjXC/U6AiiGjAst
-   mXXD96KJGUyBVPPbkoKL9K7WVvjJwFUe0uqJIl7QzHLKVDxkxHfpWD7AK
-   A==;
-X-IronPort-AV: E=Sophos;i="5.90,272,1643644800"; 
-   d="scan'208";a="199151949"
-Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 19 Apr 2022 19:26:44 +0800
-IronPort-SDR: qruNXlo6K0DsfcWJ6JjDc/eK+EAMaw2Zwc7kYf1MZnRujDiyGz7Vri+NqMSOPy9ZdkrVgvNj91
- /rAVOVB5QsaIwrGjCUJ3fKDtGVc8SKRsJAcTuGrUpsCyPB5feLVQrl7jt/u2s2GZF3ORl4EaRU
- mIgi5chT6+8UE0+FJMtBLQrHAZWVxwN3lxjI+YUJ0P9PJM4pbsYHYJs/0o5xbVEQ6QHu5rTskR
- aJqlaz7zvBUAaiH9tpZ+bnAJiZ7VuLi+X9hFoeabXvHtDK1xvOra1jQEXbOhfNce9xa80tO7ps
- 0UMsAdR4LBZbSu0l2eLBJDcb
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 19 Apr 2022 03:57:03 -0700
-IronPort-SDR: fmsEML3nzYiqcbPQfR5R4oWcg5TfIM0UhTz8yVGYcx6ZY3TiLy1MwjyzesGrHSoCNT1EJd7LsR
- VnuZI8mdvI1pVfARDSfBCg1qZQCWAialczI7aGxPToADLuSD4xbqF+Hjd6AjNJiRoKz/L2y3pD
- 8REFs6WUSMfJSLjqD0Nx5VUzzwfZjcn92NJNfz//8rtBCaUb2HlLkjFvQ8Z+MeKdCZHS8m7cUk
- cIzqPODhv2V5L/9yPXAdTEwCufeJFeQxWxNRWu6evoLRXLQTSqEiphoDbKmTzi6yP1k0oRsJnq
- dlM=
-WDCIronportException: Internal
-Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
-  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 19 Apr 2022 04:26:43 -0700
-Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4KjM2W3Ypvz1SHwl
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Apr 2022 04:26:43 -0700 (PDT)
-Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)"
-        header.d=opensource.wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
-        opensource.wdc.com; h=content-transfer-encoding:content-type
-        :in-reply-to:organization:from:references:to:content-language
-        :subject:user-agent:mime-version:date:message-id; s=dkim; t=
-        1650367603; x=1652959604; bh=bv1tQez+k/eBrpPJulhybP0533RPoK0vWJl
-        DE9Azgc8=; b=Pv9Kdchyz5LswGcCaqPejq1iOxoperpJPkciW8nVRdNG7veIpUK
-        +J19ZjIsjhTrODhqrmohrsnXaW3SkGSJIOFKQfFllaJNWOa1vRlSpZRR8pWsAq7S
-        Jm5CVCK02JsMT+99DH9DKCBIBfvFf3FZEypgD12lxgBZeBH6H+SmtEg9XdA4kh2J
-        d8St9YSaUR2Uft64rw5etw/YTsaVg3EL12yHiwuQhjailgwvXMeHR3sGOht9SbpQ
-        fJc9fosYdDfRTZkpagfJYUUWC8lPYh7Sn9CwR/uunELYWEFPB48mNKttDIc2GTlL
-        TS+GHs19Zsy+oRU60CeTBm7fPCMflcm0TMw==
-X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
-Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
-        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 1kan07IBqJDj for <linux-fsdevel@vger.kernel.org>;
-        Tue, 19 Apr 2022 04:26:43 -0700 (PDT)
-Received: from [10.225.163.14] (unknown [10.225.163.14])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4KjM2V4Rh2z1Rvlx;
-        Tue, 19 Apr 2022 04:26:42 -0700 (PDT)
-Message-ID: <38720285-3f18-dcee-fcee-f2c223b1d52a@opensource.wdc.com>
-Date:   Tue, 19 Apr 2022 20:26:41 +0900
+        Tue, 19 Apr 2022 06:49:23 -0400
+Received: from mail1.bemta32.messagelabs.com (mail1.bemta32.messagelabs.com [195.245.230.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66CCE18E3B;
+        Tue, 19 Apr 2022 03:46:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
+        s=170520fj; t=1650365198; i=@fujitsu.com;
+        bh=nKcbw9G10YRwJtuTkWKrJxPtCYxkjd1NLjOt968HcKM=;
+        h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type;
+        b=FtukdF7buVA7kfo1MC9GCqe2FA/iAKQnj7RcQrpOn9pKeTatldHlqxERZAtqaKDgh
+         PLKlmPoUOMEz1nBrxNm9t/youJkNGcdT1D9IxMmHfP7SydwrknrB0+z3T80DI2oUk6
+         OqS+YTCjKQ1XkCyJMGQcb74E3Rfzsme7Ls6SxHD4S70pfHoJpLJ6sby7REdzeAV5UW
+         xmRv5yqZCxV70WTms/aAPGDxpcEPGVdakI+XeNYrRrymX9BNodUJYOYnL1FUlL0GPd
+         ES9aKpcVmHedXk64fLxVKuC4/Nm93dbORwKOYDlbAfwEVy7r3xmTyuo7iMayAqHxrL
+         nbHmmPyKD8dXA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrPIsWRWlGSWpSXmKPExsViZ8MxSZd3cly
+  SwbH9phavD39itPhwcxKTxempZ5ksthy7x2hx+Qmfxc9lq9gtLi1yt9iz9ySLxYUDp1ktdv3Z
+  wW6x8vFWJovzf4+zOvB4nFok4bFpVSebx4vNMxk9di/4zOTxeZOcx6Ynb5kC2KJYM/OS8isSW
+  DM62rULpgpVdJx+zt7AuIq/i5GLQ0hgC6PEtmM3WSGcBUwScz++YIZw9jBKPPm3hLGLkZODTU
+  BT4lnnAmYQW0RAWWLBjWNsIEXMAmeYJC5dgygSFkiUOHv6ACuIzSKgKnHjQx9YnFfAQ6LhSx9
+  YXEJAQWLKw/fMEHFBiZMzn7CA2MwCEhIHX7xghqhRlLjU8Y0Rwq6QmDWrjQnCVpO4em4T8wRG
+  /llI2mchaV/AyLSK0SqpKDM9oyQ3MTNH19DAQNfQ0FTXQNfIxFgvsUo3US+1VLc8tbhE11Avs
+  bxYL7W4WK+4Mjc5J0UvL7VkEyMwXlKKGT7vYFzQ91PvEKMkB5OSKG99VFySEF9SfkplRmJxRn
+  xRaU5q8SFGGQ4OJQne0glAOcGi1PTUirTMHGDswqQlOHiURHgn9wOleYsLEnOLM9MhUqcYFaX
+  EecVagBICIImM0jy4Nli6uMQoKyXMy8jAwCDEU5BalJtZgir/ilGcg1FJmLdpItAUnsy8Erjp
+  r4AWMwEtrp4SC7K4JBEhJdXAlG0x47WhXXPmhOZX25cXbJ/22zNIXuVX1Rr1zBk/LzkUiB/Zl
+  PQzzPpcf0Czsuf21pzcfpHZPJPW7Pi1XE1yYsHb96E/e+ZveLJiRsd7h+IF1pPU7shLvNffM+
+  Olh9urBQWFR5i2/d/ie5xdS4L12ft9zPnLl794xf5MN3frp64bp+Mem0iL7HHgE8rUm2JtvH3
+  VKz391Tvt3tY+mNnt1PktKVklxjYg+GSnmh/7vOM7+Y4+5cu62/THvyEj7J0Nt3DgjSdn8nJW
+  yvAd3BYs2Kl0KXfaVVn1yO6l84PLs9Pe1CWdf56yYvOOcxs5/9ycn3HgiVjL28fzbJ03XFHMf
+  TZPP/FhX9KuNpXt2W0GjUosxRmJhlrMRcWJABJQCauSAwAA
+X-Env-Sender: xuyang2018.jy@fujitsu.com
+X-Msg-Ref: server-6.tower-587.messagelabs.com!1650365197!269511!1
+X-Originating-IP: [62.60.8.146]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.85.8; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 19231 invoked from network); 19 Apr 2022 10:46:37 -0000
+Received: from unknown (HELO n03ukasimr02.n03.fujitsu.local) (62.60.8.146)
+  by server-6.tower-587.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 19 Apr 2022 10:46:37 -0000
+Received: from n03ukasimr02.n03.fujitsu.local (localhost [127.0.0.1])
+        by n03ukasimr02.n03.fujitsu.local (Postfix) with ESMTP id 29D4210045A;
+        Tue, 19 Apr 2022 11:46:37 +0100 (BST)
+Received: from R01UKEXCASM126.r01.fujitsu.local (unknown [10.183.43.178])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by n03ukasimr02.n03.fujitsu.local (Postfix) with ESMTPS id 17C58100440;
+        Tue, 19 Apr 2022 11:46:37 +0100 (BST)
+Received: from localhost.localdomain (10.167.220.84) by
+ R01UKEXCASM126.r01.fujitsu.local (10.183.43.178) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.32; Tue, 19 Apr 2022 11:46:11 +0100
+From:   Yang Xu <xuyang2018.jy@fujitsu.com>
+To:     <linux-fsdevel@vger.kernel.org>
+CC:     <ceph-devel@vger.kernel.org>, <linux-nfs@vger.kernel.org>,
+        <linux-xfs@vger.kernel.org>, <viro@zeniv.linux.org.uk>,
+        <david@fromorbit.com>, <djwong@kernel.org>, <brauner@kernel.org>,
+        <jlayton@kernel.org>, <ntfs3@lists.linux.dev>, <chao@kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        Yang Xu <xuyang2018.jy@fujitsu.com>
+Subject: [PATCH v4 1/8] fs: move sgid strip operation from inode_init_owner into inode_sgid_strip
+Date:   Tue, 19 Apr 2022 19:47:07 +0800
+Message-ID: <1650368834-2420-1-git-send-email-xuyang2018.jy@fujitsu.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH 6/8] zonefs: Add active seq file accounting
-Content-Language: en-US
-To:     Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-References: <20220418011207.2385416-1-damien.lemoal@opensource.wdc.com>
- <20220418011207.2385416-7-damien.lemoal@opensource.wdc.com>
- <PH0PR04MB741681FE45A964154D2C4F359BF29@PH0PR04MB7416.namprd04.prod.outlook.com>
- <58c3d966-358c-b7e1-e2a0-8425f783383c@opensource.wdc.com>
- <PH0PR04MB741645F790D210401E2CD2EB9BF29@PH0PR04MB7416.namprd04.prod.outlook.com>
-From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
-Organization: Western Digital Research
-In-Reply-To: <PH0PR04MB741645F790D210401E2CD2EB9BF29@PH0PR04MB7416.namprd04.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain
+X-Originating-IP: [10.167.220.84]
+X-ClientProxiedBy: G08CNEXCHPEKD07.g08.fujitsu.local (10.167.33.80) To
+ R01UKEXCASM126.r01.fujitsu.local (10.183.43.178)
+X-Virus-Scanned: ClamAV using ClamSMTP
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/19/22 20:06, Johannes Thumshirn wrote:
-> On 19/04/2022 13:03, Damien Le Moal wrote:
->> On 4/19/22 19:59, Johannes Thumshirn wrote:
->>> On 18/04/2022 03:12, Damien Le Moal wrote:
->>>> +/*
->>>> + * Manage the active zone count. Called with zi->i_truncate_mutex held.
->>>> + */
->>>> +static void zonefs_account_active(struct inode *inode)
->>>> +{
->>>> +	struct zonefs_sb_info *sbi = ZONEFS_SB(inode->i_sb);
->>>> +	struct zonefs_inode_info *zi = ZONEFS_I(inode);
->>>> +
->>>
->>> Nit:	lockdep_assert_held(&zi->i_truncate_mutex);
->>
->> If I add that, lockdep screams during mount as the inodes mutex is not
->> held when the zone inodes are initialized and zonefs_account_active()
->> called. We could add a wrapper function for this, but I did not feel it
->> was necessary.
-> 
-> OK, but then the 'Called with zi->i_truncate_mutex held.' comment is invalid
-> and should be removed.
+This has no functional change. Just create and export inode_sgid_strip api for
+the subsequent patch. This function is used to strip S_ISGID mode when init
+a new inode.
 
-Not invalid. When mounting, nobody but the mount process can touch inodes,
-so not holding the mutex is OK.
+Acked-by: Christian Brauner (Microsoft) <brauner@kernel.org>
+Signed-off-by: Yang Xu <xuyang2018.jy@fujitsu.com>
+---
+ fs/inode.c         | 22 ++++++++++++++++++----
+ include/linux/fs.h |  3 ++-
+ 2 files changed, 20 insertions(+), 5 deletions(-)
 
-Will see how to clean this up.
-
-
+diff --git a/fs/inode.c b/fs/inode.c
+index 9d9b422504d1..3215e61a0021 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -2246,10 +2246,8 @@ void inode_init_owner(struct user_namespace *mnt_userns, struct inode *inode,
+ 		/* Directories are special, and always inherit S_ISGID */
+ 		if (S_ISDIR(mode))
+ 			mode |= S_ISGID;
+-		else if ((mode & (S_ISGID | S_IXGRP)) == (S_ISGID | S_IXGRP) &&
+-			 !in_group_p(i_gid_into_mnt(mnt_userns, dir)) &&
+-			 !capable_wrt_inode_uidgid(mnt_userns, dir, CAP_FSETID))
+-			mode &= ~S_ISGID;
++		else
++			inode_sgid_strip(mnt_userns, dir, &mode);
+ 	} else
+ 		inode_fsgid_set(inode, mnt_userns);
+ 	inode->i_mode = mode;
+@@ -2405,3 +2403,19 @@ struct timespec64 current_time(struct inode *inode)
+ 	return timestamp_truncate(now, inode);
+ }
+ EXPORT_SYMBOL(current_time);
++
++void inode_sgid_strip(struct user_namespace *mnt_userns,
++		      const struct inode *dir, umode_t *mode)
++{
++	if (S_ISDIR(*mode) || !dir || !(dir->i_mode & S_ISGID))
++		return;
++	if ((*mode & (S_ISGID | S_IXGRP)) != (S_ISGID | S_IXGRP))
++		return;
++	if (in_group_p(i_gid_into_mnt(mnt_userns, dir)))
++		return;
++	if (capable_wrt_inode_uidgid(mnt_userns, dir, CAP_FSETID))
++		return;
++
++	*mode &= ~S_ISGID;
++}
++EXPORT_SYMBOL(inode_sgid_strip);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index bbde95387a23..4a617aaab6f6 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1897,7 +1897,8 @@ extern long compat_ptr_ioctl(struct file *file, unsigned int cmd,
+ void inode_init_owner(struct user_namespace *mnt_userns, struct inode *inode,
+ 		      const struct inode *dir, umode_t mode);
+ extern bool may_open_dev(const struct path *path);
+-
++void inode_sgid_strip(struct user_namespace *mnt_userns,
++		      const struct inode *dir, umode_t *mode);
+ /*
+  * This is the "filldir" function type, used by readdir() to let
+  * the kernel specify what kind of dirent layout it wants to have.
 -- 
-Damien Le Moal
-Western Digital Research
+2.27.0
+
