@@ -2,81 +2,198 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 68FF35076F7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Apr 2022 20:02:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41BD45077A4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Apr 2022 20:15:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344083AbiDSSEq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Apr 2022 14:04:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43562 "EHLO
+        id S1356574AbiDSSQ6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Apr 2022 14:16:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238961AbiDSSEo (ORCPT
+        with ESMTP id S1356423AbiDSSQC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Apr 2022 14:04:44 -0400
-Received: from nibbler.cm4all.net (nibbler.cm4all.net [IPv6:2001:8d8:970:e500:82:165:145:151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1FD23A192
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Apr 2022 11:02:00 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by nibbler.cm4all.net (Postfix) with ESMTP id 3ED21C00A1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Apr 2022 20:01:59 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at nibbler.cm4all.net
-Received: from nibbler.cm4all.net ([127.0.0.1])
-        by localhost (nibbler.cm4all.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id hPWNnCV-JEvv for <linux-fsdevel@vger.kernel.org>;
-        Tue, 19 Apr 2022 20:01:52 +0200 (CEST)
-Received: from zero.intern.cm-ag (zero.intern.cm-ag [172.30.16.10])
-        by nibbler.cm4all.net (Postfix) with SMTP id 218B6C00D5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Apr 2022 20:01:52 +0200 (CEST)
-Received: (qmail 2504 invoked from network); 19 Apr 2022 23:51:54 +0200
-Received: from unknown (HELO rabbit.intern.cm-ag) (172.30.3.1)
-  by zero.intern.cm-ag with SMTP; 19 Apr 2022 23:51:54 +0200
-Received: by rabbit.intern.cm-ag (Postfix, from userid 1023)
-        id E6D21460F1C; Tue, 19 Apr 2022 20:01:51 +0200 (CEST)
-Date:   Tue, 19 Apr 2022 20:01:51 +0200
-From:   Max Kellermann <mk@cm4all.com>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Max Kellermann <mk@cm4all.com>, linux-cachefs@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: fscache corruption in Linux 5.17?
-Message-ID: <Yl75D02pXj71kQBx@rabbit.intern.cm-ag>
-References: <Yl7d++G25sNXIR+p@rabbit.intern.cm-ag>
- <YlWWbpW5Foynjllo@rabbit.intern.cm-ag>
- <507518.1650383808@warthog.procyon.org.uk>
- <509961.1650386569@warthog.procyon.org.uk>
+        Tue, 19 Apr 2022 14:16:02 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 522673EAB9;
+        Tue, 19 Apr 2022 11:12:31 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D1B1560C3C;
+        Tue, 19 Apr 2022 18:12:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39F00C385BE;
+        Tue, 19 Apr 2022 18:12:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1650391950;
+        bh=91IJCXFXrRhxZ3eZykcnYSPjUcHxOjTmk7YsarhCXlc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ZvG6agSlVtRZLL68pZUdSLHPEvYQbeNsacloZLMow/uPRPnD0zW35AmgaKv4+2Qae
+         ojPFRvoUk3oq+eacKMZuVrW9B611nhA+yV+5lOPKlCbFxGbP+/BKQ/7hqKC5GJuzty
+         69BLzQWAKhFo35lgT4kw9PCnB26jVswuysaglht7q1nwgXDieKN40WoMpwsX98+NGd
+         LI5mnQZyUELiVO2TWGj85NHJUbHXGcTI51ixR5VR2kiBHRI1S3LB4kNF767EboarYF
+         OlQFXXFfCiOwo2IfObzowPpnOVCZF+TXVhN0fLAD20l6rTDn16VGlXfNy9kp0I8LRE
+         erSooka9wPD4w==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Mikulas Patocka <mpatocka@redhat.com>,
+        Andreas Schwab <schwab@linux-m68k.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+        x86@kernel.org, viro@zeniv.linux.org.uk, arnd@arndb.de,
+        akpm@linux-foundation.org, davem@davemloft.net,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.17 28/34] stat: fix inconsistency between struct stat and struct compat_stat
+Date:   Tue, 19 Apr 2022 14:10:55 -0400
+Message-Id: <20220419181104.484667-28-sashal@kernel.org>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220419181104.484667-1-sashal@kernel.org>
+References: <20220419181104.484667-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <509961.1650386569@warthog.procyon.org.uk>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2022/04/19 18:42, David Howells <dhowells@redhat.com> wrote:
-> Could the file have been modified by a third party?
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-According to our support tickets, the customers used WordPress's
-built-in updater, which resulted in corrupt PHP sources.
+[ Upstream commit 932aba1e169090357a77af18850a10c256b50819 ]
 
-We have configured stickiness in the load balancer; HTTP requests to
-one website always go through the same web server.  Which implies that
-the same web server that saw the corrupt files was the very same one
-that wrote the new file contents.  This part surprises me, because
-writing a page to the NFS server should update (or flush/invalidate)
-the old cache page.  It would be easy for a *different* NFS client to
-miss out on updated file contents, but this is not what happened.
+struct stat (defined in arch/x86/include/uapi/asm/stat.h) has 32-bit
+st_dev and st_rdev; struct compat_stat (defined in
+arch/x86/include/asm/compat.h) has 16-bit st_dev and st_rdev followed by
+a 16-bit padding.
 
-On 2022/04/19 18:47, David Howells <dhowells@redhat.com> wrote:
-> Do the NFS servers change the files that are being served - or is it
-> just WordPress pushing the changes to the NFS servers for the web
-> servers to then export?
+This patch fixes struct compat_stat to match struct stat.
 
-I'm not sure if I understand this question correctly.  The NFS server
-(a NetApp, btw.) sees the new file contents correctly; all other web
-servers also see non-corrupt new files.  Only the one web server which
-performed the update saw broken files.
+[ Historical note: the old x86 'struct stat' did have that 16-bit field
+  that the compat layer had kept around, but it was changes back in 2003
+  by "struct stat - support larger dev_t":
 
-Max
+    https://git.kernel.org/pub/scm/linux/kernel/git/tglx/history.git/commit/?id=e95b2065677fe32512a597a79db94b77b90c968d
+
+  and back in those days, the x86_64 port was still new, and separate
+  from the i386 code, and had already picked up the old version with a
+  16-bit st_dev field ]
+
+Note that we can't change compat_dev_t because it is used by
+compat_loop_info.
+
+Also, if the st_dev and st_rdev values are 32-bit, we don't have to use
+old_valid_dev to test if the value fits into them.  This fixes
+-EOVERFLOW on filesystems that are on NVMe because NVMe uses the major
+number 259.
+
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Cc: Andreas Schwab <schwab@linux-m68k.org>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Christoph Hellwig <hch@infradead.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/x86/include/asm/compat.h |  6 ++----
+ fs/stat.c                     | 19 ++++++++++---------
+ 2 files changed, 12 insertions(+), 13 deletions(-)
+
+diff --git a/arch/x86/include/asm/compat.h b/arch/x86/include/asm/compat.h
+index 7516e4199b3c..20fd0acd7d80 100644
+--- a/arch/x86/include/asm/compat.h
++++ b/arch/x86/include/asm/compat.h
+@@ -28,15 +28,13 @@ typedef u16		compat_ipc_pid_t;
+ typedef __kernel_fsid_t	compat_fsid_t;
+ 
+ struct compat_stat {
+-	compat_dev_t	st_dev;
+-	u16		__pad1;
++	u32		st_dev;
+ 	compat_ino_t	st_ino;
+ 	compat_mode_t	st_mode;
+ 	compat_nlink_t	st_nlink;
+ 	__compat_uid_t	st_uid;
+ 	__compat_gid_t	st_gid;
+-	compat_dev_t	st_rdev;
+-	u16		__pad2;
++	u32		st_rdev;
+ 	u32		st_size;
+ 	u32		st_blksize;
+ 	u32		st_blocks;
+diff --git a/fs/stat.c b/fs/stat.c
+index 28d2020ba1f4..246d138ec066 100644
+--- a/fs/stat.c
++++ b/fs/stat.c
+@@ -334,9 +334,6 @@ SYSCALL_DEFINE2(fstat, unsigned int, fd, struct __old_kernel_stat __user *, stat
+ #  define choose_32_64(a,b) b
+ #endif
+ 
+-#define valid_dev(x)  choose_32_64(old_valid_dev(x),true)
+-#define encode_dev(x) choose_32_64(old_encode_dev,new_encode_dev)(x)
+-
+ #ifndef INIT_STRUCT_STAT_PADDING
+ #  define INIT_STRUCT_STAT_PADDING(st) memset(&st, 0, sizeof(st))
+ #endif
+@@ -345,7 +342,9 @@ static int cp_new_stat(struct kstat *stat, struct stat __user *statbuf)
+ {
+ 	struct stat tmp;
+ 
+-	if (!valid_dev(stat->dev) || !valid_dev(stat->rdev))
++	if (sizeof(tmp.st_dev) < 4 && !old_valid_dev(stat->dev))
++		return -EOVERFLOW;
++	if (sizeof(tmp.st_rdev) < 4 && !old_valid_dev(stat->rdev))
+ 		return -EOVERFLOW;
+ #if BITS_PER_LONG == 32
+ 	if (stat->size > MAX_NON_LFS)
+@@ -353,7 +352,7 @@ static int cp_new_stat(struct kstat *stat, struct stat __user *statbuf)
+ #endif
+ 
+ 	INIT_STRUCT_STAT_PADDING(tmp);
+-	tmp.st_dev = encode_dev(stat->dev);
++	tmp.st_dev = new_encode_dev(stat->dev);
+ 	tmp.st_ino = stat->ino;
+ 	if (sizeof(tmp.st_ino) < sizeof(stat->ino) && tmp.st_ino != stat->ino)
+ 		return -EOVERFLOW;
+@@ -363,7 +362,7 @@ static int cp_new_stat(struct kstat *stat, struct stat __user *statbuf)
+ 		return -EOVERFLOW;
+ 	SET_UID(tmp.st_uid, from_kuid_munged(current_user_ns(), stat->uid));
+ 	SET_GID(tmp.st_gid, from_kgid_munged(current_user_ns(), stat->gid));
+-	tmp.st_rdev = encode_dev(stat->rdev);
++	tmp.st_rdev = new_encode_dev(stat->rdev);
+ 	tmp.st_size = stat->size;
+ 	tmp.st_atime = stat->atime.tv_sec;
+ 	tmp.st_mtime = stat->mtime.tv_sec;
+@@ -644,11 +643,13 @@ static int cp_compat_stat(struct kstat *stat, struct compat_stat __user *ubuf)
+ {
+ 	struct compat_stat tmp;
+ 
+-	if (!old_valid_dev(stat->dev) || !old_valid_dev(stat->rdev))
++	if (sizeof(tmp.st_dev) < 4 && !old_valid_dev(stat->dev))
++		return -EOVERFLOW;
++	if (sizeof(tmp.st_rdev) < 4 && !old_valid_dev(stat->rdev))
+ 		return -EOVERFLOW;
+ 
+ 	memset(&tmp, 0, sizeof(tmp));
+-	tmp.st_dev = old_encode_dev(stat->dev);
++	tmp.st_dev = new_encode_dev(stat->dev);
+ 	tmp.st_ino = stat->ino;
+ 	if (sizeof(tmp.st_ino) < sizeof(stat->ino) && tmp.st_ino != stat->ino)
+ 		return -EOVERFLOW;
+@@ -658,7 +659,7 @@ static int cp_compat_stat(struct kstat *stat, struct compat_stat __user *ubuf)
+ 		return -EOVERFLOW;
+ 	SET_UID(tmp.st_uid, from_kuid_munged(current_user_ns(), stat->uid));
+ 	SET_GID(tmp.st_gid, from_kgid_munged(current_user_ns(), stat->gid));
+-	tmp.st_rdev = old_encode_dev(stat->rdev);
++	tmp.st_rdev = new_encode_dev(stat->rdev);
+ 	if ((u64) stat->size > MAX_NON_LFS)
+ 		return -EOVERFLOW;
+ 	tmp.st_size = stat->size;
+-- 
+2.35.1
+
