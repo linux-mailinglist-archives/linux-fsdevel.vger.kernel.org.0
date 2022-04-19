@@ -2,56 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 84A7B507CA5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Apr 2022 00:40:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19C49507CB6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Apr 2022 00:44:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1358248AbiDSWnJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Apr 2022 18:43:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39470 "EHLO
+        id S1358283AbiDSWqz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Apr 2022 18:46:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358042AbiDSWnG (ORCPT
+        with ESMTP id S1358273AbiDSWqw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Apr 2022 18:43:06 -0400
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BD911581A
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Apr 2022 15:40:21 -0700 (PDT)
-Received: by mail-pl1-x62e.google.com with SMTP id j8so49826pll.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Apr 2022 15:40:21 -0700 (PDT)
+        Tue, 19 Apr 2022 18:46:52 -0400
+Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 606F81EEF4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Apr 2022 15:44:08 -0700 (PDT)
+Received: by mail-pf1-x42a.google.com with SMTP id x80so179630pfc.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Apr 2022 15:44:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=jj65B/Q5u+6/PbNUYjs1QdIcGYmBVQVJnII5Wt+lIX4=;
-        b=I1nobehVf5LWIA7uopWD44Vv9PFicIlwJ83srfQrmZBtflj2atQJNxVv37gj4T4l6v
-         ScNi3IZVoLT5qpIizY9su9A+Gg9F3EImVTRjv9aQAAxS2kei4tEtl7sH9RRka1Mc+h0i
-         3J1w1FYAB9pXAlDmlVX9UJydCY8Hw6IJX2CqVhTFuZprTscj2mU2kcxYbydeeIrRNG+0
-         /hdiIk2glg2k2TPStCK1q71Rq2aAqP23tYdUpYm5CzdhY0DW9Ssn6m9sVY8WEQyaIIQA
-         ZlAaw8heoEOaMNA8nyRAyYDxmBrb15yBY5YrSLDiOl1MOET5f0HiV/cXzEtZGNQ6Jz+o
-         1c7A==
+        bh=VLhwP2K5wAQdNCL/I+laKlmhhmXTIYpsE+P3ZBVdEQY=;
+        b=r6feRZnKvLFz70LElt69P5H+fCR2FPIhGGDf/HEN3FRecAYZ9XCe48UHMGy+CySLim
+         Nf5DSsTsuheV1j+T6ia1xrZDpsTF3FTPXu+PVf45W3eRaPm0iYir4XnaqNkn/g+rZCO2
+         +mve4Z0JSADruCniouTjwzcvVDbH3e2O3juiT4JkLMIr7ZXwKFqeJlsDlQ8PoQ143YKV
+         4mXbdBPsHAvnmaRpFABAN6Fu2TxYwMuj7lx3m1l+FUNKtOImv1EuD09eyGgiiWGIIwwL
+         LNoj8AvJNwOZZPiT6ZBr88Y7Sec+d18PBB4ep9ryJg1nLwP6Jf9EVG8Bvth2Y321pPhZ
+         R+rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=jj65B/Q5u+6/PbNUYjs1QdIcGYmBVQVJnII5Wt+lIX4=;
-        b=mM/VbFtNTpdXs77bg3B+ukooJjUFJIPprszZUSxDWbVDbPurraeXhp0HydJNWtgJji
-         Ri4zSVbSQYp8ECNCpTBpmM1bGKl6si9cYxQj1loBDC6OA43uu/BAtVRoYhjnPVts5Iov
-         wF2VGZJYXnDNX0FbUlhKcP3IZS9xjokjhkS2bKH671lf+VWqFuXCQwGCtkA7SSd5KgFn
-         5ChsbKHe+1WeLjsVBK0nfqsHs4z+5pWpWq7i75jyDKe8s0twAsRwAG2HUFhA2RElCydl
-         EoIl8S71eshG4CQHBEbhSLTICSHOhDhlsjosIYTK6pz7fw68odn5D2K23ndPCCjlirIB
-         y38g==
-X-Gm-Message-State: AOAM532o0en752zTp1hyo4/JkZ656YFJTQnaaRj/7In5VR6iBzE0MuFQ
-        a6KIviL33VZ1nGwec5ggiFusSZKgZZV1AeMCPOhZpvLVH8s=
-X-Google-Smtp-Source: ABdhPJww/F0+ShnRulehEAsze0oZV1m6PnQGb4q7nZZiU5Dg58u6Z1IHEBgnXvUTReeiVw8AeB78Z4kC+sTgEsLi9v4=
-X-Received: by 2002:a17:90b:4d86:b0:1d2:cd59:d275 with SMTP id
- oj6-20020a17090b4d8600b001d2cd59d275mr888317pjb.119.1650408020788; Tue, 19
- Apr 2022 15:40:20 -0700 (PDT)
+        bh=VLhwP2K5wAQdNCL/I+laKlmhhmXTIYpsE+P3ZBVdEQY=;
+        b=VqPhWf03ncmRdguuPoYt/5g1K2xtmRDK1hyaZnre5bNeL7MNZ5pFIVxItarAtEhsfn
+         V7nNccaCRXu6DDUpY/xZYqcAG3RkY/rfcdT67jzQNJFiZVENVGVBTW9mB8HsOX0NLSh8
+         Zmxrkvh6F1tTGXjbd/hWcnHbtHpzzPQaCjvGpCIV67F/6G5A8qM9EBUFyeOzqa97o9/k
+         wTJyt8ktUaF2e5MLXUSRCwn6idckvcd6NW3biNX8nNg5zlE7kIxxbbURZPjOITV3jq9B
+         C0D/Sg0jF8YhC7MKh3LGoktJsKxoPoui+XRUZ2RD9OkIzTkGfBgjvNC55ZKZnSVgz6Wd
+         iHkg==
+X-Gm-Message-State: AOAM532HyfrN+OvJlnHYICOpdEz9ItIGR7gWJ2iDwVWpC4d17hQ3Ec6c
+        H+SBgqEh4VykDoDtB7ZLjLWFMTVcOvz+fAlN23RuAw==
+X-Google-Smtp-Source: ABdhPJy1nh6THruK7UwMlM2wpxzbJNt+bc4+NMZX+nwIAjwmQ/JmNyUx85odCJYd4rFIN0fRrs6lthI6/1JylF8mddI=
+X-Received: by 2002:a65:56cb:0:b0:378:82ed:d74 with SMTP id
+ w11-20020a6556cb000000b0037882ed0d74mr16683302pgs.491.1650408247642; Tue, 19
+ Apr 2022 15:44:07 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220310140911.50924-1-chao.p.peng@linux.intel.com> <20220310140911.50924-4-chao.p.peng@linux.intel.com>
-In-Reply-To: <20220310140911.50924-4-chao.p.peng@linux.intel.com>
+References: <20220310140911.50924-1-chao.p.peng@linux.intel.com> <20220310140911.50924-12-chao.p.peng@linux.intel.com>
+In-Reply-To: <20220310140911.50924-12-chao.p.peng@linux.intel.com>
 From:   Vishal Annapurve <vannapurve@google.com>
-Date:   Tue, 19 Apr 2022 15:40:09 -0700
-Message-ID: <CAGtprH9X-v-R+UiAvdvKgqAqoc4MBJAWTnoEtP+Y2nip_y8Heg@mail.gmail.com>
-Subject: Re: [PATCH v5 03/13] mm/shmem: Support memfile_notifier
+Date:   Tue, 19 Apr 2022 15:43:56 -0700
+Message-ID: <CAGtprH-qTB2sehidF7xkSvR3X4D5cUOLpMBXf4mhTEh0BUR-mQ@mail.gmail.com>
+Subject: Re: [PATCH v5 11/13] KVM: Zap existing KVM mappings when pages
+ changed in the private fd
 To:     Chao Peng <chao.p.peng@linux.intel.com>
 Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
@@ -84,188 +85,120 @@ X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
         ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Mar 10, 2022 at 6:10 AM Chao Peng <chao.p.peng@linux.intel.com> wrote:
+On Thu, Mar 10, 2022 at 6:11 AM Chao Peng <chao.p.peng@linux.intel.com> wrote:
 >
-> From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+> KVM gets notified when memory pages changed in the memory backing store.
+> When userspace allocates the memory with fallocate() or frees memory
+> with fallocate(FALLOC_FL_PUNCH_HOLE), memory backing store calls into
+> KVM fallocate/invalidate callbacks respectively. To ensure KVM never
+> maps both the private and shared variants of a GPA into the guest, in
+> the fallocate callback, we should zap the existing shared mapping and
+> in the invalidate callback we should zap the existing private mapping.
 >
-> It maintains a memfile_notifier list in shmem_inode_info structure and
-> implements memfile_pfn_ops callbacks defined by memfile_notifier. It
-> then exposes them to memfile_notifier via
-> shmem_get_memfile_notifier_info.
+> In the callbacks, KVM firstly converts the offset range into the
+> gfn_range and then calls existing kvm_unmap_gfn_range() which will zap
+> the shared or private mapping. Both callbacks pass in a memslot
+> reference but we need 'kvm' so add a reference in memslot structure.
 >
-> We use SGP_NOALLOC in shmem_get_lock_pfn since the pages should be
-> allocated by userspace for private memory. If there is no pages
-> allocated at the offset then error should be returned so KVM knows that
-> the memory is not private memory.
->
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
 > Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
 > ---
->  include/linux/shmem_fs.h |  4 +++
->  mm/shmem.c               | 76 ++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 80 insertions(+)
+>  include/linux/kvm_host.h |  3 ++-
+>  virt/kvm/kvm_main.c      | 36 ++++++++++++++++++++++++++++++++++++
+>  2 files changed, 38 insertions(+), 1 deletion(-)
 >
-> diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
-> index 2dde843f28ef..7bb16f2d2825 100644
-> --- a/include/linux/shmem_fs.h
-> +++ b/include/linux/shmem_fs.h
-> @@ -9,6 +9,7 @@
->  #include <linux/percpu_counter.h>
->  #include <linux/xattr.h>
->  #include <linux/fs_parser.h>
-> +#include <linux/memfile_notifier.h>
->
->  /* inode in-kernel data */
->
-> @@ -28,6 +29,9 @@ struct shmem_inode_info {
->         struct simple_xattrs    xattrs;         /* list of xattrs */
->         atomic_t                stop_eviction;  /* hold when working on inode */
->         unsigned int            xflags;         /* shmem extended flags */
-> +#ifdef CONFIG_MEMFILE_NOTIFIER
-> +       struct memfile_notifier_list memfile_notifiers;
-> +#endif
->         struct inode            vfs_inode;
->  };
->
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index 9b31a7056009..7b43e274c9a2 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -903,6 +903,28 @@ static struct folio *shmem_get_partial_folio(struct inode *inode, pgoff_t index)
->         return page ? page_folio(page) : NULL;
->  }
->
-> +static void notify_fallocate(struct inode *inode, pgoff_t start, pgoff_t end)
-> +{
-> +#ifdef CONFIG_MEMFILE_NOTIFIER
-> +       struct shmem_inode_info *info = SHMEM_I(inode);
-> +
-> +       memfile_notifier_fallocate(&info->memfile_notifiers, start, end);
-> +#endif
-> +}
-> +
-> +static void notify_invalidate_page(struct inode *inode, struct folio *folio,
-> +                                  pgoff_t start, pgoff_t end)
-> +{
-> +#ifdef CONFIG_MEMFILE_NOTIFIER
-> +       struct shmem_inode_info *info = SHMEM_I(inode);
-> +
-> +       start = max(start, folio->index);
-> +       end = min(end, folio->index + folio_nr_pages(folio));
-> +
-> +       memfile_notifier_invalidate(&info->memfile_notifiers, start, end);
-> +#endif
-> +}
-> +
->  /*
->   * Remove range of pages and swap entries from page cache, and free them.
->   * If !unfalloc, truncate or punch hole; if unfalloc, undo failed fallocate.
-> @@ -946,6 +968,8 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
->                         }
->                         index += folio_nr_pages(folio) - 1;
->
-> +                       notify_invalidate_page(inode, folio, start, end);
-> +
->                         if (!unfalloc || !folio_test_uptodate(folio))
->                                 truncate_inode_folio(mapping, folio);
->                         folio_unlock(folio);
-> @@ -1019,6 +1043,9 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
->                                         index--;
->                                         break;
->                                 }
-> +
-> +                               notify_invalidate_page(inode, folio, start, end);
-> +
-
-Should this be done in batches or done once for all of range [start, end)?
-
->                                 VM_BUG_ON_FOLIO(folio_test_writeback(folio),
->                                                 folio);
->                                 truncate_inode_folio(mapping, folio);
-> @@ -2279,6 +2306,9 @@ static struct inode *shmem_get_inode(struct super_block *sb, const struct inode
->                 info->flags = flags & VM_NORESERVE;
->                 INIT_LIST_HEAD(&info->shrinklist);
->                 INIT_LIST_HEAD(&info->swaplist);
-> +#ifdef CONFIG_MEMFILE_NOTIFIER
-> +               memfile_notifier_list_init(&info->memfile_notifiers);
-> +#endif
->                 simple_xattrs_init(&info->xattrs);
->                 cache_no_acl(inode);
->                 mapping_set_large_folios(inode->i_mapping);
-> @@ -2802,6 +2832,7 @@ static long shmem_fallocate(struct file *file, int mode, loff_t offset,
->         if (!(mode & FALLOC_FL_KEEP_SIZE) && offset + len > inode->i_size)
->                 i_size_write(inode, offset + len);
->         inode->i_ctime = current_time(inode);
-> +       notify_fallocate(inode, start, end);
->  undone:
->         spin_lock(&inode->i_lock);
->         inode->i_private = NULL;
-> @@ -3909,6 +3940,47 @@ static struct file_system_type shmem_fs_type = {
->         .fs_flags       = FS_USERNS_MOUNT,
->  };
->
-> +#ifdef CONFIG_MEMFILE_NOTIFIER
-> +static long shmem_get_lock_pfn(struct inode *inode, pgoff_t offset, int *order)
-> +{
-> +       struct page *page;
-> +       int ret;
-> +
-> +       ret = shmem_getpage(inode, offset, &page, SGP_NOALLOC);
-> +       if (ret)
-> +               return ret;
-> +
-> +       *order = thp_order(compound_head(page));
-> +
-> +       return page_to_pfn(page);
-> +}
-> +
-> +static void shmem_put_unlock_pfn(unsigned long pfn)
-> +{
-> +       struct page *page = pfn_to_page(pfn);
-> +
-> +       VM_BUG_ON_PAGE(!PageLocked(page), page);
-> +
-> +       set_page_dirty(page);
-> +       unlock_page(page);
-> +       put_page(page);
-> +}
-> +
-> +static struct memfile_notifier_list* shmem_get_notifier_list(struct inode *inode)
-> +{
-> +       if (!shmem_mapping(inode->i_mapping))
-> +               return NULL;
-> +
-> +       return  &SHMEM_I(inode)->memfile_notifiers;
-> +}
-> +
-> +static struct memfile_backing_store shmem_backing_store = {
-> +       .pfn_ops.get_lock_pfn = shmem_get_lock_pfn,
-> +       .pfn_ops.put_unlock_pfn = shmem_put_unlock_pfn,
-> +       .get_notifier_list = shmem_get_notifier_list,
-> +};
-> +#endif /* CONFIG_MEMFILE_NOTIFIER */
-> +
->  int __init shmem_init(void)
->  {
->         int error;
-> @@ -3934,6 +4006,10 @@ int __init shmem_init(void)
->         else
->                 shmem_huge = SHMEM_HUGE_NEVER; /* just in case it was patched */
+> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> index 9b175aeca63f..186b9b981a65 100644
+> --- a/include/linux/kvm_host.h
+> +++ b/include/linux/kvm_host.h
+> @@ -236,7 +236,7 @@ bool kvm_setup_async_pf(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
+>  int kvm_async_pf_wakeup_all(struct kvm_vcpu *vcpu);
 >  #endif
-> +
-> +#ifdef CONFIG_MEMFILE_NOTIFIER
-> +       memfile_register_backing_store(&shmem_backing_store);
-> +#endif
->         return 0;
 >
->  out1:
+> -#ifdef KVM_ARCH_WANT_MMU_NOTIFIER
+> +#if defined(KVM_ARCH_WANT_MMU_NOTIFIER) || defined(CONFIG_MEMFILE_NOTIFIER)
+>  struct kvm_gfn_range {
+>         struct kvm_memory_slot *slot;
+>         gfn_t start;
+> @@ -568,6 +568,7 @@ struct kvm_memory_slot {
+>         loff_t private_offset;
+>         struct memfile_pfn_ops *pfn_ops;
+>         struct memfile_notifier notifier;
+> +       struct kvm *kvm;
+>  };
+>
+>  static inline bool kvm_slot_is_private(const struct kvm_memory_slot *slot)
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index 67349421eae3..52319f49d58a 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -841,8 +841,43 @@ static int kvm_init_mmu_notifier(struct kvm *kvm)
+>  #endif /* CONFIG_MMU_NOTIFIER && KVM_ARCH_WANT_MMU_NOTIFIER */
+>
+>  #ifdef CONFIG_MEMFILE_NOTIFIER
+> +static void kvm_memfile_notifier_handler(struct memfile_notifier *notifier,
+> +                                        pgoff_t start, pgoff_t end)
+> +{
+> +       int idx;
+> +       struct kvm_memory_slot *slot = container_of(notifier,
+> +                                                   struct kvm_memory_slot,
+> +                                                   notifier);
+> +       struct kvm_gfn_range gfn_range = {
+> +               .slot           = slot,
+> +               .start          = start - (slot->private_offset >> PAGE_SHIFT),
+> +               .end            = end - (slot->private_offset >> PAGE_SHIFT),
+> +               .may_block      = true,
+> +       };
+> +       struct kvm *kvm = slot->kvm;
+> +
+> +       gfn_range.start = max(gfn_range.start, slot->base_gfn);
+
+gfn_range.start seems to be page offset within the file. Should this rather be:
+gfn_range.start = slot->base_gfn + min(gfn_range.start, slot->npages);
+
+> +       gfn_range.end = min(gfn_range.end, slot->base_gfn + slot->npages);
+> +
+
+Similar to previous comment, should this rather be:
+gfn_range.end = slot->base_gfn + min(gfn_range.end, slot->npages);
+
+> +       if (gfn_range.start >= gfn_range.end)
+> +               return;
+> +
+> +       idx = srcu_read_lock(&kvm->srcu);
+> +       KVM_MMU_LOCK(kvm);
+> +       kvm_unmap_gfn_range(kvm, &gfn_range);
+> +       kvm_flush_remote_tlbs(kvm);
+> +       KVM_MMU_UNLOCK(kvm);
+> +       srcu_read_unlock(&kvm->srcu, idx);
+> +}
+> +
+> +static struct memfile_notifier_ops kvm_memfile_notifier_ops = {
+> +       .invalidate = kvm_memfile_notifier_handler,
+> +       .fallocate = kvm_memfile_notifier_handler,
+> +};
+> +
+>  static inline int kvm_memfile_register(struct kvm_memory_slot *slot)
+>  {
+> +       slot->notifier.ops = &kvm_memfile_notifier_ops;
+>         return memfile_register_notifier(file_inode(slot->private_file),
+>                                          &slot->notifier,
+>                                          &slot->pfn_ops);
+> @@ -1963,6 +1998,7 @@ int __kvm_set_memory_region(struct kvm *kvm,
+>         new->private_file = file;
+>         new->private_offset = mem->flags & KVM_MEM_PRIVATE ?
+>                               region_ext->private_offset : 0;
+> +       new->kvm = kvm;
+>
+>         r = kvm_set_memslot(kvm, old, new, change);
+>         if (!r)
 > --
 > 2.17.1
 >
