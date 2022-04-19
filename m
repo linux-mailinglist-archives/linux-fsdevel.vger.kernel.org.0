@@ -2,68 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 71D435060E6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Apr 2022 02:24:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 604765060F6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Apr 2022 02:30:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240351AbiDSA1P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Apr 2022 20:27:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54598 "EHLO
+        id S237927AbiDSAdB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Apr 2022 20:33:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233195AbiDSA1O (ORCPT
+        with ESMTP id S233914AbiDSAdA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Apr 2022 20:27:14 -0400
-Received: from mail-lj1-x236.google.com (mail-lj1-x236.google.com [IPv6:2a00:1450:4864:20::236])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF18F1FA51
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Apr 2022 17:24:33 -0700 (PDT)
-Received: by mail-lj1-x236.google.com with SMTP id q14so18602458ljc.12
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Apr 2022 17:24:33 -0700 (PDT)
+        Mon, 18 Apr 2022 20:33:00 -0400
+Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95B8E252BC
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Apr 2022 17:30:18 -0700 (PDT)
+Received: by mail-pg1-x534.google.com with SMTP id j70so1064464pgd.4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Apr 2022 17:30:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=md4M0Y06YB9OwRf1R9+bPl4STANxF+Va3/xyN7ba6pk=;
-        b=YHnXBJFEjNeWLyKdoGJR+IzEBZ9L2j8NK6AQmfP7o0gC2RYvJmv5M5CsqaSmsoSanK
-         SzE8eW1lYQqdm1V2biGeFhg45yH3PhMA6bcbPKzrCNdzRN8HI6iQOLsh023owaOqWvmd
-         GrAyY7jzy++wQ4CGTLA7J2/MUu03/G1YWD6YM=
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=QyazptfXP7Rs93K/hiFyb/6AZ61n5qOjKOHynMwC+bQ=;
+        b=MPOgAg96vGHs3bRXKO17sSSDcM506EcaNoM9FZhvKTml594Xd/4b2Zb4U11WJzDMiK
+         V3XOeg4wkoFb7zNI8pVGxsIyXDoqH8a9iU+jf7KMc7h+aLTyBlWS22HxeR3lKKnTbHw3
+         Fe0no9m71NRV7VljRyvBGlLb4msg2dBNESrdb/TOF2GY3yzb41IyvfHsyJZxKquQtnao
+         JyRbexn8Aj199OHB1fXz6P6V9B2TKKHrSOJTdeUW420hi4r3Wm3s17pqou5b3peWiA1Y
+         HnYDIVXzsFzioJmKS+15sT7w1jA1X/GC+uUC2YIHdynGr2eh27oxxiXokpdqOyOILxMA
+         0q3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=md4M0Y06YB9OwRf1R9+bPl4STANxF+Va3/xyN7ba6pk=;
-        b=nMjL/xMjQdFwgBVcA22K1MTDsqn+N7oGdusRQJbounv15wXCrJv2x71psuGFOnS1Yt
-         IV2Lby3Ahd07KNgklGh1ZteE1CvY9xr61fy7r035Zv00XuZx0T1vOzbPr3MXPEPSWXoa
-         Ya7K2kuJ6xih5lJWli33mTokX8dMQVeuozKiGFwJon1Z+Zxu17wz0sNptUJqNhdRAhSh
-         3s7J1KhuGg1DLlYiXcpdLRzgU3WJhhiR/TocbzGr+FEsjugBSFQgRcJPjblNw6bRJqJX
-         +IEWAbKXkfyU2vs3VYeGnahVDI1o3K8Vupb71sDaQnMWveH7aMEXk8dGEsxx1zUnl87V
-         41SQ==
-X-Gm-Message-State: AOAM530Qe4yqCFCx4oUVpbmCnhcdoIn9pJWLll5lSxFUCNvtCA31Aq+P
-        8PvXz+JI0PzsaobZP4ny9g8X5wZJVauP6ifGr8E=
-X-Google-Smtp-Source: ABdhPJwtSGAgvekKLDgv4gbHB89ovD4uOLxyk0nyEpbt3d3sKUxH+OA6VI9gJW3TtlDZyJ9sxyRAdw==
-X-Received: by 2002:a05:651c:311:b0:246:1250:d6f with SMTP id a17-20020a05651c031100b0024612500d6fmr8321405ljp.455.1650327871726;
-        Mon, 18 Apr 2022 17:24:31 -0700 (PDT)
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
-        by smtp.gmail.com with ESMTPSA id h22-20020a056512339600b0046bc4ceaeb6sm1356138lfg.27.2022.04.18.17.24.29
-        for <linux-fsdevel@vger.kernel.org>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=QyazptfXP7Rs93K/hiFyb/6AZ61n5qOjKOHynMwC+bQ=;
+        b=f5g4f4YAO2Vg5SUllfTf4od3A1sEBp58J2pe6QuWAGIKqB9uoDs8WAtTdrwLFI+z1s
+         5zUfwTLut8t3krsFIXyB+fZKRYzkYL9BiGEapX01U7hWBF+dtwfjI0okfMkgVTX2pwIy
+         5awNWsTSuiqCLAYWFhtmVpUeD+p94aIMfo2EH8pmUihi/3BNSk3RNvCz5/XVoOrLqO7V
+         bb5Nt2ylkMa+vzDnL0evl8AJ4f4tMrlCgw+8ywazZ2Q1PQvNIf1eogkjs+FR0TT3jtKE
+         uujYDB26HuS+vDSpVCaL0f+EDsoxl0FzWdOgb9tJJFDHCJ3qKMcRCuGiEc1UtzK0+SO2
+         P1Bg==
+X-Gm-Message-State: AOAM532sl7qZ6C0EpiECSWF3IsLEUhzeDRUnObsE7yOjTLlKWZ1FbZoI
+        HEIhQPGaNfWJjg6eCBBcYGUcrGfpC1Sf97Zo
+X-Google-Smtp-Source: ABdhPJyqF0aouiLcOtGZwtlWinOEg3dMkGA3r1kxJ3cZX3kQbML50BZ0QgWtn0f9pEexp8Lm261DFw==
+X-Received: by 2002:a63:ff1c:0:b0:39c:c83a:7da with SMTP id k28-20020a63ff1c000000b0039cc83a07damr12375416pgi.479.1650328218020;
+        Mon, 18 Apr 2022 17:30:18 -0700 (PDT)
+Received: from [192.168.1.100] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id g200-20020a6252d1000000b0050833d7602csm14011317pfb.103.2022.04.18.17.30.16
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Apr 2022 17:24:30 -0700 (PDT)
-Received: by mail-lf1-f41.google.com with SMTP id bu29so26759885lfb.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Apr 2022 17:24:29 -0700 (PDT)
-X-Received: by 2002:a05:6512:2291:b0:46b:b72b:c947 with SMTP id
- f17-20020a056512229100b0046bb72bc947mr9478367lfu.531.1650327869174; Mon, 18
- Apr 2022 17:24:29 -0700 (PDT)
+        Mon, 18 Apr 2022 17:30:17 -0700 (PDT)
+Message-ID: <69f80fe3-5bec-f02e-474b-e49651f5818f@kernel.dk>
+Date:   Mon, 18 Apr 2022 18:30:16 -0600
 MIME-Version: 1.0
-References: <20220418092824.3018714-1-chengzhihao1@huawei.com>
- <CAHk-=wh7CqEu+34=jUsSaMcMHe4Uiz7JrgYjU+eE-SJ3MPS-Gg@mail.gmail.com>
- <587c1849-f81b-13d6-fb1a-f22588d8cc2d@kernel.dk> <CAHk-=wjmFw1EBOVAN8vffPDHKJH84zZOtwZrLpE=Tn2MD6kEgQ@mail.gmail.com>
- <df4853fb-0e10-4d50-75cd-ee9b06da5ab1@kernel.dk> <b0167ea3-55ae-5e4e-7022-4105844b0495@kernel.dk>
-In-Reply-To: <b0167ea3-55ae-5e4e-7022-4105844b0495@kernel.dk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 18 Apr 2022 17:24:13 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whqzkoYZ06Bn0Owy-tQt_jK1uSTFd6awUQAAGK4rysD1Q@mail.gmail.com>
-Message-ID: <CAHk-=whqzkoYZ06Bn0Owy-tQt_jK1uSTFd6awUQAAGK4rysD1Q@mail.gmail.com>
-Subject: =?UTF-8?Q?Re=3A_=5BPATCH_v2=5D_fs=2Dwriteback=3A_writeback=5Fsb=5Finodes=EF=BC=9AR?=
-        =?UTF-8?Q?ecalculate_=27wrote=27_according_skipped_pages?=
-To:     Jens Axboe <axboe@kernel.dk>
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: =?UTF-8?Q?Re=3a_=5bPATCH_v2=5d_fs-writeback=3a_writeback=5fsb=5fino?=
+ =?UTF-8?Q?des=ef=bc=9aRecalculate_=27wrote=27_according_skipped_pages?=
+Content-Language: en-US
+To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Zhihao Cheng <chengzhihao1@huawei.com>,
         Ingo Molnar <mingo@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
@@ -72,33 +66,50 @@ Cc:     Zhihao Cheng <chengzhihao1@huawei.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         yukuai3@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=no autolearn_force=no version=3.4.6
+References: <20220418092824.3018714-1-chengzhihao1@huawei.com>
+ <CAHk-=wh7CqEu+34=jUsSaMcMHe4Uiz7JrgYjU+eE-SJ3MPS-Gg@mail.gmail.com>
+ <587c1849-f81b-13d6-fb1a-f22588d8cc2d@kernel.dk>
+ <CAHk-=wjmFw1EBOVAN8vffPDHKJH84zZOtwZrLpE=Tn2MD6kEgQ@mail.gmail.com>
+ <df4853fb-0e10-4d50-75cd-ee9b06da5ab1@kernel.dk>
+ <CAHk-=wg6s5gHCc-JngKFfOS7uZUrT9cqzNDKqUQZON6Txfa_rQ@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <CAHk-=wg6s5gHCc-JngKFfOS7uZUrT9cqzNDKqUQZON6Txfa_rQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-5.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 18, 2022 at 3:20 PM Jens Axboe <axboe@kernel.dk> wrote:
->
-> Here's the thread:
->
-> https://lore.kernel.org/all/1295659049-2688-6-git-send-email-jaxboe@fusionio.com/
->
-> I'll dig through it in a bit, but here's your reasoning for why it
-> should not flush on preemption:
->
-> https://lore.kernel.org/all/BANLkTikBEJa7bJJoLFU7NoiEgOjVHVG08A@mail.gmail.com/
+On 4/18/22 6:19 PM, Linus Torvalds wrote:
+> On Mon, Apr 18, 2022 at 3:12 PM Jens Axboe <axboe@kernel.dk> wrote:
+>>
+>> Hmm yes. But doesn't preemption imply a full barrier? As long as we
+>> assign the plug at the end, we should be fine. And just now looking that
+>> up, there's even already a comment to that effect in blk_start_plug().
+>> So barring any weirdness with that, maybe that's the solution.
+> 
+> My worry is more about the code that adds new cb_list entries to the
+> plug, racing with then some random preemption event that flushes the
+> plug.
+> 
+> preemption itself is perfectly fine wrt any per-thread data updates
+> etc, but if preemption then also *changes* the data that is updated,
+> that's not great.
+> 
+> So that worries me.
 
-Well, that one was triggered by that whole "now it can happen
-anywhere" worry that people had.
+Yes, and the same is true for eg merge traversal. We'd then need to
+disable preempt for that as well...
 
-So yes, IO patterns are a worry, but I think the bigger worry - even
-back then - was that preemption points can be pretty much anywhere in
-the code.
+It may be the best option in terms of making this issue go away without
+having callers working around it. I don't have a good answer to this
+right now, I'll think about it.
 
-              Linus
+-- 
+Jens Axboe
+
