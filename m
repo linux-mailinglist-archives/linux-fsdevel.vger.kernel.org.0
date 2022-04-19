@@ -2,63 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B249F506900
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Apr 2022 12:47:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9FDC506909
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Apr 2022 12:47:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350784AbiDSKto (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Apr 2022 06:49:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50948 "EHLO
+        id S1350798AbiDSKuQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Apr 2022 06:50:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240381AbiDSKtm (ORCPT
+        with ESMTP id S243059AbiDSKuG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Apr 2022 06:49:42 -0400
-Received: from mail3.bemta32.messagelabs.com (mail3.bemta32.messagelabs.com [195.245.230.82])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DFD61CB34;
-        Tue, 19 Apr 2022 03:46:59 -0700 (PDT)
+        Tue, 19 Apr 2022 06:50:06 -0400
+Received: from mail1.bemta32.messagelabs.com (mail1.bemta32.messagelabs.com [195.245.230.2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCE811D335;
+        Tue, 19 Apr 2022 03:47:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
-        s=170520fj; t=1650365217; i=@fujitsu.com;
-        bh=4LvUQiHQuZbq3+y9oGS90voMbGFx43rdOdvN/yWo2vI=;
+        s=170520fj; t=1650365242; i=@fujitsu.com;
+        bh=0pzuZqnMKiL4erT/FsIYrH8hrYItIQ0ZRX22uC8lIbQ=;
         h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
          MIME-Version:Content-Type;
-        b=ao26HRrlQaKtDPImAqAml+KuTJieC1e81R6RJISy54lToIcQ9oV2MWbIFyiM2crWn
-         e2k778pGa9p83yhbDtcbWtLkSKwWjXo4FBLtw0S/8lqbjKD8ZR4itsIvORc768ViOH
-         HnjfTwwYH+CW8+BRezNa2dyoWhbCCF/cXAPE3GxAOUbRvbeQvsbpyuG3AABzoDTJpH
-         YrnDFbAejVXwaHCPJR0Vo9S5ElKSJwD3tChw7RUTM689yjQb6nkk8lnqo6tO+sm8gI
-         rbDe3b0Utulm5ETUnPmJWmeBTJXWeT9lb+xl51QIsBnljuMpBSMwH+zs9bUQqGc0VE
-         6obMZ6J4tGdVA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpnleJIrShJLcpLzFFi42Kxs+EI0VWYHJd
-  k8GuFgcXrw58YLT7cnMRkcXrqWSaLLcfuMVpcfsJn8XPZKnaLS4vcLfbsPcliceHAaVaLXX92
+        b=hIwfAuc69Xx8K25DwcOytVfnY2HcBlHnpYAGbO4CnypR85lQ5SFVuTh/tkIJQY6Ou
+         2AUfaSP0Uy2wkPcWyRMeT8JKKenGQPKsey63y6p3NOtsZL0gyTvAK35vkwzo2Nsd60
+         FB6Lyt3Ztlp5nqmYSWLYvPiQCpODFdh0pwWJmlxRbvWBbqEHhN4V8xIQp1hmxrcf14
+         EOOjwwtJo6M1zZuCRPbn9scL9ZwmIaFXx4ClIc3Z9gHSUVwYXGIWcCJaqy2kEZ+vXQ
+         RXiFScjVnMIlMh9cHzIL+/14Si/jT8/nytq21b9Xrgl9LH5depfT0QxihYaSaXwZtA
+         zkM1J0kBbT+lQ==
+X-Brightmail-Tracker: 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
-  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
+  owlXy+xFuwUrdj1cjZ7A+NkoS5GLg4hgS2MEp1bpjJBOAuYJI78eczcxcgJ5OxhlDj0VhnEZh
+  PQlHjWuQAsLiKgLLHgxjE2kAZmgTNMEpeuLWEESQgL+Ev8fv4WyObgYBFQlZg0PRckzCvgIXF
+  t2QqwEgkBBYkpD9+DzeEU8JTY+PY9C8QuD4nrh7cwQ9QLSpyc+QQsziwgIXHwxQtmiF5FiUsd
+  36DmVEjMmtXGBGGrSVw9t4l5AqPgLCTts5C0L2BkWsVolVSUmZ5RkpuYmaNraGCga2hoqgskT
+  U30Eqt0E/VSS3XLU4tLdA31EsuL9VKLi/WKK3OTc1L08lJLNjECoyulmGHWDsZZfT/1DjFKcj
+  ApifLWR8UlCfEl5adUZiQWZ8QXleakFh9ilOHgUJLgLZ0AlBMsSk1PrUjLzAFGOkxagoNHSYR
+  3cj9Qmre4IDG3ODMdInWKUVFKnFesBSghAJLIKM2Da4Mll0uMslLCvIwMDAxCPAWpRbmZJajy
+  rxjFORiVhHmbJgJN4cnMK4Gb/gpoMRPQ4uopsSCLSxIRUlINTBMil3oo5px9M+P21/9NC85/d
+  fxqPvfMjN2PDk5jNq2KdnZnsNp99NFylynms66ZMf6cd9twjjzbhcbneX/1HTQWGM+7Glh9at
+  JGyW+eU9ayfLZ9Gt66Ri3ploKHrken1j22j+Ffda7cn6Bu3tGb4nRrx4clF8InLVxTf3lrnOn
+  iK2yKXwTSNb88m3LgXO7bxR2nowVzrI2v7On8Fbsh+67S67b2pYK5U0KtJ79rD73CYmd9h3vx
+  rF8JPousU0O0pEqZ6l++/ZwnFHHobhTjCZmSSBkR9/CVLnwp129LB0zck2MtwxnN/TvJ0rtr9
+  fSsXbz1P7KVGV2X/p4arHnH/wGvwG6+eMtep/NREmbfFZVYijMSDbWYi4oTAfUjQSGpAwAA
 X-Env-Sender: xuyang2018.jy@fujitsu.com
-X-Msg-Ref: server-18.tower-585.messagelabs.com!1650365216!280278!1
-X-Originating-IP: [62.60.8.84]
+X-Msg-Ref: server-13.tower-591.messagelabs.com!1650365241!273698!1
+X-Originating-IP: [62.60.8.97]
 X-SYMC-ESS-Client-Auth: outbound-route-from=pass
 X-StarScan-Received: 
 X-StarScan-Version: 9.85.8; banners=-,-,-
 X-VirusChecked: Checked
-Received: (qmail 24417 invoked from network); 19 Apr 2022 10:46:56 -0000
-Received: from unknown (HELO mailhost3.uk.fujitsu.com) (62.60.8.84)
-  by server-18.tower-585.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 19 Apr 2022 10:46:56 -0000
-Received: from R01UKEXCASM126.r01.fujitsu.local ([10.183.43.178])
-        by mailhost3.uk.fujitsu.com (8.14.5/8.14.5) with ESMTP id 23JAkiuN014724
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
-        Tue, 19 Apr 2022 11:46:44 +0100
+Received: (qmail 29673 invoked from network); 19 Apr 2022 10:47:21 -0000
+Received: from unknown (HELO n03ukasimr01.n03.fujitsu.local) (62.60.8.97)
+  by server-13.tower-591.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 19 Apr 2022 10:47:21 -0000
+Received: from n03ukasimr01.n03.fujitsu.local (localhost [127.0.0.1])
+        by n03ukasimr01.n03.fujitsu.local (Postfix) with ESMTP id 9AF6F1001A1;
+        Tue, 19 Apr 2022 11:47:20 +0100 (BST)
+Received: from R01UKEXCASM126.r01.fujitsu.local (unknown [10.183.43.178])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by n03ukasimr01.n03.fujitsu.local (Postfix) with ESMTPS id 805B6100196;
+        Tue, 19 Apr 2022 11:47:20 +0100 (BST)
 Received: from localhost.localdomain (10.167.220.84) by
  R01UKEXCASM126.r01.fujitsu.local (10.183.43.178) with Microsoft SMTP Server
- (TLS) id 15.0.1497.32; Tue, 19 Apr 2022 11:46:38 +0100
+ (TLS) id 15.0.1497.32; Tue, 19 Apr 2022 11:47:01 +0100
 From:   Yang Xu <xuyang2018.jy@fujitsu.com>
 To:     <linux-fsdevel@vger.kernel.org>
 CC:     <ceph-devel@vger.kernel.org>, <linux-nfs@vger.kernel.org>,
@@ -67,9 +71,9 @@ CC:     <ceph-devel@vger.kernel.org>, <linux-nfs@vger.kernel.org>,
         <jlayton@kernel.org>, <ntfs3@lists.linux.dev>, <chao@kernel.org>,
         <linux-f2fs-devel@lists.sourceforge.net>,
         Yang Xu <xuyang2018.jy@fujitsu.com>
-Subject: [PATCH v4 3/8] xfs: only call posix_acl_create under CONFIG_XFS_POSIX_ACL
-Date:   Tue, 19 Apr 2022 19:47:09 +0800
-Message-ID: <1650368834-2420-3-git-send-email-xuyang2018.jy@fujitsu.com>
+Subject: [PATCH v4 4/8] NFSv3: only do posix_acl_create under CONFIG_NFS_V3_ACL
+Date:   Tue, 19 Apr 2022 19:47:10 +0800
+Message-ID: <1650368834-2420-4-git-send-email-xuyang2018.jy@fujitsu.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1650368834-2420-1-git-send-email-xuyang2018.jy@fujitsu.com>
 References: <1650368834-2420-1-git-send-email-xuyang2018.jy@fujitsu.com>
@@ -78,6 +82,7 @@ Content-Type: text/plain
 X-Originating-IP: [10.167.220.84]
 X-ClientProxiedBy: G08CNEXCHPEKD07.g08.fujitsu.local (10.167.33.80) To
  R01UKEXCASM126.r01.fujitsu.local (10.183.43.178)
+X-Virus-Scanned: ClamAV using ClamSMTP
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
@@ -88,66 +93,86 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Since xfs_generic_create only calls xfs_set_acl when enable this kconfig, we
-don't need to call posix_acl_create for the !CONFIG_XFS_POSIX_ACL case.
+Since nfs3_proc_create/nfs3_proc_mkdir/nfs3_proc_mknod these rpc ops are called
+by nfs_create/nfs_mkdir/nfs_mkdir these inode ops, so they are all in control of
+vfs.
 
-The previous patch has added missing umask strip for tmpfile, so all creation
-paths handle umask in the vfs directly if the filesystem doesn't support or
-enable POSIX ACLs.
-
-So just put this function under CONFIG_XFS_POSIX_ACL and umask strip still works
-well.
-
-Also use unified rule for CONFIG_XFS_POSIX_ACL in this file, so use IS_ENABLED in
-xfs_generic_create.
+nfs3_proc_setacls does nothing in the !CONFIG_NFS_V3_ACL case, so we put
+posix_acl_create under CONFIG_NFS_V3_ACL and it also doesn't affect
+sattr->ia_mode value because vfs has did umask strip.
 
 Signed-off-by: Yang Xu <xuyang2018.jy@fujitsu.com>
 ---
- fs/xfs/xfs_iops.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ fs/nfs/nfs3proc.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-index b34e8e4344a8..6b8df9ab215a 100644
---- a/fs/xfs/xfs_iops.c
-+++ b/fs/xfs/xfs_iops.c
-@@ -150,6 +150,7 @@ xfs_create_need_xattr(
- 		return true;
- 	if (default_acl)
- 		return true;
-+
- #if IS_ENABLED(CONFIG_SECURITY)
- 	if (dir->i_sb->s_security)
- 		return true;
-@@ -169,7 +170,7 @@ xfs_generic_create(
+diff --git a/fs/nfs/nfs3proc.c b/fs/nfs/nfs3proc.c
+index 1597eef40d54..9ab93427db30 100644
+--- a/fs/nfs/nfs3proc.c
++++ b/fs/nfs/nfs3proc.c
+@@ -337,7 +337,7 @@ static int
+ nfs3_proc_create(struct inode *dir, struct dentry *dentry, struct iattr *sattr,
+ 		 int flags)
  {
- 	struct inode	*inode;
- 	struct xfs_inode *ip = NULL;
 -	struct posix_acl *default_acl, *acl;
 +	struct posix_acl *default_acl = NULL, *acl = NULL;
- 	struct xfs_name	name;
- 	int		error;
- 
-@@ -184,9 +185,11 @@ xfs_generic_create(
- 		rdev = 0;
+ 	struct nfs3_createdata *data;
+ 	struct dentry *d_alias;
+ 	int status = -ENOMEM;
+@@ -361,9 +361,11 @@ nfs3_proc_create(struct inode *dir, struct dentry *dentry, struct iattr *sattr,
+ 		data->arg.create.verifier[1] = cpu_to_be32(current->pid);
  	}
  
-+#if IS_ENABLED(CONFIG_XFS_POSIX_ACL)
- 	error = posix_acl_create(dir, &mode, &default_acl, &acl);
- 	if (error)
- 		return error;
++#if IS_ENABLED(CONFIG_NFS_V3_ACL)
+ 	status = posix_acl_create(dir, &sattr->ia_mode, &default_acl, &acl);
+ 	if (status)
+ 		goto out;
 +#endif
  
- 	/* Verify mode is valid also for tmpfile case */
- 	error = xfs_dentry_mode_to_name(&name, dentry, mode);
-@@ -209,7 +212,7 @@ xfs_generic_create(
- 	if (unlikely(error))
- 		goto out_cleanup_inode;
+ 	for (;;) {
+ 		d_alias = nfs3_do_create(dir, dentry, data);
+@@ -580,7 +582,7 @@ nfs3_proc_symlink(struct inode *dir, struct dentry *dentry, struct page *page,
+ static int
+ nfs3_proc_mkdir(struct inode *dir, struct dentry *dentry, struct iattr *sattr)
+ {
+-	struct posix_acl *default_acl, *acl;
++	struct posix_acl *default_acl = NULL, *acl = NULL;
+ 	struct nfs3_createdata *data;
+ 	struct dentry *d_alias;
+ 	int status = -ENOMEM;
+@@ -591,9 +593,11 @@ nfs3_proc_mkdir(struct inode *dir, struct dentry *dentry, struct iattr *sattr)
+ 	if (data == NULL)
+ 		goto out;
  
--#ifdef CONFIG_XFS_POSIX_ACL
-+#if IS_ENABLED(CONFIG_XFS_POSIX_ACL)
- 	if (default_acl) {
- 		error = __xfs_set_acl(inode, default_acl, ACL_TYPE_DEFAULT);
- 		if (error)
++#if IS_ENABLED(CONFIG_NFS_V3_ACL)
+ 	status = posix_acl_create(dir, &sattr->ia_mode, &default_acl, &acl);
+ 	if (status)
+ 		goto out;
++#endif
+ 
+ 	data->msg.rpc_proc = &nfs3_procedures[NFS3PROC_MKDIR];
+ 	data->arg.mkdir.fh = NFS_FH(dir);
+@@ -711,7 +715,7 @@ static int
+ nfs3_proc_mknod(struct inode *dir, struct dentry *dentry, struct iattr *sattr,
+ 		dev_t rdev)
+ {
+-	struct posix_acl *default_acl, *acl;
++	struct posix_acl *default_acl = NULL, *acl = NULL;
+ 	struct nfs3_createdata *data;
+ 	struct dentry *d_alias;
+ 	int status = -ENOMEM;
+@@ -723,9 +727,11 @@ nfs3_proc_mknod(struct inode *dir, struct dentry *dentry, struct iattr *sattr,
+ 	if (data == NULL)
+ 		goto out;
+ 
++#if IS_ENABLED(CONFIG_NFS_V3_ACL)
+ 	status = posix_acl_create(dir, &sattr->ia_mode, &default_acl, &acl);
+ 	if (status)
+ 		goto out;
++#endif
+ 
+ 	data->msg.rpc_proc = &nfs3_procedures[NFS3PROC_MKNOD];
+ 	data->arg.mknod.fh = NFS_FH(dir);
 -- 
 2.27.0
 
