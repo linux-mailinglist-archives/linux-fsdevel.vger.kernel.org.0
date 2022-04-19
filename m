@@ -2,146 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E472506FF1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Apr 2022 16:17:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0AAC507002
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Apr 2022 16:22:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348138AbiDSOT5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Apr 2022 10:19:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35188 "EHLO
+        id S1350405AbiDSOVn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Apr 2022 10:21:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346632AbiDSOT4 (ORCPT
+        with ESMTP id S1349391AbiDSOVm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Apr 2022 10:19:56 -0400
-Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96FDF6141;
-        Tue, 19 Apr 2022 07:17:13 -0700 (PDT)
-Received: from in01.mta.xmission.com ([166.70.13.51]:33804)
-        by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1ngofH-009EtF-CA; Tue, 19 Apr 2022 08:17:11 -0600
-Received: from ip68-227-174-4.om.om.cox.net ([68.227.174.4]:34928 helo=email.froward.int.ebiederm.org.xmission.com)
-        by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1ngofG-00EtRb-Eq; Tue, 19 Apr 2022 08:17:10 -0600
-From:   "Eric W. Biederman" <ebiederm@xmission.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Niklas Cassel <Niklas.Cassel@wdc.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Mike Frysinger <vapier@gentoo.org>,
-        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-        kernel test robot <lkp@intel.com>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
-References: <20220418200834.1501454-1-Niklas.Cassel@wdc.com>
-        <202204181501.D55C8D2A@keescook>
-Date:   Tue, 19 Apr 2022 09:16:41 -0500
-In-Reply-To: <202204181501.D55C8D2A@keescook> (Kees Cook's message of "Mon, 18
-        Apr 2022 15:01:35 -0700")
-Message-ID: <87mtgh17li.fsf_-_@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+        Tue, 19 Apr 2022 10:21:42 -0400
+Received: from nibbler.cm4all.net (nibbler.cm4all.net [IPv6:2001:8d8:970:e500:82:165:145:151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B509918E12
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Apr 2022 07:18:57 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by nibbler.cm4all.net (Postfix) with ESMTP id 88CA2C00E8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Apr 2022 16:18:55 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at nibbler.cm4all.net
+Received: from nibbler.cm4all.net ([127.0.0.1])
+        by localhost (nibbler.cm4all.net [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id mYN1Iko7_Kvw for <linux-fsdevel@vger.kernel.org>;
+        Tue, 19 Apr 2022 16:18:48 +0200 (CEST)
+Received: from zero.intern.cm-ag (zero.intern.cm-ag [172.30.16.10])
+        by nibbler.cm4all.net (Postfix) with SMTP id 6984EC00CB
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Apr 2022 16:18:48 +0200 (CEST)
+Received: (qmail 20027 invoked from network); 19 Apr 2022 20:08:47 +0200
+Received: from unknown (HELO rabbit.intern.cm-ag) (172.30.3.1)
+  by zero.intern.cm-ag with SMTP; 19 Apr 2022 20:08:47 +0200
+Received: by rabbit.intern.cm-ag (Postfix, from userid 1023)
+        id 40ACB460E9C; Tue, 19 Apr 2022 16:18:48 +0200 (CEST)
+Date:   Tue, 19 Apr 2022 16:18:48 +0200
+From:   Max Kellermann <mk@cm4all.com>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Max Kellermann <mk@cm4all.com>, linux-cachefs@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: fscache corruption in Linux 5.17?
+Message-ID: <Yl7EyMLnqqDv63yW@rabbit.intern.cm-ag>
+References: <YlWWbpW5Foynjllo@rabbit.intern.cm-ag>
+ <454834.1650373340@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1ngofG-00EtRb-Eq;;;mid=<87mtgh17li.fsf_-_@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.174.4;;;frm=ebiederm@xmission.com;;;spf=softfail
-X-XM-AID: U2FsdGVkX19ajDTwOr+BtcmAx3CpiqLDVMt1FS+BCvY=
-X-SA-Exim-Connect-IP: 68.227.174.4
-X-SA-Exim-Mail-From: ebiederm@xmission.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <454834.1650373340@warthog.procyon.org.uk>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
-X-Spam-Virus: No
-X-Spam-DCC: XMission; sa01 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Kees Cook <keescook@chromium.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 373 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 4.1 (1.1%), b_tie_ro: 2.8 (0.8%), parse: 0.69
-        (0.2%), extract_message_metadata: 8 (2.2%), get_uri_detail_list: 0.95
-        (0.3%), tests_pri_-1000: 11 (2.8%), tests_pri_-950: 0.97 (0.3%),
-        tests_pri_-900: 0.88 (0.2%), tests_pri_-90: 115 (30.8%), check_bayes:
-        114 (30.5%), b_tokenize: 5 (1.4%), b_tok_get_all: 7 (1.8%),
-        b_comp_prob: 1.41 (0.4%), b_tok_touch_all: 97 (26.1%), b_finish: 0.79
-        (0.2%), tests_pri_0: 223 (59.7%), check_dkim_signature: 0.45 (0.1%),
-        check_dkim_adsp: 2.3 (0.6%), poll_dns_idle: 0.81 (0.2%), tests_pri_10:
-        1.83 (0.5%), tests_pri_500: 6 (1.6%), rewrite_mail: 0.00 (0.0%)
-Subject: [PATCH] binfmt_flat; Drop vestigates of coredump support
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 2022/04/19 15:02, David Howells <dhowells@redhat.com> wrote:
+> I presume you are actually using a cache?
 
-There is the briefest start of coredump support in binfmt_flat.  It is
-actually a pain to maintain as binfmt_flat is not built on most
-architectures so it is easy to overlook.
+Yes, see:
 
-Since the support does not do anything remove it.
+On 2022/04/12 17:10, Max Kellermann <max@rabbit.intern.cm-ag> wrote:
+> All web servers mount a storage via NFSv3 with fscache.
 
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
----
+At least one web server is still in this broken state right now.  So
+if you need anything from that server, tell me, and I'll get it.
 
-Apologies for hijacking this thread but it looks like we have people who
-are actively using binfmt_flat on it.
+I will need to downgrade to 5.16 tomorrow to get rid of the corruption
+bug (I've delayed this for a week, waiting for your reply).  After
+tomorrow, I can no longer help debugging this.
 
-Does anyone have any objections to simply removing what little there
-is of coredump support from binfmt_flat?
-
-Eric
-
- fs/binfmt_flat.c | 22 ----------------------
- 1 file changed, 22 deletions(-)
-
-diff --git a/fs/binfmt_flat.c b/fs/binfmt_flat.c
-index 626898150011..0ad2c7bbaddd 100644
---- a/fs/binfmt_flat.c
-+++ b/fs/binfmt_flat.c
-@@ -37,7 +37,6 @@
- #include <linux/flat.h>
- #include <linux/uaccess.h>
- #include <linux/vmalloc.h>
--#include <linux/coredump.h>
- 
- #include <asm/byteorder.h>
- #include <asm/unaligned.h>
-@@ -98,33 +97,12 @@ static int load_flat_shared_library(int id, struct lib_info *p);
- #endif
- 
- static int load_flat_binary(struct linux_binprm *);
--#ifdef CONFIG_COREDUMP
--static int flat_core_dump(struct coredump_params *cprm);
--#endif
- 
- static struct linux_binfmt flat_format = {
- 	.module		= THIS_MODULE,
- 	.load_binary	= load_flat_binary,
--#ifdef CONFIG_COREDUMP
--	.core_dump	= flat_core_dump,
--	.min_coredump	= PAGE_SIZE
--#endif
- };
- 
--/****************************************************************************/
--/*
-- * Routine writes a core dump image in the current directory.
-- * Currently only a stub-function.
-- */
--
--#ifdef CONFIG_COREDUMP
--static int flat_core_dump(struct coredump_params *cprm)
--{
--	pr_warn("Process %s:%d received signr %d and should have core dumped\n",
--		current->comm, current->pid, cprm->siginfo->si_signo);
--	return 1;
--}
--#endif
- 
- /****************************************************************************/
- /*
--- 
-2.35.3
-
+Max
