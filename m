@@ -2,49 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F0AAC507002
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Apr 2022 16:22:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E97CD507098
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Apr 2022 16:34:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350405AbiDSOVn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Apr 2022 10:21:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36012 "EHLO
+        id S1353351AbiDSOfs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Apr 2022 10:35:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349391AbiDSOVm (ORCPT
+        with ESMTP id S1353444AbiDSOfr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Apr 2022 10:21:42 -0400
-Received: from nibbler.cm4all.net (nibbler.cm4all.net [IPv6:2001:8d8:970:e500:82:165:145:151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B509918E12
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Apr 2022 07:18:57 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-        by nibbler.cm4all.net (Postfix) with ESMTP id 88CA2C00E8
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Apr 2022 16:18:55 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at nibbler.cm4all.net
-Received: from nibbler.cm4all.net ([127.0.0.1])
-        by localhost (nibbler.cm4all.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id mYN1Iko7_Kvw for <linux-fsdevel@vger.kernel.org>;
-        Tue, 19 Apr 2022 16:18:48 +0200 (CEST)
-Received: from zero.intern.cm-ag (zero.intern.cm-ag [172.30.16.10])
-        by nibbler.cm4all.net (Postfix) with SMTP id 6984EC00CB
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Apr 2022 16:18:48 +0200 (CEST)
-Received: (qmail 20027 invoked from network); 19 Apr 2022 20:08:47 +0200
-Received: from unknown (HELO rabbit.intern.cm-ag) (172.30.3.1)
-  by zero.intern.cm-ag with SMTP; 19 Apr 2022 20:08:47 +0200
-Received: by rabbit.intern.cm-ag (Postfix, from userid 1023)
-        id 40ACB460E9C; Tue, 19 Apr 2022 16:18:48 +0200 (CEST)
-Date:   Tue, 19 Apr 2022 16:18:48 +0200
-From:   Max Kellermann <mk@cm4all.com>
+        Tue, 19 Apr 2022 10:35:47 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57B381DA7C
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Apr 2022 07:33:03 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 7FAC92129B;
+        Tue, 19 Apr 2022 14:33:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1650378781; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=95gmZ+IeFKkHL6H6bLyyQ0iXUlQOXJcr5vuMwdX6V/k=;
+        b=FsrRwiNc+k5cWAfyYoEdMauTcmBwqj9SoK+AH/ePfZIcHJH+O6f82WzCaiiTlxrLikQLSS
+        1dtENYsV9WraDAEpKtBxSnJejq3r+IieWvnsCcaV1kXa7h0akG90i2EnYTszGtyH5Ir2i2
+        scCv1B/I9QAQGZR6uteQdJc3jCzTHGU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1650378781;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=95gmZ+IeFKkHL6H6bLyyQ0iXUlQOXJcr5vuMwdX6V/k=;
+        b=XOHNYfqSyTmMiJHoAMXdkZ5XzjE3fXroSt0pzgO23+nfMUFgmDsXhwLXJWKT78kryTKoAC
+        sJ/S6uYd2gofPADg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 59296132E7;
+        Tue, 19 Apr 2022 14:33:01 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id Uy5HFB3IXmI3IwAAMHmgww
+        (envelope-from <ddiss@suse.de>); Tue, 19 Apr 2022 14:33:01 +0000
+Date:   Tue, 19 Apr 2022 16:32:55 +0200
+From:   David Disseldorp <ddiss@suse.de>
 To:     David Howells <dhowells@redhat.com>
-Cc:     Max Kellermann <mk@cm4all.com>, linux-cachefs@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: fscache corruption in Linux 5.17?
-Message-ID: <Yl7EyMLnqqDv63yW@rabbit.intern.cm-ag>
-References: <YlWWbpW5Foynjllo@rabbit.intern.cm-ag>
- <454834.1650373340@warthog.procyon.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] watch_queue: fix IOC_WATCH_QUEUE_SET_SIZE alloc error
+ paths
+Message-ID: <20220419163255.03e210eb@suse.de>
+In-Reply-To: <20220404181318.21c0740a@suse.de>
+References: <20220328145746.8146-1-ddiss@suse.de>
+        <20220404181318.21c0740a@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <454834.1650373340@warthog.procyon.org.uk>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
         SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -53,19 +72,37 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2022/04/19 15:02, David Howells <dhowells@redhat.com> wrote:
-> I presume you are actually using a cache?
+Ping...
 
-Yes, see:
+On Mon, 4 Apr 2022 18:13:18 +0200, David Disseldorp wrote:
 
-On 2022/04/12 17:10, Max Kellermann <max@rabbit.intern.cm-ag> wrote:
-> All web servers mount a storage via NFSv3 with fscache.
+> Hi David,
+> 
+> Any feedback on this? It's a pretty obvious fix IMO.
+> 
+> On Mon, 28 Mar 2022 16:57:46 +0200, David Disseldorp wrote:
+> 
+> > From code inspection, the watch_queue_set_size() allocation error paths
+> > return the ret value set via the prior pipe_resize_ring() call, which
+> > will always be zero.
+> > 
+> > Fixes: c73be61cede58 ("pipe: Add general notification queue support")
+> > Signed-off-by: David Disseldorp <ddiss@suse.de>
+> > ---
+> >  kernel/watch_queue.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/kernel/watch_queue.c b/kernel/watch_queue.c
+> > index 3990e4df3d7b0..a128dedec9db2 100644
+> > --- a/kernel/watch_queue.c
+> > +++ b/kernel/watch_queue.c
+> > @@ -248,6 +248,7 @@ long watch_queue_set_size(struct pipe_inode_info *pipe, unsigned int nr_notes)
+> >  	if (ret < 0)
+> >  		goto error;
+> >  
+> > +	ret = -ENOMEM;
+> >  	pages = kcalloc(sizeof(struct page *), nr_pages, GFP_KERNEL);
+> >  	if (!pages)
+> >  		goto error;  
+> 
 
-At least one web server is still in this broken state right now.  So
-if you need anything from that server, tell me, and I'll get it.
-
-I will need to downgrade to 5.16 tomorrow to get rid of the corruption
-bug (I've delayed this for a week, waiting for your reply).  After
-tomorrow, I can no longer help debugging this.
-
-Max
