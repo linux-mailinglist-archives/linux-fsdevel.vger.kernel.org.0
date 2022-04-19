@@ -2,91 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B76A5076C2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Apr 2022 19:47:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68FF35076F7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Apr 2022 20:02:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356041AbiDSRtw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Apr 2022 13:49:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56488 "EHLO
+        id S1344083AbiDSSEq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Apr 2022 14:04:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356037AbiDSRtv (ORCPT
+        with ESMTP id S238961AbiDSSEo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Apr 2022 13:49:51 -0400
-Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA4B01116A
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Apr 2022 10:47:06 -0700 (PDT)
-Received: by mail-pf1-x42d.google.com with SMTP id l127so7297401pfl.6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Apr 2022 10:47:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=eJhX1LbAxPHHT8a5Ih0hSyTAg97jWBttV19glVJ+v8g=;
-        b=NGwlXY/d9L/tFLU0ev9y4i50/by0rKyFxHo2PLdJ5MuW3pFk72iH/X3g29R/K28UJC
-         dMSxWVnBJOqwSwC94yvOv/BO47OIlemSkgGdkZpucwSU2D214XYwUzXRF5Ir4yYWbLNd
-         g1AJltZrz1LawumnQf3biNiopIPoSRelFUXeQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=eJhX1LbAxPHHT8a5Ih0hSyTAg97jWBttV19glVJ+v8g=;
-        b=3zcdvvF7D4PNCDAudZTQxYh1QAFQ6ch5ORkeYUOMItKiapBDlChkMAwvZdHERaH5Uc
-         kIMML0y54eVbglQpUvhWLjM3Drq1jewSpmLkYRlrgvQpvJdLqqHdEjnBr8lZkhjZP4sa
-         E6lHQHa5fkc7Fsl7rNPFCpW40ly/HqxjhL+XiFh/QGAk9EwloTVZdpdFmuQz+KC4c+zY
-         xXNDtEYHjfljZCbCdwqQmRb8pCWr3c7QjgxCcG0vuhUQoVGNlu0EuBhn4QWp+FTgFhBf
-         S0RZpUpv0HhqqkFH4KcBMtcAS1VWSyw6dT5yFm8FgWcwo35sc2KEqOVzzXJMi91LgE4a
-         IsSw==
-X-Gm-Message-State: AOAM532YTJfx3Mz8ZVxBcaV5QnoaCs9XdZTDm/NpLY8A+9nOBNe4aOz0
-        NS5zFo3iwPFhCCs9R2jNE09yvQ==
-X-Google-Smtp-Source: ABdhPJzScsflZaDve27ipH6bvurP6DoUeG3G2+wqfWTiSnihmsKylQwmyOc5Dlo9JrZ5ArCsH1H9zg==
-X-Received: by 2002:a05:6a00:1254:b0:50a:55c5:5ff7 with SMTP id u20-20020a056a00125400b0050a55c55ff7mr16928195pfi.85.1650390426329;
-        Tue, 19 Apr 2022 10:47:06 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id i5-20020a17090a2a0500b001cba3ac9366sm20143182pjd.10.2022.04.19.10.47.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 19 Apr 2022 10:47:05 -0700 (PDT)
-From:   Kees Cook <keescook@chromium.org>
-To:     ebiederm@xmission.com
-Cc:     Kees Cook <keescook@chromium.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        damien.lemoal@opensource.wdc.com, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, Niklas.Cassel@wdc.com,
-        lkp@intel.com, vapier@gentoo.org, gerg@linux-m68k.org,
-        stable@vger.kernel.org
-Subject: Re: (subset) [PATCH] binfmt_flat; Drop vestigates of coredump support
-Date:   Tue, 19 Apr 2022 10:46:40 -0700
-Message-Id: <165039039729.809958.17874221541968744613.b4-ty@chromium.org>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <87mtgh17li.fsf_-_@email.froward.int.ebiederm.org>
-References: <20220418200834.1501454-1-Niklas.Cassel@wdc.com> <202204181501.D55C8D2A@keescook> <87mtgh17li.fsf_-_@email.froward.int.ebiederm.org>
+        Tue, 19 Apr 2022 14:04:44 -0400
+Received: from nibbler.cm4all.net (nibbler.cm4all.net [IPv6:2001:8d8:970:e500:82:165:145:151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1FD23A192
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Apr 2022 11:02:00 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+        by nibbler.cm4all.net (Postfix) with ESMTP id 3ED21C00A1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Apr 2022 20:01:59 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at nibbler.cm4all.net
+Received: from nibbler.cm4all.net ([127.0.0.1])
+        by localhost (nibbler.cm4all.net [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id hPWNnCV-JEvv for <linux-fsdevel@vger.kernel.org>;
+        Tue, 19 Apr 2022 20:01:52 +0200 (CEST)
+Received: from zero.intern.cm-ag (zero.intern.cm-ag [172.30.16.10])
+        by nibbler.cm4all.net (Postfix) with SMTP id 218B6C00D5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Apr 2022 20:01:52 +0200 (CEST)
+Received: (qmail 2504 invoked from network); 19 Apr 2022 23:51:54 +0200
+Received: from unknown (HELO rabbit.intern.cm-ag) (172.30.3.1)
+  by zero.intern.cm-ag with SMTP; 19 Apr 2022 23:51:54 +0200
+Received: by rabbit.intern.cm-ag (Postfix, from userid 1023)
+        id E6D21460F1C; Tue, 19 Apr 2022 20:01:51 +0200 (CEST)
+Date:   Tue, 19 Apr 2022 20:01:51 +0200
+From:   Max Kellermann <mk@cm4all.com>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Max Kellermann <mk@cm4all.com>, linux-cachefs@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: fscache corruption in Linux 5.17?
+Message-ID: <Yl75D02pXj71kQBx@rabbit.intern.cm-ag>
+References: <Yl7d++G25sNXIR+p@rabbit.intern.cm-ag>
+ <YlWWbpW5Foynjllo@rabbit.intern.cm-ag>
+ <507518.1650383808@warthog.procyon.org.uk>
+ <509961.1650386569@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <509961.1650386569@warthog.procyon.org.uk>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 19 Apr 2022 09:16:41 -0500, Eric W. Biederman wrote:
-> There is the briefest start of coredump support in binfmt_flat.  It is
-> actually a pain to maintain as binfmt_flat is not built on most
-> architectures so it is easy to overlook.
-> 
-> Since the support does not do anything remove it.
-> 
-> 
-> [...]
+On 2022/04/19 18:42, David Howells <dhowells@redhat.com> wrote:
+> Could the file have been modified by a third party?
 
-Applied to for-next/execve, thanks! (With typo nits fixed.)
+According to our support tickets, the customers used WordPress's
+built-in updater, which resulted in corrupt PHP sources.
 
-[1/1] binfmt_flat; Drop vestigates of coredump support
-      https://git.kernel.org/kees/c/6e1a873cefd1
+We have configured stickiness in the load balancer; HTTP requests to
+one website always go through the same web server.  Which implies that
+the same web server that saw the corrupt files was the very same one
+that wrote the new file contents.  This part surprises me, because
+writing a page to the NFS server should update (or flush/invalidate)
+the old cache page.  It would be easy for a *different* NFS client to
+miss out on updated file contents, but this is not what happened.
 
--- 
-Kees Cook
+On 2022/04/19 18:47, David Howells <dhowells@redhat.com> wrote:
+> Do the NFS servers change the files that are being served - or is it
+> just WordPress pushing the changes to the NFS servers for the web
+> servers to then export?
 
+I'm not sure if I understand this question correctly.  The NFS server
+(a NetApp, btw.) sees the new file contents correctly; all other web
+servers also see non-corrupt new files.  Only the one web server which
+performed the update saw broken files.
+
+Max
