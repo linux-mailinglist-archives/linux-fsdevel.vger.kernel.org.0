@@ -2,78 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 49A3B507590
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Apr 2022 18:49:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B76A5076C2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Apr 2022 19:47:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239074AbiDSQuh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Apr 2022 12:50:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58674 "EHLO
+        id S1356041AbiDSRtw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Apr 2022 13:49:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56488 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347611AbiDSQuN (ORCPT
+        with ESMTP id S1356037AbiDSRtv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Apr 2022 12:50:13 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E17E93AA45
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Apr 2022 09:47:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1650386827;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=BWvAKy8LocH47YhakvpIBQwKMnIJQQng3vxQEYIL7zc=;
-        b=VX9Lea2KWKzJbjxUJB+5eNsXFpCLEh2LP7F4CyPIdOU1zFfTPqSS2LoYo0YSoNfkgMna/l
-        wBH6fgiAxG90QkwsxU6bRgklaiCJVMoqE5EQsMdYVfcXV1ETi5SEqAXrjQdn1DBJwuliqu
-        C4SVV9PSezIi3S8OhVzbYj3AfM4UvRw=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-511-EaA8j95MOtSsSpdXOLr65A-1; Tue, 19 Apr 2022 12:47:03 -0400
-X-MC-Unique: EaA8j95MOtSsSpdXOLr65A-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 34F563820F64;
-        Tue, 19 Apr 2022 16:47:03 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.13])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7B4A740E80E0;
-        Tue, 19 Apr 2022 16:47:02 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <Yl7mQr05hPg4vELb@rabbit.intern.cm-ag>
-References: <Yl7mQr05hPg4vELb@rabbit.intern.cm-ag> <Yl7EyMLnqqDv63yW@rabbit.intern.cm-ag> <YlWWbpW5Foynjllo@rabbit.intern.cm-ag> <454834.1650373340@warthog.procyon.org.uk> <508603.1650385022@warthog.procyon.org.uk>
-To:     Max Kellermann <mk@cm4all.com>
-Cc:     dhowells@redhat.com, linux-cachefs@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: fscache corruption in Linux 5.17?
+        Tue, 19 Apr 2022 13:49:51 -0400
+Received: from mail-pf1-x42d.google.com (mail-pf1-x42d.google.com [IPv6:2607:f8b0:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA4B01116A
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Apr 2022 10:47:06 -0700 (PDT)
+Received: by mail-pf1-x42d.google.com with SMTP id l127so7297401pfl.6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Apr 2022 10:47:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=eJhX1LbAxPHHT8a5Ih0hSyTAg97jWBttV19glVJ+v8g=;
+        b=NGwlXY/d9L/tFLU0ev9y4i50/by0rKyFxHo2PLdJ5MuW3pFk72iH/X3g29R/K28UJC
+         dMSxWVnBJOqwSwC94yvOv/BO47OIlemSkgGdkZpucwSU2D214XYwUzXRF5Ir4yYWbLNd
+         g1AJltZrz1LawumnQf3biNiopIPoSRelFUXeQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=eJhX1LbAxPHHT8a5Ih0hSyTAg97jWBttV19glVJ+v8g=;
+        b=3zcdvvF7D4PNCDAudZTQxYh1QAFQ6ch5ORkeYUOMItKiapBDlChkMAwvZdHERaH5Uc
+         kIMML0y54eVbglQpUvhWLjM3Drq1jewSpmLkYRlrgvQpvJdLqqHdEjnBr8lZkhjZP4sa
+         E6lHQHa5fkc7Fsl7rNPFCpW40ly/HqxjhL+XiFh/QGAk9EwloTVZdpdFmuQz+KC4c+zY
+         xXNDtEYHjfljZCbCdwqQmRb8pCWr3c7QjgxCcG0vuhUQoVGNlu0EuBhn4QWp+FTgFhBf
+         S0RZpUpv0HhqqkFH4KcBMtcAS1VWSyw6dT5yFm8FgWcwo35sc2KEqOVzzXJMi91LgE4a
+         IsSw==
+X-Gm-Message-State: AOAM532YTJfx3Mz8ZVxBcaV5QnoaCs9XdZTDm/NpLY8A+9nOBNe4aOz0
+        NS5zFo3iwPFhCCs9R2jNE09yvQ==
+X-Google-Smtp-Source: ABdhPJzScsflZaDve27ipH6bvurP6DoUeG3G2+wqfWTiSnihmsKylQwmyOc5Dlo9JrZ5ArCsH1H9zg==
+X-Received: by 2002:a05:6a00:1254:b0:50a:55c5:5ff7 with SMTP id u20-20020a056a00125400b0050a55c55ff7mr16928195pfi.85.1650390426329;
+        Tue, 19 Apr 2022 10:47:06 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id i5-20020a17090a2a0500b001cba3ac9366sm20143182pjd.10.2022.04.19.10.47.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 Apr 2022 10:47:05 -0700 (PDT)
+From:   Kees Cook <keescook@chromium.org>
+To:     ebiederm@xmission.com
+Cc:     Kees Cook <keescook@chromium.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        damien.lemoal@opensource.wdc.com, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, Niklas.Cassel@wdc.com,
+        lkp@intel.com, vapier@gentoo.org, gerg@linux-m68k.org,
+        stable@vger.kernel.org
+Subject: Re: (subset) [PATCH] binfmt_flat; Drop vestigates of coredump support
+Date:   Tue, 19 Apr 2022 10:46:40 -0700
+Message-Id: <165039039729.809958.17874221541968744613.b4-ty@chromium.org>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <87mtgh17li.fsf_-_@email.froward.int.ebiederm.org>
+References: <20220418200834.1501454-1-Niklas.Cassel@wdc.com> <202204181501.D55C8D2A@keescook> <87mtgh17li.fsf_-_@email.froward.int.ebiederm.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <510135.1650386821.1@warthog.procyon.org.uk>
-Date:   Tue, 19 Apr 2022 17:47:01 +0100
-Message-ID: <510136.1650386821@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.11.54.2
-X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H4,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Max Kellermann <mk@cm4all.com> wrote:
+On Tue, 19 Apr 2022 09:16:41 -0500, Eric W. Biederman wrote:
+> There is the briefest start of coredump support in binfmt_flat.  It is
+> actually a pain to maintain as binfmt_flat is not built on most
+> architectures so it is easy to overlook.
+> 
+> Since the support does not do anything remove it.
+> 
+> 
+> [...]
 
-> I don't think any write is misaligned.  This was triggered by a
-> WordPress update, so I think the WordPress updater truncated and
-> rewrote all files.  Random guess: some pages got transferred to the
-> NFS server, but the local copy in fscache did not get updated.
+Applied to for-next/execve, thanks! (With typo nits fixed.)
 
-Do the NFS servers change the files that are being served - or is it just
-WordPress pushing the changes to the NFS servers for the web servers to then
-export?
+[1/1] binfmt_flat; Drop vestigates of coredump support
+      https://git.kernel.org/kees/c/6e1a873cefd1
 
-David
+-- 
+Kees Cook
 
