@@ -2,53 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F4855062A4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Apr 2022 05:32:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37EBE5062E3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 19 Apr 2022 05:42:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346907AbiDSDfH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 18 Apr 2022 23:35:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33212 "EHLO
+        id S231829AbiDSDow (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 18 Apr 2022 23:44:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346806AbiDSDfG (ORCPT
+        with ESMTP id S1348168AbiDSDos (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 18 Apr 2022 23:35:06 -0400
+        Mon, 18 Apr 2022 23:44:48 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EAC82B266;
-        Mon, 18 Apr 2022 20:32:25 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98BA33193D
+        for <linux-fsdevel@vger.kernel.org>; Mon, 18 Apr 2022 20:42:06 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id C84B160FCA;
-        Tue, 19 Apr 2022 03:32:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC9EBC385A7;
-        Tue, 19 Apr 2022 03:32:23 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5AB2F61049
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Apr 2022 03:42:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7281DC385A1;
+        Tue, 19 Apr 2022 03:42:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1650339144;
-        bh=NUPu4YWlrvlHt/n0rKRmUg75CJPp5wRqgNcYElGbLxo=;
+        s=korg; t=1650339725;
+        bh=Col+AuMuVCxgczTCBn+vOlTtSikyZMVqXjSHcD/QGsc=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=GtVMzzCP4TQ9o7chQQyqm2nRj7zyWGe1ngPSYR4tF2+k81uD8uWW9xwuwtYj8M0qq
-         5Jg1ytKk0XJevilQgynjZN0yG7B9+qAqcauyXI1IJDTZcM/N6ptPOSyspSG5B7aQzc
-         xm999DA8Af2V6LItS6IQPXgN/od/Jv9e3GIUAf9Q=
-Date:   Mon, 18 Apr 2022 20:32:23 -0700
+        b=TyU5vl0JDmVQsivRL11MJ6DW2ONKqOvANTg1zGc5zvY4rZlV7JSuq2+3jBKMPGwwV
+         zq/It8qZOZ+DZVjS9a8UbUzgbOiSK6XckuaCfJXq1jciaBhNX+RHBYIoG7O+Q52CFL
+         zE6BaGe6Yj1ctjHwpg74A2WIiZrb4kpS9i2N1l4s=
+Date:   Mon, 18 Apr 2022 20:42:04 -0700
 From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Axel Rasmussen <axelrasmussen@google.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Gleb Fotengauer-Malinovskiy <glebfm@altlinux.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <namit@vmware.com>, Peter Xu <peterx@redhat.com>,
-        Shuah Khan <shuah@kernel.org>, linux-fsdevel@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     hughd@google.com, amir73il@gmail.com, viro@zeniv.linux.org.uk,
+        kernel@collabora.com, Khazhismel Kumykov <khazhy@google.com>,
         Linux MM <linux-mm@kvack.org>,
-        Linuxkselftest <linux-kselftest@vger.kernel.org>
-Subject: Re: [PATCH 2/2] userfaultfd: selftests: modify selftest to use
- /dev/userfaultfd
-Message-Id: <20220418203223.02d00391505b662e71e8c1db@linux-foundation.org>
-In-Reply-To: <CAJHvVcj=pL8y_b_urq8QvtDvRRMmjgGkquQM6xhxWwiajNrhKQ@mail.gmail.com>
-References: <20220412202942.386981-1-axelrasmussen@google.com>
-        <20220412202942.386981-2-axelrasmussen@google.com>
-        <20220412134159.f0a1d0d77f5b01638007bf4b@linux-foundation.org>
-        <CAJHvVcj=pL8y_b_urq8QvtDvRRMmjgGkquQM6xhxWwiajNrhKQ@mail.gmail.com>
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v3 0/3] shmem: Allow userspace monitoring of tmpfs for
+ lack of space.
+Message-Id: <20220418204204.0405eda0c506fd29e857e1e4@linux-foundation.org>
+In-Reply-To: <20220418213713.273050-1-krisman@collabora.com>
+References: <20220418213713.273050-1-krisman@collabora.com>
 X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -63,26 +55,41 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 18 Apr 2022 15:16:02 -0700 Axel Rasmussen <axelrasmussen@google.com> wrote:
+On Mon, 18 Apr 2022 17:37:10 -0400 Gabriel Krisman Bertazi <krisman@collabora.com> wrote:
 
-> Thanks for looking Andrew. And, fair criticism.
-> 
-> In keeping with the status quo, I'm thinking of just adding a new
-> command-line argument which toggles between the two modes.
+> When provisioning containerized applications, multiple very small tmpfs
 
-But I think you could tweak the test pretty simply to run itself twice.
-Once with the syscall then once with the /dev interface.
+"files"?
 
-I suppose that adding the commandline argument is equivalent, as long
-as the upper level script/makefile invokes the test program twice.
+> are used, for which one cannot always predict the proper file system
+> size ahead of time.  We want to be able to reliably monitor filesystems
+> for ENOSPC errors, without depending on the application being executed
+> reporting the ENOSPC after a failure.
 
-> But, if I'm honest, it's starting to feel like the test has way too
-> many arguments... I'm tempted to refactor the test to use the
-> kselftest framework [1], get rid of all these command line arguments,
-> and just always test everything. But, this seems like a big and
-> perhaps controversial refactor, so I may take it up after this
-> series...
+Well that sucks.  We need a kernel-side workaround for applications
+that fail to check and report storage errors?
 
-Yes, that's a separable activity.
+We could do this for every syscall in the kernel.  What's special about
+tmpfs in this regard?  
+
+Please provide additional justification and usage examples for such an
+extraordinary thing.
+
+>  It is also not enough to watch
+> statfs since that information might be ephemeral (say the application
+> recovers by deleting data, the issue can get lost).
+
+We could fix the apps?  Heck, you could patch libc's write() to the same
+effect.
+
+>  For this use case,
+> it is also interesting to differentiate IO errors caused by lack of
+> virtual memory from lack of FS space.
+
+More details, please.  Why interesting?  What actions can the system
+operator take based upon this information?
+
+Whatever that action is, I see no user-facing documentation which
+guides the user info how to take advantage of this?
 
 
