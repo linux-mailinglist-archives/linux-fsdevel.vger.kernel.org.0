@@ -2,178 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F8F4508EC6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Apr 2022 19:46:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 652A5508ED8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Apr 2022 19:47:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1381284AbiDTRsu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Apr 2022 13:48:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33904 "EHLO
+        id S1351423AbiDTRub (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Apr 2022 13:50:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1380246AbiDTRss (ORCPT
+        with ESMTP id S1381323AbiDTRu2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Apr 2022 13:48:48 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B7EC45AFD;
-        Wed, 20 Apr 2022 10:46:01 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 13B86B81EB6;
-        Wed, 20 Apr 2022 17:46:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97AFEC385A4;
-        Wed, 20 Apr 2022 17:45:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650476758;
-        bh=0IQpL7Wg9Mq/y7A3UKLbFuWQ6Lpmm0AsHYlcuGIKTnQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hEaP/ZkMcPr/FLQVEXXLW8MN/yKztzZ2AiYNM2IuCxtEIh8aE8FNZ3D9GQWtp/fA5
-         TtPGbmrGpjXaEQj0HRw62q8BxcaSVulsv02HdrUX47CkSufe2JmP4puPGvcpiaDQwP
-         iMFChnjCgtnkZ2AGt8bfRw3xmml/dgWEwCZBtyAOGdGgFUi5IaUOVDcaSXI/IvXF3a
-         k6pru5d2tI/zkEtjYUUr8OlID89SP74vaiAa/NntqvUSEHEoPl0WlWacSMoDKR5Rmn
-         ukYkeuSrNQOulKMe49AKTTml9kUo6clqFab7LYnDX/AmShAKXwh50aNPa3zhWS91LD
-         0A1CuoZzkbMVA==
-Date:   Wed, 20 Apr 2022 10:45:58 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
-Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        nvdimm@lists.linux.dev, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, dan.j.williams@intel.com,
-        david@fromorbit.com, hch@infradead.org, jane.chu@oracle.com,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v13 3/7] pagemap,pmem: Introduce ->memory_failure()
-Message-ID: <20220420174558.GW17025@magnolia>
-References: <20220419045045.1664996-1-ruansy.fnst@fujitsu.com>
- <20220419045045.1664996-4-ruansy.fnst@fujitsu.com>
+        Wed, 20 Apr 2022 13:50:28 -0400
+Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8318146B1E
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Apr 2022 10:47:41 -0700 (PDT)
+Received: by mail-pf1-x431.google.com with SMTP id j17so2625700pfi.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Apr 2022 10:47:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=SHMsfABGGrvn2lsVsfqgzVLwywQSfxtdJBF+mJ5LZXs=;
+        b=ifQm0MVgjtV+BXIaAo3bFkMuhxuVZBnwY0aFGZk1+nVrlhCy5FA9hG9fnZaS/1OTlY
+         U72SN6BUq0YrEvFiM/wPkP4INNUU0czy83FarimwkCa8pzM0gwf67bpq4SZcz0RNe9bt
+         jNsKDh5xmimNviBlpr5yk0v18LF9HjlZQa6zk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=SHMsfABGGrvn2lsVsfqgzVLwywQSfxtdJBF+mJ5LZXs=;
+        b=Kx2vGQcFsqS5qXgDcG2RsCv7CQSRbKDtwZCEmWPRln3ING5MSYxsnOJ+h7Xyj5Yj/F
+         j5/4i+UW+EF5ltE/J0C1BzXrJbcnu4pAdEmF7ZGc9RuqnDXJq9AndYRfoIKbjFdgz/Wi
+         9qjLqN8CQ5OIBA5fAjt8CCSOPo4dhsClunis0jQNF5yc13O7AaJxSi/Bjg+nlsBiylc4
+         K7fMLCUeAKobwfCeCTv4pfsrVAfiFNri+P80WBIAhG7OqmlckpOVg2gvz4gRCn4NTMtB
+         9ipTgbXHXpBwpx9pBXTRselhj7yuyWRcC401cHs9jSaRgIaBbNZ4Zv4Pc/QppZspKYzE
+         ZZDQ==
+X-Gm-Message-State: AOAM530mWNTqVXQ2GrhFhn3UEwFD3fnsa1msdbDBi5rgUsf6gsVwhHia
+        nYQWM/hxW5Dvj7dQ28Lrio6JOg==
+X-Google-Smtp-Source: ABdhPJzlyKuQhYm9qanfZk6jXGeHYMGh09tbQmAJbxfwhgdwizKPI1SHKfbvpHUJSUj6EwAypoQ+yA==
+X-Received: by 2002:a05:6a00:2284:b0:50a:40b8:28ff with SMTP id f4-20020a056a00228400b0050a40b828ffmr24827405pfe.17.1650476861016;
+        Wed, 20 Apr 2022 10:47:41 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id p1-20020a17090a680100b001d28905b214sm22614pjj.39.2022.04.20.10.47.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Apr 2022 10:47:40 -0700 (PDT)
+Date:   Wed, 20 Apr 2022 10:47:39 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Rich Felker <dalias@libc.org>
+Cc:     Palmer Dabbelt <palmer@dabbelt.com>, ebiederm@xmission.com,
+        damien.lemoal@opensource.wdc.com, Niklas.Cassel@wdc.com,
+        viro@zeniv.linux.org.uk, Paul Walmsley <paul.walmsley@sifive.com>,
+        aou@eecs.berkeley.edu, vapier@gentoo.org, stable@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-riscv@lists.infradead.org, linux-arch@vger.kernel.org,
+        geert@linux-m68k.org, linux-m68k@lists.linux-m68k.org,
+        gerg@linux-m68k.org, linux-arm-kernel@lists.infradead.org,
+        linux-sh@vger.kernel.org, ysato@users.sourceforge.jp
+Subject: Re: [PATCH] binfmt_flat: Remove shared library support
+Message-ID: <202204201044.ACFEB0C@keescook>
+References: <87levzzts4.fsf_-_@email.froward.int.ebiederm.org>
+ <mhng-32cab6aa-87a3-4a5c-bf83-836c25432fdd@palmer-ri-x1c9>
+ <20220420165935.GA12207@brightrain.aerifal.cx>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220419045045.1664996-4-ruansy.fnst@fujitsu.com>
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20220420165935.GA12207@brightrain.aerifal.cx>
+X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 19, 2022 at 12:50:41PM +0800, Shiyang Ruan wrote:
-> When memory-failure occurs, we call this function which is implemented
-> by each kind of devices.  For the fsdax case, pmem device driver
-> implements it.  Pmem device driver will find out the filesystem in which
-> the corrupted page located in.
+On Wed, Apr 20, 2022 at 12:59:37PM -0400, Rich Felker wrote:
+> On Wed, Apr 20, 2022 at 09:17:22AM -0700, Palmer Dabbelt wrote:
+> > On Wed, 20 Apr 2022 07:58:03 PDT (-0700), ebiederm@xmission.com wrote:
+> > >
+> > >In a recent discussion[1] it was reported that the binfmt_flat library
+> > >support was only ever used on m68k and even on m68k has not been used
+> > >in a very long time.
+> > >
+> > >The structure of binfmt_flat is different from all of the other binfmt
+> > >implementations becasue of this shared library support and it made
+> > >life and code review more effort when I refactored the code in fs/exec.c.
+> > >
+> > >Since in practice the code is dead remove the binfmt_flat shared libarary
+> > >support and make maintenance of the code easier.
+> > >
+> > >[1] https://lkml.kernel.org/r/81788b56-5b15-7308-38c7-c7f2502c4e15@linux-m68k.org
+> > >Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+> > >---
+> > >
+> > >Can the binfmt_flat folks please verify that the shared library support
+> > >really isn't used?
+> > 
+> > I don't actually know follow the RISC-V flat support, last I heard it was still
+> > sort of just in limbo (some toolchain/userspace bugs th at needed to be sorted
+> > out).  Damien would know better, though, he's already on the thread.  I'll
+> > leave it up to him to ack this one, if you were even looking for anything from
+> > the RISC-V folks at all (we don't have this in any defconfigs).
 > 
-> With dax_holder notify support, we are able to notify the memory failure
-> from pmem driver to upper layers.  If there is something not support in
-> the notify routine, memory_failure will fall back to the generic hanlder.
-> 
-> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+> For what it's worth, bimfmt_flat (with or without shared library
+> support) should be simple to implement as a binfmt_misc handler if
+> anyone needs the old shared library support (or if kernel wanted to
+> drop it entirely, which I would be in favor of). That's how I handled
+> old aout binaries I wanted to run after aout was removed: trivial
+> binfmt_misc loader.
 
-Looks good to me now that we've ironed out the earlier unit questions,
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Yeah, I was trying to understand why systems were using binfmt_flat and
+not binfmt_elf, given the mention of elf2flat -- is there really such a
+large kernel memory footprint savings to be had from removing
+binfmt_elf?
 
---D
+But regardless, yes, it seems like if you're doing anything remotely
+needing shared libraries with binfmt_flat, such a system could just use
+ELF instead.
 
-> ---
->  drivers/nvdimm/pmem.c    | 17 +++++++++++++++++
->  include/linux/memremap.h | 12 ++++++++++++
->  mm/memory-failure.c      | 14 ++++++++++++++
->  3 files changed, 43 insertions(+)
-> 
-> diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
-> index 58d95242a836..bd502957cfdf 100644
-> --- a/drivers/nvdimm/pmem.c
-> +++ b/drivers/nvdimm/pmem.c
-> @@ -366,6 +366,21 @@ static void pmem_release_disk(void *__pmem)
->  	blk_cleanup_disk(pmem->disk);
->  }
->  
-> +static int pmem_pagemap_memory_failure(struct dev_pagemap *pgmap,
-> +		unsigned long pfn, unsigned long nr_pages, int mf_flags)
-> +{
-> +	struct pmem_device *pmem =
-> +			container_of(pgmap, struct pmem_device, pgmap);
-> +	u64 offset = PFN_PHYS(pfn) - pmem->phys_addr - pmem->data_offset;
-> +	u64 len = nr_pages << PAGE_SHIFT;
-> +
-> +	return dax_holder_notify_failure(pmem->dax_dev, offset, len, mf_flags);
-> +}
-> +
-> +static const struct dev_pagemap_ops fsdax_pagemap_ops = {
-> +	.memory_failure		= pmem_pagemap_memory_failure,
-> +};
-> +
->  static int pmem_attach_disk(struct device *dev,
->  		struct nd_namespace_common *ndns)
->  {
-> @@ -427,6 +442,7 @@ static int pmem_attach_disk(struct device *dev,
->  	pmem->pfn_flags = PFN_DEV;
->  	if (is_nd_pfn(dev)) {
->  		pmem->pgmap.type = MEMORY_DEVICE_FS_DAX;
-> +		pmem->pgmap.ops = &fsdax_pagemap_ops;
->  		addr = devm_memremap_pages(dev, &pmem->pgmap);
->  		pfn_sb = nd_pfn->pfn_sb;
->  		pmem->data_offset = le64_to_cpu(pfn_sb->dataoff);
-> @@ -440,6 +456,7 @@ static int pmem_attach_disk(struct device *dev,
->  		pmem->pgmap.range.end = res->end;
->  		pmem->pgmap.nr_range = 1;
->  		pmem->pgmap.type = MEMORY_DEVICE_FS_DAX;
-> +		pmem->pgmap.ops = &fsdax_pagemap_ops;
->  		addr = devm_memremap_pages(dev, &pmem->pgmap);
->  		pmem->pfn_flags |= PFN_MAP;
->  		bb_range = pmem->pgmap.range;
-> diff --git a/include/linux/memremap.h b/include/linux/memremap.h
-> index ad6062d736cd..bcfb6bf4ce5a 100644
-> --- a/include/linux/memremap.h
-> +++ b/include/linux/memremap.h
-> @@ -79,6 +79,18 @@ struct dev_pagemap_ops {
->  	 * the page back to a CPU accessible page.
->  	 */
->  	vm_fault_t (*migrate_to_ram)(struct vm_fault *vmf);
-> +
-> +	/*
-> +	 * Handle the memory failure happens on a range of pfns.  Notify the
-> +	 * processes who are using these pfns, and try to recover the data on
-> +	 * them if necessary.  The mf_flags is finally passed to the recover
-> +	 * function through the whole notify routine.
-> +	 *
-> +	 * When this is not implemented, or it returns -EOPNOTSUPP, the caller
-> +	 * will fall back to a common handler called mf_generic_kill_procs().
-> +	 */
-> +	int (*memory_failure)(struct dev_pagemap *pgmap, unsigned long pfn,
-> +			      unsigned long nr_pages, int mf_flags);
->  };
->  
->  #define PGMAP_ALTMAP_VALID	(1 << 0)
-> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-> index 7c8c047bfdc8..a40e79e634a4 100644
-> --- a/mm/memory-failure.c
-> +++ b/mm/memory-failure.c
-> @@ -1741,6 +1741,20 @@ static int memory_failure_dev_pagemap(unsigned long pfn, int flags,
->  	if (!pgmap_pfn_valid(pgmap, pfn))
->  		goto out;
->  
-> +	/*
-> +	 * Call driver's implementation to handle the memory failure, otherwise
-> +	 * fall back to generic handler.
-> +	 */
-> +	if (pgmap->ops->memory_failure) {
-> +		rc = pgmap->ops->memory_failure(pgmap, pfn, 1, flags);
-> +		/*
-> +		 * Fall back to generic handler too if operation is not
-> +		 * supported inside the driver/device/filesystem.
-> +		 */
-> +		if (rc != -EOPNOTSUPP)
-> +			goto out;
-> +	}
-> +
->  	rc = mf_generic_kill_procs(pfn, flags, pgmap);
->  out:
->  	/* drop pgmap ref acquired in caller */
-> -- 
-> 2.35.1
-> 
-> 
-> 
+-- 
+Kees Cook
