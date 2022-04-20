@@ -2,50 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 897E6508819
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Apr 2022 14:26:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 355CA50881D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Apr 2022 14:27:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378514AbiDTM3E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Apr 2022 08:29:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40982 "EHLO
+        id S1353193AbiDTM3z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Apr 2022 08:29:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353193AbiDTM3D (ORCPT
+        with ESMTP id S232349AbiDTM3x (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Apr 2022 08:29:03 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED4BE286E1;
-        Wed, 20 Apr 2022 05:26:17 -0700 (PDT)
+        Wed, 20 Apr 2022 08:29:53 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E7C8286E1;
+        Wed, 20 Apr 2022 05:27:08 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id AAFDFB81ECD;
-        Wed, 20 Apr 2022 12:26:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97F20C385A0;
-        Wed, 20 Apr 2022 12:26:13 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CE26361988;
+        Wed, 20 Apr 2022 12:27:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DEC5C385A0;
+        Wed, 20 Apr 2022 12:27:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650457575;
-        bh=iECp8GFjCkhpAv51gZMBcltLbreh5Jd0z16B9i8dGhc=;
+        s=k20201202; t=1650457627;
+        bh=jxli10XRiJdu42WSS8669uK+pbmxZax4+eLzHGUJeog=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=K9JLCLk1cvj6L2BUtW7SHoF2XwCCyJeDqlDglccjY64wW5vHz9YutWn+Qhx/mmO6B
-         i2AOcQRyOmimm3rFTNeM2dWpQuJeZrPAFmgnXyL1cX4K/3zFGQaah+dTo4bvQa7Wf/
-         inAUVba37yveUyQlszapXlHX2OFrnEiE20vR5CIqTQUM6e4dIXqYvVhe29jwSaatGX
-         LGbWSHjxaWHHCgVeIJfqtYmJfRpxlJ4leH7rVATPJ8prUX6WZgeY6I6P2EA6PrfBFT
-         fihe6+IH3Y6W03OlB6MwqQ1t+hU56tj55lNqUM1TW9egbnZzpGpMVNv0XvmsGiOwMH
-         fETLGHUh0mWzQ==
-Date:   Wed, 20 Apr 2022 14:26:10 +0200
+        b=QvMQcJRWhCY8JiZNLpIrt4IupUkvwhgGmFy1kp+vXYY6YuokOuL2TiMZ0DaciGLCa
+         A7Oa33f7bYiHsZEbrcpPg/qE70QOJIjrWyOml+v1oQ84ZD1VAuQpO6hTl9cnE9gn4d
+         FV3VxPKgBBTHiJY/nhD6g3HJCvmjhRY9CmPrpbUemxU3A7+y366NCRBuEaqMjNqer1
+         uczOwTmgshhIFM6YZNNefno2zGYnw/PiVUdcA9MAqbdI+o/zhRDeuA1hdsylzjGvzi
+         HY6MGJfU1UtzkDwLArtWaBy7GCfA6eNCTEj67CYSRX+TBOwJ3oMLGlAvKW4R1UG6lu
+         3XuRYLzl7q8iQ==
+Date:   Wed, 20 Apr 2022 14:27:02 +0200
 From:   Christian Brauner <brauner@kernel.org>
-To:     syzbot <syzbot+10a16d1c43580983f6a2@syzkaller.appspotmail.com>
+To:     syzbot <syzbot+306090cfa3294f0bbfb3@syzkaller.appspotmail.com>
 Cc:     fweisbec@gmail.com, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, mingo@kernel.org,
         syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
         viro@zeniv.linux.org.uk
-Subject: Re: [syzbot] INFO: rcu detected stall in sys_setxattr (2)
-Message-ID: <20220420122610.7k2qx5dwdchu27mg@wittgenstein>
-References: <0000000000007cc21d05dd0432b8@google.com>
+Subject: Re: [syzbot] INFO: rcu detected stall in sys_lsetxattr
+Message-ID: <20220420122702.lseed5l3lrssyat2@wittgenstein>
+References: <00000000000080e10e05dd043247@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <0000000000007cc21d05dd0432b8@google.com>
+In-Reply-To: <00000000000080e10e05dd043247@google.com>
 X-Spam-Status: No, score=-5.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
@@ -61,14 +61,14 @@ On Tue, Apr 19, 2022 at 09:16:20AM -0700, syzbot wrote:
 > 
 > syzbot found the following issue on:
 > 
-> HEAD commit:    b2d229d4ddb1 Linux 5.18-rc3
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=144417ccf00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=6cb89c879305f336
-> dashboard link: https://syzkaller.appspot.com/bug?extid=10a16d1c43580983f6a2
-> compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=104a88e8f00000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=132a840cf00000
+> HEAD commit:    40354149f4d7 Add linux-next specific files for 20220414
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=16ae0bd0f00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=a44d62051576f6f5
+> dashboard link: https://syzkaller.appspot.com/bug?extid=306090cfa3294f0bbfb3
+> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=164417ccf00000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=104d63d0f00000
 > 
 > The issue was bisected to:
 > 
@@ -78,14 +78,12 @@ On Tue, Apr 19, 2022 at 09:16:20AM -0700, syzbot wrote:
 > 
 >     mount_setattr(): clean the control flow and calling conventions
 > 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16b313c0f00000
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=15b313c0f00000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=11b313c0f00000
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14622210f00000
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=16622210f00000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=12622210f00000
 > 
 > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+10a16d1c43580983f6a2@syzkaller.appspotmail.com
+> Reported-by: syzbot+306090cfa3294f0bbfb3@syzkaller.appspotmail.com
 > Fixes: e257039f0fc7 ("mount_setattr(): clean the control flow and calling conventions")
 
 #syz test: git://git.kernel.org/pub/scm/linux/kernel/git/brauner/linux.git fs.mount_setattr.cleanup
-
-
