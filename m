@@ -2,469 +2,222 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 440C4507DAB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Apr 2022 02:37:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1991507DEF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Apr 2022 03:12:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1358572AbiDTAkW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Apr 2022 20:40:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54718 "EHLO
+        id S1358684AbiDTBPB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Apr 2022 21:15:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244069AbiDTAkV (ORCPT
+        with ESMTP id S236644AbiDTBPA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Apr 2022 20:40:21 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 886CBB857;
-        Tue, 19 Apr 2022 17:37:36 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 18802B81244;
-        Wed, 20 Apr 2022 00:37:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8D1BC385A7;
-        Wed, 20 Apr 2022 00:37:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650415053;
-        bh=crX7LfMw2c5NNQLoS9LDfSjFx6YzubBYnKnfKAIGIcc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DU2FpNBtMEMfbb4tIaBxY+0AVFaHu4cDFdGrkOO1OkB1KDA6avk/umf0xNCwqe4Py
-         hATkAtFgEL+JNnWYFhM/GUDMEcO4AfJ7V/QWnPxsrD4ixHKiTUwMIvGjr4npbmV0ey
-         OeA/QQOlATjD7NxWAo+JzKq1q0GQpPkL/bNkI/8lPsM+r09vzd1ghIe419FtR1S7RU
-         b8GtL1vO+/guNdVTuo5nybnvvud2bV6lkYoiH4QtcSJnSElzL90HqhJL7AUQrmwaKq
-         /SZMoJHyc0RFQDrwBhbVa80LwjNOWuVJa7x4IfDJAoFjgJ2ORT25UmhZwglHzAAPKz
-         lTPLsfBKsMGKQ==
-Date:   Tue, 19 Apr 2022 17:37:33 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     xfs <linux-xfs@vger.kernel.org>, fstests <fstests@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: generic/068 crash on 5.18-rc2?
-Message-ID: <20220420003733.GB16996@magnolia>
-References: <20220413033425.GM16799@magnolia>
- <YlbjOPEQP66gc1WQ@casper.infradead.org>
- <20220418174747.GF17025@magnolia>
+        Tue, 19 Apr 2022 21:15:00 -0400
+Received: from esa6.fujitsucc.c3s2.iphmx.com (esa6.fujitsucc.c3s2.iphmx.com [68.232.159.83])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFC6818E22;
+        Tue, 19 Apr 2022 18:12:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj1;
+  t=1650417136; x=1681953136;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=8QbU6+VIAuCYczDMhdelrb+mJl6ir8oP1Fz7JNZgwbY=;
+  b=C0SC/Yj18YcM1Pdhj6HBRLyKgWGIwK78lm3HC0zoHXIdKUfrw5jNOLoK
+   3vrUYp/vhFCO8nZMfyFCYqp5egksRIu8vZI4FfxmK6j2yyPpmh5QmU2Wq
+   qEFZp+IZPJR8KXciT0cJk/j+0xGQjOoKzVDBuWR81ZlMPAa0+MCt9K2aV
+   KEYXSF0okCIYc9nTZK1AGYJycvr5/cT3Q+j9260eQFmX2f0TatrTN9xgR
+   RY6z+fysfwtLb0P0h3nqCVB0+BdlZf07D466fK0iobDCM9hvheE0FGi1s
+   +f47aeIwd8WN/YuY4HIY8GU7y8iJDHXK9zopCbbPjjbb2Aqk56ec+p0xI
+   A==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10322"; a="54269785"
+X-IronPort-AV: E=Sophos;i="5.90,274,1643641200"; 
+   d="scan'208";a="54269785"
+Received: from mail-tycjpn01lp2176.outbound.protection.outlook.com (HELO JPN01-TYC-obe.outbound.protection.outlook.com) ([104.47.23.176])
+  by ob1.fujitsucc.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Apr 2022 10:12:10 +0900
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=aPNtln7WrkpnN/S1sU62/IqNqScm0qYRugawaCVZhRG13n3Sm1GTGWBj4KmgG6dm6kzXvTBgCm07/42YueLWjI8lu4INX/KgxAHzhHPNOOdoDlb20Dp5frGD+WeKdKvARQgCoL80fnD91L788ylIfOslEpkqlNxZTPzvMMlxlR9j7StVabK+TD6cObYCrBbeEXbUIwk6wFaDophPFjEEJszh7dQ9LY2GVLFDuyF8FY51w5glv3Udpul03hVNPeu0o6DfYnibVawRuZr1JGk4yvOt6wyZt7e2lgklBgkcFFdGn5ZxhIr4W2IbuSgTjhuryh2fv6V3VuUEUTHCCvLv+A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8QbU6+VIAuCYczDMhdelrb+mJl6ir8oP1Fz7JNZgwbY=;
+ b=NoEWXJ65IU5j2vorT/fhjApiPY+e4WQkgm4fsY+Dhxlxhqu9fpEPWhI/+eYSvKUoRmwPXusVnr5KVP0uUbwXpsGNHMRuOhLmFIICapyCBYkBYHFzb53BN+X1gtWgExRitd0nwsPJPEineEMYxQ9llUl8ny3mI6iKvynDTLG+cNf9JHHtoXkgdiJJw6x9DdwgAK52W+FSN/nEG1T9la/PmgYAJw89Vf7nrIuOKlIO35zE+3qcPudO/guAx8WcFOfXY0fSL/QK2MWMufBHJWMVJIDm//KFCYUa8NAHo8OwX2uNDic2rSkyeiJAIAEHP0RgKKyfSBrkn7gS4GreFXghBA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fujitsu.com; dmarc=pass action=none header.from=fujitsu.com;
+ dkim=pass header.d=fujitsu.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=fujitsu.onmicrosoft.com; s=selector2-fujitsu-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8QbU6+VIAuCYczDMhdelrb+mJl6ir8oP1Fz7JNZgwbY=;
+ b=dD8O9xTvwNiXojHIiDOjbBaabz10STZcA2Uaxf/deT9JJppXhPScGXamjg2PW2M68VQxdJguUvf0praYN92IMBAvPliqe+yauMXVn42ZHpfxYs3NcCfrT8kH+XqY57//KIezEkcPLYMs0nenVTGrisY+Rvu5VZqBJGsGDJoNATY=
+Received: from TY2PR01MB4427.jpnprd01.prod.outlook.com (2603:1096:404:10d::20)
+ by OSBPR01MB2327.jpnprd01.prod.outlook.com (2603:1096:604:1b::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5164.20; Wed, 20 Apr
+ 2022 01:12:05 +0000
+Received: from TY2PR01MB4427.jpnprd01.prod.outlook.com
+ ([fe80::fca9:dcb9:88b4:40fd]) by TY2PR01MB4427.jpnprd01.prod.outlook.com
+ ([fe80::fca9:dcb9:88b4:40fd%7]) with mapi id 15.20.5164.026; Wed, 20 Apr 2022
+ 01:12:05 +0000
+From:   "xuyang2018.jy@fujitsu.com" <xuyang2018.jy@fujitsu.com>
+To:     Christian Brauner <brauner@kernel.org>
+CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "david@fromorbit.com" <david@fromorbit.com>,
+        "djwong@kernel.org" <djwong@kernel.org>,
+        "jlayton@kernel.org" <jlayton@kernel.org>,
+        "ntfs3@lists.linux.dev" <ntfs3@lists.linux.dev>,
+        "chao@kernel.org" <chao@kernel.org>,
+        "linux-f2fs-devel@lists.sourceforge.net" 
+        <linux-f2fs-devel@lists.sourceforge.net>
+Subject: Re: [PATCH v4 3/8] xfs: only call posix_acl_create under
+ CONFIG_XFS_POSIX_ACL
+Thread-Topic: [PATCH v4 3/8] xfs: only call posix_acl_create under
+ CONFIG_XFS_POSIX_ACL
+Thread-Index: AQHYU9rQ1RyFOxEMHEKdCE0i0JLGpaz3QeCAgADO0YA=
+Date:   Wed, 20 Apr 2022 01:12:04 +0000
+Message-ID: <625F6C3F.1040308@fujitsu.com>
+References: <1650368834-2420-1-git-send-email-xuyang2018.jy@fujitsu.com>
+ <1650368834-2420-3-git-send-email-xuyang2018.jy@fujitsu.com>
+ <20220419135305.7vztxq5mld5jynt5@wittgenstein>
+In-Reply-To: <20220419135305.7vztxq5mld5jynt5@wittgenstein>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=fujitsu.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 6e4d3b8c-6bf3-45ae-f1cd-08da226ac865
+x-ms-traffictypediagnostic: OSBPR01MB2327:EE_
+x-microsoft-antispam-prvs: <OSBPR01MB23274BB5C5DDF55F91216EA1FDF59@OSBPR01MB2327.jpnprd01.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: E54VF5UbTlShbAmjCgPqTBe0L28m7yfiz5dVNC8719/Upr517woLw7LunzIbhbsQCkvJTDpr5mKMb9nr4SiSjYVksi5A6s0cLdGGgMxQlB99BIpwj2espKhElX33pwCd8MtunVVAFMq+NjUMC2GxpjeeaOTAnPMEPFFC0cn/T9wY5L8LaGRTBWYPrkrhDZ7vENa0ipN5XH/QWz97yJ4cEp7CZcvxp7IgSDroOpMBnhWSiacQyjcsYq1tDqdcbdHtUvb6magGSjEe7yUt8t8x5YAIUMBlzRqmHfr9AUzSvODI9EBkcLXKNv4uhyb+OxTCANsHdqvgopEsiQzIqbEMUiFCkrO43JcwA2Tlpza5S3fKvUICiMUm3dog27jE8T+P9+MKB8hNrCoTlG5MFuC9wBuIt4Z5pZYR2pL6g0ZSaJRSx0rtEkG7RqBUjMUQTNve/AECwcr2FA4JNT5yViRKfw6FK3+JrfwnTYyHypVanQv4I2vi29/bggmMSZm4pMyjmhuU7qljTlH69GF3GOySAk/yu0HvSEqooFLFMjmT8Y1BRdTN1tNvZlWjJP6UYVEh1p/zLkq6qyBrXM05IDcBR6vWh81cX0BsjEkL4P8UWdH1204zbYHTGTbC9jReMDXRr82s9MMyL/zUKKy2xZUYwkmJ2Sit3L1JgfsNnliAX5SNqPQWaV5enD4GTDQGynP31LwSOOmov6lrDVLHTEErkA==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY2PR01MB4427.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(54906003)(6916009)(91956017)(186003)(7416002)(316002)(8936002)(82960400001)(71200400001)(76116006)(86362001)(2616005)(66446008)(66946007)(66476007)(66556008)(64756008)(4326008)(83380400001)(8676002)(6512007)(5660300002)(508600001)(38070700005)(26005)(36756003)(6506007)(87266011)(38100700002)(2906002)(85182001)(122000001)(6486002)(33656002);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?eGFIeXJBcVU2QkpCY2FDZWNlUmgxSjcxYkxIN3hLV1NwVTFkNndUUzRsdm1z?=
+ =?utf-8?B?dE1aOVFPdUFSOUtoUVZ6dDdGZU16QVVhTnBBSTR4dkdEcG9qSWFEUXNWSUdD?=
+ =?utf-8?B?b21jTkF4TXhxL01GY3hqY3JOM09hNUprUUlRUm43NW4wKzhpamxLQ01rTzZB?=
+ =?utf-8?B?MEpsdEZoRkZKQ0NTUFFlNFBWVnhwQS8vUE5FcXlHWWVETVF5Y2ttNmp0NXJs?=
+ =?utf-8?B?ZVI1U2JPaExlUXVWVUpyL2R4ZWhYWmNVdEpyWjRlRFVJbW5XTm1KenpmSDVj?=
+ =?utf-8?B?cllndjdSUiszUnh5ZmhSMkVoTU55U1gyYmNYZU5WczVBc1JueW9VMmNpZzBa?=
+ =?utf-8?B?bVZRMmdvWHluM2VGYlJLS3hjVUxXVEZOR3ExR2paTUlLRCtUQUZSN1BTRnly?=
+ =?utf-8?B?VFVEcDVzKy9aSm5HTFlFdUxINjdNNGUrRWlDUFRSd2J5UjN4clN6cVVOVW5y?=
+ =?utf-8?B?NFRObVhMT3FkQ1BoclMvOWd1aHNRZlhEL3lYRWVoZFI0bHJOYmV3YmRBWUJV?=
+ =?utf-8?B?UERIRXBkSHpibmdsS21tN1FqZXVydHY3cWQvTjF2ZWpwak5rNDdpS0s1anpY?=
+ =?utf-8?B?bXJDODJrd0ZtS2tROG56cnZuK2szbGZhU3hPRlVHMEcrL1UyUnhNTGlHYXBk?=
+ =?utf-8?B?bTg5ZFdXNysxM2ZUTXY5N2NPTUpWUTNaYXY5Tjc0Nnc2d3RVZW55NU5YMm84?=
+ =?utf-8?B?d2hWVWl1aDc4VTN1RHZRenRCVGs0bjAzbkhXeE4xYmg3Tmd0V2kybmFCdGQ0?=
+ =?utf-8?B?US9vL2lMZW1ROUhGYTVXZmVDVnVJaTQ4cXlwcC9ZRTlQeEhVL2xsQnM5RnlL?=
+ =?utf-8?B?T2VoTXNCZ3d2V1VmQXRRbmUySHZYQkdDMUwzdWZ1VjdhY2s4RkZWY2FMUUFF?=
+ =?utf-8?B?RjZYZ3V6OEJ4dmhTRXYwYnhVbXdvY2FXY0o5Z1hVRWkzMnZSZzJTdkhZNnl1?=
+ =?utf-8?B?MFBiVTBqd1ZBcEsySUFyY2Nlb3l1NU54bFl0RTZRTkYxNmQ2WU5UL3ZGSEN6?=
+ =?utf-8?B?THNCdndjenA5dU5BdGJvcFhLNVN6UE13NncxVVZUZUxhdUdjYjdnajF0cHg0?=
+ =?utf-8?B?SmU3eEVabjN0SFRTOGg0SUdEL1hsYWZoL1puNXVGSWp3NVJQenYzL1d4NS9k?=
+ =?utf-8?B?Q25Wam82TVZtcmVTQlZMUlNEMmk4c1R1YytmcnpUbDRWZ1B0TWhYNEFHTGtl?=
+ =?utf-8?B?NE52TkszTkNvc1FWL1pJY0RQcDRNRUZydEE1TGxrVDZMS3p0YnRXeWhRbEZN?=
+ =?utf-8?B?ZFZjMWptYUxBSWo3RjJGeW9qVzZVa3BNcWFxMWhtNTlqV3JBREdpQmZ4M1FM?=
+ =?utf-8?B?QU1YSWliZmh3U3FIT0RKUWN6eXhCRHAzSUVxY3RMTGFrbjY0UnFwNUt3VkRq?=
+ =?utf-8?B?dzBzZHE4Y0tPSVJLcng3Qk5ITTJpak0wWG1PcFZFekJSb3ArZzU0bWVEc3Fa?=
+ =?utf-8?B?c2FpN0JXV2hJQ3AvTjI3Y0ZTQTh0cjJVOHVZNlo0V2x0ZE5XdS8zbzl5MEFJ?=
+ =?utf-8?B?L29RYkpjbzczUXg0VGM2dUJTRGxsZ0tkZU1LSXRibTFCWkl0NllmSC9taDhq?=
+ =?utf-8?B?UXRWMlFGalZBOVllZXVGcUFzK0pjTHgxK1RGRk94NU1GNU5aNTBmTUlPS09i?=
+ =?utf-8?B?V2t6ZG1tQktEYVFkMjZzYWluZDBmc3JXWjdlRi9uTExrcVhZY1VyVWhzREV6?=
+ =?utf-8?B?Tm15RHpqN21XeWx6b2VhbUdURy9EMlZ4MmFmbXVySUd3MUIxWUNrbmRqREp2?=
+ =?utf-8?B?TmVwUnVESFFrZUI2a0JVelZveFBQLzBGUXp1QUVyRTZ2K0c3RTBvT1prZER2?=
+ =?utf-8?B?R0lza25QZjVpMllaeXRtWUJWSUtVL2pOYmRBZ0V5dmxJdTB0Zy85WTNqdGVm?=
+ =?utf-8?B?aVE2RWRJVnFPaHRhVmpPL1VDT2RyS2s1U3pPYVBFbllQR2laNFJwZUk5SVlD?=
+ =?utf-8?B?K1BtZE1qcUYzeWhmS0xIelFmNUdWdWJFcnY4ZzdxWmdIclFvcHY4eVJ0M24x?=
+ =?utf-8?B?ME14cUlMRGdjckRCS2svdTlEUzgwTmdoSVJTaEszZXkyd2tZanJNcVl0czFJ?=
+ =?utf-8?B?Yk1DNUJvYi9lZGtZTEFaM1FKMVV0bnJuWFloaUhBRGN3Q0lzbmxNVisvb3hS?=
+ =?utf-8?B?cUdpOElHUHo2L3k0Mnk0RmkvblZDMStjZ09pTEIzWTJ5Y1ExakVnTUQzelll?=
+ =?utf-8?B?V0h6TlVwenk1cXZEQm9CZ2RpYndqdTh5WkxRdFRnNlJBdHl3MXZ1SndqT1FZ?=
+ =?utf-8?B?WGVhUXJteW5mT3pUVU4vVlBtcFlmYWE2QzdNL1BudW9UZFZndU9UdzdqN3Rq?=
+ =?utf-8?B?WmgwcHVMUjQrTnJZZXBaYlYxN0huRjRYUEdCVkJjRUp4NkVGeUJLZ1liN0x1?=
+ =?utf-8?Q?7fgavEa4FA75sWBme7NSODEJlXjx9q3aMNtQe?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <84416A9CBF797F4A8BAC76E478B72786@jpnprd01.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220418174747.GF17025@magnolia>
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-OriginatorOrg: fujitsu.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY2PR01MB4427.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6e4d3b8c-6bf3-45ae-f1cd-08da226ac865
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Apr 2022 01:12:04.9567
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a19f121d-81e1-4858-a9d8-736e267fd4c7
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: a6SRKlYqrvas2o4q6gpcA112U6UZG3y7DzHL/iAhhOpUEwfGF/x15MXLM5CChbSnHImZbJBP1MmkrLYN2+STl5456GJTww6QERJQTp1Jg2I=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB2327
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 18, 2022 at 10:47:47AM -0700, Darrick J. Wong wrote:
-> On Wed, Apr 13, 2022 at 03:50:32PM +0100, Matthew Wilcox wrote:
-> > On Tue, Apr 12, 2022 at 08:34:25PM -0700, Darrick J. Wong wrote:
-> > > Hmm.  Two nights in a row I've seen the following crash.  Has anyone
-> > > else seen this, or should I keep digging?  This is a fairly boring
-> > > x86_64 VM with a XFS v5 filesystem + rmapbt.
-> > 
-> > I have not seen this before.  I test with:
-> > MKFS_OPTIONS  -- -f -m reflink=1,rmapbt=1 -i sparse=1 -b size=1024 /dev/sdc
-> > 
-> > Maybe I should try a 4096 byte block size.
-> > 
-> > > mm/filemap.c:1653 is the BUG in:
-> > > 
-> > > void folio_end_writeback(struct folio *folio)
-> > > {
-> > > 	/*
-> > > 	 * folio_test_clear_reclaim() could be used here but it is an
-> > > 	 * atomic operation and overkill in this particular case.
-> > > 	 * Failing to shuffle a folio marked for immediate reclaim is
-> > > 	 * too mild a gain to justify taking an atomic operation penalty
-> > > 	 * at the end of every folio writeback.
-> > > 	 */
-> > > 	if (folio_test_reclaim(folio)) {
-> > > 		folio_clear_reclaim(folio);
-> > > 		folio_rotate_reclaimable(folio);
-> > > 	}
-> > > 
-> > > 	/*
-> > > 	 * Writeback does not hold a folio reference of its own, relying
-> > > 	 * on truncation to wait for the clearing of PG_writeback.
-> > > 	 * But here we must make sure that the folio is not freed and
-> > > 	 * reused before the folio_wake().
-> > > 	 */
-> > > 	folio_get(folio);
-> > > 	if (!__folio_end_writeback(folio))
-> > > >>>>		BUG();
-> > 
-> > Grr, that should have been a VM_BUG_ON_FOLIO(1, folio) so we get useful
-> > information about the folio (like whether it has an iop, or what order
-> > the folio is).  Can you make that change and try to reproduce?
-> 
-> > What's going on here is that we've called folio_end_writeback() on a
-> > folio which does not have the writeback flag set.  That _should_ be
-> > impossible, hence the use of BUG().  Either we've called
-> > folio_end_writeback() twice on the same folio, or we neglected to set
-> > the writeback flag on the folio.  I don't immediately see why either
-> > of those two things would happen.
-> 
-> Well, I made that change and rebased to -rc3 to see if reverting that
-> ZERO_PAGE thing would produce better results, I think I just got the
-> same crash.  Curiously, the only VM that died this time was the one
-> running the realtime configuration, but it's still generic/068:
-> 
-> FSTYP         -- xfs (debug)
-> PLATFORM      -- Linux/x86_64 oci-mtr28 5.18.0-rc3-djwx #rc3 SMP PREEMPT_DYNAMIC Sun Apr 17 14:42:49 PDT 2022
-> MKFS_OPTIONS  -- -f -rrtdev=/dev/sdb4 -llogdev=/dev/sdb2 -m reflink=0,rmapbt=0, -d rtinherit=1, /dev/sda4
-> MOUNT_OPTIONS -- -ortdev=/dev/sdb4 -ologdev=/dev/sdb2 /dev/sda4 /opt
-> 
-> I don't know if it'll help, but here's the sequence of tests that we
-> were running just prior to crashing:
-> 
-> generic/445      3s
-> generic/225      76s
-> xfs/306  22s
-> xfs/290  3s
-> generic/155     [not run] Reflink not supported by test filesystem type: xfs
-> generic/525      6s
-> generic/269      89s
-> generic/1206    [not run] xfs_io swapext -v vfs -s 64k -l 64k ioctl support is missing
-> xfs/504  198s
-> xfs/192 [not run] Reflink not supported by scratch filesystem type: xfs
-> xfs/303  1s
-> generic/346      6s
-> generic/512      5s
-> xfs/227  308s
-> generic/147     [not run] Reflink not supported by test filesystem type: xfs
-> generic/230     [not run] Quotas not supported on realtime test device
-> generic/008      4s
-> generic/108      4s
-> xfs/264  12s
-> generic/200     [not run] Reflink not supported by scratch filesystem type: xfs
-> generic/493     [not run] Dedupe not supported by scratch filesystem type: xfs
-> xfs/021  5s
-> generic/672     [not run] Reflink not supported by scratch filesystem type: xfs
-> xfs/493  5s
-> xfs/146  13s
-> xfs/315 [not run] Reflink not supported by scratch filesystem type: xfs
-> generic/068     
-> 
-> And the dmesg output:
-> 
-> run fstests generic/068 at 2022-04-17 16:57:16
-> XFS (sda4): Mounting V5 Filesystem
-> XFS (sda4): Ending clean mount
-> page:ffffea0004a39c40 refcount:0 mapcount:0 mapping:0000000000000000 index:0x1 pfn:0x128e71
-> flags: 0x17ff80000000000(node=0|zone=2|lastcpupid=0xfff)
-> raw: 017ff80000000000 0000000000000000 ffffffff00000203 0000000000000000
-> raw: 0000000000000001 0000000000000000 00000000ffffffff 0000000000000000
-> page dumped because: VM_BUG_ON_FOLIO(((unsigned int) folio_ref_count(folio) + 127u <= 127u))
-> ------------[ cut here ]------------
-> kernel BUG at include/linux/mm.h:1164!
-> invalid opcode: 0000 [#1] PREEMPT SMP
-> CPU: 3 PID: 1094085 Comm: 3:0 Tainted: G        W         5.18.0-rc3-djwx #rc3 0a707744ee7c555d54e50726c5b02515710a6aae
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS ?-20171121_152543-x86-ol7-builder-01.us.oracle.com-4.el7.1 04/01/2014
-> Workqueue: xfs-conv/sda4 xfs_end_io [xfs]
-> RIP: 0010:folio_end_writeback+0xd0/0x110
-> Code: 80 60 02 fb 48 89 ef e8 5e 6d 01 00 8b 45 34 83 c0 7f 83 f8 7f 0f 87 6a ff ff ff 48 c7 c6 40 c7 e2 81 48 89 ef e8 30 69 04 00 <0f> 0b 48 89 ee e8 b6 51 02 00 eb 9a 48 c7 c6 c0 ad e5 81 48 89 ef
-> RSP: 0018:ffffc900084f3d48 EFLAGS: 00010246
-> RAX: 000000000000005c RBX: 0000000000001000 RCX: 0000000000000000
-> RDX: 0000000000000000 RSI: ffffffff81e56da3 RDI: 00000000ffffffff
-> RBP: ffffea0004a39c40 R08: 0000000000000000 R09: ffffffff8205fe40
-> R10: 0000000000017578 R11: 00000000000175f0 R12: 0000000000004000
-> R13: ffff88814dc5cd40 R14: 000000000000002e R15: ffffea0004a39c40
-> FS:  0000000000000000(0000) GS:ffff88843fd80000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f2b0ea47010 CR3: 000000043f00c000 CR4: 00000000001506a0
-> Call Trace:
->  <TASK>
->  iomap_finish_ioend+0x1ee/0x6a0
->  iomap_finish_ioends+0x69/0x100
->  xfs_end_ioend+0x5a/0x160 [xfs e8251de1111d7958449fd159d84af12a2afc12f2]
->  xfs_end_io+0xb1/0xf0 [xfs e8251de1111d7958449fd159d84af12a2afc12f2]
->  process_one_work+0x1df/0x3c0
->  ? rescuer_thread+0x3b0/0x3b0
->  worker_thread+0x53/0x3b0
->  ? rescuer_thread+0x3b0/0x3b0
->  kthread+0xea/0x110
->  ? kthread_complete_and_exit+0x20/0x20
->  ret_from_fork+0x1f/0x30
->  </TASK>
-> Modules linked in: xfs dm_zero btrfs blake2b_generic xor lzo_compress lzo_decompress zlib_deflate raid6_pq zstd_compress dm_delay dm_snapshot dm_thin_pool dm_persistent_data dm_bio_prison dm_bufio dm_flakey libcrc32c xt_REDIRECT iptable_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 auth_rpcgss oid_registry xt_tcpudp ip_set_hash_ip ip_set_hash_net xt_set ip_set_hash_mac ip_set nfnetlink ip6table_filter ip6_tables iptable_filter bfq sch_fq_codel ip_tables x_tables overlay nfsv4 af_packet [last unloaded: scsi_debug]
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> ---[ end trace 0000000000000000 ]---
-> RIP: 0010:folio_end_writeback+0xd0/0x110
-> Code: 80 60 02 fb 48 89 ef e8 5e 6d 01 00 8b 45 34 83 c0 7f 83 f8 7f 0f 87 6a ff ff ff 48 c7 c6 40 c7 e2 81 48 89 ef e8 30 69 04 00 <0f> 0b 48 89 ee e8 b6 51 02 00 eb 9a 48 c7 c6 c0 ad e5 81 48 89 ef
-> RSP: 0018:ffffc900084f3d48 EFLAGS: 00010246
-> RAX: 000000000000005c RBX: 0000000000001000 RCX: 0000000000000000
-> RDX: 0000000000000000 RSI: ffffffff81e56da3 RDI: 00000000ffffffff
-> RBP: ffffea0004a39c40 R08: 0000000000000000 R09: ffffffff8205fe40
-> R10: 0000000000017578 R11: 00000000000175f0 R12: 0000000000004000
-> R13: ffff88814dc5cd40 R14: 000000000000002e R15: ffffea0004a39c40
-> FS:  0000000000000000(0000) GS:ffff88843fd80000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f2b0ea47010 CR3: 000000043f00c000 CR4: 00000000001506a0
-> 
-> --D
-
-
-Today I managed to capture stack traces of all the D state processes on
-a system with the hang described above:
-
-/proc/41/comm = khugepaged
-/proc/41/stack : [<0>] flush_work+0x5c/0x80
-[<0>] __lru_add_drain_all+0x134/0x1c0
-[<0>] khugepaged+0x6c/0x2460
-[<0>] kthread+0xea/0x110
-[<0>] ret_from_fork+0x1f/0x30
-
-Not sure if this is involved, but it might be?
-These systems /do/ have KSM and HUGEPAGE_ALWAYS turned on.
-
-/proc/411335/comm = u8:1+events_unbound
-/proc/411335/stack : [<0>] __synchronize_srcu.part.0+0x86/0xf0
-[<0>] fsnotify_mark_destroy_workfn+0x7c/0x110
-[<0>] process_one_work+0x1df/0x3c0
-[<0>] worker_thread+0x53/0x3b0
-[<0>] kthread+0xea/0x110
-[<0>] ret_from_fork+0x1f/0x30
-/proc/973682/comm = u8:0+flush-8:0
-/proc/973682/stack : [<0>] down+0x54/0x70
-[<0>] xfs_buf_lock+0x2d/0xe0 [xfs]
-[<0>] xfs_buf_find+0x356/0x880 [xfs]
-[<0>] xfs_buf_get_map+0x46/0x3b0 [xfs]
-[<0>] xfs_buf_read_map+0x52/0x2f0 [xfs]
-[<0>] xfs_trans_read_buf_map+0x1bb/0x4a0 [xfs]
-[<0>] xfs_btree_read_buf_block.constprop.0+0x96/0xd0 [xfs]
-[<0>] xfs_btree_lookup_get_block+0x97/0x170 [xfs]
-[<0>] xfs_btree_lookup+0xdd/0x540 [xfs]
-[<0>] xfs_rmap_map+0xd0/0x860 [xfs]
-[<0>] xfs_rmap_finish_one+0x243/0x300 [xfs]
-[<0>] xfs_rmap_update_finish_item+0x37/0x70 [xfs]
-[<0>] xfs_defer_finish_noroll+0x20a/0x6f0 [xfs]
-[<0>] __xfs_trans_commit+0x153/0x3e0 [xfs]
-[<0>] xfs_bmapi_convert_delalloc+0x495/0x5e0 [xfs]
-[<0>] xfs_map_blocks+0x1ed/0x540 [xfs]
-[<0>] iomap_do_writepage+0x2a3/0xae0
-[<0>] write_cache_pages+0x224/0x6f0
-[<0>] iomap_writepages+0x1c/0x40
-[<0>] xfs_vm_writepages+0x7a/0xb0 [xfs]
-[<0>] do_writepages+0xcc/0x1c0
-[<0>] __writeback_single_inode+0x41/0x340
-[<0>] writeback_sb_inodes+0x207/0x4a0
-[<0>] __writeback_inodes_wb+0x4c/0xe0
-[<0>] wb_writeback+0x1da/0x2c0
-[<0>] wb_workfn+0x28c/0x500
-[<0>] process_one_work+0x1df/0x3c0
-[<0>] worker_thread+0x53/0x3b0
-[<0>] kthread+0xea/0x110
-[<0>] ret_from_fork+0x1f/0x30
-
-Writeback is stuck in an rmapbt update...
-
-/proc/1139791/comm = u8:2+events_unbound
-/proc/1139791/stack : [<0>] __synchronize_srcu.part.0+0x86/0xf0
-[<0>] fsnotify_connector_destroy_workfn+0x3c/0x60
-[<0>] process_one_work+0x1df/0x3c0
-[<0>] worker_thread+0x53/0x3b0
-[<0>] kthread+0xea/0x110
-[<0>] ret_from_fork+0x1f/0x30
-/proc/1274752/comm = u8:3+xfs-blockgc/sda4
-/proc/1274752/stack : [<0>] down+0x54/0x70
-[<0>] xfs_buf_lock+0x2d/0xe0 [xfs]
-[<0>] xfs_buf_find+0x356/0x880 [xfs]
-[<0>] xfs_buf_get_map+0x46/0x3b0 [xfs]
-[<0>] xfs_buf_read_map+0x52/0x2f0 [xfs]
-[<0>] xfs_trans_read_buf_map+0x1bb/0x4a0 [xfs]
-[<0>] xfs_read_agf+0xb2/0x1b0 [xfs]
-[<0>] xfs_alloc_read_agf+0x54/0x370 [xfs]
-[<0>] xfs_alloc_fix_freelist+0x38e/0x510 [xfs]
-[<0>] xfs_free_extent_fix_freelist+0x61/0xa0 [xfs]
-[<0>] xfs_rmap_finish_one+0xd9/0x300 [xfs]
-[<0>] xfs_rmap_update_finish_item+0x37/0x70 [xfs]
-[<0>] xfs_defer_finish_noroll+0x20a/0x6f0 [xfs]
-[<0>] xfs_defer_finish+0x11/0xa0 [xfs]
-[<0>] xfs_itruncate_extents_flags+0x14b/0x4b0 [xfs]
-[<0>] xfs_free_eofblocks+0xe9/0x150 [xfs]
-[<0>] xfs_icwalk_ag+0x4a7/0x800 [xfs]
-[<0>] xfs_blockgc_worker+0x31/0x110 [xfs]
-[<0>] process_one_work+0x1df/0x3c0
-[<0>] worker_thread+0x53/0x3b0
-[<0>] kthread+0xea/0x110
-[<0>] ret_from_fork+0x1f/0x30
-
-Stuck waiting for the AGF to do an rmapbt update...
-
-/proc/1315282/comm = fstest
-/proc/1315282/stack : [<0>] folio_wait_bit_common+0x148/0x460
-[<0>] folio_wait_writeback+0x22/0x80
-[<0>] truncate_inode_pages_range+0x3fe/0x6f0
-[<0>] truncate_pagecache+0x44/0x60
-[<0>] xfs_setattr_size+0x163/0x4d0 [xfs]
-[<0>] xfs_vn_setattr+0x75/0x180 [xfs]
-[<0>] notify_change+0x306/0x500
-[<0>] do_truncate+0x7d/0xd0
-[<0>] path_openat+0xc60/0x1060
-[<0>] do_filp_open+0xa9/0x150
-[<0>] do_sys_openat2+0x97/0x160
-[<0>] __x64_sys_openat+0x54/0x90
-[<0>] do_syscall_64+0x35/0x80
-[<0>] entry_SYSCALL_64_after_hwframe+0x44/0xae
-/proc/1315283/comm = fstest
-/proc/1315283/stack : [<0>] folio_wait_bit_common+0x148/0x460
-[<0>] folio_wait_writeback+0x22/0x80
-[<0>] __filemap_fdatawait_range+0x8c/0x250
-[<0>] filemap_write_and_wait_range+0x85/0xf0
-[<0>] xfs_setattr_size+0x103/0x4d0 [xfs]
-[<0>] xfs_vn_setattr+0x75/0x180 [xfs]
-[<0>] notify_change+0x306/0x500
-[<0>] do_truncate+0x7d/0xd0
-[<0>] path_openat+0xc60/0x1060
-[<0>] do_filp_open+0xa9/0x150
-[<0>] do_sys_openat2+0x97/0x160
-[<0>] __x64_sys_openat+0x54/0x90
-[<0>] do_syscall_64+0x35/0x80
-[<0>] entry_SYSCALL_64_after_hwframe+0x44/0xae
-/proc/1315287/comm = fsstress
-/proc/1315287/stack : [<0>] folio_wait_bit_common+0x148/0x460
-[<0>] folio_wait_writeback+0x22/0x80
-[<0>] __filemap_fdatawait_range+0x8c/0x250
-[<0>] filemap_write_and_wait_range+0x85/0xf0
-[<0>] xfs_setattr_size+0x2da/0x4d0 [xfs]
-[<0>] xfs_vn_setattr+0x75/0x180 [xfs]
-[<0>] notify_change+0x306/0x500
-[<0>] do_truncate+0x7d/0xd0
-[<0>] vfs_truncate+0x108/0x140
-[<0>] do_sys_truncate.part.0+0x8a/0xa0
-[<0>] do_syscall_64+0x35/0x80
-[<0>] entry_SYSCALL_64_after_hwframe+0x44/0xae
-
-Clearly stuck on writeback, not sure if it's the same file as the one
-that tripped the assertion...
-
-/proc/1315478/comm = u8:4+xfs-blockgc/sda4
-/proc/1315478/stack : [<0>] down+0x54/0x70
-[<0>] xfs_buf_lock+0x2d/0xe0 [xfs]
-[<0>] xfs_buf_find+0x356/0x880 [xfs]
-[<0>] xfs_buf_get_map+0x46/0x3b0 [xfs]
-[<0>] xfs_buf_read_map+0x52/0x2f0 [xfs]
-[<0>] xfs_trans_read_buf_map+0x1bb/0x4a0 [xfs]
-[<0>] xfs_imap_to_bp+0x4e/0x70 [xfs]
-[<0>] xfs_trans_log_inode+0x1da/0x350 [xfs]
-[<0>] __xfs_bunmapi+0x7e8/0xd30 [xfs]
-[<0>] xfs_itruncate_extents_flags+0x13d/0x4b0 [xfs]
-[<0>] xfs_free_eofblocks+0xe9/0x150 [xfs]
-[<0>] xfs_icwalk_ag+0x4a7/0x800 [xfs]
-[<0>] xfs_blockgc_worker+0x31/0x110 [xfs]
-[<0>] process_one_work+0x1df/0x3c0
-[<0>] worker_thread+0x53/0x3b0
-[<0>] kthread+0xea/0x110
-[<0>] ret_from_fork+0x1f/0x30
-/proc/1315479/comm = u8:5+xfs-blockgc/sda4
-/proc/1315479/stack : [<0>] down+0x54/0x70
-[<0>] xfs_buf_lock+0x2d/0xe0 [xfs]
-[<0>] xfs_buf_find+0x356/0x880 [xfs]
-[<0>] xfs_buf_get_map+0x46/0x3b0 [xfs]
-[<0>] xfs_buf_read_map+0x52/0x2f0 [xfs]
-[<0>] xfs_trans_read_buf_map+0x1bb/0x4a0 [xfs]
-[<0>] xfs_imap_to_bp+0x4e/0x70 [xfs]
-[<0>] xfs_trans_log_inode+0x1da/0x350 [xfs]
-[<0>] __xfs_bunmapi+0x7e8/0xd30 [xfs]
-[<0>] xfs_itruncate_extents_flags+0x13d/0x4b0 [xfs]
-[<0>] xfs_free_eofblocks+0xe9/0x150 [xfs]
-[<0>] xfs_icwalk_ag+0x4a7/0x800 [xfs]
-[<0>] xfs_blockgc_worker+0x31/0x110 [xfs]
-[<0>] process_one_work+0x1df/0x3c0
-[<0>] worker_thread+0x53/0x3b0
-[<0>] kthread+0xea/0x110
-[<0>] ret_from_fork+0x1f/0x30
-
-Both of these threads are stuck on the inode cluster buffer.  If I had
-to bet, I'd guess it's the one underlying the inode being processed by
-pid 973682.
-
-/proc/1315480/comm = u8:6+xfs-blockgc/sda4
-/proc/1315480/stack : [<0>] down+0x54/0x70
-[<0>] xfs_buf_lock+0x2d/0xe0 [xfs]
-[<0>] xfs_buf_find+0x356/0x880 [xfs]
-[<0>] xfs_buf_get_map+0x46/0x3b0 [xfs]
-[<0>] xfs_buf_read_map+0x52/0x2f0 [xfs]
-[<0>] xfs_trans_read_buf_map+0x1bb/0x4a0 [xfs]
-[<0>] xfs_read_agf+0xb2/0x1b0 [xfs]
-[<0>] xfs_alloc_read_agf+0x54/0x370 [xfs]
-[<0>] xfs_alloc_fix_freelist+0x38e/0x510 [xfs]
-[<0>] xfs_free_extent_fix_freelist+0x61/0xa0 [xfs]
-[<0>] xfs_rmap_finish_one+0xd9/0x300 [xfs]
-[<0>] xfs_rmap_update_finish_item+0x37/0x70 [xfs]
-[<0>] xfs_defer_finish_noroll+0x20a/0x6f0 [xfs]
-[<0>] xfs_defer_finish+0x11/0xa0 [xfs]
-[<0>] xfs_itruncate_extents_flags+0x14b/0x4b0 [xfs]
-[<0>] xfs_free_eofblocks+0xe9/0x150 [xfs]
-[<0>] xfs_icwalk_ag+0x4a7/0x800 [xfs]
-[<0>] xfs_blockgc_worker+0x31/0x110 [xfs]
-[<0>] process_one_work+0x1df/0x3c0
-[<0>] worker_thread+0x53/0x3b0
-[<0>] kthread+0xea/0x110
-[<0>] ret_from_fork+0x1f/0x30
-
-Speculative preallocation garbage collection also got stuck waiting for
-the AGF to do an rmapbt update.
-
---D
-
-> 
-> > 
-> > > 
-> > > 
-> > > --D
-> > > 
-> > > run fstests generic/068 at 2022-04-12 17:57:11
-> > > XFS (sda3): Mounting V5 Filesystem
-> > > XFS (sda3): Ending clean mount
-> > > XFS (sda4): Mounting V5 Filesystem
-> > > XFS (sda4): Ending clean mount
-> > > ------------[ cut here ]------------
-> > > kernel BUG at mm/filemap.c:1653!
-> > > invalid opcode: 0000 [#1] PREEMPT SMP
-> > > CPU: 0 PID: 1349866 Comm: 0:116 Tainted: G        W         5.18.0-rc2-djwx #rc2 19cc48221d47ada6c8e5859639b6a0946c9a3777
-> > > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS ?-20171121_152543-x86-ol7-builder-01.us.oracle.com-4.el7.1 04/01/2014
-> > > Workqueue: xfs-conv/sda4 xfs_end_io [xfs]
-> > > RIP: 0010:folio_end_writeback+0x79/0x80
-> > > Code: d2 75 1d f0 ff 4d 34 74 0e 5d c3 f0 80 67 02 fb e8 ac 29 01 00 eb ad 48 89 ef 5d e9 a1 0f 01 00 48 89 ee e8 b9 e8 01 00 eb d9 <0f> 0b 0f 1f 44 00 00 0f 1f 44 00 00 53 48 89 fb e8 62 f7 ff ff 48
-> > > RSP: 0018:ffffc9000286fd50 EFLAGS: 00010246
-> > > RAX: 0000000000000000 RBX: ffffea0007376840 RCX: 000000000000000c
-> > > RDX: ffff88810d2de000 RSI: ffffffff81e55f0b RDI: ffff88810d2de000
-> > > RBP: ffffea0007376840 R08: ffffea000b82c308 R09: ffffea000b82c308
-> > > R10: 0000000000000001 R11: 000000000000000c R12: 0000000000000000
-> > > R13: 000000000000c000 R14: 0000000000000005 R15: 0000000000000001
-> > > FS:  0000000000000000(0000) GS:ffff88843fc00000(0000) knlGS:0000000000000000
-> > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > CR2: 00007f5b067d0000 CR3: 000000010d1bb000 CR4: 00000000001506b0
-> > > Call Trace:
-> > >  <TASK>
-> > >  iomap_finish_ioend+0x19e/0x560
-> > >  iomap_finish_ioends+0x69/0x100
-> > >  xfs_end_ioend+0x5a/0x160 [xfs 513857e2ae300a835ce1fbd8065a84dc5382e649]
-> > >  xfs_end_io+0xb1/0xf0 [xfs 513857e2ae300a835ce1fbd8065a84dc5382e649]
-> > >  process_one_work+0x1df/0x3c0
-> > >  ? rescuer_thread+0x3b0/0x3b0
-> > >  worker_thread+0x53/0x3b0
-> > >  ? rescuer_thread+0x3b0/0x3b0
-> > >  kthread+0xea/0x110
-> > >  ? kthread_complete_and_exit+0x20/0x20
-> > >  ret_from_fork+0x1f/0x30
-> > >  </TASK>
-> > > Modules linked in: dm_snapshot dm_bufio dm_zero dm_flakey xfs libcrc32c xt_REDIRECT iptable_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 auth_rpcgss oid_registry xt_tcpudp ip_set_hash_ip ip_set_hash_net xt_set ip_set_hash_mac ip_set nfnetlink ip6table_filter ip6_tables iptable_filter bfq sch_fq_codel ip_tables x_tables overlay nfsv4 af_packet [last unloaded: scsi_debug]
-> > > Dumping ftrace buffer:
-> > >    (ftrace buffer empty)
-> > > ---[ end trace 0000000000000000 ]---
-> > > RIP: 0010:folio_end_writeback+0x79/0x80
-> > > Code: d2 75 1d f0 ff 4d 34 74 0e 5d c3 f0 80 67 02 fb e8 ac 29 01 00 eb ad 48 89 ef 5d e9 a1 0f 01 00 48 89 ee e8 b9 e8 01 00 eb d9 <0f> 0b 0f 1f 44 00 00 0f 1f 44 00 00 53 48 89 fb e8 62 f7 ff ff 48
-> > > RSP: 0018:ffffc9000286fd50 EFLAGS: 00010246
-> > > RAX: 0000000000000000 RBX: ffffea0007376840 RCX: 000000000000000c
-> > > RDX: ffff88810d2de000 RSI: ffffffff81e55f0b RDI: ffff88810d2de000
-> > > RBP: ffffea0007376840 R08: ffffea000b82c308 R09: ffffea000b82c308
-> > > R10: 0000000000000001 R11: 000000000000000c R12: 0000000000000000
-> > > R13: 000000000000c000 R14: 0000000000000005 R15: 0000000000000001
-> > > FS:  0000000000000000(0000) GS:ffff88843fc00000(0000) knlGS:0000000000000000
-> > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > CR2: 00007f4b94008278 CR3: 0000000101ac9000 CR4: 00000000001506b0
-> > > 
+b24gMjAyMi80LzE5IDIxOjUzLCBDaHJpc3RpYW4gQnJhdW5lciB3cm90ZToNCj4gT24gVHVlLCBB
+cHIgMTksIDIwMjIgYXQgMDc6NDc6MDlQTSArMDgwMCwgWWFuZyBYdSB3cm90ZToNCj4+IFNpbmNl
+IHhmc19nZW5lcmljX2NyZWF0ZSBvbmx5IGNhbGxzIHhmc19zZXRfYWNsIHdoZW4gZW5hYmxlIHRo
+aXMga2NvbmZpZywgd2UNCj4+IGRvbid0IG5lZWQgdG8gY2FsbCBwb3NpeF9hY2xfY3JlYXRlIGZv
+ciB0aGUgIUNPTkZJR19YRlNfUE9TSVhfQUNMIGNhc2UuDQo+Pg0KPj4gVGhlIHByZXZpb3VzIHBh
+dGNoIGhhcyBhZGRlZCBtaXNzaW5nIHVtYXNrIHN0cmlwIGZvciB0bXBmaWxlLCBzbyBhbGwgY3Jl
+YXRpb24NCj4+IHBhdGhzIGhhbmRsZSB1bWFzayBpbiB0aGUgdmZzIGRpcmVjdGx5IGlmIHRoZSBm
+aWxlc3lzdGVtIGRvZXNuJ3Qgc3VwcG9ydCBvcg0KPj4gZW5hYmxlIFBPU0lYIEFDTHMuDQo+Pg0K
+Pj4gU28ganVzdCBwdXQgdGhpcyBmdW5jdGlvbiB1bmRlciBDT05GSUdfWEZTX1BPU0lYX0FDTCBh
+bmQgdW1hc2sgc3RyaXAgc3RpbGwgd29ya3MNCj4+IHdlbGwuDQo+Pg0KPj4gQWxzbyB1c2UgdW5p
+ZmllZCBydWxlIGZvciBDT05GSUdfWEZTX1BPU0lYX0FDTCBpbiB0aGlzIGZpbGUsIHNvIHVzZSBJ
+U19FTkFCTEVEIGluDQo+PiB4ZnNfZ2VuZXJpY19jcmVhdGUuDQo+Pg0KPj4gU2lnbmVkLW9mZi1i
+eTogWWFuZyBYdTx4dXlhbmcyMDE4Lmp5QGZ1aml0c3UuY29tPg0KPj4gLS0tDQo+PiAgIGZzL3hm
+cy94ZnNfaW9wcy5jIHwgNyArKysrKy0tDQo+PiAgIDEgZmlsZSBjaGFuZ2VkLCA1IGluc2VydGlv
+bnMoKyksIDIgZGVsZXRpb25zKC0pDQo+Pg0KPj4gZGlmZiAtLWdpdCBhL2ZzL3hmcy94ZnNfaW9w
+cy5jIGIvZnMveGZzL3hmc19pb3BzLmMNCj4+IGluZGV4IGIzNGU4ZTQzNDRhOC4uNmI4ZGY5YWIy
+MTVhIDEwMDY0NA0KPj4gLS0tIGEvZnMveGZzL3hmc19pb3BzLmMNCj4+ICsrKyBiL2ZzL3hmcy94
+ZnNfaW9wcy5jDQo+PiBAQCAtMTUwLDYgKzE1MCw3IEBAIHhmc19jcmVhdGVfbmVlZF94YXR0cigN
+Cj4+ICAgCQlyZXR1cm4gdHJ1ZTsNCj4+ICAgCWlmIChkZWZhdWx0X2FjbCkNCj4+ICAgCQlyZXR1
+cm4gdHJ1ZTsNCj4+ICsNCj4+ICAgI2lmIElTX0VOQUJMRUQoQ09ORklHX1NFQ1VSSVRZKQ0KPj4g
+ICAJaWYgKGRpci0+aV9zYi0+c19zZWN1cml0eSkNCj4+ICAgCQlyZXR1cm4gdHJ1ZTsNCj4+IEBA
+IC0xNjksNyArMTcwLDcgQEAgeGZzX2dlbmVyaWNfY3JlYXRlKA0KPj4gICB7DQo+PiAgIAlzdHJ1
+Y3QgaW5vZGUJKmlub2RlOw0KPj4gICAJc3RydWN0IHhmc19pbm9kZSAqaXAgPSBOVUxMOw0KPj4g
+LQlzdHJ1Y3QgcG9zaXhfYWNsICpkZWZhdWx0X2FjbCwgKmFjbDsNCj4+ICsJc3RydWN0IHBvc2l4
+X2FjbCAqZGVmYXVsdF9hY2wgPSBOVUxMLCAqYWNsID0gTlVMTDsNCj4+ICAgCXN0cnVjdCB4ZnNf
+bmFtZQluYW1lOw0KPj4gICAJaW50CQllcnJvcjsNCj4+DQo+PiBAQCAtMTg0LDkgKzE4NSwxMSBA
+QCB4ZnNfZ2VuZXJpY19jcmVhdGUoDQo+PiAgIAkJcmRldiA9IDA7DQo+PiAgIAl9DQo+Pg0KPj4g
+KyNpZiBJU19FTkFCTEVEKENPTkZJR19YRlNfUE9TSVhfQUNMKQ0KPj4gICAJZXJyb3IgPSBwb3Np
+eF9hY2xfY3JlYXRlKGRpciwmbW9kZSwmZGVmYXVsdF9hY2wsJmFjbCk7DQo+PiAgIAlpZiAoZXJy
+b3IpDQo+PiAgIAkJcmV0dXJuIGVycm9yOw0KPj4gKyNlbmRpZg0KPg0KPiBEb2VzIHRoaXMgYWN0
+dWFsbHkgZml4IG9yIGltcHJvdmUgYW55dGhpbmc/DQo+IElmIENPTkZJR19YRlNfUE9TSVhfQUNM
+IGlzbid0IHNlbGVjdGVkIHRoZW4gU0JfUE9TSVhBQ0wgd29uJ3QgYmUgc2V0IGluDQo+IGlub2Rl
+LT5pX3NiLT5zX2ZsYWdzIGFuZCBjb25zZXF1ZW50bHkgcG9zaXhfYWNsX2NyZWF0ZSgpIGlzIGEg
+bm9wLiBTbw0KPiBpZmRlZmluZyB0aGlzIGRvZXNuJ3QgcmVhbGx5IGRvIGFueXRoaW5nIHNvIEkn
+ZCBhcmd1ZSB0byBub3QgYm90aGVyIHdpdGgNCj4gdGhpcyBjaGFuZ2UuDQpJdCBvbmx5IGF2b2lk
+IHVzZWxlc3MgbW9kZSAmPSB+Y3VycmVudF9tYXNrIGhlcmUuDQo+DQo+PiAgIAkvKiBWZXJpZnkg
+bW9kZSBpcyB2YWxpZCBhbHNvIGZvciB0bXBmaWxlIGNhc2UgKi8NCj4+ICAgCWVycm9yID0geGZz
+X2RlbnRyeV9tb2RlX3RvX25hbWUoJm5hbWUsIGRlbnRyeSwgbW9kZSk7DQo+PiBAQCAtMjA5LDcg
+KzIxMiw3IEBAIHhmc19nZW5lcmljX2NyZWF0ZSgNCj4+ICAgCWlmICh1bmxpa2VseShlcnJvcikp
+DQo+PiAgIAkJZ290byBvdXRfY2xlYW51cF9pbm9kZTsNCj4+DQo+PiAtI2lmZGVmIENPTkZJR19Y
+RlNfUE9TSVhfQUNMDQo+PiArI2lmIElTX0VOQUJMRUQoQ09ORklHX1hGU19QT1NJWF9BQ0wpDQo+
+PiAgIAlpZiAoZGVmYXVsdF9hY2wpIHsNCj4+ICAgCQllcnJvciA9IF9feGZzX3NldF9hY2woaW5v
+ZGUsIGRlZmF1bHRfYWNsLCBBQ0xfVFlQRV9ERUZBVUxUKTsNCj4+ICAgCQlpZiAoZXJyb3IpDQo+
+DQo+IFNpZGUtbm90ZSwgSSB0aGluaw0KPg0KPiAJI2lmZGVmIENPTkZJR19YRlNfUE9TSVhfQUNM
+DQo+IAlleHRlcm4gc3RydWN0IHBvc2l4X2FjbCAqeGZzX2dldF9hY2woc3RydWN0IGlub2RlICpp
+bm9kZSwgaW50IHR5cGUsIGJvb2wgcmN1KTsNCj4gCWV4dGVybiBpbnQgeGZzX3NldF9hY2woc3Ry
+dWN0IHVzZXJfbmFtZXNwYWNlICptbnRfdXNlcm5zLCBzdHJ1Y3QgaW5vZGUgKmlub2RlLA0KPiAJ
+CQkgICAgICAgc3RydWN0IHBvc2l4X2FjbCAqYWNsLCBpbnQgdHlwZSk7DQo+IAlleHRlcm4gaW50
+IF9feGZzX3NldF9hY2woc3RydWN0IGlub2RlICppbm9kZSwgc3RydWN0IHBvc2l4X2FjbCAqYWNs
+LCBpbnQgdHlwZSk7DQo+IAkjZWxzZQ0KPiAJZXh0ZXJuIGludCB4ZnNfc2V0X2FjbChzdHJ1Y3Qg
+dXNlcl9uYW1lc3BhY2UgKm1udF91c2VybnMsIHN0cnVjdCBpbm9kZSAqaW5vZGUsDQo+IAkJCSAg
+ICAgICBzdHJ1Y3QgcG9zaXhfYWNsICphY2wsIGludCB0eXBlKQ0KPiAJew0KPiAJCXJldHVybiAw
+Ow0KPiAJfQ0KPiAJDQo+IAlleHRlcm4gaW50IF9feGZzX3NldF9hY2woc3RydWN0IGlub2RlICpp
+bm9kZSwgc3RydWN0IHBvc2l4X2FjbCAqYWNsLCBpbnQgdHlwZSkNCj4gCXsNCj4gCQlyZXR1cm4g
+MDsNCj4gCX0NCj4gCSNlbmRpZg0KPg0KPiBhbmQgdGhlbiByZW1vdmluZyB0aGUgaW5saW5lLWlm
+ZGVmIG1pZ2h0IGJlIGFuIGltcHJvdmVtZW50Lg0KTWF5YmUsIGJ1dCBpdCBzaG91bGQgbm90IGJl
+IGluIHRoaXMgcGF0Y2hzZXQgYXMgeW91IHNhaWQuDQoNCkJlc3QgUmVnYXJkcw0KWWFuZyBYdQ0K
