@@ -2,84 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8958A507F96
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Apr 2022 05:24:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D654D507FB7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Apr 2022 05:58:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1359260AbiDTD1N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Apr 2022 23:27:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53934 "EHLO
+        id S231485AbiDTEBc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Apr 2022 00:01:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239413AbiDTD1N (ORCPT
+        with ESMTP id S230163AbiDTEBc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Apr 2022 23:27:13 -0400
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C0D021E13;
-        Tue, 19 Apr 2022 20:24:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1650425068; x=1681961068;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   mime-version:in-reply-to;
-  bh=ABPdNmHHBR0xLY/Ru6EV3J58j73qsnuwoz1VPUML71M=;
-  b=PmUeqC6NglhqYOwwQZTyPjSTIKFIaCW9F8Pg9ELdrMX408heS/7HrFPf
-   0S1B4VDUrgGqHVzK6R8PNahYofIAgMFJp28duALUcJ1nWcO4mGA+OewN5
-   HNMjtoSW8A5D3Dtx+tZV/vCjwJgFCXUKG/3M4HBpR7mSHe+mPR4XIicr1
-   vCqWqlAttn5jgpujFtSA16Y1oQogxJnjl8jOgJ3cpghP3DzG4j/E5mvMm
-   jVx/0hFz7i/NHGk0114DOjGVPyUmudI73PXWDkHFvlfCMAGhGrMkYPxhV
-   8UeI9p8aGeirJkEQWeREqKJOyYk4DD4IDOWk646A8VHgqLqa9WmGXejtQ
-   A==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10322"; a="243859398"
-X-IronPort-AV: E=Sophos;i="5.90,274,1643702400"; 
-   d="scan'208";a="243859398"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Apr 2022 20:24:28 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.90,274,1643702400"; 
-   d="scan'208";a="667599784"
-Received: from chaop.bj.intel.com (HELO localhost) ([10.240.192.101])
-  by orsmga004.jf.intel.com with ESMTP; 19 Apr 2022 20:24:19 -0700
-Date:   Wed, 20 Apr 2022 11:24:10 +0800
-From:   Chao Peng <chao.p.peng@linux.intel.com>
-To:     Vishal Annapurve <vannapurve@google.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Jun Nakajima <jun.nakajima@intel.com>, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com
-Subject: Re: [PATCH v5 03/13] mm/shmem: Support memfile_notifier
-Message-ID: <20220420032410.GB39591@chaop.bj.intel.com>
-Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
-References: <20220310140911.50924-1-chao.p.peng@linux.intel.com>
- <20220310140911.50924-4-chao.p.peng@linux.intel.com>
- <CAGtprH9X-v-R+UiAvdvKgqAqoc4MBJAWTnoEtP+Y2nip_y8Heg@mail.gmail.com>
+        Wed, 20 Apr 2022 00:01:32 -0400
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam08on2040.outbound.protection.outlook.com [40.107.102.40])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 816BB2A265
+        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Apr 2022 20:58:47 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=GAo028l1G3Zy+ZrrAK83LAs3CWWA2E7zoqNu+6cpc7oUBDGMMgo5WiNfH5k5a58XdkSkdRqUJ/RYz497tRJ+QwjCDqg25Ykmmxk/qLYAizIhw7ISEfz6Nu5VrpyWJcZ8xWNyKSbyiedddbGF618wELsUKKFk3p0Vb5ZdgLFRiqTRoEKereyKId0lxLbrcPkQyhonZmvGXG56ZImPzfkygIRIPQEqFiTwggPS2vxc+FTBuWj9EOArbGa1FXpO3jXDPGDHSzSmIKTG2UQGaj4XGNLoXEc5MyuT2gCWKgo/gcV4xDa5pry3UWFeeluZ85Qge2tjGbZXGrSpq6tKzQzQFg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LhGbRDUp38e9p5OGM2K9+EKXCrvkQ+1H7+TWOd8fYG8=;
+ b=QAJNnbKKeSe+eeUhdEvVTWrHqelhvnxTuaevUku1YQL7PFh2njFYOFXHbubyAw6AI7XJk1QQ/T5uhqa03vAZcJ633PqURwMfHKX5hdrF3ct+jqxdF5qFJTChPAu/i+I/vIsvaFId5po7BqcvpwMsvugIVYYylL5YPYnsBBfrhdNkoxx0tYQ5lUe/fxh9tHkG/GsLqwvOBGM9BVlEnqDXexqhOmRMIWnXuWKyrPCh+YG7CE/QClxah4Y8Vj6zJPwOwbh4yWSeZJE24lsiDgYOgwoGBfFvfNznNb5EQq5wmbDZe1IddTWUJ1RnrsjD9Ch0c7+75S3EomaMizJAZdqXlA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LhGbRDUp38e9p5OGM2K9+EKXCrvkQ+1H7+TWOd8fYG8=;
+ b=KVZyc9THia6BvkdlH0lEvuZ5O3GvjdLWHd82Snil3uI0Z/w2gg2QQ9h5rqCiTrJk3jAm/GL645ZPziXTLpbf4OaTFq9gxJK8uZdFqDBUxxMu/vFoIN2AjAv7C74IM7X0OTTB6j4gecqfgYaljcu25RrQiW++t2iv1nnkqmx3tuVpX1vQmvH9m2OQwNihyLSgRaAE80PGb8BOgQ/M2ZAA4nO4cdQwjkakQtrHF/a3L+vdCDn6iPij7sbYOKCA9I1zrPh+meKL0f0n/+h54Td/BLJ8gY7CCVfEBhijQdiFxtznOGpKXXIG/n+Uk3imkoKTIbuw8WwIFGD9EwjHlEhy7Q==
+Received: from MW2PR12MB4667.namprd12.prod.outlook.com (2603:10b6:302:12::28)
+ by CH2PR12MB3942.namprd12.prod.outlook.com (2603:10b6:610:23::29) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5186.13; Wed, 20 Apr
+ 2022 03:58:46 +0000
+Received: from MW2PR12MB4667.namprd12.prod.outlook.com
+ ([fe80::a90b:9df2:370c:e76b]) by MW2PR12MB4667.namprd12.prod.outlook.com
+ ([fe80::a90b:9df2:370c:e76b%3]) with mapi id 15.20.5164.025; Wed, 20 Apr 2022
+ 03:58:46 +0000
+From:   Chaitanya Kulkarni <chaitanyak@nvidia.com>
+To:     Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+CC:     Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: Re: [PATCH v2 1/8] zonefs: Clear inode information flags on inode
+ creation
+Thread-Topic: [PATCH v2 1/8] zonefs: Clear inode information flags on inode
+ creation
+Thread-Index: AQHYVF/Y/Z73eUBPAUKdFwOh+LdjHaz4LR2A
+Date:   Wed, 20 Apr 2022 03:58:46 +0000
+Message-ID: <cdf153ba-464e-9707-844c-4129fc081294@nvidia.com>
+References: <20220420023545.3814998-1-damien.lemoal@opensource.wdc.com>
+ <20220420023545.3814998-2-damien.lemoal@opensource.wdc.com>
+In-Reply-To: <20220420023545.3814998-2-damien.lemoal@opensource.wdc.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.0
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 10691135-5da1-43b7-64f4-08da22821184
+x-ms-traffictypediagnostic: CH2PR12MB3942:EE_
+x-microsoft-antispam-prvs: <CH2PR12MB394281D8A62BB17190767E03A3F59@CH2PR12MB3942.namprd12.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: EIIML+3dJ942Ko8yoF624/Sm8GAMcX5/KeIoCIVnbfAdQO/mp1CKhqQxYBHRWfR6x1V+kR7URre6Oll+Ql2blB7mKWnFUl2atpVvvy1sGNWvVgvvWdxbLu8pOF9lyobK+4xitMnFgsD5wVesuAk0bOyDI1PL98VELw5wFKGC8/Zy1Zyfui+UH2GuBybpTTJYc3YJN1rAfb7xh5cBoiCksVyCwJxT5CwfHcBHICQDiBapaWbpZ18fy1A3fz28fzl/t6IHegafDdFqrA0zxyshbNVuZIvJDTZCS7tn/CV4UxuWwDOJB9cScG7iMJqGguzUzp5c3kuK9yxk8uYJfpyBNQsf+BakZAK1QFma4CE1BxqKjpRexSPTgTJxJtg58LRc2hKmQrEeJHdtNm99wVuj1qcIpKxSdyvR1bmG+aGYciCXuLEEaqgoficRlvt8aMf+5r2huJSe18ebC4wOBzUW2B7J2eHz7+X1HYJhetIZpF8NNzOpL+hTNcqo7BRcWa6DN+ZQ/6cVmQvTi0jW47IJXwBVplZiQJVQvP9ByBfKvWfQFI+3RBNX/LThOV8++I21ufeLr7MG6LouvmcbX+rT43ZFmPLeFXvVGUxwQX3P7dFrEuz+FJFoCg9rKNYKgo/FOScRfVN/Ep1cjPpuRfoJgyLzY5xBwmPkjl4Yaz1GdbyIV4HGlOmuRA/E/5IeAma2bNoNDEBLbLdBv46bPmwkXy6RW3z+uoqWfgS5P3vRbknzj/6tIqBmB7qBrH14WtPZdVUY+wxgL+YJIr9+nXe17w==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW2PR12MB4667.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(71200400001)(2616005)(4744005)(122000001)(186003)(31696002)(38100700002)(86362001)(91956017)(66446008)(508600001)(76116006)(8676002)(64756008)(38070700005)(83380400001)(66476007)(66946007)(66556008)(5660300002)(31686004)(316002)(6512007)(6486002)(6506007)(53546011)(110136005)(36756003)(4326008)(2906002)(8936002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 2
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?Umt5WURYY0Z2ZVIyN01HRDYwVWkxVnlOVFhkUk9JWFNOWGZHSElaOWQ5Q1JL?=
+ =?utf-8?B?TWJkRDRrcWNYUUZxazZsMCtIRFVUcmxLOWx5ay96d0dKR1o3Vmt1V05xd0N4?=
+ =?utf-8?B?SkJ1Qy92ZTR0VHVucllCR2ZHM2RJaU1RYy9DcTRrdjJYYVA4S2E0RUxtSXM4?=
+ =?utf-8?B?dGNBUzdicFV5TEtleUwxdm9LbzE3Q0g3bmtqZTNGU21IN25kNXBGSXJ3Ni9Q?=
+ =?utf-8?B?Y1VpaUt0K3pJbmx0bW83UE05dk12L01PbWl3WnB5OGRMdDBEcFMwYmNFd2Rv?=
+ =?utf-8?B?ang1MENvTHZaZmRBYnowMjNuYmJKQUJtOEtTdFlwLzFFdUszQVhTTkl3NEN0?=
+ =?utf-8?B?b1dHMVlFNXp0SXN1MnFhY0JoY2tZUDh3aDJmZml4VUNGdXVxWStFYXFROGlv?=
+ =?utf-8?B?Snhwb3pGS0tTRDBOYXovSSswTlJuMWRVOElLYjlubDVXVWRwb3o3TVo4YUJL?=
+ =?utf-8?B?REhrZlZnWnhMZGZsRHdKNDZnTmlXUGl1MFVnOFQ5NGlyYWRpSzlEb3IvZlps?=
+ =?utf-8?B?eHpuZW9tTWtic2ZXMVh6KzNCSFE5VGN1TDNBcFBiVEY0SHFOV0V3UmNYZ0ZL?=
+ =?utf-8?B?QVVVYzFKTTBUejlVQVlIWDU2TUVRMTVWSkplQURIOGVVbE1iYTA3dUpwam02?=
+ =?utf-8?B?WkV4ejhlZ3J2T2pEM005UEtPK0I3eHRnelNDYVI1dFpMR0M4aE1sVnJRbVJF?=
+ =?utf-8?B?VnFBM1Rwa2tjRzhSbGwybnJaTEFMWmQ1VUE2ZHpWdWErZkhGWFZPZUdRVG45?=
+ =?utf-8?B?Yk03Y0NzWXlCTFI1N2RXVnN3bFBRS1pBY3hZOC9vbXNXN1JCMWVKVjc4dDlH?=
+ =?utf-8?B?RlVoZjZXZGIwc0NPdGRKVEZuTlZzZWF0YjJSd1R0QkZoaHMxMjJzWnMwb2gz?=
+ =?utf-8?B?VUxNSEJKVFo5aGhJT1BLelg2MjBvSUJ3ZjdBbmJnOWk0U2tzNkJTWjBYOVk3?=
+ =?utf-8?B?NU1MZG1WaGYyOHhOMnk2VGE5RVNrUkgzdE5yWHpEWDVNUUo2Qy9xQUx6U2RD?=
+ =?utf-8?B?UVNGRHpmRHZ2R2M0dnIxZFBDMjk3SDRIMUZCUVJjTis3MWxwUkExb0M2Um91?=
+ =?utf-8?B?RzlRc29Ib0RldjVFcnZnQkNXQXBDeTZwcXBsRHlGbmVycS9xVE9YdTJoTHRI?=
+ =?utf-8?B?MHdMczNMMHhTUWNZaWIwc2FselVXeEpkS1oyVHkydVFSMDczVW5malVMckNW?=
+ =?utf-8?B?ZUdscTU3MkhjMEw4ZE9kd0lXWmdBMGtTSitoUUNvc1BTdG5aV1A0OWlNZmJo?=
+ =?utf-8?B?TTJrL3Bmc0dXMG10UEprSFdaY0Q0VUpYaVhOa0gvMnBEVzBzTUxmRW1VUG5I?=
+ =?utf-8?B?OU42UGl4K0dRRjc3WTI3WExQbndNQm41T0MxNkljOThBcW1NQXlDWW5UbWhQ?=
+ =?utf-8?B?THBXaVlhNW9vZm1VNUt6Z0VvMGE4ZUY1Q1dqazY3KzN0NkZMOXZzMnVpaW9y?=
+ =?utf-8?B?aHZYSjZ1eDZGSVJnK01YUUh0TWdJSlFLd3ZRUzdlRzZ3bWM2S1MzS2dLZElp?=
+ =?utf-8?B?OHVLMk1TeVBkWmZjUXdRS20xWHh1aThPY1Rad2pYeFcyUVUrR1NiSVBjUnBn?=
+ =?utf-8?B?TDFxT2E3a3phMTgvaTIzZjQ2amxVOVlHMGkwbmZPTXR3ejlTY3UvZ3grMThx?=
+ =?utf-8?B?blI3aUtuenhLekVHc1lJT3h2U0EvRTYyMFBDK3J0NmpIblZiQkdZa0tqazVt?=
+ =?utf-8?B?M0dSNnBKaTh5U2ZGSmhEMXZKNnMvenhmZXlIY0xIRnFBeG4reWxUZEVSWStk?=
+ =?utf-8?B?NmoyeHkvMGRnMmlsVW9wSW1CODJqZHFwK0N5Yy8vNCtkRVk2eE9DRUlUZ1Nn?=
+ =?utf-8?B?aWduODlFY1dpSUI3NzMyNWFWWGJXTkNsNXpWaTRObmwrV0pvSXdHN0psMVlW?=
+ =?utf-8?B?STA0dTVPSWtWcHZicnlhQm5yZ2JNWi9EY2lVZ1ZTRWtNSVlmUy9PQXc5SEZm?=
+ =?utf-8?B?RkVWK3NqTnJBdlhTbWNMRS9SY3EyWU43NXpPRjAwZS9yKzVpL2xVUjlicGJu?=
+ =?utf-8?B?dlIrczhWUG5LZEZkR3RMaWdEaFU5K0VuQVY0U0dWNGR5TktrTGF4enltaXJV?=
+ =?utf-8?B?bWw3SFB4NlhCd0RML3ZTeFNCNUlaa2J4UlBIc0JWS0xnSjJEOXp4VUxyNG1B?=
+ =?utf-8?B?N2ZCeTF0VFI4OFdxcGRBdTZrVnNWaHNNUy91d1FRWTFiMThMRVFTOXIyUHFQ?=
+ =?utf-8?B?eTFIMEQ2amdSNDc0K09tSkM5Rk1xL25VS2JaQjF6ZmVUc0tqL3FmZlN3MklY?=
+ =?utf-8?B?U1NtcEI1Y1pTdHlBcExIeXJPalJJeTVKcVMvUjc1YUUrYU8vUzdzRXhSa2lI?=
+ =?utf-8?B?M1QwWmVObytpMFZzM3hGQ3Q5SkdaTk1tVHQrS1ljd2VqNThGMGJMZEpIUElB?=
+ =?utf-8?Q?AkZ9C2qP67mrXEJrCSoGlwYJsewaksA3hsApGVuIKC/Yq?=
+x-ms-exchange-antispam-messagedata-1: KmOoaf1SZxvU+Q==
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <D59AEB263A70A74EB5431296D7A65EEE@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGtprH9X-v-R+UiAvdvKgqAqoc4MBJAWTnoEtP+Y2nip_y8Heg@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MW2PR12MB4667.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 10691135-5da1-43b7-64f4-08da22821184
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Apr 2022 03:58:46.0391
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: PE9xfRvaoJjw8NAwkz7TmYn6UXFtBQ5tJbMF0XbJmvHzUsOOgszxhCndM+19YMAOU3J1Coc4iEhh+kFMeGQlPg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB3942
 X-Spam-Status: No, score=-4.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
+        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,
         SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -88,187 +138,13 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 19, 2022 at 03:40:09PM -0700, Vishal Annapurve wrote:
-> On Thu, Mar 10, 2022 at 6:10 AM Chao Peng <chao.p.peng@linux.intel.com> wrote:
-> >
-> > From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-> >
-> > It maintains a memfile_notifier list in shmem_inode_info structure and
-> > implements memfile_pfn_ops callbacks defined by memfile_notifier. It
-> > then exposes them to memfile_notifier via
-> > shmem_get_memfile_notifier_info.
-> >
-> > We use SGP_NOALLOC in shmem_get_lock_pfn since the pages should be
-> > allocated by userspace for private memory. If there is no pages
-> > allocated at the offset then error should be returned so KVM knows that
-> > the memory is not private memory.
-> >
-> > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> > Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
-> > ---
-> >  include/linux/shmem_fs.h |  4 +++
-> >  mm/shmem.c               | 76 ++++++++++++++++++++++++++++++++++++++++
-> >  2 files changed, 80 insertions(+)
-> >
-> > diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
-> > index 2dde843f28ef..7bb16f2d2825 100644
-> > --- a/include/linux/shmem_fs.h
-> > +++ b/include/linux/shmem_fs.h
-> > @@ -9,6 +9,7 @@
-> >  #include <linux/percpu_counter.h>
-> >  #include <linux/xattr.h>
-> >  #include <linux/fs_parser.h>
-> > +#include <linux/memfile_notifier.h>
-> >
-> >  /* inode in-kernel data */
-> >
-> > @@ -28,6 +29,9 @@ struct shmem_inode_info {
-> >         struct simple_xattrs    xattrs;         /* list of xattrs */
-> >         atomic_t                stop_eviction;  /* hold when working on inode */
-> >         unsigned int            xflags;         /* shmem extended flags */
-> > +#ifdef CONFIG_MEMFILE_NOTIFIER
-> > +       struct memfile_notifier_list memfile_notifiers;
-> > +#endif
-> >         struct inode            vfs_inode;
-> >  };
-> >
-> > diff --git a/mm/shmem.c b/mm/shmem.c
-> > index 9b31a7056009..7b43e274c9a2 100644
-> > --- a/mm/shmem.c
-> > +++ b/mm/shmem.c
-> > @@ -903,6 +903,28 @@ static struct folio *shmem_get_partial_folio(struct inode *inode, pgoff_t index)
-> >         return page ? page_folio(page) : NULL;
-> >  }
-> >
-> > +static void notify_fallocate(struct inode *inode, pgoff_t start, pgoff_t end)
-> > +{
-> > +#ifdef CONFIG_MEMFILE_NOTIFIER
-> > +       struct shmem_inode_info *info = SHMEM_I(inode);
-> > +
-> > +       memfile_notifier_fallocate(&info->memfile_notifiers, start, end);
-> > +#endif
-> > +}
-> > +
-> > +static void notify_invalidate_page(struct inode *inode, struct folio *folio,
-> > +                                  pgoff_t start, pgoff_t end)
-> > +{
-> > +#ifdef CONFIG_MEMFILE_NOTIFIER
-> > +       struct shmem_inode_info *info = SHMEM_I(inode);
-> > +
-> > +       start = max(start, folio->index);
-> > +       end = min(end, folio->index + folio_nr_pages(folio));
-> > +
-> > +       memfile_notifier_invalidate(&info->memfile_notifiers, start, end);
-> > +#endif
-> > +}
-> > +
-> >  /*
-> >   * Remove range of pages and swap entries from page cache, and free them.
-> >   * If !unfalloc, truncate or punch hole; if unfalloc, undo failed fallocate.
-> > @@ -946,6 +968,8 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
-> >                         }
-> >                         index += folio_nr_pages(folio) - 1;
-> >
-> > +                       notify_invalidate_page(inode, folio, start, end);
-> > +
-> >                         if (!unfalloc || !folio_test_uptodate(folio))
-> >                                 truncate_inode_folio(mapping, folio);
-> >                         folio_unlock(folio);
-> > @@ -1019,6 +1043,9 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
-> >                                         index--;
-> >                                         break;
-> >                                 }
-> > +
-> > +                               notify_invalidate_page(inode, folio, start, end);
-> > +
-> 
-> Should this be done in batches or done once for all of range [start, end)?
-
-Batching is definitely prefered. Will look at that.
-
-Thanks,
-Chao
-> 
-> >                                 VM_BUG_ON_FOLIO(folio_test_writeback(folio),
-> >                                                 folio);
-> >                                 truncate_inode_folio(mapping, folio);
-> > @@ -2279,6 +2306,9 @@ static struct inode *shmem_get_inode(struct super_block *sb, const struct inode
-> >                 info->flags = flags & VM_NORESERVE;
-> >                 INIT_LIST_HEAD(&info->shrinklist);
-> >                 INIT_LIST_HEAD(&info->swaplist);
-> > +#ifdef CONFIG_MEMFILE_NOTIFIER
-> > +               memfile_notifier_list_init(&info->memfile_notifiers);
-> > +#endif
-> >                 simple_xattrs_init(&info->xattrs);
-> >                 cache_no_acl(inode);
-> >                 mapping_set_large_folios(inode->i_mapping);
-> > @@ -2802,6 +2832,7 @@ static long shmem_fallocate(struct file *file, int mode, loff_t offset,
-> >         if (!(mode & FALLOC_FL_KEEP_SIZE) && offset + len > inode->i_size)
-> >                 i_size_write(inode, offset + len);
-> >         inode->i_ctime = current_time(inode);
-> > +       notify_fallocate(inode, start, end);
-> >  undone:
-> >         spin_lock(&inode->i_lock);
-> >         inode->i_private = NULL;
-> > @@ -3909,6 +3940,47 @@ static struct file_system_type shmem_fs_type = {
-> >         .fs_flags       = FS_USERNS_MOUNT,
-> >  };
-> >
-> > +#ifdef CONFIG_MEMFILE_NOTIFIER
-> > +static long shmem_get_lock_pfn(struct inode *inode, pgoff_t offset, int *order)
-> > +{
-> > +       struct page *page;
-> > +       int ret;
-> > +
-> > +       ret = shmem_getpage(inode, offset, &page, SGP_NOALLOC);
-> > +       if (ret)
-> > +               return ret;
-> > +
-> > +       *order = thp_order(compound_head(page));
-> > +
-> > +       return page_to_pfn(page);
-> > +}
-> > +
-> > +static void shmem_put_unlock_pfn(unsigned long pfn)
-> > +{
-> > +       struct page *page = pfn_to_page(pfn);
-> > +
-> > +       VM_BUG_ON_PAGE(!PageLocked(page), page);
-> > +
-> > +       set_page_dirty(page);
-> > +       unlock_page(page);
-> > +       put_page(page);
-> > +}
-> > +
-> > +static struct memfile_notifier_list* shmem_get_notifier_list(struct inode *inode)
-> > +{
-> > +       if (!shmem_mapping(inode->i_mapping))
-> > +               return NULL;
-> > +
-> > +       return  &SHMEM_I(inode)->memfile_notifiers;
-> > +}
-> > +
-> > +static struct memfile_backing_store shmem_backing_store = {
-> > +       .pfn_ops.get_lock_pfn = shmem_get_lock_pfn,
-> > +       .pfn_ops.put_unlock_pfn = shmem_put_unlock_pfn,
-> > +       .get_notifier_list = shmem_get_notifier_list,
-> > +};
-> > +#endif /* CONFIG_MEMFILE_NOTIFIER */
-> > +
-> >  int __init shmem_init(void)
-> >  {
-> >         int error;
-> > @@ -3934,6 +4006,10 @@ int __init shmem_init(void)
-> >         else
-> >                 shmem_huge = SHMEM_HUGE_NEVER; /* just in case it was patched */
-> >  #endif
-> > +
-> > +#ifdef CONFIG_MEMFILE_NOTIFIER
-> > +       memfile_register_backing_store(&shmem_backing_store);
-> > +#endif
-> >         return 0;
-> >
-> >  out1:
-> > --
-> > 2.17.1
-> >
+T24gNC8xOS8yMiAxOTozNSwgRGFtaWVuIExlIE1vYWwgd3JvdGU6DQo+IEVuc3VyZSB0aGF0IHRo
+ZSBpX2ZsYWdzIGZpZWxkIG9mIHN0cnVjdCB6b25lZnNfaW5vZGVfaW5mbyBpcyBjbGVhcmVkIHRv
+DQo+IDAgd2hlbiBpbml0aWFsaXppbmcgYSB6b25lIGZpbGUgaW5vZGUsIGF2b2lkaW5nIHNlZWlu
+ZyB0aGUgZmxhZw0KPiBaT05FRlNfWk9ORV9PUEVOIGJlaW5nIGluY29ycmVjdGx5IHNldC4NCj4g
+DQo+IEZpeGVzOiBiNWMwMGU5NzU3NzkgKCJ6b25lZnM6IG9wZW4vY2xvc2Ugem9uZSBvbiBmaWxl
+IG9wZW4vY2xvc2UiKQ0KPiBDYzogPHN0YWJsZUB2Z2VyLmtlcm5lbC5vcmc+DQo+IFNpZ25lZC1v
+ZmYtYnk6IERhbWllbiBMZSBNb2FsIDxkYW1pZW4ubGVtb2FsQG9wZW5zb3VyY2Uud2RjLmNvbT4N
+Cj4gUmV2aWV3ZWQtYnk6IEpvaGFubmVzIFRodW1zaGlybiA8am9oYW5uZXMudGh1bXNoaXJuQHdk
+Yy5jb20+DQo+IC0tLQ0KDQpMb29rcyBnb29kLg0KDQpSZXZpZXdlZC1ieTogQ2hhaXRhbnlhIEt1
+bGthcm5pIDxrY2hAbnZpZGlhLmNvbT4NCg0KLWNrDQoNCg0K
