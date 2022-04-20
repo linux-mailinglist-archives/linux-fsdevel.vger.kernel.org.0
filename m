@@ -2,89 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8005E507EE8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Apr 2022 04:36:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5F153507F8F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Apr 2022 05:18:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1358973AbiDTCit (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Apr 2022 22:38:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34058 "EHLO
+        id S1359225AbiDTDUX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Apr 2022 23:20:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49064 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242215AbiDTCij (ORCPT
+        with ESMTP id S238897AbiDTDUV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Apr 2022 22:38:39 -0400
-Received: from esa4.hgst.iphmx.com (esa4.hgst.iphmx.com [216.71.154.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0363237D7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Apr 2022 19:35:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1650422154; x=1681958154;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=wAZQid4lKgOomKfXSEInjQihIYH+92Z3DRwKfcBoFxM=;
-  b=ZuHVya6Z3WcrntU2O1q/G5GXshk1aw2S9HWU7S/HXzfKxosmAmAjl4Ba
-   q0xP4cda/bHpQpgP9SNGKkF2X1wVqhLbx7BCEYTFx6dAgLGIhmqvE4Nv3
-   +tkWFxVwJyYUYy3Nqg58yKNsT3ssQZPlXi0dT8nJvFsnfOhG5c2mfQaqM
-   gkRVQGu0JEw6xHZ2gym7oxnOysKqCtPqvxVrRMYqj6iu8UARlF4/VgqpI
-   sXfAxruII/oAEgIcbuOCzeH1uOkTpLC/HIatSFwHKXnld02oVy754RXVf
-   M6q9hQWX6CELWvOM8bli+ELTHzv5tzJvF/mEuB6shrlGI+WuiIcSb5cm4
-   w==;
-X-IronPort-AV: E=Sophos;i="5.90,274,1643644800"; 
-   d="scan'208";a="197177979"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 20 Apr 2022 10:35:53 +0800
-IronPort-SDR: /XFeC6KLJcNkBWeagHvs4Ss//QQFTsNrrzy5IoR0qa9ZfNCoZJeDSnCbvYhzlSc4H9RiaChtwd
- XDsBt8E9nFaismbCvlCH8/bBLTTpp1mWc1muGsHIP9BCW1M0yGwPjS4mPx2WA7Pdc3v+WdXqai
- tzEfNItgEY3IvPL/q1OWtYYQiZ9OfV3TVKkA4kN6P8dGsxAQAfB1KMKddMJ2kJx5+2Bgws9g/i
- crHLYecb9KQWEmfbeC+9bd12iJtl0J0+Be6Iw1u28U5dG+Z9ytKKXRv8oCaF/MvUJ4o/XXP6Xn
- /mRlU+Nm4Ev4U0zzkwTqTgRY
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 19 Apr 2022 19:06:12 -0700
-IronPort-SDR: HmtMvP0zFCsShf2V2Ol8c9l7K/MwSN/s0U84GKskcTWE5fKcIA/adruDuxYzuWgdB5MsqVvokI
- TyaYED6DO7XMTU6J8xE7p6RL1STEQdkFMz3YrtgupqiGFBLnHvEtco/6zxt1Az5e7OOL7mCf19
- mOB6FNQFgls6jTOollzricp/BBkMb27w4rUpEZAF6zhEThHNRJzROueBxi5EWwJRQiYZ3FML2j
- cuc96r/vEjEBJ559ylGqcThMrSZEnXKpJAw85C89NQxrGeTC4gglU8WfLbn5sfr5Rqy6h8lz8R
- 880=
-WDCIronportException: Internal
-Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
-  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 19 Apr 2022 19:35:54 -0700
-Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4KjlCY39nqz1Rvlx
-        for <linux-fsdevel@vger.kernel.org>; Tue, 19 Apr 2022 19:35:53 -0700 (PDT)
-Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)"
-        header.d=opensource.wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
-        opensource.wdc.com; h=content-transfer-encoding:mime-version
-        :references:in-reply-to:x-mailer:message-id:date:subject:to
-        :from; s=dkim; t=1650422153; x=1653014154; bh=wAZQid4lKgOomKfXSE
-        InjQihIYH+92Z3DRwKfcBoFxM=; b=C+hZIf0si14o6yBEk3QHJY5t/Gsyq5sGnr
-        mhn/kBPEUIZlhab5bzyQOE9W212cAnSjFa0UQRS/iL/Q5STr3R2v4kgbMxP0prtr
-        tj3zDwD8X9c2DnHVfEo8+1KiPbmkDanbGCqT611dFii2hk+Gw6aJfWk7Y3cTtmCr
-        BQBcBM5wAXSpr3ajemHTMmORBeu93DbniixV9w0RGa+RD8pMGvsdU9mHZOU4NsOA
-        doZcV8tdHzR8JXCSCFDmsXGBViyMfrn/Xbbz8K0sYNmXL8zTEzrQ3snbt5MUrgk3
-        RzBWE97dmbtAdFruzZEU6/9YUj5WIqoB/82N4/eb37oowmoCu3tw==
-X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
-Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
-        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id SSIkeMqKbrEw for <linux-fsdevel@vger.kernel.org>;
-        Tue, 19 Apr 2022 19:35:53 -0700 (PDT)
-Received: from washi.fujisawa.hgst.com (washi.fujisawa.hgst.com [10.149.53.254])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4KjlCX4tmDz1Rwrw;
-        Tue, 19 Apr 2022 19:35:52 -0700 (PDT)
-From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: [PATCH v2 8/8] documentation: zonefs: Document sysfs attributes
-Date:   Wed, 20 Apr 2022 11:35:45 +0900
-Message-Id: <20220420023545.3814998-9-damien.lemoal@opensource.wdc.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220420023545.3814998-1-damien.lemoal@opensource.wdc.com>
-References: <20220420023545.3814998-1-damien.lemoal@opensource.wdc.com>
+        Tue, 19 Apr 2022 23:20:21 -0400
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BB139FD6;
+        Tue, 19 Apr 2022 20:17:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1650424656; x=1681960656;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   mime-version:in-reply-to;
+  bh=aSlmWYo67979bXI+8rgE6ppMUFAAUoPR5mX4oC2meD8=;
+  b=QzBDTsvB3pu732uwEag5dKe9Z5E4wa2OBJsOu4qRT8u9ak/Jwj8wDepy
+   hrvclFPbcUWUmVpyOIRKUJ8ybBNU+dDgHMzBKzKMHRieiGfcMVXiuUPcK
+   C2sLPXkWyP6AHeM9M2kvB1CAXL9fvOdyyhvl3Wd2lgnUCV05eaq//irld
+   m8PEQd3mOZkWzJz1N1+Z2OFBWt77Zrrg4/PzhZWQgWyfEVsMHLR90TyXQ
+   4u8juvKqF0fiNsgu+RiS4oFwTOXNqcuYX4uCRG1zbcGO2HHwyVJreDvR8
+   6vVg458hdAiLnQrEOfMRCgSCO/rfRpkqXnF1n1Zirg0JHrclmKisYCgVb
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10322"; a="350375126"
+X-IronPort-AV: E=Sophos;i="5.90,274,1643702400"; 
+   d="scan'208";a="350375126"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Apr 2022 20:17:36 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.90,274,1643702400"; 
+   d="scan'208";a="667588846"
+Received: from chaop.bj.intel.com (HELO localhost) ([10.240.192.101])
+  by orsmga004.jf.intel.com with ESMTP; 19 Apr 2022 20:17:27 -0700
+Date:   Wed, 20 Apr 2022 11:17:18 +0800
+From:   Chao Peng <chao.p.peng@linux.intel.com>
+To:     Vishal Annapurve <vannapurve@google.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Jun Nakajima <jun.nakajima@intel.com>, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com
+Subject: Re: [PATCH v5 11/13] KVM: Zap existing KVM mappings when pages
+ changed in the private fd
+Message-ID: <20220420031718.GA39591@chaop.bj.intel.com>
+Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
+References: <20220310140911.50924-1-chao.p.peng@linux.intel.com>
+ <20220310140911.50924-12-chao.p.peng@linux.intel.com>
+ <CAGtprH-qTB2sehidF7xkSvR3X4D5cUOLpMBXf4mhTEh0BUR-mQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGtprH-qTB2sehidF7xkSvR3X4D5cUOLpMBXf4mhTEh0BUR-mQ@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Spam-Status: No, score=-4.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -92,88 +89,124 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Document the max_wro_seq_files, nr_wro_seq_files, max_active_seq_files
-and nr_active_seq_files sysfs attributes.
+On Tue, Apr 19, 2022 at 03:43:56PM -0700, Vishal Annapurve wrote:
+> On Thu, Mar 10, 2022 at 6:11 AM Chao Peng <chao.p.peng@linux.intel.com> wrote:
+> >
+> > KVM gets notified when memory pages changed in the memory backing store.
+> > When userspace allocates the memory with fallocate() or frees memory
+> > with fallocate(FALLOC_FL_PUNCH_HOLE), memory backing store calls into
+> > KVM fallocate/invalidate callbacks respectively. To ensure KVM never
+> > maps both the private and shared variants of a GPA into the guest, in
+> > the fallocate callback, we should zap the existing shared mapping and
+> > in the invalidate callback we should zap the existing private mapping.
+> >
+> > In the callbacks, KVM firstly converts the offset range into the
+> > gfn_range and then calls existing kvm_unmap_gfn_range() which will zap
+> > the shared or private mapping. Both callbacks pass in a memslot
+> > reference but we need 'kvm' so add a reference in memslot structure.
+> >
+> > Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
+> > Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
+> > ---
+> >  include/linux/kvm_host.h |  3 ++-
+> >  virt/kvm/kvm_main.c      | 36 ++++++++++++++++++++++++++++++++++++
+> >  2 files changed, 38 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> > index 9b175aeca63f..186b9b981a65 100644
+> > --- a/include/linux/kvm_host.h
+> > +++ b/include/linux/kvm_host.h
+> > @@ -236,7 +236,7 @@ bool kvm_setup_async_pf(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
+> >  int kvm_async_pf_wakeup_all(struct kvm_vcpu *vcpu);
+> >  #endif
+> >
+> > -#ifdef KVM_ARCH_WANT_MMU_NOTIFIER
+> > +#if defined(KVM_ARCH_WANT_MMU_NOTIFIER) || defined(CONFIG_MEMFILE_NOTIFIER)
+> >  struct kvm_gfn_range {
+> >         struct kvm_memory_slot *slot;
+> >         gfn_t start;
+> > @@ -568,6 +568,7 @@ struct kvm_memory_slot {
+> >         loff_t private_offset;
+> >         struct memfile_pfn_ops *pfn_ops;
+> >         struct memfile_notifier notifier;
+> > +       struct kvm *kvm;
+> >  };
+> >
+> >  static inline bool kvm_slot_is_private(const struct kvm_memory_slot *slot)
+> > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> > index 67349421eae3..52319f49d58a 100644
+> > --- a/virt/kvm/kvm_main.c
+> > +++ b/virt/kvm/kvm_main.c
+> > @@ -841,8 +841,43 @@ static int kvm_init_mmu_notifier(struct kvm *kvm)
+> >  #endif /* CONFIG_MMU_NOTIFIER && KVM_ARCH_WANT_MMU_NOTIFIER */
+> >
+> >  #ifdef CONFIG_MEMFILE_NOTIFIER
+> > +static void kvm_memfile_notifier_handler(struct memfile_notifier *notifier,
+> > +                                        pgoff_t start, pgoff_t end)
+> > +{
+> > +       int idx;
+> > +       struct kvm_memory_slot *slot = container_of(notifier,
+> > +                                                   struct kvm_memory_slot,
+> > +                                                   notifier);
+> > +       struct kvm_gfn_range gfn_range = {
+> > +               .slot           = slot,
+> > +               .start          = start - (slot->private_offset >> PAGE_SHIFT),
+> > +               .end            = end - (slot->private_offset >> PAGE_SHIFT),
+> > +               .may_block      = true,
+> > +       };
+> > +       struct kvm *kvm = slot->kvm;
+> > +
+> > +       gfn_range.start = max(gfn_range.start, slot->base_gfn);
+> 
+> gfn_range.start seems to be page offset within the file. Should this rather be:
+> gfn_range.start = slot->base_gfn + min(gfn_range.start, slot->npages);
 
-Signed-off-by: Damien Le Moal <damien.lemoal@opensource.wdc.com>
-Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
----
- Documentation/filesystems/zonefs.rst | 38 ++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
+Right. For start we don't really need care about the uppper bound
+here (will check below), so this should be enough:
+	gfn_range.start = slot->base_gfn + gfn_range.start;
 
-diff --git a/Documentation/filesystems/zonefs.rst b/Documentation/filesys=
-tems/zonefs.rst
-index 72d4baba0b6a..394b9f15dce0 100644
---- a/Documentation/filesystems/zonefs.rst
-+++ b/Documentation/filesystems/zonefs.rst
-@@ -351,6 +351,44 @@ guaranteed that write requests can be processed. Con=
-versely, the
- to the device on the last close() of a zone file if the zone is not full=
- nor
- empty.
-=20
-+Runtime sysfs attributes
-+------------------------
-+
-+zonefs defines several sysfs attributes for mounted devices.  All attrib=
-utes
-+are user readable and can be found in the directory /sys/fs/zonefs/<dev>=
-/,
-+where <dev> is the name of the mounted zoned block device.
-+
-+The attributes defined are as follows.
-+
-+* **max_wro_seq_files**:  This attribute reports the maximum number of
-+  sequential zone files that can be open for writing.  This number corre=
-sponds
-+  to the maximum number of explicitly or implicitly open zones that the =
-device
-+  supports.  A value of 0 means that the device has no limit and that an=
-y zone
-+  (any file) can be open for writing and written at any time, regardless=
- of the
-+  state of other zones.  When the *explicit-open* mount option is used, =
-zonefs
-+  will fail any open() system call requesting to open a sequential zone =
-file for
-+  writing when the number of sequential zone files already open for writ=
-ing has
-+  reached the *max_wro_seq_files* limit.
-+* **nr_wro_seq_files**:  This attribute reports the current number of se=
-quential
-+  zone files open for writing.  When the "explicit-open" mount option is=
- used,
-+  this number can never exceed *max_wro_seq_files*.  If the *explicit-op=
-en*
-+  mount option is not used, the reported number can be greater than
-+  *max_wro_seq_files*.  In such case, it is the responsibility of the
-+  application to not write simultaneously more than *max_wro_seq_files*
-+  sequential zone files.  Failure to do so can result in write errors.
-+* **max_active_seq_files**:  This attribute reports the maximum number o=
-f
-+  sequential zone files that are in an active state, that is, sequential=
- zone
-+  files that are partially writen (not empty nor full) or that have a zo=
-ne that
-+  is explicitly open (which happens only if the *explicit-open* mount op=
-tion is
-+  used).  This number is always equal to the maximum number of active zo=
-nes that
-+  the device supports.  A value of 0 means that the mounted device has n=
-o limit
-+  on the number of sequential zone files that can be active.
-+* **nr_active_seq_files**:  This attributes reports the current number o=
-f
-+  sequential zone files that are active. If *max_active_seq_files* is no=
-t 0,
-+  then the value of *nr_active_seq_files* can never exceed the value of
-+  *nr_active_seq_files*, regardless of the use of the *explicit-open* mo=
-unt
-+  option.
-+
- Zonefs User Space Tools
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-=20
---=20
-2.35.1
+> 
+> > +       gfn_range.end = min(gfn_range.end, slot->base_gfn + slot->npages);
+> > +
+> 
+> Similar to previous comment, should this rather be:
+> gfn_range.end = slot->base_gfn + min(gfn_range.end, slot->npages);
 
+This is correct.
+
+Thanks,
+Chao
+> 
+> > +       if (gfn_range.start >= gfn_range.end)
+> > +               return;
+> > +
+> > +       idx = srcu_read_lock(&kvm->srcu);
+> > +       KVM_MMU_LOCK(kvm);
+> > +       kvm_unmap_gfn_range(kvm, &gfn_range);
+> > +       kvm_flush_remote_tlbs(kvm);
+> > +       KVM_MMU_UNLOCK(kvm);
+> > +       srcu_read_unlock(&kvm->srcu, idx);
+> > +}
+> > +
+> > +static struct memfile_notifier_ops kvm_memfile_notifier_ops = {
+> > +       .invalidate = kvm_memfile_notifier_handler,
+> > +       .fallocate = kvm_memfile_notifier_handler,
+> > +};
+> > +
+> >  static inline int kvm_memfile_register(struct kvm_memory_slot *slot)
+> >  {
+> > +       slot->notifier.ops = &kvm_memfile_notifier_ops;
+> >         return memfile_register_notifier(file_inode(slot->private_file),
+> >                                          &slot->notifier,
+> >                                          &slot->pfn_ops);
+> > @@ -1963,6 +1998,7 @@ int __kvm_set_memory_region(struct kvm *kvm,
+> >         new->private_file = file;
+> >         new->private_offset = mem->flags & KVM_MEM_PRIVATE ?
+> >                               region_ext->private_offset : 0;
+> > +       new->kvm = kvm;
+> >
+> >         r = kvm_set_memslot(kvm, old, new, change);
+> >         if (!r)
+> > --
+> > 2.17.1
+> >
