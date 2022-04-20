@@ -2,364 +2,469 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 87D94507DA6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Apr 2022 02:35:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 440C4507DAB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Apr 2022 02:37:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1358385AbiDTAhp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 19 Apr 2022 20:37:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50514 "EHLO
+        id S1358572AbiDTAkW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 19 Apr 2022 20:40:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356378AbiDTAhf (ORCPT
+        with ESMTP id S244069AbiDTAkV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 19 Apr 2022 20:37:35 -0400
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC1DB1A1;
-        Tue, 19 Apr 2022 17:34:49 -0700 (PDT)
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.16.1.2/8.16.1.2) with SMTP id 23JN15G5009567;
-        Wed, 20 Apr 2022 00:34:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=corp-2021-07-09;
- bh=EoQdbGwtEbNwYAYG/99YaWgz0pq1y27gMjyoYZrXYrs=;
- b=WMpB+vK3Qmt4kVdfNcCJW7X0X8DfQbdXAQvHKIHAjhI0kbxkFMSmSYGlWMXYTfYLscn1
- 2ytMcaEZme8/L0Bo9C/GqAw2lx8Nmdk+ENPovstCkXI//8v0jyXNzR9LNmAAUrc5q52H
- /9h3F27lOscDbON6OI3Gq1c2RG3Zj5NvDMm2C1oKuJP3UDJRDGhV6bHVYcIbRGKdnj8/
- acPS7qvsG1URhGSCJZ+w1DJKjrs+KZQjq+zrDnUAwDD5y5IyeVjqldmYjUl7XJ+NHCLi
- jiHE8ob0lTIJNUmAoFwUhPqczsSCDxHLFl5EKHJ61gFSAMGfU4xQGhGS7mZp1/Gx90cf Qw== 
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-        by mx0b-00069f02.pphosted.com with ESMTP id 3ffndtfjam-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Apr 2022 00:34:38 +0000
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.16.1.2/8.16.1.2) with SMTP id 23K0Bg0G024655;
-        Wed, 20 Apr 2022 00:34:37 GMT
-Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2044.outbound.protection.outlook.com [104.47.66.44])
-        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com with ESMTP id 3ffm88vcxd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 20 Apr 2022 00:34:37 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=izxdcBSBpf4RYYRxKnRlRp1SVv0Jvbxn054lBV+psSpi3yJ9bNjl+8N5QeewfBRXsn6+a/kSuUaWqW3rcb3bn5eBei9AakPcanBzCBcxcfgSAiFbI9222OLaxXH3qrblIC5yrvLS+cWcZezqnP4NxMih6ahjdzbPcwxByNW+K6xVJM6Y6ZQZ3tSF5Rfjqz4uzLzWrKr9Oiu5MtXde+RiTd/RqkUtFrMzHKcUjpTthR8PPRi25ZaTvoPtVzqldm0fQfoJ6X2sMOzycb8FhS65axEMoi3sUOyIPgS0YOQDensYAEgRpguZ0XM0s/ujMb6DzcXswVLJ/fD6bM0gUwO+HQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EoQdbGwtEbNwYAYG/99YaWgz0pq1y27gMjyoYZrXYrs=;
- b=fj8LmakCCUT7we28IMgpVsL5OVrVO+IvcYNp6rRMt9xtuKn9EdnNCihfNil8r03H90qQoCq8PK/xK0K+XgfoNkEEsjPj1hk+yK/5qo8lDRWKhfFuioSNVszE5IA0t80q/bj7JuGjhf81qBn7ypeka6ldFoQMPkSLgiFjKMV0Od9C36kxUVAeUcMQ6EmYjJUv1WYVDKPK2L/gZL4uQh1LkZdX/RDtq+prO6tS/N5jbjCiZiGEwBkcr2ZO0pJTJwg3Cm0Gw/ht7RW7PZInRRHeUexL3NJFT0vsRL5aRNhPCkkUSYBbRnLYS40+z8i4Uh58ZRPrMmbyjkjWnr9eJ6GwmA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EoQdbGwtEbNwYAYG/99YaWgz0pq1y27gMjyoYZrXYrs=;
- b=pCApCKZMrPZrBjsszOIWL7GEb5sJyabqds5FWNz0r08YFtOBrg+xBLkLXlBDrivrDrcOJ8bbOG9HF+Rq3ObbHX7frEIx1Clw0op2JGkYa7YbtOQ0Bo5ujEOd4ykOl0aegJPC/Zc5WAhbOX3n/BlldFeETLlUU4Bj4bW3R6vt+8I=
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
- by PH0PR10MB5731.namprd10.prod.outlook.com (2603:10b6:510:149::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5164.20; Wed, 20 Apr
- 2022 00:34:35 +0000
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::f427:92a0:da5d:7d49]) by BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::f427:92a0:da5d:7d49%7]) with mapi id 15.20.5164.025; Wed, 20 Apr 2022
- 00:34:34 +0000
-From:   Chuck Lever III <chuck.lever@oracle.com>
-To:     Trond Myklebust <trondmy@hammerspace.com>
-CC:     "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "simo@redhat.com" <simo@redhat.com>,
-        "ak@tempesta-tech.com" <ak@tempesta-tech.com>,
-        "borisp@nvidia.com" <borisp@nvidia.com>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
-Subject: Re: [PATCH RFC 08/15] SUNRPC: Add RPC_TASK_CORK flag
-Thread-Topic: [PATCH RFC 08/15] SUNRPC: Add RPC_TASK_CORK flag
-Thread-Index: AQHYU0UH7NIJR860dUOYblj2e849Maz2i/EAgAEAwYCAAA1cAIAACfaAgAApi4CAACi2Sg==
-Date:   Wed, 20 Apr 2022 00:34:34 +0000
-Message-ID: <A7FEFB8F-3E64-437C-87DD-586427F72078@oracle.com>
-References: <165030062272.5246.16956092606399079004.stgit@oracle-102.nfsv4.dev>
-         <165030072175.5246.14868635576137008067.stgit@oracle-102.nfsv4.dev>
-         <a771c65353d0805fc5f028fa56691ee762d6843f.camel@hammerspace.com>
-         <AE1190F4-EDE4-4C2D-94C9-02A5EDAAFBC6@oracle.com>
-         <36618d90e44961aed7b40c4640952fd574fce60c.camel@hammerspace.com>
-         <B7355D85-1CCF-4836-9B85-E6C9E019CD9E@oracle.com>
- <04ca809b6dc34bc300b5c39e69ad8dc79f8d8cfd.camel@hammerspace.com>
-In-Reply-To: <04ca809b6dc34bc300b5c39e69ad8dc79f8d8cfd.camel@hammerspace.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: ae4d85c2-edbb-48aa-f135-08da22658ae3
-x-ms-traffictypediagnostic: PH0PR10MB5731:EE_
-x-microsoft-antispam-prvs: <PH0PR10MB5731A571A83905AB51818D3393F59@PH0PR10MB5731.namprd10.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 8KI96TvxzaPgUdF+fgc1ocxSpoKrTQ8SYEUCTTUR3vtWCrWVeLHSyXqLS7badrkXANJRr5FP6TdpLCwMhqgcCVjSUqU7xgoj8TvvFI7bB0IKwGCfAU+znHjN7nPj2emQK9V5ZYjTSOi6ShCvnan/92OVl9RgIuVyl0FioJ/3AAtbPkqXrcv7XKZfwJ18vWsEeS/EABDFJCRWtCUWxrxOa01jkJpWJpT9/tf1pDVIBNHgALrNlb7Kk0lqATG/d05Un7b/wiD846GeFf9N03xgEwq612MKljXr5GdlkvJjFMeybmb9bu30xGUXXYaXC7C4HfGB/cPwXwkzoIQdtvOmB/Twsh9twpsDvlmHFy/OXVWjY3wWKryxdnhR9qYC1cPQ+05EIVRzjIR7ZySMzo3nXHLSJ4mk5wJPL8x9mgjqtgbZcVhckGJUZSt9hEY9r1hhflEWwun4hE+09XdEs4qIZnDTWY2R/IcpvfPsJB2jzra3Nl3H9rfpHrJlDJ1P+MjwtApkXS+5fmo1r0xYuKRJ67TDSfgsHlpQbE3+3/lQX1UhsHdOMwaJcqygnAGc5h9RTtqwryeN8lLad72mrNWkT7zq5Ms0SizD0YI1eQ/RDjls1+cHK1gJJ56gYaVqw8AV2j/A3xa7nRMGYPpx+j2Z4DAdGCZdwDV1CC8oYyOrPJ/iHg7qN1SyGKNgNJXe/YeGy3rMhNUwMLluyV7jDrVj4rVuUSlB+XJvdlFr4gbO+h86MlF63wU+QuGi8KfvIxIv
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(366004)(53546011)(66476007)(66946007)(8676002)(316002)(66446008)(2906002)(66556008)(64756008)(38100700002)(8936002)(36756003)(4326008)(83380400001)(33656002)(91956017)(76116006)(86362001)(122000001)(6506007)(6512007)(71200400001)(38070700005)(6486002)(508600001)(26005)(2616005)(186003)(5660300002)(6916009)(54906003)(45980500001);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?aStQcDE0V0VQVjJPbG9TTkpEb1JuWnpEV2JzS3BSM0NQeSt6Vi8wdW9saWk5?=
- =?utf-8?B?MG9Pelg0aW13WlBpcEtGUThxdXhwcUZaaUV5b3FQc1RsU2hnbmJqcUFmb2NR?=
- =?utf-8?B?YXFma092YWpYdVRVTm5kVHRXQlhvSkVDd29qYmRtUkNiZ25OYmloSXhEVnI4?=
- =?utf-8?B?U29jU2JLUm1qOGJicGlpZFdUOERzYnkrREJsQm1OdCs2bmxjQlJ2TzdZRkox?=
- =?utf-8?B?Vm91Q1A2MWpDajdUQTJtWDVMUGZMMm41S0p0b2JUT0ZseHRuODZUUCtzWkpL?=
- =?utf-8?B?VjVSRE9kYzB2UTYySDdxdlozamkvOFdIN1dZd3FvQUhNcmJ2S2I0YVppY1Jp?=
- =?utf-8?B?bXhQUmdGZlhTVWpjYTJYaGtBbVBaUUFDdUNPSS84OVFBbWxJNzlNcWVjL0dD?=
- =?utf-8?B?cGlpeUh6U1VMbkpXYjR2U1BNYnhwbTRSa0RFTzY2dE1vcUwyUS91cWR0V0E0?=
- =?utf-8?B?TVVKUkdnWDdXK3pycGk2OEVQYWV0VDVPVjBUSStQbHNpcXQ0R2VVd3JZaGhZ?=
- =?utf-8?B?VHBPSW1mU3hSaXdoVlF2eUxjTWUvMjdZZ1NvNHJwZmtrcStTUXh6MnJybVBQ?=
- =?utf-8?B?czZsbk1sVEdDMnBaMHpQVVRwQUFrNjNJbUgvTnoydzU0MFNwcU9WVmdhc3Yw?=
- =?utf-8?B?dTN5cUtMR3lGT1FHVWJKL1htdWwxOVpZYTRlSzBvVXA2NkZUb2lVZWtrcEpo?=
- =?utf-8?B?dEY4SytLMWEwSUFNU1FmNlhrcnhaZWxuemlUZHhzb0Y3MHV5YXZXQnh2VTZw?=
- =?utf-8?B?dUJ5VHJTbFltZ00xSXhOWnBBcmkza1BKQ3hHVSs0VTNudW9IK3hGUFhxM1kw?=
- =?utf-8?B?NnlLR0ZoT2UyekJlL293VTMyZlJ5T0VLSzdYM1hDbEhXSjQ3ZUtyemFRc0Nq?=
- =?utf-8?B?bnozenZYQUZQTitmMGgxd01PeFJJVzI3aUZUeHAyRjJsaG9WRUJsRTNGVVdr?=
- =?utf-8?B?WHFwdWx5d2NTUmNhNndCRkt2a2hYcEJrWDRTMmRrVDZsaHVOeUFMZkhDU3dw?=
- =?utf-8?B?OFVoWWtMeEpEZjBWdnpCMU4zdlluRjJmSGNkOTY0cWhYbjZEdENPL1lyNStE?=
- =?utf-8?B?NmxoZjhncVdINW1LVDV2MC8vT1IzVHZwdmJFcGxuQi9aMU5hNjN1SlNoTFhR?=
- =?utf-8?B?NnNJNmVCWFc0L3UvdnY4ZndqazdEOXJzSHYrdEc5VVRVd2FscXBUdHlkNlBC?=
- =?utf-8?B?V0pOckE5QW1hbTFLQXNsejdJNGp6WWx6M2RuWXNsYk1UUllvZjdnc3krVmtk?=
- =?utf-8?B?dHoySFA5WFk5Qnd1eER1bDUxYk85WlppVXV6WkxQSVhTUHVPc1ZvQjM4aVQz?=
- =?utf-8?B?dGU2TURNd2RzS08yMTJoYStJTnd6SEgrYUYyMWN1OW5sOEp6N3laSE51TC9Q?=
- =?utf-8?B?d2pYallDYmhIZE9QeXpyZG92emJ1V3NzQUxaTTdVL2c5Y2xoREVvR2dra0pP?=
- =?utf-8?B?SVdScGVBVU82Z1AzVmFZTzN3RDJPNjNDL01IMTBYMUVLOFl3ZUJrOXN0WUJ0?=
- =?utf-8?B?amlIWksvZm5RVjJUYWpxckZCMmhXZ1k4WWhwWFVnelZWK1lqcUR2am9XUmhF?=
- =?utf-8?B?amR0c05HU1k1UUswcUpxSU9CN0w3bWFzS0NkZnRHZHJadWloc2pkWjZpejdU?=
- =?utf-8?B?V2YzeW5VTzEzNUhZS2R6R3UvWTVmZWFBdVFNbzlIR256c3ppSmFFN0NtVGho?=
- =?utf-8?B?VG1tTFY2RXNzbmNyVUpYaWNQTmZUZDRWZlhSTWRvOUVRSjVGdTFCYXhrZmZy?=
- =?utf-8?B?cUNhS29xOHUzQ1QxS1FJSkdHVjhidVFWOGN3OGVKbE81NWpxZktmUThzeUxq?=
- =?utf-8?B?YVZ2QnpTMWhqMXZHcFczbkRBcnIzMjN4Rmp4dSsrM2dRcTNkVGo3NnhuelBj?=
- =?utf-8?B?YzhabW1jbTFIUitSaWVzNjRJYTR3STdWTmpzUkZXM09CclVxU3h2aXc0Rjk3?=
- =?utf-8?B?NzRLaDIvQUhRZWVqTXB5VDdLZGlWckNpb09IaUNFZlpEWVI2MVlMODY2S2Q5?=
- =?utf-8?B?RkFzNVZ0anExMm94QWxOSnlIRko0bE9hZ2JnbDJJMzVTMlZLb3VkVDl1Z0dK?=
- =?utf-8?B?SDZ5R2lLTDdOcFRJQU0yZUsvTmZBY1RyYjZ6L0RiTjZoZzJSSHVsUnJIVE8v?=
- =?utf-8?B?MmJNOXVKVzBOdE45U0ppQ2tDZk9wUVp1UU04WXV0RDN3YXlReFY3OG54Nkhw?=
- =?utf-8?B?Zk9JRThrOEFKYm9TSy9TZHRyZnVvaWFMZmp5Zmc1amxqRk1sQjUraElsaE81?=
- =?utf-8?B?UGV5SG9Ba2NIeGVlemc4NldmckVZei9wQjdvZlZFWWVYelJabnZxQk4xU3BP?=
- =?utf-8?B?ZWR1NE5kYTVzU3d4YXhybFBPOWdLd3IrWWxEdUZuMWxYZzJpNU43UT09?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Tue, 19 Apr 2022 20:40:21 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 886CBB857;
+        Tue, 19 Apr 2022 17:37:36 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 18802B81244;
+        Wed, 20 Apr 2022 00:37:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8D1BC385A7;
+        Wed, 20 Apr 2022 00:37:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1650415053;
+        bh=crX7LfMw2c5NNQLoS9LDfSjFx6YzubBYnKnfKAIGIcc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=DU2FpNBtMEMfbb4tIaBxY+0AVFaHu4cDFdGrkOO1OkB1KDA6avk/umf0xNCwqe4Py
+         hATkAtFgEL+JNnWYFhM/GUDMEcO4AfJ7V/QWnPxsrD4ixHKiTUwMIvGjr4npbmV0ey
+         OeA/QQOlATjD7NxWAo+JzKq1q0GQpPkL/bNkI/8lPsM+r09vzd1ghIe419FtR1S7RU
+         b8GtL1vO+/guNdVTuo5nybnvvud2bV6lkYoiH4QtcSJnSElzL90HqhJL7AUQrmwaKq
+         /SZMoJHyc0RFQDrwBhbVa80LwjNOWuVJa7x4IfDJAoFjgJ2ORT25UmhZwglHzAAPKz
+         lTPLsfBKsMGKQ==
+Date:   Tue, 19 Apr 2022 17:37:33 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     xfs <linux-xfs@vger.kernel.org>, fstests <fstests@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: generic/068 crash on 5.18-rc2?
+Message-ID: <20220420003733.GB16996@magnolia>
+References: <20220413033425.GM16799@magnolia>
+ <YlbjOPEQP66gc1WQ@casper.infradead.org>
+ <20220418174747.GF17025@magnolia>
 MIME-Version: 1.0
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ae4d85c2-edbb-48aa-f135-08da22658ae3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Apr 2022 00:34:34.2175
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: SnV3In9mDdpSISVwbw7Mg+xHVwcp0YqJz6XBM1iFT1zGjYvPUR4V8O5aiD6qlHGrYaWZtvLJVblNIF8g/JpNiA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB5731
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.486,18.0.858
- definitions=2022-04-19_08:2022-04-15,2022-04-19 signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 malwarescore=0 mlxscore=0
- adultscore=0 mlxlogscore=999 suspectscore=0 spamscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2202240000
- definitions=main-2204200000
-X-Proofpoint-ORIG-GUID: --3HsbMnSVRqqEx-kRMqMmE5bkcP02wL
-X-Proofpoint-GUID: --3HsbMnSVRqqEx-kRMqMmE5bkcP02wL
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220418174747.GF17025@magnolia>
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-DQo+IE9uIEFwciAxOSwgMjAyMiwgYXQgNjowOSBQTSwgVHJvbmQgTXlrbGVidXN0IDx0cm9uZG15
-QGhhbW1lcnNwYWNlLmNvbT4gd3JvdGU6DQo+IA0KPiDvu79PbiBUdWUsIDIwMjItMDQtMTkgYXQg
-MTk6NDAgKzAwMDAsIENodWNrIExldmVyIElJSSB3cm90ZToNCj4+IA0KPj4gDQo+Pj4gT24gQXBy
-IDE5LCAyMDIyLCBhdCAzOjA0IFBNLCBUcm9uZCBNeWtsZWJ1c3QNCj4+PiA8dHJvbmRteUBoYW1t
-ZXJzcGFjZS5jb20+IHdyb3RlOg0KPj4+IA0KPj4+IE9uIFR1ZSwgMjAyMi0wNC0xOSBhdCAxODox
-NiArMDAwMCwgQ2h1Y2sgTGV2ZXIgSUlJIHdyb3RlOg0KPj4+PiANCj4+Pj4gDQo+Pj4+PiBPbiBB
-cHIgMTgsIDIwMjIsIGF0IDEwOjU3IFBNLCBUcm9uZCBNeWtsZWJ1c3QNCj4+Pj4+IDx0cm9uZG15
-QGhhbW1lcnNwYWNlLmNvbT4gd3JvdGU6DQo+Pj4+PiANCj4+Pj4+PiBPbiBNb24sIDIwMjItMDQt
-MTggYXQgMTI6NTIgLTA0MDAsIENodWNrIExldmVyIHdyb3RlOg0KPj4+Pj4+PiBJbnRyb2R1Y2Ug
-YSBtZWNoYW5pc20gdG8gY2F1c2UgeHBydF90cmFuc21pdCgpIHRvIGJyZWFrIG91dA0KPj4+Pj4+
-PiBvZg0KPj4+Pj4+PiBpdHMNCj4+Pj4+Pj4gc2VuZGluZyBsb29wIGF0IGEgc3BlY2lmaWMgcnBj
-X3Jxc3QsIHJhdGhlciB0aGFuIGRyYWluaW5nIHRoZQ0KPj4+Pj4+PiB3aG9sZQ0KPj4+Pj4+PiB0
-cmFuc21pdCBxdWV1ZS4NCj4+Pj4+Pj4gDQo+Pj4+Pj4+IFRoaXMgZW5hYmxlcyB0aGUgY2xpZW50
-IHRvIHNlbmQganVzdCBhbiBSUEMgVExTIHByb2JlIGFuZA0KPj4+Pj4+PiB0aGVuDQo+Pj4+Pj4+
-IHdhaXQNCj4+Pj4+Pj4gZm9yIHRoZSByZXNwb25zZSBiZWZvcmUgcHJvY2VlZGluZyB3aXRoIHRo
-ZSByZXN0IG9mIHRoZQ0KPj4+Pj4+PiBxdWV1ZS4NCj4+Pj4+Pj4gDQo+Pj4+Pj4+IFNpZ25lZC1v
-ZmYtYnk6IENodWNrIExldmVyIDxjaHVjay5sZXZlckBvcmFjbGUuY29tPg0KPj4+Pj4+PiAtLS0N
-Cj4+Pj4+Pj4gIGluY2x1ZGUvbGludXgvc3VucnBjL3NjaGVkLmggIHwgICAgMiArKw0KPj4+Pj4+
-PiAgaW5jbHVkZS90cmFjZS9ldmVudHMvc3VucnBjLmggfCAgICAxICsNCj4+Pj4+Pj4gIG5ldC9z
-dW5ycGMveHBydC5jICAgICAgICAgICAgIHwgICAgMiArKw0KPj4+Pj4+PiAgMyBmaWxlcyBjaGFu
-Z2VkLCA1IGluc2VydGlvbnMoKykNCj4+Pj4+Pj4gDQo+Pj4+Pj4+IGRpZmYgLS1naXQgYS9pbmNs
-dWRlL2xpbnV4L3N1bnJwYy9zY2hlZC5oDQo+Pj4+Pj4+IGIvaW5jbHVkZS9saW51eC9zdW5ycGMv
-c2NoZWQuaA0KPj4+Pj4+PiBpbmRleCA1OTkxMzNmYjNjNjMuLmY4YzA5NjM4ZmE2OSAxMDA2NDQN
-Cj4+Pj4+Pj4gLS0tIGEvaW5jbHVkZS9saW51eC9zdW5ycGMvc2NoZWQuaA0KPj4+Pj4+PiArKysg
-Yi9pbmNsdWRlL2xpbnV4L3N1bnJwYy9zY2hlZC5oDQo+Pj4+Pj4+IEBAIC0xMjUsNiArMTI1LDcg
-QEAgc3RydWN0IHJwY190YXNrX3NldHVwIHsNCj4+Pj4+Pj4gICNkZWZpbmUgUlBDX1RBU0tfVExT
-Q1JFRCAgICAgICAgICAgICAgIDB4MDAwMDAwMDggICAgICAvKg0KPj4+Pj4+PiBVc2UNCj4+Pj4+
-Pj4gQVVUSF9UTFMgY3JlZGVudGlhbCAqLw0KPj4+Pj4+PiAgI2RlZmluZSBSUENfVEFTS19OVUxM
-Q1JFRFMgICAgICAgICAgICAgMHgwMDAwMDAxMCAgICAgIC8qDQo+Pj4+Pj4+IFVzZQ0KPj4+Pj4+
-PiBBVVRIX05VTEwgY3JlZGVudGlhbCAqLw0KPj4+Pj4+PiAgI2RlZmluZSBSUENfQ0FMTF9NQUpP
-UlNFRU4gICAgICAgICAgICAgMHgwMDAwMDAyMCAgICAgIC8qDQo+Pj4+Pj4+IG1ham9yDQo+Pj4+
-Pj4+IHRpbWVvdXQgc2VlbiAqLw0KPj4+Pj4+PiArI2RlZmluZSBSUENfVEFTS19DT1JLICAgICAg
-ICAgICAgICAgICAgMHgwMDAwMDA0MCAgICAgIC8qDQo+Pj4+Pj4+IGNvcmsNCj4+Pj4+Pj4gdGhl
-DQo+Pj4+Pj4+IHhtaXQgcXVldWUgKi8NCj4+Pj4+Pj4gICNkZWZpbmUgUlBDX1RBU0tfRFlOQU1J
-QyAgICAgICAgICAgICAgIDB4MDAwMDAwODAgICAgICAvKg0KPj4+Pj4+PiB0YXNrDQo+Pj4+Pj4+
-IHdhcw0KPj4+Pj4+PiBrbWFsbG9jJ2VkICovDQo+Pj4+Pj4+ICAjZGVmaW5lICAgICAgICBSUENf
-VEFTS19OT19ST1VORF9ST0JJTiAgICAgICAgDQo+Pj4+Pj4+IDB4MDAwMDAxMDAgICAgIA0KPj4+
-Pj4+PiAvKg0KPj4+Pj4+PiBzZW5kIHJlcXVlc3RzIG9uICJtYWluIiB4cHJ0ICovDQo+Pj4+Pj4+
-ICAjZGVmaW5lIFJQQ19UQVNLX1NPRlQgICAgICAgICAgICAgICAgICAweDAwMDAwMjAwICAgICAg
-LyoNCj4+Pj4+Pj4gVXNlDQo+Pj4+Pj4+IHNvZnQNCj4+Pj4+Pj4gdGltZW91dHMgKi8NCj4+Pj4+
-Pj4gQEAgLTEzNyw2ICsxMzgsNyBAQCBzdHJ1Y3QgcnBjX3Rhc2tfc2V0dXAgew0KPj4+Pj4+PiAg
-DQo+Pj4+Pj4+ICAjZGVmaW5lIFJQQ19JU19BU1lOQyh0KSAgICAgICAgICAgICAgICAoKHQpLT50
-a19mbGFncyAmDQo+Pj4+Pj4+IFJQQ19UQVNLX0FTWU5DKQ0KPj4+Pj4+PiAgI2RlZmluZSBSUENf
-SVNfU1dBUFBFUih0KSAgICAgICgodCktPnRrX2ZsYWdzICYNCj4+Pj4+Pj4gUlBDX1RBU0tfU1dB
-UFBFUikNCj4+Pj4+Pj4gKyNkZWZpbmUgUlBDX0lTX0NPUksodCkgICAgICAgICAoKHQpLT50a19m
-bGFncyAmDQo+Pj4+Pj4+IFJQQ19UQVNLX0NPUkspDQo+Pj4+Pj4+ICAjZGVmaW5lIFJQQ19JU19T
-T0ZUKHQpICAgICAgICAgKCh0KS0+dGtfZmxhZ3MgJg0KPj4+Pj4+PiAoUlBDX1RBU0tfU09GVHxS
-UENfVEFTS19USU1FT1VUKSkNCj4+Pj4+Pj4gICNkZWZpbmUgUlBDX0lTX1NPRlRDT05OKHQpICAg
-ICAoKHQpLT50a19mbGFncyAmDQo+Pj4+Pj4+IFJQQ19UQVNLX1NPRlRDT05OKQ0KPj4+Pj4+PiAg
-I2RlZmluZSBSUENfV0FTX1NFTlQodCkgICAgICAgICAgICAgICAgKCh0KS0+dGtfZmxhZ3MgJg0K
-Pj4+Pj4+PiBSUENfVEFTS19TRU5UKQ0KPj4+Pj4+PiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS90cmFj
-ZS9ldmVudHMvc3VucnBjLmgNCj4+Pj4+Pj4gYi9pbmNsdWRlL3RyYWNlL2V2ZW50cy9zdW5ycGMu
-aA0KPj4+Pj4+PiBpbmRleCA4MTExODdjNDdlYmIuLmU4ZDZhZGZmMWE1MCAxMDA2NDQNCj4+Pj4+
-Pj4gLS0tIGEvaW5jbHVkZS90cmFjZS9ldmVudHMvc3VucnBjLmgNCj4+Pj4+Pj4gKysrIGIvaW5j
-bHVkZS90cmFjZS9ldmVudHMvc3VucnBjLmgNCj4+Pj4+Pj4gQEAgLTMxMiw2ICszMTIsNyBAQCBU
-UkFDRV9FVkVOVChycGNfcmVxdWVzdCwNCj4+Pj4+Pj4gICAgICAgICAgICAgICAgIHsgUlBDX1RB
-U0tfVExTQ1JFRCwgIlRMU0NSRUQiDQo+Pj4+Pj4+IH0sICAgICAgICAgICAgICAgICAgICAgICAg
-XA0KPj4+Pj4+PiAgICAgICAgICAgICAgICAgeyBSUENfVEFTS19OVUxMQ1JFRFMsICJOVUxMQ1JF
-RFMiDQo+Pj4+Pj4+IH0sICAgICAgICAgICAgICAgICAgICBcDQo+Pj4+Pj4+ICAgICAgICAgICAg
-ICAgICB7IFJQQ19DQUxMX01BSk9SU0VFTiwgIk1BSk9SU0VFTiINCj4+Pj4+Pj4gfSwgICAgICAg
-ICAgICAgICAgICAgIFwNCj4+Pj4+Pj4gKyAgICAgICAgICAgICAgIHsgUlBDX1RBU0tfQ09SSywg
-IkNPUksiDQo+Pj4+Pj4+IH0sICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgXA0KPj4+Pj4+
-PiAgICAgICAgICAgICAgICAgeyBSUENfVEFTS19EWU5BTUlDLCAiRFlOQU1JQyINCj4+Pj4+Pj4g
-fSwgICAgICAgICAgICAgICAgICAgICAgICBcDQo+Pj4+Pj4+ICAgICAgICAgICAgICAgICB7IFJQ
-Q19UQVNLX05PX1JPVU5EX1JPQklOLCAiTk9fUk9VTkRfUk9CSU4iDQo+Pj4+Pj4+IH0sICAgICAg
-ICAgIFwNCj4+Pj4+Pj4gICAgICAgICAgICAgICAgIHsgUlBDX1RBU0tfU09GVCwgIlNPRlQiDQo+
-Pj4+Pj4+IH0sICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgXA0KPj4+Pj4+PiBkaWZmIC0t
-Z2l0IGEvbmV0L3N1bnJwYy94cHJ0LmMgYi9uZXQvc3VucnBjL3hwcnQuYw0KPj4+Pj4+PiBpbmRl
-eCA4NmQ2MmNmZmJhMGQuLjRiMzAzYjk0NWI1MSAxMDA2NDQNCj4+Pj4+Pj4gLS0tIGEvbmV0L3N1
-bnJwYy94cHJ0LmMNCj4+Pj4+Pj4gKysrIGIvbmV0L3N1bnJwYy94cHJ0LmMNCj4+Pj4+Pj4gQEAg
-LTE2MjIsNiArMTYyMiw4IEBAIHhwcnRfdHJhbnNtaXQoc3RydWN0IHJwY190YXNrICp0YXNrKQ0K
-Pj4+Pj4+PiAgICAgICAgICAgICAgICAgaWYgKHhwcnRfcmVxdWVzdF9kYXRhX3JlY2VpdmVkKHRh
-c2spICYmDQo+Pj4+Pj4+ICAgICAgICAgICAgICAgICAgICAgIXRlc3RfYml0KFJQQ19UQVNLX05F
-RURfWE1JVCwgJnRhc2stDQo+Pj4+Pj4+PiB0a19ydW5zdGF0ZSkpDQo+Pj4+Pj4+ICAgICAgICAg
-ICAgICAgICAgICAgICAgIGJyZWFrOw0KPj4+Pj4+PiArICAgICAgICAgICAgICAgaWYgKFJQQ19J
-U19DT1JLKHRhc2spKQ0KPj4+Pj4+PiArICAgICAgICAgICAgICAgICAgICAgICBicmVhazsNCj4+
-Pj4+Pj4gICAgICAgICAgICAgICAgIGNvbmRfcmVzY2hlZF9sb2NrKCZ4cHJ0LT5xdWV1ZV9sb2Nr
-KTsNCj4+Pj4+Pj4gICAgICAgICB9DQo+Pj4+Pj4+ICAgICAgICAgc3Bpbl91bmxvY2soJnhwcnQt
-PnF1ZXVlX2xvY2spOw0KPj4+Pj4+PiANCj4+Pj4+Pj4gDQo+Pj4+Pj4gDQo+Pj4+Pj4gVGhpcyBp
-cyBlbnRpcmVseSB0aGUgd3JvbmcgcGxhY2UgZm9yIHRoaXMga2luZCBvZiBjb250cm9sDQo+Pj4+
-Pj4gbWVjaGFuaXNtLg0KPj4+Pj4gDQo+Pj4+PiBJJ20gbm90IHN1cmUgSSBlbnRpcmVseSB1bmRl
-cnN0YW5kIHlvdXIgY29uY2Vybiwgc28gYmVhciB3aXRoDQo+Pj4+PiBtZSB3aGlsZSBJIHRyeSB0
-byBjbGFyaWZ5Lg0KPj4+Pj4gDQo+Pj4+PiANCj4+Pj4+PiBUTFMgdnMgbm90LVRMUyBuZWVkcyB0
-byBiZSBkZWNpZGVkIHVwIGZyb250IHdoZW4gd2UgaW5pdGlhbGlzZQ0KPj4+Pj4+IHRoZQ0KPj4+
-Pj4+IHRyYW5zcG9ydCAoaS5lLiBhdCBtb3VudCB0aW1lIG9yIHdoZW5ldmVyIHRoZSBwTkZTIGNo
-YW5uZWxzIGFyZQ0KPj4+Pj4+IHNldA0KPj4+Pj4+IHVwKS4gT3RoZXJ3aXNlLCB3ZSdyZSB2dWxu
-ZXJhYmxlIHRvIGRvd25ncmFkZSBhdHRhY2tzLg0KPj4+Pj4gDQo+Pj4+PiBEb3duZ3JhZGUgYXR0
-YWNrcyBhcmUgcHJldmVudGVkIGJ5IHVzaW5nICJ4cHJ0c2VjPXRscyIgYmVjYXVzZQ0KPj4+Pj4g
-aW4gdGhhdCBjYXNlLCB0cmFuc3BvcnQgY3JlYXRpb24gZmFpbHMgaWYgZWl0aGVyIHRoZSBBVVRI
-X1RMUw0KPj4+Pj4gZmFpbHMgb3IgdGhlIGhhbmRzaGFrZSBmYWlscy4NCj4+Pj4+IA0KPj4+Pj4g
-VGhlIFRDUCBjb25uZWN0aW9uIGhhcyB0byBiZSBlc3RhYmxpc2hlZCBmaXJzdCwgdGhvdWdoLiBU
-aGVuIHRoZQ0KPj4+Pj4gY2xpZW50IGNhbiBzZW5kIHRoZSBSUENfQVVUSF9UTFMgcHJvYmUsIHdo
-aWNoIGlzIHRoZSBzYW1lIGFzIHRoZQ0KPj4+Pj4gTlVMTCBwaW5nIHRoYXQgaXQgYWxyZWFkeSBz
-ZW5kcy4gVGhhdCBtZWNoYW5pc20gaXMgaW5kZXBlbmRlbnQNCj4+Pj4+IG9mIHRoZSBsb3dlciBs
-YXllciB0cmFuc3BvcnQgKFRDUCBpbiB0aGlzIGNhc2UpLg0KPj4+Pj4gDQo+Pj4+PiBUaGVyZWZv
-cmUsIFJQQyB0cmFmZmljIG11c3QgYmUgc3RvcHBlcmVkIHdoaWxlIHRoZSBjbGllbnQ6DQo+Pj4+
-PiANCj4+Pj4+IDEuIHdhaXRzIGZvciB0aGUgQVVUSF9UTFMgcHJvYmUncyByZXBseSwgYW5kDQo+
-Pj4+PiANCj4+Pj4+IDIuIHdhaXRzIGZvciB0aGUgaGFuZHNoYWtlIHRvIGNvbXBsZXRlDQo+Pj4+
-PiANCj4+Pj4+IEJlY2F1c2UgYW4gUlBDIG1lc3NhZ2UgaXMgaW52b2x2ZWQgaW4gdGhpcyBpbnRl
-cmFjdGlvbiwgSSBkaWRuJ3QNCj4+Pj4+IHNlZSBhIHdheSB0byBpbXBsZW1lbnQgaXQgY29tcGxl
-dGVseSB3aXRoaW4geHBydHNvY2sncyBUQ1ANCj4+Pj4+IGNvbm5lY3Rpb24gbG9naWMuIElNTywg
-ZHJpdmluZyB0aGUgaGFuZHNoYWtlIGhhcyB0byBiZSBkb25lIGJ5DQo+Pj4+PiB0aGUgZ2VuZXJp
-YyBSUEMgY2xpZW50Lg0KPj4+Pj4gDQo+Pj4+PiBTbywgZG8geW91IG1lYW4gdGhhdCBJIG5lZWQg
-dG8gcmVwbGFjZSBSUENfVEFTS19DT1JLIHdpdGggYQ0KPj4+Pj4gc3BlY2lhbCByZXR1cm4gY29k
-ZSBmcm9tIHhzX3RjcF9zZW5kX3JlcXVlc3QoKSA/DQo+Pj4gDQo+Pj4gDQo+Pj4gSSBtZWFuIHRo
-ZSByaWdodCBtZWNoYW5pc20gZm9yIGNvbnRyb2xsaW5nIHdoZXRoZXIgb3Igbm90IHRoZQ0KPj4+
-IHRyYW5zcG9ydA0KPj4+IGlzIHJlYWR5IHRvIHNlcnZlIFJQQyByZXF1ZXN0cyBpcyB0aHJvdWdo
-IHRoZSBYUFJUX0NPTk5FQ1RFRCBmbGFnLg0KPj4+IEFsbA0KPj4+IHRoZSBleGlzdGluZyBnZW5l
-cmljIFJQQyBlcnJvciBoYW5kbGluZywgY29uZ2VzdGlvbiBoYW5kbGluZywgZXRjDQo+Pj4gZGVw
-ZW5kcyBvbiB0aGF0IGZsYWcgYmVpbmcgc2V0IGNvcnJlY3RseS4NCj4+PiANCj4+PiBVbnRpbCB0
-aGUgVExTIHNvY2tldCBoYXMgY29tcGxldGVkIGl0cyBoYW5kc2hha2UgcHJvdG9jb2wgYW5kIGlz
-DQo+Pj4gcmVhZHkNCj4+PiB0byB0cmFuc21pdCBkYXRhLCBpdCBzaG91bGQgbm90IGJlIGRlY2xh
-cmVkIGNvbm5lY3RlZC4gVGhlDQo+Pj4gZGlzdGluY3Rpb24NCj4+PiBiZXR3ZWVuIHRoZSB0d28g
-c3RhdGVzICdUQ1AgaXMgdW5jb25uZWN0ZWQnIGFuZCAnVExTIGhhbmRzaGFrZSBpcw0KPj4+IGlu
-Y29tcGxldGUnIGlzIGEgc29ja2V0L3RyYW5zcG9ydCBzZXR1cCBkZXRhaWwgYXMgZmFyIGFzIHRo
-ZSBSUEMNCj4+PiB4cHJ0DQo+Pj4gbGF5ZXIgaXMgY29uY2VybmVkOiBqdXN0IGFub3RoZXIgc2V0
-IG9mIGludGVybWVkaWF0ZSBzdGF0ZXMgYmV0d2Vlbg0KPj4+IFNZTl9TRU5UIGFuZCBFU1RBQkxJ
-U0hFRC4NCj4+IA0KPj4gRmlyc3QsIFRMUyBpcyB0ZWNobmljYWxseSBhbiB1cHBlciBsYXllciBw
-cm90b2NvbC4gSXQncyBub3QNCj4+IHBhcnQgb2YgdGhlIHRyYW5zcG9ydCBwcm90b2NvbC4gVGhp
-cyBpcyBleGFjdGx5IGhvdyBpdCdzDQo+PiBpbXBsZW1lbnRlZCBpbiB0aGUgTGludXgga2VybmVs
-LiBBbmQsIFRMUyB3b3JrcyBvbiB0cmFuc3BvcnRzDQo+PiBvdGhlciB0aGFuIFRDUCwgc28gdGhh
-dCBtYWtlcyBpdCBhIHJlYXNvbmFibGUgY2FuZGlkYXRlIGZvcg0KPj4gdHJlYXRtZW50IGluIHRo
-ZSBnZW5lcmljIGNsaWVudCByYXRoZXIgdGhhbiBpbiBhIHBhcnRpY3VsYXINCj4+IHRyYW5zcG9y
-dCBtZWNoYW5pc20uDQo+IA0KPiBTb3JyeSwgYnV0IG5vISBBcyBmYXIgYXMgdGhlIFJQQyBsYXll
-ciBpcyBjb25jZXJuZWQsIHRoZXJlIGlzIG5vDQo+IGRpZmZlcmVuY2UgYmV0d2VlbiBhIFRMUyBz
-b2NrZXQgYW5kIGEgVENQIHNvY2tldC4gVGhlIHhwcnQgbGF5ZXIgc2hvdWxkDQo+IG5vdCBoYXZl
-IHRvIGtub3cgb3IgY2FyZSBhYm91dCB0aGUgZXhpc3RlbmNlIG9mIFRMUyBvdGhlciB0aGF0IGFz
-IGENCj4gdHJhbnNwb3J0IG9wdGlvbiB0byBiZSBjb25maWd1cmVkIGF0IGNvbm5lY3Rpb24gdGlt
-ZS4NCj4gDQo+PiANCj4+IFNlY29uZCwgdGhlICJpbnRlcm1lZGlhdGUgc3RhdGVzIiB3b3VsZCBi
-ZSAvb3V0c2lkZS8gb2YgU1lOX1NFTlQNCj4+IGFuZCBFU1RBQkxJU0hFRC4gQSBUQ1AgdHJhbnNw
-b3J0IGhhcyB0byBiZSBpbiB0aGUgRVNUQUJMSVNIRUQNCj4+IHN0YXRlIChpZSwgdGhlIHRyYW5z
-cG9ydCdzIGNvbm5lY3Rpb24gaGFuZHNoYWtlIGhhcyB0byBiZQ0KPj4gY29tcGxldGUpIGJlZm9y
-ZSBhbnkgVExTIHRyYWZmaWMgY2FuIGdvIG92ZXIgaXQuDQo+PiANCj4gDQo+IE15IHBvaW50IGlz
-IHdlIGRvbid0IGdpdmUgYSBkYW1uIGFib3V0IHRoZSBpbnRlcm1lZGlhdGUgc3RhdGVzIGluIHRo
-ZQ0KPiBSUEMgbGF5ZXIuDQo+IA0KPj4gTW9zdCBpbXBvcnRhbnRseSwgdGhlIGNsaWVudCBoYXMg
-dG8gc2VuZCBhbiBSUEMgbWVzc2FnZSBmaXJzdA0KPj4gYmVmb3JlIGl0IGNhbiBzdGFydCBhIFRM
-UyBoYW5kc2hha2UuIFRoZSBSUEMtd2l0aC1UTFMgcHJvdG9jb2wNCj4+IHNwZWNpZmljYXRpb24g
-cmVxdWlyZXMgdGhhdCB0aGUgaGFuZHNoYWtlIGJlIHByZWNlZGVkIHdpdGggdGhlDQo+PiBOVUxM
-IEFVVEhfVExTIHJlcXVlc3QsIHdoaWNoIGlzIGFuIFJQQy4gT3RoZXJ3aXNlLCB0aGVyZSdzIG5v
-DQo+PiB3YXkgZm9yIHRoZSBzZXJ2ZXIgZW5kIHRvIGtub3cgd2hlbiB0byBleHBlY3QgYSBoYW5k
-c2hha2UuDQo+PiANCj4gDQo+IFN1cmUsIGJ1dCB0aG9zZSBhcmUgMiBub24tb3ZlcmxhcHBpbmcg
-c3RhdGVzLiBUaGUgc29ja2V0IGlzIGZpcnN0IGluIGENCj4gc3RhdGUgd2hlcmUgaXQgbmVlZHMg
-dG8gZG8gYSBOVUxMIHBpbmcgdXNpbmcgcmVndWxhciBSUEMvVENQLiBUaGVuIGl0DQo+IG5lZWRz
-IHRvIGRvIHRoZSBUTFMgaGFuZHNoYWtlLiBUaGVuIGl0IHRyYW5zaXRpb25zIGludG8gdGhlIHN0
-YXRlIHdoZXJlDQo+IGl0IGNhbiBhY3QgbGlrZSBhbnkgb3RoZXIgdHJhbnNwb3J0Lg0KDQpVbmRl
-cnN0b29kOiB0aGlzIGFyY2hpdGVjdHVyZSBtb3JlLW9yLWxlc3MgbWltaWNzIHdoYXQgdGhlIFJQ
-QyBjbGllbnQgd291bGQgc2VlIGZvciBhIHRyYW5zcG9ydCBsaWtlIFFVSUMgd2hlcmUgY29ubmVj
-dGlvbiBlc3RhYmxpc2htZW50IGFuZCB0aGUgc2VjdXJpdHkgaGFuZHNoYWtlIGFyZSBpbnRlZ3Jh
-dGVkIGFuZCBoYW5kbGVkIGNvbmN1cnJlbnRseS4NCg0KVGhlIHJlYWxpdHkgaXMgdGhhdCB0aGUg
-UlBDIGNsaWVudOKAmXMgdHJhbnNwb3J0IGxheWVyIHdpbGwgaGF2ZSB0byBkZWFsIHdpdGggdGhl
-c2Ugc3RlcHMgc2VwYXJhdGVseSBmb3IgVExTLW9uLVVEUCBhbmQgVExTLW9uLVRDUCwgYnV0IGhp
-ZGluZyB0aGUgZGV0YWlscyB1bmRlciB0aGUgdHJhbnNwb3J0IHN3aXRjaCBpcyBmaW5lIHdpdGgg
-bWUgYXMgbG9uZyBhcyB0aGVyZSBpcyBhIHdheSB0byBzZW5kIHRoZSBBVVRIX1RMUyBwcm9iZSBi
-ZWZvcmUgdGhlIHRyYW5zcG9ydCBpcyBtYXJrZWQg4oCcY29ubmVjdGVk4oCdIChzZWUgYmVsb3cp
-Lg0KDQoNCj4+IEluIHRvZGF5J3MgUlBDIGNsaWVudCwgdGhlIHVuZGVybHlpbmcgY29ubmVjdGlv
-biBoYXMgdG8gYmUgaW4NCj4+IHRoZSBYUFJUX0NPTk5FQ1RFRCBzdGF0ZSBiZWZvcmUgdGhlIFJQ
-QyBjbGllbnQgY2FuIGV4Y2hhbmdlIGFueQ0KPj4gUlBDIHRyYW5zYWN0aW9uLCBpbmNsdWRpbmcg
-QVVUSF9UTFMgTlVMTC4NCj4+IA0KPj4gVG8gbWFrZSBpdCB3b3JrIHRoZSB3YXkgeW91J3ZlIHN1
-Z2dlc3RlZCwgd2Ugd291bGQgaGF2ZSB0byBidWlsZA0KPj4gYSBtZWNoYW5pc20gdGhhdCBjb3Vs
-ZCBzZW5kIHRoZSBBVVRIX1RMUyBOVUxMIGFuZCByZWNlaXZlIGFuZA0KPj4gcGFyc2UgaXRzIHJl
-cGx5IC9iZWZvcmUvIHRoZSBjbGllbnQgaGFzIHB1dCB0aGUgdHJhbnNwb3J0IGludG8NCj4+IHRo
-ZSBYUFJUX0NPTk5FQ1RFRCBzdGF0ZSwgYW5kIHRoYXQgTlVMTCByZXF1ZXN0IHdvdWxkIGhhdmUg
-dG8NCj4+IGJlIGRyaXZlbiBmcm9tIGluc2lkZSB0aGUgdHJhbnNwb3J0IGluc3RhbmNlIChub3Qg
-dmlhIHRoZSBGU00NCj4+IHdoZXJlIGFsbCBvdGhlciBSUEMgdHJhZmZpYyBvcmlnaW5hdGVzKS4N
-Cj4+IA0KPj4gRG8geW91IGhhdmUgYW55IHN1Z2dlc3Rpb25zIGFib3V0IGhvdyB0byBtYWtlIHRo
-aXMgbGFzdCBwb2ludA0KPj4gbGVzcyBwYWluZnVsPw0KPiANCj4gVGhpcyBpc24ndCB0b28gZGlm
-ZmVyZW50IGZyb20gd2hhdCB3ZSBhbHJlYWR5IGRvIHdpdGggdGhlIHJwY2JpbmQgY2FsbA0KPiBm
-b3IgcGVyZm9ybWluZyBwb3J0IGRpc2NvdmVyeS4gVGhlIG9ubHkgZGlmZmVyZW5jZSBpcyB0aGF0
-IHRoZSBOVUxMDQo+IHBpbmcgbmVlZHMgdG8gaGFwcGVuIG9uIHRoZSBzYW1lIHRyYW5zcG9ydCBh
-cyB0aGUgb25lIGJlaW5nIGNvbnN0cnVjdGVkDQo+IGFuZCB0aGF0IGl0IG5lZWRzIHRvIGhhcHBl
-biBhZnRlciB0aGUgVENQIGNvbm5lY3Rpb24gaXMgY29tcGxldGUuDQo+IA0KPiBTbyBJJ2Qgc3Vn
-Z2VzdCB0aGF0IFRMUy9UQ1AgbmVlZHMgdG8gYmUgYSBkaWZmZXJlbnQgeHBydF9jbGFzcyB0aGFu
-IHRoZQ0KPiBiYXNlIFRDUCwgdGhlbiBkb2luZyB0aGUgd2hvbGUgImRvLU5VTEwtcGluZy1hbmQt
-VExTLWhhbmRzaGFrZSIgaW4gdGhlDQo+IGNvbm5lY3QoKSBjYWxsYmFjayBmb3IgdGhhdCBuZXcg
-Y2xhc3MuDQo+IA0KPiBUaGUgY29ubmVjdCgpIGNhbGxiYWNrIGNhbiBzZXQgdXAgYSBwcml2YXRl
-IHJwYyBjbGllbnQgYW5kIGRvIHRoZSBOVUxMDQo+IGNhbGwgYXN5bmNocm9ub3VzbHkganVzdCBs
-aWtlIHdlIGRvIGluIHJwY2JfZ2V0cG9ydF9hc3luYygpLg0KDQrigJxTZXQgdXAgYSBzZXBhcmF0
-ZSBycGNfY2xpZW50IHRvIGhhbmRsZSB0aGUgQVVUSF9UTFMgcHJvYmXigJ0gd2FzIHRoZSBwaWVj
-ZSBJIHdhcyBtaXNzaW5nLiBUaGUgcmVzdCBvZiB0aGlzIGlzIHByZXR0eSBtdWNoIHdoYXQgdGhl
-IFJQQyBjaGFuZ2VzIGluIHRoaXMgcGF0Y2ggc2VyaWVzIGFscmVhZHkgZG8sIGJ1dCBvcmdhbml6
-ZWQgYSBsaXR0bGUgZGlmZmVyZW50bHkgKGZvciBleGFtcGxlLCB0aGV5IHVzZSBhIOKAnGRvbmXi
-gJ0gY2FsbGJhY2sgYXMgeW91IGRlc2NyaWJlIGJlbG93LCBzbyB3ZeKAmXJlIGFscmVhZHkgYWJv
-dXQgaGFsZndheSB0aGVyZSkuDQoNClRoZSBpZGVhIGlzIHRvIHN0b3BwZXIgdGhlIHN0cmVhbSBv
-ZiBSUEMgbWVzc2FnZXMgYnkgbGVhdmluZyB0aGUgeHBydCBtYXJrZWQg4oCcbm90IGNvbm5lY3Rl
-ZOKAnSBpbnN0ZWFkIG9mIGJ5IGFkZGluZyBhbmQgc2V0dGluZyBhbiBSUENfVEFTS19DT1JLIGZs
-YWcuIFRoZSBGU00gd2lsbCBubyBsb25nZXIgYmUgaW52b2x2ZWQgYXQgYWxsIGluIGRlYWxpbmcg
-d2l0aCBUTFMuDQoNCg0KPiBXaGVuIHRoZQ0KPiBSUEMgY2FsbCBjb21wbGV0ZXMsIHdlIHN0ZWFs
-IHRoZSByZXN1bHRpbmcgc29ja2V0IGZyb20gdGhhdCBwcml2YXRlIHJwYw0KPiBjbGllbnQgYW5k
-IGtpY2sgb2ZmIHRoZSBUTFMgaGFuZHNoYWtlIG9uIGl0LiBBbGwgdGhhdCBjYW4gYmUgZG9uZSBp
-bg0KPiB0aGUgcnBjX2NhbGxfZG9uZSBjYWxsYmFjayAoaS5lLiB0aGUgZXF1aXZhbGVudCBvZiBy
-cGNiX2dldHBvcnRfZG9uZSkuDQo+IA0KPiBPbmNlIHRoZSBUTFMgaGFuZHNoYWtlIGlzIGRvbmUs
-IHlvdSBjYW4gc2V0IHRoZSBYUFJUX0NPTk5FQ1RFRCBzdGF0ZQ0KPiBhbmQgY2FsbCB4cHJ0X3dh
-a2VfcGVuZGluZ190YXNrcygpLg0K
+On Mon, Apr 18, 2022 at 10:47:47AM -0700, Darrick J. Wong wrote:
+> On Wed, Apr 13, 2022 at 03:50:32PM +0100, Matthew Wilcox wrote:
+> > On Tue, Apr 12, 2022 at 08:34:25PM -0700, Darrick J. Wong wrote:
+> > > Hmm.  Two nights in a row I've seen the following crash.  Has anyone
+> > > else seen this, or should I keep digging?  This is a fairly boring
+> > > x86_64 VM with a XFS v5 filesystem + rmapbt.
+> > 
+> > I have not seen this before.  I test with:
+> > MKFS_OPTIONS  -- -f -m reflink=1,rmapbt=1 -i sparse=1 -b size=1024 /dev/sdc
+> > 
+> > Maybe I should try a 4096 byte block size.
+> > 
+> > > mm/filemap.c:1653 is the BUG in:
+> > > 
+> > > void folio_end_writeback(struct folio *folio)
+> > > {
+> > > 	/*
+> > > 	 * folio_test_clear_reclaim() could be used here but it is an
+> > > 	 * atomic operation and overkill in this particular case.
+> > > 	 * Failing to shuffle a folio marked for immediate reclaim is
+> > > 	 * too mild a gain to justify taking an atomic operation penalty
+> > > 	 * at the end of every folio writeback.
+> > > 	 */
+> > > 	if (folio_test_reclaim(folio)) {
+> > > 		folio_clear_reclaim(folio);
+> > > 		folio_rotate_reclaimable(folio);
+> > > 	}
+> > > 
+> > > 	/*
+> > > 	 * Writeback does not hold a folio reference of its own, relying
+> > > 	 * on truncation to wait for the clearing of PG_writeback.
+> > > 	 * But here we must make sure that the folio is not freed and
+> > > 	 * reused before the folio_wake().
+> > > 	 */
+> > > 	folio_get(folio);
+> > > 	if (!__folio_end_writeback(folio))
+> > > >>>>		BUG();
+> > 
+> > Grr, that should have been a VM_BUG_ON_FOLIO(1, folio) so we get useful
+> > information about the folio (like whether it has an iop, or what order
+> > the folio is).  Can you make that change and try to reproduce?
+> 
+> > What's going on here is that we've called folio_end_writeback() on a
+> > folio which does not have the writeback flag set.  That _should_ be
+> > impossible, hence the use of BUG().  Either we've called
+> > folio_end_writeback() twice on the same folio, or we neglected to set
+> > the writeback flag on the folio.  I don't immediately see why either
+> > of those two things would happen.
+> 
+> Well, I made that change and rebased to -rc3 to see if reverting that
+> ZERO_PAGE thing would produce better results, I think I just got the
+> same crash.  Curiously, the only VM that died this time was the one
+> running the realtime configuration, but it's still generic/068:
+> 
+> FSTYP         -- xfs (debug)
+> PLATFORM      -- Linux/x86_64 oci-mtr28 5.18.0-rc3-djwx #rc3 SMP PREEMPT_DYNAMIC Sun Apr 17 14:42:49 PDT 2022
+> MKFS_OPTIONS  -- -f -rrtdev=/dev/sdb4 -llogdev=/dev/sdb2 -m reflink=0,rmapbt=0, -d rtinherit=1, /dev/sda4
+> MOUNT_OPTIONS -- -ortdev=/dev/sdb4 -ologdev=/dev/sdb2 /dev/sda4 /opt
+> 
+> I don't know if it'll help, but here's the sequence of tests that we
+> were running just prior to crashing:
+> 
+> generic/445      3s
+> generic/225      76s
+> xfs/306  22s
+> xfs/290  3s
+> generic/155     [not run] Reflink not supported by test filesystem type: xfs
+> generic/525      6s
+> generic/269      89s
+> generic/1206    [not run] xfs_io swapext -v vfs -s 64k -l 64k ioctl support is missing
+> xfs/504  198s
+> xfs/192 [not run] Reflink not supported by scratch filesystem type: xfs
+> xfs/303  1s
+> generic/346      6s
+> generic/512      5s
+> xfs/227  308s
+> generic/147     [not run] Reflink not supported by test filesystem type: xfs
+> generic/230     [not run] Quotas not supported on realtime test device
+> generic/008      4s
+> generic/108      4s
+> xfs/264  12s
+> generic/200     [not run] Reflink not supported by scratch filesystem type: xfs
+> generic/493     [not run] Dedupe not supported by scratch filesystem type: xfs
+> xfs/021  5s
+> generic/672     [not run] Reflink not supported by scratch filesystem type: xfs
+> xfs/493  5s
+> xfs/146  13s
+> xfs/315 [not run] Reflink not supported by scratch filesystem type: xfs
+> generic/068     
+> 
+> And the dmesg output:
+> 
+> run fstests generic/068 at 2022-04-17 16:57:16
+> XFS (sda4): Mounting V5 Filesystem
+> XFS (sda4): Ending clean mount
+> page:ffffea0004a39c40 refcount:0 mapcount:0 mapping:0000000000000000 index:0x1 pfn:0x128e71
+> flags: 0x17ff80000000000(node=0|zone=2|lastcpupid=0xfff)
+> raw: 017ff80000000000 0000000000000000 ffffffff00000203 0000000000000000
+> raw: 0000000000000001 0000000000000000 00000000ffffffff 0000000000000000
+> page dumped because: VM_BUG_ON_FOLIO(((unsigned int) folio_ref_count(folio) + 127u <= 127u))
+> ------------[ cut here ]------------
+> kernel BUG at include/linux/mm.h:1164!
+> invalid opcode: 0000 [#1] PREEMPT SMP
+> CPU: 3 PID: 1094085 Comm: 3:0 Tainted: G        W         5.18.0-rc3-djwx #rc3 0a707744ee7c555d54e50726c5b02515710a6aae
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS ?-20171121_152543-x86-ol7-builder-01.us.oracle.com-4.el7.1 04/01/2014
+> Workqueue: xfs-conv/sda4 xfs_end_io [xfs]
+> RIP: 0010:folio_end_writeback+0xd0/0x110
+> Code: 80 60 02 fb 48 89 ef e8 5e 6d 01 00 8b 45 34 83 c0 7f 83 f8 7f 0f 87 6a ff ff ff 48 c7 c6 40 c7 e2 81 48 89 ef e8 30 69 04 00 <0f> 0b 48 89 ee e8 b6 51 02 00 eb 9a 48 c7 c6 c0 ad e5 81 48 89 ef
+> RSP: 0018:ffffc900084f3d48 EFLAGS: 00010246
+> RAX: 000000000000005c RBX: 0000000000001000 RCX: 0000000000000000
+> RDX: 0000000000000000 RSI: ffffffff81e56da3 RDI: 00000000ffffffff
+> RBP: ffffea0004a39c40 R08: 0000000000000000 R09: ffffffff8205fe40
+> R10: 0000000000017578 R11: 00000000000175f0 R12: 0000000000004000
+> R13: ffff88814dc5cd40 R14: 000000000000002e R15: ffffea0004a39c40
+> FS:  0000000000000000(0000) GS:ffff88843fd80000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f2b0ea47010 CR3: 000000043f00c000 CR4: 00000000001506a0
+> Call Trace:
+>  <TASK>
+>  iomap_finish_ioend+0x1ee/0x6a0
+>  iomap_finish_ioends+0x69/0x100
+>  xfs_end_ioend+0x5a/0x160 [xfs e8251de1111d7958449fd159d84af12a2afc12f2]
+>  xfs_end_io+0xb1/0xf0 [xfs e8251de1111d7958449fd159d84af12a2afc12f2]
+>  process_one_work+0x1df/0x3c0
+>  ? rescuer_thread+0x3b0/0x3b0
+>  worker_thread+0x53/0x3b0
+>  ? rescuer_thread+0x3b0/0x3b0
+>  kthread+0xea/0x110
+>  ? kthread_complete_and_exit+0x20/0x20
+>  ret_from_fork+0x1f/0x30
+>  </TASK>
+> Modules linked in: xfs dm_zero btrfs blake2b_generic xor lzo_compress lzo_decompress zlib_deflate raid6_pq zstd_compress dm_delay dm_snapshot dm_thin_pool dm_persistent_data dm_bio_prison dm_bufio dm_flakey libcrc32c xt_REDIRECT iptable_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 auth_rpcgss oid_registry xt_tcpudp ip_set_hash_ip ip_set_hash_net xt_set ip_set_hash_mac ip_set nfnetlink ip6table_filter ip6_tables iptable_filter bfq sch_fq_codel ip_tables x_tables overlay nfsv4 af_packet [last unloaded: scsi_debug]
+> Dumping ftrace buffer:
+>    (ftrace buffer empty)
+> ---[ end trace 0000000000000000 ]---
+> RIP: 0010:folio_end_writeback+0xd0/0x110
+> Code: 80 60 02 fb 48 89 ef e8 5e 6d 01 00 8b 45 34 83 c0 7f 83 f8 7f 0f 87 6a ff ff ff 48 c7 c6 40 c7 e2 81 48 89 ef e8 30 69 04 00 <0f> 0b 48 89 ee e8 b6 51 02 00 eb 9a 48 c7 c6 c0 ad e5 81 48 89 ef
+> RSP: 0018:ffffc900084f3d48 EFLAGS: 00010246
+> RAX: 000000000000005c RBX: 0000000000001000 RCX: 0000000000000000
+> RDX: 0000000000000000 RSI: ffffffff81e56da3 RDI: 00000000ffffffff
+> RBP: ffffea0004a39c40 R08: 0000000000000000 R09: ffffffff8205fe40
+> R10: 0000000000017578 R11: 00000000000175f0 R12: 0000000000004000
+> R13: ffff88814dc5cd40 R14: 000000000000002e R15: ffffea0004a39c40
+> FS:  0000000000000000(0000) GS:ffff88843fd80000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f2b0ea47010 CR3: 000000043f00c000 CR4: 00000000001506a0
+> 
+> --D
+
+
+Today I managed to capture stack traces of all the D state processes on
+a system with the hang described above:
+
+/proc/41/comm = khugepaged
+/proc/41/stack : [<0>] flush_work+0x5c/0x80
+[<0>] __lru_add_drain_all+0x134/0x1c0
+[<0>] khugepaged+0x6c/0x2460
+[<0>] kthread+0xea/0x110
+[<0>] ret_from_fork+0x1f/0x30
+
+Not sure if this is involved, but it might be?
+These systems /do/ have KSM and HUGEPAGE_ALWAYS turned on.
+
+/proc/411335/comm = u8:1+events_unbound
+/proc/411335/stack : [<0>] __synchronize_srcu.part.0+0x86/0xf0
+[<0>] fsnotify_mark_destroy_workfn+0x7c/0x110
+[<0>] process_one_work+0x1df/0x3c0
+[<0>] worker_thread+0x53/0x3b0
+[<0>] kthread+0xea/0x110
+[<0>] ret_from_fork+0x1f/0x30
+/proc/973682/comm = u8:0+flush-8:0
+/proc/973682/stack : [<0>] down+0x54/0x70
+[<0>] xfs_buf_lock+0x2d/0xe0 [xfs]
+[<0>] xfs_buf_find+0x356/0x880 [xfs]
+[<0>] xfs_buf_get_map+0x46/0x3b0 [xfs]
+[<0>] xfs_buf_read_map+0x52/0x2f0 [xfs]
+[<0>] xfs_trans_read_buf_map+0x1bb/0x4a0 [xfs]
+[<0>] xfs_btree_read_buf_block.constprop.0+0x96/0xd0 [xfs]
+[<0>] xfs_btree_lookup_get_block+0x97/0x170 [xfs]
+[<0>] xfs_btree_lookup+0xdd/0x540 [xfs]
+[<0>] xfs_rmap_map+0xd0/0x860 [xfs]
+[<0>] xfs_rmap_finish_one+0x243/0x300 [xfs]
+[<0>] xfs_rmap_update_finish_item+0x37/0x70 [xfs]
+[<0>] xfs_defer_finish_noroll+0x20a/0x6f0 [xfs]
+[<0>] __xfs_trans_commit+0x153/0x3e0 [xfs]
+[<0>] xfs_bmapi_convert_delalloc+0x495/0x5e0 [xfs]
+[<0>] xfs_map_blocks+0x1ed/0x540 [xfs]
+[<0>] iomap_do_writepage+0x2a3/0xae0
+[<0>] write_cache_pages+0x224/0x6f0
+[<0>] iomap_writepages+0x1c/0x40
+[<0>] xfs_vm_writepages+0x7a/0xb0 [xfs]
+[<0>] do_writepages+0xcc/0x1c0
+[<0>] __writeback_single_inode+0x41/0x340
+[<0>] writeback_sb_inodes+0x207/0x4a0
+[<0>] __writeback_inodes_wb+0x4c/0xe0
+[<0>] wb_writeback+0x1da/0x2c0
+[<0>] wb_workfn+0x28c/0x500
+[<0>] process_one_work+0x1df/0x3c0
+[<0>] worker_thread+0x53/0x3b0
+[<0>] kthread+0xea/0x110
+[<0>] ret_from_fork+0x1f/0x30
+
+Writeback is stuck in an rmapbt update...
+
+/proc/1139791/comm = u8:2+events_unbound
+/proc/1139791/stack : [<0>] __synchronize_srcu.part.0+0x86/0xf0
+[<0>] fsnotify_connector_destroy_workfn+0x3c/0x60
+[<0>] process_one_work+0x1df/0x3c0
+[<0>] worker_thread+0x53/0x3b0
+[<0>] kthread+0xea/0x110
+[<0>] ret_from_fork+0x1f/0x30
+/proc/1274752/comm = u8:3+xfs-blockgc/sda4
+/proc/1274752/stack : [<0>] down+0x54/0x70
+[<0>] xfs_buf_lock+0x2d/0xe0 [xfs]
+[<0>] xfs_buf_find+0x356/0x880 [xfs]
+[<0>] xfs_buf_get_map+0x46/0x3b0 [xfs]
+[<0>] xfs_buf_read_map+0x52/0x2f0 [xfs]
+[<0>] xfs_trans_read_buf_map+0x1bb/0x4a0 [xfs]
+[<0>] xfs_read_agf+0xb2/0x1b0 [xfs]
+[<0>] xfs_alloc_read_agf+0x54/0x370 [xfs]
+[<0>] xfs_alloc_fix_freelist+0x38e/0x510 [xfs]
+[<0>] xfs_free_extent_fix_freelist+0x61/0xa0 [xfs]
+[<0>] xfs_rmap_finish_one+0xd9/0x300 [xfs]
+[<0>] xfs_rmap_update_finish_item+0x37/0x70 [xfs]
+[<0>] xfs_defer_finish_noroll+0x20a/0x6f0 [xfs]
+[<0>] xfs_defer_finish+0x11/0xa0 [xfs]
+[<0>] xfs_itruncate_extents_flags+0x14b/0x4b0 [xfs]
+[<0>] xfs_free_eofblocks+0xe9/0x150 [xfs]
+[<0>] xfs_icwalk_ag+0x4a7/0x800 [xfs]
+[<0>] xfs_blockgc_worker+0x31/0x110 [xfs]
+[<0>] process_one_work+0x1df/0x3c0
+[<0>] worker_thread+0x53/0x3b0
+[<0>] kthread+0xea/0x110
+[<0>] ret_from_fork+0x1f/0x30
+
+Stuck waiting for the AGF to do an rmapbt update...
+
+/proc/1315282/comm = fstest
+/proc/1315282/stack : [<0>] folio_wait_bit_common+0x148/0x460
+[<0>] folio_wait_writeback+0x22/0x80
+[<0>] truncate_inode_pages_range+0x3fe/0x6f0
+[<0>] truncate_pagecache+0x44/0x60
+[<0>] xfs_setattr_size+0x163/0x4d0 [xfs]
+[<0>] xfs_vn_setattr+0x75/0x180 [xfs]
+[<0>] notify_change+0x306/0x500
+[<0>] do_truncate+0x7d/0xd0
+[<0>] path_openat+0xc60/0x1060
+[<0>] do_filp_open+0xa9/0x150
+[<0>] do_sys_openat2+0x97/0x160
+[<0>] __x64_sys_openat+0x54/0x90
+[<0>] do_syscall_64+0x35/0x80
+[<0>] entry_SYSCALL_64_after_hwframe+0x44/0xae
+/proc/1315283/comm = fstest
+/proc/1315283/stack : [<0>] folio_wait_bit_common+0x148/0x460
+[<0>] folio_wait_writeback+0x22/0x80
+[<0>] __filemap_fdatawait_range+0x8c/0x250
+[<0>] filemap_write_and_wait_range+0x85/0xf0
+[<0>] xfs_setattr_size+0x103/0x4d0 [xfs]
+[<0>] xfs_vn_setattr+0x75/0x180 [xfs]
+[<0>] notify_change+0x306/0x500
+[<0>] do_truncate+0x7d/0xd0
+[<0>] path_openat+0xc60/0x1060
+[<0>] do_filp_open+0xa9/0x150
+[<0>] do_sys_openat2+0x97/0x160
+[<0>] __x64_sys_openat+0x54/0x90
+[<0>] do_syscall_64+0x35/0x80
+[<0>] entry_SYSCALL_64_after_hwframe+0x44/0xae
+/proc/1315287/comm = fsstress
+/proc/1315287/stack : [<0>] folio_wait_bit_common+0x148/0x460
+[<0>] folio_wait_writeback+0x22/0x80
+[<0>] __filemap_fdatawait_range+0x8c/0x250
+[<0>] filemap_write_and_wait_range+0x85/0xf0
+[<0>] xfs_setattr_size+0x2da/0x4d0 [xfs]
+[<0>] xfs_vn_setattr+0x75/0x180 [xfs]
+[<0>] notify_change+0x306/0x500
+[<0>] do_truncate+0x7d/0xd0
+[<0>] vfs_truncate+0x108/0x140
+[<0>] do_sys_truncate.part.0+0x8a/0xa0
+[<0>] do_syscall_64+0x35/0x80
+[<0>] entry_SYSCALL_64_after_hwframe+0x44/0xae
+
+Clearly stuck on writeback, not sure if it's the same file as the one
+that tripped the assertion...
+
+/proc/1315478/comm = u8:4+xfs-blockgc/sda4
+/proc/1315478/stack : [<0>] down+0x54/0x70
+[<0>] xfs_buf_lock+0x2d/0xe0 [xfs]
+[<0>] xfs_buf_find+0x356/0x880 [xfs]
+[<0>] xfs_buf_get_map+0x46/0x3b0 [xfs]
+[<0>] xfs_buf_read_map+0x52/0x2f0 [xfs]
+[<0>] xfs_trans_read_buf_map+0x1bb/0x4a0 [xfs]
+[<0>] xfs_imap_to_bp+0x4e/0x70 [xfs]
+[<0>] xfs_trans_log_inode+0x1da/0x350 [xfs]
+[<0>] __xfs_bunmapi+0x7e8/0xd30 [xfs]
+[<0>] xfs_itruncate_extents_flags+0x13d/0x4b0 [xfs]
+[<0>] xfs_free_eofblocks+0xe9/0x150 [xfs]
+[<0>] xfs_icwalk_ag+0x4a7/0x800 [xfs]
+[<0>] xfs_blockgc_worker+0x31/0x110 [xfs]
+[<0>] process_one_work+0x1df/0x3c0
+[<0>] worker_thread+0x53/0x3b0
+[<0>] kthread+0xea/0x110
+[<0>] ret_from_fork+0x1f/0x30
+/proc/1315479/comm = u8:5+xfs-blockgc/sda4
+/proc/1315479/stack : [<0>] down+0x54/0x70
+[<0>] xfs_buf_lock+0x2d/0xe0 [xfs]
+[<0>] xfs_buf_find+0x356/0x880 [xfs]
+[<0>] xfs_buf_get_map+0x46/0x3b0 [xfs]
+[<0>] xfs_buf_read_map+0x52/0x2f0 [xfs]
+[<0>] xfs_trans_read_buf_map+0x1bb/0x4a0 [xfs]
+[<0>] xfs_imap_to_bp+0x4e/0x70 [xfs]
+[<0>] xfs_trans_log_inode+0x1da/0x350 [xfs]
+[<0>] __xfs_bunmapi+0x7e8/0xd30 [xfs]
+[<0>] xfs_itruncate_extents_flags+0x13d/0x4b0 [xfs]
+[<0>] xfs_free_eofblocks+0xe9/0x150 [xfs]
+[<0>] xfs_icwalk_ag+0x4a7/0x800 [xfs]
+[<0>] xfs_blockgc_worker+0x31/0x110 [xfs]
+[<0>] process_one_work+0x1df/0x3c0
+[<0>] worker_thread+0x53/0x3b0
+[<0>] kthread+0xea/0x110
+[<0>] ret_from_fork+0x1f/0x30
+
+Both of these threads are stuck on the inode cluster buffer.  If I had
+to bet, I'd guess it's the one underlying the inode being processed by
+pid 973682.
+
+/proc/1315480/comm = u8:6+xfs-blockgc/sda4
+/proc/1315480/stack : [<0>] down+0x54/0x70
+[<0>] xfs_buf_lock+0x2d/0xe0 [xfs]
+[<0>] xfs_buf_find+0x356/0x880 [xfs]
+[<0>] xfs_buf_get_map+0x46/0x3b0 [xfs]
+[<0>] xfs_buf_read_map+0x52/0x2f0 [xfs]
+[<0>] xfs_trans_read_buf_map+0x1bb/0x4a0 [xfs]
+[<0>] xfs_read_agf+0xb2/0x1b0 [xfs]
+[<0>] xfs_alloc_read_agf+0x54/0x370 [xfs]
+[<0>] xfs_alloc_fix_freelist+0x38e/0x510 [xfs]
+[<0>] xfs_free_extent_fix_freelist+0x61/0xa0 [xfs]
+[<0>] xfs_rmap_finish_one+0xd9/0x300 [xfs]
+[<0>] xfs_rmap_update_finish_item+0x37/0x70 [xfs]
+[<0>] xfs_defer_finish_noroll+0x20a/0x6f0 [xfs]
+[<0>] xfs_defer_finish+0x11/0xa0 [xfs]
+[<0>] xfs_itruncate_extents_flags+0x14b/0x4b0 [xfs]
+[<0>] xfs_free_eofblocks+0xe9/0x150 [xfs]
+[<0>] xfs_icwalk_ag+0x4a7/0x800 [xfs]
+[<0>] xfs_blockgc_worker+0x31/0x110 [xfs]
+[<0>] process_one_work+0x1df/0x3c0
+[<0>] worker_thread+0x53/0x3b0
+[<0>] kthread+0xea/0x110
+[<0>] ret_from_fork+0x1f/0x30
+
+Speculative preallocation garbage collection also got stuck waiting for
+the AGF to do an rmapbt update.
+
+--D
+
+> 
+> > 
+> > > 
+> > > 
+> > > --D
+> > > 
+> > > run fstests generic/068 at 2022-04-12 17:57:11
+> > > XFS (sda3): Mounting V5 Filesystem
+> > > XFS (sda3): Ending clean mount
+> > > XFS (sda4): Mounting V5 Filesystem
+> > > XFS (sda4): Ending clean mount
+> > > ------------[ cut here ]------------
+> > > kernel BUG at mm/filemap.c:1653!
+> > > invalid opcode: 0000 [#1] PREEMPT SMP
+> > > CPU: 0 PID: 1349866 Comm: 0:116 Tainted: G        W         5.18.0-rc2-djwx #rc2 19cc48221d47ada6c8e5859639b6a0946c9a3777
+> > > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS ?-20171121_152543-x86-ol7-builder-01.us.oracle.com-4.el7.1 04/01/2014
+> > > Workqueue: xfs-conv/sda4 xfs_end_io [xfs]
+> > > RIP: 0010:folio_end_writeback+0x79/0x80
+> > > Code: d2 75 1d f0 ff 4d 34 74 0e 5d c3 f0 80 67 02 fb e8 ac 29 01 00 eb ad 48 89 ef 5d e9 a1 0f 01 00 48 89 ee e8 b9 e8 01 00 eb d9 <0f> 0b 0f 1f 44 00 00 0f 1f 44 00 00 53 48 89 fb e8 62 f7 ff ff 48
+> > > RSP: 0018:ffffc9000286fd50 EFLAGS: 00010246
+> > > RAX: 0000000000000000 RBX: ffffea0007376840 RCX: 000000000000000c
+> > > RDX: ffff88810d2de000 RSI: ffffffff81e55f0b RDI: ffff88810d2de000
+> > > RBP: ffffea0007376840 R08: ffffea000b82c308 R09: ffffea000b82c308
+> > > R10: 0000000000000001 R11: 000000000000000c R12: 0000000000000000
+> > > R13: 000000000000c000 R14: 0000000000000005 R15: 0000000000000001
+> > > FS:  0000000000000000(0000) GS:ffff88843fc00000(0000) knlGS:0000000000000000
+> > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > CR2: 00007f5b067d0000 CR3: 000000010d1bb000 CR4: 00000000001506b0
+> > > Call Trace:
+> > >  <TASK>
+> > >  iomap_finish_ioend+0x19e/0x560
+> > >  iomap_finish_ioends+0x69/0x100
+> > >  xfs_end_ioend+0x5a/0x160 [xfs 513857e2ae300a835ce1fbd8065a84dc5382e649]
+> > >  xfs_end_io+0xb1/0xf0 [xfs 513857e2ae300a835ce1fbd8065a84dc5382e649]
+> > >  process_one_work+0x1df/0x3c0
+> > >  ? rescuer_thread+0x3b0/0x3b0
+> > >  worker_thread+0x53/0x3b0
+> > >  ? rescuer_thread+0x3b0/0x3b0
+> > >  kthread+0xea/0x110
+> > >  ? kthread_complete_and_exit+0x20/0x20
+> > >  ret_from_fork+0x1f/0x30
+> > >  </TASK>
+> > > Modules linked in: dm_snapshot dm_bufio dm_zero dm_flakey xfs libcrc32c xt_REDIRECT iptable_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 auth_rpcgss oid_registry xt_tcpudp ip_set_hash_ip ip_set_hash_net xt_set ip_set_hash_mac ip_set nfnetlink ip6table_filter ip6_tables iptable_filter bfq sch_fq_codel ip_tables x_tables overlay nfsv4 af_packet [last unloaded: scsi_debug]
+> > > Dumping ftrace buffer:
+> > >    (ftrace buffer empty)
+> > > ---[ end trace 0000000000000000 ]---
+> > > RIP: 0010:folio_end_writeback+0x79/0x80
+> > > Code: d2 75 1d f0 ff 4d 34 74 0e 5d c3 f0 80 67 02 fb e8 ac 29 01 00 eb ad 48 89 ef 5d e9 a1 0f 01 00 48 89 ee e8 b9 e8 01 00 eb d9 <0f> 0b 0f 1f 44 00 00 0f 1f 44 00 00 53 48 89 fb e8 62 f7 ff ff 48
+> > > RSP: 0018:ffffc9000286fd50 EFLAGS: 00010246
+> > > RAX: 0000000000000000 RBX: ffffea0007376840 RCX: 000000000000000c
+> > > RDX: ffff88810d2de000 RSI: ffffffff81e55f0b RDI: ffff88810d2de000
+> > > RBP: ffffea0007376840 R08: ffffea000b82c308 R09: ffffea000b82c308
+> > > R10: 0000000000000001 R11: 000000000000000c R12: 0000000000000000
+> > > R13: 000000000000c000 R14: 0000000000000005 R15: 0000000000000001
+> > > FS:  0000000000000000(0000) GS:ffff88843fc00000(0000) knlGS:0000000000000000
+> > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > CR2: 00007f4b94008278 CR3: 0000000101ac9000 CR4: 00000000001506b0
+> > > 
