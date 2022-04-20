@@ -2,134 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DCFE509261
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Apr 2022 23:53:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB625509344
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Apr 2022 01:00:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1382695AbiDTVzq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Apr 2022 17:55:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38854 "EHLO
+        id S1383042AbiDTXDf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Apr 2022 19:03:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46922 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357179AbiDTVzp (ORCPT
+        with ESMTP id S1383040AbiDTXDe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Apr 2022 17:55:45 -0400
-Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id AEDB345513;
-        Wed, 20 Apr 2022 14:52:57 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-115-138.pa.nsw.optusnet.com.au [49.181.115.138])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id A37F310E5CE6;
-        Thu, 21 Apr 2022 07:52:54 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1nhIFo-002XWU-OW; Thu, 21 Apr 2022 07:52:52 +1000
-Date:   Thu, 21 Apr 2022 07:52:52 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     "xuyang2018.jy@fujitsu.com" <xuyang2018.jy@fujitsu.com>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "djwong@kernel.org" <djwong@kernel.org>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        "ntfs3@lists.linux.dev" <ntfs3@lists.linux.dev>,
-        "chao@kernel.org" <chao@kernel.org>,
-        "linux-f2fs-devel@lists.sourceforge.net" 
-        <linux-f2fs-devel@lists.sourceforge.net>
-Subject: Re: [PATCH v4 1/8] fs: move sgid strip operation from
- inode_init_owner into inode_sgid_strip
-Message-ID: <20220420215252.GO1544202@dread.disaster.area>
-References: <1650368834-2420-1-git-send-email-xuyang2018.jy@fujitsu.com>
- <20220419140508.b6c4uit3u5hmdql4@wittgenstein>
- <625F6FE6.4010305@fujitsu.com>
+        Wed, 20 Apr 2022 19:03:34 -0400
+Received: from esa4.hgst.iphmx.com (esa4.hgst.iphmx.com [216.71.154.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 476291E3DB
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Apr 2022 16:00:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1650495647; x=1682031647;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=S3wrcHUGdl9LcKznCHJjFCjAB1oU2LwvM5QjcZA34fY=;
+  b=N4oZWCxXNSc6BxClumr2tx1iksvaRtQvg+TgAMQ9QDnsuhrWh3jCeLOb
+   i4WqaECs3Yi+sOwm84WUDWB7OLDnkXpgGqJRZ2qcm3dEF6iPZJoYagwLr
+   Ei1etlRmmlQMGAxAfBeLsazyZ8bUkuFXyMdvyHko2wGOVMrrfMvvGuIhR
+   COhSCEpDmH9wtzihWFCiegS6ihQ/3csVS39U3TJo14XWDhFQGtGIMVwzw
+   FvSpNX8WhInkgAAgUMciQ+BG++T8jxtJwLPXzUTrhSfbJaJWYg6otVpjQ
+   VfhYgG9tuaCVwFESxwumWi6XmRBGf1MmOQYFlcgp1fTaH71U8FRbTQVfx
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.90,276,1643644800"; 
+   d="scan'208";a="197264222"
+Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 21 Apr 2022 07:00:44 +0800
+IronPort-SDR: s9DRGhQHYn4U3nypQTZDMX+sP9smoFgvLReFmr7Ce2F82V16sQrahDkoDJhlNXc08ajK4dvNc/
+ xHMK3doxaCIK2mD1tWiqGzx9RXY4LWqBfUMqFBywAnXtht9iNSKmLzfB+uBvikdOPW06rExuzJ
+ ZR4ZKRcwGX9+/cbLsq+nEXscuFkIzJP9SmPeqrFTpfEsYlMa5rh1zrVrMAfIelowQx+60F0ayk
+ EqQR6aNSbs3jT0Mn2n5k7JW/gc8ShhZzCNCeaPBLN5tAZAA6wMyQWu5KkYSw7Y1GNgJt93guo0
+ WAipKV8OJXFEefHL877NR0jj
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 20 Apr 2022 15:31:48 -0700
+IronPort-SDR: RjHmmeDAe18xuPW9l1WBFVDvehZVWBWyHt+pAzlmxSvhP5CyVbD1x1yo6KujHWaJfbOEsgCoUa
+ dgrXTQeHrs6xvC++NDPeDW1tJet2LOzJcbfjZjmmBa/bbghZqr1DckV8u0BtAa1IF+SLkSrnVe
+ YmFOG5HFY+fJ6cKhP8A10s1IzKUHZ4aUttZ8/J4pT7QLAUuTLnedTth5+QIKOHwBUP0awXZwps
+ mq7QLnxjU4LzIxceXH58ztoWyrBQfpHpCUVdUqSm3cAbM8hkpON2cboRBZM5McXYxswjMDB3DX
+ Ruk=
+WDCIronportException: Internal
+Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
+  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 20 Apr 2022 16:00:45 -0700
+Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4KkGNr2dhtz1SVnx
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Apr 2022 16:00:44 -0700 (PDT)
+Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)"
+        header.d=opensource.wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
+        opensource.wdc.com; h=content-transfer-encoding:content-type
+        :in-reply-to:organization:from:references:to:content-language
+        :subject:user-agent:mime-version:date:message-id; s=dkim; t=
+        1650495643; x=1653087644; bh=S3wrcHUGdl9LcKznCHJjFCjAB1oU2LwvM5Q
+        jcZA34fY=; b=D2NS7tuk1+iRdP2LXEmtP9/6hn5ZwQNV8bhVAXHTm6qx3RZWyL5
+        c6jousROa5m5iDPz8KDFGCCqKUQ14/8fXxb+x5u4wqoE3FKSjF+IWh2fzArJDGlV
+        kMXNdZ+1bffcohH0WCo3xmyWq10jH8WKZiiMcbDew14H68pdOjH/l9dBXXQK7cp7
+        2qRoMSDlhBuTMnFp12RR8hWOc8ro6TqIrFTwNh/5ewrdZ40NPlO35+HNySdfJD5t
+        X2iefhTMwwiq2uiGXQOqpmYE8heVo/dam/Wd9BPmhLhdH3v2+kulsKEIZ/XInTdm
+        pGPF6aGbXgmmA+zSgg/E4dJvjGh1pWJXsLw==
+X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
+Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
+        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 3T-6lB0ZV1Kd for <linux-fsdevel@vger.kernel.org>;
+        Wed, 20 Apr 2022 16:00:43 -0700 (PDT)
+Received: from [10.225.163.14] (unknown [10.225.163.14])
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4KkGNl5hPQz1Rvlx;
+        Wed, 20 Apr 2022 16:00:39 -0700 (PDT)
+Message-ID: <ff01a3d8-3248-b0cb-2276-6438b995dfea@opensource.wdc.com>
+Date:   Thu, 21 Apr 2022 08:00:38 +0900
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <625F6FE6.4010305@fujitsu.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=VuxAv86n c=1 sm=1 tr=0 ts=626080b7
-        a=/kVtbFzwtM2bJgxRVb+eeA==:117 a=/kVtbFzwtM2bJgxRVb+eeA==:17
-        a=kj9zAlcOel0A:10 a=z0gMJWrwH1QA:10 a=omOdbC7AAAAA:8 a=VwQbUJbxAAAA:8
-        a=7-415B0cAAAA:8 a=dB9dRndzBIRXieEivdAA:9 a=CjuIK1q_8ugA:10
-        a=AjGcO6oz07-iQ99wixmX:22 a=biEYGPWJfzWAr4FL6Ov7:22
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_PASS,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH] binfmt_flat: Remove shared library support
+Content-Language: en-US
+To:     Rich Felker <dalias@libc.org>, Arnd Bergmann <arnd@arndb.de>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Niklas.Cassel@wdc.com, Al Viro <viro@zeniv.linux.org.uk>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Mike Frysinger <vapier@gentoo.org>,
+        "# 3.4.x" <stable@vger.kernel.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-riscv <linux-riscv@lists.infradead.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>
+References: <87levzzts4.fsf_-_@email.froward.int.ebiederm.org>
+ <mhng-32cab6aa-87a3-4a5c-bf83-836c25432fdd@palmer-ri-x1c9>
+ <20220420165935.GA12207@brightrain.aerifal.cx>
+ <202204201044.ACFEB0C@keescook>
+ <CAK8P3a2KvK78bbW_5DWKsrxLvKxYDqoCkii-kxi-mB7W9DCvNA@mail.gmail.com>
+ <20220420202321.GD7074@brightrain.aerifal.cx>
+From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
+Organization: Western Digital Research
+In-Reply-To: <20220420202321.GD7074@brightrain.aerifal.cx>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-8.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_PASS,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 20, 2022 at 01:27:39AM +0000, xuyang2018.jy@fujitsu.com wrote:
-> on 2022/4/19 22:05, Christian Brauner wrote:
-> > On Tue, Apr 19, 2022 at 07:47:07PM +0800, Yang Xu wrote:
-> >> This has no functional change. Just create and export inode_sgid_strip api for
-> >> the subsequent patch. This function is used to strip S_ISGID mode when init
-> >> a new inode.
-> >>
-> >> Acked-by: Christian Brauner (Microsoft)<brauner@kernel.org>
-> >> Signed-off-by: Yang Xu<xuyang2018.jy@fujitsu.com>
-> >> ---
-> >>   fs/inode.c         | 22 ++++++++++++++++++----
-> >>   include/linux/fs.h |  3 ++-
-> >>   2 files changed, 20 insertions(+), 5 deletions(-)
-> >>
-> >> diff --git a/fs/inode.c b/fs/inode.c
-> >> index 9d9b422504d1..3215e61a0021 100644
-> >> --- a/fs/inode.c
-> >> +++ b/fs/inode.c
-> >> @@ -2246,10 +2246,8 @@ void inode_init_owner(struct user_namespace *mnt_userns, struct inode *inode,
-> >>   		/* Directories are special, and always inherit S_ISGID */
-> >>   		if (S_ISDIR(mode))
-> >>   			mode |= S_ISGID;
-> >> -		else if ((mode&  (S_ISGID | S_IXGRP)) == (S_ISGID | S_IXGRP)&&
-> >> -			 !in_group_p(i_gid_into_mnt(mnt_userns, dir))&&
-> >> -			 !capable_wrt_inode_uidgid(mnt_userns, dir, CAP_FSETID))
-> >> -			mode&= ~S_ISGID;
-> >> +		else
-> >> +			inode_sgid_strip(mnt_userns, dir,&mode);
-> >>   	} else
-> >>   		inode_fsgid_set(inode, mnt_userns);
-> >>   	inode->i_mode = mode;
-> >> @@ -2405,3 +2403,19 @@ struct timespec64 current_time(struct inode *inode)
-> >>   	return timestamp_truncate(now, inode);
-> >>   }
-> >>   EXPORT_SYMBOL(current_time);
-> >> +
-> >> +void inode_sgid_strip(struct user_namespace *mnt_userns,
-> >> +		      const struct inode *dir, umode_t *mode)
-> >> +{
-> >
-> > I think with Willy agreeing in an earlier version with me and you
-> > needing to resend anyway I'd say have this return umode_t instead of
-> > passing a pointer.
+On 4/21/22 05:23, Rich Felker wrote:
+> On Wed, Apr 20, 2022 at 10:04:32PM +0200, Arnd Bergmann wrote:
+>> On Wed, Apr 20, 2022 at 7:47 PM Kees Cook <keescook@chromium.org> wrote:
+>>>
+>>> Yeah, I was trying to understand why systems were using binfmt_flat and
+>>> not binfmt_elf, given the mention of elf2flat -- is there really such a
+>>> large kernel memory footprint savings to be had from removing
+>>> binfmt_elf?
+>>
+>> I think the main reason for using flat binaries is nommu support on
+>> m68k, xtensa and risc-v. The regular binfmt_elf support requires
+>> an MMU, and the elf-fdpic variant is only available for arm and sh
+>> at this point (the other nommu architectures got removed over time).
 > 
-> IMO, I am fine with your and Willy way. But I need a reason otherwise
-> I can't convince myself why not use mode pointer directly.
+> I believe I made the elf-fdpic loader so that it's capable of loading
+> normal non-fdpic elf files on nommu (1bde925d23), unless somebody
+> broke that. I also seem to recall that capability being added to the
+> main elf loader later.
 
-You should listen to experienced developers like Willy and Christian
-when they say "follow existing coding conventions".  Indeed, Darrick
-has also mentioned he'd prefer it to return the new mode, and I'd
-also prefer that it returns the new mode.
+Last time I checked, building shared libraries usable with nommu riscv
+required gcc/ld options that were not supported for riscv (PIE related
+stuff). So removing the kernel support for shared flat libs is fine with me.
 
-> I have asked you and Willy before why return umode_t value is better, 
-> why not modify mode pointer directly? Since we have use mode as 
-> argument, why not modify mode pointer directly in function?
 
-If the function had mulitple return status (e.g. an error or a mode)
-the convention is to pass the mode output variable by reference and
-return the error status. But there is only one return value from
-this function - the mode - and hence it should be returned in the
-return value, not passed by reference.
-
-Passing by reference unnecessarily makes the code more complex and
-less mainatainable.  Code that returns a single value is easy to
-understand, is more flexible in the way callers can use it and it's
-simpler to maintain.
-
-Cheers,
-
-Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+Damien Le Moal
+Western Digital Research
