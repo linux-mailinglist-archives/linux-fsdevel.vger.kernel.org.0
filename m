@@ -2,430 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E28F508242
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Apr 2022 09:33:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F1965082CC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Apr 2022 09:51:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355729AbiDTHgi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Apr 2022 03:36:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59004 "EHLO
+        id S1376482AbiDTHyU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Apr 2022 03:54:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238474AbiDTHgg (ORCPT
+        with ESMTP id S1376481AbiDTHyM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Apr 2022 03:36:36 -0400
-Received: from heian.cn.fujitsu.com (mail.cn.fujitsu.com [183.91.158.132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 09A3437A2D;
-        Wed, 20 Apr 2022 00:33:49 -0700 (PDT)
-IronPort-Data: =?us-ascii?q?A9a23=3A/bRJzKudSLnaN53/gE4u3FJ1K+fnVClfMUV32f8?=
- =?us-ascii?q?akzHdYEJGY0x3xjcYWzqPbPnbYGCkfoh0boWy/RwO75XWz4M1SAU9pS5gHilAw?=
- =?us-ascii?q?SbnLY7Hdx+vZUt+DSFioHpPtpxYMp+ZRCwNZie0SiyFb/6x/RGQ6YnSHuCmULS?=
- =?us-ascii?q?cY3goLeNZYHxJZSxLyrdRbrFA0YDR7zOl4bsekuWHULOX82cc3lE8t8pvnChSU?=
- =?us-ascii?q?MHa41v0iLCRicdj5zcyn1FNZH4WyDrYw3HQGuG4FcbiLwrPIS3Qw4/Xw/stIov?=
- =?us-ascii?q?NfrfTeUtMTKPQPBSVlzxdXK3Kbhpq/3R0i/hkcqFHLxo/ZzahxridzP1XqJW2U?=
- =?us-ascii?q?hZvMKvXhMwTThtZDzpje6ZB/dcrJFDm65fMlxWfIiCEL/JGSRte0Zcj0up+H2B?=
- =?us-ascii?q?C3fICLzUKdBqCm6S9x7fTYulnhuwiKsfxNY8Ss30myivWZd4qSJaFQePV5Ntc3?=
- =?us-ascii?q?T41nehPG+rTY4wSbj8HRBjCfBpJNX8UBYg4kePugWPwGxVcqVSIte8y5kDQ0gV?=
- =?us-ascii?q?60/7qKtW9UtqUScRQm26cp3na5CL9AxcHJJqTxCTt2nKnhsfLhj+9VI96PL+x8?=
- =?us-ascii?q?PMsi12O7msJARYSWB2wpvzRokq/Xc9PbkIP9icwoKwa6kOmVJ/+Uge+rXrCuQQ?=
- =?us-ascii?q?TM/JUEusn+ESOx7DS7gKxGGcJVHhCZcYguctwQiYlvneNntX0FXl/vqa9V32Q7?=
- =?us-ascii?q?PGXoCm0NCxTKnUNDRLo5yNtD8LL+dl110yQCI04VvPdszE8IhmoqxjikcT0r+x?=
- =?us-ascii?q?7YRY36piG?=
-IronPort-HdrOrdr: =?us-ascii?q?A9a23=3Aq8ESf68fswowUSFMWbduk+A+I+orL9Y04lQ7?=
- =?us-ascii?q?vn2YSXRuE/Bw8Pre5cjztCWE8Ar5N0tQ+uxoVJPufZqYz+8Q3WBzB8bFYOCFgh?=
- =?us-ascii?q?rLEGgK1+KLqFeMdxEWtNQtspuIGJIfNDSfNzZHZL7BkWyF+sgbsaW62ZHtleHD?=
- =?us-ascii?q?1G1sUA0vT6lh6j1yAgGdHlYefng9ObMJUIqb+tFcpyetPVAebsGADHEDWOTZ4/?=
- =?us-ascii?q?LRkpaOW296OzcXrBmJkSiz6KP3VzyR3hIlWTtJxrs4tUjp+jaJnZmejw=3D=3D?=
-X-IronPort-AV: E=Sophos;i="5.88,333,1635177600"; 
-   d="scan'208";a="123700193"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 20 Apr 2022 15:33:49 +0800
-Received: from G08CNEXMBPEKD06.g08.fujitsu.local (unknown [10.167.33.206])
-        by cn.fujitsu.com (Postfix) with ESMTP id BEC754D1716F;
-        Wed, 20 Apr 2022 15:33:44 +0800 (CST)
-Received: from G08CNEXJMPEKD02.g08.fujitsu.local (10.167.33.202) by
- G08CNEXMBPEKD06.g08.fujitsu.local (10.167.33.206) with Microsoft SMTP Server
- (TLS) id 15.0.1497.23; Wed, 20 Apr 2022 15:33:42 +0800
-Received: from G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.85) by
- G08CNEXJMPEKD02.g08.fujitsu.local (10.167.33.202) with Microsoft SMTP Server
- (TLS) id 15.0.1497.23; Wed, 20 Apr 2022 15:33:44 +0800
-Received: from irides.mr.mr (10.167.225.141) by
- G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
- id 15.0.1497.23 via Frontend Transport; Wed, 20 Apr 2022 15:33:42 +0800
-From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
-To:     <djwong@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
-        <nvdimm@lists.linux.dev>, <linux-mm@kvack.org>,
-        <linux-fsdevel@vger.kernel.org>, <dan.j.williams@intel.com>,
-        <david@fromorbit.com>, <hch@infradead.org>, <jane.chu@oracle.com>,
-        "Christoph Hellwig" <hch@lst.de>
-Subject: [PATCH v13.1 6/7] xfs: Implement ->notify_failure() for XFS
-Date:   Wed, 20 Apr 2022 15:33:42 +0800
-Message-ID: <20220420073342.1998779-1-ruansy.fnst@fujitsu.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220419153854.GH17025@magnolia>
-References: <20220419153854.GH17025@magnolia>
+        Wed, 20 Apr 2022 03:54:12 -0400
+Received: from esa6.hgst.iphmx.com (esa6.hgst.iphmx.com [216.71.154.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1925C3C4B0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Apr 2022 00:50:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1650441052; x=1681977052;
+  h=from:to:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=G8FZ0D3PP/OudJ5uuxCAz/C/vBHo8wESZoPwxTWqVEI=;
+  b=HoCfip4eQMAcPnbGTILodEQG0IZ+XgpX1qmJx5O8EJECOPcYhLhCNwBm
+   syrIZt5KcUsje1T4aO3VjdPvV2Bdi9X3c2XMieq0m9K3MDqcPmpTOtv/0
+   ryOylQPhYg+dcSSbaslo75JI6iX80ZhsaD6uZFb3h73vBWvqiHVv0vD/d
+   eUbXu+yX86GK3cQyRD3R11yom3thtaS3B7akGCNV3UKDtiar7xS7rXbkI
+   gBPt4xp0bJKwLjhphGtdlhz9ojKx46HmS4h3nNn1IkWD5iBo+xh6wQXfl
+   rfuRRPtFdFr2/WlZFGVwK3vis7pmLL8TPzRMhWmnPtDRB3T8nWun46rVZ
+   g==;
+X-IronPort-AV: E=Sophos;i="5.90,275,1643644800"; 
+   d="scan'208";a="199237747"
+Received: from mail-dm6nam12lp2175.outbound.protection.outlook.com (HELO NAM12-DM6-obe.outbound.protection.outlook.com) ([104.47.59.175])
+  by ob1.hgst.iphmx.com with ESMTP; 20 Apr 2022 15:50:51 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Fj5F2G4XHi/Rj5a4mryp636cKx2rad8fWtlfh03AdKzBvMog2x/RQ57gzEPc9BMNQHStez5uJbt81FBSeX5p9RajxmGsIs1PEaabiz26hDsp7CkGMK2Eqg7mExh1xFokPePw/EfiEZqWGVxfHyH5PEB7Y72XLFZx2LjsyYFQxVNQ/Pj+/UGHckrbGQhLO4Abl4r5XjU1bNeRMA95Lyo6ckOl+/CLlYox3W+CdbYLdIhQP+jLepmetezHZD6ZDk3Tyv6K4Sg37XrpHHGo3RI3yB8L9xz7Uq0oeVP4VOVZfWp41gdZ5Hk4lcU/2RMkHmDeFkCb13ZdObnWbkvK/P/myA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=G8FZ0D3PP/OudJ5uuxCAz/C/vBHo8wESZoPwxTWqVEI=;
+ b=XuTJefeTpTh1Hka0/TDazrLoAtYTSl2MDFKShWlLviRMCeyR28mlnFPs+zH3lUxUuUFx7h7jzs2Fb2rsnovlxOQfUKkU+U89elVoCBIUEzLMbFeEcXvBqfCBD/iRJNJVOCfp/qWJlkvo2tyjQM3apeHrRYi2pzKQv6TuVZcF9zlMDbG6/lSqZliSdGMGNlDHFIKN+lunMwhFabMBsRZ5mnM2qqCKZyrxWPDHJgLHCeHJ8aatfYQyuSMqBO7+nvFar9NxZ1EevxF1kp+HC5Tkci+2wbwnZ/OSF1h9rlPzLTNnwWUOYfR3bOG9j9nPwbBUUiD4+hbHcgHBZG8g/VllQg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=G8FZ0D3PP/OudJ5uuxCAz/C/vBHo8wESZoPwxTWqVEI=;
+ b=Muh5+BPxsrYPHIKdLG9zTZE8/BAiHGEORqM9eNzJ6hF/azoyrpKKrh7XE5/csLMgykNnzHaJFS3nHg/sWby0akXAuT6P3iv+IaCF1HI1GWHYP0zv8wJyOSY4u0aUBpJb5HgMuuTfZyWU6wxzGIlJ3AkPBZLFHif+AIoamjAU4t8=
+Received: from PH0PR04MB7416.namprd04.prod.outlook.com (2603:10b6:510:12::17)
+ by BN8PR04MB5556.namprd04.prod.outlook.com (2603:10b6:408:54::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5164.20; Wed, 20 Apr
+ 2022 07:50:48 +0000
+Received: from PH0PR04MB7416.namprd04.prod.outlook.com
+ ([fe80::6cfd:b252:c66e:9e12]) by PH0PR04MB7416.namprd04.prod.outlook.com
+ ([fe80::6cfd:b252:c66e:9e12%3]) with mapi id 15.20.5186.014; Wed, 20 Apr 2022
+ 07:50:48 +0000
+From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+To:     Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH v2 6/8] zonefs: Add active seq file accounting
+Thread-Topic: [PATCH v2 6/8] zonefs: Add active seq file accounting
+Thread-Index: AQHYVF9hhFK6d5PiqE2LUrcMGrssBw==
+Date:   Wed, 20 Apr 2022 07:50:48 +0000
+Message-ID: <PH0PR04MB7416CBEEBBD6C33CB93F95C19BF59@PH0PR04MB7416.namprd04.prod.outlook.com>
+References: <20220420023545.3814998-1-damien.lemoal@opensource.wdc.com>
+ <20220420023545.3814998-7-damien.lemoal@opensource.wdc.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=wdc.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 28696857-5fea-46a6-427c-08da22a27bfb
+x-ms-traffictypediagnostic: BN8PR04MB5556:EE_
+x-microsoft-antispam-prvs: <BN8PR04MB5556B814BDDAD1F49300AD6A9BF59@BN8PR04MB5556.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: D7T9vYZK8dIHpjYOjfEsKfDnVKtFa2Px3xw/unQJ4ZHUlT2LAPSoWuC/mfSx/pExJI3r0R2RWejkulQ1JzW8oMvxpwvfK9zNwrsTWud0L4gnys8xyKbOGSf9BjtDTuktQZfLh4cBVVGExBVbNsxvhJYmdVp2aaUJ0/3m5AUMhDL0D7GPdKYhr80lB5W8Eprygj0AKS91hRj6qMzkTRHtHThz1vbD9ffVzGdpTt1jsmizBTvAuS7ffPcAuDX1cyVO1tZKjoCmdUO3B1xicYGIRJX6t0ZXY5jdhl7twMs548mFMP0mK3+LhCI+2VnuthF4DLLoJm6laEmmuCl9Q4RstIgVvBvjF6Q3OBYIvB5g1LzlJ2cI3S3hFnja2aLQGV/13r8Gpy8VEJi0eTafxwt4j6zloMs2EE0hFHa0e/Upf+JmYph+lSkGzldWWLVZ0vFZq/rh0A5XEj+Z17Srb4Xm+rD4szSbz+h6CWzs6JT4Hm/21SCz/D9/psW9l0ZXXotlctbuMNwMA+MHOEi02qlUmzmMbepUdqcPtQw+mXw+FNO0DczUAJEaq4b68HG2ROvTY3aSzGjA/AYBWYwN/YRvOf6wkJoCj/KXJgf/IOW13t1KKyx+8pR+a8rFG3y84aH9oWjoBzwABMiQcqrQikQxmzh/OnpzY0tmlE99MgFIQVE55HvU5KLItGWOzCQFfL1SpT2uZOBvWqhXoB0kzKwJQw==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR04MB7416.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(71200400001)(52536014)(5660300002)(38100700002)(508600001)(19618925003)(2906002)(9686003)(7696005)(6506007)(4270600006)(8676002)(66476007)(66446008)(66556008)(110136005)(86362001)(8936002)(76116006)(38070700005)(186003)(316002)(64756008)(66946007)(122000001)(91956017)(558084003)(33656002)(55016003)(82960400001);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 2
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?6f2l2sb1BRWxD1zKUh1DP+B8O45Xe0gRuchuroN3U7RLTUsHCxtKZqaaTqA0?=
+ =?us-ascii?Q?tBpbBFdFTOiXPENBYms9qPPrM3OEo5Hd6nM03RlcNim54nj8sf7BF4B9zWOp?=
+ =?us-ascii?Q?6UY7xeCFya+DE/Se5vZsdIjP/OCwdcewK98gDleHbkwHfOWJ7e6O0HD8qVue?=
+ =?us-ascii?Q?I9Qg+mUkdUHrmYCNUSw2f+VUOH0INvSRFReRcXNjfBrLLqHgEYhdR6Z35kK5?=
+ =?us-ascii?Q?xEQgve962RFeC2BM0pcJ/SebuNZCvjEwEJf0LdCWDljUNScT1HogdNWeMCgi?=
+ =?us-ascii?Q?Lxr0CgN8cIysyUk7gX5qXuJYPZPC5mCe5Avj0u1QlFimp4k4h1Owfno+eb8h?=
+ =?us-ascii?Q?Gm2BdeSqzCeeHY8NUQQtC8o8WjROfw6GAjv1q6xrmigswq1/tYJiU1bwBCd3?=
+ =?us-ascii?Q?mjxuuP2dYdfQapUe4Dz+QqfxmxwdNClx0FIipIs0PJm8JcE5QP4Tn49S4gvZ?=
+ =?us-ascii?Q?DvT8IydgX+KHkQsd/G0CAWMwuDdkchtZUqPYownorAmAj+oANBLzFLk4afKT?=
+ =?us-ascii?Q?lZZ4neXCPli2HGJFSSx2na1wTqaYBacGd/aFn0/y8lJd7eTu91IfAmVObjgI?=
+ =?us-ascii?Q?Pvuul/yIGim73fKcM0cAalaJqJGebfib2+TQ7KW+8tB4DG6W45o1j9s7lFNU?=
+ =?us-ascii?Q?MDaFhFe7PQ/Lkuyc3BNJ5aCTqoYCOmQ0STbyJVoYYH61hIBlfPo+pf6t7CFj?=
+ =?us-ascii?Q?F4k9Zz7Ai7Ma1mEz+e/dp1uJNZUTU1g0NyIzaYItjIci+jXZCFmRKPAYt3C3?=
+ =?us-ascii?Q?LzoADHAIo78HYGcQxj+BZmzQv7mwYldVXDY81kQGpH7ZMm5P8nHNMHVJBJle?=
+ =?us-ascii?Q?odJD8yRoLUgfnOHTzsbxWQoAENNmlZZGOayoRUxCPq9ced29OHNh4WWKdVy8?=
+ =?us-ascii?Q?8nt0r4SIOAaPjsQCew6Gm981ha8wp5O4/7sCPnRLaXx2wwHv+e9iCkmBlEqX?=
+ =?us-ascii?Q?mtUEI2VPS2LV13O9FR5Kg3s2Qal/JCQI8nWIRHksPzsZgdKwppTmPf1eR/Om?=
+ =?us-ascii?Q?PKvLEBBgBvU3bwiWPePm0yhefClaQ8enHR8I9K8i1rGKwhZ/3cZ4JEMba+Oc?=
+ =?us-ascii?Q?+yzYXKAEcMEKfoLu8tqPkiJhulX1lW+r2jPnt1zTt0chb7XiXyV7lmHlmkyf?=
+ =?us-ascii?Q?Rob7ttHPZRH9BZQJvxCMtCKr3dDW4AU30GW1sVfuUuzOm8bnQQOpD0gEonXK?=
+ =?us-ascii?Q?9fVhj3hTfuTtyWIZ4dw21o9upSLFbIZIJ8HFd+MXppE19Sf9Iew+267pdnjL?=
+ =?us-ascii?Q?X/iHI9+jZ3WTml7lEPJS5cX80A2VUUohaG2n5E5EKhHn0zgP5US1AmkP0/TO?=
+ =?us-ascii?Q?osZzkrvtZj35y5ZAsX3r/vnLPpS80DMjHCwXwh8qfnxeqt2JC1Xn0mvhQWGy?=
+ =?us-ascii?Q?KM0XsT6PptyrJ6RaCPeeUud2R2+B+/mPWj0bhKDlJo74/ygEypqm9n4ytArA?=
+ =?us-ascii?Q?PyFNGdS0JC8qBEpDH+pcWUlYShZnIsadDe8/MOqZLOHpK7zCtchp96Aofnlu?=
+ =?us-ascii?Q?mag5Lv+EOIGnHxTf9JkudQPIJiMJefkGv76rIvgIZWkv1U6SpFozlvt9WhHy?=
+ =?us-ascii?Q?cC5PJXA2zJWzTBHGDmWDSGnCtnrY4wkhY+SP2YomAlsn+OLE46HbPbz0viF5?=
+ =?us-ascii?Q?a13s4jQhdun7PtryWOrQ8V22VNDxMdfqwXy4mnHxzd8Q7FXTmsme3LSAjfLx?=
+ =?us-ascii?Q?nc6Eed/Im52e3Skr5iD0A03z3v7iJhf8he700nPjO//MOQbH8NNY4i7EoNHb?=
+ =?us-ascii?Q?tBnEQCG50XSyD1JWjh9KYjiB/F2NrbA10jc5cmb7FmPL+GcZlecQOYm/ZL1m?=
+x-ms-exchange-antispam-messagedata-1: O5nn0a7NxVH++WBmx7eZOcyLjVqsL1YcOlYZmGtUFbg/mB4wW8cITDXo
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-yoursite-MailScanner-ID: BEC754D1716F.A14BC
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: ruansy.fnst@fujitsu.com
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR04MB7416.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 28696857-5fea-46a6-427c-08da22a27bfb
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Apr 2022 07:50:48.6300
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 5RfEBFB1YAAbBjE9cTRSYG8JfHU2ZhJXAU7BPlBzaMHBe8lfcXUlSkWiPWXC9a1fnDevk62mSJ52PGmClpE5ok9nWT+00L9WZmTll/jQ97I=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR04MB5556
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Introduce xfs_notify_failure.c to handle failure related works, such as
-implement ->notify_failure(), register/unregister dax holder in xfs, and
-so on.
-
-If the rmap feature of XFS enabled, we can query it to find files and
-metadata which are associated with the corrupt data.  For now all we do
-is kill processes with that file mapped into their address spaces, but
-future patches could actually do something about corrupt metadata.
-
-After that, the memory failure needs to notify the processes who are
-using those files.
-
-Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
----
- fs/xfs/Makefile             |   5 +
- fs/xfs/xfs_buf.c            |  11 +-
- fs/xfs/xfs_fsops.c          |   3 +
- fs/xfs/xfs_mount.h          |   1 +
- fs/xfs/xfs_notify_failure.c | 220 ++++++++++++++++++++++++++++++++++++
- fs/xfs/xfs_super.h          |   1 +
- 6 files changed, 238 insertions(+), 3 deletions(-)
- create mode 100644 fs/xfs/xfs_notify_failure.c
-
-diff --git a/fs/xfs/Makefile b/fs/xfs/Makefile
-index 04611a1068b4..09f5560e29f2 100644
---- a/fs/xfs/Makefile
-+++ b/fs/xfs/Makefile
-@@ -128,6 +128,11 @@ xfs-$(CONFIG_SYSCTL)		+= xfs_sysctl.o
- xfs-$(CONFIG_COMPAT)		+= xfs_ioctl32.o
- xfs-$(CONFIG_EXPORTFS_BLOCK_OPS)	+= xfs_pnfs.o
- 
-+# notify failure
-+ifeq ($(CONFIG_MEMORY_FAILURE),y)
-+xfs-$(CONFIG_FS_DAX)		+= xfs_notify_failure.o
-+endif
-+
- # online scrub/repair
- ifeq ($(CONFIG_XFS_ONLINE_SCRUB),y)
- 
-diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
-index f9ca08398d32..084455f7e2ff 100644
---- a/fs/xfs/xfs_buf.c
-+++ b/fs/xfs/xfs_buf.c
-@@ -5,6 +5,7 @@
-  */
- #include "xfs.h"
- #include <linux/backing-dev.h>
-+#include <linux/dax.h>
- 
- #include "xfs_shared.h"
- #include "xfs_format.h"
-@@ -1911,7 +1912,7 @@ xfs_free_buftarg(
- 	list_lru_destroy(&btp->bt_lru);
- 
- 	blkdev_issue_flush(btp->bt_bdev);
--	fs_put_dax(btp->bt_daxdev, NULL);
-+	fs_put_dax(btp->bt_daxdev, btp->bt_mount);
- 
- 	kmem_free(btp);
- }
-@@ -1958,14 +1959,18 @@ xfs_alloc_buftarg(
- 	struct block_device	*bdev)
- {
- 	xfs_buftarg_t		*btp;
-+	const struct dax_holder_operations *ops = NULL;
- 
-+#if defined(CONFIG_FS_DAX) && defined(CONFIG_MEMORY_FAILURE)
-+	ops = &xfs_dax_holder_operations;
-+#endif
- 	btp = kmem_zalloc(sizeof(*btp), KM_NOFS);
- 
- 	btp->bt_mount = mp;
- 	btp->bt_dev =  bdev->bd_dev;
- 	btp->bt_bdev = bdev;
--	btp->bt_daxdev = fs_dax_get_by_bdev(bdev, &btp->bt_dax_part_off, NULL,
--					    NULL);
-+	btp->bt_daxdev = fs_dax_get_by_bdev(bdev, &btp->bt_dax_part_off,
-+					    mp, ops);
- 
- 	/*
- 	 * Buffer IO error rate limiting. Limit it to no more than 10 messages
-diff --git a/fs/xfs/xfs_fsops.c b/fs/xfs/xfs_fsops.c
-index 68f74549fa22..56530900bb86 100644
---- a/fs/xfs/xfs_fsops.c
-+++ b/fs/xfs/xfs_fsops.c
-@@ -536,6 +536,9 @@ xfs_do_force_shutdown(
- 	} else if (flags & SHUTDOWN_CORRUPT_INCORE) {
- 		tag = XFS_PTAG_SHUTDOWN_CORRUPT;
- 		why = "Corruption of in-memory data";
-+	} else if (flags & SHUTDOWN_CORRUPT_ONDISK) {
-+		tag = XFS_PTAG_SHUTDOWN_CORRUPT;
-+		why = "Corruption of on-disk metadata";
- 	} else {
- 		tag = XFS_PTAG_SHUTDOWN_IOERROR;
- 		why = "Metadata I/O Error";
-diff --git a/fs/xfs/xfs_mount.h b/fs/xfs/xfs_mount.h
-index f6dc19de8322..9237cc159542 100644
---- a/fs/xfs/xfs_mount.h
-+++ b/fs/xfs/xfs_mount.h
-@@ -435,6 +435,7 @@ void xfs_do_force_shutdown(struct xfs_mount *mp, int flags, char *fname,
- #define SHUTDOWN_LOG_IO_ERROR	0x0002	/* write attempt to the log failed */
- #define SHUTDOWN_FORCE_UMOUNT	0x0004	/* shutdown from a forced unmount */
- #define SHUTDOWN_CORRUPT_INCORE	0x0008	/* corrupt in-memory data structures */
-+#define SHUTDOWN_CORRUPT_ONDISK	0x0010  /* corrupt metadata on device */
- 
- #define XFS_SHUTDOWN_STRINGS \
- 	{ SHUTDOWN_META_IO_ERROR,	"metadata_io" }, \
-diff --git a/fs/xfs/xfs_notify_failure.c b/fs/xfs/xfs_notify_failure.c
-new file mode 100644
-index 000000000000..aa8dc27c599c
---- /dev/null
-+++ b/fs/xfs/xfs_notify_failure.c
-@@ -0,0 +1,220 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2022 Fujitsu.  All Rights Reserved.
-+ */
-+
-+#include "xfs.h"
-+#include "xfs_shared.h"
-+#include "xfs_format.h"
-+#include "xfs_log_format.h"
-+#include "xfs_trans_resv.h"
-+#include "xfs_mount.h"
-+#include "xfs_alloc.h"
-+#include "xfs_bit.h"
-+#include "xfs_btree.h"
-+#include "xfs_inode.h"
-+#include "xfs_icache.h"
-+#include "xfs_rmap.h"
-+#include "xfs_rmap_btree.h"
-+#include "xfs_rtalloc.h"
-+#include "xfs_trans.h"
-+
-+#include <linux/mm.h>
-+#include <linux/dax.h>
-+
-+struct failure_info {
-+	xfs_agblock_t		startblock;
-+	xfs_extlen_t		blockcount;
-+	int			mf_flags;
-+};
-+
-+static pgoff_t
-+xfs_failure_pgoff(
-+	struct xfs_mount		*mp,
-+	const struct xfs_rmap_irec	*rec,
-+	const struct failure_info	*notify)
-+{
-+	loff_t				pos = XFS_FSB_TO_B(mp, rec->rm_offset);
-+
-+	if (notify->startblock > rec->rm_startblock)
-+		pos += XFS_FSB_TO_B(mp,
-+				notify->startblock - rec->rm_startblock);
-+	return pos >> PAGE_SHIFT;
-+}
-+
-+static unsigned long
-+xfs_failure_pgcnt(
-+	struct xfs_mount		*mp,
-+	const struct xfs_rmap_irec	*rec,
-+	const struct failure_info	*notify)
-+{
-+	xfs_agblock_t			end_rec;
-+	xfs_agblock_t			end_notify;
-+	xfs_agblock_t			start_cross;
-+	xfs_agblock_t			end_cross;
-+
-+	start_cross = max(rec->rm_startblock, notify->startblock);
-+
-+	end_rec = rec->rm_startblock + rec->rm_blockcount;
-+	end_notify = notify->startblock + notify->blockcount;
-+	end_cross = min(end_rec, end_notify);
-+
-+	return XFS_FSB_TO_B(mp, end_cross - start_cross) >> PAGE_SHIFT;
-+}
-+
-+static int
-+xfs_dax_failure_fn(
-+	struct xfs_btree_cur		*cur,
-+	const struct xfs_rmap_irec	*rec,
-+	void				*data)
-+{
-+	struct xfs_mount		*mp = cur->bc_mp;
-+	struct xfs_inode		*ip;
-+	struct failure_info		*notify = data;
-+	int				error = 0;
-+
-+	if (XFS_RMAP_NON_INODE_OWNER(rec->rm_owner) ||
-+	    (rec->rm_flags & (XFS_RMAP_ATTR_FORK | XFS_RMAP_BMBT_BLOCK))) {
-+		xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_ONDISK);
-+		return -EFSCORRUPTED;
-+	}
-+
-+	/* Get files that incore, filter out others that are not in use. */
-+	error = xfs_iget(mp, cur->bc_tp, rec->rm_owner, XFS_IGET_INCORE,
-+			 0, &ip);
-+	/* Continue the rmap query if the inode isn't incore */
-+	if (error == -ENODATA)
-+		return 0;
-+	if (error)
-+		return error;
-+
-+	error = mf_dax_kill_procs(VFS_I(ip)->i_mapping,
-+				  xfs_failure_pgoff(mp, rec, notify),
-+				  xfs_failure_pgcnt(mp, rec, notify),
-+				  notify->mf_flags);
-+	xfs_irele(ip);
-+	return error;
-+}
-+
-+static int
-+xfs_dax_notify_ddev_failure(
-+	struct xfs_mount	*mp,
-+	xfs_daddr_t		daddr,
-+	xfs_daddr_t		bblen,
-+	int			mf_flags)
-+{
-+	struct xfs_trans	*tp = NULL;
-+	struct xfs_btree_cur	*cur = NULL;
-+	struct xfs_buf		*agf_bp = NULL;
-+	int			error = 0;
-+	xfs_fsblock_t		fsbno = XFS_DADDR_TO_FSB(mp, daddr);
-+	xfs_agnumber_t		agno = XFS_FSB_TO_AGNO(mp, fsbno);
-+	xfs_fsblock_t		end_fsbno = XFS_DADDR_TO_FSB(mp, daddr + bblen);
-+	xfs_agnumber_t		end_agno = XFS_FSB_TO_AGNO(mp, end_fsbno);
-+
-+	error = xfs_trans_alloc_empty(mp, &tp);
-+	if (error)
-+		return error;
-+
-+	for (; agno <= end_agno; agno++) {
-+		struct xfs_rmap_irec	ri_low = { };
-+		struct xfs_rmap_irec	ri_high;
-+		struct failure_info	notify;
-+		struct xfs_agf		*agf;
-+		xfs_agblock_t		agend;
-+
-+		error = xfs_alloc_read_agf(mp, tp, agno, 0, &agf_bp);
-+		if (error)
-+			break;
-+
-+		cur = xfs_rmapbt_init_cursor(mp, tp, agf_bp, agf_bp->b_pag);
-+
-+		/*
-+		 * Set the rmap range from ri_low to ri_high, which represents
-+		 * a [start, end] where we looking for the files or metadata.
-+		 */
-+		memset(&ri_high, 0xFF, sizeof(ri_high));
-+		ri_low.rm_startblock = XFS_FSB_TO_AGBNO(mp, fsbno);
-+		if (agno == end_agno)
-+			ri_high.rm_startblock = XFS_FSB_TO_AGBNO(mp, end_fsbno);
-+
-+		agf = agf_bp->b_addr;
-+		agend = min(be32_to_cpu(agf->agf_length),
-+				ri_high.rm_startblock);
-+		notify.startblock = ri_low.rm_startblock;
-+		notify.blockcount = agend - ri_low.rm_startblock;
-+
-+		error = xfs_rmap_query_range(cur, &ri_low, &ri_high,
-+				xfs_dax_failure_fn, &notify);
-+		xfs_btree_del_cursor(cur, error);
-+		xfs_trans_brelse(tp, agf_bp);
-+		if (error)
-+			break;
-+
-+		fsbno = XFS_AGB_TO_FSB(mp, agno + 1, 0);
-+	}
-+
-+	xfs_trans_cancel(tp);
-+	return error;
-+}
-+
-+static int
-+xfs_dax_notify_failure(
-+	struct dax_device	*dax_dev,
-+	u64			offset,
-+	u64			len,
-+	int			mf_flags)
-+{
-+	struct xfs_mount	*mp = dax_holder(dax_dev);
-+	u64			ddev_start;
-+	u64			ddev_end;
-+
-+	if (!(mp->m_sb.sb_flags & SB_BORN)) {
-+		xfs_warn(mp, "filesystem is not ready for notify_failure()!");
-+		return -EIO;
-+	}
-+
-+	if (mp->m_rtdev_targp && mp->m_rtdev_targp->bt_daxdev == dax_dev) {
-+		xfs_warn(mp,
-+			 "notify_failure() not supported on realtime device!");
-+		return -EOPNOTSUPP;
-+	}
-+
-+	if (mp->m_logdev_targp && mp->m_logdev_targp->bt_daxdev == dax_dev &&
-+	    mp->m_logdev_targp != mp->m_ddev_targp) {
-+		xfs_err(mp, "ondisk log corrupt, shutting down fs!");
-+		xfs_force_shutdown(mp, SHUTDOWN_CORRUPT_ONDISK);
-+		return -EFSCORRUPTED;
-+	}
-+
-+	if (!xfs_has_rmapbt(mp)) {
-+		xfs_warn(mp, "notify_failure() needs rmapbt enabled!");
-+		return -EOPNOTSUPP;
-+	}
-+
-+	ddev_start = mp->m_ddev_targp->bt_dax_part_off;
-+	ddev_end = ddev_start + bdev_nr_bytes(mp->m_ddev_targp->bt_bdev) - 1;
-+
-+	/* Ignore the range out of filesystem area */
-+	if (offset + len < ddev_start)
-+		return -ENXIO;
-+	if (offset > ddev_end)
-+		return -ENXIO;
-+
-+	/* Calculate the real range when it touches the boundary */
-+	if (offset > ddev_start)
-+		offset -= ddev_start;
-+	else {
-+		len -= ddev_start - offset;
-+		offset = 0;
-+	}
-+	if (offset + len > ddev_end)
-+		len -= ddev_end - offset;
-+
-+	return xfs_dax_notify_ddev_failure(mp, BTOBB(offset), BTOBB(len),
-+			mf_flags);
-+}
-+
-+const struct dax_holder_operations xfs_dax_holder_operations = {
-+	.notify_failure		= xfs_dax_notify_failure,
-+};
-diff --git a/fs/xfs/xfs_super.h b/fs/xfs/xfs_super.h
-index 167d23f92ffe..27ab5087d0b3 100644
---- a/fs/xfs/xfs_super.h
-+++ b/fs/xfs/xfs_super.h
-@@ -93,6 +93,7 @@ extern xfs_agnumber_t xfs_set_inode_alloc(struct xfs_mount *,
- extern const struct export_operations xfs_export_operations;
- extern const struct xattr_handler *xfs_xattr_handlers[];
- extern const struct quotactl_ops xfs_quotactl_operations;
-+extern const struct dax_holder_operations xfs_dax_holder_operations;
- 
- extern void xfs_reinit_percpu_counters(struct xfs_mount *mp);
- 
--- 
-2.35.1
-
-
-
+Looks good,=0A=
+Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>=0A=
