@@ -2,131 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3757E50891C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Apr 2022 15:20:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FFD55089CA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 20 Apr 2022 15:48:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378924AbiDTNWZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 20 Apr 2022 09:22:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33410 "EHLO
+        id S1379201AbiDTNvc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 20 Apr 2022 09:51:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40652 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233914AbiDTNWZ (ORCPT
+        with ESMTP id S1379197AbiDTNv2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 20 Apr 2022 09:22:25 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4732B42A21
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Apr 2022 06:19:39 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D757A61A5C
-        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Apr 2022 13:19:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4049C385A0;
-        Wed, 20 Apr 2022 13:19:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650460778;
-        bh=2Gik4DS55Z+cbDrVP23ItBsIuakEIek64YbpMrdW0Q4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=o1euhhDLJdy7gJZHPAwk6bCGIdL8x4O1BqhZ2YuBx+5CSz6M9Ot4W4sEGfCZWG3uV
-         V05QF62OtWRMxcKqu9KW9M3+X2d/cxwdUoVvoC9cNWurx+WncG4lgh7zBh1qVmb/AF
-         gfwG8Ct6TA0yLA/Le7xJSFVoIMvEnoKNhaIlXSl4F38f55mlSipke0/7fGFNLPIPsy
-         xMC4Y9lCXg/EXFuziMm8Y/Q3lRRyrJoZ6EepGLNFoCaakMIzwx2Ga0bFIfLffCqjal
-         cdcwJ4tXFzDAZkVLbObyoaDZLtMF77XPKbqx1XwngvD0eoEsly9YzeeLHMyP4ZDEGs
-         5VqyBkg7zDUZg==
-From:   Christian Brauner <brauner@kernel.org>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Hillf Danton <hdanton@sina.com>, fweisbec@gmail.com,
-        mingo@kernel.org, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de,
-        syzbot+10a16d1c43580983f6a2@syzkaller.appspotmail.com,
-        syzbot+306090cfa3294f0bbfb3@syzkaller.appspotmail.com
-Subject: [PATCH] fs: unset MNT_WRITE_HOLD on failure
-Date:   Wed, 20 Apr 2022 15:19:25 +0200
-Message-Id: <20220420131925.2464685-1-brauner@kernel.org>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <00000000000080e10e05dd043247@google.com>
-References: 
+        Wed, 20 Apr 2022 09:51:28 -0400
+Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A3FD43499;
+        Wed, 20 Apr 2022 06:48:42 -0700 (PDT)
+Received: from in01.mta.xmission.com ([166.70.13.51]:54260)
+        by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1nhAhE-009Qlq-HP; Wed, 20 Apr 2022 07:48:40 -0600
+Received: from ip68-227-174-4.om.om.cox.net ([68.227.174.4]:35004 helo=email.froward.int.ebiederm.org.xmission.com)
+        by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1nhAhD-003KDU-L5; Wed, 20 Apr 2022 07:48:40 -0600
+From:   "Eric W. Biederman" <ebiederm@xmission.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        damien.lemoal@opensource.wdc.com, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, Niklas.Cassel@wdc.com,
+        lkp@intel.com, vapier@gentoo.org, gerg@linux-m68k.org,
+        stable@vger.kernel.org
+References: <20220418200834.1501454-1-Niklas.Cassel@wdc.com>
+        <202204181501.D55C8D2A@keescook>
+        <87mtgh17li.fsf_-_@email.froward.int.ebiederm.org>
+        <165039039729.809958.17874221541968744613.b4-ty@chromium.org>
+Date:   Wed, 20 Apr 2022 08:48:11 -0500
+In-Reply-To: <165039039729.809958.17874221541968744613.b4-ty@chromium.org>
+        (Kees Cook's message of "Tue, 19 Apr 2022 10:46:40 -0700")
+Message-ID: <87h76n27dw.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2864; h=from:subject; bh=2Gik4DS55Z+cbDrVP23ItBsIuakEIek64YbpMrdW0Q4=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSQlcARwT2e4X51VfYandqH/3xPZq3Tfu/Ll319aMFMhZqnV l7UFHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABOxCmL4n/lqhl/sw06pyvuJp9bUPQ 21fb90zaZ/LkodjLtP3PjZP5Phn5nV1i6rjPK1UowrX7nVRx2IeFvx2MCIt/yaZvGbXuUYDgA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain
+X-XM-SPF: eid=1nhAhD-003KDU-L5;;;mid=<87h76n27dw.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.174.4;;;frm=ebiederm@xmission.com;;;spf=softfail
+X-XM-AID: U2FsdGVkX18FFPP0YfysqT9KZNiOyZqfSkTypL/ShzA=
+X-SA-Exim-Connect-IP: 68.227.174.4
+X-SA-Exim-Mail-From: ebiederm@xmission.com
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Virus: No
+X-Spam-DCC: XMission; sa03 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ***;Kees Cook <keescook@chromium.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 273 ms - load_scoreonly_sql: 0.04 (0.0%),
+        signal_user_changed: 3.8 (1.4%), b_tie_ro: 2.6 (1.0%), parse: 1.02
+        (0.4%), extract_message_metadata: 11 (4.0%), get_uri_detail_list: 0.73
+        (0.3%), tests_pri_-1000: 12 (4.5%), tests_pri_-950: 1.06 (0.4%),
+        tests_pri_-900: 0.85 (0.3%), tests_pri_-90: 90 (32.8%), check_bayes:
+        87 (31.8%), b_tokenize: 6 (2.2%), b_tok_get_all: 5 (1.9%),
+        b_comp_prob: 1.92 (0.7%), b_tok_touch_all: 71 (25.9%), b_finish: 0.75
+        (0.3%), tests_pri_0: 142 (51.9%), check_dkim_signature: 0.37 (0.1%),
+        check_dkim_adsp: 2.3 (0.8%), poll_dns_idle: 0.65 (0.2%), tests_pri_10:
+        1.68 (0.6%), tests_pri_500: 7 (2.4%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: (subset) [PATCH] binfmt_flat; Drop vestigates of coredump support
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-After mnt_hold_writers() has been called we will always have set MNT_WRITE_HOLD
-and consequently we always need to pair mnt_hold_writers() with
-mnt_unhold_writers(). After the recent cleanup in [1] where Al switched from a
-do-while to a for loop the cleanup currently fails to unset MNT_WRITE_HOLD for
-the first mount that was changed. Fix this and make sure that the first mount
-will be cleaned up and add some comments to make it more obvious.
+Kees Cook <keescook@chromium.org> writes:
 
-Reported-by: syzbot+10a16d1c43580983f6a2@syzkaller.appspotmail.com
-Reported-by: syzbot+306090cfa3294f0bbfb3@syzkaller.appspotmail.com
-Fixes: e257039f0fc7 ("mount_setattr(): clean the control flow and calling conventions") [1]
-Link: https://lore.kernel.org/lkml/0000000000007cc21d05dd0432b8@google.com
-Link: https://lore.kernel.org/lkml/00000000000080e10e05dd043247@google.com
-Cc: Hillf Danton <hdanton@sina.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
----
-This should fix the syzbot issue. This is only relevant for making a
-mount or mount tree read-only:
-1. successul recursive read-only mount tree change:
-   Cleanup loop isn't executed.
-2. failed recursive read-only mount tree change:
-   m will point to the mount we failed to handle. The cleanup loop will
-   run until p == m and then terminate.
-3. successful single read-only mount change:
-   Cleanup loop won't be executed.
-4. failed single read-only mount change:
-   m will point to mnt and the cleanup loop will terminate if p == m.
-I don't think there's any other weird corner cases since we now that
-MNT_WRITE_HOLD can only have been set by us as it requires
-lock_mount_hash() which we hold. So unconditionally unsetting it is
-fine. But please make sure to take a close look at the changed loop.
----
- fs/namespace.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+> On Tue, 19 Apr 2022 09:16:41 -0500, Eric W. Biederman wrote:
+>> There is the briefest start of coredump support in binfmt_flat.  It is
+>> actually a pain to maintain as binfmt_flat is not built on most
+>> architectures so it is easy to overlook.
+>> 
+>> Since the support does not do anything remove it.
+>> 
+>> 
+>> [...]
+>
+> Applied to for-next/execve, thanks! (With typo nits fixed.)
+>
+> [1/1] binfmt_flat; Drop vestigates of coredump support
+>       https://git.kernel.org/kees/c/6e1a873cefd1
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index a0a36bfa3aa0..afe2b64b14f1 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -4058,10 +4058,22 @@ static int mount_setattr_prepare(struct mount_kattr *kattr, struct mount *mnt)
- 	if (err) {
- 		struct mount *p;
- 
--		for (p = mnt; p != m; p = next_mnt(p, mnt)) {
-+		/*
-+		 * If we had to call mnt_hold_writers() MNT_WRITE_HOLD will
-+		 * be set in @mnt_flags. The loop unsets MNT_WRITE_HOLD for all
-+		 * mounts and needs to take care to include the first mount.
-+		 */
-+		for (p = mnt; p; p = next_mnt(p, mnt)) {
- 			/* If we had to hold writers unblock them. */
- 			if (p->mnt.mnt_flags & MNT_WRITE_HOLD)
- 				mnt_unhold_writers(p);
-+
-+			/*
-+			 * We're done once the first mount we changed got
-+			 * MNT_WRITE_HOLD unset.
-+			 */
-+			if (p == m)
-+				break;
- 		}
- 	}
- 	return err;
-
-base-commit: b2d229d4ddb17db541098b83524d901257e93845
--- 
-2.32.0
+Thanks,
+Eric
 
