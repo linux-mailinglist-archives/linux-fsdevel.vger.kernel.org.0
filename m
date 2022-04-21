@@ -2,93 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 15F08509AD2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Apr 2022 10:38:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C23EC509AFF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Apr 2022 10:49:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1386759AbiDUIkF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Apr 2022 04:40:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52006 "EHLO
+        id S1386894AbiDUIuc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Apr 2022 04:50:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1386750AbiDUIjl (ORCPT
+        with ESMTP id S1386909AbiDUIu2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Apr 2022 04:39:41 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91A273890;
-        Thu, 21 Apr 2022 01:36:52 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 05164CE2156;
-        Thu, 21 Apr 2022 08:36:51 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30B6BC385A5;
-        Thu, 21 Apr 2022 08:36:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650530209;
-        bh=DgIpTRUz3aTs8B7+zg6ZlAUylyg4ZKn2RJmN1t6ecgg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FEd6/BoXKhVfHShY9OucHDiLBrSFQWP3B37jLfvDLhcV6zGNusUDtuYUqX3EXcYOB
-         8iIsGGlwaT/pO+y7WQgbFpvwPw/XphoLSl1uIKFo3FkLse+ZgDabTnkcZaR/MOLS0w
-         kkkCtIpiCv/qaQlgBQnr81/R+heGEfTapbVKkLyVhuOVEW1bRzb+yUR1Sx/wkzgAMn
-         nPy/wL24NFJubxhrjEZhW89nTyZfO7MRxbSs3YrjnLI94dtBataBWP3b8VhMmGBPZC
-         JNmEFtrX/Xd0w4VURFz3FcTxvO5BnuwLlnfoeLu2Q12bx8Wtfq7AQEGsumxCevPCmm
-         1PaZK+pM02qIw==
-Date:   Thu, 21 Apr 2022 10:36:43 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     "xuyang2018.jy@fujitsu.com" <xuyang2018.jy@fujitsu.com>
-Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "david@fromorbit.com" <david@fromorbit.com>,
-        "djwong@kernel.org" <djwong@kernel.org>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "jlayton@kernel.org" <jlayton@kernel.org>
-Subject: Re: [PATCH v5 4/4] ceph: Remove S_ISGID clear code in
- ceph_finish_async_create
-Message-ID: <20220421083643.yzdcberj3azuj2ep@wittgenstein>
-References: <1650527658-2218-1-git-send-email-xuyang2018.jy@fujitsu.com>
- <1650527658-2218-4-git-send-email-xuyang2018.jy@fujitsu.com>
- <20220421081852.rrmj2log3fln22lp@wittgenstein>
- <626123F9.8070004@fujitsu.com>
+        Thu, 21 Apr 2022 04:50:28 -0400
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C801220F63;
+        Thu, 21 Apr 2022 01:47:31 -0700 (PDT)
+Received: from canpemm500002.china.huawei.com (unknown [172.30.72.56])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4KkWPk528TzhXyZ;
+        Thu, 21 Apr 2022 16:47:22 +0800 (CST)
+Received: from [10.174.177.76] (10.174.177.76) by
+ canpemm500002.china.huawei.com (7.192.104.244) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Thu, 21 Apr 2022 16:47:29 +0800
+Subject: Re: [PATCH v13 5/7] mm: Introduce mf_dax_kill_procs() for fsdax case
+To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
+CC:     <djwong@kernel.org>, <dan.j.williams@intel.com>,
+        <david@fromorbit.com>, <hch@infradead.org>, <jane.chu@oracle.com>,
+        Christoph Hellwig <hch@lst.de>, <linux-kernel@vger.kernel.org>,
+        <linux-xfs@vger.kernel.org>, <nvdimm@lists.linux.dev>,
+        <linux-mm@kvack.org>, <linux-fsdevel@vger.kernel.org>
+References: <20220419045045.1664996-1-ruansy.fnst@fujitsu.com>
+ <20220419045045.1664996-6-ruansy.fnst@fujitsu.com>
+From:   Miaohe Lin <linmiaohe@huawei.com>
+Message-ID: <68579c32-268f-0431-72e9-d3d104bc10bf@huawei.com>
+Date:   Thu, 21 Apr 2022 16:47:28 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <626123F9.8070004@fujitsu.com>
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20220419045045.1664996-6-ruansy.fnst@fujitsu.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.174.177.76]
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ canpemm500002.china.huawei.com (7.192.104.244)
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-7.4 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,RCVD_IN_MSPIKE_H5,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 21, 2022 at 08:28:12AM +0000, xuyang2018.jy@fujitsu.com wrote:
-> on 2022/4/21 16:18, Christian Brauner wrote:
-> > On Thu, Apr 21, 2022 at 03:54:18PM +0800, Yang Xu wrote:
-> >> Since vfs has stripped S_ISGID in the previous patch, the calltrace
-> >> as below:
-> >>
-> >> vfs:	lookup_open
-> >> 	...
-> >> 	  if (open_flag&  O_CREAT) {
-> >>                  if (open_flag&  O_EXCL)
-> >>                          open_flag&= ~O_TRUNC;
-> >>                  mode = prepare_mode(mnt_userns, dir->d_inode, mode);
-> >> 	...
-> >> 	   dir_inode->i_op->atomic_open
-> >>
-> >> ceph:	ceph_atomic_open
-> >> 	...
-> >> 	      if (flags&  O_CREAT)
-> >>              		ceph_finish_async_create
-> >>
-> >> We have stripped sgid in prepare_mode, so remove this useless clear
-> >> code directly.
-> >
-> > I'd replace this with:
-> >
-> > "Previous patches moved sgid stripping exclusively into the vfs. So
-> > manual sgid stripping by the filesystem isn't needed anymore."
-> Looks more clear, so should I drop the above calltrace?
+On 2022/4/19 12:50, Shiyang Ruan wrote:
+> This new function is a variant of mf_generic_kill_procs that accepts a
+> file, offset pair instead of a struct to support multiple files sharing
+> a DAX mapping.  It is intended to be called by the file systems as part
+> of the memory_failure handler after the file system performed a reverse
+> mapping from the storage address to the file and file offset.
+> 
+> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> ---
+...
+>  
+> +#ifdef CONFIG_FS_DAX
+> +/**
+> + * mf_dax_kill_procs - Collect and kill processes who are using this file range
+> + * @mapping:	the file in use
+> + * @index:	start pgoff of the range within the file
 
-Imho, yes.
+Might replacing 'file' with 'mapping' or 'address_space within file' will be better?
+
+> + * @count:	length of the range, in unit of PAGE_SIZE
+> + * @mf_flags:	memory failure flags
+> + */
+> +int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
+> +		unsigned long count, int mf_flags)
+> +{
+> +	LIST_HEAD(to_kill);
+> +	dax_entry_t cookie;
+> +	struct page *page;
+> +	size_t end = index + count;
+> +
+> +	mf_flags |= MF_ACTION_REQUIRED | MF_MUST_KILL;
+> +
+> +	for (; index < end; index++) {
+> +		page = NULL;
+> +		cookie = dax_lock_mapping_entry(mapping, index, &page);
+> +		if (!cookie)
+> +			return -EBUSY;
+> +		if (!page)
+> +			goto unlock;
+> +
+
+Should we do hwpoison_filter here?
+
+> +		SetPageHWPoison(page);
+> +
+> +		collect_procs_fsdax(page, mapping, index, &to_kill);
+> +		unmap_and_kill(&to_kill, page_to_pfn(page), mapping,
+> +				index, mf_flags);
+> +unlock:
+> +		dax_unlock_mapping_entry(mapping, index, cookie);
+> +	}
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(mf_dax_kill_procs);
+> +#endif /* CONFIG_FS_DAX */
+> +
+>  /*
+>   * Called from hugetlb code with hugetlb_lock held.
+>   *
+> 
+
+Except from the above nit, this patch looks good to me. Thanks!
+
+Reviewed-by: Miaohe Lin <linmiaohe@huawei.com>
