@@ -2,147 +2,174 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CEBAD509600
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Apr 2022 06:35:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 996E05096DC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Apr 2022 07:34:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350564AbiDUEh5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Apr 2022 00:37:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33312 "EHLO
+        id S1384461AbiDUFhA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Apr 2022 01:37:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229988AbiDUEh4 (ORCPT
+        with ESMTP id S1345361AbiDUFg6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Apr 2022 00:37:56 -0400
-Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8B57D11164;
-        Wed, 20 Apr 2022 21:35:08 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-115-138.pa.nsw.optusnet.com.au [49.181.115.138])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id EB00153454A;
-        Thu, 21 Apr 2022 14:35:04 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1nhOX0-002eRf-Fr; Thu, 21 Apr 2022 14:35:02 +1000
-Date:   Thu, 21 Apr 2022 14:35:02 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Shiyang Ruan <ruansy.fnst@fujitsu.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Linux NVDIMM <nvdimm@lists.linux.dev>,
+        Thu, 21 Apr 2022 01:36:58 -0400
+Received: from mail-qv1-xf35.google.com (mail-qv1-xf35.google.com [IPv6:2607:f8b0:4864:20::f35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9676611A08
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Apr 2022 22:34:09 -0700 (PDT)
+Received: by mail-qv1-xf35.google.com with SMTP id dw17so2955891qvb.9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 20 Apr 2022 22:34:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lopfncGJubtM3QjrhekXM3BKrXrw09UHELrv89Q90Gs=;
+        b=For0oSKlhehXY05+cfsw22EhOg3IFjKx6/71PVJ3qCi1AmTHGHnSeHKsuLSuBSBCw7
+         p1BS+oBBQvzw4FdDavLviVGtan6YcYnHkxnozbLvL5+57wgoI6XIsAsO5Gy/m5bHozXx
+         qsndm9ZNzPHkXC1uREudD+yWci8M5HbFQJbPmgQNXawBmcd5Gy9srUemKadRikjH1Tah
+         giVsweVuc4uvcyD82fA6XIB8DsfkpmzUfuHdirl+wZT/BVVU0bAwNp+pdoL/9GRHsjIW
+         6ebH3C81lpx32VU6YMFLtdnUUnO9PyzL/UEdPamK5gQPsE2SLhh5LRZgNc2iZESTPOY4
+         jxgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lopfncGJubtM3QjrhekXM3BKrXrw09UHELrv89Q90Gs=;
+        b=DmrP+o4bwFF8bFgwZOLWJo4HDMTU2EJ/zrvPEJ9Ia0W+qBECc/LB0Cco1eVZDXY5mJ
+         GTHjtSXaGMaa2rJ5pbso5upEY4o3adHVPwlsxbxt1rT0hKft5OY5N0XRw3eoqQDqOYoF
+         2uDO6i8265x0/PDibPPa3pZfFXPUdDzmeZId7byI/49oLxq7Kzq+eEzfu61JMUrKDOtb
+         Q6fZcB137WlJ982gnsAzTTjYk3gYneYyFf5YKjddXWaquPwP02JjBK78oMlSG7Z8E0Qu
+         37aiuuZx8d6dqzPQPzdBM+iQPuNxpbvemaHNx2qxBPLYDMf+mTtNwGwGNxMQdyl54chN
+         ClRQ==
+X-Gm-Message-State: AOAM531a+tUglYw3fCSVNdilajPB6ByT7T9I3ClqyFTamwj/s9K6gt+Y
+        Snonb1sNS4mTz/28UGeqp6D+Go34Zx2Gev6CsOQ=
+X-Google-Smtp-Source: ABdhPJyJ0JvgWGOEICPX3nsDvzl8v8+rukG1D96j/m8Eqb9XEi749vPq7IR4GENhO+Pe+rBcuI/Z7XiAPBgEBvphIR4=
+X-Received: by 2002:ad4:5d6e:0:b0:446:4aae:630c with SMTP id
+ fn14-20020ad45d6e000000b004464aae630cmr16522298qvb.77.1650519248696; Wed, 20
+ Apr 2022 22:34:08 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220418213713.273050-1-krisman@collabora.com>
+ <20220418204204.0405eda0c506fd29e857e1e4@linux-foundation.org> <87h76pay87.fsf@collabora.com>
+In-Reply-To: <87h76pay87.fsf@collabora.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 21 Apr 2022 08:33:56 +0300
+Message-ID: <CAOQ4uxhjvwwEQo+u=TD-CJ0xwZ7A1NjkA5GRFOzqG7m1dN1E2Q@mail.gmail.com>
+Subject: Re: [PATCH v3 0/3] shmem: Allow userspace monitoring of tmpfs for
+ lack of space.
+To:     Gabriel Krisman Bertazi <krisman@collabora.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Hugh Dickins <hughd@google.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, kernel@collabora.com,
+        Khazhismel Kumykov <khazhy@google.com>,
         Linux MM <linux-mm@kvack.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jane Chu <jane.chu@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Naoya Horiguchi <naoya.horiguchi@nec.com>
-Subject: Re: [PATCH v13 0/7] fsdax: introduce fs query to support reflink
-Message-ID: <20220421043502.GS1544202@dread.disaster.area>
-References: <20220419045045.1664996-1-ruansy.fnst@fujitsu.com>
- <20220421012045.GR1544202@dread.disaster.area>
- <86cb0ada-208c-02de-dbc9-53c6014892c3@fujitsu.com>
- <CAPcyv4i0Noum8hqHtCpdM5HMVdmNHm3Aj2JCnZ+KZLgceiXYaA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPcyv4i0Noum8hqHtCpdM5HMVdmNHm3Aj2JCnZ+KZLgceiXYaA@mail.gmail.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=deDjYVbe c=1 sm=1 tr=0 ts=6260defb
-        a=/kVtbFzwtM2bJgxRVb+eeA==:117 a=/kVtbFzwtM2bJgxRVb+eeA==:17
-        a=IkcTkHD0fZMA:10 a=z0gMJWrwH1QA:10 a=omOdbC7AAAAA:8 a=VwQbUJbxAAAA:8
-        a=JfrnYn6hAAAA:8 a=7-415B0cAAAA:8 a=4wxXsGBeZjQiNu9EbwgA:9
-        a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=1CNFftbPRP8L7MoqJWF3:22
-        a=biEYGPWJfzWAr4FL6Ov7:22
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_PASS,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+        Theodore Tso <tytso@mit.edu>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 20, 2022 at 07:20:07PM -0700, Dan Williams wrote:
-> [ add Andrew and Naoya ]
-> 
-> On Wed, Apr 20, 2022 at 6:48 PM Shiyang Ruan <ruansy.fnst@fujitsu.com> wrote:
+On Tue, Apr 19, 2022 at 6:29 PM Gabriel Krisman Bertazi
+<krisman@collabora.com> wrote:
+>
+> Andrew Morton <akpm@linux-foundation.org> writes:
+>
+> Hi Andrew,
+>
+> > On Mon, 18 Apr 2022 17:37:10 -0400 Gabriel Krisman Bertazi <krisman@collabora.com> wrote:
 > >
-> > Hi Dave,
+> >> When provisioning containerized applications, multiple very small tmpfs
 > >
-> > 在 2022/4/21 9:20, Dave Chinner 写道:
-> > > Hi Ruan,
-> > >
-> > > On Tue, Apr 19, 2022 at 12:50:38PM +0800, Shiyang Ruan wrote:
-> > >> This patchset is aimed to support shared pages tracking for fsdax.
-> > >
-> > > Now that this is largely reviewed, it's time to work out the
-> > > logistics of merging it.
+> > "files"?
+>
+> Actually, filesystems.  In cloud environments, we have several small
+> tmpfs associated with containerized tasks.
+>
+> >> are used, for which one cannot always predict the proper file system
+> >> size ahead of time.  We want to be able to reliably monitor filesystems
+> >> for ENOSPC errors, without depending on the application being executed
+> >> reporting the ENOSPC after a failure.
 > >
-> > Thanks!
+> > Well that sucks.  We need a kernel-side workaround for applications
+> > that fail to check and report storage errors?
 > >
-> > >
-> > >> Changes since V12:
-> > >>    - Rebased onto next-20220414
-> > >
-> > > What does this depend on that is in the linux-next kernel?
-> > >
-> > > i.e. can this be applied successfully to a v5.18-rc2 kernel without
-> > > needing to drag in any other patchsets/commits/trees?
+> > We could do this for every syscall in the kernel.  What's special about
+> > tmpfs in this regard?
 > >
-> > Firstly, I tried to apply to v5.18-rc2 but it failed.
-> >
-> > There are some changes in memory-failure.c, which besides my Patch-02
-> >    "mm/hwpoison: fix race between hugetlb free/demotion and
-> > memory_failure_hugetlb()"
-> >
-> > https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=423228ce93c6a283132be38d442120c8e4cdb061
-> >
-> > Then, why it is on linux-next is: I was told[1] there is a better fix
-> > about "pgoff_address()" in linux-next:
-> >    "mm: rmap: introduce pfn_mkclean_range() to cleans PTEs"
-> >
-> > https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=65c9605009f8317bb3983519874d755a0b2ca746
-> > so I rebased my patches to it and dropped one of mine.
-> >
-> > [1] https://lore.kernel.org/linux-xfs/YkPuooGD139Wpg1v@infradead.org/
-> 
-> From my perspective, once something has -mm dependencies it needs to
-> go through Andrew's tree, and if it's going through Andrew's tree I
-> think that means the reflink side of this needs to wait a cycle as
-> there is no stable point that the XFS tree could merge to build on top
-> of.
+> > Please provide additional justification and usage examples for such an
+> > extraordinary thing.
+>
+> For a cloud provider deploying containerized applications, they might
+> not control the application, so patching userspace wouldn't be a
+> solution.  More importantly - and why this is shmem specific -
+> they want to differentiate between a user getting ENOSPC due to
+> insufficiently provisioned fs size, vs. due to running out of memory in
+> a container, both of which return ENOSPC to the process.
+>
 
-Ngggh. Still? Really?
+Isn't there already a per memcg OOM handler that could be used by
+orchestrator to detect the latter?
 
-Sure, I'm not a maintainer and just the stand-in patch shepherd for
-a single release. However, being unable to cleanly merge code we
-need integrated into our local subsystem tree for integration
-testing because a patch dependency with another subsystem won't gain
-a stable commit ID until the next merge window is .... distinctly
-suboptimal.
+> A system administrator can then use this feature to monitor a fleet of
+> containerized applications in a uniform way, detect provisioning issues
+> caused by different reasons and address the deployment.
+>
+> I originally submitted this as a new fanotify event, but given the
+> specificity of shmem, Amir suggested the interface I'm implementing
+> here.  We've raised this discussion originally here:
+>
+> https://lore.kernel.org/linux-mm/CACGdZYLLCqzS4VLUHvzYG=rX3SEJaG7Vbs8_Wb_iUVSvXsqkxA@mail.gmail.com/
+>
 
-We know how to do this cleanly, quickly and efficiently - we've been
-doing cross-subsystem shared git branch co-ordination for
-VFS/fs/block stuff when needed for many, many years. It's pretty
-easy to do, just requires clear communication to decide where the
-source branch will be kept. It doesn't even matter what order Linus
-then merges the trees - they are self contained and git sorts out
-the duplicated commits without an issue.
+To put things in context, the points I was trying to make in this
+discussion are:
 
-I mean, we've been using git for *17 years* now - this stuff should
-be second nature to maintainers by now. So how is it still
-considered acceptible for a core kernel subsystem not to have the
-ability to provide other subsystems with stable commits/branches
-so we can cleanly develop cross-subsystem functionality quickly and
-efficiently?
+1. Why isn't monitoring with statfs() a sufficient solution? and more
+    specifically, the shared disk space provisioning problem does not sound
+    very tmpfs specific to me.
+    It is a well known issue for thin provisioned storage in environments
+    with shared resources as the ones that you describe
+2. OTOH, exporting internal fs stats via /sys/fs for debugging, health
+monitoring
+    or whatever seems legit to me and is widely practiced by other fs, so
+    exposing those tmpfs stats as this patch set is doing seems fine to me.
 
-> The last reviewed-by this wants before going through there is Naoya's
-> on the memory-failure.c changes.
+Another point worth considering in favor of /sys/fs/tmpfs -
+since tmpfs is FS_USERNS_MOUNT, the ability of sysadmin to monitor all
+tmpfs mounts in the system and their usage is limited.
 
-Naoya? 
+Therefore, having a central way to enumerate all tmpfs instances in the system
+like blockdev fs instances and like fuse fs instances, does not sound
+like a terrible
+idea in general.
 
-Cheers,
+> > Whatever that action is, I see no user-facing documentation which
+> > guides the user info how to take advantage of this?
+>
+> I can follow up with a new version with documentation, if we agree this
+> feature makes sense.
+>
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Given the time of year and participants involved, shall we continue
+this discussion
+in LSFMM?
+
+I am not sure if this even requires a shared FS/MM session, but I
+don't mind trying
+to allocate a shared FS/MM slot if Andrew and MM guys are interested
+to take part
+in the discussion.
+
+As long as memcg is able to report OOM to the orchestrator, the problem does not
+sound very tmpfs specific to me.
+
+As Ted explained, cloud providers (for some reason) charge by disk size and not
+by disk usage, so also for non-tmpfs, online growing the fs on demand could
+prove to be a rewarding practice for cloud applications.
+
+Thanks,
+Amir.
