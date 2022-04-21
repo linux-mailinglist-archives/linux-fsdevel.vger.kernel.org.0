@@ -2,183 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AC97E5099B3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Apr 2022 09:56:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66EE5509869
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Apr 2022 09:06:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1386242AbiDUH4D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Apr 2022 03:56:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50260 "EHLO
+        id S1385395AbiDUG5L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Apr 2022 02:57:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356531AbiDUH4C (ORCPT
+        with ESMTP id S1385352AbiDUG5C (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Apr 2022 03:56:02 -0400
-Received: from out30-56.freemail.mail.aliyun.com (out30-56.freemail.mail.aliyun.com [115.124.30.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E244DFB3;
-        Thu, 21 Apr 2022 00:53:13 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04357;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=20;SR=0;TI=SMTPD_---0VAdmSw9_1650527585;
-Received: from B-P7TQMD6M-0146.local(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0VAdmSw9_1650527585)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 21 Apr 2022 15:53:08 +0800
-Date:   Thu, 21 Apr 2022 15:53:05 +0800
-From:   Gao Xiang <hsiangkao@linux.alibaba.com>
-To:     Jeffle Xu <jefflexu@linux.alibaba.com>
-Cc:     dhowells@redhat.com, linux-cachefs@redhat.com, xiang@kernel.org,
-        chao@kernel.org, linux-erofs@lists.ozlabs.org,
-        torvalds@linux-foundation.org, gregkh@linuxfoundation.org,
-        willy@infradead.org, linux-fsdevel@vger.kernel.org,
-        joseph.qi@linux.alibaba.com, bo.liu@linux.alibaba.com,
-        tao.peng@linux.alibaba.com, gerry@linux.alibaba.com,
-        eguan@linux.alibaba.com, linux-kernel@vger.kernel.org,
-        luodaowen.backend@bytedance.com, tianzichen@kuaishou.com,
-        fannaihao@baidu.com, zhangjiachen.jaycee@bytedance.com
-Subject: Re: [PATCH v9 10/21] erofs: add fscache mode check helper
-Message-ID: <YmENYam/pVJ+Riyy@B-P7TQMD6M-0146.local>
-Mail-Followup-To: Jeffle Xu <jefflexu@linux.alibaba.com>,
-        dhowells@redhat.com, linux-cachefs@redhat.com, xiang@kernel.org,
-        chao@kernel.org, linux-erofs@lists.ozlabs.org,
-        torvalds@linux-foundation.org, gregkh@linuxfoundation.org,
-        willy@infradead.org, linux-fsdevel@vger.kernel.org,
-        joseph.qi@linux.alibaba.com, bo.liu@linux.alibaba.com,
-        tao.peng@linux.alibaba.com, gerry@linux.alibaba.com,
-        eguan@linux.alibaba.com, linux-kernel@vger.kernel.org,
-        luodaowen.backend@bytedance.com, tianzichen@kuaishou.com,
-        fannaihao@baidu.com, zhangjiachen.jaycee@bytedance.com
-References: <20220415123614.54024-1-jefflexu@linux.alibaba.com>
- <20220415123614.54024-11-jefflexu@linux.alibaba.com>
+        Thu, 21 Apr 2022 02:57:02 -0400
+Received: from mail3.bemta32.messagelabs.com (mail3.bemta32.messagelabs.com [195.245.230.17])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AB1E6350;
+        Wed, 20 Apr 2022 23:53:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
+        s=170520fj; t=1650524014; i=@fujitsu.com;
+        bh=bsIcrEQ7T7ZDVCzc9c2YjRMuEHA0WkrkYfM8+exRdkg=;
+        h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type;
+        b=YdKQCqP0aagpdAvIVn+6T818kHeK7wZvH4FiNWjk2AFzAwOBH8xcSCkLDJdKUVNPj
+         r2JUHuGj0Bgk4z6HVGaxReV6t4KmjAM507R0ElaIAbqvzefk8YiYNEfY6HmOB5BRbZ
+         15Wd1qoJ376xwdwoDluzXEjs6W14cEAHoaGDCcZEEoXeHdqY3lbI9wcp0j0DwgSjl2
+         iQA/JjOBg8DuIGtX3pYzV1RUko+vuyrA2bUl0R3c5BBwTYGZha79JQenDRLcqSkzlR
+         AitgalKTC6u8EU9Kfa/EKVUBeDRQO3GvtvLn9SRj+j1WmWV9nQdxieHY0OKFJVBjBN
+         JWVJ7h3Z9Wg2A==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrKIsWRWlGSWpSXmKPExsViZ8ORqJv7PyH
+  JYPZmbYvXhz8xWny4OYnJYsuxe4wWl5/wWfxctordYs/ekywW5/8eZ7X4/WMOmwOHx6lFEh6b
+  V2h5bFrVyebxeZOcx6Ynb5kCWKNYM/OS8isSWDO6dh1iLfgmWDFj9Ry2BsbJ/F2MXBxCAlsYJ
+  Q7N6GTuYuQEchYwSSzfwQOR2MMocefFVBaQBJuApsSzzgVgRSICjhIv2meAxZkFNjNKLHscDm
+  ILCyRKtP+eCFbDIqAqceEohM0r4CHxa85yNhBbQkBBYsrD91BxQYmTM59AzZGQOPjiBTNEjaL
+  EpY5vjBB2hcSsWW1MELaaxNVzm5gnMPLPQtI+C0n7AkamVYxWSUWZ6RkluYmZObqGBga6hoam
+  uqa6RkameolVuol6qaW65anFJbqGeonlxXqpxcV6xZW5yTkpenmpJZsYgaGfUsz6cAfj4r6fe
+  ocYJTmYlER5L/5KSBLiS8pPqcxILM6ILyrNSS0+xCjDwaEkwdv7GSgnWJSanlqRlpkDjEOYtA
+  QHj5IIr/I/oDRvcUFibnFmOkTqFKOilDivFUhCACSRUZoH1waL/UuMslLCvIwMDAxCPAWpRbm
+  ZJajyrxjFORiVhHn9QabwZOaVwE1/BbSYCWhx9ZRYkMUliQgpqQYmV+WtC28JVP3zljyhPm1x
+  1VaVtVwBy9o+PLprP/NBxrPmVzz9Coszum/yia1hqTTr+Tzp/A5VyZvJN1Yeq9px4XRHhmSw+
+  bl5/duCik61TPEq3eNh83uJVmVjXX2g+hqmLStkGI/G7kn2/dkWoPPXNnnq3Oi+2Z1/zNLLpB
+  9VXz3wenfGZx2/uWGrvAI97DedP3lFaeMOAR+L2BOFWnLCkm+aU5/vVXQLdmIRP7x2An/ise3
+  cxkIZ9hPSOWIUe9vf167fz21pcOaD2byPlc/L/p2Jfdc8c0HomYvfex2V9Z9vMEn8FCdVzK8q
+  syBCppgtfA7veqZ9fDLzO2+lm2zeacc98b+Zcobcz/PCMzWVWIozEg21mIuKEwF6hfXreAMAA
+  A==
+X-Env-Sender: xuyang2018.jy@fujitsu.com
+X-Msg-Ref: server-16.tower-585.messagelabs.com!1650524013!37518!1
+X-Originating-IP: [62.60.8.97]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.85.8; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 28394 invoked from network); 21 Apr 2022 06:53:33 -0000
+Received: from unknown (HELO n03ukasimr01.n03.fujitsu.local) (62.60.8.97)
+  by server-16.tower-585.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 21 Apr 2022 06:53:33 -0000
+Received: from n03ukasimr01.n03.fujitsu.local (localhost [127.0.0.1])
+        by n03ukasimr01.n03.fujitsu.local (Postfix) with ESMTP id 07ED71001A0;
+        Thu, 21 Apr 2022 07:53:33 +0100 (BST)
+Received: from R01UKEXCASM126.r01.fujitsu.local (unknown [10.183.43.178])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by n03ukasimr01.n03.fujitsu.local (Postfix) with ESMTPS id E1755100183;
+        Thu, 21 Apr 2022 07:53:32 +0100 (BST)
+Received: from localhost.localdomain (10.167.220.84) by
+ R01UKEXCASM126.r01.fujitsu.local (10.183.43.178) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.32; Thu, 21 Apr 2022 07:53:27 +0100
+From:   Yang Xu <xuyang2018.jy@fujitsu.com>
+To:     <linux-fsdevel@vger.kernel.org>, <ceph-devel@vger.kernel.org>
+CC:     <viro@zeniv.linux.org.uk>, <david@fromorbit.com>,
+        <djwong@kernel.org>, <brauner@kernel.org>, <willy@infradead.org>,
+        <jlayton@kernel.org>, Yang Xu <xuyang2018.jy@fujitsu.com>
+Subject: [PATCH v5 1/4] fs: move sgid strip operation from inode_init_owner into inode_sgid_strip
+Date:   Thu, 21 Apr 2022 15:54:15 +0800
+Message-ID: <1650527658-2218-1-git-send-email-xuyang2018.jy@fujitsu.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20220415123614.54024-11-jefflexu@linux.alibaba.com>
-X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H5,
-        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-        USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain
+X-Originating-IP: [10.167.220.84]
+X-ClientProxiedBy: G08CNEXCHPEKD07.g08.fujitsu.local (10.167.33.80) To
+ R01UKEXCASM126.r01.fujitsu.local (10.183.43.178)
+X-Virus-Scanned: ClamAV using ClamSMTP
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 15, 2022 at 08:36:03PM +0800, Jeffle Xu wrote:
-> Until then erofs is exactly blockdev based filesystem.
-> 
-> A new fscache-based mode is going to be introduced for erofs to support
-> scenarios where on-demand read semantics is needed, e.g. container
-> image distribution. In this case, erofs could be mounted from data blobs
-> through fscache.
-> 
-> Add a helper checking which mode erofs works in, and twist the code in
-> prep for the following fscache mode.
+This has no functional change. Just create and export inode_sgid_strip
+api for the subsequent patch. This function is used to strip inode's
+S_ISGID mode when init a new inode.
 
-in preparation for the upcoming fscache mode.
+Signed-off-by: Yang Xu <xuyang2018.jy@fujitsu.com>
+---
+v4-v5:
+use umode_t return value instead of mode pointer
+ fs/inode.c         | 23 +++++++++++++++++++----
+ include/linux/fs.h |  2 ++
+ 2 files changed, 21 insertions(+), 4 deletions(-)
 
-> 
-> Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
+diff --git a/fs/inode.c b/fs/inode.c
+index 9d9b422504d1..57130e4ef8b4 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -2246,10 +2246,8 @@ void inode_init_owner(struct user_namespace *mnt_userns, struct inode *inode,
+ 		/* Directories are special, and always inherit S_ISGID */
+ 		if (S_ISDIR(mode))
+ 			mode |= S_ISGID;
+-		else if ((mode & (S_ISGID | S_IXGRP)) == (S_ISGID | S_IXGRP) &&
+-			 !in_group_p(i_gid_into_mnt(mnt_userns, dir)) &&
+-			 !capable_wrt_inode_uidgid(mnt_userns, dir, CAP_FSETID))
+-			mode &= ~S_ISGID;
++		else
++			mode = inode_sgid_strip(mnt_userns, dir, mode);
+ 	} else
+ 		inode_fsgid_set(inode, mnt_userns);
+ 	inode->i_mode = mode;
+@@ -2405,3 +2403,20 @@ struct timespec64 current_time(struct inode *inode)
+ 	return timestamp_truncate(now, inode);
+ }
+ EXPORT_SYMBOL(current_time);
++
++umode_t inode_sgid_strip(struct user_namespace *mnt_userns,
++			 const struct inode *dir, umode_t mode)
++{
++	if (S_ISDIR(mode) || !dir || !(dir->i_mode & S_ISGID))
++		return mode;
++	if ((mode & (S_ISGID | S_IXGRP)) != (S_ISGID | S_IXGRP))
++		return mode;
++	if (in_group_p(i_gid_into_mnt(mnt_userns, dir)))
++		return mode;
++	if (capable_wrt_inode_uidgid(mnt_userns, dir, CAP_FSETID))
++		return mode;
++
++	mode &= ~S_ISGID;
++	return mode;
++}
++EXPORT_SYMBOL(inode_sgid_strip);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index bbde95387a23..532de76c9b91 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1897,6 +1897,8 @@ extern long compat_ptr_ioctl(struct file *file, unsigned int cmd,
+ void inode_init_owner(struct user_namespace *mnt_userns, struct inode *inode,
+ 		      const struct inode *dir, umode_t mode);
+ extern bool may_open_dev(const struct path *path);
++umode_t inode_sgid_strip(struct user_namespace *mnt_userns,
++			 const struct inode *dir, umode_t mode);
+ 
+ /*
+  * This is the "filldir" function type, used by readdir() to let
+-- 
+2.27.0
 
-Reviewed-by: Gao Xiang <hsiangkao@linux.alibaba.com>
-
-Thanks,
-Gao Xiang
-
-> ---
->  fs/erofs/internal.h |  5 +++++
->  fs/erofs/super.c    | 44 +++++++++++++++++++++++++++++---------------
->  2 files changed, 34 insertions(+), 15 deletions(-)
-> 
-> diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-> index fe9564e5091e..05a97533b1e9 100644
-> --- a/fs/erofs/internal.h
-> +++ b/fs/erofs/internal.h
-> @@ -161,6 +161,11 @@ struct erofs_sb_info {
->  #define set_opt(opt, option)	((opt)->mount_opt |= EROFS_MOUNT_##option)
->  #define test_opt(opt, option)	((opt)->mount_opt & EROFS_MOUNT_##option)
->  
-> +static inline bool erofs_is_fscache_mode(struct super_block *sb)
-> +{
-> +	return IS_ENABLED(CONFIG_EROFS_FS_ONDEMAND) && !sb->s_bdev;
-> +}
-> +
->  enum {
->  	EROFS_ZIP_CACHE_DISABLED,
->  	EROFS_ZIP_CACHE_READAHEAD,
-> diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-> index 0c4b41130c2f..724d5ff0d78c 100644
-> --- a/fs/erofs/super.c
-> +++ b/fs/erofs/super.c
-> @@ -259,15 +259,19 @@ static int erofs_init_devices(struct super_block *sb,
->  		}
->  		dis = ptr + erofs_blkoff(pos);
->  
-> -		bdev = blkdev_get_by_path(dif->path,
-> -					  FMODE_READ | FMODE_EXCL,
-> -					  sb->s_type);
-> -		if (IS_ERR(bdev)) {
-> -			err = PTR_ERR(bdev);
-> -			break;
-> +		if (!erofs_is_fscache_mode(sb)) {
-> +			bdev = blkdev_get_by_path(dif->path,
-> +						  FMODE_READ | FMODE_EXCL,
-> +						  sb->s_type);
-> +			if (IS_ERR(bdev)) {
-> +				err = PTR_ERR(bdev);
-> +				break;
-> +			}
-> +			dif->bdev = bdev;
-> +			dif->dax_dev = fs_dax_get_by_bdev(bdev,
-> +							  &dif->dax_part_off);
->  		}
-> -		dif->bdev = bdev;
-> -		dif->dax_dev = fs_dax_get_by_bdev(bdev, &dif->dax_part_off);
-> +
->  		dif->blocks = le32_to_cpu(dis->blocks);
->  		dif->mapped_blkaddr = le32_to_cpu(dis->mapped_blkaddr);
->  		sbi->total_blocks += dif->blocks;
-> @@ -586,21 +590,28 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
->  
->  	sb->s_magic = EROFS_SUPER_MAGIC;
->  
-> -	if (!sb_set_blocksize(sb, EROFS_BLKSIZ)) {
-> -		erofs_err(sb, "failed to set erofs blksize");
-> -		return -EINVAL;
-> -	}
-> -
->  	sbi = kzalloc(sizeof(*sbi), GFP_KERNEL);
->  	if (!sbi)
->  		return -ENOMEM;
->  
->  	sb->s_fs_info = sbi;
->  	sbi->opt = ctx->opt;
-> -	sbi->dax_dev = fs_dax_get_by_bdev(sb->s_bdev, &sbi->dax_part_off);
->  	sbi->devs = ctx->devs;
->  	ctx->devs = NULL;
->  
-> +	if (erofs_is_fscache_mode(sb)) {
-> +		sb->s_blocksize = EROFS_BLKSIZ;
-> +		sb->s_blocksize_bits = LOG_BLOCK_SIZE;
-> +	} else {
-> +		if (!sb_set_blocksize(sb, EROFS_BLKSIZ)) {
-> +			erofs_err(sb, "failed to set erofs blksize");
-> +			return -EINVAL;
-> +		}
-> +
-> +		sbi->dax_dev = fs_dax_get_by_bdev(sb->s_bdev,
-> +						  &sbi->dax_part_off);
-> +	}
-> +
->  	err = erofs_read_superblock(sb);
->  	if (err)
->  		return err;
-> @@ -857,7 +868,10 @@ static int erofs_statfs(struct dentry *dentry, struct kstatfs *buf)
->  {
->  	struct super_block *sb = dentry->d_sb;
->  	struct erofs_sb_info *sbi = EROFS_SB(sb);
-> -	u64 id = huge_encode_dev(sb->s_bdev->bd_dev);
-> +	u64 id = 0;
-> +
-> +	if (!erofs_is_fscache_mode(sb))
-> +		id = huge_encode_dev(sb->s_bdev->bd_dev);
->  
->  	buf->f_type = sb->s_magic;
->  	buf->f_bsize = EROFS_BLKSIZ;
-> -- 
-> 2.27.0
