@@ -2,79 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D0BA50A952
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Apr 2022 21:37:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3658E50A9AF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Apr 2022 22:05:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1392018AbiDUTkB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Apr 2022 15:40:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46422 "EHLO
+        id S1392184AbiDUUIS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Apr 2022 16:08:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1392017AbiDUTj6 (ORCPT
+        with ESMTP id S1387130AbiDUUIR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Apr 2022 15:39:58 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1BC34705B;
-        Thu, 21 Apr 2022 12:37:07 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1CE1661C99;
-        Thu, 21 Apr 2022 19:37:07 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59BE3C385A1;
-        Thu, 21 Apr 2022 19:37:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650569826;
-        bh=Q6hxPwdWAM/6TqcEm/jAq+s1htCa8HBEP5b8F+ScUCo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YAH/GZzsfN8bVNuzQts+ou3GSuPk4puZ/0oel9IuGQF1jNwQDef2Z899wlJl/2kv9
-         u/hFl+QIN3m2Vw7sR9qeHUKVnJyseDDYvskPUtKkkPb1FaCZ8nXGtgqAnQhFyWxZSe
-         yClqT5SLuEhKbOci+Ux3upXr3TZ12j7LLin41oOkaj/dPu71XLmDAq4n+7cxJE2CDr
-         o5jkKUJk/Off79lhjPcuOm1kL0EtZvzxReAy8n7a7fjtTncmODFEnMfZSDHkQ/bXWe
-         P/rmUbGtlFUMq/8audbog+68KweSJ5XSwO76pRrB70S2GiB9brN7iHMjm3oMRmC5N8
-         13RfQ3ZI7/FqA==
-Date:   Thu, 21 Apr 2022 12:37:04 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     syzbot <syzbot+e0fda9a3d66127dea5c2@syzkaller.appspotmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Subject: Re: [syzbot] possible deadlock in evict (2)
-Message-ID: <YmGyYOLMT2/m1CrE@sol.localdomain>
-References: <00000000000018117c05dd29952c@google.com>
+        Thu, 21 Apr 2022 16:08:17 -0400
+Received: from mail-lj1-x233.google.com (mail-lj1-x233.google.com [IPv6:2a00:1450:4864:20::233])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09F514C430
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Apr 2022 13:05:27 -0700 (PDT)
+Received: by mail-lj1-x233.google.com with SMTP id bn33so7074055ljb.6
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Apr 2022 13:05:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=NwdH8+rjRDlxFy4vl9CTk6e7tYB9OyxwRDgNSZG6Y1w=;
+        b=YrT0DkychC77xvw7gJZXCDCRRTcc+xmzapsBzZPiAAvGHZjAj+/Hrm64XP2N6QsLr0
+         XbKrROYW1QSRx+7LLCG+PxohFfhZ6HQV2dN9+wn2CLFyBAudL9tE71yhW2eWUA/K/6cf
+         9zAm6A5EYu46D5Oy3mwRB7TR0oeT56u0pxmHcJMpIKS5bsgTznedVjJqTF/nBGVYraSi
+         ya9nDYtzOmQ1JpgO4DPW7h4xYv7CqD7apDc7Vq/jTPG7NWqGeFnMT0V5LMW53snRHg+P
+         fgpWvcRZuqj4EB+V0pr1z468mJSN/gz51J4KciBvatX1FTaw+cayrBkdaQSRCMIg4Xpf
+         13lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=NwdH8+rjRDlxFy4vl9CTk6e7tYB9OyxwRDgNSZG6Y1w=;
+        b=GUoYmVaNnLTu5EXiOD3RuFpKDJUr8kCRXivPLQCX2rx/g+ebtK0scSZWp2Kl2mSzxV
+         Q8OHnh51hGlZ9njSWlarqoneVDltk+aq1VBCKJBIPnhapOjz07EcPj48YVUUvDbsiHvZ
+         mFpv/nIiU9/aq/0DBSkpuTwZcovkNic6jLxt+VBbUbealTOt61c1OXZXW65dM3OaztUP
+         fwsN4KksxI8l9ml3AUQAlhlJSbJc2J7PfApn5WTcBEDUSwy5eIh7GcuUu8x//GkzET6+
+         RCKDOJ81LCwlou5apDdicUKHlEJPsck4+uLCAuVpYnVtT0BJUbiVRMMa7bl7qUOkFSF/
+         T24w==
+X-Gm-Message-State: AOAM532FQbVJgAbCllRHMalF7yYPL6snhM5lZnauEYrfY1vPYSEJXsRf
+        Xu1wjSmtUdj+i4S2dzN3au6tC1eqUghA860kOJEErkai8vZGZQ==
+X-Google-Smtp-Source: ABdhPJxShZhUS+HQK07Jssgwyjgayzn2Kw8PyjOvVwaF124XPAVE/3x+jxQezOz2M00QTV9JWYmYp9lw4IN4dUYnU74=
+X-Received: by 2002:a2e:888c:0:b0:24d:ba94:260c with SMTP id
+ k12-20020a2e888c000000b0024dba94260cmr748648lji.403.1650571525324; Thu, 21
+ Apr 2022 13:05:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <00000000000018117c05dd29952c@google.com>
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+From:   Lan Sijie <sijielan@gmail.com>
+Date:   Thu, 21 Apr 2022 16:05:14 -0400
+Message-ID: <CAGAHmYBpipWnVaqBsLLXUYE-BdusGg=qZAHno9OE2hkzitOxUQ@mail.gmail.com>
+Subject: throughput on F2FS
+To:     linux-f2fs-devel@lists.sourceforge.net
+Cc:     linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 21, 2022 at 05:52:28AM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    a2c29ccd9477 Merge tag 'devicetree-fixes-for-5.18-2' of gi..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=13508568f00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=ac042ae170e2c50f
-> dashboard link: https://syzkaller.appspot.com/bug?extid=e0fda9a3d66127dea5c2
-> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+e0fda9a3d66127dea5c2@syzkaller.appspotmail.com
-
-Duplicate of https://lore.kernel.org/r/00000000000070395e05dd1fb4d7@google.com :
-
-#syz dup: possible deadlock in fscrypt_initialize
-
-This is an ext4 bug, and I've been planning to fix it; see
-https://lore.kernel.org/r/YmC2epeJNChYxWB3@gmail.com
-
-- Eric
+HI, team,
+When we run fio random-write test with 1,4,16 threads on compression
+f2fs, the throughputs on different threads are roughly equal, we
+expected that the throughput would be increased with more threads, but
+it isn't.
+So we are wondering if anything we ignored?
