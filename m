@@ -2,52 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3243D5098F1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Apr 2022 09:27:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A145950993B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Apr 2022 09:38:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1385736AbiDUH1a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Apr 2022 03:27:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47328 "EHLO
+        id S1385822AbiDUHiA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Apr 2022 03:38:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1385732AbiDUH13 (ORCPT
+        with ESMTP id S241799AbiDUHh4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Apr 2022 03:27:29 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D276183AC;
-        Thu, 21 Apr 2022 00:24:41 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Thu, 21 Apr 2022 03:37:56 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8F55E48;
+        Thu, 21 Apr 2022 00:35:07 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id C8077B8229B;
-        Thu, 21 Apr 2022 07:24:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53182C385A1;
-        Thu, 21 Apr 2022 07:24:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650525878;
-        bh=95qv/mzlhfG1VVXD4CfUUhHWp9mU3YVW3h2A2kkM9aQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=O3d5XrguhhyWnnHyDh7SBzufBbKpx1wNgC7Q32fe7LL1ftcjJUflE5ljsUp8kn6+m
-         xsZ7RLlzBLJHfYRU05KOIFh5091UFRh68N9ZyePzlPCnLwVV5rTNi69VHJUGldhEbh
-         P0wsc9KVaclIdmxcL5S4fVDhxNo2LcPla8xkUYn37b/k6fHxAy3xokL9cQoPVsx8Wj
-         Fq8zTZPdF+VXPXhuZ3WlyNvP9Y7/SDCRUooSA96Udj8KqR7Gopv3dJ5hntAfvIpBcW
-         CxX0HES3hxaUPSI04XOcHY/WyHDQohcHbUl7w6nSp/m+8SIJSvZPGilITqYSY9Dl3k
-         4EKaTVld3ZMKQ==
-Date:   Thu, 21 Apr 2022 09:24:33 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Yang Xu <xuyang2018.jy@fujitsu.com>
-Cc:     linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org,
-        viro@zeniv.linux.org.uk, david@fromorbit.com, djwong@kernel.org,
-        willy@infradead.org, jlayton@kernel.org
-Subject: Re: [PATCH v5 2/4] fs: Add missing umask strip in vfs_tmpfile
-Message-ID: <20220421072433.xtgamsjy3nbe44hl@wittgenstein>
-References: <1650527658-2218-1-git-send-email-xuyang2018.jy@fujitsu.com>
- <1650527658-2218-2-git-send-email-xuyang2018.jy@fujitsu.com>
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 4E90A1F768;
+        Thu, 21 Apr 2022 07:35:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1650526506; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=B+HIkqvJLteia0esz/c1R+ShVrYpZv/KOM+i5bqa5bI=;
+        b=eKFBQIyNZSHAG9IjLiOquElLqMY9PFbSrMPMmch+pvdSSVMhEVa2p1LZp/8yDnS+ZRz/+K
+        8LSEElyiipcKVP/SMULzhy5ApE7DsYwhZvUDgXc8L4+LOpa6mKnMnpfpcPNtFIvn33MBx8
+        NzPNGLH+6kmduphpJA86f49LaLn7384=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1650526506;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=B+HIkqvJLteia0esz/c1R+ShVrYpZv/KOM+i5bqa5bI=;
+        b=eUB4zOR8pj5zrlYlITI46UDTDMVYlKdqGlmXb4LNWatQEKfFoE0WXe8OrUi+DM8arVnH+C
+        KvV/G27vHIr805Cg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 0B5AE13A84;
+        Thu, 21 Apr 2022 07:35:06 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id AnJvAioJYWJfEQAAMHmgww
+        (envelope-from <hare@suse.de>); Thu, 21 Apr 2022 07:35:06 +0000
+Message-ID: <325938d3-bb82-730b-046c-451dde8cc14c@suse.de>
+Date:   Thu, 21 Apr 2022 09:35:05 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1650527658-2218-2-git-send-email-xuyang2018.jy@fujitsu.com>
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.4.0
+Subject: Re: [PATCH RFC 1/5] net: Add distinct sk_psock field
+Content-Language: en-US
+To:     Chuck Lever <chuck.lever@oracle.com>, netdev@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     ak@tempesta-tech.com, borisp@nvidia.com, simo@redhat.com
+References: <165030051838.5073.8699008789153780301.stgit@oracle-102.nfsv4.dev>
+ <165030056960.5073.6664402939918720250.stgit@oracle-102.nfsv4.dev>
+From:   Hannes Reinecke <hare@suse.de>
+In-Reply-To: <165030056960.5073.6664402939918720250.stgit@oracle-102.nfsv4.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-8.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -55,24 +75,41 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 21, 2022 at 03:54:16PM +0800, Yang Xu wrote:
-> All creation paths except for O_TMPFILE handle umask in the vfs directly
-> if the filesystem doesn't support or enable POSIX ACLs. If the filesystem
-> does then umask handling is deferred until posix_acl_create().
-> Because, O_TMPFILE misses umask handling in the vfs it will not honor
-> umask settings. Fix this by adding the missing umask handling.
+On 4/18/22 18:49, Chuck Lever wrote:
+> The sk_psock facility populates the sk_user_data field with the
+> address of an extra bit of metadata. User space sockets never
+> populate the sk_user_data field, so this has worked out fine.
 > 
-> Reported-by: Christian Brauner (Microsoft) <brauner@kernel.org>
-> Acked-by: Christian Brauner (Microsoft) <brauner@kernel.org>
-> Signed-off-by: Yang Xu <xuyang2018.jy@fujitsu.com>
+> However, kernel consumers such as the RPC client and server do
+> populate the sk_user_data field. The sk_psock() function cannot tell
+> that the content of sk_user_data does not point to psock metadata,
+> so it will happily return a pointer to something else, cast to a
+> struct sk_psock.
+> 
+> Thus kernel consumers and psock currently cannot co-exist.
+> 
+> We could educate sk_psock() to return NULL if sk_user_data does
+> not point to a struct sk_psock. However, a more general solution
+> that enables full co-existence psock and other uses of sk_user_data
+> might be more interesting.
+> 
+> Move the struct sk_psock address to its own pointer field so that
+> the contents of the sk_user_data field is preserved.
+> 
+> Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
 > ---
+>   include/linux/skmsg.h |    2 +-
+>   include/net/sock.h    |    4 +++-
+>   net/core/skmsg.c      |    6 +++---
+>   3 files changed, 7 insertions(+), 5 deletions(-)
+> 
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 
-So given that we seem to all agree that the missing umask stripping is a
-bug and not intentional because of special O_TMPFILE semantics (which
-wouldn't have suprised me tbh...) this should get a:
+Cheers,
 
-Fixes: 60545d0d4610 ("[O_TMPFILE] it's still short a few helpers, but infrastructure should be OK now...")
-Cc: <stable@vger.kernel.org> # 4.19+
-
-If people feel comfortable it'd be great to get some more acks on this
-or an explanation why umask doesn't need to be stripped in this case...
+Hannes
+-- 
+Dr. Hannes Reinecke		           Kernel Storage Architect
+hare@suse.de			                  +49 911 74053 688
+SUSE Software Solutions Germany GmbH, Maxfeldstr. 5, 90409 Nürnberg
+HRB 36809 (AG Nürnberg), GF: Felix Imendörffer
