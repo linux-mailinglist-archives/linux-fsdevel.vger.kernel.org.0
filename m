@@ -2,91 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4879950A455
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Apr 2022 17:36:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43B5950A478
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Apr 2022 17:40:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1390172AbiDUPjF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Apr 2022 11:39:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34808 "EHLO
+        id S1390238AbiDUPm6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Apr 2022 11:42:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37260 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1390111AbiDUPjE (ORCPT
+        with ESMTP id S1349678AbiDUPm5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Apr 2022 11:39:04 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACD4146B33
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Apr 2022 08:36:14 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id y21so120073edo.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Apr 2022 08:36:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4ECbaUjNPWxDfrNA66rDo4tFmjf5CBuTQXWJkkCb+ok=;
-        b=SfShqGESysEsb1o79ybRTJnvLlJjwXLqgstljw5zylpZMPFfOieAC5If1G3lDKMScz
-         n4ovY4iJ415W1/L2fDLVvkhCm2ezL0Lc7m9OD2RYf0oMsSYJFz83XNGhSm5P7+9Al97U
-         0geidEomgSvn7SGgZZljiBYDKXV287br+6TPQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4ECbaUjNPWxDfrNA66rDo4tFmjf5CBuTQXWJkkCb+ok=;
-        b=EjV/gy9Z4gqm40xJLJpvfx3JW6B8f4E3T9A5I7AcS/oSaVr995P4k3nNJHCdyU+l0J
-         dYhkaJ4rGLY5q2PjFv7hmcwMEmwbUNuJnqsK8XjByLkC3Ois4pCb+X1AseOqMF9MsPfd
-         lBR7RK3rg7gANQkN46qFGdquKVEYIv3Lc6FmAtHWHIlM7xulPLEVywyF5g3V0dMpzhbb
-         zMoYfAkNru3Q7XMcP4YsCDwn9c/oMiYN3kcFlwrtvYtV88KydiKDQllH5wZUlPcR5MQY
-         5EVkwJz2+ziMRIJBuxH2Y4eZjQV/vHtyCF+DCyeRUuUcbiGEysgYui27tAdQTHBo6B93
-         22pw==
-X-Gm-Message-State: AOAM530uKskA845yAiS2sJor70dNPBJn72Z7bVq1LulCOicJXjntZ98l
-        /SsBBCc1dtXHllh6EDrchy/AfTNcl3JZ760fo71jaA==
-X-Google-Smtp-Source: ABdhPJzgOxzZ231dlpYxwZ9wcbXxVOCcEy5LK+jwGR9n22b1eXTLejQ46hbanXJSnkhixtOWDrTyV2IA5k6IlghQmQk=
-X-Received: by 2002:a05:6402:42cb:b0:421:c735:1fd3 with SMTP id
- i11-20020a05640242cb00b00421c7351fd3mr83971edc.341.1650555373332; Thu, 21 Apr
- 2022 08:36:13 -0700 (PDT)
+        Thu, 21 Apr 2022 11:42:57 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E430632EDE
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Apr 2022 08:40:06 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 9DCE921112;
+        Thu, 21 Apr 2022 15:40:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1650555605; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ZuNuiI2tqLawFsDAG7UJYCJbq6wx8NWybiQMFtSdqmA=;
+        b=LJyDpegQw4SQQdlb2C202+1lcFuBC/qH/oXRGK2+XpBaskPb0c3gkZNV1aH9u4bTGrqQj7
+        wGAgk1c1NUPj4hTTti1Sp7TyWRnfD9WmNkR+A3B95ByXVL1JPkQLmdE0d2psfFAz4KbiJ/
+        9akE7qdYlaoC2w8YYARU9nVH7typvj0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1650555605;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ZuNuiI2tqLawFsDAG7UJYCJbq6wx8NWybiQMFtSdqmA=;
+        b=AZLniw3DmIUg4nNv/mSU47Uw8pOZWLEVeWTTzsG0tybgUEbFBF3mLEC2nK0rVPYRVpD9Bq
+        j1elcGhyF0BxlpDg==
+Received: from quack3.suse.cz (unknown [10.100.224.230])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 8B57E2C14B;
+        Thu, 21 Apr 2022 15:40:05 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 38C94A0620; Thu, 21 Apr 2022 17:40:05 +0200 (CEST)
+Date:   Thu, 21 Apr 2022 17:40:05 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, Matthew Bobrowski <repnop@google.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 14/16] fanotify: implement "evictable" inode marks
+Message-ID: <20220421154005.vb6ms3o4fho2z7d6@quack3.lan>
+References: <20220413090935.3127107-1-amir73il@gmail.com>
+ <20220413090935.3127107-15-amir73il@gmail.com>
 MIME-Version: 1.0
-References: <165002363635.1457422.5930635235733982079.stgit@localhost>
-In-Reply-To: <165002363635.1457422.5930635235733982079.stgit@localhost>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 21 Apr 2022 17:36:02 +0200
-Message-ID: <CAJfpegs=_bzBrmPSv_V3yQWaW7NR_f9CviuUTwfbcx9Wzudoxg@mail.gmail.com>
-Subject: Re: [PATCH] fuse: Apply flags2 only when userspace set the
- FUSE_INIT_EXT flag
-To:     Bernd Schubert <bschubert@ddn.com>
-Cc:     linux-fsdevel@vger.kernel.org, Vivek Goyal <vgoyal@redhat.com>,
-        Jeffle Xu <jefflexu@linux.alibaba.com>,
-        Dharmendra Singh <dsingh@ddn.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220413090935.3127107-15-amir73il@gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 15 Apr 2022 at 13:54, Bernd Schubert <bschubert@ddn.com> wrote:
->
-> This is just a safety precaution to avoid checking flags
-> on memory that was initialized on the user space side.
-> libfuse zeroes struct fuse_init_out outarg, but this is not
-> guranteed to be done in all implementations. Better is to
-> act on flags and to only apply flags2 when FUSE_INIT_EXT
-> is set.
->
-> There is a risk with this change, though - it might break existing
-> user space libraries, which are already using flags2 without
-> setting FUSE_INIT_EXT.
->
-> The corresponding libfuse patch is here
-> https://github.com/libfuse/libfuse/pull/662
->
->
-> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
+On Wed 13-04-22 12:09:33, Amir Goldstein wrote:
+> When an inode mark is created with flag FAN_MARK_EVICTABLE, it will not
+> pin the marked inode to inode cache, so when inode is evicted from cache
+> due to memory pressure, the mark will be lost.
+> 
+> When an inode mark with flag FAN_MARK_EVICATBLE is updated without using
+> this flag, the marked inode is pinned to inode cache.
+> 
+> When an inode mark is updated with flag FAN_MARK_EVICTABLE but an
+> existing mark already has the inode pinned, the mark update fails with
+> error EEXIST.
+> 
+> Evictable inode marks can be used to setup inode marks with ignored mask
+> to suppress events from uninteresting files or directories in a lazy
+> manner, upon receiving the first event, without having to iterate all
+> the uninteresting files or directories before hand.
+> 
+> The evictbale inode mark feature allows performing this lazy marks setup
+> without exhausting the system memory with pinned inodes.
+> 
+> This change does not enable the feature yet.
+> 
+> Link: https://lore.kernel.org/linux-fsdevel/CAOQ4uxiRDpuS=2uA6+ZUM7yG9vVU-u212tkunBmSnP_u=mkv=Q@mail.gmail.com/
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 
-Agreed, this is a good change.  Applied.
+Just one nit below...
 
-Just one comment: please consider adding  "Fixes:" and "Cc:
-<stable@....>" tags next time.   I added them now.
+> @@ -1097,6 +1099,18 @@ static int fanotify_mark_update_flags(struct fsnotify_mark *fsn_mark,
+>  			*recalc = true;
+>  	}
+>  
+> +	if (fsn_mark->connector->type != FSNOTIFY_OBJ_TYPE_INODE ||
+> +	    want_iref == !(fsn_mark->flags & FSNOTIFY_MARK_FLAG_NO_IREF))
+> +		return 0;
+> +
+> +	/*
+> +	 * NO_IREF may be removed from a mark, but not added.
+> +	 * When removed, fsnotify_recalc_mask() will take the inode ref.
+> +	 */
+> +	WARN_ON_ONCE(!want_iref);
+> +	fsn_mark->flags &= ~FSNOTIFY_MARK_FLAG_NO_IREF;
+> +	*recalc = true;
+> +
+>  	return 0;
+>  }
 
-Thanks,
-Miklos
+Since we always return 0 from this function, we may as well just drop the
+'recalc' argument and return whether mask recalc is needed?
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
