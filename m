@@ -2,189 +2,295 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8130A50A001
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Apr 2022 14:50:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFBC650A00D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Apr 2022 14:52:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1385821AbiDUMxH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Apr 2022 08:53:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50580 "EHLO
+        id S1385790AbiDUMzT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Apr 2022 08:55:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1383558AbiDUMxG (ORCPT
+        with ESMTP id S1383795AbiDUMzT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Apr 2022 08:53:06 -0400
-Received: from JPN01-OS0-obe.outbound.protection.outlook.com (mail-os0jpn01on2062.outbound.protection.outlook.com [40.107.113.62])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FBA32F3BD;
-        Thu, 21 Apr 2022 05:50:16 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Bvkxpse2yp/VVYSIiIFyIHwDMXHubeOiPJAj1N8QvKllS2b0vWKuliLODEr2J8n90y0SCjehqly5ETldwXrloB/7bIa4QMQ1YZ8skmSFVc/+wnq04K+5+a5sI9cBwhleeLcL7nIw48xWpJxpsTAlIrDdfU9wxv3fYAwq76B1+jwXSngI9oNp9ZVD9CoEze3GvBGskKfaY+kpGCA2DC9ImSJ4xLftSLFdGdJvjdK/kGU1T2J7of0/ot+/UYK7j2Pqo5WuAUkwJMiYXo7FpfNs1xTqXvd4+NU5Zscd995dUTdmlwl4owP9CUcVoq26g77mI2pSg3ydK1vsufaXI6U8ug==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cFiS7X82pfZRJGqthG6dlOK2qZvwVlpKWB6onOJouBo=;
- b=BJeAlkGtLkXB6vfS0KOq5xxYgcNKrWeV8/6SBBvEskhqVctLVJhM8S2d+fHXMi9PJe6SuTNgk4XRlANp64D/gzCro5w1vBdZpnH0ueL802yNFp3VIdkED7q9+aIdtFosO5VGuKOuXti1siYP3bS0LGCfDX3er/r+XGD6xDTLg2XLWMvJbHO0mli7/ubPNIuV7TsHrABEk5bHFkjUFjVHWi0IS7r1diZzOTOWSTF0H5mTMM1xLEjmnNGHVF6YklvS4wxaKnB36ITg4rXoMZpv5QWRRDYvVLrCs7IV08JDVNpVZ7sIhEOAD3BDQAJPlMYhWtjFOJP1yHvCkTkm79H2Xg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nec.com; dmarc=pass action=none header.from=nec.com; dkim=pass
- header.d=nec.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nec.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cFiS7X82pfZRJGqthG6dlOK2qZvwVlpKWB6onOJouBo=;
- b=d+OxG8r9FjkZzz4MFULV/NAM9COAQj3YAMUZ0MD4C8iiAZiMFy5vRZyjQlpX2AkpOsXOVuh0ktkpbLu++aghM9y2y1+W5aJ++XgjkieUeLX4RAp2+w9a/xoj2tr8u6VKQ1GBvTI1PxY/C4uQAMdzUWExwemOIrtcvh3g88YsLkQ=
-Received: from TYWPR01MB8591.jpnprd01.prod.outlook.com (2603:1096:400:13c::10)
- by OSAPR01MB2436.jpnprd01.prod.outlook.com (2603:1096:603:3b::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5186.13; Thu, 21 Apr
- 2022 12:50:14 +0000
-Received: from TYWPR01MB8591.jpnprd01.prod.outlook.com
- ([fe80::9149:6fc9:1b62:1232]) by TYWPR01MB8591.jpnprd01.prod.outlook.com
- ([fe80::9149:6fc9:1b62:1232%8]) with mapi id 15.20.5164.025; Thu, 21 Apr 2022
- 12:50:13 +0000
-From:   =?utf-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPo+OAgOebtOS5nyk=?= 
-        <naoya.horiguchi@nec.com>
-To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "djwong@kernel.org" <djwong@kernel.org>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "david@fromorbit.com" <david@fromorbit.com>,
-        "hch@infradead.org" <hch@infradead.org>,
-        "jane.chu@oracle.com" <jane.chu@oracle.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v13 5/7] mm: Introduce mf_dax_kill_procs() for fsdax case
-Thread-Topic: [PATCH v13 5/7] mm: Introduce mf_dax_kill_procs() for fsdax case
-Thread-Index: AQHYVUNrG5HoNEVEwEi5JRdOqeVANaz6UicA
-Date:   Thu, 21 Apr 2022 12:50:13 +0000
-Message-ID: <20220421125012.GA3612199@hori.linux.bs1.fc.nec.co.jp>
-References: <20220419045045.1664996-1-ruansy.fnst@fujitsu.com>
- <20220419045045.1664996-6-ruansy.fnst@fujitsu.com>
-In-Reply-To: <20220419045045.1664996-6-ruansy.fnst@fujitsu.com>
-Accept-Language: ja-JP, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nec.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: bab84720-eeda-4e5c-2ea6-08da23957a6d
-x-ms-traffictypediagnostic: OSAPR01MB2436:EE_
-x-microsoft-antispam-prvs: <OSAPR01MB2436C88BF3E0D7AC822B43D3E7F49@OSAPR01MB2436.jpnprd01.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: Vl6rUWOjz3PtDAgxJJteL0JP7oiN2qiVvapiN5463hVul4xci5gbbrtbc81hGrvuH85lmxdKV3DNesTr22bMBeurpKy8DlD7ZYF/1dLDgjOEdqbpXUMrR++S8prChn56syT/7+MaYKGpGX/M9+D4iajgkOlZ47HA3wD7JTf+t3pFGxGYSh9S+EpwcaqChaQj/jpqNj1BQsLSSpMOBluXnZb+dFkkPOfX10qrWDcHiZxnzLO1c2NVs9Ng6haMgPji9xHa7vQIpdC/RuW3ZQvsfsTa+5ZsOg7eumgTU0Fz9GPHzhx+2AM2wB1B88dqbJFL132ZrsdENAiVSRKS022GvXlxIvnVnVmqy/9Qp+EsNDVO7S134o+QQf2JyEf5Klb+qUxEX+fnd4Sr8ZBcnpnQZIkMzLkSuBl41vAkhsXocwHrbPQnVEUgfSWuckibP996SRjKgQJNGFFaw0D6k0PXUl8F/6E3+gvGFxMhZYUviBC59XvHYh1Qfe6T7CH3LLxDlDxfVqz2LUNoX6LW0/xJbylce5g1XiIyPZTZOKXfDX9tX8QWBZ+nJME+0HligLX8CdikUblLEjdo3ZbMrQumEwX3DbUa06/Zr7HcUNuxuyWV9S4J8TULkrww9PuDEyxsqORhIPW7OlJeSbMG2lMRz95XqRYe0ipbNEsp7IA3jkjTIJoRHwXMPAfVslxTDJv6765PJRJn4w/p5Yl0w0q0qg==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYWPR01MB8591.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(8936002)(8676002)(64756008)(4326008)(7416002)(71200400001)(66946007)(85182001)(76116006)(66476007)(66556008)(86362001)(66446008)(5660300002)(82960400001)(2906002)(38070700005)(6486002)(54906003)(186003)(6916009)(55236004)(83380400001)(26005)(316002)(508600001)(122000001)(9686003)(6506007)(38100700002)(6512007)(33656002)(1076003);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?S0sya2s0NWY3dGR4STVJMjVCTnQraWY4bU1ENkx2Z1l0SkowTHRuS29YSVZi?=
- =?utf-8?B?ZnlVSXlBVHU3cTM3MEdubWhXVmdWaGhhQXZVREgycTBhV25aUmZUR2FMUG92?=
- =?utf-8?B?KzdsQlF6Y3IwdU5mbHZuQzhJNnUySklveldReCtDRGx6S2FVZDJHa2FMV0Fs?=
- =?utf-8?B?aWo4b1IwNXhvQjNpaCs1aDZsVSt4Sm1zTGxWdFA1bFFDWVRYYnVmWkhXcC9D?=
- =?utf-8?B?bUxzNXp5T1JieE43Zk56MzJNdGR6RmdVTTJ3eUJuUXpyeWlXREZGR0hCc3U3?=
- =?utf-8?B?cnAxKzJkSXVUZEFteTFkNXdMd3NZRzl3NlBjUXlCNnQvWUFDbUtESXdhOHNR?=
- =?utf-8?B?NkYzV0p4TTMyYWFXUm8yVTNubm53NkxhZEF6U2NmVlVXcElUWUxlb0FYTVJa?=
- =?utf-8?B?aWdXdmpWK3piR1RLZFhYTUozckVvMXFnYUV1aFNmTnRiRUs1SVUrR2tFUkxR?=
- =?utf-8?B?RVJWTHdGbWJ3OEFKbEJ6WDY0bnVMRVcxRDJsdHlBOWFUbmJyNVErU2JyN3BG?=
- =?utf-8?B?ZTZ6K2t1VzhYL1FhUlRZUDdYb0hmZldIZ2FJMGg1SHBXTkEvMDJPVVlCV0RL?=
- =?utf-8?B?NzNrU2FsUVlrVGxiUE1JeWoyMXZvUGEwQ2NpTjNMTnRNaTk3NmtocHhaR3Ex?=
- =?utf-8?B?ZXJoRWQreVM0R0hhUHdCbUpxaDJwU0hYUkNZTktvYXExRzJ6SEMyZldoODFL?=
- =?utf-8?B?cVVnblpQNEdqS0xPUUxGM2ZmQW9CNjNTQStKNHVXbmp6S3lueHgzcS9MMGt6?=
- =?utf-8?B?YUdnQnhUSkxZRUMxYkhSd1RjbW1MSHI5KzJzRURaRXUxSDF2UDg4U2w1YWo1?=
- =?utf-8?B?SGlBZ0NIbzlHR0lrVjdQZ0g5RytiQzJ5K0l1OFpscks2T3ZOZlNjT2RDaEgx?=
- =?utf-8?B?RlJCc0pXOXRoQ1YzTksvODk2Z2hwMENjL1hVaHY0ZjZ1T2tnVG9FSHFiWVk2?=
- =?utf-8?B?WHVuVXNIZzNac1FsTXRDc1o2T3pUcWVYZjZNa0JzWGlKcVBJNThHcndnNmdu?=
- =?utf-8?B?aUhocllQcjRZbGM4ZitvYTc2QW5QK3BYMTFYWnpXd3M0Z1lFR0JnS3pwWXEx?=
- =?utf-8?B?eEpTOHJMblkvV3p0ZE9sVy9GL3JhQ21FdE5rNVFpcThmeng4V3VzKzFZb2R2?=
- =?utf-8?B?MDQ0U1grb1RER2RkazJJdVlJOGlFS1grV1loWlVZQ1RFSzRPdTFlZlhPQ3pz?=
- =?utf-8?B?NG1tYjZVdHFpbDFCbWFzNWdPZE91aU4zRGVTTWpYcUt4TXNTYUo5YXhyekxy?=
- =?utf-8?B?N0o2MjUvbEFKbHVFZVdHVjYrU0pFcmpHRUdVVEJPK0pWYmJPa094TnBQV2Nw?=
- =?utf-8?B?WmxRa2Q0MEFoRVNyNnI1Q0E3N29WNzRsemtGV2IvaStmY1pFTWc0R3RHNUYw?=
- =?utf-8?B?bUlwalQrc2ZWY3FsZHhhYnprOHJKVDNEVlE1eFdiM3d3K29rS3NjYWpWOEZq?=
- =?utf-8?B?UzVWWnhIU1FXTE9uOFd0d01Vb09sUTU3Ry9Kd0F3MzYxSVpSMk04K3lxdWFI?=
- =?utf-8?B?MnRweDRaQk5MdkpMYnE1czFBZGR2cGtVMWFrR3BJTjMwL3R6cnJzbk9ScWFw?=
- =?utf-8?B?bzJvM0taUUZHejE4SjZia2RNWEhNR2E2Um9Cb3pjMGNNZzZ4aGV4eGR6ZHdv?=
- =?utf-8?B?K0IrQUxKTjVBeThDVFlQUDM1YmN2SUJOTEpra0Fnbm4xTkl0ZDZOTzl6b0pZ?=
- =?utf-8?B?bVJuQXJXNmVyejdSZHdzdGQvaXZ0cWVJakd5MmJjQUE5SWtQWFFBWlUzQUtZ?=
- =?utf-8?B?bGxDWVNlWVJZT0dybk1GRzRSWFdvQWRjWUdXaFhMU2E1RkFxY3lCUTA0aERi?=
- =?utf-8?B?Z2hZTHdrcWN2dmxEYklRRDdUZnBFbjVxaEdLZHZ6L28wNk1GSUdocUNFOUtX?=
- =?utf-8?B?bUw5KzEwUi9PeGF1aVpDeXBXNGYxY1A3Slh6UDAzZmUvY2dyZmJDUlljZ1ZO?=
- =?utf-8?B?eHRmWElFSC9CRWFYNWpxTHNPblB5dHJFSU9PL3pIcndUNWo1eHl4QUViVWFu?=
- =?utf-8?B?c0JnVmRVcXppVVpIbmh0c1lJL0E1eVp4djBwbmR1aUpXS2VVdnpYWThua0Jt?=
- =?utf-8?B?QSs3bC9yWUdCRjA5dHc5WnZHRkpKbml2MmpUQXBVWXVubUY5TFc0K085anJY?=
- =?utf-8?B?QWVza1hrenNHTitmZ1BkQnRCWHFVbk1jK0luc1JJU3V4amQybGIrV3pMS0I5?=
- =?utf-8?B?MEZRUUIrWW5CS1doKzJQdjlEK25zNllwUFBNL0RwNlNHTnVXVHFkbDRCY0l3?=
- =?utf-8?B?WW4zMUMzR2dLLzNkUkhONEpPUVJBYVJhS2g0RDZxQ0hSc1gzV3grZm1PVjhQ?=
- =?utf-8?B?VzhUS3M2blFvRnF4bHozNHFoQ3ZiT25jTXF5VmdvbWRVbzBjYzhTK2d0L1pV?=
- =?utf-8?Q?b5cRThdqZFs4uCDU=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D6280750FD4CB3418B97E527E88AEC3A@jpnprd01.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Thu, 21 Apr 2022 08:55:19 -0400
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA9AB32993
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Apr 2022 05:52:28 -0700 (PDT)
+Received: by mail-io1-f72.google.com with SMTP id d19-20020a0566022d5300b0065499cd4a73so3220404iow.14
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Apr 2022 05:52:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=0wOpHcYRyTy1gHbHRKwr8jrNSS5AepkjjIwI89NNgBY=;
+        b=J5QbF3r9EAbCVZuJ5lG1yIiyS4zpekJjA5K+AiKlb6PSA3XIUOaRZCi4Gf5ec15P75
+         X4GO60JGyjuqdoQ4QPEegHh6BxIrqAqm6pjBKSGo+PPIDSpIgj38mxDvUAdnxKsJZo/E
+         INqV7rlsjui4hR//8gL7mtbUn/YP8MfeatFZ8G8kC2OViIDCcL9IjvmBQzh5JX4rTxQV
+         ecosMsmpdqBJXFCuA8G2fsuYK2tL+xccaHRky8kMuA5IHbTBwCK+iI+0Nec2wumADIME
+         yg9ongg5e1y/y95zrQv/auibRd7kq+/j4ag/AOInxJOIuqLJTOA7fu1tkHWQ3LcWFHbZ
+         688w==
+X-Gm-Message-State: AOAM531Bi0TJLiD3C4mpYu8VJCvJsKqZaiwSwoKZv3Qu+EKkBH5cZyIH
+        7eTcX0BS+Vs/tJ2R9mtSOuphhDOBxbMAIa/WANtsHPx+ozb3
+X-Google-Smtp-Source: ABdhPJxTo+QtKWZ1OIb4VWf752AOKkoFIBH6frJ4VOrtv/GHVPKJgxlHaoXxnjoDwgjGI3jT0QFaiyrWD4/EpvSbVCPld88bpX0s
 MIME-Version: 1.0
-X-OriginatorOrg: nec.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYWPR01MB8591.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bab84720-eeda-4e5c-2ea6-08da23957a6d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Apr 2022 12:50:13.5859
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: e67df547-9d0d-4f4d-9161-51c6ed1f7d11
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: G3xAFvgjW3Uk2JshE2Bd/KO5EV4N9FOPoEcIyTGjh5dU/kkQIZKJ9eZa1Onfok2f+FizMa1wWU3gQKnHO0amhg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB2436
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6e02:20e1:b0:2cc:2ea5:6c98 with SMTP id
+ q1-20020a056e0220e100b002cc2ea56c98mr7428759ilv.29.1650545548331; Thu, 21 Apr
+ 2022 05:52:28 -0700 (PDT)
+Date:   Thu, 21 Apr 2022 05:52:28 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000018117c05dd29952c@google.com>
+Subject: [syzbot] possible deadlock in evict (2)
+From:   syzbot <syzbot+e0fda9a3d66127dea5c2@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-T24gVHVlLCBBcHIgMTksIDIwMjIgYXQgMTI6NTA6NDNQTSArMDgwMCwgU2hpeWFuZyBSdWFuIHdy
-b3RlOg0KPiBUaGlzIG5ldyBmdW5jdGlvbiBpcyBhIHZhcmlhbnQgb2YgbWZfZ2VuZXJpY19raWxs
-X3Byb2NzIHRoYXQgYWNjZXB0cyBhDQo+IGZpbGUsIG9mZnNldCBwYWlyIGluc3RlYWQgb2YgYSBz
-dHJ1Y3QgdG8gc3VwcG9ydCBtdWx0aXBsZSBmaWxlcyBzaGFyaW5nDQo+IGEgREFYIG1hcHBpbmcu
-ICBJdCBpcyBpbnRlbmRlZCB0byBiZSBjYWxsZWQgYnkgdGhlIGZpbGUgc3lzdGVtcyBhcyBwYXJ0
-DQo+IG9mIHRoZSBtZW1vcnlfZmFpbHVyZSBoYW5kbGVyIGFmdGVyIHRoZSBmaWxlIHN5c3RlbSBw
-ZXJmb3JtZWQgYSByZXZlcnNlDQo+IG1hcHBpbmcgZnJvbSB0aGUgc3RvcmFnZSBhZGRyZXNzIHRv
-IHRoZSBmaWxlIGFuZCBmaWxlIG9mZnNldC4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IFNoaXlhbmcg
-UnVhbiA8cnVhbnN5LmZuc3RAZnVqaXRzdS5jb20+DQo+IFJldmlld2VkLWJ5OiBEYW4gV2lsbGlh
-bXMgPGRhbi5qLndpbGxpYW1zQGludGVsLmNvbT4NCj4gUmV2aWV3ZWQtYnk6IENocmlzdG9waCBI
-ZWxsd2lnIDxoY2hAbHN0LmRlPg0KPiAtLS0NCi4uLg0KDQo+IEBAIC01MzksMTMgKzU0OCw0MSBA
-QCBzdGF0aWMgdm9pZCBjb2xsZWN0X3Byb2NzX2ZpbGUoc3RydWN0IHBhZ2UgKnBhZ2UsIHN0cnVj
-dCBsaXN0X2hlYWQgKnRvX2tpbGwsDQo+ICAJCQkgKiB0byBiZSBpbmZvcm1lZCBvZiBhbGwgc3Vj
-aCBkYXRhIGNvcnJ1cHRpb25zLg0KPiAgCQkJICovDQo+ICAJCQlpZiAodm1hLT52bV9tbSA9PSB0
-LT5tbSkNCj4gLQkJCQlhZGRfdG9fa2lsbCh0LCBwYWdlLCB2bWEsIHRvX2tpbGwpOw0KPiArCQkJ
-CWFkZF90b19raWxsKHQsIHBhZ2UsIDAsIHZtYSwgdG9fa2lsbCk7DQo+ICAJCX0NCj4gIAl9DQo+
-ICAJcmVhZF91bmxvY2soJnRhc2tsaXN0X2xvY2spOw0KPiAgCWlfbW1hcF91bmxvY2tfcmVhZCht
-YXBwaW5nKTsNCj4gIH0NCj4gIA0KPiArI2lmIElTX0VOQUJMRUQoQ09ORklHX0ZTX0RBWCkNCg0K
-VGhpcyBtYWNybyBpcyBlcXVpdmFsZW50IHdpdGggIiNpZmRlZiBDT05GSUdfRlNfREFYIiwgYW5k
-IHlvdSBhbHNvIGFkZCAiI2lmZGVmIiBiZWxvdywNCnNvIGFsaWduaW5nIHRvIGVpdGhlciAoSSBw
-cmVmZXIgIiNpZmRlZiIpIG1pZ2h0IGJlIGJldHRlci4NCg0KPiArLyoNCj4gKyAqIENvbGxlY3Qg
-cHJvY2Vzc2VzIHdoZW4gdGhlIGVycm9yIGhpdCBhIGZzZGF4IHBhZ2UuDQo+ICsgKi8NCj4gK3N0
-YXRpYyB2b2lkIGNvbGxlY3RfcHJvY3NfZnNkYXgoc3RydWN0IHBhZ2UgKnBhZ2UsDQo+ICsJCXN0
-cnVjdCBhZGRyZXNzX3NwYWNlICptYXBwaW5nLCBwZ29mZl90IHBnb2ZmLA0KPiArCQlzdHJ1Y3Qg
-bGlzdF9oZWFkICp0b19raWxsKQ0KDQpVbmxpa2UgY29sbGVjdF9wcm9jc19maWxlKCksIHRoaXMg
-bmV3IGZ1bmN0aW9uIGRvZXMgbm90IGhhdmUgcGFyYW1ldGVyDQpmb3JjZV9lYXJseSwgYW5kIHBh
-c3NlcyB0cnVlIHVuY29uZGl0aW9uYWxseSB0byB0YXNrX2Vhcmx5X2tpbGwoKS4NCg0KTG9va2lu
-ZyBhdCB0aGUgY3VycmVudCBjb2RlLCBJIG5vdGljZWQgdGhlIGZvbGxvd2luZyBjb2RlIGFuZCBj
-b21tZW50Og0KDQoJLyoNCgkgKiBVbmxpa2UgU3lzdGVtLVJBTSB0aGVyZSBpcyBubyBwb3NzaWJp
-bGl0eSB0byBzd2FwIGluIGENCgkgKiBkaWZmZXJlbnQgcGh5c2ljYWwgcGFnZSBhdCBhIGdpdmVu
-IHZpcnR1YWwgYWRkcmVzcywgc28gYWxsDQoJICogdXNlcnNwYWNlIGNvbnN1bXB0aW9uIG9mIFpP
-TkVfREVWSUNFIG1lbW9yeSBuZWNlc3NpdGF0ZXMNCgkgKiBTSUdCVVMgKGkuZS4gTUZfTVVTVF9L
-SUxMKQ0KCSAqLw0KCWZsYWdzIHw9IE1GX0FDVElPTl9SRVFVSVJFRCB8IE1GX01VU1RfS0lMTDsN
-Cg0KLCB3aGljaCBmb3JjaWJseSBzZXRzIE1GX0FDVElPTl9SRVFVSVJFRCBhbmQgSSBndWVzcyB0
-aGF0IHRoaXMgaXMgdGhlIHJlYXNvbg0KZm9yIHBhc3NpbmcgdHJ1ZSBhYm92ZS4gIEJ1dCBub3cg
-SSdtIG5vdCBzdXJlIHRoYXQgc2V0dGluZyB0aGVzZSBmbGFncyBmb3INCmFsbCBlcnJvciBldmVu
-dHMgb24gTlZESU1NIGlzIHJlYWxseSByaWdodCB0aGluZy4gIFRoZSBhYm92ZSBjb21tZW50IHNv
-dW5kcyB0bw0KbWUgdGhhdCBtZW1vcnlfZmFpbHVyZV9kZXZfcGFnZW1hcCgpIGlzIGNhbGxlZCB0
-byBoYW5kbGUgdGhlIGV2ZW50IHdoZW4gdGhlIGRhdGENCm9uIFpPTkVfREVWSUNFIG1lbW9yeSBp
-cyBhYm91dCB0byBiZSBhY2Nlc3NlZC9jb25zdW1lZCwgYnV0IGlzIHRoYXQgdGhlIG9ubHkgY2Fz
-ZT8NCg0KSSB0aG91Z2h0IHRoYXQgbWVtb3J5X2ZhaWx1cmUoKSBjYW4gYmUgY2FsbGVkIGJ5IG1l
-bW9yeSBzY3J1YmJpbmcgKmJlZm9yZSoNCnNvbWUgcHJvY2VzcyBhY3R1YWxseSBhY2Nlc3MgdG8g
-aXQsIGFuZCBNQ0UgaGFuZGxlciBqdWRnZXMgd2hldGhlciBhY3Rpb24gaXMNCnJlcXVpcmVkIG9y
-IG5vdCBiYXNlZCBvbiBNU1JzLiAgRG9lcyB0aGlzIG5vdCBoYXBwZW4gb24gTlZESU1NIGVycm9y
-Pw0KDQpBbnl3YXkgdGhpcyBxdWVzdGlvbiBtaWdodCBiZSBhIGxpdHRsZSBvZmYtdG9waWMsIHNv
-IG5vdCB0byBiZSBhIGJsb2NrZXIgZm9yDQp0aGlzIHBhdGNoc2V0Lg0KDQpUaGFua3MsDQpOYW95
-YSBIb3JpZ3VjaGk=
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    a2c29ccd9477 Merge tag 'devicetree-fixes-for-5.18-2' of gi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13508568f00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ac042ae170e2c50f
+dashboard link: https://syzkaller.appspot.com/bug?extid=e0fda9a3d66127dea5c2
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e0fda9a3d66127dea5c2@syzkaller.appspotmail.com
+
+======================================================
+WARNING: possible circular locking dependency detected
+5.18.0-rc2-syzkaller-00351-ga2c29ccd9477 #0 Not tainted
+------------------------------------------------------
+khugepaged/49 is trying to acquire lock:
+ffff88801ca7a650 (sb_internal){.+.+}-{0:0}, at: evict+0x2ed/0x6b0 fs/inode.c:664
+
+but task is already holding lock:
+ffffffff8beac660 (fs_reclaim){+.+.}-{0:0}, at: __perform_reclaim mm/page_alloc.c:4621 [inline]
+ffffffff8beac660 (fs_reclaim){+.+.}-{0:0}, at: __alloc_pages_direct_reclaim mm/page_alloc.c:4646 [inline]
+ffffffff8beac660 (fs_reclaim){+.+.}-{0:0}, at: __alloc_pages_slowpath.constprop.0+0xa1e/0x20e0 mm/page_alloc.c:5046
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #3 (fs_reclaim){+.+.}-{0:0}:
+       __fs_reclaim_acquire mm/page_alloc.c:4572 [inline]
+       fs_reclaim_acquire+0x115/0x160 mm/page_alloc.c:4586
+       might_alloc include/linux/sched/mm.h:254 [inline]
+       slab_pre_alloc_hook mm/slab.h:722 [inline]
+       slab_alloc_node mm/slab.c:3214 [inline]
+       kmem_cache_alloc_node_trace+0x48/0x5b0 mm/slab.c:3625
+       kmalloc_node include/linux/slab.h:599 [inline]
+       kzalloc_node include/linux/slab.h:725 [inline]
+       mempool_create_node mm/mempool.c:266 [inline]
+       mempool_create+0x4e/0xc0 mm/mempool.c:255
+       mempool_create_page_pool include/linux/mempool.h:107 [inline]
+       fscrypt_initialize+0x86/0xa0 fs/crypto/crypto.c:330
+       fscrypt_setup_encryption_info+0xef/0xf00 fs/crypto/keysetup.c:545
+       fscrypt_get_encryption_info+0x34a/0x3f0 fs/crypto/keysetup.c:654
+       fscrypt_setup_filename+0x238/0xec0 fs/crypto/fname.c:426
+       __fscrypt_prepare_lookup+0x28/0xf0 fs/crypto/hooks.c:102
+       fscrypt_prepare_lookup include/linux/fscrypt.h:898 [inline]
+       ext4_fname_prepare_lookup+0x2b1/0x330 fs/ext4/ext4.h:2770
+       ext4_lookup_entry fs/ext4/namei.c:1694 [inline]
+       ext4_lookup fs/ext4/namei.c:1769 [inline]
+       ext4_lookup+0x12d/0x730 fs/ext4/namei.c:1760
+       lookup_open.isra.0+0x9aa/0x1690 fs/namei.c:3308
+       open_last_lookups fs/namei.c:3400 [inline]
+       path_openat+0x9a2/0x2910 fs/namei.c:3606
+       do_filp_open+0x1aa/0x400 fs/namei.c:3636
+       do_sys_openat2+0x16d/0x4c0 fs/open.c:1213
+       do_sys_open fs/open.c:1229 [inline]
+       __do_sys_openat fs/open.c:1245 [inline]
+       __se_sys_openat fs/open.c:1240 [inline]
+       __x64_sys_openat+0x13f/0x1f0 fs/open.c:1240
+       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+       do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+       entry_SYSCALL_64_after_hwframe+0x44/0xae
+
+-> #2 (fscrypt_init_mutex){+.+.}-{3:3}:
+       __mutex_lock_common kernel/locking/mutex.c:600 [inline]
+       __mutex_lock+0x12f/0x12f0 kernel/locking/mutex.c:733
+       fscrypt_initialize+0x3c/0xa0 fs/crypto/crypto.c:324
+       fscrypt_setup_encryption_info+0xef/0xf00 fs/crypto/keysetup.c:545
+       fscrypt_get_encryption_info+0x34a/0x3f0 fs/crypto/keysetup.c:654
+       fscrypt_setup_filename+0x238/0xec0 fs/crypto/fname.c:426
+       ext4_fname_setup_filename+0x8d/0x240 fs/ext4/ext4.h:2751
+       ext4_find_entry+0x8c/0x170 fs/ext4/namei.c:1674
+       __ext4_unlink+0x92/0x920 fs/ext4/namei.c:3155
+       ext4_unlink+0x346/0x9e0 fs/ext4/namei.c:3231
+       vfs_unlink+0x351/0x920 fs/namei.c:4148
+       do_unlinkat+0x3c9/0x650 fs/namei.c:4216
+       __do_sys_unlink fs/namei.c:4264 [inline]
+       __se_sys_unlink fs/namei.c:4262 [inline]
+       __x64_sys_unlink+0xc6/0x110 fs/namei.c:4262
+       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+       do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+       entry_SYSCALL_64_after_hwframe+0x44/0xae
+
+-> #1 (jbd2_handle){++++}-{0:0}:
+       start_this_handle+0xfe7/0x14a0 fs/jbd2/transaction.c:463
+       jbd2__journal_start+0x399/0x930 fs/jbd2/transaction.c:520
+       __ext4_journal_start_sb+0x3a8/0x4a0 fs/ext4/ext4_jbd2.c:105
+       ext4_sample_last_mounted fs/ext4/file.c:820 [inline]
+       ext4_file_open+0x5e7/0xb50 fs/ext4/file.c:849
+       do_dentry_open+0x4a1/0x11e0 fs/open.c:824
+       do_open fs/namei.c:3476 [inline]
+       path_openat+0x1c71/0x2910 fs/namei.c:3609
+       do_filp_open+0x1aa/0x400 fs/namei.c:3636
+       do_sys_openat2+0x16d/0x4c0 fs/open.c:1213
+       do_sys_open fs/open.c:1229 [inline]
+       __do_sys_openat fs/open.c:1245 [inline]
+       __se_sys_openat fs/open.c:1240 [inline]
+       __x64_sys_openat+0x13f/0x1f0 fs/open.c:1240
+       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+       do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+       entry_SYSCALL_64_after_hwframe+0x44/0xae
+
+-> #0 (sb_internal){.+.+}-{0:0}:
+       check_prev_add kernel/locking/lockdep.c:3065 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3188 [inline]
+       validate_chain kernel/locking/lockdep.c:3803 [inline]
+       __lock_acquire+0x2ac6/0x56c0 kernel/locking/lockdep.c:5029
+       lock_acquire kernel/locking/lockdep.c:5641 [inline]
+       lock_acquire+0x1ab/0x510 kernel/locking/lockdep.c:5606
+       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
+       __sb_start_write include/linux/fs.h:1698 [inline]
+       sb_start_intwrite include/linux/fs.h:1815 [inline]
+       ext4_evict_inode+0xe81/0x1960 fs/ext4/inode.c:240
+       evict+0x2ed/0x6b0 fs/inode.c:664
+       iput_final fs/inode.c:1744 [inline]
+       iput.part.0+0x562/0x820 fs/inode.c:1770
+       iput+0x58/0x70 fs/inode.c:1760
+       dentry_unlink_inode+0x2b1/0x460 fs/dcache.c:401
+       __dentry_kill+0x3c0/0x640 fs/dcache.c:607
+       dentry_kill fs/dcache.c:745 [inline]
+       dput+0x64d/0xdb0 fs/dcache.c:913
+       ovl_entry_stack_free fs/overlayfs/super.c:61 [inline]
+       ovl_dentry_release+0xca/0x130 fs/overlayfs/super.c:74
+       __dentry_kill+0x42b/0x640 fs/dcache.c:612
+       shrink_dentry_list+0x23c/0x800 fs/dcache.c:1201
+       prune_dcache_sb+0xe7/0x140 fs/dcache.c:1282
+       super_cache_scan+0x336/0x590 fs/super.c:104
+       do_shrink_slab+0x42d/0xbd0 mm/vmscan.c:774
+       shrink_slab_memcg mm/vmscan.c:843 [inline]
+       shrink_slab+0x3ee/0x6f0 mm/vmscan.c:922
+       shrink_node_memcgs mm/vmscan.c:3100 [inline]
+       shrink_node+0x8b3/0x1df0 mm/vmscan.c:3221
+       shrink_zones mm/vmscan.c:3458 [inline]
+       do_try_to_free_pages+0x3b5/0x1700 mm/vmscan.c:3516
+       try_to_free_pages+0x2ac/0x840 mm/vmscan.c:3751
+       __perform_reclaim mm/page_alloc.c:4624 [inline]
+       __alloc_pages_direct_reclaim mm/page_alloc.c:4646 [inline]
+       __alloc_pages_slowpath.constprop.0+0xac7/0x20e0 mm/page_alloc.c:5046
+       __alloc_pages+0x412/0x500 mm/page_alloc.c:5421
+       __alloc_pages_node include/linux/gfp.h:587 [inline]
+       khugepaged_alloc_page+0xa0/0x170 mm/khugepaged.c:868
+       collapse_huge_page mm/khugepaged.c:1071 [inline]
+       khugepaged_scan_pmd mm/khugepaged.c:1357 [inline]
+       khugepaged_scan_mm_slot mm/khugepaged.c:2167 [inline]
+       khugepaged_do_scan mm/khugepaged.c:2248 [inline]
+       khugepaged+0x3474/0x66e0 mm/khugepaged.c:2293
+       kthread+0x2e9/0x3a0 kernel/kthread.c:376
+       ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:298
+
+other info that might help us debug this:
+
+Chain exists of:
+  sb_internal --> fscrypt_init_mutex --> fs_reclaim
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(fs_reclaim);
+                               lock(fscrypt_init_mutex);
+                               lock(fs_reclaim);
+  lock(sb_internal);
+
+ *** DEADLOCK ***
+
+3 locks held by khugepaged/49:
+ #0: ffffffff8beac660 (fs_reclaim){+.+.}-{0:0}, at: __perform_reclaim mm/page_alloc.c:4621 [inline]
+ #0: ffffffff8beac660 (fs_reclaim){+.+.}-{0:0}, at: __alloc_pages_direct_reclaim mm/page_alloc.c:4646 [inline]
+ #0: ffffffff8beac660 (fs_reclaim){+.+.}-{0:0}, at: __alloc_pages_slowpath.constprop.0+0xa1e/0x20e0 mm/page_alloc.c:5046
+ #1: ffffffff8be6e310 (shrinker_rwsem){++++}-{3:3}, at: shrink_slab_memcg mm/vmscan.c:816 [inline]
+ #1: ffffffff8be6e310 (shrinker_rwsem){++++}-{3:3}, at: shrink_slab+0x2b4/0x6f0 mm/vmscan.c:922
+ #2: ffff8880241a40e0 (&type->s_umount_key#75){++++}-{3:3}, at: trylock_super fs/super.c:415 [inline]
+ #2: ffff8880241a40e0 (&type->s_umount_key#75){++++}-{3:3}, at: super_cache_scan+0x6c/0x590 fs/super.c:79
+
+stack backtrace:
+CPU: 2 PID: 49 Comm: khugepaged Not tainted 5.18.0-rc2-syzkaller-00351-ga2c29ccd9477 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.14.0-2 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:106
+ check_noncircular+0x25f/0x2e0 kernel/locking/lockdep.c:2145
+ check_prev_add kernel/locking/lockdep.c:3065 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3188 [inline]
+ validate_chain kernel/locking/lockdep.c:3803 [inline]
+ __lock_acquire+0x2ac6/0x56c0 kernel/locking/lockdep.c:5029
+ lock_acquire kernel/locking/lockdep.c:5641 [inline]
+ lock_acquire+0x1ab/0x510 kernel/locking/lockdep.c:5606
+ percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
+ __sb_start_write include/linux/fs.h:1698 [inline]
+ sb_start_intwrite include/linux/fs.h:1815 [inline]
+ ext4_evict_inode+0xe81/0x1960 fs/ext4/inode.c:240
+ evict+0x2ed/0x6b0 fs/inode.c:664
+ iput_final fs/inode.c:1744 [inline]
+ iput.part.0+0x562/0x820 fs/inode.c:1770
+ iput+0x58/0x70 fs/inode.c:1760
+ dentry_unlink_inode+0x2b1/0x460 fs/dcache.c:401
+ __dentry_kill+0x3c0/0x640 fs/dcache.c:607
+ dentry_kill fs/dcache.c:745 [inline]
+ dput+0x64d/0xdb0 fs/dcache.c:913
+ ovl_entry_stack_free fs/overlayfs/super.c:61 [inline]
+ ovl_dentry_release+0xca/0x130 fs/overlayfs/super.c:74
+ __dentry_kill+0x42b/0x640 fs/dcache.c:612
+ shrink_dentry_list+0x23c/0x800 fs/dcache.c:1201
+ prune_dcache_sb+0xe7/0x140 fs/dcache.c:1282
+ super_cache_scan+0x336/0x590 fs/super.c:104
+ do_shrink_slab+0x42d/0xbd0 mm/vmscan.c:774
+ shrink_slab_memcg mm/vmscan.c:843 [inline]
+ shrink_slab+0x3ee/0x6f0 mm/vmscan.c:922
+ shrink_node_memcgs mm/vmscan.c:3100 [inline]
+ shrink_node+0x8b3/0x1df0 mm/vmscan.c:3221
+ shrink_zones mm/vmscan.c:3458 [inline]
+ do_try_to_free_pages+0x3b5/0x1700 mm/vmscan.c:3516
+ try_to_free_pages+0x2ac/0x840 mm/vmscan.c:3751
+ __perform_reclaim mm/page_alloc.c:4624 [inline]
+ __alloc_pages_direct_reclaim mm/page_alloc.c:4646 [inline]
+ __alloc_pages_slowpath.constprop.0+0xac7/0x20e0 mm/page_alloc.c:5046
+ __alloc_pages+0x412/0x500 mm/page_alloc.c:5421
+ __alloc_pages_node include/linux/gfp.h:587 [inline]
+ khugepaged_alloc_page+0xa0/0x170 mm/khugepaged.c:868
+ collapse_huge_page mm/khugepaged.c:1071 [inline]
+ khugepaged_scan_pmd mm/khugepaged.c:1357 [inline]
+ khugepaged_scan_mm_slot mm/khugepaged.c:2167 [inline]
+ khugepaged_do_scan mm/khugepaged.c:2248 [inline]
+ khugepaged+0x3474/0x66e0 mm/khugepaged.c:2293
+ kthread+0x2e9/0x3a0 kernel/kthread.c:376
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:298
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
