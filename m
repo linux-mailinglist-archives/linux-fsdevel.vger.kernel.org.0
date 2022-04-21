@@ -2,81 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 430B450A389
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Apr 2022 17:00:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5D9150A395
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Apr 2022 17:01:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1389818AbiDUPDA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Apr 2022 11:03:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40666 "EHLO
+        id S1349544AbiDUPDx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Apr 2022 11:03:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41410 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1389901AbiDUPC6 (ORCPT
+        with ESMTP id S1389886AbiDUPDq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Apr 2022 11:02:58 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 047122F029
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Apr 2022 08:00:09 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id AFF10210EC;
-        Thu, 21 Apr 2022 15:00:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1650553207; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=hz4sTeXzxa4hC2YfoCf8UBHVoyrdYpL8bK5K9hZFgQw=;
-        b=JKeiQTKGbOKaTni1DQLEcPFIvoLqQD1GSmGNuoZ//yxf33KeoI7I3dSY0FOJ8S4++e/RNz
-        8QDMUYr5JuDdqLTQFz2R+To3saw0097UPPyZKRX3faTfSZhvA5yA5y6mzlq/1E6BdNr5bR
-        phgXkeK7vmCt9fx8ywQrASL0Zf2ESak=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1650553207;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=hz4sTeXzxa4hC2YfoCf8UBHVoyrdYpL8bK5K9hZFgQw=;
-        b=yNoD2ADTks9CBr2DzEI3O5kJ37i86dE1EpQ+xlJJJc3nanGQBy065M7FpEJ9fXphOmnW2l
-        G5OrrMukIT4K0nBQ==
-Received: from quack3.suse.cz (unknown [10.100.224.230])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 9ACD32C141;
-        Thu, 21 Apr 2022 15:00:07 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 39CCBA0620; Thu, 21 Apr 2022 17:00:07 +0200 (CEST)
-Date:   Thu, 21 Apr 2022 17:00:07 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, Matthew Bobrowski <repnop@google.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 13/16] fanotify: factor out helper
- fanotify_mark_update_flags()
-Message-ID: <20220421150007.ytjvw5fe7hfqihwv@quack3.lan>
-References: <20220413090935.3127107-1-amir73il@gmail.com>
- <20220413090935.3127107-14-amir73il@gmail.com>
+        Thu, 21 Apr 2022 11:03:46 -0400
+Received: from out30-54.freemail.mail.aliyun.com (out30-54.freemail.mail.aliyun.com [115.124.30.54])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DBA34704D;
+        Thu, 21 Apr 2022 08:00:46 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R591e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=19;SR=0;TI=SMTPD_---0VAgCgRW_1650553238;
+Received: from 192.168.31.65(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0VAgCgRW_1650553238)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 21 Apr 2022 23:00:41 +0800
+Message-ID: <9b99e246-fbdf-2d78-7773-bf4481a8e122@linux.alibaba.com>
+Date:   Thu, 21 Apr 2022 23:00:38 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220413090935.3127107-14-amir73il@gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.6.1
+Subject: Re: [PATCH v9 05/21] cachefiles: implement on-demand read
+Content-Language: en-US
+To:     David Howells <dhowells@redhat.com>
+Cc:     linux-cachefs@redhat.com, xiang@kernel.org, chao@kernel.org,
+        linux-erofs@lists.ozlabs.org, torvalds@linux-foundation.org,
+        gregkh@linuxfoundation.org, willy@infradead.org,
+        linux-fsdevel@vger.kernel.org, joseph.qi@linux.alibaba.com,
+        bo.liu@linux.alibaba.com, tao.peng@linux.alibaba.com,
+        gerry@linux.alibaba.com, eguan@linux.alibaba.com,
+        linux-kernel@vger.kernel.org, luodaowen.backend@bytedance.com,
+        tianzichen@kuaishou.com, fannaihao@baidu.com,
+        zhangjiachen.jaycee@bytedance.com
+References: <20220415123614.54024-6-jefflexu@linux.alibaba.com>
+ <20220415123614.54024-1-jefflexu@linux.alibaba.com>
+ <1445520.1650550446@warthog.procyon.org.uk>
+From:   JeffleXu <jefflexu@linux.alibaba.com>
+In-Reply-To: <1445520.1650550446@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-13.1 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
+        SPF_PASS,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 13-04-22 12:09:32, Amir Goldstein wrote:
-> Handle FAN_MARK_IGNORED_SURV_MODIFY flag change in a helper that
-> is called after updating the mark mask.
-> 
-> Move recalc of object mask inside fanotify_mark_add_to_mask() which
-> makes the code a bit simpler to follow.
-> 
-> Add also helper to translate fsnotify mark flags to user visible
-> fanotify mark flags.
 
-This bit got moved to another commit. Otherwise changes look good.
 
-								Honza
+On 4/21/22 10:14 PM, David Howells wrote:
+> Jeffle Xu <jefflexu@linux.alibaba.com> wrote:
+> 
+>> A new NETFS_SREQ_ONDEMAND flag is introduced to indicate that on-demand
+>> read should be done when a cache miss encountered.
+> 
+> That may conflict with changes I'm making - but it's just a matter of flag
+> renumbering.
+> 
+>> +#define CACHEFILES_IOC_CREAD	_IOW(0x98, 1, int)
+> 
+> I wonder if CACHEFILES_IOC_READ_COMPLETE would be a better name, 
+
+Okay, it sounds more readable. Thanks.
+
+
+but apart
+> from that:
+> 
+> Acked-by: David Howells <dhowells@redhat.com>
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks,
+Jeffle
