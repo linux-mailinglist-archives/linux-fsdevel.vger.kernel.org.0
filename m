@@ -2,51 +2,28 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EDB6750A7A1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Apr 2022 20:00:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E79150A7EC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Apr 2022 20:16:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1391070AbiDUSAs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Apr 2022 14:00:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55054 "EHLO
+        id S1391070AbiDUSTf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Apr 2022 14:19:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1391095AbiDUSAr (ORCPT
+        with ESMTP id S1377142AbiDUSTe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Apr 2022 14:00:47 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0D7FC4AE26
-        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Apr 2022 10:57:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1650563875;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=a4va1/Lq36cMvwBfvf9W3jL50NhUZUHTTW2j9bp+3cE=;
-        b=TKJGwJZahb1IathZ+pxlpiwKLSYo3ci/Xx1aW/aPIouIQ12eiBO1DO9NFlOfLj6G213Hts
-        B9Q1aJoK3rwXlUE7KKvXSsT3yudazdd94BRqCnK0jX3nov20l7TxRY2Jt0hxx0ueUeqL0J
-        Yb5Y7xHrh1VhZ+TaOJR1T4qrcI6MvvY=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-1-ryYKA82UMta93HSRiWfXaQ-1; Thu, 21 Apr 2022 13:57:51 -0400
-X-MC-Unique: ryYKA82UMta93HSRiWfXaQ-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 1198F1014A64;
-        Thu, 21 Apr 2022 17:57:51 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.13])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9088240CFD22;
-        Thu, 21 Apr 2022 17:57:43 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <2067a5c7-4e24-f449-4676-811d12e9ab72@linux.alibaba.com>
-References: <2067a5c7-4e24-f449-4676-811d12e9ab72@linux.alibaba.com> <20220415123614.54024-3-jefflexu@linux.alibaba.com> <20220415123614.54024-1-jefflexu@linux.alibaba.com> <1447543.1650552898@warthog.procyon.org.uk>
-To:     JeffleXu <jefflexu@linux.alibaba.com>
-Cc:     dhowells@redhat.com, linux-cachefs@redhat.com, xiang@kernel.org,
-        chao@kernel.org, linux-erofs@lists.ozlabs.org,
+        Thu, 21 Apr 2022 14:19:34 -0400
+Received: from out30-56.freemail.mail.aliyun.com (out30-56.freemail.mail.aliyun.com [115.124.30.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEBF53E0D5;
+        Thu, 21 Apr 2022 11:16:42 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04357;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=20;SR=0;TI=SMTPD_---0VAh.Br2_1650564996;
+Received: from B-P7TQMD6M-0146.local(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0VAh.Br2_1650564996)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 22 Apr 2022 02:16:38 +0800
+Date:   Fri, 22 Apr 2022 02:16:36 +0800
+From:   Gao Xiang <hsiangkao@linux.alibaba.com>
+To:     David Howells <dhowells@redhat.com>
+Cc:     JeffleXu <jefflexu@linux.alibaba.com>, linux-cachefs@redhat.com,
+        xiang@kernel.org, chao@kernel.org, linux-erofs@lists.ozlabs.org,
         torvalds@linux-foundation.org, gregkh@linuxfoundation.org,
         willy@infradead.org, linux-fsdevel@vger.kernel.org,
         joseph.qi@linux.alibaba.com, bo.liu@linux.alibaba.com,
@@ -55,28 +32,60 @@ Cc:     dhowells@redhat.com, linux-cachefs@redhat.com, xiang@kernel.org,
         luodaowen.backend@bytedance.com, tianzichen@kuaishou.com,
         fannaihao@baidu.com, zhangjiachen.jaycee@bytedance.com
 Subject: Re: EMFILE/ENFILE mitigation needed in erofs?
+Message-ID: <YmGfhFQshWOkAqNG@B-P7TQMD6M-0146.local>
+Mail-Followup-To: David Howells <dhowells@redhat.com>,
+        JeffleXu <jefflexu@linux.alibaba.com>, linux-cachefs@redhat.com,
+        xiang@kernel.org, chao@kernel.org, linux-erofs@lists.ozlabs.org,
+        torvalds@linux-foundation.org, gregkh@linuxfoundation.org,
+        willy@infradead.org, linux-fsdevel@vger.kernel.org,
+        joseph.qi@linux.alibaba.com, bo.liu@linux.alibaba.com,
+        tao.peng@linux.alibaba.com, gerry@linux.alibaba.com,
+        eguan@linux.alibaba.com, linux-kernel@vger.kernel.org,
+        luodaowen.backend@bytedance.com, tianzichen@kuaishou.com,
+        fannaihao@baidu.com, zhangjiachen.jaycee@bytedance.com
+References: <2067a5c7-4e24-f449-4676-811d12e9ab72@linux.alibaba.com>
+ <20220415123614.54024-3-jefflexu@linux.alibaba.com>
+ <20220415123614.54024-1-jefflexu@linux.alibaba.com>
+ <1447543.1650552898@warthog.procyon.org.uk>
+ <1484181.1650563860@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1484180.1650563860.1@warthog.procyon.org.uk>
-Date:   Thu, 21 Apr 2022 18:57:40 +0100
-Message-ID: <1484181.1650563860@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.84 on 10.11.54.1
-X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1484181.1650563860@warthog.procyon.org.uk>
+X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-JeffleXu <jefflexu@linux.alibaba.com> wrote:
+Hi David,
 
-> 2. Our user daemon will configure rlimit-nofile to a reasonably large
-> (e.g. 1 million) value, so that it won't fail when trying to allocate fds.
+On Thu, Apr 21, 2022 at 06:57:40PM +0100, David Howells wrote:
+> JeffleXu <jefflexu@linux.alibaba.com> wrote:
+> 
+> > 2. Our user daemon will configure rlimit-nofile to a reasonably large
+> > (e.g. 1 million) value, so that it won't fail when trying to allocate fds.
+> 
+> There's a system-wide limit also; simply increasing the rlimit won't override
+> that.
 
-There's a system-wide limit also; simply increasing the rlimit won't override
-that.
+Yes, I suggest that we should add some words to document this
+to system administrators to take care of `/proc/sys/fs/file-max',
+but I think it's typically not a problem about our on-demand cases.
 
-David
+Since each cookie equals to an erofs device, so not too many erofs
+devices (much like docker layers) for one erofs images and they
+are all handled when mounting (which needs privilege permissions.)
 
+And due to this, fscache dir can be easily backed up, restored, and
+transfered since they are really golden erofs image files.
+
+Thanks,
+Gao Xiang
+
+> 
+> David
