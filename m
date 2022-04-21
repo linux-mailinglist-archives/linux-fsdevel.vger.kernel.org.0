@@ -2,60 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AD7E50AC5B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Apr 2022 01:49:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD4C450AC60
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Apr 2022 01:49:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1442797AbiDUXvr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Apr 2022 19:51:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49296 "EHLO
+        id S1442815AbiDUXv4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Apr 2022 19:51:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1442774AbiDUXvj (ORCPT
+        with ESMTP id S1381619AbiDUXvl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Apr 2022 19:51:39 -0400
-Received: from mail-qk1-x72f.google.com (mail-qk1-x72f.google.com [IPv6:2607:f8b0:4864:20::72f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0803535A9C;
-        Thu, 21 Apr 2022 16:48:48 -0700 (PDT)
-Received: by mail-qk1-x72f.google.com with SMTP id j6so4752975qkp.9;
-        Thu, 21 Apr 2022 16:48:47 -0700 (PDT)
+        Thu, 21 Apr 2022 19:51:41 -0400
+Received: from mail-qk1-x730.google.com (mail-qk1-x730.google.com [IPv6:2607:f8b0:4864:20::730])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A59C943AC0;
+        Thu, 21 Apr 2022 16:48:49 -0700 (PDT)
+Received: by mail-qk1-x730.google.com with SMTP id b189so4743205qkf.11;
+        Thu, 21 Apr 2022 16:48:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=eAsTyebn2Y4pYis3+WZXuPp8TzH7j4PwV2amK3FTGx8=;
-        b=OOmnTYCAoQCRnBz8ZGchOn9i8U2hOeNPorJb87M3/pnKbf8r4wczk8AvZCUmTkG3mo
-         xGWgYzNqWvYNey8z+NvJMhfgd1eg+nk1HGXrD25zDFPAUgk72Sa+LB7v6gfUO57Dvvme
-         PUKAn+DVRz1g0IvpX6xC/IKenendQESOW7zlAWGHCNmpC2LVNI+AasWrGx5DlnqpEhuH
-         GBs/HApRFPWfFJP9NkeR/a/P7ve/PSSxLMXaBDwU6FpPrKr9LlUltYvmFz5OWhNH5XKG
-         T9QQFV9TmX/Y3Wc645Fpqp/Pqb4neHuqNYITdF61bPOzKiNfbMor6CQBRbRA0xBGNKNF
-         hC3g==
+        bh=hiSsrCjlwcoYpl0/USGlx4MhgXt3RiZFVish54MSnok=;
+        b=RhU5SczM7MVxuNqxZsysmmyBQLNaVLb/iEEH6obfC/a+trx9CedfZtJBll0IWekfih
+         tuXO0eYVjBPdozagT3PrGnVNP8+XjxRjuR9WLfymxj+0Xua835Q13Gw8Lpni5Io2OEmI
+         b1bn/4zKQFkNEU3LLPoUKMFik3eBOJePUJ1x6G2jrK6itl1IAIa4rl7ySv4bP4evNGXT
+         AErbwlrchxqc9UBwE2MEpLDhgcphNu5M1F4hviCtf/mrA9756zSZ5wseB6rbk2SwIL2t
+         6ukPAOCy90+zZIZfiWPuyhv9GPPVm9C3ICs5PJhv6LFGh3/qIz6/ZNt8Eq04DVVBw3OO
+         nwKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=eAsTyebn2Y4pYis3+WZXuPp8TzH7j4PwV2amK3FTGx8=;
-        b=7DrS0+Z3mThWH+nQRLrzh6PdMedrZOjHURx5Rx5y4t2ET3SAO4ziFe2f0RYFM8VyG3
-         qSlYr3Ek70PnEv7cgcuvalIfWDas/Imv7z11eNgW3aXTuNfEdgEkBBnUbtf6o2ZKBgzM
-         HfUWwSYuw4+3B0TzdKtMOk4RpbdXK3bciGSFtBu9SznZwgAR4CMTp+QP8F1RsN1Oyjqm
-         I3D9zaX0QPY4J7MKfWwV1f7h1hSOS8ste2qB7vcgDSrmwZlGgrC/8fNwd66zkiHZ+Mj3
-         DwBBoMbKnq45riI/qt/FUgrfpipsty4jwwD7mCtllnKDvTLObl24kTtcpGmBbVEoYYpJ
-         WHpg==
-X-Gm-Message-State: AOAM5332H2udxrushDNYsfFxAj7yTT6O/mNwdGb+3f0fkcC+q5SxYsme
-        f8dCnWFLpHHLPt4DETQKnswMdWEZy1K5
-X-Google-Smtp-Source: ABdhPJznB8ohPd49EoVGQUtsW/9dkOtNQzD1SuXVh4IxjthK+x2h94gl7xGMY9HG+LZtHfOVU1TYjw==
-X-Received: by 2002:a05:620a:4001:b0:69e:d9cf:d957 with SMTP id h1-20020a05620a400100b0069ed9cfd957mr1185369qko.678.1650584926675;
-        Thu, 21 Apr 2022 16:48:46 -0700 (PDT)
+        bh=hiSsrCjlwcoYpl0/USGlx4MhgXt3RiZFVish54MSnok=;
+        b=djnKYsgwkmM0Ba2KAHoZ0vn0nd9qcXxPdz1weC5vHKknVtiSAdosj+X/2iKJY11W0n
+         VIG8+cY0vNw9OhWL8Gj80fdCs35drBi60RQxLFghMzUGypWQOAH1piy4JodVjlikEbGZ
+         zTPADbndg2txB5fsYRsGlhjwexpBRJUqHEfxLcXjeiJTKAxn94y64a4Sxt5VYXAtu/uT
+         Kj8AgMspEmayDodGDt907Xt+eDyFbOXft170w5VM9LmxsXk+JntWxNJQAj+eROGhOogX
+         wZ19L8S+3V651DeQ5NPJQD9kZR55JFlMZzhlYUtE+t27xwtwjTVTnqNvP1V8R5XKYq28
+         WFwg==
+X-Gm-Message-State: AOAM530BIW8GzFG8sGacCq0eKlV9HDBwtU85hQ3yZRgsjJVnsxb9Uxx9
+        FKV8xe8FX1A3Mr0jCMHSTB308oVlgffd
+X-Google-Smtp-Source: ABdhPJzdKXxkO6fb4T06NqccHoQlgynEHMHYXfdQlfuIRpxfcMHi3GVv+ul+UsxLxNvOJg/4zsKRuA==
+X-Received: by 2002:a05:620a:4504:b0:69e:eb76:1d83 with SMTP id t4-20020a05620a450400b0069eeb761d83mr1211556qkp.92.1650584928386;
+        Thu, 21 Apr 2022 16:48:48 -0700 (PDT)
 Received: from moria.home.lan (c-73-219-103-14.hsd1.vt.comcast.net. [73.219.103.14])
-        by smtp.gmail.com with ESMTPSA id a1-20020a05622a02c100b002f342ccc1c5sm287372qtx.72.2022.04.21.16.48.45
+        by smtp.gmail.com with ESMTPSA id a1-20020a05622a02c100b002f342ccc1c5sm287372qtx.72.2022.04.21.16.48.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Apr 2022 16:48:46 -0700 (PDT)
+        Thu, 21 Apr 2022 16:48:47 -0700 (PDT)
 From:   Kent Overstreet <kent.overstreet@gmail.com>
 To:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org
 Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
         roman.gushchin@linux.dev, hannes@cmpxchg.org
-Subject: [PATCH 2/4] mm: Add a .to_text() method for shrinkers
-Date:   Thu, 21 Apr 2022 19:48:26 -0400
-Message-Id: <20220421234837.3629927-3-kent.overstreet@gmail.com>
+Subject: [PATCH 3/4] mm: Centralize & improve oom reporting in show_mem.c
+Date:   Thu, 21 Apr 2022 19:48:27 -0400
+Message-Id: <20220421234837.3629927-4-kent.overstreet@gmail.com>
 X-Mailer: git-send-email 2.35.2
 In-Reply-To: <20220421234837.3629927-1-kent.overstreet@gmail.com>
 References: <20220421234837.3629927-1-kent.overstreet@gmail.com>
@@ -71,149 +71,243 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This adds a new callback method to shrinkers which they can use to
-describe anything relevant to memory reclaim about their internal state,
-for example object dirtyness.
+This patch:
+ - Moves lib/show_mem.c to mm/show_mem.c
+ - Changes show_mem() to always report on slab usage
+ - Instead of reporting on all slabs, we only report on top 10 slabs,
+   and in sorted order
+ - Also reports on shrinkers, with the new shrinkers_to_text().
 
-This uses the new printbufs to output to heap allocated strings, so that
-the .to_text() methods can be used both for messages logged to the
-console, and also sysfs/debugfs.
-
-This patch also adds shrinkers_to_text(), which reports on the top 10
-shrinkers - by object count - in sorted order, to be used in OOM
-reporting.
+More OOM reporting can be moved to show_mem.c and improved, this patch
+is only a small start.
 
 Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
 ---
- include/linux/shrinker.h |  5 +++
- mm/vmscan.c              | 75 ++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 80 insertions(+)
+ lib/Makefile           |  2 +-
+ mm/Makefile            |  2 +-
+ mm/oom_kill.c          | 23 ------------------
+ {lib => mm}/show_mem.c | 14 +++++++++++
+ mm/slab.h              |  6 +++--
+ mm/slab_common.c       | 53 +++++++++++++++++++++++++++++++++++-------
+ 6 files changed, 65 insertions(+), 35 deletions(-)
+ rename {lib => mm}/show_mem.c (78%)
 
-diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
-index 76fbf92b04..b5f411768b 100644
---- a/include/linux/shrinker.h
-+++ b/include/linux/shrinker.h
-@@ -2,6 +2,8 @@
- #ifndef _LINUX_SHRINKER_H
- #define _LINUX_SHRINKER_H
+diff --git a/lib/Makefile b/lib/Makefile
+index 31a3904eda..c5041d33d0 100644
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@ -30,7 +30,7 @@ endif
+ lib-y := ctype.o string.o vsprintf.o cmdline.o \
+ 	 rbtree.o radix-tree.o timerqueue.o xarray.o \
+ 	 idr.o extable.o sha1.o irq_regs.o argv_split.o \
+-	 flex_proportions.o ratelimit.o show_mem.o \
++	 flex_proportions.o ratelimit.o \
+ 	 is_single_threaded.o plist.o decompress.o kobject_uevent.o \
+ 	 earlycpio.o seq_buf.o siphash.o dec_and_lock.o \
+ 	 nmi_backtrace.o nodemask.o win_minmax.o memcat_p.o \
+diff --git a/mm/Makefile b/mm/Makefile
+index 70d4309c9c..97c0be12f3 100644
+--- a/mm/Makefile
++++ b/mm/Makefile
+@@ -54,7 +54,7 @@ obj-y			:= filemap.o mempool.o oom_kill.o fadvise.o \
+ 			   mm_init.o percpu.o slab_common.o \
+ 			   compaction.o vmacache.o \
+ 			   interval_tree.o list_lru.o workingset.o \
+-			   debug.o gup.o mmap_lock.o $(mmu-y)
++			   debug.o gup.o mmap_lock.o show_mem.o $(mmu-y)
+ 
+ # Give 'page_alloc' its own module-parameter namespace
+ page-alloc-y := page_alloc.o
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+index 832fb33037..659c7d6376 100644
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -171,27 +171,6 @@ static bool oom_unkillable_task(struct task_struct *p)
+ 	return false;
+ }
+ 
+-/*
+- * Check whether unreclaimable slab amount is greater than
+- * all user memory(LRU pages).
+- * dump_unreclaimable_slab() could help in the case that
+- * oom due to too much unreclaimable slab used by kernel.
+-*/
+-static bool should_dump_unreclaim_slab(void)
+-{
+-	unsigned long nr_lru;
+-
+-	nr_lru = global_node_page_state(NR_ACTIVE_ANON) +
+-		 global_node_page_state(NR_INACTIVE_ANON) +
+-		 global_node_page_state(NR_ACTIVE_FILE) +
+-		 global_node_page_state(NR_INACTIVE_FILE) +
+-		 global_node_page_state(NR_ISOLATED_ANON) +
+-		 global_node_page_state(NR_ISOLATED_FILE) +
+-		 global_node_page_state(NR_UNEVICTABLE);
+-
+-	return (global_node_page_state_pages(NR_SLAB_UNRECLAIMABLE_B) > nr_lru);
+-}
+-
+ /**
+  * oom_badness - heuristic function to determine which candidate task to kill
+  * @p: task struct of which task we should calculate
+@@ -465,8 +444,6 @@ static void dump_header(struct oom_control *oc, struct task_struct *p)
+ 		mem_cgroup_print_oom_meminfo(oc->memcg);
+ 	else {
+ 		show_mem(SHOW_MEM_FILTER_NODES, oc->nodemask);
+-		if (should_dump_unreclaim_slab())
+-			dump_unreclaimable_slab();
+ 	}
+ 	if (sysctl_oom_dump_tasks)
+ 		dump_tasks(oc);
+diff --git a/lib/show_mem.c b/mm/show_mem.c
+similarity index 78%
+rename from lib/show_mem.c
+rename to mm/show_mem.c
+index 1c26c14ffb..c9f37f13d6 100644
+--- a/lib/show_mem.c
++++ b/mm/show_mem.c
+@@ -7,11 +7,15 @@
+ 
+ #include <linux/mm.h>
+ #include <linux/cma.h>
++#include <linux/printbuf.h>
++
++#include "slab.h"
+ 
+ void show_mem(unsigned int filter, nodemask_t *nodemask)
+ {
+ 	pg_data_t *pgdat;
+ 	unsigned long total = 0, reserved = 0, highmem = 0;
++	struct printbuf buf = PRINTBUF;
+ 
+ 	printk("Mem-Info:\n");
+ 	show_free_areas(filter, nodemask);
+@@ -41,4 +45,14 @@ void show_mem(unsigned int filter, nodemask_t *nodemask)
+ #ifdef CONFIG_MEMORY_FAILURE
+ 	printk("%lu pages hwpoisoned\n", atomic_long_read(&num_poisoned_pages));
+ #endif
++
++	pr_info("Unreclaimable slab info:\n");
++	dump_unreclaimable_slab(&buf);
++	printk("%s", buf.buf);
++	printbuf_reset(&buf);
++
++	printk("Shrinkers:\n");
++	shrinkers_to_text(&buf);
++	printk("%s", buf.buf);
++	printbuf_exit(&buf);
+ }
+diff --git a/mm/slab.h b/mm/slab.h
+index c7f2abc2b1..abefbf7674 100644
+--- a/mm/slab.h
++++ b/mm/slab.h
+@@ -788,10 +788,12 @@ static inline struct kmem_cache_node *get_node(struct kmem_cache *s, int node)
+ 
+ #endif
  
 +struct printbuf;
 +
- /*
-  * This struct is used to pass information from page reclaim to the shrinkers.
-  * We consolidate the values for easier extension later.
-@@ -58,10 +60,12 @@ struct shrink_control {
-  * @flags determine the shrinker abilities, like numa awareness
-  */
- struct shrinker {
-+	char name[32];
- 	unsigned long (*count_objects)(struct shrinker *,
- 				       struct shrink_control *sc);
- 	unsigned long (*scan_objects)(struct shrinker *,
- 				      struct shrink_control *sc);
-+	void (*to_text)(struct printbuf *, struct shrinker *);
- 
- 	long batch;	/* reclaim batch size, 0 = default */
- 	int seeks;	/* seeks to recreate an obj */
-@@ -94,4 +98,5 @@ extern int register_shrinker(struct shrinker *shrinker);
- extern void unregister_shrinker(struct shrinker *shrinker);
- extern void free_prealloced_shrinker(struct shrinker *shrinker);
- extern void synchronize_shrinkers(void);
-+void shrinkers_to_text(struct printbuf *);
+ #if defined(CONFIG_SLAB) || defined(CONFIG_SLUB_DEBUG)
+-void dump_unreclaimable_slab(void);
++void dump_unreclaimable_slab(struct printbuf *);
+ #else
+-static inline void dump_unreclaimable_slab(void)
++static inline void dump_unreclaimable_slab(struct printbuf *out)
+ {
+ }
  #endif
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 59b14e0d69..09c483dfd3 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -50,6 +50,7 @@
- #include <linux/printk.h>
- #include <linux/dax.h>
- #include <linux/psi.h>
+diff --git a/mm/slab_common.c b/mm/slab_common.c
+index 23f2ab0713..cb1c548c73 100644
+--- a/mm/slab_common.c
++++ b/mm/slab_common.c
+@@ -24,6 +24,7 @@
+ #include <asm/tlbflush.h>
+ #include <asm/page.h>
+ #include <linux/memcontrol.h>
 +#include <linux/printbuf.h>
  
- #include <asm/tlbflush.h>
- #include <asm/div64.h>
-@@ -702,6 +703,80 @@ void synchronize_shrinkers(void)
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/kmem.h>
+@@ -1084,10 +1085,15 @@ static int slab_show(struct seq_file *m, void *p)
+ 	return 0;
  }
- EXPORT_SYMBOL(synchronize_shrinkers);
  
-+/**
-+ * shrinkers_to_text - Report on shrinkers with highest usage
-+ *
-+ * This reports on the top 10 shrinkers, by object counts, in sorted order:
-+ * intended to be used for OOM reporting.
-+ */
-+void shrinkers_to_text(struct printbuf *out)
-+{
-+	struct shrinker *shrinker;
-+	struct shrinker_by_mem {
-+		struct shrinker	*shrinker;
-+		unsigned long	mem;
-+	} shrinkers_by_mem[10];
+-void dump_unreclaimable_slab(void)
++void dump_unreclaimable_slab(struct printbuf *out)
+ {
+ 	struct kmem_cache *s;
+ 	struct slabinfo sinfo;
++	struct slab_by_mem {
++		struct kmem_cache *s;
++		size_t total, active;
++	} slabs_by_mem[10], n;
 +	int i, nr = 0;
-+
-+	if (!down_read_trylock(&shrinker_rwsem)) {
-+		pr_buf(out, "(couldn't take shrinker lock)");
-+		return;
-+	}
-+
-+	list_for_each_entry(shrinker, &shrinker_list, list) {
-+		struct shrink_control sc = { .gfp_mask = GFP_KERNEL, };
-+		unsigned long mem = shrinker->count_objects(shrinker, &sc);
-+
-+		if (!mem || mem == SHRINK_STOP || mem == SHRINK_EMPTY)
+ 
+ 	/*
+ 	 * Here acquiring slab_mutex is risky since we don't prefer to get
+@@ -1097,12 +1103,11 @@ void dump_unreclaimable_slab(void)
+ 	 * without acquiring the mutex.
+ 	 */
+ 	if (!mutex_trylock(&slab_mutex)) {
+-		pr_warn("excessive unreclaimable slab but cannot dump stats\n");
++		pr_buf(out, "excessive unreclaimable slab but cannot dump stats\n");
+ 		return;
+ 	}
+ 
+-	pr_info("Unreclaimable slab info:\n");
+-	pr_info("Name                      Used          Total\n");
++	buf->atomic++;
+ 
+ 	list_for_each_entry(s, &slab_caches, list) {
+ 		if (s->flags & SLAB_RECLAIM_ACCOUNT)
+@@ -1110,11 +1115,43 @@ void dump_unreclaimable_slab(void)
+ 
+ 		get_slabinfo(s, &sinfo);
+ 
+-		if (sinfo.num_objs > 0)
+-			pr_info("%-17s %10luKB %10luKB\n", s->name,
+-				(sinfo.active_objs * s->size) / 1024,
+-				(sinfo.num_objs * s->size) / 1024);
++		if (!sinfo.num_objs)
 +			continue;
 +
++		n.s = s;
++		n.total = sinfo.num_objs * s->size;
++		n.active = sinfo.active_objs * s->size;
++
 +		for (i = 0; i < nr; i++)
-+			if (mem < shrinkers_by_mem[i].mem)
++			if (n.total < slabs_by_mem[i].total)
 +				break;
 +
-+		if (nr < ARRAY_SIZE(shrinkers_by_mem)) {
-+			memmove(&shrinkers_by_mem[i + 1],
-+				&shrinkers_by_mem[i],
-+				sizeof(shrinkers_by_mem[0]) * (nr - i));
++		if (nr < ARRAY_SIZE(slabs_by_mem)) {
++			memmove(&slabs_by_mem[i + 1],
++				&slabs_by_mem[i],
++				sizeof(slabs_by_mem[0]) * (nr - i));
 +			nr++;
 +		} else if (i) {
 +			i--;
-+			memmove(&shrinkers_by_mem[0],
-+				&shrinkers_by_mem[1],
-+				sizeof(shrinkers_by_mem[0]) * i);
++			memmove(&slabs_by_mem[0],
++				&slabs_by_mem[1],
++				sizeof(slabs_by_mem[0]) * i);
 +		} else {
 +			continue;
 +		}
 +
-+		shrinkers_by_mem[i] = (struct shrinker_by_mem) {
-+			.shrinker = shrinker,
-+			.mem = mem,
-+		};
++		slabs_by_mem[i] = n;
 +	}
 +
 +	for (i = nr - 1; i >= 0; --i) {
-+		struct shrink_control sc = { .gfp_mask = GFP_KERNEL, };
-+		shrinker = shrinkers_by_mem[i].shrinker;
-+
-+		if (shrinker->name[0])
-+			pr_buf(out, "%s", shrinker->name);
-+		else
-+			pr_buf(out, "%ps:", shrinker->scan_objects);
-+
-+		pr_buf(out, " objects: %lu", shrinker->count_objects(shrinker, &sc));
++		pr_buf(out, "%-17s total: ", slabs_by_mem[i].s->name);
++		pr_human_readable_u64(out, slabs_by_mem[i].total);
++		pr_buf(out, " active: ");
++		pr_human_readable_u64(out, slabs_by_mem[i].active);
 +		pr_newline(out);
+ 	}
 +
-+		if (shrinker->to_text) {
-+			pr_indent_push(out, 2);
-+			shrinker->to_text(out, shrinker);
-+			pr_indent_pop(out, 2);
-+			pr_newline(out);
-+		}
-+	}
-+
-+	up_read(&shrinker_rwsem);
-+}
-+
- #define SHRINK_BATCH 128
++	--buf->atomic;
+ 	mutex_unlock(&slab_mutex);
+ }
  
- static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
 -- 
 2.35.2
 
