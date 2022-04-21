@@ -2,155 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E64350A780
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Apr 2022 19:55:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDB6750A7A1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Apr 2022 20:00:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1390996AbiDUR40 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Apr 2022 13:56:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52126 "EHLO
+        id S1391070AbiDUSAs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Apr 2022 14:00:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55054 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236549AbiDUR4X (ORCPT
+        with ESMTP id S1391095AbiDUSAr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Apr 2022 13:56:23 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5262F4A926;
-        Thu, 21 Apr 2022 10:53:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=OzMBFt4cX9sZG3+xKaNjpIrCYXW+IugofzGvsiKoa1c=; b=r+8wwH27HmVqrnNXROGmLzk+8Z
-        9BQdWmRbDA5sRoSKKRvgHo5MzzgfhN5j0Omy9hJXca1lszYylN6C6VhVBRerKkOqR3O3xnPvQx/0k
-        cjFj+cO1nW6yYtWNecbGNXyOmd0a1BKLaez4I8cGDSH7bF0Qjy733QIvq74FIcyVyeaqQLJnoAyGd
-        PpdS/8QRn5mLrCNg7LP4bWPEAmlsGn9sMfxBAPKo856bGPyOmrZJe2OLHRgVugg0+EtA41Os2EHp5
-        JXtRD2c/UC/Yopn1biddSqI6/4c9rgw4hbPDEc8hy+f7H10LkQPzaeoOhsXbpJNOIXRx+lEndjkM7
-        oBbuzUrw==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nhazi-00EWI6-QM; Thu, 21 Apr 2022 17:53:30 +0000
-Date:   Thu, 21 Apr 2022 10:53:30 -0700
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Douglas Gilbert <dgilbert@interlog.com>
-Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-modules@vger.kernel.org, Chaitanya Kulkarni <kch@nvidia.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Lucas De Marchi <lucas.demarchi@intel.com>,
-        Pankaj Malhotra <pankaj1.m@samsung.com>,
-        Vincent Fu <vincent.fu@samsung.com>
-Subject: scsi_debug in fstests and blktests (Was: Re: Fwd: [bug
- report][bisected] modprob -r scsi-debug take more than 3mins during blktests
- srp/ tests)
-Message-ID: <YmGaGoz2+Kdqu05l@bombadil.infradead.org>
-References: <CAHj4cs9OTm9sb_5fmzgz+W9OSLeVPKix3Yri856kqQVccwd_Mw@mail.gmail.com>
- <fba69540-b623-9602-a0e2-00de3348dbd6@interlog.com>
- <YlW7gY8nr9LnBEF+@bombadil.infradead.org>
- <00ebace8-b513-53c0-f13b-d3320757695d@interlog.com>
+        Thu, 21 Apr 2022 14:00:47 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0D7FC4AE26
+        for <linux-fsdevel@vger.kernel.org>; Thu, 21 Apr 2022 10:57:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1650563875;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=a4va1/Lq36cMvwBfvf9W3jL50NhUZUHTTW2j9bp+3cE=;
+        b=TKJGwJZahb1IathZ+pxlpiwKLSYo3ci/Xx1aW/aPIouIQ12eiBO1DO9NFlOfLj6G213Hts
+        B9Q1aJoK3rwXlUE7KKvXSsT3yudazdd94BRqCnK0jX3nov20l7TxRY2Jt0hxx0ueUeqL0J
+        Yb5Y7xHrh1VhZ+TaOJR1T4qrcI6MvvY=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-1-ryYKA82UMta93HSRiWfXaQ-1; Thu, 21 Apr 2022 13:57:51 -0400
+X-MC-Unique: ryYKA82UMta93HSRiWfXaQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 1198F1014A64;
+        Thu, 21 Apr 2022 17:57:51 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.13])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9088240CFD22;
+        Thu, 21 Apr 2022 17:57:43 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <2067a5c7-4e24-f449-4676-811d12e9ab72@linux.alibaba.com>
+References: <2067a5c7-4e24-f449-4676-811d12e9ab72@linux.alibaba.com> <20220415123614.54024-3-jefflexu@linux.alibaba.com> <20220415123614.54024-1-jefflexu@linux.alibaba.com> <1447543.1650552898@warthog.procyon.org.uk>
+To:     JeffleXu <jefflexu@linux.alibaba.com>
+Cc:     dhowells@redhat.com, linux-cachefs@redhat.com, xiang@kernel.org,
+        chao@kernel.org, linux-erofs@lists.ozlabs.org,
+        torvalds@linux-foundation.org, gregkh@linuxfoundation.org,
+        willy@infradead.org, linux-fsdevel@vger.kernel.org,
+        joseph.qi@linux.alibaba.com, bo.liu@linux.alibaba.com,
+        tao.peng@linux.alibaba.com, gerry@linux.alibaba.com,
+        eguan@linux.alibaba.com, linux-kernel@vger.kernel.org,
+        luodaowen.backend@bytedance.com, tianzichen@kuaishou.com,
+        fannaihao@baidu.com, zhangjiachen.jaycee@bytedance.com
+Subject: Re: EMFILE/ENFILE mitigation needed in erofs?
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <00ebace8-b513-53c0-f13b-d3320757695d@interlog.com>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1484180.1650563860.1@warthog.procyon.org.uk>
+Date:   Thu, 21 Apr 2022 18:57:40 +0100
+Message-ID: <1484181.1650563860@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.11.54.1
+X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Moving this discussion to the lists as we need to really think
-about how testing on fstests and blktests uses scsi_debug for
-a high confidence in baseline without false positives on failures
-due to the inability to the remove scsi_debug module.
+JeffleXu <jefflexu@linux.alibaba.com> wrote:
 
-This should also apply to other test debug modules like null_blk,
-nvme target loop drivers, etc, it's all the same long term. But yeah
-scsi surely make this... painful today. In any case hopefully folks
-with other test debug drivesr are running tests to ensure you can
-always rmmod these modules regardless of what is happening.
+> 2. Our user daemon will configure rlimit-nofile to a reasonably large
+> (e.g. 1 million) value, so that it won't fail when trying to allocate fds.
 
-On Tue, Apr 12, 2022 at 06:03:40PM -0400, Douglas Gilbert wrote:
-> On 2022-04-12 13:48, Luis Chamberlain wrote:
-> > On Thu, Apr 07, 2022 at 10:09:54PM -0400, Douglas Gilbert wrote:
-> > > Hi,
-> > > Is it time to revert this patch?
-> > 
-> > Upstream kmod will indeed get patched soon witha  --patient-remove
-> > option. So the issue is that. However, it doesn't mean driver's
-> > can't / should strive to avoid these issues if they can. That is a
-> > thing left to driver's to implement / resolve if they want.
-> > 
-> > In the meantime userspace should change to user the patient removal,
-> > and if the upstream kmod doesn't have yet have it (note, the code is
-> > not yet merged) then tools doing module removal should open code the
-> > module removal. I modified fstests to do open coding of the patient
-> > module removal in case kmod does not support it.  I have a similar patch
-> > for blktests but that still requires regression testing on my part. I
-> > hope to finish that soon though.
-> > 
-> > So the answer to your question: it depends on how well you want to deal
-> > with these issues for users, or punt the problems to patient removal
-> > usage.
-> 
-> Hi,
-> There is a significant amount of work bringing down a driver like scsi_debug.
-> Apart from potentially consuming most of the ram on a box, it also has the
-> issue of SCSI commands that are "in flight" when rmmod is called.
-> 
-> So I think it is approaching impossible to make rmmod scsi_debug the equivalent
-> of an atomic operation. There are just too many moving parts, potentially
-> moving asynchronously to one another. This is an extremely good test for the
-> SCSI/block system, roughly equivalent to losing a HBA that has a lot of disks
-> behind it. Will the system stabilize and how long will that take?
+There's a system-wide limit also; simply increasing the rlimit won't override
+that.
 
-I understand. But I really cannot buy "impossible". Impossible I think should
-mean a design flaw somewhere.
+David
 
-At least for now I think we should narrow our objectives so that
-this is *possible* within the context of fstests and blktests because
-otherwise *we really should not be using scsi_debug* for high fidelity
-in testing. One of the reasons is that we want to be able to run
-fstests or blktests in a loop with confidence so that failures are
-real. A failure due to the inability to not remove a debug module
-makes gaining confidence in a baseline a bit difficult and you'd have
-to implement hacks around it.
-
-mcgrof@fulton ~/devel/blktests (git::master)$ git grep _have_scsi_debug tests | wc -l
-10
-
-mcgrof@fulton ~/devel/xfstests-dev (git::master)$ git grep _require_scsi_debug tests| wc -l
-5
-
-Not insane, but enough for us to care, but I think if we *narrow* our
-scope to ensure scsi_debug *can* be removed *at least* with the patient
-module remover we're good.
-
-Do you think this is viable goal for scsi_debug?
-
-> Setting up races between modprobe and rmmod on scsi_debug was certainly not
-> top of mind for me.
-
-Oh I get it. But the community has already embraced it for years on
-fstests and blktests. So at this point I think we have no other option.
-
-I think one thing we *can* do is *not* use scsi_debug for tests which
-*really don't need scsi*.
-
-> Storage systems such as SCSI are a lot better defined
-> (and ordered) in the power-up scenario. Even with asynchronous scanning
-> (discovery) of devices (even SSDs) it can take 10 plus seconds to bring up
-> devices with a lot more handshaking between controller and the storage
-> device. And even with SSDs, there is increased power draw during power-up
-> (hard disks obviously need to accelerate the medium up to the rated speed).
-> That leads to big storage arrays staggering when they apply power to
-> different banks of SSDs/disks.
-
-Sure..
-
-> I wonder if anyone has tested building scsi_mod (the SCSI mid-level) as a
-> module and tried rmmod on it while, say, a USB key is being read :-)
-
-:)
-
-  Luis
