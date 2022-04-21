@@ -2,94 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2626A50994C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Apr 2022 09:38:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5252509992
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 21 Apr 2022 09:56:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1385855AbiDUHku (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 21 Apr 2022 03:40:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32922 "EHLO
+        id S1386157AbiDUHub (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 21 Apr 2022 03:50:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1385972AbiDUHkC (ORCPT
+        with ESMTP id S1386246AbiDUHuM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 21 Apr 2022 03:40:02 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48C7813E25;
-        Thu, 21 Apr 2022 00:36:43 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id F23031F752;
-        Thu, 21 Apr 2022 07:36:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1650526601; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Q69hhjwT+kSjonv8QFdlTZVMurQeV1T2PIMjNcz8AUM=;
-        b=mdjgoTvvaDF2Ag3Zqw5TpPk8QcQaYVhO//4b31iouM4Py+LJ8/mKSsHLid3sdz5izLLiuV
-        FJOEjfr3iZbWnFgzUZOrI8zg2EmQlQZ/fZbz0ZYrUz9xd1bM/so3O7+P061vM1FOGZkhUX
-        6rX/AoD0+63e10bLXr/B1SvAgvRnF5w=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1650526601;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Q69hhjwT+kSjonv8QFdlTZVMurQeV1T2PIMjNcz8AUM=;
-        b=id70+zebsG7sOnXb7k6LKxwA4b2EWX+tw6TAKsYoO3Nuz8qXpKPs60Q4dMW3heqjNf8wew
-        nMDfQuXCV2JR9tBg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id B535113A84;
-        Thu, 21 Apr 2022 07:36:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id D/ZFK4kJYWIwEgAAMHmgww
-        (envelope-from <hare@suse.de>); Thu, 21 Apr 2022 07:36:41 +0000
-Message-ID: <2683c56f-62c3-987a-72c4-0df5a97368f7@suse.de>
-Date:   Thu, 21 Apr 2022 09:36:41 +0200
+        Thu, 21 Apr 2022 03:50:12 -0400
+Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 822051CB29;
+        Thu, 21 Apr 2022 00:46:58 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-115-138.pa.nsw.optusnet.com.au [49.181.115.138])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 2C10310E5C0F;
+        Thu, 21 Apr 2022 17:46:55 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1nhRWf-002hck-5w; Thu, 21 Apr 2022 17:46:53 +1000
+Date:   Thu, 21 Apr 2022 17:46:53 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Shiyang Ruan <ruansy.fnst@fujitsu.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Linux NVDIMM <nvdimm@lists.linux.dev>,
+        Linux MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Jane Chu <jane.chu@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Naoya Horiguchi <naoya.horiguchi@nec.com>
+Subject: Re: [PATCH v13 0/7] fsdax: introduce fs query to support reflink
+Message-ID: <20220421074653.GT1544202@dread.disaster.area>
+References: <20220419045045.1664996-1-ruansy.fnst@fujitsu.com>
+ <20220421012045.GR1544202@dread.disaster.area>
+ <86cb0ada-208c-02de-dbc9-53c6014892c3@fujitsu.com>
+ <CAPcyv4i0Noum8hqHtCpdM5HMVdmNHm3Aj2JCnZ+KZLgceiXYaA@mail.gmail.com>
+ <20220421043502.GS1544202@dread.disaster.area>
+ <YmDxs1Hj4H/cu2sd@infradead.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.0
-Subject: Re: [PATCH RFC 5/5] net/tls: Add observability for AF_TLSH sockets
-Content-Language: en-US
-To:     Chuck Lever <chuck.lever@oracle.com>, netdev@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     ak@tempesta-tech.com, borisp@nvidia.com, simo@redhat.com
-References: <165030051838.5073.8699008789153780301.stgit@oracle-102.nfsv4.dev>
- <165030059773.5073.6168640435213548957.stgit@oracle-102.nfsv4.dev>
-From:   Hannes Reinecke <hare@suse.de>
-In-Reply-To: <165030059773.5073.6168640435213548957.stgit@oracle-102.nfsv4.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-8.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YmDxs1Hj4H/cu2sd@infradead.org>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=62610bf2
+        a=/kVtbFzwtM2bJgxRVb+eeA==:117 a=/kVtbFzwtM2bJgxRVb+eeA==:17
+        a=kj9zAlcOel0A:10 a=z0gMJWrwH1QA:10 a=7-415B0cAAAA:8
+        a=Mb5XfCdAhjU6mY5isQ0A:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_PASS,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/18/22 18:49, Chuck Lever wrote:
-> Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
-> ---
->   net/tls/af_tlsh.c |   50 +++++++
->   net/tls/trace.c   |    3
->   net/tls/trace.h   |  355 +++++++++++++++++++++++++++++++++++++++++++++++++++++
->   3 files changed, 402 insertions(+), 6 deletions(-)
+On Wed, Apr 20, 2022 at 10:54:59PM -0700, Christoph Hellwig wrote:
+> On Thu, Apr 21, 2022 at 02:35:02PM +1000, Dave Chinner wrote:
+> > Sure, I'm not a maintainer and just the stand-in patch shepherd for
+> > a single release. However, being unable to cleanly merge code we
+> > need integrated into our local subsystem tree for integration
+> > testing because a patch dependency with another subsystem won't gain
+> > a stable commit ID until the next merge window is .... distinctly
+> > suboptimal.
 > 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+> Yes.  Which is why we've taken a lot of mm patchs through other trees,
+> sometimes specilly crafted for that.  So I guess in this case we'll
+> just need to take non-trivial dependencies into the XFS tree, and just
+> deal with small merge conflicts for the trivial ones.
+
+OK. As Naoyo has pointed out, the first dependency/conflict Ruan has
+listed looks trivial to resolve.
+
+The second dependency, OTOH, is on a new function added in the patch
+pointed to. That said, at first glance it looks to be independent of
+the first two patches in that series so I might just be able to pull
+that one patch in and have that leave us with a working
+fsdax+reflink tree.
+
+Regardless, I'll wait to see how much work the updated XFS/DAX
+reflink enablement patchset still requires when Ruan posts it before
+deciding what to do here.  If it isn't going to be a merge
+candidate, what to do with this patchset is moot because there's
+little to test without reflink enabled...
 
 Cheers,
 
-Hannes
+Dave.
 -- 
-Dr. Hannes Reinecke		           Kernel Storage Architect
-hare@suse.de			                  +49 911 74053 688
-SUSE Software Solutions Germany GmbH, Maxfeldstr. 5, 90409 Nürnberg
-HRB 36809 (AG Nürnberg), GF: Felix Imendörffer
+Dave Chinner
+david@fromorbit.com
