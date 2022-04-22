@@ -2,118 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B060F50C0C4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Apr 2022 22:45:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE0D450C10B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Apr 2022 23:21:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229585AbiDVUpP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Apr 2022 16:45:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36964 "EHLO
+        id S229837AbiDVVYU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Apr 2022 17:24:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229517AbiDVUpO (ORCPT
+        with ESMTP id S229680AbiDVVYT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Apr 2022 16:45:14 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A5DF202B4C;
-        Fri, 22 Apr 2022 12:42:35 -0700 (PDT)
+        Fri, 22 Apr 2022 17:24:19 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1780A19B679;
+        Fri, 22 Apr 2022 13:19:54 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 849AC61CE4;
-        Fri, 22 Apr 2022 19:39:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1B01C385A4;
-        Fri, 22 Apr 2022 19:39:18 +0000 (UTC)
-Date:   Fri, 22 Apr 2022 15:39:16 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Kent Overstreet <kent.overstreet@gmail.com>
-Cc:     Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        hannes@cmpxchg.org, akpm@linux-foundation.org,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-input@vger.kernel.org, roman.gushchin@linux.dev
-Subject: Re: [PATCH v2 1/8] lib/printbuf: New data structure for
- heap-allocated strings
-Message-ID: <20220422153916.7ebf20c3@gandalf.local.home>
-In-Reply-To: <20220422193015.2rs2wvqwdlczreh3@moria.home.lan>
-References: <20220421234837.3629927-1-kent.overstreet@gmail.com>
-        <20220421234837.3629927-7-kent.overstreet@gmail.com>
-        <20220422042017.GA9946@lst.de>
-        <YmI5yA1LrYrTg8pB@moria.home.lan>
-        <20220422052208.GA10745@lst.de>
-        <YmI/v35IvxhOZpXJ@moria.home.lan>
-        <20220422113736.460058cc@gandalf.local.home>
-        <20220422193015.2rs2wvqwdlczreh3@moria.home.lan>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C7AF3B82D82;
+        Fri, 22 Apr 2022 19:43:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5742DC385A4;
+        Fri, 22 Apr 2022 19:43:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1650656622;
+        bh=WwVgQvu+crgB9HWT96pNSkuqAaHtEF5wwt64I5ZCnQI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ClQa3D6Vnh9fu4wV/O1TPl+OpU5hlF9x7zszhiMicEwfT9TYmVwGYPussos77rXVg
+         yXo9MCJELP12lmr9cAQE91TCh6P1XaaQTbIRB1PMQRD/kQgckHuYC64vNy4Hu1P1vn
+         uPhMBbnEve+cF6on3HVzLwjrclVsFnQttPvl6u/7Hb55TgrAqnNJgxmpqQCOykOalC
+         ydvclZKDWmPSDV39imxynV7FUa+OhF6JRZwL10LSjRfmQsFO8JNSVrdvI63+x4yZ0z
+         AGGDvdsh58K5AszSf9xYbbh9e37Ao7I38r4RqoGN1PO5Wi0+2kjcPO8a5+gP5/QPMl
+         9VC1Re8bc41hQ==
+Date:   Fri, 22 Apr 2022 12:43:40 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     xiangxia.m.yue@gmail.com, netdev@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        David Ahern <dsahern@kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Julian Anastasov <ja@ssi.bg>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Florian Westphal <fw@strlen.de>, Shuah Khan <shuah@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        Lorenz Bauer <lmb@cloudflare.com>,
+        Akhmat Karakotov <hmukos@yandex-team.ru>
+Subject: Re: [net-next v4 0/3] use standard sysctl macro
+Message-ID: <20220422124340.2382da79@kernel.org>
+In-Reply-To: <YmK/PM2x5PTG2b+c@bombadil.infradead.org>
+References: <20220422070141.39397-1-xiangxia.m.yue@gmail.com>
+        <YmK/PM2x5PTG2b+c@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-6.7 required=5.0 tests=BAYES_00,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 22 Apr 2022 15:30:15 -0400
-Kent Overstreet <kent.overstreet@gmail.com> wrote:
-
-> > This is how open source programming is suppose to work ;-)  
+On Fri, 22 Apr 2022 07:44:12 -0700 Luis Chamberlain wrote:
+> On Fri, Apr 22, 2022 at 03:01:38PM +0800, xiangxia.m.yue@gmail.com wrote:
+> > From: Tonghao Zhang <xiangxia.m.yue@gmail.com>
+> > 
+> > This patchset introduce sysctl macro or replace var
+> > with macro.
+> > 
+> > Tonghao Zhang (3):
+> >   net: sysctl: use shared sysctl macro
+> >   net: sysctl: introduce sysctl SYSCTL_THREE
+> >   selftests/sysctl: add sysctl macro test  
 > 
-> Is it though? :)
-> 
-> One of the things I've been meaning to talk more about, that
-> came out of a recent Rust discussion, is that we in the kernel community could
-> really do a better job with how we interact with the outside world, particularly
-> with regards to the sharing of code.
-> 
-> The point was made to me when another long standing kernel dev was complaining
-> about Facebook being a large, insular, difficult to work with organization, that
-> likes to pretend it is the center of the universe and not bend to the outside
-> world, while doing the exact same thing with respect to new concerns brought by
-> the Rust community. The irony was illuminating :)
+> I see these are based on net-next, to avoid conflicts with
+> sysctl development this may be best based on sysctl-next
+> though. Jakub?
 
-I do not consider Facebook an open source company. One reason I turned them
-down.
+I guess the base should be whatever we are going to use as
+a base for a branch, the branch we can both pull in?
 
-> 
-> The reason I bring that up is that in this case, printbuf is the more evolved,
-> more widely used implementation, and you're asking me to discard it so the
-> kernel can stick with its more primitive, less widely used implementation.
-> 
-> $ git grep -w seq_buf|wc -l
-> 86
-> 
-> $ git grep -w printbuf|wc -l
-> 366
+How many patches like that do you see flying around, tho?
+I feel like I've seen at least 3 - netfilter, net core and bpf.
+It's starting to feel like we should have one patch that adds all 
+the constants and self test, put that in a branch anyone can pull in,
+and then do the conversions in separate patches..
 
-$ git grep printbuf
-drivers/media/i2c/ccs/ccs-reg-access.c:                 char printbuf[(MAX_WRITE_LEN << 1) +
-drivers/media/i2c/ccs/ccs-reg-access.c:                 bin2hex(printbuf, regdata, msg.len);
-drivers/media/i2c/ccs/ccs-reg-access.c:                         regs->addr + j, printbuf);
+Option number two - rename the statics in the subsystems to SYSCTL_x,
+and we can do a much smaller cleanup in the next cycle which would
+replace those with a centralized instances? That should have minimal
+chance of conflicts so no need to do special branches.
 
-I don't see it.
-
-And by your notion:
-
-$ git grep trace_seq | wc -l
-1680
-
-Thus we all should be using trace_seq!
-
-> 
-> So, going to have to push back on that one :)
-> 
-> Printbufs aren't new code; everything in them is there because I've found it
-> valuable, which is why I decided to try promoting them to the kernel proper (and
-> more importantly, the idea of a standard way to pretty-print anything).
-> 
-> I'm happy to discuss the merits of the code more, and try to convince you why
-> you'll like them :)
-
-I'd like to know more to why seq_buf is not good for you. And just telling
-me that you never seriously tried to make it work because you were afraid
-of causing tracing regressions without ever asking the tracing maintainer
-is not going to cut it.
-
--- Steve
+Option number three defer all this until the merge window.
