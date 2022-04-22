@@ -2,60 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 70B1F50B6BF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Apr 2022 14:05:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1309150B6C4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Apr 2022 14:05:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1447201AbiDVMHu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Apr 2022 08:07:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60722 "EHLO
+        id S1447267AbiDVMHy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Apr 2022 08:07:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60784 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1447282AbiDVMHh (ORCPT
+        with ESMTP id S1447288AbiDVMHh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 22 Apr 2022 08:07:37 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65E0656753
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Apr 2022 05:03:31 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id g20so10163217edw.6
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Apr 2022 05:03:31 -0700 (PDT)
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF63056758
+        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Apr 2022 05:03:33 -0700 (PDT)
+Received: by mail-ej1-x634.google.com with SMTP id u15so15896097ejf.11
+        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Apr 2022 05:03:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ne5dF26Vjz0px8PSvDW6klBVWrs/Rw8cdlJlGZkLrgo=;
-        b=n58mt7KdKoggHPAYtMDvV4hLksv4jH/XdD4nO+nx05yjdkzOt8/KDi7eg2s3NbDX8B
-         F7j+mQhObfE5DAH4mp41psthmc7WHm6kkjaeI5fdCQkKAPcJSlrmFHqcx0udMUNpEFlw
-         4EXafDYu6S+ze2mtvj8hyZYvHfHGN36XL/U/nbrXokhWLF1njQHIDGUq0hiDU1s6zkyJ
-         Wv1Bvrh85/YC06WflM8AKtFAWJl1Jn3HFvhPyhPytlCeaMoI620052Rlf48yc6in27RA
-         rzTIp0LLs40kMA30Y5il86fY+KkiKMVy+zdhrMYRPU5WWD0AOHfblaVi7KmA4GRG+9li
-         Z6Pw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=UXs35vihM88XJ2kkE3QaoH5UldyApMgkiHQew6I8P28=;
+        b=PIj7AjpvgC52cIE2KFp2MCRg7MGXWkZ+bCDbyb/uo/mcUPSiGjGynYuYk/RgH8iOZ7
+         0MvZ/erYEAm4APD1U4VAmy8omumDHRriQgjnun22AiWaSq5gMjH+Qhpl22PZ8ItJEEzy
+         /vUVMLNjfrzTqZ20jhAUryVzHc3giRbG9DuUBnxtnQ7gJkXjjNBYdLKvVQtXmxEyJG48
+         VeFD89dKng6fvypHpoDBpj6dB/m42yrl2cS0P8arLy0bF0lppf1rDRKKhcXpP2OPP2ub
+         NLMRr4bLnPT7cLUWQZM/ekLnnTMcZ/L+1q1C+ZkEuSP1gFEtixAGsYhYD5ZY+58sL8qz
+         UTHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ne5dF26Vjz0px8PSvDW6klBVWrs/Rw8cdlJlGZkLrgo=;
-        b=2nM8IwokJP3MYYfThb5rLMcgHeqXBhrKoerH8f+X/B5ExcLmnfknWQsnNqRSHCaB7b
-         8eYrI5FGjwPS96b1DY4p430pSlQx/o/11cmsV1u+S+T20GKfE6ZvWoeXZL0wM9e26S4G
-         /pzLMWkMR/QAfsPMXqevw6oyYYBNfZQSx4BCs1UXwy9X/qbH6oBJBlT+i0RAEivuPxLL
-         i/NxuSiFpmRJjhFwikPYPW+8X38Uw47yOD7usydaNXxmzXCLe5yVndE8Wm3hnemhepBZ
-         VYohK2MR8qTPC3vZsm5dPzFzRYUWKU1c4nlPtQBvRBlYGuqX1JRvd3teU1HkZJtsxlrg
-         Ofgw==
-X-Gm-Message-State: AOAM532Bf+TGrn+RHn9UXzcNkAzUXkQPmj6JKTnft0iAQfMRew8NsSe7
-        RfgCKjgO7x2QWxIdt2WGeYjpP/Sy9Y8=
-X-Google-Smtp-Source: ABdhPJzSVBGa/W3sdXYpJhqYzm/zDUxlgjXxHBDxJosjADO6B/6kIjqiIIqU+gl03qu0wYfAshA02A==
-X-Received: by 2002:a05:6402:1104:b0:41d:5f4a:7f5a with SMTP id u4-20020a056402110400b0041d5f4a7f5amr4557131edv.207.1650629009838;
-        Fri, 22 Apr 2022 05:03:29 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=UXs35vihM88XJ2kkE3QaoH5UldyApMgkiHQew6I8P28=;
+        b=aRcQbtEZdx0oDSo+9bLBPa4ptx+bKdxQmo7W7FghXdQ671zeGn/GU5Te+lszKZ3813
+         z+GRyvC6+yvDlW/uf9OfPDmAwXvXhcCf4Jm8YxQy3UKjkIe3F+RxMsJB8NtFHmUdjcYG
+         JS5eXDJazeTdTgeryfEJltlgQLoo0cN6tTStvJss5sdqhIJCdij+6DNq8X3w+5AlmeYV
+         iom+EKtQ7M5Hp7Nlwb7nEk3Cnz/89/C3pzryfJsZTAfCcFJx+rvJYFqM57LuIrvv04KO
+         n5j5eShTSjho0zu+b8q50ReekzCDsF/6Z4ZIu6YSxUufDOdXwZF2psoGNAPkCh0YYlpz
+         eRKg==
+X-Gm-Message-State: AOAM533l1HeFcwSbzoKIwnmE1VKffUeTMf/1WibfyKJZvfE39I/SOFkh
+        vGZLQcrxHkCsZcAhUqkgouk=
+X-Google-Smtp-Source: ABdhPJwHYl+soG9iOTl5eM07X3E9rHVESqJALsXCVN/oirE1FxJip9eT0S0QAr2D5p/b45f8DibTiA==
+X-Received: by 2002:a17:907:8a0d:b0:6ef:e43e:f08f with SMTP id sc13-20020a1709078a0d00b006efe43ef08fmr3825019ejc.733.1650629012236;
+        Fri, 22 Apr 2022 05:03:32 -0700 (PDT)
 Received: from localhost.localdomain ([5.29.13.154])
-        by smtp.gmail.com with ESMTPSA id x24-20020a1709064bd800b006ef606fe5c1sm697026ejv.43.2022.04.22.05.03.28
+        by smtp.gmail.com with ESMTPSA id x24-20020a1709064bd800b006ef606fe5c1sm697026ejv.43.2022.04.22.05.03.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Apr 2022 05:03:29 -0700 (PDT)
+        Fri, 22 Apr 2022 05:03:31 -0700 (PDT)
 From:   Amir Goldstein <amir73il@gmail.com>
 To:     Jan Kara <jack@suse.cz>
 Cc:     Matthew Bobrowski <repnop@google.com>,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH v4 00/16] Evictable fanotify marks
-Date:   Fri, 22 Apr 2022 15:03:11 +0300
-Message-Id: <20220422120327.3459282-1-amir73il@gmail.com>
+Subject: [PATCH v4 01/16] inotify: show inotify mask flags in proc fdinfo
+Date:   Fri, 22 Apr 2022 15:03:12 +0300
+Message-Id: <20220422120327.3459282-2-amir73il@gmail.com>
 X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220422120327.3459282-1-amir73il@gmail.com>
+References: <20220422120327.3459282-1-amir73il@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -68,84 +70,77 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Jan,
+The inotify mask flags IN_ONESHOT and IN_EXCL_UNLINK are not "internal
+to kernel" and should be exposed in procfs fdinfo so CRIU can restore
+them.
 
-Following v4 patch set addresses your review comments on v3 [3].
+Fixes: 6933599697c9 ("inotify: hide internal kernel bits from fdinfo")
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+---
+ fs/notify/fdinfo.c               | 11 ++---------
+ fs/notify/inotify/inotify.h      | 12 ++++++++++++
+ fs/notify/inotify/inotify_user.c |  2 +-
+ 3 files changed, 15 insertions(+), 10 deletions(-)
 
-I allowed myself to take the clean you requested for
-fanotify_mark_update_flags() and recalc argument a bit further.
-I hope you will like the result.
-
-Thanks,
-Amir.
-
-Changes since v3 [3]:
-- Drop FSNOTIFY_GROUP_FLAG() macro
-- Make ALLOW_DUPS a group flag
-- Return recalc by value from fanotify_mark_update_flags()
-- Rename some flags arguments to fan_flags
-- Update outdated comments and commit message
-- Rebased and tested on v5.18-rc3
-
-Changes since v2 [2]:
-- Simplify group lock helpers (Jan)
-- Move FSNOTIFY_GROUP_NOFS flag to group object (Jan)
-- Split patch of fanotify_mark_user_flags() (Jan)
-- Fix bug in case of EEXIST
-- Drop ioctl for debugging
-- Rebased and tested on v5.18-rc1
-
-Changes since v1 [1]:
-- Fixes for direct reclaim deadlock
-- Add ioctl for direct reclaim test
-- Rebrand as FAN_MARK_EVICTABLE
-- Remove FAN_MARK_CREATE and allow clearing FAN_MARK_EVICTABLE
-- Replace connector proxy_iref with HAS_IREF flag
-- Take iref in fsnotify_reclac_mark() rather than on add mark to list
-- Remove fsnotify_add_mark() allow_dups/flags argument
-- Remove pr_debug() prints
-
-[1] https://lore.kernel.org/r/20220307155741.1352405-1-amir73il@gmail.com/
-[2] https://lore.kernel.org/r/20220329074904.2980320-1-amir73il@gmail.com/
-[3] https://lore.kernel.org/r/20220413090935.3127107-1-amir73il@gmail.com/
-
-Amir Goldstein (16):
-  inotify: show inotify mask flags in proc fdinfo
-  inotify: move control flags from mask to mark flags
-  fsnotify: fix wrong lockdep annotations
-  fsnotify: pass flags argument to fsnotify_alloc_group()
-  fsnotify: make allow_dups a property of the group
-  fsnotify: create helpers for group mark_mutex lock
-  inotify: use fsnotify group lock helpers
-  audit: use fsnotify group lock helpers
-  nfsd: use fsnotify group lock helpers
-  dnotify: use fsnotify group lock helpers
-  fsnotify: allow adding an inode mark without pinning inode
-  fanotify: create helper fanotify_mark_user_flags()
-  fanotify: factor out helper fanotify_mark_update_flags()
-  fanotify: implement "evictable" inode marks
-  fanotify: use fsnotify group lock helpers
-  fanotify: enable "evictable" inode marks
-
- fs/nfsd/filecache.c                  |  14 ++--
- fs/notify/dnotify/dnotify.c          |  13 +--
- fs/notify/fanotify/fanotify.h        |  12 +++
- fs/notify/fanotify/fanotify_user.c   | 100 +++++++++++++++--------
- fs/notify/fdinfo.c                   |  21 ++---
- fs/notify/fsnotify.c                 |   4 +-
- fs/notify/group.c                    |  32 +++++---
- fs/notify/inotify/inotify.h          |  19 +++++
- fs/notify/inotify/inotify_fsnotify.c |   2 +-
- fs/notify/inotify/inotify_user.c     |  47 ++++++-----
- fs/notify/mark.c                     | 115 ++++++++++++++++++---------
- include/linux/fanotify.h             |   1 +
- include/linux/fsnotify_backend.h     |  67 ++++++++++++----
- include/uapi/linux/fanotify.h        |   1 +
- kernel/audit_fsnotify.c              |   5 +-
- kernel/audit_tree.c                  |  34 ++++----
- kernel/audit_watch.c                 |   2 +-
- 17 files changed, 324 insertions(+), 165 deletions(-)
-
+diff --git a/fs/notify/fdinfo.c b/fs/notify/fdinfo.c
+index 57f0d5d9f934..3451708fd035 100644
+--- a/fs/notify/fdinfo.c
++++ b/fs/notify/fdinfo.c
+@@ -83,16 +83,9 @@ static void inotify_fdinfo(struct seq_file *m, struct fsnotify_mark *mark)
+ 	inode_mark = container_of(mark, struct inotify_inode_mark, fsn_mark);
+ 	inode = igrab(fsnotify_conn_inode(mark->connector));
+ 	if (inode) {
+-		/*
+-		 * IN_ALL_EVENTS represents all of the mask bits
+-		 * that we expose to userspace.  There is at
+-		 * least one bit (FS_EVENT_ON_CHILD) which is
+-		 * used only internally to the kernel.
+-		 */
+-		u32 mask = mark->mask & IN_ALL_EVENTS;
+-		seq_printf(m, "inotify wd:%x ino:%lx sdev:%x mask:%x ignored_mask:%x ",
++		seq_printf(m, "inotify wd:%x ino:%lx sdev:%x mask:%x ignored_mask:0 ",
+ 			   inode_mark->wd, inode->i_ino, inode->i_sb->s_dev,
+-			   mask, mark->ignored_mask);
++			   inotify_mark_user_mask(mark));
+ 		show_mark_fhandle(m, inode);
+ 		seq_putc(m, '\n');
+ 		iput(inode);
+diff --git a/fs/notify/inotify/inotify.h b/fs/notify/inotify/inotify.h
+index 2007e3711916..8f00151eb731 100644
+--- a/fs/notify/inotify/inotify.h
++++ b/fs/notify/inotify/inotify.h
+@@ -22,6 +22,18 @@ static inline struct inotify_event_info *INOTIFY_E(struct fsnotify_event *fse)
+ 	return container_of(fse, struct inotify_event_info, fse);
+ }
+ 
++/*
++ * INOTIFY_USER_FLAGS represents all of the mask bits that we expose to
++ * userspace.  There is at least one bit (FS_EVENT_ON_CHILD) which is
++ * used only internally to the kernel.
++ */
++#define INOTIFY_USER_MASK (IN_ALL_EVENTS | IN_ONESHOT | IN_EXCL_UNLINK)
++
++static inline __u32 inotify_mark_user_mask(struct fsnotify_mark *fsn_mark)
++{
++	return fsn_mark->mask & INOTIFY_USER_MASK;
++}
++
+ extern void inotify_ignored_and_remove_idr(struct fsnotify_mark *fsn_mark,
+ 					   struct fsnotify_group *group);
+ extern int inotify_handle_inode_event(struct fsnotify_mark *inode_mark,
+diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
+index 54583f62dc44..3ef57db0ec9d 100644
+--- a/fs/notify/inotify/inotify_user.c
++++ b/fs/notify/inotify/inotify_user.c
+@@ -110,7 +110,7 @@ static inline __u32 inotify_arg_to_mask(struct inode *inode, u32 arg)
+ 		mask |= FS_EVENT_ON_CHILD;
+ 
+ 	/* mask off the flags used to open the fd */
+-	mask |= (arg & (IN_ALL_EVENTS | IN_ONESHOT | IN_EXCL_UNLINK));
++	mask |= (arg & INOTIFY_USER_MASK);
+ 
+ 	return mask;
+ }
 -- 
 2.35.1
 
