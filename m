@@ -2,75 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 57E7350BB3C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Apr 2022 17:09:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BACE50BB64
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Apr 2022 17:12:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1449155AbiDVPLB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Apr 2022 11:11:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54290 "EHLO
+        id S1448834AbiDVPN3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Apr 2022 11:13:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55674 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234289AbiDVPK6 (ORCPT
+        with ESMTP id S1449230AbiDVPMy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Apr 2022 11:10:58 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD52CEB5;
-        Fri, 22 Apr 2022 08:08:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=i53aMRF5IR/1YEbTTTBtgQzdvvCZxmKNoDHWB/w+PEc=; b=hzvdnyYH0twiH1hf9W3tCLoalb
-        hkHaa425tjaUC7Ol+dOVHJPXGZJ07RENAnlP8lqT0WvN56R4wi83p9ZMw4rsUaenZWpNOK7w5MTDK
-        SlgZ+pUSh9p27lcaJ0ubaxFL1Rd7CcjVOnVEdtC1lNsszhssYY0kUD+beDpuMMpdSMmLIBav2K40o
-        yExN3nt/UUL6flU/LqOsjZbG0F2kr7HGtnJfIldcXlHXKuhnoWLH0mOIgIRpJb/y6K1257l0e6m1D
-        f1DKaYZPxliHqL2KekDcdNQVM8q3l2MBDK5TFdsdhP94WDRRpjdqMR3zlyGUtVRYafuV/T+uZrQvj
-        V38D8tMg==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nhut9-0010Kj-Uw; Fri, 22 Apr 2022 15:08:03 +0000
-Date:   Fri, 22 Apr 2022 08:08:03 -0700
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Theodore Ts'o <tytso@mit.edu>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Douglas Gilbert <dgilbert@interlog.com>,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-modules@vger.kernel.org, Chaitanya Kulkarni <kch@nvidia.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Lucas De Marchi <lucas.demarchi@intel.com>,
-        Pankaj Malhotra <pankaj1.m@samsung.com>,
-        Vincent Fu <vincent.fu@samsung.com>
-Subject: Re: scsi_debug in fstests and blktests (Was: Re: Fwd: [bug
- report][bisected] modprob -r scsi-debug take more than 3mins during blktests
- srp/ tests)
-Message-ID: <YmLE0xVn/knBZga0@bombadil.infradead.org>
-References: <CAHj4cs9OTm9sb_5fmzgz+W9OSLeVPKix3Yri856kqQVccwd_Mw@mail.gmail.com>
- <fba69540-b623-9602-a0e2-00de3348dbd6@interlog.com>
- <YlW7gY8nr9LnBEF+@bombadil.infradead.org>
- <00ebace8-b513-53c0-f13b-d3320757695d@interlog.com>
- <YmGaGoz2+Kdqu05l@bombadil.infradead.org>
- <YmJDqceT1AiePyxj@infradead.org>
- <YmKgxGFc4SMi7MnB@mit.edu>
+        Fri, 22 Apr 2022 11:12:54 -0400
+Received: from out1.migadu.com (out1.migadu.com [91.121.223.63])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CB1F1083;
+        Fri, 22 Apr 2022 08:09:58 -0700 (PDT)
+Date:   Fri, 22 Apr 2022 08:09:48 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1650640196;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=FuSilkQrD0XHypF9NHM/iQufTOifJtoJtKA0QjM80gQ=;
+        b=ogvZvMz0qmRqn6QDbBgi2ylHy0TQA3uWaXlbE2Qr5PhovLBd6Wn+NU6jdRIreeLszV8F0T
+        6vKrZZb2n1v73UODttDRnOV+VFz4bTzSb5v8lROD6lWxhYq1rSkVWs2ELGwxEOI0lkMR0a
+        /6VVGN0zpZMKdJS97D22pC8bfMik1wM=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Roman Gushchin <roman.gushchin@linux.dev>
+To:     Michal Hocko <mhocko@suse.com>
+Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, hch@lst.de, hannes@cmpxchg.org,
+        akpm@linux-foundation.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-input@vger.kernel.org
+Subject: Re: [PATCH v2 8/8] mm: Centralize & improve oom reporting in
+ show_mem.c
+Message-ID: <YmLFPJTyoE4GYWp4@carbon>
+References: <20220421234837.3629927-1-kent.overstreet@gmail.com>
+ <20220421234837.3629927-14-kent.overstreet@gmail.com>
+ <YmKma/1WUvjjbcO4@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YmKgxGFc4SMi7MnB@mit.edu>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <YmKma/1WUvjjbcO4@dhcp22.suse.cz>
+X-Migadu-Flow: FLOW_OUT
+X-Migadu-Auth-User: linux.dev
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 22, 2022 at 08:34:12AM -0400, Theodore Ts'o wrote:
-> I think we would need to make some changes to how scsi_debug and other
-> block device modules, first, though.  blktests is using modules
-> because that appears to be the only way to configure some of these
-> test/debug drivers and then have the debug device show up with the
-> specified characteristics.
+On Fri, Apr 22, 2022 at 02:58:19PM +0200, Michal Hocko wrote:
+> On Thu 21-04-22 19:48:37, Kent Overstreet wrote:
+> > This patch:
+> >  - Changes show_mem() to always report on slab usage
+> >  - Instead of reporting on all slabs, we only report on top 10 slabs,
+> >    and in sorted order
+> 
+> As I've already pointed out in the email thread for the previous
+> version, this would be better in its own patch explaining why we want to
+> make this unconditional and why to limit the number caches to print.
+> Why the trashold shouldn't be absolute size based?
+> 
+> >  - Also reports on shrinkers, with the new shrinkers_to_text().
+> >    Shrinkers need to be included in OOM/allocation failure reporting
+> >    because they're responsible for memory reclaim - if a shrinker isn't
+> >    giving up its memory, we need to know which one and why.
+>
+> Again, I do agree that information about shrinkers can be useful but
+> there are two main things to consider. Do we want to dump that
+> information unconditionaly? E.g. does it make sense to print for all
+> allocation requests (even high order, GFP_NOWAIT...)? Should there be
+> any explicit trigger when to dump this data (like too many shrinkers
+> failing etc)?
 
-Agreed.
+To add a concern: largest shrinkers are usually memcg-aware. Scanning
+over the whole cgroup tree (with potentially hundreds or thousands of cgroups)
+and over all shrinkers from the oom context sounds like a bad idea to me.
 
-  Luis
+IMO it's more appropriate to do from userspace by oomd or a similar daemon,
+well before the in-kernel OOM kicks in.
+
+> 
+> Last but not least let me echo the concern from the other reply. Memory
+> allocations are not really reasonable to be done from the oom context so
+> the pr_buf doesn't sound like a good tool here.
+
++1
