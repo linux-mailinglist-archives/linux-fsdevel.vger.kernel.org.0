@@ -2,108 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DCBA50B6D1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Apr 2022 14:05:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1821D50B729
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Apr 2022 14:21:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1390539AbiDVMIc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Apr 2022 08:08:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60804 "EHLO
+        id S1447278AbiDVMYn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Apr 2022 08:24:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44152 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1447360AbiDVMHm (ORCPT
+        with ESMTP id S1447391AbiDVMYm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Apr 2022 08:07:42 -0400
-Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C57FA56C11
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Apr 2022 05:04:00 -0700 (PDT)
-Received: by mail-ed1-x532.google.com with SMTP id d6so5058422ede.8
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Apr 2022 05:04:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=HPhKrtZiI6gpcHvMXMnoGWTD9vNJsNJnZzFe+ZBrjZ0=;
-        b=kSzhX3/qy1JaXUgeY9V1/7pMz1fddjr1ebGVTAsP3wNbAyQx/011Yl/6cNrq/jKkT7
-         wAK9yFhBNs4gXdLDmYFrLJBJcmyyffj80Io3GMwQyRge/5d0V6ydaKGS1RgVylXcUr0p
-         vIF4cgKtYQ8BoP8+YvLHooPA01Mb7QPzQLOe9qcUzt7MdWGFZruX0Dp9ZXacz7O1/1bz
-         AQYbeRNcUuOfO9BQr3SHVKqntOcwXgOi7n0aY/uQ8ZpBza3N7hDFmhH9ymEZOI6njZZN
-         XI+VWRumvzYhD3Br1hNU2N2uGCC41gZyxNjXxf7F9Wi1EB7sNghq4TyE0mZMZXy4xZCM
-         FBmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=HPhKrtZiI6gpcHvMXMnoGWTD9vNJsNJnZzFe+ZBrjZ0=;
-        b=WY6+C+0tiGvxO2aoYKSuwCzwQWrHgqjtqBgWg0pwXgZKZgptUULbPRSwtuCoo8pvHf
-         AjI9onJABd5ASMQaP9zWTZOvMbE8wHLEckZF2FA2Z+/+1lu6ESrLxNXIuUg45I1Pr/bq
-         cYi7QXEEuJKnUYSwpy2nzR+xIzIWc9hCV8jZaBMtl+dKsPiUkDjgsgV8nl1jEaQvHh0q
-         X7BhzGX5Lyst61jdpIJor/r3EehECMXFby8K2Kv2Gy0042C3XaNZ+mFmchxLzH8kzJDZ
-         2ujDz2+Dn5C0YVsWIa0gSxNalR6Fi5ubXgm4LQ/hcWGu8d/NVSg9985BkO0Fzp06SbWR
-         Gmwg==
-X-Gm-Message-State: AOAM5317i8B1AGUsigx37KJxczrwBWccfSVD6tocgekQAoLh9HVXKIDw
-        zRJbgA3MqTxNUADFHvpHK+o=
-X-Google-Smtp-Source: ABdhPJz1iJq3LAjZbuKtNmdrkKu6g04YhfFlOoETmPyTjpEIgKfNENarPJp9z+ObqzZh+m10HYYNKg==
-X-Received: by 2002:a05:6402:54:b0:419:9b58:e305 with SMTP id f20-20020a056402005400b004199b58e305mr4479161edu.158.1650629039367;
-        Fri, 22 Apr 2022 05:03:59 -0700 (PDT)
-Received: from localhost.localdomain ([5.29.13.154])
-        by smtp.gmail.com with ESMTPSA id x24-20020a1709064bd800b006ef606fe5c1sm697026ejv.43.2022.04.22.05.03.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 Apr 2022 05:03:58 -0700 (PDT)
-From:   Amir Goldstein <amir73il@gmail.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Matthew Bobrowski <repnop@google.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH v4 16/16] fanotify: enable "evictable" inode marks
-Date:   Fri, 22 Apr 2022 15:03:27 +0300
-Message-Id: <20220422120327.3459282-17-amir73il@gmail.com>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220422120327.3459282-1-amir73il@gmail.com>
-References: <20220422120327.3459282-1-amir73il@gmail.com>
+        Fri, 22 Apr 2022 08:24:42 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA60E56770;
+        Fri, 22 Apr 2022 05:21:48 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 0DDE3212B7;
+        Fri, 22 Apr 2022 12:21:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1650630107; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=QUoGjQVg/gKwE2jcF+F4y++onpzGvazarbd0xM/LAk4=;
+        b=SuNEDHULF+Y11ebVN3hJaCb9EKfm4mdnr353vh83vrm+EanCvB1hRP3nINICq9Lhthrb2A
+        wZfQsgJw6EJeakU9H1WGDI3TiiZtp0zacRu8Esc+u7vmwEVtYK0u9Ihlj68adoOqwD+Gq4
+        1FAKWqL+AFplDInvwUHRrsQ9PlaYvs4=
+Received: from suse.cz (unknown [10.100.201.86])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id B25212C142;
+        Fri, 22 Apr 2022 12:21:46 +0000 (UTC)
+Date:   Fri, 22 Apr 2022 14:21:46 +0200
+From:   Michal Hocko <mhocko@suse.com>
+To:     Kent Overstreet <kent.overstreet@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, roman.gushchin@linux.dev,
+        hannes@cmpxchg.org
+Subject: Re: [PATCH 2/4] mm: Add a .to_text() method for shrinkers
+Message-ID: <YmKd2iHTHuzaTkE6@dhcp22.suse.cz>
+References: <20220421234837.3629927-1-kent.overstreet@gmail.com>
+ <20220421234837.3629927-3-kent.overstreet@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220421234837.3629927-3-kent.overstreet@gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Now that the direct reclaim path is handled we can enable evictable
-inode marks.
+On Thu 21-04-22 19:48:26, Kent Overstreet wrote:
+> This adds a new callback method to shrinkers which they can use to
+> describe anything relevant to memory reclaim about their internal state,
+> for example object dirtyness.
+> 
+> This uses the new printbufs to output to heap allocated strings, so that
+> the .to_text() methods can be used both for messages logged to the
+> console, and also sysfs/debugfs.
+> 
+> This patch also adds shrinkers_to_text(), which reports on the top 10
+> shrinkers - by object count - in sorted order, to be used in OOM
+> reporting.
 
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
----
- fs/notify/fanotify/fanotify_user.c | 2 +-
- include/linux/fanotify.h           | 1 +
- 2 files changed, 2 insertions(+), 1 deletion(-)
+Let's put aside whether doing the sorting is useful or not for a moment.
+The primary concern I have here is that pr_buf is internally relying on
+memory allocations. This makes it really risky to use from the OOM path
+which is the primary motivation here AFAICS.
 
-diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index 228cf25e9230..edad67d674dc 100644
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -1787,7 +1787,7 @@ static int __init fanotify_user_setup(void)
- 
- 	BUILD_BUG_ON(FANOTIFY_INIT_FLAGS & FANOTIFY_INTERNAL_GROUP_FLAGS);
- 	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_INIT_FLAGS) != 12);
--	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_MARK_FLAGS) != 9);
-+	BUILD_BUG_ON(HWEIGHT32(FANOTIFY_MARK_FLAGS) != 10);
- 
- 	fanotify_mark_cache = KMEM_CACHE(fsnotify_mark,
- 					 SLAB_PANIC|SLAB_ACCOUNT);
-diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
-index 419cadcd7ff5..edc28555814c 100644
---- a/include/linux/fanotify.h
-+++ b/include/linux/fanotify.h
-@@ -66,6 +66,7 @@
- 				 FAN_MARK_ONLYDIR | \
- 				 FAN_MARK_IGNORED_MASK | \
- 				 FAN_MARK_IGNORED_SURV_MODIFY | \
-+				 FAN_MARK_EVICTABLE | \
- 				 FAN_MARK_FLUSH)
- 
- /*
+Especially the oom killer path where we _know_ the memory is depleted.
+The only way to pursue the allocation is to rely on PF_MEMALLOC and
+memory reserves.
+
+If you want to have a generic way to dump shrinker's internal state then
+those would really need a prellocated buffer and .to_text would need to
+be documented to not depend on any locking that could be directly or
+indirectly depending on memory allocations.
+
+> Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
+> ---
+>  include/linux/shrinker.h |  5 +++
+>  mm/vmscan.c              | 75 ++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 80 insertions(+)
 -- 
-2.35.1
-
+Michal Hocko
+SUSE Labs
