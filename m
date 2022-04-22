@@ -2,91 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A9AF350B64F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Apr 2022 13:43:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70B1F50B6BF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 22 Apr 2022 14:05:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1447122AbiDVLqI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Apr 2022 07:46:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49262 "EHLO
+        id S1447201AbiDVMHu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Apr 2022 08:07:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229960AbiDVLqI (ORCPT
+        with ESMTP id S1447282AbiDVMHh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Apr 2022 07:46:08 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 24632546B5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Apr 2022 04:43:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1650627794;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=0Ka4pkaIl0n0C8wRiVJB+Tf0N4jkuRhOTDXzmulvrko=;
-        b=N7lpY4NMtlZ9NF3FU+/vhJqEmLCiE1JW9NxLR2YrakY9j1GhBYkAOvSo2VJ9Iec2uXo/IP
-        Lt/of2Bbk9dMSmpAqySogwLaeFFNVO1wBNCXVS4x3B6rVCiYccC9zoWzDO68ck1lp/iwbo
-        fIPk6C/zOCLU+4bQ6Ds85U3RZXfrU8Q=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-43-2aQCrlSrPfuy5v4vWNiTYg-1; Fri, 22 Apr 2022 07:43:10 -0400
-X-MC-Unique: 2aQCrlSrPfuy5v4vWNiTYg-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id AFC621C05AB6;
-        Fri, 22 Apr 2022 11:43:09 +0000 (UTC)
-Received: from [172.16.176.1] (ovpn-64-2.rdu2.redhat.com [10.10.64.2])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 567B3C33AE8;
-        Fri, 22 Apr 2022 11:43:09 +0000 (UTC)
-From:   "Benjamin Coddington" <bcodding@redhat.com>
-To:     "Matthew Wilcox" <willy@infradead.org>
-Cc:     lsf-pc@lists.linuxfoundation.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-block@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-nvme@lists.infradead.org,
-        bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: LSF/MM/BPF 2022: Running BOF
-Date:   Fri, 22 Apr 2022 07:43:08 -0400
-Message-ID: <15847F8A-5246-4634-ABBE-9C05AA3CBF34@redhat.com>
-In-Reply-To: <Yl7TUDtLcrhXcp1g@casper.infradead.org>
-References: <Yl7TUDtLcrhXcp1g@casper.infradead.org>
+        Fri, 22 Apr 2022 08:07:37 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65E0656753
+        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Apr 2022 05:03:31 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id g20so10163217edw.6
+        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Apr 2022 05:03:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ne5dF26Vjz0px8PSvDW6klBVWrs/Rw8cdlJlGZkLrgo=;
+        b=n58mt7KdKoggHPAYtMDvV4hLksv4jH/XdD4nO+nx05yjdkzOt8/KDi7eg2s3NbDX8B
+         F7j+mQhObfE5DAH4mp41psthmc7WHm6kkjaeI5fdCQkKAPcJSlrmFHqcx0udMUNpEFlw
+         4EXafDYu6S+ze2mtvj8hyZYvHfHGN36XL/U/nbrXokhWLF1njQHIDGUq0hiDU1s6zkyJ
+         Wv1Bvrh85/YC06WflM8AKtFAWJl1Jn3HFvhPyhPytlCeaMoI620052Rlf48yc6in27RA
+         rzTIp0LLs40kMA30Y5il86fY+KkiKMVy+zdhrMYRPU5WWD0AOHfblaVi7KmA4GRG+9li
+         Z6Pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ne5dF26Vjz0px8PSvDW6klBVWrs/Rw8cdlJlGZkLrgo=;
+        b=2nM8IwokJP3MYYfThb5rLMcgHeqXBhrKoerH8f+X/B5ExcLmnfknWQsnNqRSHCaB7b
+         8eYrI5FGjwPS96b1DY4p430pSlQx/o/11cmsV1u+S+T20GKfE6ZvWoeXZL0wM9e26S4G
+         /pzLMWkMR/QAfsPMXqevw6oyYYBNfZQSx4BCs1UXwy9X/qbH6oBJBlT+i0RAEivuPxLL
+         i/NxuSiFpmRJjhFwikPYPW+8X38Uw47yOD7usydaNXxmzXCLe5yVndE8Wm3hnemhepBZ
+         VYohK2MR8qTPC3vZsm5dPzFzRYUWKU1c4nlPtQBvRBlYGuqX1JRvd3teU1HkZJtsxlrg
+         Ofgw==
+X-Gm-Message-State: AOAM532Bf+TGrn+RHn9UXzcNkAzUXkQPmj6JKTnft0iAQfMRew8NsSe7
+        RfgCKjgO7x2QWxIdt2WGeYjpP/Sy9Y8=
+X-Google-Smtp-Source: ABdhPJzSVBGa/W3sdXYpJhqYzm/zDUxlgjXxHBDxJosjADO6B/6kIjqiIIqU+gl03qu0wYfAshA02A==
+X-Received: by 2002:a05:6402:1104:b0:41d:5f4a:7f5a with SMTP id u4-20020a056402110400b0041d5f4a7f5amr4557131edv.207.1650629009838;
+        Fri, 22 Apr 2022 05:03:29 -0700 (PDT)
+Received: from localhost.localdomain ([5.29.13.154])
+        by smtp.gmail.com with ESMTPSA id x24-20020a1709064bd800b006ef606fe5c1sm697026ejv.43.2022.04.22.05.03.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 22 Apr 2022 05:03:29 -0700 (PDT)
+From:   Amir Goldstein <amir73il@gmail.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Matthew Bobrowski <repnop@google.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH v4 00/16] Evictable fanotify marks
+Date:   Fri, 22 Apr 2022 15:03:11 +0300
+Message-Id: <20220422120327.3459282-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.85 on 10.11.54.8
-X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 19 Apr 2022, at 11:20, Matthew Wilcox wrote:
+Jan,
 
-> As in the past few years, let's hold a running BOF.
->
-> I propose meeting in the lobby of the Margaritaville hotel at 6:15 for
-> a 6:30 departure for an hour-long run on Monday, Tuesday and Wednesday
-> mornings.  I'm assuming breakfast will be 8-9am and sessions start at 9am.
-> Pace will be determined by whoever shows up.
->
-> We're only a mile from the North Lykken north Trailhead.
-> Other trails are a little more distant.  I've been reading
-> http://www.hiking-in-ps.com/the-north-lykken-trail/ (note this map is
-> for the south trailhead of the North Lykken trail).  I haven't been
-> to this area in 30 years and I have no idea what the trails are like,
-> so if somebody has local information, that would be great.
->
-> I note that the room rate includes complimentary bicycle rentals.  If
-> we want to, we could cycle to various other local trails.
+Following v4 patch set addresses your review comments on v3 [3].
 
-I'm in unless I'm trying to run in the PM.  I've got a tentative run/explore
-of one of the slot canyons about an hour away if I can swing it (painted
-canyon, ladder canyon, I may have to borrow a car from someone), and would
-be nice to try to get up into Mt San Jacinto park as well.
+I allowed myself to take the clean you requested for
+fanotify_mark_update_flags() and recalc argument a bit further.
+I hope you will like the result.
 
-I'm interested in getting some trail and elevation, but I've not run out
-there yet and will need to scope out what's possible when I get there.
+Thanks,
+Amir.
 
-Ben
+Changes since v3 [3]:
+- Drop FSNOTIFY_GROUP_FLAG() macro
+- Make ALLOW_DUPS a group flag
+- Return recalc by value from fanotify_mark_update_flags()
+- Rename some flags arguments to fan_flags
+- Update outdated comments and commit message
+- Rebased and tested on v5.18-rc3
+
+Changes since v2 [2]:
+- Simplify group lock helpers (Jan)
+- Move FSNOTIFY_GROUP_NOFS flag to group object (Jan)
+- Split patch of fanotify_mark_user_flags() (Jan)
+- Fix bug in case of EEXIST
+- Drop ioctl for debugging
+- Rebased and tested on v5.18-rc1
+
+Changes since v1 [1]:
+- Fixes for direct reclaim deadlock
+- Add ioctl for direct reclaim test
+- Rebrand as FAN_MARK_EVICTABLE
+- Remove FAN_MARK_CREATE and allow clearing FAN_MARK_EVICTABLE
+- Replace connector proxy_iref with HAS_IREF flag
+- Take iref in fsnotify_reclac_mark() rather than on add mark to list
+- Remove fsnotify_add_mark() allow_dups/flags argument
+- Remove pr_debug() prints
+
+[1] https://lore.kernel.org/r/20220307155741.1352405-1-amir73il@gmail.com/
+[2] https://lore.kernel.org/r/20220329074904.2980320-1-amir73il@gmail.com/
+[3] https://lore.kernel.org/r/20220413090935.3127107-1-amir73il@gmail.com/
+
+Amir Goldstein (16):
+  inotify: show inotify mask flags in proc fdinfo
+  inotify: move control flags from mask to mark flags
+  fsnotify: fix wrong lockdep annotations
+  fsnotify: pass flags argument to fsnotify_alloc_group()
+  fsnotify: make allow_dups a property of the group
+  fsnotify: create helpers for group mark_mutex lock
+  inotify: use fsnotify group lock helpers
+  audit: use fsnotify group lock helpers
+  nfsd: use fsnotify group lock helpers
+  dnotify: use fsnotify group lock helpers
+  fsnotify: allow adding an inode mark without pinning inode
+  fanotify: create helper fanotify_mark_user_flags()
+  fanotify: factor out helper fanotify_mark_update_flags()
+  fanotify: implement "evictable" inode marks
+  fanotify: use fsnotify group lock helpers
+  fanotify: enable "evictable" inode marks
+
+ fs/nfsd/filecache.c                  |  14 ++--
+ fs/notify/dnotify/dnotify.c          |  13 +--
+ fs/notify/fanotify/fanotify.h        |  12 +++
+ fs/notify/fanotify/fanotify_user.c   | 100 +++++++++++++++--------
+ fs/notify/fdinfo.c                   |  21 ++---
+ fs/notify/fsnotify.c                 |   4 +-
+ fs/notify/group.c                    |  32 +++++---
+ fs/notify/inotify/inotify.h          |  19 +++++
+ fs/notify/inotify/inotify_fsnotify.c |   2 +-
+ fs/notify/inotify/inotify_user.c     |  47 ++++++-----
+ fs/notify/mark.c                     | 115 ++++++++++++++++++---------
+ include/linux/fanotify.h             |   1 +
+ include/linux/fsnotify_backend.h     |  67 ++++++++++++----
+ include/uapi/linux/fanotify.h        |   1 +
+ kernel/audit_fsnotify.c              |   5 +-
+ kernel/audit_tree.c                  |  34 ++++----
+ kernel/audit_watch.c                 |   2 +-
+ 17 files changed, 324 insertions(+), 165 deletions(-)
+
+-- 
+2.35.1
 
