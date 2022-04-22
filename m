@@ -2,75 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4385050C2FB
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Apr 2022 01:09:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3570950C382
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Apr 2022 01:10:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233311AbiDVWfe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Apr 2022 18:35:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57034 "EHLO
+        id S233342AbiDVWia (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Apr 2022 18:38:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48494 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233317AbiDVWfN (ORCPT
+        with ESMTP id S233445AbiDVWh2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 22 Apr 2022 18:35:13 -0400
-Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64FC12CC18C
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Apr 2022 14:27:44 -0700 (PDT)
-Received: by mail-pl1-x62d.google.com with SMTP id d15so13527134pll.10
-        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Apr 2022 14:27:44 -0700 (PDT)
+        Fri, 22 Apr 2022 18:37:28 -0400
+Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7899A1F3131
+        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Apr 2022 14:29:51 -0700 (PDT)
+Received: by mail-yb1-xb49.google.com with SMTP id j11-20020a05690212cb00b006454988d225so8177988ybu.10
+        for <linux-fsdevel@vger.kernel.org>; Fri, 22 Apr 2022 14:29:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=w9AKK/wGlnxig+lE3h4LHV/aZa9ukqQjCgIygmyWAnI=;
-        b=68ZELSGoErna6Kx0I1rr70ZevaMAPMnUYlggojQeGdeNtet7Hum0m7txFWvhbVCPoh
-         Lpfn1c1GUzjoDoqF3atTMDyB/W54WSq09ZqEMstjj/nD57yi3McP45zUESmlBRcMSayd
-         RCzz4ipAytYtGQe71XITH8QJ3AOzILuXAM8yhmiGgJ7WF+oGlf5airqmyAOM2HGknwiH
-         NL8jDL6gpoJPBQW7EeAY6wZ4C88AXehvjWq8bqkos1IivsjngJ9pqrOMVpnTljE1x58T
-         I93xuOolWlJ6WC9weiHMQEfCyYC7FH5wSxSWXUOcug8i2eaQtc0PgYHeEI3sT7IioZIr
-         TevA==
+        d=google.com; s=20210112;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=2OUrHBVQ2XGsiWEMmpN9lcaXOoCh5x5IHeSwakaqCjU=;
+        b=Aow8LWdbHQ8mE+wjvovuTbsPF39TiJA6sPYxg2JQZd+23m8l/+XB1F9qkMvdVXNRg0
+         fZev5Etdz1q0hIsgyZWbSaFZjTBdJ9VWCFBRU8eBVfHaxsBOGqI7cDhN5oo9gC413a3m
+         gvWZRS9e7nI30010ze8OFrC8V0LO6LXC6C5UwdqfIs2kLN7U21jZtH7KzWi2ief0rAaS
+         CYQdE1MI7oRVde8cp8DeJ4sP2q24P5vdBoqq4mORARm3WuCFCIS7zNqsMlQPsYyrhUDe
+         LO3euRkIUxqJygFfIefkCW2M4IxKVAvFPsRkNRhJwmmkIG9+Oudn+R7bw4c5wsDDt67i
+         rj5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=w9AKK/wGlnxig+lE3h4LHV/aZa9ukqQjCgIygmyWAnI=;
-        b=BCdyjf8oMzGsCSI1LBXGPPLNyh1Bs0gxV3zIXwU3BR9Q0v3ysJgP2baw64KJ+f+w+a
-         91D9kD8tmDAYk8w2mkm9U2xM88syOeRdFpsFwo3ztTEniy1Dhim6LbVo1UOK1CXZLuGi
-         td1Xnnqs/GAYzJuOdJuwJTrO1PWz6SiJ7CgpOtFRdFAHo/kTYhzV4nBLHrCsZEXiSj2/
-         ueXwDKyCYsYM1fHimzIBtb/4GYhFVqywZkwSDCrfmNfMb1buos1FJUSeH+X7ZEta3Gbt
-         UE1Peqi8F8TMgXfw3aqDhGydQL3RB2jI5f7qSPNk6yHymYDFQT71LZqxBbeJjtXDvMhu
-         u2LQ==
-X-Gm-Message-State: AOAM53073qvwXyuFwaHKEzrrRjri0f5yn3QM6Hfx0J2MRRTgp7DLDPGJ
-        7AARLuoZgzSjscOc65m6AohR9cgee552u2BEwsopLg==
-X-Google-Smtp-Source: ABdhPJwBmyn23Epq/35EZiri4tm6JvqSiIIERB77yO45Op+oQcI+/5ahmZRwLntOQrNzhYN0N3NhjEndaBvuqb3gpmc=
-X-Received: by 2002:a17:902:7296:b0:14b:4bc6:e81 with SMTP id
- d22-20020a170902729600b0014b4bc60e81mr6342011pll.132.1650662863976; Fri, 22
- Apr 2022 14:27:43 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220419045045.1664996-1-ruansy.fnst@fujitsu.com>
- <20220421012045.GR1544202@dread.disaster.area> <86cb0ada-208c-02de-dbc9-53c6014892c3@fujitsu.com>
- <CAPcyv4i0Noum8hqHtCpdM5HMVdmNHm3Aj2JCnZ+KZLgceiXYaA@mail.gmail.com>
- <20220421043502.GS1544202@dread.disaster.area> <YmDxs1Hj4H/cu2sd@infradead.org>
- <20220421074653.GT1544202@dread.disaster.area>
-In-Reply-To: <20220421074653.GT1544202@dread.disaster.area>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Fri, 22 Apr 2022 14:27:32 -0700
-Message-ID: <CAPcyv4jj_Z+P4BuC6EXXrzbVr1uHomQVu1A+cq55EFnSGmP7cQ@mail.gmail.com>
-Subject: Re: [PATCH v13 0/7] fsdax: introduce fs query to support reflink
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Shiyang Ruan <ruansy.fnst@fujitsu.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Linux NVDIMM <nvdimm@lists.linux.dev>,
-        Linux MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Jane Chu <jane.chu@oracle.com>,
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=2OUrHBVQ2XGsiWEMmpN9lcaXOoCh5x5IHeSwakaqCjU=;
+        b=x01H7FFGmgxzHpWPWtxEep/lIbcWd06akWI3rRmm7f0c0in0GOxOAeQ+cpbT5D609F
+         JlDxDLXt8gCg6p1JuLtSQneFNAcpUQYVGVq+OPrAAZ8Up0mkZWQV4m5gsmEkSomKaDZw
+         csUyxMq3fOUI9MM8zOp/wS8fP5xVY7mBts2n+nve6FxeRd+aIhoh3ZVKV5sxJJlSMb9o
+         oIjf9O71pBY5/FQIuhD8m90UY1IE/xnVw4RWgJt1gLV6qZnAdW87nVKHYZDVZwiLyn7w
+         6Bs4obnvV+poZdmqVxPUsc3fZt1sgMlFjcwEIv8ftnjdLwWZqsd+S5OweAHd4hVKIiJe
+         SGPg==
+X-Gm-Message-State: AOAM530jN/TlNwtcgmnBweYscXoswZWXI9SjtvwAiJ/OOYu39/JGjaJ8
+        fe3eZAF1w7x817dXL+H/CSzJVtkwAR3aTrZU88lc
+X-Google-Smtp-Source: ABdhPJzN20+x39HHCgsQ8s+XetICyuwHBA/K5CIlhrR9l07xTY2TvqCOCgmubuPwmhK7ht8/vTRA3nNCJmwDMnx0uVbs
+X-Received: from ajr0.svl.corp.google.com ([2620:15c:2cd:203:7ba6:20ac:a8f7:1dbd])
+ (user=axelrasmussen job=sendgmr) by 2002:a25:9f90:0:b0:624:521e:d4a5 with
+ SMTP id u16-20020a259f90000000b00624521ed4a5mr6505440ybq.230.1650662990723;
+ Fri, 22 Apr 2022 14:29:50 -0700 (PDT)
+Date:   Fri, 22 Apr 2022 14:29:39 -0700
+Message-Id: <20220422212945.2227722-1-axelrasmussen@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.36.0.rc2.479.g8af0fa9b8e-goog
+Subject: [PATCH v2 0/6] userfaultfd: add /dev/userfaultfd for fine grained
+ access control
+From:   Axel Rasmussen <axelrasmussen@google.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Naoya Horiguchi <naoya.horiguchi@nec.com>
+        Charan Teja Reddy <charante@codeaurora.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        Gleb Fotengauer-Malinovskiy <glebfm@altlinux.org>,
+        Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.cz>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Peter Xu <peterx@redhat.com>, Shuah Khan <shuah@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>, zhangyi <yi.zhang@huawei.com>
+Cc:     Axel Rasmussen <axelrasmussen@google.com>,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kselftest@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
+X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -78,43 +80,39 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 21, 2022 at 12:47 AM Dave Chinner <david@fromorbit.com> wrote:
->
-> On Wed, Apr 20, 2022 at 10:54:59PM -0700, Christoph Hellwig wrote:
-> > On Thu, Apr 21, 2022 at 02:35:02PM +1000, Dave Chinner wrote:
-> > > Sure, I'm not a maintainer and just the stand-in patch shepherd for
-> > > a single release. However, being unable to cleanly merge code we
-> > > need integrated into our local subsystem tree for integration
-> > > testing because a patch dependency with another subsystem won't gain
-> > > a stable commit ID until the next merge window is .... distinctly
-> > > suboptimal.
-> >
-> > Yes.  Which is why we've taken a lot of mm patchs through other trees,
-> > sometimes specilly crafted for that.  So I guess in this case we'll
-> > just need to take non-trivial dependencies into the XFS tree, and just
-> > deal with small merge conflicts for the trivial ones.
->
-> OK. As Naoyo has pointed out, the first dependency/conflict Ruan has
-> listed looks trivial to resolve.
->
-> The second dependency, OTOH, is on a new function added in the patch
-> pointed to. That said, at first glance it looks to be independent of
-> the first two patches in that series so I might just be able to pull
-> that one patch in and have that leave us with a working
-> fsdax+reflink tree.
->
-> Regardless, I'll wait to see how much work the updated XFS/DAX
-> reflink enablement patchset still requires when Ruan posts it before
-> deciding what to do here.  If it isn't going to be a merge
-> candidate, what to do with this patchset is moot because there's
-> little to test without reflink enabled...
+This series is based on torvalds/master, but additionally the run_vmtests.sh
+changes assume my refactor [1] has been applied first.
 
-I do have a use case for this work absent the reflink work. Recall we
-had a conversation about how to communicate "dax-device has been
-ripped away from the fs" events and we ended up on the idea of reusing
-->notify_failure(), but with the device's entire logical address range
-as the notification span. That will let me unwind and delete the
-PTE_DEVMAP infrastructure for taking extra device references to hold
-off device-removal. Instead ->notify_failure() arranges for all active
-DAX mappings to be invalidated and allow the removal to proceed
-especially since physical removal does not care about software pins.
+The series is split up like so:
+- Patch 1 is a simple fixup which we should take in any case (even by itself).
+- Patches 2-4 add the feature, basic support for it to the selftest, and docs.
+- Patches 5-6 make the selftest configurable, so you can test one or the other
+  instead of always both. If we decide this is overcomplicated, we could just
+  drop these two patches and take the rest of the series.
+
+[1]: https://patchwork.kernel.org/project/linux-mm/patch/20220421224928.1848230-1-axelrasmussen@google.com/
+
+Changelog:
+v1->v2:
+  - Add documentation update.
+  - Test *both* userfaultfd(2) and /dev/userfaultfd via the selftest.
+
+Axel Rasmussen (6):
+  selftests: vm: add hugetlb_shared userfaultfd test to run_vmtests.sh
+  userfaultfd: add /dev/userfaultfd for fine grained access control
+  userfaultfd: selftests: modify selftest to use /dev/userfaultfd
+  userfaultfd: update documentation to describe /dev/userfaultfd
+  userfaultfd: selftests: make /dev/userfaultfd testing configurable
+  selftests: vm: add /dev/userfaultfd test cases to run_vmtests.sh
+
+ Documentation/admin-guide/mm/userfaultfd.rst | 38 +++++++++-
+ Documentation/admin-guide/sysctl/vm.rst      |  3 +
+ fs/userfaultfd.c                             | 79 ++++++++++++++++----
+ include/uapi/linux/userfaultfd.h             |  4 +
+ tools/testing/selftests/vm/run_vmtests.sh    | 11 ++-
+ tools/testing/selftests/vm/userfaultfd.c     | 60 +++++++++++++--
+ 6 files changed, 170 insertions(+), 25 deletions(-)
+
+--
+2.36.0.rc2.479.g8af0fa9b8e-goog
+
