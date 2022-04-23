@@ -2,91 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B3D9F50C90B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Apr 2022 12:09:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6930C50C9B9
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Apr 2022 13:49:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234867AbiDWKL2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 23 Apr 2022 06:11:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41806 "EHLO
+        id S235343AbiDWLwP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 23 Apr 2022 07:52:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234841AbiDWKLJ (ORCPT
+        with ESMTP id S234794AbiDWLwO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 23 Apr 2022 06:11:09 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EB7A1B2B00;
-        Sat, 23 Apr 2022 03:08:06 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 298A6B80AD3;
-        Sat, 23 Apr 2022 10:08:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDB8AC385A5;
-        Sat, 23 Apr 2022 10:08:01 +0000 (UTC)
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, Chris Mason <clm@fb.com>,
-        David Sterba <dsterba@suse.com>, Will Deacon <will@kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-btrfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 3/3] btrfs: Avoid live-lock in search_ioctl() on hardware with sub-page faults
-Date:   Sat, 23 Apr 2022 11:07:51 +0100
-Message-Id: <20220423100751.1870771-4-catalin.marinas@arm.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20220423100751.1870771-1-catalin.marinas@arm.com>
-References: <20220423100751.1870771-1-catalin.marinas@arm.com>
+        Sat, 23 Apr 2022 07:52:14 -0400
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 981681F6E5A;
+        Sat, 23 Apr 2022 04:49:17 -0700 (PDT)
+Received: from fsav112.sakura.ne.jp (fsav112.sakura.ne.jp [27.133.134.239])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 23NBmTfj015009;
+        Sat, 23 Apr 2022 20:48:29 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav112.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav112.sakura.ne.jp);
+ Sat, 23 Apr 2022 20:48:29 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav112.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 23NBmSiS015000
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Sat, 23 Apr 2022 20:48:28 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <8a6659ba-13ba-b9be-08c8-f02f106d55fb@I-love.SAKURA.ne.jp>
+Date:   Sat, 23 Apr 2022 20:48:28 +0900
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-6.7 required=5.0 tests=BAYES_00,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [PATCH v2 8/8] mm: Centralize & improve oom reporting in
+ show_mem.c
+Content-Language: en-US
+To:     Kent Overstreet <kent.overstreet@gmail.com>
+Cc:     Michal Hocko <mhocko@suse.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hch@lst.de,
+        hannes@cmpxchg.org, akpm@linux-foundation.org,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-input@vger.kernel.org, rostedt@goodmis.org,
+        Roman Gushchin <roman.gushchin@linux.dev>
+References: <20220421234837.3629927-1-kent.overstreet@gmail.com>
+ <20220421234837.3629927-14-kent.overstreet@gmail.com>
+ <YmKma/1WUvjjbcO4@dhcp22.suse.cz> <YmLFPJTyoE4GYWp4@carbon>
+ <20220422234820.plusgyixgybebfmi@moria.home.lan> <YmNH/fh8OwTJ6ASC@carbon>
+ <20220423004607.q4lbz2mplkhlbyhm@moria.home.lan> <YmNVjiVv0fKXYjIF@carbon>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <YmNVjiVv0fKXYjIF@carbon>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-3.8 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Commit a48b73eca4ce ("btrfs: fix potential deadlock in the search
-ioctl") addressed a lockdep warning by pre-faulting the user pages and
-attempting the copy_to_user_nofault() in an infinite loop. On
-architectures like arm64 with MTE, an access may fault within a page at
-a location different from what fault_in_writeable() probed. Since the
-sk_offset is rewound to the previous struct btrfs_ioctl_search_header
-boundary, there is no guaranteed forward progress and search_ioctl() may
-live-lock.
+On 2022/04/23 10:25, Roman Gushchin wrote:
+>>> I agree. However the OOM killer _has_ to make the progress even in such rare
+>>> circumstances.
+>>
+>> Oh, and the concern is allocator recursion? Yeah, that's a good point.
+> 
+> Yes, but not the only problem.
+> 
+>>
+>> Do you know if using memalloc_noreclaim_(save|restore) is sufficient for that,
+>> or do we want GFP_ATOMIC? I'm already using GFP_ATOMIC for allocations when we
+>> generate the report on slabs, since we're taking the slab mutex there.
+> 
+> And this is another problem: grabbing _any_ locks from the oom context is asking
+> for trouble: you can potentially enter the oom path doing any allocation, so
+> now you have to check that no allocations are ever made holding this lock.
+> And I'm not aware of any reasonable way to test it, so most likely it ends up
+> introducing some very subtle bags, which will be triggered once a year.
+> 
 
-Use fault_in_subpage_writeable() instead of fault_in_writeable() to
-ensure the permission is checked at the right granularity (smaller than
-PAGE_SIZE).
-
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-Fixes: a48b73eca4ce ("btrfs: fix potential deadlock in the search ioctl")
-Reported-by: Al Viro <viro@zeniv.linux.org.uk>
-Acked-by: David Sterba <dsterba@suse.com>
-Cc: Chris Mason <clm@fb.com>
-Cc: Josef Bacik <josef@toxicpanda.com>
----
- fs/btrfs/ioctl.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-index be6c24577dbe..9bf0616a3069 100644
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -2565,7 +2565,12 @@ static noinline int search_ioctl(struct inode *inode,
- 
- 	while (1) {
- 		ret = -EFAULT;
--		if (fault_in_writeable(ubuf + sk_offset, *buf_size - sk_offset))
-+		/*
-+		 * Ensure that the whole user buffer is faulted in at sub-page
-+		 * granularity, otherwise the loop may live-lock.
-+		 */
-+		if (fault_in_subpage_writeable(ubuf + sk_offset,
-+					       *buf_size - sk_offset))
- 			break;
- 
- 		ret = btrfs_search_forward(root, &key, path, sk->min_transid);
+You can't allocate memory nor hold locks from OOM context. Since oom_lock mutex
+serializes OOM reporting, you could use statically pre-allocated buffer for holding
+one line of output. Correlating whole report will be done by the userspace program
+with the aid of CONFIG_PRINTK_CALLER=y.
