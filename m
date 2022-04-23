@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E2B3050C6E6
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Apr 2022 05:29:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A1DC50C6E7
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Apr 2022 05:29:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232359AbiDWD0u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 22 Apr 2022 23:26:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38124 "EHLO
+        id S232401AbiDWD0v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 22 Apr 2022 23:26:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38170 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232163AbiDWD0s (ORCPT
+        with ESMTP id S232204AbiDWD0s (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 22 Apr 2022 23:26:48 -0400
 Received: from synology.com (mail.synology.com [211.23.38.101])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D8F214585E
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9375414586C
         for <linux-fsdevel@vger.kernel.org>; Fri, 22 Apr 2022 20:23:52 -0700 (PDT)
 From:   Chung-Chiang Cheng <cccheng@synology.com>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synology.com; s=123;
-        t=1650684230; bh=pYXAHwwSYaKFN+MwvyrX+42T7WxWjxFvgk4Ir8RGQOY=;
+        t=1650684230; bh=dH37hSwd0RJNtFKM3/hj6IPI09qfptf8pvcyRdXz52o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=DP8nk7qyMuBygcNJItiF8A+U2cKc/gxul9ARAFgDZHvS6NR3IJdvouBeO7TDFDG0U
-         Ihc6YrXm3apanvW+v6MaEloDRaaGAL7j90ZDx7cD61wj9c/gdJ1FAQcWv6zb+9ytlF
-         DzL/P9ZZqC9xrE4rF2G5zQCScFrrtLX87Z2U+4qM=
+        b=EF5OeADwSZW+NAxVlgMuVaJHRwF8P5mQZkjcM+KWxdwsMPqRxDgAC07JzKAhJRHbo
+         QfKp+d5Ed+DQ/a3S/sdUUoue0KRd6/0Uzneo/OX/Z8pWigpSGhnNIWk2HBvic1Bkrp
+         8fYh5E2mbnjV4F1eWxjnP+tKoBRtL4ogDb7LS/wQ=
 To:     hirofumi@mail.parknet.co.jp
 Cc:     linux-fsdevel@vger.kernel.org, kernel@cccheng.net,
         shepjeng@gmail.com, Chung-Chiang Cheng <cccheng@synology.com>
-Subject: [PATCH v4 2/3] fat: ignore ctime updates, and keep ctime identical to mtime in memory
-Date:   Sat, 23 Apr 2022 11:23:47 +0800
-Message-Id: <20220423032348.1475539-2-cccheng@synology.com>
+Subject: [PATCH v4 3/3] fat: report creation time in statx
+Date:   Sat, 23 Apr 2022 11:23:48 +0800
+Message-Id: <20220423032348.1475539-3-cccheng@synology.com>
 In-Reply-To: <20220423032348.1475539-1-cccheng@synology.com>
 References: <20220423032348.1475539-1-cccheng@synology.com>
 MIME-Version: 1.0
@@ -46,78 +46,125 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-FAT supports creation time but not change time, and there was no
-corresponding timestamp for creation time in previous VFS. The
-original implementation took the compromise of saving the in-memory
-change time into the on-disk creation time field, but this would lead
-to compatibility issues with non-linux systems.
+creation time is no longer mixed with change time. Add an in-memory
+field for it, and report it in statx if supported.
 
-To address this issue, this patch changes the behavior of ctime. It
-will no longer be loaded and stored from the creation time on disk.
-Instead of that, it'll be consistent with the in-memory mtime and share
-the same on-disk field. All updates to mtime will also be applied to
-ctime in memory, while all updates to ctime will be ignored.
+The unused code in fat_truncate_crtime() is also removed because only
+vfat support creation time.
 
 Signed-off-by: Chung-Chiang Cheng <cccheng@synology.com>
 ---
- fs/fat/inode.c | 11 ++++-------
- fs/fat/misc.c  | 12 +++++++++---
- 2 files changed, 13 insertions(+), 10 deletions(-)
+ fs/fat/fat.h        |  1 +
+ fs/fat/file.c       | 14 +++++++++++---
+ fs/fat/inode.c      | 10 ++++++++--
+ fs/fat/misc.c       |  3 +--
+ fs/fat/namei_vfat.c |  1 +
+ 5 files changed, 22 insertions(+), 7 deletions(-)
 
-diff --git a/fs/fat/inode.c b/fs/fat/inode.c
-index bf6051bdf1d1..f2ac55cd4ea4 100644
---- a/fs/fat/inode.c
-+++ b/fs/fat/inode.c
-@@ -567,12 +567,11 @@ int fat_fill_inode(struct inode *inode, struct msdos_dir_entry *de)
- 			   & ~((loff_t)sbi->cluster_size - 1)) >> 9;
+diff --git a/fs/fat/fat.h b/fs/fat/fat.h
+index 508b4f2a1ffb..e4409ee82ea9 100644
+--- a/fs/fat/fat.h
++++ b/fs/fat/fat.h
+@@ -126,6 +126,7 @@ struct msdos_inode_info {
+ 	struct hlist_node i_fat_hash;	/* hash by i_location */
+ 	struct hlist_node i_dir_hash;	/* hash by i_logstart */
+ 	struct rw_semaphore truncate_lock; /* protect bmap against truncate */
++	struct timespec64 i_crtime;	/* File creation (birth) time */
+ 	struct inode vfs_inode;
+ };
  
- 	fat_time_fat2unix(sbi, &inode->i_mtime, de->time, de->date, 0);
--	if (sbi->options.isvfat) {
--		fat_time_fat2unix(sbi, &inode->i_ctime, de->ctime,
--				  de->cdate, de->ctime_cs);
-+	inode->i_ctime = inode->i_mtime;
-+	if (sbi->options.isvfat)
- 		fat_time_fat2unix(sbi, &inode->i_atime, 0, de->adate, 0);
--	} else
--		fat_truncate_time(inode, &inode->i_mtime, S_ATIME|S_CTIME);
-+	else
-+		fat_truncate_atime(sbi, &inode->i_mtime, &inode->i_atime);
+diff --git a/fs/fat/file.c b/fs/fat/file.c
+index a5a309fcc7fa..8f5218450a3a 100644
+--- a/fs/fat/file.c
++++ b/fs/fat/file.c
+@@ -399,13 +399,21 @@ int fat_getattr(struct user_namespace *mnt_userns, const struct path *path,
+ 		struct kstat *stat, u32 request_mask, unsigned int flags)
+ {
+ 	struct inode *inode = d_inode(path->dentry);
++	struct msdos_sb_info *sbi = MSDOS_SB(inode->i_sb);
++
+ 	generic_fillattr(mnt_userns, inode, stat);
+-	stat->blksize = MSDOS_SB(inode->i_sb)->cluster_size;
++	stat->blksize = sbi->cluster_size;
  
+-	if (MSDOS_SB(inode->i_sb)->options.nfs == FAT_NFS_NOSTALE_RO) {
++	if (sbi->options.nfs == FAT_NFS_NOSTALE_RO) {
+ 		/* Use i_pos for ino. This is used as fileid of nfs. */
+-		stat->ino = fat_i_pos_read(MSDOS_SB(inode->i_sb), inode);
++		stat->ino = fat_i_pos_read(sbi, inode);
+ 	}
++
++	if (sbi->options.isvfat && request_mask & STATX_BTIME) {
++		stat->result_mask |= STATX_BTIME;
++		stat->btime = MSDOS_I(inode)->i_crtime;
++	}
++
  	return 0;
  }
-@@ -888,8 +887,6 @@ static int __fat_write_inode(struct inode *inode, int wait)
+ EXPORT_SYMBOL_GPL(fat_getattr);
+diff --git a/fs/fat/inode.c b/fs/fat/inode.c
+index f2ac55cd4ea4..ebc124f44e86 100644
+--- a/fs/fat/inode.c
++++ b/fs/fat/inode.c
+@@ -568,9 +568,11 @@ int fat_fill_inode(struct inode *inode, struct msdos_dir_entry *de)
+ 
+ 	fat_time_fat2unix(sbi, &inode->i_mtime, de->time, de->date, 0);
+ 	inode->i_ctime = inode->i_mtime;
+-	if (sbi->options.isvfat)
++	if (sbi->options.isvfat) {
+ 		fat_time_fat2unix(sbi, &inode->i_atime, 0, de->adate, 0);
+-	else
++		fat_time_fat2unix(sbi, &MSDOS_I(inode)->i_crtime, de->ctime,
++				  de->cdate, de->ctime_cs);
++	} else
+ 		fat_truncate_atime(sbi, &inode->i_mtime, &inode->i_atime);
+ 
+ 	return 0;
+@@ -756,6 +758,8 @@ static struct inode *fat_alloc_inode(struct super_block *sb)
+ 	ei->i_logstart = 0;
+ 	ei->i_attrs = 0;
+ 	ei->i_pos = 0;
++	ei->i_crtime.tv_sec = 0;
++	ei->i_crtime.tv_nsec = 0;
+ 
+ 	return &ei->vfs_inode;
+ }
+@@ -887,6 +891,8 @@ static int __fat_write_inode(struct inode *inode, int wait)
  			  &raw_entry->date, NULL);
  	if (sbi->options.isvfat) {
  		__le16 atime;
--		fat_time_unix2fat(sbi, &inode->i_ctime, &raw_entry->ctime,
--				  &raw_entry->cdate, &raw_entry->ctime_cs);
++		fat_time_unix2fat(sbi, &MSDOS_I(inode)->i_crtime, &raw_entry->ctime,
++				  &raw_entry->cdate, &raw_entry->ctime_cs);
  		fat_time_unix2fat(sbi, &inode->i_atime, &atime,
  				  &raw_entry->adate, NULL);
  	}
 diff --git a/fs/fat/misc.c b/fs/fat/misc.c
-index c87df64f8b2b..ef09b6361602 100644
+index ef09b6361602..dfc5d6df3519 100644
 --- a/fs/fat/misc.c
 +++ b/fs/fat/misc.c
-@@ -341,10 +341,16 @@ int fat_truncate_time(struct inode *inode, struct timespec64 *now, int flags)
- 
- 	if (flags & S_ATIME)
- 		fat_truncate_atime(sbi, now, &inode->i_atime);
--	if (flags & S_CTIME)
--		fat_truncate_crtime(sbi, now, &inode->i_ctime);
--	if (flags & S_MTIME)
-+
-+	/*
-+	 * ctime and mtime share the same on-disk field, and should be
-+	 * identical in memory. all mtime updates will be applied to ctime,
-+	 * but ctime updates are ignored.
-+	 */
-+	if (flags & S_MTIME) {
- 		fat_truncate_mtime(sbi, now, &inode->i_mtime);
-+		inode->i_ctime = inode->i_mtime;
-+	}
- 
- 	return 0;
+@@ -309,9 +309,8 @@ void fat_truncate_crtime(struct msdos_sb_info *sbi, struct timespec64 *ts,
+ {
+ 	if (sbi->options.isvfat)
+ 		*crtime = fat_timespec64_trunc_10ms(*ts);
+-	else
+-		*crtime = fat_timespec64_trunc_2secs(*ts);
  }
++EXPORT_SYMBOL_GPL(fat_truncate_crtime);
+ 
+ /*
+  * truncate mtime to 2 second granularity
+diff --git a/fs/fat/namei_vfat.c b/fs/fat/namei_vfat.c
+index 5369d82e0bfb..9187979fed5d 100644
+--- a/fs/fat/namei_vfat.c
++++ b/fs/fat/namei_vfat.c
+@@ -781,6 +781,7 @@ static int vfat_create(struct user_namespace *mnt_userns, struct inode *dir,
+ 	}
+ 	inode_inc_iversion(inode);
+ 	fat_truncate_time(inode, &ts, S_ATIME|S_CTIME|S_MTIME);
++	fat_truncate_crtime(MSDOS_SB(sb), &MSDOS_I(inode)->i_crtime, &MSDOS_I(inode)->i_crtime);
+ 	/* timestamp is already written, so mark_inode_dirty() is unneeded. */
+ 
+ 	d_instantiate(dentry, inode);
 -- 
 2.34.1
 
