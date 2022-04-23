@@ -2,26 +2,26 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3501450C90C
+	by mail.lfdr.de (Postfix) with ESMTP id C380350C90E
 	for <lists+linux-fsdevel@lfdr.de>; Sat, 23 Apr 2022 12:09:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234729AbiDWKKz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 23 Apr 2022 06:10:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41062 "EHLO
+        id S234824AbiDWKLA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 23 Apr 2022 06:11:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234289AbiDWKKy (ORCPT
+        with ESMTP id S234759AbiDWKK4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 23 Apr 2022 06:10:54 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0A141B2B00;
-        Sat, 23 Apr 2022 03:07:58 -0700 (PDT)
+        Sat, 23 Apr 2022 06:10:56 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3AE31B2B05;
+        Sat, 23 Apr 2022 03:07:59 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 75650B80AD3;
-        Sat, 23 Apr 2022 10:07:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE488C385A5;
-        Sat, 23 Apr 2022 10:07:53 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 605BF60F29;
+        Sat, 23 Apr 2022 10:07:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93900C385A8;
+        Sat, 23 Apr 2022 10:07:56 +0000 (UTC)
 From:   Catalin Marinas <catalin.marinas@arm.com>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
@@ -32,10 +32,12 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         linux-fsdevel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-btrfs@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v4 0/3] Avoid live-lock in btrfs fault-in+uaccess loop
-Date:   Sat, 23 Apr 2022 11:07:48 +0100
-Message-Id: <20220423100751.1870771-1-catalin.marinas@arm.com>
+Subject: [PATCH v4 1/3] mm: Add fault_in_subpage_writeable() to probe at sub-page granularity
+Date:   Sat, 23 Apr 2022 11:07:49 +0100
+Message-Id: <20220423100751.1870771-2-catalin.marinas@arm.com>
 X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20220423100751.1870771-1-catalin.marinas@arm.com>
+References: <20220423100751.1870771-1-catalin.marinas@arm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-6.7 required=5.0 tests=BAYES_00,
@@ -47,50 +49,141 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On hardware with features like arm64 MTE or SPARC ADI, an access fault
+can be triggered at sub-page granularity. Depending on how the
+fault_in_writeable() function is used, the caller can get into a
+live-lock by continuously retrying the fault-in on an address different
+from the one where the uaccess failed.
 
-A minor update from v3 here:
+In the majority of cases progress is ensured by the following
+conditions:
 
-https://lore.kernel.org/r/20220406180922.1522433-1-catalin.marinas@arm.com
+1. copy_to_user_nofault() guarantees at least one byte access if the
+   user address is not faulting.
 
-In patch 3/3 I dropped the 'len' local variable, so the btrfs patch
-simply replaces fault_in_writeable() with fault_in_subpage_writeable()
-and adds a comment. I kept David's ack as there's no functional change
-since v3.
+2. The fault_in_writeable() loop is resumed from the first address that
+   could not be accessed by copy_to_user_nofault().
 
-Andrew, since there was no objection last time around, I'd like this
-series to land in 5.19. As it touches arch, fs and mm, it should
-probably go in via the mm tree but I'm also happy to merge the series
-via arm64. Please let me know if you have any preference.
+If the loop iteration is restarted from an earlier (initial) point, the
+loop is repeated with the same conditions and it would live-lock.
 
-The btrfs search_ioctl() function can potentially live-lock on arm64
-with MTE enabled due to a fault_in_writeable() + copy_to_user_nofault()
-unbounded loop. The uaccess can fault in the middle of a page (MTE tag
-check fault) even if a prior fault_in_writeable() successfully wrote to
-the beginning of that page. The btrfs loop always restarts the fault-in
-loop from the beginning of the user buffer, hence the live-lock.
+Introduce an arch-specific probe_subpage_writeable() and call it from
+the newly added fault_in_subpage_writeable() function. The arch code
+with sub-page faults will have to implement the specific probing
+functionality.
 
-The series introduces fault_in_subpage_writeable() together with the
-arm64 probing counterpart and the btrfs fix.
+Note that no other fault_in_subpage_*() functions are added since they
+have no callers currently susceptible to a live-lock.
 
-Thanks.
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+---
+ arch/Kconfig            |  7 +++++++
+ include/linux/pagemap.h |  1 +
+ include/linux/uaccess.h | 22 ++++++++++++++++++++++
+ mm/gup.c                | 29 +++++++++++++++++++++++++++++
+ 4 files changed, 59 insertions(+)
 
-Catalin Marinas (3):
-  mm: Add fault_in_subpage_writeable() to probe at sub-page granularity
-  arm64: Add support for user sub-page fault probing
-  btrfs: Avoid live-lock in search_ioctl() on hardware with sub-page
-    faults
-
- arch/Kconfig                     |  7 +++++++
- arch/arm64/Kconfig               |  1 +
- arch/arm64/include/asm/mte.h     |  1 +
- arch/arm64/include/asm/uaccess.h | 15 +++++++++++++++
- arch/arm64/kernel/mte.c          | 30 ++++++++++++++++++++++++++++++
- fs/btrfs/ioctl.c                 |  7 ++++++-
- include/linux/pagemap.h          |  1 +
- include/linux/uaccess.h          | 22 ++++++++++++++++++++++
- mm/gup.c                         | 29 +++++++++++++++++++++++++++++
- 9 files changed, 112 insertions(+), 1 deletion(-)
-
-
-base-commit: b2d229d4ddb17db541098b83524d901257e93845
+diff --git a/arch/Kconfig b/arch/Kconfig
+index 29b0167c088b..b34032279926 100644
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -24,6 +24,13 @@ config KEXEC_ELF
+ config HAVE_IMA_KEXEC
+ 	bool
+ 
++config ARCH_HAS_SUBPAGE_FAULTS
++	bool
++	help
++	  Select if the architecture can check permissions at sub-page
++	  granularity (e.g. arm64 MTE). The probe_user_*() functions
++	  must be implemented.
++
+ config HOTPLUG_SMT
+ 	bool
+ 
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 993994cd943a..6165283bdb6f 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -1046,6 +1046,7 @@ void folio_add_wait_queue(struct folio *folio, wait_queue_entry_t *waiter);
+  * Fault in userspace address range.
+  */
+ size_t fault_in_writeable(char __user *uaddr, size_t size);
++size_t fault_in_subpage_writeable(char __user *uaddr, size_t size);
+ size_t fault_in_safe_writeable(const char __user *uaddr, size_t size);
+ size_t fault_in_readable(const char __user *uaddr, size_t size);
+ 
+diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
+index 546179418ffa..8bbb2dabac19 100644
+--- a/include/linux/uaccess.h
++++ b/include/linux/uaccess.h
+@@ -231,6 +231,28 @@ static inline bool pagefault_disabled(void)
+  */
+ #define faulthandler_disabled() (pagefault_disabled() || in_atomic())
+ 
++#ifndef CONFIG_ARCH_HAS_SUBPAGE_FAULTS
++
++/**
++ * probe_subpage_writeable: probe the user range for write faults at sub-page
++ *			    granularity (e.g. arm64 MTE)
++ * @uaddr: start of address range
++ * @size: size of address range
++ *
++ * Returns 0 on success, the number of bytes not probed on fault.
++ *
++ * It is expected that the caller checked for the write permission of each
++ * page in the range either by put_user() or GUP. The architecture port can
++ * implement a more efficient get_user() probing if the same sub-page faults
++ * are triggered by either a read or a write.
++ */
++static inline size_t probe_subpage_writeable(void __user *uaddr, size_t size)
++{
++	return 0;
++}
++
++#endif /* CONFIG_ARCH_HAS_SUBPAGE_FAULTS */
++
+ #ifndef ARCH_HAS_NOCACHE_UACCESS
+ 
+ static inline __must_check unsigned long
+diff --git a/mm/gup.c b/mm/gup.c
+index f598a037eb04..501bc150792c 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -1648,6 +1648,35 @@ size_t fault_in_writeable(char __user *uaddr, size_t size)
+ }
+ EXPORT_SYMBOL(fault_in_writeable);
+ 
++/**
++ * fault_in_subpage_writeable - fault in an address range for writing
++ * @uaddr: start of address range
++ * @size: size of address range
++ *
++ * Fault in a user address range for writing while checking for permissions at
++ * sub-page granularity (e.g. arm64 MTE). This function should be used when
++ * the caller cannot guarantee forward progress of a copy_to_user() loop.
++ *
++ * Returns the number of bytes not faulted in (like copy_to_user() and
++ * copy_from_user()).
++ */
++size_t fault_in_subpage_writeable(char __user *uaddr, size_t size)
++{
++	size_t faulted_in;
++
++	/*
++	 * Attempt faulting in at page granularity first for page table
++	 * permission checking. The arch-specific probe_subpage_writeable()
++	 * functions may not check for this.
++	 */
++	faulted_in = size - fault_in_writeable(uaddr, size);
++	if (faulted_in)
++		faulted_in -= probe_subpage_writeable(uaddr, faulted_in);
++
++	return size - faulted_in;
++}
++EXPORT_SYMBOL(fault_in_subpage_writeable);
++
+ /*
+  * fault_in_safe_writeable - fault in an address range for writing
+  * @uaddr: start of address range
