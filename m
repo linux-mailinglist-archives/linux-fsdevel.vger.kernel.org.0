@@ -2,148 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F05A150CEC6
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Apr 2022 04:59:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9240150D065
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 24 Apr 2022 10:07:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237912AbiDXDCM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 23 Apr 2022 23:02:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52594 "EHLO
+        id S238630AbiDXIKy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 24 Apr 2022 04:10:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57818 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231260AbiDXDCL (ORCPT
+        with ESMTP id S236428AbiDXIKx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 23 Apr 2022 23:02:11 -0400
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1954413FD8B;
-        Sat, 23 Apr 2022 19:59:11 -0700 (PDT)
-Received: from dggpeml500022.china.huawei.com (unknown [172.30.72.56])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4KmCXM72zlzhYKj;
-        Sun, 24 Apr 2022 10:58:59 +0800 (CST)
-Received: from dggpeml100012.china.huawei.com (7.185.36.121) by
- dggpeml500022.china.huawei.com (7.185.36.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Sun, 24 Apr 2022 10:59:10 +0800
-Received: from Linux-SUSE12SP5.huawei.com (10.67.189.3) by
- dggpeml100012.china.huawei.com (7.185.36.121) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Sun, 24 Apr 2022 10:59:09 +0800
-From:   yingelin <yingelin@huawei.com>
-To:     <ebiederm@xmission.com>, <keescook@chromium.org>,
-        <mcgrof@kernel.org>, <yzaikin@google.com>, <yingelin@huawei.com>
-CC:     <kexec@lists.infradead.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <chenjianguo3@huawei.com>,
-        <nixiaoming@huawei.com>, <qiuguorui1@huawei.com>,
-        <young.liuyang@huawei.com>, <zengweilin@huawei.com>
-Subject: [PATCH sysctl-testing v2] kernel/kexec_core: move kexec_core sysctls into its own file
-Date:   Sun, 24 Apr 2022 10:57:40 +0800
-Message-ID: <20220424025740.50371-1-yingelin@huawei.com>
-X-Mailer: git-send-email 2.26.2
+        Sun, 24 Apr 2022 04:10:53 -0400
+Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AB101816C6;
+        Sun, 24 Apr 2022 01:07:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1650787674; x=1682323674;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   mime-version:in-reply-to;
+  bh=Jg69NAeROVkmxoEWc411QwNioJnF4WnIiJ0sHVRfPPE=;
+  b=gl1rcmLSizfukbF+kURWVeQ4WDc6GXknisCAooeJSK5KrUnRfxau5Ldv
+   /f//mIHeegzZVbXychQYSUZfHzUbIjTOJl3EPoUtVvq0XVPY8jO9w8E0f
+   JFQTqnqvp/ODv0keKt0KFlKUEfIConqJkvaLbciCSEKkPWCX2ydMGRxTB
+   /VNcdAkmv/POalgQ2zYktLqTYvUeyp4OIpPWK9+t93vkosScOo/oJSXXW
+   FqJSK9QNlzhI4JSLEPT/SLI1n+nXxkoFs9ikujHMKt71obVDrzjLH/1lI
+   WBC0fvBjNjsGZiPDyOcx+S1S+Bf35DIwlTh1t7KKxyOO1uD2H7NZXhEnR
+   w==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10326"; a="265182519"
+X-IronPort-AV: E=Sophos;i="5.90,286,1643702400"; 
+   d="scan'208";a="265182519"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Apr 2022 01:07:53 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.90,286,1643702400"; 
+   d="scan'208";a="704146191"
+Received: from chaop.bj.intel.com (HELO localhost) ([10.240.192.101])
+  by fmsmga001.fm.intel.com with ESMTP; 24 Apr 2022 01:07:45 -0700
+Date:   Sun, 24 Apr 2022 16:07:37 +0800
+From:   Chao Peng <chao.p.peng@linux.intel.com>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Sean Christopherson <seanjc@google.com>,
+        Quentin Perret <qperret@google.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        kvm list <kvm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        Linux API <linux-api@vger.kernel.org>, qemu-devel@nongnu.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        "Nakajima, Jun" <jun.nakajima@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v5 00/13] KVM: mm: fd-based approach for supporting KVM
+ guest private memory
+Message-ID: <20220424080737.GA4207@chaop.bj.intel.com>
+Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
+References: <80aad2f9-9612-4e87-a27a-755d3fa97c92@www.fastmail.com>
+ <YkcTTY4YjQs5BRhE@google.com>
+ <83fd55f8-cd42-4588-9bf6-199cbce70f33@www.fastmail.com>
+ <YksIQYdG41v3KWkr@google.com>
+ <Ykslo2eo2eRXrpFR@google.com>
+ <eefc3c74-acca-419c-8947-726ce2458446@www.fastmail.com>
+ <Ykwbqv90C7+8K+Ao@google.com>
+ <YkyEaYiL0BrDYcZv@google.com>
+ <20220422105612.GB61987@chaop.bj.intel.com>
+ <ae7c9c7a-ecda-8c80-751f-f05dbc6489d7@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.67.189.3]
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- dggpeml100012.china.huawei.com (7.185.36.121)
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ae7c9c7a-ecda-8c80-751f-f05dbc6489d7@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Spam-Status: No, score=-7.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,
+        SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This move the kernel/kexec_core.c respective sysctls to its own file.
+On Fri, Apr 22, 2022 at 01:06:25PM +0200, Paolo Bonzini wrote:
+> On 4/22/22 12:56, Chao Peng wrote:
+> >          /* memfile notifier flags */
+> >          #define MFN_F_USER_INACCESSIBLE   0x0001  /* memory allocated in the file is inaccessible from userspace (e.g. read/write/mmap) */
+> >          #define MFN_F_UNMOVABLE           0x0002  /* memory allocated in the file is unmovable */
+> >          #define MFN_F_UNRECLAIMABLE       0x0003  /* memory allocated in the file is unreclaimable (e.g. via kswapd or any other pathes) */
+> 
+> You probably mean BIT(0/1/2) here.
 
-kernel/sysctl.c has grown to an insane mess, We move sysctls to places
-where features actually belong to improve the readability and reduce
-merge conflicts. At the same time, the proc-sysctl maintainers can easily
-care about the core logic other than the sysctl knobs added for some feature.
+Right, it's BIT(n), Thanks.
 
-We already moved all filesystem sysctls out. This patch is part of the effort
-to move kexec related sysctls out.
-
-Signed-off-by: yingelin <yingelin@huawei.com>
-
----
-v2:
-  1. Add the explanation to commit log to help patch review and subsystem
-  maintainers better understand the context/logic behind the migration
-  2. Add CONFIG_SYSCTL to to isolate the sysctl
-  3. Change subject-prefix of sysctl-next to sysctl-testing
-
-v1: https://lore.kernel.org/lkml/20220223030318.213093-1-yingelin@huawei.com/
-  1. Lack more informations in the commit log to help patch review better
-  2. Lack isolation of the sysctl
-  3. Use subject-prefix of sysctl-next
----
- kernel/kexec_core.c | 22 ++++++++++++++++++++++
- kernel/sysctl.c     | 13 -------------
- 2 files changed, 22 insertions(+), 13 deletions(-)
-
-diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
-index 68480f731192..a0456baf52cc 100644
---- a/kernel/kexec_core.c
-+++ b/kernel/kexec_core.c
-@@ -936,6 +936,28 @@ int kimage_load_segment(struct kimage *image,
- struct kimage *kexec_image;
- struct kimage *kexec_crash_image;
- int kexec_load_disabled;
-+#ifdef CONFIG_SYSCTL
-+static struct ctl_table kexec_core_sysctls[] = {
-+	{
-+		.procname	= "kexec_load_disabled",
-+		.data		= &kexec_load_disabled,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		/* only handle a transition from default "0" to "1" */
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= SYSCTL_ONE,
-+		.extra2		= SYSCTL_ONE,
-+	},
-+	{ }
-+};
-+
-+static int __init kexec_core_sysctl_init(void)
-+{
-+	register_sysctl_init("kernel", kexec_core_sysctls);
-+	return 0;
-+}
-+late_initcall(kexec_core_sysctl_init);
-+#endif
- 
- /*
-  * No panic_cpu check version of crash_kexec().  This function is called
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index b60345cbadf0..0f3cb61a2e39 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -61,7 +61,6 @@
- #include <linux/capability.h>
- #include <linux/binfmts.h>
- #include <linux/sched/sysctl.h>
--#include <linux/kexec.h>
- #include <linux/mount.h>
- #include <linux/userfaultfd_k.h>
- #include <linux/pid.h>
-@@ -1712,18 +1711,6 @@ static struct ctl_table kern_table[] = {
- 		.proc_handler	= tracepoint_printk_sysctl,
- 	},
- #endif
--#ifdef CONFIG_KEXEC_CORE
--	{
--		.procname	= "kexec_load_disabled",
--		.data		= &kexec_load_disabled,
--		.maxlen		= sizeof(int),
--		.mode		= 0644,
--		/* only handle a transition from default "0" to "1" */
--		.proc_handler	= proc_dointvec_minmax,
--		.extra1		= SYSCTL_ONE,
--		.extra2		= SYSCTL_ONE,
--	},
--#endif
- #ifdef CONFIG_MODULES
- 	{
- 		.procname	= "modprobe",
--- 
-2.26.2
-
+Chao
+> 
+> Paolo
+> 
+> >      When memfile_notifier is being registered, memfile_register_notifier will
+> >      need check these flags. E.g. for MFN_F_USER_INACCESSIBLE, it fails when
+> >      previous mmap-ed mapping exists on the fd (I'm still unclear on how to do
+> >      this). When multiple consumers are supported it also need check all
+> >      registered consumers to see if any conflict (e.g. all consumers should have
+> >      MFN_F_USER_INACCESSIBLE set). Only when the register succeeds, the fd is
+> >      converted into a private fd, before that, the fd is just a normal (shared)
+> >      one. During this conversion, the previous data is preserved so you can put
+> >      some initial data in guest pages (whether the architecture allows this is
+> >      architecture-specific and out of the scope of this patch).
