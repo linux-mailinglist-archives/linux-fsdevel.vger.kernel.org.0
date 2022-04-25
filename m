@@ -2,105 +2,174 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DBCD850D660
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Apr 2022 02:46:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F36C550D68D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Apr 2022 03:28:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240037AbiDYAtJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 24 Apr 2022 20:49:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34660 "EHLO
+        id S240154AbiDYBbZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 24 Apr 2022 21:31:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240032AbiDYAtF (ORCPT
+        with ESMTP id S240145AbiDYBbT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 24 Apr 2022 20:49:05 -0400
-Received: from mail-qt1-x82f.google.com (mail-qt1-x82f.google.com [IPv6:2607:f8b0:4864:20::82f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50E371C903;
-        Sun, 24 Apr 2022 17:46:00 -0700 (PDT)
-Received: by mail-qt1-x82f.google.com with SMTP id v2so2727496qto.6;
-        Sun, 24 Apr 2022 17:46:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=lUfRNFCLBP3uFMSuVP2gohDe8N80eyAcPJ7OERj4nyU=;
-        b=Zhlu1wPjtycgm4h/SbFthtBn6M7XP5HH9QzvnlBs8/gkCnV1FfpIpmYLGTTiXqmfaZ
-         b/XOB9GBUX7NsJJvw3DYcjZemRe4zK2AVq7vICdzvDbsG4y1qf6fcfsQThlXZJ+ZLhug
-         Zgrjq3EiuyKsZKBr1Lqd5H7GfgD+LkCsu/E4fXYKQoQp+nOVDfl2TZdq1kSQlXYE+spq
-         vKG9RSg8ClFj2el1cExDAPn9vMq3/2p9IbMttzTeQPZu/p7ZamPuJAVwpZWjuR9dJ7D2
-         HrQvJZRxTSYMsO5a8HNmVB5VBZjns/lk1r/oV+p3m+ywT27uFdWXc9pL9M59NhtpuXbW
-         hmGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=lUfRNFCLBP3uFMSuVP2gohDe8N80eyAcPJ7OERj4nyU=;
-        b=UnsNH8S9kJlwQ19wAT2wuKjzwMImALqtRz3IDxGlz8rH5utNy6C4GfRCJ68nmATrO4
-         n1HzryiSDDF3bGMte/LStQReZF77jE2OZU7Zh3NG4IF83ChHyRHFW5+6iiNZQ96MwW2e
-         wqakNfzj7FFhRAUF3sjsRvtetAHDnky72UyutXSaEsQkhTsbWk6TkxBOiIoVfWoU4xYc
-         F1pcX0cypwqBCBLCcnMBiNE+hWHzO+4Gw8lFXac1KDMCTctEnZDfFkeqVA2Nla3AeCfj
-         o8Rm08D627OSbBpRuTmBjLuaZ5Pq+1eSEFQ+m5xNrEXzT2+ZHMwbHFb/99uJcnsRhqDy
-         wfnQ==
-X-Gm-Message-State: AOAM5326YgZUKi6PRCAjea7keeBeWAFTKuMS2bJP3b89MutP7iyA0H9d
-        t0t74lLuCjnLmYb4RsrlkQ==
-X-Google-Smtp-Source: ABdhPJyI5g4R5aAGDCwE3uoQfWTCQnIEklx2JnXGiFsOoOFU+YQFmrGStZwOa52FAmkfmSaAOohC8Q==
-X-Received: by 2002:ac8:7d08:0:b0:2f1:e349:adb7 with SMTP id g8-20020ac87d08000000b002f1e349adb7mr10338487qtb.616.1650847559580;
-        Sun, 24 Apr 2022 17:45:59 -0700 (PDT)
-Received: from moria.home.lan (c-73-219-103-14.hsd1.vt.comcast.net. [73.219.103.14])
-        by smtp.gmail.com with ESMTPSA id p13-20020a05622a048d00b002e1ce0c627csm5625644qtx.58.2022.04.24.17.45.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 Apr 2022 17:45:58 -0700 (PDT)
-Date:   Sun, 24 Apr 2022 20:45:56 -0400
-From:   Kent Overstreet <kent.overstreet@gmail.com>
-To:     Joe Perches <joe@perches.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, hch@lst.de, hannes@cmpxchg.org,
-        akpm@linux-foundation.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-input@vger.kernel.org,
-        roman.gushchin@linux.dev
-Subject: Re: [PATCH v2 1/8] lib/printbuf: New data structure for
- heap-allocated strings
-Message-ID: <20220425004556.psqcz3vxfhetuuak@moria.home.lan>
-References: <20220421234837.3629927-1-kent.overstreet@gmail.com>
- <20220421234837.3629927-7-kent.overstreet@gmail.com>
- <fcaf18ed6efaafa6ca7df79712d9d317645215f8.camel@perches.com>
+        Sun, 24 Apr 2022 21:31:19 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BD3D0DE935
+        for <linux-fsdevel@vger.kernel.org>; Sun, 24 Apr 2022 18:28:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1650850092;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=yWGAvjQef7xMOnO4TUloUSDXWdlreZxNm5RKmGNAwQs=;
+        b=fkc1/fo/uOKJ8+WUu8EP6MAnv5HuasTXU1AGvh1cpcyZjl6twxbjwb7yQZc4+Zen/a39/+
+        zDJq1IdyvZR6nygK1Drn/zkb9/NNW7Ht4R+RKO2V27cDEMzOrulkUKmw1pU7VoaIwluhfV
+        lln1YrPgO0iHVez9P7vAbAZPqFDJM6g=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-1-HvICT7MBPIa_1yJKboZq2Q-1; Sun, 24 Apr 2022 21:28:07 -0400
+X-MC-Unique: HvICT7MBPIa_1yJKboZq2Q-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 6A5AD1C0514D;
+        Mon, 25 Apr 2022 01:28:06 +0000 (UTC)
+Received: from localhost (ovpn-12-73.pek2.redhat.com [10.72.12.73])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id EFC6B40EC001;
+        Mon, 25 Apr 2022 01:28:04 +0000 (UTC)
+Date:   Mon, 25 Apr 2022 09:28:01 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     yingelin <yingelin@huawei.com>
+Cc:     ebiederm@xmission.com, keescook@chromium.org, mcgrof@kernel.org,
+        yzaikin@google.com, kexec@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        chenjianguo3@huawei.com, nixiaoming@huawei.com,
+        qiuguorui1@huawei.com, young.liuyang@huawei.com,
+        zengweilin@huawei.com
+Subject: Re: [PATCH sysctl-testing v2] kernel/kexec_core: move kexec_core
+ sysctls into its own file
+Message-ID: <YmX5Ic8eyMQZbIxY@MiWiFi-R3L-srv>
+References: <20220424025740.50371-1-yingelin@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fcaf18ed6efaafa6ca7df79712d9d317645215f8.camel@perches.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <20220424025740.50371-1-yingelin@huawei.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.11.54.2
+X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Apr 24, 2022 at 04:46:03PM -0700, Joe Perches wrote:
-> On Thu, 2022-04-21 at 19:48 -0400, Kent Overstreet wrote:
-> > This adds printbufs: simple heap-allocated strings meant for building up
-> > structured messages, for logging/procfs/sysfs and elsewhere. They've
-> > been heavily used in bcachefs for writing .to_text() functions/methods -
-> > pretty printers, which has in turn greatly improved the overall quality
-> > of error messages.
-> > 
-> > Basic usage is documented in include/linux/printbuf.h.
+On 04/24/22 at 10:57am, yingelin wrote:
+> This move the kernel/kexec_core.c respective sysctls to its own file.
 > 
-> Given the maximum printk output is less than 1024 bytes, why should
-> this be allowed to be larger than that or larger than PAGE_SIZE?
-
-It's not just used there - in bcachefs I use it for sysfs & debugfs, as well as
-userspace code for e.g. printing out the superblock (which gets pretty big when
-including all the variable length sections).
-
-> > + * pr_human_readable_u64, pr_human_readable_s64: Print an integer with human
-> > + * readable units.
+> kernel/sysctl.c has grown to an insane mess, We move sysctls to places
+> where features actually belong to improve the readability and reduce
+> merge conflicts. At the same time, the proc-sysctl maintainers can easily
+> care about the core logic other than the sysctl knobs added for some feature.
 > 
-> Why not extend vsprintf for this using something like %pH[8|16|32|64] 
-> or %pH[c|s|l|ll|uc|us|ul|ull] ?
+> We already moved all filesystem sysctls out. This patch is part of the effort
+> to move kexec related sysctls out.
+> 
+> Signed-off-by: yingelin <yingelin@huawei.com>
 
-It'd be incompatible with userspace printf. I do like the way we extend printf
-is the kernel, but I'm trying to make sure the code I write now is by default
-portable between both kernel space and userspace. Glibc has its own mechanism
-for extending printf, I've been meaning to look at that more and see if it'd be
-possible to do something more generic and extensible that works for both.
+LGTM,
+
+Acked-by: Baoquan He <bhe@redhat.com>
+
+> 
+> ---
+> v2:
+>   1. Add the explanation to commit log to help patch review and subsystem
+>   maintainers better understand the context/logic behind the migration
+>   2. Add CONFIG_SYSCTL to to isolate the sysctl
+>   3. Change subject-prefix of sysctl-next to sysctl-testing
+> 
+> v1: https://lore.kernel.org/lkml/20220223030318.213093-1-yingelin@huawei.com/
+>   1. Lack more informations in the commit log to help patch review better
+>   2. Lack isolation of the sysctl
+>   3. Use subject-prefix of sysctl-next
+> ---
+>  kernel/kexec_core.c | 22 ++++++++++++++++++++++
+>  kernel/sysctl.c     | 13 -------------
+>  2 files changed, 22 insertions(+), 13 deletions(-)
+> 
+> diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+> index 68480f731192..a0456baf52cc 100644
+> --- a/kernel/kexec_core.c
+> +++ b/kernel/kexec_core.c
+> @@ -936,6 +936,28 @@ int kimage_load_segment(struct kimage *image,
+>  struct kimage *kexec_image;
+>  struct kimage *kexec_crash_image;
+>  int kexec_load_disabled;
+> +#ifdef CONFIG_SYSCTL
+> +static struct ctl_table kexec_core_sysctls[] = {
+> +	{
+> +		.procname	= "kexec_load_disabled",
+> +		.data		= &kexec_load_disabled,
+> +		.maxlen		= sizeof(int),
+> +		.mode		= 0644,
+> +		/* only handle a transition from default "0" to "1" */
+> +		.proc_handler	= proc_dointvec_minmax,
+> +		.extra1		= SYSCTL_ONE,
+> +		.extra2		= SYSCTL_ONE,
+> +	},
+> +	{ }
+> +};
+> +
+> +static int __init kexec_core_sysctl_init(void)
+> +{
+> +	register_sysctl_init("kernel", kexec_core_sysctls);
+> +	return 0;
+> +}
+> +late_initcall(kexec_core_sysctl_init);
+> +#endif
+>  
+>  /*
+>   * No panic_cpu check version of crash_kexec().  This function is called
+> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> index b60345cbadf0..0f3cb61a2e39 100644
+> --- a/kernel/sysctl.c
+> +++ b/kernel/sysctl.c
+> @@ -61,7 +61,6 @@
+>  #include <linux/capability.h>
+>  #include <linux/binfmts.h>
+>  #include <linux/sched/sysctl.h>
+> -#include <linux/kexec.h>
+>  #include <linux/mount.h>
+>  #include <linux/userfaultfd_k.h>
+>  #include <linux/pid.h>
+> @@ -1712,18 +1711,6 @@ static struct ctl_table kern_table[] = {
+>  		.proc_handler	= tracepoint_printk_sysctl,
+>  	},
+>  #endif
+> -#ifdef CONFIG_KEXEC_CORE
+> -	{
+> -		.procname	= "kexec_load_disabled",
+> -		.data		= &kexec_load_disabled,
+> -		.maxlen		= sizeof(int),
+> -		.mode		= 0644,
+> -		/* only handle a transition from default "0" to "1" */
+> -		.proc_handler	= proc_dointvec_minmax,
+> -		.extra1		= SYSCTL_ONE,
+> -		.extra2		= SYSCTL_ONE,
+> -	},
+> -#endif
+>  #ifdef CONFIG_MODULES
+>  	{
+>  		.procname	= "modprobe",
+> -- 
+> 2.26.2
+> 
+> 
+> _______________________________________________
+> kexec mailing list
+> kexec@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/kexec
+> 
+
