@@ -2,105 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B7AC50DB6C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Apr 2022 10:41:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3570350DC39
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Apr 2022 11:17:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235530AbiDYIoO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Apr 2022 04:44:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47678 "EHLO
+        id S232180AbiDYJTW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Apr 2022 05:19:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47558 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236883AbiDYIoK (ORCPT
+        with ESMTP id S241615AbiDYJRm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Apr 2022 04:44:10 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52E377CDC2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Apr 2022 01:40:59 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id i27so28168120ejd.9
-        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Apr 2022 01:40:59 -0700 (PDT)
+        Mon, 25 Apr 2022 05:17:42 -0400
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 066A32ACB
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Apr 2022 02:14:37 -0700 (PDT)
+Received: by mail-lj1-x244.google.com with SMTP id m23so6183009ljc.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Apr 2022 02:14:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yo7vm9yRg/QAt1cNLA0IMYEFR0QnFkwTlujuFxJ6tig=;
-        b=Yj5v2QNu+40yHuj9V96wK5Lk2PRlgVVxr+SlafzZ7eT6mKUsJEGiQPF9w+B+5CX7oH
-         LoXOZtHd1okc62V7YZhvvG0vy6cbqi0Nxx7zPn2IhK4P8HppahbIB3U4Np3NxBkP1N81
-         HkdlYhhE9SpupA1RSfERLDb5m+NekQwnEyTKE=
+        d=gmail.com; s=20210112;
+        h=mime-version:sender:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=2m/c+HTiq67jsqWp8uamRbhLl470hiH704V1w+W3v9Y=;
+        b=jV5IejTqKww9m5p2E3yNQoiDCHrSSoaYJ3RY8jrK5RJIfuJKMJnhPA2hpcfritboFZ
+         PtwudkHZI90wkTCh89wZ/ZLgMpRXCsBif78tpHGswieki2saZE09X+Py03vNMQFL8VeW
+         Sxq7JRJG+8Nxo6zcMa5qNW4FOvd19mQuxzXdaGBoKVLaI8aP7s1zM1AFmXKE/Sv1rlTg
+         kFj0F2r6n8Zz8+cQclaODn8M0sEuG/MDsnmCGPGQkMXmQjI/3d6gjW23BdJW3YXjeI75
+         +ozjklICqXoASiKXEaofCQJOGYBERtJldGz/ZW7LQ+5aOIefBj/AQqxb717YKb6N3In4
+         kpLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yo7vm9yRg/QAt1cNLA0IMYEFR0QnFkwTlujuFxJ6tig=;
-        b=J816nq8Wc0G+LzUmE2Vo1xIH9aQH6BH7FwtSlOKeLYLFXaj8LHX9P0tccxbgfyW1nJ
-         jzc8ODGELleYSK+Q20qDib88hrp0EjG7it8/leSmXiD0xh2dsdcAT1F5Qb5l9zG2MQUC
-         R7kXfy4RV/keh8VEBjr9Oe0a+Ue7pFwRDUN6ynsRr3ZYLLvLRQddxXmtduV6hztZt6Ri
-         YBkiyW7h8XqTmrfOUqnt7FvK6Zkg94Sh1DyC1MRJpizUGFqr07Uel0OiTxFYGnxrFfaE
-         rt+cAXgT0d7HA2SgL9uzyegLn7bFP00t6QOWJFhjTIgMv/muGikyM6lUkHCF9KBIdgfM
-         LhEA==
-X-Gm-Message-State: AOAM533qMl0jQAKYj/B3oDIc+kNICc5qEFsFleB8JKAgiYioZzVu6CBZ
-        Q6/SsWy2GVM6b8uZ3hI0arb2yTt0EiAxHUCgZeZ5RQ==
-X-Google-Smtp-Source: ABdhPJzrHXhPirdz/qLVLB8fMpWlNTSB58OH+GuOBLRSDrrxcvhyz9FXzX0JJ7wK3nskKjTkUX8GTQUVo6vroLyDu74=
-X-Received: by 2002:a17:906:8982:b0:6f3:95f4:4adf with SMTP id
- gg2-20020a170906898200b006f395f44adfmr3637776ejc.524.1650876057869; Mon, 25
- Apr 2022 01:40:57 -0700 (PDT)
+        h=x-gm-message-state:mime-version:sender:from:date:message-id:subject
+         :to:content-transfer-encoding;
+        bh=2m/c+HTiq67jsqWp8uamRbhLl470hiH704V1w+W3v9Y=;
+        b=tpccz4H4/JTPJDmmcG4NUdRs5PvUtgDzH6XwVP0PBxxeWoTyKND3KYhf2nMgeQz+Ib
+         Fm2rRUVTjULXhchOEC86e+vv26YFFH0Up6G3ADEKK2TjBuoCmvMFdsKU6Kb0sF9hd+MR
+         J15uZm7W7oAqgCiRAf9Fy4Z1vbrH5D1wTfQGsPASxhZkOhmANP73o1IWvuzNKFtfAkD9
+         nvorRclc18+T24DMiKfWcsmpERga4UGzFutIbF77l/a2voVUp66zZyabrKzy8w2CSA2S
+         jM4yVedOvAc0W4Zap5KIOQ55lSBKWOxDsvL9nBr0oFz/T0xMAwflPicdfUMeDR4xzJ9P
+         nb5Q==
+X-Gm-Message-State: AOAM532Y+GEkfEVYD+9ICLHyJzoI8Dbx0Zdyufi6wqGMEFiVjU0CsXRe
+        5Y3p+/cQScO0Ux8Wq7XkRKNXCIDbXidQbSccnKw=
+X-Google-Smtp-Source: ABdhPJwnAmzVDZEbgIuacSMejMgpglIadnKh9wnDut6EIH7XY/Z0j9KYfxScd9/xbBLjtK8ZkyjMrwSGVHh2Yl2wsks=
+X-Received: by 2002:a2e:8e91:0:b0:24d:aac1:f855 with SMTP id
+ z17-20020a2e8e91000000b0024daac1f855mr10924742ljk.28.1650878076217; Mon, 25
+ Apr 2022 02:14:36 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220408061809.12324-1-dharamhans87@gmail.com>
- <20220408061809.12324-2-dharamhans87@gmail.com> <CAJfpegvU+y+WRhWrgWfc_7O5BdVi=N+3RUuVdBFFoyYVr9MDeg@mail.gmail.com>
- <CACUYsyGiNgbyoxWWdXm0z73B7QfnPGU2gYanDNSQqmq5_rnrhw@mail.gmail.com>
- <CAJfpegsZF4D-sshMK0C=jSECskyQRAgA_1hKD9ytsHKvmXoBeA@mail.gmail.com> <2c8e61de-54da-44da-3a7b-b95eabfb29f2@ddn.com>
-In-Reply-To: <2c8e61de-54da-44da-3a7b-b95eabfb29f2@ddn.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 25 Apr 2022 10:40:46 +0200
-Message-ID: <CAJfpegtsTiO8tJ5yP0tonh3zu4125JXaJ0cOY-e_B5dDxmfSug@mail.gmail.com>
-Subject: Re: [PATCH 1/1] FUSE: Allow parallel direct writes on the same file
-To:     Bernd Schubert <bschubert@ddn.com>
-Cc:     Dharmendra Hans <dharamhans87@gmail.com>,
-        linux-fsdevel@vger.kernel.org,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        linux-kernel@vger.kernel.org, Dharmendra Singh <dsingh@ddn.com>
+Sender: mitchfastloans@gmail.com
+Received: by 2002:a9a:4c46:0:b0:1b9:a92f:831f with HTTP; Mon, 25 Apr 2022
+ 02:14:35 -0700 (PDT)
+From:   "Warren E. Buffett" <wbuffett534@gmail.com>
+Date:   Mon, 25 Apr 2022 02:14:35 -0700
+X-Google-Sender-Auth: lso87YkEPt6Ye27_zdq51q-nJ0s
+Message-ID: <CAKMcEtNZ3DF9U48w6KuGxkHuhp3Q9=DbevKHtk+RjZc4==qcdQ@mail.gmail.com>
+Subject: Darowizna !!!
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=2.8 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,LOTS_OF_MONEY,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,UNDISC_MONEY autolearn=no
         autolearn_force=no version=3.4.6
+X-Spam-Level: **
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 22 Apr 2022 at 17:20, Bernd Schubert <bschubert@ddn.com> wrote:
->
->
->
-> On 4/22/22 16:48, Miklos Szeredi wrote:
-> > On Fri, 22 Apr 2022 at 16:30, Dharmendra Hans <dharamhans87@gmail.com> wrote:
-> >>
-> >> On Thu, Apr 21, 2022 at 8:52 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
-> >>>
-> >>> On Fri, 8 Apr 2022 at 08:18, Dharmendra Singh <dharamhans87@gmail.com> wrote:
-> >>>>
-> >
-> > That's true, but I still worry...  Does your workload include
-> > non-append extending writes?  Seems to me making those run in parallel
-> > is asking for trouble.
->
-> Our main use case is MPIIO for now and I don't think it first sets the
-> file size and would then write to these sparse files. Fixing all the
-> different MPI implementations including closed source stacks is probably
-> out of question.
+--=20
+Drogi Zwyci=C4=99zco,
 
-Okay.
 
-> Given that MPIIO also supports direct calls into its stack we also do
-> support that for some MPIs, but not all stacks. Direct calls bypassing
-> the vfs also haas  it's own issues, including security. So it would be
-> really great if we could find a way to avoid the inode lock.
->
-> Would you mind to share what you worry about in detail?
+ Nazywam si=C4=99 Warren E. Buffett, jestem ameryka=C5=84skim magnatem
+biznesowym, inwestorem i filantropem. Jestem odnosz=C4=85cym najwi=C4=99ksz=
+e
+sukcesy inwestorem na =C5=9Bwiecie. G=C5=82=C4=99boko wierz=C4=99 w zasad=
+=C4=99 "dawania za
+=C5=BCycia". Mam jedn=C4=85 ide=C4=99, kt=C3=B3ra nigdy nie zmieni=C5=82a s=
+i=C4=99 w moim umy=C5=9Ble, =C5=BCe
+powiniene=C5=9B u=C5=BCywa=C4=87 swojego bogactwa, aby pomaga=C4=87 ludziom=
+ i zdecydowa=C5=82em
+si=C4=99 przekaza=C4=87 { 3,500,000.00 Euro } Trzy Miliony Pi=C4=99=C4=87se=
+t Tysi=C4=99cy Euro
+losowo wybranym ludziom na ca=C5=82ym =C5=9Bwiecie. Kiedy otrzymasz ten e-m=
+ail,
+powiniene=C5=9B liczy=C4=87 si=C4=99 jako szcz=C4=99=C5=9Bciarz, poniewa=C5=
+=BC Tw=C3=B3j adres e-mail
+zosta=C5=82 wybrany online podczas losowego wyszukiwania.
 
-I worry about breaking the assumption about i_size does not change if
-inode lock is held (exclusive of shared).
 
-Maybe that's not an issue, but we'd need to look very carefully.
+Prosz=C4=99 odezwij si=C4=99 do mnie szybko, abym wiedzia=C5=82, =C5=BCe Tw=
+=C3=B3j adres e-mail
+jest poprawny.
 
-Thanks,
-Miklos
+
+Odwied=C5=BA t=C4=99 stron=C4=99: https://en.wikipedia.org/wiki/Warren_Buff=
+ett lub
+wyszukaj moje nazwisko w google, aby uzyska=C4=87 wi=C4=99cej informacji:
+(Warren E. Buffett).
+
+
+Z niecierpliwo=C5=9Bci=C4=85 czekam na odpowied=C5=BA.
+
+
+Z powa=C5=BCaniem,
+Pan Warren E. Buffett
+Dyrektor Generalny: Berkshire Hathaway
+
+http://www.berkshirehathaway.com/
