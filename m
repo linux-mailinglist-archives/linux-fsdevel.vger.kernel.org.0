@@ -2,50 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D356E50E647
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Apr 2022 18:54:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F0FD50E69C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Apr 2022 19:11:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242155AbiDYQ52 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Apr 2022 12:57:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37900 "EHLO
+        id S243741AbiDYROf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Apr 2022 13:14:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235375AbiDYQ50 (ORCPT
+        with ESMTP id S232474AbiDYROe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Apr 2022 12:57:26 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F6E43A739;
-        Mon, 25 Apr 2022 09:54:21 -0700 (PDT)
+        Mon, 25 Apr 2022 13:14:34 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45ED213DD7;
+        Mon, 25 Apr 2022 10:11:30 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 963F361338;
-        Mon, 25 Apr 2022 16:54:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC2B5C385A7;
-        Mon, 25 Apr 2022 16:54:19 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id E976BB8185B;
+        Mon, 25 Apr 2022 17:11:28 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31CC6C385A7;
+        Mon, 25 Apr 2022 17:11:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650905660;
-        bh=KXJVeHvfBoeQRSEK/W6Wv+6jM5VvVPCcOez/eDrDa1w=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=re87esaQWebxX3nfjHmMciUuhhC1LDKwLCuG7M+0mkFIuf6LR+a/n4c9h1V+C54eG
-         DadjpAAgQP5J12j9f6RO2lqNhPVYbMn0weoP90W8++PUVGZ7OwY0OBLneHX6aOGg0s
-         V+6SMQxFOpDbiN/aDkuwcyVTU8uHG3zaGN3zm9PewFypc+FEnCh4ZjtvD8JOmM+ah/
-         ErgvD1qIdx4fC7mX4YZ4s24KS624NdBHSAxB/lkhjqKp4n88pnk/snSq0zUpBUyGDb
-         /omD9QlzDiqrLuXTUPgm/x8FvybYfkwJKTJE47IGJozAqtdZ5YENtG2WglOfwPe4Xo
-         J94od0WvEUWAA==
-Date:   Mon, 25 Apr 2022 09:54:19 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Yang Xu <xuyang2018.jy@fujitsu.com>
-Cc:     linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org,
-        viro@zeniv.linux.org.uk, david@fromorbit.com, brauner@kernel.org,
-        willy@infradead.org, jlayton@kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v6 2/4] fs: Add missing umask strip in vfs_tmpfile
-Message-ID: <20220425165419.GE16996@magnolia>
-References: <1650856181-21350-1-git-send-email-xuyang2018.jy@fujitsu.com>
- <1650856181-21350-2-git-send-email-xuyang2018.jy@fujitsu.com>
+        s=k20201202; t=1650906687;
+        bh=+bgp0PfSTA56OI/cMQNiiWX7cdawrhm8C4d75Ow+If4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=KYWt7eUYGSFAvr/Q6cedy60WfBDeIUGU5kVNpwszBm1hC4HazvvJ37RtMC3sUrw3m
+         XTICnlfapX5xfG8Kpf2GKjCpg4ZYW9N05NyzJ7JIG+rvm/CG0YiTqanDmom4e5kPnZ
+         f29mybYSk/SUUCCT7h79rmWanjEyeWH+HrzYgyW6pwiUjbtRnhc7QkWsV5+hb6+BOH
+         qD3IFU2pasMZgbStcsIKbzzT7nJKMyl6tmTBDJzKgorW3txcyOhKeI6a9hB2f5O+It
+         1+p4uKQrKi1WgdTvZuw2BQrolj3tu16PD4Tf0ieZGmDNNsjxmRHQzkn/PJoQyQnPVc
+         0rlhgf+IrkuvQ==
+Date:   Mon, 25 Apr 2022 10:11:26 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Chuck Lever <chuck.lever@oracle.com>
+Cc:     netdev@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-cifs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, ak@tempesta-tech.com,
+        borisp@nvidia.com, simo@redhat.com
+Subject: Re: [PATCH RFC 2/5] tls: build proto after context has been
+ initialized
+Message-ID: <20220425101126.0efa9f51@kernel.org>
+In-Reply-To: <165030057652.5073.10364318727607743572.stgit@oracle-102.nfsv4.dev>
+References: <165030051838.5073.8699008789153780301.stgit@oracle-102.nfsv4.dev>
+        <165030057652.5073.10364318727607743572.stgit@oracle-102.nfsv4.dev>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1650856181-21350-2-git-send-email-xuyang2018.jy@fujitsu.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -55,43 +57,12 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 25, 2022 at 11:09:39AM +0800, Yang Xu wrote:
-> All creation paths except for O_TMPFILE handle umask in the vfs directly
-> if the filesystem doesn't support or enable POSIX ACLs. If the filesystem
-> does then umask handling is deferred until posix_acl_create().
-> Because, O_TMPFILE misses umask handling in the vfs it will not honor
-> umask settings. Fix this by adding the missing umask handling.
+On Mon, 18 Apr 2022 12:49:36 -0400 Chuck Lever wrote:
+> From: Hannes Reinecke <hare@suse.de>
 > 
-> Fixes: 60545d0d4610 ("[O_TMPFILE] it's still short a few helpers, but infrastructure should be OK now...")
+> We have to build the proto ops only after the context has been
+> initialized, as otherwise we might crash when I/O is ongoing
+> during initialisation.
 
-If I had a nickel for every time I felt like I was short a few
-helpers... ;)
-
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-
---D
-
-> Cc: <stable@vger.kernel.org> # 4.19+
-> Reported-by: Christian Brauner (Microsoft) <brauner@kernel.org>
-> Acked-by: Christian Brauner (Microsoft) <brauner@kernel.org>
-> Signed-off-by: Yang Xu <xuyang2018.jy@fujitsu.com>
-> ---
->  fs/namei.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 509657fdf4f5..73646e28fae0 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -3521,6 +3521,8 @@ struct dentry *vfs_tmpfile(struct user_namespace *mnt_userns,
->  	child = d_alloc(dentry, &slash_name);
->  	if (unlikely(!child))
->  		goto out_err;
-> +	if (!IS_POSIXACL(dir))
-> +		mode &= ~current_umask();
->  	error = dir->i_op->tmpfile(mnt_userns, dir, child, mode);
->  	if (error)
->  		goto out_err;
-> -- 
-> 2.27.0
-> 
+Can you say more about the crash you see? protos are not used until 
+at least one socket calls update_sk_prot().
