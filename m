@@ -2,44 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A299550EADA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Apr 2022 22:52:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A73D750EADE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Apr 2022 22:53:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244792AbiDYUzD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Apr 2022 16:55:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50412 "EHLO
+        id S245166AbiDYU4t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Apr 2022 16:56:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57894 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231753AbiDYUzC (ORCPT
+        with ESMTP id S231753AbiDYU4t (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Apr 2022 16:55:02 -0400
+        Mon, 25 Apr 2022 16:56:49 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50DDD344C4;
-        Mon, 25 Apr 2022 13:51:57 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5F2E10F436;
+        Mon, 25 Apr 2022 13:53:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
         MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=UezYTpkGwwWHLr7TCtI1U2DaUhIahmheDQtz2U252E8=; b=AiubjeiyEAbQT1rdssolc9+eZK
-        naeZMgkl43Z0EmDFbEoCYDmvpiO4T72GaML9jlCS+eBzGNwOKFluO2V07O5H9zyulLE72HREp993g
-        EXbExZH1WBQbZ6NXNeSd/EgfIObs2hEz6ebhZ/YY6iBd1FPKu2Xs/RzlDZuJ86EpubGQLJeCVZybG
-        ENn1LZgUp/3ycXHGzA2iHKMOOoc/Sa5Yv3jKfTBNfLU7fGO4i+abaRcpsCln6CyOEXtzy+QpodVaY
-        DOIlS+GDlzsu0zNAtfWtFNkX+xNHdZrsII3emTPOXAeCcbJMF9nncvshtVS3p+oJmFpWZtWyTiYU2
-        I2JvPTvg==;
+        bh=dUPQYq2+oE4ZhEPnYgOuVlmUQz4e1ee8Qn7Tuawi6W4=; b=W+wp6p1JyYONZD4FeG/rz9dfZ1
+        cGR8sUfgbGQzrNrTFig2Smuou15BjGavsmO82E00H4sQpQ1NrrOa5V9TFAMdYuzjDBJfyoPKKwrwY
+        fYtBeQ+DejYaCbDnZg/+ER5YaVwi/bvxxhny3iBVUPXTo6fpqq3nYTkxhBHwsAKGXVKAK/0X5j0f3
+        ocuaFOsUBEA3+d6zP8NT3+ASEZkwSMOFwun+dLFb1kFRgGfA808pQCtETmyu9adKitsJm9C6yj3gG
+        qQ0G9VMVuq+Y78rGxr/XA5WjCu/Noyo4UGfDNa99WPVHr+d/p1apOQLgB4pctb/sjTacxoqSPeqI9
+        8kC51tTQ==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nj5gb-00BOQb-7n; Mon, 25 Apr 2022 20:51:57 +0000
-Date:   Mon, 25 Apr 2022 13:51:57 -0700
+        id 1nj5iH-00BP9x-Rp; Mon, 25 Apr 2022 20:53:41 +0000
+Date:   Mon, 25 Apr 2022 13:53:41 -0700
 From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Vasily Averin <vvs@openvz.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>, kernel@openvz.org
-Subject: Re: [PATCH] sysctl: minor cleanup in new_dir()
-Message-ID: <YmcJ7V0ywWcwvS/6@bombadil.infradead.org>
-References: <b1b9cf79-d0a8-bb9a-5dca-42ceb74ffcbf@openvz.org>
+To:     Jakub Kicinski <kuba@kernel.org>
+Cc:     xiangxia.m.yue@gmail.com, netdev@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        David Ahern <dsahern@kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Julian Anastasov <ja@ssi.bg>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Florian Westphal <fw@strlen.de>, Shuah Khan <shuah@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        Lorenz Bauer <lmb@cloudflare.com>,
+        Akhmat Karakotov <hmukos@yandex-team.ru>
+Subject: Re: [net-next v4 0/3] use standard sysctl macro
+Message-ID: <YmcKVYMLKHBQjLAK@bombadil.infradead.org>
+References: <20220422070141.39397-1-xiangxia.m.yue@gmail.com>
+ <YmK/PM2x5PTG2b+c@bombadil.infradead.org>
+ <20220422124340.2382da79@kernel.org>
+ <Ymb6ukQNDh6VBT59@bombadil.infradead.org>
+ <20220425125644.52e3aad4@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b1b9cf79-d0a8-bb9a-5dca-42ceb74ffcbf@openvz.org>
+In-Reply-To: <20220425125644.52e3aad4@kernel.org>
 Sender: Luis Chamberlain <mcgrof@infradead.org>
 X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
@@ -51,27 +69,18 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Apr 24, 2022 at 09:28:54PM +0300, Vasily Averin wrote:
-> Byte zeroing is not required here, since memory was allocated by kzalloc()
+On Mon, Apr 25, 2022 at 12:56:44PM -0700, Jakub Kicinski wrote:
+> On Mon, 25 Apr 2022 12:47:06 -0700 Luis Chamberlain wrote:
+> > I have a better option. I checked to see the diff stat between
+> > the proposed patch to see what the chances of a conflict are
+> > and so far I don't see any conflict so I think this patchset
+> > should just go through your tree.
+> > 
+> > So feel free to take it in! Let me know if that's OK!
 > 
-> Signed-off-by: Vasily Averin <vvs@openvz.org>
-> ---
->  fs/proc/proc_sysctl.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-> index 7d9cfc730bd4..094c24e010ae 100644
-> --- a/fs/proc/proc_sysctl.c
-> +++ b/fs/proc/proc_sysctl.c
-> @@ -978,7 +978,6 @@ static struct ctl_dir *new_dir(struct ctl_table_set *set,
->  	table = (struct ctl_table *)(node + 1);
->  	new_name = (char *)(table + 2);
->  	memcpy(new_name, name, namelen);
-> -	new_name[namelen] = '\0';
->  	table[0].procname = new_name;
->  	table[0].mode = S_IFDIR|S_IRUGO|S_IXUGO;
->  	init_header(&new->header, set->dir.header.root, set, node, table);
+> Ok, assuming the netfilter and bpf patches I saw were the only other
+> conversions we can resolve the conflicts before code reaches Linus...
 
-Queued onto sysctl-testing, thanks!
+Sure thing.
 
   Luis
