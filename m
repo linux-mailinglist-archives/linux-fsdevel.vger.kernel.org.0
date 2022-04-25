@@ -2,94 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 120BE50E463
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Apr 2022 17:28:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED74550E556
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Apr 2022 18:14:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242847AbiDYPbT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Apr 2022 11:31:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42736 "EHLO
+        id S243274AbiDYQQ6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Apr 2022 12:16:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231351AbiDYPbT (ORCPT
+        with ESMTP id S239957AbiDYQQ5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Apr 2022 11:31:19 -0400
-Received: from mail-qt1-x82b.google.com (mail-qt1-x82b.google.com [IPv6:2607:f8b0:4864:20::82b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3806210F3AC;
-        Mon, 25 Apr 2022 08:28:15 -0700 (PDT)
-Received: by mail-qt1-x82b.google.com with SMTP id f22so10503874qtp.13;
-        Mon, 25 Apr 2022 08:28:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=pYyv8u6TK+HNnCO2dEZ8rytiI/LivMuIT6ek4UyKCZU=;
-        b=By74vmVJQ/MnB36Y7p6UwVteaImK9ZjGLjA9uBcyypNXMkNwHVqIYGK4LLUcjyQtwV
-         gCml6JlzZPU91AeAqZVjwtBCd+WwrZU4BVZsBjzlpPumMon3lVhe0cPKfjc3T5oxKnVu
-         HJ5Owst1glYb9C6e5TXhR3fTu3L1w8PXstENMx4mPrtVGsmT1tseZ/NvR5iK5LJTXNZg
-         qaxWBUpARNbeAAWobmN/fHMcJmydLk2qbVbiAKVv9qIChHO4FvS64QyRqN8zBVicu+LX
-         1maxLaF5CMblXanXaZ6cfZOWpA4usEyZSVoq02wkcfGtCBDTvc54kVTcu/Wq0NKsMOmU
-         ntgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=pYyv8u6TK+HNnCO2dEZ8rytiI/LivMuIT6ek4UyKCZU=;
-        b=5lU8nCz2nwBrbkPDAcr/afoqETh1U4g3ZxKqLCLYoE/qmAOIxegp6CPWoHvjUSfy1L
-         5M7rqM8WbL7sxnhxxI9d0XGG3dqqp6tpWxvbJvMaYXR6hBILf26JWYqo5dSZeoh4C/GC
-         EIpgq/T7QsHlxCmOaeOBUq9MNUAqlP7S2letKZI+wWCxbaT0FPe8CliXK+9rdTgn5suX
-         7ih6ll4u9beBCmFtBk/WQKw3GW40nkKW7r/HjL5FRMoLlqnp/UipfFfdEbPWxZZb6k4E
-         Ik61TqP9wIZOAZ1NgRDi4nlChidhpwoaCTsGDFBJ+f6C2vbJg4XKVWDAOVFDjZcm4kiv
-         CitA==
-X-Gm-Message-State: AOAM530FyiD1pdoeAGd/Ej5s1FSrvXbbjaB8bz7R45o+rdRYn2VmTqvp
-        0EVrTe5D3t1Qg65SvCkGQQ==
-X-Google-Smtp-Source: ABdhPJyn1L63ig8CXlJylyOHi+tBOKG6YcgedNBUKOf6xBOnteBc+GTPyVacwZlkcADPpljIaz9lmQ==
-X-Received: by 2002:a05:622a:1314:b0:2f3:5726:e034 with SMTP id v20-20020a05622a131400b002f35726e034mr12185089qtk.297.1650900494382;
-        Mon, 25 Apr 2022 08:28:14 -0700 (PDT)
-Received: from moria.home.lan (c-73-219-103-14.hsd1.vt.comcast.net. [73.219.103.14])
-        by smtp.gmail.com with ESMTPSA id 128-20020a370486000000b0069e9d72b45fsm5193739qke.13.2022.04.25.08.28.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Apr 2022 08:28:13 -0700 (PDT)
-Date:   Mon, 25 Apr 2022 11:28:11 -0400
-From:   Kent Overstreet <kent.overstreet@gmail.com>
-To:     Michal Hocko <mhocko@suse.com>
-Cc:     Roman Gushchin <roman.gushchin@linux.dev>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, hch@lst.de, hannes@cmpxchg.org,
-        akpm@linux-foundation.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-input@vger.kernel.org,
-        rostedt@goodmis.org
-Subject: Re: [PATCH v2 8/8] mm: Centralize & improve oom reporting in
- show_mem.c
-Message-ID: <20220425152811.pg2dse4zybpnpaa4@moria.home.lan>
-References: <20220421234837.3629927-1-kent.overstreet@gmail.com>
- <20220421234837.3629927-14-kent.overstreet@gmail.com>
- <YmKma/1WUvjjbcO4@dhcp22.suse.cz>
- <YmLFPJTyoE4GYWp4@carbon>
- <20220422234820.plusgyixgybebfmi@moria.home.lan>
- <YmNH/fh8OwTJ6ASC@carbon>
- <20220423004607.q4lbz2mplkhlbyhm@moria.home.lan>
- <YmZpuikkgWeF2RPt@dhcp22.suse.cz>
+        Mon, 25 Apr 2022 12:16:57 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3D25119ECB;
+        Mon, 25 Apr 2022 09:13:52 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8C8EC612F2;
+        Mon, 25 Apr 2022 16:13:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A02F7C385A7;
+        Mon, 25 Apr 2022 16:13:49 +0000 (UTC)
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Will Deacon <will@kernel.org>, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        David Sterba <dsterba@suse.com>, linux-kernel@vger.kernel.org,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v4 0/3] Avoid live-lock in btrfs fault-in+uaccess loop
+Date:   Mon, 25 Apr 2022 17:13:47 +0100
+Message-Id: <165090314404.2743611.7102822933741144292.b4-ty@arm.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20220423100751.1870771-1-catalin.marinas@arm.com>
+References: <20220423100751.1870771-1-catalin.marinas@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YmZpuikkgWeF2RPt@dhcp22.suse.cz>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-6.7 required=5.0 tests=BAYES_00,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 25, 2022 at 11:28:26AM +0200, Michal Hocko wrote:
+On Sat, 23 Apr 2022 11:07:48 +0100, Catalin Marinas wrote:
+> A minor update from v3 here:
 > 
-> > Do you know if using memalloc_noreclaim_(save|restore) is sufficient for that,
-> > or do we want GFP_ATOMIC? I'm already using GFP_ATOMIC for allocations when we
-> > generate the report on slabs, since we're taking the slab mutex there.
+> https://lore.kernel.org/r/20220406180922.1522433-1-catalin.marinas@arm.com
 > 
-> No it's not. You simply _cannot_ allocate from the oom context.
+> In patch 3/3 I dropped the 'len' local variable, so the btrfs patch
+> simply replaces fault_in_writeable() with fault_in_subpage_writeable()
+> and adds a comment. I kept David's ack as there's no functional change
+> since v3.
+> 
+> [...]
 
-Hmm, no, that can't be right. I've been using the patch set and it definitely
-works, at least in my testing. Do you mean to say that we shouldn't? Can you
-explain why?
+Applied to arm64 (for-next/fault-in-subpage). Also changed the
+probe_subpage_writeable() prototype to use char __user * instead of void
+__user * (as per Andrew's suggestion).
+
+[1/3] mm: Add fault_in_subpage_writeable() to probe at sub-page granularity
+      https://git.kernel.org/arm64/c/da32b5817253
+[2/3] arm64: Add support for user sub-page fault probing
+      https://git.kernel.org/arm64/c/f3ba50a7a100
+[3/3] btrfs: Avoid live-lock in search_ioctl() on hardware with sub-page faults
+      https://git.kernel.org/arm64/c/18788e34642e
+
+-- 
+Catalin
+
