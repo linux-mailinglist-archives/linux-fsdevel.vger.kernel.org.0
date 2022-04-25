@@ -2,118 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 05CEA50DA4D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Apr 2022 09:41:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AAE5D50DAE2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Apr 2022 10:10:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239477AbiDYHoL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Apr 2022 03:44:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52634 "EHLO
+        id S231150AbiDYINV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Apr 2022 04:13:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230236AbiDYHoE (ORCPT
+        with ESMTP id S237319AbiDYINH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Apr 2022 03:44:04 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 621E43B290;
-        Mon, 25 Apr 2022 00:40:56 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 51017B810AD;
-        Mon, 25 Apr 2022 07:40:55 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39F0AC385A4;
-        Mon, 25 Apr 2022 07:40:49 +0000 (UTC)
-Message-ID: <ee410d9d-25dc-3b87-08d2-c4c8e71575a3@linux-m68k.org>
-Date:   Mon, 25 Apr 2022 17:40:46 +1000
+        Mon, 25 Apr 2022 04:13:07 -0400
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3667B6454
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Apr 2022 01:10:02 -0700 (PDT)
+Received: by mail-ej1-x635.google.com with SMTP id kq17so4906408ejb.4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Apr 2022 01:10:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=V/9MryFXBUk9FF6YyMTYHMUXvrP3+Xkf/wgXTlKPLPs=;
+        b=b9ebbhTzeZ8GuXZ/4ewnCjrEVlORIdL0XUxOo9bMSsPvDWWFp0xk66m7Na7Rlcvkxd
+         rrAlS4sHcIdZiajhw6o6YX5O0+hvm8vKAtjMbd09q+HbwUpOp6B1yTdwUpcBRme6+PPg
+         z25KzYDyGOZD9MIKQYW2REovkmW3jXrXeLUDQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=V/9MryFXBUk9FF6YyMTYHMUXvrP3+Xkf/wgXTlKPLPs=;
+        b=aO9NwFZmUtXE3mnRDcIU++dCQAZdK2fUn2bvAXOrioIstWWMa70ZTEb9Mh8Vf6a5H9
+         W5MQxXnTBauvbvXQtl6vzM0RnQKycQPnxDYEuehNGBozui9hE/pkzORslpgy0JRxukEM
+         M7AYRd9vAXbrVp7TTWiY3KPNiinibC/wfSVhRSjkcHYXdSbPQmEIhUJ5DVvmDDeVFHxS
+         8lRvGO/t4yEk5OqS/CDe2TvfyFFh2ReQk/3bgPr5HaT5FceYI5CTA0ys7+2f1EZNqv+8
+         O8NuQG4j5WfRkNGiWpQU3OgEm4U1LQXrYw1A5WedeGqYVcobqY9pVfL7tMyGlhbEWgSw
+         yYyA==
+X-Gm-Message-State: AOAM533orqa4vU3BYHRItJD7lsnor9ve+H+7DfHM455nS9en0gF31JJM
+        CN9jF8Ox5bh69TSidplA7eKS1gaVi7+TWOXDKst5Wg==
+X-Google-Smtp-Source: ABdhPJw75OpIGEOXMANMEVZpoEzu+YYZ1j0DQTLMZx3GYh/4QD+CHjbpUUK4YHFGw2prVElyPb/dBddmOb8t8kj+wM0=
+X-Received: by 2002:a17:906:280b:b0:6ce:f3c7:688f with SMTP id
+ r11-20020a170906280b00b006cef3c7688fmr15024444ejc.468.1650874200249; Mon, 25
+ Apr 2022 01:10:00 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH] binfmt_flat: Remove shared library support
-Content-Language: en-US
-To:     Rob Landley <rob@landley.net>, Kees Cook <keescook@chromium.org>,
-        Rich Felker <dalias@libc.org>
-Cc:     Palmer Dabbelt <palmer@dabbelt.com>, ebiederm@xmission.com,
-        damien.lemoal@opensource.wdc.com, Niklas.Cassel@wdc.com,
-        viro@zeniv.linux.org.uk, Paul Walmsley <paul.walmsley@sifive.com>,
-        aou@eecs.berkeley.edu, vapier@gentoo.org, stable@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-riscv@lists.infradead.org, linux-arch@vger.kernel.org,
-        geert@linux-m68k.org, linux-m68k@lists.linux-m68k.org,
-        linux-arm-kernel@lists.infradead.org, linux-sh@vger.kernel.org,
-        ysato@users.sourceforge.jp
-References: <87levzzts4.fsf_-_@email.froward.int.ebiederm.org>
- <mhng-32cab6aa-87a3-4a5c-bf83-836c25432fdd@palmer-ri-x1c9>
- <20220420165935.GA12207@brightrain.aerifal.cx>
- <202204201044.ACFEB0C@keescook>
- <ab454879-5506-fe7d-cd59-812a6bc9d193@landley.net>
-From:   Greg Ungerer <gerg@linux-m68k.org>
-In-Reply-To: <ab454879-5506-fe7d-cd59-812a6bc9d193@landley.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-8.5 required=5.0 tests=BAYES_00,
-        HEADER_FROM_DIFFERENT_DOMAINS,NICE_REPLY_A,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+References: <165002363635.1457422.5930635235733982079.stgit@localhost>
+ <CAJfpegs=_bzBrmPSv_V3yQWaW7NR_f9CviuUTwfbcx9Wzudoxg@mail.gmail.com> <YmUKZQKNAGimupv7@redhat.com>
+In-Reply-To: <YmUKZQKNAGimupv7@redhat.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 25 Apr 2022 10:09:48 +0200
+Message-ID: <CAJfpegsUfANp4a4gmAKLjenkdjoA-Gppja=LmwdF_1Gh3wdL4g@mail.gmail.com>
+Subject: Re: [PATCH] fuse: Apply flags2 only when userspace set the
+ FUSE_INIT_EXT flag
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     Bernd Schubert <bschubert@ddn.com>, linux-fsdevel@vger.kernel.org,
+        Jeffle Xu <jefflexu@linux.alibaba.com>,
+        Dharmendra Singh <dsingh@ddn.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        German Maglione <gmaglione@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
+        DKIM_SIGNED,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Sun, 24 Apr 2022 at 10:29, Vivek Goyal <vgoyal@redhat.com> wrote:
+>
+> On Thu, Apr 21, 2022 at 05:36:02PM +0200, Miklos Szeredi wrote:
+> > On Fri, 15 Apr 2022 at 13:54, Bernd Schubert <bschubert@ddn.com> wrote:
+> > >
+> > > This is just a safety precaution to avoid checking flags
+> > > on memory that was initialized on the user space side.
+> > > libfuse zeroes struct fuse_init_out outarg, but this is not
+> > > guranteed to be done in all implementations. Better is to
+> > > act on flags and to only apply flags2 when FUSE_INIT_EXT
+> > > is set.
+> > >
+> > > There is a risk with this change, though - it might break existing
+> > > user space libraries, which are already using flags2 without
+> > > setting FUSE_INIT_EXT.
+> > >
+> > > The corresponding libfuse patch is here
+> > > https://github.com/libfuse/libfuse/pull/662
+> > >
+> > >
+> > > Signed-off-by: Bernd Schubert <bschubert@ddn.com>
+> >
+> > Agreed, this is a good change.  Applied.
+> >
+> > Just one comment: please consider adding  "Fixes:" and "Cc:
+> > <stable@....>" tags next time.   I added them now.
+>
+> I am afraid that this probably will break both C and rust version of
+> virtiofsd. I had a quick look and I can't seem to find these
+> implementations setting INIT_EXT flag in reply to init.
+>
+> I am travelling. Will check it more closely when I return next week.
+> If virtiofsd implementations don't set INIT_EXT, I would rather prefer
+> to not do this change and avoid breaking it.
 
-On 25/4/22 13:38, Rob Landley wrote:
-> On 4/20/22 12:47, Kees Cook wrote:
->>> For what it's worth, bimfmt_flat (with or without shared library
->>> support) should be simple to implement as a binfmt_misc handler if
->>> anyone needs the old shared library support (or if kernel wanted to
->>> drop it entirely, which I would be in favor of). That's how I handled
->>> old aout binaries I wanted to run after aout was removed: trivial
->>> binfmt_misc loader.
->>
->> Yeah, I was trying to understand why systems were using binfmt_flat and
->> not binfmt_elf, given the mention of elf2flat -- is there really such a
->> large kernel memory footprint savings to be had from removing
->> binfmt_elf?
-> 
-> elf2flat is a terrible name: it doesn't take an executable as input, it takes a
-> .o file as input. (I mean it's an elf format .o file, but... misleading.)
+Okay, let's postpone this kernel patch until libfuse and virtiofsd
+implementations are updated.
 
-No, not at all. "elf2flt" is exactly what it does. Couldn't get a
-more accurate name.
-
-
->> But regardless, yes, it seems like if you're doing anything remotely
->> needing shared libraries with binfmt_flat, such a system could just use
->> ELF instead.
-> 
-> A) The binfmt_elf.c loader won't run on nommu systems. The fdpic loader will,
-> and in theory can handle normal ELF binaries (it's ELF with _more_
-> capabilities), but sadly it's not supported on most architectures for reasons
-> that are unclear to me.
-
-Inertia. Flat format has been around a very long time.
-And for most people it just works. Flat format works on MMU systems
-as well, though you would have to be crazy to choose to do that.
-
-
-> B) You can't run conventional ELF on nommu, because everything is offset from 0
-> so PID 1 eats that address range and you can't run exec program.
-> 
-> You can run PIE binaries on nommu (the symbols offset from a base pointer which
-> can point anywhere), but they're inefficient (can't share text or rodata
-> sections between instances because every symbol is offset from a single shared
-> base pointer), and highly vulnerable to fragmentation (because it needs a
-> contiguous blob of memory for text, rodata, bss, and data: see single base
-> pointer everything has an integer offset from).
-> 
-> All fdpic really does is give you 4 base pointers, one for each section. That
-> way you can share text and rodata, and put bss and data into smaller independent
-> fragments of memory. Various security guys use this as super-aslr even on mmu
-> systems, but tend not to advertise that they're doing so. :)
-
-Well flat got half way there. You can have separate text/rodata and data/bss,
-used a lot back in the day for execute-in-place of the code.
-
-Regards
-Greg
-
-
+Thanks,
+Miklos
