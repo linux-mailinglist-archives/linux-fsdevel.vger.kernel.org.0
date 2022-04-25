@@ -2,125 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B8BD50D798
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Apr 2022 05:35:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7214050D7B1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Apr 2022 05:41:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240659AbiDYDiF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 24 Apr 2022 23:38:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43400 "EHLO
+        id S240781AbiDYDnu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 24 Apr 2022 23:43:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240671AbiDYDhn (ORCPT
+        with ESMTP id S240801AbiDYDnf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 24 Apr 2022 23:37:43 -0400
-Received: from mail-oi1-x234.google.com (mail-oi1-x234.google.com [IPv6:2607:f8b0:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B08C52CCB3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 24 Apr 2022 20:34:40 -0700 (PDT)
-Received: by mail-oi1-x234.google.com with SMTP id b188so15755589oia.13
-        for <linux-fsdevel@vger.kernel.org>; Sun, 24 Apr 2022 20:34:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=landley-net.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=B1QfoAi5AbmZrNfgKcOMoR0g+jeoWpDUXn39NnppiO8=;
-        b=RP5YQMrqRBjFc1TPzDRF/VNHpK8/m7n4dXSd/cW6Z5KUCS1IKHMEhUBJ5NZBxPSlQe
-         7w69F6X6ON+ARmCOQU0idD+EYWSxMlBPBMReqAsXwbNBrW3/87epvMb6ASjFylpL/qcT
-         PlQP2jiXuw8pn/O8+w35QVbGxauzbtyJro3+/mru8XCY6zwaT9g3mN7ITl336PH9kTPK
-         lV7kpe0CHmxr5jjvZV36lVm345wKpfd7SjO1S5pwz+Lqc12HAHCQ+CeXXfqmxvVDi/uu
-         2JS8/XRGqAInv+agUB3X6u1ASYWsrcuw+QvXWEyK0vxNdPObwZHiGre7X9RvphN4xv+E
-         e8fA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=B1QfoAi5AbmZrNfgKcOMoR0g+jeoWpDUXn39NnppiO8=;
-        b=Rgu1IFHZLcrY794zOiuprBIVk59GY81NEhMK9qnlH/iffqiHWn+NGi4nuju9K5OV3h
-         zwr212wC8GnPMG3P+oGLtjX/axTeyIWCsApTeSRAwUqtO7+Apv0Wq940jT/X3RezBvwb
-         NaK2joZq+dtFuVYBaAsdn0fcLZmWeg+FTNwWVWfBCeOvLFmqvz4IPDzEs5TYtuDQHNyh
-         hZwafGZqKE8oX22J7r2JOZcGq5G2yVXIu82HKVXUpWWLYPypBlevwGH1r3qGO/RJohsD
-         39BvVy9rBLnjFk+R0f9mS5E37Ln+OTf7HqXjjlo6CEyP1ovdGl/aM2YSZNVJAm1grAze
-         /WDg==
-X-Gm-Message-State: AOAM533Nt8U3QfpU8ZMJjffsgyLW/L7mXM74rUMI7Go0DPY6ydLDoyyh
-        eH0hwObwo+lyzn+YPIPvATscJA==
-X-Google-Smtp-Source: ABdhPJxo8MI+d6zaUs6uXLuDmIBbvncR0vS1nSWd1hInEUCXQb+VfGu0cvlm09UQJgV/8onv8BD9pw==
-X-Received: by 2002:a05:6808:1690:b0:325:4159:2004 with SMTP id bb16-20020a056808169000b0032541592004mr214582oib.86.1650857680070;
-        Sun, 24 Apr 2022 20:34:40 -0700 (PDT)
-Received: from [192.168.208.243] ([172.56.88.231])
-        by smtp.gmail.com with ESMTPSA id i26-20020a4a929a000000b0033a29c8d564sm3899603ooh.3.2022.04.24.20.34.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 24 Apr 2022 20:34:39 -0700 (PDT)
-Message-ID: <ab454879-5506-fe7d-cd59-812a6bc9d193@landley.net>
-Date:   Sun, 24 Apr 2022 22:38:58 -0500
+        Sun, 24 Apr 2022 23:43:35 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3D146286E1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 24 Apr 2022 20:40:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1650858029;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=90rrxOVsEMID8IC7xlvD6/AwL0J+LK1t9cJRjNj1fGo=;
+        b=iFJyDmkfhdjvYnkA3ihu9SJwsx4SibUmO0wY/gBx9vlMFV9KKORIZvvU0oPtpI5PuW4Aub
+        CzktyX/rxhflDN34nFColOOm3uwRXhSTBv/RJmOKqbhHwLTRfxvcFuY/idv0qQ42p+lEte
+        M/4cnsfly3EUPCJcwJWX12NUy4ZxRLo=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-625-1ZAa2xNsPaOznEgVyThoIw-1; Sun, 24 Apr 2022 23:40:24 -0400
+X-MC-Unique: 1ZAa2xNsPaOznEgVyThoIw-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 8904C1C0514D;
+        Mon, 25 Apr 2022 03:40:21 +0000 (UTC)
+Received: from localhost (ovpn-12-73.pek2.redhat.com [10.72.12.73])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 809AA409B3E2;
+        Mon, 25 Apr 2022 03:40:20 +0000 (UTC)
+Date:   Mon, 25 Apr 2022 11:40:17 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     akpm@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
+        hch@lst.de, yangtiezhu@loongson.cn, amit.kachhap@arm.com,
+        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        willy@infradead.org
+Subject: Re: [PATCH v5 RESEND 0/3] Convert vmcore to use an iov_iter
+Message-ID: <YmYYIeU6qBDpCE4v@MiWiFi-R3L-srv>
+References: <20220408090636.560886-1-bhe@redhat.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.2
-Subject: Re: [PATCH] binfmt_flat: Remove shared library support
-Content-Language: en-US
-To:     Kees Cook <keescook@chromium.org>, Rich Felker <dalias@libc.org>
-Cc:     Palmer Dabbelt <palmer@dabbelt.com>, ebiederm@xmission.com,
-        damien.lemoal@opensource.wdc.com, Niklas.Cassel@wdc.com,
-        viro@zeniv.linux.org.uk, Paul Walmsley <paul.walmsley@sifive.com>,
-        aou@eecs.berkeley.edu, vapier@gentoo.org, stable@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-riscv@lists.infradead.org, linux-arch@vger.kernel.org,
-        geert@linux-m68k.org, linux-m68k@lists.linux-m68k.org,
-        gerg@linux-m68k.org, linux-arm-kernel@lists.infradead.org,
-        linux-sh@vger.kernel.org, ysato@users.sourceforge.jp
-References: <87levzzts4.fsf_-_@email.froward.int.ebiederm.org>
- <mhng-32cab6aa-87a3-4a5c-bf83-836c25432fdd@palmer-ri-x1c9>
- <20220420165935.GA12207@brightrain.aerifal.cx>
- <202204201044.ACFEB0C@keescook>
-From:   Rob Landley <rob@landley.net>
-In-Reply-To: <202204201044.ACFEB0C@keescook>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220408090636.560886-1-bhe@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.11.54.1
+X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/20/22 12:47, Kees Cook wrote:
->> For what it's worth, bimfmt_flat (with or without shared library
->> support) should be simple to implement as a binfmt_misc handler if
->> anyone needs the old shared library support (or if kernel wanted to
->> drop it entirely, which I would be in favor of). That's how I handled
->> old aout binaries I wanted to run after aout was removed: trivial
->> binfmt_misc loader.
-> 
-> Yeah, I was trying to understand why systems were using binfmt_flat and
-> not binfmt_elf, given the mention of elf2flat -- is there really such a
-> large kernel memory footprint savings to be had from removing
-> binfmt_elf?
+Hi Andrew,
 
-elf2flat is a terrible name: it doesn't take an executable as input, it takes a
-.o file as input. (I mean it's an elf format .o file, but... misleading.)
+On 04/08/22 at 05:06pm, Baoquan He wrote:
+> Copy the description of v3 cover letter from Willy:
+> ===
+> For some reason several people have been sending bad patches to fix
+> compiler warnings in vmcore recently.  Here's how it should be done.
+> Compile-tested only on x86.  As noted in the first patch, s390 should
+> take this conversion a bit further, but I'm not inclined to do that
+> work myself.
 
-> But regardless, yes, it seems like if you're doing anything remotely
-> needing shared libraries with binfmt_flat, such a system could just use
-> ELF instead.
+Ping!
 
-A) The binfmt_elf.c loader won't run on nommu systems. The fdpic loader will,
-and in theory can handle normal ELF binaries (it's ELF with _more_
-capabilities), but sadly it's not supported on most architectures for reasons
-that are unclear to me.
+This patchset has got one ack, can we merge it now?
 
-B) You can't run conventional ELF on nommu, because everything is offset from 0
-so PID 1 eats that address range and you can't run exec program.
+The lkp reported issue is not related to this patchset, but an existed
+one. We can fix it in another patch.
 
-You can run PIE binaries on nommu (the symbols offset from a base pointer which
-can point anywhere), but they're inefficient (can't share text or rodata
-sections between instances because every symbol is offset from a single shared
-base pointer), and highly vulnerable to fragmentation (because it needs a
-contiguous blob of memory for text, rodata, bss, and data: see single base
-pointer everything has an integer offset from).
+Thanks
+Baoquan
 
-All fdpic really does is give you 4 base pointers, one for each section. That
-way you can share text and rodata, and put bss and data into smaller independent
-fragments of memory. Various security guys use this as super-aslr even on mmu
-systems, but tend not to advertise that they're doing so. :)
-
-Rob
