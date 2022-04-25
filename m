@@ -2,183 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A173250E029
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Apr 2022 14:26:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE86450E04F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Apr 2022 14:30:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241808AbiDYM1e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Apr 2022 08:27:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34270 "EHLO
+        id S239162AbiDYMdV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Apr 2022 08:33:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33608 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241806AbiDYMZ1 (ORCPT
+        with ESMTP id S231655AbiDYMdS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Apr 2022 08:25:27 -0400
-Received: from out30-57.freemail.mail.aliyun.com (out30-57.freemail.mail.aliyun.com [115.124.30.57])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A022560D8A;
-        Mon, 25 Apr 2022 05:22:23 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=20;SR=0;TI=SMTPD_---0VBG8mn5_1650889338;
-Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0VBG8mn5_1650889338)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 25 Apr 2022 20:22:19 +0800
-From:   Jeffle Xu <jefflexu@linux.alibaba.com>
-To:     dhowells@redhat.com, linux-cachefs@redhat.com, xiang@kernel.org,
-        chao@kernel.org, linux-erofs@lists.ozlabs.org
-Cc:     torvalds@linux-foundation.org, gregkh@linuxfoundation.org,
-        willy@infradead.org, linux-fsdevel@vger.kernel.org,
-        joseph.qi@linux.alibaba.com, bo.liu@linux.alibaba.com,
-        tao.peng@linux.alibaba.com, gerry@linux.alibaba.com,
-        eguan@linux.alibaba.com, linux-kernel@vger.kernel.org,
-        luodaowen.backend@bytedance.com, tianzichen@kuaishou.com,
-        fannaihao@baidu.com, zhangjiachen.jaycee@bytedance.com,
-        zhujia.zj@bytedance.com
-Subject: [PATCH v10 21/21] erofs: add 'fsid' mount option
-Date:   Mon, 25 Apr 2022 20:21:43 +0800
-Message-Id: <20220425122143.56815-22-jefflexu@linux.alibaba.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20220425122143.56815-1-jefflexu@linux.alibaba.com>
-References: <20220425122143.56815-1-jefflexu@linux.alibaba.com>
+        Mon, 25 Apr 2022 08:33:18 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC2B764731;
+        Mon, 25 Apr 2022 05:30:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=e/nSWGUN3FIAmeOGnERJTpavdH8S5PvkJMrvIlmos0A=; b=EUnNGTKsPcwlrnrm2PDN6Y/5Ae
+        IAYZ0jEuutiZ9TSmOs3HZujZ2EhDcaB7xMcGaM3Z32Yvm77yKwh9Sc+aF8iphnrgVD3lH3FnCWJe2
+        bBNrqojxDAGwGUEyXW060fHziSPtDE3+meG0khkIxx8z1PoI8+xKB6xa+VjK1E8mMlJTuTLSV7vlU
+        GnOfWEdG4+NBcLA66dKydOSJqwAaQXALOdDYQ2xQ91T6kCgzvv1rWkBF+y4YsqjfktHIHwx/LHK0T
+        FGkEV+ByPiaJ1B6vFSXDK4/DigWFiq0+YGcyHScm7ykrfWrGWeQYTfDgJV3JUNZAR1++pi8Bu9gW0
+        e0ReSM9w==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nixqz-008geI-66; Mon, 25 Apr 2022 12:30:09 +0000
+Date:   Mon, 25 Apr 2022 13:30:09 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     linux-cachefs@redhat.com,
+        Rohith Surabattula <rohiths.msft@gmail.com>,
+        Steve French <sfrench@samba.org>,
+        Shyam Prasad N <nspmangalore@gmail.com>,
+        linux-cifs@vger.kernel.org, Jeff Layton <jlayton@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH 14/14] mm, netfs, fscache: Stop read optimisation when
+ folio removed from pagecache
+Message-ID: <YmaUUezsM+AS5R4y@casper.infradead.org>
+References: <Yk9V/03wgdYi65Lb@casper.infradead.org>
+ <Yk5W6zvvftOB+80D@casper.infradead.org>
+ <164928615045.457102.10607899252434268982.stgit@warthog.procyon.org.uk>
+ <164928630577.457102.8519251179327601178.stgit@warthog.procyon.org.uk>
+ <469869.1649313707@warthog.procyon.org.uk>
+ <3118843.1650888461@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3118843.1650888461@warthog.procyon.org.uk>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Introduce 'fsid' mount option to enable on-demand read sementics, in
-which case, erofs will be mounted from data blobs. Users could specify
-the name of primary data blob by this mount option.
+On Mon, Apr 25, 2022 at 01:07:41PM +0100, David Howells wrote:
+> Matthew Wilcox <willy@infradead.org> wrote:
+> 
+> > OK.  You suggested that releasepage was an acceptable place to call it.
+> > How about we have AS_RELEASE_ALL (... or something ...) and then
+> > page_has_private() becomes a bit more complicated ... to the point
+> > where we should probably get rid of it (by embedding it into
+> > filemap_release_folio():
+> 
+> I'm not sure page_has_private() is quite so easy to get rid of.
+> shrink_page_list() and collapse_file(), for example, use it to conditionalise
+> a call to try_to_release_page() plus some other bits.
 
-Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
-Reviewed-by: Gao Xiang <hsiangkao@linux.alibaba.com>
----
- fs/erofs/super.c | 31 ++++++++++++++++++++++++++++++-
- fs/erofs/sysfs.c |  4 ++--
- 2 files changed, 32 insertions(+), 3 deletions(-)
+That's what I was saying.  Make the calls to try_to_release_page()
+unconditional and delete page_has_private() because it only confuses
+people who should actually be using PagePrivate().
 
-diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index f68ba929100d..4a623630e1c4 100644
---- a/fs/erofs/super.c
-+++ b/fs/erofs/super.c
-@@ -371,6 +371,8 @@ static int erofs_read_superblock(struct super_block *sb)
- 
- 	if (erofs_sb_has_ztailpacking(sbi))
- 		erofs_info(sb, "EXPERIMENTAL compressed inline data feature in use. Use at your own risk!");
-+	if (erofs_is_fscache_mode(sb))
-+		erofs_info(sb, "EXPERIMENTAL fscache-based on-demand read feature in use. Use at your own risk!");
- out:
- 	erofs_put_metabuf(&buf);
- 	return ret;
-@@ -399,6 +401,7 @@ enum {
- 	Opt_dax,
- 	Opt_dax_enum,
- 	Opt_device,
-+	Opt_fsid,
- 	Opt_err
- };
- 
-@@ -423,6 +426,7 @@ static const struct fs_parameter_spec erofs_fs_parameters[] = {
- 	fsparam_flag("dax",             Opt_dax),
- 	fsparam_enum("dax",		Opt_dax_enum, erofs_dax_param_enums),
- 	fsparam_string("device",	Opt_device),
-+	fsparam_string("fsid",		Opt_fsid),
- 	{}
- };
- 
-@@ -518,6 +522,16 @@ static int erofs_fc_parse_param(struct fs_context *fc,
- 		}
- 		++ctx->devs->extra_devices;
- 		break;
-+	case Opt_fsid:
-+#ifdef CONFIG_EROFS_FS_ONDEMAND
-+		kfree(ctx->opt.fsid);
-+		ctx->opt.fsid = kstrdup(param->string, GFP_KERNEL);
-+		if (!ctx->opt.fsid)
-+			return -ENOMEM;
-+#else
-+		errorfc(fc, "fsid option not supported");
-+#endif
-+		break;
- 	default:
- 		return -ENOPARAM;
- 	}
-@@ -604,6 +618,7 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
- 
- 	sb->s_fs_info = sbi;
- 	sbi->opt = ctx->opt;
-+	ctx->opt.fsid = NULL;
- 	sbi->devs = ctx->devs;
- 	ctx->devs = NULL;
- 
-@@ -690,6 +705,11 @@ static int erofs_fc_fill_super(struct super_block *sb, struct fs_context *fc)
- 
- static int erofs_fc_get_tree(struct fs_context *fc)
- {
-+	struct erofs_fs_context *ctx = fc->fs_private;
-+
-+	if (IS_ENABLED(CONFIG_EROFS_FS_ONDEMAND) && ctx->opt.fsid)
-+		return get_tree_nodev(fc, erofs_fc_fill_super);
-+
- 	return get_tree_bdev(fc, erofs_fc_fill_super);
- }
- 
-@@ -739,6 +759,7 @@ static void erofs_fc_free(struct fs_context *fc)
- 	struct erofs_fs_context *ctx = fc->fs_private;
- 
- 	erofs_free_dev_context(ctx->devs);
-+	kfree(ctx->opt.fsid);
- 	kfree(ctx);
- }
- 
-@@ -779,7 +800,10 @@ static void erofs_kill_sb(struct super_block *sb)
- 
- 	WARN_ON(sb->s_magic != EROFS_SUPER_MAGIC);
- 
--	kill_block_super(sb);
-+	if (erofs_is_fscache_mode(sb))
-+		generic_shutdown_super(sb);
-+	else
-+		kill_block_super(sb);
- 
- 	sbi = EROFS_SB(sb);
- 	if (!sbi)
-@@ -789,6 +813,7 @@ static void erofs_kill_sb(struct super_block *sb)
- 	fs_put_dax(sbi->dax_dev);
- 	erofs_fscache_unregister_cookie(&sbi->s_fscache);
- 	erofs_fscache_unregister_fs(sb);
-+	kfree(sbi->opt.fsid);
- 	kfree(sbi);
- 	sb->s_fs_info = NULL;
- }
-@@ -938,6 +963,10 @@ static int erofs_show_options(struct seq_file *seq, struct dentry *root)
- 		seq_puts(seq, ",dax=always");
- 	if (test_opt(opt, DAX_NEVER))
- 		seq_puts(seq, ",dax=never");
-+#ifdef CONFIG_EROFS_FS_ONDEMAND
-+	if (opt->fsid)
-+		seq_printf(seq, ",fsid=%s", opt->fsid);
-+#endif
- 	return 0;
- }
- 
-diff --git a/fs/erofs/sysfs.c b/fs/erofs/sysfs.c
-index f3babf1e6608..c1383e508bbe 100644
---- a/fs/erofs/sysfs.c
-+++ b/fs/erofs/sysfs.c
-@@ -205,8 +205,8 @@ int erofs_register_sysfs(struct super_block *sb)
- 
- 	sbi->s_kobj.kset = &erofs_root;
- 	init_completion(&sbi->s_kobj_unregister);
--	err = kobject_init_and_add(&sbi->s_kobj, &erofs_sb_ktype, NULL,
--				   "%s", sb->s_id);
-+	err = kobject_init_and_add(&sbi->s_kobj, &erofs_sb_ktype, NULL, "%s",
-+			erofs_is_fscache_mode(sb) ? sbi->opt.fsid : sb->s_id);
- 	if (err)
- 		goto put_sb_kobj;
- 	return 0;
--- 
-2.27.0
-
+> I think that, for the moment, I would need to add a check for AS_RELEASE_ALL
+> to page_has_private().
+> 
+> David
+> 
+> 
