@@ -2,119 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C43A650D6DD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Apr 2022 04:10:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B8BD50D798
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Apr 2022 05:35:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240290AbiDYCNG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 24 Apr 2022 22:13:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55418 "EHLO
+        id S240659AbiDYDiF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 24 Apr 2022 23:38:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240351AbiDYCMv (ORCPT
+        with ESMTP id S240671AbiDYDhn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 24 Apr 2022 22:12:51 -0400
-Received: from mail1.bemta32.messagelabs.com (mail1.bemta32.messagelabs.com [195.245.230.2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DE542980B;
-        Sun, 24 Apr 2022 19:09:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
-        s=170520fj; t=1650852587; i=@fujitsu.com;
-        bh=c5FCpwWbwNZnqJjma6yo9VosB0Dzi2MqAMD84YLxtik=;
-        h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-         MIME-Version:Content-Type;
-        b=HT2GkfBb5ARGC/yOfCN/H3kYyu3MhPrqCth/YvTncsD73iOvgTrvfEjJtZIerN7RB
-         /Af8L4QEQHcUh9AOYS9R5nBi1q7P3rmU/c8LQXP7jyZjTnR+K45skttRidLab7J47c
-         nzOPA1OW7lGCtOOQOremcQJ0wyzbF6pinlaQ/5rzgJ7UQ2LMUjmbgIG+0bYLiek4OG
-         u/ozDswlOKy18QGH6qbw2/NG4qVUmwZn6keIvAlyE4CIr+rlkoNFsaKfffOLejXAsu
-         W96q8QYADpht1nuPle9wDBoPOh5C4sMjuQINt3iVcbywgFnxlcwr7HUFoGoHOjuJG2
-         JnRThXbfoOVmg==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkleJIrShJLcpLzFFi42Kxs+FI1H3KlJZ
-  k8OaCmcXrw58YLT7cnMRkseXYPUaLy0/4LH4uW8VusWfvSRaL83+Ps1r8/jGHzYHD49QiCY/N
-  K7Q8Nq3qZPP4vEnOY9OTt0wBrFGsmXlJ+RUJrBk9CxazFWxlr9izvpW1gXEZWxcjF4eQwBZGi
-  VcLV7FCOAuYJDb8nMcE4exhlHg8ZR1QhpODTUBT4lnnAmYQW0TAUeJF+wwWEJtZYDOjxLLH4S
-  C2sEC4xOTj39m7GDk4WARUJe48SwIJ8wp4Sqy/+JwRxJYQUJCY8vA92BhOAS+JaytOsoHYQkA
-  1f3c+Y4KoF5Q4OfMJ1HgJiYMvXjBD9CpKXOr4BjWnQmLWrDYmCFtN4uq5TcwTGAVnIWmfhaR9
-  ASPTKkarpKLM9IyS3MTMHF1DAwNdQ0NTXVNdI1NTvcQq3US91FLd8tTiEl1DvcTyYr3U4mK94
-  src5JwUvbzUkk2MwFhJKWb9v4Oxu++n3iFGSQ4mJVHeDMa0JCG+pPyUyozE4oz4otKc1OJDjD
-  IcHEoSvBdBcoJFqempFWmZOcC4hUlLcPAoifD++JGaJMRbXJCYW5yZDpE6xajL8fT5ib3MQix
-  5+XmpUuK8G0BmCIAUZZTmwY2ApZBLjLJSwryMDAwMQjwFqUW5mSWo8q8YxTkYlYR5P4NM4cnM
-  K4Hb9AroCCagIz7Vgh1RkoiQkmpgMngafMLTtufKLtlbHWVsXIHiKy1mWzjMf2dexrjRqiVkh
-  /bHM3/YrLIMrtw9tvHBqqq4J9U5n+1OTnyYeJnn+sfotYGXL3oF7b69hWXj07d2KXdfTb8is3
-  hyWHrNFpd3e/72TuvOnlK1tilk4wOHhBYxnZ/e6mdcm1O+v5jI+O4kl79v5LQeq0JFsV9Cq6K
-  XLHReeHrps3/rJMJO7o/b0nJv+sEfPZMO2IZr/XLvnvT6yg37Vdlm01xbb0c0FgjtnvHD7ahV
-  tVd+EZOmPn/XpoSNW85mhc9VeDFFa/JhgWT/+j6VHifT3v6lbO4KXZ2/2PUFvhpsOnPDKO4I1
-  63dEgKzw/lFzwi2e8TkxBu7KLEUZyQaajEXFScCAH/rVhicAwAA
-X-Env-Sender: xuyang2018.jy@fujitsu.com
-X-Msg-Ref: server-18.tower-591.messagelabs.com!1650852581!113011!1
-X-Originating-IP: [62.60.8.97]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.85.8; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 14581 invoked from network); 25 Apr 2022 02:09:41 -0000
-Received: from unknown (HELO n03ukasimr01.n03.fujitsu.local) (62.60.8.97)
-  by server-18.tower-591.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 25 Apr 2022 02:09:41 -0000
-Received: from n03ukasimr01.n03.fujitsu.local (localhost [127.0.0.1])
-        by n03ukasimr01.n03.fujitsu.local (Postfix) with ESMTP id 5E776100193;
-        Mon, 25 Apr 2022 03:09:41 +0100 (BST)
-Received: from R01UKEXCASM126.r01.fujitsu.local (unknown [10.183.43.178])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by n03ukasimr01.n03.fujitsu.local (Postfix) with ESMTPS id 4248310018F;
-        Mon, 25 Apr 2022 03:09:41 +0100 (BST)
-Received: from localhost.localdomain (10.167.220.84) by
- R01UKEXCASM126.r01.fujitsu.local (10.183.43.178) with Microsoft SMTP Server
- (TLS) id 15.0.1497.32; Mon, 25 Apr 2022 03:09:14 +0100
-From:   Yang Xu <xuyang2018.jy@fujitsu.com>
-To:     <linux-fsdevel@vger.kernel.org>, <ceph-devel@vger.kernel.org>
-CC:     <viro@zeniv.linux.org.uk>, <david@fromorbit.com>,
-        <djwong@kernel.org>, <brauner@kernel.org>, <willy@infradead.org>,
-        <jlayton@kernel.org>, Yang Xu <xuyang2018.jy@fujitsu.com>
-Subject: [PATCH v6 4/4] ceph: Remove S_ISGID stripping code in ceph_finish_async_create
-Date:   Mon, 25 Apr 2022 11:09:41 +0800
-Message-ID: <1650856181-21350-4-git-send-email-xuyang2018.jy@fujitsu.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1650856181-21350-1-git-send-email-xuyang2018.jy@fujitsu.com>
-References: <1650856181-21350-1-git-send-email-xuyang2018.jy@fujitsu.com>
+        Sun, 24 Apr 2022 23:37:43 -0400
+Received: from mail-oi1-x234.google.com (mail-oi1-x234.google.com [IPv6:2607:f8b0:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B08C52CCB3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 24 Apr 2022 20:34:40 -0700 (PDT)
+Received: by mail-oi1-x234.google.com with SMTP id b188so15755589oia.13
+        for <linux-fsdevel@vger.kernel.org>; Sun, 24 Apr 2022 20:34:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=landley-net.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=B1QfoAi5AbmZrNfgKcOMoR0g+jeoWpDUXn39NnppiO8=;
+        b=RP5YQMrqRBjFc1TPzDRF/VNHpK8/m7n4dXSd/cW6Z5KUCS1IKHMEhUBJ5NZBxPSlQe
+         7w69F6X6ON+ARmCOQU0idD+EYWSxMlBPBMReqAsXwbNBrW3/87epvMb6ASjFylpL/qcT
+         PlQP2jiXuw8pn/O8+w35QVbGxauzbtyJro3+/mru8XCY6zwaT9g3mN7ITl336PH9kTPK
+         lV7kpe0CHmxr5jjvZV36lVm345wKpfd7SjO1S5pwz+Lqc12HAHCQ+CeXXfqmxvVDi/uu
+         2JS8/XRGqAInv+agUB3X6u1ASYWsrcuw+QvXWEyK0vxNdPObwZHiGre7X9RvphN4xv+E
+         e8fA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=B1QfoAi5AbmZrNfgKcOMoR0g+jeoWpDUXn39NnppiO8=;
+        b=Rgu1IFHZLcrY794zOiuprBIVk59GY81NEhMK9qnlH/iffqiHWn+NGi4nuju9K5OV3h
+         zwr212wC8GnPMG3P+oGLtjX/axTeyIWCsApTeSRAwUqtO7+Apv0Wq940jT/X3RezBvwb
+         NaK2joZq+dtFuVYBaAsdn0fcLZmWeg+FTNwWVWfBCeOvLFmqvz4IPDzEs5TYtuDQHNyh
+         hZwafGZqKE8oX22J7r2JOZcGq5G2yVXIu82HKVXUpWWLYPypBlevwGH1r3qGO/RJohsD
+         39BvVy9rBLnjFk+R0f9mS5E37Ln+OTf7HqXjjlo6CEyP1ovdGl/aM2YSZNVJAm1grAze
+         /WDg==
+X-Gm-Message-State: AOAM533Nt8U3QfpU8ZMJjffsgyLW/L7mXM74rUMI7Go0DPY6ydLDoyyh
+        eH0hwObwo+lyzn+YPIPvATscJA==
+X-Google-Smtp-Source: ABdhPJxo8MI+d6zaUs6uXLuDmIBbvncR0vS1nSWd1hInEUCXQb+VfGu0cvlm09UQJgV/8onv8BD9pw==
+X-Received: by 2002:a05:6808:1690:b0:325:4159:2004 with SMTP id bb16-20020a056808169000b0032541592004mr214582oib.86.1650857680070;
+        Sun, 24 Apr 2022 20:34:40 -0700 (PDT)
+Received: from [192.168.208.243] ([172.56.88.231])
+        by smtp.gmail.com with ESMTPSA id i26-20020a4a929a000000b0033a29c8d564sm3899603ooh.3.2022.04.24.20.34.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 24 Apr 2022 20:34:39 -0700 (PDT)
+Message-ID: <ab454879-5506-fe7d-cd59-812a6bc9d193@landley.net>
+Date:   Sun, 24 Apr 2022 22:38:58 -0500
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.167.220.84]
-X-ClientProxiedBy: G08CNEXCHPEKD07.g08.fujitsu.local (10.167.33.80) To
- R01UKEXCASM126.r01.fujitsu.local (10.183.43.178)
-X-Virus-Scanned: ClamAV using ClamSMTP
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.6.2
+Subject: Re: [PATCH] binfmt_flat: Remove shared library support
+Content-Language: en-US
+To:     Kees Cook <keescook@chromium.org>, Rich Felker <dalias@libc.org>
+Cc:     Palmer Dabbelt <palmer@dabbelt.com>, ebiederm@xmission.com,
+        damien.lemoal@opensource.wdc.com, Niklas.Cassel@wdc.com,
+        viro@zeniv.linux.org.uk, Paul Walmsley <paul.walmsley@sifive.com>,
+        aou@eecs.berkeley.edu, vapier@gentoo.org, stable@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-riscv@lists.infradead.org, linux-arch@vger.kernel.org,
+        geert@linux-m68k.org, linux-m68k@lists.linux-m68k.org,
+        gerg@linux-m68k.org, linux-arm-kernel@lists.infradead.org,
+        linux-sh@vger.kernel.org, ysato@users.sourceforge.jp
+References: <87levzzts4.fsf_-_@email.froward.int.ebiederm.org>
+ <mhng-32cab6aa-87a3-4a5c-bf83-836c25432fdd@palmer-ri-x1c9>
+ <20220420165935.GA12207@brightrain.aerifal.cx>
+ <202204201044.ACFEB0C@keescook>
+From:   Rob Landley <rob@landley.net>
+In-Reply-To: <202204201044.ACFEB0C@keescook>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-3.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Previous patches moved sgid stripping exclusively into the vfs. So
-manual sgid stripping by the filesystem isn't needed anymore.
+On 4/20/22 12:47, Kees Cook wrote:
+>> For what it's worth, bimfmt_flat (with or without shared library
+>> support) should be simple to implement as a binfmt_misc handler if
+>> anyone needs the old shared library support (or if kernel wanted to
+>> drop it entirely, which I would be in favor of). That's how I handled
+>> old aout binaries I wanted to run after aout was removed: trivial
+>> binfmt_misc loader.
+> 
+> Yeah, I was trying to understand why systems were using binfmt_flat and
+> not binfmt_elf, given the mention of elf2flat -- is there really such a
+> large kernel memory footprint savings to be had from removing
+> binfmt_elf?
 
-Reviewed-by: Xiubo Li <xiubli@redhat.com>
-Reviewed-by: Christian Brauner (Microsoft)<brauner@kernel.org>
-Signed-off-by: Yang Xu <xuyang2018.jy@fujitsu.com>
----
- fs/ceph/file.c | 4 ----
- 1 file changed, 4 deletions(-)
+elf2flat is a terrible name: it doesn't take an executable as input, it takes a
+.o file as input. (I mean it's an elf format .o file, but... misleading.)
 
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index 6c9e837aa1d3..8e3b99853333 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -651,10 +651,6 @@ static int ceph_finish_async_create(struct inode *dir, struct dentry *dentry,
- 		/* Directories always inherit the setgid bit. */
- 		if (S_ISDIR(mode))
- 			mode |= S_ISGID;
--		else if ((mode & (S_ISGID | S_IXGRP)) == (S_ISGID | S_IXGRP) &&
--			 !in_group_p(dir->i_gid) &&
--			 !capable_wrt_inode_uidgid(&init_user_ns, dir, CAP_FSETID))
--			mode &= ~S_ISGID;
- 	} else {
- 		in.gid = cpu_to_le32(from_kgid(&init_user_ns, current_fsgid()));
- 	}
--- 
-2.27.0
+> But regardless, yes, it seems like if you're doing anything remotely
+> needing shared libraries with binfmt_flat, such a system could just use
+> ELF instead.
 
+A) The binfmt_elf.c loader won't run on nommu systems. The fdpic loader will,
+and in theory can handle normal ELF binaries (it's ELF with _more_
+capabilities), but sadly it's not supported on most architectures for reasons
+that are unclear to me.
+
+B) You can't run conventional ELF on nommu, because everything is offset from 0
+so PID 1 eats that address range and you can't run exec program.
+
+You can run PIE binaries on nommu (the symbols offset from a base pointer which
+can point anywhere), but they're inefficient (can't share text or rodata
+sections between instances because every symbol is offset from a single shared
+base pointer), and highly vulnerable to fragmentation (because it needs a
+contiguous blob of memory for text, rodata, bss, and data: see single base
+pointer everything has an integer offset from).
+
+All fdpic really does is give you 4 base pointers, one for each section. That
+way you can share text and rodata, and put bss and data into smaller independent
+fragments of memory. Various security guys use this as super-aslr even on mmu
+systems, but tend not to advertise that they're doing so. :)
+
+Rob
