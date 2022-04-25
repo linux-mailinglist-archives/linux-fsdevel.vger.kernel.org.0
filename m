@@ -2,161 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 38DC150D7D0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Apr 2022 05:46:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E051B50D82F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Apr 2022 06:19:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241011AbiDYDtN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 24 Apr 2022 23:49:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42682 "EHLO
+        id S240986AbiDYEWT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Apr 2022 00:22:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240987AbiDYDs7 (ORCPT
+        with ESMTP id S240876AbiDYEWS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 24 Apr 2022 23:48:59 -0400
-Received: from mail-oi1-x233.google.com (mail-oi1-x233.google.com [IPv6:2607:f8b0:4864:20::233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73A48192B2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 24 Apr 2022 20:45:51 -0700 (PDT)
-Received: by mail-oi1-x233.google.com with SMTP id r8so15818643oib.5
-        for <linux-fsdevel@vger.kernel.org>; Sun, 24 Apr 2022 20:45:51 -0700 (PDT)
+        Mon, 25 Apr 2022 00:22:18 -0400
+Received: from mail-qk1-x72c.google.com (mail-qk1-x72c.google.com [IPv6:2607:f8b0:4864:20::72c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89BB018361;
+        Sun, 24 Apr 2022 21:19:13 -0700 (PDT)
+Received: by mail-qk1-x72c.google.com with SMTP id q75so9986891qke.6;
+        Sun, 24 Apr 2022 21:19:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=landley-net.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=dCbuXnt8KI6vT4+iL+5GGDKwywcs08Pazm0PAaoYNFI=;
-        b=ZvaDEohb8ZLj7cvPeWXG70F+Xmei4RkLyAyXVmfQrQwpmNzLUAwA3X85LIHV2dvy3B
-         zdls0TLE9Bm0H7NsvkqqSigKYPQmL1fEIk5ubVzVX7gH77cDgy0gcYKaDwbqepEx+Z42
-         beIuU3yYuC2nJ2JPlxGkDdPy5pfY6i9g6EviD4PM1Biie+s8LDe1rU1v7Chqf9+Of2DM
-         hj/fz3cO/2reyFq0zD0PoG1gQgbBJr8wL+PmUB6jjTiewSYBc88jCiVWlYLS+ZIGuJG5
-         9Lz/5+i0Ir9Lvrsf2fCg6oedgf2axiFm5gLfRx95D6fG5Ndv39Ybt7WM3UQW1//pXBzv
-         tO1A==
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=n9ZQHKz6biJiRkpy+CyyBSek4fjy21imjdDmRA8Vqgw=;
+        b=cmnAJJkP34bjVns2uO/86rkj5RTyiJm45vA+lAwj5O1/o0Y0+K/ZQz858LHcAhf/Wj
+         o33vdISVSpM7OTXmNjeVFiQpYuzIAYHFTIFr/IYykpp2p63xBZDt34cM8T6iFOltM7N8
+         BTBERl3etwNlD+7WAHI7TqcOWnntTf1hJQFhTL/j3Bi5MkhQ/TXngcZTR0s9OshoZPXm
+         opl0oTVWYCec68WYkUBR1YC+i11/f3aNqqKMbRxnS2w5mpyFYdu7LWtdLCtiaIerJMuz
+         ixhVtMKpJYI4FqxSKCKzcGJWRJb/98HN+0dlS3m8onn1Pv0gnODJbuUKWmbSuMFM8sXb
+         fDcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=dCbuXnt8KI6vT4+iL+5GGDKwywcs08Pazm0PAaoYNFI=;
-        b=TAV6K8fG4BY64rR+syiIBlo93dvRgvOvRg41Xw0LaYDVSCxlUxh0yBMl0GyIw7sf9D
-         UYoVNRaPzMf2BCsHgROdChUJQgQpLOUBcoz+j/bZwtrL6tFgik/7XelJuYEQYcYXbCkt
-         prER+nfe8cTs8musmiRVqt4FjQojAmUsjY9T3SFQfU7SnRIPir/G2DeX0/60qQDuu6vU
-         Qx3nx0cvmVOw6lWtr4ybu8ZNcecwC8KjvdYLyLnpItWeCMm5TGdPOa0fjUTRR0J2qqmz
-         /uXs74gGzqczdRK2mBfXWbe6+A6T9gofELbEeJSNtPvUBa2/PV7c4/YKz3ErGszCbkbB
-         cuGw==
-X-Gm-Message-State: AOAM5300anL9iLSgAY1rv83fxcdZLFN+LYfK//pycGVDrhui/GcJiv0r
-        w6BON0r6pBRqHUNBVWwmT+kvwg==
-X-Google-Smtp-Source: ABdhPJyjXv8VnX8iTAuwua0Imy62cyfWX3ohly9ACpWE55XVrjfJZYK8m6QF79M73snVG+oZVSSfmQ==
-X-Received: by 2002:a05:6808:1381:b0:325:1ffe:af93 with SMTP id c1-20020a056808138100b003251ffeaf93mr2368429oiw.191.1650858350829;
-        Sun, 24 Apr 2022 20:45:50 -0700 (PDT)
-Received: from [192.168.208.243] ([172.56.88.231])
-        by smtp.gmail.com with ESMTPSA id e16-20020a4a9b50000000b0035e5b5acc04sm1834959ook.24.2022.04.24.20.45.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 24 Apr 2022 20:45:50 -0700 (PDT)
-Message-ID: <24f1fd7f-7e1c-bb56-3a08-56ccfc686a61@landley.net>
-Date:   Sun, 24 Apr 2022 22:50:09 -0500
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=n9ZQHKz6biJiRkpy+CyyBSek4fjy21imjdDmRA8Vqgw=;
+        b=FzTzXzfDOVo6KZWSvrVVJd7N1BnSky+E8rDcZPGUAOqoDnL2xO8qlgcu+Dfc5ZwGhk
+         PlBMZPdqDbT/btapAEVtwZdI8koUTD0s7Kq/GaSmau4J3coNwKtq6hry/sFEeIrs5LCt
+         Ev4GQN4Gvue/foWPINI+5fJXs3mKZaug4azUVrr7vFOFY1enjB0e+RTKZFlOX97m0I8g
+         wzBLYmTM+579t5KcOYvkXDdRe72lVAllMshkCrMX1eCsWDuqhduSQXjckwOZX0ntPkAh
+         FNViIbV8NB3RS57XZFKWrkeT6BZacEw2/TLZNJm+NJw5b/e4qko00n2BElcnzLij6aw+
+         L0Bg==
+X-Gm-Message-State: AOAM530MM6mwXT330QR99OYABeCH7+deLTWpsSMnvME1rTaGUcm0mMhY
+        RmjYMmFMdxxR+vMmwuYMAA==
+X-Google-Smtp-Source: ABdhPJxeI09oROlDGdyr6/aGBGZksem4gbPjLwqSs0XVQfJosORnc9e+ZOIM168DGIgRrzo9YgWVhA==
+X-Received: by 2002:a05:620a:13a5:b0:69e:e3b1:91a0 with SMTP id m5-20020a05620a13a500b0069ee3b191a0mr8995546qki.5.1650860352586;
+        Sun, 24 Apr 2022 21:19:12 -0700 (PDT)
+Received: from moria.home.lan (c-73-219-103-14.hsd1.vt.comcast.net. [73.219.103.14])
+        by smtp.gmail.com with ESMTPSA id c21-20020ac87dd5000000b002f36347ddabsm3300316qte.77.2022.04.24.21.19.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 24 Apr 2022 21:19:11 -0700 (PDT)
+Date:   Mon, 25 Apr 2022 00:19:09 -0400
+From:   Kent Overstreet <kent.overstreet@gmail.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hch@lst.de,
+        hannes@cmpxchg.org, akpm@linux-foundation.org,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-input@vger.kernel.org, roman.gushchin@linux.dev
+Subject: Re: [PATCH v2 1/8] lib/printbuf: New data structure for
+ heap-allocated strings
+Message-ID: <20220425041909.hcyirjphrkhxz6hx@moria.home.lan>
+References: <20220421234837.3629927-1-kent.overstreet@gmail.com>
+ <20220421234837.3629927-7-kent.overstreet@gmail.com>
+ <fcaf18ed6efaafa6ca7df79712d9d317645215f8.camel@perches.com>
+ <YmYLEovwj9BqeZQA@casper.infradead.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.2
-Subject: Re: [PATCH] binfmt_flat: Remove shared library support
-Content-Language: en-US
-To:     Rich Felker <dalias@libc.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Greg Ungerer <gerg@linux-m68k.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        Niklas Cassel <Niklas.Cassel@wdc.com>,
-        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Mike Frysinger <vapier@gentoo.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>
-References: <20220414091018.896737-1-niklas.cassel@wdc.com>
- <f379cb56-6ff5-f256-d5f2-3718a47e976d@opensource.wdc.com>
- <Yli8voX7hw3EZ7E/@x1-carbon>
- <81788b56-5b15-7308-38c7-c7f2502c4e15@linux-m68k.org>
- <87levzzts4.fsf_-_@email.froward.int.ebiederm.org>
- <01b063d7-d5c2-8af0-ad90-ed6c069252c5@linux-m68k.org>
- <CAMuHMdXd94L=766usN4WG-hK2MpQLy50mJZ=9G9NGv03kx8V8Q@mail.gmail.com>
- <20220421124326.GG7074@brightrain.aerifal.cx>
-From:   Rob Landley <rob@landley.net>
-In-Reply-To: <20220421124326.GG7074@brightrain.aerifal.cx>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YmYLEovwj9BqeZQA@casper.infradead.org>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 4/21/22 07:43, Rich Felker wrote:
-> On Thu, Apr 21, 2022 at 08:52:59AM +0200, Geert Uytterhoeven wrote:
->> On Thu, Apr 21, 2022 at 1:53 AM Greg Ungerer <gerg@linux-m68k.org> wrote:
->> > On 21/4/22 00:58, Eric W. Biederman wrote:
->> > > In a recent discussion[1] it was reported that the binfmt_flat library
->> > > support was only ever used on m68k and even on m68k has not been used
->> > > in a very long time.
->> > >
->> > > The structure of binfmt_flat is different from all of the other binfmt
->> > > implementations becasue of this shared library support and it made
->> > > life and code review more effort when I refactored the code in fs/exec.c.
->> > >
->> > > Since in practice the code is dead remove the binfmt_flat shared libarary
->> > > support and make maintenance of the code easier.
->> > >
->> > > [1] https://lkml.kernel.org/r/81788b56-5b15-7308-38c7-c7f2502c4e15@linux-m68k.org
->> > > Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
->> > > ---
->> > >
->> > > Can the binfmt_flat folks please verify that the shared library support
->> > > really isn't used?
->> >
->> > I can definitely confirm I don't use it on m68k. And I don't know of
->> > anyone that has used it in many years.
->> >
->> >
->> > > Was binfmt_flat being enabled on arm and sh the mistake it looks like?
->> 
->> I think the question was intended to be
->> 
->>     Was *binfmt_flat_shared_flat* being enabled on arm and sh the
->>     mistake it looks like?
+On Mon, Apr 25, 2022 at 03:44:34AM +0100, Matthew Wilcox wrote:
+> On Sun, Apr 24, 2022 at 04:46:03PM -0700, Joe Perches wrote:
+> > > + * pr_human_readable_u64, pr_human_readable_s64: Print an integer with human
+> > > + * readable units.
+> > 
+> > Why not extend vsprintf for this using something like %pH[8|16|32|64] 
+> > or %pH[c|s|l|ll|uc|us|ul|ull] ?
 > 
-> Early in my work on j2, I tried to research the history of shared flat
-> support on sh, and it turned out the mainline tooling never even
-> supported it, and the out-of-line tooling I eventually found was using
-> all sorts of wrong conditionals for how it did the linking and elf2flt
-> conversion, e.g. mere presence of any PIC-like relocation in any file
-> made it assume the whole program was PIC-compatible. There's no way
-> that stuf was ever used in any meaningful way. It just didn't work.
+> The %pX extension we have is _cute_, but ultimately a bad idea.  It
+> centralises all kinds of unrelated things in vsprintf.c, eg bdev_name()
+> and clock() and ip_addr_string().
+
+And it's not remotely discoverable. I didn't realize we had bdev_name()
+available as a format string until just now or I would've been using it!
+
+> Really, it's working around that we don't have something like Java's
+> StringBuffer (which I see both seq_buf and printbuf as attempting to
+> be).  So we have this primitive format string hack instead of exposing
+> methods like:
 > 
-> Quickly dropped that and got plain ELF (no shared text/xip, but no
-> worse than the existing flat support) working, and soon after, FDPIC.
+> void dentry_string(struct strbuf *, struct dentry *);
+
+Exactly!
+
+> as an example,
+>                 if (unlikely(ino == dir->i_ino)) {
+>                         EXT4_ERROR_INODE(dir, "'%pd' linked to parent dir",
+>                                          dentry);
+>                         return ERR_PTR(-EFSCORRUPTED);
+>                 }
 > 
-> The whole binfmt_flat ecosystem is a mess with no good reason to
-> exist.
+> would become something like:
+> 
+> 		if (unlikely(ino == dir->i_ino)) {
+> 			struct strbuf strbuf;
+> 			strbuf_char(strbuf, '\'');
+> 			dentry_string(strbuf, dentry);
+> 			strbuf_string(strbuf, "' linked to parent dir");
+> 			EXT4_ERROR_INODE(dir, strbuf);
+> 			return ERR_PTR(-EFSCORRUPTED);
+> 		}
+> 
+> which isn't terribly nice, but C has sucky syntax for string
+> construction.  Other languages have done this better, including Rust.
 
-FYI when I had to come up to speed on this in 2014 I did a writeup on my own
-research:
+Over IRC just now you proposed "%p(%p)", dentry_name, dentry - I'm _really_
+liking this idea, especially if we can get glibc to take it.
 
-https://landley.net/notes-2014.html#07-12-2014
+Then your ext4 example becomes just 
 
-The lack of a canonical "upstream" elf2flt repository was probably the biggest
-problem at the time.
+	if (unlikely(ino == dir->i_ino)) {
+		EXT4_ERROR_INODE(dir, "'%p(%p)' linked to parent dir",
+				 dentry_name, dentry);
+		return ERR_PTR(-EFSCORRUPTED);
+	}
 
-(There's a reason I grabbed fdpic hard and tried to make that work everywhere.)
+And you can cscope to the pretty-printer! And dentry_name becomes just
 
-> Rich
+void dentry_name(struct printbuf *out, struct dentry *dentry)
+{
+	...
+}
 
-Rob
+Which is quite a bit simpler than the current definition.
+
+Sweeeeeet.
