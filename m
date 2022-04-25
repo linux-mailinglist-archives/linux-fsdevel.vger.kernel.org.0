@@ -2,83 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DE86450E04F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Apr 2022 14:30:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D43450E08C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Apr 2022 14:41:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239162AbiDYMdV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Apr 2022 08:33:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33608 "EHLO
+        id S241920AbiDYMog (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Apr 2022 08:44:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42914 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231655AbiDYMdS (ORCPT
+        with ESMTP id S233100AbiDYMod (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Apr 2022 08:33:18 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC2B764731;
-        Mon, 25 Apr 2022 05:30:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=e/nSWGUN3FIAmeOGnERJTpavdH8S5PvkJMrvIlmos0A=; b=EUnNGTKsPcwlrnrm2PDN6Y/5Ae
-        IAYZ0jEuutiZ9TSmOs3HZujZ2EhDcaB7xMcGaM3Z32Yvm77yKwh9Sc+aF8iphnrgVD3lH3FnCWJe2
-        bBNrqojxDAGwGUEyXW060fHziSPtDE3+meG0khkIxx8z1PoI8+xKB6xa+VjK1E8mMlJTuTLSV7vlU
-        GnOfWEdG4+NBcLA66dKydOSJqwAaQXALOdDYQ2xQ91T6kCgzvv1rWkBF+y4YsqjfktHIHwx/LHK0T
-        FGkEV+ByPiaJ1B6vFSXDK4/DigWFiq0+YGcyHScm7ykrfWrGWeQYTfDgJV3JUNZAR1++pi8Bu9gW0
-        e0ReSM9w==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nixqz-008geI-66; Mon, 25 Apr 2022 12:30:09 +0000
-Date:   Mon, 25 Apr 2022 13:30:09 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     linux-cachefs@redhat.com,
-        Rohith Surabattula <rohiths.msft@gmail.com>,
-        Steve French <sfrench@samba.org>,
-        Shyam Prasad N <nspmangalore@gmail.com>,
-        linux-cifs@vger.kernel.org, Jeff Layton <jlayton@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH 14/14] mm, netfs, fscache: Stop read optimisation when
- folio removed from pagecache
-Message-ID: <YmaUUezsM+AS5R4y@casper.infradead.org>
-References: <Yk9V/03wgdYi65Lb@casper.infradead.org>
- <Yk5W6zvvftOB+80D@casper.infradead.org>
- <164928615045.457102.10607899252434268982.stgit@warthog.procyon.org.uk>
- <164928630577.457102.8519251179327601178.stgit@warthog.procyon.org.uk>
- <469869.1649313707@warthog.procyon.org.uk>
- <3118843.1650888461@warthog.procyon.org.uk>
+        Mon, 25 Apr 2022 08:44:33 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1BBCCE4AA
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Apr 2022 05:41:28 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id z19so4971685edx.9
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Apr 2022 05:41:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9DsLpqQPuxCK2Mrehw4P0708AXzU3xBMKVlsThqy3Zc=;
+        b=YIsai6GVstoGAERSXy61aZOo146osRmFisTtgf1r43CWKdN0WObYtifthAbCAQXzY3
+         tqDNkB8lZMG8O+ZA3BI7ARoIlT9sDW4DiT6LNdT+qU2+HKoMz7Klz4vA4aiecr6cuU0N
+         31+H7m93zTKZRdQm5Ly7aMJZqVx4OM7TEkO7E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9DsLpqQPuxCK2Mrehw4P0708AXzU3xBMKVlsThqy3Zc=;
+        b=rzGNhkOOc6Ij5wGL28CoItwEp3VfD1tAuvw3OHrMIlXOf1vTiTEJSTFXaFxy5R6Xg+
+         90dER4PgcXqH6d6LYuWtOGC4APMBbKhUC5UiucIaIE38RmYinZwj4nn3B15ObAC/QMQS
+         FPhJ9sUGtdYS/vPb63NbQgfhYTqOJPUFwOw38dQaajI4sAsvr1oFL6/Zx6BIhfPy+Ru7
+         lYbrceMx9ZrpDz8KpXGBG19k5ZgwLrvt3+gHjwf5J+Hk30rf4SLDGGr6OZXncxRFXKmR
+         2fghRhEgW0b7TpM7rD0ZKWnLdH0eDiZzF4kqzbz63JlS8l9684hFZsR3GZYad23WEK49
+         y2QQ==
+X-Gm-Message-State: AOAM531+yZuYwgLg15nC1lqK7cif9mVfkqRsn2XosxhBtrQO6BphPXEM
+        9z6q+Q6BVJVL96XfBjETm3+Ky5dnXuQL9WCmGsKhvA==
+X-Google-Smtp-Source: ABdhPJyXkzITV2ceShfI11A54nnWGtHFrfecC+LpX/i3C5jj2uy9aIr5gNUmnebtnuLIX3bX+4PSPJXxoydBw/Mil7M=
+X-Received: by 2002:a05:6402:274b:b0:423:fe73:95a0 with SMTP id
+ z11-20020a056402274b00b00423fe7395a0mr18665932edd.224.1650890487604; Mon, 25
+ Apr 2022 05:41:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3118843.1650888461@warthog.procyon.org.uk>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+References: <20220325132126.61949-1-zhangjiachen.jaycee@bytedance.com>
+In-Reply-To: <20220325132126.61949-1-zhangjiachen.jaycee@bytedance.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 25 Apr 2022 14:41:16 +0200
+Message-ID: <CAJfpeguESQm1KsQLyoMRTevLttV8N8NTGsb2tRbNS1AQ_pNAww@mail.gmail.com>
+Subject: Re: [RFC PATCH] fuse: support cache revalidation in writeback_cache mode
+To:     Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Xie Yongji <xieyongji@bytedance.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
+        DKIM_SIGNED,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 25, 2022 at 01:07:41PM +0100, David Howells wrote:
-> Matthew Wilcox <willy@infradead.org> wrote:
-> 
-> > OK.  You suggested that releasepage was an acceptable place to call it.
-> > How about we have AS_RELEASE_ALL (... or something ...) and then
-> > page_has_private() becomes a bit more complicated ... to the point
-> > where we should probably get rid of it (by embedding it into
-> > filemap_release_folio():
-> 
-> I'm not sure page_has_private() is quite so easy to get rid of.
-> shrink_page_list() and collapse_file(), for example, use it to conditionalise
-> a call to try_to_release_page() plus some other bits.
+On Fri, 25 Mar 2022 at 14:23, Jiachen Zhang
+<zhangjiachen.jaycee@bytedance.com> wrote:
+>
+> Hi all,
+>
+> This RFC patch implements attr cache and data cache revalidation for
+> fuse writeback_cache mode in kernel. Looking forward to any suggestions
+> or comments on this feature.
 
-That's what I was saying.  Make the calls to try_to_release_page()
-unconditional and delete page_has_private() because it only confuses
-people who should actually be using PagePrivate().
+Quick question before going into the details:  could the cache
+revalidation be done in the userspace filesystem instead, which would
+set/clear FOPEN_KEEP_CACHE based on the result of the revalidation?
 
-> I think that, for the moment, I would need to add a check for AS_RELEASE_ALL
-> to page_has_private().
-> 
-> David
-> 
-> 
+Thanks,
+Miklos
