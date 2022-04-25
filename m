@@ -2,130 +2,159 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0539A50E97A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Apr 2022 21:27:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D93550E992
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 25 Apr 2022 21:35:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244916AbiDYTa7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 25 Apr 2022 15:30:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40092 "EHLO
+        id S244971AbiDYTiw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 25 Apr 2022 15:38:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40740 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230214AbiDYTa6 (ORCPT
+        with ESMTP id S244968AbiDYTiv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 25 Apr 2022 15:30:58 -0400
-X-Greylist: delayed 313 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 25 Apr 2022 12:27:51 PDT
-Received: from mp-relay-01.fibernetics.ca (mp-relay-01.fibernetics.ca [208.85.217.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FC31110978;
-        Mon, 25 Apr 2022 12:27:51 -0700 (PDT)
-Received: from mailpool-fe-02.fibernetics.ca (mailpool-fe-02.fibernetics.ca [208.85.217.145])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mp-relay-01.fibernetics.ca (Postfix) with ESMTPS id D0F9FE0F7E;
-        Mon, 25 Apr 2022 19:22:36 +0000 (UTC)
-Received: from localhost (mailpool-mx-02.fibernetics.ca [208.85.217.141])
-        by mailpool-fe-02.fibernetics.ca (Postfix) with ESMTP id B304460284;
-        Mon, 25 Apr 2022 19:22:36 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at 
-X-Spam-Score: -0.2
-X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
-Received: from mailpool-fe-02.fibernetics.ca ([208.85.217.145])
-        by localhost (mail-mx-02.fibernetics.ca [208.85.217.141]) (amavisd-new, port 10024)
-        with ESMTP id PaBD9BfcMjTl; Mon, 25 Apr 2022 19:22:36 +0000 (UTC)
-Received: from [192.168.48.23] (host-45-78-195-155.dyn.295.ca [45.78.195.155])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: dgilbert@interlog.com)
-        by mail.ca.inter.net (Postfix) with ESMTPSA id 535B860958;
-        Mon, 25 Apr 2022 19:22:35 +0000 (UTC)
-Message-ID: <bc0b2c10-10e6-a1d9-4139-ac93ad3512b2@interlog.com>
-Date:   Mon, 25 Apr 2022 15:22:34 -0400
+        Mon, 25 Apr 2022 15:38:51 -0400
+Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 176D211115A;
+        Mon, 25 Apr 2022 12:35:46 -0700 (PDT)
+Received: by fieldses.org (Postfix, from userid 2815)
+        id 90A8014DB; Mon, 25 Apr 2022 15:35:45 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org 90A8014DB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
+        s=default; t=1650915345;
+        bh=RMqHgOKqXXbxUoCSNWhPfJAimj7IFB101BD794lejj0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=GcIDZNBprxrZ3zkBj2HiXt23Ne0HH2haVnBRRUJrmbz730MEfO3QqHPz0ZJM3Zo4H
+         UunADjkK9fh0qd8b+y+pWxLnB5TJRncYlAiZGe6dmzyfr2+sAWZ7Djgsa3qrI1rWGU
+         lVSLw94lR6euALxpLFMBG5zJqQemAAw614GFS7GA=
+Date:   Mon, 25 Apr 2022 15:35:45 -0400
+From:   "J. Bruce Fields" <bfields@fieldses.org>
+To:     dai.ngo@oracle.com
+Cc:     chuck.lever@oracle.com, jlayton@redhat.com,
+        viro@zeniv.linux.org.uk, linux-nfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH RFC v21 3/7] NFSD: move create/destroy of laundry_wq to
+ init_nfsd and exit_nfsd
+Message-ID: <20220425193545.GG24825@fieldses.org>
+References: <1650739455-26096-1-git-send-email-dai.ngo@oracle.com>
+ <1650739455-26096-4-git-send-email-dai.ngo@oracle.com>
+ <8640dbe0-cece-4515-fa4f-efa2e0a14303@oracle.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Reply-To: dgilbert@interlog.com
-Subject: Re: scsi_debug in fstests and blktests (Was: Re: Fwd: [bug
- report][bisected] modprob -r scsi-debug take more than 3mins during blktests
- srp/ tests)
-Content-Language: en-CA
-To:     Luis Chamberlain <mcgrof@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>
-Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-modules@vger.kernel.org, Chaitanya Kulkarni <kch@nvidia.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Lucas De Marchi <lucas.demarchi@intel.com>,
-        Pankaj Malhotra <pankaj1.m@samsung.com>,
-        Vincent Fu <vincent.fu@samsung.com>
-References: <CAHj4cs9OTm9sb_5fmzgz+W9OSLeVPKix3Yri856kqQVccwd_Mw@mail.gmail.com>
- <fba69540-b623-9602-a0e2-00de3348dbd6@interlog.com>
- <YlW7gY8nr9LnBEF+@bombadil.infradead.org>
- <00ebace8-b513-53c0-f13b-d3320757695d@interlog.com>
- <YmGaGoz2+Kdqu05l@bombadil.infradead.org> <YmJDqceT1AiePyxj@infradead.org>
- <YmLEeUhTImWKIshO@bombadil.infradead.org>
-From:   Douglas Gilbert <dgilbert@interlog.com>
-In-Reply-To: <YmLEeUhTImWKIshO@bombadil.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8640dbe0-cece-4515-fa4f-efa2e0a14303@oracle.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2022-04-22 11:06, Luis Chamberlain wrote:
-> On Thu, Apr 21, 2022 at 10:56:57PM -0700, Christoph Hellwig wrote:
->> On Thu, Apr 21, 2022 at 10:53:30AM -0700, Luis Chamberlain wrote:
->>> Moving this discussion to the lists as we need to really think
->>> about how testing on fstests and blktests uses scsi_debug for
->>> a high confidence in baseline without false positives on failures
->>> due to the inability to the remove scsi_debug module.
->>>
->>> This should also apply to other test debug modules like null_blk,
->>> nvme target loop drivers, etc, it's all the same long term. But yeah
->>> scsi surely make this... painful today. In any case hopefully folks
->>> with other test debug drivesr are running tests to ensure you can
->>> always rmmod these modules regardless of what is happening.
->>
->> Maybe fix blktests to not rely on module removal  I have such a hard
->> time actually using blktests because it is suck a f^^Y% broken piece
->> of crap that assumes everything is modular.  Stop making that whole
->> assumption and work fine with built-in driver as a first step.  Then
->> start worrying about module removal.
+On Mon, Apr 25, 2022 at 08:27:22AM -0700, dai.ngo@oracle.com wrote:
+> This patch has problem to build with this error:
 > 
-> It begs the question if the same wish should apply to fstests.
+> >>nfsctl.c:(.exit.text+0x0): undefined reference to `laundry_wq'
+> >>mipsel-linux-ld: nfsctl.c:(.exit.text+0x4): undefined reference to `laundry_wq'
 > 
-> If we want to *not* rely on module removal then the right thing to do I
-> think would be to replace module removal on these debug modules
-> (scsi_debug) with an API as null_blk has which uses configfs to *add* /
-> *remove* devices.
+> This happens when CONFIG_NFSD is defined but CONFIG_NFSD_V4
+> is not. I think to fix this we need to also move the declaration
+> of laundry_wq from nfs4state.c to nfsctl.c. However this seems
+> odd since the laundry_wq is only used for v4, unless you have
+> any other suggestion.
 
-The scsi_debug driver has been around for a while, I started maintaining it
-around 1998. It was always assumed that it would be used as a module while
-testing, then removed. You might wonder why the number of SCSI hosts simulated
-by scsi_debug is called "add_hosts"? That is because it is also a sysfs
-read-write parameter that can take a positive or negative integer to add or
-remove that number of SCSI hosts at runtime, without removing the module.
-See /sys/bus/pseudo/drivers/scsi_debug where about 2/3 of the parameters
-are writable. Perhaps configfs capability could be added to scsi_debug,
-patches welcome ...
+I'd just leave laundry_wq private to nfs4state.c.  Define
+create_laundromat() and destroy_laundromat() in nfs4state.c too.  And in
+nfsd.h, do the usual trick of defining no-op versions of those functions
+in the non-v4 case.  (See e.g. what we do with nfsd4_init/free_slabs().)
 
-If you want a cheap ram disk to back file system tests then null_blk is the
-way to go.
+--b.
 
-The scsi_debug driver is a SCSI low level driver (LLD) controlling a
-simulated HBA (on the "pseudo" bus) that has zero or more SCSI devices
-(e.g. disks) attached to it. It is designed to back sd, st, ses Linux
-devices (e.g. /dev/sdb). And it can simulate various types of storage
-that are found in the real world, for example storage with associated
-protection information and more recently with zoned storage. It can also
-simulate errors and/or a _lot_ of devices (say 10,000) by sharing the
-backing ram behind each device.
-
-So the fact that the scsi_debug driver can support blktests could be seen
-as a bit of an accident, that is not its primary purpose.
-
-Doug Gilbert
-
-
+> 
+> -Dai
+> 
+> On 4/23/22 11:44 AM, Dai Ngo wrote:
+> >This patch moves create/destroy of laundry_wq from nfs4_state_start
+> >and nfs4_state_shutdown_net to init_nfsd and exit_nfsd to prevent
+> >the laundromat from being freed while a thread is processing a
+> >conflicting lock.
+> >
+> >Signed-off-by: Dai Ngo <dai.ngo@oracle.com>
+> >---
+> >  fs/nfsd/nfs4state.c | 15 ++-------------
+> >  fs/nfsd/nfsctl.c    |  6 ++++++
+> >  fs/nfsd/nfsd.h      |  1 +
+> >  3 files changed, 9 insertions(+), 13 deletions(-)
+> >
+> >diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+> >index b08c132648b9..b70ba2eb5665 100644
+> >--- a/fs/nfsd/nfs4state.c
+> >+++ b/fs/nfsd/nfs4state.c
+> >@@ -125,7 +125,7 @@ static void free_session(struct nfsd4_session *);
+> >  static const struct nfsd4_callback_ops nfsd4_cb_recall_ops;
+> >  static const struct nfsd4_callback_ops nfsd4_cb_notify_lock_ops;
+> >-static struct workqueue_struct *laundry_wq;
+> >+struct workqueue_struct *laundry_wq;
+> >  static bool is_session_dead(struct nfsd4_session *ses)
+> >  {
+> >@@ -7798,22 +7798,12 @@ nfs4_state_start(void)
+> >  {
+> >  	int ret;
+> >-	laundry_wq = alloc_workqueue("%s", WQ_UNBOUND, 0, "nfsd4");
+> >-	if (laundry_wq == NULL) {
+> >-		ret = -ENOMEM;
+> >-		goto out;
+> >-	}
+> >  	ret = nfsd4_create_callback_queue();
+> >  	if (ret)
+> >-		goto out_free_laundry;
+> >+		return ret;
+> >  	set_max_delegations();
+> >  	return 0;
+> >-
+> >-out_free_laundry:
+> >-	destroy_workqueue(laundry_wq);
+> >-out:
+> >-	return ret;
+> >  }
+> >  void
+> >@@ -7850,7 +7840,6 @@ nfs4_state_shutdown_net(struct net *net)
+> >  void
+> >  nfs4_state_shutdown(void)
+> >  {
+> >-	destroy_workqueue(laundry_wq);
+> >  	nfsd4_destroy_callback_queue();
+> >  }
+> >diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
+> >index 16920e4512bd..884e873b46ad 100644
+> >--- a/fs/nfsd/nfsctl.c
+> >+++ b/fs/nfsd/nfsctl.c
+> >@@ -1544,6 +1544,11 @@ static int __init init_nfsd(void)
+> >  	retval = register_cld_notifier();
+> >  	if (retval)
+> >  		goto out_free_all;
+> >+	laundry_wq = alloc_workqueue("%s", WQ_UNBOUND, 0, "nfsd4");
+> >+	if (laundry_wq == NULL) {
+> >+		retval = -ENOMEM;
+> >+		goto out_free_all;
+> >+	}
+> >  	return 0;
+> >  out_free_all:
+> >  	unregister_pernet_subsys(&nfsd_net_ops);
+> >@@ -1566,6 +1571,7 @@ static int __init init_nfsd(void)
+> >  static void __exit exit_nfsd(void)
+> >  {
+> >+	destroy_workqueue(laundry_wq);
+> >  	unregister_cld_notifier();
+> >  	unregister_pernet_subsys(&nfsd_net_ops);
+> >  	nfsd_drc_slab_free();
+> >diff --git a/fs/nfsd/nfsd.h b/fs/nfsd/nfsd.h
+> >index 23996c6ca75e..d41dcf1c4312 100644
+> >--- a/fs/nfsd/nfsd.h
+> >+++ b/fs/nfsd/nfsd.h
+> >@@ -72,6 +72,7 @@ extern unsigned long		nfsd_drc_max_mem;
+> >  extern unsigned long		nfsd_drc_mem_used;
+> >  extern const struct seq_operations nfs_exports_op;
+> >+extern struct workqueue_struct *laundry_wq;
+> >  /*
+> >   * Common void argument and result helpers
