@@ -2,59 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E5F8510105
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Apr 2022 16:54:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 845DF51010E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Apr 2022 16:55:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349472AbiDZO5L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Apr 2022 10:57:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52016 "EHLO
+        id S1351795AbiDZO6N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Apr 2022 10:58:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351773AbiDZO5G (ORCPT
+        with ESMTP id S1351791AbiDZO6L (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Apr 2022 10:57:06 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 743C464720;
-        Tue, 26 Apr 2022 07:53:58 -0700 (PDT)
+        Tue, 26 Apr 2022 10:58:11 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF38E1409E;
+        Tue, 26 Apr 2022 07:55:02 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id BF99DCE1EA1;
-        Tue, 26 Apr 2022 14:53:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A14B5C385A0;
-        Tue, 26 Apr 2022 14:53:52 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 78F0A614ED;
+        Tue, 26 Apr 2022 14:55:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79D7BC385AA;
+        Tue, 26 Apr 2022 14:55:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650984835;
-        bh=KmqW8cpwOQam+syOSz/PwH5wv80htuNPJ/Ou7/xXDEc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=g2srGQ+T1sP/B2eF62Rj7QyAqD9SyHeEqMupxx1poA9agdV22DqGIa31vNO32Zvci
-         1EEj2MChuyXH62pivEKg1SjVuwUM2+vVC0HjjyEplrwPXM8LSj1k9XYjzPwZ4JiOvd
-         IOZBxwHPT+ia3K51+pNyXd9m++kx0HQmdWxNXjVrGXTAVYsTjNPKa0izrvarEiFTpF
-         GhcBv9+rrdy908DvXpUuMY7Ey5Ttjsc5+49gZyVilvOPaL6gR4wXXdAx9d+yGht+td
-         5TP/y7q2qXYIRcKvdRrEcuEWT0Kj1KlsuzdgLwwFaE+a2wH9vyhEQ8iDsJ8TmRPbkT
-         IawVZz96GvUBQ==
-Date:   Tue, 26 Apr 2022 16:53:49 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        Yang Xu <xuyang2018.jy@fujitsu.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        ceph-devel <ceph-devel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Dave Chinner <david@fromorbit.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jeff Layton <jlayton@kernel.org>
-Subject: Re: [PATCH v8 3/4] fs: move S_ISGID stripping into the vfs
-Message-ID: <20220426145349.zxmahoq2app2lhip@wittgenstein>
-References: <1650971490-4532-1-git-send-email-xuyang2018.jy@fujitsu.com>
- <1650971490-4532-3-git-send-email-xuyang2018.jy@fujitsu.com>
- <20220426103846.tzz66f2qxcxykws3@wittgenstein>
- <CAOQ4uxhRMp4tM9nP+0yPHJyzPs6B2vtX6z51tBHWxE6V+UZREw@mail.gmail.com>
- <CAJfpegu5uJiHgHmLcuSJ6+cQfOPB2aOBovHr4W5j_LU+reJsCw@mail.gmail.com>
+        s=k20201202; t=1650984901;
+        bh=me9iCcOuTJq+2PqZc4Jh4npbdVCsacbBRf9z6+gdqqk=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Fq9hilMCAJ9Rwa8FPT5daWcr97ssuASl+lSc8iGSkdyweVTInpfT9bvtS2m6xq7PW
+         TC8nluVb3QnvFByfp4Ei8BJqnJSBrKDSETcw6YDJ/CKnRVkYlh0RZJ9kGxojrzN4Rz
+         fkrMJd5qGeG/yU3l7kmqOHAMSnlGCKcwsXGm1Mj4eRXiiQp5yfQOXWphT95sbPJ86e
+         KZNRiIZsBq+RgD5cpH6RL3HE85LRrRKAkdsrw5yUuNJ20N9e2EREBy4VjA4LyTNdJA
+         /vpiDNG8S4KLXVAb29UdlnQ3wUurVw+vPZ+0z+xj7P5OBB+HEGSMgcoLrZlf4oPey3
+         KMCPwev+alVJg==
+Date:   Tue, 26 Apr 2022 07:55:00 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Hannes Reinecke <hare@suse.de>
+Cc:     Chuck Lever <chuck.lever@oracle.com>, netdev@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        ak@tempesta-tech.com, borisp@nvidia.com, simo@redhat.com
+Subject: Re: [PATCH RFC 4/5] net/tls: Add support for PF_TLSH (a TLS
+ handshake listener)
+Message-ID: <20220426075500.34776cd5@kernel.org>
+In-Reply-To: <66077b73-c1a4-d2ae-c8e4-3e19e9053171@suse.de>
+References: <165030051838.5073.8699008789153780301.stgit@oracle-102.nfsv4.dev>
+        <165030059051.5073.16723746870370826608.stgit@oracle-102.nfsv4.dev>
+        <20220425101459.15484d17@kernel.org>
+        <66077b73-c1a4-d2ae-c8e4-3e19e9053171@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAJfpegu5uJiHgHmLcuSJ6+cQfOPB2aOBovHr4W5j_LU+reJsCw@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -64,70 +59,23 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 26, 2022 at 01:52:11PM +0200, Miklos Szeredi wrote:
-> On Tue, 26 Apr 2022 at 13:21, Amir Goldstein <amir73il@gmail.com> wrote:
-> >
-> > On Tue, Apr 26, 2022 at 1:38 PM Christian Brauner <brauner@kernel.org> wrote:
+On Tue, 26 Apr 2022 11:43:37 +0200 Hannes Reinecke wrote:
+> > Create the socket in user space, do all the handshakes you need there
+> > and then pass it to the kernel.  This is how NBD + TLS works.  Scales
+> > better and requires much less kernel code.
+> >   
+> But we can't, as the existing mechanisms (at least for NVMe) creates the 
+> socket in-kernel.
+> Having to create the socket in userspace would require a completely new 
+> interface for nvme and will not be backwards compatible.
+> Not to mention having to rework the nvme driver to accept sockets from 
+> userspace instead of creating them internally.
 > 
-> > > One thing that I just remembered and which I think I haven't mentioned
-> > > so far is that moving S_ISGID stripping from filesystem callpaths into
-> > > the vfs callpaths means that we're hoisting this logic out of vfs_*()
-> > > helpers implicitly.
-> > >
-> > > So filesystems that call vfs_*() helpers directly can't rely on S_ISGID
-> > > stripping being done in vfs_*() helpers anymore unless they pass the
-> > > mode on from a prior run through the vfs.
-> > >
-> > > This mostly affects overlayfs which calls vfs_*() functions directly. So
-> > > a typical overlayfs callstack would be (roughly - I'm omw to lunch):
-> > >
-> > > sys_mknod()
-> > > -> do_mknodat(mode) // calls vfs_prepare_mode()
-> > >    -> .mknod = ovl_mknod(mode)
-> > >       -> ovl_create(mode)
-> > >          -> vfs_mknod(mode)
-> > >
-> > > I think we are safe as overlayfs passes on the mode on from its own run
-> > > through the vfs and then via vfs_*() to the underlying filesystem but it
-> > > is worth point that out.
-> > >
-> > > Ccing Amir just for confirmation.
-> >
-> > Looks fine to me, but CC Miklos ...
-> 
-> Looks fine to me as well.  Overlayfs should share the mode (including
-> the suid and sgid bits), owner, group and ACL's with the underlying
-> filesystem, so clearing sgid based on overlay parent directory should
-> result in the same mode as if it was done based on the parent
-> directory on the underlying layer.
+> With this approach we can keep existing infrastructure, and can get a 
+> common implementation for either transport.
 
-Ah yes, good point.
+You add 1.5kLoC and require running a user space agent, surely you're
+adding new interfaces and are not backward-compatible already.
 
-> 
-> AFAIU this logic is not affected by userns or mnt_userns, but
-> Christian would be best to confirm that.
-
-It does depend on it as S_ISGID stripping requires knowledge about
-whether the caller has CAP_FSETID and is capable over the parent
-directory or if they are in the group the file is owned by.
-
-I think ultimately it might just come down to moving vfs_prepare_mode()
-into vfs_*() helpers and not into the do_*at() helpers.
-
-That would be cleaner anyway as right now we have this weird disconnect
-between vfs_tmpfile() and vfs_{create,mknod,mkdir}(). IOW, vfs_tmpfile()
-doesn't even have an associated do_*() wrapper where we could call
-vfs_prepare_mode() from.
-
-So ultimately it might be nicer if we do it in vfs_*() helpers anyway.
-
-The less pretty thing about it will be that the security_path_*() hooks
-also want a mode.
-
-Right now these hooks receive the mode as it's passed in from userspace
-minus umask but before S_ISGID stripping happens.
-
-Whereas I think they should really see what the filesystem sees and
-currently it's a bug that they see something else.
-
-I need to think about this a bit.
+I don't understand your argument, maybe you could rephrase / dumb it
+down for me?
