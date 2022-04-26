@@ -2,50 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D55C5100FA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Apr 2022 16:53:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E5F8510105
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Apr 2022 16:54:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348610AbiDZO4H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Apr 2022 10:56:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48604 "EHLO
+        id S1349472AbiDZO5L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Apr 2022 10:57:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52016 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244221AbiDZO4G (ORCPT
+        with ESMTP id S1351773AbiDZO5G (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Apr 2022 10:56:06 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A66B644E8;
-        Tue, 26 Apr 2022 07:52:59 -0700 (PDT)
+        Tue, 26 Apr 2022 10:57:06 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 743C464720;
+        Tue, 26 Apr 2022 07:53:58 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CA6A4618A9;
-        Tue, 26 Apr 2022 14:52:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79194C385A0;
-        Tue, 26 Apr 2022 14:52:57 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id BF99DCE1EA1;
+        Tue, 26 Apr 2022 14:53:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A14B5C385A0;
+        Tue, 26 Apr 2022 14:53:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650984778;
-        bh=sI30y5H5YftG4MXI2Gw38i3P0XYbhin3oM2Omc/XTx0=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=EN7sUpFgLNc8pFxLz/za6PrkS/DlI15BsZOo5yd6V9i4M9Z9EHuYgDWSlBUOHE703
-         xwexj7i7d9zbTS8x5cCKJ2H1YlckV6KiJ+29VzENa2zQaIIuGIK7SIkBtONYHHbx1W
-         iXtQt+dw3Q0RurNzoetgqGIpmM5QWg6f8D8E4RBT6k4dfHWZcs8bqYrxgO55wb38my
-         yyNsTOnYGrFGXeO6WtOJqOsQmdSSSU92bUTQkZj/zJZLAvgJcNofMJsyI4D4MH6MyY
-         02RkLFLPwpLV2Hp2kPXnWqlwRY4YRMYoE86/18D959nrxFhYeYUVm9/+Pkj6uPKEMT
-         dDqfgXhWyIe/w==
-Message-ID: <a6919986dcd93c695761b022b9fddb93937d3deb.camel@kernel.org>
-Subject: Re: [PATCH v8 1/4] fs: add mode_strip_sgid() helper
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Yang Xu <xuyang2018.jy@fujitsu.com>, linux-fsdevel@vger.kernel.org,
-        ceph-devel@vger.kernel.org
-Cc:     viro@zeniv.linux.org.uk, david@fromorbit.com, djwong@kernel.org,
-        brauner@kernel.org, willy@infradead.org
-Date:   Tue, 26 Apr 2022 10:52:56 -0400
-In-Reply-To: <1650971490-4532-1-git-send-email-xuyang2018.jy@fujitsu.com>
+        s=k20201202; t=1650984835;
+        bh=KmqW8cpwOQam+syOSz/PwH5wv80htuNPJ/Ou7/xXDEc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=g2srGQ+T1sP/B2eF62Rj7QyAqD9SyHeEqMupxx1poA9agdV22DqGIa31vNO32Zvci
+         1EEj2MChuyXH62pivEKg1SjVuwUM2+vVC0HjjyEplrwPXM8LSj1k9XYjzPwZ4JiOvd
+         IOZBxwHPT+ia3K51+pNyXd9m++kx0HQmdWxNXjVrGXTAVYsTjNPKa0izrvarEiFTpF
+         GhcBv9+rrdy908DvXpUuMY7Ey5Ttjsc5+49gZyVilvOPaL6gR4wXXdAx9d+yGht+td
+         5TP/y7q2qXYIRcKvdRrEcuEWT0Kj1KlsuzdgLwwFaE+a2wH9vyhEQ8iDsJ8TmRPbkT
+         IawVZz96GvUBQ==
+Date:   Tue, 26 Apr 2022 16:53:49 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        Yang Xu <xuyang2018.jy@fujitsu.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        ceph-devel <ceph-devel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Dave Chinner <david@fromorbit.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jeff Layton <jlayton@kernel.org>
+Subject: Re: [PATCH v8 3/4] fs: move S_ISGID stripping into the vfs
+Message-ID: <20220426145349.zxmahoq2app2lhip@wittgenstein>
 References: <1650971490-4532-1-git-send-email-xuyang2018.jy@fujitsu.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.42.4 (3.42.4-2.fc35) 
+ <1650971490-4532-3-git-send-email-xuyang2018.jy@fujitsu.com>
+ <20220426103846.tzz66f2qxcxykws3@wittgenstein>
+ <CAOQ4uxhRMp4tM9nP+0yPHJyzPs6B2vtX6z51tBHWxE6V+UZREw@mail.gmail.com>
+ <CAJfpegu5uJiHgHmLcuSJ6+cQfOPB2aOBovHr4W5j_LU+reJsCw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAJfpegu5uJiHgHmLcuSJ6+cQfOPB2aOBovHr4W5j_LU+reJsCw@mail.gmail.com>
 X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -55,97 +64,70 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2022-04-26 at 19:11 +0800, Yang Xu wrote:
-> Add a dedicated helper to handle the setgid bit when creating a new file
-> in a setgid directory. This is a preparatory patch for moving setgid
-> stripping into the vfs. The patch contains no functional changes.
+On Tue, Apr 26, 2022 at 01:52:11PM +0200, Miklos Szeredi wrote:
+> On Tue, 26 Apr 2022 at 13:21, Amir Goldstein <amir73il@gmail.com> wrote:
+> >
+> > On Tue, Apr 26, 2022 at 1:38 PM Christian Brauner <brauner@kernel.org> wrote:
 > 
-> Currently the setgid stripping logic is open-coded directly in
-> inode_init_owner() and the individual filesystems are responsible for
-> handling setgid inheritance. Since this has proven to be brittle as
-> evidenced by old issues we uncovered over the last months (see [1] to
-> [3] below) we will try to move this logic into the vfs.
+> > > One thing that I just remembered and which I think I haven't mentioned
+> > > so far is that moving S_ISGID stripping from filesystem callpaths into
+> > > the vfs callpaths means that we're hoisting this logic out of vfs_*()
+> > > helpers implicitly.
+> > >
+> > > So filesystems that call vfs_*() helpers directly can't rely on S_ISGID
+> > > stripping being done in vfs_*() helpers anymore unless they pass the
+> > > mode on from a prior run through the vfs.
+> > >
+> > > This mostly affects overlayfs which calls vfs_*() functions directly. So
+> > > a typical overlayfs callstack would be (roughly - I'm omw to lunch):
+> > >
+> > > sys_mknod()
+> > > -> do_mknodat(mode) // calls vfs_prepare_mode()
+> > >    -> .mknod = ovl_mknod(mode)
+> > >       -> ovl_create(mode)
+> > >          -> vfs_mknod(mode)
+> > >
+> > > I think we are safe as overlayfs passes on the mode on from its own run
+> > > through the vfs and then via vfs_*() to the underlying filesystem but it
+> > > is worth point that out.
+> > >
+> > > Ccing Amir just for confirmation.
+> >
+> > Looks fine to me, but CC Miklos ...
 > 
-> Link: e014f37db1a2 ("xfs: use setattr_copy to set vfs inode attributes") [1]
-> Link: 01ea173e103e ("xfs: fix up non-directory creation in SGID directories") [2]
-> Link: fd84bfdddd16 ("ceph: fix up non-directory creation in SGID directories") [3]
-> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-> Reviewed-by: Christian Brauner (Microsoft) <brauner@kernel.org>
-> Signed-off-by: Yang Xu <xuyang2018.jy@fujitsu.com>
-> ---
->  fs/inode.c         | 37 +++++++++++++++++++++++++++++++++----
->  include/linux/fs.h |  2 ++
->  2 files changed, 35 insertions(+), 4 deletions(-)
+> Looks fine to me as well.  Overlayfs should share the mode (including
+> the suid and sgid bits), owner, group and ACL's with the underlying
+> filesystem, so clearing sgid based on overlay parent directory should
+> result in the same mode as if it was done based on the parent
+> directory on the underlying layer.
+
+Ah yes, good point.
+
 > 
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 9d9b422504d1..e9a5f2ec2f89 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -2246,10 +2246,8 @@ void inode_init_owner(struct user_namespace *mnt_userns, struct inode *inode,
->  		/* Directories are special, and always inherit S_ISGID */
->  		if (S_ISDIR(mode))
->  			mode |= S_ISGID;
-> -		else if ((mode & (S_ISGID | S_IXGRP)) == (S_ISGID | S_IXGRP) &&
-> -			 !in_group_p(i_gid_into_mnt(mnt_userns, dir)) &&
-> -			 !capable_wrt_inode_uidgid(mnt_userns, dir, CAP_FSETID))
-> -			mode &= ~S_ISGID;
-> +		else
-> +			mode = mode_strip_sgid(mnt_userns, dir, mode);
->  	} else
->  		inode_fsgid_set(inode, mnt_userns);
->  	inode->i_mode = mode;
-> @@ -2405,3 +2403,34 @@ struct timespec64 current_time(struct inode *inode)
->  	return timestamp_truncate(now, inode);
->  }
->  EXPORT_SYMBOL(current_time);
-> +
-> +/**
-> + * mode_strip_sgid - handle the sgid bit for non-directories
-> + * @mnt_userns: User namespace of the mount the inode was created from
-> + * @dir: parent directory inode
-> + * @mode: mode of the file to be created in @dir
-> + *
-> + * If the @mode of the new file has both the S_ISGID and S_IXGRP bit
-> + * raised and @dir has the S_ISGID bit raised ensure that the caller is
-> + * either in the group of the parent directory or they have CAP_FSETID
-> + * in their user namespace and are privileged over the parent directory.
-> + * In all other cases, strip the S_ISGID bit from @mode.
-> + *
-> + * Return: the new mode to use for the file
-> + */
-> +umode_t mode_strip_sgid(struct user_namespace *mnt_userns,
-> +			 const struct inode *dir, umode_t mode)
-> +{
-> +	if (S_ISDIR(mode) || !dir || !(dir->i_mode & S_ISGID))
-> +		return mode;
-> +	if ((mode & (S_ISGID | S_IXGRP)) != (S_ISGID | S_IXGRP))
-> +		return mode;
-> +	if (in_group_p(i_gid_into_mnt(mnt_userns, dir)))
-> +		return mode;
-> +	if (capable_wrt_inode_uidgid(mnt_userns, dir, CAP_FSETID))
-> +		return mode;
-> +
-> +	mode &= ~S_ISGID;
-> +	return mode;
-> +}
-> +EXPORT_SYMBOL(mode_strip_sgid);
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index bbde95387a23..98b44a2732f5 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1897,6 +1897,8 @@ extern long compat_ptr_ioctl(struct file *file, unsigned int cmd,
->  void inode_init_owner(struct user_namespace *mnt_userns, struct inode *inode,
->  		      const struct inode *dir, umode_t mode);
->  extern bool may_open_dev(const struct path *path);
-> +umode_t mode_strip_sgid(struct user_namespace *mnt_userns,
-> +			 const struct inode *dir, umode_t mode);
->  
->  /*
->   * This is the "filldir" function type, used by readdir() to let
+> AFAIU this logic is not affected by userns or mnt_userns, but
+> Christian would be best to confirm that.
 
-This series looks like a nice cleanup. I went ahead and added this pile
-to another kernel I was testing with xfstests and it seemed to do fine.
+It does depend on it as S_ISGID stripping requires knowledge about
+whether the caller has CAP_FSETID and is capable over the parent
+directory or if they are in the group the file is owned by.
 
-You can add this (or some variant of it) to all 4 patches.
+I think ultimately it might just come down to moving vfs_prepare_mode()
+into vfs_*() helpers and not into the do_*at() helpers.
 
-Reviewed-and-Tested-by: Jeff Layton <jlayton@kernel.org>
+That would be cleaner anyway as right now we have this weird disconnect
+between vfs_tmpfile() and vfs_{create,mknod,mkdir}(). IOW, vfs_tmpfile()
+doesn't even have an associated do_*() wrapper where we could call
+vfs_prepare_mode() from.
+
+So ultimately it might be nicer if we do it in vfs_*() helpers anyway.
+
+The less pretty thing about it will be that the security_path_*() hooks
+also want a mode.
+
+Right now these hooks receive the mode as it's passed in from userspace
+minus umask but before S_ISGID stripping happens.
+
+Whereas I think they should really see what the filesystem sees and
+currently it's a bug that they see something else.
+
+I need to think about this a bit.
