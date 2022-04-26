@@ -2,47 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AFC39510525
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Apr 2022 19:19:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2284D510581
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Apr 2022 19:34:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230505AbiDZRWT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Apr 2022 13:22:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58988 "EHLO
+        id S1349209AbiDZRhc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Apr 2022 13:37:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229839AbiDZRWS (ORCPT
+        with ESMTP id S1349190AbiDZRh3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Apr 2022 13:22:18 -0400
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC4F224595;
-        Tue, 26 Apr 2022 10:19:09 -0700 (PDT)
-Received: from mail-yb1-f180.google.com ([209.85.219.180]) by
- mrelayeu.kundenserver.de (mreue012 [213.165.67.97]) with ESMTPSA (Nemesis) id
- 1My6xz-1o5LQB2b5b-00zTZO; Tue, 26 Apr 2022 19:14:04 +0200
-Received: by mail-yb1-f180.google.com with SMTP id w187so24764165ybe.2;
-        Tue, 26 Apr 2022 10:14:04 -0700 (PDT)
-X-Gm-Message-State: AOAM532TsqAt7Q/IPazDwjCS6R/JEhIcoPDVTsdC9pmcMcvx7ZCU6ZpG
-        htWPz1fVoKBklr2XU7h8bs7g1Vq+5LHFp+nNr+A=
-X-Google-Smtp-Source: ABdhPJy4qrzId24VdonwrFL8xdmT+OefZW9RIA7s/JBFmqDtK6o+FbcHdop/B8RF2jVsl9Z7YvDRgbjOS6bpOD7eSC0=
-X-Received: by 2002:a25:d3c2:0:b0:645:74df:f43d with SMTP id
- e185-20020a25d3c2000000b0064574dff43dmr21550935ybf.394.1650993243035; Tue, 26
- Apr 2022 10:14:03 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220422212945.2227722-1-axelrasmussen@google.com>
- <20220422212945.2227722-3-axelrasmussen@google.com> <20220425203249.GA5814@altlinux.org>
- <CAJHvVchLSpbKXn6u451pjaRpW=SwbOFSdpQpaC47WBFa0660xw@mail.gmail.com>
-In-Reply-To: <CAJHvVchLSpbKXn6u451pjaRpW=SwbOFSdpQpaC47WBFa0660xw@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 26 Apr 2022 19:13:47 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a0th99KbPO_Mt17uztHay6vBMngT-ii2dFW4++BaAQNpw@mail.gmail.com>
-Message-ID: <CAK8P3a0th99KbPO_Mt17uztHay6vBMngT-ii2dFW4++BaAQNpw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/6] userfaultfd: add /dev/userfaultfd for fine grained
- access control
-To:     Axel Rasmussen <axelrasmussen@google.com>
-Cc:     "Dmitry V. Levin" <ldv@altlinux.org>,
+        Tue, 26 Apr 2022 13:37:29 -0400
+Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F8F6939B3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Apr 2022 10:34:20 -0700 (PDT)
+Received: by mail-io1-xd35.google.com with SMTP id n134so21001144iod.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Apr 2022 10:34:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=7f2dI15a4+fxCm2oUbnayxZipYVTc4CPiFnYf4iZd2U=;
+        b=SREAqgM7dV17pgSKvTHXqGRtHaa149tdP3zeKDxtvrWfF/g9kSkykZn7f2kF/kZLrp
+         4ADMNFdr49SVVqqxE4FHv2OBrlkZEsjAwubpihKozfaxZGLx7hfE7uTEAW3lvU4/70if
+         Lzcv5LPTbN395oaYwmC48671h2iLMAq3lDqPI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=7f2dI15a4+fxCm2oUbnayxZipYVTc4CPiFnYf4iZd2U=;
+        b=OV5dKmeCBLQcJN0p4maXf5Azh0Q8fi1Ib3+tP4CXrgoWbxlrySbfVe3WTbEq++1Vvk
+         0p4SRC2mQyopOlBjimb8fHVHVYDUTyXCCiY9rFpBkAYedqOAUiBNlOvHZLzv9fDGTzZc
+         BzINQqWXXsJeTeF8CsZmzLIWlX2lFQlP7mup0i7rykgPFyUzGYqNSSxarpckpMDKvPrc
+         AcJRfT4U4RwYFExwmqvYLwLuC5G5oD/9m0dCIUDzQX6bRt/0FQ3Mjh8jzuOmRJzCLAti
+         LLXMVahkyqUx8dluXxNvSIkXtjw+ewzN2okVo5l/xaNnnWVAh6TKKVZlf0x6Xn8YToCS
+         OmMQ==
+X-Gm-Message-State: AOAM533MZvvcbkPvZ8UZh0cZXKvI7dzvP+o8hkTP4MccqUffuk6D/Sgl
+        q8VwT0CenZ+l7k04QZM2khRErXbMGeDDTw==
+X-Google-Smtp-Source: ABdhPJzQGDlIXE5ent6k2MVRos1IeGAWobjiKgxDUQSt7g0QXIN9BmEROJsT2JY8WurBH/mD6/+5sA==
+X-Received: by 2002:a6b:490f:0:b0:657:5e68:66b8 with SMTP id u15-20020a6b490f000000b006575e6866b8mr7896021iob.102.1650994459551;
+        Tue, 26 Apr 2022 10:34:19 -0700 (PDT)
+Received: from [192.168.1.128] ([71.205.29.0])
+        by smtp.gmail.com with ESMTPSA id t11-20020a922c0b000000b002c85834eb06sm8164495ile.47.2022.04.26.10.34.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 Apr 2022 10:34:19 -0700 (PDT)
+Subject: Re: [PATCH v2 6/6] selftests: vm: add /dev/userfaultfd test cases to
+ run_vmtests.sh
+To:     Axel Rasmussen <axelrasmussen@google.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
         Charan Teja Reddy <charante@codeaurora.org>,
         Dave Hansen <dave.hansen@linux.intel.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
         Gleb Fotengauer-Malinovskiy <glebfm@altlinux.org>,
         Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.cz>,
         Jonathan Corbet <corbet@lwn.net>,
@@ -51,49 +62,70 @@ Cc:     "Dmitry V. Levin" <ldv@altlinux.org>,
         Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
         Peter Xu <peterx@redhat.com>, Shuah Khan <shuah@kernel.org>,
         Suren Baghdasaryan <surenb@google.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        zhangyi <yi.zhang@huawei.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linuxkselftest <linux-kselftest@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:+s8HFHdANqZQ0PHV/EC05dFnp+y9+zq7ZoknP0XSfx+gbj1UKdy
- qpd/5nWyjvrS+vcbvdCPyfrueeReCzfxkFwdSw8JbIqIinpDALZigP9yF6FY8L0US6P4aG6
- JncGfCJpshBqIUY+6ShHNRwX1J1a4eECU2ibabTL/29b2T58eMWnbdprNr/ARASn82mFmEZ
- NpD5ZuwRg6RsaYYS4ofTA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:0naR4d11Hho=:T/uCdg0IR3rEfMqak9PYUn
- zOE2qQ6wxT3yC1Vzz/WV6+QpsRIL4kY2AjBUzlYySiZYfc7/3EzGuhXLItGo2Kb3+ZY0PQJ42
- VZzF4UW2lGC6kFYmJQ+WMTF92+ENA7/y164+o+meFagCa9Fn+3NfQaRk56Ff8s/aU5GO/pUUY
- XUhCq+yZ6NRbJOECBFonYVkG4as7im20bcmzTs2BKsr4kAEpJliKOi9epmsYRokD6L2CjiE8d
- yS61e1Vk1sCee5j4oT/u8ALpEKUs2RP3gZBTnmv5tCTMLSTBkMu9pBuVuGY0y6MHycjgWc/PN
- uHi1N3tMZf7YOfPMn2JYI1VXxco6XyNWdV9ib5innyN67evnHCI/O89YecEzqrxGzB9DaMIia
- XVTrqoYIEbaOhFIHql7O9b1mZfjF1lk3uG+dhZ5P1tWdJiUB5FxIs0VNKuV1ZSo398jMz3LXK
- 6Z0wb45FHbYHdMQdgedxRQHVH3meS08WJuTRh83gRWWN9dZufJBRln0JUglmMzousuSUWtyxp
- qWZD5lZ5YOR5LaahRVE8zvePLQ0H04a+NH5iJwuZfpXy5JC5bShdZDiusWs8SMv3vCMw3UbaQ
- UTZ65k1AyB7TOB1ZRre0Yf6y/7Lkqv1SHVZGbmDB8jXf01s2X/M/IhNxSjwMxHD7yKK8WFRlE
- OcYJk/vBipN4vr6bpdOkQaU1Qw5AuZsQjPzmRREMuC2INh75h6OZXoHKQqHZuG2mcab7bZYcg
- J55deikpHYsUgLz3xZl/sInGUID9zNUwLB/JyATNj4wE7JFKIKZXMaGK9tDEfponNtBCNdNZz
- axy2FU0aEnACFatxVhJPEuowBbHpsX3FBDxdbvVefIH0W64R4s=
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+        Vlastimil Babka <vbabka@suse.cz>, zhangyi <yi.zhang@huawei.com>
+Cc:     linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kselftest@vger.kernel.org,
+        Shuah Khan <skhan@linuxfoundation.org>
+References: <20220422212945.2227722-1-axelrasmussen@google.com>
+ <20220422212945.2227722-7-axelrasmussen@google.com>
+From:   Shuah Khan <skhan@linuxfoundation.org>
+Message-ID: <f257d358-1ec8-d3f4-d3c2-e61e0063df03@linuxfoundation.org>
+Date:   Tue, 26 Apr 2022 11:34:17 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
+MIME-Version: 1.0
+In-Reply-To: <20220422212945.2227722-7-axelrasmussen@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 26, 2022 at 6:00 PM Axel Rasmussen <axelrasmussen@google.com> wrote:
->
-> You're right, [1] says _IO is appropriate for ioctls which only take
-> an integer argument. I'll send a v3 with this fix, although I might
-> wait a bit for any other review comments before doing so. Thanks for
-> taking a look!
+On 4/22/22 3:29 PM, Axel Rasmussen wrote:
+> This new mode was recently added to the userfaultfd selftest. We want to
+> exercise both userfaultfd(2) as well as /dev/userfaultfd, so add both
+> test cases to the script.
+> 
+> Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
+> ---
+>   tools/testing/selftests/vm/run_vmtests.sh | 5 +++++
+>   1 file changed, 5 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/vm/run_vmtests.sh b/tools/testing/selftests/vm/run_vmtests.sh
+> index 5065dbd89bdb..57f01505c719 100755
+> --- a/tools/testing/selftests/vm/run_vmtests.sh
+> +++ b/tools/testing/selftests/vm/run_vmtests.sh
+> @@ -121,12 +121,17 @@ run_test ./gup_test -a
+>   run_test ./gup_test -ct -F 0x1 0 19 0x1000
+>   
+>   run_test ./userfaultfd anon 20 16
+> +run_test ./userfaultfd anon:dev 20 16
+>   # Hugetlb tests require source and destination huge pages. Pass in half the
+>   # size ($half_ufd_size_MB), which is used for *each*.
+>   run_test ./userfaultfd hugetlb "$half_ufd_size_MB" 32
+> +run_test ./userfaultfd hugetlb:dev "$half_ufd_size_MB" 32
+>   run_test ./userfaultfd hugetlb_shared "$half_ufd_size_MB" 32 "$mnt"/uffd-test
+>   rm -f "$mnt"/uffd-test
+> +run_test ./userfaultfd hugetlb_shared:dev "$half_ufd_size_MB" 32 "$mnt"/uffd-test
+> +rm -f "$mnt"/uffd-test
+>   run_test ./userfaultfd shmem 20 16
+> +run_test ./userfaultfd shmem:dev 20 16
+>   
+>   #cleanup
+>   umount "$mnt"
+> 
 
-If there are no other command codes, you could also set .compat_ioctl
-to the same function pointer as .unlocked_ioctl, the compat_ptr_ioctl
-conversion is only needed when there are commands that take a pointer.
+Looks good to me.
 
-        Armd
+Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
+
+thanks,
+-- Shuah
