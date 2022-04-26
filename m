@@ -2,47 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 596E05105C8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Apr 2022 19:44:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 309545105D0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Apr 2022 19:44:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353625AbiDZRrg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Apr 2022 13:47:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42402 "EHLO
+        id S1353637AbiDZRrn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Apr 2022 13:47:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353624AbiDZRr0 (ORCPT
+        with ESMTP id S1353635AbiDZRr0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Tue, 26 Apr 2022 13:47:26 -0400
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EE6E1836EA
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F6DD1836F7
         for <linux-fsdevel@vger.kernel.org>; Tue, 26 Apr 2022 10:44:13 -0700 (PDT)
-Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 23QGQTdP024678
+Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 23QGQeTE011897
         for <linux-fsdevel@vger.kernel.org>; Tue, 26 Apr 2022 10:44:12 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=facebook;
- bh=+HgJGoEIIwN+lho4d7QFSimQhaJr0FtLkVZoF8/ubZ0=;
- b=GNO/lIy8IsaQwL4CpxAqVOjN7/BCL9lHa5B17KBwS6Ij5JbRHoS4lltnpUx85BS9SXZx
- hnUPCZlGfT1DxpgEFgPH+vnbcPus6pyEaBNs95ejSdyjuL2T4CNAKAIv5WWdY9F+c1a+
- 7NaSMPt086vRwQhR4cvBZ0bRXpA3bUGmNvQ= 
+ bh=ZGiac9DfNcMPFP4FZczy+JuhMRbBFBt4ZZNoLvkPz34=;
+ b=EWyYuhY2A/7wgwQw3JcryiKhVKYGFGt7YDxel63XdC8cLEyHEVgaYC4AnuueEAPfU/DL
+ cljOSThRxYFvfDZRJuTFBpJUz1iJGpUPDvNJZLJjUXXlrUhHHj0YTzJsthKg8l2CwYV7
+ cVRz3KiabXppL6uv9rTXbQbPy8Vcqx5YuLY= 
 Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3fn1ge03h8-3
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3fmeyu3nyk-6
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
         for <linux-fsdevel@vger.kernel.org>; Tue, 26 Apr 2022 10:44:12 -0700
 Received: from twshared10896.25.frc3.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:82::f) with Microsoft SMTP Server
+ mail.thefacebook.com (2620:10d:c0a8:82::c) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
  15.1.2375.24; Tue, 26 Apr 2022 10:44:10 -0700
 Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
-        id C49A1E2D486D; Tue, 26 Apr 2022 10:43:40 -0700 (PDT)
+        id CA7D7E2D486F; Tue, 26 Apr 2022 10:43:40 -0700 (PDT)
 From:   Stefan Roesch <shr@fb.com>
 To:     <io-uring@vger.kernel.org>, <kernel-team@fb.com>,
         <linux-mm@kvack.org>, <linux-xfs@vger.kernel.org>,
         <linux-fsdevel@vger.kernel.org>
 CC:     <shr@fb.com>, <david@fromorbit.com>
-Subject: [RFC PATCH v1 13/18] io_uring: add tracepoint for short writes
-Date:   Tue, 26 Apr 2022 10:43:30 -0700
-Message-ID: <20220426174335.4004987-14-shr@fb.com>
+Subject: [RFC PATCH v1 14/18] sched: add new fields to task_struct
+Date:   Tue, 26 Apr 2022 10:43:31 -0700
+Message-ID: <20220426174335.4004987-15-shr@fb.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220426174335.4004987-1-shr@fb.com>
 References: <20220426174335.4004987-1-shr@fb.com>
@@ -50,13 +50,13 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: JnzY4txD6pMgrJ2ti0iumhYoU0mx40uO
-X-Proofpoint-GUID: JnzY4txD6pMgrJ2ti0iumhYoU0mx40uO
+X-Proofpoint-GUID: d7rtibpyv_pCXRDIIztpwjq2NVINRfbS
+X-Proofpoint-ORIG-GUID: d7rtibpyv_pCXRDIIztpwjq2NVINRfbS
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.486,FMLib:17.11.64.514
  definitions=2022-04-26_05,2022-04-26_02,2022-02-23_01
-X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
         RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -65,68 +65,46 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This adds the io_uring_short_write tracepoint to io_uring. A short write
-is issued if not all pages that are required for a write are in the page
-cache and the async buffered writes have to return EAGAIN.
+Add two new fields to the task_struct to support async
+write throttling.
+
+  - One field to store how long writes are throttled: bdp_pause
+  - The other field to store the number of dirtied pages:
+    bdp_nr_dirtied_pause
 
 Signed-off-by: Stefan Roesch <shr@fb.com>
 ---
- fs/io_uring.c                   |  3 +++
- include/trace/events/io_uring.h | 25 +++++++++++++++++++++++++
- 2 files changed, 28 insertions(+)
+ include/linux/sched.h | 3 +++
+ kernel/fork.c         | 1 +
+ 2 files changed, 4 insertions(+)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 2ba615374ba4..ace3a5cdda68 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -4031,6 +4031,9 @@ static int io_write(struct io_kiocb *req, unsigned =
-int issue_flags)
- 		if (ret2 !=3D req->result && ret2 >=3D 0 && need_complete_io(req)) {
- 			struct io_async_rw *rw;
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index a8911b1f35aa..98d70f2945e3 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1327,6 +1327,9 @@ struct task_struct {
+ 	/* Start of a write-and-pause period: */
+ 	unsigned long			dirty_paused_when;
 =20
-+			trace_io_uring_short_write(req->ctx, kiocb->ki_pos - ret2,
-+						req->result, ret2);
++	unsigned long			bdp_pause;
++	int				bdp_nr_dirtied_pause;
 +
- 			/* This is a partial write. The file pos has already been
- 			 * updated, setup the async struct to complete the request
- 			 * in the worker. Also update bytes_done to account for
-diff --git a/include/trace/events/io_uring.h b/include/trace/events/io_ur=
-ing.h
-index cddf5b6fbeb4..661834361d33 100644
---- a/include/trace/events/io_uring.h
-+++ b/include/trace/events/io_uring.h
-@@ -543,6 +543,31 @@ TRACE_EVENT(io_uring_req_failed,
- 		  (unsigned long long) __entry->pad2, __entry->error)
- );
+ #ifdef CONFIG_LATENCYTOP
+ 	int				latency_record_count;
+ 	struct latency_record		latency_record[LT_SAVECOUNT];
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 9796897560ab..5bc6298827fc 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -2316,6 +2316,7 @@ static __latent_entropy struct task_struct *copy_pr=
+ocess(
+ 	p->nr_dirtied =3D 0;
+ 	p->nr_dirtied_pause =3D 128 >> (PAGE_SHIFT - 10);
+ 	p->dirty_paused_when =3D 0;
++	p->bdp_nr_dirtied_pause =3D -1;
 =20
-+TRACE_EVENT(io_uring_short_write,
-+
-+	TP_PROTO(void *ctx, u64 fpos, u64 wanted, u64 got),
-+
-+	TP_ARGS(ctx, fpos, wanted, got),
-+
-+	TP_STRUCT__entry(
-+		__field(void *,	ctx)
-+		__field(u64,	fpos)
-+		__field(u64,	wanted)
-+		__field(u64,	got)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->ctx	=3D ctx;
-+		__entry->fpos	=3D fpos;
-+		__entry->wanted	=3D wanted;
-+		__entry->got	=3D got;
-+	),
-+
-+	TP_printk("ring %p, fpos %lld, wanted %lld, got %lld",
-+			  __entry->ctx, __entry->fpos,
-+			  __entry->wanted, __entry->got)
-+);
-+
- #endif /* _TRACE_IO_URING_H */
-=20
- /* This part must be outside protection */
+ 	p->pdeath_signal =3D 0;
+ 	INIT_LIST_HEAD(&p->thread_group);
 --=20
 2.30.2
 
