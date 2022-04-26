@@ -2,141 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 769DF510265
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Apr 2022 17:58:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 108AB510278
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Apr 2022 18:01:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352722AbiDZQBt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Apr 2022 12:01:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58836 "EHLO
+        id S1352762AbiDZQEQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Apr 2022 12:04:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352713AbiDZQBs (ORCPT
+        with ESMTP id S1352825AbiDZQEM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Apr 2022 12:01:48 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1826C1632D2;
-        Tue, 26 Apr 2022 08:58:41 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id CB5091F380;
-        Tue, 26 Apr 2022 15:58:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1650988719; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=z/SnflrHI3KVsg8jdxxTvHBaYfhAF2HRDrFp9wuv+OU=;
-        b=dFWOpfPHqSvnhwXztUTZYUl3fap1MBIe2lX8NCjDD53cErnGiOUxlL6EIaRMF5+SQ0E2ss
-        oDHJqQCOgBTKrhIe4TylXMCrtGGS1OyhtalkCvWs2gw0HOTQZeH2+hVQUwC8aQx69va1lB
-        bhqDHmxKkKNT9kC3fJ8QfnyAtLstYCw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1650988719;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=z/SnflrHI3KVsg8jdxxTvHBaYfhAF2HRDrFp9wuv+OU=;
-        b=U7AZRG6f03hwa73y4K3qKVfFLvL2LYyPUlQ+lBtn9gKIZigltC2UxKvPFj5X/uJs/AofS/
-        KPYJFqOfTlp5ykBA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 95A6F13223;
-        Tue, 26 Apr 2022 15:58:39 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id t0vTI68WaGJ2dAAAMHmgww
-        (envelope-from <hare@suse.de>); Tue, 26 Apr 2022 15:58:39 +0000
-Message-ID: <40bc060f-f359-081d-9ba7-fae531cf2cd6@suse.de>
-Date:   Tue, 26 Apr 2022 17:58:39 +0200
+        Tue, 26 Apr 2022 12:04:12 -0400
+Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11DD6381BA
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Apr 2022 09:01:03 -0700 (PDT)
+Received: by mail-io1-xd29.google.com with SMTP id r28so1841000iot.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Apr 2022 09:01:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dyCNcdxP+OP+ZEEDkKpS4dIut/dFXRkxuAQItAbC2hk=;
+        b=kkI2HO5/ZEBb6dwCosEFba8Hqs93phXW7y7LQIwDiDweskbxzWfkhJOxUXgbksafGv
+         Cj9I3+VUsMtqzbQ+FRheYG7Jnp0nCQoqCtylg9A9uVvjFZFE+gYUol4vZnJS8L/D7fcH
+         IXLA9h7oaFPNuHm4FrQjgkuQGxMTT+zn4y0Dc3ZUaMQ6grfstTlV1uURhTu7yZhAB2CR
+         S15Az/6PGwq5RzEtyE76iZSrukPtIepHVy15uTIKCKRfoQGMqwl6nQ2Wcrtywgqq4l9K
+         yrTT7rEccOM0wyFm2LgURZQ9atXRmAewK37yNCUoS/4n8PFFGhjVqFY7J9psP2v3Z2G9
+         KjGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dyCNcdxP+OP+ZEEDkKpS4dIut/dFXRkxuAQItAbC2hk=;
+        b=2Vf03m2jG513F3HfvEhdO0+Wm1kO6REOIlK9YirYeAMUw2ubJMw7nfdF0ESXq+53Mx
+         cpC2nydH2JriB31MyxH3/MdcrjB82LYjd9VpuswNIJqvED/d1y9CNLEyZ944X5IRbtpF
+         tmZc+xSJ5SSMsEp8FlUolnhCQtwnl5soxMxC3N7LXFeDlC66XlA4g+ZaayrUTUtZbc8F
+         zGYYueQ1g4BLBWFRaWDpAkcDKntPY/j6INK1nRHaZ6nm4L3yNwuRHfquG0LR64JmkjX7
+         AKZAxlF67JVymxg4t1J2lo7F5gz0603PzZB/QCmnBNP/m1ZzzjrVCAW8L78QxHoqC0wV
+         b1Og==
+X-Gm-Message-State: AOAM532fC7a5GiXQ1CaX5rCuIbO3pcQh6LG5QBUQxB6BIYV7c+ZFLczZ
+        dAutgLsMxs3aMa0bwVnppvQ2ggL3lpaH6tJNcKU5cg==
+X-Google-Smtp-Source: ABdhPJy2p2YsSAWaLRUyeCx9GIenmVZnYXSr1zBWwbH2S+IZQF4NN6DuvWqwwrbZ5neEqlH8OPqJygq6V4YSc9feqz0=
+X-Received: by 2002:a05:6638:1695:b0:32a:a178:98bc with SMTP id
+ f21-20020a056638169500b0032aa17898bcmr10205311jat.167.1650988862310; Tue, 26
+ Apr 2022 09:01:02 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH RFC 4/5] net/tls: Add support for PF_TLSH (a TLS handshake
- listener)
-Content-Language: en-US
-To:     Jakub Kicinski <kuba@kernel.org>, Sagi Grimberg <sagi@grimberg.me>
-Cc:     Chuck Lever <chuck.lever@oracle.com>, netdev@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        ak@tempesta-tech.com, borisp@nvidia.com, simo@redhat.com
-References: <165030051838.5073.8699008789153780301.stgit@oracle-102.nfsv4.dev>
- <165030059051.5073.16723746870370826608.stgit@oracle-102.nfsv4.dev>
- <20220425101459.15484d17@kernel.org>
- <66077b73-c1a4-d2ae-c8e4-3e19e9053171@suse.de>
- <1fca2eda-83e4-fe39-13c8-0e5e7553689b@grimberg.me>
- <20220426080247.19bbb64e@kernel.org>
-From:   Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20220426080247.19bbb64e@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-6.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+References: <20220422212945.2227722-1-axelrasmussen@google.com>
+ <20220422212945.2227722-3-axelrasmussen@google.com> <20220425203249.GA5814@altlinux.org>
+In-Reply-To: <20220425203249.GA5814@altlinux.org>
+From:   Axel Rasmussen <axelrasmussen@google.com>
+Date:   Tue, 26 Apr 2022 09:00:26 -0700
+Message-ID: <CAJHvVchLSpbKXn6u451pjaRpW=SwbOFSdpQpaC47WBFa0660xw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/6] userfaultfd: add /dev/userfaultfd for fine grained
+ access control
+To:     "Dmitry V. Levin" <ldv@altlinux.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Charan Teja Reddy <charante@codeaurora.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Gleb Fotengauer-Malinovskiy <glebfm@altlinux.org>,
+        Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.cz>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Peter Xu <peterx@redhat.com>, Shuah Khan <shuah@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        zhangyi <yi.zhang@huawei.com>, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linuxkselftest <linux-kselftest@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/26/22 17:02, Jakub Kicinski wrote:
-> On Tue, 26 Apr 2022 17:29:03 +0300 Sagi Grimberg wrote:
->>>> Create the socket in user space, do all the handshakes you need there
->>>> and then pass it to the kernel.  This is how NBD + TLS works.  Scales
->>>> better and requires much less kernel code.
->>>>   
->>> But we can't, as the existing mechanisms (at least for NVMe) creates the
->>> socket in-kernel.
->>> Having to create the socket in userspace would require a completely new
->>> interface for nvme and will not be backwards compatible.
->>
->> And we will still need the upcall anyways when we reconnect
->> (re-establish the socket)
-> 
-> That totally flew over my head, I have zero familiarity with in-kernel
-> storage network users :S
-> 
-Count yourself lucky.
+You're right, [1] says _IO is appropriate for ioctls which only take
+an integer argument. I'll send a v3 with this fix, although I might
+wait a bit for any other review comments before doing so. Thanks for
+taking a look!
 
-> In all honesty the tls code in the kernel is a bit of a dumping ground.
-> People come, dump a bunch of code and disappear. Nobody seems to care
-> that the result is still (years in) not ready for production use :/
-> Until a month ago it'd break connections even under moderate memory
-> pressure. This set does not even have selftests.
-> 
-Well, I'd been surprised that it worked, too.
-And even more so that Boris Piskenny @ Nvidia is actively working on it.
-(Thanks, Sagi!)
+https://www.kernel.org/doc/html/latest/driver-api/ioctl.html
 
-> Plus there are more protocols being actively worked on (QUIC, PSP etc.)
-> Having per ULP special sauce to invoke a user space helper is not the
-> paradigm we chose, and the time as inopportune as ever to change that.
-
-Which is precisely what we hope to discuss at LSF.
-(Yes, I know, probably not the best venue to discuss network stuff ...)
-
-Each approach has its drawbacks:
-
-- Establishing sockets from userspace will cause issues during 
-reconnection, as then someone (aka the kernel) will have to inform 
-userspace that a new connection will need to be established.
-(And that has to happen while the root filesystem is potentially 
-inaccessible, so you can't just call arbitrary commands here)
-(Especially call_usermodehelper() is out of the game)
-- Having ULP helpers (as with this design) mitigates that problem 
-somewhat in the sense that you can mlock() that daemon and having it 
-polling on an intermediate socket; that solves the notification problem.
-But you have to have ULP special sauce here to make it work.
-- Moving everything in kernel is ... possible. But then you have yet 
-another security-relevant piece of code in the kernel which needs to be 
-audited, CVEd etc. Not to mention the usual policy discussion whether it 
-really belongs into the kernel.
-
-So I don't really see any obvious way to go; best we can do is to pick 
-the least ugly :-(
-
-Cheers,
-
-Hannes
+On Mon, Apr 25, 2022 at 1:32 PM Dmitry V. Levin <ldv@altlinux.org> wrote:
+>
+> On Fri, Apr 22, 2022 at 02:29:41PM -0700, Axel Rasmussen wrote:
+> [...]
+> > --- a/include/uapi/linux/userfaultfd.h
+> > +++ b/include/uapi/linux/userfaultfd.h
+> > @@ -12,6 +12,10 @@
+> >
+> >  #include <linux/types.h>
+> >
+> > +/* ioctls for /dev/userfaultfd */
+> > +#define USERFAULTFD_IOC 0xAA
+> > +#define USERFAULTFD_IOC_NEW _IOWR(USERFAULTFD_IOC, 0x00, int)
+>
+> Why this new ioctl is defined using _IOWR()?  Since it neither reads from
+> user memory nor writes into user memory, it should rather be defined using
+> _IO(), shouldn't it?
+>
+>
+> --
+> ldv
