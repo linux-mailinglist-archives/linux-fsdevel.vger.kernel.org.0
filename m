@@ -2,130 +2,241 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2284D510581
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Apr 2022 19:34:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 501EB5105A4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Apr 2022 19:43:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349209AbiDZRhc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Apr 2022 13:37:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33238 "EHLO
+        id S235895AbiDZRq7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Apr 2022 13:46:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349190AbiDZRh3 (ORCPT
+        with ESMTP id S229782AbiDZRq5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Apr 2022 13:37:29 -0400
-Received: from mail-io1-xd35.google.com (mail-io1-xd35.google.com [IPv6:2607:f8b0:4864:20::d35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F8F6939B3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Apr 2022 10:34:20 -0700 (PDT)
-Received: by mail-io1-xd35.google.com with SMTP id n134so21001144iod.5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Apr 2022 10:34:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=7f2dI15a4+fxCm2oUbnayxZipYVTc4CPiFnYf4iZd2U=;
-        b=SREAqgM7dV17pgSKvTHXqGRtHaa149tdP3zeKDxtvrWfF/g9kSkykZn7f2kF/kZLrp
-         4ADMNFdr49SVVqqxE4FHv2OBrlkZEsjAwubpihKozfaxZGLx7hfE7uTEAW3lvU4/70if
-         Lzcv5LPTbN395oaYwmC48671h2iLMAq3lDqPI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=7f2dI15a4+fxCm2oUbnayxZipYVTc4CPiFnYf4iZd2U=;
-        b=OV5dKmeCBLQcJN0p4maXf5Azh0Q8fi1Ib3+tP4CXrgoWbxlrySbfVe3WTbEq++1Vvk
-         0p4SRC2mQyopOlBjimb8fHVHVYDUTyXCCiY9rFpBkAYedqOAUiBNlOvHZLzv9fDGTzZc
-         BzINQqWXXsJeTeF8CsZmzLIWlX2lFQlP7mup0i7rykgPFyUzGYqNSSxarpckpMDKvPrc
-         AcJRfT4U4RwYFExwmqvYLwLuC5G5oD/9m0dCIUDzQX6bRt/0FQ3Mjh8jzuOmRJzCLAti
-         LLXMVahkyqUx8dluXxNvSIkXtjw+ewzN2okVo5l/xaNnnWVAh6TKKVZlf0x6Xn8YToCS
-         OmMQ==
-X-Gm-Message-State: AOAM533MZvvcbkPvZ8UZh0cZXKvI7dzvP+o8hkTP4MccqUffuk6D/Sgl
-        q8VwT0CenZ+l7k04QZM2khRErXbMGeDDTw==
-X-Google-Smtp-Source: ABdhPJzQGDlIXE5ent6k2MVRos1IeGAWobjiKgxDUQSt7g0QXIN9BmEROJsT2JY8WurBH/mD6/+5sA==
-X-Received: by 2002:a6b:490f:0:b0:657:5e68:66b8 with SMTP id u15-20020a6b490f000000b006575e6866b8mr7896021iob.102.1650994459551;
-        Tue, 26 Apr 2022 10:34:19 -0700 (PDT)
-Received: from [192.168.1.128] ([71.205.29.0])
-        by smtp.gmail.com with ESMTPSA id t11-20020a922c0b000000b002c85834eb06sm8164495ile.47.2022.04.26.10.34.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Apr 2022 10:34:19 -0700 (PDT)
-Subject: Re: [PATCH v2 6/6] selftests: vm: add /dev/userfaultfd test cases to
- run_vmtests.sh
-To:     Axel Rasmussen <axelrasmussen@google.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Charan Teja Reddy <charante@codeaurora.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Gleb Fotengauer-Malinovskiy <glebfm@altlinux.org>,
-        Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.cz>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
-        Peter Xu <peterx@redhat.com>, Shuah Khan <shuah@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Vlastimil Babka <vbabka@suse.cz>, zhangyi <yi.zhang@huawei.com>
-Cc:     linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kselftest@vger.kernel.org,
-        Shuah Khan <skhan@linuxfoundation.org>
-References: <20220422212945.2227722-1-axelrasmussen@google.com>
- <20220422212945.2227722-7-axelrasmussen@google.com>
-From:   Shuah Khan <skhan@linuxfoundation.org>
-Message-ID: <f257d358-1ec8-d3f4-d3c2-e61e0063df03@linuxfoundation.org>
-Date:   Tue, 26 Apr 2022 11:34:17 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        Tue, 26 Apr 2022 13:46:57 -0400
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 041271816C9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Apr 2022 10:43:48 -0700 (PDT)
+Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 23QGQR1w024414
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Apr 2022 10:43:48 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=facebook; bh=L9bCsWpK1sSy2SbZ0ozW3EIL4BqTxs2Dpb6c3uXdY3Y=;
+ b=XG1WM87pFn+ABNzlg38vNPdckKMrggktEF0Y2fb32NWJMoLcY992rtx2JISUBIUr61Uh
+ supEU+aQ7qmCd6JwQRZAJrMdWqjLxXCl/5qyyU4MsqRMLc9vxw1pJEdlDu0wOkXSQxtv
+ m8MBTEJci0vO4ZL+EhsuKZWjw19Eji0LBxo= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3fn1ge03e0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Apr 2022 10:43:48 -0700
+Received: from twshared10896.25.frc3.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:82::e) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Tue, 26 Apr 2022 10:43:47 -0700
+Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
+        id 71719E2D4853; Tue, 26 Apr 2022 10:43:40 -0700 (PDT)
+From:   Stefan Roesch <shr@fb.com>
+To:     <io-uring@vger.kernel.org>, <kernel-team@fb.com>,
+        <linux-mm@kvack.org>, <linux-xfs@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>
+CC:     <shr@fb.com>, <david@fromorbit.com>
+Subject: [RFC PATCH v1 00/18] io-uring/xfs: support async buffered writes
+Date:   Tue, 26 Apr 2022 10:43:17 -0700
+Message-ID: <20220426174335.4004987-1-shr@fb.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-In-Reply-To: <20220422212945.2227722-7-axelrasmussen@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: WQufR68bc8Qs0-SUJCoFeUoxXnFKGsXK
+X-Proofpoint-GUID: WQufR68bc8Qs0-SUJCoFeUoxXnFKGsXK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.486,FMLib:17.11.64.514
+ definitions=2022-04-26_05,2022-04-26_02,2022-02-23_01
+X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/22/22 3:29 PM, Axel Rasmussen wrote:
-> This new mode was recently added to the userfaultfd selftest. We want to
-> exercise both userfaultfd(2) as well as /dev/userfaultfd, so add both
-> test cases to the script.
-> 
-> Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
-> ---
->   tools/testing/selftests/vm/run_vmtests.sh | 5 +++++
->   1 file changed, 5 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/vm/run_vmtests.sh b/tools/testing/selftests/vm/run_vmtests.sh
-> index 5065dbd89bdb..57f01505c719 100755
-> --- a/tools/testing/selftests/vm/run_vmtests.sh
-> +++ b/tools/testing/selftests/vm/run_vmtests.sh
-> @@ -121,12 +121,17 @@ run_test ./gup_test -a
->   run_test ./gup_test -ct -F 0x1 0 19 0x1000
->   
->   run_test ./userfaultfd anon 20 16
-> +run_test ./userfaultfd anon:dev 20 16
->   # Hugetlb tests require source and destination huge pages. Pass in half the
->   # size ($half_ufd_size_MB), which is used for *each*.
->   run_test ./userfaultfd hugetlb "$half_ufd_size_MB" 32
-> +run_test ./userfaultfd hugetlb:dev "$half_ufd_size_MB" 32
->   run_test ./userfaultfd hugetlb_shared "$half_ufd_size_MB" 32 "$mnt"/uffd-test
->   rm -f "$mnt"/uffd-test
-> +run_test ./userfaultfd hugetlb_shared:dev "$half_ufd_size_MB" 32 "$mnt"/uffd-test
-> +rm -f "$mnt"/uffd-test
->   run_test ./userfaultfd shmem 20 16
-> +run_test ./userfaultfd shmem:dev 20 16
->   
->   #cleanup
->   umount "$mnt"
-> 
+This patch series adds support for async buffered writes when using both
+xfs and io-uring. Currently io-uring only supports buffered writes in the
+slow path, by processing them in the io workers. With this patch series i=
+t is
+now possible to support buffered writes in the fast path. To be able to u=
+se
+the fast path the required pages must be in the page cache, the required =
+locks
+in xfs can be granted immediately and no additional blocks need to be rea=
+d
+form disk.
 
-Looks good to me.
+Updating the inode can take time. An optimization has been implemented fo=
+r
+the time update. Time updates will be processed in the slow path. While t=
+here
+is already a time update in process, other write requests for the same fi=
+le,
+can skip the update of the modification time.
+ =20
 
-Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
+Performance results:
+  For fio the following results have been obtained with a queue depth of
+  1 and 4k block size (runtime 600 secs):
 
-thanks,
--- Shuah
+                 sequential writes:
+                 without patch                 with patch
+  iops:              80k                          269k
+
+
+                 random writes:
+                 without patch                 with patch
+  iops:              76k                          249k
+
+For an io depth of 1, the new patch improves throughput by over three tim=
+es
+(compared to the exiting behavior, where buffered writes are processed by=
+ an
+io-worker process) and also the latency is considerably reduced. To achie=
+ve the
+same or better performance with the exisiting code an io depth of 4 is re=
+quired.
+Increasing the iodepth further does not lead to any further improvements.
+
+Especially for mixed workloads this is a considerable improvement.
+
+
+
+Support for async buffered writes:
+
+  Patch 1: block: add check for async buffered writes to generic_write_ch=
+ecks
+    Add a new flag FMODE_BUF_WASYNC so filesystems can specify that they =
+support
+    async buffered writes and include the flag in the check of the functi=
+on
+    generic_write_checks().
+   =20
+  Patch 2: mm: add FGP_ATOMIC flag to __filemap_get_folio()
+    This adds the FGP_ATOMIC flag. This allows to specify the gfp flags
+    for memory allocations for async buffered writes.
+   =20
+  Patch 3: iomap: add iomap_page_create_gfp to allocate iomap_pages
+    Add new function to allow specifying gfp flags when allocating and
+    initializing the structure iomap_page.
+
+  Patch 4: iomap: use iomap_page_create_gfp() in __iomap_write_begin
+    Add a gfp flag to the iomap_page_create function.
+ =20
+  Patch 5: iomap: add async buffered write support
+    Set IOMAP_NOWAIT flag if IOCB_NOWAIT is set. Also use specific gfp fl=
+ags if
+    the iomap_page structure is allocated for an async buffered page.
+
+  Patch 6: xfs: add iomap async buffered write support
+    Add async buffered write support to the xfs iomap layer.
+
+Support for async buffered write support and inode time modification
+
+
+  Patch 7: fs: split off need_remove_file_privs() do_remove_file_privs()
+    Splits of a check and action function, so they can later be invoked
+    in the nowait code path.
+   =20
+  Patch 8: fs: split off need_file_update_time and do_file_update_time
+    Splits of a check and action function, so they can later be invoked
+    in the nowait code path.
+   =20
+  Patch 9: fs: add pending file update time flag.
+    Add new flag so consecutive write requests for the same inode can
+    proceed without waiting for the inode modification time to complete.
+
+  Patch 10: xfs: enable async write file modification handling.
+    Enable async write handling in xfs for the file modification time
+    update. If the file modification update requires logging or removal
+    of privileges that needs to wait, -EAGAIN is returned.
+
+  Patch 11: xfs: add async buffered write support
+    Take the ilock in nowait mode if async buffered writes are enabled.
+
+  Patch 12: io_uring: add support for async buffered writes
+    This enables the async buffered writes optimization in io_uring.
+    Buffered writes are enabled for blocks that are already in the page
+    cache.
+
+  Patch 13: io_uring: Add tracepoint for short writes
+
+Support for write throttling of async buffered writes:
+
+  Patch 14: sched: add new fields to task_struct
+    Add two new fields to the task_struct. These fields store the
+    deadline after which writes are no longer throttled.
+
+  Patch 15: mm: support write throttling for async buffered writes
+    This changes the balance_dirty_pages function to take an additional
+    parameter. When nowait is specified the write throttling code no
+    longer waits synchronously for the deadline to expire. Instead
+    it sets the fields in task_struct. Once the deadline expires the
+    fields are reset.
+   =20
+  Patch 16: iomap: User throttling for async buffered writes.
+    Enable async buffered write throttling in iomap.
+
+  Patch 17: io_uring: support write throttling for async buffered writes
+    Adds support to io_uring for write throttling. When the writes
+    are throttled, the write requests are added to the pending io list.
+    Once the write throttling deadline expires, the writes are submitted.
+
+Enable async buffered write support in xfs
+  Patch 18: xfs: enable async buffered write support
+    This enables the flag that enables async buffered writes for xfs.
+
+
+Testing:
+  This patch has been tested with xfstests and fio.
+
+
+Stefan Roesch (18):
+  block: add check for async buffered writes to generic_write_checks
+  mm: add FGP_ATOMIC flag to __filemap_get_folio()
+  iomap: add iomap_page_create_gfp to allocate iomap_pages
+  iomap: use iomap_page_create_gfp() in __iomap_write_begin
+  iomap: add async buffered write support
+  xfs: add iomap async buffered write support
+  fs: split off need_remove_file_privs() do_remove_file_privs()
+  fs: split off need_file_update_time and do_file_update_time
+  fs: add pending file update time flag.
+  xfs: Enable async write file modification handling.
+  xfs: add async buffered write support
+  io_uring: add support for async buffered writes
+  io_uring: add tracepoint for short writes
+  sched: add new fields to task_struct
+  mm: support write throttling for async buffered writes
+  iomap: User throttling for async buffered writes.
+  io_uring: support write throttling for async buffered writes
+  xfs: enable async buffered write support
+
+ fs/inode.c                      | 127 +++++++++++++++++++++----------
+ fs/io_uring.c                   | 131 +++++++++++++++++++++++++++++---
+ fs/iomap/buffered-io.c          |  63 +++++++++++++--
+ fs/read_write.c                 |   3 +-
+ fs/xfs/xfs_file.c               |  51 +++++++++++--
+ fs/xfs/xfs_iomap.c              |  33 +++++++-
+ include/linux/fs.h              |  14 ++++
+ include/linux/pagemap.h         |   1 +
+ include/linux/sched.h           |   3 +
+ include/linux/writeback.h       |   1 +
+ include/trace/events/io_uring.h |  25 ++++++
+ kernel/fork.c                   |   1 +
+ mm/filemap.c                    |   3 +
+ mm/page-writeback.c             |  54 +++++++++----
+ 14 files changed, 424 insertions(+), 86 deletions(-)
+
+
+base-commit: af2d861d4cd2a4da5137f795ee3509e6f944a25b
+--=20
+2.30.2
+
