@@ -2,47 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CEB7F5105AA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Apr 2022 19:43:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 368FE5105B7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Apr 2022 19:44:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243129AbiDZRrF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Apr 2022 13:47:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40588 "EHLO
+        id S1353604AbiDZRrQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Apr 2022 13:47:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238343AbiDZRq7 (ORCPT
+        with ESMTP id S1353048AbiDZRrK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Apr 2022 13:46:59 -0400
+        Tue, 26 Apr 2022 13:47:10 -0400
 Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 298F418169E
-        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Apr 2022 10:43:50 -0700 (PDT)
-Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 23QGQX6u011623
-        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Apr 2022 10:43:50 -0700
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61F1D1816ED
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Apr 2022 10:44:01 -0700 (PDT)
+Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 23QGQSNG022321
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Apr 2022 10:44:00 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=facebook;
- bh=5kC+EaG8kC1NKMRTCYxqHhGLne8jSvz8PgxcvPIUop4=;
- b=iyirba4hRWIPkhSOLF7SjU7PUizOK0Hd/MOc4d5C4ZWbYlqqd8bOrW6URG7DpEa6Q9DT
- O85UVe0gM1yWHgnzNBwZtCJvzgSL0nIS/8xkcKAOKdo7lpg/T/kznI5jhGAL3xIHhXW0
- 6+a+OQp4XOtRGET0UR6/oP01yhTXbc68Y1c= 
+ bh=DMxeTOpqCEe+Tvocr/V6khKpI6cObsPyGo88EBQxCYQ=;
+ b=hvlnd3V4HxFmkkcQbSVhcchro7WsRr2JGxiXSvC12JY3o1rd7//BSGTbNGUQTF6Zg/46
+ mvgoZRKQ0zk3SUCQIolBP97y6khT+veGVL/lj45fYc8frK319E8kwfUa4lXUmXQvtkNM
+ yKU470QMOHMfx/Tgj8JYARRMcMVXzBA1C0Y= 
 Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3fmeyu3nvy-3
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3fp10efkse-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Apr 2022 10:43:49 -0700
-Received: from twshared19572.14.frc2.facebook.com (2620:10d:c085:208::f) by
- mail.thefacebook.com (2620:10d:c085:11d::7) with Microsoft SMTP Server
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Apr 2022 10:44:00 -0700
+Received: from twshared19572.14.frc2.facebook.com (2620:10d:c085:108::8) by
+ mail.thefacebook.com (2620:10d:c085:11d::4) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Tue, 26 Apr 2022 10:43:48 -0700
+ 15.1.2375.24; Tue, 26 Apr 2022 10:43:59 -0700
 Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
-        id 815E2E2D4859; Tue, 26 Apr 2022 10:43:40 -0700 (PDT)
+        id 87F30E2D485B; Tue, 26 Apr 2022 10:43:40 -0700 (PDT)
 From:   Stefan Roesch <shr@fb.com>
 To:     <io-uring@vger.kernel.org>, <kernel-team@fb.com>,
         <linux-mm@kvack.org>, <linux-xfs@vger.kernel.org>,
         <linux-fsdevel@vger.kernel.org>
 CC:     <shr@fb.com>, <david@fromorbit.com>
-Subject: [RFC PATCH v1 03/18] iomap: add iomap_page_create_gfp to allocate iomap_pages
-Date:   Tue, 26 Apr 2022 10:43:20 -0700
-Message-ID: <20220426174335.4004987-4-shr@fb.com>
+Subject: [RFC PATCH v1 04/18] iomap: use iomap_page_create_gfp() in __iomap_write_begin
+Date:   Tue, 26 Apr 2022 10:43:21 -0700
+Message-ID: <20220426174335.4004987-5-shr@fb.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220426174335.4004987-1-shr@fb.com>
 References: <20220426174335.4004987-1-shr@fb.com>
@@ -50,8 +50,8 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-GUID: 0sT6sYFrqg5Hpzg46tRTMh5ZOqOpgrSx
-X-Proofpoint-ORIG-GUID: 0sT6sYFrqg5Hpzg46tRTMh5ZOqOpgrSx
+X-Proofpoint-GUID: DO5k1cRZF83lnaCDqr7HneXwVkWR6jzV
+X-Proofpoint-ORIG-GUID: DO5k1cRZF83lnaCDqr7HneXwVkWR6jzV
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.486,FMLib:17.11.64.514
  definitions=2022-04-26_05,2022-04-26_02,2022-02-23_01
@@ -65,79 +65,45 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add the function iomap_page_create_gfp() to be able to specify gfp flags
-and to pass in the number of blocks per folio in the function
-iomap_page_create_gfp().
+This change uses the new iomap_page_create_gfp() function in the
+function __iomap_write_begin().
 
 No intended functional changes in this patch.
 
 Signed-off-by: Stefan Roesch <shr@fb.com>
 ---
- fs/iomap/buffered-io.c | 34 ++++++++++++++++++++++++++++------
- 1 file changed, 28 insertions(+), 6 deletions(-)
+ fs/iomap/buffered-io.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 8ce8720093b9..85aa32f50db0 100644
+index 85aa32f50db0..1ffdc7078e7d 100644
 --- a/fs/iomap/buffered-io.c
 +++ b/fs/iomap/buffered-io.c
-@@ -43,17 +43,27 @@ static inline struct iomap_page *to_iomap_page(struct=
- folio *folio)
-=20
- static struct bio_set iomap_ioend_bioset;
-=20
-+/**
-+ * iomap_page_create_gfp : Create and initialize iomap_page for folio.
-+ * @inode     : Pointer to inode
-+ * @folio     : Pointer to folio
-+ * @nr_blocks : Number of blocks in the folio
-+ * @gfp       : gfp allocation flags
-+ *
-+ * This function returns a newly allocated iomap for the folio with the =
-settings
-+ * specified in the gfp parameter.
-+ *
-+ **/
- static struct iomap_page *
--iomap_page_create(struct inode *inode, struct folio *folio)
-+iomap_page_create_gfp(struct inode *inode, struct folio *folio,
-+		unsigned int nr_blocks, gfp_t gfp)
+@@ -572,17 +572,22 @@ static int __iomap_write_begin(const struct iomap_i=
+ter *iter, loff_t pos,
+ 		size_t len, struct folio *folio)
  {
--	struct iomap_page *iop =3D to_iomap_page(folio);
--	unsigned int nr_blocks =3D i_blocks_per_folio(inode, folio);
-+	struct iomap_page *iop;
-=20
--	if (iop || nr_blocks <=3D 1)
-+	iop =3D kzalloc(struct_size(iop, uptodate, BITS_TO_LONGS(nr_blocks)), g=
-fp);
-+	if (!iop)
- 		return iop;
-=20
--	iop =3D kzalloc(struct_size(iop, uptodate, BITS_TO_LONGS(nr_blocks)),
--			GFP_NOFS | __GFP_NOFAIL);
- 	spin_lock_init(&iop->uptodate_lock);
- 	if (folio_test_uptodate(folio))
- 		bitmap_fill(iop->uptodate, nr_blocks);
-@@ -61,6 +71,18 @@ iomap_page_create(struct inode *inode, struct folio *f=
-olio)
- 	return iop;
- }
-=20
-+static struct iomap_page *
-+iomap_page_create(struct inode *inode, struct folio *folio)
-+{
+ 	const struct iomap *srcmap =3D iomap_iter_srcmap(iter);
+-	struct iomap_page *iop =3D iomap_page_create(iter->inode, folio);
 +	struct iomap_page *iop =3D to_iomap_page(folio);
-+	unsigned int nr_blocks =3D i_blocks_per_folio(inode, folio);
+ 	loff_t block_size =3D i_blocksize(iter->inode);
+ 	loff_t block_start =3D round_down(pos, block_size);
+ 	loff_t block_end =3D round_up(pos + len, block_size);
++	unsigned int nr_blocks =3D i_blocks_per_folio(iter->inode, folio);
+ 	size_t from =3D offset_in_folio(folio, pos), to =3D from + len;
+ 	size_t poff, plen;
++	gfp_t  gfp =3D GFP_NOFS | __GFP_NOFAIL;
+=20
+ 	if (folio_test_uptodate(folio))
+ 		return 0;
+ 	folio_clear_error(folio);
+=20
++	if (!iop && nr_blocks > 1)
++		iop =3D iomap_page_create_gfp(iter->inode, folio, nr_blocks, gfp);
 +
-+	if (iop || nr_blocks <=3D 1)
-+		return iop;
-+
-+	return iomap_page_create_gfp(inode, folio, nr_blocks, GFP_NOFS | __GFP_=
-NOFAIL);
-+}
-+
- static void iomap_page_release(struct folio *folio)
- {
- 	struct iomap_page *iop =3D folio_detach_private(folio);
+ 	do {
+ 		iomap_adjust_read_range(iter->inode, folio, &block_start,
+ 				block_end - block_start, &poff, &plen);
 --=20
 2.30.2
 
