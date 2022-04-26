@@ -2,288 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DB96450F02B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Apr 2022 07:22:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1829C50F03B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Apr 2022 07:39:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239284AbiDZFZI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Apr 2022 01:25:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38418 "EHLO
+        id S244407AbiDZFm0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Apr 2022 01:42:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233119AbiDZFZH (ORCPT
+        with ESMTP id S236170AbiDZFmZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Apr 2022 01:25:07 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B33215FF1;
-        Mon, 25 Apr 2022 22:22:00 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 166BEB811F8;
-        Tue, 26 Apr 2022 05:21:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEFFDC385A4;
-        Tue, 26 Apr 2022 05:21:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1650950517;
-        bh=M7y9z2HMRLqwatvHl476GZFoUzQ6J5PmY1+GrAUh6+Q=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FcILfOUMq+4QmPOE31Jx5+r6dnDQv1gEpy5JMQ190JTm+6BZyKeUnlHZeBIZuYBN2
-         6A3u34kJzV56sByYY/kP5QcSeSWY9mPZoi2NUcbIsly86dLu79SW3QQHHsx/aFnN7g
-         RePhDIv4IAO0bNkjDlTHnXXnX3JATlD3BvLV3lPkswjRDUt+Rwzls2OEUprvgRVozU
-         LTDf794VBGBCtMX1zn8xJT9d+iKzUfS2KetqYgZQpipb3bCD9JnVC88PnQSZht+xQB
-         RU+h+8v+OKQL7jS53FNoAOGs66aoSNrAEIa6MQpDxOl2ePyt/o7/ZpqCuOE2ljqivo
-         3BjjoYrGBP3cw==
-Date:   Mon, 25 Apr 2022 22:21:57 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Yang Xu <xuyang2018.jy@fujitsu.com>
-Cc:     linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org,
-        viro@zeniv.linux.org.uk, david@fromorbit.com, brauner@kernel.org,
-        willy@infradead.org, jlayton@kernel.org
-Subject: Re: [PATCH v7 3/4] fs: strip file's S_ISGID mode on vfs instead of
- on underlying filesystem
-Message-ID: <20220426052157.GJ17059@magnolia>
-References: <1650946792-9545-1-git-send-email-xuyang2018.jy@fujitsu.com>
- <1650946792-9545-3-git-send-email-xuyang2018.jy@fujitsu.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1650946792-9545-3-git-send-email-xuyang2018.jy@fujitsu.com>
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        Tue, 26 Apr 2022 01:42:25 -0400
+Received: from mail-pj1-x1049.google.com (mail-pj1-x1049.google.com [IPv6:2607:f8b0:4864:20::1049])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A9AC326EA
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Apr 2022 22:39:18 -0700 (PDT)
+Received: by mail-pj1-x1049.google.com with SMTP id s18-20020a17090aa11200b001d92f7609e8so1073586pjp.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 25 Apr 2022 22:39:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=wiy4ZFErG6M19mqQHUKpS1yTWJiAAlT4dR/xLvJk6Hw=;
+        b=FnVqBEYT/x+/otkeQ3+MGU8nRgioALOZEJyWRms+DoU60vLvG4knvZ85+k1mr3tVc0
+         vqArKWu7LcXihZYZOL7dZijR1qW/fUI1ogYdryU7KR30je7tEjpL7SWeqEnnd/Z0l+6p
+         oQzkcbfWngpMAliZPhAsfXTSWCnwz8fWFa74DRSIzlIoZx+NC9CPJeMNUZ3R63A72PJf
+         QZcKxPUm3H1SOIAqby7P9meP48e3oR4Bh8C/ma3u+fJEHhbZdFo9brPFPEbwbLiTho1C
+         Qvh2BmXNRXBqnJccxzxqqdYZqemamQonwCzTKOX5d0cQHIkgbJ7rHfmHl0679wZSmYIx
+         AFng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=wiy4ZFErG6M19mqQHUKpS1yTWJiAAlT4dR/xLvJk6Hw=;
+        b=tKHkkkfWyYIhK+f8LrLkOAXgtnpMcvjk7ZwTZQFC4w2GYRn6T0LR2cFU3sOCNomIy1
+         zK2csCsctmtLxVkS87lv20qxs2PI+Fahu20A6O4DCYbn4T+r+ztJfxdJXVuZ5KadVuMx
+         uvh0Kwuwp4OU71IRciMZ3V0CcIOWJGZzNCFxbNWoIBbIL3LF7b2MVPrgQfxOftoE9RU9
+         83hZRmw8TYXmrOYDrkFktSY8y69tbgrVETRwYyediHSpMijYnt9OT+2wPq4w+iajCBtA
+         Y+0s60G7TzjJxu9+MWJB/t+X8Exlw+UYSkqIkbWD8Mj7081471qPr5Cj9z7wN84oLWzg
+         e3AQ==
+X-Gm-Message-State: AOAM533vWr13LUQHHOzeg9uD7L1vgLt5mzt4zhjYGLoAlpfZrsUh+413
+        g9+CWfOlN2ylLr4L9isWCr6yGTQc1HaNZsEt
+X-Google-Smtp-Source: ABdhPJxvg8pZpaAGbW2v0JTDOhNhWaI7b9G2UFmwsQAHLCDtYBjVtAQ+AyjheoLnE1s4SzV5HxUjB6H2aYquwIV1
+X-Received: from yosry.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:2327])
+ (user=yosryahmed job=sendgmr) by 2002:a05:6a00:8c8:b0:4fe:ecb:9b8f with SMTP
+ id s8-20020a056a0008c800b004fe0ecb9b8fmr22623121pfu.55.1650951557634; Mon, 25
+ Apr 2022 22:39:17 -0700 (PDT)
+Date:   Tue, 26 Apr 2022 05:38:58 +0000
+Message-Id: <20220426053904.3684293-1-yosryahmed@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.36.0.rc2.479.g8af0fa9b8e-goog
+Subject: [PATCH v3 0/6] KVM: mm: count KVM page table pages in memory stats
+From:   Yosry Ahmed <yosryahmed@google.com>
+To:     Sean Christopherson <seanjc@google.com>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Aleksandar Markovic <aleksandar.qemu.devel@gmail.com>,
+        Anup Patel <anup@brainfault.org>,
+        Atish Patra <atishp@atishpatra.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Shakeel Butt <shakeelb@google.com>,
+        James Morse <james.morse@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Alexandru Elisei <alexandru.elisei@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     linux-mips@vger.kernel.org, kvm@vger.kernel.org,
+        kvm-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        cgroups@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kvmarm@lists.cs.columbia.edu, Yosry Ahmed <yosryahmed@google.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 26, 2022 at 12:19:51PM +0800, Yang Xu wrote:
-> Currently, vfs only passes mode parameter to filesystem, then use inode_init_owner()
-> to strip S_ISGID. Some filesystem(ie ext4/btrfs) will call inode_init_owner
-> firstly, then posxi acl setup, but xfs uses the contrary order. It will
-> affect S_ISGID clear especially we filter S_IXGRP by umask or acl.
-> 
-> Regardless of which filesystem is in use, failure to strip the SGID correctly
-> is considered a security failure that needs to be fixed. The current VFS
-> infrastructure requires the filesystem to do everything right and not step on
-> any landmines to strip the SGID bit, when in fact it can easily be done at the
-> VFS and the filesystems then don't even need to be aware that the SGID needs
-> to be (or has been stripped) by the operation the user asked to be done.
-> 
-> Vfs has all the info it needs - it doesn't need the filesystems to do everything
-> correctly with the mode and ensuring that they order things like posix acl setup
-> functions correctly with inode_init_owner() to strip the SGID bit.
-> 
-> Just strip the SGID bit at the VFS, and then the filesystem can't get it wrong.
-> 
-> Also, the mode_strip_sgid() api should be used before IS_POSIXACL() because
-> this api may change mode.
-> 
-> Only the following places use inode_init_owner
-> "
-> arch/powerpc/platforms/cell/spufs/inode.c:      inode_init_owner(&init_user_ns, inode, dir, mode | S_IFDIR);
-> arch/powerpc/platforms/cell/spufs/inode.c:      inode_init_owner(&init_user_ns, inode, dir, mode | S_IFDIR);
-> fs/9p/vfs_inode.c:      inode_init_owner(&init_user_ns, inode, NULL, mode);
-> fs/bfs/dir.c:   inode_init_owner(&init_user_ns, inode, dir, mode);
-> fs/btrfs/inode.c:       inode_init_owner(mnt_userns, inode, dir, mode);
-> fs/btrfs/tests/btrfs-tests.c:   inode_init_owner(&init_user_ns, inode, NULL, S_IFREG);
-> fs/ext2/ialloc.c:               inode_init_owner(&init_user_ns, inode, dir, mode);
-> fs/ext4/ialloc.c:               inode_init_owner(mnt_userns, inode, dir, mode);
-> fs/f2fs/namei.c:        inode_init_owner(mnt_userns, inode, dir, mode);
-> fs/hfsplus/inode.c:     inode_init_owner(&init_user_ns, inode, dir, mode);
-> fs/hugetlbfs/inode.c:           inode_init_owner(&init_user_ns, inode, dir, mode);
-> fs/jfs/jfs_inode.c:     inode_init_owner(&init_user_ns, inode, parent, mode);
-> fs/minix/bitmap.c:      inode_init_owner(&init_user_ns, inode, dir, mode);
-> fs/nilfs2/inode.c:      inode_init_owner(&init_user_ns, inode, dir, mode);
-> fs/ntfs3/inode.c:       inode_init_owner(mnt_userns, inode, dir, mode);
-> fs/ocfs2/dlmfs/dlmfs.c:         inode_init_owner(&init_user_ns, inode, NULL, mode);
-> fs/ocfs2/dlmfs/dlmfs.c: inode_init_owner(&init_user_ns, inode, parent, mode);
-> fs/ocfs2/namei.c:       inode_init_owner(&init_user_ns, inode, dir, mode);
-> fs/omfs/inode.c:        inode_init_owner(&init_user_ns, inode, NULL, mode);
-> fs/overlayfs/dir.c:     inode_init_owner(&init_user_ns, inode, dentry->d_parent->d_inode, mode);
-> fs/ramfs/inode.c:               inode_init_owner(&init_user_ns, inode, dir, mode);
-> fs/reiserfs/namei.c:    inode_init_owner(&init_user_ns, inode, dir, mode);
-> fs/sysv/ialloc.c:       inode_init_owner(&init_user_ns, inode, dir, mode);
-> fs/ubifs/dir.c: inode_init_owner(&init_user_ns, inode, dir, mode);
-> fs/udf/ialloc.c:        inode_init_owner(&init_user_ns, inode, dir, mode);
-> fs/ufs/ialloc.c:        inode_init_owner(&init_user_ns, inode, dir, mode);
-> fs/xfs/xfs_inode.c:             inode_init_owner(mnt_userns, inode, dir, mode);
-> fs/zonefs/super.c:      inode_init_owner(&init_user_ns, inode, parent, S_IFDIR | 0555);
-> kernel/bpf/inode.c:     inode_init_owner(&init_user_ns, inode, dir, mode);
-> mm/shmem.c:             inode_init_owner(&init_user_ns, inode, dir, mode);
-> "
-> 
-> They are used in filesystem to init new inode function and these init inode
-> functions are used by following operations:
-> mkdir
-> symlink
-> mknod
-> create
-> tmpfile
-> rename
-> 
-> We don't care about mkdir because we don't strip SGID bit for directory except
-> fs.xfs.irix_sgid_inherit. But we even call vfs_prepare_mode() in do_mkdirat() since
-> mode_strip_sgid() will skip directories anyway. This will enforce the same
-> ordering for all relevant operations and it will make the code more uniform and
-> easier to understand by using new helper vfs_prepare_mode().
-> 
-> symlink and rename only use valid mode that doesn't have SGID bit.
-> 
-> We have added mode_strip_sgid() api for the remaining operations.
-> 
-> In addition to the above six operations, four filesystems has a little difference
-> 1) btrfs has btrfs_create_subvol_root to create new inode but used non SGID bit
->    mode and can ignore
-> 2) ocfs2 reflink function should add mode_strip_sgid api manually because this ioctl
->    is unique and not added into vfs. It may use S_ISGID modd.
-> 3) spufs which doesn't really go hrough the regular VFS callpath because it has
->    separate system call spu_create, but it t only allows the creation of
->    directories and only allows bits in 0777 and can ignore
-> 4) bpf use vfs_mkobj in bpf_obj_do_pin with
->    "S_IFREG | ((S_IRUSR | S_IWUSR) & ~current_umask()) mode and
->    use bpf_mkobj_ops in bpf_iter_link_pin_kernel with S_IFREG | S_IRUSR mode,
->    so bpf is also not affected
-> 
-> This patch also changed grpid behaviour for ext4/xfs because the mode passed to
-> them may been changed by vfs_prepare_mode.
-> 
-> Also as Christian Brauner said"
-> The patch itself is useful as it would move a security sensitive operation that is
-> currently burried in individual filesystems into the vfs layer. But it has a decent
-> regression potential since it might strip filesystems that have so far relied on
-> getting the S_ISGID bit with a mode argument. So this needs a lot of testing and
-> long exposure in -next for at least one full kernel cycle."
-> 
-> Suggested-by: Dave Chinner <david@fromorbit.com>
-> Signed-off-by: Yang Xu <xuyang2018.jy@fujitsu.com>
+We keep track of several kernel memory stats (total kernel memory, page
+tables, stack, vmalloc, etc) on multiple levels (global, per-node,
+per-memcg, etc). These stats give insights to users to how much memory
+is used by the kernel and for what purposes.
 
-Looks good!  Thank you for taking care of this! :)
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Currently, memory used by kvm for its page tables is not accounted in
+any of those kernel memory stats. This patch series accounts the memory
+pages used by KVM for page tables in those stats in a new
+NR_SECONDARY_PAGETABLE stat.
 
---D
+The riscv and mips patches are not tested due to lack of
+resources. Feel free to test or drop them.
 
-> ---
->  fs/inode.c         |  2 --
->  fs/namei.c         | 22 +++++++++-------------
->  fs/ocfs2/namei.c   |  1 +
->  include/linux/fs.h | 11 +++++++++++
->  4 files changed, 21 insertions(+), 15 deletions(-)
-> 
-> diff --git a/fs/inode.c b/fs/inode.c
-> index e9a5f2ec2f89..dd357f4b556d 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -2246,8 +2246,6 @@ void inode_init_owner(struct user_namespace *mnt_userns, struct inode *inode,
->  		/* Directories are special, and always inherit S_ISGID */
->  		if (S_ISDIR(mode))
->  			mode |= S_ISGID;
-> -		else
-> -			mode = mode_strip_sgid(mnt_userns, dir, mode);
->  	} else
->  		inode_fsgid_set(inode, mnt_userns);
->  	inode->i_mode = mode;
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 73646e28fae0..5dbf00704ae8 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -3287,8 +3287,7 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
->  	if (open_flag & O_CREAT) {
->  		if (open_flag & O_EXCL)
->  			open_flag &= ~O_TRUNC;
-> -		if (!IS_POSIXACL(dir->d_inode))
-> -			mode &= ~current_umask();
-> +		mode = vfs_prepare_mode(mnt_userns, dir->d_inode, mode);
->  		if (likely(got_write))
->  			create_error = may_o_create(mnt_userns, &nd->path,
->  						    dentry, mode);
-> @@ -3521,8 +3520,7 @@ struct dentry *vfs_tmpfile(struct user_namespace *mnt_userns,
->  	child = d_alloc(dentry, &slash_name);
->  	if (unlikely(!child))
->  		goto out_err;
-> -	if (!IS_POSIXACL(dir))
-> -		mode &= ~current_umask();
-> +	mode = vfs_prepare_mode(mnt_userns, dir, mode);
->  	error = dir->i_op->tmpfile(mnt_userns, dir, child, mode);
->  	if (error)
->  		goto out_err;
-> @@ -3850,13 +3848,12 @@ static int do_mknodat(int dfd, struct filename *name, umode_t mode,
->  	if (IS_ERR(dentry))
->  		goto out1;
->  
-> -	if (!IS_POSIXACL(path.dentry->d_inode))
-> -		mode &= ~current_umask();
-> +	mnt_userns = mnt_user_ns(path.mnt);
-> +	mode = vfs_prepare_mode(mnt_userns, path.dentry->d_inode, mode);
->  	error = security_path_mknod(&path, dentry, mode, dev);
->  	if (error)
->  		goto out2;
->  
-> -	mnt_userns = mnt_user_ns(path.mnt);
->  	switch (mode & S_IFMT) {
->  		case 0: case S_IFREG:
->  			error = vfs_create(mnt_userns, path.dentry->d_inode,
-> @@ -3943,6 +3940,7 @@ int do_mkdirat(int dfd, struct filename *name, umode_t mode)
->  	struct path path;
->  	int error;
->  	unsigned int lookup_flags = LOOKUP_DIRECTORY;
-> +	struct user_namespace *mnt_userns;
->  
->  retry:
->  	dentry = filename_create(dfd, name, &path, lookup_flags);
-> @@ -3950,15 +3948,13 @@ int do_mkdirat(int dfd, struct filename *name, umode_t mode)
->  	if (IS_ERR(dentry))
->  		goto out_putname;
->  
-> -	if (!IS_POSIXACL(path.dentry->d_inode))
-> -		mode &= ~current_umask();
-> +	mnt_userns = mnt_user_ns(path.mnt);
-> +	mode = vfs_prepare_mode(mnt_userns, path.dentry->d_inode, mode);
->  	error = security_path_mkdir(&path, dentry, mode);
-> -	if (!error) {
-> -		struct user_namespace *mnt_userns;
-> -		mnt_userns = mnt_user_ns(path.mnt);
-> +	if (!error)
->  		error = vfs_mkdir(mnt_userns, path.dentry->d_inode, dentry,
->  				  mode);
-> -	}
-> +
->  	done_path_create(&path, dentry);
->  	if (retry_estale(error, lookup_flags)) {
->  		lookup_flags |= LOOKUP_REVAL;
-> diff --git a/fs/ocfs2/namei.c b/fs/ocfs2/namei.c
-> index c75fd54b9185..961d1cf54388 100644
-> --- a/fs/ocfs2/namei.c
-> +++ b/fs/ocfs2/namei.c
-> @@ -197,6 +197,7 @@ static struct inode *ocfs2_get_init_inode(struct inode *dir, umode_t mode)
->  	 * callers. */
->  	if (S_ISDIR(mode))
->  		set_nlink(inode, 2);
-> +	mode = mode_strip_sgid(&init_user_ns, dir, mode);
->  	inode_init_owner(&init_user_ns, inode, dir, mode);
->  	status = dquot_initialize(inode);
->  	if (status)
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 98b44a2732f5..914c8f28bb02 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3459,6 +3459,17 @@ static inline bool dir_relax_shared(struct inode *inode)
->  	return !IS_DEADDIR(inode);
->  }
->  
-> +static inline umode_t vfs_prepare_mode(struct user_namespace *mnt_userns,
-> +				   const struct inode *dir, umode_t mode)
-> +{
-> +	mode = mode_strip_sgid(mnt_userns, dir, mode);
-> +
-> +	if (!IS_POSIXACL(dir))
-> +		mode &= ~current_umask();
-> +
-> +	return mode;
-> +}
-> +
->  extern bool path_noexec(const struct path *path);
->  extern void inode_nohighmem(struct inode *inode);
->  
-> -- 
-> 2.27.0
-> 
+Changes in V3:
+- Added NR_SECONDARY_PAGETABLE instead of piggybacking on NR_PAGETABLE
+  stats.
+
+Changes in V2:
+- Added accounting stats for other archs than x86.
+- Changed locations in the code where x86 KVM page table stats were
+  accounted based on suggestions from Sean Christopherson.
+
+
+Yosry Ahmed (6):
+  mm: add NR_SECONDARY_PAGETABLE stat
+  KVM: mmu: add a helper to account page table pages used by KVM.
+  KVM: x86/mmu: count KVM page table pages in pagetable stats
+  KVM: arm64/mmu: count KVM page table pages in pagetable stats
+  KVM: riscv/mmu: count KVM page table pages in pagetable stats
+  KVM: mips/mmu: count KVM page table pages in pagetable stats
+
+ arch/arm64/kernel/image-vars.h |  3 ++
+ arch/arm64/kvm/hyp/pgtable.c   | 50 +++++++++++++++++++++-------------
+ arch/mips/kvm/mips.c           |  1 +
+ arch/mips/kvm/mmu.c            |  9 +++++-
+ arch/riscv/kvm/mmu.c           | 26 +++++++++++++-----
+ arch/x86/kvm/mmu/mmu.c         | 16 +++++++++--
+ arch/x86/kvm/mmu/tdp_mmu.c     | 16 +++++++++--
+ drivers/base/node.c            |  2 ++
+ fs/proc/meminfo.c              |  2 ++
+ include/linux/kvm_host.h       |  9 ++++++
+ include/linux/mmzone.h         |  1 +
+ mm/memcontrol.c                |  1 +
+ mm/page_alloc.c                |  6 +++-
+ mm/vmstat.c                    |  1 +
+ 14 files changed, 111 insertions(+), 32 deletions(-)
+
+-- 
+2.36.0.rc2.479.g8af0fa9b8e-goog
+
