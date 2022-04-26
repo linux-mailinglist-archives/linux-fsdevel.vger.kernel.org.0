@@ -2,82 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C711510B68
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 26 Apr 2022 23:34:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91C21510BB0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Apr 2022 00:07:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238763AbiDZVhO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Apr 2022 17:37:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54690 "EHLO
+        id S1355638AbiDZWKj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Apr 2022 18:10:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242656AbiDZVhN (ORCPT
+        with ESMTP id S229833AbiDZWKi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Apr 2022 17:37:13 -0400
-Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77C161A5DC9
-        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Apr 2022 14:34:04 -0700 (PDT)
-Received: by mail-io1-xd32.google.com with SMTP id 125so219221iov.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Apr 2022 14:34:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zJHneikLXEGfJde4krQasd9PQhsFRpApoS4ZRag7+RU=;
-        b=EdwxR0V/0R58E5VQDj0HrytGDcfRa0ZaI7Me6rDBjirAgNHRbWWWvGaw7HmQEIGzu+
-         8UTTpBJpVmtohKiGL5cVYIq8PicWJvFUQVly2vSP4TS+56W86k/aX6l5WCrdoFzyILM+
-         1Yehf40AqvUszrZodWCBswvT50v8vrsYb0CT9VT0ik1assb3s50rjI/Ghc6ERMC0+hQS
-         kngQQpUrenrx0Z/CG7kuYI7vOHHB9pxCvklytawOfmTdu9cTLRddizluzNirEjBtvgHq
-         /7wjZvrPSoiAuTCiyBqcBwBGz7SjzYicglmkQ0p2ZcHJZmj17y1/IkCZAoejAg68UMHJ
-         xOsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zJHneikLXEGfJde4krQasd9PQhsFRpApoS4ZRag7+RU=;
-        b=BXJf22LQ0yxCfGR9NNmyWffzC+UuAinRpS9rtMj8S5LWKo1WD2Z24KHSEgGt+lmJmM
-         pLdFtT/aRTBf81hJem9oRqnh4RkoEJ9Q3bh4Z3V3bi3ICyRALQyVi7hFX5c2kBIMHwi6
-         +22CXuKr9eRi1XakWY2QNNI9Kp/scDl4wsUuEt84iP3/QnMmj7nSbK2z0GNHe/fIa4S3
-         g3MlAaMlrReHbXMYcVnTtxbY2XWirFQIqkm0PFyOz5A93qjeHG+Xcpj8uSAhKT9e6fEE
-         RgCShwjxTsoq2x98zW6eBezwY7FTm9WPDd7jveZsap3sHTl4OPwJnAkhbKig+aPgNwmW
-         KLKg==
-X-Gm-Message-State: AOAM533we3AhEg82fnXgfcMwTvSqzNv6cO2LjCXRAQEi/1wVyUXhB+av
-        LxhpfmgUPYiel75Voi+akeg6QFrQlef2oovZ6APYIw==
-X-Google-Smtp-Source: ABdhPJyGNR5sOXzGqUeKg6keEazd9H9Z8L/jAzBgMCoHI+lyyK7gNjS+2erCu0X4dzgJTpnr7YSLg3mNpJ5fsfcJHI0=
-X-Received: by 2002:a5d:9448:0:b0:657:24e0:c0b2 with SMTP id
- x8-20020a5d9448000000b0065724e0c0b2mr10388348ior.167.1651008843696; Tue, 26
- Apr 2022 14:34:03 -0700 (PDT)
+        Tue, 26 Apr 2022 18:10:38 -0400
+Received: from wout3-smtp.messagingengine.com (wout3-smtp.messagingengine.com [64.147.123.19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A878B1ED;
+        Tue, 26 Apr 2022 15:07:30 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.west.internal (Postfix) with ESMTP id 4527C3200915;
+        Tue, 26 Apr 2022 18:07:29 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute4.internal (MEProxy); Tue, 26 Apr 2022 18:07:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1651010848; x=
+        1651097248; bh=h/r6mqxxO8CGeQeYBV/T4XnCBd2vSsImhikCpYpQ254=; b=c
+        YypQLUUfXsYTcz6o9Udfvm/qe4Nn05wll+0A9csMAwVxo5xt5QqjdB2b/Yyk2Fk+
+        Mc7ucKXKs6E5zgYWzoB8a1nmh+gaxiKEY/Klg16WJhYhywT21yqVPlGHsjbGELRG
+        JjiW8Fi1k0j4a2ZzqoqJV8woNGBN5zsNRIT6dxYL2vWa2qexUKgFVALrjX19ZmSu
+        t7uAmMNjd/bCaj2Ud0qwNTFQ858HYN1B6Cd0EbLwVCJZ5eAbvYuTzy8U/cPx4hjq
+        PilLVmkX159bl+ymxiiaX4Hs568cx4ien2ChSqisNJKE2wTX8RNydahQYNq+ioan
+        Whi8WLkHjfL0Eva1wThKw==
+X-ME-Sender: <xms:IG1oYr7tB8X8VHhQuCPIXTSQrW4HoVCxRaEvWBSeTbkxzki_r7MWaQ>
+    <xme:IG1oYg4KFzuLj8oX-3JY1Jr2l0_mrmlM9OZMjhOMcpe57a8cqZwkopdVwfwpej-Kp
+    gEEr-e4So-C1Ls>
+X-ME-Received: <xmr:IG1oYic0IDxNLyD9uJInZA3hErzMmV6HarUcakAZN3M698HufI0X8UeN394g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrudeggddtiecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvvefukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeffvghmihcu
+    ofgrrhhivgcuqfgsvghnohhurhcuoeguvghmihesihhnvhhishhisghlvghthhhinhhgsh
+    hlrggsrdgtohhmqeenucggtffrrghtthgvrhhnpeduieelfeeutedvleehueetffejgeej
+    geffkeelveeuleeukeejjeduffetjeekteenucevlhhushhtvghrufhiiigvpedtnecurf
+    grrhgrmhepmhgrihhlfhhrohhmpeguvghmihesihhnvhhishhisghlvghthhhinhhgshhl
+    rggsrdgtohhm
+X-ME-Proxy: <xmx:IG1oYsKqaLNox9Y-AHjoTTSkZukzU6K7fXD056oTXSeUTBzqdvEtkg>
+    <xmx:IG1oYvLEFlCZNOmbEZ8HsGppfUPV-cla42PV7--2CKVRyuFM2mCHLw>
+    <xmx:IG1oYlzjoXoZ88OXBvqk8D8U5I0MP9RVRY_x-RF-SC8y3FKGnvcyqg>
+    <xmx:IG1oYmW-BvkYDvyZ2GpVU072mNFcO1fFD0LZ9FUIw7rdUflJ4xn81w>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 26 Apr 2022 18:07:28 -0400 (EDT)
+Date:   Tue, 26 Apr 2022 18:07:26 -0400
+From:   Demi Marie Obenour <demi@invisiblethingslab.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lennart Poettering <lennart@poettering.net>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Block Mailing List <linux-block@vger.kernel.org>,
+        Linux Filesystem Mailing List <linux-fsdevel@vger.kernel.org>
+Subject: Re: Race-free block device opening
+Message-ID: <YmhtHgaJaw0wfzY6@itl-email>
+References: <Ymg2HIc8NGraPNbM@itl-email>
+ <Ymg7dihxLG923vs3@kroah.com>
+ <YmhktF/9DyEQpatZ@itl-email>
 MIME-Version: 1.0
-References: <20220422212945.2227722-1-axelrasmussen@google.com>
- <20220422212945.2227722-3-axelrasmussen@google.com> <YmhW+mOuQUWsByj4@xz-m1.local>
-In-Reply-To: <YmhW+mOuQUWsByj4@xz-m1.local>
-From:   Axel Rasmussen <axelrasmussen@google.com>
-Date:   Tue, 26 Apr 2022 14:33:27 -0700
-Message-ID: <CAJHvVch=8znnY-u1PbPb1qUeczn+9AR_eZOP5z9kD6PgtPQjrQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/6] userfaultfd: add /dev/userfaultfd for fine grained
- access control
-To:     Peter Xu <peterx@redhat.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Charan Teja Reddy <charante@codeaurora.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Gleb Fotengauer-Malinovskiy <glebfm@altlinux.org>,
-        Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.cz>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        zhangyi <yi.zhang@huawei.com>, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linuxkselftest <linux-kselftest@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="gTBYkXogsP2+mBjf"
+Content-Disposition: inline
+In-Reply-To: <YmhktF/9DyEQpatZ@itl-email>
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -85,37 +77,44 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 26, 2022 at 1:33 PM Peter Xu <peterx@redhat.com> wrote:
->
-> Axel,
->
-> On Fri, Apr 22, 2022 at 02:29:41PM -0700, Axel Rasmussen wrote:
-> > @@ -65,6 +66,8 @@ struct userfaultfd_ctx {
-> >       unsigned int flags;
-> >       /* features requested from the userspace */
-> >       unsigned int features;
-> > +     /* whether or not to handle kernel faults */
-> > +     bool handle_kernel_faults;
->
-> Could you help explain why we need this bool?  I failed to figure out
-> myself on the difference against "!(ctx->flags & UFFD_USER_MODE_ONLY)".
 
-Ah, yeah you're right, we can get rid of it and just rely on
-UFFD_USER_MODE_ONLY.
+--gTBYkXogsP2+mBjf
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 26 Apr 2022 18:07:26 -0400
+From: Demi Marie Obenour <demi@invisiblethingslab.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Lennart Poettering <lennart@poettering.net>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Block Mailing List <linux-block@vger.kernel.org>,
+	Linux Filesystem Mailing List <linux-fsdevel@vger.kernel.org>
+Subject: Re: Race-free block device opening
 
-Just to add context, in a previous version I never sent out, I had:
+Also bringing in Lennart Poettering.
+--=20
+Sincerely,
+Demi Marie Obenour (she/her/hers)
+Invisible Things Lab
 
-ctx->handle_kernel_faults = userfaultfd_allowed(...);
+--gTBYkXogsP2+mBjf
+Content-Type: application/pgp-signature; name="signature.asc"
 
-That's wrong for other reasons, but if we were going to do that we'd
-have to store the result, since it's a function not just of the flags,
-but also of the method used to create the userfaultfd. I changed this
-without also dropping the boolean, which can now be cleaned up. I'll
-include this change in a v3.
+-----BEGIN PGP SIGNATURE-----
 
->
-> Thanks,
->
-> --
-> Peter Xu
->
+iQIzBAEBCAAdFiEEdodNnxM2uiJZBxxxsoi1X/+cIsEFAmJobR4ACgkQsoi1X/+c
+IsE22g//eP5BToabrRG6R01WwqEnt6LQZHk9en1xjSGr6X5hiKJ1Sc+/r3bbF3VN
+WElHab/etgpidX48krogtoNasrk3ck/SKFes/GIQTnLcWdBJ6Syhnb94jMOgNbFk
+qkVyrKNvKX9XtNhgq5PolVXV+VUuT6PEz0LmPvZKdEKwpjS0kEL+jIDUxdYRMRdm
+icbIbHx769PQiOyEyOYuq8ZxGRsN0TVuUJtNwlBxD6dlYGSAkA4KIujfe5ntN5gA
+DOgXJqd9cwyEpi7hTWvyZcQmeJnMwZWbuFuYnwSIlvLuLTPvlEdr3K37SoziBlky
++3l71tzU3EJwQfMsfBBgPqj60cAEv8WZWubTyG7gjx+xZa+aJvcrY4+3tyH1Yapk
+5dVBcY53DYM1Lo7tOySfUUTuq7byfo0Bx9ZwyksWptcSg/v9C4NqIFJcSzdOixPA
+HXcnnyQ+zK4ikGRvFC9t89sbXpK5j7koC7PAQ844bdkRMKkodOk0EyMCfPOVrBz9
+1Yxy8yqrLa6SaDf0M5oY3W3Aghzmw2cGDqXCtIB317ewBOKuuCbf5z/dUyKP62Bt
+7SrZTRy97ZBAfMrTLPHrEyDe+SzG1Yg3hf/pAo9A1ZAw91I1WMB0yDo/Zi96omRH
+MHhZ+bgTu8oNVxOVFLmYsOW11MIsTcxQnPmbljm3Sg6YOd1mvgE=
+=8Wnx
+-----END PGP SIGNATURE-----
+
+--gTBYkXogsP2+mBjf--
