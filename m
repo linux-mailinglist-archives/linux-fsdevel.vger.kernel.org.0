@@ -2,116 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B781511CE4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Apr 2022 20:33:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D060511F43
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Apr 2022 20:37:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244702AbiD0SMw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Apr 2022 14:12:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42926 "EHLO
+        id S241613AbiD0QHI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Apr 2022 12:07:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49060 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244673AbiD0SMu (ORCPT
+        with ESMTP id S241618AbiD0QGx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Apr 2022 14:12:50 -0400
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE5CE4198D
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Apr 2022 11:09:17 -0700 (PDT)
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20220427180916epoutp04e016936e23481dc9f90887ff49237bef~p0zNh4DPe2665126651epoutp04R
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Apr 2022 18:09:16 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20220427180916epoutp04e016936e23481dc9f90887ff49237bef~p0zNh4DPe2665126651epoutp04R
+        Wed, 27 Apr 2022 12:06:53 -0400
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8E833CA0AE
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Apr 2022 09:03:00 -0700 (PDT)
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20220427160258euoutp01764638f72ad376b2fa76a5c82fa3b2ee~pzE8aHXnb0317703177euoutp01W
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Apr 2022 16:02:58 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20220427160258euoutp01764638f72ad376b2fa76a5c82fa3b2ee~pzE8aHXnb0317703177euoutp01W
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1651082956;
-        bh=xPl1IY39MuYgdUTpQIGrEyNYyAWYGrPNoP4aRDqkkDs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=aY8Pn2KrM5yAS/aNB7+2Ytsp098XxvoxpDcgZNFwApheGLrDs6I+ND1VAV8kFldjI
-         NGi9JSOWPaIw8YfyrUkmMxgyAKFdq9g/2mf4yGByAULZ582Au9ijQ/cVPDpCGL31r1
-         PYbJWvYnWgA41tyOeXNKFU/m5aNLhB26g7haPW8Q=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20220427180915epcas5p3249b4f36723a41f0b5b94f2f1c9276aa~p0zNE4kv82667826678epcas5p3y;
-        Wed, 27 Apr 2022 18:09:15 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.179]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4KpRbB4sQwz4x9Pr; Wed, 27 Apr
-        2022 18:09:10 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        B6.94.09827.6C689626; Thu, 28 Apr 2022 03:09:10 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-        20220427155356epcas5p4c96a6b254f89300d6f1943f6a8b4d1ff~py9D6ql_d1865118651epcas5p42;
-        Wed, 27 Apr 2022 15:53:56 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220427155356epsmtrp1120ee3b3bf7abcd2f5be2a35d7d3a878~py9D57pZ63121031210epsmtrp1g;
-        Wed, 27 Apr 2022 15:53:56 +0000 (GMT)
-X-AuditID: b6c32a4a-b3bff70000002663-8e-626986c6fcf4
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        F9.F8.08853.41769626; Thu, 28 Apr 2022 00:53:56 +0900 (KST)
-Received: from test-zns (unknown [107.110.206.5]) by epsmtip1.samsung.com
+        s=mail20170921; t=1651075378;
+        bh=001J3gMOWB39wAH9SyHg/FPO9nkpiDdVSZKOenlCugM=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=oPJs5+10K2koFqyE8SSog5HATHFnVaIH9DLtS3i13dHnN/ng+fJ0n+SNYdHDzHAK7
+         C2EjrZWti7DhZrWn1DJCPsf4oBdyoo8jG7z2KrTj8JvCqM65tRXvYSzOpPy4miNctU
+         HyehQT3Lw6b+gvyIEMYR4auAm4gG5hWRoGtL9M3A=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20220427160256eucas1p252958f4ee36901197d6f974e3560f069~pzE69jBaR0647406474eucas1p2a;
+        Wed, 27 Apr 2022 16:02:56 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 5E.F9.10260.03969626; Wed, 27
+        Apr 2022 17:02:56 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20220427160256eucas1p2db2b58792ffc93026d870c260767da14~pzE6Zv6eI2335723357eucas1p2e;
+        Wed, 27 Apr 2022 16:02:56 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220427160256eusmtrp2db328686c1f04e7aa12eb0ef672a4b77~pzE6W4EF62598325983eusmtrp2a;
+        Wed, 27 Apr 2022 16:02:56 +0000 (GMT)
+X-AuditID: cbfec7f5-bddff70000002814-7c-62696930abfd
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 19.71.09522.03969626; Wed, 27
+        Apr 2022 17:02:56 +0100 (BST)
+Received: from localhost (unknown [106.210.248.162]) by eusmtip2.samsung.com
         (KnoxPortal) with ESMTPA id
-        20220427155355epsmtip18c536e1a3da7f33b9c3849bfa5691571~py9Cqj4Hu2999929999epsmtip1T;
-        Wed, 27 Apr 2022 15:53:55 +0000 (GMT)
-Date:   Wed, 27 Apr 2022 21:18:47 +0530
-From:   Nitesh Shetty <nj.shetty@samsung.com>
-To:     Hannes Reinecke <hare@suse.de>
-Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        dm-devel@redhat.com, linux-nvme@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, nitheshshetty@gmail.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 02/10] block: Add copy offload support infrastructure
-Message-ID: <20220427154847.GF9558@test-zns>
+        20220427160255eusmtip28f0e31bb579db42914dda258fed0ec00~pzE585B-12538025380eusmtip2K;
+        Wed, 27 Apr 2022 16:02:55 +0000 (GMT)
+From:   Pankaj Raghav <p.raghav@samsung.com>
+To:     jaegeuk@kernel.org, axboe@kernel.dk, snitzer@kernel.org,
+        hch@lst.de, mcgrof@kernel.org, naohiro.aota@wdc.com,
+        sagi@grimberg.me, damien.lemoal@opensource.wdc.com,
+        dsterba@suse.com, johannes.thumshirn@wdc.com
+Cc:     linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        clm@fb.com, gost.dev@samsung.com, chao@kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, josef@toxicpanda.com,
+        jonathan.derrick@linux.dev, agk@redhat.com, kbusch@kernel.org,
+        kch@nvidia.com, linux-nvme@lists.infradead.org,
+        dm-devel@redhat.com, bvanassche@acm.org, jiangbo.365@bytedance.com,
+        linux-fsdevel@vger.kernel.org, matias.bjorling@wdc.com,
+        linux-block@vger.kernel.org, Pankaj Raghav <p.raghav@samsung.com>
+Subject: [PATCH 00/16] support non power of 2 zoned devices
+Date:   Wed, 27 Apr 2022 18:02:39 +0200
+Message-Id: <20220427160255.300418-1-p.raghav@samsung.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <2082148f-890f-e5f4-c304-b99212aa377e@suse.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNJsWRmVeSWpSXmKPExsWy7bCmuu6xtswkg73rlC32vpvNarFn0SQm
-        i723tC327D3JYnF51xw2i/nLnrJbdF/fwWax40kjowOHx85Zd9k9Ni+p93i/7yqbx+bT1R6f
-        N8kFsEZl22SkJqakFimk5iXnp2TmpdsqeQfHO8ebmhkY6hpaWpgrKeQl5qbaKrn4BOi6ZeYA
-        HaKkUJaYUwoUCkgsLlbSt7Mpyi8tSVXIyC8usVVKLUjJKTAp0CtOzC0uzUvXy0stsTI0MDAy
-        BSpMyM6YdngTe8Eli4plc9wbGBfpdDFyckgImEg8uruQrYuRi0NIYDejxPamTcwQzidGibMb
-        v7FAON8YJT6dOcrexcgB1vLhqilIt5DAXkaJrlnyEDXPGCW+bF/NBFLDIqAq0f/QE8RkE9CW
-        OP2fA6RcREBJ4mP7IXaQcmaBM4wS7e93sYMkhAV8JJafmMYIUs8roCMxYXMQSJhXQFDi5Mwn
-        LCA2p4C1xJkHaxhBbFEBZYkD244zgcyREGjlkPj5YAozxDcuEh8bpzFC2MISr45vYYewpSRe
-        9rdB2eUS29sWQDW3AN1/6hQLRMJe4uKev0wgNrNAhsS1hoNMEHFZiamn1kHF+SR6fz+BivNK
-        7JgHYytLrFm/gA3ClpS49r0RyvaQmLf3CTQQPzBKzFx1h20Co/wsJN/NQrIPwtaRWLD7E9ss
-        YGAwC0hLLP/HAWFqSqzfpb+AkXUVo2RqQXFuemqxaYFRXmo5PLqT83M3MYJTqZbXDsaHDz7o
-        HWJk4mA8xCjBwawkwvtld0aSEG9KYmVValF+fFFpTmrxIUZTYFxNZJYSTc4HJvO8knhDE0sD
-        EzMzMxNLYzNDJXHe0+kbEoUE0hNLUrNTUwtSi2D6mDg4pRqYNuybznPD8ZtaT/v++Vrt8619
-        Sn17RVPKMxQXGho9MHk+T/LAy7cxzUdmRxu5+5pwmx1vtPfd0bqye2LM6o2dLz6/XZdTsVT0
-        ebZUzActh03Wa25s07BTv1J0cJrd9LMmu5eKy4Zsbe74y7PwIH/E1AkHFW7e0oxdLLmfK2he
-        YJbSr7X5EYq/ct6Ebe286Lb06YyLNzSUj77at6xRK/zrSX/R2IQ1F1yzVau7mRqV5bqj/Pao
-        KX1r6Y63ulUXuqls113toxft4q+v5DiVVfmQy/Zl1P474h8NTsfFXjL8EHWR44eO8JQHE+sW
-        pzT43E+/tl/attJufarezpLktwe/ipV/fuTSbVWx7ND/UEMOJZbijERDLeai4kQAkAXpJi4E
-        AAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrLLMWRmVeSWpSXmKPExsWy7bCSnK5IemaSwd6Z2hZ7381mtdizaBKT
-        xd5b2hZ79p5ksbi8aw6bxfxlT9ktuq/vYLPY8aSR0YHDY+esu+wem5fUe7zfd5XNY/Ppao/P
-        m+QCWKO4bFJSczLLUov07RK4Mvas6mEsmGRW0X7lDFsD42/NLkYODgkBE4kPV027GLk4hAR2
-        M0qs3/WbtYuREyguKbHs7xFmCFtYYuW/5+wQRU8YJea0v2QGaWYRUJXof+gJYrIJaEuc/s8B
-        Ui4ioCTxsf0QWDmzwBlGifb3u9hBEsICPhLLT0xjBKnnFdCRmLA5CGLkB0aJlZu3gNXwCghK
-        nJz5hAXEZhbQkrjx7yUTSD2zgLTE8n9g8zkFrCXOPFjDCGKLCihLHNh2nGkCo+AsJN2zkHTP
-        QuhewMi8ilEytaA4Nz232LDAMC+1XK84Mbe4NC9dLzk/dxMjOAa0NHcwbl/1Qe8QIxMH4yFG
-        CQ5mJRHeL7szkoR4UxIrq1KL8uOLSnNSiw8xSnOwKInzXug6GS8kkJ5YkpqdmlqQWgSTZeLg
-        lGpg2pojZS371VN/UuRTHcfmunWNS0Uf7NMUtE/W9nujL5+58BNTukpbc1Pav9AnlzfpvRGZ
-        tHqqxfkI3YVPmern/4woO82sm2j5JLTOvfCjj9hfLvWMXVIXlyjmNdnpcX/UzVsRJTV53uTJ
-        iStOxPUxmC+QmxQoHsb3oXGfaMr6ap/LIoy9Je4Jzca/o0R1E23Muvb67olVl7g2++Wv7RkF
-        ksfaX36vyPLTCXnXvuhEsPVtL1tfpd175K+dPhew5tTnI1xckTL/H62ecvdasaf4nqs3T1m8
-        U9CzNeD+vsdq5mXr/AX3/cyuNe/WtuFISr25Qu3EkR7pfbdnaxjy8/TfPHGNfcOO3XnaExYp
-        ybgqsRRnJBpqMRcVJwIA/9D3//ACAAA=
-X-CMS-MailID: 20220427155356epcas5p4c96a6b254f89300d6f1943f6a8b4d1ff
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SfUxTVxzdfe/1tXQBn9WEG9TgOjWZRD6mJte5bGyBceMSdST4hwlhpbwA
+        WQHT2o1tGhDQSVmB4hjQonxMEQEtFAQLA7GJlG+Q2glGYDiaCbhKW3B8CBvdq5n/nXN+53fP
+        +SVXQIrqaT9BYvJpVp4skYlpIdXctTy4LzgxMTZ4cCII6Xu7SFQ7nkejn+eXSdRXOECggrxi
+        PlodGCJRu13HQ8NL5wg01mkk0I3a+wSa1mtJ9GPnPIXWVBMbWtYUiV5NhaAC028A2axaArU/
+        DkAjf1Tz0UhlBPq1vYdCltZSGpVV2fgo/8IiiUbzbQBpzI085LqWxUe35l5QqPvxttAd2PLw
+        c7zeXUdjTaadj4cmGihsGVBiQ002jSvSC0nceDUNt5W7CNw2lk5jdaadxsbzkzz8osNK49ym
+        GoD1TVYK5zc28I6LTgo/jGNliV+z8qCPvhQmZCz8QJ3qDU01r0/R6aB1vwp4CSBzAI5dcpIq
+        IBSImGoAu4fbeRxZAPDOpUkPcW2QnjXy9cqNIo1ncB3AkZXnnv0ZAGvKmikVEAhoZi88l813
+        61uZUQA19fWEm5DMLAmHmx4R7qe2MIdhUVUn340pZjdcuviS58bezAcw56e7gIvzhyUjf/M5
+        fTPsKZmm3Jjc0DNv6/5LhkyFEJocTzz9wuC1hlKCw1vgrLmJz+Ht8B9jmUf/HtpGVz3LWQDm
+        GfW0uzbcaJTbL3NDknkP6luDOPsn8Hf1NI9z+MDRvzZzFXxgQXMRycne8OIFEecWQ+PytCcU
+        QktGKcVZMFxojXDLIiYaOm7lUvlgp/aNu7Rv3KX9v0I5IGuAL6tUJMWziv3J7DeBCkmSQpkc
+        HyhNSTKAjU/dt25evAOqZx2BJkAIgAlAASne6r3QlhAr8o6TfPsdK0+JkStlrMIEtgkosa+3
+        NLFeImLiJafZr1j2FCt/PSUEXn7pRCWz6fKVP2PulofuWQp5Fn+ALFFU5hz1k86nnFHNhd28
+        p3vZobV/Kuo53lVV+3RG9W721Uetjo4dpR3KzwLsB8dNfq8Mkt4rui8o/0XLg+YZXfyy/u16
+        a/+x91N3x5zc/ot6Z9QKiq5YG0iJ8D+/hmJXTxxqPixdDnWFR/sYwsHZQkOJ/K0ABa6TpTkP
+        PnCeaejepN7jlbZ01nW/Tnf0Y9suo3j96RFr+L2YSKolI27OXikJVt9siczFWcyxbtz4xHeV
+        rCuOfJhTdcQQpXE+n4xKL+0sOrQy5DA/c6XwytRLs14N48qssPHId4w6aZO/UzOIo4rH+1L7
+        W657KS6fEFOKBEnIXlKukPwL4VxeMEMEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHKsWRmVeSWpSXmKPExsVy+t/xe7oGmZlJBvM+clqsP3WM2WL13X42
+        i2kffjJbnJ56lsliUv8MdovfZ88zW+x9N5vV4sKPRiaLmwd2MlmsXH2UyeLJ+lnMFj0HPrBY
+        /O26BxRrechs8eehocWkQ9cYLZ5encVksfeWtsWlxyvYLS4tcrfYs/cki8XlXXPYLOYve8pu
+        MaHtK7PFjQlPGS0mHt/MavF5aQu7xbrX71ksTtySdpD1uHzF2+PfiTVsHhOb37F7nL+3kcXj
+        8tlSj02rOtk8FjZMZfbYvKTeY/eCz0weu282sHn0Nr9j89jZep/V4/2+q2wefVtWMXqs33KV
+        xWPC5o2sAUJRejZF+aUlqQoZ+cUltkrRhhZGeoaWFnpGJpZ6hsbmsVZGpkr6djYpqTmZZalF
+        +nYJehlNX9pZCk45VBz/95CtgXGXcRcjJ4eEgInEyukTWbsYuTiEBJYyStz6+JQNIiEhcXth
+        EyOELSzx51oXG0TRc0aJ++92MXcxcnCwCWhJNHayg8RFBJ4AxX8+ZgFxmAUaWCRuTdzFBNIt
+        LGAtMX3ZAXYQm0VAVeJHxzdWEJtXwEqie8p+qA3yEjMvfWcHGcosoCmxfpc+RImgxMmZT1hA
+        bGagkuats5knMPLPQqiahaRqFpKqBYzMqxhFUkuLc9Nziw31ihNzi0vz0vWS83M3MQITyrZj
+        PzfvYJz36qPeIUYmDsZDjBIczEoivF92ZyQJ8aYkVlalFuXHF5XmpBYfYjQFunois5Rocj4w
+        peWVxBuaGZgamphZGphamhkrifN6FnQkCgmkJ5akZqemFqQWwfQxcXBKNTA1JdufvXcynOfi
+        pXuTLhkefG2q8WLH7WdhmVprjm3+cdX5mJijzEWdyiOcu/dxbf7YIKCW4dNb1rGYSUQuRig2
+        9PVVkweThJ901qkbO/6QWZt9M3fORd6ZO5Yr8vtVXGeY3p1vV3LQZnmQCvcqPh+FPvfv8yKe
+        Xu07tUutOTf/O8ub+5K+LNUXrxhqZe8KupNd+NVMW+Luyo/nL8b9eqW38mW7UAYP33zPBbMO
+        Sucz35nwwLf1zJ3o7KjLFyc+4ePdKryxK7n7tNem7T+Xza3KO8NT2JbvNb1DITvuRvdGp0lu
+        nFOaun4fcF50rF3pmtpywTn1K5YUT4r82WmeM/Xtu3f/a1Y4qPH/MFT6Pe2pEktxRqKhFnNR
+        cSIA3zNCZbEDAAA=
+X-CMS-MailID: 20220427160256eucas1p2db2b58792ffc93026d870c260767da14
 X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-        boundary="----B60c1XsBAYLlAvSr_Hnug5kZhc5LtmZ3tZiwVK7tFSQflFGl=_18042_"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220426101921epcas5p341707619b5e836490284a42c92762083
-References: <20220426101241.30100-1-nj.shetty@samsung.com>
-        <CGME20220426101921epcas5p341707619b5e836490284a42c92762083@epcas5p3.samsung.com>
-        <20220426101241.30100-3-nj.shetty@samsung.com>
-        <2082148f-890f-e5f4-c304-b99212aa377e@suse.de>
-X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20220427160256eucas1p2db2b58792ffc93026d870c260767da14
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20220427160256eucas1p2db2b58792ffc93026d870c260767da14
+References: <CGME20220427160256eucas1p2db2b58792ffc93026d870c260767da14@eucas1p2.samsung.com>
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
         autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -120,204 +123,208 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-------B60c1XsBAYLlAvSr_Hnug5kZhc5LtmZ3tZiwVK7tFSQflFGl=_18042_
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
+- Background and Motivation:
 
-On Wed, Apr 27, 2022 at 12:29:15PM +0200, Hannes Reinecke wrote:
-> On 4/26/22 12:12, Nitesh Shetty wrote:
-> > Introduce blkdev_issue_copy which supports source and destination bdevs,
-> > and an array of (source, destination and copy length) tuples.
-> > Introduce REQ_COPY copy offload operation flag. Create a read-write
-> > bio pair with a token as payload and submitted to the device in order.
-> > Read request populates token with source specific information which
-> > is then passed with write request.
-> > This design is courtesy Mikulas Patocka's token based copy
-> > 
-> > Larger copy will be divided, based on max_copy_sectors,
-> > max_copy_range_sector limits.
-> > 
-> > Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
-> > Signed-off-by: Arnav Dawn <arnav.dawn@samsung.com>
-> > ---
-> >   block/blk-lib.c           | 232 ++++++++++++++++++++++++++++++++++++++
-> >   block/blk.h               |   2 +
-> >   include/linux/blk_types.h |  21 ++++
-> >   include/linux/blkdev.h    |   2 +
-> >   include/uapi/linux/fs.h   |  14 +++
-> >   5 files changed, 271 insertions(+)
-> > 
-> > diff --git a/block/blk-lib.c b/block/blk-lib.c
-> > index 09b7e1200c0f..ba9da2d2f429 100644
-> > --- a/block/blk-lib.c
-> > +++ b/block/blk-lib.c
-> > @@ -117,6 +117,238 @@ int blkdev_issue_discard(struct block_device *bdev, sector_t sector,
-> >   }
-> >   EXPORT_SYMBOL(blkdev_issue_discard);
-> > +/*
-> > + * Wait on and process all in-flight BIOs.  This must only be called once
-> > + * all bios have been issued so that the refcount can only decrease.
-> > + * This just waits for all bios to make it through bio_copy_end_io. IO
-> > + * errors are propagated through cio->io_error.
-> > + */
-> > +static int cio_await_completion(struct cio *cio)
-> > +{
-> > +	int ret = 0;
-> > +	unsigned long flags;
-> > +
-> > +	spin_lock_irqsave(&cio->lock, flags);
-> > +	if (cio->refcount) {
-> > +		cio->waiter = current;
-> > +		__set_current_state(TASK_UNINTERRUPTIBLE);
-> > +		spin_unlock_irqrestore(&cio->lock, flags);
-> > +		blk_io_schedule();
-> > +		/* wake up sets us TASK_RUNNING */
-> > +		spin_lock_irqsave(&cio->lock, flags);
-> > +		cio->waiter = NULL;
-> > +		ret = cio->io_err;
-> > +	}
-> > +	spin_unlock_irqrestore(&cio->lock, flags);
-> > +	kvfree(cio);
-> > +
-> > +	return ret;
-> > +}
-> > +
-> > +static void bio_copy_end_io(struct bio *bio)
-> > +{
-> > +	struct copy_ctx *ctx = bio->bi_private;
-> > +	struct cio *cio = ctx->cio;
-> > +	sector_t clen;
-> > +	int ri = ctx->range_idx;
-> > +	unsigned long flags;
-> > +	bool wake = false;
-> > +
-> > +	if (bio->bi_status) {
-> > +		cio->io_err = bio->bi_status;
-> > +		clen = (bio->bi_iter.bi_sector << SECTOR_SHIFT) - ctx->start_sec;
-> > +		cio->rlist[ri].comp_len = min_t(sector_t, clen, cio->rlist[ri].comp_len);
-> > +	}
-> > +	__free_page(bio->bi_io_vec[0].bv_page);
-> > +	kfree(ctx);
-> > +	bio_put(bio);
-> > +
-> > +	spin_lock_irqsave(&cio->lock, flags);
-> > +	if (((--cio->refcount) <= 0) && cio->waiter)
-> > +		wake = true;
-> > +	spin_unlock_irqrestore(&cio->lock, flags);
-> > +	if (wake)
-> > +		wake_up_process(cio->waiter);
-> > +}
-> > +
-> > +/*
-> > + * blk_copy_offload	- Use device's native copy offload feature
-> > + * Go through user provide payload, prepare new payload based on device's copy offload limits.
-> > + */
-> > +int blk_copy_offload(struct block_device *src_bdev, int nr_srcs,
-> > +		struct range_entry *rlist, struct block_device *dst_bdev, gfp_t gfp_mask)
-> > +{
-> > +	struct request_queue *sq = bdev_get_queue(src_bdev);
-> > +	struct request_queue *dq = bdev_get_queue(dst_bdev);
-> > +	struct bio *read_bio, *write_bio;
-> > +	struct copy_ctx *ctx;
-> > +	struct cio *cio;
-> > +	struct page *token;
-> > +	sector_t src_blk, copy_len, dst_blk;
-> > +	sector_t remaining, max_copy_len = LONG_MAX;
-> > +	unsigned long flags;
-> > +	int ri = 0, ret = 0;
-> > +
-> > +	cio = kzalloc(sizeof(struct cio), GFP_KERNEL);
-> > +	if (!cio)
-> > +		return -ENOMEM;
-> > +	cio->rlist = rlist;
-> > +	spin_lock_init(&cio->lock);
-> > +
-> > +	max_copy_len = min_t(sector_t, sq->limits.max_copy_sectors, dq->limits.max_copy_sectors);
-> > +	max_copy_len = min3(max_copy_len, (sector_t)sq->limits.max_copy_range_sectors,
-> > +			(sector_t)dq->limits.max_copy_range_sectors) << SECTOR_SHIFT;
-> > +
-> > +	for (ri = 0; ri < nr_srcs; ri++) {
-> > +		cio->rlist[ri].comp_len = rlist[ri].len;
-> > +		src_blk = rlist[ri].src;
-> > +		dst_blk = rlist[ri].dst;
-> > +		for (remaining = rlist[ri].len; remaining > 0; remaining -= copy_len) {
-> > +			copy_len = min(remaining, max_copy_len);
-> > +
-> > +			token = alloc_page(gfp_mask);
-> > +			if (unlikely(!token)) {
-> > +				ret = -ENOMEM;
-> > +				goto err_token;
-> > +			}
-> > +
-> > +			ctx = kzalloc(sizeof(struct copy_ctx), gfp_mask);
-> > +			if (!ctx) {
-> > +				ret = -ENOMEM;
-> > +				goto err_ctx;
-> > +			}
-> > +			ctx->cio = cio;
-> > +			ctx->range_idx = ri;
-> > +			ctx->start_sec = dst_blk;
-> > +
-> > +			read_bio = bio_alloc(src_bdev, 1, REQ_OP_READ | REQ_COPY | REQ_NOMERGE,
-> > +					gfp_mask);
-> > +			if (!read_bio) {
-> > +				ret = -ENOMEM;
-> > +				goto err_read_bio;
-> > +			}
-> > +			read_bio->bi_iter.bi_sector = src_blk >> SECTOR_SHIFT;
-> > +			__bio_add_page(read_bio, token, PAGE_SIZE, 0);
-> > +			/*__bio_add_page increases bi_size by len, so overwrite it with copy len*/
-> > +			read_bio->bi_iter.bi_size = copy_len;
-> > +			ret = submit_bio_wait(read_bio);
-> > +			bio_put(read_bio);
-> > +			if (ret)
-> > +				goto err_read_bio;
-> > +
-> > +			write_bio = bio_alloc(dst_bdev, 1, REQ_OP_WRITE | REQ_COPY | REQ_NOMERGE,
-> > +					gfp_mask);
-> > +			if (!write_bio) {
-> > +				ret = -ENOMEM;
-> > +				goto err_read_bio;
-> > +			}
-> > +			write_bio->bi_iter.bi_sector = dst_blk >> SECTOR_SHIFT;
-> > +			__bio_add_page(write_bio, token, PAGE_SIZE, 0);
-> > +			/*__bio_add_page increases bi_size by len, so overwrite it with copy len*/
-> > +			write_bio->bi_iter.bi_size = copy_len;
-> > +			write_bio->bi_end_io = bio_copy_end_io;
-> > +			write_bio->bi_private = ctx;
-> > +
-> > +			spin_lock_irqsave(&cio->lock, flags);
-> > +			++cio->refcount;
-> > +			spin_unlock_irqrestore(&cio->lock, flags);
-> > +
-> > +			submit_bio(write_bio);
-> > +			src_blk += copy_len;
-> > +			dst_blk += copy_len;
-> > +		}
-> > +	}
-> > +
-> 
-> Hmm. I'm not sure if I like the copy loop.
-> What I definitely would do is to allocate the write bio before reading data;
-> after all, if we can't allocate the write bio reading is pretty much
-> pointless.
-> 
-> But the real issue I have with this is that it's doing synchronous reads,
-> thereby limiting the performance.
-> 
-> Can't you submit the write bio from the end_io function of the read bio?
-> That would disentangle things, and we should be getting a better
-> performance.
-> 
+The zone storage implementation in Linux, introduced since v4.10, first
+targetted SMR drives which have a power of 2 (po2) zone size alignment
+requirement. The po2 zone size was further imposed implicitly by the
+block layer's blk_queue_chunk_sectors(), used to prevent IO merging
+across chunks beyond the specified size, since v3.16 through commit
+762380ad9322 ("block: add notion of a chunk size for request merging").
+But this same general block layer po2 requirement for blk_queue_chunk_sectors()
+was removed on v5.10 through commit 07d098e6bbad ("block: allow 'chunk_sectors'
+to be non-power-of-2"). NAND, which is the media used in newer zoned storage
+devices, does not naturally align to po2, and so the po2 requirement
+does not make sense for those type of zone storage devices.
 
-Agree, it will make code efficient.
+Removing the po2 requirement from zone storage should therefore be possible
+now provided that no userspace regression and no performance regressions are
+introduced. Stop-gap patches have been already merged into f2fs-tools to
+proactively not allow npo2 zone sizes until proper support is added [0].
+Additional kernel stop-gap patches are provided in this series for dm-zoned.
+Support for npo2 zonefs and btrfs support is addressed in this series.
 
---
-Thank you 
-Nitesh Shetty
+There was an effort previously [1] to add support to non po2 devices via
+device level emulation but that was rejected with a final conclusion
+to add support for non po2 zoned device in the complete stack[2].
 
-------B60c1XsBAYLlAvSr_Hnug5kZhc5LtmZ3tZiwVK7tFSQflFGl=_18042_
-Content-Type: text/plain; charset="utf-8"
+- Patchset description:
+This patchset aims at adding support to non power of 2 zoned devices in
+the block layer, nvme layer, null blk and adds support to btrfs and
+zonefs.
 
+This round of patches **will not** support f2fs and DM layer for non
+power of 2 zoned devices. More about this in the future work section.
 
-------B60c1XsBAYLlAvSr_Hnug5kZhc5LtmZ3tZiwVK7tFSQflFGl=_18042_--
+Patches 1-4 deals with removing the po2 constraint from the
+block layer. Note that the patches have been split for clarity and it can
+be squashed together if the community feels that is better.
+
+Patches 5-6 deals with removing the constraint from nvme zns.
+
+Patches 7-11 adds support to btrfs for non po2 zoned devices.
+
+Patch 12 removes the po2 constraint in ZoneFS
+
+Patch 13 removes the po2 contraint in null blk
+
+Patches 14-16 adds conditions to not allow non power of 2 devices in
+f2fs and DM.
+
+- Performance:
+PO2 zone sizes utilizes log and shifts instead of division when
+determing alignment, zone number, etc. The same math cannot be used when
+using a zoned device with non po2 zone size. Hence, to avoid any performance
+regression on zoned devices with po2 zone sizes, the optimized math in the
+hot paths has been retained with branching.
+
+The performance was measured using null blk for regression
+and the results have been posted in the appropriate commit log. No
+performance regression was noticed.
+
+- Testing
+With respect to testing we need to tackle two things: one for regression
+on po2 zoned device and progression on non po2 zoned devices.
+
+kdevops (https://github.com/mcgrof/kdevops) was extensively used to
+automate the testing for blktests and (x)fstests for btrfs changes. The
+known failures were excluded during the test based on the baseline
+v5.17.0-rc7
+
+-- regression
+Emulated zoned device with zone size =128M , nr_zones = 10000
+
+Block and nvme zns:
+blktests were run with no new failures
+
+Btrfs:
+Changes were tested with the following profile in QEMU:
+[btrfs_simple_zns]
+TEST_DIR=<dir>
+SCRATCH_MNT=<mnt>
+FSTYP=btrfs
+MKFS_OPTIONS="-f -d single -m single"
+TEST_DEV=<dev>
+SCRATCH_DEV_POOL=<dev-pool>
+
+No new failures were observed in btrfs, generic and shared test suite
+
+ZoneFS:
+zonefs-tests-nullblk.sh and zonefs-tests.sh from zonefs-tools were run
+with no failures.
+
+nullblk:
+t/zbd/run-tests-against-nullb from fio was run with no failures.
+
+F2FS and DM:
+It was verified if f2fs and dm-zoned successfully mounts without any
+error.
+
+-- progression
+Emulated zoned device with zone size = 96M , nr_zones = 10000
+
+Block and nvme zns:
+blktests were run with no new failures
+
+Btrfs:
+Same profile as po2 zone size was used.
+
+Many tests in xfstests for btrfs included dm-flakey and some tests
+required dm-linear. As they are not supported at the moment for non
+po2 devices, those **tests were excluded for non po2 devices**.
+
+No new failures were observed in btrfs, generic and shared test suite
+
+ZoneFS:
+zonefs-tests.sh from zonefs-tools were run with no failures.
+
+nullblk:
+A new section was added to cover non po2 devices:
+
+section14()
+{
+       conv_pcnt=10
+       zone_size=3
+       zone_capacity=3
+       max_open=${set_max_open}
+       zbd_test_opts+=("-o ${max_open}")
+}
+t/zbd/run-tests-against-nullb from fio was run with no failures.
+
+F2FS and DM:
+It was verified that f2fs and dm-zoned does not mount.
+
+- Open issue:
+* btrfs superblock location for zoned devices is expected to be in 0,
+  512GB(mirror) and 4TB(mirror) in the device. Zoned devices with po2
+  zone size will naturally align with these superblock location but non
+  po2 devices will not align with 512GB and 4TB offset.
+
+  The current approach for npo2 devices is to place the superblock mirror
+  zones near   512GB and 4TB that is **aligned to the zone size**. This
+  is of no issue for normal operation as we keep track where the superblock
+  mirror are placed but this can cause an issue with recovery tools for
+  zoned devices as they expect mirror superblock to be in 512GB and 4TB.
+
+  Note that ATM, recovery tools such as `btrfs check` does not work for
+  image dumps for zoned devices even for po2 zone sizes.
+
+  I hope this issue could be discussed as a part of the BoF on ZNS
+  during the upcoming LSFMM.
+
+- Tools:
+Some tools had to be updated to support non po2 devices. Once these
+patches are accepted in the kernel, these tool updates will also be
+upstreamed.
+* btrfs-prog: https://github.com/Panky-codes/btrfs-progs/tree/remove-po2-btrfs
+* blkzone: https://github.com/Panky-codes/util-linux/tree/remove-po2
+
+- Future work
+To reduce the amount of changes and testing, support for F2FS and DM was
+excluded in this round of patches. The plan is to add support to them in
+the forthcoming future.
+
+[0] https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs-tools.git/commit/?h=dev-test&id=6afcf6493578e77528abe65ab8b12f3e1c16749f
+[1] https://lore.kernel.org/all/20220310094725.GA28499@lst.de/T/
+[2] https://lore.kernel.org/all/20220315135245.eqf4tqngxxb7ymqa@unifi/
+
+Luis Chamberlain (4):
+  nvmet: use blk_queue_zone_no()
+  f2fs: call bdev_zone_sectors() only once on init_blkz_info()
+  f2fs: ensure only power of 2 zone sizes are allowed
+  dm-zoned: ensure only power of 2 zone sizes are allowed
+
+Pankaj Raghav (12):
+  block: make blkdev_nr_zones and blk_queue_zone_no generic for npo2
+    zsze
+  block: add blk_queue_zone_aligned and bdev_zone_aligned helper
+  block: add bdev_zone_no helper
+  block: allow blk-zoned devices to have non-power-of-2 zone size
+  nvme: zns: Allow ZNS drives that have non-power_of_2 zone size
+  btrfs: zoned: Cache superblock location in btrfs_zoned_device_info
+  btrfs: zoned: add generic btrfs helpers for zoned devices
+  btrfs: zoned: Make sb_zone_number function non power of 2 compatible
+  btrfs: zoned: use btrfs zone helpers to support non po2 zoned devices
+  btrfs: zoned: relax the alignment constraint for zoned devices
+  zonefs: allow non power of 2 zoned devices
+  null_blk: allow non power of 2 zoned devices
+
+ block/blk-core.c               |   3 +-
+ block/blk-zoned.c              |  20 ++++--
+ drivers/block/null_blk/main.c  |   4 +-
+ drivers/block/null_blk/zoned.c |  14 ++--
+ drivers/md/dm-zone.c           |  12 ++++
+ drivers/nvme/host/zns.c        |  11 +---
+ drivers/nvme/target/zns.c      |   2 +-
+ fs/btrfs/volumes.c             |  24 +++----
+ fs/btrfs/zoned.c               | 115 +++++++++++++++++----------------
+ fs/btrfs/zoned.h               |  41 ++++++++++--
+ fs/f2fs/super.c                |  15 +++--
+ fs/zonefs/super.c              |   6 +-
+ fs/zonefs/zonefs.h             |   1 -
+ include/linux/blkdev.h         |  48 +++++++++++++-
+ 14 files changed, 208 insertions(+), 108 deletions(-)
+
+-- 
+2.25.1
+
