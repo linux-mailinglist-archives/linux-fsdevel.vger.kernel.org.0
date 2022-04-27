@@ -2,104 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F5CE512770
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Apr 2022 01:17:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ACD9D512788
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Apr 2022 01:31:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234295AbiD0XUK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Apr 2022 19:20:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51194 "EHLO
+        id S232921AbiD0Xe4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Apr 2022 19:34:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55082 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229451AbiD0XUI (ORCPT
+        with ESMTP id S232140AbiD0Xez (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Apr 2022 19:20:08 -0400
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D23E163E4;
-        Wed, 27 Apr 2022 16:16:55 -0700 (PDT)
-Received: by mail-pl1-x631.google.com with SMTP id p6so2830986plf.9;
-        Wed, 27 Apr 2022 16:16:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HA2iOZcTH9xcoVq+fhYi3f+JG1jZPj5iAWQGBU6dxYk=;
-        b=M100Rgh1scYfFJVKHX6QedUDxXFHqefXLnvT4SqpUd/oHlGHbb/oobYGJFfZlvRt1M
-         95u5K/iCnx6NQ7kgK7bkszLk8x7ofF3bQKGcGV45CNFuq4OUGo/RYoEh4F3EVIvemdEx
-         yOFupPUtEIQR2vhi+lhYq1DTpri8x/xGnjCBCf1N36k55KMSggE7TSA7G5uRqI1wT1zO
-         J7cNpB211LLtBzO2XzHUH5cdVhbLWGjq+bDG09a3GHhMkBuqZls7iw92MiCcPd+FGFvc
-         Z2TGRypKxvKunQrWePC0n4oj+29gCKwlaf54Vbgu4O74ohCNVv39Omp0RAR38diwNweB
-         9igQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HA2iOZcTH9xcoVq+fhYi3f+JG1jZPj5iAWQGBU6dxYk=;
-        b=rbIXLOARMvvyx9QuOQQNG+djHea9U/qNUJOaUYNchtoTiZoD+/rNB9iS1FzSdGfrwX
-         ls5SRwczhJdDEJvZo6FiRylDapsMEJvR7eW/P1ICCudj9agJl6Q6aQnUG+1qR3xgtEsU
-         fbsPUWSO21DbtKFN1wnP3K1KHNsgEcMt9acumI+vjk+0BYS28JEfQNz1LmH5+elDEk9n
-         N1rGkuPsMOu5gKFh63oDTmv5KfVilgq3fqOhlzpYMFi6rggu1Gk+g0WfvZSwBt2t4XBw
-         nXhvU5EYIqYZM9sWTJUc2g11dHtX4ZAehdsbefisLhRTMquC62abOnhGmxladaoHemC5
-         dHcg==
-X-Gm-Message-State: AOAM533+bzrlagW68D7HvYXcz4hC43Be8UqUgFGgfXqJ4LDmW99J4i3r
-        HrD82kdi05ZnzcRW8GzW6RqDfpiLw90SW7qK53Q=
-X-Google-Smtp-Source: ABdhPJwQD/s4Wm0t1d5fd85VE3pA75rhD0V4WeNDy9GUto3y7CAzPGk0OO4/YD3GwumzVQoz/fYfJTWJroTeWij17TU=
-X-Received: by 2002:a17:90b:4b07:b0:1db:c488:7394 with SMTP id
- lx7-20020a17090b4b0700b001dbc4887394mr2634716pjb.21.1651101415382; Wed, 27
- Apr 2022 16:16:55 -0700 (PDT)
+        Wed, 27 Apr 2022 19:34:55 -0400
+Received: from esa4.hgst.iphmx.com (esa4.hgst.iphmx.com [216.71.154.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 330E11114B
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Apr 2022 16:31:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1651102303; x=1682638303;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=gLrzp6duhkPkV6taMyjQM6C7cL2l+fGNVwimG4CXPYA=;
+  b=UxwxbAqsimwtwGRnt2pWvurMD3DKCoV4txQE4Qikvpz85X7zOij+G24A
+   dYV++q3vdl/S2zGz6mPwlw3o1/RtH7HvwCa8ouDXOzPy5ELiBfrGDraa5
+   0IEkT469+4ei67t8VBwIsBWL/yl4idrCL8X5+UMrjkWDN7PpE8s48Oelk
+   dKvPifu1CsGXUvSNt9jqMqul96gf8TVr+kGYhrqXORkDwY1Ul++seufeB
+   A/JxKLXZLOAx/MnYVHvYl+cijAIq2sAxagbSzApTmD7WDYoJAKe05MPUl
+   XYGG4e2PKccIJv7SwaS6GVdic4zJzXC/F+hBMZqGIb/GzXxXUbWLc+b4N
+   A==;
+X-IronPort-AV: E=Sophos;i="5.90,294,1643644800"; 
+   d="scan'208";a="197843991"
+Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 28 Apr 2022 07:31:41 +0800
+IronPort-SDR: LqnVeMTxXw6CPHMfMpVivmJydx8lpyFTNJcKolbOspOCgan5Ro2giuwbjbHZsvqRmeg/rZjVqa
+ btzcUixt/FuvLJgYtRuOMSL3jfRRHp+dfsGfm1luc5VLDciTV3UnGlQwXHRdyBHw+0Ynev5D8O
+ niA+WkNUFRdHGLo8JJ1c4/CnxECUymJ914EJj03BcfMmIKpXAtWQ8QVwXR5JcMIxT2vUFZJ9Z4
+ d35bwWHTcOJzuUvdAyqPXHyOACY9k7YEDPFbIfdIL7h9d/5+60eAir/8Bk0IMThqFCCQzb9jt6
+ +vB0HqFgP5P3aq79iNAKibo+
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 27 Apr 2022 16:01:50 -0700
+IronPort-SDR: OHXZAYmj054eEVqHJrChmML86ieLper90AJtuHlpn5Xbthwmo/GmeF0vm2fiV904QvZ7uk8Z0Y
+ cs9UAQlpIXoarMzJLpiE4BfYhSGQACmZVHRo3UR0VLvVtYYYypDhBM3LLCRc79x42LRO3EHzDK
+ 1oIzvyPgUmcdZAj6surGzcJpZoJJrNaFhLF6nge7LrKXsf/udEYlOG8FPhNMyLBm03jQNZ7D/8
+ /xr6+fX0TCeU02RvtsmMueDw5WP8auasNoejlX6FRa9EyMdbB+gK9ofVjnGj6rQ3qErHbQ6Bt0
+ 80o=
+WDCIronportException: Internal
+Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
+  by uls-op-cesaip01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 27 Apr 2022 16:31:41 -0700
+Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4KpZlJ4sShz1SVp0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Apr 2022 16:31:40 -0700 (PDT)
+Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)"
+        header.d=opensource.wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
+        opensource.wdc.com; h=content-transfer-encoding:content-type
+        :in-reply-to:organization:from:references:to:content-language
+        :subject:user-agent:mime-version:date:message-id; s=dkim; t=
+        1651102299; x=1653694300; bh=gLrzp6duhkPkV6taMyjQM6C7cL2l+fGNVwi
+        mG4CXPYA=; b=PdTQSxxj3EOLpYEGcnBYVKUPguXiBCCpr5ymI7+k28TTGz3mfSs
+        KbvC8k3lhS5m6XprU6x/phnhFmDH5Zdpl9mtNhPvxWLwoLZA79RJ39tzK0T66DJg
+        cQ1J9s5aD6mTMKCIx7SKO/H0j3TVPipsOior8762yACFqgZPSPwSaryNVkrWfY9P
+        vFK6Qn1Dlh6ebNdzrLYEPjfHxjH1TIuA8nWpktFuNYhAu/AUjrulRyzZmZH+ftr1
+        f82lyX/KB3APT/Gb/yPBy31svE2vEO1vB1f3Yyd5uBMXra+42NUkawZ+Cd66ga7/
+        bklmIOigH4dlDMngOOGM9ReZ0ePeHAN6LGA==
+X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
+Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
+        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id FkoavnSyJKfw for <linux-fsdevel@vger.kernel.org>;
+        Wed, 27 Apr 2022 16:31:39 -0700 (PDT)
+Received: from [10.225.163.27] (unknown [10.225.163.27])
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4KpZlB5PzJz1Rvlc;
+        Wed, 27 Apr 2022 16:31:34 -0700 (PDT)
+Message-ID: <652c33b5-1d85-e356-05b9-7bd84b768143@opensource.wdc.com>
+Date:   Thu, 28 Apr 2022 08:31:33 +0900
 MIME-Version: 1.0
-References: <20220404200250.321455-1-shy828301@gmail.com> <YkuKbMbSecBVsa1k@casper.infradead.org>
- <CAHbLzkoWPN+ahrvu2JrvoDpf8J_QGR6Ug6BbPnC11C82Lb-NaA@mail.gmail.com> <YmmuivdOWcr46oNC@casper.infradead.org>
-In-Reply-To: <YmmuivdOWcr46oNC@casper.infradead.org>
-From:   Yang Shi <shy828301@gmail.com>
-Date:   Wed, 27 Apr 2022 16:16:41 -0700
-Message-ID: <CAHbLzkpH6zRtgBZixVsvMnO8Y+fM74dTAP=ktqS_bBUrsNz8qg@mail.gmail.com>
-Subject: Re: [v3 PATCH 0/8] Make khugepaged collapse readonly FS THP more consistent
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Vlastimil Babka <vbabka@suse.cz>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Miaohe Lin <linmiaohe@huawei.com>,
-        Song Liu <songliubraving@fb.com>,
-        Rik van Riel <riel@surriel.com>, Zi Yan <ziy@nvidia.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.0
+Subject: Re: [PATCH 03/16] block: add bdev_zone_no helper
+Content-Language: en-US
+To:     Pankaj Raghav <p.raghav@samsung.com>, jaegeuk@kernel.org,
+        axboe@kernel.dk, snitzer@kernel.org, hch@lst.de, mcgrof@kernel.org,
+        naohiro.aota@wdc.com, sagi@grimberg.me, dsterba@suse.com,
+        johannes.thumshirn@wdc.com
+Cc:     linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        clm@fb.com, gost.dev@samsung.com, chao@kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, josef@toxicpanda.com,
+        jonathan.derrick@linux.dev, agk@redhat.com, kbusch@kernel.org,
+        kch@nvidia.com, linux-nvme@lists.infradead.org,
+        dm-devel@redhat.com, bvanassche@acm.org, jiangbo.365@bytedance.com,
+        linux-fsdevel@vger.kernel.org, matias.bjorling@wdc.com,
+        linux-block@vger.kernel.org
+References: <20220427160255.300418-1-p.raghav@samsung.com>
+ <CGME20220427160259eucas1p25aab0637fec229cd1140e6aa08678f38@eucas1p2.samsung.com>
+ <20220427160255.300418-4-p.raghav@samsung.com>
+From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
+Organization: Western Digital Research
+In-Reply-To: <20220427160255.300418-4-p.raghav@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-6.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_PASS,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 27, 2022 at 1:59 PM Matthew Wilcox <willy@infradead.org> wrote:
->
-> On Mon, Apr 04, 2022 at 05:48:49PM -0700, Yang Shi wrote:
-> > When khugepaged collapses file THPs, its behavior is not consistent.
-> > It is kind of "random luck" for khugepaged to see the file vmas (see
-> > report: https://lore.kernel.org/linux-mm/00f195d4-d039-3cf2-d3a1-a2c88de397a0@suse.cz/)
-> > since currently the vmas are registered to khugepaged when:
-> >   - Anon huge pmd page fault
-> >   - VMA merge
-> >   - MADV_HUGEPAGE
-> >   - Shmem mmap
-> >
-> > If the above conditions are not met, even though khugepaged is enabled
-> > it won't see any file vma at all.  MADV_HUGEPAGE could be specified
-> > explicitly to tell khugepaged to collapse this area, but when
-> > khugepaged mode is "always" it should scan suitable vmas as long as
-> > VM_NOHUGEPAGE is not set.
->
-> I don't see that as being true at all.  The point of this hack was that
-> applications which really knew what they were doing could enable it.
-> It makes no sense to me that setting "always" by the sysadmin for shmem
-> also force-enables ROTHP, even for applications which aren't aware of it.
->
-> Most telling, I think, is that Song Liu hasn't weighed in on this at
-> all.  It's clearly not important to the original author.
+On 4/28/22 01:02, Pankaj Raghav wrote:
+> Many places in the filesystem for zoned devices open code this function
+> to find the zone number for a given sector with power of 2 assumption.
+> This generic helper can be used to calculate zone number for a given
+> sector in a block device
+> 
+> This helper internally uses blk_queue_zone_no to find the zone number.
+> 
+> Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+> ---
+>  include/linux/blkdev.h | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+> index f8f2d2998afb..55293e0a8702 100644
+> --- a/include/linux/blkdev.h
+> +++ b/include/linux/blkdev.h
+> @@ -1392,6 +1392,15 @@ static inline bool bdev_zone_aligned(struct block_device *bdev, sector_t sec)
+>  	return false;
+>  }
+>  
+> +static inline unsigned int bdev_zone_no(struct block_device *bdev, sector_t sec)
+> +{
+> +	struct request_queue *q = bdev_get_queue(bdev);
+> +
+> +	if (q)
 
-Song Liu already acked the series, please see
-https://lore.kernel.org/linux-mm/96F2D93B-2043-44C3-8062-C639372A0212@fb.com/
+q is never NULL. So this can be simplified to:
+
+	return blk_queue_zone_no(bdev_get_queue(bdev), sector);
+
+> +		return blk_queue_zone_no(q, sec);
+> +	return 0;
+> +}
+> +
+>  static inline unsigned int bdev_max_open_zones(struct block_device *bdev)
+>  {
+>  	struct request_queue *q = bdev_get_queue(bdev);
+
+
+-- 
+Damien Le Moal
+Western Digital Research
