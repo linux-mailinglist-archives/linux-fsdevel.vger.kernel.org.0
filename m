@@ -2,96 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A9189512292
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Apr 2022 21:24:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0990B5123FC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Apr 2022 22:34:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233331AbiD0T1s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Apr 2022 15:27:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38476 "EHLO
+        id S236979AbiD0Uho (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Apr 2022 16:37:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233060AbiD0TTO (ORCPT
+        with ESMTP id S236676AbiD0Uhg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Apr 2022 15:19:14 -0400
-Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F08DD88B0A;
-        Wed, 27 Apr 2022 12:13:31 -0700 (PDT)
-Received: by fieldses.org (Postfix, from userid 2815)
-        id 605D91506; Wed, 27 Apr 2022 15:13:31 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org 605D91506
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
-        s=default; t=1651086811;
-        bh=9pnIKUeLsJcyeVDL2Txs9cWxBjrg+SIi9iT7kjMAEJM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Veu59Udz8L+HtvQYBbmEspqZSvuIgfyW8dchubfkN7xSFyFodKGVguDKdBGymsBQI
-         vF0DRl3BPj4fjKSaCMk3pptzYhWYmIgIPTqUffqqj4iFD/pHqJwmXkIugDbPZL+Uk1
-         CBzPzTda186i3BiJmh13OpWMPtmTVL/0LnPKXJI0=
-Date:   Wed, 27 Apr 2022 15:13:31 -0400
-From:   "J. Bruce Fields" <bfields@fieldses.org>
-To:     dai.ngo@oracle.com
-Cc:     chuck.lever@oracle.com, jlayton@redhat.com,
-        viro@zeniv.linux.org.uk, linux-nfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH RFC v22 1/7] NFSD: add courteous server support for
- thread with only delegation
-Message-ID: <20220427191331.GF13471@fieldses.org>
-References: <1651049573-29552-1-git-send-email-dai.ngo@oracle.com>
- <1651049573-29552-2-git-send-email-dai.ngo@oracle.com>
- <20220427184653.GE13471@fieldses.org>
- <75276a04-53b2-4033-d07e-3b5eb210f9eb@oracle.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <75276a04-53b2-4033-d07e-3b5eb210f9eb@oracle.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+        Wed, 27 Apr 2022 16:37:36 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A16954EF5A;
+        Wed, 27 Apr 2022 13:34:24 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 39076B82AA7;
+        Wed, 27 Apr 2022 20:34:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B2B9C385A7;
+        Wed, 27 Apr 2022 20:34:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1651091661;
+        bh=QhjW6sqbQQAgxviJKBe4aWpl0/FEQUpaXuQ5s4h6qWg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=q7Ns2THonpI64rhc55ciDClC+/tZwbo74ep5sf07OFCb26oZ1kUe9z79CZSpHNgzN
+         VGMMisHTfPF3UFsfvxZ0AEUddllyF0mAQ72EsVMFRXrTjUdgq9z58WzHBUfQPEqp0O
+         W6dNwKJCwvp4aKEyZx9Z3zIMHTeQ0j/etEQ7Dh8M=
+Date:   Wed, 27 Apr 2022 13:34:20 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Alex Xu (Hello71)" <alex_y_xu@yahoo.ca>,
+        Daniel Colascione <dancol@google.com>,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH] mm/smaps_rollup: return empty file for kthreads instead
+ of ESRCH
+Message-Id: <20220427133420.2847e62203b9e10a106c86b2@linux-foundation.org>
+In-Reply-To: <83f49beb-52f7-15f6-3b53-97cac0030ca4@suse.cz>
+References: <20220413211357.26938-1-alex_y_xu.ref@yahoo.ca>
+        <20220413211357.26938-1-alex_y_xu@yahoo.ca>
+        <20220413142748.a5796e31e567a6205c850ae7@linux-foundation.org>
+        <1649886492.rqei1nn3vm.none@localhost>
+        <20220413160613.385269bf45a9ebb2f7223ca8@linux-foundation.org>
+        <YleToQbgeRalHTwO@casper.infradead.org>
+        <YlfFaPhNFWNP+1Z7@localhost.localdomain>
+        <83f49beb-52f7-15f6-3b53-97cac0030ca4@suse.cz>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-9.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 27, 2022 at 12:09:58PM -0700, dai.ngo@oracle.com wrote:
-> 
-> On 4/27/22 11:46 AM, J. Bruce Fields wrote:
-> >On Wed, Apr 27, 2022 at 01:52:47AM -0700, Dai Ngo wrote:
-> >>diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-> >>index 234e852fcdfa..216bd77a8764 100644
-> >>--- a/fs/nfsd/nfs4state.c
-> >>+++ b/fs/nfsd/nfs4state.c
-> >>@@ -125,6 +125,8 @@ static void free_session(struct nfsd4_session *);
-> >>  static const struct nfsd4_callback_ops nfsd4_cb_recall_ops;
-> >>  static const struct nfsd4_callback_ops nfsd4_cb_notify_lock_ops;
-> >>+static struct workqueue_struct *laundry_wq;
-> >>+
-> >>  static bool is_session_dead(struct nfsd4_session *ses)
-> >>  {
-> >>  	return ses->se_flags & NFS4_SESSION_DEAD;
-> >>@@ -152,6 +154,7 @@ static __be32 get_client_locked(struct nfs4_client *clp)
-> >>  	if (is_client_expired(clp))
-> >>  		return nfserr_expired;
-> >>  	atomic_inc(&clp->cl_rpc_users);
-> >>+	clp->cl_state = NFSD4_ACTIVE;
-> >>  	return nfs_ok;
-> >>  }
-> >>@@ -172,6 +175,7 @@ renew_client_locked(struct nfs4_client *clp)
-> >>  	list_move_tail(&clp->cl_lru, &nn->client_lru);
-> >>  	clp->cl_time = ktime_get_boottime_seconds();
-> >>+	clp->cl_state = NFSD4_ACTIVE;
-> >>  }
-> >We shouldn't need that assignment in both places.
-> >
-> >The laundromat really shouldn't let a client go to COURTESY while there
-> >are rpc's in process for that client.  So, let's just add that check to
-> >the laundromat (see below), and then the assignment in
-> >renew_client_locked becomes unnecessary.
-> 
-> I added this for the case when the 4.0 COURTESY/EXPIRABLE client
-> reconnects. The client needs to be restored back ACTIVE state and
-> the RENEW is usually comes in first. Without this, the client
-> continues to be in COURTESY/EXPIRABLE state.
+On Thu, 14 Apr 2022 09:38:14 +0200 Vlastimil Babka <vbabka@suse.cz> wrote:
 
-Got it.  OK, I think that makes sense.
+> > Returning ESRCH is better so that programs don't waste time reading and
+> > closing empty files and instantiating useless inodes.
+> 
+> Hm, unfortunately I don't remember why I put return -ESRCH for this case in
+> addition to get_proc_task() failing. I doubt it was a conscious decision to
+> treat kthreads differently - I think I would have preferred consistency with
+> maps/smaps.
+> 
+> Can the awk use case be fixed with some flag to make it ignore the errors?
 
---b.
+This is all too hard.  I think I'll drop the patch for now.
