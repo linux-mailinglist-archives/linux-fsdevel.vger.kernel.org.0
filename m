@@ -2,117 +2,227 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 16683510D00
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Apr 2022 02:03:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95E43510D11
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Apr 2022 02:12:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356308AbiD0AGt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Apr 2022 20:06:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44206 "EHLO
+        id S1356337AbiD0APc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Apr 2022 20:15:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47272 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356297AbiD0AGs (ORCPT
+        with ESMTP id S229520AbiD0APb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Apr 2022 20:06:48 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1FE9177CB9;
-        Tue, 26 Apr 2022 17:03:38 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 62BA5B823EB;
-        Wed, 27 Apr 2022 00:03:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85A68C385A4;
-        Wed, 27 Apr 2022 00:03:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1651017816;
-        bh=t0zawJnlOyXwzS6WK1c2yglNRvFTH/XaDhjC3G/cH0U=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=UJPV/z8jzqRLnklprH9L/Jwnm39U4CizfBZ0c4Z3BZbNdwNnIstnX8wMb91JanmsQ
-         Ytcvpg38EFUfZjIb86PFIdAyfXXFKimzD7vLv3698oCFMqB8JoV1YjmlJSbEy1+JrI
-         QMBcMpJR5O3vDRJhfRdPykZGx60YPhX1dyOmJt7GZqvrGweohyhqFBLSI0bZbvZr5h
-         y++QVEpjNWy8+ioJBvifR0EbZ5IEvHPQvMwITWeEJfvXj8NE19INresRfLChWBAPMp
-         A7Jip0KdZL6OCNHPMYhh2DbLlZ4IjVTWWVOP83S91lHcv8eAEOTEDRwKglOYRh6kT3
-         DUamUXmWnJdGA==
-Date:   Tue, 26 Apr 2022 17:03:34 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Hannes Reinecke <hare@suse.de>
-Cc:     Sagi Grimberg <sagi@grimberg.me>,
-        Chuck Lever <chuck.lever@oracle.com>, netdev@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        ak@tempesta-tech.com, borisp@nvidia.com, simo@redhat.com
-Subject: Re: [PATCH RFC 4/5] net/tls: Add support for PF_TLSH (a TLS
- handshake listener)
-Message-ID: <20220426170334.3781cd0e@kernel.org>
-In-Reply-To: <40bc060f-f359-081d-9ba7-fae531cf2cd6@suse.de>
-References: <165030051838.5073.8699008789153780301.stgit@oracle-102.nfsv4.dev>
-        <165030059051.5073.16723746870370826608.stgit@oracle-102.nfsv4.dev>
-        <20220425101459.15484d17@kernel.org>
-        <66077b73-c1a4-d2ae-c8e4-3e19e9053171@suse.de>
-        <1fca2eda-83e4-fe39-13c8-0e5e7553689b@grimberg.me>
-        <20220426080247.19bbb64e@kernel.org>
-        <40bc060f-f359-081d-9ba7-fae531cf2cd6@suse.de>
+        Tue, 26 Apr 2022 20:15:31 -0400
+Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21273674F6;
+        Tue, 26 Apr 2022 17:12:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1651018342; x=1682554342;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=IJKeTxABZvXswFfO4b9L3mkC7AWJ8dJxlHjKnja64Dw=;
+  b=U93hT1g8PULfDll3QXbBWcPYTCI+ZvmKElKTqmFGsbkAK/RZbFbj6BGU
+   dogPRbwrOv4ubLlcFk0nZBX4iSDpo/KsHBhs5867mxKBMAdpzOzEZx1cp
+   UC9w2pDR4o0tWfZaUPAyMfbQ6iSlrOCdeHVUHKO1qY/r2J0/O4n6Yp0EV
+   YYoPQQ1WJnV/F7dTtQKpi+TDvn38KEGV2m5NgljH1KOVZ7UE174rmixBg
+   OG2wI+20hiWDAAIa9MpK4T4W9qmfGWP7H3bBUl31QJKrMLAUx7/GHBUWR
+   8p6NJwgpjh1FMVQIGOERtD6ietKwrQtasKDYckUOsdRCKW62D0rxg35fU
+   Q==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10329"; a="328704083"
+X-IronPort-AV: E=Sophos;i="5.90,292,1643702400"; 
+   d="scan'208";a="328704083"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Apr 2022 17:12:21 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.90,292,1643702400"; 
+   d="scan'208";a="807761334"
+Received: from lkp-server01.sh.intel.com (HELO 5056e131ad90) ([10.239.97.150])
+  by fmsmga006.fm.intel.com with ESMTP; 26 Apr 2022 17:12:14 -0700
+Received: from kbuild by 5056e131ad90 with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1njVHx-00046e-BM;
+        Wed, 27 Apr 2022 00:12:13 +0000
+Date:   Wed, 27 Apr 2022 08:11:24 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Nitesh Shetty <nj.shetty@samsung.com>
+Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
+        chaitanyak@nvidia.com, linux-block@vger.kernel.org,
+        linux-scsi@vger.kernel.org, dm-devel@redhat.com,
+        linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        axboe@kernel.dk, msnitzer@redhat.com, bvanassche@acm.org,
+        martin.petersen@oracle.com, hare@suse.de, kbusch@kernel.org,
+        hch@lst.de, Frederick.Knight@netapp.com, osandov@fb.com,
+        lsf-pc@lists.linux-foundation.org, djwong@kernel.org,
+        josef@toxicpanda.com, clm@fb.com, dsterba@suse.com, tytso@mit.edu,
+        jack@suse.com, nitheshshetty@gmail.com, gost.dev@samsung.com,
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        Arnav Dawn <arnav.dawn@samsung.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@kernel.org>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        James Smart <james.smart@broadcom.com>
+Subject: Re: [PATCH v4 02/10] block: Add copy offload support infrastructure
+Message-ID: <202204270754.pM0Ewhl5-lkp@intel.com>
+References: <20220426101241.30100-3-nj.shetty@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220426101241.30100-3-nj.shetty@samsung.com>
+X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 26 Apr 2022 17:58:39 +0200 Hannes Reinecke wrote:
-> > Plus there are more protocols being actively worked on (QUIC, PSP etc.)
-> > Having per ULP special sauce to invoke a user space helper is not the
-> > paradigm we chose, and the time as inopportune as ever to change that.  
-> 
-> Which is precisely what we hope to discuss at LSF.
-> (Yes, I know, probably not the best venue to discuss network stuff ...)
+Hi Nitesh,
 
-Indeed.
+Thank you for the patch! Perhaps something to improve:
 
-> Each approach has its drawbacks:
-> 
-> - Establishing sockets from userspace will cause issues during 
-> reconnection, as then someone (aka the kernel) will have to inform 
-> userspace that a new connection will need to be established.
-> (And that has to happen while the root filesystem is potentially 
-> inaccessible, so you can't just call arbitrary commands here)
-> (Especially call_usermodehelper() is out of the game)
+[auto build test WARNING on next-20220422]
+[cannot apply to axboe-block/for-next device-mapper-dm/for-next linus/master v5.18-rc4 v5.18-rc3 v5.18-rc2 v5.18-rc4]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
-Indeed, we may need _some_ form of a notification mechanism and that's
-okay. Can be a (more generic) socket, can be something based on existing
-network storage APIs (IDK what you have there).
+url:    https://github.com/intel-lab-lkp/linux/commits/Nitesh-Shetty/block-Introduce-queue-limits-for-copy-offload-support/20220426-201825
+base:    e7d6987e09a328d4a949701db40ef63fbb970670
+config: hexagon-randconfig-r041-20220425 (https://download.01.org/0day-ci/archive/20220427/202204270754.pM0Ewhl5-lkp@intel.com/config)
+compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project 1cddcfdc3c683b393df1a5c9063252eb60e52818)
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/3e91cba65ef73ba116953031d5548da7fd33a150
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Nitesh-Shetty/block-Introduce-queue-limits-for-copy-offload-support/20220426-201825
+        git checkout 3e91cba65ef73ba116953031d5548da7fd33a150
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=hexagon SHELL=/bin/bash
 
-My thinking was that establishing the session in user space would be
-easiest. We wouldn't need all the special getsockopt()s which AFAIU
-work around part of the handshake being done in the kernel, and which,
-I hope we can agree, are not beautiful.
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
 
-> - Having ULP helpers (as with this design) mitigates that problem 
-> somewhat in the sense that you can mlock() that daemon and having it 
-> polling on an intermediate socket; that solves the notification problem.
-> But you have to have ULP special sauce here to make it work.
+All warnings (new ones prefixed by >>):
 
-TBH I don't see how this is much different to option 1 in terms of
-constraints & requirements on the user space agent. We can implement
-option 1 over a socket-like interface, too, and that'll carry
-notifications all the same.
+>> block/blk-lib.c:178:5: warning: no previous prototype for function 'blk_copy_offload' [-Wmissing-prototypes]
+   int blk_copy_offload(struct block_device *src_bdev, int nr_srcs,
+       ^
+   block/blk-lib.c:178:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
+   int blk_copy_offload(struct block_device *src_bdev, int nr_srcs,
+   ^
+   static 
+   1 warning generated.
 
-> - Moving everything in kernel is ... possible. But then you have yet 
-> another security-relevant piece of code in the kernel which needs to be 
-> audited, CVEd etc. Not to mention the usual policy discussion whether it 
-> really belongs into the kernel.
 
-Yeah, if that gets posted it'd be great if it includes removing me from
-the TLS maintainers 'cause I want to sleep at night ;)
+vim +/blk_copy_offload +178 block/blk-lib.c
 
-> So I don't really see any obvious way to go; best we can do is to pick 
-> the least ugly :-(
+   173	
+   174	/*
+   175	 * blk_copy_offload	- Use device's native copy offload feature
+   176	 * Go through user provide payload, prepare new payload based on device's copy offload limits.
+   177	 */
+ > 178	int blk_copy_offload(struct block_device *src_bdev, int nr_srcs,
+   179			struct range_entry *rlist, struct block_device *dst_bdev, gfp_t gfp_mask)
+   180	{
+   181		struct request_queue *sq = bdev_get_queue(src_bdev);
+   182		struct request_queue *dq = bdev_get_queue(dst_bdev);
+   183		struct bio *read_bio, *write_bio;
+   184		struct copy_ctx *ctx;
+   185		struct cio *cio;
+   186		struct page *token;
+   187		sector_t src_blk, copy_len, dst_blk;
+   188		sector_t remaining, max_copy_len = LONG_MAX;
+   189		unsigned long flags;
+   190		int ri = 0, ret = 0;
+   191	
+   192		cio = kzalloc(sizeof(struct cio), GFP_KERNEL);
+   193		if (!cio)
+   194			return -ENOMEM;
+   195		cio->rlist = rlist;
+   196		spin_lock_init(&cio->lock);
+   197	
+   198		max_copy_len = min_t(sector_t, sq->limits.max_copy_sectors, dq->limits.max_copy_sectors);
+   199		max_copy_len = min3(max_copy_len, (sector_t)sq->limits.max_copy_range_sectors,
+   200				(sector_t)dq->limits.max_copy_range_sectors) << SECTOR_SHIFT;
+   201	
+   202		for (ri = 0; ri < nr_srcs; ri++) {
+   203			cio->rlist[ri].comp_len = rlist[ri].len;
+   204			src_blk = rlist[ri].src;
+   205			dst_blk = rlist[ri].dst;
+   206			for (remaining = rlist[ri].len; remaining > 0; remaining -= copy_len) {
+   207				copy_len = min(remaining, max_copy_len);
+   208	
+   209				token = alloc_page(gfp_mask);
+   210				if (unlikely(!token)) {
+   211					ret = -ENOMEM;
+   212					goto err_token;
+   213				}
+   214	
+   215				ctx = kzalloc(sizeof(struct copy_ctx), gfp_mask);
+   216				if (!ctx) {
+   217					ret = -ENOMEM;
+   218					goto err_ctx;
+   219				}
+   220				ctx->cio = cio;
+   221				ctx->range_idx = ri;
+   222				ctx->start_sec = dst_blk;
+   223	
+   224				read_bio = bio_alloc(src_bdev, 1, REQ_OP_READ | REQ_COPY | REQ_NOMERGE,
+   225						gfp_mask);
+   226				if (!read_bio) {
+   227					ret = -ENOMEM;
+   228					goto err_read_bio;
+   229				}
+   230				read_bio->bi_iter.bi_sector = src_blk >> SECTOR_SHIFT;
+   231				__bio_add_page(read_bio, token, PAGE_SIZE, 0);
+   232				/*__bio_add_page increases bi_size by len, so overwrite it with copy len*/
+   233				read_bio->bi_iter.bi_size = copy_len;
+   234				ret = submit_bio_wait(read_bio);
+   235				bio_put(read_bio);
+   236				if (ret)
+   237					goto err_read_bio;
+   238	
+   239				write_bio = bio_alloc(dst_bdev, 1, REQ_OP_WRITE | REQ_COPY | REQ_NOMERGE,
+   240						gfp_mask);
+   241				if (!write_bio) {
+   242					ret = -ENOMEM;
+   243					goto err_read_bio;
+   244				}
+   245				write_bio->bi_iter.bi_sector = dst_blk >> SECTOR_SHIFT;
+   246				__bio_add_page(write_bio, token, PAGE_SIZE, 0);
+   247				/*__bio_add_page increases bi_size by len, so overwrite it with copy len*/
+   248				write_bio->bi_iter.bi_size = copy_len;
+   249				write_bio->bi_end_io = bio_copy_end_io;
+   250				write_bio->bi_private = ctx;
+   251	
+   252				spin_lock_irqsave(&cio->lock, flags);
+   253				++cio->refcount;
+   254				spin_unlock_irqrestore(&cio->lock, flags);
+   255	
+   256				submit_bio(write_bio);
+   257				src_blk += copy_len;
+   258				dst_blk += copy_len;
+   259			}
+   260		}
+   261	
+   262		/* Wait for completion of all IO's*/
+   263		return cio_await_completion(cio);
+   264	
+   265	err_read_bio:
+   266		kfree(ctx);
+   267	err_ctx:
+   268		__free_page(token);
+   269	err_token:
+   270		rlist[ri].comp_len = min_t(sector_t, rlist[ri].comp_len, (rlist[ri].len - remaining));
+   271	
+   272		cio->io_err = ret;
+   273		return cio_await_completion(cio);
+   274	}
+   275	
 
-True, I'm sure we can find some middle ground between 1 and 2.
-Preferably implemented in a way where the mechanism is separated 
-from the fact it's carrying TLS handshake requests, so that it can
-carry something else tomorrow.
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
