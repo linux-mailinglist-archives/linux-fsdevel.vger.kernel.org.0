@@ -2,256 +2,183 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E7C8F511AF4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Apr 2022 16:57:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BEAC511A80
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Apr 2022 16:56:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235097AbiD0M7X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Apr 2022 08:59:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44154 "EHLO
+        id S238181AbiD0Oel (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Apr 2022 10:34:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235055AbiD0M7V (ORCPT
+        with ESMTP id S238130AbiD0Oee (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Apr 2022 08:59:21 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B7374BBB9;
-        Wed, 27 Apr 2022 05:56:09 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 31355B826BE;
-        Wed, 27 Apr 2022 12:56:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33896C385A7;
-        Wed, 27 Apr 2022 12:56:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1651064166;
-        bh=+iwViTMNuEBefWuXL+BZ8Ru60O++ykuSqfz2yL2dJWs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TgVUR8QY+aBt6VikeE0+0cVyW11WtrxSG8WhcgPVreUQJsEU0RsIwJ0jFJiwOoE5z
-         j6s2HLDruLPDBdonojnT5RG+oV2Kj46EoIBMx4bEqdgk9aeDX4J0XRPtRjytKFCTeP
-         8bbqH/P9TrSuxq9Rn7I2+XwY0TyQLe5ASYz/hrIiRjtrCwVmgSS+GMo2ERuoGK3F0k
-         Ba2QBSIQLddmOj7L0HlukdlFYFsvotwcHx22a5zHZxLZKqJzqNDUeNDwMqCG7AvSsL
-         ywLKEhbWIe02XerPMxXMh4sI9E3Eu19R4VRE9+0V4KgAY0mjEsF3wRwJjAL7bc3/tc
-         gyarSNi7sqJbA==
-Date:   Wed, 27 Apr 2022 14:55:58 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     syzbot <syzbot+7170d66493145b71afd4@syzkaller.appspotmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [syzbot] KASAN: use-after-free Read in mas_next_nentry
-Message-ID: <20220427125558.5cx4iv3mgjqi36ld@wittgenstein>
-References: <0000000000009ecbf205dda227bd@google.com>
+        Wed, 27 Apr 2022 10:34:34 -0400
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBFDE1A811
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Apr 2022 07:31:12 -0700 (PDT)
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20220427143111epoutp04550352ce9c81384ba3747c70cd69c980~px0zJucd92458624586epoutp04S
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Apr 2022 14:31:11 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20220427143111epoutp04550352ce9c81384ba3747c70cd69c980~px0zJucd92458624586epoutp04S
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1651069871;
+        bh=crH6lA8CKSr3raD35a8WNJj9gNhvnxzuqz4w8DLYYGk=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=fBEiAL09DVN+6O96oSHfHYfLa/Y0rXC6OWr8HMjDqmKMbmsTHamZ3k97hKG7YmF2/
+         U2vK9ejkjv+6eatRrTbT5IhEm0Ymzg9tCefEY7cdhkQDb+GNpT7eoaHbK5wQ3IVfid
+         FrF7T1W5R4YAg2LFLwPW7VJslUT919RYSUn/PsoI=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+        20220427143110epcas5p40c88d0aed948bf707494648074071e87~px0yta3Zx2356823568epcas5p4v;
+        Wed, 27 Apr 2022 14:31:10 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.183]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4KpLlZ5wJ5z4x9Pt; Wed, 27 Apr
+        2022 14:31:06 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        05.DD.10063.9A359626; Wed, 27 Apr 2022 23:31:05 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+        20220427130824epcas5p38594effe1d648be050ff00284e115014~pwshxFhMl2087820878epcas5p35;
+        Wed, 27 Apr 2022 13:08:24 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20220427130824epsmtrp14e26381493d2df92a583d1f425e97e0c~pwshwRhe_3201832018epsmtrp1G;
+        Wed, 27 Apr 2022 13:08:24 +0000 (GMT)
+X-AuditID: b6c32a49-4b5ff7000000274f-c5-626953a9862a
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        D8.A4.08853.84049626; Wed, 27 Apr 2022 22:08:24 +0900 (KST)
+Received: from test-zns (unknown [107.110.206.5]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20220427130823epsmtip2faace445336901ad6bad32c4c8c06a3d~pwsghFvIJ1516015160epsmtip2s;
+        Wed, 27 Apr 2022 13:08:23 +0000 (GMT)
+Date:   Wed, 27 Apr 2022 18:33:15 +0530
+From:   Nitesh Shetty <nj.shetty@samsung.com>
+To:     Damien Le Moal <damien.lemoal@opensource.wdc.com>
+Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        dm-devel@redhat.com, linux-nvme@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, nitheshshetty@gmail.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 03/10] block: Introduce a new ioctl for copy
+Message-ID: <20220427130315.GB9558@test-zns>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <0000000000009ecbf205dda227bd@google.com>
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <513edc25-1c73-6c85-9a50-0e267a106ec0@opensource.wdc.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrAJsWRmVeSWpSXmKPExsWy7bCmlu7K4Mwkg83dbBa/z55nttj7bjar
+        xd5b2hZ79p5ksbi8aw6bxfxlT9ktuq/vYLPY8aSR0YHDY+esu+wem5fUe+xsvc/q8X7fVTaP
+        z5vkAlijsm0yUhNTUosUUvOS81My89JtlbyD453jTc0MDHUNLS3MlRTyEnNTbZVcfAJ03TJz
+        gC5RUihLzCkFCgUkFhcr6dvZFOWXlqQqZOQXl9gqpRak5BSYFOgVJ+YWl+al6+WlllgZGhgY
+        mQIVJmRnbOndwFrwUrBiw71fjA2MLXxdjJwcEgImEkv3zWDtYuTiEBLYzSjRvXYulPOJUeLs
+        wd9sEM43RomWxYcYYVpWX5sKVbWXUaK1+zhU1TNGieM7vrGDVLEIqEr0LF8AlODgYBPQljj9
+        nwMkLCJgKvG2p5UFpJ5Z4AyjRPv7XWD1wgLOEv0XbzOD2LwCOhJ7D2xlg7AFJU7OfMICYnMK
+        uElMPbaRCcQWFVCWOLDtOBPIIAmBVg6J91P2sUOc5yKx/Np3NghbWOLV8S1QcSmJl/1tUHa5
+        xPa2BVDNLYwSXadOsUAk7CUu7vkLtoFZIEPiZP8TqEGyElNPrYOK80n0/n7CBBHnldgxD8ZW
+        llizfgFUvaTEte+NULaHxJ9fkLATEvjNKHFuecQERvlZSJ6bhWQdhK0jsWD3JyCbA8iWllj+
+        jwPC1JRYv0t/ASPrKkbJ1ILi3PTUYtMCw7zUcniUJ+fnbmIEJ1Utzx2Mdx980DvEyMTBeIhR
+        goNZSYT3y+6MJCHelMTKqtSi/Pii0pzU4kOMpsDImsgsJZqcD0zreSXxhiaWBiZmZmYmlsZm
+        hkrivKfTNyQKCaQnlqRmp6YWpBbB9DFxcEo1MDHuZMtnCveS5dyplbLtQ6yT1cyrqp+jNV78
+        td50UtihS2znQbNss6ct9y5WSj7h4r/YvvP4l4mq586arxDgNPK0nbt2++XpMSyzTzCcP7bl
+        5Ga9AMnSCYdmflilkdHO6ZLZYi2mdeBXw/qNYccOMUeXMonf3vhNMHH187VXs/esU5gVdm+R
+        QH7+vZSl3Et/rs9sdvogqivX0XT8L7/GDZcT0a5aIZtfbT5d3nVm9QtZWSuWxw7PjrLxsXB6
+        ZAepV1oo5Jr3P3lwnr2ghq1ZxsBld7Y03/5b/IwP31969ER6+s043U+n6j5ylorx68Wd7luj
+        tu5F4JUE58n38kyZ060niWXO15t/W6h4z12VDCWW4oxEQy3mouJEAIGbFNYzBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrALMWRmVeSWpSXmKPExsWy7bCSvK6HQ2aSwaIl0ha/z55nttj7bjar
+        xd5b2hZ79p5ksbi8aw6bxfxlT9ktuq/vYLPY8aSR0YHDY+esu+wem5fUe+xsvc/q8X7fVTaP
+        z5vkAlijuGxSUnMyy1KL9O0SuDKaL3IXrOSv2LThL2MD413uLkZODgkBE4nV16aydjFycQgJ
+        7GaUeHP7DSNEQlJi2d8jzBC2sMTKf8/ZIYqeMEo03poDlmARUJXoWb6ArYuRg4NNQFvi9H8O
+        kLCIgKnE255WFpB6ZoEzjBLt73exgySEBZwl+i/eBuvlFdCR2HtgKxvE0N+MEkveTmaFSAhK
+        nJz5hAXEZhbQkrjx7yUTyAJmAWmJ5f/AFnAKuElMPbaRCcQWFVCWOLDtONMERsFZSLpnIeme
+        hdC9gJF5FaNkakFxbnpusWGBYV5quV5xYm5xaV66XnJ+7iZGcCRoae5g3L7qg94hRiYOxkOM
+        EhzMSiK8X3ZnJAnxpiRWVqUW5ccXleakFh9ilOZgURLnvdB1Ml5IID2xJDU7NbUgtQgmy8TB
+        KdXAdHDXNQfr76ea8g6xxHUXtj65+s76sFXCrNy02EbZflWt4s8m8WmWhQxPPdznWvr0qJo5
+        Zdl8rf1zY1c1R/y1JZ82m/OuXpJrPi9hS23woU4/0/Lo1nXzLrLdWXPw+pSD+Rk7bu3XYXDP
+        P6ZzU9qc1UTn5oMFWsuZp9vy5K7NW5w8V/286MKagv+9svKreO4v+lszVWWhb+8WvuP+G3Ym
+        nG8q/h5b8l38wV/NvALj/cZTT3quXejR71hYe6g79UiOzdrSezVVklPsvNUmu2qEVNfYPZ/y
+        ovWVfEzu76ojTfskD5v4KDZznLvU9rdpsWa19anSOSXHvrBI9QcbR2+MCWdc7zc5J/o8m5/l
+        pjQlluKMREMt5qLiRACj4ob+8wIAAA==
+X-CMS-MailID: 20220427130824epcas5p38594effe1d648be050ff00284e115014
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+        boundary="----s9reHD3dvq.Swzu4OgS99nNlXP7CLa0djtt04wdzZepsPVyA=_17950_"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220426101938epcas5p291690dd1f0e931cd9f8139daaf3f9296
+References: <20220426101241.30100-1-nj.shetty@samsung.com>
+        <CGME20220426101938epcas5p291690dd1f0e931cd9f8139daaf3f9296@epcas5p2.samsung.com>
+        <20220426101241.30100-4-nj.shetty@samsung.com>
+        <513edc25-1c73-6c85-9a50-0e267a106ec0@opensource.wdc.com>
+X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[+Cc Willy]
+------s9reHD3dvq.Swzu4OgS99nNlXP7CLa0djtt04wdzZepsPVyA=_17950_
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
 
-On Wed, Apr 27, 2022 at 05:43:22AM -0700, syzbot wrote:
-> Hello,
+O Wed, Apr 27, 2022 at 11:48:57AM +0900, Damien Le Moal wrote:
+> On 4/26/22 19:12, Nitesh Shetty wrote:
+> > Add new BLKCOPY ioctl that offloads copying of one or more sources ranges
+> > to one or more destination in a device. COPY ioctl accepts a 'copy_range'
+> > structure that contains no of range, a reserved field , followed by an
+> > array of ranges. Each source range is represented by 'range_entry' that
+> > contains source start offset, destination start offset and length of
+> > source ranges (in bytes)
+> > 
+> > MAX_COPY_NR_RANGE, limits the number of entries for the IOCTL and
+> > MAX_COPY_TOTAL_LENGTH limits the total copy length, IOCTL can handle.
+> > 
+> > Example code, to issue BLKCOPY:
+> > /* Sample example to copy three entries with [dest,src,len],
+> > * [32768, 0, 4096] [36864, 4096, 4096] [40960,8192,4096] on same device */
+> > 
+> > int main(void)
+> > {
+> > 	int i, ret, fd;
+> > 	unsigned long src = 0, dst = 32768, len = 4096;
+> > 	struct copy_range *cr;
+> > 	cr = (struct copy_range *)malloc(sizeof(*cr)+
+> > 					(sizeof(struct range_entry)*3));
+> > 	cr->nr_range = 3;
+> > 	cr->reserved = 0;
+> > 	for (i = 0; i< cr->nr_range; i++, src += len, dst += len) {
+> > 		cr->range_list[i].dst = dst;
+> > 		cr->range_list[i].src = src;
+> > 		cr->range_list[i].len = len;
+> > 		cr->range_list[i].comp_len = 0;
+> > 	}
+> > 	fd = open("/dev/nvme0n1", O_RDWR);
+> > 	if (fd < 0) return 1;
+> > 	ret = ioctl(fd, BLKCOPY, cr);
+> > 	if (ret != 0)
+> > 	       printf("copy failed, ret= %d\n", ret);
+> > 	for (i=0; i< cr->nr_range; i++)
+> > 		if (cr->range_list[i].len != cr->range_list[i].comp_len)
+> > 			printf("Partial copy for entry %d: requested %llu, completed %llu\n",
+> > 								i, cr->range_list[i].len,
+> > 								cr->range_list[i].comp_len);
+> > 	close(fd);
+> > 	free(cr);
+> > 	return ret;
+> > }
 > 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    f02ac5c95dfd Add linux-next specific files for 20220427
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=14bd8db2f00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=e9256c70f586da8a
-> dashboard link: https://syzkaller.appspot.com/bug?extid=7170d66493145b71afd4
-> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=113b4252f00000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1174bcbaf00000
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+7170d66493145b71afd4@syzkaller.appspotmail.com
-> 
-> ==================================================================
-> BUG: KASAN: use-after-free in mas_safe_min lib/maple_tree.c:715 [inline]
-> BUG: KASAN: use-after-free in mas_next_nentry+0x997/0xaa0 lib/maple_tree.c:4546
-> Read of size 8 at addr ffff88807811e418 by task syz-executor361/3593
-> 
-> CPU: 1 PID: 3593 Comm: syz-executor361 Not tainted 5.18.0-rc4-next-20220427-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> Call Trace:
->  <TASK>
->  __dump_stack lib/dump_stack.c:88 [inline]
->  dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:106
->  print_address_description.constprop.0.cold+0xeb/0x495 mm/kasan/report.c:313
->  print_report mm/kasan/report.c:429 [inline]
->  kasan_report.cold+0xf4/0x1c6 mm/kasan/report.c:491
->  mas_safe_min lib/maple_tree.c:715 [inline]
->  mas_next_nentry+0x997/0xaa0 lib/maple_tree.c:4546
->  mas_next_entry lib/maple_tree.c:4636 [inline]
->  mas_next+0x1eb/0xc40 lib/maple_tree.c:5723
->  userfaultfd_register fs/userfaultfd.c:1468 [inline]
->  userfaultfd_ioctl+0x2527/0x40f0 fs/userfaultfd.c:1993
->  vfs_ioctl fs/ioctl.c:51 [inline]
->  __do_sys_ioctl fs/ioctl.c:870 [inline]
->  __se_sys_ioctl fs/ioctl.c:856 [inline]
->  __x64_sys_ioctl+0x193/0x200 fs/ioctl.c:856
->  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
->  do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
->  entry_SYSCALL_64_after_hwframe+0x44/0xae
-> RIP: 0033:0x7f4e5785d939
-> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 91 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007ffff7501a18 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-> RAX: ffffffffffffffda RBX: 0000000000000031 RCX: 00007f4e5785d939
-> RDX: 00000000200001c0 RSI: 00000000c020aa00 RDI: 0000000000000003
-> RBP: 00007ffff7501b10 R08: 00007ffff7501a72 R09: 00007ffff7501a72
-> R10: 00007ffff7501a72 R11: 0000000000000246 R12: 00007ffff7501ae0
-> R13: 00007f4e578e14e0 R14: 0000000000000003 R15: 00007ffff7501a72
->  </TASK>
-> 
-> Allocated by task 3592:
->  kasan_save_stack+0x1e/0x40 mm/kasan/common.c:38
->  kasan_set_track mm/kasan/common.c:45 [inline]
->  set_alloc_info mm/kasan/common.c:436 [inline]
->  __kasan_slab_alloc+0x90/0xc0 mm/kasan/common.c:469
->  kasan_slab_alloc include/linux/kasan.h:224 [inline]
->  slab_post_alloc_hook mm/slab.h:750 [inline]
->  kmem_cache_alloc_bulk+0x39f/0x720 mm/slub.c:3728
->  mt_alloc_bulk lib/maple_tree.c:151 [inline]
->  mas_alloc_nodes+0x1df/0x6b0 lib/maple_tree.c:1244
->  mas_node_count+0x101/0x130 lib/maple_tree.c:1303
->  mas_split lib/maple_tree.c:3406 [inline]
->  mas_commit_b_node lib/maple_tree.c:3508 [inline]
->  mas_wr_modify+0x2505/0x5ac0 lib/maple_tree.c:4251
->  mas_wr_store_entry.isra.0+0x66e/0x10f0 lib/maple_tree.c:4289
->  mas_store+0xac/0xf0 lib/maple_tree.c:5523
->  dup_mmap+0x845/0x1030 kernel/fork.c:687
->  dup_mm+0x91/0x370 kernel/fork.c:1516
->  copy_mm kernel/fork.c:1565 [inline]
->  copy_process+0x3b07/0x6fd0 kernel/fork.c:2226
->  kernel_clone+0xe7/0xab0 kernel/fork.c:2631
->  __do_sys_clone+0xc8/0x110 kernel/fork.c:2748
->  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
->  do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
->  entry_SYSCALL_64_after_hwframe+0x44/0xae
-> 
-> Freed by task 3593:
->  kasan_save_stack+0x1e/0x40 mm/kasan/common.c:38
->  kasan_set_track+0x21/0x30 mm/kasan/common.c:45
->  kasan_set_free_info+0x20/0x30 mm/kasan/generic.c:370
->  ____kasan_slab_free mm/kasan/common.c:366 [inline]
->  ____kasan_slab_free+0x166/0x1a0 mm/kasan/common.c:328
->  kasan_slab_free include/linux/kasan.h:200 [inline]
->  slab_free_hook mm/slub.c:1727 [inline]
->  slab_free_freelist_hook+0x8b/0x1c0 mm/slub.c:1753
->  slab_free mm/slub.c:3507 [inline]
->  kmem_cache_free_bulk mm/slub.c:3654 [inline]
->  kmem_cache_free_bulk+0x2c0/0xb60 mm/slub.c:3641
->  mt_free_bulk lib/maple_tree.c:157 [inline]
->  mas_destroy+0x394/0x5c0 lib/maple_tree.c:5685
->  mas_store_prealloc+0xec/0x150 lib/maple_tree.c:5567
->  vma_mas_store mm/internal.h:482 [inline]
->  __vma_adjust+0x6ba/0x18f0 mm/mmap.c:811
->  vma_adjust include/linux/mm.h:2654 [inline]
->  __split_vma+0x443/0x530 mm/mmap.c:2259
->  split_vma+0x9f/0xe0 mm/mmap.c:2292
->  userfaultfd_register fs/userfaultfd.c:1444 [inline]
->  userfaultfd_ioctl+0x39f4/0x40f0 fs/userfaultfd.c:1993
->  vfs_ioctl fs/ioctl.c:51 [inline]
->  __do_sys_ioctl fs/ioctl.c:870 [inline]
->  __se_sys_ioctl fs/ioctl.c:856 [inline]
->  __x64_sys_ioctl+0x193/0x200 fs/ioctl.c:856
->  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
->  do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
->  entry_SYSCALL_64_after_hwframe+0x44/0xae
-> 
-> The buggy address belongs to the object at ffff88807811e400
->  which belongs to the cache maple_node of size 256
-> The buggy address is located 24 bytes inside of
->  256-byte region [ffff88807811e400, ffff88807811e500)
-> 
-> The buggy address belongs to the physical page:
-> page:ffffea0001e04780 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x7811e
-> head:ffffea0001e04780 order:1 compound_mapcount:0 compound_pincount:0
-> flags: 0xfff00000010200(slab|head|node=0|zone=1|lastcpupid=0x7ff)
-> raw: 00fff00000010200 0000000000000000 dead000000000001 ffff888010c4fdc0
-> raw: 0000000000000000 0000000000100010 00000001ffffffff 0000000000000000
-> page dumped because: kasan: bad access detected
-> page_owner tracks the page as allocated
-> page last allocated via order 1, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 3286, tgid 3286 (dhcpcd-run-hook), ts 27966983290, free_ts 22717162691
->  prep_new_page mm/page_alloc.c:2431 [inline]
->  get_page_from_freelist+0xba2/0x3e00 mm/page_alloc.c:4172
->  __alloc_pages+0x1b2/0x500 mm/page_alloc.c:5393
->  alloc_pages+0x1aa/0x310 mm/mempolicy.c:2281
->  alloc_slab_page mm/slub.c:1797 [inline]
->  allocate_slab+0x26c/0x3c0 mm/slub.c:1942
->  new_slab mm/slub.c:2002 [inline]
->  ___slab_alloc+0x985/0xd90 mm/slub.c:3002
->  kmem_cache_alloc_bulk+0x21c/0x720 mm/slub.c:3704
->  mt_alloc_bulk lib/maple_tree.c:151 [inline]
->  mas_alloc_nodes+0x2b0/0x6b0 lib/maple_tree.c:1244
->  mas_preallocate+0xfb/0x270 lib/maple_tree.c:5581
->  __vma_adjust+0x226/0x18f0 mm/mmap.c:742
->  vma_adjust include/linux/mm.h:2654 [inline]
->  __split_vma+0x443/0x530 mm/mmap.c:2259
->  do_mas_align_munmap+0x4f5/0xe80 mm/mmap.c:2375
->  do_mas_munmap+0x202/0x2c0 mm/mmap.c:2499
->  mmap_region+0x219/0x1c70 mm/mmap.c:2547
->  do_mmap+0x825/0xf60 mm/mmap.c:1471
->  vm_mmap_pgoff+0x1b7/0x290 mm/util.c:488
->  ksys_mmap_pgoff+0x40d/0x5a0 mm/mmap.c:1517
-> page last free stack trace:
->  reset_page_owner include/linux/page_owner.h:24 [inline]
->  free_pages_prepare mm/page_alloc.c:1346 [inline]
->  free_pcp_prepare+0x549/0xd20 mm/page_alloc.c:1396
->  free_unref_page_prepare mm/page_alloc.c:3318 [inline]
->  free_unref_page+0x19/0x6a0 mm/page_alloc.c:3413
->  __unfreeze_partials+0x17c/0x1a0 mm/slub.c:2521
->  qlink_free mm/kasan/quarantine.c:168 [inline]
->  qlist_free_all+0x6a/0x170 mm/kasan/quarantine.c:187
->  kasan_quarantine_reduce+0x180/0x200 mm/kasan/quarantine.c:294
->  __kasan_slab_alloc+0xa2/0xc0 mm/kasan/common.c:446
->  kasan_slab_alloc include/linux/kasan.h:224 [inline]
->  slab_post_alloc_hook mm/slab.h:750 [inline]
->  slab_alloc_node mm/slub.c:3214 [inline]
->  slab_alloc mm/slub.c:3222 [inline]
->  __kmalloc+0x200/0x350 mm/slub.c:4415
->  kmalloc include/linux/slab.h:593 [inline]
->  tomoyo_realpath_from_path+0xc3/0x620 security/tomoyo/realpath.c:254
->  tomoyo_realpath_nofollow+0xc8/0xe0 security/tomoyo/realpath.c:309
->  tomoyo_find_next_domain+0x280/0x1f80 security/tomoyo/domain.c:727
->  tomoyo_bprm_check_security security/tomoyo/tomoyo.c:101 [inline]
->  tomoyo_bprm_check_security+0x121/0x1a0 security/tomoyo/tomoyo.c:91
->  security_bprm_check+0x45/0xa0 security/security.c:865
->  search_binary_handler fs/exec.c:1718 [inline]
->  exec_binprm fs/exec.c:1771 [inline]
->  bprm_execve fs/exec.c:1840 [inline]
->  bprm_execve+0x732/0x1970 fs/exec.c:1802
->  do_execveat_common+0x727/0x890 fs/exec.c:1945
->  do_execve fs/exec.c:2015 [inline]
->  __do_sys_execve fs/exec.c:2091 [inline]
->  __se_sys_execve fs/exec.c:2086 [inline]
->  __x64_sys_execve+0x8f/0xc0 fs/exec.c:2086
->  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
->  do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
-> 
-> Memory state around the buggy address:
->  ffff88807811e300: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->  ffff88807811e380: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> >ffff88807811e400: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->                             ^
->  ffff88807811e480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->  ffff88807811e500: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> ==================================================================
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> syzbot can test patches for this issue, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
+> Nice to have a code example. But please format it correctly.
+>
+
+acked
+
+--
+Nitesh Shetty
+
+------s9reHD3dvq.Swzu4OgS99nNlXP7CLa0djtt04wdzZepsPVyA=_17950_
+Content-Type: text/plain; charset="utf-8"
+
+
+------s9reHD3dvq.Swzu4OgS99nNlXP7CLa0djtt04wdzZepsPVyA=_17950_--
