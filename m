@@ -2,112 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E0F98511F56
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Apr 2022 20:37:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B781511CE4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Apr 2022 20:33:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244644AbiD0SMW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Apr 2022 14:12:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40820 "EHLO
+        id S244702AbiD0SMw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Apr 2022 14:12:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244676AbiD0SMT (ORCPT
+        with ESMTP id S244673AbiD0SMu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Apr 2022 14:12:19 -0400
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29C1157B3D
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Apr 2022 11:09:00 -0700 (PDT)
+        Wed, 27 Apr 2022 14:12:50 -0400
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE5CE4198D
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Apr 2022 11:09:17 -0700 (PDT)
 Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20220427180858epoutp030ee4bbd61cc6c1400dee12bdf233ef7c~p0y9FjuGW1429614296epoutp037
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Apr 2022 18:08:58 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20220427180858epoutp030ee4bbd61cc6c1400dee12bdf233ef7c~p0y9FjuGW1429614296epoutp037
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20220427180916epoutp04e016936e23481dc9f90887ff49237bef~p0zNh4DPe2665126651epoutp04R
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Apr 2022 18:09:16 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20220427180916epoutp04e016936e23481dc9f90887ff49237bef~p0zNh4DPe2665126651epoutp04R
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1651082938;
-        bh=y5OS7C3x4USZWkOHB+8ofntVAXK7uEdgUcFhqganpFk=;
+        s=mail20170921; t=1651082956;
+        bh=xPl1IY39MuYgdUTpQIGrEyNYyAWYGrPNoP4aRDqkkDs=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=R8asHsPppiqdSNVTGyqE6JkdA3kfOs02eyF/ijaLLwIS9NRrripLZxPjCivOk0r7b
-         hsSTjb7o7I0fJbDWr1kM61tgTa+NDfMX2kECOH+CRdOKPqyLRhlUMQvPpXbwW1voiE
-         7pURtAOwqy0fn3Lu+uWJiXNJI72fldfEl1VryuTI=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-        20220427180857epcas5p49214c5b087f6a3abc404d9e61d699270~p0y7zEIdM3093730937epcas5p4-;
-        Wed, 27 Apr 2022 18:08:57 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.175]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4KpRZs2w2mz4x9Pq; Wed, 27 Apr
-        2022 18:08:53 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        CB.2C.10063.5B689626; Thu, 28 Apr 2022 03:08:53 +0900 (KST)
+        b=aY8Pn2KrM5yAS/aNB7+2Ytsp098XxvoxpDcgZNFwApheGLrDs6I+ND1VAV8kFldjI
+         NGi9JSOWPaIw8YfyrUkmMxgyAKFdq9g/2mf4yGByAULZ582Au9ijQ/cVPDpCGL31r1
+         PYbJWvYnWgA41tyOeXNKFU/m5aNLhB26g7haPW8Q=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+        20220427180915epcas5p3249b4f36723a41f0b5b94f2f1c9276aa~p0zNE4kv82667826678epcas5p3y;
+        Wed, 27 Apr 2022 18:09:15 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.179]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4KpRbB4sQwz4x9Pr; Wed, 27 Apr
+        2022 18:09:10 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        B6.94.09827.6C689626; Thu, 28 Apr 2022 03:09:10 +0900 (KST)
 Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-        20220427154335epcas5p2decfa46fd054003fe354919a6ccc8bb5~py0BFdT5t1292212922epcas5p2s;
-        Wed, 27 Apr 2022 15:43:35 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+        20220427155356epcas5p4c96a6b254f89300d6f1943f6a8b4d1ff~py9D6ql_d1865118651epcas5p42;
+        Wed, 27 Apr 2022 15:53:56 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
         epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220427154335epsmtrp1836aaec6d9081312a54cf44cfab35bf7~py0BEoafL2542225422epsmtrp1t;
-        Wed, 27 Apr 2022 15:43:35 +0000 (GMT)
-X-AuditID: b6c32a49-4b5ff7000000274f-7e-626986b5bcd4
+        20220427155356epsmtrp1120ee3b3bf7abcd2f5be2a35d7d3a878~py9D57pZ63121031210epsmtrp1g;
+        Wed, 27 Apr 2022 15:53:56 +0000 (GMT)
+X-AuditID: b6c32a4a-b3bff70000002663-8e-626986c6fcf4
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        B8.AA.08924.7A469626; Thu, 28 Apr 2022 00:43:35 +0900 (KST)
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        F9.F8.08853.41769626; Thu, 28 Apr 2022 00:53:56 +0900 (KST)
 Received: from test-zns (unknown [107.110.206.5]) by epsmtip1.samsung.com
         (KnoxPortal) with ESMTPA id
-        20220427154333epsmtip1c2203c795e44edd393049c9924cd6740~pyz-zoaVP2609826098epsmtip1D;
-        Wed, 27 Apr 2022 15:43:33 +0000 (GMT)
-Date:   Wed, 27 Apr 2022 21:08:26 +0530
+        20220427155355epsmtip18c536e1a3da7f33b9c3849bfa5691571~py9Cqj4Hu2999929999epsmtip1T;
+        Wed, 27 Apr 2022 15:53:55 +0000 (GMT)
+Date:   Wed, 27 Apr 2022 21:18:47 +0530
 From:   Nitesh Shetty <nj.shetty@samsung.com>
-To:     Damien Le Moal <damien.lemoal@opensource.wdc.com>
+To:     Hannes Reinecke <hare@suse.de>
 Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
         dm-devel@redhat.com, linux-nvme@lists.infradead.org,
         linux-fsdevel@vger.kernel.org, nitheshshetty@gmail.com,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 00/10] Add Copy offload support
-Message-ID: <20220427153826.GE9558@test-zns>
+Subject: Re: [PATCH v4 02/10] block: Add copy offload support infrastructure
+Message-ID: <20220427154847.GF9558@test-zns>
 MIME-Version: 1.0
-In-Reply-To: <c02f67e1-2f76-7e52-8478-78e28b96b6a1@opensource.wdc.com>
+In-Reply-To: <2082148f-890f-e5f4-c304-b99212aa377e@suse.de>
 User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrFJsWRmVeSWpSXmKPExsWy7bCmpu7Wtswkg77pgha/z55nttj7bjar
-        xd5b2hZ79p5ksbi8aw6bxfxlT9ktuq/vYLPY8aSR0YHDY+esu+wem5fUe+xsvc/q8X7fVTaP
-        z5vkAlijsm0yUhNTUosUUvOS81My89JtlbyD453jTc0MDHUNLS3MlRTyEnNTbZVcfAJ03TJz
-        gC5RUihLzCkFCgUkFhcr6dvZFOWXlqQqZOQXl9gqpRak5BSYFOgVJ+YWl+al6+WlllgZGhgY
-        mQIVJmRn/LohVnBRoOL4pJPMDYzXebsYOTkkBEwkdvY9Yuli5OIQEtjNKPHm919GCOcTo8Sa
-        bb2sEM5nRolFe6eywLS8Xj8LqmoXo8S7d1+gnGeMEtNP/gKrYhFQlZh4dCV7FyMHB5uAtsTp
-        /xwgYREBU4m3Pa1g+5gFzjBKtL/fxQ6SEBYwk1jd2coGYvMK6Eg8n32TFcIWlDg58wkLyBxO
-        ATeJXSuVQMKiAsoSB7YdZwKZIyEwlUPi76E/TBDXuUgseb2IGcIWlnh1fAs7hC0l8bK/Dcou
-        l9jetgCquYVRouvUKajX7CUu7vkLNohZIEPizftlUA2yElNPrYOK80n0/n4CtYxXYsc8GFtZ
-        Ys36BWwQtqTEte+NULaHxM6PK6HheIpR4tmkBtYJjPKzkDw3C8m+WUCPMgtoSqzfpQ8Rlpdo
-        3jqbGSIsLbH8HweSigWMbKsYJVMLinPTU4tNCwzzUsvhkZ+cn7uJEZxotTx3MN598EHvECMT
-        B+MhRgkOZiUR3i+7M5KEeFMSK6tSi/Lji0pzUosPMZoC420is5Rocj4w1eeVxBuaWBqYmJmZ
-        mVgamxkqifOeTt+QKCSQnliSmp2aWpBaBNPHxMEp1cA07bdN1pr1rOJuT7VLfALK9OTWfT79
-        2k7qzV7JTcov07ez1cwpjd/Zprt8Sdykh99eBecX7HR1PmOy9omaz7lYLsFdvAfuvKqdavCo
-        77T2y1O3HAMM3t6atKFmfUyeZTYfR5Dq9M6CZQHJOpMs5iQw/AmTTXpnrfdn8dWV/0/2Ck/9
-        zn/x2KsAs0fblQV7w+8JRPGnXFLi4fBf+NbXzGe63MoCg8VbnqXf+H/t0vG+5Jw5LN7BKrdc
-        YmUXrb3KcOXp2hkTlk5WE3Cs/6TI++yOy66S1RuPGqY6LF25+nvDn8XJX6POqU7a7pvFLO2X
-        P/uAXOr6bd4Mbnbz5wTk3Ymv4M4L/+nf/pbxR36mj2+pEktxRqKhFnNRcSIAhY8t5z0EAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBLMWRmVeSWpSXmKPExsWy7bCSnO7ylMwkg54+LovfZ88zW+x9N5vV
-        Yu8tbYs9e0+yWFzeNYfNYv6yp+wW3dd3sFnseNLI6MDhsXPWXXaPzUvqPXa23mf1eL/vKpvH
-        501yAaxRXDYpqTmZZalF+nYJXBnrr39gLPjMWzHvxASWBsap3F2MnBwSAiYSr9fPYuxi5OIQ
-        EtjBKLFszhU2iISkxLK/R5ghbGGJlf+es0MUPWGUmHllNyNIgkVAVWLi0ZVACQ4ONgFtidP/
-        OUDCIgKmEm97WllA6pkFzjBKtL/fxQ6SEBYwk1jd2Qq2gFdAR+L57JusEENPMUq8vDyZCSIh
-        KHFy5hMWEJtZQF3iz7xLzCALmAWkJZb/44AIy0s0b50NFuYUcJPYtVIJJCwqoCxxYNtxpgmM
-        QrOQDJqFZNAshEGzkAxawMiyilEytaA4Nz232LDAKC+1XK84Mbe4NC9dLzk/dxMjOHK0tHYw
-        7ln1Qe8QIxMH4yFGCQ5mJRHeL7szkoR4UxIrq1KL8uOLSnNSiw8xSnOwKInzXug6GS8kkJ5Y
-        kpqdmlqQWgSTZeLglGpgsjqyIrdo7svg/Yd2r1/Vz3s9JMRNZlmiaxt/6tsXvfcmmR+85KSo
-        8Cmub7Fk87R1E+ZdS86dUxIwbyfTztmSc94JtpRP6T5xaIPvvbMbb4oUFmftuZ3SwaC1n/kv
-        W1rtJrsi++RZ6x0iFboPbiiz2PQ+9O3GN7+6pB5bzJf7080Uv6dhEdNVixczPm8VYCmYzv7t
-        X0zu1fkf/vX1HV3dNaujOHdJL+v5JO7mkunK6oJnZ+Xt2m71eUXHV98ZZbvqdOq8FzgUuWZo
-        ZZm6SoRpvTpsvFz/BDv/VKfXGUtEDi0Myw5lDvrdXMyoN+XK+na3XWtrpLbIZze6nqs5oRxy
-        +NmFf8Zn1qv7Lf0k1O4cpcRSnJFoqMVcVJwIAL0nILoLAwAA
-X-CMS-MailID: 20220427154335epcas5p2decfa46fd054003fe354919a6ccc8bb5
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNJsWRmVeSWpSXmKPExsWy7bCmuu6xtswkg73rlC32vpvNarFn0SQm
+        i723tC327D3JYnF51xw2i/nLnrJbdF/fwWax40kjowOHx85Zd9k9Ni+p93i/7yqbx+bT1R6f
+        N8kFsEZl22SkJqakFimk5iXnp2TmpdsqeQfHO8ebmhkY6hpaWpgrKeQl5qbaKrn4BOi6ZeYA
+        HaKkUJaYUwoUCkgsLlbSt7Mpyi8tSVXIyC8usVVKLUjJKTAp0CtOzC0uzUvXy0stsTI0MDAy
+        BSpMyM6YdngTe8Eli4plc9wbGBfpdDFyckgImEg8uruQrYuRi0NIYDejxPamTcwQzidGibMb
+        v7FAON8YJT6dOcrexcgB1vLhqilIt5DAXkaJrlnyEDXPGCW+bF/NBFLDIqAq0f/QE8RkE9CW
+        OP2fA6RcREBJ4mP7IXaQcmaBM4wS7e93sYMkhAV8JJafmMYIUs8roCMxYXMQSJhXQFDi5Mwn
+        LCA2p4C1xJkHaxhBbFEBZYkD244zgcyREGjlkPj5YAozxDcuEh8bpzFC2MISr45vYYewpSRe
+        9rdB2eUS29sWQDW3AN1/6hQLRMJe4uKev0wgNrNAhsS1hoNMEHFZiamn1kHF+SR6fz+BivNK
+        7JgHYytLrFm/gA3ClpS49r0RyvaQmLf3CTQQPzBKzFx1h20Co/wsJN/NQrIPwtaRWLD7E9ss
+        YGAwC0hLLP/HAWFqSqzfpb+AkXUVo2RqQXFuemqxaYFRXmo5PLqT83M3MYJTqZbXDsaHDz7o
+        HWJk4mA8xCjBwawkwvtld0aSEG9KYmVValF+fFFpTmrxIUZTYFxNZJYSTc4HJvO8knhDE0sD
+        EzMzMxNLYzNDJXHe0+kbEoUE0hNLUrNTUwtSi2D6mDg4pRqYNuybznPD8ZtaT/v++Vrt8619
+        Sn17RVPKMxQXGho9MHk+T/LAy7cxzUdmRxu5+5pwmx1vtPfd0bqye2LM6o2dLz6/XZdTsVT0
+        ebZUzActh03Wa25s07BTv1J0cJrd9LMmu5eKy4Zsbe74y7PwIH/E1AkHFW7e0oxdLLmfK2he
+        YJbSr7X5EYq/ct6Ebe286Lb06YyLNzSUj77at6xRK/zrSX/R2IQ1F1yzVau7mRqV5bqj/Pao
+        KX1r6Y63ulUXuqls113toxft4q+v5DiVVfmQy/Zl1P474h8NTsfFXjL8EHWR44eO8JQHE+sW
+        pzT43E+/tl/attJufarezpLktwe/ipV/fuTSbVWx7ND/UEMOJZbijERDLeai4kQAkAXpJi4E
+        AAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrLLMWRmVeSWpSXmKPExsWy7bCSnK5IemaSwd6Z2hZ7381mtdizaBKT
+        xd5b2hZ79p5ksbi8aw6bxfxlT9ktuq/vYLPY8aSR0YHDY+esu+wem5fUe7zfd5XNY/Ppao/P
+        m+QCWKO4bFJSczLLUov07RK4Mvas6mEsmGRW0X7lDFsD42/NLkYODgkBE4kPV027GLk4hAR2
+        M0qs3/WbtYuREyguKbHs7xFmCFtYYuW/5+wQRU8YJea0v2QGaWYRUJXof+gJYrIJaEuc/s8B
+        Ui4ioCTxsf0QWDmzwBlGifb3u9hBEsICPhLLT0xjBKnnFdCRmLA5CGLkB0aJlZu3gNXwCghK
+        nJz5hAXEZhbQkrjx7yUTSD2zgLTE8n9g8zkFrCXOPFjDCGKLCihLHNh2nGkCo+AsJN2zkHTP
+        QuhewMi8ilEytaA4Nz232LDAMC+1XK84Mbe4NC9dLzk/dxMjOAa0NHcwbl/1Qe8QIxMH4yFG
+        CQ5mJRHeL7szkoR4UxIrq1KL8uOLSnNSiw8xSnOwKInzXug6GS8kkJ5YkpqdmlqQWgSTZeLg
+        lGpg2pojZS371VN/UuRTHcfmunWNS0Uf7NMUtE/W9nujL5+58BNTukpbc1Pav9AnlzfpvRGZ
+        tHqqxfkI3YVPmern/4woO82sm2j5JLTOvfCjj9hfLvWMXVIXlyjmNdnpcX/UzVsRJTV53uTJ
+        iStOxPUxmC+QmxQoHsb3oXGfaMr6ap/LIoy9Je4Jzca/o0R1E23Muvb67olVl7g2++Wv7RkF
+        ksfaX36vyPLTCXnXvuhEsPVtL1tfpd175K+dPhew5tTnI1xckTL/H62ecvdasaf4nqs3T1m8
+        U9CzNeD+vsdq5mXr/AX3/cyuNe/WtuFISr25Qu3EkR7pfbdnaxjy8/TfPHGNfcOO3XnaExYp
+        ybgqsRRnJBpqMRcVJwIA/9D3//ACAAA=
+X-CMS-MailID: 20220427155356epcas5p4c96a6b254f89300d6f1943f6a8b4d1ff
 X-Msg-Generator: CA
 Content-Type: multipart/mixed;
-        boundary="----SFNbypxiwiYv2mFj5qNI3mkL0EyMW--LFKYa8svGKq9OOQ6W=_17deb_"
+        boundary="----B60c1XsBAYLlAvSr_Hnug5kZhc5LtmZ3tZiwVK7tFSQflFGl=_18042_"
 X-Sendblock-Type: REQ_APPROVE
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220426101804epcas5p4a0a325d3ce89e868e4924bbdeeba6d15
-References: <CGME20220426101804epcas5p4a0a325d3ce89e868e4924bbdeeba6d15@epcas5p4.samsung.com>
-        <20220426101241.30100-1-nj.shetty@samsung.com>
-        <c02f67e1-2f76-7e52-8478-78e28b96b6a1@opensource.wdc.com>
+X-CMS-RootMailID: 20220426101921epcas5p341707619b5e836490284a42c92762083
+References: <20220426101241.30100-1-nj.shetty@samsung.com>
+        <CGME20220426101921epcas5p341707619b5e836490284a42c92762083@epcas5p3.samsung.com>
+        <20220426101241.30100-3-nj.shetty@samsung.com>
+        <2082148f-890f-e5f4-c304-b99212aa377e@suse.de>
 X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
@@ -118,64 +120,204 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-------SFNbypxiwiYv2mFj5qNI3mkL0EyMW--LFKYa8svGKq9OOQ6W=_17deb_
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+------B60c1XsBAYLlAvSr_Hnug5kZhc5LtmZ3tZiwVK7tFSQflFGl=_18042_
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
 
-On Wed, Apr 27, 2022 at 10:46:32AM +0900, Damien Le Moal wrote:
-> On 4/26/22 19:12, Nitesh Shetty wrote:
-> > The patch series covers the points discussed in November 2021 virtual call
-> > [LSF/MM/BFP TOPIC] Storage: Copy Offload[0].
-> > We have covered the Initial agreed requirements in this patchset.
-> > Patchset borrows Mikulas's token based approach for 2 bdev
-> > implementation.
+On Wed, Apr 27, 2022 at 12:29:15PM +0200, Hannes Reinecke wrote:
+> On 4/26/22 12:12, Nitesh Shetty wrote:
+> > Introduce blkdev_issue_copy which supports source and destination bdevs,
+> > and an array of (source, destination and copy length) tuples.
+> > Introduce REQ_COPY copy offload operation flag. Create a read-write
+> > bio pair with a token as payload and submitted to the device in order.
+> > Read request populates token with source specific information which
+> > is then passed with write request.
+> > This design is courtesy Mikulas Patocka's token based copy
 > > 
-> > Overall series supports –
+> > Larger copy will be divided, based on max_copy_sectors,
+> > max_copy_range_sector limits.
 > > 
-> > 1. Driver
-> > - NVMe Copy command (single NS), including support in nvme-target (for
-> >     block and file backend)
+> > Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
+> > Signed-off-by: Arnav Dawn <arnav.dawn@samsung.com>
+> > ---
+> >   block/blk-lib.c           | 232 ++++++++++++++++++++++++++++++++++++++
+> >   block/blk.h               |   2 +
+> >   include/linux/blk_types.h |  21 ++++
+> >   include/linux/blkdev.h    |   2 +
+> >   include/uapi/linux/fs.h   |  14 +++
+> >   5 files changed, 271 insertions(+)
 > > 
-> > 2. Block layer
-> > - Block-generic copy (REQ_COPY flag), with interface accommodating
-> >     two block-devs, and multi-source/destination interface
-> > - Emulation, when offload is natively absent
-> > - dm-linear support (for cases not requiring split)
-> > 
-> > 3. User-interface
-> > - new ioctl
-> > - copy_file_range for zonefs
-> > 
-> > 4. In-kernel user
-> > - dm-kcopyd
-> > - copy_file_range in zonefs
-> > 
-> > For zonefs copy_file_range - Seems we cannot levearge fstest here. Limited
-> > testing is done at this point using a custom application for unit testing.
+> > diff --git a/block/blk-lib.c b/block/blk-lib.c
+> > index 09b7e1200c0f..ba9da2d2f429 100644
+> > --- a/block/blk-lib.c
+> > +++ b/block/blk-lib.c
+> > @@ -117,6 +117,238 @@ int blkdev_issue_discard(struct block_device *bdev, sector_t sector,
+> >   }
+> >   EXPORT_SYMBOL(blkdev_issue_discard);
+> > +/*
+> > + * Wait on and process all in-flight BIOs.  This must only be called once
+> > + * all bios have been issued so that the refcount can only decrease.
+> > + * This just waits for all bios to make it through bio_copy_end_io. IO
+> > + * errors are propagated through cio->io_error.
+> > + */
+> > +static int cio_await_completion(struct cio *cio)
+> > +{
+> > +	int ret = 0;
+> > +	unsigned long flags;
+> > +
+> > +	spin_lock_irqsave(&cio->lock, flags);
+> > +	if (cio->refcount) {
+> > +		cio->waiter = current;
+> > +		__set_current_state(TASK_UNINTERRUPTIBLE);
+> > +		spin_unlock_irqrestore(&cio->lock, flags);
+> > +		blk_io_schedule();
+> > +		/* wake up sets us TASK_RUNNING */
+> > +		spin_lock_irqsave(&cio->lock, flags);
+> > +		cio->waiter = NULL;
+> > +		ret = cio->io_err;
+> > +	}
+> > +	spin_unlock_irqrestore(&cio->lock, flags);
+> > +	kvfree(cio);
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +static void bio_copy_end_io(struct bio *bio)
+> > +{
+> > +	struct copy_ctx *ctx = bio->bi_private;
+> > +	struct cio *cio = ctx->cio;
+> > +	sector_t clen;
+> > +	int ri = ctx->range_idx;
+> > +	unsigned long flags;
+> > +	bool wake = false;
+> > +
+> > +	if (bio->bi_status) {
+> > +		cio->io_err = bio->bi_status;
+> > +		clen = (bio->bi_iter.bi_sector << SECTOR_SHIFT) - ctx->start_sec;
+> > +		cio->rlist[ri].comp_len = min_t(sector_t, clen, cio->rlist[ri].comp_len);
+> > +	}
+> > +	__free_page(bio->bi_io_vec[0].bv_page);
+> > +	kfree(ctx);
+> > +	bio_put(bio);
+> > +
+> > +	spin_lock_irqsave(&cio->lock, flags);
+> > +	if (((--cio->refcount) <= 0) && cio->waiter)
+> > +		wake = true;
+> > +	spin_unlock_irqrestore(&cio->lock, flags);
+> > +	if (wake)
+> > +		wake_up_process(cio->waiter);
+> > +}
+> > +
+> > +/*
+> > + * blk_copy_offload	- Use device's native copy offload feature
+> > + * Go through user provide payload, prepare new payload based on device's copy offload limits.
+> > + */
+> > +int blk_copy_offload(struct block_device *src_bdev, int nr_srcs,
+> > +		struct range_entry *rlist, struct block_device *dst_bdev, gfp_t gfp_mask)
+> > +{
+> > +	struct request_queue *sq = bdev_get_queue(src_bdev);
+> > +	struct request_queue *dq = bdev_get_queue(dst_bdev);
+> > +	struct bio *read_bio, *write_bio;
+> > +	struct copy_ctx *ctx;
+> > +	struct cio *cio;
+> > +	struct page *token;
+> > +	sector_t src_blk, copy_len, dst_blk;
+> > +	sector_t remaining, max_copy_len = LONG_MAX;
+> > +	unsigned long flags;
+> > +	int ri = 0, ret = 0;
+> > +
+> > +	cio = kzalloc(sizeof(struct cio), GFP_KERNEL);
+> > +	if (!cio)
+> > +		return -ENOMEM;
+> > +	cio->rlist = rlist;
+> > +	spin_lock_init(&cio->lock);
+> > +
+> > +	max_copy_len = min_t(sector_t, sq->limits.max_copy_sectors, dq->limits.max_copy_sectors);
+> > +	max_copy_len = min3(max_copy_len, (sector_t)sq->limits.max_copy_range_sectors,
+> > +			(sector_t)dq->limits.max_copy_range_sectors) << SECTOR_SHIFT;
+> > +
+> > +	for (ri = 0; ri < nr_srcs; ri++) {
+> > +		cio->rlist[ri].comp_len = rlist[ri].len;
+> > +		src_blk = rlist[ri].src;
+> > +		dst_blk = rlist[ri].dst;
+> > +		for (remaining = rlist[ri].len; remaining > 0; remaining -= copy_len) {
+> > +			copy_len = min(remaining, max_copy_len);
+> > +
+> > +			token = alloc_page(gfp_mask);
+> > +			if (unlikely(!token)) {
+> > +				ret = -ENOMEM;
+> > +				goto err_token;
+> > +			}
+> > +
+> > +			ctx = kzalloc(sizeof(struct copy_ctx), gfp_mask);
+> > +			if (!ctx) {
+> > +				ret = -ENOMEM;
+> > +				goto err_ctx;
+> > +			}
+> > +			ctx->cio = cio;
+> > +			ctx->range_idx = ri;
+> > +			ctx->start_sec = dst_blk;
+> > +
+> > +			read_bio = bio_alloc(src_bdev, 1, REQ_OP_READ | REQ_COPY | REQ_NOMERGE,
+> > +					gfp_mask);
+> > +			if (!read_bio) {
+> > +				ret = -ENOMEM;
+> > +				goto err_read_bio;
+> > +			}
+> > +			read_bio->bi_iter.bi_sector = src_blk >> SECTOR_SHIFT;
+> > +			__bio_add_page(read_bio, token, PAGE_SIZE, 0);
+> > +			/*__bio_add_page increases bi_size by len, so overwrite it with copy len*/
+> > +			read_bio->bi_iter.bi_size = copy_len;
+> > +			ret = submit_bio_wait(read_bio);
+> > +			bio_put(read_bio);
+> > +			if (ret)
+> > +				goto err_read_bio;
+> > +
+> > +			write_bio = bio_alloc(dst_bdev, 1, REQ_OP_WRITE | REQ_COPY | REQ_NOMERGE,
+> > +					gfp_mask);
+> > +			if (!write_bio) {
+> > +				ret = -ENOMEM;
+> > +				goto err_read_bio;
+> > +			}
+> > +			write_bio->bi_iter.bi_sector = dst_blk >> SECTOR_SHIFT;
+> > +			__bio_add_page(write_bio, token, PAGE_SIZE, 0);
+> > +			/*__bio_add_page increases bi_size by len, so overwrite it with copy len*/
+> > +			write_bio->bi_iter.bi_size = copy_len;
+> > +			write_bio->bi_end_io = bio_copy_end_io;
+> > +			write_bio->bi_private = ctx;
+> > +
+> > +			spin_lock_irqsave(&cio->lock, flags);
+> > +			++cio->refcount;
+> > +			spin_unlock_irqrestore(&cio->lock, flags);
+> > +
+> > +			submit_bio(write_bio);
+> > +			src_blk += copy_len;
+> > +			dst_blk += copy_len;
+> > +		}
+> > +	}
+> > +
 > 
-> https://protect2.fireeye.com/v1/url?k=b14bf8e1-d0361099-b14a73ae-74fe485fffb1-9bd9bbb269af18f9&q=1&e=b9714c29-ea22-4fa5-8a2a-eeb42ca4bdc1&u=https%3A%2F%2Fgithub.com%2Fwesterndigitalcorporation%2Fzonefs-tools
+> Hmm. I'm not sure if I like the copy loop.
+> What I definitely would do is to allocate the write bio before reading data;
+> after all, if we can't allocate the write bio reading is pretty much
+> pointless.
 > 
-> ./configure --with-tests
-> make
-> sudo make install
+> But the real issue I have with this is that it's doing synchronous reads,
+> thereby limiting the performance.
 > 
-> Then run tests/zonefs-tests.sh
+> Can't you submit the write bio from the end_io function of the read bio?
+> That would disentangle things, and we should be getting a better
+> performance.
 > 
-> Adding test case is simple. Just add script files under tests/scripts
-> 
-> I just realized that the README file of this project is not documenting
-> this. I will update it.
->
 
-Thank you. We will try to use this.
-Any plans to integrate this testsuite with fstests(xfstest) ?
+Agree, it will make code efficient.
 
 --
+Thank you 
 Nitesh Shetty
 
-------SFNbypxiwiYv2mFj5qNI3mkL0EyMW--LFKYa8svGKq9OOQ6W=_17deb_
+------B60c1XsBAYLlAvSr_Hnug5kZhc5LtmZ3tZiwVK7tFSQflFGl=_18042_
 Content-Type: text/plain; charset="utf-8"
 
 
-------SFNbypxiwiYv2mFj5qNI3mkL0EyMW--LFKYa8svGKq9OOQ6W=_17deb_--
+------B60c1XsBAYLlAvSr_Hnug5kZhc5LtmZ3tZiwVK7tFSQflFGl=_18042_--
