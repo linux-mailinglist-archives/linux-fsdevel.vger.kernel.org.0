@@ -2,133 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5780A51255A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Apr 2022 00:37:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4876D51255C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Apr 2022 00:38:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232575AbiD0Wjn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Apr 2022 18:39:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46440 "EHLO
+        id S232671AbiD0Wl3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Apr 2022 18:41:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236689AbiD0WjN (ORCPT
+        with ESMTP id S232420AbiD0Wl0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Apr 2022 18:39:13 -0400
-Received: from mail-lj1-x229.google.com (mail-lj1-x229.google.com [IPv6:2a00:1450:4864:20::229])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E26462CCBA
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Apr 2022 15:35:57 -0700 (PDT)
-Received: by mail-lj1-x229.google.com with SMTP id q185so4479452ljb.5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Apr 2022 15:35:57 -0700 (PDT)
+        Wed, 27 Apr 2022 18:41:26 -0400
+Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C74A26D3B4;
+        Wed, 27 Apr 2022 15:38:13 -0700 (PDT)
+Received: by mail-pf1-x434.google.com with SMTP id bo5so2727014pfb.4;
+        Wed, 27 Apr 2022 15:38:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=openvz-org.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=zxjODgdLfXb5bMGzaUtB+izM+jyIRFXXBicqRczakdE=;
-        b=kOgHkvcXiKDHcf0FPKISXEY5HqGfG/C3VTxC3r+qCyDNb58YQ2Ffm1EN+ZlnNbcklN
-         3xuHlw7dI5IAdFE/+iGt8WZvjfO7q6k8VKBoPN743YhsElb89sF9gZKHOWTWzA2c3Rwd
-         54YF4aIVaLRZWzwG0KTZKcgCLNVNHLGg3rCWfTKevXQPCDYDJ2IZuZKHtRmaqsYwSR5p
-         XpJhcPiWYNEZefwnTjp4pe/ygtOPWtd5Talc9/MypxxDHY+1wSUIaXiRzkx85TXRbhgt
-         S+SnpKe5BVSbjw/sLPVHQ/cE9dacC5fnJ8dVd88zXJ4RowaAf8I5IZSkR41CoM++9DjB
-         nvZw==
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=drm1OQdyw43I3bW2ueb7Nz1xPsW07ECbYZ6BCyW/SWg=;
+        b=g6C7JMcnrZ5ojJ8YLJNvmY7lTaxV4r0eAyKMoPajLiumweS31BhCzTuThLIrUiRBGc
+         eRXEE8IQN7ojqtn7KQXhZzxHW3UtKQE6oXVeGGE/7u8c0+AKrAbRC9ttkrd+I6YHw0Vj
+         Zj3iNJJBGhASQA/IKrYgpcgqfPs03eeGcULbEi/OVrmv2sYZefNNGnPQ8ETr6z7SF64Q
+         FPPcYllE5FMCrqIDzoM6t3OkB6Otua3142EyPLSj76zSVSdg1uD5kFFlTpAqrgHq+wvR
+         8Ibq5glylHByEctpFQp8LKT/Fd5S/qFS+IN83Z3A9MNSxusFkYGbL/aYTcGfKwd0IMqv
+         vxYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=zxjODgdLfXb5bMGzaUtB+izM+jyIRFXXBicqRczakdE=;
-        b=ge4JaB75o8WIUH2KCJyFaitHUGtrE19wk52GpMCaAy7qZDkKeyJLHacolRszobhHi/
-         ufoiuASo4d+FMfoBHTfeyeqLrcmsO/vN0XepOLZYtXiKMLfl+dCovsc9Y8Udn2XKz+R0
-         AXu2epBA/5j3ahfNvRIR9QOGedtbMg0oHBTNWxTP8mmHNsB8NPWqGGibn8RaFP2AunKE
-         qILhdnmeLKeixUKs00FXAcO8gd9iq0quE+crTKtnxpUg2DetFvVbb/zcsPHEXQGMH2Pt
-         YBND9wea81tkE4Q7WnT9vXHBEdBrNBIlFM+Jq4LrfrWWHyoOI39+eRhwlD+TLhTrDDzc
-         Bbyg==
-X-Gm-Message-State: AOAM5337/+V1PK2oYBWSg8ND4qVaPt5c7J2CtIIn8cjaC4ho5BnDObIE
-        gbYeteHFae3ugod6MUlwojqQig==
-X-Google-Smtp-Source: ABdhPJxTIRQmVTxGXf9Qi7GP7rRR0+iZpZJAWqZv6M4gFYfPHkUDB+SbCZAFITpdjJXyLHa2cnkymA==
-X-Received: by 2002:a05:651c:1542:b0:249:5d86:3164 with SMTP id y2-20020a05651c154200b002495d863164mr20114887ljp.500.1651098956152;
-        Wed, 27 Apr 2022 15:35:56 -0700 (PDT)
-Received: from [192.168.1.65] ([46.188.121.177])
-        by smtp.gmail.com with ESMTPSA id f1-20020a056512322100b00472285d5a74sm362884lfe.147.2022.04.27.15.35.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 27 Apr 2022 15:35:55 -0700 (PDT)
-Message-ID: <53613f02-75f2-0546-d84c-a5ed989327b6@openvz.org>
-Date:   Thu, 28 Apr 2022 01:35:54 +0300
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=drm1OQdyw43I3bW2ueb7Nz1xPsW07ECbYZ6BCyW/SWg=;
+        b=CPA3aEdUVnCAEfYwIVbu5ecsUVGb3LWmNshVqRGolO4srjqHXaFiNGpJJWSfv4XoAe
+         9jTCUqQtF+TOEVIxorxaGzrSDwLq/eM95+f9uEFkg1uBzH0ZbTLwxHkoulLitrZpKvsk
+         /UiGMPYeDbFYBm6B0AHn61uYd44lyC+ugzuoKXTSg+vRQE9AuOn4It16T7hs9fQxgmAQ
+         K7OZuNNHvgUO/xrV5YpY+4UoO2ebzgxeUw+kH3ZQWICsNtyFjz0tm5xh83vFqEjI1Rs7
+         gcsJkPRSYt9FiC3mcRzQ3HnksO0WNnwE9oslI4cYN/PHX+xtmfK9nPhEk1C798iK+2Jy
+         489Q==
+X-Gm-Message-State: AOAM531d2A16qTKntAK3sLXHQIkCPYPYrcZuP2Jq7O6oaZnPbio3dfZv
+        TB5LfI5JbsV6J2KhXrf0o0i8vDU14tFLzbsxCK0=
+X-Google-Smtp-Source: ABdhPJz5hgyo4J17oiLJQvgmGBUrY5Szb7LLTDZQuKW+KQqtiG1uSOJB7kXebmgJ2zuSLtC0gH0cpsi+p7k4QYGE8nk=
+X-Received: by 2002:a63:90ca:0:b0:3aa:fff3:6f76 with SMTP id
+ a193-20020a6390ca000000b003aafff36f76mr19460147pge.206.1651099093287; Wed, 27
+ Apr 2022 15:38:13 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH] memcg: accounting for objects allocated for new netdevice
-Content-Language: en-US
-To:     Shakeel Butt <shakeelb@google.com>,
-        =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>
-Cc:     Roman Gushchin <roman.gushchin@linux.dev>,
-        Vlastimil Babka <vbabka@suse.cz>, kernel@openvz.org,
-        Florian Westphal <fw@strlen.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Cgroups <cgroups@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tejun Heo <tj@kernel.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <7e867cb0-89d6-402c-33d2-9b9ba0ba1523@openvz.org>
- <20220427140153.GC9823@blackbody.suse.cz>
- <CALvZod6Dz7iw=gyiQ2pDVe2RJxF-7PbVoptwFZCw=sWtxpBBGQ@mail.gmail.com>
-From:   Vasily Averin <vvs@openvz.org>
-In-Reply-To: <CALvZod6Dz7iw=gyiQ2pDVe2RJxF-7PbVoptwFZCw=sWtxpBBGQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-3.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+References: <20220404200250.321455-1-shy828301@gmail.com> <YkuKbMbSecBVsa1k@casper.infradead.org>
+ <CAHbLzkoWPN+ahrvu2JrvoDpf8J_QGR6Ug6BbPnC11C82Lb-NaA@mail.gmail.com> <YmmuivdOWcr46oNC@casper.infradead.org>
+In-Reply-To: <YmmuivdOWcr46oNC@casper.infradead.org>
+From:   Yang Shi <shy828301@gmail.com>
+Date:   Wed, 27 Apr 2022 15:38:00 -0700
+Message-ID: <CAHbLzkoOvewQ6DfXH1Pac50xDS+PHRh3BbYVwGnptov55N6msQ@mail.gmail.com>
+Subject: Re: [v3 PATCH 0/8] Make khugepaged collapse readonly FS THP more consistent
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Vlastimil Babka <vbabka@suse.cz>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        Song Liu <songliubraving@fb.com>,
+        Rik van Riel <riel@surriel.com>, Zi Yan <ziy@nvidia.com>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/27/22 19:52, Shakeel Butt wrote:
-> On Wed, Apr 27, 2022 at 7:01 AM Michal Koutný <mkoutny@suse.com> wrote:
->>
->> Hello Vasily.
->>
->> On Wed, Apr 27, 2022 at 01:37:50PM +0300, Vasily Averin <vvs@openvz.org> wrote:
->>> diff --git a/fs/kernfs/mount.c b/fs/kernfs/mount.c
->>> index cfa79715fc1a..2881aeeaa880 100644
->>> --- a/fs/kernfs/mount.c
->>> +++ b/fs/kernfs/mount.c
->>> @@ -391,7 +391,7 @@ void __init kernfs_init(void)
->>>  {
->>>       kernfs_node_cache = kmem_cache_create("kernfs_node_cache",
->>>                                             sizeof(struct kernfs_node),
->>> -                                           0, SLAB_PANIC, NULL);
->>> +                                           0, SLAB_PANIC | SLAB_ACCOUNT, NULL);
->>
->> kernfs accounting you say?
->> kernfs backs up also cgroups, so the parent-child accounting comes to my
->> mind.
->> See the temporary switch to parent memcg in mem_cgroup_css_alloc().
->>
->> (I mean this makes some sense but I'd suggest unlumping the kernfs into
->> a separate path for possible discussion and its not-only-netdevice
->> effects.)
-> 
-> I agree with Michal that kernfs accounting should be its own patch.
-> Internally at Google, we actually have enabled the memcg accounting of
-> kernfs nodes. We have workloads which create 100s of subcontainers and
-> without memcg accounting of kernfs we see high system overhead.
+On Wed, Apr 27, 2022 at 1:59 PM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Mon, Apr 04, 2022 at 05:48:49PM -0700, Yang Shi wrote:
+> > When khugepaged collapses file THPs, its behavior is not consistent.
+> > It is kind of "random luck" for khugepaged to see the file vmas (see
+> > report: https://lore.kernel.org/linux-mm/00f195d4-d039-3cf2-d3a1-a2c88de397a0@suse.cz/)
+> > since currently the vmas are registered to khugepaged when:
+> >   - Anon huge pmd page fault
+> >   - VMA merge
+> >   - MADV_HUGEPAGE
+> >   - Shmem mmap
+> >
+> > If the above conditions are not met, even though khugepaged is enabled
+> > it won't see any file vma at all.  MADV_HUGEPAGE could be specified
+> > explicitly to tell khugepaged to collapse this area, but when
+> > khugepaged mode is "always" it should scan suitable vmas as long as
+> > VM_NOHUGEPAGE is not set.
+>
+> I don't see that as being true at all.  The point of this hack was that
+> applications which really knew what they were doing could enable it.
+> It makes no sense to me that setting "always" by the sysadmin for shmem
+> also force-enables ROTHP, even for applications which aren't aware of it.
+>
+> Most telling, I think, is that Song Liu hasn't weighed in on this at
+> all.  It's clearly not important to the original author.
 
-I had this idea (i.e. move kernfs accounting into separate patch) too, 
-but finally decided to include it into current patch.
-
-Kernfs accounting is critical for described scenario. Without it typical
-netdevice creating will charge only ~50% of allocated memory, and the rest
-of patch does not allow to protect the host properly.
-
-Now I'm going to follow your recommendation and split the patch.
-
-Thank you,
-	Vasily Averin
+I tend to agree that MADV_MADVISE should be preferred when this
+feature (or hack) was designed in the original author's mind in the
+first place. And "madvise" is definitely the recommended way to use
+THP, but I don't think it means we should not care "always" and assume
+nobody uses it otherwise the issue would have not been reported.
