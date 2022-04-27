@@ -2,251 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1118A5117A7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Apr 2022 14:46:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C817511A40
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Apr 2022 16:56:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234572AbiD0Mqg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Apr 2022 08:46:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45984 "EHLO
+        id S237989AbiD0Ofh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Apr 2022 10:35:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234544AbiD0Mqe (ORCPT
+        with ESMTP id S238109AbiD0Oe2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Apr 2022 08:46:34 -0400
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5006A8CD80
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Apr 2022 05:43:23 -0700 (PDT)
-Received: by mail-io1-f72.google.com with SMTP id j6-20020a5d93c6000000b0064fbbf9566bso2170201ioo.12
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Apr 2022 05:43:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=5Jllh2G8R/2uZZhklSVexvxSPS3UAGeuThjoXB88O6U=;
-        b=OXxCWSTrq12kohOxGleNMmFpvuWy/8MK19uY6obwGIhC9h3SRueDZ5gs/Ml647FD9p
-         5uN2MLBctPxLqvQqIiUrmWdVB5ROnllrwXMJvgLUNo59peb9dgx49BSOuYBxm/Q7zDVm
-         kZjpGSTShpNlALo/SHHCmyYN7jQ+efSGD/MGUCj+BWepd6Kgv1DMB64yF76o7ikk7VCt
-         w4QNqJnAoOtdWd7I/sBaV6vE1+l0YG6FQoXu/BzX2VLcrtww37el3gBG9oldHKmRysmM
-         L/qdyLdhCgq8srGA8uDp6RPFaPdyZkg1PpqpldarLbwTZx9dWb6HI2WZ5WzmqDoUw4Ev
-         ITAw==
-X-Gm-Message-State: AOAM531DO0GDn3pe4h2Ej1bRQQAz9hNq09vPhsiJnhVDAqDzZOrD/nIL
-        1TfG8N9IbkT31hBwT7vatPH0KBY3AsktycaOSZBKP6c/+Qhi
-X-Google-Smtp-Source: ABdhPJxfxm8TifOewxEbaWIV+LwAy1PZpiDBDULm9D1IRjFyT8ViHI4ovn+JXw0qKmshPTvzPWWsNrLCsPUw0dp9lHDZhw51fg4K
+        Wed, 27 Apr 2022 10:34:28 -0400
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9845418347
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Apr 2022 07:31:08 -0700 (PDT)
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20220427143103epoutp01879fc7f9510ad07a13d10ede5169971f~px0sV57XE2068920689epoutp01h
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Apr 2022 14:31:03 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20220427143103epoutp01879fc7f9510ad07a13d10ede5169971f~px0sV57XE2068920689epoutp01h
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1651069863;
+        bh=MH0TUpJmd6Xn0TDs3wbYY50xoN/FUQag8q/ZfmgP1iI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=i8ZdI+gKcT3sdt3HmnIHuvWHcj0t0iZH0pVj6s8dOYLz4OX21bPI8MzjwoWXvqsTw
+         yL/Qy955dY/q43hOORMoDzvBM0e49Xl5IeZc6S9tWA3nvZh7PO4qc2hsJ7kGGlmhS2
+         NRBP6upHgZYAFU+rwn0NdJjY680lNBBCp5qW0Y20=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+        20220427143102epcas5p29b596e5d8e6e014fbed587a068543a20~px0rRj7Yu2595925959epcas5p2B;
+        Wed, 27 Apr 2022 14:31:02 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.175]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4KpLlR0WZ2z4x9Pp; Wed, 27 Apr
+        2022 14:30:59 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        46.88.09762.2A359626; Wed, 27 Apr 2022 23:30:58 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+        20220427125500epcas5p189ef3a038115f13840f8992a79fb2e3d~pwg002FDZ1031610316epcas5p1G;
+        Wed, 27 Apr 2022 12:55:00 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20220427125500epsmtrp18381e20d6e38ffd4eb28b8ea3234fa63~pwg0y5X4H2300323003epsmtrp1O;
+        Wed, 27 Apr 2022 12:55:00 +0000 (GMT)
+X-AuditID: b6c32a4b-1fdff70000002622-70-626953a2579d
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        0D.34.08853.42D39626; Wed, 27 Apr 2022 21:55:00 +0900 (KST)
+Received: from test-zns (unknown [107.110.206.5]) by epsmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20220427125459epsmtip19208f23035104a9c8446a86c8c32dcd3~pwgzmZAtj1493614936epsmtip1J;
+        Wed, 27 Apr 2022 12:54:58 +0000 (GMT)
+Date:   Wed, 27 Apr 2022 18:19:51 +0530
+From:   Nitesh Shetty <nj.shetty@samsung.com>
+To:     Damien Le Moal <damien.lemoal@opensource.wdc.com>
+Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        dm-devel@redhat.com, linux-nvme@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, nitheshshetty@gmail.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 00/10] Add Copy offload support
+Message-ID: <20220427124951.GA9558@test-zns>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:3288:b0:32a:a19c:7e9 with SMTP id
- f8-20020a056638328800b0032aa19c07e9mr12140815jav.248.1651063402710; Wed, 27
- Apr 2022 05:43:22 -0700 (PDT)
-Date:   Wed, 27 Apr 2022 05:43:22 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009ecbf205dda227bd@google.com>
-Subject: [syzbot] KASAN: use-after-free Read in mas_next_nentry
-From:   syzbot <syzbot+7170d66493145b71afd4@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+In-Reply-To: <6a85e8c8-d9d1-f192-f10d-09052703c99a@opensource.wdc.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDJsWRmVeSWpSXmKPExsWy7bCmpu6i4Mwkg3fbLS1+nz3PbLH33WxW
+        i723tC327D3JYnF51xw2i/nLnrJbdF/fwWax40kjowOHx85Zd9k9Ni+p99jZep/V4/2+q2we
+        nzfJBbBGZdtkpCampBYppOYl56dk5qXbKnkHxzvHm5oZGOoaWlqYKynkJeam2iq5+AToumXm
+        AF2ipFCWmFMKFApILC5W0rezKcovLUlVyMgvLrFVSi1IySkwKdArTswtLs1L18tLLbEyNDAw
+        MgUqTMjOmPj9CnPBOY6Knz1vGBsY+9i7GDk5JARMJF7e7WXsYuTiEBLYzSgxce1zVgjnE6PE
+        8nX72SCcb4wSjZeuscK0tGw9B1W1l1Fi26zjUP3PGCWWte5nBKliEVCVWLRuPlMXIwcHm4C2
+        xOn/HCBhEQFTibc9rSwg9cwCZxgl2t/vAjtEWMBMYnVnKxuIzSugI3Hzy19WCFtQ4uTMJywg
+        NqeAm0THgUnMILaogLLEgW3HmUAGSQhM5ZA4sWsFC8R5LhIf7s1hhrCFJV4d3wL1qZTEy/42
+        KLtcYnvbAqjmFkaJrlOnoJrtJS7u+csEYjMLZEj8fzkV6mdZiamn1kHF+SR6fz9hgojzSuyY
+        B2MrS6xZv4ANwpaUuPa9Ecr2kNj5cSU0vE4Bg3jlHMYJjPKzkHw3C8m+WcAQYxbQlFi/Sx8i
+        LC/RvHU2M0RYWmL5Pw4kFQsY2VYxSqYWFOempxabFhjnpZbDoz85P3cTIzjZannvYHz04IPe
+        IUYmDsZDjBIczEoivF92ZyQJ8aYkVlalFuXHF5XmpBYfYjQFRtxEZinR5Hxgus8riTc0sTQw
+        MTMzM7E0NjNUEuc9lb4hUUggPbEkNTs1tSC1CKaPiYNTqoFJ/sXyv8flM4vyjuwxY1rg5f7V
+        /9PC2qtRz00K7tQGHgyfd79y+q5Vt3ZZqa4/z7Qjwv34g2nb7mf/KvrDs2J35YPFBls+phh5
+        Kj4wmWk8c92//z4WkbdfvuB8+tAlU3BHDpfP2+OPuVJ+P9tsYnzRb3PUYo8jWy8zXz5fe2Ti
+        FtsGP7Wgfr0snydfjEP/vps92+n9qjUCjnP89QRXz98z2dewxrpyqfUSO++Pcx7VzXEJsLQT
+        +vRNM9tSM+ax6YE9b6eZRam4a00uF7nkk7i7eW765hPLglMWajFIRC/cp11Wuslml6sQX+xN
+        qV/2CcdjHh0S1RCKq1l3x91Wdr3cJfbdPFuPX1bvWu5gOXtRmRJLcUaioRZzUXEiAJsamEE/
+        BAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBLMWRmVeSWpSXmKPExsWy7bCSnK6KbWaSwZMuIYvfZ88zW+x9N5vV
+        Yu8tbYs9e0+yWFzeNYfNYv6yp+wW3dd3sFnseNLI6MDhsXPWXXaPzUvqPXa23mf1eL/vKpvH
+        501yAaxRXDYpqTmZZalF+nYJXBnv1l9kLPjAWrGkYRZTA+MZli5GTg4JAROJlq3nWEFsIYHd
+        jBJXf/pBxCUllv09wgxhC0us/PecvYuRC6jmCaNEx5HH7CAJFgFViUXr5jN1MXJwsAloS5z+
+        zwESFhEwlXjb08oCUs8scIZRov39LrB6YQEzidWdrWwgNq+AjsTNL39ZIYaeYpTofHqRFSIh
+        KHFy5hOw65gF1CX+zLvEDLKAWUBaYvk/DoiwvETz1tlgx3EKuEl0HJgEZosKKEsc2HacaQKj
+        0Cwkk2YhmTQLYdIsJJMWMLKsYpRMLSjOTc8tNiwwzEst1ytOzC0uzUvXS87P3cQIjhwtzR2M
+        21d90DvEyMTBeIhRgoNZSYT3y+6MJCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8F7pOxgsJpCeW
+        pGanphakFsFkmTg4pRqY3E4HJove7NU0V7A9sZ11R157x+KgZU7PWx9lvNdqnSV0Katz3/bd
+        qxRYBTvLRENTZxnWXox4ta7whvj/268VGQ23TZG9+Ovy0izWsn8LH2hrJ208VLHiIMukjZdf
+        9Au12G5aLub9wmBp/ox8xxkX9JROneMWa826cC7U7v2Rf29EjD/Mjf7q8u7e9ZR4hXPJStwa
+        bdcXLfU8YqS+VM9WKSJ8ncP5U5znSri7t5ntLJk/WXVnqaa52nEvD6+zhitE5z9oDbMJk9j+
+        /KKyG4/iPNGIIp2zMpulRDnvb6lUS5Xjjt681vBMiceTFU7rvM5v+zVdvozz4vuXNw+q7fp2
+        VODNqvlHDuVrcp976l+rqcRSnJFoqMVcVJwIAPtAlfYLAwAA
+X-CMS-MailID: 20220427125500epcas5p189ef3a038115f13840f8992a79fb2e3d
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+        boundary="----SFNbypxiwiYv2mFj5qNI3mkL0EyMW--LFKYa8svGKq9OOQ6W=_1770c_"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220426101804epcas5p4a0a325d3ce89e868e4924bbdeeba6d15
+References: <CGME20220426101804epcas5p4a0a325d3ce89e868e4924bbdeeba6d15@epcas5p4.samsung.com>
+        <20220426101241.30100-1-nj.shetty@samsung.com>
+        <6a85e8c8-d9d1-f192-f10d-09052703c99a@opensource.wdc.com>
+X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+------SFNbypxiwiYv2mFj5qNI3mkL0EyMW--LFKYa8svGKq9OOQ6W=_1770c_
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
 
-syzbot found the following issue on:
+O Wed, Apr 27, 2022 at 11:19:48AM +0900, Damien Le Moal wrote:
+> On 4/26/22 19:12, Nitesh Shetty wrote:
+> > The patch series covers the points discussed in November 2021 virtual call
+> > [LSF/MM/BFP TOPIC] Storage: Copy Offload[0].
+> > We have covered the Initial agreed requirements in this patchset.
+> > Patchset borrows Mikulas's token based approach for 2 bdev
+> > implementation.
+> > 
+> > Overall series supports –
+> > 
+> > 1. Driver
+> > - NVMe Copy command (single NS), including support in nvme-target (for
+> >     block and file backend)
+> 
+> It would also be nice to have copy offload emulation in null_blk for testing.
+>
 
-HEAD commit:    f02ac5c95dfd Add linux-next specific files for 20220427
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=14bd8db2f00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e9256c70f586da8a
-dashboard link: https://syzkaller.appspot.com/bug?extid=7170d66493145b71afd4
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=113b4252f00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1174bcbaf00000
+We can plan this in next phase of copy support, once this series settles down.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+7170d66493145b71afd4@syzkaller.appspotmail.com
+--
+Nitesh Shetty
 
-==================================================================
-BUG: KASAN: use-after-free in mas_safe_min lib/maple_tree.c:715 [inline]
-BUG: KASAN: use-after-free in mas_next_nentry+0x997/0xaa0 lib/maple_tree.c:4546
-Read of size 8 at addr ffff88807811e418 by task syz-executor361/3593
-
-CPU: 1 PID: 3593 Comm: syz-executor361 Not tainted 5.18.0-rc4-next-20220427-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:106
- print_address_description.constprop.0.cold+0xeb/0x495 mm/kasan/report.c:313
- print_report mm/kasan/report.c:429 [inline]
- kasan_report.cold+0xf4/0x1c6 mm/kasan/report.c:491
- mas_safe_min lib/maple_tree.c:715 [inline]
- mas_next_nentry+0x997/0xaa0 lib/maple_tree.c:4546
- mas_next_entry lib/maple_tree.c:4636 [inline]
- mas_next+0x1eb/0xc40 lib/maple_tree.c:5723
- userfaultfd_register fs/userfaultfd.c:1468 [inline]
- userfaultfd_ioctl+0x2527/0x40f0 fs/userfaultfd.c:1993
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:870 [inline]
- __se_sys_ioctl fs/ioctl.c:856 [inline]
- __x64_sys_ioctl+0x193/0x200 fs/ioctl.c:856
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-RIP: 0033:0x7f4e5785d939
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 91 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffff7501a18 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000031 RCX: 00007f4e5785d939
-RDX: 00000000200001c0 RSI: 00000000c020aa00 RDI: 0000000000000003
-RBP: 00007ffff7501b10 R08: 00007ffff7501a72 R09: 00007ffff7501a72
-R10: 00007ffff7501a72 R11: 0000000000000246 R12: 00007ffff7501ae0
-R13: 00007f4e578e14e0 R14: 0000000000000003 R15: 00007ffff7501a72
- </TASK>
-
-Allocated by task 3592:
- kasan_save_stack+0x1e/0x40 mm/kasan/common.c:38
- kasan_set_track mm/kasan/common.c:45 [inline]
- set_alloc_info mm/kasan/common.c:436 [inline]
- __kasan_slab_alloc+0x90/0xc0 mm/kasan/common.c:469
- kasan_slab_alloc include/linux/kasan.h:224 [inline]
- slab_post_alloc_hook mm/slab.h:750 [inline]
- kmem_cache_alloc_bulk+0x39f/0x720 mm/slub.c:3728
- mt_alloc_bulk lib/maple_tree.c:151 [inline]
- mas_alloc_nodes+0x1df/0x6b0 lib/maple_tree.c:1244
- mas_node_count+0x101/0x130 lib/maple_tree.c:1303
- mas_split lib/maple_tree.c:3406 [inline]
- mas_commit_b_node lib/maple_tree.c:3508 [inline]
- mas_wr_modify+0x2505/0x5ac0 lib/maple_tree.c:4251
- mas_wr_store_entry.isra.0+0x66e/0x10f0 lib/maple_tree.c:4289
- mas_store+0xac/0xf0 lib/maple_tree.c:5523
- dup_mmap+0x845/0x1030 kernel/fork.c:687
- dup_mm+0x91/0x370 kernel/fork.c:1516
- copy_mm kernel/fork.c:1565 [inline]
- copy_process+0x3b07/0x6fd0 kernel/fork.c:2226
- kernel_clone+0xe7/0xab0 kernel/fork.c:2631
- __do_sys_clone+0xc8/0x110 kernel/fork.c:2748
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-
-Freed by task 3593:
- kasan_save_stack+0x1e/0x40 mm/kasan/common.c:38
- kasan_set_track+0x21/0x30 mm/kasan/common.c:45
- kasan_set_free_info+0x20/0x30 mm/kasan/generic.c:370
- ____kasan_slab_free mm/kasan/common.c:366 [inline]
- ____kasan_slab_free+0x166/0x1a0 mm/kasan/common.c:328
- kasan_slab_free include/linux/kasan.h:200 [inline]
- slab_free_hook mm/slub.c:1727 [inline]
- slab_free_freelist_hook+0x8b/0x1c0 mm/slub.c:1753
- slab_free mm/slub.c:3507 [inline]
- kmem_cache_free_bulk mm/slub.c:3654 [inline]
- kmem_cache_free_bulk+0x2c0/0xb60 mm/slub.c:3641
- mt_free_bulk lib/maple_tree.c:157 [inline]
- mas_destroy+0x394/0x5c0 lib/maple_tree.c:5685
- mas_store_prealloc+0xec/0x150 lib/maple_tree.c:5567
- vma_mas_store mm/internal.h:482 [inline]
- __vma_adjust+0x6ba/0x18f0 mm/mmap.c:811
- vma_adjust include/linux/mm.h:2654 [inline]
- __split_vma+0x443/0x530 mm/mmap.c:2259
- split_vma+0x9f/0xe0 mm/mmap.c:2292
- userfaultfd_register fs/userfaultfd.c:1444 [inline]
- userfaultfd_ioctl+0x39f4/0x40f0 fs/userfaultfd.c:1993
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:870 [inline]
- __se_sys_ioctl fs/ioctl.c:856 [inline]
- __x64_sys_ioctl+0x193/0x200 fs/ioctl.c:856
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-
-The buggy address belongs to the object at ffff88807811e400
- which belongs to the cache maple_node of size 256
-The buggy address is located 24 bytes inside of
- 256-byte region [ffff88807811e400, ffff88807811e500)
-
-The buggy address belongs to the physical page:
-page:ffffea0001e04780 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x7811e
-head:ffffea0001e04780 order:1 compound_mapcount:0 compound_pincount:0
-flags: 0xfff00000010200(slab|head|node=0|zone=1|lastcpupid=0x7ff)
-raw: 00fff00000010200 0000000000000000 dead000000000001 ffff888010c4fdc0
-raw: 0000000000000000 0000000000100010 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 1, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 3286, tgid 3286 (dhcpcd-run-hook), ts 27966983290, free_ts 22717162691
- prep_new_page mm/page_alloc.c:2431 [inline]
- get_page_from_freelist+0xba2/0x3e00 mm/page_alloc.c:4172
- __alloc_pages+0x1b2/0x500 mm/page_alloc.c:5393
- alloc_pages+0x1aa/0x310 mm/mempolicy.c:2281
- alloc_slab_page mm/slub.c:1797 [inline]
- allocate_slab+0x26c/0x3c0 mm/slub.c:1942
- new_slab mm/slub.c:2002 [inline]
- ___slab_alloc+0x985/0xd90 mm/slub.c:3002
- kmem_cache_alloc_bulk+0x21c/0x720 mm/slub.c:3704
- mt_alloc_bulk lib/maple_tree.c:151 [inline]
- mas_alloc_nodes+0x2b0/0x6b0 lib/maple_tree.c:1244
- mas_preallocate+0xfb/0x270 lib/maple_tree.c:5581
- __vma_adjust+0x226/0x18f0 mm/mmap.c:742
- vma_adjust include/linux/mm.h:2654 [inline]
- __split_vma+0x443/0x530 mm/mmap.c:2259
- do_mas_align_munmap+0x4f5/0xe80 mm/mmap.c:2375
- do_mas_munmap+0x202/0x2c0 mm/mmap.c:2499
- mmap_region+0x219/0x1c70 mm/mmap.c:2547
- do_mmap+0x825/0xf60 mm/mmap.c:1471
- vm_mmap_pgoff+0x1b7/0x290 mm/util.c:488
- ksys_mmap_pgoff+0x40d/0x5a0 mm/mmap.c:1517
-page last free stack trace:
- reset_page_owner include/linux/page_owner.h:24 [inline]
- free_pages_prepare mm/page_alloc.c:1346 [inline]
- free_pcp_prepare+0x549/0xd20 mm/page_alloc.c:1396
- free_unref_page_prepare mm/page_alloc.c:3318 [inline]
- free_unref_page+0x19/0x6a0 mm/page_alloc.c:3413
- __unfreeze_partials+0x17c/0x1a0 mm/slub.c:2521
- qlink_free mm/kasan/quarantine.c:168 [inline]
- qlist_free_all+0x6a/0x170 mm/kasan/quarantine.c:187
- kasan_quarantine_reduce+0x180/0x200 mm/kasan/quarantine.c:294
- __kasan_slab_alloc+0xa2/0xc0 mm/kasan/common.c:446
- kasan_slab_alloc include/linux/kasan.h:224 [inline]
- slab_post_alloc_hook mm/slab.h:750 [inline]
- slab_alloc_node mm/slub.c:3214 [inline]
- slab_alloc mm/slub.c:3222 [inline]
- __kmalloc+0x200/0x350 mm/slub.c:4415
- kmalloc include/linux/slab.h:593 [inline]
- tomoyo_realpath_from_path+0xc3/0x620 security/tomoyo/realpath.c:254
- tomoyo_realpath_nofollow+0xc8/0xe0 security/tomoyo/realpath.c:309
- tomoyo_find_next_domain+0x280/0x1f80 security/tomoyo/domain.c:727
- tomoyo_bprm_check_security security/tomoyo/tomoyo.c:101 [inline]
- tomoyo_bprm_check_security+0x121/0x1a0 security/tomoyo/tomoyo.c:91
- security_bprm_check+0x45/0xa0 security/security.c:865
- search_binary_handler fs/exec.c:1718 [inline]
- exec_binprm fs/exec.c:1771 [inline]
- bprm_execve fs/exec.c:1840 [inline]
- bprm_execve+0x732/0x1970 fs/exec.c:1802
- do_execveat_common+0x727/0x890 fs/exec.c:1945
- do_execve fs/exec.c:2015 [inline]
- __do_sys_execve fs/exec.c:2091 [inline]
- __se_sys_execve fs/exec.c:2086 [inline]
- __x64_sys_execve+0x8f/0xc0 fs/exec.c:2086
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
-
-Memory state around the buggy address:
- ffff88807811e300: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff88807811e380: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->ffff88807811e400: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                            ^
- ffff88807811e480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff88807811e500: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-==================================================================
+------SFNbypxiwiYv2mFj5qNI3mkL0EyMW--LFKYa8svGKq9OOQ6W=_1770c_
+Content-Type: text/plain; charset="utf-8"
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+------SFNbypxiwiYv2mFj5qNI3mkL0EyMW--LFKYa8svGKq9OOQ6W=_1770c_--
