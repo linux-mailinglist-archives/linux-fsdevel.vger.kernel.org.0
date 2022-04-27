@@ -2,158 +2,217 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D5A3511614
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Apr 2022 13:33:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A67D9511562
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Apr 2022 13:32:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231745AbiD0LAL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Apr 2022 07:00:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35170 "EHLO
+        id S231754AbiD0LAm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Apr 2022 07:00:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231684AbiD0K72 (ORCPT
+        with ESMTP id S231777AbiD0LAL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Apr 2022 06:59:28 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7036D22C3C1;
-        Wed, 27 Apr 2022 03:37:09 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id DE5591F747;
-        Wed, 27 Apr 2022 10:37:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1651055827; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=EwRuU3lN9KI8hyzt5BRGcUdxQu2aFhndVDrcib1zzbI=;
-        b=feYJC2od1AKLT8mJSoDbAoyzHedIgJQwZvNS3KNVkgnc7RzT6txrdyC7qHmbKtqm0eHZ1C
-        nwtyIUFNi9tG48N+Y74qTSYSX6kwlgGkYQd3TgrHBB36BxazEEJwyWSiqJG/CA/Henk0as
-        Q442kgxgzolK1QTcIhmgJfFSnVSSaYE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1651055827;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=EwRuU3lN9KI8hyzt5BRGcUdxQu2aFhndVDrcib1zzbI=;
-        b=Z5DGjHUwr8LqYy6Y4hmCD5vvVYHZlNaZpZ9cOR3X70LSGdN3HKPIIQ+uUPD5pElrFfGesW
-        b/jCF0GqeLUhBNBg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 942411323E;
-        Wed, 27 Apr 2022 10:37:07 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id VQRnI9McaWJTBQAAMHmgww
-        (envelope-from <hare@suse.de>); Wed, 27 Apr 2022 10:37:07 +0000
-Message-ID: <a885def5-7373-28d9-6ed6-bc836864c67c@suse.de>
-Date:   Wed, 27 Apr 2022 12:37:07 +0200
+        Wed, 27 Apr 2022 07:00:11 -0400
+Received: from mail-lf1-x12e.google.com (mail-lf1-x12e.google.com [IPv6:2a00:1450:4864:20::12e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 311473C763B
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Apr 2022 03:37:54 -0700 (PDT)
+Received: by mail-lf1-x12e.google.com with SMTP id t25so2359770lfg.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Apr 2022 03:37:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=openvz-org.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:from:subject:to:cc
+         :content-language:content-transfer-encoding;
+        bh=jRN8XksCdAf0+x8Uj8a/DButwn5KzLonnaobSsBfglg=;
+        b=DK23ya2EJ5weoMmh1t7kx/QodejkNkn8M5NyBLC6YNDDq/iyYjlsNadZ2EHYSJ5Fqg
+         v6gIuXZexBcUPt7oHC2h4qRgCgC/5A3dmpZmQsJ+8GqVCb1x/lOqbf91P7uw5Ww0uqKD
+         uyHVfyKv/F1Mc0YNVKPWcoHW3ohxieUlWta8+KHFA8/SQJvfuKwbBS+TFPT4bO6XlV24
+         H/uUZxi93xoDkhBCqfXOOKQhO/48gVdV2wprUxrQeRwT2K32euRbJz7E7YXAoFNXApwv
+         SLu4nXXcpWgbpsAiiuxu+zsOGeWaGuKPZ7cmgu84GIuIDg25iFm84RkrJJ73rKF+8/gg
+         IwGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:from
+         :subject:to:cc:content-language:content-transfer-encoding;
+        bh=jRN8XksCdAf0+x8Uj8a/DButwn5KzLonnaobSsBfglg=;
+        b=uAplMrj+VRy575vyJEkRj8IL67nyUzD0dY7RV2PWCz4erusXuCqmtR6VEXBR25ZdMB
+         P3i4QFmWI96KE9IOc3H7Lben6vo5aPI/O5Oz63lbEty5iyyzY12LgQVGpm4pKepGux5h
+         TneX5a97NAHqsXlffCGKfLW869oRODvRWhrQFDIv6QQsoG+sb3vmmhFm7qnp7tOJkeRa
+         ztIuFWGxIxdDpsRoiOVpRR0wJS3D34v/ezuUeyYVRZNsUVXVO4SX4XdzvypOCph7JSl8
+         zUQ++lqv+YKso4nJXZraK9TEaSfXUNGlNgpGD8taIfgGclMVvr2HDESd1UpeizHatmH/
+         d+Qw==
+X-Gm-Message-State: AOAM531MoZ+gUJqbmUWcE7Fpsqq01bPuBN99lEBdYZm/D2FjNP1yE791
+        Zb679wRnJ3dUxbtasFfMIO9Yvw==
+X-Google-Smtp-Source: ABdhPJydThKNwg1fAKcAA4XC9MwiqCQDBZ2EHrvqh41Hwk2uoGINd3w/CMeX10Khz/ZzztPAo5aBuw==
+X-Received: by 2002:a05:6512:400a:b0:46b:8cd9:1af8 with SMTP id br10-20020a056512400a00b0046b8cd91af8mr20687452lfb.545.1651055872441;
+        Wed, 27 Apr 2022 03:37:52 -0700 (PDT)
+Received: from [192.168.1.65] ([46.188.121.177])
+        by smtp.gmail.com with ESMTPSA id m4-20020a197104000000b00471ebfc7a0bsm1840776lfc.191.2022.04.27.03.37.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Apr 2022 03:37:51 -0700 (PDT)
+Message-ID: <7e867cb0-89d6-402c-33d2-9b9ba0ba1523@openvz.org>
+Date:   Wed, 27 Apr 2022 13:37:50 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.4.0
+ Thunderbird/91.7.0
+From:   Vasily Averin <vvs@openvz.org>
+Subject: [PATCH] memcg: accounting for objects allocated for new netdevice
+To:     Roman Gushchin <roman.gushchin@linux.dev>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Shakeel Butt <shakeelb@google.com>
+Cc:     kernel@openvz.org, Florian Westphal <fw@strlen.de>,
+        linux-kernel@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
+        cgroups@vger.kernel.org, netdev@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tejun Heo <tj@kernel.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        linux-fsdevel@vger.kernel.org
 Content-Language: en-US
-To:     Nitesh Shetty <nj.shetty@samsung.com>
-Cc:     chaitanyak@nvidia.com, linux-block@vger.kernel.org,
-        linux-scsi@vger.kernel.org, dm-devel@redhat.com,
-        linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        axboe@kernel.dk, msnitzer@redhat.com, bvanassche@acm.org,
-        martin.petersen@oracle.com, kbusch@kernel.org, hch@lst.de,
-        Frederick.Knight@netapp.com, osandov@fb.com,
-        lsf-pc@lists.linux-foundation.org, djwong@kernel.org,
-        josef@toxicpanda.com, clm@fb.com, dsterba@suse.com, tytso@mit.edu,
-        jack@suse.com, nitheshshetty@gmail.com, gost.dev@samsung.com,
-        =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <javier.gonz@samsung.com>,
-        Arnav Dawn <arnav.dawn@samsung.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@kernel.org>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        James Smart <james.smart@broadcom.com>,
-        Chaitanya Kulkarni <kch@nvidia.com>,
-        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-        Naohiro Aota <naohiro.aota@wdc.com>,
-        Johannes Thumshirn <jth@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-kernel@vger.kernel.org
-References: <20220426101241.30100-1-nj.shetty@samsung.com>
- <CGME20220426101938epcas5p291690dd1f0e931cd9f8139daaf3f9296@epcas5p2.samsung.com>
- <20220426101241.30100-4-nj.shetty@samsung.com>
-From:   Hannes Reinecke <hare@suse.de>
-Subject: Re: [PATCH v4 03/10] block: Introduce a new ioctl for copy
-In-Reply-To: <20220426101241.30100-4-nj.shetty@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-6.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/26/22 12:12, Nitesh Shetty wrote:
-> Add new BLKCOPY ioctl that offloads copying of one or more sources ranges
-> to one or more destination in a device. COPY ioctl accepts a 'copy_range'
-> structure that contains no of range, a reserved field , followed by an
-> array of ranges. Each source range is represented by 'range_entry' that
-> contains source start offset, destination start offset and length of
-> source ranges (in bytes)
-> 
-> MAX_COPY_NR_RANGE, limits the number of entries for the IOCTL and
-> MAX_COPY_TOTAL_LENGTH limits the total copy length, IOCTL can handle.
-> 
-> Example code, to issue BLKCOPY:
-> /* Sample example to copy three entries with [dest,src,len],
-> * [32768, 0, 4096] [36864, 4096, 4096] [40960,8192,4096] on same device */
-> 
-> int main(void)
-> {
-> 	int i, ret, fd;
-> 	unsigned long src = 0, dst = 32768, len = 4096;
-> 	struct copy_range *cr;
-> 	cr = (struct copy_range *)malloc(sizeof(*cr)+
-> 					(sizeof(struct range_entry)*3));
-> 	cr->nr_range = 3;
-> 	cr->reserved = 0;
-> 	for (i = 0; i< cr->nr_range; i++, src += len, dst += len) {
-> 		cr->range_list[i].dst = dst;
-> 		cr->range_list[i].src = src;
-> 		cr->range_list[i].len = len;
-> 		cr->range_list[i].comp_len = 0;
-> 	}
-> 	fd = open("/dev/nvme0n1", O_RDWR);
-> 	if (fd < 0) return 1;
-> 	ret = ioctl(fd, BLKCOPY, cr);
-> 	if (ret != 0)
-> 	       printf("copy failed, ret= %d\n", ret);
-> 	for (i=0; i< cr->nr_range; i++)
-> 		if (cr->range_list[i].len != cr->range_list[i].comp_len)
-> 			printf("Partial copy for entry %d: requested %llu, completed %llu\n",
-> 								i, cr->range_list[i].len,
-> 								cr->range_list[i].comp_len);
-> 	close(fd);
-> 	free(cr);
-> 	return ret;
-> }
-> 
-> Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
-> Signed-off-by: Javier González <javier.gonz@samsung.com>
-> Signed-off-by: Arnav Dawn <arnav.dawn@samsung.com>
-> ---
->   block/ioctl.c           | 32 ++++++++++++++++++++++++++++++++
->   include/uapi/linux/fs.h |  9 +++++++++
->   2 files changed, 41 insertions(+)
-> 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+Creating a new netdevice allocates at least ~50Kb of memory for various
+kernel objects, but only ~5Kb of them are accounted to memcg. As a result,
+creating an unlimited number of netdevice inside a memcg-limited container
+does not fall within memcg restrictions, consumes a significant part
+of the host's memory, can cause global OOM and lead to random kills of
+host processes.
 
-Cheers,
+The main consumers of non-accounted memory are:
+ ~10Kb   80+ kernfs nodes
+ ~6Kb    ipv6_add_dev() allocations
+  6Kb    __register_sysctl_table() allocations
+  4Kb    neigh_sysctl_register() allocations
+  4Kb    __devinet_sysctl_register() allocations
+  4Kb    __addrconf_sysctl_register() allocations
 
-Hannes
+Accounting of these objects allows to increase the share of memcg-related
+memory up to 60-70% (~38Kb accounted vs ~54Kb total for dummy netdevice
+on typical VM with default Fedora 35 kernel) and this should be enough
+to somehow protect the host from misuse inside container.
+
+Other related objects are quite small and may not be taken into account
+to minimize the expected performance degradation.
+
+It should be separately mentonied ~300 bytes of percpu allocation
+of struct ipstats_mib in snmp6_alloc_dev(), on huge multi-cpu nodes
+it can become the main consumer of memory.
+
+Signed-off-by: Vasily Averin <vvs@openvz.org>
+---
+RFC was discussed here:
+https://lore.kernel.org/all/a5e09e93-106d-0527-5b1e-48dbf3b48b4e@virtuozzo.com/
+---
+ fs/kernfs/mount.c     | 2 +-
+ fs/proc/proc_sysctl.c | 2 +-
+ net/core/neighbour.c  | 2 +-
+ net/ipv4/devinet.c    | 2 +-
+ net/ipv6/addrconf.c   | 8 ++++----
+ 5 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/fs/kernfs/mount.c b/fs/kernfs/mount.c
+index cfa79715fc1a..2881aeeaa880 100644
+--- a/fs/kernfs/mount.c
++++ b/fs/kernfs/mount.c
+@@ -391,7 +391,7 @@ void __init kernfs_init(void)
+ {
+ 	kernfs_node_cache = kmem_cache_create("kernfs_node_cache",
+ 					      sizeof(struct kernfs_node),
+-					      0, SLAB_PANIC, NULL);
++					      0, SLAB_PANIC | SLAB_ACCOUNT, NULL);
+ 
+ 	/* Creates slab cache for kernfs inode attributes */
+ 	kernfs_iattrs_cache  = kmem_cache_create("kernfs_iattrs_cache",
+diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+index 7d9cfc730bd4..df4604fea4f8 100644
+--- a/fs/proc/proc_sysctl.c
++++ b/fs/proc/proc_sysctl.c
+@@ -1333,7 +1333,7 @@ struct ctl_table_header *__register_sysctl_table(
+ 		nr_entries++;
+ 
+ 	header = kzalloc(sizeof(struct ctl_table_header) +
+-			 sizeof(struct ctl_node)*nr_entries, GFP_KERNEL);
++			 sizeof(struct ctl_node)*nr_entries, GFP_KERNEL_ACCOUNT);
+ 	if (!header)
+ 		return NULL;
+ 
+diff --git a/net/core/neighbour.c b/net/core/neighbour.c
+index ec0bf737b076..3dcda2a54f86 100644
+--- a/net/core/neighbour.c
++++ b/net/core/neighbour.c
+@@ -3728,7 +3728,7 @@ int neigh_sysctl_register(struct net_device *dev, struct neigh_parms *p,
+ 	char neigh_path[ sizeof("net//neigh/") + IFNAMSIZ + IFNAMSIZ ];
+ 	char *p_name;
+ 
+-	t = kmemdup(&neigh_sysctl_template, sizeof(*t), GFP_KERNEL);
++	t = kmemdup(&neigh_sysctl_template, sizeof(*t), GFP_KERNEL_ACCOUNT);
+ 	if (!t)
+ 		goto err;
+ 
+diff --git a/net/ipv4/devinet.c b/net/ipv4/devinet.c
+index fba2bffd65f7..47523fe5b891 100644
+--- a/net/ipv4/devinet.c
++++ b/net/ipv4/devinet.c
+@@ -2566,7 +2566,7 @@ static int __devinet_sysctl_register(struct net *net, char *dev_name,
+ 	struct devinet_sysctl_table *t;
+ 	char path[sizeof("net/ipv4/conf/") + IFNAMSIZ];
+ 
+-	t = kmemdup(&devinet_sysctl, sizeof(*t), GFP_KERNEL);
++	t = kmemdup(&devinet_sysctl, sizeof(*t), GFP_KERNEL_ACCOUNT);
+ 	if (!t)
+ 		goto out;
+ 
+diff --git a/net/ipv6/addrconf.c b/net/ipv6/addrconf.c
+index f908e2fd30b2..e79621ee4a0a 100644
+--- a/net/ipv6/addrconf.c
++++ b/net/ipv6/addrconf.c
+@@ -342,7 +342,7 @@ static int snmp6_alloc_dev(struct inet6_dev *idev)
+ {
+ 	int i;
+ 
+-	idev->stats.ipv6 = alloc_percpu(struct ipstats_mib);
++	idev->stats.ipv6 = alloc_percpu_gfp(struct ipstats_mib, GFP_KERNEL_ACCOUNT);
+ 	if (!idev->stats.ipv6)
+ 		goto err_ip;
+ 
+@@ -358,7 +358,7 @@ static int snmp6_alloc_dev(struct inet6_dev *idev)
+ 	if (!idev->stats.icmpv6dev)
+ 		goto err_icmp;
+ 	idev->stats.icmpv6msgdev = kzalloc(sizeof(struct icmpv6msg_mib_device),
+-					   GFP_KERNEL);
++					   GFP_KERNEL_ACCOUNT);
+ 	if (!idev->stats.icmpv6msgdev)
+ 		goto err_icmpmsg;
+ 
+@@ -382,7 +382,7 @@ static struct inet6_dev *ipv6_add_dev(struct net_device *dev)
+ 	if (dev->mtu < IPV6_MIN_MTU)
+ 		return ERR_PTR(-EINVAL);
+ 
+-	ndev = kzalloc(sizeof(struct inet6_dev), GFP_KERNEL);
++	ndev = kzalloc(sizeof(struct inet6_dev), GFP_KERNEL_ACCOUNT);
+ 	if (!ndev)
+ 		return ERR_PTR(err);
+ 
+@@ -7029,7 +7029,7 @@ static int __addrconf_sysctl_register(struct net *net, char *dev_name,
+ 	struct ctl_table *table;
+ 	char path[sizeof("net/ipv6/conf/") + IFNAMSIZ];
+ 
+-	table = kmemdup(addrconf_sysctl, sizeof(addrconf_sysctl), GFP_KERNEL);
++	table = kmemdup(addrconf_sysctl, sizeof(addrconf_sysctl), GFP_KERNEL_ACCOUNT);
+ 	if (!table)
+ 		goto out;
+ 
 -- 
-Dr. Hannes Reinecke		           Kernel Storage Architect
-hare@suse.de			                  +49 911 74053 688
-SUSE Software Solutions Germany GmbH, Maxfeldstr. 5, 90409 Nürnberg
-HRB 36809 (AG Nürnberg), GF: Felix Imendörffer
+2.31.1
+
