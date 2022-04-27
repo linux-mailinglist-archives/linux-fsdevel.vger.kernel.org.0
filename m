@@ -2,422 +2,384 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B75F511493
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Apr 2022 11:55:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A08E2511511
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Apr 2022 12:47:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229508AbiD0Jk3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Apr 2022 05:40:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33222 "EHLO
+        id S229986AbiD0KqX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Apr 2022 06:46:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51778 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229456AbiD0Jk1 (ORCPT
+        with ESMTP id S229964AbiD0KqC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Apr 2022 05:40:27 -0400
-Received: from JPN01-TYC-obe.outbound.protection.outlook.com (mail-tycjpn01olkn2081.outbound.protection.outlook.com [40.92.99.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7814332BCF1;
-        Wed, 27 Apr 2022 02:36:06 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=I2J3mR8d7sWLjO95c1Tpb82+Brlq3ONFZaAYmqLzVWs1GaYOSCq7WvGWtbVTnFnfJcv6JXpg+wcHUsH5pZ16YBD0wCJhDv7L6DjTWa9aj6YDuwQEJQ/JMxg1xspJzVO0Nh3SubVl3wq6QjyiqsQ/eAI8CyIZ8RgV25k4uo6L2CNGsa0mIZ0LKfmUiWMY8vOPJT+Gm9mKCeMdHNuWOuk9eA66KIQjIn8tkS9vL6Y2UxxtOIUkAdblXSmdaJ7GguWtyNXeJ7UEyMbCcfcFMZYt0S3j2cgZEkgl7+A7chL0uTmKg/bV4+/2suO6p7DPxhd1PBzr+DrBA9ENuts4TXFc+g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rGR6+NgsNpXIWjEwY9hs+rTt5kII+sa1gLwGI9mLJ0M=;
- b=nNAFfmCX+SC4jWkh7OWJI5MMf72U2pipUwIDbknGA+BJszkj3ekLkKfuVWfi+XZKe7vZ2+s4p8Huym/PatbxhPHSdB6dNeQw9GqV20QPC9gGCj8hY4CoORM1/6yQW1uKhAyoT68BXgPKRN5s4wjDhW1gkCo8qjaos2eY1jb1oP68R/n3xg2bwCt9Ko7ARD8qYBoMjGr2+y5QEGlRenKnNP/kUy2SroyQoOqou16c3koro2r+Q2Ziv1r8+8TIR9CNKSwiq8RGe+XrjDZVT54J1j0AyLhNOycDx1pUSo3alfpj0WSIAxzO9TNCZqu34eHIrtteLHka9zfEMrkMxPs3TA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rGR6+NgsNpXIWjEwY9hs+rTt5kII+sa1gLwGI9mLJ0M=;
- b=WrKj4mt7o3j7mocAOJ/lVWfsPJpizuJKJn7LJvUXSu4Q2Hj4kdd/2Nd0cRdBT7XyScgk+NKLY4sqEzy+oKDuSRQ9NcfCRY5D/mik6pz1djTP7R6Jgb0Z9RVYDm8aE5yfcXYjBpA01xbY4Qv3gC+7Prp7l72vLT42x4wGkmT1fI+jC8Aahac0/QWeiqkyR2j8G8S9mW/idM9k3s63mthNpPUcw5LGvmQSBGRYJWa+vkzVK8Fj1d6Cn5klYlHQCzanIydHHnuZd5ByQC+2AoifaNB1UjaK3P3BehGVZZjwxpnWf9wFhKAYa1dUAWdiTvapNs8EXvLGKBYVZcr7YFeGsQ==
-Received: from TYYP286MB1115.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:ce::9) by
- OS3P286MB1057.JPNP286.PROD.OUTLOOK.COM (2603:1096:604:10f::13) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5186.14; Wed, 27 Apr 2022 09:33:01 +0000
-Received: from TYYP286MB1115.JPNP286.PROD.OUTLOOK.COM
- ([fe80::ed8c:9e75:ddab:8c5e]) by TYYP286MB1115.JPNP286.PROD.OUTLOOK.COM
- ([fe80::ed8c:9e75:ddab:8c5e%4]) with mapi id 15.20.5186.021; Wed, 27 Apr 2022
- 09:33:01 +0000
-From:   Xie Yongmei <yongmeixie@hotmail.com>
-To:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
-Cc:     yongmeixie@hotmail.comc, Xie Yongmei <yongmeixie@hotmail.com>
-Subject: [PATCH 3/3] writeback: specify writeback period and expire interval per memcg
-Date:   Wed, 27 Apr 2022 05:32:41 -0400
-Message-ID: <TYYP286MB1115331A1F4852D7CA3E86A2C5FA9@TYYP286MB1115.JPNP286.PROD.OUTLOOK.COM>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20220427093241.108281-1-yongmeixie@hotmail.com>
-References: <20220427093241.108281-1-yongmeixie@hotmail.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TMN:  [XbBKjZKgJ/uPV0EtxqE/Feo+t1tbxwHe]
-X-ClientProxiedBy: HK0PR01CA0067.apcprd01.prod.exchangelabs.com
- (2603:1096:203:a6::31) To TYYP286MB1115.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:ce::9)
-X-Microsoft-Original-Message-ID: <20220427093241.108281-4-yongmeixie@hotmail.com>
+        Wed, 27 Apr 2022 06:46:02 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E62EA1C1DD1;
+        Wed, 27 Apr 2022 03:29:47 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 6C426B82576;
+        Wed, 27 Apr 2022 09:22:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DD70C385A7;
+        Wed, 27 Apr 2022 09:22:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1651051327;
+        bh=onXoX5u0npwqKTIon13EJNfGXjQv81cfFzRb4TQR/dc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jLhIgScPS7R2CqTfhmHVMf/TU4Y+czL3f7z6OwMCOVsPbjYDrGs7UbYcZdBG7p/Jb
+         kRMrL/tHcqJToDf6+fC47MmTyhAd27t/bmeYz+AulJNl4roW/576hr4JMWkf8CHTTQ
+         8pQSTBAGlNdgjLlUr2Ca+/EkpB5VHGt7CYaiXzSuekQaR/tZTOS7YNmkS7VPdkOXSh
+         xHy3Q+lobGZVKLktdYFCe/x5OHqq07wCXUCZHszgpBtA00Xd6/JxEunW4dEBkFyBjz
+         7tKxnp7ffDI1MYrKMUEcHDAqMvoNYhfDsldJswaQrEN9ocaPPC2Kt4sgltWQ7KR6h3
+         rYmr5nVeGexRQ==
+Date:   Wed, 27 Apr 2022 11:22:01 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Yang Xu <xuyang2018.jy@fujitsu.com>,
+        Dave Chinner <david@fromorbit.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        ceph-devel <ceph-devel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH v8 3/4] fs: move S_ISGID stripping into the vfs
+Message-ID: <20220427092201.wvsdjbnc7b4dttaw@wittgenstein>
+References: <1650971490-4532-1-git-send-email-xuyang2018.jy@fujitsu.com>
+ <1650971490-4532-3-git-send-email-xuyang2018.jy@fujitsu.com>
+ <20220426103846.tzz66f2qxcxykws3@wittgenstein>
+ <CAOQ4uxhRMp4tM9nP+0yPHJyzPs6B2vtX6z51tBHWxE6V+UZREw@mail.gmail.com>
+ <CAJfpegu5uJiHgHmLcuSJ6+cQfOPB2aOBovHr4W5j_LU+reJsCw@mail.gmail.com>
+ <20220426145349.zxmahoq2app2lhip@wittgenstein>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 974a3c04-51bb-4c67-f184-08da2830ebef
-X-MS-Exchange-SLBlob-MailProps: Zv/SX2iM+5XXEEEdR/xMXhNCeF/y1+93HUjrN3m8MDCUewaI1nR/wSpNIuOIuWJzda/Pjr8Q7LMUGAFZf0frLZogWCQ9BY6YTIMtEPWm6ZbPnAqMV3jQ9Qa8J8MiiU0HlP2sNpaoBFWmF/M0BJhIeKkBzpxCSWlETieosOVhPZF7/mgnV1k0KGoXL62N9wBMFPQffkwXiRMCQk+HHIpH33Ee58kIdF7b0GlIS9mJxinW8oRxZ25FODJlHYgXKVs0EnKMr5S55OXW0zgVUkKVWRrTxCqg+cLjjbH1ViBKgfZLIKJX/am0TYN+OaXNnA9rhI3VRBxhXHhg+V3rrUNS1/qlcUDJcEkoBOV31zMfxvb/G77wwb4ye5usXRmBm1w86MYdWkx9H7naMYPDez872ZDZJC1xUN6FgJFOyQS5+GBt0wQsfIUt9qn1Jm+w2nhZIkWA8flHkz884zWlYdBXhzXHXPeKVJmir6FOpM5wkDSNj2Fuh86N5pvX13jA/J2NqLhROt5VrcGnq5h7IMdXzb3tdVp2RVmhccnjdNgXiqEjOU1PVsmO8Il3WeugD3d6ra21ypzd9RQxs1PD2eNvMWbzBR8HZhIluBQTW5eFuGKkI7n2yowvigy8kzJ7ZhO2Ko9nn+87FlO3O6YOaDPX7W10vWJMsRtz1OdrfMma+I8g9R5gSwM9M9QGQmdVS6cJYLu2bGZNxo4=
-X-MS-TrafficTypeDiagnostic: OS3P286MB1057:EE_
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: iO5u6YuWYb/R8PJf91wLiHCKPY7pGEMs6DahvS/9awUvcHe33x0/AjAXfWJo2ZqkEhL6D6dU/Kaha3a4KVmA06YXdINlBeFjs2zy/FqcWFMl89NxEOyQ+2wavY/t+2noNZPFMFBnqgi8M7B/XLcLnaregehr5t9NuXL5xW+rbRHxXnhXruIajOc0ZGTxIYD6ujhR8C4t+L8077yGZGmEAmuvgV+rlK01gvV2SY2IhNE/mc319Diy8yfakPRFBnJFOIGjNmDnk1aqDyGVj/xZupStfvxgDrBNhxWmBR3GuEseS4tqiRECve2UHSZUyqKq9A4/0y5iqnX6fkePYE0BNsxGgOprms7rtNsiF89NjSC13zuW+KLXb/DoT8g+6ngzkVyzNIuDHkMCeUbcmK6psn2zEi5r5kVxXJoVWVhePa2VONK2cSrEEOO2IUlOIlaZ5mz7bFEspibZrFiD3sd/co0KM9qzZYeDPT6hR79YxYXkDGFv6zBa+J9tk4bWfVTTfrL0DFt9BjUE7J3SjpqMEwzzSHQPimIugjfwdsuvIV6fxQu8cLnaO7eYovClfMKf44GZ91+xiTNuJyGHFo7REA==
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?mmuDWfVau0H2Y0fYYbmM8KswuSTgsVi4FEdaQM6RfvxZuByCoNp8JZVyCNUj?=
- =?us-ascii?Q?5onMCW5jd7V3u0iVjYK2o+vXihk8FLp5KyZyCU3fwkYKv4cTShUsqus2kSLg?=
- =?us-ascii?Q?aehjaH6LIPewvb66H3ant2p1kbT0I9O2fW3x51/dTJWsJwgyou7QwI/q4l3R?=
- =?us-ascii?Q?g0lpPq0TmSxcHofq7yV8uOfZmYXnspZqyVNYJlDyUdYfFPBy3BOwNmyX9xoG?=
- =?us-ascii?Q?tdG3d6IEX2CLRZ7vK6vme/fXUzWZIu8TgyJO2ITMqPaFnSTfDkjG8+lJyLAw?=
- =?us-ascii?Q?fzoCqAfdGzZ4rMaOumAxBd9yfFYOfxRKMEvzDZFDiDHE223CU2x0QkqUS3oa?=
- =?us-ascii?Q?Anpkg1eNTSFaqnPvIhfSKO6nuGgQQac6tp+myBpeoTH3aTCXYHEvLYPs2Uub?=
- =?us-ascii?Q?u0ujQVCMg7VRceX5RlLwAb9aCHMB2RdGDSWFrg+1ZQtE2CRNrhs9pagrydpz?=
- =?us-ascii?Q?A1NhX9gnEs3MFZd7BKlSYpnkqdAOoxHiSdyVn88U65UD0J0WOAtFWpiASvgp?=
- =?us-ascii?Q?Lu8l+Q4axID9QbDl/XeJi235ggS/dYeHhw/RRH70Uem9WpqkgjM8edngcjy/?=
- =?us-ascii?Q?u40jXLIGqrjX+2LEFIR+CFqbeWs2JMXCBBxBguzBVjcq2EqIy6ynpU0xpkCh?=
- =?us-ascii?Q?zJmvIlVu6KhBvcKhS3BOJbQdYZyM85whq5aXt+cNik0ihcuZhDOKEPGfnjt/?=
- =?us-ascii?Q?nBlTs6WgaoWDZ31bb8wtWmGFFt90fUHmq4ZasIvLSWjLC+gmpYXp55QDtBzY?=
- =?us-ascii?Q?9fHxUwuuny6csOH6p9F49PmRRGAv3e0ULgX2xVLN5rpgE5M5qLaq8xGE1Qk3?=
- =?us-ascii?Q?CG+CviadJodUcg4xyKNwGKRUKEGeykHkxcMd1h9j3+EH2OlLpf6815vymVeJ?=
- =?us-ascii?Q?Cq9rFpkAmHIijo8yJ5BifGMVPT4glDzgaRNuyv3zEdW59HrjvMAtTCSFYKj4?=
- =?us-ascii?Q?KdpLV4sSxncM0WU+EUEni4rN84hPLPHJB/Js82Qfidlb3eV5SGA5ywot3H5q?=
- =?us-ascii?Q?vzBRxDdCap8BmfpWubZYR48BMb8KKoKkFW5Aro8eLos8FLObMqAhweBlztoK?=
- =?us-ascii?Q?ZuZ8HZbuWa2+2reUaeW7VRhaHloXOSG6gHhOegLIPBYQ/VB8Nky/8ydz4FaL?=
- =?us-ascii?Q?jH5Kk7wnHLMer0Ka0mZ3ibvivQVa0cWKQBamFdHPiad3xSQxeSlBES5kCvGw?=
- =?us-ascii?Q?CyJMG0QFAInejstroSQfqzjc9DETmDgOxOYna60uGE88deA7fsqRC2rjdwkC?=
- =?us-ascii?Q?pxJdklHzvFr6vt+ZucjEaNmSqdUEQ2ysNxzT0io/j30Nrf0OfuMBiwrB+AVP?=
- =?us-ascii?Q?gIuH+UGn1dHFfjlYX/KAFqRKUCoutLgmYwzXcwWUB8/Ga4+z4HKcu2TIM/jl?=
- =?us-ascii?Q?ejB6RWFzWsXjiBfq4FGedx4odbL3Tco4lFGE0G+jtdYybL6kp96vhfUObnpd?=
- =?us-ascii?Q?2UP/kuABmYs=3D?=
-X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-05f45.templateTenant
-X-MS-Exchange-CrossTenant-Network-Message-Id: 974a3c04-51bb-4c67-f184-08da2830ebef
-X-MS-Exchange-CrossTenant-AuthSource: TYYP286MB1115.JPNP286.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Apr 2022 09:33:01.1851
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3P286MB1057
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_PASS,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20220426145349.zxmahoq2app2lhip@wittgenstein>
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-dirty_writeback_interval: dirty wakeup period
-dirty_expire_interval: expire period
+On Tue, Apr 26, 2022 at 04:53:49PM +0200, Christian Brauner wrote:
+> On Tue, Apr 26, 2022 at 01:52:11PM +0200, Miklos Szeredi wrote:
+> > On Tue, 26 Apr 2022 at 13:21, Amir Goldstein <amir73il@gmail.com> wrote:
+> > >
+> > > On Tue, Apr 26, 2022 at 1:38 PM Christian Brauner <brauner@kernel.org> wrote:
+> > 
+> > > > One thing that I just remembered and which I think I haven't mentioned
+> > > > so far is that moving S_ISGID stripping from filesystem callpaths into
+> > > > the vfs callpaths means that we're hoisting this logic out of vfs_*()
+> > > > helpers implicitly.
+> > > >
+> > > > So filesystems that call vfs_*() helpers directly can't rely on S_ISGID
+> > > > stripping being done in vfs_*() helpers anymore unless they pass the
+> > > > mode on from a prior run through the vfs.
+> > > >
+> > > > This mostly affects overlayfs which calls vfs_*() functions directly. So
+> > > > a typical overlayfs callstack would be (roughly - I'm omw to lunch):
+> > > >
+> > > > sys_mknod()
+> > > > -> do_mknodat(mode) // calls vfs_prepare_mode()
+> > > >    -> .mknod = ovl_mknod(mode)
+> > > >       -> ovl_create(mode)
+> > > >          -> vfs_mknod(mode)
+> > > >
+> > > > I think we are safe as overlayfs passes on the mode on from its own run
+> > > > through the vfs and then via vfs_*() to the underlying filesystem but it
+> > > > is worth point that out.
+> > > >
+> > > > Ccing Amir just for confirmation.
+> > >
+> > > Looks fine to me, but CC Miklos ...
+> > 
+> > Looks fine to me as well.  Overlayfs should share the mode (including
+> > the suid and sgid bits), owner, group and ACL's with the underlying
+> > filesystem, so clearing sgid based on overlay parent directory should
+> > result in the same mode as if it was done based on the parent
+> > directory on the underlying layer.
+> 
+> Ah yes, good point.
+> 
+> > 
+> > AFAIU this logic is not affected by userns or mnt_userns, but
+> > Christian would be best to confirm that.
+> 
+> It does depend on it as S_ISGID stripping requires knowledge about
+> whether the caller has CAP_FSETID and is capable over the parent
+> directory or if they are in the group the file is owned by.
+> 
+> I think ultimately it might just come down to moving vfs_prepare_mode()
+> into vfs_*() helpers and not into the do_*at() helpers.
+> 
+> That would be cleaner anyway as right now we have this weird disconnect
+> between vfs_tmpfile() and vfs_{create,mknod,mkdir}(). IOW, vfs_tmpfile()
+> doesn't even have an associated do_*() wrapper where we could call
+> vfs_prepare_mode() from.
+> 
+> So ultimately it might be nicer if we do it in vfs_*() helpers anyway.
+> 
+> The less pretty thing about it will be that the security_path_*() hooks
+> also want a mode.
+> 
+> Right now these hooks receive the mode as it's passed in from userspace
+> minus umask but before S_ISGID stripping happens.
+> 
+> Whereas I think they should really see what the filesystem sees and
+> currently it's a bug that they see something else.
+> 
+> I need to think about this a bit.
 
-This patch provides per memcg setttings for writeback interval.
+So on top of that series (though it should just be folded in), does that
+look reasonable?
 
-Dirty writeback could be triggered in the below ways:
-  - mark_inode_dirty: when the first time of dirtying pages for this inode,
-		it tries to wakeup the callback hook wb_workfn in
-		wakeup period later.
-  - wb_workfn: if there're more writeback works to do, it would wakeup the
-		callback hook wb_workfn in another wakeup period later.
-  - external event: kswad found dirty pages piled up at the end of inactive
-		list or desktop mode timer.
-  - buffered write context: balance_dirty_pages tries to wake up background
-		writeback once dirty pages above freerun level of pages.
-  - sync context: sync(fs sync) writeback immediately
+From e993f81caae60fee4f77b40d46ad3863ea383493 Mon Sep 17 00:00:00 2001
+From: Christian Brauner <brauner@kernel.org>
+Date: Wed, 27 Apr 2022 10:53:35 +0200
+Subject: [PATCH] UNTESTED UNTESTED UNTESTED
 
-No matter how writeback is triggered, wb_workfn is the unique callback hook
-to manipulate the flushing things. Actually, wb_check_old_data_flush
-handles the period writeback and decides the scope of dirty pages which
-have to be written back because they were too old.
+As I realized yesterday we need to move mode preparation into the vfs_*()
+instead of do_*() helpers as filesystems like overlayfs have the following
+callstacks:
 
-Signed-off-by: Xie Yongmei <yongmeixie@hotmail.com>
+sys_mknod(ovl_path, mode)
+-> do_mknodat(ovl_path, mode)
+   -> .mknod = ovl_mknod(ovl_path, mode)
+      -> vfs_mknod(xfs_path, mode)
+	 -> .mknod = xfs_vn_mknod(xfs_path, mode)
+
+and the requirement that this will yield the same mode as:
+
+sys_mknod(xfs_path, mode)
+-> do_mknodat(xfs_path, mode)
+   -> .mknod = xfs_vn_mknod(xfs_path, mode)
+
+By moving setgid stripping into vfs_*() helpers we achieve:
+
+- Moving setgid stripping out of the individual filesystem's responsibility.
+- Ensure that callers of vfs_*() helpers continue to get correct setgid
+  stripping.
+
+Another thing I realized while looking at this yesterday was the entanglement
+with security hooks. Security hooks currently see a different mode than the
+actual filesystem sees when it calls into inode_init_owner(). This patch
+doesn't change that!
+
+I originally thought that we might be able to make the security hooks see the
+same mode that the filesystem will see. However, I have doubts. First, I don't
+think that is achievable without more restructuring. Second, I don't think it's
+required as the hooks have clearly been placed before any vfs_*() calls and
+thereby have committed themselves to see the mode as passed in from userspace
+(minus the umask). We will simply continue doing just exactly that
+side-stepping the issue for now.
+
+Sketched-by: Christian Brauner (Microsoft) <brauner@kernel.org>
 ---
- fs/fs-writeback.c          |  11 ++--
- include/linux/memcontrol.h |  16 ++++++
- mm/backing-dev.c           |   4 +-
- mm/memcontrol.c            | 114 +++++++++++++++++++++++++++++++++++++
- 4 files changed, 140 insertions(+), 5 deletions(-)
+ fs/namei.c         | 103 +++++++++++++++++++++++++++++++++++++++------
+ include/linux/fs.h |  11 -----
+ 2 files changed, 90 insertions(+), 24 deletions(-)
 
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index 591fe9cf1659..f59e4709ec39 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -1980,6 +1980,7 @@ static long wb_writeback(struct bdi_writeback *wb,
- 	struct inode *inode;
- 	long progress;
- 	struct blk_plug plug;
-+	unsigned int dirty_expire = wb_dirty_expire_interval(wb);
- 
- 	blk_start_plug(&plug);
- 	spin_lock(&wb->list_lock);
-@@ -2015,7 +2016,7 @@ static long wb_writeback(struct bdi_writeback *wb,
- 		 */
- 		if (work->for_kupdate) {
- 			dirtied_before = jiffies -
--				msecs_to_jiffies(dirty_expire_interval * 10);
-+				msecs_to_jiffies(dirty_expire * 10);
- 		} else if (work->for_background)
- 			dirtied_before = jiffies;
- 
-@@ -2101,15 +2102,16 @@ static long wb_check_old_data_flush(struct bdi_writeback *wb)
- {
- 	unsigned long expired;
- 	long nr_pages;
-+	unsigned int writeback_interval = wb_dirty_writeback_interval(wb);
- 
- 	/*
- 	 * When set to zero, disable periodic writeback
- 	 */
--	if (!dirty_writeback_interval)
-+	if (!writeback_interval)
- 		return 0;
- 
- 	expired = wb->last_old_flush +
--			msecs_to_jiffies(dirty_writeback_interval * 10);
-+			msecs_to_jiffies(writeback_interval * 10);
- 	if (time_before(jiffies, expired))
- 		return 0;
- 
-@@ -2194,6 +2196,7 @@ void wb_workfn(struct work_struct *work)
- 	struct bdi_writeback *wb = container_of(to_delayed_work(work),
- 						struct bdi_writeback, dwork);
- 	long pages_written;
-+	unsigned int writeback_interval = wb_dirty_writeback_interval(wb);
- 
- 	set_worker_desc("flush-%s", bdi_dev_name(wb->bdi));
- 
-@@ -2222,7 +2225,7 @@ void wb_workfn(struct work_struct *work)
- 
- 	if (!list_empty(&wb->work_list))
- 		wb_wakeup(wb);
--	else if (wb_has_dirty_io(wb) && dirty_writeback_interval)
-+	else if (wb_has_dirty_io(wb) && writeback_interval)
- 		wb_wakeup_delayed(wb);
+diff --git a/fs/namei.c b/fs/namei.c
+index 5dbf00704ae8..8b83db15ae5f 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -2998,6 +2998,71 @@ void unlock_rename(struct dentry *p1, struct dentry *p2)
  }
+ EXPORT_SYMBOL(unlock_rename);
  
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 386fc9b70c95..c1dc88bb8f80 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -347,6 +347,8 @@ struct mem_cgroup {
- #ifdef CONFIG_CGROUP_WRITEBACK_PARA
- 	int dirty_background_ratio;
- 	int dirty_ratio;
-+	int dirty_writeback_interval;
-+	int dirty_expire_interval;
- #endif
- 
- 	struct mem_cgroup_per_node *nodeinfo[];
-@@ -1642,6 +1644,8 @@ static inline void mem_cgroup_flush_foreign(struct bdi_writeback *wb)
- #ifdef CONFIG_CGROUP_WRITEBACK_PARA
- unsigned int wb_dirty_background_ratio(struct bdi_writeback *wb);
- unsigned int wb_dirty_ratio(struct bdi_writeback *wb);
-+unsigned int wb_dirty_writeback_interval(struct bdi_writeback *wb);
-+unsigned int wb_dirty_expire_interval(struct bdi_writeback *wb);
- #else
- static inline
- unsigned int wb_dirty_background_ratio(struct bdi_writeback *wb)
-@@ -1654,6 +1658,18 @@ unsigned int wb_dirty_ratio(struct bdi_writeback *wb)
- {
- 	return vm_dirty_ratio;
- }
-+
-+static inline
-+unsigned int wb_dirty_writeback_interval(struct bdi_writeback *wb)
++/**
++ * mode_strip_umask - handle vfs umask stripping
++ * @dir:	parent directory of the new inode
++ * @mode:	mode of the new inode to be created in @dir
++ *
++ * Umask stripping depends on whether or not the filesystem supports POSIX
++ * ACLs. If the filesystem doesn't support it umask stripping is done directly
++ * in here. If the filesystem does support POSIX ACLs umask stripping is
++ * deferred until the filesystem calls posix_acl_create().
++ *
++ * Returns: mode
++ */
++static inline umode_t mode_strip_umask(const struct inode *dir, umode_t mode)
 +{
-+	return dirty_writeback_interval;
++	if (!IS_POSIXACL(dir))
++		mode &= ~current_umask();
++	return mode;
 +}
 +
-+static inline
-+unsigned int wb_dirty_expire_interval(struct bdi_writeback *wb)
++/**
++ * vfs_prepare_mode - prepare the mode to be used for a new inode
++ * @mnt_userns:	user namespace of the mount the inode was found from
++ * @dir:	parent directory of the new inode
++ * @mode:	mode of the new inode
++ * @mask_perms:	allowed permission by the vfs
++ * @type:	type of file to be created
++ *
++ * This helper consolidates and enforces vfs restrictions on the @mode of a new
++ * object to be created.
++ *
++ * Umask stripping depends on whether the filesystem supports POSIX ACLs (see
++ * the kernel documentation for mode_strip_umask()). Moving umask stripping
++ * after setgid stripping allows the same ordering for both non-POSIX ACL and
++ * POSIX ACL supporting filesystems.
++ *
++ * Note that it's currently valid for @type to be 0 if a directory is created.
++ * Filesystems raise that flag individually and we need to check whether each
++ * filesystem can deal with receiving S_IFDIR from the vfs before we enforce a
++ * non-zero type.
++ *
++ * Returns: mode to be passed to the filesystem
++ */
++static inline umode_t vfs_prepare_mode(struct user_namespace *mnt_userns,
++				       const struct inode *dir, umode_t mode,
++				       umode_t mask_perms, umode_t type)
 +{
-+	return dirty_expire_interval;
-+}
- #endif
- 
- struct sock;
-diff --git a/mm/backing-dev.c b/mm/backing-dev.c
-index 7176af65b103..685558362ad8 100644
---- a/mm/backing-dev.c
-+++ b/mm/backing-dev.c
-@@ -15,6 +15,7 @@
- #include <linux/writeback.h>
- #include <linux/device.h>
- #include <trace/events/writeback.h>
-+#include <linux/memcontrol.h>
- 
- struct backing_dev_info noop_backing_dev_info;
- EXPORT_SYMBOL_GPL(noop_backing_dev_info);
-@@ -264,8 +265,9 @@ subsys_initcall(default_bdi_init);
- void wb_wakeup_delayed(struct bdi_writeback *wb)
- {
- 	unsigned long timeout;
-+	unsigned int dirty_interval = wb_dirty_writeback_interval(wb);
- 
--	timeout = msecs_to_jiffies(dirty_writeback_interval * 10);
-+	timeout = msecs_to_jiffies(dirty_interval * 10);
- 	spin_lock_bh(&wb->work_lock);
- 	if (test_bit(WB_registered, &wb->state))
- 		queue_delayed_work(bdi_wq, &wb->dwork, timeout);
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index b1c1b150637a..c392aec22e2e 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -4851,17 +4851,49 @@ unsigned int wb_dirty_ratio(struct bdi_writeback *wb)
- 	return memcg->dirty_ratio;
- }
- 
-+unsigned int wb_dirty_writeback_interval(struct bdi_writeback *wb)
-+{
-+	struct mem_cgroup *memcg;
++	/*
++	 * S_ISGID stripping depends on the mode of the new file so make sure
++	 * that the caller gives us this information and splat if we miss it.
++	 */
++	WARN_ON_ONCE((mode & S_IFMT) == 0);
 +
-+	if (mem_cgroup_disabled() || !wb)
-+		return dirty_writeback_interval;
++	mode = mode_strip_sgid(mnt_userns, dir, mode);
++	mode = mode_strip_umask(dir, mode);
 +
-+	memcg = mem_cgroup_from_css(wb->memcg_css);
-+	if (memcg == root_mem_cgroup || memcg->dirty_writeback_interval < 0)
-+		return dirty_writeback_interval;
++	/*
++	 * Apply the vfs mandated allowed permission mask and set the type of
++	 * file to be created before we call into the filesystem.
++	 */
++	mode &= (mask_perms & ~S_IFMT);
++	mode |= (type & S_IFMT);
 +
-+	return memcg->dirty_writeback_interval;
++	return mode;
 +}
 +
-+unsigned int wb_dirty_expire_interval(struct bdi_writeback *wb)
-+{
-+	struct mem_cgroup *memcg;
-+
-+	if (mem_cgroup_disabled() || !wb)
-+		return dirty_expire_interval;
-+
-+	memcg = mem_cgroup_from_css(wb->memcg_css);
-+	if (memcg == root_mem_cgroup || memcg->dirty_expire_interval < 0)
-+		return dirty_expire_interval;
-+
-+	return memcg->dirty_expire_interval;
-+}
-+
- static void wb_memcg_inherit_from_parent(struct mem_cgroup *parent,
- 					 struct mem_cgroup *memcg)
- {
- 	memcg->dirty_background_ratio = parent->dirty_background_ratio;
- 	memcg->dirty_ratio = parent->dirty_ratio;
-+	memcg->dirty_writeback_interval = parent->dirty_writeback_interval;
-+	memcg->dirty_expire_interval = parent->dirty_expire_interval;
- }
+ /**
+  * vfs_create - create new file
+  * @mnt_userns:	user namespace of the mount the inode was found from
+@@ -3023,8 +3088,9 @@ int vfs_create(struct user_namespace *mnt_userns, struct inode *dir,
  
- static void wb_memcg_init(struct mem_cgroup *memcg)
- {
- 	memcg->dirty_background_ratio = -1;
- 	memcg->dirty_ratio = -1;
-+	memcg->dirty_writeback_interval = -1;
-+	memcg->dirty_expire_interval = -1;
- }
+ 	if (!dir->i_op->create)
+ 		return -EACCES;	/* shouldn't it be ENOSYS? */
+-	mode &= S_IALLUGO;
+-	mode |= S_IFREG;
++
++	mode = vfs_prepare_mode(mnt_userns, d_inode(path.dentry), mode,
++				S_IALLUGO, S_IFREG);
+ 	error = security_inode_create(dir, dentry, mode);
+ 	if (error)
+ 		return error;
+@@ -3287,7 +3353,7 @@ static struct dentry *lookup_open(struct nameidata *nd, struct file *file,
+ 	if (open_flag & O_CREAT) {
+ 		if (open_flag & O_EXCL)
+ 			open_flag &= ~O_TRUNC;
+-		mode = vfs_prepare_mode(mnt_userns, dir->d_inode, mode);
++		mode = vfs_prepare_mode(mnt_userns, dir->d_inode, mode, mode, mode);
+ 		if (likely(got_write))
+ 			create_error = may_o_create(mnt_userns, &nd->path,
+ 						    dentry, mode);
+@@ -3520,7 +3586,7 @@ struct dentry *vfs_tmpfile(struct user_namespace *mnt_userns,
+ 	child = d_alloc(dentry, &slash_name);
+ 	if (unlikely(!child))
+ 		goto out_err;
+-	mode = vfs_prepare_mode(mnt_userns, dir, mode);
++	mode = vfs_prepare_mode(mnt_userns, dir, mode, mode, mode);
+ 	error = dir->i_op->tmpfile(mnt_userns, dir, child, mode);
+ 	if (error)
+ 		goto out_err;
+@@ -3798,6 +3864,8 @@ int vfs_mknod(struct user_namespace *mnt_userns, struct inode *dir,
+ 	if (!dir->i_op->mknod)
+ 		return -EPERM;
  
- static int mem_cgroup_dirty_background_ratio_show(struct seq_file *m, void *v)
-@@ -4918,6 +4950,64 @@ mem_cgroup_dirty_ratio_write(struct kernfs_open_file *of,
- 	memcg->dirty_ratio = dirty_ratio;
- 	return nbytes;
- }
++	mode = vfs_prepare_mode(mnt_userns, d_inode(path.dentry),
++				mode, mode, mode);
+ 	error = devcgroup_inode_mknod(mode, dev);
+ 	if (error)
+ 		return error;
+@@ -3848,12 +3916,13 @@ static int do_mknodat(int dfd, struct filename *name, umode_t mode,
+ 	if (IS_ERR(dentry))
+ 		goto out1;
+ 
+-	mnt_userns = mnt_user_ns(path.mnt);
+-	mode = vfs_prepare_mode(mnt_userns, path.dentry->d_inode, mode);
+-	error = security_path_mknod(&path, dentry, mode, dev);
++	error = security_path_mknod(&path, dentry,
++				    mode_strip_umask(d_inode(path.dentry), mode),
++				    dev);
+ 	if (error)
+ 		goto out2;
+ 
++	mnt_userns = mnt_user_ns(path.mnt);
+ 	switch (mode & S_IFMT) {
+ 		case 0: case S_IFREG:
+ 			error = vfs_create(mnt_userns, path.dentry->d_inode,
+@@ -3919,7 +3988,13 @@ int vfs_mkdir(struct user_namespace *mnt_userns, struct inode *dir,
+ 	if (!dir->i_op->mkdir)
+ 		return -EPERM;
+ 
+-	mode &= (S_IRWXUGO|S_ISVTX);
++	/*
++	 * Filesystems currently raise S_IFDIR individually. We should try and
++	 * fix that going forward passing it in from the vfs as we do for all
++	 * other files going forward.
++	 */
++	mode = vfs_prepare_mode(mnt_userns, d_inode(path.dentry),
++				mode, S_IRWXUGO | S_ISVTX, 0);
+ 	error = security_inode_mkdir(dir, dentry, mode);
+ 	if (error)
+ 		return error;
+@@ -3940,7 +4015,6 @@ int do_mkdirat(int dfd, struct filename *name, umode_t mode)
+ 	struct path path;
+ 	int error;
+ 	unsigned int lookup_flags = LOOKUP_DIRECTORY;
+-	struct user_namespace *mnt_userns;
+ 
+ retry:
+ 	dentry = filename_create(dfd, name, &path, lookup_flags);
+@@ -3948,12 +4022,15 @@ int do_mkdirat(int dfd, struct filename *name, umode_t mode)
+ 	if (IS_ERR(dentry))
+ 		goto out_putname;
+ 
+-	mnt_userns = mnt_user_ns(path.mnt);
+-	mode = vfs_prepare_mode(mnt_userns, path.dentry->d_inode, mode);
+-	error = security_path_mkdir(&path, dentry, mode);
+-	if (!error)
++	error = security_path_mkdir(&path, dentry,
++				    mode_strip_umask(d_inode(path.dentry), mode));
++	if (!error) {
++		struct user_namespace *mnt_userns;
 +
-+static int mem_cgroup_dirty_writeback_interval_show(struct seq_file *m, void *v)
-+{
-+	struct mem_cgroup *memcg = mem_cgroup_from_css(seq_css(m));
-+
-+	seq_printf(m, "%d\n", memcg->dirty_writeback_interval);
-+	return 0;
-+}
-+
-+static ssize_t
-+mem_cgroup_dirty_writeback_interval_write(struct kernfs_open_file *of,
-+					  char *buf, size_t nbytes,
-+					  loff_t off)
-+{
-+	struct mem_cgroup *memcg = mem_cgroup_from_css(of_css(of));
-+	int ret, writeback_interval;
-+
-+	buf = strstrip(buf);
-+	ret = kstrtoint(buf, 0, &writeback_interval);
-+	if (ret)
-+		return ret;
-+
-+	if (writeback_interval < -1)
-+		return -EINVAL;
-+
-+	if (memcg->dirty_writeback_interval != writeback_interval) {
-+		memcg->dirty_writeback_interval = writeback_interval;
-+		wakeup_flusher_threads(WB_REASON_PERIODIC);
++		mnt_userns = mnt_user_ns(path.mnt);
+ 		error = vfs_mkdir(mnt_userns, path.dentry->d_inode, dentry,
+ 				  mode);
 +	}
-+	return nbytes;
-+}
-+
-+static int mem_cgroup_dirty_expire_interval_show(struct seq_file *m, void *v)
-+{
-+	struct mem_cgroup *memcg = mem_cgroup_from_css(seq_css(m));
-+
-+	seq_printf(m, "%d\n", memcg->dirty_expire_interval);
-+	return 0;
-+}
-+
-+static ssize_t
-+mem_cgroup_dirty_expire_interval_write(struct kernfs_open_file *of,
-+				       char *buf, size_t nbytes, loff_t off)
-+{
-+	struct mem_cgroup *memcg = mem_cgroup_from_css(of_css(of));
-+	int ret, expire_interval;
-+
-+	buf = strstrip(buf);
-+	ret = kstrtoint(buf, 0, &expire_interval);
-+	if (ret)
-+		return ret;
-+
-+	if (expire_interval < -1)
-+		return -EINVAL;
-+
-+	memcg->dirty_expire_interval = expire_interval;
-+	return nbytes;
-+}
- #else
- static void wb_memcg_inherit_from_parent(struct mem_cgroup *parent,
- 					 struct mem_cgroup *memcg)
-@@ -5067,6 +5157,18 @@ static struct cftype mem_cgroup_legacy_files[] = {
- 		.seq_show = mem_cgroup_dirty_ratio_show,
- 		.write = mem_cgroup_dirty_ratio_write,
- 	},
-+	{
-+		.name = "dirty_writeback_interval_centisecs",
-+		.flags = CFTYPE_NOT_ON_ROOT,
-+		.seq_show = mem_cgroup_dirty_writeback_interval_show,
-+		.write = mem_cgroup_dirty_writeback_interval_write,
-+	},
-+	{
-+		.name = "dirty_expire_interval_centisecs",
-+		.flags = CFTYPE_NOT_ON_ROOT,
-+		.seq_show = mem_cgroup_dirty_expire_interval_show,
-+		.write = mem_cgroup_dirty_expire_interval_write,
-+	},
- #endif
- 	{ },	/* terminate */
- };
-@@ -6549,6 +6651,18 @@ static struct cftype memory_files[] = {
- 		.seq_show = mem_cgroup_dirty_ratio_show,
- 		.write = mem_cgroup_dirty_ratio_write,
- 	},
-+	{
-+		.name = "dirty_writeback_interval_centisecs",
-+		.flags = CFTYPE_NOT_ON_ROOT,
-+		.seq_show = mem_cgroup_dirty_writeback_interval_show,
-+		.write = mem_cgroup_dirty_writeback_interval_write,
-+	},
-+	{
-+		.name = "dirty_expire_interval_centisecs",
-+		.flags = CFTYPE_NOT_ON_ROOT,
-+		.seq_show = mem_cgroup_dirty_expire_interval_show,
-+		.write = mem_cgroup_dirty_expire_interval_write,
-+	},
- #endif
- 	{ }	/* terminate */
- };
+ 
+ 	done_path_create(&path, dentry);
+ 	if (retry_estale(error, lookup_flags)) {
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 914c8f28bb02..98b44a2732f5 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3459,17 +3459,6 @@ static inline bool dir_relax_shared(struct inode *inode)
+ 	return !IS_DEADDIR(inode);
+ }
+ 
+-static inline umode_t vfs_prepare_mode(struct user_namespace *mnt_userns,
+-				   const struct inode *dir, umode_t mode)
+-{
+-	mode = mode_strip_sgid(mnt_userns, dir, mode);
+-
+-	if (!IS_POSIXACL(dir))
+-		mode &= ~current_umask();
+-
+-	return mode;
+-}
+-
+ extern bool path_noexec(const struct path *path);
+ extern void inode_nohighmem(struct inode *inode);
+ 
 -- 
-2.27.0
+2.32.0
 
