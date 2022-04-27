@@ -2,77 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0990B5123FC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Apr 2022 22:34:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D26451242E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Apr 2022 22:59:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236979AbiD0Uho (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Apr 2022 16:37:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54172 "EHLO
+        id S236906AbiD0VCm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Apr 2022 17:02:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236676AbiD0Uhg (ORCPT
+        with ESMTP id S236763AbiD0VCk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Apr 2022 16:37:36 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A16954EF5A;
-        Wed, 27 Apr 2022 13:34:24 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 39076B82AA7;
-        Wed, 27 Apr 2022 20:34:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B2B9C385A7;
-        Wed, 27 Apr 2022 20:34:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1651091661;
-        bh=QhjW6sqbQQAgxviJKBe4aWpl0/FEQUpaXuQ5s4h6qWg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=q7Ns2THonpI64rhc55ciDClC+/tZwbo74ep5sf07OFCb26oZ1kUe9z79CZSpHNgzN
-         VGMMisHTfPF3UFsfvxZ0AEUddllyF0mAQ72EsVMFRXrTjUdgq9z58WzHBUfQPEqp0O
-         W6dNwKJCwvp4aKEyZx9Z3zIMHTeQ0j/etEQ7Dh8M=
-Date:   Wed, 27 Apr 2022 13:34:20 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Alex Xu (Hello71)" <alex_y_xu@yahoo.ca>,
-        Daniel Colascione <dancol@google.com>,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH] mm/smaps_rollup: return empty file for kthreads instead
- of ESRCH
-Message-Id: <20220427133420.2847e62203b9e10a106c86b2@linux-foundation.org>
-In-Reply-To: <83f49beb-52f7-15f6-3b53-97cac0030ca4@suse.cz>
-References: <20220413211357.26938-1-alex_y_xu.ref@yahoo.ca>
-        <20220413211357.26938-1-alex_y_xu@yahoo.ca>
-        <20220413142748.a5796e31e567a6205c850ae7@linux-foundation.org>
-        <1649886492.rqei1nn3vm.none@localhost>
-        <20220413160613.385269bf45a9ebb2f7223ca8@linux-foundation.org>
-        <YleToQbgeRalHTwO@casper.infradead.org>
-        <YlfFaPhNFWNP+1Z7@localhost.localdomain>
-        <83f49beb-52f7-15f6-3b53-97cac0030ca4@suse.cz>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-9.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        Wed, 27 Apr 2022 17:02:40 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3376C1083;
+        Wed, 27 Apr 2022 13:59:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=cQesnUHvsevqj8LCTS5dD+iCwEbXRZtgTgIlz/6PQHA=; b=dQ/6BATy3PF81w6PED0XHEp3gD
+        kftx4U8C6qeWcvUH3ZKLbETVaFKpz7FcHnukq3jsRdRmXaJ3r/HcJdMVHGCtDtet9lICy7bFrw2CH
+        7P1R4PbKuS2+j+Hu/UXuNt6L5qEW4K640a1xv6gaizmtryGaJn5dxYM6UZu+6WkxB1T79alvJLP17
+        ytqPbxhBOxof5c40hsU7nvWGc2MJ/RMqKLBegO27btlO9otBrgkzXRjr1oM4NocCYa00HKxMMXUOh
+        otBgFrlO6ytA+LZJDnD/9BidfUlhByUgAtaZ/npUnHuR6v7XK0bYK439224eqgIOHu6lLgiFau7Db
+        Za00Ud2g==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1njokM-00Atky-89; Wed, 27 Apr 2022 20:58:50 +0000
+Date:   Wed, 27 Apr 2022 21:58:50 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Yang Shi <shy828301@gmail.com>
+Cc:     Vlastimil Babka <vbabka@suse.cz>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Miaohe Lin <linmiaohe@huawei.com>,
+        Song Liu <songliubraving@fb.com>,
+        Rik van Riel <riel@surriel.com>, Zi Yan <ziy@nvidia.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [v3 PATCH 0/8] Make khugepaged collapse readonly FS THP more
+ consistent
+Message-ID: <YmmuivdOWcr46oNC@casper.infradead.org>
+References: <20220404200250.321455-1-shy828301@gmail.com>
+ <YkuKbMbSecBVsa1k@casper.infradead.org>
+ <CAHbLzkoWPN+ahrvu2JrvoDpf8J_QGR6Ug6BbPnC11C82Lb-NaA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHbLzkoWPN+ahrvu2JrvoDpf8J_QGR6Ug6BbPnC11C82Lb-NaA@mail.gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 14 Apr 2022 09:38:14 +0200 Vlastimil Babka <vbabka@suse.cz> wrote:
-
-> > Returning ESRCH is better so that programs don't waste time reading and
-> > closing empty files and instantiating useless inodes.
+On Mon, Apr 04, 2022 at 05:48:49PM -0700, Yang Shi wrote:
+> When khugepaged collapses file THPs, its behavior is not consistent.
+> It is kind of "random luck" for khugepaged to see the file vmas (see
+> report: https://lore.kernel.org/linux-mm/00f195d4-d039-3cf2-d3a1-a2c88de397a0@suse.cz/)
+> since currently the vmas are registered to khugepaged when:
+>   - Anon huge pmd page fault
+>   - VMA merge
+>   - MADV_HUGEPAGE
+>   - Shmem mmap
 > 
-> Hm, unfortunately I don't remember why I put return -ESRCH for this case in
-> addition to get_proc_task() failing. I doubt it was a conscious decision to
-> treat kthreads differently - I think I would have preferred consistency with
-> maps/smaps.
-> 
-> Can the awk use case be fixed with some flag to make it ignore the errors?
+> If the above conditions are not met, even though khugepaged is enabled
+> it won't see any file vma at all.  MADV_HUGEPAGE could be specified
+> explicitly to tell khugepaged to collapse this area, but when
+> khugepaged mode is "always" it should scan suitable vmas as long as
+> VM_NOHUGEPAGE is not set.
 
-This is all too hard.  I think I'll drop the patch for now.
+I don't see that as being true at all.  The point of this hack was that
+applications which really knew what they were doing could enable it.
+It makes no sense to me that setting "always" by the sysadmin for shmem
+also force-enables ROTHP, even for applications which aren't aware of it.
+
+Most telling, I think, is that Song Liu hasn't weighed in on this at
+all.  It's clearly not important to the original author.
