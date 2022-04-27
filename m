@@ -2,256 +2,632 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D48E0511E11
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Apr 2022 20:37:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1896512019
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Apr 2022 20:38:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238819AbiD0PBj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Apr 2022 11:01:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35180 "EHLO
+        id S244618AbiD0SMD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Apr 2022 14:12:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39508 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235367AbiD0PBh (ORCPT
+        with ESMTP id S231675AbiD0SMB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Apr 2022 11:01:37 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A341922F009;
-        Wed, 27 Apr 2022 07:58:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Lans4tG07EwKXn6+tOtooIHeOz+xvy/5VwjEQlbdFbk=; b=R8KiSgPd+UNkcDPtloAHWYGpQf
-        FZgyEGOvDGc3IdxgHruSz5Ft0CvFY67qZ3dCycuEa947avVixgYQdwdLFfOdqOqanMW6SisFl0txu
-        oi9kYlwAwxedahnt1f5GHYrWEdErKnuh3IyUhd52a2sbGuUaOrKFF0xFDWDFccE8p6klYfQ5PvuAb
-        0wSlKZGMqbIfqGiEumL/6sUR8vT7CRnV0w7ASRodihEcYCDBH3PdpoOBhLtTsLqJiSCBYmAHpEBTE
-        NTwEnUKRISLdFHbKxI9JTm9OyTbwpMpKOXrPyTRAw82f9+K+rKIiAjCS1kPGN7HEJ3RqNn0a07Utd
-        IFLk/i3Q==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1njj7R-00AdeC-Ny; Wed, 27 Apr 2022 14:58:17 +0000
-Date:   Wed, 27 Apr 2022 15:58:17 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     syzbot <syzbot+7170d66493145b71afd4@syzkaller.appspotmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>
-Subject: Re: [syzbot] KASAN: use-after-free Read in mas_next_nentry
-Message-ID: <YmlaCVrwvZBlOWGO@casper.infradead.org>
-References: <0000000000009ecbf205dda227bd@google.com>
- <20220427125558.5cx4iv3mgjqi36ld@wittgenstein>
+        Wed, 27 Apr 2022 14:12:01 -0400
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 207922B270
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Apr 2022 11:08:45 -0700 (PDT)
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20220427180843epoutp0178b4eb173d27cb3946287b6379a7f3c2~p0yu7GyvV2002920029epoutp011
+        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Apr 2022 18:08:43 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20220427180843epoutp0178b4eb173d27cb3946287b6379a7f3c2~p0yu7GyvV2002920029epoutp011
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1651082923;
+        bh=/JbRXKA3/ARykIpMGGbQAmpbNBVgcwVPRHQxMrS0nUo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=TtGGtPBA1G2wZP6gJ2gClu2//g0yVYlAWVvTz5sMaWPp17Fhi0f6pIPTKZGMj2WLs
+         xa3OqWLUAgxsdsz7GlcZL8JHEmfV1r8fRIGAvXjSmGr7PX/ryIvRZuDH5C+NpEGt3t
+         92qJtpV+RB57PVuYttQ3aABn/+PQxwRzSvIQnh30=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+        20220427180842epcas5p4d3cb15db2b9bb7cb199f3134d9ae49e9~p0yuLwjGh3079930799epcas5p4H;
+        Wed, 27 Apr 2022 18:08:42 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.179]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4KpRZZ3KqNz4x9Pq; Wed, 27 Apr
+        2022 18:08:38 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        FA.27.09762.6A689626; Thu, 28 Apr 2022 03:08:38 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+        20220427152044epcas5p4c46d938a9bd50c208e31ecf1fdcc4368~pygEzuuGw2527625276epcas5p4w;
+        Wed, 27 Apr 2022 15:20:44 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20220427152044epsmtrp1c1d3e4fd6ec3fcf9242ad99f1e68f4f2~pygEy2MTH1130711307epsmtrp1P;
+        Wed, 27 Apr 2022 15:20:44 +0000 (GMT)
+X-AuditID: b6c32a4b-213ff70000002622-3a-626986a6ac8a
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        B3.48.08853.C4F59626; Thu, 28 Apr 2022 00:20:44 +0900 (KST)
+Received: from test-zns (unknown [107.110.206.5]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20220427152043epsmtip2b5cec0ccc493e253275309c4ca4b2fd3~pygDdInx_0088200882epsmtip2Q;
+        Wed, 27 Apr 2022 15:20:43 +0000 (GMT)
+Date:   Wed, 27 Apr 2022 20:45:35 +0530
+From:   Nitesh Shetty <nj.shetty@samsung.com>
+To:     Damien Le Moal <damien.lemoal@opensource.wdc.com>
+Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        dm-devel@redhat.com, linux-nvme@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, nitheshshetty@gmail.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 02/10] block: Add copy offload support infrastructure
+Message-ID: <20220427151535.GC9558@test-zns>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220427125558.5cx4iv3mgjqi36ld@wittgenstein>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <7d1fdd1e-c854-4744-8bec-7d222fb9be76@opensource.wdc.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrAJsWRmVeSWpSXmKPExsWy7bCmhu6ytswkg473Iha/z55nttj7bjar
+        xd5b2hZ79p5ksbi8aw6bxfxlT9ktuq/vYLPY8aSR0YHDY+esu+wem5fUe+xsvc/q8X7fVTaP
+        z5vkAlijsm0yUhNTUosUUvOS81My89JtlbyD453jTc0MDHUNLS3MlRTyEnNTbZVcfAJ03TJz
+        gC5RUihLzCkFCgUkFhcr6dvZFOWXlqQqZOQXl9gqpRak5BSYFOgVJ+YWl+al6+WlllgZGhgY
+        mQIVJmRnzHrlVvCvrmJx8yaWBsbtSV2MnBwSAiYS+/81M3cxcnEICexmlFj5YQmU84lR4uvD
+        pSwQzjdGiU03brHDtOz7fJoNIrGXUeL7oa1QLc8YJc7tvsYCUsUioCrR8+MwUBUHB5uAtsTp
+        /xwgYREBU4m3Pa1gU5kFzjBKtL/fBTZVWMBHYvmJaYwgNq+AjsTPjllMELagxMmZT8Bmcgq4
+        SWw5dJANxBYVUJY4sO04E8ggCYFODomXZw+xQpznIvFgyzMoW1ji1fEtUGdLSbzsb4OyyyW2
+        ty2Aam5hlOg6dYoFImEvcXHPX7DNzAIZEr/fNjBCxGUlpp5aBxXnk+j9/YQJIs4rsWMejK0s
+        sWb9AjYIW1Li2vdGKNtDYt7eJ9CA/M0ocXDjWcYJjPKzkHw3C8k+CFtHYsHuT2yzgKHHLCAt
+        sfwfB4SpKbF+l/4CRtZVjJKpBcW56anFpgXGeanl8ChPzs/dxAhOqlreOxgfPfigd4iRiYPx
+        EKMEB7OSCO+X3RlJQrwpiZVVqUX58UWlOanFhxhNgbE1kVlKNDkfmNbzSuINTSwNTMzMzEws
+        jc0MlcR5T6VvSBQSSE8sSc1OTS1ILYLpY+LglGpg0pwUpjXpflfG+hssreqLWmNqfiQ6l73b
+        Va5qz7Hd7cMnpsaMk7IqXtfZN9WpP3X97GZ1SpVHbcH1bCuTXQIv3/3+G/BDz2z2haIdqV0M
+        JRmd7d3FG5JPiTzLPC54itlOa06HyucT+5YIqSoofv05M854+onJT6YpWa72X19zo9Yh+8IX
+        L7ntNr+VN5z8vZbFVavmFuNSrviPzMI/5RdqFuQalrOXnJfw0w5vrHqx8CT7PW7j+vQ9b0Pk
+        S28tEjc6JNbxc6JC44oj2ysucew/Kratr0Eq8bCE790UZ/90DYdgierHAZ4PXNZt8HHqXsz0
+        avPeStOf6ifTdt6+OytHUpDj4v3Zr/tTOkJ6V0UosRRnJBpqMRcVJwIAJjebFTMEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrALMWRmVeSWpSXmKPExsWy7bCSvK5PfGaSwc+Phha/z55nttj7bjar
+        xd5b2hZ79p5ksbi8aw6bxfxlT9ktuq/vYLPY8aSR0YHDY+esu+wem5fUe+xsvc/q8X7fVTaP
+        z5vkAlijuGxSUnMyy1KL9O0SuDLud91iLthXU7H5+Wr2BsYJCV2MnBwSAiYS+z6fZuti5OIQ
+        EtjNKHFx8y9WiISkxLK/R5ghbGGJlf+es4PYQgJPGCVOvnEEsVkEVCV6fhwGaubgYBPQljj9
+        nwMkLCJgKvG2p5UFZCazwBlGifb3u8B6hQV8JJafmMYIYvMK6Ej87JjFBLH4N6PEur7pzBAJ
+        QYmTM5+wgNjMAloSN/69ZAJZwCwgLbH8H9gCTgE3iS2HDrKB2KICyhIHth1nmsAoOAtJ9ywk
+        3bMQuhcwMq9ilEwtKM5Nzy02LDDMSy3XK07MLS7NS9dLzs/dxAiOBC3NHYzbV33QO8TIxMF4
+        iFGCg1lJhPfL7owkId6UxMqq1KL8+KLSnNTiQ4zSHCxK4rwXuk7GCwmkJ5akZqemFqQWwWSZ
+        ODilGphyy5ebrj72cEMpm3xSedHM3Hf7S9ZPLDyV5WNkOf+KhndknMu2D7W7pCbHrXZzepSx
+        80bsY5PDWTMPfY4pMJmp8nEeQ0r+H/ad1w7wZLw6Oefw5/sMSv29ryqljx/8rtQ7yURad9rD
+        DR8On9vQKFe59aXEi2tWPTpnRJ8s65BZ8yOw5pN3wpvelXJ309K+qluvOpwdI3TIt1goymmf
+        a6THljCGiTue7ny/37Ny+b7jEaE1jZlVusLtYmWNS5LZMr4+/FN8+rr124knc72q30Qddjhe
+        qPHo8+Mvmz2+G/2y9tRudZddK3Vkp6imzvZnMbuTVvK3v7vberX/xh0Lc9HGY5rlHrITmurP
+        xe3aGcOgxFKckWioxVxUnAgAezrNQ/MCAAA=
+X-CMS-MailID: 20220427152044epcas5p4c46d938a9bd50c208e31ecf1fdcc4368
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+        boundary="----0ZLlJYeDNsXsa2iHVDx88FJSiXNelWJlSsIznY99o6DAaXg4=_17ced_"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220426101921epcas5p341707619b5e836490284a42c92762083
+References: <20220426101241.30100-1-nj.shetty@samsung.com>
+        <CGME20220426101921epcas5p341707619b5e836490284a42c92762083@epcas5p3.samsung.com>
+        <20220426101241.30100-3-nj.shetty@samsung.com>
+        <7d1fdd1e-c854-4744-8bec-7d222fb9be76@opensource.wdc.com>
+X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Apr 27, 2022 at 02:55:58PM +0200, Christian Brauner wrote:
-> [+Cc Willy]
+------0ZLlJYeDNsXsa2iHVDx88FJSiXNelWJlSsIznY99o6DAaXg4=_17ced_
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
 
-I read fsdevel.  Not sure Liam does though.
-
-> On Wed, Apr 27, 2022 at 05:43:22AM -0700, syzbot wrote:
-> > Hello,
+On Wed, Apr 27, 2022 at 11:45:26AM +0900, Damien Le Moal wrote:
+> On 4/26/22 19:12, Nitesh Shetty wrote:
+> > Introduce blkdev_issue_copy which supports source and destination bdevs,
+> > and an array of (source, destination and copy length) tuples.
+> > Introduce REQ_COPY copy offload operation flag. Create a read-write
+> > bio pair with a token as payload and submitted to the device in order.
+> > Read request populates token with source specific information which
+> > is then passed with write request.
+> > This design is courtesy Mikulas Patocka's token based copy
 > > 
-> > syzbot found the following issue on:
+> > Larger copy will be divided, based on max_copy_sectors,
+> > max_copy_range_sector limits.
 > > 
-> > HEAD commit:    f02ac5c95dfd Add linux-next specific files for 20220427
-> > git tree:       linux-next
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=14bd8db2f00000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=e9256c70f586da8a
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=7170d66493145b71afd4
-> > compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=113b4252f00000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1174bcbaf00000
-> > 
-> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > Reported-by: syzbot+7170d66493145b71afd4@syzkaller.appspotmail.com
-> > 
-> > ==================================================================
-> > BUG: KASAN: use-after-free in mas_safe_min lib/maple_tree.c:715 [inline]
-> > BUG: KASAN: use-after-free in mas_next_nentry+0x997/0xaa0 lib/maple_tree.c:4546
-> > Read of size 8 at addr ffff88807811e418 by task syz-executor361/3593
-> > 
-> > CPU: 1 PID: 3593 Comm: syz-executor361 Not tainted 5.18.0-rc4-next-20220427-syzkaller #0
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-> > Call Trace:
-> >  <TASK>
-> >  __dump_stack lib/dump_stack.c:88 [inline]
-> >  dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:106
-> >  print_address_description.constprop.0.cold+0xeb/0x495 mm/kasan/report.c:313
-> >  print_report mm/kasan/report.c:429 [inline]
-> >  kasan_report.cold+0xf4/0x1c6 mm/kasan/report.c:491
-> >  mas_safe_min lib/maple_tree.c:715 [inline]
-> >  mas_next_nentry+0x997/0xaa0 lib/maple_tree.c:4546
-> >  mas_next_entry lib/maple_tree.c:4636 [inline]
-> >  mas_next+0x1eb/0xc40 lib/maple_tree.c:5723
-> >  userfaultfd_register fs/userfaultfd.c:1468 [inline]
-> >  userfaultfd_ioctl+0x2527/0x40f0 fs/userfaultfd.c:1993
-> >  vfs_ioctl fs/ioctl.c:51 [inline]
-> >  __do_sys_ioctl fs/ioctl.c:870 [inline]
-> >  __se_sys_ioctl fs/ioctl.c:856 [inline]
-> >  __x64_sys_ioctl+0x193/0x200 fs/ioctl.c:856
-> >  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-> >  do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
-> >  entry_SYSCALL_64_after_hwframe+0x44/0xae
-> > RIP: 0033:0x7f4e5785d939
-> > Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 91 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-> > RSP: 002b:00007ffff7501a18 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-> > RAX: ffffffffffffffda RBX: 0000000000000031 RCX: 00007f4e5785d939
-> > RDX: 00000000200001c0 RSI: 00000000c020aa00 RDI: 0000000000000003
-> > RBP: 00007ffff7501b10 R08: 00007ffff7501a72 R09: 00007ffff7501a72
-> > R10: 00007ffff7501a72 R11: 0000000000000246 R12: 00007ffff7501ae0
-> > R13: 00007f4e578e14e0 R14: 0000000000000003 R15: 00007ffff7501a72
-> >  </TASK>
-> > 
-> > Allocated by task 3592:
-> >  kasan_save_stack+0x1e/0x40 mm/kasan/common.c:38
-> >  kasan_set_track mm/kasan/common.c:45 [inline]
-> >  set_alloc_info mm/kasan/common.c:436 [inline]
-> >  __kasan_slab_alloc+0x90/0xc0 mm/kasan/common.c:469
-> >  kasan_slab_alloc include/linux/kasan.h:224 [inline]
-> >  slab_post_alloc_hook mm/slab.h:750 [inline]
-> >  kmem_cache_alloc_bulk+0x39f/0x720 mm/slub.c:3728
-> >  mt_alloc_bulk lib/maple_tree.c:151 [inline]
-> >  mas_alloc_nodes+0x1df/0x6b0 lib/maple_tree.c:1244
-> >  mas_node_count+0x101/0x130 lib/maple_tree.c:1303
-> >  mas_split lib/maple_tree.c:3406 [inline]
-> >  mas_commit_b_node lib/maple_tree.c:3508 [inline]
-> >  mas_wr_modify+0x2505/0x5ac0 lib/maple_tree.c:4251
-> >  mas_wr_store_entry.isra.0+0x66e/0x10f0 lib/maple_tree.c:4289
-> >  mas_store+0xac/0xf0 lib/maple_tree.c:5523
-> >  dup_mmap+0x845/0x1030 kernel/fork.c:687
-> >  dup_mm+0x91/0x370 kernel/fork.c:1516
-> >  copy_mm kernel/fork.c:1565 [inline]
-> >  copy_process+0x3b07/0x6fd0 kernel/fork.c:2226
-> >  kernel_clone+0xe7/0xab0 kernel/fork.c:2631
-> >  __do_sys_clone+0xc8/0x110 kernel/fork.c:2748
-> >  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-> >  do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
-> >  entry_SYSCALL_64_after_hwframe+0x44/0xae
-> > 
-> > Freed by task 3593:
-> >  kasan_save_stack+0x1e/0x40 mm/kasan/common.c:38
-> >  kasan_set_track+0x21/0x30 mm/kasan/common.c:45
-> >  kasan_set_free_info+0x20/0x30 mm/kasan/generic.c:370
-> >  ____kasan_slab_free mm/kasan/common.c:366 [inline]
-> >  ____kasan_slab_free+0x166/0x1a0 mm/kasan/common.c:328
-> >  kasan_slab_free include/linux/kasan.h:200 [inline]
-> >  slab_free_hook mm/slub.c:1727 [inline]
-> >  slab_free_freelist_hook+0x8b/0x1c0 mm/slub.c:1753
-> >  slab_free mm/slub.c:3507 [inline]
-> >  kmem_cache_free_bulk mm/slub.c:3654 [inline]
-> >  kmem_cache_free_bulk+0x2c0/0xb60 mm/slub.c:3641
-> >  mt_free_bulk lib/maple_tree.c:157 [inline]
-> >  mas_destroy+0x394/0x5c0 lib/maple_tree.c:5685
-> >  mas_store_prealloc+0xec/0x150 lib/maple_tree.c:5567
-> >  vma_mas_store mm/internal.h:482 [inline]
-> >  __vma_adjust+0x6ba/0x18f0 mm/mmap.c:811
-> >  vma_adjust include/linux/mm.h:2654 [inline]
-> >  __split_vma+0x443/0x530 mm/mmap.c:2259
-> >  split_vma+0x9f/0xe0 mm/mmap.c:2292
-> >  userfaultfd_register fs/userfaultfd.c:1444 [inline]
-> >  userfaultfd_ioctl+0x39f4/0x40f0 fs/userfaultfd.c:1993
-> >  vfs_ioctl fs/ioctl.c:51 [inline]
-> >  __do_sys_ioctl fs/ioctl.c:870 [inline]
-> >  __se_sys_ioctl fs/ioctl.c:856 [inline]
-> >  __x64_sys_ioctl+0x193/0x200 fs/ioctl.c:856
-> >  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-> >  do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
-> >  entry_SYSCALL_64_after_hwframe+0x44/0xae
-> > 
-> > The buggy address belongs to the object at ffff88807811e400
-> >  which belongs to the cache maple_node of size 256
-> > The buggy address is located 24 bytes inside of
-> >  256-byte region [ffff88807811e400, ffff88807811e500)
-> > 
-> > The buggy address belongs to the physical page:
-> > page:ffffea0001e04780 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x7811e
-> > head:ffffea0001e04780 order:1 compound_mapcount:0 compound_pincount:0
-> > flags: 0xfff00000010200(slab|head|node=0|zone=1|lastcpupid=0x7ff)
-> > raw: 00fff00000010200 0000000000000000 dead000000000001 ffff888010c4fdc0
-> > raw: 0000000000000000 0000000000100010 00000001ffffffff 0000000000000000
-> > page dumped because: kasan: bad access detected
-> > page_owner tracks the page as allocated
-> > page last allocated via order 1, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 3286, tgid 3286 (dhcpcd-run-hook), ts 27966983290, free_ts 22717162691
-> >  prep_new_page mm/page_alloc.c:2431 [inline]
-> >  get_page_from_freelist+0xba2/0x3e00 mm/page_alloc.c:4172
-> >  __alloc_pages+0x1b2/0x500 mm/page_alloc.c:5393
-> >  alloc_pages+0x1aa/0x310 mm/mempolicy.c:2281
-> >  alloc_slab_page mm/slub.c:1797 [inline]
-> >  allocate_slab+0x26c/0x3c0 mm/slub.c:1942
-> >  new_slab mm/slub.c:2002 [inline]
-> >  ___slab_alloc+0x985/0xd90 mm/slub.c:3002
-> >  kmem_cache_alloc_bulk+0x21c/0x720 mm/slub.c:3704
-> >  mt_alloc_bulk lib/maple_tree.c:151 [inline]
-> >  mas_alloc_nodes+0x2b0/0x6b0 lib/maple_tree.c:1244
-> >  mas_preallocate+0xfb/0x270 lib/maple_tree.c:5581
-> >  __vma_adjust+0x226/0x18f0 mm/mmap.c:742
-> >  vma_adjust include/linux/mm.h:2654 [inline]
-> >  __split_vma+0x443/0x530 mm/mmap.c:2259
-> >  do_mas_align_munmap+0x4f5/0xe80 mm/mmap.c:2375
-> >  do_mas_munmap+0x202/0x2c0 mm/mmap.c:2499
-> >  mmap_region+0x219/0x1c70 mm/mmap.c:2547
-> >  do_mmap+0x825/0xf60 mm/mmap.c:1471
-> >  vm_mmap_pgoff+0x1b7/0x290 mm/util.c:488
-> >  ksys_mmap_pgoff+0x40d/0x5a0 mm/mmap.c:1517
-> > page last free stack trace:
-> >  reset_page_owner include/linux/page_owner.h:24 [inline]
-> >  free_pages_prepare mm/page_alloc.c:1346 [inline]
-> >  free_pcp_prepare+0x549/0xd20 mm/page_alloc.c:1396
-> >  free_unref_page_prepare mm/page_alloc.c:3318 [inline]
-> >  free_unref_page+0x19/0x6a0 mm/page_alloc.c:3413
-> >  __unfreeze_partials+0x17c/0x1a0 mm/slub.c:2521
-> >  qlink_free mm/kasan/quarantine.c:168 [inline]
-> >  qlist_free_all+0x6a/0x170 mm/kasan/quarantine.c:187
-> >  kasan_quarantine_reduce+0x180/0x200 mm/kasan/quarantine.c:294
-> >  __kasan_slab_alloc+0xa2/0xc0 mm/kasan/common.c:446
-> >  kasan_slab_alloc include/linux/kasan.h:224 [inline]
-> >  slab_post_alloc_hook mm/slab.h:750 [inline]
-> >  slab_alloc_node mm/slub.c:3214 [inline]
-> >  slab_alloc mm/slub.c:3222 [inline]
-> >  __kmalloc+0x200/0x350 mm/slub.c:4415
-> >  kmalloc include/linux/slab.h:593 [inline]
-> >  tomoyo_realpath_from_path+0xc3/0x620 security/tomoyo/realpath.c:254
-> >  tomoyo_realpath_nofollow+0xc8/0xe0 security/tomoyo/realpath.c:309
-> >  tomoyo_find_next_domain+0x280/0x1f80 security/tomoyo/domain.c:727
-> >  tomoyo_bprm_check_security security/tomoyo/tomoyo.c:101 [inline]
-> >  tomoyo_bprm_check_security+0x121/0x1a0 security/tomoyo/tomoyo.c:91
-> >  security_bprm_check+0x45/0xa0 security/security.c:865
-> >  search_binary_handler fs/exec.c:1718 [inline]
-> >  exec_binprm fs/exec.c:1771 [inline]
-> >  bprm_execve fs/exec.c:1840 [inline]
-> >  bprm_execve+0x732/0x1970 fs/exec.c:1802
-> >  do_execveat_common+0x727/0x890 fs/exec.c:1945
-> >  do_execve fs/exec.c:2015 [inline]
-> >  __do_sys_execve fs/exec.c:2091 [inline]
-> >  __se_sys_execve fs/exec.c:2086 [inline]
-> >  __x64_sys_execve+0x8f/0xc0 fs/exec.c:2086
-> >  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-> >  do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
-> > 
-> > Memory state around the buggy address:
-> >  ffff88807811e300: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> >  ffff88807811e380: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> > >ffff88807811e400: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> >                             ^
-> >  ffff88807811e480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> >  ffff88807811e500: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> > ==================================================================
-> > 
-> > 
+> > Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
+> > Signed-off-by: Arnav Dawn <arnav.dawn@samsung.com>
 > > ---
-> > This report is generated by a bot. It may contain errors.
-> > See https://goo.gl/tpsmEJ for more information about syzbot.
-> > syzbot engineers can be reached at syzkaller@googlegroups.com.
+> >  block/blk-lib.c           | 232 ++++++++++++++++++++++++++++++++++++++
+> >  block/blk.h               |   2 +
+> >  include/linux/blk_types.h |  21 ++++
+> >  include/linux/blkdev.h    |   2 +
+> >  include/uapi/linux/fs.h   |  14 +++
+> >  5 files changed, 271 insertions(+)
 > > 
-> > syzbot will keep track of this issue. See:
-> > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> > syzbot can test patches for this issue, for details see:
-> > https://goo.gl/tpsmEJ#testing-patches
+> > diff --git a/block/blk-lib.c b/block/blk-lib.c
+> > index 09b7e1200c0f..ba9da2d2f429 100644
+> > --- a/block/blk-lib.c
+> > +++ b/block/blk-lib.c
+> > @@ -117,6 +117,238 @@ int blkdev_issue_discard(struct block_device *bdev, sector_t sector,
+> >  }
+> >  EXPORT_SYMBOL(blkdev_issue_discard);
+> >  
+> > +/*
+> > + * Wait on and process all in-flight BIOs.  This must only be called once
+> > + * all bios have been issued so that the refcount can only decrease.
+> > + * This just waits for all bios to make it through bio_copy_end_io. IO
+> > + * errors are propagated through cio->io_error.
+> > + */
+> > +static int cio_await_completion(struct cio *cio)
+> > +{
+> > +	int ret = 0;
+> > +	unsigned long flags;
+> > +
+> > +	spin_lock_irqsave(&cio->lock, flags);
+> > +	if (cio->refcount) {
+> > +		cio->waiter = current;
+> > +		__set_current_state(TASK_UNINTERRUPTIBLE);
+> > +		spin_unlock_irqrestore(&cio->lock, flags);
+> > +		blk_io_schedule();
+> > +		/* wake up sets us TASK_RUNNING */
+> > +		spin_lock_irqsave(&cio->lock, flags);
+> > +		cio->waiter = NULL;
+> > +		ret = cio->io_err;
+> > +	}
+> > +	spin_unlock_irqrestore(&cio->lock, flags);
+> > +	kvfree(cio);
+> 
+> cio is allocated with kzalloc() == kmalloc(). So why the kvfree() here ?
+>
+
+acked.
+
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +static void bio_copy_end_io(struct bio *bio)
+> > +{
+> > +	struct copy_ctx *ctx = bio->bi_private;
+> > +	struct cio *cio = ctx->cio;
+> > +	sector_t clen;
+> > +	int ri = ctx->range_idx;
+> > +	unsigned long flags;
+> > +	bool wake = false;
+> > +
+> > +	if (bio->bi_status) {
+> > +		cio->io_err = bio->bi_status;
+> > +		clen = (bio->bi_iter.bi_sector << SECTOR_SHIFT) - ctx->start_sec;
+> > +		cio->rlist[ri].comp_len = min_t(sector_t, clen, cio->rlist[ri].comp_len);
+> 
+> long line.
+
+Is it because line is more than 80 character, I thought limit is 100 now, so
+went with longer lines ?
+
+> 
+> > +	}
+> > +	__free_page(bio->bi_io_vec[0].bv_page);
+> > +	kfree(ctx);
+> > +	bio_put(bio);
+> > +
+> > +	spin_lock_irqsave(&cio->lock, flags);
+> > +	if (((--cio->refcount) <= 0) && cio->waiter)
+> > +		wake = true;
+> > +	spin_unlock_irqrestore(&cio->lock, flags);
+> > +	if (wake)
+> > +		wake_up_process(cio->waiter);
+> > +}
+> > +
+> > +/*
+> > + * blk_copy_offload	- Use device's native copy offload feature
+> > + * Go through user provide payload, prepare new payload based on device's copy offload limits.
+> 
+> long line.
+> 
+
+Same as above
+
+> > + */
+> > +int blk_copy_offload(struct block_device *src_bdev, int nr_srcs,
+> > +		struct range_entry *rlist, struct block_device *dst_bdev, gfp_t gfp_mask)
+> 
+> long line.
+>
+
+Same as above
+
+> rlist is an array, but rlist naming implies a list. Why not call that
+> argument "ranges" ?
+> 
+> The argument ordering is also strange. I would make that:
+> 
+> blk_copy_offload(struct block_device *src_bdev,
+> 	         struct block_device *dst_bdev,
+> 		 struct range_entry *rlist, int nr_srcs,
+> 		 gfp_t gfp_mask)
+> 
+
+Yes, looks better. We will update in next version.
+One doubt, this arguments ordering is based on size ?
+Since we ordered it with logic that, we use nr_srcs to get number of entries
+in rlist(ranges).
+
+> > +{
+> > +	struct request_queue *sq = bdev_get_queue(src_bdev);
+> > +	struct request_queue *dq = bdev_get_queue(dst_bdev);
+> > +	struct bio *read_bio, *write_bio;
+> > +	struct copy_ctx *ctx;
+> > +	struct cio *cio;
+> > +	struct page *token;
+> > +	sector_t src_blk, copy_len, dst_blk;
+> > +	sector_t remaining, max_copy_len = LONG_MAX;
+> > +	unsigned long flags;
+> > +	int ri = 0, ret = 0;
+> > +
+> > +	cio = kzalloc(sizeof(struct cio), GFP_KERNEL);
+> > +	if (!cio)
+> > +		return -ENOMEM;
+> > +	cio->rlist = rlist;
+> > +	spin_lock_init(&cio->lock);
+> > +
+> > +	max_copy_len = min_t(sector_t, sq->limits.max_copy_sectors, dq->limits.max_copy_sectors);
+> > +	max_copy_len = min3(max_copy_len, (sector_t)sq->limits.max_copy_range_sectors,
+> > +			(sector_t)dq->limits.max_copy_range_sectors) << SECTOR_SHIFT;
+> 
+> But max_copy_range_sectors is for one sector only, right ? So what is this
+> second min3() doing ? It is mixing up total length and one range length.
+> The device should not have reported a per range max length larger than the
+> total length in the first place, right ? If it does, that would be a very
+> starnge device...
+> 
+
+Yeah you are right, makes sense, will update in next version.
+
+> > +
+> > +	for (ri = 0; ri < nr_srcs; ri++) {
+> > +		cio->rlist[ri].comp_len = rlist[ri].len;
+> > +		src_blk = rlist[ri].src;
+> > +		dst_blk = rlist[ri].dst;
+> > +		for (remaining = rlist[ri].len; remaining > 0; remaining -= copy_len) {
+> > +			copy_len = min(remaining, max_copy_len);
+> > +
+> > +			token = alloc_page(gfp_mask);
+> > +			if (unlikely(!token)) {
+> > +				ret = -ENOMEM;
+> > +				goto err_token;
+> > +			}
+> > +
+> > +			ctx = kzalloc(sizeof(struct copy_ctx), gfp_mask);
+> > +			if (!ctx) {
+> > +				ret = -ENOMEM;
+> > +				goto err_ctx;
+> > +			}
+> > +			ctx->cio = cio;
+> > +			ctx->range_idx = ri;
+> > +			ctx->start_sec = dst_blk;
+> > +
+> > +			read_bio = bio_alloc(src_bdev, 1, REQ_OP_READ | REQ_COPY | REQ_NOMERGE,
+> > +					gfp_mask);
+> > +			if (!read_bio) {
+> > +				ret = -ENOMEM;
+> > +				goto err_read_bio;
+> > +			}
+> > +			read_bio->bi_iter.bi_sector = src_blk >> SECTOR_SHIFT;
+> > +			__bio_add_page(read_bio, token, PAGE_SIZE, 0);
+> > +			/*__bio_add_page increases bi_size by len, so overwrite it with copy len*/
+> > +			read_bio->bi_iter.bi_size = copy_len;
+> > +			ret = submit_bio_wait(read_bio);
+> > +			bio_put(read_bio);
+> > +			if (ret)
+> > +				goto err_read_bio;
+> > +
+> > +			write_bio = bio_alloc(dst_bdev, 1, REQ_OP_WRITE | REQ_COPY | REQ_NOMERGE,
+> > +					gfp_mask);
+> > +			if (!write_bio) {
+> > +				ret = -ENOMEM;
+> > +				goto err_read_bio;
+> > +			}
+> > +			write_bio->bi_iter.bi_sector = dst_blk >> SECTOR_SHIFT;
+> > +			__bio_add_page(write_bio, token, PAGE_SIZE, 0);
+> > +			/*__bio_add_page increases bi_size by len, so overwrite it with copy len*/
+> > +			write_bio->bi_iter.bi_size = copy_len;
+> > +			write_bio->bi_end_io = bio_copy_end_io;
+> > +			write_bio->bi_private = ctx;
+> > +
+> > +			spin_lock_irqsave(&cio->lock, flags);
+> > +			++cio->refcount;
+> 
+> Shouldn't this be an atomic_t ?
+> 
+
+We changed it to normal variable and used a single spin_lock to avoid race
+condition on refcount and current process wakeup in completion path.
+Since for making copy asynchronous, we needed to store process
+context as well. So there was a possibility of race condition.
+https://lore.kernel.org/all/20220209102208.GB7698@test-zns/
+
+> And wrap lines please. Many are too long.
+> 
+> > +			spin_unlock_irqrestore(&cio->lock, flags);
+> > +
+> > +			submit_bio(write_bio);
+> > +			src_blk += copy_len;
+> > +			dst_blk += copy_len;
+> > +		}
+> > +	}
+> > +
+> > +	/* Wait for completion of all IO's*/
+> > +	return cio_await_completion(cio);
+> > +
+> > +err_read_bio:
+> > +	kfree(ctx);
+> > +err_ctx:
+> > +	__free_page(token);
+> > +err_token:
+> > +	rlist[ri].comp_len = min_t(sector_t, rlist[ri].comp_len, (rlist[ri].len - remaining));
+> > +
+> > +	cio->io_err = ret;
+> > +	return cio_await_completion(cio);
+> > +}
+> > +
+> > +static inline int blk_copy_sanity_check(struct block_device *src_bdev,
+> > +		struct block_device *dst_bdev, struct range_entry *rlist, int nr)
+> > +{
+> > +	unsigned int align_mask = max(
+> > +			bdev_logical_block_size(dst_bdev), bdev_logical_block_size(src_bdev)) - 1;
+> > +	sector_t len = 0;
+> > +	int i;
+> > +
+> > +	for (i = 0; i < nr; i++) {
+> > +		if (rlist[i].len)
+> > +			len += rlist[i].len;
+> > +		else
+> > +			return -EINVAL;
+> 
+> Reverse the if condition and return to avoid the else.
+> 
+
+acked
+
+> > +		if ((rlist[i].dst & align_mask) || (rlist[i].src & align_mask) ||
+> > +				(rlist[i].len & align_mask))
+> > +			return -EINVAL;
+> > +		rlist[i].comp_len = 0;
+> > +	}
+> > +
+> > +	if (len && len >= MAX_COPY_TOTAL_LENGTH)
+> > +		return -EINVAL;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static inline bool blk_check_copy_offload(struct request_queue *src_q,
+> > +		struct request_queue *dest_q)
+> > +{
+> > +	if (blk_queue_copy(dest_q) && blk_queue_copy(src_q))
+> > +		return true;
+> > +
+> > +	return false;
+> 
+> return blk_queue_copy(dest_q) && blk_queue_copy(src_q);
+> 
+> would be simpler.
+> 
+
+acked
+
+> > +}
+> > +
+> > +/*
+> > + * blkdev_issue_copy - queue a copy
+> > + * @src_bdev:	source block device
+> > + * @nr_srcs:	number of source ranges to copy
+> > + * @rlist:	array of source/dest/len
+> > + * @dest_bdev:	destination block device
+> > + * @gfp_mask:   memory allocation flags (for bio_alloc)
+> > + *
+> > + * Description:
+> > + *	Copy source ranges from source block device to destination block device.
+> > + *	length of a source range cannot be zero.
+> > + */
+> > +int blkdev_issue_copy(struct block_device *src_bdev, int nr,
+> > +		struct range_entry *rlist, struct block_device *dest_bdev, gfp_t gfp_mask)
+> 
+> same comment as above about args order and naming.
+> 
+
+acked
+
+> > +{
+> > +	struct request_queue *src_q = bdev_get_queue(src_bdev);
+> > +	struct request_queue *dest_q = bdev_get_queue(dest_bdev);
+> > +	int ret = -EINVAL;
+> > +
+> > +	if (!src_q || !dest_q)
+> > +		return -ENXIO;
+> > +
+> > +	if (!nr)
+> > +		return -EINVAL;
+> > +
+> > +	if (nr >= MAX_COPY_NR_RANGE)
+> > +		return -EINVAL;
+> 
+> Where do you check the number of ranges against what the device can do ?
+>
+
+The present implementation submits only one range at a time. This was done to 
+make copy offload generic, so that other types of copy implementation such as
+XCOPY should be able to use same infrastructure. Downside at present being
+NVMe copy offload is not optimal.
+
+> > +
+> > +	if (bdev_read_only(dest_bdev))
+> > +		return -EPERM;
+> > +
+> > +	ret = blk_copy_sanity_check(src_bdev, dest_bdev, rlist, nr);
+> > +	if (ret)
+> > +		return ret;
+> 
+> nr check should be in this function...
+> 
+> > +
+> > +	if (blk_check_copy_offload(src_q, dest_q))
+> 
+> ...which should be only one function with this one.
+> 
+
+Sure, we can combine blk_copy_sanity_check and blk_check_copy_offload.
+
+> > +		ret = blk_copy_offload(src_bdev, nr, rlist, dest_bdev, gfp_mask);
+> > +
+> > +	return ret;
+> > +}
+> > +EXPORT_SYMBOL_GPL(blkdev_issue_copy);
+> > +
+> >  static int __blkdev_issue_write_zeroes(struct block_device *bdev,
+> >  		sector_t sector, sector_t nr_sects, gfp_t gfp_mask,
+> >  		struct bio **biop, unsigned flags)
+> > diff --git a/block/blk.h b/block/blk.h
+> > index 434017701403..6010eda58c70 100644
+> > --- a/block/blk.h
+> > +++ b/block/blk.h
+> > @@ -291,6 +291,8 @@ static inline bool blk_may_split(struct request_queue *q, struct bio *bio)
+> >  		break;
+> >  	}
+> >  
+> > +	if (unlikely(op_is_copy(bio->bi_opf)))
+> > +		return false;
+> >  	/*
+> >  	 * All drivers must accept single-segments bios that are <= PAGE_SIZE.
+> >  	 * This is a quick and dirty check that relies on the fact that
+> > diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+> > index c62274466e72..f5b01f284c43 100644
+> > --- a/include/linux/blk_types.h
+> > +++ b/include/linux/blk_types.h
+> > @@ -418,6 +418,7 @@ enum req_flag_bits {
+> >  	/* for driver use */
+> >  	__REQ_DRV,
+> >  	__REQ_SWAP,		/* swapping request. */
+> > +	__REQ_COPY,		/* copy request */
+> >  	__REQ_NR_BITS,		/* stops here */
+> >  };
+> >  
+> > @@ -443,6 +444,7 @@ enum req_flag_bits {
+> >  
+> >  #define REQ_DRV			(1ULL << __REQ_DRV)
+> >  #define REQ_SWAP		(1ULL << __REQ_SWAP)
+> > +#define REQ_COPY		(1ULL << __REQ_COPY)
+> >  
+> >  #define REQ_FAILFAST_MASK \
+> >  	(REQ_FAILFAST_DEV | REQ_FAILFAST_TRANSPORT | REQ_FAILFAST_DRIVER)
+> > @@ -459,6 +461,11 @@ enum stat_group {
+> >  	NR_STAT_GROUPS
+> >  };
+> >  
+> > +static inline bool op_is_copy(unsigned int op)
+> > +{
+> > +	return (op & REQ_COPY);
+> > +}
+> > +
+> >  #define bio_op(bio) \
+> >  	((bio)->bi_opf & REQ_OP_MASK)
+> >  
+> > @@ -533,4 +540,18 @@ struct blk_rq_stat {
+> >  	u64 batch;
+> >  };
+> >  
+> > +struct cio {
+> > +	struct range_entry *rlist;
+> 
+> naming... This is an array, right ?
+>
+
+acked, will update in next version.
+
+> > +	struct task_struct *waiter;     /* waiting task (NULL if none) */
+> > +	spinlock_t lock;		/* protects refcount and waiter */
+> > +	int refcount;
+> > +	blk_status_t io_err;
+> > +};
+> > +
+> > +struct copy_ctx {
+> > +	int range_idx;
+> > +	sector_t start_sec;
+> > +	struct cio *cio;
+> > +};
+> > +
+> >  #endif /* __LINUX_BLK_TYPES_H */
+> > diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+> > index 3596fd37fae7..c6cb3fe82ba2 100644
+> > --- a/include/linux/blkdev.h
+> > +++ b/include/linux/blkdev.h
+> > @@ -1121,6 +1121,8 @@ int __blkdev_issue_discard(struct block_device *bdev, sector_t sector,
+> >  		sector_t nr_sects, gfp_t gfp_mask, struct bio **biop);
+> >  int blkdev_issue_secure_erase(struct block_device *bdev, sector_t sector,
+> >  		sector_t nr_sects, gfp_t gfp);
+> > +int blkdev_issue_copy(struct block_device *src_bdev, int nr_srcs,
+> > +		struct range_entry *src_rlist, struct block_device *dest_bdev, gfp_t gfp_mask);
+> >  
+> >  #define BLKDEV_ZERO_NOUNMAP	(1 << 0)  /* do not free blocks */
+> >  #define BLKDEV_ZERO_NOFALLBACK	(1 << 1)  /* don't write explicit zeroes */
+> > diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+> > index bdf7b404b3e7..822c28cebf3a 100644
+> > --- a/include/uapi/linux/fs.h
+> > +++ b/include/uapi/linux/fs.h
+> > @@ -64,6 +64,20 @@ struct fstrim_range {
+> >  	__u64 minlen;
+> >  };
+> >  
+> > +/* Maximum no of entries supported */
+> > +#define MAX_COPY_NR_RANGE	(1 << 12)
+> 
+> This value should be used also when setting the limits in the previous
+> patch. max_copy_nr_ranges and max_hw_copy_nr_ranges must be bounded by it.
+> 
+
+acked.
+
+> > +
+> > +/* maximum total copy length */
+> > +#define MAX_COPY_TOTAL_LENGTH	(1 << 27)
+> 
+> Same for this one. And where does this magic number come from ?
+>
+
+We used this as max size for local testing, so as not to hang resources in case
+of emulation. Feel free to suggest better values if you have anything in mind !!
+
+> > +
+> > +/* Source range entry for copy */
+> > +struct range_entry {
+> > +	__u64 src;
+> > +	__u64 dst;
+> > +	__u64 len;
+> > +	__u64 comp_len;
+> 
+> Please describe the fields of this structure. The meaning of them is
+> really not clear from the names.
+> 
+
+acked
+
+> > +};
+> > +
+> >  /* extent-same (dedupe) ioctls; these MUST match the btrfs ioctl definitions */
+> >  #define FILE_DEDUPE_RANGE_SAME		0
+> >  #define FILE_DEDUPE_RANGE_DIFFERS	1
+> 
+> 
+> -- 
+> Damien Le Moal
+> Western Digital Research
+> 
+
+------0ZLlJYeDNsXsa2iHVDx88FJSiXNelWJlSsIznY99o6DAaXg4=_17ced_
+Content-Type: text/plain; charset="utf-8"
+
+
+------0ZLlJYeDNsXsa2iHVDx88FJSiXNelWJlSsIznY99o6DAaXg4=_17ced_--
