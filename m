@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A137510E86
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Apr 2022 04:07:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF5BD510EAD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Apr 2022 04:21:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357035AbiD0CEV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 26 Apr 2022 22:04:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49914 "EHLO
+        id S1357153AbiD0CXL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 26 Apr 2022 22:23:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244895AbiD0CER (ORCPT
+        with ESMTP id S1357145AbiD0CXK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 26 Apr 2022 22:04:17 -0400
-Received: from esa4.hgst.iphmx.com (esa4.hgst.iphmx.com [216.71.154.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42D80101D7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Apr 2022 19:01:08 -0700 (PDT)
+        Tue, 26 Apr 2022 22:23:10 -0400
+Received: from esa2.hgst.iphmx.com (esa2.hgst.iphmx.com [68.232.143.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEFB825EF
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Apr 2022 19:20:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1651024868; x=1682560868;
+  t=1651026000; x=1682562000;
   h=message-id:date:mime-version:subject:to:cc:references:
    from:in-reply-to:content-transfer-encoding;
-  bh=aVEYVQf35+Uh7XzM6a1kJevWBsv5Uf3EWaUSl6Zi8N0=;
-  b=UocUzM1qIfxCSJF7NWfoqXYekFW684jLBtzH2jlb2RWBGcCrVcdMPJ9F
-   XiEFqrc0D3rXpOuRIe7xmKl/p437JlT5OfCrFUqAEjAI+TsmIXYyF4rYI
-   M0qyp8TPiyUqlvd9bGRFvu1TkCrxGrlpxHCf95nyi6S4G2m5xvPiGB4cY
-   FciILnk/Sb4D4JxOI9s10JJJNiLvLiy6MTG69/zdbFQIqs3s2n0/w+qb5
-   hMs8lu5kGRGq6YSHg5CYMXRDDNZsY2uFpUKUzlJGHO/LD4MolpCsMU0YI
-   Am3cDZOFkGV7NnKXLtOZhdykUHAHrW+vcIPWqSl6SkXKPg2W44xn0rMbU
-   A==;
+  bh=5TeQN5lhR4Ahp6383VgZCh7eErXQ5BHljxeq6DTkar0=;
+  b=BrV63yRSdIXWT3fI7F7e4Dm1FzMcW1uUipwMJQUqAdabKsYg6NxMii6O
+   zMJX7R5fI8oIk9x3LV390zYwIq2EriNr3gHCrl+cDWPadIpM48NlM/1iS
+   Uv/1H3FTgHwsz3qGCvPbm+LP//NKBNJCY9ZgRE+IxoG/jtmdskxI8anVd
+   N+kA9GayhohMHElPEXe814NYAecHx4Zp9U+17lowEUNmVwdfPCc/yFgqo
+   w71v/hGfvU1JV73KmoKK9jOEALT8QEvmuQ6kEeJUeywKzpXVlopftgZdw
+   XAbI44Jumu4Fj7ESK7GBjY0XTwIsfdisPjGL4+R/c9OrwpqJiQEm2crDm
+   Q==;
 X-IronPort-AV: E=Sophos;i="5.90,292,1643644800"; 
-   d="scan'208";a="197753708"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 27 Apr 2022 10:01:06 +0800
-IronPort-SDR: qN8F+PHwKqOkqqYK5BcaWz6cuAmZY3I1CJWYr8FDFDxAtD/F6pSW4kyEWZBfIciMIZmSw1TOao
- D2/XBLm7gsUqhzijHViDOUs4oN/HkZ5ZBpCcNUL84ZRryvpJW7eM/Owo0x/9A6CiV7Bh585ipi
- J9Mzw6W3r8eUQ1mavy2Ln8ts1eFntRnpf6kek57r2/puAwci4mrIpnFH6Z9O2rXr2p+Slvq49U
- pnLuQld5Q8bFiCsPXat71PxrELd5VvgATAQ8OI+fFFXn4eU66FQWLQJADWe1/6HVWjAbdQWWC9
- LcaCpS+Wu00A5p5TjW3MjcBu
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 26 Apr 2022 18:32:00 -0700
-IronPort-SDR: /po13bBthGvRqjsEHUtQoZb/m4uIVRtXCKvY9Ip2E2ZQXKEKSSxdbLxfX8w+3eYKtQAwZJbUTG
- bX6Tck5LrIENHoJwSElp4tfHcWK9Q399QbNCvi10DJ4ZRN+BvNU7LXgf+w+8sw4Tqmbp0ruv+L
- QZQdXQSVtEJMDnRNUSrgNuzY+UtpDMi3PDxSRtiINY5NJJ4bXQtWmxslNJMC17YYPIq6gXEecX
- xqR74U8MnbnB5oZPoT2pHdvrLICWZZPa1DGpsule4MJziMHa3ZiYTN1PFTvawsTIwocEys9fwQ
- 9cI=
+   d="scan'208";a="303120018"
+Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 27 Apr 2022 10:19:58 +0800
+IronPort-SDR: Wzx0JazMswjcfxQHvqZEUfKooNIOSj4m2yv8uQLPw2vDjDwZnJqWoqX4jjdd5izLRj+rqedzOK
+ OCVx73cFANKJy8/Xhoi+wtkDCto8Cldi57tHY48fi4D0SxbiKfMUSPgBB0vvxgqEAhQzDbQcSJ
+ 8h9JLhTgDSZJ7FlttPEqsLgRy6qO80TOiEyrcQIgpkdAQfRZHBjIH3b+AheA5krnMru0A6O4j4
+ SMbWQa+7g5mM/774nrQGh3P4wk57Wl0//jxCjAjDiP/u6dZYJcZnP08WXedzJKaEvgYt2mLzyu
+ 6Zs1HnDNispO2P8Xs3dAVFVF
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 26 Apr 2022 18:50:09 -0700
+IronPort-SDR: KIc8dK1Er3X8ktYvYY9Zjt0J1ritm9oowjveUHgi2+H9zZTlSXmv0hdxJ5mOxkqhO3SlpqIX6V
+ DANCMoJymcLleDcLDfFfLNMVaV4ZmHzKF+EhtfTsFb2z8x/tFBjER82PeXAlicFs0m/hSq+xhy
+ U1qcAl7qZfrNs+9sh6GOaq4gdjrNrYlleh13TsTDd/73cRA4fs1j7BpfV/ouNHVmZr9BSWN2bJ
+ G+VgwYJGSMDGt8BWejbMu0mhW4p/toyQcy4H08Nf15XRoSCK7sEQxYhyopkC6IOJj7K487qy4x
+ oe0=
 WDCIronportException: Internal
 Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
-  by uls-op-cesaip01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 26 Apr 2022 19:01:05 -0700
+  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 26 Apr 2022 19:19:58 -0700
 Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4Kp2693134z1Rvlx
-        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Apr 2022 19:01:05 -0700 (PDT)
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4Kp2Wx6q3yz1SVny
+        for <linux-fsdevel@vger.kernel.org>; Tue, 26 Apr 2022 19:19:57 -0700 (PDT)
 Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
         reason="pass (just generated, assumed good)"
         header.d=opensource.wdc.com
@@ -57,23 +57,23 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
         opensource.wdc.com; h=content-transfer-encoding:content-type
         :in-reply-to:organization:from:references:to:content-language
         :subject:user-agent:mime-version:date:message-id; s=dkim; t=
-        1651024863; x=1653616864; bh=aVEYVQf35+Uh7XzM6a1kJevWBsv5Uf3EWaU
-        Sl6Zi8N0=; b=KfX3t52RHjy82z2TJzUhoVlJ0/BxFzUJLFKPzHSozkhHJJmCA2P
-        nweuPL+ydqBMCKQEK2VHh35Y/SPhWrUHSvx9x7hn0VwCddnnjN9XqHGV8T+TR+RY
-        aKeV2RSsxx1DxTEJxJeTvRr3oFCucN5CLVD2xVdrUgsoJTLNmlkJJNPBnjOu8xh1
-        ChIzLsgudSmkQoeSFyEiaMjAm71wKa4uYjsEYZ0pKmTZDDD6frJfWMF7mEmwuXgW
-        0X4RpDdKxB4i1yrkm5y0mIWo8WBIMJsp0WeTsmtrh2XcJOR7GVoyk1lQPHQ1IXqb
-        kKDvjaQQ+59quwxyWYKAYS90TOq0fi3lUyw==
+        1651025996; x=1653617997; bh=5TeQN5lhR4Ahp6383VgZCh7eErXQ5BHljxe
+        q6DTkar0=; b=HLh3gOdIoLSGUUyUMi7ugQ80WGd64u85fuvUH7mJ8KLbrYvw+n4
+        ZfEA4vmz1fIqGmNkLDTQnp/EARZTn46QbXeSk9AgyEeRoc7QmzuDr9+HSFQaGPS8
+        f1KVXkLxmHZEAFQGUY6AEqMMZEzD6CBczxJOM0lOCUAGFZdIHa4uWWiTNs+eHmga
+        PvLhDA+WtojKoy1rBnwEqxVn9ie+kA361GS9CQqkEl2D2izLQHDP6fZUcMAJX4bG
+        PN52+3YAVZz25etiQ45f0l/NwYQB1q3ZmAaDgflCx0DlZ/VOoK33B2u08wb5A2no
+        P8lJfWB4SE71FKiYeaqRUK95YDBBPOWivdg==
 X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
 Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
         by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id p91S28a40dPh for <linux-fsdevel@vger.kernel.org>;
-        Tue, 26 Apr 2022 19:01:03 -0700 (PDT)
+        with ESMTP id NuAjuCtn4S54 for <linux-fsdevel@vger.kernel.org>;
+        Tue, 26 Apr 2022 19:19:56 -0700 (PDT)
 Received: from [10.225.163.27] (unknown [10.225.163.27])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4Kp25z67Pcz1Rvlc;
-        Tue, 26 Apr 2022 19:00:55 -0700 (PDT)
-Message-ID: <76a89205-f4f1-1e51-aa23-c8082bfefd3c@opensource.wdc.com>
-Date:   Wed, 27 Apr 2022 11:00:54 +0900
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4Kp2Wn4QZqz1Rvlc;
+        Tue, 26 Apr 2022 19:19:49 -0700 (PDT)
+Message-ID: <6a85e8c8-d9d1-f192-f10d-09052703c99a@opensource.wdc.com>
+Date:   Wed, 27 Apr 2022 11:19:48 +0900
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.8.0
@@ -122,16 +122,16 @@ all
 > We have covered the Initial agreed requirements in this patchset.
 > Patchset borrows Mikulas's token based approach for 2 bdev
 > implementation.
-
-Please reduce the distribution list. List servers (and email clients) are
-complaining about it being too large.
-
 >=20
 > Overall series supports =E2=80=93
 >=20
 > 1. Driver
 > - NVMe Copy command (single NS), including support in nvme-target (for
 >     block and file backend)
+
+It would also be nice to have copy offload emulation in null_blk for test=
+ing.
+
 >=20
 > 2. Block layer
 > - Block-generic copy (REQ_COPY flag), with interface accommodating
