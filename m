@@ -2,59 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CE2A5113DB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Apr 2022 10:53:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36FDF5113E9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Apr 2022 10:53:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235219AbiD0I4V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Apr 2022 04:56:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44938 "EHLO
+        id S238289AbiD0I42 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Apr 2022 04:56:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45420 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229773AbiD0I4P (ORCPT
+        with ESMTP id S233454AbiD0I4U (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Apr 2022 04:56:15 -0400
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4AA51AE035;
-        Wed, 27 Apr 2022 01:53:04 -0700 (PDT)
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 23R6q8J9003700;
-        Wed, 27 Apr 2022 08:53:02 GMT
+        Wed, 27 Apr 2022 04:56:20 -0400
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8098B1AF664;
+        Wed, 27 Apr 2022 01:53:07 -0700 (PDT)
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 23R5rLkF032115;
+        Wed, 27 Apr 2022 08:53:05 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references; s=corp-2021-07-09;
- bh=LGSPXBDQBrKoSqeb2iwjeiVXyaRaUFmj08i8ApiawaA=;
- b=gwLtn9mp5Lrlyn1hYr1555Q4Tbgdv+w7mUEPHg2kr0HWjC/7qlEXG5W5NorydupchmVt
- rISMqn5S5grLYvXA9ltrJ6OxHn6pJw/mkj/3Pbjjy4nxhVK3Z3M47aMbVkmWCUN6j4BV
- ZL2OM9w79ZKFlFRYYU0GePBfsDare/J3ohl7zq4jUvD8iO8KbWDbCGHTu/UhNDNqHV2T
- PiP+ySYUDay1oHB9em936SuO2y7ybojddaRGTlMGPtH+t2B2MP7f47z4F/Seg/heD2Gm
- M8lvU2MCNJI8O3y6ZBYn8QMir6hU56zXPHRranM1lLnuKPhNQ5yFo/N3q3z6rcqqGZUp Mw== 
+ bh=8wxROLCFf21i4G1MDpwgdE5up1VD2tI4Hd2iZWeERLk=;
+ b=IXrKOWGHAzAQjcT8mlmFOvgpUe+CQx84vDmrcmibFjg2+3Cc2A55ZwBdTMOm5G7Cn74i
+ YVJfmP453PISIg1oGq51Ywu7jKf/ipp19Hr0b2uNlS0HNxWL43z5k0EdpghMCy+Cf3kZ
+ zRVaiCXmOUd88yf2Oiw3FRVp0LgYgFIkJvFpTiIa0yWGU4MAXN/IC23yH5T/FQyIaMYC
+ oR4q432VJcDdYGeDnf4Ao3vT+h60sjKSJh7u6/DrPDNMxqv4LuyfeTv1m3DEre22pFd+
+ rso6zs+V/b0u9yqNkn57dtnGeoj90vFEh3JWL1kWe0lLGMf6IYCm+rm6EQNx4Wn+oRuy xw== 
 Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3fmbb4r3yt-1
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3fmb1003kv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 27 Apr 2022 08:53:04 +0000
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.16.1.2/8.16.1.2) with SMTP id 23R8kYl0001352;
+        Wed, 27 Apr 2022 08:53:02 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com with ESMTP id 3fp5ykfxq9-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
         Wed, 27 Apr 2022 08:53:02 +0000
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.16.1.2/8.16.1.2) with SMTP id 23R8kYIn001337;
-        Wed, 27 Apr 2022 08:53:01 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com with ESMTP id 3fp5ykfxpw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 27 Apr 2022 08:53:01 +0000
 Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 23R8ligw005778;
-        Wed, 27 Apr 2022 08:53:01 GMT
+        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 23R8lih0005778;
+        Wed, 27 Apr 2022 08:53:02 GMT
 Received: from ca-common-hq.us.oracle.com (ca-common-hq.us.oracle.com [10.211.9.209])
-        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com with ESMTP id 3fp5ykfxme-4;
-        Wed, 27 Apr 2022 08:53:01 +0000
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com with ESMTP id 3fp5ykfxme-5;
+        Wed, 27 Apr 2022 08:53:02 +0000
 From:   Dai Ngo <dai.ngo@oracle.com>
 To:     chuck.lever@oracle.com, bfields@fieldses.org
 Cc:     jlayton@redhat.com, viro@zeniv.linux.org.uk,
         linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH RFC v22 3/7] NFSD: move create/destroy of laundry_wq to init_nfsd and exit_nfsd
-Date:   Wed, 27 Apr 2022 01:52:49 -0700
-Message-Id: <1651049573-29552-4-git-send-email-dai.ngo@oracle.com>
+Subject: [PATCH RFC v22 4/7] fs/lock: add helper locks_owner_has_blockers to check for blockers
+Date:   Wed, 27 Apr 2022 01:52:50 -0700
+Message-Id: <1651049573-29552-5-git-send-email-dai.ngo@oracle.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1651049573-29552-1-git-send-email-dai.ngo@oracle.com>
 References: <1651049573-29552-1-git-send-email-dai.ngo@oracle.com>
-X-Proofpoint-ORIG-GUID: UnwFl37ZCnbTTOtK38ko_laIMJ5whWeP
-X-Proofpoint-GUID: UnwFl37ZCnbTTOtK38ko_laIMJ5whWeP
+X-Proofpoint-ORIG-GUID: 1znGOqlRoFF_KVZT7nH-AzuC1Pzs6k4I
+X-Proofpoint-GUID: 1znGOqlRoFF_KVZT7nH-AzuC1Pzs6k4I
 X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
         SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
@@ -64,128 +64,79 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch moves create/destroy of laundry_wq from nfs4_state_start
-and nfs4_state_shutdown_net to init_nfsd and exit_nfsd to prevent
-the laundromat from being freed while a thread is processing a
-conflicting lock.
+Add helper locks_owner_has_blockers to check if there is any blockers
+for a given lockowner.
 
 Signed-off-by: Dai Ngo <dai.ngo@oracle.com>
 ---
- fs/nfsd/nfs4state.c | 28 ++++++++++++++++------------
- fs/nfsd/nfsctl.c    |  5 +++++
- fs/nfsd/nfsd.h      |  4 ++++
- 3 files changed, 25 insertions(+), 12 deletions(-)
+ fs/locks.c         | 28 ++++++++++++++++++++++++++++
+ include/linux/fs.h |  7 +++++++
+ 2 files changed, 35 insertions(+)
 
-diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-index 1454cadcd595..55ecf5da25fe 100644
---- a/fs/nfsd/nfs4state.c
-+++ b/fs/nfsd/nfs4state.c
-@@ -127,6 +127,21 @@ static const struct nfsd4_callback_ops nfsd4_cb_notify_lock_ops;
+diff --git a/fs/locks.c b/fs/locks.c
+index 8c6df10cd9ed..c369841ef7d1 100644
+--- a/fs/locks.c
++++ b/fs/locks.c
+@@ -300,6 +300,34 @@ void locks_release_private(struct file_lock *fl)
+ }
+ EXPORT_SYMBOL_GPL(locks_release_private);
  
- static struct workqueue_struct *laundry_wq;
- 
-+int nfsd4_create_laundry_wq(void)
++/**
++ * locks_owner_has_blockers - Check for blocking lock requests
++ * @flctx: file lock context
++ * @owner: lock owner
++ *
++ * Return values:
++ *   %true: @owner has at least one blocker
++ *   %false: @owner has no blockers
++ */
++bool locks_owner_has_blockers(struct file_lock_context *flctx,
++		fl_owner_t owner)
 +{
-+	int rc = 0;
++	struct file_lock *fl;
 +
-+	laundry_wq = alloc_workqueue("%s", WQ_UNBOUND, 0, "nfsd4");
-+	if (laundry_wq == NULL)
-+		rc = -ENOMEM;
-+	return rc;
++	spin_lock(&flctx->flc_lock);
++	list_for_each_entry(fl, &flctx->flc_posix, fl_list) {
++		if (fl->fl_owner != owner)
++			continue;
++		if (!list_empty(&fl->fl_blocked_requests)) {
++			spin_unlock(&flctx->flc_lock);
++			return true;
++		}
++	}
++	spin_unlock(&flctx->flc_lock);
++	return false;
 +}
++EXPORT_SYMBOL_GPL(locks_owner_has_blockers);
 +
-+void nfsd4_destroy_laundry_wq(void)
+ /* Free a lock which is not in use. */
+ void locks_free_lock(struct file_lock *fl)
+ {
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index bbde95387a23..b8ed7f974fb4 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1174,6 +1174,8 @@ extern void lease_unregister_notifier(struct notifier_block *);
+ struct files_struct;
+ extern void show_fd_locks(struct seq_file *f,
+ 			 struct file *filp, struct files_struct *files);
++extern bool locks_owner_has_blockers(struct file_lock_context *flctx,
++			fl_owner_t owner);
+ #else /* !CONFIG_FILE_LOCKING */
+ static inline int fcntl_getlk(struct file *file, unsigned int cmd,
+ 			      struct flock __user *user)
+@@ -1309,6 +1311,11 @@ static inline int lease_modify(struct file_lock *fl, int arg,
+ struct files_struct;
+ static inline void show_fd_locks(struct seq_file *f,
+ 			struct file *filp, struct files_struct *files) {}
++static inline bool locks_owner_has_blockers(struct file_lock_context *flctx,
++			fl_owner_t owner)
 +{
-+	destroy_workqueue(laundry_wq);
++	return false;
 +}
-+
- static bool is_session_dead(struct nfsd4_session *ses)
- {
- 	return ses->se_flags & NFS4_SESSION_DEAD;
-@@ -7758,22 +7773,12 @@ nfs4_state_start(void)
- {
- 	int ret;
+ #endif /* !CONFIG_FILE_LOCKING */
  
--	laundry_wq = alloc_workqueue("%s", WQ_UNBOUND, 0, "nfsd4");
--	if (laundry_wq == NULL) {
--		ret = -ENOMEM;
--		goto out;
--	}
- 	ret = nfsd4_create_callback_queue();
- 	if (ret)
--		goto out_free_laundry;
-+		return ret;
- 
- 	set_max_delegations();
- 	return 0;
--
--out_free_laundry:
--	destroy_workqueue(laundry_wq);
--out:
--	return ret;
- }
- 
- void
-@@ -7810,7 +7815,6 @@ nfs4_state_shutdown_net(struct net *net)
- void
- nfs4_state_shutdown(void)
- {
--	destroy_workqueue(laundry_wq);
- 	nfsd4_destroy_callback_queue();
- }
- 
-diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
-index 16920e4512bd..2bdd5678deee 100644
---- a/fs/nfsd/nfsctl.c
-+++ b/fs/nfsd/nfsctl.c
-@@ -1476,6 +1476,7 @@ static __net_init int nfsd_init_net(struct net *net)
- 	if (retval)
- 		goto out_drc_error;
- 	nn->nfsd4_lease = 90;	/* default lease time */
-+	nn->nfsd4_lease = 30;	/* DEBUG */
- 	nn->nfsd4_grace = 90;
- 	nn->somebody_reclaimed = false;
- 	nn->track_reclaim_completes = false;
-@@ -1544,6 +1545,9 @@ static int __init init_nfsd(void)
- 	retval = register_cld_notifier();
- 	if (retval)
- 		goto out_free_all;
-+	retval = nfsd4_create_laundry_wq();
-+	if (retval)
-+		goto out_free_all;
- 	return 0;
- out_free_all:
- 	unregister_pernet_subsys(&nfsd_net_ops);
-@@ -1566,6 +1570,7 @@ static int __init init_nfsd(void)
- 
- static void __exit exit_nfsd(void)
- {
-+	nfsd4_destroy_laundry_wq();
- 	unregister_cld_notifier();
- 	unregister_pernet_subsys(&nfsd_net_ops);
- 	nfsd_drc_slab_free();
-diff --git a/fs/nfsd/nfsd.h b/fs/nfsd/nfsd.h
-index 23996c6ca75e..624a6c7da522 100644
---- a/fs/nfsd/nfsd.h
-+++ b/fs/nfsd/nfsd.h
-@@ -162,6 +162,8 @@ void nfs4_state_shutdown_net(struct net *net);
- int nfs4_reset_recoverydir(char *recdir);
- char * nfs4_recoverydir(void);
- bool nfsd4_spo_must_allow(struct svc_rqst *rqstp);
-+int nfsd4_create_laundry_wq(void);
-+void nfsd4_destroy_laundry_wq(void);
- #else
- static inline int nfsd4_init_slabs(void) { return 0; }
- static inline void nfsd4_free_slabs(void) { }
-@@ -175,6 +177,8 @@ static inline bool nfsd4_spo_must_allow(struct svc_rqst *rqstp)
- {
- 	return false;
- }
-+static inline int nfsd4_create_laundry_wq(void) { return 0 };
-+static inline void nfsd4_destroy_laundry_wq(void) {};
- #endif
- 
- /*
+ static inline struct inode *file_inode(const struct file *f)
 -- 
 2.9.5
 
