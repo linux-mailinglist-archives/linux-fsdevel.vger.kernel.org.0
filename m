@@ -2,188 +2,246 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AA3CC512225
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Apr 2022 21:07:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B203851223C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 27 Apr 2022 21:14:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233022AbiD0TKc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Apr 2022 15:10:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42454 "EHLO
+        id S231377AbiD0TRO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Apr 2022 15:17:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232952AbiD0TKY (ORCPT
+        with ESMTP id S232434AbiD0TRF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Apr 2022 15:10:24 -0400
-Received: from mail-qv1-xf29.google.com (mail-qv1-xf29.google.com [IPv6:2607:f8b0:4864:20::f29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04152783AF
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Apr 2022 11:59:05 -0700 (PDT)
-Received: by mail-qv1-xf29.google.com with SMTP id b17so1699415qvf.12
-        for <linux-fsdevel@vger.kernel.org>; Wed, 27 Apr 2022 11:59:05 -0700 (PDT)
+        Wed, 27 Apr 2022 15:17:05 -0400
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 689365B3E1;
+        Wed, 27 Apr 2022 12:10:07 -0700 (PDT)
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 23RHh3cm011361;
+        Wed, 27 Apr 2022 19:10:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : date :
+ subject : to : cc : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=corp-2021-07-09;
+ bh=jvT77X20Fm/t81+K1TQnTOve5ja/cSbJR5Ic+zDrf60=;
+ b=rMAuUq48iJ3tG7VbENhkQI0Zebkr09pbwf9alke2mjW6Y9MwOUkem8ugWQ/LQwx9lAzj
+ cmR6Be5HPXDo+PfDjYhw8K/MHCBRSH1shfXk5frAR55Qea9Te156/3bYAVZsz8KpeJL2
+ 9bxI1M0LraQLNHzWNdXoOb/GXjBYpVH9xAo216X56l1WNt04C1udFvZ7ws1qS0dPcijo
+ KNjG2ieLnNEoB4mjO1rQsxdjtvik7ytBvdGHfB1ZEPFonV808wHhJd7ytR3/aPojumrr
+ r9i3jZjq5r59Q3cNRkPYXPTI1MEkRzKLxbM7vZPQbDLoKkV1IJLT1258Tzd+q1L9Gacy hQ== 
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3fmaw4j3nu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 27 Apr 2022 19:10:04 +0000
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.16.1.2/8.16.1.2) with SMTP id 23RJ0fk8025134;
+        Wed, 27 Apr 2022 19:10:03 GMT
+Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2101.outbound.protection.outlook.com [104.47.70.101])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com with ESMTP id 3fp5ymhq3e-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 27 Apr 2022 19:10:03 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=B5SZpLviMBY9bdlDce0NieXOaRCP/zIi6nQsE8sfb88KZ00VONvLZH+y8sb3zs0lWciUZnEjmf8eywfEXtTR0AW5oy+4xTfhchU4xcPh7o5fLI2sJV9UpPPyH223IQq4UQeCTKXPA0CyCKSu7QLC0Ed9qjbeuB6l3pATajU39BCKv4CVI1PEsH03DHgx8S41FSGGgmJQE3er002E7vGb11iWtEFNbG458hPXZXGqUODvbP3IuoZ+Tt7TE39tNvdaVbN0ASBeXR612qcF64Fxf3b7+rSV5kM+K+eqcxVFqnQJDbVKecEEXeYBZ8KouwWLC1bFQQYHsEgb1MEWS8psPQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jvT77X20Fm/t81+K1TQnTOve5ja/cSbJR5Ic+zDrf60=;
+ b=dnimkevM0sO45r3yki8DjwhZp7hcNhdM+76kdfxWoOjXlEYEK49+Y/ycwKyGFn2zRmOz7XgvoNXFZDSxKLY3Cmdp1wuUo6spEF6vo0rBxmAsASUc2Ck9koswU7eAH6wfwb71odO51q2dPPn9HXuRDswxzr+I7xO6OPruL0ACHAOIgEHw+VbK4OIsxI1iRkjpTGGnflbRJl+gNSQrl9KxAwRcs6nbst55S5utvDr9bZmQkqQRuflznw6LmUM3meuEjpdO5fijYmOls7tdEh0Zz7woaQHuqIGGw2CgiF5kfF40hfX61tN3icgy3Z7SST5ivNSyRhCiNFjWfhSpfmHEXA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=wHOyhzQktuJeCmvwWjftPQsSsOlt4BXlADA5QK6cyn4=;
-        b=k1qML+sxrm95156WSt9WSBOpx6+mTKFtOQi4nGVQI4QRw40UCsnptGGy/M6SI7rz29
-         U79bHm6mcA4AhTnC5WHZRx7hIacLjQiTeMxoiPj8jLBBso7yxJfh45xUHjn8FbsGzhyn
-         ijroBL2eVTw3EX9w/lfHC77jM8etbh4lSEy3iZ8oBs9ac8qx+Eg37LEkvzTG8Zq+d9ka
-         p22lZZ6WET0UVys9n62RmF7Vyatvn/lUJ2vn0Lyi/Hc7RJFPeDAS+qM7k2uGi36fWS43
-         n3im94JWaaOFr96F245s3oFs+uWq/WeBxqcqIS3/nidiwteN5UqGta7dgCjtUOvs/W4O
-         dwBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=wHOyhzQktuJeCmvwWjftPQsSsOlt4BXlADA5QK6cyn4=;
-        b=uVOrM2TG8PHdKHl6+MXHOjhV/oCkBpDqywC3O+a5Y60mgbVM87d1XmTZoT1tUV0DlW
-         HK3c5Pff7hzhykkwpBg8hIVlemsCDBvifYome8tWfFVh8xhE3kxBkBRNqP3elyjmd4yj
-         /FyDRUTWUjL8jNqxcXUUo4lMsX4swFHUxuCJrT9N+joYC+R9ipGUI2xC18MTPcpYSBB6
-         3PnmrCfoKEpMsfvK8CcW7PmDhIJFWYey/Ux1il8HRdkKVV5nvtOyK3R1ZRD39auEsVZG
-         W7g+r06RDBCr4Ej9dRENqpauvz1lvRy/w068Xw5xvJPQvKPwWczLcx6VwHJwrB8YpQ/4
-         DNiw==
-X-Gm-Message-State: AOAM5338s801TGjwimgu2rSvXiCtVMUBeukXPfsV+gAxGO2l50ENXV6p
-        I4y5rDwRh/xzBg3vWduNvGuewwnyDkQMFytzh14=
-X-Google-Smtp-Source: ABdhPJyheLar29wCuvcMCic6aOE76qkhw1mAsLCB/DQStwgAIYnaHBHUcWkKUk/j4MeqT4z91XbjHO63wkEmdazjnsQ=
-X-Received: by 2002:a05:6214:e4b:b0:456:5325:5b06 with SMTP id
- o11-20020a0562140e4b00b0045653255b06mr2239632qvc.77.1651085944826; Wed, 27
- Apr 2022 11:59:04 -0700 (PDT)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jvT77X20Fm/t81+K1TQnTOve5ja/cSbJR5Ic+zDrf60=;
+ b=KhbhDPh/lmCch0kmae7XmW5H/IrkP9yqp8x3PLIfKpqFqM54vlbPOiPD8/tgX6kXa8JAFZGJltqU7x/kjlUgE5JKA+XKWbsssulSwDc5gxpNBlxr87C01484K0piGv9z1nC6wlFu3hL50LFuf2gvNfbFIFPqX7mtKf7Knsc9CTI=
+Received: from MN2PR10MB4270.namprd10.prod.outlook.com (2603:10b6:208:1d6::21)
+ by MN2PR10MB3359.namprd10.prod.outlook.com (2603:10b6:208:122::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5186.15; Wed, 27 Apr
+ 2022 19:10:02 +0000
+Received: from MN2PR10MB4270.namprd10.prod.outlook.com
+ ([fe80::2cd7:43a8:eaa3:2b85]) by MN2PR10MB4270.namprd10.prod.outlook.com
+ ([fe80::2cd7:43a8:eaa3:2b85%8]) with mapi id 15.20.5186.021; Wed, 27 Apr 2022
+ 19:10:01 +0000
+Message-ID: <75276a04-53b2-4033-d07e-3b5eb210f9eb@oracle.com>
+Date:   Wed, 27 Apr 2022 12:09:58 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.8.1
+Subject: Re: [PATCH RFC v22 1/7] NFSD: add courteous server support for thread
+ with only delegation
+Content-Language: en-US
+To:     "J. Bruce Fields" <bfields@fieldses.org>
+Cc:     chuck.lever@oracle.com, jlayton@redhat.com,
+        viro@zeniv.linux.org.uk, linux-nfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+References: <1651049573-29552-1-git-send-email-dai.ngo@oracle.com>
+ <1651049573-29552-2-git-send-email-dai.ngo@oracle.com>
+ <20220427184653.GE13471@fieldses.org>
+From:   dai.ngo@oracle.com
+In-Reply-To: <20220427184653.GE13471@fieldses.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BYAPR11CA0078.namprd11.prod.outlook.com
+ (2603:10b6:a03:f4::19) To MN2PR10MB4270.namprd10.prod.outlook.com
+ (2603:10b6:208:1d6::21)
 MIME-Version: 1.0
-References: <20190212170012.GF69686@sasha-vm> <CAOQ4uxjysufPUtwepPGNZDhoC_HdsnkHx7--kso_OXWPyPkw_A@mail.gmail.com>
- <YicrMCidylefTC3n@kroah.com> <CAOQ4uxjjdFgdMxEOq7aW-nLZFf-S99CC93Ycg1CcMUBiRAYTQQ@mail.gmail.com>
- <YiepUS/bDKTNA5El@sashalap> <Yij4lD19KGloWPJw@bombadil.infradead.org>
- <Yirc69JyH5N/pXKJ@mit.edu> <Yiu2mRwguHhbVpLJ@bombadil.infradead.org> <YivHdetTMVW260df@mit.edu>
-In-Reply-To: <YivHdetTMVW260df@mit.edu>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 27 Apr 2022 21:58:53 +0300
-Message-ID: <CAOQ4uxg+5XUxD19Zh_WoTjVc+yU-mjjCrgWN+85=oZe=pSKO2Q@mail.gmail.com>
-Subject: Re: [LSF/MM TOPIC] FS, MM, and stable trees
-To:     "Theodore Ts'o" <tytso@mit.edu>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        lsf-pc <lsf-pc@lists.linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Matthew Wilcox <willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 453e60b1-ba84-41ff-8876-08da2881879a
+X-MS-TrafficTypeDiagnostic: MN2PR10MB3359:EE_
+X-Microsoft-Antispam-PRVS: <MN2PR10MB3359D078E17CE857A090589787FA9@MN2PR10MB3359.namprd10.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: fmhYTnhX5vUw2Y6QDOgOMZ1pFFnVO/Dd5SJxvvus1DCLArVgPuJIeazVHBl0CF/k4QJqUcYCyDqAKrvUNDL47ZibjnGJjPP+MAEosh4a4NIj+JPEyipBlbucNnFlanIbkFDUdLoZE5PJ93Jqov4TfTxnQtafgYMyFDvf2NVYixeoAs3LeuZ2uKLeJQcC2aksp+Myg3mnJWlIMAos2dvSkDNjvdorpsaZx45+r2XXZGYhL41T0P9Knj2Hof1+CvS3RACGFiDW4y62umbWhfJNCdIlllCtJlIoXI1iqkuh9aGwp05NuObZv54bXyxq+ki4YrTyjOrHq8JU0Wgxi4YWgjsLYHaFir9kxtDu+/YjJDBn+gGMVhopqHFIdJDJBAvr7CZtG5SO0JXAhSLQ2DthZUXpNNEnypkuWeXGozfQiZRh//1caF02tXf2Lkz9vlUvMY2OX0RzbgAiqSrIku+v9Y2dhjHoBVxmN2Kiau48L8M11MZEZDqerRSAYSefnnaIKzZWl6FUmbGBcxL0Ygfnc4//ai/Rx/k18IjEG6Cc6zf4YRQMK6Ezm4jQjVRzTF3k3dBERqyw9VdXObtaLdEHGVsqzIIDKEIfuiD+X0x9DyXhbzOjE/YDoBzJJ7cMZSBeXVcRfMWOhNMtGci4GTSbvp4CrhUYq7sQB/6tcy+GEakLWh7oRqXmq4y5PeSVeF0TGl81FPi0M56P3lhMyyWvPg==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR10MB4270.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(366004)(38100700002)(36756003)(66946007)(5660300002)(53546011)(316002)(6916009)(2906002)(6486002)(508600001)(8676002)(83380400001)(26005)(86362001)(31686004)(6506007)(6512007)(6666004)(9686003)(8936002)(66556008)(4326008)(66476007)(186003)(31696002)(2616005)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Y0NDdE1uVnlhNTRYTWJOL2lyQi9aVzZIS0RPQjUzam5SK05SM1dzemNVQ0pN?=
+ =?utf-8?B?ZS9nY0VFT2RBb0dBQWtHVEtIOEx0VjlrUGF3a1pxVzdrd1Y0NVBEZ3I0TFFq?=
+ =?utf-8?B?aWYzWUl4UW4zS2hvWUxDSWljZFI0eGxVbzFaNGFreXV6eGovcmxYNllEb3B1?=
+ =?utf-8?B?encwM2NlTzlNb0RUSjZnY3A5dVMzU2t4ZGEvVU8rZHE3Qjgwa0J0NlRDTUR2?=
+ =?utf-8?B?TmVpZkNaWmRtZ21aWmpOd2xQWG5mZ2RsMnF3LzliVWF5Y2xGWnNnNnM2Qm4w?=
+ =?utf-8?B?OFM1eENkNXUwWXFqdW4wZnFQTEkzMWIvMGNIbVdNSnlJTG82OTA4aUpycEJX?=
+ =?utf-8?B?K2FlMnBPbnlLdysyTmtCWC9jSUlNZ09rKzl6RHNJUGgrZ1BrUzZTdEw4Z1Y2?=
+ =?utf-8?B?d3FmM1NqMHdDNUcrTEFHNVczUWlFeGU4WGQzUEFCNWJYTWpIT3Q5UGk5M3Zv?=
+ =?utf-8?B?K2QvZUR1cG9aREluTzBibDhkd2VMbEVBb2RjSXFQOHd2UW1WQ3NsNHUrRkZu?=
+ =?utf-8?B?ZWFxSTZWZzlDbUxHWTFWck9RREFDNUx6Mm5pZFovcnBSQS9pTm1iWE8rTWZh?=
+ =?utf-8?B?Tlh2TmVYS0g5eGJBemlSUVdQaDh6VEQ5bE1mVzBFUjk1TVJpL2t1bWhvQ05w?=
+ =?utf-8?B?ZXlJZUxLSHlrNE5HZ3Fpdk82OVgvcUlQOVczTFp0Rk1UZituZ2NOczdkOGlv?=
+ =?utf-8?B?bFJBVnJMMjF3V3RsMkxWc2h3VFdBajVjNmx2NzYrVXErZVE4Qjg5UXlzUyto?=
+ =?utf-8?B?WHdkWlZOUmRMc01TSmZxa1YyZzV6Wi9rNWE2bDJ2SUlWbnRLZlVWWWtMZzN6?=
+ =?utf-8?B?eStxM25qSnVMT0VCbVlrK3dpU0dsa3FqRmI3Vm1RSENuRWFwN3Z3K2NUSXM5?=
+ =?utf-8?B?cFg5MlpGV1FOdk52bkNodkljWHpYTGJmUEY2QUNHWkJmYmFCY2lSU1piWTIw?=
+ =?utf-8?B?WC9VUzRGNGNaSFgyODhETHRIR1RJakZqcFRDRXJDOGJteXlySnhQcG9zMGtn?=
+ =?utf-8?B?d1IwcVJkb1NWaWhMU2VodHFUeFRQeldORVhwNzREM2xNV0NtNTUvMGlzaVVo?=
+ =?utf-8?B?ckRJZXdUbnBJS3l1TmdUY0Nwa1p6cjluTWd1b0VVTG0rTlBjVXVmY0hZemU5?=
+ =?utf-8?B?bzhhamRxZElxVkxBNGswYkE3Zk4xeEhFdnNHQ3V1Slo3UUJGejA1ZHlkTUtB?=
+ =?utf-8?B?LzJpd2pSdGFic0RuNDMyY0hLZGVFS09pRDFCVjBIYkFQVzI4Y05UeTZHak54?=
+ =?utf-8?B?MzJFTmduWnBzWnMzVnlZWHRQelNHWklFSnRHcnIxMW5nZ0c3VHAwcnZjZytZ?=
+ =?utf-8?B?NzF6Nk1PbGRoNUUwTDM4and6cUNkWGJ3Rmh5WWhsZFl5b0pWa29TOUlsOVBp?=
+ =?utf-8?B?QzlRc0RJWmtPWnRSNHBTU1NSb1hTY3FKWlVTRHVmRmZlcHBDK29qNy9kOHIr?=
+ =?utf-8?B?MW5neXdnYVZjTkJWeGxkZHZPSzFTaDBiS3VnbWc2ajNyNjhFdXpBVUU4WlVF?=
+ =?utf-8?B?VzBHNnhpZTBBR2JvNjBROWVKY2tWdjRhR2pKVkx6bVdUV1RQZkJxMkoycmsw?=
+ =?utf-8?B?VFNLSmtZMmJBUUNsL1BWRXBpQm1rMkYzRDJmMzFaL21kZUNyKzNSWWZUSXVR?=
+ =?utf-8?B?TXF1c0h0V2xHUzlRV0JicS8vUkNKK21rQnhXRHh4SklTSkhkL1U2OUZlKzVq?=
+ =?utf-8?B?U1NoNWR4bzkzY1VRY2RkUUhaeXVYcWQzUGhWRlJ2SnB6TUFCaWdmYW9BUzRl?=
+ =?utf-8?B?YTRwNExVWWp5UjY0TlQ1bHFRTk5iR2MxTldkbllTeG1zUlF6ZlcyN3N3WVc1?=
+ =?utf-8?B?K3RJZzJqblhZY3pFWDlIYThPKzBkbUlsSTByd3k3UWppUUk0MU43TWR6azhO?=
+ =?utf-8?B?UE9MR1hBM2F5L0FqSzNBVktoekxkNjRQakRtSzZYMHpOZ0cyZ1FOZzJkWU9l?=
+ =?utf-8?B?TGgyY1pKekxGRTFLbnNWWEpqU04xZkdFMFVLZVh6dklWTzlFM3FGSXJMQlFQ?=
+ =?utf-8?B?c0ZxVzRtRDB2UVRoMGFXQXlkamxXTnJlUk9HeUdqMlNwaVR4cEgvUk5xWjFS?=
+ =?utf-8?B?WkFrVklZYVZ1bTFKZ0ZJL0FHK1pQWHJSQ2lZWlNZWVVlUjNIZ1RjY1VUZkdr?=
+ =?utf-8?B?SVFTU2NrWEliUHJMWGl0MXJRY2F2TmpLL1pCeDYzL0NhVyt3a2hHN0kvSklG?=
+ =?utf-8?B?V3R5OVZreDNjU21HM3ZtbXAwaGoyVkphT2ZMTTdOTVExcGRwVldJUXU1SWIz?=
+ =?utf-8?B?QjYxUUM1a3BiSnZ4ZHplRnVmaXNGelM3WWNKSEs2WExsM3g2bGtXSU55NHJB?=
+ =?utf-8?B?czd2WWVvTThhWEhZNWQ2NWJzZUNaQjFyV3daam90UmJnYkZSMmJxUT09?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 453e60b1-ba84-41ff-8876-08da2881879a
+X-MS-Exchange-CrossTenant-AuthSource: MN2PR10MB4270.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Apr 2022 19:10:01.9165
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4gBkX4qyBprtcq206PJRS4t5QqG/70wRSB1ycO/N6TZfyccOxJH/gWGYZFXPnhbPU1xCW6fe4fhbBbG5BCCp9A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR10MB3359
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.486,18.0.858
+ definitions=2022-04-27_04:2022-04-27,2022-04-27 signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxlogscore=999 mlxscore=0
+ suspectscore=0 malwarescore=0 spamscore=0 adultscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2202240000
+ definitions=main-2204270119
+X-Proofpoint-GUID: 5Vh1lrp_2MuLkJeVjk2vPgKiRh81cIV1
+X-Proofpoint-ORIG-GUID: 5Vh1lrp_2MuLkJeVjk2vPgKiRh81cIV1
+X-Spam-Status: No, score=-4.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Mar 12, 2022 at 12:04 AM Theodore Ts'o <tytso@mit.edu> wrote:
->
-> On Fri, Mar 11, 2022 at 12:52:41PM -0800, Luis Chamberlain wrote:
-> >
-> > The only way to move forward with enabling more automation for kernel
-> > code integration is through better and improved kernel test automation.
-> > And it is *exactly* why I've been working so hard on that problem.
->
-> I think we're on the same page here.
->
-> > Also let's recall that just because you have your own test framework
-> > it does not mean we could not benefit from others testing our
-> > filesystems on their own silly hardware at home as well. Yes tons
-> > of projects can be used which wrap fstests...
->
-> No argument from me!  I'm strongly in favor of diversity in test
-> framework automation as well as test environments.
->
-> In particular, I think there are some valuable things we can learn
-> from each other, in terms of cross polination in terms of features and
-> as well as feedback about how easy it is to use a particular test
-> framework.
->
-> For example: README.md doesn't say anything about running make as root
-> when running "make" as kdevops.  At least, I *think* this is why
-> running make as kdevops failed:
->
-> fatal: [localhost]: FAILED! =3D> {"changed": true, "cmd": ["/usr/sbin/app=
-armor_status", "--enabled"], "delta": "0:00:00.001426", "end": "2022-03-11 =
-16:23:11.769658", "failed_when_result": true, "rc": 0, "start": "2022-03-11=
- 16:23:11.768232", "stderr": "", "stderr_lines": [], "stdout": "", "stdout_=
-lines": []}
->
-> (I do have apparmor installed, but it's currently not enabled.  I
-> haven't done more experimentation since I'm a bit scared of running
-> "make XXX" as root for any package I randomly download from the net,
-> so I haven't explored trying to use kdevops, at least not until I set
-> up a sandboxed VM.  :-)
->
-> Including the Debian package names that should be installed would also
-> be helpful in kdevops/doc/requirements.md.  That's not a problem for
-> the experienced Debian developer, but one of my personal goals for
-> kvm-xfstests and gce-xfstests is to allow a random graduate student
-> who has presented some research file system like Betrfs at the Usenix
-> FAST conference to be able to easily run fstests.  And it sounds like
-> you have similar goals of "enabling the average user to also easily
-> run tests".
->
->
-> > but I never found one
-> > as easy to use as compiling the kernel and running a few make commands.
->
-> I've actually done a lot of work to optimize developer velocity using
-> my test framework.  So for example:
->
-> kvm-xfstests install-kconfig    # set up a kernel Kconfig suitable for kv=
-m-xfstests and gce-xfstests
-> make
-> kvm-xfstests smoke     # boot the test appliance VM, using the kernel tha=
-t was just built
->
-> And a user can test a particular stable kernel using a single command
-> line (this will checkout a particular kernel, and build it on a build
-> VM, and then launch tests in parallel on a dozen or so VM's):
->
-> gce-xfstests ltm -c ext4/all -g auto --repo stable.git --commit v5.15.28
->
-> ... or if we want to bisect a particular test failure, we might do
-> something like this:
->
-> gce-xfstests ltm -c ext4 generic/361 --bisect-good v5.15 --bisect-bad v5.=
-16
->
-> ... or I can establish a watcher that will automatically build a git
-> tree when a branch on a git tree changes:
->
-> gce-xfstests ltm -c ext4/4k -g auto --repo next.git --watch master
->
-> Granted, this only works on GCE --- but feel free to take these ideas
-> and integrate them into kdevops if you feel inspired to do so.  :-)
->
-> > There is the concept of results too and a possible way to share things.=
-.
-> > but this is getting a bit off topic and I don't want to bore people mor=
-e.
->
-> This would be worth chatting about, perhaps at LSF/MM.  xfstests
-> already supports junit results files; we could convert it to TAP
-> format, but junit has more functionality, so perhaps the right
-> approach is to have tools that can support both TAP and junit?  What
-> about some way to establish interchange of test artifacts?  i.e.,
-> saving the kernel logs, and the generic/NNN.full and
-> generic/NNN.out.bad files?
->
-> I have a large library of these test results and test artifacts, and
-> perhaps others would find it useful if we had a way sharing test
-> results between developers, especially we have multiple test
-> infrastructures that might be running ext4, f2fs, and xfs tests?
->
 
-Hi Ted,
+On 4/27/22 11:46 AM, J. Bruce Fields wrote:
+> On Wed, Apr 27, 2022 at 01:52:47AM -0700, Dai Ngo wrote:
+>> diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+>> index 234e852fcdfa..216bd77a8764 100644
+>> --- a/fs/nfsd/nfs4state.c
+>> +++ b/fs/nfsd/nfs4state.c
+>> @@ -125,6 +125,8 @@ static void free_session(struct nfsd4_session *);
+>>   static const struct nfsd4_callback_ops nfsd4_cb_recall_ops;
+>>   static const struct nfsd4_callback_ops nfsd4_cb_notify_lock_ops;
+>>   
+>> +static struct workqueue_struct *laundry_wq;
+>> +
+>>   static bool is_session_dead(struct nfsd4_session *ses)
+>>   {
+>>   	return ses->se_flags & NFS4_SESSION_DEAD;
+>> @@ -152,6 +154,7 @@ static __be32 get_client_locked(struct nfs4_client *clp)
+>>   	if (is_client_expired(clp))
+>>   		return nfserr_expired;
+>>   	atomic_inc(&clp->cl_rpc_users);
+>> +	clp->cl_state = NFSD4_ACTIVE;
+>>   	return nfs_ok;
+>>   }
+>>   
+>> @@ -172,6 +175,7 @@ renew_client_locked(struct nfs4_client *clp)
+>>   
+>>   	list_move_tail(&clp->cl_lru, &nn->client_lru);
+>>   	clp->cl_time = ktime_get_boottime_seconds();
+>> +	clp->cl_state = NFSD4_ACTIVE;
+>>   }
+> We shouldn't need that assignment in both places.
+>
+> The laundromat really shouldn't let a client go to COURTESY while there
+> are rpc's in process for that client.  So, let's just add that check to
+> the laundromat (see below), and then the assignment in
+> renew_client_locked becomes unnecessary.
 
-I penciled a session on "Challenges with running fstests" in the
-agenda.
+I added this for the case when the 4.0 COURTESY/EXPIRABLE client
+reconnects. The client needs to be restored back ACTIVE state and
+the RENEW is usually comes in first. Without this, the client
+continues to be in COURTESY/EXPIRABLE state.
 
-I was hoping that you and Luis could co-lead this session and
-present the progress both of you made with your test frameworks.
+-Dai
 
-Thanks,
-Amir.
+>
+>> +static void
+>> +nfs4_get_client_reaplist(struct nfsd_net *nn, struct list_head *reaplist,
+>> +				struct laundry_time *lt)
+>> +{
+>> +	struct list_head *pos, *next;
+>> +	struct nfs4_client *clp;
+>> +	bool cour;
+>> +
+>> +	INIT_LIST_HEAD(reaplist);
+>> +	spin_lock(&nn->client_lock);
+>> +	list_for_each_safe(pos, next, &nn->client_lru) {
+>> +		clp = list_entry(pos, struct nfs4_client, cl_lru);
+>> +		if (clp->cl_state == NFSD4_EXPIRABLE)
+>> +			goto exp_client;
+>> +		if (!state_expired(lt, clp->cl_time))
+>> +			break;
+>> +		if (!client_has_state_tmp(clp))
+>> +			goto exp_client;
+>> +		cour = (clp->cl_state == NFSD4_COURTESY);
+>> +		if (cour && ktime_get_boottime_seconds() >=
+>> +				(clp->cl_time + NFSD_COURTESY_CLIENT_TIMEOUT)) {
+>> +			goto exp_client;
+>> +		}
+>> +		if (nfs4_anylock_blockers(clp)) {
+>> +exp_client:
+>> +			if (mark_client_expired_locked(clp))
+>> +				continue;
+>> +			list_add(&clp->cl_lru, reaplist);
+>> +			continue;
+>> +		}
+>> +		if (!cour)
+>> +			cmpxchg(&clp->cl_state, NFSD4_ACTIVE, NFSD4_COURTESY);
+> So, as in mark_client_expired_locked, we should only be doing this if
+> clp_cl_rpc_users is 0.
+>
+> Also, it should just be a simple assignment, the cmpxchg isn't necessary
+> here.
+>
+> --b.
