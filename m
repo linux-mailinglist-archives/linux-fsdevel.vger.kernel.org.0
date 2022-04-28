@@ -2,70 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 29C4551366B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Apr 2022 16:09:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 555A8513772
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Apr 2022 16:53:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235893AbiD1OMi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Apr 2022 10:12:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55310 "EHLO
+        id S232103AbiD1O5I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Apr 2022 10:57:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230047AbiD1OMg (ORCPT
+        with ESMTP id S230047AbiD1O5F (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Apr 2022 10:12:36 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C1FEF27148
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Apr 2022 07:09:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1651154960;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=r89Z/7oHso894jLgFkyp7GZ9nOpRmCTTiW/mUMGcSaU=;
-        b=S5oo4Gat5MKDeBR4KBF82uaVjo6tZhdCSbZ+LaWBeAuu52JF2USx/udq4IOB4DdeqzWCJQ
-        ffxsghmy0zf2M2FP0ZL3xtWzq7beIgcDl/9i7uwdGKnm66Rtatp/CA108+s0pv0QxYo5m/
-        M3zgcnDKKXyewoHgczxhwrrLNKCuZZA=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-531-_Aap0-ndPQmMqh42lv3zmw-1; Thu, 28 Apr 2022 10:09:19 -0400
-X-MC-Unique: _Aap0-ndPQmMqh42lv3zmw-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 8C873811E7A;
-        Thu, 28 Apr 2022 14:09:18 +0000 (UTC)
-Received: from [172.16.176.1] (ovpn-64-2.rdu2.redhat.com [10.10.64.2])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1B093463EF5;
-        Thu, 28 Apr 2022 14:09:18 +0000 (UTC)
-From:   "Benjamin Coddington" <bcodding@redhat.com>
-To:     "Hannes Reinecke" <hare@suse.de>
-Cc:     "Jakub Kicinski" <kuba@kernel.org>,
-        "Sagi Grimberg" <sagi@grimberg.me>,
-        "Chuck Lever" <chuck.lever@oracle.com>, netdev@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        ak@tempesta-tech.com, borisp@nvidia.com, simo@redhat.com
-Subject: Re: [PATCH RFC 4/5] net/tls: Add support for PF_TLSH (a TLS handshake
- listener)
-Date:   Thu, 28 Apr 2022 10:09:17 -0400
-Message-ID: <E2BF9CFF-9361-400B-BDEE-CF5E0AFDCA63@redhat.com>
-In-Reply-To: <be7e3c4b-8bb5-e818-1402-ac24cbbcb38c@suse.de>
-References: <165030051838.5073.8699008789153780301.stgit@oracle-102.nfsv4.dev>
- <165030059051.5073.16723746870370826608.stgit@oracle-102.nfsv4.dev>
- <20220425101459.15484d17@kernel.org>
- <66077b73-c1a4-d2ae-c8e4-3e19e9053171@suse.de>
- <1fca2eda-83e4-fe39-13c8-0e5e7553689b@grimberg.me>
- <20220426080247.19bbb64e@kernel.org>
- <40bc060f-f359-081d-9ba7-fae531cf2cd6@suse.de>
- <20220426170334.3781cd0e@kernel.org>
- <23f497ab-08e3-3a25-26d9-56d94ee92cde@suse.de>
- <20220428063009.0a63a7f9@kernel.org>
- <be7e3c4b-8bb5-e818-1402-ac24cbbcb38c@suse.de>
+        Thu, 28 Apr 2022 10:57:05 -0400
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40598B1AB0;
+        Thu, 28 Apr 2022 07:53:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1651157630; x=1682693630;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=laK4u97EX9doYugJxLEEbIUOUAx/Qz9PAszFYjC5IiA=;
+  b=TuKL3jA6BdXeu16KLOsm/GUBQL5ZMqxA2INSrBS4JQyu7PHjxgyeQXKP
+   9JDmVDC1V11rKk8IQ9HUH0P1XZuqu1L/GU4TzaotiBGCNNZQk8Fdm/f0y
+   dl6GpSVUMF+qpSURpWj9qHmXVckqZz/BjeA1IDjdMnSeqhflWv6j24WpC
+   mcxYIKh+pybMCOIfGKK4qFPqvT3UjxZgTHO5qJU5h9kOQATKv6wW68gLR
+   V7yGqDh4sDe5/i8JwbbK0ITLwbew7RdAtBfBsP+W0mVkVmzZb15xHqlgN
+   TnWEViRG5IRiGlo65CBrDjQIuyOmwiIyf4Ozv8XVuEsNG+DCewJqmTPsc
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10330"; a="266127998"
+X-IronPort-AV: E=Sophos;i="5.91,295,1647327600"; 
+   d="scan'208";a="266127998"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2022 07:53:49 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.91,295,1647327600"; 
+   d="scan'208";a="514327844"
+Received: from lkp-server01.sh.intel.com (HELO 5056e131ad90) ([10.239.97.150])
+  by orsmga003.jf.intel.com with ESMTP; 28 Apr 2022 07:53:43 -0700
+Received: from kbuild by 5056e131ad90 with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1nk5WY-0005Sd-BN;
+        Thu, 28 Apr 2022 14:53:42 +0000
+Date:   Thu, 28 Apr 2022 22:53:21 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Nitesh Shetty <nj.shetty@samsung.com>
+Cc:     kbuild-all@lists.01.org, chaitanyak@nvidia.com,
+        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        dm-devel@redhat.com, linux-nvme@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, axboe@kernel.dk,
+        msnitzer@redhat.com, bvanassche@acm.org,
+        martin.petersen@oracle.com, hare@suse.de, kbusch@kernel.org,
+        hch@lst.de, Frederick.Knight@netapp.com, osandov@fb.com,
+        lsf-pc@lists.linux-foundation.org, djwong@kernel.org,
+        josef@toxicpanda.com, clm@fb.com, dsterba@suse.com, tytso@mit.edu,
+        jack@suse.com, nitheshshetty@gmail.com, gost.dev@samsung.com,
+        Arnav Dawn <arnav.dawn@samsung.com>,
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@kernel.org>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        James Smart <james.smart@broadcom.com>
+Subject: Re: [PATCH v4 06/10] nvmet: add copy command support for bdev and
+ file ns
+Message-ID: <202204282248.B5VfX8LS-lkp@intel.com>
+References: <20220426101241.30100-7-nj.shetty@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.85 on 10.11.54.10
-X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220426101241.30100-7-nj.shetty@samsung.com>
+X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -73,53 +78,116 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 28 Apr 2022, at 9:51, Hannes Reinecke wrote:
+Hi Nitesh,
 
-> On 4/28/22 15:30, Jakub Kicinski wrote:
->> On Thu, 28 Apr 2022 09:26:41 +0200 Hannes Reinecke wrote:
->>> The whole thing started off with the problem on _how_ sockets could be
->>> passed between kernel and userspace and vice versa.
->>> While there is fd passing between processes via AF_UNIX, there is no
->>> such mechanism between kernel and userspace.
->>
->> Noob question - the kernel <> user space FD sharing is just
->> not implemented yet, or somehow fundamentally hard because kernel
->> fds are "special"?
->
-> Noob reply: wish I knew.  (I somewhat hoped _you_ would've been able to
-> tell me.)
->
-> Thing is, the only method I could think of for fd passing is the POSIX fd
-> passing via unix_attach_fds()/unix_detach_fds().  But that's AF_UNIX,
-> which really is designed for process-to-process communication, not
-> process-to-kernel.  So you probably have to move a similar logic over to
-> AF_NETLINK. And design a new interface on how fds should be passed over
-> AF_NETLINK.
->
-> But then you have to face the issue that AF_NELINK is essentially UDP, and
-> you have _no_ idea if and how many processes do listen on the other end.
-> Thing is, you (as the sender) have to copy the fd over to the receiving
-> process, so you'd better _hope_ there is a receiving process.  Not to
-> mention that there might be several processes listening in...
->
-> And that's something I _definitely_ don't feel comfortable with without
-> guidance from the networking folks, so I didn't pursue it further and we
-> went with the 'accept()' mechanism Chuck implemented.
->
-> I'm open to suggestions, though.
+Thank you for the patch! Perhaps something to improve:
 
-EXPORT_SYMBOL(receive_fd) would allow interesting implementations.
+[auto build test WARNING on next-20220422]
+[cannot apply to axboe-block/for-next device-mapper-dm/for-next linus/master v5.18-rc4 v5.18-rc3 v5.18-rc2 v5.18-rc4]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
-The kernel keyring facilities have a good API for creating various key_types
-which are able to perform work such as this from userspace contexts.
+url:    https://github.com/intel-lab-lkp/linux/commits/Nitesh-Shetty/block-Introduce-queue-limits-for-copy-offload-support/20220426-201825
+base:    e7d6987e09a328d4a949701db40ef63fbb970670
+config: s390-randconfig-s032-20220427 (https://download.01.org/0day-ci/archive/20220428/202204282248.B5VfX8LS-lkp@intel.com/config)
+compiler: s390-linux-gcc (GCC) 11.3.0
+reproduce:
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # apt-get install sparse
+        # sparse version: v0.6.4-dirty
+        # https://github.com/intel-lab-lkp/linux/commit/6a9ea8570c34a7222786ca4d129578f48426d2f2
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Nitesh-Shetty/block-Introduce-queue-limits-for-copy-offload-support/20220426-201825
+        git checkout 6a9ea8570c34a7222786ca4d129578f48426d2f2
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.3.0 make.cross C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__' O=build_dir ARCH=s390 SHELL=/bin/bash drivers/md/ drivers/nvme/target/
 
-I have a working prototype for a keyring key instantiation which allows a
-userspace process to install a kernel fd on its file table.  The problem
-here is how to match/route such fd passing to appropriate processes in
-appropriate namespaces.  I think this problem is shared by all
-kernel-to-userspace upcalls, which I hope we can discuss at LSF/MM.
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
 
-I don't think kernel fds are very special as compared to userspace fds.
 
-Ben
+sparse warnings: (new ones prefixed by >>)
+>> drivers/nvme/target/io-cmd-bdev.c:56:26: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned char [usertype] msrc @@     got restricted __le16 @@
+   drivers/nvme/target/io-cmd-bdev.c:56:26: sparse:     expected unsigned char [usertype] msrc
+   drivers/nvme/target/io-cmd-bdev.c:56:26: sparse:     got restricted __le16
+   drivers/nvme/target/io-cmd-bdev.c:59:34: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned char [usertype] msrc @@     got restricted __le16 @@
+   drivers/nvme/target/io-cmd-bdev.c:59:34: sparse:     expected unsigned char [usertype] msrc
+   drivers/nvme/target/io-cmd-bdev.c:59:34: sparse:     got restricted __le16
+--
+>> drivers/nvme/target/admin-cmd.c:537:26: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned char [usertype] msrc @@     got restricted __le16 @@
+   drivers/nvme/target/admin-cmd.c:537:26: sparse:     expected unsigned char [usertype] msrc
+   drivers/nvme/target/admin-cmd.c:537:26: sparse:     got restricted __le16
 
+vim +56 drivers/nvme/target/io-cmd-bdev.c
+
+    12	
+    13	void nvmet_bdev_set_limits(struct block_device *bdev, struct nvme_id_ns *id)
+    14	{
+    15		const struct queue_limits *ql = &bdev_get_queue(bdev)->limits;
+    16		/* Number of logical blocks per physical block. */
+    17		const u32 lpp = ql->physical_block_size / ql->logical_block_size;
+    18		/* Logical blocks per physical block, 0's based. */
+    19		const __le16 lpp0b = to0based(lpp);
+    20	
+    21		/*
+    22		 * For NVMe 1.2 and later, bit 1 indicates that the fields NAWUN,
+    23		 * NAWUPF, and NACWU are defined for this namespace and should be
+    24		 * used by the host for this namespace instead of the AWUN, AWUPF,
+    25		 * and ACWU fields in the Identify Controller data structure. If
+    26		 * any of these fields are zero that means that the corresponding
+    27		 * field from the identify controller data structure should be used.
+    28		 */
+    29		id->nsfeat |= 1 << 1;
+    30		id->nawun = lpp0b;
+    31		id->nawupf = lpp0b;
+    32		id->nacwu = lpp0b;
+    33	
+    34		/*
+    35		 * Bit 4 indicates that the fields NPWG, NPWA, NPDG, NPDA, and
+    36		 * NOWS are defined for this namespace and should be used by
+    37		 * the host for I/O optimization.
+    38		 */
+    39		id->nsfeat |= 1 << 4;
+    40		/* NPWG = Namespace Preferred Write Granularity. 0's based */
+    41		id->npwg = lpp0b;
+    42		/* NPWA = Namespace Preferred Write Alignment. 0's based */
+    43		id->npwa = id->npwg;
+    44		/* NPDG = Namespace Preferred Deallocate Granularity. 0's based */
+    45		id->npdg = to0based(ql->discard_granularity / ql->logical_block_size);
+    46		/* NPDG = Namespace Preferred Deallocate Alignment */
+    47		id->npda = id->npdg;
+    48		/* NOWS = Namespace Optimal Write Size */
+    49		id->nows = to0based(ql->io_opt / ql->logical_block_size);
+    50	
+    51		/*Copy limits*/
+    52		if (ql->max_copy_sectors) {
+    53			id->mcl = cpu_to_le32((ql->max_copy_sectors << 9) / ql->logical_block_size);
+    54			id->mssrl = cpu_to_le16((ql->max_copy_range_sectors << 9) /
+    55					ql->logical_block_size);
+  > 56			id->msrc = to0based(ql->max_copy_nr_ranges);
+    57		} else {
+    58			if (ql->zoned == BLK_ZONED_NONE) {
+    59				id->msrc = to0based(BIO_MAX_VECS);
+    60				id->mssrl = cpu_to_le16(
+    61						(BIO_MAX_VECS << PAGE_SHIFT) / ql->logical_block_size);
+    62				id->mcl = cpu_to_le32(le16_to_cpu(id->mssrl) * BIO_MAX_VECS);
+    63	#ifdef CONFIG_BLK_DEV_ZONED
+    64			} else {
+    65				/* TODO: get right values for zoned device */
+    66				id->msrc = to0based(BIO_MAX_VECS);
+    67				id->mssrl = cpu_to_le16(min((BIO_MAX_VECS << PAGE_SHIFT),
+    68						ql->chunk_sectors) / ql->logical_block_size);
+    69				id->mcl = cpu_to_le32(min(le16_to_cpu(id->mssrl) * BIO_MAX_VECS,
+    70							ql->chunk_sectors));
+    71	#endif
+    72			}
+    73		}
+    74	}
+    75	
+
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
