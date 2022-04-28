@@ -2,245 +2,328 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 857D15128CF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Apr 2022 03:29:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC1A751291F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Apr 2022 03:52:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239910AbiD1Bch (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Apr 2022 21:32:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58184 "EHLO
+        id S231661AbiD1Bzt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Apr 2022 21:55:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230351AbiD1Bcg (ORCPT
+        with ESMTP id S229889AbiD1Bzt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Apr 2022 21:32:36 -0400
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA45D2251A;
-        Wed, 27 Apr 2022 18:29:23 -0700 (PDT)
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 23RKI0Su015475;
-        Thu, 28 Apr 2022 01:29:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-id : content-transfer-encoding : mime-version; s=corp-2021-07-09;
- bh=4ZixdfxHRW9gxhYX73w4Es/G/t9x5ds38z/WVpjECCY=;
- b=mzek5rvqBC8tX0bfxEX9ZZCqmpj6fe2HBCB4VuTPL23KcBMfbf7d0Y3t/uv0qM5eOfvA
- juXT9vJKHH75XC13LJ+fYe+T41Oj6TexL/fFLlT7+NTW5EwVGtsn3VcwnAdeADtGDo3a
- 7u3NrlGuwS1iA0E5hU9ORRsWh6uAYs2067ijNFQkxhUzTfIcU7rTIQjJ6i+C+Qb27s96
- 8kLGYvvun3cMlR84WJi/wChrDUev4DxNcsAltJG1IeV6KctteJuFySwaQIzJUY0nSsvB
- 7ZlDnhoZoW/WmXMADKSfqkCGWDUShptZV8tU22hIMwErKGPhgFhDCA6M4cbpDux9+v9b tg== 
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3fmb9atkfc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 28 Apr 2022 01:29:14 +0000
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.16.1.2/8.16.1.2) with SMTP id 23S1BCSa012850;
-        Thu, 28 Apr 2022 01:29:13 GMT
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2170.outbound.protection.outlook.com [104.47.57.170])
-        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com with ESMTP id 3fm7w5sern-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 28 Apr 2022 01:29:12 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jL7jAoR7PmUbmJkbD/iJwdQFrCZpIPbKYlOV5b87eTKvFEnHyzDiAlIvxcgv5UrMur+nBj68CBmXXGnR7+mUxQqwGnxq5KPMhH79TgdPxtzFjjwJhvWMRWyFzMQ5udzvP5t5v7YtOfa1BLZpFmE+2jBgvYC+yYSRO8y85ddtFEZ9wkrhD/ortZOqi8FNiIaq5lP/J5gOVdyB9FKgWzs01/8lUb6er1OCDznZnGiBaXOAvXZ6rBUPuJk0JtMhEht4G/xGeP8gC7LOkVHNE5MarmlKpo82HTbWXnnE/jSWAmC36Bh5RlfFdkgn6ggM9JbpydZUSLiSiP/gdZ0RyWR3oQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4ZixdfxHRW9gxhYX73w4Es/G/t9x5ds38z/WVpjECCY=;
- b=AnwnMmhBMzCQp3wqJoCKMtf+EsvkustVBfVfk9ND5QfU2wtYz8XTl1xFIoqX9wZb0AsNl49YwcPvgVn90g3rua0Gl0TLNJHUtvXkxjKSngmkTpzXY3WH4+wu7wtMCoDRqVUG2dHLUL6UIoUsa9JL8IJID3z+RB56jhJp/uuxMpFuy61FTEeoGUbWAvRN6d/nKsGkG1vu1SoAcNkmbXKrEIUjndbYtFWBKuyNXgvxVHbpQfHBs/ZL2/BEYb+8t5GXKfzl39bPtqBNmhRKjlpK70i288R2f3PGVUtWLYYqpTN3CNW/pwW+wccYvVI8oZMAKU7Z57hqVA2QwNswn1c0hw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4ZixdfxHRW9gxhYX73w4Es/G/t9x5ds38z/WVpjECCY=;
- b=i3aqd7fYDOsQs0Y4uWviJXjXAT6qgBtW6WFSL0PlGwPXViVnsHPA2f/zn7bMBOgSVCGfU4FtIAyrb96H9feLTN4O3/Xjg/UvTqXNJOEuWy88bCIuvjX2lDK8zGKvTZZzEy17qASpbhAxEwMtgA7jXpJyFDO84cqUu8pA3RuZs94=
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
- by CY4PR1001MB2389.namprd10.prod.outlook.com (2603:10b6:910:45::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5206.13; Thu, 28 Apr
- 2022 01:29:10 +0000
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::ed81:8458:5414:f59f]) by BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::ed81:8458:5414:f59f%9]) with mapi id 15.20.5206.013; Thu, 28 Apr 2022
- 01:29:10 +0000
-From:   Chuck Lever III <chuck.lever@oracle.com>
-To:     Jakub Kicinski <kuba@kernel.org>
-CC:     netdev <netdev@vger.kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "ak@tempesta-tech.com" <ak@tempesta-tech.com>,
-        "borisp@nvidia.com" <borisp@nvidia.com>,
-        "simo@redhat.com" <simo@redhat.com>
-Subject: Re: [PATCH RFC 4/5] net/tls: Add support for PF_TLSH (a TLS handshake
- listener)
-Thread-Topic: [PATCH RFC 4/5] net/tls: Add support for PF_TLSH (a TLS
- handshake listener)
-Thread-Index: AQHYU0RqwCfhD8h+BkiXOp6ayeNVBq0A6XOAgAFYlQCAABKoAIAAEbcAgACC9gCAAPo/AIAAmfUAgAAanYA=
-Date:   Thu, 28 Apr 2022 01:29:10 +0000
-Message-ID: <F64C2771-663D-4BE7-9EB9-A8859818C7F8@oracle.com>
-References: <165030051838.5073.8699008789153780301.stgit@oracle-102.nfsv4.dev>
- <165030059051.5073.16723746870370826608.stgit@oracle-102.nfsv4.dev>
- <20220425101459.15484d17@kernel.org>
- <E8809EC2-D49A-4171-8C88-D5E24FFA4079@oracle.com>
- <20220426075504.18be4ee2@kernel.org>
- <BA6BB8F6-3A2A-427B-A5D7-30B5F778B7E0@oracle.com>
- <20220426164712.068e365c@kernel.org>
- <7B871201-AC3C-46E2-98B0-52B44530E7BD@oracle.com>
- <20220427165354.2eed6c5b@kernel.org>
-In-Reply-To: <20220427165354.2eed6c5b@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3654.120.0.1.13)
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: d29a8280-d55e-446a-0ec4-08da28b67ec1
-x-ms-traffictypediagnostic: CY4PR1001MB2389:EE_
-x-microsoft-antispam-prvs: <CY4PR1001MB23897088F1FA11918F43333193FD9@CY4PR1001MB2389.namprd10.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: f0vSdlArSteArUAIADF/Uy8dYRQ4oVJsYEPgODz7iOE6BBM4N5TrD2cB4vmWSMoUT4hiR9q8ukJeynvPmxy1gPS7RiB6uqppLzwVmCDgeUtTBE6jL82TmCpoJiMQ8gehnRgfGKHSnXvMDhpCSlU9OPGPSUhQE9ouwHyCEjWVJPQrsSJpkJADdGkK3sJGzXZg5bEwRh6Q14exSEp/pS/JaFAcQnGb21M1oNuXdaZmQJHA0Id+5RogTpoqhYgZvasLDef6GGvoMAIKf0oAMH7L4CE08zsHKlqsF0D50j6AupyDAng4HV09/1WGJWQo3PheRZAUkQ1wWUqFd2n0YF0AP2XASW+RWeQ08ekJlQd2uGnbmHjbEpip39Wid+GtTEcoEocp7C5brBWLFXajbFJuaYWp0mjxs7Jujn5NGgM2OsoEnvWRfwVO4pokAsBy3a+AP+qmU+9tXqLCipF4+OgBbnd4RxIIN0GeZ5UvDubC1NNBfPzdd7phAQsdwr8M9253oaBiePp067xwOx1pvxdvGXz1rV1299KjAFn0TtYdmZ8+tFLRlCeT3QepzBGqnUZDT9PgNnhQFlx/0o1/DfITj5QGG0aL2sUMCkHEseA8TDv0xTuQhzVk/XXrbQPJUe6mVVy3BRr2HG6c3a0jl3Pt9uTJA6US/XnslwBx2yag514xlhE3ztQ5xFOaWOqfcNq8e7adMMy6mfIoe89LDYtQkH7yL9e55RJJEbSYMnpRrftzgRBJwZJFV9TER9tVUutb9RCUlYn31SyI/qWgVp79NFq/8gBML8+YTgd+kgqs8KQkLC3xyy03NGccZjxRm1HWXG7CvrWv+/T75ccJ0M60H3H3eLEL7EkZ48ui/uYs52M=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(366004)(6512007)(83380400001)(91956017)(26005)(76116006)(66946007)(4326008)(66556008)(66476007)(66446008)(64756008)(6506007)(8676002)(53546011)(122000001)(5660300002)(6916009)(54906003)(86362001)(2906002)(316002)(38100700002)(38070700005)(36756003)(8936002)(186003)(2616005)(33656002)(508600001)(6486002)(71200400001)(966005)(45980500001);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?P1JyvsKHx87F9fykayYxkLJq1y92s4tG7FxR1HthyYM3B/XYnQruG1Q+p1FH?=
- =?us-ascii?Q?aOmHOKSYniIsZ/MgKVpQ95j5YhlEaKSsDNfVWEf2pqf99IcDbaRF8BW8qh5E?=
- =?us-ascii?Q?AzzJqhc78I1SiScO5OZLLnb2JOU4aaYPXe452idNsA9E91cNAcksLYroEPoO?=
- =?us-ascii?Q?aA89meDrELqqPurWTehnBeElKvb/UpzhXDxt6yvjpLVoNKWb7EDNcWl0CM3V?=
- =?us-ascii?Q?3DlUQjOUoQyHaClcUlY7zLI8IKCHzsQgMMxDUuQg2Ha2KjHPKsizm/GXZIXq?=
- =?us-ascii?Q?Tyik2a/vSyjaorb+XNFEwM1B3m/lSoHv4KrRH7dkprVHd/7xMaPdIA60YaQH?=
- =?us-ascii?Q?SQBnIDg07bI17YPPtiJFPZtT8+7FkqXqwOwJFCoFaBHiJbD9Y9zf5ur9iNtW?=
- =?us-ascii?Q?+Eu7shhGKdn8VzWzReh+FRfZu1tCT4BlXMDnFTd0oVRVa1HUlbzWmw5/p0b/?=
- =?us-ascii?Q?B/yGk/pEa7RFLi/whB21AgcXxx/c7knXBAXS1zOwyT0r5FVgoLEUgxlTka0x?=
- =?us-ascii?Q?WtR26ftTMUVshStEMbGWeUK8xy1n/wagFD0o5/AVb9eJ9TmQGwttri9yJk8D?=
- =?us-ascii?Q?tIZhZzOyeQh47UIImB8wsRGWp5pNIL5Z+6jS90/QQG0cJOQePAen0uWWvHUs?=
- =?us-ascii?Q?thr1aDqH6Y/E+Nt63/Z2IvON90HxciUgggkv+9+jZy/SpMmaTDQoLe9uC7WK?=
- =?us-ascii?Q?PVIl/txrq8gFFBqf5alXK6dlf8xBlgdtTywadcNqDS65NhVHw6JmHOaTZYBE?=
- =?us-ascii?Q?+ixUthZTLagsNpLP+X44IjLZgc9FHB3sz32jUpF/52TMQ+k88c26c5ca9vhK?=
- =?us-ascii?Q?8Je0II+HQPdl2KC8/j/I1KiiTe0d5+cxUjYrB3vlCCQ++CF+QE7scCBIek1o?=
- =?us-ascii?Q?9GLvzlppTMhJWb03mWIvH6QyJZ1kANLgh68p8QuDA7rQivyOGUOSxE2Set+Q?=
- =?us-ascii?Q?oJBGMKLybvG5csI56OYdth6W2LSS7HE0G4jD+CxStVKGPUfsW0VVqTEM3ACm?=
- =?us-ascii?Q?6Gx/MLwr1INnWWdd9W+dtVuxwJnlq1Wzr2crhE2VNdFgWw8+dLeFnfa+FUPq?=
- =?us-ascii?Q?7Zdg1EGDNGTzB3TZihdFbEMG/sKMI+blJHbTjwAiDGR4iTDzcSEObvN5h1EY?=
- =?us-ascii?Q?+RVa8c/ubmaJqXzo1eXg9iDGZJ/nbJ8kg9PuMNUcv/PIS+33LD7SZCMlRF+B?=
- =?us-ascii?Q?mK1z91iBw1SXznwrP0ov5mgQNlrJ+nvmvW3bZflYtABkTHWxlZHXr7GrStAm?=
- =?us-ascii?Q?bXvAQNnvpVO9qoayKyPVbR89xPeEphiGXjF3J7cxa1corFeRg20oVZvD1es2?=
- =?us-ascii?Q?NYyKpo0H/5UTFtC7ZTGCv45EC6wiIjE/zCc7/Zp2TAy473n0b2Xf3uYy8Yyk?=
- =?us-ascii?Q?KrvM1/mZpBe/5FJXpX87gs0XrVUde5ghEqQIwIAPOWYxjqeCBusPNYuAeb8I?=
- =?us-ascii?Q?Hup1epTyDusT/b70RkszqDijUY/kzPq5JyKcoBZAOUF1fwvjmSsUEZu9Reqs?=
- =?us-ascii?Q?FpbftZWy9aZvjyRjkKPE5Qg6+zUwPAdMRKgoainWHxgG7tnP02w1o/kt8oat?=
- =?us-ascii?Q?DpGo4DOgCAbhbJURPFidTiFA7pUiVMQmQpMJ6MqfwyACdNr2nltqy3pHBZmC?=
- =?us-ascii?Q?cM7c4yvTxJQCXWXWGV7Adl3wBoPqE/K8XO469oBNFv9hBteQO5BYXSk4VBkY?=
- =?us-ascii?Q?pYDHJEyKqTiVTxTtiZR+5CdQBNwZlVcJgCetStzSCzUL990Pn0fmf6hiib44?=
- =?us-ascii?Q?TPLyECrlRWAV7KnDV98le8scgudxXvA=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <31A56027C594F94BAD476D481F58F522@namprd10.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Wed, 27 Apr 2022 21:55:49 -0400
+Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF36A25C6F;
+        Wed, 27 Apr 2022 18:52:35 -0700 (PDT)
+Received: by fieldses.org (Postfix, from userid 2815)
+        id E45446801; Wed, 27 Apr 2022 21:52:34 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org E45446801
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
+        s=default; t=1651110754;
+        bh=qIgBDtQ0WL7+hpSZEtTpRAj3I83Jo0viOJs92A+fv0k=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VgvIHdN8g4DKXe8nLipLQGj1F9m35SucFj9AO5abi75ILTtJtGow5ulF/H+1bU/VG
+         eMFiuWtfEhUrCoveCA4pqQPRmL0vOAiQGWrNnzOajqiDwKpY1/YVD4DndYN8XZKNyu
+         q9aZsyOsDuI3rgmDGM1R82ssuqLYyNrs//sq/9U4=
+Date:   Wed, 27 Apr 2022 21:52:34 -0400
+From:   "J. Bruce Fields" <bfields@fieldses.org>
+To:     dai.ngo@oracle.com
+Cc:     chuck.lever@oracle.com, jlayton@redhat.com,
+        viro@zeniv.linux.org.uk, linux-nfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH RFC v22 1/7] NFSD: add courteous server support for
+ thread with only delegation
+Message-ID: <20220428015234.GJ13471@fieldses.org>
+References: <1651049573-29552-1-git-send-email-dai.ngo@oracle.com>
+ <1651049573-29552-2-git-send-email-dai.ngo@oracle.com>
+ <20220427215614.GH13471@fieldses.org>
+ <24607d8d-9a69-b139-ce1a-c0f70814de05@oracle.com>
 MIME-Version: 1.0
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d29a8280-d55e-446a-0ec4-08da28b67ec1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Apr 2022 01:29:10.1774
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ubL5LCArJwmri+AbL9Ex2VR284b0aG32GH3GquClk0MzCWljtVCWeOH7KazYERzsl+gJNoUBlyalaweGYfxLyQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR1001MB2389
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.486,18.0.858
- definitions=2022-04-27_04:2022-04-27,2022-04-27 signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 adultscore=0
- mlxscore=0 bulkscore=0 suspectscore=0 malwarescore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2202240000
- definitions=main-2204280005
-X-Proofpoint-ORIG-GUID: ey5BRPZCOrZJrokSg23AxgaYuzXDGbAD
-X-Proofpoint-GUID: ey5BRPZCOrZJrokSg23AxgaYuzXDGbAD
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <24607d8d-9a69-b139-ce1a-c0f70814de05@oracle.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, Apr 27, 2022 at 03:52:37PM -0700, dai.ngo@oracle.com wrote:
+> 
+> On 4/27/22 2:56 PM, J. Bruce Fields wrote:
+> >On Wed, Apr 27, 2022 at 01:52:47AM -0700, Dai Ngo wrote:
+> >>This patch provides courteous server support for delegation only.
+> >>Only expired client with delegation but no conflict and no open
+> >>or lock state is allowed to be in COURTESY state.
+> >>
+> >>Delegation conflict with COURTESY/EXPIRABLE client is resolved by
+> >>setting it to EXPIRABLE, queue work for the laundromat and return
+> >>delay to the caller. Conflict is resolved when the laudromat runs
+> >>and expires the EXIRABLE client while the NFS client retries the
+> >>OPEN request. Local thread request that gets conflict is doing the
+> >>retry in _break_lease.
+> >>
+> >>Client in COURTESY or EXPIRABLE state is allowed to reconnect and
+> >>continues to have access to its state. Access to the nfs4_client by
+> >>the reconnecting thread and the laundromat is serialized via the
+> >>client_lock.
+> >>
+> >>Signed-off-by: Dai Ngo <dai.ngo@oracle.com>
+> >>---
+> >>  fs/nfsd/nfs4state.c | 86 +++++++++++++++++++++++++++++++++++++++++++++--------
+> >>  fs/nfsd/nfsd.h      |  1 +
+> >>  fs/nfsd/state.h     | 32 ++++++++++++++++++++
+> >>  3 files changed, 106 insertions(+), 13 deletions(-)
+> >>
+> >>diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+> >>index 234e852fcdfa..216bd77a8764 100644
+> >>--- a/fs/nfsd/nfs4state.c
+> >>+++ b/fs/nfsd/nfs4state.c
+> >>@@ -125,6 +125,8 @@ static void free_session(struct nfsd4_session *);
+> >>  static const struct nfsd4_callback_ops nfsd4_cb_recall_ops;
+> >>  static const struct nfsd4_callback_ops nfsd4_cb_notify_lock_ops;
+> >>+static struct workqueue_struct *laundry_wq;
+> >>+
+> >>  static bool is_session_dead(struct nfsd4_session *ses)
+> >>  {
+> >>  	return ses->se_flags & NFS4_SESSION_DEAD;
+> >>@@ -152,6 +154,7 @@ static __be32 get_client_locked(struct nfs4_client *clp)
+> >>  	if (is_client_expired(clp))
+> >>  		return nfserr_expired;
+> >>  	atomic_inc(&clp->cl_rpc_users);
+> >>+	clp->cl_state = NFSD4_ACTIVE;
+> >>  	return nfs_ok;
+> >>  }
+> >>@@ -172,6 +175,7 @@ renew_client_locked(struct nfs4_client *clp)
+> >>  	list_move_tail(&clp->cl_lru, &nn->client_lru);
+> >>  	clp->cl_time = ktime_get_boottime_seconds();
+> >>+	clp->cl_state = NFSD4_ACTIVE;
+> >>  }
+> >>  static void put_client_renew_locked(struct nfs4_client *clp)
+> >>@@ -2004,6 +2008,7 @@ static struct nfs4_client *alloc_client(struct xdr_netobj name)
+> >>  	idr_init(&clp->cl_stateids);
+> >>  	atomic_set(&clp->cl_rpc_users, 0);
+> >>  	clp->cl_cb_state = NFSD4_CB_UNKNOWN;
+> >>+	clp->cl_state = NFSD4_ACTIVE;
+> >>  	INIT_LIST_HEAD(&clp->cl_idhash);
+> >>  	INIT_LIST_HEAD(&clp->cl_openowners);
+> >>  	INIT_LIST_HEAD(&clp->cl_delegations);
+> >>@@ -4694,9 +4699,16 @@ nfsd_break_deleg_cb(struct file_lock *fl)
+> >>  	bool ret = false;
+> >>  	struct nfs4_delegation *dp = (struct nfs4_delegation *)fl->fl_owner;
+> >>  	struct nfs4_file *fp = dp->dl_stid.sc_file;
+> >>+	struct nfs4_client *clp = dp->dl_stid.sc_client;
+> >>+	struct nfsd_net *nn;
+> >>  	trace_nfsd_cb_recall(&dp->dl_stid);
+> >>+	if (!try_to_expire_client(clp)) {
+> >>+		nn = net_generic(clp->net, nfsd_net_id);
+> >>+		mod_delayed_work(laundry_wq, &nn->laundromat_work, 0);
+> >>+	}
+> >>+
+> >>  	/*
+> >>  	 * We don't want the locks code to timeout the lease for us;
+> >>  	 * we'll remove it ourself if a delegation isn't returned
+> >>@@ -5605,6 +5617,65 @@ static void nfsd4_ssc_expire_umount(struct nfsd_net *nn)
+> >>  }
+> >>  #endif
+> >>+/*
+> >>+ * place holder for now, no check for lock blockers yet
+> >>+ */
+> >>+static bool
+> >>+nfs4_anylock_blockers(struct nfs4_client *clp)
+> >>+{
+> >>+	/*
+> >>+	 * don't want to check for delegation conflict here since
+> >>+	 * we need the state_lock for it. The laundromat willexpire
+> >>+	 * COURTESY later when checking for delegation recall timeout.
+> >>+	 */
+> >>+	return false;
+> >>+}
+> >>+
+> >>+static bool client_has_state_tmp(struct nfs4_client *clp)
+> >>+{
+> >>+	if (!list_empty(&clp->cl_delegations) &&
+> >>+			!client_has_openowners(clp) &&
+> >>+			list_empty(&clp->async_copies))
+> >>+		return true;
+> >>+	return false;
+> >>+}
+> >>+
+> >>+static void
+> >>+nfs4_get_client_reaplist(struct nfsd_net *nn, struct list_head *reaplist,
+> >>+				struct laundry_time *lt)
+> >>+{
+> >>+	struct list_head *pos, *next;
+> >>+	struct nfs4_client *clp;
+> >>+	bool cour;
+> >>+
+> >>+	INIT_LIST_HEAD(reaplist);
+> >>+	spin_lock(&nn->client_lock);
+> >>+	list_for_each_safe(pos, next, &nn->client_lru) {
+> >>+		clp = list_entry(pos, struct nfs4_client, cl_lru);
+> >>+		if (clp->cl_state == NFSD4_EXPIRABLE)
+> >>+			goto exp_client;
+> >>+		if (!state_expired(lt, clp->cl_time))
+> >>+			break;
+> >>+		if (!client_has_state_tmp(clp))
+> >>+			goto exp_client;
+> >>+		cour = (clp->cl_state == NFSD4_COURTESY);
+> >>+		if (cour && ktime_get_boottime_seconds() >=
+> >>+				(clp->cl_time + NFSD_COURTESY_CLIENT_TIMEOUT)) {
+> >>+			goto exp_client;
+> >>+		}
+> >>+		if (nfs4_anylock_blockers(clp)) {
+> >>+exp_client:
+> >>+			if (mark_client_expired_locked(clp))
+> >>+				continue;
+> >>+			list_add(&clp->cl_lru, reaplist);
+> >>+			continue;
+> >>+		}
+> >>+		if (!cour)
+> >>+			cmpxchg(&clp->cl_state, NFSD4_ACTIVE, NFSD4_COURTESY);
+> >I just noticed there's a small race here: a lock conflict (for example)
+> >could intervene between checking nfs4_anylock_blockers and setting
+> >COURTESY.
+> 
+> If there is lock conflict intervenes before setting COURTESY then that
+> lock request is denied since the client is ACTIVE. Does NFSv4, NLM
+> client retry the lock request? if it does then on next retry the
+> COURTESY client will be expired.
 
+I'm thinking of a local request for a blocking lock.  Yes, the request
+will be denied, but then the process will block on the lock forever
+(well, for 24 hours anyway).
 
-> On Apr 27, 2022, at 7:53 PM, Jakub Kicinski <kuba@kernel.org> wrote:
->=20
-> On Wed, 27 Apr 2022 14:42:53 +0000 Chuck Lever III wrote:
->>> On Apr 26, 2022, at 7:47 PM, Jakub Kicinski <kuba@kernel.org> wrote:
->>>> RPC-with-TLS requires one RPC as a "starttls" token. That could be
->>>> done in user space as part of the handshake, but it is currently
->>>> done in the kernel to enable the user agent to be shared with other
->>>> kernel consumers of TLS. Keep in mind that we already have two
->>>> real consumers: NVMe and RPC-with-TLS; and possibly QUIC.
->>>>=20
->>>> You asserted earlier that creating sockets in user space "scales
->>>> better" but did not provide any data. Can we see some? How well
->>>> does it need to scale for storage protocols that use long-lived
->>>> connections? =20
->>>=20
->>> I meant scale with the number of possible crypto protocols,=20
->>> I mentioned three there. =20
->>=20
->> I'm looking at previous emails. The "three crypto protocols"
->> don't stand out to me. Which ones?
->=20
-> TLS, QUIC and PSP maybe that was in a different email that what you
-> quoted, sorry:
-> https://lore.kernel.org/all/20220426080247.19bbb64e@kernel.org/
->=20
-> PSP:
-> https://raw.githubusercontent.com/google/psp/main/doc/PSP_Arch_Spec.pdf
+> >I think what you want to do is set COURTESY first--right after you check
+> >state_expired()--instead of doing it at the end.
+> 
+> Yes, I can make this change. I think this still has a tiny window
+> where a lock conflict comes in after state_expired and before
+> COURTESY is set?
 
-During the design process, we discussed both TLS and QUIC handshake
-requirements, which are nearly the same. QUIC will want a TLSv1.3
-handshake on a UDP socket, effectively. We can support DTLS in a
-similar fashion.
+No, I think it's OK.  A lock that comes before COURTESY is set will be
+caught by nfs4_anylock_blockers().
 
-We hope that the proposed design can be used for all of those, and
-barring anything unforeseen in the description of PSP you provided,
-PSP can be supported as well.
+--b.
 
-The handshake agent is really only a shim around a TLS library.
-There isn't much to it.
-
-
-> Is it possible to instead create a fd-passing-like structured message
-> which could carry the fd and all the relevant context (what goes=20
-> via the getsockopt() now)?
->=20
-> The user space agent can open such upcall socket, then bind to
-> whatever entity it wants to talk to on the kernel side and read
-> the notifications via recv()?
-
-We considered this kind of design. A reasonable place to start there
-would be to fabricate new NETLINK messages to do this. I don't see
-much benefit over what is done now, it's just a different isomer of
-syntactic sugar, but it could be considered.
-
-The issue is how the connected socket is materialized in user space.
-accept(2) is the historical way to instantiate an already connected
-socket in a process's file table, and seems like a natural fit. When
-the handshake agent is done with the handshake, it closes the socket.
-This invokes the tlsh_release() function which can check whether the
-IV implantation was successful.
-
-So instead of an AF_TLSH listener we could use a named pipe or a
-netlink socket and a blocking recv(), as long as there is a reasonable
-solution to how a connected socket fd is attached to the handshake
-agent process.
-
-I'm flexible about the mechanism for passing handshake parameters.
-Attaching them to the connected socket seems convenient, but perhaps
-not aesthetic.
-
-
---
-Chuck Lever
-
-
-
+> 
+> -Dai
+> 
+> >
+> >--b.
+> >
+> >>+	}
+> >>+	spin_unlock(&nn->client_lock);
+> >>+}
+> >>+
+> >>  static time64_t
+> >>  nfs4_laundromat(struct nfsd_net *nn)
+> >>  {
+> >>@@ -5627,7 +5698,6 @@ nfs4_laundromat(struct nfsd_net *nn)
+> >>  		goto out;
+> >>  	}
+> >>  	nfsd4_end_grace(nn);
+> >>-	INIT_LIST_HEAD(&reaplist);
+> >>  	spin_lock(&nn->s2s_cp_lock);
+> >>  	idr_for_each_entry(&nn->s2s_cp_stateids, cps_t, i) {
+> >>@@ -5637,17 +5707,7 @@ nfs4_laundromat(struct nfsd_net *nn)
+> >>  			_free_cpntf_state_locked(nn, cps);
+> >>  	}
+> >>  	spin_unlock(&nn->s2s_cp_lock);
+> >>-
+> >>-	spin_lock(&nn->client_lock);
+> >>-	list_for_each_safe(pos, next, &nn->client_lru) {
+> >>-		clp = list_entry(pos, struct nfs4_client, cl_lru);
+> >>-		if (!state_expired(&lt, clp->cl_time))
+> >>-			break;
+> >>-		if (mark_client_expired_locked(clp))
+> >>-			continue;
+> >>-		list_add(&clp->cl_lru, &reaplist);
+> >>-	}
+> >>-	spin_unlock(&nn->client_lock);
+> >>+	nfs4_get_client_reaplist(nn, &reaplist, &lt);
+> >>  	list_for_each_safe(pos, next, &reaplist) {
+> >>  		clp = list_entry(pos, struct nfs4_client, cl_lru);
+> >>  		trace_nfsd_clid_purged(&clp->cl_clientid);
+> >>@@ -5657,6 +5717,7 @@ nfs4_laundromat(struct nfsd_net *nn)
+> >>  	spin_lock(&state_lock);
+> >>  	list_for_each_safe(pos, next, &nn->del_recall_lru) {
+> >>  		dp = list_entry (pos, struct nfs4_delegation, dl_recall_lru);
+> >>+		try_to_expire_client(dp->dl_stid.sc_client);
+> >>  		if (!state_expired(&lt, dp->dl_time))
+> >>  			break;
+> >>  		WARN_ON(!unhash_delegation_locked(dp));
+> >>@@ -5722,7 +5783,6 @@ nfs4_laundromat(struct nfsd_net *nn)
+> >>  	return max_t(time64_t, lt.new_timeo, NFSD_LAUNDROMAT_MINTIMEOUT);
+> >>  }
+> >>-static struct workqueue_struct *laundry_wq;
+> >>  static void laundromat_main(struct work_struct *);
+> >>  static void
+> >>diff --git a/fs/nfsd/nfsd.h b/fs/nfsd/nfsd.h
+> >>index 4fc1fd639527..23996c6ca75e 100644
+> >>--- a/fs/nfsd/nfsd.h
+> >>+++ b/fs/nfsd/nfsd.h
+> >>@@ -336,6 +336,7 @@ void		nfsd_lockd_shutdown(void);
+> >>  #define COMPOUND_ERR_SLACK_SPACE	16     /* OP_SETATTR */
+> >>  #define NFSD_LAUNDROMAT_MINTIMEOUT      1   /* seconds */
+> >>+#define	NFSD_COURTESY_CLIENT_TIMEOUT	(24 * 60 * 60)	/* seconds */
+> >>  /*
+> >>   * The following attributes are currently not supported by the NFSv4 server:
+> >>diff --git a/fs/nfsd/state.h b/fs/nfsd/state.h
+> >>index 95457cfd37fc..6130376c438b 100644
+> >>--- a/fs/nfsd/state.h
+> >>+++ b/fs/nfsd/state.h
+> >>@@ -283,6 +283,28 @@ struct nfsd4_sessionid {
+> >>  #define HEXDIR_LEN     33 /* hex version of 16 byte md5 of cl_name plus '\0' */
+> >>  /*
+> >>+ *       State                Meaning                  Where set
+> >>+ * --------------------------------------------------------------------------
+> >>+ * | NFSD4_ACTIVE      | Confirmed, active    | Default                     |
+> >>+ * |------------------- ----------------------------------------------------|
+> >>+ * | NFSD4_COURTESY    | Courtesy state.      | nfs4_get_client_reaplist    |
+> >>+ * |                   | Lease/lock/share     |                             |
+> >>+ * |                   | reservation conflict |                             |
+> >>+ * |                   | can cause Courtesy   |                             |
+> >>+ * |                   | client to be expired |                             |
+> >>+ * |------------------------------------------------------------------------|
+> >>+ * | NFSD4_EXPIRABLE   | Courtesy client to be| nfs4_laundromat             |
+> >>+ * |                   | expired by Laundromat| try_to_expire_client        |
+> >>+ * |                   | due to conflict      |                             |
+> >>+ * |------------------------------------------------------------------------|
+> >>+ */
+> >>+enum {
+> >>+	NFSD4_ACTIVE = 0,
+> >>+	NFSD4_COURTESY,
+> >>+	NFSD4_EXPIRABLE,
+> >>+};
+> >>+
+> >>+/*
+> >>   * struct nfs4_client - one per client.  Clientids live here.
+> >>   *
+> >>   * The initial object created by an NFS client using SETCLIENTID (for NFSv4.0)
+> >>@@ -385,6 +407,8 @@ struct nfs4_client {
+> >>  	struct list_head	async_copies;	/* list of async copies */
+> >>  	spinlock_t		async_lock;	/* lock for async copies */
+> >>  	atomic_t		cl_cb_inflight;	/* Outstanding callbacks */
+> >>+
+> >>+	unsigned int		cl_state;
+> >>  };
+> >>  /* struct nfs4_client_reset
+> >>@@ -702,4 +726,12 @@ extern void nfsd4_client_record_remove(struct nfs4_client *clp);
+> >>  extern int nfsd4_client_record_check(struct nfs4_client *clp);
+> >>  extern void nfsd4_record_grace_done(struct nfsd_net *nn);
+> >>+static inline bool try_to_expire_client(struct nfs4_client *clp)
+> >>+{
+> >>+	bool ret;
+> >>+
+> >>+	ret = NFSD4_ACTIVE ==
+> >>+		cmpxchg(&clp->cl_state, NFSD4_COURTESY, NFSD4_EXPIRABLE);
+> >>+	return ret;
+> >>+}
+> >>  #endif   /* NFSD4_STATE_H */
+> >>-- 
+> >>2.9.5
