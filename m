@@ -2,161 +2,217 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DCD85132EC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Apr 2022 13:56:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 477285133C3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Apr 2022 14:33:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345798AbiD1L7K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Apr 2022 07:59:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33316 "EHLO
+        id S1346347AbiD1Mg6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Apr 2022 08:36:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234234AbiD1L7J (ORCPT
+        with ESMTP id S1346330AbiD1Mgu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Apr 2022 07:59:09 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05558888EF;
-        Thu, 28 Apr 2022 04:55:54 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6BAB161F88;
-        Thu, 28 Apr 2022 11:55:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 935B5C385A0;
-        Thu, 28 Apr 2022 11:55:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1651146953;
-        bh=f6ST6gZQuZBsb5pOcI4x7sQ7qH7kHl7qyl/MzMDuu+o=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=W4asAUa+Z8MClmq6PoYixS8U5Y4FknAL9gZNbtSbf16P6fMOcSEiegUNZ5VcPJGvS
-         QxRznMHaz4fVHrCT1IvUV/rhdXnFC5LGQrmLJRbQccemqyUoRhBPlgWkUgrvZrR2fW
-         VvFjggH/kDTSLiwo1qHRbuWUuTeH9F8BgO6Iyaq6JwsDoqhQaY4aHnzX/UbHSJ/bvm
-         YksST7ISgl/WfpIVIl/fBFxDgSz+r7zFTZG+1lKuaAFCv05MfnEkbAtkUCIQXOz+/d
-         PK8puV5rM4U72rqfEtwh4/lG7DbM1jWBoXXxaWsjcUC/UIzeczBJaESVwuby9XbxZ1
-         9nhri+F1c9b+g==
-Date:   Thu, 28 Apr 2022 13:55:43 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     "xuyang2018.jy@fujitsu.com" <xuyang2018.jy@fujitsu.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-        "david@fromorbit.com" <david@fromorbit.com>,
-        "djwong@kernel.org" <djwong@kernel.org>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jann Horn <jannh@google.com>
-Subject: Re: [PATCH v8 1/4] fs: add mode_strip_sgid() helper
-Message-ID: <20220428115543.mh2uq7nmqi2fbw45@wittgenstein>
-References: <1650971490-4532-1-git-send-email-xuyang2018.jy@fujitsu.com>
- <Ymn05eNgOnaYy36R@zeniv-ca.linux.org.uk>
- <Ymn4xPXXWe4LFhPZ@zeniv-ca.linux.org.uk>
- <626A08DA.3060802@fujitsu.com>
- <YmoAp+yWBpH5T8rt@zeniv-ca.linux.org.uk>
- <20220428084454.il3gooakfnnsq2di@wittgenstein>
+        Thu, 28 Apr 2022 08:36:50 -0400
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 637ACAF1F3;
+        Thu, 28 Apr 2022 05:33:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1651149215; x=1682685215;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   mime-version:in-reply-to;
+  bh=JLTwnb6knAU2NJRTOD5Wxmiw692WpVrgjBsDWSNIg3I=;
+  b=lQn1s6u8Iq4uDvAvfxLLK7t+GpngNIVi3nYGeaF2m3rQ6AQs8wLDDNN9
+   u9nSd6LaHH4fAhe8Cq6OwaSoPF/BPHaHIeuDI4M2hXx8i8LU9sy+pxYN+
+   RDk9qfOn29Kgaf0S6sDTmPRzXHbqFygg2QfDl7rM7bBN5bNJsAYil4dQ/
+   geTrYrCZaBJeC8fENCUUhTgZ1fBGvPk9LZyYfcrfUgqNKCnrFwyMIrRof
+   IN3C9Otmg30C3lbByShy4EZ799LExzmfRVUmIsCIJlmsFOfRhd8AtuwYJ
+   89fAekUOzNoSHGNF/DsS1TU0LQo8/BlQZ/xxMTzen8QVuc50iky7tdbqe
+   Q==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10330"; a="352708323"
+X-IronPort-AV: E=Sophos;i="5.91,295,1647327600"; 
+   d="scan'208";a="352708323"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2022 05:33:32 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.91,295,1647327600"; 
+   d="scan'208";a="706037490"
+Received: from chaop.bj.intel.com (HELO localhost) ([10.240.192.101])
+  by fmsmga001.fm.intel.com with ESMTP; 28 Apr 2022 05:33:24 -0700
+Date:   Thu, 28 Apr 2022 20:29:52 +0800
+From:   Chao Peng <chao.p.peng@linux.intel.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Sean Christopherson <seanjc@google.com>,
+        Quentin Perret <qperret@google.com>,
+        Steven Price <steven.price@arm.com>,
+        kvm list <kvm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        Linux API <linux-api@vger.kernel.org>, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        "Nakajima, Jun" <jun.nakajima@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+        Michael Roth <michael.roth@amd.com>
+Subject: Re: [PATCH v5 00/13] KVM: mm: fd-based approach for supporting KVM
+ guest private memory
+Message-ID: <20220428122952.GA10508@chaop.bj.intel.com>
+Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
+References: <83fd55f8-cd42-4588-9bf6-199cbce70f33@www.fastmail.com>
+ <YksIQYdG41v3KWkr@google.com>
+ <Ykslo2eo2eRXrpFR@google.com>
+ <eefc3c74-acca-419c-8947-726ce2458446@www.fastmail.com>
+ <Ykwbqv90C7+8K+Ao@google.com>
+ <YkyEaYiL0BrDYcZv@google.com>
+ <20220422105612.GB61987@chaop.bj.intel.com>
+ <3b99f157-0f30-4b30-8399-dd659250ab8d@www.fastmail.com>
+ <20220425134051.GA175928@chaop.bj.intel.com>
+ <27616b2f-1eff-42ff-91e0-047f531639ea@www.fastmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220428084454.il3gooakfnnsq2di@wittgenstein>
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <27616b2f-1eff-42ff-91e0-047f531639ea@www.fastmail.com>
+X-Spam-Status: No, score=-4.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 28, 2022 at 10:45:01AM +0200, Christian Brauner wrote:
-> On Thu, Apr 28, 2022 at 02:49:11AM +0000, Al Viro wrote:
-> > On Thu, Apr 28, 2022 at 02:23:25AM +0000, xuyang2018.jy@fujitsu.com wrote:
-> > 
-> > > > BTW, xfs has grpid option as well:
-> > > > 	if (dir&&  !(dir->i_mode&  S_ISGID)&&  xfs_has_grpid(mp)) {
-> > > > 		inode_fsuid_set(inode, mnt_userns);
-> > > > 		inode->i_gid = dir->i_gid;
-> > > > 		inode->i_mode = mode;
-> > > > 	} else {
-> > > > 		inode_init_owner(mnt_userns, inode, dir, mode);
-> > > > 	}
-> > > >
-> > > > We could lift that stuff into VFS, but it would require lifting that flag
-> > > > (BSD vs. SysV behaviour wrt GID - BSD *always* inherits GID from parent
-> > > > and ignores SGID on directories) into generic superblock.  Otherwise we'd
-> > > > be breaking existing behaviour for ext* and xfs...
-> > > 
-> > > I also mentioned it in my previous version(in the 3/4 patch)
-> > > "This patch also changed grpid behaviour for ext4/xfs because the mode 
-> > > passed to them may been changed by vfs_prepare_mode.
-> > > "
-> > > 
-> > > I guess we can add a  grpid option check in vfs_prepare_mode or in 
-> > > mode_strip_sgid, then it should not break the existing behaviour for 
-> > > ext* and xfs.
-> > 
-> > I don't like it, TBH.  That way we have
-> > 	1) caller mangles mode (after having looked at grpid, etc.)
-> > 	2) filesystem checks grpid and either calls inode_init_owner(),
-> > which might (or might not) modify the gid to be used or skips the
-> > call and assigns gid directly.
-> > 
-> > It's asking for trouble.  We have two places where the predicate is
-> > checked; the first mangles mode (and I'm still not convinced that we
-> > need to bother with that at all), the second affects gid (and for
-> > mkdir in sgid directory on non-grpid ones inherits sgid).
-> > 
-> > That kind of structure is asking for trouble.  *IF* we make inode_init_owner()
-> > aware of grpid (and make that predicate usable from generic helper), we might
-> > as well just make inode_init_owner() mandatory (for the first time ever) and
-> > get rid of grpid checks in filesystems themselves.  But then there's no point
-> > doing it in method callers.
-> 
-> This has ordering issues. In the vfs the umask is stripped and then we
-> call into the filesystem and inode_init_owner() is called. So if
-> S_IXGRP is removed by the umask then we inherit the S_ISGID bit.
-> 
-> But if the filesystem uses POSIX ACLs then the umask isn't stripped in
-> the vfs and instead may be done (I say "may" because it depends on
-> whether or not applicable POSIX ACLs are found) in posix_acl_create().
-> 
-> But in order to call posix_acl_create() the filesystem will have often
-> ran through inode_init_owner() first. For example, ext4 does
-> inode_init_owner() and afterwards calls ext4_init_acl() which in turn
-> ends up calling posix_acl_create() which _may_ strip the umask.
-> 
-> Iow, you end up with two possible setgid removal paths:
-> * strip setgid first, apply umask (no POSIX ACLs supported)
-> * apply umask, strip setgid (POSIX ACLs supported)
 
-Ugh, that's reversed:
-* POSIX ACLs supported:
-  1. strip setgid first
-  2. (possibly) strip umask
-* POSIX ACLS unsupported:
-  1. apply umask
-  2. strip setgid
++ Michael in case he has comment from SEV side.
 
-> with possibly different results.
+On Mon, Apr 25, 2022 at 07:52:38AM -0700, Andy Lutomirski wrote:
 > 
-> Mandating inode_init_owner() being used doesn't solve that and I think
-> it's still brittle overall.
 > 
-> If we can hoist all of this into vfs_*() before we call into the
-> filesystem we're better off in the long run. It's worth the imho
-> negible regression risk. 
+> On Mon, Apr 25, 2022, at 6:40 AM, Chao Peng wrote:
+> > On Sun, Apr 24, 2022 at 09:59:37AM -0700, Andy Lutomirski wrote:
+> >> 
 > 
-> > 
-> > Note, BTW, that while XFS has inode_fsuid_set() on the non-inode_init_owner()
-> > path, it doesn't have inode_fsgid_set() there.  Same goes for ext4, while
-> > ext2 doesn't bother with either in such case...
+> >> 
+> >> 2. Bind the memfile to a VM (or at least to a VM technology).  Now it's in the initial state appropriate for that VM.
+> >> 
+> >> For TDX, this completely bypasses the cases where the data is prepopulated and TDX can't handle it cleanly.  For SEV, it bypasses a situation in which data might be written to the memory before we find out whether that data will be unreclaimable or unmovable.
+> >
+> > This sounds a more strict rule to avoid semantics unclear.
+> >
+> > So userspace needs to know what excatly happens for a 'bind' operation.
+> > This is different when binds to different technologies. E.g. for SEV, it
+> > may imply after this call, the memfile can be accessed (through mmap or
+> > what ever) from userspace, while for current TDX this should be not allowed.
 > 
-> Using inode_fs*id_set() is only relevant when the inode is initialized
-> based on the caller's fs*id. If you request to inherit the parent
-> directories gid then the caller's gid doesn't matter.
+> I think this is actually a good thing.  While SEV, TDX, pKVM, etc achieve similar goals and have broadly similar ways of achieving them, they really are different, and having userspace be aware of the differences seems okay to me.
 > 
-> ext2 doesn't need to care at all about this because it doesn't raise
-> FS_ALLOW_IDMAP.
+> (Although I don't think that allowing userspace to mmap SEV shared pages is particularly wise -- it will result in faults or cache incoherence depending on the variant of SEV in use.)
 > 
-> > 
-> > Let's try to separate the issues here.  Jann, could you explain what makes
-> > empty sgid files dangerous?
+> >
+> > And I feel we still need a third flow/operation to indicate the
+> > completion of the initialization on the memfile before the guest's 
+> > first-time launch. SEV needs to check previous mmap-ed areas are munmap-ed
+> > and prevent future userspace access. After this point, then the memfile
+> > becomes truely private fd.
 > 
-> I see that's answered in a later mail.
+> Even that is technology-dependent.  For TDX, this operation doesn't really exist.  For SEV, I'm not sure (I haven't read the specs in nearly enough detail).  For pKVM, I guess it does exist and isn't quite the same as a shared->private conversion.
+> 
+> Maybe this could be generalized a bit as an operation "measure and make private" that would be supported by the technologies for which it's useful.
+
+Then I think we need callback instead of static flag field. Backing
+store implements this callback and consumers change the flags
+dynamically with this callback. This implements kind of state machine
+flow.
+
+> 
+> 
+> >
+> >> 
+> >> 
+> >> ----------------------------------------------
+> >> 
+> >> Now I have a question, since I don't think anyone has really answered it: how does this all work with SEV- or pKVM-like technologies in which private and shared pages share the same address space?  I sounds like you're proposing to have a big memfile that contains private and shared pages and to use that same memfile as pages are converted back and forth.  IO and even real physical DMA could be done on that memfile.  Am I understanding correctly?
+> >
+> > For TDX case, and probably SEV as well, this memfile contains private memory
+> > only. But this design at least makes it possible for usage cases like
+> > pKVM which wants both private/shared memory in the same memfile and rely
+> > on other ways like mmap/munmap or mprotect to toggle private/shared instead
+> > of fallocate/hole punching.
+> 
+> Hmm.  Then we still need some way to get KVM to generate the correct SEV pagetables.  For TDX, there are private memslots and shared memslots, and they can overlap.  If they overlap and both contain valid pages at the same address, then the results may not be what the guest-side ABI expects, but everything will work.  So, when a single logical guest page transitions between shared and private, no change to the memslots is needed.  For SEV, this is not the case: everything is in one set of pagetables, and there isn't a natural way to resolve overlaps.
+
+I don't see SEV has problem. Note for all the cases, both private/shared
+memory are in the same memslot. For a given GPA, if there is no private
+page, then shared page will be used to establish KVM pagetables, so this
+can guarantee there is no overlaps.
+
+> 
+> If the memslot code becomes efficient enough, then the memslots could be fragmented.  Or the memfile could support private and shared data in the same memslot.  And if pKVM does this, I don't see why SEV couldn't also do it and hopefully reuse the same code.
+
+For pKVM, that might be the case. For SEV, I don't think we require
+private/shared data in the same memfile. The same model that works for
+TDX should also work for SEV. Or maybe I misunderstood something here?
+
+> 
+> >
+> >> 
+> >> If so, I think this makes sense, but I'm wondering if the actual memslot setup should be different.  For TDX, private memory lives in a logically separate memslot space.  For SEV and pKVM, it doesn't.  I assume the API can reflect this straightforwardly.
+> >
+> > I believe so. The flow should be similar but we do need pass different
+> > flags during the 'bind' to the backing store for different usages. That
+> > should be some new flags for pKVM but the callbacks (API here) between
+> > memfile_notifile and its consumers can be reused.
+> 
+> And also some different flag in the operation that installs the fd as a memslot?
+> 
+> >
+> >> 
+> >> And the corresponding TDX question: is the intent still that shared pages aren't allowed at all in a TDX memfile?  If so, that would be the most direct mapping to what the hardware actually does.
+> >
+> > Exactly. TDX will still use fallocate/hole punching to turn on/off the
+> > private page. Once off, the traditional shared page will become
+> > effective in KVM.
+> 
+> Works for me.
+> 
+> For what it's worth, I still think it should be fine to land all the TDX memfile bits upstream as long as we're confident that SEV, pKVM, etc can be added on without issues.
+> 
+> I think we can increase confidence in this by either getting one other technology's maintainers to get far enough along in the design to be confident
+
+AFAICS, SEV shouldn't have any problem, But would like to see AMD people
+can comment. For pKVM, definitely need more work, but isn't totally
+undoable. Also would be good if pKVM people can comment.
+
+Thanks,
+Chao
+
+> and/or by having a pure-kernel-software implementation that serves as a testbed.  For the latter, maybe it could support two different models with little overhead:
+> 
+> Pure software "interleaved" model: pages are shared or private and a hypercall converts them.  The access mode is entirely determined by the state programmed by hypercall.  I think this is essentially what Vishal implemented, but with the "HACK" replaced by something permanent and (if they're not already in the series) appropriate access checks implemented to actually protect the private memory.
+> 
+> Pure software "separate" mode: one GPA bit is set aside as the shared vs private bit.  The normal memslots are restricted to the shared half of GPA space.  Private memslots use the private half.  This works a lot like TDX.  This would be new code.  We don't *really* need this for testing, since TDX itself exercises the same programming model, but it would let people without TDX hardware exercise the interesting bits of the memory management.
+> 
+> Paolo, etc: what do you think?
+> 
+> >
+> > Chao
+> >> 
+> >> --Andy
