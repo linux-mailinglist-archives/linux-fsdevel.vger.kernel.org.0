@@ -2,192 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 555A8513772
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Apr 2022 16:53:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C127513793
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Apr 2022 17:00:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232103AbiD1O5I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Apr 2022 10:57:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40920 "EHLO
+        id S232078AbiD1PDj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Apr 2022 11:03:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230047AbiD1O5F (ORCPT
+        with ESMTP id S230396AbiD1PDi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Apr 2022 10:57:05 -0400
-Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40598B1AB0;
-        Thu, 28 Apr 2022 07:53:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1651157630; x=1682693630;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=laK4u97EX9doYugJxLEEbIUOUAx/Qz9PAszFYjC5IiA=;
-  b=TuKL3jA6BdXeu16KLOsm/GUBQL5ZMqxA2INSrBS4JQyu7PHjxgyeQXKP
-   9JDmVDC1V11rKk8IQ9HUH0P1XZuqu1L/GU4TzaotiBGCNNZQk8Fdm/f0y
-   dl6GpSVUMF+qpSURpWj9qHmXVckqZz/BjeA1IDjdMnSeqhflWv6j24WpC
-   mcxYIKh+pybMCOIfGKK4qFPqvT3UjxZgTHO5qJU5h9kOQATKv6wW68gLR
-   V7yGqDh4sDe5/i8JwbbK0ITLwbew7RdAtBfBsP+W0mVkVmzZb15xHqlgN
-   TnWEViRG5IRiGlo65CBrDjQIuyOmwiIyf4Ozv8XVuEsNG+DCewJqmTPsc
-   g==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10330"; a="266127998"
-X-IronPort-AV: E=Sophos;i="5.91,295,1647327600"; 
-   d="scan'208";a="266127998"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2022 07:53:49 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.91,295,1647327600"; 
-   d="scan'208";a="514327844"
-Received: from lkp-server01.sh.intel.com (HELO 5056e131ad90) ([10.239.97.150])
-  by orsmga003.jf.intel.com with ESMTP; 28 Apr 2022 07:53:43 -0700
-Received: from kbuild by 5056e131ad90 with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1nk5WY-0005Sd-BN;
-        Thu, 28 Apr 2022 14:53:42 +0000
-Date:   Thu, 28 Apr 2022 22:53:21 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Nitesh Shetty <nj.shetty@samsung.com>
-Cc:     kbuild-all@lists.01.org, chaitanyak@nvidia.com,
-        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        dm-devel@redhat.com, linux-nvme@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, axboe@kernel.dk,
-        msnitzer@redhat.com, bvanassche@acm.org,
-        martin.petersen@oracle.com, hare@suse.de, kbusch@kernel.org,
-        hch@lst.de, Frederick.Knight@netapp.com, osandov@fb.com,
-        lsf-pc@lists.linux-foundation.org, djwong@kernel.org,
-        josef@toxicpanda.com, clm@fb.com, dsterba@suse.com, tytso@mit.edu,
-        jack@suse.com, nitheshshetty@gmail.com, gost.dev@samsung.com,
-        Arnav Dawn <arnav.dawn@samsung.com>,
-        Nitesh Shetty <nj.shetty@samsung.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@kernel.org>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        James Smart <james.smart@broadcom.com>
-Subject: Re: [PATCH v4 06/10] nvmet: add copy command support for bdev and
- file ns
-Message-ID: <202204282248.B5VfX8LS-lkp@intel.com>
-References: <20220426101241.30100-7-nj.shetty@samsung.com>
+        Thu, 28 Apr 2022 11:03:38 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A7EF12AA5
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Apr 2022 08:00:23 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 089BE1F745;
+        Thu, 28 Apr 2022 15:00:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1651158022; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=teYgutLvQw0h6xvINcC2dz3O1o7WSyedRKXKjvCmVyc=;
+        b=hFCBbQT2LzlNKApSxMOMOxHd+utwKhqDgjtP5qNVg3s/j+PUFVEiof2YE/KlfEXQsf+LVr
+        EJ0XGjzJgnmqfxy54GbEZ9cvEZ9SQ5YRiCwi/TwqciOgdGN6cBc0clqEJ4pnM4j2/8dIIS
+        uS/Mb2ja5qbML2+Yv+vPzXW2Qb9NvXs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1651158022;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=teYgutLvQw0h6xvINcC2dz3O1o7WSyedRKXKjvCmVyc=;
+        b=y0VrIKHCu5FD1ZP+9euLLUl3KaybCyLc+3IPp1rPr7/rKGcr2udW5v31Ml5ApqW7wKMXEG
+        0rt7D4R+3H22umBg==
+Received: from quack3.suse.cz (unknown [10.100.224.230])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id E7CBC2C145;
+        Thu, 28 Apr 2022 15:00:21 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 5C395A061A; Thu, 28 Apr 2022 17:00:21 +0200 (CEST)
+Date:   Thu, 28 Apr 2022 17:00:21 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Niels Dossche <dossche.niels@gmail.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH] direct-io: prevent possible race condition on bio_list
+Message-ID: <20220428150021.h7s62zeta2xsbg6z@quack3.lan>
+References: <20220226221748.197800-1-dossche.niels@gmail.com>
+ <Yhqo9/695SJbMCBb@casper.infradead.org>
+ <9f5f8241-f3c4-f3ad-a5c1-c7b4637467bd@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220426101241.30100-7-nj.shetty@samsung.com>
-X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <9f5f8241-f3c4-f3ad-a5c1-c7b4637467bd@gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Nitesh,
+On Sat 26-02-22 23:29:03, Niels Dossche wrote:
+> On 2/26/22 23:25, Matthew Wilcox wrote:
+> > On Sat, Feb 26, 2022 at 11:17:48PM +0100, Niels Dossche wrote:
+> >> Prevent bio_list from changing in the while loop condition such that the
+> >> body of the loop won't execute with a potentially NULL pointer for
+> >> bio_list, which causes a NULL dereference later on.
+> > 
+> > Is this something you've seen happen, or something you think might
+> > happen?
+> > 
+> 
+> This is something that I think might happen, not something I've seen.
 
-Thank you for the patch! Perhaps something to improve:
+I can see this didn't get merged. I agree the code looks fishy but AFAICT
+it is safe. The reason is that the only code that can currently remove bio
+from bio_list is under dio_await_completion() which cannot run concurrently
+with dio_bio_reap() on the same bio... It might deserve a comment though.
 
-[auto build test WARNING on next-20220422]
-[cannot apply to axboe-block/for-next device-mapper-dm/for-next linus/master v5.18-rc4 v5.18-rc3 v5.18-rc2 v5.18-rc4]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
+								Honza
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Nitesh-Shetty/block-Introduce-queue-limits-for-copy-offload-support/20220426-201825
-base:    e7d6987e09a328d4a949701db40ef63fbb970670
-config: s390-randconfig-s032-20220427 (https://download.01.org/0day-ci/archive/20220428/202204282248.B5VfX8LS-lkp@intel.com/config)
-compiler: s390-linux-gcc (GCC) 11.3.0
-reproduce:
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # apt-get install sparse
-        # sparse version: v0.6.4-dirty
-        # https://github.com/intel-lab-lkp/linux/commit/6a9ea8570c34a7222786ca4d129578f48426d2f2
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Nitesh-Shetty/block-Introduce-queue-limits-for-copy-offload-support/20220426-201825
-        git checkout 6a9ea8570c34a7222786ca4d129578f48426d2f2
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.3.0 make.cross C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__' O=build_dir ARCH=s390 SHELL=/bin/bash drivers/md/ drivers/nvme/target/
-
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
-
-
-sparse warnings: (new ones prefixed by >>)
->> drivers/nvme/target/io-cmd-bdev.c:56:26: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned char [usertype] msrc @@     got restricted __le16 @@
-   drivers/nvme/target/io-cmd-bdev.c:56:26: sparse:     expected unsigned char [usertype] msrc
-   drivers/nvme/target/io-cmd-bdev.c:56:26: sparse:     got restricted __le16
-   drivers/nvme/target/io-cmd-bdev.c:59:34: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned char [usertype] msrc @@     got restricted __le16 @@
-   drivers/nvme/target/io-cmd-bdev.c:59:34: sparse:     expected unsigned char [usertype] msrc
-   drivers/nvme/target/io-cmd-bdev.c:59:34: sparse:     got restricted __le16
---
->> drivers/nvme/target/admin-cmd.c:537:26: sparse: sparse: incorrect type in assignment (different base types) @@     expected unsigned char [usertype] msrc @@     got restricted __le16 @@
-   drivers/nvme/target/admin-cmd.c:537:26: sparse:     expected unsigned char [usertype] msrc
-   drivers/nvme/target/admin-cmd.c:537:26: sparse:     got restricted __le16
-
-vim +56 drivers/nvme/target/io-cmd-bdev.c
-
-    12	
-    13	void nvmet_bdev_set_limits(struct block_device *bdev, struct nvme_id_ns *id)
-    14	{
-    15		const struct queue_limits *ql = &bdev_get_queue(bdev)->limits;
-    16		/* Number of logical blocks per physical block. */
-    17		const u32 lpp = ql->physical_block_size / ql->logical_block_size;
-    18		/* Logical blocks per physical block, 0's based. */
-    19		const __le16 lpp0b = to0based(lpp);
-    20	
-    21		/*
-    22		 * For NVMe 1.2 and later, bit 1 indicates that the fields NAWUN,
-    23		 * NAWUPF, and NACWU are defined for this namespace and should be
-    24		 * used by the host for this namespace instead of the AWUN, AWUPF,
-    25		 * and ACWU fields in the Identify Controller data structure. If
-    26		 * any of these fields are zero that means that the corresponding
-    27		 * field from the identify controller data structure should be used.
-    28		 */
-    29		id->nsfeat |= 1 << 1;
-    30		id->nawun = lpp0b;
-    31		id->nawupf = lpp0b;
-    32		id->nacwu = lpp0b;
-    33	
-    34		/*
-    35		 * Bit 4 indicates that the fields NPWG, NPWA, NPDG, NPDA, and
-    36		 * NOWS are defined for this namespace and should be used by
-    37		 * the host for I/O optimization.
-    38		 */
-    39		id->nsfeat |= 1 << 4;
-    40		/* NPWG = Namespace Preferred Write Granularity. 0's based */
-    41		id->npwg = lpp0b;
-    42		/* NPWA = Namespace Preferred Write Alignment. 0's based */
-    43		id->npwa = id->npwg;
-    44		/* NPDG = Namespace Preferred Deallocate Granularity. 0's based */
-    45		id->npdg = to0based(ql->discard_granularity / ql->logical_block_size);
-    46		/* NPDG = Namespace Preferred Deallocate Alignment */
-    47		id->npda = id->npdg;
-    48		/* NOWS = Namespace Optimal Write Size */
-    49		id->nows = to0based(ql->io_opt / ql->logical_block_size);
-    50	
-    51		/*Copy limits*/
-    52		if (ql->max_copy_sectors) {
-    53			id->mcl = cpu_to_le32((ql->max_copy_sectors << 9) / ql->logical_block_size);
-    54			id->mssrl = cpu_to_le16((ql->max_copy_range_sectors << 9) /
-    55					ql->logical_block_size);
-  > 56			id->msrc = to0based(ql->max_copy_nr_ranges);
-    57		} else {
-    58			if (ql->zoned == BLK_ZONED_NONE) {
-    59				id->msrc = to0based(BIO_MAX_VECS);
-    60				id->mssrl = cpu_to_le16(
-    61						(BIO_MAX_VECS << PAGE_SHIFT) / ql->logical_block_size);
-    62				id->mcl = cpu_to_le32(le16_to_cpu(id->mssrl) * BIO_MAX_VECS);
-    63	#ifdef CONFIG_BLK_DEV_ZONED
-    64			} else {
-    65				/* TODO: get right values for zoned device */
-    66				id->msrc = to0based(BIO_MAX_VECS);
-    67				id->mssrl = cpu_to_le16(min((BIO_MAX_VECS << PAGE_SHIFT),
-    68						ql->chunk_sectors) / ql->logical_block_size);
-    69				id->mcl = cpu_to_le32(min(le16_to_cpu(id->mssrl) * BIO_MAX_VECS,
-    70							ql->chunk_sectors));
-    71	#endif
-    72			}
-    73		}
-    74	}
-    75	
-
+> 
+> >> Signed-off-by: Niels Dossche <dossche.niels@gmail.com>
+> >> ---
+> >>  fs/direct-io.c | 7 +++++--
+> >>  1 file changed, 5 insertions(+), 2 deletions(-)
+> >>
+> >> diff --git a/fs/direct-io.c b/fs/direct-io.c
+> >> index 654443558047..806f05407019 100644
+> >> --- a/fs/direct-io.c
+> >> +++ b/fs/direct-io.c
+> >> @@ -545,19 +545,22 @@ static inline int dio_bio_reap(struct dio *dio, struct dio_submit *sdio)
+> >>  	int ret = 0;
+> >>  
+> >>  	if (sdio->reap_counter++ >= 64) {
+> >> +		unsigned long flags;
+> >> +
+> >> +		spin_lock_irqsave(&dio->bio_lock, flags);
+> >>  		while (dio->bio_list) {
+> >> -			unsigned long flags;
+> >>  			struct bio *bio;
+> >>  			int ret2;
+> >>  
+> >> -			spin_lock_irqsave(&dio->bio_lock, flags);
+> >>  			bio = dio->bio_list;
+> >>  			dio->bio_list = bio->bi_private;
+> >>  			spin_unlock_irqrestore(&dio->bio_lock, flags);
+> >>  			ret2 = blk_status_to_errno(dio_bio_complete(dio, bio));
+> >>  			if (ret == 0)
+> >>  				ret = ret2;
+> >> +			spin_lock_irqsave(&dio->bio_lock, flags);
+> >>  		}
+> >> +		spin_unlock_irqrestore(&dio->bio_lock, flags);
+> >>  		sdio->reap_counter = 0;
+> >>  	}
+> >>  	return ret;
+> >> -- 
+> >> 2.35.1
+> >>
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
