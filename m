@@ -2,49 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C8EF951292E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Apr 2022 03:59:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C42B512953
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Apr 2022 04:05:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237164AbiD1CCR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 27 Apr 2022 22:02:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52908 "EHLO
+        id S233156AbiD1CI3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 27 Apr 2022 22:08:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232736AbiD1CCQ (ORCPT
+        with ESMTP id S229506AbiD1CIZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 27 Apr 2022 22:02:16 -0400
-Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54D4B5DA75;
-        Wed, 27 Apr 2022 18:59:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=vIEyyyUKJd74cDHCrWq4r5eal6qL9XuP5zN2hfnktRA=; b=eUvkO+oAuZh1zd0iy5EtZz5oX6
-        A5Bn+Szk1s8uftZWcx+J/JVR9gxCo01JtGamqcJb6y+thOm8aJNABE8F+B22BI/EBTaK0+pfNYoBg
-        injkaqHuXMUx7R4jAaKUjp5hqV1Eo0HSVGkFGe9GdUzXmxtx6fXrq4V+H5t+mJG16YhoOD151+rkg
-        1q7EwMhXpKySfxUbtN5BwE2FRg6iMU4ewc9som6wBj2a0YkJPVEr0u5wip0UrG/76/KLdPEPk2skB
-        R993XsEwfKj8VZRYeVKLPgvrXTNCULfJf+yyv4c8wzRWX2fwmxFDCnA/Qs5Tk85u6UYNvj3h07t7u
-        l4JBrXOg==;
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1njtQr-00A66m-TY; Thu, 28 Apr 2022 01:59:02 +0000
-Date:   Thu, 28 Apr 2022 01:59:01 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Yang Xu <xuyang2018.jy@fujitsu.com>
-Cc:     linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org,
-        david@fromorbit.com, djwong@kernel.org, brauner@kernel.org,
-        willy@infradead.org, jlayton@kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jann Horn <jannh@google.com>
-Subject: Re: [PATCH v8 1/4] fs: add mode_strip_sgid() helper
-Message-ID: <Ymn05eNgOnaYy36R@zeniv-ca.linux.org.uk>
-References: <1650971490-4532-1-git-send-email-xuyang2018.jy@fujitsu.com>
+        Wed, 27 Apr 2022 22:08:25 -0400
+Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F323013F5F;
+        Wed, 27 Apr 2022 19:05:11 -0700 (PDT)
+Received: by fieldses.org (Postfix, from userid 2815)
+        id 854591506; Wed, 27 Apr 2022 22:05:11 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org 854591506
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
+        s=default; t=1651111511;
+        bh=QCkmNtSPy65RomWZIe/Vs0ux8LiQsEUhiCrAcC59kC0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kTNLtXTgfc9kocTyow1/UJ8elexj4MqVaQ7Fs5pZrWgW+YGZGI+cnqZcxk9kB+NIF
+         omoO0prchATZ/SMuD3YiMmwr2sMgdF5JHktf/dbiQR2QtVdh0JxB1UWEWNe2lIawiY
+         nhr6JjUwdnXDcg2hzRO+3yMImy3cFWmCaCTdyUP8=
+Date:   Wed, 27 Apr 2022 22:05:11 -0400
+From:   "J. Bruce Fields" <bfields@fieldses.org>
+To:     Dai Ngo <dai.ngo@oracle.com>
+Cc:     chuck.lever@oracle.com, jlayton@redhat.com,
+        viro@zeniv.linux.org.uk, linux-nfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH RFC v22 6/7] NFSD: add support for lock conflict to
+ courteous server
+Message-ID: <20220428020511.GK13471@fieldses.org>
+References: <1651049573-29552-1-git-send-email-dai.ngo@oracle.com>
+ <1651049573-29552-7-git-send-email-dai.ngo@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1650971490-4532-1-git-send-email-xuyang2018.jy@fujitsu.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE
+In-Reply-To: <1651049573-29552-7-git-send-email-dai.ngo@oracle.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -52,43 +50,168 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 26, 2022 at 07:11:27PM +0800, Yang Xu wrote:
-> Add a dedicated helper to handle the setgid bit when creating a new file
-> in a setgid directory. This is a preparatory patch for moving setgid
-> stripping into the vfs. The patch contains no functional changes.
+On Wed, Apr 27, 2022 at 01:52:52AM -0700, Dai Ngo wrote:
+> This patch allows expired client with lock state to be in COURTESY
+> state. Lock conflict with COURTESY client is resolved by the fs/lock
+> code using the lm_lock_expirable and lm_expire_lock callback in the
+> struct lock_manager_operations.
 > 
-> Currently the setgid stripping logic is open-coded directly in
-> inode_init_owner() and the individual filesystems are responsible for
-> handling setgid inheritance. Since this has proven to be brittle as
-> evidenced by old issues we uncovered over the last months (see [1] to
-> [3] below) we will try to move this logic into the vfs.
+> If conflict client is in COURTESY state, set it to EXPIRABLE and
+> schedule the laundromat to run immediately to expire the client. The
+> callback lm_expire_lock waits for the laundromat to flush its work
+> queue before returning to caller.
+> 
+> Signed-off-by: Dai Ngo <dai.ngo@oracle.com>
+> ---
+>  fs/nfsd/nfs4state.c | 82 +++++++++++++++++++++++++++++++++--------------------
+>  1 file changed, 52 insertions(+), 30 deletions(-)
+> 
+> diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+> index 55ecf5da25fe..9b1134d823bb 100644
+> --- a/fs/nfsd/nfs4state.c
+> +++ b/fs/nfsd/nfs4state.c
+> @@ -5705,11 +5705,31 @@ static void nfsd4_ssc_expire_umount(struct nfsd_net *nn)
+>  }
+>  #endif
+>  
+> +/* Check if any lock belonging to this lockowner has any blockers */
+>  static bool
+> -nfs4_has_any_locks(struct nfs4_client *clp)
+> +nfs4_lockowner_has_blockers(struct nfs4_lockowner *lo)
+> +{
+> +	struct file_lock_context *ctx;
+> +	struct nfs4_ol_stateid *stp;
+> +	struct nfs4_file *nf;
+> +
+> +	list_for_each_entry(stp, &lo->lo_owner.so_stateids, st_perstateowner) {
+> +		nf = stp->st_stid.sc_file;
+> +		ctx = nf->fi_inode->i_flctx;
+> +		if (!ctx)
+> +			continue;
+> +		if (locks_owner_has_blockers(ctx, lo))
+> +			return true;
+> +	}
+> +	return false;
+> +}
+> +
+> +static bool
+> +nfs4_anylock_blockers(struct nfs4_client *clp)
+>  {
+>  	int i;
+>  	struct nfs4_stateowner *so;
+> +	struct nfs4_lockowner *lo;
+>  
+>  	spin_lock(&clp->cl_lock);
+>  	for (i = 0; i < OWNER_HASH_SIZE; i++) {
+> @@ -5717,40 +5737,17 @@ nfs4_has_any_locks(struct nfs4_client *clp)
+>  				so_strhash) {
+>  			if (so->so_is_open_owner)
+>  				continue;
+> -			spin_unlock(&clp->cl_lock);
+> -			return true;
+> +			lo = lockowner(so);
+> +			if (nfs4_lockowner_has_blockers(lo)) {
+> +				spin_unlock(&clp->cl_lock);
+> +				return true;
+> +			}
+>  		}
+>  	}
+>  	spin_unlock(&clp->cl_lock);
+>  	return false;
+>  }
+>  
+> -/*
+> - * place holder for now, no check for lock blockers yet
+> - */
+> -static bool
+> -nfs4_anylock_blockers(struct nfs4_client *clp)
+> -{
+> -	/* not allow locks yet */
+> -	if (nfs4_has_any_locks(clp))
+> -		return true;
+> -	/*
+> -	 * don't want to check for delegation conflict here since
+> -	 * we need the state_lock for it. The laundromat willexpire
+> -	 * COURTESY later when checking for delegation recall timeout.
+> -	 */
+> -	return false;
+> -}
+> -
+> -static bool client_has_state_tmp(struct nfs4_client *clp)
+> -{
+> -	if (((!list_empty(&clp->cl_delegations)) ||
+> -			client_has_openowners(clp)) &&
+> -			list_empty(&clp->async_copies))
+> -		return true;
+> -	return false;
+> -}
+> -
+>  static void
+>  nfs4_get_client_reaplist(struct nfsd_net *nn, struct list_head *reaplist,
+>  				struct laundry_time *lt)
+> @@ -5767,7 +5764,7 @@ nfs4_get_client_reaplist(struct nfsd_net *nn, struct list_head *reaplist,
+>  			goto exp_client;
+>  		if (!state_expired(lt, clp->cl_time))
+>  			break;
+> -		if (!client_has_state_tmp(clp))
+> +		if (!client_has_state(clp))
+>  			goto exp_client;
+>  		cour = (clp->cl_state == NFSD4_COURTESY);
+>  		if (cour && ktime_get_boottime_seconds() >=
+> @@ -6722,6 +6719,28 @@ nfsd4_lm_put_owner(fl_owner_t owner)
+>  		nfs4_put_stateowner(&lo->lo_owner);
+>  }
+>  
+> +/* return pointer to struct nfs4_client if client is expirable */
+> +static void *
+> +nfsd4_lm_lock_expirable(struct file_lock *cfl)
+> +{
+> +	struct nfs4_lockowner *lo = (struct nfs4_lockowner *)cfl->fl_owner;
+> +	struct nfs4_client *clp = lo->lo_owner.so_client;
+> +
+> +	if (!try_to_expire_client(clp))
+> +		return clp;
+> +	return NULL;
+> +}
+> +
+> +/* schedule laundromat to run immediately and wait for it to complete */
+> +static void
+> +nfsd4_lm_expire_lock(void *data)
+> +{
+> +	struct nfs4_client *clp = (struct nfs4_client *)data;
+> +	struct nfsd_net *nn = net_generic(clp->net, nfsd_net_id);
+> +
+> +	flush_workqueue(laundry_wq);
 
-First of all, inode_init_owner() is (and always had been) an optional helper.
-Filesystems are *NOT* required to call it, so putting any common functionality
-in there had always been a mistake.
+Note we don't actually end up using the nfsd_net, or the argument to
+lm_lock_expirable.  This was a mistake in my original sketch.  See
 
-That goes for inode_fsuid_set() and inode_fsgid_set() calls as well.
-Consider e.g. this:
-struct inode *ext2_new_inode(struct inode *dir, umode_t mode,
-                             const struct qstr *qstr)
-{
-	...
-        if (test_opt(sb, GRPID)) {
-		inode->i_mode = mode;
-		inode->i_uid = current_fsuid();
-		inode->i_gid = dir->i_gid;
-	} else
-		inode_init_owner(&init_user_ns, inode, dir, mode);
+	https://lore.kernel.org/linux-nfs/20220417190727.GA18120@fieldses.org/
 
-Here we have an explicit mount option, selecting the way S_ISGID on directories
-is handled.  Mount ext2 with -o grpid and see for yourself - no inode_init_owner()
-calls there.
+	"Correction: I forgot that the laundromat is global, not
+	per-net.  So, we can skip the put_net/get_net.  Also,
+	lm_lock_expirable can just return bool instead of void *, and
+	lm_expire_lock needs no arguments."
 
-The same goes for ext4 - that code is copied there unchanged.
+--b.
 
-What's more, I'm not sure that Jann's fix made any sense in the first place.
-After all, the file being created here is empty; exec on it won't give you
-anything - it'll simply fail.  And modifying that file ought to strip SGID,
-or we have much more interesting problems.
-
-What am I missing here?
+> +}
+> +
+>  static void
+>  nfsd4_lm_notify(struct file_lock *fl)
+>  {
+> @@ -6748,9 +6767,12 @@ nfsd4_lm_notify(struct file_lock *fl)
+>  }
+>  
+>  static const struct lock_manager_operations nfsd_posix_mng_ops  = {
+> +	.lm_mod_owner = THIS_MODULE,
+>  	.lm_notify = nfsd4_lm_notify,
+>  	.lm_get_owner = nfsd4_lm_get_owner,
+>  	.lm_put_owner = nfsd4_lm_put_owner,
+> +	.lm_lock_expirable = nfsd4_lm_lock_expirable,
+> +	.lm_expire_lock = nfsd4_lm_expire_lock,
+>  };
+>  
+>  static inline void
+> -- 
+> 2.9.5
