@@ -2,129 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3259F513E3C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Apr 2022 23:55:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C433B513E48
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Apr 2022 00:06:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348288AbiD1V6B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Apr 2022 17:58:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33894 "EHLO
+        id S1352768AbiD1WKK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Apr 2022 18:10:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233590AbiD1V6A (ORCPT
+        with ESMTP id S1347740AbiD1WKJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Apr 2022 17:58:00 -0400
-Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id D462F46162;
-        Thu, 28 Apr 2022 14:54:44 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-32-1.pa.nsw.optusnet.com.au [49.180.32.1])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id CA0F810E5E76;
-        Fri, 29 Apr 2022 07:54:43 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1nkC5y-005hah-7B; Fri, 29 Apr 2022 07:54:42 +1000
-Date:   Fri, 29 Apr 2022 07:54:42 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Stefan Roesch <shr@fb.com>
-Cc:     io-uring@vger.kernel.org, kernel-team@fb.com, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH v1 11/18] xfs: add async buffered write support
-Message-ID: <20220428215442.GW1098723@dread.disaster.area>
-References: <20220426174335.4004987-1-shr@fb.com>
- <20220426174335.4004987-12-shr@fb.com>
- <20220426225652.GS1544202@dread.disaster.area>
- <30f2920c-5262-7cb0-05b5-6e84a76162a7@fb.com>
+        Thu, 28 Apr 2022 18:10:09 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81F5233EA9;
+        Thu, 28 Apr 2022 15:06:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=9v/jwR+R8u87FL4qORMMhnuwU+FONow5gj9ZK60JlpI=; b=s7tZJeCHXPydeNyzQuN8NsfxgP
+        eu4k6UGhsVLB00xCdra8ScX0cG22vl4diUOaGh9FKdX7ZbDm54F7Sz0V6dDshrJNi6/wT9TaTLE7L
+        4lziHtohweA2A/pEGRkEQA/vjgE7pbVRnrWniCsX9yEkpQ2hMs2CWXd+7aGj4ahpDbzBv+jVDj0ap
+        JdQw0FhqNuU0KC9UTqrHuy4JXz7tHdwXRx/xwjjzvCWyXUc2CceR12Gm2rzyMoXNmRGC7jZDfM/Sd
+        fASKdOUqjIoKv+PaYoM25kjeVCygCtv96ptD2wNPrJ0lPiZpRzZ7Jn+O1gxO1aN3k4eGnAkBe8P/F
+        +J/VDTRA==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nkCHX-008hOx-BO; Thu, 28 Apr 2022 22:06:39 +0000
+Date:   Thu, 28 Apr 2022 15:06:39 -0700
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Damien Le Moal <damien.lemoal@opensource.wdc.com>
+Cc:     Pankaj Raghav <p.raghav@samsung.com>, jaegeuk@kernel.org,
+        axboe@kernel.dk, snitzer@kernel.org, hch@lst.de,
+        naohiro.aota@wdc.com, sagi@grimberg.me, dsterba@suse.com,
+        johannes.thumshirn@wdc.com, linux-kernel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, clm@fb.com, gost.dev@samsung.com,
+        chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        josef@toxicpanda.com, jonathan.derrick@linux.dev, agk@redhat.com,
+        kbusch@kernel.org, kch@nvidia.com, linux-nvme@lists.infradead.org,
+        dm-devel@redhat.com, bvanassche@acm.org, jiangbo.365@bytedance.com,
+        linux-fsdevel@vger.kernel.org, matias.bjorling@wdc.com,
+        linux-block@vger.kernel.org
+Subject: Re: [PATCH 16/16] dm-zoned: ensure only power of 2 zone sizes are
+ allowed
+Message-ID: <YmsP7wQAyDx9g8gy@bombadil.infradead.org>
+References: <20220427160255.300418-1-p.raghav@samsung.com>
+ <CGME20220427160313eucas1p1feecf74ec15c8c3d9250444710fd1676@eucas1p1.samsung.com>
+ <20220427160255.300418-17-p.raghav@samsung.com>
+ <2ffc46c7-945f-ba26-90db-737fccd74fdf@opensource.wdc.com>
+ <YmrQFu9EbMmrL2Ys@bombadil.infradead.org>
+ <ce56cb7d-f184-aad1-4935-5f622e7afe5d@opensource.wdc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <30f2920c-5262-7cb0-05b5-6e84a76162a7@fb.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=VuxAv86n c=1 sm=1 tr=0 ts=626b0d24
-        a=0Ysg4n7SwsYHWQMxibB6iw==:117 a=0Ysg4n7SwsYHWQMxibB6iw==:17
-        a=kj9zAlcOel0A:10 a=z0gMJWrwH1QA:10 a=FOH2dFAWAAAA:8 a=7-415B0cAAAA:8
-        a=VUOJFI46L-dW_0rXThcA:9 a=CjuIK1q_8ugA:10 a=i3VuKzQdj-NEYjvDI-p3:22
-        a=biEYGPWJfzWAr4FL6Ov7:22
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_PASS,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <ce56cb7d-f184-aad1-4935-5f622e7afe5d@opensource.wdc.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 28, 2022 at 12:58:59PM -0700, Stefan Roesch wrote:
+On Fri, Apr 29, 2022 at 06:43:58AM +0900, Damien Le Moal wrote:
+> On 4/29/22 02:34, Luis Chamberlain wrote:
+> > One step at a time.
 > 
-> 
-> On 4/26/22 3:56 PM, Dave Chinner wrote:
-> > On Tue, Apr 26, 2022 at 10:43:28AM -0700, Stefan Roesch wrote:
-> >> This adds the async buffered write support to XFS. For async buffered
-> >> write requests, the request will return -EAGAIN if the ilock cannot be
-> >> obtained immediately.
-> >>
-> >> Signed-off-by: Stefan Roesch <shr@fb.com>
-> >> ---
-> >>  fs/xfs/xfs_file.c | 10 ++++++----
-> >>  1 file changed, 6 insertions(+), 4 deletions(-)
-> >>
-> >> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-> >> index 6f9da1059e8b..49d54b939502 100644
-> >> --- a/fs/xfs/xfs_file.c
-> >> +++ b/fs/xfs/xfs_file.c
-> >> @@ -739,12 +739,14 @@ xfs_file_buffered_write(
-> >>  	bool			cleared_space = false;
-> >>  	int			iolock;
-> >>  
-> >> -	if (iocb->ki_flags & IOCB_NOWAIT)
-> >> -		return -EOPNOTSUPP;
-> >> -
-> >>  write_retry:
-> >>  	iolock = XFS_IOLOCK_EXCL;
-> >> -	xfs_ilock(ip, iolock);
-> >> +	if (iocb->ki_flags & IOCB_NOWAIT) {
-> >> +		if (!xfs_ilock_nowait(ip, iolock))
-> >> +			return -EAGAIN;
-> >> +	} else {
-> >> +		xfs_ilock(ip, iolock);
-> >> +	}
-> > 
-> > xfs_ilock_iocb().
-> > 
-> 
-> The helper xfs_ilock_iocb cannot be used as it hardcoded to use iocb->ki_filp to
-> get a pointer to the xfs_inode.
+> Yes, in general, I agree. But in this case, that will create kernel
+> versions that end up having partial support for zoned drives. Not ideal to
+> say the least. So if the patches are not that big, I would rather like to
+> see everything go into a single release.
 
-And the problem with that is?
+This would have delayed the patches more, and I see no rush for npo2 to
+use dm-zoned really. Just as with f2fs, we can take priorities at a
+time.
 
-I mean, look at what xfs_file_buffered_write() does to get the
-xfs_inode 10 lines about that change:
-
-xfs_file_buffered_write(
-        struct kiocb            *iocb,
-        struct iov_iter         *from)
-{
-        struct file             *file = iocb->ki_filp;
-        struct address_space    *mapping = file->f_mapping;
-        struct inode            *inode = mapping->host;
-        struct xfs_inode        *ip = XFS_I(inode);
-
-In what cases does file_inode(iocb->ki_filp) point to a different
-inode than iocb->ki_filp->f_mapping->host? The dio write path assumes
-that file_inode(iocb->ki_filp) is correct, as do both the buffered
-and dio read paths.
-
-What makes the buffered write path special in that
-file_inode(iocb->ki_filp) is not correctly set whilst
-iocb->ki_filp->f_mapping->host is?
-
-Regardless, if this is a problem, then just pass the XFS inode to
-xfs_ilock_iocb() and this is a moot point.
-
-> However here we need to use iocb->ki_filp->f_mapping->host.
-> I'll split off new helper for this in the next version of the patch.
-
-We don't need a new helper here, either.
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+  Luis
