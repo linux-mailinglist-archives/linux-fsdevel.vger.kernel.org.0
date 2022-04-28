@@ -2,107 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 250F5513284
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Apr 2022 13:33:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DCD85132EC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Apr 2022 13:56:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345591AbiD1Lfe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Apr 2022 07:35:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58422 "EHLO
+        id S1345798AbiD1L7K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Apr 2022 07:59:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345558AbiD1Lfd (ORCPT
+        with ESMTP id S234234AbiD1L7J (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Apr 2022 07:35:33 -0400
-Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 472445DA63
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Apr 2022 04:32:19 -0700 (PDT)
-Received: by mail-io1-xd43.google.com with SMTP id g21so6081699iom.13
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Apr 2022 04:32:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=UXiI1Ou+hgS6xUOBleoXBZ0P1W6h3cfa19FRe+lKcNc=;
-        b=qdRXWsH4VboVZqMp+U+9xgTkruA8gP1PnMemdrmmg0YO6COokK/UN2OFrTer0rQTAT
-         L/Gk1tYZKKFPFqo7JdutorIHaZilUNgMXSNSOCNevKkAHmcBVMElQGq6HpkYC/lBhR+z
-         cGdhDa6PfwxJvXH1rpfTD2kgzo8ZHUp1se8gwJDs9ievPavEXtbkGq5W5APCsSBEjbhG
-         b6RpLTbmn4cGsMi3ZP7Vc/UnPeVn3UhTzAwx9cOph6YMcAfGfSlA3NE/eQL+O/fC+ky6
-         WCEFGtzo/pZQofGZq0COcl2SR3VgReM6aVbjBeulJfsOg1nbD9JO0lCeZ9TTXm3ROS5F
-         lBgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=UXiI1Ou+hgS6xUOBleoXBZ0P1W6h3cfa19FRe+lKcNc=;
-        b=DIltjwhWCVsRCvcRJbQPDZwLPZGQk3q+JXjEkIqUBQYT3vDq15mLTZRue6ZoyTIlLO
-         JQUpGBVMdG3HEYIp9TiT33sN3stbAbLPUh5d2CwoNEjrsJQB+Q7HloRQv5Qz4rGHzEiK
-         T2a7QbczGARJifLS7Q2iPNz4D94UbMSSJSn26zz0A0sqiOemIZhqDlNdcQSmuMqIbpDS
-         CF5F9B1i5Zs+J90w5CzhIlnpuilMlDwInSkLk3k/cR5RnJ4VQvZIJ4NKWY5iFTF3l39b
-         uBQg8z7t3T9vl8HGRbiNkFUAFXwmhh2ySq4fSShxiHDj+O7w1f+2QkgvtOE1mtcv13HH
-         aCjg==
-X-Gm-Message-State: AOAM532bpswUrgWHGxLWEiekuNn8NVcuqcu/PovAOMF1VGywSwXshMPI
-        HdM5HfwrSs+UU6pAitcG+AxfSwdWZIuc0ctVbJ4=
-X-Google-Smtp-Source: ABdhPJy//UOmnScX3U+9HAMHSaslp0Zg2kKG2rsRF1VyHdz+6Vg1gTuTmghrLA5VXddaXujrR+D0UZta7z+mQH+DG2g=
-X-Received: by 2002:a6b:680c:0:b0:657:aecd:c666 with SMTP id
- d12-20020a6b680c000000b00657aecdc666mr4431049ioc.218.1651145538572; Thu, 28
- Apr 2022 04:32:18 -0700 (PDT)
+        Thu, 28 Apr 2022 07:59:09 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05558888EF;
+        Thu, 28 Apr 2022 04:55:54 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6BAB161F88;
+        Thu, 28 Apr 2022 11:55:54 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 935B5C385A0;
+        Thu, 28 Apr 2022 11:55:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1651146953;
+        bh=f6ST6gZQuZBsb5pOcI4x7sQ7qH7kHl7qyl/MzMDuu+o=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=W4asAUa+Z8MClmq6PoYixS8U5Y4FknAL9gZNbtSbf16P6fMOcSEiegUNZ5VcPJGvS
+         QxRznMHaz4fVHrCT1IvUV/rhdXnFC5LGQrmLJRbQccemqyUoRhBPlgWkUgrvZrR2fW
+         VvFjggH/kDTSLiwo1qHRbuWUuTeH9F8BgO6Iyaq6JwsDoqhQaY4aHnzX/UbHSJ/bvm
+         YksST7ISgl/WfpIVIl/fBFxDgSz+r7zFTZG+1lKuaAFCv05MfnEkbAtkUCIQXOz+/d
+         PK8puV5rM4U72rqfEtwh4/lG7DbM1jWBoXXxaWsjcUC/UIzeczBJaESVwuby9XbxZ1
+         9nhri+F1c9b+g==
+Date:   Thu, 28 Apr 2022 13:55:43 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     "xuyang2018.jy@fujitsu.com" <xuyang2018.jy@fujitsu.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
+        "david@fromorbit.com" <david@fromorbit.com>,
+        "djwong@kernel.org" <djwong@kernel.org>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "jlayton@kernel.org" <jlayton@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jann Horn <jannh@google.com>
+Subject: Re: [PATCH v8 1/4] fs: add mode_strip_sgid() helper
+Message-ID: <20220428115543.mh2uq7nmqi2fbw45@wittgenstein>
+References: <1650971490-4532-1-git-send-email-xuyang2018.jy@fujitsu.com>
+ <Ymn05eNgOnaYy36R@zeniv-ca.linux.org.uk>
+ <Ymn4xPXXWe4LFhPZ@zeniv-ca.linux.org.uk>
+ <626A08DA.3060802@fujitsu.com>
+ <YmoAp+yWBpH5T8rt@zeniv-ca.linux.org.uk>
+ <20220428084454.il3gooakfnnsq2di@wittgenstein>
 MIME-Version: 1.0
-Received: by 2002:a05:6e02:20e7:0:0:0:0 with HTTP; Thu, 28 Apr 2022 04:32:18
- -0700 (PDT)
-Reply-To: barristerbenwaidhoferb@gmail.com
-From:   "Barrister. Ben Waidhofer" <gogalonasiru@gmail.com>
-Date:   Thu, 28 Apr 2022 04:32:18 -0700
-Message-ID: <CAPs4PmpVKkFuMtUTtqYzDMEM1tkHd6mExwR5ngFD_ZF_qd_qtg@mail.gmail.com>
-Subject: Investment Offer
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: Yes, score=6.4 required=5.0 tests=BAYES_80,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,FREEMAIL_REPLYTO,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,UNDISC_FREEM autolearn=no
-        autolearn_force=no version=3.4.6
-X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
-        *      https://www.dnswl.org/, no trust
-        *      [2607:f8b0:4864:20:0:0:0:d43 listed in]
-        [list.dnswl.org]
-        *  2.0 BAYES_80 BODY: Bayes spam probability is 80 to 95%
-        *      [score: 0.9246]
-        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
-        *      provider
-        *      [gogalonasiru[at]gmail.com]
-        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
-        * -0.0 SPF_PASS SPF: sender matches SPF record
-        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
-        *      author's domain
-        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
-        *       valid
-        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
-        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
-        *      envelope-from domain
-        *  3.6 UNDISC_FREEM Undisclosed recipients + freemail reply-to
-        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
-        *      different freemails
-X-Spam-Level: ******
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20220428084454.il3gooakfnnsq2di@wittgenstein>
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Good day,
+On Thu, Apr 28, 2022 at 10:45:01AM +0200, Christian Brauner wrote:
+> On Thu, Apr 28, 2022 at 02:49:11AM +0000, Al Viro wrote:
+> > On Thu, Apr 28, 2022 at 02:23:25AM +0000, xuyang2018.jy@fujitsu.com wrote:
+> > 
+> > > > BTW, xfs has grpid option as well:
+> > > > 	if (dir&&  !(dir->i_mode&  S_ISGID)&&  xfs_has_grpid(mp)) {
+> > > > 		inode_fsuid_set(inode, mnt_userns);
+> > > > 		inode->i_gid = dir->i_gid;
+> > > > 		inode->i_mode = mode;
+> > > > 	} else {
+> > > > 		inode_init_owner(mnt_userns, inode, dir, mode);
+> > > > 	}
+> > > >
+> > > > We could lift that stuff into VFS, but it would require lifting that flag
+> > > > (BSD vs. SysV behaviour wrt GID - BSD *always* inherits GID from parent
+> > > > and ignores SGID on directories) into generic superblock.  Otherwise we'd
+> > > > be breaking existing behaviour for ext* and xfs...
+> > > 
+> > > I also mentioned it in my previous version(in the 3/4 patch)
+> > > "This patch also changed grpid behaviour for ext4/xfs because the mode 
+> > > passed to them may been changed by vfs_prepare_mode.
+> > > "
+> > > 
+> > > I guess we can add a  grpid option check in vfs_prepare_mode or in 
+> > > mode_strip_sgid, then it should not break the existing behaviour for 
+> > > ext* and xfs.
+> > 
+> > I don't like it, TBH.  That way we have
+> > 	1) caller mangles mode (after having looked at grpid, etc.)
+> > 	2) filesystem checks grpid and either calls inode_init_owner(),
+> > which might (or might not) modify the gid to be used or skips the
+> > call and assigns gid directly.
+> > 
+> > It's asking for trouble.  We have two places where the predicate is
+> > checked; the first mangles mode (and I'm still not convinced that we
+> > need to bother with that at all), the second affects gid (and for
+> > mkdir in sgid directory on non-grpid ones inherits sgid).
+> > 
+> > That kind of structure is asking for trouble.  *IF* we make inode_init_owner()
+> > aware of grpid (and make that predicate usable from generic helper), we might
+> > as well just make inode_init_owner() mandatory (for the first time ever) and
+> > get rid of grpid checks in filesystems themselves.  But then there's no point
+> > doing it in method callers.
+> 
+> This has ordering issues. In the vfs the umask is stripped and then we
+> call into the filesystem and inode_init_owner() is called. So if
+> S_IXGRP is removed by the umask then we inherit the S_ISGID bit.
+> 
+> But if the filesystem uses POSIX ACLs then the umask isn't stripped in
+> the vfs and instead may be done (I say "may" because it depends on
+> whether or not applicable POSIX ACLs are found) in posix_acl_create().
+> 
+> But in order to call posix_acl_create() the filesystem will have often
+> ran through inode_init_owner() first. For example, ext4 does
+> inode_init_owner() and afterwards calls ext4_init_acl() which in turn
+> ends up calling posix_acl_create() which _may_ strip the umask.
+> 
+> Iow, you end up with two possible setgid removal paths:
+> * strip setgid first, apply umask (no POSIX ACLs supported)
+> * apply umask, strip setgid (POSIX ACLs supported)
 
-I am Barrister. Ben Waidhofer from the stated law firm in London. I act
-for Mr. Andrew Walker, a former loyalist and a personal Friend to the
-President of Russia Vladimir Putin presently in London; he flew into
-the UK months ago before the invasion of Ukraine by Russian government.
-The sum of $3.5b was deposited in a Private bank in Switzerland for
-the procurement of MIC war equipment from North Korea to fight the
-war, but he has decided to back out of the initial plan to divert part
-of the fund for investment in a viable venture.
+Ugh, that's reversed:
+* POSIX ACLs supported:
+  1. strip setgid first
+  2. (possibly) strip umask
+* POSIX ACLS unsupported:
+  1. apply umask
+  2. strip setgid
 
-There is a need for a matured and trusted individual or corporate
-organization to receive part of the fund. All the needed documentation
-will be perfected here in London.
-
-You are at liberty to respond for more detail.
-
-Thanks.
-Regards,
-Barrister. Ben Waidhofer
+> with possibly different results.
+> 
+> Mandating inode_init_owner() being used doesn't solve that and I think
+> it's still brittle overall.
+> 
+> If we can hoist all of this into vfs_*() before we call into the
+> filesystem we're better off in the long run. It's worth the imho
+> negible regression risk. 
+> 
+> > 
+> > Note, BTW, that while XFS has inode_fsuid_set() on the non-inode_init_owner()
+> > path, it doesn't have inode_fsgid_set() there.  Same goes for ext4, while
+> > ext2 doesn't bother with either in such case...
+> 
+> Using inode_fs*id_set() is only relevant when the inode is initialized
+> based on the caller's fs*id. If you request to inherit the parent
+> directories gid then the caller's gid doesn't matter.
+> 
+> ext2 doesn't need to care at all about this because it doesn't raise
+> FS_ALLOW_IDMAP.
+> 
+> > 
+> > Let's try to separate the issues here.  Jann, could you explain what makes
+> > empty sgid files dangerous?
+> 
+> I see that's answered in a later mail.
