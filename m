@@ -2,105 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B4CA513033
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Apr 2022 11:48:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 250F5513284
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Apr 2022 13:33:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232062AbiD1JuW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Apr 2022 05:50:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57154 "EHLO
+        id S1345591AbiD1Lfe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Apr 2022 07:35:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58422 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348282AbiD1Jhz (ORCPT
+        with ESMTP id S1345558AbiD1Lfd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Apr 2022 05:37:55 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EC4C95486;
-        Thu, 28 Apr 2022 02:34:41 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E537260E06;
-        Thu, 28 Apr 2022 09:34:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94E0BC385A0;
-        Thu, 28 Apr 2022 09:34:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1651138480;
-        bh=luhrz9r9PkXIPr7EQBPjoqFpOJw5lvxqAOITtpyxxwk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lzVWy6q9t87OUC3QzNKP10BsjhcXkz7XhDNJ3ULl8dzsqv8/vgQKekhOY/en2oqTn
-         vqS+C9/W7RjkzewBSbggCyE6DPIKpA0gRtz3r5hNEsSv1GshR79aFbXdfUdgIpkwSt
-         +WxuseiWlHPAPzJxJ5LZQSIE9fpUSm42s7Xx/firTIfkghKcpK6LRTf1ZVCFREtpRV
-         R32OLR9Tq3UyHZ6N7seWXo06iw6I4Vy6JnTBCfqtvVHt+QCd4VZ3MFj+WQmzKUlQj8
-         VqVuX0QGPdrl4ZxJPoDmnaK0hARHbGrQSKkvuh3OmBUmyd53EMjQ2MorttWFSN5gUq
-         JV+HnE3z92sOQ==
-Date:   Thu, 28 Apr 2022 11:34:34 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     "xuyang2018.jy@fujitsu.com" <xuyang2018.jy@fujitsu.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-        "david@fromorbit.com" <david@fromorbit.com>,
-        "djwong@kernel.org" <djwong@kernel.org>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jann Horn <jannh@google.com>
-Subject: Re: [PATCH v8 1/4] fs: add mode_strip_sgid() helper
-Message-ID: <20220428093434.yc7hjjplvicugfqs@wittgenstein>
-References: <1650971490-4532-1-git-send-email-xuyang2018.jy@fujitsu.com>
- <Ymn05eNgOnaYy36R@zeniv-ca.linux.org.uk>
- <Ymn4xPXXWe4LFhPZ@zeniv-ca.linux.org.uk>
- <626A08DA.3060802@fujitsu.com>
- <YmoAp+yWBpH5T8rt@zeniv-ca.linux.org.uk>
- <YmoGHrNVtfXsl6vM@zeniv-ca.linux.org.uk>
- <YmoOMz+3ul5uHclV@zeniv-ca.linux.org.uk>
+        Thu, 28 Apr 2022 07:35:33 -0400
+Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 472445DA63
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Apr 2022 04:32:19 -0700 (PDT)
+Received: by mail-io1-xd43.google.com with SMTP id g21so6081699iom.13
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Apr 2022 04:32:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=UXiI1Ou+hgS6xUOBleoXBZ0P1W6h3cfa19FRe+lKcNc=;
+        b=qdRXWsH4VboVZqMp+U+9xgTkruA8gP1PnMemdrmmg0YO6COokK/UN2OFrTer0rQTAT
+         L/Gk1tYZKKFPFqo7JdutorIHaZilUNgMXSNSOCNevKkAHmcBVMElQGq6HpkYC/lBhR+z
+         cGdhDa6PfwxJvXH1rpfTD2kgzo8ZHUp1se8gwJDs9ievPavEXtbkGq5W5APCsSBEjbhG
+         b6RpLTbmn4cGsMi3ZP7Vc/UnPeVn3UhTzAwx9cOph6YMcAfGfSlA3NE/eQL+O/fC+ky6
+         WCEFGtzo/pZQofGZq0COcl2SR3VgReM6aVbjBeulJfsOg1nbD9JO0lCeZ9TTXm3ROS5F
+         lBgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=UXiI1Ou+hgS6xUOBleoXBZ0P1W6h3cfa19FRe+lKcNc=;
+        b=DIltjwhWCVsRCvcRJbQPDZwLPZGQk3q+JXjEkIqUBQYT3vDq15mLTZRue6ZoyTIlLO
+         JQUpGBVMdG3HEYIp9TiT33sN3stbAbLPUh5d2CwoNEjrsJQB+Q7HloRQv5Qz4rGHzEiK
+         T2a7QbczGARJifLS7Q2iPNz4D94UbMSSJSn26zz0A0sqiOemIZhqDlNdcQSmuMqIbpDS
+         CF5F9B1i5Zs+J90w5CzhIlnpuilMlDwInSkLk3k/cR5RnJ4VQvZIJ4NKWY5iFTF3l39b
+         uBQg8z7t3T9vl8HGRbiNkFUAFXwmhh2ySq4fSShxiHDj+O7w1f+2QkgvtOE1mtcv13HH
+         aCjg==
+X-Gm-Message-State: AOAM532bpswUrgWHGxLWEiekuNn8NVcuqcu/PovAOMF1VGywSwXshMPI
+        HdM5HfwrSs+UU6pAitcG+AxfSwdWZIuc0ctVbJ4=
+X-Google-Smtp-Source: ABdhPJy//UOmnScX3U+9HAMHSaslp0Zg2kKG2rsRF1VyHdz+6Vg1gTuTmghrLA5VXddaXujrR+D0UZta7z+mQH+DG2g=
+X-Received: by 2002:a6b:680c:0:b0:657:aecd:c666 with SMTP id
+ d12-20020a6b680c000000b00657aecdc666mr4431049ioc.218.1651145538572; Thu, 28
+ Apr 2022 04:32:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <YmoOMz+3ul5uHclV@zeniv-ca.linux.org.uk>
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Received: by 2002:a05:6e02:20e7:0:0:0:0 with HTTP; Thu, 28 Apr 2022 04:32:18
+ -0700 (PDT)
+Reply-To: barristerbenwaidhoferb@gmail.com
+From:   "Barrister. Ben Waidhofer" <gogalonasiru@gmail.com>
+Date:   Thu, 28 Apr 2022 04:32:18 -0700
+Message-ID: <CAPs4PmpVKkFuMtUTtqYzDMEM1tkHd6mExwR5ngFD_ZF_qd_qtg@mail.gmail.com>
+Subject: Investment Offer
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: Yes, score=6.4 required=5.0 tests=BAYES_80,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,FREEMAIL_REPLYTO,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,UNDISC_FREEM autolearn=no
+        autolearn_force=no version=3.4.6
+X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
+        *      https://www.dnswl.org/, no trust
+        *      [2607:f8b0:4864:20:0:0:0:d43 listed in]
+        [list.dnswl.org]
+        *  2.0 BAYES_80 BODY: Bayes spam probability is 80 to 95%
+        *      [score: 0.9246]
+        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
+        *      provider
+        *      [gogalonasiru[at]gmail.com]
+        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
+        * -0.0 SPF_PASS SPF: sender matches SPF record
+        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
+        *      author's domain
+        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
+        *       valid
+        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
+        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
+        *      envelope-from domain
+        *  3.6 UNDISC_FREEM Undisclosed recipients + freemail reply-to
+        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
+        *      different freemails
+X-Spam-Level: ******
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 28, 2022 at 03:46:59AM +0000, Al Viro wrote:
-> On Thu, Apr 28, 2022 at 03:12:30AM +0000, Al Viro wrote:
-> 
-> > > Note, BTW, that while XFS has inode_fsuid_set() on the non-inode_init_owner()
-> > > path, it doesn't have inode_fsgid_set() there.  Same goes for ext4, while
-> > > ext2 doesn't bother with either in such case...
-> > > 
-> > > Let's try to separate the issues here.  Jann, could you explain what makes
-> > > empty sgid files dangerous?
-> > 
-> > Found the original thread in old mailbox, and the method of avoiding the
-> > SGID removal on modification is usable.  Which answers the question above...
-> 
-> OK, what do we want for grpid mounts?  Aside of "don't forget inode_fsuid_set(),
-> please", that is.  We don't want inode_fsgid_set() there (whatever went for
-> the parent directory should be the right value for the child).  Same "strip
+Good day,
 
-Exactly. You sounded puzzled why we don't call that in an earlier mail.
+I am Barrister. Ben Waidhofer from the stated law firm in London. I act
+for Mr. Andrew Walker, a former loyalist and a personal Friend to the
+President of Russia Vladimir Putin presently in London; he flew into
+the UK months ago before the invasion of Ukraine by Russian government.
+The sum of $3.5b was deposited in a Private bank in Switzerland for
+the procurement of MIC war equipment from North Korea to fight the
+war, but he has decided to back out of the initial plan to divert part
+of the fund for investment in a viable venture.
 
-> SGID from non-directory child, unless we are in the resulting group"?
+There is a need for a matured and trusted individual or corporate
+organization to receive part of the fund. All the needed documentation
+will be perfected here in London.
 
-Honestly, I think we should try and see if we can't use the same setgid
-inheritance enforcement of the new mode_strip_sgid() helper for the
-grpid mount option as well. Iow, just don't give the grpid mount option
-a separate setgid treatment and try it with the current approach.
+You are at liberty to respond for more detail.
 
-It'll allow us to move things into vfs proper which I think is a robust
-solution with clear semantics. It also gives us a uniform ordering wrt
-to umask stripping and POSIX ACLs.
-
-Yes, as we've pointed out in the thread this carries a non-zero
-regression risk. But so does the whole patch series. But this might end
-up being a big win security wise and makes maintenance way easier going
-forward.
-
-The current setgid situation is thoroughly messy though and we keep
-plugging holes. Even writing tests for the current situation is an
-almost herculean task let alone reviewing it.
+Thanks.
+Regards,
+Barrister. Ben Waidhofer
