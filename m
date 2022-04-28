@@ -2,138 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2296C513B10
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Apr 2022 19:45:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01DBD513B18
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Apr 2022 19:47:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350603AbiD1RtJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Apr 2022 13:49:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52342 "EHLO
+        id S1350609AbiD1Ru5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Apr 2022 13:50:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236635AbiD1RtH (ORCPT
+        with ESMTP id S1350582AbiD1Ru4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Apr 2022 13:49:07 -0400
-Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 802AB8566E
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Apr 2022 10:45:52 -0700 (PDT)
-Received: by mail-io1-xd31.google.com with SMTP id z26so7259589iot.8
-        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Apr 2022 10:45:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=rYkNgcXPFsN0AZS9Gdq00dTATV9XxHLGEv5CoQhxVgg=;
-        b=hzMsoV3D0yJ0Unlop+rpTzklIYhRnWH7ICsyDlDVFdcLE9BIlkNP73Wm+4oXNVuiB8
-         plJ8GuyyvEt6ZXQbKxd1muNdZzq09naSLXrKhBTeETybRl01LEoPVDN68ktaYn9l0zsi
-         yoyQHHe1wradnURDVY6+HNGMMkWazXFQRLoTut+ycpEUb54hblTXLdMjgsITAqGXMdx5
-         3Y8FH49L78ooub0KNRfiN5ke97caoBhhHNMCuuOQncS7BD/mI1wPI6p0qS0ilNo4Z01F
-         oWlrVzL07peONZe79tOTcyd8YQZsNWlwpVd98T9TgcHmPXq0Kuzw5WruzgVtu+f1uIoR
-         iH0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=rYkNgcXPFsN0AZS9Gdq00dTATV9XxHLGEv5CoQhxVgg=;
-        b=PkMSBURV0BYgy+UIX/V0L4Z5VW42PRPI6CUuBkqtOreAZ22DHc6kyTj5QUqauQDXpL
-         ZDP0u4cC7POUPQc1DAu36eWs6u27zN+rPPSlFZt0kMXSkoE+c9qQVnBqDswj/8dblCHf
-         eFcHaE/IVhZ9ZxuwqKP9KTT4jzZEu1/zptjBIxUYqu4LuYJkyz8e/xneUQQ/pqvZ0cgQ
-         JEp41dVVpKJyC+b00x9OYlzcN1b9GVyW62+iEtmvJEHzL9xLQ0WyJxzGt+yljt51IF3z
-         OxHuNO8+Lq9XUsiMqJ05RMwkbYuDWX8x6CjcKXG831Nnw77rDl2Lmvxwsndq1ZEwJbnj
-         QQ7Q==
-X-Gm-Message-State: AOAM532imQ/8OIOfZzPlAGh6wEfpnsndyVGFIv4xdanQta7QLsewaKLs
-        KdFrEjHgpKfQH2PXcuWWhIjn1A==
-X-Google-Smtp-Source: ABdhPJx/sYY/i7dOFt3+PaiV4KhSUz6X+tqTVPbVDr2OqPDCjEE/yaOau4YnhKo+v4gz0/SI7nAHRg==
-X-Received: by 2002:a02:cc48:0:b0:32b:14:4186 with SMTP id i8-20020a02cc48000000b0032b00144186mr6761137jaq.189.1651167951414;
-        Thu, 28 Apr 2022 10:45:51 -0700 (PDT)
-Received: from google.com (194.225.68.34.bc.googleusercontent.com. [34.68.225.194])
-        by smtp.gmail.com with ESMTPSA id f15-20020a056e020c6f00b002cbc9935527sm269640ilj.83.2022.04.28.10.45.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 Apr 2022 10:45:50 -0700 (PDT)
-Date:   Thu, 28 Apr 2022 17:45:47 +0000
-From:   Oliver Upton <oupton@google.com>
-To:     Yosry Ahmed <yosryahmed@google.com>
-Cc:     Sean Christopherson <seanjc@google.com>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        Aleksandar Markovic <aleksandar.qemu.devel@gmail.com>,
-        Anup Patel <anup@brainfault.org>,
-        Atish Patra <atishp@atishpatra.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Roman Gushchin <roman.gushchin@linux.dev>,
-        Shakeel Butt <shakeelb@google.com>,
-        James Morse <james.morse@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-        Marc Zyngier <maz@kernel.org>,
-        Alexandru Elisei <alexandru.elisei@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-mips@vger.kernel.org, kvm@vger.kernel.org,
-        kvm-riscv@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
-        cgroups@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.cs.columbia.edu
-Subject: Re: [PATCH v3 4/6] KVM: arm64/mmu: count KVM page table pages in
- pagetable stats
-Message-ID: <YmrSywSU1ezREvT6@google.com>
-References: <20220426053904.3684293-1-yosryahmed@google.com>
- <20220426053904.3684293-5-yosryahmed@google.com>
- <YmegoB/fBkfwaE5z@google.com>
- <CAJD7tkY-WZKcyer=TbWF0dVfOhvZO7hqPN=AYCDZe1f+2HA-QQ@mail.gmail.com>
+        Thu, 28 Apr 2022 13:50:56 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01F8CBAB86;
+        Thu, 28 Apr 2022 10:47:40 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 898BE1F745;
+        Thu, 28 Apr 2022 17:47:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1651168059; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=KrT9OotE4Hcl4npj66dN3ozvEYqDadpB3sUAPal3Wsw=;
+        b=n0gUX2+qpTxrBCCCko5bBy/VU1s0TBecEI93zE4o71YRCGtl5+ZLlRCsmUcwCwCvm3+kAd
+        CPhrFmF+ULlqczgfWbAy+GTeFElZT1S4ePHR+dosfCp2QHlfIrULfWqeRIjNzlCu32bfMn
+        W+ZVcYqvT3JriR4Bha0A+XRmYQ/ydfI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1651168059;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=KrT9OotE4Hcl4npj66dN3ozvEYqDadpB3sUAPal3Wsw=;
+        b=KbiTI7IP5HpOQP/8EwL12R8D8PbfrETF8o2utoE0CAAfiTkmRVLtV0UDqo5TMWBOGbY7h7
+        d+Q/nK/NzMAh35DA==
+Received: from quack3.suse.cz (unknown [10.100.224.230])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 553E52C141;
+        Thu, 28 Apr 2022 17:47:39 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 149B7A061A; Thu, 28 Apr 2022 19:47:36 +0200 (CEST)
+Date:   Thu, 28 Apr 2022 19:47:36 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Stefan Roesch <shr@fb.com>
+Cc:     io-uring@vger.kernel.org, kernel-team@fb.com, linux-mm@kvack.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        david@fromorbit.com
+Subject: Re: [RFC PATCH v1 15/18] mm: support write throttling for async
+ buffered writes
+Message-ID: <20220428174736.mgadsxfuiwmoxrzx@quack3.lan>
+References: <20220426174335.4004987-1-shr@fb.com>
+ <20220426174335.4004987-16-shr@fb.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJD7tkY-WZKcyer=TbWF0dVfOhvZO7hqPN=AYCDZe1f+2HA-QQ@mail.gmail.com>
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <20220426174335.4004987-16-shr@fb.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 26, 2022 at 12:27:57PM -0700, Yosry Ahmed wrote:
-> > What page tables do we want to account? KVM on ARM manages several page
-> > tables.
-> >
-> > For regular KVM, the host kernel manages allocations for the hyp stage 1
-> > tables in addition to the stage 2 tables used for a particular VM. The
-> > former is system overhead whereas the latter could be attributed to a
-> > guest VM.
+On Tue 26-04-22 10:43:32, Stefan Roesch wrote:
+> This change adds support for async write throttling in the function
+> balance_dirty_pages(). So far if throttling was required, the code was
+> waiting synchronously as long as the writes were throttled. This change
+> introduces asynchronous throttling. Instead of waiting in the function
+> balance_dirty_pages(), the timeout is set in the task_struct field
+> bdp_pause. Once the timeout has expired, the writes are no longer
+> throttled.
 > 
-> Honestly I would love to get your input on this. The main motivation
-> here is to give users insights on the kernel memory usage on their
-> system (or in a cgroup). We currently have NR_PAGETABLE stats for
-> normal kernel page tables (allocated using
-> __pte_alloc_one()/pte_free()), this shows up in /proc/meminfo,
-> /path/to/cgroup/memory.stat, and node stats. The idea is to add
-> NR_SECONDARY_PAGETABLE that should include the memory used for kvm
-> pagetables, which should be a separate category (no overlap). What
-> gets included or not depends on the semantics of KVM and what exactly
-> falls under the category of secondary pagetables from the user's pov.
+> - Add a new parameter to the balance_dirty_pages() function
+>   - This allows the caller to pass in the nowait flag
+>   - When the nowait flag is specified, the code does not wait in
+>     balance_dirty_pages(), but instead stores the wait expiration in the
+>     new task_struct field bdp_pause.
 > 
-> Currently it looks like s2 page table allocations get accounted to
-> kmem of memory control groups (GFP_KERNEL_ACCOUNT), while hyp page
-> table allocations do not (GFP_KERNEL). So we could either follow this
-> and only account s2 page table allocations in the stats, or make hyp
-> allocations use GFP_KERNEL_ACCOUNT as well and add them to the stats.
-> Let me know what you think.
+> - The function balance_dirty_pages_ratelimited() resets the new values
+>   in the task_struct, once the timeout has expired
+> 
+> This change is required to support write throttling for the async
+> buffered writes. While the writes are throttled, io_uring still can make
+> progress with processing other requests.
+> 
+> Signed-off-by: Stefan Roesch <shr@fb.com>
 
-I think it is reasonable to just focus on stage 2 table allocations and
-ignore all else. As Marc pointed out it isn't workable in other
-contexts anyway (pKVM), and keeps the patch tidy too.
+Maybe I miss something but I don't think this will throttle writers enough.
+For three reasons:
 
-GFP_KERNEL_ACCOUNT for hyp allocations wouldn't make sense, as it is
-done at init to build out the system page tables for EL2.
+1) The calculated throttling pauses should accumulate for the task so that
+if we compute that say it takes 0.1s to write 100 pages and the task writes
+300 pages, the delay adds up to 0.3s properly. Otherwise the task would not
+be throttled as long as we expect the writeback to take.
 
---
-Thanks,
-Oliver
+2) We must not allow the amount of dirty pages to exceed the dirty limit.
+That can easily lead to page reclaim getting into trouble reclaiming pages
+and thus machine stalls, oom kills etc. So if we are coming close to dirty
+limit and we cannot sleep, we must just fail the nowait write.
+
+3) Even with above two problems fixed I suspect results will be suboptimal
+because balance_dirty_pages() heuristics assume they get called reasonably
+often and throttle writes so if amount of dirty pages is coming close to
+dirty limit, they think we are overestimating writeback speed and update
+throttling parameters accordingly. So if io_uring code does not throttle
+writers often enough, I think dirty throttling parameters will be jumping
+wildly resulting in poor behavior.
+
+So what I'd probably suggest is that if balance_dirty_pages() is called in
+"async" mode, we'd give tasks a pass until dirty_freerun_ceiling(). If
+balance_dirty_pages() decides the task needs to wait, we store the pause
+and bail all the way up into the place where we can sleep (io_uring code I
+assume), sleep there, and then continue doing write.
+
+								Honza
+
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
