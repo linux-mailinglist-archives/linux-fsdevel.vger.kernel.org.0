@@ -2,191 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 15909512CBF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Apr 2022 09:27:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93350512E1F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Apr 2022 10:20:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245214AbiD1HaC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Apr 2022 03:30:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41954 "EHLO
+        id S1344055AbiD1IWh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Apr 2022 04:22:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245185AbiD1H36 (ORCPT
+        with ESMTP id S1344056AbiD1IWT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Apr 2022 03:29:58 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 035ED33E27;
-        Thu, 28 Apr 2022 00:26:43 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 634F01F37B;
-        Thu, 28 Apr 2022 07:26:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1651130802; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=8La7nCythI606QEFjhYh0xAtTpWBmAV8ZgAbWFDSAPA=;
-        b=TnOjymCYipj5i9iYJ4tqA02l2//PJs/MLyhkcsGXRO8bIJsFAYY6ljO08fm4BlCle8b4qa
-        XCvEW9KmxikZ9vLeim2z87ct0thesl+g8oMRz+KUYMihyTtz3kGiO63vVnmFFWnzyAUgGD
-        PKnV4KaxyRq93BMxMavoN/NAsQJw05U=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1651130802;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=8La7nCythI606QEFjhYh0xAtTpWBmAV8ZgAbWFDSAPA=;
-        b=he8LWbJqoFVYeywHCdfUwWz6vUMo6u4hljkW69oEvLXDd9V8Xm1jTpX7AQnisfdfKXdWsb
-        AkdHhSkzi7uGuODQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 330CF13AF8;
-        Thu, 28 Apr 2022 07:26:42 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id vNDPC7JBamK3DgAAMHmgww
-        (envelope-from <hare@suse.de>); Thu, 28 Apr 2022 07:26:42 +0000
-Message-ID: <23f497ab-08e3-3a25-26d9-56d94ee92cde@suse.de>
-Date:   Thu, 28 Apr 2022 09:26:41 +0200
+        Thu, 28 Apr 2022 04:22:19 -0400
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97B0F9FE6F
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Apr 2022 01:19:03 -0700 (PDT)
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20220428081901epoutp01f4bed648f6bbd81911567ae53eb777e0~qAZJC-Q1W1907819078epoutp01H
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Apr 2022 08:19:01 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20220428081901epoutp01f4bed648f6bbd81911567ae53eb777e0~qAZJC-Q1W1907819078epoutp01H
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1651133941;
+        bh=wOXierUafvtxBlcmLM8miKLDWIrpcRM3NRzL9LIllCI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=RRs2Pf/NQ1HxorjPRILWRRPuW8wd9+yspJN2nnu1mZZXHKUDrAsGgC6+MAH96KKzW
+         WRxujTUxwPrAWVlHgogHsRoPifVjfdMD6wMEgBeHZL4yhYSzUlRkXcsnLF9PuwM6//
+         Sf3X9a27uWVRH9AAyq72K3sK8C+2T32ob2v1PC20=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+        20220428081859epcas5p19880ba6dfa6389f18098ac62ca74e360~qAZIA-u-l0467704677epcas5p1x;
+        Thu, 28 Apr 2022 08:18:59 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.177]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4KppRg2W7Dz4x9QB; Thu, 28 Apr
+        2022 08:18:55 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        E2.07.09827.EED4A626; Thu, 28 Apr 2022 17:18:54 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+        20220428075435epcas5p285a70634102f71440a283361657f4d9b~qAD0bnrr92164321643epcas5p2Q;
+        Thu, 28 Apr 2022 07:54:35 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20220428075435epsmtrp1a9ee8d4d92953b0ff2d7f9b7559998a2~qAD0asRh-1575615756epsmtrp1S;
+        Thu, 28 Apr 2022 07:54:35 +0000 (GMT)
+X-AuditID: b6c32a4a-b3bff70000002663-dd-626a4deee6d4
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        A6.BF.08924.B384A626; Thu, 28 Apr 2022 16:54:35 +0900 (KST)
+Received: from test-zns (unknown [107.110.206.5]) by epsmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20220428075434epsmtip13f509946fb1170bf6e1ff8e4df1f4948~qADzDll5X1873018730epsmtip1z;
+        Thu, 28 Apr 2022 07:54:34 +0000 (GMT)
+Date:   Thu, 28 Apr 2022 13:19:26 +0530
+From:   Nitesh Shetty <nj.shetty@samsung.com>
+To:     Damien Le Moal <damien.lemoal@opensource.wdc.com>
+Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        dm-devel@redhat.com, linux-nvme@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, nitheshshetty@gmail.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 00/10] Add Copy offload support
+Message-ID: <20220428074926.GG9558@test-zns>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH RFC 4/5] net/tls: Add support for PF_TLSH (a TLS handshake
- listener)
-Content-Language: en-US
-To:     Jakub Kicinski <kuba@kernel.org>
-Cc:     Sagi Grimberg <sagi@grimberg.me>,
-        Chuck Lever <chuck.lever@oracle.com>, netdev@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        ak@tempesta-tech.com, borisp@nvidia.com, simo@redhat.com
-References: <165030051838.5073.8699008789153780301.stgit@oracle-102.nfsv4.dev>
- <165030059051.5073.16723746870370826608.stgit@oracle-102.nfsv4.dev>
- <20220425101459.15484d17@kernel.org>
- <66077b73-c1a4-d2ae-c8e4-3e19e9053171@suse.de>
- <1fca2eda-83e4-fe39-13c8-0e5e7553689b@grimberg.me>
- <20220426080247.19bbb64e@kernel.org>
- <40bc060f-f359-081d-9ba7-fae531cf2cd6@suse.de>
- <20220426170334.3781cd0e@kernel.org>
-From:   Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20220426170334.3781cd0e@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <c285f0da-ab1d-2b24-e5a4-21193ef93155@opensource.wdc.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBJsWRmVeSWpSXmKPExsWy7bCmpu5736wkgz+5Fr/Pnme22PtuNqvF
+        3lvaFnv2nmSxuLxrDpvF/GVP2S26r+9gs9jxpJHRgcNj56y77B6bl9R77Gy9z+rxft9VNo/P
+        m+QCWKOybTJSE1NSixRS85LzUzLz0m2VvIPjneNNzQwMdQ0tLcyVFPISc1NtlVx8AnTdMnOA
+        DlFSKEvMKQUKBSQWFyvp29kU5ZeWpCpk5BeX2CqlFqTkFJgU6BUn5haX5qXr5aWWWBkaGBiZ
+        AhUmZGfcv7eFtaCfu+Lm7busDYztnF2MnBwSAiYSXe+2sYLYQgK7GSXmLI3uYuQCsj8xSsx/
+        8IIVwvnMKHF8/Uk2mI75d6ayQyR2MUqcOz0XquoZo0TT/HnsIFUsAqoSD6Z2MXYxcnCwCWhL
+        nP7PARIWETCVeNvTygJSzyxwhlGi/f0usHphATOJ1Z2tYBt4BXQkFs/fzQ5hC0qcnPmEBcTm
+        FHCTmL3xG5gtKqAscWDbcSaIiyZySMyYmwqyS0LARaL5dTREWFji1fEt7BC2lMTL/jYou1xi
+        e9sCJpAbJARaGCW6Tp1igUjYS1zc8xdsJrNAhsTsb2uhPpaVmHpqHVScT6L39xOovbwSO+bB
+        2MoSa9YvgKqXlLj2vRHK9pDY+XElNIBWMkm8PH2IfQKj/Cwkv81Csm8W0A/MApoS63fpQ4Tl
+        JZq3zmaGCEtLLP/HgaRiASPbKkbJ1ILi3PTUYtMCo7zUcnjcJ+fnbmIEJ1ktrx2MDx980DvE
+        yMTBeIhRgoNZSYT3y+6MJCHelMTKqtSi/Pii0pzU4kOMpsBom8gsJZqcD0zzeSXxhiaWBiZm
+        ZmYmlsZmhkrivKfTNyQKCaQnlqRmp6YWpBbB9DFxcEo1MHmYxBi3KS/r+5xXoHh/5e5/mpOK
+        OLaz1QUJJm5LlWV+dGCy2qfIDR1bPTv4Cv8o7cuz5K+7k+o17+LTf7WP9Hb0x/PP1u849K1e
+        9ECS25U/X77MfXHhdDCf6CKtxUE1cj17vjAr/U6ZkKPatTBKKu23yc1t05J0TR/EblD+sWFx
+        0DPf6Q7i++QYDghltRZyCmdZbpQ0mbLf//CW7BVyO3Mj78a3hghMUJNqNAp1337257kTdWFK
+        F5WF48I+LnzLVaHz1Wvq/N+HWwX5lVy6/OQDdXwTmyQOHOF9+P5ORO+1sxMfmJVUr1snvTy8
+        Kfb+1bVvxTqdU/dcnR/13vrQ+u4M04X3O3s98v0vTXLvVmIpzkg01GIuKk4EAG3bN+s7BAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrOLMWRmVeSWpSXmKPExsWy7bCSnK61R1aSQcdnPYvfZ88zW+x9N5vV
+        Yu8tbYs9e0+yWFzeNYfNYv6yp+wW3dd3sFnseNLI6MDhsXPWXXaPzUvqPXa23mf1eL/vKpvH
+        501yAaxRXDYpqTmZZalF+nYJXBkrtjkWbOSo2PbVroHxKFsXIyeHhICJxPw7U9m7GLk4hAR2
+        MEp8aTrHApGQlFj29wgzhC0ssfLfc6iiJ4wSs+6vBetmEVCVeDC1i7GLkYODTUBb4vR/DpCw
+        iICpxNueVhaQemaBM4wS7e93sYMkhAXMJFZ3toL18groSCyevxtq6Eomiff7V7JDJAQlTs58
+        AnYFs4C6xJ95l5hBFjALSEss/8cBEZaXaN46G+w4TgE3idkbv4GViwooSxzYdpxpAqPQLCST
+        ZiGZNAth0iwkkxYwsqxilEwtKM5Nzy02LDDKSy3XK07MLS7NS9dLzs/dxAiOGy2tHYx7Vn3Q
+        O8TIxMF4iFGCg1lJhPfL7owkId6UxMqq1KL8+KLSnNTiQ4zSHCxK4rwXuk7GCwmkJ5akZqem
+        FqQWwWSZODilGphmNkSeu+/Zy/AzdJGv3sPXJ3sNLl4t7nK+dN/kX+8ctbV/eb6LrRTa9s+k
+        YDWbSN7z4NI5On1n5fnNvWRuVogfPnn2Q/QKI/2ZvLOWpR5raFxyxPrm3G/zt/3jSAwIVNEV
+        vlGj9r15qkzKnZTAabfNrOunnG56dvDkm55ZLamR00U/P9HWbLHer/0vbFnmhkXlsVeflx5I
+        PvfhVElgVdO7F6tL4/72aE+82pMt+Icv6rLBBfXuw+1eMw7u+cD1b3uQ34IF52+4Sfkp/Ulg
+        1VRZN3Ghe9+N0/Z2JkkWB4s/O9acPB8mtemFG6OJ8TmFi3pr5/kn6pxVuj8j33YeF+MJ4zdn
+        HZjXyDM/fquzxWWKEktxRqKhFnNRcSIAWXgw9goDAAA=
+X-CMS-MailID: 20220428075435epcas5p285a70634102f71440a283361657f4d9b
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+        boundary="----MMcOyA4CJjQRgHhn55zXOrpiM0Dxers-aGNKdRjWa9MqQ0PV=_1cb6b_"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220426101804epcas5p4a0a325d3ce89e868e4924bbdeeba6d15
+References: <CGME20220426101804epcas5p4a0a325d3ce89e868e4924bbdeeba6d15@epcas5p4.samsung.com>
+        <20220426101241.30100-1-nj.shetty@samsung.com>
+        <6a85e8c8-d9d1-f192-f10d-09052703c99a@opensource.wdc.com>
+        <20220427124951.GA9558@test-zns>
+        <c285f0da-ab1d-2b24-e5a4-21193ef93155@opensource.wdc.com>
+X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/27/22 02:03, Jakub Kicinski wrote:
-> On Tue, 26 Apr 2022 17:58:39 +0200 Hannes Reinecke wrote:
->>> Plus there are more protocols being actively worked on (QUIC, PSP etc.)
->>> Having per ULP special sauce to invoke a user space helper is not the
->>> paradigm we chose, and the time as inopportune as ever to change that.
->>
->> Which is precisely what we hope to discuss at LSF.
->> (Yes, I know, probably not the best venue to discuss network stuff ...)
-> 
-> Indeed.
-> 
->> Each approach has its drawbacks:
->>
->> - Establishing sockets from userspace will cause issues during
->> reconnection, as then someone (aka the kernel) will have to inform
->> userspace that a new connection will need to be established.
->> (And that has to happen while the root filesystem is potentially
->> inaccessible, so you can't just call arbitrary commands here)
->> (Especially call_usermodehelper() is out of the game)
-> 
-> Indeed, we may need _some_ form of a notification mechanism and that's
-> okay. Can be a (more generic) socket, can be something based on existing
-> network storage APIs (IDK what you have there).
-> 
-Which is one of the issues; we don't have any.
-Network storage is accessed from userspace via read()/write(), and for 
-control everyone rolls its own thing.
-So speaking of a 'network storage API' is quite optimistic.
+------MMcOyA4CJjQRgHhn55zXOrpiM0Dxers-aGNKdRjWa9MqQ0PV=_1cb6b_
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
 
-> My thinking was that establishing the session in user space would be
-> easiest. We wouldn't need all the special getsockopt()s which AFAIU
-> work around part of the handshake being done in the kernel, and which,
-> I hope we can agree, are not beautiful.
+On Thu, Apr 28, 2022 at 07:05:32AM +0900, Damien Le Moal wrote:
+> On 4/27/22 21:49, Nitesh Shetty wrote:
+> > O Wed, Apr 27, 2022 at 11:19:48AM +0900, Damien Le Moal wrote:
+> >> On 4/26/22 19:12, Nitesh Shetty wrote:
+> >>> The patch series covers the points discussed in November 2021 virtual call
+> >>> [LSF/MM/BFP TOPIC] Storage: Copy Offload[0].
+> >>> We have covered the Initial agreed requirements in this patchset.
+> >>> Patchset borrows Mikulas's token based approach for 2 bdev
+> >>> implementation.
+> >>>
+> >>> Overall series supports –
+> >>>
+> >>> 1. Driver
+> >>> - NVMe Copy command (single NS), including support in nvme-target (for
+> >>>     block and file backend)
+> >>
+> >> It would also be nice to have copy offload emulation in null_blk for testing.
+> >>
+> > 
+> > We can plan this in next phase of copy support, once this series settles down.
 > 
-Well; that is open to debate.
-During open-iscsi development (which followed your model of having a 
-control- and dataplane split between userspace and kernel) we found that 
-the model is great for keeping the in-kernel code simple.
-But we also found that it's not so great once you come down to the 
-gritty details; you have to duplicate quite some protocol handling in 
-userspace, and you have to worry about session re-establishment.
-Up to the point where we start wondering if moving things into userspace 
-was a good idea at all...
+> So how can people test your series ? Not a lot of drives out there with
+> copy support.
+>
 
-As for this particular interface: the problem we're facing is that TLS 
-has to be started in-band. For some reason NVMexpress decided not to 
-follow the traditional method of establishing the socket, start TLS, and 
-then start protocol processing, but it rather has specified a hybrid 
-model: establishing the socket, doing authentication, _then_ start TLS, 
-and only then continue with protocol processing on the TLS socket.
+Yeah not many drives at present, Qemu can be used to test NVMe copy.
 
-Moving _that_ into userspace would require us to move the most of the 
-protocol logic into userspace, too. Which really is something we want to 
-avoid, as this would be quite a code duplication.
-Not to mention the maintenance burden, as issues would need to be fixed 
-in two locations.
-(Talk to me about iscsiuio.)
+--
+Nitesh Shetty
 
-And that's before we even get to things like TLS session tickets, which 
-opens yet another can of worms.
+------MMcOyA4CJjQRgHhn55zXOrpiM0Dxers-aGNKdRjWa9MqQ0PV=_1cb6b_
+Content-Type: text/plain; charset="utf-8"
 
->> - Having ULP helpers (as with this design) mitigates that problem
->> somewhat in the sense that you can mlock() that daemon and having it
->> polling on an intermediate socket; that solves the notification problem.
->> But you have to have ULP special sauce here to make it work.
-> 
-> TBH I don't see how this is much different to option 1 in terms of
-> constraints & requirements on the user space agent. We can implement
-> option 1 over a socket-like interface, too, and that'll carry
-> notifications all the same.
-> 
->> - Moving everything in kernel is ... possible. But then you have yet
->> another security-relevant piece of code in the kernel which needs to be
->> audited, CVEd etc. Not to mention the usual policy discussion whether it
->> really belongs into the kernel.
-> 
-> Yeah, if that gets posted it'd be great if it includes removing me from
-> the TLS maintainers 'cause I want to sleep at night ;)
-> 
->> So I don't really see any obvious way to go; best we can do is to pick
->> the least ugly :-(
-> 
-> True, I'm sure we can find some middle ground between 1 and 2.
-> Preferably implemented in a way where the mechanism is separated
-> from the fact it's carrying TLS handshake requests, so that it can
-> carry something else tomorrow.
-> 
-Which was actually our goal.
-The whole thing started off with the problem on _how_ sockets could be 
-passed between kernel and userspace and vice versa.
-While there is fd passing between processes via AF_UNIX, there is no 
-such mechanism between kernel and userspace.
 
-So accept() was an easy way out as the implementation was quite simple.
-And it was moved into net/tls as this was the primary use-case.
-But it's by no means meant to be exclusive for TLS; we could expand it 
-to other things once there is a need.
-But we really didn't want to over-engineer things here.
-
-However, if you have another idea, by all means, do tell.
-It's just that I don't think creating sockets in userspace is a great 
-fit for us.
-
-Cheers,
-
-Hannes
+------MMcOyA4CJjQRgHhn55zXOrpiM0Dxers-aGNKdRjWa9MqQ0PV=_1cb6b_--
