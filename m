@@ -2,60 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A18A513AFF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Apr 2022 19:34:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2296C513B10
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 28 Apr 2022 19:45:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350555AbiD1Rhj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Apr 2022 13:37:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52688 "EHLO
+        id S1350603AbiD1RtJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 28 Apr 2022 13:49:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52342 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232566AbiD1Rhi (ORCPT
+        with ESMTP id S236635AbiD1RtH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Apr 2022 13:37:38 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E69746833E;
-        Thu, 28 Apr 2022 10:34:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=CU5vNoZ2DyJnMSSsv6FKJaOR1+kQZIFv71gVo+f6jqA=; b=jYC4utzF59Rb/tKOmYemaP/wEU
-        wlAwR2UrulKrgeXbx+/XQ0gpzYVB7MUifsOGD3Z+QGWNETWT18yE5kxNH6g2tCGUTKNaxu1V30mKc
-        HHjpH4ZhdAywtV6L7pe/Qu39s3KZVt54yTBL6LMkSFs6tLRz0hCHoUOsJXrpicBzyVRiQjcPIeLEC
-        AxX8KkaoM3BJvxEU3MgDQpBsZuHWf2imtywFQtsSoT5sbDHlYNiv/lCJP+6BbHnma14GU45TN1sqe
-        PMDDVUElH/4aFK31a21gZCcTDUSyuvKpWrTHUE7MO9NPsBNFg7Fn3rbVi7b1zjNlhgIS/VVnNw8fq
-        TAus3vPA==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nk81u-0083c3-7l; Thu, 28 Apr 2022 17:34:14 +0000
-Date:   Thu, 28 Apr 2022 10:34:14 -0700
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Damien Le Moal <damien.lemoal@opensource.wdc.com>
-Cc:     Pankaj Raghav <p.raghav@samsung.com>, jaegeuk@kernel.org,
-        axboe@kernel.dk, snitzer@kernel.org, hch@lst.de,
-        naohiro.aota@wdc.com, sagi@grimberg.me, dsterba@suse.com,
-        johannes.thumshirn@wdc.com, linux-kernel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, clm@fb.com, gost.dev@samsung.com,
-        chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        josef@toxicpanda.com, jonathan.derrick@linux.dev, agk@redhat.com,
-        kbusch@kernel.org, kch@nvidia.com, linux-nvme@lists.infradead.org,
-        dm-devel@redhat.com, bvanassche@acm.org, jiangbo.365@bytedance.com,
-        linux-fsdevel@vger.kernel.org, matias.bjorling@wdc.com,
-        linux-block@vger.kernel.org
-Subject: Re: [PATCH 16/16] dm-zoned: ensure only power of 2 zone sizes are
- allowed
-Message-ID: <YmrQFu9EbMmrL2Ys@bombadil.infradead.org>
-References: <20220427160255.300418-1-p.raghav@samsung.com>
- <CGME20220427160313eucas1p1feecf74ec15c8c3d9250444710fd1676@eucas1p1.samsung.com>
- <20220427160255.300418-17-p.raghav@samsung.com>
- <2ffc46c7-945f-ba26-90db-737fccd74fdf@opensource.wdc.com>
+        Thu, 28 Apr 2022 13:49:07 -0400
+Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 802AB8566E
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Apr 2022 10:45:52 -0700 (PDT)
+Received: by mail-io1-xd31.google.com with SMTP id z26so7259589iot.8
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Apr 2022 10:45:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=rYkNgcXPFsN0AZS9Gdq00dTATV9XxHLGEv5CoQhxVgg=;
+        b=hzMsoV3D0yJ0Unlop+rpTzklIYhRnWH7ICsyDlDVFdcLE9BIlkNP73Wm+4oXNVuiB8
+         plJ8GuyyvEt6ZXQbKxd1muNdZzq09naSLXrKhBTeETybRl01LEoPVDN68ktaYn9l0zsi
+         yoyQHHe1wradnURDVY6+HNGMMkWazXFQRLoTut+ycpEUb54hblTXLdMjgsITAqGXMdx5
+         3Y8FH49L78ooub0KNRfiN5ke97caoBhhHNMCuuOQncS7BD/mI1wPI6p0qS0ilNo4Z01F
+         oWlrVzL07peONZe79tOTcyd8YQZsNWlwpVd98T9TgcHmPXq0Kuzw5WruzgVtu+f1uIoR
+         iH0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=rYkNgcXPFsN0AZS9Gdq00dTATV9XxHLGEv5CoQhxVgg=;
+        b=PkMSBURV0BYgy+UIX/V0L4Z5VW42PRPI6CUuBkqtOreAZ22DHc6kyTj5QUqauQDXpL
+         ZDP0u4cC7POUPQc1DAu36eWs6u27zN+rPPSlFZt0kMXSkoE+c9qQVnBqDswj/8dblCHf
+         eFcHaE/IVhZ9ZxuwqKP9KTT4jzZEu1/zptjBIxUYqu4LuYJkyz8e/xneUQQ/pqvZ0cgQ
+         JEp41dVVpKJyC+b00x9OYlzcN1b9GVyW62+iEtmvJEHzL9xLQ0WyJxzGt+yljt51IF3z
+         OxHuNO8+Lq9XUsiMqJ05RMwkbYuDWX8x6CjcKXG831Nnw77rDl2Lmvxwsndq1ZEwJbnj
+         QQ7Q==
+X-Gm-Message-State: AOAM532imQ/8OIOfZzPlAGh6wEfpnsndyVGFIv4xdanQta7QLsewaKLs
+        KdFrEjHgpKfQH2PXcuWWhIjn1A==
+X-Google-Smtp-Source: ABdhPJx/sYY/i7dOFt3+PaiV4KhSUz6X+tqTVPbVDr2OqPDCjEE/yaOau4YnhKo+v4gz0/SI7nAHRg==
+X-Received: by 2002:a02:cc48:0:b0:32b:14:4186 with SMTP id i8-20020a02cc48000000b0032b00144186mr6761137jaq.189.1651167951414;
+        Thu, 28 Apr 2022 10:45:51 -0700 (PDT)
+Received: from google.com (194.225.68.34.bc.googleusercontent.com. [34.68.225.194])
+        by smtp.gmail.com with ESMTPSA id f15-20020a056e020c6f00b002cbc9935527sm269640ilj.83.2022.04.28.10.45.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 28 Apr 2022 10:45:50 -0700 (PDT)
+Date:   Thu, 28 Apr 2022 17:45:47 +0000
+From:   Oliver Upton <oupton@google.com>
+To:     Yosry Ahmed <yosryahmed@google.com>
+Cc:     Sean Christopherson <seanjc@google.com>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Aleksandar Markovic <aleksandar.qemu.devel@gmail.com>,
+        Anup Patel <anup@brainfault.org>,
+        Atish Patra <atishp@atishpatra.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Shakeel Butt <shakeelb@google.com>,
+        James Morse <james.morse@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Alexandru Elisei <alexandru.elisei@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-mips@vger.kernel.org, kvm@vger.kernel.org,
+        kvm-riscv@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
+        cgroups@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        kvmarm@lists.cs.columbia.edu
+Subject: Re: [PATCH v3 4/6] KVM: arm64/mmu: count KVM page table pages in
+ pagetable stats
+Message-ID: <YmrSywSU1ezREvT6@google.com>
+References: <20220426053904.3684293-1-yosryahmed@google.com>
+ <20220426053904.3684293-5-yosryahmed@google.com>
+ <YmegoB/fBkfwaE5z@google.com>
+ <CAJD7tkY-WZKcyer=TbWF0dVfOhvZO7hqPN=AYCDZe1f+2HA-QQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2ffc46c7-945f-ba26-90db-737fccd74fdf@opensource.wdc.com>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE autolearn=ham
+In-Reply-To: <CAJD7tkY-WZKcyer=TbWF0dVfOhvZO7hqPN=AYCDZe1f+2HA-QQ@mail.gmail.com>
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -63,65 +100,40 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 28, 2022 at 08:42:41AM +0900, Damien Le Moal wrote:
-> On 4/28/22 01:02, Pankaj Raghav wrote:
-> > From: Luis Chamberlain <mcgrof@kernel.org>
-> > 
-> > Today dm-zoned relies on the assumption that you have a zone size
-> > with a power of 2. Even though the block layer today enforces this
-> > requirement, these devices do exist and so provide a stop-gap measure
-> > to ensure these devices cannot be used by mistake
-> > 
-> > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-> > Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
-> > ---
-> >  drivers/md/dm-zone.c | 12 ++++++++++++
-> >  1 file changed, 12 insertions(+)
-> > 
-> > diff --git a/drivers/md/dm-zone.c b/drivers/md/dm-zone.c
-> > index 57daa86c19cf..221e0aa0f1a7 100644
-> > --- a/drivers/md/dm-zone.c
-> > +++ b/drivers/md/dm-zone.c
-> > @@ -231,6 +231,18 @@ static int dm_revalidate_zones(struct mapped_device *md, struct dm_table *t)
-> >  	struct request_queue *q = md->queue;
-> >  	unsigned int noio_flag;
-> >  	int ret;
-> > +	struct block_device *bdev = md->disk->part0;
-> > +	sector_t zone_sectors;
-> > +	char bname[BDEVNAME_SIZE];
-> > +
-> > +	zone_sectors = bdev_zone_sectors(bdev);
-> > +
-> > +	if (!is_power_of_2(zone_sectors)) {
-> > +		DMWARN("%s: %s only power of two zone size supported\n",
-> > +		       dm_device_name(md),
-> > +		       bdevname(bdev, bname));
-> > +		return 1;
-> > +	}
+On Tue, Apr 26, 2022 at 12:27:57PM -0700, Yosry Ahmed wrote:
+> > What page tables do we want to account? KVM on ARM manages several page
+> > tables.
+> >
+> > For regular KVM, the host kernel manages allocations for the hyp stage 1
+> > tables in addition to the stage 2 tables used for a particular VM. The
+> > former is system overhead whereas the latter could be attributed to a
+> > guest VM.
 > 
-> Why ?
+> Honestly I would love to get your input on this. The main motivation
+> here is to give users insights on the kernel memory usage on their
+> system (or in a cgroup). We currently have NR_PAGETABLE stats for
+> normal kernel page tables (allocated using
+> __pte_alloc_one()/pte_free()), this shows up in /proc/meminfo,
+> /path/to/cgroup/memory.stat, and node stats. The idea is to add
+> NR_SECONDARY_PAGETABLE that should include the memory used for kvm
+> pagetables, which should be a separate category (no overlap). What
+> gets included or not depends on the semantics of KVM and what exactly
+> falls under the category of secondary pagetables from the user's pov.
 > 
-> See my previous email about still allowing ZC < ZS for non power of 2 zone
-> size drives. dm-zoned can easily support non power of 2 zone size as long
-> as ZC == ZS for all zones.
+> Currently it looks like s2 page table allocations get accounted to
+> kmem of memory control groups (GFP_KERNEL_ACCOUNT), while hyp page
+> table allocations do not (GFP_KERNEL). So we could either follow this
+> and only account s2 page table allocations in the stats, or make hyp
+> allocations use GFP_KERNEL_ACCOUNT as well and add them to the stats.
+> Let me know what you think.
 
-Great, thanks for the heads up.
+I think it is reasonable to just focus on stage 2 table allocations and
+ignore all else. As Marc pointed out it isn't workable in other
+contexts anyway (pKVM), and keeps the patch tidy too.
 
-> The problem with dm-zoned is ZC < ZS *AND* potentially variable ZC per
-> zone. That cannot be supported easily (still not impossible, but
-> definitely a lot more complex).
+GFP_KERNEL_ACCOUNT for hyp allocations wouldn't make sense, as it is
+done at init to build out the system page tables for EL2.
 
-I see thanks.
-
-Testing would still be required to ensure this all works well with npo2.
-So I'd prefer to do that as a separate effort, even if it is easy. So
-for now I think it makes sense to avoid this as this is not yet well
-tested.
-
-As with filesystem support, we've even have gotten hints that support
-for npo2 should be easy, but without proper testing it would not be
-prudent to enable support for users yet.
-
-One step at a time.
-
-  Luis
+--
+Thanks,
+Oliver
