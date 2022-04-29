@@ -2,38 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DA405151E9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Apr 2022 19:26:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1794D515212
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Apr 2022 19:27:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379647AbiD2R34 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Apr 2022 13:29:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42514 "EHLO
+        id S1379686AbiD2RbD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Apr 2022 13:31:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43146 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378214AbiD2R3a (ORCPT
+        with ESMTP id S1379643AbiD2R3q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Apr 2022 13:29:30 -0400
+        Fri, 29 Apr 2022 13:29:46 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8955B9F3AD
-        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Apr 2022 10:26:07 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 573A6A8887
+        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Apr 2022 10:26:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=+FJqpBnjKvkYcFghyH0RiRG/N81yoH33P8bIUw3ARaI=; b=mkd8v8p8LvF//ofhTfiImSMMxs
-        NCDpcbuKIEPF5/YEvERIfZapwWX1relZn33EoXF9lk6GKlGGqHP+FM6Zv2JQmU9gxllRMG/TE4kxW
-        /JOrHTxyynIGl0M2Ecnr9pd5sOkYPYVn9zvNP9KfphSkhZ1xRJ3RoCEeFr4w11nF1jMg7aeXQNKbI
-        EU18qw7pJHfPv33W9PlVbYP8VqjxbmDJ4RtynjEBFeMoFCiyzgRNj5RZSd1pTlRNIoRQMkp0uL/l/
-        vib0GGU09JAW8xig04ZSLAA/hkIkk7RBrm4NJQD5sxccyL3zHaPTmdXwBS4gqEXJJdzPBZbsJuTiT
-        dZLtM34Q==;
+        bh=ukNbbRbZxH56Po3ysYnQL8YLpC4stX4G0l+kdkGV3Og=; b=RbZLPtvTCpjE3oqUumnXA3Foog
+        HI/Dwe6bCapy51eVa7MBWFtmJOnaScWN5sKk8kRvk79qp0cpBAdb7nuJ0NVFRJgCxNjT4NQi6dcjk
+        RI9/aNYnV4If2XzgAgmFUlA6RcJrEvG+UhNR+LRMSFRmkyWP4pzE6h4Xl9ODhTkLHuKwVEX+egMVP
+        Uo4CHwCE2SSif5X2C7AKu8IqwgcidRCg5tEVswkGGrMiIvYaywFq5UqS5VjeauOXiAenkT7/mJR/8
+        guiuZs+IvDalLwfILS8zMUiwO/K7a2Bhvbn/riIf5Qvy4qqJ/8xm8CXQ3eDdkfkucQBCgT3nuNiwe
+        wB6d5SgA==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nkUNW-00CdX6-9M; Fri, 29 Apr 2022 17:26:02 +0000
+        id 1nkUNW-00CdXB-DT; Fri, 29 Apr 2022 17:26:02 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Christoph Hellwig <hch@lst.de>
-Subject: [PATCH 02/69] ext4: Use page_symlink() instead of __page_symlink()
-Date:   Fri, 29 Apr 2022 18:24:49 +0100
-Message-Id: <20220429172556.3011843-3-willy@infradead.org>
+        Christoph Hellwig <hch@lst.de>,
+        Christian Brauner <brauner@kernel.org>
+Subject: [PATCH 03/69] namei: Merge page_symlink() and __page_symlink()
+Date:   Fri, 29 Apr 2022 18:24:50 +0100
+Message-Id: <20220429172556.3011843-4-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220429172556.3011843-1-willy@infradead.org>
 References: <20220429172556.3011843-1-willy@infradead.org>
@@ -48,48 +49,77 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-By using the memalloc_nofs_save() functionality, we can call
-page_symlink(), safe in the knowledge that it won't recurse into the
-filesystem.
+There are no callers of __page_symlink() left, so we can remove that
+entry point.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/ext4/namei.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ Documentation/filesystems/porting.rst |  2 +-
+ fs/namei.c                            | 13 ++-----------
+ include/linux/fs.h                    |  2 --
+ 3 files changed, 3 insertions(+), 14 deletions(-)
 
-diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-index 767b4bfe39c3..1e7c5deed5e3 100644
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -29,6 +29,7 @@
- #include <linux/pagemap.h>
- #include <linux/time.h>
- #include <linux/fcntl.h>
-+#include <linux/sched/mm.h>
- #include <linux/stat.h>
- #include <linux/string.h>
- #include <linux/quotaops.h>
-@@ -3308,6 +3309,8 @@ static int ext4_symlink(struct user_namespace *mnt_userns, struct inode *dir,
- 	}
+diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesystems/porting.rst
+index 7c1583dbeb59..2e0e4f0e0c6f 100644
+--- a/Documentation/filesystems/porting.rst
++++ b/Documentation/filesystems/porting.rst
+@@ -624,7 +624,7 @@ any symlink that might use page_follow_link_light/page_put_link() must
+ have inode_nohighmem(inode) called before anything might start playing with
+ its pagecache.  No highmem pages should end up in the pagecache of such
+ symlinks.  That includes any preseeding that might be done during symlink
+-creation.  __page_symlink() will honour the mapping gfp flags, so once
++creation.  page_symlink() will honour the mapping gfp flags, so once
+ you've done inode_nohighmem() it's safe to use, but if you allocate and
+ insert the page manually, make sure to use the right gfp flags.
  
- 	if ((disk_link.len > EXT4_N_BLOCKS * 4)) {
-+		unsigned int flags;
-+
- 		if (!IS_ENCRYPTED(inode))
- 			inode->i_op = &ext4_symlink_inode_operations;
- 		inode_nohighmem(inode);
-@@ -3329,7 +3332,9 @@ static int ext4_symlink(struct user_namespace *mnt_userns, struct inode *dir,
- 		handle = NULL;
- 		if (err)
- 			goto err_drop_inode;
--		err = __page_symlink(inode, disk_link.name, disk_link.len, 1);
-+		flags = memalloc_nofs_save();
-+		err = page_symlink(inode, disk_link.name, disk_link.len);
-+		memalloc_nofs_restore(flags);
- 		if (err)
- 			goto err_drop_inode;
- 		/*
+diff --git a/fs/namei.c b/fs/namei.c
+index 509657fdf4f5..6153581073b1 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -5001,12 +5001,10 @@ int page_readlink(struct dentry *dentry, char __user *buffer, int buflen)
+ }
+ EXPORT_SYMBOL(page_readlink);
+ 
+-/*
+- * The nofs argument instructs pagecache_write_begin to pass AOP_FLAG_NOFS
+- */
+-int __page_symlink(struct inode *inode, const char *symname, int len, int nofs)
++int page_symlink(struct inode *inode, const char *symname, int len)
+ {
+ 	struct address_space *mapping = inode->i_mapping;
++	bool nofs = !mapping_gfp_constraint(mapping, __GFP_FS);
+ 	struct page *page;
+ 	void *fsdata;
+ 	int err;
+@@ -5034,13 +5032,6 @@ int __page_symlink(struct inode *inode, const char *symname, int len, int nofs)
+ fail:
+ 	return err;
+ }
+-EXPORT_SYMBOL(__page_symlink);
+-
+-int page_symlink(struct inode *inode, const char *symname, int len)
+-{
+-	return __page_symlink(inode, symname, len,
+-			!mapping_gfp_constraint(inode->i_mapping, __GFP_FS));
+-}
+ EXPORT_SYMBOL(page_symlink);
+ 
+ const struct inode_operations page_symlink_inode_operations = {
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index bbde95387a23..e108aff23a28 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3109,8 +3109,6 @@ extern int page_readlink(struct dentry *, char __user *, int);
+ extern const char *page_get_link(struct dentry *, struct inode *,
+ 				 struct delayed_call *);
+ extern void page_put_link(void *);
+-extern int __page_symlink(struct inode *inode, const char *symname, int len,
+-		int nofs);
+ extern int page_symlink(struct inode *inode, const char *symname, int len);
+ extern const struct inode_operations page_symlink_inode_operations;
+ extern void kfree_link(void *);
 -- 
 2.34.1
 
