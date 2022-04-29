@@ -2,39 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1794D515212
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Apr 2022 19:27:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73AEF5151CF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Apr 2022 19:26:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379686AbiD2RbD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Apr 2022 13:31:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43146 "EHLO
+        id S1379236AbiD2R3Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Apr 2022 13:29:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379643AbiD2R3q (ORCPT
+        with ESMTP id S1359830AbiD2R3X (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Apr 2022 13:29:46 -0400
+        Fri, 29 Apr 2022 13:29:23 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 573A6A8887
-        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Apr 2022 10:26:16 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 365D797BAE
+        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Apr 2022 10:26:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=ukNbbRbZxH56Po3ysYnQL8YLpC4stX4G0l+kdkGV3Og=; b=RbZLPtvTCpjE3oqUumnXA3Foog
-        HI/Dwe6bCapy51eVa7MBWFtmJOnaScWN5sKk8kRvk79qp0cpBAdb7nuJ0NVFRJgCxNjT4NQi6dcjk
-        RI9/aNYnV4If2XzgAgmFUlA6RcJrEvG+UhNR+LRMSFRmkyWP4pzE6h4Xl9ODhTkLHuKwVEX+egMVP
-        Uo4CHwCE2SSif5X2C7AKu8IqwgcidRCg5tEVswkGGrMiIvYaywFq5UqS5VjeauOXiAenkT7/mJR/8
-        guiuZs+IvDalLwfILS8zMUiwO/K7a2Bhvbn/riIf5Qvy4qqJ/8xm8CXQ3eDdkfkucQBCgT3nuNiwe
-        wB6d5SgA==;
+        bh=oOCFSTQjXi3I8TjZeXPYoY2HCI8zdIL+BInag5eurSU=; b=hBU+Wpmqa6wAtE97xy8l3furtm
+        fcJ1GHhvjVXPx3RYOdkuqfWgrDOUd+ZRNfiPJjmIlpcZSbyhoGZ/RT1WLUtYh4NZMRTLpJ7x3/Jvw
+        1lNJ6q4Qrxx5PfVQiyGKYPsQasWjvOZgwczFnlaOIuFHUE0hJGXTqvZnyCr3CHzaUXukzwoJzQkce
+        t97zDVNAEYJGeqoyYNidqqtccRdyeBUjQdzOKEL3Yi859CSPRQCxUzZY8dF4Xyp1+o2ZWqpPhtelF
+        P/SzuhRk9fxjbXMVw76lc20V4lGoTF2XEaOpFMGKtBuBZr+kZeEOpOxDfppiDl6EiRayYes+Z3bJn
+        SbxomobA==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nkUNW-00CdXB-DT; Fri, 29 Apr 2022 17:26:02 +0000
+        id 1nkUNW-00CdXD-G8; Fri, 29 Apr 2022 17:26:02 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Christian Brauner <brauner@kernel.org>
-Subject: [PATCH 03/69] namei: Merge page_symlink() and __page_symlink()
-Date:   Fri, 29 Apr 2022 18:24:50 +0100
-Message-Id: <20220429172556.3011843-4-willy@infradead.org>
+        Christoph Hellwig <hch@lst.de>
+Subject: [PATCH 04/69] namei: Convert page_symlink() to use memalloc_nofs_save()
+Date:   Fri, 29 Apr 2022 18:24:51 +0100
+Message-Id: <20220429172556.3011843-5-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220429172556.3011843-1-willy@infradead.org>
 References: <20220429172556.3011843-1-willy@infradead.org>
@@ -49,77 +48,46 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-There are no callers of __page_symlink() left, so we can remove that
-entry point.
+Stop using AOP_FLAG_NOFS in favour of the scoped memory API.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Christian Brauner <brauner@kernel.org>
 ---
- Documentation/filesystems/porting.rst |  2 +-
- fs/namei.c                            | 13 ++-----------
- include/linux/fs.h                    |  2 --
- 3 files changed, 3 insertions(+), 14 deletions(-)
+ fs/namei.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/filesystems/porting.rst b/Documentation/filesystems/porting.rst
-index 7c1583dbeb59..2e0e4f0e0c6f 100644
---- a/Documentation/filesystems/porting.rst
-+++ b/Documentation/filesystems/porting.rst
-@@ -624,7 +624,7 @@ any symlink that might use page_follow_link_light/page_put_link() must
- have inode_nohighmem(inode) called before anything might start playing with
- its pagecache.  No highmem pages should end up in the pagecache of such
- symlinks.  That includes any preseeding that might be done during symlink
--creation.  __page_symlink() will honour the mapping gfp flags, so once
-+creation.  page_symlink() will honour the mapping gfp flags, so once
- you've done inode_nohighmem() it's safe to use, but if you allocate and
- insert the page manually, make sure to use the right gfp flags.
- 
 diff --git a/fs/namei.c b/fs/namei.c
-index 509657fdf4f5..6153581073b1 100644
+index 6153581073b1..0c84b4326dc9 100644
 --- a/fs/namei.c
 +++ b/fs/namei.c
-@@ -5001,12 +5001,10 @@ int page_readlink(struct dentry *dentry, char __user *buffer, int buflen)
- }
- EXPORT_SYMBOL(page_readlink);
- 
--/*
-- * The nofs argument instructs pagecache_write_begin to pass AOP_FLAG_NOFS
-- */
--int __page_symlink(struct inode *inode, const char *symname, int len, int nofs)
-+int page_symlink(struct inode *inode, const char *symname, int len)
- {
- 	struct address_space *mapping = inode->i_mapping;
-+	bool nofs = !mapping_gfp_constraint(mapping, __GFP_FS);
+@@ -22,6 +22,7 @@
+ #include <linux/fs.h>
+ #include <linux/namei.h>
+ #include <linux/pagemap.h>
++#include <linux/sched/mm.h>
+ #include <linux/fsnotify.h>
+ #include <linux/personality.h>
+ #include <linux/security.h>
+@@ -5008,13 +5009,15 @@ int page_symlink(struct inode *inode, const char *symname, int len)
  	struct page *page;
  	void *fsdata;
  	int err;
-@@ -5034,13 +5032,6 @@ int __page_symlink(struct inode *inode, const char *symname, int len, int nofs)
- fail:
- 	return err;
- }
--EXPORT_SYMBOL(__page_symlink);
--
--int page_symlink(struct inode *inode, const char *symname, int len)
--{
--	return __page_symlink(inode, symname, len,
--			!mapping_gfp_constraint(inode->i_mapping, __GFP_FS));
--}
- EXPORT_SYMBOL(page_symlink);
+-	unsigned int flags = 0;
+-	if (nofs)
+-		flags |= AOP_FLAG_NOFS;
++	unsigned int flags;
  
- const struct inode_operations page_symlink_inode_operations = {
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index bbde95387a23..e108aff23a28 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3109,8 +3109,6 @@ extern int page_readlink(struct dentry *, char __user *, int);
- extern const char *page_get_link(struct dentry *, struct inode *,
- 				 struct delayed_call *);
- extern void page_put_link(void *);
--extern int __page_symlink(struct inode *inode, const char *symname, int len,
--		int nofs);
- extern int page_symlink(struct inode *inode, const char *symname, int len);
- extern const struct inode_operations page_symlink_inode_operations;
- extern void kfree_link(void *);
+ retry:
++	if (nofs)
++		flags = memalloc_nofs_save();
+ 	err = pagecache_write_begin(NULL, mapping, 0, len-1,
+-				flags, &page, &fsdata);
++				0, &page, &fsdata);
++	if (nofs)
++		memalloc_nofs_restore(flags);
+ 	if (err)
+ 		goto fail;
+ 
 -- 
 2.34.1
 
