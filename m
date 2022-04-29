@@ -2,348 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B76A8514690
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Apr 2022 12:19:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC7315148CF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Apr 2022 14:05:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357409AbiD2KWl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Apr 2022 06:22:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38784 "EHLO
+        id S240156AbiD2MI7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Apr 2022 08:08:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357388AbiD2KWe (ORCPT
+        with ESMTP id S1358868AbiD2MIm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Apr 2022 06:22:34 -0400
-Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3153BC6EC4;
-        Fri, 29 Apr 2022 03:19:16 -0700 (PDT)
-Received: by mail-pl1-x62c.google.com with SMTP id s14so6745026plk.8;
-        Fri, 29 Apr 2022 03:19:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=B3NCzom8hJlx0zEy79Sz4qhJxcFl7hPctwsRA5jCJVg=;
-        b=n5e2gCVMetK60EV0yAY1ZD2lqkuRIIdUATIgR3jexzzkaMC8uaAWT9rNxFUAdvCLbH
-         vVZ9m9DA9XA5BSYrmH3+/xL2rYNAqdrF7ij4qDlpioRQO92Vgf+pCqUUoOYcCG+OFAFe
-         gLlcOVSONcpXDQiy68mGWbJkbJ8NHcMMR7ThVXFUncaJgdAPS+ztw0aNBSN7r/p+/GO+
-         fQYAHjthDn1s6T9Qee7aR9YX13QKL6LrL0jvPvQbuBV/ad8BaN0ev0Uru72L4ZVrM5zp
-         gtzvQQ8KAacKFsk2fR0omTbWb8f7AWXNHyRiGcvMKq9xcWEXF/YyZRFyxfqYWZogCwYl
-         xBXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=B3NCzom8hJlx0zEy79Sz4qhJxcFl7hPctwsRA5jCJVg=;
-        b=ZlcNf0NsRTWQTyRiuhrceCT5Wre/3il+nDB/BKpcQDcVli3Nqj7sAWVBWOOPJ2ia/t
-         AoYgVH0LvDy9CB/R0J2yzpdDbfbwAv2BMBrGqkHJMj2NfOvrz1s1bGlJSq81dOzLhlxf
-         GnvVFk0/Fp5yJf2rIO0bN/zV6KRBPyhRyW36O7bVievQ1y3BYREr5bjvGG4GCC+KxWWv
-         gOMPF5U+tjYJS+jsc8bZfpM6kSI0kQ7E8G3fH/2TiJRNykWGNsTmAV+BTOQNdJwHuK4E
-         9CLDUDQRbsmAiayZMR6bVKK1IZr/8t3iZXeIxa71CvIIr6FqtTlXfulf7FTc3F+OSN4X
-         Etxg==
-X-Gm-Message-State: AOAM533gWUJfdFcAl1qhcIGnpPep0GVP/rRhN18V0i1J6HFXINP+MzU/
-        zIewtbBkui0gAwfcY95aPWGqWYyhaQc=
-X-Google-Smtp-Source: ABdhPJyRVy4Th8+Q8iCMIdMzGLmF4M6s5YI9UwjImZYV5uDo9pI0HszSp7nM2ZUuUPrSn3m3XiDrXA==
-X-Received: by 2002:a17:90a:c402:b0:1d9:a003:3f8a with SMTP id i2-20020a17090ac40200b001d9a0033f8amr3065685pjt.18.1651227555375;
-        Fri, 29 Apr 2022 03:19:15 -0700 (PDT)
-Received: from HOWEYXU-MB0.tencent.com ([106.53.33.166])
-        by smtp.gmail.com with ESMTPSA id k17-20020a628e11000000b0050d8d373331sm2600016pfe.214.2022.04.29.03.19.13
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 29 Apr 2022 03:19:15 -0700 (PDT)
-From:   Hao Xu <haoxu.linux@gmail.com>
-To:     io-uring@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 9/9] io_uring: add register fixed worker interface
-Date:   Fri, 29 Apr 2022 18:18:58 +0800
-Message-Id: <20220429101858.90282-10-haoxu.linux@gmail.com>
-X-Mailer: git-send-email 2.36.0
-In-Reply-To: <20220429101858.90282-1-haoxu.linux@gmail.com>
-References: <20220429101858.90282-1-haoxu.linux@gmail.com>
+        Fri, 29 Apr 2022 08:08:42 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 889E758E74;
+        Fri, 29 Apr 2022 05:05:02 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2D616620DA;
+        Fri, 29 Apr 2022 12:05:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D720EC385A7;
+        Fri, 29 Apr 2022 12:04:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1651233901;
+        bh=51WNgMraDb0YzEABPLR2yD9CPLnar7/70JTrdoVfD90=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kVOjnZP+KmrD+HEDG9rvTDfplbWvxHJ2xxGVUUA8Jgbh4X6vxHzXDUQtp7uuqdIjb
+         3K3wdZZKieOGgvMhKhu6j5qSEUMgH/yn4N/dLgjJCHyBmFVBUxH7v7HUWvx7XNCKnW
+         TGv0XNv5K1M6wb2pIFIqcNSpsCwzoEV7v3Pi1ii6C1jkjdTRmJ5twSPPSuC+qzBC+D
+         NJaaARCPgcP1mNMGbV9IDjfTOFqP0SCUPkbbQgndvY/IC4VOpJwBpl0zrLTKIY/yDo
+         VGavY2EiOfmkr4vaSP4+RK3dKRZBCPO4//VfVwvgDyWbK/7CKp7gGyDiR/Yi7j+l0n
+         SFFXTX8g8Y3VQ==
+Date:   Fri, 29 Apr 2022 14:04:56 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     syzbot <syzbot+2ee18845e89ae76342c5@syzkaller.appspotmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+        Liam Howlett <liam.howlett@oracle.com>
+Subject: Re: [syzbot] WARNING: suspicious RCU usage in mas_walk
+Message-ID: <20220429120456.qcs7qbtv3o4hiiv6@wittgenstein>
+References: <0000000000006b8dad05ddc47e92@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <0000000000006b8dad05ddc47e92@google.com>
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Hao Xu <howeyxu@tencent.com>
+On Thu, Apr 28, 2022 at 10:41:27PM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    bdc61aad77fa Add linux-next specific files for 20220428
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=15bb3dc2f00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=87767e89da13a759
+> dashboard link: https://syzkaller.appspot.com/bug?extid=2ee18845e89ae76342c5
+> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1118a5f6f00000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=125bd212f00000
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+2ee18845e89ae76342c5@syzkaller.appspotmail.com
+> 
+> =============================
+> WARNING: suspicious RCU usage
+> 5.18.0-rc4-next-20220428-syzkaller #0 Not tainted
+> -----------------------------
+> lib/maple_tree.c:844 suspicious rcu_dereference_check() usage!
 
-Add an io_uring_register() interface to register fixed workers and
-indicate its work capacity.
-The argument is an array of two elements each is
-    struct {
-    	__s32 nr_workers;
-    	__s32 max_works;
-    }
-(nr_workers, max_works)                        meaning
+I _think_ for maple tree stuff you want to somehow ensure that
+Liam Howlett <liam.howlett@oracle.com>
+gets Cced.
 
-nr_workers or max_works <  -1                  invalid
-nr_workers or max_works == -1           get the old value back
-nr_workers or max_works >=  0        get the old value and set to the
-                                     new value
-
-Signed-off-by: Hao Xu <howeyxu@tencent.com>
----
- fs/io-wq.c                    | 101 ++++++++++++++++++++++++++++++++++
- fs/io-wq.h                    |   3 +
- fs/io_uring.c                 |  71 ++++++++++++++++++++++++
- include/uapi/linux/io_uring.h |  11 ++++
- 4 files changed, 186 insertions(+)
-
-diff --git a/fs/io-wq.c b/fs/io-wq.c
-index df2d480395e8..c1e87b29c960 100644
---- a/fs/io-wq.c
-+++ b/fs/io-wq.c
-@@ -1671,6 +1671,107 @@ int io_wq_max_workers(struct io_wq *wq, int *new_count)
- 	return 0;
- }
- 
-+/*
-+ * Set max number of fixed workers and the capacity of private work list,
-+ * returns old value. If new_count is -1, then just return the old value.
-+ */
-+int io_wq_fixed_workers(struct io_wq *wq,
-+			struct io_uring_fixed_worker_arg *new_count)
-+{
-+	struct io_uring_fixed_worker_arg prev[IO_WQ_ACCT_NR];
-+	bool first_node = true;
-+	int i, node;
-+	bool readonly[2] = {
-+		(new_count[0].nr_workers == -1 && new_count[0].max_works == -1),
-+		(new_count[1].nr_workers == -1 && new_count[1].max_works == -1),
-+	};
-+
-+	BUILD_BUG_ON((int) IO_WQ_ACCT_BOUND   != (int) IO_WQ_BOUND);
-+	BUILD_BUG_ON((int) IO_WQ_ACCT_UNBOUND != (int) IO_WQ_UNBOUND);
-+	BUILD_BUG_ON((int) IO_WQ_ACCT_NR      != 2);
-+
-+	for (i = 0; i < IO_WQ_ACCT_NR; i++) {
-+		if (new_count[i].nr_workers > task_rlimit(current, RLIMIT_NPROC))
-+			new_count[i].nr_workers =
-+				task_rlimit(current, RLIMIT_NPROC);
-+	}
-+
-+	rcu_read_lock();
-+	for_each_node(node) {
-+		int j;
-+		struct io_wqe *wqe = wq->wqes[node];
-+
-+		for (i = 0; i < IO_WQ_ACCT_NR; i++) {
-+			struct io_wqe_acct *acct = &wqe->fixed_acct[i];
-+			int *nr_fixed, *max_works;
-+			struct io_worker **fixed_workers;
-+			int nr = new_count[i].nr_workers;
-+
-+			raw_spin_lock(&acct->lock);
-+			nr_fixed = &acct->nr_fixed;
-+			max_works = &acct->max_works;
-+			fixed_workers = acct->fixed_workers;
-+			if (first_node) {
-+				prev[i].nr_workers = *nr_fixed;
-+				prev[i].max_works = *max_works;
-+			}
-+			if (readonly[i]) {
-+				raw_spin_unlock(&acct->lock);
-+				continue;
-+			}
-+			if (*nr_fixed == nr || nr == -1) {
-+				*max_works = new_count[i].max_works;
-+				raw_spin_unlock(&acct->lock);
-+				continue;
-+			}
-+			for (j = 0; j < *nr_fixed; j++) {
-+				struct io_worker *worker = fixed_workers[j];
-+
-+				if (!worker)
-+					continue;
-+				worker->flags |= IO_WORKER_F_EXIT;
-+				/*
-+				 * Mark index to -1 to avoid false deletion
-+				 * in io_fixed_worker_exit()
-+				 */
-+				worker->index = -1;
-+				/*
-+				 * Once a worker is in fixed_workers array
-+				 * it is definitely there before we release
-+				 * the acct->lock below. That's why we don't
-+				 * need to increment the worker->ref here.
-+				 */
-+				wake_up_process(worker->task);
-+			}
-+			kfree(fixed_workers);
-+			acct->fixed_workers = NULL;
-+			*nr_fixed = 0;
-+			*max_works = new_count[i].max_works;
-+			acct->fixed_workers = kzalloc_node(
-+						sizeof(*fixed_workers) * nr,
-+						GFP_KERNEL, wqe->node);
-+			if (!acct->fixed_workers) {
-+				raw_spin_unlock(&acct->lock);
-+				return -ENOMEM;
-+			}
-+			raw_spin_unlock(&acct->lock);
-+			for (j = 0; j < nr; j++)
-+				io_wqe_create_worker(wqe, acct);
-+
-+			acct->fixed_worker_registered = !!nr;
-+		}
-+		first_node = false;
-+	}
-+	rcu_read_unlock();
-+
-+	for (i = 0; i < IO_WQ_ACCT_NR; i++) {
-+		new_count[i].nr_workers = prev[i].nr_workers;
-+		new_count[i].max_works = prev[i].max_works;
-+	}
-+
-+	return 0;
-+}
-+
- static __init int io_wq_init(void)
- {
- 	int ret;
-diff --git a/fs/io-wq.h b/fs/io-wq.h
-index ef3ce577e6b7..bf90488b0283 100644
---- a/fs/io-wq.h
-+++ b/fs/io-wq.h
-@@ -2,6 +2,7 @@
- #define INTERNAL_IO_WQ_H
- 
- #include <linux/refcount.h>
-+#include <uapi/linux/io_uring.h>
- 
- struct io_wq;
- 
-@@ -202,6 +203,8 @@ void io_wq_hash_work(struct io_wq_work *work, void *val);
- 
- int io_wq_cpu_affinity(struct io_wq *wq, cpumask_var_t mask);
- int io_wq_max_workers(struct io_wq *wq, int *new_count);
-+int io_wq_fixed_workers(struct io_wq *wq,
-+			struct io_uring_fixed_worker_arg *new_count);
- 
- static inline bool io_wq_is_hashed(struct io_wq_work *work)
- {
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index 1e7466079af7..c0c7c1fd94fd 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -11806,6 +11806,71 @@ static __cold int io_register_iowq_max_workers(struct io_ring_ctx *ctx,
- 	return ret;
- }
- 
-+static __cold int io_register_iowq_fixed_workers(struct io_ring_ctx *ctx,
-+						 void __user *arg)
-+	__must_hold(&ctx->uring_lock)
-+{
-+	struct io_uring_task *tctx = NULL;
-+	struct io_sq_data *sqd = NULL;
-+	struct io_uring_fixed_worker_arg new_count[2];
-+	int i, ret;
-+
-+	if (copy_from_user(new_count, arg, sizeof(new_count)))
-+		return -EFAULT;
-+	for (i = 0; i < ARRAY_SIZE(new_count); i++) {
-+		int nr_workers = new_count[i].nr_workers;
-+		int max_works = new_count[i].max_works;
-+
-+		if (nr_workers < -1 || max_works < -1)
-+			return -EINVAL;
-+	}
-+
-+	if (ctx->flags & IORING_SETUP_SQPOLL) {
-+		sqd = ctx->sq_data;
-+		if (sqd) {
-+			/*
-+			 * Observe the correct sqd->lock -> ctx->uring_lock
-+			 * ordering. Fine to drop uring_lock here, we hold
-+			 * a ref to the ctx.
-+			 */
-+			refcount_inc(&sqd->refs);
-+			mutex_unlock(&ctx->uring_lock);
-+			mutex_lock(&sqd->lock);
-+			mutex_lock(&ctx->uring_lock);
-+			if (sqd->thread)
-+				tctx = sqd->thread->io_uring;
-+		}
-+	} else {
-+		tctx = current->io_uring;
-+	}
-+
-+	if (tctx && tctx->io_wq) {
-+		ret = io_wq_fixed_workers(tctx->io_wq, new_count);
-+		if (ret)
-+			goto err;
-+	} else {
-+		memset(new_count, -1, sizeof(new_count));
-+	}
-+
-+	if (sqd) {
-+		mutex_unlock(&sqd->lock);
-+		io_put_sq_data(sqd);
-+	}
-+
-+	if (copy_to_user(arg, new_count, sizeof(new_count)))
-+		return -EFAULT;
-+
-+	/* that's it for SQPOLL, only the SQPOLL task creates requests */
-+	if (sqd)
-+		return 0;
-+
-+err:
-+	if (sqd) {
-+		mutex_unlock(&sqd->lock);
-+		io_put_sq_data(sqd);
-+	}
-+	return ret;
-+}
- static int __io_uring_register(struct io_ring_ctx *ctx, unsigned opcode,
- 			       void __user *arg, unsigned nr_args)
- 	__releases(ctx->uring_lock)
-@@ -11934,6 +11999,12 @@ static int __io_uring_register(struct io_ring_ctx *ctx, unsigned opcode,
- 	case IORING_UNREGISTER_RING_FDS:
- 		ret = io_ringfd_unregister(ctx, arg, nr_args);
- 		break;
-+	case IORING_REGISTER_IOWQ_FIXED_WORKERS:
-+		ret = -EINVAL;
-+		if (!arg || nr_args != 2)
-+			break;
-+		ret = io_register_iowq_fixed_workers(ctx, arg);
-+		break;
- 	default:
- 		ret = -EINVAL;
- 		break;
-diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
-index fad63564678a..f0ec9523ab42 100644
---- a/include/uapi/linux/io_uring.h
-+++ b/include/uapi/linux/io_uring.h
-@@ -360,6 +360,12 @@ enum {
- 	IORING_REGISTER_RING_FDS		= 20,
- 	IORING_UNREGISTER_RING_FDS		= 21,
- 
-+	/* set number of fixed workers and number
-+	 * of works in a private work list which
-+	 * belongs to a fixed worker
-+	 */
-+	IORING_REGISTER_IOWQ_FIXED_WORKERS	= 22,
-+
- 	/* this goes last */
- 	IORING_REGISTER_LAST
- };
-@@ -457,4 +463,9 @@ struct io_uring_getevents_arg {
- 	__u64	ts;
- };
- 
-+struct io_uring_fixed_worker_arg {
-+	__s32	nr_workers;
-+	__s32	max_works;
-+};
-+
- #endif
--- 
-2.36.0
-
+> 
+> other info that might help us debug this:
+> 
+> 
+> rcu_scheduler_active = 2, debug_locks = 1
+> 5 locks held by syz-executor842/4211:
+>  #0: ffff88807f0ae460 (sb_writers#8){.+.+}-{0:0}, at: ksys_write+0x127/0x250 fs/read_write.c:644
+>  #1: ffff88801df04488 (&of->mutex){+.+.}-{3:3}, at: kernfs_fop_write_iter+0x28c/0x610 fs/kernfs/file.c:282
+>  #2: ffff8881453b9a00 (kn->active#106){.+.+}-{0:0}, at: kernfs_fop_write_iter+0x2b0/0x610 fs/kernfs/file.c:283
+>  #3: ffffffff8bedc528 (ksm_thread_mutex){+.+.}-{3:3}, at: run_store+0xd1/0xa60 mm/ksm.c:2917
+>  #4: ffff88801e5e8fd8 (&mm->mmap_lock#2){++++}-{3:3}, at: mmap_read_lock include/linux/mmap_lock.h:117 [inline]
+>  #4: ffff88801e5e8fd8 (&mm->mmap_lock#2){++++}-{3:3}, at: unmerge_and_remove_all_rmap_items mm/ksm.c:989 [inline]
+>  #4: ffff88801e5e8fd8 (&mm->mmap_lock#2){++++}-{3:3}, at: run_store+0x2a5/0xa60 mm/ksm.c:2923
+> 
+> stack backtrace:
+> CPU: 0 PID: 4211 Comm: syz-executor842 Not tainted 5.18.0-rc4-next-20220428-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:88 [inline]
+>  dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:106
+>  mas_root lib/maple_tree.c:844 [inline]
+>  mas_start lib/maple_tree.c:1331 [inline]
+>  mas_state_walk lib/maple_tree.c:3745 [inline]
+>  mas_walk+0x45e/0x670 lib/maple_tree.c:4923
+>  mas_find+0x442/0xc90 lib/maple_tree.c:5861
+>  vma_find include/linux/mm.h:664 [inline]
+>  vma_next include/linux/mm.h:673 [inline]
+>  unmerge_and_remove_all_rmap_items mm/ksm.c:990 [inline]
+>  run_store+0x2ed/0xa60 mm/ksm.c:2923
+>  kobj_attr_store+0x50/0x80 lib/kobject.c:824
+>  sysfs_kf_write+0x110/0x160 fs/sysfs/file.c:136
+>  kernfs_fop_write_iter+0x3f8/0x610 fs/kernfs/file.c:291
+>  call_write_iter include/linux/fs.h:2059 [inline]
+>  new_sync_write+0x38a/0x560 fs/read_write.c:504
+>  vfs_write+0x7c0/0xac0 fs/read_write.c:591
+>  ksys_write+0x127/0x250 fs/read_write.c:644
+>  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+>  do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+>  entry_SYSCALL_64_after_hwframe+0x44/0xae
+> RIP: 0033:0x7f6a91306e79
+> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 b1 14 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007ffddeb8cde8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+> RAX: ffffffffffffffda RBX: 00000000000f4240 RCX: 00007f6a91306e79
+> RDX: 0000000000000002 RSI: 0000000020000000 RDI: 0000000000000003
+> RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000001
+> R10: 0000000020117000 R11: 0000000000000246 R12: 000000000000cf84
+> R13: 00007ffddeb8cdfc R14: 00007ffddeb8ce10 R15: 00007ffddeb8ce00
+>  </TASK>
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> syzbot can test patches for this issue, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
