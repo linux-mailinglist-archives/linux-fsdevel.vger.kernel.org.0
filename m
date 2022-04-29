@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ADE865151E6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Apr 2022 19:26:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CEFF55151D3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Apr 2022 19:26:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379534AbiD2R3x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Apr 2022 13:29:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42486 "EHLO
+        id S1379527AbiD2R30 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Apr 2022 13:29:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42446 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379530AbiD2R3a (ORCPT
+        with ESMTP id S1376937AbiD2R3X (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Apr 2022 13:29:30 -0400
+        Fri, 29 Apr 2022 13:29:23 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B4869F3B5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Apr 2022 10:26:07 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74B259859C
+        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Apr 2022 10:26:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=fs3yjOFU7Is8zXjtGhR6ALd+llANqAadapxJ56oler4=; b=blgo+ZKytRcLnVc9HhJl1LG+g4
-        Jn9nqkOdsl8B3DD6X+agWMPLHevcA6TGki7IAzIW5eGBS5zxjZEV7x3OeY/m5b6rtHqw6GNRlMdFw
-        9zKS4B0iYyr3XLzbAHOY9+gfaBBLngMliWgGVEufuOfIQ+LKZqkAeLxRwIoYa3haRFKHUUQWm2gvF
-        5xIN3hJvvbMHWA4WUgSAvy9UD/G8PjDqdbHzlRrhrrm10mQd9r1839y+npwscdp9+lulwfGVHCw4h
-        F85UeF9UJku/BdGDtroTl3Q+wKpZ3BqwFeKb1heK+x44RMXYPcb8I0qK8Z0yM95LUbXpPrP1TCk9i
-        rREZxroQ==;
+        bh=trDP4gjjFpmqZvJ+JNrSlXV+L8vVqC1TdJmWMDKM3+I=; b=ruv00QPsH7xIftAVygZ6Uv0yqb
+        2+o2EFUemLx20PxRuSrmsEHUywVJBm0ZX/utB2XGf1NR7pfBDO9E6zBDeTfxl3MCkYlx8+RsTmJPv
+        y3lmjtYT7rmxhQfPnbJgoDgESZ9F6JBLNNnzZrisjl7cfLBYxjD9mnphJ4njCry7HFhfgGx0jHgWR
+        rlDjepK1nTi/g3H455g0mjmafwaGNY6arr5S5MRSVPjEGJtFGabeWjxdzRDR/gOHH5vUXeSi7OakB
+        NGC950mKkNphQc+rISuQ1aYcrmr6HHB5Gh8AKRHQ/LnlRboqYP7Bv7PfKUG6WhmFXsB0kQ3UxuVQv
+        KVxGZwtA==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nkUNW-00CdXQ-Nl; Fri, 29 Apr 2022 17:26:02 +0000
+        id 1nkUNW-00CdXS-QH; Fri, 29 Apr 2022 17:26:02 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Theodore Ts'o <tytso@mit.edu>
-Subject: [PATCH 07/69] ext4: Use scoped memory API in mext_page_double_lock()
-Date:   Fri, 29 Apr 2022 18:24:54 +0100
-Message-Id: <20220429172556.3011843-8-willy@infradead.org>
+Subject: [PATCH 08/69] ext4: Use scoped memory APIs in ext4_da_write_begin()
+Date:   Fri, 29 Apr 2022 18:24:55 +0100
+Message-Id: <20220429172556.3011843-9-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220429172556.3011843-1-willy@infradead.org>
 References: <20220429172556.3011843-1-willy@infradead.org>
@@ -48,55 +48,92 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Replace use of AOP_FLAG_NOFS with calls to memalloc_nofs_save()
-and memalloc_nofs_restore().
+Instead of setting AOP_FLAG_NOFS, use memalloc_nofs_save() and
+memalloc_nofs_restore() to prevent GFP_FS allocations recursing
+into the filesystem with a journal already started.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 Acked-by: Theodore Ts'o <tytso@mit.edu>
 ---
- fs/ext4/move_extent.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ fs/ext4/ext4.h   |  1 -
+ fs/ext4/inline.c | 16 ++++++++--------
+ fs/ext4/inode.c  |  3 +--
+ 3 files changed, 9 insertions(+), 11 deletions(-)
 
-diff --git a/fs/ext4/move_extent.c b/fs/ext4/move_extent.c
-index 95aa212f0863..56f21272fb00 100644
---- a/fs/ext4/move_extent.c
-+++ b/fs/ext4/move_extent.c
-@@ -8,6 +8,7 @@
- #include <linux/fs.h>
- #include <linux/quotaops.h>
- #include <linux/slab.h>
-+#include <linux/sched/mm.h>
- #include "ext4_jbd2.h"
- #include "ext4.h"
- #include "ext4_extents.h"
-@@ -127,7 +128,7 @@ mext_page_double_lock(struct inode *inode1, struct inode *inode2,
- 		      pgoff_t index1, pgoff_t index2, struct page *page[2])
+diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+index a743b1e3b89e..90677e30e52d 100644
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -3604,7 +3604,6 @@ ext4_journalled_write_inline_data(struct inode *inode,
+ extern int ext4_da_write_inline_data_begin(struct address_space *mapping,
+ 					   struct inode *inode,
+ 					   loff_t pos, unsigned len,
+-					   unsigned flags,
+ 					   struct page **pagep,
+ 					   void **fsdata);
+ extern int ext4_try_add_inline_entry(handle_t *handle,
+diff --git a/fs/ext4/inline.c b/fs/ext4/inline.c
+index 93694ceb5a34..d965ba08f68f 100644
+--- a/fs/ext4/inline.c
++++ b/fs/ext4/inline.c
+@@ -906,7 +906,6 @@ static int ext4_da_convert_inline_data_to_extent(struct address_space *mapping,
+ int ext4_da_write_inline_data_begin(struct address_space *mapping,
+ 				    struct inode *inode,
+ 				    loff_t pos, unsigned len,
+-				    unsigned flags,
+ 				    struct page **pagep,
+ 				    void **fsdata)
  {
- 	struct address_space *mapping[2];
--	unsigned fl = AOP_FLAG_NOFS;
+@@ -915,6 +914,7 @@ int ext4_da_write_inline_data_begin(struct address_space *mapping,
+ 	struct page *page;
+ 	struct ext4_iloc iloc;
+ 	int retries = 0;
 +	unsigned int flags;
  
- 	BUG_ON(!inode1 || !inode2);
- 	if (inode1 < inode2) {
-@@ -139,11 +140,15 @@ mext_page_double_lock(struct inode *inode1, struct inode *inode2,
- 		mapping[1] = inode1->i_mapping;
+ 	ret = ext4_get_inode_loc(inode, &iloc);
+ 	if (ret)
+@@ -931,12 +931,6 @@ int ext4_da_write_inline_data_begin(struct address_space *mapping,
+ 	if (ret && ret != -ENOSPC)
+ 		goto out_journal;
+ 
+-	/*
+-	 * We cannot recurse into the filesystem as the transaction
+-	 * is already started.
+-	 */
+-	flags |= AOP_FLAG_NOFS;
+-
+ 	if (ret == -ENOSPC) {
+ 		ext4_journal_stop(handle);
+ 		ret = ext4_da_convert_inline_data_to_extent(mapping,
+@@ -948,7 +942,13 @@ int ext4_da_write_inline_data_begin(struct address_space *mapping,
+ 		goto out;
  	}
  
--	page[0] = grab_cache_page_write_begin(mapping[0], index1, fl);
--	if (!page[0])
+-	page = grab_cache_page_write_begin(mapping, 0, flags);
++	/*
++	 * We cannot recurse into the filesystem as the transaction
++	 * is already started.
++	 */
 +	flags = memalloc_nofs_save();
-+	page[0] = grab_cache_page_write_begin(mapping[0], index1, 0);
-+	if (!page[0]) {
-+		memalloc_nofs_restore(flags);
- 		return -ENOMEM;
-+	}
- 
--	page[1] = grab_cache_page_write_begin(mapping[1], index2, fl);
-+	page[1] = grab_cache_page_write_begin(mapping[1], index2, 0);
++	page = grab_cache_page_write_begin(mapping, 0, 0);
 +	memalloc_nofs_restore(flags);
- 	if (!page[1]) {
- 		unlock_page(page[0]);
- 		put_page(page[0]);
+ 	if (!page) {
+ 		ret = -ENOMEM;
+ 		goto out_journal;
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 646ece9b3455..21ebcb3c59ba 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -2954,8 +2954,7 @@ static int ext4_da_write_begin(struct file *file, struct address_space *mapping,
+ 	trace_ext4_da_write_begin(inode, pos, len, flags);
+ 
+ 	if (ext4_test_inode_state(inode, EXT4_STATE_MAY_INLINE_DATA)) {
+-		ret = ext4_da_write_inline_data_begin(mapping, inode,
+-						      pos, len, flags,
++		ret = ext4_da_write_inline_data_begin(mapping, inode, pos, len,
+ 						      pagep, fsdata);
+ 		if (ret < 0)
+ 			return ret;
 -- 
 2.34.1
 
