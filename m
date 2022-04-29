@@ -2,145 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A7590514173
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Apr 2022 06:34:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11CA45141D7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Apr 2022 07:41:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237316AbiD2Ehg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Apr 2022 00:37:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39352 "EHLO
+        id S1354169AbiD2Fou (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Apr 2022 01:44:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230133AbiD2Ehf (ORCPT
+        with ESMTP id S1354160AbiD2Fop (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Apr 2022 00:37:35 -0400
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 247CA8A9FD;
-        Thu, 28 Apr 2022 21:34:17 -0700 (PDT)
-Received: by mail-pj1-x1034.google.com with SMTP id cx11-20020a17090afd8b00b001d9fe5965b3so7583477pjb.3;
-        Thu, 28 Apr 2022 21:34:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=evyUHOqOn3TXKm02pc1sLqPIBDCTJ+500dIEM+PwO1Q=;
-        b=Xbr0A4/YrpGb8LHdyrQj7Uvb273qfk6dEk+N6FmUaLsp9XdYkONWGAZxnE53NyrrG2
-         TjTRbMuxublHgZAmC/DK4+MTdVRbaGOO5SSvAt8jNuxEfBE189aLZT8Z4K+STordTbN0
-         KdP6DaFtYLoOJKmEyV0yvkfMozHG7hmtZERXkriUcDPGAaAc/MtnJaajcb8yM8LXe3AI
-         FLv8ewTJ/zdfqf2SDfN91k3qeGs7EgUT66+TnsqhOx1kH0zFIzRDd8ezVOA/nzAHNOP3
-         RXSCbhi6QM86Xkei0TbKBRwzBAerdyXK7/TMmAhMZ3agjlL0y8f+arA7arBD9jwSvopS
-         4h2A==
+        Fri, 29 Apr 2022 01:44:45 -0400
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7427254BD6
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Apr 2022 22:41:28 -0700 (PDT)
+Received: by mail-il1-f198.google.com with SMTP id y19-20020a056e02119300b002c2d3ef05bfso3040974ili.18
+        for <linux-fsdevel@vger.kernel.org>; Thu, 28 Apr 2022 22:41:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=evyUHOqOn3TXKm02pc1sLqPIBDCTJ+500dIEM+PwO1Q=;
-        b=eYijC940CsO2LBTle9UEInmjlhPUcq3KoPfMQOhaphSITuCAdA1CnL5UTig5s5PedH
-         bUC993ws1nXkIM4WvzYH52K3K8lL209b07/G6DSXlOqRkQHeYdC5sLDNQBjoS1T2J0Qj
-         xMPjvaOJVB/EsO87/ZqmG9VKrQ3dc15OzBNCWJur+UTEerrZiJBR+bSFKHeIzxS6i7kj
-         RzfhQijegoAUlInCtjt2L2213I/C5r2jCdXbU5uOHcXzQsZ63wmVk4fYd444hlM1sxy9
-         xuPCbkvBMIKNExHhbhiLD4iRrvEA9nS5Pbejunu5wQEiSCH8j+Bkvs2sYtFVN1CUWIpr
-         qpXw==
-X-Gm-Message-State: AOAM5308evTJ10Kcij/m2DO1l8Dxl3u4PTGoyocGi01x+wmohsfINFWW
-        Qf5RUiT5HZDFAegXhwgOx2dFnRHiFjhHsWYreVg=
-X-Google-Smtp-Source: ABdhPJz+N6SLkD7HusZ2PQAqngkmUnrQp6p3IGUSpB0v/dVKrkW6Qn4I/U1uv89fGoPc1oW58LodLZVIyMg4jqJ1AM8=
-X-Received: by 2002:a17:90b:4d86:b0:1da:3cba:bd56 with SMTP id
- oj6-20020a17090b4d8600b001da3cbabd56mr1871622pjb.116.1651206856476; Thu, 28
- Apr 2022 21:34:16 -0700 (PDT)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=x3MTACHKJZ3L2DlqgxVgqLiRoxwCwaVIdsT6U6RxAqw=;
+        b=euiBfUfFFO60zYchUGvPhNI0lXSENkfGWXAd2PTOq7fOIWh05gA8oVY+oQznJP10X2
+         A034cXEBPUA/6sOxhBOcigigbtoRdmBAYE72nfjE7VGJiAeGJ8JTe1r3mh9j2ooLHLif
+         lHdq4EEvJguQ+x4+brrCiyKgno3a0hFu3dpYGJcHsTbW9OvUCtHREftjDYe1iwY/EZFb
+         sPg72CBFSt3YWKYHVOWCihUnUBnrtQ0ugah9C6gexkeznBafMePqv10a7JhWu14G8JL0
+         63LUnxNVAbELHo4cPhIMdWbcQKKPChMVl+sTINnewNqFl8c6ZWlSYSghyq5LDnn1DTVL
+         1cqw==
+X-Gm-Message-State: AOAM530q7MFBjd/G9AR+Vo1eGFB4lDLpztphkGHOllWS6tHFEjWbl7ct
+        WN/VUdylqbjkxNGVkUr3jTRQbV9OR1p/Cc3+IVzlQkPAngsI
+X-Google-Smtp-Source: ABdhPJxoqfI1Tq8QAcjTxAeDa4Kz8N2fm4VNksuraSBI4GnBO4AQcsyK8aYn4jGnceWg0lesom9HGtbbwxSINfmi9aRaBWdWpxju
 MIME-Version: 1.0
-References: <20220322115148.3870-1-dharamhans87@gmail.com> <20220322115148.3870-2-dharamhans87@gmail.com>
- <CAJfpegtunCe5hV1b9cKJgPk44B2SQgtK3RG5r2is8V5VrMYeNg@mail.gmail.com>
- <CACUYsyGmab57_efkXRXD8XvO6Stn4JbJM8+NfBHNKQ+FLcA7nA@mail.gmail.com>
- <CAJfpegt5qWE4UepoDj9QBuT--ysT6+7E-6ZQvNeZ+bODRHHCvg@mail.gmail.com> <CACUYsyFrP5UDOJKCLOr+PeHjnh9RV=wWOBRFN31-Fr-gi1d2WA@mail.gmail.com>
-In-Reply-To: <CACUYsyFrP5UDOJKCLOr+PeHjnh9RV=wWOBRFN31-Fr-gi1d2WA@mail.gmail.com>
-From:   Dharmendra Hans <dharamhans87@gmail.com>
-Date:   Fri, 29 Apr 2022 10:04:04 +0530
-Message-ID: <CACUYsyGuHEM8U6qsqEE_=mUcAgAFzCYuCLcCtiBf1CGirLE95Q@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] FUSE: Implement atomic lookup + open
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-fsdevel@vger.kernel.org,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        linux-kernel@vger.kernel.org, Dharmendra Singh <dsingh@ddn.com>,
-        Bernd Schubert <bschubert@ddn.com>
+X-Received: by 2002:a6b:4416:0:b0:657:b740:a016 with SMTP id
+ r22-20020a6b4416000000b00657b740a016mr4039618ioa.190.1651210887858; Thu, 28
+ Apr 2022 22:41:27 -0700 (PDT)
+Date:   Thu, 28 Apr 2022 22:41:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000006b8dad05ddc47e92@google.com>
+Subject: [syzbot] WARNING: suspicious RCU usage in mas_walk
+From:   syzbot <syzbot+2ee18845e89ae76342c5@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Apr 25, 2022 at 4:13 PM Dharmendra Hans <dharamhans87@gmail.com> wrote:
->
-> On Mon, Apr 25, 2022 at 1:08 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
-> >
-> > On Mon, 25 Apr 2022 at 07:26, Dharmendra Hans <dharamhans87@gmail.com> wrote:
-> > >
-> > > On Fri, Apr 22, 2022 at 8:59 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
-> > > >
-> > > > On Tue, 22 Mar 2022 at 12:52, Dharmendra Singh <dharamhans87@gmail.com> wrote:
-> > > > >
-> > > > > From: Dharmendra Singh <dsingh@ddn.com>
-> > > > >
-> > > > > There are couple of places in FUSE where we do agressive
-> > > > > lookup.
-> > > > > 1) When we go for creating a file (O_CREAT), we do lookup
-> > > > > for non-existent file. It is very much likely that file
-> > > > > does not exists yet as O_CREAT is passed to open(). This
-> > > > > lookup can be avoided and can be performed  as part of
-> > > > > open call into libfuse.
-> > > > >
-> > > > > 2) When there is normal open for file/dir (dentry is
-> > > > > new/negative). In this case since we are anyway going to open
-> > > > > the file/dir with USER space, avoid this separate lookup call
-> > > > > into libfuse and combine it with open.
-> > > > >
-> > > > > This lookup + open in single call to libfuse and finally to
-> > > > > USER space has been named as atomic open. It is expected
-> > > > > that USER space open the file and fills in the attributes
-> > > > > which are then used to make inode stand/revalidate in the
-> > > > > kernel cache.
-> > > > >
-> > > > > Signed-off-by: Dharmendra Singh <dsingh@ddn.com>
-> > > > > ---
-> > > > > v2 patch includes:
-> > > > > - disabled o-create atomicity when the user space file system
-> > > > >   does not have an atomic_open implemented. In principle lookups
-> > > > >   for O_CREATE also could be optimized out, but there is a risk
-> > > > >   to break existing fuse file systems. Those file system might
-> > > > >   not expect open O_CREATE calls for exiting files, as these calls
-> > > > >   had been so far avoided as lookup was done first.
-> > > >
-> > > > So we enabling atomic lookup+create only if FUSE_DO_ATOMIC_OPEN is
-> > > > set.  This logic is a bit confusing as CREATE is unrelated to
-> > > > ATOMIC_OPEN.   It would be cleaner to have a separate flag for atomic
-> > > > lookup+create.  And in fact FUSE_DO_ATOMIC_OPEN could be dropped and
-> > > > the usual logic of setting fc->no_atomic_open if ENOSYS is returned
-> > > > could be used instead.
-> > >
-> > > I am aware that ATOMIC_OPEN is not directly related to CREATE. But
-> > > This is more of feature enabling by using the flag. If we do not
-> > > FUSE_DO_ATOMIC_OPEN, CREATE calls would not know that it need to
-> > > optimize lookup calls otherwise as we know only from open call that
-> > > atomic open is implemented.
-> >
-> > Right.  So because the atomic lookup+crteate would need a new flag to
-> > return whether the file was created or not, this is probably better
-> > implemented as a completely new request type (FUSE_ATOMIC_CREATE?)
-> >
-> > No new INIT flags needed at all, since we can use the ENOSYS mechanism
-> > to determine whether the filesystem has atomic open/create ops or not.
->
-> Yes, it sounds good to have a separate request type for CREATE. I
-> would separate out the patch into two for create and open.  Will omit
-> INIT flags. Also, I would change libfuse code accordingly.
+Hello,
 
-Actually when writing the code, I observe that not having INIT flags
-works fine for atomic create but it does not work well for atomic
-open case considering specially 3rd  patch which optimises
-d_revalidate() lookups.
-(https://lore.kernel.org/linux-fsdevel/20220322115148.3870-3-dharamhans87@gmail.com/,
- we did not receive any comments on it so far).
-So it looks like we need INIT flags in atomic open case at least
-considering that 3rd patch would go in as well.
+syzbot found the following issue on:
+
+HEAD commit:    bdc61aad77fa Add linux-next specific files for 20220428
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=15bb3dc2f00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=87767e89da13a759
+dashboard link: https://syzkaller.appspot.com/bug?extid=2ee18845e89ae76342c5
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1118a5f6f00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=125bd212f00000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+2ee18845e89ae76342c5@syzkaller.appspotmail.com
+
+=============================
+WARNING: suspicious RCU usage
+5.18.0-rc4-next-20220428-syzkaller #0 Not tainted
+-----------------------------
+lib/maple_tree.c:844 suspicious rcu_dereference_check() usage!
+
+other info that might help us debug this:
+
+
+rcu_scheduler_active = 2, debug_locks = 1
+5 locks held by syz-executor842/4211:
+ #0: ffff88807f0ae460 (sb_writers#8){.+.+}-{0:0}, at: ksys_write+0x127/0x250 fs/read_write.c:644
+ #1: ffff88801df04488 (&of->mutex){+.+.}-{3:3}, at: kernfs_fop_write_iter+0x28c/0x610 fs/kernfs/file.c:282
+ #2: ffff8881453b9a00 (kn->active#106){.+.+}-{0:0}, at: kernfs_fop_write_iter+0x2b0/0x610 fs/kernfs/file.c:283
+ #3: ffffffff8bedc528 (ksm_thread_mutex){+.+.}-{3:3}, at: run_store+0xd1/0xa60 mm/ksm.c:2917
+ #4: ffff88801e5e8fd8 (&mm->mmap_lock#2){++++}-{3:3}, at: mmap_read_lock include/linux/mmap_lock.h:117 [inline]
+ #4: ffff88801e5e8fd8 (&mm->mmap_lock#2){++++}-{3:3}, at: unmerge_and_remove_all_rmap_items mm/ksm.c:989 [inline]
+ #4: ffff88801e5e8fd8 (&mm->mmap_lock#2){++++}-{3:3}, at: run_store+0x2a5/0xa60 mm/ksm.c:2923
+
+stack backtrace:
+CPU: 0 PID: 4211 Comm: syz-executor842 Not tainted 5.18.0-rc4-next-20220428-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:106
+ mas_root lib/maple_tree.c:844 [inline]
+ mas_start lib/maple_tree.c:1331 [inline]
+ mas_state_walk lib/maple_tree.c:3745 [inline]
+ mas_walk+0x45e/0x670 lib/maple_tree.c:4923
+ mas_find+0x442/0xc90 lib/maple_tree.c:5861
+ vma_find include/linux/mm.h:664 [inline]
+ vma_next include/linux/mm.h:673 [inline]
+ unmerge_and_remove_all_rmap_items mm/ksm.c:990 [inline]
+ run_store+0x2ed/0xa60 mm/ksm.c:2923
+ kobj_attr_store+0x50/0x80 lib/kobject.c:824
+ sysfs_kf_write+0x110/0x160 fs/sysfs/file.c:136
+ kernfs_fop_write_iter+0x3f8/0x610 fs/kernfs/file.c:291
+ call_write_iter include/linux/fs.h:2059 [inline]
+ new_sync_write+0x38a/0x560 fs/read_write.c:504
+ vfs_write+0x7c0/0xac0 fs/read_write.c:591
+ ksys_write+0x127/0x250 fs/read_write.c:644
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x7f6a91306e79
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 b1 14 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffddeb8cde8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00000000000f4240 RCX: 00007f6a91306e79
+RDX: 0000000000000002 RSI: 0000000020000000 RDI: 0000000000000003
+RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000001
+R10: 0000000020117000 R11: 0000000000000246 R12: 000000000000cf84
+R13: 00007ffddeb8cdfc R14: 00007ffddeb8ce10 R15: 00007ffddeb8ce00
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
