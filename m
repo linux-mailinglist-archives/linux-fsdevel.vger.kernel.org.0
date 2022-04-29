@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9271A5151DE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Apr 2022 19:26:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94B035151E2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Apr 2022 19:26:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379627AbiD2R3n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Apr 2022 13:29:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42538 "EHLO
+        id S1379677AbiD2R3t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Apr 2022 13:29:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379517AbiD2R3Z (ORCPT
+        with ESMTP id S1379518AbiD2R3Z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 29 Apr 2022 13:29:25 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D4969D06E
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72AB59D4C7
         for <linux-fsdevel@vger.kernel.org>; Fri, 29 Apr 2022 10:26:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=PAfZABp1iNExCHmAXKO7YXQ6u4PT0MOTepjBvoeGvoE=; b=Q6hnBP8ElC2lTUtltAG/zcIR4P
-        P67M7J5OLof00m01U1PoYp0A9y8riu5SDsZEwzLrf49wd+mMGOwx4mPc4bsPpXkmjerb+6mld2pU0
-        926bXaNAd1UZxF6W7ThWeHRph9F7nAA8oyQWwKx9ANbJnS1SDOU67Lw41saND8fSGrzUfv/SXs8TL
-        xXlYQEgGLzqDfTrkqx15tdROMutQuCxexOKzqh0zTR90VfHenJ+Y/6XTme/TYrWM5XqXIoLybzk1R
-        5ONFIQetnVRc65go6CLgPm4LP9IWQ0PN6N1K3qldihO1ItYrQkcLPwLQeW6qcI79qhGpERifTxqtE
-        Z31XSnmg==;
+        bh=Orqe2oWBOGHVWK0VnqM2RUhWmSeOi4EotrHMHk3kAYg=; b=Av7OHygSIKUlWXFjhOouto8eW2
+        OEnIFqHH2ZLo+ORpPGGoNBeizk3BpO0i6ICoRg1hC/K3ZfQhcEYB/OMczJjN6Zl2aw6KNdWLGsKQR
+        3e5RsQDj/C5wwHTnpN4iJQTZqAfAkOWRl7hMzVEs8fEgPf3xYKr3p9waphJWdyM0gmKvlvzypvZrF
+        oGfmxzQOCR2zjl60qbmnA49bBhOpqK2TDwPlwBu2LrZ/V8nPeFC719GCSOeNHjBYR558R2vbg1A9n
+        vrXIBnsX32U6R9zALwtJH5oyN6rfypbIfELDpoXkH9CTsyj2lf8OJMRgOv6xaJrN0jD8lDAS7+gLz
+        ZTGbSTjg==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nkUNY-00CdYh-L1; Fri, 29 Apr 2022 17:26:04 +0000
+        id 1nkUNY-00CdYn-Of; Fri, 29 Apr 2022 17:26:04 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH 20/69] hfs: Call hfs_write_begin() and generic_write_end() directly
-Date:   Fri, 29 Apr 2022 18:25:07 +0100
-Message-Id: <20220429172556.3011843-21-willy@infradead.org>
+Subject: [PATCH 21/69] hfsplus: Call hfsplus_write_begin() and generic_write_end() directly
+Date:   Fri, 29 Apr 2022 18:25:08 +0100
+Message-Id: <20220429172556.3011843-22-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220429172556.3011843-1-willy@infradead.org>
 References: <20220429172556.3011843-1-willy@infradead.org>
@@ -48,59 +48,62 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 There is only one kind of write_begin/write_end aops, so we don't need
-to look up which aop it is, just make hfs_write_begin() available to
+to look up which aop it is, just make hfsplus_write_begin() available to
 this file and call it directly.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/hfs/extent.c | 6 +++---
- fs/hfs/hfs_fs.h | 2 ++
- fs/hfs/inode.c  | 5 ++---
- 3 files changed, 7 insertions(+), 6 deletions(-)
+ fs/hfsplus/extents.c    | 8 ++++----
+ fs/hfsplus/hfsplus_fs.h | 2 ++
+ fs/hfsplus/inode.c      | 5 ++---
+ 3 files changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/fs/hfs/extent.c b/fs/hfs/extent.c
-index 263d5028d9d1..3f7e9bef9874 100644
---- a/fs/hfs/extent.c
-+++ b/fs/hfs/extent.c
-@@ -491,10 +491,10 @@ void hfs_file_truncate(struct inode *inode)
+diff --git a/fs/hfsplus/extents.c b/fs/hfsplus/extents.c
+index 7054a542689f..721f779b4ec3 100644
+--- a/fs/hfsplus/extents.c
++++ b/fs/hfsplus/extents.c
+@@ -557,12 +557,12 @@ void hfsplus_file_truncate(struct inode *inode)
+ 		void *fsdata;
+ 		loff_t size = inode->i_size;
  
- 		/* XXX: Can use generic_cont_expand? */
- 		size = inode->i_size - 1;
--		res = pagecache_write_begin(NULL, mapping, size+1, 0, 0,
+-		res = pagecache_write_begin(NULL, mapping, size, 0, 0,
 -					    &page, &fsdata);
-+		res = hfs_write_begin(NULL, mapping, size + 1, 0, &page,
-+				&fsdata);
- 		if (!res) {
--			res = pagecache_write_end(NULL, mapping, size+1, 0, 0,
-+			res = generic_write_end(NULL, mapping, size + 1, 0, 0,
- 					page, fsdata);
- 		}
++		res = hfsplus_write_begin(NULL, mapping, size, 0,
++					  &page, &fsdata);
  		if (res)
-diff --git a/fs/hfs/hfs_fs.h b/fs/hfs/hfs_fs.h
-index b8eb0322a3e5..68d0305880f7 100644
---- a/fs/hfs/hfs_fs.h
-+++ b/fs/hfs/hfs_fs.h
-@@ -201,6 +201,8 @@ extern int hfs_get_block(struct inode *, sector_t, struct buffer_head *, int);
- extern const struct address_space_operations hfs_aops;
- extern const struct address_space_operations hfs_btree_aops;
+ 			return;
+-		res = pagecache_write_end(NULL, mapping, size,
+-			0, 0, page, fsdata);
++		res = generic_write_end(NULL, mapping, size, 0, 0,
++					page, fsdata);
+ 		if (res < 0)
+ 			return;
+ 		mark_inode_dirty(inode);
+diff --git a/fs/hfsplus/hfsplus_fs.h b/fs/hfsplus/hfsplus_fs.h
+index 1798949f269b..396e73aa0961 100644
+--- a/fs/hfsplus/hfsplus_fs.h
++++ b/fs/hfsplus/hfsplus_fs.h
+@@ -468,6 +468,8 @@ extern const struct address_space_operations hfsplus_aops;
+ extern const struct address_space_operations hfsplus_btree_aops;
+ extern const struct dentry_operations hfsplus_dentry_operations;
  
-+int hfs_write_begin(struct file *file, struct address_space *mapping,
++int hfsplus_write_begin(struct file *file, struct address_space *mapping,
 +		loff_t pos, unsigned len, struct page **pagep, void **fsdata);
- extern struct inode *hfs_new_inode(struct inode *, const struct qstr *, umode_t);
- extern void hfs_inode_write_fork(struct inode *, struct hfs_extent *, __be32 *, __be32 *);
- extern int hfs_write_inode(struct inode *, struct writeback_control *);
-diff --git a/fs/hfs/inode.c b/fs/hfs/inode.c
-index 93d9aa832139..9a26b9510da0 100644
---- a/fs/hfs/inode.c
-+++ b/fs/hfs/inode.c
-@@ -49,9 +49,8 @@ static void hfs_write_failed(struct address_space *mapping, loff_t to)
+ struct inode *hfsplus_new_inode(struct super_block *sb, struct inode *dir,
+ 				umode_t mode);
+ void hfsplus_delete_inode(struct inode *inode);
+diff --git a/fs/hfsplus/inode.c b/fs/hfsplus/inode.c
+index 73010aa4623f..905ae3660315 100644
+--- a/fs/hfsplus/inode.c
++++ b/fs/hfsplus/inode.c
+@@ -43,9 +43,8 @@ static void hfsplus_write_failed(struct address_space *mapping, loff_t to)
  	}
  }
  
--static int hfs_write_begin(struct file *file, struct address_space *mapping,
+-static int hfsplus_write_begin(struct file *file, struct address_space *mapping,
 -			loff_t pos, unsigned len,
 -			struct page **pagep, void **fsdata)
-+int hfs_write_begin(struct file *file, struct address_space *mapping,
++int hfsplus_write_begin(struct file *file, struct address_space *mapping,
 +		loff_t pos, unsigned len, struct page **pagep, void **fsdata)
  {
  	int ret;
