@@ -2,37 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D722A5151EA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Apr 2022 19:26:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B42EB5151F8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Apr 2022 19:27:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379664AbiD2R37 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Apr 2022 13:29:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42752 "EHLO
+        id S1379574AbiD2RaS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Apr 2022 13:30:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379526AbiD2R30 (ORCPT
+        with ESMTP id S1379536AbiD2R3b (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Apr 2022 13:29:26 -0400
+        Fri, 29 Apr 2022 13:29:31 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03E2E9E9D3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Apr 2022 10:26:07 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 989CEA27FA
+        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Apr 2022 10:26:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=U3hUOwNygGz1zGvOEmViKYtkKTgTTOWc2Xf9zuBI+cE=; b=fjgI8Z/VqMFxH86T6rInwI/wYQ
-        0pbwWchwA9TozxH2c36wn2yY/gJc0DZysookR2oz83x0HVm454wbbJ3x4mXF3bD7SShuN7zAai7xs
-        +uNUYByb14RKQ9Pw/gZYy/hwblGAVpIEVjcNC2F9KH5YDBeW85nQicJlZUTCDsTBmi+HYY1ppOd0L
-        cpUcDklnJof/tBfRwc65jt8eebV45epb0+AT6v2OvyFpuYSU+OMh/VHZkMwgDsWMGE8gwAdtDSEmr
-        ls2k4fYrdFyoGTEqQBGCQUUYj5zTTVVUSZfqTR35Bq2q6oQNJiznwTZNQHq+bCpW8XaScPp9q9b56
-        J1Am1j0Q==;
+        bh=ZNKJWFDCUWil8jx/xHZmnIEY4w4yDlyboSDNkzjtICU=; b=Ph992qZNAl0F6XMJcn6N2/BBcY
+        VdH9rl/eDs2xVZys8GqVgXe0P+Nz9+xkduDldVfs80sLR+M0oEoF4Ov2JPts4qot7NIUyMI9+n98U
+        1/3pOwvi02aEED+HADweMbRyE2dsi9A5BdBWdCxzSRD73e9XyQRg4ttvT6xyH31WRpcixPG4rB+4t
+        64kj+BTWSbxObvJvykTiEpfzVdOaWSgEF7ljGP7AP6rSUVX5O6dtocyOIy18ArGKqHj130xNZbGfG
+        zU70QI+sa/4Pw8isrY+zawox6VishHklgcI4ZZq8im+C9J5O+Jpfg2dwGM8D63vqcG24qbIbSC7tB
+        eGKg/fZQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nkUNZ-00CdZ7-8q; Fri, 29 Apr 2022 17:26:05 +0000
+        id 1nkUNZ-00CdZC-D7; Fri, 29 Apr 2022 17:26:05 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH 25/69] fs: Remove pagecache_write_begin() and pagecache_write_end()
-Date:   Fri, 29 Apr 2022 18:25:12 +0100
-Message-Id: <20220429172556.3011843-26-willy@infradead.org>
+Cc:     Miaohe Lin <linmiaohe@huawei.com>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH 26/69] filemap: Remove obsolete comment in lock_page
+Date:   Fri, 29 Apr 2022 18:25:13 +0100
+Message-Id: <20220429172556.3011843-27-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220429172556.3011843-1-willy@infradead.org>
 References: <20220429172556.3011843-1-willy@infradead.org>
@@ -47,68 +48,33 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-These wrappers have no more users; remove them.
+From: Miaohe Lin <linmiaohe@huawei.com>
 
+We no longer need the page's inode pinned.  This comment dates back to
+commit db37648cd6ce ("[PATCH] mm: non syncing lock_page()") which added
+lock_page_nosync().  That was removed by commit 7eaceaccab5f ("block:
+remove per-queue plugging") which also made this comment obsolete.
+
+Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- include/linux/fs.h | 12 ------------
- mm/filemap.c       | 20 --------------------
- 2 files changed, 32 deletions(-)
+ include/linux/pagemap.h | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index a0e73432526f..b35ce086a7a1 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -380,18 +380,6 @@ struct address_space_operations {
- 
- extern const struct address_space_operations empty_aops;
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 65ae8f96554b..ab47579af434 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -908,9 +908,6 @@ static inline void folio_lock(struct folio *folio)
+ 		__folio_lock(folio);
+ }
  
 -/*
-- * pagecache_write_begin/pagecache_write_end must be used by general code
-- * to write into the pagecache.
+- * lock_page may only be called if we have the page's inode pinned.
 - */
--int pagecache_write_begin(struct file *, struct address_space *mapping,
--				loff_t pos, unsigned len, unsigned flags,
--				struct page **pagep, void **fsdata);
--
--int pagecache_write_end(struct file *, struct address_space *mapping,
--				loff_t pos, unsigned len, unsigned copied,
--				struct page *page, void *fsdata);
--
- /**
-  * struct address_space - Contents of a cacheable, mappable object.
-  * @host: Owner, either the inode or the block_device.
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 0751843b052f..c15cfc28f9ce 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -3622,26 +3622,6 @@ struct page *read_cache_page_gfp(struct address_space *mapping,
- }
- EXPORT_SYMBOL(read_cache_page_gfp);
- 
--int pagecache_write_begin(struct file *file, struct address_space *mapping,
--				loff_t pos, unsigned len, unsigned flags,
--				struct page **pagep, void **fsdata)
--{
--	const struct address_space_operations *aops = mapping->a_ops;
--
--	return aops->write_begin(file, mapping, pos, len, pagep, fsdata);
--}
--EXPORT_SYMBOL(pagecache_write_begin);
--
--int pagecache_write_end(struct file *file, struct address_space *mapping,
--				loff_t pos, unsigned len, unsigned copied,
--				struct page *page, void *fsdata)
--{
--	const struct address_space_operations *aops = mapping->a_ops;
--
--	return aops->write_end(file, mapping, pos, len, copied, page, fsdata);
--}
--EXPORT_SYMBOL(pagecache_write_end);
--
- /*
-  * Warn about a page cache invalidation failure during a direct I/O write.
-  */
+ static inline void lock_page(struct page *page)
+ {
+ 	struct folio *folio;
 -- 
 2.34.1
 
