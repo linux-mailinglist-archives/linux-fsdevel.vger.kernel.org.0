@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 99B9B5151D6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Apr 2022 19:26:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F12B45151D7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Apr 2022 19:26:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379612AbiD2R3b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Apr 2022 13:29:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42488 "EHLO
+        id S1379521AbiD2R3d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Apr 2022 13:29:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42514 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377195AbiD2R3Y (ORCPT
+        with ESMTP id S1378319AbiD2R3Y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 29 Apr 2022 13:29:24 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B55FF986D9
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E986E98F6B
         for <linux-fsdevel@vger.kernel.org>; Fri, 29 Apr 2022 10:26:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=ha8ebKgRGxtayEYqUXJ+XYzoZ7W6fZr5XiakkCOM3DA=; b=OaXJ2LSwFsfEqRUeCbaot+K7Ng
-        8G4ErGJ+dNymu62YwVsE+mjV/jT4G/hF4J+u729lvWdDHAmweHf5vI9rS5z6uxR58B3L1LpfdQRpb
-        2bQGSbbxq5CBCvk7Zk/miFidUlANFv7DXeBtuB8LoicH6H60+CYrU+pT8BVdcckpqoViZviZ2d6xy
-        4+z8Mb8+1heTQx6FVwJYrxTbNyplX+APtE2bCvbN/9rMOdDi9BCaHNRgNul3Mpd2hn/i5sf2x92a4
-        dc1tIyFJuXL8xWUgkkd+2BRvF1093Q4MnzcEvbACbSBeO4XfRNHX+GjBDFnZZBAIWwsi7urC2TNoH
-        70nri9Eg==;
+        bh=XGk4D40/83Mk2b0xnEMti2TPyZ0SXFmKONNwBKO+QXQ=; b=RbMRdyntGiYhSBvJF0sn5L4M1s
+        bQJTtWuh7pocQ24MIRgCiUEvkC9c90vXjVoIivP4OxI4h6y9MisVH3tTX3e30dF7cTjty+yK67XIm
+        PtCvwVQsn2BgsyauWLvYt1wp7Jx6FvYRC1+udI+/EReQECvq7a9gFD47pMFMj3C5HTWuRnTsFAd+/
+        AbPuhnrWeLiT7iwC2CXVG/J/k3aqlHAY53UiJ94HMAjJpVMHGqPZCd4VbLDO7tGBLAzb55wUC5xX/
+        /7zv1XAVvxymEv0RV/QhCY4JdVo4KxCduuNTpwtTmi7WomI1Lau9t/0iS0pZe14JOFvV+IU5abVb3
+        f/ykBLHQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nkUNX-00CdXf-1D; Fri, 29 Apr 2022 17:26:03 +0000
+        id 1nkUNX-00CdXi-4F; Fri, 29 Apr 2022 17:26:03 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCH 10/69] fs: Remove AOP_FLAG_NOFS
-Date:   Fri, 29 Apr 2022 18:24:57 +0100
-Message-Id: <20220429172556.3011843-11-willy@infradead.org>
+Subject: [PATCH 11/69] fs: Remove aop_flags parameter from netfs_write_begin()
+Date:   Fri, 29 Apr 2022 18:24:58 +0100
+Message-Id: <20220429172556.3011843-12-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220429172556.3011843-1-willy@infradead.org>
 References: <20220429172556.3011843-1-willy@infradead.org>
@@ -48,74 +48,98 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-With all users of this flag gone, we can stop testing whether it's set.
+There are no more aop flags left, so remove the parameter.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/netfs/buffered_read.c | 6 +-----
- include/linux/fs.h       | 4 ----
- mm/folio-compat.c        | 2 --
- 3 files changed, 1 insertion(+), 11 deletions(-)
+ Documentation/filesystems/netfs_library.rst | 1 -
+ fs/9p/vfs_addr.c                            | 2 +-
+ fs/afs/write.c                              | 2 +-
+ fs/ceph/addr.c                              | 2 +-
+ fs/netfs/buffered_read.c                    | 4 ++--
+ include/linux/netfs.h                       | 2 +-
+ 6 files changed, 6 insertions(+), 7 deletions(-)
 
+diff --git a/Documentation/filesystems/netfs_library.rst b/Documentation/filesystems/netfs_library.rst
+index 69f00179fdfe..d51c2a5ccf57 100644
+--- a/Documentation/filesystems/netfs_library.rst
++++ b/Documentation/filesystems/netfs_library.rst
+@@ -142,7 +142,6 @@ Three read helpers are provided::
+ 			      struct address_space *mapping,
+ 			      loff_t pos,
+ 			      unsigned int len,
+-			      unsigned int flags,
+ 			      struct folio **_folio,
+ 			      void **_fsdata);
+ 
+diff --git a/fs/9p/vfs_addr.c b/fs/9p/vfs_addr.c
+index 501128188343..d311e68e21fd 100644
+--- a/fs/9p/vfs_addr.c
++++ b/fs/9p/vfs_addr.c
+@@ -275,7 +275,7 @@ static int v9fs_write_begin(struct file *filp, struct address_space *mapping,
+ 	 * file.  We need to do this before we get a lock on the page in case
+ 	 * there's more than one writer competing for the same cache block.
+ 	 */
+-	retval = netfs_write_begin(filp, mapping, pos, len, flags, &folio, fsdata);
++	retval = netfs_write_begin(filp, mapping, pos, len, &folio, fsdata);
+ 	if (retval < 0)
+ 		return retval;
+ 
+diff --git a/fs/afs/write.c b/fs/afs/write.c
+index 4763132ca57e..af496c98d394 100644
+--- a/fs/afs/write.c
++++ b/fs/afs/write.c
+@@ -60,7 +60,7 @@ int afs_write_begin(struct file *file, struct address_space *mapping,
+ 	 * file.  We need to do this before we get a lock on the page in case
+ 	 * there's more than one writer competing for the same cache block.
+ 	 */
+-	ret = netfs_write_begin(file, mapping, pos, len, flags, &folio, fsdata);
++	ret = netfs_write_begin(file, mapping, pos, len, &folio, fsdata);
+ 	if (ret < 0)
+ 		return ret;
+ 
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index aa25bffd4823..415f0886bc25 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -1318,7 +1318,7 @@ static int ceph_write_begin(struct file *file, struct address_space *mapping,
+ 	struct folio *folio = NULL;
+ 	int r;
+ 
+-	r = netfs_write_begin(file, inode->i_mapping, pos, len, 0, &folio, NULL);
++	r = netfs_write_begin(file, inode->i_mapping, pos, len, &folio, NULL);
+ 	if (r == 0)
+ 		folio_wait_fscache(folio);
+ 	if (r < 0) {
 diff --git a/fs/netfs/buffered_read.c b/fs/netfs/buffered_read.c
-index 281a88a5b8dc..65c17c5a5567 100644
+index 65c17c5a5567..1d44509455a5 100644
 --- a/fs/netfs/buffered_read.c
 +++ b/fs/netfs/buffered_read.c
-@@ -302,7 +302,6 @@ static bool netfs_skip_folio_read(struct folio *folio, loff_t pos, size_t len,
-  * @mapping: The mapping to read from
-  * @pos: File position at which the write will begin
-  * @len: The length of the write (may extend beyond the end of the folio chosen)
-- * @aop_flags: AOP_* flags
-  * @_folio: Where to put the resultant folio
-  * @_fsdata: Place for the netfs to store a cookie
-  *
-@@ -335,16 +334,13 @@ int netfs_write_begin(struct file *file, struct address_space *mapping,
+@@ -328,8 +328,8 @@ static bool netfs_skip_folio_read(struct folio *folio, loff_t pos, size_t len,
+  * This is usable whether or not caching is enabled.
+  */
+ int netfs_write_begin(struct file *file, struct address_space *mapping,
+-		      loff_t pos, unsigned int len, unsigned int aop_flags,
+-		      struct folio **_folio, void **_fsdata)
++		      loff_t pos, unsigned int len, struct folio **_folio,
++		      void **_fsdata)
+ {
  	struct netfs_io_request *rreq;
  	struct netfs_i_context *ctx = netfs_i_context(file_inode(file ));
- 	struct folio *folio;
--	unsigned int fgp_flags;
-+	unsigned int fgp_flags = FGP_LOCK | FGP_WRITE | FGP_CREAT | FGP_STABLE;
- 	pgoff_t index = pos >> PAGE_SHIFT;
- 	int ret;
+diff --git a/include/linux/netfs.h b/include/linux/netfs.h
+index c7bf1eaf51d5..1c29f317d907 100644
+--- a/include/linux/netfs.h
++++ b/include/linux/netfs.h
+@@ -276,7 +276,7 @@ struct readahead_control;
+ extern void netfs_readahead(struct readahead_control *);
+ extern int netfs_readpage(struct file *, struct page *);
+ extern int netfs_write_begin(struct file *, struct address_space *,
+-			     loff_t, unsigned int, unsigned int, struct folio **,
++			     loff_t, unsigned int, struct folio **,
+ 			     void **);
  
- 	DEFINE_READAHEAD(ractl, file, NULL, mapping, index);
- 
- retry:
--	fgp_flags = FGP_LOCK | FGP_WRITE | FGP_CREAT | FGP_STABLE;
--	if (aop_flags & AOP_FLAG_NOFS)
--		fgp_flags |= FGP_NOFS;
- 	folio = __filemap_get_folio(mapping, index, fgp_flags,
- 				    mapping_gfp_mask(mapping));
- 	if (!folio)
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index e108aff23a28..f81bc5cbcbb6 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -275,10 +275,6 @@ enum positive_aop_returns {
- 	AOP_TRUNCATED_PAGE	= 0x80001,
- };
- 
--#define AOP_FLAG_NOFS			0x0002 /* used by filesystem to direct
--						* helper code (eg buffer layer)
--						* to clear GFP_FS from alloc */
--
- /*
-  * oh the beauties of C type declarations.
-  */
-diff --git a/mm/folio-compat.c b/mm/folio-compat.c
-index 46fa179e32fb..3e42ddb81918 100644
---- a/mm/folio-compat.c
-+++ b/mm/folio-compat.c
-@@ -135,8 +135,6 @@ struct page *grab_cache_page_write_begin(struct address_space *mapping,
- {
- 	unsigned fgp_flags = FGP_LOCK | FGP_WRITE | FGP_CREAT | FGP_STABLE;
- 
--	if (flags & AOP_FLAG_NOFS)
--		fgp_flags |= FGP_NOFS;
- 	return pagecache_get_page(mapping, index, fgp_flags,
- 			mapping_gfp_mask(mapping));
- }
+ extern void netfs_subreq_terminated(struct netfs_io_subrequest *, ssize_t, bool);
 -- 
 2.34.1
 
