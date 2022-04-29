@@ -2,111 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D69F514107
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Apr 2022 05:48:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7590514173
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Apr 2022 06:34:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236619AbiD2Dmx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 28 Apr 2022 23:42:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59904 "EHLO
+        id S237316AbiD2Ehg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Apr 2022 00:37:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235940AbiD2Dmw (ORCPT
+        with ESMTP id S230133AbiD2Ehf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 28 Apr 2022 23:42:52 -0400
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEC5CBC879;
-        Thu, 28 Apr 2022 20:39:35 -0700 (PDT)
-Received: by mail-pl1-f172.google.com with SMTP id s14so6044238plk.8;
-        Thu, 28 Apr 2022 20:39:35 -0700 (PDT)
+        Fri, 29 Apr 2022 00:37:35 -0400
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 247CA8A9FD;
+        Thu, 28 Apr 2022 21:34:17 -0700 (PDT)
+Received: by mail-pj1-x1034.google.com with SMTP id cx11-20020a17090afd8b00b001d9fe5965b3so7583477pjb.3;
+        Thu, 28 Apr 2022 21:34:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=evyUHOqOn3TXKm02pc1sLqPIBDCTJ+500dIEM+PwO1Q=;
+        b=Xbr0A4/YrpGb8LHdyrQj7Uvb273qfk6dEk+N6FmUaLsp9XdYkONWGAZxnE53NyrrG2
+         TjTRbMuxublHgZAmC/DK4+MTdVRbaGOO5SSvAt8jNuxEfBE189aLZT8Z4K+STordTbN0
+         KdP6DaFtYLoOJKmEyV0yvkfMozHG7hmtZERXkriUcDPGAaAc/MtnJaajcb8yM8LXe3AI
+         FLv8ewTJ/zdfqf2SDfN91k3qeGs7EgUT66+TnsqhOx1kH0zFIzRDd8ezVOA/nzAHNOP3
+         RXSCbhi6QM86Xkei0TbKBRwzBAerdyXK7/TMmAhMZ3agjlL0y8f+arA7arBD9jwSvopS
+         4h2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=qUwunun/VVG6pwTOWhDwXkr9BbstGxHqbcx5TzpKkl0=;
-        b=0kLl6Xc3IU3alOBNuzWMaJk0lmKyuIBgV+ZxRbEIw7TUal4PFFHNwG7nawdWDBjmzh
-         eHFnIXfXEKB7C0wJJiHEdXFluZCsZmSew0QClY4Bn/QaRJEqBQ0/m6D23XQAu/W0scGW
-         fyR3KQCIJVXYKd+nJHDiUNX/dxnzPRg2/RYMgcsB2++dMzioYYHjCi2f178HKpF4WP0T
-         8ZdHHQ2aiPKYP2BEf39H10Gw2AszoHHuDgxjPDp/nV0A6NgAx2rABGPk0C7JoGjo9fE+
-         X42buy0W9FOZVWBRhQkOFBRIf4teOJ7yYw/zSZqzHamxdx8wjoueilOlMfEMDnOl3IQa
-         IgLQ==
-X-Gm-Message-State: AOAM533K1aUtO1rjW8hccpzJm1kOcQReM0P/0TBc3qX/OLFjFF549B0h
-        eW/UdqoE3rKi4hbMvxEjSLc=
-X-Google-Smtp-Source: ABdhPJxtxVjuFEv0W1FHl8AvFyGb++7DZPYLFEeHuA6owahJDEYGMQWByu+vBRdjF/5hfBrS312ruw==
-X-Received: by 2002:a17:902:7884:b0:158:b5b6:572c with SMTP id q4-20020a170902788400b00158b5b6572cmr37168381pll.144.1651203575217;
-        Thu, 28 Apr 2022 20:39:35 -0700 (PDT)
-Received: from ?IPV6:2601:647:4000:d7:feaa:14ff:fe9d:6dbd? ([2601:647:4000:d7:feaa:14ff:fe9d:6dbd])
-        by smtp.gmail.com with ESMTPSA id z2-20020a655a42000000b003c14af505efsm4537074pgs.7.2022.04.28.20.39.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 28 Apr 2022 20:39:33 -0700 (PDT)
-Message-ID: <8f00ce03-ec87-b356-29a1-3b01d6c75efa@acm.org>
-Date:   Thu, 28 Apr 2022 20:39:31 -0700
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=evyUHOqOn3TXKm02pc1sLqPIBDCTJ+500dIEM+PwO1Q=;
+        b=eYijC940CsO2LBTle9UEInmjlhPUcq3KoPfMQOhaphSITuCAdA1CnL5UTig5s5PedH
+         bUC993ws1nXkIM4WvzYH52K3K8lL209b07/G6DSXlOqRkQHeYdC5sLDNQBjoS1T2J0Qj
+         xMPjvaOJVB/EsO87/ZqmG9VKrQ3dc15OzBNCWJur+UTEerrZiJBR+bSFKHeIzxS6i7kj
+         RzfhQijegoAUlInCtjt2L2213I/C5r2jCdXbU5uOHcXzQsZ63wmVk4fYd444hlM1sxy9
+         xuPCbkvBMIKNExHhbhiLD4iRrvEA9nS5Pbejunu5wQEiSCH8j+Bkvs2sYtFVN1CUWIpr
+         qpXw==
+X-Gm-Message-State: AOAM5308evTJ10Kcij/m2DO1l8Dxl3u4PTGoyocGi01x+wmohsfINFWW
+        Qf5RUiT5HZDFAegXhwgOx2dFnRHiFjhHsWYreVg=
+X-Google-Smtp-Source: ABdhPJz+N6SLkD7HusZ2PQAqngkmUnrQp6p3IGUSpB0v/dVKrkW6Qn4I/U1uv89fGoPc1oW58LodLZVIyMg4jqJ1AM8=
+X-Received: by 2002:a17:90b:4d86:b0:1da:3cba:bd56 with SMTP id
+ oj6-20020a17090b4d8600b001da3cbabd56mr1871622pjb.116.1651206856476; Thu, 28
+ Apr 2022 21:34:16 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [dm-devel] [PATCH v4 00/10] Add Copy offload support
-Content-Language: en-US
-To:     Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-        Nitesh Shetty <nj.shetty@samsung.com>
-Cc:     linux-scsi@vger.kernel.org, nitheshshetty@gmail.com,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, dm-devel@redhat.com,
-        linux-fsdevel@vger.kernel.org
-References: <CGME20220426101804epcas5p4a0a325d3ce89e868e4924bbdeeba6d15@epcas5p4.samsung.com>
- <20220426101241.30100-1-nj.shetty@samsung.com>
- <6a85e8c8-d9d1-f192-f10d-09052703c99a@opensource.wdc.com>
- <20220427124951.GA9558@test-zns>
- <c285f0da-ab1d-2b24-e5a4-21193ef93155@opensource.wdc.com>
- <20220428074926.GG9558@test-zns>
- <a6d1c61a-14f2-36dc-5952-4d6897720c7a@opensource.wdc.com>
-From:   Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <a6d1c61a-14f2-36dc-5952-4d6897720c7a@opensource.wdc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
-        SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+References: <20220322115148.3870-1-dharamhans87@gmail.com> <20220322115148.3870-2-dharamhans87@gmail.com>
+ <CAJfpegtunCe5hV1b9cKJgPk44B2SQgtK3RG5r2is8V5VrMYeNg@mail.gmail.com>
+ <CACUYsyGmab57_efkXRXD8XvO6Stn4JbJM8+NfBHNKQ+FLcA7nA@mail.gmail.com>
+ <CAJfpegt5qWE4UepoDj9QBuT--ysT6+7E-6ZQvNeZ+bODRHHCvg@mail.gmail.com> <CACUYsyFrP5UDOJKCLOr+PeHjnh9RV=wWOBRFN31-Fr-gi1d2WA@mail.gmail.com>
+In-Reply-To: <CACUYsyFrP5UDOJKCLOr+PeHjnh9RV=wWOBRFN31-Fr-gi1d2WA@mail.gmail.com>
+From:   Dharmendra Hans <dharamhans87@gmail.com>
+Date:   Fri, 29 Apr 2022 10:04:04 +0530
+Message-ID: <CACUYsyGuHEM8U6qsqEE_=mUcAgAFzCYuCLcCtiBf1CGirLE95Q@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] FUSE: Implement atomic lookup + open
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-fsdevel@vger.kernel.org,
+        fuse-devel <fuse-devel@lists.sourceforge.net>,
+        linux-kernel@vger.kernel.org, Dharmendra Singh <dsingh@ddn.com>,
+        Bernd Schubert <bschubert@ddn.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/28/22 14:37, Damien Le Moal wrote:
-> On 4/28/22 16:49, Nitesh Shetty wrote:
->> On Thu, Apr 28, 2022 at 07:05:32AM +0900, Damien Le Moal wrote:
->>> On 4/27/22 21:49, Nitesh Shetty wrote:
->>>> O Wed, Apr 27, 2022 at 11:19:48AM +0900, Damien Le Moal wrote:
->>>>> On 4/26/22 19:12, Nitesh Shetty wrote:
->>>>>> The patch series covers the points discussed in November 2021 virtual call
->>>>>> [LSF/MM/BFP TOPIC] Storage: Copy Offload[0].
->>>>>> We have covered the Initial agreed requirements in this patchset.
->>>>>> Patchset borrows Mikulas's token based approach for 2 bdev
->>>>>> implementation.
->>>>>>
->>>>>> Overall series supports –
->>>>>>
->>>>>> 1. Driver
->>>>>> - NVMe Copy command (single NS), including support in nvme-target (for
->>>>>>      block and file backend)
->>>>>
->>>>> It would also be nice to have copy offload emulation in null_blk for testing.
->>>>>
->>>>
->>>> We can plan this in next phase of copy support, once this series settles down.
->>>
->>> So how can people test your series ? Not a lot of drives out there with
->>> copy support.
->>>
->>
->> Yeah not many drives at present, Qemu can be used to test NVMe copy.
-> 
-> Upstream QEMU ? What is the command line options ? An example would be
-> nice. But I still think null_blk support would be easiest.
+On Mon, Apr 25, 2022 at 4:13 PM Dharmendra Hans <dharamhans87@gmail.com> wrote:
+>
+> On Mon, Apr 25, 2022 at 1:08 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
+> >
+> > On Mon, 25 Apr 2022 at 07:26, Dharmendra Hans <dharamhans87@gmail.com> wrote:
+> > >
+> > > On Fri, Apr 22, 2022 at 8:59 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
+> > > >
+> > > > On Tue, 22 Mar 2022 at 12:52, Dharmendra Singh <dharamhans87@gmail.com> wrote:
+> > > > >
+> > > > > From: Dharmendra Singh <dsingh@ddn.com>
+> > > > >
+> > > > > There are couple of places in FUSE where we do agressive
+> > > > > lookup.
+> > > > > 1) When we go for creating a file (O_CREAT), we do lookup
+> > > > > for non-existent file. It is very much likely that file
+> > > > > does not exists yet as O_CREAT is passed to open(). This
+> > > > > lookup can be avoided and can be performed  as part of
+> > > > > open call into libfuse.
+> > > > >
+> > > > > 2) When there is normal open for file/dir (dentry is
+> > > > > new/negative). In this case since we are anyway going to open
+> > > > > the file/dir with USER space, avoid this separate lookup call
+> > > > > into libfuse and combine it with open.
+> > > > >
+> > > > > This lookup + open in single call to libfuse and finally to
+> > > > > USER space has been named as atomic open. It is expected
+> > > > > that USER space open the file and fills in the attributes
+> > > > > which are then used to make inode stand/revalidate in the
+> > > > > kernel cache.
+> > > > >
+> > > > > Signed-off-by: Dharmendra Singh <dsingh@ddn.com>
+> > > > > ---
+> > > > > v2 patch includes:
+> > > > > - disabled o-create atomicity when the user space file system
+> > > > >   does not have an atomic_open implemented. In principle lookups
+> > > > >   for O_CREATE also could be optimized out, but there is a risk
+> > > > >   to break existing fuse file systems. Those file system might
+> > > > >   not expect open O_CREATE calls for exiting files, as these calls
+> > > > >   had been so far avoided as lookup was done first.
+> > > >
+> > > > So we enabling atomic lookup+create only if FUSE_DO_ATOMIC_OPEN is
+> > > > set.  This logic is a bit confusing as CREATE is unrelated to
+> > > > ATOMIC_OPEN.   It would be cleaner to have a separate flag for atomic
+> > > > lookup+create.  And in fact FUSE_DO_ATOMIC_OPEN could be dropped and
+> > > > the usual logic of setting fc->no_atomic_open if ENOSYS is returned
+> > > > could be used instead.
+> > >
+> > > I am aware that ATOMIC_OPEN is not directly related to CREATE. But
+> > > This is more of feature enabling by using the flag. If we do not
+> > > FUSE_DO_ATOMIC_OPEN, CREATE calls would not know that it need to
+> > > optimize lookup calls otherwise as we know only from open call that
+> > > atomic open is implemented.
+> >
+> > Right.  So because the atomic lookup+crteate would need a new flag to
+> > return whether the file was created or not, this is probably better
+> > implemented as a completely new request type (FUSE_ATOMIC_CREATE?)
+> >
+> > No new INIT flags needed at all, since we can use the ENOSYS mechanism
+> > to determine whether the filesystem has atomic open/create ops or not.
+>
+> Yes, it sounds good to have a separate request type for CREATE. I
+> would separate out the patch into two for create and open.  Will omit
+> INIT flags. Also, I would change libfuse code accordingly.
 
-+1 for adding copy offloading support in null_blk. That enables running 
-copy offloading tests without depending on Qemu.
-
-Thanks,
-
-Bart.
+Actually when writing the code, I observe that not having INIT flags
+works fine for atomic create but it does not work well for atomic
+open case considering specially 3rd  patch which optimises
+d_revalidate() lookups.
+(https://lore.kernel.org/linux-fsdevel/20220322115148.3870-3-dharamhans87@gmail.com/,
+ we did not receive any comments on it so far).
+So it looks like we need INIT flags in atomic open case at least
+considering that 3rd patch would go in as well.
