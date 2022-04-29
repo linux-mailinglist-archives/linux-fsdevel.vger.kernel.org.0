@@ -2,177 +2,219 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 152B6515132
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Apr 2022 18:56:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD12B515173
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Apr 2022 19:16:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379355AbiD2RAA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Apr 2022 13:00:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35840 "EHLO
+        id S1379457AbiD2RUE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Apr 2022 13:20:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233453AbiD2Q77 (ORCPT
+        with ESMTP id S1379100AbiD2RUA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Apr 2022 12:59:59 -0400
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDBF43192A;
-        Fri, 29 Apr 2022 09:56:40 -0700 (PDT)
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 23TEgigw032179;
-        Fri, 29 Apr 2022 16:56:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-id : content-transfer-encoding : mime-version; s=corp-2021-07-09;
- bh=P8K+3JcciMfHNr47KLEX6blS1+yobM4rF3NIxT5BW7Y=;
- b=0kuTdqVT+qTciqp7QEoYzyLR0VZTNXvG5Rw1OSWUw5MhsU0k0ZuV2IleqFlrkLlLbyn8
- krHR48ciM+PtrlKUci3lbwN86QbKvgeMVpAXPi/3gn9TXoWXZs6/PRLklhlMQYG50Qwg
- UFfTT5p2omj1YF3iV/BPh899fBYxsM+HfpH4eGFkT62wA3SRAYRMWf/x6+HOIHA4gZrS
- tkDQqjcHhAk17rR003Tpqv4op1IuhQZvMMA3O9pSpYTdlCy1pM00/my5s2SFX+cYiRsX
- R+t6XWqHrYVgv9C/G3MR5ZfzDGGxaWM6edxHwFwuLuieraggLvND6/Gs8e20ObepEJeo Qg== 
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3fmb106mqa-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 29 Apr 2022 16:56:36 +0000
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.16.1.2/8.16.1.2) with SMTP id 23TGVUi6018850;
-        Fri, 29 Apr 2022 16:56:35 GMT
-Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2047.outbound.protection.outlook.com [104.47.66.47])
-        by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com with ESMTP id 3fm7w89d9e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 29 Apr 2022 16:56:34 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Kt+K8H7xsU1N/wEfpmqeDNcudIAADE9Tr5mbOG9GK1pBqS+xB+4h/0Mjf8ve2ogCCvEWLzobRr9P6M7bC1Suo8WBvgudhOyYP9qfipS/xIWtW9UbqqD+HIq2IUJnWqLUTRRYoD2eXMJ96EXV1qYfvWXRBPA6/Oi7hWEXanzwq63XuE6Up4Id4Uxmdu+hgF23KvxB7Y5bNvkMjIepj/o2q7iKJiw2H2B10IaxfoTZLTLT6tzy2SUliNUgh843xsZuobL3LReX+s8yIlrYSa79OMPQxs7TOriKsZC8sY8D1HVLA722hIr8hQSeSGTtIno1fmlNr0zAbmF2YxLqP+nuWw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=P8K+3JcciMfHNr47KLEX6blS1+yobM4rF3NIxT5BW7Y=;
- b=EK494BeCQA4wipZo7upOPq98w8Gj9+mroLy0uas3zz/oHquUVaCmeWn5OPdScpXhEjchiVza6otu0aybM9aHZlNF5EGObq83Y/daYqVSsHNMDrfMc23npZE9lo3cfVqBIrXZUuhkqI2e3tKVSZrWqFboTdP73EEU64P67InhopTpiwY/Q9TgLnED8hn0Nw7sGJh14ekEsdebCYy6k4MKNmDG2cDWM/OOtN3PZbNkCX9VnBZgh9fmbRTc/kIXgvgtmHpwyWxegt3OMVFLEFfaLgNaJbL3PFApUTXsbpYocvuc6r/EFm6wHclWhK61+C6oBFCqjTI8nL2XAKrz6W2c3A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=P8K+3JcciMfHNr47KLEX6blS1+yobM4rF3NIxT5BW7Y=;
- b=e4NBzhzaYhL3rPe0i5J0w57wQClCfORFjfGAtsOmvACo8HrCemwZMERBoDP3XsfU+5YWzK+bZI7pECYDEiinuBp6IEU41v8TlOfVYGtt92lDPKI71j84gQUMeVcaK++uV5cZsBpLQnVEG5HWuPAOtDEfyY1Qsq/O/bLIlAyyDkM=
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
- by CO6PR10MB5410.namprd10.prod.outlook.com (2603:10b6:303:13d::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5206.13; Fri, 29 Apr
- 2022 16:56:32 +0000
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::ed81:8458:5414:f59f]) by BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::ed81:8458:5414:f59f%9]) with mapi id 15.20.5206.013; Fri, 29 Apr 2022
- 16:56:32 +0000
-From:   Chuck Lever III <chuck.lever@oracle.com>
-To:     Bruce Fields <bfields@fieldses.org>
-CC:     Dai Ngo <dai.ngo@oracle.com>, Jeff Layton <jlayton@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH RFC v23 0/7] NFSD: Initial implementation of NFSv4
- Courteous Server
-Thread-Topic: [PATCH RFC v23 0/7] NFSD: Initial implementation of NFSv4
- Courteous Server
-Thread-Index: AQHYWs6CPuCkiaNLVUqe4GH4xweRu60HBTwAgAAZTYA=
-Date:   Fri, 29 Apr 2022 16:56:32 +0000
-Message-ID: <05A3D378-8A1A-4F3E-A1BD-4DEC1F5A9F2F@oracle.com>
-References: <1651129595-6904-1-git-send-email-dai.ngo@oracle.com>
- <20220429152558.GG7107@fieldses.org>
-In-Reply-To: <20220429152558.GG7107@fieldses.org>
+        Fri, 29 Apr 2022 13:20:00 -0400
+Received: from mailout2.w2.samsung.com (mailout2.w2.samsung.com [211.189.100.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 869458878E;
+        Fri, 29 Apr 2022 10:16:41 -0700 (PDT)
+Received: from uscas1p1.samsung.com (unknown [182.198.245.206])
+        by mailout2.w2.samsung.com (KnoxPortal) with ESMTP id 20220429171638usoutp02eb11944212bbad4d6c61b377f484439f~qbX1sF-kC2806928069usoutp02K;
+        Fri, 29 Apr 2022 17:16:38 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w2.samsung.com 20220429171638usoutp02eb11944212bbad4d6c61b377f484439f~qbX1sF-kC2806928069usoutp02K
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1651252598;
+        bh=2XGdYd/SjcBGd5d7dysZkIrck12E/j/iG27vLdTdMNM=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References:From;
+        b=VPmgXZQK0/RfLExiUeX2A62bn/alMCrbSg6gAKYVsTlURT1kjYybA1dcCa8eSfwGv
+         DQKRvZney48e4UeLY3dmOcsqJwyGBGwlnKNNkTQtAdQC1HXVW2nwwiYOX1aaF/3ZkL
+         fVJVFK+SeAwtaCFEFWaR26IvRwSkrIXrq1XK5o08=
+Received: from ussmges2new.samsung.com (u111.gpu85.samsung.co.kr
+        [203.254.195.111]) by uscas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20220429171638uscas1p131c2d50f50206b6e406bc36481e59170~qbX1f9CZE2081520815uscas1p1x;
+        Fri, 29 Apr 2022 17:16:38 +0000 (GMT)
+Received: from uscas1p2.samsung.com ( [182.198.245.207]) by
+        ussmges2new.samsung.com (USCPEMTA) with SMTP id EA.10.09642.67D1C626; Fri,
+        29 Apr 2022 13:16:38 -0400 (EDT)
+Received: from ussmgxs2new.samsung.com (u91.gpu85.samsung.co.kr
+        [203.254.195.91]) by uscas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20220429171638uscas1p23b334cc35b918428c7c3938fb1df6ef2~qbX06f9RV3222232222uscas1p2u;
+        Fri, 29 Apr 2022 17:16:38 +0000 (GMT)
+X-AuditID: cbfec36f-c15ff700000025aa-e6-626c1d76f171
+Received: from SSI-EX4.ssi.samsung.com ( [105.128.2.145]) by
+        ussmgxs2new.samsung.com (USCPEXMTA) with SMTP id C4.43.09672.57D1C626; Fri,
+        29 Apr 2022 13:16:37 -0400 (EDT)
+Received: from SSI-EX3.ssi.samsung.com (105.128.2.228) by
+        SSI-EX4.ssi.samsung.com (105.128.2.229) with Microsoft SMTP Server
+        (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+        15.1.2375.7; Fri, 29 Apr 2022 10:16:36 -0700
+Received: from SSI-EX3.ssi.samsung.com ([105.128.5.228]) by
+        SSI-EX3.ssi.samsung.com ([105.128.5.228]) with mapi id 15.01.2375.007; Fri,
+        29 Apr 2022 10:16:36 -0700
+From:   Adam Manzanares <a.manzanares@samsung.com>
+To:     Pankaj Raghav <p.raghav@samsung.com>
+CC:     "jaegeuk@kernel.org" <jaegeuk@kernel.org>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "snitzer@kernel.org" <snitzer@kernel.org>,
+        "hch@lst.de" <hch@lst.de>, "mcgrof@kernel.org" <mcgrof@kernel.org>,
+        "naohiro.aota@wdc.com" <naohiro.aota@wdc.com>,
+        "sagi@grimberg.me" <sagi@grimberg.me>,
+        "damien.lemoal@opensource.wdc.com" <damien.lemoal@opensource.wdc.com>,
+        "dsterba@suse.com" <dsterba@suse.com>,
+        "johannes.thumshirn@wdc.com" <johannes.thumshirn@wdc.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "clm@fb.com" <clm@fb.com>,
+        "gost.dev@samsung.com" <gost.dev@samsung.com>,
+        "chao@kernel.org" <chao@kernel.org>,
+        "linux-f2fs-devel@lists.sourceforge.net" 
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        "josef@toxicpanda.com" <josef@toxicpanda.com>,
+        "jonathan.derrick@linux.dev" <jonathan.derrick@linux.dev>,
+        "agk@redhat.com" <agk@redhat.com>,
+        "kbusch@kernel.org" <kbusch@kernel.org>,
+        "kch@nvidia.com" <kch@nvidia.com>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "dm-devel@redhat.com" <dm-devel@redhat.com>,
+        "bvanassche@acm.org" <bvanassche@acm.org>,
+        "jiangbo.365@bytedance.com" <jiangbo.365@bytedance.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "matias.bjorling@wdc.com" <matias.bjorling@wdc.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+Subject: Re: [PATCH 01/16] block: make blkdev_nr_zones and blk_queue_zone_no
+ generic for npo2 zsze
+Thread-Topic: [PATCH 01/16] block: make blkdev_nr_zones and
+        blk_queue_zone_no generic for npo2 zsze
+Thread-Index: AQHYWlBSHPfSzcQATUGVFhddlprDmK0HmneA
+Date:   Fri, 29 Apr 2022 17:16:36 +0000
+Message-ID: <20220429171628.GA174938@bgt-140510-bm01>
+In-Reply-To: <20220427160255.300418-2-p.raghav@samsung.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3654.120.0.1.13)
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: cdd4a8b7-c270-4612-c6d5-08da2a0136b3
-x-ms-traffictypediagnostic: CO6PR10MB5410:EE_
-x-microsoft-antispam-prvs: <CO6PR10MB541029117BED82E491ECE22493FC9@CO6PR10MB5410.namprd10.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: uA+dwOJ1GmApZkHjZ/VLnK9iGjKvruqD1W0X9lFGEA8KDtcaOk6EMlhqBMlkmo4Tjdotk1mwRhUOovgeC8BL5yh+0Fs96ue3+EwPba9IdYPkAz1tLlfJqCkIfxlFrcNKcsZjOemZ12rwJcmyRX0NJGq6jlBYuk3+goLq5Go0TYTupbbA4mVGA6l8t0mFi67B7hL032pvbFry8UoU4P7N0BJqDkw3sSQz+9iscvd3Iwodd+L3y9feRXCxmAcw2aFv7Q0rrqJqBP57bGx+MhNMfwKYrOp1F1YRB9IFbhxp5PHe1UFtMP0Ryq/oMCNsn4l6aFumWsRivwMaqH7k3x4i6+27uhBDUrzIkCXVrA6M5xzyc/yQFbVm/BpWPqzurcd0lgwRvEzkE/hWIQ9wMt/xkQY6/JUXUODyTb78uMCSp6v42NbQ1VKGrIma+Ke16GBnG6ERd922WGq4lYH0sO/9+drOAFSKFTzCVaP9n0Ffi0tcYD9eVo4Wb6513+7zdE/DnPXPlfld0nAB9JSaZJb+3N2qOrAhv1MmFeiqy48UsZN/PaeBrwHhATEIFMWtTOgEBSqGcRkMYWQAAIltdsH/bt6TWI0uW08R0Lkqb0OE7mz3OEnY6El6ZWvAAHbvacdz7bS3FY4gH3HgLiUnULcXNS8BMqwyMg1JIodByS7ErXvXq8tqjSfgAJHgIFF2lXrOVva75hZFCRwCcEqRfWW3PXAJEWKlKaQyBFUYNKSXEwsgkoGWGPDxNoB4CsF6Dskq
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(366004)(36756003)(2616005)(2906002)(86362001)(186003)(5660300002)(316002)(122000001)(33656002)(53546011)(6506007)(6512007)(26005)(4744005)(91956017)(76116006)(8936002)(4326008)(38100700002)(8676002)(38070700005)(6916009)(54906003)(66556008)(66446008)(66476007)(66946007)(71200400001)(6486002)(508600001)(64756008)(45980500001);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?isVlPzSNzA4kOizUpTXWBgFHSk3NP8pnGksjXu9fmBXnZm8BvMVXx+glGtjZ?=
- =?us-ascii?Q?DpI2bbDiopboRg6Z2tQaDNqx0f9ESoH3WU0kTVH04x42xznE7LkAXlX6AifJ?=
- =?us-ascii?Q?YwaJEtkNWMWd84kZtFKY8cdz19qzu4n+I/dwmXv3Q5v7HLaKdczZpUuVote2?=
- =?us-ascii?Q?0RvpeULwLYXGAZjFR7zFuWo9XB5HGRS1BmFoepoLpGFAEDy0SueGY0rP7QiT?=
- =?us-ascii?Q?gLJmp08YfGOxH5Y6SgIbaIkupaQKwV/bWciUFwP2yVTr0EPw2uNhjc2U2aDS?=
- =?us-ascii?Q?ddDzlRvKlD+nHCUM5czt8Y74AeiOWSl8s/8/K+T3XQ4OmGG155lyerOLMqmX?=
- =?us-ascii?Q?kSDYi98P3JD03lr5IvZwrerORgdZs5mNFdpJEQuGYGDtlYC4e8QaJGB10HJ0?=
- =?us-ascii?Q?JPCUbfhX9tcVZ0FMhO+5DohJ9E9Do6DW86xyfkTYVbX0t0lSHGM1WL80lEmG?=
- =?us-ascii?Q?/PR3588ppT+u2U6fVupmpAMV5hKTiSHysvLj8t8h+MmTYkBgbPWiltHdfPGU?=
- =?us-ascii?Q?NVmjR8ZCbROddCns89JGwQ9oB9I8Jjw05c1wimKU+eeaBYUOx0+CVJZ11q0x?=
- =?us-ascii?Q?Efp4tdrHYL9U2lPhNaBMkYgLCExv0W+T7Dtl0R/8Jf/S0ClyIVfYdsqRn5DV?=
- =?us-ascii?Q?cun5N38lpudOTxFBTeggw3V5RamQzUdUWfyEIFZ4NgBQsqRGMi/nNjUNHVda?=
- =?us-ascii?Q?iG4SK1KLadqrmWKPvCrWS82pi51IKsM9spF01l3hXXJSJ1Y19BToFTjVR1H6?=
- =?us-ascii?Q?b/gsZfwPvNtzRHBMbD7hnmZTSSPFlWu72Xbv14rhOZWeeyjMqDgmol084V2f?=
- =?us-ascii?Q?6kiyj6RureSif6XL3wiV/pcJJHLmtJyXurDtyOfLxGgGSaihrJzmvObnY3cp?=
- =?us-ascii?Q?WeQc3ulM6pdO59hNu7wXbdWCruKloc7H2D76svO2BMpax1QP75I+W4FYdyn0?=
- =?us-ascii?Q?kyl80scN/NorRbosFNW4bUTZw1SCVV8cooZk4CwMGfJW3ykUwOTBAhaRUCqP?=
- =?us-ascii?Q?QldwMjVbfzR4u9gbjW+xjml2XhTUbVcv/zfEvPNOcRe1Qv7tBJ3hafOfgJqL?=
- =?us-ascii?Q?poOvOBmZg8OgILtng+jrCP7AKKujIlrE2JNWfz6BAvxJLeDZPwglIhj/kRXL?=
- =?us-ascii?Q?1lgBOVxp8bX/HV5jXmxOymzxqNGe4XxWsNrJxChlM3ZNrvHdYmOYc0AWLJEs?=
- =?us-ascii?Q?Qq6nwKs5XAvzzXLHzXGmtayoyuCx1mykMq9uJPa5muDlJHEYByhzSlYAyEgf?=
- =?us-ascii?Q?3YjAxgjqk3PSY8s3QN6HD64fUjWIpB/Sr3DXJnkK4M+peMzuPD+eMOUUGHgC?=
- =?us-ascii?Q?Blyw6vXcAV1iNXSxR/8Pzp2Oyge4P+WYfGROOvCLSRPY7nMu+raqQRwwxpEM?=
- =?us-ascii?Q?u2h73R1nUIHDxPeStChPG4Z82G5UqbbMU/0HozdlLEcyRN3+IAPyucKVBs+F?=
- =?us-ascii?Q?rRsTV+qvKjdDIrLgygDGfYJXD/GhUdyG+jE0VylSDITI7cBA/81CR54U4lV/?=
- =?us-ascii?Q?g8fIOvocvKcOx4Sq774UOpSj+mwi7G/tsmaqwKbvvzf58MsOlVBJZCWZ1qyE?=
- =?us-ascii?Q?bMuZPxiG532q4tYsmZvQeD7YTy0E9c6DS0Nzt0gx1Ye/iOHXSYD8y0LnTMQ2?=
- =?us-ascii?Q?+sKs7p9RODMo27VFspq3zCn1rpMtvDgnimK6FcOBIdbDDjpOrDLy6fVbn5ek?=
- =?us-ascii?Q?ugnzRR5dySeeWgIocsr+QDSc/AcTe6j/TkP97VMiCtRpVkkBwYspMrvfOV4E?=
- =?us-ascii?Q?NulyWFG2LGNS1L3xPUIxj2CXxU74nNU=3D?=
+x-originating-ip: [105.128.2.176]
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <920250779A28B442B8A37CDA4D38DC81@namprd10.prod.outlook.com>
+Content-ID: <7E6427266D2D7F4C8C5CD9B93D12C2A5@ssi.samsung.com>
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cdd4a8b7-c270-4612-c6d5-08da2a0136b3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Apr 2022 16:56:32.6799
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: sJ7st3SG9mmghhYVJwqtkcK9JP+lslNU8ms6PCVwrg+2viW2mpCU3y9CAaCR++jjJdGSBXEspDuSnX62uSurkA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO6PR10MB5410
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.486,18.0.858
- definitions=2022-04-29_06:2022-04-28,2022-04-29 signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 spamscore=0 adultscore=0
- mlxscore=0 bulkscore=0 suspectscore=0 malwarescore=0 mlxlogscore=992
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2202240000
- definitions=main-2204290086
-X-Proofpoint-ORIG-GUID: oRjawDanv0-9bOipgsbTtiZ7gJi1XSBm
-X-Proofpoint-GUID: oRjawDanv0-9bOipgsbTtiZ7gJi1XSBm
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+X-CFilter-Loop: Reflected
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sf0xTVxTHd997fX3tQB6VwR2oG43OORkDAuRmKmEBwzNG47YMM8RplceP
+        WChpgU3mYhWRUTVUHIRVGFA6EOuGwLJosbqV8dOxThHQDjSV1miQioBKi5BZXk363/fc8/me
+        8z3JpXCRiQymsnLyWHmORComhcTv3c/MHxaslO6LqH4Uilr6u3GkHysjUeWUE0fXKwYwVF5W
+        xUfzA2YcGR1neejfuSMYatZ3YcjWosHRyT+mCLSguvvq7ZgVRy+tkajcNAyQfUiDIaNlPbo5
+        fo6PbmqT0BVjH4EGDdUkqm2085H6+DMc3VbbATrd085Dv048IVCvJSQ+hBm8tZVZ7L1AMqeL
+        HHzGfLeVYAYH8pm286UkU6+swJl23WGmo24GYzruKEnmVJGDZC4X3+MxT64OkUzLb0MEo25v
+        5TEzbat2+KcIN6ax0qwCVv5R3F5hZm2Nk5/bLPpmsqucrwQlfiogoCAdDQf0TqACQkpENwOo
+        vP+IzxXFGDyp/R57TbmOzGFc4xcA60qbPJanAFb94/IUjQA2O2dJt4WkI+B8Tyvu1gH0+/DB
+        rfalUTitehOOVUSrAEUtp9OgpfcTDmFhQ9Mgj9NR0G69SLg1Qa+B3ZXFS1ZfOga2W48uMQJ6
+        A1woa1hiAB0IX/Rf8IwPghZbrSe1P9SevYJzOhAuGqwkp0PhvRfuM918GKzrmCY5HQeNRZWe
+        9/WwsX4C5/b6w74fbQTnfRv+ee424b4X0q1C+EP9IJ9rJEKbXulZEAIXxhoxDioBcEp9lccV
+        agBHJ50eagNcLB3mq8FqjVdyjVcqjVcqjVcqjVeqOsA7D4LyFYrsDFYRlcN+Ha6QZCvyczLC
+        98uy28Crb359sVN2CYxYnoabAEYBE4AULg7wne3I3CfyTZMcLGTlsj3yfCmrMIEQihAH+TZm
+        XZSI6AxJHnuAZXNZ+esuRgmCldg7175a2x9k+bYpbe1DY/fRKLMzPsOanezwebAiJHJseouh
+        f/lOw8tVbHBn0870UZcu2Qc7tSyxYapAl5qw29dYvT+084uJmKTRA+JgvzX/9fbJNpOOxwtv
+        /Nw0xzuo3Xhms0rq0l6e/ZKtiR0ZdhpG7IcT1tU93qXbliAmQ/Wp2ufH2mIjojVzsQJR3vx4
+        ceSy+98VplREFH7OWzF66T1JybVdYXk1PeqZpIdnJidyWbPuRHpvVfwJvy2H2vbeSd3tSP4p
+        ZdN2157qGJmN1xGWvM0YNxsYsOkGWv1WxnMQ5Zfz8Thf2ZX+t+6z1MTj44K/ZNPrPt0hP1R6
+        Y2T+XR/9SqewX0woMiWRH+ByheR/joyx41UEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUxTVxiHPffe3nvpZFw7Z88E2WRbhmMi9SM52VD0D9x1ZgaTLdtkEYvc
+        ALOAttSBZFmhQKVu6UdCJ50EEMJAmBUKuI0ysaN8SGoJX8Fua9NQTJgbqIxgUcgo1yX973nP
+        +z6/95zk0LjIK9hKZ+fmc/JcqSyGFBLZKsywU7lNlp6gdexDljv9OGr5U0ci08MAjoYrnRgy
+        6i5T6KnThaOeue8FaORJMYaaWxwY8lvMOPqm9yGBVrSetbNSH46e+STIaJ8EaGbCjKEedxwa
+        nW6i0OjV95GtZ4hAY79cIVFN4wyF9OWLOJrSzwBkGLAK0PUH8wQadEcejGTHxo+yq4OtJGtQ
+        z1Gsy9NGsGNOJdt+rYJk61SVOGtt+Jrtrl3A2O57KpL9Vj1Hsj+XeQXs/K8TJGvpmCBYvbVN
+        wC60R6dsOiFMzOBk2ec5+a4Dp4RZNdUB6myzqOAfh5FSAU2EFoTRkNkLl4ufYFogpEVMC4Ar
+        kzcEfPEIwIXHI4AvGgHUqH8kgwrJJMCnA214kDczsfD+uHVdx5mLL8DFQMOaQdMvMRnQPXiI
+        n+Gg6QcT4Hk3nPHdIIJMMG/CflMZFuRwZh+0+kqeb74FYHmFmwo2wpj34Iqufl0AzBa4dKd1
+        XcAZMXT7azD+DQxssLlwnl+Gs9OrAp63Q+/SLMXPvwNrux+TPB+APWrT8/M42Fj3AOcvsQkO
+        VfkJ3n0F3m6aIvQAmkPWmUOizCFR5pAoc0hULRBcA2KlQpGTWaDYnct9Ga+Q5iiUuZnxp/Ny
+        2sHaHxxe/S31J/C7+1G8HWA0sANI4zGbw//tzkoXhWdICy9w8rw0uVLGKewgkiZixOGzJwxp
+        IiZTms+d4biznPz/LkaHbVVh0hc7dF7dpa64122f9CX8MW4anSx5tXSvcJs67t1T8JDNvvNk
+        ctcXlX07quskUrFBGr3xmMx1ZMj3kb+13tnq8xxZ1nfozxn/Kjg8PGXLwizTH+6qIZfuVUdd
+        vzW3/9IZbXJib3ItITuWPnb36tBoQdX+tD1FgLgtGo+qdFT8fTm1r9PYNRD4rOnThNi6CGo1
+        +/TJZcPIFkm5zbnRVXwxdrv74w1LRZaIwjz/cSP1bEPKG2FVnZ78196KKvHcTDVqnCWaaUkR
+        U3b/4OeJdSDpcOYH4vikZvUOdWepTv7VHk2XLynFSx5fZO42wiiPQKgJRM+f/27Ze+Fc/c3e
+        QoetP4ZQZEklb+NyhfQ/zjd7GvIDAAA=
+X-CMS-MailID: 20220429171638uscas1p23b334cc35b918428c7c3938fb1df6ef2
+CMS-TYPE: 301P
+X-CMS-RootMailID: 20220427160257eucas1p21fb58d0129376a135fdf0b9c2fe88895
+References: <20220427160255.300418-1-p.raghav@samsung.com>
+        <CGME20220427160257eucas1p21fb58d0129376a135fdf0b9c2fe88895@eucas1p2.samsung.com>
+        <20220427160255.300418-2-p.raghav@samsung.com>
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-> On Apr 29, 2022, at 11:25 AM, J. Bruce Fields <bfields@fieldses.org> wrot=
-e:
+On Wed, Apr 27, 2022 at 06:02:40PM +0200, Pankaj Raghav wrote:
+> Adapt blkdev_nr_zones and blk_queue_zone_no function so that it can
+> also work for non-power-of-2 zone sizes.
 >=20
-> Except for comments on particular patches, this looks ready as far as
-> I'm concerned.
+> As the existing deployments of zoned devices had power-of-2
+> assumption, power-of-2 optimized calculation is kept for those devices.
+>=20
+> There are no direct hot paths modified and the changes just
+> introduce one new branch per call.
+>=20
+> Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+> ---
+>  block/blk-zoned.c      | 8 +++++++-
+>  include/linux/blkdev.h | 8 +++++++-
+>  2 files changed, 14 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/block/blk-zoned.c b/block/blk-zoned.c
+> index 38cd840d8838..1dff4a8bd51d 100644
+> --- a/block/blk-zoned.c
+> +++ b/block/blk-zoned.c
+> @@ -117,10 +117,16 @@ EXPORT_SYMBOL_GPL(__blk_req_zone_write_unlock);
+>  unsigned int blkdev_nr_zones(struct gendisk *disk)
+>  {
+>  	sector_t zone_sectors =3D blk_queue_zone_sectors(disk->queue);
+> +	sector_t capacity =3D get_capacity(disk);
+> =20
+>  	if (!blk_queue_is_zoned(disk->queue))
+>  		return 0;
+> -	return (get_capacity(disk) + zone_sectors - 1) >> ilog2(zone_sectors);
+> +
+> +	if (is_power_of_2(zone_sectors))
+> +		return (capacity + zone_sectors - 1) >>
+> +		       ilog2(zone_sectors);
+> +
+> +	return div64_u64(capacity + zone_sectors - 1, zone_sectors);
+>  }
+>  EXPORT_SYMBOL_GPL(blkdev_nr_zones);
+> =20
+> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+> index 60d016138997..c4e4c7071b7b 100644
+> --- a/include/linux/blkdev.h
+> +++ b/include/linux/blkdev.h
+> @@ -665,9 +665,15 @@ static inline unsigned int blk_queue_nr_zones(struct=
+ request_queue *q)
+>  static inline unsigned int blk_queue_zone_no(struct request_queue *q,
+>  					     sector_t sector)
+>  {
+> +	sector_t zone_sectors =3D blk_queue_zone_sectors(q);
+> +
+>  	if (!blk_queue_is_zoned(q))
+>  		return 0;
+> -	return sector >> ilog2(q->limits.chunk_sectors);
+> +
+> +	if (is_power_of_2(zone_sectors))
+> +		return sector >> ilog2(zone_sectors);
+> +
+> +	return div64_u64(sector, zone_sectors);
+>  }
+> =20
+>  static inline bool blk_queue_zone_is_seq(struct request_queue *q,
+> --=20
+> 2.25.1
+>
 
-I propose Dai should post a v24 with suggested corrections. Bruce,
-please send a public Reviewed-by: to that version, and then I'll
-apply it to NFSD for-next.
 
-Thanks to you both for your very focused efforts. I'm excited for
-Linux NFSD to have this functionality.
+Looks good.
 
-
---
-Chuck Lever
-
-
-
+Reviewed by: Adam Manzanares <a.manzanares@samsung.com>=
