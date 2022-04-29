@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CE5BC515200
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Apr 2022 19:27:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 281A55151FF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Apr 2022 19:27:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379666AbiD2Rac (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Apr 2022 13:30:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43326 "EHLO
+        id S1379678AbiD2Ra3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Apr 2022 13:30:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379607AbiD2R3b (ORCPT
+        with ESMTP id S1379520AbiD2R3b (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 29 Apr 2022 13:29:31 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A41C2A66CD
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B864A66D6
         for <linux-fsdevel@vger.kernel.org>; Fri, 29 Apr 2022 10:26:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=dkrajfA2mxp2aowMuf2gUwqeOPobJuO7Ne+a3M1SyHc=; b=VYfmFmk3/i6hORInXI0jd3n+Ki
-        xWYtxWPwfMMYtXtiO5f6Zy+9URO/czU05GIVyYRTYyUQ3EDA1eI6orGbRFR3IyYV8amvqfX2VH3hL
-        d9Uh/w2oQVCDFc56nrJXh0girqg8gvF45g6erjrE/eBCl/nRAmp4N5Ir3YffgzzeHBP1XFppoe4YO
-        G2cwubAb2LbmtaQN/4Mv9aYcv4vz9MUrHaq4tsXuOrdAOkPgybyEP+whV8zAmHSN3Z2VhTP8y+WJ5
-        kfl/GWVG+Ap0uQ0LCJSh0G8knvwDLIQbtf30a7ZUcjATbyDOyz4Yo7tzMPRKeepnPCWifimAI7u72
-        j7dHJe9w==;
+        bh=Zlrw23/9zsoNnmB/ZFg3rEXTUeeweSd78Bi4kp8O0ig=; b=JeC/X1JreHV5CXxHbMuWjBuStA
+        PCxvXTXBYcAnJqXHrnQHYnfOaB0hkR39EMyQtN0wR/ODTetJ6wrgLYLsN6/olvITubyLltVpymueU
+        /oK8DFrpz1aaH2D0RWAV/hD3C7Se/4smy0PofsIDV+ad/A2sNArcQgsmFeqbipF0WTVrrTBfmYVrJ
+        DDWfSfIPobiYadM8EfsLiG4dhCprzwXeqJZF80PSnti33VjdwI3oC4HELnmNftLnI6o7godInx82/
+        +z7bbu32gyzfyt3/6hJsqeQm6LvM0vifn9InmtXEYmOSpAVgIxuSdsNMoTqPtGTRvpQMMg+c+iUu1
+        knfazqCA==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nkUNc-00CdcF-PC; Fri, 29 Apr 2022 17:26:08 +0000
+        id 1nkUNc-00CdcN-UJ; Fri, 29 Apr 2022 17:26:08 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH 53/69] fuse: Convert fuse to read_folio
-Date:   Fri, 29 Apr 2022 18:25:40 +0100
-Message-Id: <20220429172556.3011843-54-willy@infradead.org>
+Subject: [PATCH 54/69] hostfs: Convert hostfs to read_folio
+Date:   Fri, 29 Apr 2022 18:25:41 +0100
+Message-Id: <20220429172556.3011843-55-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220429172556.3011843-1-willy@infradead.org>
 References: <20220429172556.3011843-1-willy@infradead.org>
@@ -53,64 +53,33 @@ someone familiar with the filesystem.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/fuse/dir.c  | 10 +++++-----
- fs/fuse/file.c |  5 +++--
- 2 files changed, 8 insertions(+), 7 deletions(-)
+ fs/hostfs/hostfs_kern.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 9ff27b8a9782..74303d6e987b 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -1957,20 +1957,20 @@ void fuse_init_dir(struct inode *inode)
- 	fi->rdc.version = 0;
- }
- 
--static int fuse_symlink_readpage(struct file *null, struct page *page)
-+static int fuse_symlink_read_folio(struct file *null, struct folio *folio)
- {
--	int err = fuse_readlink_page(page->mapping->host, page);
-+	int err = fuse_readlink_page(folio->mapping->host, &folio->page);
- 
- 	if (!err)
--		SetPageUptodate(page);
-+		folio_mark_uptodate(folio);
- 
--	unlock_page(page);
-+	folio_unlock(folio);
- 
+diff --git a/fs/hostfs/hostfs_kern.c b/fs/hostfs/hostfs_kern.c
+index e658d8edde35..cc1bc6f93a01 100644
+--- a/fs/hostfs/hostfs_kern.c
++++ b/fs/hostfs/hostfs_kern.c
+@@ -434,8 +434,9 @@ static int hostfs_writepage(struct page *page, struct writeback_control *wbc)
  	return err;
  }
  
- static const struct address_space_operations fuse_symlink_aops = {
--	.readpage	= fuse_symlink_readpage,
-+	.read_folio	= fuse_symlink_read_folio,
- };
- 
- void fuse_init_symlink(struct inode *inode)
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index bca8c2135ec5..05caa2b9272e 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -857,8 +857,9 @@ static int fuse_do_readpage(struct file *file, struct page *page)
- 	return 0;
- }
- 
--static int fuse_readpage(struct file *file, struct page *page)
-+static int fuse_read_folio(struct file *file, struct folio *folio)
+-static int hostfs_readpage(struct file *file, struct page *page)
++static int hostfs_read_folio(struct file *file, struct folio *folio)
  {
 +	struct page *page = &folio->page;
- 	struct inode *inode = page->mapping->host;
- 	int err;
+ 	char *buffer;
+ 	loff_t start = page_offset(page);
+ 	int bytes_read, ret = 0;
+@@ -504,7 +505,7 @@ static int hostfs_write_end(struct file *file, struct address_space *mapping,
  
-@@ -3174,7 +3175,7 @@ static const struct file_operations fuse_file_operations = {
- };
- 
- static const struct address_space_operations fuse_file_aops  = {
--	.readpage	= fuse_readpage,
-+	.read_folio	= fuse_read_folio,
- 	.readahead	= fuse_readahead,
- 	.writepage	= fuse_writepage,
- 	.writepages	= fuse_writepages,
+ static const struct address_space_operations hostfs_aops = {
+ 	.writepage 	= hostfs_writepage,
+-	.readpage	= hostfs_readpage,
++	.read_folio	= hostfs_read_folio,
+ 	.dirty_folio	= filemap_dirty_folio,
+ 	.write_begin	= hostfs_write_begin,
+ 	.write_end	= hostfs_write_end,
 -- 
 2.34.1
 
