@@ -2,90 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 10EA751550A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Apr 2022 21:59:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72998515513
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Apr 2022 22:01:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1380469AbiD2UCv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Apr 2022 16:02:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34680 "EHLO
+        id S1380489AbiD2UE1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Apr 2022 16:04:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39212 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378695AbiD2UCu (ORCPT
+        with ESMTP id S1378860AbiD2UEZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Apr 2022 16:02:50 -0400
-Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02B49BCB4F;
-        Fri, 29 Apr 2022 12:59:30 -0700 (PDT)
-Received: by fieldses.org (Postfix, from userid 2815)
-        id 07D0C7140; Fri, 29 Apr 2022 15:59:30 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org 07D0C7140
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
-        s=default; t=1651262370;
-        bh=9cERD43aQDAggW+W43xzFi8iScoiz/K0W/yWtLBaydk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=w2V4kpIadmYv7Qqg7SWcOoIGr2gIsGFT7l/R4Rg+b3i61iG0HuAt0oCL1uVqiD0Tq
-         O1ttbXQsa9Lpb5g1afnR/9rqxP4qM296OQidBSdtNsPwTHIBupy6U/O6zMeyCZrpXV
-         eBV4f/s6LIWGeK+xyvX6Ei2k/ZbeWUR55jbVBH6k=
-Date:   Fri, 29 Apr 2022 15:59:30 -0400
-From:   "J. Bruce Fields" <bfields@fieldses.org>
-To:     dai.ngo@oracle.com
-Cc:     chuck.lever@oracle.com, jlayton@redhat.com,
-        viro@zeniv.linux.org.uk, linux-nfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH RFC v23 1/7] NFSD: add courteous server support for
- thread with only delegation
-Message-ID: <20220429195930.GJ7107@fieldses.org>
-References: <1651129595-6904-1-git-send-email-dai.ngo@oracle.com>
- <1651129595-6904-2-git-send-email-dai.ngo@oracle.com>
- <20220429145543.GD7107@fieldses.org>
- <6ce5af72-52ba-7cf0-8295-7929b9b0b4a8@oracle.com>
- <20220429195510.GH7107@fieldses.org>
+        Fri, 29 Apr 2022 16:04:25 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DCD832996
+        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Apr 2022 13:01:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=zHUUINo4yJyTYlJWIEO+i+Gv3G+bm3CvTusmM0IYPVI=; b=f5lR+EeHsnnOgPEzU6di73+m3G
+        uKLi3qL6+sobcmacijRGPPmDQ33mbxyCuzCERsxrykXcC5CkBt/yNr087twyORevf8wnNtR6e2KGP
+        N5N/LMBJv+z8lljhYZqaUZ3vROuSa4IpftNKp9RE8o7FLqQijabSNya6flipQxfONQb3VuXUcgfbR
+        3NxV38aJUl9yT8ONaJZdwo9jwCYjaCkq99gZh/M57DfbYkkPcGVDGPmQQnJ9Ucm34H5h86R1HeAMz
+        I546vl/PvM6/Gdnpo36jqgk3VQiZrsmBVMjD0KNMpgrV5UL14TAnFOKJ9zoc0yw4mi8kZbQze1Ucd
+        j5LW98YA==;
+Received: from [2601:1c0:6280:3f0::aa0b] (helo=bombadil.infradead.org)
+        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nkWnV-00CON3-2c; Fri, 29 Apr 2022 20:01:01 +0000
+From:   Randy Dunlap <rdunlap@infradead.org>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        syzbot+1631f09646bc214d2e76@syzkaller.appspotmail.com,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        ntfs3@lists.linux.dev, Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kari Argillander <kari.argillander@stargateuniverse.net>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH v2] fs/ntfs3: validate BOOT sectors_per_clusters
+Date:   Fri, 29 Apr 2022 13:01:00 -0700
+Message-Id: <20220429200100.22659-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220429195510.GH7107@fieldses.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Apr 29, 2022 at 03:55:10PM -0400, J. Bruce Fields wrote:
-> On Fri, Apr 29, 2022 at 10:21:21AM -0700, dai.ngo@oracle.com wrote:
-> > 
-> > On 4/29/22 7:55 AM, J. Bruce Fields wrote:
-> > >On Thu, Apr 28, 2022 at 12:06:29AM -0700, Dai Ngo wrote:
-> > >>+static bool client_has_state_tmp(struct nfs4_client *clp)
-> > >Why the "_tmp"?
-> > >
-> > >>+{
-> > >>+	if (!list_empty(&clp->cl_delegations) &&
-> > >>+			!client_has_openowners(clp) &&
-> > >>+			list_empty(&clp->async_copies))
-> > >I would have expected
-> > >
-> > >	if (!list_empty(&clp->cl_delegations) ||
-> > >		client_has_openowners(clp) ||
-> > >		!list_empty(&clp->async_copies))
-> > 
-> > In patch 1, we want to allow *only* clients with non-conflict delegation
-> > to be in COURTESY state, not with opens and locks. So for that, we can not
-> > use the existing client_has_state (until patch 6), so I just created
-> > client_has_state_tmp for it.
-> 
-> Got it, so, I recommend just moving this logic into
-> nfs4_anylock_blockers instead, and replacing the call to
-> client_has_state_tmp() with a call to client_has_state().
-> 
-> The logic of nfs4_anylock_blockers() is then basically "return true if anyone
-> might be waiting on this client; and if the client has some class of
-> state that we don't handle yet, just assume it might have someone
-> waiting on it."
+When the NTFS BOOT sectors_per_clusters field is > 0x80,
+it represents a shift value. Make sure that the shift value is
+not too large (> 31) before using it. Return 0xffffffff if it is.
 
-And, yeah, the end result is probably the same, but this would just make
-the patches easier to read.
+This prevents negative shift values and shift values that are
+larger than the field size.
 
---b.
+Prevents this UBSAN error:
+
+ UBSAN: shift-out-of-bounds in ../fs/ntfs3/super.c:673:16
+ shift exponent -192 is negative
+
+Fixes: 82cae269cfa9 ("fs/ntfs3: Add initialization of super block")
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Reported-by: syzbot+1631f09646bc214d2e76@syzkaller.appspotmail.com
+Cc: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Cc: ntfs3@lists.linux.dev
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Kari Argillander <kari.argillander@stargateuniverse.net>
+Cc: Namjae Jeon <linkinjeon@kernel.org>
+Cc: Matthew Wilcox <willy@infradead.org>
+---
+v2: use Willy's suggestions
+
+ fs/ntfs3/super.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+--- linux-next-20220428.orig/fs/ntfs3/super.c
++++ linux-next-20220428/fs/ntfs3/super.c
+@@ -668,9 +668,11 @@ static u32 format_size_gb(const u64 byte
+ 
+ static u32 true_sectors_per_clst(const struct NTFS_BOOT *boot)
+ {
+-	return boot->sectors_per_clusters <= 0x80
+-		       ? boot->sectors_per_clusters
+-		       : (1u << (0 - boot->sectors_per_clusters));
++	if (boot->sectors_per_clusters <= 0x80)
++		return boot->sectors_per_clusters;
++	if (boot->sectors_per_clusters > 0xe0) /* limit to 31-bit shift */
++		return 1U << (0 - boot->sectors_per_clusters);
++	return 0xffffffff;
+ }
+ 
+ /*
