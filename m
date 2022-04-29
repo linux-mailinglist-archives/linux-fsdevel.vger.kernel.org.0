@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CDFAE5151E8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Apr 2022 19:26:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DB075151E4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 29 Apr 2022 19:26:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379593AbiD2R3z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Apr 2022 13:29:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42682 "EHLO
+        id S1344266AbiD2R3u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Apr 2022 13:29:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379531AbiD2R3a (ORCPT
+        with ESMTP id S1379534AbiD2R3a (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 29 Apr 2022 13:29:30 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A34D8A0BC6
-        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Apr 2022 10:26:07 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10685A0BDD
+        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Apr 2022 10:26:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=vB/FUDznW007D/1dFC/irSstDYRSCilgx1jaSg3ClnQ=; b=KZdZlT9gQJyZpixyUsbYP3rXB0
-        elGwm107T+HsDmLsqbDob56qvrMC5kd2EzB5fYyCpAW4eKWN1/9mUwykKsMEv8NXN7pv60MxoFnAj
-        mHOUsqfVwmewR8Izgi4Nb84SoOtvZq8cPm5WaF5Yqi/W2AusnPwsS9mzmsyuaEIa9JVXeigbC12Fx
-        WKOVsDWyOSTPV/140J8eRmiM8QBgfrSfOVl7w2rPe6DV84tHKd+H5qr3yLzTy/wOVoBdATYmBbWrX
-        q7wdXrgFOE35dTm0AXIXOPz9LxlN2p4FVjCgBlju4e94iXmDiXnOzBGMoe+wrX330GApO5Z3HQj3k
-        IW1RWOAA==;
+        bh=5tD+FSQ/nAMq2dGk2GcxZrL+cShNG6uIImA7c0IG2h8=; b=e6+UB+JcZ3y54lrLDg5xyEcvwX
+        hr7s+TH9jw/GMzSM5c4kpRpNBAZsoUr27nAVDEg5rvw007RoAuJnhZ5v5i2efPU8aw/Q1hWiYGgsT
+        FSjriE4kHlL9JG89kHWn80ITUu9hyyKuyNZhryQPXFsJsOh9CjGbUN518/GObaS3xVnnbLmKy46Mr
+        BUXBMAfvnW6dDGUWuZjPUc/T+V8SS7zYgGjPoRis3Hph5wm4Kv/wCLy2kU9MMm5pp+9h8SMj2UJLw
+        3Q589NdHQ3EpkCsdmdFCZrfNmr36DTiqmCgJDpZ7dAYuLaP287wXcS0sMHvO9nN6MkDMg90pjhZXs
+        nvyNAoSg==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nkUNZ-00CdZZ-Qn; Fri, 29 Apr 2022 17:26:05 +0000
+        id 1nkUNZ-00CdZf-UK; Fri, 29 Apr 2022 17:26:05 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH 30/69] fs: Convert is_dirty_writeback() to take a folio
-Date:   Fri, 29 Apr 2022 18:25:17 +0100
-Message-Id: <20220429172556.3011843-31-willy@infradead.org>
+Subject: [PATCH 31/69] mm/readahead: Convert page_cache_async_readahead to take a folio
+Date:   Fri, 29 Apr 2022 18:25:18 +0100
+Message-Id: <20220429172556.3011843-32-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220429172556.3011843-1-willy@infradead.org>
 References: <20220429172556.3011843-1-willy@infradead.org>
@@ -47,174 +47,119 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Pass a folio instead of a page to aops->is_dirty_writeback().
-Convert both implementations and the caller.
+Removes a couple of calls to compound_head and saves a few bytes.
+Also convert verity's read_file_data_page() to be folio-based.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- Documentation/filesystems/vfs.rst | 10 +++++-----
- fs/buffer.c                       | 16 ++++++++--------
- fs/nfs/file.c                     | 21 +++++++++------------
- include/linux/buffer_head.h       |  2 +-
- include/linux/fs.h                |  2 +-
- mm/vmscan.c                       |  2 +-
- 6 files changed, 25 insertions(+), 28 deletions(-)
+ fs/btrfs/relocation.c   |  5 +++--
+ fs/btrfs/send.c         |  3 ++-
+ fs/verity/enable.c      | 29 ++++++++++++++---------------
+ include/linux/pagemap.h |  6 +++---
+ 4 files changed, 22 insertions(+), 21 deletions(-)
 
-diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
-index 30f303180a7d..469882f72fc1 100644
---- a/Documentation/filesystems/vfs.rst
-+++ b/Documentation/filesystems/vfs.rst
-@@ -747,7 +747,7 @@ cache in your filesystem.  The following members are defined:
+diff --git a/fs/btrfs/relocation.c b/fs/btrfs/relocation.c
+index fdc2c4b411f0..9ae06895ffc9 100644
+--- a/fs/btrfs/relocation.c
++++ b/fs/btrfs/relocation.c
+@@ -2967,8 +2967,9 @@ static int relocate_one_page(struct inode *inode, struct file_ra_state *ra,
+ 		goto release_page;
  
- 		bool (*is_partially_uptodate) (struct folio *, size_t from,
- 					       size_t count);
--		void (*is_dirty_writeback) (struct page *, bool *, bool *);
-+		void (*is_dirty_writeback)(struct folio *, bool *, bool *);
- 		int (*error_remove_page) (struct mapping *mapping, struct page *page);
- 		int (*swap_activate)(struct file *);
- 		int (*swap_deactivate)(struct file *);
-@@ -932,14 +932,14 @@ cache in your filesystem.  The following members are defined:
- 	without needing I/O to bring the whole page up to date.
+ 	if (PageReadahead(page))
+-		page_cache_async_readahead(inode->i_mapping, ra, NULL, page,
+-				   page_index, last_index + 1 - page_index);
++		page_cache_async_readahead(inode->i_mapping, ra, NULL,
++				page_folio(page), page_index,
++				last_index + 1 - page_index);
  
- ``is_dirty_writeback``
--	Called by the VM when attempting to reclaim a page.  The VM uses
-+	Called by the VM when attempting to reclaim a folio.  The VM uses
- 	dirty and writeback information to determine if it needs to
- 	stall to allow flushers a chance to complete some IO.
--	Ordinarily it can use PageDirty and PageWriteback but some
--	filesystems have more complex state (unstable pages in NFS
-+	Ordinarily it can use folio_test_dirty and folio_test_writeback but
-+	some filesystems have more complex state (unstable folios in NFS
- 	prevent reclaim) or do not set those flags due to locking
- 	problems.  This callback allows a filesystem to indicate to the
--	VM if a page should be treated as dirty or writeback for the
-+	VM if a folio should be treated as dirty or writeback for the
- 	purposes of stalling.
+ 	if (!PageUptodate(page)) {
+ 		btrfs_readpage(NULL, page);
+diff --git a/fs/btrfs/send.c b/fs/btrfs/send.c
+index 7d1642937274..b327dbe0cbf5 100644
+--- a/fs/btrfs/send.c
++++ b/fs/btrfs/send.c
+@@ -4986,7 +4986,8 @@ static int put_file_data(struct send_ctx *sctx, u64 offset, u32 len)
  
- ``error_remove_page``
-diff --git a/fs/buffer.c b/fs/buffer.c
-index d538495a0553..fb4df259c92d 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -79,26 +79,26 @@ void unlock_buffer(struct buffer_head *bh)
- EXPORT_SYMBOL(unlock_buffer);
+ 		if (PageReadahead(page)) {
+ 			page_cache_async_readahead(inode->i_mapping, &sctx->ra,
+-				NULL, page, index, last_index + 1 - index);
++						NULL, page_folio(page), index,
++						last_index + 1 - index);
+ 		}
  
- /*
-- * Returns if the page has dirty or writeback buffers. If all the buffers
-- * are unlocked and clean then the PageDirty information is stale. If
-- * any of the pages are locked, it is assumed they are locked for IO.
-+ * Returns if the folio has dirty or writeback buffers. If all the buffers
-+ * are unlocked and clean then the folio_test_dirty information is stale. If
-+ * any of the buffers are locked, it is assumed they are locked for IO.
+ 		if (!PageUptodate(page)) {
+diff --git a/fs/verity/enable.c b/fs/verity/enable.c
+index 60a4372aa4d7..f75d2c010f36 100644
+--- a/fs/verity/enable.c
++++ b/fs/verity/enable.c
+@@ -18,27 +18,26 @@
+  * Read a file data page for Merkle tree construction.  Do aggressive readahead,
+  * since we're sequentially reading the entire file.
   */
--void buffer_check_dirty_writeback(struct page *page,
-+void buffer_check_dirty_writeback(struct folio *folio,
- 				     bool *dirty, bool *writeback)
+-static struct page *read_file_data_page(struct file *filp, pgoff_t index,
++static struct page *read_file_data_page(struct file *file, pgoff_t index,
+ 					struct file_ra_state *ra,
+ 					unsigned long remaining_pages)
  {
- 	struct buffer_head *head, *bh;
- 	*dirty = false;
- 	*writeback = false;
+-	struct page *page;
++	DEFINE_READAHEAD(ractl, file, ra, file->f_mapping, index);
++	struct folio *folio;
  
--	BUG_ON(!PageLocked(page));
-+	BUG_ON(!folio_test_locked(folio));
- 
--	if (!page_has_buffers(page))
-+	head = folio_buffers(folio);
-+	if (!head)
- 		return;
- 
--	if (PageWriteback(page))
-+	if (folio_test_writeback(folio))
- 		*writeback = true;
- 
--	head = page_buffers(page);
- 	bh = head;
- 	do {
- 		if (buffer_locked(bh))
-diff --git a/fs/nfs/file.c b/fs/nfs/file.c
-index 314d2d7ba84a..f05c4b18b681 100644
---- a/fs/nfs/file.c
-+++ b/fs/nfs/file.c
-@@ -430,19 +430,16 @@ static int nfs_release_page(struct page *page, gfp_t gfp)
- 	return nfs_fscache_release_page(page, gfp);
- }
- 
--static void nfs_check_dirty_writeback(struct page *page,
-+static void nfs_check_dirty_writeback(struct folio *folio,
- 				bool *dirty, bool *writeback)
- {
- 	struct nfs_inode *nfsi;
--	struct address_space *mapping = page_file_mapping(page);
--
--	if (!mapping || PageSwapCache(page))
--		return;
-+	struct address_space *mapping = folio->mapping;
- 
- 	/*
--	 * Check if an unstable page is currently being committed and
--	 * if so, have the VM treat it as if the page is under writeback
--	 * so it will not block due to pages that will shortly be freeable.
-+	 * Check if an unstable folio is currently being committed and
-+	 * if so, have the VM treat it as if the folio is under writeback
-+	 * so it will not block due to folios that will shortly be freeable.
- 	 */
- 	nfsi = NFS_I(mapping->host);
- 	if (atomic_read(&nfsi->commit_info.rpcs_out)) {
-@@ -451,11 +448,11 @@ static void nfs_check_dirty_writeback(struct page *page,
+-	page = find_get_page_flags(filp->f_mapping, index, FGP_ACCESSED);
+-	if (!page || !PageUptodate(page)) {
+-		if (page)
+-			put_page(page);
++	folio = __filemap_get_folio(ractl.mapping, index, FGP_ACCESSED, 0);
++	if (!folio || !folio_test_uptodate(folio)) {
++		if (folio)
++			folio_put(folio);
+ 		else
+-			page_cache_sync_readahead(filp->f_mapping, ra, filp,
+-						  index, remaining_pages);
+-		page = read_mapping_page(filp->f_mapping, index, NULL);
+-		if (IS_ERR(page))
+-			return page;
++			page_cache_sync_ra(&ractl, remaining_pages);
++		folio = read_cache_folio(ractl.mapping, index, NULL, file);
++		if (IS_ERR(folio))
++			return &folio->page;
  	}
- 
- 	/*
--	 * If PagePrivate() is set, then the page is not freeable and as the
--	 * inode is not being committed, it's not going to be cleaned in the
--	 * near future so treat it as dirty
-+	 * If the private flag is set, then the folio is not freeable
-+	 * and as the inode is not being committed, it's not going to
-+	 * be cleaned in the near future so treat it as dirty
- 	 */
--	if (PagePrivate(page))
-+	if (folio_test_private(folio))
- 		*dirty = true;
+-	if (PageReadahead(page))
+-		page_cache_async_readahead(filp->f_mapping, ra, filp, page,
+-					   index, remaining_pages);
+-	return page;
++	if (folio_test_readahead(folio))
++		page_cache_async_ra(&ractl, folio, remaining_pages);
++	return folio_file_page(folio, index);
  }
  
-diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
-index 6e5a64005fef..805c4e12700a 100644
---- a/include/linux/buffer_head.h
-+++ b/include/linux/buffer_head.h
-@@ -146,7 +146,7 @@ BUFFER_FNS(Defer_Completion, defer_completion)
- #define page_has_buffers(page)	PagePrivate(page)
- #define folio_buffers(folio)		folio_get_private(folio)
- 
--void buffer_check_dirty_writeback(struct page *page,
-+void buffer_check_dirty_writeback(struct folio *folio,
- 				     bool *dirty, bool *writeback);
- 
- /*
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index b35ce086a7a1..2be852661a29 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -369,7 +369,7 @@ struct address_space_operations {
- 	int (*launder_folio)(struct folio *);
- 	bool (*is_partially_uptodate) (struct folio *, size_t from,
- 			size_t count);
--	void (*is_dirty_writeback) (struct page *, bool *, bool *);
-+	void (*is_dirty_writeback) (struct folio *, bool *dirty, bool *wb);
- 	int (*error_remove_page)(struct address_space *, struct page *);
- 
- 	/* swapfile support */
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 1678802e03e7..27851232e00c 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -1451,7 +1451,7 @@ static void folio_check_dirty_writeback(struct folio *folio,
- 
- 	mapping = folio_mapping(folio);
- 	if (mapping && mapping->a_ops->is_dirty_writeback)
--		mapping->a_ops->is_dirty_writeback(&folio->page, dirty, writeback);
-+		mapping->a_ops->is_dirty_writeback(folio, dirty, writeback);
+ static int build_merkle_tree_level(struct file *filp, unsigned int level,
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 60657132080f..b70192f56454 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -1242,7 +1242,7 @@ void page_cache_sync_readahead(struct address_space *mapping,
+  * @mapping: address_space which holds the pagecache and I/O vectors
+  * @ra: file_ra_state which holds the readahead state
+  * @file: Used by the filesystem for authentication.
+- * @page: The page at @index which triggered the readahead call.
++ * @folio: The folio at @index which triggered the readahead call.
+  * @index: Index of first page to be read.
+  * @req_count: Total number of pages being read by the caller.
+  *
+@@ -1254,10 +1254,10 @@ void page_cache_sync_readahead(struct address_space *mapping,
+ static inline
+ void page_cache_async_readahead(struct address_space *mapping,
+ 		struct file_ra_state *ra, struct file *file,
+-		struct page *page, pgoff_t index, unsigned long req_count)
++		struct folio *folio, pgoff_t index, unsigned long req_count)
+ {
+ 	DEFINE_READAHEAD(ractl, file, ra, mapping, index);
+-	page_cache_async_ra(&ractl, page_folio(page), req_count);
++	page_cache_async_ra(&ractl, folio, req_count);
  }
  
- static struct page *alloc_demote_page(struct page *page, unsigned long node)
+ static inline struct folio *__readahead_folio(struct readahead_control *ractl)
 -- 
 2.34.1
 
