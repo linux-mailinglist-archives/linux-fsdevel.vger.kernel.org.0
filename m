@@ -2,412 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CCAAD515A0D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Apr 2022 05:16:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E24F515A23
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 30 Apr 2022 05:27:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238217AbiD3DTX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 29 Apr 2022 23:19:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39934 "EHLO
+        id S1382137AbiD3Da3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 29 Apr 2022 23:30:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234725AbiD3DTW (ORCPT
+        with ESMTP id S232757AbiD3DaV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 29 Apr 2022 23:19:22 -0400
-Received: from out30-56.freemail.mail.aliyun.com (out30-56.freemail.mail.aliyun.com [115.124.30.56])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EDA795A25
-        for <linux-fsdevel@vger.kernel.org>; Fri, 29 Apr 2022 20:15:55 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0VBlilYd_1651288551;
-Received: from 30.47.241.146(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0VBlilYd_1651288551)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Sat, 30 Apr 2022 11:15:52 +0800
-Message-ID: <e054bee7-88a8-65c3-5390-84ff46ef36f2@linux.alibaba.com>
-Date:   Sat, 30 Apr 2022 11:15:51 +0800
+        Fri, 29 Apr 2022 23:30:21 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 753913D48C;
+        Fri, 29 Apr 2022 20:27:00 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id EC99A624D4;
+        Sat, 30 Apr 2022 03:26:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BF49C385AD;
+        Sat, 30 Apr 2022 03:26:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1651289219;
+        bh=d3ZW5fNPK57eX66J9ylKtIPChK1LOQBQAo/4SDkWPvk=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=RBq81V1B0zC1wsouKSpwHcYn/RAVKgyizDbYM3/yVAZUOp35whj2HgfAFJgUfrRA9
+         KcmTRSIvFGUMxmSSHn5dZn1Lh0QP007kCZMsrNrkwdrHFWeBXLNWy0F/kxSi+BY+7H
+         JXPxxOgtE03yzUinsNtfAI2wc2Srm4MgxKbRUGvuuMnZgTzyLLZaW1rY8vR152J6AB
+         oUzNcKul34iJI0xwW5mZaFonY4WO02G1vRI+WBpsOZH3nbr/HADkYgy+YFVQwedsRv
+         MPxItXG2YhmYjIefDA943fD4PdKLLxtHUdn4brKm5TuHufjUVBbO9eGhcp/OenTLZs
+         rMBDcenRcxfyw==
+Received: by mail-wm1-f47.google.com with SMTP id p189so5541698wmp.3;
+        Fri, 29 Apr 2022 20:26:59 -0700 (PDT)
+X-Gm-Message-State: AOAM531fJLJegFSxB1thi9tfS83Yr3hxGnNF9l1Ovb2p97dEHKeOpRnt
+        A+j5oR12HHJO3l/hNlRW6GnTVa3B2myBYMqBB64=
+X-Google-Smtp-Source: ABdhPJzEDelgZYI9HaASTigWNgH5drnhUAvbr85xTlM+Xv8ERFusnHEgo96dz4tPdMyNM7ga0jrYWBKiJe3/P395BX8=
+X-Received: by 2002:a05:600c:384f:b0:393:e79f:a146 with SMTP id
+ s15-20020a05600c384f00b00393e79fa146mr5823746wmr.102.1651289217537; Fri, 29
+ Apr 2022 20:26:57 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.6.1
-Subject: Re: [RFC PATCH 1/1] erofs: change to use asynchronous io for fscache
- readahead
-Content-Language: en-US
-To:     Xin Yin <yinxin.x@bytedance.com>, xiang@kernel.org,
-        dhowells@redhat.com
-Cc:     linux-erofs@lists.ozlabs.org, linux-cachefs@redhat.com,
-        linux-fsdevel@vger.kernel.org
-References: <20220428233849.321495-1-yinxin.x@bytedance.com>
- <20220428233849.321495-2-yinxin.x@bytedance.com>
-From:   JeffleXu <jefflexu@linux.alibaba.com>
-In-Reply-To: <20220428233849.321495-2-yinxin.x@bytedance.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-12.8 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-        USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no version=3.4.6
+Received: by 2002:a5d:64e7:0:0:0:0:0 with HTTP; Fri, 29 Apr 2022 20:26:56
+ -0700 (PDT)
+In-Reply-To: <CAKYAXd_9BT7je6-UHgDYCY-WD2maxYtam0_En8pgS_FiwRJP9Q@mail.gmail.com>
+References: <20220418173923.193173-1-tadeusz.struk@linaro.org> <CAKYAXd_9BT7je6-UHgDYCY-WD2maxYtam0_En8pgS_FiwRJP9Q@mail.gmail.com>
+From:   Namjae Jeon <linkinjeon@kernel.org>
+Date:   Sat, 30 Apr 2022 12:26:56 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd8sQDJyftZ_N8bgCMcMCMraQ=6_8x+QZ5XprMN3P4x9gQ@mail.gmail.com>
+Message-ID: <CAKYAXd8sQDJyftZ_N8bgCMcMCMraQ=6_8x+QZ5XprMN3P4x9gQ@mail.gmail.com>
+Subject: Re: [PATCH] exfat: check if cluster num is valid
+To:     Tadeusz Struk <tadeusz.struk@linaro.org>
+Cc:     Sungjong Seo <sj1557.seo@samsung.com>,
+        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        syzbot+a4087e40b9c13aad7892@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Xin,
+2022-04-22 14:54 GMT+09:00, Namjae Jeon <linkinjeon@kernel.org>:
+> 2022-04-19 2:39 GMT+09:00, Tadeusz Struk <tadeusz.struk@linaro.org>:
+> Hi Tadeusz,
+>
+>> Syzbot reported slab-out-of-bounds read in exfat_clear_bitmap.
+>> This was triggered by reproducer calling truncate with size 0,
+>> which causes the following trace:
+>>
+>> BUG: KASAN: slab-out-of-bounds in exfat_clear_bitmap+0x147/0x490
+>> fs/exfat/balloc.c:174
+>> Read of size 8 at addr ffff888115aa9508 by task syz-executor251/365
+>>
+>> Call Trace:
+>>  __dump_stack lib/dump_stack.c:77 [inline]
+>>  dump_stack_lvl+0x1e2/0x24b lib/dump_stack.c:118
+>>  print_address_description+0x81/0x3c0 mm/kasan/report.c:233
+>>  __kasan_report mm/kasan/report.c:419 [inline]
+>>  kasan_report+0x1a4/0x1f0 mm/kasan/report.c:436
+>>  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report_generic.c:309
+>>  exfat_clear_bitmap+0x147/0x490 fs/exfat/balloc.c:174
+>>  exfat_free_cluster+0x25a/0x4a0 fs/exfat/fatent.c:181
+>>  __exfat_truncate+0x99e/0xe00 fs/exfat/file.c:217
+>>  exfat_truncate+0x11b/0x4f0 fs/exfat/file.c:243
+>>  exfat_setattr+0xa03/0xd40 fs/exfat/file.c:339
+>>  notify_change+0xb76/0xe10 fs/attr.c:336
+>>  do_truncate+0x1ea/0x2d0 fs/open.c:65
+> Could you please share how to reproduce this ?
+Ping, If you apply this patch to your source, there is a problem. You
+need to add +1 to EXFAT_DATA_CLUSTER_COUNT(sbi).
+and please use is_valid_cluster() to check if cluster is valid instead of it.
 
-Thanks for the awsome work, which is exacly what we need.
-
-
-
-On 4/29/22 7:38 AM, Xin Yin wrote:
-> Add erofs_fscache_read_folios_async helper which has same on-demand
-> read logic with erofs_fscache_read_folios, also support asynchronously
-> read data from fscache.And change .readahead() to use this new helper.
-> 
-> Signed-off-by: Xin Yin <yinxin.x@bytedance.com>
-> ---
->  fs/erofs/fscache.c | 256 ++++++++++++++++++++++++++++++++++++++++++++++++++---
->  1 file changed, 245 insertions(+), 11 deletions(-)
-> 
-> diff --git a/fs/erofs/fscache.c b/fs/erofs/fscache.c
-> index eaa50692ddba..4241f1cdc30b 100644
-> --- a/fs/erofs/fscache.c
-> +++ b/fs/erofs/fscache.c
-> @@ -5,6 +5,231 @@
->  #include <linux/fscache.h>
->  #include "internal.h"
->  
-> +static void erofs_fscache_put_subrequest(struct netfs_io_subrequest *subreq);
-> +
-> +static struct netfs_io_request *erofs_fscache_alloc_request(struct address_space *mapping,
-> +					     loff_t start, size_t len)
-> +{
-> +	struct netfs_io_request *rreq;
-> +
-> +	rreq = kzalloc(sizeof(struct netfs_io_request), GFP_KERNEL);
-> +	if (!rreq)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	rreq->start	= start;
-> +	rreq->len	= len;
-> +	rreq->mapping	= mapping;
-> +	INIT_LIST_HEAD(&rreq->subrequests);
-> +	refcount_set(&rreq->ref, 1);
-> +
-> +	return rreq;
-> +}
-> +
-> +static void erofs_fscache_clear_subrequests(struct netfs_io_request *rreq)
-> +{
-> +	struct netfs_io_subrequest *subreq;
-> +
-> +	while (!list_empty(&rreq->subrequests)) {
-> +		subreq = list_first_entry(&rreq->subrequests,
-> +					  struct netfs_io_subrequest, rreq_link);
-> +		list_del(&subreq->rreq_link);
-> +		erofs_fscache_put_subrequest(subreq);
-> +	}
-> +}
-> +
-
-
-> +static void erofs_fscache_free_request(struct netfs_io_request *rreq)
-> +{
-> +	erofs_fscache_clear_subrequests(rreq);
-
-Actually I don't underdtand why erofs_fscache_clear_subrequests() is
-needed here. erofs_fscache_free_request() is called only when rreq->ref
-has been decreased to 0. That means there's already no subrequest, or
-rreq->ref won't be 0 since each subrequest maintains one refcount of
-rreq. Though I know it's a copy from netfs_free_request()...
-
-
-> +	if (rreq->cache_resources.ops)
-> +		rreq->cache_resources.ops->end_operation(&rreq->cache_resources);
-> +	kfree(rreq);
-> +}
-> +
-> +static void erofs_fscache_put_request(struct netfs_io_request *rreq)
-> +{
-> +	bool dead;
-> +
-> +	dead = refcount_dec_and_test(&rreq->ref);
-> +	if (dead)
-> +		erofs_fscache_free_request(rreq);
-> +}
-
-How about making erofs_fscache_free_request() folded inside
-erofs_fscache_put_request(), since here each function is quite short?
-
-Besides, how about
-
-if (refcount_dec_and_test(&rreq->ref)) {
-	/* erofs_fscache_free_request */
-}
-
-
-> +
-> +
-> +static struct netfs_io_subrequest *
-> +	erofs_fscache_alloc_subrequest(struct netfs_io_request *rreq)
-> +{
-> +	struct netfs_io_subrequest *subreq;
-> +
-> +	subreq = kzalloc(sizeof(struct netfs_io_subrequest), GFP_KERNEL);
-> +	if (subreq) {
-> +		INIT_LIST_HEAD(&subreq->rreq_link);
-> +		refcount_set(&subreq->ref, 2);
-> +		subreq->rreq = rreq;
-> +		refcount_inc(&rreq->ref);
-> +	}
-> +
-> +	return subreq;
-> +}
-> +
-
-
-> +static void erofs_fscache_free_subrequest(struct netfs_io_subrequest *subreq)
-> +{
-> +	struct netfs_io_request *rreq = subreq->rreq;
-> +
-> +	kfree(subreq);
-> +	erofs_fscache_put_request(rreq);
-> +}
-> +
-> +static void erofs_fscache_put_subrequest(struct netfs_io_subrequest *subreq)
-> +{
-> +	bool dead;
-> +
-> +	dead = refcount_dec_and_test(&subreq->ref);
-> +	if (dead)
-> +		erofs_fscache_free_subrequest(subreq);
-> +}
-
-Similar to the issue of erofs_fscache_put_request().
-
-
-> +
-> +
-> +static void erofs_fscache_rreq_unlock_folios(struct netfs_io_request *rreq)
-> +{
-> +	struct netfs_io_subrequest *subreq;
-> +	struct folio *folio;
-> +	unsigned int iopos;
-> +	pgoff_t start_page = rreq->start / PAGE_SIZE;
-> +	pgoff_t last_page = ((rreq->start + rreq->len) / PAGE_SIZE) - 1;
-> +	bool subreq_failed = false;
-> +
-> +	XA_STATE(xas, &rreq->mapping->i_pages, start_page);
-> +
-> +	subreq = list_first_entry(&rreq->subrequests,
-> +				  struct netfs_io_subrequest, rreq_link);
-> +	iopos = 0;
-> +	subreq_failed = (subreq->error < 0);
-> +
-> +	rcu_read_lock();
-> +	xas_for_each(&xas, folio, last_page) {
-> +		unsigned int pgpos = (folio_index(folio) - start_page) * PAGE_SIZE;
-> +		unsigned int pgend = pgpos + folio_size(folio);
-> +		bool pg_failed = false;
-> +
-> +		for (;;) {
-> +			if (!subreq) {
-> +				pg_failed = true;
-> +				break;
-> +			}
-> +
-> +			pg_failed |= subreq_failed;
-> +			if (pgend < iopos + subreq->len)
-> +				break;
-> +
-> +			iopos += subreq->len;
-> +			if (!list_is_last(&subreq->rreq_link, &rreq->subrequests)) {
-> +				subreq = list_next_entry(subreq, rreq_link);
-> +				subreq_failed = (subreq->error < 0);
-> +			} else {
-> +				subreq = NULL;
-> +				subreq_failed = false;
-> +			}
-> +			if (pgend == iopos)
-> +				break;
-> +		}
-> +
-> +		if (!pg_failed)
-> +			folio_mark_uptodate(folio);
-> +
-> +		folio_unlock(folio);
-> +	}
-> +	rcu_read_unlock();
-> +}
-> +
-> +
-> +static void erofs_fscache_rreq_complete(struct netfs_io_request *rreq)
-> +{
-> +	erofs_fscache_rreq_unlock_folios(rreq);
-> +	erofs_fscache_clear_subrequests(rreq);
-> +	erofs_fscache_put_request(rreq);
-> +}
-> +
-> +static void erofc_fscache_subreq_complete(void *priv, ssize_t transferred_or_error,
-> +					bool was_async)
-> +{
-> +	struct netfs_io_subrequest *subreq = priv;
-> +	struct netfs_io_request *rreq = subreq->rreq;
-> +
-> +	if (IS_ERR_VALUE(transferred_or_error))
-> +		subreq->error = transferred_or_error;
-> +
-> +	if (atomic_dec_and_test(&rreq->nr_outstanding))
-> +		erofs_fscache_rreq_complete(rreq);
-> +
-> +	erofs_fscache_put_subrequest(subreq);
-> +}
-> +
-> +static int erofs_fscache_read_folios_async(struct fscache_cookie *cookie,
-> +				     struct netfs_io_request *rreq,
-> +				     loff_t start, size_t len,
-> +				     loff_t pstart)
-> +{
-> +	enum netfs_io_source source;
-> +	struct netfs_io_subrequest *subreq;
-> +	struct netfs_cache_resources *cres;
-> +	struct iov_iter iter;
-> +	size_t done = 0;
-> +	int ret;
-> +
-> +	atomic_set(&rreq->nr_outstanding, 1);
-> +
-> +	cres = &rreq->cache_resources;
-> +	ret = fscache_begin_read_operation(cres, cookie);
-> +	if (ret)
-> +		goto out;
-> +
-> +	while (done < len) {
-> +		subreq = erofs_fscache_alloc_subrequest(rreq);
-> +		if (!subreq) {
-> +			ret = -ENOMEM;
-> +			goto out;
-> +		}
-> +
-> +		subreq->start = pstart + done;
-> +		subreq->len	=  len - done;
-> +		subreq->flags = 1 << NETFS_SREQ_ONDEMAND;
-> +
-> +		list_add_tail(&subreq->rreq_link, &rreq->subrequests);
-> +
-> +		source = cres->ops->prepare_read(subreq, LLONG_MAX);
-> +		if (WARN_ON(subreq->len == 0))
-> +			source = NETFS_INVALID_READ;
-> +		if (source != NETFS_READ_FROM_CACHE) {
-> +			ret = -EIO;
-> +			erofs_fscache_put_subrequest(subreq);
-> +			goto out;
-
-Need to set subreq->error here before going to out?
-
-
-> +		}
-> +
-> +		atomic_inc(&rreq->nr_outstanding);
-> +
-> +		iov_iter_xarray(&iter, READ, &rreq->mapping->i_pages,
-> +				start + done, subreq->len);
-> +
-> +		ret = fscache_read(cres, subreq->start, &iter,
-> +				   NETFS_READ_HOLE_FAIL, erofc_fscache_subreq_complete, subreq);
-> +
-> +		if (ret == -EIOCBQUEUED)
-> +			ret = 0;
-> +
-> +		if (ret) {
-> +			erofs_fscache_put_subrequest(subreq);
-
-I think erofs_fscache_put_subrequest() here is not needed, since when
-error encountered, erofc_fscache_subreq_complete() will be called inside
-fscache_read(), in which erofs_fscache_put_subrequest() will be called
-already.
-
-> +			goto out;
-> +		}
-> +
-> +		done += subreq->len;
-> +	}
-> +out:
-> +	if (atomic_dec_and_test(&rreq->nr_outstanding))
-> +		erofs_fscache_rreq_complete(rreq);
-> +
-> +	return ret;
-> +}
-BTW, could you please also help covert the original synchronous
-erofs_fscache_read_folios() to calling erofs_fscache_read_folios_async()
-to avoid code duplication?
-
-> +
->  /*
->   * Read data from fscache and fill the read data into page cache described by
->   * @start/len, which shall be both aligned with PAGE_SIZE. @pstart describes
-> @@ -163,15 +388,16 @@ static int erofs_fscache_readpage(struct file *file, struct page *page)
->  	return ret;
->  }
->  
-> -static void erofs_fscache_unlock_folios(struct readahead_control *rac,
-> -					size_t len)
-> +static void erofs_fscache_readahead_folios(struct readahead_control *rac,
-> +					size_t len, bool unlock)
->  {
->  	while (len) {
->  		struct folio *folio = readahead_folio(rac);
-> -
->  		len -= folio_size(folio);
-> -		folio_mark_uptodate(folio);
-> -		folio_unlock(folio);
-> +		if (unlock) {
-> +			folio_mark_uptodate(folio);
-> +			folio_unlock(folio);
-> +		}
->  	}
->  }
->  
-> @@ -193,6 +419,7 @@ static void erofs_fscache_readahead(struct readahead_control *rac)
->  	do {
->  		struct erofs_map_blocks map;
->  		struct erofs_map_dev mdev;
-> +		struct netfs_io_request *rreq;
->  
->  		pos = start + done;
->  		map.m_la = pos;
-> @@ -212,7 +439,7 @@ static void erofs_fscache_readahead(struct readahead_control *rac)
->  					offset, count);
->  			iov_iter_zero(count, &iter);
->  
-> -			erofs_fscache_unlock_folios(rac, count);
-> +			erofs_fscache_readahead_folios(rac, count, true);
->  			ret = count;
->  			continue;
->  		}
-> @@ -238,13 +465,20 @@ static void erofs_fscache_readahead(struct readahead_control *rac)
->  		if (ret)
->  			return;
->  
-> -		ret = erofs_fscache_read_folios(mdev.m_fscache->cookie,
-> -				rac->mapping, offset, count,
-> +		rreq = erofs_fscache_alloc_request(rac->mapping, offset, count);
-> +		if (IS_ERR(rreq))
-> +			return;
-> +		/*
-> +		 * Drop the ref of folios here. Unlock them in
-> +		 * rreq_unlock_folios() when rreq complete.
-> +		 */
-> +		erofs_fscache_readahead_folios(rac, count, false);
-> +		ret = erofs_fscache_read_folios_async(mdev.m_fscache->cookie,
-> +				rreq, offset, count,
->  				mdev.m_pa + (pos - map.m_la));
-> -		if (!ret) {
-> -			erofs_fscache_unlock_folios(rac, count);
-> +
-> +		if (!ret)
->  			ret = count;
-> -		}
->  	} while (ret > 0 && ((done += ret) < len));
->  }
->  
-
-
-
--- 
-Thanks,
-Jeffle
+>
+> Thanks.
+>>
+>> Add checks to validate if cluster number is within valid range in
+>> exfat_clear_bitmap() and exfat_set_bitmap()
+>>
+>> Cc: Namjae Jeon <linkinjeon@kernel.org>
+>> Cc: Sungjong Seo <sj1557.seo@samsung.com>
+>> Cc: linux-fsdevel@vger.kernel.org
+>> Cc: stable@vger.kernel.org
+>> Cc: linux-kernel@vger.kernel.org
+>>
+>> Link:
+>> https://syzkaller.appspot.com/bug?id=50381fc73821ecae743b8cf24b4c9a04776f767c
+>> Reported-by: syzbot+a4087e40b9c13aad7892@syzkaller.appspotmail.com
+>> Fixes: 1e49a94cf707 ("exfat: add bitmap operations")
+>> Signed-off-by: Tadeusz Struk <tadeusz.struk@linaro.org>
+>> ---
+>>  fs/exfat/balloc.c | 6 ++++++
+>>  1 file changed, 6 insertions(+)
+>>
+>> diff --git a/fs/exfat/balloc.c b/fs/exfat/balloc.c
+>> index 03f142307174..4ed81f86f993 100644
+>> --- a/fs/exfat/balloc.c
+>> +++ b/fs/exfat/balloc.c
+>> @@ -149,6 +149,9 @@ int exfat_set_bitmap(struct inode *inode, unsigned
+>> int
+>> clu, bool sync)
+>>  	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+>>
+>>  	WARN_ON(clu < EXFAT_FIRST_CLUSTER);
+>> +	if (clu > EXFAT_DATA_CLUSTER_COUNT(sbi))
+>> +		return -EINVAL;
+>> +
+>>  	ent_idx = CLUSTER_TO_BITMAP_ENT(clu);
+>>  	i = BITMAP_OFFSET_SECTOR_INDEX(sb, ent_idx);
+>>  	b = BITMAP_OFFSET_BIT_IN_SECTOR(sb, ent_idx);
+>> @@ -167,6 +170,9 @@ void exfat_clear_bitmap(struct inode *inode, unsigned
+>> int clu, bool sync)
+>>  	struct exfat_mount_options *opts = &sbi->options;
+>>
+>>  	WARN_ON(clu < EXFAT_FIRST_CLUSTER);
+>> +	if (clu > EXFAT_DATA_CLUSTER_COUNT(sbi))
+>> +		return;
+>> +
+>>  	ent_idx = CLUSTER_TO_BITMAP_ENT(clu);
+>>  	i = BITMAP_OFFSET_SECTOR_INDEX(sb, ent_idx);
+>>  	b = BITMAP_OFFSET_BIT_IN_SECTOR(sb, ent_idx);
+>> --
+>> 2.35.1
+>>
+>>
+>
