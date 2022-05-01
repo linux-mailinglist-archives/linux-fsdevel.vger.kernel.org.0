@@ -2,83 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F0D7E516151
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 May 2022 05:56:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26CAF516238
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 May 2022 08:31:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239719AbiEAD7z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 30 Apr 2022 23:59:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36870 "EHLO
+        id S241837AbiEAGe6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 1 May 2022 02:34:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48042 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239646AbiEAD7w (ORCPT
+        with ESMTP id S231721AbiEAGez (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 30 Apr 2022 23:59:52 -0400
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B13064EDC8;
-        Sat, 30 Apr 2022 20:56:25 -0700 (PDT)
-Received: by mail-pj1-x102a.google.com with SMTP id w17-20020a17090a529100b001db302efed6so8842852pjh.4;
-        Sat, 30 Apr 2022 20:56:25 -0700 (PDT)
+        Sun, 1 May 2022 02:34:55 -0400
+Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FA5E12AA1;
+        Sat, 30 Apr 2022 23:31:30 -0700 (PDT)
+Received: by mail-pl1-x636.google.com with SMTP id c11so63861plg.13;
+        Sat, 30 Apr 2022 23:31:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=nFKK9tbwZ4J1LvHBYQyFT4vsHGk5LucafrRS/Gv18zA=;
-        b=ktOboK1mXTskj8qTSetILJdzrAt3fBKxSpOym4txyAZilYWxeX0LRHga+1QpY/BIFM
-         7KXljDm4rPD8PUu0T6RVX2m8LdRYC1SypNNx0+mAPOekj9u7DqNuGxqJHYHLqa8fKbGg
-         +497gEpFYRo1UorbDUWq7FFYgl2pckvvmu5o59Gu3bmynM8Fa7C4LYjbLj02t6r3uFFN
-         nPGj+8LcaA74IAxdAb1b1Tg59tqoxZMc31uYdZ7wk81OktKKcAggGKSt8MNt0K7hq3Wt
-         hPcDxNneUr1nZtg+2l4gh2oNxyJ8iSdLVk59uC6smn1oXEbZIK7VMhD5+Ejf9bn1X6Wn
-         mjCg==
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=C3fw8DIFF0S9vtq6+VZ86MGJHG+O7QFGmF8dzFDlkn0=;
+        b=b50AxEBIlMAkxEuc8Xq73f92g/HVSeCn7ILG63CJBJ8YxHsInlZ7048PQdWBooTpqX
+         hLCCUyzXzOMXdjTF0xcZ3g+Q0WCMyD1YI//fNd1trC4NOjZimLUwGmF2SJcA8kyfJuux
+         lKsvNWlOchpbigmyhpC4/3c/VibhAjka2RUqg/cD6k6r/11ydL6/wtDlwXBnW2KoUST0
+         /TIeHsyesmLkRA7J6zw8PSZBnbkEgPSaEhkXOFJBwMWfJVSGkZsunJ0Lp/kICuMuu3Yo
+         2dnGMPID0hO+4H8x14/ohVo8BuhCYplSUWM7l6TiOtIlfKEOQOQvcgcG3LmNv91MmMqI
+         ztSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=nFKK9tbwZ4J1LvHBYQyFT4vsHGk5LucafrRS/Gv18zA=;
-        b=mwktS2TBoXsIHehGoM9L7JBXaOa7GJ/Hyw3APLQyv411zgmpQ8Gaetd+OmzP2Rp8h0
-         sBwzxkd0Yv4c7EcGf7qWFqT7xhO3D4I9fEzQM4Z9AzUI1ylFdBIt9GqL3b3RSrRiieQ4
-         vtYAH7FzizbdLY8U5GIaNUoE/HhSjfrzh+XHYkQ7GdlaiiuuW72PQrxm0N/VS7nfOkj0
-         mxQJvMd5FeVKodQh0pUidta6mxgE3SJr+EGLEI1ZnLTBChYc17Tn2Fg5jqBHSjIoAdB0
-         k8U2QnUaLE5t3s3MWNsnKksx7m/Um7GxZ+pPA2KI15OZGRMJzc42Ie/9y/zafOmkgkZW
-         PLrg==
-X-Gm-Message-State: AOAM531qymp0ET1B/iFDP19gA4sMRM2ggXXNcPnCPiaX1F2heFw4lQhB
-        +SCJJLyqUKlNG9ifQOo/0KF3giPyaRiQzA==
-X-Google-Smtp-Source: ABdhPJwHYKQ/ZlsEGXA6r5p6xTcoS10xAS/6qA8qeCPePdAImnjtQ9Sv5DA2y4zc51ufizRS4D1gbQ==
-X-Received: by 2002:a17:90a:730c:b0:1d9:3f5:9a00 with SMTP id m12-20020a17090a730c00b001d903f59a00mr6829993pjk.109.1651377384932;
-        Sat, 30 Apr 2022 20:56:24 -0700 (PDT)
-Received: from bogon.xiaojukeji.com ([111.201.149.168])
-        by smtp.gmail.com with ESMTPSA id q9-20020a654949000000b003c1d946af6csm1767863pgs.32.2022.04.30.20.56.19
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 30 Apr 2022 20:56:24 -0700 (PDT)
-From:   xiangxia.m.yue@gmail.com
-To:     linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org
-Cc:     Tonghao Zhang <xiangxia.m.yue@gmail.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        David Ahern <dsahern@kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Julian Anastasov <ja@ssi.bg>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@netfilter.org>,
-        Florian Westphal <fw@strlen.de>, Shuah Khan <shuah@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Eric Dumazet <edumazet@google.com>,
-        Lorenz Bauer <lmb@cloudflare.com>,
-        Akhmat Karakotov <hmukos@yandex-team.ru>
-Subject: [PATCH v5 3/3] selftests/sysctl: add sysctl macro test
-Date:   Sun,  1 May 2022 11:55:24 +0800
-Message-Id: <20220501035524.91205-4-xiangxia.m.yue@gmail.com>
-X-Mailer: git-send-email 2.30.1 (Apple Git-130)
-In-Reply-To: <20220501035524.91205-1-xiangxia.m.yue@gmail.com>
-References: <20220501035524.91205-1-xiangxia.m.yue@gmail.com>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=C3fw8DIFF0S9vtq6+VZ86MGJHG+O7QFGmF8dzFDlkn0=;
+        b=nzTymDs7Bxy0vPWTSenQ/a8EchX/YeWRIyJaN9wsRTOaqkEzshOBZPeemcGJO8ddZ4
+         yBsoCCwnzjQrnfKfuse8eQLHuaRxV8g0ho4ETTpMP//MG0oMKrJrlk85srpxsTg17BYq
+         MhgJQqS1fOiqm9uNpHBgOB7LPuWodF0+Mw94qjJQuUXei1kuNNnLEuVGTVsOuUV91IKt
+         7YuySq5LV1hmWwB6GM8TUQ/iCWyMsY+49Nm/izmr6GmEyKBCF75IpcwkYT3ATyCCC+N8
+         rkglUYkZJaDQpWZfWf8VVI+NJb7cWEMenPAUqBlqq3M14L3NiMxmT0jBcph5tPV+Obn0
+         v1VA==
+X-Gm-Message-State: AOAM532WUUpVTDJT0HjjalW3Qp1CXL7XI4Vm0JTBnEnxUxsKH3ACmMa0
+        2yk1CWHNSagkyRsPXhEXgYBVf6X9jXmovYfQ
+X-Google-Smtp-Source: ABdhPJzxT9dATzzPTyUZNf4N+sT4vHr6bBbiLdGX8A9LUpAGqEl7PEIOQTDpKPo2eXY8ayPjvim6UQ==
+X-Received: by 2002:a17:90a:6445:b0:1d6:a69e:406c with SMTP id y5-20020a17090a644500b001d6a69e406cmr12149202pjm.49.1651386690104;
+        Sat, 30 Apr 2022 23:31:30 -0700 (PDT)
+Received: from [127.0.0.1] ([103.121.210.106])
+        by smtp.gmail.com with ESMTPSA id j12-20020a170903028c00b0015e8d4eb1b6sm2383682plr.0.2022.04.30.23.31.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 30 Apr 2022 23:31:29 -0700 (PDT)
+Message-ID: <30161ae8-690a-4423-546a-8fbea9f0bdb1@gmail.com>
+Date:   Sun, 1 May 2022 14:30:57 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [RFC v3 0/9] fixed worker
+Content-Language: en-US
+To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
+Cc:     Pavel Begunkov <asml.silence@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220429101858.90282-1-haoxu.linux@gmail.com>
+ <ee61dae0-30d4-b301-a787-ea83be3f9308@kernel.dk>
+From:   Hao Xu <haoxu.linux@gmail.com>
+In-Reply-To: <ee61dae0-30d4-b301-a787-ea83be3f9308@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
         RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -87,138 +75,50 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Tonghao Zhang <xiangxia.m.yue@gmail.com>
-
-Cc: Luis Chamberlain <mcgrof@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Iurii Zaikin <yzaikin@google.com>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Jakub Kicinski <kuba@kernel.org>
-Cc: Paolo Abeni <pabeni@redhat.com>
-Cc: Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
-Cc: David Ahern <dsahern@kernel.org>
-Cc: Simon Horman <horms@verge.net.au>
-Cc: Julian Anastasov <ja@ssi.bg>
-Cc: Pablo Neira Ayuso <pablo@netfilter.org>
-Cc: Jozsef Kadlecsik <kadlec@netfilter.org>
-Cc: Florian Westphal <fw@strlen.de>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Eric Dumazet <edumazet@google.com>
-Cc: Lorenz Bauer <lmb@cloudflare.com>
-Cc: Akhmat Karakotov <hmukos@yandex-team.ru>
-Signed-off-by: Tonghao Zhang <xiangxia.m.yue@gmail.com>
----
- lib/test_sysctl.c                        | 32 ++++++++++++++++++++++++
- tools/testing/selftests/sysctl/sysctl.sh | 23 +++++++++++++++++
- 2 files changed, 55 insertions(+)
-
-diff --git a/lib/test_sysctl.c b/lib/test_sysctl.c
-index a5a3d6c27e1f..9a564971f539 100644
---- a/lib/test_sysctl.c
-+++ b/lib/test_sysctl.c
-@@ -38,6 +38,7 @@
- 
- static int i_zero;
- static int i_one_hundred = 100;
-+static int match_int_ok = 1;
- 
- struct test_sysctl_data {
- 	int int_0001;
-@@ -95,6 +96,13 @@ static struct ctl_table test_table[] = {
- 		.mode		= 0644,
- 		.proc_handler	= proc_dointvec,
- 	},
-+	{
-+		.procname	= "match_int",
-+		.data		= &match_int_ok,
-+		.maxlen		= sizeof(match_int_ok),
-+		.mode		= 0444,
-+		.proc_handler	= proc_dointvec,
-+	},
- 	{
- 		.procname	= "boot_int",
- 		.data		= &test_data.boot_int,
-@@ -132,6 +140,30 @@ static struct ctl_table_header *test_sysctl_header;
- 
- static int __init test_sysctl_init(void)
- {
-+	int i;
-+
-+	struct {
-+		int defined;
-+		int wanted;
-+	} match_int[] = {
-+		{.defined = *(int *)SYSCTL_ZERO,	.wanted = 0},
-+		{.defined = *(int *)SYSCTL_ONE,		.wanted = 1},
-+		{.defined = *(int *)SYSCTL_TWO,		.wanted = 2},
-+		{.defined = *(int *)SYSCTL_THREE,	.wanted = 3},
-+		{.defined = *(int *)SYSCTL_FOUR,	.wanted = 4},
-+		{.defined = *(int *)SYSCTL_ONE_HUNDRED, .wanted = 100},
-+		{.defined = *(int *)SYSCTL_TWO_HUNDRED,	.wanted = 200},
-+		{.defined = *(int *)SYSCTL_ONE_THOUSAND, .wanted = 1000},
-+		{.defined = *(int *)SYSCTL_THREE_THOUSAND, .wanted = 3000},
-+		{.defined = *(int *)SYSCTL_INT_MAX,	.wanted = INT_MAX},
-+		{.defined = *(int *)SYSCTL_MAXOLDUID,	.wanted = 65535},
-+		{.defined = *(int *)SYSCTL_NEG_ONE,	.wanted = -1},
-+	};
-+
-+	for (i = 0; i < ARRAY_SIZE(match_int); i++)
-+		if (match_int[i].defined != match_int[i].wanted)
-+			match_int_ok = 0;
-+
- 	test_data.bitmap_0001 = kzalloc(SYSCTL_TEST_BITMAP_SIZE/8, GFP_KERNEL);
- 	if (!test_data.bitmap_0001)
- 		return -ENOMEM;
-diff --git a/tools/testing/selftests/sysctl/sysctl.sh b/tools/testing/selftests/sysctl/sysctl.sh
-index 19515dcb7d04..f50778a3d744 100755
---- a/tools/testing/selftests/sysctl/sysctl.sh
-+++ b/tools/testing/selftests/sysctl/sysctl.sh
-@@ -40,6 +40,7 @@ ALL_TESTS="$ALL_TESTS 0004:1:1:uint_0001"
- ALL_TESTS="$ALL_TESTS 0005:3:1:int_0003"
- ALL_TESTS="$ALL_TESTS 0006:50:1:bitmap_0001"
- ALL_TESTS="$ALL_TESTS 0007:1:1:boot_int"
-+ALL_TESTS="$ALL_TESTS 0008:1:1:match_int"
- 
- function allow_user_defaults()
- {
-@@ -785,6 +786,27 @@ sysctl_test_0007()
- 	return $ksft_skip
- }
- 
-+sysctl_test_0008()
-+{
-+	TARGET="${SYSCTL}/match_int"
-+	if [ ! -f $TARGET ]; then
-+		echo "Skipping test for $TARGET as it is not present ..."
-+		return $ksft_skip
-+	fi
-+
-+	echo -n "Testing if $TARGET is matched in kernel"
-+	ORIG_VALUE=$(cat "${TARGET}")
-+
-+	if [ $ORIG_VALUE -ne 1 ]; then
-+		echo "TEST FAILED"
-+		rc=1
-+		test_rc
-+	fi
-+
-+	echo "ok"
-+	return 0
-+}
-+
- list_tests()
- {
- 	echo "Test ID list:"
-@@ -800,6 +822,7 @@ list_tests()
- 	echo "0005 x $(get_test_count 0005) - tests proc_douintvec() array"
- 	echo "0006 x $(get_test_count 0006) - tests proc_do_large_bitmap()"
- 	echo "0007 x $(get_test_count 0007) - tests setting sysctl from kernel boot param"
-+	echo "0008 x $(get_test_count 0008) - tests sysctl macro values match"
- }
- 
- usage()
--- 
-2.27.0
+On 4/30/22 21:11, Jens Axboe wrote:
+> On 4/29/22 4:18 AM, Hao Xu wrote:
+>> This is the third version of fixed worker implementation.
+>> Wrote a nop test program to test it, 3 fixed-workers VS 3 normal workers.
+>> normal workers:
+>> ./run_nop_wqe.sh nop_wqe_normal 200000 100 3 1-3
+>>          time spent: 10464397 usecs      IOPS: 1911242
+>>          time spent: 9610976 usecs       IOPS: 2080954
+>>          time spent: 9807361 usecs       IOPS: 2039284
+>>
+>> fixed workers:
+>> ./run_nop_wqe.sh nop_wqe_fixed 200000 100 3 1-3
+>>          time spent: 17314274 usecs      IOPS: 1155116
+>>          time spent: 17016942 usecs      IOPS: 1175299
+>>          time spent: 17908684 usecs      IOPS: 1116776
+> 
+> I saw these numbers in v2 as well, and I have to admit I don't
+> understand them. Because on the surface, it sure looks like the first
+> set of results (labeled "normal") are better than the second "fixed"
+> set. Am I reading them wrong, or did you transpose them?
+Sorry, I transposed them..
+> 
+> I think this patch series would benefit from a higher level description
+> of what fixed workers mean in this context. How are they different from
+> the existing workers, and why would it improve things.
+Sure, put that in the Patch 7/9, I'll move it to the cover letter as
+well.
+> 
+>> things to be done:
+>>   - Still need some thinking about the work cancellation
+> 
+> Can you expand? What are the challenges with fixed workers and
+> cancelation?
+Currently, when a fixed worker fetch all the works from its private work
+list, I use a temporary acct struct to hold them. This means at that
+moment the cancellation cannot find these works which are going to run
+but not in the private work list already. This won't be a big problem,
+another acct member in io_worker{} should be good enough to resolve
+that.
+> 
+>>   - not very sure IO_WORKER_F_EXIT is safe enough on synchronization
+>>   - the iowq hash stuff is not compatible with fixed worker for now
+> 
+> We might need to extract the hashing out a bit so it's not as tied to
+> the existing implementation.
+> 
 
