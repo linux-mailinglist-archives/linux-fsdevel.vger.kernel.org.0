@@ -2,108 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B5FD051625B
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 May 2022 09:01:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F4A7516287
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 May 2022 09:59:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242755AbiEAHE7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 1 May 2022 03:04:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35170 "EHLO
+        id S236013AbiEAIDP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 1 May 2022 04:03:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236606AbiEAHE5 (ORCPT
+        with ESMTP id S232123AbiEAIDO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 1 May 2022 03:04:57 -0400
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A49AB192B1;
-        Sun,  1 May 2022 00:01:32 -0700 (PDT)
-Received: by mail-pj1-x102d.google.com with SMTP id o69so9038297pjo.3;
-        Sun, 01 May 2022 00:01:32 -0700 (PDT)
+        Sun, 1 May 2022 04:03:14 -0400
+Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 091D27B575
+        for <linux-fsdevel@vger.kernel.org>; Sun,  1 May 2022 00:59:49 -0700 (PDT)
+Received: by mail-lj1-x234.google.com with SMTP id 4so15124469ljw.11
+        for <linux-fsdevel@vger.kernel.org>; Sun, 01 May 2022 00:59:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=XJuXYg02F7GZrqi1LIe5DG6ak9PjoEuh2MqhUV/o+CI=;
-        b=Y0/jZvPdTwxd5qNAoFtAQjICBif7TP4/uvNGHZ7mCVBNTf5UQZuBLBr192yhB2uGEx
-         QDxEeVMT0F6NrYrr+3q/6enzJft2dUL1ybHYpJkquIl2jGDkU1E16YxjlIYESfMePOS5
-         AvdLSpWsGU14DMZKwKtUpG28ZbRJ6d8HOsN9+B4h8pmgXfQlTaygGoumWj8cSZdLHBuQ
-         j189Wr+YGPwMxr/LZHsw7p5GG0cVQVUq4Zi6Ptbk9wPoIGav4zbZgO9DNG3k4N0sPmhK
-         jqMCHNaoESkbaHMdYS/QTUPjd1jZcDSW6IA8wEg5/rrTvUsut5omo0OVMBje4tY/yHD3
-         H/8Q==
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=bwS6neoJgwAscLo7SMr+briaL7cQkz+klklthFb5lCU=;
+        b=cY9xiKClPzQfCMz80gVj3KC8oirqpcOaA49JLl1+D5f+dtBt0xpRAm8iFoK/+NkSUw
+         KjJQgwMoGYF6NG4HVB8h4RIK++OlZ/2fPHOjNCOI10JsGKnGnBPFTJU7majqwl91uYl3
+         IM8y/RL1P2EfDPdTsf5UhkE34NhiFe8wRaoAsuDKoJtyEYpXDrSE/0iuT0JKzI2xvwLN
+         dabg7oqfUWmMgB2K2NVXcHYz1WOCiMOoiI9qFP3zKwA2rtNex2LO03rQcnBra04VgrUA
+         MH0T2f5I0oyVUEeTa2VAdIzlvRRKr0JA4tmyHRzZ3Yo40zuNUMO7Q2/FecTh2UBEZ5nY
+         b5AA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=XJuXYg02F7GZrqi1LIe5DG6ak9PjoEuh2MqhUV/o+CI=;
-        b=JTkc2wnUSsWluesO/3JWCqwt5GhzUbJinGUto1dlVPTXG5+3Pw1bVcXf2JDtLGXz1b
-         oA21Uu+AmmWZ88xZ8LA6JdhEHwGiRu0I/JMg7zxsx170c8q4pvlS+oWj++oAgsKCwf7R
-         r6qb4pis4spfWy8QYvonJlI/njme88D0cvr7qh7SUranqIfWm5apGaD7NAHPIgJ3BmrL
-         h2K6+K+8TV37iHE1l7A0oOwN9U4C3vCyjPmluO0e/t+ecrD6DsZ4L0hQsxgcIuDXsv2j
-         a/FUW6wQfS4rAyihcheBlQVOydeV/UMBHid5g8SDt4ndwCmkxe3Y/2ws/2LNqaccUpQG
-         QNdg==
-X-Gm-Message-State: AOAM531gMwh4AhqL5P8KrYR0MLPOpBjAbGFemEFA2UNcugfeufEDtYJj
-        KHWfDDDZT8x/MIe4tvgmEl0=
-X-Google-Smtp-Source: ABdhPJxjGACwujXvOQg6H2YQlGoquVq0GFnswroW1iywGoHNo2RXHSHhZT985A1E4HRMufbQD0M0/A==
-X-Received: by 2002:a17:902:8644:b0:15a:3b4a:538a with SMTP id y4-20020a170902864400b0015a3b4a538amr6513889plt.146.1651388492197;
-        Sun, 01 May 2022 00:01:32 -0700 (PDT)
-Received: from [127.0.0.1] ([103.121.210.106])
-        by smtp.gmail.com with ESMTPSA id e3-20020a170903240300b0015e8d4eb28fsm2398872plo.217.2022.05.01.00.01.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 01 May 2022 00:01:31 -0700 (PDT)
-Message-ID: <b90f96e9-3209-2285-fd1d-9a7660cf5e1a@gmail.com>
-Date:   Sun, 1 May 2022 15:00:04 +0800
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=bwS6neoJgwAscLo7SMr+briaL7cQkz+klklthFb5lCU=;
+        b=DxxbymZ5HNQ31kbHj7XyLr0+8nEfyLGRX1353JEWx7T/mNYOpFoyIl7hxWcwe2S+CM
+         5tMqEY9OW1/XNPHbJuG1Ys5LXWQ7u6nqnS5w3+iHzs12NbkyELmRo2X706U3cm8jvKfM
+         8XoxMeJtWrGXkffhm2vPrk4q6Zy6P4rVrOQXiig3HuVRTGLCWnmvbZ8Pxnt8+WODJHY4
+         bIQ754jZikxQKJL40ZejoSyuBDG9rv97FALc78IK3r7y1Zzf7xQpChccr88uKH72JNOY
+         xui2Unn6k9ngkjEXLorHBH5cgZuTejswJV3zWeeDMPTAp1UlTx4RLTXSGM0pauClq9Of
+         3sQw==
+X-Gm-Message-State: AOAM533069n7/JamQS1dUJPl5UaJ//Al10CbiBkFJIGchrbguOrDd3hb
+        xPrFavHo/6rVL/ILgekdvEITfUC0tzeCZCtHOfWR6A==
+X-Google-Smtp-Source: ABdhPJwVs2ZVv+Eaq5VyLrhX5r9W7NBvf4my2q1OF2UJtKn+DFVoi8+nGzLLoOvLndBDI7z5HBcmwn406loffgvhLno=
+X-Received: by 2002:a05:651c:4c7:b0:24f:4017:a2ce with SMTP id
+ e7-20020a05651c04c700b0024f4017a2cemr4870748lji.5.1651391987333; Sun, 01 May
+ 2022 00:59:47 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH 7/9] io-wq: implement fixed worker logic
-Content-Language: en-US
-To:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org
-Cc:     Pavel Begunkov <asml.silence@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220429101858.90282-1-haoxu.linux@gmail.com>
- <20220429101858.90282-8-haoxu.linux@gmail.com>
- <015f58ed-09c1-cd27-064a-b6c0cc5580d2@kernel.dk>
-From:   Hao Xu <haoxu.linux@gmail.com>
-In-Reply-To: <015f58ed-09c1-cd27-064a-b6c0cc5580d2@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20220428233849.321495-1-yinxin.x@bytedance.com> <YmvbwKSdiCosPhAV@B-P7TQMD6M-0146.local>
+In-Reply-To: <YmvbwKSdiCosPhAV@B-P7TQMD6M-0146.local>
+From:   Xin Yin <yinxin.x@bytedance.com>
+Date:   Sun, 1 May 2022 15:59:37 +0800
+Message-ID: <CAK896s701pZ_VzRUGLA=g5poAc+oqHqD=Swp14AVxND7ZVvg3A@mail.gmail.com>
+Subject: Re: [External] Re: [RFC PATCH 0/1] erofs: change to use asynchronous
+ io for fscache readahead
+To:     jefflexu@linux.alibaba.com, xiang@kernel.org, dhowells@redhat.com,
+        linux-erofs@lists.ozlabs.org, linux-cachefs@redhat.com,
+        linux-fsdevel@vger.kernel.org, boyu.mt@taobao.com,
+        lizefan.x@bytedance.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/30/22 21:27, Jens Axboe wrote:
-> On 4/29/22 4:18 AM, Hao Xu wrote:
->> @@ -1030,6 +1101,7 @@ static bool io_wq_work_match_item(struct io_wq_work *work, void *data)
->>   static void io_wqe_enqueue(struct io_wqe *wqe, struct io_wq_work *work)
->>   {
->>   	struct io_wqe_acct *acct = io_work_get_acct(wqe, work);
->> +	struct io_wqe_acct *fixed_acct;
->>   	struct io_cb_cancel_data match;
->>   	unsigned work_flags = work->flags;
->>   	bool do_create;
->> @@ -1044,8 +1116,14 @@ static void io_wqe_enqueue(struct io_wqe *wqe, struct io_wq_work *work)
->>   		return;
->>   	}
->>   
->> +	fixed_acct = io_get_acct(wqe, !acct->index, true);
->> +	if (fixed_acct->fixed_worker_registered && !io_wq_is_hashed(work)) {
->> +		if (io_wqe_insert_private_work(wqe, work, fixed_acct))
->> +			return;
->> +	}
->> +
-> 
-> As per previous email, I was going to comment back saying "why don't we
-> just always do hashed work on the non-fixed workers?" - but that's
-> already what you are doing. Isn't this fine, does anything else need to
-> get done here in terms of hashed work and fixed workers? If you need
-> per-iowq serialization, then you don't get a fixed worker.
+On Fri, Apr 29, 2022 at 8:36 PM Gao Xiang <hsiangkao@linux.alibaba.com> wrote:
+>
+> Hi Xin,
+>
+> On Fri, Apr 29, 2022 at 07:38:48AM +0800, Xin Yin wrote:
+> > Hi Jeffle & Xiang
+> >
+> > I have tested your fscache,erofs: fscache-based on-demand read semantics
+> > v9 patches sets https://www.spinics.net/lists/linux-fsdevel/msg216178.html.
+> > For now , it works fine with the nydus image-service. After the image data
+> > is fully loaded to local storage, it does have great IO performance gain
+> > compared with nydus V5 which is based on fuse.
+>
+> Yeah, thanks for your interest and efforts. Actually I'm pretty sure you
+> could observe CPU, bandwidth and latency improvement on the dense deployed
+> scenarios since our goal is to provide native performance when the data is
+> ready, as well as image on-demand read, flexible cache data management to
+> end users.
+>
+> >
+> > For 4K random read , fscache-based erofs can get the same performance with
+> > the original local filesystem. But I still saw a performance drop in the 4K
+> > sequential read case. And I found the root cause is in erofs_fscache_readahead()
+> > we use synchronous IO , which may stall the readahead pipelining.
+> >
+>
+> Yeah, that is a known TODO, in principle, when such part of data is locally
+> available, it will have the similar performance (bandwidth, latency, CPU
+> loading) as loop device. But we don't implement asynchronous I/O for now,
+> since we need to make the functionality work first, so thanks for your
+> patch addressing this.
+>
+> > I have tried to change to use asynchronous io during erofs fscache readahead
+> > procedure, as what netfs did. Then I saw a great performance gain.
+> >
+> > Here are my test steps and results:
+> > - generate nydus v6 format image , in which stored a large file for IO test.
+> > - launch nydus image-service , and  make image data fully loaded to local storage (ext4).
+> > - run fio with below cmd.
+> > fio -ioengine=psync -bs=4k -size=5G -direct=0 -thread -rw=read -filename=./test_image  -name="test" -numjobs=1 -iodepth=16 -runtime=60
+>
+> Yeah, although I can see what you mean (to test buffered I/O), the
+> argument is still somewhat messy (maybe because we don't support
+> fscache-based direct I/O for now. That is another TODO but with
+> low priority.)
+>
+> >
+> > v9 patches: 202654 KB/s
+> > v9 patches + async readahead patch: 407213 KB/s
+> > ext4: 439912 KB/s
+>
+> May I ask if such ext4 image is through a loop device? If not, that is
+> reasonable. Anyway, it's not a big problem for now, we could optimize
+> it later since it should be exactly the same finally.
+>
 
-Hmm, seems we cannot accelerate serialized works with fixed worker. So
-Let's make it as it is.
-> 
+This ext4 image is not through a loop device ,  just the same test
+file stored in native ext4.  Actually , after further tests , I could
+see that fscache-based erofs with async readahead patch almost achieve
+native performance in sequential buffer read cases.
 
+Thanks,
+Xin Yin
+
+> And I will drop a message to Jeffle for further review since we're
+> closing to another 5-day national holiday.
+>
+> Thanks again!
+> Gao Xiang
+>
