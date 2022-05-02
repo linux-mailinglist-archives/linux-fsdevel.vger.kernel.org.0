@@ -2,100 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ADB31516E4F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 May 2022 12:44:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B44B2516F5F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 May 2022 14:15:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376723AbiEBKr3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 May 2022 06:47:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33444 "EHLO
+        id S1384947AbiEBMSK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 May 2022 08:18:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240051AbiEBKrY (ORCPT
+        with ESMTP id S1384944AbiEBMSI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 May 2022 06:47:24 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB3BE5FA8
-        for <linux-fsdevel@vger.kernel.org>; Mon,  2 May 2022 03:43:55 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id k23so27021694ejd.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 May 2022 03:43:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=QRCVia859CvI1FcacIK/vRlTfJd+SbxpysHOvI3snNU=;
-        b=JzyaFcUZGLafCnGVkuITvq7Fny5tLwae6pd7PJffkyCgHTtY+M4tBVeFt1RH7HrN/q
-         YvpV4SfU2F7fkUUzn72oknHijExLJ0hGAz/uUFYrgsE2u7MZiA91RuxeAuVLOzUsPekS
-         o6DEKdJOfcN7WryS5GLWhKCRfLsp5FnX6JbTzfJydbQWyFadZgmaxcBEJ9t5Lc1Gr52M
-         I2FVcrB+kq+7CeH7eeI279x1Yb+VXTeglTt3+h1/iWS6ycN9HHJtdKd5j4ShQNcPBeOZ
-         C42ciV9PCO95404/tLvFOuzFAHY7XhoXz7uKeELjbHpMtkHE2CGSqyJwDmCk85MpB+e+
-         UaEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=QRCVia859CvI1FcacIK/vRlTfJd+SbxpysHOvI3snNU=;
-        b=5kLpNw/ftUkOp7j1un2L3Ofsqw+0DARPydlLJcbmt7SeisAH18U9BpSOdBJc7vask5
-         YQKOm9G/ZE+qypvGc2rDZDJ78Sdo3MCxAHM9qcxRaUmCGYeG4T1fplRAWDFytwJraP3S
-         mKseLO5ktbICfajGjzR0lrHmx+l5hQz1q6RDuXW1/mgjOmLnEVDqwEgBekv56qS/Puv+
-         jdU4LB1lmaa33aC26iQO6swPdAdWxjBNB5vmw6Ah/YMuyuR65C8QuxRt8odebA9U4q5i
-         FJQwcCXX2SIwKzkoVcDB6Yu+Klt7wr2hWFAn5M589h2M8SOOih1XO0ZoNfO+2V37qHs7
-         LTwg==
-X-Gm-Message-State: AOAM532S4qoUIIC1cy+NNLB8BoghB5KhPCAPRocQzgMllYs0sP0Lc/Mx
-        5mO9q18Ewnm00oLpgzvs4UxgoyVgIy5ZCWMyyMg=
-X-Google-Smtp-Source: ABdhPJwX32mVDittCrr/FnxJT4YNU7ivtuvSeUWx/kN74Y415B67ohZgceWlW8yWqP+lt7tJWgK+D/aOdfTRcY/EuuA=
-X-Received: by 2002:a17:907:1ca8:b0:6f3:6d36:b2e3 with SMTP id
- nb40-20020a1709071ca800b006f36d36b2e3mr10695736ejc.88.1651488234231; Mon, 02
- May 2022 03:43:54 -0700 (PDT)
+        Mon, 2 May 2022 08:18:08 -0400
+Received: from esa2.hgst.iphmx.com (esa2.hgst.iphmx.com [68.232.143.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CEDE12097
+        for <linux-fsdevel@vger.kernel.org>; Mon,  2 May 2022 05:14:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1651493678; x=1683029678;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=upcjxMBu+P7WwqT0zp8eXVNlC+8I1RqcfjsnBpDAUsk=;
+  b=XUjugT7GvT4GHKWM04O5wXMZw8cU22iMd0sDTE+9tkIUY4JDRONghRug
+   0Vomal8cH4zWgrWZ4ym3478/Xv81UclMchklxYASXM8I/3CcaG5r25zQG
+   YsfUOJB8wnDtm1n/0Slejde5rXcP9Prz0EEmkbJr942Ei9GHUjaR0wpsb
+   IxxuPXtYeeznGgtwMdZyD0jt1Bhz4VQkSaT1FWxvEG4GTjwydkj2obECB
+   mShLyzM6uTP4xDIUJIhK9mNbEXI4b38mhBOQu/oMJbWVpa55VUky+0Xko
+   4imM7u+wjrnSy8LyKbOtCtvgv3jNFthESvCu6lzlXciVB5Eyzdop4Y2D4
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.91,190,1647273600"; 
+   d="scan'208";a="303545440"
+Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 02 May 2022 20:14:36 +0800
+IronPort-SDR: ZjemZUc+lRfXoUFozvii3FC50/u/B8WB3QSsYAwx+TMiouS7pXNdHY9yicbrUbCzvJidNiGDQJ
+ WPkC+QGAKNc9+HZEqwmPER6oIpo37GV4ne1wg3bDFARm66MwP7U31VVGX2XSKKiYQXrwpQ7pLN
+ DdH/WKb1Ek+T6gIv0U43xYl43eM2j4RCmRtz/efi2F9+MsnQdiOt5JXEyDAa0QVf9TM3yeBOAb
+ iTWqzzZqXkGaeg6TFBjHprQUNNhWaZrwZnsLlTpc20Kb9th/MCylziPmBK0Z72n8BwK9m/psp1
+ w23uW1QZ2kUmPAmXYAyTfrlx
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 02 May 2022 04:44:41 -0700
+IronPort-SDR: 8qt6bgDs/XMzr8tWwr8YAf87ynEKfaEPY5xV+j0pesU5c+ts3zASsSJNyZZjN4W58sdVcMJujH
+ S7OCb/3Mg/x+zFqoLAdXI33EJIAm9yzLTPF9Lcp7bPiI+KgBR1V0/2LzFCLgBWr2CEeFIsRkex
+ rIfJqAaD+QNwiU/UvvzGi59pME4nZEV0SrvwQntB5uc8w3WTQT9xSVZbRKpfX0YzEE8UpH8Sso
+ QMyEaS4sikL/bcBCsrxyKdOmbRJzWP7+5U3qz76zewwLxq8KkzQzgMq8yHTkzg0qdOxM8bFS6L
+ +E8=
+WDCIronportException: Internal
+Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
+  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 02 May 2022 05:14:38 -0700
+Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4KsMTm5T0Kz1Rwrw
+        for <linux-fsdevel@vger.kernel.org>; Mon,  2 May 2022 05:14:36 -0700 (PDT)
+Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)"
+        header.d=opensource.wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
+        opensource.wdc.com; h=content-transfer-encoding:content-type
+        :in-reply-to:organization:from:references:to:content-language
+        :subject:user-agent:mime-version:date:message-id; s=dkim; t=
+        1651493676; x=1654085677; bh=upcjxMBu+P7WwqT0zp8eXVNlC+8I1Rqcfjs
+        nBpDAUsk=; b=ciG1pDAWwoPGHqJ1HX4eF9v2xlPWggbWDb1uKGSNO/jkj8TEDpa
+        ILi9HAbkAFNq5EiDhdSuVQosgo82rHtnp1u+5RraiVW1JKJnulP6lgEwewflYcZn
+        SLU2nqSrCmvaBlOlhq/SwUz0aYIxD59HoZfzPFAJDB0k2U9prTJ30nuAfheIJUi6
+        cxSGNnQB+pIT+qHg0gj218RXQsNIz7HUN6KLbDp7SK40cYGKfLGC+QPoZ1ef02fi
+        CGm1HBmySTkuifTYQNn+nm3D/0IlH3vsNc4RSAOlTiP0Ce5dxFXvF9P5lhzKnytM
+        U2jRb8KhbGXd9hS/QVpsB1BuBNTzztKOoGA==
+X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
+Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
+        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id fN1HNpK0JD2I for <linux-fsdevel@vger.kernel.org>;
+        Mon,  2 May 2022 05:14:36 -0700 (PDT)
+Received: from [10.225.81.200] (hq6rw33.ad.shared [10.225.81.200])
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4KsMTl4knDz1Rvlc;
+        Mon,  2 May 2022 05:14:35 -0700 (PDT)
+Message-ID: <260b95e8-74bf-9460-cf0d-7e3df1b1a3c7@opensource.wdc.com>
+Date:   Mon, 2 May 2022 21:14:34 +0900
 MIME-Version: 1.0
-Received: by 2002:a54:3147:0:0:0:0:0 with HTTP; Mon, 2 May 2022 03:43:53 -0700 (PDT)
-From:   Frank David <frankdavidloanfirm3@gmail.com>
-Date:   Mon, 2 May 2022 03:43:53 -0700
-Message-ID: <CACPaKznaCEkrv_3oE3PfM+MNNsDv6r2ppBCBNoBjmSC14EjK_w@mail.gmail.com>
-Subject: =?UTF-8?B?0J7RhNC10YDRgtCwINC30LAg0LfQsNC10Lw=?=
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.8.1
+Subject: Re: [dm-devel] [PATCH v4 00/10] Add Copy offload support
+Content-Language: en-US
+To:     Nitesh Shetty <nj.shetty@samsung.com>
+Cc:     linux-scsi@vger.kernel.org, nitheshshetty@gmail.com,
+        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-block@vger.kernel.org, dm-devel@redhat.com,
+        linux-fsdevel@vger.kernel.org
+References: <CGME20220426101804epcas5p4a0a325d3ce89e868e4924bbdeeba6d15@epcas5p4.samsung.com>
+ <20220426101241.30100-1-nj.shetty@samsung.com>
+ <6a85e8c8-d9d1-f192-f10d-09052703c99a@opensource.wdc.com>
+ <20220427124951.GA9558@test-zns>
+From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
+Organization: Western Digital Research
+In-Reply-To: <20220427124951.GA9558@test-zns>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-6.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-0JfQtNGA0LDQstC10LnRgtC1Lg0KDQrQotC+0LLQsCDQuNC80LAg0LfQsCDRhtC10Lsg0LTQsCDQ
-uNC90YTQvtGA0LzQuNGA0LAg0YjQuNGA0L7QutCw0YLQsCDQvtCx0YnQtdGB0YLQstC10L3QvtGB
-0YIsINGH0LUg0LMt0L0g0KTRgNCw0L3Qug0K0JTQtdC50LLQuNC0LCDRh9Cw0YHRgtC10L0g0LfQ
-sNC10Lwg0L7RgiDQt9Cw0LXQvNC+0LTQsNGC0LXQuywg0L7RgtCy0L7RgNC4INC40LrQvtC90L7Q
-vNC40YfQtdGB0LrQsCDQstGK0LfQvNC+0LbQvdC+0YHRgiDQt9CwDQrRgtC10LfQuCwg0LrQvtC4
-0YLQviDRgdC1INC90YPQttC00LDRj9GCINC+0YIg0YTQuNC90LDQvdGB0L7QstCwINC/0L7QvNC+
-0YkuINCd0LjQtSDQvtGC0L/Rg9GB0LrQsNC80LUg0LfQsNC10LzQuCDQvdCwDQrRhNC40LfQuNGH
-0LXRgdC60Lgg0LvQuNGG0LAsINGE0LjRgNC80Lgg0Lgg0YTQuNGA0LzQuCDQv9GA0Lgg0Y/RgdC9
-0Lgg0Lgg0YDQsNC30LHQuNGA0LDQtdC80Lgg0YPRgdC70L7QstC40Y8g0YEg0LvQuNGF0LLQsCDQ
-vtGCDQrRgdCw0LzQviAzJS4g0YHQstGK0YDQttC10YLQtSDRgdC1INGBINC90LDRgSDQtNC90LXR
-gSDRh9GA0LXQtyDQuNC80LXQudC7OiAoDQpmcmFua2RhdmlkbG9hbmZpcm0zQGdtYWlsLmNvbSks
-INC30LAg0LTQsCDQvNC+0LbQtdC8INC00LAg0LLQuCDQv9GA0LXQtNC+0YHRgtCw0LLQuNC8INC9
-0LDRiNC40YLQtQ0K0YPRgdC70L7QstC40Y8g0LfQsCDQt9Cw0LXQvC4NCg0K0JjQndCk0J7QoNCc
-0JDQptCY0K8g0LrRitC8INC60YDQtdC00LjRgtC+0L/QvtC70YPRh9Cw0YLQtdC70Y8NCg0KMSkg
-0JjQvNC1OiAuLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4g
-Li4uLg0KDQoyKSDQlNGK0YDQttCw0LLQsDogLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4u
-Li4uLi4uLi4uLi4uLi4uLiAuDQoNCjMpINCQ0LTRgNC10YE6IC4uLi4uLi4uLi4uLi4uLi4uLi4u
-Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4gLg0KDQo0KSDQn9C+0Ls6IC4uLi4uLi4uLi4uLi4u
-Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLiAuLi4uLg0KDQo1KSDQodC10LzQtdC5
-0L3QviDQv9C+0LvQvtC20LXQvdC40LU6IC4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4u
-Li4uLi4uLi4NCg0KNikg0J/RgNC+0YTQtdGB0LjRjzogLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4u
-Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLg0KDQo3KSDQotC10LvQtdGE0L7QvTogLi4uLi4uLi4u
-Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uDQoNCjgpINCa0LDQvdC00LjQ
-tNCw0YLRgdGC0LLQsNC70Lgg0LvQuCDRgdGC0LUg0L/RgNC10LTQuCAuLi4uLi4uLi4uLi4uLi4u
-Li4uLi4uLi4uLi4uLi4uLi4NCg0KOSkg0JzQtdGB0LXRh9C10L0g0LTQvtGF0L7QtDogLi4uLi4u
-Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLg0KDQoxMCkg0J3QtdC+0LHRhdC+0LTQ
-uNC80LAg0YHRg9C80LAg0L3QsCDQt9Cw0LXQvNCwOiAuLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4u
-Li4uLi4uLi4uLg0KDQoxMSkg0J/RgNC+0LTRitC70LbQuNGC0LXQu9C90L7RgdGCINC90LAg0LfQ
-sNC10LzQsDogLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLg0K
-DQoxMikg0KbQtdC7INC90LAg0LfQsNC10LzQsDogLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4u
-Li4uLi4uLi4uLi4uLi4uLi4uLi4uDQoNCjEzKSDQoNC10LvQuNCz0LjRjzogLi4uLi4uLi4uLi4u
-Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uIC4NCg0KDQrQl9CwINCy0YDRitC3
-0LrQsDogKCBmcmFua2RhdmlkbG9hbmZpcm0zQGdtYWlsLmNvbSApIHdoYXRzYXBwOyArMjM0NzAz
-MjkwOTcyOA0KDQoNCtCR0LvQsNCz0L7QtNCw0YDRjywNCtCTLdC9INCk0YDQsNC90Log0JTQtdC5
-0LLQuNC0DQo=
+On 2022/04/27 21:49, Nitesh Shetty wrote:
+> O Wed, Apr 27, 2022 at 11:19:48AM +0900, Damien Le Moal wrote:
+>> On 4/26/22 19:12, Nitesh Shetty wrote:
+>>> The patch series covers the points discussed in November 2021 virtual=
+ call
+>>> [LSF/MM/BFP TOPIC] Storage: Copy Offload[0].
+>>> We have covered the Initial agreed requirements in this patchset.
+>>> Patchset borrows Mikulas's token based approach for 2 bdev
+>>> implementation.
+>>>
+>>> Overall series supports =E2=80=93
+>>>
+>>> 1. Driver
+>>> - NVMe Copy command (single NS), including support in nvme-target (fo=
+r
+>>>     block and file backend)
+>>
+>> It would also be nice to have copy offload emulation in null_blk for t=
+esting.
+>>
+>=20
+> We can plan this in next phase of copy support, once this series settle=
+s down.
+
+Why ? How do you expect people to test simply without null_blk ? Sutre, y=
+ou said
+QEMU can be used. But if copy offload is not upstream for QEMU either, th=
+ere is
+no easy way to test.
+
+Adding that support to null_blk would not be hard at all.
+
+
+
+--=20
+Damien Le Moal
+Western Digital Research
