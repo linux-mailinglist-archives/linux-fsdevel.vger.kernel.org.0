@@ -2,101 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C8FF516F6F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 May 2022 14:16:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29ADC516F83
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 May 2022 14:21:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1385007AbiEBMT5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 May 2022 08:19:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44250 "EHLO
+        id S235914AbiEBMZI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 May 2022 08:25:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1384994AbiEBMTx (ORCPT
+        with ESMTP id S233404AbiEBMZH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 May 2022 08:19:53 -0400
-Received: from esa1.hgst.iphmx.com (esa1.hgst.iphmx.com [68.232.141.245])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E2861839D
-        for <linux-fsdevel@vger.kernel.org>; Mon,  2 May 2022 05:16:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1651493784; x=1683029784;
-  h=message-id:date:mime-version:subject:from:to:cc:
-   references:in-reply-to:content-transfer-encoding;
-  bh=Mmb6FF+PbRqpffm582WWKWb30Gfw5wn7OBAUJ+Olo/w=;
-  b=KYXZDutPhyqc1LouAKbzCDres9KVFogZwfcl6hO9x6ldPChYYLIeig19
-   ZxDX41k/n5auUwHwxfLF/CZnP0tsVHeT3UzSuvwtaZaWKEfqx1mtZABIn
-   tA8/0J93JqQ9Ae1kxSlFJjG8H8WoHT43j+4WLeyfM4oWiyPs/at+WoYxD
-   AGpFXog2VeMv+EOA+4XH4kvb2MMPFRAaQ4Iy+kWYHz7aIkC9cvu78Z6be
-   47YCeOD75re8QpnZ9m1hsRcRuYkuon6/dCFVMlp6alzJIrmxq4mwLjhUA
-   EaTMi5Opb7i78QGp2hpGdCBFgbGu+8qY2AHxMAeymWNt/XNlF0BEkmn3Q
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.91,190,1647273600"; 
-   d="scan'208";a="311305191"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 02 May 2022 20:16:22 +0800
-IronPort-SDR: vp5SzQb3ywxrWUevrDFYuyCtVCh1epSgfYg0gp7C63jUIL35Dkrr//1VTHByb/xCOFRrNMKSOa
- 5RN1wa7szSyaLCkVpOqEHeeV6a/4iWFzY6o47JjP/x9jIudCphS15LaNXlQmysE0qOxCnU6H3t
- bODvRyL1JW3Gfl85LGtrpJ4ruJPBQ97Ur5IloISANgW2AGeZzRs9GdiQ02yNPJs/kITB9Jt0hL
- n+/2nv5quN7/d03CL3dqsRJafkD1hnd/Xa27qZoRN5IrwF+TygH6RUKeaGM3BKICnhU0xETcLn
- 9iQKiJaG1TatGYydTrCMmeGk
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 02 May 2022 04:47:07 -0700
-IronPort-SDR: MAT+/e0qPcGCYaf3Svkb60T3iveGjSgjXTvpcLTR/jkuQY+n4dQQIZVlYxpe/djJV3NvuXlshJ
- MBV6aRSM84pBbs3P99/gxR5I62VbsdLGOIpJcGwjVFWLSQ7gWm3ori/0muNuE7hNPKI85lQvlB
- yGVG2tSyp8S8050UXejoeaZRTP513oe0IQBourTS8RAYMS6+mCp2Hr7hp5dDH5PEveur9e8bAq
- GFriccjCoGUcmMbrg0goJAZQRHnJ8GogCrdxFdMVNKs7PZ9wDQlI1a+T2p3UwgPGJ23tfDntIw
- 4VA=
-WDCIronportException: Internal
-Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
-  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 02 May 2022 05:16:22 -0700
-Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4KsMWp26yRz1Rwrw
-        for <linux-fsdevel@vger.kernel.org>; Mon,  2 May 2022 05:16:22 -0700 (PDT)
-Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)"
-        header.d=opensource.wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
-        opensource.wdc.com; h=content-transfer-encoding:content-type
-        :in-reply-to:organization:references:to:from:content-language
-        :subject:user-agent:mime-version:date:message-id; s=dkim; t=
-        1651493781; x=1654085782; bh=Mmb6FF+PbRqpffm582WWKWb30Gfw5wn7OBA
-        UJ+Olo/w=; b=ir7xhRFBi2/RFJ2rJ+hllCYGYFtpqylm1j10dApznRoPZPQ28hl
-        bFxjt2sR2vMty9t3G8wk1ut6OemckQ8U6VMIRq2VtOg2zfhifar1rB3x3pahn9u5
-        zKexf+Sa6EI9PM/Q/jNnMWJTbKRs8jVb7l2ABZ45qOS6mFJxUp7ra6bl/WVe8u7h
-        8z2yJwAfAoRPRdFULR6BmBI62hIlyIst9jFWTuwVQIYuqcb7gMG2xTRk/ZRHa/gS
-        CkxghkjsBn+XD0zoVQxS52pTzTTXLffRpGReZo/arHkuA29TTc9sn2cO1zNb3Bgk
-        PGASNSJNbtoqjhKwhhdSRGm0N7v7RpbLNJw==
-X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
-Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
-        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id IOo_GNo6UIov for <linux-fsdevel@vger.kernel.org>;
-        Mon,  2 May 2022 05:16:21 -0700 (PDT)
-Received: from [10.225.81.200] (hq6rw33.ad.shared [10.225.81.200])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4KsMWn2C5Wz1Rvlc;
-        Mon,  2 May 2022 05:16:21 -0700 (PDT)
-Message-ID: <84da2486-7a20-f3c7-43e9-60a29c7429fc@opensource.wdc.com>
-Date:   Mon, 2 May 2022 21:16:20 +0900
+        Mon, 2 May 2022 08:25:07 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 28FE6B7F6
+        for <linux-fsdevel@vger.kernel.org>; Mon,  2 May 2022 05:21:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1651494098;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=/MPF4SlHJTSwOs9uq+qeW8/MK0NYqARQeWoIqaF+luw=;
+        b=APgFOfIwAl7KNakWojYk3LGUe4EKl5Y8DaCrbZtXgE4QjpT1e07VSguBj08Z/8xT9HbEKk
+        VgTyp6Pjdqqh9UBNNa9DoClmb2TZokX4oCrZy2d+IUr1TpVToiB/Ift/XPck2umdVpzCp/
+        bFoLe3eWV69Wzufy7C+zeZwZJzhg1pY=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-614-FpBuwnDOMO-RM7YNxLD33w-1; Mon, 02 May 2022 08:18:27 -0400
+X-MC-Unique: FpBuwnDOMO-RM7YNxLD33w-1
+Received: by mail-qv1-f71.google.com with SMTP id o12-20020a0562140e4c00b0044a67ef728dso10903471qvc.8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 May 2022 05:18:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=/MPF4SlHJTSwOs9uq+qeW8/MK0NYqARQeWoIqaF+luw=;
+        b=VGxFw7PC3O26guqaOGPYTSsMUpPKXB+QWE0Lquv7Z8P49Mkls477CkjDMmxwIcOznI
+         ond5ri68lGU0mDKlli3oZFjUkkfmtCXIgpEEEI3fRbX007LAsotoX1Xs1YUtrVLbEx6e
+         QTgHiH4WwpPaCkKv+x2BzbqqXBe2u/2kr1bjMQHL4WgNeQSk9tDUEQe4TlOKT+iIqxBk
+         1TLvuM//+g2FDw+x3ch654DwYGFxLloTSbizYm7JbfQ7XnP6fG2l8KFOVaeGsRaliX/i
+         O0mzC2ajBFfUTS8VKlxL76P76cODnawERJsB4gXSsbVc5lo9CKE6BoBRNb5ZNjxkHKRv
+         xjbQ==
+X-Gm-Message-State: AOAM530kALn9RjxvyrjQfRIDpUXym4IjLYBG5bV7Om7SI4z6+cHVKLGu
+        epma8RNAo+e0YiIQDDDQknKRgzo6I8eJzYekAuMN/uiNnbGQTvu4KnHEmEvGlZ2R8TE4Qx1KfKe
+        rfrj6VgOp1WqIfu9qLo/8pvihpQ==
+X-Received: by 2002:a05:622a:1211:b0:2f2:167:55dc with SMTP id y17-20020a05622a121100b002f2016755dcmr9756400qtx.105.1651493907288;
+        Mon, 02 May 2022 05:18:27 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwkMF9lcc6DS6FBWLWUIVap+Xc5D8aaV20ZYaG7Q/z0wEek99nyXbS8Zkj7RgwqXcS5qEOKUg==
+X-Received: by 2002:a05:622a:1211:b0:2f2:167:55dc with SMTP id y17-20020a05622a121100b002f2016755dcmr9756380qtx.105.1651493907034;
+        Mon, 02 May 2022 05:18:27 -0700 (PDT)
+Received: from bfoster (c-24-61-119-116.hsd1.ma.comcast.net. [24.61.119.116])
+        by smtp.gmail.com with ESMTPSA id c5-20020ac86605000000b002f39b99f6a0sm4038090qtp.58.2022.05.02.05.18.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 May 2022 05:18:26 -0700 (PDT)
+Date:   Mon, 2 May 2022 08:18:24 -0400
+From:   Brian Foster <bfoster@redhat.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        xfs <linux-xfs@vger.kernel.org>,
+        fstests <fstests@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: generic/068 crash on 5.18-rc2?
+Message-ID: <Ym/MEBfa0szil3hW@bfoster>
+References: <20220413033425.GM16799@magnolia>
+ <YlbjOPEQP66gc1WQ@casper.infradead.org>
+ <20220418174747.GF17025@magnolia>
+ <20220422215943.GC17025@magnolia>
+ <Ymq4brjhBcBvcfIs@bfoster>
+ <Ymywh003c+Hd4Zu9@casper.infradead.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.8.1
-Subject: Re: [dm-devel] [PATCH v4 00/10] Add Copy offload support
-Content-Language: en-US
-From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
-To:     Nitesh Shetty <nj.shetty@samsung.com>
-Cc:     linux-scsi@vger.kernel.org, nitheshshetty@gmail.com,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, dm-devel@redhat.com,
-        linux-fsdevel@vger.kernel.org
-References: <CGME20220426101804epcas5p4a0a325d3ce89e868e4924bbdeeba6d15@epcas5p4.samsung.com>
- <20220426101241.30100-1-nj.shetty@samsung.com>
- <6a85e8c8-d9d1-f192-f10d-09052703c99a@opensource.wdc.com>
- <20220427124951.GA9558@test-zns>
- <260b95e8-74bf-9460-cf0d-7e3df1b1a3c7@opensource.wdc.com>
-Organization: Western Digital Research
-In-Reply-To: <260b95e8-74bf-9460-cf0d-7e3df1b1a3c7@opensource.wdc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-6.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Ymywh003c+Hd4Zu9@casper.infradead.org>
+X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -104,43 +83,80 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2022/05/02 21:14, Damien Le Moal wrote:
-> On 2022/04/27 21:49, Nitesh Shetty wrote:
->> O Wed, Apr 27, 2022 at 11:19:48AM +0900, Damien Le Moal wrote:
->>> On 4/26/22 19:12, Nitesh Shetty wrote:
->>>> The patch series covers the points discussed in November 2021 virtua=
-l call
->>>> [LSF/MM/BFP TOPIC] Storage: Copy Offload[0].
->>>> We have covered the Initial agreed requirements in this patchset.
->>>> Patchset borrows Mikulas's token based approach for 2 bdev
->>>> implementation.
->>>>
->>>> Overall series supports =E2=80=93
->>>>
->>>> 1. Driver
->>>> - NVMe Copy command (single NS), including support in nvme-target (f=
-or
->>>>     block and file backend)
->>>
->>> It would also be nice to have copy offload emulation in null_blk for =
-testing.
->>>
->>
->> We can plan this in next phase of copy support, once this series settl=
-es down.
->=20
-> Why ? How do you expect people to test simply without null_blk ? Sutre,=
- you said
-> QEMU can be used. But if copy offload is not upstream for QEMU either, =
-there is
-> no easy way to test.
->=20
-> Adding that support to null_blk would not be hard at all.
+On Sat, Apr 30, 2022 at 04:44:07AM +0100, Matthew Wilcox wrote:
+> On Thu, Apr 28, 2022 at 11:53:18AM -0400, Brian Foster wrote:
+> > The above is the variant of generic/068 failure I was reproducing and
+> > used to bisect [1]. With some additional tracing added to ioend
+> > completion, what I'm seeing is that the bio_for_each_folio_all() bvec
+> > iteration basically seems to go off the rails. What happens more
+> > specifically is that at some point during the loop, bio_next_folio()
+> > actually lands into the second page of the just processed folio instead
+> > of the actual next folio (i.e. as if it's walking to the next page from
+> > the head page of the folio instead of to the next 16k folio). I suspect
+> > completion is racing with some form of truncation/reclaim/invalidation
+> > here, what exactly I don't know, that perhaps breaks down the folio and
+> > renders the iteration (bio_next_folio() -> folio_next()) unsafe. To test
+> > that theory, I open coded and modified the loop to something like the
+> > following:
+> > 
+> >                 for (bio_first_folio(&fi, bio, 0); fi.folio; ) {
+> >                         f = fi.folio;
+> >                         l = fi.length;
+> >                         bio_next_folio(&fi, bio);
+> >                         iomap_finish_folio_write(inode, f, l, error);
+> >                         folio_count++;
+> >                 }
+> > 
+> > ... to avoid accessing folio metadata after writeback is cleared on it
+> > and this seems to make the problem disappear (so far, I'll need to let
+> > this spin for a while longer to be completely confident in that).
+> 
+> _Oh_.
+> 
+> It's not even a terribly weird race, then.  It's just this:
+> 
+> CPU 0				CPU 1
+> 				truncate_inode_partial_folio()
+> 				folio_wait_writeback();
+> bio_next_folio(&fi, bio)
+> iomap_finish_folio_write(fi.folio)
+> folio_end_writeback(folio)
+> 				split_huge_page()
+> bio_next_folio()
+> ... oops, now we only walked forward one page instead of the entire folio.
+> 
 
-Sorry. Replied again to an email I already replied to. vger keep sending =
-me
-multiple copies of the same emails...
+Yep, though once I noticed and turned on the mm_page_free tracepoint, it
+looked like it was actually the I/O completion path breaking down the
+compound folio:
 
---=20
-Damien Le Moal
-Western Digital Research
+   kworker/10:1-440     [010] .....   355.369899: iomap_finish_ioend: 1090: bio 00000000bc8445c7 index 192 fi (00000000dc8c03bd 0 16384 32768 27)
+   ...
+    kworker/10:1-440     [010] .....   355.369905: mm_page_free: page=00000000dc8c03bd pfn=0x182190 order=2
+    kworker/10:1-440     [010] .....   355.369907: iomap_finish_ioend: 1090: bio 00000000bc8445c7 index 1 fi (00000000f8b5d9b3 0 4096 16384 27)
+
+I take that to mean the truncate path executes while the completion side
+holds a reference, folio_end_writeback() ends up dropping the last
+reference, falls into the free/split path and the iteration breaks from
+there. Same idea either way, I think.
+
+Brian
+
+> So ... I think we can fix this with:
+> 
+> +++ b/include/linux/bio.h
+> @@ -290,7 +290,8 @@ static inline void bio_next_folio(struct folio_iter *fi, struct bio *bio)
+>  {
+>         fi->_seg_count -= fi->length;
+>         if (fi->_seg_count) {
+> -               fi->folio = folio_next(fi->folio);
+> +               fi->folio = (struct folio *)folio_page(fi->folio,
+> +                               (fi->offset + fi->length) / PAGE_SIZE);
+>                 fi->offset = 0;
+>                 fi->length = min(folio_size(fi->folio), fi->_seg_count);
+>         } else if (fi->_i + 1 < bio->bi_vcnt) {
+> 
+> (I do not love this, have not even compiled it; it's late.  We may be
+> better off just storing next_folio inside the folio_iter).
+> 
+
