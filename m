@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 173B3516A81
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 May 2022 07:56:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5B44516A87
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 May 2022 07:57:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1383404AbiEBGAH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 May 2022 02:00:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50636 "EHLO
+        id S1383436AbiEBGAe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 May 2022 02:00:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50700 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1383382AbiEBF7s (ORCPT
+        with ESMTP id S1383390AbiEBF7t (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 May 2022 01:59:48 -0400
+        Mon, 2 May 2022 01:59:49 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1C0020190
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0142B20193
         for <linux-fsdevel@vger.kernel.org>; Sun,  1 May 2022 22:56:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=OCxjvAdZxpvrpie/TK297LRQ65OSZAlqwmxei9EQf58=; b=JxJYv6A3blQn2aR13qV0D2Tec/
-        V+hfvCMSg3eFZRcJBDygegLHV7bKuPnowActwPmazzTub2Up2bv69WY8YJlC4RGx3vrTj3AwUR5BH
-        IXWJzTuglV9z6PKoy3Hw5A1pbwxPeoBs/u+7DaizoG51SSYADe5Qv3k75emiVKAJgbET99oLrOSFy
-        Vi9jbl7hHlFXMIe6XpTqTcV+fzqD19eXZJ2mXBnGdsBn6ce9tleP/PWlhCKTm/aKHY1to9iaqD8LF
-        1McaQ0U/yiAHHaeJRCCuvCS5hDZBtMWL1Bs1pQH2zF/56u6UiUCHP8PlMPce74inpftLEkdABv0m6
-        TQCeaqFA==;
+        bh=X9aimttSY0SxPLjcKDF5tW7VdcRJaCocGP60OOSbjRI=; b=ZVpCKxO4Ta/BY0HmJuSlpITlL5
+        fPa54HUyChgvjEsBFMYmd+81yO70yBkOlZyilfieI8+RIjN4FqgFhTfuIqM2/sdWhMq1gdl9jRghc
+        Ej2ry9gcgrPxYLWUIcy2QHPTSWsBu+FyiH37SOdgAPafuuuHGvxktP1fFb5qvLbfA1ngJp0FYX5yM
+        uE0fdj/WMz0yv0QtJ35HA/y5hy1Dhk0dq8SXD615vm0/hh1ZyYKQEY+W60SymhpJrl6dStCcYnUv1
+        /UN9QOrD6SlQIbR3z8Qn3CVWVxYnDg9waT2umwagjGoqYLVqqXl8NIYNyzy63N8oAha9vkBTzi23S
+        PddtHvrQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nlP2g-00EZWA-28; Mon, 02 May 2022 05:56:18 +0000
+        id 1nlP2g-00EZWF-6V; Mon, 02 May 2022 05:56:18 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH 10/26] f2fs: Convert to release_folio
-Date:   Mon,  2 May 2022 06:55:58 +0100
-Message-Id: <20220502055614.3473032-11-willy@infradead.org>
+Subject: [PATCH 11/26] gfs2: Convert to release_folio
+Date:   Mon,  2 May 2022 06:55:59 +0100
+Message-Id: <20220502055614.3473032-12-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220502055614.3473032-1-willy@infradead.org>
 References: <20220502055614.3473032-1-willy@infradead.org>
@@ -48,130 +48,144 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-While converting f2fs_release_page() to f2fs_release_folio(), cache the
-sb_info so we don't need to retrieve it twice, and remove the redundant
-call to set_page_private().  The use of folios should be pushed further
-into f2fs from here.
+Use a folio throughout gfs2_release_folio().
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/f2fs/checkpoint.c |  2 +-
- fs/f2fs/compress.c   |  2 +-
- fs/f2fs/data.c       | 32 +++++++++++++++++---------------
- fs/f2fs/f2fs.h       |  2 +-
- fs/f2fs/node.c       |  2 +-
- 5 files changed, 21 insertions(+), 19 deletions(-)
+ fs/gfs2/aops.c    | 42 ++++++++++++++++++++++--------------------
+ fs/gfs2/inode.h   |  2 +-
+ fs/gfs2/meta_io.c |  4 ++--
+ 3 files changed, 25 insertions(+), 23 deletions(-)
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 909085a78f9c..456c1e89386a 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -468,7 +468,7 @@ const struct address_space_operations f2fs_meta_aops = {
- 	.writepages	= f2fs_write_meta_pages,
- 	.dirty_folio	= f2fs_dirty_meta_folio,
- 	.invalidate_folio = f2fs_invalidate_folio,
--	.releasepage	= f2fs_release_page,
-+	.release_folio	= f2fs_release_folio,
- #ifdef CONFIG_MIGRATION
- 	.migratepage    = f2fs_migrate_page,
- #endif
-diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
-index 12a56f9e1572..24824cd96f36 100644
---- a/fs/f2fs/compress.c
-+++ b/fs/f2fs/compress.c
-@@ -1746,7 +1746,7 @@ unsigned int f2fs_cluster_blocks_are_contiguous(struct dnode_of_data *dn)
+diff --git a/fs/gfs2/aops.c b/fs/gfs2/aops.c
+index 3d6c5c5eb4f1..95a674d70c04 100644
+--- a/fs/gfs2/aops.c
++++ b/fs/gfs2/aops.c
+@@ -691,38 +691,40 @@ static void gfs2_invalidate_folio(struct folio *folio, size_t offset,
  }
  
- const struct address_space_operations f2fs_compress_aops = {
--	.releasepage = f2fs_release_page,
-+	.release_folio = f2fs_release_folio,
- 	.invalidate_folio = f2fs_invalidate_folio,
+ /**
+- * gfs2_releasepage - free the metadata associated with a page
+- * @page: the page that's being released
++ * gfs2_release_folio - free the metadata associated with a folio
++ * @folio: the folio that's being released
+  * @gfp_mask: passed from Linux VFS, ignored by us
+  *
+- * Calls try_to_free_buffers() to free the buffers and put the page if the
++ * Calls try_to_free_buffers() to free the buffers and put the folio if the
+  * buffers can be released.
+  *
+- * Returns: 1 if the page was put or else 0
++ * Returns: true if the folio was put or else false
+  */
+ 
+-int gfs2_releasepage(struct page *page, gfp_t gfp_mask)
++bool gfs2_release_folio(struct folio *folio, gfp_t gfp_mask)
+ {
+-	struct address_space *mapping = page->mapping;
++	struct address_space *mapping = folio->mapping;
+ 	struct gfs2_sbd *sdp = gfs2_mapping2sbd(mapping);
+ 	struct buffer_head *bh, *head;
+ 	struct gfs2_bufdata *bd;
+ 
+-	if (!page_has_buffers(page))
+-		return 0;
++	head = folio_buffers(folio);
++	if (!head)
++		return false;
+ 
+ 	/*
+-	 * From xfs_vm_releasepage: mm accommodates an old ext3 case where
+-	 * clean pages might not have had the dirty bit cleared.  Thus, it can
+-	 * send actual dirty pages to ->releasepage() via shrink_active_list().
++	 * mm accommodates an old ext3 case where clean folios might
++	 * not have had the dirty bit cleared.	Thus, it can send actual
++	 * dirty folios to ->release_folio() via shrink_active_list().
+ 	 *
+-	 * As a workaround, we skip pages that contain dirty buffers below.
+-	 * Once ->releasepage isn't called on dirty pages anymore, we can warn
+-	 * on dirty buffers like we used to here again.
++	 * As a workaround, we skip folios that contain dirty buffers
++	 * below.  Once ->release_folio isn't called on dirty folios
++	 * anymore, we can warn on dirty buffers like we used to here
++	 * again.
+ 	 */
+ 
+ 	gfs2_log_lock(sdp);
+-	head = bh = page_buffers(page);
++	bh = head;
+ 	do {
+ 		if (atomic_read(&bh->b_count))
+ 			goto cannot_release;
+@@ -732,9 +734,9 @@ int gfs2_releasepage(struct page *page, gfp_t gfp_mask)
+ 		if (buffer_dirty(bh) || WARN_ON(buffer_pinned(bh)))
+ 			goto cannot_release;
+ 		bh = bh->b_this_page;
+-	} while(bh != head);
++	} while (bh != head);
+ 
+-	head = bh = page_buffers(page);
++	bh = head;
+ 	do {
+ 		bd = bh->b_private;
+ 		if (bd) {
+@@ -755,11 +757,11 @@ int gfs2_releasepage(struct page *page, gfp_t gfp_mask)
+ 	} while (bh != head);
+ 	gfs2_log_unlock(sdp);
+ 
+-	return try_to_free_buffers(page);
++	return try_to_free_buffers(&folio->page);
+ 
+ cannot_release:
+ 	gfs2_log_unlock(sdp);
+-	return 0;
++	return false;
+ }
+ 
+ static const struct address_space_operations gfs2_aops = {
+@@ -785,7 +787,7 @@ static const struct address_space_operations gfs2_jdata_aops = {
+ 	.dirty_folio = jdata_dirty_folio,
+ 	.bmap = gfs2_bmap,
+ 	.invalidate_folio = gfs2_invalidate_folio,
+-	.releasepage = gfs2_releasepage,
++	.release_folio = gfs2_release_folio,
+ 	.is_partially_uptodate = block_is_partially_uptodate,
+ 	.error_remove_page = generic_error_remove_page,
+ };
+diff --git a/fs/gfs2/inode.h b/fs/gfs2/inode.h
+index 7b2c1f390db7..0264d514dda7 100644
+--- a/fs/gfs2/inode.h
++++ b/fs/gfs2/inode.h
+@@ -12,7 +12,7 @@
+ #include <linux/mm.h>
+ #include "util.h"
+ 
+-extern int gfs2_releasepage(struct page *page, gfp_t gfp_mask);
++bool gfs2_release_folio(struct folio *folio, gfp_t gfp_mask);
+ extern int gfs2_internal_read(struct gfs2_inode *ip,
+ 			      char *buf, loff_t *pos, unsigned size);
+ extern void gfs2_set_aops(struct inode *inode);
+diff --git a/fs/gfs2/meta_io.c b/fs/gfs2/meta_io.c
+index d8bd1d48bd78..868dcc71b581 100644
+--- a/fs/gfs2/meta_io.c
++++ b/fs/gfs2/meta_io.c
+@@ -92,14 +92,14 @@ const struct address_space_operations gfs2_meta_aops = {
+ 	.dirty_folio	= block_dirty_folio,
+ 	.invalidate_folio = block_invalidate_folio,
+ 	.writepage = gfs2_aspace_writepage,
+-	.releasepage = gfs2_releasepage,
++	.release_folio = gfs2_release_folio,
  };
  
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index f894267f0722..8f38c26bb16c 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -3528,28 +3528,30 @@ void f2fs_invalidate_folio(struct folio *folio, size_t offset, size_t length)
- 	folio_detach_private(folio);
- }
+ const struct address_space_operations gfs2_rgrp_aops = {
+ 	.dirty_folio	= block_dirty_folio,
+ 	.invalidate_folio = block_invalidate_folio,
+ 	.writepage = gfs2_aspace_writepage,
+-	.releasepage = gfs2_releasepage,
++	.release_folio = gfs2_release_folio,
+ };
  
--int f2fs_release_page(struct page *page, gfp_t wait)
-+bool f2fs_release_folio(struct folio *folio, gfp_t wait)
- {
--	/* If this is dirty page, keep PagePrivate */
--	if (PageDirty(page))
--		return 0;
-+	struct f2fs_sb_info *sbi;
-+
-+	/* If this is dirty folio, keep private data */
-+	if (folio_test_dirty(folio))
-+		return false;
- 
- 	/* This is atomic written page, keep Private */
--	if (page_private_atomic(page))
--		return 0;
-+	if (page_private_atomic(&folio->page))
-+		return false;
- 
--	if (test_opt(F2FS_P_SB(page), COMPRESS_CACHE)) {
--		struct inode *inode = page->mapping->host;
-+	sbi = F2FS_M_SB(folio->mapping);
-+	if (test_opt(sbi, COMPRESS_CACHE)) {
-+		struct inode *inode = folio->mapping->host;
- 
--		if (inode->i_ino == F2FS_COMPRESS_INO(F2FS_I_SB(inode)))
--			clear_page_private_data(page);
-+		if (inode->i_ino == F2FS_COMPRESS_INO(sbi))
-+			clear_page_private_data(&folio->page);
- 	}
- 
--	clear_page_private_gcing(page);
-+	clear_page_private_gcing(&folio->page);
- 
--	detach_page_private(page);
--	set_page_private(page, 0);
--	return 1;
-+	folio_detach_private(folio);
-+	return true;
- }
- 
- static bool f2fs_dirty_data_folio(struct address_space *mapping,
-@@ -3944,7 +3946,7 @@ const struct address_space_operations f2fs_dblock_aops = {
- 	.write_end	= f2fs_write_end,
- 	.dirty_folio	= f2fs_dirty_data_folio,
- 	.invalidate_folio = f2fs_invalidate_folio,
--	.releasepage	= f2fs_release_page,
-+	.release_folio	= f2fs_release_folio,
- 	.direct_IO	= noop_direct_IO,
- 	.bmap		= f2fs_bmap,
- 	.swap_activate  = f2fs_swap_activate,
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 18df53ef3d7e..73ebac078884 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3768,7 +3768,7 @@ int f2fs_write_single_data_page(struct page *page, int *submitted,
- 				int compr_blocks, bool allow_balance);
- void f2fs_write_failed(struct inode *inode, loff_t to);
- void f2fs_invalidate_folio(struct folio *folio, size_t offset, size_t length);
--int f2fs_release_page(struct page *page, gfp_t wait);
-+bool f2fs_release_folio(struct folio *folio, gfp_t wait);
- #ifdef CONFIG_MIGRATION
- int f2fs_migrate_page(struct address_space *mapping, struct page *newpage,
- 			struct page *page, enum migrate_mode mode);
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index c45d341dcf6e..8ccff18560ff 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -2165,7 +2165,7 @@ const struct address_space_operations f2fs_node_aops = {
- 	.writepages	= f2fs_write_node_pages,
- 	.dirty_folio	= f2fs_dirty_node_folio,
- 	.invalidate_folio = f2fs_invalidate_folio,
--	.releasepage	= f2fs_release_page,
-+	.release_folio	= f2fs_release_folio,
- #ifdef CONFIG_MIGRATION
- 	.migratepage	= f2fs_migrate_page,
- #endif
+ /**
 -- 
 2.34.1
 
