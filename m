@@ -2,65 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DE5AC516701
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 May 2022 20:24:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6945D516995
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 May 2022 05:31:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353593AbiEAS2A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 1 May 2022 14:28:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59378 "EHLO
+        id S1348976AbiEBDem (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 1 May 2022 23:34:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234718AbiEAS16 (ORCPT
+        with ESMTP id S230268AbiEBDek (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 1 May 2022 14:27:58 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09E0B56403;
-        Sun,  1 May 2022 11:24:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=++0tXB8r6fqAoAWO0zn58LBjR0GxZ8Ui8yI9kV7Ql6c=; b=5Bvm25+pkmeLL5rMNrxHfplM7s
-        uKg935xXJmaVLLztQS7lAaaumcfTsInHq0U3fp0FT/49AU/iugvoMPp7Ea3qOHNOyCfdpoH3vR0EC
-        f2YSrPcQciYHpVw6Ms4xCNFi3SDZg2dGg3No6LR98z+5DajXjeQlFPOpno0chVBe7ChAk0qntgBFB
-        6PpCt0ZbB1//y4zNnHabMq4ZeZnWZv29LszwS5klex7qmCWYQJ/hmQULdZRG30COu18Z4lbWo/WIA
-        73Dfy97TxkjyMZaJeYaYl0NW0lqSv4ZbGKSERZqAsmCARqz+d+ccDFcYoUcux6UOKFd/KOq7BBh+N
-        RJUiABXg==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nlEFA-00Gh9I-PL; Sun, 01 May 2022 18:24:28 +0000
-Date:   Sun, 1 May 2022 11:24:28 -0700
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     David Gow <davidgow@google.com>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Lucas De Marchi <lucas.demarchi@intel.com>,
-        Aaron Tomlin <atomlin@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
-Cc:     Brendan Higgins <brendanhiggins@google.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "Guilherme G . Piccoli" <gpiccoli@igalia.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        John Ogness <john.ogness@linutronix.de>,
-        Joe Fradley <joefradley@google.com>,
-        Daniel Latypov <dlatypov@google.com>,
-        kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jani Nikula <jani.nikula@linux.intel.com>
-Subject: Re: [PATCH v2] kunit: Taint kernel if any tests run
-Message-ID: <Ym7QXOMK3fLQ+b6t@bombadil.infradead.org>
-References: <20220429043913.626647-1-davidgow@google.com>
- <20220430030019.803481-1-davidgow@google.com>
- <Ym7P7mCoMiQq99EM@bombadil.infradead.org>
+        Sun, 1 May 2022 23:34:40 -0400
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4714D64E5;
+        Sun,  1 May 2022 20:31:13 -0700 (PDT)
+Received: by mail-ej1-x633.google.com with SMTP id g6so25539743ejw.1;
+        Sun, 01 May 2022 20:31:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wUqXzBeFEsDrc5ibIJLNWC7b6ZPsu9hMCM0ez1Zi5wc=;
+        b=iU77RsSZOrmcHoZK9CQEATY2m29clBJxiS1rYOez7jD+9DzreAp+6wWJMS+4HQEqfT
+         AE03j8qZlJLSkTSH7WAaVPqQm2BygCRXFvouqDi4AhqAaSH/pxLslYxnVP1ncorP7pQO
+         zzuPqasP1cqizGwDZ/7uoVsVzqFwdcxOR4xCG1W+Oz+6SNbc/PQ83A+jtsPJ3h7bj4/i
+         jFswD/v5U4s8B/R+LBtIX4ajmgEM39F4dzUAQ8wOp1MGMzpu6qeXtU1Ctqa7ofv4SJSo
+         uyjbBe6gZuvqabax3CF/jl+kQd6bzVF15y3J/jiVFTZUuCee1v0MrCvrxvm8dxc7WpY/
+         taaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wUqXzBeFEsDrc5ibIJLNWC7b6ZPsu9hMCM0ez1Zi5wc=;
+        b=5smilJtlY2YWwPP8tRsUq2bEWjHmvIsszKf6LfxMnz2s/onadWvxvHR1OxrOa2tLz/
+         CNcLcrG9pDh6Xwj5GEePGKA4uM7W+D/CrNKkfSU6veJjPsgkdRujI6UdjsrjNgPSNz+z
+         RS55o4aykSTIgYg5QiBESf1Twan1l8Cg8h1ccgiLM84ralI6knF/yFdBqI2hwrGujtYX
+         OljzCO226EPDwFVCH/2xcsKovKbyVpnYdU4rXSDUfOr/jZzDbl+PKLBqE3+4F4PHirHc
+         Wgwqq2Qhyl53eOnBAize8ta/b0HmsVO6oq87hxZehy07pBPxS8S50WRm0VJEuRYeTRFM
+         JdSg==
+X-Gm-Message-State: AOAM5324k/4iIOpMPFj6B27i10qNAVKhKspZeS4OHSXMQ69yZRcC4TtF
+        z5X5jUGQrZJoWiEgZA/bqLzWGxYaRldcj5T2W1eU58SRRSvbyQ==
+X-Google-Smtp-Source: ABdhPJydmRr2I7cWSvYLptLKn8O1vb6z2JLBHKQwD3RiR9UfCNtsj8ke3fjrOYJj8eqCdvfylMbnrv5OJOv3mAgUjFU=
+X-Received: by 2002:a17:907:d22:b0:6f4:7bb:d53e with SMTP id
+ gn34-20020a1709070d2200b006f407bbd53emr9455869ejc.251.1651462271429; Sun, 01
+ May 2022 20:31:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Ym7P7mCoMiQq99EM@bombadil.infradead.org>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+References: <20220501035524.91205-1-xiangxia.m.yue@gmail.com> <20220501035524.91205-3-xiangxia.m.yue@gmail.com>
+In-Reply-To: <20220501035524.91205-3-xiangxia.m.yue@gmail.com>
+From:   Tonghao Zhang <xiangxia.m.yue@gmail.com>
+Date:   Mon, 2 May 2022 11:30:35 +0800
+Message-ID: <CAMDZJNX0tm+krFb+Nr9Emy4UBg3niGg1y88Y2hTd37ByLGhkQA@mail.gmail.com>
+Subject: Re: [PATCH v5 2/3] net: sysctl: introduce sysctl SYSCTL_THREE
+To:     linux-fsdevel@vger.kernel.org,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        David Ahern <dsahern@kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Julian Anastasov <ja@ssi.bg>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Florian Westphal <fw@strlen.de>, Shuah Khan <shuah@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        Lorenz Bauer <lmb@cloudflare.com>,
+        Akhmat Karakotov <hmukos@yandex-team.ru>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -68,44 +83,191 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, May 01, 2022 at 11:22:38AM -0700, Luis Chamberlain wrote:
-> On Sat, Apr 30, 2022 at 11:00:19AM +0800, David Gow wrote:
-> > KUnit tests are not supposed to run on production systems: they may do
-> > deliberately illegal things to trigger errors, and have security
-> > implications (assertions will often deliberately leak kernel addresses).
-> > 
-> > Add a new taint type, TAINT_KUNIT to signal that a KUnit test has been
-> > run. This will be printed as 'N' (for kuNit, as K, U and T were already
-> > taken).
-> > 
-> > This should discourage people from running KUnit tests on production
-> > systems, and to make it easier to tell if tests have been run
-> > accidentally (by loading the wrong configuration, etc.)
-> > 
-> > Signed-off-by: David Gow <davidgow@google.com>
-> 
-> There is no reason to distinguish kunit from selftests if the result is
-> the same: really make the kernel try really insane stupid things which
-> may crash it or put it into a bad state.
-> 
-> So no, this should be renamed to "TEST_BREAK" as I think outside of
-> selftest and kunit we may grow the kernel to do stupid things outside
-> of that domain and this gives us the flexilibilty to use that in other
-> places as well.
-> 
-> It begs the question if we *should* allow userspace to volunterally say
-> "hey, we are doing really insane things, brace yourself." Why ? Well
-> because selftest has tons of modules. We either then define a macro
-> that adds the taint for them and wrap the module declaration for it,
-> or we expose a syctl to let userspace volunteer to opt-in to seggest
-> we are about to try something stupid with the kernel including loading
-> some dangeerous modules which may not have macros which taint the kernel.
-> That would let selftest taint on *any* selftest. Because we can run all
-> selftests or run one selftest.
-> 
-> Then, if such sysctl is exposed, maybe we should then also use this for
-> example for blktests, fstests, fio tests, etc.
+On Sun, May 1, 2022 at 11:56 AM <xiangxia.m.yue@gmail.com> wrote:
+>
+> From: Tonghao Zhang <xiangxia.m.yue@gmail.com>
+>
+> This patch introdues the SYSCTL_THREE.
+>
+> KUnit:
+> [00:10:14] ================ sysctl_test (10 subtests) =================
+> [00:10:14] [PASSED] sysctl_test_api_dointvec_null_tbl_data
+> [00:10:14] [PASSED] sysctl_test_api_dointvec_table_maxlen_unset
+> [00:10:14] [PASSED] sysctl_test_api_dointvec_table_len_is_zero
+> [00:10:14] [PASSED] sysctl_test_api_dointvec_table_read_but_position_set
+> [00:10:14] [PASSED] sysctl_test_dointvec_read_happy_single_positive
+> [00:10:14] [PASSED] sysctl_test_dointvec_read_happy_single_negative
+> [00:10:14] [PASSED] sysctl_test_dointvec_write_happy_single_positive
+> [00:10:14] [PASSED] sysctl_test_dointvec_write_happy_single_negative
+> [00:10:14] [PASSED] sysctl_test_api_dointvec_write_single_less_int_min
+> [00:10:14] [PASSED] sysctl_test_api_dointvec_write_single_greater_int_max
+> [00:10:14] =================== [PASSED] sysctl_test ===================
+>
+> ./run_kselftest.sh -c sysctl
+> ...
+> ok 1 selftests: sysctl: sysctl.sh
+>
+> Cc: Luis Chamberlain <mcgrof@kernel.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Iurii Zaikin <yzaikin@google.com>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Jakub Kicinski <kuba@kernel.org>
+> Cc: Paolo Abeni <pabeni@redhat.com>
+> Cc: Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
+> Cc: David Ahern <dsahern@kernel.org>
+> Cc: Simon Horman <horms@verge.net.au>
+> Cc: Julian Anastasov <ja@ssi.bg>
+> Cc: Pablo Neira Ayuso <pablo@netfilter.org>
+> Cc: Jozsef Kadlecsik <kadlec@netfilter.org>
+> Cc: Florian Westphal <fw@strlen.de>
+> Cc: Shuah Khan <shuah@kernel.org>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Alexei Starovoitov <ast@kernel.org>
+> Cc: Eric Dumazet <edumazet@google.com>
+> Cc: Lorenz Bauer <lmb@cloudflare.com>
+> Cc: Akhmat Karakotov <hmukos@yandex-team.ru>
+> Signed-off-by: Tonghao Zhang <xiangxia.m.yue@gmail.com>
+Reviewed-by: Simon Horman <horms@verge.net.au>
 
-For got to expand to fsdevel and linux-block.
+v4 version, Simon added this tag. I miss this tag in v5.
+> ---
+>  fs/proc/proc_sysctl.c          | 2 +-
+>  include/linux/sysctl.h         | 9 +++++----
+>  net/core/sysctl_net_core.c     | 3 +--
+>  net/ipv4/sysctl_net_ipv4.c     | 3 +--
+>  net/ipv6/sysctl_net_ipv6.c     | 3 +--
+>  net/netfilter/ipvs/ip_vs_ctl.c | 4 +---
+>  6 files changed, 10 insertions(+), 14 deletions(-)
+>
+> diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+> index 7d9cfc730bd4..5851c2a92c0d 100644
+> --- a/fs/proc/proc_sysctl.c
+> +++ b/fs/proc/proc_sysctl.c
+> @@ -26,7 +26,7 @@ static const struct file_operations proc_sys_dir_file_operations;
+>  static const struct inode_operations proc_sys_dir_operations;
+>
+>  /* shared constants to be used in various sysctls */
+> -const int sysctl_vals[] = { -1, 0, 1, 2, 4, 100, 200, 1000, 3000, INT_MAX, 65535 };
+> +const int sysctl_vals[] = { 0, 1, 2, 3, 4, 100, 200, 1000, 3000, INT_MAX, 65535, -1 };
+>  EXPORT_SYMBOL(sysctl_vals);
+>
+>  const unsigned long sysctl_long_vals[] = { 0, 1, LONG_MAX };
+> diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
+> index 6353d6db69b2..80263f7cdb77 100644
+> --- a/include/linux/sysctl.h
+> +++ b/include/linux/sysctl.h
+> @@ -38,10 +38,10 @@ struct ctl_table_header;
+>  struct ctl_dir;
+>
+>  /* Keep the same order as in fs/proc/proc_sysctl.c */
+> -#define SYSCTL_NEG_ONE                 ((void *)&sysctl_vals[0])
+> -#define SYSCTL_ZERO                    ((void *)&sysctl_vals[1])
+> -#define SYSCTL_ONE                     ((void *)&sysctl_vals[2])
+> -#define SYSCTL_TWO                     ((void *)&sysctl_vals[3])
+> +#define SYSCTL_ZERO                    ((void *)&sysctl_vals[0])
+> +#define SYSCTL_ONE                     ((void *)&sysctl_vals[1])
+> +#define SYSCTL_TWO                     ((void *)&sysctl_vals[2])
+> +#define SYSCTL_THREE                   ((void *)&sysctl_vals[3])
+>  #define SYSCTL_FOUR                    ((void *)&sysctl_vals[4])
+>  #define SYSCTL_ONE_HUNDRED             ((void *)&sysctl_vals[5])
+>  #define SYSCTL_TWO_HUNDRED             ((void *)&sysctl_vals[6])
+> @@ -51,6 +51,7 @@ struct ctl_dir;
+>
+>  /* this is needed for the proc_dointvec_minmax for [fs_]overflow UID and GID */
+>  #define SYSCTL_MAXOLDUID               ((void *)&sysctl_vals[10])
+> +#define SYSCTL_NEG_ONE                 ((void *)&sysctl_vals[11])
+>
+>  extern const int sysctl_vals[];
+>
+> diff --git a/net/core/sysctl_net_core.c b/net/core/sysctl_net_core.c
+> index 3a0ce309ffcd..195ca5c28771 100644
+> --- a/net/core/sysctl_net_core.c
+> +++ b/net/core/sysctl_net_core.c
+> @@ -25,7 +25,6 @@
+>
+>  #include "dev.h"
+>
+> -static int three = 3;
+>  static int int_3600 = 3600;
+>  static int min_sndbuf = SOCK_MIN_SNDBUF;
+>  static int min_rcvbuf = SOCK_MIN_RCVBUF;
+> @@ -553,7 +552,7 @@ static struct ctl_table net_core_table[] = {
+>                 .mode           = 0644,
+>                 .proc_handler   = proc_dointvec_minmax,
+>                 .extra1         = SYSCTL_ZERO,
+> -               .extra2         = &three,
+> +               .extra2         = SYSCTL_THREE,
+>         },
+>         {
+>                 .procname       = "high_order_alloc_disable",
+> diff --git a/net/ipv4/sysctl_net_ipv4.c b/net/ipv4/sysctl_net_ipv4.c
+> index 9ff60a389cd0..cd448cdd3b38 100644
+> --- a/net/ipv4/sysctl_net_ipv4.c
+> +++ b/net/ipv4/sysctl_net_ipv4.c
+> @@ -20,7 +20,6 @@
+>  #include <net/protocol.h>
+>  #include <net/netevent.h>
+>
+> -static int three __maybe_unused = 3;
+>  static int tcp_retr1_max = 255;
+>  static int ip_local_port_range_min[] = { 1, 1 };
+>  static int ip_local_port_range_max[] = { 65535, 65535 };
+> @@ -1056,7 +1055,7 @@ static struct ctl_table ipv4_net_table[] = {
+>                 .mode           = 0644,
+>                 .proc_handler   = proc_fib_multipath_hash_policy,
+>                 .extra1         = SYSCTL_ZERO,
+> -               .extra2         = &three,
+> +               .extra2         = SYSCTL_THREE,
+>         },
+>         {
+>                 .procname       = "fib_multipath_hash_fields",
+> diff --git a/net/ipv6/sysctl_net_ipv6.c b/net/ipv6/sysctl_net_ipv6.c
+> index 560c48d0ddb7..94a0a294c6a1 100644
+> --- a/net/ipv6/sysctl_net_ipv6.c
+> +++ b/net/ipv6/sysctl_net_ipv6.c
+> @@ -23,7 +23,6 @@
+>  #endif
+>  #include <linux/ioam6.h>
+>
+> -static int three = 3;
+>  static int flowlabel_reflect_max = 0x7;
+>  static int auto_flowlabels_max = IP6_AUTO_FLOW_LABEL_MAX;
+>  static u32 rt6_multipath_hash_fields_all_mask =
+> @@ -171,7 +170,7 @@ static struct ctl_table ipv6_table_template[] = {
+>                 .mode           = 0644,
+>                 .proc_handler   = proc_rt6_multipath_hash_policy,
+>                 .extra1         = SYSCTL_ZERO,
+> -               .extra2         = &three,
+> +               .extra2         = SYSCTL_THREE,
+>         },
+>         {
+>                 .procname       = "fib_multipath_hash_fields",
+> diff --git a/net/netfilter/ipvs/ip_vs_ctl.c b/net/netfilter/ipvs/ip_vs_ctl.c
+> index 7f645328b47f..efab2b06d373 100644
+> --- a/net/netfilter/ipvs/ip_vs_ctl.c
+> +++ b/net/netfilter/ipvs/ip_vs_ctl.c
+> @@ -1767,8 +1767,6 @@ static int ip_vs_zero_all(struct netns_ipvs *ipvs)
+>
+>  #ifdef CONFIG_SYSCTL
+>
+> -static int three = 3;
+> -
+>  static int
+>  proc_do_defense_mode(struct ctl_table *table, int write,
+>                      void *buffer, size_t *lenp, loff_t *ppos)
+> @@ -1977,7 +1975,7 @@ static struct ctl_table vs_vars[] = {
+>                 .mode           = 0644,
+>                 .proc_handler   = proc_dointvec_minmax,
+>                 .extra1         = SYSCTL_ZERO,
+> -               .extra2         = &three,
+> +               .extra2         = SYSCTL_THREE,
+>         },
+>         {
+>                 .procname       = "nat_icmp_send",
+> --
+> 2.27.0
+>
 
-  Luis
+
+-- 
+Best regards, Tonghao
