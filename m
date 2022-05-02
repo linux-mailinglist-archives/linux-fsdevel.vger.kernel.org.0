@@ -2,108 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3284751713C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 May 2022 16:06:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6DB3517187
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 May 2022 16:26:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236801AbiEBOJz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 May 2022 10:09:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48222 "EHLO
+        id S1350041AbiEBOa0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 May 2022 10:30:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38814 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236744AbiEBOJy (ORCPT
+        with ESMTP id S1347497AbiEBOaZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 May 2022 10:09:54 -0400
+        Mon, 2 May 2022 10:30:25 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EECAEE03F;
-        Mon,  2 May 2022 07:06:24 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6167EE00A;
+        Mon,  2 May 2022 07:26:51 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 6120AB8115F;
-        Mon,  2 May 2022 14:06:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7230AC385AC;
-        Mon,  2 May 2022 14:06:21 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-        dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="eWJc49DY"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-        t=1651500379;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=+7+HGir1Cy6uU4bq/QSK6Sa0K4vOQe5UFQEDdB+7RMI=;
-        b=eWJc49DY3MlUFo3eogAJqMeRkRrRIoCzUvKiQAh5btUyGLkMzSvCJcS5QPFb2l8HKapJrg
-        nQE7N4FjRz4A5porfk0mUwLD5XcKSjb9z3rFmNGVwvS3vfTMF8Lfpu6EGhjL6xXtTqxOuQ
-        UuocIv+v31Sgk/OWwIhfVawGtbu61Z8=
-Received: by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 160ad175 (TLSv1.3:AEAD-AES256-GCM-SHA384:256:NO);
-        Mon, 2 May 2022 14:06:18 +0000 (UTC)
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-To:     linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org
-Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>,
+        by ams.source.kernel.org (Postfix) with ESMTPS id 0C0BBB817D2;
+        Mon,  2 May 2022 14:26:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F292AC385AC;
+        Mon,  2 May 2022 14:26:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1651501608;
+        bh=vU9/ZvXf6xeGdB3aeZn5fIWE1fBD4DSrUCcKsWDBkR4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=hXJnyXBZOmSBYEPLoK1m1HxLmpchOsGVZiQuX+EXeU9Wl20f0TgCRCZDbThs06eN9
+         roZqA4uPT2m+uJIOGUtwWiKSwsS3XL4r0GI8GeEc3JyB3ttxscgB6e8UJ7w1LzOgdX
+         fBthZAVIzC/UbpRqUja5bphlzN5hyUnsVJ4+1wSjmDZBL+p7fhwMBloMG36lCNMdmL
+         W40JjPzEH6YTE4s/06e//+WNY+xldzXmIKuaPznSX7YWNtKFA7zg2tXZxSGNcNddPR
+         EuswYSYjb7Ek4NeUH7dsR2HZmVGJmzku6JXBnuhWzk1JBvY94CE7gFi7WAFCLTTT4k
+         KGyPHw3ASRkyg==
+Date:   Mon, 2 May 2022 07:26:46 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Tonghao Zhang <xiangxia.m.yue@gmail.com>
+Cc:     Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
         Luis Chamberlain <mcgrof@kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH 1/2] sysctl: read() must consume poll events, not poll()
-Date:   Mon,  2 May 2022 16:06:01 +0200
-Message-Id: <20220502140602.130373-1-Jason@zx2c4.com>
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        David Ahern <dsahern@kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Julian Anastasov <ja@ssi.bg>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Florian Westphal <fw@strlen.de>, Shuah Khan <shuah@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        Lorenz Bauer <lmb@cloudflare.com>,
+        Akhmat Karakotov <hmukos@yandex-team.ru>
+Subject: Re: [net-next v4 3/3] selftests/sysctl: add sysctl macro test
+Message-ID: <20220502072646.7fdc45bc@kernel.org>
+In-Reply-To: <CAMDZJNV69HeaBmy1uY7g7R=GKunoV3=bgNd5yfEMKUg_jMPuUg@mail.gmail.com>
+References: <20220422070141.39397-1-xiangxia.m.yue@gmail.com>
+        <20220422070141.39397-4-xiangxia.m.yue@gmail.com>
+        <20220425125828.06cc0b51@kernel.org>
+        <CAMDZJNV69HeaBmy1uY7g7R=GKunoV3=bgNd5yfEMKUg_jMPuUg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-6.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Events that poll() responds to are supposed to be consumed when the file
-is read(), not by the poll() itself. By putting it on the poll() itself,
-it makes it impossible to poll() on a epoll file descriptor, since the
-event gets consumed too early. Jann wrote a PoC, available in the link
-below.
+On Sun, 1 May 2022 11:31:47 +0800 Tonghao Zhang wrote:
+>  static int __init test_sysctl_init(void)
+>  {
+> +       int i;
+> +
 
-Reported-by: Jann Horn <jannh@google.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Luis Chamberlain <mcgrof@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org
-Link: https://lore.kernel.org/lkml/CAG48ez1F0P7Wnp=PGhiUej=u=8CSF6gpD9J=Oxxg0buFRqV1tA@mail.gmail.com/
-Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
----
- fs/proc/proc_sysctl.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+nit: No empty line needed here.
 
-diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-index 7d9cfc730bd4..1aa145794207 100644
---- a/fs/proc/proc_sysctl.c
-+++ b/fs/proc/proc_sysctl.c
-@@ -622,6 +622,14 @@ static ssize_t proc_sys_call_handler(struct kiocb *iocb, struct iov_iter *iter,
- 
- static ssize_t proc_sys_read(struct kiocb *iocb, struct iov_iter *iter)
- {
-+	struct inode *inode = file_inode(iocb->ki_filp);
-+	struct ctl_table_header *head = grab_header(inode);
-+	struct ctl_table *table = PROC_I(inode)->sysctl_entry;
-+
-+	if (!IS_ERR(head) && table->poll)
-+		iocb->ki_filp->private_data = proc_sys_poll_event(table->poll);
-+	sysctl_head_finish(head);
-+
- 	return proc_sys_call_handler(iocb, iter, 0);
- }
- 
-@@ -668,10 +676,8 @@ static __poll_t proc_sys_poll(struct file *filp, poll_table *wait)
- 	event = (unsigned long)filp->private_data;
- 	poll_wait(filp, &table->poll->wait, wait);
- 
--	if (event != atomic_read(&table->poll->event)) {
--		filp->private_data = proc_sys_poll_event(table->poll);
-+	if (event != atomic_read(&table->poll->event))
- 		ret = EPOLLIN | EPOLLRDNORM | EPOLLERR | EPOLLPRI;
--	}
- 
- out:
- 	sysctl_head_finish(head);
--- 
-2.35.1
+> +       struct {
+> +               int defined;
+> +               int wanted;
+> +       } match_int[] = {
+> +               {.defined = *(int *)SYSCTL_ZERO,        .wanted = 0},
+> +               {.defined = *(int *)SYSCTL_ONE,         .wanted = 1},
+> +               {.defined = *(int *)SYSCTL_TWO,         .wanted = 2},
+> +               {.defined = *(int *)SYSCTL_THREE,       .wanted = 3},
+> +               {.defined = *(int *)SYSCTL_FOUR,        .wanted = 4},
+> +               {.defined = *(int *)SYSCTL_ONE_HUNDRED, .wanted = 100},
+> +               {.defined = *(int *)SYSCTL_TWO_HUNDRED, .wanted = 200},
+> +               {.defined = *(int *)SYSCTL_ONE_THOUSAND, .wanted = 1000},
+> +               {.defined = *(int *)SYSCTL_THREE_THOUSAND, .wanted = 3000},
+> +               {.defined = *(int *)SYSCTL_INT_MAX,     .wanted = INT_MAX},
+> +               {.defined = *(int *)SYSCTL_MAXOLDUID,   .wanted = 65535},
+> +               {.defined = *(int *)SYSCTL_NEG_ONE,     .wanted = -1},
+> +       };
+> +
+> +       for (i = 0; i < ARRAY_SIZE(match_int); i++)
+> +               if (match_int[i].defined != match_int[i].wanted)
+> +                       match_int_ok = 0;
 
+That's better, thank you!
