@@ -2,251 +2,222 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F1E0551790F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 May 2022 23:21:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3C415179C2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 May 2022 00:07:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237004AbiEBVZE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 May 2022 17:25:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57154 "EHLO
+        id S243234AbiEBWLP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 May 2022 18:11:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50200 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232204AbiEBVZD (ORCPT
+        with ESMTP id S1387829AbiEBWKo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 May 2022 17:25:03 -0400
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D60DD2F5;
-        Mon,  2 May 2022 14:21:33 -0700 (PDT)
-Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 242LKPLu010202;
-        Mon, 2 May 2022 14:21:29 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=message-id : date :
- subject : to : cc : references : from : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=facebook;
- bh=e1ocDreiMUew3asfFx6pR8djx2fnfp6eRcFEFIXlqJo=;
- b=IadpFvxElqEJGSuEYB8GJhRkzqcUFCWLLKqtoXgE68TQ1PUDJM4mgQKpXjw0ELPOze3Q
- ZutrvTCssWsxivGj2/9iywPmlK3PkIauLPA2IT9L6c1PKHMqs9L1E8ULl8YoQdxRoqcb
- Z7YYnBMW1ETTN6nsKY83+78DAOSWGnPSaWg= 
-Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2176.outbound.protection.outlook.com [104.47.58.176])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3fs15k493b-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 02 May 2022 14:21:29 -0700
+        Mon, 2 May 2022 18:10:44 -0400
+Received: from esa3.hgst.iphmx.com (esa3.hgst.iphmx.com [216.71.153.141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BC8F1121;
+        Mon,  2 May 2022 15:07:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1651529234; x=1683065234;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=+p2bilC194FPBJ3EhZ84ajc8No9hIc4J6p2u9fdAvuI=;
+  b=Rnc+BC2ivyCa9VLJfI1yebwAusK05jtnOItLVzWsJ0HWT+Qlm2ub41Hk
+   IRCH0PgePNEtAGKaflBcL+z1qu1Zqw5nGP6Zk+sZOE19NaqL7enyIo2cU
+   t7Qek3jzUlu85JzCviW91hGr4hAE2Isc4SD1qRS5kKRX5tH4ZLOrtMosz
+   RvDDDSnwh1n+VS3ykK4VzbtaSLT6XwLH8wwqYGQHMsddPOnKxFReE3/sI
+   tw81dqfkYf+T5RXP4a054cVTOmB1zLRC5RgibtEIPi6rNBNDKjozFssNv
+   u+WLtZVm0l464985+AwVK0yU241QB9YmgwUH+l1VDz28NYvDZWjzK9DXj
+   g==;
+X-IronPort-AV: E=Sophos;i="5.91,193,1647273600"; 
+   d="scan'208";a="204240683"
+Received: from mail-dm6nam11lp2177.outbound.protection.outlook.com (HELO NAM11-DM6-obe.outbound.protection.outlook.com) ([104.47.57.177])
+  by ob1.hgst.iphmx.com with ESMTP; 03 May 2022 06:07:11 +0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=PNwy3V+xKdjGSOKw0br+xNeUdFlyUc62lq4LM+e0rEDpV9FiaAa1xnbOhfC2X5KOhAzr/dpoI1SRFW0QazV3NJ04VlFx+p6qzytQAov5SkNZ9F8MoI2gux+4dViA8vAedb9lTohhEbQyZxlQgSVn3OUgfW3i20emPkvlQcT2R6IUXctTJfILHg7ezGnPcVu7RBZpnX89GSzjes0qfj2D4DvnVvb4UUrHHS4OnqdoqBInkzpg7VznES/U/hSoKBZdqC8c0fuJplHWgUy1Ikc8XGsuYYWhUQPvIqFf2j/YmbGLljQSBxS23dwscw511fLaitWGm4zCAhQ1biuUkZiOXg==
+ b=F3QL/V2u5Z9tHa3rV6Y9ldSxbaXZhaut63nyivn7ROFWzwgiOSR+LSP1EaVcun1Q/u06BHkv/LAK+/0G94jxwI94ZksuXu9L59ttHiJq5Q4x/GmeqQFqRyjHe2F+YOtLC6/k1Ph3rGdKSbxXeoharBFAN2xdHAdqC3kqS2VNsxXm7dLkfsexkbYqP7M1H7IDGSmWS3CcCVQQgmblDEI6fOv7xvUqg08GGSI5zTcaf8ADjjx+K1UO3sjez0fgpA83tC3W7M76NZVpyfYMPyOpvDtVJ3d5/6eRZcqcK7DtTCL0mOVtX28VDj8ToCNUltFXLYPS/+aW3RQSFXm6631pnw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=e1ocDreiMUew3asfFx6pR8djx2fnfp6eRcFEFIXlqJo=;
- b=XMELKnonUCVT3TiG+4yPz/PgCeR4E4x0Rw14b1vQHkUZkcCx8QvdgFnUE8Lh9hRz7vxGbh+qWj/XwQuq2kDSqugURCOFSeq9gEA7iSQY3eV+cbgqdv8UtPapdyv/139cfbXJe8oe+yoGKl+gOfKylHVAz6yFt0dIG1CAcQaHny+VZwuIOk4qh6kuWJZzFCRcvP+U4GE6hQ0g4J3+1PYs+keFHl25bpqdNrOelPCOMxoO5w/MT65M4DDk/C3pyAdRE2q4RGZKbpVihgSYQgRjsEtPCjYD3v85ABVYprBDqUDJ3C6vCXgmxjGm3Kc4HN2YXO5dx9frc2JTk175faz2pg==
+ bh=dWU1zcAodQa0jLxSBgS1NZFyLWXl0T4b+RTjxmMzIno=;
+ b=bOOhYt1aqX06yIkffV9jnnFsrSahjFdxBdPxr82tazWGGHMvB/8+cGhrlBD1PbECnwmxrELAJMN9j3yn1x3HyNxsil+AOPDYe87tMZeOXrm9mSNUGy7GhyJ8cQZl1GhMqEopl/uDkzHo9Qx81xEO6WjfDv+vaTCffccr/bHzfwDPFaEVJjtSp+U6fg384Erba0ir9YBa4msB23u3IghJeDnWW5eXtQKbEr05CM7JQbH4IX12SzXk5lVv41ZmXtr3pKyas1FfhLJr2H+uwekkeVvrU4CSup4lCiOHBppSC9WjDr0GqppwJeGrIM+RpinRVmhNw26ttBkyxRSahE19aw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-Received: from MW4PR15MB4410.namprd15.prod.outlook.com (2603:10b6:303:bf::10)
- by BN8PR15MB2787.namprd15.prod.outlook.com (2603:10b6:408:cf::28) with
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dWU1zcAodQa0jLxSBgS1NZFyLWXl0T4b+RTjxmMzIno=;
+ b=PCSsY2cyXcsvwkQEv2UuoPYH6CY8ROT6vLSsb7WbfRPyXYuPMJNM3LGjGluBUf2qFQlFNnA7K/bRfsGpjTc1EGIhP8krwRjqAfcpoEAgV0QaoSvXFoaY4XnewslOYiYqKQvYtLCKQUrlGTyqEXB6OGIq9oT2qaMwSrOV+a+ogDA=
+Received: from PH0PR04MB7416.namprd04.prod.outlook.com (2603:10b6:510:12::17)
+ by SN6PR04MB5181.namprd04.prod.outlook.com (2603:10b6:805:f7::12) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5206.24; Mon, 2 May
- 2022 21:21:20 +0000
-Received: from MW4PR15MB4410.namprd15.prod.outlook.com
- ([fe80::687a:3f7e:150b:1091]) by MW4PR15MB4410.namprd15.prod.outlook.com
- ([fe80::687a:3f7e:150b:1091%9]) with mapi id 15.20.5206.024; Mon, 2 May 2022
- 21:21:20 +0000
-Message-ID: <19d411e5-fe1f-a3f8-36e0-87284a1c02f3@fb.com>
-Date:   Mon, 2 May 2022 14:21:17 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.8.0
-Subject: Re: [RFC PATCH v1 11/18] xfs: add async buffered write support
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5186.15; Mon, 2 May
+ 2022 22:07:10 +0000
+Received: from PH0PR04MB7416.namprd04.prod.outlook.com
+ ([fe80::6cfd:b252:c66e:9e12]) by PH0PR04MB7416.namprd04.prod.outlook.com
+ ([fe80::6cfd:b252:c66e:9e12%3]) with mapi id 15.20.5206.024; Mon, 2 May 2022
+ 22:07:10 +0000
+From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+To:     Pankaj Raghav <p.raghav@samsung.com>,
+        "jaegeuk@kernel.org" <jaegeuk@kernel.org>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "snitzer@kernel.org" <snitzer@kernel.org>,
+        "hch@lst.de" <hch@lst.de>, "mcgrof@kernel.org" <mcgrof@kernel.org>,
+        Naohiro Aota <Naohiro.Aota@wdc.com>,
+        "sagi@grimberg.me" <sagi@grimberg.me>,
+        "damien.lemoal@opensource.wdc.com" <damien.lemoal@opensource.wdc.com>,
+        "dsterba@suse.com" <dsterba@suse.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "clm@fb.com" <clm@fb.com>,
+        "gost.dev@samsung.com" <gost.dev@samsung.com>,
+        "chao@kernel.org" <chao@kernel.org>,
+        "linux-f2fs-devel@lists.sourceforge.net" 
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        "josef@toxicpanda.com" <josef@toxicpanda.com>,
+        "jonathan.derrick@linux.dev" <jonathan.derrick@linux.dev>,
+        "agk@redhat.com" <agk@redhat.com>,
+        "kbusch@kernel.org" <kbusch@kernel.org>,
+        "kch@nvidia.com" <kch@nvidia.com>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "dm-devel@redhat.com" <dm-devel@redhat.com>,
+        "bvanassche@acm.org" <bvanassche@acm.org>,
+        "jiangbo.365@bytedance.com" <jiangbo.365@bytedance.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        =?iso-8859-1?Q?Matias_Bj=F8rling?= <Matias.Bjorling@wdc.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+Subject: Re: [PATCH 00/16] support non power of 2 zoned devices
+Thread-Topic: [PATCH 00/16] support non power of 2 zoned devices
+Thread-Index: AQHYWlBbVAcTcxyrHkCrWR4NhJ2aaA==
+Date:   Mon, 2 May 2022 22:07:09 +0000
+Message-ID: <PH0PR04MB74167FC8BA634A3DA09586489BC19@PH0PR04MB7416.namprd04.prod.outlook.com>
+References: <CGME20220427160256eucas1p2db2b58792ffc93026d870c260767da14@eucas1p2.samsung.com>
+ <20220427160255.300418-1-p.raghav@samsung.com>
+Accept-Language: en-US
 Content-Language: en-US
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     io-uring@vger.kernel.org, kernel-team@fb.com, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20220426174335.4004987-1-shr@fb.com>
- <20220426174335.4004987-12-shr@fb.com>
- <20220426225652.GS1544202@dread.disaster.area>
- <30f2920c-5262-7cb0-05b5-6e84a76162a7@fb.com>
- <20220428215442.GW1098723@dread.disaster.area>
-From:   Stefan Roesch <shr@fb.com>
-In-Reply-To: <20220428215442.GW1098723@dread.disaster.area>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4PR04CA0338.namprd04.prod.outlook.com
- (2603:10b6:303:8a::13) To MW4PR15MB4410.namprd15.prod.outlook.com
- (2603:10b6:303:bf::10)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=wdc.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 737a42a1-6be8-4ddc-e1f5-08da2c881a90
+x-ms-traffictypediagnostic: SN6PR04MB5181:EE_
+x-microsoft-antispam-prvs: <SN6PR04MB51816E48C7920B640CBD56BA9BC19@SN6PR04MB5181.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: Kqd/h6p7qnADrAZ0vPTmp/tqhmWk3UMQKEFF0+hJzb98kgf35QW8bLHflCtDtmag3Om5qn6cXZfM/J/c7ucCBM0ubkLj/OxrJ4ymQ+OTRC2PtC7r7bc10NdXwmGN5aUN6Kt4qDuJV+6tFtZqiMjeiMwBbknXdm3Hx+S2IY75lJ7CiYDxEaq+yi8LYbTq7u05zyFqsZlh0qiWfCwp9EOU/zRS7VL3fkpzakifMHF6fRbRJUisM3vUQj2SjGt34mW5bb4+QlHQhsiz9LB6V3lIfdbvUZHFb9YkQxYCq4OTq8UnsAh/oq2xIpB1T6aHU+CE3aGXgDaxDagbqQr95SOJLwTnZH6ofmNXZB+DQ3NG2P3C2q3kW9osl3xk3aS2mYl/E26H9xHVtZx/e1PxlADY3BNjlKLsXyuH53O3hqatvwKzh3v98h2tdpTSENUX5gTu9YnTQ2pj4qRo8r3/Z68TAVp60ko0q+qJfKW3rZoXmBo2YM0f+Koa2o587XdAzRKrzv+Hrmwhp3NtNCJ6B30QiwPYMuutpurvoCOojQ2FbYW1/5zMqADUZGIUdHsir510h54VX7XLZXykdKJPVyLfV+Q1DmmQ27hEwbOC6Eg3sGlHyiR3NKNtSyhh7TBWyBtd/kTSK4rEcnxHMQ/yIFkzb8qylt9kq7aSAVORqb4h05iBnAP3uimjyZIEB2rzw4/abec2otGlstG5LyQFpTbx5ItzEa1w2ycIEQUhWfFbEh0Zdu36FOvxC+B5+WDkQya3svFZ2d/q3Ild8/YpSpb5Gx/1p4u3qNWreqEsACx5Oa6vkaXtvOM59K2HBAqBDUV+
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR04MB7416.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(110136005)(86362001)(8676002)(4326008)(33656002)(66556008)(508600001)(66946007)(76116006)(66446008)(66476007)(966005)(55016003)(64756008)(71200400001)(54906003)(316002)(38070700005)(38100700002)(2906002)(83380400001)(186003)(7416002)(8936002)(5660300002)(921005)(9686003)(6506007)(7696005)(26005)(122000001)(52536014)(53546011)(82960400001);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?P6ofxjqdMTFATnV/5tCxB+leHjJbejMM+tFIMKgLJfyLd33uD0ZROxfmzM?=
+ =?iso-8859-1?Q?bU11gSHxNkUCgkW1bG1IZcXHStFR5UNomn51aBeQTEmsG8MzeLgwxFCRso?=
+ =?iso-8859-1?Q?mGMdLRsWC2YhkLUJgqNKuAzy/Dp4Zq/32Te9z2MH9ohQntXSEPrGctU/53?=
+ =?iso-8859-1?Q?OKgmFCweNwiIpRrUw/uSH4SOvNIZ4vvbR2vTXwYvF7XVTm2My+5OgYOJhp?=
+ =?iso-8859-1?Q?mUUGODEGXH91CVW4jQYttQ/Soue4ncP4stS6+ftqIcfdgN+6HHjlg4BFK1?=
+ =?iso-8859-1?Q?nO5ExMdAIA88aeI2z0sV0+k4GGK/TlmPVNSd5G+nIu3i0uy5vGLk5a6VK6?=
+ =?iso-8859-1?Q?2yMsYVlqCvH4GSWyJhwotwfNwlfzv5JaAIUV/eOWq6ZtdEUOmDlnKajXE2?=
+ =?iso-8859-1?Q?AnKmZWLzmIDMgwTxLWzQXNZtW3Vs3TeKFKqSjdg5UVpUA7XAyo8KsyvS2d?=
+ =?iso-8859-1?Q?bjfTQpdCheuAK3jPRG0UO9UY4S0KROvdev//xMAIVzvWSgubDgUoXXb7uw?=
+ =?iso-8859-1?Q?qcufuB1+G2kXUozBN4qpsS6HS6+/Szef1sWEvfjZtJZL4FBqR8t5aAVuM/?=
+ =?iso-8859-1?Q?2fiOUSApYsENbZ4OVann5Ih+koMjkyczdvpqlNn0AGYGwmKobNyxvlSauk?=
+ =?iso-8859-1?Q?tLJJvyJYn7gpTM94mou5MK5gAqYRRW8War4ZcrEj83KlaqtNb8asIGIZ2v?=
+ =?iso-8859-1?Q?qyJhF/SUJ06+r0Vcpc+LgpGtDqysMBZkROy/WlKlxPRKVtZ4EkSC05kb+j?=
+ =?iso-8859-1?Q?5RX9kocnheUpZG7o+kA1BtYiF5L6fBZntPBSbRxtz4hLkg1dG3clMiPIgg?=
+ =?iso-8859-1?Q?qdOm0frLxyDTuUAQf2npsgHO4FJykAD2F15eyczm8OqgQHilJCwF3GSRW6?=
+ =?iso-8859-1?Q?mEQ30Ig6ug4drcyqeuj88ys5HRcxHqbxuDw3zV0Ou1yEJ4J5KfbXFQM0ki?=
+ =?iso-8859-1?Q?MqsZH6+/u60C8+ol+UiagA4tKn5Mnoe5f7bss/153jEU4Og+b9k6gN20vx?=
+ =?iso-8859-1?Q?FKRBfTaFHvuKqfB4r4RXRyhCeoEWlxThuVTmGPNauZ34ibZn3ezPFwBo5T?=
+ =?iso-8859-1?Q?ipkqS2DwVlE5xk+8TagFipMVGHLNU8qsEi57wlxZlliFx1fBpWsnBL7TL6?=
+ =?iso-8859-1?Q?o8WONe35+/H/IzidR9zFCVSRugEHBvuOXk9xg4VxWWW1ZzqZ2ROJiud9yl?=
+ =?iso-8859-1?Q?MtQrPcWTv80YgQDuYofPVap5xCUKyCqD+vt+oipXJMXFsskNj6FYhwHyBm?=
+ =?iso-8859-1?Q?GjvMWPi3jLwrl5dcr20g7/vap3c7z4HhKriu0GFETw9d7lh2/OC1X5H+fi?=
+ =?iso-8859-1?Q?+kBm7F4gifcCHCxAYJCfpJVNK8Bbgr0bNldWJXD2DX/iAvnFMmxzi1G8qR?=
+ =?iso-8859-1?Q?TxAekoWB148BPQOBeRySZyl0zNXeoOGVLf+2ej5Z2pFoFgCYxUpSrgochd?=
+ =?iso-8859-1?Q?TtKwTx/ermFrGJfQo+1xCVVnjv/iitwvX7jl4cJ81ezNJJsK5A85q/Yx2H?=
+ =?iso-8859-1?Q?/zbNsa6lkRUTVNJB4n8rJUmNNvl5XsBYwMkpzXXybtSMbUQ6kI+ZiKGwF+?=
+ =?iso-8859-1?Q?yKqTKny4tAls78Or5YNqyyeiCWtj37f+P8RJ9KLcTk/hm8Vg80ZEvXdrqh?=
+ =?iso-8859-1?Q?Y07uI+3ZbszSMGFZD/aUM7oCM7OiKq/itLfKRyx8lWkudzKz7Q5pNoR1s8?=
+ =?iso-8859-1?Q?XZcL3swH9jP0WNKQf1KSWHZZ/08Ama1Lu167dfSvDnb6Bwt40y+P5LTg6D?=
+ =?iso-8859-1?Q?YM4F6DRUXyH9/VkSg9/vIG2+7HbNWxtgnYhRiAPlYif7nsYCuKbq8NZ7lS?=
+ =?iso-8859-1?Q?ybKrrTsc5zXcuCrfBWbPCW0LGiXuOuY=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 38e72ab4-1134-4486-5f38-08da2c81b3a6
-X-MS-TrafficTypeDiagnostic: BN8PR15MB2787:EE_
-X-Microsoft-Antispam-PRVS: <BN8PR15MB2787195F6D69ECBBE970E2EBD8C19@BN8PR15MB2787.namprd15.prod.outlook.com>
-X-FB-Source: Internal
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: a+sXOss4ZsCVDg6F1Ia2WhkHSNzDUBPYNS+l8BchWymRNxky2tZ9eD0ZS4YC5ImX0DHdm57iRZOdKi9wpIYvfmmy4QUBGHPULoLXYERBuZIqAVzh05vBQjki0XhyiWOFmriIzdS4nbUP91/ORB1REtv1Lwl7a5Ss8dXqjvrZ7tB2sbmtWn/5VdRJJM7Sdld9bh5rmeO23vi9LiO72kk/gNZgn77+mPOYN97uXYu8XrlohSoI0+uD3QFTEYIuwrpDBTcYwgo7C+PAQRUmzaOWX9J+XNj9vcfhb31U/eGDXMFzX7MpSLUghzPYAIEWPbofPInJ5nRAMvuQq39K7emCh2ZdU1+PMk38G8wu+998Aeq8JTy76BshWuLrdYeKhZ9DN3RfRGNKQMPFFXho4JCwSB2FbKP9r/VQvV7lhWyZrbF1Yc2/qk+XcB4vvakbqgdMYlpQjdMopeIMw30isI5fDO+gDIxzVwr6NBoOmfHx40Y6tnJaidtv75zbahw2/ehgvYJi8SQafyCEHyZscaVY/2a8KtM/3vzg/qhWxO3UqPMji9adEJt3Ec79aL6NZ/+sSRBTszX/ZaFu1zP9PfRnr72uQsfV4wt/kZK/8H21OF+tMyrzYbFikVwZs2QOxMtkNKxMJQ1GK/kWNuIMx+yYXS/LjrgEC89FUK0Zp+/jxSaITadYhDLg70iXcKy7DXCS3UyOT0NrgnunK4fU38KThuVNpC/9JrrTx9G17EyM3T4=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR15MB4410.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(366004)(36756003)(31686004)(53546011)(186003)(6916009)(38100700002)(6506007)(5660300002)(316002)(66946007)(83380400001)(8676002)(6666004)(8936002)(4326008)(66476007)(66556008)(2906002)(508600001)(86362001)(2616005)(31696002)(6486002)(6512007)(45980500001)(43740500002);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NGt6bld4ejNUSkZPaHYwV2dxc0FlY2ZTQjA2U3dZRUZhMDZicDFFTHVUMmxk?=
- =?utf-8?B?VldMTUwrTVNCaTNoTmpWU0J1RGxDa1BQNXBlckh0blZxVS9kcFJIdi9tTWdO?=
- =?utf-8?B?VVlseEVzMk1NTEZpS1U3V1Z6bmdDWmZ6Y2JPemFKOFRoMjlJZzY3aTFwT09t?=
- =?utf-8?B?VjdnR2FBZ3BJQmtSK1JETGtYRWNzUW1KNWtXVW1DMTB2TGhaOVZ6R3F3dWli?=
- =?utf-8?B?Mm5BakxJeGZKVVkrWmNVL2wwRThzNm1KdkFNa0xpRnpIdlRPVnYycmFwQ1ZC?=
- =?utf-8?B?UDF5UElQTklDSXcreEo0V2dYZFhEQ2cxcjRZb09QTm5oUHNaK2JkckJGdnZJ?=
- =?utf-8?B?TkJQam1PNno0TllWVkw3TWVheDJxOVN3U1crZjZEa3dleDk2bHlkZ0xQdlZP?=
- =?utf-8?B?dzZvcjczOUVJRG84c2dEekZZeXlLaU1adEc2a2hxVk9wL01UekZoaGxET2JJ?=
- =?utf-8?B?N2wvSExERjE2YU9obGxPMnFweDlUT3owMkZSL3RvaE5Pc1R0ZTl1b0RwRHdT?=
- =?utf-8?B?WFROQnJhUWc4WEJId1k0TW51bmNCTWJSZ3N1MVNkTEFRWlRFSHEzRlRQWVND?=
- =?utf-8?B?MmEwb0dGMFBpbnJKMEVJT2RUZ1NBT2dpSjF1S21Bcm1mc3R4Y1RsdVY1cGpl?=
- =?utf-8?B?VDl5RVZBNXhoZzBDb05NVFZWdlBMSDd2d2VQcXRSV1BTT25WQXRwTDBaekpa?=
- =?utf-8?B?OTMwNDE0aEVsRlFCRXVMUS9YdVB4d0N4L2JTWjlGTjdJMy85ZlVpYXRtL3Zu?=
- =?utf-8?B?d01SaUlxL3cyMXcyUW5oLzlWK0MvbzQ2Vmdlbldoc0pNcjZhVmVSMlJ4UHRr?=
- =?utf-8?B?OUJpemZQM1YrM2I5bXlVK3hhd1Vsdk1acjFTeGVBY051MHkzK29lVHlGdno1?=
- =?utf-8?B?VS8wRThUSWdReFB3ZTEyU1pzMVBvRlNLQkJHNFVodXovenB4NHl3MEhsV2pp?=
- =?utf-8?B?SHZ5YVV1VFVndEFoVGhlamxWRlVNcTg3WDJNaE8xdmJiRC9YNlFCaW1hYWVO?=
- =?utf-8?B?K0swRmo1U0xnZVZTa2I3U01aZEtmTFd5T3l2STF1K3F3eDUxc2NqT3g2MjNI?=
- =?utf-8?B?MlE3c0lWNWtERjFTSWtNdGZNaDFIdmVXeEFPMzJwNlZ1cS9FalpLNklpME1B?=
- =?utf-8?B?MmZiYmtjVmpPQkZtMmcrbyt0V3R3Ulcyam41Y05rSUp6c2NEbXM2MGIzaXB3?=
- =?utf-8?B?aWNsN0hRWnkrWlZKMW9NdkQ5VGNxVXA2ZmE1MTRubWZGWVcvdTdzaW1Iekht?=
- =?utf-8?B?elhYQjU2NURvZUxYNDRMZ2xLRHhRc1ZFbVF6S3p0dW9OZ29ZNzVvQTdLK1dX?=
- =?utf-8?B?K2Q1dEpZVXlZdkFmLzJjb2IyMHNaTys2S2xydURQdXUybTdBRERJbk12dElU?=
- =?utf-8?B?TUdlWnFJZTNFVlV4eGlPcndOVjh1ZWs3cWhJT2VUT1o1cTZKTzdnT2NlOEZy?=
- =?utf-8?B?RFpUODY3aXZxOHFUdVVIcWErTEFrR1pWeXNLdnRKTWpQOHJvMGpxUzUxMVZ4?=
- =?utf-8?B?c1pRSm5oeWlvWFZQSEJZRlFYcWRJQTdqUVFYVjl4TFhWSHJLUVorZTEzRlRH?=
- =?utf-8?B?Mi9XSVcyOEV3dGhQWkg4cmJnYm9qRTNLVWpzZ1d2eFJxS1NJSWMzOFN0VVdR?=
- =?utf-8?B?bjNOY1FZcnNjZFdTNVlMb1A3Z2o0UUhGRGd6R2FmUytWYkNtZHEzb01KNnZJ?=
- =?utf-8?B?andsdmhIbkY0dzBtR3FZRkZmRW1mb3RXS21aL3ZNNjBRMDJYVnZDTTVvMFpr?=
- =?utf-8?B?ZUdBNlhxblh4bVZvSzl3d1lGaVZ2MWs3S3MzK0VnWUVvVVBLL1p6WGZZU2dL?=
- =?utf-8?B?Y0c1Ym1oamRDeTdjY2RiRzl5V2U5TnFZRkpaK1Ftc29SR0pLaEprTlN1RnJr?=
- =?utf-8?B?bmhBeHAvWnFNcS8zQ3FYUGdqUzk0aFVWcmY3ck5vU1lqanhJTUREOGI3N3R6?=
- =?utf-8?B?TFRNTzZPUWVUQjFSUC92UldMYXVaVytad3lBUC9iNXFpNlkrWC9FZjJqdG13?=
- =?utf-8?B?QURhR0lLb3cvQTVqQ0ZTNU5GM1ZNRTBySjhwM1NxK09lVUQwM1lYN0N3bmlz?=
- =?utf-8?B?b2xJbEhaZnhjdDhnQTRwa1M1OC9vZGJ5dmNSUUdDWHNXK1RZV202ZFBZZ1RZ?=
- =?utf-8?B?QVEzU1duSjFnRS81R0xlVFRldWFkU2lYREgxeXcwcVBld1p1NGlFTk5xM0dB?=
- =?utf-8?B?WFAzNDg1bDg4bDBLWGVCYjF2b1lXby9XQmFETUJtVUZqb3EzajlxOGU0b2py?=
- =?utf-8?B?ZkxCa21XWVg5WjBaZXVUZ2ZWQ1hZMlk1UVhJN25sMExwbUZRMktPR3RndDdw?=
- =?utf-8?B?YkYySW15WEVTMjVhVFQ0WlBFNEpPRzJucHFPRmlnSlhOVFNGSTRxSXVsd05h?=
- =?utf-8?Q?x4f0O9yQRrGmesm0=3D?=
-X-OriginatorOrg: fb.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 38e72ab4-1134-4486-5f38-08da2c81b3a6
-X-MS-Exchange-CrossTenant-AuthSource: MW4PR15MB4410.namprd15.prod.outlook.com
+X-OriginatorOrg: wdc.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 May 2022 21:21:20.4180
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR04MB7416.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 737a42a1-6be8-4ddc-e1f5-08da2c881a90
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 May 2022 22:07:09.8911
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2Tmce5yHRR4kSJoGj+oNHwGjdjXkVahUAe8IuWYidiZM1bcKWqxfclWM1QIPPSS+
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR15MB2787
-X-Proofpoint-GUID: G9GLd4BYNy_DR5KSgAe-vJwE6aogPeu0
-X-Proofpoint-ORIG-GUID: G9GLd4BYNy_DR5KSgAe-vJwE6aogPeu0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.486,FMLib:17.11.64.514
- definitions=2022-05-02_07,2022-05-02_03,2022-02-23_01
-X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: pXSrpwmMcyRTXNrz68EpBiuYw5Pa+tQrKzFBtB/vEuBvZU0/1YCUZGY85gPHrGWwgqhO24XrDnLv9PFZCzRHRd43nlRi4zPyiSYm28446/s=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR04MB5181
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 4/28/22 2:54 PM, Dave Chinner wrote:
-> On Thu, Apr 28, 2022 at 12:58:59PM -0700, Stefan Roesch wrote:
->>
->>
->> On 4/26/22 3:56 PM, Dave Chinner wrote:
->>> On Tue, Apr 26, 2022 at 10:43:28AM -0700, Stefan Roesch wrote:
->>>> This adds the async buffered write support to XFS. For async buffered
->>>> write requests, the request will return -EAGAIN if the ilock cannot be
->>>> obtained immediately.
->>>>
->>>> Signed-off-by: Stefan Roesch <shr@fb.com>
->>>> ---
->>>>  fs/xfs/xfs_file.c | 10 ++++++----
->>>>  1 file changed, 6 insertions(+), 4 deletions(-)
->>>>
->>>> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
->>>> index 6f9da1059e8b..49d54b939502 100644
->>>> --- a/fs/xfs/xfs_file.c
->>>> +++ b/fs/xfs/xfs_file.c
->>>> @@ -739,12 +739,14 @@ xfs_file_buffered_write(
->>>>  	bool			cleared_space = false;
->>>>  	int			iolock;
->>>>  
->>>> -	if (iocb->ki_flags & IOCB_NOWAIT)
->>>> -		return -EOPNOTSUPP;
->>>> -
->>>>  write_retry:
->>>>  	iolock = XFS_IOLOCK_EXCL;
->>>> -	xfs_ilock(ip, iolock);
->>>> +	if (iocb->ki_flags & IOCB_NOWAIT) {
->>>> +		if (!xfs_ilock_nowait(ip, iolock))
->>>> +			return -EAGAIN;
->>>> +	} else {
->>>> +		xfs_ilock(ip, iolock);
->>>> +	}
->>>
->>> xfs_ilock_iocb().
->>>
->>
->> The helper xfs_ilock_iocb cannot be used as it hardcoded to use iocb->ki_filp to
->> get a pointer to the xfs_inode.
-> 
-> And the problem with that is?
-> 
-> I mean, look at what xfs_file_buffered_write() does to get the
-> xfs_inode 10 lines about that change:
-> 
-> xfs_file_buffered_write(
->         struct kiocb            *iocb,
->         struct iov_iter         *from)
-> {
->         struct file             *file = iocb->ki_filp;
->         struct address_space    *mapping = file->f_mapping;
->         struct inode            *inode = mapping->host;
->         struct xfs_inode        *ip = XFS_I(inode);
-> 
-> In what cases does file_inode(iocb->ki_filp) point to a different
-> inode than iocb->ki_filp->f_mapping->host? The dio write path assumes
-> that file_inode(iocb->ki_filp) is correct, as do both the buffered
-> and dio read paths.
-> 
-> What makes the buffered write path special in that
-> file_inode(iocb->ki_filp) is not correctly set whilst
-> iocb->ki_filp->f_mapping->host is?
-> 
-
-In the function xfs_file_buffered_write() the code calls the function 
-xfs_ilock(). The xfs_inode pointer that is passed in is iocb->ki_filp->f_mapping->host.
-The one used in xfs_ilock_iocb is ki_filp->f_inode.
-
-After getting the lock, the code in xfs_file_buffered_write calls the
-function xfs_buffered_write_iomap_begin(). In this function the code
-calls xfs_ilock() for ki_filp->f_inode in exclusive mode.
-
-If I replace the first xfs_ilock() call with xfs_ilock_iocb(), then it looks
-like I get a deadlock.
-
-
-Am I missing something?
-
-I can:
-- replace the pointer to iocb with pointer to xfs_inode in the function xfs_ilock_iocb()
-  and also pass in the flags value as a parameter.
-or
-- create function xfs_ilock_inode(), which xfs_ilock_iocb() calls. The existing
-  calls will not need to change, only the xfs_ilock in xfs_file_buffered_write()
-  will use xfs_ilock_inode().
-
-
-> Regardless, if this is a problem, then just pass the XFS inode to
-> xfs_ilock_iocb() and this is a moot point.
-> 
->> However here we need to use iocb->ki_filp->f_mapping->host.
->> I'll split off new helper for this in the next version of the patch.
-> 
-> We don't need a new helper here, either.
-> 
-> Cheers,
-> 
-> Dave.
+On 27/04/2022 09:03, Pankaj Raghav wrote:=0A=
+> - Background and Motivation:=0A=
+> =0A=
+> The zone storage implementation in Linux, introduced since v4.10, first=
+=0A=
+> targetted SMR drives which have a power of 2 (po2) zone size alignment=0A=
+> requirement. The po2 zone size was further imposed implicitly by the=0A=
+> block layer's blk_queue_chunk_sectors(), used to prevent IO merging=0A=
+> across chunks beyond the specified size, since v3.16 through commit=0A=
+> 762380ad9322 ("block: add notion of a chunk size for request merging").=
+=0A=
+> But this same general block layer po2 requirement for blk_queue_chunk_sec=
+tors()=0A=
+> was removed on v5.10 through commit 07d098e6bbad ("block: allow 'chunk_se=
+ctors'=0A=
+> to be non-power-of-2"). NAND, which is the media used in newer zoned stor=
+age=0A=
+> devices, does not naturally align to po2, and so the po2 requirement=0A=
+> does not make sense for those type of zone storage devices.=0A=
+> =0A=
+> Removing the po2 requirement from zone storage should therefore be possib=
+le=0A=
+> now provided that no userspace regression and no performance regressions =
+are=0A=
+> introduced. Stop-gap patches have been already merged into f2fs-tools to=
+=0A=
+> proactively not allow npo2 zone sizes until proper support is added [0].=
+=0A=
+> Additional kernel stop-gap patches are provided in this series for dm-zon=
+ed.=0A=
+> Support for npo2 zonefs and btrfs support is addressed in this series.=0A=
+> =0A=
+> There was an effort previously [1] to add support to non po2 devices via=
+=0A=
+> device level emulation but that was rejected with a final conclusion=0A=
+> to add support for non po2 zoned device in the complete stack[2].=0A=
+=0A=
+Hey Pankaj,=0A=
+=0A=
+One thing I'm concerned with this patches is, once we have npo2 zones (or t=
+o be precise =0A=
+not fs_info->sectorsize aligned zones) we have to check on every allocation=
+ if we still =0A=
+have at least have fs_info->sectorsize bytes left in a zone. If not we need=
+ to =0A=
+explicitly finish the zone, otherwise we'll run out of max active zones. =
+=0A=
+=0A=
+This is a problem for zoned btrfs at the moment already but it'll be even w=
+orse=0A=
+with npo2, because we're never implicitly finishing zones.=0A=
+=0A=
+See also =0A=
+https://lore.kernel.org/linux-btrfs/42758829d8696a471a27f7aaeab5468f60b1565=
+d.1651157034.git.naohiro.aota@wdc.com=0A=
+=0A=
+Thanks,=0A=
+	Johannes=0A=
