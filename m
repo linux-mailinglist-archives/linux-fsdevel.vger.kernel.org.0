@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 716A9516A80
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 May 2022 07:56:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25FC2516A7E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 May 2022 07:56:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1383403AbiEBGAF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 May 2022 02:00:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50630 "EHLO
+        id S1383401AbiEBGAC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 May 2022 02:00:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1383373AbiEBF7s (ORCPT
+        with ESMTP id S1383370AbiEBF7s (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Mon, 2 May 2022 01:59:48 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A1011FCCC
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 968771FCE8
         for <linux-fsdevel@vger.kernel.org>; Sun,  1 May 2022 22:56:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=IuaDtuBdgHhMI+I3GGlIesMesfKFnTZwtEO6lEC7Slg=; b=rQgTYDVWoPSlZG35cZL1RwZ15F
-        f8jOjc3SDtEWgqUq1dIxDwreix+hmkrNRfVd9kOg0gwWZz4avQJAI3Ui5P/h0EqFUH2uJ+BHeDW6P
-        c1bL0dH4xkCRQPszCkCdJzjYxDwut3fbqGsAtF+zI7PhHEL0AEh+KAirUZmuScMm17K4JZsiLBXkH
-        tNJk76kfui0YiQG3P1+DRLgk1S9qqSUAQTF9aQaoWcZyoaEyBx5fIr3XAXX/MowQDd2Lvkcf2ut/0
-        eKRpd0MnMv4XRj0z7LjzH7iFtyyrOcz7mhzFfsOjA8DvTgdVqWFoDy3Lu52r2QAgwnZ/26iHFqquF
-        G5zqzhdQ==;
+        bh=/wowFiMAsOcZWiLS6mVJs4OWM4I5AIYIiO/PNCaiBG8=; b=odJGYq7K70eMrGyY+GynSiPmWK
+        aWg7Oc0gFHQbty59j0OoGiy3ZXw6rD7TNJ9liB82nyl9zN5rQ/PXuwXU1pUcNSaBwB0ddTJfCd75I
+        XwSwDX7sc4+0JL4goGYmrf8uQDwLzrbsv7RyslhOTTtutjAoXyeorUi4T2c8qLFBIzNtpQ3lLfkG4
+        3YW/LlFOKQhHBocR+F4f8HiQ7SOPH2FFLcKGqRsxhk5MzAvnZUnfjAMxo6YoL//TIIU/z7w8THxwM
+        kl3VvxaoqUc2BWQH7MJmpHYSxl+v9pimn0Uqajxid0AON8x/RxneiD89ynxQP744WC0Ho99NW2PWQ
+        qCDeQdMA==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nlP2f-00EZVv-NX; Mon, 02 May 2022 05:56:17 +0000
+        id 1nlP2f-00EZW0-RK; Mon, 02 May 2022 05:56:17 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH 07/26] cifs: Convert to release_folio
-Date:   Mon,  2 May 2022 06:55:55 +0100
-Message-Id: <20220502055614.3473032-8-willy@infradead.org>
+Subject: [PATCH 08/26] erofs: Convert to release_folio
+Date:   Mon,  2 May 2022 06:55:56 +0100
+Message-Id: <20220502055614.3473032-9-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220502055614.3473032-1-willy@infradead.org>
 References: <20220502055614.3473032-1-willy@infradead.org>
@@ -48,57 +48,56 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use a folio throughout cifs_release_folio().
+Use a folio in erofs_managed_cache_release_folio(), but use of folios
+should be pushed into erofs_try_to_free_cached_page().
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/cifs/file.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ fs/erofs/super.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/fs/cifs/file.c b/fs/cifs/file.c
-index bc6d88e2e672..06003bb9cbe9 100644
---- a/fs/cifs/file.c
-+++ b/fs/cifs/file.c
-@@ -4758,16 +4758,16 @@ static int cifs_write_begin(struct file *file, struct address_space *mapping,
- 	return rc;
- }
+diff --git a/fs/erofs/super.c b/fs/erofs/super.c
+index 0c4b41130c2f..0e3862a72bfe 100644
+--- a/fs/erofs/super.c
++++ b/fs/erofs/super.c
+@@ -518,16 +518,16 @@ static int erofs_fc_parse_param(struct fs_context *fc,
+ #ifdef CONFIG_EROFS_FS_ZIP
+ static const struct address_space_operations managed_cache_aops;
  
--static int cifs_release_page(struct page *page, gfp_t gfp)
-+static bool cifs_release_folio(struct folio *folio, gfp_t gfp)
+-static int erofs_managed_cache_releasepage(struct page *page, gfp_t gfp_mask)
++static bool erofs_managed_cache_release_folio(struct folio *folio, gfp_t gfp)
  {
+-	int ret = 1;	/* 0 - busy */
+-	struct address_space *const mapping = page->mapping;
++	bool ret = true;
++	struct address_space *const mapping = folio->mapping;
+ 
+-	DBG_BUGON(!PageLocked(page));
++	DBG_BUGON(!folio_test_locked(folio));
+ 	DBG_BUGON(mapping->a_ops != &managed_cache_aops);
+ 
 -	if (PagePrivate(page))
+-		ret = erofs_try_to_free_cached_page(page);
 +	if (folio_test_private(folio))
- 		return 0;
--	if (PageFsCache(page)) {
-+	if (folio_test_fscache(folio)) {
- 		if (current_is_kswapd() || !(gfp & __GFP_FS))
- 			return false;
--		wait_on_page_fscache(page);
-+		folio_wait_fscache(folio);
- 	}
--	fscache_note_page_release(cifs_inode_cookie(page->mapping->host));
-+	fscache_note_page_release(cifs_inode_cookie(folio->mapping->host));
- 	return true;
++		ret = erofs_try_to_free_cached_page(&folio->page);
+ 
+ 	return ret;
+ }
+@@ -548,12 +548,12 @@ static void erofs_managed_cache_invalidate_folio(struct folio *folio,
+ 	DBG_BUGON(stop > folio_size(folio) || stop < length);
+ 
+ 	if (offset == 0 && stop == folio_size(folio))
+-		while (!erofs_managed_cache_releasepage(&folio->page, GFP_NOFS))
++		while (!erofs_managed_cache_release_folio(folio, GFP_NOFS))
+ 			cond_resched();
  }
  
-@@ -4973,7 +4973,7 @@ const struct address_space_operations cifs_addr_ops = {
- 	.write_begin = cifs_write_begin,
- 	.write_end = cifs_write_end,
- 	.dirty_folio = cifs_dirty_folio,
--	.releasepage = cifs_release_page,
-+	.release_folio = cifs_release_folio,
- 	.direct_IO = cifs_direct_io,
- 	.invalidate_folio = cifs_invalidate_folio,
- 	.launder_folio = cifs_launder_folio,
-@@ -4998,7 +4998,7 @@ const struct address_space_operations cifs_addr_ops_smallbuf = {
- 	.write_begin = cifs_write_begin,
- 	.write_end = cifs_write_end,
- 	.dirty_folio = cifs_dirty_folio,
--	.releasepage = cifs_release_page,
-+	.release_folio = cifs_release_folio,
- 	.invalidate_folio = cifs_invalidate_folio,
- 	.launder_folio = cifs_launder_folio,
+ static const struct address_space_operations managed_cache_aops = {
+-	.releasepage = erofs_managed_cache_releasepage,
++	.release_folio = erofs_managed_cache_release_folio,
+ 	.invalidate_folio = erofs_managed_cache_invalidate_folio,
  };
+ 
 -- 
 2.34.1
 
