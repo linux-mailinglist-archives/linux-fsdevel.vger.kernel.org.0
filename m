@@ -2,61 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 14B22516E18
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 May 2022 12:25:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC257516E1B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 May 2022 12:25:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1384503AbiEBK3N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 May 2022 06:29:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49664 "EHLO
+        id S1377522AbiEBK3W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 May 2022 06:29:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1384632AbiEBK3I (ORCPT
+        with ESMTP id S1384682AbiEBK3M (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 May 2022 06:29:08 -0400
-Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F49FF68;
-        Mon,  2 May 2022 03:25:39 -0700 (PDT)
-Received: by mail-pf1-x42c.google.com with SMTP id x23so6668707pff.9;
-        Mon, 02 May 2022 03:25:39 -0700 (PDT)
+        Mon, 2 May 2022 06:29:12 -0400
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7A3DFD24;
+        Mon,  2 May 2022 03:25:43 -0700 (PDT)
+Received: by mail-pj1-x1034.google.com with SMTP id cq17-20020a17090af99100b001dc0386cd8fso7005187pjb.5;
+        Mon, 02 May 2022 03:25:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :organization;
-        bh=gOhjSMrjCwKbxjE2hP/4KxUnfkTZuZCh55gMElj3XMU=;
-        b=Ehamo+dQQmAOK1YoI0I3UK04H2DPrMfYMWCsyWSY+ge9FiF7XhCYWqSD2SjEWWP5NZ
-         VzRBMqLW9urDqnoMZqVLJRpSUXA+00RecaQ1jQQLH0+Xfpz8e4s2szx+sL1QcgX/v8qr
-         UfwuH0bqKDVNk0bl1UKLsFBfwGgl79i/2F5NN7Mk29UBtMlFv62v01VZCgZgFniflPxh
-         jmAgYRnYrraKm2+mzVVtvFnjXQtOxvz05ZNx+as6IToW9uyJFkgeCN8z+TpZxZKG2Q2X
-         7vJSwWg7jv4U/eoSwrOEqLLZBokd+unuwjDXCXed5P8SCZNXPUuXP07EU5jkE9m4YWjY
-         3hLQ==
+        bh=l1dSrjQAuEBdUacWP6Ms303wdXzk6rFGelJiALQ8vx8=;
+        b=OphJ2JRi6IalQLYDk5xioo+CJUSZo6HPlh9cPqp4cXNbYCbWpi/sd5e6hnuXArOfC+
+         /YAR7jZXZYb8wDdm/3Ker+mcVmnpxsDcsm2/vrTlalB5KIJ5rKs+Fnv7nf6CJ4xfwEom
+         FQT1Al1QXwvckFr/ZSoNOabjL0yn5v/97IEHCijw4COjsnGhd6Xc3H6tiFma8RNB2iWe
+         8TKxe+gyzsVJXOw+4O+dYsfFTDKAiStetNRG+MHXmhatT0hCRMI38mTdm3j3MdFnETK0
+         UQ3b2DX8EGaJqecIjnWPMJ73NM0UOkugkttB6mjru4A99cKbF0KDS8L9r48SNMVk8IUz
+         Kzmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:organization;
-        bh=gOhjSMrjCwKbxjE2hP/4KxUnfkTZuZCh55gMElj3XMU=;
-        b=OflHN8bPoDhf70OEcceIdFB7oFC+cTo29cNnoorb4Z1N7MxkQJ0HnaAWdDSn5nsETl
-         o6Vxr2sHsXt06zBnzO0O/StmFE6PoC+BoYicgFRdaJwLe5XsmPJncsBZVhzFlBClZveZ
-         QjtsA668sk90Cb4oZn8SsVE+4ii8+CwLVa9SaO3kHxnJmr6bJO1f6QQ5UD/8lZHryxQI
-         yDyKhzbfFB/HZRMpMESxWptUfPotBJ+N1aZOiHIJnhMkjQTdEo6UV6Y+ChF9dgKWX2ZQ
-         BkAb0NVfVcPh8otMSlyqRgNjXhKacLKUX3DKevKAHacJOJGsCTEbm1tCSpCmanHcOT7M
-         ZjBA==
-X-Gm-Message-State: AOAM531D1x81UngpA0Ub8hhqYEy9u2NhmU2OqZwfXN0+ExS+TucgA9rm
-        YdiufDVnnv2J/ArBqJXBFmw=
-X-Google-Smtp-Source: ABdhPJyvUQaJ2I8Q9kqyrXZdIRi+rae9QP20YS5HJdELcfx/41lHwW1jsKJjsJq8r/YbPco/4OciKg==
-X-Received: by 2002:a05:6a00:1a4d:b0:50d:5921:1a8f with SMTP id h13-20020a056a001a4d00b0050d59211a8fmr10457377pfv.64.1651487138642;
-        Mon, 02 May 2022 03:25:38 -0700 (PDT)
+        bh=l1dSrjQAuEBdUacWP6Ms303wdXzk6rFGelJiALQ8vx8=;
+        b=x1KmTWzJOEDETMmiNbRTRxfJfUaJbquXJgjjem7rCiUzrI/YKOhyr2QkjPMn2TPoRQ
+         xM7Jd/mhBmyCYV482L7VriryT6ySNWjsJa263KwsFpUx2f+CePtzab4OYRJXBEhMJITP
+         XISh+EzhdAzyDYJn4rVMq9Q29Nb35sF0ZoMgHKJqms2Su3KWFUJyABFWTOs7UP708h8e
+         x6JnVi338moURx+CE1kYBmAeeCpnTZUjQaiVQ7Te228lq32Qh224mxtVyrGCFsGmXjI/
+         Gfmdnz1r+eXScp1L8AcVNwAZVShPbCnTKEIGGLxgB4tnnKEDOBRio8ALWRNQC+KVoCHp
+         hXqQ==
+X-Gm-Message-State: AOAM533G2FKsPHzu/wY5+cxJ19VuwEV8YQaLOAkoz37Jxh25vx9f923m
+        P4fkIlYUa4kUWulqrbvpbqc=
+X-Google-Smtp-Source: ABdhPJzqSYbaNTH6joCYeUBSa7O5obu7n0hk3kK9x4ISQZ9KhBeOs6fVM6YHi3+2fWANS68A9k3CJA==
+X-Received: by 2002:a17:90a:e7cb:b0:1dc:6602:7178 with SMTP id kb11-20020a17090ae7cb00b001dc66027178mr2423427pjb.175.1651487143059;
+        Mon, 02 May 2022 03:25:43 -0700 (PDT)
 Received: from localhost.localdomain ([123.201.245.164])
-        by smtp.googlemail.com with ESMTPSA id j14-20020aa7800e000000b0050dc762816bsm4347953pfi.69.2022.05.02.03.25.35
+        by smtp.googlemail.com with ESMTPSA id j14-20020aa7800e000000b0050dc762816bsm4347953pfi.69.2022.05.02.03.25.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 May 2022 03:25:38 -0700 (PDT)
+        Mon, 02 May 2022 03:25:42 -0700 (PDT)
 From:   Dharmendra Singh <dharamhans87@gmail.com>
 To:     miklos@szeredi.hu
 Cc:     Dharmendra Singh <dharamhans87@gmail.com>,
         linux-fsdevel@vger.kernel.org, fuse-devel@lists.sourceforge.net,
         linux-kernel@vger.kernel.org, bschubert@ddn.com,
         Dharmendra Singh <dsingh@ddn.com>
-Subject: [PATCH v4 1/3] FUSE: Implement atomic lookup + create
-Date:   Mon,  2 May 2022 15:55:19 +0530
-Message-Id: <20220502102521.22875-2-dharamhans87@gmail.com>
+Subject: [PATCH v4 2/3] FUSE: Implement atomic lookup + open
+Date:   Mon,  2 May 2022 15:55:20 +0530
+Message-Id: <20220502102521.22875-3-dharamhans87@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220502102521.22875-1-dharamhans87@gmail.com>
 References: <20220502102521.22875-1-dharamhans87@gmail.com>
@@ -73,234 +73,229 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Dharmendra Singh <dsingh@ddn.com>
 
-When we go for creating a file (O_CREAT), we trigger
-a lookup to FUSE USER SPACE. It is very  much likely
-that file does not exist yet as O_CREAT is passed to
-open(). This lookup can be avoided and can be performed
-as part of create call into libfuse.
+We can optimize aggressive lookups which are triggered when
+there is normal open for file/dir (dentry is new/negative).
 
-This lookup + create in single call to libfuse and finally
-to USER SPACE has been named as atomic create. It is expected
-that USER SPACE create the file, open it and fills in the
-attributes which are then used to make inode stand/revalidate
-in the kernel cache. Also if file was newly created(does not
-exist yet by this time) in USER SPACE then it should be indicated
-in `struct fuse_file_info` by setting a bit which is again used by
-libfuse to send some flags back to fuse kernel to indicate that
-that file was newly created. These flags are used by kernel to
-indicate changes in parent directory.
+Here in this case since we are anyway going to open the file/dir
+with USER SPACE, avoid this separate lookup call into libfuse
+and combine it with open call into libfuse.
 
-Fuse kernel automatically detects if atomic create is implemented
-by libfuse/USER SPACE or not. And depending upon the outcome of
-this check all further creates are decided to be atomic or non-atomic
-creates.
-
-If libfuse/USER SPACE has not implemented the atomic create operation
-then by default behaviour remains same i.e we do not optimize lookup
-calls which are triggered before create calls into libfuse.
+This lookup + open in single call to libfuse has been named
+as atomic open. It is expected that USER SPACE opens the file
+and fills in the attributes, which are then used to make inode
+stand/revalidate in the kernel cache.
 
 Signed-off-by: Dharmendra Singh <dsingh@ddn.com>
 ---
- fs/fuse/dir.c             | 82 +++++++++++++++++++++++++++++++++++----
+ fs/fuse/dir.c             | 78 ++++++++++++++++++++++++++++++---------
  fs/fuse/fuse_i.h          |  3 ++
- include/uapi/linux/fuse.h |  3 ++
- 3 files changed, 81 insertions(+), 7 deletions(-)
+ fs/fuse/inode.c           |  4 +-
+ include/uapi/linux/fuse.h |  2 +
+ 4 files changed, 69 insertions(+), 18 deletions(-)
 
 diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 656e921f3506..cad3322a007f 100644
+index cad3322a007f..6879d3a86796 100644
 --- a/fs/fuse/dir.c
 +++ b/fs/fuse/dir.c
-@@ -523,7 +523,7 @@ static int get_security_context(struct dentry *entry, umode_t mode,
+@@ -516,18 +516,18 @@ static int get_security_context(struct dentry *entry, umode_t mode,
+ }
+ 
+ /*
+- * Atomic create+open operation
+- *
+- * If the filesystem doesn't support this, then fall back to separate
+- * 'mknod' + 'open' requests.
++ * This is common function for initiating atomic operations into libfuse.
++ * Currently being used by Atomic create(atomic lookup + create) and
++ * Atomic open(atomic lookup + open).
   */
- static int fuse_create_open(struct inode *dir, struct dentry *entry,
- 			    struct file *file, unsigned int flags,
--			    umode_t mode)
-+			    umode_t mode, uint32_t opcode)
+-static int fuse_create_open(struct inode *dir, struct dentry *entry,
+-			    struct file *file, unsigned int flags,
+-			    umode_t mode, uint32_t opcode)
++static int fuse_atomic_do_common(struct inode *dir, struct dentry *entry,
++				 struct dentry **alias, struct file *file,
++				 unsigned int flags, umode_t mode, uint32_t opcode)
  {
  	int err;
  	struct inode *inode;
-@@ -535,8 +535,10 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
- 	struct fuse_entry_out outentry;
- 	struct fuse_inode *fi;
- 	struct fuse_file *ff;
-+	struct dentry *res = NULL;
+ 	struct fuse_mount *fm = get_fuse_mount(dir);
++	struct fuse_conn *fc = get_fuse_conn(dir);
+ 	FUSE_ARGS(args);
+ 	struct fuse_forget_link *forget;
+ 	struct fuse_create_in inarg;
+@@ -539,9 +539,13 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
  	void *security_ctx = NULL;
  	u32 security_ctxlen;
-+	bool atomic_create = (opcode == FUSE_ATOMIC_CREATE ? true : false);
+ 	bool atomic_create = (opcode == FUSE_ATOMIC_CREATE ? true : false);
++	bool create_op = (opcode == FUSE_CREATE ||
++			  opcode == FUSE_ATOMIC_CREATE) ? true : false;
++	if (alias)
++		*alias = NULL;
  
  	/* Userspace expects S_IFREG in create mode */
- 	BUG_ON((mode & S_IFMT) != S_IFREG);
-@@ -566,7 +568,7 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
- 		inarg.open_flags |= FUSE_OPEN_KILL_SUIDGID;
- 	}
+-	BUG_ON((mode & S_IFMT) != S_IFREG);
++	BUG_ON(create_op && (mode & S_IFMT) != S_IFREG);
  
--	args.opcode = FUSE_CREATE;
-+	args.opcode = opcode;
- 	args.nodeid = get_node_id(dir);
- 	args.in_numargs = 2;
- 	args.in_args[0].size = sizeof(inarg);
-@@ -613,9 +615,44 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
- 		goto out_err;
+ 	forget = fuse_alloc_forget();
+ 	err = -ENOMEM;
+@@ -553,7 +557,7 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
+ 	if (!ff)
+ 		goto out_put_forget_req;
+ 
+-	if (!fm->fc->dont_mask)
++	if (!fc->dont_mask)
+ 		mode &= ~current_umask();
+ 
+ 	flags &= ~O_NOCTTY;
+@@ -642,8 +646,9 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
+ 				err = PTR_ERR(res);
+ 				goto out_err;
+ 			}
+-			/* res is expected to be NULL since its REG file */
+-			WARN_ON(res);
++			entry = res;
++			if (alias)
++				*alias = res;
+ 		}
  	}
- 	kfree(forget);
--	d_instantiate(entry, inode);
-+	/*
-+	 * In atomic create, we skipped lookup and it is very much likely that
-+	 * dentry has DCACHE_PAR_LOOKUP flag set on it so call d_splice_alias().
-+	 * Note: Only REG file is allowed under create/atomic create.
-+	 */
-+	/* There is special case when at very first call where we check if
-+	 * atomic create is implemented by USER SPACE/libfuse or not, we
-+	 * skipped lookup. Now, in case where atomic create is not implemented
-+	 * underlying, we fall back to FUSE_CREATE. here we are required to handle
-+	 * DCACHE_PAR_LOOKUP flag.
-+	 */
-+	if (!atomic_create && !d_in_lookup(entry) && fm->fc->no_atomic_create)
-+		d_instantiate(entry, inode);
-+	else {
-+		res = d_splice_alias(inode, entry);
-+		if (res) {
-+			 /* Close the file in user space, but do not unlink it,
-+			  * if it was created - with network file systems other
-+			  * clients might have already accessed it.
-+			  */
-+			if (IS_ERR(res)) {
-+				fi = get_fuse_inode(inode);
-+				fuse_sync_release(fi, ff, flags);
-+				fuse_queue_forget(fm->fc, forget, outentry.nodeid, 1);
-+				err = PTR_ERR(res);
-+				goto out_err;
-+			}
-+			/* res is expected to be NULL since its REG file */
-+			WARN_ON(res);
-+		}
-+	}
  	fuse_change_entry_timeout(entry, &outentry);
--	fuse_dir_changed(dir);
-+	/*
-+	 * In case of atomic create, we want to indicate directory change
-+	 * only if USER SPACE actually created the file.
-+	 */
-+	if (!atomic_create || (outopen.open_flags & FOPEN_FILE_CREATED))
-+		fuse_dir_changed(dir);
- 	err = finish_open(file, entry, generic_file_open);
- 	if (err) {
- 		fi = get_fuse_inode(inode);
-@@ -634,6 +671,29 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
+@@ -681,8 +686,8 @@ static int fuse_atomic_create(struct inode *dir, struct dentry *entry,
+ 	if (fc->no_atomic_create)
+ 		return -ENOSYS;
+ 
+-	err = fuse_create_open(dir, entry, file, flags, mode,
+-			       FUSE_ATOMIC_CREATE);
++	err = fuse_atomic_do_common(dir, entry, NULL, file, flags, mode,
++				    FUSE_ATOMIC_CREATE);
+ 	/* If atomic create is not implemented then indicate in fc so that next
+ 	 * request falls back to normal create instead of going into libufse and
+ 	 * returning with -ENOSYS.
+@@ -694,6 +699,29 @@ static int fuse_atomic_create(struct inode *dir, struct dentry *entry,
  	return err;
  }
  
-+static int fuse_atomic_create(struct inode *dir, struct dentry *entry,
-+			      struct file *file, unsigned int flags,
-+			      umode_t mode)
++static int fuse_do_atomic_open(struct inode *dir, struct dentry *entry,
++				struct dentry **alias, struct file *file,
++				unsigned int flags, umode_t mode)
 +{
 +	int err;
 +	struct fuse_conn *fc = get_fuse_conn(dir);
 +
-+	if (fc->no_atomic_create)
++	if (!fc->do_atomic_open)
 +		return -ENOSYS;
 +
-+	err = fuse_create_open(dir, entry, file, flags, mode,
-+			       FUSE_ATOMIC_CREATE);
-+	/* If atomic create is not implemented then indicate in fc so that next
-+	 * request falls back to normal create instead of going into libufse and
-+	 * returning with -ENOSYS.
++	err = fuse_atomic_do_common(dir, entry, alias, file, flags, mode,
++				    FUSE_ATOMIC_OPEN);
++	/* Atomic open imply atomic trunc as well i.e truncate should be performed
++	 * as part of atomic open call itself.
 +	 */
-+	if (err == -ENOSYS) {
-+		if (!fc->no_atomic_create)
-+			fc->no_atomic_create = 1;
++	if (!fc->atomic_o_trunc) {
++		if (fc->do_atomic_open)
++			fc->atomic_o_trunc = 1;
 +	}
++
 +	return err;
 +}
 +
  static int fuse_mknod(struct user_namespace *, struct inode *, struct dentry *,
  		      umode_t, dev_t);
  static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
-@@ -643,11 +703,12 @@ static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
+@@ -702,12 +730,23 @@ static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
+ {
  	int err;
  	struct fuse_conn *fc = get_fuse_conn(dir);
- 	struct dentry *res = NULL;
-+	bool create = flags & O_CREAT ? true : false;
+-	struct dentry *res = NULL;
++	struct dentry *res = NULL, *alias = NULL;
+ 	bool create = flags & O_CREAT ? true : false;
  
  	if (fuse_is_bad(dir))
  		return -EIO;
  
--	if (d_in_lookup(entry)) {
-+	if ((!create || fc->no_atomic_create) && d_in_lookup(entry)) {
++	if (!create) {
++		err = fuse_do_atomic_open(dir, entry, &alias,
++					  file, flags, mode);
++		res = alias;
++		if (!err || err != -ENOSYS)
++			goto out_dput;
++	}
++	 /*
++	  * ENOSYS fall back for open- user space does not have full
++	  * atomic open.
++	  */
+ 	if ((!create || fc->no_atomic_create) && d_in_lookup(entry)) {
  		res = fuse_lookup(dir, entry, 0);
  		if (IS_ERR(res))
- 			return PTR_ERR(res);
-@@ -656,7 +717,7 @@ static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
- 			entry = res;
- 	}
- 
--	if (!(flags & O_CREAT) || d_really_is_positive(entry))
-+	if (!create || d_really_is_positive(entry))
- 		goto no_open;
- 
- 	/* Only creates */
-@@ -665,7 +726,13 @@ static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
- 	if (fc->no_create)
- 		goto mknod;
- 
--	err = fuse_create_open(dir, entry, file, flags, mode);
-+	err = fuse_atomic_create(dir, entry, file, flags, mode);
-+	/* Libfuse/user space has not implemented atomic create, therefore
-+	 * fall back to normal create.
+@@ -730,9 +769,14 @@ static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
+ 	/* Libfuse/user space has not implemented atomic create, therefore
+ 	 * fall back to normal create.
+ 	 */
+-	if (err == -ENOSYS)
+-		err = fuse_create_open(dir, entry, file, flags, mode,
+-				       FUSE_CREATE);
++	/* Atomic create+open operation
++	 * If the filesystem doesn't support this, then fall back to separate
++	 * 'mknod' + 'open' requests.
 +	 */
-+	if (err == -ENOSYS)
-+		err = fuse_create_open(dir, entry, file, flags, mode,
-+				       FUSE_CREATE);
++	if (err == -ENOSYS) {
++		err = fuse_atomic_do_common(dir, entry, NULL, file, flags,
++					    mode, FUSE_CREATE);
++	}
  	if (err == -ENOSYS) {
  		fc->no_create = 1;
  		goto mknod;
-@@ -683,6 +750,7 @@ static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
- }
- 
- /*
-+
-  * Code shared between mknod, mkdir, symlink and link
-  */
- static int create_new_entry(struct fuse_mount *fm, struct fuse_args *args,
 diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index e8e59fbdefeb..d577a591ab16 100644
+index d577a591ab16..24793b82303f 100644
 --- a/fs/fuse/fuse_i.h
 +++ b/fs/fuse/fuse_i.h
 @@ -669,6 +669,9 @@ struct fuse_conn {
  	/** Is open/release not implemented by fs? */
  	unsigned no_open:1;
  
-+	/** Is atomic create not implemented by fs? */
-+	unsigned no_atomic_create:1;
++	/** Is atomic open implemented by fs ? */
++	unsigned do_atomic_open : 1;
 +
- 	/** Is opendir/releasedir not implemented by fs? */
- 	unsigned no_opendir:1;
+ 	/** Is atomic create not implemented by fs? */
+ 	unsigned no_atomic_create:1;
  
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index ee846ce371d8..5f667de69115 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -1190,6 +1190,8 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
+ 				fc->setxattr_ext = 1;
+ 			if (flags & FUSE_SECURITY_CTX)
+ 				fc->init_security = 1;
++			if (flags & FUSE_DO_ATOMIC_OPEN)
++				fc->do_atomic_open = 1;
+ 		} else {
+ 			ra_pages = fc->max_read / PAGE_SIZE;
+ 			fc->no_lock = 1;
+@@ -1235,7 +1237,7 @@ void fuse_send_init(struct fuse_mount *fm)
+ 		FUSE_ABORT_ERROR | FUSE_MAX_PAGES | FUSE_CACHE_SYMLINKS |
+ 		FUSE_NO_OPENDIR_SUPPORT | FUSE_EXPLICIT_INVAL_DATA |
+ 		FUSE_HANDLE_KILLPRIV_V2 | FUSE_SETXATTR_EXT | FUSE_INIT_EXT |
+-		FUSE_SECURITY_CTX;
++		FUSE_SECURITY_CTX | FUSE_DO_ATOMIC_OPEN;
+ #ifdef CONFIG_FUSE_DAX
+ 	if (fm->fc->dax)
+ 		flags |= FUSE_MAP_ALIGNMENT;
 diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index d6ccee961891..e4b56004b148 100644
+index e4b56004b148..ab91e391241a 100644
 --- a/include/uapi/linux/fuse.h
 +++ b/include/uapi/linux/fuse.h
-@@ -301,6 +301,7 @@ struct fuse_file_lock {
-  * FOPEN_CACHE_DIR: allow caching this directory
-  * FOPEN_STREAM: the file is stream-like (no file position at all)
-  * FOPEN_NOFLUSH: don't flush data cache on close (unless FUSE_WRITEBACK_CACHE)
-+ * FOPEN_FILE_CREATED: the file was actually created
-  */
- #define FOPEN_DIRECT_IO		(1 << 0)
- #define FOPEN_KEEP_CACHE	(1 << 1)
-@@ -308,6 +309,7 @@ struct fuse_file_lock {
- #define FOPEN_CACHE_DIR		(1 << 3)
- #define FOPEN_STREAM		(1 << 4)
- #define FOPEN_NOFLUSH		(1 << 5)
-+#define FOPEN_FILE_CREATED	(1 << 6)
+@@ -391,6 +391,7 @@ struct fuse_file_lock {
+ /* bits 32..63 get shifted down 32 bits into the flags2 field */
+ #define FUSE_SECURITY_CTX	(1ULL << 32)
+ #define FUSE_HAS_INODE_DAX	(1ULL << 33)
++#define FUSE_DO_ATOMIC_OPEN	(1ULL << 34)
  
  /**
-  * INIT request/reply flags
-@@ -537,6 +539,7 @@ enum fuse_opcode {
- 	FUSE_SETUPMAPPING	= 48,
+  * CUSE INIT request/reply flags
+@@ -540,6 +541,7 @@ enum fuse_opcode {
  	FUSE_REMOVEMAPPING	= 49,
  	FUSE_SYNCFS		= 50,
-+	FUSE_ATOMIC_CREATE	= 51,
+ 	FUSE_ATOMIC_CREATE	= 51,
++	FUSE_ATOMIC_OPEN	= 52,
  
  	/* CUSE specific operations */
  	CUSE_INIT		= 4096,
