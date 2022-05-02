@@ -2,44 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A424851738A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 May 2022 18:02:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA2D95173BA
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 May 2022 18:07:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1386212AbiEBQFP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 May 2022 12:05:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42784 "EHLO
+        id S241045AbiEBQKE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 May 2022 12:10:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50838 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1386147AbiEBQEr (ORCPT
+        with ESMTP id S240675AbiEBQKB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 May 2022 12:04:47 -0400
+        Mon, 2 May 2022 12:10:01 -0400
 Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C050BE12;
-        Mon,  2 May 2022 09:00:59 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E598B17;
+        Mon,  2 May 2022 09:06:32 -0700 (PDT)
 Received: by fieldses.org (Postfix, from userid 2815)
-        id 470FB6214; Mon,  2 May 2022 12:00:58 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org 470FB6214
+        id CD3516CCD; Mon,  2 May 2022 12:06:31 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org CD3516CCD
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
-        s=default; t=1651507258;
-        bh=MgexYy/qSvZKhZG5OaGDKjaf+0dL78kNEUaZBzH7cTc=;
+        s=default; t=1651507591;
+        bh=fefRNgwP2JK/PA4RbrIuAA8K3Kcmfe5fM3W6FiebHeI=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MA4TVwilAIpU1e7Q5brjWFgbjw26KJ/iLL2YCf+tzucg8Y6BmHBeJrI9KjWIM+byc
-         whod/pbRa4jGf1hk2mi1ZauH5nNCuPHpYU5RoPqhhGblOxUHK6W4pN3g1YM30CwNsV
-         LN412usz7OmtOn9nSNyQcIvs9NQEKlclBHCqzVqo=
-Date:   Mon, 2 May 2022 12:00:58 -0400
+        b=lBZAtnmo05ndGRgQcO+dcRJhSIe96fCWi2qH/MaXev/7rhnnTuL7DFFzEwoJ124ti
+         i85cgOHtNHLE4H2OPgf5BlSAOb4GeJvAafrkQMuWfpJHvZXW0Tn6c/u/amgSMGOgIG
+         P6cdkIvrJTRFvPFeXs1SXhGu9Ug++87sdWJziXMY=
+Date:   Mon, 2 May 2022 12:06:31 -0400
 From:   "J. Bruce Fields" <bfields@fieldses.org>
 To:     Dai Ngo <dai.ngo@oracle.com>
 Cc:     chuck.lever@oracle.com, jlayton@redhat.com,
         viro@zeniv.linux.org.uk, linux-nfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH RFC v24 6/7] NFSD: add support for lock conflict to
- courteous server
-Message-ID: <20220502160058.GF30550@fieldses.org>
+Subject: Re: [PATCH RFC v24 7/7] NFSD: Show state of courtesy client in
+ client info
+Message-ID: <20220502160631.GG30550@fieldses.org>
 References: <1651426696-15509-1-git-send-email-dai.ngo@oracle.com>
- <1651426696-15509-7-git-send-email-dai.ngo@oracle.com>
+ <1651426696-15509-8-git-send-email-dai.ngo@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1651426696-15509-7-git-send-email-dai.ngo@oracle.com>
+In-Reply-To: <1651426696-15509-8-git-send-email-dai.ngo@oracle.com>
 User-Agent: Mutt/1.5.21 (2010-09-15)
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
@@ -50,146 +50,57 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, May 01, 2022 at 10:38:15AM -0700, Dai Ngo wrote:
-> This patch allows expired client with lock state to be in COURTESY
-> state. Lock conflict with COURTESY client is resolved by the fs/lock
-> code using the lm_lock_expirable and lm_expire_lock callback in the
-> struct lock_manager_operations.
-> 
-> If conflict client is in COURTESY state, set it to EXPIRABLE and
-> schedule the laundromat to run immediately to expire the client. The
-> callback lm_expire_lock waits for the laundromat to flush its work
-> queue before returning to caller.
+On Sun, May 01, 2022 at 10:38:16AM -0700, Dai Ngo wrote:
+> Update client_info_show to show state of courtesy client
+> and time since last renew.
 
-Reviewed-by: J. Bruce Fields <bfields@fieldses.org>
-
-(These searches over hash tables that we're adding in a few places are
-inefficient, but I'm assuming it won't matter.  And I don't have a
-better idea off the top of my head.  So I'm fine with just doing this
-instead of optimizing prematurely.)
+At this point I may be borderline woodshedding, but: for simplicity's
+sake, let's just keep that time as a number of seconds.  I'm thinking
+that'll make it marginally easier for people processing the output and
+doing comparisons and such.
 
 --b.
 
 > 
 > Signed-off-by: Dai Ngo <dai.ngo@oracle.com>
 > ---
->  fs/nfsd/nfs4state.c | 70 +++++++++++++++++++++++++++++++++++++++++------------
->  1 file changed, 54 insertions(+), 16 deletions(-)
+>  fs/nfsd/nfs4state.c | 14 ++++++++++++--
+>  1 file changed, 12 insertions(+), 2 deletions(-)
 > 
 > diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-> index f369142da79f..4ab7dda44f38 100644
+> index 4ab7dda44f38..9cff06fc3600 100644
 > --- a/fs/nfsd/nfs4state.c
 > +++ b/fs/nfsd/nfs4state.c
-> @@ -5715,39 +5715,51 @@ static void nfsd4_ssc_expire_umount(struct nfsd_net *nn)
->  }
->  #endif
->  
-> +/* Check if any lock belonging to this lockowner has any blockers */
->  static bool
-> -nfs4_has_any_locks(struct nfs4_client *clp)
-> +nfs4_lockowner_has_blockers(struct nfs4_lockowner *lo)
-> +{
-> +	struct file_lock_context *ctx;
-> +	struct nfs4_ol_stateid *stp;
-> +	struct nfs4_file *nf;
-> +
-> +	list_for_each_entry(stp, &lo->lo_owner.so_stateids, st_perstateowner) {
-> +		nf = stp->st_stid.sc_file;
-> +		ctx = nf->fi_inode->i_flctx;
-> +		if (!ctx)
-> +			continue;
-> +		if (locks_owner_has_blockers(ctx, lo))
-> +			return true;
-> +	}
-> +	return false;
-> +}
-> +
-> +static bool
-> +nfs4_anylock_blockers(struct nfs4_client *clp)
+> @@ -2473,7 +2473,8 @@ static int client_info_show(struct seq_file *m, void *v)
 >  {
->  	int i;
->  	struct nfs4_stateowner *so;
-> +	struct nfs4_lockowner *lo;
+>  	struct inode *inode = m->private;
+>  	struct nfs4_client *clp;
+> -	u64 clid;
+> +	u64 clid, hrs;
+> +	u32 mins, secs;
 >  
-> +	if (atomic_read(&clp->cl_delegs_in_recall))
-> +		return true;
->  	spin_lock(&clp->cl_lock);
->  	for (i = 0; i < OWNER_HASH_SIZE; i++) {
->  		list_for_each_entry(so, &clp->cl_ownerstr_hashtbl[i],
->  				so_strhash) {
->  			if (so->so_is_open_owner)
->  				continue;
-> -			spin_unlock(&clp->cl_lock);
-> -			return true;
-> +			lo = lockowner(so);
-> +			if (nfs4_lockowner_has_blockers(lo)) {
-> +				spin_unlock(&clp->cl_lock);
-> +				return true;
-> +			}
->  		}
->  	}
->  	spin_unlock(&clp->cl_lock);
->  	return false;
->  }
->  
-> -/*
-> - * place holder for now, no check for lock blockers yet
-> - */
-> -static bool
-> -nfs4_anylock_blockers(struct nfs4_client *clp)
-> -{
-> -	if (atomic_read(&clp->cl_delegs_in_recall) ||
-> -			!list_empty(&clp->async_copies) ||
-> -			nfs4_has_any_locks(clp))
-> -		return true;
-> -	return false;
-> -}
-> -
->  static void
->  nfs4_get_client_reaplist(struct nfsd_net *nn, struct list_head *reaplist,
->  				struct laundry_time *lt)
-> @@ -6712,6 +6724,29 @@ nfsd4_lm_put_owner(fl_owner_t owner)
->  		nfs4_put_stateowner(&lo->lo_owner);
->  }
->  
-> +/* return pointer to struct nfs4_client if client is expirable */
-> +static bool
-> +nfsd4_lm_lock_expirable(struct file_lock *cfl)
-> +{
-> +	struct nfs4_lockowner *lo = (struct nfs4_lockowner *)cfl->fl_owner;
-> +	struct nfs4_client *clp = lo->lo_owner.so_client;
-> +	struct nfsd_net *nn;
+>  	clp = get_nfsdfs_clp(inode);
+>  	if (!clp)
+> @@ -2481,10 +2482,19 @@ static int client_info_show(struct seq_file *m, void *v)
+>  	memcpy(&clid, &clp->cl_clientid, sizeof(clid));
+>  	seq_printf(m, "clientid: 0x%llx\n", clid);
+>  	seq_printf(m, "address: \"%pISpc\"\n", (struct sockaddr *)&clp->cl_addr);
+> -	if (test_bit(NFSD4_CLIENT_CONFIRMED, &clp->cl_flags))
 > +
-> +	if (try_to_expire_client(clp)) {
-> +		nn = net_generic(clp->net, nfsd_net_id);
-> +		mod_delayed_work(laundry_wq, &nn->laundromat_work, 0);
-> +		return true;
-> +	}
-> +	return false;
-> +}
-> +
-> +/* schedule laundromat to run immediately and wait for it to complete */
-> +static void
-> +nfsd4_lm_expire_lock(void)
-> +{
-> +	flush_workqueue(laundry_wq);
-> +}
-> +
->  static void
->  nfsd4_lm_notify(struct file_lock *fl)
->  {
-> @@ -6738,9 +6773,12 @@ nfsd4_lm_notify(struct file_lock *fl)
->  }
->  
->  static const struct lock_manager_operations nfsd_posix_mng_ops  = {
-> +	.lm_mod_owner = THIS_MODULE,
->  	.lm_notify = nfsd4_lm_notify,
->  	.lm_get_owner = nfsd4_lm_get_owner,
->  	.lm_put_owner = nfsd4_lm_put_owner,
-> +	.lm_lock_expirable = nfsd4_lm_lock_expirable,
-> +	.lm_expire_lock = nfsd4_lm_expire_lock,
->  };
->  
->  static inline void
+> +	if (clp->cl_state == NFSD4_COURTESY)
+> +		seq_puts(m, "status: courtesy\n");
+> +	else if (clp->cl_state == NFSD4_EXPIRABLE)
+> +		seq_puts(m, "status: expirable\n");
+> +	else if (test_bit(NFSD4_CLIENT_CONFIRMED, &clp->cl_flags))
+>  		seq_puts(m, "status: confirmed\n");
+>  	else
+>  		seq_puts(m, "status: unconfirmed\n");
+> +	hrs = div_u64_rem(ktime_get_boottime_seconds() - clp->cl_time,
+> +				3600, &secs);
+> +	mins = div_u64_rem((u64)secs, 60, &secs);
+> +	seq_printf(m, "time since last renew: %llu:%02u:%02u\n", hrs, mins, secs);
+>  	seq_printf(m, "name: ");
+>  	seq_quote_mem(m, clp->cl_name.data, clp->cl_name.len);
+>  	seq_printf(m, "\nminor version: %d\n", clp->cl_minorversion);
 > -- 
 > 2.9.5
