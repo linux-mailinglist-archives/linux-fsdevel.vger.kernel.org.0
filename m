@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A3094516A8F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 May 2022 07:57:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E135516A91
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 May 2022 07:57:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1383415AbiEBGAo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 May 2022 02:00:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52888 "EHLO
+        id S1383416AbiEBGAt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 May 2022 02:00:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1383408AbiEBGA1 (ORCPT
+        with ESMTP id S1383409AbiEBGA2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 May 2022 02:00:27 -0400
+        Mon, 2 May 2022 02:00:28 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B436B205E4
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3B91205F3
         for <linux-fsdevel@vger.kernel.org>; Sun,  1 May 2022 22:56:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=e7caWPCCYvvl/M31IWhJn+FN6kXXIF79gpn2aS5zJ9o=; b=bn9Cy7hwG+Wv65tD12cCd0kDsP
-        EBh/cw2NaUT6s/dz9r6yvEOwzTwWUBZne8RZN6t/BIezg/b0POh4/4PIwpfthiB2AlJTzPbhJS3ge
-        hkpYZoc4QMbYNLpTndv93isxkqWf+LHKnqr4B/Q8NdfahuzxrJ6pNv2Athl5N/sDnaN3rRhQhA2b1
-        F22DugUHRbI+ttvAOiP7Sez+JoXSqviIusHOyI35saC1xBG+m1qh208imZq4ufYl6AuMBXpXa5SDg
-        itx1VduqWGrqXyv7sm9qMxvx/F8JjIUOsbrr4ADBwyfxJ1HZjjOZcAH2nGBj3255EZr5YHDlU37I5
-        In5Z6dQg==;
+        bh=4zgwwwIw5SRNItgN6i+fhBBM1JSJG2OeYITK0OPXl04=; b=uIkxWLuyKOS0XZiaSDApWT0QGo
+        dobxDrE1/EtHmR8ZdxTLyhDrwyY68hgUd1wBEdQCc9xPrhQQDV1pn029SJnMRFy+IFyjOqDkWPF2/
+        m6k1ED25lSOOLWHqFuYXAr6FkO5ongwaDvrV1gUdzkmUdGPT17cJhGNn2+Seb1cygzBYgIk4Z2xwq
+        ZrqsuwH95k1sYl62ozpD0sCDnpQPL0rsPDOb4KvM6mvPdH73KLMOwfcv+gzN8FDVdiaY9WxZZ3feB
+        uGQlYrc6fJeScVErG/WalP2dXP4WtVNovvsYD86F3kbsSIGgWGgclK7rt7i9bwNY6JbPyEuRXJKPP
+        85BDXZuQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nlP2h-00EZXE-Tl; Mon, 02 May 2022 05:56:19 +0000
+        id 1nlP2i-00EZXJ-1G; Mon, 02 May 2022 05:56:20 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH 23/26] jbd2: Convert jbd2_journal_try_to_free_buffers to take a folio
-Date:   Mon,  2 May 2022 06:56:11 +0100
-Message-Id: <20220502055614.3473032-24-willy@infradead.org>
+Subject: [PATCH 24/26] jbd2: Convert release_buffer_page() to use a folio
+Date:   Mon,  2 May 2022 06:56:12 +0100
+Message-Id: <20220502055614.3473032-25-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220502055614.3473032-1-willy@infradead.org>
 References: <20220502055614.3473032-1-willy@infradead.org>
@@ -48,77 +48,51 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Also convert it to return a bool since it's called from release_folio().
+Saves a few calls to compound_head().
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/ext4/inode.c       |  2 +-
- fs/jbd2/transaction.c | 12 ++++++------
- include/linux/jbd2.h  |  2 +-
- 3 files changed, 8 insertions(+), 8 deletions(-)
+ fs/jbd2/commit.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 52c46ac5bc8a..943937cb5302 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -3253,7 +3253,7 @@ static bool ext4_release_folio(struct folio *folio, gfp_t wait)
- 	if (folio_test_checked(folio))
- 		return false;
- 	if (journal)
--		return jbd2_journal_try_to_free_buffers(journal, &folio->page);
-+		return jbd2_journal_try_to_free_buffers(journal, folio);
- 	else
- 		return try_to_free_buffers(&folio->page);
- }
-diff --git a/fs/jbd2/transaction.c b/fs/jbd2/transaction.c
-index fcb9175016a5..ee33d277d51e 100644
---- a/fs/jbd2/transaction.c
-+++ b/fs/jbd2/transaction.c
-@@ -2143,17 +2143,17 @@ __journal_try_to_free_buffer(journal_t *journal, struct buffer_head *bh)
-  * cannot happen because we never reallocate freed data as metadata
-  * while the data is part of a transaction.  Yes?
-  *
-- * Return 0 on failure, 1 on success
-+ * Return false on failure, true on success
+diff --git a/fs/jbd2/commit.c b/fs/jbd2/commit.c
+index ac7f067b7bdd..2f37108da0ec 100644
+--- a/fs/jbd2/commit.c
++++ b/fs/jbd2/commit.c
+@@ -62,6 +62,7 @@ static void journal_end_buffer_io_sync(struct buffer_head *bh, int uptodate)
   */
--int jbd2_journal_try_to_free_buffers(journal_t *journal, struct page *page)
-+bool jbd2_journal_try_to_free_buffers(journal_t *journal, struct folio *folio)
+ static void release_buffer_page(struct buffer_head *bh)
  {
- 	struct buffer_head *head;
- 	struct buffer_head *bh;
--	int ret = 0;
-+	bool ret = false;
++	struct folio *folio;
+ 	struct page *page;
  
--	J_ASSERT(PageLocked(page));
-+	J_ASSERT(folio_test_locked(folio));
+ 	if (buffer_dirty(bh))
+@@ -71,18 +72,19 @@ static void release_buffer_page(struct buffer_head *bh)
+ 	page = bh->b_page;
+ 	if (!page)
+ 		goto nope;
+-	if (page->mapping)
++	folio = page_folio(page);
++	if (folio->mapping)
+ 		goto nope;
  
--	head = page_buffers(page);
-+	head = folio_buffers(folio);
- 	bh = head;
- 	do {
- 		struct journal_head *jh;
-@@ -2175,7 +2175,7 @@ int jbd2_journal_try_to_free_buffers(journal_t *journal, struct page *page)
- 			goto busy;
- 	} while ((bh = bh->b_this_page) != head);
+ 	/* OK, it's a truncated page */
+-	if (!trylock_page(page))
++	if (!folio_trylock(folio))
+ 		goto nope;
  
--	ret = try_to_free_buffers(page);
-+	ret = try_to_free_buffers(&folio->page);
- busy:
- 	return ret;
- }
-diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
-index de9536680b2b..e79d6e0b14e8 100644
---- a/include/linux/jbd2.h
-+++ b/include/linux/jbd2.h
-@@ -1529,7 +1529,7 @@ extern int	 jbd2_journal_dirty_metadata (handle_t *, struct buffer_head *);
- extern int	 jbd2_journal_forget (handle_t *, struct buffer_head *);
- int jbd2_journal_invalidate_folio(journal_t *, struct folio *,
- 					size_t offset, size_t length);
--extern int	 jbd2_journal_try_to_free_buffers(journal_t *journal, struct page *page);
-+bool jbd2_journal_try_to_free_buffers(journal_t *journal, struct folio *folio);
- extern int	 jbd2_journal_stop(handle_t *);
- extern int	 jbd2_journal_flush(journal_t *journal, unsigned int flags);
- extern void	 jbd2_journal_lock_updates (journal_t *);
+-	get_page(page);
++	folio_get(folio);
+ 	__brelse(bh);
+-	try_to_free_buffers(page);
+-	unlock_page(page);
+-	put_page(page);
++	try_to_free_buffers(&folio->page);
++	folio_unlock(folio);
++	folio_put(folio);
+ 	return;
+ 
+ nope:
 -- 
 2.34.1
 
