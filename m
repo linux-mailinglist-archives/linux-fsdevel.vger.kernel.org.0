@@ -2,71 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C38B1516D35
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 May 2022 11:19:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59D1A516D4D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 May 2022 11:24:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1384134AbiEBJW5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 May 2022 05:22:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47884 "EHLO
+        id S1384169AbiEBJ2B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 May 2022 05:28:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35016 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1384146AbiEBJWs (ORCPT
+        with ESMTP id S1384160AbiEBJ2A (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 May 2022 05:22:48 -0400
-X-Greylist: delayed 373 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 02 May 2022 02:19:18 PDT
-Received: from shout01.mail.de (shout01.mail.de [IPv6:2001:868:100:600::216])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 617613BA77
-        for <linux-fsdevel@vger.kernel.org>; Mon,  2 May 2022 02:19:18 -0700 (PDT)
-Received: from postfix03.mail.de (postfix03.bt.mail.de [10.0.121.127])
-        by shout01.mail.de (Postfix) with ESMTP id AF691A093E;
-        Mon,  2 May 2022 11:13:03 +0200 (CEST)
-Received: from smtp03.mail.de (smtp03.bt.mail.de [10.0.121.213])
-        by postfix03.mail.de (Postfix) with ESMTP id 8E1AC801CF;
-        Mon,  2 May 2022 11:13:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mail.de;
-        s=mailde202009; t=1651482783;
-        bh=DOW2oYQL0WjyJWaXAYshXP2A3SgKgc/TMDBB9KlJL1w=;
-        h=Message-ID:Date:Subject:To:Cc:From:From:To:CC:Subject:Reply-To;
-        b=bCw6NpcOUKq6Lif+9nvRlJfW9j4dDZM9QCeeqtO9eYleIkcv4nJyV4zMJsrdXv1QM
-         GM3IVfwsJF/R4BrRTc2Igv8uzApcmYuXhvt7TNqvCPn6+6/UilZQJWwLW7mnebpgRN
-         XpGcugERzLaRxR89lGjjh4DQ/8GaVlg7/aPlgI57ElGADueC1MJrwWd5AMMphiR28k
-         NZOsyUQS1OjQzF1Ae/E1eF9TE4KI/VIpoOIunFMRYnBT1hB2vFOC6nv6EdL7th1NKX
-         xVivSLuFkKAYmwcQ0zwVf097dDFMLMovN2fuPNTVLaz3tGBYWNVPBtoqffk0Kh2sIM
-         duMSqMvuQlcUA==
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtp03.mail.de (Postfix) with ESMTPSA id 01BDCA065B;
-        Mon,  2 May 2022 11:13:02 +0200 (CEST)
-Message-ID: <6799146c-fa5a-7b64-bb91-6038006cf612@mail.de>
-Date:   Mon, 2 May 2022 11:13:02 +0200
+        Mon, 2 May 2022 05:28:00 -0400
+Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 915733BBF4;
+        Mon,  2 May 2022 02:24:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1651483472; x=1683019472;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Un8ROf/YYHiOCU6+fstsqJ861Fy1UPDTbQBPV60OZOg=;
+  b=K0YfWsP0Vew4CwH7SRWc5nsuv7s33I55CIGiZeHW007NtVn++ZVIC2CM
+   a3zxYYQ8SKy3U7qEC9tR26F4N4txmgIkEuJJsh8zPussV7+raYcpTVupQ
+   /6CSpP+xzkwEcDJkAck1uNWMA/QCelU6jFor/KoFd+2ORoo6awi1YkqvI
+   EZKVPAoLgTBqdtHUhoMq3sO4iBc5bkOAzwZP9VFIatBb2DrPFIHtEVreL
+   Suz7lCNGyqI8OF4Bj18w1AwE6qvRpkLbZKmJewPHw1FZmRfXEOEWS1l1m
+   2b94JZT2MYX8zsAVmkC0naqNH4e78bHhgCjHocb2gpmNE/yrcBwjxNKhF
+   Q==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10334"; a="327704199"
+X-IronPort-AV: E=Sophos;i="5.91,190,1647327600"; 
+   d="scan'208";a="327704199"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 May 2022 02:24:32 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.91,190,1647327600"; 
+   d="scan'208";a="546067712"
+Received: from lkp-server01.sh.intel.com (HELO 5056e131ad90) ([10.239.97.150])
+  by orsmga002.jf.intel.com with ESMTP; 02 May 2022 02:24:30 -0700
+Received: from kbuild by 5056e131ad90 with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1nlSI9-0009Rn-Ao;
+        Mon, 02 May 2022 09:24:29 +0000
+Date:   Mon, 2 May 2022 17:24:08 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Dharmendra Singh <dharamhans87@gmail.com>, miklos@szeredi.hu
+Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
+        Dharmendra Singh <dharamhans87@gmail.com>,
+        linux-fsdevel@vger.kernel.org, fuse-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, bschubert@ddn.com
+Subject: Re: [PATCH v3 3/3] Avoid lookup in d_revalidate()
+Message-ID: <202205021705.GXaOa8o4-lkp@intel.com>
+References: <20220502054628.25826-4-dharamhans87@gmail.com>
 MIME-Version: 1.0
-Subject: Re: [RFC] Volatile fanotify marks
-Content-Language: en-US
-To:     Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <CAOQ4uxiRDpuS=2uA6+ZUM7yG9vVU-u212tkunBmSnP_u=mkv=Q@mail.gmail.com>
- <20220228140556.ae5rhgqsyzm5djbp@quack3.lan>
- <CAOQ4uxiMp4HjSj01FZm8-jPzHD4jVugxuXBDW2JnSpVizhCeTQ@mail.gmail.com>
- <ff14ec84-2541-28c9-4d28-7e2ee13835dc@mail.de>
- <CAOQ4uxhry1_tW9NPC4X3q3YUQ86Ecg+G6A2Fvs5vKQTDB0ctHQ@mail.gmail.com>
- <8c636384-8db6-d7d1-b89b-424ef1accfe8@mail.de>
- <CAOQ4uxgLovYffU5epFy+r3qa7WjD9637YNuiFJHGj_du7H8gOA@mail.gmail.com>
- <20220303092459.mglgfvq653ge4k42@quack3.lan>
-From:   Tycho Kirchner <tychokirchner@mail.de>
-In-Reply-To: <20220303092459.mglgfvq653ge4k42@quack3.lan>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-purgate: clean
-X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
-X-purgate-type: clean
-X-purgate-Ad: Categorized by eleven eXpurgate (R) http://www.eleven.de
-X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
-X-purgate: clean
-X-purgate-size: 3864
-X-purgate-ID: 154282::1651482783-0000061A-38871D00/0/0
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220502054628.25826-4-dharamhans87@gmail.com>
+X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -74,78 +66,237 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-All right, I thought a bit more about that and returned to your
-original BPF idea you mentioned on 2020-08-28:
+Hi Dharmendra,
 
-> I was thinking that we could add a BPF hook to fanotify_handle_event()
-> (similar to what's happening in packet filtering code) and you could attach
-> BPF programs to this hook to do filtering of events. That way we don't have
-> to introduce new group flags for various filtering options. The question is
-> whether eBPF is strong enough so that filters useful for fanotify users
-> could be implemented with it but this particular check seems implementable.
->
-> 								Honza
+Thank you for the patch! Perhaps something to improve:
 
-Instead of changing fanotify's filesystem notification functionality,
-I suggest to rather **add a tracing mode (fantrace)**.
+[auto build test WARNING on v5.18-rc5]
+[cannot apply to mszeredi-fuse/for-next next-20220429]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
-The synchronous handling of syscalls via ptrace is of course required
-for debugging purposes, however that introduces a major slowdown (even
-with seccomp-bpf filters). There are a number of cases, including
-[1-3], where async processing of file events of specific tasks would be
-fine but is not readily available in Linux. Fanotify already ships
-important infrastructure in this regard: it provides very fast
-event-buffering and, by using file descriptors instead of resolved
-paths, a clean and race-free API to process the events later. However,
-as already stated, fanotify does not provide a clean way, to monitor
-only a subset of tasks. Therefore please consider the following
-proposed architecture of fantrace:
+url:    https://github.com/intel-lab-lkp/linux/commits/Dharmendra-Singh/FUSE-Implement-atomic-lookup-open-create/20220502-134729
+base:    672c0c5173427e6b3e2a9bbb7be51ceeec78093a
+config: hexagon-randconfig-r045-20220502 (https://download.01.org/0day-ci/archive/20220502/202205021705.GXaOa8o4-lkp@intel.com/config)
+compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project 09325d36061e42b495d1f4c7e933e260eac260ed)
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/a531ce8124c046dffefe5cd731c952c8f7248c5b
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Dharmendra-Singh/FUSE-Implement-atomic-lookup-open-create/20220502-134729
+        git checkout a531ce8124c046dffefe5cd731c952c8f7248c5b
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=hexagon SHELL=/bin/bash fs/fuse/
 
-Each taks gets its own struct fsnotify_group. Within
-fsnotify.c:fsnotify() it is checked if the given task has a
-fsnotify_group attached where events of interest are buffered as usual.
-Note that this is an additional hook - sysadmins being subscribed to
-filesystem events rather than task-filesystem-events are notified as
-usual - in that case two hooks possibly run. The fsnotify_group is
-extended by a field optionally pointing to a BPF program which allows
-for custom filters to be run.
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
 
-Some implementation details:
-- To let the tracee return quickly, run BPF filter program within tracer
-   context during read(fan_fd) but before events are copied to userspace
-- only one fantracer per task, which overrides existing ones if any
-- task->fsnotify_group refcount increment on fork, decrement on exit (run
-   after exit_files(tsk) to not miss final close events). When last task
-   exited, send EOF to listener.
-- on exec of seuid-programs the fsnotify_group is cleared (like in ptrace)
-- lazy check when event occurs, if listener is still alive (refcount > 1)
-- for the beginning, to keep things simple and to "solve" the cleanup of
-   filesystem marks, I suggest to disable i_fsnotify_marks for fantrace
-   (only allow FAN_MARK_FILESYSTEM), as that functionality can be
-   implemented within the user-provided BPF-program.
+All warnings (new ones prefixed by >>):
 
-A working implementation of this concept, which effectively does the
-same using hardcoded filter rules can be found in my kernel module
-shournalk [4]. For instance In kernel/event_handler.c:event_handler_fput()
-it is checked, if the task is observed using a hashtable, and if so,
-the event is stored to a buffer corresponding to that process tree.
-
-Thanks
-Tycho
+>> fs/fuse/dir.c:571:5: warning: no previous prototype for function 'fuse_do_atomic_common' [-Wmissing-prototypes]
+   int fuse_do_atomic_common(struct inode *dir, struct dentry *entry,
+       ^
+   fs/fuse/dir.c:571:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
+   int fuse_do_atomic_common(struct inode *dir, struct dentry *entry,
+   ^
+   static 
+>> fs/fuse/dir.c:668:63: warning: variable 'fi' is uninitialized when used here [-Wuninitialized]
+                   err = fuse_atomic_open_revalidate_inode(reval_inode, entry, fi,
+                                                                               ^~
+   fs/fuse/dir.c:585:23: note: initialize the variable 'fi' to silence this warning
+           struct fuse_inode *fi;
+                                ^
+                                 = NULL
+   2 warnings generated.
 
 
-[1] Chirigati F, Rampin R, Shasha D, Freire J. (2016). ReproZip:
-Computational Reproducibility with Ease. Paper presented at the
-Proceedings of the 2016 International Conference on Management of Data.
-San Francisco, CA: New York: Association for Computing Technology.
-https://github.com/VIDA-NYU/reprozip
-[2] Guo, P. (2012). CDE: A Tool For Creating Portable Experimental
-Software Packages. Computing in Science & Engineering 14, 332–35
-[3] Tycho Kirchner, Konstantin Riege, Steve Hoffmann (2020). Bashing
-irreproducibility with shournal bioRxiv 2020.08.03.232843; doi:
-https://doi.org/10.1101/2020.08.03.232843
-[4] https://github.com/tycho-kirchner/shournal
+vim +/fuse_do_atomic_common +571 fs/fuse/dir.c
 
+   564	
+   565	
+   566	/*
+   567	 * This is common function for initiating atomic operations into libfuse.
+   568	 * Currently being used by Atomic create(atomic lookup + create) and
+   569	 * Atomic open(atomic lookup + open).
+   570	 */
+ > 571	int fuse_do_atomic_common(struct inode *dir, struct dentry *entry,
+   572				  struct dentry **alias, struct file *file,
+   573				  struct inode *reval_inode, unsigned int flags,
+   574				  umode_t mode, uint32_t opcode)
+   575	{
+   576		int err;
+   577		struct inode *inode;
+   578		struct fuse_mount *fm = get_fuse_mount(dir);
+   579		struct fuse_conn *fc = get_fuse_conn(dir);
+   580		FUSE_ARGS(args);
+   581		struct fuse_forget_link *forget;
+   582		struct fuse_create_in inarg;
+   583		struct fuse_open_out outopen;
+   584		struct fuse_entry_out outentry;
+   585		struct fuse_inode *fi;
+   586		struct fuse_file *ff;
+   587		struct dentry *res = NULL;
+   588		void *security_ctx = NULL;
+   589		u32 security_ctxlen;
+   590		bool atomic_create = (opcode == FUSE_ATOMIC_CREATE ? true : false);
+   591		bool create_op = (opcode == FUSE_CREATE ||
+   592				  opcode == FUSE_ATOMIC_CREATE) ? true : false;
+   593		u64 attr_version = fuse_get_attr_version(fm->fc);
+   594	
+   595		if (alias)
+   596			*alias = NULL;
+   597	
+   598		/* Userspace expects S_IFREG in create mode */
+   599		BUG_ON(create_op && (mode & S_IFMT) != S_IFREG);
+   600	
+   601		forget = fuse_alloc_forget();
+   602		err = -ENOMEM;
+   603		if (!forget)
+   604			goto out_err;
+   605	
+   606		err = -ENOMEM;
+   607		ff = fuse_file_alloc(fm);
+   608		if (!ff)
+   609			goto out_put_forget_req;
+   610	
+   611		if (!fc->dont_mask)
+   612			mode &= ~current_umask();
+   613	
+   614		flags &= ~O_NOCTTY;
+   615		memset(&inarg, 0, sizeof(inarg));
+   616		memset(&outentry, 0, sizeof(outentry));
+   617		inarg.flags = flags;
+   618		inarg.mode = mode;
+   619		inarg.umask = current_umask();
+   620	
+   621		if (fm->fc->handle_killpriv_v2 && (flags & O_TRUNC) &&
+   622		    !(flags & O_EXCL) && !capable(CAP_FSETID)) {
+   623			inarg.open_flags |= FUSE_OPEN_KILL_SUIDGID;
+   624		}
+   625	
+   626		args.opcode = opcode;
+   627		args.nodeid = get_node_id(dir);
+   628		args.in_numargs = 2;
+   629		args.in_args[0].size = sizeof(inarg);
+   630		args.in_args[0].value = &inarg;
+   631		args.in_args[1].size = entry->d_name.len + 1;
+   632		args.in_args[1].value = entry->d_name.name;
+   633		args.out_numargs = 2;
+   634		args.out_args[0].size = sizeof(outentry);
+   635		args.out_args[0].value = &outentry;
+   636		args.out_args[1].size = sizeof(outopen);
+   637		args.out_args[1].value = &outopen;
+   638	
+   639		if (fm->fc->init_security) {
+   640			err = get_security_context(entry, mode, &security_ctx,
+   641						   &security_ctxlen);
+   642			if (err)
+   643				goto out_put_forget_req;
+   644	
+   645			args.in_numargs = 3;
+   646			args.in_args[2].size = security_ctxlen;
+   647			args.in_args[2].value = security_ctx;
+   648		}
+   649	
+   650		err = fuse_simple_request(fm, &args);
+   651		kfree(security_ctx);
+   652		if (err)
+   653			goto out_free_ff;
+   654	
+   655		err = -EIO;
+   656		if (!S_ISREG(outentry.attr.mode) || invalid_nodeid(outentry.nodeid) ||
+   657		    fuse_invalid_attr(&outentry.attr))
+   658			goto out_free_ff;
+   659	
+   660		ff->fh = outopen.fh;
+   661		ff->nodeid = outentry.nodeid;
+   662		ff->open_flags = outopen.open_flags;
+   663	
+   664		/* Inode revalidation was bypassed previously for type other than
+   665		 * directories, revalidate now as we got fresh attributes.
+   666		 */
+   667		if (reval_inode) {
+ > 668			err = fuse_atomic_open_revalidate_inode(reval_inode, entry, fi,
+   669								forget, &outentry,
+   670								attr_version);
+   671			if (err)
+   672				goto out_free_ff;
+   673			inode = reval_inode;
+   674			kfree(forget);
+   675			goto out_finish_open;
+   676		}
+   677		inode = fuse_iget(dir->i_sb, outentry.nodeid, outentry.generation,
+   678				  &outentry.attr, entry_attr_timeout(&outentry), 0);
+   679		if (!inode) {
+   680			flags &= ~(O_CREAT | O_EXCL | O_TRUNC);
+   681			fuse_sync_release(NULL, ff, flags);
+   682			fuse_queue_forget(fm->fc, forget, outentry.nodeid, 1);
+   683			err = -ENOMEM;
+   684			goto out_err;
+   685		}
+   686		kfree(forget);
+   687		/*
+   688		 * In atomic create, we skipped lookup and it is very much likely that
+   689		 * dentry has DCACHE_PAR_LOOKUP flag set on it so call d_splice_alias().
+   690		 * Note: Only REG file is allowed under create/atomic create.
+   691		 */
+   692		/* There is special case when at very first call where we check if
+   693		 * atomic create is implemented by USER SPACE/libfuse or not, we
+   694		 * skipped lookup. Now, in case where atomic create is not implemented
+   695		 * underlying, we fall back to FUSE_CREATE. here we are required to handle
+   696		 * DCACHE_PAR_LOOKUP flag.
+   697		 */
+   698		if (!atomic_create && !d_in_lookup(entry) && fm->fc->no_atomic_create)
+   699			d_instantiate(entry, inode);
+   700		else {
+   701			res = d_splice_alias(inode, entry);
+   702			if (res) {
+   703				 /* Close the file in user space, but do not unlink it,
+   704				  * if it was created - with network file systems other
+   705				  * clients might have already accessed it.
+   706				  */
+   707				if (IS_ERR(res)) {
+   708					fi = get_fuse_inode(inode);
+   709					fuse_sync_release(fi, ff, flags);
+   710					fuse_queue_forget(fm->fc, forget, outentry.nodeid, 1);
+   711					err = PTR_ERR(res);
+   712					goto out_err;
+   713				}
+   714				entry = res;
+   715				if (alias)
+   716					*alias = res;
+   717			}
+   718		}
+   719		fuse_change_entry_timeout(entry, &outentry);
+   720		/*
+   721		 * In case of atomic create, we want to indicate directory change
+   722		 * only if USER SPACE actually created the file.
+   723		 */
+   724		if (!atomic_create || (outopen.open_flags & FOPEN_FILE_CREATED))
+   725			fuse_dir_changed(dir);
+   726		err = finish_open(file, entry, generic_file_open);
+   727	out_finish_open:
+   728		if (err) {
+   729			fi = get_fuse_inode(inode);
+   730			fuse_sync_release(fi, ff, flags);
+   731		} else {
+   732			file->private_data = ff;
+   733			fuse_finish_open(inode, file);
+   734		}
+   735		return err;
+   736	
+   737	out_free_ff:
+   738		fuse_file_free(ff);
+   739	out_put_forget_req:
+   740		kfree(forget);
+   741	out_err:
+   742		return err;
+   743	}
+   744	
 
-
-
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
