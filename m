@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 36BA2516A89
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 May 2022 07:57:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 052E0516A8D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 May 2022 07:57:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1383405AbiEBGAf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 May 2022 02:00:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50706 "EHLO
+        id S1383406AbiEBGAm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 May 2022 02:00:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1383393AbiEBF7t (ORCPT
+        with ESMTP id S1383394AbiEBF7t (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Mon, 2 May 2022 01:59:49 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 876D4205D0
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA29C205DC
         for <linux-fsdevel@vger.kernel.org>; Sun,  1 May 2022 22:56:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=53gmpou/csAQtk0mDA4IcMIkTYMO4P94hi1K9vWouxk=; b=O9IxU1snDg4IysZyiaNi5TMApo
-        A37ysaId18j5FGcnjiuNTpwaJsMw3AZ+/AjoNIrUWNjRWoLnHGEGTtNYxZdw9fXcKD/F6UGMftW1U
-        +hWUuT99KuOABrb189nKEGxZAYbiuc/G1RNPrRljRq12uvX9YhTlF6BCza+3lId5AYDC4oiX2Ef0A
-        08M0QF6LO+RGreA/Vt6i/ytO7Ozho8v1wuIzaQMLTRdTAiJ8YaVHj4QP+sVC/zI9aOR1+rAmhdsBw
-        gVVYuw39S8aVuoxpMddpq+s7tcZJ8C3FNx25LrAlezwajyKPLZQczVBw80f+xFh5WHF3J59sjwtt7
-        3XXN730g==;
+        bh=k63jQa9iMRPT02R7TYStvnmcS1iPXn7CcKbsGOfcxOM=; b=cvTLFKLpecfV+hi7DzFMvdkuug
+        emfGbqtWQyockUFOuqvo+rFRXUxA6FO+/dbPkcQoNLdQpAd2cWm41U8/bRo+1OQizLd3FOIZ4PGTl
+        rxDyDs6MZw6OIu02QIDmdSX453ppScy672DzMWPZlA3SYJ9OamFKIZEAVmS+Xk942aB6UwKfBHuiM
+        NhHtfqMwOsMzyrhg6JW+qQNM1IDwkf7H6dbRvRJbAgZbHgKexIeldYxJ5CwLxhzUZPW9h4cSzYlSI
+        FV18FBSpt/QU8y0E3XaA3lkRa41uU+9rYazX5VnrAi775XxeXXrOkvLEJ+iT07DV7rEMbdBuoN7uV
+        JssTpigw==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nlP2g-00EZWV-QX; Mon, 02 May 2022 05:56:18 +0000
+        id 1nlP2g-00EZWa-UI; Mon, 02 May 2022 05:56:18 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH 14/26] jfs: Convert to release_folio
-Date:   Mon,  2 May 2022 06:56:02 +0100
-Message-Id: <20220502055614.3473032-15-willy@infradead.org>
+Subject: [PATCH 15/26] nfs: Convert to release_folio
+Date:   Mon,  2 May 2022 06:56:03 +0100
+Message-Id: <20220502055614.3473032-16-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220502055614.3473032-1-willy@infradead.org>
 References: <20220502055614.3473032-1-willy@infradead.org>
@@ -48,69 +48,93 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The use of folios should be pushed further down into jfs from here.
+Use folios throughout the release_folio paths.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/jfs/jfs_metapage.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ fs/nfs/file.c    | 22 +++++++++++-----------
+ fs/nfs/fscache.h | 14 +++++++-------
+ 2 files changed, 18 insertions(+), 18 deletions(-)
 
-diff --git a/fs/jfs/jfs_metapage.c b/fs/jfs/jfs_metapage.c
-index 2fc78405b3f2..387652ae14c2 100644
---- a/fs/jfs/jfs_metapage.c
-+++ b/fs/jfs/jfs_metapage.c
-@@ -524,29 +524,29 @@ static int metapage_read_folio(struct file *fp, struct folio *folio)
- 	return -EIO;
+diff --git a/fs/nfs/file.c b/fs/nfs/file.c
+index 4f6d1f90b87f..d764b3ce7905 100644
+--- a/fs/nfs/file.c
++++ b/fs/nfs/file.c
+@@ -415,19 +415,19 @@ static void nfs_invalidate_folio(struct folio *folio, size_t offset,
  }
  
--static int metapage_releasepage(struct page *page, gfp_t gfp_mask)
-+static bool metapage_release_folio(struct folio *folio, gfp_t gfp_mask)
+ /*
+- * Attempt to release the private state associated with a page
+- * - Called if either PG_private or PG_fscache is set on the page
+- * - Caller holds page lock
+- * - Return true (may release page) or false (may not)
++ * Attempt to release the private state associated with a folio
++ * - Called if either private or fscache flags are set on the folio
++ * - Caller holds folio lock
++ * - Return true (may release folio) or false (may not)
+  */
+-static int nfs_release_page(struct page *page, gfp_t gfp)
++static bool nfs_release_folio(struct folio *folio, gfp_t gfp)
  {
- 	struct metapage *mp;
--	int ret = 1;
-+	bool ret = true;
- 	int offset;
+-	dfprintk(PAGECACHE, "NFS: release_page(%p)\n", page);
++	dfprintk(PAGECACHE, "NFS: release_folio(%p)\n", folio);
  
- 	for (offset = 0; offset < PAGE_SIZE; offset += PSIZE) {
--		mp = page_to_mp(page, offset);
-+		mp = page_to_mp(&folio->page, offset);
- 
- 		if (!mp)
- 			continue;
- 
--		jfs_info("metapage_releasepage: mp = 0x%p", mp);
-+		jfs_info("metapage_release_folio: mp = 0x%p", mp);
- 		if (mp->count || mp->nohomeok ||
- 		    test_bit(META_dirty, &mp->flag)) {
- 			jfs_info("count = %ld, nohomeok = %d", mp->count,
- 				 mp->nohomeok);
--			ret = 0;
-+			ret = false;
- 			continue;
- 		}
- 		if (mp->lsn)
- 			remove_from_logsync(mp);
--		remove_metapage(page, mp);
-+		remove_metapage(&folio->page, mp);
- 		INCREMENT(mpStat.pagefree);
- 		free_metapage(mp);
- 	}
-@@ -560,13 +560,13 @@ static void metapage_invalidate_folio(struct folio *folio, size_t offset,
- 
- 	BUG_ON(folio_test_writeback(folio));
- 
--	metapage_releasepage(&folio->page, 0);
-+	metapage_release_folio(folio, 0);
+-	/* If PagePrivate() is set, then the page is not freeable */
+-	if (PagePrivate(page))
+-		return 0;
+-	return nfs_fscache_release_page(page, gfp);
++	/* If the private flag is set, then the folio is not freeable */
++	if (folio_test_private(folio))
++		return false;
++	return nfs_fscache_release_folio(folio, gfp);
  }
  
- const struct address_space_operations jfs_metapage_aops = {
- 	.read_folio	= metapage_read_folio,
- 	.writepage	= metapage_writepage,
--	.releasepage	= metapage_releasepage,
-+	.release_folio	= metapage_release_folio,
- 	.invalidate_folio = metapage_invalidate_folio,
- 	.dirty_folio	= filemap_dirty_folio,
- };
+ static void nfs_check_dirty_writeback(struct folio *folio,
+@@ -522,7 +522,7 @@ const struct address_space_operations nfs_file_aops = {
+ 	.write_begin = nfs_write_begin,
+ 	.write_end = nfs_write_end,
+ 	.invalidate_folio = nfs_invalidate_folio,
+-	.releasepage = nfs_release_page,
++	.release_folio = nfs_release_folio,
+ 	.direct_IO = nfs_direct_IO,
+ #ifdef CONFIG_MIGRATION
+ 	.migratepage = nfs_migrate_page,
+diff --git a/fs/nfs/fscache.h b/fs/nfs/fscache.h
+index 4e980cc04779..2a37af880978 100644
+--- a/fs/nfs/fscache.h
++++ b/fs/nfs/fscache.h
+@@ -48,14 +48,14 @@ extern void nfs_fscache_release_file(struct inode *, struct file *);
+ extern int __nfs_fscache_read_page(struct inode *, struct page *);
+ extern void __nfs_fscache_write_page(struct inode *, struct page *);
+ 
+-static inline int nfs_fscache_release_page(struct page *page, gfp_t gfp)
++static inline bool nfs_fscache_release_folio(struct folio *folio, gfp_t gfp)
+ {
+-	if (PageFsCache(page)) {
++	if (folio_test_fscache(folio)) {
+ 		if (current_is_kswapd() || !(gfp & __GFP_FS))
+ 			return false;
+-		wait_on_page_fscache(page);
+-		fscache_note_page_release(nfs_i_fscache(page->mapping->host));
+-		nfs_inc_fscache_stats(page->mapping->host,
++		folio_wait_fscache(folio);
++		fscache_note_page_release(nfs_i_fscache(folio->mapping->host));
++		nfs_inc_fscache_stats(folio->mapping->host,
+ 				      NFSIOS_FSCACHE_PAGES_UNCACHED);
+ 	}
+ 	return true;
+@@ -129,9 +129,9 @@ static inline void nfs_fscache_open_file(struct inode *inode,
+ 					 struct file *filp) {}
+ static inline void nfs_fscache_release_file(struct inode *inode, struct file *file) {}
+ 
+-static inline int nfs_fscache_release_page(struct page *page, gfp_t gfp)
++static inline bool nfs_fscache_release_folio(struct folio *folio, gfp_t gfp)
+ {
+-	return 1; /* True: may release page */
++	return true; /* may release folio */
+ }
+ static inline int nfs_fscache_read_page(struct inode *inode, struct page *page)
+ {
 -- 
 2.34.1
 
