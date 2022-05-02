@@ -2,248 +2,335 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D5D8517260
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 May 2022 17:19:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0D57517271
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 May 2022 17:23:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1385197AbiEBPWw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 May 2022 11:22:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55354 "EHLO
+        id S239342AbiEBP1I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 May 2022 11:27:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236020AbiEBPWv (ORCPT
+        with ESMTP id S238609AbiEBP1G (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 May 2022 11:22:51 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A999B844
-        for <linux-fsdevel@vger.kernel.org>; Mon,  2 May 2022 08:19:22 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 109DA60F1F
-        for <linux-fsdevel@vger.kernel.org>; Mon,  2 May 2022 15:19:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3035CC385AC;
-        Mon,  2 May 2022 15:19:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1651504761;
-        bh=1qlluHOU2V0gVsZ3AEQ2Yew6tZHPGmKXx++UV4xRnq4=;
-        h=Subject:From:To:Date:In-Reply-To:References:From;
-        b=il+bYLubcYyfOMvEtQ1vN1TdpviwVE4KM5Re8/QaEJanx2kgYd1T5l+J9dbfV1RYo
-         Z+Vzk0+0QqKMzqf3oRN52S0DpLgcTY2RI33QfRjMsR7EJFrema765rkCo8MtSAvQAO
-         o453v8RM/HQ/5SD6muq6Byqae08/NwwpbH6m538Uz1Y+bORkSxpKWNL/UPI1APgRAS
-         xI+iX6M36k2WM+ZAx2qOaPSAo4UzKCsPGjxtULy15jkEkdiMroAIQajvl6S03BPp/n
-         FfUVIWGAlWnX0yQsq3/wOT0YltsSlcpX9fCgJmZmWCm51ktpFtUg3qdmD9uEfTkPJF
-         lb/Nup6/TXzKg==
-Message-ID: <081dd8bc2b0462b86bc03638c5e55eeaaf4de13a.camel@kernel.org>
-Subject: Re: [PATCH 01/26] fs: Add aops->release_folio
-From:   Jeff Layton <jlayton@kernel.org>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Mon, 2 May 2022 11:27:06 -0400
+Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1ED913CC9;
+        Mon,  2 May 2022 08:23:36 -0700 (PDT)
+Received: by fieldses.org (Postfix, from userid 2815)
+        id 201D46214; Mon,  2 May 2022 11:23:36 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org 201D46214
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
+        s=default; t=1651505016;
+        bh=AS/6vbqVTf7sfE1lbMJTchfiT0amHhuZ+GSv/ZwMb0A=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jQoM7tjKlyWX5peTO+sDQcLQfrPIRkn4Obz0UP2q2vYotfD3EbzFXqDzCyNG0CPn1
+         siPoA6quCRQG3M5v0JFFtwrR6ZypdLc/l3Pp++PLyKgDA5g+eu69k5DdfzQJhzVZNx
+         zq5GeH5dC4Hlfw17M6azSZ4OTBFR8Ojsd0GGBB78=
+Date:   Mon, 2 May 2022 11:23:36 -0400
+From:   "J. Bruce Fields" <bfields@fieldses.org>
+To:     Dai Ngo <dai.ngo@oracle.com>
+Cc:     chuck.lever@oracle.com, jlayton@redhat.com,
+        viro@zeniv.linux.org.uk, linux-nfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Date:   Mon, 02 May 2022 11:19:19 -0400
-In-Reply-To: <20220502055614.3473032-2-willy@infradead.org>
-References: <20220502055614.3473032-1-willy@infradead.org>
-         <20220502055614.3473032-2-willy@infradead.org>
-Content-Type: text/plain; charset="ISO-8859-15"
-User-Agent: Evolution 3.42.4 (3.42.4-2.fc35) 
+Subject: Re: [PATCH RFC v24 1/7] NFSD: add courteous server support for
+ thread with only delegation
+Message-ID: <20220502152336.GA30550@fieldses.org>
+References: <1651426696-15509-1-git-send-email-dai.ngo@oracle.com>
+ <1651426696-15509-2-git-send-email-dai.ngo@oracle.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1651426696-15509-2-git-send-email-dai.ngo@oracle.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2022-05-02 at 06:55 +0100, Matthew Wilcox (Oracle) wrote:
-> This replaces aops->releasepage.  Update the documentation, and call it
-> if it exists.
+On Sun, May 01, 2022 at 10:38:10AM -0700, Dai Ngo wrote:
+> This patch provides courteous server support for delegation only.
+> Only expired client with delegation but no conflict and no open
+> or lock state is allowed to be in COURTESY state.
 > 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> Delegation conflict with COURTESY/EXPIRABLE client is resolved by
+> setting it to EXPIRABLE, queue work for the laundromat and return
+> delay to the caller. Conflict is resolved when the laudromat runs
+> and expires the EXIRABLE client while the NFS client retries the
+> OPEN request. Local thread request that gets conflict is doing the
+> retry in _break_lease.
+> 
+> Client in COURTESY or EXPIRABLE state is allowed to reconnect and
+> continues to have access to its state. Access to the nfs4_client by
+> the reconnecting thread and the laundromat is serialized via the
+> client_lock.
+> 
+> Signed-off-by: Dai Ngo <dai.ngo@oracle.com>
 > ---
->  .../filesystems/caching/netfs-api.rst         |  4 +-
->  Documentation/filesystems/locking.rst         | 14 +++---
->  Documentation/filesystems/vfs.rst             | 45 +++++++++----------
->  include/linux/fs.h                            |  1 +
->  mm/filemap.c                                  |  2 +
->  5 files changed, 34 insertions(+), 32 deletions(-)
+>  fs/nfsd/nfs4state.c | 83 +++++++++++++++++++++++++++++++++++++++++++----------
+>  fs/nfsd/nfsd.h      |  1 +
+>  fs/nfsd/state.h     | 31 ++++++++++++++++++++
+>  3 files changed, 100 insertions(+), 15 deletions(-)
 > 
-> diff --git a/Documentation/filesystems/caching/netfs-api.rst b/Documentation/filesystems/caching/netfs-api.rst
-> index 7308d76a29dc..1d18e9def183 100644
-> --- a/Documentation/filesystems/caching/netfs-api.rst
-> +++ b/Documentation/filesystems/caching/netfs-api.rst
-> @@ -433,11 +433,11 @@ has done a write and then the page it wrote from has been released by the VM,
->  after which it *has* to look in the cache.
+> diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+> index 234e852fcdfa..917eaab45999 100644
+> --- a/fs/nfsd/nfs4state.c
+> +++ b/fs/nfsd/nfs4state.c
+> @@ -125,6 +125,8 @@ static void free_session(struct nfsd4_session *);
+>  static const struct nfsd4_callback_ops nfsd4_cb_recall_ops;
+>  static const struct nfsd4_callback_ops nfsd4_cb_notify_lock_ops;
 >  
->  To inform fscache that a page might now be in the cache, the following function
-> -should be called from the ``releasepage`` address space op::
-> +should be called from the ``release_folio`` address space op::
+> +static struct workqueue_struct *laundry_wq;
+> +
+>  static bool is_session_dead(struct nfsd4_session *ses)
+>  {
+>  	return ses->se_flags & NFS4_SESSION_DEAD;
+> @@ -152,6 +154,7 @@ static __be32 get_client_locked(struct nfs4_client *clp)
+>  	if (is_client_expired(clp))
+>  		return nfserr_expired;
+>  	atomic_inc(&clp->cl_rpc_users);
+> +	clp->cl_state = NFSD4_ACTIVE;
+>  	return nfs_ok;
+>  }
 >  
->  	void fscache_note_page_release(struct fscache_cookie *cookie);
+> @@ -172,6 +175,7 @@ renew_client_locked(struct nfs4_client *clp)
 >  
-> -if the page has been released (ie. releasepage returned true).
-> +if the page has been released (ie. release_folio returned true).
+>  	list_move_tail(&clp->cl_lru, &nn->client_lru);
+>  	clp->cl_time = ktime_get_boottime_seconds();
+> +	clp->cl_state = NFSD4_ACTIVE;
+>  }
 >  
->  Page release and page invalidation should also wait for any mark left on the
->  page to say that a DIO write is underway from that page::
-> diff --git a/Documentation/filesystems/locking.rst b/Documentation/filesystems/locking.rst
-> index aeba2475a53c..2a295bb72dbc 100644
-> --- a/Documentation/filesystems/locking.rst
-> +++ b/Documentation/filesystems/locking.rst
-> @@ -249,7 +249,7 @@ prototypes::
->  				struct page *page, void *fsdata);
->  	sector_t (*bmap)(struct address_space *, sector_t);
->  	void (*invalidate_folio) (struct folio *, size_t start, size_t len);
-> -	int (*releasepage) (struct page *, int);
-> +	int (*release_folio)(struct folio *, gfp_t);
->  	void (*freepage)(struct page *);
->  	int (*direct_IO)(struct kiocb *, struct iov_iter *iter);
->  	bool (*isolate_page) (struct page *, isolate_mode_t);
-> @@ -270,13 +270,13 @@ ops			PageLocked(page)	 i_rwsem	invalidate_lock
->  writepage:		yes, unlocks (see below)
->  read_folio:		yes, unlocks				shared
->  writepages:
-> -dirty_folio		maybe
-> +dirty_folio:		maybe
->  readahead:		yes, unlocks				shared
->  write_begin:		locks the page		 exclusive
->  write_end:		yes, unlocks		 exclusive
->  bmap:
->  invalidate_folio:	yes					exclusive
-> -releasepage:		yes
-> +release_folio:		yes
->  freepage:		yes
->  direct_IO:
->  isolate_page:		yes
-> @@ -372,10 +372,10 @@ invalidate_lock before invalidating page cache in truncate / hole punch
->  path (and thus calling into ->invalidate_folio) to block races between page
->  cache invalidation and page cache filling functions (fault, read, ...).
+>  static void put_client_renew_locked(struct nfs4_client *clp)
+> @@ -1090,6 +1094,7 @@ alloc_init_deleg(struct nfs4_client *clp, struct nfs4_file *fp,
+>  	get_clnt_odstate(odstate);
+>  	dp->dl_type = NFS4_OPEN_DELEGATE_READ;
+>  	dp->dl_retries = 1;
+> +	dp->dl_recalled = false;
+>  	nfsd4_init_cb(&dp->dl_recall, dp->dl_stid.sc_client,
+>  		      &nfsd4_cb_recall_ops, NFSPROC4_CLNT_CB_RECALL);
+>  	get_nfs4_file(fp);
+> @@ -2004,6 +2009,8 @@ static struct nfs4_client *alloc_client(struct xdr_netobj name)
+>  	idr_init(&clp->cl_stateids);
+>  	atomic_set(&clp->cl_rpc_users, 0);
+>  	clp->cl_cb_state = NFSD4_CB_UNKNOWN;
+> +	clp->cl_state = NFSD4_ACTIVE;
+> +	atomic_set(&clp->cl_delegs_in_recall, 0);
+>  	INIT_LIST_HEAD(&clp->cl_idhash);
+>  	INIT_LIST_HEAD(&clp->cl_openowners);
+>  	INIT_LIST_HEAD(&clp->cl_delegations);
+> @@ -4694,9 +4701,18 @@ nfsd_break_deleg_cb(struct file_lock *fl)
+>  	bool ret = false;
+>  	struct nfs4_delegation *dp = (struct nfs4_delegation *)fl->fl_owner;
+>  	struct nfs4_file *fp = dp->dl_stid.sc_file;
+> +	struct nfs4_client *clp = dp->dl_stid.sc_client;
+> +	struct nfsd_net *nn;
 >  
-> -->releasepage() is called when the kernel is about to try to drop the
-> -buffers from the page in preparation for freeing it.  It returns zero to
-> -indicate that the buffers are (or may be) freeable.  If ->releasepage is zero,
-> -the kernel assumes that the fs has no private interest in the buffers.
-> +->release_folio() is called when the kernel is about to try to drop the
-> +buffers from the folio in preparation for freeing it.  It returns false to
-> +indicate that the buffers are (or may be) freeable.  If ->release_folio is
-> +NULL, the kernel assumes that the fs has no private interest in the buffers.
+>  	trace_nfsd_cb_recall(&dp->dl_stid);
 >  
->  ->freepage() is called when the kernel is done dropping the page
->  from the page cache.
-> diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
-> index 0919a4ad973a..679887b5c8fc 100644
-> --- a/Documentation/filesystems/vfs.rst
-> +++ b/Documentation/filesystems/vfs.rst
-> @@ -620,9 +620,9 @@ Writeback.
->  The first can be used independently to the others.  The VM can try to
->  either write dirty pages in order to clean them, or release clean pages
->  in order to reuse them.  To do this it can call the ->writepage method
-> -on dirty pages, and ->releasepage on clean pages with PagePrivate set.
-> -Clean pages without PagePrivate and with no external references will be
-> -released without notice being given to the address_space.
-> +on dirty pages, and ->release_folio on clean folios with the private
-> +flag set.  Clean pages without PagePrivate and with no external references
-> +will be released without notice being given to the address_space.
->  
->  To achieve this functionality, pages need to be placed on an LRU with
->  lru_cache_add and mark_page_active needs to be called whenever the page
-> @@ -734,7 +734,7 @@ cache in your filesystem.  The following members are defined:
->  				 struct page *page, void *fsdata);
->  		sector_t (*bmap)(struct address_space *, sector_t);
->  		void (*invalidate_folio) (struct folio *, size_t start, size_t len);
-> -		int (*releasepage) (struct page *, int);
-> +		bool (*release_folio)(struct folio *, gfp_t);
->  		void (*freepage)(struct page *);
->  		ssize_t (*direct_IO)(struct kiocb *, struct iov_iter *iter);
->  		/* isolate a page for migration */
-> @@ -864,33 +864,32 @@ cache in your filesystem.  The following members are defined:
->  	address space.  This generally corresponds to either a
->  	truncation, punch hole or a complete invalidation of the address
->  	space (in the latter case 'offset' will always be 0 and 'length'
-> -	will be folio_size()).  Any private data associated with the page
-> +	will be folio_size()).  Any private data associated with the folio
->  	should be updated to reflect this truncation.  If offset is 0
->  	and length is folio_size(), then the private data should be
-> -	released, because the page must be able to be completely
-> -	discarded.  This may be done by calling the ->releasepage
-> +	released, because the folio must be able to be completely
-> +	discarded.  This may be done by calling the ->release_folio
->  	function, but in this case the release MUST succeed.
->  
-> -``releasepage``
-> -	releasepage is called on PagePrivate pages to indicate that the
-> -	page should be freed if possible.  ->releasepage should remove
-> -	any private data from the page and clear the PagePrivate flag.
-> -	If releasepage() fails for some reason, it must indicate failure
-> -	with a 0 return value.  releasepage() is used in two distinct
-> -	though related cases.  The first is when the VM finds a clean
-> -	page with no active users and wants to make it a free page.  If
-> -	->releasepage succeeds, the page will be removed from the
-> -	address_space and become free.
-> +``release_folio``
-> +	release_folio is called on folios with private data to tell the
-> +	filesystem that the folio is about to be freed.  ->release_folio
-> +	should remove any private data from the folio and clear the
-> +	private flag.  If release_folio() fails, it should return false.
-> +	release_folio() is used in two distinct though related cases.
-> +	The first is when the VM wants to free a clean folio with no
-> +	active users.  If ->release_folio succeeds, the folio will be
-> +	removed from the address_space and be freed.
->  
->  	The second case is when a request has been made to invalidate
-> -	some or all pages in an address_space.  This can happen through
-> -	the fadvise(POSIX_FADV_DONTNEED) system call or by the
-> -	filesystem explicitly requesting it as nfs and 9fs do (when they
-> +	some or all folios in an address_space.  This can happen
-> +	through the fadvise(POSIX_FADV_DONTNEED) system call or by the
-> +	filesystem explicitly requesting it as nfs and 9p do (when they
->  	believe the cache may be out of date with storage) by calling
->  	invalidate_inode_pages2().  If the filesystem makes such a call,
-> -	and needs to be certain that all pages are invalidated, then its
-> -	releasepage will need to ensure this.  Possibly it can clear the
-> -	PageUptodate bit if it cannot free private data yet.
-> +	and needs to be certain that all folios are invalidated, then
-> +	its release_folio will need to ensure this.  Possibly it can
-> +	clear the uptodate flag if it cannot free private data yet.
->  
->  ``freepage``
->  	freepage is called once the page is no longer visible in the
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index f812f5aa07dd..ad768f13f485 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -355,6 +355,7 @@ struct address_space_operations {
->  	/* Unfortunately this kludge is needed for FIBMAP. Don't use it */
->  	sector_t (*bmap)(struct address_space *, sector_t);
->  	void (*invalidate_folio) (struct folio *, size_t offset, size_t len);
-> +	bool (*release_folio)(struct folio *, gfp_t);
->  	int (*releasepage) (struct page *, gfp_t);
->  	void (*freepage)(struct page *);
->  	ssize_t (*direct_IO)(struct kiocb *, struct iov_iter *iter);
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 81a0ed08a82c..40df5704ec39 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -3956,6 +3956,8 @@ bool filemap_release_folio(struct folio *folio, gfp_t gfp)
->  	if (folio_test_writeback(folio))
->  		return false;
->  
-> +	if (mapping && mapping->a_ops->release_folio)
-> +		return mapping->a_ops->release_folio(folio, gfp);
+> +	dp->dl_recalled = true;
+> +	atomic_inc(&clp->cl_delegs_in_recall);
+> +	if (try_to_expire_client(clp)) {
+> +		nn = net_generic(clp->net, nfsd_net_id);
+> +		mod_delayed_work(laundry_wq, &nn->laundromat_work, 0);
+> +	}
+> +
+>  	/*
+>  	 * We don't want the locks code to timeout the lease for us;
+>  	 * we'll remove it ourself if a delegation isn't returned
+> @@ -4739,9 +4755,15 @@ static int
+>  nfsd_change_deleg_cb(struct file_lock *onlist, int arg,
+>  		     struct list_head *dispose)
+>  {
+> -	if (arg & F_UNLCK)
+> +	struct nfs4_delegation *dp = (struct nfs4_delegation *)onlist->fl_owner;
+> +	struct nfs4_client *clp = dp->dl_stid.sc_client;
+> +
+> +	if (arg & F_UNLCK) {
+> +		if (dp->dl_recalled &&
+> +			atomic_dec_return(&clp->cl_delegs_in_recall) == 0)
+> +			dp->dl_recalled = false;
 
-Might it be worthwhile to add something like this to the above condition
-for now?
+Why isn't this just
 
-      BUG_ON(mapping->a_ops->releasepage);
+		if (dp->dl_recalled)
+			atomic_dec(&clp->cl_delegs_in_recall)
 
-It might help catch bad conversions...
+?  I'm not seeing why the case where cl_delegs_in_recall goes to zero
+should be special.
 
+Also, from a quick check of fs/locks.c, I don't think
+lm_change(.,F_UNLCK,.) will be called more than once, so I don't think
+it's necessary to clear dl_recalled.
 
->  	if (mapping && mapping->a_ops->releasepage)
->  		return mapping->a_ops->releasepage(&folio->page, gfp);
->  	return try_to_free_buffers(&folio->page);
+Other than that, the patch looks good to me.
 
+--b.
 
-Looks pretty like a straighforward change overall.
-
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+>  		return lease_modify(onlist, arg, dispose);
+> -	else
+> +	} else
+>  		return -EAGAIN;
+>  }
+>  
+> @@ -5605,6 +5627,49 @@ static void nfsd4_ssc_expire_umount(struct nfsd_net *nn)
+>  }
+>  #endif
+>  
+> +/*
+> + * place holder for now, no check for lock blockers yet
+> + */
+> +static bool
+> +nfs4_anylock_blockers(struct nfs4_client *clp)
+> +{
+> +	if (atomic_read(&clp->cl_delegs_in_recall) ||
+> +			client_has_openowners(clp)  ||
+> +			!list_empty(&clp->async_copies))
+> +		return true;
+> +	return false;
+> +}
+> +
+> +static void
+> +nfs4_get_client_reaplist(struct nfsd_net *nn, struct list_head *reaplist,
+> +				struct laundry_time *lt)
+> +{
+> +	struct list_head *pos, *next;
+> +	struct nfs4_client *clp;
+> +
+> +	INIT_LIST_HEAD(reaplist);
+> +	spin_lock(&nn->client_lock);
+> +	list_for_each_safe(pos, next, &nn->client_lru) {
+> +		clp = list_entry(pos, struct nfs4_client, cl_lru);
+> +		if (clp->cl_state == NFSD4_EXPIRABLE)
+> +			goto exp_client;
+> +		if (!state_expired(lt, clp->cl_time))
+> +			break;
+> +		if (!atomic_read(&clp->cl_rpc_users))
+> +			clp->cl_state = NFSD4_COURTESY;
+> +		if (!client_has_state(clp) ||
+> +				ktime_get_boottime_seconds() >=
+> +				(clp->cl_time + NFSD_COURTESY_CLIENT_TIMEOUT))
+> +			goto exp_client;
+> +		if (nfs4_anylock_blockers(clp)) {
+> +exp_client:
+> +			if (!mark_client_expired_locked(clp))
+> +				list_add(&clp->cl_lru, reaplist);
+> +		}
+> +	}
+> +	spin_unlock(&nn->client_lock);
+> +}
+> +
+>  static time64_t
+>  nfs4_laundromat(struct nfsd_net *nn)
+>  {
+> @@ -5627,7 +5692,6 @@ nfs4_laundromat(struct nfsd_net *nn)
+>  		goto out;
+>  	}
+>  	nfsd4_end_grace(nn);
+> -	INIT_LIST_HEAD(&reaplist);
+>  
+>  	spin_lock(&nn->s2s_cp_lock);
+>  	idr_for_each_entry(&nn->s2s_cp_stateids, cps_t, i) {
+> @@ -5637,17 +5701,7 @@ nfs4_laundromat(struct nfsd_net *nn)
+>  			_free_cpntf_state_locked(nn, cps);
+>  	}
+>  	spin_unlock(&nn->s2s_cp_lock);
+> -
+> -	spin_lock(&nn->client_lock);
+> -	list_for_each_safe(pos, next, &nn->client_lru) {
+> -		clp = list_entry(pos, struct nfs4_client, cl_lru);
+> -		if (!state_expired(&lt, clp->cl_time))
+> -			break;
+> -		if (mark_client_expired_locked(clp))
+> -			continue;
+> -		list_add(&clp->cl_lru, &reaplist);
+> -	}
+> -	spin_unlock(&nn->client_lock);
+> +	nfs4_get_client_reaplist(nn, &reaplist, &lt);
+>  	list_for_each_safe(pos, next, &reaplist) {
+>  		clp = list_entry(pos, struct nfs4_client, cl_lru);
+>  		trace_nfsd_clid_purged(&clp->cl_clientid);
+> @@ -5722,7 +5776,6 @@ nfs4_laundromat(struct nfsd_net *nn)
+>  	return max_t(time64_t, lt.new_timeo, NFSD_LAUNDROMAT_MINTIMEOUT);
+>  }
+>  
+> -static struct workqueue_struct *laundry_wq;
+>  static void laundromat_main(struct work_struct *);
+>  
+>  static void
+> diff --git a/fs/nfsd/nfsd.h b/fs/nfsd/nfsd.h
+> index 4fc1fd639527..23996c6ca75e 100644
+> --- a/fs/nfsd/nfsd.h
+> +++ b/fs/nfsd/nfsd.h
+> @@ -336,6 +336,7 @@ void		nfsd_lockd_shutdown(void);
+>  #define COMPOUND_ERR_SLACK_SPACE	16     /* OP_SETATTR */
+>  
+>  #define NFSD_LAUNDROMAT_MINTIMEOUT      1   /* seconds */
+> +#define	NFSD_COURTESY_CLIENT_TIMEOUT	(24 * 60 * 60)	/* seconds */
+>  
+>  /*
+>   * The following attributes are currently not supported by the NFSv4 server:
+> diff --git a/fs/nfsd/state.h b/fs/nfsd/state.h
+> index 95457cfd37fc..f3d6313914ed 100644
+> --- a/fs/nfsd/state.h
+> +++ b/fs/nfsd/state.h
+> @@ -149,6 +149,7 @@ struct nfs4_delegation {
+>  /* For recall: */
+>  	int			dl_retries;
+>  	struct nfsd4_callback	dl_recall;
+> +	bool			dl_recalled;
+>  };
+>  
+>  #define cb_to_delegation(cb) \
+> @@ -283,6 +284,28 @@ struct nfsd4_sessionid {
+>  #define HEXDIR_LEN     33 /* hex version of 16 byte md5 of cl_name plus '\0' */
+>  
+>  /*
+> + *       State                Meaning                  Where set
+> + * --------------------------------------------------------------------------
+> + * | NFSD4_ACTIVE      | Confirmed, active    | Default                     |
+> + * |------------------- ----------------------------------------------------|
+> + * | NFSD4_COURTESY    | Courtesy state.      | nfs4_get_client_reaplist    |
+> + * |                   | Lease/lock/share     |                             |
+> + * |                   | reservation conflict |                             |
+> + * |                   | can cause Courtesy   |                             |
+> + * |                   | client to be expired |                             |
+> + * |------------------------------------------------------------------------|
+> + * | NFSD4_EXPIRABLE   | Courtesy client to be| nfs4_laundromat             |
+> + * |                   | expired by Laundromat| try_to_expire_client        |
+> + * |                   | due to conflict      |                             |
+> + * |------------------------------------------------------------------------|
+> + */
+> +enum {
+> +	NFSD4_ACTIVE = 0,
+> +	NFSD4_COURTESY,
+> +	NFSD4_EXPIRABLE,
+> +};
+> +
+> +/*
+>   * struct nfs4_client - one per client.  Clientids live here.
+>   *
+>   * The initial object created by an NFS client using SETCLIENTID (for NFSv4.0)
+> @@ -385,6 +408,9 @@ struct nfs4_client {
+>  	struct list_head	async_copies;	/* list of async copies */
+>  	spinlock_t		async_lock;	/* lock for async copies */
+>  	atomic_t		cl_cb_inflight;	/* Outstanding callbacks */
+> +
+> +	unsigned int		cl_state;
+> +	atomic_t		cl_delegs_in_recall;
+>  };
+>  
+>  /* struct nfs4_client_reset
+> @@ -702,4 +728,9 @@ extern void nfsd4_client_record_remove(struct nfs4_client *clp);
+>  extern int nfsd4_client_record_check(struct nfs4_client *clp);
+>  extern void nfsd4_record_grace_done(struct nfsd_net *nn);
+>  
+> +static inline bool try_to_expire_client(struct nfs4_client *clp)
+> +{
+> +	cmpxchg(&clp->cl_state, NFSD4_COURTESY, NFSD4_EXPIRABLE);
+> +	return clp->cl_state == NFSD4_EXPIRABLE;
+> +}
+>  #endif   /* NFSD4_STATE_H */
+> -- 
+> 2.9.5
