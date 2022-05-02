@@ -2,127 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 892E4516FEA
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 May 2022 15:00:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3284751713C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 May 2022 16:06:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1381791AbiEBNEJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 May 2022 09:04:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60998 "EHLO
+        id S236801AbiEBOJz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 May 2022 10:09:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48222 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1385146AbiEBNDx (ORCPT
+        with ESMTP id S236744AbiEBOJy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 May 2022 09:03:53 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C012638A8;
-        Mon,  2 May 2022 06:00:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=XcyDdbV6DXOFSllXpbj6CsMixxQmR7G0rPcGqPJD948=; b=UnfKsUiNYlJFBUfNSmzK55N9FV
-        d/ykjTsFHA4ajgAFOwQwqpJmlQRG2VNdw/oEJR/ZSb8f30uqP5x8yOD729FV8RqMo+e070nXj517V
-        GB+sZgKt75sDs+9zpSWqPVtxxdlxhOjCYphLrjqHydAyfjJTQvECb610arZdFM2JqezqCN54Rjxty
-        f4XEOesg85owuoqiZRyAuY1M6gSKuNfTJgiozjnCunVOYUBQ/Ff/epwsJ114WtLiDFUcIcGAChKvM
-        mPSmUDiPpj2mVxnNKvJwd+PFqoW4EklW4wan3wamNQNwU+WX4w7a7WWSBQTuSJBSPUTk34+LuxkNN
-        2u06H1Og==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nlVey-00Ep4a-Hh; Mon, 02 May 2022 13:00:16 +0000
-Date:   Mon, 2 May 2022 14:00:16 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Brian Foster <bfoster@redhat.com>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        xfs <linux-xfs@vger.kernel.org>,
-        fstests <fstests@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: generic/068 crash on 5.18-rc2?
-Message-ID: <Ym/V4G2RcQd/RmHZ@casper.infradead.org>
-References: <20220413033425.GM16799@magnolia>
- <YlbjOPEQP66gc1WQ@casper.infradead.org>
- <20220418174747.GF17025@magnolia>
- <20220422215943.GC17025@magnolia>
- <Ymq4brjhBcBvcfIs@bfoster>
- <Ymywh003c+Hd4Zu9@casper.infradead.org>
- <Ym/MEBfa0szil3hW@bfoster>
+        Mon, 2 May 2022 10:09:54 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EECAEE03F;
+        Mon,  2 May 2022 07:06:24 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 6120AB8115F;
+        Mon,  2 May 2022 14:06:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7230AC385AC;
+        Mon,  2 May 2022 14:06:21 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+        dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="eWJc49DY"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+        t=1651500379;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=+7+HGir1Cy6uU4bq/QSK6Sa0K4vOQe5UFQEDdB+7RMI=;
+        b=eWJc49DY3MlUFo3eogAJqMeRkRrRIoCzUvKiQAh5btUyGLkMzSvCJcS5QPFb2l8HKapJrg
+        nQE7N4FjRz4A5porfk0mUwLD5XcKSjb9z3rFmNGVwvS3vfTMF8Lfpu6EGhjL6xXtTqxOuQ
+        UuocIv+v31Sgk/OWwIhfVawGtbu61Z8=
+Received: by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 160ad175 (TLSv1.3:AEAD-AES256-GCM-SHA384:256:NO);
+        Mon, 2 May 2022 14:06:18 +0000 (UTC)
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+To:     linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org
+Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH 1/2] sysctl: read() must consume poll events, not poll()
+Date:   Mon,  2 May 2022 16:06:01 +0200
+Message-Id: <20220502140602.130373-1-Jason@zx2c4.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Ym/MEBfa0szil3hW@bfoster>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-6.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 02, 2022 at 08:18:24AM -0400, Brian Foster wrote:
-> On Sat, Apr 30, 2022 at 04:44:07AM +0100, Matthew Wilcox wrote:
-> > On Thu, Apr 28, 2022 at 11:53:18AM -0400, Brian Foster wrote:
-> > > The above is the variant of generic/068 failure I was reproducing and
-> > > used to bisect [1]. With some additional tracing added to ioend
-> > > completion, what I'm seeing is that the bio_for_each_folio_all() bvec
-> > > iteration basically seems to go off the rails. What happens more
-> > > specifically is that at some point during the loop, bio_next_folio()
-> > > actually lands into the second page of the just processed folio instead
-> > > of the actual next folio (i.e. as if it's walking to the next page from
-> > > the head page of the folio instead of to the next 16k folio). I suspect
-> > > completion is racing with some form of truncation/reclaim/invalidation
-> > > here, what exactly I don't know, that perhaps breaks down the folio and
-> > > renders the iteration (bio_next_folio() -> folio_next()) unsafe. To test
-> > > that theory, I open coded and modified the loop to something like the
-> > > following:
-> > > 
-> > >                 for (bio_first_folio(&fi, bio, 0); fi.folio; ) {
-> > >                         f = fi.folio;
-> > >                         l = fi.length;
-> > >                         bio_next_folio(&fi, bio);
-> > >                         iomap_finish_folio_write(inode, f, l, error);
-> > >                         folio_count++;
-> > >                 }
-> > > 
-> > > ... to avoid accessing folio metadata after writeback is cleared on it
-> > > and this seems to make the problem disappear (so far, I'll need to let
-> > > this spin for a while longer to be completely confident in that).
-> > 
-> > _Oh_.
-> > 
-> > It's not even a terribly weird race, then.  It's just this:
-> > 
-> > CPU 0				CPU 1
-> > 				truncate_inode_partial_folio()
-> > 				folio_wait_writeback();
-> > bio_next_folio(&fi, bio)
-> > iomap_finish_folio_write(fi.folio)
-> > folio_end_writeback(folio)
-> > 				split_huge_page()
-> > bio_next_folio()
-> > ... oops, now we only walked forward one page instead of the entire folio.
-> > 
-> 
-> Yep, though once I noticed and turned on the mm_page_free tracepoint, it
-> looked like it was actually the I/O completion path breaking down the
-> compound folio:
-> 
->    kworker/10:1-440     [010] .....   355.369899: iomap_finish_ioend: 1090: bio 00000000bc8445c7 index 192 fi (00000000dc8c03bd 0 16384 32768 27)
->    ...
->     kworker/10:1-440     [010] .....   355.369905: mm_page_free: page=00000000dc8c03bd pfn=0x182190 order=2
->     kworker/10:1-440     [010] .....   355.369907: iomap_finish_ioend: 1090: bio 00000000bc8445c7 index 1 fi (00000000f8b5d9b3 0 4096 16384 27)
-> 
-> I take that to mean the truncate path executes while the completion side
-> holds a reference, folio_end_writeback() ends up dropping the last
-> reference, falls into the free/split path and the iteration breaks from
-> there. Same idea either way, I think.
+Events that poll() responds to are supposed to be consumed when the file
+is read(), not by the poll() itself. By putting it on the poll() itself,
+it makes it impossible to poll() on a epoll file descriptor, since the
+event gets consumed too early. Jann wrote a PoC, available in the link
+below.
 
-Absolutely.  That's probably the more common path anyway; we truncate
-an entire folio instead of a partial one, so it could be:
+Reported-by: Jann Horn <jannh@google.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org
+Link: https://lore.kernel.org/lkml/CAG48ez1F0P7Wnp=PGhiUej=u=8CSF6gpD9J=Oxxg0buFRqV1tA@mail.gmail.com/
+Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+---
+ fs/proc/proc_sysctl.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-truncate_inode_partial_folio():
-        folio_wait_writeback(folio);
-        if (length == folio_size(folio)) {
-                truncate_inode_folio(folio->mapping, folio);
-
-or basically the same code in truncate_inode_pages_range()
-or invalidate_inode_pages2_range().
+diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+index 7d9cfc730bd4..1aa145794207 100644
+--- a/fs/proc/proc_sysctl.c
++++ b/fs/proc/proc_sysctl.c
+@@ -622,6 +622,14 @@ static ssize_t proc_sys_call_handler(struct kiocb *iocb, struct iov_iter *iter,
+ 
+ static ssize_t proc_sys_read(struct kiocb *iocb, struct iov_iter *iter)
+ {
++	struct inode *inode = file_inode(iocb->ki_filp);
++	struct ctl_table_header *head = grab_header(inode);
++	struct ctl_table *table = PROC_I(inode)->sysctl_entry;
++
++	if (!IS_ERR(head) && table->poll)
++		iocb->ki_filp->private_data = proc_sys_poll_event(table->poll);
++	sysctl_head_finish(head);
++
+ 	return proc_sys_call_handler(iocb, iter, 0);
+ }
+ 
+@@ -668,10 +676,8 @@ static __poll_t proc_sys_poll(struct file *filp, poll_table *wait)
+ 	event = (unsigned long)filp->private_data;
+ 	poll_wait(filp, &table->poll->wait, wait);
+ 
+-	if (event != atomic_read(&table->poll->event)) {
+-		filp->private_data = proc_sys_poll_event(table->poll);
++	if (event != atomic_read(&table->poll->event))
+ 		ret = EPOLLIN | EPOLLRDNORM | EPOLLERR | EPOLLPRI;
+-	}
+ 
+ out:
+ 	sysctl_head_finish(head);
+-- 
+2.35.1
 
