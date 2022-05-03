@@ -2,44 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B2E465186DA
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 May 2022 16:37:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB76A5186DB
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 May 2022 16:37:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237148AbiECOlE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 May 2022 10:41:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36114 "EHLO
+        id S237151AbiECOlL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 May 2022 10:41:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36160 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236366AbiECOlC (ORCPT
+        with ESMTP id S236366AbiECOlK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 May 2022 10:41:02 -0400
+        Tue, 3 May 2022 10:41:10 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE9B92AE32
-        for <linux-fsdevel@vger.kernel.org>; Tue,  3 May 2022 07:37:30 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5020C3467F
+        for <linux-fsdevel@vger.kernel.org>; Tue,  3 May 2022 07:37:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=1umyAol6qJ52sj688B0QitsfoTQEqbkW4R/EnVJiSfk=; b=dI/wc9i9IGVwznnnV2JAyX1p6R
-        rj4rVu4GBXm0o1/2ydP+pk66pttmoBOREwqcdO2RL+ItIcc6ZnIMAkqdKnmaOgYHmMN8YRVsyba+9
-        lL0zA7zWetXbo7cOMFVqoYU9OBHFr9kVvWf+B0neqQ/4G62e8ynhqRSjkdNKZuZlZNhf1QABwzNoY
-        lovW4r9YpmgxF+uZ4dqmA4OnuX6/RqSsQzdQKDhPFhEGKl3avheVDNHv7lZgoORff4Vo4uVEdEKrb
-        v52kL0L8s8GcAS4KtMUuj4/qOBnBuZgVnLNcieXzifeGPaA3d89LiK99eKcQJtdTLKND2+TKcKoaS
-        8ZNhbR8A==;
+        bh=1umyAol6qJ52sj688B0QitsfoTQEqbkW4R/EnVJiSfk=; b=Wx8cIeaWZgJR78ZLfbIx6TJz6R
+        +BDVREPIFBS/rH5G1PssJdoDNsZG7qQKI65X4KPEYsQ/Bx3p16HvkrMg0k1C1SOwPJZE4SnzBafIG
+        eXWelNOSk0dwWigjCBLtiE4cTUsQMrTmG+1Rkpjl9DtHPAEHHT/8zCIlhWb8SvDer9gmEaevcJSlZ
+        dDbppPpvGSIit1L9vRwj0nT9Qqz9dXJ/A8YFWlSWe9GpiK1bg4yyqft1up0SgIzaI5gZ1dC6b6BCj
+        853jBF42f5008MhvU27igqGVDdO1CqvJTMrtujDy4WVOQTqfagq8H6Xsmc88abi/fsT7+IIzhOi1q
+        pvPDU5Rg==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nltec-006Ieg-LY; Tue, 03 May 2022 14:37:30 +0000
-Date:   Tue, 3 May 2022 07:37:30 -0700
+        id 1nltek-006Ig1-0C; Tue, 03 May 2022 14:37:38 +0000
+Date:   Tue, 3 May 2022 07:37:37 -0700
 From:   Christoph Hellwig <hch@infradead.org>
 To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
 Cc:     linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 22/69] ext4: Call aops write_begin() and write_end()
+Subject: Re: [PATCH 23/69] f2fs: Call aops write_begin() and write_end()
  directly
-Message-ID: <YnE+KutnxTN/og/Q@infradead.org>
+Message-ID: <YnE+MUNl3vh4Xctg@infradead.org>
 References: <20220429172556.3011843-1-willy@infradead.org>
- <20220429172556.3011843-23-willy@infradead.org>
+ <20220429172556.3011843-24-willy@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220429172556.3011843-23-willy@infradead.org>
+In-Reply-To: <20220429172556.3011843-24-willy@infradead.org>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
