@@ -2,73 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F1EDE518FD0
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 May 2022 23:13:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23B4351905B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 May 2022 23:43:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231410AbiECVPr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 May 2022 17:15:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53074 "EHLO
+        id S242970AbiECVkv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 May 2022 17:40:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229689AbiECVPp (ORCPT
+        with ESMTP id S229451AbiECVku (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 May 2022 17:15:45 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C77AF40A18
-        for <linux-fsdevel@vger.kernel.org>; Tue,  3 May 2022 14:12:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=WPe7wnkFUKpUZBDi2c8e4iUxhhEPkpK//lI+1BIiKxc=; b=gJf6DHKp9qrf6SdlIMPf4cxX9U
-        pCfXIlqxgCffbVWO3/hQtriNissfE3hjuR0inezAQq7yEbFNz/pneU93wSgS1OcM9CBi/EYH9MPI3
-        DlFx5H3qXOf5+UShQoreJyZ66d95Qizo9wgu2abTWykPc6QfcPUbiYwIreT+xWOCT7kHopyMDt/81
-        EOgKH7qs+W0PWeh9ZkUTyOZxLiq3jwJvFx3W3BBnZamrkAXSS2S7uuvK9OCjUPvANi+zv9T04DaSj
-        a6s74dlOJIudqwKNeTiyAaaQ/SC9fEw6vTs5GyATSVygggJ6An1m6jezUwGCjJLO69c+zVC2aQSru
-        DAtQSV1g==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nlzoW-00Fxxz-17; Tue, 03 May 2022 21:12:08 +0000
-Date:   Tue, 3 May 2022 22:12:07 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 01/69] scsicam: Fix use of page cache
-Message-ID: <YnGap/hM8d2h8hCC@casper.infradead.org>
-References: <20220429172556.3011843-1-willy@infradead.org>
- <20220429172556.3011843-2-willy@infradead.org>
- <YnE9vaA14JqqbD1W@infradead.org>
+        Tue, 3 May 2022 17:40:50 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6150A31921
+        for <linux-fsdevel@vger.kernel.org>; Tue,  3 May 2022 14:37:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1651613836;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=aStIUsv3bUno6wgnE6p+ahkgDftecN0R+3tSGZd7L94=;
+        b=WniRSMG3ChlbCSqFqS8ZOF4kRx8v2NJj/kyP7E5TxTueu77WIDjwWcUnkIEiZKZgqwVJ8W
+        beafl306Nholpm3eJ9zaPPME/7cYXEQtjHjoCAGeVdwt+Gnk6kTFCyDX4YFCGuR3EOozDk
+        G2i9LnDLhSfdVrf1aEqyEPzkvIO9hPE=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-347-wXiZ68ZPOoa8tNLWueJUVA-1; Tue, 03 May 2022 17:36:49 -0400
+X-MC-Unique: wXiZ68ZPOoa8tNLWueJUVA-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 0B82F94A2B5;
+        Tue,  3 May 2022 21:36:48 +0000 (UTC)
+Received: from max.localdomain (unknown [10.40.194.254])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C14CF1546E0B;
+        Tue,  3 May 2022 21:36:46 +0000 (UTC)
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+To:     Christoph Hellwig <hch@infradead.org>,
+        "Darrick J . Wong" <djwong@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Andreas Gruenbacher <agruenba@redhat.com>
+Subject: [PATCH] iomap: iomap_write_failed fix
+Date:   Tue,  3 May 2022 23:36:45 +0200
+Message-Id: <20220503213645.3273828-1-agruenba@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YnE9vaA14JqqbD1W@infradead.org>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.85 on 10.11.54.7
+X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 03, 2022 at 07:35:41AM -0700, Christoph Hellwig wrote:
-> On Fri, Apr 29, 2022 at 06:24:48PM +0100, Matthew Wilcox (Oracle) wrote:
-> > Filesystems do not necessarily set PageError; instead they will leave
-> > PageUptodate clear on errors.  We should also kmap() the page before
-> > accessing it in case the page is allocated from HIGHMEM.
-> 
-> The PageError to PageUptodate change looks sane.  But block device
-> page cache absolutely must not be in highmem, so I don't see a point
-> in the kmap conversion here.
+The @lend parameter of truncate_pagecache_range() should be the offset
+of the last byte of the hole, not the first byte beyond it.
 
-Huh, I didn't know that.  I think I've seen that some filesystems also
-require non-highmem pages for directory or symlink inodes.
+Fixes: ae259a9c8593 ("fs: introduce iomap infrastructure")
+Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+---
+ fs/iomap/buffered-io.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Coincidentally, I was in Ira's session earlier today where he was
-talking about reusing/abusing kmap/kmap_local/kmap_atomic to implement
-protection keys.  I'm not entirely sold on the concept, but something
-like this might also be useful for a CHERI-style architecture.
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 8ce8720093b9..358ee1fb6f0d 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -531,7 +531,8 @@ iomap_write_failed(struct inode *inode, loff_t pos, unsigned len)
+ 	 * write started inside the existing inode size.
+ 	 */
+ 	if (pos + len > i_size)
+-		truncate_pagecache_range(inode, max(pos, i_size), pos + len);
++		truncate_pagecache_range(inode, max(pos, i_size),
++					 pos + len - 1);
+ }
+ 
+ static int iomap_read_folio_sync(loff_t block_start, struct folio *folio,
+-- 
+2.35.1
 
-I'm kind of inclined to say "We should always kmap() anything we get from
-the page cache to support the unmapped-by-default case" because it's not
-exactly expensive to call kmap() on a page which is permanently mapped.
-I dunno.
