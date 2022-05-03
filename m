@@ -2,61 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AE931518877
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 May 2022 17:25:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA4ED518808
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 May 2022 17:12:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237485AbiECP2j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 May 2022 11:28:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33426 "EHLO
+        id S237905AbiECPPm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 May 2022 11:15:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238433AbiECP2h (ORCPT
+        with ESMTP id S236394AbiECPPk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 May 2022 11:28:37 -0400
+        Tue, 3 May 2022 11:15:40 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id F1F0F3C48A
-        for <linux-fsdevel@vger.kernel.org>; Tue,  3 May 2022 08:25:01 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 162273A5D7
+        for <linux-fsdevel@vger.kernel.org>; Tue,  3 May 2022 08:12:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1651591501;
+        s=mimecast20190719; t=1651590727;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=d3hGKvDjDhA3A5CPaQDCX7CfmyhvahBgWk3Z2qwaPMg=;
-        b=GYM17E4AZAVtbYXlD+8g60/1R5hXUJimQcm3a43svZfxUbQJMHEu7KdKET1QJG75ysh++5
-        PxMJdnJEjCy1bzq/1Kqj7FL+Taf7UN1/YK6Z8Av8IkH851oTHRqQfiFSCEs6WdFG9Cn80T
-        dvx7GBegsjyxRPkQ+vTLfQZcKk6ALA8=
+        bh=xALRK9R5AWNZ7LG4kj2LfKpnduFxzArKbMxNGs4Fs8s=;
+        b=QcTyESqWGUNWumQlTFssI56d4vnKU3TTH02NMP4mos+8EonPFu5wzwUlU9jBRtJu8feG4Y
+        qPXfOQ/Y7DSFDSMqXnggBEeYGay3LzaP5zupIST9GYebAhahkM/1aL67hUYXNg6ULClzLk
+        jSYG4cKBONp6PjukMbL6UrNigpQKqEc=
 Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
  [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-622-5WN2CR5QOB-ZMM7mWcgrSQ-1; Tue, 03 May 2022 11:24:45 -0400
-X-MC-Unique: 5WN2CR5QOB-ZMM7mWcgrSQ-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+ us-mta-171-_aljzM8yOpyzI6l71FA7hw-1; Tue, 03 May 2022 11:11:48 -0400
+X-MC-Unique: _aljzM8yOpyzI6l71FA7hw-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 4D32FA97710;
-        Tue,  3 May 2022 12:43:01 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 23946B777E9;
+        Tue,  3 May 2022 14:13:03 +0000 (UTC)
 Received: from horse.redhat.com (unknown [10.18.25.210])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3977340D2820;
-        Tue,  3 May 2022 12:43:01 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E5FEC40CFD32;
+        Tue,  3 May 2022 14:13:02 +0000 (UTC)
 Received: by horse.redhat.com (Postfix, from userid 10451)
-        id E979B22570F; Tue,  3 May 2022 08:43:00 -0400 (EDT)
-Date:   Tue, 3 May 2022 08:43:00 -0400
+        id A22E7220463; Tue,  3 May 2022 10:13:02 -0400 (EDT)
+Date:   Tue, 3 May 2022 10:13:02 -0400
 From:   Vivek Goyal <vgoyal@redhat.com>
 To:     Dharmendra Singh <dharamhans87@gmail.com>
 Cc:     miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
         fuse-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
         bschubert@ddn.com, Dharmendra Singh <dsingh@ddn.com>
 Subject: Re: [PATCH v4 1/3] FUSE: Implement atomic lookup + create
-Message-ID: <YnEjVMTYVd8S1Zbs@redhat.com>
+Message-ID: <YnE4bqYoUJsJR3tV@redhat.com>
 References: <20220502102521.22875-1-dharamhans87@gmail.com>
  <20220502102521.22875-2-dharamhans87@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <20220502102521.22875-2-dharamhans87@gmail.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.11.54.2
+X-Scanned-By: MIMEDefang 2.84 on 10.11.54.1
 X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -74,20 +74,7 @@ On Mon, May 02, 2022 at 03:55:19PM +0530, Dharmendra Singh wrote:
 > as part of create call into libfuse.
 > 
 > This lookup + create in single call to libfuse and finally
-> to USER SPACE has been named as atomic create.
-
-Looking at it and trying to understand if lookup can be avoided. But
-before that this naming of calling it atomic create seems confusing.
-
-We already have fuse_create_open() which we are calling it as 
-"Atomic create+open operation". Now looks like this is extension
-to this operation where we are doing "Atomic lookup + create + open".
-Do I understand it correctly?
-
-Thanks
-Vivek
-
-> It is expected
+> to USER SPACE has been named as atomic create. It is expected
 > that USER SPACE create the file, open it and fills in the
 > attributes which are then used to make inode stand/revalidate
 > in the kernel cache. Also if file was newly created(does not
@@ -154,6 +141,11 @@ Vivek
 > +	/*
 > +	 * In atomic create, we skipped lookup and it is very much likely that
 > +	 * dentry has DCACHE_PAR_LOOKUP flag set on it so call d_splice_alias().
+
+Can you please help me understand what does DCACHE_PAR_LOOKUP flag mean.
+Also how d_splice_alias() helps in that case.
+
+
 > +	 * Note: Only REG file is allowed under create/atomic create.
 > +	 */
 > +	/* There is special case when at very first call where we check if
@@ -164,6 +156,29 @@ Vivek
 > +	 */
 > +	if (!atomic_create && !d_in_lookup(entry) && fm->fc->no_atomic_create)
 > +		d_instantiate(entry, inode);
+
+So if we are trying to do atomic_create first time, then we skipped lookup
+in fuse_atomic_open() (assuming DCACHE_PAR_LOOKUP flag is set). If server
+does not support, atomic_create, then we will set
+fm->fc->no_atomic_create=1 and non-atomic create will be tried and we will
+come here. And given we skipped lookup (even for non-atomic-create) case,
+we are going to call d_splice_alias(). Right?
+
+IOW, even without non-atomic-create, you are skipping lookup() and be
+able to handle file creation and use d_splice_alias(). If this is
+correct, I am wondering why do I need atomic create to begin with.
+
+If this is not correct, then fuse_atomic_open() probably should handle
+error from fuse_create_open(FUSE_ATOMIC_CREATE) first, retry lookup
+and then retry fuse_create_open(FUSE_CREATE).
+
+What am I missing?
+
+Thanks
+Vivek
+
+
+
 > +	else {
 > +		res = d_splice_alias(inode, entry);
 > +		if (res) {
@@ -182,6 +197,8 @@ Vivek
 > +			WARN_ON(res);
 > +		}
 > +	}
+
+
 >  	fuse_change_entry_timeout(entry, &outentry);
 > -	fuse_dir_changed(dir);
 > +	/*
