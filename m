@@ -2,114 +2,179 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 62E4A518816
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 May 2022 17:14:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 165BC51887A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 May 2022 17:25:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238024AbiECPSS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 May 2022 11:18:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46146 "EHLO
+        id S238416AbiECP32 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 May 2022 11:29:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232306AbiECPSQ (ORCPT
+        with ESMTP id S238591AbiECP3O (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 May 2022 11:18:16 -0400
-Received: from mail-qt1-x82c.google.com (mail-qt1-x82c.google.com [IPv6:2607:f8b0:4864:20::82c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFB373A714;
-        Tue,  3 May 2022 08:14:43 -0700 (PDT)
-Received: by mail-qt1-x82c.google.com with SMTP id k2so7193634qtp.1;
-        Tue, 03 May 2022 08:14:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vuqvJ8A4FAPCd0ZxLOVcJFiWq1cjGCU3yw1SfcBfSUY=;
-        b=kzKzv3NsXMvjvu1MlZgBFVmD91rFPoTzjrJ2cUZ3tIWOgXoc+s+4GrxtRxTSr1Mxab
-         ApzybxelwdHze5Xmq6vH0KQCKguGSNdCYOj2bOjeFly7Q1IjNoy9Yb+BCB8f1huhcAqC
-         k40vKwB4nKAqQM4+ekc9iHBrbxyN7MXBSd+W4pI9sxXh97alepbvUMQqOTaslybLp4+D
-         hRFtry5y3FiAB63k3qa88Cw+6+/mn84vG/epS8gnCHc66XJViQqT+gXDoZjeKk/2qnzb
-         2oJBHpsOlNvkhYFuD+EcItAgPN5PWZ9SomdTJPbVu1yH6RLDx0B8/8kogRLq1WnIc+w7
-         kMyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vuqvJ8A4FAPCd0ZxLOVcJFiWq1cjGCU3yw1SfcBfSUY=;
-        b=JOLFYkBq4xGdHT33N3/d2T4n+UYnLaUpFANKqTfKWlnqpc7rAdfylqvwRq+rKP+FVO
-         YjSSpSsRKcZLLHGudqp3mamuCBNuGH1A4fvEJ9ZP3BdSNuT29/X13eH8jUQeW1X3myAH
-         1aa4655GJpaRncmSaRxxjstKmSG3UiX461KCTvCFpGv4Q+qnsy31izGaP5fcgm/T6cdv
-         BuEcNvQs8kmTXgnj2M+PuQgaq79V8Moe/ocfH1kaVBuur0BbrQJ0NpOoXuKCyDHYmU0/
-         uuqomCHCL9hhGouFfskIzMc2K4SFbJ7JgYrslV8bWGm1eWvIs/aflUzSSY7kR9LHETYv
-         itig==
-X-Gm-Message-State: AOAM533km2AkrsC7LRJwFXXJctVMe0PBsiNY4SNZ6BrbHYGTOhxlKLIm
-        My18WFfYDNti9H9y7iH/vBceg4zaj0EF7kGPlxQ=
-X-Google-Smtp-Source: ABdhPJwkmrc8+A8LLLRMtq2qm8/vNyS036IFhaV1AfKVJA/p+3tLccnsxkgGbgL2IHademLNBz1XLf8TdlEeJeOhD/U=
-X-Received: by 2002:a05:622a:c9:b0:2f3:b100:648c with SMTP id
- p9-20020a05622a00c900b002f3b100648cmr1883202qtw.157.1651590883121; Tue, 03
- May 2022 08:14:43 -0700 (PDT)
+        Tue, 3 May 2022 11:29:14 -0400
+Received: from synology.com (mail.synology.com [211.23.38.101])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76B5122287
+        for <linux-fsdevel@vger.kernel.org>; Tue,  3 May 2022 08:25:41 -0700 (PDT)
+From:   Chung-Chiang Cheng <cccheng@synology.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synology.com; s=123;
+        t=1651591538; bh=3me3flhlF0zAioUhf31RCVJJKrxmqTsn06do/9rp53c=;
+        h=From:To:Cc:Subject:Date;
+        b=dUAlt7Gps51ZhqxuuapdJAXkl64qj+ZQ7ABfTNg8wjUgq11DeTMhk9GKJj40Kg444
+         L6YOYLKQhs2aKYAEbnLCoXcYLtxrK0kWxjXZWyTAVr5HeR5l3I/zE52eweTTK7EFY+
+         L5N/PH5Q2Ienpb5z7azexLEwh6lviVhQDoLI/q3o=
+To:     hirofumi@mail.parknet.co.jp
+Cc:     linux-fsdevel@vger.kernel.org, shepjeng@gmail.com,
+        kernel@cccheng.net, Chung-Chiang Cheng <cccheng@synology.com>
+Subject: [PATCH v6 1/4] fat: split fat_truncate_time() into separate functions
+Date:   Tue,  3 May 2022 23:25:33 +0800
+Message-Id: <20220503152536.2503003-1-cccheng@synology.com>
 MIME-Version: 1.0
-References: <YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com> <CAOQ4uxim+JmFbXPQcasELDEgRDP-spdPtJrLuhvSiyxErSUkvw@mail.gmail.com>
- <YnFB/ct2Q/yYBnm8@kroah.com> <CAJfpegtZjRca5QPm2QgPtPG0-BJ=15Vtd48OTnRnr5G7ggAtmA@mail.gmail.com>
-In-Reply-To: <CAJfpegtZjRca5QPm2QgPtPG0-BJ=15Vtd48OTnRnr5G7ggAtmA@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 3 May 2022 18:14:31 +0300
-Message-ID: <CAOQ4uxiBsQXbxQJf7Az3T+gq7Oph4joykqMB0EP87U=bj4LvSg@mail.gmail.com>
-Subject: Re: [RFC PATCH] getting misc stats/attributes via xattr API
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        "Theodore Ts'o" <tytso@mit.edu>, Karel Zak <kzak@redhat.com>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Ian Kent <raven@themaw.net>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Synology-MCP-Status: no
+X-Synology-Spam-Flag: no
+X-Synology-Spam-Status: score=0, required 6, WHITELIST_FROM_ADDRESS 0
+X-Synology-Virus-Status: no
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 3, 2022 at 6:04 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
->
-> On Tue, 3 May 2022 at 16:53, Greg KH <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Tue, May 03, 2022 at 05:39:46PM +0300, Amir Goldstein wrote:
->
-> > > It should be noted that while this API mandates text keys,
-> > > it does not mandate text values, so for example, sb iostats could be
-> > > exported as text or as binary struct, or as individual text/binary records or
-> > > all of the above.
-> >
-> > Ugh, no, that would be a total mess.  Don't go exporting random binary
-> > structs depending on the file, that's going to be completely
-> > unmaintainable.  As it is, this is going to be hard enough with random
-> > text fields.
-> >
-> > As for this format, it needs to be required to be documented in
-> > Documentation/ABI/ for each entry and key type so that we have a chance
-> > of knowing what is going on and tracking how things are working and
-> > validating stuff.
->
-> My preference would be a single text value for each key.
->
-> Contents of ":mnt:info" contradicts that, but mountinfo has a long
-> established, well documented format, and nothing prevents exporting
-> individual attributes with separate names as well (the getvalues(2)
-> patch did exactly that).
->
+Separate fat_truncate_time() to each timestamps for later creation time
+work.
 
-Right, the fun is that ":mnt:info" and ":mnt:info:" can co-exist.
+This patch does not introduce any functional changes, it's merely
+refactoring change.
 
-Thanks,
-Amir.
+Signed-off-by: Chung-Chiang Cheng <cccheng@synology.com>
+---
+ fs/fat/fat.h  |  6 +++++
+ fs/fat/misc.c | 74 ++++++++++++++++++++++++++++++++-------------------
+ 2 files changed, 53 insertions(+), 27 deletions(-)
+
+diff --git a/fs/fat/fat.h b/fs/fat/fat.h
+index 02d4d4234956..6b04aa623b3b 100644
+--- a/fs/fat/fat.h
++++ b/fs/fat/fat.h
+@@ -446,6 +446,12 @@ extern void fat_time_fat2unix(struct msdos_sb_info *sbi, struct timespec64 *ts,
+ 			      __le16 __time, __le16 __date, u8 time_cs);
+ extern void fat_time_unix2fat(struct msdos_sb_info *sbi, struct timespec64 *ts,
+ 			      __le16 *time, __le16 *date, u8 *time_cs);
++extern struct timespec64 fat_truncate_atime(const struct msdos_sb_info *sbi,
++					    const struct timespec64 *ts);
++extern struct timespec64 fat_truncate_crtime(const struct msdos_sb_info *sbi,
++					     const struct timespec64 *ts);
++extern struct timespec64 fat_truncate_mtime(const struct msdos_sb_info *sbi,
++					    const struct timespec64 *ts);
+ extern int fat_truncate_time(struct inode *inode, struct timespec64 *now,
+ 			     int flags);
+ extern int fat_update_time(struct inode *inode, struct timespec64 *now,
+diff --git a/fs/fat/misc.c b/fs/fat/misc.c
+index 91ca3c304211..63160e47be00 100644
+--- a/fs/fat/misc.c
++++ b/fs/fat/misc.c
+@@ -187,7 +187,7 @@ static long days_in_year[] = {
+ 	0,   0,  31,  59,  90, 120, 151, 181, 212, 243, 273, 304, 334, 0, 0, 0,
+ };
+ 
+-static inline int fat_tz_offset(struct msdos_sb_info *sbi)
++static inline int fat_tz_offset(const struct msdos_sb_info *sbi)
+ {
+ 	return (sbi->options.tz_set ?
+ 	       -sbi->options.time_offset :
+@@ -282,16 +282,49 @@ static inline struct timespec64 fat_timespec64_trunc_10ms(struct timespec64 ts)
+ 	return ts;
+ }
+ 
++/*
++ * truncate atime to 24 hour granularity (00:00:00 in local timezone)
++ */
++struct timespec64 fat_truncate_atime(const struct msdos_sb_info *sbi,
++				     const struct timespec64 *ts)
++{
++	/* to localtime */
++	time64_t seconds = ts->tv_sec - fat_tz_offset(sbi);
++	s32 remainder;
++
++	div_s64_rem(seconds, SECS_PER_DAY, &remainder);
++	/* to day boundary, and back to unix time */
++	seconds = seconds + fat_tz_offset(sbi) - remainder;
++
++	return (struct timespec64){ seconds, 0 };
++}
++
++/*
++ * truncate creation time with appropriate granularity:
++ *   msdos - 2 seconds
++ *   vfat  - 10 milliseconds
++ */
++struct timespec64 fat_truncate_crtime(const struct msdos_sb_info *sbi,
++				      const struct timespec64 *ts)
++{
++	if (sbi->options.isvfat)
++		return fat_timespec64_trunc_10ms(*ts);
++	else
++		return fat_timespec64_trunc_2secs(*ts);
++}
++
++/*
++ * truncate mtime to 2 second granularity
++ */
++struct timespec64 fat_truncate_mtime(const struct msdos_sb_info *sbi,
++				     const struct timespec64 *ts)
++{
++	return fat_timespec64_trunc_2secs(*ts);
++}
++
+ /*
+  * truncate the various times with appropriate granularity:
+- *   root inode:
+- *     all times always 0
+- *   all other inodes:
+- *     mtime - 2 seconds
+- *     ctime
+- *       msdos - 2 seconds
+- *       vfat  - 10 milliseconds
+- *     atime - 24 hours (00:00:00 in local timezone)
++ *   all times in root node are always 0
+  */
+ int fat_truncate_time(struct inode *inode, struct timespec64 *now, int flags)
+ {
+@@ -306,25 +339,12 @@ int fat_truncate_time(struct inode *inode, struct timespec64 *now, int flags)
+ 		ts = current_time(inode);
+ 	}
+ 
+-	if (flags & S_ATIME) {
+-		/* to localtime */
+-		time64_t seconds = now->tv_sec - fat_tz_offset(sbi);
+-		s32 remainder;
+-
+-		div_s64_rem(seconds, SECS_PER_DAY, &remainder);
+-		/* to day boundary, and back to unix time */
+-		seconds = seconds + fat_tz_offset(sbi) - remainder;
+-
+-		inode->i_atime = (struct timespec64){ seconds, 0 };
+-	}
+-	if (flags & S_CTIME) {
+-		if (sbi->options.isvfat)
+-			inode->i_ctime = fat_timespec64_trunc_10ms(*now);
+-		else
+-			inode->i_ctime = fat_timespec64_trunc_2secs(*now);
+-	}
++	if (flags & S_ATIME)
++		inode->i_atime = fat_truncate_atime(sbi, now);
++	if (flags & S_CTIME)
++		inode->i_ctime = fat_truncate_crtime(sbi, now);
+ 	if (flags & S_MTIME)
+-		inode->i_mtime = fat_timespec64_trunc_2secs(*now);
++		inode->i_mtime = fat_truncate_mtime(sbi, now);
+ 
+ 	return 0;
+ }
+-- 
+2.34.1
+
