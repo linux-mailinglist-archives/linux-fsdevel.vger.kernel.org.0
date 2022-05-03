@@ -2,40 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D2C4517D7E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 May 2022 08:40:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 24AC2517D87
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 May 2022 08:41:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230076AbiECGns (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 May 2022 02:43:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35252 "EHLO
+        id S230204AbiECGof (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 May 2022 02:44:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229758AbiECGnr (ORCPT
+        with ESMTP id S230229AbiECGoD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 May 2022 02:43:47 -0400
+        Tue, 3 May 2022 02:44:03 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3E761A4
-        for <linux-fsdevel@vger.kernel.org>; Mon,  2 May 2022 23:40:13 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB227107
+        for <linux-fsdevel@vger.kernel.org>; Mon,  2 May 2022 23:40:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=XCUVBbBEPVIU9BeQxjHqMwA6uziqJF6mSDyRf8zgf0Y=; b=LLHZ0lNyIJ65aqwUTUJXJDjhAu
-        vv5+awhouGM2yQ5vmW0rf0ZW8z4XRyKA+EpppiWw1lGw6uYzAzdte725K8TSWpoqn8aehvHp8mf7Y
-        AKCzSR2Cnt+dlH1dFQChrSbtfuPe0ObbXdnHHg12uRDsKIIkwFwTDYMed4/9/zTSyM6M9rfw2MOAX
-        AtYkIUW3jMeFdwdLry/tB2fmajnr0hzQ/5BZ+2h4U3oSpi8Ox5kXWeU2JmkGUDSi+/dvCQvQPgoSm
-        XRuxrui6BkovKwSqX5J6hH8wNqFiJTY0CvU4JbpXlgFhfm6BgI/jmS3gmDvhMMW/4LBTGVB/4g6wV
-        uOKvcTRw==;
+        bh=Di4jPnOXCZQJlZKyMXkv6+DkGMbrUEgKEtDIWyIlRv8=; b=ruzsaEx+JFdWQFikwZoqTgX7qL
+        EnLeF+iY+EVACejAM+U6ZmuUMCQTrojr99olY000rBSe1cHFQN5UL9K20/P+rgKBKruuOPKbGJ2LS
+        gygUL3efkBysmjAQkkvUEu6uENoTfuudwSHfTRn3li/o5P904yvaneSEYjg1qqftjNGo32frMgYoZ
+        K0lGzpP25LaLn5qHDtZ4wIKxE4S5busLLlanV3i+4sp/ELMcMzV7n9De0GZKwrZ3s41LdAvFqYQE/
+        Z5kTAc7wxC+Ylde9ZJOegTxkqQ0HshRCsjYschyvvggeqEeuWTkeNVt0UU+1V/TJ9cF0gQq+FH7n1
+        K4H06+GQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nlmCh-00FRxE-Mi; Tue, 03 May 2022 06:40:11 +0000
+        id 1nlmCh-00FRxG-Ps; Tue, 03 May 2022 06:40:11 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Damien Le Moal <damien.lemoal@opensource.wdc.com>,
         Christoph Hellwig <hch@lst.de>,
         "Darrick J . Wong" <djwong@kernel.org>
-Subject: [RFC PATCH 01/10] iomap: Pass struct iomap to iomap_alloc_ioend()
-Date:   Tue,  3 May 2022 07:39:59 +0100
-Message-Id: <20220503064008.3682332-2-willy@infradead.org>
+Subject: [RFC PATCH 02/10] iomap: Remove iomap_writepage_ctx from iomap_can_add_to_ioend()
+Date:   Tue,  3 May 2022 07:40:00 +0100
+Message-Id: <20220503064008.3682332-3-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220503064008.3682332-1-willy@infradead.org>
 References: <20220503064008.3682332-1-willy@infradead.org>
@@ -51,67 +51,88 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-iomap_alloc_ioend() does not need the rest of iomap_writepage_ctx;
-only the iomap contained in it.
+In preparation for using this function without an iomap_writepage_ctx,
+pass in the iomap and ioend.  Also simplify iomap_add_to_ioend() by
+using the iomap & ioend directly.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/iomap/buffered-io.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+ fs/iomap/buffered-io.c | 35 ++++++++++++++++++-----------------
+ 1 file changed, 18 insertions(+), 17 deletions(-)
 
 diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 6c51a75d0be6..03c7c97bc871 100644
+index 03c7c97bc871..c91259530ac1 100644
 --- a/fs/iomap/buffered-io.c
 +++ b/fs/iomap/buffered-io.c
-@@ -1222,15 +1222,15 @@ iomap_submit_ioend(struct iomap_writepage_ctx *wpc, struct iomap_ioend *ioend,
- 	return 0;
+@@ -1273,25 +1273,24 @@ iomap_chain_bio(struct bio *prev)
+ 	return new;
  }
  
--static struct iomap_ioend *
--iomap_alloc_ioend(struct inode *inode, struct iomap_writepage_ctx *wpc,
--		loff_t offset, sector_t sector, struct writeback_control *wbc)
-+static struct iomap_ioend *iomap_alloc_ioend(struct inode *inode,
-+		struct iomap *iomap, loff_t offset, sector_t sector,
-+		struct writeback_control *wbc)
+-static bool
+-iomap_can_add_to_ioend(struct iomap_writepage_ctx *wpc, loff_t offset,
+-		sector_t sector)
++static bool iomap_can_add_to_ioend(struct iomap *iomap,
++		struct iomap_ioend *ioend, loff_t offset, sector_t sector)
  {
- 	struct iomap_ioend *ioend;
- 	struct bio *bio;
- 
- 	bio = bio_alloc_bioset(GFP_NOFS, BIO_MAX_VECS, &iomap_ioend_bioset);
--	bio_set_dev(bio, wpc->iomap.bdev);
-+	bio_set_dev(bio, iomap->bdev);
- 	bio->bi_iter.bi_sector = sector;
- 	bio->bi_opf = REQ_OP_WRITE | wbc_to_write_flags(wbc);
- 	bio->bi_write_hint = inode->i_write_hint;
-@@ -1238,8 +1238,8 @@ iomap_alloc_ioend(struct inode *inode, struct iomap_writepage_ctx *wpc,
- 
- 	ioend = container_of(bio, struct iomap_ioend, io_inline_bio);
- 	INIT_LIST_HEAD(&ioend->io_list);
--	ioend->io_type = wpc->iomap.type;
--	ioend->io_flags = wpc->iomap.flags;
-+	ioend->io_type = iomap->type;
-+	ioend->io_flags = iomap->flags;
- 	ioend->io_inode = inode;
- 	ioend->io_size = 0;
- 	ioend->io_folios = 0;
-@@ -1305,14 +1305,15 @@ iomap_add_to_ioend(struct inode *inode, loff_t pos, struct folio *folio,
- 		struct iomap_page *iop, struct iomap_writepage_ctx *wpc,
+-	if ((wpc->iomap.flags & IOMAP_F_SHARED) !=
+-	    (wpc->ioend->io_flags & IOMAP_F_SHARED))
++	if ((iomap->flags & IOMAP_F_SHARED) !=
++	    (ioend->io_flags & IOMAP_F_SHARED))
+ 		return false;
+-	if (wpc->iomap.type != wpc->ioend->io_type)
++	if (iomap->type != ioend->io_type)
+ 		return false;
+-	if (offset != wpc->ioend->io_offset + wpc->ioend->io_size)
++	if (offset != ioend->io_offset + ioend->io_size)
+ 		return false;
+-	if (sector != bio_end_sector(wpc->ioend->io_bio))
++	if (sector != bio_end_sector(ioend->io_bio))
+ 		return false;
+ 	/*
+ 	 * Limit ioend bio chain lengths to minimise IO completion latency. This
+ 	 * also prevents long tight loops ending page writeback on all the
+ 	 * folios in the ioend.
+ 	 */
+-	if (wpc->ioend->io_folios >= IOEND_BATCH_SIZE)
++	if (ioend->io_folios >= IOEND_BATCH_SIZE)
+ 		return false;
+ 	return true;
+ }
+@@ -1306,24 +1305,26 @@ iomap_add_to_ioend(struct inode *inode, loff_t pos, struct folio *folio,
  		struct writeback_control *wbc, struct list_head *iolist)
  {
--	sector_t sector = iomap_sector(&wpc->iomap, pos);
-+	struct iomap *iomap = &wpc->iomap;
-+	sector_t sector = iomap_sector(iomap, pos);
+ 	struct iomap *iomap = &wpc->iomap;
++	struct iomap_ioend *ioend = wpc->ioend;
+ 	sector_t sector = iomap_sector(iomap, pos);
  	unsigned len = i_blocksize(inode);
  	size_t poff = offset_in_folio(folio, pos);
  
- 	if (!wpc->ioend || !iomap_can_add_to_ioend(wpc, pos, sector)) {
- 		if (wpc->ioend)
- 			list_add(&wpc->ioend->io_list, iolist);
--		wpc->ioend = iomap_alloc_ioend(inode, wpc, pos, sector, wbc);
-+		wpc->ioend = iomap_alloc_ioend(inode, iomap, pos, sector, wbc);
+-	if (!wpc->ioend || !iomap_can_add_to_ioend(wpc, pos, sector)) {
+-		if (wpc->ioend)
+-			list_add(&wpc->ioend->io_list, iolist);
+-		wpc->ioend = iomap_alloc_ioend(inode, iomap, pos, sector, wbc);
++	if (!ioend || !iomap_can_add_to_ioend(iomap, ioend, pos, sector)) {
++		if (ioend)
++			list_add(&ioend->io_list, iolist);
++		ioend = iomap_alloc_ioend(inode, iomap, pos, sector, wbc);
++		wpc->ioend = ioend;
  	}
  
- 	if (!bio_add_folio(wpc->ioend->io_bio, folio, len, poff)) {
+-	if (!bio_add_folio(wpc->ioend->io_bio, folio, len, poff)) {
+-		wpc->ioend->io_bio = iomap_chain_bio(wpc->ioend->io_bio);
+-		bio_add_folio(wpc->ioend->io_bio, folio, len, poff);
++	if (!bio_add_folio(ioend->io_bio, folio, len, poff)) {
++		ioend->io_bio = iomap_chain_bio(ioend->io_bio);
++		bio_add_folio(ioend->io_bio, folio, len, poff);
+ 	}
+ 
+ 	if (iop)
+ 		atomic_add(len, &iop->write_bytes_pending);
+-	wpc->ioend->io_size += len;
++	ioend->io_size += len;
+ 	wbc_account_cgroup_owner(wbc, &folio->page, len);
+ }
+ 
 -- 
 2.34.1
 
