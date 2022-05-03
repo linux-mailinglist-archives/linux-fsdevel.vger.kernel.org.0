@@ -2,221 +2,579 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 66E31518319
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 May 2022 13:12:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 410A8518431
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 May 2022 14:23:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234620AbiECLP6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 May 2022 07:15:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52982 "EHLO
+        id S235200AbiECM1K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 May 2022 08:27:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234200AbiECLP5 (ORCPT
+        with ESMTP id S235168AbiECM1H (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 May 2022 07:15:57 -0400
-Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D29B63464A
-        for <linux-fsdevel@vger.kernel.org>; Tue,  3 May 2022 04:12:23 -0700 (PDT)
-Received: by mail-ej1-x630.google.com with SMTP id kq17so32769170ejb.4
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 May 2022 04:12:23 -0700 (PDT)
+        Tue, 3 May 2022 08:27:07 -0400
+Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D08D344F2
+        for <linux-fsdevel@vger.kernel.org>; Tue,  3 May 2022 05:23:28 -0700 (PDT)
+Received: by mail-ed1-x544.google.com with SMTP id be20so19627567edb.12
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 May 2022 05:23:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=oFqiHnRl1AV5CwVvzFn8cPS0OwpSBHpXeStUM3laFbc=;
-        b=rgEPWEyb2782i+En/M1Gr9kW1acyISu99grDdKpqBvvPNsWCOiP+G46tw+T/g/PWac
-         0j/1IRgAx1LslBRX9J7N7iLrm3mcHMi7hhyzdYB5+ng2Ys2TT210cess3fl+KH+LXswP
-         YnUJ5G4gbXRsTmJeogARhIPFKX4YLURoQ/zauliX7py64FVLF0q/j/9nemRIgKYrxfRF
-         50bDBKtO24eHHvWVd0drvStgCLuh456LYRrNwiecHIdJqORZ5ymDAyfLWlif7S9+FR0S
-         sOpckw/TLRFb1sQNpj7W3yH7GGX6IflG6OTh0++C8FJ+iysRYy2A8JK6ATCEZuqV/FRP
-         J1cA==
+        d=szeredi.hu; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=TE1k+xyihTMSWkSGzrDneVkAum46sMwYkJNJnhAJ764=;
+        b=XyhJnktM7U2LlMZ7TisGrY3ZYOKepHADKspM0LQsbvVOn0BWP5LLxykI4JI7RZisns
+         SdTvPSppnRAC9XndqSQl4Grl1zEqP6CWD5NgcATdrh044EoAzu1MBRGdAzdBmcdfKzPW
+         BMbJ27IvW+Zc2Es3sW4c07lOWRYCbgyOY4VoQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=oFqiHnRl1AV5CwVvzFn8cPS0OwpSBHpXeStUM3laFbc=;
-        b=7R4AreSxBf8Udcksf/phgVz0UZCu/V9aMVezbvU9KdmQNzQ/k+jJzCoOWge8LzJlv5
-         Rb+4F1PtqEY/fRTbtc8s143ogfoP8fc/ouXy9KgpRAookn0CqeNf8FRNweunD2AyFLbC
-         A2fSYj7QLeihsHy7aCnCP1aKubo3aEPKdIHYfXcElD5Ye/jTMqTDJ4Qg+NPPCxyppBY+
-         R1hziNIv0z0UeDkeCN7DIO334KyiW8LJRw0NA6s45K2t2Jo529It6sEDX93AEdbs+3/Q
-         zlis3iU9ad3AegGKwK9S/iycWn4t/3D56QY0ld4NIencFp7Oi5sLoindO+D9EYyPYAJU
-         /9SQ==
-X-Gm-Message-State: AOAM5337Ih3apZCaUanlFwcIoil5u+L+oOjN7Ke+paBBirTxey4jEPGr
-        Kaik/cqtPcWd/p9gffojdhhlSQ==
-X-Google-Smtp-Source: ABdhPJw97PYd30DNDpPNsRrpJXojPvheV9UWZoSzYNANOpCBRVYdFYA4fTJtujnPpl7vcUfHD29C2Q==
-X-Received: by 2002:a17:907:6e04:b0:6e0:95c0:47b8 with SMTP id sd4-20020a1709076e0400b006e095c047b8mr15127269ejc.483.1651576342075;
-        Tue, 03 May 2022 04:12:22 -0700 (PDT)
-Received: from google.com (30.171.91.34.bc.googleusercontent.com. [34.91.171.30])
-        by smtp.gmail.com with ESMTPSA id l24-20020a056402029800b0042617ba63a7sm7817960edv.49.2022.05.03.04.12.21
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=TE1k+xyihTMSWkSGzrDneVkAum46sMwYkJNJnhAJ764=;
+        b=ANvaCzBlm0EO+MmkQGCL55Yi3HKeNcwNG7uVPLKZxLlCZF/jzoCl9Ha9vQf+aAILpG
+         hJJ1dEaZvNjUrcJ0jWzrW5tqHsA33WOzcbFZ7OUQ1IN8yfkevacv5U0PdkM0vr2/Domd
+         HFDgv4Lt9usMFY/M0XZR3p9Sg3jOzzKoiwzAf0VST0CuRAG07ELruJHalrTlac1/fY9C
+         BiRA5MaNgnfXgexuvqMZTCwr6251mKF+wlp9719m5NZhRSjhfOXYeqz3kaAO3ZMRudUC
+         r6rCjVSQxDUtLt+fNqA/pBf5gX8+WLDeZmwEAVYC7Te41u1/CwZxMaev1dZGDAZz6wOS
+         dcQA==
+X-Gm-Message-State: AOAM532CbiWe+God2gmtETq5nhc79K4FgNkqlHH8hqY2NdrXlf8+r4k+
+        hqOW/IzsgbDYxcOD40qKQS6+iE8XOJiplrPG
+X-Google-Smtp-Source: ABdhPJyidd0sNK3Dvs85E/mvMVYwF6knm8hinBxEIIcMNfcF+DOmOJKgvd2JlTGJ/5dOeoGxnT8HpA==
+X-Received: by 2002:a50:c014:0:b0:41d:5ee9:f354 with SMTP id r20-20020a50c014000000b0041d5ee9f354mr17536367edb.257.1651580606617;
+        Tue, 03 May 2022 05:23:26 -0700 (PDT)
+Received: from miu.piliscsaba.redhat.com (catv-178-48-189-3.catv.fixed.vodafone.hu. [178.48.189.3])
+        by smtp.gmail.com with ESMTPSA id p14-20020a056402154e00b0042617ba63a8sm7742405edx.50.2022.05.03.05.23.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 May 2022 04:12:21 -0700 (PDT)
-Date:   Tue, 3 May 2022 11:12:18 +0000
-From:   Quentin Perret <qperret@google.com>
-To:     Chao Peng <chao.p.peng@linux.intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Sean Christopherson <seanjc@google.com>,
-        Steven Price <steven.price@arm.com>,
-        kvm list <kvm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        Linux API <linux-api@vger.kernel.org>, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@kernel.org>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        "Nakajima, Jun" <jun.nakajima@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-        Michael Roth <michael.roth@amd.com>
-Subject: Re: [PATCH v5 00/13] KVM: mm: fd-based approach for supporting KVM
- guest private memory
-Message-ID: <YnEOEmf4We1aeLcT@google.com>
-References: <YksIQYdG41v3KWkr@google.com>
- <Ykslo2eo2eRXrpFR@google.com>
- <eefc3c74-acca-419c-8947-726ce2458446@www.fastmail.com>
- <Ykwbqv90C7+8K+Ao@google.com>
- <YkyEaYiL0BrDYcZv@google.com>
- <20220422105612.GB61987@chaop.bj.intel.com>
- <3b99f157-0f30-4b30-8399-dd659250ab8d@www.fastmail.com>
- <20220425134051.GA175928@chaop.bj.intel.com>
- <27616b2f-1eff-42ff-91e0-047f531639ea@www.fastmail.com>
- <20220428122952.GA10508@chaop.bj.intel.com>
+        Tue, 03 May 2022 05:23:25 -0700 (PDT)
+Date:   Tue, 3 May 2022 14:23:23 +0200
+From:   Miklos Szeredi <miklos@szeredi.hu>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     Dave Chinner <david@fromorbit.com>, Theodore Ts'o <tytso@mit.edu>,
+        Karel Zak <kzak@redhat.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>
+Subject: [RFC PATCH] getting misc stats/attributes via xattr API
+Message-ID: <YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220428122952.GA10508@chaop.bj.intel.com>
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
+        DKIM_SIGNED,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thursday 28 Apr 2022 at 20:29:52 (+0800), Chao Peng wrote:
-> 
-> + Michael in case he has comment from SEV side.
-> 
-> On Mon, Apr 25, 2022 at 07:52:38AM -0700, Andy Lutomirski wrote:
-> > 
-> > 
-> > On Mon, Apr 25, 2022, at 6:40 AM, Chao Peng wrote:
-> > > On Sun, Apr 24, 2022 at 09:59:37AM -0700, Andy Lutomirski wrote:
-> > >> 
-> > 
-> > >> 
-> > >> 2. Bind the memfile to a VM (or at least to a VM technology).  Now it's in the initial state appropriate for that VM.
-> > >> 
-> > >> For TDX, this completely bypasses the cases where the data is prepopulated and TDX can't handle it cleanly.  For SEV, it bypasses a situation in which data might be written to the memory before we find out whether that data will be unreclaimable or unmovable.
-> > >
-> > > This sounds a more strict rule to avoid semantics unclear.
-> > >
-> > > So userspace needs to know what excatly happens for a 'bind' operation.
-> > > This is different when binds to different technologies. E.g. for SEV, it
-> > > may imply after this call, the memfile can be accessed (through mmap or
-> > > what ever) from userspace, while for current TDX this should be not allowed.
-> > 
-> > I think this is actually a good thing.  While SEV, TDX, pKVM, etc achieve similar goals and have broadly similar ways of achieving them, they really are different, and having userspace be aware of the differences seems okay to me.
-> > 
-> > (Although I don't think that allowing userspace to mmap SEV shared pages is particularly wise -- it will result in faults or cache incoherence depending on the variant of SEV in use.)
-> > 
-> > >
-> > > And I feel we still need a third flow/operation to indicate the
-> > > completion of the initialization on the memfile before the guest's 
-> > > first-time launch. SEV needs to check previous mmap-ed areas are munmap-ed
-> > > and prevent future userspace access. After this point, then the memfile
-> > > becomes truely private fd.
-> > 
-> > Even that is technology-dependent.  For TDX, this operation doesn't really exist.  For SEV, I'm not sure (I haven't read the specs in nearly enough detail).  For pKVM, I guess it does exist and isn't quite the same as a shared->private conversion.
-> > 
-> > Maybe this could be generalized a bit as an operation "measure and make private" that would be supported by the technologies for which it's useful.
-> 
-> Then I think we need callback instead of static flag field. Backing
-> store implements this callback and consumers change the flags
-> dynamically with this callback. This implements kind of state machine
-> flow.
-> 
-> > 
-> > 
-> > >
-> > >> 
-> > >> 
-> > >> ----------------------------------------------
-> > >> 
-> > >> Now I have a question, since I don't think anyone has really answered it: how does this all work with SEV- or pKVM-like technologies in which private and shared pages share the same address space?  I sounds like you're proposing to have a big memfile that contains private and shared pages and to use that same memfile as pages are converted back and forth.  IO and even real physical DMA could be done on that memfile.  Am I understanding correctly?
-> > >
-> > > For TDX case, and probably SEV as well, this memfile contains private memory
-> > > only. But this design at least makes it possible for usage cases like
-> > > pKVM which wants both private/shared memory in the same memfile and rely
-> > > on other ways like mmap/munmap or mprotect to toggle private/shared instead
-> > > of fallocate/hole punching.
-> > 
-> > Hmm.  Then we still need some way to get KVM to generate the correct SEV pagetables.  For TDX, there are private memslots and shared memslots, and they can overlap.  If they overlap and both contain valid pages at the same address, then the results may not be what the guest-side ABI expects, but everything will work.  So, when a single logical guest page transitions between shared and private, no change to the memslots is needed.  For SEV, this is not the case: everything is in one set of pagetables, and there isn't a natural way to resolve overlaps.
-> 
-> I don't see SEV has problem. Note for all the cases, both private/shared
-> memory are in the same memslot. For a given GPA, if there is no private
-> page, then shared page will be used to establish KVM pagetables, so this
-> can guarantee there is no overlaps.
-> 
-> > 
-> > If the memslot code becomes efficient enough, then the memslots could be fragmented.  Or the memfile could support private and shared data in the same memslot.  And if pKVM does this, I don't see why SEV couldn't also do it and hopefully reuse the same code.
-> 
-> For pKVM, that might be the case. For SEV, I don't think we require
-> private/shared data in the same memfile. The same model that works for
-> TDX should also work for SEV. Or maybe I misunderstood something here?
-> 
-> > 
-> > >
-> > >> 
-> > >> If so, I think this makes sense, but I'm wondering if the actual memslot setup should be different.  For TDX, private memory lives in a logically separate memslot space.  For SEV and pKVM, it doesn't.  I assume the API can reflect this straightforwardly.
-> > >
-> > > I believe so. The flow should be similar but we do need pass different
-> > > flags during the 'bind' to the backing store for different usages. That
-> > > should be some new flags for pKVM but the callbacks (API here) between
-> > > memfile_notifile and its consumers can be reused.
-> > 
-> > And also some different flag in the operation that installs the fd as a memslot?
-> > 
-> > >
-> > >> 
-> > >> And the corresponding TDX question: is the intent still that shared pages aren't allowed at all in a TDX memfile?  If so, that would be the most direct mapping to what the hardware actually does.
-> > >
-> > > Exactly. TDX will still use fallocate/hole punching to turn on/off the
-> > > private page. Once off, the traditional shared page will become
-> > > effective in KVM.
-> > 
-> > Works for me.
-> > 
-> > For what it's worth, I still think it should be fine to land all the TDX memfile bits upstream as long as we're confident that SEV, pKVM, etc can be added on without issues.
-> > 
-> > I think we can increase confidence in this by either getting one other technology's maintainers to get far enough along in the design to be confident
-> 
-> AFAICS, SEV shouldn't have any problem, But would like to see AMD people
-> can comment. For pKVM, definitely need more work, but isn't totally
-> undoable. Also would be good if pKVM people can comment.
+This is a simplification of the getvalues(2) prototype and moving it to the
+getxattr(2) interface, as suggested by Dave.
 
-Merging things incrementally sounds good to me if we can indeed get some
-time to make sure it'll be a workable solution for other technologies.
-I'm happy to prototype a pKVM extension to the proposed series to see if
-there are any major blockers.
+The patch itself just adds the possibility to retrieve a single line of
+/proc/$$/mountinfo (which was the basic requirement from which the fsinfo
+patchset grew out of).
+
+But this should be able to serve Amir's per-sb iostats, as well as a host of
+other cases where some statistic needs to be retrieved from some object.  Note:
+a filesystem object often represents other kinds of objects (such as processes
+in /proc) so this is not limited to fs attributes.
+
+This also opens up the interface to setting attributes via setxattr(2).
+
+After some pondering I made the namespace so:
+
+: - root
+bar - an attribute
+foo: - a folder (can contain attributes and/or folders)
+
+The contents of a folder is represented by a null separated list of names.
+
+Examples:
+
+$ getfattr -etext -n ":" .
+# file: .
+:="mnt:\000mntns:"
+
+$ getfattr -etext -n ":mnt:" .
+# file: .
+:mnt:="info"
+
+$ getfattr -etext -n ":mnt:info" .
+# file: .
+:mnt:info="21 1 254:0 / / rw,relatime - ext4 /dev/root rw\012"
+
+$ getfattr -etext -n ":mntns:" .
+# file: .
+:mntns:="21:\00022:\00024:\00025:\00023:\00026:\00027:\00028:\00029:\00030:\00031:"
+
+$ getfattr -etext -n ":mntns:28:" .
+# file: .
+:mntns:28:="info"
+
+Comments?
 
 Thanks,
-Quentin
+Miklos
+
+---
+ fs/Makefile            |    2 
+ fs/mount.h             |    8 +
+ fs/namespace.c         |   15 ++-
+ fs/pnode.h             |    2 
+ fs/proc_namespace.c    |   15 ++-
+ fs/values.c            |  242 +++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/xattr.c             |   16 ++-
+ include/linux/values.h |   11 ++
+ 8 files changed, 295 insertions(+), 16 deletions(-)
+
+--- a/fs/Makefile
++++ b/fs/Makefile
+@@ -16,7 +16,7 @@ obj-y :=	open.o read_write.o file_table.
+ 		pnode.o splice.o sync.o utimes.o d_path.o \
+ 		stack.o fs_struct.o statfs.o fs_pin.o nsfs.o \
+ 		fs_types.o fs_context.o fs_parser.o fsopen.o init.o \
+-		kernel_read_file.o remap_range.o
++		kernel_read_file.o remap_range.o values.o
+ 
+ ifeq ($(CONFIG_BLOCK),y)
+ obj-y +=	buffer.o direct-io.o mpage.o
+--- a/fs/mount.h
++++ b/fs/mount.h
+@@ -148,3 +148,11 @@ static inline bool is_anon_ns(struct mnt
+ }
+ 
+ extern void mnt_cursor_del(struct mnt_namespace *ns, struct mount *cursor);
++
++struct mount *mnt_list_next(struct mnt_namespace *ns, struct list_head *p);
++extern void namespace_lock_read(void);
++extern void namespace_unlock_read(void);
++extern int show_mountinfo_root(struct seq_file *m, struct vfsmount *mnt,
++			       struct path *root);
++extern bool is_path_reachable(struct mount *, struct dentry *,
++			      const struct path *root);
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -1332,9 +1332,7 @@ struct vfsmount *mnt_clone_internal(cons
+ 	return &p->mnt;
+ }
+ 
+-#ifdef CONFIG_PROC_FS
+-static struct mount *mnt_list_next(struct mnt_namespace *ns,
+-				   struct list_head *p)
++struct mount *mnt_list_next(struct mnt_namespace *ns, struct list_head *p)
+ {
+ 	struct mount *mnt, *ret = NULL;
+ 
+@@ -1351,6 +1349,7 @@ static struct mount *mnt_list_next(struc
+ 	return ret;
+ }
+ 
++#ifdef CONFIG_PROC_FS
+ /* iterator; we want it to have access to namespace_sem, thus here... */
+ static void *m_start(struct seq_file *m, loff_t *pos)
+ {
+@@ -1507,6 +1506,16 @@ static inline void namespace_lock(void)
+ 	down_write(&namespace_sem);
+ }
+ 
++void namespace_lock_read(void)
++{
++	down_read(&namespace_sem);
++}
++
++void namespace_unlock_read(void)
++{
++	up_read(&namespace_sem);
++}
++
+ enum umount_tree_flags {
+ 	UMOUNT_SYNC = 1,
+ 	UMOUNT_PROPAGATE = 2,
+--- a/fs/pnode.h
++++ b/fs/pnode.h
+@@ -50,7 +50,5 @@ void mnt_set_mountpoint(struct mount *,
+ void mnt_change_mountpoint(struct mount *parent, struct mountpoint *mp,
+ 			   struct mount *mnt);
+ struct mount *copy_tree(struct mount *, struct dentry *, int);
+-bool is_path_reachable(struct mount *, struct dentry *,
+-			 const struct path *root);
+ int count_mounts(struct mnt_namespace *ns, struct mount *mnt);
+ #endif /* _LINUX_PNODE_H */
+--- a/fs/proc_namespace.c
++++ b/fs/proc_namespace.c
+@@ -132,9 +132,9 @@ static int show_vfsmnt(struct seq_file *
+ 	return err;
+ }
+ 
+-static int show_mountinfo(struct seq_file *m, struct vfsmount *mnt)
++int show_mountinfo_root(struct seq_file *m, struct vfsmount *mnt,
++			struct path *root)
+ {
+-	struct proc_mounts *p = m->private;
+ 	struct mount *r = real_mount(mnt);
+ 	struct super_block *sb = mnt->mnt_sb;
+ 	struct path mnt_path = { .dentry = mnt->mnt_root, .mnt = mnt };
+@@ -152,7 +152,7 @@ static int show_mountinfo(struct seq_fil
+ 	seq_putc(m, ' ');
+ 
+ 	/* mountpoints outside of chroot jail will give SEQ_SKIP on this */
+-	err = seq_path_root(m, &mnt_path, &p->root, " \t\n\\");
++	err = seq_path_root(m, &mnt_path, root, " \t\n\\");
+ 	if (err)
+ 		goto out;
+ 
+@@ -164,7 +164,7 @@ static int show_mountinfo(struct seq_fil
+ 		seq_printf(m, " shared:%i", r->mnt_group_id);
+ 	if (IS_MNT_SLAVE(r)) {
+ 		int master = r->mnt_master->mnt_group_id;
+-		int dom = get_dominating_id(r, &p->root);
++		int dom = get_dominating_id(r, root);
+ 		seq_printf(m, " master:%i", master);
+ 		if (dom && dom != master)
+ 			seq_printf(m, " propagate_from:%i", dom);
+@@ -194,6 +194,13 @@ static int show_mountinfo(struct seq_fil
+ 	return err;
+ }
+ 
++static int show_mountinfo(struct seq_file *m, struct vfsmount *mnt)
++{
++	struct proc_mounts *p = m->private;
++
++	return show_mountinfo_root(m, mnt, &p->root);
++}
++
+ static int show_vfsstat(struct seq_file *m, struct vfsmount *mnt)
+ {
+ 	struct proc_mounts *p = m->private;
+--- /dev/null
++++ b/fs/values.c
+@@ -0,0 +1,242 @@
++#include <linux/values.h>
++#include <linux/fs_struct.h>
++#include <linux/seq_file.h>
++#include <linux/nsproxy.h>
++#include "../lib/kstrtox.h"
++#include "mount.h"
++
++struct val_string {
++	const char *str;
++	size_t len;
++};
++
++struct val_iter {
++	struct val_string name;
++	struct seq_file seq;
++	int error;
++};
++
++struct val_desc {
++	struct val_string name;
++	union {
++		u64 idx;
++		int (*get)(struct val_iter *vi, const struct path *path);
++	};
++};
++
++#define VAL_STRING(x) { .str = x, .len = sizeof(x) - 1 }
++#define VD_NAME(x) .name = VAL_STRING(x)
++
++static int val_err(struct val_iter *vi, int err)
++{
++	vi->error = err;
++	return 0;
++}
++
++static int val_end_seq(struct val_iter *vi)
++{
++	if (vi->seq.count == vi->seq.size)
++		return -EOVERFLOW;
++
++	return 0;
++}
++
++static inline void val_string_skip(struct val_string *s, size_t count)
++{
++	WARN_ON(s->len < count);
++	s->str += count;
++	s->len -= count;
++}
++
++static bool val_string_prefix(const struct val_string *p,
++			      const struct val_string *s)
++{
++	return s->len >= p->len && !memcmp(s->str, p->str, p->len);
++}
++
++static struct val_desc *val_lookup(struct val_iter *vi, struct val_desc *vd)
++{
++	for (; vd->name.len; vd++) {
++		if (val_string_prefix(&vd->name, &vi->name)) {
++			val_string_skip(&vi->name, vd->name.len);
++			break;
++		}
++	}
++	return vd;
++}
++
++static int val_get_group(struct val_iter *vi, struct val_desc *vd)
++{
++	for (; vd->name.len; vd++)
++		seq_write(&vi->seq, vd->name.str, vd->name.len + 1);
++
++	return val_end_seq(vi);
++}
++
++enum {
++	VAL_MNT_INFO,
++};
++
++static struct val_desc val_mnt_group[] = {
++	{ VD_NAME("info"),		.idx = VAL_MNT_INFO		},
++	{ }
++};
++
++static int val_mnt_show(struct val_iter *vi, struct vfsmount *mnt)
++{
++	struct val_desc *vd = val_lookup(vi, val_mnt_group);
++	struct path root;
++
++	if (!vd->name.str)
++		return val_err(vi, -ENOENT);
++
++	switch(vd->idx) {
++	case VAL_MNT_INFO:
++		get_fs_root(current->fs, &root);
++		show_mountinfo_root(&vi->seq, mnt, &root);
++		path_put(&root);
++		break;
++	}
++
++	return 0;
++}
++
++static int val_mnt_get(struct val_iter *vi, const struct path *path)
++{
++	int err;
++
++	if (!vi->name.len)
++		return val_get_group(vi, val_mnt_group);
++
++	namespace_lock_read();
++	err = val_mnt_show(vi, path->mnt);
++	namespace_unlock_read();
++
++	return err;
++}
++
++/* called with namespace_sem held for read */
++static struct vfsmount *mnt_lookup_by_id(struct mnt_namespace *ns,
++					 struct path *root, int id)
++{
++	struct mount *m;
++
++	for (m = mnt_list_next(ns, &ns->list); m; m = mnt_list_next(ns, &m->mnt_list)) {
++		if (m->mnt_id == id) {
++			if (is_path_reachable(m, m->mnt.mnt_root, root))
++				return mntget(&m->mnt);
++			else
++				return NULL;
++		}
++	}
++	return NULL;
++}
++
++static void seq_mnt_list(struct seq_file *seq, struct mnt_namespace *ns,
++			 struct path *root)
++{
++	struct mount *m;
++
++	namespace_lock_read();
++	for (m = mnt_list_next(ns, &ns->list); m; m = mnt_list_next(ns, &m->mnt_list)) {
++		if (is_path_reachable(m, m->mnt.mnt_root, root)) {
++			seq_printf(seq, "%i:", m->mnt_id);
++			seq_putc(seq, '\0');
++		}
++	}
++	namespace_unlock_read();
++}
++
++static int val_mntns_get(struct val_iter *vi, const struct path *path)
++{
++	struct mnt_namespace *mnt_ns = current->nsproxy->mnt_ns;
++	struct vfsmount *mnt;
++	struct path root;
++	unsigned long long mnt_id;
++	unsigned int end;
++	int err;
++
++	if (!vi->name.len) {
++		get_fs_root(current->fs, &root);
++		seq_mnt_list(&vi->seq, mnt_ns, &root);
++		path_put(&root);
++		return val_end_seq(vi);
++	}
++
++	end = _parse_integer(vi->name.str, 10, &mnt_id);
++	if (end & KSTRTOX_OVERFLOW)
++		return val_err(vi, -ENOENT);
++	if (vi->name.str[end] != VAL_SEP)
++		return val_err(vi, -ENOENT);
++	val_string_skip(&vi->name, end + 1);
++
++	namespace_lock_read();
++	get_fs_root(current->fs, &root);
++	mnt = mnt_lookup_by_id(mnt_ns, &root, mnt_id);
++	path_put(&root);
++	if (!mnt) {
++		namespace_unlock_read();
++		return val_err(vi, -ENOENT);
++	}
++	if (vi->name.len)
++		err = val_mnt_show(vi, mnt);
++	else
++		err = val_get_group(vi, val_mnt_group);
++
++	namespace_unlock_read();
++	mntput(mnt);
++
++	return err;
++}
++
++
++
++static struct val_desc val_toplevel_group[] = {
++	{ VD_NAME("mnt:"),	.get = val_mnt_get,	},
++	{ VD_NAME("mntns:"),	.get = val_mntns_get,	},
++	{ },
++};
++
++static int getvalues(struct val_iter *vi, const struct path *path)
++{
++	struct val_desc *vd;
++	int err;
++
++	if (!vi->name.len)
++		return val_get_group(vi, val_toplevel_group);
++
++	vd = val_lookup(vi, val_toplevel_group);
++	if (!vd->name.len)
++		err = val_err(vi, -ENOENT);
++	else
++		err = vd->get(vi, path);
++
++	return err ?: vi->error;
++}
++
++ssize_t val_getxattr(struct path *path, const char *name, size_t namelen,
++		     void __user *value, size_t size)
++{
++	int err;
++	char val[1024];
++	struct val_iter vi = {
++		.name = { .str = name, .len = namelen },
++		.seq = { .buf = val, .size = min(sizeof(val), size) },
++	};
++
++	if (!size)
++		return sizeof(val);
++
++	val_string_skip(&vi.name, 1);
++
++	err = getvalues(&vi, path);
++	if (err < 0)
++		return err;
++
++	WARN_ON(vi.seq.count > size);
++	if (copy_to_user(value, vi.seq.buf, vi.seq.count))
++		return -EFAULT;
++
++	return vi.seq.count;
++}
++
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -22,6 +22,7 @@
+ #include <linux/audit.h>
+ #include <linux/vmalloc.h>
+ #include <linux/posix_acl_xattr.h>
++#include <linux/values.h>
+ 
+ #include <linux/uaccess.h>
+ 
+@@ -643,12 +644,13 @@ SYSCALL_DEFINE5(fsetxattr, int, fd, cons
+  * Extended attribute GET operations
+  */
+ static ssize_t
+-getxattr(struct user_namespace *mnt_userns, struct dentry *d,
+-	 const char __user *name, void __user *value, size_t size)
++getxattr(struct path *path, const char __user *name,
++	 void __user *value, size_t size)
+ {
+ 	ssize_t error;
+ 	void *kvalue = NULL;
+ 	char kname[XATTR_NAME_MAX + 1];
++	struct user_namespace *mnt_userns = mnt_user_ns(path->mnt);
+ 
+ 	error = strncpy_from_user(kname, name, sizeof(kname));
+ 	if (error == 0 || error == sizeof(kname))
+@@ -656,6 +658,9 @@ getxattr(struct user_namespace *mnt_user
+ 	if (error < 0)
+ 		return error;
+ 
++	if (kname[0] == VAL_SEP)
++		return val_getxattr(path, kname, error, value, size);
++
+ 	if (size) {
+ 		if (size > XATTR_SIZE_MAX)
+ 			size = XATTR_SIZE_MAX;
+@@ -664,7 +669,7 @@ getxattr(struct user_namespace *mnt_user
+ 			return -ENOMEM;
+ 	}
+ 
+-	error = vfs_getxattr(mnt_userns, d, kname, kvalue, size);
++	error = vfs_getxattr(mnt_userns, path->dentry, kname, kvalue, size);
+ 	if (error > 0) {
+ 		if ((strcmp(kname, XATTR_NAME_POSIX_ACL_ACCESS) == 0) ||
+ 		    (strcmp(kname, XATTR_NAME_POSIX_ACL_DEFAULT) == 0))
+@@ -693,7 +698,7 @@ static ssize_t path_getxattr(const char
+ 	error = user_path_at(AT_FDCWD, pathname, lookup_flags, &path);
+ 	if (error)
+ 		return error;
+-	error = getxattr(mnt_user_ns(path.mnt), path.dentry, name, value, size);
++	error = getxattr(&path, name, value, size);
+ 	path_put(&path);
+ 	if (retry_estale(error, lookup_flags)) {
+ 		lookup_flags |= LOOKUP_REVAL;
+@@ -723,8 +728,7 @@ SYSCALL_DEFINE4(fgetxattr, int, fd, cons
+ 	if (!f.file)
+ 		return error;
+ 	audit_file(f.file);
+-	error = getxattr(file_mnt_user_ns(f.file), f.file->f_path.dentry,
+-			 name, value, size);
++	error = getxattr(&f.file->f_path, name, value, size);
+ 	fdput(f);
+ 	return error;
+ }
+--- /dev/null
++++ b/include/linux/values.h
+@@ -0,0 +1,11 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#include <linux/types.h>
++
++#define VAL_SEP ':'
++
++struct path;
++
++ssize_t val_getxattr(struct path *path, const char *name, size_t namelen,
++		     void __user *value, size_t size);
++
