@@ -2,88 +2,235 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 44DCD518CA1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 May 2022 20:52:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78B25518D74
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 May 2022 21:49:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240368AbiECS4L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 May 2022 14:56:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46924 "EHLO
+        id S234757AbiECTxW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 May 2022 15:53:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47122 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238360AbiECS4K (ORCPT
+        with ESMTP id S232984AbiECTxU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 May 2022 14:56:10 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E5853E0E0
-        for <linux-fsdevel@vger.kernel.org>; Tue,  3 May 2022 11:52:36 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id i27so35149982ejd.9
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 May 2022 11:52:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+53Nu1sdzbhj5f+bVeszWe3uOnWBSR1lb0KWgzfBqos=;
-        b=CA7MqryCloS3FBvwU8S/wXU0n7Gs5ssJT66d6+3L+MaMSAq1o7K03VtxVZR20goLQ1
-         k16T3/68mpBatPHWuEcGDm3l31LJJ5beiSFCjrTvbiFLIxN6Bc0OHvYG82C9AU90qg+L
-         svrtv3fCPbyGI6WWLZl/NmMkkd4E16clswe3w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+53Nu1sdzbhj5f+bVeszWe3uOnWBSR1lb0KWgzfBqos=;
-        b=wyG1+W18g3xvlbwe0xHABTQxJUWPEGBkG/OiM6YPJSxRF4pIKKvEv4E2Du8Iz/UAf2
-         PNyCmYGOj+CCvTSDYk+FuVDfv6RbasRF56HnnqPpkTuBJpRVMY1zxo0sZp1UP5X1hC7h
-         cyAbIiMPdSZvRdqK343CU7w4gjms1vPJ8kYxg6Pisw6FZC1cCOm7ZQNlRS4hbMcUXZX0
-         A4agfFI2zJoEPdim0QRyrKydnv6PK+oOZMTHOE5MqAfuEEJN864OfKx/YHa+u0u6Fww9
-         8jUwSWeR5a6pUIvhLKUNob+q74n3hIttMLi7vsGnKBkC260IziRWhRS5mDjOhDzhcB7g
-         q9zA==
-X-Gm-Message-State: AOAM530ORTMrStJQM6bEYkCfbbPQvY5tdAdhkwIrLsFh0P0L9lOjZsaO
-        S0+dS2TRbRWLC4aYn1Q8c2qqHpsRp9eo+87xe5+MPw==
-X-Google-Smtp-Source: ABdhPJysAIdTHp9PSQJkZUq/jimZI5MPOJIj4u+BZoM6Q5whd76vnfVhBKCoOEbFM+b4oGJXiERGdeWvtp6KS96MN34=
-X-Received: by 2002:a17:906:58d1:b0:6f4:6e61:dae with SMTP id
- e17-20020a17090658d100b006f46e610daemr7130379ejs.468.1651603955075; Tue, 03
- May 2022 11:52:35 -0700 (PDT)
+        Tue, 3 May 2022 15:53:20 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 399BE3F88A;
+        Tue,  3 May 2022 12:49:46 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id AFC11210E4;
+        Tue,  3 May 2022 19:49:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1651607384; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=9BjCsNyhWrFhajIPGqZcKtHERzRUauTrhIQt2R+1HS0=;
+        b=x74SWPj5lGZTVIeu5kHB7KOvBdLAMWOJ9MzTKPcraNvyAgog5Z4WGg6GX2drGe+BCv8FCO
+        1vJblvVsNI/sDjjECCl01lTBxW3uwzzDfnQYKxZ7BzvgWK8CsGqrqqVmfNMc3J8ugXBmRs
+        GKWEFHHOL78Muie3Rrq8KNenw+NBCE8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1651607384;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=9BjCsNyhWrFhajIPGqZcKtHERzRUauTrhIQt2R+1HS0=;
+        b=aPs7YCK6PUz6/Zd1NZ4LV3QGTAKxYUSIaKi2rjAj7hT/4dOGfcpUqRxyjuCMzXpdKKirxI
+        u/pqrktMmBqyrzAQ==
+Received: from quack3.suse.cz (unknown [10.100.224.230])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id B656D2C145;
+        Tue,  3 May 2022 19:49:43 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 57731A0629; Tue,  3 May 2022 21:49:43 +0200 (CEST)
+Date:   Tue, 3 May 2022 21:49:43 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Guowei Du <duguoweisz@gmail.com>
+Cc:     jack@suse.cz, amir73il@gmail.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        jmorris@namei.org, serge@hallyn.com, ast@kernel.org,
+        daniel@iogearbox.net, andrii@kernel.org, kafai@fb.com,
+        songliubraving@fb.com, yhs@fb.com, john.fastabend@gmail.com,
+        kpsingh@kernel.org, linux-security-module@vger.kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org, paul@paul-moore.com,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        keescook@chromium.org, anton@enomsg.org, ccross@android.com,
+        tony.luck@intel.com, selinux@vger.kernel.org,
+        duguowei <duguowei@xiaomi.com>
+Subject: Re: [PATCH] fsnotify: add generic perm check for unlink/rmdir
+Message-ID: <20220503194943.6bcmsxjvinfjrqxa@quack3.lan>
+References: <20220503183750.1977-1-duguoweisz@gmail.com>
 MIME-Version: 1.0
-References: <CAH2r5mv7Z7XmyWgp5K8ZshA1OiMBTNGU-v8FdmwwkZaNNe=4wA@mail.gmail.com>
-In-Reply-To: <CAH2r5mv7Z7XmyWgp5K8ZshA1OiMBTNGU-v8FdmwwkZaNNe=4wA@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 3 May 2022 20:52:23 +0200
-Message-ID: <CAJfpegskJzpXXhWCdw6K9r2hKORiBdXfSrgpUhKqn9VVyuVuqw@mail.gmail.com>
-Subject: Re: [LSF/MM/BPF TOPIC] making O_TMPFILE more atomic
-To:     Steve French <smfrench@gmail.com>
-Cc:     lsf-pc@lists.linux-foundation.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220503183750.1977-1-duguoweisz@gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 24 Feb 2022 at 06:33, Steve French <smfrench@gmail.com> wrote:
->
-> Currently creating tmpfiles on Linux can be problematic because the
-> tmpfile is not created and opened at the same time  (vfs_tmpfile calls
-> into the fs, then later vfs_open is called to open the tmpfile).   For
-> some filesystems it would be more natural to create and open the
-> tmpfile as one operation (because the action of creating the file on
-> some filesystems returns an open handle, so closing it then reopening
-> it would cause the tmpfile to be deleted).
->
-> I would like to discuss whether the function do_tmpfile (which creates
-> and then opens the tmpfile) could have an option for a filesystem to
-> do this as one operation which would allow it to be more atomic and
-> allow it to work on a wider variety of filesystems.
+On Wed 04-05-22 02:37:50, Guowei Du wrote:
+> From: duguowei <duguowei@xiaomi.com>
+> 
+> For now, there have been open/access/open_exec perms for file operation,
+> so we add new perms check with unlink/rmdir syscall. if one app deletes
+> any file/dir within pubic area, fsnotify can sends fsnotify_event to
+> listener to deny that, even if the app have right dac/mac permissions.
+> 
+> Signed-off-by: duguowei <duguowei@xiaomi.com>
 
-A related thread:
+Before we go into technical details of implementation can you tell me more
+details about the usecase? Why do you need to check specifically for unlink
+/ delete?
 
-https://lore.kernel.org/all/20201109100343.3958378-3-chirantan@chromium.org/#r
+Also on the design side of things: Do you realize these permission events
+will not be usable together with other permission events like
+FAN_OPEN_PERM? Because these require notification group returning file
+descriptors while your events will return file handles... I guess we should
+somehow fix that.
 
-There was no conclusion in the end. Not sure how hacky it would be to
-store the open file in the inode...
 
-Thanks,
-Miklos
+								Honza
+> ---
+>  fs/notify/fsnotify.c             |  2 +-
+>  include/linux/fs.h               |  2 ++
+>  include/linux/fsnotify.h         | 16 ++++++++++++++++
+>  include/linux/fsnotify_backend.h |  6 +++++-
+>  security/security.c              | 12 ++++++++++--
+>  security/selinux/hooks.c         |  4 ++++
+>  6 files changed, 38 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
+> index 70a8516b78bc..9c03a5f84be0 100644
+> --- a/fs/notify/fsnotify.c
+> +++ b/fs/notify/fsnotify.c
+> @@ -581,7 +581,7 @@ static __init int fsnotify_init(void)
+>  {
+>  	int ret;
+>  
+> -	BUILD_BUG_ON(HWEIGHT32(ALL_FSNOTIFY_BITS) != 25);
+> +	BUILD_BUG_ON(HWEIGHT32(ALL_FSNOTIFY_BITS) != 27);
+>  
+>  	ret = init_srcu_struct(&fsnotify_mark_srcu);
+>  	if (ret)
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index bbde95387a23..9c661584db7d 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -100,6 +100,8 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
+>  #define MAY_CHDIR		0x00000040
+>  /* called from RCU mode, don't block */
+>  #define MAY_NOT_BLOCK		0x00000080
+> +#define MAY_UNLINK		0x00000100
+> +#define MAY_RMDIR		0x00000200
+>  
+>  /*
+>   * flags in file.f_mode.  Note that FMODE_READ and FMODE_WRITE must correspond
+> diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
+> index bb8467cd11ae..68f5d4aaf1ae 100644
+> --- a/include/linux/fsnotify.h
+> +++ b/include/linux/fsnotify.h
+> @@ -80,6 +80,22 @@ static inline int fsnotify_parent(struct dentry *dentry, __u32 mask,
+>  	return fsnotify(mask, data, data_type, NULL, NULL, inode, 0);
+>  }
+>  
+> +static inline int fsnotify_path_perm(struct path *path, struct dentry *dentry, __u32 mask)
+> +{
+> +	__u32 fsnotify_mask = 0;
+> +
+> +	if (!(mask & (MAY_UNLINK | MAY_RMDIR)))
+> +		return 0;
+> +
+> +	if (mask & MAY_UNLINK)
+> +		fsnotify_mask |= FS_UNLINK_PERM;
+> +
+> +	if (mask & MAY_RMDIR)
+> +		fsnotify_mask |= FS_RMDIR_PERM;
+> +
+> +	return fsnotify_parent(dentry, fsnotify_mask, path, FSNOTIFY_EVENT_PATH);
+> +}
+> +
+>  /*
+>   * Simple wrappers to consolidate calls to fsnotify_parent() when an event
+>   * is on a file/dentry.
+> diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
+> index 0805b74cae44..0e2e240e8234 100644
+> --- a/include/linux/fsnotify_backend.h
+> +++ b/include/linux/fsnotify_backend.h
+> @@ -54,6 +54,8 @@
+>  #define FS_OPEN_PERM		0x00010000	/* open event in an permission hook */
+>  #define FS_ACCESS_PERM		0x00020000	/* access event in a permissions hook */
+>  #define FS_OPEN_EXEC_PERM	0x00040000	/* open/exec event in a permission hook */
+> +#define FS_UNLINK_PERM		0x00080000	/* unlink event in a permission hook */
+> +#define FS_RMDIR_PERM		0x00100000	/* rmdir event in a permission hook */
+>  
+>  #define FS_EXCL_UNLINK		0x04000000	/* do not send events if object is unlinked */
+>  /*
+> @@ -79,7 +81,9 @@
+>  #define ALL_FSNOTIFY_DIRENT_EVENTS (FS_CREATE | FS_DELETE | FS_MOVE | FS_RENAME)
+>  
+>  #define ALL_FSNOTIFY_PERM_EVENTS (FS_OPEN_PERM | FS_ACCESS_PERM | \
+> -				  FS_OPEN_EXEC_PERM)
+> +				  FS_OPEN_EXEC_PERM | \
+> +				  FS_UNLINK_PERM | \
+> +				  FS_RMDIR_PERM)
+>  
+>  /*
+>   * This is a list of all events that may get sent to a parent that is watching
+> diff --git a/security/security.c b/security/security.c
+> index b7cf5cbfdc67..8efc00ec02ed 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -1160,16 +1160,24 @@ EXPORT_SYMBOL(security_path_mkdir);
+>  
+>  int security_path_rmdir(const struct path *dir, struct dentry *dentry)
+>  {
+> +	int ret;
+>  	if (unlikely(IS_PRIVATE(d_backing_inode(dir->dentry))))
+>  		return 0;
+> -	return call_int_hook(path_rmdir, 0, dir, dentry);
+> +	ret = call_int_hook(path_rmdir, 0, dir, dentry);
+> +	if (ret)
+> +		return ret;
+> +	return fsnotify_path_perm(dir, dentry, MAY_RMDIR);
+>  }
+>  
+>  int security_path_unlink(const struct path *dir, struct dentry *dentry)
+>  {
+> +	int ret;
+>  	if (unlikely(IS_PRIVATE(d_backing_inode(dir->dentry))))
+>  		return 0;
+> -	return call_int_hook(path_unlink, 0, dir, dentry);
+> +	ret = call_int_hook(path_unlink, 0, dir, dentry);
+> +	if (ret)
+> +		return ret;
+> +	return fsnotify_path_perm(dir, dentry, MAY_UNLINK);
+>  }
+>  EXPORT_SYMBOL(security_path_unlink);
+>  
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index e9e959343de9..f0780f0eb903 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -1801,8 +1801,12 @@ static int may_create(struct inode *dir,
+>  }
+>  
+>  #define MAY_LINK	0
+> +#ifndef MAY_UNLINK
+>  #define MAY_UNLINK	1
+> +#endif
+> +#ifndef MAY_RMDIR
+>  #define MAY_RMDIR	2
+> +#endif
+>  
+>  /* Check whether a task can link, unlink, or rmdir a file/directory. */
+>  static int may_link(struct inode *dir,
+> -- 
+> 2.17.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
