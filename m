@@ -2,235 +2,349 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 78B25518D74
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 May 2022 21:49:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF455518D7F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 May 2022 21:54:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234757AbiECTxW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 May 2022 15:53:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47122 "EHLO
+        id S234264AbiECT6D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 May 2022 15:58:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232984AbiECTxU (ORCPT
+        with ESMTP id S231902AbiECT56 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 May 2022 15:53:20 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 399BE3F88A;
-        Tue,  3 May 2022 12:49:46 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id AFC11210E4;
-        Tue,  3 May 2022 19:49:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1651607384; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        Tue, 3 May 2022 15:57:58 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8B11D3F8BC
+        for <linux-fsdevel@vger.kernel.org>; Tue,  3 May 2022 12:54:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1651607663;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=9BjCsNyhWrFhajIPGqZcKtHERzRUauTrhIQt2R+1HS0=;
-        b=x74SWPj5lGZTVIeu5kHB7KOvBdLAMWOJ9MzTKPcraNvyAgog5Z4WGg6GX2drGe+BCv8FCO
-        1vJblvVsNI/sDjjECCl01lTBxW3uwzzDfnQYKxZ7BzvgWK8CsGqrqqVmfNMc3J8ugXBmRs
-        GKWEFHHOL78Muie3Rrq8KNenw+NBCE8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1651607384;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=9BjCsNyhWrFhajIPGqZcKtHERzRUauTrhIQt2R+1HS0=;
-        b=aPs7YCK6PUz6/Zd1NZ4LV3QGTAKxYUSIaKi2rjAj7hT/4dOGfcpUqRxyjuCMzXpdKKirxI
-        u/pqrktMmBqyrzAQ==
-Received: from quack3.suse.cz (unknown [10.100.224.230])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        bh=4wFa1ojJUMN8uF0d8w0+qYpkDltm+LcA4WT8ecDIu7c=;
+        b=Y9z+6iFOdStJO2oD2mM/d3YuOanX6Y0egjTKZkz8UId2kPwlZ7QlVocsTMTO08AcD8UYKy
+        z+YhCkEFbqSZOJ4DjcfbZqtrL5j7wqD6bDhNpYDQIMyGqalzag/lTlb87dNCMIGiJe+A6f
+        TTS0CqbkCmzyh2ZL8TaAutPjbhESlN0=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-215-SsDbsNOWO6aBCbWBczMxqQ-1; Tue, 03 May 2022 15:53:53 -0400
+X-MC-Unique: SsDbsNOWO6aBCbWBczMxqQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id B656D2C145;
-        Tue,  3 May 2022 19:49:43 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 57731A0629; Tue,  3 May 2022 21:49:43 +0200 (CEST)
-Date:   Tue, 3 May 2022 21:49:43 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Guowei Du <duguoweisz@gmail.com>
-Cc:     jack@suse.cz, amir73il@gmail.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        jmorris@namei.org, serge@hallyn.com, ast@kernel.org,
-        daniel@iogearbox.net, andrii@kernel.org, kafai@fb.com,
-        songliubraving@fb.com, yhs@fb.com, john.fastabend@gmail.com,
-        kpsingh@kernel.org, linux-security-module@vger.kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org, paul@paul-moore.com,
-        stephen.smalley.work@gmail.com, eparis@parisplace.org,
-        keescook@chromium.org, anton@enomsg.org, ccross@android.com,
-        tony.luck@intel.com, selinux@vger.kernel.org,
-        duguowei <duguowei@xiaomi.com>
-Subject: Re: [PATCH] fsnotify: add generic perm check for unlink/rmdir
-Message-ID: <20220503194943.6bcmsxjvinfjrqxa@quack3.lan>
-References: <20220503183750.1977-1-duguoweisz@gmail.com>
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A6B5A85A5BE;
+        Tue,  3 May 2022 19:53:52 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.18.25.210])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 96C6C400F736;
+        Tue,  3 May 2022 19:53:52 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 53109220463; Tue,  3 May 2022 15:53:52 -0400 (EDT)
+Date:   Tue, 3 May 2022 15:53:52 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Dharmendra Singh <dharamhans87@gmail.com>
+Cc:     miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
+        fuse-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        bschubert@ddn.com, Dharmendra Singh <dsingh@ddn.com>
+Subject: Re: [PATCH v4 1/3] FUSE: Implement atomic lookup + create
+Message-ID: <YnGIUOP2BezDAb1k@redhat.com>
+References: <20220502102521.22875-1-dharamhans87@gmail.com>
+ <20220502102521.22875-2-dharamhans87@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220503183750.1977-1-duguoweisz@gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+In-Reply-To: <20220502102521.22875-2-dharamhans87@gmail.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.11.54.1
+X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 04-05-22 02:37:50, Guowei Du wrote:
-> From: duguowei <duguowei@xiaomi.com>
+On Mon, May 02, 2022 at 03:55:19PM +0530, Dharmendra Singh wrote:
+> From: Dharmendra Singh <dsingh@ddn.com>
 > 
-> For now, there have been open/access/open_exec perms for file operation,
-> so we add new perms check with unlink/rmdir syscall. if one app deletes
-> any file/dir within pubic area, fsnotify can sends fsnotify_event to
-> listener to deny that, even if the app have right dac/mac permissions.
+> When we go for creating a file (O_CREAT), we trigger
+> a lookup to FUSE USER SPACE. It is very  much likely
+> that file does not exist yet as O_CREAT is passed to
+> open(). This lookup can be avoided and can be performed
+> as part of create call into libfuse.
 > 
-> Signed-off-by: duguowei <duguowei@xiaomi.com>
+> This lookup + create in single call to libfuse and finally
+> to USER SPACE has been named as atomic create. It is expected
+> that USER SPACE create the file, open it and fills in the
+> attributes which are then used to make inode stand/revalidate
+> in the kernel cache. Also if file was newly created(does not
+> exist yet by this time) in USER SPACE then it should be indicated
+> in `struct fuse_file_info` by setting a bit which is again used by
+> libfuse to send some flags back to fuse kernel to indicate that
+> that file was newly created. These flags are used by kernel to
+> indicate changes in parent directory.
 
-Before we go into technical details of implementation can you tell me more
-details about the usecase? Why do you need to check specifically for unlink
-/ delete?
+Reading the existing code a little bit more and trying to understand
+existing semantics. And that will help me unerstand what new is being
+done.
 
-Also on the design side of things: Do you realize these permission events
-will not be usable together with other permission events like
-FAN_OPEN_PERM? Because these require notification group returning file
-descriptors while your events will return file handles... I guess we should
-somehow fix that.
+So current fuse_atomic_open() does following.
+
+A. Looks up dentry (if d_in_lookup() is set).
+B. If dentry is positive or O_CREAT is not set, return. 
+C. If server supports atomic create + open, use that to create file and
+   open it as well.
+D. If server does not support atomic create + open, just create file
+   using "mknod" and return. VFS will take care of opening the file.
+
+Now with this patch, new flow is.
+
+A. Look up dentry if d_in_lookup() is set as well as either file is not
+   being created or fc->no_atomic_create is set. This basiclally means
+   skip lookup if atomic_create is supported and file is being created.
+
+B. Remains same. if dentry is positive or O_CREATE is not set, return.
+
+C. If server supports new atomic_create(), use that.
+
+D. If not, if server supports atomic create + open, use that
+
+E. If not, fall back to mknod and do not open file.
+
+So to me this new functionality is basically atomic "lookup + create +
+open"?
+
+Or may be not. I see we check "fc->no_create" and fallback to mknod.
+
+        if (fc->no_create)
+                goto mknod;
+
+So fc->no_create is representing both old atomic "create + open" as well
+as new "lookup + create + open" ?
+
+It might be obvious to you, but it is not to me. So will be great if
+you shed some light on this. 
+
+Thanks
+Vivek
 
 
-								Honza
+> 
+> Fuse kernel automatically detects if atomic create is implemented
+> by libfuse/USER SPACE or not. And depending upon the outcome of
+> this check all further creates are decided to be atomic or non-atomic
+> creates.
+> 
+> If libfuse/USER SPACE has not implemented the atomic create operation
+> then by default behaviour remains same i.e we do not optimize lookup
+> calls which are triggered before create calls into libfuse.
+> 
+> Signed-off-by: Dharmendra Singh <dsingh@ddn.com>
 > ---
->  fs/notify/fsnotify.c             |  2 +-
->  include/linux/fs.h               |  2 ++
->  include/linux/fsnotify.h         | 16 ++++++++++++++++
->  include/linux/fsnotify_backend.h |  6 +++++-
->  security/security.c              | 12 ++++++++++--
->  security/selinux/hooks.c         |  4 ++++
->  6 files changed, 38 insertions(+), 4 deletions(-)
+>  fs/fuse/dir.c             | 82 +++++++++++++++++++++++++++++++++++----
+>  fs/fuse/fuse_i.h          |  3 ++
+>  include/uapi/linux/fuse.h |  3 ++
+>  3 files changed, 81 insertions(+), 7 deletions(-)
 > 
-> diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-> index 70a8516b78bc..9c03a5f84be0 100644
-> --- a/fs/notify/fsnotify.c
-> +++ b/fs/notify/fsnotify.c
-> @@ -581,7 +581,7 @@ static __init int fsnotify_init(void)
+> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+> index 656e921f3506..cad3322a007f 100644
+> --- a/fs/fuse/dir.c
+> +++ b/fs/fuse/dir.c
+> @@ -523,7 +523,7 @@ static int get_security_context(struct dentry *entry, umode_t mode,
+>   */
+>  static int fuse_create_open(struct inode *dir, struct dentry *entry,
+>  			    struct file *file, unsigned int flags,
+> -			    umode_t mode)
+> +			    umode_t mode, uint32_t opcode)
 >  {
->  	int ret;
+>  	int err;
+>  	struct inode *inode;
+> @@ -535,8 +535,10 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
+>  	struct fuse_entry_out outentry;
+>  	struct fuse_inode *fi;
+>  	struct fuse_file *ff;
+> +	struct dentry *res = NULL;
+>  	void *security_ctx = NULL;
+>  	u32 security_ctxlen;
+> +	bool atomic_create = (opcode == FUSE_ATOMIC_CREATE ? true : false);
 >  
-> -	BUILD_BUG_ON(HWEIGHT32(ALL_FSNOTIFY_BITS) != 25);
-> +	BUILD_BUG_ON(HWEIGHT32(ALL_FSNOTIFY_BITS) != 27);
+>  	/* Userspace expects S_IFREG in create mode */
+>  	BUG_ON((mode & S_IFMT) != S_IFREG);
+> @@ -566,7 +568,7 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
+>  		inarg.open_flags |= FUSE_OPEN_KILL_SUIDGID;
+>  	}
 >  
->  	ret = init_srcu_struct(&fsnotify_mark_srcu);
->  	if (ret)
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index bbde95387a23..9c661584db7d 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -100,6 +100,8 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
->  #define MAY_CHDIR		0x00000040
->  /* called from RCU mode, don't block */
->  #define MAY_NOT_BLOCK		0x00000080
-> +#define MAY_UNLINK		0x00000100
-> +#define MAY_RMDIR		0x00000200
->  
->  /*
->   * flags in file.f_mode.  Note that FMODE_READ and FMODE_WRITE must correspond
-> diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
-> index bb8467cd11ae..68f5d4aaf1ae 100644
-> --- a/include/linux/fsnotify.h
-> +++ b/include/linux/fsnotify.h
-> @@ -80,6 +80,22 @@ static inline int fsnotify_parent(struct dentry *dentry, __u32 mask,
->  	return fsnotify(mask, data, data_type, NULL, NULL, inode, 0);
+> -	args.opcode = FUSE_CREATE;
+> +	args.opcode = opcode;
+>  	args.nodeid = get_node_id(dir);
+>  	args.in_numargs = 2;
+>  	args.in_args[0].size = sizeof(inarg);
+> @@ -613,9 +615,44 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
+>  		goto out_err;
+>  	}
+>  	kfree(forget);
+> -	d_instantiate(entry, inode);
+> +	/*
+> +	 * In atomic create, we skipped lookup and it is very much likely that
+> +	 * dentry has DCACHE_PAR_LOOKUP flag set on it so call d_splice_alias().
+> +	 * Note: Only REG file is allowed under create/atomic create.
+> +	 */
+> +	/* There is special case when at very first call where we check if
+> +	 * atomic create is implemented by USER SPACE/libfuse or not, we
+> +	 * skipped lookup. Now, in case where atomic create is not implemented
+> +	 * underlying, we fall back to FUSE_CREATE. here we are required to handle
+> +	 * DCACHE_PAR_LOOKUP flag.
+> +	 */
+> +	if (!atomic_create && !d_in_lookup(entry) && fm->fc->no_atomic_create)
+> +		d_instantiate(entry, inode);
+> +	else {
+> +		res = d_splice_alias(inode, entry);
+> +		if (res) {
+> +			 /* Close the file in user space, but do not unlink it,
+> +			  * if it was created - with network file systems other
+> +			  * clients might have already accessed it.
+> +			  */
+> +			if (IS_ERR(res)) {
+> +				fi = get_fuse_inode(inode);
+> +				fuse_sync_release(fi, ff, flags);
+> +				fuse_queue_forget(fm->fc, forget, outentry.nodeid, 1);
+> +				err = PTR_ERR(res);
+> +				goto out_err;
+> +			}
+> +			/* res is expected to be NULL since its REG file */
+> +			WARN_ON(res);
+> +		}
+> +	}
+>  	fuse_change_entry_timeout(entry, &outentry);
+> -	fuse_dir_changed(dir);
+> +	/*
+> +	 * In case of atomic create, we want to indicate directory change
+> +	 * only if USER SPACE actually created the file.
+> +	 */
+> +	if (!atomic_create || (outopen.open_flags & FOPEN_FILE_CREATED))
+> +		fuse_dir_changed(dir);
+>  	err = finish_open(file, entry, generic_file_open);
+>  	if (err) {
+>  		fi = get_fuse_inode(inode);
+> @@ -634,6 +671,29 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
+>  	return err;
 >  }
 >  
-> +static inline int fsnotify_path_perm(struct path *path, struct dentry *dentry, __u32 mask)
+> +static int fuse_atomic_create(struct inode *dir, struct dentry *entry,
+> +			      struct file *file, unsigned int flags,
+> +			      umode_t mode)
 > +{
-> +	__u32 fsnotify_mask = 0;
+> +	int err;
+> +	struct fuse_conn *fc = get_fuse_conn(dir);
 > +
-> +	if (!(mask & (MAY_UNLINK | MAY_RMDIR)))
-> +		return 0;
+> +	if (fc->no_atomic_create)
+> +		return -ENOSYS;
 > +
-> +	if (mask & MAY_UNLINK)
-> +		fsnotify_mask |= FS_UNLINK_PERM;
-> +
-> +	if (mask & MAY_RMDIR)
-> +		fsnotify_mask |= FS_RMDIR_PERM;
-> +
-> +	return fsnotify_parent(dentry, fsnotify_mask, path, FSNOTIFY_EVENT_PATH);
+> +	err = fuse_create_open(dir, entry, file, flags, mode,
+> +			       FUSE_ATOMIC_CREATE);
+> +	/* If atomic create is not implemented then indicate in fc so that next
+> +	 * request falls back to normal create instead of going into libufse and
+> +	 * returning with -ENOSYS.
+> +	 */
+> +	if (err == -ENOSYS) {
+> +		if (!fc->no_atomic_create)
+> +			fc->no_atomic_create = 1;
+> +	}
+> +	return err;
 > +}
 > +
->  /*
->   * Simple wrappers to consolidate calls to fsnotify_parent() when an event
->   * is on a file/dentry.
-> diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
-> index 0805b74cae44..0e2e240e8234 100644
-> --- a/include/linux/fsnotify_backend.h
-> +++ b/include/linux/fsnotify_backend.h
-> @@ -54,6 +54,8 @@
->  #define FS_OPEN_PERM		0x00010000	/* open event in an permission hook */
->  #define FS_ACCESS_PERM		0x00020000	/* access event in a permissions hook */
->  #define FS_OPEN_EXEC_PERM	0x00040000	/* open/exec event in a permission hook */
-> +#define FS_UNLINK_PERM		0x00080000	/* unlink event in a permission hook */
-> +#define FS_RMDIR_PERM		0x00100000	/* rmdir event in a permission hook */
+>  static int fuse_mknod(struct user_namespace *, struct inode *, struct dentry *,
+>  		      umode_t, dev_t);
+>  static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
+> @@ -643,11 +703,12 @@ static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
+>  	int err;
+>  	struct fuse_conn *fc = get_fuse_conn(dir);
+>  	struct dentry *res = NULL;
+> +	bool create = flags & O_CREAT ? true : false;
 >  
->  #define FS_EXCL_UNLINK		0x04000000	/* do not send events if object is unlinked */
->  /*
-> @@ -79,7 +81,9 @@
->  #define ALL_FSNOTIFY_DIRENT_EVENTS (FS_CREATE | FS_DELETE | FS_MOVE | FS_RENAME)
+>  	if (fuse_is_bad(dir))
+>  		return -EIO;
 >  
->  #define ALL_FSNOTIFY_PERM_EVENTS (FS_OPEN_PERM | FS_ACCESS_PERM | \
-> -				  FS_OPEN_EXEC_PERM)
-> +				  FS_OPEN_EXEC_PERM | \
-> +				  FS_UNLINK_PERM | \
-> +				  FS_RMDIR_PERM)
+> -	if (d_in_lookup(entry)) {
+> +	if ((!create || fc->no_atomic_create) && d_in_lookup(entry)) {
+>  		res = fuse_lookup(dir, entry, 0);
+>  		if (IS_ERR(res))
+>  			return PTR_ERR(res);
+> @@ -656,7 +717,7 @@ static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
+>  			entry = res;
+>  	}
 >  
->  /*
->   * This is a list of all events that may get sent to a parent that is watching
-> diff --git a/security/security.c b/security/security.c
-> index b7cf5cbfdc67..8efc00ec02ed 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -1160,16 +1160,24 @@ EXPORT_SYMBOL(security_path_mkdir);
+> -	if (!(flags & O_CREAT) || d_really_is_positive(entry))
+> +	if (!create || d_really_is_positive(entry))
+>  		goto no_open;
 >  
->  int security_path_rmdir(const struct path *dir, struct dentry *dentry)
->  {
-> +	int ret;
->  	if (unlikely(IS_PRIVATE(d_backing_inode(dir->dentry))))
->  		return 0;
-> -	return call_int_hook(path_rmdir, 0, dir, dentry);
-> +	ret = call_int_hook(path_rmdir, 0, dir, dentry);
-> +	if (ret)
-> +		return ret;
-> +	return fsnotify_path_perm(dir, dentry, MAY_RMDIR);
+>  	/* Only creates */
+> @@ -665,7 +726,13 @@ static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
+>  	if (fc->no_create)
+>  		goto mknod;
+>  
+> -	err = fuse_create_open(dir, entry, file, flags, mode);
+> +	err = fuse_atomic_create(dir, entry, file, flags, mode);
+> +	/* Libfuse/user space has not implemented atomic create, therefore
+> +	 * fall back to normal create.
+> +	 */
+> +	if (err == -ENOSYS)
+> +		err = fuse_create_open(dir, entry, file, flags, mode,
+> +				       FUSE_CREATE);
+>  	if (err == -ENOSYS) {
+>  		fc->no_create = 1;
+>  		goto mknod;
+> @@ -683,6 +750,7 @@ static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
 >  }
 >  
->  int security_path_unlink(const struct path *dir, struct dentry *dentry)
->  {
-> +	int ret;
->  	if (unlikely(IS_PRIVATE(d_backing_inode(dir->dentry))))
->  		return 0;
-> -	return call_int_hook(path_unlink, 0, dir, dentry);
-> +	ret = call_int_hook(path_unlink, 0, dir, dentry);
-> +	if (ret)
-> +		return ret;
-> +	return fsnotify_path_perm(dir, dentry, MAY_UNLINK);
->  }
->  EXPORT_SYMBOL(security_path_unlink);
+>  /*
+> +
+>   * Code shared between mknod, mkdir, symlink and link
+>   */
+>  static int create_new_entry(struct fuse_mount *fm, struct fuse_args *args,
+> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> index e8e59fbdefeb..d577a591ab16 100644
+> --- a/fs/fuse/fuse_i.h
+> +++ b/fs/fuse/fuse_i.h
+> @@ -669,6 +669,9 @@ struct fuse_conn {
+>  	/** Is open/release not implemented by fs? */
+>  	unsigned no_open:1;
 >  
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index e9e959343de9..f0780f0eb903 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -1801,8 +1801,12 @@ static int may_create(struct inode *dir,
->  }
+> +	/** Is atomic create not implemented by fs? */
+> +	unsigned no_atomic_create:1;
+> +
+>  	/** Is opendir/releasedir not implemented by fs? */
+>  	unsigned no_opendir:1;
 >  
->  #define MAY_LINK	0
-> +#ifndef MAY_UNLINK
->  #define MAY_UNLINK	1
-> +#endif
-> +#ifndef MAY_RMDIR
->  #define MAY_RMDIR	2
-> +#endif
+> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+> index d6ccee961891..e4b56004b148 100644
+> --- a/include/uapi/linux/fuse.h
+> +++ b/include/uapi/linux/fuse.h
+> @@ -301,6 +301,7 @@ struct fuse_file_lock {
+>   * FOPEN_CACHE_DIR: allow caching this directory
+>   * FOPEN_STREAM: the file is stream-like (no file position at all)
+>   * FOPEN_NOFLUSH: don't flush data cache on close (unless FUSE_WRITEBACK_CACHE)
+> + * FOPEN_FILE_CREATED: the file was actually created
+>   */
+>  #define FOPEN_DIRECT_IO		(1 << 0)
+>  #define FOPEN_KEEP_CACHE	(1 << 1)
+> @@ -308,6 +309,7 @@ struct fuse_file_lock {
+>  #define FOPEN_CACHE_DIR		(1 << 3)
+>  #define FOPEN_STREAM		(1 << 4)
+>  #define FOPEN_NOFLUSH		(1 << 5)
+> +#define FOPEN_FILE_CREATED	(1 << 6)
 >  
->  /* Check whether a task can link, unlink, or rmdir a file/directory. */
->  static int may_link(struct inode *dir,
+>  /**
+>   * INIT request/reply flags
+> @@ -537,6 +539,7 @@ enum fuse_opcode {
+>  	FUSE_SETUPMAPPING	= 48,
+>  	FUSE_REMOVEMAPPING	= 49,
+>  	FUSE_SYNCFS		= 50,
+> +	FUSE_ATOMIC_CREATE	= 51,
+>  
+>  	/* CUSE specific operations */
+>  	CUSE_INIT		= 4096,
 > -- 
 > 2.17.1
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+
