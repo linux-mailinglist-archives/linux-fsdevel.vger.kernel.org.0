@@ -2,579 +2,177 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 410A8518431
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 May 2022 14:23:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 440315184A3
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 May 2022 14:57:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235200AbiECM1K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 May 2022 08:27:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38224 "EHLO
+        id S235614AbiECNAr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 May 2022 09:00:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235168AbiECM1H (ORCPT
+        with ESMTP id S231546AbiECNAq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 May 2022 08:27:07 -0400
-Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D08D344F2
-        for <linux-fsdevel@vger.kernel.org>; Tue,  3 May 2022 05:23:28 -0700 (PDT)
-Received: by mail-ed1-x544.google.com with SMTP id be20so19627567edb.12
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 May 2022 05:23:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=TE1k+xyihTMSWkSGzrDneVkAum46sMwYkJNJnhAJ764=;
-        b=XyhJnktM7U2LlMZ7TisGrY3ZYOKepHADKspM0LQsbvVOn0BWP5LLxykI4JI7RZisns
-         SdTvPSppnRAC9XndqSQl4Grl1zEqP6CWD5NgcATdrh044EoAzu1MBRGdAzdBmcdfKzPW
-         BMbJ27IvW+Zc2Es3sW4c07lOWRYCbgyOY4VoQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=TE1k+xyihTMSWkSGzrDneVkAum46sMwYkJNJnhAJ764=;
-        b=ANvaCzBlm0EO+MmkQGCL55Yi3HKeNcwNG7uVPLKZxLlCZF/jzoCl9Ha9vQf+aAILpG
-         hJJ1dEaZvNjUrcJ0jWzrW5tqHsA33WOzcbFZ7OUQ1IN8yfkevacv5U0PdkM0vr2/Domd
-         HFDgv4Lt9usMFY/M0XZR3p9Sg3jOzzKoiwzAf0VST0CuRAG07ELruJHalrTlac1/fY9C
-         BiRA5MaNgnfXgexuvqMZTCwr6251mKF+wlp9719m5NZhRSjhfOXYeqz3kaAO3ZMRudUC
-         r6rCjVSQxDUtLt+fNqA/pBf5gX8+WLDeZmwEAVYC7Te41u1/CwZxMaev1dZGDAZz6wOS
-         dcQA==
-X-Gm-Message-State: AOAM532CbiWe+God2gmtETq5nhc79K4FgNkqlHH8hqY2NdrXlf8+r4k+
-        hqOW/IzsgbDYxcOD40qKQS6+iE8XOJiplrPG
-X-Google-Smtp-Source: ABdhPJyidd0sNK3Dvs85E/mvMVYwF6knm8hinBxEIIcMNfcF+DOmOJKgvd2JlTGJ/5dOeoGxnT8HpA==
-X-Received: by 2002:a50:c014:0:b0:41d:5ee9:f354 with SMTP id r20-20020a50c014000000b0041d5ee9f354mr17536367edb.257.1651580606617;
-        Tue, 03 May 2022 05:23:26 -0700 (PDT)
-Received: from miu.piliscsaba.redhat.com (catv-178-48-189-3.catv.fixed.vodafone.hu. [178.48.189.3])
-        by smtp.gmail.com with ESMTPSA id p14-20020a056402154e00b0042617ba63a8sm7742405edx.50.2022.05.03.05.23.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 May 2022 05:23:25 -0700 (PDT)
-Date:   Tue, 3 May 2022 14:23:23 +0200
-From:   Miklos Szeredi <miklos@szeredi.hu>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     Dave Chinner <david@fromorbit.com>, Theodore Ts'o <tytso@mit.edu>,
-        Karel Zak <kzak@redhat.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Ian Kent <raven@themaw.net>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Amir Goldstein <amir73il@gmail.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>
-Subject: [RFC PATCH] getting misc stats/attributes via xattr API
-Message-ID: <YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com>
+        Tue, 3 May 2022 09:00:46 -0400
+Received: from esa1.hgst.iphmx.com (esa1.hgst.iphmx.com [68.232.141.245])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3E15326D0
+        for <linux-fsdevel@vger.kernel.org>; Tue,  3 May 2022 05:57:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1651582633; x=1683118633;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=/vh6/MdxLPAFqya3jNysuKAAPDnctjfI7bKL6Lpwimc=;
+  b=PR5ENVTD+ItPt6SKfuDmffMwezwTN+DwQAwEOJYYQ3V9p6EM6a+xJNCl
+   ch2WfcOCgQQNyfkRa4yraVkcnUUE7aADrawlOC8obBMgNFfl4my96zNwS
+   Uti2PSwd6LxFjXP0v94mW63t2Xpzfzh8ePzhEB2vvDXBty7O+8dLHo9zR
+   5CKbdcZ/Qj9GI7ql4CFEMvMVbypB8/x/TYxZlos74mXMbf30aLhrTRF/j
+   zP674+haLWFhxd/cwh9Sg/a8zTEwaU+60NIe9uE5RHvMshSOa9jWUaKNC
+   2cNYSzNzGPxtSU+U4u/ZCbPkdBBtvrdcfoBVDpw71VLoo6h5Qd854i0jp
+   A==;
+X-IronPort-AV: E=Sophos;i="5.91,195,1647273600"; 
+   d="scan'208";a="311393400"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 03 May 2022 20:57:13 +0800
+IronPort-SDR: qfAbA4G5O9RFlWfPp/RNm+XVE//KNPXuDEe0+SgEXe80OEJEu6tvVNkgneCuAMsI9eY+1uckPF
+ s2FzphWj/hb4m4ftmZUZXnWbuD5A9CK/c7T0dNX3F59dD8CxEYof9xqhG0Lp9HNTrEqkEr/g2N
+ Dat8ARxMjMuMtPRM2OU5lvMsGahqSmObz8fz3do7oXbT+Tk3aNCcDIdwke8PFQTVEaml7ZtHx8
+ GQoS3oJBT+TwiJFmShusC4GHw4H4FoWuoe6qXaT1fEnkmYs4xWLBdU5yEuXMky0lpTjigHwFyk
+ 1Ik/2WuOWS/IpfSHLcaTUUgo
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 03 May 2022 05:27:57 -0700
+IronPort-SDR: BrBz/wAaS4Ta5YpLC1cYACMmeV9t7WG5a289F/JVWVXxZPMLloLcIhIXUiL+BRZCbB0lsAYCp9
+ 7SD45M62HfBP0dYXdrVXkv82oNsASFa2Q0vMIzTyl3XzBzYoIPsLJuHfVWCLbX7bG3TZOSlvPm
+ fIUAQQnEFvWXOkI+it22Rrs8hqq+kfy62udVNitQUvgLaAWzop9GMO5QA5HkTi5gTRYjJynbWW
+ +7WKh6SkNQ/Fpr9v6SADbdcyfh9s5sa+rwkNRRAQqOjbpHkWEhdb4HVkAeVFSBexPlt91MC+mY
+ mD0=
+WDCIronportException: Internal
+Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
+  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 03 May 2022 05:57:13 -0700
+Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4Kt0NS5tRBz1Rvlx
+        for <linux-fsdevel@vger.kernel.org>; Tue,  3 May 2022 05:57:12 -0700 (PDT)
+Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)"
+        header.d=opensource.wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
+        opensource.wdc.com; h=content-transfer-encoding:content-type
+        :in-reply-to:organization:from:references:to:content-language
+        :subject:user-agent:mime-version:date:message-id; s=dkim; t=
+        1651582632; x=1654174633; bh=/vh6/MdxLPAFqya3jNysuKAAPDnctjfI7bK
+        L6Lpwimc=; b=hQl0K5mYZCHVFPZNZNpl3XrJqk99uG9YcsOfVzT3xkSZyRldc/6
+        3u+rc6Vp3atpUGddIbrrMfwig+eSSKnwRYPMjCMWc408WmUYtvAwymsG+vOu/np0
+        ySDWd6lfyzB7Es/Wk020JKGfLL7ocQIrU00iMTWjb+RmxSFda4n+nulZOMDqDJrg
+        2WnDFHQ7dqs3TisIIPukt/uwQEbmBvtBCxj8y2gJKILDcncoVAFPmyxg63vRBpM7
+        5ywSHOERb+zf73zNKA0BSZErrxvBpquEczjNvN76Flf+FI775tidO1DHGWT/C6Nt
+        pwiv1JHauZTakVA1f/2DM/M+7pnlxCXtlmA==
+X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
+Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
+        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 9pBpD0iKixAS for <linux-fsdevel@vger.kernel.org>;
+        Tue,  3 May 2022 05:57:12 -0700 (PDT)
+Received: from [10.225.81.200] (hq6rw33.ad.shared [10.225.81.200])
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4Kt0NR5Zryz1Rvlc;
+        Tue,  3 May 2022 05:57:11 -0700 (PDT)
+Message-ID: <f43fdbda-ba95-8864-3fd5-e9251e0de7a6@opensource.wdc.com>
+Date:   Tue, 3 May 2022 21:57:10 +0900
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.8.1
+Subject: Re: [RFC PATCH 00/10] Make O_SYNC writethrough
+Content-Language: en-US
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org
+Cc:     Christoph Hellwig <hch@lst.de>,
+        "Darrick J . Wong" <djwong@kernel.org>
+References: <20220503064008.3682332-1-willy@infradead.org>
+From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
+Organization: Western Digital Research
+In-Reply-To: <20220503064008.3682332-1-willy@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-7.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is a simplification of the getvalues(2) prototype and moving it to the
-getxattr(2) interface, as suggested by Dave.
+On 2022/05/03 15:39, Matthew Wilcox (Oracle) wrote:
+> This is very much in development and basically untested, but Damian
 
-The patch itself just adds the possibility to retrieve a single line of
-/proc/$$/mountinfo (which was the basic requirement from which the fsinfo
-patchset grew out of).
+s/Damian/Damien :)
 
-But this should be able to serve Amir's per-sb iostats, as well as a host of
-other cases where some statistic needs to be retrieved from some object.  Note:
-a filesystem object often represents other kinds of objects (such as processes
-in /proc) so this is not limited to fs attributes.
+Thank you for posting this. I am definitely going to play with this with zonefs.
 
-This also opens up the interface to setting attributes via setxattr(2).
+The goal is to allow replacing the mandatory O_DIRECT writing of sequential zone
+files with sector aligned O_SYNC writes which "preload" the page cache for
+subsequent buffered reads, thus reducing device accesses. That will also avoid
+an annoying overhead with zonefs which is that applications need 2 file
+descriptors per zone file: one without O_DIRECT for buffered reads and another
+O_DIRECT one for writes.
 
-After some pondering I made the namespace so:
+In the case of zonefs, since all sequential files are always fully mapped,
+allocated, cannot be used for mmap writing *and* a write is never an overwrite,
+these conditions:
 
-: - root
-bar - an attribute
-foo: - a folder (can contain attributes and/or folders)
++	if (folio_test_dirty(folio))
++		return true;
 
-The contents of a folder is represented by a null separated list of names.
++	/* Can't allocate blocks here because we don't have ->prepare_ioend */
++	if (iomap->type != IOMAP_MAPPED || iomap->type != IOMAP_UNWRITTEN ||
++	    iomap->flags & IOMAP_F_SHARED)
++		return false;
 
-Examples:
+never trigger and the writethrough is always started with
+folio_start_writeback(), essentially becoming a "direct" write from the issuer
+context (under the inode lock) on the entire folio. And that should guarantee
+that writes stay sequential as they must.
 
-$ getfattr -etext -n ":" .
-# file: .
-:="mnt:\000mntns:"
+> started describing to me something that he wanted, and I told him he
+> was asking for the wrong thing, and I already had this patch series
+> in progress.  If someone wants to pick it up and make it mergable,
+> that'd be grand.
+> 
+> The idea is that an O_SYNC write is always going to want to write, and
+> we know that at the time we're storing into the page cache.  So for an
+> otherwise clean folio, we can skip the part where we dirty the folio,
+> find the dirty folios and wait for their writeback.  We can just mark the
+> folio as writeback-in-progress and start the IO there and then (where we
+> know exactly which blocks need to be written, so possibly a smaller I/O
+> than writing the entire page).  The existing "find dirty pages, start
+> I/O and wait on them" code will end up waiting on this pre-started I/O
+> to complete, even though it didn't start any of its own I/O.
+> 
+> The important part is patch 9.  Everything before it is boring prep work.
+> I'm in two minds about whether to keep the 'write_through' bool, or
+> remove it.  So feel to read patches 9+10 squashed together, or as if
+> patch 10 doesn't exist.  Whichever feels better.
+> 
+> The biggest problem with all this is that iomap doesn't have the necessary
+> information to cause extent allocation, so if you do an O_SYNC write
+> to an extent which is HOLE or DELALLOC, we can't do this optimisation.
+> Maybe that doesn't really matter for interesting applications.  I suspect
+> it doesn't matter for ZoneFS.
+> 
+> Matthew Wilcox (Oracle) (10):
+>   iomap: Pass struct iomap to iomap_alloc_ioend()
+>   iomap: Remove iomap_writepage_ctx from iomap_can_add_to_ioend()
+>   iomap: Do not pass iomap_writepage_ctx to iomap_add_to_ioend()
+>   iomap: Accept a NULL iomap_writepage_ctx in iomap_submit_ioend()
+>   iomap: Allow a NULL writeback_control argument to iomap_alloc_ioend()
+>   iomap: Pass a length to iomap_add_to_ioend()
+>   iomap: Reorder functions
+>   iomap: Reorder functions
+>   iomap: Add writethrough for O_SYNC
+>   remove write_through bool
+> 
+>  fs/iomap/buffered-io.c | 492 +++++++++++++++++++++++------------------
+>  1 file changed, 273 insertions(+), 219 deletions(-)
+> 
 
-$ getfattr -etext -n ":mnt:" .
-# file: .
-:mnt:="info"
 
-$ getfattr -etext -n ":mnt:info" .
-# file: .
-:mnt:info="21 1 254:0 / / rw,relatime - ext4 /dev/root rw\012"
-
-$ getfattr -etext -n ":mntns:" .
-# file: .
-:mntns:="21:\00022:\00024:\00025:\00023:\00026:\00027:\00028:\00029:\00030:\00031:"
-
-$ getfattr -etext -n ":mntns:28:" .
-# file: .
-:mntns:28:="info"
-
-Comments?
-
-Thanks,
-Miklos
-
----
- fs/Makefile            |    2 
- fs/mount.h             |    8 +
- fs/namespace.c         |   15 ++-
- fs/pnode.h             |    2 
- fs/proc_namespace.c    |   15 ++-
- fs/values.c            |  242 +++++++++++++++++++++++++++++++++++++++++++++++++
- fs/xattr.c             |   16 ++-
- include/linux/values.h |   11 ++
- 8 files changed, 295 insertions(+), 16 deletions(-)
-
---- a/fs/Makefile
-+++ b/fs/Makefile
-@@ -16,7 +16,7 @@ obj-y :=	open.o read_write.o file_table.
- 		pnode.o splice.o sync.o utimes.o d_path.o \
- 		stack.o fs_struct.o statfs.o fs_pin.o nsfs.o \
- 		fs_types.o fs_context.o fs_parser.o fsopen.o init.o \
--		kernel_read_file.o remap_range.o
-+		kernel_read_file.o remap_range.o values.o
- 
- ifeq ($(CONFIG_BLOCK),y)
- obj-y +=	buffer.o direct-io.o mpage.o
---- a/fs/mount.h
-+++ b/fs/mount.h
-@@ -148,3 +148,11 @@ static inline bool is_anon_ns(struct mnt
- }
- 
- extern void mnt_cursor_del(struct mnt_namespace *ns, struct mount *cursor);
-+
-+struct mount *mnt_list_next(struct mnt_namespace *ns, struct list_head *p);
-+extern void namespace_lock_read(void);
-+extern void namespace_unlock_read(void);
-+extern int show_mountinfo_root(struct seq_file *m, struct vfsmount *mnt,
-+			       struct path *root);
-+extern bool is_path_reachable(struct mount *, struct dentry *,
-+			      const struct path *root);
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -1332,9 +1332,7 @@ struct vfsmount *mnt_clone_internal(cons
- 	return &p->mnt;
- }
- 
--#ifdef CONFIG_PROC_FS
--static struct mount *mnt_list_next(struct mnt_namespace *ns,
--				   struct list_head *p)
-+struct mount *mnt_list_next(struct mnt_namespace *ns, struct list_head *p)
- {
- 	struct mount *mnt, *ret = NULL;
- 
-@@ -1351,6 +1349,7 @@ static struct mount *mnt_list_next(struc
- 	return ret;
- }
- 
-+#ifdef CONFIG_PROC_FS
- /* iterator; we want it to have access to namespace_sem, thus here... */
- static void *m_start(struct seq_file *m, loff_t *pos)
- {
-@@ -1507,6 +1506,16 @@ static inline void namespace_lock(void)
- 	down_write(&namespace_sem);
- }
- 
-+void namespace_lock_read(void)
-+{
-+	down_read(&namespace_sem);
-+}
-+
-+void namespace_unlock_read(void)
-+{
-+	up_read(&namespace_sem);
-+}
-+
- enum umount_tree_flags {
- 	UMOUNT_SYNC = 1,
- 	UMOUNT_PROPAGATE = 2,
---- a/fs/pnode.h
-+++ b/fs/pnode.h
-@@ -50,7 +50,5 @@ void mnt_set_mountpoint(struct mount *,
- void mnt_change_mountpoint(struct mount *parent, struct mountpoint *mp,
- 			   struct mount *mnt);
- struct mount *copy_tree(struct mount *, struct dentry *, int);
--bool is_path_reachable(struct mount *, struct dentry *,
--			 const struct path *root);
- int count_mounts(struct mnt_namespace *ns, struct mount *mnt);
- #endif /* _LINUX_PNODE_H */
---- a/fs/proc_namespace.c
-+++ b/fs/proc_namespace.c
-@@ -132,9 +132,9 @@ static int show_vfsmnt(struct seq_file *
- 	return err;
- }
- 
--static int show_mountinfo(struct seq_file *m, struct vfsmount *mnt)
-+int show_mountinfo_root(struct seq_file *m, struct vfsmount *mnt,
-+			struct path *root)
- {
--	struct proc_mounts *p = m->private;
- 	struct mount *r = real_mount(mnt);
- 	struct super_block *sb = mnt->mnt_sb;
- 	struct path mnt_path = { .dentry = mnt->mnt_root, .mnt = mnt };
-@@ -152,7 +152,7 @@ static int show_mountinfo(struct seq_fil
- 	seq_putc(m, ' ');
- 
- 	/* mountpoints outside of chroot jail will give SEQ_SKIP on this */
--	err = seq_path_root(m, &mnt_path, &p->root, " \t\n\\");
-+	err = seq_path_root(m, &mnt_path, root, " \t\n\\");
- 	if (err)
- 		goto out;
- 
-@@ -164,7 +164,7 @@ static int show_mountinfo(struct seq_fil
- 		seq_printf(m, " shared:%i", r->mnt_group_id);
- 	if (IS_MNT_SLAVE(r)) {
- 		int master = r->mnt_master->mnt_group_id;
--		int dom = get_dominating_id(r, &p->root);
-+		int dom = get_dominating_id(r, root);
- 		seq_printf(m, " master:%i", master);
- 		if (dom && dom != master)
- 			seq_printf(m, " propagate_from:%i", dom);
-@@ -194,6 +194,13 @@ static int show_mountinfo(struct seq_fil
- 	return err;
- }
- 
-+static int show_mountinfo(struct seq_file *m, struct vfsmount *mnt)
-+{
-+	struct proc_mounts *p = m->private;
-+
-+	return show_mountinfo_root(m, mnt, &p->root);
-+}
-+
- static int show_vfsstat(struct seq_file *m, struct vfsmount *mnt)
- {
- 	struct proc_mounts *p = m->private;
---- /dev/null
-+++ b/fs/values.c
-@@ -0,0 +1,242 @@
-+#include <linux/values.h>
-+#include <linux/fs_struct.h>
-+#include <linux/seq_file.h>
-+#include <linux/nsproxy.h>
-+#include "../lib/kstrtox.h"
-+#include "mount.h"
-+
-+struct val_string {
-+	const char *str;
-+	size_t len;
-+};
-+
-+struct val_iter {
-+	struct val_string name;
-+	struct seq_file seq;
-+	int error;
-+};
-+
-+struct val_desc {
-+	struct val_string name;
-+	union {
-+		u64 idx;
-+		int (*get)(struct val_iter *vi, const struct path *path);
-+	};
-+};
-+
-+#define VAL_STRING(x) { .str = x, .len = sizeof(x) - 1 }
-+#define VD_NAME(x) .name = VAL_STRING(x)
-+
-+static int val_err(struct val_iter *vi, int err)
-+{
-+	vi->error = err;
-+	return 0;
-+}
-+
-+static int val_end_seq(struct val_iter *vi)
-+{
-+	if (vi->seq.count == vi->seq.size)
-+		return -EOVERFLOW;
-+
-+	return 0;
-+}
-+
-+static inline void val_string_skip(struct val_string *s, size_t count)
-+{
-+	WARN_ON(s->len < count);
-+	s->str += count;
-+	s->len -= count;
-+}
-+
-+static bool val_string_prefix(const struct val_string *p,
-+			      const struct val_string *s)
-+{
-+	return s->len >= p->len && !memcmp(s->str, p->str, p->len);
-+}
-+
-+static struct val_desc *val_lookup(struct val_iter *vi, struct val_desc *vd)
-+{
-+	for (; vd->name.len; vd++) {
-+		if (val_string_prefix(&vd->name, &vi->name)) {
-+			val_string_skip(&vi->name, vd->name.len);
-+			break;
-+		}
-+	}
-+	return vd;
-+}
-+
-+static int val_get_group(struct val_iter *vi, struct val_desc *vd)
-+{
-+	for (; vd->name.len; vd++)
-+		seq_write(&vi->seq, vd->name.str, vd->name.len + 1);
-+
-+	return val_end_seq(vi);
-+}
-+
-+enum {
-+	VAL_MNT_INFO,
-+};
-+
-+static struct val_desc val_mnt_group[] = {
-+	{ VD_NAME("info"),		.idx = VAL_MNT_INFO		},
-+	{ }
-+};
-+
-+static int val_mnt_show(struct val_iter *vi, struct vfsmount *mnt)
-+{
-+	struct val_desc *vd = val_lookup(vi, val_mnt_group);
-+	struct path root;
-+
-+	if (!vd->name.str)
-+		return val_err(vi, -ENOENT);
-+
-+	switch(vd->idx) {
-+	case VAL_MNT_INFO:
-+		get_fs_root(current->fs, &root);
-+		show_mountinfo_root(&vi->seq, mnt, &root);
-+		path_put(&root);
-+		break;
-+	}
-+
-+	return 0;
-+}
-+
-+static int val_mnt_get(struct val_iter *vi, const struct path *path)
-+{
-+	int err;
-+
-+	if (!vi->name.len)
-+		return val_get_group(vi, val_mnt_group);
-+
-+	namespace_lock_read();
-+	err = val_mnt_show(vi, path->mnt);
-+	namespace_unlock_read();
-+
-+	return err;
-+}
-+
-+/* called with namespace_sem held for read */
-+static struct vfsmount *mnt_lookup_by_id(struct mnt_namespace *ns,
-+					 struct path *root, int id)
-+{
-+	struct mount *m;
-+
-+	for (m = mnt_list_next(ns, &ns->list); m; m = mnt_list_next(ns, &m->mnt_list)) {
-+		if (m->mnt_id == id) {
-+			if (is_path_reachable(m, m->mnt.mnt_root, root))
-+				return mntget(&m->mnt);
-+			else
-+				return NULL;
-+		}
-+	}
-+	return NULL;
-+}
-+
-+static void seq_mnt_list(struct seq_file *seq, struct mnt_namespace *ns,
-+			 struct path *root)
-+{
-+	struct mount *m;
-+
-+	namespace_lock_read();
-+	for (m = mnt_list_next(ns, &ns->list); m; m = mnt_list_next(ns, &m->mnt_list)) {
-+		if (is_path_reachable(m, m->mnt.mnt_root, root)) {
-+			seq_printf(seq, "%i:", m->mnt_id);
-+			seq_putc(seq, '\0');
-+		}
-+	}
-+	namespace_unlock_read();
-+}
-+
-+static int val_mntns_get(struct val_iter *vi, const struct path *path)
-+{
-+	struct mnt_namespace *mnt_ns = current->nsproxy->mnt_ns;
-+	struct vfsmount *mnt;
-+	struct path root;
-+	unsigned long long mnt_id;
-+	unsigned int end;
-+	int err;
-+
-+	if (!vi->name.len) {
-+		get_fs_root(current->fs, &root);
-+		seq_mnt_list(&vi->seq, mnt_ns, &root);
-+		path_put(&root);
-+		return val_end_seq(vi);
-+	}
-+
-+	end = _parse_integer(vi->name.str, 10, &mnt_id);
-+	if (end & KSTRTOX_OVERFLOW)
-+		return val_err(vi, -ENOENT);
-+	if (vi->name.str[end] != VAL_SEP)
-+		return val_err(vi, -ENOENT);
-+	val_string_skip(&vi->name, end + 1);
-+
-+	namespace_lock_read();
-+	get_fs_root(current->fs, &root);
-+	mnt = mnt_lookup_by_id(mnt_ns, &root, mnt_id);
-+	path_put(&root);
-+	if (!mnt) {
-+		namespace_unlock_read();
-+		return val_err(vi, -ENOENT);
-+	}
-+	if (vi->name.len)
-+		err = val_mnt_show(vi, mnt);
-+	else
-+		err = val_get_group(vi, val_mnt_group);
-+
-+	namespace_unlock_read();
-+	mntput(mnt);
-+
-+	return err;
-+}
-+
-+
-+
-+static struct val_desc val_toplevel_group[] = {
-+	{ VD_NAME("mnt:"),	.get = val_mnt_get,	},
-+	{ VD_NAME("mntns:"),	.get = val_mntns_get,	},
-+	{ },
-+};
-+
-+static int getvalues(struct val_iter *vi, const struct path *path)
-+{
-+	struct val_desc *vd;
-+	int err;
-+
-+	if (!vi->name.len)
-+		return val_get_group(vi, val_toplevel_group);
-+
-+	vd = val_lookup(vi, val_toplevel_group);
-+	if (!vd->name.len)
-+		err = val_err(vi, -ENOENT);
-+	else
-+		err = vd->get(vi, path);
-+
-+	return err ?: vi->error;
-+}
-+
-+ssize_t val_getxattr(struct path *path, const char *name, size_t namelen,
-+		     void __user *value, size_t size)
-+{
-+	int err;
-+	char val[1024];
-+	struct val_iter vi = {
-+		.name = { .str = name, .len = namelen },
-+		.seq = { .buf = val, .size = min(sizeof(val), size) },
-+	};
-+
-+	if (!size)
-+		return sizeof(val);
-+
-+	val_string_skip(&vi.name, 1);
-+
-+	err = getvalues(&vi, path);
-+	if (err < 0)
-+		return err;
-+
-+	WARN_ON(vi.seq.count > size);
-+	if (copy_to_user(value, vi.seq.buf, vi.seq.count))
-+		return -EFAULT;
-+
-+	return vi.seq.count;
-+}
-+
---- a/fs/xattr.c
-+++ b/fs/xattr.c
-@@ -22,6 +22,7 @@
- #include <linux/audit.h>
- #include <linux/vmalloc.h>
- #include <linux/posix_acl_xattr.h>
-+#include <linux/values.h>
- 
- #include <linux/uaccess.h>
- 
-@@ -643,12 +644,13 @@ SYSCALL_DEFINE5(fsetxattr, int, fd, cons
-  * Extended attribute GET operations
-  */
- static ssize_t
--getxattr(struct user_namespace *mnt_userns, struct dentry *d,
--	 const char __user *name, void __user *value, size_t size)
-+getxattr(struct path *path, const char __user *name,
-+	 void __user *value, size_t size)
- {
- 	ssize_t error;
- 	void *kvalue = NULL;
- 	char kname[XATTR_NAME_MAX + 1];
-+	struct user_namespace *mnt_userns = mnt_user_ns(path->mnt);
- 
- 	error = strncpy_from_user(kname, name, sizeof(kname));
- 	if (error == 0 || error == sizeof(kname))
-@@ -656,6 +658,9 @@ getxattr(struct user_namespace *mnt_user
- 	if (error < 0)
- 		return error;
- 
-+	if (kname[0] == VAL_SEP)
-+		return val_getxattr(path, kname, error, value, size);
-+
- 	if (size) {
- 		if (size > XATTR_SIZE_MAX)
- 			size = XATTR_SIZE_MAX;
-@@ -664,7 +669,7 @@ getxattr(struct user_namespace *mnt_user
- 			return -ENOMEM;
- 	}
- 
--	error = vfs_getxattr(mnt_userns, d, kname, kvalue, size);
-+	error = vfs_getxattr(mnt_userns, path->dentry, kname, kvalue, size);
- 	if (error > 0) {
- 		if ((strcmp(kname, XATTR_NAME_POSIX_ACL_ACCESS) == 0) ||
- 		    (strcmp(kname, XATTR_NAME_POSIX_ACL_DEFAULT) == 0))
-@@ -693,7 +698,7 @@ static ssize_t path_getxattr(const char
- 	error = user_path_at(AT_FDCWD, pathname, lookup_flags, &path);
- 	if (error)
- 		return error;
--	error = getxattr(mnt_user_ns(path.mnt), path.dentry, name, value, size);
-+	error = getxattr(&path, name, value, size);
- 	path_put(&path);
- 	if (retry_estale(error, lookup_flags)) {
- 		lookup_flags |= LOOKUP_REVAL;
-@@ -723,8 +728,7 @@ SYSCALL_DEFINE4(fgetxattr, int, fd, cons
- 	if (!f.file)
- 		return error;
- 	audit_file(f.file);
--	error = getxattr(file_mnt_user_ns(f.file), f.file->f_path.dentry,
--			 name, value, size);
-+	error = getxattr(&f.file->f_path, name, value, size);
- 	fdput(f);
- 	return error;
- }
---- /dev/null
-+++ b/include/linux/values.h
-@@ -0,0 +1,11 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#include <linux/types.h>
-+
-+#define VAL_SEP ':'
-+
-+struct path;
-+
-+ssize_t val_getxattr(struct path *path, const char *name, size_t namelen,
-+		     void __user *value, size_t size);
-+
+-- 
+Damien Le Moal
+Western Digital Research
