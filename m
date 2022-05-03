@@ -2,130 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D26A517C9C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 May 2022 06:35:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0684517CDE
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 May 2022 07:53:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231145AbiECEem (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 May 2022 00:34:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47352 "EHLO
+        id S229484AbiECF4b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 May 2022 01:56:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41554 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230476AbiECEek (ORCPT
+        with ESMTP id S229458AbiECF4a (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 May 2022 00:34:40 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9205A3B564;
-        Mon,  2 May 2022 21:31:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=1xJ0vx1eaMi0x4gIvupC81JbOaz8pmRcDejeLusRC8E=; b=RMSIiKPhlNnjKrN2V06lOuTY7D
-        Y2KcuFxgB2TVQQg82TABjkwAdu9UiSGW68OTwqTL+OcDD1NOYAwSFRIu95aOv/ogtPnvQ0KZpJkAL
-        oH9GQr4FXGclk/Ukfn8TupBsy/JfAyR3o3PrpwArMK+Y23dA+OX89Dnz84H2QkhSfgD/nY5ngAMCD
-        OotJV/rfqrtaHT3CAIeI3yKcdGm/ssgKrZwymJiBsUVVTq5XRD6QvpomHxaWcFbN2qyDIq5PMAJyV
-        8yXRlJB23XK3pLA2UoVd49Zz4XactdLtrTBbPki8rZYrzFtHkFh3ovTSODuXCPYK6Nb3yspJ7gMu9
-        lU10RhuQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nlkBh-00FNk1-8Y; Tue, 03 May 2022 04:31:01 +0000
-Date:   Tue, 3 May 2022 05:31:01 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Brian Foster <bfoster@redhat.com>, xfs <linux-xfs@vger.kernel.org>,
-        fstests <fstests@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: generic/068 crash on 5.18-rc2?
-Message-ID: <YnCwBVdmg3IiGhfD@casper.infradead.org>
-References: <20220413033425.GM16799@magnolia>
- <YlbjOPEQP66gc1WQ@casper.infradead.org>
- <20220418174747.GF17025@magnolia>
- <20220422215943.GC17025@magnolia>
- <Ymq4brjhBcBvcfIs@bfoster>
- <Ymywh003c+Hd4Zu9@casper.infradead.org>
- <Ym2szx2S3ontYsBf@casper.infradead.org>
- <Ym/McFNCTzmsLBak@bfoster>
- <20220503032534.GC8297@magnolia>
+        Tue, 3 May 2022 01:56:30 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADF6123BF9
+        for <linux-fsdevel@vger.kernel.org>; Mon,  2 May 2022 22:52:59 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4728D6154D
+        for <linux-fsdevel@vger.kernel.org>; Tue,  3 May 2022 05:52:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F939C385B7
+        for <linux-fsdevel@vger.kernel.org>; Tue,  3 May 2022 05:52:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1651557178;
+        bh=ITa2NwqXe5zLXa48uJhMNSWPpRvUDo2drvTp2+JtsD4=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=rCdJPjUWySfQ1jZvtIdn8tJ+fRt9qrPwTmotfPk28AvGQreF50malXmLIK1d1GtPq
+         HTYzjxl9fG/W05NWTqP2BVDmQVk33Lq7hrbDMJMETgy3FRxWjaDiCsAepOqY7fReob
+         pTNox8NZvwQFispufe1caFXhVS8lEvRZdakRs3wgT/1V9QbteyXP2VaL0RXhUEqFj0
+         TjBvprjVII0TvHHmB+iL2QviOBh+44RiCzeIr/1tBdiO+4+WxOEi3THU5GU6+GBZIT
+         ehR3r9VakwvKXRA8bbH69b+Ge5EnCesO5v1xIRwwkMgvXIzNx4wcbUtkKHbUn2CU9C
+         HEr3whKOktULA==
+Received: by mail-wm1-f48.google.com with SMTP id m62so9272673wme.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 May 2022 22:52:58 -0700 (PDT)
+X-Gm-Message-State: AOAM531lGV4eGqoD1MK7IvZvj6Kql0K+DsuBlrth7gx1IiKbUfd3VEGt
+        gm1n9I09VX+T8ilon722U9lgDi1pE9eSnFtYQ+Q=
+X-Google-Smtp-Source: ABdhPJyNNCIH65z+ugyOzWOp33nsssQlkEfrnNFd/8Kk2TgNO4FM3ihi6IvSwEhKnj15TITSvj9jhrH9UEyu66infmg=
+X-Received: by 2002:a05:600c:3503:b0:38f:fbd7:1f0d with SMTP id
+ h3-20020a05600c350300b0038ffbd71f0dmr1817436wmq.170.1651557176740; Mon, 02
+ May 2022 22:52:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220503032534.GC8297@magnolia>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Received: by 2002:a5d:4571:0:0:0:0:0 with HTTP; Mon, 2 May 2022 22:52:56 -0700 (PDT)
+In-Reply-To: <20220502175342.20296-1-rdunlap@infradead.org>
+References: <20220502175342.20296-1-rdunlap@infradead.org>
+From:   Namjae Jeon <linkinjeon@kernel.org>
+Date:   Tue, 3 May 2022 14:52:56 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd8wWbe+xtd5jWSxmb9NF1YFYDo-2DQAJVLhZCHQaEnRSg@mail.gmail.com>
+Message-ID: <CAKYAXd8wWbe+xtd5jWSxmb9NF1YFYDo-2DQAJVLhZCHQaEnRSg@mail.gmail.com>
+Subject: Re: [PATCH v3] fs/ntfs3: validate BOOT sectors_per_clusters
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org,
+        syzbot+1631f09646bc214d2e76@syzkaller.appspotmail.com,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        ntfs3@lists.linux.dev, Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kari Argillander <kari.argillander@stargateuniverse.net>,
+        Matthew Wilcox <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 02, 2022 at 08:25:34PM -0700, Darrick J. Wong wrote:
-> On Mon, May 02, 2022 at 08:20:00AM -0400, Brian Foster wrote:
-> > On Sat, Apr 30, 2022 at 10:40:31PM +0100, Matthew Wilcox wrote:
-> > > On Sat, Apr 30, 2022 at 04:44:07AM +0100, Matthew Wilcox wrote:
-> > > > (I do not love this, have not even compiled it; it's late.  We may be
-> > > > better off just storing next_folio inside the folio_iter).
-> > > 
-> > > Does anyone have a preference for fixing this between Option A:
-> > > 
-> > 
-> > After seeing the trace in my previous mail and several thousand
-> > successful iterations of the test hack, I had reworked it into this
-> > (which survived weekend testing until it ran into some other XFS problem
-> > that looks unrelated):
-> > 
-> > diff --git a/include/linux/bio.h b/include/linux/bio.h
-> > index 278cc81cc1e7..aa820e09978e 100644
-> > --- a/include/linux/bio.h
-> > +++ b/include/linux/bio.h
-> > @@ -269,6 +269,7 @@ struct folio_iter {
-> >  	size_t offset;
-> >  	size_t length;
-> >  	/* private: for use by the iterator */
-> > +	struct folio *_next;
-> >  	size_t _seg_count;
-> >  	int _i;
-> >  };
-> > @@ -279,6 +280,7 @@ static inline void bio_first_folio(struct folio_iter *fi, struct bio *bio,
-> >  	struct bio_vec *bvec = bio_first_bvec_all(bio) + i;
-> >  
-> >  	fi->folio = page_folio(bvec->bv_page);
-> > +	fi->_next = folio_next(fi->folio);
-> >  	fi->offset = bvec->bv_offset +
-> >  			PAGE_SIZE * (bvec->bv_page - &fi->folio->page);
-> >  	fi->_seg_count = bvec->bv_len;
-> > @@ -290,13 +292,15 @@ static inline void bio_next_folio(struct folio_iter *fi, struct bio *bio)
-> >  {
-> >  	fi->_seg_count -= fi->length;
-> >  	if (fi->_seg_count) {
-> > -		fi->folio = folio_next(fi->folio);
-> > +		fi->folio = fi->_next;
-> > +		fi->_next = folio_next(fi->folio);
-> >  		fi->offset = 0;
-> >  		fi->length = min(folio_size(fi->folio), fi->_seg_count);
-> >  	} else if (fi->_i + 1 < bio->bi_vcnt) {
-> >  		bio_first_folio(fi, bio, fi->_i + 1);
-> >  	} else {
-> >  		fi->folio = NULL;
-> > +		fi->_next = NULL;
-> >  	}
-> >  }
-> > 
-> > So FWIW, that is just to say that I find option A to be cleaner and more
-> > readable.
-> 
-> Me too.  I'll queue up the usual nightly tests with that patch added and
-> we'll see how that does.
+2022-05-03 2:53 GMT+09:00, Randy Dunlap <rdunlap@infradead.org>:
+> When the NTFS BOOT sectors_per_clusters field is > 0x80,
+> it represents a shift value. Make sure that the shift value is
+> not too large before using it (NTFS max cluster size is 2MB).
+> Return -EVINVAL if it too large.
+>
+> This prevents negative shift values and shift values that are
+> larger than the field size.
+>
+> Prevents this UBSAN error:
+>
+>  UBSAN: shift-out-of-bounds in ../fs/ntfs3/super.c:673:16
+>  shift exponent -192 is negative
+>
+> Fixes: 82cae269cfa9 ("fs/ntfs3: Add initialization of super block")
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Reported-by: syzbot+1631f09646bc214d2e76@syzkaller.appspotmail.com
+> Cc: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+> Cc: ntfs3@lists.linux.dev
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Kari Argillander <kari.argillander@stargateuniverse.net>
+> Cc: Namjae Jeon <linkinjeon@kernel.org>
+> Cc: Matthew Wilcox <willy@infradead.org>
+Looks good to me:)
 
-I've just pushed essentially that patch to my for-next tree in case
-anybody does any testing with that.  I'll give it a couple of days
-before creating a folio-5.18f tag and asking Linus to pull the first two
-commits on
+Reviewed-by: Namjae Jeon <linkinjeon@kernel.org>
 
-git://git.infradead.org/users/willy/pagecache.git for-next
-
-That is, commits
-
-1a4c97e2dd5b ("block: Do not call folio_next() on an unreferenced folio")
-095099da208b ("mm/readahead: Fix readahead with large folios")
-
-(more than happy to update anything about those patches)
+Thanks.
+> ---
+> v2: use Willy's suggestions
+> v3: use Namjae's suggestions -- but now Konstantin can decide.
+>     drop Willy's Rev-by: tag due to changes
+>
+>  fs/ntfs3/super.c |   10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
+>
+> --- linux-next-20220428.orig/fs/ntfs3/super.c
+> +++ linux-next-20220428/fs/ntfs3/super.c
+> @@ -668,9 +668,11 @@ static u32 format_size_gb(const u64 byte
+>
+>  static u32 true_sectors_per_clst(const struct NTFS_BOOT *boot)
+>  {
+> -	return boot->sectors_per_clusters <= 0x80
+> -		       ? boot->sectors_per_clusters
+> -		       : (1u << (0 - boot->sectors_per_clusters));
+> +	if (boot->sectors_per_clusters <= 0x80)
+> +		return boot->sectors_per_clusters;
+> +	if (boot->sectors_per_clusters >= 0xf4) /* limit shift to 2MB max */
+> +		return 1U << (0 - boot->sectors_per_clusters);
+> +	return -EINVAL;
+>  }
+>
+>  /*
+> @@ -713,6 +715,8 @@ static int ntfs_init_from_boot(struct su
+>
+>  	/* cluster size: 512, 1K, 2K, 4K, ... 2M */
+>  	sct_per_clst = true_sectors_per_clst(boot);
+> +	if ((int)sct_per_clst < 0)
+> +		goto out;
+>  	if (!is_power_of_2(sct_per_clst))
+>  		goto out;
+>
+>
+>
