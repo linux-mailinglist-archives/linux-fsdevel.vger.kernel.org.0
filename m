@@ -2,98 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4835251AD38
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 May 2022 20:46:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D61751ADA7
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 May 2022 21:19:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377274AbiEDStn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 May 2022 14:49:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48014 "EHLO
+        id S1376857AbiEDTWf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 May 2022 15:22:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1377241AbiEDStl (ORCPT
+        with ESMTP id S1356002AbiEDTWe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 May 2022 14:49:41 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E3B4101DC;
-        Wed,  4 May 2022 11:46:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Dn3HTp6KUp78ZFzWlHBYdXj5KOE/G4agBHq21Rs9ZcU=; b=q8P31BgeHM8LksWa1g6pVQGEev
-        8H/7gSHdSIGf4hnUZNG6k+NP/eyDVuhEa+E/bIHsjVXN5T1EKYCJy7/bIZ2gwofMBVL0m04h906iy
-        O3m6WyGqfypCYPOeFlE0zbL6KzH75Dt6yQynZ2YQb+tjQcvc8h0DNJLxPlj13yCZ/0fHhfWFYko29
-        +mbPlaxqsXq8iB7o++eo7wHDCeL+pv7RLP4uld2Owm2FwNjROt2Nbdn7jgEo1D8SAnfFhVijf+4Ah
-        2gPgRMk9OnlAr8zlq0l5QdnCMe8bwU9AhVy3E7SmAac3O5pVOrjuKc62H1lx2a7NKVVOWSVVV3BVX
-        R0OH7blQ==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nmK0f-00CBsb-2f; Wed, 04 May 2022 18:46:01 +0000
-Date:   Wed, 4 May 2022 11:46:01 -0700
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Daniel Latypov <dlatypov@google.com>
-Cc:     David Gow <davidgow@google.com>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Lucas De Marchi <lucas.demarchi@intel.com>,
-        Aaron Tomlin <atomlin@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "Guilherme G . Piccoli" <gpiccoli@igalia.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        John Ogness <john.ogness@linutronix.de>,
-        Joe Fradley <joefradley@google.com>,
-        kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jani Nikula <jani.nikula@linux.intel.com>
-Subject: Re: [PATCH v2] kunit: Taint kernel if any tests run
-Message-ID: <YnLJ6dJQBTYjBRHZ@bombadil.infradead.org>
-References: <20220429043913.626647-1-davidgow@google.com>
- <20220430030019.803481-1-davidgow@google.com>
- <Ym7P7mCoMiQq99EM@bombadil.infradead.org>
- <Ym7QXOMK3fLQ+b6t@bombadil.infradead.org>
- <CABVgOSmXyN3SrDkUt4y_TaKPvEGVJgbuE3ycrVDa-Kt1NFGH7g@mail.gmail.com>
- <YnKS3MwNxvEi73OP@bombadil.infradead.org>
- <CAGS_qxrz1WoUd5oGa7p1-H2mQVbkRxSTEbqnCG=aBj=xnMu1zQ@mail.gmail.com>
+        Wed, 4 May 2022 15:22:34 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B248B289A5
+        for <linux-fsdevel@vger.kernel.org>; Wed,  4 May 2022 12:18:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1651691936;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ZwSljj3c5T6Utkzz17OaX0BViEESRn+BH5N5ceRLoVg=;
+        b=FexlnEssIAWDbxMIb8t3GSbRA7HoAucWtBzf8Rl6TRIFgW3tKVeon1kWYu3ZgoFPRl4hgI
+        ECznpE9OtJpH/PuyLlg29f0nWiRWqgkh73I3V+ViDXeU4AaSPv6yq/0UtrBWj16KwWq8r9
+        w3ItsPNBXesKpQ/MEZzzxboZuDKz2Mc=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-607-bsMMlQ16PiqoSZ-tI920Ng-1; Wed, 04 May 2022 15:18:53 -0400
+X-MC-Unique: bsMMlQ16PiqoSZ-tI920Ng-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 72B83101AA47;
+        Wed,  4 May 2022 19:18:53 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.22.16.200])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 63326400E896;
+        Wed,  4 May 2022 19:18:53 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 21F9D220463; Wed,  4 May 2022 15:18:53 -0400 (EDT)
+Date:   Wed, 4 May 2022 15:18:53 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Dharmendra Singh <dharamhans87@gmail.com>
+Cc:     miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
+        fuse-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        bschubert@ddn.com
+Subject: Re: [PATCH v4 0/3] FUSE: Implement atomic lookup + open/create
+Message-ID: <YnLRnR3Xqu0cYPdb@redhat.com>
+References: <20220502102521.22875-1-dharamhans87@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAGS_qxrz1WoUd5oGa7p1-H2mQVbkRxSTEbqnCG=aBj=xnMu1zQ@mail.gmail.com>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20220502102521.22875-1-dharamhans87@gmail.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.11.54.1
+X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 04, 2022 at 11:25:14AM -0500, Daniel Latypov wrote:
-> On Wed, May 4, 2022 at 9:51 AM Luis Chamberlain <mcgrof@kernel.org> wrote:
-> > selftests has modules, although I am not sure if there are selftests
-> > which do not load modules. Shuah?
+On Mon, May 02, 2022 at 03:55:18PM +0530, Dharmendra Singh wrote:
+> In FUSE, as of now, uncached lookups are expensive over the wire.
+> E.g additional latencies and stressing (meta data) servers from
+> thousands of clients. These lookup calls possibly can be avoided
+> in some cases. Incoming three patches address this issue.
+
+BTW, these patches are designed to improve performance by cutting down
+on number of fuse commands sent. Are there any performance numbers
+which demonstrate what kind of improvement you are seeing.
+
+Say, If I do kernel build, is the performance improvement observable?
+
+Thanks
+Vivek
+
 > 
-> I'm not Shuah, but there are indeed selftests that don't load modules.
 > 
-> I went looking for an example and found
-> tools/testing/selftests/bpf/test_doc_build.sh, which runs entirely in
-> userspace (basically just `make docs`).
+> Fist patch handles the case where we are creating a file with O_CREAT.
+> Before we go for file creation, we do a lookup on the file which is most
+> likely non-existent. After this lookup is done, we again go into libfuse
+> to create file. Such lookups where file is most likely non-existent, can
+> be avoided.
+> 
+> Second patch handles the case where we open first time a file/dir
+> but do a lookup first on it. After lookup is performed we make another
+> call into libfuse to open the file. Now these two separate calls into
+> libfuse can be combined and performed as a single call into libfuse.
+> 
+> Third patch handles the case when we are opening an already existing file
+> (positive dentry). Before this open call, we re-validate the inode and
+> this re-validation does a lookup on the file and verify the inode.
+> This separate lookup also can be avoided (for non-dir) and combined
+> with open call into libfuse. After open returns we can revalidate the inode.
+> This optimisation is performed only when we do not have default permissions
+> enabled.
+> 
+> Here is the link to performance numbers
+> https://lore.kernel.org/linux-fsdevel/20220322121212.5087-1-dharamhans87@gmail.com/
+> 
+> 
+> Dharmendra Singh (3):
+>   FUSE: Implement atomic lookup + create
+>   Implement atomic lookup + open
+>   Avoid lookup in d_revalidate()
+> 
+>  fs/fuse/dir.c             | 211 +++++++++++++++++++++++++++++++++++---
+>  fs/fuse/file.c            |  30 +++++-
+>  fs/fuse/fuse_i.h          |  16 ++-
+>  fs/fuse/inode.c           |   4 +-
+>  fs/fuse/ioctl.c           |   2 +-
+>  include/uapi/linux/fuse.h |   5 +
+>  6 files changed, 246 insertions(+), 22 deletions(-)
+> 
+> ---
+> v4: Addressed all comments and refactored the code into 3 separate patches
+>     respectively for Atomic create, Atomic open, optimizing lookup in
+>     d_revalidate().
+> ---
+> 
 
-OK so, we can just skip tainting considerations for selftests which
-don't use modules for now. There may be selftests which do wonky
-things in userspace but indeed I agree the userspace taint would
-be better for those but I don't think it may be worth bother
-worrying about those at this point in time.
-
-But my point in that sharing a taint between kunit / selftests modules
-does make sense and is easily possible. The unfortunate aspect is just
-that selftests don't have a centralized runner, because I can just
-run tools/testing/selftests/sysctl/sysctl.sh for example and that's it.
-So I think we have no other option but to just add the module info
-manually for selftests at this time.
-
-  Luis
