@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 88989519AD7
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 May 2022 10:54:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2586519ABA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 May 2022 10:52:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346730AbiEDI4Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 May 2022 04:56:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52550 "EHLO
+        id S1347252AbiEDIyt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 May 2022 04:54:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346821AbiEDIxp (ORCPT
+        with ESMTP id S1346829AbiEDIxp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 4 May 2022 04:53:45 -0400
-Received: from lgeamrelo11.lge.com (lgeamrelo11.lge.com [156.147.23.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1B66525C4F
-        for <linux-fsdevel@vger.kernel.org>; Wed,  4 May 2022 01:49:22 -0700 (PDT)
+Received: from lgeamrelo11.lge.com (lgeamrelo13.lge.com [156.147.23.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0855425C62
+        for <linux-fsdevel@vger.kernel.org>; Wed,  4 May 2022 01:49:23 -0700 (PDT)
 Received: from unknown (HELO lgeamrelo01.lge.com) (156.147.1.125)
-        by 156.147.23.51 with ESMTP; 4 May 2022 17:19:21 +0900
+        by 156.147.23.53 with ESMTP; 4 May 2022 17:19:21 +0900
 X-Original-SENDERIP: 156.147.1.125
 X-Original-MAILFROM: byungchul.park@lge.com
 Received: from unknown (HELO localhost.localdomain) (10.177.244.38)
@@ -47,9 +47,9 @@ Cc:     damien.lemoal@opensource.wdc.com, linux-ide@vger.kernel.org,
         dri-devel@lists.freedesktop.org, airlied@linux.ie,
         rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
         hamohammed.sa@gmail.com, 42.hyeyoo@gmail.com
-Subject: [PATCH RFC v6 16/21] dept: Distinguish each work from another
-Date:   Wed,  4 May 2022 17:17:44 +0900
-Message-Id: <1651652269-15342-17-git-send-email-byungchul.park@lge.com>
+Subject: [PATCH RFC v6 17/21] dept: Disable Dept within the wait_bit layer by default
+Date:   Wed,  4 May 2022 17:17:45 +0900
+Message-Id: <1651652269-15342-18-git-send-email-byungchul.park@lge.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1651652269-15342-1-git-send-email-byungchul.park@lge.com>
 References: <1651652269-15342-1-git-send-email-byungchul.park@lge.com>
@@ -62,81 +62,43 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Workqueue already provides concurrency control. By that, any wait in a
-work doesn't prevents events in other works with the control enabled.
-Thus, each work would better be considered a different context.
+The struct wait_queue_head array, bit_wait_table[] in sched/wait_bit.c
+are shared by all its users, which unfortunately vary in terms of class.
+So each should've been assigned its own class to avoid false positives.
 
-So let Dept assign a different context id to each work.
+It'd better let Dept work at a higher layer than wait_bit. So disabled
+Dept within the wait_bit layer by default.
+
+It's worth noting that Dept is still working with the other struct
+wait_queue_head ones that are mostly well-classified.
 
 Signed-off-by: Byungchul Park <byungchul.park@lge.com>
 ---
- include/linux/dept.h     |  2 ++
- kernel/dependency/dept.c | 10 ++++++++++
- kernel/workqueue.c       |  3 +++
- 3 files changed, 15 insertions(+)
+ kernel/sched/wait_bit.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/dept.h b/include/linux/dept.h
-index c020b17..1a3858c 100644
---- a/include/linux/dept.h
-+++ b/include/linux/dept.h
-@@ -503,6 +503,7 @@ struct dept_task {
- extern void dept_event_split_map(struct dept_map_each *me, struct dept_map_common *mc, unsigned long ip, const char *e_fn);
- extern void dept_ask_event_split_map(struct dept_map_each *me, struct dept_map_common *mc);
- extern void dept_kernel_enter(void);
-+extern void dept_work_enter(void);
- 
- static inline void dept_ecxt_enter_nokeep(struct dept_map *m)
- {
-@@ -556,6 +557,7 @@ static inline void dept_ecxt_enter_nokeep(struct dept_map *m)
- #define dept_event_split_map(me, mc, ip, e_fn)		do { } while (0)
- #define dept_ask_event_split_map(me, mc)		do { } while (0)
- #define dept_kernel_enter()				do { } while (0)
-+#define dept_work_enter()				do { } while (0)
- #define dept_ecxt_enter_nokeep(m)			do { } while (0)
- #define dept_key_init(k)				do { (void)(k); } while (0)
- #define dept_key_destroy(k)				do { (void)(k); } while (0)
-diff --git a/kernel/dependency/dept.c b/kernel/dependency/dept.c
-index 18e5951..6707313 100644
---- a/kernel/dependency/dept.c
-+++ b/kernel/dependency/dept.c
-@@ -1844,6 +1844,16 @@ void dept_enirq_transition(unsigned long ip)
- 	dept_exit(flags);
- }
- 
-+/*
-+ * Assign a different context id to each work.
-+ */
-+void dept_work_enter(void)
-+{
-+	struct dept_task *dt = dept_task();
-+
-+	dt->cxt_id[DEPT_CXT_PROCESS] += (1UL << DEPT_CXTS_NR);
-+}
-+
- void dept_kernel_enter(void)
- {
- 	struct dept_task *dt = dept_task();
-diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-index 0d2514b..334654c 100644
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -51,6 +51,7 @@
- #include <linux/sched/isolation.h>
- #include <linux/nmi.h>
- #include <linux/kvm_para.h>
+diff --git a/kernel/sched/wait_bit.c b/kernel/sched/wait_bit.c
+index d4788f8..df93e33 100644
+--- a/kernel/sched/wait_bit.c
++++ b/kernel/sched/wait_bit.c
+@@ -3,6 +3,7 @@
+ /*
+  * The implementation of the wait_bit*() and related waiting APIs:
+  */
 +#include <linux/dept.h>
  
- #include "workqueue_internal.h"
+ #define WAIT_TABLE_BITS 8
+ #define WAIT_TABLE_SIZE (1 << WAIT_TABLE_BITS)
+@@ -246,6 +247,8 @@ void __init wait_bit_init(void)
+ {
+ 	int i;
  
-@@ -2199,6 +2200,8 @@ static void process_one_work(struct worker *worker, struct work_struct *work)
- 
- 	lockdep_copy_map(&lockdep_map, &work->lockdep_map);
- #endif
-+	dept_work_enter();
-+
- 	/* ensure we're on the correct CPU */
- 	WARN_ON_ONCE(!(pool->flags & POOL_DISASSOCIATED) &&
- 		     raw_smp_processor_id() != pool->cpu);
+-	for (i = 0; i < WAIT_TABLE_SIZE; i++)
++	for (i = 0; i < WAIT_TABLE_SIZE; i++) {
+ 		init_waitqueue_head(bit_wait_table + i);
++		dept_map_nocheck(&(bit_wait_table + i)->dmap);
++	}
+ }
 -- 
 1.9.1
 
