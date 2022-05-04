@@ -2,137 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F0D3B519AFC
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 May 2022 10:57:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74827519C7C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 May 2022 12:01:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346709AbiEDJB0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 May 2022 05:01:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38312 "EHLO
+        id S241026AbiEDKFb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 May 2022 06:05:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346121AbiEDJBU (ORCPT
+        with ESMTP id S232653AbiEDKFa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 May 2022 05:01:20 -0400
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFF5A2C112
-        for <linux-fsdevel@vger.kernel.org>; Wed,  4 May 2022 01:53:48 -0700 (PDT)
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20220504085333euoutp017ba6ffce21438ec272299890e712e45c~r2vBNPNaP1979219792euoutp01B
-        for <linux-fsdevel@vger.kernel.org>; Wed,  4 May 2022 08:53:33 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20220504085333euoutp017ba6ffce21438ec272299890e712e45c~r2vBNPNaP1979219792euoutp01B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1651654414;
-        bh=QkjMVZ7YuUw8jJhXQnJpcoFnlPYOWuxnkq5J+jf/yN8=;
-        h=Date:Subject:To:CC:From:In-Reply-To:References:From;
-        b=SwX7PQomwR9Jxg5kgaLJn1V3BbAIEDAGNBF9dw/LpWo72I+64v2TBGhhngZu8do4l
-         YVQIHqyZIIB2PCc7quDNenoFeJLOuCIsas9mjT49mvOmnHHY80AWC78AA0DUtO97q+
-         nqUbUPqpfYurzajP+vWaOF9+YZ7NVzpTPZ4lFrno=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20220504085333eucas1p10e28ba95f5c2a26ea4db6270247ad64b~r2vAoyEmn0813908139eucas1p1Y;
-        Wed,  4 May 2022 08:53:33 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 3F.B5.10260.D0F32726; Wed,  4
-        May 2022 09:53:33 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20220504085332eucas1p28b16e7db390eb2ffb2906ed2f2aa06b5~r2vAHVCh_1462414624eucas1p2y;
-        Wed,  4 May 2022 08:53:32 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220504085332eusmtrp1117c59c1ab66ee22363450053dfd8684~r2vAF33E11107411074eusmtrp1T;
-        Wed,  4 May 2022 08:53:32 +0000 (GMT)
-X-AuditID: cbfec7f5-bddff70000002814-a7-62723f0d3918
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 50.F7.09404.C0F32726; Wed,  4
-        May 2022 09:53:32 +0100 (BST)
-Received: from CAMSVWEXC01.scsc.local (unknown [106.1.227.71]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20220504085332eusmtip1ef554c6afdc7b3b69842971ebc6d663b~r2u-6o-s51569915699eusmtip1e;
-        Wed,  4 May 2022 08:53:32 +0000 (GMT)
-Received: from [192.168.8.130] (106.210.248.170) by CAMSVWEXC01.scsc.local
-        (2002:6a01:e347::6a01:e347) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-        Wed, 4 May 2022 09:53:29 +0100
-Message-ID: <850340eb-fc88-38a7-4c92-1c389e92b0ad@samsung.com>
-Date:   Wed, 4 May 2022 10:53:28 +0200
+        Wed, 4 May 2022 06:05:30 -0400
+Received: from shout02.mail.de (shout02.mail.de [IPv6:2001:868:100:600::217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2728027CF1
+        for <linux-fsdevel@vger.kernel.org>; Wed,  4 May 2022 03:01:54 -0700 (PDT)
+Received: from postfix03.mail.de (postfix03.bt.mail.de [10.0.121.127])
+        by shout02.mail.de (Postfix) with ESMTP id 2D769A0CDA;
+        Wed,  4 May 2022 12:01:51 +0200 (CEST)
+Received: from smtp02.mail.de (smtp02.bt.mail.de [10.0.121.212])
+        by postfix03.mail.de (Postfix) with ESMTP id 0F49F801EC;
+        Wed,  4 May 2022 12:01:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mail.de;
+        s=mailde202009; t=1651658511;
+        bh=gQo69zZpijIMceLoi1TGmQKQIrxfTlIMW9j9Zo08oaE=;
+        h=Message-ID:Date:Subject:To:Cc:From:From:To:CC:Subject:Reply-To;
+        b=2arZxkqoScThsYCCacBWkJQmYvzjIVsEjKYh32V1NrAOgoG4vAwqVjS3HnSkeNNVp
+         de6Fw58DhYoiUyp05HQYF+Q2u4fAy5j541zXAJKChZxQPbaCur0pPvgKw3nugsqltG
+         CtPs8piL5yzVsCmRVpi9g2UjrUlg0aYVc1VNQ4A96IUwcnfCFV3eR+TfeNl+q5ZTSg
+         4AVkTyX8b1PE+zb/9xdYMRkKy4Afc7F9rfnxJCQchre1Ba2KkA8y6kjC/CDm8CD5dP
+         7lzsF5JDBoTRMCGx2nXmp8Oh+fGhdqBRRxH1qEZYVEwnNYsfyG0XJMXIBFD1VqcL2Y
+         sUsWADuY2sVAA==
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtp02.mail.de (Postfix) with ESMTPSA id 57F03A01EB;
+        Wed,  4 May 2022 12:01:50 +0200 (CEST)
+Message-ID: <7887399b-a0a0-2e09-a9fb-68b758dfa2ff@mail.de>
+Date:   Wed, 4 May 2022 12:01:49 +0200
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
-        Thunderbird/91.8.1
-Subject: Re: [PATCH 15/16] f2fs: ensure only power of 2 zone sizes are
- allowed
-Content-Language: en-US
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
-CC:     <axboe@kernel.dk>, <snitzer@kernel.org>, <hch@lst.de>,
-        <mcgrof@kernel.org>, <naohiro.aota@wdc.com>, <sagi@grimberg.me>,
-        <damien.lemoal@opensource.wdc.com>, <dsterba@suse.com>,
-        <johannes.thumshirn@wdc.com>, <linux-kernel@vger.kernel.org>,
-        <linux-btrfs@vger.kernel.org>, <clm@fb.com>,
-        <gost.dev@samsung.com>, <chao@kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>, <josef@toxicpanda.com>,
-        <jonathan.derrick@linux.dev>, <agk@redhat.com>,
-        <kbusch@kernel.org>, <kch@nvidia.com>,
-        <linux-nvme@lists.infradead.org>, <dm-devel@redhat.com>,
-        <bvanassche@acm.org>, <jiangbo.365@bytedance.com>,
-        <linux-fsdevel@vger.kernel.org>, <matias.bjorling@wdc.com>,
-        <linux-block@vger.kernel.org>
-From:   Pankaj Raghav <p.raghav@samsung.com>
-In-Reply-To: <YnGK/8lu2GW4gEY0@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [RFC] Volatile fanotify marks
+Content-Language: de-DE
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <CAOQ4uxiRDpuS=2uA6+ZUM7yG9vVU-u212tkunBmSnP_u=mkv=Q@mail.gmail.com>
+ <20220228140556.ae5rhgqsyzm5djbp@quack3.lan>
+ <CAOQ4uxiMp4HjSj01FZm8-jPzHD4jVugxuXBDW2JnSpVizhCeTQ@mail.gmail.com>
+ <ff14ec84-2541-28c9-4d28-7e2ee13835dc@mail.de>
+ <CAOQ4uxhry1_tW9NPC4X3q3YUQ86Ecg+G6A2Fvs5vKQTDB0ctHQ@mail.gmail.com>
+ <8c636384-8db6-d7d1-b89b-424ef1accfe8@mail.de>
+ <CAOQ4uxgLovYffU5epFy+r3qa7WjD9637YNuiFJHGj_du7H8gOA@mail.gmail.com>
+ <20220303092459.mglgfvq653ge4k42@quack3.lan>
+ <6799146c-fa5a-7b64-bb91-6038006cf612@mail.de>
+ <CAOQ4uxgXfL6_fi9rSf8_cUW0Lgbw8Rj_VcBOPiA5ec3PqBqo_Q@mail.gmail.com>
+From:   Tycho Kirchner <tychokirchner@mail.de>
+In-Reply-To: <CAOQ4uxgXfL6_fi9rSf8_cUW0Lgbw8Rj_VcBOPiA5ec3PqBqo_Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [106.210.248.170]
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-        CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347)
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0xTZxjed249Lak7FJFPuulSnAlsoAx03zKkLszt6GZk/4y7FjlBslKh
-        lW3qNksQkAZoAZFRQcSwjdvoaFG8UMKaAcpFFkux4IApoKaEiwFkHayOcjDj3/O+7/O87/N8
-        +Whc0kAF0omqY5xapVDKKBFxpd3dGyqWq+O2F2f6IVNnO45qh/QUOjfjxlFXUQ+GCvQ/CNBi
-        Ty+OrFPnSfTH32kYqq5tw9CYyYijnNYZAv2rG17unb6Po6X74ajA1g/QuMOIIevga+jOaJUA
-        3bn0Pmq23iKQ/Xophcp/GhcgQ+Y8jpyGcYDyOywkqp+YJtDNQeluKWvv+4D13Kyj2Pz0KQHb
-        O9xAsPaeVNZck02xFdoinLVUnmJvXJzF2BsDWorNTZ+i2GsZIyQ73eKgWFOjg2ANlgaSnTVv
-        ivU9JIqK55SJX3HqbdFfiI487ntEJmf6fFPa6BFogZvWASENmUjosnVQOiCiJUwVgLfzcgm+
-        mAPw7sKz1WIWwO5HC4LnEkPTyOrgZwAfdqX9zxrK76O8LAlzHcDf5nfqAE2LmWjYVrXB2yaY
-        LfDy2XzgxWLGF94qGSO82J85CM8Zuykv3Y+JhcMZK/ZwJgAOjpVjXrx+WWq7ZBd4T+FMMwkb
-        qu+RXj7FhMC07BVvwmU4bHaRvDYYZjQtCni8GTZNluK8/yBY6OzDePwd/KW9e2UnZAZEcG5i
-        kvDuhMy7sLNiB8/xg66OxtXsL8GuwhyCxyfhuHMR57WnAdRfM1G89m2Y163kOe/ATP0FjG+v
-        g85JX97OOlhwpRg3gFeNax7CuCaxcU0C45oEFwFRAwK4VE1SAqeJUHFfh2kUSZpUVULY4aNJ
-        ZrD8q7s8HfNXQZXrSZgNYDSwAUjjsvXimB+T4yTieMXxE5z66OfqVCWnsQEpTcgCxIcTf1VI
-        mATFMe5Ljkvm1M+nGC0M1GLyiHCfyastIfrdard8SPlP0Bmfp2+q+9V97m8L9mSlnOi/y1nq
-        AZlgr8zevnVv1sOWpRr8gcvtvzd82GqcvW362NmifVCPxZEduT4qR+toxGe7DqagznRP1GOh
-        pzf+1Jz7bGuZyecA80Lnp3Wjwdbo0NcXRsCflqzEyg8/iqpJUQVy06WxpqWBKGv16E7lRmmw
-        LmjuSfF7te31JS9XPH3rxe9LcoCRNBV9srG5zrw5TLKvivJ3pP0VY8mtKyrfdDxyw+X9ZYZC
-        l7xgz++LbZGhA2XnKdnMyZpnO96AYdHFB/R1u1qlrPMQLq8+o41hY7G8rXETiTEXtglfYcbg
-        vX0yQnNEER6CqzWK/wAWnxgCRAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJKsWRmVeSWpSXmKPExsVy+t/xu7o89kVJBs/OalusP3WM2WL13X42
-        i2kffjJbnJ56lsliUv8MdovfZ88zW+x9N5vV4sKPRiaLlauPMlk8WT+L2aLnwAcWi79d94Bi
-        LQ+ZLf48NLSYdOgao8XTq7OYLPbe0ra49HgFu8WlRe4We/aeZLG4vGsOm8X8ZU/ZLSa0fWW2
-        uDHhKaPFxOObWS3WvX7PYnHilrSDtMflK94e/06sYfOY2PyO3eP8vY0sHpfPlnpsWtXJ5rGw
-        YSqzx+Yl9R67F3xm8th9s4HNo7f5HZvHztb7rB7v911l81i/5SqLx4TNG1k9Pm+SCxCM0rMp
-        yi8tSVXIyC8usVWKNrQw0jO0tNAzMrHUMzQ2j7UyMlXSt7NJSc3JLEst0rdL0Mt4ceU5a0Eb
-        d8WcLf/YGxh/cnQxcnJICJhITNh+n6WLkYtDSGApo0TzimVMEAkZiU9XPrJD2MISf651sUEU
-        fWSUWL9oKSOEs4tRYu2jOUDtHBy8AnYSR1eIgTSwCKhIbJ0ykRHE5hUQlDg58wkLiC0qECHx
-        YPdZVhBbWMBP4sHRy2ALmAXEJW49mQ+2WASo99AikDgXUHwPq8TGlbdZIZbdY5SYsu0JI8gy
-        NgEticZOsGZOIPPeplesEIM0JVq3/4YaKi+x/e0cZogPlCUm37gC9VmtxKv7uxknMIrOQnLf
-        LCR3zEIyahaSUQsYWVYxiqSWFuem5xYb6RUn5haX5qXrJefnbmIEprltx35u2cG48tVHvUOM
-        TByMhxglOJiVRHidlxYkCfGmJFZWpRblxxeV5qQWH2I0BQbSRGYp0eR8YKLNK4k3NDMwNTQx
-        szQwtTQzVhLn9SzoSBQSSE8sSc1OTS1ILYLpY+LglGpgalp7I+v5v+ufFd/sXCqr/Kq8ctEG
-        5WV+gtILyybMulX/f+ouXg1+dfZpNl3ht1+8ucSdYtPx7O0GqxeHFQ7WvZ5zfXt+Zv/Gld8e
-        bNBXsVY4afir4YNhnueuSMOUS+yyPcZL1/47XjLp8PuPkw9Y/X8v9iXb44VRa5T1lmgLBQa7
-        ZKXpSer1Nfmqh7ln3ljtsv6i2gOeMBbuoMz9s3cyGka+v7/7YNEkg9mR537zuS3fdYxJfG6u
-        73SfI1wXVZJSihZZS+9Q0Ojuubj+jfOeGK1ekZkZnTOeiTEFHyzemdUntqZtnaKl5WPVtDMJ
-        sXNTpn1OCf82a6250J27hhb/n0uH8ypfTPjhzJ0fGjlhmhJLcUaioRZzUXEiAIorxvr8AwAA
-X-CMS-MailID: 20220504085332eucas1p28b16e7db390eb2ffb2906ed2f2aa06b5
-X-Msg-Generator: CA
-X-RootMTR: 20220427160312eucas1p279bcffd97ef83bd3617a38b80d979746
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20220427160312eucas1p279bcffd97ef83bd3617a38b80d979746
-References: <20220427160255.300418-1-p.raghav@samsung.com>
-        <CGME20220427160312eucas1p279bcffd97ef83bd3617a38b80d979746@eucas1p2.samsung.com>
-        <20220427160255.300418-16-p.raghav@samsung.com>
-        <YnGK/8lu2GW4gEY0@google.com>
-X-Spam-Status: No, score=-10.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_HI,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+X-purgate: clean
+X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
+X-purgate-type: clean
+X-purgate-Ad: Categorized by eleven eXpurgate (R) http://www.eleven.de
+X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
+X-purgate: clean
+X-purgate-size: 4814
+X-purgate-ID: 154282::1651658510-0000737C-C2D326F3/0/0
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -140,44 +77,95 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
-On 2022-05-03 22:05, Jaegeuk Kim wrote:
-> Applied to f2fs tree. Thanks,
->
-Thanks Jaegeuk. I will remove the f2fs patches from my next revision
 
-Regards,
-Pankaj
-> On 04/27, Pankaj Raghav wrote:
->> From: Luis Chamberlain <mcgrof@kernel.org>
+Am 04.05.22 um 08:13 schrieb Amir Goldstein:
+> On Mon, May 2, 2022 at 12:13 PM Tycho Kirchner <tychokirchner@mail.de> wrote:
 >>
->> F2FS zoned support has power of 2 zone size assumption in many places
->> such as in __f2fs_issue_discard_zone, init_blkz_info. As the power of 2
->> requirement has been removed from the block layer, explicitly add a
->> condition in f2fs to allow only power of 2 zone size devices.
+>> All right, I thought a bit more about that and returned to your
+>> original BPF idea you mentioned on 2020-08-28:
 >>
->> This condition will be relaxed once those calculation based on power of
->> 2 is made generic.
+>>> I was thinking that we could add a BPF hook to fanotify_handle_event()
+>>> (similar to what's happening in packet filtering code) and you could attach
+>>> BPF programs to this hook to do filtering of events. That way we don't have
+>>> to introduce new group flags for various filtering options. The question is
+>>> whether eBPF is strong enough so that filters useful for fanotify users
+>>> could be implemented with it but this particular check seems implementable.
+>>>
+>>>                                                                Honza
 >>
->> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
->> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
->> ---
->>  fs/f2fs/super.c | 4 ++++
->>  1 file changed, 4 insertions(+)
+>> Instead of changing fanotify's filesystem notification functionality,
+>> I suggest to rather **add a tracing mode (fantrace)**.
 >>
->> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->> index f64761a15df7..db79abf30002 100644
->> --- a/fs/f2fs/super.c
->> +++ b/fs/f2fs/super.c
->> @@ -3685,6 +3685,10 @@ static int init_blkz_info(struct f2fs_sb_info *sbi, int devi)
->>  		return 0;
->>  
->>  	zone_sectors = bdev_zone_sectors(bdev);
->> +	if (!is_power_of_2(zone_sectors)) {
->> +		f2fs_err(sbi, "F2FS does not support non power of 2 zone sizes\n");
->> +		return -EINVAL;
->> +	}
->>  
->>  	if (sbi->blocks_per_blkz && sbi->blocks_per_blkz !=
->>  				SECTOR_TO_BLOCK(zone_sectors))
->> -- 
->> 2.25.1
+>> The synchronous handling of syscalls via ptrace is of course required
+>> for debugging purposes, however that introduces a major slowdown (even
+>> with seccomp-bpf filters). There are a number of cases, including
+>> [1-3], where async processing of file events of specific tasks would be
+>> fine but is not readily available in Linux. Fanotify already ships
+>> important infrastructure in this regard: it provides very fast
+>> event-buffering and, by using file descriptors instead of resolved
+>> paths, a clean and race-free API to process the events later. However,
+>> as already stated, fanotify does not provide a clean way, to monitor
+>> only a subset of tasks. Therefore please consider the following
+>> proposed architecture of fantrace:
+>>
+>> Each taks gets its own struct fsnotify_group. Within
+>> fsnotify.c:fsnotify() it is checked if the given task has a
+>> fsnotify_group attached where events of interest are buffered as usual.
+>> Note that this is an additional hook - sysadmins being subscribed to
+>> filesystem events rather than task-filesystem-events are notified as
+>> usual - in that case two hooks possibly run. The fsnotify_group is
+>> extended by a field optionally pointing to a BPF program which allows
+>> for custom filters to be run.
+>>
+>> Some implementation details:
+>> - To let the tracee return quickly, run BPF filter program within tracer
+>>     context during read(fan_fd) but before events are copied to userspace
+>> - only one fantracer per task, which overrides existing ones if any
+>> - task->fsnotify_group refcount increment on fork, decrement on exit (run
+>>     after exit_files(tsk) to not miss final close events). When last task
+>>     exited, send EOF to listener.
+>> - on exec of seuid-programs the fsnotify_group is cleared (like in ptrace)
+>> - lazy check when event occurs, if listener is still alive (refcount > 1)
+>> - for the beginning, to keep things simple and to "solve" the cleanup of
+>>     filesystem marks, I suggest to disable i_fsnotify_marks for fantrace
+>>     (only allow FAN_MARK_FILESYSTEM), as that functionality can be
+>>     implemented within the user-provided BPF-program.
+>>
+> 
+> Maybe I am slow, but I did not understand the need for this task fsnotify_group.
+> 
+> What's wrong with Jan's suggestion? (add a BPF hook to fanotify_handle_event())
+> that hook is supposed to filter by pid so why all this extra complexity?
+> 
+> We may consider the option to have another BFP hook when reading
+> events if there is
+> good justification, but subtree filters will have to be in handle_event().
+> 
+> Thanks,
+> Amir.
+
+To be a reasonable async replacement for ptrace (see e.g. mentioned reprozip)
+file-events from all paths have to be reported, which is difficult
+using i_fsnotify_marks, because
+- marking whole mountpoints requires privileges
+- marking the whole filesystem using directory marks is unfeasible
+
+However, we need a quick way to find out, if a file event is of
+interest (find its beloning fsnotify_group). For the purpose of tracing
+it appears reasonable to consider all file events of a traced task as
+"interesting" in the first place. So, in this way, we allow a user to
+trace file events of his own tasks without slowing down other,
+non-traced tasks.
+
+After all, it's all about the order of running filters - first inode,
+then pid or reverse. With my proposed architecture for the purpose of
+tracing I would hand the inode-filter to the user in form of an
+optional BPF hook. Performance-wise that's also the "fair" solution.
+Let's assume we allow marking the whole filesystem (via mountpoints).
+Now, the BPF-pid-filter code has to run for every single file event (of
+all users!), if multiple users trace the filesystem even multiple hooks
+have to run, slowing down the whole system.
+
+
+Thanks,
+Tycho
