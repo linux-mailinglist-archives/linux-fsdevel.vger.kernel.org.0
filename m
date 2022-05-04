@@ -2,144 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 04C5B51968D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 May 2022 06:27:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EC96519744
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 May 2022 08:13:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344579AbiEDEbK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 May 2022 00:31:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56876 "EHLO
+        id S1344852AbiEDGRF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 May 2022 02:17:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344558AbiEDEax (ORCPT
+        with ESMTP id S233453AbiEDGRC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 May 2022 00:30:53 -0400
-Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9AAC2B1B0;
-        Tue,  3 May 2022 21:27:02 -0700 (PDT)
-Received: by mail-pl1-x632.google.com with SMTP id i17so377983pla.10;
-        Tue, 03 May 2022 21:27:02 -0700 (PDT)
+        Wed, 4 May 2022 02:17:02 -0400
+Received: from mail-qk1-x733.google.com (mail-qk1-x733.google.com [IPv6:2607:f8b0:4864:20::733])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C23217051
+        for <linux-fsdevel@vger.kernel.org>; Tue,  3 May 2022 23:13:28 -0700 (PDT)
+Received: by mail-qk1-x733.google.com with SMTP id j9so330756qkg.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 May 2022 23:13:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=r+cGrnPRGPK/ucSsABpTChWSDeibddA+M2PSMWrLe4Q=;
-        b=hudgSCzJK8/Xys0xHyBNbbzxocrhG4QHCPtvAJSmTDAZHKDQ/M8Shd1LL1JlLbkcvS
-         xNnsAjs1tusI6X7Rgg7DH2IkAV4VjlJg4Of4vaX7FHZi8OyCQmiL6pnQ6427oRB2B520
-         G3Ra3PcvEAe+wu9TZkFLcoTzt3Twins720nGwOwyUsF+IEvC0+EFXvdUd67HT1Eqwzu+
-         Or8rNKc/6MiE7fmFaqdSWiYeTU5A+uuLIfa0MPNePqTSJwjIvILsart97SFXyhnBq11x
-         J7gDK+0v2CpvTg4wbrgw6WKnjuvKzRnXE//uFMbA5Ssdp782vHQQbeXFMpwBJ1vuS9Qc
-         zCOA==
+        bh=p+IWfkK7oJXhUk2Lnn9P524hIFSIrAG5TSuPhYiWH0Q=;
+        b=bM5wL0MZZHtJfosNEelkzqLNSiIuxMtVyNQqmGC544ZlHtYjgmfVoophuq1QRKfqMj
+         xm3TCNPkPi+TZ88UARLEkXkVqVnAStgmv+LvjkmJCE07ncMSWqUoqGBdNCHyX5TWUO6P
+         5EH2bec11qchJXgtEcAJWGsAZSaUpPTRS+uahy/gBVLbhVuQv/VzgK4mZBEnf+vtyjt/
+         H0OEmfJwkc4zKsHqL8DlhR7JNQqesUDmc+jFLFfW4jqQGTDK4gB4b6dSUr4qXrwVqTwu
+         B8cqSac6rp53rkcj8MGImlmEVAAl72MY/HWO1vk0N4LpoIraVw8a0ckDXiLu5zKPVS/N
+         po/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=r+cGrnPRGPK/ucSsABpTChWSDeibddA+M2PSMWrLe4Q=;
-        b=Xr2duc+HmrS3z1Wqd3A0FTfFxgCh3QAVUuZN0cQso9dgUdmdBOWXLrBtKgXvZ8h02x
-         tF9CxsHEqD0iSE0GziRmlrk9G60Wi05CybqS6KjA8mCWtxMZBHERC/v9rDCsh0xPD1NO
-         L7zXtu8ueeHDjsMRndiaZ3Me+YAjWzP/YfYIzKWIPdXmHwzGVY734UsLGbGhsyc+JGRq
-         hDz98EQBY4EswqyYyNlyI6e2yHV4/JW+QEHCV0m95So5d1us1MadLuWwAaPOKKsAr1wS
-         6WKBx2fQiNeVc6uTueiIfk9bQmutXwRXfPipMleM5a1Im3S5AC2GcAmqdzz8V0qsm+i5
-         Ph1A==
-X-Gm-Message-State: AOAM532HEAhDKL2MSIIwfFm3UsCKR4EuMa9pTFLzYjFoP2tDQmQGN7uC
-        2D6rNolB9hqim14jb+ujLUfdb1CeuE5j/ChuiG2+7uqJ7X0=
-X-Google-Smtp-Source: ABdhPJxdtYKQTvwQ+7OKcaPPxrUWY69nr7lCsfgEBI6s3bNdbPmyFE1nOgiL7SfwBaVBK252dBjnwx6mYLAWbtlVCwc=
-X-Received: by 2002:a17:90b:3d0b:b0:1dc:1953:462d with SMTP id
- pt11-20020a17090b3d0b00b001dc1953462dmr8438078pjb.122.1651638421425; Tue, 03
- May 2022 21:27:01 -0700 (PDT)
+        bh=p+IWfkK7oJXhUk2Lnn9P524hIFSIrAG5TSuPhYiWH0Q=;
+        b=VQoMrT02phBWQKm32iC/Y39PzxinvCpUzWU5Lpi1V1nAvrHhgRyed87PMiDw9Vzojx
+         jN9R/2IB3otqonYHYEDLPxj0WeUUQQkHzDnn+BWlFGFI28EPB7ewtSWBDjqFVFTvxN5s
+         ICqs+E/1B8h/paa9SN3Xz2fp5S/BDi/KipgMUsbRxx4XgmTBboTylgAd6pGe4Ap5vU0K
+         pUGVSGPhPbmN1ezXlGE2Yhaotzt/wf+wc3aR2aLZUIahL9QCayVHB/eU8COuB3nrHsGq
+         AzaTHvXGzg5+AsTloqHhDPDr2n2rVLnOczjNO1QEWVYHKCYwYETQbWNUeNHH1dWQTw29
+         omjQ==
+X-Gm-Message-State: AOAM532sTQKmssdhut+HNBvEGEa7tFhJncJlbgrvuula6nLeYrtPJuPM
+        Jo1pjEfdDduED7mr3Pn4+xug4krtCOuMff/WbLmDf7s7+TZmbQ==
+X-Google-Smtp-Source: ABdhPJxxrP0BtJj4GgNILuXQlQKcQoApZiPz4i5KBeCBxqD+zZAHPhfwi7gASpt+9ARXjDIWuRdtRnhkuqVpmHdSRiA=
+X-Received: by 2002:a05:620a:1aa0:b0:6a0:a34:15e0 with SMTP id
+ bl32-20020a05620a1aa000b006a00a3415e0mr3231099qkb.19.1651644807224; Tue, 03
+ May 2022 23:13:27 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220502102521.22875-1-dharamhans87@gmail.com>
- <20220502102521.22875-2-dharamhans87@gmail.com> <YnGIUOP2BezDAb1k@redhat.com>
-In-Reply-To: <YnGIUOP2BezDAb1k@redhat.com>
-From:   Dharmendra Hans <dharamhans87@gmail.com>
-Date:   Wed, 4 May 2022 09:56:49 +0530
-Message-ID: <CACUYsyGoX+o19u41cZyF92eDBO-9rFN_EEWBvWBGrEMuNn29Mw@mail.gmail.com>
-Subject: Re: [PATCH v4 1/3] FUSE: Implement atomic lookup + create
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        linux-kernel@vger.kernel.org, Bernd Schubert <bschubert@ddn.com>,
-        Dharmendra Singh <dsingh@ddn.com>
+References: <CAOQ4uxiRDpuS=2uA6+ZUM7yG9vVU-u212tkunBmSnP_u=mkv=Q@mail.gmail.com>
+ <20220228140556.ae5rhgqsyzm5djbp@quack3.lan> <CAOQ4uxiMp4HjSj01FZm8-jPzHD4jVugxuXBDW2JnSpVizhCeTQ@mail.gmail.com>
+ <ff14ec84-2541-28c9-4d28-7e2ee13835dc@mail.de> <CAOQ4uxhry1_tW9NPC4X3q3YUQ86Ecg+G6A2Fvs5vKQTDB0ctHQ@mail.gmail.com>
+ <8c636384-8db6-d7d1-b89b-424ef1accfe8@mail.de> <CAOQ4uxgLovYffU5epFy+r3qa7WjD9637YNuiFJHGj_du7H8gOA@mail.gmail.com>
+ <20220303092459.mglgfvq653ge4k42@quack3.lan> <6799146c-fa5a-7b64-bb91-6038006cf612@mail.de>
+In-Reply-To: <6799146c-fa5a-7b64-bb91-6038006cf612@mail.de>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 4 May 2022 09:13:15 +0300
+Message-ID: <CAOQ4uxgXfL6_fi9rSf8_cUW0Lgbw8Rj_VcBOPiA5ec3PqBqo_Q@mail.gmail.com>
+Subject: Re: [RFC] Volatile fanotify marks
+To:     Tycho Kirchner <tychokirchner@mail.de>
+Cc:     Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 4, 2022 at 1:24 AM Vivek Goyal <vgoyal@redhat.com> wrote:
+On Mon, May 2, 2022 at 12:13 PM Tycho Kirchner <tychokirchner@mail.de> wrote:
 >
-> On Mon, May 02, 2022 at 03:55:19PM +0530, Dharmendra Singh wrote:
-> > From: Dharmendra Singh <dsingh@ddn.com>
+> All right, I thought a bit more about that and returned to your
+> original BPF idea you mentioned on 2020-08-28:
+>
+> > I was thinking that we could add a BPF hook to fanotify_handle_event()
+> > (similar to what's happening in packet filtering code) and you could attach
+> > BPF programs to this hook to do filtering of events. That way we don't have
+> > to introduce new group flags for various filtering options. The question is
+> > whether eBPF is strong enough so that filters useful for fanotify users
+> > could be implemented with it but this particular check seems implementable.
 > >
-> > When we go for creating a file (O_CREAT), we trigger
-> > a lookup to FUSE USER SPACE. It is very  much likely
-> > that file does not exist yet as O_CREAT is passed to
-> > open(). This lookup can be avoided and can be performed
-> > as part of create call into libfuse.
-> >
-> > This lookup + create in single call to libfuse and finally
-> > to USER SPACE has been named as atomic create. It is expected
-> > that USER SPACE create the file, open it and fills in the
-> > attributes which are then used to make inode stand/revalidate
-> > in the kernel cache. Also if file was newly created(does not
-> > exist yet by this time) in USER SPACE then it should be indicated
-> > in `struct fuse_file_info` by setting a bit which is again used by
-> > libfuse to send some flags back to fuse kernel to indicate that
-> > that file was newly created. These flags are used by kernel to
-> > indicate changes in parent directory.
+> >                                                               Honza
 >
-> Reading the existing code a little bit more and trying to understand
-> existing semantics. And that will help me unerstand what new is being
-> done.
+> Instead of changing fanotify's filesystem notification functionality,
+> I suggest to rather **add a tracing mode (fantrace)**.
 >
-> So current fuse_atomic_open() does following.
+> The synchronous handling of syscalls via ptrace is of course required
+> for debugging purposes, however that introduces a major slowdown (even
+> with seccomp-bpf filters). There are a number of cases, including
+> [1-3], where async processing of file events of specific tasks would be
+> fine but is not readily available in Linux. Fanotify already ships
+> important infrastructure in this regard: it provides very fast
+> event-buffering and, by using file descriptors instead of resolved
+> paths, a clean and race-free API to process the events later. However,
+> as already stated, fanotify does not provide a clean way, to monitor
+> only a subset of tasks. Therefore please consider the following
+> proposed architecture of fantrace:
 >
-> A. Looks up dentry (if d_in_lookup() is set).
-> B. If dentry is positive or O_CREAT is not set, return.
-> C. If server supports atomic create + open, use that to create file and
->    open it as well.
-> D. If server does not support atomic create + open, just create file
->    using "mknod" and return. VFS will take care of opening the file.
+> Each taks gets its own struct fsnotify_group. Within
+> fsnotify.c:fsnotify() it is checked if the given task has a
+> fsnotify_group attached where events of interest are buffered as usual.
+> Note that this is an additional hook - sysadmins being subscribed to
+> filesystem events rather than task-filesystem-events are notified as
+> usual - in that case two hooks possibly run. The fsnotify_group is
+> extended by a field optionally pointing to a BPF program which allows
+> for custom filters to be run.
 >
-> Now with this patch, new flow is.
->
-> A. Look up dentry if d_in_lookup() is set as well as either file is not
->    being created or fc->no_atomic_create is set. This basiclally means
->    skip lookup if atomic_create is supported and file is being created.
->
-> B. Remains same. if dentry is positive or O_CREATE is not set, return.
->
-> C. If server supports new atomic_create(), use that.
->
-> D. If not, if server supports atomic create + open, use that
->
-> E. If not, fall back to mknod and do not open file.
->
-> So to me this new functionality is basically atomic "lookup + create +
-> open"?
->
-> Or may be not. I see we check "fc->no_create" and fallback to mknod.
->
->         if (fc->no_create)
->                 goto mknod;
->
-> So fc->no_create is representing both old atomic "create + open" as well
-> as new "lookup + create + open" ?
->
-> It might be obvious to you, but it is not to me. So will be great if
-> you shed some light on this.
+> Some implementation details:
+> - To let the tracee return quickly, run BPF filter program within tracer
+>    context during read(fan_fd) but before events are copied to userspace
+> - only one fantracer per task, which overrides existing ones if any
+> - task->fsnotify_group refcount increment on fork, decrement on exit (run
+>    after exit_files(tsk) to not miss final close events). When last task
+>    exited, send EOF to listener.
+> - on exec of seuid-programs the fsnotify_group is cleared (like in ptrace)
+> - lazy check when event occurs, if listener is still alive (refcount > 1)
+> - for the beginning, to keep things simple and to "solve" the cleanup of
+>    filesystem marks, I suggest to disable i_fsnotify_marks for fantrace
+>    (only allow FAN_MARK_FILESYSTEM), as that functionality can be
+>    implemented within the user-provided BPF-program.
 >
 
-I think you got it right now. New atomic create does what you
-mentioned as new flow.  It does  lookup + create + open in single call
-(being called as atomic create) to USER SPACE. mknod is a special case
-where the file system does not have a create call implemented. I think
-its legacy probably goes back to Linux 2.4 if I am not wrong. We did
-not make any changes into that.
+Maybe I am slow, but I did not understand the need for this task fsnotify_group.
 
-Second patch avoids lookup for open calls. 3rd patch avoids lookup in
-de_revalidate() but for non-dir. And only in case when default
-permissions are not enabled.
+What's wrong with Jan's suggestion? (add a BPF hook to fanotify_handle_event())
+that hook is supposed to filter by pid so why all this extra complexity?
+
+We may consider the option to have another BFP hook when reading
+events if there is
+good justification, but subtree filters will have to be in handle_event().
+
+Thanks,
+Amir.
