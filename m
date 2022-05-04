@@ -2,21 +2,21 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F2586519ABA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 May 2022 10:52:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4559519ABD
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 May 2022 10:52:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347252AbiEDIyt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 May 2022 04:54:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53084 "EHLO
+        id S1347279AbiEDIyw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 May 2022 04:54:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346829AbiEDIxp (ORCPT
+        with ESMTP id S1346809AbiEDIxo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 May 2022 04:53:45 -0400
-Received: from lgeamrelo11.lge.com (lgeamrelo13.lge.com [156.147.23.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0855425C62
-        for <linux-fsdevel@vger.kernel.org>; Wed,  4 May 2022 01:49:23 -0700 (PDT)
+        Wed, 4 May 2022 04:53:44 -0400
+Received: from lgeamrelo11.lge.com (lgeamrelo11.lge.com [156.147.23.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0804F25C49
+        for <linux-fsdevel@vger.kernel.org>; Wed,  4 May 2022 01:49:22 -0700 (PDT)
 Received: from unknown (HELO lgeamrelo01.lge.com) (156.147.1.125)
-        by 156.147.23.53 with ESMTP; 4 May 2022 17:19:21 +0900
+        by 156.147.23.51 with ESMTP; 4 May 2022 17:19:21 +0900
 X-Original-SENDERIP: 156.147.1.125
 X-Original-MAILFROM: byungchul.park@lge.com
 Received: from unknown (HELO localhost.localdomain) (10.177.244.38)
@@ -47,9 +47,9 @@ Cc:     damien.lemoal@opensource.wdc.com, linux-ide@vger.kernel.org,
         dri-devel@lists.freedesktop.org, airlied@linux.ie,
         rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
         hamohammed.sa@gmail.com, 42.hyeyoo@gmail.com
-Subject: [PATCH RFC v6 17/21] dept: Disable Dept within the wait_bit layer by default
-Date:   Wed,  4 May 2022 17:17:45 +0900
-Message-Id: <1651652269-15342-18-git-send-email-byungchul.park@lge.com>
+Subject: [PATCH RFC v6 18/21] dept: Disable Dept on struct crypto_larval's completion for now
+Date:   Wed,  4 May 2022 17:17:46 +0900
+Message-Id: <1651652269-15342-19-git-send-email-byungchul.park@lge.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1651652269-15342-1-git-send-email-byungchul.park@lge.com>
 References: <1651652269-15342-1-git-send-email-byungchul.park@lge.com>
@@ -62,42 +62,35 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The struct wait_queue_head array, bit_wait_table[] in sched/wait_bit.c
-are shared by all its users, which unfortunately vary in terms of class.
-So each should've been assigned its own class to avoid false positives.
+struct crypto_larval's completion is used for multiple purposes e.g.
+waiting for test to complete or waiting for probe to complete.
 
-It'd better let Dept work at a higher layer than wait_bit. So disabled
-Dept within the wait_bit layer by default.
-
-It's worth noting that Dept is still working with the other struct
-wait_queue_head ones that are mostly well-classified.
+The completion variable needs to be split according to what it's used
+for. Otherwise, Dept cannot distinguish one from another and doesn't
+work properly. Now that it isn't, disable Dept on it.
 
 Signed-off-by: Byungchul Park <byungchul.park@lge.com>
 ---
- kernel/sched/wait_bit.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ crypto/api.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/sched/wait_bit.c b/kernel/sched/wait_bit.c
-index d4788f8..df93e33 100644
---- a/kernel/sched/wait_bit.c
-+++ b/kernel/sched/wait_bit.c
-@@ -3,6 +3,7 @@
- /*
-  * The implementation of the wait_bit*() and related waiting APIs:
-  */
-+#include <linux/dept.h>
+diff --git a/crypto/api.c b/crypto/api.c
+index 69508ae..305d24c 100644
+--- a/crypto/api.c
++++ b/crypto/api.c
+@@ -115,7 +115,12 @@ struct crypto_larval *crypto_larval_alloc(const char *name, u32 type, u32 mask)
+ 	larval->alg.cra_destroy = crypto_larval_destroy;
  
- #define WAIT_TABLE_BITS 8
- #define WAIT_TABLE_SIZE (1 << WAIT_TABLE_BITS)
-@@ -246,6 +247,8 @@ void __init wait_bit_init(void)
- {
- 	int i;
+ 	strlcpy(larval->alg.cra_name, name, CRYPTO_MAX_ALG_NAME);
+-	init_completion(&larval->completion);
++	/*
++	 * TODO: Split ->completion according to what it's used for e.g.
++	 * ->test_completion, ->probe_completion and the like, so that
++	 *  Dept can track its dependency properly.
++	 */
++	init_completion_nocheck(&larval->completion);
  
--	for (i = 0; i < WAIT_TABLE_SIZE; i++)
-+	for (i = 0; i < WAIT_TABLE_SIZE; i++) {
- 		init_waitqueue_head(bit_wait_table + i);
-+		dept_map_nocheck(&(bit_wait_table + i)->dmap);
-+	}
+ 	return larval;
  }
 -- 
 1.9.1
