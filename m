@@ -2,139 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CD4B51AC67
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 May 2022 20:09:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47D0F51ACE4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 May 2022 20:32:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376311AbiEDSN3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 May 2022 14:13:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58086 "EHLO
+        id S1355871AbiEDSgE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 May 2022 14:36:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1376820AbiEDSNT (ORCPT
+        with ESMTP id S1377187AbiEDSfh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 May 2022 14:13:19 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A59BE7FF6C
-        for <linux-fsdevel@vger.kernel.org>; Wed,  4 May 2022 10:31:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1651685474;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=joehKCGQgUtB5bm9SSiCyxnpdmxIgMPc6V/OebR+v8M=;
-        b=C5AJcstFFPYdyUe4tcA3IjnrYqT0Da2LH/jURefGvwUlSmJIa5FGlhs0tzRL9FuYff83pv
-        dLqHaund8jr5GXOD8Qv60Z6fjTpKINe72Qf3l6vTjUDdf9yk/q24po34dNjCm5hSlvOnFy
-        0ZDLKs0BkRonXrcBbe+Xb0C/+zf8XZc=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-393-rk43vzTnOBWIVmvA9gJnVw-1; Wed, 04 May 2022 13:31:11 -0400
-X-MC-Unique: rk43vzTnOBWIVmvA9gJnVw-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 8CE0E380451D;
-        Wed,  4 May 2022 17:31:09 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.16.200])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 45A0A111DCF2;
-        Wed,  4 May 2022 17:31:09 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 094EC220463; Wed,  4 May 2022 13:31:09 -0400 (EDT)
-Date:   Wed, 4 May 2022 13:31:08 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Bernd Schubert <bschubert@ddn.com>
-Cc:     Dharmendra Hans <dharamhans87@gmail.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel@vger.kernel.org,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        linux-kernel@vger.kernel.org, Dharmendra Singh <dsingh@ddn.com>
-Subject: Re: [PATCH v4 1/3] FUSE: Implement atomic lookup + create
-Message-ID: <YnK4XIk0M3Dx5RP+@redhat.com>
-References: <20220502102521.22875-1-dharamhans87@gmail.com>
- <20220502102521.22875-2-dharamhans87@gmail.com>
- <YnGIUOP2BezDAb1k@redhat.com>
- <CACUYsyGoX+o19u41cZyF92eDBO-9rFN_EEWBvWBGrEMuNn29Mw@mail.gmail.com>
- <YnKR9CFYPXT1bM1F@redhat.com>
- <8003098d-6b17-5cdf-866d-06fefdf1ca31@ddn.com>
+        Wed, 4 May 2022 14:35:37 -0400
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A25354AE11
+        for <linux-fsdevel@vger.kernel.org>; Wed,  4 May 2022 11:17:31 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id g20so2624392edw.6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 04 May 2022 11:17:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=azQ8sWCnz/WIz9gx757KP54kS0UJB42kEHdJ90hMQlI=;
+        b=TGN9imabgriFl447VR+LtalCql2Ru1FM30YxNTrRXmNp2/aqSQe997eejilXBWN//u
+         GLL7PEuW6j459zsXmON4fgRMpLVmy4AeFXc6ipyOPPq4NZahAq6TXZNADjmVrlQQdnt5
+         DczkC/efB8FuKeTl9T9HqInWj7/2oPQ1dOleE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=azQ8sWCnz/WIz9gx757KP54kS0UJB42kEHdJ90hMQlI=;
+        b=Rv/tUDmec9rVfJc2D6JJQaD33kJFkaOr1gpNCLYVPAJs7LINamri5n8zscT4cNbeNL
+         sds+272lJ2rTpesDdSkSDjRxYlKqYQ/W9WJjvsD0YyHHG4VZMo26ptDT2WpWlpL4v4+Z
+         o+GG4KXR36r0K2kMEtf1Wq5UYxDsC6CVNP9jHG94U+lI50a6C93mpx4ToI6Wa5WkNX/Y
+         7t7HwLcLx8pQpR+7VId6/oo15plxCSxSdJr3cfcJWBFaWHTFTOIwC8RU9xqCMyo8kiLI
+         VD/89zcKcROP173yiIWELVq9+zRTiic8UfL7GPnSlO69s9kLbfHmlvSh/mb9lhgEH6kC
+         vNng==
+X-Gm-Message-State: AOAM531aL4t0nZ/w1QLh/ZOcdjuGeXJ/Vg0oWCSsLnBoyzvJN24BST0W
+        IW7u89xPT4K/36d4qy0R82YmxZdhwnJkZyCX
+X-Google-Smtp-Source: ABdhPJz1vTspvcIp7ruh0Sa0L1PTlVEgRbvIrznL4HXiTeYDeBjj53J1Fb3oeBlsv9qCrOZ849aaRA==
+X-Received: by 2002:a05:6402:354d:b0:428:19be:2447 with SMTP id f13-20020a056402354d00b0042819be2447mr3295285edd.308.1651688249961;
+        Wed, 04 May 2022 11:17:29 -0700 (PDT)
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com. [209.85.218.44])
+        by smtp.gmail.com with ESMTPSA id zd22-20020a17090698d600b006f3ef214dacsm6113883ejb.18.2022.05.04.11.17.29
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 May 2022 11:17:29 -0700 (PDT)
+Received: by mail-ej1-f44.google.com with SMTP id n10so4459796ejk.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 04 May 2022 11:17:29 -0700 (PDT)
+X-Received: by 2002:a05:6512:b12:b0:44a:ba81:f874 with SMTP id
+ w18-20020a0565120b1200b0044aba81f874mr15410699lfu.449.1651688238925; Wed, 04
+ May 2022 11:17:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8003098d-6b17-5cdf-866d-06fefdf1ca31@ddn.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+References: <1651652269-15342-1-git-send-email-byungchul.park@lge.com>
+In-Reply-To: <1651652269-15342-1-git-send-email-byungchul.park@lge.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 4 May 2022 11:17:02 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whnPePcffsNQM+YSHMGttLXvpf8LbBQ8P7HEdqFXaV7Lg@mail.gmail.com>
+Message-ID: <CAHk-=whnPePcffsNQM+YSHMGttLXvpf8LbBQ8P7HEdqFXaV7Lg@mail.gmail.com>
+Subject: Re: [PATCH RFC v6 00/21] DEPT(Dependency Tracker)
+To:     Byungchul Park <byungchul.park@lge.com>
+Cc:     Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        linux-ide@vger.kernel.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Sasha Levin <sashal@kernel.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Chris Wilson <chris@chris-wilson.co.uk>, duyuyang@gmail.com,
+        johannes.berg@intel.com, Tejun Heo <tj@kernel.org>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        kernel-team@lge.com, Linux-MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Minchan Kim <minchan@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>, sj@kernel.org,
+        Jerome Glisse <jglisse@redhat.com>,
+        Dennis Zhou <dennis@kernel.org>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>, ngupta@vflare.org,
+        linux-block <linux-block@vger.kernel.org>,
+        paolo.valente@linaro.org, Josef Bacik <josef@toxicpanda.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+        jack@suse.com, Jeff Layton <jlayton@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Dave Airlie <airlied@linux.ie>, rodrigosiqueiramelo@gmail.com,
+        melissa.srw@gmail.com, hamohammed.sa@gmail.com, 42.hyeyoo@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 04, 2022 at 05:46:27PM +0200, Bernd Schubert wrote:
-> 
-> 
-> On 5/4/22 16:47, Vivek Goyal wrote:
-> 
-> > Ok, naming is little confusing. I think we will have to put it in
-> > commit message and where you define FUSE_ATOMIC_CREATE that what's
-> > the difference between FUSE_CREATE and FUSE_ATOMIC_CREATE. This is
-> > ATOMIC w.r.t what?
-> > 
-> > May be atomic here means that "lookup + create + open" is a single operation.
-> > But then even FUSE_CREATE is atomic because "creat + open" is a single
-> > operation.
-> > 
-> > In fact FUSE_CREATE does lookup anyway and returns all the information
-> > in fuse_entry_out.
-> > 
-> > IIUC, only difference between FUSE_CREATE and FUSE_ATOMIC_CREATE is that
-> > later also carries information in reply whether file was actually created
-> > or not (FOPEN_FILE_CREATED). This will be set if file did not exist
-> > already and it was created indeed. Is that right?
-> > 
-> > I see FOPEN_FILE_CREATED is being used to avoid calling
-> > fuse_dir_changed(). That sounds like a separate optimization and probably
-> > should be in a separate patch.
-> > 
-> > IOW, I think this patch should be broken in to multiple pieces. First
-> > piece seems to be avoiding lookup() and given the way it is implemented,
-> > looks like we can avoid lookup() even by using existing FUSE_CREATE
-> > command. We don't necessarily need FUSE_ATOMIC_CREATE. Is that right?
-> 
-> The initial non-published patches had that, but I had actually asked not to
-> go that route, because I'm scared that some user space file system
-> implementations might get broken.
+On Wed, May 4, 2022 at 1:19 AM Byungchul Park <byungchul.park@lge.com> wrote:
+>
+> Hi Linus and folks,
+>
+> I've been developing a tool for detecting deadlock possibilities by
+> tracking wait/event rather than lock(?) acquisition order to try to
+> cover all synchonization machanisms.
 
-> Right now there is always a lookup before
-> fuse_create_open() and when the resulting dentry is positive
-> fuse_create_open/FUSE_CREATE is bypassed. I.e. user space implementations
-> didn't need to handle existing files.
+So what is the actual status of reports these days?
 
-Hmm..., So if dentry is positive, we will call FUSE_OPEN instead in 
-current code.
+Last time I looked at some reports, it gave a lot of false positives
+due to mis-understanding prepare_to_sleep().
 
-Now with this change, we will call FUSE_CREATE and file could still
-be present. If it is a shared filesystem, file could be created by
-another client anyway after lookup() completed and returned a non-existent
-file. So server can still get FUSE_CREATE and file could be there.
+For this all to make sense, it would need to not have false positives
+(or at least a very small number of them together with a way to sanely
+get rid of them), and also have a track record of finding things that
+lockdep doesn't.
 
-But I understand that risk of regression is not zero. 
+Maybe such reports have been sent out with the current situation, and
+I haven't seen them.
 
-Given we are going to implement FUSE_CREATE_EXT in the same patch
-series, I guess we could fix it easily by switching to FUSE_CREATE_EXT.
-
-So that's my take. I will be willing to take this chance. Until and
-unless ofcourse Miklos disagrees. :-)
-
-Thanks
-Vivek
-
-> Out of the sudden user space
-> implementations might need to handle it and some of them might get broken
-> with that kernel update. I guess even a single broken user space
-> implementation would count as regression.
-> So I had asked to change the patch to require a user space flag.
-> 
-> -- Bernd
-> 
-
+                 Linus
