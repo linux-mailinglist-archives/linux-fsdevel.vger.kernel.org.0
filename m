@@ -2,67 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 13F6351A887
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 May 2022 19:07:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A93D51A850
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 May 2022 19:07:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355725AbiEDRLX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 May 2022 13:11:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39182 "EHLO
+        id S1355509AbiEDRKY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 May 2022 13:10:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356672AbiEDRJh (ORCPT
+        with ESMTP id S1356862AbiEDRJr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 May 2022 13:09:37 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC032DFC0;
-        Wed,  4 May 2022 09:55:21 -0700 (PDT)
+        Wed, 4 May 2022 13:09:47 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADA4F434BE;
+        Wed,  4 May 2022 09:56:07 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 56CEC1F38D;
-        Wed,  4 May 2022 16:55:20 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 04B9F210EC;
+        Wed,  4 May 2022 16:56:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1651683320; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+        t=1651683366; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=vIH8khGfsWQr/G8XxJBCff3FHm1s2U5cIJcIUqX8z74=;
-        b=fxvMs/oy3r+8L1n1MFQIapG73Ibm3O6/tat7+NP9WW1TW8r09Du8uoO6rocjdXzlpyGvwk
-        C5hEla1QoB9EEgtab/YDHaB2tVq7238KrlBol0zAj2Qjbef06pxxIesMIcT6fEQSxkR9D/
-        BoZBGUCuzL5vXw3JnF4pK4+YU3x97Ok=
+        bh=pXPYJ+fgOV1Zl5Qb/eENI/cPV1QeM/WC1l9xJtBkjrM=;
+        b=eG5CTnel4TjKB2USY2SAJ9eCwNU8e67BmdrokSpRYoTmgLAzzmsUHj1oj9PZ7Y21Kz3Jxl
+        rNcQrR/iu03Ksv9UDz2DiOX+OExKEGybsXHUSvXQhuMNJUSykJBVAVQQAxBu7tmS7abwqO
+        2BNB990G7wlwcuuGKAan3tNmNGDC/Nc=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1651683320;
+        s=susede2_ed25519; t=1651683366;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=vIH8khGfsWQr/G8XxJBCff3FHm1s2U5cIJcIUqX8z74=;
-        b=ZP5QPuSU+43VPlOkMbFvUEvnny6lgfp5xqVC+flR2XZPgdo+xyxM/1E7KQx4QYaM3MKY3Z
-        0aJBeF5beNC5vnAw==
+        bh=pXPYJ+fgOV1Zl5Qb/eENI/cPV1QeM/WC1l9xJtBkjrM=;
+        b=CESc2MRtGMZZ4cBcssfZJruJS58Pp5zWKoK94jfLH5Ha6vbCUnmI1ZdLYnm5zvXU0kF351
+        9woB0nHfywC6X0DA==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id ED96A131BD;
-        Wed,  4 May 2022 16:55:14 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 7B2C8131BD;
+        Wed,  4 May 2022 16:56:00 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id dlZdLvKvcmLmVAAAMHmgww
-        (envelope-from <hare@suse.de>); Wed, 04 May 2022 16:55:14 +0000
-Message-ID: <f25bdfcb-d01a-2bd0-6d7b-7d58205a2df6@suse.de>
-Date:   Wed, 4 May 2022 09:55:12 -0700
+        id RAGMEyCwcmJAVQAAMHmgww
+        (envelope-from <hare@suse.de>); Wed, 04 May 2022 16:56:00 +0000
+Message-ID: <1286b88c-7068-d23a-1d0e-bb71efbb1258@suse.de>
+Date:   Wed, 4 May 2022 09:55:57 -0700
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.4.0
-Subject: Re: [PATCH 02/16] block: add blk_queue_zone_aligned and
- bdev_zone_aligned helper
+Subject: Re: [PATCH 03/16] block: add bdev_zone_no helper
 Content-Language: en-US
 References: <20220427160255.300418-1-p.raghav@samsung.com>
- <CGME20220427160258eucas1p19548a7094f67b4c9f340add776f60082@eucas1p1.samsung.com>
- <20220427160255.300418-3-p.raghav@samsung.com>
+ <CGME20220427160259eucas1p25aab0637fec229cd1140e6aa08678f38@eucas1p2.samsung.com>
+ <20220427160255.300418-4-p.raghav@samsung.com>
 From:   Hannes Reinecke <hare@suse.de>
 To:     undisclosed-recipients:;
-In-Reply-To: <20220427160255.300418-3-p.raghav@samsung.com>
+In-Reply-To: <20220427160255.300418-4-p.raghav@samsung.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-6.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -76,23 +75,18 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On 4/27/22 09:02, Pankaj Raghav wrote:
-> Checking if a given sector is aligned to a zone is a very common
-> operation that is performed for zoned devices. Add
-> blk_queue_zone_aligned helper to check for this instead of opencoding it
-> everywhere.
+> Many places in the filesystem for zoned devices open code this function
+> to find the zone number for a given sector with power of 2 assumption.
+> This generic helper can be used to calculate zone number for a given
+> sector in a block device
 > 
-> The helper is made to be generic so that it can also check for alignment
-> for non non-power-of-2 zone size devices.
-> 
-> As the existing deployments of zoned devices had power-of-2
-> assumption, power-of-2 optimized calculation is done for devices with
-> power-of-2 zone size
+> This helper internally uses blk_queue_zone_no to find the zone number.
 > 
 > Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
 > Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
 > ---
->   include/linux/blkdev.h | 31 +++++++++++++++++++++++++++++++
->   1 file changed, 31 insertions(+)
+>   include/linux/blkdev.h | 9 +++++++++
+>   1 file changed, 9 insertions(+)
 > 
 Reviewed-by: Hannes Reinecke <hare@suse.de>
 
