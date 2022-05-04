@@ -2,61 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CF38519922
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 May 2022 10:03:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EDDE5519AA0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 May 2022 10:51:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344172AbiEDIGh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 May 2022 04:06:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38198 "EHLO
+        id S1346800AbiEDIxg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 May 2022 04:53:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235862AbiEDIGe (ORCPT
+        with ESMTP id S1346634AbiEDIxJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 May 2022 04:06:34 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C2FB21FCDC
-        for <linux-fsdevel@vger.kernel.org>; Wed,  4 May 2022 01:02:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1651651378;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=QXs2GF6sBKWIeqbf7WfMBsD5HrZduvaTKSVFb36kok4=;
-        b=FtwNHLFQwfuKQpojndF4cuhvouLGez+YcGHwSpEHRTZ0PWEP9NQeWPNEHHq+gMkqIQbS3f
-        5AZOH9mDBz5vQY9XsDnew32sJDe+tTKY6m+6m+QtpVc4bLp80WmM7fpxkFr+dhGiZHYLBs
-        dXIoDCXGBM/Ct0wg+OuZXX/PQufElI4=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-488-0V3H3fvjPUW3j_FiCAgx_w-1; Wed, 04 May 2022 04:02:55 -0400
-X-MC-Unique: 0V3H3fvjPUW3j_FiCAgx_w-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 15CB88039D7;
-        Wed,  4 May 2022 08:02:55 +0000 (UTC)
-Received: from max.localdomain (unknown [10.40.194.254])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CA750463E16;
-        Wed,  4 May 2022 08:02:53 +0000 (UTC)
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-xfs@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH] iomap: iomap_write_end cleanup
-Date:   Wed,  4 May 2022 10:02:52 +0200
-Message-Id: <20220504080252.3299512-1-agruenba@redhat.com>
-In-Reply-To: <YnHIeHuAXr6WCk7M@casper.infradead.org>
-References: <YnHIeHuAXr6WCk7M@casper.infradead.org> <20220503213727.3273873-1-agruenba@redhat.com> <YnGkO9zpuzahiI0F@casper.infradead.org> <CAHc6FU5_JTi+RJxYwa+CLc9tx_3_CS8_r8DjkEiYRhyjUvbFww@mail.gmail.com> <20220503230226.GK8265@magnolia>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Scanned-By: MIMEDefang 2.85 on 10.11.54.10
-X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        Wed, 4 May 2022 04:53:09 -0400
+Received: from lgeamrelo11.lge.com (lgeamrelo13.lge.com [156.147.23.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2E54B25288
+        for <linux-fsdevel@vger.kernel.org>; Wed,  4 May 2022 01:49:21 -0700 (PDT)
+Received: from unknown (HELO lgeamrelo01.lge.com) (156.147.1.125)
+        by 156.147.23.53 with ESMTP; 4 May 2022 17:19:19 +0900
+X-Original-SENDERIP: 156.147.1.125
+X-Original-MAILFROM: byungchul.park@lge.com
+Received: from unknown (HELO localhost.localdomain) (10.177.244.38)
+        by 156.147.1.125 with ESMTP; 4 May 2022 17:19:19 +0900
+X-Original-SENDERIP: 10.177.244.38
+X-Original-MAILFROM: byungchul.park@lge.com
+From:   Byungchul Park <byungchul.park@lge.com>
+To:     torvalds@linux-foundation.org
+Cc:     damien.lemoal@opensource.wdc.com, linux-ide@vger.kernel.org,
+        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        mingo@redhat.com, linux-kernel@vger.kernel.org,
+        peterz@infradead.org, will@kernel.org, tglx@linutronix.de,
+        rostedt@goodmis.org, joel@joelfernandes.org, sashal@kernel.org,
+        daniel.vetter@ffwll.ch, chris@chris-wilson.co.uk,
+        duyuyang@gmail.com, johannes.berg@intel.com, tj@kernel.org,
+        tytso@mit.edu, willy@infradead.org, david@fromorbit.com,
+        amir73il@gmail.com, bfields@fieldses.org,
+        gregkh@linuxfoundation.org, kernel-team@lge.com,
+        linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
+        minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
+        sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
+        penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
+        ngupta@vflare.org, linux-block@vger.kernel.org,
+        paolo.valente@linaro.org, josef@toxicpanda.com,
+        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        jack@suse.cz, jack@suse.com, jlayton@kernel.org,
+        dan.j.williams@intel.com, hch@infradead.org, djwong@kernel.org,
+        dri-devel@lists.freedesktop.org, airlied@linux.ie,
+        rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
+        hamohammed.sa@gmail.com, 42.hyeyoo@gmail.com
+Subject: [PATCH RFC v6 00/21] DEPT(Dependency Tracker)
+Date:   Wed,  4 May 2022 17:17:28 +0900
+Message-Id: <1651652269-15342-1-git-send-email-byungchul.park@lge.com>
+X-Mailer: git-send-email 1.9.1
+X-Spam-Status: No, score=-6.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -64,80 +60,207 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 4, 2022 at 2:27 AM Matthew Wilcox <willy@infradead.org> wrote:=
-=0D
-> On Tue, May 03, 2022 at 04:02:26PM -0700, Darrick J. Wong wrote:=0D
-> > On Wed, May 04, 2022 at 12:15:45AM +0200, Andreas Gruenbacher wrote:=0D
-> > > On Tue, May 3, 2022 at 11:53 PM Matthew Wilcox <willy@infradead.org> =
-wrote:=0D
-> > > > On Tue, May 03, 2022 at 11:37:27PM +0200, Andreas Gruenbacher wrote=
-:=0D
-> > > > > In iomap_write_end(), only call iomap_write_failed() on the byte =
-range=0D
-> > > > > that has failed.  This should improve code readability, but doesn=
-'t fix=0D
-> > > > > an actual bug because iomap_write_failed() is called after updati=
-ng the=0D
-> > > > > file size here and it only affects the memory beyond the end of t=
-he=0D
-> > > > > file.=0D
-> > > >=0D
-> > > > I can't find a way to set 'ret' to anything other than 0 or len.  I=
- know=0D
-> > > > the code is written to make it look like we can return a short writ=
-e,=0D
-> > > > but I can't see a way to do it.=0D
-> > >=0D
-> > > Good point, but that doesn't make the code any less confusing in my e=
-yes.=0D
-> >=0D
-> > Not to mention it leaves a logic bomb if we ever /do/ start returning=0D
-> > 0 < ret < len.=0D
->=0D
-> This is one of the things I noticed when folioising iomap and didn't=0D
-> get round to cleaning up, but I feel like we should change the calling=0D
-> convention here to bool (true =3D success, false =3D fail).  Changing=0D
-> block_write_end() might not be on the cards, unless someone's really=0D
-> motivated, but we can at least change iomap_write_end() to not have this=
-=0D
-> stupid calling convention.=0D
->=0D
-> I mean, I won't NAK this patch, it is somewhat better with it than withou=
-t=0D
-> it, but it perpetuates the myth that this is in some way ever going to=0D
-> happen, and the code could be a lot simpler if we stopped pretending.=0D
-=0D
-Hmm, I don't really see how this would make things significantly=0D
-simpler.  Trying it out made me notice the following problem, though.=0D
-Any thoughts?=0D
-=0D
-Of course this was copied from generic_write_end(), and so we have the same=
-=0D
-issue there as well as in nobh_write_end().=0D
-=0D
-Thanks,=0D
-Andreas=0D
-=0D
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c=0D
-index 8fb9b2797fc5..1938dbbda1c0 100644=0D
---- a/fs/iomap/buffered-io.c=0D
-+++ b/fs/iomap/buffered-io.c=0D
-@@ -721,13 +721,13 @@ static size_t iomap_write_end(struct iomap_iter *iter=
-, loff_t pos, size_t len,=0D
- 	 * cache.  It's up to the file system to write the updated size to disk,=
-=0D
- 	 * preferably after I/O completion so that no stale data is exposed.=0D
- 	 */=0D
--	if (pos + ret > old_size) {=0D
-+	if (ret && pos + ret > old_size) {=0D
- 		i_size_write(iter->inode, pos + ret);=0D
- 		iter->iomap.flags |=3D IOMAP_F_SIZE_CHANGED;=0D
- 	}=0D
- 	folio_unlock(folio);=0D
-=0D
--	if (old_size < pos)=0D
-+	if (ret && old_size < pos)=0D
- 		pagecache_isize_extended(iter->inode, old_size, pos);=0D
- 	if (page_ops && page_ops->page_done)=0D
- 		page_ops->page_done(iter->inode, pos, ret, &folio->page);=0D
+Hi Linus and folks,
+
+I've been developing a tool for detecting deadlock possibilities by
+tracking wait/event rather than lock(?) acquisition order to try to
+cover all synchonization machanisms. It's done on v5.18-rc3 tag.
+
+https://github.com/lgebyungchulpark/linux-dept/commits/dept1.20_on_v5.18-rc3
+
+Benifit:
+
+	0. Works with all lock primitives.
+	1. Works with wait_for_completion()/complete().
+	2. Works with 'wait' on PG_locked.
+	3. Works with 'wait' on PG_writeback.
+	4. Works with swait/wakeup.
+	5. Works with waitqueue.
+	6. Multiple reports are allowed.
+	7. Deduplication control on multiple reports.
+	8. Withstand false positives thanks to 6.
+	9. Easy to tag any wait/event.
+
+Future work:
+
+	0. To make it more stable.
+	1. To separates Dept from Lockdep.
+	2. To improves performance in terms of time and space.
+	3. To use Dept as a dependency engine for Lockdep.
+	4. To add any missing tags of wait/event in the kernel.
+	5. To deduplicate stack trace.
+
+How to interpret reports:
+
+	1. E(event) in each context cannot be triggered because of the
+	   W(wait) that cannot be woken.
+	2. The stack trace helping find the problematic code is located
+	   in each conext's detail.
+
+Thanks,
+Byungchul
+
+---
+
+Changes from v5:
+
+	1. Use just pr_warn_once() rather than WARN_ONCE() on the lack
+	   of internal resources because WARN_*() printing stacktrace is
+	   too much for informing the lack. (feedback from Ted, Hyeonggon)
+	2. Fix trivial bugs like missing initializing a struct before
+	   using it.
+	3. Assign a different class per task when handling onstack
+	   variables for waitqueue or the like. Which makes Dept
+	   distinguish between onstack variables of different tasks so
+	   as to prevent false positives. (reported by Hyeonggon)
+	4. Make Dept aware of even raw_local_irq_*() to prevent false
+	   positives. (reported by Hyeonggon)
+	5. Don't consider dependencies between the events that might be
+	   triggered within __schedule() and the waits that requires
+	    __schedule(), real ones. (reported by Hyeonggon)
+	6. Unstage the staged wait that has prepare_to_wait_event()'ed
+	   *and* yet to get to __schedule(), if we encounter __schedule()
+	   in-between for another sleep, which is possible if e.g. a
+	   mutex_lock() exists in 'condition' of ___wait_event().
+	7. Turn on CONFIG_PROVE_LOCKING when CONFIG_DEPT is on, to rely
+	   on the hardirq and softirq entrance tracing to make Dept more
+	   portable for now.
+
+Changes from v4:
+
+	1. Fix some bugs that produce false alarms.
+	2. Distinguish each syscall context from another *for arm64*.
+	3. Make it not warn it but just print it in case Dept ring
+	   buffer gets exhausted. (feedback from Hyeonggon)
+	4. Explicitely describe "EXPERIMENTAL" and "Dept might produce
+	   false positive reports" in Kconfig. (feedback from Ted)
+
+Changes from v3:
+
+	1. Dept shouldn't create dependencies between different depths
+	   of a class that were indicated by *_lock_nested(). Dept
+	   normally doesn't but it does once another lock class comes
+	   in. So fixed it. (feedback from Hyeonggon)
+	2. Dept considered a wait as a real wait once getting to
+	   __schedule() even if it has been set to TASK_RUNNING by wake
+	   up sources in advance. Fixed it so that Dept doesn't consider
+	   the case as a real wait. (feedback from Jan Kara)
+	3. Stop tracking dependencies with a map once the event
+	   associated with the map has been handled. Dept will start to
+	   work with the map again, on the next sleep.
+
+Changes from v2:
+
+	1. Disable Dept on bit_wait_table[] in sched/wait_bit.c
+	   reporting a lot of false positives, which is my fault.
+	   Wait/event for bit_wait_table[] should've been tagged in a
+	   higher layer for better work, which is a future work.
+	   (feedback from Jan Kara)
+	2. Disable Dept on crypto_larval's completion to prevent a false
+	   positive.
+
+Changes from v1:
+
+	1. Fix coding style and typo. (feedback from Steven)
+	2. Distinguish each work context from another in workqueue.
+	3. Skip checking lock acquisition with nest_lock, which is about
+	   correct lock usage that should be checked by Lockdep.
+
+Changes from RFC(v0):
+
+	1. Prevent adding a wait tag at prepare_to_wait() but __schedule().
+	   (feedback from Linus and Matthew)
+	2. Use try version at lockdep_acquire_cpus_lock() annotation.
+	3. Distinguish each syscall context from another.
+
+Byungchul Park (21):
+  llist: Move llist_{head,node} definition to types.h
+  dept: Implement Dept(Dependency Tracker)
+  dept: Apply Dept to spinlock
+  dept: Apply Dept to mutex families
+  dept: Apply Dept to rwlock
+  dept: Apply Dept to wait_for_completion()/complete()
+  dept: Apply Dept to seqlock
+  dept: Apply Dept to rwsem
+  dept: Add proc knobs to show stats and dependency graph
+  dept: Introduce split map concept and new APIs for them
+  dept: Apply Dept to wait/event of PG_{locked,writeback}
+  dept: Apply SDT to swait
+  dept: Apply SDT to wait(waitqueue)
+  locking/lockdep, cpu/hotplus: Use a weaker annotation in AP thread
+  dept: Distinguish each syscall context from another
+  dept: Distinguish each work from another
+  dept: Disable Dept within the wait_bit layer by default
+  dept: Disable Dept on struct crypto_larval's completion for now
+  dept: Differentiate onstack maps from others of different tasks in
+    class
+  dept: Do not add dependencies between events within scheduler and
+    sleeps
+  dept: Unstage wait when tagging a normal sleep wait
+
+ arch/arm64/kernel/syscall.c        |    2 +
+ arch/x86/entry/common.c            |    4 +
+ crypto/api.c                       |    7 +-
+ include/linux/completion.h         |   44 +-
+ include/linux/dept.h               |  596 ++++++++
+ include/linux/dept_page.h          |   78 +
+ include/linux/dept_sdt.h           |   67 +
+ include/linux/hardirq.h            |    3 +
+ include/linux/irqflags.h           |   71 +-
+ include/linux/llist.h              |    8 -
+ include/linux/lockdep.h            |  186 ++-
+ include/linux/lockdep_types.h      |    3 +
+ include/linux/mutex.h              |   22 +
+ include/linux/page-flags.h         |   45 +-
+ include/linux/pagemap.h            |    7 +-
+ include/linux/percpu-rwsem.h       |    4 +-
+ include/linux/rtmutex.h            |    1 +
+ include/linux/rwlock.h             |   42 +
+ include/linux/rwlock_api_smp.h     |    8 +-
+ include/linux/rwlock_types.h       |    1 +
+ include/linux/rwsem.h              |   22 +
+ include/linux/sched.h              |    7 +
+ include/linux/seqlock.h            |   60 +-
+ include/linux/spinlock.h           |   21 +
+ include/linux/spinlock_types_raw.h |    3 +
+ include/linux/swait.h              |    4 +
+ include/linux/types.h              |    8 +
+ include/linux/wait.h               |    6 +-
+ init/init_task.c                   |    2 +
+ init/main.c                        |    4 +
+ kernel/Makefile                    |    1 +
+ kernel/cpu.c                       |    2 +-
+ kernel/dependency/Makefile         |    4 +
+ kernel/dependency/dept.c           | 2938 ++++++++++++++++++++++++++++++++++++
+ kernel/dependency/dept_hash.h      |   10 +
+ kernel/dependency/dept_internal.h  |   26 +
+ kernel/dependency/dept_object.h    |   13 +
+ kernel/dependency/dept_proc.c      |   92 ++
+ kernel/exit.c                      |    7 +
+ kernel/fork.c                      |    2 +
+ kernel/locking/lockdep.c           |   28 +-
+ kernel/locking/spinlock_rt.c       |   24 +-
+ kernel/module.c                    |    2 +
+ kernel/sched/completion.c          |   12 +-
+ kernel/sched/core.c                |   10 +
+ kernel/sched/swait.c               |   10 +
+ kernel/sched/wait.c                |   16 +
+ kernel/sched/wait_bit.c            |    5 +-
+ kernel/workqueue.c                 |    3 +
+ lib/Kconfig.debug                  |   28 +
+ mm/filemap.c                       |   68 +
+ mm/page_ext.c                      |    5 +
+ 52 files changed, 4558 insertions(+), 84 deletions(-)
+ create mode 100644 include/linux/dept.h
+ create mode 100644 include/linux/dept_page.h
+ create mode 100644 include/linux/dept_sdt.h
+ create mode 100644 kernel/dependency/Makefile
+ create mode 100644 kernel/dependency/dept.c
+ create mode 100644 kernel/dependency/dept_hash.h
+ create mode 100644 kernel/dependency/dept_internal.h
+ create mode 100644 kernel/dependency/dept_object.h
+ create mode 100644 kernel/dependency/dept_proc.c
+
+-- 
+1.9.1
 
