@@ -2,135 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EC96519744
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 May 2022 08:13:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52E565197C0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 May 2022 09:02:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344852AbiEDGRF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 May 2022 02:17:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44928 "EHLO
+        id S1345160AbiEDHFj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 May 2022 03:05:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233453AbiEDGRC (ORCPT
+        with ESMTP id S232560AbiEDHFi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 May 2022 02:17:02 -0400
-Received: from mail-qk1-x733.google.com (mail-qk1-x733.google.com [IPv6:2607:f8b0:4864:20::733])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C23217051
-        for <linux-fsdevel@vger.kernel.org>; Tue,  3 May 2022 23:13:28 -0700 (PDT)
-Received: by mail-qk1-x733.google.com with SMTP id j9so330756qkg.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 May 2022 23:13:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=p+IWfkK7oJXhUk2Lnn9P524hIFSIrAG5TSuPhYiWH0Q=;
-        b=bM5wL0MZZHtJfosNEelkzqLNSiIuxMtVyNQqmGC544ZlHtYjgmfVoophuq1QRKfqMj
-         xm3TCNPkPi+TZ88UARLEkXkVqVnAStgmv+LvjkmJCE07ncMSWqUoqGBdNCHyX5TWUO6P
-         5EH2bec11qchJXgtEcAJWGsAZSaUpPTRS+uahy/gBVLbhVuQv/VzgK4mZBEnf+vtyjt/
-         H0OEmfJwkc4zKsHqL8DlhR7JNQqesUDmc+jFLFfW4jqQGTDK4gB4b6dSUr4qXrwVqTwu
-         B8cqSac6rp53rkcj8MGImlmEVAAl72MY/HWO1vk0N4LpoIraVw8a0ckDXiLu5zKPVS/N
-         po/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=p+IWfkK7oJXhUk2Lnn9P524hIFSIrAG5TSuPhYiWH0Q=;
-        b=VQoMrT02phBWQKm32iC/Y39PzxinvCpUzWU5Lpi1V1nAvrHhgRyed87PMiDw9Vzojx
-         jN9R/2IB3otqonYHYEDLPxj0WeUUQQkHzDnn+BWlFGFI28EPB7ewtSWBDjqFVFTvxN5s
-         ICqs+E/1B8h/paa9SN3Xz2fp5S/BDi/KipgMUsbRxx4XgmTBboTylgAd6pGe4Ap5vU0K
-         pUGVSGPhPbmN1ezXlGE2Yhaotzt/wf+wc3aR2aLZUIahL9QCayVHB/eU8COuB3nrHsGq
-         AzaTHvXGzg5+AsTloqHhDPDr2n2rVLnOczjNO1QEWVYHKCYwYETQbWNUeNHH1dWQTw29
-         omjQ==
-X-Gm-Message-State: AOAM532sTQKmssdhut+HNBvEGEa7tFhJncJlbgrvuula6nLeYrtPJuPM
-        Jo1pjEfdDduED7mr3Pn4+xug4krtCOuMff/WbLmDf7s7+TZmbQ==
-X-Google-Smtp-Source: ABdhPJxxrP0BtJj4GgNILuXQlQKcQoApZiPz4i5KBeCBxqD+zZAHPhfwi7gASpt+9ARXjDIWuRdtRnhkuqVpmHdSRiA=
-X-Received: by 2002:a05:620a:1aa0:b0:6a0:a34:15e0 with SMTP id
- bl32-20020a05620a1aa000b006a00a3415e0mr3231099qkb.19.1651644807224; Tue, 03
- May 2022 23:13:27 -0700 (PDT)
+        Wed, 4 May 2022 03:05:38 -0400
+Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EDAA21260;
+        Wed,  4 May 2022 00:02:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1651647722; x=1683183722;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=7ZCqlQA5sx7gnt6UXenHJLpYVoVKeBIUo5U3B8t8rmE=;
+  b=JgsQrAjNoJ2bKHpmeKPP0rymm4WqEYDo24MUUewYIoYW2YCZbO+tbXTg
+   W3A8ppj9USsIf09Ak+kXTlJKXTJri9oiCdi/rQvT44YlYz8v394LWa0dN
+   Kfn/VssNM90dJL2YaLpgQNwjDYoURjPIp++ntxf/J6NvMN+LJgNsMqMJu
+   ajep2Urat2qbuK0ZHEDlqugapvSSsztxSVYApTPV0FGhLCRu26/YL8xM1
+   3SlErWBs+K4t6mqQ8bra2384HEma3siIYo2NaHQyD4dm/Umz/52mULEaO
+   e2tCUZZw5/9M4opfpxyUgreVIiLXLgP0GQ/aI7N/r6fLRlB6NJb0nUDxn
+   w==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10336"; a="267279980"
+X-IronPort-AV: E=Sophos;i="5.91,197,1647327600"; 
+   d="scan'208";a="267279980"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 May 2022 00:02:01 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.91,197,1647327600"; 
+   d="scan'208";a="653603446"
+Received: from lkp-server01.sh.intel.com (HELO 5056e131ad90) ([10.239.97.150])
+  by FMSMGA003.fm.intel.com with ESMTP; 04 May 2022 00:01:55 -0700
+Received: from kbuild by 5056e131ad90 with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1nm91G-000B9r-MZ;
+        Wed, 04 May 2022 07:01:54 +0000
+Date:   Wed, 4 May 2022 15:01:44 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Guowei Du <duguoweisz@gmail.com>, jack@suse.cz
+Cc:     kbuild-all@lists.01.org, amir73il@gmail.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, jmorris@namei.org, serge@hallyn.com,
+        ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+        kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
+        john.fastabend@gmail.com, kpsingh@kernel.org,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        bpf@vger.kernel.org, paul@paul-moore.com,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        keescook@chromium.org, anton@enomsg.org, ccross@android.com,
+        tony.luck@intel.com, selinux@vger.kernel.org, duguoweisz@gmail.com,
+        duguowei <duguowei@xiaomi.com>
+Subject: Re: [PATCH] fsnotify: add generic perm check for unlink/rmdir
+Message-ID: <202205041421.bHwZBEFK-lkp@intel.com>
+References: <20220503183750.1977-1-duguoweisz@gmail.com>
 MIME-Version: 1.0
-References: <CAOQ4uxiRDpuS=2uA6+ZUM7yG9vVU-u212tkunBmSnP_u=mkv=Q@mail.gmail.com>
- <20220228140556.ae5rhgqsyzm5djbp@quack3.lan> <CAOQ4uxiMp4HjSj01FZm8-jPzHD4jVugxuXBDW2JnSpVizhCeTQ@mail.gmail.com>
- <ff14ec84-2541-28c9-4d28-7e2ee13835dc@mail.de> <CAOQ4uxhry1_tW9NPC4X3q3YUQ86Ecg+G6A2Fvs5vKQTDB0ctHQ@mail.gmail.com>
- <8c636384-8db6-d7d1-b89b-424ef1accfe8@mail.de> <CAOQ4uxgLovYffU5epFy+r3qa7WjD9637YNuiFJHGj_du7H8gOA@mail.gmail.com>
- <20220303092459.mglgfvq653ge4k42@quack3.lan> <6799146c-fa5a-7b64-bb91-6038006cf612@mail.de>
-In-Reply-To: <6799146c-fa5a-7b64-bb91-6038006cf612@mail.de>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 4 May 2022 09:13:15 +0300
-Message-ID: <CAOQ4uxgXfL6_fi9rSf8_cUW0Lgbw8Rj_VcBOPiA5ec3PqBqo_Q@mail.gmail.com>
-Subject: Re: [RFC] Volatile fanotify marks
-To:     Tycho Kirchner <tychokirchner@mail.de>
-Cc:     Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220503183750.1977-1-duguoweisz@gmail.com>
+X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 2, 2022 at 12:13 PM Tycho Kirchner <tychokirchner@mail.de> wrote:
->
-> All right, I thought a bit more about that and returned to your
-> original BPF idea you mentioned on 2020-08-28:
->
-> > I was thinking that we could add a BPF hook to fanotify_handle_event()
-> > (similar to what's happening in packet filtering code) and you could attach
-> > BPF programs to this hook to do filtering of events. That way we don't have
-> > to introduce new group flags for various filtering options. The question is
-> > whether eBPF is strong enough so that filters useful for fanotify users
-> > could be implemented with it but this particular check seems implementable.
-> >
-> >                                                               Honza
->
-> Instead of changing fanotify's filesystem notification functionality,
-> I suggest to rather **add a tracing mode (fantrace)**.
->
-> The synchronous handling of syscalls via ptrace is of course required
-> for debugging purposes, however that introduces a major slowdown (even
-> with seccomp-bpf filters). There are a number of cases, including
-> [1-3], where async processing of file events of specific tasks would be
-> fine but is not readily available in Linux. Fanotify already ships
-> important infrastructure in this regard: it provides very fast
-> event-buffering and, by using file descriptors instead of resolved
-> paths, a clean and race-free API to process the events later. However,
-> as already stated, fanotify does not provide a clean way, to monitor
-> only a subset of tasks. Therefore please consider the following
-> proposed architecture of fantrace:
->
-> Each taks gets its own struct fsnotify_group. Within
-> fsnotify.c:fsnotify() it is checked if the given task has a
-> fsnotify_group attached where events of interest are buffered as usual.
-> Note that this is an additional hook - sysadmins being subscribed to
-> filesystem events rather than task-filesystem-events are notified as
-> usual - in that case two hooks possibly run. The fsnotify_group is
-> extended by a field optionally pointing to a BPF program which allows
-> for custom filters to be run.
->
-> Some implementation details:
-> - To let the tracee return quickly, run BPF filter program within tracer
->    context during read(fan_fd) but before events are copied to userspace
-> - only one fantracer per task, which overrides existing ones if any
-> - task->fsnotify_group refcount increment on fork, decrement on exit (run
->    after exit_files(tsk) to not miss final close events). When last task
->    exited, send EOF to listener.
-> - on exec of seuid-programs the fsnotify_group is cleared (like in ptrace)
-> - lazy check when event occurs, if listener is still alive (refcount > 1)
-> - for the beginning, to keep things simple and to "solve" the cleanup of
->    filesystem marks, I suggest to disable i_fsnotify_marks for fantrace
->    (only allow FAN_MARK_FILESYSTEM), as that functionality can be
->    implemented within the user-provided BPF-program.
->
+Hi Guowei,
 
-Maybe I am slow, but I did not understand the need for this task fsnotify_group.
+Thank you for the patch! Perhaps something to improve:
 
-What's wrong with Jan's suggestion? (add a BPF hook to fanotify_handle_event())
-that hook is supposed to filter by pid so why all this extra complexity?
+[auto build test WARNING on pcmoore-selinux/next]
+[also build test WARNING on linus/master jmorris-security/next-testing v5.18-rc5]
+[cannot apply to jack-fs/fsnotify next-20220503]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
-We may consider the option to have another BFP hook when reading
-events if there is
-good justification, but subtree filters will have to be in handle_event().
+url:    https://github.com/intel-lab-lkp/linux/commits/Guowei-Du/fsnotify-add-generic-perm-check-for-unlink-rmdir/20220504-024310
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git next
+config: h8300-randconfig-s032-20220501 (https://download.01.org/0day-ci/archive/20220504/202205041421.bHwZBEFK-lkp@intel.com/config)
+compiler: h8300-linux-gcc (GCC) 11.3.0
+reproduce:
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # apt-get install sparse
+        # sparse version: v0.6.4-dirty
+        # https://github.com/intel-lab-lkp/linux/commit/6f635019bbd2ab22a64e03164c8812a46531966e
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Guowei-Du/fsnotify-add-generic-perm-check-for-unlink-rmdir/20220504-024310
+        git checkout 6f635019bbd2ab22a64e03164c8812a46531966e
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.3.0 make.cross C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__' O=build_dir ARCH=h8300 SHELL=/bin/bash
 
-Thanks,
-Amir.
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
+
+
+sparse warnings: (new ones prefixed by >>)
+   security/security.c:358:25: sparse: sparse: cast removes address space '__rcu' of expression
+>> security/security.c:1169:35: sparse: sparse: incorrect type in argument 1 (different modifiers) @@     expected struct path *path @@     got struct path const *dir @@
+   security/security.c:1169:35: sparse:     expected struct path *path
+   security/security.c:1169:35: sparse:     got struct path const *dir
+   security/security.c:1180:35: sparse: sparse: incorrect type in argument 1 (different modifiers) @@     expected struct path *path @@     got struct path const *dir @@
+   security/security.c:1180:35: sparse:     expected struct path *path
+   security/security.c:1180:35: sparse:     got struct path const *dir
+
+vim +1169 security/security.c
+
+  1160	
+  1161	int security_path_rmdir(const struct path *dir, struct dentry *dentry)
+  1162	{
+  1163		int ret;
+  1164		if (unlikely(IS_PRIVATE(d_backing_inode(dir->dentry))))
+  1165			return 0;
+  1166		ret = call_int_hook(path_rmdir, 0, dir, dentry);
+  1167		if (ret)
+  1168			return ret;
+> 1169		return fsnotify_path_perm(dir, dentry, MAY_RMDIR);
+  1170	}
+  1171	
+
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
