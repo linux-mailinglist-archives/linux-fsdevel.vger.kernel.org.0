@@ -2,256 +2,175 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1100751B865
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 May 2022 09:05:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A7F351B8F8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 May 2022 09:29:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245548AbiEEHJX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 May 2022 03:09:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46416 "EHLO
+        id S1344173AbiEEHcd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 May 2022 03:32:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36344 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232300AbiEEHJS (ORCPT
+        with ESMTP id S1344682AbiEEHcb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 May 2022 03:09:18 -0400
-Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id AE73922BC0
-        for <linux-fsdevel@vger.kernel.org>; Thu,  5 May 2022 00:05:38 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-2-147.pa.nsw.optusnet.com.au [49.181.2.147])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id E4E0E534578;
-        Thu,  5 May 2022 17:05:36 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1nmVYM-008E5b-Vq; Thu, 05 May 2022 17:05:35 +1000
-Date:   Thu, 5 May 2022 17:05:34 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Darrick J . Wong" <djwong@kernel.org>
-Subject: Re: [RFC PATCH 00/10] Make O_SYNC writethrough
-Message-ID: <20220505070534.GB1949718@dread.disaster.area>
-References: <20220503064008.3682332-1-willy@infradead.org>
- <20220505045821.GA1949718@dread.disaster.area>
- <YnNbf9dPhJ3FiHzH@casper.infradead.org>
+        Thu, 5 May 2022 03:32:31 -0400
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA4924754D
+        for <linux-fsdevel@vger.kernel.org>; Thu,  5 May 2022 00:28:51 -0700 (PDT)
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20220505072849euoutp02ab8365b5e00a45ec26f64438c07fbe4f~sJOTxCXYU2921629216euoutp02k
+        for <linux-fsdevel@vger.kernel.org>; Thu,  5 May 2022 07:28:49 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20220505072849euoutp02ab8365b5e00a45ec26f64438c07fbe4f~sJOTxCXYU2921629216euoutp02k
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1651735729;
+        bh=j19LG41QlgQqZ+lZFqrhtRma1C1jIg9OOFvDpBlTex4=;
+        h=Date:Subject:To:CC:From:In-Reply-To:References:From;
+        b=qSK450mxwZZbcleGzZAl+PCJRc4osU6wshdEJje4Fgn9KOe9lVv4T6FR/JKhixwvP
+         qKNh0rcCqoXrfZmcJVv2aZQ+mnheRHSPM/uVx2YzEJ1YQal8PeNEd5Pf01PDAaE7JJ
+         KA9nLDxF4tAnrPXEbFnp5IxetDXPhhCXa7q3Ov+M=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20220505072848eucas1p1d66f136b7b1226351171cd4dd1152d26~sJOTKK_DF2541325413eucas1p1z;
+        Thu,  5 May 2022 07:28:48 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id B4.15.09887.0BC73726; Thu,  5
+        May 2022 08:28:48 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20220505072847eucas1p27c50364580d96918bc2a59b6877671ba~sJOSvbf6V0726607266eucas1p2b;
+        Thu,  5 May 2022 07:28:47 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220505072847eusmtrp2acdb61270717097424f910760caaa9a7~sJOStu9m32757327573eusmtrp2B;
+        Thu,  5 May 2022 07:28:47 +0000 (GMT)
+X-AuditID: cbfec7f4-471ff7000000269f-26-62737cb08449
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 73.0D.09404.FAC73726; Thu,  5
+        May 2022 08:28:47 +0100 (BST)
+Received: from CAMSVWEXC01.scsc.local (unknown [106.1.227.71]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20220505072847eusmtip133d8624e020309d5e17197a6d3fce6cd~sJOSiJ1WZ1867518675eusmtip1m;
+        Thu,  5 May 2022 07:28:47 +0000 (GMT)
+Received: from [192.168.8.130] (106.210.248.170) by CAMSVWEXC01.scsc.local
+        (2002:6a01:e347::6a01:e347) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+        Thu, 5 May 2022 08:28:44 +0100
+Message-ID: <fe8746d5-f7c4-efd6-b4a6-e198f6d95813@samsung.com>
+Date:   Thu, 5 May 2022 09:28:43 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YnNbf9dPhJ3FiHzH@casper.infradead.org>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=62737741
-        a=ivVLWpVy4j68lT4lJFbQgw==:117 a=ivVLWpVy4j68lT4lJFbQgw==:17
-        a=kj9zAlcOel0A:10 a=oZkIemNP1mAA:10 a=7-415B0cAAAA:8
-        a=3XtGqXo65XAlBLoekegA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+        Thunderbird/91.8.1
+Subject: Re: [PATCH 00/16] support non power of 2 zoned devices
+Content-Language: en-US
+To:     David Sterba <dsterba@suse.cz>
+CC:     Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        "jaegeuk@kernel.org" <jaegeuk@kernel.org>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "snitzer@kernel.org" <snitzer@kernel.org>,
+        "hch@lst.de" <hch@lst.de>, "mcgrof@kernel.org" <mcgrof@kernel.org>,
+        Naohiro Aota <Naohiro.Aota@wdc.com>,
+        "sagi@grimberg.me" <sagi@grimberg.me>,
+        "damien.lemoal@opensource.wdc.com" <damien.lemoal@opensource.wdc.com>,
+        "dsterba@suse.com" <dsterba@suse.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "clm@fb.com" <clm@fb.com>,
+        "gost.dev@samsung.com" <gost.dev@samsung.com>,
+        "chao@kernel.org" <chao@kernel.org>,
+        "linux-f2fs-devel@lists.sourceforge.net" 
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        "josef@toxicpanda.com" <josef@toxicpanda.com>,
+        "jonathan.derrick@linux.dev" <jonathan.derrick@linux.dev>,
+        "agk@redhat.com" <agk@redhat.com>,
+        "kbusch@kernel.org" <kbusch@kernel.org>,
+        "kch@nvidia.com" <kch@nvidia.com>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "dm-devel@redhat.com" <dm-devel@redhat.com>,
+        "bvanassche@acm.org" <bvanassche@acm.org>,
+        "jiangbo.365@bytedance.com" <jiangbo.365@bytedance.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        =?UTF-8?Q?Matias_Bj=c3=b8rling?= <Matias.Bjorling@wdc.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+From:   Pankaj Raghav <p.raghav@samsung.com>
+In-Reply-To: <20220504211440.GU18596@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [106.210.248.170]
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+        CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347)
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0xTZxjed87pOaedkGOB8K2wbMOxcZk4yJJ9G5sDN+dJRtQfbGMmRiuc
+        AI5yaenmmKZ0KFEY4+IFd0Rg3rCIFoEUqVwEpAgWXYA6JFrmKAkWqd1AkRRxtIct/Hve55L3
+        fb58NC41kjI6NT2bU6bL04JICWEwzd9aW79Xtevd0iop0vebcHThfjGJjjnncXTz6ACGyoqP
+        U8g1cBtHbY4TIvT7My2GTrvmCKS70IMhm57H0c/XnAR6XmDFkG7/AxwtPIhEZV13AJqw8Bhq
+        Gw1Hg+PnKTR4ahNqbesj0JCxgkRV5yYoVJL/BEcjJRMAlfY2itClqccEujEaEBPIDg1/wS7e
+        qCPZ0jwHxd62XibYoQE121B7iGR/yz2Ks41nNOzV6hmMvXo3l2SL8hwk23JgTMQ+breQrL7J
+        QrDm6usUW9J4WbRVuk3yURKXlvodp1y3fqckZfKci8rsp/YYzA0gFxSRBUBMQ+Y9eG2hYQlL
+        aClzHsCJwfuEMMwCaC3rWR5mAGxfyPs/8nSmiRKEGgCnrAaRW/C4bK0bBcEIoHM435PwYtbD
+        uzWdhBsTzJuwcGx+mV8N+361eXg/JgEe480e3of5BF40zmJujDP+cNRW5cG+TBCsNFkw9wKc
+        cUmgo7VyaTNNk0wY1B6i3B4xsxYeqejHhWwoPNDsogT8GmyersCFBmvg4ZFhTMD74EWT2dMG
+        MpMS+MeJ08umz2DBi/Jlkw+09zZRAg6EL1qqlvkf4cSICxfC+wEsbtGT7oMgEw1/MacJnlj4
+        Z5FNJNDecGR6tXCPNywzlOMlIJhf8RT8isr8igr8igrVgKgF/pxapUjmVFHp3PcRKrlCpU5P
+        jkjMUDSApe99c7F39gqosf8d0QUwGnQBSONBvl6fns3cJfVKkv+QwykzdijVaZyqCwTQRJC/
+        V2JqvVzKJMuzuW85LpNT/qditFiWi9VHWTd3NNfVGQoSAyLj7PH6O1mZEnF3yOB2/i8yUTG3
+        o+M6r9k+3rNzxhA78E9e2qq5KeZhsdT+isw3sCZasTfE76zlJ8OXhYrBRwlbgrOfD8s0b4un
+        D6ptYdMv51AObfSa/vKOW88SNogiOsMveXUfH+OzNmzN73WqU/OzdLEZB2UaLVF4ZHHVWzJr
+        /MhL2Y/inPu2iaiN9R+caQgNd9KvmqIaO0VGy0Of8Th7RHDV6+HajP43Pv7Q4H3PmFPGvXMl
+        ZtzvpObrb3ZbYp4CmqytXPc+3x5rD6xVn+oOTfqqNUVXVPx54ea6Jw6nbjIxku4R7/YOc9wb
+        Cqm37tnUF58SRKhS5JFhuFIl/xeMBbOtTQQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrPKsWRmVeSWpSXmKPExsVy+t/xu7rra4qTDDa0GVusP3WM2WL13X42
+        i2kffjJbnJ56lsliUv8MdovfZ88zW+x9N5vV4sKPRiaLxb+/s1isXH2UyeLJ+lnMFj0HPrBY
+        /O26x2SxsuUhs8Wfh4YWkw5dY7R4enUWk8XeW9oWlx6vYLe4tMjdYs/ekywWl3fNYbOYv+wp
+        u8WEtq/MFjcmPGW0mHh8M6vFutfvWSxO3JJ2kPG4fMXb49+JNWweE5vfsXucv7eRxePy2VKP
+        Tas62TwWNkxl9ti8pN5j94LPTB67bzawefQ2v2Pz2Nl6n9Xj/b6rbB7rt1xl8Tiz4Ai7x4TN
+        G1kDhKL0bIryS0tSFTLyi0tslaINLYz0DC0t9IxMLPUMjc1jrYxMlfTtbFJSczLLUov07RL0
+        Ml4s+81ecIq9YtuZTYwNjL1sXYycHBICJhLfPm9h72Lk4hASWMoocXXLJqiEjMSnKx/ZIWxh
+        iT/Xutggij4ySsz61cIM4exilPj05DdYFa+AncTN5QdZQGwWARWJ7vs/2SDighInZz4Bi4sK
+        REg82H2WFcQWFrCXWLvrCxOIzSwgLnHryXwwW0RASWLesatgtpDATiaJR99iQJYxC/zkkpj5
+        uRFoMwcHm4CWRGMn2F5OAV2JKXNOMUPM0ZRo3Q5xD7OAvMT2t3OYIT5Qlph84woThF0r8er+
+        bsYJjKKzkJw3C8kZs5CMmoVk1AJGllWMIqmlxbnpucVGesWJucWleel6yfm5mxiBKW/bsZ9b
+        djCufPVR7xAjEwfjIUYJDmYlEV7npQVJQrwpiZVVqUX58UWlOanFhxhNgWE0kVlKNDkfmHTz
+        SuINzQxMDU3MLA1MLc2MlcR5PQs6EoUE0hNLUrNTUwtSi2D6mDg4pRqYPJye+xrfntSvZ258
+        sj6QJ9fgXaL0leeRGjbXc2Z27Emf8VX0/e7QfR3TnWf9nXBUmW1d3O05uo/j9ub9Xv+do/+c
+        6k+Xz5Ncz6auZj7aEKfMKPCOLZH/r4iFUtiBjKMlDRwBTp+tOK/Eq/yU/GDnG3Juaej7f7c9
+        32dmfnFOOtLQFn3ZwdynzppHc+uk5ZVL7ktFvw/KOpx5UzHl3601M7+fPD7P8ac8e2Kl6nvL
+        qZ5LLqyY9XS+sreS5fy62uavc7R6Y8t6O8xzT3hWGIR517PbPPu33uTrLOvmbsGnEdf39hW2
+        Hr8b+t6/Yu9yK/NfD2vdi45rWb9xTXYKSbueFt7nJ526oeeI8lJrUSclluKMREMt5qLiRABk
+        5eXBAgQAAA==
+X-CMS-MailID: 20220505072847eucas1p27c50364580d96918bc2a59b6877671ba
+X-Msg-Generator: CA
+X-RootMTR: 20220427160256eucas1p2db2b58792ffc93026d870c260767da14
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20220427160256eucas1p2db2b58792ffc93026d870c260767da14
+References: <CGME20220427160256eucas1p2db2b58792ffc93026d870c260767da14@eucas1p2.samsung.com>
+        <20220427160255.300418-1-p.raghav@samsung.com>
+        <PH0PR04MB74167FC8BA634A3DA09586489BC19@PH0PR04MB7416.namprd04.prod.outlook.com>
+        <a702c7f7-9719-9f3e-63de-1e96f2912432@samsung.com>
+        <20220504211440.GU18596@suse.cz>
+X-Spam-Status: No, score=-10.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_HI,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 05, 2022 at 06:07:11AM +0100, Matthew Wilcox wrote:
-> On Thu, May 05, 2022 at 02:58:21PM +1000, Dave Chinner wrote:
-> > On Tue, May 03, 2022 at 07:39:58AM +0100, Matthew Wilcox (Oracle) wrote:
-> > > This is very much in development and basically untested, but Damian
-> > > started describing to me something that he wanted, and I told him he
-> > > was asking for the wrong thing, and I already had this patch series
-> > > in progress.  If someone wants to pick it up and make it mergable,
-> > > that'd be grand.
-> > 
-> > That've very non-descriptive. Saying "someone wanted something, I said it's
-> > wrong, so here's a patch series about something else" doesn't tell me anything
-> > about the problem that Damien was trying to solve.
+On 2022-05-04 23:14, David Sterba wrote:
+>> This commit: `btrfs: zoned: relax the alignment constraint for zoned
+>> devices` makes sure the zone size is BTRFS_STRIPE_LEN aligned (64K). So
+>> even the npo2 zoned device should be aligned to `fs_info->sectorsize`,
+>> which is typically 4k.
+>>
+>> This was one of the comment that came from David Sterba:
+>> https://lore.kernel.org/all/20220315142740.GU12643@twin.jikos.cz/
+>> where he suggested to have some sane alignment for the zone sizes.
 > 
-> Sorry about that.  I was a bit jet-lagged when I wrote it.
-> 
-> > > The idea is that an O_SYNC write is always going to want to write, and
-> > > we know that at the time we're storing into the page cache.  So for an
-> > > otherwise clean folio, we can skip the part where we dirty the folio,
-> > > find the dirty folios and wait for their writeback.
-> > 
-> > What exactly is this shortcut trying to optimise away? A bit of CPU
-> > time?
-> > 
-> > O_SYNC is already a write-through operation - we just call
-> > filemap_write_and_wait_range() once we've copied the data into the
-> > page cache and dirtied the page. What does skipping the dirty page
-> > step gain us?
-> 
-> Two things; the original reason I was doing this, and Damien's reason.
-> 
-> My reason: a small write to a large folio will cause the entire folio to
-> be dirtied and written.
+> My idea of 'sane' value would be 1M, that we have 4K for sectors is
+> because of the 1:1 mapping to pages, but RAM sizes are on a different
+> scale than storage devices. The 4K is absolute minimum but if the page
+> size is taken as a basic constraint, ARM has 64K and there are some 256K
+> arches.
 
-If that's a problem, then shouldn't we track sub-folio dirty
-regions? Because normal non-O_SYNC buffered writes will still cause
-this to happen...
-
-> This is unnecessary with O_SYNC; we're about
-> to force the write anyway; we may as well do the write of the part of
-> the folio which is modified, and skip the whole dirtying step.
-
-What happens when another part of the folio is concurrently dirtied?
-
-What happens if the folio already has other parts of it under
-writeback? How do we avoid and/or resolve concurent "partial folio
-writeback" race conditions?
-
-> Damien's reason: It's racy.  Somebody else (... even vmscan) could cause
-> folios to be written out of order.  This matters for ZoneFS because
-> writing a file out of order is Not Allowed.  He was looking at relaxing
-> O_DIRECT, but I think what he really wants is a writethrough page cache.
-
-Zonefs has other mechanisms to solve this. It already has the
-inode_lock() to serialise all dio writes to a zone because they must
-be append IOs. i.e. new writes must be located at the write pointer,
-and the write pointer does not get incremented until the IO
-has been submitted (for DIO+AIO) or completed (for non-AIO).
-
-Hence for buffered writes, we have the same situation: once we have
-sampled the zone write pointer to get the offset, we cannot start
-another write until the current IO has been submitted.
-
-Further, for zonefs, we cannot get another write to that page cache
-page *ever*; we can only get reads from it. Hence page state really
-doesn't matter at all - once there is data in the page cache page,
-all that can happen is it can be invalidated but it cannot change
-(ah, the beauties of write-once media!). Hence the dirty state is
-completely meaningless from a coherency and integrity POV, as is the
-writeback state.
-
-IOWs, for zonefs we can already ignore the page dirtying and
-writeback mechanisms fairly safely. Hence we could do something like
-this in the zonefs buffered write path:
-
-- lock the inode
-- sample the write pointer to get the file offset
-- instantiate a page cache folio at the given offset
-- copy the data into the folio, mark it up to date.
-- mark it as under writeback or lock the folio to keep reclaim away
-- add the page cache folio to an iter_iov
-- pass the iter_iov to the direct IO write path to submit the IO and
-  wait for completion.
-- clear the folio writeback state.
-- move the write pointer
-- unlock the inode
-
-and that gets us writethrough O_SYNC buffered writes. In fact, I
-think it may even work with async writes, too, just like the DIO
-write path seems to work with AIO.
-
-The best part about the above mechanism is that there is
-almost no new iomap, page cache or direct IO functionality required
-to do this. All the magic is all in the zonefs sequential zone write
-path. Hence I don't see needing to substantially modify the iomap
-buffered write path to do zonefs write-through....
-
-> > > The biggest problem with all this is that iomap doesn't have the necessary
-> > > information to cause extent allocation, so if you do an O_SYNC write
-> > > to an extent which is HOLE or DELALLOC, we can't do this optimisation.
-> > > Maybe that doesn't really matter for interesting applications.  I suspect
-> > > it doesn't matter for ZoneFS.
-> > 
-> > This seems like a lot of complexity for only partial support. It
-> > introduces races with page dirtying and cleaning, it likely has
-> > interesting issues with all the VM dirty/writeback accounting
-> > (because this series is using a completion path that expects the
-> > submission path has done it's side of the accounting) and it only
-> > works in certain preconditions are met.
-> 
-> If we want to have better O_SYNC support, I think we can improve those
-> conditions.  For example, XFS could preallocate the blocks before calling
-> into iomap.  Since it's an O_SYNC write, everything is already terrible.
-
-Ugh, that's even worse.
-
-Quite frankly, designing pure O_SYNC writethrough is a classic case
-of not seeing the forest for the trees.  What we actually need is
-*async* page cache write-through.
-
-Ever wondered why you can only get 60-70k write IOPS out of buffered
-writes? e.g untarring really large tarballs of small files always
-end up at 60-70k write IOPS regardless of filesystem, how many
-threads you break the writes up into, etc? io_uring buffered writes
-won't save us here, either, because it's not the data ingest side
-that limits performance. Yeah, it's the writeback side that limits
-us.
-
-There's a simple reason for that: the flusher thread becomes CPU
-bound doing the writeback of hundreds of thousands of dirty inodes.
-
-Writeback caching is a major bottleneck on high performance storage;
-when your storage can do 6.5GB/s and buffered writes can only copy
-into the page cache and flush to disk at 2GB/s (typically lower than
-this!), writeback caching is robbing us of major amounts of
-performance.
-
-It's even worse with small files - the flusher thread becomes CPU
-bound at 60-80k IOPS on XFS, ext4 and btrfs because block allocation
-is an expensive operation. On a device with a couple of million IOPS
-available, having the kernel top out at under 5% of it's capacity is
-pretty bad.
-
-However, if I do a hacky "writethrough" of small writes by calling
-filemap_flush() in ->release() (i.e. when close is called after the
-write), then multithreaded small file write workloads can push
-*several hundred thousand* write IOPS to disk before I run out of
-CPU.
-
-Write-through enables submission concurrency for small IOs. It
-avoids lots of page state management overehad for high data
-throughput IO. That's where all the performance wins with high end
-storage are - keeping the pipes full. Buffered writes stopped being
-able to do that years ago, and modern PCIe4 SSDs have only made that
-gulf wider again.
-
-IOWs, what we actually need is a clean page cache write-through
-model that doesn't have any nasty quirks or side effects. IOWs, I
-think you are on the right conceptual path, just the wrong
-architectural path.
-
-My preference would be for the page cache write-through mode to be a
-thin shim over the DIO write path. The DIO write path is a highly
-concurrent async IO engine - it's designed to handle everything
-AIO and io_uring can throw at it. Forget about "direct IO", just
-treat it as a high concurrency, high throughput async IO engine.
-
-Hence for page cache write-through, all we do is instantiate the
-page cache page, lock it, copy the data into it and then pass it to
-the direct IO write implementation to submit it and then unlock it
-on completion.  There's nothing else we really need to do - the DIO
-path already handles everything else.
-
-And if we use page/folio locking for concurrency synchronisation of
-write-through mode instead of an exclusive inode lock, the model
-allows for concurrent, non-overlapping buffered writes to a single
-inode, just like we have for direct IO. It also allows us to avoid
-all dirty and writeback page cache and VM state/accounting
-manipulations. ANd by using the page/folio lock we avoid racing
-state transitions until the write-through op is complete.
-
-Sure, if there is an existing dirty folio in the page cache, then
-punt it down the existing buffered IO path - something else is
-already using write-back caching for this folio (e.g. mmap), so we
-don't want to deal with trying to change modes.
-
-But otherwise, we don't want to go near the normal buffered write
-paths - they are all optimised for *write back* caching.  From an IO
-and filesystem allocation optimisation perspective, page-cache
-write-through IO is exactly the same as direct IO writes.  Hence we
-ireally want page cache write-through to use the same allocator
-paths and optimisations as the direct IO path, not the existing
-buffered write path.
-
-This sort of setup will get write-through buffered writes close to
-the throughput of what direct IO is capable of on modern storage. It
-won't quite match it, because DIO is zero copy and buffered IO is
-copy-once, but it'll get a *lot* closer than it does now....
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+That is a good point. I think it is safe to have 1MB as the minimum
+alignment so that it covers all architecture's page sizes. Thanks. I
+will queue this up.
