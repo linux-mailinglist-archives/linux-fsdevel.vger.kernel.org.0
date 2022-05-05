@@ -2,41 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 87C2451CA3E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 May 2022 22:11:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34FB451CA40
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 May 2022 22:11:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1385711AbiEEUPF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1385726AbiEEUPF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Thu, 5 May 2022 16:15:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35270 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35272 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241971AbiEEUPD (ORCPT
+        with ESMTP id S1385691AbiEEUPE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 May 2022 16:15:03 -0400
+        Thu, 5 May 2022 16:15:04 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A4A55F26F;
-        Thu,  5 May 2022 13:11:23 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04AD235DC3;
+        Thu,  5 May 2022 13:11:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=fBVrbe6Bwv56qkohYH6YihFUc4A7+M1nHINpHwxi6xU=; b=0k+473pDQ4z4f6kipwABLtNjYh
-        AL+GUDVi7MDmHQlUKoBIhZi8TIt4fC+TOMejQZRlh84TkzL9uQZKjEnp/MFW6gq6bPd6qFJoM6iLX
-        iLaUJHCYZlWMIEUX8FD/SB2Fi4AAMClHsLrOpqTtMro+3Yqf+KEIAEgOcOsvGJ8NGj3ZMn1UbvD6N
-        G94IPLKHFCFB7fuw+H3lQR1dR/WWOpVLIzOE+UrOdV6lF/fMaKSZxehmYlYIAShuHrTacdI0/3Ak2
-        76liOR/Mb5npROsejlA4vPob1/ols2kQ8tqKDwFVcpEN2ogEr36jVad3xKwZPbaMczmP17d6WyMjb
-        YgQpO6KA==;
+        bh=8deOESBnsyOQ7JadvF2zZ/Cdu2JHPhu0r/iumY6xPD0=; b=ix4I59EZ7p0dx7aHeA3+FKPbIk
+        SxlhMzoCGSoRjXAYrTxcmDy0FBFT5QBkfI5Q5EKFph2wuKNcPoRsQjyYJwUDVaEl4D2QddCgcjodI
+        zZHBWuDBjoyXS1xbil+qUsCK20oHn0XuDsYnV+HC24HG5iBp7PYZiA/NoaWFtMQc9OYvjwGvB/HrQ
+        +cBqPEI9Nt+bHrhZg9kQYnaWDw0i5U3XpCKnGHXlxHjqbobGRZvha9mjw2MHRvQ1NCun0d3qmdmj3
+        azk5lROgO6XwCC6GWfLNoFzYqVPJ33VAsCG+v/CFdcfCJ9halsro0pKCqmhA1t6DWpFPKqmuhs1kC
+        +2tVlyOA==;
 Received: from 65-114-90-19.dia.static.qwest.net ([65.114.90.19] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nmhok-0006hv-9H; Thu, 05 May 2022 20:11:18 +0000
+        id 1nmhol-0006iJ-5E; Thu, 05 May 2022 20:11:19 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
         David Sterba <dsterba@suse.com>,
         "Darrick J. Wong" <djwong@kernel.org>
 Cc:     linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH 1/7] btrfs: add a btrfs_dio_rw wrapper
-Date:   Thu,  5 May 2022 15:11:09 -0500
-Message-Id: <20220505201115.937837-2-hch@lst.de>
+Subject: [PATCH 2/7] iomap: allow the file system to provide a bio_set for direct I/O
+Date:   Thu,  5 May 2022 15:11:10 -0500
+Message-Id: <20220505201115.937837-3-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220505201115.937837-1-hch@lst.de>
 References: <20220505201115.937837-1-hch@lst.de>
@@ -53,86 +53,108 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a wrapper around iomap_dio_rw that keeps the direct I/O internals
-isolated in inode.c.
+Allow the file system to provide a specific bio_set for allocating
+direct I/O bios.  This will allow file systems that use the
+->submit_io hook to stash away additional information for file system
+use.
+
+To make use of this additional space for information in the completion
+path, the file system needs to override the ->bi_end_io callback and
+then call back into iomap, so export iomap_dio_bio_end_io for that.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/btrfs/ctree.h |  5 +++--
- fs/btrfs/file.c  |  6 ++----
- fs/btrfs/inode.c | 11 +++++++++--
- 3 files changed, 14 insertions(+), 8 deletions(-)
+ fs/iomap/direct-io.c  | 18 ++++++++++++++----
+ include/linux/iomap.h | 11 +++++++++++
+ 2 files changed, 25 insertions(+), 4 deletions(-)
 
-diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
-index 6e939bf01dcc3..aa6e71fdc72b9 100644
---- a/fs/btrfs/ctree.h
-+++ b/fs/btrfs/ctree.h
-@@ -3358,9 +3358,10 @@ ssize_t btrfs_encoded_read(struct kiocb *iocb, struct iov_iter *iter,
- ssize_t btrfs_do_encoded_write(struct kiocb *iocb, struct iov_iter *from,
- 			     const struct btrfs_ioctl_encoded_io_args *encoded);
- 
-+ssize_t btrfs_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
-+		     size_t done_before);
-+
- extern const struct dentry_operations btrfs_dentry_operations;
--extern const struct iomap_ops btrfs_dio_iomap_ops;
--extern const struct iomap_dio_ops btrfs_dio_ops;
- 
- /* Inode locking type flags, by default the exclusive lock is taken */
- #define BTRFS_ILOCK_SHARED	(1U << 0)
-diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
-index b64fb93d90469..46c2baa8fdf54 100644
---- a/fs/btrfs/file.c
-+++ b/fs/btrfs/file.c
-@@ -1929,8 +1929,7 @@ static ssize_t btrfs_direct_write(struct kiocb *iocb, struct iov_iter *from)
- 	 */
- again:
- 	from->nofault = true;
--	err = iomap_dio_rw(iocb, from, &btrfs_dio_iomap_ops, &btrfs_dio_ops,
--			   IOMAP_DIO_PARTIAL, written);
-+	err = btrfs_dio_rw(iocb, from, written);
- 	from->nofault = false;
- 
- 	/* No increment (+=) because iomap returns a cumulative value. */
-@@ -3693,8 +3692,7 @@ static ssize_t btrfs_direct_read(struct kiocb *iocb, struct iov_iter *to)
- 	 */
- 	pagefault_disable();
- 	to->nofault = true;
--	ret = iomap_dio_rw(iocb, to, &btrfs_dio_iomap_ops, &btrfs_dio_ops,
--			   IOMAP_DIO_PARTIAL, read);
-+	ret = btrfs_dio_rw(iocb, to, read);
- 	to->nofault = false;
- 	pagefault_enable();
- 
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index b42d6e7e4049f..cdf96a2472821 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -8155,15 +8155,22 @@ static void btrfs_submit_direct(const struct iomap_iter *iter,
- 	btrfs_dio_private_put(dip);
- }
- 
--const struct iomap_ops btrfs_dio_iomap_ops = {
-+static const struct iomap_ops btrfs_dio_iomap_ops = {
- 	.iomap_begin            = btrfs_dio_iomap_begin,
- 	.iomap_end              = btrfs_dio_iomap_end,
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index b08f5dc31780d..15929690d89e3 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -51,6 +51,15 @@ struct iomap_dio {
+ 	};
  };
  
--const struct iomap_dio_ops btrfs_dio_ops = {
-+static const struct iomap_dio_ops btrfs_dio_ops = {
- 	.submit_io		= btrfs_submit_direct,
- };
- 
-+ssize_t btrfs_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
-+		size_t done_before)
++static struct bio *iomap_dio_alloc_bio(const struct iomap_iter *iter,
++		struct iomap_dio *dio, unsigned short nr_vecs, unsigned int opf)
 +{
-+	return iomap_dio_rw(iocb, iter, &btrfs_dio_iomap_ops, &btrfs_dio_ops,
-+			   IOMAP_DIO_PARTIAL, done_before);
++	if (dio->dops && dio->dops->bio_set)
++		return bio_alloc_bioset(iter->iomap.bdev, nr_vecs, opf,
++					GFP_KERNEL, dio->dops->bio_set);
++	return bio_alloc(iter->iomap.bdev, nr_vecs, opf, GFP_KERNEL);
 +}
 +
- static int btrfs_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
- 			u64 start, u64 len)
+ static void iomap_dio_submit_bio(const struct iomap_iter *iter,
+ 		struct iomap_dio *dio, struct bio *bio, loff_t pos)
  {
+@@ -144,7 +153,7 @@ static inline void iomap_dio_set_error(struct iomap_dio *dio, int ret)
+ 	cmpxchg(&dio->error, 0, ret);
+ }
+ 
+-static void iomap_dio_bio_end_io(struct bio *bio)
++void iomap_dio_bio_end_io(struct bio *bio)
+ {
+ 	struct iomap_dio *dio = bio->bi_private;
+ 	bool should_dirty = (dio->flags & IOMAP_DIO_DIRTY);
+@@ -176,16 +185,17 @@ static void iomap_dio_bio_end_io(struct bio *bio)
+ 		bio_put(bio);
+ 	}
+ }
++EXPORT_SYMBOL_GPL(iomap_dio_bio_end_io);
+ 
+ static void iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
+ 		loff_t pos, unsigned len)
+ {
+ 	struct inode *inode = file_inode(dio->iocb->ki_filp);
+ 	struct page *page = ZERO_PAGE(0);
+-	int flags = REQ_SYNC | REQ_IDLE;
+ 	struct bio *bio;
+ 
+-	bio = bio_alloc(iter->iomap.bdev, 1, REQ_OP_WRITE | flags, GFP_KERNEL);
++	bio = iomap_dio_alloc_bio(iter, dio, 1,
++			REQ_OP_WRITE | REQ_SYNC | REQ_IDLE);
+ 	fscrypt_set_bio_crypt_ctx(bio, inode, pos >> inode->i_blkbits,
+ 				  GFP_KERNEL);
+ 	bio->bi_iter.bi_sector = iomap_sector(&iter->iomap, pos);
+@@ -311,7 +321,7 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+ 			goto out;
+ 		}
+ 
+-		bio = bio_alloc(iomap->bdev, nr_pages, bio_opf, GFP_KERNEL);
++		bio = iomap_dio_alloc_bio(iter, dio, nr_pages, bio_opf);
+ 		fscrypt_set_bio_crypt_ctx(bio, inode, pos >> inode->i_blkbits,
+ 					  GFP_KERNEL);
+ 		bio->bi_iter.bi_sector = iomap_sector(iomap, pos);
+diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+index b76f0dd149fb4..526c9e7f2eaf8 100644
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@ -320,6 +320,16 @@ struct iomap_dio_ops {
+ 		      unsigned flags);
+ 	void (*submit_io)(const struct iomap_iter *iter, struct bio *bio,
+ 		          loff_t file_offset);
++
++	/*
++	 * Filesystems wishing to attach private information to a directio bio
++	 * must provide a ->submit_io method that attaches the additional
++	 * information to the bio and changes the ->bi_end_io callback to a
++	 * custom function.  This function should, at a minimum, perform any
++	 * relevant post-processing of the bio and end with a call to
++	 * iomap_dio_bio_end_io.
++	 */
++	struct bio_set *bio_set;
+ };
+ 
+ /*
+@@ -349,6 +359,7 @@ struct iomap_dio *__iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+ 		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
+ 		unsigned int dio_flags, size_t done_before);
+ ssize_t iomap_dio_complete(struct iomap_dio *dio);
++void iomap_dio_bio_end_io(struct bio *bio);
+ 
+ #ifdef CONFIG_SWAP
+ struct file;
 -- 
 2.30.2
 
