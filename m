@@ -2,96 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 57BB651CCCF
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 May 2022 01:38:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1803651CCD7
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 May 2022 01:43:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1386823AbiEEXmX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 May 2022 19:42:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49120 "EHLO
+        id S1386847AbiEEXrK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 May 2022 19:47:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233701AbiEEXmW (ORCPT
+        with ESMTP id S241016AbiEEXrJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 May 2022 19:42:22 -0400
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 522DD2559B;
-        Thu,  5 May 2022 16:38:41 -0700 (PDT)
-Received: from penguin.thunk.org (corpnat-104-133-9-85.corp.google.com [104.133.9.85] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 245NcDT2021685
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 5 May 2022 19:38:14 -0400
-Received: by penguin.thunk.org (Postfix, from userid 1000)
-        id 4B9634B485; Thu,  5 May 2022 16:38:12 -0700 (PDT)
-Date:   Thu, 5 May 2022 16:38:12 -0700
-From:   tytso <tytso@mit.edu>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
-        Karel Zak <kzak@redhat.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Ian Kent <raven@themaw.net>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Amir Goldstein <amir73il@gmail.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>
-Subject: Re: [RFC PATCH] getting misc stats/attributes via xattr API
-Message-ID: <YnRf5CNN2yNKVu0B@mit.edu>
-References: <YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com>
+        Thu, 5 May 2022 19:47:09 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84BDD443C7;
+        Thu,  5 May 2022 16:43:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=qAb22uIhpCH8ILir3+ikE/8BOp9F07i0dHC7d945NL4=; b=LuMxZlQ+G6TwddhCM85yWQZFwB
+        qfbmGMGs5MB7XX9WbXARI6fuUgg3zI0HmvhGSu3gUmkmvzPmehG9K2l3QgOZ8dU37Ue0BCsnVY0N5
+        NrnPEOdZyczOWqmECZz8PF2SOrtfM1tPpKCxZ6Q2IORN5NeqwVRksX/tElouL3Pk6uSIgdaHjeAQr
+        aSfEzwT8Rl2IOEcu3anXUQVFeBN+pjWgkoZfW2UkY3+VvV5XHAJ8zUpf9WKmpNCgQ3ggtASo8GTkY
+        AGJATSy8luhySo+HutKvjQ5kuUXXapgJ3iSBG88/gRBXC4jpUkft2+Osd6PE0WQ7hbOpnAv3Bu+0N
+        PEmN24zw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nml7u-000RDh-7A; Thu, 05 May 2022 23:43:18 +0000
+Date:   Fri, 6 May 2022 00:43:18 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Two folio fixes for 5.18
+Message-ID: <YnRhFrLuRM5SY+hq@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com>
-X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,MAY_BE_FORGED,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 03, 2022 at 02:23:23PM +0200, Miklos Szeredi wrote:
-> 
-> : - root
-> bar - an attribute
-> foo: - a folder (can contain attributes and/or folders)
-> 
-> The contents of a folder is represented by a null separated list of names.
-> 
-> Examples:
-> 
-> $ getfattr -etext -n ":" .
-> # file: .
-> :="mnt:\000mntns:"
+Darrick and Brian have done amazing work debugging the race I created
+in the folio BIO iterator.  The readahead problem was deterministic,
+so easy to fix.
 
-In your example, does it matter what "." is?  It looks like in some
-cases, it makes no difference at all, and in other cases, like this,
-'.' *does* matter:
+The following changes since commit a7391ad3572431a354c927cf8896e86e50d7d0bf:
 
-> $ getfattr -etext -n ":mnt:info" .
-> # file: .
-> :mnt:info="21 1 254:0 / / rw,relatime - ext4 /dev/root rw\012"
+  Merge tag 'iomm-fixes-v5.18-rc5' of git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu (2022-05-04 11:04:52 -0700)
 
-Is that right?
+are available in the Git repository at:
 
-> $ getfattr -etext -n ":mntns:" .
-> # file: .
-> :mntns:="21:\00022:\00024:\00025:\00023:\00026:\00027:\00028:\00029:\00030:\00031:"
+  git://git.infradead.org/users/willy/pagecache.git tags/folio-5.18f
 
-What is this returning?  All possible mount name spaces?  Or all of
-the mount spaces where '.' happens to exist?
+for you to fetch changes up to b9ff43dd27434dbd850b908e2e0e1f6e794efd9b:
 
-Also, using the null character means that we can't really use shell
-scripts calling getfattr.  I understand that the problem is that in
-some cases, you might want to return a pathname, and NULL is the only
-character which is guaranteed not to show up in a pathname.  However,
-it makes parsing the returned value in a shell script exciting.
+  mm/readahead: Fix readahead with large folios (2022-05-05 00:47:29 -0400)
 
-   	 	     	      	       	 - Ted
+----------------------------------------------------------------
+Two folio fixes for 5.18:
+
+ - Fix a race when we were calling folio_next() in the BIO folio iter
+   without holding a reference, meaning the folio could be split or freed,
+   and we'd jump to the next page instead of the intended next folio.
+
+ - Fix readahead creating single-page folios instead of the intended
+   large folios when doing reads that are not a power of two in size.
+
+----------------------------------------------------------------
+Matthew Wilcox (Oracle) (2):
+      block: Do not call folio_next() on an unreferenced folio
+      mm/readahead: Fix readahead with large folios
+
+ include/linux/bio.h |  5 ++++-
+ mm/readahead.c      | 15 +++++++++------
+ 2 files changed, 13 insertions(+), 7 deletions(-)
+
+
