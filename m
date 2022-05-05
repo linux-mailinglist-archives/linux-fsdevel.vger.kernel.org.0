@@ -2,59 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F9D951BB49
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 May 2022 10:58:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1132351BB53
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 May 2022 11:01:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345275AbiEEJCT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 May 2022 05:02:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43738 "EHLO
+        id S236419AbiEEJEp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 May 2022 05:04:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234570AbiEEJCS (ORCPT
+        with ESMTP id S234570AbiEEJEn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 May 2022 05:02:18 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23FBA4AE32
-        for <linux-fsdevel@vger.kernel.org>; Thu,  5 May 2022 01:58:38 -0700 (PDT)
+        Thu, 5 May 2022 05:04:43 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB8F71FCF7
+        for <linux-fsdevel@vger.kernel.org>; Thu,  5 May 2022 02:01:03 -0700 (PDT)
 Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 1FFF21F460;
-        Thu,  5 May 2022 08:58:37 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTP id 9C9AB218F2;
+        Thu,  5 May 2022 09:01:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1651741117; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1651741262; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=6ZvMxhMSxDhFd60UKohso8OE5hMNukzJzBlYznqPb6E=;
-        b=S9bLQMbcKOo8WcBUh95h9/TgyoI5TqKgYb78yNbNdt2Ce9su3ixAKkqjzXFD9Jn86Y5mlj
-        JFaSNcOv3PFckpPtKpX9ZigRYD/m+jDpmWl5qSSjL3PU+FSsvIkuchCu+SSsykX0F+d9tC
-        8iVHZv42g4zwQ/vI+RKVwdbskBESSJw=
+        bh=oDo27eh8JDaR4e2Fv+OryKwE09e8IYTXDEaW5hZ9iko=;
+        b=nq9KzSgUTCCIl+L+Dc8IUr6+VQUlZVouJ7ieATrscMfP1wZijQHujRKwoJdJ9qXESZ+Zt5
+        NU4CRv34Btgay9XyJwSjniZjejZN2hw2sovjTD9OYhX2oFakAYjz28yz/k12M/oMr+0pIS
+        whCmpx/PbTxwEa76bXEtSwxqRHhnaxA=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1651741117;
+        s=susede2_ed25519; t=1651741262;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=6ZvMxhMSxDhFd60UKohso8OE5hMNukzJzBlYznqPb6E=;
-        b=HGz/vAYq2nU98IzxOGYKWVLnUOaYg8CNLeaj72FBvja7YXQWYkLOB5f4U8QbKZDHOKANzg
-        I/jdCJ0x9WIYEfBg==
+        bh=oDo27eh8JDaR4e2Fv+OryKwE09e8IYTXDEaW5hZ9iko=;
+        b=6SAkjjBslsTemZBeUdpfyLULXTi2oCaMLTDQDUO8YSPx4QB/zxDiv9A5Lm8F4jv7s4sC+Y
+        cgzCrrpDA5DHQqBQ==
 Received: from quack3.suse.cz (unknown [10.100.224.230])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 0D7452C141;
-        Thu,  5 May 2022 08:58:37 +0000 (UTC)
+        by relay2.suse.de (Postfix) with ESMTPS id 8D6A12C141;
+        Thu,  5 May 2022 09:01:02 +0000 (UTC)
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 882ACA0627; Thu,  5 May 2022 10:58:36 +0200 (CEST)
-Date:   Thu, 5 May 2022 10:58:36 +0200
+        id BEB9AA0627; Thu,  5 May 2022 11:00:59 +0200 (CEST)
+Date:   Thu, 5 May 2022 11:00:59 +0200
 From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>, David Howells <dhowells@redhat.com>
-Subject: Re: adding mount notification to fanotify?
-Message-ID: <20220505085836.asvqonkv4efxugsk@quack3.lan>
-References: <CAJfpegvq2yNtuFWOYWJ-QNGCXFni_SfunQLEQzrErNpjZ0Tk-w@mail.gmail.com>
- <CAOQ4uxjqu4Ca1LTr2d5wB791Hd2FitOUyXdMQa95O2ttEjW-Gw@mail.gmail.com>
+To:     Jchao sun <sunjunchao2870@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+        viro@zeniv.linux.org.uk
+Subject: Re: [PATCH v3] writeback: Fix inode->i_io_list not be protected by
+ inode->i_lock error
+Message-ID: <20220505090059.bgbn7lv2jsvo3vu3@quack3.lan>
+References: <20220504143924.ix2m3azbxdmx67u6@quack3.lan>
+ <20220504182514.25347-1-sunjunchao2870@gmail.com>
+ <20220504193847.lx4eqcnqzqqffbtm@quack3.lan>
+ <CAHB1Naif38Cib5xMLa1nK7-5H4FeLgPMLbBCi-Ze=YNna8ymYA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAOQ4uxjqu4Ca1LTr2d5wB791Hd2FitOUyXdMQa95O2ttEjW-Gw@mail.gmail.com>
+In-Reply-To: <CAHB1Naif38Cib5xMLa1nK7-5H4FeLgPMLbBCi-Ze=YNna8ymYA@mail.gmail.com>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
         SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
@@ -65,46 +67,57 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 05-05-22 08:41:09, Amir Goldstein wrote:
-> On Thu, May 5, 2022 at 7:28 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
+On Thu 05-05-22 12:45:56, Jchao sun wrote:
+> On Thu, May 5, 2022 at 3:38 AM Jan Kara <jack@suse.cz> wrote:
 > >
-> > Here's David's patch, which introduces new infrastructure for this purpose:
+> > On Wed 04-05-22 11:25:14, Jchao Sun wrote:
+> > > Commit b35250c0816c ("writeback: Protect inode->i_io_list with
+> > > inode->i_lock") made inode->i_io_list not only protected by
+> > > wb->list_lock but also inode->i_lock, but inode_io_list_move_locked()
+> > > was missed. Add lock there and also update comment describing things
+> > > protected by inode->i_lock.
+> > >
+> > > Fixes: b35250c0816c ("writeback: Protect inode->i_io_list with
+> inode->i_lock")
+> > > Signed-off-by: Jchao Sun <sunjunchao2870@gmail.com>
 > >
-> > https://lore.kernel.org/all/158204559631.3299825.5358385352169781990.stgit@warthog.procyon.org.uk/
+> > Almost there :). A few comments below:
 > >
-> > I'm wondering if this could be added to fsnotify/fanotify instead?
-> 
-> I suppose we could.
-
-I'm not so sure. We could definitely add fanotify event for changes in the
-superblock (like watch for RO vs RW state, mount option changes, etc. of a
-particular sb). However the general "was anything mounted/unmounted in the
-subtree of this mount" seems to have rather different properties than
-common fanotify events. For fanotify if would be natural to have events
-like "was anything mounted on this dir?" or "was anything mounted on some
-dir of this superblock?". Besides this philosophical objection,
-communicating general "something got mounted in the subtree" through
-fanotify has the problem that we would have hard time gathering and
-reporting what has changed and where information - that would basically
-require completely separate info structures attached to events. So there is
-some overlap but I'm not sure it is large enough.
-
->  Speaking of David's patch, I think that getting
-> fanotify events via watch_queue instead of read() could also be a nice
-> improvement.
-
-What would be advantages?
-
-> > After all, the events are very similar, except it's changes to the
-> > mount tree, not the dentry tree that need to be reported.
+> > > @@ -2402,6 +2404,9 @@ void __mark_inode_dirty(struct inode *inode, int
+> flags)
+> > >                       inode->i_state &= ~I_DIRTY_TIME;
+> > >               inode->i_state |= flags;
+> > >
+> > > +             wb = locked_inode_to_wb_and_lock_list(inode);
+> > > +             spin_lock(&inode->i_lock);
+> > > +
 > >
 > 
-> There is already one precedent to event on mount tree change in fsnotify -
-> inotify IN_UNMOUNT
+> > > We don't want to lock wb->list_lock if the inode was already dirty (which
+> > > is a common path). So you want something like:
+> > >
+> > >                 if (was_dirty)
+> > >                         wb = locked_inode_to_wb_and_lock_list(inode);
+> 
+> I'm a little confused about here. The logic of the current source tree is
+> like this:
+>                        if (!was_dirty) {
+>                                struct bdi_writeback *wb;
+>                                wb =
+> locked_inode_to_wb_and_lock_list(inode);
+>                                ...
+>                                dirty_list = &wb-> b_dirty_time;
+>                                assert_spin_locked(&wb->list_lock);
+>                        }
+> The logic is the opposite of the logic in the comments, and it seems like
+> that wb will
+> absolutely not be NULL.
+> Why is this? What is the difference between them?
 
-Yes, events for superblock have precedent. But since fanotify is all build
-around watches on objects, I'm not sure general mount notification really
-fits well.
+Sorry, that was a typo in my suggestion. It should have been
+
+                 if (!was_dirty)
+                         wb = locked_inode_to_wb_and_lock_list(inode);
 
 								Honza
 -- 
