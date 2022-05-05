@@ -2,175 +2,352 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A7F351B8F8
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 May 2022 09:29:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0131951B92F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 May 2022 09:34:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344173AbiEEHcd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 May 2022 03:32:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36344 "EHLO
+        id S1345055AbiEEHhi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 May 2022 03:37:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45492 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344682AbiEEHcb (ORCPT
+        with ESMTP id S232037AbiEEHhg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 May 2022 03:32:31 -0400
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA4924754D
-        for <linux-fsdevel@vger.kernel.org>; Thu,  5 May 2022 00:28:51 -0700 (PDT)
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20220505072849euoutp02ab8365b5e00a45ec26f64438c07fbe4f~sJOTxCXYU2921629216euoutp02k
-        for <linux-fsdevel@vger.kernel.org>; Thu,  5 May 2022 07:28:49 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20220505072849euoutp02ab8365b5e00a45ec26f64438c07fbe4f~sJOTxCXYU2921629216euoutp02k
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1651735729;
-        bh=j19LG41QlgQqZ+lZFqrhtRma1C1jIg9OOFvDpBlTex4=;
-        h=Date:Subject:To:CC:From:In-Reply-To:References:From;
-        b=qSK450mxwZZbcleGzZAl+PCJRc4osU6wshdEJje4Fgn9KOe9lVv4T6FR/JKhixwvP
-         qKNh0rcCqoXrfZmcJVv2aZQ+mnheRHSPM/uVx2YzEJ1YQal8PeNEd5Pf01PDAaE7JJ
-         KA9nLDxF4tAnrPXEbFnp5IxetDXPhhCXa7q3Ov+M=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20220505072848eucas1p1d66f136b7b1226351171cd4dd1152d26~sJOTKK_DF2541325413eucas1p1z;
-        Thu,  5 May 2022 07:28:48 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id B4.15.09887.0BC73726; Thu,  5
-        May 2022 08:28:48 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20220505072847eucas1p27c50364580d96918bc2a59b6877671ba~sJOSvbf6V0726607266eucas1p2b;
-        Thu,  5 May 2022 07:28:47 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220505072847eusmtrp2acdb61270717097424f910760caaa9a7~sJOStu9m32757327573eusmtrp2B;
-        Thu,  5 May 2022 07:28:47 +0000 (GMT)
-X-AuditID: cbfec7f4-471ff7000000269f-26-62737cb08449
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 73.0D.09404.FAC73726; Thu,  5
-        May 2022 08:28:47 +0100 (BST)
-Received: from CAMSVWEXC01.scsc.local (unknown [106.1.227.71]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20220505072847eusmtip133d8624e020309d5e17197a6d3fce6cd~sJOSiJ1WZ1867518675eusmtip1m;
-        Thu,  5 May 2022 07:28:47 +0000 (GMT)
-Received: from [192.168.8.130] (106.210.248.170) by CAMSVWEXC01.scsc.local
-        (2002:6a01:e347::6a01:e347) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-        Thu, 5 May 2022 08:28:44 +0100
-Message-ID: <fe8746d5-f7c4-efd6-b4a6-e198f6d95813@samsung.com>
-Date:   Thu, 5 May 2022 09:28:43 +0200
+        Thu, 5 May 2022 03:37:36 -0400
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 367704889B;
+        Thu,  5 May 2022 00:33:57 -0700 (PDT)
+Received: by mail-pl1-x62e.google.com with SMTP id k1so3637932pll.4;
+        Thu, 05 May 2022 00:33:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=07cJG+hUg/bnkbDtFqfSYI7NXgZjWhjSEEAl39l078c=;
+        b=Qcg77eKyeJyZzDbG5nYzuPfa6mKnXs3ci0SNL8u4jf3B4fFdjW0fFp/T8RrBbPdjVu
+         EALgUZNqeaWSmzThWRJh1YhMwU7KqyaB2QMG0bBFVAEwjHPjpTgP6lN6oc9j2Kwjcr9S
+         o+MjSpPH4xX3eEVSakrqsV0jHqwQoy8vqX9FFkB5Ns6w9tojHOSEr02AVs1ycFf4j4eO
+         Un5P2PTbp5pzrWpPScvhMxRt3H0Vpd5yqEvGYCQZJ2LjbzTPFMI2eft0buHQrlahXUbj
+         xXpn71IeBOwq1ftCe8cAq/SUGKVlOkaPbDuS262yesNSMkcKJ7fiz6u9PRshBZM3VFLh
+         tzhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=07cJG+hUg/bnkbDtFqfSYI7NXgZjWhjSEEAl39l078c=;
+        b=2p8TQn/eDSGpxKNEL9NH6N9OzoGuItTLdOfYmMYxOX1v2cpON9eVFGdd6QcggK2viD
+         XFrP8+Uita49bEHSzu3QkEYUyPba2gq9NQ+29zlnPyBQpPQ+DT89gOmYeGZAhHe3sHou
+         jRa3JIgT7OmwgbJgsteiVEAb/dMhaG9MZqzcURQdR54GURmv4TPvfwcYeSBZKsdm7UqI
+         CbCIqPcaxai4wWgLEL6qeitMc6l7d/pajPf0srSpZ0x/tv1YR6Yna8TlnPcQG9kmOf5J
+         65n4nzZITFhGwvk4LNgRiU3Megim1LEIaShJm/M4ITTrXq7WYwc18fFie8IIVTVklU65
+         TvAw==
+X-Gm-Message-State: AOAM533koDOUHUp5KjsTNbn+iXK46nQUkshRRlw2kHM0W1Cu0bGX6vHd
+        nlBnvD9qZbaT9LfmIf6fVo+YBXZmgaiI2HI0cYU=
+X-Google-Smtp-Source: ABdhPJxUZDzsa2O9+iuCEwMDYCjI8i14K4a/1W6fFKgKXdWLJNKIMjA3gygOUw+0RAZktluDworD1v42SwarEmQWDRs=
+X-Received: by 2002:a17:90b:4d90:b0:1dc:c03e:3a39 with SMTP id
+ oj16-20020a17090b4d9000b001dcc03e3a39mr1287554pjb.116.1651736036422; Thu, 05
+ May 2022 00:33:56 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
-        Thunderbird/91.8.1
-Subject: Re: [PATCH 00/16] support non power of 2 zoned devices
-Content-Language: en-US
-To:     David Sterba <dsterba@suse.cz>
-CC:     Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-        "jaegeuk@kernel.org" <jaegeuk@kernel.org>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "snitzer@kernel.org" <snitzer@kernel.org>,
-        "hch@lst.de" <hch@lst.de>, "mcgrof@kernel.org" <mcgrof@kernel.org>,
-        Naohiro Aota <Naohiro.Aota@wdc.com>,
-        "sagi@grimberg.me" <sagi@grimberg.me>,
-        "damien.lemoal@opensource.wdc.com" <damien.lemoal@opensource.wdc.com>,
-        "dsterba@suse.com" <dsterba@suse.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "clm@fb.com" <clm@fb.com>,
-        "gost.dev@samsung.com" <gost.dev@samsung.com>,
-        "chao@kernel.org" <chao@kernel.org>,
-        "linux-f2fs-devel@lists.sourceforge.net" 
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        "josef@toxicpanda.com" <josef@toxicpanda.com>,
-        "jonathan.derrick@linux.dev" <jonathan.derrick@linux.dev>,
-        "agk@redhat.com" <agk@redhat.com>,
-        "kbusch@kernel.org" <kbusch@kernel.org>,
-        "kch@nvidia.com" <kch@nvidia.com>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "dm-devel@redhat.com" <dm-devel@redhat.com>,
-        "bvanassche@acm.org" <bvanassche@acm.org>,
-        "jiangbo.365@bytedance.com" <jiangbo.365@bytedance.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        =?UTF-8?Q?Matias_Bj=c3=b8rling?= <Matias.Bjorling@wdc.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-From:   Pankaj Raghav <p.raghav@samsung.com>
-In-Reply-To: <20220504211440.GU18596@suse.cz>
+References: <20220502054628.25826-1-dharamhans87@gmail.com>
+ <20220502054628.25826-2-dharamhans87@gmail.com> <YnKX2wsvsafp/uw3@redhat.com>
+In-Reply-To: <YnKX2wsvsafp/uw3@redhat.com>
+From:   Dharmendra Hans <dharamhans87@gmail.com>
+Date:   Thu, 5 May 2022 13:03:45 +0530
+Message-ID: <CACUYsyGE=cnrnan4=7opOtunmx=NEaurMjSOjKUK0gdnKdjORw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] FUSE: Implement atomic lookup + create
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
+        fuse-devel <fuse-devel@lists.sourceforge.net>,
+        linux-kernel@vger.kernel.org, Bernd Schubert <bschubert@ddn.com>,
+        Dharmendra Singh <dsingh@ddn.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [106.210.248.170]
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-        CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347)
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0xTZxjed87pOaedkGOB8K2wbMOxcZk4yJJ9G5sDN+dJRtQfbGMmRiuc
-        AI5yaenmmKZ0KFEY4+IFd0Rg3rCIFoEUqVwEpAgWXYA6JFrmKAkWqd1AkRRxtIct/Hve55L3
-        fb58NC41kjI6NT2bU6bL04JICWEwzd9aW79Xtevd0iop0vebcHThfjGJjjnncXTz6ACGyoqP
-        U8g1cBtHbY4TIvT7My2GTrvmCKS70IMhm57H0c/XnAR6XmDFkG7/AxwtPIhEZV13AJqw8Bhq
-        Gw1Hg+PnKTR4ahNqbesj0JCxgkRV5yYoVJL/BEcjJRMAlfY2itClqccEujEaEBPIDg1/wS7e
-        qCPZ0jwHxd62XibYoQE121B7iGR/yz2Ks41nNOzV6hmMvXo3l2SL8hwk23JgTMQ+breQrL7J
-        QrDm6usUW9J4WbRVuk3yURKXlvodp1y3fqckZfKci8rsp/YYzA0gFxSRBUBMQ+Y9eG2hYQlL
-        aClzHsCJwfuEMMwCaC3rWR5mAGxfyPs/8nSmiRKEGgCnrAaRW/C4bK0bBcEIoHM435PwYtbD
-        uzWdhBsTzJuwcGx+mV8N+361eXg/JgEe480e3of5BF40zmJujDP+cNRW5cG+TBCsNFkw9wKc
-        cUmgo7VyaTNNk0wY1B6i3B4xsxYeqejHhWwoPNDsogT8GmyersCFBmvg4ZFhTMD74EWT2dMG
-        MpMS+MeJ08umz2DBi/Jlkw+09zZRAg6EL1qqlvkf4cSICxfC+wEsbtGT7oMgEw1/MacJnlj4
-        Z5FNJNDecGR6tXCPNywzlOMlIJhf8RT8isr8igr8igrVgKgF/pxapUjmVFHp3PcRKrlCpU5P
-        jkjMUDSApe99c7F39gqosf8d0QUwGnQBSONBvl6fns3cJfVKkv+QwykzdijVaZyqCwTQRJC/
-        V2JqvVzKJMuzuW85LpNT/qditFiWi9VHWTd3NNfVGQoSAyLj7PH6O1mZEnF3yOB2/i8yUTG3
-        o+M6r9k+3rNzxhA78E9e2qq5KeZhsdT+isw3sCZasTfE76zlJ8OXhYrBRwlbgrOfD8s0b4un
-        D6ptYdMv51AObfSa/vKOW88SNogiOsMveXUfH+OzNmzN73WqU/OzdLEZB2UaLVF4ZHHVWzJr
-        /MhL2Y/inPu2iaiN9R+caQgNd9KvmqIaO0VGy0Of8Th7RHDV6+HajP43Pv7Q4H3PmFPGvXMl
-        ZtzvpObrb3ZbYp4CmqytXPc+3x5rD6xVn+oOTfqqNUVXVPx54ea6Jw6nbjIxku4R7/YOc9wb
-        Cqm37tnUF58SRKhS5JFhuFIl/xeMBbOtTQQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrPKsWRmVeSWpSXmKPExsVy+t/xu7rra4qTDDa0GVusP3WM2WL13X42
-        i2kffjJbnJ56lsliUv8MdovfZ88zW+x9N5vV4sKPRiaLxb+/s1isXH2UyeLJ+lnMFj0HPrBY
-        /O26x2SxsuUhs8Wfh4YWkw5dY7R4enUWk8XeW9oWlx6vYLe4tMjdYs/ekywWl3fNYbOYv+wp
-        u8WEtq/MFjcmPGW0mHh8M6vFutfvWSxO3JJ2kPG4fMXb49+JNWweE5vfsXucv7eRxePy2VKP
-        Tas62TwWNkxl9ti8pN5j94LPTB67bzawefQ2v2Pz2Nl6n9Xj/b6rbB7rt1xl8Tiz4Ai7x4TN
-        G1kDhKL0bIryS0tSFTLyi0tslaINLYz0DC0t9IxMLPUMjc1jrYxMlfTtbFJSczLLUov07RL0
-        Ml4s+81ecIq9YtuZTYwNjL1sXYycHBICJhLfPm9h72Lk4hASWMoocXXLJqiEjMSnKx/ZIWxh
-        iT/Xutggij4ySsz61cIM4exilPj05DdYFa+AncTN5QdZQGwWARWJ7vs/2SDighInZz4Bi4sK
-        REg82H2WFcQWFrCXWLvrCxOIzSwgLnHryXwwW0RASWLesatgtpDATiaJR99iQJYxC/zkkpj5
-        uRFoMwcHm4CWRGMn2F5OAV2JKXNOMUPM0ZRo3Q5xD7OAvMT2t3OYIT5Qlph84woThF0r8er+
-        bsYJjKKzkJw3C8kZs5CMmoVk1AJGllWMIqmlxbnpucVGesWJucWleel6yfm5mxiBKW/bsZ9b
-        djCufPVR7xAjEwfjIUYJDmYlEV7npQVJQrwpiZVVqUX58UWlOanFhxhNgWE0kVlKNDkfmHTz
-        SuINzQxMDU3MLA1MLc2MlcR5PQs6EoUE0hNLUrNTUwtSi2D6mDg4pRqYPJye+xrfntSvZ258
-        sj6QJ9fgXaL0leeRGjbXc2Z27Emf8VX0/e7QfR3TnWf9nXBUmW1d3O05uo/j9ub9Xv+do/+c
-        6k+Xz5Ncz6auZj7aEKfMKPCOLZH/r4iFUtiBjKMlDRwBTp+tOK/Eq/yU/GDnG3Juaej7f7c9
-        32dmfnFOOtLQFn3ZwdynzppHc+uk5ZVL7ktFvw/KOpx5UzHl3601M7+fPD7P8ac8e2Kl6nvL
-        qZ5LLqyY9XS+sreS5fy62uavc7R6Y8t6O8xzT3hWGIR517PbPPu33uTrLOvmbsGnEdf39hW2
-        Hr8b+t6/Yu9yK/NfD2vdi45rWb9xTXYKSbueFt7nJ526oeeI8lJrUSclluKMREMt5qLiRABk
-        5eXBAgQAAA==
-X-CMS-MailID: 20220505072847eucas1p27c50364580d96918bc2a59b6877671ba
-X-Msg-Generator: CA
-X-RootMTR: 20220427160256eucas1p2db2b58792ffc93026d870c260767da14
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20220427160256eucas1p2db2b58792ffc93026d870c260767da14
-References: <CGME20220427160256eucas1p2db2b58792ffc93026d870c260767da14@eucas1p2.samsung.com>
-        <20220427160255.300418-1-p.raghav@samsung.com>
-        <PH0PR04MB74167FC8BA634A3DA09586489BC19@PH0PR04MB7416.namprd04.prod.outlook.com>
-        <a702c7f7-9719-9f3e-63de-1e96f2912432@samsung.com>
-        <20220504211440.GU18596@suse.cz>
-X-Spam-Status: No, score=-10.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_HI,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2022-05-04 23:14, David Sterba wrote:
->> This commit: `btrfs: zoned: relax the alignment constraint for zoned
->> devices` makes sure the zone size is BTRFS_STRIPE_LEN aligned (64K). So
->> even the npo2 zoned device should be aligned to `fs_info->sectorsize`,
->> which is typically 4k.
->>
->> This was one of the comment that came from David Sterba:
->> https://lore.kernel.org/all/20220315142740.GU12643@twin.jikos.cz/
->> where he suggested to have some sane alignment for the zone sizes.
-> 
-> My idea of 'sane' value would be 1M, that we have 4K for sectors is
-> because of the 1:1 mapping to pages, but RAM sizes are on a different
-> scale than storage devices. The 4K is absolute minimum but if the page
-> size is taken as a basic constraint, ARM has 64K and there are some 256K
-> arches.
+On Wed, May 4, 2022 at 8:42 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+>
+> On Mon, May 02, 2022 at 11:16:26AM +0530, Dharmendra Singh wrote:
+> > From: Dharmendra Singh <dsingh@ddn.com>
+> >
+> > When we go for creating a file (O_CREAT), we trigger
+> > a lookup to FUSE USER SPACE. It is very  much likely
+> > that file does not exist yet as O_CREAT is passed to
+> > open(). This lookup can be avoided and can be performed
+> > as part of create call into libfuse.
+> >
+> > This lookup + create in single call to libfuse and finally
+> > to USER SPACE has been named as atomic create. It is expected
+> > that USER SPACE create the file, open it and fills in the
+> > attributes which are then used to make inode stand/revalidate
+> > in the kernel cache. Also if file was newly created(does not
+> > exist yet by this time) in USER SPACE then it should be indicated
+> > in `struct fuse_file_info` by setting a bit which is again used by
+> > libfuse to send some flags back to fuse kernel to indicate that
+> > that file was newly created. These flags are used by kernel to
+> > indicate changes in parent directory.
+> >
+> > Fuse kernel automatically detects if atomic create is implemented
+> > by libfuse/USER SPACE or not. And depending upon the outcome of
+> > this check all further creates are decided to be atomic or non-atomic
+> > creates.
+> >
+> > If libfuse/USER SPACE has not implemented the atomic create operation
+> > then by default behaviour remains same i.e we do not optimize lookup
+> > calls which are triggered before create calls into libfuse.
+> >
+> > Signed-off-by: Dharmendra Singh <dsingh@ddn.com>
+> > ---
+> >  fs/fuse/dir.c             | 82 +++++++++++++++++++++++++++++++++++----
+> >  fs/fuse/fuse_i.h          |  3 ++
+> >  include/uapi/linux/fuse.h |  3 ++
+> >  3 files changed, 81 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+> > index 656e921f3506..cad3322a007f 100644
+> > --- a/fs/fuse/dir.c
+> > +++ b/fs/fuse/dir.c
+> > @@ -523,7 +523,7 @@ static int get_security_context(struct dentry *entry, umode_t mode,
+> >   */
+> >  static int fuse_create_open(struct inode *dir, struct dentry *entry,
+> >                           struct file *file, unsigned int flags,
+> > -                         umode_t mode)
+> > +                         umode_t mode, uint32_t opcode)
+> >  {
+> >       int err;
+> >       struct inode *inode;
+> > @@ -535,8 +535,10 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
+> >       struct fuse_entry_out outentry;
+> >       struct fuse_inode *fi;
+> >       struct fuse_file *ff;
+> > +     struct dentry *res = NULL;
+> >       void *security_ctx = NULL;
+> >       u32 security_ctxlen;
+> > +     bool atomic_create = (opcode == FUSE_ATOMIC_CREATE ? true : false);
+> >
+> >       /* Userspace expects S_IFREG in create mode */
+> >       BUG_ON((mode & S_IFMT) != S_IFREG);
+> > @@ -566,7 +568,7 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
+> >               inarg.open_flags |= FUSE_OPEN_KILL_SUIDGID;
+> >       }
+> >
+> > -     args.opcode = FUSE_CREATE;
+> > +     args.opcode = opcode;
+> >       args.nodeid = get_node_id(dir);
+> >       args.in_numargs = 2;
+> >       args.in_args[0].size = sizeof(inarg);
+> > @@ -613,9 +615,44 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
+> >               goto out_err;
+> >       }
+> >       kfree(forget);
+> > -     d_instantiate(entry, inode);
+> > +     /*
+> > +      * In atomic create, we skipped lookup and it is very much likely that
+> > +      * dentry has DCACHE_PAR_LOOKUP flag set on it so call d_splice_alias().
+> > +      * Note: Only REG file is allowed under create/atomic create.
+> > +      */
+> > +     /* There is special case when at very first call where we check if
+> > +      * atomic create is implemented by USER SPACE/libfuse or not, we
+> > +      * skipped lookup. Now, in case where atomic create is not implemented
+> > +      * underlying, we fall back to FUSE_CREATE. here we are required to handle
+> > +      * DCACHE_PAR_LOOKUP flag.
+> > +      */
+> > +     if (!atomic_create && !d_in_lookup(entry) && fm->fc->no_atomic_create)
+> > +             d_instantiate(entry, inode);
+> > +     else {
+> > +             res = d_splice_alias(inode, entry);
+> > +             if (res) {
+> > +                      /* Close the file in user space, but do not unlink it,
+> > +                       * if it was created - with network file systems other
+> > +                       * clients might have already accessed it.
+> > +                       */
+> > +                     if (IS_ERR(res)) {
+> > +                             fi = get_fuse_inode(inode);
+> > +                             fuse_sync_release(fi, ff, flags);
+> > +                             fuse_queue_forget(fm->fc, forget, outentry.nodeid, 1);
+> > +                             err = PTR_ERR(res);
+> > +                             goto out_err;
+> > +                     }
+> > +                     /* res is expected to be NULL since its REG file */
+> > +                     WARN_ON(res);
+>
+> This WARN_ON(res) is strange. We enter if (res) block only if res is
+> non null. So effectively we are doing this.
 
-That is a good point. I think it is safe to have 1MB as the minimum
-alignment so that it covers all architecture's page sizes. Thanks. I
-will queue this up.
+In create mode, we expect only REG files. It can happen that we
+encountered an error on inode for REG files. We are detecting that
+case. In all cases res should be null.
+
+>
+> if (res) {
+>    WARN_ON(res);
+> }
+>
+> Will it not trigger all the time?
+
+No, it will not trigger for REG files and we do not expect spliced dentry here.
+
+>
+> I think I already asked the question in previous email that what's the
+> difference between d_instanatiate() and d_splice_alias() and why we
+> need d_splice_alias() in this case instead.
+
+Since we skipped d_lookup() and came here( whether atomic create is
+implemented or not, all cases), dentry can have DCACHE_PAR_LOOKUP flag
+on it (This flag prevents parallel dentry creation for same file name
+in hash, other dentry insert for same file name in hash if came for
+allocation would wait until this flag gets cleared on the dentry).
+d_splice_alias() awaknes those sleeping on this flag but
+d_instantiate() does nothing related to dentry waiters awake/flag
+clear etc. It just links inode with dentry. So we need
+d_splice_alias() here instead of d_instantiate().
+
+Please note that we are auto detecting the atomic create so even in
+normal create case we would avoid lookup first until
+fc->no_atomic_create is set. it is after we confirm with lower layers
+that atomic create is not implemented, we do not avoid lookups so
+would be calling d_instantiate() instead of d_splice_alias();
+
+
+
+> Thanks
+> Vivek
+> > +             }
+> > +     }
+> >       fuse_change_entry_timeout(entry, &outentry);
+> > -     fuse_dir_changed(dir);
+> > +     /*
+> > +      * In case of atomic create, we want to indicate directory change
+> > +      * only if USER SPACE actually created the file.
+> > +      */
+> > +     if (!atomic_create || (outopen.open_flags & FOPEN_FILE_CREATED))
+> > +             fuse_dir_changed(dir);
+> >       err = finish_open(file, entry, generic_file_open);
+> >       if (err) {
+> >               fi = get_fuse_inode(inode);
+> > @@ -634,6 +671,29 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
+> >       return err;
+> >  }
+> >
+> > +static int fuse_atomic_create(struct inode *dir, struct dentry *entry,
+> > +                           struct file *file, unsigned int flags,
+> > +                           umode_t mode)
+> > +{
+> > +     int err;
+> > +     struct fuse_conn *fc = get_fuse_conn(dir);
+> > +
+> > +     if (fc->no_atomic_create)
+> > +             return -ENOSYS;
+> > +
+> > +     err = fuse_create_open(dir, entry, file, flags, mode,
+> > +                            FUSE_ATOMIC_CREATE);
+> > +     /* If atomic create is not implemented then indicate in fc so that next
+> > +      * request falls back to normal create instead of going into libufse and
+> > +      * returning with -ENOSYS.
+> > +      */
+> > +     if (err == -ENOSYS) {
+> > +             if (!fc->no_atomic_create)
+> > +                     fc->no_atomic_create = 1;
+> > +     }
+> > +     return err;
+> > +}
+> > +
+> >  static int fuse_mknod(struct user_namespace *, struct inode *, struct dentry *,
+> >                     umode_t, dev_t);
+> >  static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
+> > @@ -643,11 +703,12 @@ static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
+> >       int err;
+> >       struct fuse_conn *fc = get_fuse_conn(dir);
+> >       struct dentry *res = NULL;
+> > +     bool create = flags & O_CREAT ? true : false;
+> >
+> >       if (fuse_is_bad(dir))
+> >               return -EIO;
+> >
+> > -     if (d_in_lookup(entry)) {
+> > +     if ((!create || fc->no_atomic_create) && d_in_lookup(entry)) {
+> >               res = fuse_lookup(dir, entry, 0);
+> >               if (IS_ERR(res))
+> >                       return PTR_ERR(res);
+> > @@ -656,7 +717,7 @@ static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
+> >                       entry = res;
+> >       }
+> >
+> > -     if (!(flags & O_CREAT) || d_really_is_positive(entry))
+> > +     if (!create || d_really_is_positive(entry))
+> >               goto no_open;
+> >
+> >       /* Only creates */
+> > @@ -665,7 +726,13 @@ static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
+> >       if (fc->no_create)
+> >               goto mknod;
+> >
+> > -     err = fuse_create_open(dir, entry, file, flags, mode);
+> > +     err = fuse_atomic_create(dir, entry, file, flags, mode);
+> > +     /* Libfuse/user space has not implemented atomic create, therefore
+> > +      * fall back to normal create.
+> > +      */
+> > +     if (err == -ENOSYS)
+> > +             err = fuse_create_open(dir, entry, file, flags, mode,
+> > +                                    FUSE_CREATE);
+> >       if (err == -ENOSYS) {
+> >               fc->no_create = 1;
+> >               goto mknod;
+> > @@ -683,6 +750,7 @@ static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
+> >  }
+> >
+> >  /*
+> > +
+> >   * Code shared between mknod, mkdir, symlink and link
+> >   */
+> >  static int create_new_entry(struct fuse_mount *fm, struct fuse_args *args,
+> > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> > index e8e59fbdefeb..d577a591ab16 100644
+> > --- a/fs/fuse/fuse_i.h
+> > +++ b/fs/fuse/fuse_i.h
+> > @@ -669,6 +669,9 @@ struct fuse_conn {
+> >       /** Is open/release not implemented by fs? */
+> >       unsigned no_open:1;
+> >
+> > +     /** Is atomic create not implemented by fs? */
+> > +     unsigned no_atomic_create:1;
+> > +
+> >       /** Is opendir/releasedir not implemented by fs? */
+> >       unsigned no_opendir:1;
+> >
+> > diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+> > index d6ccee961891..e4b56004b148 100644
+> > --- a/include/uapi/linux/fuse.h
+> > +++ b/include/uapi/linux/fuse.h
+> > @@ -301,6 +301,7 @@ struct fuse_file_lock {
+> >   * FOPEN_CACHE_DIR: allow caching this directory
+> >   * FOPEN_STREAM: the file is stream-like (no file position at all)
+> >   * FOPEN_NOFLUSH: don't flush data cache on close (unless FUSE_WRITEBACK_CACHE)
+> > + * FOPEN_FILE_CREATED: the file was actually created
+> >   */
+> >  #define FOPEN_DIRECT_IO              (1 << 0)
+> >  #define FOPEN_KEEP_CACHE     (1 << 1)
+> > @@ -308,6 +309,7 @@ struct fuse_file_lock {
+> >  #define FOPEN_CACHE_DIR              (1 << 3)
+> >  #define FOPEN_STREAM         (1 << 4)
+> >  #define FOPEN_NOFLUSH                (1 << 5)
+> > +#define FOPEN_FILE_CREATED   (1 << 6)
+> >
+> >  /**
+> >   * INIT request/reply flags
+> > @@ -537,6 +539,7 @@ enum fuse_opcode {
+> >       FUSE_SETUPMAPPING       = 48,
+> >       FUSE_REMOVEMAPPING      = 49,
+> >       FUSE_SYNCFS             = 50,
+> > +     FUSE_ATOMIC_CREATE      = 51,
+> >
+> >       /* CUSE specific operations */
+> >       CUSE_INIT               = 4096,
+> > --
+> > 2.17.1
+> >
+>
