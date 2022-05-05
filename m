@@ -2,54 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C79951CABA
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 May 2022 22:38:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 967A751CAEE
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 May 2022 23:16:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1385924AbiEEUmL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 May 2022 16:42:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53636 "EHLO
+        id S1352489AbiEEVTs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 May 2022 17:19:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235604AbiEEUmJ (ORCPT
+        with ESMTP id S231739AbiEEVTs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 May 2022 16:42:09 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 479D65FF26;
-        Thu,  5 May 2022 13:38:28 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 0F287B82DF0;
-        Thu,  5 May 2022 20:38:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B51F5C385AA;
-        Thu,  5 May 2022 20:38:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1651783105;
-        bh=Ftdlx/J6+2yersYEpJzNemic5uh9nbtLakcJSrvrbT8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GwxkfnzCoLKjBawUzecA15DpeVbn2x9VDqK96b5P0hcmcgUpOgVUYVmVQjRutu9Zl
-         us0/wcoAZJ5jcJLBvtqNDbS7TV1O3zJMXQBoDbXGYYsv/vJ/XtueMjBRk+89WCpdzl
-         DWpx+chRpZeBbmSnwujNi6cAi0uJtGUSzUQDgYwH/PmhU/bOmLgnsLPVFOqTWmF27x
-         H4SNaInIwWBcGC2ko/sR/0kEzMO5J+Bm4IXUF2VIy5SLuhYD0hij63PPVjJAAYRPYA
-         NQ2bQ6IqiDyTuASejhUrw4/ZOS4VL+4PD7Nl7sMKdP7sB//KSsYklLw3vQhKyKFvx5
-         CGHteeoowPZpw==
-Date:   Thu, 5 May 2022 13:38:25 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/7] iomap: allow the file system to provide a bio_set
- for direct I/O
-Message-ID: <20220505203825.GM27195@magnolia>
-References: <20220505201115.937837-1-hch@lst.de>
- <20220505201115.937837-3-hch@lst.de>
+        Thu, 5 May 2022 17:19:48 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B41C41126
+        for <linux-fsdevel@vger.kernel.org>; Thu,  5 May 2022 14:16:06 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: krisman)
+        with ESMTPSA id CDB631F45D36
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1651785365;
+        bh=iijrYkFmQ2HQzTJ0bI60d2PvMgCEnQHI8uY+Ay9+CLA=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=R1fYL9fimcJUa5xXSffO5UQ2Pw4j7+PEZdrvVwah6kqUxYqC2unEHwtq5E1TlvBCf
+         4jGOUSPNlIisffUVsViOZLTDwEoaw6XVNQEKAKJQuDNGcUi5PJqx8IyrQGLodaDmvk
+         bZ5CaZoXj+G9a8AgrJMPmVBNn+OwKiwspapwIy7SALhOiRNMYt5J8kQGOQMNAet1AO
+         aVaigtfwMrIPFoccPobv/wRGnh8Vli7WOnL3zpAvVAbHLQZxzoZ4cj4jkII6aYPm2J
+         J0qhW83poyllwz3NEmzlBmDVOH156YwtytDpxBheWueMcfoa4LrlRv1PAwJCX3Uaid
+         FiH5l5oix8+XA==
+From:   Gabriel Krisman Bertazi <krisman@collabora.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Khazhy Kumykov <khazhy@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Hugh Dickins <hughd@google.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, kernel@collabora.com,
+        Linux MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Theodore Tso <tytso@mit.edu>
+Subject: Re: [PATCH v3 0/3] shmem: Allow userspace monitoring of tmpfs for
+ lack of space.
+Organization: Collabora
+References: <20220418213713.273050-1-krisman@collabora.com>
+        <20220418204204.0405eda0c506fd29e857e1e4@linux-foundation.org>
+        <87h76pay87.fsf@collabora.com>
+        <CAOQ4uxhjvwwEQo+u=TD-CJ0xwZ7A1NjkA5GRFOzqG7m1dN1E2Q@mail.gmail.com>
+        <CACGdZY+KqPKaW3jM2SN4MA8_SUHSRiA2Dt43Q7NbK7BO2t_FVw@mail.gmail.com>
+        <CAOQ4uxiTu1k9ngxquPwxTsEzF72U9jkBs69wjfgRY7E8w4bj4g@mail.gmail.com>
+Date:   Thu, 05 May 2022 17:16:01 -0400
+In-Reply-To: <CAOQ4uxiTu1k9ngxquPwxTsEzF72U9jkBs69wjfgRY7E8w4bj4g@mail.gmail.com>
+        (Amir Goldstein's message of "Fri, 22 Apr 2022 12:02:22 +0300")
+Message-ID: <87r157n0j2.fsf@collabora.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.2 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220505201115.937837-3-hch@lst.de>
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+Content-Type: text/plain
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -57,115 +63,220 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 05, 2022 at 03:11:10PM -0500, Christoph Hellwig wrote:
-> Allow the file system to provide a specific bio_set for allocating
-> direct I/O bios.  This will allow file systems that use the
-> ->submit_io hook to stash away additional information for file system
-> use.
-> 
-> To make use of this additional space for information in the completion
-> path, the file system needs to override the ->bi_end_io callback and
-> then call back into iomap, so export iomap_dio_bio_end_io for that.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+Amir Goldstein <amir73il@gmail.com> writes:
 
-LGTM,
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+>> task a user could easily go from 0% to full, or OOM, rather quickly,
+>> so statfs polling would likely miss the event. The orchestrator can,
+>> when the task fails, easily (and reliably) look at this statistic to
+>> determine if a user exceeded the tmpfs limit.
+>>
+>> (I do see the parallel here to thin provisioned storage - "exceeded
+>> your individual budget" vs. "underlying overcommitted system ran out
+>> of bytes")
+>
+> Right, and in this case, the application gets a different error in case
+> of "underlying space overcommitted", usually EIO, that's why I think that
+> opting-in for this same behavior could make sense for tmpfs.
 
---D
+Amir,
 
-> ---
->  fs/iomap/direct-io.c  | 18 ++++++++++++++----
->  include/linux/iomap.h | 11 +++++++++++
->  2 files changed, 25 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index b08f5dc31780d..15929690d89e3 100644
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -51,6 +51,15 @@ struct iomap_dio {
->  	};
->  };
->  
-> +static struct bio *iomap_dio_alloc_bio(const struct iomap_iter *iter,
-> +		struct iomap_dio *dio, unsigned short nr_vecs, unsigned int opf)
-> +{
-> +	if (dio->dops && dio->dops->bio_set)
-> +		return bio_alloc_bioset(iter->iomap.bdev, nr_vecs, opf,
-> +					GFP_KERNEL, dio->dops->bio_set);
-> +	return bio_alloc(iter->iomap.bdev, nr_vecs, opf, GFP_KERNEL);
-> +}
-> +
->  static void iomap_dio_submit_bio(const struct iomap_iter *iter,
->  		struct iomap_dio *dio, struct bio *bio, loff_t pos)
->  {
-> @@ -144,7 +153,7 @@ static inline void iomap_dio_set_error(struct iomap_dio *dio, int ret)
->  	cmpxchg(&dio->error, 0, ret);
->  }
->  
-> -static void iomap_dio_bio_end_io(struct bio *bio)
-> +void iomap_dio_bio_end_io(struct bio *bio)
->  {
->  	struct iomap_dio *dio = bio->bi_private;
->  	bool should_dirty = (dio->flags & IOMAP_DIO_DIRTY);
-> @@ -176,16 +185,17 @@ static void iomap_dio_bio_end_io(struct bio *bio)
->  		bio_put(bio);
->  	}
->  }
-> +EXPORT_SYMBOL_GPL(iomap_dio_bio_end_io);
->  
->  static void iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
->  		loff_t pos, unsigned len)
->  {
->  	struct inode *inode = file_inode(dio->iocb->ki_filp);
->  	struct page *page = ZERO_PAGE(0);
-> -	int flags = REQ_SYNC | REQ_IDLE;
->  	struct bio *bio;
->  
-> -	bio = bio_alloc(iter->iomap.bdev, 1, REQ_OP_WRITE | flags, GFP_KERNEL);
-> +	bio = iomap_dio_alloc_bio(iter, dio, 1,
-> +			REQ_OP_WRITE | REQ_SYNC | REQ_IDLE);
->  	fscrypt_set_bio_crypt_ctx(bio, inode, pos >> inode->i_blkbits,
->  				  GFP_KERNEL);
->  	bio->bi_iter.bi_sector = iomap_sector(&iter->iomap, pos);
-> @@ -311,7 +321,7 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
->  			goto out;
->  		}
->  
-> -		bio = bio_alloc(iomap->bdev, nr_pages, bio_opf, GFP_KERNEL);
-> +		bio = iomap_dio_alloc_bio(iter, dio, nr_pages, bio_opf);
->  		fscrypt_set_bio_crypt_ctx(bio, inode, pos >> inode->i_blkbits,
->  					  GFP_KERNEL);
->  		bio->bi_iter.bi_sector = iomap_sector(iomap, pos);
-> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-> index b76f0dd149fb4..526c9e7f2eaf8 100644
-> --- a/include/linux/iomap.h
-> +++ b/include/linux/iomap.h
-> @@ -320,6 +320,16 @@ struct iomap_dio_ops {
->  		      unsigned flags);
->  	void (*submit_io)(const struct iomap_iter *iter, struct bio *bio,
->  		          loff_t file_offset);
-> +
-> +	/*
-> +	 * Filesystems wishing to attach private information to a directio bio
-> +	 * must provide a ->submit_io method that attaches the additional
-> +	 * information to the bio and changes the ->bi_end_io callback to a
-> +	 * custom function.  This function should, at a minimum, perform any
-> +	 * relevant post-processing of the bio and end with a call to
-> +	 * iomap_dio_bio_end_io.
-> +	 */
-> +	struct bio_set *bio_set;
->  };
->  
->  /*
-> @@ -349,6 +359,7 @@ struct iomap_dio *__iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
->  		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
->  		unsigned int dio_flags, size_t done_before);
->  ssize_t iomap_dio_complete(struct iomap_dio *dio);
-> +void iomap_dio_bio_end_io(struct bio *bio);
->  
->  #ifdef CONFIG_SWAP
->  struct file;
-> -- 
-> 2.30.2
-> 
+If I understand correctly, that would allow the application to catch the
+lack of memory vs. lack of fs space, but it wouldn't facilitate life for
+an orchestrator trying to detect the condition.  Still it seems like a
+step in the right direction.  For the orchestrator, it seems necessary
+that we expose this is some out-of-band mechanism, a WB_ERROR
+notification or sysfs.
+
+As a first step:
+
+>8
+Subject: [PATCH] shmem: Differentiate overcommit failure from lack of fs space
+
+When provisioning user applications in cloud environments, it is common
+to allocate containers with very small tmpfs and little available
+memory.  In such scenarios, it is hard for an application to
+differentiate whether its tmpfs IO failed due do insufficient
+provisioned filesystem space, or due to running out of memory in the
+container, because both situations will return ENOSPC in shmem.
+
+This patch modifies the behavior of shmem failure due to overcommit to
+return EIO instead of ENOSPC in this scenario.  In order to preserve the
+existing interface, this feature must be enabled through a new
+shmem-specific mount option.
+
+Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
+---
+ Documentation/filesystems/tmpfs.rst | 16 +++++++++++++++
+ include/linux/shmem_fs.h            |  3 +++
+ mm/shmem.c                          | 30 ++++++++++++++++++++---------
+ 3 files changed, 40 insertions(+), 9 deletions(-)
+
+diff --git a/Documentation/filesystems/tmpfs.rst b/Documentation/filesystems/tmpfs.rst
+index 0408c245785e..83278d2b15a3 100644
+--- a/Documentation/filesystems/tmpfs.rst
++++ b/Documentation/filesystems/tmpfs.rst
+@@ -171,6 +171,22 @@ will give you tmpfs instance on /mytmpfs which can allocate 10GB
+ RAM/SWAP in 10240 inodes and it is only accessible by root.
+ 
+ 
++When provisioning containerized applications, it is common to allocate
++the system with a very small tmpfs and little total memory.  In such
++scenarios, it is sometimes useful for an application to differentiate
++whether an IO operation failed due to insufficient provisioned
++filesystem space or due to running out of container memory.  tmpfs
++includes a mount parameter to treat a memory overcommit limit error
++differently from a lack of filesystem space error, allowing the
++application to differentiate these two scenarios.  If the following
++mount option is specified, surpassing memory overcommit limits on a
++tmpfs will return EIO.  ENOSPC is then only used to report lack of
++filesystem space.
++
++=================   ===================================================
++report_overcommit   Report overcommit issues with EIO instead of ENOSPC
++=================   ===================================================
++
+ :Author:
+    Christoph Rohland <cr@sap.com>, 1.12.01
+ :Updated:
+diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
+index e65b80ed09e7..1be57531b257 100644
+--- a/include/linux/shmem_fs.h
++++ b/include/linux/shmem_fs.h
+@@ -44,6 +44,9 @@ struct shmem_sb_info {
+ 	spinlock_t shrinklist_lock;   /* Protects shrinklist */
+ 	struct list_head shrinklist;  /* List of shinkable inodes */
+ 	unsigned long shrinklist_len; /* Length of shrinklist */
++
++	/* Assist userspace with detecting overcommit errors */
++	bool report_overcommit;
+ };
+ 
+ static inline struct shmem_inode_info *SHMEM_I(struct inode *inode)
+diff --git a/mm/shmem.c b/mm/shmem.c
+index a09b29ec2b45..23f2780678df 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -112,6 +112,7 @@ struct shmem_options {
+ 	kgid_t gid;
+ 	umode_t mode;
+ 	bool full_inums;
++	bool report_overcommit;
+ 	int huge;
+ 	int seen;
+ #define SHMEM_SEEN_BLOCKS 1
+@@ -207,13 +208,16 @@ static inline void shmem_unacct_blocks(unsigned long flags, long pages)
+ 		vm_unacct_memory(pages * VM_ACCT(PAGE_SIZE));
+ }
+ 
+-static inline bool shmem_inode_acct_block(struct inode *inode, long pages)
++static inline int shmem_inode_acct_block(struct inode *inode, long pages)
+ {
+ 	struct shmem_inode_info *info = SHMEM_I(inode);
+ 	struct shmem_sb_info *sbinfo = SHMEM_SB(inode->i_sb);
+ 
+-	if (shmem_acct_block(info->flags, pages))
+-		return false;
++	if (shmem_acct_block(info->flags, pages)) {
++		if (sbinfo->report_overcommit)
++			return -EIO;
++		return -ENOSPC;
++	}
+ 
+ 	if (sbinfo->max_blocks) {
+ 		if (percpu_counter_compare(&sbinfo->used_blocks,
+@@ -222,11 +226,11 @@ static inline bool shmem_inode_acct_block(struct inode *inode, long pages)
+ 		percpu_counter_add(&sbinfo->used_blocks, pages);
+ 	}
+ 
+-	return true;
++	return 0;
+ 
+ unacct:
+ 	shmem_unacct_blocks(info->flags, pages);
+-	return false;
++	return -ENOSPC;
+ }
+ 
+ static inline void shmem_inode_unacct_blocks(struct inode *inode, long pages)
+@@ -372,7 +376,7 @@ bool shmem_charge(struct inode *inode, long pages)
+ 	struct shmem_inode_info *info = SHMEM_I(inode);
+ 	unsigned long flags;
+ 
+-	if (!shmem_inode_acct_block(inode, pages))
++	if (shmem_inode_acct_block(inode, pages))
+ 		return false;
+ 
+ 	/* nrpages adjustment first, then shmem_recalc_inode() when balanced */
+@@ -1555,13 +1559,14 @@ static struct page *shmem_alloc_and_acct_page(gfp_t gfp,
+ 	struct shmem_inode_info *info = SHMEM_I(inode);
+ 	struct page *page;
+ 	int nr;
+-	int err = -ENOSPC;
++	int err;
+ 
+ 	if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
+ 		huge = false;
+ 	nr = huge ? HPAGE_PMD_NR : 1;
+ 
+-	if (!shmem_inode_acct_block(inode, nr))
++	err = shmem_inode_acct_block(inode, nr);
++	if (err)
+ 		goto failed;
+ 
+ 	if (huge)
+@@ -2324,7 +2329,7 @@ int shmem_mfill_atomic_pte(struct mm_struct *dst_mm,
+ 	int ret;
+ 	pgoff_t max_off;
+ 
+-	if (!shmem_inode_acct_block(inode, 1)) {
++	if (shmem_inode_acct_block(inode, 1)) {
+ 		/*
+ 		 * We may have got a page, returned -ENOENT triggering a retry,
+ 		 * and now we find ourselves with -ENOMEM. Release the page, to
+@@ -3301,6 +3306,7 @@ enum shmem_param {
+ 	Opt_uid,
+ 	Opt_inode32,
+ 	Opt_inode64,
++	Opt_report_overcommit,
+ };
+ 
+ static const struct constant_table shmem_param_enums_huge[] = {
+@@ -3322,6 +3328,7 @@ const struct fs_parameter_spec shmem_fs_parameters[] = {
+ 	fsparam_u32   ("uid",		Opt_uid),
+ 	fsparam_flag  ("inode32",	Opt_inode32),
+ 	fsparam_flag  ("inode64",	Opt_inode64),
++	fsparam_flag  ("report_overcommit", Opt_report_overcommit),
+ 	{}
+ };
+ 
+@@ -3405,6 +3412,9 @@ static int shmem_parse_one(struct fs_context *fc, struct fs_parameter *param)
+ 		ctx->full_inums = true;
+ 		ctx->seen |= SHMEM_SEEN_INUMS;
+ 		break;
++	case Opt_report_overcommit:
++		ctx->report_overcommit = true;
++		break;
+ 	}
+ 	return 0;
+ 
+@@ -3513,6 +3523,7 @@ static int shmem_reconfigure(struct fs_context *fc)
+ 		sbinfo->max_inodes  = ctx->inodes;
+ 		sbinfo->free_inodes = ctx->inodes - inodes;
+ 	}
++	sbinfo->report_overcommit = ctx->report_overcommit;
+ 
+ 	/*
+ 	 * Preserve previous mempolicy unless mpol remount option was specified.
+@@ -3640,6 +3651,7 @@ static int shmem_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	sbinfo->mode = ctx->mode;
+ 	sbinfo->huge = ctx->huge;
+ 	sbinfo->mpol = ctx->mpol;
++	sbinfo->report_overcommit = ctx->report_overcommit;
+ 	ctx->mpol = NULL;
+ 
+ 	raw_spin_lock_init(&sbinfo->stat_lock);
+-- 
+2.35.1
+
+
+
