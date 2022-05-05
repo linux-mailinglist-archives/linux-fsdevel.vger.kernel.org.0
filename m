@@ -2,309 +2,215 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E781D51C28A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 May 2022 16:27:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17B1251C2D0
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 May 2022 16:45:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1380613AbiEEOag (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 May 2022 10:30:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55434 "EHLO
+        id S1380736AbiEEOsm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 May 2022 10:48:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347282AbiEEOad (ORCPT
+        with ESMTP id S237470AbiEEOsk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 May 2022 10:30:33 -0400
-Received: from us-smtp-delivery-74.mimecast.com (us-smtp-delivery-74.mimecast.com [170.10.129.74])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id F3564AE46
-        for <linux-fsdevel@vger.kernel.org>; Thu,  5 May 2022 07:26:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1651760813;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+        Thu, 5 May 2022 10:48:40 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3C475A2D3;
+        Thu,  5 May 2022 07:44:59 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 271261F8D2;
+        Thu,  5 May 2022 14:44:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1651761898; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=ufj/Nlucm7lyP1dfA8xRF4xBk3E8pv5QO2sw8rt5hZc=;
-        b=iD6hIcidx8481evQlRVTeLe6ajJBh4LeREQJLPWfvivnuy4zoaWCLMOPgVHxf4aoqWHVqa
-        5qrDUSBFDKlwFmbmY52eaHI3D/8gb2AM2Gr1OUr4wr1m0jYCwOmxAsKrvzpfFkMKhEL+Bc
-        RQmeyFUhyBBRePnVksY9kianSWtxSAI=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-639-mXF5wrXIPMyBqqmGco25Zg-1; Thu, 05 May 2022 10:26:50 -0400
-X-MC-Unique: mXF5wrXIPMyBqqmGco25Zg-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        bh=CSu7w+nmnR68Ha0NqVpNUTtYFKouPF6ihnFnZEJDGyU=;
+        b=K5fed7g1aYIgkbSwGkw0QyJUSxdLWt2sLIovnqYJzsX3YfyZ8hTY2/9BIaEiPGXWWhjzsT
+        sy49TbSZ2BmYLPQ+1V/PcAo7iZhU4L2+AHDZUrO4G2LCdJ+iB5nnxPSHSIxscLohCoaXxk
+        A2eCSzr+0ke9pS7sQEoum9QnewhaT90=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1651761898;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=CSu7w+nmnR68Ha0NqVpNUTtYFKouPF6ihnFnZEJDGyU=;
+        b=3EoBBOdToRb0kvKHft86VQqshn2r2xcKxXPRldkGmgvw0hmagrg+rxPgj7ayhOJ82LlXJV
+        KoOx4EEJMT4v1IDQ==
+Received: from quack3.suse.cz (unknown [10.100.224.230])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 3001E3C10233;
-        Thu,  5 May 2022 14:26:49 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.32.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 18C341121339;
-        Thu,  5 May 2022 14:26:49 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id CF89A220463; Thu,  5 May 2022 10:26:48 -0400 (EDT)
-Date:   Thu, 5 May 2022 10:26:48 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Dharmendra Hans <dharamhans87@gmail.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        linux-kernel@vger.kernel.org, Bernd Schubert <bschubert@ddn.com>,
-        Dharmendra Singh <dsingh@ddn.com>
-Subject: Re: [PATCH v4 1/3] FUSE: Implement atomic lookup + create
-Message-ID: <YnPeqPTny1Eeat9r@redhat.com>
-References: <20220502102521.22875-1-dharamhans87@gmail.com>
- <20220502102521.22875-2-dharamhans87@gmail.com>
- <YnGIUOP2BezDAb1k@redhat.com>
- <CACUYsyGoX+o19u41cZyF92eDBO-9rFN_EEWBvWBGrEMuNn29Mw@mail.gmail.com>
- <YnKR9CFYPXT1bM1F@redhat.com>
- <CACUYsyG+QRyObnD5eaD8pXygwBRRcBrGHLCUZb2hmMZbFOfFTg@mail.gmail.com>
+        by relay2.suse.de (Postfix) with ESMTPS id B4A922C142;
+        Thu,  5 May 2022 14:44:57 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 6835CA0627; Thu,  5 May 2022 16:44:56 +0200 (CEST)
+Date:   Thu, 5 May 2022 16:44:56 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
+        Steve Grubb <sgrubb@redhat.com>, Jan Kara <jack@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>
+Subject: Re: [PATCH v2 2/3] fanotify: define struct members to hold response
+ decision context
+Message-ID: <20220505144456.nw6slyqw4pjizl5p@quack3.lan>
+References: <cover.1651174324.git.rgb@redhat.com>
+ <17660b3f2817e5c0a19d1e9e5d40b53ff4561845.1651174324.git.rgb@redhat.com>
+ <CAHC9VhQ3Qtpwhj6TeMR7rmdbUe_6VRHU9OymmDoDdsazeGuNKA@mail.gmail.com>
+ <YnHX74E+COTp7AgY@madcap2.tricolour.ca>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CACUYsyG+QRyObnD5eaD8pXygwBRRcBrGHLCUZb2hmMZbFOfFTg@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+In-Reply-To: <YnHX74E+COTp7AgY@madcap2.tricolour.ca>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 05, 2022 at 10:21:21AM +0530, Dharmendra Hans wrote:
-> On Wed, May 4, 2022 at 8:17 PM Vivek Goyal <vgoyal@redhat.com> wrote:
-> >
-> > On Wed, May 04, 2022 at 09:56:49AM +0530, Dharmendra Hans wrote:
-> > > On Wed, May 4, 2022 at 1:24 AM Vivek Goyal <vgoyal@redhat.com> wrote:
-> > > >
-> > > > On Mon, May 02, 2022 at 03:55:19PM +0530, Dharmendra Singh wrote:
-> > > > > From: Dharmendra Singh <dsingh@ddn.com>
-> > > > >
-> > > > > When we go for creating a file (O_CREAT), we trigger
-> > > > > a lookup to FUSE USER SPACE. It is very  much likely
-> > > > > that file does not exist yet as O_CREAT is passed to
-> > > > > open(). This lookup can be avoided and can be performed
-> > > > > as part of create call into libfuse.
-> > > > >
-> > > > > This lookup + create in single call to libfuse and finally
-> > > > > to USER SPACE has been named as atomic create. It is expected
-> > > > > that USER SPACE create the file, open it and fills in the
-> > > > > attributes which are then used to make inode stand/revalidate
-> > > > > in the kernel cache. Also if file was newly created(does not
-> > > > > exist yet by this time) in USER SPACE then it should be indicated
-> > > > > in `struct fuse_file_info` by setting a bit which is again used by
-> > > > > libfuse to send some flags back to fuse kernel to indicate that
-> > > > > that file was newly created. These flags are used by kernel to
-> > > > > indicate changes in parent directory.
-> > > >
-> > > > Reading the existing code a little bit more and trying to understand
-> > > > existing semantics. And that will help me unerstand what new is being
-> > > > done.
-> > > >
-> > > > So current fuse_atomic_open() does following.
-> > > >
-> > > > A. Looks up dentry (if d_in_lookup() is set).
-> > > > B. If dentry is positive or O_CREAT is not set, return.
-> > > > C. If server supports atomic create + open, use that to create file and
-> > > >    open it as well.
-> > > > D. If server does not support atomic create + open, just create file
-> > > >    using "mknod" and return. VFS will take care of opening the file.
-> > > >
-> > > > Now with this patch, new flow is.
-> > > >
-> > > > A. Look up dentry if d_in_lookup() is set as well as either file is not
-> > > >    being created or fc->no_atomic_create is set. This basiclally means
-> > > >    skip lookup if atomic_create is supported and file is being created.
-> > > >
-> > > > B. Remains same. if dentry is positive or O_CREATE is not set, return.
-> > > >
-> > > > C. If server supports new atomic_create(), use that.
-> > > >
-> > > > D. If not, if server supports atomic create + open, use that
-> > > >
-> > > > E. If not, fall back to mknod and do not open file.
-> > > >
-> > > > So to me this new functionality is basically atomic "lookup + create +
-> > > > open"?
-> > > >
-> > > > Or may be not. I see we check "fc->no_create" and fallback to mknod.
-> > > >
-> > > >         if (fc->no_create)
-> > > >                 goto mknod;
-> > > >
-> > > > So fc->no_create is representing both old atomic "create + open" as well
-> > > > as new "lookup + create + open" ?
-> > > >
-> > > > It might be obvious to you, but it is not to me. So will be great if
-> > > > you shed some light on this.
-> > > >
+On Tue 03-05-22 21:33:35, Richard Guy Briggs wrote:
+> On 2022-05-02 20:16, Paul Moore wrote:
+> > On Thu, Apr 28, 2022 at 8:45 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > This patch adds 2 structure members to the response returned from user
+> > > space on a permission event. The first field is 16 bits for the context
+> > > type.  The context type will describe what the meaning is of the second
+> > > field. The default is none. The patch defines one additional context
+> > > type which means that the second field is a 32-bit rule number. This
+> > > will allow for the creation of other context types in the future if
+> > > other users of the API identify different needs.  The second field size
+> > > is defined by the context type and can be used to pass along the data
+> > > described by the context.
 > > >
-> > > I think you got it right now. New atomic create does what you
-> > > mentioned as new flow.  It does  lookup + create + open in single call
-> > > (being called as atomic create) to USER SPACE.mknod is a special case
-> >
-> > Ok, naming is little confusing. I think we will have to put it in
-> > commit message and where you define FUSE_ATOMIC_CREATE that what's
-> > the difference between FUSE_CREATE and FUSE_ATOMIC_CREATE. This is
-> > ATOMIC w.r.t what?
+> > > To support this, there is a macro for user space to check that the data
+> > > being sent is valid. Of course, without this check, anything that
+> > > overflows the bit field will trigger an EINVAL based on the use of
+> > > FAN_INVALID_RESPONSE_MASK in process_access_response().
+> > >
+
+...
+
+> > >  static ssize_t fanotify_write(struct file *file, const char __user *buf, size_t count, loff_t *pos)
+> > >  {
+> > > -       struct fanotify_response response = { .fd = -1, .response = -1 };
+> > > +       struct fanotify_response response;
+> > >         struct fsnotify_group *group;
+> > >         int ret;
+> > > +       size_t size = min(count, sizeof(struct fanotify_response));
+> > >
+> > >         if (!IS_ENABLED(CONFIG_FANOTIFY_ACCESS_PERMISSIONS))
+> > >                 return -EINVAL;
+> > >
+> > >         group = file->private_data;
+> > >
+> > > -       if (count < sizeof(response))
+> > > +       if (count < offsetof(struct fanotify_response, extra_info_buf))
+> > >                 return -EINVAL;
+> > 
+> > Is this why you decided to shrink the fanotify_response:response field
+> > from 32-bits to 16-bits?  I hope not.  I would suggest both keeping
+> > the existing response field as 32-bits and explicitly checking for
+> > writes that are either the existing/compat length as well as the
+> > newer, longer length.
 > 
-> Sure, I would update the commit message to make the distinction clear
-> between the two. This operation is atomic w.r.t to USER SPACE FUSE
-> implementations. i.e USER SPACE would be performing all these
-> operations in a single call to it.
+> No.  I shrank it at Jan's suggestion.  I think I agree with you that
+> the response field should be kept at u32 as it is defined in userspace
+> and purge the doubt about what would happen with a new userspace with
+> an old kernel.
 
-I think even FUSE_CREAT is doing same thing. Creating file, opening and
-doing lookup and sending all the data. So that's not the difference
-between the two, IMHO. And that's why I am getting confused with the
-naming.
+Hum, for the life of me I cannot find my response you mention here. Can you
+send a link so that I can refresh my memory? It has been a long time...
 
-From user space file server perspective, only extra operation seems
-to be that it sends a flag in response telling the client whether
-file was actually created or it already existed. So to me it just
-sounds little extension of existing FUSE_CREATE command and that's
-why I thought calling it FUSE_CREATE_EXT is probably better naming.
-
-
+> > > +
+> > > +#define FANOTIFY_RESPONSE_EXTRA_LEN_MAX        \
+> > > +       (sizeof(union { \
+> > > +               struct fanotify_response_audit_rule r; \
+> > > +               /* add other extra info structures here */ \
+> > > +       }))
+> > > +
+> > >  struct fanotify_response {
+> > >         __s32 fd;
+> > > -       __u32 response;
+> > > +       __u16 response;
+> > > +       __u16 extra_info_type;
+> > > +       char extra_info_buf[FANOTIFY_RESPONSE_EXTRA_LEN_MAX];
+> > >  };
+> > 
+> > Since both the kernel and userspace are going to need to agree on the
+> > content and formatting of the fanotify_response:extra_info_buf field,
+> > why is it hidden behind a char array?  You might as well get rid of
+> > that abstraction and put the union directly in the fanotify_response
+> > struct.  It is possible you could also get rid of the
+> > fanotify_response_audit_rule struct this way too and just access the
+> > rule scalar directly.
 > 
+> This does make sense and my only concern would be a variable-length
+> type.  There isn't any reason to hide it.  If userspace chooses to use
+> the old interface and omit the type field then it defaults to NONE.
 > 
-> > May be atomic here means that "lookup + create + open" is a single operation.
-> > But then even FUSE_CREATE is atomic because "creat + open" is a single
-> > operation.
-> >
-> > In fact FUSE_CREATE does lookup anyway and returns all the information
-> > in fuse_entry_out.
-> >
-> > IIUC, only difference between FUSE_CREATE and FUSE_ATOMIC_CREATE is that
-> > later also carries information in reply whether file was actually created
-> > or not (FOPEN_FILE_CREATED). This will be set if file did not exist
-> > already and it was created indeed. Is that right?
-> 
-> FUSE_CREATE is atomic but upto level of libfuse. Libfuse separates it
-> into two calls, create and lookup separately into USER SPACE FUSE
-> implementation.
+> If future types with variable data are defined, the first field could be
+> a u32 that unions with the rule number that won't change the struct
+> size.
 
-I am not sure what do you mean by "libfuse separates it into two calls,
-create and lookup separately". I guess you are referring to lo_create()
-in example/passthrough_ll.c which first creates and opens file and
-then looks it up and replies.
+Struct fanotify_response size must not change, it is part of the kernel
+ABI. In particular your above change would break userspace code that is
+currently working just fine (e.g. allocating 8 bytes and expecting struct
+fanotify_response fits there, or just writing sizeof(struct
+fanotify_response) as a response while initializing only first 8 bytes).
+How I'd suggest doing it now (and I'd like to refresh my memory from my
+past emails you mention because in the past I might have thought something
+else ;)) is that you add another flag to 'response' field similar to
+FAN_AUDIT - like FAN_EXTRA_INFO. If that is present, it means extra info is
+to be expected after struct fanotify_response. The extra info would always
+start with a header like:
 
-        fd = openat(lo_fd(req, parent), name,
-                    (fi->flags | O_CREAT) & ~O_NOFOLLOW, mode);
-	err = lo_do_lookup(req, parent, name, &e);
-	fuse_reply_create(req, &e, fi);
+struct fanotify_response_info_header {
+        __u8 info_type;
+        __u8 pad;
+        __u16 len;		/* This is including the header itself */
+}
 
-I am looking at your proposal for atomic_create implementation here.
+And after such header there would be the 'blob' of data 'len - header size'
+long.  We use this same scheme when passing fanotify events to userspace
+and it has proven to be lightweight and extensible. It covers the situation
+when in the future audit would decide it wants other data (just change data
+type), it would also cover the situation when some other subsystem wants
+its information passed as well - there can be more structures like this
+attached at the end, we can process the response up to the length of the
+write.
 
-https://github.com/libfuse/libfuse/pull/673/commits/88cd25b2857f2bb213d01afbcfd666787d1e6893#diff-a36385ec8fb753d6f4492a5f0d3c6a5750bd370b50df6ef0610efdcd3f8880ffR787
+Now these are just possible future extensions making sure we can extend the
+ABI without too much pain. In the current implementation I'd just return
+EINVAL whenever more than FANOTIFY_RESPONSE_MAX_LEN (16 bytes) is written 
+and do very strict checks on what gets passed in. It is also trivially
+backwards compatible (old userspace on new kernel works just fine).
 
-It is doing exactly same thing as lo_create(), except one difference that
-it is checking first if file exists. It essentially is doing this.
+If you want to achieve compatibility of running new userspace on old kernel
+(I guess that's desirable), we have group flags for that - like we
+introduced FAN_ENABLE_AUDIT to allow for FAN_AUDIT flag in response we now
+need to add a flag like FAN_EXTENDED_PERMISSION_INFO telling the kernel it
+should expect an allow more info returning for permission events. At the
+same time this is the way for userspace to be able to tell whether the
+kernel supports this. I know this sounds tedious but that's the cost of
+extending the ABI in the compatible way. We've made various API mistakes in
+the past having to add weird workarounds to fanotify and we don't want to
+repeat those mistakes :).
 
-A. newfd = openat(lo_fd(req, parent), name, O_PATH | O_NOFOLLOW);
-B. fd = openat(lo_fd(req, parent), name,
-		    (fi->flags | O_CREAT) & ~O_NOFOLLOW, mode);
-C. err = lo_do_lookup(req, parent, name, &e);
-D. fuse_reply_create(req, &e, fi);
+One open question I have is what should the kernel do with 'info_type' in
+response it does not understand (in the future when there are possibly more
+different info types). It could just skip it because this should be just
+additional info for introspection (the only mandatory part is in
+fanotify_response, however it could surprise userspace that passed info is
+just getting ignored. To solve this we would have to somewhere report
+supported info types (maybe in fanotify fdinfo in proc). I guess we'll
+cross that bridge when we get to it.
 
-So what do you mean by libfuse makes it two calls. 
+Amir, what do you think?
 
-And I think above implementation is racy. What if filesystem is
-shared and another client creates the file between calls to
-A and B. You will think you created the file but some other
-client created it.
+								Honza
 
-So if intent is to know whether we created the file or not, then
-you should probably do openat() with O_EXCL flag. If that succeeds
-you know you created the file. If it fails with -EEXIST, then you
-know file is already there. That's what virtiofs does.
-
-Anyway, coming back to the point. IMHO, from server perspective,
-there is no atomicity difference between FUSE_CREATE and
-FUSE_ATOMIC_CREATE. Only difference seems to be to send addditional
-information back to the client to tell it whether file was created
-or not.
-
-In fact for shared filesystem this is probably a problem. What if
-guest's cache is stale and it does not know about the file. A client
-B creates the file and we think we did not create the file. And we
-will return with FOPEN_FILE_CREATED = 0. And in that case client
-will not call fuse_dir_changed(). But that seems wrong in case
-of shared filesystems. I am concerned about virtiofs which can
-be shared between different guests.
-
-Miklos, WDYT?
-
-May be it is not a huge concern. If one guest drops a file, other guest
-will not invalidate its dir attrs till timeout happens. Case of shared
-filesystem is very tricky with fuse. And sometimes it is not clear
-to me what kind of coherency matters.
-
-So in this case say I am booted with cache=auto, if guest B drops a file
-bar/foo.txt and guest A does open(bar/foo.txt, O_CREAT), then should
-guest A invalidate the attrs of bar/ right away or it will be invalidated
-anyway after a second. 
-
-Anyway.., my core point is that difference between FUSE_CREATE and
-FUSE_ATOMIC_CREATE is just one flag FOPEN_FILE_CREATED which tells
-client whether file was actually created or not. And that is used
-to determine whether to invalidate parent dir attributes or not. It
-does not have anything extra in terms of ATOMICITY as far as I can
-see and that's what confuses me.
-
-
-
-> This FUSE_ATOMIC_CREATE does all these ops in a single call to FUSE
-> implementations.  We do not want to break any existing FUSE
-> implementations, therefore it is being introduced as a new feature. I
-> forgot to include links to libfuse patches as well. That would have
-> made it much clearer.  Here is the link to libfuse patch for this call
-> https://github.com/libfuse/libfuse/pull/673.
-> 
-> >
-> > I see FOPEN_FILE_CREATED is being used to avoid calling
-> > fuse_dir_changed(). That sounds like a separate optimization and probably
-> > should be in a separate patch.
-> 
-> FUSE_ATOMIC_CREATE needs to send back info about if  file was actually
-> created or not (This is suggestion from Miklos) to correctly convey if
-> the parent dir is really changing or not. I included this as part of
-> this patch itself instead of having it as a separate patch.
-
-This needs little more thought w.r.t shared filesystems.
-
-> 
-> > IOW, I think this patch should be broken in to multiple pieces. First
-> > piece seems to be avoiding lookup() and given the way it is implemented,
-> > looks like we can avoid lookup() even by using existing FUSE_CREATE
-> > command. We don't necessarily need FUSE_ATOMIC_CREATE. Is that right?
-> 
-> Its not only about changing fuse kernel code but USER SPACE
-> implementations also. If we change the you are suggesting we would be
-> required to twist many things at libfuse and FUSE low level API. So to
-> keep things simple and not to break any existing implementations we
-> have kept it as new call (we now pass `struct stat` to USER SPACE FUSE
-> to filled in).
-> 
-> > And once that is done, a separate patch should probably should explain
-> > the problem and say fuse_dir_changed() call can be avoided if we knew
-> > if file was actually created or it was already existing there. And that's
-> > when one need to introduce a new command. Given this is just an extension
-> > of existing FUSE_CREATE command and returns additiona info about
-> > FOPEN_FILE_CREATED, we probably should simply call it FUSE_CREATE_EXT
-> > and explain how this operation is different from FUSE_CREATE.
-> 
-> As explained above, we are not doing this way as we have kept in mind
-> all existing libfuse APIs as well.
->
-
-I am not seeing what will break in existing passthrough_ll.c if I
-simply used FUSE_CREATE for a file which already exists.
-
-        fd = openat(lo_fd(req, parent), name,
-                    (fi->flags | O_CREAT) & ~O_NOFOLLOW, mode);
-
-This call should still succeed even if file already exists. (until and
-unless called it with O_EXCL and in that case failing is the correct
-behavior). 
-
-Thanks
-Vivek
-
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
