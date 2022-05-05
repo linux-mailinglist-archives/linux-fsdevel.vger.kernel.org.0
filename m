@@ -2,173 +2,245 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8165851B609
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 May 2022 04:41:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D47BE51B69A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 May 2022 05:33:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229643AbiEECoE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 May 2022 22:44:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50758 "EHLO
+        id S241431AbiEEDgv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 May 2022 23:36:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239791AbiEECnz (ORCPT
+        with ESMTP id S232605AbiEEDgu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 May 2022 22:43:55 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D6291087;
-        Wed,  4 May 2022 19:40:16 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id BC227B82A9E;
-        Thu,  5 May 2022 02:40:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73637C385A5;
-        Thu,  5 May 2022 02:40:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1651718413;
-        bh=qY4KmXLzLDJbFRydh6JicSuMK3vMZp0aSGlP21fPJGo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JkUTG5WLBHaxwkKCi4GUy+4L/PBlhzjjkgAFnLOGijc9nS3s+CIjHaS7WE38RjLiB
-         ckwRW5mLeJOaA2cGJl0D61aW5HbFPJAxQYGUetGb+3ojsxZO0eB2wL87Ei29G9GJ0I
-         MDPPBj8rmYYSdbIzCWCb1bRJBTrUTEAJvv2PtmPuMbedU8faq5QcUPALsh3gdu+s7K
-         Yiid7Ao38dRUkkTwLMiiI7YeeBXnwTBLNsguFo8L5fkd2+gwVF5j666QWIgfDxGvnQ
-         zaGPrbkizfEjcxBn13qz8s1C2VqoBst71vSHbV4irmmSQP73xXuldd1fbW6yKgiGqL
-         qFp95wbChuBWw==
-Date:   Wed, 4 May 2022 19:40:12 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Brian Foster <bfoster@redhat.com>, xfs <linux-xfs@vger.kernel.org>,
-        fstests <fstests@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: generic/068 crash on 5.18-rc2?
-Message-ID: <20220505024012.GA27195@magnolia>
-References: <YlbjOPEQP66gc1WQ@casper.infradead.org>
- <20220418174747.GF17025@magnolia>
- <20220422215943.GC17025@magnolia>
- <Ymq4brjhBcBvcfIs@bfoster>
- <Ymywh003c+Hd4Zu9@casper.infradead.org>
- <Ym2szx2S3ontYsBf@casper.infradead.org>
- <Ym/McFNCTzmsLBak@bfoster>
- <20220503032534.GC8297@magnolia>
- <YnCwBVdmg3IiGhfD@casper.infradead.org>
- <20220503172532.GA8265@magnolia>
+        Wed, 4 May 2022 23:36:50 -0400
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7F31849F95
+        for <linux-fsdevel@vger.kernel.org>; Wed,  4 May 2022 20:33:11 -0700 (PDT)
+Received: by mail-wr1-x42a.google.com with SMTP id u3so4372999wrg.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 04 May 2022 20:33:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YqfZfQpmXVHETuF1B0xNE9EmPpUhhrjqT9Nbme9K0BI=;
+        b=oE/mLb9s7n5byBWoAzgTvwR7m4Ag4TuYbKdpZGwy317zKrDgD/ijP+QcPOvbnGKfFZ
+         HgA/N6I5JCAnSqpCNdPAtqx4tF72aOkDa8c6PiBJ/0S9o1WQtO9XtYrtY2DPL+FAhMr9
+         Fwwn6sapCh9U+2Cobw4FhaJ+gt/NHS7u75uNtiLOpBBSwKCK1kzYOpkDmkTLuFXZiMyV
+         Z58Bczyl93yd2t1JKeeZPWw5TCvgMbRQrzL0bbf4FRhkyJG1jX6TEle6qkULxq9j5z8y
+         Ix9VOjP40Y3RXKgykDrJlOuYobWA+1KfxQV43D0PLu3Be+xmeAGTR9xl8l2F/EoG9WOM
+         ifMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YqfZfQpmXVHETuF1B0xNE9EmPpUhhrjqT9Nbme9K0BI=;
+        b=YqBZVFSBng04Mw3ZN8YS+G/Zen7LRkKHcTP4X3ClspJBJmIObL5cMuShic2j4IreyQ
+         e6do0nuB2BkVKTD2D2uFjnoIfT8lLFi4ci8cSooVXlNw3lONZ5e9/Ao0xJ8uLTO5f8Xu
+         GGLIe1dRIABQehQbV4fXc5joi72XUKBt1VKphQPHAPDDAW8tx6j0IB7SWOcxBfIHg7Pz
+         LBMqamUKrPyhZr8ddnUp1lvcNfNufaprFUmdiy3++stFAzHiF4iVIDUmeP8S1PLagtSG
+         UlSfadOUT8lWshORtoAEzXfoOQOZ0rnVXKO0Wr1P7+qHb6XjB4H6tHskA9g8C6DHYjHI
+         KJvA==
+X-Gm-Message-State: AOAM531FI1Lc4yuxQP/Fqla5mqGh2oY3kSA4Gc09tEXfJxeGxrdJfmzO
+        dTtUIMi2JYQSKE1PoKPnGtQIXssgs+K/xxWzXuyq
+X-Google-Smtp-Source: ABdhPJwWYpcnPUCH3PNkFBMqlRujbkaS6Bc/qHhso4xOhHj4K4edZv8Cb6cHarVPyslAEAAvUUKW0DR1qpT4+/9ckHs=
+X-Received: by 2002:a05:6000:10cc:b0:20a:de6f:3c48 with SMTP id
+ b12-20020a05600010cc00b0020ade6f3c48mr18325890wrx.650.1651721590030; Wed, 04
+ May 2022 20:33:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220503172532.GA8265@magnolia>
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <cover.1651174324.git.rgb@redhat.com> <17660b3f2817e5c0a19d1e9e5d40b53ff4561845.1651174324.git.rgb@redhat.com>
+ <CAHC9VhQ3Qtpwhj6TeMR7rmdbUe_6VRHU9OymmDoDdsazeGuNKA@mail.gmail.com> <YnHX74E+COTp7AgY@madcap2.tricolour.ca>
+In-Reply-To: <YnHX74E+COTp7AgY@madcap2.tricolour.ca>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 4 May 2022 23:32:59 -0400
+Message-ID: <CAHC9VhR-3xNFgSdK7LUKmhfw5uGHo9gnmKb7K62=3TVBONJ2nQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] fanotify: define struct members to hold response
+ decision context
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
+        Steve Grubb <sgrubb@redhat.com>, Jan Kara <jack@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 03, 2022 at 10:25:32AM -0700, Darrick J. Wong wrote:
-> On Tue, May 03, 2022 at 05:31:01AM +0100, Matthew Wilcox wrote:
-> > On Mon, May 02, 2022 at 08:25:34PM -0700, Darrick J. Wong wrote:
-> > > On Mon, May 02, 2022 at 08:20:00AM -0400, Brian Foster wrote:
-> > > > On Sat, Apr 30, 2022 at 10:40:31PM +0100, Matthew Wilcox wrote:
-> > > > > On Sat, Apr 30, 2022 at 04:44:07AM +0100, Matthew Wilcox wrote:
-> > > > > > (I do not love this, have not even compiled it; it's late.  We may be
-> > > > > > better off just storing next_folio inside the folio_iter).
-> > > > > 
-> > > > > Does anyone have a preference for fixing this between Option A:
-> > > > > 
-> > > > 
-> > > > After seeing the trace in my previous mail and several thousand
-> > > > successful iterations of the test hack, I had reworked it into this
-> > > > (which survived weekend testing until it ran into some other XFS problem
-> > > > that looks unrelated):
-> > > > 
-> > > > diff --git a/include/linux/bio.h b/include/linux/bio.h
-> > > > index 278cc81cc1e7..aa820e09978e 100644
-> > > > --- a/include/linux/bio.h
-> > > > +++ b/include/linux/bio.h
-> > > > @@ -269,6 +269,7 @@ struct folio_iter {
-> > > >  	size_t offset;
-> > > >  	size_t length;
-> > > >  	/* private: for use by the iterator */
-> > > > +	struct folio *_next;
-> > > >  	size_t _seg_count;
-> > > >  	int _i;
-> > > >  };
-> > > > @@ -279,6 +280,7 @@ static inline void bio_first_folio(struct folio_iter *fi, struct bio *bio,
-> > > >  	struct bio_vec *bvec = bio_first_bvec_all(bio) + i;
-> > > >  
-> > > >  	fi->folio = page_folio(bvec->bv_page);
-> > > > +	fi->_next = folio_next(fi->folio);
-> > > >  	fi->offset = bvec->bv_offset +
-> > > >  			PAGE_SIZE * (bvec->bv_page - &fi->folio->page);
-> > > >  	fi->_seg_count = bvec->bv_len;
-> > > > @@ -290,13 +292,15 @@ static inline void bio_next_folio(struct folio_iter *fi, struct bio *bio)
-> > > >  {
-> > > >  	fi->_seg_count -= fi->length;
-> > > >  	if (fi->_seg_count) {
-> > > > -		fi->folio = folio_next(fi->folio);
-> > > > +		fi->folio = fi->_next;
-> > > > +		fi->_next = folio_next(fi->folio);
-> > > >  		fi->offset = 0;
-> > > >  		fi->length = min(folio_size(fi->folio), fi->_seg_count);
-> > > >  	} else if (fi->_i + 1 < bio->bi_vcnt) {
-> > > >  		bio_first_folio(fi, bio, fi->_i + 1);
-> > > >  	} else {
-> > > >  		fi->folio = NULL;
-> > > > +		fi->_next = NULL;
-> > > >  	}
-> > > >  }
-> > > > 
-> > > > So FWIW, that is just to say that I find option A to be cleaner and more
-> > > > readable.
-> > > 
-> > > Me too.  I'll queue up the usual nightly tests with that patch added and
-> > > we'll see how that does.
-> > 
-> > I've just pushed essentially that patch to my for-next tree in case
-> > anybody does any testing with that.  I'll give it a couple of days
-> > before creating a folio-5.18f tag and asking Linus to pull the first two
-> > commits on
-> > 
-> > git://git.infradead.org/users/willy/pagecache.git for-next
-> > 
-> > That is, commits
-> > 
-> > 1a4c97e2dd5b ("block: Do not call folio_next() on an unreferenced folio")
-> > 095099da208b ("mm/readahead: Fix readahead with large folios")
-> 
-> Hmm.  Well, I added 1a4c97 to my tree last night, and it seems to have
-> cleared up all but two of the problems I saw with the for-next branch.
-> 
-> generic/388 still fails (40 minutes in) with:
-> 
-> WARN_ON_ONCE(atomic_read(&iop->write_bytes_pending));
-> VM_BUG_ON_FOLIO(i_blocks_per_folio(inode, folio) > 1 && !iop, folio);
-> 
-> Which I think is the same problem where the fs goes down, XFS throws an
-> error back to iomap_do_writepages, and it tries to discard a folio that
-> already had writeback running on it.
-> 
-> There's also the same problem I reported a few days ago in xfs/501
-> on a 64k-page ARM64 VM where:
-> 
-> run fstests xfs/501 at 2022-05-02 21:17:31
-> XFS: Assertion failed: IS_ALIGNED((unsigned long)lv->lv_buf, sizeof(uint64_t)), file: fs/xfs/xfs_log_cil.c, line: 430
-> XFS: Assertion failed: IS_ALIGNED((unsigned long)buf, sizeof(uint64_t)), file: fs/xfs/xfs_log.c, line: 137
-> XFS: Assertion failed: IS_ALIGNED((unsigned long)buf, sizeof(uint64_t)), file: fs/xfs/xfs_log.c, line: 137
-> 
-> But I think that's a new bug that came in with all the log buffer
-> alignment changes in the 5.19 branch.
-> 
-> Oh.  My tree still had the "disable large folios" patch in it.  I guess
-> the "successful" results are mostly invalid then.
+On Tue, May 3, 2022 at 9:33 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> On 2022-05-02 20:16, Paul Moore wrote:
+> > On Thu, Apr 28, 2022 at 8:45 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > This patch adds 2 structure members to the response returned from user
+> > > space on a permission event. The first field is 16 bits for the context
+> > > type.  The context type will describe what the meaning is of the second
+> > > field. The default is none. The patch defines one additional context
+> > > type which means that the second field is a 32-bit rule number. This
+> > > will allow for the creation of other context types in the future if
+> > > other users of the API identify different needs.  The second field size
+> > > is defined by the context type and can be used to pass along the data
+> > > described by the context.
+> > >
+> > > To support this, there is a macro for user space to check that the data
+> > > being sent is valid. Of course, without this check, anything that
+> > > overflows the bit field will trigger an EINVAL based on the use of
+> > > FAN_INVALID_RESPONSE_MASK in process_access_response().
+> > >
+> > > Suggested-by: Steve Grubb <sgrubb@redhat.com>
+> > > Link: https://lore.kernel.org/r/2745105.e9J7NaK4W3@x2
+> > > Suggested-by: Jan Kara <jack@suse.cz>
+> > > Link: https://lore.kernel.org/r/20201001101219.GE17860@quack2.suse.cz
+> > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > > Link: https://lore.kernel.org/r/17660b3f2817e5c0a19d1e9e5d40b53ff4561845.1651174324.git.rgb@redhat.com
+> > > ---
+> > >  fs/notify/fanotify/fanotify.c      |  1 -
+> > >  fs/notify/fanotify/fanotify.h      |  4 +-
+> > >  fs/notify/fanotify/fanotify_user.c | 59 ++++++++++++++++++++----------
+> > >  include/linux/fanotify.h           |  3 ++
+> > >  include/uapi/linux/fanotify.h      | 27 +++++++++++++-
+> > >  5 files changed, 72 insertions(+), 22 deletions(-)
 
-Well... with large folios turned back on and those two patches added to
-the branch, *most* of the problems go away.  The generic/388 problem
-persists, and last night's run showed that the weird xfs_dquot leak that
-I"ve occasionally seen on 5.18 with xfs/43[46] also exists in 5.17.
+...
 
---D
+> > > diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+> > > index 694516470660..f1ff4cf683fb 100644
+> > > --- a/fs/notify/fanotify/fanotify_user.c
+> > > +++ b/fs/notify/fanotify/fanotify_user.c
+> > > @@ -289,13 +289,19 @@ static int create_fd(struct fsnotify_group *group, struct path *path,
+> > >   */
+> > >  static void finish_permission_event(struct fsnotify_group *group,
+> > >                                     struct fanotify_perm_event *event,
+> > > -                                   __u32 response)
+> > > +                                   struct fanotify_response *response)
+> > >                                     __releases(&group->notification_lock)
+> > >  {
+> > >         bool destroy = false;
+> > >
+> > >         assert_spin_locked(&group->notification_lock);
+> > > -       event->response = response;
+> > > +       event->response = response->response;
+> > > +       event->extra_info_type = response->extra_info_type;
+> > > +       switch (event->extra_info_type) {
+> > > +       case FAN_RESPONSE_INFO_AUDIT_RULE:
+> > > +               memcpy(event->extra_info_buf, response->extra_info_buf,
+> > > +                      sizeof(struct fanotify_response_audit_rule));
+> >
+> > Since the fanotify_perm_event:extra_info_buf and
+> > fanotify_response:extra_info_buf are the same type/length, and they
+> > will be the same regardless of the extra_info_type field, why not
+> > simply get rid of the above switch statement and do something like
+> > this:
+> >
+> >   memcpy(event->extra_info_buf, response->extra_info_buf,
+> >          sizeof(response->extra_info_buf));
+>
+> I've been wrestling with the possibility of doing a split between what
+> is presented to userspace and what's used in the kernel for struct
+> fanotify_response, while attempting to future-proof it.
 
-> --D
-> 
-> > (more than happy to update anything about those patches)
+You really only need to worry about what is presented to userspace,
+the kernel internals can always change if needed.  Right now I would
+focus on making sure the userspace visible data structures are done
+properly: preserve the existing data offsets/lengths, and ensure that
+the new additions do not make it harder to extend the structure again
+in the future.
+
+> > > @@ -827,26 +845,25 @@ static ssize_t fanotify_read(struct file *file, char __user *buf,
+> > >
+> > >  static ssize_t fanotify_write(struct file *file, const char __user *buf, size_t count, loff_t *pos)
+> > >  {
+> > > -       struct fanotify_response response = { .fd = -1, .response = -1 };
+> > > +       struct fanotify_response response;
+> > >         struct fsnotify_group *group;
+> > >         int ret;
+> > > +       size_t size = min(count, sizeof(struct fanotify_response));
+> > >
+> > >         if (!IS_ENABLED(CONFIG_FANOTIFY_ACCESS_PERMISSIONS))
+> > >                 return -EINVAL;
+> > >
+> > >         group = file->private_data;
+> > >
+> > > -       if (count < sizeof(response))
+> > > +       if (count < offsetof(struct fanotify_response, extra_info_buf))
+> > >                 return -EINVAL;
+> >
+> > Is this why you decided to shrink the fanotify_response:response field
+> > from 32-bits to 16-bits?  I hope not.  I would suggest both keeping
+> > the existing response field as 32-bits and explicitly checking for
+> > writes that are either the existing/compat length as well as the
+> > newer, longer length.
+>
+> No.  I shrank it at Jan's suggestion.  I think I agree with you that
+> the response field should be kept at u32 as it is defined in userspace
+> and purge the doubt about what would happen with a new userspace with
+> an old kernel.
+
+I'm struggling to think of why shrinking an existing field is a good
+idea.  Unfortunately, there is a possibility that any problems this
+would cause might not be caught until it has been in a couple of
+kernel releases and some applications have been written/updated to use
+the new struct definition, at which point restoring the field to a u32
+value will break all of these new applications.
+
+I think changing the fanotify_response:response field is an
+unnecessary risk, and I'll leave it at that.
+
+> > > diff --git a/include/uapi/linux/fanotify.h b/include/uapi/linux/fanotify.h
+> > > index e8ac38cc2fd6..efb5a3a6f814 100644
+> > > --- a/include/uapi/linux/fanotify.h
+> > > +++ b/include/uapi/linux/fanotify.h
+> > > @@ -179,9 +179,34 @@ struct fanotify_event_info_error {
+> > >         __u32 error_count;
+> > >  };
+> > >
+> > > +/*
+> > > + * User space may need to record additional information about its decision.
+> > > + * The extra information type records what kind of information is included.
+> > > + * The default is none. We also define an extra informaion buffer whose
+> > > + * size is determined by the extra information type.
+> > > + *
+> > > + * If the context type is Rule, then the context following is the rule number
+> > > + * that triggered the user space decision.
+> > > + */
+> > > +
+> > > +#define FAN_RESPONSE_INFO_AUDIT_NONE   0
+> > > +#define FAN_RESPONSE_INFO_AUDIT_RULE   1
+> > > +
+> > > +struct fanotify_response_audit_rule {
+> > > +       __u32 rule;
+> > > +};
+> > > +
+> > > +#define FANOTIFY_RESPONSE_EXTRA_LEN_MAX        \
+> > > +       (sizeof(union { \
+> > > +               struct fanotify_response_audit_rule r; \
+> > > +               /* add other extra info structures here */ \
+> > > +       }))
+> > > +
+> > >  struct fanotify_response {
+> > >         __s32 fd;
+> > > -       __u32 response;
+> > > +       __u16 response;
+> > > +       __u16 extra_info_type;
+> > > +       char extra_info_buf[FANOTIFY_RESPONSE_EXTRA_LEN_MAX];
+> > >  };
+> >
+> > Since both the kernel and userspace are going to need to agree on the
+> > content and formatting of the fanotify_response:extra_info_buf field,
+> > why is it hidden behind a char array?  You might as well get rid of
+> > that abstraction and put the union directly in the fanotify_response
+> > struct.  It is possible you could also get rid of the
+> > fanotify_response_audit_rule struct this way too and just access the
+> > rule scalar directly.
+>
+> This does make sense and my only concern would be a variable-length
+> type.  There isn't any reason to hide it.  If userspace chooses to use
+> the old interface and omit the type field then it defaults to NONE.
+
+There is no reason you couldn't put flexible-array field in a union if
+that is what was needed.  Of you could have the flexible-array field
+outside of the union and use a union field as the length value.
+There's probably other clever solutions to this too.
+
+-- 
+paul-moore.com
