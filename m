@@ -2,103 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 576A851C13D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 May 2022 15:49:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B07DC51C1CC
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 May 2022 16:00:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352094AbiEENwL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 May 2022 09:52:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36528 "EHLO
+        id S233206AbiEEODp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 May 2022 10:03:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53818 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379994AbiEENwE (ORCPT
+        with ESMTP id S1353382AbiEEODo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 May 2022 09:52:04 -0400
-Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED24257994;
-        Thu,  5 May 2022 06:48:19 -0700 (PDT)
-Received: from SHSend.spreadtrum.com (shmbx04.spreadtrum.com [10.0.1.214])
-        by SHSQR01.spreadtrum.com with ESMTPS id 245Dlgb1015983
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NO);
-        Thu, 5 May 2022 21:47:42 +0800 (CST)
-        (envelope-from Jing.Xia@unisoc.com)
-Received: from bj08259pcu.spreadtrum.com (10.0.74.59) by
- shmbx04.spreadtrum.com (10.0.1.214) with Microsoft SMTP Server (TLS) id
- 15.0.1497.23; Thu, 5 May 2022 21:47:44 +0800
-From:   Jing Xia <jing.xia@unisoc.com>
-To:     <viro@zeniv.linux.org.uk>
-CC:     <jack@suse.cz>, <jing.xia@unisoc.com>, <jing.xia.mail@gmail.com>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] writeback: Avoid skipping inode writeback
-Date:   Thu, 5 May 2022 21:47:31 +0800
-Message-ID: <20220505134731.5295-1-jing.xia@unisoc.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 5 May 2022 10:03:44 -0400
+Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B16D95643C
+        for <linux-fsdevel@vger.kernel.org>; Thu,  5 May 2022 06:59:58 -0700 (PDT)
+Received: by mail-ed1-x529.google.com with SMTP id ba17so5322236edb.5
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 May 2022 06:59:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8cdP+QQ3RkXNjtwvBi4VN1FsvGgtTlKBfCuL8UUAtAI=;
+        b=E8qBemq4oTx4YPbWRWMJzV2qIbcvYOdveNbfeZemz+4dZQ+I0m7fLXmsY75j+/wiX5
+         XaE1LThAuxmxZgvbTboIF71ZZ5XDfPUtgSQz8ZVQ2PL1AE4CxYt/PmItFNePGMLFoNgb
+         A8tRUVmKiVc6KZIJU/kk/0DlACH0+77UO+Qz0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8cdP+QQ3RkXNjtwvBi4VN1FsvGgtTlKBfCuL8UUAtAI=;
+        b=foEB+3rHgPSfqNXeMbKOoJ/QL+XFbz7FWlfcYd3hvrC+E+I6kL/EzpqyhnFutLxl3F
+         E8qmVYLafDgZJ8kneQkQz/lb0q0gDtXi4IN53eH2RGqZqx963WQTgszP2YBp1QxMVEPm
+         vMUjDihcNo1cIBRBHbmhbsn4JwmjWdKIZhBn46euQ2E0BDcAOnPLVXE5G5slBKrciUnV
+         F9c6e6vP2F+ZEyoUJq2tmYajFUIV220YxG3LRuj9gIhQzmUiwddD9wBfpkYImvxKRtzT
+         BiXquUttlxAdiJqL8UgSYyoUKCyhuV2LH9hczkiA4irNzMprL9X2lj+j1mX4ea6mgvW4
+         HuWA==
+X-Gm-Message-State: AOAM5304e3efO7D0Lzk2KDg4a8xlPcX7EzoYcbXa3OKg5Cl5UEabIqNO
+        Goc0YqprluvpUdwquhNraFd+Zpk/KWQ1sOx1guzX2A==
+X-Google-Smtp-Source: ABdhPJzTe+CDKCcscUgOgvXLSyK5NVYs7EmJWj3tio4m59arkqFAPKBq+XxNeijdGRs92739wL1GOOxDMjNo+9z+bh8=
+X-Received: by 2002:a05:6402:5ca:b0:423:f330:f574 with SMTP id
+ n10-20020a05640205ca00b00423f330f574mr30384732edx.116.1651759197275; Thu, 05
+ May 2022 06:59:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.0.74.59]
-X-ClientProxiedBy: SHCAS01.spreadtrum.com (10.0.1.201) To
- shmbx04.spreadtrum.com (10.0.1.214)
-X-MAIL: SHSQR01.spreadtrum.com 245Dlgb1015983
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+References: <YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com> <20220505123033.sgcyx7kfl4kcfcds@ws.net.home>
+In-Reply-To: <20220505123033.sgcyx7kfl4kcfcds@ws.net.home>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Thu, 5 May 2022 15:59:45 +0200
+Message-ID: <CAJfpegv2asQoevG992+1yruSrmMus57CoQ+=Cssf7O50FhyJyQ@mail.gmail.com>
+Subject: Re: [RFC PATCH] getting misc stats/attributes via xattr API
+To:     Karel Zak <kzak@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
+        DKIM_SIGNED,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,T_SCC_BODY_TEXT_LINE,
+        T_SPF_TEMPERROR autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We have run into an issue that a task gets stuck in
-balance_dirty_pages_ratelimited() when perform I/O stress testing.
-The reason we observed is that an I_DIRTY_PAGES inode with lots
-of dirty pages is in b_dirty_time list and standard background
-writeback cannot writeback the inode.
-After studing the relevant code, the following scenario may lead
-to the issue:
+On Thu, 5 May 2022 at 14:30, Karel Zak <kzak@redhat.com> wrote:
 
-task1                                   task2
------                                   -----
-fuse_flush
- write_inode_now //in b_dirty_time
-  writeback_single_inode
-   __writeback_single_inode
-                                 fuse_write_end
-                                  filemap_dirty_folio
-                                   __xa_set_mark:PAGECACHE_TAG_DIRTY
-    lock inode->i_lock
-    if mapping tagged PAGECACHE_TAG_DIRTY
-    inode->i_state |= I_DIRTY_PAGES
-    unlock inode->i_lock
-                                   __mark_inode_dirty:I_DIRTY_PAGES
-                                      lock inode->i_lock
-                                      -was dirty,inode stays in
-                                      -b_dirty_time
-                                      unlock inode->i_lock
+> Is there a way how to get mountinfo-like entry by mount ID for some
+> sub-tree? Something like:
+>
+>  getfattr -etext -n ":mnt:info:21" /
 
-   if(!(inode->i_state & I_DIRTY_All))
-      -not true,so nothing done
+Yes:
 
-This patch moves the dirty inode to b_dirty list when the inode
-currently is not queued in b_io or b_more_io list at the end of
-writeback_single_inode.
+getfattr -etext -n ":mntns:21:info" /
 
-Signed-off-by: Jing Xia <jing.xia@unisoc.com>
----
- fs/fs-writeback.c | 3 +++
- 1 file changed, 3 insertions(+)
+>
+> The interface has to be consistent with some notification system (I
+> see your question about fsnotify/fanotify at linux-fsdevel) and mount
+> ID seems better than paths due to over-mounts, etc.
 
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index 591fe9cf1659..d7763feaf14a 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -1712,6 +1712,9 @@ static int writeback_single_inode(struct inode *inode,
- 	 */
- 	if (!(inode->i_state & I_DIRTY_ALL))
- 		inode_cgwb_move_to_attached(inode, wb);
-+	else if (!(inode->i_state & I_SYNC_QUEUED) && (inode->i_state & I_DIRTY))
-+		redirty_tail_locked(inode, wb);
-+
- 	spin_unlock(&wb->list_lock);
- 	inode_sync_complete(inode);
- out:
--- 
-2.17.1
+Right.
 
+If the mount notification doesn't fit into fsnotify well, the original
+patch from David could be used.  I think that part was
+uncontroversial.
+
+Thanks,
+Miklos
