@@ -2,60 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 647E651C000
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 May 2022 14:58:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BF9D51C069
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 May 2022 15:18:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240388AbiEENAJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 May 2022 09:00:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41682 "EHLO
+        id S1378983AbiEENVA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 May 2022 09:21:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33374 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233634AbiEENAH (ORCPT
+        with ESMTP id S1377190AbiEENU7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 May 2022 09:00:07 -0400
-Received: from mail-qt1-x831.google.com (mail-qt1-x831.google.com [IPv6:2607:f8b0:4864:20::831])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8724D4A922;
-        Thu,  5 May 2022 05:56:28 -0700 (PDT)
-Received: by mail-qt1-x831.google.com with SMTP id o11so3028057qtp.13;
-        Thu, 05 May 2022 05:56:28 -0700 (PDT)
+        Thu, 5 May 2022 09:20:59 -0400
+Received: from mail-qk1-x733.google.com (mail-qk1-x733.google.com [IPv6:2607:f8b0:4864:20::733])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46DFD2E684
+        for <linux-fsdevel@vger.kernel.org>; Thu,  5 May 2022 06:17:20 -0700 (PDT)
+Received: by mail-qk1-x733.google.com with SMTP id s4so3129784qkh.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 May 2022 06:17:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=g2zNSZ7z34605RGjUSbGcNOfuH/EFE45DeZ21jtbg80=;
-        b=SgrSvcG/zqMmD1Aq5+dRqptKSr4wQVOtA78nyzkGuTxRDgDarD6x70+FKTZsqDEKce
-         S6VGcmdrmiXUsKH+J9XAe/56mJ7lX9hCi+Y4Ux50734ZctiUYS1jzX5BXtb1QdJ74jJK
-         uZFIHv2GCuldAMktpgap9Wfmfsf/vjbLsMulp4tKGCzvo9pP/LrJqGSbkOq86LCc5GG6
-         OIbNS/Uaa/a0et+soE2hcLGgSg6JWOgayepBljz2VKzj6epRtQmF8d2GgxZ64Cbv7Rfs
-         ETxmwXynFNaoi2XxSif8YE9TNpEH/zWCcqsBLdrlytWRV3FzfVIOmjg1Vsz07I8r58qY
-         UWSQ==
+        bh=QHDeuXobOPbOJYxsebPbcLRDlWZm1Xez5L8IQWn8iDM=;
+        b=RCvA5nCrZGPUNqNlGBsYDv2XISD1VlRqdxJ+4o+0E/0F67Rf3ySTZiybQAup8fCj7f
+         bq8Y452a2T9H650/FnB2vwmCvg8YBumz59nt3DuqNiikT6OCtYqpjuLA3AC21q9wECjJ
+         /yB7ZZLdHk6Q0KJAwAPOV07dE2eLSQ6G7zsrpinmHHIw6dWbtJEKJc+jv+dvKikl+d97
+         /4rwZ+IC9LMjLsrzE/TsguSS+M/a9mZ5zq9v3Pazn7FqFKOCmG9yRnWSWErjplVqOx4s
+         5plQnANuFB7YwC+Ku7WABj1F/tTWx1FZeU37282neBiGaQDsPeAZ98apkm1YwVPE+3M4
+         QO5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=g2zNSZ7z34605RGjUSbGcNOfuH/EFE45DeZ21jtbg80=;
-        b=Qd/8SfUskcI9T1HptI73e9Dt/GHGmcBG3cF5iphjs5JUYEolNt77SzQKtUV+M/jwp9
-         JX03Wt7DXuMM2CfHl0T9X6tDVWEsxYRx01RaHz4NirJZ8Qr9V9qgDX633diAsliBg2zU
-         W5If9W2qLmvbufsgWZsIATqkF0G08nfwqrvzLr26b9NYw9u74M/a23/OCiAeR2ElOynJ
-         t+wJ7c+YLbE4w8n9qxn0nBYz4dZmZ6+YkYtbhbne8vgzy7KCoHSb/ab+B3YU2ojZkOdo
-         u2RXqZ8t1hLJaLGJJi9OPPLSZ5oyZZESt/YAOTVF+MAyUbPmzAYffAVpIQX9U/qURqPJ
-         VvSg==
-X-Gm-Message-State: AOAM531PO/llTXaoNKOQmkvHWHfLGhTQEcB+0THczTpilY7mvOXfYYIj
-        l1AIezDho/OTtEx7mXJMiw5M+2OVZ3PwBSJigcMm9ZBERy9R4A==
-X-Google-Smtp-Source: ABdhPJzZisT99LrTtQb1wsHfJwtfXf2HzLuXv1MlTV4JfrfapOznKr2ZY0Y2uDJX2DE0/YDSegcKrkRMizizlE7xEnI=
-X-Received: by 2002:ac8:5a4f:0:b0:2ed:d39b:5264 with SMTP id
- o15-20020ac85a4f000000b002edd39b5264mr23780497qta.477.1651755387623; Thu, 05
- May 2022 05:56:27 -0700 (PDT)
+        bh=QHDeuXobOPbOJYxsebPbcLRDlWZm1Xez5L8IQWn8iDM=;
+        b=jo0GZmRLZ9FBWjosd9KmlseXeL4+iBfoRpS36wg0wcMLN21iwKs6IOV8VXWRj1T2vm
+         WtsdN0aG+KfNFQ3F2dDVe508JLO6lGqCl5gnz4Y59Y0px6eJea5Uh6VYeTe/C60BiKg3
+         +BPnt3LcrwKJ7VXftVjyh+0ScHMFZexWYWdFcfk8a/go3VRCadvSOlfo4grVKIMws6iK
+         PEAHcCBT+MbrawTIiPbdaArWXMAErOlzCEjWx1niDxOAKn+vESISz9wkRub/LGLFjq7Z
+         Q6YmQYljuMWZDtiWLkVB6p8msrMeEZFw12AfskwH2W1GbhBu+4cFCpfLMTdGILF+bVqi
+         oYRA==
+X-Gm-Message-State: AOAM532s/BcMovWtjyGPYoXPp49qOZPjJytGLenC2iT1+pzCvkwCgcxt
+        rnJ4yZK/fqkXzsY7IOeQ1we0q8uoBN+npth6x6w=
+X-Google-Smtp-Source: ABdhPJyJXYWDkJeJFPgbix8AMYiZET3z4nlGnGJ5RFRJ/tmKvY3GnjWNaqg9W33lz1XHWe9YJdz3cbecKQrwC0OVkFA=
+X-Received: by 2002:a05:620a:460d:b0:6a0:11c5:a12f with SMTP id
+ br13-20020a05620a460d00b006a011c5a12fmr6465743qkb.258.1651756639367; Thu, 05
+ May 2022 06:17:19 -0700 (PDT)
 MIME-Version: 1.0
-References: <YnOmG2DvSpvvOEOQ@google.com> <20220505112217.zvzbzhjgmoz7lr6w@quack3.lan>
-In-Reply-To: <20220505112217.zvzbzhjgmoz7lr6w@quack3.lan>
+References: <20220503183750.1977-1-duguoweisz@gmail.com> <20220503194943.6bcmsxjvinfjrqxa@quack3.lan>
+ <CAC+1Nxv5n0eGtRhfS6pxt8Z-no5scu2kO2pu+_6CpbkeeBqFAw@mail.gmail.com>
+ <20220504192751.76axinbuuptqdpsz@quack3.lan> <CAC+1Nxt2NsyA=HpyK=75oaFuKSp9y_ze3JOS2rE0+AEETn5iiQ@mail.gmail.com>
+ <CAOQ4uxiO2fNt-DFqpbX5pZ1dVjMxT+E4-GVFZxY7_LJx1E4rkw@mail.gmail.com> <CAC+1NxtcFf8XN9BnyOOLWqCkwCw-ozndKTuc3fYuM_Gbs2w92w@mail.gmail.com>
+In-Reply-To: <CAC+1NxtcFf8XN9BnyOOLWqCkwCw-ozndKTuc3fYuM_Gbs2w92w@mail.gmail.com>
 From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 5 May 2022 15:56:16 +0300
-Message-ID: <CAOQ4uxhJFEoV0X8uunNaYjdKpsFj6nUtcNFBx8d3oqodDO_iYA@mail.gmail.com>
-Subject: Re: Fanotify API - Tracking File Movement
-To:     Jan Kara <jack@suse.cz>
-Cc:     Matthew Bobrowski <repnop@google.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Date:   Thu, 5 May 2022 16:17:07 +0300
+Message-ID: <CAOQ4uxjS6ixL4bzVB4NT=k0seP9m1WQ5tNfWa9cdtk1BPvNojQ@mail.gmail.com>
+Subject: Re: [PATCH] fsnotify: add generic perm check for unlink/rmdir
+To:     guowei du <duguoweisz@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Matthew Bobrowski <repnop@google.com>
 Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
@@ -67,108 +70,87 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-+fsdevel
-
-On Thu, May 5, 2022 at 2:22 PM Jan Kara <jack@suse.cz> wrote:
+On Thu, May 5, 2022 at 10:22 AM guowei du <duguoweisz@gmail.com> wrote:
 >
-> Hello Matthew!
+> Ok, I understand.
 >
-> On Thu 05-05-22 20:25:31, Matthew Bobrowski wrote:
-> > I was having a brief chat with Amir the other day about an idea/use
-> > case that I have which at present don't believe is robustly supported
-> > by the fanotify API. I was wondering whether you could share some
-> > thoughts on supporting the following idea.
-> >
-> > I have a need to track file movement across a filesystem without
-> > necessarily burdening the system by having to watch the entire
-> > filesystem for such movements. That is, knowing when file /dir1/a had
-> > been moved from /dir1/a to /dir2/a and then from /dir2/a to /dir3/a
-> > and so on. Or more simply, knowing the destination/new path of the
-> > file once it has moved.
+> All replies are very important to me,I need to make some changes for my mistakes.
+> I should not do the same wrong things for now.
+
+One more newbie mistake to correct - no "top posting" please.
+Answers below the questions.
+
+See one more important comment below.
+
 >
-> OK, and the places the file moves to can be arbitrary? That seems like a
-> bit narrow usecase :)
 >
-> > Initially, I was thinking of using FAN_MOVE_SELF, but it doesn't quite
-> > cut it. For such events, you only know the target location or path of
-> > a file had been modified once it has subsequently been moved
-> > elsewhere. Not to mention that path resolution using the file
-> > identifier from such an event may not always work. Then there's
-> > FAN_RENAME which could arguably work. This would include setting up a
-> > watch on the parent directory of the file of interest and then using
-> > the information record of type FAN_EVENT_INFO_TYPE_NEW_DFID_NAME to
-> > figure out the new target location of the file once it has been moved
-> > and then resetting the mark on the next parent directory once the new
-> > target location is known. But, as Amir rightfully mentioned, this
-> > rinse and repeat mark approach is suboptimal as it can lead to certain
-> > race conditions.
+> thanks very much.
 >
-> It seems to me you really want FAN_MOVE_SELF but you'd need more
-> information coming with it like the new parent dir, wouldn't you? It would
-> be relatively easy to add that info but it would kind of suck that it would
-> be difficult to discover in advance whether the directory info will arrive
-> with the event or not. But that actually would seem to be the case for
-> FAN_RENAME as well because we didn't seem to bother to refuse FAN_RENAME on
-> a file. Amir?
->
+> On Thu, May 5, 2022 at 1:23 PM Amir Goldstein <amir73il@gmail.com> wrote:
+>>
+>> On Thu, May 5, 2022 at 6:28 AM guowei du <duguoweisz@gmail.com> wrote:
+>> >
+>> > thanks very much for your replay.
+>> >
+>> > I am a starter for kernel filesystem study, i see the newest plan with the 'pre modify events',
+>> > I think the plan is great and meaningful,I am looking forward to it.
+>>
+>> Welcome. Since you are new let me start with some basics.
+>> I don't know what generated the long list of CC that you used,
+>> I suppose it was get_maintainer.pl - this list is way too long and irrelevant
+>> I cut it down to the list and maintainers listed in the MAINTAINERS file.
+>>
+>> >
+>> > for the legacy modify events, i mean to implement most blocking events which are not yet
+>> > done for now, maybe the permission model is old or legacy, and,sure ,expending the
+>> > blocking events such as unlink/rmdir/rename will do pollute EVENTS namespace in part.
+>> > but, it is only a little ,maybe all usual blocking events are  open/access/rmdir/unlink/rename,
+>> > they cover some usecases,and other modify events can be only audited or notified.
+>>
+>> Sorry, I don't understand what you mean.
+>>
+>> >
+>> > With the fanotify, open/access/rmdir/unlink/rename need to occupy a fsnotify bit to explicitly
+>> > separate from others.if Blocking event is denied,then there will be no normal events to notify.
+>> >
+>>
+>> Sorry, I don't understand what you mean.
+>> What I meant is that adding different bits for FAN_OPEN and FAN_OPEN_PERM
+>> was a mistake that was done a long time ago and we need to live with it.
+>> We do NOT need to repeat the same mistake again.
+>>
+>> We need to initialize fanotify with class FAN_CLASS_PERM and then when
+>> setting events FAN_UNLINK|FAN_RMDIR in mask they will be blocking events
+>> which reader will need to allow/deny.
+>>
+>> Here is my old example implementation of dir modify permission events that use
+>> just one more bit in mask:
+>> https://github.com/amir73il/linux/commits/fsnotify_dirent_perm
+>>
 
-No, we did not, but it is also not refused for all the other dirent events and
-it was never refused by inotify too, so that behavior is at least consistent.
-But if we do want to change the behavior of FAN_RENAME on file, my preference
-would be to start with a Fixes commit that forbis that, backport it to stable
-and then allow the new behavior upstream.
-I can post the fix patch.
+As you can see in the branch above, this is similar to your patch
+but more generic.
 
-> > Having briefly mentioned all this, what is your stance on maybe
-> > extending out FAN_RENAME to also cover files? Or, maybe you have
-> > another approach/idea in mind to cover such cases i.e. introducing a
-> > new flag FAN_{TRACK,TRACE}.
->
-> So extending FAN_MOVE_SELF or FAN_RENAME looks OK to me, not much thoughts
-> beyond that :).
+However, I did not like this approach especially if exporting blocking events
+to userspace because the hooks are called with directory inode locked.
 
-Both FAN_RENAME and FAN_REPORT_TARGET_FID are from v5.17
-which is rather new and it is highly unlikely that anyone has ever used them,
-so I think we can get away with fixing the API either way.
-Not to mention that the man pages have not been updated.
+That means that as long as the monitoring program does not approve
+an unlink, creation of files in that directory are blocked as well.
+This could also result in deadlock because userland is not aware of
+directory locking order.
 
-This is from the man page that is pending review:
+So IF we are going to support those blocking events in userspace
+and be aware that it is not at all certina that we will, then those events
+better be called without the inode lock held as in my pre_modify
+patches. I can split
+#define FS_NAME_INTENT         0x02000000      /* Subfile about to be
+linked/unlinked */
+To FS_LINK_INTENT and FS_UNLINK_INTENT if needed
+that is not a problem, but separate events for RMDIR and UNLINK is
+an overkill. You will be able to use FAN_ONDIR to request or ignore
+FS_UNLINK_INTENT events on directories.
 
-       FAN_REPORT_TARGET_FID (since Linux 5.17)
-              Events for fanotify groups initialized with this flag
-will contain additional information
-              about the child correlated with directory entry
-modification events...
-              For the directory entry modification events
-              FAN_CREATE,  FAN_DELETE,  FAN_RENAME,  and  FAN_MOVE,
-an  additional...
-
-       FAN_MOVED_TO (since Linux 5.1)
-              Create an event when a file or directory has been moved
-to a marked parent directory...
-
-       FAN_RENAME (since Linux 5.17)
-              This  event contains the same information provided by
-events FAN_MOVED_FROM
-              and FAN_MOVED_TO, ...
-
-       FAN_MOVE_SELF (since Linux 5.1)
-              Create an event when a marked file or directory itself
-has been moved...
-
-I think it will be easier to retrofit this functionality of FAN_RENAME
-(i.e. ...provided
-by events FAN_MOVED_FROM, FAN_MOVED_TO, and FAN_MOVE_SELF).
-Looking at the code, I think it will also be much easier to implement
-for FAN_RENAME
-because it is special-cased for reporting.
-
-HOWEVER! look at the way we implemented reporting of FAN_RENAME
-(i.e. match_mask). We report_new location only if watching sb or watching
-new dir. We did that for a reason because watcher may not have permissions
-to read new dir. We could revisit this decision for a privileged group, but will
-need to go back reading all the discussions we had about this point to see
-if there were other reasons(?).
+I expect to post these patches within month or two.
 
 Thanks,
 Amir.
