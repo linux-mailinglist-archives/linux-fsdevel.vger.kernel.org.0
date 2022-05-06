@@ -2,331 +2,236 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CF5B251D745
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 May 2022 14:03:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B53151D9B3
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 May 2022 15:57:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1391631AbiEFMH2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 May 2022 08:07:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60592 "EHLO
+        id S1349347AbiEFOBa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 May 2022 10:01:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1391635AbiEFMH1 (ORCPT
+        with ESMTP id S1441942AbiEFOBa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 May 2022 08:07:27 -0400
-Received: from esa5.hgst.iphmx.com (esa5.hgst.iphmx.com [216.71.153.144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A905E64BF6
-        for <linux-fsdevel@vger.kernel.org>; Fri,  6 May 2022 05:03:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1651838622; x=1683374622;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=VI8qxjFLlheDkNAyy6X02rzmG9+33ng0L25cSxgfA30=;
-  b=TgGSj2n9EMbdBceYgA3YI1R+me2hF0hJ6s5AXDeetRi4Eo4/Fp5LU8J4
-   Ya2x35BNx0bX/0GVVT7xbdMIGocHDKbI7L9mVURne+hCSNRb7Fo9q9W1n
-   WQtfGqzDw++ZJBzQQdG7SKz9dvHMPrTzbIz616DHml6ee+mqfiOdxUnAr
-   dkw5TSpMl9CTZvL7bJxfU9N11ns9okp9GCKrSkgDpsktGvpjaaTtRl8E0
-   ar/XOEM56AbrTFppfrjvoSnKBU8ENzTOElZM+ujr5XSp245jago2yMmLp
-   miJ29DpsGD1IpgZ4E2QGeITZ48/DrjGwkiLO80m2xC1QKceZzj37sxCql
-   g==;
-X-IronPort-AV: E=Sophos;i="5.91,203,1647273600"; 
-   d="scan'208";a="199687223"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 06 May 2022 20:03:42 +0800
-IronPort-SDR: a7o6g+jOBsP7Egx96XZbFsq0WHsxCoIrV9KvMwOn+aYXSqf8ez5sAPL12k+jzirbR1XLOg2o/Q
- F9NAC6lSMaa1Ex1wAPNPZUEU16Rc7rH+fkL3+nQYA5q9r7FGCRgxP7BrIXmB2etsCyl9DSJUZM
- z5vlmNcZxlSboyEDW77WUbghLj2uujjFyTCdQ6wJzvKFp2StkV5yLfW5OYb62U7+ecN2Zq/L4y
- qk1viaOlo56T3aiUCbWvbASNaIELgbAyKWPF0lvwn2uVgT+DwHOVtkiQ25QwB8DNTkUF3IZH3o
- Ub8MryoxKqN7fdJe/Va9Pzyo
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 06 May 2022 04:33:20 -0700
-IronPort-SDR: Kfn4Lv5JDZ957j7XtyXTuGindAGNBfsPsAtKduyooCh4cT+Wxr1XJzTSMzcqIeKlI9OunCJsXC
- IdH+yYA/s00MYPonXKCJV7cx5cF3ABZYODo+q6SXk6NSN//NKv5S7EVQN2IKJu/xfqQ6tB9oB1
- EUM817JJTpWKRkxLfajZmcFDNVKvO6MTS1+PpP94iUaBGR+8oV60ADm9o1EqE9ypO+WhzFBeKJ
- RhyTCXLP9LO4cJNMNdWBdoh897FE+I9CgimoyCFRiaLibkjJdv5NxIM4nOPC5iyN84Lr9nT6uj
- /mQ=
-WDCIronportException: Internal
-Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
-  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 06 May 2022 05:03:43 -0700
-Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4Kvq3L3ryFz1Rwrw
-        for <linux-fsdevel@vger.kernel.org>; Fri,  6 May 2022 05:03:42 -0700 (PDT)
-Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)"
-        header.d=opensource.wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
-        opensource.wdc.com; h=content-transfer-encoding:content-type
-        :in-reply-to:organization:from:references:to:content-language
-        :subject:user-agent:mime-version:date:message-id; s=dkim; t=
-        1651838621; x=1654430622; bh=VI8qxjFLlheDkNAyy6X02rzmG9+33ng0L25
-        cSxgfA30=; b=ubA8/2JkOQw0IAO4JgjiWSy6V4TmySyE+9LjrvaP1oAk51yiV/u
-        YRcO1grm10Z5cMFFDoGfQRBWVvfcFZsxDT+VbOlqnbOH4kMXmSmsMCMWStKGBoue
-        Y9KpfyIkrlRcaNXps8ItMtQcrm1QoNRtxYgkKVcWsT5F+WxiemiLYv1o8vBoFV+d
-        +syn6zwXWf5VwF0sUcRYJsqI48oulubgcVsP64vi6mYnDhXcSamOAGRqlCjHWSMv
-        wwCkFrNgbSsauDxeP06737/sg8b9xro2ZkCVXov2XleP/TilHfDsQnExP06wJq2S
-        PEPdiReULFvWnjMQsWeJzJpBsb6K1EtO3QQ==
-X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
-Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
-        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id bRGV54Br7-ud for <linux-fsdevel@vger.kernel.org>;
-        Fri,  6 May 2022 05:03:41 -0700 (PDT)
-Received: from [10.225.103.215] (hn9j2j3.ad.shared [10.225.103.215])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4Kvq3J6P8Kz1Rvlc;
-        Fri,  6 May 2022 05:03:40 -0700 (PDT)
-Message-ID: <6aeb8359-a31c-0832-61fe-ff6dc18b30c5@opensource.wdc.com>
-Date:   Fri, 6 May 2022 21:03:40 +0900
+        Fri, 6 May 2022 10:01:30 -0400
+Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 125705DBE9
+        for <linux-fsdevel@vger.kernel.org>; Fri,  6 May 2022 06:57:44 -0700 (PDT)
+Received: by mail-pg1-x536.google.com with SMTP id q76so6168495pgq.10
+        for <linux-fsdevel@vger.kernel.org>; Fri, 06 May 2022 06:57:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sBpFEbihRJcYw2PVZ0Ir3bkRfFP2on1Hh677/FjVuuA=;
+        b=ZwVj763v8hoF4d7BaAm9uGVTyMc483ySH7YASG1K10aEzVS0Vmk72uAd1m0+TDH1EW
+         gvs2/qjZ5lHf+n7alhvxZ6LYGwBmJa8bE1vs/lheGoRWS23op2iaOapZHV2/eRpKzGUE
+         tXNTNULhn2Ez4zYCkC0b3liDPqq5RENeSFJ0jACq3QzwQFo/JK0B7wd7fx7CEgAwsYO7
+         EIDfuLOaHTrYgGdh+KCTPRiJCdc9jAu373DKGmEArKatYHMKtNYwEby0/s1Lr8RnOjqA
+         Z3rQDjLodgh1Vc/STcd8hDkj8Xq7VCwA3fTA2DBzljsmaiTjsN7Ehd5MJnzweltVG31m
+         ZdkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sBpFEbihRJcYw2PVZ0Ir3bkRfFP2on1Hh677/FjVuuA=;
+        b=rysLW4u4D9hhi5pimdevRAi/7Ap+PXRr37ejHN4Upi9epTQLBiVgW8E4us2ss19a8K
+         3tUtYGPuhgiibGhzDbtXF/M2nHXzcEnoF/0ghpBYhz+YJ1aSW8WUoRoI7+cbd9a1xVfg
+         unV/2DowtPQ3XaLgTrPK9B4uz600PoJWpoY4q6LefB3nJ2l+e/EWo0QEP/Y3wMNvwao4
+         s5YLPfptBh/sT5WGG2/I/DSW3x+OdHr/Xd31c4dR5G8coCnKlX3MEs5yIZJuXU6JSM/d
+         u44Fqc3YN1Yk2WJqEP4oRKkr/9XG9Li4yTxI3tkOaHxxNvGaUr1hDHd5EYFKzNdU5TTv
+         LsrA==
+X-Gm-Message-State: AOAM531pOjyLphV5WWGtcrbDCyaKUaPYYPwPJAvStCvk00lmosB4D9eb
+        iBmoJvQJjvuNGgSGpv1N6EoHUJcAKIdaHw==
+X-Google-Smtp-Source: ABdhPJyvH8RJUZcUzn+WgxBBSixFUL4i/t72PK8/nTJ4dxUNHoIC8kqrvLRhsRHLLnWe9RF3xZ7Vhg==
+X-Received: by 2002:a63:1b1f:0:b0:3c1:bb2a:3afb with SMTP id b31-20020a631b1f000000b003c1bb2a3afbmr2863176pgb.596.1651845463396;
+        Fri, 06 May 2022 06:57:43 -0700 (PDT)
+Received: from localhost.localdomain ([50.7.159.34])
+        by smtp.gmail.com with ESMTPSA id ie13-20020a17090b400d00b001da3920d985sm7396931pjb.12.2022.05.06.06.57.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 May 2022 06:57:42 -0700 (PDT)
+From:   Liang Chen <liangchen.linux@gmail.com>
+X-Google-Original-From: Liang Chen <lchen@localhost.localdomain>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     hch@infradead.org, jmoyer@redhat.com, jack@suse.cz,
+        lczerner@redhat.com, Liang Chen <liangchen.linux@gmail.com>
+Subject: [PATCH] fs: Fix page cache inconsistency when mixing buffered and AIO DIO for bdev
+Date:   Fri,  6 May 2022 21:57:09 +0800
+Message-Id: <20220506135709.46872-1-lchen@localhost.localdomain>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.8.1
-Subject: Re: [RFC PATCH 00/10] Make O_SYNC writethrough
-Content-Language: en-US
-To:     Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        "Darrick J . Wong" <djwong@kernel.org>
-References: <20220503064008.3682332-1-willy@infradead.org>
- <20220505045821.GA1949718@dread.disaster.area>
- <YnNbf9dPhJ3FiHzH@casper.infradead.org>
- <20220505070534.GB1949718@dread.disaster.area>
-From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
-Organization: Western Digital Research
-In-Reply-To: <20220505070534.GB1949718@dread.disaster.area>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2022/05/05 16:05, Dave Chinner wrote:
-> On Thu, May 05, 2022 at 06:07:11AM +0100, Matthew Wilcox wrote:
->> On Thu, May 05, 2022 at 02:58:21PM +1000, Dave Chinner wrote:
->>> On Tue, May 03, 2022 at 07:39:58AM +0100, Matthew Wilcox (Oracle) wrote:
->>>> This is very much in development and basically untested, but Damian
->>>> started describing to me something that he wanted, and I told him he
->>>> was asking for the wrong thing, and I already had this patch series
->>>> in progress.  If someone wants to pick it up and make it mergable,
->>>> that'd be grand.
->>>
->>> That've very non-descriptive. Saying "someone wanted something, I said it's
->>> wrong, so here's a patch series about something else" doesn't tell me anything
->>> about the problem that Damien was trying to solve.
->>
->> Sorry about that.  I was a bit jet-lagged when I wrote it.
->>
->>>> The idea is that an O_SYNC write is always going to want to write, and
->>>> we know that at the time we're storing into the page cache.  So for an
->>>> otherwise clean folio, we can skip the part where we dirty the folio,
->>>> find the dirty folios and wait for their writeback.
->>>
->>> What exactly is this shortcut trying to optimise away? A bit of CPU
->>> time?
->>>
->>> O_SYNC is already a write-through operation - we just call
->>> filemap_write_and_wait_range() once we've copied the data into the
->>> page cache and dirtied the page. What does skipping the dirty page
->>> step gain us?
->>
->> Two things; the original reason I was doing this, and Damien's reason.
->>
->> My reason: a small write to a large folio will cause the entire folio to
->> be dirtied and written.
-> 
-> If that's a problem, then shouldn't we track sub-folio dirty
-> regions? Because normal non-O_SYNC buffered writes will still cause
-> this to happen...
-> 
->> This is unnecessary with O_SYNC; we're about
->> to force the write anyway; we may as well do the write of the part of
->> the folio which is modified, and skip the whole dirtying step.
-> 
-> What happens when another part of the folio is concurrently dirtied?
-> 
-> What happens if the folio already has other parts of it under
-> writeback? How do we avoid and/or resolve concurent "partial folio
-> writeback" race conditions?
-> 
->> Damien's reason: It's racy.  Somebody else (... even vmscan) could cause
->> folios to be written out of order.  This matters for ZoneFS because
->> writing a file out of order is Not Allowed.  He was looking at relaxing
->> O_DIRECT, but I think what he really wants is a writethrough page cache.
-> 
-> Zonefs has other mechanisms to solve this. It already has the
-> inode_lock() to serialise all dio writes to a zone because they must
-> be append IOs. i.e. new writes must be located at the write pointer,
-> and the write pointer does not get incremented until the IO
-> has been submitted (for DIO+AIO) or completed (for non-AIO).
-> 
-> Hence for buffered writes, we have the same situation: once we have
-> sampled the zone write pointer to get the offset, we cannot start
-> another write until the current IO has been submitted.
-> 
-> Further, for zonefs, we cannot get another write to that page cache
-> page *ever*; we can only get reads from it. Hence page state really
-> doesn't matter at all - once there is data in the page cache page,
-> all that can happen is it can be invalidated but it cannot change
-> (ah, the beauties of write-once media!). Hence the dirty state is
-> completely meaningless from a coherency and integrity POV, as is the
-> writeback state.
-> 
-> IOWs, for zonefs we can already ignore the page dirtying and
-> writeback mechanisms fairly safely. Hence we could do something like
-> this in the zonefs buffered write path:
-> 
-> - lock the inode
-> - sample the write pointer to get the file offset
-> - instantiate a page cache folio at the given offset
-> - copy the data into the folio, mark it up to date.
-> - mark it as under writeback or lock the folio to keep reclaim away
-> - add the page cache folio to an iter_iov
-> - pass the iter_iov to the direct IO write path to submit the IO and
->   wait for completion.
-> - clear the folio writeback state.
-> - move the write pointer
-> - unlock the inode
+From: Liang Chen <liangchen.linux@gmail.com>
 
-That was my initial idea. When I talked about it with Matthew, he mentioned his
-write-through work and posted it. For my use case, I do like what he has done
-since that would avoid the need to add most of the above machinery to zonefs.
-But if there are no benefits anywhere else, adding this as a zonefs only thing
-is fine with me.
+As pointed out in commit 332391a, mixing buffered reads and asynchronous
+direct writes risks ending up with a situation where stale data is left
+in page cache while new data is already written to disk. The same problem
+hits block dev fs too. A similar approach needs to be taken here.
 
-> and that gets us writethrough O_SYNC buffered writes. In fact, I
-> think it may even work with async writes, too, just like the DIO
-> write path seems to work with AIO.
+Signed-off-by: Liang Chen <liangchen.linux@gmail.com>
+---
+ block/fops.c | 92 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 92 insertions(+)
 
-Yes, I think this all works for AIOs too since we use the "soft" write pointer
-position updated on BIO submit, not completion.
-
-> The best part about the above mechanism is that there is
-> almost no new iomap, page cache or direct IO functionality required
-> to do this. All the magic is all in the zonefs sequential zone write
-> path. Hence I don't see needing to substantially modify the iomap
-> buffered write path to do zonefs write-through....
-
-Indeed. The only additional constraint is that zonefs must still ensure that
-writes are physical block aligned to avoid iomap attempting to do a
-read-modify-rewrite of the last written sector of a zone. Just need to think
-about potential corner cases when the page size is larger than the device block
-size. Could the partially filled last page of a file ever end-up needing a
-read-modify-write ? I do not think so, but need to check.
-
->>>> The biggest problem with all this is that iomap doesn't have the necessary
->>>> information to cause extent allocation, so if you do an O_SYNC write
->>>> to an extent which is HOLE or DELALLOC, we can't do this optimisation.
->>>> Maybe that doesn't really matter for interesting applications.  I suspect
->>>> it doesn't matter for ZoneFS.
->>>
->>> This seems like a lot of complexity for only partial support. It
->>> introduces races with page dirtying and cleaning, it likely has
->>> interesting issues with all the VM dirty/writeback accounting
->>> (because this series is using a completion path that expects the
->>> submission path has done it's side of the accounting) and it only
->>> works in certain preconditions are met.
->>
->> If we want to have better O_SYNC support, I think we can improve those
->> conditions.  For example, XFS could preallocate the blocks before calling
->> into iomap.  Since it's an O_SYNC write, everything is already terrible.
-> 
-> Ugh, that's even worse.
-> 
-> Quite frankly, designing pure O_SYNC writethrough is a classic case
-> of not seeing the forest for the trees.  What we actually need is
-> *async* page cache write-through.
-> 
-> Ever wondered why you can only get 60-70k write IOPS out of buffered
-> writes? e.g untarring really large tarballs of small files always
-> end up at 60-70k write IOPS regardless of filesystem, how many
-> threads you break the writes up into, etc? io_uring buffered writes
-> won't save us here, either, because it's not the data ingest side
-> that limits performance. Yeah, it's the writeback side that limits
-> us.
-> 
-> There's a simple reason for that: the flusher thread becomes CPU
-> bound doing the writeback of hundreds of thousands of dirty inodes.
-> 
-> Writeback caching is a major bottleneck on high performance storage;
-> when your storage can do 6.5GB/s and buffered writes can only copy
-> into the page cache and flush to disk at 2GB/s (typically lower than
-> this!), writeback caching is robbing us of major amounts of
-> performance.
-> 
-> It's even worse with small files - the flusher thread becomes CPU
-> bound at 60-80k IOPS on XFS, ext4 and btrfs because block allocation
-> is an expensive operation. On a device with a couple of million IOPS
-> available, having the kernel top out at under 5% of it's capacity is
-> pretty bad.
-> 
-> However, if I do a hacky "writethrough" of small writes by calling
-> filemap_flush() in ->release() (i.e. when close is called after the
-> write), then multithreaded small file write workloads can push
-> *several hundred thousand* write IOPS to disk before I run out of
-> CPU.
-> 
-> Write-through enables submission concurrency for small IOs. It
-> avoids lots of page state management overehad for high data
-> throughput IO. That's where all the performance wins with high end
-> storage are - keeping the pipes full. Buffered writes stopped being
-> able to do that years ago, and modern PCIe4 SSDs have only made that
-> gulf wider again.
-> 
-> IOWs, what we actually need is a clean page cache write-through
-> model that doesn't have any nasty quirks or side effects. IOWs, I
-> think you are on the right conceptual path, just the wrong
-> architectural path.
-> 
-> My preference would be for the page cache write-through mode to be a
-> thin shim over the DIO write path. The DIO write path is a highly
-> concurrent async IO engine - it's designed to handle everything
-> AIO and io_uring can throw at it. Forget about "direct IO", just
-> treat it as a high concurrency, high throughput async IO engine.
-> 
-> Hence for page cache write-through, all we do is instantiate the
-> page cache page, lock it, copy the data into it and then pass it to
-> the direct IO write implementation to submit it and then unlock it
-> on completion.  There's nothing else we really need to do - the DIO
-> path already handles everything else.
-
-Yes ! And the special case for zonefs would actually implement almost exactly
-this, modulo the additional requirement of the write alignment that is purely
-due to zonefs/device constraint.
-
-> 
-> And if we use page/folio locking for concurrency synchronisation of
-> write-through mode instead of an exclusive inode lock, the model
-> allows for concurrent, non-overlapping buffered writes to a single
-> inode, just like we have for direct IO. It also allows us to avoid
-> all dirty and writeback page cache and VM state/accounting
-> manipulations. ANd by using the page/folio lock we avoid racing
-> state transitions until the write-through op is complete.
-> 
-> Sure, if there is an existing dirty folio in the page cache, then
-> punt it down the existing buffered IO path - something else is
-> already using write-back caching for this folio (e.g. mmap), so we
-> don't want to deal with trying to change modes.
-> 
-> But otherwise, we don't want to go near the normal buffered write
-> paths - they are all optimised for *write back* caching.  From an IO
-> and filesystem allocation optimisation perspective, page-cache
-> write-through IO is exactly the same as direct IO writes.  Hence we
-> ireally want page cache write-through to use the same allocator
-> paths and optimisations as the direct IO path, not the existing
-> buffered write path.
-> 
-> This sort of setup will get write-through buffered writes close to
-> the throughput of what direct IO is capable of on modern storage. It
-> won't quite match it, because DIO is zero copy and buffered IO is
-> copy-once, but it'll get a *lot* closer than it does now....
-> 
-> Cheers,
-> 
-> Dave.
-
-
+diff --git a/block/fops.c b/block/fops.c
+index 9f2ecec406b0..8ab679814b9d 100644
+--- a/block/fops.c
++++ b/block/fops.c
+@@ -136,11 +136,56 @@ struct blkdev_dio {
+ 	size_t			size;
+ 	atomic_t		ref;
+ 	unsigned int		flags;
++	struct work_struct	complete_work;
+ 	struct bio		bio ____cacheline_aligned_in_smp;
+ };
+ 
+ static struct bio_set blkdev_dio_pool;
+ 
++static void blkdev_aio_complete_work(struct work_struct *work)
++{
++	struct blkdev_dio *dio = container_of(work, struct blkdev_dio, complete_work);
++	struct kiocb *iocb = dio->iocb;
++	int err;
++	struct inode *inode = bdev_file_inode(iocb->ki_filp);
++	loff_t offset = iocb->ki_pos;
++	ssize_t ret;
++
++	WRITE_ONCE(iocb->private, NULL);
++
++	if (likely(!dio->bio.bi_status)) {
++		ret = dio->size;
++		iocb->ki_pos += ret;
++	} else {
++		ret = blk_status_to_errno(dio->bio.bi_status);
++	}
++
++	/*
++	 * Try again to invalidate clean pages which might have been cached by
++	 * non-direct readahead, or faulted in by get_user_pages() if the source
++	 * of the write was an mmap'ed region of the file we're writing.  Either
++	 * one is a pretty crazy thing to do, so we don't support it 100%.  If
++	 * this invalidation fails, tough, the write still worked...
++	 */
++	if (iocb->ki_flags & IOCB_WRITE && ret > 0 &&
++	    inode->i_mapping->nrpages) {
++		err = invalidate_inode_pages2_range(inode->i_mapping,
++				offset >> PAGE_SHIFT,
++				(offset + ret - 1) >> PAGE_SHIFT);
++		if (err)
++			dio_warn_stale_pagecache(iocb->ki_filp);
++	}
++
++	iocb->ki_complete(iocb, ret);
++
++	/*
++	 * For multi-bio dio dio->bio has an extra reference to ensure the
++	 * dio stays around. In the other case, an extra reference is taken
++	 * to make sure 
++	 */
++	bio_put(&dio->bio);
++}
++
+ static void blkdev_bio_end_io(struct bio *bio)
+ {
+ 	struct blkdev_dio *dio = bio->bi_private;
+@@ -153,6 +198,14 @@ static void blkdev_bio_end_io(struct bio *bio)
+ 		if (!(dio->flags & DIO_IS_SYNC)) {
+ 			struct kiocb *iocb = dio->iocb;
+ 			ssize_t ret;
++			struct inode *inode = bdev_file_inode(iocb->ki_filp);
++
++			if (iocb->ki_flags & IOCB_WRITE){
++				INIT_WORK(&dio->complete_work, blkdev_aio_complete_work);
++				queue_work(inode->i_sb->s_dio_done_wq,
++						&dio->complete_work);
++				goto out;
++			}
+ 
+ 			WRITE_ONCE(iocb->private, NULL);
+ 
+@@ -173,6 +226,7 @@ static void blkdev_bio_end_io(struct bio *bio)
+ 		}
+ 	}
+ 
++out:
+ 	if (should_dirty) {
+ 		bio_check_pages_dirty(bio);
+ 	} else {
+@@ -284,6 +338,20 @@ static void blkdev_bio_end_io_async(struct bio *bio)
+ 	struct blkdev_dio *dio = container_of(bio, struct blkdev_dio, bio);
+ 	struct kiocb *iocb = dio->iocb;
+ 	ssize_t ret;
++	struct inode *inode = bdev_file_inode(iocb->ki_filp);
++
++	if (iocb->ki_flags & IOCB_WRITE){
++		INIT_WORK(&dio->complete_work, blkdev_aio_complete_work);
++		/*
++		 * Grab an extra reference to ensure the dio structure
++		 * which the bio embeds in stays around for complete_work
++		 * to access.
++		 */
++		bio_get(bio);
++		queue_work(inode->i_sb->s_dio_done_wq,
++				&dio->complete_work);
++		goto out;
++	}
+ 
+ 	WRITE_ONCE(iocb->private, NULL);
+ 
+@@ -296,6 +364,7 @@ static void blkdev_bio_end_io_async(struct bio *bio)
+ 
+ 	iocb->ki_complete(iocb, ret);
+ 
++out:
+ 	if (dio->flags & DIO_SHOULD_DIRTY) {
+ 		bio_check_pages_dirty(bio);
+ 	} else {
+@@ -366,14 +435,37 @@ static ssize_t __blkdev_direct_IO_async(struct kiocb *iocb,
+ 	return -EIOCBQUEUED;
+ }
+ 
++int blkdev_sb_init_dio_done_wq(struct super_block *sb)
++{
++	struct workqueue_struct *old;
++	struct workqueue_struct *wq = alloc_workqueue("dio/%s",
++						     WQ_MEM_RECLAIM, 0,
++						     sb->s_id);
++	if (!wq)
++	       return -ENOMEM;
++	/*
++	 * This has to be atomic as more DIOs can race to create the workqueue
++	 */
++	old = cmpxchg(&sb->s_dio_done_wq, NULL, wq);
++	/* Someone created workqueue before us? Free ours... */
++	if (old)
++		destroy_workqueue(wq);
++       return 0;
++}
++
+ static ssize_t blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+ {
+ 	unsigned int nr_pages;
++	struct inode *inode = bdev_file_inode(iocb->ki_filp);
+ 
+ 	if (!iov_iter_count(iter))
+ 		return 0;
+ 
+ 	nr_pages = bio_iov_vecs_to_alloc(iter, BIO_MAX_VECS + 1);
++
++	if(!inode->i_sb->s_dio_done_wq && blkdev_sb_init_dio_done_wq(inode->i_sb))
++		return -ENOMEM;
++
+ 	if (likely(nr_pages <= BIO_MAX_VECS)) {
+ 		if (is_sync_kiocb(iocb))
+ 			return __blkdev_direct_IO_simple(iocb, iter, nr_pages);
 -- 
-Damien Le Moal
-Western Digital Research
+2.31.1
+
