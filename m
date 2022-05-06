@@ -2,343 +2,242 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 01B5E51D0C3
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 May 2022 07:34:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8D2451D1D5
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 May 2022 09:01:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1389205AbiEFFiB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 May 2022 01:38:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43320 "EHLO
+        id S1387718AbiEFHFb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 May 2022 03:05:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236039AbiEFFiA (ORCPT
+        with ESMTP id S1387628AbiEFHF3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 May 2022 01:38:00 -0400
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAA733A5CB;
-        Thu,  5 May 2022 22:34:17 -0700 (PDT)
-Received: by mail-pl1-x62f.google.com with SMTP id d22so6390110plr.9;
-        Thu, 05 May 2022 22:34:17 -0700 (PDT)
+        Fri, 6 May 2022 03:05:29 -0400
+Received: from mail-wm1-x32f.google.com (mail-wm1-x32f.google.com [IPv6:2a00:1450:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9C9E50050
+        for <linux-fsdevel@vger.kernel.org>; Fri,  6 May 2022 00:01:46 -0700 (PDT)
+Received: by mail-wm1-x32f.google.com with SMTP id bg25so3860709wmb.4
+        for <linux-fsdevel@vger.kernel.org>; Fri, 06 May 2022 00:01:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
+        d=google.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ex69CouA/TD9oouk6ZSjABFg+EwbviuytwIS+udyRK0=;
-        b=GSWOmPmxTH1saaOMyyviXcK0CKT1/z3NUdSqHErFcKyK6a1QLYPfDdv4UKVcR8Eep0
-         7tpjgpsaIeSdroZAhJ+PHtKj63Rh6AqXrvw3szOvVbBvjc9BUi5l97St1yqsh1GCIX0w
-         BF1R4DpE/El8wgOyqJH+8/Z6EM1eVykM/tIuYilVGSo+Kxok0w9rhuHVRkJ9atylAgxn
-         KZjVm48tgqLzffgwxIYJL2w2laxejfcdShYxmaJaXhUqDDs4ago5+Sb4j8VDsF0rzfkn
-         Y2LO4Ptkbv/Ww/jr+n5EBGtwd+OSEt69Ltq7vAz9+h/VF1PW2s24yqoe9OTkTo5PKdKw
-         EfRQ==
+        bh=EGTiQdFZir3JGg77TIFAFhu2mng/V1wuD90wZvDc+Cw=;
+        b=sJeHYED/BphVruQjBElxG+HxeepzGbxyw8mZnY4hNw4jnTn8jLAprTHBRqeBVEvbjC
+         RXEqMnpd6iObosOVLnHhVk7Q/uAOx0OlwMGufnMUcNDJ1n/gy61gO1si1Zjn3ijFPSTm
+         WNbkqlWpE0+JPWT14Ct9GawZ3bRW4TuTkWMzPxxyNtD85KJ8DOE4RP+dNanNxW504fPd
+         dCNXfbnBLiIpugC6l6KsU0af8eU/iVALjkvAFAKADzy0WYzBqUCv8V6Kials/fvdNMWL
+         wr8S2FxsqNuuuizZXevxSSLo1VJ2tVB2Q+boGGWsqmzv+lzHzLLkc7FaMK8AysX0nFmK
+         ldcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ex69CouA/TD9oouk6ZSjABFg+EwbviuytwIS+udyRK0=;
-        b=RJzRBp4qkRXsRu+GWRDJBu5W7KE11MR4bCYvGAZtkgseNKtJWUUuNE18XuEFyHBY2A
-         gauzVwNjKQFXWyvIio6kDdzjdmQRLfqY8XfoUjWNOS/w2kxerTdTTvrRWl4bD1sdH4+/
-         jlEfyA87q/5coRwc66BSpHr9CWVnzp53fCO/Vz2cL0H4HWokKG3FzGJS5IKNur9yUGYg
-         DGGw1uoKLWSujqERsEjm+5tci2SNsgPwednVDmmHV8MNNdJ5EDtSVn/CHkL+2ZEtRjp0
-         89J8EPSpuLhqrBYOiXU3muzvD1bDTIbO7FDeXz/+mQNCTw3Av7+LePHw6SDP9eKiU6V6
-         sVyg==
-X-Gm-Message-State: AOAM53108bolYaLWjsR6HFFJ0RxlK2DvxKfnG8XibHuib1vZ6YfveVCp
-        roLIV3ejecqDXPH0YjdNHZ2CpY3PKGO2W6jvn3k=
-X-Google-Smtp-Source: ABdhPJxPLkQmdAjqANMl0WM5PPzqCmrkZ/XyNTxbtICN+fEKBt/PZsUZHpCFYrAvRDmZMxVsknEVEc3ayv+vYgOWcDc=
-X-Received: by 2002:a17:902:e809:b0:15e:c67d:14c5 with SMTP id
- u9-20020a170902e80900b0015ec67d14c5mr1772992plg.13.1651815256926; Thu, 05 May
- 2022 22:34:16 -0700 (PDT)
+        bh=EGTiQdFZir3JGg77TIFAFhu2mng/V1wuD90wZvDc+Cw=;
+        b=bEL0Dw8kxf1AXYqCvTOysNgpZY7PSm1kK4tyKqvop+M8m8MGfdUlnhWGIdb4yH0jan
+         y1N1hvaNrfTGxn7rCTc/qaJ4aH5TmstvQOXfA4fiq9Osbz4A4PxqMQ3UAXZs7RuVC4BW
+         rydTZ8veZ7m7bDsd2UWkie6CTSoqpAdVgW/N0DVjYjtGt7Vq093Lg53cJ5RUys2AO09x
+         /zs6Ryuy/ySkFst15a+PRaxNeIEZVIb7euLKkQ/9aOCnz39jtUQNKbgXhxuqJa5N9XEA
+         NQJFRFdSaMHYdgyppYFeUxkzIRPFLlLoaWeMCbhjxQcNFL/XMYHM0zrMtO1DAmSnvw49
+         UCgA==
+X-Gm-Message-State: AOAM530PHQ8p6zPDFQE+bSPUjpn0G5xUgcVvAiuxAI5Hbbix2+fmi13c
+        jtFVveFAItNUMXZAAr8Xedtp5ic2aTdBXfDNVRzGZw==
+X-Google-Smtp-Source: ABdhPJxgiYvcpDl5iIQO0WW2jhx5CW4NvSGAj1yQeUK6OqNF1Z6M/1hngPglCSRdiQp6dzFREoSS6qG4PV+b5nu2+X0=
+X-Received: by 2002:a05:600c:12c9:b0:394:54ab:52c5 with SMTP id
+ v9-20020a05600c12c900b0039454ab52c5mr8566186wmd.141.1651820505351; Fri, 06
+ May 2022 00:01:45 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220502102521.22875-1-dharamhans87@gmail.com>
- <20220502102521.22875-2-dharamhans87@gmail.com> <YnGIUOP2BezDAb1k@redhat.com>
- <CACUYsyGoX+o19u41cZyF92eDBO-9rFN_EEWBvWBGrEMuNn29Mw@mail.gmail.com>
- <YnKR9CFYPXT1bM1F@redhat.com> <CACUYsyG+QRyObnD5eaD8pXygwBRRcBrGHLCUZb2hmMZbFOfFTg@mail.gmail.com>
- <YnPeqPTny1Eeat9r@redhat.com>
-In-Reply-To: <YnPeqPTny1Eeat9r@redhat.com>
-From:   Dharmendra Hans <dharamhans87@gmail.com>
-Date:   Fri, 6 May 2022 11:04:05 +0530
-Message-ID: <CACUYsyG9mKQK+pWcAcWFEtC2ad0_OBU6NZgBC965ZxQy5_JiXQ@mail.gmail.com>
-Subject: Re: [PATCH v4 1/3] FUSE: Implement atomic lookup + create
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        linux-kernel@vger.kernel.org, Bernd Schubert <bschubert@ddn.com>,
-        Dharmendra Singh <dsingh@ddn.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+References: <20220429043913.626647-1-davidgow@google.com> <20220430030019.803481-1-davidgow@google.com>
+ <Ym7P7mCoMiQq99EM@bombadil.infradead.org> <Ym7QXOMK3fLQ+b6t@bombadil.infradead.org>
+ <CABVgOSmXyN3SrDkUt4y_TaKPvEGVJgbuE3ycrVDa-Kt1NFGH7g@mail.gmail.com>
+ <YnKS3MwNxvEi73OP@bombadil.infradead.org> <CAGS_qxrz1WoUd5oGa7p1-H2mQVbkRxSTEbqnCG=aBj=xnMu1zQ@mail.gmail.com>
+ <YnLJ6dJQBTYjBRHZ@bombadil.infradead.org> <CAGS_qxoFECVJD3Jby1eTWG741hBWuotuEM78PU-qfyvp-nLV7Q@mail.gmail.com>
+ <YnLsPgbQ7CHiannN@bombadil.infradead.org> <YnNnLIZDxkNwECv+@bombadil.infradead.org>
+In-Reply-To: <YnNnLIZDxkNwECv+@bombadil.infradead.org>
+From:   David Gow <davidgow@google.com>
+Date:   Fri, 6 May 2022 15:01:34 +0800
+Message-ID: <CABVgOS=8=41KgVEgRAGcDZ_JrZpsVaK24ca0jR5J74XY9GCmDA@mail.gmail.com>
+Subject: Re: [PATCH v2] kunit: Taint kernel if any tests run
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Daniel Latypov <dlatypov@google.com>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Lucas De Marchi <lucas.demarchi@intel.com>,
+        Aaron Tomlin <atomlin@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "Guilherme G . Piccoli" <gpiccoli@igalia.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        John Ogness <john.ogness@linutronix.de>,
+        Joe Fradley <joefradley@google.com>,
+        KUnit Development <kunit-dev@googlegroups.com>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jani Nikula <jani.nikula@linux.intel.com>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+        boundary="00000000000079b5a205de526e16"
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 5, 2022 at 7:56 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+--00000000000079b5a205de526e16
+Content-Type: text/plain; charset="UTF-8"
+
+On Thu, May 5, 2022 at 1:57 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
 >
-> On Thu, May 05, 2022 at 10:21:21AM +0530, Dharmendra Hans wrote:
-> > On Wed, May 4, 2022 at 8:17 PM Vivek Goyal <vgoyal@redhat.com> wrote:
-> > >
-> > > On Wed, May 04, 2022 at 09:56:49AM +0530, Dharmendra Hans wrote:
-> > > > On Wed, May 4, 2022 at 1:24 AM Vivek Goyal <vgoyal@redhat.com> wrote:
-> > > > >
-> > > > > On Mon, May 02, 2022 at 03:55:19PM +0530, Dharmendra Singh wrote:
-> > > > > > From: Dharmendra Singh <dsingh@ddn.com>
-> > > > > >
-> > > > > > When we go for creating a file (O_CREAT), we trigger
-> > > > > > a lookup to FUSE USER SPACE. It is very  much likely
-> > > > > > that file does not exist yet as O_CREAT is passed to
-> > > > > > open(). This lookup can be avoided and can be performed
-> > > > > > as part of create call into libfuse.
-> > > > > >
-> > > > > > This lookup + create in single call to libfuse and finally
-> > > > > > to USER SPACE has been named as atomic create. It is expected
-> > > > > > that USER SPACE create the file, open it and fills in the
-> > > > > > attributes which are then used to make inode stand/revalidate
-> > > > > > in the kernel cache. Also if file was newly created(does not
-> > > > > > exist yet by this time) in USER SPACE then it should be indicated
-> > > > > > in `struct fuse_file_info` by setting a bit which is again used by
-> > > > > > libfuse to send some flags back to fuse kernel to indicate that
-> > > > > > that file was newly created. These flags are used by kernel to
-> > > > > > indicate changes in parent directory.
-> > > > >
-> > > > > Reading the existing code a little bit more and trying to understand
-> > > > > existing semantics. And that will help me unerstand what new is being
-> > > > > done.
-> > > > >
-> > > > > So current fuse_atomic_open() does following.
-> > > > >
-> > > > > A. Looks up dentry (if d_in_lookup() is set).
-> > > > > B. If dentry is positive or O_CREAT is not set, return.
-> > > > > C. If server supports atomic create + open, use that to create file and
-> > > > >    open it as well.
-> > > > > D. If server does not support atomic create + open, just create file
-> > > > >    using "mknod" and return. VFS will take care of opening the file.
-> > > > >
-> > > > > Now with this patch, new flow is.
-> > > > >
-> > > > > A. Look up dentry if d_in_lookup() is set as well as either file is not
-> > > > >    being created or fc->no_atomic_create is set. This basiclally means
-> > > > >    skip lookup if atomic_create is supported and file is being created.
-> > > > >
-> > > > > B. Remains same. if dentry is positive or O_CREATE is not set, return.
-> > > > >
-> > > > > C. If server supports new atomic_create(), use that.
-> > > > >
-> > > > > D. If not, if server supports atomic create + open, use that
-> > > > >
-> > > > > E. If not, fall back to mknod and do not open file.
-> > > > >
-> > > > > So to me this new functionality is basically atomic "lookup + create +
-> > > > > open"?
-> > > > >
-> > > > > Or may be not. I see we check "fc->no_create" and fallback to mknod.
-> > > > >
-> > > > >         if (fc->no_create)
-> > > > >                 goto mknod;
-> > > > >
-> > > > > So fc->no_create is representing both old atomic "create + open" as well
-> > > > > as new "lookup + create + open" ?
-> > > > >
-> > > > > It might be obvious to you, but it is not to me. So will be great if
-> > > > > you shed some light on this.
-> > > > >
+> On Wed, May 04, 2022 at 02:12:30PM -0700, Luis Chamberlain wrote:
+> > On Wed, May 04, 2022 at 02:19:59PM -0500, Daniel Latypov wrote:
+> > > On Wed, May 4, 2022 at 1:46 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+> > > > OK so, we can just skip tainting considerations for selftests which
+> > > > don't use modules for now. There may be selftests which do wonky
+> > > > things in userspace but indeed I agree the userspace taint would
+> > > > be better for those but I don't think it may be worth bother
+> > > > worrying about those at this point in time.
 > > > >
-> > > > I think you got it right now. New atomic create does what you
-> > > > mentioned as new flow.  It does  lookup + create + open in single call
-> > > > (being called as atomic create) to USER SPACE.mknod is a special case
+> > > > But my point in that sharing a taint between kunit / selftests modules
+> > > > does make sense and is easily possible. The unfortunate aspect is just
 > > >
-> > > Ok, naming is little confusing. I think we will have to put it in
-> > > commit message and where you define FUSE_ATOMIC_CREATE that what's
-> > > the difference between FUSE_CREATE and FUSE_ATOMIC_CREATE. This is
-> > > ATOMIC w.r.t what?
+> > > Yes, I 100% agree that we should share a taint for kernelspace testing
+> > > from both kunit/kselftest.
+> > > Someone running the system won't care what framework was used.
 > >
-> > Sure, I would update the commit message to make the distinction clear
-> > between the two. This operation is atomic w.r.t to USER SPACE FUSE
-> > implementations. i.e USER SPACE would be performing all these
-> > operations in a single call to it.
+> > OK do you mind doing the nasty work of manually adding the new
+> > MODULE_TAINT() to the selftests as part of your effort?
+> >
+> > *Alternatively*, if we *moved* all sefltests modules to a new
+> > lib/debug/selftests/ directory or something like that then t would
+> > seem modpost *could* add the taint flag automagically for us without
+> > having to edit or require it on new drivers. We have similar type of
+> > taint for staging, see add_staging_flag().
+> >
+> > I would *highly* prefer this approach, event though it is more work,
+> > because I think this is a step we should take anyway.
+> >
+> > However, I just checked modules on lib/ and well, some of them are
+> > already in their own directory, like lib/math/test_div64.c. So not
+> > sure, maybe just move a few modules which are just in lib/*.c for now
+> > and then just sprinkle the MODULE_TAINT() to the others?
 >
-> I think even FUSE_CREAT is doing same thing. Creating file, opening and
-> doing lookup and sending all the data. So that's not the difference
-> between the two, IMHO. And that's why I am getting confused with the
-> naming.
+> I *think* we could just pull this off with a much easier approach,
+> simply looking for the substrings in the module name in modpost.c:
 >
-> From user space file server perspective, only extra operation seems
-> to be that it sends a flag in response telling the client whether
-> file was actually created or it already existed. So to me it just
-> sounds little extension of existing FUSE_CREATE command and that's
-> why I thought calling it FUSE_CREATE_EXT is probably better naming.
+>   * "_test." || "-test."
+>   * ^"test_" || ^"test-"
+>
+> An issue with this of course is a vendor $FOO with an out of tree
+> test driver may end up with the taint. Perhaps we don't care.
+>
+> That means moving selftests to its own directory is not needed at this
+> point in time.
 
-The difference between the two is of atomicity from top to bottom i.e
-single call from fuse kernel to user space file server. Generally
-FUSE_CREATE goes upto libfuse low level API as atomic (check
-fuse_lib_create()) and it gets separated there into two calls (create
-+ getattr). This is not what we want as it results in two network
-trips each for create and lookup to the file server.
+I can't say I'm thrilled with the idea of just doing name comparisons,
+particularly since not all of them match this pattern, for example:
+bpf_testmod.ko. (Though, frankly, more of them do than I'd've
+guessed.)
 
->
-> >
-> >
-> > > May be atomic here means that "lookup + create + open" is a single operation.
-> > > But then even FUSE_CREATE is atomic because "creat + open" is a single
-> > > operation.
-> > >
-> > > In fact FUSE_CREATE does lookup anyway and returns all the information
-> > > in fuse_entry_out.
-> > >
-> > > IIUC, only difference between FUSE_CREATE and FUSE_ATOMIC_CREATE is that
-> > > later also carries information in reply whether file was actually created
-> > > or not (FOPEN_FILE_CREATED). This will be set if file did not exist
-> > > already and it was created indeed. Is that right?
-> >
-> > FUSE_CREATE is atomic but upto level of libfuse. Libfuse separates it
-> > into two calls, create and lookup separately into USER SPACE FUSE
-> > implementation.
->
-> I am not sure what do you mean by "libfuse separates it into two calls,
-> create and lookup separately". I guess you are referring to lo_create()
-> in example/passthrough_ll.c which first creates and opens file and
-> then looks it up and replies.
->
->         fd = openat(lo_fd(req, parent), name,
->                     (fi->flags | O_CREAT) & ~O_NOFOLLOW, mode);
->         err = lo_do_lookup(req, parent, name, &e);
->         fuse_reply_create(req, &e, fi);
->
-> I am looking at your proposal for atomic_create implementation here.
->
-> https://github.com/libfuse/libfuse/pull/673/commits/88cd25b2857f2bb213d01afbcfd666787d1e6893#diff-a36385ec8fb753d6f4492a5f0d3c6a5750bd370b50df6ef0610efdcd3f8880ffR787
->
-> It is doing exactly same thing as lo_create(), except one difference that
-> it is checking first if file exists. It essentially is doing this.
->
-> A. newfd = openat(lo_fd(req, parent), name, O_PATH | O_NOFOLLOW);
-> B. fd = openat(lo_fd(req, parent), name,
->                     (fi->flags | O_CREAT) & ~O_NOFOLLOW, mode);
-> C. err = lo_do_lookup(req, parent, name, &e);
-> D. fuse_reply_create(req, &e, fi);
->
-> So what do you mean by libfuse makes it two calls.
->
-> And I think above implementation is racy. What if filesystem is
-> shared and another client creates the file between calls to
-> A and B. You will think you created the file but some other
-> client created it.
->
-> So if intent is to know whether we created the file or not, then
-> you should probably do openat() with O_EXCL flag. If that succeeds
-> you know you created the file. If it fails with -EEXIST, then you
-> know file is already there. That's what virtiofs does.
->
-> Anyway, coming back to the point. IMHO, from server perspective,
-> there is no atomicity difference between FUSE_CREATE and
-> FUSE_ATOMIC_CREATE. Only difference seems to be to send addditional
-> information back to the client to tell it whether file was created
-> or not.
->
-> In fact for shared filesystem this is probably a problem. What if
-> guest's cache is stale and it does not know about the file. A client
-> B creates the file and we think we did not create the file. And we
-> will return with FOPEN_FILE_CREATED = 0. And in that case client
-> will not call fuse_dir_changed(). But that seems wrong in case
-> of shared filesystems. I am concerned about virtiofs which can
-> be shared between different guests.
->
-> Miklos, WDYT?
->
-> May be it is not a huge concern. If one guest drops a file, other guest
-> will not invalidate its dir attrs till timeout happens. Case of shared
-> filesystem is very tricky with fuse. And sometimes it is not clear
-> to me what kind of coherency matters.
->
-> So in this case say I am booted with cache=auto, if guest B drops a file
-> bar/foo.txt and guest A does open(bar/foo.txt, O_CREAT), then should
-> guest A invalidate the attrs of bar/ right away or it will be invalidated
-> anyway after a second.
->
-> Anyway.., my core point is that difference between FUSE_CREATE and
-> FUSE_ATOMIC_CREATE is just one flag FOPEN_FILE_CREATED which tells
-> client whether file was actually created or not. And that is used
-> to determine whether to invalidate parent dir attributes or not. It
-> does not have anything extra in terms of ATOMICITY as far as I can
-> see and that's what confuses me.
+Maybe adding a taint call to the selftest helper module framework in
+kselftest_module.h, though again, there are several tests which don't
+use it.
 
-You checked the wrong code. pasthrough_ll is not production code, we
-do not use it at all, just using it to test these patches here. There
-is a main patch which implements atomic create in libfuse for low
-level api(). It is in same pull request, check it here
-https://github.com/libfuse/libfuse/pull/673/commits/f86fe92bef7bb529ef1617e077d69a39eb26bc9f
+I _suspect_ we'd be able to hit most of them by tainting in frameworks
+like the above, and patch the remaining modules manually. There's also
+definitely a grey area with things like netdevsim, which are used a
+lot as helper modules by selftests, but may have other uses as well.
 
-What this FUSE_ATOMIC_CREATE(fuse_lib_atomic_create()) does in libfuse
-is it make a single call into fuse_operations where file server would
-be doing all 'lookup + create + open' in one call itself  whereas
-FUSE_CREATE gets separated into two calls 'create + lookup' which
-eventually are two rpcs to the user space file server for a single
-operation.  Now you can see FUSE_CREATE  is not atomic from file
-systems point of view(i.e  from user space file server perspective)
-but from fuse kernel point of view only. We can make existing libfuse
-code i.e fuse_lib_create() to call new atomic create but then the
-interface becomes messy and it might start a trend to twist libfuse.
-We want to keep libfuse APIs neat and clean. And do not break existing
-systems. No flag from fuse kernel to libfuse to decide which code to
-traverse.  Therefore a new call for all this work.
+(The advantage of the KUnit tainting is that, due to KUnit's
+centralised executor, we can be sure all KUnit tests will correctly
+trigger the taint. But maybe it doesn't matter as much if one or two
+selftests miss out.)
 
->
->
->
-> > This FUSE_ATOMIC_CREATE does all these ops in a single call to FUSE
-> > implementations.  We do not want to break any existing FUSE
-> > implementations, therefore it is being introduced as a new feature. I
-> > forgot to include links to libfuse patches as well. That would have
-> > made it much clearer.  Here is the link to libfuse patch for this call
-> > https://github.com/libfuse/libfuse/pull/673.
-> >
-> > >
-> > > I see FOPEN_FILE_CREATED is being used to avoid calling
-> > > fuse_dir_changed(). That sounds like a separate optimization and probably
-> > > should be in a separate patch.
-> >
-> > FUSE_ATOMIC_CREATE needs to send back info about if  file was actually
-> > created or not (This is suggestion from Miklos) to correctly convey if
-> > the parent dir is really changing or not. I included this as part of
-> > this patch itself instead of having it as a separate patch.
->
-> This needs little more thought w.r.t shared filesystems.
->
-> >
-> > > IOW, I think this patch should be broken in to multiple pieces. First
-> > > piece seems to be avoiding lookup() and given the way it is implemented,
-> > > looks like we can avoid lookup() even by using existing FUSE_CREATE
-> > > command. We don't necessarily need FUSE_ATOMIC_CREATE. Is that right?
-> >
-> > Its not only about changing fuse kernel code but USER SPACE
-> > implementations also. If we change the you are suggesting we would be
-> > required to twist many things at libfuse and FUSE low level API. So to
-> > keep things simple and not to break any existing implementations we
-> > have kept it as new call (we now pass `struct stat` to USER SPACE FUSE
-> > to filled in).
-> >
-> > > And once that is done, a separate patch should probably should explain
-> > > the problem and say fuse_dir_changed() call can be avoided if we knew
-> > > if file was actually created or it was already existing there. And that's
-> > > when one need to introduce a new command. Given this is just an extension
-> > > of existing FUSE_CREATE command and returns additiona info about
-> > > FOPEN_FILE_CREATED, we probably should simply call it FUSE_CREATE_EXT
-> > > and explain how this operation is different from FUSE_CREATE.
-> >
-> > As explained above, we are not doing this way as we have kept in mind
-> > all existing libfuse APIs as well.
-> >
->
-> I am not seeing what will break in existing passthrough_ll.c if I
-> simply used FUSE_CREATE for a file which already exists.
->
->         fd = openat(lo_fd(req, parent), name,
->                     (fi->flags | O_CREAT) & ~O_NOFOLLOW, mode);
->
-> This call should still succeed even if file already exists. (until and
-> unless called it with O_EXCL and in that case failing is the correct
-> behavior).
+-- David
 
-It's not passthrogh_ll but low level libfuse API. Passthrough_ll is
-just another user of low level API. It has been used just to test
-these patches. We do not use passthrough_ll at all for any other
-purpose.
+--00000000000079b5a205de526e16
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIIPnwYJKoZIhvcNAQcCoIIPkDCCD4wCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+ggz5MIIEtjCCA56gAwIBAgIQeAMYYHb81ngUVR0WyMTzqzANBgkqhkiG9w0BAQsFADBMMSAwHgYD
+VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMzETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
+AxMKR2xvYmFsU2lnbjAeFw0yMDA3MjgwMDAwMDBaFw0yOTAzMTgwMDAwMDBaMFQxCzAJBgNVBAYT
+AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
+IFIzIFNNSU1FIENBIDIwMjAwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCvLe9xPU9W
+dpiHLAvX7kFnaFZPuJLey7LYaMO8P/xSngB9IN73mVc7YiLov12Fekdtn5kL8PjmDBEvTYmWsuQS
+6VBo3vdlqqXZ0M9eMkjcKqijrmDRleudEoPDzTumwQ18VB/3I+vbN039HIaRQ5x+NHGiPHVfk6Rx
+c6KAbYceyeqqfuJEcq23vhTdium/Bf5hHqYUhuJwnBQ+dAUcFndUKMJrth6lHeoifkbw2bv81zxJ
+I9cvIy516+oUekqiSFGfzAqByv41OrgLV4fLGCDH3yRh1tj7EtV3l2TngqtrDLUs5R+sWIItPa/4
+AJXB1Q3nGNl2tNjVpcSn0uJ7aFPbAgMBAAGjggGKMIIBhjAOBgNVHQ8BAf8EBAMCAYYwHQYDVR0l
+BBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMBIGA1UdEwEB/wQIMAYBAf8CAQAwHQYDVR0OBBYEFHzM
+CmjXouseLHIb0c1dlW+N+/JjMB8GA1UdIwQYMBaAFI/wS3+oLkUkrk1Q+mOai97i3Ru8MHsGCCsG
+AQUFBwEBBG8wbTAuBggrBgEFBQcwAYYiaHR0cDovL29jc3AyLmdsb2JhbHNpZ24uY29tL3Jvb3Ry
+MzA7BggrBgEFBQcwAoYvaHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvcm9vdC1y
+My5jcnQwNgYDVR0fBC8wLTAroCmgJ4YlaHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9yb290LXIz
+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
+G7p3AiuB2sgfq6cOpbO5MEwGA1UdIARFMEMwQQYJKwYBBAGgMgEoMDQwMgYIKwYBBQUHAgEWJmh0
+dHBzOi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMAwGA1UdEwEB/wQCMAAwgZoGCCsG
+AQUFBwEBBIGNMIGKMD4GCCsGAQUFBzABhjJodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9jYS9n
+c2F0bGFzcjNzbWltZWNhMjAyMDBIBggrBgEFBQcwAoY8aHR0cDovL3NlY3VyZS5nbG9iYWxzaWdu
+LmNvbS9jYWNlcnQvZ3NhdGxhc3Izc21pbWVjYTIwMjAuY3J0MB8GA1UdIwQYMBaAFHzMCmjXouse
+LHIb0c1dlW+N+/JjMEYGA1UdHwQ/MD0wO6A5oDeGNWh0dHA6Ly9jcmwuZ2xvYmFsc2lnbi5jb20v
+Y2EvZ3NhdGxhc3Izc21pbWVjYTIwMjAuY3JsMA0GCSqGSIb3DQEBCwUAA4IBAQBsL34EJkCtu9Nu
+2+R6l1Qzno5Gl+N2Cm6/YLujukDGYa1JW27txXiilR9dGP7yl60HYyG2Exd5i6fiLDlaNEw0SqzE
+dw9ZSIak3Qvm2UybR8zcnB0deCUiwahqh7ZncEPlhnPpB08ETEUtwBEqCEnndNEkIN67yz4kniCZ
+jZstNF/BUnI3864fATiXSbnNqBwlJS3YkoaCTpbI9qNTrf5VIvnbryT69xJ6f25yfmxrXNJJe5OG
+ncB34Cwnb7xQyk+uRLZ465yUBkbjk9pC/yamL0O7SOGYUclrQl2c5zzGuVBD84YcQGDOK6gSPj6w
+QuBfOooZPOyZZZ8AMih7J980MYICajCCAmYCAQEwaDBUMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQ
+R2xvYmFsU2lnbiBudi1zYTEqMCgGA1UEAxMhR2xvYmFsU2lnbiBBdGxhcyBSMyBTTUlNRSBDQSAy
+MDIwAhABQeVybOOpR4bOOXZYL5T3MA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCBr
+X/PN1i5F2zIL242HU4GqsEFET+G6b/STy3yckg7VuTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcB
+MBwGCSqGSIb3DQEJBTEPFw0yMjA1MDYwNzAxNDVaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUD
+BAEqMAsGCWCGSAFlAwQBFjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsG
+CSqGSIb3DQEBBzALBglghkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEAYDUZutewvAsTjHXMgVEQ
+On7tpvC/sM+F49kXBC3mN+dn/xITeI7m47iTK6X+Ct5E9qGYkLDpN1d6LOUGC8DYAM0+YIfNNBn8
+aHnuU6qetQUfkRDDhWw95HajkWpb477ny8XEnIUuALqDHB0K7RghabJhdBiA7q0GuVshOqNO6Bmt
+lUV2xwQnDZ+SCkQ31O/icMGdFwY01JvvTx+XDR2jUHz2jOGAFR1ib96DuLG2sR6SASxR3MshuJsz
+13a1zVVdu52JXd1CFyaLcqcyo9h0ykggX1NINTclSrw7EaQVP0Rziil/K422cAncptvuChRN5JCo
+qugllBI5OPHAGbQmag==
+--00000000000079b5a205de526e16--
