@@ -2,106 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 213B751D406
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 May 2022 11:12:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12A4651D49D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 May 2022 11:32:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1381989AbiEFJPw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 May 2022 05:15:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59736 "EHLO
+        id S1390659AbiEFJdx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 May 2022 05:33:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352619AbiEFJPr (ORCPT
+        with ESMTP id S1390575AbiEFJde (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 May 2022 05:15:47 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E73E763399
-        for <linux-fsdevel@vger.kernel.org>; Fri,  6 May 2022 02:12:04 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id A2BC31F8BD;
-        Fri,  6 May 2022 09:12:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1651828323; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ezRCPaxIImCpU4HFofeOei1/+NaOPYZ+2gW2gHiN71U=;
-        b=HgaRHmMTrJhVsTQDU3lxgoeeDi4FwIkc6p/TwfyKkeM3F+AUtfG8xHqcR7VFZTjFi6c+cr
-        0Pdm6I4Uc1EBh8bQ3DShOFwOk9HHWFBQqsn1K7yw2S8snA7AIS8f9/yk5hSqqxo3EzLsyk
-        fMup+P0EJVDLlCt/FZoB5y/uOsxbKYQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1651828323;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ezRCPaxIImCpU4HFofeOei1/+NaOPYZ+2gW2gHiN71U=;
-        b=MJ5jZLc/L6v5TNXorudnT1rCMb9/TLlLdNE12waVRGOP81B8D1AVFnzeYM6k9U1XIM1QS8
-        0/3uKfY7GbGq+HBA==
-Received: from quack3.suse.cz (unknown [10.100.224.230])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 842472C142;
-        Fri,  6 May 2022 09:12:03 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 35D63A0629; Fri,  6 May 2022 11:12:03 +0200 (CEST)
-Date:   Fri, 6 May 2022 11:12:03 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fanotify: do not allow setting FAN_RENAME on non-dir
-Message-ID: <20220506091203.yknwtnnxaz6n547d@quack3.lan>
-References: <20220506014626.191619-1-amir73il@gmail.com>
+        Fri, 6 May 2022 05:33:34 -0400
+Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A350B65D27;
+        Fri,  6 May 2022 02:29:20 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-2-147.pa.nsw.optusnet.com.au [49.181.2.147])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id D916110E6631;
+        Fri,  6 May 2022 19:29:18 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1nmuGx-008fB5-EV; Fri, 06 May 2022 19:29:15 +1000
+Date:   Fri, 6 May 2022 19:29:15 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Stefan Roesch <shr@fb.com>
+Cc:     io-uring@vger.kernel.org, kernel-team@fb.com, linux-mm@kvack.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH v1 11/18] xfs: add async buffered write support
+Message-ID: <20220506092915.GI1098723@dread.disaster.area>
+References: <20220426174335.4004987-1-shr@fb.com>
+ <20220426174335.4004987-12-shr@fb.com>
+ <20220426225652.GS1544202@dread.disaster.area>
+ <30f2920c-5262-7cb0-05b5-6e84a76162a7@fb.com>
+ <20220428215442.GW1098723@dread.disaster.area>
+ <19d411e5-fe1f-a3f8-36e0-87284a1c02f3@fb.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220506014626.191619-1-amir73il@gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+In-Reply-To: <19d411e5-fe1f-a3f8-36e0-87284a1c02f3@fb.com>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=6274ea6f
+        a=ivVLWpVy4j68lT4lJFbQgw==:117 a=ivVLWpVy4j68lT4lJFbQgw==:17
+        a=kj9zAlcOel0A:10 a=oZkIemNP1mAA:10 a=FOH2dFAWAAAA:8 a=7-415B0cAAAA:8
+        a=y0LPT60VOqdp-VbHO3cA:9 a=CjuIK1q_8ugA:10 a=i3VuKzQdj-NEYjvDI-p3:22
+        a=biEYGPWJfzWAr4FL6Ov7:22
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 06-05-22 04:46:26, Amir Goldstein wrote:
-> The desired sematics of this action are not clear, so for now deny
-> this action.  We may relax it when we decide on the semantics and
-> implement them.
+On Mon, May 02, 2022 at 02:21:17PM -0700, Stefan Roesch wrote:
 > 
-> Fixes: 8cc3b1ccd930 ("fanotify: wire up FAN_RENAME event")
-> Link: https://lore.kernel.org/linux-fsdevel/20220505133057.zm5t6vumc4xdcnsg@quack3.lan/
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-
-Thanks guys. I've merged the fix to my tree (fast_track branch) and will
-push it to Linus on Monday once it gets at least some exposure to
-auto-testers.
-
-								Honza
-
-> ---
->  fs/notify/fanotify/fanotify_user.c | 5 +++++
->  1 file changed, 5 insertions(+)
 > 
-> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-> index edad67d674dc..ae0c27fac651 100644
-> --- a/fs/notify/fanotify/fanotify_user.c
-> +++ b/fs/notify/fanotify/fanotify_user.c
-> @@ -1695,6 +1695,11 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
->  	else
->  		mnt = path.mnt;
->  
-> +	/* FAN_RENAME is not allowed on non-dir (for now) */
-> +	ret = -EINVAL;
-> +	if (inode && (mask & FAN_RENAME) && !S_ISDIR(inode->i_mode))
-> +		goto path_put_and_out;
-> +
->  	/* Mask out FAN_EVENT_ON_CHILD flag for sb/mount/non-dir marks */
->  	if (mnt || !S_ISDIR(inode->i_mode)) {
->  		mask &= ~FAN_EVENT_ON_CHILD;
-> -- 
-> 2.25.1
+> On 4/28/22 2:54 PM, Dave Chinner wrote:
+> > On Thu, Apr 28, 2022 at 12:58:59PM -0700, Stefan Roesch wrote:
+> >>
+> >>
+> >> On 4/26/22 3:56 PM, Dave Chinner wrote:
+> >>> On Tue, Apr 26, 2022 at 10:43:28AM -0700, Stefan Roesch wrote:
+> >>>> This adds the async buffered write support to XFS. For async buffered
+> >>>> write requests, the request will return -EAGAIN if the ilock cannot be
+> >>>> obtained immediately.
+> >>>>
+> >>>> Signed-off-by: Stefan Roesch <shr@fb.com>
+> >>>> ---
+> >>>>  fs/xfs/xfs_file.c | 10 ++++++----
+> >>>>  1 file changed, 6 insertions(+), 4 deletions(-)
+> >>>>
+> >>>> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+> >>>> index 6f9da1059e8b..49d54b939502 100644
+> >>>> --- a/fs/xfs/xfs_file.c
+> >>>> +++ b/fs/xfs/xfs_file.c
+> >>>> @@ -739,12 +739,14 @@ xfs_file_buffered_write(
+> >>>>  	bool			cleared_space = false;
+> >>>>  	int			iolock;
+> >>>>  
+> >>>> -	if (iocb->ki_flags & IOCB_NOWAIT)
+> >>>> -		return -EOPNOTSUPP;
+> >>>> -
+> >>>>  write_retry:
+> >>>>  	iolock = XFS_IOLOCK_EXCL;
+> >>>> -	xfs_ilock(ip, iolock);
+> >>>> +	if (iocb->ki_flags & IOCB_NOWAIT) {
+> >>>> +		if (!xfs_ilock_nowait(ip, iolock))
+> >>>> +			return -EAGAIN;
+> >>>> +	} else {
+> >>>> +		xfs_ilock(ip, iolock);
+> >>>> +	}
+> >>>
+> >>> xfs_ilock_iocb().
+> >>>
+> >>
+> >> The helper xfs_ilock_iocb cannot be used as it hardcoded to use iocb->ki_filp to
+> >> get a pointer to the xfs_inode.
+> > 
+> > And the problem with that is?
+> > 
+> > I mean, look at what xfs_file_buffered_write() does to get the
+> > xfs_inode 10 lines about that change:
+> > 
+> > xfs_file_buffered_write(
+> >         struct kiocb            *iocb,
+> >         struct iov_iter         *from)
+> > {
+> >         struct file             *file = iocb->ki_filp;
+> >         struct address_space    *mapping = file->f_mapping;
+> >         struct inode            *inode = mapping->host;
+> >         struct xfs_inode        *ip = XFS_I(inode);
+> > 
+> > In what cases does file_inode(iocb->ki_filp) point to a different
+> > inode than iocb->ki_filp->f_mapping->host? The dio write path assumes
+> > that file_inode(iocb->ki_filp) is correct, as do both the buffered
+> > and dio read paths.
+> > 
+> > What makes the buffered write path special in that
+> > file_inode(iocb->ki_filp) is not correctly set whilst
+> > iocb->ki_filp->f_mapping->host is?
+> > 
 > 
+> In the function xfs_file_buffered_write() the code calls the function 
+> xfs_ilock(). The xfs_inode pointer that is passed in is iocb->ki_filp->f_mapping->host.
+> The one used in xfs_ilock_iocb is ki_filp->f_inode.
+> 
+> After getting the lock, the code in xfs_file_buffered_write calls the
+> function xfs_buffered_write_iomap_begin(). In this function the code
+> calls xfs_ilock() for ki_filp->f_inode in exclusive mode.
+> 
+> If I replace the first xfs_ilock() call with xfs_ilock_iocb(), then it looks
+> like I get a deadlock.
+> 
+> Am I missing something?
+
+Yes. They take different locks. xfs_file_buffered_write() takes the
+IOLOCK, xfs_buffered_write_iomap_begin() takes the ILOCK....
+
+> I can:
+> - replace the pointer to iocb with pointer to xfs_inode in the function xfs_ilock_iocb()
+>   and also pass in the flags value as a parameter.
+> or
+> - create function xfs_ilock_inode(), which xfs_ilock_iocb() calls. The existing
+>   calls will not need to change, only the xfs_ilock in xfs_file_buffered_write()
+>   will use xfs_ilock_inode().
+
+You're making this way more complex than it needs to be. As I said:
+
+> > Regardless, if this is a problem, then just pass the XFS inode to
+> > xfs_ilock_iocb() and this is a moot point.
+
+Cheers,
+
+Dave.
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Dave Chinner
+david@fromorbit.com
