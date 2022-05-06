@@ -2,113 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 82EF051CDB4
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 May 2022 02:13:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE73251CEEC
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 May 2022 04:16:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1387225AbiEFAQ6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 May 2022 20:16:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51928 "EHLO
+        id S1388079AbiEFBuR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 May 2022 21:50:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1384126AbiEFAQw (ORCPT
+        with ESMTP id S1388065AbiEFBuQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 May 2022 20:16:52 -0400
-Received: from lgeamrelo11.lge.com (lgeamrelo11.lge.com [156.147.23.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 21D3651E73
-        for <linux-fsdevel@vger.kernel.org>; Thu,  5 May 2022 17:13:09 -0700 (PDT)
-Received: from unknown (HELO lgeamrelo01.lge.com) (156.147.1.125)
-        by 156.147.23.51 with ESMTP; 6 May 2022 09:13:07 +0900
-X-Original-SENDERIP: 156.147.1.125
-X-Original-MAILFROM: byungchul.park@lge.com
-Received: from unknown (HELO localhost.localdomain) (10.177.244.38)
-        by 156.147.1.125 with ESMTP; 6 May 2022 09:13:07 +0900
-X-Original-SENDERIP: 10.177.244.38
-X-Original-MAILFROM: byungchul.park@lge.com
-From:   Byungchul Park <byungchul.park@lge.com>
-To:     torvalds@linux-foundation.org
-Cc:     damien.lemoal@opensource.wdc.com, linux-ide@vger.kernel.org,
-        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        mingo@redhat.com, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, will@kernel.org, tglx@linutronix.de,
-        rostedt@goodmis.org, joel@joelfernandes.org, sashal@kernel.org,
-        daniel.vetter@ffwll.ch, chris@chris-wilson.co.uk,
-        duyuyang@gmail.com, johannes.berg@intel.com, tj@kernel.org,
-        tytso@mit.edu, willy@infradead.org, david@fromorbit.com,
-        amir73il@gmail.com, gregkh@linuxfoundation.org,
-        kernel-team@lge.com, linux-mm@kvack.org, akpm@linux-foundation.org,
-        mhocko@kernel.org, minchan@kernel.org, hannes@cmpxchg.org,
-        vdavydov.dev@gmail.com, sj@kernel.org, jglisse@redhat.com,
-        dennis@kernel.org, cl@linux.com, penberg@kernel.org,
-        rientjes@google.com, vbabka@suse.cz, ngupta@vflare.org,
-        linux-block@vger.kernel.org, paolo.valente@linaro.org,
-        josef@toxicpanda.com, linux-fsdevel@vger.kernel.org,
-        viro@zeniv.linux.org.uk, jack@suse.cz, jack@suse.com,
-        jlayton@kernel.org, dan.j.williams@intel.com, hch@infradead.org,
-        djwong@kernel.org, dri-devel@lists.freedesktop.org,
-        airlied@linux.ie, rodrigosiqueiramelo@gmail.com,
-        melissa.srw@gmail.com, hamohammed.sa@gmail.com, 42.hyeyoo@gmail.com
-Subject: Re: [PATCH RFC v6 00/21] DEPT(Dependency Tracker)
-Date:   Fri,  6 May 2022 09:11:35 +0900
-Message-Id: <1651795895-8641-1-git-send-email-byungchul.park@lge.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <CAHk-=whnPePcffsNQM+YSHMGttLXvpf8LbBQ8P7HEdqFXaV7Lg@mail.gmail.com>
-References: <CAHk-=whnPePcffsNQM+YSHMGttLXvpf8LbBQ8P7HEdqFXaV7Lg@mail.gmail.com>
-X-Spam-Status: No, score=-6.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+        Thu, 5 May 2022 21:50:16 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D25861623
+        for <linux-fsdevel@vger.kernel.org>; Thu,  5 May 2022 18:46:35 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id b24so7116307edu.10
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 May 2022 18:46:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=D6AaRSgDENnrIZxhDeoBGQNYZWanEL+17Ds7WsL0GLM=;
+        b=cdFp2hXj6yeR6syCPPBluKU24f6A6Fh/lEiCzmkeHJB1qWNy3CsNKlNUOcFbjRgNiT
+         C+iAzUkXoZ0pYp2zpwm9NKJLOJKl7UkKWT2wCdFFDR2Mv6rZ6wGcuMSnh0OFYTcC934w
+         IBAjS6wfck8Li/YXc/yogBeSrGkOhMd/tj2FiMNpo8s6C6rFtBC5+OuIiOpqVSsL7EO2
+         MFwghkgJBV300FaTkSnRl7l4e9V1JC+3oAoeruMFCBF/EUiLKdTjVrwl8cXF2AvXE94E
+         vm2THhUQa2ZyMApjhmkALc2sBn6Wq3KjAVUMFkGWfruI/AJfYUawIcQWaU+xsxccmjnV
+         G2SA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=D6AaRSgDENnrIZxhDeoBGQNYZWanEL+17Ds7WsL0GLM=;
+        b=BwZcksxw5xTzOhr1OncTgUb4O+Z0XmR48AMVNVU1r98wHgSYl1eYRiil/ogQbaE8F6
+         fo9g3j8yxeW3aPk50lawAcws8aLjvX1micfnL4sDB14xwQsc4iGMSR0NFKwqmgQ8YtaX
+         22C4azLxEeHImxPcR/C3oEd1v4eJVJ8brHq3YDyK6ZZRV44L7WPq1JYtjMA5YLYQekph
+         EnqYDcsGzkFTbh85QnXek4en7+ZDa5c6IU6GuSo5x1rTPtRP7HWSHtsKXKJt37my4X1g
+         NGjcFup9WkT86dzjAb1oZyRLho10q+DT278X9w3ddZT8X0tcyY1/bwWLr4yGdAxvix8u
+         U9Ig==
+X-Gm-Message-State: AOAM530D56cKdGJpD1tsK9nhYbg6cRd0Fiw829qYpFLmZ5eESFtHy2c2
+        o0/sHrEoBRS5pCz4mBlgMBf1tXmxOQWaBA==
+X-Google-Smtp-Source: ABdhPJwxd65u1uH/AfKEVEx1q1YyJCqmg/Aiz9AfgGtXLInSDbwdb/pBAwCJfStv7uZdVcmMbFyO8w==
+X-Received: by 2002:a05:6402:370c:b0:425:a9c4:88c4 with SMTP id ek12-20020a056402370c00b00425a9c488c4mr1099400edb.190.1651801593727;
+        Thu, 05 May 2022 18:46:33 -0700 (PDT)
+Received: from localhost.localdomain ([147.161.9.83])
+        by smtp.gmail.com with ESMTPSA id j19-20020aa7c0d3000000b004275cef32efsm1565014edp.6.2022.05.05.18.46.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 May 2022 18:46:33 -0700 (PDT)
+From:   Amir Goldstein <amir73il@gmail.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH] fanotify: do not allow setting FAN_RENAME on non-dir
+Date:   Fri,  6 May 2022 04:46:26 +0300
+Message-Id: <20220506014626.191619-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Linus wrote:
->
-> On Wed, May 4, 2022 at 1:19 AM Byungchul Park <byungchul.park@lge.com> wrote:
-> >
-> > Hi Linus and folks,
-> >
-> > I've been developing a tool for detecting deadlock possibilities by
-> > tracking wait/event rather than lock(?) acquisition order to try to
-> > cover all synchonization machanisms.
-> 
-> So what is the actual status of reports these days?
-> 
-> Last time I looked at some reports, it gave a lot of false positives
-> due to mis-understanding prepare_to_sleep().
+The desired sematics of this action are not clear, so for now deny
+this action.  We may relax it when we decide on the semantics and
+implement them.
 
-Yes, it was. I handled the case in the following way:
+Fixes: 8cc3b1ccd930 ("fanotify: wire up FAN_RENAME event")
+Link: https://lore.kernel.org/linux-fsdevel/20220505133057.zm5t6vumc4xdcnsg@quack3.lan/
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+---
+ fs/notify/fanotify/fanotify_user.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-1. Stage the wait at prepare_to_sleep(), which might be used at commit.
-   Which has yet to be an actual wait that Dept considers.
-2. If the condition for sleep is true, the wait will be committed at
-   __schedule(). The wait becomes an actual one that Dept considers.
-3. If the condition is false and the task gets back to TASK_RUNNING,
-   clean(=reset) the staged wait.
+diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+index edad67d674dc..ae0c27fac651 100644
+--- a/fs/notify/fanotify/fanotify_user.c
++++ b/fs/notify/fanotify/fanotify_user.c
+@@ -1695,6 +1695,11 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+ 	else
+ 		mnt = path.mnt;
+ 
++	/* FAN_RENAME is not allowed on non-dir (for now) */
++	ret = -EINVAL;
++	if (inode && (mask & FAN_RENAME) && !S_ISDIR(inode->i_mode))
++		goto path_put_and_out;
++
+ 	/* Mask out FAN_EVENT_ON_CHILD flag for sb/mount/non-dir marks */
+ 	if (mnt || !S_ISDIR(inode->i_mode)) {
+ 		mask &= ~FAN_EVENT_ON_CHILD;
+-- 
+2.25.1
 
-That way, Dept only works with what actually hits to __schedule() for
-the waits through sleep.
-
-> For this all to make sense, it would need to not have false positives
-> (or at least a very small number of them together with a way to sanely
-
-Yes. I agree with you. I got rid of them that way I described above.
-
-> get rid of them), and also have a track record of finding things that
-> lockdep doesn't.
-
-I have some reports that wait_for_completion or waitqueue is involved.
-It's worth noting those are not tracked by Lockdep. I'm checking if
-those are true positive or not. I will share those reports once I get
-more convinced for that.
-
-> Maybe such reports have been sent out with the current situation, and
-> I haven't seen them.
-
-Dept reports usually have been sent to me privately, not in LKML. As I
-told you, I'm planning to share them.
-
-	Byungchul
-
-> 
->                  Linus
-> 
