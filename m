@@ -2,140 +2,319 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 002DD51E77A
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 May 2022 15:33:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 558B351E868
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 May 2022 18:03:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1385216AbiEGNh3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 7 May 2022 09:37:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54690 "EHLO
+        id S1353246AbiEGQHP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 7 May 2022 12:07:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45714 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1385152AbiEGNh1 (ORCPT
+        with ESMTP id S1386094AbiEGQHN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 7 May 2022 09:37:27 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C78EA1929C
-        for <linux-fsdevel@vger.kernel.org>; Sat,  7 May 2022 06:33:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1651930418;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=XyotHlnPBZMTbWwbWZV56jLBQCGIO3aie4DIO5CGBeM=;
-        b=DYVu/8Yl5d+fs/ALtuLk0NChuOszDlAOnox6JPgNk3gYDUATb6Hv/AtHrHRcoWguBswbke
-        bQQRGUn4Q66Efo+y/4y6oFrvRXtK021St9lDb1X/UTElQLaLLUoQ+ZwSwq6ay6L0+9rMz0
-        D4EygKMnW3BiwuL3N7p/SMqMGttmcUk=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-154-lRTWxHpmO3eNzS0i2G_2iA-1; Sat, 07 May 2022 09:33:37 -0400
-X-MC-Unique: lRTWxHpmO3eNzS0i2G_2iA-1
-Received: by mail-qv1-f69.google.com with SMTP id d13-20020a05621421cd00b0045a99874ae5so8073334qvh.14
-        for <linux-fsdevel@vger.kernel.org>; Sat, 07 May 2022 06:33:37 -0700 (PDT)
+        Sat, 7 May 2022 12:07:13 -0400
+Received: from mail-qv1-xf2c.google.com (mail-qv1-xf2c.google.com [IPv6:2607:f8b0:4864:20::f2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A45E82FFCE;
+        Sat,  7 May 2022 09:03:25 -0700 (PDT)
+Received: by mail-qv1-xf2c.google.com with SMTP id eq14so7511363qvb.4;
+        Sat, 07 May 2022 09:03:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fYKnF0mYqV9oFtUPelP3o02PAAD1cMVZ2XKJJwJf06w=;
+        b=Y9kGeLlvpOgjMXXBLfD3etg5ORAw9O/X68vmNn+Wf1PWnJNcF8jVpvks65FG44BDsa
+         zVYYOl3xZiT0m/MwoinfPtHCVLcSpryNKGE6nWjNHC0+Jru3lmovIH+GSaTPsF2iZDjy
+         zgmHc4kcgq4k4IG0oUjcfb1B340NJxX2/0WtaeBmbBrT89NDygH2c1A5XqWhkiWsBFHm
+         Y03MJHpBhGAsjDZQNgYUW0dWkloqXZPNRIdr05BH9xVx85m7lK5F33oJbM0EYwKbwri7
+         Bf6SXktuG7y4SJLlC1+tfk+XPyX8M1KW3/LtWW+gKfuGRqDl9scHLlkYffS1Nf9huepT
+         ZfFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to;
-        bh=XyotHlnPBZMTbWwbWZV56jLBQCGIO3aie4DIO5CGBeM=;
-        b=D64aFuKyXVXx6uaZFg4HMMnJEzZWv+jpMWVpMMXt5naQvgHknYwflsc1aLB8g3LxZw
-         t1cpPQT8fKHaSlNqZhssjHQwXMFQztmw0VjkLF+KoW5x44PJW33e4X0usFRekpYgNWzy
-         w/xYT/Z9BC+u46/Z64NibjbCkI3PCjj/abEMZIjUloyS08TEIduYlt47YgN+tdcHZTmJ
-         KfdbdimaFXbnUyOrgGMR7T4Bh5Voc7MVvDNQv6CeK/wglQ+uIHbtfRv4bQBH7ZiWyzol
-         GqJdMdvErhOciAtvXjkpp0GVRO4xlFDcfBZWbHAjhhsabMuCeakK7W5FHj2IY07GMY2W
-         acUA==
-X-Gm-Message-State: AOAM530r6CLZHNSUdh9cCW8U/Nfb+K92bMugBlgLdOmO3zUzuaCK6dvU
-        eHpKxZj1IX900Y7D2GFdaaSO8/qWdPp2/VNkcA4ROt914H4nCxfENhI/LRz+go6cWKNLEFKOEDI
-        Zdjpb1YW1ldcm/HizKPA5dG+2Vw==
-X-Received: by 2002:ac8:5f0d:0:b0:2f3:b0d6:fb6f with SMTP id x13-20020ac85f0d000000b002f3b0d6fb6fmr7300803qta.663.1651930417014;
-        Sat, 07 May 2022 06:33:37 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxygjzsutNY00Piq+Q/Su60QU41qUNYOoCdOYhiBDj+IBvdTk7ZkR014dUPH0Ys1ohMGBtobQ==
-X-Received: by 2002:ac8:5f0d:0:b0:2f3:b0d6:fb6f with SMTP id x13-20020ac85f0d000000b002f3b0d6fb6fmr7300787qta.663.1651930416789;
-        Sat, 07 May 2022 06:33:36 -0700 (PDT)
-Received: from zlang-mailbox ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id l6-20020a37f906000000b0069fc13ce23dsm4137451qkj.110.2022.05.07.06.33.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 May 2022 06:33:36 -0700 (PDT)
-Date:   Sat, 7 May 2022 21:33:30 +0800
-From:   Zorro Lang <zlang@redhat.com>
-To:     Yang Xu <xuyang2018.jy@fujitsu.com>
-Cc:     linux-fsdevel@vger.kernel.org, fstests@vger.kernel.org
-Subject: Re: [PATCH v4 1/3] idmapped-mounts: Reset errno to zero before
- run_test
-Message-ID: <20220507133330.xxuw2x7buluhpnlu@zlang-mailbox>
-Mail-Followup-To: Yang Xu <xuyang2018.jy@fujitsu.com>,
-        linux-fsdevel@vger.kernel.org, fstests@vger.kernel.org
-References: <1651928726-2263-1-git-send-email-xuyang2018.jy@fujitsu.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fYKnF0mYqV9oFtUPelP3o02PAAD1cMVZ2XKJJwJf06w=;
+        b=OLcQ6CUfaCxe4dv7iRMDjVG2l64iay6gqKtJ5jCaf5Usu7vUqjkRVWcTdaZjmsZGyC
+         i67mLq1RoYHDIeDndm/eKrFCiMJ661jxQQBnfUf67WixV+2eRg6fQzQaAgVex54TkHUx
+         uv1aQI+YxotT50iHZzmWooxX2ax/ws5g1UWluVUFq1UhkTEmhjbthj+F5AU4AtWA8e27
+         2WnZZEIq/Sh5i8i4exEX5MJpniwEJKnP20fF78/tcHGab7RbpELFP6UCbnRIGBozxUc7
+         YpX4xpkACBk4r1PCySSMs37gtiQrVQTXAsR6zZZSHvybhSNaOxu0ygD23lpsugpJbtxf
+         i4Iw==
+X-Gm-Message-State: AOAM530UUNN9l1wAWu29k9ixjFNLgvndY888rS2crcBHdd3l1M3N827e
+        UfUx1BQKR+g1lLyRjsMEqiCNevcvhOPgdHqGaA4=
+X-Google-Smtp-Source: ABdhPJzA/61r+I+9EYASDXsY+faQ41+9gVWKzhsMXD2Uv6IsKP8ieT/gLnt6ihduuUh+rT6M+fgIvmKKO9S/4sxQ0ng=
+X-Received: by 2002:a05:6214:1cc4:b0:435:35c3:f0f1 with SMTP id
+ g4-20020a0562141cc400b0043535c3f0f1mr7255101qvd.0.1651939404657; Sat, 07 May
+ 2022 09:03:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1651928726-2263-1-git-send-email-xuyang2018.jy@fujitsu.com>
-X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <YnOmG2DvSpvvOEOQ@google.com> <20220505112217.zvzbzhjgmoz7lr6w@quack3.lan>
+ <CAOQ4uxhJFEoV0X8uunNaYjdKpsFj6nUtcNFBx8d3oqodDO_iYA@mail.gmail.com>
+ <20220505133057.zm5t6vumc4xdcnsg@quack3.lan> <YnRhVgu6JKNinarh@google.com>
+ <CAOQ4uxi9Jps3BGiSYWWvQdNeb+QPA9kSo_BDRCC2jfPSGWdx_w@mail.gmail.com> <20220506100636.k2lm22ztxpyaw373@quack3.lan>
+In-Reply-To: <20220506100636.k2lm22ztxpyaw373@quack3.lan>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Sat, 7 May 2022 19:03:13 +0300
+Message-ID: <CAOQ4uxjEcbjRoObAUfSS3RHVJY7EiW8tJSo1geNtbgQbcTOM+A@mail.gmail.com>
+Subject: Re: Fanotify API - Tracking File Movement
+To:     Jan Kara <jack@suse.cz>
+Cc:     Matthew Bobrowski <repnop@google.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="0000000000006800ff05de6e1d7e"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, May 07, 2022 at 09:05:24PM +0800, Yang Xu wrote:
-> If we run case on old kernel that doesn't support mount_setattr and
-> then fail on our own function before call is_setgid/is_setuid function
-> to reset errno, run_test will print "Function not implement" error.
-> 
-> We also check whether system support user namespace, so reset errno to
-> zero after userns check.
-> 
-> Acked-by: Christian Brauner (Microsoft) <brauner@kernel.org>
-> Signed-off-by: Yang Xu <xuyang2018.jy@fujitsu.com>
-> ---
+--0000000000006800ff05de6e1d7e
+Content-Type: text/plain; charset="UTF-8"
 
-This patchset bring in a new failure [1] on kernel 5.18.0-0.rc4+. Before I push,
-just confirm that is it as your expected, not a regression ?
+> So I've slept on it and agree that allowing FAN_RENAME on a file with the
+> semantics Matthew wants is consistent with the current design and probably
+> the only sensible meaning we can give to it. I also agree that updating
+> permission checks for reporting parent dirs isn't that big of a headache
+> and maintenance burden going further.
+>
+> I'm still somewhat concerned about how the propagation of two parent
+> directories and then formatting into the event is going to work out (i.e.,
+> how many special cases that's going to need) but I'm willing to have a look
+> at the patch. Maybe it won't be as bad as I was afraid :).
+
+Here is a patch. I don't think it is so bad.(?)
+In fact, I think the code is made a bit more clear when we stop overloading
+ITER_TYPE_INODE as the new_dir in FS_RENAME case.
+But yes, it does add yet another special (moved non-dir vs. moved dir).
+
+Sorry Matthew, I was looking at the code to give you pointers, but there were
+so many subtle details (as Jan has expected) that I could only communicate
+them with a patch.
+I tested that this patch does not break anything, but did not implement the
+UAPI changes, so the functionality that it adds is not tested - I leave that
+to you.
+
+>
+> > > Ah, I really wanted to stay away from watching the super block for all
+> > > FAN_RENAME events. I feel like userspace wearing the pain for such
+> > > cases is suboptimal, as this is something that can effectively be done
+> > > in-kernel.
+>
+> I agree that kernel can do this more efficiently than userspace but the
+> question is how much in terms of code (and thus maintenance overhead) are
+> we willing to spend for this IMO rather specialized feature. The code to
+> build necessary information to pass with the event, dealing with all
+> different types of watches and backends and then formatting it to the event
+> for userspace is complex as hell. Whenever I have to do or review some
+> non-trivial changes to it, my head hurts ;) And the amount of subtle
+> cornercase bugs we were fixing in that code over the years is just a
+> testimony of this. So that's why I'm reluctant to add even small
+> complications to it for something I find relatively specialized use (think
+> for how many userspace programs this feature is going to be useful, I don't
+> think many).
+>
+
+My 0.02$ - while FAN_RENAME is a snowflake, this is not because
+of our design, this is because rename(2) is a snowflake vfs operation.
+The event information simply reflects the operation complexity and when
+looking at non-Linux filesystem event APIs, the event information for rename
+looks very similar to FAN_RENAME. In some cases (lustre IIRC) the protocol
+was enhanced at some point exactly as we did with FAN_RENAME to
+have all the info in one event vs. having to join two events.
+
+Hopefully, the attached patch simplifies the specialized implementation
+a little bit.
+
+But... (there is always a but when it comes to UAPI),
+When looking at my patch, one cannot help wondering -
+what about FAN_CREATE/FAN_DELETE/FAN_MOVE?
+If those can report child fid, why should they be treated differently
+than FAN_RENAME w.r.t marking the child inode?
+
+For example, when watching a non-dir for FAN_CREATE, it could
+be VERY helpful to get the dirfid+name of where the inode was
+hard linked. In fact, if an application is watching FAN_RENAME to track
+the movement of a non-dir file and does not watch hardlink+unlink, then
+the file could escape under the application's nose.
+
+We should definitely not extend the UAPI to a non-dir file before we provide
+an answer to this question. For that reason I also sent v2 of Fix patch to
+deny setting all dirent events on non-dir with FAN_REPORT_TARGET_FID.
 
 Thanks,
-Zorro
+Amir.
 
-[1]
-# ./check generic/633
-FSTYP         -- xfs (non-debug)
-PLATFORM      -- Linux/x86_64 hp-xxxxxxx-xx 5.18.0-0.rc4.20220427git46cf2c613f4b10e.35.fc37.x86_64 #1 SMP PREEMPT_DYNAMIC Wed Apr 27 13:03:32 UTC 2022
-MKFS_OPTIONS  -- -f /dev/sda3
-MOUNT_OPTIONS -- -o context=system_u:object_r:root_t:s0 /dev/sda3 /mnt/scratch
+--0000000000006800ff05de6e1d7e
+Content-Type: text/x-patch; charset="US-ASCII"; 
+	name="0001-fsnotify-send-FS_RENAME-to-groups-watching-the-moved.patch"
+Content-Disposition: attachment; 
+	filename="0001-fsnotify-send-FS_RENAME-to-groups-watching-the-moved.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_l2w1qav90>
+X-Attachment-Id: f_l2w1qav90
 
-generic/633 14s ... [failed, exit status 1]- output mismatch (see /root/git/xfstests/results//generic/633.out.bad)
-    --- tests/generic/633.out   2022-04-29 23:07:23.547501513 +0800
-    +++ /root/git/xfstests/results//generic/633.out.bad 2022-05-07 21:20:40.205852662 +0800
-    @@ -1,2 +1,4 @@
-     QA output created by 633
-     Silence is golden
-    +idmapped-mounts.c: 8244: setgid_create_idmapped - No such file or directory - failure: linkat
-    +idmapped-mounts.c: 14437: run_test - Success - failure: create operations in directories with setgid bit set on idmapped mounts
-    ...
-    (Run 'diff -u /root/git/xfstests/tests/generic/633.out /root/git/xfstests/results//generic/633.out.bad'  to see the entire diff)
-Ran: generic/633
-Failures: generic/633
-Failed 1 of 1 tests
-
-> v3->v4: move this reset step after sys_has_usersn()
->  src/idmapped-mounts/idmapped-mounts.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/src/idmapped-mounts/idmapped-mounts.c b/src/idmapped-mounts/idmapped-mounts.c
-> index ce3f73be..2e94bf71 100644
-> --- a/src/idmapped-mounts/idmapped-mounts.c
-> +++ b/src/idmapped-mounts/idmapped-mounts.c
-> @@ -14232,6 +14232,8 @@ int main(int argc, char *argv[])
->  		exit(EXIT_SUCCESS);
->  	}
->  	t_has_userns = sys_has_userns();
-> +	/* don't copy ENOSYS errno to child process on older kernel */
-> +	errno = 0;
->  
->  	stash_overflowuid();
->  	stash_overflowgid();
-> -- 
-> 2.31.1
-> 
-
+RnJvbSBkMjVmM2NlOGRhNDljZTFhM2IwYTA2MjFmMGJmN2IxZDZiYTJkYWQ2IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBBbWlyIEdvbGRzdGVpbiA8YW1pcjczaWxAZ21haWwuY29tPgpE
+YXRlOiBTYXQsIDcgTWF5IDIwMjIgMTA6MDQ6MDggKzAzMDAKU3ViamVjdDogW1BBVENIXSBmc25v
+dGlmeTogc2VuZCBGU19SRU5BTUUgdG8gZ3JvdXBzIHdhdGNoaW5nIHRoZSBtb3ZlZCBpbm9kZQoK
+U2VuZCBGU19SRU5BTUUgdG8gZ3JvdXBzIHdhdGNoaW5nIHRoZSBtb3ZlZCBpbm9kZSBpdHNlbGYg
+aWYgdGhlCm1vdmVkIGlub2RlIGlzIGEgbm9uLWRpciB0byBhbGxvdyB0cmFja2luZyB0aGUgbW92
+ZW1lbnQgb2YgYSB3YXRjaGVkCmlub2RlLgoKU2VuZGluZyBGU19SRU5BTUUgdG8gYSBtb3ZlZCB3
+YXRjaGVkIGRpcmVjdG9yeSB3b3VsZCBiZSBjb25mdXNpbmcKYW5kIEZBTl9NT1ZFX1NFTEYgcHJv
+dmlkZWQgZW5vdWdoIGluZm9ybWF0aW9uIHRvIHRyYWNrIHRoZSBtb3ZlbWVudHMKb2YgYSB3YXRj
+aGVkIGRpcmVjdG9yeS4KCkF0IHRoZSBtb21lbnQsIG5vIGJhY2tlbmQgYWxsb3dzIHdhdGNoaW5n
+IEZTX1JFTkFNRSBvbiBhIG5vbi1kaXIgaW5vZGUuCldoZW4gYmFja2VuZHMgKGkuZS4gZmFub3Rp
+ZnkpIHdpbGwgYWxsb3cgd2F0Y2hpbmcgRlNfUkVOQU1FIG9uIGEgbm9uLWRpcgppbm9kZSwgb2xk
+L25ldyBkaXIrbmFtZSBzaG91bGQgYmUgcmVwb3J0ZWQgb25seSBpZiB0aGUgZ3JvdXAgcHJvdmVz
+IHRvCmhhdmUgcmVhZCBwZXJtaXNzaW9uIG9uIG9sZC9uZXcgZGlyLgoKU2lnbmVkLW9mZi1ieTog
+QW1pciBHb2xkc3RlaW4gPGFtaXI3M2lsQGdtYWlsLmNvbT4KLS0tCiBmcy9ub3RpZnkvZmFub3Rp
+ZnkvZmFub3RpZnkuYyAgICB8ICA0ICstCiBmcy9ub3RpZnkvZnNub3RpZnkuYyAgICAgICAgICAg
+ICB8IDcyICsrKysrKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tCiBpbmNsdWRlL2xpbnV4L2Zz
+bm90aWZ5LmggICAgICAgICB8IDE5ICsrKysrLS0tLQogaW5jbHVkZS9saW51eC9mc25vdGlmeV9i
+YWNrZW5kLmggfCAgNiArKy0KIDQgZmlsZXMgY2hhbmdlZCwgNjMgaW5zZXJ0aW9ucygrKSwgMzgg
+ZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZnMvbm90aWZ5L2Zhbm90aWZ5L2Zhbm90aWZ5LmMg
+Yi9mcy9ub3RpZnkvZmFub3RpZnkvZmFub3RpZnkuYwppbmRleCA5ODVlOTk1ZDJhMzkuLmZjNDk4
+ZmMwOTBkYSAxMDA2NDQKLS0tIGEvZnMvbm90aWZ5L2Zhbm90aWZ5L2Zhbm90aWZ5LmMKKysrIGIv
+ZnMvbm90aWZ5L2Zhbm90aWZ5L2Zhbm90aWZ5LmMKQEAgLTc4MCw5ICs3ODAsOSBAQCBzdGF0aWMg
+c3RydWN0IGZhbm90aWZ5X2V2ZW50ICpmYW5vdGlmeV9hbGxvY19ldmVudCgKIAkJCXJlcG9ydF9v
+bGQgPSByZXBvcnRfbmV3ID0KIAkJCQltYXRjaF9tYXNrICYgKDFVIDw8IEZTTk9USUZZX0lURVJf
+VFlQRV9TQik7CiAJCQlyZXBvcnRfb2xkIHw9Ci0JCQkJbWF0Y2hfbWFzayAmICgxVSA8PCBGU05P
+VElGWV9JVEVSX1RZUEVfSU5PREUpOworCQkJCW1hdGNoX21hc2sgJiAoMVUgPDwgRlNOT1RJRllf
+SVRFUl9UWVBFX09MRF9ESVIpOwogCQkJcmVwb3J0X25ldyB8PQotCQkJCW1hdGNoX21hc2sgJiAo
+MVUgPDwgRlNOT1RJRllfSVRFUl9UWVBFX0lOT0RFMik7CisJCQkJbWF0Y2hfbWFzayAmICgxVSA8
+PCBGU05PVElGWV9JVEVSX1RZUEVfTkVXX0RJUik7CiAKIAkJCWlmICghcmVwb3J0X29sZCkgewog
+CQkJCS8qIERvIG5vdCByZXBvcnQgb2xkIHBhcmVudCtuYW1lICovCmRpZmYgLS1naXQgYS9mcy9u
+b3RpZnkvZnNub3RpZnkuYyBiL2ZzL25vdGlmeS9mc25vdGlmeS5jCmluZGV4IDZlZWUxOWQxNWU4
+Yy4uY2UxYWU3MjVlYzhjIDEwMDY0NAotLS0gYS9mcy9ub3RpZnkvZnNub3RpZnkuYworKysgYi9m
+cy9ub3RpZnkvZnNub3RpZnkuYwpAQCAtMjc3LDE5ICsyNzcsMTkgQEAgc3RhdGljIGludCBmc25v
+dGlmeV9oYW5kbGVfZXZlbnQoc3RydWN0IGZzbm90aWZ5X2dyb3VwICpncm91cCwgX191MzIgbWFz
+aywKIAkgICAgV0FSTl9PTl9PTkNFKGZzbm90aWZ5X2l0ZXJfdmZzbW91bnRfbWFyayhpdGVyX2lu
+Zm8pKSkKIAkJcmV0dXJuIDA7CiAKLQkvKgotCSAqIEZvciBGU19SRU5BTUUsICdkaXInIGlzIG9s
+ZCBkaXIgYW5kICdkYXRhJyBpcyBuZXcgZGVudHJ5LgotCSAqIFRoZSBvbmx5IC0+aGFuZGxlX2lu
+b2RlX2V2ZW50KCkgYmFja2VuZCB0aGF0IHN1cHBvcnRzIEZTX1JFTkFNRSBpcwotCSAqIGRub3Rp
+ZnksIHdoZXJlIGl0IG1lYW5zIGZpbGUgd2FzIHJlbmFtZWQgd2l0aGluIHNhbWUgcGFyZW50Lgot
+CSAqLwogCWlmIChtYXNrICYgRlNfUkVOQU1FKSB7Ci0JCXN0cnVjdCBkZW50cnkgKm1vdmVkID0g
+ZnNub3RpZnlfZGF0YV9kZW50cnkoZGF0YSwgZGF0YV90eXBlKTsKKwkJaW5vZGVfbWFyayA9IGZz
+bm90aWZ5X2l0ZXJfb2xkX2Rpcl9tYXJrKGl0ZXJfaW5mbyk7CisJCXBhcmVudF9tYXJrID0gZnNu
+b3RpZnlfaXRlcl9uZXdfZGlyX21hcmsoaXRlcl9pbmZvKTsKIAotCQlpZiAoZGlyICE9IG1vdmVk
+LT5kX3BhcmVudC0+ZF9pbm9kZSkKKwkJLyoKKwkJICogVGhlIG9ubHkgLT5oYW5kbGVfaW5vZGVf
+ZXZlbnQoKSBiYWNrZW5kIHRoYXQgc3VwcG9ydHMKKwkJICogRlNfUkVOQU1FIGlzIGRub3RpZnks
+IHdoZXJlIEROX1JFTkFNRSBtZWFucyB0aGF0IGZpbGUKKwkJICogd2FzIHJlbmFtZWQgd2l0aGlu
+IHRoZSBzYW1lIHBhcmVudC4KKwkJICovCisJCWlmIChXQVJOX09OX09OQ0UoIWlub2RlX21hcmsp
+IHx8CisJCSAgICBpbm9kZV9tYXJrICE9IHBhcmVudF9tYXJrKQogCQkJcmV0dXJuIDA7Ci0JfQot
+Ci0JaWYgKHBhcmVudF9tYXJrKSB7CisJfSBlbHNlIGlmIChwYXJlbnRfbWFyaykgewogCQkvKgog
+CQkgKiBwYXJlbnRfbWFyayBpbmRpY2F0ZXMgdGhhdCB0aGUgcGFyZW50IGlub2RlIGlzIHdhdGNo
+aW5nCiAJCSAqIGNoaWxkcmVuIGFuZCBpbnRlcmVzdGVkIGluIHRoaXMgZXZlbnQsIHdoaWNoIGlz
+IGFuIGV2ZW50CkBAIC00NzksOSArNDc5LDkgQEAgaW50IGZzbm90aWZ5KF9fdTMyIG1hc2ssIGNv
+bnN0IHZvaWQgKmRhdGEsIGludCBkYXRhX3R5cGUsIHN0cnVjdCBpbm9kZSAqZGlyLAogCXN0cnVj
+dCBzdXBlcl9ibG9jayAqc2IgPSBmc25vdGlmeV9kYXRhX3NiKGRhdGEsIGRhdGFfdHlwZSk7CiAJ
+c3RydWN0IGZzbm90aWZ5X2l0ZXJfaW5mbyBpdGVyX2luZm8gPSB7fTsKIAlzdHJ1Y3QgbW91bnQg
+Km1udCA9IE5VTEw7Ci0Jc3RydWN0IGlub2RlICppbm9kZTIgPSBOVUxMOworCXN0cnVjdCBpbm9k
+ZSAqZGlyMSwgKmRpcjI7CiAJc3RydWN0IGRlbnRyeSAqbW92ZWQ7Ci0JaW50IGlub2RlMl90eXBl
+OworCWludCBkaXIxX3R5cGUgPSAwOwogCWludCByZXQgPSAwOwogCV9fdTMyIHRlc3RfbWFzaywg
+bWFya3NfbWFzazsKIApAQCAtNDkxLDE5ICs0OTEsMzEgQEAgaW50IGZzbm90aWZ5KF9fdTMyIG1h
+c2ssIGNvbnN0IHZvaWQgKmRhdGEsIGludCBkYXRhX3R5cGUsIHN0cnVjdCBpbm9kZSAqZGlyLAog
+CWlmICghaW5vZGUpIHsKIAkJLyogRGlyZW50IGV2ZW50IC0gcmVwb3J0IG9uIFRZUEVfSU5PREUg
+dG8gZGlyICovCiAJCWlub2RlID0gZGlyOwotCQkvKiBGb3IgRlNfUkVOQU1FLCBpbm9kZSBpcyBv
+bGRfZGlyIGFuZCBpbm9kZTIgaXMgbmV3X2RpciAqLwotCQlpZiAobWFzayAmIEZTX1JFTkFNRSkg
+ewotCQkJbW92ZWQgPSBmc25vdGlmeV9kYXRhX2RlbnRyeShkYXRhLCBkYXRhX3R5cGUpOwotCQkJ
+aW5vZGUyID0gbW92ZWQtPmRfcGFyZW50LT5kX2lub2RlOwotCQkJaW5vZGUyX3R5cGUgPSBGU05P
+VElGWV9JVEVSX1RZUEVfSU5PREUyOwotCQl9CisJfSBlbHNlIGlmIChtYXNrICYgRlNfUkVOQU1F
+KSB7CisJCS8qIEZvciBGU19SRU5BTUUsIGRpcjEgaXMgb2xkX2RpciBhbmQgZGlyMiBpcyBuZXdf
+ZGlyICovCisJCW1vdmVkID0gZnNub3RpZnlfZGF0YV9kZW50cnkoZGF0YSwgZGF0YV90eXBlKTsK
+KwkJZGlyMSA9IG1vdmVkLT5kX3BhcmVudC0+ZF9pbm9kZTsKKwkJZGlyMiA9IGRpcjsKKwkJaWYg
+KGRpcjEtPmlfZnNub3RpZnlfbWFya3MgfHwgZGlyMi0+aV9mc25vdGlmeV9tYXJrcykKKwkJCWRp
+cjFfdHlwZSA9IEZTTk9USUZZX0lURVJfVFlQRV9PTERfRElSOworCQkvKgorCQkgKiBTZW5kIEZT
+X1JFTkFNRSB0byBncm91cHMgd2F0Y2hpbmcgdGhlIG1vdmVkIGlub2RlIGl0c2VsZgorCQkgKiBv
+bmx5IGlmIHRoZSBtb3ZlZCBpbm9kZSBpcyBhIG5vbi1kaXIuCisJCSAqIFNlbmRpbmcgRlNfUkVO
+QU1FIHRvIGEgbW92ZWQgd2F0Y2hlZCBkaXJlY3Rvcnkgd291bGQgYmUKKwkJICogY29uZnVzaW5n
+IGFuZCBGU19NT1ZFX1NFTEYgcHJvdmlkZWQgZW5vdWdoIGluZm9ybWF0aW9uIHRvCisJCSAqIHRy
+YWNrIHRoZSBtb3ZlbWVudHMgb2YgYSB3YXRjaGVkIGRpcmVjdG9yeS4KKwkJICovCisJCWlmICht
+YXNrICYgRlNfSVNESVIpCisJCQlpbm9kZSA9IE5VTEw7CiAJfSBlbHNlIGlmIChtYXNrICYgRlNf
+RVZFTlRfT05fQ0hJTEQpIHsKIAkJLyoKIAkJICogRXZlbnQgb24gY2hpbGQgLSByZXBvcnQgb24g
+VFlQRV9QQVJFTlQgdG8gZGlyIGlmIGl0IGlzCiAJCSAqIHdhdGNoaW5nIGNoaWxkcmVuIGFuZCBv
+biBUWVBFX0lOT0RFIHRvIGNoaWxkLgogCQkgKi8KLQkJaW5vZGUyID0gZGlyOwotCQlpbm9kZTJf
+dHlwZSA9IEZTTk9USUZZX0lURVJfVFlQRV9QQVJFTlQ7CisJCWRpcjEgPSBkaXI7CisJCWRpcjIg
+PSBOVUxMOworCQlpZiAoZGlyMS0+aV9mc25vdGlmeV9tYXJrcykKKwkJCWRpcjFfdHlwZSA9IEZT
+Tk9USUZZX0lURVJfVFlQRV9QQVJFTlQ7CiAJfQogCiAJLyoKQEAgLTUxNiw3ICs1MjgsNyBAQCBp
+bnQgZnNub3RpZnkoX191MzIgbWFzaywgY29uc3Qgdm9pZCAqZGF0YSwgaW50IGRhdGFfdHlwZSwg
+c3RydWN0IGlub2RlICpkaXIsCiAJaWYgKCFzYi0+c19mc25vdGlmeV9tYXJrcyAmJgogCSAgICAo
+IW1udCB8fCAhbW50LT5tbnRfZnNub3RpZnlfbWFya3MpICYmCiAJICAgICghaW5vZGUgfHwgIWlu
+b2RlLT5pX2Zzbm90aWZ5X21hcmtzKSAmJgotCSAgICAoIWlub2RlMiB8fCAhaW5vZGUyLT5pX2Zz
+bm90aWZ5X21hcmtzKSkKKwkgICAgIWRpcjFfdHlwZSkKIAkJcmV0dXJuIDA7CiAKIAltYXJrc19t
+YXNrID0gc2ItPnNfZnNub3RpZnlfbWFzazsKQEAgLTUyNCw4ICs1MzYsMTIgQEAgaW50IGZzbm90
+aWZ5KF9fdTMyIG1hc2ssIGNvbnN0IHZvaWQgKmRhdGEsIGludCBkYXRhX3R5cGUsIHN0cnVjdCBp
+bm9kZSAqZGlyLAogCQltYXJrc19tYXNrIHw9IG1udC0+bW50X2Zzbm90aWZ5X21hc2s7CiAJaWYg
+KGlub2RlKQogCQltYXJrc19tYXNrIHw9IGlub2RlLT5pX2Zzbm90aWZ5X21hc2s7Ci0JaWYgKGlu
+b2RlMikKLQkJbWFya3NfbWFzayB8PSBpbm9kZTItPmlfZnNub3RpZnlfbWFzazsKKwlpZiAoZGly
+MV90eXBlKSB7CisJCWlmIChkaXIxKQorCQkJbWFya3NfbWFzayB8PSBkaXIxLT5pX2Zzbm90aWZ5
+X21hc2s7CisJCWlmIChkaXIyKQorCQkJbWFya3NfbWFzayB8PSBkaXIyLT5pX2Zzbm90aWZ5X21h
+c2s7CisJfQogCiAKIAkvKgpAQCAtNTUwLDkgKzU2NiwxMyBAQCBpbnQgZnNub3RpZnkoX191MzIg
+bWFzaywgY29uc3Qgdm9pZCAqZGF0YSwgaW50IGRhdGFfdHlwZSwgc3RydWN0IGlub2RlICpkaXIs
+CiAJCWl0ZXJfaW5mby5tYXJrc1tGU05PVElGWV9JVEVSX1RZUEVfSU5PREVdID0KIAkJCWZzbm90
+aWZ5X2ZpcnN0X21hcmsoJmlub2RlLT5pX2Zzbm90aWZ5X21hcmtzKTsKIAl9Ci0JaWYgKGlub2Rl
+MikgewotCQlpdGVyX2luZm8ubWFya3NbaW5vZGUyX3R5cGVdID0KLQkJCWZzbm90aWZ5X2ZpcnN0
+X21hcmsoJmlub2RlMi0+aV9mc25vdGlmeV9tYXJrcyk7CisJaWYgKGRpcjFfdHlwZSkgeworCQlp
+ZiAoZGlyMSkKKwkJCWl0ZXJfaW5mby5tYXJrc1tkaXIxX3R5cGVdID0KKwkJCQlmc25vdGlmeV9m
+aXJzdF9tYXJrKCZkaXIxLT5pX2Zzbm90aWZ5X21hcmtzKTsKKwkJaWYgKGRpcjIpCisJCQlpdGVy
+X2luZm8ubWFya3NbRlNOT1RJRllfSVRFUl9UWVBFX05FV19ESVJdID0KKwkJCQlmc25vdGlmeV9m
+aXJzdF9tYXJrKCZkaXIyLT5pX2Zzbm90aWZ5X21hcmtzKTsKIAl9CiAKIAkvKgpkaWZmIC0tZ2l0
+IGEvaW5jbHVkZS9saW51eC9mc25vdGlmeS5oIGIvaW5jbHVkZS9saW51eC9mc25vdGlmeS5oCmlu
+ZGV4IGJiODQ2N2NkMTFhZS4uNzVmMTA0ODQ0M2E1IDEwMDY0NAotLS0gYS9pbmNsdWRlL2xpbnV4
+L2Zzbm90aWZ5LmgKKysrIGIvaW5jbHVkZS9saW51eC9mc25vdGlmeS5oCkBAIC0yOCwxOCArMjgs
+MTkgQEAKICAqLwogc3RhdGljIGlubGluZSBpbnQgZnNub3RpZnlfbmFtZShfX3UzMiBtYXNrLCBj
+b25zdCB2b2lkICpkYXRhLCBpbnQgZGF0YV90eXBlLAogCQkJCXN0cnVjdCBpbm9kZSAqZGlyLCBj
+b25zdCBzdHJ1Y3QgcXN0ciAqbmFtZSwKLQkJCQl1MzIgY29va2llKQorCQkJCXN0cnVjdCBpbm9k
+ZSAqaW5vZGUsIHUzMiBjb29raWUpCiB7CiAJaWYgKGF0b21pY19sb25nX3JlYWQoJmRpci0+aV9z
+Yi0+c19mc25vdGlmeV9jb25uZWN0b3JzKSA9PSAwKQogCQlyZXR1cm4gMDsKIAotCXJldHVybiBm
+c25vdGlmeShtYXNrLCBkYXRhLCBkYXRhX3R5cGUsIGRpciwgbmFtZSwgTlVMTCwgY29va2llKTsK
+KwlyZXR1cm4gZnNub3RpZnkobWFzaywgZGF0YSwgZGF0YV90eXBlLCBkaXIsIG5hbWUsIGlub2Rl
+LCBjb29raWUpOwogfQogCiBzdGF0aWMgaW5saW5lIHZvaWQgZnNub3RpZnlfZGlyZW50KHN0cnVj
+dCBpbm9kZSAqZGlyLCBzdHJ1Y3QgZGVudHJ5ICpkZW50cnksCiAJCQkJICAgX191MzIgbWFzaykK
+IHsKLQlmc25vdGlmeV9uYW1lKG1hc2ssIGRlbnRyeSwgRlNOT1RJRllfRVZFTlRfREVOVFJZLCBk
+aXIsICZkZW50cnktPmRfbmFtZSwgMCk7CisJZnNub3RpZnlfbmFtZShtYXNrLCBkZW50cnksIEZT
+Tk9USUZZX0VWRU5UX0RFTlRSWSwgZGlyLCAmZGVudHJ5LT5kX25hbWUsCisJCSAgICAgIE5VTEws
+IDApOwogfQogCiBzdGF0aWMgaW5saW5lIHZvaWQgZnNub3RpZnlfaW5vZGUoc3RydWN0IGlub2Rl
+ICppbm9kZSwgX191MzIgbWFzaykKQEAgLTE1NCwxMyArMTU1LDEzIEBAIHN0YXRpYyBpbmxpbmUg
+dm9pZCBmc25vdGlmeV9tb3ZlKHN0cnVjdCBpbm9kZSAqb2xkX2Rpciwgc3RydWN0IGlub2RlICpu
+ZXdfZGlyLAogCX0KIAogCS8qIEV2ZW50IHdpdGggaW5mb3JtYXRpb24gYWJvdXQgYm90aCBvbGQg
+YW5kIG5ldyBwYXJlbnQrbmFtZSAqLwotCWZzbm90aWZ5X25hbWUocmVuYW1lX21hc2ssIG1vdmVk
+LCBGU05PVElGWV9FVkVOVF9ERU5UUlksCi0JCSAgICAgIG9sZF9kaXIsIG9sZF9uYW1lLCAwKTsK
+Kwlmc25vdGlmeShyZW5hbWVfbWFzaywgbW92ZWQsIEZTTk9USUZZX0VWRU5UX0RFTlRSWSwKKwkJ
+IG9sZF9kaXIsIG9sZF9uYW1lLCBzb3VyY2UsIDApOwogCiAJZnNub3RpZnlfbmFtZShvbGRfZGly
+X21hc2ssIHNvdXJjZSwgRlNOT1RJRllfRVZFTlRfSU5PREUsCi0JCSAgICAgIG9sZF9kaXIsIG9s
+ZF9uYW1lLCBmc19jb29raWUpOworCQkgICAgICBvbGRfZGlyLCBvbGRfbmFtZSwgTlVMTCwgZnNf
+Y29va2llKTsKIAlmc25vdGlmeV9uYW1lKG5ld19kaXJfbWFzaywgc291cmNlLCBGU05PVElGWV9F
+VkVOVF9JTk9ERSwKLQkJICAgICAgbmV3X2RpciwgbmV3X25hbWUsIGZzX2Nvb2tpZSk7CisJCSAg
+ICAgIG5ld19kaXIsIG5ld19uYW1lLCBOVUxMLCBmc19jb29raWUpOwogCiAJaWYgKHRhcmdldCkK
+IAkJZnNub3RpZnlfbGlua19jb3VudCh0YXJnZXQpOwpAQCAtMjIxLDcgKzIyMiw3IEBAIHN0YXRp
+YyBpbmxpbmUgdm9pZCBmc25vdGlmeV9saW5rKHN0cnVjdCBpbm9kZSAqZGlyLCBzdHJ1Y3QgaW5v
+ZGUgKmlub2RlLAogCWF1ZGl0X2lub2RlX2NoaWxkKGRpciwgbmV3X2RlbnRyeSwgQVVESVRfVFlQ
+RV9DSElMRF9DUkVBVEUpOwogCiAJZnNub3RpZnlfbmFtZShGU19DUkVBVEUsIGlub2RlLCBGU05P
+VElGWV9FVkVOVF9JTk9ERSwKLQkJICAgICAgZGlyLCAmbmV3X2RlbnRyeS0+ZF9uYW1lLCAwKTsK
+KwkJICAgICAgZGlyLCAmbmV3X2RlbnRyeS0+ZF9uYW1lLCBOVUxMLCAwKTsKIH0KIAogLyoKQEAg
+LTI0MSw3ICsyNDIsNyBAQCBzdGF0aWMgaW5saW5lIHZvaWQgZnNub3RpZnlfZGVsZXRlKHN0cnVj
+dCBpbm9kZSAqZGlyLCBzdHJ1Y3QgaW5vZGUgKmlub2RlLAogCQltYXNrIHw9IEZTX0lTRElSOwog
+CiAJZnNub3RpZnlfbmFtZShtYXNrLCBpbm9kZSwgRlNOT1RJRllfRVZFTlRfSU5PREUsIGRpciwg
+JmRlbnRyeS0+ZF9uYW1lLAotCQkgICAgICAwKTsKKwkJICAgICAgTlVMTCwgMCk7CiB9CiAKIC8q
+KgpkaWZmIC0tZ2l0IGEvaW5jbHVkZS9saW51eC9mc25vdGlmeV9iYWNrZW5kLmggYi9pbmNsdWRl
+L2xpbnV4L2Zzbm90aWZ5X2JhY2tlbmQuaAppbmRleCA5YTFhOWU3OGY2OWYuLjE1YzQ3ZThiNGFl
+MyAxMDA2NDQKLS0tIGEvaW5jbHVkZS9saW51eC9mc25vdGlmeV9iYWNrZW5kLmgKKysrIGIvaW5j
+bHVkZS9saW51eC9mc25vdGlmeV9iYWNrZW5kLmgKQEAgLTM3NCwxMSArMzc0LDEzIEBAIHN0YXRp
+YyBpbmxpbmUgc3RydWN0IGZzX2Vycm9yX3JlcG9ydCAqZnNub3RpZnlfZGF0YV9lcnJvcl9yZXBv
+cnQoCiAgKiBGb3IgZXhhbXBsZSwgYm90aCBwYXJlbnQgYW5kIGNoaWxkIGFyZSB3YXRjaGluZyBh
+biBvYmplY3Qgb2YgdHlwZSBpbm9kZS4KICAqLwogZW51bSBmc25vdGlmeV9pdGVyX3R5cGUgewor
+CUZTTk9USUZZX0lURVJfVFlQRV9OT05FID0gMCwKIAlGU05PVElGWV9JVEVSX1RZUEVfSU5PREUs
+CiAJRlNOT1RJRllfSVRFUl9UWVBFX1ZGU01PVU5ULAogCUZTTk9USUZZX0lURVJfVFlQRV9TQiwK
+IAlGU05PVElGWV9JVEVSX1RZUEVfUEFSRU5ULAotCUZTTk9USUZZX0lURVJfVFlQRV9JTk9ERTIs
+CisJRlNOT1RJRllfSVRFUl9UWVBFX09MRF9ESVIsCisJRlNOT1RJRllfSVRFUl9UWVBFX05FV19E
+SVIsCiAJRlNOT1RJRllfSVRFUl9UWVBFX0NPVU5UCiB9OwogCkBAIC00MzMsNiArNDM1LDggQEAg
+c3RhdGljIGlubGluZSBzdHJ1Y3QgZnNub3RpZnlfbWFyayAqZnNub3RpZnlfaXRlcl8jI25hbWUj
+I19tYXJrKCBcCiAKIEZTTk9USUZZX0lURVJfRlVOQ1MoaW5vZGUsIElOT0RFKQogRlNOT1RJRllf
+SVRFUl9GVU5DUyhwYXJlbnQsIFBBUkVOVCkKK0ZTTk9USUZZX0lURVJfRlVOQ1Mob2xkX2Rpciwg
+T0xEX0RJUikKK0ZTTk9USUZZX0lURVJfRlVOQ1MobmV3X2RpciwgTkVXX0RJUikKIEZTTk9USUZZ
+X0lURVJfRlVOQ1ModmZzbW91bnQsIFZGU01PVU5UKQogRlNOT1RJRllfSVRFUl9GVU5DUyhzYiwg
+U0IpCiAKLS0gCjIuMjUuMQoK
+--0000000000006800ff05de6e1d7e--
