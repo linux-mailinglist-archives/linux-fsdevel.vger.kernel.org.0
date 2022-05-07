@@ -2,146 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E73051E50E
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 May 2022 09:09:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6FD251E52E
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 May 2022 09:21:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1445970AbiEGHNL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 7 May 2022 03:13:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53140 "EHLO
+        id S1446068AbiEGHZF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 7 May 2022 03:25:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60702 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1445858AbiEGHNJ (ORCPT
+        with ESMTP id S1446038AbiEGHY6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 7 May 2022 03:13:09 -0400
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A457C5EBED
-        for <linux-fsdevel@vger.kernel.org>; Sat,  7 May 2022 00:09:23 -0700 (PDT)
-Received: by mail-io1-f70.google.com with SMTP id i66-20020a6bb845000000b00657bac76fb4so6408084iof.15
-        for <linux-fsdevel@vger.kernel.org>; Sat, 07 May 2022 00:09:23 -0700 (PDT)
+        Sat, 7 May 2022 03:24:58 -0400
+Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F35F33883;
+        Sat,  7 May 2022 00:21:11 -0700 (PDT)
+Received: by mail-pg1-x534.google.com with SMTP id 202so7862914pgc.9;
+        Sat, 07 May 2022 00:21:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=rNQz935Rwo42XgI1l8Va40p/MEeV4p6HEVCQ52VDnf4=;
+        b=P42+8ex/HBpVSeUhi79CcZsiB1rEwx7SjPsWOzHKtYtuDRjT+7g81hnQb9Bg+3nrwT
+         De8dQlU9BcgwoEV9wdnbeE3D82XEoM9rdMizKhVMhmThyQPs7pG6yQdXOZHUILyVEB8B
+         MZOMaM5Nag+I9ca+mSFwEkbaCfc+mVQpZN8W0UFxaI3P1zlBAo3OLxIQcU7yZiXAhU1h
+         Jiaawf+dpE+KAoqOYTid6KwfvlqOs8L3T25b9+uILvT8+qC03iIX5R5P7pBVqRxRlV1/
+         2L77a/eKzFW5m+4Q8qaNXGrcogU5pQhNHMvwFRhhaVI7cMNifBapsGydQXtopBhbDEvv
+         tGKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=/RjqXkVDmSnEe7KcfYtOgh/hY0eudwR3OTDGNYh8rWI=;
-        b=wjBVm79T8iqdtlXRwYha325l0MMYJZ8iavz8nWeMAnOuSs+dzquxzlMrhUokoBVJ6l
-         F2u115vlAo6YjSxcEBZHSygJYJ2pBegXGvJCckow+tZm8+rnYSCLUYm3rlG5qYPAiTHZ
-         e4MFDBdv8Ni40DYaEngz3JeLxJDAxg84bEb7yPnKSd8Y5ialIZWjrH4RVKDwjo/oil4Z
-         jTiyAb0gQCmZcXpj1NWfi77XH20CLYIY2RCbNq9HpEdvK7YZyMRMJVgYgaTNc7uT+4j8
-         jWl8yU/9+bLriPF8Ve1nrShDK/NK+xNfKqH5UMb2j8uLa3mymYRRtDzvZgqziP44hsVj
-         Q0iw==
-X-Gm-Message-State: AOAM530dbUUScGJ0JEvAY5xr+swDC/rD6ThhIyJ/Vc9iWFv7+MXYFSCf
-        t1eKD//88qBuTfdUN6WEIS7C0kC0WHr+HLCst013TcVU14Kz
-X-Google-Smtp-Source: ABdhPJyD5vhriW0DL0FybaB3cEdkB4wuT4GlUYh3xnFl/+8kWp5S1XYJRqauY2rD0crFe0Etz6IMsZKLRijiBeuKdACT4U9rsSFJ
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=rNQz935Rwo42XgI1l8Va40p/MEeV4p6HEVCQ52VDnf4=;
+        b=dbeW4iM7xzP1pedpoDFeZtPSpmc86HZmgQb1X3b5lrJZdzI+tplsVsUWaqsF8L1s8A
+         2U5tF6esDkokfGvo/YHHeEeec6aJgpFOSQsbfcC/MQkEGcSX5c6FVHf+p0IAokhhPB+q
+         l4FClkS0nKcw4/jXpPICClyeLZ89tcDKSfVADmhw1kbEBSWgGwHU2IfmpJuqLMTtJCrk
+         PNN3GDEiLwWAtr5iU9coSPpxe6mLDsAFWt5TUq8XBXVcrXTGHRmuddlv7L2GujvJklTK
+         nC7flNwS/oLwTTv+whKqvnsq60zWSNjk4GLU7zCTih+92OwvzA6oXuZtj6nRsBqwc11D
+         eWlA==
+X-Gm-Message-State: AOAM533mkWrE91d5Fv8TF+MsfcWOY5uSudTeBV1ZFoloI+2u15sES9gD
+        tRsM1an+HHlHXwUaVI9RE7Q=
+X-Google-Smtp-Source: ABdhPJy8wngBA9nCSkNphuykt/x5APcFu3ZWQNW14hKz2s7Rb0bLuKnbzsVQiG9xcQts5UZOdrCb6w==
+X-Received: by 2002:a65:6093:0:b0:373:9c75:19ec with SMTP id t19-20020a656093000000b003739c7519ecmr5972095pgu.539.1651908071104;
+        Sat, 07 May 2022 00:21:11 -0700 (PDT)
+Received: from hyeyoo ([114.29.24.243])
+        by smtp.gmail.com with ESMTPSA id 1-20020a170902c20100b0015ec44d25dasm2956759pll.235.2022.05.07.00.20.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 07 May 2022 00:21:10 -0700 (PDT)
+Date:   Sat, 7 May 2022 16:20:50 +0900
+From:   Hyeonggon Yoo <42.hyeyoo@gmail.com>
+To:     Byungchul Park <byungchul.park@lge.com>
+Cc:     torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
+        linux-ide@vger.kernel.org, adilger.kernel@dilger.ca,
+        linux-ext4@vger.kernel.org, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, peterz@infradead.org,
+        will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
+        joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
+        chris@chris-wilson.co.uk, duyuyang@gmail.com,
+        johannes.berg@intel.com, tj@kernel.org, tytso@mit.edu,
+        willy@infradead.org, david@fromorbit.com, amir73il@gmail.com,
+        gregkh@linuxfoundation.org, kernel-team@lge.com,
+        linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
+        minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
+        sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
+        penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
+        ngupta@vflare.org, linux-block@vger.kernel.org,
+        paolo.valente@linaro.org, josef@toxicpanda.com,
+        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        jack@suse.cz, jack@suse.com, jlayton@kernel.org,
+        dan.j.williams@intel.com, hch@infradead.org, djwong@kernel.org,
+        dri-devel@lists.freedesktop.org, airlied@linux.ie,
+        rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
+        hamohammed.sa@gmail.com
+Subject: Re: [PATCH RFC v6 00/21] DEPT(Dependency Tracker)
+Message-ID: <YnYd0hd+yTvVQxm5@hyeyoo>
+References: <CAHk-=whnPePcffsNQM+YSHMGttLXvpf8LbBQ8P7HEdqFXaV7Lg@mail.gmail.com>
+ <1651795895-8641-1-git-send-email-byungchul.park@lge.com>
 MIME-Version: 1.0
-X-Received: by 2002:a5d:8d94:0:b0:652:f6f0:6330 with SMTP id
- b20-20020a5d8d94000000b00652f6f06330mr2866737ioj.199.1651907363056; Sat, 07
- May 2022 00:09:23 -0700 (PDT)
-Date:   Sat, 07 May 2022 00:09:23 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000093b39105de66a7a7@google.com>
-Subject: [syzbot] BUG: unable to handle kernel paging request in inode_wait_for_writeback
-From:   syzbot <syzbot+8fbf154f6ae28029c757@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1651795895-8641-1-git-send-email-byungchul.park@lge.com>
+X-Spam-Status: No, score=-0.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,HK_RANDOM_ENVFROM,
+        HK_RANDOM_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Fri, May 06, 2022 at 09:11:35AM +0900, Byungchul Park wrote:
+> Linus wrote:
+> >
+> > On Wed, May 4, 2022 at 1:19 AM Byungchul Park <byungchul.park@lge.com> wrote:
+> > >
+> > > Hi Linus and folks,
+> > >
+> > > I've been developing a tool for detecting deadlock possibilities by
+> > > tracking wait/event rather than lock(?) acquisition order to try to
+> > > cover all synchonization machanisms.
+> > 
+> > So what is the actual status of reports these days?
+> > 
+> > Last time I looked at some reports, it gave a lot of false positives
+> > due to mis-understanding prepare_to_sleep().
+> 
+> Yes, it was. I handled the case in the following way:
+> 
+> 1. Stage the wait at prepare_to_sleep(), which might be used at commit.
+>    Which has yet to be an actual wait that Dept considers.
+> 2. If the condition for sleep is true, the wait will be committed at
+>    __schedule(). The wait becomes an actual one that Dept considers.
+> 3. If the condition is false and the task gets back to TASK_RUNNING,
+>    clean(=reset) the staged wait.
+> 
+> That way, Dept only works with what actually hits to __schedule() for
+> the waits through sleep.
+> 
+> > For this all to make sense, it would need to not have false positives
+> > (or at least a very small number of them together with a way to sanely
+> 
+> Yes. I agree with you. I got rid of them that way I described above.
+>
 
-syzbot found the following issue on:
+IMHO DEPT should not report what lockdep allows (Not talking about
+wait events). I mean lockdep allows some kind of nested locks but
+DEPT reports them.
 
-HEAD commit:    4b97bac0756a Merge tag 'for-5.18-rc5-tag' of git://git.ker..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1265a2bcf00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=331feb185f8828e0
-dashboard link: https://syzkaller.appspot.com/bug?extid=8fbf154f6ae28029c757
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+When I was collecting reports from DEPT on varous configurations,
+Most of them was report of down_write_nested(), which is allowed in
+lockdep.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+DEPT should not report at least what we know it's not a real deadlock.
+Otherwise there will be reports that is never fixed, which is quite
+unpleasant and reporters cannot examine all of them if it's real deadlock
+or not.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+8fbf154f6ae28029c757@syzkaller.appspotmail.com
+> > get rid of them), and also have a track record of finding things that
+> > lockdep doesn't.
+> 
+> I have some reports that wait_for_completion or waitqueue is involved.
+> It's worth noting those are not tracked by Lockdep. I'm checking if
+> those are true positive or not. I will share those reports once I get
+> more convinced for that.
+> 
+> > Maybe such reports have been sent out with the current situation, and
+> > I haven't seen them.
+> 
+> Dept reports usually have been sent to me privately, not in LKML. As I
+> told you, I'm planning to share them.
+> 
+> 	Byungchul
+> 
+> > 
+> >                  Linus
+> > 
 
-BUG: unable to handle page fault for address: 0000000065d375c1
-#PF: supervisor write access in kernel mode
-#PF: error_code(0x0002) - not-present page
-PGD 7cc07067 P4D 7cc07067 PUD 0 
-Oops: 0002 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 6611 Comm: syz-executor.5 Not tainted 5.18.0-rc5-syzkaller-00163-g4b97bac0756a #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:lock_is_held include/linux/lockdep.h:283 [inline]
-RIP: 0010:rcu_read_lock_sched_held+0x39/0x70 kernel/rcu/update.c:125
-Code: 75 06 44 89 e0 41 5c c3 e8 24 8c 00 00 84 c0 74 41 e8 8b a8 00 00 84 c0 74 38 be ff ff ff ff 48 c7 c7 20 20 d8 8b e8 c6 a1 09 <08> 85 c0 75 d3 65 8b 05 cb c1 9e 7e a9 ff ff ff 7f 75 c5 9c 41 5c
-RSP: 0018:ffffc9000545f9e0 EFLAGS: 00010282
-RAX: 0000000000000000 RBX: 1ffff92000a8bf40 RCX: 0000000000000001
-RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000000
-RBP: 0000000000000001 R08: 0000000000000000 R09: ffffffff8db92257
-R10: fffffbfff1b7244a R11: 0000000000000000 R12: 0000000000000001
-R13: 0000000000000000 R14: ffff88806a792f30 R15: 0000000000000000
-FS:  00007f66a8337700(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000065d375c1 CR3: 000000007d8c7000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- trace_lock_acquire include/trace/events/lock.h:13 [inline]
- lock_acquire+0x442/0x510 kernel/locking/lockdep.c:5612
- __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
- _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:154
- spin_lock include/linux/spinlock.h:349 [inline]
- inode_wait_for_writeback+0x1a/0x30 fs/fs-writeback.c:1466
- evict+0x2b7/0x6b0 fs/inode.c:661
- iput_final fs/inode.c:1744 [inline]
- iput.part.0+0x562/0x820 fs/inode.c:1770
- iput+0x58/0x70 fs/inode.c:1760
- ntfs_fill_super+0x2e08/0x37b0 fs/ntfs3/super.c:1178
- get_tree_bdev+0x440/0x760 fs/super.c:1292
- vfs_get_tree+0x89/0x2f0 fs/super.c:1497
- do_new_mount fs/namespace.c:3040 [inline]
- path_mount+0x1320/0x1fa0 fs/namespace.c:3370
- do_mount fs/namespace.c:3383 [inline]
- __do_sys_mount fs/namespace.c:3591 [inline]
- __se_sys_mount fs/namespace.c:3568 [inline]
- __x64_sys_mount+0x27f/0x300 fs/namespace.c:3568
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-RIP: 0033:0x7f66a728a61a
-Code: 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 b8 ff ff ff ff eb d2 e8 b8 04 00 00 0f 1f 84 00 00 00 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f66a8336f88 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0000000020000200 RCX: 00007f66a728a61a
-RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007f66a8336fe0
-RBP: 00007f66a8337020 R08: 00007f66a8337020 R09: 0000000020000000
-R10: 0000000000000000 R11: 0000000000000206 R12: 0000000020000000
-R13: 0000000020000100 R14: 00007f66a8336fe0 R15: 000000002007c6a0
- </TASK>
-Modules linked in:
-CR2: 0000000065d375c1
----[ end trace 0000000000000000 ]---
-RIP: 0010:lock_is_held include/linux/lockdep.h:283 [inline]
-RIP: 0010:rcu_read_lock_sched_held+0x39/0x70 kernel/rcu/update.c:125
-Code: 75 06 44 89 e0 41 5c c3 e8 24 8c 00 00 84 c0 74 41 e8 8b a8 00 00 84 c0 74 38 be ff ff ff ff 48 c7 c7 20 20 d8 8b e8 c6 a1 09 <08> 85 c0 75 d3 65 8b 05 cb c1 9e 7e a9 ff ff ff 7f 75 c5 9c 41 5c
-RSP: 0018:ffffc9000545f9e0 EFLAGS: 00010282
-RAX: 0000000000000000 RBX: 1ffff92000a8bf40 RCX: 0000000000000001
-RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000000
-RBP: 0000000000000001 R08: 0000000000000000 R09: ffffffff8db92257
-R10: fffffbfff1b7244a R11: 0000000000000000 R12: 0000000000000001
-R13: 0000000000000000 R14: ffff88806a792f30 R15: 0000000000000000
-FS:  00007f66a8337700(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000065d375c1 CR3: 000000007d8c7000 CR4: 0000000000350ef0
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+-- 
+Thanks,
+Hyeonggon
