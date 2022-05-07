@@ -2,66 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A37B51E332
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 May 2022 03:43:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC33F51E3EB
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 May 2022 06:11:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1445261AbiEGBrU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 May 2022 21:47:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60908 "EHLO
+        id S1445489AbiEGEOm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 7 May 2022 00:14:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1445246AbiEGBrS (ORCPT
+        with ESMTP id S1445488AbiEGEOg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 May 2022 21:47:18 -0400
-Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E77C45DBC7;
-        Fri,  6 May 2022 18:43:33 -0700 (PDT)
-Received: by mail-pg1-x52f.google.com with SMTP id 15so7429495pgf.4;
-        Fri, 06 May 2022 18:43:33 -0700 (PDT)
+        Sat, 7 May 2022 00:14:36 -0400
+Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 938ED2B26F
+        for <linux-fsdevel@vger.kernel.org>; Fri,  6 May 2022 21:10:50 -0700 (PDT)
+Received: by mail-pf1-x42a.google.com with SMTP id x52so7791149pfu.11
+        for <linux-fsdevel@vger.kernel.org>; Fri, 06 May 2022 21:10:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=xhp4PmSHzdcTg4X6br/SY/MgNKlnNiug+NCaOL77dg4=;
-        b=TWXbumwiv7ccRTB0dmrhV4RFC6Mch/dZ2bQRWCxNrp7rKDulHfUmSbfczVIA/okp39
-         zmydRTRo9B+IiltF4aSIz2zw4K3gVW9mDXYtxUo4YrmGBn2gf2tOkyy3SwlPx2UAiYgT
-         ceGnOVicntfQ6X7izFOSN9A63Niz+r3mEx0Ik1Gy6FOPHpI1LEaQTq6gNbRgQK8/Bvr7
-         jFy3ku9DqIe8S6xGO7PzrvE4x3uo+KCF4rUHAL6KvxHnylH7VpqpXbwxVwiE0ZPp8tkh
-         YM7yNoL0+oHKeLZ5ydwhM4b68f3jVh52SX47vsc7eJghFnuCB7KikopVCBeW155kxe0m
-         K7HA==
+        bh=sb6v0Ma3s2HntuUN/ThPmA/eaERXutHBVpI8yu6W+v4=;
+        b=JzfcNd/1aY2Rb6OrxqXcvOlXysihVad4WPbiQUZGFJgeeUM4XOdTRB0a29i94aWYUK
+         wi4pmFQulSiemNE/AuaKTM8KpJrN9GsqKsD68pKpMVUrsWzruY4KllFhrwxsZoFpEmdF
+         e/vNUrhwXAn8n4ObZ2U+5c7RLcAG9UQ9mbjR5jl5kQZXBHv382PSuLMvWrARThtaeZjJ
+         6G8WNfYFvuYS/LWaBfERb01jAxNb58tJbCtUf3iqDp2dpt8rK1dNG0KwPgwK+hstIs5N
+         uGoOZ+jxhFOQ10gkJlDyKD/6HHq3qlUcseO/qge3p1VWQ9nei3+YEyBzBH5TVdhjmPgm
+         9Z/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=xhp4PmSHzdcTg4X6br/SY/MgNKlnNiug+NCaOL77dg4=;
-        b=62JeJ1x5gr/VnAkgK+SB5VTQlxU6XE06j3niA6vVgT9oC7824JbWbJVg64hfapuylV
-         8D41WwiIg5toD53OUcc+0xhyEhcFteqXoNkq0260fLn5i2Kbvhy/nZSaIBz1tAByS2ZP
-         i5KWIRXDVqmU4c0K/GiHtcqk36TQiiPw7GWEO5EL/PKGx9jfc3kgqlnhpG8PIw22ZoLB
-         UHALrxT3kJlCbLDnnCgGqHJE2CrcXDbscCY+Tlx4fCG7/l4WEWQWn1ph0XDMpfqHZ+dh
-         lUEVrIPLE2tSHJXXFRvaDzLEUocDHPW/Zsxb5mlRbyeSdNeLfN0NfsTrARu76evGNM2M
-         Iltg==
-X-Gm-Message-State: AOAM531b1gMDAuYdXHygG4Pw+d0yQd7jr0oJ7FjngdP8yTp6B5EZKi1T
-        3gK6zmNAFolbKZehLSg4ojs=
-X-Google-Smtp-Source: ABdhPJw2WINuVYxwyjn4YtL6ag2cn2y/D6ysdRfB0zhZw3tC2yiWik0AIwNEnfKddQQuqGH9ndFEng==
-X-Received: by 2002:a65:6805:0:b0:3c1:bb28:6bd4 with SMTP id l5-20020a656805000000b003c1bb286bd4mr4997603pgt.585.1651887813423;
-        Fri, 06 May 2022 18:43:33 -0700 (PDT)
-Received: from localhost.localdomain ([193.203.214.57])
-        by smtp.gmail.com with ESMTPSA id b141-20020a621b93000000b0050dc7628176sm3999189pfb.80.2022.05.06.18.43.29
+        bh=sb6v0Ma3s2HntuUN/ThPmA/eaERXutHBVpI8yu6W+v4=;
+        b=Hcxyu7QNC9vGmJRaNn1adPxD/ckS8PwWMxIlhVdZ6Nzlj08qzEiJ+Pd2f9ZrcCkaUR
+         XWd+xtRcM+zS8yVbPbpKriD3KidtWS+r5ZdfnMLF8XOqXmmw0iFSKtagCQFPUrYBI5Ke
+         sOcktLhxmT76d8+shDLKNhxUWqv+U8ZVWu4CWIVWbQgtCUUuvsZodCBGSRQNIdIRtqUE
+         JvRFyZ3zdcnIydzKiBqxDC/0B1/YJ6CYdL+Uyvqk1mMoDXYSJEpbplHywd8/+HaTFejm
+         q7ejpBKl1ZoYmOsH8kJwfqmvtcnTC1PHL94eu/MVPBoJHpUz+v9RU9T7FsrTSfIayKIJ
+         tFzQ==
+X-Gm-Message-State: AOAM533ZSkdrr1rVyCagNWFfGZqhQjexOmroGauy7DpJ5R+T3Sp0siKI
+        4Lmhlurlqce7tQXJPJf/K8hcDvkJgA7OlQ==
+X-Google-Smtp-Source: ABdhPJwv2Y+jMbSVXH8L59irNHUYbEoGwdRryd9AF75CVsqMWMqRl6i9r47B6tpfgjMro4XZ6+IiiQ==
+X-Received: by 2002:a63:d07:0:b0:3c2:7317:24c8 with SMTP id c7-20020a630d07000000b003c2731724c8mr5375015pgl.109.1651896650012;
+        Fri, 06 May 2022 21:10:50 -0700 (PDT)
+Received: from localhost.localdomain ([50.7.159.34])
+        by smtp.gmail.com with ESMTPSA id kb8-20020a17090ae7c800b001d8abe4bb17sm4511952pjb.32.2022.05.06.21.10.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 May 2022 18:43:33 -0700 (PDT)
-From:   cgel.zte@gmail.com
-X-Google-Original-From: xu.xin16@zte.com.cn
-To:     akpm@linux-foundation.org
-Cc:     keescook@chromium.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        xu xin <xu.xin16@zte.com.cn>,
-        Yang Yang <yang.yang29@zte.com.cn>,
-        Ran Xiaokai <ran.xiaokai@zte.com.cn>,
-        wangyong <wang.yong12@zte.com.cn>,
-        Yunkai Zhang <zhang.yunkai@zte.com.cn>
-Subject: [PATCH v2] mm/ksm: introduce ksm_force for each process
-Date:   Sat,  7 May 2022 01:43:18 +0000
-Message-Id: <20220507014318.642353-1-xu.xin16@zte.com.cn>
-X-Mailer: git-send-email 2.25.1
+        Fri, 06 May 2022 21:10:49 -0700 (PDT)
+From:   Liang Chen <liangchen.linux@gmail.com>
+X-Google-Original-From: Liang Chen <lchen@localhost.localdomain>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     hch@infradead.org, jmoyer@redhat.com, jack@suse.cz,
+        lczerner@redhat.com, Liang Chen <liangchen.linux@gmail.com>
+Subject: [PATCH v2] fs: Fix page cache inconsistency when mixing buffered and AIO DIO for bdev
+Date:   Sat,  7 May 2022 12:10:33 +0800
+Message-Id: <20220507041033.9588-1-lchen@localhost.localdomain>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -74,249 +69,166 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: xu xin <xu.xin16@zte.com.cn>
+From: Liang Chen <liangchen.linux@gmail.com>
 
-To use KSM, we must explicitly call madvise() in application code,
-which means installed apps on OS needs to be uninstall and source
-code needs to be modified. It is inconvenient.
+As pointed out in commit 332391a, mixing buffered reads and asynchronous
+direct writes risks ending up with a situation where stale data is left
+in page cache while new data is already written to disk. The same problem
+hits block dev fs too. A similar approach needs to be taken here.
 
-In order to change this situation, We add a new proc 'ksm_force'
-under /proc/<pid>/ to support turning on/off KSM scanning of a
-process's mm dynamically.
-
-If ksm_force is set as 1, force all anonymous and 'qualified' vma
-of this mm to be involved in KSM scanning without explicitly
-calling madvise to make vma MADV_MERGEABLE. But It is effctive only
-when the klob of '/sys/kernel/mm/ksm/run' is set as 1.
-
-If ksm_enale is set as 0, cancel the feature of ksm_force of this
-process and unmerge those merged pages which is not madvised as
-MERGEABLE of this process, but leave MERGEABLE areas merged.
-
-Signed-off-by: xu xin <xu.xin16@zte.com.cn>
-Reviewed-by: Yang Yang <yang.yang29@zte.com.cn>
-Reviewed-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
-Reviewed-by: wangyong <wang.yong12@zte.com.cn>
-Reviewed-by: Yunkai Zhang <zhang.yunkai@zte.com.cn>
+Signed-off-by: Liang Chen <liangchen.linux@gmail.com>
 ---
-v2:
-- fix a spelling error in commit log.
-- remove a redundant condition check in ksm_force_write().
-
+V2: declare blkdev_sb_init_dio_done_wq static
 ---
- fs/proc/base.c           | 99 ++++++++++++++++++++++++++++++++++++++++
- include/linux/mm_types.h |  9 ++++
- mm/ksm.c                 | 32 ++++++++++++-
- 3 files changed, 138 insertions(+), 2 deletions(-)
+ block/fops.c | 87 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 87 insertions(+)
 
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 8dfa36a99c74..3115ffa4c9fb 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -96,6 +96,7 @@
- #include <linux/time_namespace.h>
- #include <linux/resctrl.h>
- #include <linux/cn_proc.h>
-+#include <linux/ksm.h>
- #include <trace/events/oom.h>
- #include "internal.h"
- #include "fd.h"
-@@ -3168,6 +3169,102 @@ static int proc_pid_ksm_merging_pages(struct seq_file *m, struct pid_namespace *
- 
- 	return 0;
- }
-+
-+static ssize_t ksm_force_read(struct file *file, char __user *buf, size_t count,
-+				loff_t *ppos)
-+{
-+	struct task_struct *task;
-+	struct mm_struct *mm;
-+	char buffer[PROC_NUMBUF];
-+	ssize_t len;
-+	int ret;
-+
-+	task = get_proc_task(file_inode(file));
-+	if (!task)
-+		return -ESRCH;
-+
-+	mm = get_task_mm(task);
-+	ret = 0;
-+	if (mm) {
-+		len = snprintf(buffer, sizeof(buffer), "%d\n", mm->ksm_force);
-+		ret =  simple_read_from_buffer(buf, count, ppos, buffer, len);
-+		mmput(mm);
-+	}
-+
-+	return ret;
-+}
-+
-+static ssize_t ksm_force_write(struct file *file, const char __user *buf,
-+				size_t count, loff_t *ppos)
-+{
-+	struct task_struct *task;
-+	struct mm_struct *mm;
-+	char buffer[PROC_NUMBUF];
-+	int force;
-+	int err = 0;
-+
-+	memset(buffer, 0, sizeof(buffer));
-+	if (count > sizeof(buffer) - 1)
-+		count = sizeof(buffer) - 1;
-+	if (copy_from_user(buffer, buf, count)) {
-+		err = -EFAULT;
-+		goto out_return;
-+	}
-+
-+	err = kstrtoint(strstrip(buffer), 0, &force);
-+
-+	if (err)
-+		goto out_return;
-+	if (force != 0 && force != 1) {
-+		err = -EINVAL;
-+		goto out_return;
-+	}
-+
-+	task = get_proc_task(file_inode(file));
-+	if (!task) {
-+		err = -ESRCH;
-+		goto out_return;
-+	}
-+
-+	mm = get_task_mm(task);
-+	if (!mm)
-+		goto out_put_task;
-+
-+	if (mm->ksm_force != force) {
-+		if (mmap_write_lock_killable(mm)) {
-+			err = -EINTR;
-+			goto out_mmput;
-+		}
-+
-+		if (force == 0)
-+			mm->ksm_force = force;
-+		else {
-+			/*
-+			 * Force anonymous pages of this mm to be involved in KSM merging
-+			 * without explicitly calling madvise.
-+			 */
-+			if (!test_bit(MMF_VM_MERGEABLE, &mm->flags))
-+				err = __ksm_enter(mm);
-+			if (!err)
-+				mm->ksm_force = force;
-+		}
-+
-+		mmap_write_unlock(mm);
-+	}
-+
-+out_mmput:
-+	mmput(mm);
-+out_put_task:
-+	put_task_struct(task);
-+out_return:
-+	return err < 0 ? err : count;
-+}
-+
-+static const struct file_operations proc_pid_ksm_force_operations = {
-+	.read		= ksm_force_read,
-+	.write		= ksm_force_write,
-+	.llseek		= generic_file_llseek,
-+};
- #endif /* CONFIG_KSM */
- 
- #ifdef CONFIG_STACKLEAK_METRICS
-@@ -3303,6 +3400,7 @@ static const struct pid_entry tgid_base_stuff[] = {
- #endif
- #ifdef CONFIG_KSM
- 	ONE("ksm_merging_pages",  S_IRUSR, proc_pid_ksm_merging_pages),
-+	REG("ksm_force", S_IRUSR|S_IWUSR, proc_pid_ksm_force_operations),
- #endif
+diff --git a/block/fops.c b/block/fops.c
+index 9f2ecec406b0..d3ae5eddc11b 100644
+--- a/block/fops.c
++++ b/block/fops.c
+@@ -136,11 +136,51 @@ struct blkdev_dio {
+ 	size_t			size;
+ 	atomic_t		ref;
+ 	unsigned int		flags;
++	struct work_struct	complete_work;
+ 	struct bio		bio ____cacheline_aligned_in_smp;
  };
  
-@@ -3639,6 +3737,7 @@ static const struct pid_entry tid_base_stuff[] = {
- #endif
- #ifdef CONFIG_KSM
- 	ONE("ksm_merging_pages",  S_IRUSR, proc_pid_ksm_merging_pages),
-+	REG("ksm_force", S_IRUSR|S_IWUSR, proc_pid_ksm_force_operations),
- #endif
- };
+ static struct bio_set blkdev_dio_pool;
  
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index b34ff2cdbc4f..1b1592c2f5cf 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -661,6 +661,15 @@ struct mm_struct {
- 		 * merging.
- 		 */
- 		unsigned long ksm_merging_pages;
-+		/*
-+		 * If true, force anonymous pages of this mm to be involved in KSM
-+		 * merging without explicitly calling madvise. It is effctive only
-+		 * when the klob of '/sys/kernel/mm/ksm/run' is set as 1. If false,
-+		 * cancel the feature of ksm_force of this process and unmerge
-+		 * those merged pages which is not madvised as MERGEABLE of this
-+		 * process, but leave MERGEABLE areas merged.
-+		 */
-+		bool ksm_force;
- #endif
- 	} __randomize_layout;
- 
-diff --git a/mm/ksm.c b/mm/ksm.c
-index 38360285497a..ba170e53e283 100644
---- a/mm/ksm.c
-+++ b/mm/ksm.c
-@@ -334,6 +334,34 @@ static void __init ksm_slab_free(void)
- 	mm_slot_cache = NULL;
- }
- 
-+/* Check if vma is qualified for ksmd scanning */
-+static bool ksm_vma_check(struct vm_area_struct *vma)
++static void blkdev_aio_complete_work(struct work_struct *work)
 +{
-+	unsigned long vm_flags = vma->vm_flags;
++	struct blkdev_dio *dio = container_of(work, struct blkdev_dio, complete_work);
++	struct kiocb *iocb = dio->iocb;
++	int err;
++	struct inode *inode = bdev_file_inode(iocb->ki_filp);
++	loff_t offset = iocb->ki_pos;
++	ssize_t ret;
 +
-+	if (!(vma->vm_flags & VM_MERGEABLE) && !(vma->vm_mm->ksm_force))
-+		turn false;
++	WRITE_ONCE(iocb->private, NULL);
 +
-+	if (vm_flags & (VM_SHARED	| VM_MAYSHARE	|
-+			VM_PFNMAP	| VM_IO | VM_DONTEXPAND |
-+			VM_HUGETLB	| VM_MIXEDMAP))
-+		return false;       /* just ignore this vma*/
++	if (likely(!dio->bio.bi_status)) {
++		ret = dio->size;
++		iocb->ki_pos += ret;
++	} else {
++		ret = blk_status_to_errno(dio->bio.bi_status);
++	}
 +
-+	if (vma_is_dax(vma))
-+		return false;
++	/*
++	 * Try again to invalidate clean pages which might have been cached by
++	 * non-direct readahead, or faulted in by get_user_pages() if the source
++	 * of the write was an mmap'ed region of the file we're writing.  Either
++	 * one is a pretty crazy thing to do, so we don't support it 100%.  If
++	 * this invalidation fails, tough, the write still worked...
++	 */
++	if (iocb->ki_flags & IOCB_WRITE && ret > 0 &&
++	    inode->i_mapping->nrpages) {
++		err = invalidate_inode_pages2_range(inode->i_mapping,
++				offset >> PAGE_SHIFT,
++				(offset + ret - 1) >> PAGE_SHIFT);
++		if (err)
++			dio_warn_stale_pagecache(iocb->ki_filp);
++	}
 +
-+#ifdef VM_SAO
-+	if (vm_flags & VM_SAO)
-+		return false;
-+#endif
-+#ifdef VM_SPARC_ADI
-+	if (vm_flags & VM_SPARC_ADI)
-+		return false;
-+#endif
++	iocb->ki_complete(iocb, ret);
 +
-+	return true;
++	bio_put(&dio->bio);
 +}
 +
- static __always_inline bool is_stable_node_chain(struct stable_node *chain)
+ static void blkdev_bio_end_io(struct bio *bio)
  {
- 	return chain->rmap_hlist_len == STABLE_NODE_CHAIN;
-@@ -523,7 +551,7 @@ static struct vm_area_struct *find_mergeable_vma(struct mm_struct *mm,
- 	if (ksm_test_exit(mm))
- 		return NULL;
- 	vma = vma_lookup(mm, addr);
--	if (!vma || !(vma->vm_flags & VM_MERGEABLE) || !vma->anon_vma)
-+	if (!vma || !ksm_vma_check(vma) || !vma->anon_vma)
- 		return NULL;
- 	return vma;
- }
-@@ -2297,7 +2325,7 @@ static struct rmap_item *scan_get_next_rmap_item(struct page **page)
- 		vma = find_vma(mm, ksm_scan.address);
+ 	struct blkdev_dio *dio = bio->bi_private;
+@@ -153,6 +193,14 @@ static void blkdev_bio_end_io(struct bio *bio)
+ 		if (!(dio->flags & DIO_IS_SYNC)) {
+ 			struct kiocb *iocb = dio->iocb;
+ 			ssize_t ret;
++			struct inode *inode = bdev_file_inode(iocb->ki_filp);
++
++			if (iocb->ki_flags & IOCB_WRITE){
++				INIT_WORK(&dio->complete_work, blkdev_aio_complete_work);
++				queue_work(inode->i_sb->s_dio_done_wq,
++						&dio->complete_work);
++				goto out;
++			}
  
- 	for (; vma; vma = vma->vm_next) {
--		if (!(vma->vm_flags & VM_MERGEABLE))
-+		if (!ksm_vma_check(vma))
- 			continue;
- 		if (ksm_scan.address < vma->vm_start)
- 			ksm_scan.address = vma->vm_start;
+ 			WRITE_ONCE(iocb->private, NULL);
+ 
+@@ -173,6 +221,7 @@ static void blkdev_bio_end_io(struct bio *bio)
+ 		}
+ 	}
+ 
++out:
+ 	if (should_dirty) {
+ 		bio_check_pages_dirty(bio);
+ 	} else {
+@@ -284,6 +333,20 @@ static void blkdev_bio_end_io_async(struct bio *bio)
+ 	struct blkdev_dio *dio = container_of(bio, struct blkdev_dio, bio);
+ 	struct kiocb *iocb = dio->iocb;
+ 	ssize_t ret;
++	struct inode *inode = bdev_file_inode(iocb->ki_filp);
++
++	if (iocb->ki_flags & IOCB_WRITE){
++		INIT_WORK(&dio->complete_work, blkdev_aio_complete_work);
++		/*
++		 * Grab an extra reference to ensure the dio structure
++		 * which the bio embeds in stays around for complete_work
++		 * to access.
++		 */
++		bio_get(bio);
++		queue_work(inode->i_sb->s_dio_done_wq,
++				&dio->complete_work);
++		goto out;
++	}
+ 
+ 	WRITE_ONCE(iocb->private, NULL);
+ 
+@@ -296,6 +359,7 @@ static void blkdev_bio_end_io_async(struct bio *bio)
+ 
+ 	iocb->ki_complete(iocb, ret);
+ 
++out:
+ 	if (dio->flags & DIO_SHOULD_DIRTY) {
+ 		bio_check_pages_dirty(bio);
+ 	} else {
+@@ -366,14 +430,37 @@ static ssize_t __blkdev_direct_IO_async(struct kiocb *iocb,
+ 	return -EIOCBQUEUED;
+ }
+ 
++static int blkdev_sb_init_dio_done_wq(struct super_block *sb)
++{
++	struct workqueue_struct *old;
++	struct workqueue_struct *wq = alloc_workqueue("dio/%s",
++						     WQ_MEM_RECLAIM, 0,
++						     sb->s_id);
++	if (!wq)
++	       return -ENOMEM;
++	/*
++	 * This has to be atomic as more DIOs can race to create the workqueue
++	 */
++	old = cmpxchg(&sb->s_dio_done_wq, NULL, wq);
++	/* Someone created workqueue before us? Free ours... */
++	if (old)
++		destroy_workqueue(wq);
++       return 0;
++}
++
+ static ssize_t blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+ {
+ 	unsigned int nr_pages;
++	struct inode *inode = bdev_file_inode(iocb->ki_filp);
+ 
+ 	if (!iov_iter_count(iter))
+ 		return 0;
+ 
+ 	nr_pages = bio_iov_vecs_to_alloc(iter, BIO_MAX_VECS + 1);
++
++	if(!inode->i_sb->s_dio_done_wq && blkdev_sb_init_dio_done_wq(inode->i_sb))
++		return -ENOMEM;
++
+ 	if (likely(nr_pages <= BIO_MAX_VECS)) {
+ 		if (is_sync_kiocb(iocb))
+ 			return __blkdev_direct_IO_simple(iocb, iter, nr_pages);
 -- 
-2.25.1
+2.31.1
 
