@@ -2,47 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 685BD51E909
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 May 2022 19:59:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5F9F51EA64
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 May 2022 23:52:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1446750AbiEGSDU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 7 May 2022 14:03:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41868 "EHLO
+        id S1350158AbiEGV4S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 7 May 2022 17:56:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1385126AbiEGSDR (ORCPT
+        with ESMTP id S233529AbiEGV4O (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 7 May 2022 14:03:17 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4001462C5;
-        Sat,  7 May 2022 10:59:30 -0700 (PDT)
+        Sat, 7 May 2022 17:56:14 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E313CFD10;
+        Sat,  7 May 2022 14:52:26 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id E6B91B80B56;
-        Sat,  7 May 2022 17:59:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 487CDC385A5;
-        Sat,  7 May 2022 17:59:27 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8326F60F2D;
+        Sat,  7 May 2022 21:52:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9956DC385A5;
+        Sat,  7 May 2022 21:52:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1651946367;
-        bh=lXqB3A0Ad6dE9qPBilXIn9VTJGcwZvnO4dUBZTdEwzg=;
+        s=korg; t=1651960345;
+        bh=VUBEB/P2WIQw0SMyiFMZdKktomMMIezyj6B6YeN0fcM=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=sDLtH8ryLVHB6nT6SoVTpwvMsKXjWCzTHhDgA2pMAyYiqBjYXVVQC4jAQv21uXYbK
-         J6eXrC00K8tA3TrBE443Vx2GjLPqE/7wX6hV3j9pWv4AK0/ceC0fEw0WWxxDJYf/Ir
-         ehBDbZHpvvcpAk1CQ9uR5ZhB9FkCELD0/0KzWm1g=
-Date:   Sat, 7 May 2022 10:59:26 -0700
+        b=YTT1ypjOFayfH/VIwXhN9k5FX9ncnibe6OKtZMXDFP1r9CQouE87+i/BZV4MrH0F4
+         6SEmVcA9WN2HY1vLSEzzSzyu3T+VibHmN8Zg+7ByrhgSImc5tubb4/uzRZYTZnT1Rx
+         L4JZUGK9wkgdnBNfRSEBg1UC6K7JjKz1nbfUBsv4=
+Date:   Sat, 7 May 2022 14:52:24 -0700
 From:   Andrew Morton <akpm@linux-foundation.org>
-To:     cgel.zte@gmail.com
-Cc:     keescook@chromium.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        xu xin <xu.xin16@zte.com.cn>,
-        Yang Yang <yang.yang29@zte.com.cn>,
-        Ran Xiaokai <ran.xiaokai@zte.com.cn>,
-        wangyong <wang.yong12@zte.com.cn>,
-        Yunkai Zhang <zhang.yunkai@zte.com.cn>
-Subject: Re: [PATCH v3] mm/ksm: introduce ksm_force for each process
-Message-Id: <20220507105926.d4423601230f698b0f5228d1@linux-foundation.org>
-In-Reply-To: <20220507054702.687958-1-xu.xin16@zte.com.cn>
-References: <20220507054702.687958-1-xu.xin16@zte.com.cn>
+To:     Andrei Vagin <avagin@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>, stable@kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH] fs: sendfile handles O_NONBLOCK of out_fd
+Message-Id: <20220507145224.a9b6555969d6e66586b6514c@linux-foundation.org>
+In-Reply-To: <CANaxB-wcf0Py9eCeA8YKcBSnwzW6pKAD5edCDUadebmo=JLYhA@mail.gmail.com>
+References: <20220415005015.525191-1-avagin@gmail.com>
+        <CANaxB-wcf0Py9eCeA8YKcBSnwzW6pKAD5edCDUadebmo=JLYhA@mail.gmail.com>
 X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -57,32 +54,50 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat,  7 May 2022 05:47:02 +0000 cgel.zte@gmail.com wrote:
+On Mon, 2 May 2022 00:01:46 -0700 Andrei Vagin <avagin@gmail.com> wrote:
 
-> To use KSM, we must explicitly call madvise() in application code,
-> which means installed apps on OS needs to be uninstall and source
-> code needs to be modified. It is inconvenient.
+> Andrew, could you take a look at this patch?
 > 
-> In order to change this situation, We add a new proc 'ksm_force'
-> under /proc/<pid>/ to support turning on/off KSM scanning of a
-> process's mm dynamically.
+> Here is a small reproducer for the problem:
 > 
-> If ksm_force is set as 1, force all anonymous and 'qualified' vma
-> of this mm to be involved in KSM scanning without explicitly
-> calling madvise to make vma MADV_MERGEABLE. But It is effctive only
-> when the klob of '/sys/kernel/mm/ksm/run' is set as 1.
+> #define _GNU_SOURCE /* See feature_test_macros(7) */
+> #include <fcntl.h>
+> #include <stdio.h>
+> #include <unistd.h>
+> #include <errno.h>
+> #include <sys/stat.h>
+> #include <sys/types.h>
+> #include <sys/sendfile.h>
 > 
-> If ksm_enale is set as 0, cancel the feature of ksm_force of this
-> process and unmerge those merged pages which is not madvised as
-> MERGEABLE of this process, but leave MERGEABLE areas merged.
 > 
+> #define FILE_SIZE (1UL << 30)
+> int main(int argc, char **argv) {
+>         int p[2], fd;
+> 
+>         if (pipe2(p, O_NONBLOCK))
+>                 return 1;
+> 
+>         fd = open(argv[1], O_RDWR | O_TMPFILE, 0666);
+>         if (fd < 0)
+>                 return 1;
+>         ftruncate(fd, FILE_SIZE);
+> 
+>         if (sendfile(p[1], fd, 0, FILE_SIZE) == -1) {
+>                 fprintf(stderr, "FAIL\n");
+>         }
+>         if (sendfile(p[1], fd, 0, FILE_SIZE) != -1 || errno != EAGAIN) {
+>                 fprintf(stderr, "FAIL\n");
+>         }
+>         return 0;
+> }
+> 
+> It worked before b964bf53e540, it is stuck after b964bf53e540, and it
+> works again with this fix.
 
-There are quite a lot of typos here.  Please proof-read it.
+Thanks.  How did b964bf53e540 cause this?  do_splice_direct()
+accidentally does the right thing even when SPLICE_F_NONBLOCK was not
+passed?
 
->  fs/proc/base.c           | 99 ++++++++++++++++++++++++++++++++++++++++
->  include/linux/mm_types.h |  9 ++++
->  mm/ksm.c                 | 32 ++++++++++++-
-
-And please update the appropriate places under Documentation/ - all
-user-facing interfaces should be well documented.
+I assume that Al will get to this.  Meanwhile I can toss it
+into linux-next to get some exposure and so it won't be lost.
 
