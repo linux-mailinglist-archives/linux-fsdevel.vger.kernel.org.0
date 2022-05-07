@@ -2,99 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AB0D051E5BB
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 May 2022 10:51:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A1F351E5BE
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 May 2022 10:52:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344435AbiEGIzV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 7 May 2022 04:55:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38134 "EHLO
+        id S1351536AbiEGI4J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 7 May 2022 04:56:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38440 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236490AbiEGIzP (ORCPT
+        with ESMTP id S1344435AbiEGI4E (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 7 May 2022 04:55:15 -0400
-Received: from mail-yw1-x1131.google.com (mail-yw1-x1131.google.com [IPv6:2607:f8b0:4864:20::1131])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 086E23F325
-        for <linux-fsdevel@vger.kernel.org>; Sat,  7 May 2022 01:51:30 -0700 (PDT)
-Received: by mail-yw1-x1131.google.com with SMTP id 00721157ae682-2ec42eae76bso102519187b3.10
-        for <linux-fsdevel@vger.kernel.org>; Sat, 07 May 2022 01:51:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tFH4kYV82gQV4fQ5y42PvDRv0zFNZF59BW0f/xZ+SYk=;
-        b=EJilAcPwp6zXSgtrGqaWvnX3Z22lmbwiDlFnLKDoZ+dMvIZFBQK6liggfwfNWTRV+h
-         BWbOPTZ5P51i/EzW3XItanqbMPuDIuKzkuE6rL/XNsvHmKh+0Nl+1FwLG8hQnu3fCLEo
-         r4SLs5mdhASUS09joQFWeBdMJ7tq5excuoqMkq3vN+6dzg4A79TTUTFrLKGV7sbFFsIa
-         4jYUBiLQ6q14/4BeX+TYvv/nfa9gI2Iu71wLNlIcQ/hBJrm28Ni9ge0rAimufVBal1vX
-         WdIIJsiXYF2KkMldu+Sr2nncSEHp7mZ1jjUy/A6wMph/PwIF9VhegFKM0NbXak2uI4TM
-         G4OA==
+        Sat, 7 May 2022 04:56:04 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2BBCD3F325
+        for <linux-fsdevel@vger.kernel.org>; Sat,  7 May 2022 01:52:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1651913538;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=0ciSZ83kEJsDE3Sa5MWACbwccq8QNxUBeEt2oeFsfks=;
+        b=TsuL37sFmSB/FaYw2HCPmnNu1/Ucjzqi5rd+stjfslEYlMcCCD1uq79UDayq5GdImf7mJh
+        PHhFBmkcnIumNtaULzWdQnXT12jiNlW3P1qcbsCtIVcFCt3spBKycLq46yrnoipJCtibjs
+        uB/YHneb55G/o5kNicTp1EostNqJFyU=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-512-vDe4UjHUNYSsLbEv35D9xQ-1; Sat, 07 May 2022 04:52:17 -0400
+X-MC-Unique: vDe4UjHUNYSsLbEv35D9xQ-1
+Received: by mail-qk1-f198.google.com with SMTP id o13-20020a05620a0d4d00b0069f47054e58so6532381qkl.13
+        for <linux-fsdevel@vger.kernel.org>; Sat, 07 May 2022 01:52:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tFH4kYV82gQV4fQ5y42PvDRv0zFNZF59BW0f/xZ+SYk=;
-        b=tj7a3p4cDihomGQ4f171pIJagPqtA30IkPKfDbjWf6+8tmRcybWhFOSBEJVJEy894Z
-         3zScmCamm8n62n1iq8ri769oD38kS2HHaUPjFWHtZ+0lzMT7NdogRqHA5jzhqynBwU/Y
-         NyaXloT8zF+iWitJ5/Rqy09pUpvZS2kDpUo2a4f8oCLPuaJYHVTasoQFweHlsb9ptKc0
-         ilYY76zAhjEMuv9S/rQETdL30+Zl1Su8ugfoac7UPnG71YzM6ide49D4EjMOMfi5YkYo
-         JCQIK0zWYxtQmWDO/3AtCqJm3aDlq/Z4ZpBZs+sEX5SsDoXeTZsNiFmVW0BJpSOkwmzK
-         9yoQ==
-X-Gm-Message-State: AOAM5323SNHjELsyIypK9pBIY2lo2BsRENu3+T5H2+Lpyw6WpqsKZhWG
-        MLKtXWfAQS/jRsoNg2tABwWopiLiMm3w+iPv38I5oI8KtqY=
-X-Google-Smtp-Source: ABdhPJy2n+G+KVLZiLa+ZDKS2RVLaKfakxi3me2v4PmjS27u55fD8wo/YIOlbYaF2qPmexBrDBxAd+3IPZm8Qjx8nJo=
-X-Received: by 2002:a81:7109:0:b0:2f8:1542:cca5 with SMTP id
- m9-20020a817109000000b002f81542cca5mr5834954ywc.506.1651913489277; Sat, 07
- May 2022 01:51:29 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to;
+        bh=0ciSZ83kEJsDE3Sa5MWACbwccq8QNxUBeEt2oeFsfks=;
+        b=ZOHMcKu0F95NxbrrxcnwLdAhlEL7X23Q6WN1aYbRUpOL1GnZ1+3YEPaE8CwMCbdqqz
+         jGyzJ7RVi04FyOcdU2cJC+fLTpNasN0HnLqQDwc2P8m8od8HA8ebFzM3sS0nQZYmkWpk
+         aYUlaUaA1jAOnD8AbU3qxwlVbETQ3GifQ39XuFxezDWeCck20AP9rT+V8o3ZVCxXj4fo
+         gbA6oO2xCr7JhKdjEfDAAzAXkKh7k7dPNh06CTUXHxJRdRZqI/VqhxYzpWaZvkAUXXpB
+         WNkclhebi3BEzBb/EFM4hYegK4oCiIEn6PpklXnxvN7lz95phepL8s81AbM9YjcOjGlD
+         eFhQ==
+X-Gm-Message-State: AOAM531IfIGD4isWXi3ri9MRFXmo7CQ2lqpn/TkRqqB2Mmg696dVyMzT
+        ZjuZ6+GsLwBj7i0jPkMklkOb+HhRrAJ+y6jNgtcucOmX5sjfLK8hnY1waj3LQTHyD5QXXQiETt8
+        jMVwuWsv7/BsmF9br9yB3Wee/yA==
+X-Received: by 2002:ad4:5f05:0:b0:45a:b123:c790 with SMTP id fo5-20020ad45f05000000b0045ab123c790mr5717721qvb.105.1651913536594;
+        Sat, 07 May 2022 01:52:16 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxIBzHQ9MAQUy0qbjalqPMAKavi34yRXzOZQ7RrVrBdVX+bNk5poqDGDCGKjpoueT6Mn6ly6Q==
+X-Received: by 2002:ad4:5f05:0:b0:45a:b123:c790 with SMTP id fo5-20020ad45f05000000b0045ab123c790mr5717712qvb.105.1651913536379;
+        Sat, 07 May 2022 01:52:16 -0700 (PDT)
+Received: from zlang-mailbox ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id p184-20020a378dc1000000b0069fc13ce1e1sm3747116qkd.18.2022.05.07.01.52.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 07 May 2022 01:52:15 -0700 (PDT)
+Date:   Sat, 7 May 2022 16:52:09 +0800
+From:   Zorro Lang <zlang@redhat.com>
+To:     "xuyang2018.jy@fujitsu.com" <xuyang2018.jy@fujitsu.com>
+Cc:     "david@fromorbit.com" <david@fromorbit.com>,
+        "brauner@kernel.org" <brauner@kernel.org>,
+        "djwong@kernel.org" <djwong@kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "fstests@vger.kernel.org" <fstests@vger.kernel.org>
+Subject: Re: [PATCH v3 1/5] idmapped-mounts: Reset errno to zero after detect
+ fs_allow_idmap
+Message-ID: <20220507085209.ortk2ybj3t2nemkc@zlang-mailbox>
+Mail-Followup-To: "xuyang2018.jy@fujitsu.com" <xuyang2018.jy@fujitsu.com>,
+        "david@fromorbit.com" <david@fromorbit.com>,
+        "brauner@kernel.org" <brauner@kernel.org>,
+        "djwong@kernel.org" <djwong@kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "fstests@vger.kernel.org" <fstests@vger.kernel.org>
+References: <1649763226-2329-1-git-send-email-xuyang2018.jy@fujitsu.com>
+ <6275DAB9.5030700@fujitsu.com>
 MIME-Version: 1.0
-References: <20220507041033.9588-1-lchen@localhost.localdomain> <20220507042829.GN1949718@dread.disaster.area>
-In-Reply-To: <20220507042829.GN1949718@dread.disaster.area>
-From:   Liang Chen <liangchen.linux@gmail.com>
-Date:   Sat, 7 May 2022 16:51:17 +0800
-Message-ID: <CAKhg4tKFhc4UL-Ag2edT3yOWt=+W5MzoQJAAMFLG27Vce_rCTg@mail.gmail.com>
-Subject: Re: [PATCH v2] fs: Fix page cache inconsistency when mixing buffered
- and AIO DIO for bdev
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>, jmoyer@redhat.com,
-        jack@suse.cz, lczerner@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6275DAB9.5030700@fujitsu.com>
+X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, May 7, 2022 at 12:28 PM Dave Chinner <david@fromorbit.com> wrote:
->
-> On Sat, May 07, 2022 at 12:10:33PM +0800, Liang Chen wrote:
-> > From: Liang Chen <liangchen.linux@gmail.com>
-> >
-> > As pointed out in commit 332391a, mixing buffered reads and asynchronous
-> > direct writes risks ending up with a situation where stale data is left
-> > in page cache while new data is already written to disk. The same problem
-> > hits block dev fs too. A similar approach needs to be taken here.
-> >
-> > Signed-off-by: Liang Chen <liangchen.linux@gmail.com>
-> > ---
-> > V2: declare blkdev_sb_init_dio_done_wq static
-> > ---
-> >  block/fops.c | 87 ++++++++++++++++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 87 insertions(+)
->
-> Rather than copying functionality from the two other generic DIO
-> paths (which we really want to get down to 1!) into this cut down,
-> less functional DIO path, shouldn't we be spending the effort to
-> convert the blkdev device to use one of the other generic DIO paths
-> that already solves this problem and likely gets a lot more test
-> coverage?
+On Sat, May 07, 2022 at 01:33:33AM +0000, xuyang2018.jy@fujitsu.com wrote:
+> Hi Zorro
+> 
+> Since  Christian doesn't send  a new patchset(for rename idmap-mount)
+> based on lastest xfstests, should I send a v4 patch for the following
+> patches today?
+> "idmapped-mounts: Reset errno to zero after detect fs_allow_idmap"
+> " idmapped-mounts: Add mknodat operation in setgid test"
+> "idmapped-mounts: Add open with O_TMPFILE operation in setgid test"
+> 
+> So you can merge these three patches if you plan to announce a new
+> xfstests version in this weekend.
+> 
+> What do you think about it?
 
-Yeah, that would be better for sure. In fact I just realized the patch
-introduces
-a performance drawback compared to the two other DIO paths. Making use of
-the well tested code path would avoid such a mistake. I will take a look on
-converting blkdev device to use __blockdev_direct_IO (seems requiring less
-effort).
+Sure, you can send V4 of patch 1/5 ～ 3/5 (base on latest for-next branch
+please), as they have been reviewed and tested. Christian's patch (about
+refactor idmapped testing) might need more review, he just sent it out to
+get some review points I think (cc Christian).
+
+If you'd like to catch up the release of this weekend, please send your
+v4 patch ASAP. Due to I need time to do regression test before pushing.
+It'll wait for next week if too late.
+
+Thanks,
+Zorro
+
+> 
+> Best Regards
+> Yang Xu
+> > If we run case on old kernel that doesn't support mount_setattr and
+> > then fail on our own function before call is_setgid/is_setuid function
+> > to reset errno, run_test will print "Function not implement" error.
+> > 
+> > Signed-off-by: Yang Xu<xuyang2018.jy@fujitsu.com>
+> > ---
+> >   src/idmapped-mounts/idmapped-mounts.c | 2 ++
+> >   1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/src/idmapped-mounts/idmapped-mounts.c b/src/idmapped-mounts/idmapped-mounts.c
+> > index 4cf6c3bb..8e6405c5 100644
+> > --- a/src/idmapped-mounts/idmapped-mounts.c
+> > +++ b/src/idmapped-mounts/idmapped-mounts.c
+> > @@ -14070,6 +14070,8 @@ int main(int argc, char *argv[])
+> >   		die("failed to open %s", t_mountpoint_scratch);
+> > 
+> >   	t_fs_allow_idmap = fs_allow_idmap();
+> > +	/* don't copy ENOSYS errno to child process on older kernel */
+> > +	errno = 0;
+> >   	if (supported) {
+> >   		/*
+> >   		 * Caller just wants to know whether the filesystem we're on
+
