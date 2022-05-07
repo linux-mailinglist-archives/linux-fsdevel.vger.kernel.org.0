@@ -2,439 +2,283 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DFB7751E6B2
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 May 2022 13:49:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AFB351E682
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 May 2022 12:43:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1384742AbiEGLxV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 7 May 2022 07:53:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43548 "EHLO
+        id S1446289AbiEGKrX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 7 May 2022 06:47:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231339AbiEGLxU (ORCPT
+        with ESMTP id S1446287AbiEGKrF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 7 May 2022 07:53:20 -0400
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5C974CD71
-        for <linux-fsdevel@vger.kernel.org>; Sat,  7 May 2022 04:49:33 -0700 (PDT)
-Received: by mail-pl1-x631.google.com with SMTP id p6so9235466plr.12
-        for <linux-fsdevel@vger.kernel.org>; Sat, 07 May 2022 04:49:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=E4/9ioseUoCiIraqweq6WOU+06QQpQKoqOjD8giqy10=;
-        b=gQGd6PBWpEmM1kvFe6iYElshT35v3SF3pRoUmbghubS1vDHrXuKzKpYfbx+LQAQfR4
-         esjwzVMPTOGTYfKe3UPb8W/8uV/n4+MiSOUWCWeZ9VkVLSKk4qxY6LrhrLJxzqsaKb+G
-         Dj6Nwg3kTFV1Mt0VgY3dHee/9gHuSFCWMImiNuveY03+jaIqtSfh7CwLzuWXlRb8VRNJ
-         gHv0FPGAPfU2Bs9fVPBhzN9S3yMGCTsQ5s3mSCCARcl/OMx1NJg2kvg/Qh6fMLrZ4Kfp
-         cX8L8rEFIlLcFLL7m0b0S6Z6KdmN6pKTsDFuHSsNpqZH/cL0V+xfYprXu04IuVAj+jFt
-         19gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=E4/9ioseUoCiIraqweq6WOU+06QQpQKoqOjD8giqy10=;
-        b=BKf2Uc58D3hBBck55hCXcwI0MomqfUtX/9R2H2gvO9e867yc5VDxjhuJyBn5BREseH
-         L/iOJ/9Tm6OvUlXkX6dew0qvXQgy0OrjurJPVUFRDJAH5kVvoHyX7RkHCgoErSoOHubP
-         Wos6caDxH3Jxf0o/3D2ld36OGMW1gzEerecu0q8eVi989mtRZH5XPG/YbKeQNEd8Gyp8
-         EAkz0mAeUYNhje2ngDktxKNUD/UYyJa3Jg8IFLgXrj9wBn/NA/SfczWcizm7A5Jh2uc5
-         BWZBX/WxNo8ni1lA4skYxAVrO12bH3O8jrOAsSHOOEaHubjFnBRvTXgeaRV2TlWZjo9Z
-         B98Q==
-X-Gm-Message-State: AOAM531PiFuNbkPZRNjzXeSfG1MG4MrDdB9Ri2p31ct/HQxX6LKpU3Jg
-        N6ot95UqNBjF0NMBY6U2z2sNKOjzqDbYSQ==
-X-Google-Smtp-Source: ABdhPJx131+h05b2/jlkj2SYbM+RNCOSzVfDhuhRLI+2HynSoWrfCMsDPIYOAjgsy9zKZwGU+eQrlw==
-X-Received: by 2002:a17:90b:1b51:b0:1dc:dfdb:436 with SMTP id nv17-20020a17090b1b5100b001dcdfdb0436mr7408065pjb.2.1651924173147;
-        Sat, 07 May 2022 04:49:33 -0700 (PDT)
-Received: from yinxin.bytedance.net ([139.177.225.228])
-        by smtp.gmail.com with ESMTPSA id y8-20020a1709029b8800b0015e8d4eb1b9sm3510609plp.3.2022.05.07.04.49.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 May 2022 04:49:32 -0700 (PDT)
-From:   Xin Yin <yinxin.x@bytedance.com>
-To:     hsiangkao@linux.alibaba.com, jefflexu@linux.alibaba.com,
-        dhowells@redhat.com
-Cc:     linux-erofs@lists.ozlabs.org, linux-cachefs@redhat.com,
-        linux-fsdevel@vger.kernel.org, Xin Yin <yinxin.x@bytedance.com>
-Subject: [PATCH v2] erofs: change to use asyncronous io for fscache readpage/readahead
-Date:   Sat,  7 May 2022 16:31:54 +0800
-Message-Id: <20220507083154.18226-1-yinxin.x@bytedance.com>
-X-Mailer: git-send-email 2.25.1
-MIME-Version: 1.0
+        Sat, 7 May 2022 06:47:05 -0400
+Received: from ciao.gmane.io (ciao.gmane.io [116.202.254.214])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B52A8562CD
+        for <linux-fsdevel@vger.kernel.org>; Sat,  7 May 2022 03:43:06 -0700 (PDT)
+Received: from list by ciao.gmane.io with local (Exim 4.92)
+        (envelope-from <lnx-linux-fsdevel@m.gmane-mx.org>)
+        id 1nnHtv-0005vl-93
+        for linux-fsdevel@vger.kernel.org; Sat, 07 May 2022 12:43:03 +0200
+X-Injected-Via-Gmane: http://gmane.org/
+To:     linux-fsdevel@vger.kernel.org
+From:   =?UTF-8?Q?Jean-Pierre_Andr=c3=a9?= <jean-pierre.andre@wanadoo.fr>
+Subject: Re: [PATCH v4 1/3] FUSE: Implement atomic lookup + create
+Date:   Sat, 7 May 2022 12:42:56 +0200
+Message-ID: <a712f535-7e34-4967-d335-f3680f9c4b6f@wanadoo.fr>
+References: <20220502102521.22875-1-dharamhans87@gmail.com>
+ <20220502102521.22875-2-dharamhans87@gmail.com> <YnGIUOP2BezDAb1k@redhat.com>
+ <CACUYsyGoX+o19u41cZyF92eDBO-9rFN_EEWBvWBGrEMuNn29Mw@mail.gmail.com>
+ <YnKR9CFYPXT1bM1F@redhat.com>
+ <CACUYsyG+QRyObnD5eaD8pXygwBRRcBrGHLCUZb2hmMZbFOfFTg@mail.gmail.com>
+ <YnPeqPTny1Eeat9r@redhat.com>
+ <CACUYsyG9mKQK+pWcAcWFEtC2ad0_OBU6NZgBC965ZxQy5_JiXQ@mail.gmail.com>
+ <YnUsw4O3F4wgtxTr@redhat.com> <78c2beed-b221-71b4-019f-b82522d98f1e@ddn.com>
+ <YnVV2Rr4NMyFj5oF@redhat.com> <90fbe06b-4af7-c9ce-4aca-393aed709722@ddn.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-0.3 required=5.0 tests=BAYES_00,DATE_IN_PAST_03_06,
-        DKIM_SIGNED,DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+In-Reply-To: <90fbe06b-4af7-c9ce-4aca-393aed709722@ddn.com>
+Cc:     fuse-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,
+        HEADER_FROM_DIFFERENT_DOMAINS,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use asyncronous io to read data from fscache may greatly improve IO
-bandwidth for sequential buffer read scenario.
+Bernd Schubert wrote on 5/6/22 8:45 PM:
+> 
+> 
+> On 5/6/22 19:07, Vivek Goyal wrote:
+>> On Fri, May 06, 2022 at 06:41:17PM +0200, Bernd Schubert wrote:
+>>>
+>>>
+>>> On 5/6/22 16:12, Vivek Goyal wrote:
+>>>
+>>> [...]
+>>>
+>>>> On Fri, May 06, 2022 at 11:04:05AM +0530, Dharmendra Hans wrote:
+>>>
+>>>>
+>>>> Ok, looks like your fuse file server is talking to a another file
+>>>> server on network and that's why you are mentioning two network trips.
+>>>>
+>>>> Let us differentiate between two things first.
+>>>>
+>>>> A. FUSE protocol semantics
+>>>> B. Implementation of FUSE protocl by libfuse.
+>>>>
+>>>> I think I am stressing on A and you are stressing on B. I just want
+>>>> to see what's the difference between FUSE_CREATE and FUSE_ATOMIC_CREATE
+>>>> from fuse protocol point of view. Again look at from kernel's point of
+>>>> view and don't worry about libfuse is going to implement it.
+>>>> Implementations can vary.
+>>>
+>>> Agreed, I don't think we need to bring in network for the kernel to 
+>>> libfuse
+>>> API.
+>>>
+>>>>
+>>>>   From kernel's perspective FUSE_CREATE is supposed to create + open a
+>>>> file. It is possible file already exists. Look at 
+>>>> include/fuse_lowlevel.h
+>>>> description for create().
+>>>>
+>>>>           /**
+>>>>            * Create and open a file
+>>>>            *
+>>>>            * If the file does not exist, first create it with the 
+>>>> specified
+>>>>            * mode, and then open it.
+>>>>            */
+>>>>
+>>>> I notice that fuse is offering a high level API as well as low level
+>>>> API. I primarily know about low level API. To me these are just two
+>>>> different implementation but things don't change how kernel sends
+>>>> fuse messages and what it expects from server in return.
+>>>>
+>>>> Now with FUSE_ATOMIC_CREATE, from kernel's perspective, only difference
+>>>> is that in reply message file server will also indicate if file was
+>>>> actually created or not. Is that right?
+>>>>
+>>>> And I am focussing on this FUSE API apsect. I am least concerned at
+>>>> this point of time who libfuse decides to actually implement 
+>>>> FUSE_CREATE
+>>>> or FUSE_ATOMIC_CREATE etc. You might make a single call in libfuse
+>>>> server (instead of two) and that's performance optimization in libfuse.
+>>>> Kernel does not care how many calls did you make in file server to
+>>>> implement FUSE_CREATE or FUSE_ATOMIC_CREATE. All it cares is that
+>>>> create and open the file.
+>>>>
+>>>> So while you might do things in more atomic manner in file server and
+>>>> cut down on network traffic, kernel fuse API does not care. All it 
+>>>> cares
+>>>> about is create + open a file.
+>>>>
+>>>> Anyway, from kernel's perspective, I think you should be able to
+>>>> just use FUSE_CREATE and still be do "lookup + create + open".
+>>>> FUSE_ATOMIC_CREATE is just allows one additional optimization so
+>>>> that you know whether to invalidate parent dir's attrs or not.
+>>>>
+>>>> In fact kernel is not putting any atomicity requirements as well on
+>>>> file server. And that's why I think this new command should probably
+>>>> be called FUSE_CREATE_EXT because it just sends back additional
+>>>> info.
+>>>>
+>>>> All the atomicity stuff you have been describing is that you are
+>>>> trying to do some optimizations in libfuse implementation to implement
+>>>> FUSE_ATOMIC_CREATE so that you send less number of commands over
+>>>> network. That's a good idea but fuse kernel API does not require you
+>>>> do these atomically, AFAICS.
+>>>>
+>>>> Given I know little bit of fuse low level API, If I were to implement
+>>>> this in virtiofs/passthrough_ll.c, I probably will do following.
+>>>>
+>>>> A. Check if caller provided O_EXCL flag.
+>>>> B. openat(O_CREAT | O_EXCL)
+>>>> C. If success, we created the file. Set file_created = 1.
+>>>>
+>>>> D. If error and error != -EEXIST, send error back to client.
+>>>> E. If error and error == -EEXIST, if caller did provide O_EXCL flag,
+>>>>      return error.
+>>>> F. openat() returned -EEXIST and caller did not provide O_EXCL flag,
+>>>>      that means file already exists.  Set file_created = 0.
+>>>> G. Do lookup() etc to create internal lo_inode and stat() of file.
+>>>> H. Send response back to client using fuse_reply_create().
+>>>> This is one sample implementation for fuse lowlevel API. There could
+>>>> be other ways to implement. But all that is libfuse + filesystem
+>>>> specific and kernel does not care how many operations you use to
+>>>> complete and what's the atomicity etc. Of course less number of
+>>>> operations you do better it is.
+>>>>
+>>>> Anyway, I think I have said enough on this topic. IMHO, FUSE_CREATE
+>>>> descritpion (fuse_lowlevel.h) already mentions that "If the file 
+>>>> does not
+>>>> exist, first create it with the specified mode and then open it". That
+>>>> means intent of protocol is that file could already be there as well.
+>>>> So I think we probably should implement this optimization (in kernel)
+>>>> using FUSE_CREATE command and then add FUSE_CREATE_EXT to add 
+>>>> optimization
+>>>> about knowing whether file was actually created or not.
+>>>>
+>>>> W.r.t libfuse optimizations, I am not sure why can't you do 
+>>>> optimizations
+>>>> with FUSE_CREATE and why do you need FUSE_CREATE_EXT necessarily. If
+>>>> are you worried that some existing filesystems will break, I think
+>>>> you can create an internal helper say fuse_create_atomic() and then
+>>>> use that if filesystem offers it. IOW, libfuse will have two
+>>>> ways to implement FUSE_CREATE. And if filesystem offers a new way which
+>>>> cuts down on network traffic, libfuse uses more efficient method. We
+>>>> should not have to change kernel FUSE API just because libfuse can
+>>>> do create + open operation more efficiently.
+>>>
+>>> Ah right, I like this. As I had written before, the first patch 
+>>> version was
+>>> using FUSE_CREATE and I was worried to break something. Yes, it 
+>>> should be
+>>> possible split into lookup+create on the libfuse side. That being said,
+>>> libfuse will need to know which version it is - there might be an old 
+>>> kernel
+>>> sending the non-optimized version - libfuse should not do another lookup
+>>> then.
+>>
+>> I am confused about one thing. For FUSE_CREATE command, how does it
+>> matter whether kernel has done lookup() before sending FUSE_CREATE. All
+>> FUSE_CREATE seems to say that crate a file (if it does not exist already)
+>> and then open it and return file handle as well as inode attributes. It
+>> does not say anything about whether a LOOKUP has already been done
+>> by kernel or not.
+>>
+>> It looks like you are assuming that if FUSE_CREATE is coming, that
+>> means client has already done FUSE_LOOKUP. So there is something we
+>> are not on same page about.
+>>
+>> I looked at fuse_lowlevel API and passthrough_ll.c and there is no
+>> assumption whether FUSE_LOOKUP has already been called by client
+>> before calling FUSE_CREATE. Similarly, I looked at virtiofs code
+>> and I can't see any such assumption there as well.
+> 
+> The current linux kernel code does this right now, skipping the lookup 
+> just changes behavior.  Personally I would see it as bug if the 
+> userspace implementation does not handle EEXIST for FUSE_CREATE. 
+> Implementation developer and especially users might see it differently 
+> if a kernel update breaks/changes things out of the sudden. 
+> passthrough_ll.c is not the issue here, it handles it correctly, but 
+> what about the XYZ other file systems out there - do you want to check 
+> them one by one, including closed source ones? And wouldn't even a 
+> single broken application count as regression?
+> 
+>>
+>> https://github.com/qemu/qemu/blob/master/tools/virtiofsd/passthrough_ll.c
+>>
+>> So I am sort of lost. May be you can help me understsand this.
+> 
+> I guess it would be more interesting to look at different file systems 
+> that are not overlay based. Like ntfs-3g - I have not looked at the code 
+> yet, but especially disk based file system didn't have a reason so far 
+> to handle EEXIST. And
 
-Change erofs_fscache_read_folios to erofs_fscache_read_folios_async,
-and read data from fscache asyncronously. Make .readpage()/.readahead()
-to use this new helper.
+AFAIK ntfs-3g proper does not keep a context across calls and does
+not know what LOOKUP was preparing a CREATE. However this may have
+consequences in the high level of libfuse for managing the file tree.
 
-Signed-off-by: Xin Yin <yinxin.x@bytedance.com>
----
-changes from RFC:
-1.rebase to fscache,erofs: fscache-based on-demand read semantics v10.
-2.fix issues pointed out by Jeffle.
-3.simplify parameters, add debug messages for erofs_fscache_read_folios_async.
-4.also change .readpage() to use new helper to avoid code duplication.
+The kernel apparently issues a LOOKUP to decide whether issuing a
+CREATE (create+open) or an OPEN. If it sent blindly a CREATE,
+ntfs-3g would return EEXIST if the name was already present in
+the directory.
 
-changes from v1:
-fix styling issues.
----
- fs/erofs/fscache.c | 240 ++++++++++++++++++++++++++++++++++++++++++++---------
- 1 file changed, 200 insertions(+), 40 deletions(-)
+For a test, can you suggest a way to force ignore of such lookup
+within libfuse, without applying your kernel patches ? Is there a
+way to detect the purpose of a lookup ? (A possible way is to
+hardcode a directory inode within which the lookups return ENOENT).
 
-diff --git a/fs/erofs/fscache.c b/fs/erofs/fscache.c
-index a402d8f0a063..1008f47d7252 100644
---- a/fs/erofs/fscache.c
-+++ b/fs/erofs/fscache.c
-@@ -5,57 +5,204 @@
- #include <linux/fscache.h>
- #include "internal.h"
- 
-+static struct netfs_io_request *erofs_fscache_alloc_request(struct address_space *mapping,
-+					     loff_t start, size_t len)
-+{
-+	struct netfs_io_request *rreq;
-+
-+	rreq = kzalloc(sizeof(struct netfs_io_request), GFP_KERNEL);
-+	if (!rreq)
-+		return ERR_PTR(-ENOMEM);
-+
-+	rreq->start	= start;
-+	rreq->len	= len;
-+	rreq->mapping	= mapping;
-+	INIT_LIST_HEAD(&rreq->subrequests);
-+	refcount_set(&rreq->ref, 1);
-+
-+	return rreq;
-+}
-+
-+static void erofs_fscache_put_request(struct netfs_io_request *rreq)
-+{
-+	if (refcount_dec_and_test(&rreq->ref)) {
-+		if (rreq->cache_resources.ops)
-+			rreq->cache_resources.ops->end_operation(&rreq->cache_resources);
-+		kfree(rreq);
-+	}
-+}
-+
-+static void erofs_fscache_put_subrequest(struct netfs_io_subrequest *subreq)
-+{
-+	if (refcount_dec_and_test(&subreq->ref)) {
-+		erofs_fscache_put_request(subreq->rreq);
-+		kfree(subreq);
-+	}
-+}
-+
-+static void erofs_fscache_clear_subrequests(struct netfs_io_request *rreq)
-+{
-+	struct netfs_io_subrequest *subreq;
-+
-+	while (!list_empty(&rreq->subrequests)) {
-+		subreq = list_first_entry(&rreq->subrequests,
-+					  struct netfs_io_subrequest, rreq_link);
-+		list_del(&subreq->rreq_link);
-+		erofs_fscache_put_subrequest(subreq);
-+	}
-+}
-+
-+static void erofs_fscache_rreq_unlock_folios(struct netfs_io_request *rreq)
-+{
-+	struct netfs_io_subrequest *subreq;
-+	struct folio *folio;
-+	unsigned int iopos;
-+	pgoff_t start_page = rreq->start / PAGE_SIZE;
-+	pgoff_t last_page = ((rreq->start + rreq->len) / PAGE_SIZE) - 1;
-+	bool subreq_failed = false;
-+
-+	XA_STATE(xas, &rreq->mapping->i_pages, start_page);
-+
-+	subreq = list_first_entry(&rreq->subrequests,
-+				  struct netfs_io_subrequest, rreq_link);
-+	iopos = 0;
-+	subreq_failed = (subreq->error < 0);
-+
-+	rcu_read_lock();
-+	xas_for_each(&xas, folio, last_page) {
-+		unsigned int pgpos = (folio_index(folio) - start_page) * PAGE_SIZE;
-+		unsigned int pgend = pgpos + folio_size(folio);
-+		bool pg_failed = false;
-+
-+		for (;;) {
-+			if (!subreq) {
-+				pg_failed = true;
-+				break;
-+			}
-+
-+			pg_failed |= subreq_failed;
-+			if (pgend < iopos + subreq->len)
-+				break;
-+
-+			iopos += subreq->len;
-+			if (!list_is_last(&subreq->rreq_link, &rreq->subrequests)) {
-+				subreq = list_next_entry(subreq, rreq_link);
-+				subreq_failed = (subreq->error < 0);
-+			} else {
-+				subreq = NULL;
-+				subreq_failed = false;
-+			}
-+			if (pgend == iopos)
-+				break;
-+		}
-+
-+		if (!pg_failed)
-+			folio_mark_uptodate(folio);
-+
-+		folio_unlock(folio);
-+	}
-+	rcu_read_unlock();
-+}
-+
-+static void erofs_fscache_rreq_complete(struct netfs_io_request *rreq)
-+{
-+	erofs_fscache_rreq_unlock_folios(rreq);
-+	erofs_fscache_clear_subrequests(rreq);
-+	erofs_fscache_put_request(rreq);
-+}
-+
-+static void erofc_fscache_subreq_complete(void *priv, ssize_t transferred_or_error,
-+					bool was_async)
-+{
-+	struct netfs_io_subrequest *subreq = priv;
-+	struct netfs_io_request *rreq = subreq->rreq;
-+
-+	if (IS_ERR_VALUE(transferred_or_error))
-+		subreq->error = transferred_or_error;
-+
-+	if (atomic_dec_and_test(&rreq->nr_outstanding))
-+		erofs_fscache_rreq_complete(rreq);
-+
-+	erofs_fscache_put_subrequest(subreq);
-+}
-+
- /*
-  * Read data from fscache and fill the read data into page cache described by
-- * @start/len, which shall be both aligned with PAGE_SIZE. @pstart describes
-+ * @rreq, which shall be both aligned with PAGE_SIZE. @pstart describes
-  * the start physical address in the cache file.
-  */
--static int erofs_fscache_read_folios(struct fscache_cookie *cookie,
--				     struct address_space *mapping,
--				     loff_t start, size_t len,
-+static int erofs_fscache_read_folios_async(struct fscache_cookie *cookie,
-+				     struct netfs_io_request *rreq,
- 				     loff_t pstart)
- {
- 	enum netfs_io_source source;
--	struct netfs_io_request rreq = {};
--	struct netfs_io_subrequest subreq = { .rreq = &rreq, };
--	struct netfs_cache_resources *cres = &rreq.cache_resources;
--	struct super_block *sb = mapping->host->i_sb;
-+	struct super_block *sb = rreq->mapping->host->i_sb;
-+	struct netfs_io_subrequest *subreq;
-+	struct netfs_cache_resources *cres = &rreq->cache_resources;
- 	struct iov_iter iter;
-+	loff_t start = rreq->start;
-+	size_t len = rreq->len;
- 	size_t done = 0;
- 	int ret;
- 
-+	atomic_set(&rreq->nr_outstanding, 1);
-+
- 	ret = fscache_begin_read_operation(cres, cookie);
- 	if (ret)
--		return ret;
-+		goto out;
- 
- 	while (done < len) {
--		subreq.start = pstart + done;
--		subreq.len = len - done;
--		subreq.flags = 1 << NETFS_SREQ_ONDEMAND;
-+		subreq = kzalloc(sizeof(struct netfs_io_subrequest), GFP_KERNEL);
-+		if (subreq) {
-+			INIT_LIST_HEAD(&subreq->rreq_link);
-+			refcount_set(&subreq->ref, 2);
-+			subreq->rreq = rreq;
-+			refcount_inc(&rreq->ref);
-+		} else {
-+			ret = -ENOMEM;
-+			goto out;
-+		}
- 
--		source = cres->ops->prepare_read(&subreq, LLONG_MAX);
--		if (WARN_ON(subreq.len == 0))
-+		subreq->start = pstart + done;
-+		subreq->len	=  len - done;
-+		subreq->flags = 1 << NETFS_SREQ_ONDEMAND;
-+
-+		list_add_tail(&subreq->rreq_link, &rreq->subrequests);
-+
-+		source = cres->ops->prepare_read(subreq, LLONG_MAX);
-+		if (WARN_ON(subreq->len == 0))
- 			source = NETFS_INVALID_READ;
- 		if (source != NETFS_READ_FROM_CACHE) {
- 			erofs_err(sb, "failed to fscache prepare_read (source %d)",
- 				  source);
- 			ret = -EIO;
-+			subreq->error = ret;
-+			erofs_fscache_put_subrequest(subreq);
- 			goto out;
- 		}
- 
--		iov_iter_xarray(&iter, READ, &mapping->i_pages,
--				start + done, subreq.len);
--		ret = fscache_read(cres, subreq.start, &iter,
--				   NETFS_READ_HOLE_FAIL, NULL, NULL);
-+		atomic_inc(&rreq->nr_outstanding);
-+
-+		iov_iter_xarray(&iter, READ, &rreq->mapping->i_pages,
-+				start + done, subreq->len);
-+
-+		ret = fscache_read(cres, subreq->start, &iter,
-+				   NETFS_READ_HOLE_FAIL, erofc_fscache_subreq_complete, subreq);
-+
-+		if (ret == -EIOCBQUEUED)
-+			ret = 0;
-+
- 		if (ret) {
- 			erofs_err(sb, "failed to fscache_read (ret %d)", ret);
- 			goto out;
- 		}
- 
--		done += subreq.len;
-+		done += subreq->len;
- 	}
- out:
--	fscache_end_operation(cres);
-+	if (atomic_dec_and_test(&rreq->nr_outstanding))
-+		erofs_fscache_rreq_complete(rreq);
-+
- 	return ret;
- }
- 
-@@ -64,6 +211,7 @@ static int erofs_fscache_meta_readpage(struct file *data, struct page *page)
- 	int ret;
- 	struct folio *folio = page_folio(page);
- 	struct super_block *sb = folio_mapping(folio)->host->i_sb;
-+	struct netfs_io_request *rreq;
- 	struct erofs_map_dev mdev = {
- 		.m_deviceid = 0,
- 		.m_pa = folio_pos(folio),
-@@ -73,11 +221,13 @@ static int erofs_fscache_meta_readpage(struct file *data, struct page *page)
- 	if (ret)
- 		goto out;
- 
--	ret = erofs_fscache_read_folios(mdev.m_fscache->cookie,
--			folio_mapping(folio), folio_pos(folio),
--			folio_size(folio), mdev.m_pa);
--	if (!ret)
--		folio_mark_uptodate(folio);
-+	rreq = erofs_fscache_alloc_request(folio_mapping(folio),
-+				folio_pos(folio), folio_size(folio));
-+	if (IS_ERR(rreq))
-+		goto out;
-+
-+	return erofs_fscache_read_folios_async(mdev.m_fscache->cookie,
-+				rreq, mdev.m_pa);
- out:
- 	folio_unlock(folio);
- 	return ret;
-@@ -117,6 +267,7 @@ static int erofs_fscache_readpage(struct file *file, struct page *page)
- 	struct super_block *sb = inode->i_sb;
- 	struct erofs_map_blocks map;
- 	struct erofs_map_dev mdev;
-+	struct netfs_io_request *rreq;
- 	erofs_off_t pos;
- 	loff_t pstart;
- 	int ret;
-@@ -149,10 +300,15 @@ static int erofs_fscache_readpage(struct file *file, struct page *page)
- 	if (ret)
- 		goto out_unlock;
- 
-+
-+	rreq = erofs_fscache_alloc_request(folio_mapping(folio),
-+				folio_pos(folio), folio_size(folio));
-+	if (IS_ERR(rreq))
-+		goto out_unlock;
-+
- 	pstart = mdev.m_pa + (pos - map.m_la);
--	ret = erofs_fscache_read_folios(mdev.m_fscache->cookie,
--			folio_mapping(folio), folio_pos(folio),
--			folio_size(folio), pstart);
-+	return erofs_fscache_read_folios_async(mdev.m_fscache->cookie,
-+				rreq, pstart);
- 
- out_uptodate:
- 	if (!ret)
-@@ -162,15 +318,16 @@ static int erofs_fscache_readpage(struct file *file, struct page *page)
- 	return ret;
- }
- 
--static void erofs_fscache_unlock_folios(struct readahead_control *rac,
--					size_t len)
-+static void erofs_fscache_advance_folios(struct readahead_control *rac,
-+					size_t len, bool unlock)
- {
- 	while (len) {
- 		struct folio *folio = readahead_folio(rac);
--
- 		len -= folio_size(folio);
--		folio_mark_uptodate(folio);
--		folio_unlock(folio);
-+		if (unlock) {
-+			folio_mark_uptodate(folio);
-+			folio_unlock(folio);
-+		}
- 	}
- }
- 
-@@ -192,6 +349,7 @@ static void erofs_fscache_readahead(struct readahead_control *rac)
- 	do {
- 		struct erofs_map_blocks map;
- 		struct erofs_map_dev mdev;
-+		struct netfs_io_request *rreq;
- 
- 		pos = start + done;
- 		map.m_la = pos;
-@@ -211,7 +369,7 @@ static void erofs_fscache_readahead(struct readahead_control *rac)
- 					offset, count);
- 			iov_iter_zero(count, &iter);
- 
--			erofs_fscache_unlock_folios(rac, count);
-+			erofs_fscache_advance_folios(rac, count, true);
- 			ret = count;
- 			continue;
- 		}
-@@ -237,15 +395,17 @@ static void erofs_fscache_readahead(struct readahead_control *rac)
- 		if (ret)
- 			return;
- 
--		ret = erofs_fscache_read_folios(mdev.m_fscache->cookie,
--				rac->mapping, offset, count,
--				mdev.m_pa + (pos - map.m_la));
-+		rreq = erofs_fscache_alloc_request(rac->mapping, offset, count);
-+		if (IS_ERR(rreq))
-+			return;
- 		/*
--		 * For the error cases, the folios will be unlocked when
--		 * .readahead() returns.
-+		 * Drop the ref of folios here. Unlock them in
-+		 * rreq_unlock_folios() when rreq complete.
- 		 */
-+		erofs_fscache_advance_folios(rac, count, false);
-+		ret = erofs_fscache_read_folios_async(mdev.m_fscache->cookie,
-+					rreq, mdev.m_pa + (pos - map.m_la));
- 		if (!ret) {
--			erofs_fscache_unlock_folios(rac, count);
- 			ret = count;
- 		}
- 	} while (ret > 0 && ((done += ret) < len));
--- 
-2.11.0
+> 
+>>
+>>> Now there is 'fi.flags = arg->flags', but these are already taken by
+>>> open/fcntl flags - I would not feel comfortable to overload these. At 
+>>> best,
+>>> struct fuse_create_in currently had a padding field, we could convert 
+>>> these
+>>> to something like 'ext_fuse_open_flags' and then use it for fuse 
+>>> internal
+>>> things. Difficulty here is that I don't know if all kernel 
+>>> implementations
+>>> zero the struct (BSD, MacOS), so I guess we would need to negotiate at
+>>> startup/init time and would need another main feature flag? And with 
+>>> that
+>>> I'm not be sure anymore if the result would be actually more simple than
+>>> what we have right now for the first patch.
+>>
+>> If FUSE_CREATE indeed has a dependency on FUSE_LOOKUP have been called
+>> before that, then I agree that we can't implement new semantics with
+>> FUSE_CREATE and we will have to introduce a new op say
+>> FUSE_ATOMIC_CREATE/FUSE_LOOKUP_CREATE/FUSE_CREATE_EXT.
+>>
+>> But looking at fuse API, I don't see FUSE_CREATE ever guaranteeing that
+>> a FUSE_LOOKUP has been done before this.
+> 
+> It is not in written document, but in the existing (linux) kernel behavior.
+> 
+> 
+> You can look up "regressions due to 64-bit ext4 directory cookies" - 
+> patches from me had been once already the reason for accidental breakage 
+> and back that time I did not even have the slightest chance to predict 
+> it, as glusterfs was relying on max 32bit telldir results and using the 
+> other 32bit for its own purposes. Kernel behavior changed and 
+> application broke, even though the application was relying on non-posix 
+> behavior. In case of fuse there is no document like posix, but just API 
+> headers and current behavior...
+> 
+> Thanks,
+> Bernd
+> 
+> 
+> 
+> 
+> 
+
 
