@@ -2,56 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 91E3D51EE45
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 May 2022 16:38:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F62251EE26
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 May 2022 16:37:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234095AbiEHOko (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 8 May 2022 10:40:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52700 "EHLO
+        id S234167AbiEHOkq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 8 May 2022 10:40:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233985AbiEHOkZ (ORCPT
+        with ESMTP id S233981AbiEHOkZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Sun, 8 May 2022 10:40:25 -0400
 Received: from heian.cn.fujitsu.com (mail.cn.fujitsu.com [183.91.158.132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A7C3FFD19;
-        Sun,  8 May 2022 07:36:34 -0700 (PDT)
-IronPort-Data: =?us-ascii?q?A9a23=3ABH7Aja0A+gWrByATGPbD5T9wkn2cJEfYwER7XOP?=
- =?us-ascii?q?LsXnJgD9z3jYAzDQcDWGOO6qNZTGhfdBwOoqy/U4GvsDRzNY2QQE+nZ1PZygU8?=
- =?us-ascii?q?JKaX7x1DatR0xu6d5SFFAQ+hyknQoGowPscEzmM9n9BDpC79SMmjfvQH+KlYAL?=
- =?us-ascii?q?5EnsZqTFMGX5JZS1Ly7ZRbr5A2bBVMivV0T/Ai5S31GyNh1aYBlkpB5er83uDi?=
- =?us-ascii?q?hhdVAQw5TTSbdgT1LPXeuJ84Jg3fcldJFOgKmVY83LTegrN8F251juxExYFAdX?=
- =?us-ascii?q?jnKv5c1ERX/jZOg3mZnh+AvDk20Yd4HdplPtT2Pk0MC+7jx2Tgtl308QLu5qrV?=
- =?us-ascii?q?S8nI6/NhP8AFRJfFkmSOIUfouOffiXg7ZX7I0ruNiGEL+9VJE0/I4wU0uhtBmR?=
- =?us-ascii?q?J7/YZNHYGaRXrr+a3xre6Q+5si+wjMcD0MYJZsXZlpRnZBvYOQJbNWazG6NZUm?=
- =?us-ascii?q?jAqiahmAvfaY9sxaDxhdh3MbhRDfFANB/oWkO6uwHu5bDxcrFOcoLEf4m7PwQg?=
- =?us-ascii?q?327/oWPLZeMONQ8p9nUuCoG/CuWPjDXkyMN2Z1CrA93eEhfHGliC9X5gdfJW+6?=
- =?us-ascii?q?PJrhVi7wm0IFAZQUVq9vOn/hkOgM/pfIEw8/jEy66Q/nGStR97sVlu4p2SFsQM?=
- =?us-ascii?q?XW9t4FeAxrgqKz8L84Q+fCy4PTiNpb8Yvv8s7Azct0zehhdzuATBwobu9Um+G+?=
- =?us-ascii?q?/GYoFuaPSkTMH9HazQIQBUI5/H9r4wpyBHCVNBuFOiylNKdMTXxxS2a6SsznbM?=
- =?us-ascii?q?eieYV2Kihu1PKmTShot7OVAFdzgHWWH+1qxN3f6a7aIGyr1vW9/BNKMCeVFbpl?=
- =?us-ascii?q?GYFgc+2/u0IDI/LkC2LXfVLG6umoeuGWAAwK3YH84IJrmzroiD8O9sLpmwWGau?=
- =?us-ascii?q?gCe5cEReBXaMZkVk5CEdvAUaX?=
-IronPort-HdrOrdr: =?us-ascii?q?A9a23=3AvXo0qa23PhXR77qd1J97oAqjBFQkLtp133Aq?=
- =?us-ascii?q?2lEZdPRUGvb4qynIpoVj6faUskdoZJhOo6HiBEDtexzhHNtOkO0s1NSZLW/bUQ?=
- =?us-ascii?q?mTXeNfBOLZqlWKcUCTygce79YGT0EUMr3N5DZB4/oSmDPIdurI3uP3jJyAtKPP?=
- =?us-ascii?q?yWt3VwF2Z+VF5wd9MAySFUp7X2B9dOAEPavZ9sxavCChZHhSSsy6A0MOV+/Fq8?=
- =?us-ascii?q?aOu4nhZXc9dmMawTjLnTW186T7DhTd+h8fVglEybAk/XOAsyGR3NTZj82G?=
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id F0DE6FD16;
+        Sun,  8 May 2022 07:36:33 -0700 (PDT)
+IronPort-Data: =?us-ascii?q?A9a23=3AmllfP6B+qzYrwRVW/8Xiw5YqxClBgxIJ4g17XOL?=
+ =?us-ascii?q?fAAm+hT9whmAPzmJKX22BP6zba2PxfIxyb9jj/UoAu5KAx9UxeLYW3SszFioV8?=
+ =?us-ascii?q?6IpJjg4wn/YZnrUdouaJK5ex512huLocYZkHhcwmj/3auK79SMkjPnRLlbBILW?=
+ =?us-ascii?q?s1h5ZFFYMpBgJ2UoLd94R2uaEsPDha++/kYqaT/73ZDdJ7wVJ3lc8sMpvnv/AU?=
+ =?us-ascii?q?MPa41v0tnRmDRxCUcS3e3M9VPrzLonpR5f0rxU9IwK0ewrD5OnREmLx9BFrBM6?=
+ =?us-ascii?q?nk6rgbwsBRbu60Qqm0yIQAvb9xEMZ4HFaPqUTbZLwbW9NljyPhME3xtNWqbS+V?=
+ =?us-ascii?q?AUoIrbR3u8aVnG0FgknZ/Eep+KYeijXXcu7iheun2HX6/lnEkA6FYMC/eNwG2t?=
+ =?us-ascii?q?P6boTLzVlRhSCgee3ybW7R8Fsm808IcitN4Qa0llgxjHxDPAoW5nPTqzGo9hC0?=
+ =?us-ascii?q?18YmcFKGef2ZswXczNjYR3MJRpVNT8/BJs42uXumXj7dzxRrUm9pKwr7myVxwt?=
+ =?us-ascii?q?0uJDhMsXSfNOiRshPmEuc4GXc8AzRBhAcKczazD+t8WyljeyJmjn0MKoUCrG58?=
+ =?us-ascii?q?/tChFyI2ndVDBwQSEv9rfSn4ma+UNJ3L1cIvCYjxYA0/Uu6R5/9WAe5r2OPvh8?=
+ =?us-ascii?q?0XddbVeY97WmlyKPS7kCSBnUsSSRIY9gr8sQxQFQCzFCOm9/2FDpHq6CORDSR+?=
+ =?us-ascii?q?9+8qTK0JDhQI3QOaDEJSSMb7NT55oI+lBTCSpBkCqHdptn0HyzghjOHti4zg50?=
+ =?us-ascii?q?NgsMRkaa251bKh3SrvJehZgo04BjHG3Kr9Stna4O/IY+l817W6bBHNonxZkeAp?=
+ =?us-ascii?q?n8sicWY7f5ICZCLiTzLR/8CWqyqj8tpmhW0bUVHRsFnrmryvSX4O9043d23H28?=
+ =?us-ascii?q?xWu5sRNMjSBS7Vdtt2aJu?=
+IronPort-HdrOrdr: =?us-ascii?q?A9a23=3AkPYybaoAs8YH77NhmKfgtb8aV5rPeYIsimQD?=
+ =?us-ascii?q?101hICG8cqSj+fxG+85rsyMc6QxhIU3I9urhBEDtex/hHNtOkOws1NSZLW7bUQ?=
+ =?us-ascii?q?mTXeJfBOLZqlWKcUDDH6xmpMNdmsNFaeEYY2IUsS+D2njbLz8/+qj7zImYwffZ?=
+ =?us-ascii?q?02x2TRxnL4Vp7wJCAA6dFUFsLTM2fqYRJd6N4NZdvTq8dTAyZsS/PHMMWO/OvJ?=
+ =?us-ascii?q?nlj5TjCCR2fSIP2U2fiy+y8r7mH1y91hcaaTlGxrAv6izkvmXCl92ej80=3D?=
 X-IronPort-AV: E=Sophos;i="5.88,333,1635177600"; 
-   d="scan'208";a="124075741"
+   d="scan'208";a="124075738"
 Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
   by heian.cn.fujitsu.com with ESMTP; 08 May 2022 22:36:31 +0800
 Received: from G08CNEXMBPEKD05.g08.fujitsu.local (unknown [10.167.33.204])
-        by cn.fujitsu.com (Postfix) with ESMTP id A46A34D16FDF;
-        Sun,  8 May 2022 22:36:25 +0800 (CST)
-Received: from G08CNEXJMPEKD02.g08.fujitsu.local (10.167.33.202) by
- G08CNEXMBPEKD05.g08.fujitsu.local (10.167.33.204) with Microsoft SMTP Server
- (TLS) id 15.0.1497.23; Sun, 8 May 2022 22:36:28 +0800
+        by cn.fujitsu.com (Postfix) with ESMTP id 4423C4D1718C;
+        Sun,  8 May 2022 22:36:26 +0800 (CST)
 Received: from G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.85) by
- G08CNEXJMPEKD02.g08.fujitsu.local (10.167.33.202) with Microsoft SMTP Server
+ G08CNEXMBPEKD05.g08.fujitsu.local (10.167.33.204) with Microsoft SMTP Server
  (TLS) id 15.0.1497.23; Sun, 8 May 2022 22:36:28 +0800
 Received: from irides.mr.mr (10.167.225.141) by
  G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
- id 15.0.1497.23 via Frontend Transport; Sun, 8 May 2022 22:36:23 +0800
+ id 15.0.1497.23 via Frontend Transport; Sun, 8 May 2022 22:36:24 +0800
 From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
 To:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
         <nvdimm@lists.linux.dev>, <linux-mm@kvack.org>,
@@ -61,16 +58,16 @@ CC:     <djwong@kernel.org>, <dan.j.williams@intel.com>,
         <rgoldwyn@suse.de>, <viro@zeniv.linux.org.uk>,
         <willy@infradead.org>, <naoya.horiguchi@nec.com>,
         <linmiaohe@huawei.com>, Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v14 04/07] fsdax: Introduce dax_lock_mapping_entry()
-Date:   Sun, 8 May 2022 22:36:10 +0800
-Message-ID: <20220508143620.1775214-5-ruansy.fnst@fujitsu.com>
+Subject: [PATCH v14 05/07] mm: Introduce mf_dax_kill_procs() for fsdax case
+Date:   Sun, 8 May 2022 22:36:11 +0800
+Message-ID: <20220508143620.1775214-6-ruansy.fnst@fujitsu.com>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220508143620.1775214-1-ruansy.fnst@fujitsu.com>
 References: <20220508143620.1775214-1-ruansy.fnst@fujitsu.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
-X-yoursite-MailScanner-ID: A46A34D16FDF.A26AD
+X-yoursite-MailScanner-ID: 4423C4D1718C.AEF7C
 X-yoursite-MailScanner: Found to be clean
 X-yoursite-MailScanner-From: ruansy.fnst@fujitsu.com
 X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
@@ -82,127 +79,186 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The current dax_lock_page() locks dax entry by obtaining mapping and
-index in page.  To support 1-to-N RMAP in NVDIMM, we need a new function
-to lock a specific dax entry corresponding to this file's mapping,index.
-And output the page corresponding to the specific dax entry for caller
-use.
+This new function is a variant of mf_generic_kill_procs that accepts a
+file, offset pair instead of a struct to support multiple files sharing
+a DAX mapping.  It is intended to be called by the file systems as part
+of the memory_failure handler after the file system performed a reverse
+mapping from the storage address to the file and file offset.
 
 Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Reviewed-by: Miaohe Lin <linmiaohe@huawei.com>
 ---
- fs/dax.c            | 63 +++++++++++++++++++++++++++++++++++++++++++++
- include/linux/dax.h | 15 +++++++++++
- 2 files changed, 78 insertions(+)
+ include/linux/mm.h  |  2 +
+ mm/memory-failure.c | 96 ++++++++++++++++++++++++++++++++++++++++-----
+ 2 files changed, 88 insertions(+), 10 deletions(-)
 
-diff --git a/fs/dax.c b/fs/dax.c
-index 1ac12e877f4f..57efd3f73655 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -455,6 +455,69 @@ void dax_unlock_page(struct page *page, dax_entry_t cookie)
- 	dax_unlock_entry(&xas, (void *)cookie);
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index de32c0383387..e2c0f69f0660 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -3227,6 +3227,8 @@ enum mf_flags {
+ 	MF_SOFT_OFFLINE = 1 << 3,
+ 	MF_UNPOISON = 1 << 4,
+ };
++int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
++		      unsigned long count, int mf_flags);
+ extern int memory_failure(unsigned long pfn, int flags);
+ extern void memory_failure_queue(unsigned long pfn, int flags);
+ extern void memory_failure_queue_kick(int cpu);
+diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+index aeb19593af9c..aedfc5097420 100644
+--- a/mm/memory-failure.c
++++ b/mm/memory-failure.c
+@@ -295,10 +295,9 @@ void shake_page(struct page *p)
+ }
+ EXPORT_SYMBOL_GPL(shake_page);
+ 
+-static unsigned long dev_pagemap_mapping_shift(struct page *page,
+-		struct vm_area_struct *vma)
++static unsigned long dev_pagemap_mapping_shift(struct vm_area_struct *vma,
++		unsigned long address)
+ {
+-	unsigned long address = vma_address(page, vma);
+ 	unsigned long ret = 0;
+ 	pgd_t *pgd;
+ 	p4d_t *p4d;
+@@ -338,10 +337,14 @@ static unsigned long dev_pagemap_mapping_shift(struct page *page,
+ /*
+  * Schedule a process for later kill.
+  * Uses GFP_ATOMIC allocations to avoid potential recursions in the VM.
++ *
++ * Notice: @fsdax_pgoff is used only when @p is a fsdax page.
++ *   In other cases, such as anonymous and file-backend page, the address to be
++ *   killed can be caculated by @p itself.
+  */
+ static void add_to_kill(struct task_struct *tsk, struct page *p,
+-		       struct vm_area_struct *vma,
+-		       struct list_head *to_kill)
++			pgoff_t fsdax_pgoff, struct vm_area_struct *vma,
++			struct list_head *to_kill)
+ {
+ 	struct to_kill *tk;
+ 
+@@ -352,9 +355,15 @@ static void add_to_kill(struct task_struct *tsk, struct page *p,
+ 	}
+ 
+ 	tk->addr = page_address_in_vma(p, vma);
+-	if (is_zone_device_page(p))
+-		tk->size_shift = dev_pagemap_mapping_shift(p, vma);
+-	else
++	if (is_zone_device_page(p)) {
++		/*
++		 * Since page->mapping is not used for fsdax, we need
++		 * calculate the address based on the vma.
++		 */
++		if (p->pgmap->type == MEMORY_DEVICE_FS_DAX)
++			tk->addr = vma_pgoff_address(fsdax_pgoff, 1, vma);
++		tk->size_shift = dev_pagemap_mapping_shift(vma, tk->addr);
++	} else
+ 		tk->size_shift = page_shift(compound_head(p));
+ 
+ 	/*
+@@ -503,7 +512,7 @@ static void collect_procs_anon(struct page *page, struct list_head *to_kill,
+ 			if (!page_mapped_in_vma(page, vma))
+ 				continue;
+ 			if (vma->vm_mm == t->mm)
+-				add_to_kill(t, page, vma, to_kill);
++				add_to_kill(t, page, 0, vma, to_kill);
+ 		}
+ 	}
+ 	read_unlock(&tasklist_lock);
+@@ -539,13 +548,41 @@ static void collect_procs_file(struct page *page, struct list_head *to_kill,
+ 			 * to be informed of all such data corruptions.
+ 			 */
+ 			if (vma->vm_mm == t->mm)
+-				add_to_kill(t, page, vma, to_kill);
++				add_to_kill(t, page, 0, vma, to_kill);
+ 		}
+ 	}
+ 	read_unlock(&tasklist_lock);
+ 	i_mmap_unlock_read(mapping);
  }
  
++#ifdef CONFIG_FS_DAX
 +/*
-+ * dax_lock_mapping_entry - Lock the DAX entry corresponding to a mapping
-+ * @mapping: the file's mapping whose entry we want to lock
-+ * @index: the offset within this file
-+ * @page: output the dax page corresponding to this dax entry
-+ *
-+ * Return: A cookie to pass to dax_unlock_mapping_entry() or 0 if the entry
-+ * could not be locked.
++ * Collect processes when the error hit a fsdax page.
 + */
-+dax_entry_t dax_lock_mapping_entry(struct address_space *mapping, pgoff_t index,
-+		struct page **page)
++static void collect_procs_fsdax(struct page *page,
++		struct address_space *mapping, pgoff_t pgoff,
++		struct list_head *to_kill)
 +{
-+	XA_STATE(xas, NULL, 0);
-+	void *entry;
++	struct vm_area_struct *vma;
++	struct task_struct *tsk;
 +
-+	rcu_read_lock();
-+	for (;;) {
-+		entry = NULL;
-+		if (!dax_mapping(mapping))
-+			break;
++	i_mmap_lock_read(mapping);
++	read_lock(&tasklist_lock);
++	for_each_process(tsk) {
++		struct task_struct *t = task_early_kill(tsk, true);
 +
-+		xas.xa = &mapping->i_pages;
-+		xas_lock_irq(&xas);
-+		xas_set(&xas, index);
-+		entry = xas_load(&xas);
-+		if (dax_is_locked(entry)) {
-+			rcu_read_unlock();
-+			wait_entry_unlocked(&xas, entry);
-+			rcu_read_lock();
++		if (!t)
 +			continue;
++		vma_interval_tree_foreach(vma, &mapping->i_mmap, pgoff, pgoff) {
++			if (vma->vm_mm == t->mm)
++				add_to_kill(t, page, pgoff, vma, to_kill);
 +		}
-+		if (!entry ||
-+		    dax_is_zero_entry(entry) || dax_is_empty_entry(entry)) {
-+			/*
-+			 * Because we are looking for entry from file's mapping
-+			 * and index, so the entry may not be inserted for now,
-+			 * or even a zero/empty entry.  We don't think this is
-+			 * an error case.  So, return a special value and do
-+			 * not output @page.
-+			 */
-+			entry = (void *)~0UL;
-+		} else {
-+			*page = pfn_to_page(dax_to_pfn(entry));
-+			dax_lock_entry(&xas, entry);
-+		}
-+		xas_unlock_irq(&xas);
-+		break;
 +	}
-+	rcu_read_unlock();
-+	return (dax_entry_t)entry;
++	read_unlock(&tasklist_lock);
++	i_mmap_unlock_read(mapping);
 +}
-+
-+void dax_unlock_mapping_entry(struct address_space *mapping, pgoff_t index,
-+		dax_entry_t cookie)
-+{
-+	XA_STATE(xas, &mapping->i_pages, index);
-+
-+	if (cookie == ~0UL)
-+		return;
-+
-+	dax_unlock_entry(&xas, (void *)cookie);
-+}
++#endif /* CONFIG_FS_DAX */
 +
  /*
-  * Find page cache entry at given index. If it is a DAX entry, return it
-  * with the entry locked. If the page cache doesn't contain an entry at
-diff --git a/include/linux/dax.h b/include/linux/dax.h
-index 9c426a207ba8..c152f315d1c9 100644
---- a/include/linux/dax.h
-+++ b/include/linux/dax.h
-@@ -143,6 +143,10 @@ struct page *dax_layout_busy_page(struct address_space *mapping);
- struct page *dax_layout_busy_page_range(struct address_space *mapping, loff_t start, loff_t end);
- dax_entry_t dax_lock_page(struct page *page);
- void dax_unlock_page(struct page *page, dax_entry_t cookie);
-+dax_entry_t dax_lock_mapping_entry(struct address_space *mapping,
-+		unsigned long index, struct page **page);
-+void dax_unlock_mapping_entry(struct address_space *mapping,
-+		unsigned long index, dax_entry_t cookie);
- #else
- static inline struct page *dax_layout_busy_page(struct address_space *mapping)
- {
-@@ -170,6 +174,17 @@ static inline dax_entry_t dax_lock_page(struct page *page)
- static inline void dax_unlock_page(struct page *page, dax_entry_t cookie)
- {
+  * Collect the processes who have the corrupted page mapped to kill.
+  */
+@@ -1580,6 +1617,45 @@ static int mf_generic_kill_procs(unsigned long long pfn, int flags,
+ 	return rc;
  }
-+
-+static inline dax_entry_t dax_lock_mapping_entry(struct address_space *mapping,
-+		unsigned long index, struct page **page)
+ 
++#ifdef CONFIG_FS_DAX
++/**
++ * mf_dax_kill_procs - Collect and kill processes who are using this file range
++ * @mapping:	address_space of the file in use
++ * @index:	start pgoff of the range within the file
++ * @count:	length of the range, in unit of PAGE_SIZE
++ * @mf_flags:	memory failure flags
++ */
++int mf_dax_kill_procs(struct address_space *mapping, pgoff_t index,
++		unsigned long count, int mf_flags)
 +{
++	LIST_HEAD(to_kill);
++	dax_entry_t cookie;
++	struct page *page;
++	size_t end = index + count;
++
++	mf_flags |= MF_ACTION_REQUIRED | MF_MUST_KILL;
++
++	for (; index < end; index++) {
++		page = NULL;
++		cookie = dax_lock_mapping_entry(mapping, index, &page);
++		if (!cookie)
++			return -EBUSY;
++		if (!page)
++			goto unlock;
++
++		SetPageHWPoison(page);
++
++		collect_procs_fsdax(page, mapping, index, &to_kill);
++		unmap_and_kill(&to_kill, page_to_pfn(page), mapping,
++				index, mf_flags);
++unlock:
++		dax_unlock_mapping_entry(mapping, index, cookie);
++	}
 +	return 0;
 +}
++EXPORT_SYMBOL_GPL(mf_dax_kill_procs);
++#endif /* CONFIG_FS_DAX */
 +
-+static inline void dax_unlock_mapping_entry(struct address_space *mapping,
-+		unsigned long index, dax_entry_t cookie)
-+{
-+}
- #endif
- 
- int dax_zero_range(struct inode *inode, loff_t pos, loff_t len, bool *did_zero,
+ /*
+  * Called from hugetlb code with hugetlb_lock held.
+  *
 -- 
 2.35.1
 
