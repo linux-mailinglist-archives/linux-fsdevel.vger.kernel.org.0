@@ -2,105 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A82FB51EAD5
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 May 2022 04:15:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9CC851EC3F
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 May 2022 10:59:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352236AbiEHCTD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 7 May 2022 22:19:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59622 "EHLO
+        id S231348AbiEHJC6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 8 May 2022 05:02:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44330 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234805AbiEHCTC (ORCPT
+        with ESMTP id S229897AbiEHJC5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 7 May 2022 22:19:02 -0400
-Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C423111152
-        for <linux-fsdevel@vger.kernel.org>; Sat,  7 May 2022 19:15:13 -0700 (PDT)
-Received: by mail-ed1-x52f.google.com with SMTP id be20so12576512edb.12
-        for <linux-fsdevel@vger.kernel.org>; Sat, 07 May 2022 19:15:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=Cr4jqiwCZqgvtQ1mPAG6hA/aEXX0FhXJr8HGvR+MOF4=;
-        b=hIE5zwv2rTKn+CswdyopQHf0jMYKWFxRBF6odjeCxWBM/WRdVHzPYHl78NQfbEd29K
-         9enqxTUB9ZAvVAoyjF8AWhpC+f5IVcnJoMj+unQol6NBiW/KIRN+RPaYSq7RoP62yjw1
-         2X5NuVc9b98bRcPhXJz7ydAIkaPKYIMfoxEKnd5fu9ZsX03fmWcqseP8+bykpooAanlU
-         h5RINDqd4mWKTcsWni5bShtEPJLQkkRYT8dOneNqwF1lDvdzymwuLYp+4P1W1ToIwe8o
-         DNyWfhk7sajXrmDQAaFVYyGNgCHChouTJ3BZcW21ISZxH2nUIlO4cSJ32UEeiIotkomt
-         QV/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=Cr4jqiwCZqgvtQ1mPAG6hA/aEXX0FhXJr8HGvR+MOF4=;
-        b=l/vF2VnVnxS4oDG1cq0apMDpdhs+g9Km++vGuU/S5RxWEsvPEWz8A1ExE2iIGT/ogC
-         RzAkVC4TeXEz0iIAdAq+D13/t28oNmdeYCk78dGQvFYYYfm1dbRuBllrMp7BysTHUyqj
-         +rpX8z16a4KOIp9qr7LWaF3RZGJqGyltg/jfkZmsV3YBCZy/02KimPQhEP1EMQglXRJg
-         mrb3VV4LFQNXM5jo09VBqqZqmc8mVrmZawinXqm2DPPMQey9W7GGOMKM82qMBI753Ft7
-         h5M2KrrlJNRR6ZTvahfav0dPu8cWBI2Mt/gFqP+W4XBtYllMHoEGYG9XZdrvdY3lvz1D
-         MgxA==
-X-Gm-Message-State: AOAM5320l1NzG29OQtziz/fdqhQNhJDX0f0AmjyXJlHRjtBHBNEuXAV1
-        4qOKXcjBayztT4VYCz8hOyyGjTdRRyWRNNMIk6Y=
-X-Google-Smtp-Source: ABdhPJzTI/QqRCdwIAmphqF9OzyyYNq5Vx7Ax17gRaKdquRTzXBKHWHIi7p9/pNhdRsw+jE0joTHzv2TJm/aPiu3TUo=
-X-Received: by 2002:a50:ed0e:0:b0:425:e476:f4ed with SMTP id
- j14-20020a50ed0e000000b00425e476f4edmr10770566eds.32.1651976112082; Sat, 07
- May 2022 19:15:12 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a50:3554:0:0:0:0:0 with HTTP; Sat, 7 May 2022 19:15:11 -0700 (PDT)
-Reply-To: wijh555@gmail.com
-From:   "Mr. David Kabore" <dkabore16@gmail.com>
-Date:   Sat, 7 May 2022 19:15:11 -0700
-Message-ID: <CANLKR0vzXK+xff8dc1NLRToAvTmMja99WOdUionm413PVRoNow@mail.gmail.com>
-Subject: Good Day,
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: Yes, score=5.6 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,FREEMAIL_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT,
-        HK_NAME_FM_MR_MRS,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,UNDISC_FREEM autolearn=no autolearn_force=no
-        version=3.4.6
-X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
-        *      https://www.dnswl.org/, no trust
-        *      [2a00:1450:4864:20:0:0:0:52f listed in]
-        [list.dnswl.org]
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4989]
-        *  0.2 FREEMAIL_REPLYTO_END_DIGIT Reply-To freemail username ends in
-        *      digit
-        *      [wijh555[at]gmail.com]
-        *  0.2 FREEMAIL_ENVFROM_END_DIGIT Envelope-from freemail username ends
-        *       in digit
-        *      [dkabore16[at]gmail.com]
-        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
-        *      provider
-        *      [dkabore16[at]gmail.com]
-        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
-        * -0.0 SPF_PASS SPF: sender matches SPF record
-        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
-        *      envelope-from domain
-        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
-        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
-        *      author's domain
-        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
-        *       valid
-        * -0.0 T_SCC_BODY_TEXT_LINE No description available.
-        *  0.0 HK_NAME_FM_MR_MRS No description available.
-        *  3.5 UNDISC_FREEM Undisclosed recipients + freemail reply-to
-        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
-        *      different freemails
-X-Spam-Level: *****
+        Sun, 8 May 2022 05:02:57 -0400
+Received: from out30-57.freemail.mail.aliyun.com (out30-57.freemail.mail.aliyun.com [115.124.30.57])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1EEDBCB7;
+        Sun,  8 May 2022 01:59:06 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R761e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0VCZqsya_1652000343;
+Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0VCZqsya_1652000343)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Sun, 08 May 2022 16:59:04 +0800
+From:   Baolin Wang <baolin.wang@linux.alibaba.com>
+To:     catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
+        mike.kravetz@oracle.com, akpm@linux-foundation.org, sj@kernel.org
+Cc:     baolin.wang@linux.alibaba.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: [RFC PATCH 0/3] Introduce new huge_ptep_get_access_flags() interface
+Date:   Sun,  8 May 2022 16:58:51 +0800
+Message-Id: <cover.1651998586.git.baolin.wang@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
--- 
-Hello,
-I'm Mr. David Kabore, how are you doing hope you are in good health,
-the Board irector try to reach you on phone several times Meanwhile,
-your number was not connecting. before he ask me to send you an email
-to hear from you if you are fine. hope to hear you are in good Health.
+Hi,
 
-Thanks,
-Mr. David Kabore.
+As Mike pointed out [1], the huge_ptep_get() will only return one specific
+pte value for the CONT-PTE or CONT-PMD size hugetlb on ARM64 system, which
+will not take into account the subpages' dirty or young bits of a CONT-PTE/PMD
+size hugetlb page. That will make us miss dirty or young flags of a CONT-PTE/PMD
+size hugetlb page for those functions that want to check the dirty or
+young flags of a hugetlb page. For example, the gather_hugetlb_stats() will
+get inaccurate dirty hugetlb page statistics, and the DAMON for hugetlb monitoring
+will also get inaccurate access statistics.
+
+To fix this issue, one approach is that we can define an ARM64 specific huge_ptep_get()
+implementation, which will take into account any subpages' dirty or young bits.
+However we should add a new parameter for ARM64 specific huge_ptep_get() to check
+how many continuous PTEs or PMDs in this CONT-PTE/PMD size hugetlb, that means we
+should convert all the places using huge_ptep_get(), meanwhile most places using
+huge_ptep_get() did not care about the dirty or young flags at all.
+
+So instead of changing the prototype of huge_ptep_get(), this patch set introduces
+a new huge_ptep_get_access_flags() interface and define an ARM64 specific implementation,
+that will take into account any subpages' dirty or young bits for CONT-PTE/PMD size
+hugetlb page. And we can only change to use huge_ptep_get_access_flags() for those
+functions that care about the dirty or young flags of a hugetlb page.
+
+[1] https://lore.kernel.org/linux-mm/85bd80b4-b4fd-0d3f-a2e5-149559f2f387@oracle.com/
+
+Baolin Wang (3):
+  arm64/hugetlb: Introduce new huge_ptep_get_access_flags() interface
+  fs/proc/task_mmu: Change to use huge_ptep_get_access_flags()
+  mm/damon/vaddr: Change to use huge_ptep_get_access_flags()
+
+ arch/arm64/include/asm/hugetlb.h |  2 ++
+ arch/arm64/mm/hugetlbpage.c      | 24 ++++++++++++++++++++++++
+ fs/proc/task_mmu.c               |  3 ++-
+ include/asm-generic/hugetlb.h    |  7 +++++++
+ mm/damon/vaddr.c                 |  5 +++--
+ 5 files changed, 38 insertions(+), 3 deletions(-)
+
+-- 
+1.8.3.1
+
