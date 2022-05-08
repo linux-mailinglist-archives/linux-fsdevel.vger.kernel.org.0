@@ -2,40 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 03D0651F194
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 May 2022 22:35:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D40051F17F
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 May 2022 22:35:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232699AbiEHUhU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 8 May 2022 16:37:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56964 "EHLO
+        id S233266AbiEHUhn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 8 May 2022 16:37:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56230 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232901AbiEHUgn (ORCPT
+        with ESMTP id S232960AbiEHUgq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 8 May 2022 16:36:43 -0400
+        Sun, 8 May 2022 16:36:46 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F067A11146
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3A5B11C15
         for <linux-fsdevel@vger.kernel.org>; Sun,  8 May 2022 13:32:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=IeYZN3K/nsBQDQdrVJp1iXIKKccXdRFOgvyN5YJGMHE=; b=MS8o+khpy3wKd1UhtvxBSzvx55
-        tV8dXvy5NGXCDAadZDKrLWTsUEtND94dYu4zIIiMKB1tNWLi7l77Ip/LkY8P07OlvD4Ozj5QuhkcI
-        rt5gdpsdgMFLY0HFhPHIwZrIE8SLT/vC8OJHuCS2j6t9z73G38Dpl4PQRLKEsJ1w8RuEyKc1kvKun
-        RBsyBeSZTsRww1ux5kR2UmGEjiStchOZZJUgGw1KZ5z92SWBFleSfn3SnSZFw9kIBH0ksczTcev7q
-        9PZ6F5UEw/NSUKe/DwsX5prCyGpE3osx2jdUEFQshMRR8ve25ttmL83pM+AGXDkaT+GRIqcvZb9D5
-        EcHMiwHA==;
+        bh=LIEU7Y2C4AM5vv+HNOdRtoUsIRDweZoDecPRY8/+ElI=; b=v+wX3BsLDITv+MnbU5ooy4yrnG
+        iMmiyHs5AM7VNbjMRjfCUzNvUZ27txmPLu18970R+TYLrWQ8vn8Xcekx0s5I+3DstrXE+NAN+uUc8
+        z3pPIbluNBi36uBC1wieqrWPolA9xMXCHqyzWOcqHJ5tY0WduXzip7EjtRF7X6VkABx8Q48cvJeN1
+        FGnJcBdjrvCMsYsplFY+/S5snNxGHw/UFUmlnwPIhiZOLwGCU3oABkkdHUs96/YMd/pKJGb4MUwja
+        2SJrQQKaTrwODF4Sv+UiHujGKEy7Vsutd8UHE/JbEfcJ60IAplxcWxETum/HQgb7bGr9f/0+omQom
+        fgHHA5oQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nnnaC-002o0i-Qg; Sun, 08 May 2022 20:32:48 +0000
+        id 1nnnaC-002o0l-Tg; Sun, 08 May 2022 20:32:48 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH 00/26] Convert aops->releasepage to aops->release_folio
-Date:   Sun,  8 May 2022 21:32:21 +0100
-Message-Id: <20220508203247.668791-1-willy@infradead.org>
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH 01/26] fs: Add aops->release_folio
+Date:   Sun,  8 May 2022 21:32:22 +0100
+Message-Id: <20220508203247.668791-2-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
-In-Reply-To: <YngbFluT9ftR5dqf@casper.infradead.org>
+In-Reply-To: <20220508203247.668791-1-willy@infradead.org>
 References: <YngbFluT9ftR5dqf@casper.infradead.org>
+ <20220508203247.668791-1-willy@infradead.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -48,90 +50,184 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Convert all filesystems.  The last five patches are further cleanups
-that are enabled by this change.
+This replaces aops->releasepage.  Update the documentation, and call it
+if it exists.
 
-Matthew Wilcox (Oracle) (26):
-  fs: Add aops->release_folio
-  iomap: Convert to release_folio
-  9p: Convert to release_folio
-  afs: Convert to release_folio
-  btrfs: Convert to release_folio
-  ceph: Convert to release_folio
-  cifs: Convert to release_folio
-  erofs: Convert to release_folio
-  ext4: Convert to release_folio
-  f2fs: Convert to release_folio
-  gfs2: Convert to release_folio
-  hfs: Convert to release_folio
-  hfsplus: Convert to release_folio
-  jfs: Convert to release_folio
-  nfs: Convert to release_folio
-  nilfs2: Remove comment about releasepage
-  ocfs2: Convert to release_folio
-  orangefs: Convert to release_folio
-  reiserfs: Convert to release_folio
-  ubifs: Convert to release_folio
-  fs: Remove last vestiges of releasepage
-  reiserfs: Convert release_buffer_page() to use a folio
-  jbd2: Convert jbd2_journal_try_to_free_buffers to take a folio
-  jbd2: Convert release_buffer_page() to use a folio
-  fs: Change try_to_free_buffers() to take a folio
-  fs: Convert drop_buffers() to use a folio
-
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+---
  .../filesystems/caching/netfs-api.rst         |  4 +-
- Documentation/filesystems/locking.rst         | 14 ++---
- Documentation/filesystems/vfs.rst             | 45 ++++++++--------
- fs/9p/vfs_addr.c                              | 17 +++---
- fs/afs/dir.c                                  |  7 ++-
- fs/afs/file.c                                 | 11 ++--
- fs/afs/internal.h                             |  2 +-
- fs/btrfs/disk-io.c                            | 12 ++---
- fs/btrfs/extent_io.c                          | 14 ++---
- fs/btrfs/file.c                               |  2 +-
- fs/btrfs/inode.c                              | 24 ++++-----
- fs/buffer.c                                   | 54 +++++++++----------
- fs/ceph/addr.c                                | 24 ++++-----
- fs/cifs/file.c                                | 14 ++---
- fs/erofs/super.c                              | 16 +++---
- fs/ext4/inode.c                               | 20 +++----
- fs/f2fs/checkpoint.c                          |  2 +-
- fs/f2fs/compress.c                            |  2 +-
- fs/f2fs/data.c                                | 32 +++++------
- fs/f2fs/f2fs.h                                |  2 +-
- fs/f2fs/node.c                                |  2 +-
- fs/gfs2/aops.c                                | 44 +++++++--------
- fs/gfs2/inode.h                               |  2 +-
- fs/gfs2/meta_io.c                             |  4 +-
- fs/hfs/inode.c                                | 23 ++++----
- fs/hfsplus/inode.c                            | 23 ++++----
- fs/iomap/buffered-io.c                        | 22 ++++----
- fs/iomap/trace.h                              |  2 +-
- fs/jbd2/commit.c                              | 14 ++---
- fs/jbd2/transaction.c                         | 14 ++---
- fs/jfs/jfs_metapage.c                         | 16 +++---
- fs/mpage.c                                    |  2 +-
- fs/nfs/file.c                                 | 22 ++++----
- fs/nfs/fscache.h                              | 14 ++---
- fs/nilfs2/inode.c                             |  1 -
- fs/ocfs2/aops.c                               | 10 ++--
- fs/orangefs/inode.c                           |  6 +--
- fs/reiserfs/inode.c                           | 20 +++----
- fs/reiserfs/journal.c                         | 14 ++---
- fs/ubifs/file.c                               | 18 +++----
- fs/xfs/xfs_aops.c                             |  2 +-
- fs/zonefs/super.c                             |  2 +-
- include/linux/buffer_head.h                   |  4 +-
- include/linux/fs.h                            |  2 +-
- include/linux/iomap.h                         |  2 +-
- include/linux/jbd2.h                          |  2 +-
- include/linux/page-flags.h                    |  2 +-
- include/linux/pagemap.h                       |  4 --
- mm/filemap.c                                  |  6 +--
- mm/migrate.c                                  |  2 +-
- mm/vmscan.c                                   |  2 +-
- 51 files changed, 309 insertions(+), 312 deletions(-)
+ Documentation/filesystems/locking.rst         | 14 +++---
+ Documentation/filesystems/vfs.rst             | 45 +++++++++----------
+ include/linux/fs.h                            |  1 +
+ mm/filemap.c                                  |  2 +
+ 5 files changed, 34 insertions(+), 32 deletions(-)
 
+diff --git a/Documentation/filesystems/caching/netfs-api.rst b/Documentation/filesystems/caching/netfs-api.rst
+index 7308d76a29dc..1d18e9def183 100644
+--- a/Documentation/filesystems/caching/netfs-api.rst
++++ b/Documentation/filesystems/caching/netfs-api.rst
+@@ -433,11 +433,11 @@ has done a write and then the page it wrote from has been released by the VM,
+ after which it *has* to look in the cache.
+ 
+ To inform fscache that a page might now be in the cache, the following function
+-should be called from the ``releasepage`` address space op::
++should be called from the ``release_folio`` address space op::
+ 
+ 	void fscache_note_page_release(struct fscache_cookie *cookie);
+ 
+-if the page has been released (ie. releasepage returned true).
++if the page has been released (ie. release_folio returned true).
+ 
+ Page release and page invalidation should also wait for any mark left on the
+ page to say that a DIO write is underway from that page::
+diff --git a/Documentation/filesystems/locking.rst b/Documentation/filesystems/locking.rst
+index aeba2475a53c..2a295bb72dbc 100644
+--- a/Documentation/filesystems/locking.rst
++++ b/Documentation/filesystems/locking.rst
+@@ -249,7 +249,7 @@ prototypes::
+ 				struct page *page, void *fsdata);
+ 	sector_t (*bmap)(struct address_space *, sector_t);
+ 	void (*invalidate_folio) (struct folio *, size_t start, size_t len);
+-	int (*releasepage) (struct page *, int);
++	int (*release_folio)(struct folio *, gfp_t);
+ 	void (*freepage)(struct page *);
+ 	int (*direct_IO)(struct kiocb *, struct iov_iter *iter);
+ 	bool (*isolate_page) (struct page *, isolate_mode_t);
+@@ -270,13 +270,13 @@ ops			PageLocked(page)	 i_rwsem	invalidate_lock
+ writepage:		yes, unlocks (see below)
+ read_folio:		yes, unlocks				shared
+ writepages:
+-dirty_folio		maybe
++dirty_folio:		maybe
+ readahead:		yes, unlocks				shared
+ write_begin:		locks the page		 exclusive
+ write_end:		yes, unlocks		 exclusive
+ bmap:
+ invalidate_folio:	yes					exclusive
+-releasepage:		yes
++release_folio:		yes
+ freepage:		yes
+ direct_IO:
+ isolate_page:		yes
+@@ -372,10 +372,10 @@ invalidate_lock before invalidating page cache in truncate / hole punch
+ path (and thus calling into ->invalidate_folio) to block races between page
+ cache invalidation and page cache filling functions (fault, read, ...).
+ 
+-->releasepage() is called when the kernel is about to try to drop the
+-buffers from the page in preparation for freeing it.  It returns zero to
+-indicate that the buffers are (or may be) freeable.  If ->releasepage is zero,
+-the kernel assumes that the fs has no private interest in the buffers.
++->release_folio() is called when the kernel is about to try to drop the
++buffers from the folio in preparation for freeing it.  It returns false to
++indicate that the buffers are (or may be) freeable.  If ->release_folio is
++NULL, the kernel assumes that the fs has no private interest in the buffers.
+ 
+ ->freepage() is called when the kernel is done dropping the page
+ from the page cache.
+diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
+index 0919a4ad973a..679887b5c8fc 100644
+--- a/Documentation/filesystems/vfs.rst
++++ b/Documentation/filesystems/vfs.rst
+@@ -620,9 +620,9 @@ Writeback.
+ The first can be used independently to the others.  The VM can try to
+ either write dirty pages in order to clean them, or release clean pages
+ in order to reuse them.  To do this it can call the ->writepage method
+-on dirty pages, and ->releasepage on clean pages with PagePrivate set.
+-Clean pages without PagePrivate and with no external references will be
+-released without notice being given to the address_space.
++on dirty pages, and ->release_folio on clean folios with the private
++flag set.  Clean pages without PagePrivate and with no external references
++will be released without notice being given to the address_space.
+ 
+ To achieve this functionality, pages need to be placed on an LRU with
+ lru_cache_add and mark_page_active needs to be called whenever the page
+@@ -734,7 +734,7 @@ cache in your filesystem.  The following members are defined:
+ 				 struct page *page, void *fsdata);
+ 		sector_t (*bmap)(struct address_space *, sector_t);
+ 		void (*invalidate_folio) (struct folio *, size_t start, size_t len);
+-		int (*releasepage) (struct page *, int);
++		bool (*release_folio)(struct folio *, gfp_t);
+ 		void (*freepage)(struct page *);
+ 		ssize_t (*direct_IO)(struct kiocb *, struct iov_iter *iter);
+ 		/* isolate a page for migration */
+@@ -864,33 +864,32 @@ cache in your filesystem.  The following members are defined:
+ 	address space.  This generally corresponds to either a
+ 	truncation, punch hole or a complete invalidation of the address
+ 	space (in the latter case 'offset' will always be 0 and 'length'
+-	will be folio_size()).  Any private data associated with the page
++	will be folio_size()).  Any private data associated with the folio
+ 	should be updated to reflect this truncation.  If offset is 0
+ 	and length is folio_size(), then the private data should be
+-	released, because the page must be able to be completely
+-	discarded.  This may be done by calling the ->releasepage
++	released, because the folio must be able to be completely
++	discarded.  This may be done by calling the ->release_folio
+ 	function, but in this case the release MUST succeed.
+ 
+-``releasepage``
+-	releasepage is called on PagePrivate pages to indicate that the
+-	page should be freed if possible.  ->releasepage should remove
+-	any private data from the page and clear the PagePrivate flag.
+-	If releasepage() fails for some reason, it must indicate failure
+-	with a 0 return value.  releasepage() is used in two distinct
+-	though related cases.  The first is when the VM finds a clean
+-	page with no active users and wants to make it a free page.  If
+-	->releasepage succeeds, the page will be removed from the
+-	address_space and become free.
++``release_folio``
++	release_folio is called on folios with private data to tell the
++	filesystem that the folio is about to be freed.  ->release_folio
++	should remove any private data from the folio and clear the
++	private flag.  If release_folio() fails, it should return false.
++	release_folio() is used in two distinct though related cases.
++	The first is when the VM wants to free a clean folio with no
++	active users.  If ->release_folio succeeds, the folio will be
++	removed from the address_space and be freed.
+ 
+ 	The second case is when a request has been made to invalidate
+-	some or all pages in an address_space.  This can happen through
+-	the fadvise(POSIX_FADV_DONTNEED) system call or by the
+-	filesystem explicitly requesting it as nfs and 9fs do (when they
++	some or all folios in an address_space.  This can happen
++	through the fadvise(POSIX_FADV_DONTNEED) system call or by the
++	filesystem explicitly requesting it as nfs and 9p do (when they
+ 	believe the cache may be out of date with storage) by calling
+ 	invalidate_inode_pages2().  If the filesystem makes such a call,
+-	and needs to be certain that all pages are invalidated, then its
+-	releasepage will need to ensure this.  Possibly it can clear the
+-	PageUptodate bit if it cannot free private data yet.
++	and needs to be certain that all folios are invalidated, then
++	its release_folio will need to ensure this.  Possibly it can
++	clear the uptodate flag if it cannot free private data yet.
+ 
+ ``freepage``
+ 	freepage is called once the page is no longer visible in the
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index f812f5aa07dd..ad768f13f485 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -355,6 +355,7 @@ struct address_space_operations {
+ 	/* Unfortunately this kludge is needed for FIBMAP. Don't use it */
+ 	sector_t (*bmap)(struct address_space *, sector_t);
+ 	void (*invalidate_folio) (struct folio *, size_t offset, size_t len);
++	bool (*release_folio)(struct folio *, gfp_t);
+ 	int (*releasepage) (struct page *, gfp_t);
+ 	void (*freepage)(struct page *);
+ 	ssize_t (*direct_IO)(struct kiocb *, struct iov_iter *iter);
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 9b7fa47feb5e..78e4a7dc3a56 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -3955,6 +3955,8 @@ bool filemap_release_folio(struct folio *folio, gfp_t gfp)
+ 	if (folio_test_writeback(folio))
+ 		return false;
+ 
++	if (mapping && mapping->a_ops->release_folio)
++		return mapping->a_ops->release_folio(folio, gfp);
+ 	if (mapping && mapping->a_ops->releasepage)
+ 		return mapping->a_ops->releasepage(&folio->page, gfp);
+ 	return try_to_free_buffers(&folio->page);
 -- 
 2.34.1
 
