@@ -2,23 +2,23 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E668651EC44
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 May 2022 10:59:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FCDA51EC47
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 May 2022 10:59:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231431AbiEHJDH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 8 May 2022 05:03:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44346 "EHLO
+        id S231450AbiEHJDK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 8 May 2022 05:03:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231372AbiEHJDA (ORCPT
+        with ESMTP id S231389AbiEHJDB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 8 May 2022 05:03:00 -0400
-Received: from out30-45.freemail.mail.aliyun.com (out30-45.freemail.mail.aliyun.com [115.124.30.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 188E5BCB7;
-        Sun,  8 May 2022 01:59:09 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0VCZrFB4_1652000345;
-Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0VCZrFB4_1652000345)
+        Sun, 8 May 2022 05:03:01 -0400
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35FAABCB9;
+        Sun,  8 May 2022 01:59:10 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R461e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0VCZrFBZ_1652000346;
+Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0VCZrFBZ_1652000346)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Sun, 08 May 2022 16:59:06 +0800
+          Sun, 08 May 2022 16:59:07 +0800
 From:   Baolin Wang <baolin.wang@linux.alibaba.com>
 To:     catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
         mike.kravetz@oracle.com, akpm@linux-foundation.org, sj@kernel.org
@@ -26,9 +26,9 @@ Cc:     baolin.wang@linux.alibaba.com,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org
-Subject: [RFC PATCH 2/3] fs/proc/task_mmu: Change to use huge_ptep_get_access_flags()
-Date:   Sun,  8 May 2022 16:58:53 +0800
-Message-Id: <62de656111dcdb8d189698316f1c2721753d7c7a.1651998586.git.baolin.wang@linux.alibaba.com>
+Subject: [RFC PATCH 3/3] mm/damon/vaddr: Change to use huge_ptep_get_access_flags()
+Date:   Sun,  8 May 2022 16:58:54 +0800
+Message-Id: <bfef01549847df7645bac0eacab74b4dde693e04.1651998586.git.baolin.wang@linux.alibaba.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <cover.1651998586.git.baolin.wang@linux.alibaba.com>
 References: <cover.1651998586.git.baolin.wang@linux.alibaba.com>
@@ -48,31 +48,39 @@ The ARM64 platform can support CONT-PTE/PMD size hugetlb, which can
 contain seravel continuous pte or pmd entries. However current
 huge_ptep_get() only return one specific pte value for the CONT-PTE
 or CONT-PMD size hugetlb, which did not take into accounts the
-subpages' dirty or young flags. So the gather_hugetlb_stats()
-will miss some dirty hugetlb statistics.
+subpages' dirty or young flags. That will make the hugetlb pages
+monitoring inaccurate with missing young flags.
 
 Thus change to use huge_ptep_get_access_flags() taking into accounts
-the subpages' dirty or young flags of a CONT-PTE/PMD size hugetlb,
-to make the hugetlb statistics more accurate.
+the subpages' dirty or young flags of a CONT-PTE/PMD size hugetlb.
 
 Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 ---
- fs/proc/task_mmu.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ mm/damon/vaddr.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index f9c9abb..3f224a7 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -1880,7 +1880,8 @@ static int gather_pte_stats(pmd_t *pmd, unsigned long addr,
- static int gather_hugetlb_stats(pte_t *pte, unsigned long hmask,
- 		unsigned long addr, unsigned long end, struct mm_walk *walk)
+diff --git a/mm/damon/vaddr.c b/mm/damon/vaddr.c
+index d6abf76..29459ed 100644
+--- a/mm/damon/vaddr.c
++++ b/mm/damon/vaddr.c
+@@ -400,7 +400,8 @@ static void damon_hugetlb_mkold(pte_t *pte, struct mm_struct *mm,
+ 				struct vm_area_struct *vma, unsigned long addr)
  {
--	pte_t huge_pte = huge_ptep_get(pte);
-+	pte_t huge_pte = huge_ptep_get_access_flags(pte,
-+				huge_page_size(hstate_vma(walk->vma)));
- 	struct numa_maps *md;
- 	struct page *page;
+ 	bool referenced = false;
+-	pte_t entry = huge_ptep_get(pte);
++	pte_t entry = huge_ptep_get_access_flags(pte,
++					huge_page_size(hstate_vma(vma)));
+ 	struct page *page = pte_page(entry);
+ 
+ 	get_page(page);
+@@ -557,7 +558,7 @@ static int damon_young_hugetlb_entry(pte_t *pte, unsigned long hmask,
+ 	pte_t entry;
+ 
+ 	ptl = huge_pte_lock(h, walk->mm, pte);
+-	entry = huge_ptep_get(pte);
++	entry = huge_ptep_get_access_flags(pte, huge_page_size(h));
+ 	if (!pte_present(entry))
+ 		goto out;
  
 -- 
 1.8.3.1
