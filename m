@@ -2,102 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A5F9F51EA64
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 May 2022 23:52:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A82FB51EAD5
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 May 2022 04:15:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350158AbiEGV4S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 7 May 2022 17:56:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55326 "EHLO
+        id S1352236AbiEHCTD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 7 May 2022 22:19:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233529AbiEGV4O (ORCPT
+        with ESMTP id S234805AbiEHCTC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 7 May 2022 17:56:14 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E313CFD10;
-        Sat,  7 May 2022 14:52:26 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8326F60F2D;
-        Sat,  7 May 2022 21:52:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9956DC385A5;
-        Sat,  7 May 2022 21:52:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1651960345;
-        bh=VUBEB/P2WIQw0SMyiFMZdKktomMMIezyj6B6YeN0fcM=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=YTT1ypjOFayfH/VIwXhN9k5FX9ncnibe6OKtZMXDFP1r9CQouE87+i/BZV4MrH0F4
-         6SEmVcA9WN2HY1vLSEzzSzyu3T+VibHmN8Zg+7ByrhgSImc5tubb4/uzRZYTZnT1Rx
-         L4JZUGK9wkgdnBNfRSEBg1UC6K7JjKz1nbfUBsv4=
-Date:   Sat, 7 May 2022 14:52:24 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Andrei Vagin <avagin@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>, stable@kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH] fs: sendfile handles O_NONBLOCK of out_fd
-Message-Id: <20220507145224.a9b6555969d6e66586b6514c@linux-foundation.org>
-In-Reply-To: <CANaxB-wcf0Py9eCeA8YKcBSnwzW6pKAD5edCDUadebmo=JLYhA@mail.gmail.com>
-References: <20220415005015.525191-1-avagin@gmail.com>
-        <CANaxB-wcf0Py9eCeA8YKcBSnwzW6pKAD5edCDUadebmo=JLYhA@mail.gmail.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-7.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+        Sat, 7 May 2022 22:19:02 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C423111152
+        for <linux-fsdevel@vger.kernel.org>; Sat,  7 May 2022 19:15:13 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id be20so12576512edb.12
+        for <linux-fsdevel@vger.kernel.org>; Sat, 07 May 2022 19:15:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=Cr4jqiwCZqgvtQ1mPAG6hA/aEXX0FhXJr8HGvR+MOF4=;
+        b=hIE5zwv2rTKn+CswdyopQHf0jMYKWFxRBF6odjeCxWBM/WRdVHzPYHl78NQfbEd29K
+         9enqxTUB9ZAvVAoyjF8AWhpC+f5IVcnJoMj+unQol6NBiW/KIRN+RPaYSq7RoP62yjw1
+         2X5NuVc9b98bRcPhXJz7ydAIkaPKYIMfoxEKnd5fu9ZsX03fmWcqseP8+bykpooAanlU
+         h5RINDqd4mWKTcsWni5bShtEPJLQkkRYT8dOneNqwF1lDvdzymwuLYp+4P1W1ToIwe8o
+         DNyWfhk7sajXrmDQAaFVYyGNgCHChouTJ3BZcW21ISZxH2nUIlO4cSJ32UEeiIotkomt
+         QV/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=Cr4jqiwCZqgvtQ1mPAG6hA/aEXX0FhXJr8HGvR+MOF4=;
+        b=l/vF2VnVnxS4oDG1cq0apMDpdhs+g9Km++vGuU/S5RxWEsvPEWz8A1ExE2iIGT/ogC
+         RzAkVC4TeXEz0iIAdAq+D13/t28oNmdeYCk78dGQvFYYYfm1dbRuBllrMp7BysTHUyqj
+         +rpX8z16a4KOIp9qr7LWaF3RZGJqGyltg/jfkZmsV3YBCZy/02KimPQhEP1EMQglXRJg
+         mrb3VV4LFQNXM5jo09VBqqZqmc8mVrmZawinXqm2DPPMQey9W7GGOMKM82qMBI753Ft7
+         h5M2KrrlJNRR6ZTvahfav0dPu8cWBI2Mt/gFqP+W4XBtYllMHoEGYG9XZdrvdY3lvz1D
+         MgxA==
+X-Gm-Message-State: AOAM5320l1NzG29OQtziz/fdqhQNhJDX0f0AmjyXJlHRjtBHBNEuXAV1
+        4qOKXcjBayztT4VYCz8hOyyGjTdRRyWRNNMIk6Y=
+X-Google-Smtp-Source: ABdhPJzTI/QqRCdwIAmphqF9OzyyYNq5Vx7Ax17gRaKdquRTzXBKHWHIi7p9/pNhdRsw+jE0joTHzv2TJm/aPiu3TUo=
+X-Received: by 2002:a50:ed0e:0:b0:425:e476:f4ed with SMTP id
+ j14-20020a50ed0e000000b00425e476f4edmr10770566eds.32.1651976112082; Sat, 07
+ May 2022 19:15:12 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a50:3554:0:0:0:0:0 with HTTP; Sat, 7 May 2022 19:15:11 -0700 (PDT)
+Reply-To: wijh555@gmail.com
+From:   "Mr. David Kabore" <dkabore16@gmail.com>
+Date:   Sat, 7 May 2022 19:15:11 -0700
+Message-ID: <CANLKR0vzXK+xff8dc1NLRToAvTmMja99WOdUionm413PVRoNow@mail.gmail.com>
+Subject: Good Day,
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: Yes, score=5.6 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,FREEMAIL_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT,
+        HK_NAME_FM_MR_MRS,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,UNDISC_FREEM autolearn=no autolearn_force=no
+        version=3.4.6
+X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
+        *      https://www.dnswl.org/, no trust
+        *      [2a00:1450:4864:20:0:0:0:52f listed in]
+        [list.dnswl.org]
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4989]
+        *  0.2 FREEMAIL_REPLYTO_END_DIGIT Reply-To freemail username ends in
+        *      digit
+        *      [wijh555[at]gmail.com]
+        *  0.2 FREEMAIL_ENVFROM_END_DIGIT Envelope-from freemail username ends
+        *       in digit
+        *      [dkabore16[at]gmail.com]
+        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
+        *      provider
+        *      [dkabore16[at]gmail.com]
+        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
+        * -0.0 SPF_PASS SPF: sender matches SPF record
+        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
+        *      envelope-from domain
+        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
+        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
+        *      author's domain
+        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
+        *       valid
+        * -0.0 T_SCC_BODY_TEXT_LINE No description available.
+        *  0.0 HK_NAME_FM_MR_MRS No description available.
+        *  3.5 UNDISC_FREEM Undisclosed recipients + freemail reply-to
+        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
+        *      different freemails
+X-Spam-Level: *****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2 May 2022 00:01:46 -0700 Andrei Vagin <avagin@gmail.com> wrote:
+-- 
+Hello,
+I'm Mr. David Kabore, how are you doing hope you are in good health,
+the Board irector try to reach you on phone several times Meanwhile,
+your number was not connecting. before he ask me to send you an email
+to hear from you if you are fine. hope to hear you are in good Health.
 
-> Andrew, could you take a look at this patch?
-> 
-> Here is a small reproducer for the problem:
-> 
-> #define _GNU_SOURCE /* See feature_test_macros(7) */
-> #include <fcntl.h>
-> #include <stdio.h>
-> #include <unistd.h>
-> #include <errno.h>
-> #include <sys/stat.h>
-> #include <sys/types.h>
-> #include <sys/sendfile.h>
-> 
-> 
-> #define FILE_SIZE (1UL << 30)
-> int main(int argc, char **argv) {
->         int p[2], fd;
-> 
->         if (pipe2(p, O_NONBLOCK))
->                 return 1;
-> 
->         fd = open(argv[1], O_RDWR | O_TMPFILE, 0666);
->         if (fd < 0)
->                 return 1;
->         ftruncate(fd, FILE_SIZE);
-> 
->         if (sendfile(p[1], fd, 0, FILE_SIZE) == -1) {
->                 fprintf(stderr, "FAIL\n");
->         }
->         if (sendfile(p[1], fd, 0, FILE_SIZE) != -1 || errno != EAGAIN) {
->                 fprintf(stderr, "FAIL\n");
->         }
->         return 0;
-> }
-> 
-> It worked before b964bf53e540, it is stuck after b964bf53e540, and it
-> works again with this fix.
-
-Thanks.  How did b964bf53e540 cause this?  do_splice_direct()
-accidentally does the right thing even when SPLICE_F_NONBLOCK was not
-passed?
-
-I assume that Al will get to this.  Meanwhile I can toss it
-into linux-next to get some exposure and so it won't be lost.
-
+Thanks,
+Mr. David Kabore.
