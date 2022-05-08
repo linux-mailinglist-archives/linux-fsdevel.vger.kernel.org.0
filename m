@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BA66B51F172
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 May 2022 22:32:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C1EA51F169
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 May 2022 22:32:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232673AbiEHUgW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 8 May 2022 16:36:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55580 "EHLO
+        id S232731AbiEHUgS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 8 May 2022 16:36:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55570 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232583AbiEHUfg (ORCPT
+        with ESMTP id S232421AbiEHUfg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Sun, 8 May 2022 16:35:36 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45D335F99
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 242D95F97
         for <linux-fsdevel@vger.kernel.org>; Sun,  8 May 2022 13:31:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=UyiQtrOlJApVo8TqEZs/5bvdj5z9rp2u4At+a4oNQzQ=; b=iGs8pzm595+I1LBGc3HHvBDiWS
-        J0CH90YROjovasnMY7LOW3ta+D3MC2wP4UCuPLQWK/v0Xe0EyS6tEuHcvyf/2zk40/Tcm25VA3erb
-        smVbSeHaulGJ+rSPVA2h3am7dvB/rtB0hBhEaVmFHQBmKKFbxWyLGs6plbJwJbL+8GGltcTCsJLhZ
-        KoNxMCkwWeMflEM+oZYncK32s7/ukL15u5tTdsXFYnwuQlEdWqY0OrA24dighfvmPnrdR1SqD3wfu
-        wKmJhw+F03gqhz+XjcvNNCpM9ErvRnZ89RfiTj2SaUC7qkOl2XgKggsAsNPkso0irfTd97ucjUN1S
-        AeSGvPkA==;
+        bh=aH16BpIhqvfVPG+WJB3hRIv4pV6OIvK+9fdHP6ll06M=; b=wImppcnmJv+BrmSEn3qHUVSLjH
+        qWRByH5S3ZWCCcbziuSUWJgfjL1B9bS5a7ccIxaOHiGfUKS2wD+wocCp0F4Ib8rvZk9r3PCVInptd
+        YPMPPlp3fit8TFnYfEVl5Va1q+LVWmefciiuQzK/oFG5EWKiyAOuS2SwZuKwW4fzoSPn6dBy+fgNm
+        h1leMNpdw5Gb4NXfjtckGn2W5VqA+mcTXV3CvTa2euAkAKRZNcmwGScI5QaJq81PwlQ03j0VXpgxu
+        iC0chTCK9ntug/00wC/Q239zfQP7YKXvcttPEvl0F4zWZjiFMB1Y9mB3PkXmQGTp6BXyg/OiM4O3N
+        bm5grjfg==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nnnZ6-002npU-JJ; Sun, 08 May 2022 20:31:40 +0000
+        id 1nnnZ6-002npa-Nt; Sun, 08 May 2022 20:31:40 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH 29/37] ocfs2: Convert ocfs2 to read_folio
-Date:   Sun,  8 May 2022 21:31:23 +0100
-Message-Id: <20220508203131.667959-30-willy@infradead.org>
+Subject: [PATCH 30/37] orangefs: Convert orangefs to read_folio
+Date:   Sun,  8 May 2022 21:31:24 +0100
+Message-Id: <20220508203131.667959-31-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220508203131.667959-1-willy@infradead.org>
 References: <YngbFluT9ftR5dqf@casper.infradead.org>
@@ -49,92 +49,83 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is a "weak" conversion which converts straight back to using pages.
-A full conversion should be performed at some point, hopefully by
-someone familiar with the filesystem.
+This is a full conversion which should be large folio ready, although
+I have not tested it.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/ocfs2/alloc.c   | 2 +-
- fs/ocfs2/aops.c    | 5 +++--
- fs/ocfs2/file.c    | 2 +-
- fs/ocfs2/symlink.c | 5 +++--
- 4 files changed, 8 insertions(+), 6 deletions(-)
+ fs/orangefs/inode.c | 33 ++++++++++++++++-----------------
+ 1 file changed, 16 insertions(+), 17 deletions(-)
 
-diff --git a/fs/ocfs2/alloc.c b/fs/ocfs2/alloc.c
-index 49f41074baad..51c93929a146 100644
---- a/fs/ocfs2/alloc.c
-+++ b/fs/ocfs2/alloc.c
-@@ -7427,7 +7427,7 @@ int ocfs2_truncate_inline(struct inode *inode, struct buffer_head *di_bh,
- 	/*
- 	 * No need to worry about the data page here - it's been
- 	 * truncated already and inline data doesn't need it for
--	 * pushing zero's to disk, so we'll let readpage pick it up
-+	 * pushing zero's to disk, so we'll let read_folio pick it up
- 	 * later.
- 	 */
- 	if (trunc) {
-diff --git a/fs/ocfs2/aops.c b/fs/ocfs2/aops.c
-index 7bf4b6fd93bf..6b1679db9636 100644
---- a/fs/ocfs2/aops.c
-+++ b/fs/ocfs2/aops.c
-@@ -275,8 +275,9 @@ static int ocfs2_readpage_inline(struct inode *inode, struct page *page)
- 	return ret;
+diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
+index bc7ccd15d7a3..241ac21f527b 100644
+--- a/fs/orangefs/inode.c
++++ b/fs/orangefs/inode.c
+@@ -288,40 +288,39 @@ static void orangefs_readahead(struct readahead_control *rac)
+ 	}
  }
  
--static int ocfs2_readpage(struct file *file, struct page *page)
-+static int ocfs2_read_folio(struct file *file, struct folio *folio)
+-static int orangefs_readpage(struct file *file, struct page *page)
++static int orangefs_read_folio(struct file *file, struct folio *folio)
  {
-+	struct page *page = &folio->page;
- 	struct inode *inode = page->mapping->host;
- 	struct ocfs2_inode_info *oi = OCFS2_I(inode);
- 	loff_t start = (loff_t)page->index << PAGE_SHIFT;
-@@ -2454,7 +2455,7 @@ static ssize_t ocfs2_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+-	struct folio *folio = page_folio(page);
+-	struct inode *inode = page->mapping->host;
++	struct inode *inode = folio->mapping->host;
+ 	struct iov_iter iter;
+ 	struct bio_vec bv;
+ 	ssize_t ret;
+-	loff_t off; /* offset into this page */
++	loff_t off; /* offset of this folio in the file */
  
- const struct address_space_operations ocfs2_aops = {
- 	.dirty_folio		= block_dirty_folio,
--	.readpage		= ocfs2_readpage,
-+	.read_folio		= ocfs2_read_folio,
- 	.readahead		= ocfs2_readahead,
- 	.writepage		= ocfs2_writepage,
- 	.write_begin		= ocfs2_write_begin,
-diff --git a/fs/ocfs2/file.c b/fs/ocfs2/file.c
-index 01b7407a8893..7497cd592258 100644
---- a/fs/ocfs2/file.c
-+++ b/fs/ocfs2/file.c
-@@ -2526,7 +2526,7 @@ static ssize_t ocfs2_file_read_iter(struct kiocb *iocb,
- 		return -EOPNOTSUPP;
+ 	if (folio_test_dirty(folio))
+ 		orangefs_launder_folio(folio);
  
- 	/*
--	 * buffered reads protect themselves in ->readpage().  O_DIRECT reads
-+	 * buffered reads protect themselves in ->read_folio().  O_DIRECT reads
- 	 * need locks to protect pending reads from racing with truncate.
- 	 */
- 	if (direct_io) {
-diff --git a/fs/ocfs2/symlink.c b/fs/ocfs2/symlink.c
-index f755a4985821..d4c5fdcfa1e4 100644
---- a/fs/ocfs2/symlink.c
-+++ b/fs/ocfs2/symlink.c
-@@ -52,8 +52,9 @@
- #include "buffer_head_io.h"
+-	off = page_offset(page);
+-	bv.bv_page = page;
+-	bv.bv_len = PAGE_SIZE;
++	off = folio_pos(folio);
++	bv.bv_page = &folio->page;
++	bv.bv_len = folio_size(folio);
+ 	bv.bv_offset = 0;
+-	iov_iter_bvec(&iter, READ, &bv, 1, PAGE_SIZE);
++	iov_iter_bvec(&iter, READ, &bv, 1, folio_size(folio));
  
- 
--static int ocfs2_fast_symlink_readpage(struct file *unused, struct page *page)
-+static int ocfs2_fast_symlink_read_folio(struct file *f, struct folio *folio)
- {
-+	struct page *page = &folio->page;
- 	struct inode *inode = page->mapping->host;
- 	struct buffer_head *bh = NULL;
- 	int status = ocfs2_read_inode_block(inode, &bh);
-@@ -81,7 +82,7 @@ static int ocfs2_fast_symlink_readpage(struct file *unused, struct page *page)
+ 	ret = wait_for_direct_io(ORANGEFS_IO_READ, inode, &off, &iter,
+-	    PAGE_SIZE, inode->i_size, NULL, NULL, file);
++			folio_size(folio), inode->i_size, NULL, NULL, file);
+ 	/* this will only zero remaining unread portions of the page data */
+ 	iov_iter_zero(~0U, &iter);
+ 	/* takes care of potential aliasing */
+-	flush_dcache_page(page);
++	flush_dcache_folio(folio);
+ 	if (ret < 0) {
+-		SetPageError(page);
++		folio_set_error(folio);
+ 	} else {
+-		SetPageUptodate(page);
+-		if (PageError(page))
+-			ClearPageError(page);
++		folio_mark_uptodate(folio);
++		if (folio_test_error(folio))
++			folio_clear_error(folio);
+ 		ret = 0;
+ 	}
+-	/* unlock the page after the ->readpage() routine completes */
+-	unlock_page(page);
++	/* unlock the folio after the ->read_folio() routine completes */
++	folio_unlock(folio);
+         return ret;
  }
  
- const struct address_space_operations ocfs2_fast_symlink_aops = {
--	.readpage		= ocfs2_fast_symlink_readpage,
-+	.read_folio		= ocfs2_fast_symlink_read_folio,
- };
- 
- const struct inode_operations ocfs2_symlink_inode_operations = {
+@@ -631,7 +630,7 @@ static ssize_t orangefs_direct_IO(struct kiocb *iocb,
+ static const struct address_space_operations orangefs_address_operations = {
+ 	.writepage = orangefs_writepage,
+ 	.readahead = orangefs_readahead,
+-	.readpage = orangefs_readpage,
++	.read_folio = orangefs_read_folio,
+ 	.writepages = orangefs_writepages,
+ 	.dirty_folio = filemap_dirty_folio,
+ 	.write_begin = orangefs_write_begin,
 -- 
 2.34.1
 
