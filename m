@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CA9D51F15A
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 May 2022 22:32:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 939F651F14A
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 May 2022 22:32:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232680AbiEHUfs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 8 May 2022 16:35:48 -0400
+        id S232690AbiEHUfz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 8 May 2022 16:35:55 -0400
 Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232490AbiEHUfb (ORCPT
+        with ESMTP id S232514AbiEHUfc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 8 May 2022 16:35:31 -0400
+        Sun, 8 May 2022 16:35:32 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DC4E2DE7
-        for <linux-fsdevel@vger.kernel.org>; Sun,  8 May 2022 13:31:40 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A95D52628
+        for <linux-fsdevel@vger.kernel.org>; Sun,  8 May 2022 13:31:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=ulnnpW7LCqHVAAAx5GiwIjukDKStgvzrHinbZXC+krM=; b=MB+lXDflz3H+RnFdnprohZzGJ5
-        1mBCfylLMBa+TDnpaAqUDV90uicuVRSmUbdj27N9ZrL9SXhKiWO/3ApM2vtPxPQ9DBtfM8YNP8ASV
-        +DCmI7uBjy+HPDCvMENSn3EwJATQvxzVggSQPN1z67ID5F33AWtoGh89Y9CS0EkQdehIr/VLm5LeO
-        s6jivhTksMh4pMOArfbVf7mowi7amKY/eyQmL/JWwlP6MRGgJI1woA6Qov89UYFkk7XetRK35EWqm
-        gUw+j+tGZ4I8eAq7ahqMFF++L9IffJRcDLBzCfe/30780rQYJ+sIV4V0aGvfS3Y+/OqrorOYsS2UM
-        g8p7JNfw==;
+        bh=TAxcWC6FMiXuwr7R63PsgyvedCcLMofVrsLaAeQ1AwY=; b=D/rxHmi88FF+ATXFemsELoJjYn
+        71H2swh6UyyWnRAvjOYWbm+OaQhTVVMCbLJIS7TfmwVzVjTp8m5/8artT1NIPGdc8vvh5qovcfeTf
+        dYFNEOgDt41fKEzAaDUopgWIrVyyOTSBb724bP/wwKvZzlsvbfX+CDuuIJRSc90CW5g6sQ+eooCPF
+        tNeUa1ZRz1FyT5FAEbop6wYRH8p0Hhx4y6mALHsArJKOBT+zJm5A81tkZSoGENWo1khxEd98zeN0s
+        poUkPFdMk9NiYMfsUmO0CV9G7rlMVyjgEBLi8/qMi5V42OH8W9hPB4p+GhZwvXjhGM5xiTAkl6jLY
+        CJIyGmcw==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nnnZ4-002nnt-97; Sun, 08 May 2022 20:31:38 +0000
+        id 1nnnZ4-002nny-DC; Sun, 08 May 2022 20:31:38 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH 12/37] cifs: Convert cifs to read_folio
-Date:   Sun,  8 May 2022 21:31:06 +0100
-Message-Id: <20220508203131.667959-13-willy@infradead.org>
+Subject: [PATCH 13/37] coda: Convert coda to read_folio
+Date:   Sun,  8 May 2022 21:31:07 +0100
+Message-Id: <20220508203131.667959-14-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220508203131.667959-1-willy@infradead.org>
 References: <YngbFluT9ftR5dqf@casper.infradead.org>
@@ -50,63 +50,38 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 This is a "weak" conversion which converts straight back to using pages.
-CIFS should probably be converted to use netfs_read_folio() by someone
-familiar with it.
+A full conversion should be performed at some point, hopefully by
+someone familiar with the filesystem.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/cifs/file.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ fs/coda/symlink.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/fs/cifs/file.c b/fs/cifs/file.c
-index da362b5a0c96..bc6d88e2e672 100644
---- a/fs/cifs/file.c
-+++ b/fs/cifs/file.c
-@@ -4612,8 +4612,9 @@ static int cifs_readpage_worker(struct file *file, struct page *page,
- 	return rc;
+diff --git a/fs/coda/symlink.c b/fs/coda/symlink.c
+index 8907d0508198..8adf81042498 100644
+--- a/fs/coda/symlink.c
++++ b/fs/coda/symlink.c
+@@ -20,9 +20,10 @@
+ #include "coda_psdev.h"
+ #include "coda_linux.h"
+ 
+-static int coda_symlink_filler(struct file *file, struct page *page)
++static int coda_symlink_filler(struct file *file, struct folio *folio)
+ {
+-	struct inode *inode = page->mapping->host;
++	struct page *page = &folio->page;
++	struct inode *inode = folio->mapping->host;
+ 	int error;
+ 	struct coda_inode_info *cii;
+ 	unsigned int len = PAGE_SIZE;
+@@ -44,5 +45,5 @@ static int coda_symlink_filler(struct file *file, struct page *page)
  }
  
--static int cifs_readpage(struct file *file, struct page *page)
-+static int cifs_read_folio(struct file *file, struct folio *folio)
- {
-+	struct page *page = &folio->page;
- 	loff_t offset = page_file_offset(page);
- 	int rc = -EACCES;
- 	unsigned int xid;
-@@ -4626,7 +4627,7 @@ static int cifs_readpage(struct file *file, struct page *page)
- 		return rc;
- 	}
- 
--	cifs_dbg(FYI, "readpage %p at offset %d 0x%x\n",
-+	cifs_dbg(FYI, "read_folio %p at offset %d 0x%x\n",
- 		 page, (int)offset, (int)offset);
- 
- 	rc = cifs_readpage_worker(file, page, &offset);
-@@ -4965,7 +4966,7 @@ static bool cifs_dirty_folio(struct address_space *mapping, struct folio *folio)
- #endif
- 
- const struct address_space_operations cifs_addr_ops = {
--	.readpage = cifs_readpage,
-+	.read_folio = cifs_read_folio,
- 	.readahead = cifs_readahead,
- 	.writepage = cifs_writepage,
- 	.writepages = cifs_writepages,
-@@ -4986,12 +4987,12 @@ const struct address_space_operations cifs_addr_ops = {
+ const struct address_space_operations coda_symlink_aops = {
+-	.readpage	= coda_symlink_filler,
++	.read_folio	= coda_symlink_filler,
  };
- 
- /*
-- * cifs_readpages requires the server to support a buffer large enough to
-+ * cifs_readahead requires the server to support a buffer large enough to
-  * contain the header plus one complete page of data.  Otherwise, we need
-- * to leave cifs_readpages out of the address space operations.
-+ * to leave cifs_readahead out of the address space operations.
-  */
- const struct address_space_operations cifs_addr_ops_smallbuf = {
--	.readpage = cifs_readpage,
-+	.read_folio = cifs_read_folio,
- 	.writepage = cifs_writepage,
- 	.writepages = cifs_writepages,
- 	.write_begin = cifs_write_begin,
 -- 
 2.34.1
 
