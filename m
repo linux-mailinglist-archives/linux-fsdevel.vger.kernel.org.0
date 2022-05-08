@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 50D1C51F166
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 May 2022 22:32:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3DE151F165
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 May 2022 22:32:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232911AbiEHUgO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 8 May 2022 16:36:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55588 "EHLO
+        id S232786AbiEHUgM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 8 May 2022 16:36:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232544AbiEHUfd (ORCPT
+        with ESMTP id S232577AbiEHUff (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 8 May 2022 16:35:33 -0400
+        Sun, 8 May 2022 16:35:35 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69B48132
-        for <linux-fsdevel@vger.kernel.org>; Sun,  8 May 2022 13:31:42 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE40710C6
+        for <linux-fsdevel@vger.kernel.org>; Sun,  8 May 2022 13:31:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=+XuT2UNZ8tyOhatktPLdCXVQdkBow5gH+ALSLhjgNso=; b=RhkbzrnLpynYDqvVrT036GGPD+
-        CNSTPjqUCZOwhRowXArnV48AvEmXVtG84sBGmECR5gb0lmxkM/YONJPlTL9KZni9bECdfIILEnHsW
-        7SIbMbaK/jDBCsVLvKeUWOS4/VB1L6iA0VICEMLxgTry1/4tJeAcyLvnOrqOnaVm6t2QrgjR6IaXV
-        DkLvkaqtcA5o+FzWOoCKnkUb/7wKhFi/4yvlaDOE9q7a6A8hp677fwK9FQ8cMr1r8pwFN+2RUUwzh
-        DOACQtHStjO83sxtkhmiR27/oi+7uaPyiNQ9xBb+2AIWHRjJZ0PSfZ5XJzRJaO1obsz8Eeq0aygow
-        qsGTEKhg==;
+        bh=dsJD4hWlcYDmhUrlvN64XAtOIu0W3eZefceiArYxrO4=; b=F6IUWUrU//XYMD0g86UhVmMTZU
+        8HxhhpTi+GZtKPm3hkupsGyF0h3pwT5EdwWAEtqTExszitdENJULQLhUyDT8s8QL0dUYNhJRx2xF+
+        xZ0LqRZN3l+3yk9uZzwMniMpgvC7ql/X6tR6ca8zXlhoYCLQ5P16jqbI8Fbfl8fron9281koVisEl
+        A4jHm2A5FTEI5BEM5VnGG14dl8330MbKOPk1eNK8Fj51xTYUGYMQZEr+h+kEz0mo2ZeAiFgvCOIkl
+        FKIIWSxUbBbUOKTizXouxJRrxx6o/+n/MpPWZpo8/m1jmagYNShIA9EKXgh5OfN6qow1NDl+hbOKU
+        Uod7Jhzw==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nnnZ5-002noY-BQ; Sun, 08 May 2022 20:31:39 +0000
+        id 1nnnZ5-002noi-ED; Sun, 08 May 2022 20:31:39 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH 19/37] f2fs: Convert f2fs to read_folio
-Date:   Sun,  8 May 2022 21:31:13 +0100
-Message-Id: <20220508203131.667959-20-willy@infradead.org>
+Subject: [PATCH 20/37] freevxfs: Convert vxfs_immed to read_folio
+Date:   Sun,  8 May 2022 21:31:14 +0100
+Message-Id: <20220508203131.667959-21-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220508203131.667959-1-willy@infradead.org>
 References: <YngbFluT9ftR5dqf@casper.infradead.org>
@@ -55,33 +55,55 @@ someone familiar with the filesystem.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/f2fs/data.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/freevxfs/vxfs_immed.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index b3cf49136b9f..f894267f0722 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -2372,8 +2372,9 @@ static int f2fs_mpage_readpages(struct inode *inode,
- 	return ret;
- }
+diff --git a/fs/freevxfs/vxfs_immed.c b/fs/freevxfs/vxfs_immed.c
+index bfc780c682fb..a37431e443d3 100644
+--- a/fs/freevxfs/vxfs_immed.c
++++ b/fs/freevxfs/vxfs_immed.c
+@@ -38,33 +38,34 @@
+ #include "vxfs_inode.h"
  
--static int f2fs_read_data_page(struct file *file, struct page *page)
-+static int f2fs_read_data_folio(struct file *file, struct folio *folio)
+ 
+-static int	vxfs_immed_readpage(struct file *, struct page *);
++static int	vxfs_immed_read_folio(struct file *, struct folio *);
+ 
+ /*
+  * Address space operations for immed files and directories.
+  */
+ const struct address_space_operations vxfs_immed_aops = {
+-	.readpage =		vxfs_immed_readpage,
++	.read_folio =		vxfs_immed_read_folio,
+ };
+ 
+ /**
+- * vxfs_immed_readpage - read part of an immed inode into pagecache
++ * vxfs_immed_read_folio - read part of an immed inode into pagecache
+  * @file:	file context (unused)
+- * @page:	page frame to fill in.
++ * @folio:	folio to fill in.
+  *
+  * Description:
+- *   vxfs_immed_readpage reads a part of the immed area of the
++ *   vxfs_immed_read_folio reads a part of the immed area of the
+  *   file that hosts @pp into the pagecache.
+  *
+  * Returns:
+  *   Zero on success, else a negative error code.
+  *
+  * Locking status:
+- *   @page is locked and will be unlocked.
++ *   @folio is locked and will be unlocked.
+  */
+ static int
+-vxfs_immed_readpage(struct file *fp, struct page *pp)
++vxfs_immed_read_folio(struct file *fp, struct folio *folio)
  {
-+	struct page *page = &folio->page;
- 	struct inode *inode = page_file_mapping(page)->host;
- 	int ret = -EAGAIN;
- 
-@@ -3935,7 +3936,7 @@ static void f2fs_swap_deactivate(struct file *file)
- #endif
- 
- const struct address_space_operations f2fs_dblock_aops = {
--	.readpage	= f2fs_read_data_page,
-+	.read_folio	= f2fs_read_data_folio,
- 	.readahead	= f2fs_readahead,
- 	.writepage	= f2fs_write_data_page,
- 	.writepages	= f2fs_write_data_pages,
++	struct page *pp = &folio->page;
+ 	struct vxfs_inode_info	*vip = VXFS_INO(pp->mapping->host);
+ 	u_int64_t	offset = (u_int64_t)pp->index << PAGE_SHIFT;
+ 	caddr_t		kaddr;
 -- 
 2.34.1
 
