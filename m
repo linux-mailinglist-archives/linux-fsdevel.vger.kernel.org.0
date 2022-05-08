@@ -2,110 +2,171 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F94751EFE5
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 May 2022 21:14:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1632151EFDD
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 May 2022 21:14:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229445AbiEHTRx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 8 May 2022 15:17:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42132 "EHLO
+        id S231287AbiEHTRd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 8 May 2022 15:17:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346085AbiEHSHh (ORCPT
+        with ESMTP id S238191AbiEHScE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 8 May 2022 14:07:37 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEE86B849;
-        Sun,  8 May 2022 11:03:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=LasmEg2rUBS72wUE19EKxuY+AQYVJSkN1z6eFcojeaU=; b=uSEwp/+iuBdu5CaOAO2cQ0XAsx
-        3bSQuW2tYAqJSzYarBs5DSvOQ143R5KJH6zJhC99HVjTFa+C5LE8h8zk+eVr9KrSJiHVwgZ2KGM2b
-        DgGtHjHONznLxHAer27E+90GqIgUYuRaYK1vgwELwOrHQPyXDWxnEdulbmoyhV3xhlNe+wtoXz0mE
-        /B5aQ4oGrORlr7a5ZY+BJNUFWzTOZ9HAPAWYvI+4s5vxdnmqIg2bWWHiTXLsV+kZDTXF4Boa+MRgA
-        SC3qLu90w2sf9if0jbK/hu2/4S7BI0j0oGnRe47Rf54/geRFo40hfL2Z1BFXdSYpwM0pSn5Mv+RWe
-        R0dHvA7Q==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nnlFo-002he6-Vz; Sun, 08 May 2022 18:03:37 +0000
-Date:   Sun, 8 May 2022 19:03:36 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     cgel.zte@gmail.com
-Cc:     akpm@linux-foundation.org, keescook@chromium.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, ran.xiaokai@zte.com.cn, wang.yong12@zte.com.cn,
-        xu.xin16@zte.com.cn, yang.yang29@zte.com.cn,
-        zhang.yunkai@zte.com.cn
-Subject: Re: [PATCH v5] mm/ksm: introduce ksm_force for each process
-Message-ID: <YngF+Lz01noCKRFc@casper.infradead.org>
-References: <20220507105926.d4423601230f698b0f5228d1@linux-foundation.org>
- <20220508092710.930126-1-xu.xin16@zte.com.cn>
+        Sun, 8 May 2022 14:32:04 -0400
+Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27B962DF7;
+        Sun,  8 May 2022 11:28:14 -0700 (PDT)
+Received: by mail-pl1-x635.google.com with SMTP id d22so11937911plr.9;
+        Sun, 08 May 2022 11:28:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=L0vTBUu7cERNrSt/2j/cpvelXrPJBDUXqkluepqf8b8=;
+        b=jSsthn14SJCrQ++glajXqdmZL710hNBoeiChvIIa2mF54enjFgsN60hFht2Ig41Y/F
+         s15VvMWd/z9OCWjSezTGMmY2w1Xk90IIymsv2zGmFAHbB+0kjZr5M23Ex7pAUV8YLSXx
+         i/QIgEi39FE6nPWsZwuVxbEmWf8HThYWGvVJyIlhUjMgbozOpZOm1P31r5iC73NzWcOn
+         Q+NOAdGnq0tzlWX9SGruGL7rgOkCKccpNd2zGoJsqJvoaOH0rJYyw7zp9aNTNKGhoBX+
+         HsQT2OVDnX5mnAKsyK1uGvOTvmD2vVaGz7fgfyCQ8ktGlH/gHfMLD0n6ekbJ5Y5YN8YF
+         jv1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=L0vTBUu7cERNrSt/2j/cpvelXrPJBDUXqkluepqf8b8=;
+        b=MzrpBYrViDDEaJA6B03/PItHrkfao5EpWU+4yA+z+/ql5PARR4hvSj41qQq4gxHibG
+         EySzDANWliYeJjarsl4p+SatmvKxsXhoJJqhzS5Rvs5xDgxFPGqZhmH9HnF36CeKNRBA
+         Y2ezdv+p6i2+U7V5glbCgTSs7uRUgXXVOQASJGp/MRkfmR6f2XVGx5JuNDRJ7Eu76bGj
+         M+gLm4D7GgbBoFosngE/uUtxwGkF7YVGfwgwC5DFB4OshIQqNMzXblIgV0941JlQaGa0
+         08NkU3yVvz9anesvnf+qyR0UUKxwjhs0ZF98lTbKNEeoi4Eb2aO121vzMt+GHxqCGwfy
+         Pz8A==
+X-Gm-Message-State: AOAM530PFARqatliSGYIQp0w2M3txVSwfd5XqWsKt5VPEmVpBvmdGQka
+        PDwwBqmHArXamfHP06KiSvA=
+X-Google-Smtp-Source: ABdhPJz5nkrHBlEe+ZEiZjuwSpdX5J++4ul6PD3fhb/JnsqyltoFFFtmmBQ3dkbNfrlUPRbhl0WYJQ==
+X-Received: by 2002:a17:90a:f3cb:b0:1d9:62d4:25db with SMTP id ha11-20020a17090af3cb00b001d962d425dbmr14412062pjb.222.1652034493427;
+        Sun, 08 May 2022 11:28:13 -0700 (PDT)
+Received: from gmail.com ([2601:600:8500:5f14:d627:c51e:516e:a105])
+        by smtp.gmail.com with ESMTPSA id c2-20020aa79522000000b0050dc7628164sm7038349pfp.62.2022.05.08.11.28.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 May 2022 11:28:12 -0700 (PDT)
+Date:   Sun, 8 May 2022 11:28:07 -0700
+From:   Andrei Vagin <avagin@gmail.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>, stable@kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH] fs: sendfile handles O_NONBLOCK of out_fd
+Message-ID: <YngLt9seLZBQ6Cer@gmail.com>
+References: <20220415005015.525191-1-avagin@gmail.com>
+ <CANaxB-wcf0Py9eCeA8YKcBSnwzW6pKAD5edCDUadebmo=JLYhA@mail.gmail.com>
+ <20220507145224.a9b6555969d6e66586b6514c@linux-foundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=koi8-r
 Content-Disposition: inline
-In-Reply-To: <20220508092710.930126-1-xu.xin16@zte.com.cn>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+In-Reply-To: <20220507145224.a9b6555969d6e66586b6514c@linux-foundation.org>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, May 08, 2022 at 09:27:10AM +0000, cgel.zte@gmail.com wrote:
-> If ksm_force is set to 0, cancel the feature of ksm_force of this
-> process and unmerge those merged pages belonging to VMAs which is not
-> madvised as MADV_MERGEABLE of this process, but leave MADV_MERGEABLE
-> areas merged.
+On Sat, May 07, 2022 at 02:52:24PM -0700, Andrew Morton wrote:
+> On Mon, 2 May 2022 00:01:46 -0700 Andrei Vagin <avagin@gmail.com> wrote:
+> 
+> > Andrew, could you take a look at this patch?
+> > 
+> > Here is a small reproducer for the problem:
+> > 
+> > #define _GNU_SOURCE /* See feature_test_macros(7) */
+> > #include <fcntl.h>
+> > #include <stdio.h>
+> > #include <unistd.h>
+> > #include <errno.h>
+> > #include <sys/stat.h>
+> > #include <sys/types.h>
+> > #include <sys/sendfile.h>
+> > 
+> > 
+> > #define FILE_SIZE (1UL << 30)
+> > int main(int argc, char **argv) {
+> >         int p[2], fd;
+> > 
+> >         if (pipe2(p, O_NONBLOCK))
+> >                 return 1;
+> > 
+> >         fd = open(argv[1], O_RDWR | O_TMPFILE, 0666);
+> >         if (fd < 0)
+> >                 return 1;
+> >         ftruncate(fd, FILE_SIZE);
+> > 
+> >         if (sendfile(p[1], fd, 0, FILE_SIZE) == -1) {
+> >                 fprintf(stderr, "FAIL\n");
+> >         }
+> >         if (sendfile(p[1], fd, 0, FILE_SIZE) != -1 || errno != EAGAIN) {
+> >                 fprintf(stderr, "FAIL\n");
+> >         }
+> >         return 0;
+> > }
+> > 
+> > It worked before b964bf53e540, it is stuck after b964bf53e540, and it
+> > works again with this fix.
+> 
+> Thanks.  How did b964bf53e540 cause this?  do_splice_direct()
+> accidentally does the right thing even when SPLICE_F_NONBLOCK was not
+> passed?
 
-Is that actually a useful feature?  Otherwise, we could simply turn
-on/off the existing MMF_VM_MERGEABLE flag instead of introducing this
-new bool.
+do_splice_direct() calls pipe_write that handles O_NONBLOCK. Here is
+a trace log from the reproducer:
 
-> +Controlling KSM with procfs
-> +===========================
-> +
-> +KSM can also operate on anonymous areas of address space of those processes's
-> +knob ``/proc/<pid>/ksm_force`` is on, even if app codes doesn't call madvise()
-> +explicitly to advise specific areas as MADV_MERGEABLE.
-> +
-> +You can set ksm_force to 1 to force all anonymous and qualified VMAs of
-> +this process to be involved in KSM scanning. But It is effective only when the
-> +klob of ``/sys/kernel/mm/ksm/run`` is set as 1.
+ 1)               |  __x64_sys_sendfile64() {
+ 1)               |    do_sendfile() {
+ 1)               |      __fdget()
+ 1)               |      rw_verify_area()
+ 1)               |      __fdget()
+ 1)               |      rw_verify_area()
+ 1)               |      do_splice_direct() {
+ 1)               |        rw_verify_area()
+ 1)               |        splice_direct_to_actor() {
+ 1)               |          do_splice_to() {
+ 1)               |            rw_verify_area()
+ 1)               |            generic_file_splice_read()
+ 1) + 74.153 us   |          }
+ 1)               |          direct_splice_actor() {
+ 1)               |            iter_file_splice_write() {
+ 1)               |              __kmalloc()
+ 1)   0.148 us    |              pipe_lock();
+ 1)   0.153 us    |              splice_from_pipe_next.part.0();
+ 1)   0.162 us    |              page_cache_pipe_buf_confirm();
+... 16 times
+ 1)   0.159 us    |              page_cache_pipe_buf_confirm();
+ 1)               |              vfs_iter_write() {
+ 1)               |                do_iter_write() {
+ 1)               |                  rw_verify_area()
+ 1)               |                  do_iter_readv_writev() {
+ 1)               |                    pipe_write() {
+ 1)               |                      mutex_lock()
+ 1)   0.153 us    |                      mutex_unlock();
+ 1)   1.368 us    |                    }
+ 1)   1.686 us    |                  }
+ 1)   5.798 us    |                }
+ 1)   6.084 us    |              }
+ 1)   0.174 us    |              kfree();
+ 1)   0.152 us    |              pipe_unlock();
+ 1) + 14.461 us   |            }
+ 1) + 14.783 us   |          }
+ 1)   0.164 us    |          page_cache_pipe_buf_release();
+... 16 times
+ 1)   0.161 us    |          page_cache_pipe_buf_release();
+ 1)               |          touch_atime()
+ 1) + 95.854 us   |        }
+ 1) + 99.784 us   |      }
+ 1) ! 107.393 us  |    }
+ 1) ! 107.699 us  |  }
 
-I think that last sentence doesn't really add any value.
-
-> +	memset(buffer, 0, sizeof(buffer));
-> +	if (count > sizeof(buffer) - 1)
-> +		count = sizeof(buffer) - 1;
-> +	if (copy_from_user(buffer, buf, count)) {
-> +		err = -EFAULT;
-> +		goto out_return;
-
-This feels a bit unnecessary.  Just 'return -EFAULT' here.
-
-> +	}
-> +
-> +	err = kstrtoint(strstrip(buffer), 0, &force);
-> +
-> +	if (err)
-> +		goto out_return;
-
-'return err'
-
-> +	if (force != 0 && force != 1) {
-> +		err = -EINVAL;
-> +		goto out_return;
-
-'return -EINVAL'
-
-> +	}
-> +
-> +	task = get_proc_task(file_inode(file));
-> +	if (!task) {
-> +		err = -ESRCH;
-> +		goto out_return;
-
-'return -ESRCH'
-
+> 
+> I assume that Al will get to this.  Meanwhile I can toss it
+> into linux-next to get some exposure and so it won't be lost.
+> 
