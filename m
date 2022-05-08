@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F03D51F137
+	by mail.lfdr.de (Postfix) with ESMTP id 07EDF51F135
 	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 May 2022 22:30:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232341AbiEHUeI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 8 May 2022 16:34:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53850 "EHLO
+        id S232349AbiEHUeM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 8 May 2022 16:34:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232176AbiEHUdv (ORCPT
+        with ESMTP id S232209AbiEHUdw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 8 May 2022 16:33:51 -0400
+        Sun, 8 May 2022 16:33:52 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65579E006
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA545E009
         for <linux-fsdevel@vger.kernel.org>; Sun,  8 May 2022 13:30:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=XGk4D40/83Mk2b0xnEMti2TPyZ0SXFmKONNwBKO+QXQ=; b=A00SirJtJgZ0jj239+Q4w/FbcR
-        N0/dPQCkBJDhe+UMCBpcFMDsFLgZTJ4YebFgfjqfak3g7LD13Vs0NyTSrwhUwheSOlSCb2+VkWZ9E
-        YgnetXUHUgCU5BRvnwH66a8L9wP381toIOsvGD73tLNOqWJSX92yEnHlPKXDw3UFeBbLpvPQ6LxB4
-        HOcNve69z0DmvDwA9Zlv2JyRxeNmbqGnpjakhDC+gY/w7gHSVQ/nOyQmYw7NFqEn23ODEaHcU7/hF
-        cxFxWfyQJdVey3+iZuT4c3kLXhyAQKf5+Dc/Qc7Ko5JsulDCJzydIGZspZBH0nYN/vuie2mApkr+9
-        RsK/Xeng==;
+        bh=LOIGMDSQvqjbbLhfwrNoP8DhHNVzMWWPwJ1QHy+c/8o=; b=n6MES7Lz89TEoYVEjeTUkfRIwp
+        ngYp2GaPKtLoEEW/Mu6RQp6tI7XFRWmliXuWXHxk2aA1ItLbiXsT+xXZKEG6Y6fkbgxXd2DCh3neK
+        DUVOTuG2IksZNRJruEkF2KWQ6NFRIYT2DnU4qmRldVpdySI4JNy9taO9pNPyhxYR71LRVKfN3qGaY
+        SjAvjdzqr7aJWtStObodG8sduMcAvmcdX2Gr23phTqSrV33ahzTUKswC/6e2fmpOevg1bh9IXM734
+        PwlBewWeqv6CtWN34UNEe/xf34g2/0O2mUdvZ8LCr8KipW8McuuJwZytyz7HjwdyaHqJwyfnDyH8J
+        iCW4nxkA==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nnnXS-002nYM-KS; Sun, 08 May 2022 20:29:58 +0000
+        id 1nnnXS-002nYS-PP; Sun, 08 May 2022 20:29:58 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCH 10/25] fs: Remove aop_flags parameter from netfs_write_begin()
-Date:   Sun,  8 May 2022 21:29:26 +0100
-Message-Id: <20220508202941.667024-11-willy@infradead.org>
+Subject: [PATCH 11/25] fs: Remove aop flags parameter from block_write_begin()
+Date:   Sun,  8 May 2022 21:29:27 +0100
+Message-Id: <20220508202941.667024-12-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220508202941.667024-1-willy@infradead.org>
 References: <YngbFluT9ftR5dqf@casper.infradead.org>
@@ -55,93 +55,222 @@ There are no more aop flags left, so remove the parameter.
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- Documentation/filesystems/netfs_library.rst | 1 -
- fs/9p/vfs_addr.c                            | 2 +-
- fs/afs/write.c                              | 2 +-
- fs/ceph/addr.c                              | 2 +-
- fs/netfs/buffered_read.c                    | 4 ++--
- include/linux/netfs.h                       | 2 +-
- 6 files changed, 6 insertions(+), 7 deletions(-)
+ block/fops.c                | 3 +--
+ fs/bfs/file.c               | 3 +--
+ fs/buffer.c                 | 6 +++---
+ fs/ext2/inode.c             | 3 +--
+ fs/minix/inode.c            | 3 +--
+ fs/nilfs2/inode.c           | 3 +--
+ fs/nilfs2/recovery.c        | 2 +-
+ fs/ntfs3/inode.c            | 4 ++--
+ fs/omfs/file.c              | 3 +--
+ fs/sysv/itree.c             | 2 +-
+ fs/udf/inode.c              | 2 +-
+ fs/ufs/inode.c              | 3 +--
+ include/linux/buffer_head.h | 2 +-
+ 13 files changed, 16 insertions(+), 23 deletions(-)
 
-diff --git a/Documentation/filesystems/netfs_library.rst b/Documentation/filesystems/netfs_library.rst
-index 69f00179fdfe..d51c2a5ccf57 100644
---- a/Documentation/filesystems/netfs_library.rst
-+++ b/Documentation/filesystems/netfs_library.rst
-@@ -142,7 +142,6 @@ Three read helpers are provided::
- 			      struct address_space *mapping,
- 			      loff_t pos,
- 			      unsigned int len,
--			      unsigned int flags,
- 			      struct folio **_folio,
- 			      void **_fsdata);
- 
-diff --git a/fs/9p/vfs_addr.c b/fs/9p/vfs_addr.c
-index 501128188343..d311e68e21fd 100644
---- a/fs/9p/vfs_addr.c
-+++ b/fs/9p/vfs_addr.c
-@@ -275,7 +275,7 @@ static int v9fs_write_begin(struct file *filp, struct address_space *mapping,
- 	 * file.  We need to do this before we get a lock on the page in case
- 	 * there's more than one writer competing for the same cache block.
- 	 */
--	retval = netfs_write_begin(filp, mapping, pos, len, flags, &folio, fsdata);
-+	retval = netfs_write_begin(filp, mapping, pos, len, &folio, fsdata);
- 	if (retval < 0)
- 		return retval;
- 
-diff --git a/fs/afs/write.c b/fs/afs/write.c
-index 4763132ca57e..af496c98d394 100644
---- a/fs/afs/write.c
-+++ b/fs/afs/write.c
-@@ -60,7 +60,7 @@ int afs_write_begin(struct file *file, struct address_space *mapping,
- 	 * file.  We need to do this before we get a lock on the page in case
- 	 * there's more than one writer competing for the same cache block.
- 	 */
--	ret = netfs_write_begin(file, mapping, pos, len, flags, &folio, fsdata);
-+	ret = netfs_write_begin(file, mapping, pos, len, &folio, fsdata);
- 	if (ret < 0)
- 		return ret;
- 
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index aa25bffd4823..415f0886bc25 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -1318,7 +1318,7 @@ static int ceph_write_begin(struct file *file, struct address_space *mapping,
- 	struct folio *folio = NULL;
- 	int r;
- 
--	r = netfs_write_begin(file, inode->i_mapping, pos, len, 0, &folio, NULL);
-+	r = netfs_write_begin(file, inode->i_mapping, pos, len, &folio, NULL);
- 	if (r == 0)
- 		folio_wait_fscache(folio);
- 	if (r < 0) {
-diff --git a/fs/netfs/buffered_read.c b/fs/netfs/buffered_read.c
-index 65c17c5a5567..1d44509455a5 100644
---- a/fs/netfs/buffered_read.c
-+++ b/fs/netfs/buffered_read.c
-@@ -328,8 +328,8 @@ static bool netfs_skip_folio_read(struct folio *folio, loff_t pos, size_t len,
-  * This is usable whether or not caching is enabled.
-  */
- int netfs_write_begin(struct file *file, struct address_space *mapping,
--		      loff_t pos, unsigned int len, unsigned int aop_flags,
--		      struct folio **_folio, void **_fsdata)
-+		      loff_t pos, unsigned int len, struct folio **_folio,
-+		      void **_fsdata)
+diff --git a/block/fops.c b/block/fops.c
+index 9f2ecec406b0..b432756570c6 100644
+--- a/block/fops.c
++++ b/block/fops.c
+@@ -401,8 +401,7 @@ static int blkdev_write_begin(struct file *file, struct address_space *mapping,
+ 		loff_t pos, unsigned len, unsigned flags, struct page **pagep,
+ 		void **fsdata)
  {
- 	struct netfs_io_request *rreq;
- 	struct netfs_i_context *ctx = netfs_i_context(file_inode(file ));
-diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-index c7bf1eaf51d5..1c29f317d907 100644
---- a/include/linux/netfs.h
-+++ b/include/linux/netfs.h
-@@ -276,7 +276,7 @@ struct readahead_control;
- extern void netfs_readahead(struct readahead_control *);
- extern int netfs_readpage(struct file *, struct page *);
- extern int netfs_write_begin(struct file *, struct address_space *,
--			     loff_t, unsigned int, unsigned int, struct folio **,
-+			     loff_t, unsigned int, struct folio **,
- 			     void **);
+-	return block_write_begin(mapping, pos, len, flags, pagep,
+-				 blkdev_get_block);
++	return block_write_begin(mapping, pos, len, pagep, blkdev_get_block);
+ }
  
- extern void netfs_subreq_terminated(struct netfs_io_subrequest *, ssize_t, bool);
+ static int blkdev_write_end(struct file *file, struct address_space *mapping,
+diff --git a/fs/bfs/file.c b/fs/bfs/file.c
+index 03139344568f..9408f45225cb 100644
+--- a/fs/bfs/file.c
++++ b/fs/bfs/file.c
+@@ -174,8 +174,7 @@ static int bfs_write_begin(struct file *file, struct address_space *mapping,
+ {
+ 	int ret;
+ 
+-	ret = block_write_begin(mapping, pos, len, flags, pagep,
+-				bfs_get_block);
++	ret = block_write_begin(mapping, pos, len, pagep, bfs_get_block);
+ 	if (unlikely(ret))
+ 		bfs_write_failed(mapping, pos + len);
+ 
+diff --git a/fs/buffer.c b/fs/buffer.c
+index 2b5561ae5d0b..4ec6eb03c0eb 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -2104,13 +2104,13 @@ static int __block_commit_write(struct inode *inode, struct page *page,
+  * The filesystem needs to handle block truncation upon failure.
+  */
+ int block_write_begin(struct address_space *mapping, loff_t pos, unsigned len,
+-		unsigned flags, struct page **pagep, get_block_t *get_block)
++		struct page **pagep, get_block_t *get_block)
+ {
+ 	pgoff_t index = pos >> PAGE_SHIFT;
+ 	struct page *page;
+ 	int status;
+ 
+-	page = grab_cache_page_write_begin(mapping, index, flags);
++	page = grab_cache_page_write_begin(mapping, index, 0);
+ 	if (!page)
+ 		return -ENOMEM;
+ 
+@@ -2460,7 +2460,7 @@ int cont_write_begin(struct file *file, struct address_space *mapping,
+ 		(*bytes)++;
+ 	}
+ 
+-	return block_write_begin(mapping, pos, len, flags, pagep, get_block);
++	return block_write_begin(mapping, pos, len, pagep, get_block);
+ }
+ EXPORT_SYMBOL(cont_write_begin);
+ 
+diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
+index 52377a0ee735..97192932ea56 100644
+--- a/fs/ext2/inode.c
++++ b/fs/ext2/inode.c
+@@ -892,8 +892,7 @@ ext2_write_begin(struct file *file, struct address_space *mapping,
+ {
+ 	int ret;
+ 
+-	ret = block_write_begin(mapping, pos, len, flags, pagep,
+-				ext2_get_block);
++	ret = block_write_begin(mapping, pos, len, pagep, ext2_get_block);
+ 	if (ret < 0)
+ 		ext2_write_failed(mapping, pos + len);
+ 	return ret;
+diff --git a/fs/minix/inode.c b/fs/minix/inode.c
+index f1a6610e4ee6..5e8d7ba661cf 100644
+--- a/fs/minix/inode.c
++++ b/fs/minix/inode.c
+@@ -428,8 +428,7 @@ static int minix_write_begin(struct file *file, struct address_space *mapping,
+ {
+ 	int ret;
+ 
+-	ret = block_write_begin(mapping, pos, len, flags, pagep,
+-				minix_get_block);
++	ret = block_write_begin(mapping, pos, len, pagep, minix_get_block);
+ 	if (unlikely(ret))
+ 		minix_write_failed(mapping, pos + len);
+ 
+diff --git a/fs/nilfs2/inode.c b/fs/nilfs2/inode.c
+index 6045cea21f52..be09a0d10f04 100644
+--- a/fs/nilfs2/inode.c
++++ b/fs/nilfs2/inode.c
+@@ -258,8 +258,7 @@ static int nilfs_write_begin(struct file *file, struct address_space *mapping,
+ 	if (unlikely(err))
+ 		return err;
+ 
+-	err = block_write_begin(mapping, pos, len, flags, pagep,
+-				nilfs_get_block);
++	err = block_write_begin(mapping, pos, len, pagep, nilfs_get_block);
+ 	if (unlikely(err)) {
+ 		nilfs_write_failed(mapping, pos + len);
+ 		nilfs_transaction_abort(inode->i_sb);
+diff --git a/fs/nilfs2/recovery.c b/fs/nilfs2/recovery.c
+index 9e2ed76c0f25..0955b657938f 100644
+--- a/fs/nilfs2/recovery.c
++++ b/fs/nilfs2/recovery.c
+@@ -511,7 +511,7 @@ static int nilfs_recover_dsync_blocks(struct the_nilfs *nilfs,
+ 
+ 		pos = rb->blkoff << inode->i_blkbits;
+ 		err = block_write_begin(inode->i_mapping, pos, blocksize,
+-					0, &page, nilfs_get_block);
++					&page, nilfs_get_block);
+ 		if (unlikely(err)) {
+ 			loff_t isize = inode->i_size;
+ 
+diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
+index 9eab11e3b034..3914138fd8ba 100644
+--- a/fs/ntfs3/inode.c
++++ b/fs/ntfs3/inode.c
+@@ -894,7 +894,7 @@ static int ntfs_write_begin(struct file *file, struct address_space *mapping,
+ 			goto out;
+ 	}
+ 
+-	err = block_write_begin(mapping, pos, len, flags, pagep,
++	err = block_write_begin(mapping, pos, len, pagep,
+ 				ntfs_get_block_write_begin);
+ 
+ out:
+@@ -975,7 +975,7 @@ int reset_log_file(struct inode *inode)
+ 
+ 		len = pos + PAGE_SIZE > log_size ? (log_size - pos) : PAGE_SIZE;
+ 
+-		err = block_write_begin(mapping, pos, len, 0, &page,
++		err = block_write_begin(mapping, pos, len, &page,
+ 					ntfs_get_block_write_begin);
+ 		if (err)
+ 			goto out;
+diff --git a/fs/omfs/file.c b/fs/omfs/file.c
+index 3f297b541713..349b96d89c44 100644
+--- a/fs/omfs/file.c
++++ b/fs/omfs/file.c
+@@ -321,8 +321,7 @@ static int omfs_write_begin(struct file *file, struct address_space *mapping,
+ {
+ 	int ret;
+ 
+-	ret = block_write_begin(mapping, pos, len, flags, pagep,
+-				omfs_get_block);
++	ret = block_write_begin(mapping, pos, len, pagep, omfs_get_block);
+ 	if (unlikely(ret))
+ 		omfs_write_failed(mapping, pos + len);
+ 
+diff --git a/fs/sysv/itree.c b/fs/sysv/itree.c
+index 409ab5e17803..96b7fd4facf3 100644
+--- a/fs/sysv/itree.c
++++ b/fs/sysv/itree.c
+@@ -482,7 +482,7 @@ static int sysv_write_begin(struct file *file, struct address_space *mapping,
+ {
+ 	int ret;
+ 
+-	ret = block_write_begin(mapping, pos, len, flags, pagep, get_block);
++	ret = block_write_begin(mapping, pos, len, pagep, get_block);
+ 	if (unlikely(ret))
+ 		sysv_write_failed(mapping, pos + len);
+ 
+diff --git a/fs/udf/inode.c b/fs/udf/inode.c
+index ca4fa710e562..88a95886ce8a 100644
+--- a/fs/udf/inode.c
++++ b/fs/udf/inode.c
+@@ -209,7 +209,7 @@ static int udf_write_begin(struct file *file, struct address_space *mapping,
+ {
+ 	int ret;
+ 
+-	ret = block_write_begin(mapping, pos, len, flags, pagep, udf_get_block);
++	ret = block_write_begin(mapping, pos, len, pagep, udf_get_block);
+ 	if (unlikely(ret))
+ 		udf_write_failed(mapping, pos + len);
+ 	return ret;
+diff --git a/fs/ufs/inode.c b/fs/ufs/inode.c
+index d0dda01620f0..bd0e0c66f93d 100644
+--- a/fs/ufs/inode.c
++++ b/fs/ufs/inode.c
+@@ -500,8 +500,7 @@ static int ufs_write_begin(struct file *file, struct address_space *mapping,
+ {
+ 	int ret;
+ 
+-	ret = block_write_begin(mapping, pos, len, flags, pagep,
+-				ufs_getfrag_block);
++	ret = block_write_begin(mapping, pos, len, pagep, ufs_getfrag_block);
+ 	if (unlikely(ret))
+ 		ufs_write_failed(mapping, pos + len);
+ 
+diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
+index bcb4fe9b8575..63e49dfa7738 100644
+--- a/include/linux/buffer_head.h
++++ b/include/linux/buffer_head.h
+@@ -226,7 +226,7 @@ int __block_write_full_page(struct inode *inode, struct page *page,
+ int block_read_full_page(struct page*, get_block_t*);
+ bool block_is_partially_uptodate(struct folio *, size_t from, size_t count);
+ int block_write_begin(struct address_space *mapping, loff_t pos, unsigned len,
+-		unsigned flags, struct page **pagep, get_block_t *get_block);
++		struct page **pagep, get_block_t *get_block);
+ int __block_write_begin(struct page *page, loff_t pos, unsigned len,
+ 		get_block_t *get_block);
+ int block_write_end(struct file *, struct address_space *,
 -- 
 2.34.1
 
