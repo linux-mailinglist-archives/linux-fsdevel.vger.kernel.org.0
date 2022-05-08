@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1406051F173
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 May 2022 22:32:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C66DF51F16F
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 May 2022 22:32:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232875AbiEHUgg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 8 May 2022 16:36:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55500 "EHLO
+        id S232721AbiEHUgY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 8 May 2022 16:36:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232601AbiEHUfg (ORCPT
+        with ESMTP id S232591AbiEHUfg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Sun, 8 May 2022 16:35:36 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9372A5FE5
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 935A95FD7
         for <linux-fsdevel@vger.kernel.org>; Sun,  8 May 2022 13:31:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=5hLucSIlWDT7gvjGd1USQbBcvVhzGdatd4MGsucOT5s=; b=Sb7+oV5Hmhke8chYcVKgoFr0Lt
-        BlX52NGkS+nEYbNfOdqonsu/Kb8kQzluUnpj0Ms7j3wjhThGGXjgo1xnsJ4+2NNQUTdRrexYau0Es
-        46+iw1jB+O1sDYQOKenkPhiGxuncPleK/kFi15g78qRYMwmc22fdYi3MRnDAK1CQBbjlwuSQykKIH
-        U4d583H8LnEBnI2Mcklu0JLph45pce3ZwoEDyCkklxqI+qwoCNGNB36HsyMMZ826FG+yY403gdM4m
-        2H/TmBbbk7MTo7Nmq2vKS2pxyzXBH0ESwGWkDYlJcq53crWDtEjWhiJI33c9EKbpNiPf5SS3fGowE
-        S0s81mNw==;
+        bh=fYNWAWF0UHuB+svW5UzmqrUpnQ209GYdqP5ggOpbJzM=; b=kZaZqtgwjsj1w6x2zARtXnQTfq
+        QVGrKfz1LfhlcmwttWwsWijzxO0/BlLyzWd5L+3e2QczXbowkYCUN8sav8PpJ9zBZdeJk8Ewt6Pvy
+        iNtEMjEtVkIg30oYhU7ZONRHfhoHdTqsNV5iX0xdNMaKuDMnBuNhrwm3+okwTyBpD7HnX84qzoIv/
+        payr1vD2LbJtXsRyhicgZ/wWLK+aH9hN6/HOOw98qmLt/Dqcb3Q6YKIzLh5l8GFE3kz1HdA5zVuvR
+        q0voAfMbviJ4Z9LKE1IH/JY3n6nX1VEzTySWigawabnDCpTsNT5Of7ywNLudObUTt3gSE7jVfWFQ6
+        adiWGiCA==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nnnZ6-002npm-Vq; Sun, 08 May 2022 20:31:41 +0000
+        id 1nnnZ7-002npr-3f; Sun, 08 May 2022 20:31:41 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH 32/37] squashfs: Convert squashfs to read_folio
-Date:   Sun,  8 May 2022 21:31:26 +0100
-Message-Id: <20220508203131.667959-33-willy@infradead.org>
+Subject: [PATCH 33/37] ubifs: Convert ubifs to read_folio
+Date:   Sun,  8 May 2022 21:31:27 +0100
+Message-Id: <20220508203131.667959-34-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220508203131.667959-1-willy@infradead.org>
 References: <YngbFluT9ftR5dqf@casper.infradead.org>
@@ -55,70 +55,65 @@ someone familiar with the filesystem.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/squashfs/file.c    | 5 +++--
- fs/squashfs/super.c   | 2 +-
- fs/squashfs/symlink.c | 5 +++--
- 3 files changed, 7 insertions(+), 5 deletions(-)
+ fs/ubifs/file.c  | 12 +++++++-----
+ fs/ubifs/super.c |  2 +-
+ 2 files changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/fs/squashfs/file.c b/fs/squashfs/file.c
-index 89d492916dea..a8e495d8eb86 100644
---- a/fs/squashfs/file.c
-+++ b/fs/squashfs/file.c
-@@ -444,8 +444,9 @@ static int squashfs_readpage_sparse(struct page *page, int expected)
+diff --git a/fs/ubifs/file.c b/fs/ubifs/file.c
+index 81c085c4decf..7cbf2edf8907 100644
+--- a/fs/ubifs/file.c
++++ b/fs/ubifs/file.c
+@@ -31,9 +31,9 @@
+  * in the "sys_write -> alloc_pages -> direct reclaim path". So, in
+  * 'ubifs_writepage()' we are only guaranteed that the page is locked.
+  *
+- * Similarly, @i_mutex is not always locked in 'ubifs_readpage()', e.g., the
++ * Similarly, @i_mutex is not always locked in 'ubifs_read_folio()', e.g., the
+  * read-ahead path does not lock it ("sys_read -> generic_file_aio_read ->
+- * ondemand_readahead -> readpage"). In case of readahead, @I_SYNC flag is not
++ * ondemand_readahead -> read_folio"). In case of readahead, @I_SYNC flag is not
+  * set as well. However, UBIFS disables readahead.
+  */
+ 
+@@ -889,12 +889,14 @@ static int ubifs_bulk_read(struct page *page)
+ 	return err;
+ }
+ 
+-static int ubifs_readpage(struct file *file, struct page *page)
++static int ubifs_read_folio(struct file *file, struct folio *folio)
+ {
++	struct page *page = &folio->page;
++
+ 	if (ubifs_bulk_read(page))
+ 		return 0;
+ 	do_readpage(page);
+-	unlock_page(page);
++	folio_unlock(folio);
  	return 0;
  }
  
--static int squashfs_readpage(struct file *file, struct page *page)
-+static int squashfs_read_folio(struct file *file, struct folio *folio)
- {
-+	struct page *page = &folio->page;
- 	struct inode *inode = page->mapping->host;
- 	struct squashfs_sb_info *msblk = inode->i_sb->s_fs_info;
- 	int index = page->index >> (msblk->block_log - PAGE_SHIFT);
-@@ -496,5 +497,5 @@ static int squashfs_readpage(struct file *file, struct page *page)
+@@ -1641,7 +1643,7 @@ static int ubifs_symlink_getattr(struct user_namespace *mnt_userns,
+ }
  
- 
- const struct address_space_operations squashfs_aops = {
--	.readpage = squashfs_readpage
-+	.read_folio = squashfs_read_folio
- };
-diff --git a/fs/squashfs/super.c b/fs/squashfs/super.c
-index 4f74abbc1a54..6d594ba2ed28 100644
---- a/fs/squashfs/super.c
-+++ b/fs/squashfs/super.c
-@@ -148,7 +148,7 @@ static int squashfs_fill_super(struct super_block *sb, struct fs_context *fc)
+ const struct address_space_operations ubifs_file_address_operations = {
+-	.readpage       = ubifs_readpage,
++	.read_folio     = ubifs_read_folio,
+ 	.writepage      = ubifs_writepage,
+ 	.write_begin    = ubifs_write_begin,
+ 	.write_end      = ubifs_write_end,
+diff --git a/fs/ubifs/super.c b/fs/ubifs/super.c
+index bad67455215f..0978d01b0ea4 100644
+--- a/fs/ubifs/super.c
++++ b/fs/ubifs/super.c
+@@ -2191,7 +2191,7 @@ static int ubifs_fill_super(struct super_block *sb, void *data, int silent)
  
  	/*
- 	 * squashfs provides 'backing_dev_info' in order to disable read-ahead. For
--	 * squashfs, I/O is not deferred, it is done immediately in readpage,
-+	 * squashfs, I/O is not deferred, it is done immediately in read_folio,
- 	 * which means the user would always have to wait their own I/O. So the effect
- 	 * of readahead is very weak for squashfs. squashfs_bdi_init will set
- 	 * sb->s_bdi->ra_pages and sb->s_bdi->io_pages to 0 and close readahead for
-diff --git a/fs/squashfs/symlink.c b/fs/squashfs/symlink.c
-index 1430613183e6..2bf977a52c2c 100644
---- a/fs/squashfs/symlink.c
-+++ b/fs/squashfs/symlink.c
-@@ -30,8 +30,9 @@
- #include "squashfs.h"
- #include "xattr.h"
- 
--static int squashfs_symlink_readpage(struct file *file, struct page *page)
-+static int squashfs_symlink_read_folio(struct file *file, struct folio *folio)
- {
-+	struct page *page = &folio->page;
- 	struct inode *inode = page->mapping->host;
- 	struct super_block *sb = inode->i_sb;
- 	struct squashfs_sb_info *msblk = sb->s_fs_info;
-@@ -101,7 +102,7 @@ static int squashfs_symlink_readpage(struct file *file, struct page *page)
- 
- 
- const struct address_space_operations squashfs_symlink_aops = {
--	.readpage = squashfs_symlink_readpage
-+	.read_folio = squashfs_symlink_read_folio
- };
- 
- const struct inode_operations squashfs_symlink_inode_ops = {
+ 	 * UBIFS provides 'backing_dev_info' in order to disable read-ahead. For
+-	 * UBIFS, I/O is not deferred, it is done immediately in readpage,
++	 * UBIFS, I/O is not deferred, it is done immediately in read_folio,
+ 	 * which means the user would have to wait not just for their own I/O
+ 	 * but the read-ahead I/O as well i.e. completely pointless.
+ 	 *
 -- 
 2.34.1
 
