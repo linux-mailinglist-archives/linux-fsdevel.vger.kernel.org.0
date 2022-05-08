@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CB2651EC61
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 May 2022 11:14:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DA5551EC7F
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 May 2022 11:27:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232003AbiEHJSY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 8 May 2022 05:18:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50944 "EHLO
+        id S232712AbiEHJbV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 8 May 2022 05:31:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231994AbiEHJSX (ORCPT
+        with ESMTP id S1350174AbiEHJbN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 8 May 2022 05:18:23 -0400
-Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 623CEF36;
-        Sun,  8 May 2022 02:14:33 -0700 (PDT)
-Received: by mail-pf1-x431.google.com with SMTP id j6so9838077pfe.13;
-        Sun, 08 May 2022 02:14:33 -0700 (PDT)
+        Sun, 8 May 2022 05:31:13 -0400
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE6A0101D1;
+        Sun,  8 May 2022 02:27:16 -0700 (PDT)
+Received: by mail-pl1-x633.google.com with SMTP id i1so11341146plg.7;
+        Sun, 08 May 2022 02:27:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=8i7ZhtZ6aIqHZpQwkw+QM2gT8/rz7LYRISQ+nwvdFkI=;
-        b=Hjock23BHGSXxrcPehgwpCe7t1a5uCHAkNpH7lv6YhaSeJ6vSVHNwE3muWHz2edx/U
-         J9j32LzeW8kEDcYcbQptIkwHUu5b8g/JNzVBaorCIbid/Ve39Z6i19fl6OlwQDKRynmm
-         GIynD9SzN2OaY7vp9uRexy7GYSFva+ZJ/uw9klOa64pXy9s0ptM9amDQmCTvm9JBEvir
-         98SU3p18B4W7Y1R4tIa3CN8XNaAK0dAVEmcPXLEdBK7DN5PVUC+uUwPxcDdtO+/LxDhr
-         OR7KqbxJIUb/u9fcewwtNyNXC4V9NNfT4nFpmL/D7lENld+blIjOYwtyvYqN1pobRU7y
-         Mh6Q==
+        bh=UPYhM1TdHcEAVOFdRrVOUgQchTCfnoZv3XDvbB8om90=;
+        b=bO6BpaVK938s5i4sKd4JAC4qkU/x5twAQMlSRLa0ud/WJSrzu1qhbeRQgIGIiz0ieX
+         rruyOHu9JW5wsnLkzyQoANEhjyCiWh093X+kw4sBcPoHGwkHH79oST1UyXyRTy8piI8q
+         1AKE4M5kn5SuUxhdFMgazHQhYtsfB5VCRPNYAlnhQasabJpDIFhv1rX8qlbDWS6EtBsr
+         ytoAqLZMku4cr+aoPr7jYE6eSXCNCm+M05mUDMg/qtPxXzp4idRn1qKHEqS5F6+7zFMr
+         TIDZihpZL3IQOtO2cjtZxONS56JLE4XLXgJUsKKRAuvYw9vwaKlXCymT15B9ZygBg3c9
+         LIlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=8i7ZhtZ6aIqHZpQwkw+QM2gT8/rz7LYRISQ+nwvdFkI=;
-        b=Epop1TnFQdm5lFCQwWOTSM/80gjPjiiZmHEj1C82oietHMVwfQ7Mp7Ih/g98XzJQsB
-         Po/hjPFbGMb4Z2DMKmvFEO574v2zgJKjdX6OkWSGQ/D6CllJX6SQT0TJyk3298kAdCzL
-         RzMyP2nEz+UbYdY9v7GUAR0CwURAM/Jnp7cHzm1tR8pwH3YRmvyf3XkW9USYb75cwbPS
-         Q6uJB0Wfk8IzkfeuRbg2fsCsj5hQqmXMBpbqQUHm1FUaIYwhgA+F98bPVU7ONdD3XEW3
-         z4V+5WOTZ1vfTvYbAmvyuSHBFgnkng08dt18AFcx1DYt/xsB1RdR0kMIhucEYKQmh+sG
-         auuw==
-X-Gm-Message-State: AOAM533vQL1fXlK2Zulj54hF2R3pEjssU3C8SzRusVQiJnUE/vBiF9d6
-        sX3aaglL79heTydBrBYUaQQ=
-X-Google-Smtp-Source: ABdhPJwCgilOWZYeacqPzdiBAvBHrX1LiRaPiiSaONHi1ETNfF1bFsI27MgbLLy1RsYhxez+t4YwWA==
-X-Received: by 2002:a05:6a00:1784:b0:50d:d8cb:7a4f with SMTP id s4-20020a056a00178400b0050dd8cb7a4fmr10878793pfg.23.1652001272753;
-        Sun, 08 May 2022 02:14:32 -0700 (PDT)
+        bh=UPYhM1TdHcEAVOFdRrVOUgQchTCfnoZv3XDvbB8om90=;
+        b=aq6UG4115fM7hlEKhgV6I+88RxGTqADv4J0Wtnsgg0sXOwOvC8MjjWJkh8fJ78Mx77
+         ZbPrAwwicKCgb7wHi8HUCZGhEgVKy0Qp27s+2Ru77bIqDbN1qIYTYysGStYVLUqawe8f
+         roDnb0iH6Vk6h3VcxBvh2MUpycClOkxruXyDWkEe4PO3OepNMRKdO5vLmzLv439FwM/C
+         WTwGdVqAIQFg5gpiOv1rfGch0ljKLR/CUXlSIQIaaESmRbDqU1+/zuP/1ajsb0vawrbK
+         T1Hl0AqjMaUkdpQ/8fYBXOoAGcYGhWZ9okNV7c54yBnhuM1LbRdftz2URYF8c9pre7qu
+         J88g==
+X-Gm-Message-State: AOAM531CM8CwZ9A7yBkHgRk3Q3N1Qr1DMO0gTpQw5RsQL/C944l7Ppsr
+        yQzYhkXI726YdZTd+yy+vck=
+X-Google-Smtp-Source: ABdhPJyA5UXIH7lDOw+m15Ca0/RphyNMKJ2n7GiHy+RAUQpyIG35Lh8YdHLcGQX03msYr6mdLdI52g==
+X-Received: by 2002:a17:902:f70a:b0:153:88c7:774 with SMTP id h10-20020a170902f70a00b0015388c70774mr11345710plo.166.1652002036362;
+        Sun, 08 May 2022 02:27:16 -0700 (PDT)
 Received: from localhost.localdomain ([193.203.214.57])
-        by smtp.gmail.com with ESMTPSA id s7-20020a170902a50700b0015e8d4eb206sm4831929plq.80.2022.05.08.02.14.30
+        by smtp.gmail.com with ESMTPSA id u8-20020a1709026e0800b0015e8d4eb233sm4812246plk.125.2022.05.08.02.27.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 May 2022 02:14:32 -0700 (PDT)
+        Sun, 08 May 2022 02:27:15 -0700 (PDT)
 From:   cgel.zte@gmail.com
 X-Google-Original-From: xu.xin16@zte.com.cn
 To:     akpm@linux-foundation.org
@@ -56,9 +56,9 @@ Cc:     cgel.zte@gmail.com, keescook@chromium.org,
         linux-mm@kvack.org, ran.xiaokai@zte.com.cn, wang.yong12@zte.com.cn,
         xu.xin16@zte.com.cn, yang.yang29@zte.com.cn,
         zhang.yunkai@zte.com.cn
-Subject: [PATCH v4] mm/ksm: introduce ksm_force for each process
-Date:   Sun,  8 May 2022 09:14:26 +0000
-Message-Id: <20220508091426.928094-1-xu.xin16@zte.com.cn>
+Subject: [PATCH v5] mm/ksm: introduce ksm_force for each process
+Date:   Sun,  8 May 2022 09:27:10 +0000
+Message-Id: <20220508092710.930126-1-xu.xin16@zte.com.cn>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220507105926.d4423601230f698b0f5228d1@linux-foundation.org>
 References: <20220507105926.d4423601230f698b0f5228d1@linux-foundation.org>
@@ -100,6 +100,8 @@ Reviewed-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
 Reviewed-by: wangyong <wang.yong12@zte.com.cn>
 Reviewed-by: Yunkai Zhang <zhang.yunkai@zte.com.cn>
 ---
+v5:
+- fix typos in Documentation/filesystems/proc.rst
 v4:
 - fix typos in commit log
 - add interface descriptions under Documentation/
@@ -155,7 +157,7 @@ index b244f0202a03..e42cffa42463 100644
  
  KSM daemon sysfs interface
 diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-index 061744c436d9..414977885e6e 100644
+index 061744c436d9..8f959697ae1e 100644
 --- a/Documentation/filesystems/proc.rst
 +++ b/Documentation/filesystems/proc.rst
 @@ -47,6 +47,7 @@ fixes/update part 1.1  Stefani Seibold <stefani@seibold.net>    June 9 2009
@@ -170,7 +172,7 @@ index 061744c436d9..414977885e6e 100644
    the task is unlikely an AVX512 user, but depends on the workload and the
    scheduling scenario, it also could be a false negative mentioned above.
  
-+3.11    /proc/<pid>/ksm_force - Setting of mandatory involvement in KSM
++3.13	/proc/<pid>/ksm_force - Setting of mandatory involvement in KSM
 +-----------------------------------------------------------------------
 +When CONFIG_KSM is enabled, this file can be used to specify if this
 +process's anonymous memory can be involved in KSM scanning without app codes
