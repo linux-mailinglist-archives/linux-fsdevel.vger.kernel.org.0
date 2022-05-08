@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B312851F14D
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 May 2022 22:32:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41E3551F155
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 May 2022 22:32:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232648AbiEHUfm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 8 May 2022 16:35:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55490 "EHLO
+        id S232483AbiEHUfv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 8 May 2022 16:35:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232465AbiEHUfb (ORCPT
+        with ESMTP id S232479AbiEHUfb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Sun, 8 May 2022 16:35:31 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFC1F2628
-        for <linux-fsdevel@vger.kernel.org>; Sun,  8 May 2022 13:31:39 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D22D2AE8
+        for <linux-fsdevel@vger.kernel.org>; Sun,  8 May 2022 13:31:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=uljn2IWBs8DqnOE3i3bTad2L0Ix1+446tUcqtKovHII=; b=gzKiyULy6LMOwq4tmIfp3FJ8zC
-        QTEeZl/SFlo8pzI0oz7nIkUrIL/QLgdUHoXxFTfP60zuOUOcweNA9/WO8p/LLQD2iAo0zCkq41a5Y
-        /L9temp5p/ogWMgrIBXFN0QisY8cOzMY4oN3LvA/G7htrD1INjqGyWz4KkpRUjpG73DbQsKwsnm12
-        QdeppFWVRUUbcEQUP8ZYfzz/n86xetuybKiR16h7WsY9he27yAUH8fHtFnlfG1Hrl+sxcFMAVIe7v
-        01mWYL/xWheWqDV3Q6y2ptnsPu8k/hrfe6uiOhpD+bLdrb39qw5s+zjkavwWWNWqAU0/7bs6jz69+
-        LFmFcG/A==;
+        bh=7i+rQsprs4PBXqaChHELvwK4DblnGhyte9L47UaC7aI=; b=d0WtkU9eVyEnE3dWirCBvX4Rs8
+        5rSqVLlJFXQXa1yx9hrle4r5Q8IMl5YJpmt6XJXPADPeZ9zK9LZtKZC1SZOJDtDVvwiX4j/En3oYm
+        aBnzhq8jcxNpkWVxf497nhsWIoQcrPk5qXUB9eK1M3ModtquYrR1pQBgOyTj8lP1lcczq1Ab5xjVe
+        RJQH41tYlArL209YfYpeCdhZo/3vcxjOYHV8vl5uaCUevhR/lAmz3y/faRDT38ZhU98mpVHBlwUD1
+        ljpVsDDRXizr53e9byYjP83DkPycah9S0s/llmhMMBfJtuWz7AonqZOVKmyrq/OdeHTxRy4yjqEOp
+        UnmZQbdA==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nnnZ3-002nnd-V1; Sun, 08 May 2022 20:31:37 +0000
+        id 1nnnZ4-002nnj-1X; Sun, 08 May 2022 20:31:38 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH 09/37] afs: Convert afs_symlink_readpage to afs_symlink_read_folio
-Date:   Sun,  8 May 2022 21:31:03 +0100
-Message-Id: <20220508203131.667959-10-willy@infradead.org>
+Subject: [PATCH 10/37] befs: Convert befs to read_folio
+Date:   Sun,  8 May 2022 21:31:04 +0100
+Message-Id: <20220508203131.667959-11-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220508203131.667959-1-willy@infradead.org>
 References: <YngbFluT9ftR5dqf@casper.infradead.org>
@@ -49,67 +49,48 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This function mostly used folios already, and only a few minor changes
-were needed.
+This is a "weak" conversion which converts straight back to using pages.
+A full conversion should be performed at some point, hopefully by
+someone familiar with the filesystem.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/afs/file.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+ fs/befs/linuxvfs.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/fs/afs/file.c b/fs/afs/file.c
-index e277fbe55262..65ef69a1f78e 100644
---- a/fs/afs/file.c
-+++ b/fs/afs/file.c
-@@ -19,7 +19,7 @@
- #include "internal.h"
- 
- static int afs_file_mmap(struct file *file, struct vm_area_struct *vma);
--static int afs_symlink_readpage(struct file *file, struct page *page);
-+static int afs_symlink_read_folio(struct file *file, struct folio *folio);
- static void afs_invalidate_folio(struct folio *folio, size_t offset,
- 			       size_t length);
- static int afs_releasepage(struct page *page, gfp_t gfp_flags);
-@@ -63,7 +63,7 @@ const struct address_space_operations afs_file_aops = {
+diff --git a/fs/befs/linuxvfs.c b/fs/befs/linuxvfs.c
+index 25350dd22cda..be383fa46b12 100644
+--- a/fs/befs/linuxvfs.c
++++ b/fs/befs/linuxvfs.c
+@@ -48,7 +48,7 @@ static struct inode *befs_iget(struct super_block *, unsigned long);
+ static struct inode *befs_alloc_inode(struct super_block *sb);
+ static void befs_free_inode(struct inode *inode);
+ static void befs_destroy_inodecache(void);
+-static int befs_symlink_readpage(struct file *, struct page *);
++static int befs_symlink_read_folio(struct file *, struct folio *);
+ static int befs_utf2nls(struct super_block *sb, const char *in, int in_len,
+ 			char **out, int *out_len);
+ static int befs_nls2utf(struct super_block *sb, const char *in, int in_len,
+@@ -92,7 +92,7 @@ static const struct address_space_operations befs_aops = {
  };
  
- const struct address_space_operations afs_symlink_aops = {
--	.readpage	= afs_symlink_readpage,
-+	.read_folio	= afs_symlink_read_folio,
- 	.releasepage	= afs_releasepage,
- 	.invalidate_folio = afs_invalidate_folio,
+ static const struct address_space_operations befs_symlink_aops = {
+-	.readpage	= befs_symlink_readpage,
++	.read_folio	= befs_symlink_read_folio,
  };
-@@ -332,11 +332,10 @@ static void afs_issue_read(struct netfs_io_subrequest *subreq)
- 	afs_put_read(fsreq);
- }
  
--static int afs_symlink_readpage(struct file *file, struct page *page)
-+static int afs_symlink_read_folio(struct file *file, struct folio *folio)
+ static const struct export_operations befs_export_operations = {
+@@ -468,8 +468,9 @@ befs_destroy_inodecache(void)
+  * The data stream become link name. Unless the LONG_SYMLINK
+  * flag is set.
+  */
+-static int befs_symlink_readpage(struct file *unused, struct page *page)
++static int befs_symlink_read_folio(struct file *unused, struct folio *folio)
  {
--	struct afs_vnode *vnode = AFS_FS_I(page->mapping->host);
-+	struct afs_vnode *vnode = AFS_FS_I(folio->mapping->host);
- 	struct afs_read *fsreq;
--	struct folio *folio = page_folio(page);
- 	int ret;
- 
- 	fsreq = afs_alloc_read(GFP_NOFS);
-@@ -347,13 +346,13 @@ static int afs_symlink_readpage(struct file *file, struct page *page)
- 	fsreq->len	= folio_size(folio);
- 	fsreq->vnode	= vnode;
- 	fsreq->iter	= &fsreq->def_iter;
--	iov_iter_xarray(&fsreq->def_iter, READ, &page->mapping->i_pages,
-+	iov_iter_xarray(&fsreq->def_iter, READ, &folio->mapping->i_pages,
- 			fsreq->pos, fsreq->len);
- 
- 	ret = afs_fetch_data(fsreq->vnode, fsreq);
- 	if (ret == 0)
--		SetPageUptodate(page);
--	unlock_page(page);
-+		folio_mark_uptodate(folio);
-+	folio_unlock(folio);
- 	return ret;
- }
- 
++	struct page *page = &folio->page;
+ 	struct inode *inode = page->mapping->host;
+ 	struct super_block *sb = inode->i_sb;
+ 	struct befs_inode_info *befs_ino = BEFS_I(inode);
 -- 
 2.34.1
 
