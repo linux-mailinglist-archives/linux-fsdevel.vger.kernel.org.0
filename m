@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 493BD51F16E
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 May 2022 22:32:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E13951F153
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 May 2022 22:32:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232755AbiEHUg1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 8 May 2022 16:36:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55724 "EHLO
+        id S232706AbiEHUf7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 8 May 2022 16:35:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55518 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232644AbiEHUfi (ORCPT
+        with ESMTP id S232562AbiEHUff (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 8 May 2022 16:35:38 -0400
+        Sun, 8 May 2022 16:35:35 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36E52C6D
-        for <linux-fsdevel@vger.kernel.org>; Sun,  8 May 2022 13:31:47 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6808D55A8
+        for <linux-fsdevel@vger.kernel.org>; Sun,  8 May 2022 13:31:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=rfqqXMeB9rJaPeF1zuhJSPvJieW4idxHLaMUnr+URVs=; b=RHijWenYiVtDun/Jzxg9xqiq1M
-        E1OQ3dV9BNvgGHyhYZyxtHVsv8DM7to4rAQ9TQTZEQZQ55r7xaxYth1c6REzrjbKmDwSaaflDinqd
-        GC5CC3MN9+eE4A+XFYCda59bmSyMdRg2xBImJdLWFwsfpWNIzx/zkNvwE0cFG+4mlxxzwnh+wz6A5
-        EZw/M5pwibHaS+dFJ/T44ICQA2MhDokelpXCKVycMalayxRBu3SPCe37vNq1b/kvyqWWJdJN3fzRL
-        Mp58Z4pNtRGlWQHqI7gYY4rUgux9C+BMnqsaCvIKoJl6+OSqRicm404w7eaeJBxIDz7GlYp5wmpBj
-        dlriIItA==;
+        bh=i6g5f+22tHBDTbtx3SYZWrTrLEq/pguWRferaojoIv4=; b=j2p6QOSe554fwC0GtKrTDLew+a
+        CkLe2C98s/DLsnFIRRTZlJ0BKwwbZMdFlTUXzWsw0cM8pp4rv9YsLw79o2kHRQrPU5yZMLgD5zDV4
+        GMDs0sBzuIvoS2WI0+/caCmkZa3wyERBnitmbriRolZwiCkvXHWuMUrtKr9RIYikfnAaboWK2uEzl
+        m3TXwUenhqTfcenrB6t2dQnPR8N6OASizTjvbTzN5PlLoa03G1/Ws1/w3Rp8YS/ZKYal4n9HWuocr
+        8fzeCHiVvbsO6qJp+fXsxI/KHPEK9f2ayRiRHgy0h6q5oTRCCxRY1qHOZe7srNe+5nOqaAmRLcCWA
+        DBooAcHA==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nnnZ6-002npF-6b; Sun, 08 May 2022 20:31:40 +0000
+        id 1nnnZ6-002npK-Ao; Sun, 08 May 2022 20:31:40 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Subject: [PATCH 26/37] jfs: Convert metadata pages to read_folio
-Date:   Sun,  8 May 2022 21:31:20 +0100
-Message-Id: <20220508203131.667959-27-willy@infradead.org>
+Subject: [PATCH 27/37] nfs: Convert nfs to read_folio
+Date:   Sun,  8 May 2022 21:31:21 +0100
+Message-Id: <20220508203131.667959-28-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220508203131.667959-1-willy@infradead.org>
 References: <YngbFluT9ftR5dqf@casper.infradead.org>
@@ -55,33 +55,61 @@ someone familiar with the filesystem.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/jfs/jfs_metapage.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/nfs/file.c          | 4 ++--
+ fs/nfs/read.c          | 3 ++-
+ include/linux/nfs_fs.h | 2 +-
+ 3 files changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/fs/jfs/jfs_metapage.c b/fs/jfs/jfs_metapage.c
-index c4220ccdedef..2fc78405b3f2 100644
---- a/fs/jfs/jfs_metapage.c
-+++ b/fs/jfs/jfs_metapage.c
-@@ -467,8 +467,9 @@ static int metapage_writepage(struct page *page, struct writeback_control *wbc)
- 	return -EIO;
+diff --git a/fs/nfs/file.c b/fs/nfs/file.c
+index f05c4b18b681..4f6d1f90b87f 100644
+--- a/fs/nfs/file.c
++++ b/fs/nfs/file.c
+@@ -337,7 +337,7 @@ static int nfs_write_begin(struct file *file, struct address_space *mapping,
+ 	} else if (!once_thru &&
+ 		   nfs_want_read_modify_write(file, page, pos, len)) {
+ 		once_thru = 1;
+-		ret = nfs_readpage(file, page);
++		ret = nfs_read_folio(file, page_folio(page));
+ 		put_page(page);
+ 		if (!ret)
+ 			goto start;
+@@ -514,7 +514,7 @@ static void nfs_swap_deactivate(struct file *file)
  }
  
--static int metapage_readpage(struct file *fp, struct page *page)
-+static int metapage_read_folio(struct file *fp, struct folio *folio)
+ const struct address_space_operations nfs_file_aops = {
+-	.readpage = nfs_readpage,
++	.read_folio = nfs_read_folio,
+ 	.readahead = nfs_readahead,
+ 	.dirty_folio = filemap_dirty_folio,
+ 	.writepage = nfs_writepage,
+diff --git a/fs/nfs/read.c b/fs/nfs/read.c
+index 5e7657374bc3..5a9b043662e9 100644
+--- a/fs/nfs/read.c
++++ b/fs/nfs/read.c
+@@ -333,8 +333,9 @@ readpage_async_filler(struct nfs_readdesc *desc, struct page *page)
+  *  -	The error flag is set for this page. This happens only when a
+  *	previous async read operation failed.
+  */
+-int nfs_readpage(struct file *file, struct page *page)
++int nfs_read_folio(struct file *file, struct folio *folio)
  {
 +	struct page *page = &folio->page;
- 	struct inode *inode = page->mapping->host;
- 	struct bio *bio = NULL;
- 	int block_offset;
-@@ -563,7 +564,7 @@ static void metapage_invalidate_folio(struct folio *folio, size_t offset,
- }
+ 	struct nfs_readdesc desc;
+ 	struct inode *inode = page_file_mapping(page)->host;
+ 	int ret;
+diff --git a/include/linux/nfs_fs.h b/include/linux/nfs_fs.h
+index b48b9259e02c..1bba71757d62 100644
+--- a/include/linux/nfs_fs.h
++++ b/include/linux/nfs_fs.h
+@@ -594,7 +594,7 @@ static inline bool nfs_have_writebacks(const struct inode *inode)
+ /*
+  * linux/fs/nfs/read.c
+  */
+-extern int  nfs_readpage(struct file *, struct page *);
++int  nfs_read_folio(struct file *, struct folio *);
+ void nfs_readahead(struct readahead_control *);
  
- const struct address_space_operations jfs_metapage_aops = {
--	.readpage	= metapage_readpage,
-+	.read_folio	= metapage_read_folio,
- 	.writepage	= metapage_writepage,
- 	.releasepage	= metapage_releasepage,
- 	.invalidate_folio = metapage_invalidate_folio,
+ /*
 -- 
 2.34.1
 
