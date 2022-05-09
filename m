@@ -2,194 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 001AF51F23C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 May 2022 03:26:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCB9751F27E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 May 2022 03:30:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233762AbiEIBaH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 8 May 2022 21:30:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53590 "EHLO
+        id S233485AbiEIBdv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 8 May 2022 21:33:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236282AbiEIBWR (ORCPT
+        with ESMTP id S235274AbiEIBbm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 8 May 2022 21:22:17 -0400
-Received: from out30-54.freemail.mail.aliyun.com (out30-54.freemail.mail.aliyun.com [115.124.30.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F044DEAA;
-        Sun,  8 May 2022 18:18:24 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0VCc6ZLn_1652059099;
-Received: from 30.32.96.14(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0VCc6ZLn_1652059099)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 09 May 2022 09:18:20 +0800
-Message-ID: <5e33cf5e-2c48-89fe-3447-2f29c7844928@linux.alibaba.com>
-Date:   Mon, 9 May 2022 09:19:00 +0800
+        Sun, 8 May 2022 21:31:42 -0400
+Received: from lgeamrelo11.lge.com (lgeamrelo12.lge.com [156.147.23.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BE4B013D33
+        for <linux-fsdevel@vger.kernel.org>; Sun,  8 May 2022 18:23:38 -0700 (PDT)
+Received: from unknown (HELO lgeamrelo04.lge.com) (156.147.1.127)
+        by 156.147.23.52 with ESMTP; 9 May 2022 10:23:37 +0900
+X-Original-SENDERIP: 156.147.1.127
+X-Original-MAILFROM: byungchul.park@lge.com
+Received: from unknown (HELO X58A-UD3R) (10.177.244.38)
+        by 156.147.1.127 with ESMTP; 9 May 2022 10:23:37 +0900
+X-Original-SENDERIP: 10.177.244.38
+X-Original-MAILFROM: byungchul.park@lge.com
+Date:   Mon, 9 May 2022 10:22:02 +0900
+From:   Byungchul Park <byungchul.park@lge.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        linux-ide@vger.kernel.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Sasha Levin <sashal@kernel.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Chris Wilson <chris@chris-wilson.co.uk>, duyuyang@gmail.com,
+        johannes.berg@intel.com, Tejun Heo <tj@kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        kernel-team@lge.com, Linux-MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Minchan Kim <minchan@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>, sj@kernel.org,
+        Jerome Glisse <jglisse@redhat.com>,
+        Dennis Zhou <dennis@kernel.org>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>, ngupta@vflare.org,
+        linux-block <linux-block@vger.kernel.org>,
+        paolo.valente@linaro.org, Josef Bacik <josef@toxicpanda.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+        jack@suse.com, Jeff Layton <jlayton@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Dave Airlie <airlied@linux.ie>, rodrigosiqueiramelo@gmail.com,
+        melissa.srw@gmail.com, hamohammed.sa@gmail.com, 42.hyeyoo@gmail.com
+Subject: Re: [PATCH RFC v6 00/21] DEPT(Dependency Tracker)
+Message-ID: <20220509012202.GB6047@X58A-UD3R>
+References: <1651652269-15342-1-git-send-email-byungchul.park@lge.com>
+ <CAHk-=whnPePcffsNQM+YSHMGttLXvpf8LbBQ8P7HEdqFXaV7Lg@mail.gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [RFC PATCH 1/3] arm64/hugetlb: Introduce new
- huge_ptep_get_access_flags() interface
-To:     nh26223@qq.com, catalin.marinas@arm.com, will@kernel.org,
-        arnd@arndb.de, mike.kravetz@oracle.com, akpm@linux-foundation.org,
-        sj@kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-References: <cover.1651998586.git.baolin.wang@linux.alibaba.com>
- <a73f07314e79299b85fa4d7612d6ac22548f58c1.1651998586.git.baolin.wang@linux.alibaba.com>
- <tencent_E3DE18C8CFE150F1EDCF887146BA374E6706@qq.com>
-From:   Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <tencent_E3DE18C8CFE150F1EDCF887146BA374E6706@qq.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-11.4 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=whnPePcffsNQM+YSHMGttLXvpf8LbBQ8P7HEdqFXaV7Lg@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Spam-Status: No, score=-6.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 5/8/2022 9:14 PM, nh26223@qq.com wrote:
-> On 2022年5月8日星期日 CST 下午4:58:52 Baolin Wang wrote:
->> Now we use huge_ptep_get() to get the pte value of a hugetlb page,
->> however it will only return one specific pte value for the CONT-PTE
->> or CONT-PMD size hugetlb on ARM64 system, which can contain seravel
->> continuous pte or pmd entries with same page table attributes. And it
->> will not take into account the subpages' dirty or young bits of a
->> CONT-PTE/PMD size hugetlb page.
->>
->> So the huge_ptep_get() is inconsistent with huge_ptep_get_and_clear(),
->> which already takes account the dirty or young bits for any subpages
->> in this CONT-PTE/PMD size hugetlb [1]. Meanwhile we can miss dirty or
->> young flags statistics for hugetlb pages with current huge_ptep_get(),
->> such as the gather_hugetlb_stats() function.
->>
->> Thus introduce a new huge_ptep_get_access_flags() interface and define
->> an ARM64 specific implementation, that will take into account any subpages'
->> dirty or young bits for CONT-PTE/PMD size hugetlb page, for those functions
->> that want to check the dirty and young flags of a hugetlb page.
->>
->> [1]
->> https://lore.kernel.org/linux-mm/85bd80b4-b4fd-0d3f-a2e5-149559f2f387@oracl
->> e.com/
->>
->> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
->> ---
->>   arch/arm64/include/asm/hugetlb.h |  2 ++
->>   arch/arm64/mm/hugetlbpage.c      | 24 ++++++++++++++++++++++++
->>   include/asm-generic/hugetlb.h    |  7 +++++++
->>   3 files changed, 33 insertions(+)
->>
->> diff --git a/arch/arm64/include/asm/hugetlb.h
->> b/arch/arm64/include/asm/hugetlb.h index 616b2ca..a473544 100644
->> --- a/arch/arm64/include/asm/hugetlb.h
->> +++ b/arch/arm64/include/asm/hugetlb.h
->> @@ -44,6 +44,8 @@ extern pte_t huge_ptep_clear_flush(struct vm_area_struct
->> *vma, #define __HAVE_ARCH_HUGE_PTE_CLEAR
->>   extern void huge_pte_clear(struct mm_struct *mm, unsigned long addr,
->>   			   pte_t *ptep, unsigned long sz);
->> +#define __HAVE_ARCH_HUGE_PTEP_GET_ACCESS_FLAGS
->> +extern pte_t huge_ptep_get_access_flags(pte_t *ptep, unsigned long sz);
->>   extern void set_huge_swap_pte_at(struct mm_struct *mm, unsigned long addr,
->>   				 pte_t *ptep, pte_t pte, unsigned long
-> sz);
->>   #define set_huge_swap_pte_at set_huge_swap_pte_at
->> diff --git a/arch/arm64/mm/hugetlbpage.c b/arch/arm64/mm/hugetlbpage.c
->> index ca8e65c..ce39699 100644
->> --- a/arch/arm64/mm/hugetlbpage.c
->> +++ b/arch/arm64/mm/hugetlbpage.c
->> @@ -158,6 +158,30 @@ static inline int num_contig_ptes(unsigned long size,
->> size_t *pgsize) return contig_ptes;
->>   }
->>
->> +pte_t huge_ptep_get_access_flags(pte_t *ptep, unsigned long sz)
-> The function name looks to me that it returns access flags of PTE.
-
-Yes, not a good name. That's why this is a RFC patch set to get more 
-suggestion :)
-
-Maybe huge_ptep_get_with_access_flags()? or do you have some better idea?
-
+On Wed, May 04, 2022 at 11:17:02AM -0700, Linus Torvalds wrote:
+> On Wed, May 4, 2022 at 1:19 AM Byungchul Park <byungchul.park@lge.com> wrote:
+> >
+> > Hi Linus and folks,
+> >
+> > I've been developing a tool for detecting deadlock possibilities by
+> > tracking wait/event rather than lock(?) acquisition order to try to
+> > cover all synchonization machanisms.
 > 
->> +{
->> +	int ncontig, i;
->> +	size_t pgsize;
->> +	pte_t orig_pte = ptep_get(ptep);
->> +
->> +	if (!pte_cont(orig_pte))
->> +		return orig_pte;
->> +
->> +	ncontig = num_contig_ptes(sz, &pgsize);
->> +
->> +	for (i = 0; i < ncontig; i++, ptep++) {
->> +		pte_t pte = ptep_get(ptep);
->> +
->> +		if (pte_dirty(pte))
->> +			orig_pte = pte_mkdirty(orig_pte);
->> +
->> +		if (pte_young(pte))
->> +			orig_pte = pte_mkyoung(orig_pte);
->> +	}
->> +
->> +	return orig_pte;
->> +}
-> Not sure whether it's worthy being changed to:
-> 
->          bool dirty = false, young = false;
-> 
->          for (i = 0; i < ncontig; i++, ptep++) {
->                  pte_t pte = ptep_get(ptep);
-> 
->                  if (pte_dirty(pte))
->                          dirty = true;
-> 
->                  if (pte_young(pte))
->                          young = true;
-> 
->                  if (dirty && young)
->                          break;
->          }
-> 
->          if (dirty)
->                  orig_pte = pte_mkdirty(orig_pte);
-> 
->          if (young)
->                  orig_pte = pte_mkyoung(orit_pte);
-> 
->          return orig_pte;
+> So what is the actual status of reports these days?
 
-I followed the same logics in get_clear_flush(), which is more readable 
-I think. Yes, your approach can save some cycles, I can change to use it 
-in next version if arm64 maintainers have no objection.
+I'd like to mention one important thing here. Reportability would get
+stronger if the more wait-event pairs get tagged everywhere DEPT can
+work.
 
->> +
->>   /*
->>    * Changing some bits of contiguous entries requires us to follow a
->>    * Break-Before-Make approach, breaking the whole contiguous set
->> diff --git a/include/asm-generic/hugetlb.h b/include/asm-generic/hugetlb.h
->> index a57d667..bb77fb0 100644
->> --- a/include/asm-generic/hugetlb.h
->> +++ b/include/asm-generic/hugetlb.h
->> @@ -150,6 +150,13 @@ static inline pte_t huge_ptep_get(pte_t *ptep)
->>   }
->>   #endif
->>
->> +#ifndef __HAVE_ARCH_HUGE_PTEP_GET_ACCESS_FLAGS
->> +static inline pte_t huge_ptep_get_access_flags(pte_t *ptep, unsigned long
->> sz) +{
->> +	return ptep_get(ptep);
-> Should be:
-> 	return huge_ptep_get(ptep) ?
+Everything e.g. HW-SW interface, any retry logic and so on can be a
+wait-event pair if they work wait or event anyway. For example, polling
+on an IO mapped read register and initiating the HW to go for the event
+also can be a pair. Definitely those make DEPT more useful.
 
-I don't think so. If no ARCH-specific definition, the 
-huge_ptep_get_access_flags() implementation should be same as 
-huge_ptep_get(). Thanks for your comments.
+---
 
-#ifndef __HAVE_ARCH_HUGE_PTEP_GET
-static inline pte_t huge_ptep_get(pte_t *ptep)
-{
-         return ptep_get(ptep);
-}
-#endif
+The way to use the APIs:
+
+1. Define SDT(Simple Dependency Tracker)
+
+   DEFINE_DEPT_SDT(my_hw_event); <- add this
+
+2. Tag on the waits
+
+   sdt_wait(&my_hw_event); <- add this
+   ... retry logic until my hw work done ... <- the original code
+
+3. Tag on the events
+
+   sdt_event(&my_hw_event); <- add this
+   run_my_hw(); <- the original code
+
+---
+
+These are all we should do. I believe DEPT would be a very useful tool
+once all wait-event pairs get tagged by the developers in all subsystems
+and device drivers.
+
+	Byungchul
+
+> Last time I looked at some reports, it gave a lot of false positives
+> due to mis-understanding prepare_to_sleep().
+> 
+> For this all to make sense, it would need to not have false positives
+> (or at least a very small number of them together with a way to sanely
+> get rid of them), and also have a track record of finding things that
+> lockdep doesn't.
+> 
+> Maybe such reports have been sent out with the current situation, and
+> I haven't seen them.
+> 
+>                  Linus
