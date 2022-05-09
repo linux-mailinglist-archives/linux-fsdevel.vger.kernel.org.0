@@ -2,134 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AB2B951FA31
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 May 2022 12:46:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B57751F9E4
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 May 2022 12:30:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231368AbiEIKsa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 May 2022 06:48:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54564 "EHLO
+        id S231797AbiEIKdp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 May 2022 06:33:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231185AbiEIKs1 (ORCPT
+        with ESMTP id S232626AbiEIKc6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 May 2022 06:48:27 -0400
-X-Greylist: delayed 837 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 09 May 2022 03:43:36 PDT
-Received: from smtp.dbxyz.space (constantine.dbxyz.space [IPv6:2001:19f0:5801:2cd::100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id CE3CF2CF285;
-        Mon,  9 May 2022 03:43:33 -0700 (PDT)
-Date:   Mon, 9 May 2022 20:20:31 +1000
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=dropbear.xyz;
-        s=202004; t=1652091632;
-        bh=3zD69nrHAktkpTKFutEwYOSsRHajHgFDe+9rh8XQpuI=;
-        h=Date:From:To:Subject:From;
-        b=tup1bIwVPl0WxW5/6un4amNbnCVGUUQ3RABKvKlix0WP12QSN0etB5a1SwinOkHbE
-         Sw0jJCkyWEbhsneivwAP5tkoqRk8By362rpNn2E/5Rbo99YCVAsvkXlVZ5O8tYUPTw
-         cZ3g9LZ5MzJ1HA2Fkvf1DskNV5W9qx3m0CIIM4A8=
-From:   Craig Small <csmall@dropbear.xyz>
-To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: procfs: mnt namespace behaviour with block devices (resend)
-Message-ID: <Ynjq7yN+r6sibyUd@dropbear.xyz>
+        Mon, 9 May 2022 06:32:58 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62C0524FDA9
+        for <linux-fsdevel@vger.kernel.org>; Mon,  9 May 2022 03:28:16 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 33A3160DFB
+        for <linux-fsdevel@vger.kernel.org>; Mon,  9 May 2022 10:28:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33310C385AB;
+        Mon,  9 May 2022 10:28:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1652092094;
+        bh=Za84684D0gxamc1aIKXclbLmlRreHOzJ9l61bQRkWVM=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=vDBQT8eWL13qXEkSr81ceyM8ipyos1NkEGnOd95yKw9Gw1DQGx1iVtDqC2QtOkKsy
+         3KMTWjhGg8BnkfDkLwfsn0Dih9gp+MX+Ai4ayoNq6Jv5dspz5wa3GAKtHi3SvkwhgW
+         qxWq/kS0p6LJaYi54Lm+8M+KpfsncW1DrfXHoHSJtmQ2RErMxPl7xcDZ+LqIXj1J3i
+         nXIC1Iu3bvNTZuR9t6fnq9fWc3oPks/8Jk9KrzyW+vgA6UOaayrI8Qw3iw9dPVNO8S
+         BaiVcqzvCBqE2Ww6spq9SKrwQi8Q15aixI+49Xywgh6aEqAotfbQIMpbZnQ4Ga2S4o
+         RFj83E7PZQ34A==
+Message-ID: <7a2de98766bbb81c2db2cf7a5b827c122bc7be81.camel@kernel.org>
+Subject: Re: [PATCH] Appoint myself page cache maintainer
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Dave Chinner <david@fromorbit.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org
+Date:   Mon, 09 May 2022 06:28:12 -0400
+In-Reply-To: <20220508231644.GP1949718@dread.disaster.area>
+References: <YngbFluT9ftR5dqf@casper.infradead.org>
+         <20220508202849.666756-1-willy@infradead.org>
+         <20220508231644.GP1949718@dread.disaster.area>
+Content-Type: text/plain; charset="ISO-8859-15"
+User-Agent: Evolution 3.42.4 (3.42.4-2.fc35) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Spam-Status: No, score=2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FROM_SUSPICIOUS_NTLD,
-        FROM_SUSPICIOUS_NTLD_FP,PDS_OTHER_BAD_TLD,SPF_HELO_NONE,SPF_PASS,
-        T_FILL_THIS_FORM_SHORT,T_SCC_BODY_TEXT_LINE autolearn=no
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
-X-Spam-Level: **
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-(resending as plain text as the first got bounced)
+On Mon, 2022-05-09 at 09:16 +1000, Dave Chinner wrote:
+> On Sun, May 08, 2022 at 09:28:48PM +0100, Matthew Wilcox (Oracle) wrote:
+> > This feels like a sufficiently distinct area of responsibility to be
+> > worth separating out from both MM and VFS.
+> > 
+> > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> > ---
+> >  MAINTAINERS | 12 ++++++++++++
+> >  1 file changed, 12 insertions(+)
+> > 
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 9d47c5e7c6ae..5871ec2e1b3e 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -14833,6 +14833,18 @@ F:	Documentation/core-api/padata.rst
+> >  F:	include/linux/padata.h
+> >  F:	kernel/padata.c
+> >  
+> > +PAGE CACHE
+> > +M:	Matthew Wilcox (Oracle) <willy@infradead.org>
+> > +L:	linux-fsdevel@vger.kernel.org
+> > +S:	Supported
+> > +T:	git git://git.infradead.org/users/willy/pagecache.git
+> > +F:	Documentation/filesystems/locking.rst
+> > +F:	Documentation/filesystems/vfs.rst
+> > +F:	include/linux/pagemap.h
+> > +F:	mm/filemap.c
+> > +F:	mm/page-writeback.c
+> > +F:	mm/readahead.c
+> 
+> A big thumbs up from me.
+> 
+> Reviewed-by: Dave Chinner <dchinner@redhat.com>
+> 
 
-Hi,
-  I'm the maintainer of the psmisc package that provides system tools
-for things like fuser and killall. I am trying to establish if
-something I have found with the proc filesystem is as intended
-(knowing why would be nice) or if it's a strange corner-case bug.
+Ditto. Thanks for stepping up!
 
-Apologies to the non-procfs maintainers but these two lists are what
-MAINTAINER said to go to. If you could CC me on replies that would be
-great.
-
-The proc file descriptor for a block device mounted in a different
-namespace will show the device id of that different namespace and not
-the device id of the process stat()ing the file.
-
-The issue came up in fuser not finding certain processes that were
-directly accessing a block device, see
-https://gitlab.com/psmisc/psmisc/-/issues/39 Programs such as lsof are
-caught by this too.
-
-My question is: When I am in the bash mount namespace (4026531840 below)
-then shouldn't all the device IDs be from that namespace? In other
-words, the device id of the dereferenced symlink and what it points to
-are the same (device id 5) and not symlink has 44 and /dev/dm-8 has 5.
-
-I get that if I could look at the device IDs in qemu or use nsenter to
-switch to its namespace, then the device should be 44 for the symlink
-and device (which it is and seems correct to me).
-
-How to replicate
-=============
-# uname -a
-Linux elmo 5.16.0-5-amd64 #1 SMP PREEMPT Debian 5.16.14-1 (2022-03-15)
-x86_64 GNU/Linux
-
-The easiest way to replicate this is to make a qemu virtual machine and
-have it mount a block device. I suspect there are other ways, but I
-don't have many things that mount a device and switch namespaces. The
-qemu process (here it is 136775) will have a different mount namespace.
-
-# ps -o pid,mntns,comm $$ 136775
-    PID      MNTNS COMMAND
- 136775 4026532762 qemu-system-x86
- 142359 4026531840 bash
-
-File descriptor 23 is what qemu is using to mount the block device
-# ls -l /proc/136775/fd/23
-lrwx------ 1 libvirt-qemu libvirt-qemu 64 Apr 12 16:34
-/proc/136775/fd/23 -> /dev/dm-8
-
-However, the dereferenced symlink and where the symlink points to show
-different data.
-
-# stat -L /proc/136775/fd/23
-  File: /proc/136775/fd/23
-  Size: 0         Blocks: 0          IO Block: 4096   block special file
-Device: 2ch/44d Inode: 9           Links: 1     Device type: fd,8
-Access: (0660/brw-rw----)  Uid: (64055/libvirt-qemu)   Gid: (64055/libvirt-qemu)
-Access: 2022-04-12 16:34:25.687147886 +1000
-Modify: 2022-04-12 16:34:25.519151533 +1000
-Change: 2022-04-12 16:34:25.595149882 +1000
- Birth: -
-
-# stat /dev/dm-8
-  File: /dev/dm-8
-  Size: 0         Blocks: 0          IO Block: 4096   block special file
-Device: 5h/5d Inode: 348         Links: 1     Device type: fd,8
-Access: (0660/brw-rw----)  Uid: (    0/    root)   Gid: (    0/    root)
-Access: 2022-04-12 16:15:12.684434884 +1000
-Modify: 2022-04-12 16:15:12.684434884 +1000
-Change: 2022-04-12 16:15:12.684434884 +1000
- Birth: -
-
-If we change to the qemu process' mount namespace then we do see that
-/dev/dm-8 has the same device/inode as the symlink.
-
-# nsenter -m -t 136775 stat /dev/dm-8
-  File: /dev/dm-8
-  Size: 0         Blocks: 0          IO Block: 4096   block special file
-Device: 2ch/44d Inode: 9           Links: 1     Device type: fd,8
-Access: (0660/brw-rw----)  Uid: (64055/libvirt-qemu)   Gid: (64055/libvirt-qemu)
-Access: 2022-04-12 16:34:25.687147886 +1000
-Modify: 2022-04-12 16:34:25.519151533 +1000
-Change: 2022-04-12 16:34:25.595149882 +1000
- Birth: -
-
-Thanks for your time.
-
- - Craig
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
