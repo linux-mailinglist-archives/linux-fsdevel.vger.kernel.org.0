@@ -2,59 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A5F8651FAB0
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 May 2022 13:01:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6797951FABD
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 May 2022 13:01:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230446AbiEILDK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 May 2022 07:03:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46810 "EHLO
+        id S231395AbiEILDf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 May 2022 07:03:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48272 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230359AbiEILDH (ORCPT
+        with ESMTP id S231489AbiEILD2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 May 2022 07:03:07 -0400
-Received: from mail-oi1-x22d.google.com (mail-oi1-x22d.google.com [IPv6:2607:f8b0:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 691171B54A5;
-        Mon,  9 May 2022 03:59:13 -0700 (PDT)
-Received: by mail-oi1-x22d.google.com with SMTP id v65so14707250oig.10;
-        Mon, 09 May 2022 03:59:13 -0700 (PDT)
+        Mon, 9 May 2022 07:03:28 -0400
+Received: from mail-oa1-x29.google.com (mail-oa1-x29.google.com [IPv6:2001:4860:4864:20::29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE28E1F35D0;
+        Mon,  9 May 2022 03:59:19 -0700 (PDT)
+Received: by mail-oa1-x29.google.com with SMTP id 586e51a60fabf-edf3b6b0f2so13854721fac.9;
+        Mon, 09 May 2022 03:59:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:organization;
-        bh=3mQysUIPjAAjiRbf3d/6Wo1HM4mNVU5PDAl0tpDGXO8=;
-        b=ny05JmAiW8kjUlbsP0HhFSAFr9jdAzAPOg13XQp+y7oFqgELQVW7FVHmtjiAJPWgmM
-         f4nCeWlpAY3pTN8zVbtg+UPvhZYm1Nbhe7Ccy7l/yzGSABzOIi3P7T4O/rxQriSluEyh
-         3BVjDpov43SqPawWAYBZMzBS49BLGeCBePIDwVY3lxslFAes517hhA58FlYcR0TYkA2D
-         UnqhfoBoMLBt/g9KVhh74JaBVkdDcWaLFXgraOiIrzjwRrp+zdR283al3EciSh7+97dd
-         mKcJgUY4o4YPlyXBk7Cp5XwN7BEW8ncjTCYZnhnt0scGBy09ijkhyCTyZsDFjzFGtRF6
-         TW/Q==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :organization;
+        bh=BnGXEbV8Y7iEf/Z1438MCDej841Qs2ARKUYBZjaa3vU=;
+        b=O6mFHsaWY71qiihG+2kKl84oGRJitswJMj16CyxEf77+qR58ms5pvkK7yj3mFGw+rw
+         LKVy3uO9FYuNLPxRrodcoEfmkNkx9+BvKACVlEQox6xIRVfu4KkIcEGK19261bHPB6Ld
+         WnMXIrCY2mN1fbwcNP4YuGB4I6Gd4sc0iDsGTfmiNcUqVFHnRi+LznNi3ln09Zaz10Nm
+         5cEH4at/42pQJjhAUCqYBjVfBsZDc7eAdPq/6lNbJZ+CGLt01mRA5ZofN3+grDCFEw5N
+         7vuIRLY4VKpdg9qIZfCyZlU2xVlOn5pD0Ib2HaMe3TMrewlIk7FyN8nZZfdPDMGZWFkN
+         grOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:organization;
-        bh=3mQysUIPjAAjiRbf3d/6Wo1HM4mNVU5PDAl0tpDGXO8=;
-        b=oRrTGXkoHLoTjPsyiIN4GNfmFLiYqQRLtI7c+Jir3RofdYVhHgOs6+NU5+I7NrHxWP
-         ArD6J+Nq7Uf2bR7K+dXTyu7xGRw7w/qJ4UW021OMqwDCqRVVqGB+Ja4FwbtCZuBEaWtp
-         ZSl89wDkmeYXdbLtd0KjLAD4L7AmdjrSePQtxA2jpP/+cXViQ4A4BTbApy5/7iGuu5NG
-         tKVE3qDxbSOPWqkkfhTHECwFMJrPPITcR4RdBunoxuJZSsqM3a0x2b46n8tCc6ETHnMX
-         hBvdjalKYgp+QsbPNydz79kiLdef9B+x/AsOijXcqZjdX8c7cVWKLmdRNkfUwyOsIjlp
-         MmdQ==
-X-Gm-Message-State: AOAM533b11LnVzwOLqvvpK2itD/XxQQRJIa4JQZqnPfs/h3Eh72mh+h4
-        9LqjU2ROuB4FOcLcaXrQlfc=
-X-Google-Smtp-Source: ABdhPJwgUNs0QlGbFyn/lX1x3CDJXmhsExx5g5G6+o7uYEqF+pqaiM8HrzHSheTDc2Xk6ubf6aAGLQ==
-X-Received: by 2002:a54:4f87:0:b0:324:ea60:b97d with SMTP id g7-20020a544f87000000b00324ea60b97dmr11011741oiy.87.1652093952460;
-        Mon, 09 May 2022 03:59:12 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:organization;
+        bh=BnGXEbV8Y7iEf/Z1438MCDej841Qs2ARKUYBZjaa3vU=;
+        b=7Aksau9TI5dWDNUkHvGdYWEbm6ldSQRVoihf+XH8slug9EZqRG/CaiiwZAsBcGT6ZH
+         TY6ykN+ExvNElhl1SohAm8QsvM+UtiqRrvBDmpWTF6gaDN6Gt0kZT6/KzHautdw+XNhY
+         2HbR9RgOduaPGH7cvF4U4ydkXH0Yh0gnHAXVOABndvgGb4r1GOTZkLZcSn1vuXMove0v
+         P/zztRY+qZjcfgopz/PKwENGUE1CFd0kbzR5y5rlUBbNSqBOALp7k6H9WWnKPeUqka95
+         ngc8c02x3EtosxBxfMTA+4+zK9BjUkEyf+my2f8vNNkAbDASVnEhtkiDQipxw/IRXjOf
+         Q4gg==
+X-Gm-Message-State: AOAM531YwqdRcL/W2iIiYC7OgnUhblqfhNJDIUh0NYhU/sUhvSlCxI7H
+        iPzouIejABwGPA8ZAiRB1iU=
+X-Google-Smtp-Source: ABdhPJwQD9E0L71Ga03OY/y0UOZKyH+0TnrU24+fSBgkLvgZm01UzzugjY2BGBk/64yL2nPJhY3www==
+X-Received: by 2002:a05:6870:240c:b0:ed:a070:eda5 with SMTP id n12-20020a056870240c00b000eda070eda5mr10018042oap.274.1652093959021;
+        Mon, 09 May 2022 03:59:19 -0700 (PDT)
 Received: from DDNINR0360.datadirectnet.com ([219.91.178.243])
-        by smtp.googlemail.com with ESMTPSA id 26-20020aca0d1a000000b00325d7b6cab8sm4199150oin.16.2022.05.09.03.59.09
+        by smtp.googlemail.com with ESMTPSA id 26-20020aca0d1a000000b00325d7b6cab8sm4199150oin.16.2022.05.09.03.59.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 May 2022 03:59:12 -0700 (PDT)
+        Mon, 09 May 2022 03:59:18 -0700 (PDT)
 From:   Dharmendra Singh <dharamhans87@gmail.com>
 To:     miklos@szeredi.hu
 Cc:     Dharmendra Singh <dharamhans87@gmail.com>,
         linux-fsdevel@vger.kernel.org, fuse-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/1] FUSE: Allow non-extending parallel direct writes
-Date:   Mon,  9 May 2022 16:28:46 +0530
-Message-Id: <20220509105847.8238-1-dharamhans87@gmail.com>
+        linux-kernel@vger.kernel.org, bschubert@ddn.com,
+        Dharmendra Singh <dsingh@ddn.com>
+Subject: [PATCH v2 1/1] Allow non-extending parallel direct writes
+Date:   Mon,  9 May 2022 16:28:47 +0530
+Message-Id: <20220509105847.8238-2-dharamhans87@gmail.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20220509105847.8238-1-dharamhans87@gmail.com>
+References: <20220509105847.8238-1-dharamhans87@gmail.com>
 Organization: DDN STORAGE
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
@@ -66,123 +71,137 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-It is observed that currently in Fuse, for direct writes, we hold 
-inode lock for the full duration of the request. As a result, 
-only one direct write request can proceed on the same file. This, 
-I think is due to various reasons such as serialization needed by 
-USER space fuse implementations/file size issues/write failures.
+From: Dharmendra Singh <dsingh@ddn.com>
 
-This patch allows parallel writes to proceed on the same file by
-by holding shared lock on the non-extending writes and exlusive
-lock on extending writes.
+In general, as of now, in FUSE, direct writes on the same file are
+serialized over inode lock i.e we hold inode lock for the full duration
+of the write request. I could not found in fuse code a comment which
+clearly explains why this exclusive lock is taken for direct writes.
+Our guess is some USER space fuse implementations might be relying
+on this lock for seralization and also it protects for the issues
+arising due to file size assumption or write failures.  This patch
+relaxes this exclusive lock in some cases of direct writes.
 
-For measuring performance, I carried out test on these 
-changes over example/passthrough.c (part of libfuse) by setting 
-direct-io and parallel_direct_writes flags on the file.
- 
-Note that we disabled write to underlying file system from passthrough 
-as we wanted to check gain for Fuse only. Fio was used to test
-the impact of these changes on File-per-job and Single shared File. 
-CPU binding was performed on passthrough process only.
+With these changes, we allows non-extending parallel direct writes
+on the same file with the help of a flag called FOPEN_PARALLEL_WRITES.
+If this flag is set on the file (flag is passed from libfuse to fuse
+kernel as part of file open/create), we do not take exclusive lock instead
+use shared lock so that all non-extending writes can run in parallel.
 
-Job file for SSF:
-[global]
-directory=/tmp/dest
-filename=ssf
-size=100g
-blocksize=1m
-ioengine=sync
-group_reporting=1
-fallocate=none
-runtime=60
-stonewall
+Best practise would be to enable parallel direct writes of all kinds
+including extending writes as well but we see some issues such as
+when one write completes and other fails, how we should truncate(if
+needed) the file if underlying file system does not support holes
+(For file systems which supports holes, there might be a possibility
+of enabling parallel writes for all cases).
 
-[write]
-rw=randwrite:256
-rw_sequencer=sequential
-fsync_on_close=1
+FUSE implementations which rely on this inode lock for serialisation
+can continue to do so and this is default behaviour i.e no parallel
+direct writes.
 
-
-Job file for file-per-job:
-[sequential-write]
-rw=write
-size=100G
-directory=/tmp/dest/
-group_reporting
-name=sequential-write-direct
-bs=1M
-runtime=60
-
-
-Results:
-
-unpatched=================
-
-File  per job
-
-
-Fri May  6 09:36:52 EDT 2022
-numjobs: 1  WRITE: bw=3441MiB/s (3608MB/s), 3441MiB/s-3441MiB/s (3608MB/s-3608MB/s), io=100GiB (107GB), run=29762-29762msec
-numjobs: 2  WRITE: bw=8174MiB/s (8571MB/s), 8174MiB/s-8174MiB/s (8571MB/s-8571MB/s), io=200GiB (215GB), run=25054-25054msec
-numjobs: 4  WRITE: bw=14.9GiB/s (15.0GB/s), 14.9GiB/s-14.9GiB/s (15.0GB/s-15.0GB/s), io=400GiB (429GB), run=26900-26900msec
-numjobs: 8  WRITE: bw=23.4GiB/s (25.2GB/s), 23.4GiB/s-23.4GiB/s (25.2GB/s-25.2GB/s), io=800GiB (859GB), run=34115-34115msec
-numjobs: 16  WRITE: bw=24.5GiB/s (26.3GB/s), 24.5GiB/s-24.5GiB/s (26.3GB/s-26.3GB/s), io=1469GiB (1577GB), run=60001-60001msec
-numjobs: 32  WRITE: bw=20.5GiB/s (21.0GB/s), 20.5GiB/s-20.5GiB/s (21.0GB/s-21.0GB/s), io=1229GiB (1320GB), run=60003-60003msec
-
-
-SSF
-
-Fri May  6 09:46:38 EDT 2022
-numjobs: 1  WRITE: bw=3624MiB/s (3800MB/s), 3624MiB/s-3624MiB/s (3800MB/s-3800MB/s), io=100GiB (107GB), run=28258-28258msec
-numjobs: 2  WRITE: bw=5801MiB/s (6083MB/s), 5801MiB/s-5801MiB/s (6083MB/s-6083MB/s), io=200GiB (215GB), run=35302-35302msec
-numjobs: 4  WRITE: bw=4794MiB/s (5027MB/s), 4794MiB/s-4794MiB/s (5027MB/s-5027MB/s), io=281GiB (302GB), run=60001-60001msec
-numjobs: 8  WRITE: bw=3946MiB/s (4137MB/s), 3946MiB/s-3946MiB/s (4137MB/s-4137MB/s), io=231GiB (248GB), run=60003-60003msec
-numjobs: 16  WRITE: bw=4040MiB/s (4236MB/s), 4040MiB/s-4040MiB/s (4236MB/s-4236MB/s), io=237GiB (254GB), run=60006-60006msec
-numjobs: 32  WRITE: bw=2822MiB/s (2959MB/s), 2822MiB/s-2822MiB/s (2959MB/s-2959MB/s), io=165GiB (178GB), run=60013-60013msec
-
-
-Patched=====
-
-File per job
-
-Fri May  6 10:05:46 EDT 2022
-numjobs: 1  WRITE: bw=3193MiB/s (3348MB/s), 3193MiB/s-3193MiB/s (3348MB/s-3348MB/s), io=100GiB (107GB), run=32068-32068msec
-numjobs: 2  WRITE: bw=9084MiB/s (9525MB/s), 9084MiB/s-9084MiB/s (9525MB/s-9525MB/s), io=200GiB (215GB), run=22545-22545msec
-numjobs: 4  WRITE: bw=14.8GiB/s (15.9GB/s), 14.8GiB/s-14.8GiB/s (15.9GB/s-15.9GB/s), io=400GiB (429GB), run=26986-26986msec
-numjobs: 8  WRITE: bw=24.5GiB/s (26.3GB/s), 24.5GiB/s-24.5GiB/s (26.3GB/s-26.3GB/s), io=800GiB (859GB), run=32624-32624msec
-numjobs: 16  WRITE: bw=24.2GiB/s (25.0GB/s), 24.2GiB/s-24.2GiB/s (25.0GB/s-25.0GB/s), io=1451GiB (1558GB), run=60001-60001msec
-numjobs: 32  WRITE: bw=19.3GiB/s (20.8GB/s), 19.3GiB/s-19.3GiB/s (20.8GB/s-20.8GB/s), io=1160GiB (1245GB), run=60002-60002msec
-
-
-SSF
-
-Fri May  6 09:58:33 EDT 2022
-numjobs: 1  WRITE: bw=3137MiB/s (3289MB/s), 3137MiB/s-3137MiB/s (3289MB/s-3289MB/s), io=100GiB (107GB), run=32646-32646msec
-numjobs: 2  WRITE: bw=7736MiB/s (8111MB/s), 7736MiB/s-7736MiB/s (8111MB/s-8111MB/s), io=200GiB (215GB), run=26475-26475msec
-numjobs: 4  WRITE: bw=14.4GiB/s (15.4GB/s), 14.4GiB/s-14.4GiB/s (15.4GB/s-15.4GB/s), io=400GiB (429GB), run=27869-27869msec
-numjobs: 8  WRITE: bw=22.6GiB/s (24.3GB/s), 22.6GiB/s-22.6GiB/s (24.3GB/s-24.3GB/s), io=800GiB (859GB), run=35340-35340msec
-numjobs: 16  WRITE: bw=25.6GiB/s (27.5GB/s), 25.6GiB/s-25.6GiB/s (27.5GB/s-27.5GB/s), io=1535GiB (1648GB), run=60001-60001msec
-numjobs: 32  WRITE: bw=20.2GiB/s (21.7GB/s), 20.2GiB/s-20.2GiB/s (21.7GB/s-21.7GB/s), io=1211GiB (1300GB), run=60003-60003msec
-
-
-
-SSF gain in percentage:-
-For 1 fio thread: +0%
-For 2 fio threads: +0% 
-For 4 fio threads: +42%
-For 8 fio threads: +246.8%
-For 16 fio threads: +549%
-For 32 fio threads: +630.33%
-
-
-Dharmendra Singh (1):
-  Allow non-extending parallel direct writes on the same file.
-
+Signed-off-by: Dharmendra Singh <dsingh@ddn.com>
+---
  fs/fuse/file.c            | 45 ++++++++++++++++++++++++++++++++++++---
  include/uapi/linux/fuse.h |  2 ++
  2 files changed, 44 insertions(+), 3 deletions(-)
 
----
-
-v2: Modified code to use exclusive lock only for extending writes
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 829094451774..495138a68306 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -1541,14 +1541,48 @@ static ssize_t fuse_direct_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 	return res;
+ }
+ 
++static bool fuse_direct_write_extending_i_size(struct kiocb *iocb,
++					       struct iov_iter *iter)
++{
++	struct inode *inode = file_inode(iocb->ki_filp);
++	loff_t i_size;
++	loff_t offset;
++	size_t count;
++
++	if (iocb->ki_flags & IOCB_APPEND)
++		return true;
++
++	offset = iocb->ki_pos;
++	count = iov_iter_count(iter);
++	i_size = i_size_read(inode);
++
++	return offset + count <= i_size ? false : true;
++}
++
+ static ssize_t fuse_direct_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ {
+ 	struct inode *inode = file_inode(iocb->ki_filp);
++	struct file *file = iocb->ki_filp;
++	struct fuse_file *ff = file->private_data;
+ 	struct fuse_io_priv io = FUSE_IO_PRIV_SYNC(iocb);
+ 	ssize_t res;
++	bool p_write = ff->open_flags & FOPEN_PARALLEL_WRITES ? true : false;
++	bool exclusive_lock = !p_write ||
++			       fuse_direct_write_extending_i_size(iocb, from) ?
++			       true : false;
++
++	/*
++	 * Take exclusive lock if
++	 * - parallel writes are disabled.
++	 * - parallel writes are enabled and i_size is being extended
++	 * Take shared lock if
++	 * - parallel writes are enabled but i_size does not extend.
++	 */
++	if (exclusive_lock)
++		inode_lock(inode);
++	else
++		inode_lock_shared(inode);
+ 
+-	/* Don't allow parallel writes to the same file */
+-	inode_lock(inode);
+ 	res = generic_write_checks(iocb, from);
+ 	if (res > 0) {
+ 		if (!is_sync_kiocb(iocb) && iocb->ki_flags & IOCB_DIRECT) {
+@@ -1559,7 +1593,10 @@ static ssize_t fuse_direct_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 			fuse_write_update_attr(inode, iocb->ki_pos, res);
+ 		}
+ 	}
+-	inode_unlock(inode);
++	if (exclusive_lock)
++		inode_unlock(inode);
++	else
++		inode_unlock_shared(inode);
+ 
+ 	return res;
+ }
+@@ -2900,7 +2937,9 @@ fuse_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+ 	kref_put(&io->refcnt, fuse_io_release);
+ 
+ 	if (iov_iter_rw(iter) == WRITE) {
++
+ 		fuse_write_update_attr(inode, pos, ret);
++		/* For extending writes we already hold exclusive lock */
+ 		if (ret < 0 && offset + count > i_size)
+ 			fuse_do_truncate(file);
+ 	}
+diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+index d6ccee961891..ee5379d41906 100644
+--- a/include/uapi/linux/fuse.h
++++ b/include/uapi/linux/fuse.h
+@@ -301,6 +301,7 @@ struct fuse_file_lock {
+  * FOPEN_CACHE_DIR: allow caching this directory
+  * FOPEN_STREAM: the file is stream-like (no file position at all)
+  * FOPEN_NOFLUSH: don't flush data cache on close (unless FUSE_WRITEBACK_CACHE)
++ * FOPEN_PARALLEL_WRITES: Allow concurrent writes on the same inode
+  */
+ #define FOPEN_DIRECT_IO		(1 << 0)
+ #define FOPEN_KEEP_CACHE	(1 << 1)
+@@ -308,6 +309,7 @@ struct fuse_file_lock {
+ #define FOPEN_CACHE_DIR		(1 << 3)
+ #define FOPEN_STREAM		(1 << 4)
+ #define FOPEN_NOFLUSH		(1 << 5)
++#define FOPEN_PARALLEL_WRITES	(1 << 6)
+ 
+ /**
+  * INIT request/reply flags
+-- 
+2.17.1
 
