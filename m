@@ -2,104 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E2A1451F2CA
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 May 2022 05:09:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABA5751F300
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 May 2022 05:39:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231210AbiEIDMV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 8 May 2022 23:12:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47590 "EHLO
+        id S230282AbiEIDep (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 8 May 2022 23:34:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42440 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231350AbiEIDJy (ORCPT
+        with ESMTP id S232233AbiEIDYy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 8 May 2022 23:09:54 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 617F68933D
-        for <linux-fsdevel@vger.kernel.org>; Sun,  8 May 2022 20:06:00 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id d15so13054726lfk.5
-        for <linux-fsdevel@vger.kernel.org>; Sun, 08 May 2022 20:06:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ZPCLl0WNrEQ8X7TZbGk9F5F3Xw31TIAi53cscMQsEGE=;
-        b=6xJ96j3c30HoyM2X0hOy9P1hGJLuH0A96qdPaznCYucEVe+8Xjgjzl3k4EkeeiMsJR
-         k1bhgngPuoX8XuhqFShJQsQz+g1JmAAB6xf2xZzUwZwZnDoPfJdfEbBFttzjIVk1FdSK
-         MIW9Ospi1Tz9i3tuZxlNEOl6D52+nCsQ33Gm9u3S4X57eBETIq0sXb6ZRNrDZWt9Zmco
-         xiyJyXaRHhXHIa2rRHeotUBAHkx8rajzRRXFjMcyAeqxkvVmkYhOu04r7r49U0WOh41a
-         CUEoJESUx7KT8KrEDnZRRMAv3vf0tuo9a8nLA+BGGuXdQMG/SOXC3luvwLcyhmCB2f0k
-         Z4BQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ZPCLl0WNrEQ8X7TZbGk9F5F3Xw31TIAi53cscMQsEGE=;
-        b=218ltLvgWQNMsr8pwhDdMgcwB3doIIK5O4zjC5jrBW20I9LHREHmrvi3WPeprO2UPl
-         N73KSz7JYZxbm0cY9U0GwlSAb2Rc1JokgN0i/aYdJib20gRd6Zirj0eukaZozraZ+PP4
-         gxDTAYX9d/QDzpPtgIb1p/cMGjzGbS1l9aioHujvaIm7dUJCYPbLIY3LrkF0mJUNAPOa
-         4oOWOXxqa396cyGohO6ELkp0xStsiM70thVgEzJk+yN+C+VfAXI/wsBLmkt7pZH3/0u5
-         1vr1WhzQfJkRRMkW/G7kz65OaMDtDw6ChN9eSebQaAkMNgV8EpyswUd8GoW8TO6Lc3f8
-         uvTA==
-X-Gm-Message-State: AOAM533gXrn8JuKo01zrasUncgAEyMnRX2/zTAIoegeWPuO//EUh76E+
-        FlN/VcRdxDx5E3BFeCp8iO5iDWKnlx9tNJnqD29PfQ==
-X-Google-Smtp-Source: ABdhPJylEsq2ZJj98ROOaWvCI5t7ScvLOENldeObjFe7fZFxjD/+x6tUKQL2zAuBGgq3+2z6PXGp7OAUYFJuce5ib0g=
-X-Received: by 2002:a05:6512:13a3:b0:474:2642:d00e with SMTP id
- p35-20020a05651213a300b004742642d00emr2476580lfa.328.1652065558196; Sun, 08
- May 2022 20:05:58 -0700 (PDT)
+        Sun, 8 May 2022 23:24:54 -0400
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EEE031379
+        for <linux-fsdevel@vger.kernel.org>; Sun,  8 May 2022 20:21:02 -0700 (PDT)
+Received: from canpemm500002.china.huawei.com (unknown [172.30.72.56])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4KxRFf0TvvzGph5;
+        Mon,  9 May 2022 11:18:14 +0800 (CST)
+Received: from [10.174.177.76] (10.174.177.76) by
+ canpemm500002.china.huawei.com (7.192.104.244) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Mon, 9 May 2022 11:21:00 +0800
+Subject: Re: [PATCH 1/3] filemap: Remove obsolete comment in lock_page
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+CC:     Christoph Hellwig <hch@lst.de>,
+        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>
+References: <YngbFluT9ftR5dqf@casper.infradead.org>
+ <20220508203048.667631-1-willy@infradead.org>
+ <20220508203048.667631-2-willy@infradead.org>
+From:   Miaohe Lin <linmiaohe@huawei.com>
+Message-ID: <d86aea24-1ee5-c8a5-078c-60e0bac99151@huawei.com>
+Date:   Mon, 9 May 2022 11:21:00 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 MIME-Version: 1.0
-References: <20220507083154.18226-1-yinxin.x@bytedance.com> <dfcbda24-3969-f374-b209-81c3818246c1@linux.alibaba.com>
-In-Reply-To: <dfcbda24-3969-f374-b209-81c3818246c1@linux.alibaba.com>
-From:   Xin Yin <yinxin.x@bytedance.com>
-Date:   Mon, 9 May 2022 11:05:47 +0800
-Message-ID: <CAK896s68f5Snrip8TYPfDbObOpNoTtWW+0WBXzTiJbadAShGrg@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH v2] erofs: change to use asyncronous io for
- fscache readpage/readahead
-To:     JeffleXu <jefflexu@linux.alibaba.com>
-Cc:     hsiangkao@linux.alibaba.com, dhowells@redhat.com,
-        linux-erofs@lists.ozlabs.org, linux-cachefs@redhat.com,
-        linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20220508203048.667631-2-willy@infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.174.177.76]
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ canpemm500002.china.huawei.com (7.192.104.244)
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-5.7 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, May 7, 2022 at 9:08 PM JeffleXu <jefflexu@linux.alibaba.com> wrote:
->
->
->
-> On 5/7/22 4:31 PM, Xin Yin wrote:
-> > Use asyncronous io to read data from fscache may greatly improve IO
-> > bandwidth for sequential buffer read scenario.
-> >
-> > Change erofs_fscache_read_folios to erofs_fscache_read_folios_async,
-> > and read data from fscache asyncronously. Make .readpage()/.readahead()
-> > to use this new helper.
-> >
-> > Signed-off-by: Xin Yin <yinxin.x@bytedance.com>
-> > ---
->
-> s/asyncronous/asynchronous/
-> s/asyncronously/asynchronously/
->
-Thanks for pointing this out , I will fix it.
+On 2022/5/9 4:30, Matthew Wilcox (Oracle) wrote:
+> From: Miaohe Lin <linmiaohe@huawei.com>
+> 
+> We no longer need the page's inode pinned.  This comment dates back to
+> commit db37648cd6ce ("[PATCH] mm: non syncing lock_page()") which added
+> lock_page_nosync().  That was removed by commit 7eaceaccab5f ("block:
+> remove per-queue plugging") which also made this comment obsolete.
+> 
+> Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
 
-> BTW, "convert to asynchronous readahead" may be more concise?
->
-You mean the title of this patch?  But, actually we also change to use
-this asynchronous io helper for .readpage() now , so I think we need
-to point this in the title. right ?
+Many thanks for doing this! :)
 
-Thanks,
-Xin Yin
-> Apart from that, LGTM
->
-> Reviewed-by: Jeffle Xu <jefflexu@linux.alibaba.com>
->
->
-> --
-> Thanks,
-> Jeffle
+> ---
+>  include/linux/pagemap.h | 3 ---
+>  1 file changed, 3 deletions(-)
+> 
+> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+> index 65ae8f96554b..ab47579af434 100644
+> --- a/include/linux/pagemap.h
+> +++ b/include/linux/pagemap.h
+> @@ -908,9 +908,6 @@ static inline void folio_lock(struct folio *folio)
+>  		__folio_lock(folio);
+>  }
+>  
+> -/*
+> - * lock_page may only be called if we have the page's inode pinned.
+> - */
+>  static inline void lock_page(struct page *page)
+>  {
+>  	struct folio *folio;
+> 
+
