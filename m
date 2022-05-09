@@ -2,88 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DCF48520149
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 May 2022 17:40:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BECB252014F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 May 2022 17:43:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238395AbiEIPnq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 May 2022 11:43:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45974 "EHLO
+        id S238378AbiEIPpB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 May 2022 11:45:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238398AbiEIPnj (ORCPT
+        with ESMTP id S238400AbiEIPoz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 May 2022 11:43:39 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 976792B3F56;
-        Mon,  9 May 2022 08:39:40 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id D664E21C54;
-        Mon,  9 May 2022 15:39:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1652110778; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=nTZWzTfhKU+1GQ7EcYFAIyq3UpkErEnEj1MDLxKK65U=;
-        b=UneUz6mci3EnGNAhu21F/CkfOnfjxWRl3zrXbLhCEkn5h7rtZ3WUFe2m177KKkXGXbkabo
-        Nbcz6Rmr55NlO7CyLb6lV1A4N3n6CBzTPdLtsRmWmxes41iuIlUsFTFRNNcwBrZhl8CTjx
-        SI8ew0HepDhRleWezpnCbQOq4aqONKE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1652110778;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=nTZWzTfhKU+1GQ7EcYFAIyq3UpkErEnEj1MDLxKK65U=;
-        b=SM0rAeF8/YsjIRoRduKakZt7R91TpJnfuZXIMXwXTBOfrL/+OUfvyZJV5Q1RqA0trTk7Dw
-        10j0JQdgeuPtamDw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id AC25213AA5;
-        Mon,  9 May 2022 15:39:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id sAwjKbo1eWKWIAAAMHmgww
-        (envelope-from <vbabka@suse.cz>); Mon, 09 May 2022 15:39:38 +0000
-Message-ID: <6f4c1220-74d5-787b-83a6-a45dfc8f0388@suse.cz>
-Date:   Mon, 9 May 2022 17:39:38 +0200
+        Mon, 9 May 2022 11:44:55 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 380286321;
+        Mon,  9 May 2022 08:40:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=BWi0CMF33iSMPofX0Fh5cc+WLjna1ZWjd9XJJiUgbr8=; b=pU9OzLAJ0C18+Wp/OW1urFv7Ix
+        bjs32y2b28IzDpQn93rbuwJ08wo6GMwvXe+1nbKpZU3NwGoo2r+tKQ+8Dk1LoBrHGYan/DfIl6uw8
+        rTrwU+jryLWF69ku+7ZIYNsKLit4LUDne7J8CIPKprU7GXxe51wUe1ikuHC4azwgrZPvBBQ4ZPVSG
+        25YQwLJ+ilH0TcCcfsufF+4kuMyde/D+OB5Put7w6TfjJ+OrCu6Bilhmv8ioHL4voXC52kn9AjOKF
+        Rrq/l3EpicJG9yQ5KMEjiSJ7z3wtqxzalQ4bgbzdGuJMjSuWcI4i63Ba7NdEY3nrz9HnGpZ5PZhMn
+        eudp3m1A==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1no5VC-003Zha-4f; Mon, 09 May 2022 15:40:50 +0000
+Date:   Mon, 9 May 2022 16:40:50 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     CGEL <cgel.zte@gmail.com>
+Cc:     akpm@linux-foundation.org, keescook@chromium.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, ran.xiaokai@zte.com.cn, wang.yong12@zte.com.cn,
+        xu.xin16@zte.com.cn, yang.yang29@zte.com.cn,
+        zhang.yunkai@zte.com.cn
+Subject: Re: [PATCH v5] mm/ksm: introduce ksm_force for each process
+Message-ID: <Ynk2AsCEl1fk/WaS@casper.infradead.org>
+References: <20220507105926.d4423601230f698b0f5228d1@linux-foundation.org>
+ <20220508092710.930126-1-xu.xin16@zte.com.cn>
+ <YngF+Lz01noCKRFc@casper.infradead.org>
+ <6278bb5f.1c69fb81.e623f.215f@mx.google.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [v3 PATCH 7/8] mm: khugepaged: introduce khugepaged_enter_vma()
- helper
-Content-Language: en-US
-To:     Yang Shi <shy828301@gmail.com>, kirill.shutemov@linux.intel.com,
-        linmiaohe@huawei.com, songliubraving@fb.com, riel@surriel.com,
-        willy@infradead.org, ziy@nvidia.com, tytso@mit.edu,
-        akpm@linux-foundation.org
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20220404200250.321455-1-shy828301@gmail.com>
- <20220404200250.321455-8-shy828301@gmail.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <20220404200250.321455-8-shy828301@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-5.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6278bb5f.1c69fb81.e623f.215f@mx.google.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/4/22 22:02, Yang Shi wrote:
-> The khugepaged_enter_vma_merge() actually does as the same thing as the
-> khugepaged_enter() section called by shmem_mmap(), so consolidate them
-> into one helper and rename it to khugepaged_enter_vma().
-> 
-> Signed-off-by: Yang Shi <shy828301@gmail.com>
+On Mon, May 09, 2022 at 06:57:33AM +0000, CGEL wrote:
+> On Sun, May 08, 2022 at 07:03:36PM +0100, Matthew Wilcox wrote:
+> > On Sun, May 08, 2022 at 09:27:10AM +0000, cgel.zte@gmail.com wrote:
+> > > If ksm_force is set to 0, cancel the feature of ksm_force of this
+> > > process and unmerge those merged pages belonging to VMAs which is not
+> > > madvised as MADV_MERGEABLE of this process, but leave MADV_MERGEABLE
+> > > areas merged.
+> > 
+> > Is that actually a useful feature?  Otherwise, we could simply turn
+> > on/off the existing MMF_VM_MERGEABLE flag instead of introducing this
+> > new bool.
+> > 
+> I think this will be very useful for those apps which are very likely to
+> cause Same Pages in memory and users and operators are not willing to
+> modified the source codes for any reasons.
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+No, you misunderstand.  Is it useful to have the "force KSM off"
+functionality?  ie code which has been modified to allow KSM, but
+then overridden by an admin?
+
+> Besides, simply turning of/off the existing MMF_VM_MERGEABLE flag may be
+> not feasible because madvise will also turn on the MMF_VM_MERGEABLE
+> flag.
+> 
+> I think the following suggestions is good, and I will resend a patch.
+> > > +Controlling KSM with procfs
+> > > +===========================
+> > > +
+> > > +KSM can also operate on anonymous areas of address space of those processes's
+> > > +knob ``/proc/<pid>/ksm_force`` is on, even if app codes doesn't call madvise()
+> > > +explicitly to advise specific areas as MADV_MERGEABLE.
+> > > +
+> > > +You can set ksm_force to 1 to force all anonymous and qualified VMAs of
+> > > +this process to be involved in KSM scanning. But It is effective only when the
+> > > +klob of ``/sys/kernel/mm/ksm/run`` is set as 1.
+> > 
+> > I think that last sentence doesn't really add any value.
+> > 
+> > > +	memset(buffer, 0, sizeof(buffer));
+> > > +	if (count > sizeof(buffer) - 1)
+> > > +		count = sizeof(buffer) - 1;
+> > > +	if (copy_from_user(buffer, buf, count)) {
+> > > +		err = -EFAULT;
+> > > +		goto out_return;
+> > 
+> > This feels a bit unnecessary.  Just 'return -EFAULT' here.
+> > 
+> > > +	}
+> > > +
+> > > +	err = kstrtoint(strstrip(buffer), 0, &force);
+> > > +
+> > > +	if (err)
+> > > +		goto out_return;
+> > 
+> > 'return err'
+> > 
+> > > +	if (force != 0 && force != 1) {
+> > > +		err = -EINVAL;
+> > > +		goto out_return;
+> > 
+> > 'return -EINVAL'
+> > 
+> > > +	}
+> > > +
+> > > +	task = get_proc_task(file_inode(file));
+> > > +	if (!task) {
+> > > +		err = -ESRCH;
+> > > +		goto out_return;
+> > 
+> > 'return -ESRCH'
