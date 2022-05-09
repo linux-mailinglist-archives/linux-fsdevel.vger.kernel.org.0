@@ -2,23 +2,23 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4107751F65D
+	by mail.lfdr.de (Postfix) with ESMTP id E4F5C51F65F
 	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 May 2022 10:02:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238128AbiEIIDo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 May 2022 04:03:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59152 "EHLO
+        id S238159AbiEIIDx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 May 2022 04:03:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234927AbiEIHoy (ORCPT
+        with ESMTP id S235007AbiEIHoy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Mon, 9 May 2022 03:44:54 -0400
-Received: from out30-54.freemail.mail.aliyun.com (out30-54.freemail.mail.aliyun.com [115.124.30.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B6DC165A1;
-        Mon,  9 May 2022 00:40:58 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R331e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04426;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=20;SR=0;TI=SMTPD_---0VCggc9B_1652082039;
-Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0VCggc9B_1652082039)
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50C2017073;
+        Mon,  9 May 2022 00:40:59 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R231e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=20;SR=0;TI=SMTPD_---0VCfxsXb_1652082041;
+Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0VCfxsXb_1652082041)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 09 May 2022 15:40:40 +0800
+          Mon, 09 May 2022 15:40:42 +0800
 From:   Jeffle Xu <jefflexu@linux.alibaba.com>
 To:     dhowells@redhat.com, linux-cachefs@redhat.com, xiang@kernel.org,
         chao@kernel.org, linux-erofs@lists.ozlabs.org
@@ -30,9 +30,9 @@ Cc:     torvalds@linux-foundation.org, gregkh@linuxfoundation.org,
         luodaowen.backend@bytedance.com, tianzichen@kuaishou.com,
         yinxin.x@bytedance.com, zhangjiachen.jaycee@bytedance.com,
         zhujia.zj@bytedance.com
-Subject: [PATCH v11 07/22] cachefiles: add tracepoints for on-demand read mode
-Date:   Mon,  9 May 2022 15:40:13 +0800
-Message-Id: <20220509074028.74954-8-jefflexu@linux.alibaba.com>
+Subject: [PATCH v11 08/22] cachefiles: document on-demand read mode
+Date:   Mon,  9 May 2022 15:40:14 +0800
+Message-Id: <20220509074028.74954-9-jefflexu@linux.alibaba.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20220509074028.74954-1-jefflexu@linux.alibaba.com>
 References: <20220509074028.74954-1-jefflexu@linux.alibaba.com>
@@ -48,267 +48,206 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add tracepoints for on-demand read mode. Currently following tracepoints
-are added:
-
-	OPEN request / COPEN reply
-	CLOSE request
-	READ request / CREAD reply
-	write through anonymous fd
-	release of anonymous fd
+Document new user interface introduced by on-demand read mode.
 
 Signed-off-by: Jeffle Xu <jefflexu@linux.alibaba.com>
-Acked-by: David Howells <dhowells@redhat.com>
 ---
- fs/cachefiles/ondemand.c          |   7 ++
- include/trace/events/cachefiles.h | 174 ++++++++++++++++++++++++++++++
- 2 files changed, 181 insertions(+)
+ .../filesystems/caching/cachefiles.rst        | 178 ++++++++++++++++++
+ 1 file changed, 178 insertions(+)
 
-diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
-index 3470d4e8f0cb..a41ae6efc545 100644
---- a/fs/cachefiles/ondemand.c
-+++ b/fs/cachefiles/ondemand.c
-@@ -30,6 +30,7 @@ static int cachefiles_ondemand_fd_release(struct inode *inode,
- 	xa_unlock(&cache->reqs);
+diff --git a/Documentation/filesystems/caching/cachefiles.rst b/Documentation/filesystems/caching/cachefiles.rst
+index 8bf396b76359..fc7abf712315 100644
+--- a/Documentation/filesystems/caching/cachefiles.rst
++++ b/Documentation/filesystems/caching/cachefiles.rst
+@@ -28,6 +28,7 @@ Cache on Already Mounted Filesystem
  
- 	xa_erase(&cache->ondemand_ids, object_id);
-+	trace_cachefiles_ondemand_fd_release(object, object_id);
- 	cachefiles_put_object(object, cachefiles_obj_put_ondemand_fd);
- 	cachefiles_put_unbind_pincount(cache);
- 	return 0;
-@@ -55,6 +56,7 @@ static ssize_t cachefiles_ondemand_fd_write_iter(struct kiocb *kiocb,
- 	if (ret < 0)
- 		return ret;
+  (*) Debugging.
  
-+	trace_cachefiles_ondemand_fd_write(object, file_inode(file), pos, len);
- 	ret = __cachefiles_write(object, file, pos, iter, NULL, NULL);
- 	if (!ret)
- 		ret = len;
-@@ -93,6 +95,7 @@ static long cachefiles_ondemand_fd_ioctl(struct file *filp, unsigned int ioctl,
- 	if (!req)
- 		return -EINVAL;
++ (*) On-demand Read.
  
-+	trace_cachefiles_ondemand_cread(object, id);
- 	complete(&req->done);
- 	return 0;
- }
-@@ -166,6 +169,7 @@ int cachefiles_ondemand_copen(struct cachefiles_cache *cache, char *args)
- 		clear_bit(FSCACHE_COOKIE_NO_DATA_TO_READ, &cookie->flags);
- 	else
- 		set_bit(FSCACHE_COOKIE_NO_DATA_TO_READ, &cookie->flags);
-+	trace_cachefiles_ondemand_copen(req->object, id, size);
  
- out:
- 	complete(&req->done);
-@@ -213,6 +217,7 @@ static int cachefiles_ondemand_get_fd(struct cachefiles_req *req)
- 	object->ondemand_id = object_id;
+ Overview
+@@ -482,3 +483,180 @@ the control file.  For example::
+ 	echo $((1|4|8)) >/sys/module/cachefiles/parameters/debug
  
- 	cachefiles_get_unbind_pincount(cache);
-+	trace_cachefiles_ondemand_open(object, &req->msg, load);
- 	return 0;
- 
- err_put_fd:
-@@ -426,6 +431,7 @@ static int cachefiles_ondemand_init_close_req(struct cachefiles_req *req,
- 		return -ENOENT;
- 
- 	req->msg.object_id = object_id;
-+	trace_cachefiles_ondemand_close(object, &req->msg);
- 	return 0;
- }
- 
-@@ -452,6 +458,7 @@ static int cachefiles_ondemand_init_read_req(struct cachefiles_req *req,
- 	req->msg.object_id = object_id;
- 	load->off = read_ctx->off;
- 	load->len = read_ctx->len;
-+	trace_cachefiles_ondemand_read(object, &req->msg, load);
- 	return 0;
- }
- 
-diff --git a/include/trace/events/cachefiles.h b/include/trace/events/cachefiles.h
-index 93df9391bd7f..d8d4d73fe7b6 100644
---- a/include/trace/events/cachefiles.h
-+++ b/include/trace/events/cachefiles.h
-@@ -673,6 +673,180 @@ TRACE_EVENT(cachefiles_io_error,
- 		      __entry->error)
- 	    );
- 
-+TRACE_EVENT(cachefiles_ondemand_open,
-+	    TP_PROTO(struct cachefiles_object *obj, struct cachefiles_msg *msg,
-+		     struct cachefiles_open *load),
+ will turn on all function entry debugging.
 +
-+	    TP_ARGS(obj, msg, load),
 +
-+	    TP_STRUCT__entry(
-+		    __field(unsigned int,	obj		)
-+		    __field(unsigned int,	msg_id		)
-+		    __field(unsigned int,	object_id	)
-+		    __field(unsigned int,	fd		)
-+		    __field(unsigned int,	flags		)
-+			     ),
++On-demand Read
++==============
 +
-+	    TP_fast_assign(
-+		    __entry->obj	= obj ? obj->debug_id : 0;
-+		    __entry->msg_id	= msg->msg_id;
-+		    __entry->object_id	= msg->object_id;
-+		    __entry->fd		= load->fd;
-+		    __entry->flags	= load->flags;
-+			   ),
++When working in its original mode, CacheFiles serves as a local cache for a
++remote networking fs - while in on-demand read mode, CacheFiles can boost the
++scenario where on-demand read semantics are needed, e.g. container image
++distribution.
 +
-+	    TP_printk("o=%08x mid=%x oid=%x fd=%d f=%x",
-+		      __entry->obj,
-+		      __entry->msg_id,
-+		      __entry->object_id,
-+		      __entry->fd,
-+		      __entry->flags)
-+	    );
++The essential difference between these two modes is seen when a cache miss
++occurs: In the original mode, the netfs will fetch the data from the remote
++server and then write it to the cache file; in on-demand read mode, fetching
++the data and writing it into the cache is delegated to a user daemon.
 +
-+TRACE_EVENT(cachefiles_ondemand_copen,
-+	    TP_PROTO(struct cachefiles_object *obj, unsigned int msg_id,
-+		     long len),
++``CONFIG_CACHEFILES_ONDEMAND`` should be enabled to support on-demand read mode.
 +
-+	    TP_ARGS(obj, msg_id, len),
 +
-+	    TP_STRUCT__entry(
-+		    __field(unsigned int,	obj	)
-+		    __field(unsigned int,	msg_id	)
-+		    __field(long,		len	)
-+			     ),
++Protocol Communication
++----------------------
 +
-+	    TP_fast_assign(
-+		    __entry->obj	= obj ? obj->debug_id : 0;
-+		    __entry->msg_id	= msg_id;
-+		    __entry->len	= len;
-+			   ),
++The on-demand read mode uses a simple protocol for communication between kernel
++and user daemon. The protocol can be modeled as::
 +
-+	    TP_printk("o=%08x mid=%x l=%lx",
-+		      __entry->obj,
-+		      __entry->msg_id,
-+		      __entry->len)
-+	    );
++	kernel --[request]--> user daemon --[reply]--> kernel
 +
-+TRACE_EVENT(cachefiles_ondemand_close,
-+	    TP_PROTO(struct cachefiles_object *obj, struct cachefiles_msg *msg),
++CacheFiles will send requests to the user daemon when needed.  The user daemon
++should poll the devnode ('/dev/cachefiles') to check if there's a pending
++request to be processed.  A POLLIN event will be returned when there's a pending
++request.
 +
-+	    TP_ARGS(obj, msg),
++The user daemon then reads the devnode to fetch a request to process.  It should
++be noted that each read only gets one request. When it has finished processing
++the request, the user daemon should write the reply to the devnode.
 +
-+	    TP_STRUCT__entry(
-+		    __field(unsigned int,	obj		)
-+		    __field(unsigned int,	msg_id		)
-+		    __field(unsigned int,	object_id	)
-+			     ),
++Each request starts with a message header of the form::
 +
-+	    TP_fast_assign(
-+		    __entry->obj	= obj ? obj->debug_id : 0;
-+		    __entry->msg_id	= msg->msg_id;
-+		    __entry->object_id	= msg->object_id;
-+			   ),
++	struct cachefiles_msg {
++		__u32 msg_id;
++		__u32 opcode;
++		__u32 len;
++		__u32 object_id;
++		__u8  data[];
++	};
 +
-+	    TP_printk("o=%08x mid=%x oid=%x",
-+		      __entry->obj,
-+		      __entry->msg_id,
-+		      __entry->object_id)
-+	    );
++where:
 +
-+TRACE_EVENT(cachefiles_ondemand_read,
-+	    TP_PROTO(struct cachefiles_object *obj, struct cachefiles_msg *msg,
-+		     struct cachefiles_read *load),
++	* ``msg_id`` is a unique ID identifying this request among all pending
++	  requests.
 +
-+	    TP_ARGS(obj, msg, load),
++	* ``opcode`` indicates the type of this request.
 +
-+	    TP_STRUCT__entry(
-+		    __field(unsigned int,	obj		)
-+		    __field(unsigned int,	msg_id		)
-+		    __field(unsigned int,	object_id	)
-+		    __field(loff_t,		start		)
-+		    __field(size_t,		len		)
-+			     ),
++	* ``object_id`` is a unique ID identifying the cache file operated on.
 +
-+	    TP_fast_assign(
-+		    __entry->obj	= obj ? obj->debug_id : 0;
-+		    __entry->msg_id	= msg->msg_id;
-+		    __entry->object_id	= msg->object_id;
-+		    __entry->start	= load->off;
-+		    __entry->len	= load->len;
-+			   ),
++	* ``data`` indicates the payload of this request.
 +
-+	    TP_printk("o=%08x mid=%x oid=%x s=%llx l=%zx",
-+		      __entry->obj,
-+		      __entry->msg_id,
-+		      __entry->object_id,
-+		      __entry->start,
-+		      __entry->len)
-+	    );
++	* ``len`` indicates the whole length of this request, including the
++	  header and following type-specific payload.
 +
-+TRACE_EVENT(cachefiles_ondemand_cread,
-+	    TP_PROTO(struct cachefiles_object *obj, unsigned int msg_id),
 +
-+	    TP_ARGS(obj, msg_id),
++Turning on On-demand Mode
++-------------------------
 +
-+	    TP_STRUCT__entry(
-+		    __field(unsigned int,	obj	)
-+		    __field(unsigned int,	msg_id	)
-+			     ),
++An optional parameter becomes available to the "bind" command::
 +
-+	    TP_fast_assign(
-+		    __entry->obj	= obj ? obj->debug_id : 0;
-+		    __entry->msg_id	= msg_id;
-+			   ),
++	bind [ondemand]
 +
-+	    TP_printk("o=%08x mid=%x",
-+		      __entry->obj,
-+		      __entry->msg_id)
-+	    );
++When the "bind" command is given no argument, it defaults to the original mode.
++When it is given the "ondemand" argument, i.e. "bind ondemand", on-demand read
++mode will be enabled.
 +
-+TRACE_EVENT(cachefiles_ondemand_fd_write,
-+	    TP_PROTO(struct cachefiles_object *obj, struct inode *backer,
-+		     loff_t start, size_t len),
 +
-+	    TP_ARGS(obj, backer, start, len),
++The OPEN Request
++----------------
 +
-+	    TP_STRUCT__entry(
-+		    __field(unsigned int,	obj	)
-+		    __field(unsigned int,	backer	)
-+		    __field(loff_t,		start	)
-+		    __field(size_t,		len	)
-+			     ),
++When the netfs opens a cache file for the first time, a request with the
++CACHEFILES_OP_OPEN opcode, a.k.a an OPEN request will be sent to the user
++daemon.  The payload format is of the form::
 +
-+	    TP_fast_assign(
-+		    __entry->obj	= obj ? obj->debug_id : 0;
-+		    __entry->backer	= backer->i_ino;
-+		    __entry->start	= start;
-+		    __entry->len	= len;
-+			   ),
++	struct cachefiles_open {
++		__u32 volume_key_size;
++		__u32 cookie_key_size;
++		__u32 fd;
++		__u32 flags;
++		__u8  data[];
++	};
 +
-+	    TP_printk("o=%08x iB=%x s=%llx l=%zx",
-+		      __entry->obj,
-+		      __entry->backer,
-+		      __entry->start,
-+		      __entry->len)
-+	    );
++where:
 +
-+TRACE_EVENT(cachefiles_ondemand_fd_release,
-+	    TP_PROTO(struct cachefiles_object *obj, int object_id),
++	* ``data`` contains the volume_key followed directly by the cookie_key.
++	  The volume key is a NUL-terminated string; the cookie key is binary
++	  data.
 +
-+	    TP_ARGS(obj, object_id),
++	* ``volume_key_size`` indicates the size of the volume key in bytes.
 +
-+	    TP_STRUCT__entry(
-+		    __field(unsigned int,	obj		)
-+		    __field(unsigned int,	object_id	)
-+			     ),
++	* ``cookie_key_size`` indicates the size of the cookie key in bytes.
 +
-+	    TP_fast_assign(
-+		    __entry->obj	= obj ? obj->debug_id : 0;
-+		    __entry->object_id	= object_id;
-+			   ),
++	* ``fd`` indicates an anonymous fd referring to the cache file, through
++	  which the user daemon can perform write/llseek file operations on the
++	  cache file.
 +
-+	    TP_printk("o=%08x oid=%x",
-+		      __entry->obj,
-+		      __entry->object_id)
-+	    );
 +
- #endif /* _TRACE_CACHEFILES_H */
- 
- /* This part must be outside protection */
++The user daemon can use the given (volume_key, cookie_key) pair to distinguish
++the requested cache file.  With the given anonymous fd, the user daemon can
++fetch the data and write it to the cache file in the background, even when
++kernel has not triggered a cache miss yet.
++
++Be noted that each cache file has a unique object_id, while it may have multiple
++anonymous fds.  The user daemon may duplicate anonymous fds from the initial
++anonymous fd indicated by the @fd field through dup().  Thus each object_id can
++be mapped to multiple anonymous fds, while the usr daemon itself needs to
++maintain the mapping.
++
++When implementing a user daemon, please be careful of RLIMIT_NOFILE,
++``/proc/sys/fs/nr_open`` and ``/proc/sys/fs/file-max``.  Typically these needn't
++be huge since they're related to the number of open device blobs rather than
++open files of each individual filesystem.
++
++The user daemon should reply the OPEN request by issuing a "copen" (complete
++open) command on the devnode::
++
++	copen <msg_id>,<cache_size>
++
++where:
++
++	* ``msg_id`` must match the msg_id field of the OPEN request.
++
++	* When >= 0, ``cache_size`` indicates the size of the cache file;
++	  when < 0, ``cache_size`` indicates any error code encountered by the
++	  user daemon.
++
++
++The CLOSE Request
++-----------------
++
++When a cookie withdrawn, a CLOSE request (opcode CACHEFILES_OP_CLOSE) will be
++sent to the user daemon.  This tells the user daemon to close all anonymous fds
++associated with the given object_id.  The CLOSE request has no extra payload,
++and shouldn't be replied.
++
++
++The READ Request
++----------------
++
++When a cache miss is encountered in on-demand read mode, CacheFiles will send a
++READ request (opcode CACHEFILES_OP_READ) to the user daemon. This tells the user
++daemon to fetch the contents of the requested file range.  The payload is of the
++form::
++
++	struct cachefiles_read {
++		__u64 off;
++		__u64 len;
++	};
++
++where:
++
++	* ``off`` indicates the starting offset of the requested file range.
++
++	* ``len`` indicates the length of the requested file range.
++
++
++When it receives a READ request, the user daemon should fetch the requested data
++and write it to the cache file identified by object_id.
++
++When it has finished processing the READ request, the user daemon should reply
++by using the CACHEFILES_IOC_READ_COMPLETE ioctl on one of the anonymous fds
++associated with the object_id given in the READ request.  The ioctl is of the
++form::
++
++	ioctl(fd, CACHEFILES_IOC_READ_COMPLETE, msg_id);
++
++where:
++
++	* ``fd`` is one of the anonymous fds associated with the object_id
++	  given.
++
++	* ``msg_id`` must match the msg_id field of the READ request.
 -- 
 2.27.0
 
