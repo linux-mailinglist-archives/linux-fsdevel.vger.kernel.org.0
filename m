@@ -2,63 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EBE1B51F244
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 May 2022 03:26:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C8F751F23E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 May 2022 03:26:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233678AbiEIBaZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 8 May 2022 21:30:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38592 "EHLO
+        id S231221AbiEIBaQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 8 May 2022 21:30:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50674 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234799AbiEIAWI (ORCPT
+        with ESMTP id S236139AbiEIBJu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 8 May 2022 20:22:08 -0400
-Received: from lgeamrelo11.lge.com (lgeamrelo12.lge.com [156.147.23.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8DB74262F
-        for <linux-fsdevel@vger.kernel.org>; Sun,  8 May 2022 17:18:15 -0700 (PDT)
-Received: from unknown (HELO lgemrelse6q.lge.com) (156.147.1.121)
-        by 156.147.23.52 with ESMTP; 9 May 2022 09:18:13 +0900
-X-Original-SENDERIP: 156.147.1.121
-X-Original-MAILFROM: byungchul.park@lge.com
-Received: from unknown (HELO X58A-UD3R) (10.177.244.38)
-        by 156.147.1.121 with ESMTP; 9 May 2022 09:18:13 +0900
-X-Original-SENDERIP: 10.177.244.38
-X-Original-MAILFROM: byungchul.park@lge.com
-Date:   Mon, 9 May 2022 09:16:37 +0900
-From:   Byungchul Park <byungchul.park@lge.com>
-To:     Hyeonggon Yoo <42.hyeyoo@gmail.com>
-Cc:     torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
-        linux-ide@vger.kernel.org, adilger.kernel@dilger.ca,
-        linux-ext4@vger.kernel.org, mingo@redhat.com,
-        linux-kernel@vger.kernel.org, peterz@infradead.org,
-        will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
-        joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
-        chris@chris-wilson.co.uk, duyuyang@gmail.com,
-        johannes.berg@intel.com, tj@kernel.org, tytso@mit.edu,
-        willy@infradead.org, david@fromorbit.com, amir73il@gmail.com,
-        gregkh@linuxfoundation.org, kernel-team@lge.com,
-        linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
-        minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
-        sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
-        penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
-        ngupta@vflare.org, linux-block@vger.kernel.org,
-        paolo.valente@linaro.org, josef@toxicpanda.com,
-        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        jack@suse.cz, jack@suse.com, jlayton@kernel.org,
-        dan.j.williams@intel.com, hch@infradead.org, djwong@kernel.org,
-        dri-devel@lists.freedesktop.org, airlied@linux.ie,
-        rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
-        hamohammed.sa@gmail.com
-Subject: Re: [PATCH RFC v6 00/21] DEPT(Dependency Tracker)
-Message-ID: <20220509001637.GA6047@X58A-UD3R>
-References: <CAHk-=whnPePcffsNQM+YSHMGttLXvpf8LbBQ8P7HEdqFXaV7Lg@mail.gmail.com>
- <1651795895-8641-1-git-send-email-byungchul.park@lge.com>
- <YnYd0hd+yTvVQxm5@hyeyoo>
+        Sun, 8 May 2022 21:09:50 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A37B72DFD
+        for <linux-fsdevel@vger.kernel.org>; Sun,  8 May 2022 18:05:57 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2CF7160EBB
+        for <linux-fsdevel@vger.kernel.org>; Mon,  9 May 2022 01:05:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DFD6C385AC;
+        Mon,  9 May 2022 01:05:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1652058356;
+        bh=LAMkXBXg3fhVG6OmqDTRkl6U8qsnTIFLXwHkJl0vh2I=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lAUa7K4H0RpVrPk+1yuHcAQbS8QarvN0sPhTcq3003GpBfXMEVX+onoFcNFLZaH6c
+         9GfJBNb0AbRt4Ff92KLMNoz83yQ1BiHUsE/oaJNzYDhra3bwK8nGmQf5u1bjXDhUVW
+         hQA3QgQNoQ6rZ5PmSFjMqNEcYEIajoMxrc5FYbJ0HkekKtFoSKncvwJ9yzW5YOJdFj
+         yJxlK8sSsX5Xvk4hl8MBguHMWL5MpgEBoCBHkUoMozWVsfyUOCyF7ZsLJ+YnHBTaQH
+         gRVaI17fNk3qYnG28EOK5TqiFJz1OLouhK5UzDFWJdn5Dyln0hT6m0A7cXph/mUw+7
+         6CcHZOskHRZAQ==
+Date:   Sun, 8 May 2022 18:05:55 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] Appoint myself page cache maintainer
+Message-ID: <20220509010555.GA284271@magnolia>
+References: <YngbFluT9ftR5dqf@casper.infradead.org>
+ <20220508202849.666756-1-willy@infradead.org>
+ <20220508231644.GP1949718@dread.disaster.area>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YnYd0hd+yTvVQxm5@hyeyoo>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Spam-Status: No, score=-6.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_HI,
+In-Reply-To: <20220508231644.GP1949718@dread.disaster.area>
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -67,95 +56,49 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, May 07, 2022 at 04:20:50PM +0900, Hyeonggon Yoo wrote:
-> On Fri, May 06, 2022 at 09:11:35AM +0900, Byungchul Park wrote:
-> > Linus wrote:
-> > >
-> > > On Wed, May 4, 2022 at 1:19 AM Byungchul Park <byungchul.park@lge.com> wrote:
-> > > >
-> > > > Hi Linus and folks,
-> > > >
-> > > > I've been developing a tool for detecting deadlock possibilities by
-> > > > tracking wait/event rather than lock(?) acquisition order to try to
-> > > > cover all synchonization machanisms.
-> > > 
-> > > So what is the actual status of reports these days?
-> > > 
-> > > Last time I looked at some reports, it gave a lot of false positives
-> > > due to mis-understanding prepare_to_sleep().
+On Mon, May 09, 2022 at 09:16:44AM +1000, Dave Chinner wrote:
+> On Sun, May 08, 2022 at 09:28:48PM +0100, Matthew Wilcox (Oracle) wrote:
+> > This feels like a sufficiently distinct area of responsibility to be
+> > worth separating out from both MM and VFS.
 > > 
-> > Yes, it was. I handled the case in the following way:
+> > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+
+Yes plz,
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+
+--D
+
+> > ---
+> >  MAINTAINERS | 12 ++++++++++++
+> >  1 file changed, 12 insertions(+)
 > > 
-> > 1. Stage the wait at prepare_to_sleep(), which might be used at commit.
-> >    Which has yet to be an actual wait that Dept considers.
-> > 2. If the condition for sleep is true, the wait will be committed at
-> >    __schedule(). The wait becomes an actual one that Dept considers.
-> > 3. If the condition is false and the task gets back to TASK_RUNNING,
-> >    clean(=reset) the staged wait.
-> > 
-> > That way, Dept only works with what actually hits to __schedule() for
-> > the waits through sleep.
-> > 
-> > > For this all to make sense, it would need to not have false positives
-> > > (or at least a very small number of them together with a way to sanely
-> > 
-> > Yes. I agree with you. I got rid of them that way I described above.
-> >
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 9d47c5e7c6ae..5871ec2e1b3e 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -14833,6 +14833,18 @@ F:	Documentation/core-api/padata.rst
+> >  F:	include/linux/padata.h
+> >  F:	kernel/padata.c
+> >  
+> > +PAGE CACHE
+> > +M:	Matthew Wilcox (Oracle) <willy@infradead.org>
+> > +L:	linux-fsdevel@vger.kernel.org
+> > +S:	Supported
+> > +T:	git git://git.infradead.org/users/willy/pagecache.git
+> > +F:	Documentation/filesystems/locking.rst
+> > +F:	Documentation/filesystems/vfs.rst
+> > +F:	include/linux/pagemap.h
+> > +F:	mm/filemap.c
+> > +F:	mm/page-writeback.c
+> > +F:	mm/readahead.c
 > 
-> IMHO DEPT should not report what lockdep allows (Not talking about
-
-No.
-
-> wait events). I mean lockdep allows some kind of nested locks but
-> DEPT reports them.
-
-You have already asked exactly same question in another thread of
-LKML. That time I answered to it but let me explain it again.
-
----
-
-CASE 1.
-
-   lock L with depth n
-   lock_nested L' with depth n + 1
-   ...
-   unlock L'
-   unlock L
-
-This case is allowed by Lockdep.
-This case is allowed by DEPT cuz it's not a deadlock.
-
-CASE 2.
-
-   lock L with depth n
-   lock A
-   lock_nested L' with depth n + 1
-   ...
-   unlock L'
-   unlock A
-   unlock L
-
-This case is allowed by Lockdep.
-This case is *NOT* allowed by DEPT cuz it's a *DEADLOCK*.
-
----
-
-The following scenario would explain why CASE 2 is problematic.
-
-   THREAD X			THREAD Y
-
-   lock L with depth n
-				lock L' with depth n
-   lock A
-				lock A
-   lock_nested L' with depth n + 1
-				lock_nested L'' with depth n + 1
-   ...				...
-   unlock L'			unlock L''
-   unlock A			unlock A
-   unlock L			unlock L'
-
-Yes. I need to check if the report you shared with me is a true one, but
-it's not because DEPT doesn't work with *_nested() APIs.
-
-	Byungchul
+> A big thumbs up from me.
+> 
+> Reviewed-by: Dave Chinner <dchinner@redhat.com>
+> 
+> Cheers,
+> 
+> Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
