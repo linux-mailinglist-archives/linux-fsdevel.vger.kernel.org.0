@@ -2,134 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 868B3520F74
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 May 2022 10:08:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E9DE52100C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 May 2022 10:51:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237854AbiEJIMN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 May 2022 04:12:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43854 "EHLO
+        id S238277AbiEJIzN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 May 2022 04:55:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237823AbiEJIMG (ORCPT
+        with ESMTP id S238238AbiEJIzL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 May 2022 04:12:06 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 715D0259FA8
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 May 2022 01:08:08 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id i19so31292132eja.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 May 2022 01:08:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2QFdBMdYEEbUASs02np96D58mKsmERHZc9+DIqJWP78=;
-        b=qQi+i9ZAoniWPdwG3ylmPUcac2wf8Zd0T/w/nS4IkCX0SkHWtsVxLcPNyUCNNYVzbs
-         SKLrVJtsuHZOxJf9utf3nZ1kAxJ0Y5h6Rt6gPKKyU3j5RzI862zM7fBWXwNd3l4lr+p6
-         dD3XO8aDg4AuxFjyL4NW7QgH+gJ4zt0+d9rh8=
+        Tue, 10 May 2022 04:55:11 -0400
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24AB43E5C4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 May 2022 01:51:14 -0700 (PDT)
+Received: by mail-il1-f197.google.com with SMTP id g11-20020a056e021a2b00b002cf48b48824so8972942ile.21
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 May 2022 01:51:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2QFdBMdYEEbUASs02np96D58mKsmERHZc9+DIqJWP78=;
-        b=FAhYGzq+BPz3JoVODrfuHb8K4xYRgeR1UPsHChUD57OwqpLCmnfsY6G1zws0xGuqJY
-         vZs+i88K/QAyZvI5UHi+qqTt8CHvnVv+J+LPxwQo2rz6bOjP9QBiRcmu4rdpECBFjJvk
-         v2fLTeAwx+E+UUuQAIXaQiIURWYoVWCYY+BqqJT7zRMNZ8gqP2WGozJTL9NTGQ09JfWb
-         zwvTA3nRpF/rXwX+aPFVy9QkZ7zFMljCgJqFXicHCbevusE6vOYVDappJU8A+6GRbhJZ
-         pKw72dIwj2/+n2V8h+k+CN+kXrFe/CQSrC8oKrFeDaKl4MJKwG1syDQrHqFbE1ZHsKxq
-         eKbg==
-X-Gm-Message-State: AOAM531E/1Qn4W0sgFdRiu8YYuLJwH13rh0KTIieN2E3ZUx1Z/Ri0hXb
-        vOzzFT7DIxhElZ8ZPWgsepKWd0Udh4XsRaQuBLVgpQ==
-X-Google-Smtp-Source: ABdhPJwEHlw4XhbiZIuNB+ukHQw6ZcScwA3a5E2Bw5WzA5tKVBIbFK+IK2Sb7JbU5SORV2GvNdQ+pEESwl6nGdb3zws=
-X-Received: by 2002:a17:906:b48:b0:6f5:132c:1a17 with SMTP id
- v8-20020a1709060b4800b006f5132c1a17mr18555378ejg.748.1652170086987; Tue, 10
- May 2022 01:08:06 -0700 (PDT)
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=gEeJNjfS0q6RM62Nvi60TGEoWat+e1zZfxTGA+WRzSY=;
+        b=l1yEA1hK2BtFDdLnpJovbkoi7uueRNT7kJa/yL9r5/kQX71ewuSOHitjMUzH1Sj1K6
+         WKyrMQPVEgkm6Emg5ob9lj3yypnouHX2UkLQ6QKBsWEFsn4OXq0Pblc38uzO5vjOFsiG
+         7e2R/KSg9lS3zDsviZ/LXgGe388UnKdD/tz93UthJIoX6FeSql4a7JLpYJ8QONIbVEFl
+         6RYKav/6H6ljBnzZkrRsnpurLY6Iq6UrcKnV5C1jNS8yeJUw1ZOzW4qztUCb+/xgr4bv
+         RqOteENsyiX0XAeU+n6U3ZXFZ4Hrr5N+xOmyQuF+os0jjvftjpG/37ruiUWvpemmUw3W
+         6Q2g==
+X-Gm-Message-State: AOAM5303m0VUeSar9mo8CYrEFZJ/yxOsRDJESc7CgtIdrCCN2mUYfxWg
+        EX/HG5nYpUlfUkytkvrhHMc/O1uLChaciqQK+plbZKziC62V
+X-Google-Smtp-Source: ABdhPJymd70zSLRupmjht8i7wwnCSSg/9t9Ls3kE6/21v2tdD1hcmHlI4ApXwuuuEnn2Izn9LJhqsv6m4l19IZnSt7QWs+/iF9HJ
 MIME-Version: 1.0
-References: <YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com> <20220509124815.vb7d2xj5idhb2wq6@wittgenstein>
- <CAJfpegveWaS5pR3O1c_7qLnaEDWwa8oi26x2v_CwDXB_sir1tg@mail.gmail.com>
- <8ab7f51cf18ba62e3f5bfdf5d9933895413f4806.camel@themaw.net> <CAJfpegv3MCHMzur9R+K+yZC3Z_Wmbq3=pQwuQ=+kQSrihg0c9g@mail.gmail.com>
-In-Reply-To: <CAJfpegv3MCHMzur9R+K+yZC3Z_Wmbq3=pQwuQ=+kQSrihg0c9g@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Tue, 10 May 2022 10:07:55 +0200
-Message-ID: <CAJfpegutUQOTa71NTy_iaz5Kus2ma16ALqrHtvV2+cQ0tFiaxA@mail.gmail.com>
-Subject: Re: [RFC PATCH] getting misc stats/attributes via xattr API
-To:     Ian Kent <raven@themaw.net>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
-        "Theodore Ts'o" <tytso@mit.edu>, Karel Zak <kzak@redhat.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Amir Goldstein <amir73il@gmail.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>
+X-Received: by 2002:a05:6e02:218b:b0:2cd:fb28:5417 with SMTP id
+ j11-20020a056e02218b00b002cdfb285417mr9002492ila.83.1652172673463; Tue, 10
+ May 2022 01:51:13 -0700 (PDT)
+Date:   Tue, 10 May 2022 01:51:13 -0700
+In-Reply-To: <000000000000402c5305ab0bd2a2@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004f3c0d05dea46dac@google.com>
+Subject: Re: [syzbot] INFO: task hung in synchronize_rcu (3)
+From:   syzbot <syzbot+0c6da80218456f1edc36@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, davem@davemloft.net, jhs@mojatatu.com,
+        jiri@resnulli.us, kvm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mingo@elte.hu, mlevitsk@redhat.com, netdev@vger.kernel.org,
+        pbonzini@redhat.com, peterz@infradead.org, seanjc@google.com,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
+        vinicius.gomes@intel.com, viro@zeniv.linux.org.uk,
+        xiyou.wangcong@gmail.com
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 10 May 2022 at 10:06, Miklos Szeredi <miklos@szeredi.hu> wrote:
->
-> On Tue, 10 May 2022 at 06:27, Ian Kent <raven@themaw.net> wrote:
->
-> > > Was there ever a test patch for systemd using fsinfo(2)?  I think
-> > > not.
-> >
-> > Mmm ... I'm hurt you didn't pay any attention to what I did on this
-> > during the original fsinfo() discussions.
->
-> I can't find anything related to this in my mailbox.  Maybe you
-> mentioned it at some point, but I have not been involved with the
-> actual systemd changes.  So not meant to belittle your work at all.
->
-> > > Until systemd people start to reengineer the mount handing to allow
-> > > for retrieving a single mount instead of the complete mount table we
-> > > will never know where the performance bottleneck lies.
-> >
-> > We didn't need the systemd people to do this only review and contribute
-> > to the pr for the change and eventually merge it.
-> >
-> > What I did on this showed that using fsinfo() allone about halved the
-> > CPU overhead (from around 4 processes using about 80%) and once the
-> > mount notifications was added too it went down to well under 10% per
-> > process. The problem here was systemd is quite good at servicing events
-> > and reducing event processing overhead meant more events would then be
-> > processed. Utilizing the mount notifications queueing was the key to
-> > improving this and that was what I was about to work on at the end.
-> >
-> > But everything stopped before the work was complete.
-> >
-> > As I said above it's been a long time since I looked at the systemd
-> > work and it definitely was a WIP so "what you see is what you get"
-> > at https://github.com/raven-au/systemd/commits/. It looks like the
-> > place to look to get some idea of what was being done is branch
-> > notifications-devel or notifications-rfc-pr. Also note that this
-> > uses the libmount fsinfo() infrastrucure that was done by Karal Zak
-> > (and a tiny bit by me) at the time.
->
-> Looks great as a first step.
->
-> What do you mean by "Utilizing the mount notifications queueing"?
->
-> Do you mean batching of notifications?   I think that's a very
-> important issue: processing each individual notifcation may not make
-> sense when there are lots of them.  For example, doing ceate
-> mount+remote mount in a loop a million times will result in two
+syzbot suspects this issue was fixed by commit:
 
-s/remote/remove/
+commit 2d08935682ac5f6bfb70f7e6844ec27d4a245fa4
+Author: Sean Christopherson <seanjc@google.com>
+Date:   Fri Apr 15 00:43:41 2022 +0000
 
-> million notification messages (with high likelyhood of queue
-> overflow), but in the end the mount table will end up being the
-> same...
->
-> Thanks,
-> Miklos
+    KVM: x86: Don't re-acquire SRCU lock in complete_emulated_io()
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16dc2e49f00000
+start commit:   ea4424be1688 Merge tag 'mtd/fixes-for-5.17-rc8' of git://g..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=442f8ac61e60a75e
+dashboard link: https://syzkaller.appspot.com/bug?extid=0c6da80218456f1edc36
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1685af9e700000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11b09df1700000
+
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: KVM: x86: Don't re-acquire SRCU lock in complete_emulated_io()
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
