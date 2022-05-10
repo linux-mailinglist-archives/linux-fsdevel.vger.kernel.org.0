@@ -2,116 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AE5C45211B9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 May 2022 12:06:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0216A5211B4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 May 2022 12:06:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239545AbiEJKKM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 May 2022 06:10:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49774 "EHLO
+        id S239521AbiEJKKG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 May 2022 06:10:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49610 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239543AbiEJKKI (ORCPT
+        with ESMTP id S231929AbiEJKKF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 May 2022 06:10:08 -0400
-Received: from heian.cn.fujitsu.com (mail.cn.fujitsu.com [183.91.158.132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5FD2F185C85;
-        Tue, 10 May 2022 03:06:10 -0700 (PDT)
-IronPort-Data: =?us-ascii?q?A9a23=3AI0P84K4R1JlNNlB1ZT4xcQxRtODGchMFZxGqfqr?=
- =?us-ascii?q?LsXjdYENS3mBVzjFNUGuHM6yNN2qnct93a9/l8x5U6JDTy4Q3TAY5pCpnJ55og?=
- =?us-ascii?q?ZCbXIzGdC8cHM8zwvXrFRsht4NHAjX5BJhcokT0+1H9YtANkVEmjfvSHuCkUba?=
- =?us-ascii?q?dUsxMbVQMpBkJ2EsLd9ER0tYAbeiRW2thiPuqyyHtEAbNNw1cbgr435m+RCZH5?=
- =?us-ascii?q?5wejt+3UmsWPpintHeG/5Uc4Ql2yauZdxMUSaEMdgK2qnqq8V23wo/Z109F5tK?=
- =?us-ascii?q?NmbC9fFAIQ6LJIE6FjX8+t6qK20AE/3JtlP1gcqd0hUR/0l1lm/hr1dxLro32R?=
- =?us-ascii?q?wEyIoXCheYcTwJFVSp5OMWq/ZeeeyTm65DIlxaun3zEhq8G4FsNFYER5Od7KW9?=
- =?us-ascii?q?U8vkfMjoMclaIgOfe6La6TOxtj8MjIeHrIYoAt3AmxjbcZd4mSpDrQqPE/9ZU0?=
- =?us-ascii?q?T48wMdUEp72eMsdbStHbRLOeRRDN14bTpUkk4+AinD5NT8et1ORoas+5nP7zQp?=
- =?us-ascii?q?t3byrO93QEvSGR9pSmEmwpW/c+Wn9RBYAO7S3zTuD72Lpg+rnnj3yU4FUE6e3n?=
- =?us-ascii?q?tZsnlGSw2k7DBwNSUD9pfi/l174V99BQ2QS8y0/pO4y81aqQcT2XxyQpnOP+BU?=
- =?us-ascii?q?bXrJ4EeQ85UeGyrf85ByQDWwJCDVGbbQOrsAxQTA1x1mhhM7yCHpjvdW9TXOb6?=
- =?us-ascii?q?6fRoyi+NDYYKUccaiIeCwgI+d/upMc0lB2nZtJiFrOly974Azf9xxiUoyUkwbY?=
- =?us-ascii?q?el8gG0+O851+vqzatoIXZCx47/S3JUW+/qAB0foioY8qv81ezxehBNoGxXFSHv?=
- =?us-ascii?q?WZCn8mY8fBICouC0jGOKNjhtpnBC+2taWWa2AAwWcJ6sWnFxpJqRqgIiBkWGau?=
- =?us-ascii?q?jGp9slefVXXLu?=
-IronPort-HdrOrdr: =?us-ascii?q?A9a23=3AAk0ILqEPzin0AFePpLqE1MeALOsnbusQ8zAX?=
- =?us-ascii?q?PiFKOHhom6mj+vxG88506faKslwssR0b+OxoW5PwJE80l6QFgrX5VI3KNGbbUQ?=
- =?us-ascii?q?CTXeNfBOXZowHIKmnX8+5x8eNaebFiNduYNzNHpPe/zA6mM9tI+rW6zJw=3D?=
-X-IronPort-AV: E=Sophos;i="5.88,333,1635177600"; 
-   d="scan'208";a="124124303"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 10 May 2022 18:06:09 +0800
-Received: from G08CNEXMBPEKD05.g08.fujitsu.local (unknown [10.167.33.204])
-        by cn.fujitsu.com (Postfix) with ESMTP id 107D44D16FFC;
-        Tue, 10 May 2022 18:06:04 +0800 (CST)
-Received: from G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.85) by
- G08CNEXMBPEKD05.g08.fujitsu.local (10.167.33.204) with Microsoft SMTP Server
- (TLS) id 15.0.1497.23; Tue, 10 May 2022 18:06:03 +0800
-Received: from [192.168.22.28] (10.167.225.141) by
- G08CNEXCHPEKD09.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
- id 15.0.1497.23 via Frontend Transport; Tue, 10 May 2022 18:06:02 +0800
-Message-ID: <696970ff-6a35-831a-da82-bba7975628c7@fujitsu.com>
-Date:   Tue, 10 May 2022 18:06:03 +0800
+        Tue, 10 May 2022 06:10:05 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F75E16D118;
+        Tue, 10 May 2022 03:06:08 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id C296621889;
+        Tue, 10 May 2022 10:06:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1652177166; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ytZlP7vVK+dBIlmkee79MIPsVpRUqqEBBWJPXxxXFVw=;
+        b=TS7kb4CQdw0UWYaKL1F2HZbsoWfdeqZyokWrx2/pzmLN9JCLD3JWTv3x/0jtZxgRZMELPS
+        oIFCC1Z4s0ixxjqnQ+cctz6PFleszxO4hln0/8rTP5V7fTCj9YJP7Ns1+/jeV39lNuCa5r
+        GUEun9eWj5S6mKcgP7yqN4lcV7qwgvo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1652177166;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ytZlP7vVK+dBIlmkee79MIPsVpRUqqEBBWJPXxxXFVw=;
+        b=wDevVj6IjhWv9uRasThN3fVEL8j47oLzjDzyCNS440VR+lnJV5Z6cO6VUeD6tXLEfuD3qP
+        IFHcc4+Del9EThBQ==
+Received: from quack3.suse.cz (unknown [10.163.28.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 6EFE92C141;
+        Tue, 10 May 2022 10:06:06 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 20527A062A; Tue, 10 May 2022 12:06:06 +0200 (CEST)
+Date:   Tue, 10 May 2022 12:06:06 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Jing Xia <jing.xia@unisoc.com>
+Cc:     viro@zeniv.linux.org.uk, jack@suse.cz, hch@lst.de,
+        jing.xia.mail@gmail.com, stable@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2] writeback: Avoid skipping inode writeback
+Message-ID: <20220510100606.qqiiti2i3axfusnh@quack3.lan>
+References: <20220510023514.27399-1-jing.xia@unisoc.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH v11 06/07] xfs: support CoW in fsdax mode
-To:     Christoph Hellwig <hch@infradead.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
-        <nvdimm@lists.linux.dev>, <linux-mm@kvack.org>,
-        <linux-fsdevel@vger.kernel.org>, <djwong@kernel.org>,
-        <dan.j.williams@intel.com>, <david@fromorbit.com>,
-        <jane.chu@oracle.com>, <rgoldwyn@suse.de>,
-        <viro@zeniv.linux.org.uk>, <willy@infradead.org>,
-        <naoya.horiguchi@nec.com>, <linmiaohe@huawei.com>
-References: <20220508143620.1775214-1-ruansy.fnst@fujitsu.com>
- <20220508143620.1775214-14-ruansy.fnst@fujitsu.com>
- <Ynn8BnZclNoEuzvv@infradead.org>
-From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
-In-Reply-To: <Ynn8BnZclNoEuzvv@infradead.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-yoursite-MailScanner-ID: 107D44D16FFC.A5333
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: ruansy.fnst@fujitsu.com
-X-Spam-Status: No, score=-5.1 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220510023514.27399-1-jing.xia@unisoc.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-在 2022/5/10 13:45, Christoph Hellwig 写道:
->> +#ifdef CONFIG_FS_DAX
->> +int
->> +xfs_dax_fault(
->> +	struct vm_fault		*vmf,
->> +	enum page_entry_size	pe_size,
->> +	bool			write_fault,
->> +	pfn_t			*pfn)
->> +{
->> +	return dax_iomap_fault(vmf, pe_size, pfn, NULL,
->> +			(write_fault && !vmf->cow_page) ?
->> +				&xfs_dax_write_iomap_ops :
->> +				&xfs_read_iomap_ops);
->> +}
->> +#endif
+On Tue 10-05-22 10:35:14, Jing Xia wrote:
+> We have run into an issue that a task gets stuck in
+> balance_dirty_pages_ratelimited() when perform I/O stress testing.
+> The reason we observed is that an I_DIRTY_PAGES inode with lots
+> of dirty pages is in b_dirty_time list and standard background
+> writeback cannot writeback the inode.
+> After studing the relevant code, the following scenario may lead
+> to the issue:
 > 
-> Is there any reason this is in xfs_iomap.c and not xfs_file.c?
-
-Yes, It's better to put it in xfs_file.c since it's the only caller.  I 
-didn't notice it...
-
-
---
-Thanks,
-Ruan.
-
+> task1                                   task2
+> -----                                   -----
+> fuse_flush
+>  write_inode_now //in b_dirty_time
+>   writeback_single_inode
+>    __writeback_single_inode
+>                                  fuse_write_end
+>                                   filemap_dirty_folio
+>                                    __xa_set_mark:PAGECACHE_TAG_DIRTY
+>     lock inode->i_lock
+>     if mapping tagged PAGECACHE_TAG_DIRTY
+>     inode->i_state |= I_DIRTY_PAGES
+>     unlock inode->i_lock
+>                                    __mark_inode_dirty:I_DIRTY_PAGES
+>                                       lock inode->i_lock
+>                                       -was dirty,inode stays in
+>                                       -b_dirty_time
+>                                       unlock inode->i_lock
 > 
-> Otherwise the patch looks good:
+>    if(!(inode->i_state & I_DIRTY_All))
+>       -not true,so nothing done
 > 
+> This patch moves the dirty inode to b_dirty list when the inode
+> currently is not queued in b_io or b_more_io list at the end of
+> writeback_single_inode.
 > 
+> Reviewed-by: Jan Kara <jack@suse.cz>
 > Reviewed-by: Christoph Hellwig <hch@lst.de>
+> CC: stable@vger.kernel.org
+> Fixes: 0ae45f63d4ef ("vfs: add support for a lazytime mount option")
+> Signed-off-by: Jing Xia <jing.xia@unisoc.com>
 
+Thanks. I've queued the patch to my tree and will push it to Linus tomorrow
+or so.
 
+								Honza
+
+> ---
+>  fs/fs-writeback.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+> index 591fe9cf1659..1fae0196292a 100644
+> --- a/fs/fs-writeback.c
+> +++ b/fs/fs-writeback.c
+> @@ -1712,6 +1712,10 @@ static int writeback_single_inode(struct inode *inode,
+>  	 */
+>  	if (!(inode->i_state & I_DIRTY_ALL))
+>  		inode_cgwb_move_to_attached(inode, wb);
+> +	else if (!(inode->i_state & I_SYNC_QUEUED) &&
+> +		 (inode->i_state & I_DIRTY))
+> +		redirty_tail_locked(inode, wb);
+> +
+>  	spin_unlock(&wb->list_lock);
+>  	inode_sync_complete(inode);
+>  out:
+> -- 
+> 2.17.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
