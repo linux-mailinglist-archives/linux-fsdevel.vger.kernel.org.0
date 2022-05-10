@@ -2,41 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D416521EE3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 May 2022 17:34:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B904F521FD1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 May 2022 17:48:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345924AbiEJPh6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 May 2022 11:37:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36200 "EHLO
+        id S1346572AbiEJPwg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 May 2022 11:52:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345971AbiEJPff (ORCPT
+        with ESMTP id S1347216AbiEJPwF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 May 2022 11:35:35 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2782C3B574;
-        Tue, 10 May 2022 08:31:00 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id ACCA6B81D7C;
-        Tue, 10 May 2022 15:30:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C68EC385C2;
-        Tue, 10 May 2022 15:30:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1652196657;
-        bh=S6exA6OSyNi01JKIfIMf9AjDS/wnlwFSx2RTUuwC2CM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lNXs8Q6V+p1cDUy2KdDM13MJl3NoY5Qdq/BwxZegnMRh/5ZI29oP1SPUkaBoDIGCV
-         TRre5hHPsOtIqmvWOicVnIVAb69UshJhuh5Hn99PJZSqYrNXj+PEsbz00L2u/60aiy
-         j/FmlT3/v5f6i27tQ3nCUDKETS37dKvkAokYkmfCcvj0jeFCRHv+QYEjusHvlLhp89
-         7ytt5cHhPBXg6wivc7CRGViEZUUDaQ/784NyBc5Bri20QayljHQ8hiEsos+SZktroI
-         zT+IFRGAHv991qAJXSy2bRr4D8ys4ClAXT8buFbLgaUzPyTnlFf0byM0DdjSi8okVb
-         W1diT2O5XTk/w==
-Date:   Tue, 10 May 2022 17:30:50 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Miklos Szeredi <miklos@szeredi.hu>
+        Tue, 10 May 2022 11:52:05 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF820280E12
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 May 2022 08:47:26 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id j6so33788953ejc.13
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 May 2022 08:47:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TDgGs9CgwXyWbub9AhjowkEjkVJeBjS3w2UHtPu470w=;
+        b=BWf3C8d4lnfR8oyZMmiSG29J+xMF4byi5shsnljwByLz3ZI+tA9YQmsP2wO3AXfCLN
+         2FwC+K5kV6TSxgVYPDqMHoowvhwbnvoTOQ40tdtYAFdfGW4iBRWmqdfMI9myYUzSRZju
+         K90x6QomLH3PQ8C+QlMs9A5PkLTsIFFI8EnHU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TDgGs9CgwXyWbub9AhjowkEjkVJeBjS3w2UHtPu470w=;
+        b=2+Ca6HpdjhJagEyD9Ex/5zVmKG+3T560eK62qUuOOwh6P4tDbuYvGGnPQRD3sfEOyJ
+         Fo9lr7vp0wlcIYX65ULdwn6V9DgqDWzxXqSyAAGZwdxHHoaDUuYrVO2qTZEjDFqhb/zA
+         588wKgMcrdpfxHG9QaGdA4StxKlABMviJHTRmAg50u3/KUaAqJu1YZ/ECs5f3dNcDVyq
+         rS6NZhm8ocWiA5USMBaSqu9A4XvN2N3NJVbWKib54LNQ1GRRA4P26dHWhDksLjcsuVhW
+         FGsdIeDvTlEUWoUfbmCR15j9FhY0U5s5ya8OgCGAtmAiWv7166MnmxZyNv6MLVSYwIU7
+         moJA==
+X-Gm-Message-State: AOAM530Vb5mabLXVapDTan/XVWiBRcGPKb/wTRkxW08zyC34tH8I/B/u
+        JjfzuE5klMaDTCge/FQJkk3Dz46yMYcj7ED0yT+Hrw==
+X-Google-Smtp-Source: ABdhPJzA7XHkejv97/hBJ9ZeMnnM4WnEpIKq8Sfb7wU3wAiKmqThY4v+xIYCWjHTNRv4d3NHKBoE4Y0+Flk5e1rLhis=
+X-Received: by 2002:a17:906:9749:b0:6f5:6cd:5bd9 with SMTP id
+ o9-20020a170906974900b006f506cd5bd9mr20675818ejy.523.1652197645318; Tue, 10
+ May 2022 08:47:25 -0700 (PDT)
+MIME-Version: 1.0
+References: <YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com> <20220509124815.vb7d2xj5idhb2wq6@wittgenstein>
+ <CAJfpegveWaS5pR3O1c_7qLnaEDWwa8oi26x2v_CwDXB_sir1tg@mail.gmail.com>
+ <20220510115316.acr6gl5ayqszada6@wittgenstein> <CAJfpegtVgyumJiFM_ujjuRTjg07vwOd4h9AT+mbh+n1Qn-LqqA@mail.gmail.com>
+ <20220510141932.lth3bryefbl6ykny@wittgenstein> <CAJfpegt94fP-_eDAk=_C=24ahCtjQ4vhh8Xg+SrZbwPHs1waLA@mail.gmail.com>
+ <20220510153050.cgbt3wezbvf2jfnb@wittgenstein>
+In-Reply-To: <20220510153050.cgbt3wezbvf2jfnb@wittgenstein>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 10 May 2022 17:47:13 +0200
+Message-ID: <CAJfpegu8d2VQ+WjfmUJ6g7YBPJsYUABt0jG5ByVh-dMt_waV8A@mail.gmail.com>
+Subject: Re: [RFC PATCH] getting misc stats/attributes via xattr API
+To:     Christian Brauner <brauner@kernel.org>
 Cc:     linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
-        Theodore Ts'o <tytso@mit.edu>, Karel Zak <kzak@redhat.com>,
+        "Theodore Ts'o" <tytso@mit.edu>, Karel Zak <kzak@redhat.com>,
         Greg KH <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org,
         Linux API <linux-api@vger.kernel.org>,
@@ -49,72 +68,30 @@ Cc:     linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
         Christian Brauner <christian@brauner.io>,
         Amir Goldstein <amir73il@gmail.com>,
         James Bottomley <James.Bottomley@hansenpartnership.com>
-Subject: Re: [RFC PATCH] getting misc stats/attributes via xattr API
-Message-ID: <20220510153050.cgbt3wezbvf2jfnb@wittgenstein>
-References: <YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com>
- <20220509124815.vb7d2xj5idhb2wq6@wittgenstein>
- <CAJfpegveWaS5pR3O1c_7qLnaEDWwa8oi26x2v_CwDXB_sir1tg@mail.gmail.com>
- <20220510115316.acr6gl5ayqszada6@wittgenstein>
- <CAJfpegtVgyumJiFM_ujjuRTjg07vwOd4h9AT+mbh+n1Qn-LqqA@mail.gmail.com>
- <20220510141932.lth3bryefbl6ykny@wittgenstein>
- <CAJfpegt94fP-_eDAk=_C=24ahCtjQ4vhh8Xg+SrZbwPHs1waLA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAJfpegt94fP-_eDAk=_C=24ahCtjQ4vhh8Xg+SrZbwPHs1waLA@mail.gmail.com>
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
+        DKIM_SIGNED,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 10, 2022 at 04:41:35PM +0200, Miklos Szeredi wrote:
-> On Tue, 10 May 2022 at 16:19, Christian Brauner <brauner@kernel.org> wrote:
-> 
-> > Fwiw, turning this around: unifying semantically distinct interfaces
-> > because of syntactical similarities is bad. Moving them into a
-> > syntactically equivalent system call that expresses the difference in
-> > semantics in its name is good.
-> 
-> You are ignoring the arguments against fragmentation.
+On Tue, 10 May 2022 at 17:30, Christian Brauner <brauner@kernel.org> wrote:
 
-No, I'm not ignoring it and really wasn't trying to. What I tried to say
-by this, is that the inverse of the argument against fragmentation is
-simply equally worth supporting. Meaning the argument against
-fragmentation isn't stronger than the argument against aggressive
-unification.
+> But now we're in the process of extending the *xattr() calls to operate
+> on mounts and filesystems so an additional getfsattr() (or another name)
+> is not fragmentation imho. And I definitely don't think this would
+> qualify as "crazy".
 
-(Fwiw, I think that basing the argument on syntactical similarities is
-problematic. Stretching this argument for a second, all multiplexers are
-almost by necessity syntactically similar (e.g. ptrace() and seccomp())
-but we don't use that as an argument to make them a single system call.)
+In that spirit st_dev does not belong in struct stat, because that is
+the property of the block device, not the inode.
 
-> 
-> You are also ignoring the fact that semantically the current xattr
-> interface is already fragmented.   Grep for "strncmp(name, XATTR_" in
-> fs/xattr.c.
-> 
-> We don't have getsecurityxattr(), getuserxattr(), gettrustedxattr()
-> and getsystemxattr().  It would be crazy.   Adding getfsxattr()  would
-> be equally crazy.  getxattr() pretty much describes the semantics of
-> all of these things.
+But I feel we are going round in circles, lets please not get hung up
+on this issue.  Linus will have the final word on which variant (if
+either) is going to go in.
 
-getxattr() describes the syntax of all of these things and barely that.
-It describes the method of retrieval. And the method of retrieval is
-super generic to the point where strings _or binary data_ can be
-returned (e.g. POSIX ACLs or fscaps) depending on the xattr namespace.
-But wight now, everything we currently get from getxattr() is attributes
-associated with inodes.
-
-So getsecurityxattr(), getuserxattr(), gettrustedxattr() etc. would
-arguably be fragmentation because all of these things are associated
-with inodes.
-
-But now we're in the process of extending the *xattr() calls to operate
-on mounts and filesystems so an additional getfsattr() (or another name)
-is not fragmentation imho. And I definitely don't think this would
-qualify as "crazy".
+Thanks,
+Miklos
