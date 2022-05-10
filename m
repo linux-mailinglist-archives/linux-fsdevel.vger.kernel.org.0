@@ -2,127 +2,202 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9266E520A3D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 May 2022 02:34:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23D9F520A46
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 May 2022 02:35:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229696AbiEJAhu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 May 2022 20:37:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33866 "EHLO
+        id S233816AbiEJAjD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 May 2022 20:39:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38526 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233749AbiEJAhs (ORCPT
+        with ESMTP id S232696AbiEJAjD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 May 2022 20:37:48 -0400
-Received: from lgeamrelo11.lge.com (lgeamrelo11.lge.com [156.147.23.51])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8FFD52AEDB9
-        for <linux-fsdevel@vger.kernel.org>; Mon,  9 May 2022 17:33:51 -0700 (PDT)
-Received: from unknown (HELO lgemrelse6q.lge.com) (156.147.1.121)
-        by 156.147.23.51 with ESMTP; 10 May 2022 09:33:49 +0900
-X-Original-SENDERIP: 156.147.1.121
-X-Original-MAILFROM: byungchul.park@lge.com
-Received: from unknown (HELO X58A-UD3R) (10.177.244.38)
-        by 156.147.1.121 with ESMTP; 10 May 2022 09:33:49 +0900
-X-Original-SENDERIP: 10.177.244.38
-X-Original-MAILFROM: byungchul.park@lge.com
-Date:   Tue, 10 May 2022 09:32:13 +0900
-From:   Byungchul Park <byungchul.park@lge.com>
-To:     Theodore Ts'o <tytso@mit.edu>
-Cc:     torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
-        linux-ide@vger.kernel.org, adilger.kernel@dilger.ca,
-        linux-ext4@vger.kernel.org, mingo@redhat.com,
-        linux-kernel@vger.kernel.org, peterz@infradead.org,
-        will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
-        joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
-        chris@chris-wilson.co.uk, duyuyang@gmail.com,
-        johannes.berg@intel.com, tj@kernel.org, willy@infradead.org,
-        david@fromorbit.com, amir73il@gmail.com, bfields@fieldses.org,
-        gregkh@linuxfoundation.org, kernel-team@lge.com,
-        linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
-        minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
-        sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
-        penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
-        ngupta@vflare.org, linux-block@vger.kernel.org,
-        paolo.valente@linaro.org, josef@toxicpanda.com,
-        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        jack@suse.cz, jack@suse.com, jlayton@kernel.org,
-        dan.j.williams@intel.com, hch@infradead.org, djwong@kernel.org,
-        dri-devel@lists.freedesktop.org, airlied@linux.ie,
-        rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
-        hamohammed.sa@gmail.com, 42.hyeyoo@gmail.com
-Subject: Re: [PATCH RFC v6 00/21] DEPT(Dependency Tracker)
-Message-ID: <20220510003213.GD6047@X58A-UD3R>
-References: <1651652269-15342-1-git-send-email-byungchul.park@lge.com>
- <YnmCE2iwa0MSqocr@mit.edu>
- <YnmVgVQ7usoXnJ1N@mit.edu>
+        Mon, 9 May 2022 20:39:03 -0400
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85C932AEDB9;
+        Mon,  9 May 2022 17:35:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1652142907; x=1683678907;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ws6RuJwZ5f3e7nMk3f5y6a+++iD9RCQTt1KaPqd40aE=;
+  b=OGav8uwtxbtM5zMD2NzeTWIWHG5mm8YBgIZrI9IRU1V+IUOxXzl/zCRe
+   o3KPzThgfMcIBSpRj5c2+jRoiMuuqc8sShaJDC4hEV1CvvQSGw/c0o6ig
+   zah3IfL+BO9+RvXrVA/MSQHQjDStk7cFa+MqrD4NjDjs2wN7eyA/XHExR
+   JpkiNEoaNDlnPK8FwzlNfQkXDOp5Hy1AMGUsxRdd+jCnYTrJOH+wfdBKF
+   7y1ErIcsyiz4LfgHoBfFJOUUK1eC0ZczgwkmNVCZy196aUxW/ttTSuJaa
+   bCPPb5qRgtpPKK9Fy1xP0owLlsUFZ6YfPTKwIPfoI+ysk11rkXUkzdnpa
+   Q==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10342"; a="269144889"
+X-IronPort-AV: E=Sophos;i="5.91,212,1647327600"; 
+   d="scan'208";a="269144889"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2022 17:35:07 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.91,212,1647327600"; 
+   d="scan'208";a="552268142"
+Received: from lkp-server01.sh.intel.com (HELO 5056e131ad90) ([10.239.97.150])
+  by orsmga002.jf.intel.com with ESMTP; 09 May 2022 17:35:04 -0700
+Received: from kbuild by 5056e131ad90 with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1noDqB-000H3S-NV;
+        Tue, 10 May 2022 00:35:03 +0000
+Date:   Tue, 10 May 2022 08:34:09 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Haimin Zhang <tcs.kernel@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        David Howells <dhowells@redhat.com>,
+        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
+        Haimin Zhang <tcs_kernel@tencent.com>,
+        TCS Robot <tcs_robot@tencent.com>
+Subject: Re: [PATCH v2] fs/pipe: Deinitialize the watch_queue when pipe is
+ freed
+Message-ID: <202205100814.M4Aiy8hF-lkp@intel.com>
+References: <20220509131726.59664-1-tcs.kernel@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YnmVgVQ7usoXnJ1N@mit.edu>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Spam-Status: No, score=-6.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+In-Reply-To: <20220509131726.59664-1-tcs.kernel@gmail.com>
+X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 09, 2022 at 06:28:17PM -0400, Theodore Ts'o wrote:
-> Oh, one other problem with DEPT --- it's SLOW --- the overhead is
-> enormous.  Using kvm-xfstests[1] running "kvm-xfstests smoke", here
-> are some sample times:
+Hi Haimin,
 
-Yes, right. DEPT has never been optimized. It rather turns on
-CONFIG_LOCKDEP and even CONFIG_PROVE_LOCKING when CONFIG_DEPT gets on
-because of porting issue. I have no choice but to rely on those to
-develop DEPT out of tree. Of course, that's what I don't like.
+Thank you for the patch! Yet something to improve:
 
-Plus, for now, I'm focusing on removing false positives. Once it's
-considered settled down, I will work on performance optimizaition. But
-it should still keep relying on Lockdep CONFIGs and adding additional
-overhead on it until DEPT can be developed in the tree.
+[auto build test ERROR on linus/master]
+[also build test ERROR on v5.18-rc6 next-20220509]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
-> 			LOCKDEP		DEPT
-> Time to first test	49 seconds	602 seconds
-> ext4/001      		2 s		22 s
-> ext4/003		2 s		8 s
-> ext4/005		0 s		7 s
-> ext4/020		1 s		8 s
-> ext4/021		11 s		17 s
-> ext4/023		0 s		83 s
-> generic/001		4 s		76 s
-> generic/002		0 s		11 s
-> generic/003		10 s		19 s
-> 
-> There are some large variations; in some cases, some xfstests take 10x
-> as much time or more to run.  In fact, when I first started the
-> kvm-xfstests run with DEPT, I thought something had hung and that
-> tests would never start.  (In fact, with gce-xfstests the default
-> watchdog "something has gone terribly wrong with the kexec" had fired,
-> and I didn't get any test results using gce-xfstests at all.  If DEPT
-> goes in without any optimizations, I'm going to have to adjust the
-> watchdogs timers for gce-xfstests.)
+url:    https://github.com/intel-lab-lkp/linux/commits/Haimin-Zhang/fs-pipe-Deinitialize-the-watch_queue-when-pipe-is-freed/20220509-212415
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git c5eb0a61238dd6faf37f58c9ce61c9980aaffd7a
+config: s390-randconfig-r004-20220509 (https://download.01.org/0day-ci/archive/20220510/202205100814.M4Aiy8hF-lkp@intel.com/config)
+compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project 3abb68a626160e019c30a4860e569d7bc75e486a)
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # install s390 cross compiling tool for clang build
+        # apt-get install binutils-s390x-linux-gnu
+        # https://github.com/intel-lab-lkp/linux/commit/22e9d0a2c66d49444376e55348c8a6fa26e6d150
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Haimin-Zhang/fs-pipe-Deinitialize-the-watch_queue-when-pipe-is-freed/20220509-212415
+        git checkout 22e9d0a2c66d49444376e55348c8a6fa26e6d150
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=s390 SHELL=/bin/bash
 
-Thank you for informing it. I will go for the optimization as well.
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
 
-> The bottom line is that at the moment, between the false positives,
-> and the significant overhead imposed by DEPT, I would suggest that if
-> DEPT ever does go in, that it should be possible to disable DEPT and
-> only use the existing CONFIG_PROVE_LOCKING version of LOCKDEP, just
-> because DEPT is S - L - O - W.
-> 
-> [1] https://github.com/tytso/xfstests-bld/blob/master/Documentation/kvm-quickstart.md
-> 
-> 						- Ted
-> 
-> P.S.  Darrick and I both have disabled using LOCKDEP by default
-> because it slows down ext4 -g auto testing by a factor 2, and xfs -g
-> auto testing by a factor of 3.  So the fact that DEPT is a factor of
-> 2x to 10x or more slower than LOCKDEP when running various xfstests
-> tests should be a real concern.
+All errors (new ones prefixed by >>):
 
-DEPT is tracking way more objects than Lockdep so it's inevitable to be
-slower, but let me try to make it have the similar performance to
-Lockdep.
+   <inline asm>:5:5: error: expected absolute expression
+   .if 6651b-6641b > 254
+       ^
+   <inline asm>:6:2: error: cpu alternatives does not support instructions blocks > 254 bytes
+           .error "cpu alternatives does not support instructions blocks > 254 bytes"
+           ^
+   <inline asm>:8:5: error: expected absolute expression
+   .if (6651b-6641b) % 2
+       ^
+   <inline asm>:9:2: error: cpu alternatives instructions length is odd
+           .error "cpu alternatives instructions length is odd"
+           ^
+   <inline asm>:15:5: error: expected absolute expression
+   .if -(((6651b-6641b)-(662b-661b)) > 0) * ((6651b-6641b)-(662b-661b)) > 6
+       ^
+>> <inline asm>:18:8: error: unexpected token in '.rept' directive
+           .rept (-(((6651b-6641b)-(662b-661b)) > 0) * ((6651b-6641b)-(662b-661b)) - (6620b-662b)) / 2
+                 ^
+   <inline asm>:21:8: error: unexpected token in '.rept' directive
+           .rept -(((6651b-6641b)-(662b-661b)) > 0) * ((6651b-6641b)-(662b-661b)) / 6
+                 ^
+>> <inline asm>:22:2: error: unknown directive
+           .brcl 0,0
+           ^
+>> <inline asm>:23:7: error: unmatched '.endr' directive
+           .endr
+                ^
+   <inline asm>:24:8: error: unexpected token in '.rept' directive
+           .rept -(((6651b-6641b)-(662b-661b)) > 0) * ((6651b-6641b)-(662b-661b)) % 6 / 4
+                 ^
+   <inline asm>:26:7: error: unmatched '.endr' directive
+           .endr
+                ^
+   <inline asm>:27:8: error: unexpected token in '.rept' directive
+           .rept -(((6651b-6641b)-(662b-661b)) > 0) * ((6651b-6641b)-(662b-661b)) % 6 % 4 / 2
+                 ^
+   <inline asm>:29:6: error: unmatched '.endr' directive
+   .endr
+        ^
+   <inline asm>:32:5: error: expected absolute expression
+   .if 662b-661b > 254
+       ^
+   <inline asm>:33:2: error: cpu alternatives does not support instructions blocks > 254 bytes
+           .error "cpu alternatives does not support instructions blocks > 254 bytes"
+           ^
+   <inline asm>:35:5: error: expected absolute expression
+   .if (662b-661b) % 2
+       ^
+   <inline asm>:36:2: error: cpu alternatives instructions length is odd
+           .error "cpu alternatives instructions length is odd"
+           ^
+   In file included from kernel/watch_queue.c:11:
+   In file included from include/linux/module.h:14:
+   In file included from include/linux/buildid.h:5:
+   In file included from include/linux/mm_types.h:8:
+   In file included from include/linux/kref.h:16:
+   In file included from include/linux/spinlock.h:93:
+   arch/s390/include/asm/spinlock.h:81:3: error: expected absolute expression
+                   ALTERNATIVE("", ".insn rre,0xb2fa0000,7,0", 49) /* NIAI 7 */
+                   ^
+   arch/s390/include/asm/alternative.h:118:2: note: expanded from macro 'ALTERNATIVE'
+           ALTINSTR_REPLACEMENT(altinstr, 1)                               \
+           ^
+   arch/s390/include/asm/alternative.h:113:2: note: expanded from macro 'ALTINSTR_REPLACEMENT'
+           INSTR_LEN_SANITY_CHECK(altinstr_len(num))
+           ^
+   arch/s390/include/asm/alternative.h:62:3: note: expanded from macro 'INSTR_LEN_SANITY_CHECK'
+           ".if " len " > 254\n"                                           \
+            ^
+   <inline asm>:5:5: note: instantiated into assembly here
+   .if 6651b-6641b > 254
+       ^
+   In file included from kernel/watch_queue.c:11:
+   In file included from include/linux/module.h:14:
+   In file included from include/linux/buildid.h:5:
+   In file included from include/linux/mm_types.h:8:
+   In file included from include/linux/kref.h:16:
+   In file included from include/linux/spinlock.h:93:
+   arch/s390/include/asm/spinlock.h:81:3: error: cpu alternatives does not support instructions blocks > 254 bytes
+                   ALTERNATIVE("", ".insn rre,0xb2fa0000,7,0", 49) /* NIAI 7 */
+                   ^
+   arch/s390/include/asm/alternative.h:118:2: note: expanded from macro 'ALTERNATIVE'
+           ALTINSTR_REPLACEMENT(altinstr, 1)                               \
+           ^
+   arch/s390/include/asm/alternative.h:113:2: note: expanded from macro 'ALTINSTR_REPLACEMENT'
+           INSTR_LEN_SANITY_CHECK(altinstr_len(num))
+           ^
+   arch/s390/include/asm/alternative.h:63:3: note: expanded from macro 'INSTR_LEN_SANITY_CHECK'
+           "\t.error \"cpu alternatives does not support instructions "    \
+            ^
+   <inline asm>:6:2: note: instantiated into assembly here
+           .error "cpu alternatives does not support instructions blocks > 254 bytes"
+           ^
+   fatal error: too many errors emitted, stopping now [-ferror-limit=]
+   20 errors generated.
 
-	Byungchul
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
