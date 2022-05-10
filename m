@@ -2,59 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 37E8752278B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 May 2022 01:26:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 011CA522798
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 May 2022 01:28:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238077AbiEJX0T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 May 2022 19:26:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51790 "EHLO
+        id S238262AbiEJX2c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 May 2022 19:28:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238085AbiEJX0D (ORCPT
+        with ESMTP id S233061AbiEJX2T (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 May 2022 19:26:03 -0400
-Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 721B13BBC5;
-        Tue, 10 May 2022 16:25:57 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-2-147.pa.nsw.optusnet.com.au [49.181.2.147])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id CD42653469D;
-        Wed, 11 May 2022 09:25:54 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1noZEm-00ATWh-9C; Wed, 11 May 2022 09:25:52 +1000
-Date:   Wed, 11 May 2022 09:25:52 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Karel Zak <kzak@redhat.com>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        linux-fsdevel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        Ian Kent <raven@themaw.net>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Amir Goldstein <amir73il@gmail.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>
-Subject: Re: [RFC PATCH] getting misc stats/attributes via xattr API
-Message-ID: <20220510232552.GD2306852@dread.disaster.area>
-References: <YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com>
- <20220509124815.vb7d2xj5idhb2wq6@wittgenstein>
- <20220510123512.h6jjqgowex6gnjh5@ws.net.home>
+        Tue, 10 May 2022 19:28:19 -0400
+Received: from lgeamrelo11.lge.com (lgeamrelo11.lge.com [156.147.23.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 108A55A0A5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 May 2022 16:28:13 -0700 (PDT)
+Received: from unknown (HELO lgemrelse7q.lge.com) (156.147.1.151)
+        by 156.147.23.51 with ESMTP; 11 May 2022 08:28:11 +0900
+X-Original-SENDERIP: 156.147.1.151
+X-Original-MAILFROM: byungchul.park@lge.com
+Received: from unknown (HELO X58A-UD3R) (10.177.244.38)
+        by 156.147.1.151 with ESMTP; 11 May 2022 08:28:11 +0900
+X-Original-SENDERIP: 10.177.244.38
+X-Original-MAILFROM: byungchul.park@lge.com
+Date:   Wed, 11 May 2022 08:26:33 +0900
+From:   Byungchul Park <byungchul.park@lge.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Hyeonggon Yoo <42.hyeyoo@gmail.com>, torvalds@linux-foundation.org,
+        damien.lemoal@opensource.wdc.com, linux-ide@vger.kernel.org,
+        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        mingo@redhat.com, linux-kernel@vger.kernel.org,
+        peterz@infradead.org, will@kernel.org, tglx@linutronix.de,
+        joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
+        chris@chris-wilson.co.uk, duyuyang@gmail.com,
+        johannes.berg@intel.com, tj@kernel.org, tytso@mit.edu,
+        willy@infradead.org, david@fromorbit.com, amir73il@gmail.com,
+        gregkh@linuxfoundation.org, kernel-team@lge.com,
+        linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
+        minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
+        sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
+        penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
+        ngupta@vflare.org, linux-block@vger.kernel.org,
+        paolo.valente@linaro.org, josef@toxicpanda.com,
+        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        jack@suse.cz, jack@suse.com, jlayton@kernel.org,
+        dan.j.williams@intel.com, hch@infradead.org, djwong@kernel.org,
+        dri-devel@lists.freedesktop.org, airlied@linux.ie,
+        rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
+        hamohammed.sa@gmail.com
+Subject: Re: [PATCH RFC v6 00/21] DEPT(Dependency Tracker)
+Message-ID: <20220510232633.GA18445@X58A-UD3R>
+References: <CAHk-=whnPePcffsNQM+YSHMGttLXvpf8LbBQ8P7HEdqFXaV7Lg@mail.gmail.com>
+ <1651795895-8641-1-git-send-email-byungchul.park@lge.com>
+ <YnYd0hd+yTvVQxm5@hyeyoo>
+ <20220509001637.GA6047@X58A-UD3R>
+ <20220509164712.746e236b@gandalf.local.home>
+ <20220509233838.GC6047@X58A-UD3R>
+ <20220510101254.33554885@gandalf.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220510123512.h6jjqgowex6gnjh5@ws.net.home>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=627af484
-        a=ivVLWpVy4j68lT4lJFbQgw==:117 a=ivVLWpVy4j68lT4lJFbQgw==:17
-        a=kj9zAlcOel0A:10 a=oZkIemNP1mAA:10 a=7-415B0cAAAA:8
-        a=k7MNvsyqWiSqLKXAZKIA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+In-Reply-To: <20220510101254.33554885@gandalf.local.home>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Spam-Status: No, score=-6.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -62,89 +71,33 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 10, 2022 at 02:35:12PM +0200, Karel Zak wrote:
-> On Mon, May 09, 2022 at 02:48:15PM +0200, Christian Brauner wrote:
-> > One comment about this. We really need to have this interface support
-> > giving us mount options like "relatime" back in numeric form (I assume
-> > this will be possible.). It is royally annoying having to maintain a
-> > mapping table in userspace just to do:
+On Tue, May 10, 2022 at 10:12:54AM -0400, Steven Rostedt wrote:
+> On Tue, 10 May 2022 08:38:38 +0900
+> Byungchul Park <byungchul.park@lge.com> wrote:
+> 
+> > Yes, I was talking about A and L'.
 > > 
-> > relatime -> MS_RELATIME/MOUNT_ATTR_RELATIME
-> > ro	 -> MS_RDONLY/MOUNT_ATTR_RDONLY
+> > > detect that regardless of L. A nested lock associates the the nesting with  
 > > 
-> > A library shouldn't be required to use this interface. Conservative
-> > low-level software that keeps its shared library dependencies minimal
-> > will need to be able to use that interface without having to go to an
-> > external library that transforms text-based output to binary form (Which
-> > I'm very sure will need to happen if we go with a text-based
-> > interface.).
+> > When I checked Lockdep code, L' with depth n + 1 and L' with depth n
+> > have different classes in Lockdep.
 > 
-> Sounds like David's fsinfo() :-)
-> 
-> We need an interface where the kernel returns a consistent mount table    
-> entry (more syscalls to get more key=value could be a way how to get
-> inconsistent data).                                              
-> 
-> IMHO all the attempts to make a trivial interface will be unsuccessful
-> because the mount table is complex (tree) and mixes strings, paths,
-> and flags. We will always end with a complex interface or complex
-> strings (like the last xatts attempt). There is no 3rd path to go ...
-> 
-> The best would be simplified fsinfo() where userspace defines
-> a request (wanted "keys"), and the kernel fills a buffer with data
-> separated by some header metadata struct. In this case, the kernel can
-> return strings and structs with binary data.  
-> 
-> 
-> I'd love something like:
-> 
-> ssize_t sz;
-> fsinfo_query query[] = {
->     { .request = FSINFO_MOUNT_PATH },
->     { .request = FSINFO_PROPAGATION },
->     { .request = FSINFO_CHILDREN_IDS },
-> };
-> 
-> sz = fsinfo(dfd, "", AT_EMPTY_PATH,
->                 &query, ARRAY_SIZE(query),
->                 buf, sizeof(buf));
-> 
-> for (p = buf; p < buf + sz; ) {
-> {
->     fsinfo_entry *e = (struct fsinfo_entry) p;
->     char *data = p + sizeof(struct fsinfo_entry);
-> 
->     switch(e->request) {
->     case FSINFO_MOUNT_PATH:
->         printf("mountpoint %s\n", data);
->         break;
->     case FSINFO_PROPAGATION:
->         printf("propagation %x\n", (uintptr_t) data);
->         break;
->     case FSINFO_CHILDREN_IDS:
->         fsinfo_child *x = (fsinfo_child *) data;
->         for (i = 0; i < e->count; i++) {
->             printf("child: %d\n", x[i].mnt_id);
->         }
->         break;
->     ...
->     }
-> 
->     p += sizeof(struct fsinfo_entry) + e->len;
-> }
+> If that's the case, then that's a bug in lockdep.
 
-That's pretty much what a multi-xattr get operation looks like.
-It's a bit more more intricate in the setup of the request/return
-buffer, but otherwise the structure of the code is the same.
+Yes, agree. I should've said 'Lockdep doesn't detect it currently.'
+rather than 'Lockdep can't detect it.'.
 
-I just don't see why we need special purpose interfaces like this
-for key/value information when small tweaks to the existing
-generic key/value interfaces can provide exactly the same
-functionality....
+I also think we make it for this case by fixing the bug in Lockdep.
 
-Cheers,
+> > 
+> > That's why I said Lockdep cannot detect it. By any chance, has it
+> > changed so as to consider this case? Or am I missing something?
+> 
+> No, it's not that lockdep cannot detect it, it should detect it. If it is
+> not detecting it, then we need to fix that.
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Yes.
+
+	Byungchul
+> 
+> -- Steve
