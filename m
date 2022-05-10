@@ -2,121 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D50A4520AB7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 May 2022 03:32:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10B2C520B21
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 May 2022 04:23:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234258AbiEJBgV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 May 2022 21:36:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39172 "EHLO
+        id S233963AbiEJC1d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 May 2022 22:27:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48436 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234229AbiEJBgT (ORCPT
+        with ESMTP id S231676AbiEJC13 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 May 2022 21:36:19 -0400
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B369286FCE;
-        Mon,  9 May 2022 18:32:22 -0700 (PDT)
-Received: from cwcc.thunk.org (pool-108-7-220-252.bstnma.fios.verizon.net [108.7.220.252])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 24A1WFPx029254
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 9 May 2022 21:32:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-        t=1652146337; bh=kNxC32quScbCpNyL/wTfsRZfYUcVDoGEmAnwF+CO/RI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=QxJmGfW7e1IqMYLGQvzKg6+7ZkT0OwGyjZIbR34a/I8eBprlhA99gR0O0BEp3S9Ri
-         QSxzKJONeuCwz07zjjnp7xXUyxbrw2mbXLk0OH60YANQzrSVgVJF5eD+RBMAgsUUWA
-         T4G0Ty0kWJ5uuh0PXPt33QGdcwH53U3XMtVJjXWc8ULr3+AvIz6Pgz0xZXQIBzluR2
-         CIrOokyPfzdv2U5lw9a5ZDaB9QcvNSQAyRc/2bz9cP7uvQJlW99OnxvoL7KA5YnM+l
-         HDoK6memNQg7ocJ1IS4F2j1RZyXyb9B99SqHCgp+0Poku2gzFpHznTQ3ugVllQKfHb
-         ErvwvUo9JMGBw==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id 5B4DC15C3F0A; Mon,  9 May 2022 21:32:15 -0400 (EDT)
-Date:   Mon, 9 May 2022 21:32:15 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Byungchul Park <byungchul.park@lge.com>
-Cc:     torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
-        linux-ide@vger.kernel.org, adilger.kernel@dilger.ca,
-        linux-ext4@vger.kernel.org, mingo@redhat.com,
-        linux-kernel@vger.kernel.org, peterz@infradead.org,
-        will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
-        joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
-        chris@chris-wilson.co.uk, duyuyang@gmail.com,
-        johannes.berg@intel.com, tj@kernel.org, willy@infradead.org,
-        david@fromorbit.com, amir73il@gmail.com, bfields@fieldses.org,
-        gregkh@linuxfoundation.org, kernel-team@lge.com,
-        linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
-        minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
-        sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
-        penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
-        ngupta@vflare.org, linux-block@vger.kernel.org,
-        paolo.valente@linaro.org, josef@toxicpanda.com,
-        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        jack@suse.cz, jack@suse.com, jlayton@kernel.org,
-        dan.j.williams@intel.com, hch@infradead.org, djwong@kernel.org,
-        dri-devel@lists.freedesktop.org, airlied@linux.ie,
-        rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
-        hamohammed.sa@gmail.com, 42.hyeyoo@gmail.com
-Subject: Re: [PATCH RFC v6 00/21] DEPT(Dependency Tracker)
-Message-ID: <YnnAnzPFZZte/UR8@mit.edu>
-References: <1651652269-15342-1-git-send-email-byungchul.park@lge.com>
- <YnmCE2iwa0MSqocr@mit.edu>
- <YnmVgVQ7usoXnJ1N@mit.edu>
- <20220510003213.GD6047@X58A-UD3R>
+        Mon, 9 May 2022 22:27:29 -0400
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EBEA17EC33;
+        Mon,  9 May 2022 19:23:33 -0700 (PDT)
+Received: by mail-pl1-x62d.google.com with SMTP id i17so15525523pla.10;
+        Mon, 09 May 2022 19:23:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:from:to:cc:subject:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=6/agFKZVEdVDsrXQEEfaXW6kYgW1c8TH8P87O2R+AuI=;
+        b=mG9g2mMstF8Cm/8Ole2BQDDCAn/yBDrtFtfPrKm4u+9rkbufL9pK5fRbsf6eBYZzI3
+         +kbCSyTF7wPsoB4WwC1H8/dXvNdUoHMBisTI1lOXAn/cFp3WlaaC7pj+f4EswXey+rdi
+         8/MKrRaMLc5TmRnWvqT3Bm/nwaIUrY6FuL60MYSsLycLVXSRwBI9wWoz7pE3Z4o9UrXR
+         UylW7JhbxB7Bhko8uwYEfdhuejwrbAeKMtOOt0xSXWUmECbFcejZp+Q0+WRUQOFNElYf
+         CrL+pGY7FaE2ctaNDcqEWicnzByj1PpKlhN/YAjrStFDAOtywnDpD2x06mzAYO+MhWrH
+         n7/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:from:to:cc:subject:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=6/agFKZVEdVDsrXQEEfaXW6kYgW1c8TH8P87O2R+AuI=;
+        b=R0gG3tR0CcQk9a7uCku7nE0YIckDO/UjpUCzZUB5cD4IIXVql3udL277kV4Pg8LXn2
+         pyIuxImM2vQvV0M9f2L4ODmsPyKMfBD50oMdufv6MQ+lXcazSlDbyHYI1RO7XBgEXeQc
+         F7Bh9siTClTKEMZIxkAo/+jN9V90TcyLGw37liTvIa12OPFQMes3cXigvTQO8NXiE/cM
+         oaMgCcPLBSvJCCocpBimOnHtmqCbtUHqIgHFWjUwuMa18A32eZmmS2ItV8fhLoD4FAki
+         1H5fe3Noz/CQZbEnK7vkszLtBZCMWPbpd9PcAHSXAeGm9HnCGM470b6qqHFjES5gWcMW
+         PcRA==
+X-Gm-Message-State: AOAM531UIPJ62BNZ9kDIvgrzvhTfPNbewv28N3oIqoIFt3bUnRHwZYNB
+        6xvnESl2h4LeexKva/GUmuY=
+X-Google-Smtp-Source: ABdhPJzYcvj9/KVB+ZVKxAPPK6e99ItRz2VlkXR1gDQExEfNPTMYalzk9Np8fZOiwVxmDZEAbNWoug==
+X-Received: by 2002:a17:90b:3d0:b0:1d9:52e1:de86 with SMTP id go16-20020a17090b03d000b001d952e1de86mr28829581pjb.73.1652149412660;
+        Mon, 09 May 2022 19:23:32 -0700 (PDT)
+Received: from localhost ([193.203.214.57])
+        by smtp.gmail.com with ESMTPSA id p67-20020a622946000000b0050dc7628150sm9305952pfp.42.2022.05.09.19.23.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 May 2022 19:23:31 -0700 (PDT)
+Message-ID: <6279cca3.1c69fb81.c4e50.581d@mx.google.com>
+X-Google-Original-Message-ID: <20220510022329.GA1278331@cgel.zte@gmail.com>
+Date:   Tue, 10 May 2022 02:23:29 +0000
+From:   CGEL <cgel.zte@gmail.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     akpm@linux-foundation.org, keescook@chromium.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, ran.xiaokai@zte.com.cn, wang.yong12@zte.com.cn,
+        xu.xin16@zte.com.cn, yang.yang29@zte.com.cn,
+        zhang.yunkai@zte.com.cn
+Subject: Re: [PATCH v5] mm/ksm: introduce ksm_force for each process
+References: <20220507105926.d4423601230f698b0f5228d1@linux-foundation.org>
+ <20220508092710.930126-1-xu.xin16@zte.com.cn>
+ <YngF+Lz01noCKRFc@casper.infradead.org>
+ <6278bb5f.1c69fb81.e623f.215f@mx.google.com>
+ <Ynk2AsCEl1fk/WaS@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220510003213.GD6047@X58A-UD3R>
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <Ynk2AsCEl1fk/WaS@casper.infradead.org>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 10, 2022 at 09:32:13AM +0900, Byungchul Park wrote:
-> Yes, right. DEPT has never been optimized. It rather turns on
-> CONFIG_LOCKDEP and even CONFIG_PROVE_LOCKING when CONFIG_DEPT gets on
-> because of porting issue. I have no choice but to rely on those to
-> develop DEPT out of tree. Of course, that's what I don't like.
+On Mon, May 09, 2022 at 04:40:50PM +0100, Matthew Wilcox wrote:
+> On Mon, May 09, 2022 at 06:57:33AM +0000, CGEL wrote:
+> > On Sun, May 08, 2022 at 07:03:36PM +0100, Matthew Wilcox wrote:
+> > > On Sun, May 08, 2022 at 09:27:10AM +0000, cgel.zte@gmail.com wrote:
+> > > > If ksm_force is set to 0, cancel the feature of ksm_force of this
+> > > > process and unmerge those merged pages belonging to VMAs which is not
+> > > > madvised as MADV_MERGEABLE of this process, but leave MADV_MERGEABLE
+> > > > areas merged.
+> > > 
+> > > Is that actually a useful feature?  Otherwise, we could simply turn
+> > > on/off the existing MMF_VM_MERGEABLE flag instead of introducing this
+> > > new bool.
+> > > 
+> > I think this will be very useful for those apps which are very likely to
+> > cause Same Pages in memory and users and operators are not willing to
+> > modified the source codes for any reasons.
+> 
+> No, you misunderstand.  Is it useful to have the "force KSM off"
+> functionality?  ie code which has been modified to allow KSM, but
+> then overridden by an admin?
+> 
+Oh, I see what you mean. It should be mentioned that "force KSM off" is not
+implemented for the current patch. In this patch, setting ksm_force to 0 just
+restores the system to the default state (the state before patching)
 
-Sure, but blaming the overhead on unnecessary CONFIG_PROVE_LOCKING
-overhead can explain only a tiny fraction of the slowdown.  Consider:
-if time to first test (time to boot the kernel, setup the test
-environment, figure out which tests to run, etc.) is 12 seconds w/o
-LOCKDEP, 49 seconds with LOCKDEP/PROVE_LOCKING and 602 seconds with
-DEPT, you can really only blame 37 seconds out of the 602 seconds of
-DEPT on unnecessary PROVE_LOCKING overhead.
-
-So let's assume we can get rid of all of the PROVE_LOCKING overhead.
-We're still talking about 12 seconds for time-to-first test without
-any lock debugging, versus ** 565 ** seconds for time-to-first test
-with DEPT.  That's a factor of 47x for DEPT sans LOCKDEP overhead,
-compared to a 4x overhead for PROVE_LOCKING.
-
-> Plus, for now, I'm focusing on removing false positives. Once it's
-> considered settled down, I will work on performance optimizaition. But
-> it should still keep relying on Lockdep CONFIGs and adding additional
-> overhead on it until DEPT can be developed in the tree.
-
-Well, please take a look at the false positive which I reported.  I
-suspect that in order to fix that particular false positive, we'll
-either need to have a way to disable DEPT on waiting on all page/folio
-dirty bits, or it will need to treat pages from different inodes
-and/or address spaces as being entirely separate classes, instead of
-collapsing all inode dirty bits, and all of various inode's mutexes
-(such as ext4's i_data_sem) as being part of a single object class.
-
-> DEPT is tracking way more objects than Lockdep so it's inevitable to be
-> slower, but let me try to make it have the similar performance to
-> Lockdep.
-
-In order to eliminate some of these false positives, I suspect it's
-going to increase the number of object classes that DEPT will need to
-track even *more*.  At which point, the cost/benefit of DEPT may get
-called into question, especially if all of the false positives can't
-be suppressed.
-
-					- Ted
+> > Besides, simply turning of/off the existing MMF_VM_MERGEABLE flag may be
+> > not feasible because madvise will also turn on the MMF_VM_MERGEABLE
+> > flag.
+> > 
+> > I think the following suggestions is good, and I will resend a patch.
+> > > > +Controlling KSM with procfs
+> > > > +===========================
+> > > > +
+> > > > +KSM can also operate on anonymous areas of address space of those processes's
+> > > > +knob ``/proc/<pid>/ksm_force`` is on, even if app codes doesn't call madvise()
+> > > > +explicitly to advise specific areas as MADV_MERGEABLE.
+> > > > +
+> > > > +You can set ksm_force to 1 to force all anonymous and qualified VMAs of
+> > > > +this process to be involved in KSM scanning. But It is effective only when the
+> > > > +klob of ``/sys/kernel/mm/ksm/run`` is set as 1.
+> > > 
+> > > I think that last sentence doesn't really add any value.
+> > > 
+> > > > +	memset(buffer, 0, sizeof(buffer));
+> > > > +	if (count > sizeof(buffer) - 1)
+> > > > +		count = sizeof(buffer) - 1;
+> > > > +	if (copy_from_user(buffer, buf, count)) {
+> > > > +		err = -EFAULT;
+> > > > +		goto out_return;
+> > > 
+> > > This feels a bit unnecessary.  Just 'return -EFAULT' here.
+> > > 
+> > > > +	}
+> > > > +
+> > > > +	err = kstrtoint(strstrip(buffer), 0, &force);
+> > > > +
+> > > > +	if (err)
+> > > > +		goto out_return;
+> > > 
+> > > 'return err'
+> > > 
+> > > > +	if (force != 0 && force != 1) {
+> > > > +		err = -EINVAL;
+> > > > +		goto out_return;
+> > > 
+> > > 'return -EINVAL'
+> > > 
+> > > > +	}
+> > > > +
+> > > > +	task = get_proc_task(file_inode(file));
+> > > > +	if (!task) {
+> > > > +		err = -ESRCH;
+> > > > +		goto out_return;
+> > > 
+> > > 'return -ESRCH'
