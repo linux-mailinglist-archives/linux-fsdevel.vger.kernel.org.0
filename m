@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C856522583
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 May 2022 22:33:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87D77522587
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 May 2022 22:33:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234696AbiEJUc5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 May 2022 16:32:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41548 "EHLO
+        id S234668AbiEJUc4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 May 2022 16:32:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233041AbiEJUcq (ORCPT
+        with ESMTP id S234099AbiEJUcs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 May 2022 16:32:46 -0400
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A2901D2FED;
-        Tue, 10 May 2022 13:32:43 -0700 (PDT)
-Received: by mail-pj1-x1030.google.com with SMTP id c1-20020a17090a558100b001dca2694f23so139673pji.3;
-        Tue, 10 May 2022 13:32:43 -0700 (PDT)
+        Tue, 10 May 2022 16:32:48 -0400
+Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8EE41D8101;
+        Tue, 10 May 2022 13:32:44 -0700 (PDT)
+Received: by mail-pl1-x634.google.com with SMTP id q4so14899844plr.11;
+        Tue, 10 May 2022 13:32:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=xGfl4tySzp7alFhccaOml+d9CvpyhEwjlT3yjUxnaGM=;
-        b=oyecuH2qIUB2Fn7kgYRrw4VNjuLMH1LgyyzcuskJbpv8K9b50xQtbfsaLyDw3vNr8k
-         hf15D+OK5TZyzPRGlLajNp2rk62uDJVZoJ/UjCpnCJOTFJ5anwCkL62If8oZuGpdxwbU
-         ZXZKM8ZaedmGH2PUnAdMMvryrgVR0WMJlE3Q8flaehfjvIYFjYpHBoERbn+dzRBJhz/M
-         aegxNq59fonJxoX8M1jRfKm4h9CmToH9D+wDA2rZW8mIeE8uWpNyunVz843kyWjA9bzh
-         xLuQ+hcfovSLXMruI2t9LA3BXkGXshZy6KfcstL05HopjRCl9obBYfeFu+fsrSpGKKBj
-         QtIg==
+        bh=q+fBA/niEzyMz/dVLkAQq7D2wtbVcVqUWXIX9SvJc74=;
+        b=bmMV7n1Zd+0zJjtyvRqCG2AEpBXxPGKK9NySmncUY9Xq3S2vqznztNrSjK7iz5cTdO
+         7HsPHxuKJrQYaBvDH0MVxJyhEj+HeiC0+CvQYyQh9V1qooj8xAf9QmbVflLnlkb2995g
+         W3tsDXC5LYnGI1/GnGBqiW6+BaCMAk1jc4zXq0t6o8k4YWQrGnU02WJ6rttAJkegH1LF
+         MKa6RFMg2R+Z/LpxRPJH/hWhFv9rx1IQMjTdTOyCPfXOFCf4Q2wOzH65PaJPB9nOoPsJ
+         B+2+1U/DAYiU2q9nt7UKR4sL55Q7eRQ8O0gZWdSBQkr4hMcjwP9MbO5Te/CG03IJFw/Y
+         mEHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=xGfl4tySzp7alFhccaOml+d9CvpyhEwjlT3yjUxnaGM=;
-        b=3mOF4V36DhAAQZokJ1ZZ26ypZE2A6QaMybq+2vQxU9Il85Eax8G9Wzwd99dcGQLOMi
-         NdgCFf2Jkblt1ht3MjK+SSqKKcNIHWE01+rMkgWFrrEbbiv2hJRiyObxltx17CwT+Xia
-         Xywex0PzhxWbLBEQ+TmNkgUTMR1cP5lWpWXXV2Lc6Sx/2IUeJnvVDmYUDmLyODotFfFz
-         0pcQwKKiV9KA7DrHqvmmUDg0vK12uPe9iHexvuHdKtEwwAqh+eUyztat6dmcQsghLEyG
-         ZC5dKSGf097y7+PvA/jUfLjEwqkkH3js8T6MtD5pR80LcALwPUnig7oFC8mfYK8LNq1q
-         mV+w==
-X-Gm-Message-State: AOAM533mRSs/UQ9RT9lXSSEivU134FxxYLJRmReWQSREk3agonUtDUeN
-        4chS5wu4u0H0n2yhGDnp0yk=
-X-Google-Smtp-Source: ABdhPJyViXcJ5aaAcoYE0zU3KvjlbGjVfyBwnobcIlCyWD1xAGHGjKSFQ99xQcrrqlIdbgCnn9NMRg==
-X-Received: by 2002:a17:90b:35cb:b0:1dc:7905:c4c1 with SMTP id nb11-20020a17090b35cb00b001dc7905c4c1mr1630769pjb.95.1652214762733;
-        Tue, 10 May 2022 13:32:42 -0700 (PDT)
+        bh=q+fBA/niEzyMz/dVLkAQq7D2wtbVcVqUWXIX9SvJc74=;
+        b=B25rUxd026SpxogkYNj1Tw8cxhguD5PFL90blBD1K8WIdoZsSgzJuNQWcALBRB9pF2
+         QQNhhP5UDpWrGS2NrZYkZZi9nM746uV2uvGKNC1PNFNfaG1oXb2yHUq7ej7F5zUtmpyR
+         Wm5kyLdvKRZhb6b1yuNkG5zCfANrby5xTk78feKz3gKKi9qwHvkjLSsV9MpyOGeR32Pr
+         CHwfKcT9A/3HozPhn2ogA/z/9agW9PuuFReovfhZ5QE994kqmqwEZk6HJqehM4/GbwC1
+         KpW18UiEO2hw9bUm5WsbujvjhGCEUJ5Hg9su8DKqM5BBrJ/VxwQQs8PmyAuraXhi0GxY
+         PkWQ==
+X-Gm-Message-State: AOAM533PnAyCglirRVsw2UMGQ/bzdoC/J48e4YJC0KKAcLemytkyvUoa
+        RdeAf1opTv4KLxP7Vvhz6Y8=
+X-Google-Smtp-Source: ABdhPJwI0XJpTDCvRLHH0Oz4A3G+1R0BD+GuNT2gqg7+DLCFYM/pa9ZmQMp7JZgjuxzoaWEXGggZEA==
+X-Received: by 2002:a17:90b:4b51:b0:1dc:9172:f344 with SMTP id mi17-20020a17090b4b5100b001dc9172f344mr1676754pjb.130.1652214764273;
+        Tue, 10 May 2022 13:32:44 -0700 (PDT)
 Received: from localhost.localdomain (c-67-174-241-145.hsd1.ca.comcast.net. [67.174.241.145])
-        by smtp.gmail.com with ESMTPSA id v17-20020a1709028d9100b0015e8d4eb1d4sm58898plo.30.2022.05.10.13.32.41
+        by smtp.gmail.com with ESMTPSA id v17-20020a1709028d9100b0015e8d4eb1d4sm58898plo.30.2022.05.10.13.32.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 May 2022 13:32:42 -0700 (PDT)
+        Tue, 10 May 2022 13:32:43 -0700 (PDT)
 From:   Yang Shi <shy828301@gmail.com>
 To:     vbabka@suse.cz, kirill.shutemov@linux.intel.com,
         linmiaohe@huawei.com, songliubraving@fb.com, riel@surriel.com,
@@ -55,9 +55,9 @@ To:     vbabka@suse.cz, kirill.shutemov@linux.intel.com,
         akpm@linux-foundation.org
 Cc:     shy828301@gmail.com, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [v4 PATCH 3/8] mm: khugepaged: skip DAX vma
-Date:   Tue, 10 May 2022 13:32:17 -0700
-Message-Id: <20220510203222.24246-4-shy828301@gmail.com>
+Subject: [v4 PATCH 4/8] mm: thp: only regular file could be THP eligible
+Date:   Tue, 10 May 2022 13:32:18 -0700
+Message-Id: <20220510203222.24246-5-shy828301@gmail.com>
 X-Mailer: git-send-email 2.26.3
 In-Reply-To: <20220510203222.24246-1-shy828301@gmail.com>
 References: <20220510203222.24246-1-shy828301@gmail.com>
@@ -73,36 +73,96 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The DAX vma may be seen by khugepaged when the mm has other khugepaged
-suitable vmas.  So khugepaged may try to collapse THP for DAX vma, but
-it will fail due to page sanity check, for example, page is not
-on LRU.
+Since commit a4aeaa06d45e ("mm: khugepaged: skip huge page collapse for
+special files"), khugepaged just collapses THP for regular file which is
+the intended usecase for readonly fs THP.  Only show regular file as THP
+eligible accordingly.
 
-So it is not harmful, but it is definitely pointless to run khugepaged
-against DAX vma, so skip it in early check.
+And make file_thp_enabled() available for khugepaged too in order to remove
+duplicate code.
 
-Reviewed-by: Miaohe Lin <linmiaohe@huawei.com>
 Acked-by: Song Liu <song@kernel.org>
 Acked-by: Vlastmil Babka <vbabka@suse.cz>
 Signed-off-by: Yang Shi <shy828301@gmail.com>
 ---
- mm/khugepaged.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ include/linux/huge_mm.h | 14 ++++++++++++++
+ mm/huge_memory.c        | 11 ++---------
+ mm/khugepaged.c         |  9 ++-------
+ 3 files changed, 18 insertions(+), 16 deletions(-)
 
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index dc8849d9dde4..a2380d88c3ea 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -447,6 +447,10 @@ static bool hugepage_vma_check(struct vm_area_struct *vma,
- 	if (vm_flags & VM_NO_KHUGEPAGED)
- 		return false;
+diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+index fbf36bb1be22..de29821231c9 100644
+--- a/include/linux/huge_mm.h
++++ b/include/linux/huge_mm.h
+@@ -173,6 +173,20 @@ static inline bool __transparent_hugepage_enabled(struct vm_area_struct *vma)
+ 	return false;
+ }
  
-+	/* Don't run khugepaged against DAX vma */
-+	if (vma_is_dax(vma))
++static inline bool file_thp_enabled(struct vm_area_struct *vma)
++{
++	struct inode *inode;
++
++	if (!vma->vm_file)
 +		return false;
 +
- 	if (vma->vm_file && !IS_ALIGNED((vma->vm_start >> PAGE_SHIFT) -
- 				vma->vm_pgoff, HPAGE_PMD_NR))
++	inode = vma->vm_file->f_inode;
++
++	return (IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS)) &&
++	       (vma->vm_flags & VM_EXEC) &&
++	       !inode_is_open_for_write(inode) && S_ISREG(inode->i_mode);
++}
++
+ bool transparent_hugepage_active(struct vm_area_struct *vma);
+ 
+ #define transparent_hugepage_use_zero_page()				\
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index d0c26a3b3b17..82434a9d4499 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -69,13 +69,6 @@ static atomic_t huge_zero_refcount;
+ struct page *huge_zero_page __read_mostly;
+ unsigned long huge_zero_pfn __read_mostly = ~0UL;
+ 
+-static inline bool file_thp_enabled(struct vm_area_struct *vma)
+-{
+-	return transhuge_vma_enabled(vma, vma->vm_flags) && vma->vm_file &&
+-	       !inode_is_open_for_write(vma->vm_file->f_inode) &&
+-	       (vma->vm_flags & VM_EXEC);
+-}
+-
+ bool transparent_hugepage_active(struct vm_area_struct *vma)
+ {
+ 	/* The addr is used to check if the vma size fits */
+@@ -87,8 +80,8 @@ bool transparent_hugepage_active(struct vm_area_struct *vma)
+ 		return __transparent_hugepage_enabled(vma);
+ 	if (vma_is_shmem(vma))
+ 		return shmem_huge_enabled(vma);
+-	if (IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS))
+-		return file_thp_enabled(vma);
++	if (transhuge_vma_enabled(vma, vma->vm_flags) && file_thp_enabled(vma))
++		return true;
+ 
+ 	return false;
+ }
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index a2380d88c3ea..c0d3215008ba 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -464,13 +464,8 @@ static bool hugepage_vma_check(struct vm_area_struct *vma,
+ 		return false;
+ 
+ 	/* Only regular file is valid */
+-	if (IS_ENABLED(CONFIG_READ_ONLY_THP_FOR_FS) && vma->vm_file &&
+-	    (vm_flags & VM_EXEC)) {
+-		struct inode *inode = vma->vm_file->f_inode;
+-
+-		return !inode_is_open_for_write(inode) &&
+-			S_ISREG(inode->i_mode);
+-	}
++	if (file_thp_enabled(vma))
++		return true;
+ 
+ 	if (!vma->anon_vma || !vma_is_anonymous(vma))
  		return false;
 -- 
 2.26.3
