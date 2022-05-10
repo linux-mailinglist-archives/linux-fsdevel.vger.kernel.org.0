@@ -2,95 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BAC7A520CD5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 May 2022 06:29:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DACCC520D3F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 May 2022 07:39:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236620AbiEJEdI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 May 2022 00:33:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38002 "EHLO
+        id S236756AbiEJFnW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 May 2022 01:43:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37028 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236692AbiEJEbm (ORCPT
+        with ESMTP id S236737AbiEJFnU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 May 2022 00:31:42 -0400
-Received: from wout1-smtp.messagingengine.com (wout1-smtp.messagingengine.com [64.147.123.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10867201305;
-        Mon,  9 May 2022 21:27:23 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.west.internal (Postfix) with ESMTP id 72AF23200950;
-        Tue, 10 May 2022 00:27:21 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Tue, 10 May 2022 00:27:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
-        :cc:content-transfer-encoding:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to; s=fm3; t=1652156840; x=
-        1652243240; bh=VLsWJyEUbg/8yUBVhrHDqMU773zHuqBYYMQbxj0NaOo=; b=o
-        V7gqoi+ehEUTdy8ZZYz5zncHlJ3l9M1p/oOgjHQoaRKZXN1uwPycOF5r9kzOw2KZ
-        FRYn5EqYqPdpchvASgC/mSRHPUPg0LBVpuqsRtpMpTfm8qfZ1f5ksNSZZEyA7VB9
-        xQ8KD9OESVVk8Z2Lohbr3YpExGYmqz/uINoM8ktrUnTW+7cvjuv5idMuova15JxA
-        EqqeixS4eSZxIQJIfZ/vpWpVu+KrxQqNr0fX1OEGrcmZ40Io8gVobg7CiuTYoPrH
-        rfl8NviSHB0Shkbhj5LV8wCXSK+QDgxr66qJbXNjZ8f415XVwgMkQ3KUvJCxGEGd
-        IHmGMjJ8qcyVyDvPuIRUg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; t=1652156840; x=1652243240; bh=VLsWJyEUbg/8y
-        UBVhrHDqMU773zHuqBYYMQbxj0NaOo=; b=fCSx/1cUCCFmuBH/kO+KYeB/Acl0X
-        SBbnBRAvVXjLUnvhS8i7ijN0tcwktpTWC1Vdqf0uwbDR9CHl6xisIh2ofI9RDoVF
-        9FFtSI36X9x1MuN7s699uW2Kt1UxafTzxjA1LOwcztWUWJOYEYykAO9xwFI9ZZDS
-        6yJ0Xb7rMCFCbfpXMHeQVrS0w6RJTeyZ0gToPkx0uu51HGDEx9Aev1jrpDtqDGxN
-        T7aYesVlzdwXzllwWht7MyD4L7gscjdWepCIu5PSzAbwQ+A9lWhovTfP5HSb/Oc4
-        bdQ+9NVZ3YNg0bETNs7nqv/a6xid9hLZraavC0Ojrhcq8906eGeCXLM7A==
-X-ME-Sender: <xms:qOl5Yqcj1r23I3_rE_dB3jYvIsDcpuUupXzAe7fbNaDW2Wa701nNCg>
-    <xme:qOl5YkNUHzC67NXDMBEaZtC5bp0kO0cJP2JWhY3jaMqdNS7fVFpKRft8WtdpNPVg7
-    NemAwO7-I6v>
-X-ME-Received: <xmr:qOl5YrhqL2LB8QJ82oMF6nKeFPSHojMr3wJXasFclQLYk2pXdSHohlF4XTWinsAcMf2q4uEWQEwactreklAzJGxE3_ce_Z201xJgDAeIn972Hqgvy-GD>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrgedtgdekgecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefkuffhvfevffgjfhgtfggggfesthekredttderjeenucfhrhhomhepkfgrnhcu
-    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
-    eivdehhfehtdffjeehlefhheekudetteegueeuteetvdeuheeufeeuveduuedvudenucff
-    ohhmrghinhepghhithhhuhgsrdgtohhmnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomheprhgrvhgvnhesthhhvghmrgifrdhnvght
-X-ME-Proxy: <xmx:qOl5Yn8slZ7gfKeILPaISn5mCOXMvbBHZuHwrOq11OLpogEYnxRlIA>
-    <xmx:qOl5YmvQ1e7TQldTAXzNW6D_q2-Qh90AIoG8DEVbbvPswF1HHQacQg>
-    <xmx:qOl5YuF71DehJYxFljPazxGlTBbuJIUrwHlPg2WAaVO8V40j1-4f7g>
-    <xmx:qOl5YmEVmyG4GSl2J9Hpy7PejmHo7fUp8jGymNNJqSpgIHlpiJKxKQ>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 10 May 2022 00:27:14 -0400 (EDT)
-Message-ID: <8ab7f51cf18ba62e3f5bfdf5d9933895413f4806.camel@themaw.net>
-Subject: Re: [RFC PATCH] getting misc stats/attributes via xattr API
-From:   Ian Kent <raven@themaw.net>
-To:     Miklos Szeredi <miklos@szeredi.hu>,
-        Christian Brauner <brauner@kernel.org>
-Cc:     linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>,
-        Theodore Ts'o <tytso@mit.edu>, Karel Zak <kzak@redhat.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-man <linux-man@vger.kernel.org>,
-        LSM <linux-security-module@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <christian@brauner.io>,
-        Amir Goldstein <amir73il@gmail.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>
-Date:   Tue, 10 May 2022 12:27:10 +0800
-In-Reply-To: <CAJfpegveWaS5pR3O1c_7qLnaEDWwa8oi26x2v_CwDXB_sir1tg@mail.gmail.com>
-References: <YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com>
-         <20220509124815.vb7d2xj5idhb2wq6@wittgenstein>
-         <CAJfpegveWaS5pR3O1c_7qLnaEDWwa8oi26x2v_CwDXB_sir1tg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 (3.42.4-1.fc35) 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        Tue, 10 May 2022 01:43:20 -0400
+Received: from lgeamrelo11.lge.com (lgeamrelo12.lge.com [156.147.23.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 54D58259F8A
+        for <linux-fsdevel@vger.kernel.org>; Mon,  9 May 2022 22:39:19 -0700 (PDT)
+Received: from unknown (HELO lgemrelse7q.lge.com) (156.147.1.151)
+        by 156.147.23.52 with ESMTP; 10 May 2022 14:39:17 +0900
+X-Original-SENDERIP: 156.147.1.151
+X-Original-MAILFROM: byungchul.park@lge.com
+Received: from unknown (HELO localhost.localdomain) (10.177.244.38)
+        by 156.147.1.151 with ESMTP; 10 May 2022 14:39:17 +0900
+X-Original-SENDERIP: 10.177.244.38
+X-Original-MAILFROM: byungchul.park@lge.com
+From:   Byungchul Park <byungchul.park@lge.com>
+To:     tytso@mit.edu
+Cc:     torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
+        linux-ide@vger.kernel.org, adilger.kernel@dilger.ca,
+        linux-ext4@vger.kernel.org, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, peterz@infradead.org,
+        will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
+        joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
+        chris@chris-wilson.co.uk, duyuyang@gmail.com,
+        johannes.berg@intel.com, tj@kernel.org, willy@infradead.org,
+        david@fromorbit.com, amir73il@gmail.com,
+        gregkh@linuxfoundation.org, kernel-team@lge.com,
+        linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
+        minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
+        sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
+        penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
+        ngupta@vflare.org, linux-block@vger.kernel.org,
+        paolo.valente@linaro.org, josef@toxicpanda.com,
+        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        jack@suse.cz, jack@suse.com, jlayton@kernel.org,
+        dan.j.williams@intel.com, hch@infradead.org, djwong@kernel.org,
+        dri-devel@lists.freedesktop.org, rodrigosiqueiramelo@gmail.com,
+        melissa.srw@gmail.com, hamohammed.sa@gmail.com, 42.hyeyoo@gmail.com
+Subject: Re: [PATCH RFC v6 00/21] DEPT(Dependency Tracker)
+Date:   Tue, 10 May 2022 14:37:40 +0900
+Message-Id: <1652161060-26531-1-git-send-email-byungchul.park@lge.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <YnnAnzPFZZte/UR8@mit.edu>
+References: <YnnAnzPFZZte/UR8@mit.edu>
+X-Spam-Status: No, score=-6.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -98,176 +61,91 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2022-05-10 at 05:49 +0200, Miklos Szeredi wrote:
-> On Mon, 9 May 2022 at 14:48, Christian Brauner <brauner@kernel.org>
-> wrote:
+Ted wrote:
+> On Tue, May 10, 2022 at 09:32:13AM +0900, Byungchul Park wrote:
+> > Yes, right. DEPT has never been optimized. It rather turns on
+> > CONFIG_LOCKDEP and even CONFIG_PROVE_LOCKING when CONFIG_DEPT gets on
+> > because of porting issue. I have no choice but to rely on those to
+> > develop DEPT out of tree. Of course, that's what I don't like.
 > 
-> > One comment about this. We really need to have this interface
-> > support
-> > giving us mount options like "relatime" back in numeric form (I
-> > assume
-> > this will be possible.). It is royally annoying having to maintain
-> > a
-> > mapping table in userspace just to do:
-> > 
-> > relatime -> MS_RELATIME/MOUNT_ATTR_RELATIME
-> > ro       -> MS_RDONLY/MOUNT_ATTR_RDONLY
-> > 
-> > A library shouldn't be required to use this interface. Conservative
-> > low-level software that keeps its shared library dependencies
-> > minimal
-> > will need to be able to use that interface without having to go to
-> > an
-> > external library that transforms text-based output to binary form
-> > (Which
-> > I'm very sure will need to happen if we go with a text-based
-> > interface.).
+> Sure, but blaming the overhead on unnecessary CONFIG_PROVE_LOCKING
+> overhead can explain only a tiny fraction of the slowdown.  Consider:
+> if time to first test (time to boot the kernel, setup the test
+> environment, figure out which tests to run, etc.) is 12 seconds w/o
+> LOCKDEP, 49 seconds with LOCKDEP/PROVE_LOCKING and 602 seconds with
+> DEPT, you can really only blame 37 seconds out of the 602 seconds of
+> DEPT on unnecessary PROVE_LOCKING overhead.
 > 
-> Agreed.
-> 
-> >   This pattern of requesting the size first by passing empty
-> > arguments,
-> >   then allocating the buffer and then passing down that buffer to
-> >   retrieve that value is really annoying to use and error prone (I
-> > do
-> >   of course understand why it exists.).
-> > 
-> >   For real xattrs it's not that bad because we can assume that
-> > these
-> >   values don't change often and so the race window between
-> >   getxattr(GET_SIZE) and getxattr(GET_VALUES) often doesn't matter.
-> > But
-> >   fwiw, the post > pre check doesn't exist for no reason; we do
-> > indeed
-> >   hit that race.
-> 
-> That code is wrong.  Changing xattr size is explicitly documented in
-> the man page as a non-error condition:
-> 
->        If size is specified as zero, these calls return the  current 
-> size  of
->        the  named extended attribute (and leave value unchanged). 
-> This can be
->        used to determine the size of the buffer that should be
-> supplied  in  a
->        subsequent  call.   (But, bear in mind that there is a
-> possibility that
->        the attribute value may change between the two calls,  so 
-> that  it  is
->        still necessary to check the return status from the second
-> call.)
-> 
-> > 
-> >   In addition, it is costly having to call getxattr() twice. Again,
-> > for
-> >   retrieving xattrs it often doesn't matter because it's not a
-> > super
-> >   common operation but for mount and other info it might matter.
-> 
-> You don't *have* to retrieve the size, it's perfectly valid to e.g.
-> start with a fixed buffer size and double the size until the result
-> fits.
-> 
-> > * Would it be possible to support binary output with this
-> > interface?
-> >   I really think users would love to have an interfact where they
-> > can
-> >   get a struct with binary info back.
-> 
-> I think that's bad taste.   fsinfo(2) had the same issue.  As well as
-> mount(2) which still interprets the last argument as a binary blob in
-> certain cases (nfs is one I know of).
-> 
-> >   Especially for some information at least. I'd really love to have
-> > a
-> >   way go get a struct mount_info or whatever back that gives me all
-> > the
-> >   details about a mount encompassed in a single struct.
-> 
-> If we want that, then can do a new syscall with that specific struct
-> as an argument.
-> 
-> >   Callers like systemd will have to parse text and will end up
-> >   converting everything from text into binary anyway; especially
-> > for
-> >   mount information. So giving them an option for this out of the
-> > box
-> >   would be quite good.
-> 
-> What exactly are the attributes that systemd requires?
+> So let's assume we can get rid of all of the PROVE_LOCKING overhead.
+> We're still talking about 12 seconds for time-to-first test without
+> any lock debugging, versus ** 565 ** seconds for time-to-first test
+> with DEPT.  That's a factor of 47x for DEPT sans LOCKDEP overhead,
+> compared to a 4x overhead for PROVE_LOCKING.
 
-It's been a while since I worked on this so my response might not
-be too accurrate now.
+Okay. I will work on it.
 
-Monitoring the mount table is used primarily to identify a mount
-started and mount completion.
-
-Mount table entry identification requires several fields.
-
-But, in reality, once a direct interface is available it should be
-possible to work out what is actually needed and that will be a
-rather subset of a mountinfo table entry.
-
+> > Plus, for now, I'm focusing on removing false positives. Once it's
+> > considered settled down, I will work on performance optimizaition. But
+> > it should still keep relying on Lockdep CONFIGs and adding additional
+> > overhead on it until DEPT can be developed in the tree.
 > 
-> >   Interfaces like statx aim to be as fast as possible because we
-> > exptect
-> >   them to be called quite often. Retrieving mount info is quite
-> > costly
-> >   and is done quite often as well. Maybe not for all software but
-> > for a
-> >   lot of low-level software. Especially when starting services in
-> >   systemd a lot of mount parsing happens similar when starting
-> >   containers in runtimes.
+> Well, please take a look at the false positive which I reported.  I
+> suspect that in order to fix that particular false positive, we'll
+> either need to have a way to disable DEPT on waiting on all page/folio
+> dirty bits, or it will need to treat pages from different inodes
+> and/or address spaces as being entirely separate classes, instead of
+> collapsing all inode dirty bits, and all of various inode's mutexes
+> (such as ext4's i_data_sem) as being part of a single object class.
+
+I'd rather solve it by assigning different classes to different types of
+inode. This is the right way.
+
+> > DEPT is tracking way more objects than Lockdep so it's inevitable to be
+> > slower, but let me try to make it have the similar performance to
+> > Lockdep.
 > 
-> Was there ever a test patch for systemd using fsinfo(2)?  I think
-> not.
+> In order to eliminate some of these false positives, I suspect it's
+> going to increase the number of object classes that DEPT will need to
+> track even *more*.  At which point, the cost/benefit of DEPT may get
+> called into question, especially if all of the false positives can't
+> be suppressed.
 
-Mmm ... I'm hurt you didn't pay any attention to what I did on this
-during the original fsinfo() discussions.
+Look. Let's talk in general terms. There's no way to get rid of the
+false positives all the way. It's a decision issue for *balancing*
+between considering potential cases and only real ones. Definitely,
+potential is not real. The more potential things we consider, the higher
+the chances are, that false positives appear.
 
+But yes. The advantage we'd take by detecting potential ones should be
+higher than the risk of being bothered by false ones. Do you think a
+tool is useless if it produces a few false positives? Of course, it'd
+be a problem if it's too many, but otherwise, I think it'd be a great
+tool if the advantage > the risk.
+
+Don't get me wrong here. It doesn't mean DEPT is perfect for now. The
+performance should be improved and false alarms that appear should be
+removed, of course. I'm talking about the direction.
+
+For now, there's no tool to track wait/event itself in Linux kernel -
+a subset of the functionality exists tho. DEPT is the 1st try for that
+purpose and can be a useful tool by the right direction.
+
+I know what you are concerning about. I bet it's false positives that
+are going to bother you once merged. I'll insist that DEPT shouldn't be
+used as a mandatory testing tool until considered stable enough. But
+what about ones who would take the advantage use DEPT. Why don't you
+think of folks who will take the advantage from the hints about
+dependency of synchronization esp. when their subsystem requires very
+complicated synchronization? Should a tool be useful only in a final
+testing stage? What about the usefulness during development stage?
+
+It's worth noting DEPT works with any wait/event so any lockups e.g.
+even by HW-SW interface, retry logic or the like can be detected by DEPT
+once all waits and events are tagged properly. I believe the advantage
+by that is much higher than the bad side facing false alarms. It's just
+my opinion. I'm goning to respect the majority opinion.
+
+	Byungchul
 > 
-> Until systemd people start to reengineer the mount handing to allow
-> for retrieving a single mount instead of the complete mount table we
-> will never know where the performance bottleneck lies.
-
-We didn't need the systemd people to do this only review and contribute
-to the pr for the change and eventually merge it.
-
-What I did on this showed that using fsinfo() allone about halved the
-CPU overhead (from around 4 processes using about 80%) and once the
-mount notifications was added too it went down to well under 10% per
-process. The problem here was systemd is quite good at servicing events
-and reducing event processing overhead meant more events would then be
-processed. Utilizing the mount notifications queueing was the key to
-improving this and that was what I was about to work on at the end.
-
-But everything stopped before the work was complete.
-
-As I said above it's been a long time since I looked at the systemd
-work and it definitely was a WIP so "what you see is what you get"
-at https://github.com/raven-au/systemd/commits/. It looks like the
-place to look to get some idea of what was being done is branch
-notifications-devel or notifications-rfc-pr. Also note that this
-uses the libmount fsinfo() infrastrucure that was done by Karal Zak
-(and a tiny bit by me) at the time.
-
+> 					- Ted
 > 
-> > 
-> > * If we decide to go forward with this interface - and I think I
-> >   mentioned this in the lsfmm session - could we please at least
-> > add a
-> >   new system call? It really feels wrong to retrieve mount and
-> > other
-> >   information through the xattr interfaces. They aren't really
-> > xattrs.
-> 
-> I'd argue with that statement.  These are most definitely attributes.
-> As for being extended, we'd just extended the xattr interface...
-> 
-> Naming aside... imagine that read(2) has always been used to retrieve
-> disk data, would you say that reading data from proc feels wrong?
-> And in hindsight, would a new syscall for the purpose make any sense?
-> 
-> Thanks,
-> Miklos
-
