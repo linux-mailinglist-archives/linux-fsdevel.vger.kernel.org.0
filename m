@@ -2,32 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6897952275A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 May 2022 01:04:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37E8752278B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 May 2022 01:26:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237711AbiEJXEz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 May 2022 19:04:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37954 "EHLO
+        id S238077AbiEJX0T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 May 2022 19:26:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230470AbiEJXEy (ORCPT
+        with ESMTP id S238085AbiEJX0D (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 May 2022 19:04:54 -0400
-Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 072442734DA;
-        Tue, 10 May 2022 16:04:53 -0700 (PDT)
+        Tue, 10 May 2022 19:26:03 -0400
+Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 721B13BBC5;
+        Tue, 10 May 2022 16:25:57 -0700 (PDT)
 Received: from dread.disaster.area (pa49-181-2-147.pa.nsw.optusnet.com.au [49.181.2.147])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 44A9110E68F9;
-        Wed, 11 May 2022 09:04:49 +1000 (AEST)
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id CD42653469D;
+        Wed, 11 May 2022 09:25:54 +1000 (AEST)
 Received: from dave by dread.disaster.area with local (Exim 4.92.3)
         (envelope-from <david@fromorbit.com>)
-        id 1noYuN-00AT9W-Ck; Wed, 11 May 2022 09:04:47 +1000
-Date:   Wed, 11 May 2022 09:04:47 +1000
+        id 1noZEm-00ATWh-9C; Wed, 11 May 2022 09:25:52 +1000
+Date:   Wed, 11 May 2022 09:25:52 +1000
 From:   Dave Chinner <david@fromorbit.com>
-To:     Florian Weimer <fweimer@redhat.com>
+To:     Karel Zak <kzak@redhat.com>
 Cc:     Christian Brauner <brauner@kernel.org>,
         Miklos Szeredi <miklos@szeredi.hu>,
         linux-fsdevel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-        Karel Zak <kzak@redhat.com>,
         Greg KH <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org,
         Linux API <linux-api@vger.kernel.org>,
@@ -41,20 +40,19 @@ Cc:     Christian Brauner <brauner@kernel.org>,
         Amir Goldstein <amir73il@gmail.com>,
         James Bottomley <James.Bottomley@hansenpartnership.com>
 Subject: Re: [RFC PATCH] getting misc stats/attributes via xattr API
-Message-ID: <20220510230447.GC2306852@dread.disaster.area>
+Message-ID: <20220510232552.GD2306852@dread.disaster.area>
 References: <YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com>
  <20220509124815.vb7d2xj5idhb2wq6@wittgenstein>
- <20220510005533.GA2306852@dread.disaster.area>
- <87bkw5d098.fsf@oldenburg.str.redhat.com>
+ <20220510123512.h6jjqgowex6gnjh5@ws.net.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87bkw5d098.fsf@oldenburg.str.redhat.com>
+In-Reply-To: <20220510123512.h6jjqgowex6gnjh5@ws.net.home>
 X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=627aef94
+X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=627af484
         a=ivVLWpVy4j68lT4lJFbQgw==:117 a=ivVLWpVy4j68lT4lJFbQgw==:17
         a=kj9zAlcOel0A:10 a=oZkIemNP1mAA:10 a=7-415B0cAAAA:8
-        a=DeMPlFUAyss6Xeq_UakA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+        a=k7MNvsyqWiSqLKXAZKIA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
         SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
@@ -64,62 +62,85 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 10, 2022 at 02:45:39PM +0200, Florian Weimer wrote:
-> * Dave Chinner:
+On Tue, May 10, 2022 at 02:35:12PM +0200, Karel Zak wrote:
+> On Mon, May 09, 2022 at 02:48:15PM +0200, Christian Brauner wrote:
+> > One comment about this. We really need to have this interface support
+> > giving us mount options like "relatime" back in numeric form (I assume
+> > this will be possible.). It is royally annoying having to maintain a
+> > mapping table in userspace just to do:
+> > 
+> > relatime -> MS_RELATIME/MOUNT_ATTR_RELATIME
+> > ro	 -> MS_RDONLY/MOUNT_ATTR_RDONLY
+> > 
+> > A library shouldn't be required to use this interface. Conservative
+> > low-level software that keeps its shared library dependencies minimal
+> > will need to be able to use that interface without having to go to an
+> > external library that transforms text-based output to binary form (Which
+> > I'm very sure will need to happen if we go with a text-based
+> > interface.).
 > 
-> > IOWs, what Linux really needs is a listxattr2() syscall that works
-> > the same way that getdents/XFS_IOC_ATTRLIST_BY_HANDLE work. With the
-> > list function returning value sizes and being able to iterate
-> > effectively, every problem that listxattr() causes goes away.
+> Sounds like David's fsinfo() :-)
 > 
-> getdents has issues of its own because it's unspecified what happens if
-> the list of entries is modified during iteration.  Few file systems add
-> another tree just to guarantee stable iteration.
+> We need an interface where the kernel returns a consistent mount table    
+> entry (more syscalls to get more key=value could be a way how to get
+> inconsistent data).                                              
+> 
+> IMHO all the attempts to make a trivial interface will be unsuccessful
+> because the mount table is complex (tree) and mixes strings, paths,
+> and flags. We will always end with a complex interface or complex
+> strings (like the last xatts attempt). There is no 3rd path to go ...
+> 
+> The best would be simplified fsinfo() where userspace defines
+> a request (wanted "keys"), and the kernel fills a buffer with data
+> separated by some header metadata struct. In this case, the kernel can
+> return strings and structs with binary data.  
+> 
+> 
+> I'd love something like:
+> 
+> ssize_t sz;
+> fsinfo_query query[] = {
+>     { .request = FSINFO_MOUNT_PATH },
+>     { .request = FSINFO_PROPAGATION },
+>     { .request = FSINFO_CHILDREN_IDS },
+> };
+> 
+> sz = fsinfo(dfd, "", AT_EMPTY_PATH,
+>                 &query, ARRAY_SIZE(query),
+>                 buf, sizeof(buf));
+> 
+> for (p = buf; p < buf + sz; ) {
+> {
+>     fsinfo_entry *e = (struct fsinfo_entry) p;
+>     char *data = p + sizeof(struct fsinfo_entry);
+> 
+>     switch(e->request) {
+>     case FSINFO_MOUNT_PATH:
+>         printf("mountpoint %s\n", data);
+>         break;
+>     case FSINFO_PROPAGATION:
+>         printf("propagation %x\n", (uintptr_t) data);
+>         break;
+>     case FSINFO_CHILDREN_IDS:
+>         fsinfo_child *x = (fsinfo_child *) data;
+>         for (i = 0; i < e->count; i++) {
+>             printf("child: %d\n", x[i].mnt_id);
+>         }
+>         break;
+>     ...
+>     }
+> 
+>     p += sizeof(struct fsinfo_entry) + e->len;
+> }
 
-The filesystem I care about (XFS) guarantees stable iteration and
-stable seekdir/telldir cookies. It's not that hard to do, but it
-requires the filesystem designer to understand that this is a
-necessary feature before they start designing the on-disk directory
-format and lookup algorithms....
+That's pretty much what a multi-xattr get operation looks like.
+It's a bit more more intricate in the setup of the request/return
+buffer, but otherwise the structure of the code is the same.
 
-> Maybe that's different for xattrs because they are supposed to be small
-> and can just be snapshotted with a full copy?
-
-It's different for xattrs because we directly control the API
-specification for XFS_IOC_ATTRLIST_BY_HANDLE, not POSIX. We can
-define the behaviour however we want. Stable iteration is what
-listing keys needs.
-
-The cursor is defined as 16 bytes of opaque data, enabling us to
-encoded exactly where in the hashed name btree index we have
-traversed to:
-
-/*
- * Kernel-internal version of the attrlist cursor.
- */
-struct xfs_attrlist_cursor_kern {
-        __u32   hashval;        /* hash value of next entry to add */
-        __u32   blkno;          /* block containing entry (suggestion) */
-        __u32   offset;         /* offset in list of equal-hashvals */
-        __u16   pad1;           /* padding to match user-level */
-        __u8    pad2;           /* padding to match user-level */
-        __u8    initted;        /* T/F: cursor has been initialized */
-};
-
-Hence we have all the information in the cursor we need to reset the
-btree traversal index to the exact entry we finished at (even in the
-presence of hash collisions in the index). Hence removal of the
-entry the cursor points to isn't a problem for us, we just move to
-the next highest sequential hash index in the btree and start again
-from there.
-
-Of course, if this is how we define listxattr2() behaviour (or maybe
-we should call it "list_keys()" to make it clear we are treating
-this as a key/value store instead of xattrs) then each filesystem
-can put what it needs in that cursor to guarantee it can restart key
-iteration correctly if the entry the cursor points to has been
-removed.  We can also make the cursor larger if necessary for other
-filesystems to store the information they need.
+I just don't see why we need special purpose interfaces like this
+for key/value information when small tweaks to the existing
+generic key/value interfaces can provide exactly the same
+functionality....
 
 Cheers,
 
