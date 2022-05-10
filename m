@@ -2,83 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E9DE52100C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 May 2022 10:51:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 013205210F5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 May 2022 11:32:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238277AbiEJIzN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 May 2022 04:55:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55442 "EHLO
+        id S238867AbiEJJgm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 May 2022 05:36:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238238AbiEJIzL (ORCPT
+        with ESMTP id S238879AbiEJJgl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 May 2022 04:55:11 -0400
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24AB43E5C4
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 May 2022 01:51:14 -0700 (PDT)
-Received: by mail-il1-f197.google.com with SMTP id g11-20020a056e021a2b00b002cf48b48824so8972942ile.21
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 May 2022 01:51:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=gEeJNjfS0q6RM62Nvi60TGEoWat+e1zZfxTGA+WRzSY=;
-        b=l1yEA1hK2BtFDdLnpJovbkoi7uueRNT7kJa/yL9r5/kQX71ewuSOHitjMUzH1Sj1K6
-         WKyrMQPVEgkm6Emg5ob9lj3yypnouHX2UkLQ6QKBsWEFsn4OXq0Pblc38uzO5vjOFsiG
-         7e2R/KSg9lS3zDsviZ/LXgGe388UnKdD/tz93UthJIoX6FeSql4a7JLpYJ8QONIbVEFl
-         6RYKav/6H6ljBnzZkrRsnpurLY6Iq6UrcKnV5C1jNS8yeJUw1ZOzW4qztUCb+/xgr4bv
-         RqOteENsyiX0XAeU+n6U3ZXFZ4Hrr5N+xOmyQuF+os0jjvftjpG/37ruiUWvpemmUw3W
-         6Q2g==
-X-Gm-Message-State: AOAM5303m0VUeSar9mo8CYrEFZJ/yxOsRDJESc7CgtIdrCCN2mUYfxWg
-        EX/HG5nYpUlfUkytkvrhHMc/O1uLChaciqQK+plbZKziC62V
-X-Google-Smtp-Source: ABdhPJymd70zSLRupmjht8i7wwnCSSg/9t9Ls3kE6/21v2tdD1hcmHlI4ApXwuuuEnn2Izn9LJhqsv6m4l19IZnSt7QWs+/iF9HJ
+        Tue, 10 May 2022 05:36:41 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97F8A28F7F2;
+        Tue, 10 May 2022 02:32:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=G7+t/cAdYkqhs1QKuzowXwkwfS2OErx0X9UCnaiTRWU=; b=VgR1nQ1NVLWRbOgBvrbdCW/4tg
+        ychxbwVZwl2wzAJjDn82fADKlUzvqITtssspoU+g2VDWJfuI9SKZDpw4BVKWlWrDTU0XfqXhbQrYZ
+        WKsLZ/tHz1Oj9CIASd5pspPSEvR6ACnPwg6AFRYXHa3oDOfrd5yuWvTM17QxpTXCOioNjdDjldZ6d
+        vyJ2XQVtb61LMMqHRwqmMMmqq8uttx8xIsYIvQWU3SR3NetOIhVS0qBwW4byGtvMzw6EzmDwGsyuN
+        QHgviNlvIN8gesVdFW+7rdefORH7XD1/y3kq+w19jJFGCFb2ZW8B+r+RVhAarU07kW0L4Y5OwN5Ss
+        mMbcdJaA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1noMER-000qQy-Rm; Tue, 10 May 2022 09:32:39 +0000
+Date:   Tue, 10 May 2022 02:32:39 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
+Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        nvdimm@lists.linux.dev, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, djwong@kernel.org,
+        dan.j.williams@intel.com, david@fromorbit.com, hch@infradead.org,
+        jane.chu@oracle.com, rgoldwyn@suse.de, viro@zeniv.linux.org.uk,
+        willy@infradead.org, naoya.horiguchi@nec.com, linmiaohe@huawei.com
+Subject: Re: [PATCHSETS] v14 fsdax-rmap + v11 fsdax-reflink
+Message-ID: <YnoxN0T/RBbxsqI7@infradead.org>
+References: <20220508143620.1775214-1-ruansy.fnst@fujitsu.com>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:218b:b0:2cd:fb28:5417 with SMTP id
- j11-20020a056e02218b00b002cdfb285417mr9002492ila.83.1652172673463; Tue, 10
- May 2022 01:51:13 -0700 (PDT)
-Date:   Tue, 10 May 2022 01:51:13 -0700
-In-Reply-To: <000000000000402c5305ab0bd2a2@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004f3c0d05dea46dac@google.com>
-Subject: Re: [syzbot] INFO: task hung in synchronize_rcu (3)
-From:   syzbot <syzbot+0c6da80218456f1edc36@syzkaller.appspotmail.com>
-To:     akpm@linux-foundation.org, davem@davemloft.net, jhs@mojatatu.com,
-        jiri@resnulli.us, kvm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mingo@elte.hu, mlevitsk@redhat.com, netdev@vger.kernel.org,
-        pbonzini@redhat.com, peterz@infradead.org, seanjc@google.com,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
-        vinicius.gomes@intel.com, viro@zeniv.linux.org.uk,
-        xiyou.wangcong@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220508143620.1775214-1-ruansy.fnst@fujitsu.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot suspects this issue was fixed by commit:
-
-commit 2d08935682ac5f6bfb70f7e6844ec27d4a245fa4
-Author: Sean Christopherson <seanjc@google.com>
-Date:   Fri Apr 15 00:43:41 2022 +0000
-
-    KVM: x86: Don't re-acquire SRCU lock in complete_emulated_io()
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16dc2e49f00000
-start commit:   ea4424be1688 Merge tag 'mtd/fixes-for-5.17-rc8' of git://g..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=442f8ac61e60a75e
-dashboard link: https://syzkaller.appspot.com/bug?extid=0c6da80218456f1edc36
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1685af9e700000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11b09df1700000
-
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: KVM: x86: Don't re-acquire SRCU lock in complete_emulated_io()
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+The patch numbering due looks odd due to the combination of the
+two series.  But otherwise this looks good to me modulo the one
+minor nitpick.
