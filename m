@@ -2,90 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EC2952273F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 May 2022 00:52:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6897952275A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 May 2022 01:04:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237353AbiEJWwT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 May 2022 18:52:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45808 "EHLO
+        id S237711AbiEJXEz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 May 2022 19:04:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229690AbiEJWwS (ORCPT
+        with ESMTP id S230470AbiEJXEy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 May 2022 18:52:18 -0400
-Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52F66163282
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 May 2022 15:52:17 -0700 (PDT)
-Received: by mail-pg1-x52f.google.com with SMTP id 137so212822pgb.5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 May 2022 15:52:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=4xY5bF9UYm6MAVtzgNfATpmkNYNH44rnKMWoXQzjxrI=;
-        b=FItJqMaNmWv33SShK+ZO3am8AWGCUIO6YZHO6V6G0rTg06JmT35pvYET0rD5wPSRKz
-         PgAkOYcRvOg9plTi0Fpz6xMt09s+1bmZfMjbmpygVANoPcqVB3lrBOHQIGZKzyRQC2cz
-         DERZv562zIwz3Y/CWl4EbJM59XeNRgMvRXdDxJ6wv3iRRZ0LV6Sxz60uF4f3G6yS4Jn+
-         w45yjweNbsXo+XV4w/ghyJ+0ddsElP9+zEKMZyU97FyjBDsuZNWSuv+JBECRCBsFfFUP
-         KnAri+dIhCAJdvlBSpRF1utp2WaUQN1LqnKN/58bGKpNR11aN2B1+2gLa7jOQ5itTpzd
-         XzXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=4xY5bF9UYm6MAVtzgNfATpmkNYNH44rnKMWoXQzjxrI=;
-        b=pJpkWdHBg/SrVuYMTeU6BwdL6vfTFXO4rco9XoJFBr+OxKqIAFzELw0Z9uCoPLgwpo
-         MNv1pScpjY6YD2BtcISIdVW8UFTo2EXN2pmYq9Lt0T1oVI2tD/7Cy4wY23PKOZl+8eG2
-         sNGZ680LyUGuY80J/WsV3UvsRdgWf3eyTna8GkoW2t2DM8gArpegV6iGR9B/LACy3i3J
-         U81bcEsr4LyCYf6pTFle0nNGzi2Lzw8tF9zMhwd1BvDLOb/0kSaczXxk+QnQ+QAJMKyO
-         Befq+2+VLcANJQlq+wK5bzgYGnEUUWgJCxubrwZwC4gPx+fYS7WGyPy9MJ6n8MvWwb31
-         8dbg==
-X-Gm-Message-State: AOAM532vgSabM0Ib4rdy9RiQUaqhSBtWXZeB2Gm7b95UAFvEzQr6c712
-        FmfjFgDYwjpxuJjrYAqv0Yzh4Q==
-X-Google-Smtp-Source: ABdhPJxBD7xz21Is5XyKacXGuURKZ97TVB0rCPcvgYeeGxXp0XTbwkIq3b31s//zgRAl/JwRiH+h9Q==
-X-Received: by 2002:a05:6a00:1251:b0:50d:f2c2:7f4e with SMTP id u17-20020a056a00125100b0050df2c27f4emr22492045pfi.72.1652223136854;
-        Tue, 10 May 2022 15:52:16 -0700 (PDT)
-Received: from [192.168.254.17] ([50.39.160.154])
-        by smtp.gmail.com with ESMTPSA id p2-20020a1709027ec200b0015e8d4eb229sm149967plb.115.2022.05.10.15.52.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 May 2022 15:52:16 -0700 (PDT)
-Message-ID: <ef6c9822-8099-99b2-0a88-50347934e62a@linaro.org>
-Date:   Tue, 10 May 2022 15:52:15 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH] exfat: check if cluster num is valid
-Content-Language: en-US
-To:     Namjae Jeon <linkinjeon@kernel.org>
-Cc:     Sungjong Seo <sj1557.seo@samsung.com>,
-        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org,
+        Tue, 10 May 2022 19:04:54 -0400
+Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 072442734DA;
+        Tue, 10 May 2022 16:04:53 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-2-147.pa.nsw.optusnet.com.au [49.181.2.147])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 44A9110E68F9;
+        Wed, 11 May 2022 09:04:49 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1noYuN-00AT9W-Ck; Wed, 11 May 2022 09:04:47 +1000
+Date:   Wed, 11 May 2022 09:04:47 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Florian Weimer <fweimer@redhat.com>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        linux-fsdevel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+        Karel Zak <kzak@redhat.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org,
-        syzbot+a4087e40b9c13aad7892@syzkaller.appspotmail.com
-References: <20220418173923.193173-1-tadeusz.struk@linaro.org>
- <CAKYAXd_9BT7je6-UHgDYCY-WD2maxYtam0_En8pgS_FiwRJP9Q@mail.gmail.com>
- <CAKYAXd8sQDJyftZ_N8bgCMcMCMraQ=6_8x+QZ5XprMN3P4x9gQ@mail.gmail.com>
-From:   Tadeusz Struk <tadeusz.struk@linaro.org>
-In-Reply-To: <CAKYAXd8sQDJyftZ_N8bgCMcMCMraQ=6_8x+QZ5XprMN3P4x9gQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+        Linux API <linux-api@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>,
+        LSM <linux-security-module@vger.kernel.org>,
+        Ian Kent <raven@themaw.net>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <christian@brauner.io>,
+        Amir Goldstein <amir73il@gmail.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>
+Subject: Re: [RFC PATCH] getting misc stats/attributes via xattr API
+Message-ID: <20220510230447.GC2306852@dread.disaster.area>
+References: <YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com>
+ <20220509124815.vb7d2xj5idhb2wq6@wittgenstein>
+ <20220510005533.GA2306852@dread.disaster.area>
+ <87bkw5d098.fsf@oldenburg.str.redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87bkw5d098.fsf@oldenburg.str.redhat.com>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=627aef94
+        a=ivVLWpVy4j68lT4lJFbQgw==:117 a=ivVLWpVy4j68lT4lJFbQgw==:17
+        a=kj9zAlcOel0A:10 a=oZkIemNP1mAA:10 a=7-415B0cAAAA:8
+        a=DeMPlFUAyss6Xeq_UakA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 4/29/22 20:26, Namjae Jeon wrote:
->> Could you please share how to reproduce this ?
-> Ping, If you apply this patch to your source, there is a problem. You
-> need to add +1 to EXFAT_DATA_CLUSTER_COUNT(sbi).
-> and please use is_valid_cluster() to check if cluster is valid instead of it.
+On Tue, May 10, 2022 at 02:45:39PM +0200, Florian Weimer wrote:
+> * Dave Chinner:
+> 
+> > IOWs, what Linux really needs is a listxattr2() syscall that works
+> > the same way that getdents/XFS_IOC_ATTRLIST_BY_HANDLE work. With the
+> > list function returning value sizes and being able to iterate
+> > effectively, every problem that listxattr() causes goes away.
+> 
+> getdents has issues of its own because it's unspecified what happens if
+> the list of entries is modified during iteration.  Few file systems add
+> another tree just to guarantee stable iteration.
 
-Ok, I will try a new version with is_valid_cluster()
+The filesystem I care about (XFS) guarantees stable iteration and
+stable seekdir/telldir cookies. It's not that hard to do, but it
+requires the filesystem designer to understand that this is a
+necessary feature before they start designing the on-disk directory
+format and lookup algorithms....
 
+> Maybe that's different for xattrs because they are supposed to be small
+> and can just be snapshotted with a full copy?
+
+It's different for xattrs because we directly control the API
+specification for XFS_IOC_ATTRLIST_BY_HANDLE, not POSIX. We can
+define the behaviour however we want. Stable iteration is what
+listing keys needs.
+
+The cursor is defined as 16 bytes of opaque data, enabling us to
+encoded exactly where in the hashed name btree index we have
+traversed to:
+
+/*
+ * Kernel-internal version of the attrlist cursor.
+ */
+struct xfs_attrlist_cursor_kern {
+        __u32   hashval;        /* hash value of next entry to add */
+        __u32   blkno;          /* block containing entry (suggestion) */
+        __u32   offset;         /* offset in list of equal-hashvals */
+        __u16   pad1;           /* padding to match user-level */
+        __u8    pad2;           /* padding to match user-level */
+        __u8    initted;        /* T/F: cursor has been initialized */
+};
+
+Hence we have all the information in the cursor we need to reset the
+btree traversal index to the exact entry we finished at (even in the
+presence of hash collisions in the index). Hence removal of the
+entry the cursor points to isn't a problem for us, we just move to
+the next highest sequential hash index in the btree and start again
+from there.
+
+Of course, if this is how we define listxattr2() behaviour (or maybe
+we should call it "list_keys()" to make it clear we are treating
+this as a key/value store instead of xattrs) then each filesystem
+can put what it needs in that cursor to guarantee it can restart key
+iteration correctly if the entry the cursor points to has been
+removed.  We can also make the cursor larger if necessary for other
+filesystems to store the information they need.
+
+Cheers,
+
+Dave.
 -- 
-Thanks,
-Tadeusz
+Dave Chinner
+david@fromorbit.com
