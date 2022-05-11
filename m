@@ -2,143 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E7BE523CF8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 May 2022 20:59:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA438523CFA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 May 2022 21:01:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346541AbiEKS7l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 May 2022 14:59:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40058 "EHLO
+        id S1346513AbiEKTBl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 May 2022 15:01:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346521AbiEKS7j (ORCPT
+        with ESMTP id S1345744AbiEKTBk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 May 2022 14:59:39 -0400
-Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13A8D6D3B5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 May 2022 11:59:38 -0700 (PDT)
-Received: by mail-pf1-x42f.google.com with SMTP id c14so2773929pfn.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 May 2022 11:59:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=2MbxQToswSlU3uGoWcNi5INJYQyZuFk9/eAJQ7cdhmM=;
-        b=CAnupYTRbk5GC5fKicsn72UhgiuO5+FGnHpN87ZAcpAMVTT4w/YH0sYOJ9/Tc0RzxO
-         lQCza6ElQrlD7hiEde2IBjhNwEFNRpfIueSDbPkO7C+mO/Nl7pyoMf/XiMK/Bs8vcn+s
-         31Yx8MEdBlvr8VlIy/C27slzdi8rukc9+gAXnIE284BO3FYVBjNKVIlJ7W0eB5J9VuYJ
-         8KXyHs1ICf3Hn/Q1lEQWNtVn8DP8lwdxoO+lq9VY7lOInslCI7HV00mzbUq8bxf57lVE
-         uVZrHtFwPw3FGwLhoXTPPLgl5vO4eQnTL0pqdJZsUITCwcR3xQVeYjkdmHCnGk0PH94h
-         BN/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=2MbxQToswSlU3uGoWcNi5INJYQyZuFk9/eAJQ7cdhmM=;
-        b=aPgMrUJ2OZ+8YuuYMsM3QwlBzy3QpO8OQDoJayV2o0Zv7q+BmIADT1CA3gkQJKjukE
-         LoxlDoa3IHAwDp5tGLPAYm07lQfMohA7EbOi5obHatb752Pxh1p8zJLea1so9rgPwkbw
-         BbNwstjorB+odN1P7dYINNFC7bn6QrbbELD45lDB9GW+/JHZAXQktzV6jzTocVNrWnWD
-         UsbkyMoO9Drbooio7m8SFCJsL3udOHlDxMM2X7TUwFWPINnM3eclltribr+xY1UjLkGD
-         VVR/AOrpBKJ4816b2qTQtEr46yriuobtqTPkiedOvqfn2bJ1ZXmsibEVk0tSsA8SY+M4
-         h3eg==
-X-Gm-Message-State: AOAM532EEajZFgN6sxXVzwG3Lbd7qIs0aNP1fvdZ0GGj4KTjS8SFMsbw
-        ddclUkFBkP+76MQP8JW1BR5UkQtU02VPQw==
-X-Google-Smtp-Source: ABdhPJz9bBTfcx7W1OwKidWuK66EB5cdlNK1lVelNf4ILnzBY58KVHr7ms6mzbrWQdITVzEymsyxoA==
-X-Received: by 2002:a63:5552:0:b0:3c2:363b:abe1 with SMTP id f18-20020a635552000000b003c2363babe1mr21396007pgm.304.1652295577623;
-        Wed, 11 May 2022 11:59:37 -0700 (PDT)
-Received: from localhost.localdomain ([50.39.160.154])
-        by smtp.gmail.com with ESMTPSA id a19-20020a17090aa51300b001d5c571f487sm280709pjq.25.2022.05.11.11.59.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 May 2022 11:59:37 -0700 (PDT)
-From:   Tadeusz Struk <tadeusz.struk@linaro.org>
-To:     linkinjeon@kernel.org
-Cc:     Tadeusz Struk <tadeusz.struk@linaro.org>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        syzbot+a4087e40b9c13aad7892@syzkaller.appspotmail.com
-Subject: [PATCH v2 2/2] exfat: check if cluster num is valid
-Date:   Wed, 11 May 2022 11:59:09 -0700
-Message-Id: <20220511185909.175110-2-tadeusz.struk@linaro.org>
-X-Mailer: git-send-email 2.36.1
-In-Reply-To: <20220511185909.175110-1-tadeusz.struk@linaro.org>
-References: <20220511185909.175110-1-tadeusz.struk@linaro.org>
+        Wed, 11 May 2022 15:01:40 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AF9A443D2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 May 2022 12:01:38 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 49BD2B8260B
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 May 2022 19:01:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6BF7C340EE;
+        Wed, 11 May 2022 19:01:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1652295696;
+        bh=yFAu4NtfyG/gBAE+EMMRtmsQvCPj7mkWnx/0WKtfGN8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FVEMR5yZnQEYf5f604+3xYnL8nhJW5pg0lYzw/YXrvGc9dmSxjHsI5rbeGG1Cw8Df
+         0XLp/ufoQhcZbpZQLlyaXSXQUDAj2F6yE9QzUkqMKK1RD3gaJY8BGvQysH3vfpMfv7
+         c+ssVkMduCkU8CXNTfOl0rG7cgP8xNmp8CdushYV/3rmC3pRwlMyU7zy5oubWA16EQ
+         IH93SLfhs2alOssWM7kpiaBjZ/Suas/0O1KJquFaNV3AXBtmxSDETlYCNlgcXYHBfS
+         3JndpOfs8X10qBxPlFzOw8FA4soiwKSSYD/v/xwWN21idlp+fSrm2ULvelGgBWinol
+         PCOqKou/g+qIw==
+Date:   Wed, 11 May 2022 19:01:34 +0000
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Chengguang Xu <cgxu519@mykernel.net>, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] vfs: move fdput() to right place in
+ ksys_sync_file_range()
+Message-ID: <YnwIDpkIBem+MeeC@gmail.com>
+References: <20220511154503.28365-1-cgxu519@mykernel.net>
+ <YnvbhmRUxPxWU2S3@casper.infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YnvbhmRUxPxWU2S3@casper.infradead.org>
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Syzbot reported slab-out-of-bounds read in exfat_clear_bitmap.
-This was triggered by reproducer calling truncute with size 0,
-which causes the following trace:
+On Wed, May 11, 2022 at 04:51:34PM +0100, Matthew Wilcox wrote:
+> On Wed, May 11, 2022 at 11:45:03AM -0400, Chengguang Xu wrote:
+> > Move fdput() to right place in ksys_sync_file_range() to
+> > avoid fdput() after failed fdget().
+> 
+> Why?  fdput() is already conditional on FDPUT_FPUT so you're ...
+> optimising the failure case?
 
-BUG: KASAN: slab-out-of-bounds in exfat_clear_bitmap+0x147/0x490 fs/exfat/balloc.c:174
-Read of size 8 at addr ffff888115aa9508 by task syz-executor251/365
+"fdput() after failed fdget()" has confused people before, so IMO it's worth
+cleaning this up.  But the commit message should make clear that it's a cleanup,
+not a bug fix.  Also I recommend using an early return:
 
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack_lvl+0x1e2/0x24b lib/dump_stack.c:118
- print_address_description+0x81/0x3c0 mm/kasan/report.c:233
- __kasan_report mm/kasan/report.c:419 [inline]
- kasan_report+0x1a4/0x1f0 mm/kasan/report.c:436
- __asan_report_load8_noabort+0x14/0x20 mm/kasan/report_generic.c:309
- exfat_clear_bitmap+0x147/0x490 fs/exfat/balloc.c:174
- exfat_free_cluster+0x25a/0x4a0 fs/exfat/fatent.c:181
- __exfat_truncate+0x99e/0xe00 fs/exfat/file.c:217
- exfat_truncate+0x11b/0x4f0 fs/exfat/file.c:243
- exfat_setattr+0xa03/0xd40 fs/exfat/file.c:339
- notify_change+0xb76/0xe10 fs/attr.c:336
- do_truncate+0x1ea/0x2d0 fs/open.c:65
-
-Add checks to validate if cluster number is within valid range in
-exfat_clear_bitmap() and exfat_set_bitmap()
-
-Cc: Namjae Jeon <linkinjeon@kernel.org>
-Cc: Sungjong Seo <sj1557.seo@samsung.com>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: stable@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-
-Link: https://syzkaller.appspot.com/bug?id=50381fc73821ecae743b8cf24b4c9a04776f767c
-Reported-by: syzbot+a4087e40b9c13aad7892@syzkaller.appspotmail.com
-Fixes: 1e49a94cf707 ("exfat: add bitmap operations")
-Signed-off-by: Tadeusz Struk <tadeusz.struk@linaro.org>
----
-v2:
- - Use is_valid_cluster() helper to validate clu
----
- fs/exfat/balloc.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/fs/exfat/balloc.c b/fs/exfat/balloc.c
-index 03f142307174..92f5b5b5a0d0 100644
---- a/fs/exfat/balloc.c
-+++ b/fs/exfat/balloc.c
-@@ -149,6 +149,9 @@ int exfat_set_bitmap(struct inode *inode, unsigned int clu, bool sync)
- 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
- 
- 	WARN_ON(clu < EXFAT_FIRST_CLUSTER);
-+	if (!is_valid_cluster(sbi, clu))
-+		return -EINVAL;
-+
- 	ent_idx = CLUSTER_TO_BITMAP_ENT(clu);
- 	i = BITMAP_OFFSET_SECTOR_INDEX(sb, ent_idx);
- 	b = BITMAP_OFFSET_BIT_IN_SECTOR(sb, ent_idx);
-@@ -167,6 +170,9 @@ void exfat_clear_bitmap(struct inode *inode, unsigned int clu, bool sync)
- 	struct exfat_mount_options *opts = &sbi->options;
- 
- 	WARN_ON(clu < EXFAT_FIRST_CLUSTER);
-+	if (!is_valid_cluster(sbi, clu))
-+		return;
-+
- 	ent_idx = CLUSTER_TO_BITMAP_ENT(clu);
- 	i = BITMAP_OFFSET_SECTOR_INDEX(sb, ent_idx);
- 	b = BITMAP_OFFSET_BIT_IN_SECTOR(sb, ent_idx);
--- 
-2.36.1
-
+	f = fdget(fd);
+	if (!f.file)
+		return -EBADF;
+	ret = sync_file_range(f.file, offset, nbytes, flags);
+	fdput(f);
+	return ret;
