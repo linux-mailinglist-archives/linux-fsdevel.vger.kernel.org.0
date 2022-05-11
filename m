@@ -2,128 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7887A522A30
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 May 2022 05:12:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3290E522A9E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 May 2022 05:57:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238020AbiEKDMJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 May 2022 23:12:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57328 "EHLO
+        id S239450AbiEKD5K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 May 2022 23:57:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237572AbiEKDMG (ORCPT
+        with ESMTP id S242034AbiEKD4r (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 May 2022 23:12:06 -0400
-Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8034A45796;
-        Tue, 10 May 2022 20:12:05 -0700 (PDT)
-Received: by mail-pg1-x535.google.com with SMTP id 137so635879pgb.5;
-        Tue, 10 May 2022 20:12:05 -0700 (PDT)
+        Tue, 10 May 2022 23:56:47 -0400
+Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 219AC5E75E
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 May 2022 20:56:32 -0700 (PDT)
+Received: by mail-pl1-x634.google.com with SMTP id i17so654179pla.10
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 May 2022 20:56:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:from:to:cc:subject:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=2MBN0zAn4D9ezzvtFqR3BrhbtifUhq904sSLoPSl8Gg=;
-        b=OH3/AiTSfdYV426FLwS5odKSvQ6zAXUDpYal67qusApQXatvj5YUhB8Xnzkd5Uga2N
-         92qc2Y4cFUAupDnI6aiuK7qkkafx62Vla7PRAn9lwS6+9URIwNp7HZVdbtBazgz4o80X
-         702IC20TiPakyeONU3K8nSb3lXh4zK+hk+249Js2WkAwTcAPLwPbg/69XDN4YQEOQasT
-         mgYGge8LN8TLkmTT9buWJiZez7aFG34mWAz/Ticup+afm9L+/VIF/UAz7yBx3d5nFnTN
-         rMhZ5FuQ2YZdIpOqulGf9EcKKZuCC4WAaU6uuAtBrJBEmZpcmRpiPrIgFvoCqxSdF+1i
-         lbtA==
+        d=intel-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=elq3ZqCelpCSxkkjk1LXdyA6w9hgB+SCHXKMgxWGx/U=;
+        b=f0WEcC7jjPTFG6Q6v9mT/VTbUk6akakqKqThuRBA10OtcmKjJs4FotEBdprRTmZrZF
+         Kb8j00IvxlaVvxLhVF+olvEM7z068yqNY7DUksi25Wuhc+ittQMbF3sNNuMlrjp0trft
+         jPe+SBWtYADIgBt1U9crcisYDlPyJy9V3ts222QP9S+ZNj9WdGzgEwTfgBNGgl9lTyX0
+         2Fv+/xdOFKMtT6Hvk7/sOzspO4aPku8B/XAFXgUu6zqe5yJcQO9LXB8JSfcNQzqAzBt6
+         y50LLDXRRm0M8Qj3TiD3Vhrh3vbutMS5qxe2s2RBw/glkC+5rS+kVBVhvbLF5i3xYVL7
+         tJ4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:from:to:cc:subject:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=2MBN0zAn4D9ezzvtFqR3BrhbtifUhq904sSLoPSl8Gg=;
-        b=OobcuAgA8BYC1Zi0K+qoXu7fSxgM+4+nIQjK1N/9lw77pvEw+NrFP02bgcyjZtavc5
-         h542pWNWsBNRx5tkZzLzThRk/VYK4GqezadlI2bCXK6Z7xG3KHflurMT5cxn+Pd4ppZ7
-         AFBlq4qGWMghb/n/5Bkq+8PttolqbY3hbYUf12n0MeeYf+nFCG5bNHgQKvHJkry8W2gp
-         AE8zCRrpeihTjSmAgm5nbUoJrXG1UBGCsAAUJT85UighSsu41JsOsSnUbBpHjpz03v/O
-         +KMjkLljow1K+x8HL8XM9awti3yycb+uhBFbr38UBJxJ9bXLGhor83vHYag7+aXE90Ct
-         X2ig==
-X-Gm-Message-State: AOAM532oXgyy3OxgSkmbPO0ADQ1b9T2wLltf9Ft9bc3UV0oJiibPbvXK
-        Cq/THsFNThKj2KimIPc/Z/0=
-X-Google-Smtp-Source: ABdhPJwUnDTfZUFHgHXqErgtlhY8Q79APm2Ey84kG+KC6CvYcMygKomgghJWTa+Yd+LiAI0zaxqmEg==
-X-Received: by 2002:a05:6a00:1a8d:b0:510:510f:d8e1 with SMTP id e13-20020a056a001a8d00b00510510fd8e1mr22928042pfv.83.1652238725019;
-        Tue, 10 May 2022 20:12:05 -0700 (PDT)
-Received: from localhost ([193.203.214.57])
-        by smtp.gmail.com with ESMTPSA id d5-20020a170902c18500b0015e8d4eb1d2sm389038pld.28.2022.05.10.20.12.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 May 2022 20:12:04 -0700 (PDT)
-Message-ID: <627b2984.1c69fb81.9002b.15f9@mx.google.com>
-X-Google-Original-Message-ID: <20220511031203.GA1492365@cgel.zte@gmail.com>
-Date:   Wed, 11 May 2022 03:12:03 +0000
-From:   CGEL <cgel.zte@gmail.com>
-To:     Oleksandr Natalenko <oleksandr@natalenko.name>
-Cc:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org, corbet@lwn.net,
-        xu xin <xu.xin16@zte.com.cn>,
-        Yang Yang <yang.yang29@zte.com.cn>,
-        Ran Xiaokai <ran.xiaokai@zte.com.cn>,
-        wangyong <wang.yong12@zte.com.cn>,
-        Yunkai Zhang <zhang.yunkai@zte.com.cn>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v6] mm/ksm: introduce ksm_force for each process
-References: <20220510122242.1380536-1-xu.xin16@zte.com.cn>
- <5820954.lOV4Wx5bFT@natalenko.name>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=elq3ZqCelpCSxkkjk1LXdyA6w9hgB+SCHXKMgxWGx/U=;
+        b=htwe8OHc8UhCtRWIIp7EIYcAr+BBQL3FPIVrMTCSmHL4r9NPhBu9UtsbVuCqS6xPrY
+         4qqpN8pOdflbW90jqAnY+adIXMIABQdo6ySU7VhP9Nu6KT2X289trDu1+tSQazfncz5z
+         dEZJRinP5SEiHs4yeTkPbOnnpRC1PHkRpb22M7+zSModN6erj9oRl7HUVN+4GHklCVuq
+         p+FKn16yiZZVu1s5VlX+/VcVqJ0mfUO/etD6QWBWM+JwddHSdl7UkVgi4P5QvWH8pf8V
+         ardAhhUWQvNFKzq7Kmj9Ha0GhYaHST6LS5P9Nqbe07DdVs52OFV6WVk69NTsVCppcaOo
+         M6HQ==
+X-Gm-Message-State: AOAM5331UWOEhXAm2IxeCtZFsvzdDqE7vHOvISep6tGK0UcNpkUAWqnO
+        mOFyfAecjgx/F8/Ls5PpZvtkD25tuCa5v0JDnUdXuA==
+X-Google-Smtp-Source: ABdhPJw5n1KJcz8j1FP3c7A6fBBMc1hcuPZsn2gE31BtaT8knvxsmvrFDZQnLCp0J+6DmYbEonpCWUJBRb2zAP6Umfo=
+X-Received: by 2002:a17:902:da8b:b0:15e:c0e8:d846 with SMTP id
+ j11-20020a170902da8b00b0015ec0e8d846mr23539490plx.34.1652241391912; Tue, 10
+ May 2022 20:56:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5820954.lOV4Wx5bFT@natalenko.name>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+References: <20220422224508.440670-1-jane.chu@oracle.com> <20220422224508.440670-4-jane.chu@oracle.com>
+ <CAPcyv4i7xi=5O=HSeBEzvoLvsmBB_GdEncbasMmYKf3vATNy0A@mail.gmail.com>
+In-Reply-To: <CAPcyv4i7xi=5O=HSeBEzvoLvsmBB_GdEncbasMmYKf3vATNy0A@mail.gmail.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Tue, 10 May 2022 20:56:21 -0700
+Message-ID: <CAPcyv4id8AbTFpO7ED_DAPren=eJQHwcdY8Mjx18LhW+u4MdNQ@mail.gmail.com>
+Subject: Re: [PATCH v9 3/7] mce: fix set_mce_nospec to always unmap the whole page
+To:     Jane Chu <jane.chu@oracle.com>, Borislav Petkov <bp@alien8.de>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>, david <david@fromorbit.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux NVDIMM <nvdimm@lists.linux.dev>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        X86 ML <x86@kernel.org>,
+        Vishal L Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        device-mapper development <dm-devel@redhat.com>,
+        "Weiny, Ira" <ira.weiny@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        "Luck, Tony" <tony.luck@intel.com>, Jue Wang <juew@google.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 10, 2022 at 03:30:36PM +0200, Oleksandr Natalenko wrote:
-> Hello.
-> 
-> On úterý 10. května 2022 14:22:42 CEST cgel.zte@gmail.com wrote:
-> > From: xu xin <xu.xin16@zte.com.cn>
-> > 
-> > To use KSM, we have to explicitly call madvise() in application code,
-> > which means installed apps on OS needs to be uninstall and source code
-> > needs to be modified. It is inconvenient.
-> > 
-> > In order to change this situation, We add a new proc file ksm_force
-> > under /proc/<pid>/ to support turning on/off KSM scanning of a
-> > process's mm dynamically.
-> > 
-> > If ksm_force is set to 1, force all anonymous and 'qualified' VMAs
-> > of this mm to be involved in KSM scanning without explicitly calling
-> > madvise to mark VMA as MADV_MERGEABLE. But It is effective only when
-> > the klob of /sys/kernel/mm/ksm/run is set as 1.
-> > 
-> > If ksm_force is set to 0, cancel the feature of ksm_force of this
-> > process (fallback to the default state) and unmerge those merged pages
-> > belonging to VMAs which is not madvised as MADV_MERGEABLE of this process,
-> > but still leave MADV_MERGEABLE areas merged.
-> 
-> To my best knowledge, last time a forcible KSM was discussed (see threads [1], [2], [3] and probably others) it was concluded that a) procfs was a horrible interface for things like this one; and b) process_madvise() syscall was among the best suggested places to implement this (which would require a more tricky handling from userspace, but still).
-> 
-> So, what changed since that discussion?
+On Fri, Apr 22, 2022 at 4:25 PM Dan Williams <dan.j.williams@intel.com> wrote:
 >
+> [ Add Tony as the originator of the whole_page() logic and Jue who
+> reported the issue that lead to 17fae1294ad9 x86/{mce,mm}: Unmap the
+> entire page if the whole page is affected and poisoned ]
+>
+>
+> On Fri, Apr 22, 2022 at 3:46 PM Jane Chu <jane.chu@oracle.com> wrote:
+> >
+> > The set_memory_uc() approach doesn't work well in all cases.
+> > As Dan pointed out when "The VMM unmapped the bad page from
+> > guest physical space and passed the machine check to the guest."
+> > "The guest gets virtual #MC on an access to that page. When
+> > the guest tries to do set_memory_uc() and instructs cpa_flush()
+> > to do clean caches that results in taking another fault / exception
+> > perhaps because the VMM unmapped the page from the guest."
+> >
+> > Since the driver has special knowledge to handle NP or UC,
+> > mark the poisoned page with NP and let driver handle it when
+> > it comes down to repair.
+> >
+> > Please refer to discussions here for more details.
+> > https://lore.kernel.org/all/CAPcyv4hrXPb1tASBZUg-GgdVs0OOFKXMXLiHmktg_kFi7YBMyQ@mail.gmail.com/
+> >
+> > Now since poisoned page is marked as not-present, in order to
+> > avoid writing to a not-present page and trigger kernel Oops,
+> > also fix pmem_do_write().
+> >
+> > Fixes: 284ce4011ba6 ("x86/memory_failure: Introduce {set, clear}_mce_nospec()")
+> > Reviewed-by: Christoph Hellwig <hch@lst.de>
+> > Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+> > Signed-off-by: Jane Chu <jane.chu@oracle.com>
 
-Thanks a lot for your information. 
-However, the patch here is slightly different from your previous discussion: 
+Boris,
 
-your patch focuses on using procfs to change the madvise behaviour of another process,
-but this patch will not modify the flag of all VMAs of the process. It introduces
-a new bool ksm_force to represent this forcible feature of KSM based on process,
-which is independent of madvise. the same way, process_madvise is a kind of
-madvise in essence.
-
-> P.S. For now I do it via dedicated syscall, but I'm not trying to upstream this approach.
-> 
-> [1] https://lore.kernel.org/lkml/2a66abd8-4103-f11b-06d1-07762667eee6@suse.cz/
-> [2] https://lore.kernel.org/all/20190515145151.GG16651@dhcp22.suse.cz/T/#u
-> [3] https://lore.kernel.org/lkml/20190516172452.GA2106@avx2/
-> [4] https://gitlab.com/post-factum/pf-kernel/-/commits/ksm-5.17/
-> 
-> Oleksandr Natalenko (post-factum)
-> 
+This is the last patch in this set that needs an x86 maintainer ack.
+Since you have been involved in the history for most of this, mind
+giving it an ack so I can pull it in for v5.19? Let me know if you
+want a resend.
