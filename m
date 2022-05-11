@@ -2,117 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DB0925228DA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 May 2022 03:18:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A211A5228FA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 May 2022 03:31:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240204AbiEKBSV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 May 2022 21:18:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51318 "EHLO
+        id S240449AbiEKBbT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 May 2022 21:31:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235830AbiEKBSS (ORCPT
+        with ESMTP id S229704AbiEKBbP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 May 2022 21:18:18 -0400
-Received: from lgeamrelo11.lge.com (lgeamrelo12.lge.com [156.147.23.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B453C58E4C
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 May 2022 18:18:16 -0700 (PDT)
-Received: from unknown (HELO lgeamrelo01.lge.com) (156.147.1.125)
-        by 156.147.23.52 with ESMTP; 11 May 2022 10:18:15 +0900
-X-Original-SENDERIP: 156.147.1.125
-X-Original-MAILFROM: byungchul.park@lge.com
-Received: from unknown (HELO X58A-UD3R) (10.177.244.38)
-        by 156.147.1.125 with ESMTP; 11 May 2022 10:18:14 +0900
-X-Original-SENDERIP: 10.177.244.38
-X-Original-MAILFROM: byungchul.park@lge.com
-Date:   Wed, 11 May 2022 10:16:37 +0900
-From:   Byungchul Park <byungchul.park@lge.com>
-To:     tytso@mit.edu
-Cc:     torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
-        linux-ide@vger.kernel.org, adilger.kernel@dilger.ca,
-        linux-ext4@vger.kernel.org, mingo@redhat.com,
-        linux-kernel@vger.kernel.org, peterz@infradead.org,
-        will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
-        joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
-        chris@chris-wilson.co.uk, duyuyang@gmail.com,
-        johannes.berg@intel.com, tj@kernel.org, willy@infradead.org,
-        david@fromorbit.com, amir73il@gmail.com,
-        gregkh@linuxfoundation.org, kernel-team@lge.com,
-        linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
-        minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
-        sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
-        penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
-        ngupta@vflare.org, linux-block@vger.kernel.org,
-        paolo.valente@linaro.org, josef@toxicpanda.com,
-        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        jack@suse.cz, jack@suse.com, jlayton@kernel.org,
-        dan.j.williams@intel.com, hch@infradead.org, djwong@kernel.org,
-        dri-devel@lists.freedesktop.org, rodrigosiqueiramelo@gmail.com,
-        melissa.srw@gmail.com, hamohammed.sa@gmail.com, 42.hyeyoo@gmail.com
-Subject: Re: [PATCH RFC v6 00/21] DEPT(Dependency Tracker)
-Message-ID: <20220511011637.GC18445@X58A-UD3R>
-References: <YnnAnzPFZZte/UR8@mit.edu>
- <1652161060-26531-1-git-send-email-byungchul.park@lge.com>
+        Tue, 10 May 2022 21:31:15 -0400
+Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74BD53A5F7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 May 2022 18:31:13 -0700 (PDT)
+Received: by mail-pg1-x533.google.com with SMTP id 202so460699pgc.9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 May 2022 18:31:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7Ro2giJkuvuJdzvxf68e3H2xmYter4QpHE79FuLxIAc=;
+        b=Au1CU6jRpreJ8t+x3gPMPRVQje08IpwwfwVdGeqOXNoom/8XyrcCbThW+IE0O/XP4x
+         X4gXGv2PvlgWuWnxUrl98Db7XwYlWhhuYU7PyejopoAQp/tlb0ci+Yq6YnMZtCIRisUH
+         7d8UJRehsjc4Tk8M8B9tiB2d400n/3ALaL23U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7Ro2giJkuvuJdzvxf68e3H2xmYter4QpHE79FuLxIAc=;
+        b=DzJ03FxDp3PxoRvxei39XbsGyxs3/g4PdRSTHKb7QgKoO+EZ00mi2ZiBWYLN4xypvr
+         D24eyYUxZ+s/CSMgFqADA2iX3+jmdxB7L0Lv0ExyZyWUjoeLv5pu1fbNmsto05EETFqE
+         XriW0MAiB6YdmFRsyj0m/K6HGAZssZhaWeJJ6LSil1EKKlN8zHhxHUOdxYkKGbbKAoEv
+         UlDSunytdVq67vphjZNb1gcQ2saEHKT6ZQs70QJ395wNvea+2KD/jUfR4s7Oi9Rd6Wzi
+         rCHU/zJAXOf02GiUgZYfslkzpkx2+ZMg0JtNq5Lr1QJle+dQirAOTauYPpnLVRWnn5df
+         3/cg==
+X-Gm-Message-State: AOAM5322OLV/N3nNQJ6R+bHuO5KHN33OiSOuf26EluocuWXMrqht0eGi
+        fPUbzjYF2bSTcBp8V/fiYlJ+/d7ijEmpHA==
+X-Google-Smtp-Source: ABdhPJxjUzX9FxHTIomOWYpQjNpMKe2au4mvF33dt4V+qZYFdN1t+q4jmXd9hobBS6rMTpFYDYXtpg==
+X-Received: by 2002:a63:5c58:0:b0:3c2:f183:cbd7 with SMTP id n24-20020a635c58000000b003c2f183cbd7mr18502090pgm.33.1652232672791;
+        Tue, 10 May 2022 18:31:12 -0700 (PDT)
+Received: from dlunevwfh.roam.corp.google.com (n122-107-196-14.sbr2.nsw.optusnet.com.au. [122.107.196.14])
+        by smtp.gmail.com with ESMTPSA id a4-20020a17090aa50400b001cd4989feecsm2494749pjq.56.2022.05.10.18.31.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 May 2022 18:31:12 -0700 (PDT)
+From:   Daniil Lunev <dlunev@chromium.org>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     fuse-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        Daniil Lunev <dlunev@chromium.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Subject: [PATCH 0/2] Prevent re-use of FUSE superblock after force unmount
+Date:   Wed, 11 May 2022 11:30:55 +1000
+Message-Id: <20220511013057.245827-1-dlunev@chromium.org>
+X-Mailer: git-send-email 2.31.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1652161060-26531-1-git-send-email-byungchul.park@lge.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Spam-Status: No, score=-6.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 10, 2022 at 02:37:40PM +0900, Byungchul Park wrote:
-> Ted wrote:
-> > On Tue, May 10, 2022 at 09:32:13AM +0900, Byungchul Park wrote:
-> > > DEPT is tracking way more objects than Lockdep so it's inevitable to be
-> > > slower, but let me try to make it have the similar performance to
-> > > Lockdep.
-> > 
-> > In order to eliminate some of these false positives, I suspect it's
-> > going to increase the number of object classes that DEPT will need to
-> > track even *more*.  At which point, the cost/benefit of DEPT may get
-> > called into question, especially if all of the false positives can't
-> > be suppressed.
-> 
-> Look. Let's talk in general terms. There's no way to get rid of the
-> false positives all the way. It's a decision issue for *balancing*
-> between considering potential cases and only real ones. Definitely,
-> potential is not real. The more potential things we consider, the higher
-> the chances are, that false positives appear.
-> 
-> But yes. The advantage we'd take by detecting potential ones should be
-> higher than the risk of being bothered by false ones. Do you think a
-> tool is useless if it produces a few false positives? Of course, it'd
-> be a problem if it's too many, but otherwise, I think it'd be a great
-> tool if the advantage > the risk.
-> 
-> Don't get me wrong here. It doesn't mean DEPT is perfect for now. The
-> performance should be improved and false alarms that appear should be
-> removed, of course. I'm talking about the direction.
-> 
-> For now, there's no tool to track wait/event itself in Linux kernel -
-> a subset of the functionality exists tho. DEPT is the 1st try for that
-> purpose and can be a useful tool by the right direction.
-> 
-> I know what you are concerning about. I bet it's false positives that
-> are going to bother you once merged. I'll insist that DEPT shouldn't be
-> used as a mandatory testing tool until considered stable enough. But
-> what about ones who would take the advantage use DEPT. Why don't you
-> think of folks who will take the advantage from the hints about
-> dependency of synchronization esp. when their subsystem requires very
-> complicated synchronization? Should a tool be useful only in a final
-> testing stage? What about the usefulness during development stage?
-> 
-> It's worth noting DEPT works with any wait/event so any lockups e.g.
-> even by HW-SW interface, retry logic or the like can be detected by DEPT
-> once all waits and events are tagged properly. I believe the advantage
-> by that is much higher than the bad side facing false alarms. It's just
-> my opinion. I'm goning to respect the majority opinion.
+Force unmount of fuse severes the connection between FUSE driver and its
+userspace counterpart. However, open file handles will prevent the
+superblock from being reclaimed. An attempt to remount the filesystem at
+the same endpoint will try re-using the superblock, if still present.
+Since the superblock re-use path doesn't go through the fs-specific
+superblock setup code, its state in FUSE case is already disfunctional,
+and that will prevent the mount from succeeding.
+The patchset adds a possibility to mark the superblock  "defunc", which
+will prevent its re-use by the subsequent mounts, and uses the
+functionality in FUSE driver.
 
-s/take advantage/have the benefit/g
 
-	Byungchul
+Daniil Lunev (2):
+  fs/super: Add a flag to mark super block defunc
+  FUSE: Mark super block defunc on force unmount
+
+ fs/fuse/inode.c    | 11 +++++++++--
+ fs/super.c         |  4 ++--
+ include/linux/fs.h |  1 +
+ 3 files changed, 12 insertions(+), 4 deletions(-)
+
+-- 
+2.31.0
+
