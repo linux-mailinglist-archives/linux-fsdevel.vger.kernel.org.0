@@ -2,61 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 95CD1523F14
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 May 2022 22:53:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68281523F7A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 May 2022 23:33:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347898AbiEKUx4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 May 2022 16:53:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40924 "EHLO
+        id S1348178AbiEKVdm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 May 2022 17:33:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240502AbiEKUxz (ORCPT
+        with ESMTP id S1348137AbiEKVdk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 May 2022 16:53:55 -0400
-X-Greylist: delayed 25899 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 11 May 2022 13:53:53 PDT
-Received: from yodobashi.com (unknown [106.75.237.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E7721190D1B
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 May 2022 13:53:52 -0700 (PDT)
-Sender: info@yodobashi.com
-Date:   Thu, 12 May 2022 04:53:44 +0800
-From:   "yodobashi.com" <mail@yodobashi.com>
-To:     <linux-fsdevel@vger.kernel.org>
-Subject: =?gb2312?B?peilyaXQpbelyaXDpcils6Xgo7qhuKSqv82YlMfpiPOhuYnkuPzSwA==?=
-        =?gb2312?B?7m3K3Li2pM6ktN9CvWogbHZzaXZiaHl6bHlk?=
-Message-ID: <20220512045354232601@yodobashi.com>
-X-mailer: Foxmail 6, 13, 102, 15 [cn]
-Mime-Version: 1.0
-Content-Type: text/plain;
-        charset="gb2312"
-Content-Transfer-Encoding: base64
-X-Spam-Status: No, score=4.9 required=5.0 tests=BAYES_50,RCVD_IN_SBL_CSS,
-        RDNS_NONE,SPF_FAIL,SPF_HELO_FAIL,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: ****
+        Wed, 11 May 2022 17:33:40 -0400
+Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D5E172211
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 May 2022 14:33:38 -0700 (PDT)
+Received: by mail-yb1-xb32.google.com with SMTP id s30so6369199ybi.8
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 May 2022 14:33:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5RG02r69eZnKTp9Uzlr2A3sSYsmG309qXgqnZxLCnOc=;
+        b=ZrW1SBuyknTH0Pvt02TKD642XSK4dDYF44OjGQ0VBMY4sqk8wmxHJjX1Sq/cLJLTEy
+         ZRo1N2cbFel7Rt1paK08Ddr/wL4a+R4+RWkVw3ZDGEv6TDV1RcMP3sse78Qo6IOf56cr
+         tmGyd+/mxw6P1s0u6L9aQ9Ss0V1HFUr7Oqnrk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5RG02r69eZnKTp9Uzlr2A3sSYsmG309qXgqnZxLCnOc=;
+        b=4GN/F1Vm20FUOp40V7HnJ1ClSeRoLCpSj0a5w3c9ktXDVv5gs7TbBByBv31p5Mmtuk
+         gWJhA3UaREvWqHoiEqGhQXj5Ace/ZrfA5pFzQ+mnnz8CRlCFYEyNYvBUNh227EiBXmzp
+         eeqchml3bnAxiZBF87MfczSCBHqNY50Rtka2ifEr+rfNpTT9MyKukwKlXpSDV6HQUXOe
+         pIcbKCmAg0h2uy1QYSc/ASsFiNFJNxXjHCSwUfTcqIqFeWz0uAeGlU1oMd4bGizNEIjb
+         72HNOVh/+NUZ0IyRWPJJ1eqYK3pxKHNoyhZAB0Lk/kN2SXmQzpgTH2IAHQyAuFOWXPUI
+         Lq2A==
+X-Gm-Message-State: AOAM5325MU6Jy/WSlcUaMK2DKeIIrYSaX9dNKsQ7kk9uns6DvncCT52O
+        VDHq4INarKBSTVRUIBIdA5QlSr3N6Zq/14hQ/zAgXbsQscNWmw==
+X-Google-Smtp-Source: ABdhPJzEB57fAMxgOo9ba2pK7f/rTinG6jPYMk20py7TIAICbHPPVFQCBw04WKIepQxKEdocoDhnMK4io1vjkVbiSgY=
+X-Received: by 2002:a25:2a4c:0:b0:648:6a80:9cff with SMTP id
+ q73-20020a252a4c000000b006486a809cffmr26542192ybq.507.1652304817908; Wed, 11
+ May 2022 14:33:37 -0700 (PDT)
+MIME-Version: 1.0
+References: <20220511013057.245827-1-dlunev@chromium.org> <20220511113050.1.Ifc059f4eca1cce3e2cc79818467c94f65e3d8dde@changeid>
+ <YnvOFt3sC/XLJj05@infradead.org>
+In-Reply-To: <YnvOFt3sC/XLJj05@infradead.org>
+From:   Daniil Lunev <dlunev@chromium.org>
+Date:   Thu, 12 May 2022 07:33:27 +1000
+Message-ID: <CAONX=-cW9Or1eEVUg3H669tEDW+1v16zZUGRQCaF3DAuLmgFvw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] fs/super: Add a flag to mark super block defunc
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, fuse-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-ofah9qG4pKq/zZiUx+mI86G5ieS4/NLA7m3K3Li2pM6ktN9CvWqh9qH2DQqjqKSzpM6l4algpeuk
-z6GixeTQxYyf08OkzqWipcml7KW5pMfF5NDFpLWk7KTGpKSk3qS5o6kNCg0KDQql6KXJpdClt6XJ
-pcOlyKWzpeCk8qS0wPvTw6SkpL+kwKStoaKkoqTqpKykyKSmpLSktqSkpN6kuaGjDQqkqr/NmJSk
-zqSqv82YlMfpiPOJ5Lj8yta+QaStpPKkqqSzpMqkpKTepLekv6GjDQrE2sjdpM6ktLRf1Uqk8qSq
-7oqkpKSkpL+kt6TepLmhow0Ko6il0aW5pe+pYKXJpM+horHtyr6kt6TGpKqk6qTepLuk86OpDQoN
-CqG+ieS4/Iydz/OkzrvhhlRJRKG/DQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0Ku+GGVElEoaE6oaFsaW51eC1mc2RldmVsQHZnZXIu
-a2VybmVsLm9yZw0KLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0NCg0KofGJ5Lj8pLWk7KS/pKq/zZiUx+mI8yANCi0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQrritSSt6y6xQ0K
-yNXW0KTOpLTfQr1qz8jritSSt6y6xQ0KDQqktLXH5WjH6YjzpM+hos/C05uhuKSqv82YlIyf08Ol
-2qlgpbihuaSrpOmktLRf1Uqkr6TApLWkpKGjDQoNCqGhqIukqr/NmJSMn9PDpdqpYKW4DQpodHRw
-czovL3MueWFtLmNvbS81RlhZRQ0KDQqh+aSzpM6l4algpevE2sjdpMvQxKSipL+k6qTOpMqkpIj2
-us+kz6GipKrK1sr9pMekuaSsoaKl6KXJpdCltz+lyaXDpcg/pbOl4KSqhpakpLrPpO+ku7eZv9qk
-2NbBvLGktN9CvWqk8qSq7oqkpKSkpL+kt6TepLmhow0KDQoNCqSzpM6l4algpeukz6GixeTQxYyf
-08OkzqWipcml7KW5pMfF5NDFpLWk7KTGpKSk3qS5oaMNCqSqytbK/aTypKqS7KSxpKSkv6S3pN6k
-uaSsoaKks6TOpeGpYKXrpM7E2sjdpMukxKSkpMakzqSqhpakpLrPpO+ku6TPz8LTm6TO30K9as/I
-pN6kx6Sq7oqkpKSkpL+kt6TepLmhow0KDQql6KXJpdClt6XJpcOlyKWzpeAgpKqGlqSkus+k76S7
-t5m/2g0KRW1haWw6IGluZm9AeW9kb2Jhc2hpLmNvbQ0KDQpDb3B5cmlnaHQyMDIyIFlvZG9iYXNo
-aSBDYW1lcmEgQ28uLEx0ZC4NCg0KIA0K
+On Thu, May 12, 2022 at 12:54 AM Christoph Hellwig <hch@infradead.org> wrote:
+>
+> On Wed, May 11, 2022 at 11:30:56AM +1000, Daniil Lunev wrote:
+> > File system can mark a block "defunc" in order to prevent matching
+> > against it in a new mount.
+>
+> Why use a bool instead of using s_iflags?
+Oh, I was looking at the flag field, but for some reason got confused
+about its values.
+Looking again, I totally can use it. However, the other option, that
+Miklos proposed in
+a thread on the cover letter mail, is to remove the superblock from
+"type->fs_supers".
+I plan to upload a new version with that option. Which of those two
+would you prefer?
 
+> Also I suspect we should never reuse a force mounted superblock,
+> but at least for block devices we should also not allow allocating
+> a new one for that case but just refuse the mount.
+Re-use of a force unmounted superblock "just works" for at least ext4
+- in fact, it
+continues to work as if nothing happened to it. Changing that may
+break existing use
+cases. For FUSE that unfortunately unachievable, given the daemon is
+disconnected
+from the driver and likely killed after force unmount, but ability to
+re-mount is essential,
+because force unmount is the only way to reliably achieve suspend
+while using FUSE,
+and if re-mount doesn't work, the connected device/share is missing
+after resume.
 
+Thanks,
+Daniil
