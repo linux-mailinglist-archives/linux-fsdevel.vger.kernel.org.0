@@ -2,162 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E4EBF52304D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 May 2022 12:09:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 022915230BA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 May 2022 12:35:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239731AbiEKKJA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 May 2022 06:09:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49174 "EHLO
+        id S236557AbiEKKfN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 May 2022 06:35:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52250 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229877AbiEKKI5 (ORCPT
+        with ESMTP id S236068AbiEKKfL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 May 2022 06:08:57 -0400
-Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7FDD7A828;
-        Wed, 11 May 2022 03:08:55 -0700 (PDT)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 299615C01BF;
-        Wed, 11 May 2022 06:08:55 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Wed, 11 May 2022 06:08:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-        cc:cc:content-transfer-encoding:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to; s=fm1; t=1652263735; x=
-        1652350135; bh=/JrNB2Fx41iDaNUHQ1Mupt47psUq7cPRK1CxJ1DI5H8=; b=U
-        iPyQU1umS2dHaDmIxM9V+ihgsBbZvm5ytXkgUqxRqTufJ147iBMcLm780ZYmdRW+
-        ea3/H/NSyIYFUnnqTcg4aREbTo6yDcMWD+9zhpBV0Qgz7/yDTCsOwO7wi8d8UDTU
-        PVyc45yYFSEVz0CTKI2dd/JLHqsY8+JoMXTrySFBkDu5sQn2JJDYvbxRyyVEeuZI
-        Z/VFGC/zXL3tDV8LO7ngioWrer7y+oXETypQs013Syh9tUFsN8FmZjgEnNIFIFqN
-        yCLH49d1e/vjdSM0ERoAqFJx7wLnVPGxGjLK1UszSleLWPhPGQunRffrrsIBPZAA
-        PKxS0QuRfzNYxU1ve41DA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:date:date:from:from:in-reply-to:in-reply-to
-        :message-id:mime-version:references:reply-to:sender:subject
-        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; t=1652263735; x=1652350135; bh=/JrNB2Fx41iDa
-        NUHQ1Mupt47psUq7cPRK1CxJ1DI5H8=; b=oroW1ukq0czGLRH4pqXhuDnfREq2t
-        L4kkxKkx2YMj8QbPj+rYrTcWm5lL+yulCUZ9b71M9Zd9fVDS04djzHSwXFEeEhJ9
-        /pbuoEHsj/7qLAEGBtgNqeORCiWFbzCwJ2K37cC1jdVNvI8nrEq78WRS81+oucMv
-        s9OXIweiOk4nDNRvv4rPiJDI+jKMQUfS/gv/1C6kNCTo4wubXmmh8S0smDim2DoU
-        5n0kP8SYkZnjxVLaca7GxXrhVXloVUyTMIZqdXeMiMk72SxDsPWjTXsb1t+vnuWb
-        XlFj3KongPnx74x7NSplfXVsMxh8/Bl+LDiSQdruPA91ONOmKVXyzSlww==
-X-ME-Sender: <xms:Not7YsX8ZK6a3gxP28dxvoZu3a9EgIbpyWur-VLms1Bzqo9q22lDOg>
-    <xme:Not7Ygm6qh9KkwFM2YlawRYHc8UZG4gYCHtT12beTzDgtlWSnhDd7hYeJf0YNK3m1
-    VxaOdXC5EZpRRiS>
-X-ME-Received: <xmr:Not7YgakgSTTHXUbfKR2BU0K8nHSXwHoB5a9t0TOobHcUgHozhbjg9oYyuMfnKN4meQcBOhhTo-Mxj1ZjW8pql88glArjNwxiXvRoE2EHBjRR3oai90L>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrgeehgddvfecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefkffggfgfuvfevfhfhjggtgfesthekredttdefjeenucfhrhhomhepuegvrhhn
-    ugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilh
-    drfhhmqeenucggtffrrghtthgvrhhnpefgheevteeuveelkedtudekffefvdehueevffej
-    iedvjeelhedvtdevudekjeehjeenucffohhmrghinhepghhithhhuhgsrdgtohhmnecuve
-    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdr
-    shgthhhusggvrhhtsehfrghsthhmrghilhdrfhhm
-X-ME-Proxy: <xmx:N4t7YrWm-7LMG0nESAsUEVo6qs-zXigUTN1876dar1oFv_iVRh6eOg>
-    <xmx:N4t7YmldDC41dFHMbcZV7aiWh5u8HVoRsAKykBEuYVyEmIRU695ZGg>
-    <xmx:N4t7Yge44mJ5zTcm79Vs9QsvC_9HVWVuOmu2nPZ2ah1cTEhu_GARsA>
-    <xmx:N4t7YnC0Z1tFku0c-FNXo6Z4mF4JNOpqd6m12QYDnh4_FTAEYzG_qw>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 11 May 2022 06:08:54 -0400 (EDT)
-Message-ID: <f512b616-e252-205a-d8e5-4ea7fef53edc@fastmail.fm>
-Date:   Wed, 11 May 2022 12:08:53 +0200
+        Wed, 11 May 2022 06:35:11 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C9EE6C0F6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 May 2022 03:35:08 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id d6so1998024ede.8
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 May 2022 03:35:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=e9RMvdxfaUgmFv28W78x2gPvdrNxAzfKB4dqdIX05kM=;
+        b=jUsxcGvMHY8GtTbYfp5So2fib+F6Jd8jOLdPWNb3IDtXLg0g+aX3UcVnd4j/fzW+Xe
+         timyQuWT26SQqy3tfXt0O/l5VOUjBb3vKLQC9t7ht5dw7M6i2OZyHZCo9T9egWeAzx+Z
+         SBN+JpPuwCVXUudpy7Sr5YvnYxT3/NxuCZsJs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=e9RMvdxfaUgmFv28W78x2gPvdrNxAzfKB4dqdIX05kM=;
+        b=it0rCg/UJNvTYeuqKH+DP8K9rN/cRBpiNKI9YcqHTOCL/75ZWETwth0lrchvE+I0HO
+         OazMc0UwEcCg2ugicoRZbggctWhVdv0eMHhMqx2GLebF451NnaDQl+h2DRV2uYfLEz7j
+         YZa/FjK9RZLu0k95I2yc74TuVPURLnp2HWWaD5KitBPGChYuyx4cWCBbwJRMiXwmyhJS
+         1TB7jAsoP5U6DQvhJzqjkIf0L+8BM5p1rZo3S/17q6xTQ3xAmba7AJSgtV5by1nSeS+s
+         Qc1L2TmfyJRDBtVUSGCDPNpNcvJ8TvmbXAZxp8ynnFz6zmPHLogEawLE8ItUGN7sSGdj
+         hMaA==
+X-Gm-Message-State: AOAM530KIPsanI1CnBU8CCsServA9W+HlY875JEhwSdhIAhRF+JEHMAc
+        D6JyUUuOvoegm83CO5D6ZpEIREEiRkBWYy+mYFkGmQ==
+X-Google-Smtp-Source: ABdhPJz8rDAihlF+zRcGYP/fmKwXLVzb38QkYRUruiCxQkvF1++pZd0LH6sbiBuqtKTMi64DqlpiPIeveR0/kja2T7s=
+X-Received: by 2002:a05:6402:50d1:b0:428:1473:d173 with SMTP id
+ h17-20020a05640250d100b004281473d173mr27578456edb.37.1652265306607; Wed, 11
+ May 2022 03:35:06 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH v4 1/3] FUSE: Implement atomic lookup + create
-Content-Language: en-US
-To:     =?UTF-8?Q?Jean-Pierre_Andr=c3=a9?= <jean-pierre.andre@wanadoo.fr>,
-        linux-fsdevel@vger.kernel.org, Vivek Goyal <vgoyal@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Cc:     fuse-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-References: <20220502102521.22875-1-dharamhans87@gmail.com>
- <20220502102521.22875-2-dharamhans87@gmail.com> <YnGIUOP2BezDAb1k@redhat.com>
- <CACUYsyGoX+o19u41cZyF92eDBO-9rFN_EEWBvWBGrEMuNn29Mw@mail.gmail.com>
- <YnKR9CFYPXT1bM1F@redhat.com>
- <CACUYsyG+QRyObnD5eaD8pXygwBRRcBrGHLCUZb2hmMZbFOfFTg@mail.gmail.com>
- <YnPeqPTny1Eeat9r@redhat.com>
- <CACUYsyG9mKQK+pWcAcWFEtC2ad0_OBU6NZgBC965ZxQy5_JiXQ@mail.gmail.com>
- <YnUsw4O3F4wgtxTr@redhat.com> <78c2beed-b221-71b4-019f-b82522d98f1e@ddn.com>
- <YnVV2Rr4NMyFj5oF@redhat.com> <90fbe06b-4af7-c9ce-4aca-393aed709722@ddn.com>
- <a712f535-7e34-4967-d335-f3680f9c4b6f@wanadoo.fr>
-From:   Bernd Schubert <bernd.schubert@fastmail.fm>
-In-Reply-To: <a712f535-7e34-4967-d335-f3680f9c4b6f@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-3.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20220511013057.245827-1-dlunev@chromium.org> <CAJfpegsmyY+D4kK3ov51FLGA=RkyGDKMcYiMo2zBqYuFNs78JQ@mail.gmail.com>
+ <CAONX=-dqY64VkqF6cNYvm8t-ad8XRqDhELP9icfPTPD2iLobLA@mail.gmail.com>
+ <CAJfpegvUZheWb3eJwVrpBDYzwQH=zQsuq9R8mpcXb3fqzzEdiQ@mail.gmail.com> <CAONX=-cxA-tZOSo33WK9iJU61yeDX8Ct_PwOMD=5WXLYTJ-Mjg@mail.gmail.com>
+In-Reply-To: <CAONX=-cxA-tZOSo33WK9iJU61yeDX8Ct_PwOMD=5WXLYTJ-Mjg@mail.gmail.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 11 May 2022 12:34:54 +0200
+Message-ID: <CAJfpegsNwsWJC+x8jL6kDzYhENQQ+aUYAV9wkdpQNT-FNMXyAg@mail.gmail.com>
+Subject: Re: [PATCH 0/2] Prevent re-use of FUSE superblock after force unmount
+To:     Daniil Lunev <dlunev@chromium.org>
+Cc:     linux-fsdevel@vger.kernel.org,
+        fuse-devel <fuse-devel@lists.sourceforge.net>,
+        linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
+        DKIM_SIGNED,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, 11 May 2022 at 11:37, Daniil Lunev <dlunev@chromium.org> wrote:
+>
+> > No progress has been made in the past decade with regard to suspend.
+> > I mainly put that down to lack of interest.
+> >
+> That is unfortunate.
+>
+> > It is a legitimate operation, but one that is not guaranteed to leave
+> > the system in a clean state.
+> Sure, I don't think I can argue about it. The current behaviour is a problem,
+> however, since there is no other way to ensure the system can suspend
+> reliably but force unmount - we try normal unmount first and proceed with
+> force if that fails. Do you think that the approach proposed in this patchset
+> is a reasonable path to mitigate the issue?
 
+At a glance it's a gross hack.   I can think of more than one way in
+which this could be achieved without adding a new field to struct
+super_block.
 
-On 5/7/22 12:42, Jean-Pierre André wrote:
-> Bernd Schubert wrote on 5/6/22 8:45 PM:
->>
->>
->> On 5/6/22 19:07, Vivek Goyal wrote:
->>> I looked at fuse_lowlevel API and passthrough_ll.c and there is no
->>> assumption whether FUSE_LOOKUP has already been called by client
->>> before calling FUSE_CREATE. Similarly, I looked at virtiofs code
->>> and I can't see any such assumption there as well.
->>
->> The current linux kernel code does this right now, skipping the lookup 
->> just changes behavior.  Personally I would see it as bug if the 
->> userspace implementation does not handle EEXIST for FUSE_CREATE. 
->> Implementation developer and especially users might see it differently 
->> if a kernel update breaks/changes things out of the sudden. 
->> passthrough_ll.c is not the issue here, it handles it correctly, but 
->> what about the XYZ other file systems out there - do you want to check 
->> them one by one, including closed source ones? And wouldn't even a 
->> single broken application count as regression?
->>
->>>
->>> https://github.com/qemu/qemu/blob/master/tools/virtiofsd/passthrough_ll.c 
->>>
->>>
->>> So I am sort of lost. May be you can help me understsand this.
->>
->> I guess it would be more interesting to look at different file systems 
->> that are not overlay based. Like ntfs-3g - I have not looked at the 
->> code yet, but especially disk based file system didn't have a reason 
->> so far to handle EEXIST. And
-> 
-> AFAIK ntfs-3g proper does not keep a context across calls and does
-> not know what LOOKUP was preparing a CREATE. However this may have
-> consequences in the high level of libfuse for managing the file tree.
-
-I don't think high level is effected. I'm really just scared to break
-
-> 
-> The kernel apparently issues a LOOKUP to decide whether issuing a
-> CREATE (create+open) or an OPEN. If it sent blindly a CREATE,
-> ntfs-3g would return EEXIST if the name was already present in
-> the directory.
-
-Ok, so ntfs-3g is ok - which leaves N-1 file systems to check...
-
-> 
-> For a test, can you suggest a way to force ignore of such lookup
-> within libfuse, without applying your kernel patches ? Is there a
-> way to detect the purpose of a lookup ? (A possible way is to
-> hardcode a directory inode within which the lookups return ENOENT).
-
-
-What I mean is that we need to check the code or test N file systems - 
-if ntfs-3g handles it, N-1 are left...
-
-I we all agree on that there is no issue in skipping the lookup - fine 
-with me - it slightly simplifies the patches.
-
+But...  what I'd really prefer is if the underlying issue of fuse vs.
+suspend was properly addressed instead of adding band-aids.  And that
+takes lots more resources, for sure, and the result is not guaranteed.
+But you could at least give it a try.
 
 Thanks,
-Bernd
+Miklos
