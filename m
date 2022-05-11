@@ -2,183 +2,249 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 645CF523022
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 May 2022 12:02:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41EDD52303A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 May 2022 12:05:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233796AbiEKKA5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 May 2022 06:00:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44780 "EHLO
+        id S236889AbiEKKFP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 May 2022 06:05:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35716 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239938AbiEKJ74 (ORCPT
+        with ESMTP id S229779AbiEKKFN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 May 2022 05:59:56 -0400
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2085.outbound.protection.outlook.com [40.107.237.85])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E8681EE0B7;
-        Wed, 11 May 2022 02:59:52 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=I8reVG5H+FLczaIK+GYJT6u1vnpdBrVDwGmTgvRyhIZdfLP090AMsv7TvnkEV3OC9SVrr50FdwAynf5boq4eEHmXiXoSW6JROQQ/IT+Lj5UyMNRR/vePYkxh3fulkbuln2pAae0GiFEIUFLBuA1A9oCHa3jMuuThOcbscWPWbd6aW7eVMiINin1/H8pxN/2aeVQR1M5tn1LYbZFdS3dv0t5T5CfBmJlP9OPTlbqyRVrUPCyo4DCbVQI6/w1WJVgVOyMDvW+eS+I4nyoGo7zUJ768a2BBcmmlqFbe4/o7Dz5jBpFS3HWu7XqLoZ9foMRfYNMZ+1jwH6Y/D7dQJ3hBjA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KAGnsqG3HuAyPyopQS2N3oJgW85cEuIafvivbUVPfJw=;
- b=TZSFxtSHf86diJ+O6noBdGSOZnETz3Fp1okVEDstCdQ5MyRjkSS3Sy8pHE3jDNardh3Wc821APrU133LXDpRGEh5bjL/gfO7zotncHysZVzjERjYaNECta4A8iZcwTZTFeRuRCwKCFzJl4maD2xkglCBYyDcVoKbbdGaobv8Pxj0s5FE79LeRQnn1pRip1dH8QJWEvWx5l8ngJGKFt59O1Jh2xjedGkH2ZBEw78D+GKZrRXlw9hcKOarstOojJJbPFI/V7V9WoU+b0Xps5PGLHab49cVQxYdTqaC9vpwRlugMHecZvM+SMovfRTp6oKwydjlvXbwTE3usMRqeQ6VEA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=ddn.com; dmarc=pass action=none header.from=ddn.com; dkim=pass
- header.d=ddn.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ddn.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KAGnsqG3HuAyPyopQS2N3oJgW85cEuIafvivbUVPfJw=;
- b=SJc8EyKXhlO8iaxkiEOuKz7NDt9ne4W8mrQJWoqCoZgg9MTCKhQg5wROQzIvkbtSEUjF04NRUropTNCXyvZhOvjRgKw9980mz6k5F+EYuHwTPE/RRMEJVeqL98DpbgaaEl/wFO10szFc2AI7seRoDoLVk6f3JYe9+rueP7T5a1A=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=ddn.com;
-Received: from DM5PR1901MB2037.namprd19.prod.outlook.com (2603:10b6:4:aa::29)
- by LV2PR19MB5743.namprd19.prod.outlook.com (2603:10b6:408:179::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5227.23; Wed, 11 May
- 2022 09:59:50 +0000
-Received: from DM5PR1901MB2037.namprd19.prod.outlook.com
- ([fe80::3994:ad08:1a41:d93a]) by DM5PR1901MB2037.namprd19.prod.outlook.com
- ([fe80::3994:ad08:1a41:d93a%7]) with mapi id 15.20.5227.023; Wed, 11 May 2022
- 09:59:50 +0000
-Message-ID: <8ee12e2e-94b0-a66c-104c-9b8cec92b5a5@ddn.com>
-Date:   Wed, 11 May 2022 11:59:45 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-Subject: Re: [PATCH v4 0/3] FUSE: Implement atomic lookup + open/create
-Content-Language: en-US
-To:     Miklos Szeredi <miklos@szeredi.hu>, Vivek Goyal <vgoyal@redhat.com>
-Cc:     Dharmendra Hans <dharamhans87@gmail.com>,
-        linux-fsdevel@vger.kernel.org,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        linux-kernel@vger.kernel.org
-References: <20220502102521.22875-1-dharamhans87@gmail.com>
- <YnLRnR3Xqu0cYPdb@redhat.com>
- <CACUYsyEsRph+iFC_fj3F6Ceqhq7NCTuFPH3up8R6C+_bGHktZg@mail.gmail.com>
- <YnPI6f2fRZUXbCFP@redhat.com> <882fbf7f-a56b-1e82-a158-9e2186ec7c4c@ddn.com>
- <YnQsizX5Q1sMnlI2@redhat.com>
- <CAJfpegseGaWHkjdQj7XiR=TQNFpPZzDF_rTXces2oRz=x0N7OA@mail.gmail.com>
-From:   Bernd Schubert <bschubert@ddn.com>
-In-Reply-To: <CAJfpegseGaWHkjdQj7XiR=TQNFpPZzDF_rTXces2oRz=x0N7OA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PR3P189CA0003.EURP189.PROD.OUTLOOK.COM
- (2603:10a6:102:52::8) To DM5PR1901MB2037.namprd19.prod.outlook.com
- (2603:10b6:4:aa::29)
+        Wed, 11 May 2022 06:05:13 -0400
+Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EEE05DA0C;
+        Wed, 11 May 2022 03:05:11 -0700 (PDT)
+Received: by mail-pl1-x62d.google.com with SMTP id c11so1375947plg.13;
+        Wed, 11 May 2022 03:05:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=dl2s8Tv2/kKkPRE8ZoHeNUZB1flbWNAHTlntidklYaY=;
+        b=KlIsnrMl6LzKnPwuuLyOxZLp19pZPqeI5Z4V8cuAYHI+9RVTGzbduTyCxz28BfMcY5
+         CwyO3hIQASgaBQ4kvhQxLyYSbckbWRlCLb1dD/BMJSrScuRjQHw7frIEqtCsYUwV0aJo
+         alk0g68BL70ZuQYOvBt58YRDPJ1xZn3xnx/SNkP8njfG7szgY0Hu9RRaME/VZH7+xzfW
+         9YmVvFN9yJDIXLpbXehLIFtj0nsBlM+xlrmaYop1xZL6z0w8gbSOGA+RryCui01GAuoH
+         cnWXREB1+3Q/d1q3pf62BP3GXl9AVtphO3G/fEuwafxxWxfxd2TZKvoEk0cxfjqDDCHb
+         RZlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=dl2s8Tv2/kKkPRE8ZoHeNUZB1flbWNAHTlntidklYaY=;
+        b=YEZOaKcvCruFRJUUeXH2uTSQvQVmgTEuZb1p4KVD43ClnU8v4+iwSzZwrTVl4UG+k8
+         YXPLwZVFe+YP1TNjusIE0wyBs4R2cidIMfeq6BHD8hT+ei4mvE9WL+BIieI3whnBMD2A
+         ILLJy2xNwA2BEi9OUTpgqTB9Q+sRpzk2OmAQWfKVnB5J7KMsj4CKyq04W7idzrydZcDz
+         xGBPIpr6vCVmWpD95aD0oQLWLla2Lx7TQiCz8NOOqrxOFz/8YNAJAe9zTAMtB8eExzUF
+         ZDf36kgn5ntrN3vDx3zFrGLLA4hLFlSUvT8rLftBRKezjT5nrp1ygo1dJByidVpoTNPZ
+         twBw==
+X-Gm-Message-State: AOAM530tHHIECZjogysmOdLT5/rKQ5SHXLqG02TND05Ndkej7na8Pzj3
+        Xp3wDlQtKsCB5BokFbu9v9aUNMhzSYPyBg==
+X-Google-Smtp-Source: ABdhPJxrR1W/gIbDjmZ7/+hWQ3pnc2AjtEKGxX+igDjmtKyPWlr1/5lfQ6qKTWVrO1rYmy4ogJ7Jlw==
+X-Received: by 2002:a17:90b:d91:b0:1da:35d7:a0c with SMTP id bg17-20020a17090b0d9100b001da35d70a0cmr4565541pjb.92.1652263510558;
+        Wed, 11 May 2022 03:05:10 -0700 (PDT)
+Received: from hyeyoo ([114.29.24.243])
+        by smtp.gmail.com with ESMTPSA id i20-20020a63cd14000000b003c291b46f7esm1330537pgg.18.2022.05.11.03.04.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 May 2022 03:05:09 -0700 (PDT)
+Date:   Wed, 11 May 2022 19:04:51 +0900
+From:   Hyeonggon Yoo <42.hyeyoo@gmail.com>
+To:     Byungchul Park <byungchul.park@lge.com>
+Cc:     torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
+        linux-ide@vger.kernel.org, adilger.kernel@dilger.ca,
+        linux-ext4@vger.kernel.org, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, peterz@infradead.org,
+        will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
+        joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
+        chris@chris-wilson.co.uk, duyuyang@gmail.com,
+        johannes.berg@intel.com, tj@kernel.org, tytso@mit.edu,
+        willy@infradead.org, david@fromorbit.com, amir73il@gmail.com,
+        gregkh@linuxfoundation.org, kernel-team@lge.com,
+        linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
+        minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
+        sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
+        penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
+        ngupta@vflare.org, linux-block@vger.kernel.org,
+        paolo.valente@linaro.org, josef@toxicpanda.com,
+        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        jack@suse.cz, jack@suse.com, jlayton@kernel.org,
+        dan.j.williams@intel.com, hch@infradead.org, djwong@kernel.org,
+        dri-devel@lists.freedesktop.org, airlied@linux.ie,
+        rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
+        hamohammed.sa@gmail.com, catalin.marinas@arm.com
+Subject: Re: [PATCH RFC v6 00/21] DEPT(Dependency Tracker)
+Message-ID: <YnuKQ9UIhk9WYoz7@hyeyoo>
+References: <CAHk-=whnPePcffsNQM+YSHMGttLXvpf8LbBQ8P7HEdqFXaV7Lg@mail.gmail.com>
+ <1651795895-8641-1-git-send-email-byungchul.park@lge.com>
+ <YnYd0hd+yTvVQxm5@hyeyoo>
+ <20220509001637.GA6047@X58A-UD3R>
+ <YnpJ9Mtf+pjx4JYm@hyeyoo>
+ <20220510233929.GB18445@X58A-UD3R>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 9b0e43eb-8810-4308-e93a-08da3334fd19
-X-MS-TrafficTypeDiagnostic: LV2PR19MB5743:EE_
-X-Microsoft-Antispam-PRVS: <LV2PR19MB57439AB93BBBA925E11EEBA9B5C89@LV2PR19MB5743.namprd19.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: MMy3EVLiuNMQe5dIDBaGn0lKe0HJ33do0x47Dan2HwA3OPDy/L7bkhK9YWJByU3cJF1YhnOujXN+U+hi+OyAwhdPaxzIZsEev1La0ox2X6ATpYu68bhcM2Kw/K7hYV+6VhFDP8dL6+S1+Gijzb+0xir57Htqh+XaIbT/+bZC6nn6n0naHuDIygyfl4cy6Fm9oghtwvXNMWcmBVWVSp586HbNoXUmuhAvdNEpIVeTpoOIki4TifHQ7aADAaD8uCVbErHp7HUqYqvAJKNjgr+MC0B4XdImtzEQ0OaM27+QSx3ZzxWTZ8gLKUQLAq06ZBgdzOQ77o9eWejNr+F2QmF1YPlL6LfKJ//jUzGlaNDvY+8q3wcWvDxEboxfO7R9J13m5R1vzAgkWze7Eg4vVwuxJk7SLCR2HwGABfeYaUfQcnZAGK2SPI4nYJdMZAXmj9/qLq3f2nNPusNCYxHfM7i/9jHXVZDm3Kj9pBBGt3tLYIm7eJHLia70jDM+mWsJFWVqtbzMY9WUcJtlL5Td10m0XLCaDgX8JBxjOmn4L8E6GUwFMcfCJjDN98/z7lC6PYJMYxP1IX+6oDrbQCP70taKsUJTpKFFwT8CiCdQqdenYfsrDHoDe7lW0AfBdKXJJ1RuvUOgwUFibUkm45o1W1sPhJggm3/VLhvmLZKTGrN8BoNux2pWo58SMxsKd5erRmG+myrSv7AmjmzDgMRlhkpiCaem6dH59LToGBCyTMXKK3M=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM5PR1901MB2037.namprd19.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(54906003)(186003)(6486002)(36756003)(31686004)(38100700002)(110136005)(316002)(4326008)(66556008)(66946007)(8676002)(53546011)(83380400001)(66476007)(86362001)(31696002)(2616005)(5660300002)(6666004)(2906002)(6512007)(8936002)(508600001)(6506007)(43740500002)(45980500001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?SHc5SXdXYU4yWEhMckViQ0VvaUV6aHJLZWk1TDg0eTkybFZLSDYyYmk1eTF1?=
- =?utf-8?B?dStTQ25SRDN5VlpWVm9WTEQzcUQ3Ym9wbm81T2RqNEpaZys0TXNlNGg1d2ts?=
- =?utf-8?B?VGxCYit6blF2S1FZUlFyaEV5OCtmLzQwNUNyRXVQSXJSRFpTRXhFVDZ0d2sr?=
- =?utf-8?B?ZkhTM2dqNC9BWFJHQmMvTUNWdHlDUUJzYzk4S05YVzhEVnYxZ0NVMTNSTFNw?=
- =?utf-8?B?eVFnN01LS25GejRIWlRxMThKMm5DZVZ4NlpnalYyV2UvYVE3NnkrbTduYjh6?=
- =?utf-8?B?NUNmMmJWcHN0TkxVU2hiOVVLUmNIbFU5S0lGSmpuZVByS3dhNmVibkVMV1BR?=
- =?utf-8?B?QjNLa3hCZW9IT1dZU0QyN0JtVUNXL0dscVhXdjFEUTJKVk9GUDltcHpIT1dN?=
- =?utf-8?B?RzR2WUJPSkxRMElBS2JhQzJXMFpoNjRxNVVnNjR3Z1dsVDJ2NU1RdVNORy9B?=
- =?utf-8?B?NVIrblFDcUx1TVExUDIrSzNHckM4ZjZ6d3oxVkV5QmlUbk55bDlRclZXSjM2?=
- =?utf-8?B?a3k2amdoRzdKMGV6Um94RnpHNTROSmpLNVNaNkp6bUNJWFRoZFRUWHhYRS80?=
- =?utf-8?B?emxKUUdSRlRyckNwL3VKN3AvWE12azliZlRsVk84OHVwTjQyaS8waXl5K2Ja?=
- =?utf-8?B?UDlJQTdlSVY2U2tkZGpWSjFkbGl2Q0lXR0N5RWlyVlh2WWNLZm1zNTYwSmNY?=
- =?utf-8?B?eTZGN01vVSsxc2Y5UHVEcG9IelVLSUFYMFFqRlFjTk96WTNDeTJxRG1rSHU5?=
- =?utf-8?B?d21TcWhBa0w5bWNoUHY4UGN5ZDJzN1pNK244MDVHOHJDRFhHZFpRNWkwQTJn?=
- =?utf-8?B?MjZNVGV4ckVRbmR4cjliUERlQjhKa2ZoZlZMVUY1bldVZ3JLekJhaFZ3dEtz?=
- =?utf-8?B?amFQc04zSDRLNDhmZGNHTXBYSUVjRXNqRGtzeFZhQjRMbGp5YVNNR2pZUFpR?=
- =?utf-8?B?Tmt3RGJUTU53YmQ3NFh6STkrbXY2bFp0dG1rUnZNaU5WMk9XKy9jMmMva1E3?=
- =?utf-8?B?YU5BSGk3OU0zSkZIaERmc1ZuUS9EYzdJRERVNU1uQmlxRnFZdzZGNnBJQ0tP?=
- =?utf-8?B?Y1ZsNjE4ZFRQSUp2Ui9IekRPQUpiY1pvb3ZNWTZRRm14RnpEc29Gbm5nVUpQ?=
- =?utf-8?B?WVViMDh2RGJGSVZNRU8yR2syRGNSSzRsUUd2amZ5dW5IZTc2SDJFczNUZHdN?=
- =?utf-8?B?enJndnNVaHRrWXRxR3B2cFFPSUQ4b3JTc3J0cFFhN2FqamVaYjd6d0hZS3ZM?=
- =?utf-8?B?cnFEWkJma0pRbzV4NHlkMWRSeFVvNGpkN3MvenR0aC9Yczdvck1PbWkwZlVV?=
- =?utf-8?B?czNOTGdCdkZPMVltejhKd2RDYy8xc1l0SUcrVnpBVVozajZkMXRHTUlwc0xQ?=
- =?utf-8?B?bmdKdU5RWDdQbTM3RXBOSzFuTVJLUGI1Z0VaenVKaWpyaVdpQ0RkTVphU05v?=
- =?utf-8?B?NW5wRjB0V0VNYURtWk1qTzFhTTJFNzNRVGpZVnF5aWRSVzhxY0k5T2hBZFNh?=
- =?utf-8?B?VERQN2tyWFBhM1doWUxNZEN6QURabWtWUGp6dlcyUVRkYUgwTkdCS0hmUHN5?=
- =?utf-8?B?dWRhaUxuTW1RaWJ3ZXZqck9nbDk4dXZHaGZ0VVc4SkIzMDZJamxzR2k2S05G?=
- =?utf-8?B?WDRRYXhzeFB6SncrcWx0T2RWN0Fuc0xlZFNuMWw4K2R0cnhvOTlUNkxwd2VG?=
- =?utf-8?B?b2RDNHdBeU9DTk54cTV5eEtOMWpKblM1OWtSSXNBTW40M1FYV1NNUWdjeTdL?=
- =?utf-8?B?aEwzNXZJZWFQZmw4VHZlSGgxdkh4NGM2SUhLUmtORjlaVFRGbFZINUFUZlpo?=
- =?utf-8?B?SWxVL1p0UXhJSE9lWWg2V2hUT2NNeEhmZlN2WXRyZEV1OWVUanYzckpFQTZu?=
- =?utf-8?B?WHl1N0RxT0tiQzhtWG1qYnNNMUl0cjUvUnFoMXJXcTZnazJaT3o5V082K1NJ?=
- =?utf-8?B?Qml2VHA2VmxQaE96eUxVM1B6S1FCZmI5UXlsb0VMc3lLYm81bk9IWnpUTGZI?=
- =?utf-8?B?Y2pkeWx3V3k5S2FaNkY0L0lpbWlGU2lCa0UwUmxCMXM5dkRHNzloMWFxaVFj?=
- =?utf-8?B?RHZpblAwb3c5VEdtN2h5cFJraEVxVHU4d0hQdnBoMm5tZi92RVk3eFpkcFR4?=
- =?utf-8?B?V292SzFUemVnYUNrcTRYUTNiY2ZJaVVwK1J6TDJ4UVVKMElBdjRMTjNBQU9X?=
- =?utf-8?B?dFY5bGE0Q3dkRVZQLytXUWlOa0svTmhyYkN4NkNDanQyZ2RCb2JvRWEzMjBO?=
- =?utf-8?B?WjFXMzdqaUdvSmN3TzM3REh6Ymx2ZEgwWkVLSkxnUXdJdHN3cktzTWhHeUFM?=
- =?utf-8?B?c20vYkdBVm5VNFlNS2NHU0NtSUViOVFaZXMyS1NEYkt3TitFS2ZHKzhqd0tv?=
- =?utf-8?Q?B/Z5WYo4JOhLBJMkG6hNwzTIEb/U909XhZsg2fTs17FbX?=
-X-MS-Exchange-AntiSpam-MessageData-1: UXsOdzZ5M5yL3Q==
-X-OriginatorOrg: ddn.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9b0e43eb-8810-4308-e93a-08da3334fd19
-X-MS-Exchange-CrossTenant-AuthSource: DM5PR1901MB2037.namprd19.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 May 2022 09:59:50.6496
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 753b6e26-6fd3-43e6-8248-3f1735d59bb4
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: G66jXuBo5LPlUgHNuSFzG3IUDkRURjuPP/ZHXNia9QFk2gTZlaWxPhWkZMOKE+1lLTvKV1USqbBkGSgw9eOSuw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR19MB5743
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220510233929.GB18445@X58A-UD3R>
+X-Spam-Status: No, score=-0.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,HK_RANDOM_ENVFROM,
+        HK_RANDOM_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 5/11/22 11:40, Miklos Szeredi wrote:
-> On Thu, 5 May 2022 at 21:59, Vivek Goyal <vgoyal@redhat.com> wrote:
+On Wed, May 11, 2022 at 08:39:29AM +0900, Byungchul Park wrote:
+> On Tue, May 10, 2022 at 08:18:12PM +0900, Hyeonggon Yoo wrote:
+> > On Mon, May 09, 2022 at 09:16:37AM +0900, Byungchul Park wrote:
+> > > On Sat, May 07, 2022 at 04:20:50PM +0900, Hyeonggon Yoo wrote:
+> > > > On Fri, May 06, 2022 at 09:11:35AM +0900, Byungchul Park wrote:
+> > > > > Linus wrote:
+> > > > > >
+> > > > > > On Wed, May 4, 2022 at 1:19 AM Byungchul Park <byungchul.park@lge.com> wrote:
+> > > > > > >
+> > > > > > > Hi Linus and folks,
+> > > > > > >
+> > > > > > > I've been developing a tool for detecting deadlock possibilities by
+> > > > > > > tracking wait/event rather than lock(?) acquisition order to try to
+> > > > > > > cover all synchonization machanisms.
+> > > > > > 
+> > > > > > So what is the actual status of reports these days?
+> > > > > > 
+> > > > > > Last time I looked at some reports, it gave a lot of false positives
+> > > > > > due to mis-understanding prepare_to_sleep().
+> > > > > 
+> > > > > Yes, it was. I handled the case in the following way:
+> > > > > 
+> > > > > 1. Stage the wait at prepare_to_sleep(), which might be used at commit.
+> > > > >    Which has yet to be an actual wait that Dept considers.
+> > > > > 2. If the condition for sleep is true, the wait will be committed at
+> > > > >    __schedule(). The wait becomes an actual one that Dept considers.
+> > > > > 3. If the condition is false and the task gets back to TASK_RUNNING,
+> > > > >    clean(=reset) the staged wait.
+> > > > > 
+> > > > > That way, Dept only works with what actually hits to __schedule() for
+> > > > > the waits through sleep.
+> > > > > 
+> > > > > > For this all to make sense, it would need to not have false positives
+> > > > > > (or at least a very small number of them together with a way to sanely
+> > > > > 
+> > > > > Yes. I agree with you. I got rid of them that way I described above.
+> > > > >
+> > > > 
+> > > > IMHO DEPT should not report what lockdep allows (Not talking about
+> > > 
+> > > No.
+> > > 
+> > > > wait events). I mean lockdep allows some kind of nested locks but
+> > > > DEPT reports them.
+> > > 
+> > > You have already asked exactly same question in another thread of
+> > > LKML. That time I answered to it but let me explain it again.
+> > > 
+> > > ---
+> > > 
+> > > CASE 1.
+> > > 
+> > >    lock L with depth n
+> > >    lock_nested L' with depth n + 1
+> > >    ...
+> > >    unlock L'
+> > >    unlock L
+> > > 
+> > > This case is allowed by Lockdep.
+> > > This case is allowed by DEPT cuz it's not a deadlock.
+> > > 
+> > > CASE 2.
+> > > 
+> > >    lock L with depth n
+> > >    lock A
+> > >    lock_nested L' with depth n + 1
+> > >    ...
+> > >    unlock L'
+> > >    unlock A
+> > >    unlock L
+> > > 
+> > > This case is allowed by Lockdep.
+> > > This case is *NOT* allowed by DEPT cuz it's a *DEADLOCK*.
+> > >
+> > 
+> > Yeah, in previous threads we discussed this [1]
+> > 
+> > And the case was:
+> > 	scan_mutex -> object_lock -> kmemleak_lock -> object_lock
+> > And dept reported:
+> > 	object_lock -> kmemleak_lock, kmemleak_lock -> object_lock as
+> > 	deadlock.
+> > 
+> > But IIUC - What DEPT reported happens only under scan_mutex and
+> > It is not simple just not to take them because the object can be removed from the
+> > list and freed while scanning via kmemleak_free() without kmemleak_lock and object_lock.
+>
+>
+> That should be one of the following order:
 > 
->> Oh, I have no issues with the intent. I will like to see cut in network
->> traffic too (if we can do this without introducing problems). My primary
->> interest is that this kind of change should benefit virtiofs as well.
+> 1. kmemleak_lock -> object_lock -> object_lock(nested)
+> 2. object_lock -> object_lock(nested) -> kmemleak_lock
 > 
-> One issue with that appears to be checking permissions.   AFAIU this
-> patchset only enables the optimization if default_permissions is
-> turned off (i.e. all permission checking is done by the server).  But
-> virtiofs uses the default_permissions model.
+> > Just I'm still not sure that someone will fix the warning in the future - even if the
+> > locking rule is not good - if it will not cause a real deadlock.
 > 
-> I'm not quite sure about this limitation, guessing that it's related
-> to the fact that the permissions may be stale at the time of checking?
+> There's more important thing than making code just work for now. For
+> example, maintainance, communcation via code between current developers
+> and potential new commers in the future and so on.
 
-Yes exactly, I had actually pointed this out in one of the mails.
+Then we will get same reports from DEPT until already existing bad code (even if it does not
+cause deadlock) is reworked. If you think that is right thing to do, okay.
 
-<quote myself from 2022-04-05 >
-Adding in a vfs ->open_revalidate might have the advantage that we could 
-also support 'default_permissions' - ->open_revalidate  needs to 
-additionally check the retrieved file permissions and and needs to call 
-into generic_permissions for that. Right now that is not easily 
-feasible, without adding some code dup to convert flags in MAY_* flags - 
-a vfs change would be needed here to pass the right flags.
-</quote>
+> At least, a comment describing why the wrong order in the code is safe
+> should be added.
 
+AFAIK The comment is already there in mm/kmemleak.c.
 
-Avoiding lookup for create should work without default_permissions, though.
+> I wouldn't allow the current order in the code if I
+> were the maintainer.
 
-
-With the current patches this comment should be added in 
-fuse_dentry_revalidate() to clarify things (somehow it got lost in the 
-(internal) review process).
-
-/* Default permissions actually also would not need revalidate, if 
-atomic_open() could verify attributes after opening the file. But the 
-MAY_ flags are missing and the vfs build_open_flags() to recreate these 
-flags not exported. Thus, default_permissions() cannot be called from 
-here - vfs updates would be required */
-
+[+Cc Catalin]
+He may have opinion.
 
 Thanks,
-Bernd
+Hyeonggon
+
+> 	Byungchul
+> 
+> > > ---
+> > > 
+> > > The following scenario would explain why CASE 2 is problematic.
+> > > 
+> > >    THREAD X			THREAD Y
+> > > 
+> > >    lock L with depth n
+> > > 				lock L' with depth n
+> > >    lock A
+> > > 				lock A
+> > >    lock_nested L' with depth n + 1
+> > > 				lock_nested L'' with depth n + 1
+> > >    ...				...
+> > >    unlock L'			unlock L''
+> > >    unlock A			unlock A
+> > >    unlock L			unlock L'
+> > > 
+> > > Yes. I need to check if the report you shared with me is a true one, but
+> > > it's not because DEPT doesn't work with *_nested() APIs.
+> > >
+> > 
+> > Sorry, It was not right just to say DEPT doesn't work with _nested() APIs.
+> > 
+> > > 	Byungchul
+> > 
+> > [1] https://lore.kernel.org/lkml/20220304002809.GA6112@X58A-UD3R/
+> > 
+> > -- 
+> > Thanks,
+> > Hyeonggon
+
+-- 
+Thanks,
+Hyeonggon
