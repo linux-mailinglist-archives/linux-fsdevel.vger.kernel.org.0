@@ -2,92 +2,131 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C14D523154
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 May 2022 13:19:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFD9E5231EF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 May 2022 13:38:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234084AbiEKLTb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 May 2022 07:19:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39174 "EHLO
+        id S229991AbiEKLiy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 May 2022 07:38:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231402AbiEKLT2 (ORCPT
+        with ESMTP id S229899AbiEKLit (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 May 2022 07:19:28 -0400
-Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC6C66CAAB
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 May 2022 04:19:27 -0700 (PDT)
-Received: by mail-yb1-xb32.google.com with SMTP id g28so3309393ybj.10
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 May 2022 04:19:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yQGeRKstKMwle+FFENjDqj/4DWnPwpCL9cdUs5k3wq8=;
-        b=cl6G1xs8S2DBnMExmfplmkS+v3ZwHXxin4dhUJqoE+TixyjEpJFSmHj/6I8mWpYkWM
-         /ZoJFQlqyvcjR24HJ93y579e3MR2Oy0Do+2rFAYonByg4rWr1eZrCOk5tJdYvvXkvREw
-         J7hs16H3XaOmewYXqPuVKzAzHvlGgnGBIMIIs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yQGeRKstKMwle+FFENjDqj/4DWnPwpCL9cdUs5k3wq8=;
-        b=mnY2W26eNq/6Qnxzd5t9VoZ72AGdkt4eFoTkGkSrTmUyyFtK+OKSHe0xX58Kc9xF5q
-         NCCCh4soR9LpHIG5y0cotSvtrstR0K+/MR21vvtVP0TxJn3lJdOoAXemmyCkWrjl0F0b
-         TZp4v4jiyaVMRxISvegi3dQsApLV7vvbky6uHsfawTf4Vl2vGK9ILVbMeqhIGPnV4amM
-         bYsq/qAoraCFRlqZGJdD/UN1b5dPDMuAdLzrhSa05TzW3wGvES+IFMLp3GNhdARi/8PT
-         izk5EpTtFMYxobp80oLntEWCA1Ny4eMW5Fr+BGKndMbHEBHbZk3cStxJl0bM9zZSZ/zN
-         xS8A==
-X-Gm-Message-State: AOAM532/vSeywBbZ9MwS8xkNs3kdVw5Ap97W7V0B5AIpTXh+sKkPqeVk
-        dIQQMtSBY8qA4DffMtp4I8t3SWGbIzcuNi2r3U3NRmll8v6MYg==
-X-Google-Smtp-Source: ABdhPJy6dJ80HM/NWK6pxo9H8JX41aVVI3gTyJa9azUE6OxSQWZloSGluI7DV3dtaIWgbmFLH/QzRxwBbp1tFvNfzdM=
-X-Received: by 2002:a25:cfc5:0:b0:647:39d4:49f5 with SMTP id
- f188-20020a25cfc5000000b0064739d449f5mr22874248ybg.595.1652267966978; Wed, 11
- May 2022 04:19:26 -0700 (PDT)
+        Wed, 11 May 2022 07:38:49 -0400
+Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60B6767D04;
+        Wed, 11 May 2022 04:38:47 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id D7C635C014F;
+        Wed, 11 May 2022 07:38:44 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute4.internal (MEProxy); Wed, 11 May 2022 07:38:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+        cc:cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to; s=fm1; t=1652269124; x=
+        1652355524; bh=naHO6ZQmGjggpueMIWFDjJ4Dzl3sF5KaKGDmAIp+dNs=; b=u
+        SIOuZ56mhsXd7xEOXv5K7zjz6AJVSdWQUd+AIgDodOThG7/wa5R5pBFJXUOY9V+7
+        7Tl2OVkBZzwwTLzQLufi5eYLUwzL58+DyEqHDH+C7UKTNLBhBZHSl8k3xpfNfpn1
+        hmhnVUJHfbdSiBiIjUN3hrb4d0YyGRDcZsE6I9pOe2GTILIONhomeynQ1XGbabcO
+        yCMdKNiDBrqjcZ+y7/9o7VxBZqX0GjCvO4n0FEohJemigTu/6rMBXDBsZw9E8MUL
+        ZY+L8VXeauZWrQXRWPXYbYf6SDn3ntgpy9M82BQNogbnZMaL12wHdx3514gLTZtq
+        3tDOnbCCVZ9lZMOR5lbGg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; t=1652269124; x=1652355524; bh=naHO6ZQmGjggp
+        ueMIWFDjJ4Dzl3sF5KaKGDmAIp+dNs=; b=cGWEsBRq7x06IGCwJd1/TslEeZIRY
+        24+U3Pwrbob1R/phWjPauZT2RgVeypZi3/7wnS6TqGkRBy0ziE0nASgFJk8jjmOf
+        7c23wTGG0e0Vv9NSbJnKKpfINhizi2vWBZAftZH265jdXVECd1VIL9Hhi1fPCono
+        cThKeFA+0a2ZKVn7yWZm9BzMQxpAXraltkKDBtBgXGb73wwdMsC8LWBRtlQaRX4e
+        VciEQ/Hj7lvRsbyMQo8JFyw/k1K/hFN+Jbpo/GIzkOsj3/Viz0F0Od2QeJsb0W9M
+        OrUF/ckEk7ra6cmKK5yJ0RR6bO+bNidPo+lkzp4Rq6mXyQmU4cMyXfYRQ==
+X-ME-Sender: <xms:RKB7YstHkghPzKzAYeWNtfnL_JvLhDQGxDMNH-WYY74LEaNv3ADnaA>
+    <xme:RKB7YpcP45NkEF7spc6w0DiMMU08lmf5LtkLIPPLuea6dsZORWKO1vfJeVwe8vaw8
+    uMOwAs3EavAA7D2>
+X-ME-Received: <xmr:RKB7YnylQ0DxUMHzy8FYaA8UbuiFfKSDlGhHsGIwPavz_zCImRcrhPW7RBw-_QvpeMMt1BLjywWJhXf5gv9i0c23Og8FqeEh4WSkxNZgoD6v_4nR6Sr2>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrgeehgdegtdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefkffggfgfuvfevfhfhjggtgfesthejredttdefjeenucfhrhhomhepuegvrhhn
+    ugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilh
+    drfhhmqeenucggtffrrghtthgvrhhnpeeileeigfeuudegueevtefghfffvdfhtdetvdfh
+    ueefueeugfdujeehteeuffdtudenucffohhmrghinhepnhgrrhhkihhvvgdrtghomhenuc
+    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsvghrnhgu
+    rdhstghhuhgsvghrthesfhgrshhtmhgrihhlrdhfmh
+X-ME-Proxy: <xmx:RKB7YvNJrn7BrSsF5qabElg_lCl6eBQ62Wx8xJADNcSWzzputNyK8Q>
+    <xmx:RKB7Ys-S7agNS46jsVhumYKvAf_oHhy_e7ts2XAjg5CMNisb9f3Sqw>
+    <xmx:RKB7YnUYyLhwx2BylO4aAvUJ26xUp9sPP5B9lPYgbjk9Fx6JezXbYA>
+    <xmx:RKB7YgbciW6J1PeafdIXOdUgtI2vtYJNwI6-EdsnlNrMTRuxFW-ocw>
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 11 May 2022 07:38:43 -0400 (EDT)
+Message-ID: <692c1682-ce10-7136-675b-2975f6a1aa01@fastmail.fm>
+Date:   Wed, 11 May 2022 13:38:41 +0200
 MIME-Version: 1.0
-References: <20220511013057.245827-1-dlunev@chromium.org> <CAJfpegsmyY+D4kK3ov51FLGA=RkyGDKMcYiMo2zBqYuFNs78JQ@mail.gmail.com>
- <CAONX=-dqY64VkqF6cNYvm8t-ad8XRqDhELP9icfPTPD2iLobLA@mail.gmail.com>
- <CAJfpegvUZheWb3eJwVrpBDYzwQH=zQsuq9R8mpcXb3fqzzEdiQ@mail.gmail.com>
- <CAONX=-cxA-tZOSo33WK9iJU61yeDX8Ct_PwOMD=5WXLYTJ-Mjg@mail.gmail.com> <CAJfpegsNwsWJC+x8jL6kDzYhENQQ+aUYAV9wkdpQNT-FNMXyAg@mail.gmail.com>
-In-Reply-To: <CAJfpegsNwsWJC+x8jL6kDzYhENQQ+aUYAV9wkdpQNT-FNMXyAg@mail.gmail.com>
-From:   Daniil Lunev <dlunev@chromium.org>
-Date:   Wed, 11 May 2022 21:19:16 +1000
-Message-ID: <CAONX=-d9nfYpPkbiVcaEsCQT1ZpwAN5ry8BYKBA6YoBvm7tPfg@mail.gmail.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
 Subject: Re: [PATCH 0/2] Prevent re-use of FUSE superblock after force unmount
-To:     Miklos Szeredi <miklos@szeredi.hu>
+Content-Language: en-US
+To:     Daniil Lunev <dlunev@chromium.org>,
+        Miklos Szeredi <miklos@szeredi.hu>
 Cc:     linux-fsdevel@vger.kernel.org,
         fuse-devel <fuse-devel@lists.sourceforge.net>,
         linux-kernel@vger.kernel.org,
         Alexander Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+References: <20220511013057.245827-1-dlunev@chromium.org>
+ <CAJfpegsmyY+D4kK3ov51FLGA=RkyGDKMcYiMo2zBqYuFNs78JQ@mail.gmail.com>
+ <CAONX=-dqY64VkqF6cNYvm8t-ad8XRqDhELP9icfPTPD2iLobLA@mail.gmail.com>
+ <CAJfpegvUZheWb3eJwVrpBDYzwQH=zQsuq9R8mpcXb3fqzzEdiQ@mail.gmail.com>
+ <CAONX=-cxA-tZOSo33WK9iJU61yeDX8Ct_PwOMD=5WXLYTJ-Mjg@mail.gmail.com>
+ <CAJfpegsNwsWJC+x8jL6kDzYhENQQ+aUYAV9wkdpQNT-FNMXyAg@mail.gmail.com>
+ <CAONX=-d9nfYpPkbiVcaEsCQT1ZpwAN5ry8BYKBA6YoBvm7tPfg@mail.gmail.com>
+From:   Bernd Schubert <bernd.schubert@fastmail.fm>
+In-Reply-To: <CAONX=-d9nfYpPkbiVcaEsCQT1ZpwAN5ry8BYKBA6YoBvm7tPfg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-3.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> At a glance it's a gross hack.   I can think of more than one way in
-> which this could be achieved without adding a new field to struct
-> super_block.
-Can you advise what would be a better way to achieve that?
 
-> But...  what I'd really prefer is if the underlying issue of fuse vs.
-> suspend was properly addressed instead of adding band-aids.  And that
-> takes lots more resources, for sure, and the result is not guaranteed.
-> But you could at least give it a try.
-We do have a limited success with userspace level sequencing of processes,
-but on the kernel level - it is all quite untrivial, as you mentioned.
-I did some
-research, and what I found pretty much a 9 years old thread which went
-nowhere at the end [1]. We would also prefer if suspend just worked (and
-we have a person looking into what is actually breaking with suspend), but
-there is an unbounded amount of time for how long the investigation and
-search for a solution may be ongoing given the complexity of the problem,
-and in the meantime there is no way to work around the problem.
+
+On 5/11/22 13:19, Daniil Lunev wrote:
+>> At a glance it's a gross hack.   I can think of more than one way in
+>> which this could be achieved without adding a new field to struct
+>> super_block.
+> Can you advise what would be a better way to achieve that?
+> 
+>> But...  what I'd really prefer is if the underlying issue of fuse vs.
+>> suspend was properly addressed instead of adding band-aids.  And that
+>> takes lots more resources, for sure, and the result is not guaranteed.
+>> But you could at least give it a try.
+> We do have a limited success with userspace level sequencing of processes,
+> but on the kernel level - it is all quite untrivial, as you mentioned.
+> I did some
+> research, and what I found pretty much a 9 years old thread which went
+> nowhere at the end [1]. We would also prefer if suspend just worked (and
+> we have a person looking into what is actually breaking with suspend), but
+> there is an unbounded amount of time for how long the investigation and
+> search for a solution may be ongoing given the complexity of the problem,
+> and in the meantime there is no way to work around the problem.
+> 
+> Thanks,
+> Daniil
+> 
+> [1] https://linux-kernel.vger.kernel.narkive.com/UeBWfN1V/patch-fuse-make-fuse-daemon-frozen-along-with-kernel-threads
+
+So that sounds like anything that is waiting for a response cannot be 
+frozen? Assuming there is an outstanding NFS request and the NFS server 
+is down, suspend would not work until the NFS server comes back?
 
 Thanks,
-Daniil
-
-[1] https://linux-kernel.vger.kernel.narkive.com/UeBWfN1V/patch-fuse-make-fuse-daemon-frozen-along-with-kernel-threads
+Bernd
