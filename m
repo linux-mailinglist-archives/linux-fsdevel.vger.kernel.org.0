@@ -2,82 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 66EEA52331A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 May 2022 14:28:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77B3F523371
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 May 2022 14:54:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240203AbiEKM2u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 May 2022 08:28:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42532 "EHLO
+        id S237031AbiEKMyq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 May 2022 08:54:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43016 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236542AbiEKM2t (ORCPT
+        with ESMTP id S231210AbiEKMyo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 May 2022 08:28:49 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B76691FC7CC
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 May 2022 05:28:47 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id be20so2289507edb.12
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 May 2022 05:28:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kFb+oOKVfdSFM1Ynmw5DXLEBb4aXz2rTDwsxTr/WZTY=;
-        b=NMCM6+TD98zvp/GBsWlY0VX5iKuGvLvXshRG/+mChWR+yPtiyUxxkqNbNdNQwQy9GP
-         PN3IUiJhfvNF/g3HU9LTgvzYpKgbXg6bGECeapdUNYAeGRYouWfhaasrBhujsqaUi26v
-         DkvNhaWJwMwbVG3NJnmWRoCCsPgXwQBw1SwCE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kFb+oOKVfdSFM1Ynmw5DXLEBb4aXz2rTDwsxTr/WZTY=;
-        b=XY7XG0jwgzZBvzHOxYI0D0PZFBsptr1jtBYYDXf6gPOsJqBIyHH8njqOZWVpw99dQf
-         //aL7OWKHJkt9bgRnlZcyuEWWDJNIDjp6goiuO8PubaAJmEM1UU/zmgNucWM0Hem6rK+
-         EBjBedmXM/egZp8CD07OxSK8LhcXxQ4yWpkqFNfxKzTNa3Pp6tQB5XElySRKHUzIyB5T
-         A71Lvv8sCjG5jhiY6vXimcAfelgtYz088jvYhzo9CtNZyyLvk1gtcYxlLXptz/gKCPKg
-         UBAjyC4/DxegnsBwlT4LPCXZ+bw60cu/hZDbQ2Ws0jLS+FqNJRB0a854PMeuSq/AX0zA
-         na+Q==
-X-Gm-Message-State: AOAM533SBqv2gI2L8PUuLGSKYkK5cKPVXytQdPc1zL0/rRgzgFZiX2sa
-        vefS0QB1LzfvdFmFvewiGlFp5CnngWId+dVCAXQgEJETI+AdOg==
-X-Google-Smtp-Source: ABdhPJxWwXgnhSYbvRQaaYX1wNi+xzJf+PXffIjqvgi6cI+87AjF12g3Yk81vqxwbS8t9950B4c6Nykxk7whoJ/HDX0=
-X-Received: by 2002:aa7:cb18:0:b0:428:af6e:a2a0 with SMTP id
- s24-20020aa7cb18000000b00428af6ea2a0mr10254026edt.154.1652272126351; Wed, 11
- May 2022 05:28:46 -0700 (PDT)
+        Wed, 11 May 2022 08:54:44 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FBE768308
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 May 2022 05:54:43 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id D60B421C89;
+        Wed, 11 May 2022 12:54:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1652273681; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=JHvaNZ/OeKvwlBgTbZhGHPlUxU4Tfp6b8enR9S+hpFI=;
+        b=pFoOkWrWSIymPl7RD7cyaPv87JFskZccC2rWgNwPY8Xj/ZJZ4EN1wiepffT6K3zKwoy2l3
+        XG7p85zWNpR/n5TL1Lrbxy2HxDEfnufLQujv+G6+lmduZLgMR5NxawMyEkvAXAFU27mwUF
+        PZdIH6uscfguEu2J9YFSfqCvJatl8CY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1652273681;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=JHvaNZ/OeKvwlBgTbZhGHPlUxU4Tfp6b8enR9S+hpFI=;
+        b=AJB6oAfYqMwwnr1ugY63mKPVDT56b0rxBbpzZQvMCHzHEFNJZTSqYRxLp1HSeadftq4AUR
+        YxeeE/MtXIv/ClAg==
+Received: from quack3.suse.cz (unknown [10.163.43.118])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id D851D2C141;
+        Wed, 11 May 2022 12:54:40 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 7BE7CA062A; Wed, 11 May 2022 14:54:40 +0200 (CEST)
+Date:   Wed, 11 May 2022 14:54:40 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/2] fsnotify: introduce mark type iterator
+Message-ID: <20220511125440.5zsuzn7eemdvfksi@quack3.lan>
+References: <20220511092914.731897-1-amir73il@gmail.com>
+ <20220511092914.731897-2-amir73il@gmail.com>
 MIME-Version: 1.0
-References: <20220511013057.245827-1-dlunev@chromium.org> <CAJfpegsmyY+D4kK3ov51FLGA=RkyGDKMcYiMo2zBqYuFNs78JQ@mail.gmail.com>
- <CAONX=-dqY64VkqF6cNYvm8t-ad8XRqDhELP9icfPTPD2iLobLA@mail.gmail.com>
- <CAJfpegvUZheWb3eJwVrpBDYzwQH=zQsuq9R8mpcXb3fqzzEdiQ@mail.gmail.com>
- <CAONX=-cxA-tZOSo33WK9iJU61yeDX8Ct_PwOMD=5WXLYTJ-Mjg@mail.gmail.com>
- <CAJfpegsNwsWJC+x8jL6kDzYhENQQ+aUYAV9wkdpQNT-FNMXyAg@mail.gmail.com> <CAONX=-d9nfYpPkbiVcaEsCQT1ZpwAN5ry8BYKBA6YoBvm7tPfg@mail.gmail.com>
-In-Reply-To: <CAONX=-d9nfYpPkbiVcaEsCQT1ZpwAN5ry8BYKBA6YoBvm7tPfg@mail.gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 11 May 2022 14:28:34 +0200
-Message-ID: <CAJfpegtTP==oMm+LhvOkrxkPB973-Y80chbwYpXSiOAXBDhHJw@mail.gmail.com>
-Subject: Re: [PATCH 0/2] Prevent re-use of FUSE superblock after force unmount
-To:     Daniil Lunev <dlunev@chromium.org>
-Cc:     linux-fsdevel@vger.kernel.org,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220511092914.731897-2-amir73il@gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 11 May 2022 at 13:19, Daniil Lunev <dlunev@chromium.org> wrote:
->
-> > At a glance it's a gross hack.   I can think of more than one way in
-> > which this could be achieved without adding a new field to struct
-> > super_block.
-> Can you advise what would be a better way to achieve that?
+On Wed 11-05-22 12:29:13, Amir Goldstein wrote:
+> fsnotify_foreach_iter_mark_type() is used to reduce boilerplate code
+> of iteratating all marks of a specific group interested in an event
+> by consulting the iterator report_mask.
+> 
+> Use an open coded version of that iterator in fsnotify_iter_next()
+> that collects all marks of the current iteration group without
+> consulting the iterator report_mask.
+> 
+> At the moment, the two iterator variants are the same, but this
+> decoupling will allow us to exclude some of the group's marks from
+> reporting the event, for example for event on child and inode marks
+> on parent did not request to watch events on children.
+> 
+> Fixes: 2f02fd3fa13e ("fanotify: fix ignore mask logic for events on child and on dir")
+> Reported-by: Jan Kara <jack@suse.com>
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 
-I think it would be easiest to remove the super block from the
-type->fs_supers list.
+Mostly looks good. Two nits below.
 
-Thanks,
-Miklos
+>  /*
+> - * Pop from iter_info multi head queue, the marks that were iterated in the
+> + * Pop from iter_info multi head queue, the marks that belong to the group of
+>   * current iteration step.
+>   */
+>  static void fsnotify_iter_next(struct fsnotify_iter_info *iter_info)
+>  {
+> +	struct fsnotify_mark *mark;
+>  	int type;
+>  
+>  	fsnotify_foreach_iter_type(type) {
+> -		if (fsnotify_iter_should_report_type(iter_info, type))
+> +		mark = iter_info->marks[type];
+> +		if (mark && mark->group == iter_info->current_group)
+>  			iter_info->marks[type] =
+>  				fsnotify_next_mark(iter_info->marks[type]);
+
+Wouldn't it be more natural here to use the new helper
+fsnotify_foreach_iter_mark_type()? In principle we want to advance mark
+types which were already reported...
+
+> @@ -438,6 +438,9 @@ FSNOTIFY_ITER_FUNCS(sb, SB)
+>  
+>  #define fsnotify_foreach_iter_type(type) \
+>  	for (type = 0; type < FSNOTIFY_ITER_TYPE_COUNT; type++)
+> +#define fsnotify_foreach_iter_mark_type(iter, mark, type) \
+> +	for (type = 0; type < FSNOTIFY_ITER_TYPE_COUNT; type++) \
+> +		if (!(mark = fsnotify_iter_mark(iter, type))) {} else
+
+Hum, you're really inventive here ;) I'd rather go for something a bit more
+conservative and readable like:
+
+static inline int fsnotify_iter_step(struct fsnotify_iter_info *iter, int type,
+				     struct fsnotify_mark **markp)
+{
+	while (type < FSNOTIFY_ITER_TYPE_COUNT) {
+		*markp = fsnotify_iter_mark(iter, type);
+		if (*markp)
+			break;
+		type++;
+	}
+	return type;
+}
+
+#define fsnotify_foreach_iter_mark_type(iter, mark, type) \
+	for (type = 0; \
+	     (type = fsnotify_iter_step(iter, type, &mark)) < FSNOTIFY_ITER_TYPE_COUNT; \
+	     type++)
+
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
