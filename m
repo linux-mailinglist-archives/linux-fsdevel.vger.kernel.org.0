@@ -2,106 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 880325228FE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 May 2022 03:31:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FC83522928
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 May 2022 03:48:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240480AbiEKBbo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 May 2022 21:31:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42194 "EHLO
+        id S240658AbiEKBs0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 May 2022 21:48:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240518AbiEKBbb (ORCPT
+        with ESMTP id S233599AbiEKBsZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 May 2022 21:31:31 -0400
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 550A44C788
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 May 2022 18:31:29 -0700 (PDT)
-Received: by mail-pl1-x631.google.com with SMTP id c11so402226plg.13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 May 2022 18:31:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=nyT+TEM6YfXjFwh6RP3Mgulu/QW39cAOrSoKYlACyaM=;
-        b=meI7q9780fzkqj6a0HhsAQmhu3va+coXBZlxQAwgjwFiDPhNeV2GiDAIgDzjWT5Dni
-         rsOyD5RkxOqImMxvbKnwTxybY7H6JTfuS2lsAMjuWh1HUHkXQ4PRvCUSB5wj8KZgbyXQ
-         gpQmQW533keZw+eCzRQfdd5meZ/0WUPyR7ifA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=nyT+TEM6YfXjFwh6RP3Mgulu/QW39cAOrSoKYlACyaM=;
-        b=GG7HVu45VS7ClcWeD7vp8oOSErWCc0KCdcNeCOeiM0TA+H/OI+7R29yNV5yRE/EYxl
-         EvDXQVSKPHV6eDOuN0+86Iw2R67i2/eExGKWHkwiC/SMKwXJiuS6mtAhGZgHbSe9+lTU
-         n7pUhLIrXeETQHj9byD/7L9ALEsxGbg9xSPL3AaEi/ZtzCTasnD1gFHwe/NjPzu2IWkh
-         MO+4fqWqY3fVdSozwf7DHE0f2QBKcBGgjHWgE2neXmE6ZtT/0HlhRRTL2itLQTzfTozu
-         LhP1/9FgkjzA5s4CG7Rxhb/JS49jeoTMxc46IGhu6/aY8SPu9yqyr58aLq15oO9Kke1O
-         Qvvg==
-X-Gm-Message-State: AOAM532raACtyUbrIcfeEJA6qSiXcOddTLs647NMduOV0qd/qgMOHU+3
-        nO8BiGKXpQ+lgpo4Dk8Bo1BaOOET+Hbq6A==
-X-Google-Smtp-Source: ABdhPJyVmsGY+I+4n3pCMGU/dXV5in4S+vZlRPTbhVbpJV4FxM/OsoM7PfiNLPYpVZRQ812YNj6kFA==
-X-Received: by 2002:a17:903:40cf:b0:15e:9bd0:2cab with SMTP id t15-20020a17090340cf00b0015e9bd02cabmr22614313pld.170.1652232688669;
-        Tue, 10 May 2022 18:31:28 -0700 (PDT)
-Received: from dlunevwfh.roam.corp.google.com (n122-107-196-14.sbr2.nsw.optusnet.com.au. [122.107.196.14])
-        by smtp.gmail.com with ESMTPSA id a4-20020a17090aa50400b001cd4989feecsm2494749pjq.56.2022.05.10.18.31.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 May 2022 18:31:28 -0700 (PDT)
-From:   Daniil Lunev <dlunev@chromium.org>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     fuse-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-        Daniil Lunev <dlunev@chromium.org>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Subject: [PATCH 2/2] FUSE: Mark super block defunc on force unmount
-Date:   Wed, 11 May 2022 11:30:57 +1000
-Message-Id: <20220511113050.2.I103b609e957667ca427c689fd83990e6ab32f3dd@changeid>
-X-Mailer: git-send-email 2.31.0
-In-Reply-To: <20220511013057.245827-1-dlunev@chromium.org>
-References: <20220511013057.245827-1-dlunev@chromium.org>
+        Tue, 10 May 2022 21:48:25 -0400
+Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E84495E162;
+        Tue, 10 May 2022 18:48:23 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-2-147.pa.nsw.optusnet.com.au [49.181.2.147])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id C137810E66A0;
+        Wed, 11 May 2022 11:48:19 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1nobSc-00AVtI-9Y; Wed, 11 May 2022 11:48:18 +1000
+Date:   Wed, 11 May 2022 11:48:18 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Shiyang Ruan <ruansy.fnst@fujitsu.com>,
+        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        nvdimm@lists.linux.dev, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, dan.j.williams@intel.com,
+        hch@infradead.org, jane.chu@oracle.com, rgoldwyn@suse.de,
+        viro@zeniv.linux.org.uk, willy@infradead.org,
+        naoya.horiguchi@nec.com, linmiaohe@huawei.com
+Subject: Re: [PATCHSETS] v14 fsdax-rmap + v11 fsdax-reflink
+Message-ID: <20220511014818.GE1098723@dread.disaster.area>
+References: <20220508143620.1775214-1-ruansy.fnst@fujitsu.com>
+ <20220511000352.GY27195@magnolia>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220511000352.GY27195@magnolia>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=627b15e7
+        a=ivVLWpVy4j68lT4lJFbQgw==:117 a=ivVLWpVy4j68lT4lJFbQgw==:17
+        a=kj9zAlcOel0A:10 a=oZkIemNP1mAA:10 a=VwQbUJbxAAAA:8 a=omOdbC7AAAAA:8
+        a=7-415B0cAAAA:8 a=AXPICKo_Apo_Re-Q38cA:9 a=CjuIK1q_8ugA:10
+        a=AjGcO6oz07-iQ99wixmX:22 a=biEYGPWJfzWAr4FL6Ov7:22
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Force unmount of FUSE severes the connection with the user space, even
-if there are still open files. Subsequent remount tries to re-use the
-superblock held by the open files, which is meaningless in the FUSE case
-after disconnect - reused super block doesn't have userspace counterpart
-attached to it and is incapable of doing any IO.
+On Tue, May 10, 2022 at 05:03:52PM -0700, Darrick J. Wong wrote:
+> On Sun, May 08, 2022 at 10:36:06PM +0800, Shiyang Ruan wrote:
+> > This is a combination of two patchsets:
+> >  1.fsdax-rmap: https://lore.kernel.org/linux-xfs/20220419045045.1664996-1-ruansy.fnst@fujitsu.com/
+> >  2.fsdax-reflink: https://lore.kernel.org/linux-xfs/20210928062311.4012070-1-ruansy.fnst@fujitsu.com/
+> > 
+> >  Changes since v13 of fsdax-rmap:
+> >   1. Fixed mistakes during rebasing code to latest next-
+> >   2. Rebased to next-20220504
+> > 
+> >  Changes since v10 of fsdax-reflink:
+> >   1. Rebased to next-20220504 and fsdax-rmap
+> >   2. Dropped a needless cleanup patch: 'fsdax: Convert dax_iomap_zero to
+> >       iter model'
+> >   3. Fixed many conflicts during rebasing
+> >   4. Fixed a dedupe bug in Patch 05: the actuall length to compare could be
+> >       shorter than smap->length or dmap->length.
+> >   PS: There are many changes during rebasing.  I think it's better to
+> >       review again.
+> > 
+> > ==
+> > Shiyang Ruan (14):
+> >   fsdax-rmap:
+> >     dax: Introduce holder for dax_device
+> >     mm: factor helpers for memory_failure_dev_pagemap
+> >     pagemap,pmem: Introduce ->memory_failure()
+> >     fsdax: Introduce dax_lock_mapping_entry()
+> >     mm: Introduce mf_dax_kill_procs() for fsdax case
+> 
+> Hmm.  This patchset touches at least the dax, pagecache, and xfs
+> subsystems.  Assuming it's too late for 5.19, how should we stage this
+> for 5.20?
 
-Signed-off-by: Daniil Lunev <dlunev@chromium.org>
----
+Yeah, it's past my "last date for this merge cycle" which was
+-rc6. I expected stuff might slip a little - as it has with the LARP
+code - but I don't have the time and bandwidth to start working
+on merging another feature from scratch before the merge window
+comes around.
 
- fs/fuse/inode.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+Getting the dax+reflink stuff in this cycle was always an optimistic
+stretch, but I wanted to try so that there was no doubt it would be
+ready for merge in the next cycle...
 
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 8c0665c5dff88..e2ad3c9b2d5c5 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -476,8 +476,15 @@ static void fuse_umount_begin(struct super_block *sb)
- {
- 	struct fuse_conn *fc = get_fuse_conn_super(sb);
- 
--	if (!fc->no_force_umount)
--		fuse_abort_conn(fc);
-+	if (fc->no_force_umount)
-+		return;
-+
-+	sb->s_defunc = true;
-+	if (sb->s_bdi != &noop_backing_dev_info) {
-+		bdi_put(sb->s_bdi);
-+		sb->s_bdi = &noop_backing_dev_info;
-+	}
-+	fuse_abort_conn(fc);
- }
- 
- static void fuse_send_destroy(struct fuse_mount *fm)
+> I could just add the entire series to iomap-5.20-merge and base the
+> xfs-5.20-merge off of that?  But I'm not sure what else might be landing
+> in the other subsystems, so I'm open to input.
+
+It'll need to be a stable branch somewhere, but I don't think it
+really matters where al long as it's merged into the xfs for-next
+tree so it gets filesystem test coverage...
+
+Cheers,
+
+Dave.
 -- 
-2.31.0
-
+Dave Chinner
+david@fromorbit.com
