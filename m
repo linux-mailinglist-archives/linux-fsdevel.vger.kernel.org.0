@@ -2,170 +2,123 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B468C523CE9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 May 2022 20:54:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5D50523CF4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 May 2022 20:59:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244776AbiEKSyn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 May 2022 14:54:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54104 "EHLO
+        id S1346532AbiEKS7k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 May 2022 14:59:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40028 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232115AbiEKSym (ORCPT
+        with ESMTP id S1346502AbiEKS7i (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 May 2022 14:54:42 -0400
-Received: from mail-qv1-xf34.google.com (mail-qv1-xf34.google.com [IPv6:2607:f8b0:4864:20::f34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 141141FD86E;
-        Wed, 11 May 2022 11:54:41 -0700 (PDT)
-Received: by mail-qv1-xf34.google.com with SMTP id kk28so2766060qvb.3;
-        Wed, 11 May 2022 11:54:41 -0700 (PDT)
+        Wed, 11 May 2022 14:59:38 -0400
+Received: from mail-pg1-x530.google.com (mail-pg1-x530.google.com [IPv6:2607:f8b0:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C3716D3A5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 May 2022 11:59:37 -0700 (PDT)
+Received: by mail-pg1-x530.google.com with SMTP id 15so2581998pgf.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 May 2022 11:59:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+LxdUKX99jhfa5s0+IuZGD3X6A7IS8PJuDjuEfLK+f0=;
-        b=bBk0WndcC79iIOJVGislC1gFOlMn9191qToLtc9QQhfgBrD2lOQnIVa++hAR/TIW4O
-         cZ8RrvbnkDJ6phgx46NW6WKSRoQpvL+kr2YHgZsNuIhmMvZxyNH4HrNJkAmjBZBgL9GW
-         KZI1jCRv2YB3RF4PIRNhWY4znM0PJqM3fFN+5BziDZuJY5FYuXGGb51W3bH5VMDS3x/J
-         oXlMM1SPLwGGt7Rw9h0XII6bRYJRJGt1rrUxAtlGnex++mz/nfetQdHjuES1hDk9QQjI
-         9yB1Lz8L5NFOAerewXTmSZlBlcrNesn23uTtGkAPOPxUyuOAd0DneHM4uL+ZGifU3VA/
-         YhYg==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8sGAQG8dHMKLn+nlsPe/05icv+DfBZPnqj5ZoB1g/UQ=;
+        b=wZV2E92PHLNHqME2ISGsoc8JZxSNdYWfG7d8y4/9sA4UeBrjX1Vx2Lace/4dA85wk/
+         ILfvKj3XjG9cZVCAMKPAxH9lD20VM/AU9unfqDjD87cKBUMCZlomMOd4AzaKSK1xKvNB
+         CkTgogQZZzeMoIua3YYxVoJXzIihcZkqfezwAmDOP8/yQ3R/96KXJ5qMJzs/OBEn9VBc
+         k518IQ6IuQmkA1P0vgEWvo/UhHsLVcrx/az0T5DjM4u7YSmsRzDE2s2fZV91WspwRWnj
+         yW9jzGWJ71P0TFhoqwFQFiMNKF9y1j5QfYjC3RP1tqfnt40r4lgH8M8gjv7h1+kYa12i
+         CaeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+LxdUKX99jhfa5s0+IuZGD3X6A7IS8PJuDjuEfLK+f0=;
-        b=ogBSrYrdPGRstb9wg9dnmnq17tkJOuL4T4eOQxq+md/sq4WybvaLHr7FVq5clONF7p
-         9TFkW9Ic/yhwpoIsaqdyDqgKPTt3fx9omDfduoCYCQS0Pr0NMO6FN9OouxNIgsEnmIo/
-         FYYrVBQdynRkmK2e+vSeZG976535aIq3XMT7lQogzRvJffKjYrT6zzlfvDvvfIp0NZvg
-         1O0kpLC0DQpYHfKU8Hk2/xKDRBZQYfbNbTeG3v/vJvhLdSUJ40LsyglSaD+NCacQhLmf
-         iorbqVjorrLTJxM2FSPskbK2Xyf6m9LfmFdCsbTOPHjkn5aRnTRKDe2FhwC5/BRxkG2L
-         Jr9g==
-X-Gm-Message-State: AOAM531vI7Qd9sySsC0iKXg4knUDMfpSQRGTYoEHFqKxNIG0JHoWVYaw
-        c5Vyw8a5NqjBXdOpE9oiXSpOqXw8twWPnaq2bu4=
-X-Google-Smtp-Source: ABdhPJwN42lTlRomfW86X+KUNkzMnmsw0bv5H/5/9TqQA5XYBIHQbOZrRhXsD3aPelPyGicNPnvfj5SBvFiOtqSBLgU=
-X-Received: by 2002:a05:6214:29e9:b0:45a:c341:baaf with SMTP id
- jv9-20020a05621429e900b0045ac341baafmr23570833qvb.77.1652295280186; Wed, 11
- May 2022 11:54:40 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8sGAQG8dHMKLn+nlsPe/05icv+DfBZPnqj5ZoB1g/UQ=;
+        b=dQRK5WNO+RO7q20JKlcDvC8Ji+UPFznMhPa8eiCikdSEIEGaayMLflhHO5roDxXz90
+         60Ukl0ToTPR+HvKLWfwnOIP8fp5pLQglGz0dkdXcavBtcHivjT8RVgtSohBgxSTC9yZ5
+         oLJozY1F02JNaq4YntVOy8vzplbZRMglJfQDUUg6f2ID8lHc3GdNcgZCYJUtMlFV0SLT
+         CSorNYxIs5mq1U+dwNJPNa/cDaLKso4hAr1vrPVt7Ab/JQs3nIqPS3bkvU1DTU5nAL7g
+         SpnQUABKBRsk4o5eixSchqBeTWWqOuo7aTOXHVmGmChDVRb/2ZE1Pnmrdxo3EHns1F23
+         /kHA==
+X-Gm-Message-State: AOAM531oa1YzdUXvluH/a68Eu8+BJbW/sQSfzaGEr9v1GBMCWtDIIzPm
+        OihjKqAuBYDAqPZZyBNYpRNcVw==
+X-Google-Smtp-Source: ABdhPJyuiOoKNfa17Y3IGmkUvslc+8XNXB9vnFmRfrQOBJZ+U4wDOk7Wf89qsDxFqO0T+kIsUYQY7Q==
+X-Received: by 2002:a05:6a00:15d3:b0:510:3c69:b387 with SMTP id o19-20020a056a0015d300b005103c69b387mr26214468pfu.30.1652295576885;
+        Wed, 11 May 2022 11:59:36 -0700 (PDT)
+Received: from localhost.localdomain ([50.39.160.154])
+        by smtp.gmail.com with ESMTPSA id a19-20020a17090aa51300b001d5c571f487sm280709pjq.25.2022.05.11.11.59.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 May 2022 11:59:36 -0700 (PDT)
+From:   Tadeusz Struk <tadeusz.struk@linaro.org>
+To:     linkinjeon@kernel.org
+Cc:     Tadeusz Struk <tadeusz.struk@linaro.org>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/2] exfat: move is_valid_cluster to a common header
+Date:   Wed, 11 May 2022 11:59:08 -0700
+Message-Id: <20220511185909.175110-1-tadeusz.struk@linaro.org>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-References: <YnOmG2DvSpvvOEOQ@google.com> <20220505112217.zvzbzhjgmoz7lr6w@quack3.lan>
- <CAOQ4uxhJFEoV0X8uunNaYjdKpsFj6nUtcNFBx8d3oqodDO_iYA@mail.gmail.com>
- <20220505133057.zm5t6vumc4xdcnsg@quack3.lan> <YnRhVgu6JKNinarh@google.com>
- <CAOQ4uxi9Jps3BGiSYWWvQdNeb+QPA9kSo_BDRCC2jfPSGWdx_w@mail.gmail.com>
- <20220506100636.k2lm22ztxpyaw373@quack3.lan> <CAOQ4uxjEcbjRoObAUfSS3RHVJY7EiW8tJSo1geNtbgQbcTOM+A@mail.gmail.com>
- <20220511175231.d7re3p4tyn55claf@quack3.lan>
-In-Reply-To: <20220511175231.d7re3p4tyn55claf@quack3.lan>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 11 May 2022 21:54:27 +0300
-Message-ID: <CAOQ4uxivwvUqu+4f5SKjH7YgdLZTjpq0EDohJ9UWsZsW2J5rwg@mail.gmail.com>
-Subject: Re: Fanotify API - Tracking File Movement
-To:     Jan Kara <jack@suse.cz>
-Cc:     Matthew Bobrowski <repnop@google.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> > @@ -491,19 +491,31 @@ int fsnotify(__u32 mask, const void *data, int data_type, struct inode *dir,
-> >       if (!inode) {
-> >               /* Dirent event - report on TYPE_INODE to dir */
-> >               inode = dir;
-> > -             /* For FS_RENAME, inode is old_dir and inode2 is new_dir */
-> > -             if (mask & FS_RENAME) {
-> > -                     moved = fsnotify_data_dentry(data, data_type);
-> > -                     inode2 = moved->d_parent->d_inode;
-> > -                     inode2_type = FSNOTIFY_ITER_TYPE_INODE2;
-> > -             }
-> > +     } else if (mask & FS_RENAME) {
-> > +             /* For FS_RENAME, dir1 is old_dir and dir2 is new_dir */
-> > +             moved = fsnotify_data_dentry(data, data_type);
-> > +             dir1 = moved->d_parent->d_inode;
-> > +             dir2 = dir;
-> > +             if (dir1->i_fsnotify_marks || dir2->i_fsnotify_marks)
-> > +                     dir1_type = FSNOTIFY_ITER_TYPE_OLD_DIR;
-> > +             /*
-> > +              * Send FS_RENAME to groups watching the moved inode itself
-> > +              * only if the moved inode is a non-dir.
-> > +              * Sending FS_RENAME to a moved watched directory would be
-> > +              * confusing and FS_MOVE_SELF provided enough information to
-> > +              * track the movements of a watched directory.
-> > +              */
-> > +             if (mask & FS_ISDIR)
-> > +                     inode = NULL;
->
-> So I agree that sending FS_RENAME to a directory when the directory itself
-> moves is confusing. But then it makes me wonder whether it would not be
-> more logical if we extended FS_MOVE_SELF rather than FS_RENAME. Currently
-> FS_MOVE_SELF is an inode event but we could expand it to provide new parent
-> directory to priviledged listeners (and even old directory if we wanted).
-> But I guess the concern is that we'd have to introduce a group flag for
-> this to make sure things are backward compatible, whereas with FAN_RENAME
-> we could mostly get away without a feature flag?
->
+Move the is_valid_cluster() helper from fatent.c to a common
+header to make it reusable in other *.c files.
 
-This thought has crossed my mind.
-There are several issues with extending FS_MOVE_SELF besides the one
-that you mentioned.
-1. It is not needed for tracking movement of dir - the only reason we need to
-    extend rename/create/delete for non-dir is because fid alone is not enough
-    to find the moved inode new location
-2. While we could extend FS_MOVE_SELF, we cannot extend FS_DELETE_SELF
-    (and there is no FS_CREATE_SELF), so it is better to extend all the
-    dirent events and not any self events
-3. But the nock-out argument is the one that you wrote - we can (ab)use
-    FAN_ERPORT_TARGET_FID as the backward compat barrier for changing
-    the behavior of dirent events and it would almost look like we had
-thought about
-    this in advance ;)
+Cc: Namjae Jeon <linkinjeon@kernel.org>
+Cc: Sungjong Seo <sj1557.seo@samsung.com>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: stable@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
-> > diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
-> > index bb8467cd11ae..75f1048443a5 100644
-> > --- a/include/linux/fsnotify.h
-> > +++ b/include/linux/fsnotify.h
-> > @@ -28,18 +28,19 @@
-> >   */
-> >  static inline int fsnotify_name(__u32 mask, const void *data, int data_type,
-> >                               struct inode *dir, const struct qstr *name,
-> > -                             u32 cookie)
-> > +                             struct inode *inode, u32 cookie)
->
-> So you add 'inode' argument to fsnotify_name() but never actually use it?
-> The only place where inode would be non-NULL is changed to use fsnotify()
-> directly...
+Signed-off-by: Tadeusz Struk <tadeusz.struk@linaro.org>
+---
+ fs/exfat/exfat_fs.h | 6 ++++++
+ fs/exfat/fatent.c   | 6 ------
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-My bad, I wasn't going to extend fsnotify_name(), but then I thought of the
-FAN_CREATE/FAN_DELETE case, so I wanted to make this more obvious
-in the code that dirent events should be reported to the child inode,
-but I forget
-to use the extended fsnotify_name() for FAN_RENAME and left it using fsnotify().
+diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
+index c6800b880920..42d06c68d5c5 100644
+--- a/fs/exfat/exfat_fs.h
++++ b/fs/exfat/exfat_fs.h
+@@ -381,6 +381,12 @@ static inline int exfat_sector_to_cluster(struct exfat_sb_info *sbi,
+ 		EXFAT_RESERVED_CLUSTERS;
+ }
+ 
++static inline bool is_valid_cluster(struct exfat_sb_info *sbi,
++		unsigned int clus)
++{
++	return clus >= EXFAT_FIRST_CLUSTER && clus < sbi->num_clusters;
++}
++
+ /* super.c */
+ int exfat_set_volume_dirty(struct super_block *sb);
+ int exfat_clear_volume_dirty(struct super_block *sb);
+diff --git a/fs/exfat/fatent.c b/fs/exfat/fatent.c
+index a3464e56a7e1..421c27353104 100644
+--- a/fs/exfat/fatent.c
++++ b/fs/exfat/fatent.c
+@@ -81,12 +81,6 @@ int exfat_ent_set(struct super_block *sb, unsigned int loc,
+ 	return 0;
+ }
+ 
+-static inline bool is_valid_cluster(struct exfat_sb_info *sbi,
+-		unsigned int clus)
+-{
+-	return clus >= EXFAT_FIRST_CLUSTER && clus < sbi->num_clusters;
+-}
+-
+ int exfat_ent_get(struct super_block *sb, unsigned int loc,
+ 		unsigned int *content)
+ {
+-- 
+2.36.1
 
->
-> Also I'm not sure why you pass the inode for rename event now when the same
-> inode is passed as 'dentry' in data? I feel like I'm missing something
-> here.
-
-The semantics of @inode argument vs. fsnotify_data_inode() are hard to
-remember, but we documented them in fsnotify().
-
-The meaning of @inode is that an event should be reported to @inode if inode
-has a mark. Surely, one of the reasons for this distinction was fsnotify_name()
-which carries the child inode information, but was not traditionally reported
-to the child inode mark.
-
-So when I pass positive @inode with FS_RENAME that is all it takes to
-report the event on a watching child inode. The only needed minor change in
-fsnotify() logic was to move if (mask & FS_RENAME) outside of if (!inode) {}.
-All the rest is just tidying up the code.
-
-If we are going to change fsnotify_name() then we need to see if there are
-any other cases left where @inode is NULL and fsnotify_data_inode() is positive
-(I didn't check) If not, then we may be able to drop the @inode argument.
-
-Thanks,
-Amir.
