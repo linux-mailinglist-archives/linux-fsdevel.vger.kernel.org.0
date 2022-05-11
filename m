@@ -2,215 +2,182 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A01DC52352A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 May 2022 16:15:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CABF5235BE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 May 2022 16:39:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244471AbiEKOPk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 May 2022 10:15:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52686 "EHLO
+        id S238891AbiEKOjf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 May 2022 10:39:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240025AbiEKOPg (ORCPT
+        with ESMTP id S231502AbiEKOjf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 May 2022 10:15:36 -0400
-Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 704C66B7CB
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 May 2022 07:15:35 -0700 (PDT)
-Received: by mail-pf1-x430.google.com with SMTP id g8so2116718pfh.5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 May 2022 07:15:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id;
-        bh=8N8bqLcwvcQzoTzZWHXpQfIBf7YC17iTKRRrunCuxgM=;
-        b=TqX1fs/XpzbdJeOyLdyL2ZossXCyQpvBP0TSD2XTzf7CBx/xk9x0pGDpScBTphl0x+
-         G4G8ItIak3hoCtZSDxtV8+B1KhjFj+gFokVa9WLRqg/1n7NoA82p4Q9Vvqy07TuNm79t
-         Z9R3fPkL2pJmAEB7hijghMb3HoJ46c1SxRO9NfwZmFc0rKbe32db9Fco+mXgcD1o9D0v
-         2HzLJDYGHRWCm14/JAuv1M4BUSgxWrw7ibBRc3MfRrY0raYDBlQNMYOZ8NqPjpuNqVg/
-         EW4PjIbXgu2aR903sbDIFK5pkT52n5Jpp+NfbkwJcMsZdXRx9kbQgc4PXXVZk4rGbhSi
-         gHwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=8N8bqLcwvcQzoTzZWHXpQfIBf7YC17iTKRRrunCuxgM=;
-        b=7IlePyzJfYsbQ0C6rdUTOa9D1IuX92rGMAYfRzy3bQhuVUKG4l42krsfhSR+/Eg4di
-         meHwP8rlXugxlphf9q7UkKH96+zp5JpopSXsf5MCP3+b5qm4HdU14HeDS+3R+KgYDpcz
-         yOaIS/4QbPTz43kL0vBdwlJ66mgrMiHKuT9gu3mwaRHjUZZ9yaW4ffh3p93IZLwyC6qM
-         doeEL5ZO1Hi/tDrGCpyp76Sfqulz/7j643tXVeYCDhuxcvn98M5abl8O+EiljoYiCoOX
-         YwilQQRx/mu3DDaN+QRAaH5QtKPlWXOXS+0TOFS2Gcm+Kik+v202XI7NKhUl37h8Jggh
-         lnMQ==
-X-Gm-Message-State: AOAM532LXSCUoFoJDH4dtzRSXbO0Y3/vbxdsbtqnvqGp+VbiiMnCLAZr
-        zOYj1/MW9PpeNPioukCE+oX/ceBS59evHw==
-X-Google-Smtp-Source: ABdhPJxmWHf8IeNZORyR3nzEUbTTCxFDAkk6Zk4EWIsWkaTXB+lzCr4573sjXJJjQ8bHGXlR9uuuBA==
-X-Received: by 2002:a63:e549:0:b0:3c6:d87:d3ef with SMTP id z9-20020a63e549000000b003c60d87d3efmr21228925pgj.111.1652278534581;
-        Wed, 11 May 2022 07:15:34 -0700 (PDT)
-Received: from localhost ([101.224.171.160])
-        by smtp.gmail.com with ESMTPSA id x13-20020a62fb0d000000b0050dc762813dsm1812726pfm.23.2022.05.11.07.15.33
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 11 May 2022 07:15:34 -0700 (PDT)
-From:   Jchao Sun <sunjunchao2870@gmail.com>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     viro@zeniv.linux.org.uk, jack@suse.cz,
-        Jchao Sun <sunjunchao2870@gmail.com>
-Subject: [PATCH v4] writeback: Fix inode->i_io_list not be protected by inode->i_lock error
-Date:   Wed, 11 May 2022 07:15:18 -0700
-Message-Id: <20220511141518.1895-1-sunjunchao2870@gmail.com>
-X-Mailer: git-send-email 2.17.1
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        Wed, 11 May 2022 10:39:35 -0400
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35EE256413
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 May 2022 07:39:29 -0700 (PDT)
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20220511143924euoutp022c6d87c02dde08b04c1d3b0dbea04366~uE9_4rFep0608306083euoutp02U
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 May 2022 14:39:24 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20220511143924euoutp022c6d87c02dde08b04c1d3b0dbea04366~uE9_4rFep0608306083euoutp02U
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1652279964;
+        bh=EUaYeqrDCZdYIk1QARpzTYuomNghhQ2OqPnaqXtUYXI=;
+        h=Date:Subject:To:From:In-Reply-To:References:From;
+        b=cckO2daDpiVhFX6qpoQYbYH6llh83054qsmL/8fX4xsl//rh5oxEEQcsIU0wxEzN8
+         xPcjDha5le5ZiqVkoxD+PkgW+pYaKSajomW6x4BXGIpo680Bn11YENWOCckJ8aKbi2
+         4iFTqaIZqXzehfl096ccaQwYo2n6fkUvKh14nO70=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20220511143924eucas1p1114e84104a5c6c0eb50e67f8777969a5~uE9_R-fHL3194531945eucas1p1W;
+        Wed, 11 May 2022 14:39:24 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 60.2A.10009.C9ACB726; Wed, 11
+        May 2022 15:39:24 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20220511143923eucas1p2e3a3e929d5d66bce874b5a9f7d7fd067~uE99xcdbm0496104961eucas1p2y;
+        Wed, 11 May 2022 14:39:23 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20220511143923eusmtrp1fc902ac2cae0a49dc35e360306028ac3~uE99wDcd41329413294eusmtrp1g;
+        Wed, 11 May 2022 14:39:23 +0000 (GMT)
+X-AuditID: cbfec7f2-e7fff70000002719-24-627bca9c0b1d
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id A9.16.09404.B9ACB726; Wed, 11
+        May 2022 15:39:23 +0100 (BST)
+Received: from CAMSVWEXC01.scsc.local (unknown [106.1.227.71]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20220511143923eusmtip1f71a6b406fa85da0c0332d11c8d4d4aa~uE99juOBx3226832268eusmtip1E;
+        Wed, 11 May 2022 14:39:23 +0000 (GMT)
+Received: from [192.168.8.130] (106.210.248.174) by CAMSVWEXC01.scsc.local
+        (2002:6a01:e347::6a01:e347) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+        Wed, 11 May 2022 15:39:18 +0100
+Message-ID: <d8e86c32-f122-01df-168e-648179766c55@samsung.com>
+Date:   Wed, 11 May 2022 16:39:17 +0200
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+        Thunderbird/91.8.1
+Subject: Re: [PATCH v3 11/11] dm-zoned: ensure only power of 2 zone sizes
+ are allowed
+Content-Language: en-US
+To:     <dsterba@suse.cz>, <jaegeuk@kernel.org>, <hare@suse.de>,
+        <dsterba@suse.com>, <axboe@kernel.dk>, <hch@lst.de>,
+        <damien.lemoal@opensource.wdc.com>, <snitzer@kernel.org>,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        <bvanassche@acm.org>, <linux-fsdevel@vger.kernel.org>,
+        <matias.bjorling@wdc.com>, Jens Axboe <axboe@fb.com>,
+        <gost.dev@samsung.com>, <jonathan.derrick@linux.dev>,
+        <jiangbo.365@bytedance.com>, <linux-nvme@lists.infradead.org>,
+        <dm-devel@redhat.com>, Naohiro Aota <naohiro.aota@wdc.com>,
+        <linux-kernel@vger.kernel.org>,
+        Johannes Thumshirn <jth@kernel.org>,
+        "Sagi Grimberg" <sagi@grimberg.me>,
+        Alasdair Kergon <agk@redhat.com>,
+        <linux-block@vger.kernel.org>, Chaitanya Kulkarni <kch@nvidia.com>,
+        "Keith Busch" <kbusch@kernel.org>, <linux-btrfs@vger.kernel.org>,
+        Luis Chamberlain <mcgrof@kernel.org>
+From:   Pankaj Raghav <p.raghav@samsung.com>
+In-Reply-To: <20220509185432.GB18596@twin.jikos.cz>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [106.210.248.174]
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+        CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347)
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0xTVxzHc3pv772tVC4V5QTYw4K4IUMbl+y4KWGZ4M3cdLIQlw03C94U
+        YinSFmQSGQ4kBaU8FIQOpStuPidDCA95jFUe5aGCrFpqdDAoTBmFAYsgC85yceG/z+/7+37P
+        +f1ODoWJawlPKkapYVVKmUJCCPHqtrnbb5V0JkduSrsvQOWdbRh63tBGoCsPcwhUODmHofyc
+        IhLN37qDoUbHd3zUM3uMh8rmn+KowZjPQ5eutPLQcLkeQyebJ3F0KX0QQ/8OStHgjA1H+aZ7
+        ANkteh5qtG1Ad4cukqihsQNHfTdKCFT6o51EuRn/YMiaawcor72Sj66NTeDIbPMK9mb6ftvJ
+        LJivEkxemoNk7jyqwJm+WwnM9cuZBPN9agHGVJ7/hqnvTyWY7DQHwdQd/53PTDRZCKa8yoIz
+        3YYWkqnsSmZyKyv4n4g/F249wCpiElnVxqD9wujTo7fxQwXCJG1xUioooLKAgIL027Be1wKc
+        LKYvApj9TJ4FhC94BkBtmQlwxTSAz3s6sJeJoa4eHte4AOCzmw/x/126auNSUQ9gb5txMSKi
+        g+C9uQLcyTi9Dp6veQw43Q12FA8v6qvpz2Chvptw8ip6L2xpNSxmMdoD2oZLF69zpy0ETM8f
+        4WcBiiJof3gsk3R6BPRmWFd2AnD+N+HxmnmS49dgzXjJ0tg+cGKgCef4KPyprZt0nglpixCe
+        mTECrrEdWgqKCI5XwSftVSTH3rDr1MmlcDK0W+cxLpwOYE5dOeEcCNLvQV23gvO8D422PwEn
+        r4TWcTdunpUwv/oMxskiqM0Q5wJf/bKX0C/bWL9sG/2ybQwAvww82AR1rJxVS5Xs4UC1LFad
+        oJQHRsXFXgcvPnfXQvtULTj75O9AE+BRwAQghUncRb/okiLFogOyr4+wqrivVAkKVm0CXhQu
+        8RBFxfwsE9NymYY9yLKHWNXLLo8SeKby+EfMa3CJutPsCKurZ/8aXnst0Pddu4UcKz71h0aj
+        CfXzCxo9F+xVu94lYERdK4hXUpuUE1bPiAdePuumzXmZiSvwG7WajDyf9PV5rx+M3N7U2Xr3
+        1aLxcNGKV2ZD+VJwelddxH7N4y0LFQNbpURrr3ti/Dths5+eCGkKHUhhV9/coPAt3eVtiOBv
+        VlwFMzv9XePcUqa27bN/IHe58GWhJDvkcPCUcsGwRxdsjSLnPp6OfrCn/6PJ9n17A5oVDgbt
+        2BYQ0drv4hJ/jnY0z45M7earJ9cwP0SEu255w08X9mtKQMioee0XveXh97XaR+FDPlVHp8a+
+        3Sjl53xoD0dP9a4SXB0tk/pjKrXsP9KMJ4lLBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrMKsWRmVeSWpSXmKPExsVy+t/xu7qzT1UnGbx+qmSx/tQxZov/e46x
+        Way+289mMe3DT2aLSf0z2C1+nz3PbLH33WxWiws/GpksFv/+zmKxZ9EkJouVq48yWTxZP4vZ
+        oufABxaLlS0PmS3+PDS0ePjlFovFpEPXGC2eXp3FZLH3lrbFpccr2C327D3JYnF51xw2i/nL
+        nrJbTGj7ymxxY8JTRouJxzezWqx7/Z7F4sQtaQcZj8tXvD3+nVjD5jGx+R27x/l7G1k8Lp8t
+        9di0qpPNY2HDVGaPzUvqPXbfbGDz6G1+x+axs/U+q8f7fVfZPNZvucricWbBEXaPzaerPSZs
+        3sgaIBSlZ1OUX1qSqpCRX1xiqxRtaGGkZ2hpoWdkYqlnaGwea2VkqqRvZ5OSmpNZllqkb5eg
+        lzHl+TmWgqlcFR0zKxoYp3J0MXJySAiYSDw+fYGpi5GLQ0hgKaNE74O/zBAJGYlPVz6yQ9jC
+        En+udbFBFH1klJiwZzkzhLMbqKO7kQmkilfATuLaz6ksIDaLgKrEku0vGSHighInZz4Bi4sK
+        REg82H2WFcQWFgiXWPN2C1gNs4C4xK0n88HOEBG4yibRMukZK8SG54wS7x+fB6ri4GAT0JJo
+        7AQ7iVPAWGLn4m6oZk2J1u2/2SFseYntb+dAvaAs8f7BPhYIu1bi1f3djBMYRWYhuWkWkt2z
+        kIyahWTUAkaWVYwiqaXFuem5xUZ6xYm5xaV56XrJ+bmbGIGpbduxn1t2MK589VHvECMTB+Mh
+        RgkOZiUR3v19FUlCvCmJlVWpRfnxRaU5qcWHGE2BATORWUo0OR+YXPNK4g3NDEwNTcwsDUwt
+        zYyVxHk9CzoShQTSE0tSs1NTC1KLYPqYODilGpg4qpNc0ydsyn0tv9U52nlJ4pMJW09kzrB8
+        enyejAfDqWt3FF26cs5+OjyJl/PEBPVC/SReEStbr8CsOydXtDpGrL2y7JJEqr9hTKXtrtmG
+        E+NeKL9cWBJZn3Q9+8WRwl1+rELmca9LVzprvjJoEPt6rlFk6+84hW/Oxpltcr77t3OmiAlW
+        Zv9kmdTooNbYM0vst+e1mMgi/lsbr3+3cFmu8OF1O8fmG2qn5igEHXpcd8Kj8K7JvMO7Tjme
+        6AtrOXtV8ZkYY+RRX85TSQ/Te65q/dFeftqJe9LM+h/XTPKWT/i8yz709x4umTCZowc+fcve
+        nl06I4uRw3tKkWv2Bof/S7OdtNbUux/X5d1q/EKJpTgj0VCLuag4EQANVqpY9gMAAA==
+X-CMS-MailID: 20220511143923eucas1p2e3a3e929d5d66bce874b5a9f7d7fd067
+X-Msg-Generator: CA
+X-RootMTR: 20220506081118eucas1p17f3c29cc36d748c3b5a3246f069f434a
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20220506081118eucas1p17f3c29cc36d748c3b5a3246f069f434a
+References: <20220506081105.29134-1-p.raghav@samsung.com>
+        <CGME20220506081118eucas1p17f3c29cc36d748c3b5a3246f069f434a@eucas1p1.samsung.com>
+        <20220506081105.29134-12-p.raghav@samsung.com>
+        <20220509185432.GB18596@twin.jikos.cz>
+X-Spam-Status: No, score=-8.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_HI,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Commit b35250c0816c ("writeback: Protect inode->i_io_list with
-inode->i_lock") made inode->i_io_list not only protected by
-wb->list_lock but also inode->i_lock, but inode_io_list_move_locked()
-was missed. Add lock there and also update comment describing
-things protected by inode->i_lock.
+Hi David,
 
-Fixes: b35250c0816c ("writeback: Protect inode->i_io_list with inode->i_lock")
-Signed-off-by: Jchao Sun <sunjunchao2870@gmail.com>
----
- fs/fs-writeback.c | 26 ++++++++++++++++++--------
- fs/inode.c        |  2 +-
- 2 files changed, 19 insertions(+), 9 deletions(-)
+On 2022-05-09 20:54, David Sterba wrote:>> diff --git
+a/drivers/md/dm-zone.c b/drivers/md/dm-zone.c
+>> index 3e7b1fe15..27dc4ddf2 100644
+>> --- a/drivers/md/dm-zone.c
+>> +++ b/drivers/md/dm-zone.c
+>> @@ -231,6 +231,18 @@ static int dm_revalidate_zones(struct mapped_device *md, struct dm_table *t)
+>>  	struct request_queue *q = md->queue;
+>>  	unsigned int noio_flag;
+>>  	int ret;
+>> +	struct block_device *bdev = md->disk->part0;
+>> +	sector_t zone_sectors;
+>> +	char bname[BDEVNAME_SIZE];
+>> +
+>> +	zone_sectors = bdev_zone_sectors(bdev);
+>> +
+>> +	if (!is_power_of_2(zone_sectors)) {
+> 
+> is_power_of_2 takes 'unsigned long' and sector_t is u64, so this is not
+> 32bit clean and we had an actual bug where value 1<<48 was not
+> recognized as power of 2.
+> 
+Good catch. Now I understand why btrfs has a helper for is_power_of_two_u64.
 
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index 591fe9cf1659..2bfd7ec92830 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -120,6 +120,7 @@ static bool inode_io_list_move_locked(struct inode *inode,
- 				      struct list_head *head)
- {
- 	assert_spin_locked(&wb->list_lock);
-+	assert_spin_locked(&inode->i_lock);
- 
- 	list_move(&inode->i_io_list, head);
- 
-@@ -1365,9 +1366,9 @@ static int move_expired_inodes(struct list_head *delaying_queue,
- 		inode = wb_inode(delaying_queue->prev);
- 		if (inode_dirtied_after(inode, dirtied_before))
- 			break;
-+		spin_lock(&inode->i_lock);
- 		list_move(&inode->i_io_list, &tmp);
- 		moved++;
--		spin_lock(&inode->i_lock);
- 		inode->i_state |= I_SYNC_QUEUED;
- 		spin_unlock(&inode->i_lock);
- 		if (sb_is_blkdev_sb(inode->i_sb))
-@@ -1383,6 +1384,7 @@ static int move_expired_inodes(struct list_head *delaying_queue,
- 		goto out;
- 	}
- 
-+	spin_lock(&inode->i_lock);
- 	/* Move inodes from one superblock together */
- 	while (!list_empty(&tmp)) {
- 		sb = wb_inode(tmp.prev)->i_sb;
-@@ -1392,6 +1394,7 @@ static int move_expired_inodes(struct list_head *delaying_queue,
- 				list_move(&inode->i_io_list, dispatch_queue);
- 		}
- 	}
-+	spin_unlock(&inode->i_lock);
- out:
- 	return moved;
- }
-@@ -1821,8 +1824,8 @@ static long writeback_sb_inodes(struct super_block *sb,
- 			 * We'll have another go at writing back this inode
- 			 * when we completed a full scan of b_io.
- 			 */
--			spin_unlock(&inode->i_lock);
- 			requeue_io(inode, wb);
-+			spin_unlock(&inode->i_lock);
- 			trace_writeback_sb_inodes_requeue(inode);
- 			continue;
- 		}
-@@ -2351,6 +2354,7 @@ void __mark_inode_dirty(struct inode *inode, int flags)
- {
- 	struct super_block *sb = inode->i_sb;
- 	int dirtytime = 0;
-+	struct bdi_writeback *wb = NULL;
- 
- 	trace_writeback_mark_inode_dirty(inode, flags);
- 
-@@ -2402,6 +2406,11 @@ void __mark_inode_dirty(struct inode *inode, int flags)
- 			inode->i_state &= ~I_DIRTY_TIME;
- 		inode->i_state |= flags;
- 
-+		if (!was_dirty) {
-+			wb = locked_inode_to_wb_and_lock_list(inode);
-+			spin_lock(&inode->i_lock);
-+		}
-+
- 		/*
- 		 * If the inode is queued for writeback by flush worker, just
- 		 * update its dirty state. Once the flush worker is done with
-@@ -2409,7 +2418,7 @@ void __mark_inode_dirty(struct inode *inode, int flags)
- 		 * list, based upon its state.
- 		 */
- 		if (inode->i_state & I_SYNC_QUEUED)
--			goto out_unlock_inode;
-+			goto out_unlock;
- 
- 		/*
- 		 * Only add valid (hashed) inodes to the superblock's
-@@ -2417,22 +2426,19 @@ void __mark_inode_dirty(struct inode *inode, int flags)
- 		 */
- 		if (!S_ISBLK(inode->i_mode)) {
- 			if (inode_unhashed(inode))
--				goto out_unlock_inode;
-+				goto out_unlock;
- 		}
- 		if (inode->i_state & I_FREEING)
--			goto out_unlock_inode;
-+			goto out_unlock;
- 
- 		/*
- 		 * If the inode was already on b_dirty/b_io/b_more_io, don't
- 		 * reposition it (that would break b_dirty time-ordering).
- 		 */
- 		if (!was_dirty) {
--			struct bdi_writeback *wb;
- 			struct list_head *dirty_list;
- 			bool wakeup_bdi = false;
- 
--			wb = locked_inode_to_wb_and_lock_list(inode);
--
- 			inode->dirtied_when = jiffies;
- 			if (dirtytime)
- 				inode->dirtied_time_when = jiffies;
-@@ -2446,6 +2452,7 @@ void __mark_inode_dirty(struct inode *inode, int flags)
- 							       dirty_list);
- 
- 			spin_unlock(&wb->list_lock);
-+			spin_unlock(&inode->i_lock);
- 			trace_writeback_dirty_inode_enqueue(inode);
- 
- 			/*
-@@ -2460,6 +2467,9 @@ void __mark_inode_dirty(struct inode *inode, int flags)
- 			return;
- 		}
- 	}
-+out_unlock:
-+	if (wb)
-+		spin_unlock(&wb->list_lock);
- out_unlock_inode:
- 	spin_unlock(&inode->i_lock);
- }
-diff --git a/fs/inode.c b/fs/inode.c
-index 9d9b422504d1..bd4da9c5207e 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -27,7 +27,7 @@
-  * Inode locking rules:
-  *
-  * inode->i_lock protects:
-- *   inode->i_state, inode->i_hash, __iget()
-+ *   inode->i_state, inode->i_hash, __iget(), inode->i_io_list
-  * Inode LRU list locks protect:
-  *   inode->i_sb->s_inode_lru, inode->i_lru
-  * inode->i_sb->s_inode_list_lock protects:
--- 
-2.17.1
+But the zone size can never be more than 32bit value so the zone size
+sect will never greater than unsigned long.
+
+With that said, we have two options:
+
+1.) We can put a comment explaining that even though it is 32 bit
+unsafe, zone size sect can never be a 32bit value
+
+or
+
+2) We should move the btrfs only helper `is_power_of_two_u64` to some
+common header and use it everywhere.
+
+Let me know your thoughts.
 
