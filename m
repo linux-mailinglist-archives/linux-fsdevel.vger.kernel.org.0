@@ -2,189 +2,167 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6749E523CFE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 May 2022 21:02:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F543523D77
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 May 2022 21:31:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346557AbiEKTC2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 May 2022 15:02:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50084 "EHLO
+        id S1346908AbiEKTbH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 May 2022 15:31:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59156 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346553AbiEKTCX (ORCPT
+        with ESMTP id S1346871AbiEKTam (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 May 2022 15:02:23 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4274F61296
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 May 2022 12:02:22 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id c190-20020a1c35c7000000b0038e37907b5bso3826062wma.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 May 2022 12:02:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=xPWXtWtTAaY66WIi8GMyLdZgPqnMNt3IjjYmafpqWvE=;
-        b=J7u6TGKIdq+x2KzdRBNPI/tNSZLd58xfSiioeFS3peCeCf9vPMZQ8vh48gRScZJ1RM
-         l7OJVWtOL/xIlnptqNPu2WK2mLnQZbOp24vjFFMhcYPWIWCxQkMv/kzmV+UN0YAD1p26
-         1Cuj3tVNZzMwALyYKA7P1qWzv9HbzV50l+7gzQ1q6Zj6S97yNGKIzrJZ20UM8BqaD3J+
-         a0VQhPoxSOd4mDeCExuIX80USQFsyKY0xRmUF7z1He7AeiJ999lTH/96sJC9QaGpC+Uq
-         nvNDR41SvfHjE/8LN3F0mHfvgLTxCM3zC1rgf+c0NtiDbgMHnc2fTFVUTIanaE6QJBXX
-         ncXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=xPWXtWtTAaY66WIi8GMyLdZgPqnMNt3IjjYmafpqWvE=;
-        b=oxynvF+UBiPewWAWQ36esMc7spOY3P1b3Ewnl0a7tkwXCGdhqM+6QlXoq1qfr6bViO
-         2xzwRpI7Nu6hiS01YBcm+TqEf1RKFjpzQHcrBCh1a38i8V2PqfH41rdIIh8n8gjAfwJg
-         QARZRx22M9Y/0TpfflwZ+FnF5VeeIEtNpCnv7L6EyCvfXhwKAMnPX4SnjFwlPYpW/kUN
-         q3YmEPIApW/heKkJCsLkE02PkwxfKpQsDlKnIPYvH3I2+g4TDujQEm/d01mVu7h+XLCE
-         vHciJPId8InbDVI+0L22MdA+5tGEZEk0NQFBQD/2I5nf/n31Lv1yZ/eb587nLUgJijiQ
-         XeAA==
-X-Gm-Message-State: AOAM530sWy5y2q8lq2HZOvQL1NLleNrClb9Y6DPFQfAedISlf8/GZ8yQ
-        XaCqPvsR8sgkpSAgcGP2omWmu2Gy4yE=
-X-Google-Smtp-Source: ABdhPJz8e92wz+Hm/jWij7YdDxGVbvq9FYoabmTRiUcrBJcbP3GWzghb75NDbswF7N0YsraUvfJB+g==
-X-Received: by 2002:a05:600c:4fd4:b0:394:8e96:6d3b with SMTP id o20-20020a05600c4fd400b003948e966d3bmr6295630wmq.180.1652295740796;
-        Wed, 11 May 2022 12:02:20 -0700 (PDT)
-Received: from amir-ThinkPad-T480.lan ([77.137.68.18])
-        by smtp.gmail.com with ESMTPSA id t9-20020a7bc3c9000000b003942a244eebsm435527wmj.48.2022.05.11.12.02.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 May 2022 12:02:19 -0700 (PDT)
-From:   Amir Goldstein <amir73il@gmail.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 2/2] fsnotify: consistent behavior for parent not watching children
-Date:   Wed, 11 May 2022 22:02:13 +0300
-Message-Id: <20220511190213.831646-3-amir73il@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220511190213.831646-1-amir73il@gmail.com>
-References: <20220511190213.831646-1-amir73il@gmail.com>
+        Wed, 11 May 2022 15:30:42 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 73AD621A94C
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 May 2022 12:30:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1652297415;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=G5azXxOWE111/EFfPUBN7PUx3Chajjhv4r8b0ykR4aQ=;
+        b=axTzt0DUw1kGTMFoeymyeW5OQwFseneJ21y9Mc9aJrTkGEnpquWxp/1vQtYFs87jVKHtSQ
+        3qMlOzilpS/2Tw3saNH+hYx/99UGPoZDzACboI1bNao9i2QcyLpyK+r4B9GE+Zj/QaH9WO
+        7vIohW37UrwwpGLu2crHK1UH+gSI+5s=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-605-G3ZpW4pAPh23HfnJ9Ip6lA-1; Wed, 11 May 2022 15:30:10 -0400
+X-MC-Unique: G3ZpW4pAPh23HfnJ9Ip6lA-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D44C43C62B62;
+        Wed, 11 May 2022 19:30:09 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.22.18.223])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B19E7C15D58;
+        Wed, 11 May 2022 19:30:09 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 6D9EC220463; Wed, 11 May 2022 15:30:09 -0400 (EDT)
+Date:   Wed, 11 May 2022 15:30:09 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Bernd Schubert <bschubert@ddn.com>,
+        Dharmendra Hans <dharamhans87@gmail.com>,
+        linux-fsdevel@vger.kernel.org,
+        fuse-devel <fuse-devel@lists.sourceforge.net>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/3] FUSE: Implement atomic lookup + open/create
+Message-ID: <YnwOwS/bmUkbazeL@redhat.com>
+References: <20220502102521.22875-1-dharamhans87@gmail.com>
+ <YnLRnR3Xqu0cYPdb@redhat.com>
+ <CACUYsyEsRph+iFC_fj3F6Ceqhq7NCTuFPH3up8R6C+_bGHktZg@mail.gmail.com>
+ <YnPI6f2fRZUXbCFP@redhat.com>
+ <882fbf7f-a56b-1e82-a158-9e2186ec7c4c@ddn.com>
+ <YnQsizX5Q1sMnlI2@redhat.com>
+ <CAJfpegseGaWHkjdQj7XiR=TQNFpPZzDF_rTXces2oRz=x0N7OA@mail.gmail.com>
+ <YnvwiZ+s+y3VDUMW@redhat.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <YnvwiZ+s+y3VDUMW@redhat.com>
+X-Scanned-By: MIMEDefang 2.85 on 10.11.54.8
+X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The logic for handling events on child in groups that have a mark on
-the parent inode, but without FS_EVENT_ON_CHILD flag in the mask is
-duplicated in several places and inconsistent.
+On Wed, May 11, 2022 at 01:21:13PM -0400, Vivek Goyal wrote:
+> On Wed, May 11, 2022 at 11:40:59AM +0200, Miklos Szeredi wrote:
+> > On Thu, 5 May 2022 at 21:59, Vivek Goyal <vgoyal@redhat.com> wrote:
+> > 
+> > > Oh, I have no issues with the intent. I will like to see cut in network
+> > > traffic too (if we can do this without introducing problems). My primary
+> > > interest is that this kind of change should benefit virtiofs as well.
+> > 
+> > One issue with that appears to be checking permissions.   AFAIU this
+> > patchset only enables the optimization if default_permissions is
+> > turned off (i.e. all permission checking is done by the server).  But
+> > virtiofs uses the default_permissions model.
+> 
+> IIUC, only 3rd patch mentions that default_permission should be turned
+> off. IOW, first patch where lookup + create + open is a single operation
+> and second patch which does "lookup + open" in a single operation does
+> not seem to require that default_permissions are not in effect.
+> 
+> So if first two patches work fine, I think virtiofs should benefit too.
+> (IMHO, 3rd patch is too hacky anyway)
+> 
+> W.r.t permission checks, looks like may_open() will finally be called
+> after ->atomic_open(). So even if we open the file, we should still be
+> able to check whether we have permissions to open the file or not
+> after the fact.
+> 
+> fs/namei.c
+> 
+> path_openat()
+> {
+> 	open_last_lookups()  <--- This calls ->atomic_open()
+> 	do_open()  <--- This calls may_open()
+> }
 
-Move the logic into the preparation of mark type iterator, so that the
-parent mark type will be excluded from all mark type iterations in that
-case.
+Actually I am not sure about it. I was playing with 
 
-This results in several subtle changes of behavior, hopefully all
-desired changes of behavior, for example:
+open(foo.txt, O_CREAT | O_RDWR, O_IRUSR)
 
-- Group A has a mount mark with FS_MODIFY in mask
-- Group A has a mark with ignore mask that does not survive FS_MODIFY
-  and does not watch children on directory D.
-- Group B has a mark with FS_MODIFY in mask that does watch children
-  on directory D.
-- FS_MODIFY event on file D/foo should not clear the ignore mask of
-  group A, but before this change it does
+This succeeds if file is newly created but if file already existed, this
+fails with -EACCESS
 
-And if group A ignore mask was set to survive FS_MODIFY:
-- FS_MODIFY event on file D/foo should be reported to group A on account
-  of the mount mark, but before this change it is wrongly ignored
+So man 2 open says following. Thanks to Andy Price for pointing me to it.
 
-Fixes: 2f02fd3fa13e ("fanotify: fix ignore mask logic for events on child and on dir")
-Reported-by: Jan Kara <jack@suse.com>
-Link: https://lore.kernel.org/linux-fsdevel/20220314113337.j7slrb5srxukztje@quack3.lan/
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
----
- fs/notify/fanotify/fanotify.c | 10 +---------
- fs/notify/fsnotify.c          | 34 +++++++++++++++++++---------------
- 2 files changed, 20 insertions(+), 24 deletions(-)
+    Note that mode applies only to future accesses of the newly cre‐
+    ated  file;  the  open()  call that creates a read-only file may
+    well return a read/write file descriptor.
 
-diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-index 263d303d8f8f..4f897e109547 100644
---- a/fs/notify/fanotify/fanotify.c
-+++ b/fs/notify/fanotify/fanotify.c
-@@ -320,7 +320,7 @@ static u32 fanotify_group_event_mask(struct fsnotify_group *group,
- 	}
- 
- 	fsnotify_foreach_iter_mark_type(iter_info, mark, type) {
--		/* Apply ignore mask regardless of ISDIR and ON_CHILD flags */
-+		/* Apply ignore mask regardless of mark's ISDIR flag */
- 		marks_ignored_mask |= mark->ignored_mask;
- 
- 		/*
-@@ -330,14 +330,6 @@ static u32 fanotify_group_event_mask(struct fsnotify_group *group,
- 		if (event_mask & FS_ISDIR && !(mark->mask & FS_ISDIR))
- 			continue;
- 
--		/*
--		 * If the event is on a child and this mark is on a parent not
--		 * watching children, don't send it!
--		 */
--		if (type == FSNOTIFY_ITER_TYPE_PARENT &&
--		    !(mark->mask & FS_EVENT_ON_CHILD))
--			continue;
--
- 		marks_mask |= mark->mask;
- 
- 		/* Record the mark types of this group that matched the event */
-diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-index c5bb2405ead3..2c9a13c31ac9 100644
---- a/fs/notify/fsnotify.c
-+++ b/fs/notify/fsnotify.c
-@@ -290,22 +290,15 @@ static int fsnotify_handle_event(struct fsnotify_group *group, __u32 mask,
- 	}
- 
- 	if (parent_mark) {
--		/*
--		 * parent_mark indicates that the parent inode is watching
--		 * children and interested in this event, which is an event
--		 * possible on child. But is *this mark* watching children and
--		 * interested in this event?
--		 */
--		if (parent_mark->mask & FS_EVENT_ON_CHILD) {
--			ret = fsnotify_handle_inode_event(group, parent_mark, mask,
--							  data, data_type, dir, name, 0);
--			if (ret)
--				return ret;
--		}
--		if (!inode_mark)
--			return 0;
-+		ret = fsnotify_handle_inode_event(group, parent_mark, mask,
-+						  data, data_type, dir, name, 0);
-+		if (ret)
-+			return ret;
- 	}
- 
-+	if (!inode_mark)
-+		return 0;
-+
- 	if (mask & FS_EVENT_ON_CHILD) {
- 		/*
- 		 * Some events can be sent on both parent dir and child marks
-@@ -422,8 +415,19 @@ static bool fsnotify_iter_select_report_types(
- 	iter_info->report_mask = 0;
- 	fsnotify_foreach_iter_type(type) {
- 		mark = iter_info->marks[type];
--		if (mark && mark->group == iter_info->current_group)
-+		if (mark && mark->group == iter_info->current_group) {
-+			/*
-+			 * FSNOTIFY_ITER_TYPE_PARENT indicates that this inode
-+			 * is watching children and interested in this event,
-+			 * which is an event possible on child.
-+			 * But is *this mark* watching children?
-+			 */
-+			if (type == FSNOTIFY_ITER_TYPE_PARENT &&
-+			    !(mark->mask & FS_EVENT_ON_CHILD))
-+				continue;
-+
- 			fsnotify_iter_set_report_type(iter_info, type);
-+		}
- 	}
- 
- 	return true;
--- 
-2.25.1
+
+Now I am wondering how will it look like with first patch. Assume file
+already exists on the server (But there is no negative dentry present)
+and I do following. And assume file only has read permission for user
+and I am trying to open it read-write.
+
+open(foo.txt, O_CREAT | O_RDWR, O_IRUSR)
+
+In normal circumstances, user will expect -EACCESS as file is read-only
+and user is trying to open it read-write.
+
+I am wondering how will it look like with this first patch.
+
+Current fuse ->atomic_open() looks up the dentry and does not open
+the file if dentry is positive.
+
+New implementation will skip lookup and open the file anyway and
+set file->f_mode |= FMODE_CREATED; (First patch in series)
+
+So first of all this seems wrong. I thought FMODE_CREATED should be
+set only if file was newly created. Is that a correct understanding.
+
+And I am looking at do_open() code. It does bunch of things based
+on FMODE_CREATED flag. One of the things it does is reset acc_mode =0
+
+        if (file->f_mode & FMODE_CREATED) {
+                /* Don't check for write permission, don't truncate */
+                open_flag &= ~O_TRUNC;
+                acc_mode = 0;
+	}
+	error = may_open(mnt_userns, &nd->path, acc_mode, open_flag);
+
+I suspect this is the code which allows opening a newly created read-only
+file as O_RDWR. (Though I am not 100% sure).
+
+I suspect with first patch this will be broken. We will set FMODE_CREATED
+even if file already existed and VFS will assume a new file has been
+created and do bunch of things which is wrong.
+
+So looks like fuse ->atomic_open() should set FMODE_CREATED only if
+it really created the file.
+
+Thanks
+Vivek
 
