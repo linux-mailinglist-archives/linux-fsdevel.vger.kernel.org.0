@@ -2,99 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C02D85229FD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 May 2022 04:47:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BAEC522A16
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 May 2022 04:56:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235673AbiEKCre (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 May 2022 22:47:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40886 "EHLO
+        id S241820AbiEKCxT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 May 2022 22:53:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244039AbiEKCnF (ORCPT
+        with ESMTP id S237773AbiEKCxH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 May 2022 22:43:05 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 560835B3D1;
-        Tue, 10 May 2022 19:43:04 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id DD5D5B82101;
-        Wed, 11 May 2022 02:43:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90AECC385CB;
-        Wed, 11 May 2022 02:43:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1652236981;
-        bh=H+slBZhjJ5EG7moKEOfvPRRGLjpkOTwOOM/Iqo+g4oY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FxyrotPwafWFnECQ6+E1BpXm+/56DaFyJ/XOvXN884cx5Km0J/vV+razdDlMXFYGE
-         JxWHkLwz2P5tCkPvHzepdp/zjD3UYVmnoVeOBblQAJlz5BXr4ZxiYMXzqJpZWC/I5E
-         i9BaywZ949nDVoG6E2cmfJXLikmAOkTU9g+QdqYiLdD42X9dzXIM1n8cP9Ik17gMKE
-         Z/hkeyECRJhqGjdEcze11T7rsAQiF4miwr6XESuE1Rix93PDZ6w921TM9hLtdrRHd6
-         V72lXep5kkgc9R4tGJAvA366FPEe3zzjoeWflOeQ5ngwG3LVbgVWKqV4roBtcsTaz2
-         WRv7inNKqcdfg==
-Date:   Tue, 10 May 2022 19:43:01 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Shiyang Ruan <ruansy.fnst@fujitsu.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Linux NVDIMM <nvdimm@lists.linux.dev>,
-        Linux MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jane Chu <jane.chu@oracle.com>,
-        Goldwyn Rodrigues <rgoldwyn@suse.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Naoya Horiguchi <naoya.horiguchi@nec.com>, linmiaohe@huawei.com
-Subject: Re: [PATCHSETS] v14 fsdax-rmap + v11 fsdax-reflink
-Message-ID: <20220511024301.GD27195@magnolia>
-References: <20220508143620.1775214-1-ruansy.fnst@fujitsu.com>
- <20220511000352.GY27195@magnolia>
- <20220511014818.GE1098723@dread.disaster.area>
- <CAPcyv4h0a3aT3XH9qCBW3nbT4K3EwQvBSD_oX5W=55_x24-wFA@mail.gmail.com>
- <20220510192853.410ea7587f04694038cd01de@linux-foundation.org>
+        Tue, 10 May 2022 22:53:07 -0400
+Received: from out1.migadu.com (out1.migadu.com [IPv6:2001:41d0:2:863f::])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19EA353E13;
+        Tue, 10 May 2022 19:51:29 -0700 (PDT)
+Date:   Tue, 10 May 2022 19:51:21 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1652237487;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=6EZaCYycNo4v1thOOsKX7LyDVmSBgy8fN7c/00WhTOU=;
+        b=Y8/hQZ/6e3GqoUyTGMgKv8zpHgfl7UpP52ogzB+dc8QtUdLIo9pf89o+40NUuyD8IIojlR
+        eIg3/D0bMirUjmWu3P974MtXHdS7/Ks4kjQE/BY0QuMDbpbeUtd7v377Hga3ZsLqHplrN9
+        /yalC9ohO8n+ZoB6rPbUIZ0nKi8Pe2E=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Roman Gushchin <roman.gushchin@linux.dev>
+To:     Vasily Averin <vvs@openvz.org>
+Cc:     Shakeel Butt <shakeelb@google.com>, kernel@openvz.org,
+        Florian Westphal <fw@strlen.de>, linux-kernel@vger.kernel.org,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Michal Hocko <mhocko@suse.com>, cgroups@vger.kernel.org,
+        netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH memcg v2] memcg: accounting for objects allocated for new
+ netdevice
+Message-ID: <YnskqRzAmtfLRd7U@carbon>
+References: <53613f02-75f2-0546-d84c-a5ed989327b6@openvz.org>
+ <354a0a5f-9ec3-a25c-3215-304eab2157bc@openvz.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220510192853.410ea7587f04694038cd01de@linux-foundation.org>
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <354a0a5f-9ec3-a25c-3215-304eab2157bc@openvz.org>
+X-Migadu-Flow: FLOW_OUT
+X-Migadu-Auth-User: linux.dev
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 10, 2022 at 07:28:53PM -0700, Andrew Morton wrote:
-> On Tue, 10 May 2022 18:55:50 -0700 Dan Williams <dan.j.williams@intel.com> wrote:
+On Mon, May 02, 2022 at 03:15:51PM +0300, Vasily Averin wrote:
+> Creating a new netdevice allocates at least ~50Kb of memory for various
+> kernel objects, but only ~5Kb of them are accounted to memcg. As a result,
+> creating an unlimited number of netdevice inside a memcg-limited container
+> does not fall within memcg restrictions, consumes a significant part
+> of the host's memory, can cause global OOM and lead to random kills of
+> host processes.
 > 
-> > > It'll need to be a stable branch somewhere, but I don't think it
-> > > really matters where al long as it's merged into the xfs for-next
-> > > tree so it gets filesystem test coverage...
-> > 
-> > So how about let the notify_failure() bits go through -mm this cycle,
-> > if Andrew will have it, and then the reflnk work has a clean v5.19-rc1
-> > baseline to build from?
+> The main consumers of non-accounted memory are:
+>  ~10Kb   80+ kernfs nodes
+>  ~6Kb    ipv6_add_dev() allocations
+>   6Kb    __register_sysctl_table() allocations
+>   4Kb    neigh_sysctl_register() allocations
+>   4Kb    __devinet_sysctl_register() allocations
+>   4Kb    __addrconf_sysctl_register() allocations
 > 
-> What are we referring to here?  I think a minimal thing would be the
-> memremap.h and memory-failure.c changes from
-> https://lkml.kernel.org/r/20220508143620.1775214-4-ruansy.fnst@fujitsu.com ?
+> Accounting of these objects allows to increase the share of memcg-related
+> memory up to 60-70% (~38Kb accounted vs ~54Kb total for dummy netdevice
+> on typical VM with default Fedora 35 kernel) and this should be enough
+> to somehow protect the host from misuse inside container.
 > 
-> Sure, I can scoot that into 5.19-rc1 if you think that's best.  It
-> would probably be straining things to slip it into 5.19.
+> Other related objects are quite small and may not be taken into account
+> to minimize the expected performance degradation.
 > 
-> The use of EOPNOTSUPP is a bit suspect, btw.  It *sounds* like the
-> right thing, but it's a networking errno.  I suppose livable with if it
-> never escapes the kernel, but if it can get back to userspace then a
-> user would be justified in wondering how the heck a filesystem
-> operation generated a networking errno?
+> It should be separately mentonied ~300 bytes of percpu allocation
+> of struct ipstats_mib in snmp6_alloc_dev(), on huge multi-cpu nodes
+> it can become the main consumer of memory.
+> 
+> This patch does not enables kernfs accounting as it affects
+> other parts of the kernel and should be discussed separately.
+> However, even without kernfs, this patch significantly improves the
+> current situation and allows to take into account more than half
+> of all netdevice allocations.
+> 
+> Signed-off-by: Vasily Averin <vvs@openvz.org>
+> ---
+> v2: 1) kernfs accounting moved into separate patch, suggested by
+>     Shakeel and mkoutny@.
+>     2) in ipv6_add_dev() changed original "sizeof(struct inet6_dev)"
+>     to "sizeof(*ndev)", according to checkpath.pl recommendation:
+>       CHECK: Prefer kzalloc(sizeof(*ndev)...) over kzalloc(sizeof
+>         (struct inet6_dev)...)
 
-<shrug> most filesystems return EOPNOTSUPP rather enthusiastically when
-they don't know how to do something...
+It seems it's a bit too late, but just for the record:
 
---D
+Acked-by: Roman Gushchin <roman.gushchin@linux.dev>
+
+Thanks!
