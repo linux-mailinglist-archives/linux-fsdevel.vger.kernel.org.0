@@ -2,75 +2,105 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EA438523CFA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 May 2022 21:01:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1D2E523CFC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 May 2022 21:02:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346513AbiEKTBl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 May 2022 15:01:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47032 "EHLO
+        id S1346541AbiEKTCV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 May 2022 15:02:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345744AbiEKTBk (ORCPT
+        with ESMTP id S1345744AbiEKTCT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 May 2022 15:01:40 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AF9A443D2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 May 2022 12:01:38 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 49BD2B8260B
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 May 2022 19:01:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6BF7C340EE;
-        Wed, 11 May 2022 19:01:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1652295696;
-        bh=yFAu4NtfyG/gBAE+EMMRtmsQvCPj7mkWnx/0WKtfGN8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FVEMR5yZnQEYf5f604+3xYnL8nhJW5pg0lYzw/YXrvGc9dmSxjHsI5rbeGG1Cw8Df
-         0XLp/ufoQhcZbpZQLlyaXSXQUDAj2F6yE9QzUkqMKK1RD3gaJY8BGvQysH3vfpMfv7
-         c+ssVkMduCkU8CXNTfOl0rG7cgP8xNmp8CdushYV/3rmC3pRwlMyU7zy5oubWA16EQ
-         IH93SLfhs2alOssWM7kpiaBjZ/Suas/0O1KJquFaNV3AXBtmxSDETlYCNlgcXYHBfS
-         3JndpOfs8X10qBxPlFzOw8FA4soiwKSSYD/v/xwWN21idlp+fSrm2ULvelGgBWinol
-         PCOqKou/g+qIw==
-Date:   Wed, 11 May 2022 19:01:34 +0000
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Chengguang Xu <cgxu519@mykernel.net>, viro@zeniv.linux.org.uk,
+        Wed, 11 May 2022 15:02:19 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDC3161296
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 May 2022 12:02:18 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id t6so4273293wra.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 May 2022 12:02:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2r9u+ahKwpk+8g1Gq16NEAr0Tman+TDEAuSUs7czHss=;
+        b=LL5lvazw5mCmBKVwn0p/N2Z2AuK+Rc0khD/zxm0FDACW3YH4nzAITnSbGUS0LqTUFn
+         T3j2vdDhAPCL+BGq73ApReVAiTuXcYDt0vZf+3uovghddm6O/HEjyfF+wqrUCHGcomgt
+         Hi8jPWy7PEDJTurOQVE2TTvN/VC0XLEkD4e6SV9F9cO1EYfXRJn7zNOltKT2pCkDWnad
+         JX53Yr2Xv8h8LcHW2MVimwKCjhfUBPMG4dwpS6GI+FO9hUmPrGyySLLTtJz9s/M+EHSx
+         dDeSQ3IJY+pT7DxgZtW9tOLpyB5tlHAOPRLH17pcJbfl/TnrVNctIDkvp+i+G/3MMFDi
+         wz5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2r9u+ahKwpk+8g1Gq16NEAr0Tman+TDEAuSUs7czHss=;
+        b=ro8O4e43S4h+Z2CSBH2/UkkLJJ6vsH/Sx3EfiNK8C7SDwQ7qk+cVwLyitYE5KITeP2
+         pMTeF1AEND260psFRVDze1jwSiWOw/nJRNkrVqUYlSQw38IbN3Ffxhff1KHVIQCoosD6
+         SpJXZlHL1ksPDoFOBCLz5/JADXx4Qf2uq+p2Z55NrBhgM2JXMV55rWcWYHdiWRZTsr4f
+         u7GCnGaTVZqxfUsqED+FWKanYOP63YqtVoN/qhpjMsjtGp9l7D4qMwsGuxJEs7NeWVKJ
+         VMiTPZ1stAhUz+RUc2VJpyWgznvBDIgsslgU5eCfS5YSURdz+9svNJPKnV39+ytePnbh
+         HuAw==
+X-Gm-Message-State: AOAM530+AUAppjinSnyw21fIYU+0XdDdgBAq96ZJr2fZIJYPgOIgmjq1
+        VgjRmiNsoJGlMj/Azs4SnpU=
+X-Google-Smtp-Source: ABdhPJwXReMEAp+Wo2CE8JCWvdPajcP9Rc/ZAp/K523Ffz+MoG6rDi/OeLF6iSWCz3CqF9Kz536CoA==
+X-Received: by 2002:adf:e44d:0:b0:20a:d88e:94ec with SMTP id t13-20020adfe44d000000b0020ad88e94ecmr23208825wrm.311.1652295737124;
+        Wed, 11 May 2022 12:02:17 -0700 (PDT)
+Received: from amir-ThinkPad-T480.lan ([77.137.68.18])
+        by smtp.gmail.com with ESMTPSA id t9-20020a7bc3c9000000b003942a244eebsm435527wmj.48.2022.05.11.12.02.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 May 2022 12:02:16 -0700 (PDT)
+From:   Amir Goldstein <amir73il@gmail.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] vfs: move fdput() to right place in
- ksys_sync_file_range()
-Message-ID: <YnwIDpkIBem+MeeC@gmail.com>
-References: <20220511154503.28365-1-cgxu519@mykernel.net>
- <YnvbhmRUxPxWU2S3@casper.infradead.org>
+Subject: [PATCH v2 0/2] Fixes for fanotify parent dir ignore mask logic
+Date:   Wed, 11 May 2022 22:02:11 +0300
+Message-Id: <20220511190213.831646-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YnvbhmRUxPxWU2S3@casper.infradead.org>
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 11, 2022 at 04:51:34PM +0100, Matthew Wilcox wrote:
-> On Wed, May 11, 2022 at 11:45:03AM -0400, Chengguang Xu wrote:
-> > Move fdput() to right place in ksys_sync_file_range() to
-> > avoid fdput() after failed fdget().
-> 
-> Why?  fdput() is already conditional on FDPUT_FPUT so you're ...
-> optimising the failure case?
+Jan,
 
-"fdput() after failed fdget()" has confused people before, so IMO it's worth
-cleaning this up.  But the commit message should make clear that it's a cleanup,
-not a bug fix.  Also I recommend using an early return:
+The following two patches are a prelude to FAN_MARK_IGNORE patch set [1].
+I have written tests [2] and man page draft [3] for FAN_MARK_IGNORE, but
+not proposing it for next, because one big UAPI change is enough and it
+is too late in the cycle anyway.
 
-	f = fdget(fd);
-	if (!f.file)
-		return -EBADF;
-	ret = sync_file_range(f.file, offset, nbytes, flags);
-	fdput(f);
-	return ret;
+However, I though you may want to consider these two patches for next.
+The test fanotify09 on [2] has two new test cases for the fixes in these
+patches.
+
+Thanks,
+Amir.
+
+Changes since v1:
+- Change hacky mark iterator macros
+- Clarify mark iterator in fsnotify_iter_next()
+- Open code parent mark type logic in
+  fsnotify_iter_select_report_types()
+
+[1] https://github.com/amir73il/linux/commits/fan_mark_ignore
+[2] https://github.com/amir73il/ltp/commits/fan_mark_ignore
+[3] https://github.com/amir73il/man-pages/commits/fan_mark_ignore
+
+Amir Goldstein (2):
+  fsnotify: introduce mark type iterator
+  fsnotify: consistent behavior for parent not watching children
+
+ fs/notify/fanotify/fanotify.c    | 24 ++-------
+ fs/notify/fsnotify.c             | 85 +++++++++++++++++---------------
+ include/linux/fsnotify_backend.h | 31 +++++++++---
+ 3 files changed, 73 insertions(+), 67 deletions(-)
+
+-- 
+2.25.1
+
