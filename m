@@ -2,117 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 23539523F94
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 May 2022 23:44:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C7D952403F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 May 2022 00:29:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348263AbiEKVoB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 May 2022 17:44:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40856 "EHLO
+        id S1348740AbiEKW3X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 May 2022 18:29:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243914AbiEKVoA (ORCPT
+        with ESMTP id S1344678AbiEKW3V (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 May 2022 17:44:00 -0400
-Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AFCE737B0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 May 2022 14:43:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Vcm/V672RtTM8vvm4J3KtX9NQnkGZta3Kq9vhuotm/A=; b=U3pn9iUc06fECU+PasECe4aWwQ
-        Wu4rQLRIW2rEI4pXGQlVfnT9SW5jOHe2BqV9hsNZ3/nhL2E/FoPOfuZKnU//PBieXE9kW3rA2Xq3g
-        1mRtJu7qMYHCSw8BO9nVnkCbT3jC9/1zC37fZbPXsJfb/Qe0WZzZhjqH6qs43Unt+j5GTWzSt3pzJ
-        oTk0vz8TU/e/jdaEAgaWDipx+47FD8smVwT4OeIdCVNieazOQIrMTVjHOZdU9bZV924H2nfLPtPoq
-        NP5XvRMhQ++aYd/KQ4PW3Lt/cZx3lFYyD9gTCTuJLiD7UBdMP0fI3wSgK6Xnc0KubGMtteDg2mkAu
-        jGazVxqw==;
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nou7W-00E7QV-5e; Wed, 11 May 2022 21:43:46 +0000
-Date:   Wed, 11 May 2022 21:43:46 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Chengguang Xu <cgxu519@mykernel.net>,
-        linux-fsdevel@vger.kernel.org, Xu Kuohai <xukuohai@huawei.com>,
-        Alexei Starovoitov <ast@kernel.org>
-Subject: Re: [PATCH] vfs: move fdput() to right place in
- ksys_sync_file_range()
-Message-ID: <YnwuEt2Xm1iPjW7S@zeniv-ca.linux.org.uk>
-References: <20220511154503.28365-1-cgxu519@mykernel.net>
- <YnvbhmRUxPxWU2S3@casper.infradead.org>
- <YnwIDpkIBem+MeeC@gmail.com>
+        Wed, 11 May 2022 18:29:21 -0400
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7858F1E6559
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 May 2022 15:29:20 -0700 (PDT)
+Received: by mail-pj1-x1030.google.com with SMTP id gj17-20020a17090b109100b001d8b390f77bso6176110pjb.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 May 2022 15:29:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=l6f+5/Vo3mAG8snELd3XOc4siztvcKt8YBtUwfsLbWg=;
+        b=AA45CPUU8Us9kxvujSWmr6tEHvJb6GK11i1UJq35Iseq5lx9WY4GrIa0ohM8K8cCl/
+         6MF6YKAVFjaIyjreqdXMN7X/rxAwMTBSLWMyMPxNxKRXduUKjNlDZsTRdP02Q2SqDYP9
+         PZawNqkHJFcystLRDFqhcySqH54xbhpPJta/Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=l6f+5/Vo3mAG8snELd3XOc4siztvcKt8YBtUwfsLbWg=;
+        b=ZFmBYomQAZxobffUgjjNUWke2JGqBuy0YhzHeUTlO4GcJ48r7GSi3QpMeP34J3mgby
+         wEIFX4kv91aYVq/GoK7qdzr/h2WmmXXqXU5diOsvwMa4UKwdhUgGivlrn9DuqLaodc0a
+         ZOAZs4JTFJ/G7Zi58onInnBaMr+fLWJNThGs2BOP9Kug+9rxVOpbLosfNTkWoFG/yYpt
+         SOHNCZuQ4Ury+kmac2ipKdcxiQ39ty0PxgM7JgWGYFAQTJP5L9QK157Wpbm14Mdt2oBB
+         HZ3KJ7AaVI/0MiH2Nye1guX1FAKT2dOPpUAaKi8p+fDlCJvMeCk9tCRsvaDfsSHZHJWI
+         zYag==
+X-Gm-Message-State: AOAM531miWPgGRh74uwhnsiRe8f9Ixnt2gEiSdeUk+Z2YLS0nxgaJHD5
+        WFecPshEJ6KrVpvjx5tKXHMz+lnCeRDAjg==
+X-Google-Smtp-Source: ABdhPJyqGOkE0Z2w19eFOj6PDks6DXQolwftIdTdi5nVA63NtM0rxhADPB3QqHBGnJBhCDlZZ4zt7A==
+X-Received: by 2002:a17:90a:ec16:b0:1da:3249:685b with SMTP id l22-20020a17090aec1600b001da3249685bmr7549912pjy.101.1652308159944;
+        Wed, 11 May 2022 15:29:19 -0700 (PDT)
+Received: from dlunevwfh.roam.corp.google.com (n122-107-196-14.sbr2.nsw.optusnet.com.au. [122.107.196.14])
+        by smtp.gmail.com with ESMTPSA id d5-20020a170902c18500b0015e8d4eb1d2sm2391855pld.28.2022.05.11.15.29.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 May 2022 15:29:19 -0700 (PDT)
+From:   Daniil Lunev <dlunev@chromium.org>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     hch@infradead.org, fuse-devel@lists.sourceforge.net, tytso@mit.edu,
+        miklos@szeredi.hu, viro@zeniv.linux.org.uk,
+        linux-kernel@vger.kernel.org, Daniil Lunev <dlunev@chromium.org>
+Subject: [PATCH v2 0/2] Prevent re-use of FUSE superblock after force unmount
+Date:   Thu, 12 May 2022 08:29:08 +1000
+Message-Id: <20220511222910.635307-1-dlunev@chromium.org>
+X-Mailer: git-send-email 2.31.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YnwIDpkIBem+MeeC@gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[bpf folks Cc'd]
+userspace counterpart. However, open file handles will prevent the
+superblock from being reclaimed. An attempt to remount the filesystem at
+the same endpoint will try re-using the superblock, if still present.
+Since the superblock re-use path doesn't go through the fs-specific
+superblock setup code, its state in FUSE case is already disfunctional,
+and that will prevent the mount from succeeding.
 
-On Wed, May 11, 2022 at 07:01:34PM +0000, Eric Biggers wrote:
-> On Wed, May 11, 2022 at 04:51:34PM +0100, Matthew Wilcox wrote:
-> > On Wed, May 11, 2022 at 11:45:03AM -0400, Chengguang Xu wrote:
-> > > Move fdput() to right place in ksys_sync_file_range() to
-> > > avoid fdput() after failed fdget().
-> > 
-> > Why?  fdput() is already conditional on FDPUT_FPUT so you're ...
-> > optimising the failure case?
-> 
-> "fdput() after failed fdget()" has confused people before, so IMO it's worth
-> cleaning this up.  But the commit message should make clear that it's a cleanup,
-> not a bug fix.  Also I recommend using an early return:
-> 
-> 	f = fdget(fd);
-> 	if (!f.file)
-> 		return -EBADF;
-> 	ret = sync_file_range(f.file, offset, nbytes, flags);
-> 	fdput(f);
-> 	return ret;
+Changes in v2:
+- Remove super from list of superblocks instead of using a flag
 
-FWIW, fdput() after failed fdget() is rare, but there's no fundamental reasons
-why it would be wrong.  No objections against that patch, anyway.
+Daniil Lunev (2):
+  fs/super: function to prevent super re-use
+  FUSE: Retire superblock on force unmount
 
-Out of curiousity, I've just looked at the existing users.  In mainline we have
-203 callers of fdput()/fdput_pos(); all but 7 never get reached with NULL ->file.
+ fs/fuse/inode.c    |  7 +++++--
+ fs/super.c         | 51 ++++++++++++++++++++++++++++++++++++----------
+ include/linux/fs.h |  1 +
+ 3 files changed, 46 insertions(+), 13 deletions(-)
 
-1) There's ksys_sync_file_range(), kernel_read_file_from_fd() and ksys_readahead() -
-all with similar pattern.  I'm not sure that for readahead(2) "not opened for
-read" should yield the same error as "bad descriptor", but since it's been a part
-of userland ABI for a while...
+-- 
+2.31.0
 
-2) two callers in perf_event_open(2) are playing silly buggers with explicit
-        struct fd group = {NULL, 0};
-and rely upon "fdput() is a no-op if we hadn't touched that" (note that if
-we try to touch it and get NULL ->file from fdget(), we do not hit those fdput()
-at all).
-
-3) ovl_aio_put() is hard to follow (and some of the callers are poking
-where they shouldn't), no idea if it's correct.  struct fd is manually
-constructed there, anyway.
-
-4) bpf generic_map_update_batch() is really asking for trouble.  The comment in
-there is wrong:
-        f = fdget(ufd); /* bpf_map_do_batch() guarantees ufd is valid */
-*NOTHING* we'd done earlier can guarantee that.  We might have a descriptor
-table shared with another thread, and it might have very well done dup2() since
-the last time we'd looked things up.  IOW, this fdget() is racy - the function
-assumes it refers to the same thing that gave us map back in bpf_map_do_batch(),
-but it's not guaranteed at all.
-
-I hadn't put together a reproducer, but that code is very suspicious.  As a general
-rule, you should treat descriptor table as shared object, modifiable by other
-threads.  It can be explicitly locked and it can be explicitly unshared, but
-short of that doing a lookup for the same descriptor twice in a row can yield
-different results.
-
-What's going on there?  Do you really want the same struct file you've got back in
-bpf_map_do_batch() (i.e. the one you've got the map from)?  What should happen
-if the descriptor changes its meaning during (or after) the operation?
