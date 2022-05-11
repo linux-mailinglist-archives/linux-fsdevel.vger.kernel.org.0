@@ -2,53 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C664522BC0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 May 2022 07:34:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96CB5522C2C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 May 2022 08:21:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241383AbiEKFe1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 May 2022 01:34:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55738 "EHLO
+        id S236068AbiEKGVg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 May 2022 02:21:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230470AbiEKFeZ (ORCPT
+        with ESMTP id S232768AbiEKGVf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 May 2022 01:34:25 -0400
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B243A244F05
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 May 2022 22:34:24 -0700 (PDT)
-Received: by mail-il1-f199.google.com with SMTP id q6-20020a056e0215c600b002c2c4091914so730046ilu.14
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 May 2022 22:34:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=aFQgjH47dbDj5aNlTIcru9pTtYzNioptBNbSqlWWCQs=;
-        b=BgSnCSmJkTLEg3ek84FFgJDkY/Q70IoySkMmtGH52/unS5omIqHTb9igA37LwxCm96
-         8dpi1m2IwdyP3gmGbfQMhUXfY1jia40pRxrjXMgSdthxPX6BMym7MN6Iu0ESSU66tXZN
-         UMpo4dw0ojh4rNHbLxmkDCClJFQI4pQWLoZQyc3RtDryI/aKYlFmBQJobaTySfXU7q3X
-         hYgFW6lzZG3ZKU+kj9pDiwJKUeZQLMn3CvE77F4Ye7LDBa1BV9fqh3m7MnjIZoVHLQqO
-         y2HFWnaNDp5mPJIGPx3lTZIqMbawPLcaKBeS2vmDn2k5y5+9FLfoOmYwrKFmGyeaNtxI
-         CYnw==
-X-Gm-Message-State: AOAM533HxcCCXMGwdzqb7ZPlyuAok3ybvcpGGzgJTvsuY4zjmtu4Es6i
-        theTzwG7SbK0Rdf1nrmcvQynULFmhCJhMhewbmbGLaUH8cXd
-X-Google-Smtp-Source: ABdhPJwTVsHq2aqZS5Ayf8vNemcKQ6F5l3+d4V/7OJEc4u2Ch8TFVZHMiN+gW/Gj8eoElw5dJksmF5Iid3mzzRCOAFXaifOKJzuC
+        Wed, 11 May 2022 02:21:35 -0400
+Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 102245DD3F;
+        Tue, 10 May 2022 23:21:24 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-2-147.pa.nsw.optusnet.com.au [49.181.2.147])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id D9E8B10E6B15;
+        Wed, 11 May 2022 16:21:20 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1nofip-00AaTy-9h; Wed, 11 May 2022 16:21:19 +1000
+Date:   Wed, 11 May 2022 16:21:19 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Shiyang Ruan <ruansy.fnst@fujitsu.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Linux NVDIMM <nvdimm@lists.linux.dev>,
+        Linux MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jane Chu <jane.chu@oracle.com>,
+        Goldwyn Rodrigues <rgoldwyn@suse.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Naoya Horiguchi <naoya.horiguchi@nec.com>, linmiaohe@huawei.com
+Subject: Re: [PATCHSETS] v14 fsdax-rmap + v11 fsdax-reflink
+Message-ID: <20220511062119.GI1098723@dread.disaster.area>
+References: <20220508143620.1775214-1-ruansy.fnst@fujitsu.com>
+ <20220511000352.GY27195@magnolia>
+ <20220511014818.GE1098723@dread.disaster.area>
+ <CAPcyv4h0a3aT3XH9qCBW3nbT4K3EwQvBSD_oX5W=55_x24-wFA@mail.gmail.com>
+ <20220510192853.410ea7587f04694038cd01de@linux-foundation.org>
+ <20220511024301.GD27195@magnolia>
+ <20220510222428.0cc8a50bd007474c97b050b2@linux-foundation.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1608:b0:65a:d365:c220 with SMTP id
- x8-20020a056602160800b0065ad365c220mr7974969iow.69.1652247264100; Tue, 10 May
- 2022 22:34:24 -0700 (PDT)
-Date:   Tue, 10 May 2022 22:34:24 -0700
-In-Reply-To: <00000000000042b02105d0db5037@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004206f505deb5cb12@google.com>
-Subject: Re: [syzbot] WARNING in mntput_no_expire (3)
-From:   syzbot <syzbot+5b1e53987f858500ec00@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=no
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220510222428.0cc8a50bd007474c97b050b2@linux-foundation.org>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=deDjYVbe c=1 sm=1 tr=0 ts=627b55e4
+        a=ivVLWpVy4j68lT4lJFbQgw==:117 a=ivVLWpVy4j68lT4lJFbQgw==:17
+        a=kj9zAlcOel0A:10 a=oZkIemNP1mAA:10 a=VwQbUJbxAAAA:8 a=QyXUC8HyAAAA:8
+        a=omOdbC7AAAAA:8 a=7-415B0cAAAA:8 a=37abNmnZhWSmtZz8jCkA:9
+        a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22 a=biEYGPWJfzWAr4FL6Ov7:22
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -56,57 +66,71 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has found a reproducer for the following issue on:
+On Tue, May 10, 2022 at 10:24:28PM -0700, Andrew Morton wrote:
+> On Tue, 10 May 2022 19:43:01 -0700 "Darrick J. Wong" <djwong@kernel.org> wrote:
+> 
+> > On Tue, May 10, 2022 at 07:28:53PM -0700, Andrew Morton wrote:
+> > > On Tue, 10 May 2022 18:55:50 -0700 Dan Williams <dan.j.williams@intel.com> wrote:
+> > > 
+> > > > > It'll need to be a stable branch somewhere, but I don't think it
+> > > > > really matters where al long as it's merged into the xfs for-next
+> > > > > tree so it gets filesystem test coverage...
+> > > > 
+> > > > So how about let the notify_failure() bits go through -mm this cycle,
+> > > > if Andrew will have it, and then the reflnk work has a clean v5.19-rc1
+> > > > baseline to build from?
+> > > 
+> > > What are we referring to here?  I think a minimal thing would be the
+> > > memremap.h and memory-failure.c changes from
+> > > https://lkml.kernel.org/r/20220508143620.1775214-4-ruansy.fnst@fujitsu.com ?
+> > > 
+> > > Sure, I can scoot that into 5.19-rc1 if you think that's best.  It
+> > > would probably be straining things to slip it into 5.19.
+> > > 
+> > > The use of EOPNOTSUPP is a bit suspect, btw.  It *sounds* like the
+> > > right thing, but it's a networking errno.  I suppose livable with if it
+> > > never escapes the kernel, but if it can get back to userspace then a
+> > > user would be justified in wondering how the heck a filesystem
+> > > operation generated a networking errno?
+> > 
+> > <shrug> most filesystems return EOPNOTSUPP rather enthusiastically when
+> > they don't know how to do something...
+> 
+> Can it propagate back to userspace?
 
-HEAD commit:    feb9c5e19e91 Merge tag 'for_linus' of git://git.kernel.org..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=10ea9d8ef00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=79caa0035f59d385
-dashboard link: https://syzkaller.appspot.com/bug?extid=5b1e53987f858500ec00
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=125039fef00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17a27b71f00000
+Maybe not this one, but the point Darrick is making is that we
+really don't care if it does because we've been propagating it to
+userspace in documented filesystem APIs for at least 15 years now.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+5b1e53987f858500ec00@syzkaller.appspotmail.com
+e.g:
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 3608 at fs/namespace.c:1236 mntput_no_expire+0xada/0xcd0 fs/namespace.c:1236
-Modules linked in:
+$ man 2 fallocate
+.....
+Errors
+.....
+       EOPNOTSUPP
+	     The filesystem containing the file referred to by fd
+	     does not support this operation; or the mode is not
+	     supported by the filesystem containing the file
+	     referred to by fd.
+.....
 
-CPU: 0 PID: 3608 Comm: syz-executor314 Not tainted 5.18.0-rc6-syzkaller-00009-gfeb9c5e19e91 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:mntput_no_expire+0xada/0xcd0 fs/namespace.c:1236
-Code: 30 84 c0 0f 84 b9 fe ff ff 3c 03 0f 8f b1 fe ff ff 4c 89 44 24 10 e8 45 50 e9 ff 4c 8b 44 24 10 e9 9d fe ff ff e8 56 bf 9d ff <0f> 0b e9 19 fd ff ff e8 4a bf 9d ff e8 b5 cf 91 07 31 ff 89 c5 89
-RSP: 0018:ffffc900030ffcf0 EFLAGS: 00010293
+Other random examples:
 
-RAX: 0000000000000000 RBX: 1ffff9200061ffa4 RCX: 0000000000000000
-RDX: ffff88807c859d80 RSI: ffffffff81db815a RDI: 0000000000000003
-RBP: ffff88801bcbca80 R08: 0000000000000000 R09: ffffffff9006d90f
-R10: ffffffff81db7e71 R11: 0000000000000001 R12: 0000000000000008
-R13: ffffc900030ffd40 R14: 00000000ffffffff R15: 0000000000000002
-FS:  0000555556a0e300(0000) GS:ffff8880b9c00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000555556a17628 CR3: 0000000071c9d000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- path_umount+0x7d4/0x1260 fs/namespace.c:1806
- ksys_umount fs/namespace.c:1825 [inline]
- __do_sys_umount fs/namespace.c:1830 [inline]
- __se_sys_umount fs/namespace.c:1828 [inline]
- __x64_sys_umount+0x159/0x180 fs/namespace.c:1828
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-RIP: 0033:0x7fcc5b9cc2c7
-Code: 00 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffcb4fdf1a8 EFLAGS: 00000202 ORIG_RAX: 00000000000000a6
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fcc5b9cc2c7
-RDX: 00007ffcb4fdf269 RSI: 000000000000000a RDI: 00007ffcb4fdf260
-RBP: 00007ffcb4fdf260 R08: 00000000ffffffff R09: 00007ffcb4fdf040
-R10: 0000555556a0f693 R11: 0000000000000202 R12: 00007ffcb4fe02e0
-R13: 0000555556a0f5f0 R14: 00007ffcb4fdf1d0 R15: 0000000000000002
- </TASK>
+pwritev2(RWF_NOWAIT) can return -EOPNOTSUPP on buffered writes.
+Documented in the man page.
 
+FICLONERANGE on an filesystem that doesn't support reflink will
+return -EOPNOTSUPP. Documented in the man page.
+
+mmap(MAP_SYNC) returns -EOPNOTSUPP if the underlying filesystem
+and/or storage doesn't support DAX. Documented in the man page.
+
+I could go on, but I think I've made the point already...
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
