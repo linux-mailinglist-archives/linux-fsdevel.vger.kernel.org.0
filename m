@@ -2,113 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C59FF5230D1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 May 2022 12:40:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C14D523154
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 May 2022 13:19:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240017AbiEKKjO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 May 2022 06:39:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36642 "EHLO
+        id S234084AbiEKLTb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 May 2022 07:19:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39174 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239215AbiEKKiv (ORCPT
+        with ESMTP id S231402AbiEKLT2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 May 2022 06:38:51 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2C2E972EA;
-        Wed, 11 May 2022 03:38:21 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 670E41F8BD;
-        Wed, 11 May 2022 10:38:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1652265500; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=4tTLKw2T1YJw2h64F0XA5FNUzlXdoEokzJSTtL8FUkQ=;
-        b=bG8nnKVtGj3yFB2bYY0/5PA5bmjOTJDVIoLqqd9KdpcYSXf8QGJOiTW01XgUBeUAcPWzNE
-        Uxl4VehVcjthenpwvwdywRBSOY0/VzQn8O60bjFcdZJ0M/wEK6GL3tP02wHC6GvWVbNA+O
-        UygBNsCDCkHg7543KvneMVdPNUdOpXI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1652265500;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=4tTLKw2T1YJw2h64F0XA5FNUzlXdoEokzJSTtL8FUkQ=;
-        b=iuSY6arEDo71FBr6jsiFeqwbiuG4a9UPmA9hWAbeTep9hfZ0YPmSP45i976ogH11bL7YbT
-        ZP2lVpFH6K19Z3Cw==
-Received: from quack3.suse.cz (unknown [10.163.43.118])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 389452C141;
-        Wed, 11 May 2022 10:38:20 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id E70D3A062A; Wed, 11 May 2022 12:38:19 +0200 (CEST)
-Date:   Wed, 11 May 2022 12:38:19 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Stefan Roesch <shr@fb.com>
-Cc:     Jan Kara <jack@suse.cz>, io-uring@vger.kernel.org,
-        kernel-team@fb.com, linux-mm@kvack.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, david@fromorbit.com
-Subject: Re: [RFC PATCH v1 15/18] mm: support write throttling for async
- buffered writes
-Message-ID: <20220511103819.e2irxxm2tvb3k7cc@quack3.lan>
-References: <20220426174335.4004987-1-shr@fb.com>
- <20220426174335.4004987-16-shr@fb.com>
- <20220428174736.mgadsxfuiwmoxrzx@quack3.lan>
- <88879649-57db-5102-1bed-66f610d13317@fb.com>
- <20220510095036.6tbbwwf5hxcevzkh@quack3.lan>
- <84f8da94-1227-a351-56ba-eabdba91027b@fb.com>
+        Wed, 11 May 2022 07:19:28 -0400
+Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC6C66CAAB
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 May 2022 04:19:27 -0700 (PDT)
+Received: by mail-yb1-xb32.google.com with SMTP id g28so3309393ybj.10
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 May 2022 04:19:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yQGeRKstKMwle+FFENjDqj/4DWnPwpCL9cdUs5k3wq8=;
+        b=cl6G1xs8S2DBnMExmfplmkS+v3ZwHXxin4dhUJqoE+TixyjEpJFSmHj/6I8mWpYkWM
+         /ZoJFQlqyvcjR24HJ93y579e3MR2Oy0Do+2rFAYonByg4rWr1eZrCOk5tJdYvvXkvREw
+         J7hs16H3XaOmewYXqPuVKzAzHvlGgnGBIMIIs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yQGeRKstKMwle+FFENjDqj/4DWnPwpCL9cdUs5k3wq8=;
+        b=mnY2W26eNq/6Qnxzd5t9VoZ72AGdkt4eFoTkGkSrTmUyyFtK+OKSHe0xX58Kc9xF5q
+         NCCCh4soR9LpHIG5y0cotSvtrstR0K+/MR21vvtVP0TxJn3lJdOoAXemmyCkWrjl0F0b
+         TZp4v4jiyaVMRxISvegi3dQsApLV7vvbky6uHsfawTf4Vl2vGK9ILVbMeqhIGPnV4amM
+         bYsq/qAoraCFRlqZGJdD/UN1b5dPDMuAdLzrhSa05TzW3wGvES+IFMLp3GNhdARi/8PT
+         izk5EpTtFMYxobp80oLntEWCA1Ny4eMW5Fr+BGKndMbHEBHbZk3cStxJl0bM9zZSZ/zN
+         xS8A==
+X-Gm-Message-State: AOAM532/vSeywBbZ9MwS8xkNs3kdVw5Ap97W7V0B5AIpTXh+sKkPqeVk
+        dIQQMtSBY8qA4DffMtp4I8t3SWGbIzcuNi2r3U3NRmll8v6MYg==
+X-Google-Smtp-Source: ABdhPJy6dJ80HM/NWK6pxo9H8JX41aVVI3gTyJa9azUE6OxSQWZloSGluI7DV3dtaIWgbmFLH/QzRxwBbp1tFvNfzdM=
+X-Received: by 2002:a25:cfc5:0:b0:647:39d4:49f5 with SMTP id
+ f188-20020a25cfc5000000b0064739d449f5mr22874248ybg.595.1652267966978; Wed, 11
+ May 2022 04:19:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <84f8da94-1227-a351-56ba-eabdba91027b@fb.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20220511013057.245827-1-dlunev@chromium.org> <CAJfpegsmyY+D4kK3ov51FLGA=RkyGDKMcYiMo2zBqYuFNs78JQ@mail.gmail.com>
+ <CAONX=-dqY64VkqF6cNYvm8t-ad8XRqDhELP9icfPTPD2iLobLA@mail.gmail.com>
+ <CAJfpegvUZheWb3eJwVrpBDYzwQH=zQsuq9R8mpcXb3fqzzEdiQ@mail.gmail.com>
+ <CAONX=-cxA-tZOSo33WK9iJU61yeDX8Ct_PwOMD=5WXLYTJ-Mjg@mail.gmail.com> <CAJfpegsNwsWJC+x8jL6kDzYhENQQ+aUYAV9wkdpQNT-FNMXyAg@mail.gmail.com>
+In-Reply-To: <CAJfpegsNwsWJC+x8jL6kDzYhENQQ+aUYAV9wkdpQNT-FNMXyAg@mail.gmail.com>
+From:   Daniil Lunev <dlunev@chromium.org>
+Date:   Wed, 11 May 2022 21:19:16 +1000
+Message-ID: <CAONX=-d9nfYpPkbiVcaEsCQT1ZpwAN5ry8BYKBA6YoBvm7tPfg@mail.gmail.com>
+Subject: Re: [PATCH 0/2] Prevent re-use of FUSE superblock after force unmount
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-fsdevel@vger.kernel.org,
+        fuse-devel <fuse-devel@lists.sourceforge.net>,
+        linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 10-05-22 13:16:30, Stefan Roesch wrote:
-> On 5/10/22 2:50 AM, Jan Kara wrote:
-> > I know that you're using fields in task_struct to propagate the delay info.
-> > But IMHO that is unnecessary (although I don't care too much). Instead we
-> > could factor out a variant of balance_dirty_pages() that returns 'pause' to
-> > sleep, 0 if no sleeping needed. Normal balance_dirty_pages() would use this
-> > for pause calculation, places wanting async throttling would only get the
-> > pause to sleep. So e.g. iomap_write_iter() would then check and if returned
-> > pause is > 0, it would abort the loop similary as we'd abort it for any
-> > other reason when NOWAIT write is aborted because we need to sleep. Iouring
-> > code then detects short write / EAGAIN and offloads the write to the
-> > workqueue where normal balance_dirty_pages() can sleep as needed.
-> > 
-> > This will make sure dirty limits are properly observed and we don't need
-> > that much special handling for it.
-> >
-> 
-> I like the idea of factoring out a function out balance_dirty_pages(), however
-> 
-> I see two challenges:
-> - the write operation has already completed at this point,
-> - so we can't really sleep on its completion in the io-worker in io-uring
-> - we don't know how long to sleep in io-uring
-> 
-> Currently balance_dirty_pages_ratelimited() is called at the end of the
-> function iomap_write_iter(). If the function
-> balance_dirty_pages_ratelimited() would instead be called at the
-> beginning of the function iomap_write_iter() we could return -EAGAIN and
-> then complete it in the io-worker.
+> At a glance it's a gross hack.   I can think of more than one way in
+> which this could be achieved without adding a new field to struct
+> super_block.
+Can you advise what would be a better way to achieve that?
 
-Well, we call balance_dirty_pages_ratelimited() after each page. So it does
-not really matter much if the sleep is pushed to happen one page later.
-balance_dirty_pages_ratelimited() does ratelimiting of when
-balance_dirty_pages() are called so we have to make sure
-current->nr_dirtied is not zeroed out before we really do wait (because
-that is what determines whether we enter balance_dirty_pages() and how long
-we sleep there) but looking at the code that should work out just fine.
+> But...  what I'd really prefer is if the underlying issue of fuse vs.
+> suspend was properly addressed instead of adding band-aids.  And that
+> takes lots more resources, for sure, and the result is not guaranteed.
+> But you could at least give it a try.
+We do have a limited success with userspace level sequencing of processes,
+but on the kernel level - it is all quite untrivial, as you mentioned.
+I did some
+research, and what I found pretty much a 9 years old thread which went
+nowhere at the end [1]. We would also prefer if suspend just worked (and
+we have a person looking into what is actually breaking with suspend), but
+there is an unbounded amount of time for how long the investigation and
+search for a solution may be ongoing given the complexity of the problem,
+and in the meantime there is no way to work around the problem.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks,
+Daniil
+
+[1] https://linux-kernel.vger.kernel.narkive.com/UeBWfN1V/patch-fuse-make-fuse-daemon-frozen-along-with-kernel-threads
