@@ -2,102 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 34CCD524E3A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 May 2022 15:26:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CC7E524E95
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 May 2022 15:46:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354382AbiELN0p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 May 2022 09:26:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59056 "EHLO
+        id S1354592AbiELNqp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 May 2022 09:46:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354371AbiELN0m (ORCPT
+        with ESMTP id S1354587AbiELNqn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 May 2022 09:26:42 -0400
-Received: from mail-oa1-x32.google.com (mail-oa1-x32.google.com [IPv6:2001:4860:4864:20::32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3DC549F35
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 May 2022 06:26:36 -0700 (PDT)
-Received: by mail-oa1-x32.google.com with SMTP id 586e51a60fabf-ed9a75c453so6566074fac.11
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 May 2022 06:26:36 -0700 (PDT)
+        Thu, 12 May 2022 09:46:43 -0400
+Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3D316338A
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 May 2022 06:46:42 -0700 (PDT)
+Received: by mail-pf1-x431.google.com with SMTP id g8so4846877pfh.5
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 May 2022 06:46:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+qXYGHJV7s/qc8a2bttGMmvI6F9hk+zqKIrq4cJ0DmU=;
-        b=p5qo31Endpk0PNn9e3rHVmQRh3VEa3O+meW4Q3NJCquH/Bm4gLrkYGb1x+F+vr7niZ
-         fYnIba2uOcs1Mp4BRPiMc/BzFDOPCpiPIoo/Pfvc/RzY1k+KZf15Fpa4ioTFzJa+cfME
-         laxB9eNk8zRL8kYdh7hrekiB0RSi+H2isqG1wMpPiAQJgCFdlck0g2RU0kPdPu2HpDB0
-         d1l/hnCcOzfh2I+JFwbCtPM683VJgw2Dnn8T7IegJqIzc4gPZ1QQnzajBbZwucJ940B1
-         FIzaqIF+EDSX9LkV2zQwBPOM1sAVIA74Vm6E0cg4+5wCR5h/S3M4tqfXZea/Mu3xvluy
-         clfg==
+        d=gmail.com; s=20210112;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=BKTUsOZXurokKw93pDZ/qCH4rd2yh1Ne8HUq4b8wchY=;
+        b=Y63gqBsfRrjW5Wg1/uqYlapV4UJPKvEAySHVc1O+o5rdfyAvM2PuHfdMQRqcBanwpn
+         GXeS95qUUCdS+zKdlYnkVwLfRXrNXrXS0qrhDiLkgm/sp7IKbnGI2USzMB2Ls7vBHCmC
+         XUlthZehM9dELVvDP9rF96SFUOF2U+o7gNgWiZd4kxez6dnpQ/sM+zFxMMzxjKjeVHDN
+         waZCI68CDWH8Jh8uwR9BzqLoDAjfy7Ll6lr9RCL332yQnTNgAmrHR0XtTVKhln5eoq3T
+         zm+80JagvdpuIPhyyFyCsIPVCTJlt/OBYi2SRZJZAJhSV3olCTtlQBzLHwcdrv+bYNKw
+         mTKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+qXYGHJV7s/qc8a2bttGMmvI6F9hk+zqKIrq4cJ0DmU=;
-        b=4xeYzVJPj+jahYa16SkMSF9gr9/SpMJ0RJkttHm4TPiNJ85ajSqhW0egsKnKomRe/f
-         RW6DPGUNCUNyOpw6ISAeRbawoTXFuBtX+q+BQCLI+OhvxUBSHCRLHI5P1hnKeyLUI44U
-         kQrxDA1mhVFAN46mzxXcziR5iV3/9UuoFPoH8VyvEXhKgEHmp2GgCk5CYKHX6rnyAe1a
-         eH3qATXXbVfDb3N5fRSNsPTCqUGMOB6R0SWz3kgdP5De/ElSAVkdR8H61l0Qu5xIB3vA
-         oqSCn/rrWZ+rjS+QDY9nZ9VHO4JeAToHp7cr/8Jwf551a2BZRf+uYuaXtdKN3r0Xhk4K
-         FdFw==
-X-Gm-Message-State: AOAM530hPIQrBa6Og8/9ODl+Py5VJOCCsNGgDXYXEdnxqHaG3nANOCgk
-        4QdPPvfPFKH527u5evIkpDwH5kdCKYOCdQRSjh7AyQ==
-X-Google-Smtp-Source: ABdhPJxa1sYZ9ij0YDVXf2N9J+toT0J5aHixWE1j06eRnE3ey2ZaFodcwSgEd8WzFVTLnKccj4vh5912hBbCQAH4Efc=
-X-Received: by 2002:a05:6870:d254:b0:db:12b5:da3 with SMTP id
- h20-20020a056870d25400b000db12b50da3mr5505714oac.211.1652361995905; Thu, 12
- May 2022 06:26:35 -0700 (PDT)
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=BKTUsOZXurokKw93pDZ/qCH4rd2yh1Ne8HUq4b8wchY=;
+        b=KjF7yAyWNGuuqy6g67Pf0UDCMr72mOb34nsXNG44SKpfjGwM2alfFk4KgEor37+Rxf
+         1SGYapuReEWJZQoAQmeRCPnW9o8PcpKuLnrruFXGiKj1QySDIgvtK5+YhFxJJciYWcj3
+         7jJwSnBTEzF5kRmYsgAZFec+eW6YEaM6t4x13kHs3nvuWRylgaqV4GWychwYwl98KOtg
+         UeXeHtW8gH3nA+rjQozgOqznJd44CmvcEfLfq1bL1cEF0slr6TdS9Q6FkpXX4bQ9M8Cl
+         ekXNHSSLi+Xwq9dJkKBdW0+8PG548PjzDrY1B4bI1ZCD33CexcsDPP/xfulNAgpVOsUZ
+         fAYw==
+X-Gm-Message-State: AOAM533Zw2GarPPKgXyanjjtzfzccFgcTIFIzPSYmCuNwsrHXHYQzPxl
+        0lU4XMCKwYoO+LBIS+aiHHOqOs1t7eXn/kCNrcM=
+X-Google-Smtp-Source: ABdhPJxA/liaQk8S8plDAjUxUg979oUjC+zu1NUmIntTt9lxaJpdTWjcqji/aFlbusbg3ZA8ub+Y5JQEYTxokdOoGHc=
+X-Received: by 2002:a05:6a00:a1e:b0:50d:bb0c:2e27 with SMTP id
+ p30-20020a056a000a1e00b0050dbb0c2e27mr30166684pfh.49.1652363202221; Thu, 12
+ May 2022 06:46:42 -0700 (PDT)
 MIME-Version: 1.0
-References: <0000000000001779fd05a46b001f@google.com> <0000000000006574b705dbe3533f@google.com>
-In-Reply-To: <0000000000006574b705dbe3533f@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Thu, 12 May 2022 15:26:25 +0200
-Message-ID: <CACT4Y+afw6PR=8iKbg8iT0y2+hef8fxDxA4u6aNQjG9Gjser9Q@mail.gmail.com>
-Subject: Re: [syzbot] INFO: task hung in linkwatch_event (2)
-To:     syzbot <syzbot+96ff6cfc4551fcc29342@syzkaller.appspotmail.com>
-Cc:     allison@lohutok.net, andrew@lunn.ch, aviad.krawczyk@huawei.com,
-        axboe@kernel.dk, davem@davemloft.net, gregkh@linuxfoundation.org,
-        hdanton@sina.com, io-uring@vger.kernel.org,
-        johannes.berg@intel.com, johannes@sipsolutions.net,
-        kuba@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
-        linyunsheng@huawei.com, luobin9@huawei.com, netdev@vger.kernel.org,
-        pabeni@redhat.com, phind.uet@gmail.com,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
-        viro@zeniv.linux.org.uk, xiaoguang.wang@linux.alibaba.com
+Received: by 2002:a05:6a20:3e0c:b0:7f:499d:4df6 with HTTP; Thu, 12 May 2022
+ 06:46:41 -0700 (PDT)
+Reply-To: musadosseh1@gmail.com
+From:   David Randal <barr.musabame9@gmail.com>
+Date:   Thu, 12 May 2022 15:46:41 +0200
+Message-ID: <CACXnS-6WgcbSi9DpVems9L8U0N04T5VN9meEYuUV-6UU+TcQ+g@mail.gmail.com>
+Subject: Hello
+To:     undisclosed-recipients:;
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-15.1 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SORTED_RECIPS,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Status: Yes, score=5.6 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,FREEMAIL_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        UNDISC_FREEM autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
+        *      https://www.dnswl.org/, no trust
+        *      [2607:f8b0:4864:20:0:0:0:431 listed in]
+        [list.dnswl.org]
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
+        *      provider
+        *      [barr.musabame9[at]gmail.com]
+        *  0.2 FREEMAIL_ENVFROM_END_DIGIT Envelope-from freemail username ends
+        *       in digit
+        *      [barr.musabame9[at]gmail.com]
+        * -0.0 SPF_PASS SPF: sender matches SPF record
+        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
+        *  0.2 FREEMAIL_REPLYTO_END_DIGIT Reply-To freemail username ends in
+        *      digit
+        *      [musadosseh1[at]gmail.com]
+        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
+        *       valid
+        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
+        *      envelope-from domain
+        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
+        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
+        *      author's domain
+        * -0.0 T_SCC_BODY_TEXT_LINE No description available.
+        *  3.5 UNDISC_FREEM Undisclosed recipients + freemail reply-to
+        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
+        *      different freemails
+X-Spam-Level: *****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 5 Apr 2022 at 09:38, syzbot
-<syzbot+96ff6cfc4551fcc29342@syzkaller.appspotmail.com> wrote:
->
-> syzbot suspects this issue was fixed by commit:
->
-> commit 563fbefed46ae4c1f70cffb8eb54c02df480b2c2
-> Author: Nguyen Dinh Phi <phind.uet@gmail.com>
-> Date:   Wed Oct 27 17:37:22 2021 +0000
->
->     cfg80211: call cfg80211_stop_ap when switch from P2P_GO type
->
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1048725f700000
-> start commit:   dd86e7fa07a3 Merge tag 'pci-v5.11-fixes-2' of git://git.ke..
-> git tree:       upstream
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=e83e68d0a6aba5f6
-> dashboard link: https://syzkaller.appspot.com/bug?extid=96ff6cfc4551fcc29342
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11847bc4d00000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1267e5a0d00000
->
-> If the result looks correct, please mark the issue as fixed by replying with:
->
-> #syz fix: cfg80211: call cfg80211_stop_ap when switch from P2P_GO type
+My name is DAVID Randal from africa construction equipment operator I
+want you to work with me as an overseas partner to do business GOLD.
+If you are interested answer me.
 
-Looks possible:
-
-#syz fix: cfg80211: call cfg80211_stop_ap when switch from P2P_GO type
+Ms.David
