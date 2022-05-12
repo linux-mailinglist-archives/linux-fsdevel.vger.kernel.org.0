@@ -2,105 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AEEB524CD9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 May 2022 14:30:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2D32524D28
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 May 2022 14:39:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350394AbiELMaY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 May 2022 08:30:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54766 "EHLO
+        id S1353890AbiELMjG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 May 2022 08:39:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58250 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234099AbiELMaW (ORCPT
+        with ESMTP id S1353892AbiELMjE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 May 2022 08:30:22 -0400
-Received: from mail-qt1-x82f.google.com (mail-qt1-x82f.google.com [IPv6:2607:f8b0:4864:20::82f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC48313F35;
-        Thu, 12 May 2022 05:30:19 -0700 (PDT)
-Received: by mail-qt1-x82f.google.com with SMTP id fu47so4142381qtb.5;
-        Thu, 12 May 2022 05:30:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GQiqWZrRB16NjkMXC8fmeM9ZM7iEqMa7fAB1175TsNU=;
-        b=J4Wo8R/RXOEPe2RWiqzhHzUROd03ArSLwuEPWLGf7VH3rWrna1foPjpdXq/4CgxYvw
-         kVsm0nmBVJWfirWrjJntlY70InwtG9jV10rLiMIJCOqZOqyvY/uYUvfVv2rmwLdtgjO4
-         LJ/JqUmEGhjCfetlFvtnUQQRlVOhQwvsyZQ/d/D9w6gcbgP8KDjy77uszhBuHr23+vY0
-         yMYDnBjxCxNZqzQ7u5Rwy94NdSFLkbPrR/ZIbJrFxL8pwhUYVYv4ycnQY918TyBtf/MU
-         Vo5e+Ut9ED7Kzx2fVPQAZlkDRSwvPu7xfcf2wTEvU+ENxzP0ypFjwTLdkdbJFm6YAygI
-         Efig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GQiqWZrRB16NjkMXC8fmeM9ZM7iEqMa7fAB1175TsNU=;
-        b=YZu5lfiN5tgm0AK5bNE5QgHqviH+/aOH3SO0YpXr+8DwzZLUSEKV/XqUcnxboxN0Tr
-         jo7YNrLeXR3fJmatziu/wAINuarQZW60HT1yzWSLdadMFY1TJ7aGBmyU7KY3r1e4NqFm
-         v0dmhAMREOtoETHhm3/FPIV49d6znIQgL6+Lh7ObT9I4acR7GRMuqjXyBUsRovckZy2N
-         zicKYM6qYCYPa5ZN2fgcfovL8wsJryjpVBCQGHplNEsQ/UwUkLGmaGgFVcNx7XpRDYYE
-         jzogxPy+3bg801W1/Rv/fzYXCGJiC8CAgbdmJjvCqqIwOb8EEpYtLEDi7A95WYQu33NH
-         M3OQ==
-X-Gm-Message-State: AOAM531MJNxR0aO2ireXtnFArUNU2GrrJHwUOxBzCqk31sOtJ5bd9tDP
-        9CLKPSQSMTadK7VtkFKIoYkxQZsYLrukZN3KF7c=
-X-Google-Smtp-Source: ABdhPJxOS1aZ0rU0taKVCsDSMHPuSnwD6+3BnAnqqD7B/ow5mFt1jkOJoR+8Cd5aaioOa/rG15ya5VTtA02SsQQoi0o=
-X-Received: by 2002:ac8:4e46:0:b0:2e1:b933:ec06 with SMTP id
- e6-20020ac84e46000000b002e1b933ec06mr28865970qtw.684.1652358618712; Thu, 12
- May 2022 05:30:18 -0700 (PDT)
-MIME-Version: 1.0
-References: <lGo7a4qQABKb-u_xsz6p-QtLIy2bzciBLTUJ7-ksv7ppK3mRrJhXqFmCFU4AtQf6EyrZUrYuSLDMBHEUMe5st_iT9VcRuyYPMU_jVpSzoWg=@emersion.fr>
-In-Reply-To: <lGo7a4qQABKb-u_xsz6p-QtLIy2bzciBLTUJ7-ksv7ppK3mRrJhXqFmCFU4AtQf6EyrZUrYuSLDMBHEUMe5st_iT9VcRuyYPMU_jVpSzoWg=@emersion.fr>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Thu, 12 May 2022 15:30:07 +0300
-Message-ID: <CAOQ4uxjOOe0aouDYNdkVyk7Mu1jQ-eY-6XoW=FrVRtKyBd2KFg@mail.gmail.com>
-Subject: Re: procfs: open("/proc/self/fd/...") allows bypassing O_RDONLY
-To:     Simon Ser <contact@emersion.fr>
+        Thu, 12 May 2022 08:39:04 -0400
+Received: from mail-0201.mail-europe.com (mail-0201.mail-europe.com [51.77.79.158])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89C2362136
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 May 2022 05:39:03 -0700 (PDT)
+Date:   Thu, 12 May 2022 12:38:50 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=emersion.fr;
+        s=protonmail2; t=1652359137;
+        bh=1bDLbtT4qPpVkhxVZ9YG4YTO1unO0O6HGenM4HeSJ2w=;
+        h=Date:To:From:Cc:Reply-To:Subject:Message-ID:In-Reply-To:
+         References:Feedback-ID:From:To:Cc:Date:Subject:Reply-To:
+         Feedback-ID:Message-ID;
+        b=V/DCcifQUB+ddK2jWtHHqRxmowantA3oMaNHU+uKPhjqqLt6tXyrgZW4uvCwzGWGs
+         mcVXVzWdls/yeWPWw2De+EDnLCRZZrlIv08C+k6RhSoClPywTIj6cq8xmZduXGi5ve
+         mpp7X6yxALpSdESq4dF54JDghdDOstCFvQh7nPDlyKSMXmIL2B2OxoPO53I9n8QHEh
+         6TYcH6NNSVwP0iVt6jpeZpotvM1iYIhNDmmpX/HEHJjuKtIThAMldkSlTfHE5S8Gwm
+         Lj+dUjv2xBdSF2pJ4e/G8pjv1Gw0mjNFQCPAugKLUMDRQuBe2VDxPCRemFBfubUlFH
+         G7Dp3F3RJY2VQ==
+To:     Amir Goldstein <amir73il@gmail.com>
+From:   Simon Ser <contact@emersion.fr>
 Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Reply-To: Simon Ser <contact@emersion.fr>
+Subject: Re: procfs: open("/proc/self/fd/...") allows bypassing O_RDONLY
+Message-ID: <Uc-5mYLV3EgTlSFyEEzmpLvNdXKVJSL9pOSCiNylGIONHoljlV9kKizN2bz6lHsTDPDR_4ugSxLYNCO7xjdSeF3daahq8_kvxWhpIvXcuHA=@emersion.fr>
+In-Reply-To: <CAOQ4uxjOOe0aouDYNdkVyk7Mu1jQ-eY-6XoW=FrVRtKyBd2KFg@mail.gmail.com>
+References: <lGo7a4qQABKb-u_xsz6p-QtLIy2bzciBLTUJ7-ksv7ppK3mRrJhXqFmCFU4AtQf6EyrZUrYuSLDMBHEUMe5st_iT9VcRuyYPMU_jVpSzoWg=@emersion.fr> <CAOQ4uxjOOe0aouDYNdkVyk7Mu1jQ-eY-6XoW=FrVRtKyBd2KFg@mail.gmail.com>
+Feedback-ID: 1358184:user:proton
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 12, 2022 at 2:09 PM Simon Ser <contact@emersion.fr> wrote:
->
-> Hi all,
->
-> I'm a user-space developer working on Wayland. Recently we've been
-> discussing about security considerations related to FD passing between
-> processes [1].
->
-> A Wayland compositor often needs to share read-only data with its
-> clients. Examples include a keyboard keymap, or a pixel format table.
-> The clients might be untrusted. The data sharing can happen by having
-> the compositor send a read-only FD (ie, a FD opened with O_RDONLY) to
-> clients.
->
-> It was assumed that passing such a FD wouldn't allow Wayland clients to
-> write to the file. However, it was recently discovered that procfs
-> allows to bypass this restriction. A process can open(2)
-> "/proc/self/fd/<fd>" with O_RDWR, and that will return a FD suitable for
-> writing. This also works when running the client inside a user namespace.
-> A PoC is available at [2] and can be tested inside a compositor which
-> uses this O_RDONLY strategy (e.g. wlroots compositors).
->
-> Question: is this intended behavior, or is this an oversight? If this is
+On Thursday, May 12th, 2022 at 14:30, Amir Goldstein <amir73il@gmail.com> w=
+rote:
 
-Clients can also readlink("/proc/self/fd/<fd>") to get the path of the file
-and open it from its path (if path is accessible in their mount namespace).
-Would the clients typically have write permission to those files?
-Do they need to?
+> Clients can also readlink("/proc/self/fd/<fd>") to get the path of the fi=
+le
+> and open it from its path (if path is accessible in their mount namespace=
+).
 
-> intended behavior, what would be a good way to share a FD to another
-> process without allowing it to write to the underlying file?
+What the compositor does is:
+
+- shm_open with O_RDWR
+- Write the kyeboard keymap
+- shm_open again the same file with O_RDONLY
+- shm_unlink
+- Send the O_RDONLY FD to clients
+
+Thus, the file doesn't exist anymore when clients get the FD.
+
+> Would the clients typically have write permission to those files?
+> Do they need to?
+
+Compositors need to disallow clients from writing to the shared files.
+If a client gets write access to the shared file, they can corrupt the
+keyboard keymap (and other data) used by all other clients.
+
+> > intended behavior, what would be a good way to share a FD to another
+> > process without allowing it to write to the underlying file?
 >
+> If wayland can use a read-only bind mount to the location of the files th=
+at it
+> needs to share, then re-open will get EROFS.
 
-If wayland can use a read-only bind mount to the location of the files that it
-needs to share, then re-open will get EROFS.
-
-Thanks,
-Amir.
+Wayland just uses FD passing via Unix sockets to share memory. It
+doesn't (and can't) assume anything regarding the filesystem layout,
+because the clients might be running in a separate namespace with a
+completely different layout (e.g. Flatpak).
