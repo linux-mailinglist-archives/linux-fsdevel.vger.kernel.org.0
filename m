@@ -2,140 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A3F85247DE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 May 2022 10:28:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFC6A5248AE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 May 2022 11:15:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351446AbiELI1u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 May 2022 04:27:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47504 "EHLO
+        id S1351872AbiELJPP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 May 2022 05:15:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351444AbiELI1r (ORCPT
+        with ESMTP id S1351862AbiELJPO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 May 2022 04:27:47 -0400
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75AB3939E4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 May 2022 01:27:46 -0700 (PDT)
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20220512082744euoutp02c1a8d683809db4c0aa852e09a1f5ab17~uTiwr3w-Q0587005870euoutp02C
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 May 2022 08:27:44 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20220512082744euoutp02c1a8d683809db4c0aa852e09a1f5ab17~uTiwr3w-Q0587005870euoutp02C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1652344064;
-        bh=bcQUGEOYxh1F+fPPVuVF7v9JJMrxdFG/aSzlmGfkeVw=;
-        h=Date:Subject:To:From:In-Reply-To:References:From;
-        b=TSTcRN3R6F//FYbixMQEqpOXA5AWNVgyqkFgwdz2s4LmlMRGXKTx/6P987tpkh8GL
-         AXYJzExCXrOjw1VOD/D2IKfrgV4sH1fv/kEPNhkqUaNQoiU+fICDr0l9of7QxSnguR
-         yGT/Pdfk/ZXallIvNKAgMz92PUxEwUEgPA4+K5Qg=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20220512082744eucas1p210240bbd37977d1995224e1d7664d7f5~uTiv_AvZs2198321983eucas1p2Z;
-        Thu, 12 May 2022 08:27:44 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 72.63.10009.FF4CC726; Thu, 12
-        May 2022 09:27:44 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20220512082743eucas1p2f2b8253db08a3cb212836fe634463f62~uTivLCT1p0648106481eucas1p2C;
-        Thu, 12 May 2022 08:27:43 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220512082743eusmtrp13402dfcd903ac73c80eb6204db4fc67d~uTivJvnJU0978209782eusmtrp1N;
-        Thu, 12 May 2022 08:27:43 +0000 (GMT)
-X-AuditID: cbfec7f2-e7fff70000002719-49-627cc4ff5507
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 6F.C5.09404.FF4CC726; Thu, 12
-        May 2022 09:27:43 +0100 (BST)
-Received: from CAMSVWEXC01.scsc.local (unknown [106.1.227.71]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20220512082743eusmtip1bfefa8841eba10cbdcaa7e99628c0ca6~uTiu_ZXg31785317853eusmtip1f;
-        Thu, 12 May 2022 08:27:43 +0000 (GMT)
-Received: from [192.168.8.130] (106.210.248.174) by CAMSVWEXC01.scsc.local
-        (106.1.227.71) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Thu, 12 May
-        2022 09:27:40 +0100
-Message-ID: <ccf73bfc-48a5-e5e7-2588-02f455c16f79@samsung.com>
-Date:   Thu, 12 May 2022 10:27:38 +0200
+        Thu, 12 May 2022 05:15:14 -0400
+Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3420D227831;
+        Thu, 12 May 2022 02:15:12 -0700 (PDT)
+Received: by mail-pf1-x433.google.com with SMTP id bo5so4257770pfb.4;
+        Thu, 12 May 2022 02:15:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=1yVCgY4QE8l5qFrVqFzJJ9uTK3QajC1JSeAXUrEX5mM=;
+        b=MGUdJx5o67V+c7ivUhgeC/BUEADviIwlhokhBxj+J+gl6IETIqORALQLeC353MYEdq
+         2Pv50dWwl1qTvK4mqNFOHI069/CG7FyZ13loxUH6lrmM2YVeNsaUmHum8Mp+TTRs/oeh
+         ZBGlq/iUg4CymqPWX6MatUagIwHh9sqigv1U1pwp/IFJZbcDC/sE8Y+G0OKSNa80eWYW
+         BLyjSxh1M6W5n5yjCmzKLV+ZcSFkjUbkiXtb+XgBTqTcLJ/SB7G8DkotwTzZEmEbSOsa
+         oNAFvZbwt1QeW4GoMUD5qskyCou5gc5b1XU1x3Lv9xQyif6Bg+WLMnX/LxkveG9KxCuB
+         sqAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=1yVCgY4QE8l5qFrVqFzJJ9uTK3QajC1JSeAXUrEX5mM=;
+        b=lLRz/8h4NizjwgN8zoRozPJbvNPyIQBVNxFc/iUuFBpY7WDnWaV2138zYnD81GnNLm
+         30tcGYNNrWfeHmdltgQdGYniLiTT18FOISFaVX6v2JItia+fkm4ovaaG4mT3zs+TpBud
+         M14UGMuPkezOXY+m1Ro9PUKv91WkIxp7YpobxURf7JosYRcehDxGp04xBiU+qaN80YRN
+         3HG10ZYle0roxs/eiJTckZJApb+FqrZh+XnURV/rYSvGFQgtxLtRNeYNWlB72Pk0ezjd
+         E20xX15YCHWJGKis9tGmnj2udTBHDxfH2lCb9XaE3fMFrfpeqI7wHf0zu/gx2TZoquzc
+         67xw==
+X-Gm-Message-State: AOAM530ZejMVa6hcqdYCAce1jrg5m9lF/RmP93z+48aHiiYJ6hpV5Mo8
+        stX+ppHOxBlWhXVRVhjwmU0=
+X-Google-Smtp-Source: ABdhPJxaigst32EHE9ix2EpasU4GC9GvtV1b4JcFlMBs/Eobm4jyuO5205pcB0haARI31D6QIfoeng==
+X-Received: by 2002:a05:6a00:885:b0:510:950f:f787 with SMTP id q5-20020a056a00088500b00510950ff787mr22839855pfj.83.1652346911472;
+        Thu, 12 May 2022 02:15:11 -0700 (PDT)
+Received: from localhost ([2620:10d:c090:400::4:6c64])
+        by smtp.gmail.com with ESMTPSA id c3-20020a170902724300b0015e8d4eb20esm3353001pll.88.2022.05.12.02.15.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 May 2022 02:15:10 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date:   Wed, 11 May 2022 23:15:09 -1000
+From:   Tejun Heo <tj@kernel.org>
+To:     Byungchul Park <byungchul.park@lge.com>
+Cc:     torvalds@linux-foundation.org, holt@sgi.com, mcgrof@kernel.org,
+        damien.lemoal@opensource.wdc.com, linux-ide@vger.kernel.org,
+        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        mingo@redhat.com, linux-kernel@vger.kernel.org,
+        peterz@infradead.org, will@kernel.org, tglx@linutronix.de,
+        rostedt@goodmis.org, joel@joelfernandes.org, sashal@kernel.org,
+        daniel.vetter@ffwll.ch, chris@chris-wilson.co.uk,
+        duyuyang@gmail.com, johannes.berg@intel.com, tytso@mit.edu,
+        willy@infradead.org, david@fromorbit.com, amir73il@gmail.com,
+        bfields@fieldses.org, gregkh@linuxfoundation.org,
+        kernel-team@lge.com, linux-mm@kvack.org, akpm@linux-foundation.org,
+        mhocko@kernel.org, minchan@kernel.org, hannes@cmpxchg.org,
+        vdavydov.dev@gmail.com, sj@kernel.org, jglisse@redhat.com,
+        dennis@kernel.org, cl@linux.com, penberg@kernel.org,
+        rientjes@google.com, vbabka@suse.cz, ngupta@vflare.org,
+        linux-block@vger.kernel.org, paolo.valente@linaro.org,
+        josef@toxicpanda.com, linux-fsdevel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, jack@suse.cz, jack@suse.com,
+        jlayton@kernel.org, dan.j.williams@intel.com, hch@infradead.org,
+        djwong@kernel.org, dri-devel@lists.freedesktop.org,
+        airlied@linux.ie, rodrigosiqueiramelo@gmail.com,
+        melissa.srw@gmail.com, hamohammed.sa@gmail.com, 42.hyeyoo@gmail.com
+Subject: Re: [REPORT] syscall reboot + umh + firmware fallback
+Message-ID: <YnzQHWASAxsGL9HW@slm.duckdns.org>
+References: <1651652269-15342-1-git-send-email-byungchul.park@lge.com>
+ <20220512052557.GD18445@X58A-UD3R>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
-        Thunderbird/91.8.1
-Subject: Re: [PATCH v3 11/11] dm-zoned: ensure only power of 2 zone sizes
- are allowed
-Content-Language: en-US
-To:     <dsterba@suse.cz>, <jaegeuk@kernel.org>, <hare@suse.de>,
-        <dsterba@suse.com>, <axboe@kernel.dk>, <hch@lst.de>,
-        <damien.lemoal@opensource.wdc.com>, <snitzer@kernel.org>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        <bvanassche@acm.org>, <linux-fsdevel@vger.kernel.org>,
-        <matias.bjorling@wdc.com>, Jens Axboe <axboe@fb.com>,
-        <gost.dev@samsung.com>, <jonathan.derrick@linux.dev>,
-        <jiangbo.365@bytedance.com>, <linux-nvme@lists.infradead.org>,
-        <dm-devel@redhat.com>, Naohiro Aota <naohiro.aota@wdc.com>,
-        <linux-kernel@vger.kernel.org>,
-        Johannes Thumshirn <jth@kernel.org>,
-        "Sagi Grimberg" <sagi@grimberg.me>,
-        Alasdair Kergon <agk@redhat.com>,
-        <linux-block@vger.kernel.org>, Chaitanya Kulkarni <kch@nvidia.com>,
-        "Keith Busch" <kbusch@kernel.org>, <linux-btrfs@vger.kernel.org>,
-        Luis Chamberlain <mcgrof@kernel.org>
-From:   Pankaj Raghav <p.raghav@samsung.com>
-In-Reply-To: <20220511160001.GQ18596@twin.jikos.cz>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [106.210.248.174]
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (106.1.227.71) To
-        CAMSVWEXC01.scsc.local (106.1.227.71)
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUxbZRTGee+9vb10dF5aDG+AbJGpceDqcGhePyBDl+xui0acoiHRWdi1
-        EPmyhemEuWLLdB0CK4ij1EERNlYYFLrx0QEllcLGxyBCldaNiVDZMIMpIw5KwHV3M/z3O895
-        npNz3rwULmojg6jktExWniZNCSUFREvv0tVtPvachO2TywA19vfiaK2jl0R11wtJVHpnCUfa
-        wlN85BkaxlHnXDkPjdzLxdCPnn8J1FGlxdC5OjuGpht1OMrvvkOgc+pJHK1MRqDJuy4CaW2/
-        AOR26DDU6QpHP0/V8lFH5xUCjVr0JKo44+ajomOLOBovcgN0ss/MQw1/zRPosit4ZwgzOraP
-        Wb1cTzInVXN8ZniiiWBGh7KYZuNxkjEov8MZc/VR5pJTSTLfquZIpj3vBo+Z73KQTOMFB8EM
-        VvbwGfNANlNkbuK9JYoXvHqQTUk+xMqfi/5IkKSsWyMyfn3s8+uGHlwJjH4a4EtBOhLmzS3g
-        GiCgRHQtgBbNTxhX3AXQplc97CwAqHJ+hT2KqFa7Sa5xFsCatTO8/133NC6CKxoA7DCd5nkj
-        Qjoa3qq/8YAJ+ilY0d6Ncbo/vFI2TXj5cfp9WKobJL0spt+DPfZK3Ms4HQhd0xUPlgqgHSRU
-        a/+8P4iiSDoM5h7nez2+9A64WDDG4/xbYV6rh8/xZth6W49za2+B8793Ed4opBOhqSzOOxLS
-        TgE0nLWQnL4LzkwBzi6Gs30X+ByHwIHifILjbOge9+BcVg1gYXvjw+wrsGAwhfPEwCrXTcDJ
-        G+H4bX9um41Q2/I9zslC+M0xURF4UrfuHXTr7tWtu0W37pZKQBhBIJulSJWxiog09jOJQpqq
-        yEqTSRLTU5vB/c89sNr3Txv4YfZviQ1gFLABSOGhAcIcVU6CSHhQevgLVp5+QJ6VwipsIJgi
-        QgOFickmqYiWSTPZT1g2g5U/6mKUb5ASA+eXwsq2+njKu0eGq3UXp5ZbY63Ni2O1y3HgCVbj
-        bLKQ0S/EZYs3r+2rP+TvMEVVTGaPGjX1kS+fV7z49ErXM0mZE8E7BFUluTVDp1SdbWXxE5KS
-        I7S8tOFNy5du+d5rf/iJZ4YNixuuRvXfutiUkO77m7JvWzj5vPXmjCH2w+LxnreXrtXsrCuO
-        DSlsWZAF7I80B0ZZXypc2ZSoFB3doNDq+itLiBODl/bsza8pf3agS5yqV5+mw09YVPyPqzG/
-        uLT4GPsRsP2DgLUt4gOicacftVvisztpVvWu1WTd//XryQUx1rBdvHdes0fI7EYTfKMgd1Uf
-        NO08nPGpWjMysimUUCRJI8JwuUL6H+ryAfNLBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrMKsWRmVeSWpSXmKPExsVy+t/xu7r/j9QkGTx9zW2x/tQxZov/e46x
-        Way+289mMe3DT2aLSf0z2C1+nz3PbLH33WxWiws/GpksFv/+zmKxZ9EkJouVq48yWTxZP4vZ
-        oufABxaLlS0PmS3+PDS0ePjlFovFpEPXGC2eXp3FZLH3lrbFpccr2C327D3JYnF51xw2i/nL
-        nrJbTGj7ymxxY8JTRouJxzezWqx7/Z7F4sQtaQcZj8tXvD3+nVjD5jGx+R27x/l7G1k8Lp8t
-        9di0qpPNY2HDVGaPzUvqPXbfbGDz6G1+x+axs/U+q8f7fVfZPNZvucricWbBEXaPzaerPSZs
-        3sgaIBSlZ1OUX1qSqpCRX1xiqxRtaGGkZ2hpoWdkYqlnaGwea2VkqqRvZ5OSmpNZllqkb5eg
-        l9Gw+j9LwXX+irsLjzA3MK7i6WLk5JAQMJFo/neArYuRi0NIYCmjxNIT19khEjISn658hLKF
-        Jf5c64Iq+sgoMW33J3YIZx2jxNSDzUwgVbwCdhIv19xnBbFZBFQl5u88ABUXlDg58wkLiC0q
-        ECHxYPdZsBphgXCJNW+3MILYzALiEreezGcCGSoicJVNomXSM1aIDUeZJG7c/QGU4eBgE9CS
-        aOwEO4lTwFjia98VVohmTYnW7b/ZIWx5ie1v5zBDnK0s8f7BPhaQVgmBZIm/t8InMIrMQnLS
-        LCSrZyGZNAvJpAWMLKsYRVJLi3PTc4uN9IoTc4tL89L1kvNzNzECU9u2Yz+37GBc+eqj3iFG
-        Jg7GQ4wSHMxKIrw1zTVJQrwpiZVVqUX58UWlOanFhxhNgeEykVlKNDkfmFzzSuINzQxMDU3M
-        LA1MLc2MlcR5PQs6EoUE0hNLUrNTUwtSi2D6mDg4pRqYuvw99x1vyK9R2L3wzbYVqwueKR4S
-        e+ml/OeK/c0O0auWObJLpY01hTw4rnxbeTArZucvn2uq/+SbvM+IpbkuZlVvMPvUcWDnq3eH
-        p/sseyR5uPelf923r8kzpVhFFxoGfbRk/ntx/9GMG9ZM6R91zbf/clQ5zXS2oKt82Ym/GjPd
-        1vhwbFI+8d1Y+bTN4wzrSY+vbbDn9JY+czj7hd9ErqZ1nJuqzrWbC02Oi7m66aEQ533vpc7x
-        TNW/ZXgL5OO27FTO+W5t0qG5smEpK4vEnLRK9wXbstIm74hfLtmqsLCnkGOpmKPiz7CV6lw+
-        931mXevo1a2ec9+4tnjRtgX1RzZ2HXLm4/2T8LP+4UdRJZbijERDLeai4kQAhjJCOvYDAAA=
-X-CMS-MailID: 20220512082743eucas1p2f2b8253db08a3cb212836fe634463f62
-X-Msg-Generator: CA
-X-RootMTR: 20220506081118eucas1p17f3c29cc36d748c3b5a3246f069f434a
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20220506081118eucas1p17f3c29cc36d748c3b5a3246f069f434a
-References: <20220506081105.29134-1-p.raghav@samsung.com>
-        <CGME20220506081118eucas1p17f3c29cc36d748c3b5a3246f069f434a@eucas1p1.samsung.com>
-        <20220506081105.29134-12-p.raghav@samsung.com>
-        <20220509185432.GB18596@twin.jikos.cz>
-        <d8e86c32-f122-01df-168e-648179766c55@samsung.com>
-        <20220511160001.GQ18596@twin.jikos.cz>
-X-Spam-Status: No, score=-10.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_HI,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220512052557.GD18445@X58A-UD3R>
+X-Spam-Status: No, score=-1.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -143,50 +93,75 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
->>>> +	zone_sectors = bdev_zone_sectors(bdev);
->>>> +
->>>> +	if (!is_power_of_2(zone_sectors)) {
->>>
->>> is_power_of_2 takes 'unsigned long' and sector_t is u64, so this is not
->>> 32bit clean and we had an actual bug where value 1<<48 was not
->>> recognized as power of 2.
->>>
->> Good catch. Now I understand why btrfs has a helper for is_power_of_two_u64.
->>
->> But the zone size can never be more than 32bit value so the zone size
->> sect will never greater than unsigned long.
-> 
-> We've set the maximum supported zone size in btrfs to be 8G, which is a
-> lot and should be sufficient for some time, but this also means that the
-> value is larger than 32bit maximum. I have actually tested btrfs on top
-> of such emaulated zoned device via TCMU, so it's not dm-zoned, so it's
-> up to you to make sure that a silent overflow won't happen.
-> 
+Hello,
 
-bdev_zone_sectors is used in this case and not the actual size in bytes.
-So the zone size need to be 2TB for the sectors value to cross the 32bit
-limit. This is likely not an issue in the near future.
+Just took a look out of curiosity.
 
->> With that said, we have two options:
->>
->> 1.) We can put a comment explaining that even though it is 32 bit
->> unsafe, zone size sect can never be a 32bit value
+On Thu, May 12, 2022 at 02:25:57PM +0900, Byungchul Park wrote:
+> PROCESS A	PROCESS B	WORKER C
 > 
-> This is probably part of the protocol and specification of the zoned
-> devices, the filesystem either accepts the spec or makes some room for
-> larger values in case it's not too costly.
+> __do_sys_reboot()
+> 		__do_sys_reboot()
+>  mutex_lock(&system_transition_mutex)
+>  ...		 mutex_lock(&system_transition_mutex) <- stuck
+> 		 ...
+> 				request_firmware_work_func()
+> 				 _request_firmware()
+> 				  firmware_fallback_sysfs()
+> 				   usermodehelper_read_lock_wait()
+> 				    down_read(&umhelper_sem)
+> 				   ...
+> 				   fw_load_sysfs_fallback()
+> 				    fw_sysfs_wait_timeout()
+> 				     wait_for_completion_killable_timeout(&fw_st->completion) <- stuck
+>  kernel_halt()
+>   __usermodehelper_disable()
+>    down_write(&umhelper_sem) <- stuck
 > 
->> or
->>
->> 2) We should move the btrfs only helper `is_power_of_two_u64` to some
->> common header and use it everywhere.
+> --------------------------------------------------------
+> All the 3 contexts are stuck at this point.
+> --------------------------------------------------------
 > 
-> Yeah, that can be done independently. With some macro magic it can be
-> made type-safe for any argument while preserving the 'is_power_of_2'
-> name.
-But I agree with your point that we need a type safe power of 2
-implementation in a common header so that we can avoid silent overflows
-in 32 bit architectures.
+> PROCESS A	PROCESS B	WORKER C
+> 
+>    ...
+>    up_write(&umhelper_sem)
+>  ...
+>  mutex_unlock(&system_transition_mutex) <- cannot wake up B
+> 
+> 		 ...
+> 		 kernel_halt()
+> 		  notifier_call_chain()
+> 		   hw_shutdown_notify()
+> 		    kill_pending_fw_fallback_reqs()
+> 		     __fw_load_abort()
+> 		      complete_all(&fw_st->completion) <- cannot wake up C
+> 
+> 				   ...
+> 				   usermodeheler_read_unlock()
+> 				    up_read(&umhelper_sem) <- cannot wake up A
 
-I will keep the change as is in this patch and follow up on the type
-safe power of 2 later independently. Thanks.
+I'm not sure I'm reading it correctly but it looks like "process B" column
+is superflous given that it's waiting on the same lock to do the same thing
+that A is already doing (besides, you can't really halt the machine twice).
+What it's reporting seems to be ABBA deadlock between A waiting on
+umhelper_sem and C waiting on fw_st->completion. The report seems spurious:
+
+1. wait_for_completion_killable_timeout() doesn't need someone to wake it up
+   to make forward progress because it will unstick itself after timeout
+   expires.
+
+2. complete_all() from __fw_load_abort() isn't the only source of wakeup.
+   The fw loader can be, and mainly should be, woken up by firmware loading
+   actually completing instead of being aborted.
+
+I guess the reason why B shows up there is because the operation order is
+such that just between A and C, the complete_all() takes place before
+__usermodehlper_disable(), so the whole thing kinda doesn't make sense as
+you can't block a past operation by a future one. Inserting process B
+introduces the reverse ordering.
+
+Thanks.
+
+-- 
+tejun
