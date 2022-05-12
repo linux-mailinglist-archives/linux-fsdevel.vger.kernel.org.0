@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 38DF852447E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 May 2022 06:47:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34301524484
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 May 2022 06:48:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348298AbiELErr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 May 2022 00:47:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36302 "EHLO
+        id S1347465AbiELEsY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 May 2022 00:48:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38780 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348248AbiELErj (ORCPT
+        with ESMTP id S1348566AbiELEsJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 May 2022 00:47:39 -0400
-Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7FFD2BB03
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 May 2022 21:47:37 -0700 (PDT)
-Received: by mail-pl1-x630.google.com with SMTP id s14so3801832plk.8
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 May 2022 21:47:37 -0700 (PDT)
+        Thu, 12 May 2022 00:48:09 -0400
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C5902C67A
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 May 2022 21:47:56 -0700 (PDT)
+Received: by mail-pj1-x1029.google.com with SMTP id cq17-20020a17090af99100b001dc0386cd8fso3827424pjb.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 May 2022 21:47:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bytedance-com.20210112.gappssmtp.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=mu0oeSRdhbh9VeZjyF6ZLYtewD09HIHqh0x41OUf5r4=;
-        b=qnE+4npLf7k/552JUhxPioA2V3oZwkdvutxLoX/n6XSuqRN7fIBAHvmd53SRC1gfco
-         rzzLHz3zgQAJDwh2IFamU7U2v5I3rRTL8xwlFFlTuF+kBCUIew/y0SfK5rHvdwXr90wR
-         xn0+PpzAPDTbU/Kg/E8MP0GcLWP3e51IvM4fId1s0w2zJstOZt3rcXs6ZdSVEULGPIYf
-         7Y+tv4cAwzZ9E+P3NfR1YGOqdD5fPgADfJMaid5eRiVUMgWKVLWcs4IF8hPC43IAsqtd
-         Ecjws63bHi/APHivVWVCT4UWPSPT4Ji/V32qShK/kqf/IzZGjtw1W/l1ZZxR0bgT8LkX
-         kikw==
+        bh=lV5EqWUJeu9NiPA/kLK56rAUvj5r/7m7kXc0Lxi4HQU=;
+        b=vEdnQCvwGKZH3KBEgV/hEl8AX4D2GxUvAZ3VQiUrbIDlifvTSa/BIuTjsBv2jTELlY
+         4gxguKg5L2J3PbyDN18HSD8su+QORRgVq0wuXWZ6rgrPaxpkOr6Ad24cbhTCNqpLXief
+         FOreoW9B88ZO+wClsHBKA8YWZFWhmS3POOsIAbrasVsr+UgOvyj6Uk/+KhhgT4J2aDeI
+         bf5r5DBpbyTcy5DzBciwgV+kNc+qQIDVHHi2ZMf6qQJQZjZE0djDQhIb+SqiZMmfDib4
+         wvHQNPHZk/a+jj9cDrtQdRcgaXjHDAYUPMXZaN3riW7m45C/iFAhUFWlv1Q0ktu1dqDZ
+         Y/QA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=mu0oeSRdhbh9VeZjyF6ZLYtewD09HIHqh0x41OUf5r4=;
-        b=2k/g8wCCZ3RBlMCv00jNmXOBnZz8fw8wCUlQ4eOH0RjuT3Ik2jGJy6E2z4w+vGZC04
-         r3DZ9xj8khi0rnSrlGCmGQ0uyPcBp/VUBErpfnmS45/trzT1M4237O2quB23rZZTf7VE
-         9v6yh3kzf0Mf7ysbUUjjROqPiIJdsCO6fsicYPOXCqrPgeaTWnp6Dw/zgXjrdetUN3Om
-         Psk7j9tN8u2uCfvuvdO42dfX2BVwsfNKixxFmmqfSWp9Ibb6cAh6c0BFcyUlrb/ziuxP
-         V0pzvdW4iK9vrELOlui95A8QZ/71ivOARo3d4ovIhgN0MvybwwjpWfu1pV4SY69kloqD
-         AIIA==
-X-Gm-Message-State: AOAM532CONU6wQFqKHLpGL8J6tMiG47l1+GElbiTpJv1KS08xdwOS+9z
-        g89xjlRG4Gq594Nl/IbEZN0/Cw==
-X-Google-Smtp-Source: ABdhPJzUuiCelUq6G3b+1zXrlgNS09+gkvww/VC4mZYDFyo1AFj5M1cF8Up8xWtVli0E/gbLSTNFag==
-X-Received: by 2002:a17:902:9a4c:b0:158:b6f0:4aa2 with SMTP id x12-20020a1709029a4c00b00158b6f04aa2mr28430242plv.163.1652330857366;
-        Wed, 11 May 2022 21:47:37 -0700 (PDT)
+        bh=lV5EqWUJeu9NiPA/kLK56rAUvj5r/7m7kXc0Lxi4HQU=;
+        b=gVoxzqR9PfYT3oufVvtZeP8c5vGEkV+SWUYZR+PE6FBXndVcDvNXpGVPWCTNo8Zbnw
+         CqAOiSt6i3QNnIWTmR9K4pLC3VbxHkBZ7jX2eUmx5n11UfJpjxdVkhE5pTJRWlv6PfXk
+         clkoRmESJOYmiiTVgKynOChShRmrZ+S3dC2PIG3spUReWfvvEnUKOQ+7cdlVQRkCvE1l
+         TpHI/EIrO2SBbCIrZmj/blsb6/kXHiQbc/pYIkSm7p9C9XF99/U3PM/idPNyjHSoF3Np
+         10fyXW9DSZyPzB8+EyyFWVpS+n/C3FOh6Nym3rnC6TTibKDF9JHfqVkCY0ilH1q9oS9U
+         BNjA==
+X-Gm-Message-State: AOAM531NtNmM5lbx1myhbpAN0KLmH8ES1PAlI+5r+R3N4UsAUuEXCbkn
+        gu+/NRoOfb1EKq9NS21RMZ0oGw==
+X-Google-Smtp-Source: ABdhPJwzSzpqvu17RyZaImuVVXfRwCqv4PsquKh6+mxBIzxD361DDWk3HS5eFZVma3nchUiQEDg2Hw==
+X-Received: by 2002:a17:903:1051:b0:15c:f02f:cd0e with SMTP id f17-20020a170903105100b0015cf02fcd0emr28805111plc.81.1652330875710;
+        Wed, 11 May 2022 21:47:55 -0700 (PDT)
 Received: from localhost.localdomain ([139.177.225.253])
-        by smtp.gmail.com with ESMTPSA id 5-20020a170902e9c500b0015edc07dcf3sm2790824plk.21.2022.05.11.21.47.23
+        by smtp.gmail.com with ESMTPSA id 5-20020a170902e9c500b0015edc07dcf3sm2790824plk.21.2022.05.11.21.47.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 May 2022 21:47:36 -0700 (PDT)
+        Wed, 11 May 2022 21:47:55 -0700 (PDT)
 From:   Gang Li <ligang.bdlg@bytedance.com>
 To:     akpm@linux-foundation.org
 Cc:     songmuchun@bytedance.com, hca@linux.ibm.com, gor@linux.ibm.com,
@@ -67,9 +67,9 @@ Cc:     songmuchun@bytedance.com, hca@linux.ibm.com, gor@linux.ibm.com,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         linux-perf-users@vger.kernel.org,
         Gang Li <ligang.bdlg@bytedance.com>
-Subject: [PATCH 2/5 v1] mm: add numa_count field for rss_stat
-Date:   Thu, 12 May 2022 12:46:31 +0800
-Message-Id: <20220512044634.63586-3-ligang.bdlg@bytedance.com>
+Subject: [PATCH 3/5 v1] mm: add numa fields for tracepoint rss_stat
+Date:   Thu, 12 May 2022 12:46:32 +0800
+Message-Id: <20220512044634.63586-4-ligang.bdlg@bytedance.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20220512044634.63586-1-ligang.bdlg@bytedance.com>
 References: <20220512044634.63586-1-ligang.bdlg@bytedance.com>
@@ -85,201 +85,138 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch add new fields `numa_count` for mm_rss_stat and
-task_rss_stat.
+Since we add numa_count for mm->rss_stat, the tracepoint should
+also be modified. Now the output looks like this:
 
-`numa_count` are in the size of `sizeof(long) * num_possible_numa()`.
-To reduce mem consumption, they only contain the sum of rss which is
-needed by `oom_badness` instead of recording different kinds of rss
-sepratly.
+```
+sleep-660   [002]   918.524333: rss_stat:             mm_id=1539334265 curr=0 type=MM_NO_TYPE type_size=0B node=2 node_size=32768B diff_size=-8192B
+sleep-660   [002]   918.524333: rss_stat:             mm_id=1539334265 curr=0 type=MM_FILEPAGES type_size=4096B node=-1 node_size=0B diff_size=-4096B
+sleep-660   [002]   918.524333: rss_stat:             mm_id=1539334265 curr=0 type=MM_NO_TYPE type_size=0B node=1 node_size=0B diff_size=-4096B
+```
 
 Signed-off-by: Gang Li <ligang.bdlg@bytedance.com>
 ---
- include/linux/mm_types_task.h |  6 +++
- kernel/fork.c                 | 70 +++++++++++++++++++++++++++++++++--
- 2 files changed, 73 insertions(+), 3 deletions(-)
+ include/linux/mm.h          |  9 +++++----
+ include/trace/events/kmem.h | 27 ++++++++++++++++++++-------
+ mm/memory.c                 |  5 +++--
+ 3 files changed, 28 insertions(+), 13 deletions(-)
 
-diff --git a/include/linux/mm_types_task.h b/include/linux/mm_types_task.h
-index 3e7da8c7ab95..c1ac2a33b697 100644
---- a/include/linux/mm_types_task.h
-+++ b/include/linux/mm_types_task.h
-@@ -64,11 +64,17 @@ enum {
- struct task_rss_stat {
- 	int events;	/* for synchronization threshold */
- 	int count[NR_MM_COUNTERS];
-+#ifdef CONFIG_NUMA
-+	int *numa_count;
-+#endif
- };
- #endif /* USE_SPLIT_PTE_PTLOCKS */
- 
- struct mm_rss_stat {
- 	atomic_long_t count[NR_MM_COUNTERS];
-+#ifdef CONFIG_NUMA
-+	atomic_long_t *numa_count;
-+#endif
- };
- 
- struct page_frag {
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 9796897560ab..e549e0b30e2b 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -141,6 +141,10 @@ DEFINE_PER_CPU(unsigned long, process_counts) = 0;
- 
- __cacheline_aligned DEFINE_RWLOCK(tasklist_lock);  /* outer */
- 
-+#if (defined SPLIT_RSS_COUNTING) && (defined CONFIG_NUMA)
-+#define SPLIT_RSS_NUMA_COUNTING
-+#endif
-+
- #ifdef CONFIG_PROVE_RCU
- int lockdep_tasklist_lock_is_held(void)
- {
-@@ -765,6 +769,16 @@ static void check_mm(struct mm_struct *mm)
- 				 mm, resident_page_types[i], x);
- 	}
- 
-+#ifdef CONFIG_NUMA
-+	for (i = 0; i < num_possible_nodes(); i++) {
-+		long x = atomic_long_read(&mm->rss_stat.numa_count[i]);
-+
-+		if (unlikely(x))
-+			pr_alert("BUG: Bad rss-counter state mm:%p node:%d val:%ld\n",
-+				 mm, i, x);
-+	}
-+#endif
-+
- 	if (mm_pgtables_bytes(mm))
- 		pr_alert("BUG: non-zero pgtables_bytes on freeing mm: %ld\n",
- 				mm_pgtables_bytes(mm));
-@@ -777,6 +791,29 @@ static void check_mm(struct mm_struct *mm)
- #define allocate_mm()	(kmem_cache_alloc(mm_cachep, GFP_KERNEL))
- #define free_mm(mm)	(kmem_cache_free(mm_cachep, (mm)))
- 
-+#ifdef CONFIG_NUMA
-+static inline void mm_free_rss_stat(struct mm_struct *mm)
-+{
-+	kfree(mm->rss_stat.numa_count);
-+}
-+
-+static inline int mm_init_rss_stat(struct mm_struct *mm)
-+{
-+	memset(&mm->rss_stat.count, 0, sizeof(mm->rss_stat.count));
-+	mm->rss_stat.numa_count = kcalloc(num_possible_nodes(), sizeof(atomic_long_t), GFP_KERNEL);
-+	if (unlikely(!mm->rss_stat.numa_count))
-+		return -ENOMEM;
-+	return 0;
-+}
-+#else
-+static inline void mm_free_rss_stat(struct mm_struct *mm) {}
-+static inline int mm_init_rss_stat(struct mm_struct *mm)
-+{
-+	memset(&mm->rss_stat.count, 0, sizeof(mm->rss_stat.count));
-+	return 0;
-+}
-+#endif
-+
- /*
-  * Called when the last reference to the mm
-  * is dropped: either by a lazy thread or by
-@@ -791,6 +828,7 @@ void __mmdrop(struct mm_struct *mm)
- 	destroy_context(mm);
- 	mmu_notifier_subscriptions_destroy(mm);
- 	check_mm(mm);
-+	mm_free_rss_stat(mm);
- 	put_user_ns(mm->user_ns);
- 	free_mm(mm);
- }
-@@ -831,12 +869,22 @@ static inline void put_signal_struct(struct signal_struct *sig)
- 		free_signal_struct(sig);
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 1b6c2e912ec8..cde5529285d6 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2007,27 +2007,28 @@ static inline unsigned long get_mm_counter(struct mm_struct *mm, int member, int
+ 	return (unsigned long)val;
  }
  
-+#ifdef SPLIT_RSS_NUMA_COUNTING
-+void rss_stat_free(struct task_struct *p)
-+{
-+	kfree(p->rss_stat.numa_count);
-+}
-+#else
-+void rss_stat_free(struct task_struct *p) {}
-+#endif
-+
- void __put_task_struct(struct task_struct *tsk)
+-void mm_trace_rss_stat(struct mm_struct *mm, int member, long count);
++void mm_trace_rss_stat(struct mm_struct *mm, int member, long member_count, int node,
++		       long numa_count, long diff_count);
+ 
+ static inline void add_mm_counter(struct mm_struct *mm, int member, long value, int node)
  {
- 	WARN_ON(!tsk->exit_state);
- 	WARN_ON(refcount_read(&tsk->usage));
- 	WARN_ON(tsk == current);
+ 	long count = atomic_long_add_return(value, &mm->rss_stat.count[member]);
  
-+	rss_stat_free(tsk);
- 	io_uring_free(tsk);
- 	cgroup_free(tsk);
- 	task_numa_free(tsk, true);
-@@ -963,6 +1011,7 @@ void set_task_stack_end_magic(struct task_struct *tsk)
- static struct task_struct *dup_task_struct(struct task_struct *orig, int node)
+-	mm_trace_rss_stat(mm, member, count);
++	mm_trace_rss_stat(mm, member, count, NUMA_NO_NODE, 0, value);
+ }
+ 
+ static inline void inc_mm_counter(struct mm_struct *mm, int member, int node)
  {
- 	struct task_struct *tsk;
-+	int *numa_count __maybe_unused;
- 	int err;
+ 	long count = atomic_long_inc_return(&mm->rss_stat.count[member]);
  
- 	if (node == NUMA_NO_NODE)
-@@ -984,9 +1033,16 @@ static struct task_struct *dup_task_struct(struct task_struct *orig, int node)
- #endif
- 	account_kernel_stack(tsk, 1);
+-	mm_trace_rss_stat(mm, member, count);
++	mm_trace_rss_stat(mm, member, count, NUMA_NO_NODE, 0, 1);
+ }
  
-+#ifdef SPLIT_RSS_NUMA_COUNTING
-+	numa_count = kcalloc(num_possible_nodes(), sizeof(int), GFP_KERNEL);
-+	if (!numa_count)
-+		goto free_stack;
-+	tsk->rss_stat.numa_count = numa_count;
-+#endif
-+
- 	err = scs_prepare(tsk, node);
- 	if (err)
--		goto free_stack;
-+		goto free_rss_stat;
+ static inline void dec_mm_counter(struct mm_struct *mm, int member, int node)
+ {
+ 	long count = atomic_long_dec_return(&mm->rss_stat.count[member]);
  
- #ifdef CONFIG_SECCOMP
- 	/*
-@@ -1047,6 +1103,10 @@ static struct task_struct *dup_task_struct(struct task_struct *orig, int node)
- #endif
- 	return tsk;
+-	mm_trace_rss_stat(mm, member, count);
++	mm_trace_rss_stat(mm, member, count, NUMA_NO_NODE, 0, -1);
+ }
  
-+free_rss_stat:
-+#ifdef SPLIT_RSS_NUMA_COUNTING
-+	kfree(numa_count);
-+#endif
- free_stack:
- 	exit_task_stack_account(tsk);
- 	free_thread_stack(tsk);
-@@ -1117,7 +1177,6 @@ static struct mm_struct *mm_init(struct mm_struct *mm, struct task_struct *p,
- 	mm->map_count = 0;
- 	mm->locked_vm = 0;
- 	atomic64_set(&mm->pinned_vm, 0);
--	memset(&mm->rss_stat, 0, sizeof(mm->rss_stat));
- 	spin_lock_init(&mm->page_table_lock);
- 	spin_lock_init(&mm->arg_lock);
- 	mm_init_cpumask(mm);
-@@ -1144,6 +1203,9 @@ static struct mm_struct *mm_init(struct mm_struct *mm, struct task_struct *p,
- 	if (mm_alloc_pgd(mm))
- 		goto fail_nopgd;
+ /* Optimized variant when page is already known not to be PageAnon */
+diff --git a/include/trace/events/kmem.h b/include/trace/events/kmem.h
+index ddc8c944f417..2f4707d94624 100644
+--- a/include/trace/events/kmem.h
++++ b/include/trace/events/kmem.h
+@@ -347,7 +347,8 @@ static unsigned int __maybe_unused mm_ptr_to_hash(const void *ptr)
+ 	EM(MM_FILEPAGES)	\
+ 	EM(MM_ANONPAGES)	\
+ 	EM(MM_SWAPENTS)		\
+-	EMe(MM_SHMEMPAGES)
++	EM(MM_SHMEMPAGES)	\
++	EMe(MM_NO_TYPE)
  
-+	if (mm_init_rss_stat(mm))
-+		goto fail_nocontext;
-+
- 	if (init_new_context(p, mm))
- 		goto fail_nocontext;
+ #undef EM
+ #undef EMe
+@@ -367,29 +368,41 @@ TRACE_EVENT(rss_stat,
  
-@@ -2139,7 +2201,9 @@ static __latent_entropy struct task_struct *copy_process(
- 	p->io_uring = NULL;
- #endif
+ 	TP_PROTO(struct mm_struct *mm,
+ 		int member,
+-		long count),
++		long member_count,
++		int node,
++		long node_count,
++		long diff_count),
  
--#if defined(SPLIT_RSS_COUNTING)
-+#ifdef SPLIT_RSS_NUMA_COUNTING
-+	memset(&p->rss_stat, 0, sizeof(p->rss_stat) - sizeof(p->rss_stat.numa_count));
-+#else
- 	memset(&p->rss_stat, 0, sizeof(p->rss_stat));
- #endif
+-	TP_ARGS(mm, member, count),
++	TP_ARGS(mm, member, member_count, node, node_count, diff_count),
  
+ 	TP_STRUCT__entry(
+ 		__field(unsigned int, mm_id)
+ 		__field(unsigned int, curr)
+ 		__field(int, member)
+-		__field(long, size)
++		__field(long, member_size)
++		__field(int, node)
++		__field(long, node_size)
++		__field(long, diff_size)
+ 	),
+ 
+ 	TP_fast_assign(
+ 		__entry->mm_id = mm_ptr_to_hash(mm);
+ 		__entry->curr = !!(current->mm == mm);
+ 		__entry->member = member;
+-		__entry->size = (count << PAGE_SHIFT);
++		__entry->member_size = (member_count << PAGE_SHIFT);
++		__entry->node = node;
++		__entry->node_size = (node_count << PAGE_SHIFT);
++		__entry->diff_size = (diff_count << PAGE_SHIFT);
+ 	),
+ 
+-	TP_printk("mm_id=%u curr=%d type=%s size=%ldB",
++	TP_printk("mm_id=%u curr=%d type=%s type_size=%ldB node=%d node_size=%ldB diff_size=%ldB",
+ 		__entry->mm_id,
+ 		__entry->curr,
+ 		__print_symbolic(__entry->member, TRACE_MM_PAGES),
+-		__entry->size)
++		__entry->member_size,
++		__entry->node,
++		__entry->node_size,
++		__entry->diff_size)
+ 	);
+ #endif /* _TRACE_KMEM_H */
+ 
+diff --git a/mm/memory.c b/mm/memory.c
+index adb07fb0b483..2d3040a190f6 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -170,9 +170,10 @@ static int __init init_zero_pfn(void)
+ }
+ early_initcall(init_zero_pfn);
+ 
+-void mm_trace_rss_stat(struct mm_struct *mm, int member, long count)
++void mm_trace_rss_stat(struct mm_struct *mm, int member, long member_count, int node,
++		       long numa_count, long diff_count)
+ {
+-	trace_rss_stat(mm, member, count);
++	trace_rss_stat(mm, member, member_count, node, numa_count, diff_count);
+ }
+ 
+ #if defined(SPLIT_RSS_COUNTING)
 -- 
 2.20.1
 
