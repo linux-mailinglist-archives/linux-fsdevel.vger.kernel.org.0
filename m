@@ -2,410 +2,197 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F021524666
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 May 2022 09:04:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CF8D5247BD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 May 2022 10:17:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350671AbiELHEV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 May 2022 03:04:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44476 "EHLO
+        id S1351375AbiELIQ2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 May 2022 04:16:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350677AbiELHEL (ORCPT
+        with ESMTP id S1351373AbiELIQ0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 May 2022 03:04:11 -0400
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 450665DA7E;
-        Thu, 12 May 2022 00:04:01 -0700 (PDT)
-Received: by mail-pl1-x631.google.com with SMTP id x18so4049284plg.6;
-        Thu, 12 May 2022 00:04:01 -0700 (PDT)
+        Thu, 12 May 2022 04:16:26 -0400
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0831B43AE7;
+        Thu, 12 May 2022 01:16:25 -0700 (PDT)
+Received: by mail-pj1-x1036.google.com with SMTP id cq17-20020a17090af99100b001dc0386cd8fso4206845pjb.5;
+        Thu, 12 May 2022 01:16:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=YaKkDgE/meZO4FIXQmv4E0z5fb3+Tw8MQ7HlMv6R3Uw=;
-        b=D+qcVV3vBYHAHMkb5IgxSk4d3mGwU9VrnKBDKgTI5G6PcFDs252lNzghbMO3yzxsbe
-         3DiuGR5X8lE/KNw1+7gAGgHgKZ80zb2JFlp44P9u8J4XEOa0ZAeyi6zRTSWC79tRTyeL
-         FEgqLuheH6nPzKpjFEwvxq5hGmqgdLHef/Sa+lDplsQ/VNT+V7CpYzWHMjTPdqrytNVH
-         CALzURkuV0vNWu8Gz1ZW+tCaEaZcRQOzPeOvHsnDINaEIwSF6BjZzF6q+fgt3gBzbPEk
-         rIskNjXqAuzAJ05Z79Izzv82378M2yqoh3vp6LpRNLWaH69SG5GlwjA/PNYKjn7P+TP0
-         Qhow==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=1RNkyHw4cxdvcq3ilcwkh6SqZBQf4i1CPA0FxFQUbtA=;
+        b=Ww1dHTlqBOxOmJeBXT1UeXm2Ze3bm5xgZkRta9IRE4JaKCgQaYCMEbK+H61d760O4H
+         +qYbYgPSUwkkjwF5G6J63zr5L46yiNT8ztSq2NxZopZkLAbANejewmJW/Mu+pn/6F7Uc
+         kCxkt7L3Oymf3lEIovr6ZHrD5g942OQGnbnDOhZrvU3JpQauOIc7PsUzwcujRX0PMcnB
+         woY/uL4H70w2TFpOnCVACy63AYPNtjCfznFR5dN+8StA46QVwV2CnAC54SMx58ypIVoN
+         APVq+FpkiBYGHWPFJqbTWuhKEFmPOaojhv/t8ZRJCAy2pt5CFK86Jv/CYljlMVQC4uiH
+         i0pg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=YaKkDgE/meZO4FIXQmv4E0z5fb3+Tw8MQ7HlMv6R3Uw=;
-        b=xEpVqNngaXPnJJr1vwayIPBC9qdsWLjfjA/E47cVtN8d5w3yD3j6gXkvNhynbPEDgE
-         PrnPkIYvc0elWtFZG1a+zM6JGo+/e6ofzhWrxv/c8j1dFnIEGtkI8OYrV2MmJJN4ykai
-         pPVA3BSh031s5O+5selr3m8TalAxbC30ZNl7jdYYNv5r7cKgfxqeEOUdnkcmLLzdUMo8
-         KP7WdOVj/lmS3lKjH3dXr+eU5MhV9PaGx6+DJevOBAN1nPeZPcgDJkicK4YcjTqsr8uP
-         CLP01QasHEXJwGJSfArvwfwLlHXV3XnXWUlr+buLNvt9yAcGDRkPJXmgwjxQI95rWHKi
-         ZqBA==
-X-Gm-Message-State: AOAM530aIj+RPQf41w6GIcbi7/j3BNmxZt68swZhuNHVWVSt801rOxfo
-        DU/00NeFTIISzGJup6fOD9Y=
-X-Google-Smtp-Source: ABdhPJxZPGWCtuQRHvZcbRylfZCmCp6Zorucdirkh9XB4hpZZE51CVQZ3DlYsnaL40sQ+wZBUiuC3w==
-X-Received: by 2002:a17:902:c94f:b0:15e:b542:3ef6 with SMTP id i15-20020a170902c94f00b0015eb5423ef6mr29122883pla.55.1652339040473;
-        Thu, 12 May 2022 00:04:00 -0700 (PDT)
-Received: from localhost.localdomain ([193.203.214.57])
-        by smtp.gmail.com with ESMTPSA id c7-20020a655a87000000b003db6f4a96c4sm567993pgt.32.2022.05.12.00.03.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 May 2022 00:03:59 -0700 (PDT)
-From:   cgel.zte@gmail.com
-X-Google-Original-From: xu.xin16@zte.com.cn
-To:     ammarfaizi2@gnuweeb.org, akpm@linux-foundation.org
-Cc:     cgel.zte@gmail.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        ran.xiaokai@zte.com.cn, wang.yong12@zte.com.cn,
-        willy@infradead.org, xu.xin16@zte.com.cn, yang.yang29@zte.com.cn,
-        zhang.yunkai@zte.com.cn
-Subject: [PATCH v7] mm/ksm: introduce ksm_force for each process
-Date:   Thu, 12 May 2022 07:03:47 +0000
-Message-Id: <20220512070347.1628163-1-xu.xin16@zte.com.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <fb4f0d4c-aaf7-b225-f5bb-7c41c48fb8f1@gnuweeb.org>
-References: <fb4f0d4c-aaf7-b225-f5bb-7c41c48fb8f1@gnuweeb.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=1RNkyHw4cxdvcq3ilcwkh6SqZBQf4i1CPA0FxFQUbtA=;
+        b=a8ixMU4Co40HcsIJo//e/gwIHdMFhAVjBJ8mtF9XPZvEzk8fJtuLz8KIT5pWtMRWvb
+         BirkEMYYZKPwDNLmQEVlkYsA5vmj1PeGlpaAqDGzFtFS4rmWn2XIH4rjRU8KZupZ5v6P
+         982dPEuhM5EwIO45nlh0F2/kKONzXwUxztebwtQwAaRqRKc+nUnvVOMrvSyq+5FUTXIz
+         +tfA/tOBpvjVCD3dmF2LT+0k8ACIt2nUeMUz+1j3XmbHv6/g0YzG+iH2P2qtI/U4l8jw
+         naa3yaJHUfgaNCuyI/WFh4w4wrzIyNRHiHvowXfMZ1EaedIoSk8/eayZ8eU8W7nk1PgX
+         oD2w==
+X-Gm-Message-State: AOAM532J7VcszRiEnrQspv+h586ZGRFBXxPmWKDCVyo/GskQOIpjCYLO
+        HT3fjL45tl9B5KDs5ne1gk9ZDphmi2zLghT0enNz7PGNxnA=
+X-Google-Smtp-Source: ABdhPJyUe1/gU1YTFoYXyof0mkoQAgo/dWFLGhWHAZ/QsusGlcfM72vKFEwoVn1qBduL7T6GOMtJU68YNPSStWOznuw=
+X-Received: by 2002:a17:902:e809:b0:15e:c67d:14c5 with SMTP id
+ u9-20020a170902e80900b0015ec67d14c5mr28623742plg.13.1652343384404; Thu, 12
+ May 2022 01:16:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+References: <20220502102521.22875-1-dharamhans87@gmail.com>
+ <YnLRnR3Xqu0cYPdb@redhat.com> <CACUYsyEsRph+iFC_fj3F6Ceqhq7NCTuFPH3up8R6C+_bGHktZg@mail.gmail.com>
+ <YnPI6f2fRZUXbCFP@redhat.com> <882fbf7f-a56b-1e82-a158-9e2186ec7c4c@ddn.com>
+ <YnQsizX5Q1sMnlI2@redhat.com> <CAJfpegseGaWHkjdQj7XiR=TQNFpPZzDF_rTXces2oRz=x0N7OA@mail.gmail.com>
+ <YnvwiZ+s+y3VDUMW@redhat.com> <YnwOwS/bmUkbazeL@redhat.com>
+In-Reply-To: <YnwOwS/bmUkbazeL@redhat.com>
+From:   Dharmendra Hans <dharamhans87@gmail.com>
+Date:   Thu, 12 May 2022 13:46:12 +0530
+Message-ID: <CACUYsyGTR54tX8xqBqJ2LUfWO-rV0LqgBfy0xOv7f-dq65BX8Q@mail.gmail.com>
+Subject: Re: [PATCH v4 0/3] FUSE: Implement atomic lookup + open/create
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Bernd Schubert <bschubert@ddn.com>,
+        linux-fsdevel@vger.kernel.org,
+        fuse-devel <fuse-devel@lists.sourceforge.net>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: xu xin <xu.xin16@zte.com.cn>
+On Thu, May 12, 2022 at 1:00 AM Vivek Goyal <vgoyal@redhat.com> wrote:
+>
+> On Wed, May 11, 2022 at 01:21:13PM -0400, Vivek Goyal wrote:
+> > On Wed, May 11, 2022 at 11:40:59AM +0200, Miklos Szeredi wrote:
+> > > On Thu, 5 May 2022 at 21:59, Vivek Goyal <vgoyal@redhat.com> wrote:
+> > >
+> > > > Oh, I have no issues with the intent. I will like to see cut in net=
+work
+> > > > traffic too (if we can do this without introducing problems). My pr=
+imary
+> > > > interest is that this kind of change should benefit virtiofs as wel=
+l.
+> > >
+> > > One issue with that appears to be checking permissions.   AFAIU this
+> > > patchset only enables the optimization if default_permissions is
+> > > turned off (i.e. all permission checking is done by the server).  But
+> > > virtiofs uses the default_permissions model.
+> >
+> > IIUC, only 3rd patch mentions that default_permission should be turned
+> > off. IOW, first patch where lookup + create + open is a single operatio=
+n
+> > and second patch which does "lookup + open" in a single operation does
+> > not seem to require that default_permissions are not in effect.
+> >
+> > So if first two patches work fine, I think virtiofs should benefit too.
+> > (IMHO, 3rd patch is too hacky anyway)
+> >
+> > W.r.t permission checks, looks like may_open() will finally be called
+> > after ->atomic_open(). So even if we open the file, we should still be
+> > able to check whether we have permissions to open the file or not
+> > after the fact.
+> >
+> > fs/namei.c
+> >
+> > path_openat()
+> > {
+> >       open_last_lookups()  <--- This calls ->atomic_open()
+> >       do_open()  <--- This calls may_open()
+> > }
+>
+> Actually I am not sure about it. I was playing with
+>
+> open(foo.txt, O_CREAT | O_RDWR, O_IRUSR)
+>
+> This succeeds if file is newly created but if file already existed, this
+> fails with -EACCESS
+>
+> So man 2 open says following. Thanks to Andy Price for pointing me to it.
+>
+>     Note that mode applies only to future accesses of the newly cre=E2=80=
+=90
+>     ated  file;  the  open()  call that creates a read-only file may
+>     well return a read/write file descriptor.
+>
+>
+> Now I am wondering how will it look like with first patch. Assume file
+> already exists on the server (But there is no negative dentry present)
+> and I do following. And assume file only has read permission for user
+> and I am trying to open it read-write.
+>
+> open(foo.txt, O_CREAT | O_RDWR, O_IRUSR)
+>
+> In normal circumstances, user will expect -EACCESS as file is read-only
+> and user is trying to open it read-write.
+>
+> I am wondering how will it look like with this first patch.
+>
+> Current fuse ->atomic_open() looks up the dentry and does not open
+> the file if dentry is positive.
+>
+> New implementation will skip lookup and open the file anyway and
+> set file->f_mode |=3D FMODE_CREATED; (First patch in series)
+>
+> So first of all this seems wrong. I thought FMODE_CREATED should be
+> set only if file was newly created. Is that a correct understanding.
 
-To use KSM, we have to explicitly call madvise() in application code,
-which means installed apps on OS needs to be uninstall and source code
-needs to be modified. It is inconvenient.
+You are right. we should mark in f_mode only if the file was actually creat=
+ed.
+Thanks for catching this. Appreciate your efforts:)
 
-In order to change this situation, We add a new proc file ksm_force
-under /proc/<pid>/ to support turning on/off KSM scanning of a
-process's mm dynamically.
+>
+> And I am looking at do_open() code. It does bunch of things based
+> on FMODE_CREATED flag. One of the things it does is reset acc_mode =3D0
+>
+>         if (file->f_mode & FMODE_CREATED) {
+>                 /* Don't check for write permission, don't truncate */
+>                 open_flag &=3D ~O_TRUNC;
+>                 acc_mode =3D 0;
+>         }
+>         error =3D may_open(mnt_userns, &nd->path, acc_mode, open_flag);
+>
+> I suspect this is the code which allows opening a newly created read-only
+> file as O_RDWR. (Though I am not 100% sure).
 
-If ksm_force is set to 1, force all anonymous and 'qualified' VMAs
-of this mm to be involved in KSM scanning without explicitly calling
-madvise to mark VMA as MADV_MERGEABLE. But It is effective only when
-the klob of /sys/kernel/mm/ksm/run is set as 1.
+Correct. I could see it.
 
-If ksm_force is set to 0, cancel the feature of ksm_force of this
-process and unmerge those merged pages belonging to VMAs which is not
-madvised as MADV_MERGEABLE of this process, but leave MADV_MERGEABLE
-areas merged.
+>
+> I suspect with first patch this will be broken. We will set FMODE_CREATED
+> even if file already existed and VFS will assume a new file has been
+> created and do bunch of things which is wrong.
+>
+> So looks like fuse ->atomic_open() should set FMODE_CREATED only if
+> it really created the file.
 
-Signed-off-by: xu xin <xu.xin16@zte.com.cn>
-Reviewed-by: Yang Yang <yang.yang29@zte.com.cn>
-Reviewed-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
-Reviewed-by: wangyong <wang.yong12@zte.com.cn>
-Reviewed-by: Yunkai Zhang <zhang.yunkai@zte.com.cn>
-Suggested-by: Matthew Wilcox <willy@infradead.org>
-Suggested-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
----
-v7:
-- remove over-zeroing in ksm_force_write() and using strncpy_from_user
-instead of copy_from_user.
-v6:
-- modify the way of "return"
-- remove unnecessary words in Documentation/admin-guide/mm/ksm.rst
-- add additional notes to "set 0 to ksm_force" in Documentation/../ksm.rst
-and Documentation/../proc.rst
-v5:
-- fix typos in Documentation/filesystem/proc.rst
-v4:
-- fix typos in commit log
-- add interface descriptions under Documentation/
-v3:
-- fix compile error of mm/ksm.c
-v2:
-- fix a spelling error in commit log.
-- remove a redundant condition check in ksm_force_write().
----
- Documentation/admin-guide/mm/ksm.rst | 19 +++++-
- Documentation/filesystems/proc.rst   | 17 +++++
- fs/proc/base.c                       | 97 ++++++++++++++++++++++++++++
- include/linux/mm_types.h             |  9 +++
- mm/ksm.c                             | 32 ++++++++-
- 5 files changed, 171 insertions(+), 3 deletions(-)
+This looks like an obvious bug with new patches. But If I do not miss
+anything then its a bug on distributed file systems with current code
+as well.
+It could happen this way(Taking your example which is perfect to trace
+this on distributed systems):
+Lets start with File is non-existent yet on the file system. There
+comes the first client which does a lookup on the file, it does not
+find the file. Meanwhile another client created the file on the File
+system. Now  when this first client goes to create the file, before
+going down it sets FMODE_CREATED on the file handle and then goes down
+the lower layers. It comes back with inode but f->mode as
+FMODE_CREATED which is incorrect. This mode then results in acc_mode
+being set to zero which then allows access to the file as O_RDWR.
 
-diff --git a/Documentation/admin-guide/mm/ksm.rst b/Documentation/admin-guide/mm/ksm.rst
-index b244f0202a03..8cabc2504005 100644
---- a/Documentation/admin-guide/mm/ksm.rst
-+++ b/Documentation/admin-guide/mm/ksm.rst
-@@ -32,7 +32,7 @@ are swapped back in: ksmd must rediscover their identity and merge again).
- Controlling KSM with madvise
- ============================
- 
--KSM only operates on those areas of address space which an application
-+KSM can operates on those areas of address space which an application
- has advised to be likely candidates for merging, by using the madvise(2)
- system call::
- 
-@@ -70,6 +70,23 @@ Applications should be considerate in their use of MADV_MERGEABLE,
- restricting its use to areas likely to benefit.  KSM's scans may use a lot
- of processing power: some installations will disable KSM for that reason.
- 
-+Controlling KSM with procfs
-+===========================
-+
-+KSM can also operate on anonymous areas of address space of those processes's
-+knob ``/proc/<pid>/ksm_force`` is on, even if app codes doesn't call madvise()
-+explicitly to advise specific areas as MADV_MERGEABLE.
-+
-+You can set ksm_force to 1 to force all anonymous and qualified VMAs of
-+this process to be involved in KSM scanning.
-+	e.g. ``echo 1 > /proc/<pid>/ksm_force``
-+
-+You can also set ksm_force to 0 to cancel that force feature of this process
-+and unmerge those merged pages which belongs to those VMAs not marked as
-+MADV_MERGEABLE of this process. But that still leave those pages belonging to
-+VMAs marked as MADV_MERGEABLE merged (fallback to the default state).
-+	e.g. ``echo 0 > /proc/<pid>/ksm_force``
-+
- .. _ksm_sysfs:
- 
- KSM daemon sysfs interface
-diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-index 061744c436d9..8890b8b457a4 100644
---- a/Documentation/filesystems/proc.rst
-+++ b/Documentation/filesystems/proc.rst
-@@ -47,6 +47,7 @@ fixes/update part 1.1  Stefani Seibold <stefani@seibold.net>    June 9 2009
-   3.10  /proc/<pid>/timerslack_ns - Task timerslack value
-   3.11	/proc/<pid>/patch_state - Livepatch patch operation state
-   3.12	/proc/<pid>/arch_status - Task architecture specific information
-+  3.13	/proc/<pid>/ksm_force - Setting of mandatory involvement in KSM
- 
-   4	Configuring procfs
-   4.1	Mount options
-@@ -2176,6 +2177,22 @@ AVX512_elapsed_ms
-   the task is unlikely an AVX512 user, but depends on the workload and the
-   scheduling scenario, it also could be a false negative mentioned above.
- 
-+3.13	/proc/<pid>/ksm_force - Setting of mandatory involvement in KSM
-+-----------------------------------------------------------------------
-+When CONFIG_KSM is enabled, this file can be used to specify if this
-+process's anonymous memory can be involved in KSM scanning without app codes
-+explicitly calling madvise to mark memory address as MADV_MERGEABLE.
-+
-+If writing 1 to this file, the kernel will force all anonymous and qualified
-+memory to be involved in KSM scanning without explicitly calling madvise to
-+mark memory address as MADV_MERGEABLE. But that is effective only when the
-+klob of '/sys/kernel/mm/ksm/run' is set as 1.
-+
-+If writing 0 to this file, the mandatory KSM feature of this process's will
-+be cancelled and unmerge those merged pages which belongs to those areas not
-+marked as MADV_MERGEABLE of this process, but leave those pages belonging to
-+areas marked as MADV_MERGEABLE merged (fallback to the default state).
-+
- Chapter 4: Configuring procfs
- =============================
- 
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 8dfa36a99c74..99ab0e8cdcbc 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -96,6 +96,7 @@
- #include <linux/time_namespace.h>
- #include <linux/resctrl.h>
- #include <linux/cn_proc.h>
-+#include <linux/ksm.h>
- #include <trace/events/oom.h>
- #include "internal.h"
- #include "fd.h"
-@@ -3168,6 +3169,100 @@ static int proc_pid_ksm_merging_pages(struct seq_file *m, struct pid_namespace *
- 
- 	return 0;
- }
-+
-+static ssize_t ksm_force_read(struct file *file, char __user *buf, size_t count,
-+				loff_t *ppos)
-+{
-+	struct task_struct *task;
-+	struct mm_struct *mm;
-+	char buffer[PROC_NUMBUF];
-+	ssize_t len;
-+	int ret;
-+
-+	task = get_proc_task(file_inode(file));
-+	if (!task)
-+		return -ESRCH;
-+
-+	mm = get_task_mm(task);
-+	ret = 0;
-+	if (mm) {
-+		len = snprintf(buffer, sizeof(buffer), "%d\n", mm->ksm_force);
-+		ret =  simple_read_from_buffer(buf, count, ppos, buffer, len);
-+		mmput(mm);
-+	}
-+
-+	return ret;
-+}
-+
-+static ssize_t ksm_force_write(struct file *file, const char __user *buf,
-+				size_t count, loff_t *ppos)
-+{
-+	struct task_struct *task;
-+	struct mm_struct *mm;
-+	char buffer[PROC_NUMBUF];
-+	int force;
-+	int err = 0;
-+	int str_len;
-+
-+	if (count > sizeof(buffer) - 1) {
-+		count = sizeof(buffer) - 1;
-+	}
-+
-+	str_len = strncpy_from_user(buffer, buf, count);
-+	if (str_len < 0)
-+		return -EFAULT;
-+	buffer[str_len] = '\0';
-+
-+	err = kstrtoint(strstrip(buffer), 0, &force);
-+	if (err)
-+		return err;
-+
-+	if (force != 0 && force != 1)
-+		return -EINVAL;
-+
-+	task = get_proc_task(file_inode(file));
-+	if (!task)
-+		return -ESRCH;
-+
-+	mm = get_task_mm(task);
-+	if (!mm)
-+		goto out_put_task;
-+
-+	if (mm->ksm_force != force) {
-+		if (mmap_write_lock_killable(mm)) {
-+			err = -EINTR;
-+			goto out_mmput;
-+		}
-+
-+		if (force == 0)
-+			mm->ksm_force = force;
-+		else {
-+			/*
-+			 * Force anonymous pages of this mm to be involved in KSM merging
-+			 * without explicitly calling madvise.
-+			 */
-+			if (!test_bit(MMF_VM_MERGEABLE, &mm->flags))
-+				err = __ksm_enter(mm);
-+			if (!err)
-+				mm->ksm_force = force;
-+		}
-+
-+		mmap_write_unlock(mm);
-+	}
-+
-+out_mmput:
-+	mmput(mm);
-+out_put_task:
-+	put_task_struct(task);
-+
-+	return err < 0 ? err : count;
-+}
-+
-+static const struct file_operations proc_pid_ksm_force_operations = {
-+	.read		= ksm_force_read,
-+	.write		= ksm_force_write,
-+	.llseek		= generic_file_llseek,
-+};
- #endif /* CONFIG_KSM */
- 
- #ifdef CONFIG_STACKLEAK_METRICS
-@@ -3303,6 +3398,7 @@ static const struct pid_entry tgid_base_stuff[] = {
- #endif
- #ifdef CONFIG_KSM
- 	ONE("ksm_merging_pages",  S_IRUSR, proc_pid_ksm_merging_pages),
-+	REG("ksm_force", S_IRUSR|S_IWUSR, proc_pid_ksm_force_operations),
- #endif
- };
- 
-@@ -3639,6 +3735,7 @@ static const struct pid_entry tid_base_stuff[] = {
- #endif
- #ifdef CONFIG_KSM
- 	ONE("ksm_merging_pages",  S_IRUSR, proc_pid_ksm_merging_pages),
-+	REG("ksm_force", S_IRUSR|S_IWUSR, proc_pid_ksm_force_operations),
- #endif
- };
- 
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index b34ff2cdbc4f..1b1592c2f5cf 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -661,6 +661,15 @@ struct mm_struct {
- 		 * merging.
- 		 */
- 		unsigned long ksm_merging_pages;
-+		/*
-+		 * If true, force anonymous pages of this mm to be involved in KSM
-+		 * merging without explicitly calling madvise. It is effctive only
-+		 * when the klob of '/sys/kernel/mm/ksm/run' is set as 1. If false,
-+		 * cancel the feature of ksm_force of this process and unmerge
-+		 * those merged pages which is not madvised as MERGEABLE of this
-+		 * process, but leave MERGEABLE areas merged.
-+		 */
-+		bool ksm_force;
- #endif
- 	} __randomize_layout;
- 
-diff --git a/mm/ksm.c b/mm/ksm.c
-index 38360285497a..c9f672dcc72e 100644
---- a/mm/ksm.c
-+++ b/mm/ksm.c
-@@ -334,6 +334,34 @@ static void __init ksm_slab_free(void)
- 	mm_slot_cache = NULL;
- }
- 
-+/* Check if vma is qualified for ksmd scanning */
-+static bool ksm_vma_check(struct vm_area_struct *vma)
-+{
-+	unsigned long vm_flags = vma->vm_flags;
-+
-+	if (!(vma->vm_flags & VM_MERGEABLE) && !(vma->vm_mm->ksm_force))
-+		return false;
-+
-+	if (vm_flags & (VM_SHARED	| VM_MAYSHARE	|
-+			VM_PFNMAP	| VM_IO | VM_DONTEXPAND |
-+			VM_HUGETLB	| VM_MIXEDMAP))
-+		return false;       /* just ignore this vma*/
-+
-+	if (vma_is_dax(vma))
-+		return false;
-+
-+#ifdef VM_SAO
-+	if (vm_flags & VM_SAO)
-+		return false;
-+#endif
-+#ifdef VM_SPARC_ADI
-+	if (vm_flags & VM_SPARC_ADI)
-+		return false;
-+#endif
-+
-+	return true;
-+}
-+
- static __always_inline bool is_stable_node_chain(struct stable_node *chain)
- {
- 	return chain->rmap_hlist_len == STABLE_NODE_CHAIN;
-@@ -523,7 +551,7 @@ static struct vm_area_struct *find_mergeable_vma(struct mm_struct *mm,
- 	if (ksm_test_exit(mm))
- 		return NULL;
- 	vma = vma_lookup(mm, addr);
--	if (!vma || !(vma->vm_flags & VM_MERGEABLE) || !vma->anon_vma)
-+	if (!vma || !ksm_vma_check(vma) || !vma->anon_vma)
- 		return NULL;
- 	return vma;
- }
-@@ -2297,7 +2325,7 @@ static struct rmap_item *scan_get_next_rmap_item(struct page **page)
- 		vma = find_vma(mm, ksm_scan.address);
- 
- 	for (; vma; vma = vma->vm_next) {
--		if (!(vma->vm_flags & VM_MERGEABLE))
-+		if (!ksm_vma_check(vma))
- 			continue;
- 		if (ksm_scan.address < vma->vm_start)
- 			ksm_scan.address = vma->vm_start;
--- 
-2.25.1
-
+I think Miklos proposed to return the flag from user space if the file
+was actually created, this would solve two problems 1) this access
+problem and code execution going the wrong path 2) correct update if
+parent dir changed or not.
