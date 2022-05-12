@@ -2,77 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 645A8524A6B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 May 2022 12:38:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 984FC524B84
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 May 2022 13:22:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352690AbiELKiL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 May 2022 06:38:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47004 "EHLO
+        id S1353313AbiELLWG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 May 2022 07:22:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352688AbiELKiJ (ORCPT
+        with ESMTP id S1353390AbiELLVJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 May 2022 06:38:09 -0400
-Received: from mail-4323.proton.ch (mail-4323.proton.ch [185.70.43.23])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0231A5F8DE
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 May 2022 03:38:06 -0700 (PDT)
-Date:   Thu, 12 May 2022 10:37:54 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=emersion.fr;
-        s=protonmail2; t=1652351884;
-        bh=7NmTfOCxDVAfqJ/9f/2B3RstZoJLD303Bp1OuJZ4KeA=;
-        h=Date:To:From:Reply-To:Subject:Message-ID:Feedback-ID:From:To:Cc:
-         Date:Subject:Reply-To:Feedback-ID:Message-ID;
-        b=f02r2AQ9t/AYTiq+emcHSWiFf7xzC6rrO/toal82g03MsexLkvGgplJ0P5CKchR8S
-         g4eoOKwjW1BQR8oTTpIl47owvv8yGQCYGhmfVO9EnqRx5iHVzi0kZ7Vd6xopnD5UcZ
-         dmKBGRYEkFpP90/ZrWYsrJvwiQbUS8p2z4CAi0p7AlMvraDeer8W6IFjEYiz0wo5Nq
-         A1sDfALlDtQXUoeNAt+KeLNLtxDfqJ5MSh2K8o5ghWwJquNznQyhB4aWo0o9ftN49N
-         mFCs0jrkfBpCbz4eWI8b2x/aWtWhZA7OXni+hP52rheqU8StS77chUp8xhBxbmoEuP
-         Ccbjj/059/lcw==
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-From:   Simon Ser <contact@emersion.fr>
-Reply-To: Simon Ser <contact@emersion.fr>
-Subject: procfs: open("/proc/self/fd/...") allows bypassing O_RDONLY
-Message-ID: <lGo7a4qQABKb-u_xsz6p-QtLIy2bzciBLTUJ7-ksv7ppK3mRrJhXqFmCFU4AtQf6EyrZUrYuSLDMBHEUMe5st_iT9VcRuyYPMU_jVpSzoWg=@emersion.fr>
-Feedback-ID: 1358184:user:proton
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-0.7 required=5.0 tests=BAYES_05,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        Thu, 12 May 2022 07:21:09 -0400
+Received: from lgeamrelo11.lge.com (lgeamrelo12.lge.com [156.147.23.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BBD8B15EE41
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 May 2022 04:20:05 -0700 (PDT)
+Received: from unknown (HELO lgemrelse6q.lge.com) (156.147.1.121)
+        by 156.147.23.52 with ESMTP; 12 May 2022 20:20:03 +0900
+X-Original-SENDERIP: 156.147.1.121
+X-Original-MAILFROM: byungchul.park@lge.com
+Received: from unknown (HELO localhost.localdomain) (10.177.244.38)
+        by 156.147.1.121 with ESMTP; 12 May 2022 20:20:03 +0900
+X-Original-SENDERIP: 10.177.244.38
+X-Original-MAILFROM: byungchul.park@lge.com
+From:   Byungchul Park <byungchul.park@lge.com>
+To:     tj@kernel.org
+Cc:     torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
+        linux-ide@vger.kernel.org, adilger.kernel@dilger.ca,
+        linux-ext4@vger.kernel.org, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, peterz@infradead.org,
+        will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
+        joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
+        chris@chris-wilson.co.uk, duyuyang@gmail.com,
+        johannes.berg@intel.com, tytso@mit.edu, willy@infradead.org,
+        david@fromorbit.com, amir73il@gmail.com,
+        gregkh@linuxfoundation.org, kernel-team@lge.com,
+        linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
+        minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
+        sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
+        penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
+        ngupta@vflare.org, linux-block@vger.kernel.org,
+        paolo.valente@linaro.org, josef@toxicpanda.com,
+        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        jack@suse.cz, jack@suse.com, jlayton@kernel.org,
+        dan.j.williams@intel.com, hch@infradead.org, djwong@kernel.org,
+        dri-devel@lists.freedesktop.org, rodrigosiqueiramelo@gmail.com,
+        melissa.srw@gmail.com, hamohammed.sa@gmail.com,
+        42.hyeyoo@gmail.com, mcgrof@kernel.org, holt@sgi.com
+Subject: Re: [REPORT] syscall reboot + umh + firmware fallback
+Date:   Thu, 12 May 2022 20:18:24 +0900
+Message-Id: <1652354304-17492-1-git-send-email-byungchul.park@lge.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <YnzQHWASAxsGL9HW@slm.duckdns.org>
+References: <YnzQHWASAxsGL9HW@slm.duckdns.org>
+X-Spam-Status: No, score=-6.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi all,
+Tejun wrote:
+> Hello,
 
-I'm a user-space developer working on Wayland. Recently we've been
-discussing about security considerations related to FD passing between
-processes [1].
+Hello,
 
-A Wayland compositor often needs to share read-only data with its
-clients. Examples include a keyboard keymap, or a pixel format table.
-The clients might be untrusted. The data sharing can happen by having
-the compositor send a read-only FD (ie, a FD opened with O_RDONLY) to
-clients.
+> I'm not sure I'm reading it correctly but it looks like "process B" column
 
-It was assumed that passing such a FD wouldn't allow Wayland clients to
-write to the file. However, it was recently discovered that procfs
-allows to bypass this restriction. A process can open(2)
-"/proc/self/fd/<fd>" with O_RDWR, and that will return a FD suitable for
-writing. This also works when running the client inside a user namespace.
-A PoC is available at [2] and can be tested inside a compositor which
-uses this O_RDONLY strategy (e.g. wlroots compositors).
+I think you're interpreting the report correctly.
 
-Question: is this intended behavior, or is this an oversight? If this is
-intended behavior, what would be a good way to share a FD to another
-process without allowing it to write to the underlying file?
+> is superflous given that it's waiting on the same lock to do the same thing
+> that A is already doing (besides, you can't really halt the machine twice).
 
-Thanks,
+Indeed! I've been in a daze. I thought kernel_halt() can be called twice
+by two different purposes. Sorry for the noise.
 
-Simon
+> What it's reporting seems to be ABBA deadlock between A waiting on
+> umhelper_sem and C waiting on fw_st->completion. The report seems spurious:
+>
+> 1. wait_for_completion_killable_timeout() doesn't need someone to wake it up
+>    to make forward progress because it will unstick itself after timeout
+>    expires.
 
-[1]: https://gitlab.freedesktop.org/wayland/wayland-protocols/-/issues/92
-[2]: https://paste.sr.ht/~emersion/eac94b03f286e21f8362354b6af032291c00f8a7
+I have a question about this one. Yes, it would never been stuck thanks
+to timeout. However, IIUC, timeouts are not supposed to expire in normal
+cases. So I thought a timeout expiration means not a normal case so need
+to inform it in terms of dependency so as to prevent further expiraton.
+That's why I have been trying to track even timeout'ed APIs.
+
+Do you think DEPT shouldn't track timeout APIs? If I was wrong, I
+shouldn't track the timeout APIs any more.
+
+> 2. complete_all() from __fw_load_abort() isn't the only source of wakeup.
+>    The fw loader can be, and mainly should be, woken up by firmware loading
+>    actually completing instead of being aborted.
+
+This is the point I'd like to ask. In normal cases, fw_load_done() might
+happen, of course, if the loading gets completed. However, I was
+wondering if the kernel ensures either fw_load_done() or fw_load_abort()
+to be called by *another* context while kernel_halt().
+
+> Thanks.
+
+Thank you very much!
+
+	Byungchul
+
+> 
+> -- 
+> tejun
+> 
