@@ -2,169 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D301524248
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 May 2022 04:04:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B588524479
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 May 2022 06:47:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234713AbiELCEE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 May 2022 22:04:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33692 "EHLO
+        id S1347977AbiELErp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 May 2022 00:47:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231319AbiELCED (ORCPT
+        with ESMTP id S1348169AbiELErL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 May 2022 22:04:03 -0400
-Received: from mail-qt1-x82a.google.com (mail-qt1-x82a.google.com [IPv6:2607:f8b0:4864:20::82a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 899F66004D;
-        Wed, 11 May 2022 19:04:01 -0700 (PDT)
-Received: by mail-qt1-x82a.google.com with SMTP id i20so3353915qti.11;
-        Wed, 11 May 2022 19:04:01 -0700 (PDT)
+        Thu, 12 May 2022 00:47:11 -0400
+Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03B5625296
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 May 2022 21:47:10 -0700 (PDT)
+Received: by mail-pf1-x42f.google.com with SMTP id y41so3729369pfw.12
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 May 2022 21:47:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LKj8jxm3PJ1HqAeGJYpiNS9EwKRD2eKy/LFheqZP3ac=;
-        b=faGP9WAoksFwotSiYEUmnlpq6avsHibD2TyMrneAdFu6WBXrrNx3wKqImB3xBlNajM
-         Xze1dUZ97pZMxskl6RxwGwtni1zfiU+LqZvkSVkBPm/mpCf8fMMouWm7tKSkGXyDZLhf
-         IxNIV1fKET+PmvenjZi8jN7WcxdtSXQR9FvcE/PVl8dUND2h1NFfe8ANG1opCBgt2H7x
-         Eb78u8AJkvI4TEuCt2Ib2ojeZdwYT6Dhs77khR860i+Q7I9cwiBxxaD8yvWPpfqSlwpq
-         sjHLypYC0vQfRNeATkSaZ8e2Ubb0wJG2ZUaUTYMefLwz3XZST2KtAdp9jlIwaJvWAM0I
-         zDqA==
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/pTgPhGOi/9d6Q/oqwaxhfFkmjeH4PVid+OZ0dZHdSw=;
+        b=HvhsyDv1TuH2yCE9PXc22mXXi4RP3ENuXk44vilMbhfXZAh3usDN+q7UYC4Qg+hkbD
+         ZW2CKXaScrpCanbEd7qxTPf1kXPgl9QX8PbgfaG4a5jGRByg/9RvP66UvSti/F/eerne
+         9zZlmrit2DsqjneYnmSf5DYy2mgQT4UVh++EH5K5BS7KJ8FBUg++vX3SFWV0debV1ZGZ
+         hQulKyeZYRi6+uBqZiVSot2SpRBP/ubpK3I7T7r3VT5dOzEHe1FjUbIYr5VsapkkoWXL
+         XKFqIcpMeCvJy5i5+IKJlG02P/U1Fg7p5E8+zKZGAkfwuK2GfX+G3gQbW7uvquoMjGln
+         ZY5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LKj8jxm3PJ1HqAeGJYpiNS9EwKRD2eKy/LFheqZP3ac=;
-        b=1eYlHIVd+Owmyn2dHuQqaRPuv2pmjACbW7VOQmxcAIFlfaSr5X+8tggFN+LAK2x6dh
-         LQp67IOKgw3MRKmnI427yHXdxo25wzNpEap/GFA93Kb6DlYkyzL0AF07YAghR/l16pWP
-         1SA9IGKnXM3zCnBEzQvlnBuylGkVoFnDe+s/G2YXdTLRkJXDzMyuwc3JeUKDyIt9wy/K
-         tZnIP8WMDEGqiKVPhFPmiRI1CE3W/UMwKMVnob8t1vxjqdlM7U8/6ZIMcThLxf71j/oP
-         rn4dDNZFwjr9J2gFfnglYMyo3QWlk2+Jl/80DGmh2ZfDio9XcuS/CeE87ATzPikrp3mC
-         pabA==
-X-Gm-Message-State: AOAM531Gq9fYKRuxM08iuP4+0yWSovFz/IkeoFXrOOn9LskUSYCOo4HV
-        JtpOvLuiruMHurPBUSpEazoAt+Czl+aiuKLQQsQ=
-X-Google-Smtp-Source: ABdhPJwIsbYoZPpeisV04Xj/xUlru5weoOQq84uwSEf+EVi1KxdMcxbxFZ41GBSgGDYthyoDrfOamMudkWv3rsMItrI=
-X-Received: by 2002:ac8:5b06:0:b0:2f3:d6c1:e5df with SMTP id
- m6-20020ac85b06000000b002f3d6c1e5dfmr18413172qtw.535.1652321040586; Wed, 11
- May 2022 19:04:00 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/pTgPhGOi/9d6Q/oqwaxhfFkmjeH4PVid+OZ0dZHdSw=;
+        b=hqyCGGJ085kN0PuchwUT63wXrs2fd8plIgMecF2sLQlaU9T18X8pEMcfdfjnCpAmqj
+         HH09eprERReY91mvNCcODqdBmm/FZQsxfHxj/5dXx3w9X4Y9+Pk/cwmoWTCqT6jRhCHO
+         6at0GQKgTln2By9mz/CnLp4vPIdvCEduLlDR/YtopO4N52llt1H8wRh8Pj/OVe3SQ3Cs
+         5AVzeI5odGQxLpqpg6Nl70V3TIRKTWCTrRGA8MqdQs/yl6+q3LkNsQ/0GezOHJQ97NrT
+         9o/RhTKUymce18t6plr8gdihNmHh+qhzFmpvaijdBdv8ZDLmawk3FuoLqsk52bCuMoxF
+         V+og==
+X-Gm-Message-State: AOAM5312rlbuCRqgWNlFeoGJu5nsqv9pDx5DOAAfpfzYh2vhv3wuvC35
+        yW2C956UKlpkxgG641h9btMu5g==
+X-Google-Smtp-Source: ABdhPJxVJxgprVu7WxtZqidhH+r8VEa6XOk7al5eXrOJrdSve9mLiQ3pEAj3JyiqY7GAMCjs7fxFtg==
+X-Received: by 2002:a63:d842:0:b0:3c6:ab6b:5f3c with SMTP id k2-20020a63d842000000b003c6ab6b5f3cmr16180665pgj.148.1652330829556;
+        Wed, 11 May 2022 21:47:09 -0700 (PDT)
+Received: from localhost.localdomain ([139.177.225.253])
+        by smtp.gmail.com with ESMTPSA id 5-20020a170902e9c500b0015edc07dcf3sm2790824plk.21.2022.05.11.21.46.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 May 2022 21:47:08 -0700 (PDT)
+From:   Gang Li <ligang.bdlg@bytedance.com>
+To:     akpm@linux-foundation.org
+Cc:     songmuchun@bytedance.com, hca@linux.ibm.com, gor@linux.ibm.com,
+        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
+        svens@linux.ibm.com, ebiederm@xmission.com, keescook@chromium.org,
+        viro@zeniv.linux.org.uk, rostedt@goodmis.org, mingo@redhat.com,
+        peterz@infradead.org, acme@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        namhyung@kernel.org, david@redhat.com, imbrenda@linux.ibm.com,
+        apopple@nvidia.com, adobriyan@gmail.com,
+        stephen.s.brennan@oracle.com, ohoono.kwon@samsung.com,
+        haolee.swjtu@gmail.com, kaleshsingh@google.com,
+        zhengqi.arch@bytedance.com, peterx@redhat.com, shy828301@gmail.com,
+        surenb@google.com, ccross@google.com, vincent.whitchurch@axis.com,
+        tglx@linutronix.de, bigeasy@linutronix.de, fenghua.yu@intel.com,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        Gang Li <ligang.bdlg@bytedance.com>
+Subject: [PATCH 0/5 v1] mm, oom: Introduce per numa node oom for CONSTRAINT_MEMORY_POLICY
+Date:   Thu, 12 May 2022 12:46:29 +0800
+Message-Id: <20220512044634.63586-1-ligang.bdlg@bytedance.com>
+X-Mailer: git-send-email 2.32.0
 MIME-Version: 1.0
-References: <20220511154503.28365-1-cgxu519@mykernel.net> <YnvbhmRUxPxWU2S3@casper.infradead.org>
- <YnwIDpkIBem+MeeC@gmail.com> <YnwuEt2Xm1iPjW7S@zeniv-ca.linux.org.uk>
-In-Reply-To: <YnwuEt2Xm1iPjW7S@zeniv-ca.linux.org.uk>
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date:   Wed, 11 May 2022 19:03:49 -0700
-Message-ID: <CAADnVQ+tcrDQxb769yMYvyzPHcgZXozqYq0uj4QHi+kjzBYTvQ@mail.gmail.com>
-Subject: Re: [PATCH] vfs: move fdput() to right place in ksys_sync_file_range()
-To:     Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>,
-        Brian Vazquez <brianvv@google.com>, Yonghong Song <yhs@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>
-Cc:     Eric Biggers <ebiggers@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Chengguang Xu <cgxu519@mykernel.net>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        Xu Kuohai <xukuohai@huawei.com>,
-        Alexei Starovoitov <ast@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 11, 2022 at 2:43 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> [bpf folks Cc'd]
->
-> On Wed, May 11, 2022 at 07:01:34PM +0000, Eric Biggers wrote:
-> > On Wed, May 11, 2022 at 04:51:34PM +0100, Matthew Wilcox wrote:
-> > > On Wed, May 11, 2022 at 11:45:03AM -0400, Chengguang Xu wrote:
-> > > > Move fdput() to right place in ksys_sync_file_range() to
-> > > > avoid fdput() after failed fdget().
-> > >
-> > > Why?  fdput() is already conditional on FDPUT_FPUT so you're ...
-> > > optimising the failure case?
-> >
-> > "fdput() after failed fdget()" has confused people before, so IMO it's worth
-> > cleaning this up.  But the commit message should make clear that it's a cleanup,
-> > not a bug fix.  Also I recommend using an early return:
-> >
-> >       f = fdget(fd);
-> >       if (!f.file)
-> >               return -EBADF;
-> >       ret = sync_file_range(f.file, offset, nbytes, flags);
-> >       fdput(f);
-> >       return ret;
->
-> FWIW, fdput() after failed fdget() is rare, but there's no fundamental reasons
-> why it would be wrong.  No objections against that patch, anyway.
->
-> Out of curiousity, I've just looked at the existing users.  In mainline we have
-> 203 callers of fdput()/fdput_pos(); all but 7 never get reached with NULL ->file.
->
-> 1) There's ksys_sync_file_range(), kernel_read_file_from_fd() and ksys_readahead() -
-> all with similar pattern.  I'm not sure that for readahead(2) "not opened for
-> read" should yield the same error as "bad descriptor", but since it's been a part
-> of userland ABI for a while...
->
-> 2) two callers in perf_event_open(2) are playing silly buggers with explicit
->         struct fd group = {NULL, 0};
-> and rely upon "fdput() is a no-op if we hadn't touched that" (note that if
-> we try to touch it and get NULL ->file from fdget(), we do not hit those fdput()
-> at all).
->
-> 3) ovl_aio_put() is hard to follow (and some of the callers are poking
-> where they shouldn't), no idea if it's correct.  struct fd is manually
-> constructed there, anyway.
->
-> 4) bpf generic_map_update_batch() is really asking for trouble.  The comment in
-> there is wrong:
->         f = fdget(ufd); /* bpf_map_do_batch() guarantees ufd is valid */
-> *NOTHING* we'd done earlier can guarantee that.  We might have a descriptor
-> table shared with another thread, and it might have very well done dup2() since
-> the last time we'd looked things up.  IOW, this fdget() is racy - the function
-> assumes it refers to the same thing that gave us map back in bpf_map_do_batch(),
-> but it's not guaranteed at all.
->
-> I hadn't put together a reproducer, but that code is very suspicious.  As a general
-> rule, you should treat descriptor table as shared object, modifiable by other
-> threads.  It can be explicitly locked and it can be explicitly unshared, but
-> short of that doing a lookup for the same descriptor twice in a row can yield
-> different results.
->
-> What's going on there?  Do you really want the same struct file you've got back in
-> bpf_map_do_batch() (i.e. the one you've got the map from)?  What should happen
-> if the descriptor changes its meaning during (or after) the operation?
+TLDR:
+If a mempolicy is in effect(oc->constraint == CONSTRAINT_MEMORY_POLICY), out_of_memory() will
+select victim on specific node to kill. So that kernel can avoid accidental killing on NUMA system.
 
-Interesting.
-If I got this right... in the following:
+Problem:
+Before this patch series, oom will only kill the process with the highest memory usage.
+by selecting process with the highest oom_badness on the entire system to kill.
 
-f = fdget(ufd);
-map = __bpf_map_get(f);
-if (IS_ERR(map))
-   return PTR_ERR(map);
-...
-f = fdget(ufd);
-here there are no guarantees that 'f' is valid and points
-to the same map.
-Argh. In hindsight that makes sense.
+This works fine on UMA system, but may have some accidental killing on NUMA system.
 
-generic_map_update_batch calls bpf_map_update_value.
-That could use 'f' for prog_array, fd_array and hash_of_maps
-types of maps.
-The first two types don't' define .map_update_batch callback.
-So BPF_DO_BATCH(map->ops->map_update_batch); will error out
-with -ENOTSUPP since that callback is NULL for that map type.
+As shown below, if process c.out is bind to Node1 and keep allocating pages from Node1,
+a.out will be killed first. But killing a.out did't free any mem on Node1, so c.out
+will be killed then.
 
-The hash_of_maps does seem to support it, but
-that's an odd one to use with batch access.
+A lot of our AMD machines have 8 numa nodes. In these systems, there is a greater chance
+of triggering this problem.
 
-Anyhow we certainly need to clean this up.
+OOM before patches:
+```
+Per-node process memory usage (in MBs)
+PID             Node 0        Node 1      Total
+----------- ---------- ------------- ----------
+3095 a.out     3073.34          0.11    3073.45(Killed first. Maximum memory consumption)
+3199 b.out      501.35       1500.00    2001.35
+3805 c.out        1.52 (grow)2248.00    2249.52(Killed then. Node1 is full)
+----------- ---------- ------------- ----------
+Total          3576.21       3748.11    7324.31
+```
 
-Brian,
-do you mind fixing it up, since you've added that
-secondary fdget() in the first place?
+Solution:
+We store per node rss in mm_rss_stat for each process.
 
-Thanks!
+If a page allocation with mempolicy in effect(oc->constraint == CONSTRAINT_MEMORY_POLICY)
+triger oom. We will calculate oom_badness with rss counter for the corresponding node. Then
+select the process with the highest oom_badness on the corresponding node to kill.
+
+OOM after patches:
+```
+Per-node process memory usage (in MBs)
+PID             Node 0        Node 1     Total
+----------- ---------- ------------- ----------
+3095 a.out     3073.34          0.11    3073.45
+3199 b.out      501.35       1500.00    2001.35
+3805 c.out        1.52 (grow)2248.00    2249.52(killed)
+----------- ---------- ------------- ----------
+Total          3576.21       3748.11    7324.31
+```
+
+Gang Li (5):
+  mm: add a new parameter `node` to `get/add/inc/dec_mm_counter`
+  mm: add numa_count field for rss_stat
+  mm: add numa fields for tracepoint rss_stat
+  mm: enable per numa node rss_stat count
+  mm, oom: enable per numa node oom for CONSTRAINT_MEMORY_POLICY
+
+ arch/s390/mm/pgtable.c        |   4 +-
+ fs/exec.c                     |   2 +-
+ fs/proc/base.c                |   6 +-
+ fs/proc/task_mmu.c            |  14 ++--
+ include/linux/mm.h            |  59 ++++++++++++-----
+ include/linux/mm_types_task.h |  16 +++++
+ include/linux/oom.h           |   2 +-
+ include/trace/events/kmem.h   |  27 ++++++--
+ kernel/events/uprobes.c       |   6 +-
+ kernel/fork.c                 |  70 +++++++++++++++++++-
+ mm/huge_memory.c              |  13 ++--
+ mm/khugepaged.c               |   4 +-
+ mm/ksm.c                      |   2 +-
+ mm/madvise.c                  |   2 +-
+ mm/memory.c                   | 116 ++++++++++++++++++++++++----------
+ mm/migrate.c                  |   2 +
+ mm/migrate_device.c           |   2 +-
+ mm/oom_kill.c                 |  59 ++++++++++++-----
+ mm/rmap.c                     |  16 ++---
+ mm/swapfile.c                 |   4 +-
+ mm/userfaultfd.c              |   2 +-
+ 21 files changed, 317 insertions(+), 111 deletions(-)
+
+-- 
+2.20.1
+
