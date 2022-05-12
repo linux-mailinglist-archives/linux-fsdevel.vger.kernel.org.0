@@ -2,221 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C8D152583B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 May 2022 01:26:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 04504525853
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 May 2022 01:30:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1359444AbiELX0p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 May 2022 19:26:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45956 "EHLO
+        id S1359495AbiELXaA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 May 2022 19:30:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1359445AbiELX0o (ORCPT
+        with ESMTP id S1359483AbiELX36 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 May 2022 19:26:44 -0400
-Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 262E022B1F
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 May 2022 16:26:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=4OGFt/RuhqZvF9I/pswtLr39DEvgW304DrR4MR8e7mM=; b=eihfcq8AeoEtqKjwF8Kl4Kz8QD
-        sVfmaxsrf+h47X9bn9ZFuoyj7+hzbPUTBZ9QOp0U4tzok+a8a8cw71jnmOCLmkvwoVO1VXnwenrsI
-        rXIiiy03kPzaTgaG/ik+TqT9pIgFNGyshY6kfhfFnTgPWRjx5aBXPFO5Zr9tBigG4r7cFnQeBKovz
-        j5gDRfQC0AiMcTld1ND7/onxP58idcTRRY2v2A9ChoBqByiHQjblrN0eBafnrxI7Y5JguS3uEb/oi
-        xcZg2gGqo5M92GrUJhacBKWvUuJ5zKiFtdu+jAGbka2E0JUvGNF62of1VKTvjbotIzzK+3tW27gYz
-        41cwprSA==;
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1npICd-00EQiY-5A; Thu, 12 May 2022 23:26:39 +0000
-Date:   Thu, 12 May 2022 23:26:39 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>
-Subject: [RFC][PATCH] get rid of the remnants of 'batched' fget/fput stuff
-Message-ID: <Yn2Xr5NlqVUzBQLG@zeniv-ca.linux.org.uk>
-References: <Yn16M/fayt6tK/Gp@zeniv-ca.linux.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Yn16M/fayt6tK/Gp@zeniv-ca.linux.org.uk>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        Thu, 12 May 2022 19:29:58 -0400
+Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAC79266E23
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 May 2022 16:29:54 -0700 (PDT)
+Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-2f7dbceab08so57258387b3.10
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 May 2022 16:29:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=ll/7XSf/H3qu4hV/tAquY/NfSRFNg8NkKW4o64RepQ0=;
+        b=Q++eRMtfjcI9Weo+kStkfr2hsfPcC9L4GFNLEm94yFV/g1ZBzPR6G83a/UtRlDixkw
+         1Mot0a2ot9E4Ej2LdOq1Ytks78WCqTbHZx0yVJnvsos7xdhlaK+WsGzunh0TSnLeNOXK
+         Rmhft858TNrWZxHb1vIXyDzJqV51Ui4zlKeutD2qw2Wh05j4bkzG3cBakYQkipB/1d+c
+         2VLSAB4vN3c+D0lTWLcznHNfsa97Zo6a/KCZMcr6AA59RHowXzghwDrpb9IVJ4bWK5I5
+         Ip/NJBKvapOsic3bceuoopIlLuIsz3ifSY+XZAaN8ZSrIkbXWxoNb6mVy2d0WqiuUZPN
+         0pZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=ll/7XSf/H3qu4hV/tAquY/NfSRFNg8NkKW4o64RepQ0=;
+        b=JR+ouI1Bi587cui8DZGtkDlMx9c7f1pObihIx2cHWyZfWy2BeYxhGhDHBBzNX6Z9Fg
+         Jcboa8EFwYQUgoE0ZWkncnWauEp7sdNrxL4waPG1CqDlF9Gb8WN2WgW6Odv65wxxOHrQ
+         jQmV6RuVgYdilECMzZjT+vBfF9ZU4Cb7bKoOKFuWNPwlJZnpYMYUnLcCdKbhhO4DdV5P
+         X5u9NH5AhTD5x5TtzUBN7JlQisKvILlp1JXiRtJ83HVcjBRZLiC1jwhtQNprhoeyCRkO
+         wBzDqlVWm071UKkaESRaI1WqxeaXfJLu80WyFI+TN8tMn+jN2pOvfBa8eRwMWK+yW1Ic
+         V0Kg==
+X-Gm-Message-State: AOAM531XxNnCuMXyvB8f0xrVllTfpDP+voVlpHx/0Y1KIl06JKJ0rzzr
+        W+Cl1bLC5ymG5CiMikd5vtsq0H1PrgE=
+X-Google-Smtp-Source: ABdhPJzwLo+8YO8Slpp9TJgLo1ENvJJUmE+JpdNMGnIkuOH30USGHB2TLD4cdG1YNKXX7zXUg53tmsP4rkQ=
+X-Received: from khazhy-linux.svl.corp.google.com ([2620:15c:2cd:202:a792:e3ab:48df:f42e])
+ (user=khazhy job=sendgmr) by 2002:a81:a016:0:b0:2f7:cfa3:4dc3 with SMTP id
+ x22-20020a81a016000000b002f7cfa34dc3mr2638289ywg.467.1652398194037; Thu, 12
+ May 2022 16:29:54 -0700 (PDT)
+Date:   Thu, 12 May 2022 16:29:07 -0700
+In-Reply-To: <CACGdZYLMW2KHVebfyJZVn9G=15N+Jt4+8oF5gq3wdDTOcXbk9A@mail.gmail.com>
+Message-Id: <20220512232907.312855-1-khazhy@google.com>
+Mime-Version: 1.0
+References: <CACGdZYLMW2KHVebfyJZVn9G=15N+Jt4+8oF5gq3wdDTOcXbk9A@mail.gmail.com>
+X-Mailer: git-send-email 2.36.0.550.gb090851708-goog
+Subject: [RFC PATCH] blkcg: rewind seq_file if no stats
+From:   Khazhismel Kumykov <khazhy@google.com>
+To:     tj@kernel.org, axboe@kernel.dk, viro@zeniv.linux.org.uk
+Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Khazhismel Kumykov <khazhy@google.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hadn't been used since 62906e89e63b "io_uring: remove file batch-get
-optimisation", should've been killed back then...
+In lieu of get_seq_buf + seq_commit, provide a way to "undo" writes if
+we use seq_printf
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Fixes: 252c651a4c85 ("blk-cgroup: stop using seq_get_buf")
+
+Signed-off-by: Khazhismel Kumykov <khazhy@google.com>
 ---
-diff --git a/fs/file.c b/fs/file.c
-index 9780888fa2da..9fbc0c653930 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -850,7 +850,7 @@ void do_close_on_exec(struct files_struct *files)
+ block/blk-cgroup.c       |  5 +++++
+ fs/seq_file.c            | 14 ++++++++++++++
+ include/linux/seq_file.h |  2 ++
+ 3 files changed, 21 insertions(+)
+
+diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
+index 8dfe62786cd5..50043a742c48 100644
+--- a/block/blk-cgroup.c
++++ b/block/blk-cgroup.c
+@@ -909,6 +909,7 @@ static void blkcg_print_one_stat(struct blkcg_gq *blkg, struct seq_file *s)
+ 	const char *dname;
+ 	unsigned seq;
+ 	int i;
++	int scookie;
+ 
+ 	if (!blkg->online)
+ 		return;
+@@ -917,6 +918,8 @@ static void blkcg_print_one_stat(struct blkcg_gq *blkg, struct seq_file *s)
+ 	if (!dname)
+ 		return;
+ 
++	scookie = seq_checkpoint(s);
++
+ 	seq_printf(s, "%s ", dname);
+ 
+ 	do {
+@@ -956,6 +959,8 @@ static void blkcg_print_one_stat(struct blkcg_gq *blkg, struct seq_file *s)
+ 
+ 	if (has_stats)
+ 		seq_printf(s, "\n");
++	else
++		seq_restore(s, scookie);
  }
  
- static inline struct file *__fget_files_rcu(struct files_struct *files,
--	unsigned int fd, fmode_t mask, unsigned int refs)
-+	unsigned int fd, fmode_t mask)
+ static int blkcg_print_stat(struct seq_file *sf, void *v)
+diff --git a/fs/seq_file.c b/fs/seq_file.c
+index 7ab8a58c29b6..c3ec6b57334e 100644
+--- a/fs/seq_file.c
++++ b/fs/seq_file.c
+@@ -408,6 +408,20 @@ void seq_printf(struct seq_file *m, const char *f, ...)
+ }
+ EXPORT_SYMBOL(seq_printf);
+ 
++int seq_checkpoint(struct seq_file *m)
++{
++	return m->count;
++}
++EXPORT_SYMBOL(seq_checkpoint);
++
++void seq_restore(struct seq_file *m, int count)
++{
++	if (WARN_ON_ONCE(count > m->count || count > m->size))
++		return;
++	m->count = count;
++}
++EXPORT_SYMBOL(seq_restore);
++
+ #ifdef CONFIG_BINARY_PRINTF
+ void seq_bprintf(struct seq_file *m, const char *f, const u32 *binary)
  {
- 	for (;;) {
- 		struct file *file;
-@@ -876,10 +876,10 @@ static inline struct file *__fget_files_rcu(struct files_struct *files,
- 		 * Such a race can take two forms:
- 		 *
- 		 *  (a) the file ref already went down to zero,
--		 *      and get_file_rcu_many() fails. Just try
-+		 *      and get_file_rcu() fails. Just try
- 		 *      again:
- 		 */
--		if (unlikely(!get_file_rcu_many(file, refs)))
-+		if (unlikely(!get_file_rcu(file)))
- 			continue;
- 
- 		/*
-@@ -888,11 +888,11 @@ static inline struct file *__fget_files_rcu(struct files_struct *files,
- 		 *       pointer having changed, because it always goes
- 		 *       hand-in-hand with 'fdt'.
- 		 *
--		 * If so, we need to put our refs and try again.
-+		 * If so, we need to put our ref and try again.
- 		 */
- 		if (unlikely(rcu_dereference_raw(files->fdt) != fdt) ||
- 		    unlikely(rcu_dereference_raw(*fdentry) != file)) {
--			fput_many(file, refs);
-+			fput(file);
- 			continue;
- 		}
- 
-@@ -905,37 +905,31 @@ static inline struct file *__fget_files_rcu(struct files_struct *files,
- }
- 
- static struct file *__fget_files(struct files_struct *files, unsigned int fd,
--				 fmode_t mask, unsigned int refs)
-+				 fmode_t mask)
- {
- 	struct file *file;
- 
- 	rcu_read_lock();
--	file = __fget_files_rcu(files, fd, mask, refs);
-+	file = __fget_files_rcu(files, fd, mask);
- 	rcu_read_unlock();
- 
- 	return file;
- }
- 
--static inline struct file *__fget(unsigned int fd, fmode_t mask,
--				  unsigned int refs)
--{
--	return __fget_files(current->files, fd, mask, refs);
--}
--
--struct file *fget_many(unsigned int fd, unsigned int refs)
-+static inline struct file *__fget(unsigned int fd, fmode_t mask)
- {
--	return __fget(fd, FMODE_PATH, refs);
-+	return __fget_files(current->files, fd, mask);
- }
- 
- struct file *fget(unsigned int fd)
- {
--	return __fget(fd, FMODE_PATH, 1);
-+	return __fget(fd, FMODE_PATH);
- }
- EXPORT_SYMBOL(fget);
- 
- struct file *fget_raw(unsigned int fd)
- {
--	return __fget(fd, 0, 1);
-+	return __fget(fd, 0);
- }
- EXPORT_SYMBOL(fget_raw);
- 
-@@ -945,7 +939,7 @@ struct file *fget_task(struct task_struct *task, unsigned int fd)
- 
- 	task_lock(task);
- 	if (task->files)
--		file = __fget_files(task->files, fd, 0, 1);
-+		file = __fget_files(task->files, fd, 0);
- 	task_unlock(task);
- 
- 	return file;
-@@ -1014,7 +1008,7 @@ static unsigned long __fget_light(unsigned int fd, fmode_t mask)
- 			return 0;
- 		return (unsigned long)file;
- 	} else {
--		file = __fget(fd, mask, 1);
-+		file = __fget(fd, mask);
- 		if (!file)
- 			return 0;
- 		return FDPUT_FPUT | (unsigned long)file;
-diff --git a/fs/file_table.c b/fs/file_table.c
-index 7d2e692b66a9..1ffd74bbbed6 100644
---- a/fs/file_table.c
-+++ b/fs/file_table.c
-@@ -368,9 +368,9 @@ EXPORT_SYMBOL_GPL(flush_delayed_fput);
- 
- static DECLARE_DELAYED_WORK(delayed_fput_work, delayed_fput);
- 
--void fput_many(struct file *file, unsigned int refs)
-+void fput(struct file *file)
- {
--	if (atomic_long_sub_and_test(refs, &file->f_count)) {
-+	if (atomic_long_dec_and_test(&file->f_count)) {
- 		struct task_struct *task = current;
- 
- 		if (likely(!in_interrupt() && !(task->flags & PF_KTHREAD))) {
-@@ -389,11 +389,6 @@ void fput_many(struct file *file, unsigned int refs)
- 	}
- }
- 
--void fput(struct file *file)
--{
--	fput_many(file, 1);
--}
--
- /*
-  * synchronous analog of fput(); for kernel threads that might be needed
-  * in some umount() (and thus can't use flush_delayed_fput() without
-diff --git a/include/linux/file.h b/include/linux/file.h
-index 51e830b4fe3a..39704eae83e2 100644
---- a/include/linux/file.h
-+++ b/include/linux/file.h
-@@ -14,7 +14,6 @@
- struct file;
- 
- extern void fput(struct file *);
--extern void fput_many(struct file *, unsigned int);
- 
- struct file_operations;
- struct task_struct;
-@@ -47,7 +46,6 @@ static inline void fdput(struct fd fd)
- }
- 
- extern struct file *fget(unsigned int fd);
--extern struct file *fget_many(unsigned int fd, unsigned int refs);
- extern struct file *fget_raw(unsigned int fd);
- extern struct file *fget_task(struct task_struct *task, unsigned int fd);
- extern unsigned long __fdget(unsigned int fd);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index bbde95387a23..0521f0b1356b 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -981,9 +981,8 @@ static inline struct file *get_file(struct file *f)
- 	atomic_long_inc(&f->f_count);
- 	return f;
- }
--#define get_file_rcu_many(x, cnt)	\
--	atomic_long_add_unless(&(x)->f_count, (cnt), 0)
--#define get_file_rcu(x) get_file_rcu_many((x), 1)
-+#define get_file_rcu(x)	\
-+	atomic_long_add_unless(&(x)->f_count, 1, 0)
- #define file_count(x)	atomic_long_read(&(x)->f_count)
- 
- #define	MAX_NON_LFS	((1UL<<31) - 1)
+diff --git a/include/linux/seq_file.h b/include/linux/seq_file.h
+index 60820ab511d2..d3a05f7c2750 100644
+--- a/include/linux/seq_file.h
++++ b/include/linux/seq_file.h
+@@ -117,6 +117,8 @@ __printf(2, 0)
+ void seq_vprintf(struct seq_file *m, const char *fmt, va_list args);
+ __printf(2, 3)
+ void seq_printf(struct seq_file *m, const char *fmt, ...);
++int seq_checkpoint(struct seq_file *m);
++void seq_restore(struct seq_file *m, int count);
+ void seq_putc(struct seq_file *m, char c);
+ void seq_puts(struct seq_file *m, const char *s);
+ void seq_put_decimal_ull_width(struct seq_file *m, const char *delimiter,
+-- 
+2.36.0.550.gb090851708-goog
+
