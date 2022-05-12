@@ -2,90 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CFC6A5248AE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 May 2022 11:15:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E56C524A41
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 May 2022 12:30:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351872AbiELJPP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 May 2022 05:15:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42752 "EHLO
+        id S1352608AbiELKaM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 May 2022 06:30:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48420 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351862AbiELJPO (ORCPT
+        with ESMTP id S235697AbiELKaL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 May 2022 05:15:14 -0400
-Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3420D227831;
-        Thu, 12 May 2022 02:15:12 -0700 (PDT)
-Received: by mail-pf1-x433.google.com with SMTP id bo5so4257770pfb.4;
-        Thu, 12 May 2022 02:15:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=1yVCgY4QE8l5qFrVqFzJJ9uTK3QajC1JSeAXUrEX5mM=;
-        b=MGUdJx5o67V+c7ivUhgeC/BUEADviIwlhokhBxj+J+gl6IETIqORALQLeC353MYEdq
-         2Pv50dWwl1qTvK4mqNFOHI069/CG7FyZ13loxUH6lrmM2YVeNsaUmHum8Mp+TTRs/oeh
-         ZBGlq/iUg4CymqPWX6MatUagIwHh9sqigv1U1pwp/IFJZbcDC/sE8Y+G0OKSNa80eWYW
-         BLyjSxh1M6W5n5yjCmzKLV+ZcSFkjUbkiXtb+XgBTqTcLJ/SB7G8DkotwTzZEmEbSOsa
-         oNAFvZbwt1QeW4GoMUD5qskyCou5gc5b1XU1x3Lv9xQyif6Bg+WLMnX/LxkveG9KxCuB
-         sqAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=1yVCgY4QE8l5qFrVqFzJJ9uTK3QajC1JSeAXUrEX5mM=;
-        b=lLRz/8h4NizjwgN8zoRozPJbvNPyIQBVNxFc/iUuFBpY7WDnWaV2138zYnD81GnNLm
-         30tcGYNNrWfeHmdltgQdGYniLiTT18FOISFaVX6v2JItia+fkm4ovaaG4mT3zs+TpBud
-         M14UGMuPkezOXY+m1Ro9PUKv91WkIxp7YpobxURf7JosYRcehDxGp04xBiU+qaN80YRN
-         3HG10ZYle0roxs/eiJTckZJApb+FqrZh+XnURV/rYSvGFQgtxLtRNeYNWlB72Pk0ezjd
-         E20xX15YCHWJGKis9tGmnj2udTBHDxfH2lCb9XaE3fMFrfpeqI7wHf0zu/gx2TZoquzc
-         67xw==
-X-Gm-Message-State: AOAM530ZejMVa6hcqdYCAce1jrg5m9lF/RmP93z+48aHiiYJ6hpV5Mo8
-        stX+ppHOxBlWhXVRVhjwmU0=
-X-Google-Smtp-Source: ABdhPJxaigst32EHE9ix2EpasU4GC9GvtV1b4JcFlMBs/Eobm4jyuO5205pcB0haARI31D6QIfoeng==
-X-Received: by 2002:a05:6a00:885:b0:510:950f:f787 with SMTP id q5-20020a056a00088500b00510950ff787mr22839855pfj.83.1652346911472;
-        Thu, 12 May 2022 02:15:11 -0700 (PDT)
-Received: from localhost ([2620:10d:c090:400::4:6c64])
-        by smtp.gmail.com with ESMTPSA id c3-20020a170902724300b0015e8d4eb20esm3353001pll.88.2022.05.12.02.15.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 May 2022 02:15:10 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date:   Wed, 11 May 2022 23:15:09 -1000
-From:   Tejun Heo <tj@kernel.org>
-To:     Byungchul Park <byungchul.park@lge.com>
-Cc:     torvalds@linux-foundation.org, holt@sgi.com, mcgrof@kernel.org,
-        damien.lemoal@opensource.wdc.com, linux-ide@vger.kernel.org,
-        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        mingo@redhat.com, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, will@kernel.org, tglx@linutronix.de,
-        rostedt@goodmis.org, joel@joelfernandes.org, sashal@kernel.org,
-        daniel.vetter@ffwll.ch, chris@chris-wilson.co.uk,
-        duyuyang@gmail.com, johannes.berg@intel.com, tytso@mit.edu,
-        willy@infradead.org, david@fromorbit.com, amir73il@gmail.com,
-        bfields@fieldses.org, gregkh@linuxfoundation.org,
-        kernel-team@lge.com, linux-mm@kvack.org, akpm@linux-foundation.org,
-        mhocko@kernel.org, minchan@kernel.org, hannes@cmpxchg.org,
-        vdavydov.dev@gmail.com, sj@kernel.org, jglisse@redhat.com,
-        dennis@kernel.org, cl@linux.com, penberg@kernel.org,
-        rientjes@google.com, vbabka@suse.cz, ngupta@vflare.org,
-        linux-block@vger.kernel.org, paolo.valente@linaro.org,
-        josef@toxicpanda.com, linux-fsdevel@vger.kernel.org,
-        viro@zeniv.linux.org.uk, jack@suse.cz, jack@suse.com,
-        jlayton@kernel.org, dan.j.williams@intel.com, hch@infradead.org,
-        djwong@kernel.org, dri-devel@lists.freedesktop.org,
-        airlied@linux.ie, rodrigosiqueiramelo@gmail.com,
-        melissa.srw@gmail.com, hamohammed.sa@gmail.com, 42.hyeyoo@gmail.com
-Subject: Re: [REPORT] syscall reboot + umh + firmware fallback
-Message-ID: <YnzQHWASAxsGL9HW@slm.duckdns.org>
-References: <1651652269-15342-1-git-send-email-byungchul.park@lge.com>
- <20220512052557.GD18445@X58A-UD3R>
+        Thu, 12 May 2022 06:30:11 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CE95222C12;
+        Thu, 12 May 2022 03:30:09 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 20AFA21C53;
+        Thu, 12 May 2022 10:30:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1652351408;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Kr+qXZt/eYRnHVkFQUb89v0qriZD+fVIZO2dGDtN6mM=;
+        b=QTFwnlbeTqCScIwcQTchLvRxxxQ7jV9o58HLRIATh5MGj7+nOUT86zcM10V7ChyQjxj2Zn
+        XazUcEQQHBUJa4g4P6tUcAGUfh7cTA2ZFoS1z0InPMRmnX2j3TS5ttxLO/2Xu9OqPLDEX2
+        14oPc5RZ7Xt9Fk3rmaf5LRdJ88TLCHY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1652351408;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Kr+qXZt/eYRnHVkFQUb89v0qriZD+fVIZO2dGDtN6mM=;
+        b=n8WgQymwPjK6lX9O5CaLtXN7zeAoRKPrfIMBh3UQ0HRQdmoV0jjdTs3AfFvWRZt/fDaQ5N
+        xE/OaDtTBEJGy7DA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id DBEB013ABE;
+        Thu, 12 May 2022 10:30:07 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id EFzMNK/hfGITVAAAMHmgww
+        (envelope-from <dsterba@suse.cz>); Thu, 12 May 2022 10:30:07 +0000
+Date:   Thu, 12 May 2022 12:25:52 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     Anand Jain <anand.jain@oracle.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        "Darrick J. Wong" <djwong@kernel.org>, linux-btrfs@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: reduce memory allocation in the btrfs direct I/O path v2
+Message-ID: <20220512102552.GR18596@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Anand Jain <anand.jain@oracle.com>,
+        Christoph Hellwig <hch@lst.de>, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+        "Darrick J. Wong" <djwong@kernel.org>, linux-btrfs@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20220505201115.937837-1-hch@lst.de>
+ <dcab2ed0-d48f-e987-47fa-2fd1fc2dba08@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220512052557.GD18445@X58A-UD3R>
-X-Spam-Status: No, score=-1.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
+In-Reply-To: <dcab2ed0-d48f-e987-47fa-2fd1fc2dba08@oracle.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -93,75 +81,40 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
-
-Just took a look out of curiosity.
-
-On Thu, May 12, 2022 at 02:25:57PM +0900, Byungchul Park wrote:
-> PROCESS A	PROCESS B	WORKER C
+On Thu, May 12, 2022 at 12:25:57PM +0530, Anand Jain wrote:
+> On 5/6/22 01:41, Christoph Hellwig wrote:
+> > Hi all,
+> > 
+> > this series adds two minor improvements to iomap that allow btrfs
+> > to avoid a memory allocation per read/write system call and another
+> > one per submitted bio.  I also have at last two other pending uses
+> > for the iomap functionality later on, so they are not really btrfs
+> > specific either.
+> > 
+> > Changes since v1:
+> >   - pass the private data direct to iomap_dio_rw instead of through the
+> >     iocb
+> >   - better document the bio_set in iomap_dio_ops
+> >   - split a patch into three
+> >   - use kcalloc to allocate the checksums
+> > 
+> > Diffstat:
+> >   fs/btrfs/btrfs_inode.h |   25 --------
+> >   fs/btrfs/ctree.h       |    6 -
+> >   fs/btrfs/file.c        |    6 -
+> >   fs/btrfs/inode.c       |  152 +++++++++++++++++++++++--------------------------
+> >   fs/erofs/data.c        |    2
+> >   fs/ext4/file.c         |    4 -
+> >   fs/f2fs/file.c         |    4 -
+> >   fs/gfs2/file.c         |    4 -
+> >   fs/iomap/direct-io.c   |   26 ++++++--
+> >   fs/xfs/xfs_file.c      |    6 -
+> >   fs/zonefs/super.c      |    4 -
+> >   include/linux/iomap.h  |   16 ++++-
+> >   12 files changed, 123 insertions(+), 132 deletions(-)
 > 
-> __do_sys_reboot()
-> 		__do_sys_reboot()
->  mutex_lock(&system_transition_mutex)
->  ...		 mutex_lock(&system_transition_mutex) <- stuck
-> 		 ...
-> 				request_firmware_work_func()
-> 				 _request_firmware()
-> 				  firmware_fallback_sysfs()
-> 				   usermodehelper_read_lock_wait()
-> 				    down_read(&umhelper_sem)
-> 				   ...
-> 				   fw_load_sysfs_fallback()
-> 				    fw_sysfs_wait_timeout()
-> 				     wait_for_completion_killable_timeout(&fw_st->completion) <- stuck
->  kernel_halt()
->   __usermodehelper_disable()
->    down_write(&umhelper_sem) <- stuck
-> 
-> --------------------------------------------------------
-> All the 3 contexts are stuck at this point.
-> --------------------------------------------------------
-> 
-> PROCESS A	PROCESS B	WORKER C
-> 
->    ...
->    up_write(&umhelper_sem)
->  ...
->  mutex_unlock(&system_transition_mutex) <- cannot wake up B
-> 
-> 		 ...
-> 		 kernel_halt()
-> 		  notifier_call_chain()
-> 		   hw_shutdown_notify()
-> 		    kill_pending_fw_fallback_reqs()
-> 		     __fw_load_abort()
-> 		      complete_all(&fw_st->completion) <- cannot wake up C
-> 
-> 				   ...
-> 				   usermodeheler_read_unlock()
-> 				    up_read(&umhelper_sem) <- cannot wake up A
+> This patch got me curious a couple of days back while I was tracing
+> a dio read performance issue on nvme. I am sharing the results as below.
+> [1]. There is no performance difference. Thx.
 
-I'm not sure I'm reading it correctly but it looks like "process B" column
-is superflous given that it's waiting on the same lock to do the same thing
-that A is already doing (besides, you can't really halt the machine twice).
-What it's reporting seems to be ABBA deadlock between A waiting on
-umhelper_sem and C waiting on fw_st->completion. The report seems spurious:
-
-1. wait_for_completion_killable_timeout() doesn't need someone to wake it up
-   to make forward progress because it will unstick itself after timeout
-   expires.
-
-2. complete_all() from __fw_load_abort() isn't the only source of wakeup.
-   The fw loader can be, and mainly should be, woken up by firmware loading
-   actually completing instead of being aborted.
-
-I guess the reason why B shows up there is because the operation order is
-such that just between A and C, the complete_all() takes place before
-__usermodehlper_disable(), so the whole thing kinda doesn't make sense as
-you can't block a past operation by a future one. Inserting process B
-introduces the reverse ordering.
-
-Thanks.
-
--- 
-tejun
+Thanks for the results.
