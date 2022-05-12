@@ -2,152 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 04504525853
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 May 2022 01:30:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EAE9D5258B1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 May 2022 01:48:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1359495AbiELXaA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 May 2022 19:30:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59206 "EHLO
+        id S1355136AbiELXsO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 May 2022 19:48:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1359483AbiELX36 (ORCPT
+        with ESMTP id S238274AbiELXsL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 May 2022 19:29:58 -0400
-Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAC79266E23
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 May 2022 16:29:54 -0700 (PDT)
-Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-2f7dbceab08so57258387b3.10
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 May 2022 16:29:54 -0700 (PDT)
+        Thu, 12 May 2022 19:48:11 -0400
+Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31BF5880F8
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 May 2022 16:48:10 -0700 (PDT)
+Received: by mail-pg1-x536.google.com with SMTP id q76so5945869pgq.10
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 May 2022 16:48:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=ll/7XSf/H3qu4hV/tAquY/NfSRFNg8NkKW4o64RepQ0=;
-        b=Q++eRMtfjcI9Weo+kStkfr2hsfPcC9L4GFNLEm94yFV/g1ZBzPR6G83a/UtRlDixkw
-         1Mot0a2ot9E4Ej2LdOq1Ytks78WCqTbHZx0yVJnvsos7xdhlaK+WsGzunh0TSnLeNOXK
-         Rmhft858TNrWZxHb1vIXyDzJqV51Ui4zlKeutD2qw2Wh05j4bkzG3cBakYQkipB/1d+c
-         2VLSAB4vN3c+D0lTWLcznHNfsa97Zo6a/KCZMcr6AA59RHowXzghwDrpb9IVJ4bWK5I5
-         Ip/NJBKvapOsic3bceuoopIlLuIsz3ifSY+XZAaN8ZSrIkbXWxoNb6mVy2d0WqiuUZPN
-         0pZw==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=vw3sQUpaieTMoTDcrILIHVgb1aLkRaenBNEtTnBNXys=;
+        b=Pz6+uT/TOgZQkn8jdZjeMNQne+A85AjgfGq4gqor3r+UyOgCioYHj5ta6kaanBhaTw
+         wAuOZ5DNSQKkmCViGuUnbTjQ7k4NFmUM6RRqrvqGAeh0xxlx4Eo48jkJdDEHb0lZOtYT
+         4e6QyqhI0XC3j58/HrE7jRCQW6SK9tvHHOZWs6YU6QHucGVQJH+wmtUjLIxi/oSbXJTO
+         nqLy2F7rRZQZQnt6xHzmA+OzY2+P0HX3r0ccYLjsHLeH0DmwQ2RYedB2FqbUWSop7o9F
+         81KW2R/NC/zV/6dbh25gMBpt325nFAOPmqw4FC/MFL5TXxbqkGgA0SnPp4vzWY4O9KJg
+         s51g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=ll/7XSf/H3qu4hV/tAquY/NfSRFNg8NkKW4o64RepQ0=;
-        b=JR+ouI1Bi587cui8DZGtkDlMx9c7f1pObihIx2cHWyZfWy2BeYxhGhDHBBzNX6Z9Fg
-         Jcboa8EFwYQUgoE0ZWkncnWauEp7sdNrxL4waPG1CqDlF9Gb8WN2WgW6Odv65wxxOHrQ
-         jQmV6RuVgYdilECMzZjT+vBfF9ZU4Cb7bKoOKFuWNPwlJZnpYMYUnLcCdKbhhO4DdV5P
-         X5u9NH5AhTD5x5TtzUBN7JlQisKvILlp1JXiRtJ83HVcjBRZLiC1jwhtQNprhoeyCRkO
-         wBzDqlVWm071UKkaESRaI1WqxeaXfJLu80WyFI+TN8tMn+jN2pOvfBa8eRwMWK+yW1Ic
-         V0Kg==
-X-Gm-Message-State: AOAM531XxNnCuMXyvB8f0xrVllTfpDP+voVlpHx/0Y1KIl06JKJ0rzzr
-        W+Cl1bLC5ymG5CiMikd5vtsq0H1PrgE=
-X-Google-Smtp-Source: ABdhPJzwLo+8YO8Slpp9TJgLo1ENvJJUmE+JpdNMGnIkuOH30USGHB2TLD4cdG1YNKXX7zXUg53tmsP4rkQ=
-X-Received: from khazhy-linux.svl.corp.google.com ([2620:15c:2cd:202:a792:e3ab:48df:f42e])
- (user=khazhy job=sendgmr) by 2002:a81:a016:0:b0:2f7:cfa3:4dc3 with SMTP id
- x22-20020a81a016000000b002f7cfa34dc3mr2638289ywg.467.1652398194037; Thu, 12
- May 2022 16:29:54 -0700 (PDT)
-Date:   Thu, 12 May 2022 16:29:07 -0700
-In-Reply-To: <CACGdZYLMW2KHVebfyJZVn9G=15N+Jt4+8oF5gq3wdDTOcXbk9A@mail.gmail.com>
-Message-Id: <20220512232907.312855-1-khazhy@google.com>
-Mime-Version: 1.0
-References: <CACGdZYLMW2KHVebfyJZVn9G=15N+Jt4+8oF5gq3wdDTOcXbk9A@mail.gmail.com>
-X-Mailer: git-send-email 2.36.0.550.gb090851708-goog
-Subject: [RFC PATCH] blkcg: rewind seq_file if no stats
-From:   Khazhismel Kumykov <khazhy@google.com>
-To:     tj@kernel.org, axboe@kernel.dk, viro@zeniv.linux.org.uk
-Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Khazhismel Kumykov <khazhy@google.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=vw3sQUpaieTMoTDcrILIHVgb1aLkRaenBNEtTnBNXys=;
+        b=eGUNTVe9hmt4E3jLOYOqPu/jt/VN/kMFGrajKQSnEKuzz2kSeeJzSiIMCU0wE9LwX0
+         vxz69jrXwVNMsvqJKOF8ixGvcpG7Fk0EH5sSifNQ5vUP9wPGP0TcG1iISQI5MfLctlEF
+         XQfcqZJIVqg0TXmBWOtg9vZLLJlFXQESeoObdH3EWzmYLyE3y8bxJYD8Ck2taJJiWlVD
+         4alj3dL3GWueGHd7rg3KCZosgXxhFf8bynRPkkfvQKtJf0FfDmT6tsusvENvSCxndarm
+         H87G++h3WIM8W/H0HpmdxeQdqoQtIbmPmyZcAMfrgdkDZn0vS3XXOCb9/tyzWECPomPk
+         JJog==
+X-Gm-Message-State: AOAM532USZEIisGkTLmAwfraIgab6FzAJ2lSpXDkrAfaOxrbTIQMKToL
+        600tLxZ86Nh4DErGPwr/tVmeQA==
+X-Google-Smtp-Source: ABdhPJxwk1qWnTYjkN8+NK/UUZumYODUolTYhZmVJgwS/nIhdmBp2fQZQYiMSYCcRe/a4dh1KJ06fQ==
+X-Received: by 2002:a63:e841:0:b0:3c6:afc0:2259 with SMTP id a1-20020a63e841000000b003c6afc02259mr1654460pgk.47.1652399289651;
+        Thu, 12 May 2022 16:48:09 -0700 (PDT)
+Received: from [192.168.1.100] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id k1-20020a637b41000000b003dafe6e72ffsm257295pgn.88.2022.05.12.16.48.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 May 2022 16:48:09 -0700 (PDT)
+Message-ID: <c9d4df4e-f31d-1b6c-0d63-d1f2bf40929b@kernel.dk>
+Date:   Thu, 12 May 2022 17:48:08 -0600
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [RFC][PATCH] get rid of the remnants of 'batched' fget/fput stuff
+Content-Language: en-US
+To:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
+Cc:     Pavel Begunkov <asml.silence@gmail.com>
+References: <Yn16M/fayt6tK/Gp@zeniv-ca.linux.org.uk>
+ <Yn2Xr5NlqVUzBQLG@zeniv-ca.linux.org.uk>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <Yn2Xr5NlqVUzBQLG@zeniv-ca.linux.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In lieu of get_seq_buf + seq_commit, provide a way to "undo" writes if
-we use seq_printf
+On 5/12/22 5:26 PM, Al Viro wrote:
+> Hadn't been used since 62906e89e63b "io_uring: remove file batch-get
+> optimisation", should've been killed back then...
 
-Fixes: 252c651a4c85 ("blk-cgroup: stop using seq_get_buf")
+I'm pretty sure this has been sent out before, forget from whom. So it's
+not like it hasn't been suggested or posted... In case it matters:
 
-Signed-off-by: Khazhismel Kumykov <khazhy@google.com>
----
- block/blk-cgroup.c       |  5 +++++
- fs/seq_file.c            | 14 ++++++++++++++
- include/linux/seq_file.h |  2 ++
- 3 files changed, 21 insertions(+)
+Acked-by: Jens Axboe <axboe@kernel.dk>
 
-diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
-index 8dfe62786cd5..50043a742c48 100644
---- a/block/blk-cgroup.c
-+++ b/block/blk-cgroup.c
-@@ -909,6 +909,7 @@ static void blkcg_print_one_stat(struct blkcg_gq *blkg, struct seq_file *s)
- 	const char *dname;
- 	unsigned seq;
- 	int i;
-+	int scookie;
- 
- 	if (!blkg->online)
- 		return;
-@@ -917,6 +918,8 @@ static void blkcg_print_one_stat(struct blkcg_gq *blkg, struct seq_file *s)
- 	if (!dname)
- 		return;
- 
-+	scookie = seq_checkpoint(s);
-+
- 	seq_printf(s, "%s ", dname);
- 
- 	do {
-@@ -956,6 +959,8 @@ static void blkcg_print_one_stat(struct blkcg_gq *blkg, struct seq_file *s)
- 
- 	if (has_stats)
- 		seq_printf(s, "\n");
-+	else
-+		seq_restore(s, scookie);
- }
- 
- static int blkcg_print_stat(struct seq_file *sf, void *v)
-diff --git a/fs/seq_file.c b/fs/seq_file.c
-index 7ab8a58c29b6..c3ec6b57334e 100644
---- a/fs/seq_file.c
-+++ b/fs/seq_file.c
-@@ -408,6 +408,20 @@ void seq_printf(struct seq_file *m, const char *f, ...)
- }
- EXPORT_SYMBOL(seq_printf);
- 
-+int seq_checkpoint(struct seq_file *m)
-+{
-+	return m->count;
-+}
-+EXPORT_SYMBOL(seq_checkpoint);
-+
-+void seq_restore(struct seq_file *m, int count)
-+{
-+	if (WARN_ON_ONCE(count > m->count || count > m->size))
-+		return;
-+	m->count = count;
-+}
-+EXPORT_SYMBOL(seq_restore);
-+
- #ifdef CONFIG_BINARY_PRINTF
- void seq_bprintf(struct seq_file *m, const char *f, const u32 *binary)
- {
-diff --git a/include/linux/seq_file.h b/include/linux/seq_file.h
-index 60820ab511d2..d3a05f7c2750 100644
---- a/include/linux/seq_file.h
-+++ b/include/linux/seq_file.h
-@@ -117,6 +117,8 @@ __printf(2, 0)
- void seq_vprintf(struct seq_file *m, const char *fmt, va_list args);
- __printf(2, 3)
- void seq_printf(struct seq_file *m, const char *fmt, ...);
-+int seq_checkpoint(struct seq_file *m);
-+void seq_restore(struct seq_file *m, int count);
- void seq_putc(struct seq_file *m, char c);
- void seq_puts(struct seq_file *m, const char *s);
- void seq_put_decimal_ull_width(struct seq_file *m, const char *delimiter,
 -- 
-2.36.0.550.gb090851708-goog
+Jens Axboe
 
