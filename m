@@ -2,313 +2,178 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E8E2B5256FB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 May 2022 23:21:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C4EA5257CD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 May 2022 00:31:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350109AbiELVVK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 May 2022 17:21:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48862 "EHLO
+        id S1359180AbiELWbu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 May 2022 18:31:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358431AbiELVUz (ORCPT
+        with ESMTP id S1359179AbiELWbs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 May 2022 17:20:55 -0400
-Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47110289A6
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 May 2022 14:20:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
-        Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:In-Reply-To:References;
-        bh=9oLxOzlFyrPXqmcJoBRttq0jjzSHXhyCNTKULNXsPoI=; b=o5dMTEqKmI4Vh0spDGdyp2MX6j
-        JCzqvuU/IAghFnkXVu5+7geFKO2szF1Q7MYU10J1jPX8TNOxsKm2yyx9gSuGUF6GsMWxMdtjo6BIV
-        13SzsYiltYMDSpDOsNDvbyzPYeGYptxAENUKIU0mFHz4ybYa3+rG/l12fhSfUIyPWE2q6hHLOwhAD
-        QxX5QMZQ6vWSliKG4FUtWbRKtwBz0+LC2mSDOQN+70T9B7ATRg34+lH9lkEiPD81we1d32WzP8mLv
-        xOcjnLk40WCuOUvvM7pqPgyj9lLAc5aKa4E5X7EuLi0vXp+E06I+LWb48ZgkDl31icJzkhXBg0878
-        lnVl9cFQ==;
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1npGEt-00EPMT-AI; Thu, 12 May 2022 21:20:51 +0000
-Date:   Thu, 12 May 2022 21:20:51 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     Christian Brauner <christian@brauner.io>,
-        Jens Axboe <axboe@kernel.dk>, Todd Kjos <tkjos@google.com>,
-        Giuseppe Scrivano <gscrivan@redhat.com>
-Subject: [RFC] unify the file-closing stuff in fs/file.c
-Message-ID: <Yn16M/fayt6tK/Gp@zeniv-ca.linux.org.uk>
+        Thu, 12 May 2022 18:31:48 -0400
+Received: from mail-yw1-x1131.google.com (mail-yw1-x1131.google.com [IPv6:2607:f8b0:4864:20::1131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5ED945909D
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 May 2022 15:31:46 -0700 (PDT)
+Received: by mail-yw1-x1131.google.com with SMTP id 00721157ae682-2f7d621d1caso72533607b3.11
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 May 2022 15:31:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=AJGrVRrH+dOEhiElDtPJnom+nsrzVSlx3m1P3MXcyt8=;
+        b=HKHBQnUdowSNLBhbkOBsBEX5C+iK1w0Yf+bcFPhOqlRiMP6A0Mz5ltaYanBi+i05iG
+         cin6l4liXxnPvewh1T7T7VdF/b2gZubu8BFpF1WFRdvGC4vbHWLBnyEHMDVH+/ycYupI
+         sjKR4L02x/5+BSW+jam05AzZ2NmQlqkBhti6Uq78H0zr3uNSRVTWjzYDMTHeVMumdU/f
+         6Swv4843WGA/Mnd9MNpjok50X0vmtCH9JqfJWCHJy2aQ5P6XU2iRMYw+xQW3GDRas9BS
+         PaouOeajWzpDJoWV+wRBWGsBQvWe3KgQtzreixaQBUYxzKZaZERpu/imjAsk5CAWC9cB
+         OUbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AJGrVRrH+dOEhiElDtPJnom+nsrzVSlx3m1P3MXcyt8=;
+        b=jr726GemCv0IHdd87cRgs9DhB+sXD9QmQeOto7Cu35hz18ERBowcfHNxZAx4vvPbXT
+         auqgeDViWXLTPNa+gMOX0/2/M6XWF7xCddM9JXPwuhg1+oswZ4NbVhUBt01KhcH+lcFe
+         xEbTVRdtdbUGgwpLc28hGjYTo7gR4PDRdZMJmNkjZZ8nuigIInYfq5myzsYCdlg2SisE
+         7k5FFRbsV0X/JRTIh7oMktPIdwaz199PXrXrwwqR9ZSjaZ/n7O1gBRPFyNeJRR14hWEe
+         HwDDZrk6+2il5G42zadmzk7c1RpCHKHViByT8d2GSKG7Gqyfeuuhdr5ijV+LcsPjY8cd
+         9icQ==
+X-Gm-Message-State: AOAM531iz4Yh8Vio6dN7IitGaM0gD5ihQF7nfadxLUmZUlByOfgVc8mO
+        HxzioPWLULsjXtD94sHh80iTYMlYNN7uURi0XHmuNA==
+X-Google-Smtp-Source: ABdhPJwzefOUbhnD4vlu7+gan+V9STOahhU9EhcwGhhFaV8YI/mjlx7OYk8OXREHs4uUiLanalOYjb8ajWHHjC3d7gc=
+X-Received: by 2002:a81:4fd0:0:b0:2fb:2c3e:6cbc with SMTP id
+ d199-20020a814fd0000000b002fb2c3e6cbcmr2716004ywb.180.1652394705360; Thu, 12
+ May 2022 15:31:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+References: <20220512044634.63586-1-ligang.bdlg@bytedance.com>
+In-Reply-To: <20220512044634.63586-1-ligang.bdlg@bytedance.com>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Thu, 12 May 2022 15:31:34 -0700
+Message-ID: <CAJuCfpGDamD6P6Tgz=Y59fpj1NgFL0wjKe+y42-mCQ2x-asx3A@mail.gmail.com>
+Subject: Re: [PATCH 0/5 v1] mm, oom: Introduce per numa node oom for CONSTRAINT_MEMORY_POLICY
+To:     Gang Li <ligang.bdlg@bytedance.com>, Michal Hocko <mhocko@suse.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Muchun Song <songmuchun@bytedance.com>, hca@linux.ibm.com,
+        gor@linux.ibm.com, agordeev@linux.ibm.com,
+        borntraeger@linux.ibm.com, svens@linux.ibm.com,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>, acme@kernel.org,
+        mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+        jolsa@kernel.org, namhyung@kernel.org,
+        David Hildenbrand <david@redhat.com>, imbrenda@linux.ibm.com,
+        apopple@nvidia.com, Alexey Dobriyan <adobriyan@gmail.com>,
+        stephen.s.brennan@oracle.com, ohoono.kwon@samsung.com,
+        haolee.swjtu@gmail.com, Kalesh Singh <kaleshsingh@google.com>,
+        zhengqi.arch@bytedance.com, Peter Xu <peterx@redhat.com>,
+        Yang Shi <shy828301@gmail.com>,
+        Colin Cross <ccross@google.com>, vincent.whitchurch@axis.com,
+        Thomas Gleixner <tglx@linutronix.de>, bigeasy@linutronix.de,
+        fenghua.yu@intel.com, linux-s390@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-	Right now we have two places that do such removals - pick_file()
-and {__,}close_fd_get_file().
+On Wed, May 11, 2022 at 9:47 PM Gang Li <ligang.bdlg@bytedance.com> wrote:
+>
+> TLDR:
+> If a mempolicy is in effect(oc->constraint == CONSTRAINT_MEMORY_POLICY), out_of_memory() will
+> select victim on specific node to kill. So that kernel can avoid accidental killing on NUMA system.
+>
+> Problem:
+> Before this patch series, oom will only kill the process with the highest memory usage.
+> by selecting process with the highest oom_badness on the entire system to kill.
+>
+> This works fine on UMA system, but may have some accidental killing on NUMA system.
+>
+> As shown below, if process c.out is bind to Node1 and keep allocating pages from Node1,
+> a.out will be killed first. But killing a.out did't free any mem on Node1, so c.out
+> will be killed then.
+>
+> A lot of our AMD machines have 8 numa nodes. In these systems, there is a greater chance
+> of triggering this problem.
+>
+> OOM before patches:
+> ```
+> Per-node process memory usage (in MBs)
+> PID             Node 0        Node 1      Total
+> ----------- ---------- ------------- ----------
+> 3095 a.out     3073.34          0.11    3073.45(Killed first. Maximum memory consumption)
+> 3199 b.out      501.35       1500.00    2001.35
+> 3805 c.out        1.52 (grow)2248.00    2249.52(Killed then. Node1 is full)
+> ----------- ---------- ------------- ----------
+> Total          3576.21       3748.11    7324.31
+> ```
+>
+> Solution:
+> We store per node rss in mm_rss_stat for each process.
+>
+> If a page allocation with mempolicy in effect(oc->constraint == CONSTRAINT_MEMORY_POLICY)
+> triger oom. We will calculate oom_badness with rss counter for the corresponding node. Then
+> select the process with the highest oom_badness on the corresponding node to kill.
+>
+> OOM after patches:
+> ```
+> Per-node process memory usage (in MBs)
+> PID             Node 0        Node 1     Total
+> ----------- ---------- ------------- ----------
+> 3095 a.out     3073.34          0.11    3073.45
+> 3199 b.out      501.35       1500.00    2001.35
+> 3805 c.out        1.52 (grow)2248.00    2249.52(killed)
+> ----------- ---------- ------------- ----------
+> Total          3576.21       3748.11    7324.31
+> ```
 
-	They are almost identical - the only difference is in calling
-conventions (well, and the fact that __... is called with descriptor
-table locked).
+You included lots of people but missed Michal Hocko. CC'ing him and
+please include him in the future postings.
 
-	Calling conventions are... interesting.
-
-1) pick_file() - returns file or ERR_PTR(-EBADF) or ERR_PTR(-EINVAL).
-The latter is for "descriptor is greater than size of descriptor table".
-One of the callers treats all ERR_PTR(...) as "return -EBADF"; another
-uses ERR_PTR(-EINVAL) as "end the loop now" indicator.
-
-2) {__,}close_fd_get_file() returns 0 or -ENOENT (huh?), with file (or NULL)
-passed to caller by way of struct file ** argument.  One of the callers
-(binder) ignores the return value completely and checks if the file is NULL.
-Another (io_uring) checks for return value being negative, then maps
--ENOENT to -EBADF, not that any other value would be possible.
-
-ERR_PTR(-EINVAL) magic in case of pick_file() is borderline defensible;
-{__,}close_fd_get_file() conventions are insane.  The older caller
-(in binder) had never even looked at return value; the newer one
-patches the bogus -ENOENT to what it wants to report, with strange
-"defensive" BS logics just in case __close_fd_get_file() would somehow
-find a different error to report.
-
-At the very least, {__,}close_fd_get_file() callers would've been happier
-if it just returned file or NULL.  What's more, I'm seriously tempted
-to make pick_file() do the same thing.  close_fd() won't care (checking
-for NULL is just as easy as for IS_ERR) and __range_close() could just
-as well cap the max_fd argument with last_fd(files_fdtable(current->files)).
-
-Does anybody see problems with the following?
-
-commit 8819510a641800a63ab10d6b5ab283cada1cbd50
-Author: Al Viro <viro@zeniv.linux.org.uk>
-Date:   Thu May 12 17:08:03 2022 -0400
-
-    Unify the primitives for file descriptor closing
-    
-    Currently we have 3 primitives for removing an opened file from descriptor
-    table - pick_file(), __close_fd_get_file() and close_fd_get_file().  Their
-    calling conventions are rather odd and there's a code duplication for no
-    good reason.  They can be unified -
-    
-    1) have __range_close() cap max_fd in the very beginning; that way
-    we don't need separate way for pick_file() to report being past the end
-    of descriptor table.
-    
-    2) make {__,}close_fd_get_file() return file (or NULL) directly, rather
-    than returning it via struct file ** argument.  Don't bother with
-    (bogus) return value - nobody wants that -ENOENT.
-    
-    3) make pick_file() return NULL on unopened descriptor - the only caller
-    that used to care about the distinction between descriptor past the end
-    of descriptor table and finding NULL in descriptor table doesn't give
-    a damn after (1).
-    
-    4) lift ->files_lock out of pick_file()
-    
-    That actually simplifies the callers, as well as the primitives themselves.
-    Code duplication is also gone...
-    
-    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-
-diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-index 8351c5638880..27c9b004823a 100644
---- a/drivers/android/binder.c
-+++ b/drivers/android/binder.c
-@@ -1855,7 +1855,7 @@ static void binder_deferred_fd_close(int fd)
- 	if (!twcb)
- 		return;
- 	init_task_work(&twcb->twork, binder_do_fd_close);
--	close_fd_get_file(fd, &twcb->file);
-+	twcb->file = close_fd_get_file(fd);
- 	if (twcb->file) {
- 		filp_close(twcb->file, current->files);
- 		task_work_add(current, &twcb->twork, TWA_RESUME);
-diff --git a/fs/file.c b/fs/file.c
-index ee9317346702..9780888fa2da 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -630,32 +630,21 @@ EXPORT_SYMBOL(fd_install);
-  * @files: file struct to retrieve file from
-  * @fd: file descriptor to retrieve file for
-  *
-- * If this functions returns an EINVAL error pointer the fd was beyond the
-- * current maximum number of file descriptors for that fdtable.
-- *
-- * Returns: The file associated with @fd, on error returns an error pointer.
-+ * Returns: The file associated with @fd (NULL if @fd is not open)
-  */
- static struct file *pick_file(struct files_struct *files, unsigned fd)
- {
-+	struct fdtable *fdt = files_fdtable(files);
- 	struct file *file;
--	struct fdtable *fdt;
- 
--	spin_lock(&files->file_lock);
--	fdt = files_fdtable(files);
--	if (fd >= fdt->max_fds) {
--		file = ERR_PTR(-EINVAL);
--		goto out_unlock;
--	}
-+	if (fd >= fdt->max_fds)
-+		return NULL;
-+
- 	file = fdt->fd[fd];
--	if (!file) {
--		file = ERR_PTR(-EBADF);
--		goto out_unlock;
-+	if (file) {
-+		rcu_assign_pointer(fdt->fd[fd], NULL);
-+		__put_unused_fd(files, fd);
- 	}
--	rcu_assign_pointer(fdt->fd[fd], NULL);
--	__put_unused_fd(files, fd);
--
--out_unlock:
--	spin_unlock(&files->file_lock);
- 	return file;
- }
- 
-@@ -664,8 +653,10 @@ int close_fd(unsigned fd)
- 	struct files_struct *files = current->files;
- 	struct file *file;
- 
-+	spin_lock(&files->file_lock);
- 	file = pick_file(files, fd);
--	if (IS_ERR(file))
-+	spin_unlock(&files->file_lock);
-+	if (!file)
- 		return -EBADF;
- 
- 	return filp_close(file, files);
-@@ -702,20 +693,25 @@ static inline void __range_cloexec(struct files_struct *cur_fds,
- static inline void __range_close(struct files_struct *cur_fds, unsigned int fd,
- 				 unsigned int max_fd)
- {
-+	unsigned n;
-+
-+	rcu_read_lock();
-+	n = last_fd(files_fdtable(cur_fds));
-+	rcu_read_unlock();
-+	max_fd = min(max_fd, n);
-+
- 	while (fd <= max_fd) {
- 		struct file *file;
- 
-+		spin_lock(&cur_fds->file_lock);
- 		file = pick_file(cur_fds, fd++);
--		if (!IS_ERR(file)) {
-+		spin_unlock(&cur_fds->file_lock);
-+
-+		if (file) {
- 			/* found a valid file to close */
- 			filp_close(file, cur_fds);
- 			cond_resched();
--			continue;
- 		}
--
--		/* beyond the last fd in that table */
--		if (PTR_ERR(file) == -EINVAL)
--			return;
- 	}
- }
- 
-@@ -795,26 +791,9 @@ int __close_range(unsigned fd, unsigned max_fd, unsigned int flags)
-  * See close_fd_get_file() below, this variant assumes current->files->file_lock
-  * is held.
-  */
--int __close_fd_get_file(unsigned int fd, struct file **res)
-+struct file *__close_fd_get_file(unsigned int fd)
- {
--	struct files_struct *files = current->files;
--	struct file *file;
--	struct fdtable *fdt;
--
--	fdt = files_fdtable(files);
--	if (fd >= fdt->max_fds)
--		goto out_err;
--	file = fdt->fd[fd];
--	if (!file)
--		goto out_err;
--	rcu_assign_pointer(fdt->fd[fd], NULL);
--	__put_unused_fd(files, fd);
--	get_file(file);
--	*res = file;
--	return 0;
--out_err:
--	*res = NULL;
--	return -ENOENT;
-+	return pick_file(current->files, fd);
- }
- 
- /*
-@@ -822,16 +801,16 @@ int __close_fd_get_file(unsigned int fd, struct file **res)
-  * The caller must ensure that filp_close() called on the file, and then
-  * an fput().
-  */
--int close_fd_get_file(unsigned int fd, struct file **res)
-+struct file *close_fd_get_file(unsigned int fd)
- {
- 	struct files_struct *files = current->files;
--	int ret;
-+	struct file *file;
- 
- 	spin_lock(&files->file_lock);
--	ret = __close_fd_get_file(fd, res);
-+	file = pick_file(files, fd);
- 	spin_unlock(&files->file_lock);
- 
--	return ret;
-+	return file;
- }
- 
- void do_close_on_exec(struct files_struct *files)
-diff --git a/fs/internal.h b/fs/internal.h
-index 08503dc68d2b..4065e2679103 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -125,7 +125,7 @@ extern struct file *do_file_open_root(const struct path *,
- 		const char *, const struct open_flags *);
- extern struct open_how build_open_how(int flags, umode_t mode);
- extern int build_open_flags(const struct open_how *how, struct open_flags *op);
--extern int __close_fd_get_file(unsigned int fd, struct file **res);
-+extern struct file *__close_fd_get_file(unsigned int fd);
- 
- long do_sys_ftruncate(unsigned int fd, loff_t length, int small);
- int chmod_common(const struct path *path, umode_t mode);
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index dc580a30723d..7257b0870353 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -5137,13 +5137,10 @@ static int io_close(struct io_kiocb *req, unsigned int issue_flags)
- 		return -EAGAIN;
- 	}
- 
--	ret = __close_fd_get_file(close->fd, &file);
-+	file = __close_fd_get_file(close->fd);
- 	spin_unlock(&files->file_lock);
--	if (ret < 0) {
--		if (ret == -ENOENT)
--			ret = -EBADF;
-+	if (!file)
- 		goto err;
--	}
- 
- 	/* No ->flush() or already async, safely close from here */
- 	ret = filp_close(file, current->files);
-diff --git a/include/linux/fdtable.h b/include/linux/fdtable.h
-index d0e78174874a..e066816f3519 100644
---- a/include/linux/fdtable.h
-+++ b/include/linux/fdtable.h
-@@ -125,7 +125,7 @@ int iterate_fd(struct files_struct *, unsigned,
- 
- extern int close_fd(unsigned int fd);
- extern int __close_range(unsigned int fd, unsigned int max_fd, unsigned int flags);
--extern int close_fd_get_file(unsigned int fd, struct file **res);
-+extern struct file *close_fd_get_file(unsigned int fd);
- extern int unshare_fd(unsigned long unshare_flags, unsigned int max_fds,
- 		      struct files_struct **new_fdp);
- 
+>
+> Gang Li (5):
+>   mm: add a new parameter `node` to `get/add/inc/dec_mm_counter`
+>   mm: add numa_count field for rss_stat
+>   mm: add numa fields for tracepoint rss_stat
+>   mm: enable per numa node rss_stat count
+>   mm, oom: enable per numa node oom for CONSTRAINT_MEMORY_POLICY
+>
+>  arch/s390/mm/pgtable.c        |   4 +-
+>  fs/exec.c                     |   2 +-
+>  fs/proc/base.c                |   6 +-
+>  fs/proc/task_mmu.c            |  14 ++--
+>  include/linux/mm.h            |  59 ++++++++++++-----
+>  include/linux/mm_types_task.h |  16 +++++
+>  include/linux/oom.h           |   2 +-
+>  include/trace/events/kmem.h   |  27 ++++++--
+>  kernel/events/uprobes.c       |   6 +-
+>  kernel/fork.c                 |  70 +++++++++++++++++++-
+>  mm/huge_memory.c              |  13 ++--
+>  mm/khugepaged.c               |   4 +-
+>  mm/ksm.c                      |   2 +-
+>  mm/madvise.c                  |   2 +-
+>  mm/memory.c                   | 116 ++++++++++++++++++++++++----------
+>  mm/migrate.c                  |   2 +
+>  mm/migrate_device.c           |   2 +-
+>  mm/oom_kill.c                 |  59 ++++++++++++-----
+>  mm/rmap.c                     |  16 ++---
+>  mm/swapfile.c                 |   4 +-
+>  mm/userfaultfd.c              |   2 +-
+>  21 files changed, 317 insertions(+), 111 deletions(-)
+>
+> --
+> 2.20.1
+>
