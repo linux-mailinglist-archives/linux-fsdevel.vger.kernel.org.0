@@ -2,105 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 33E2C52405B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 May 2022 00:37:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BFA5524183
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 May 2022 02:29:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348842AbiEKWgw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 May 2022 18:36:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47854 "EHLO
+        id S1349664AbiELA27 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 May 2022 20:28:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348834AbiEKWgq (ORCPT
+        with ESMTP id S1349655AbiELA2z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 May 2022 18:36:46 -0400
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EAD5387BF
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 May 2022 15:36:46 -0700 (PDT)
-Received: by mail-pl1-x62f.google.com with SMTP id x18so3210748plg.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 11 May 2022 15:36:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=si1Rwhr5j9axuLzTcmMSWZj1IF9byAf7FS+JUx2lWqQ=;
-        b=Y1mOoFpuxbMkem3auol/NJSBXB/PCujD/y1PVTZDkChfddxepgxXfoqshDcktwqGpP
-         ARhYZ7veM2ssN8ZclXRl3dw+H03xpWbYiIROWS3VPFrzWnf2UPTo/ZvCBunsjbo0iayU
-         1kzdoHqbypVeAr1XxsMdL2S/gZSskNsyRZymg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=si1Rwhr5j9axuLzTcmMSWZj1IF9byAf7FS+JUx2lWqQ=;
-        b=kOxD0LNoznJWSDIwVTpSnzbsOV6t1SWnCJkkK4MOaIqqteVhzAbgYdr0qLkHWsnlOK
-         0aySw6cf7k3lWDVZtK9UANpYRN5oJmpKKDnH5rGB+g0OLnBX/jT8+gYIQRxK47I8oGkB
-         W+kQAYjaFMNOAZN9UCsCeuetJr6la4CqAR9jgWj8bizkpgWncYMGJiQV8USO+Linovq5
-         RKS65VdsushATnd0rCVvkb3B+PW2/XstxdajY221ZCEblh+R1COAiCmFZpXHhsTwc8UG
-         GaJmsLIip1FoClXF8dI7k6o4aYIuoTVFBYUxn9VdXZ5dlvwg95d091ul1+V5tPN64hs6
-         ECSA==
-X-Gm-Message-State: AOAM531VJgQSXLHraVj6uuS1MJEjeLAv4jT0QDvGIVowWT05c5GDgHNL
-        xGmwO3ei0jwDrFiYsTsWqDEDbVM+sa+GpA==
-X-Google-Smtp-Source: ABdhPJzhp1wK1HcHgFgRwXNdOwOYc2AkkaevEP6SkCY6EqKLZyEDAmT5vf1CXRqTBa5UrZOjEt/Liw==
-X-Received: by 2002:a17:90b:4a08:b0:1dc:6cc1:3d24 with SMTP id kk8-20020a17090b4a0800b001dc6cc13d24mr7728354pjb.131.1652308605699;
-        Wed, 11 May 2022 15:36:45 -0700 (PDT)
-Received: from dlunevwfh.roam.corp.google.com (n122-107-196-14.sbr2.nsw.optusnet.com.au. [122.107.196.14])
-        by smtp.gmail.com with ESMTPSA id d5-20020a170902c18500b0015e8d4eb1d2sm2391855pld.28.2022.05.11.15.36.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 May 2022 15:36:45 -0700 (PDT)
-From:   Daniil Lunev <dlunev@chromium.org>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     hch@infradead.org, fuse-devel@lists.sourceforge.net, tytso@mit.edu,
-        miklos@szeredi.hu, viro@zeniv.linux.org.uk,
-        linux-kernel@vger.kernel.org, Daniil Lunev <dlunev@chromium.org>
-Subject: [PATCH v2 2/2] FUSE: Retire superblock on force unmount
-Date:   Thu, 12 May 2022 08:29:10 +1000
-Message-Id: <20220512082832.v2.2.I692165059274c30b59bed56940b54a573ccb46e4@changeid>
-X-Mailer: git-send-email 2.31.0
-In-Reply-To: <20220511222910.635307-1-dlunev@chromium.org>
-References: <20220511222910.635307-1-dlunev@chromium.org>
+        Wed, 11 May 2022 20:28:55 -0400
+Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 118151BC804
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 May 2022 17:28:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=vXyixc0pTwWWIzk26hKHEa2Prnr+jypWHpRsfoKsjH0=; b=Xml2R9mvSHHTIe35ZJhDfMUo/d
+        rFw56k4hgoq6wGfg6MIL1nwEBaM1ujzbw0zN1ykQWx2v6n6WAdZpvqIMW06Xutd49Hs9dZMEkiuNp
+        MCGgy+g9bl9E7uLZoUs8W/trzEMx9A0GxE8FgTb6NrV8/C4H+6RLuWk1CewjATESbHE44u/+ppkSB
+        Xe6TG48Jr94jahtk3kF9FCrPkfe6LVBI6HTEcSTTO2JCRLTnd3bNfx4X+N/dRXVZh105xbdod0z6H
+        97zv5Ey3YohTeN8lBCL3TO1lRYoi77fGAv0vtD7qsy5maO/ISaLfuOZ7B/XZtSilwX9nycNDA6KP2
+        MGOF7MNA==;
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nowhF-00E9XH-NW; Thu, 12 May 2022 00:28:49 +0000
+Date:   Thu, 12 May 2022 00:28:49 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Chengguang Xu <cgxu519@mykernel.net>,
+        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH] vfs: move fdput() to right place in
+ ksys_sync_file_range()
+Message-ID: <YnxUwQve8D39zxBz@zeniv-ca.linux.org.uk>
+References: <20220511154503.28365-1-cgxu519@mykernel.net>
+ <YnvbhmRUxPxWU2S3@casper.infradead.org>
+ <YnwIDpkIBem+MeeC@gmail.com>
+ <YnwuEt2Xm1iPjW7S@zeniv-ca.linux.org.uk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YnwuEt2Xm1iPjW7S@zeniv-ca.linux.org.uk>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Force unmount of FUSE severes the connection with the user space, even
-if there are still open files. Subsequent remount tries to re-use the
-superblock held by the open files, which is meaningless in the FUSE case
-after disconnect - reused super block doesn't have userspace counterpart
-attached to it and is incapable of doing any IO.
+On Wed, May 11, 2022 at 09:43:46PM +0000, Al Viro wrote:
 
-Signed-off-by: Daniil Lunev <dlunev@chromium.org>
+> 3) ovl_aio_put() is hard to follow (and some of the callers are poking
+> where they shouldn't), no idea if it's correct.  struct fd is manually
+> constructed there, anyway.
+
+Speaking of poking in the internals:
+
+SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
+                u32, min_complete, u32, flags, const void __user *, argp,
+                size_t, argsz)
+{
+...
+        struct fd f;
+...
+        if (flags & IORING_ENTER_REGISTERED_RING) {
+                struct io_uring_task *tctx = current->io_uring;
+
+                if (!tctx || fd >= IO_RINGFD_REG_MAX)
+                        return -EINVAL;
+                fd = array_index_nospec(fd, IO_RINGFD_REG_MAX);
+                f.file = tctx->registered_rings[fd];
+                if (unlikely(!f.file))
+                        return -EBADF;
+        } else {
+                f = fdget(fd);
+                if (unlikely(!f.file))
+                        return -EBADF;
+        }
+...
+a bunch of accesses to f.file
+...
+        if (!(flags & IORING_ENTER_REGISTERED_RING))
+                fdput(f);
+
+Note that f.flags is left uninitialized in the first case; it doesn't
+break since we have fdput(f) (which does look at f.flags) done only
+in the case where we don't have IORING_ENTER_REGISTERED_RING in flags
+and since flags remains unchanged since the first if.  But it would
+be just as easy to set f.flags to 0 and use fdput() in both cases...
+
+Jens, do you have any objections against the following?  Easier to
+follow that way...
+
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
-
-Changes in v2:
-- Use an exported function instead of directly modifying superblock
-
- fs/fuse/inode.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 8c0665c5dff88..8875361544b2a 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -476,8 +476,11 @@ static void fuse_umount_begin(struct super_block *sb)
- {
- 	struct fuse_conn *fc = get_fuse_conn_super(sb);
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 91de361ea9ab..b61ae18ef10a 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -10760,14 +10760,14 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
+ 			return -EINVAL;
+ 		fd = array_index_nospec(fd, IO_RINGFD_REG_MAX);
+ 		f.file = tctx->registered_rings[fd];
+-		if (unlikely(!f.file))
+-			return -EBADF;
++		f.flags = 0;
+ 	} else {
+ 		f = fdget(fd);
+-		if (unlikely(!f.file))
+-			return -EBADF;
+ 	}
  
--	if (!fc->no_force_umount)
--		fuse_abort_conn(fc);
-+	if (fc->no_force_umount)
-+		return;
++	if (unlikely(!f.file))
++		return -EBADF;
 +
-+	fuse_abort_conn(fc);
-+	retire_super(sb);
+ 	ret = -EOPNOTSUPP;
+ 	if (unlikely(f.file->f_op != &io_uring_fops))
+ 		goto out_fput;
+@@ -10840,8 +10840,7 @@ SYSCALL_DEFINE6(io_uring_enter, unsigned int, fd, u32, to_submit,
+ out:
+ 	percpu_ref_put(&ctx->refs);
+ out_fput:
+-	if (!(flags & IORING_ENTER_REGISTERED_RING))
+-		fdput(f);
++	fdput(f);
+ 	return submitted ? submitted : ret;
  }
  
- static void fuse_send_destroy(struct fuse_mount *fm)
--- 
-2.31.0
-
