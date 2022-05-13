@@ -2,97 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0363A5259D2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 May 2022 04:59:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C87105259EA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 May 2022 05:08:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376627AbiEMC4x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 May 2022 22:56:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43818 "EHLO
+        id S1376683AbiEMDHn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 May 2022 23:07:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57548 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1376621AbiEMC4w (ORCPT
+        with ESMTP id S1356735AbiEMDHn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 May 2022 22:56:52 -0400
-Received: from mail-qv1-xf2b.google.com (mail-qv1-xf2b.google.com [IPv6:2607:f8b0:4864:20::f2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A56202ED74
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 May 2022 19:56:47 -0700 (PDT)
-Received: by mail-qv1-xf2b.google.com with SMTP id kj8so5804361qvb.6
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 May 2022 19:56:47 -0700 (PDT)
+        Thu, 12 May 2022 23:07:43 -0400
+Received: from mail-qv1-xf31.google.com (mail-qv1-xf31.google.com [IPv6:2607:f8b0:4864:20::f31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60C356D18C
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 May 2022 20:07:41 -0700 (PDT)
+Received: by mail-qv1-xf31.google.com with SMTP id kj8so5817682qvb.6
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 May 2022 20:07:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20210112.gappssmtp.com; s=20210112;
-        h=date:from:to:subject:message-id:mime-version:content-disposition
-         :content-transfer-encoding;
-        bh=YfSyf8u/NtA/eLp0tCJ7Xe0+tnTmVim4H2pL0vEsIiU=;
-        b=0mtoDTP0h+78pMTFKFTp5W2xjK1hcv0lNhcN1E0ldAU+KruS88+d+eKT2j8jX6aaTf
-         xAxUnsQAhUijY/zcRao1hzMIrncEkUQ7nqKG5CKm/fhS0lLzQPWv03XD05t+jSF3w6Fp
-         n4j1+9tNGrnptsTapwM26mibHHeRH17d1wRomMrwpfe2j7TM/ooGkiFYVV+0K/umc9wB
-         iESWL4SXlQ0yjffaoKRY7NnCK6mRZdwVxtpBjlzXR2ZLXnLe8Y0U7R78A/K8FtX1L+vo
-         fD8Dz1+4qi03W5jcPkFTNU5uJuLkxQcOfBS2F1Axp3kuB4kReBr4cLOPA+EUDC4RKVV0
-         25kg==
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wrZByhrhOaJ4Z61OCWx+9vdEu735XTwBbnp3gG60fL0=;
+        b=RmkIXRjnswHh7Ve8jS9xVEevvXhwbdOcNAwPTl2dtJY1oW9nSMn9slCKConv62929L
+         YFVL1ZLIczgGI9JUc43bypi+zEigwht5iI2f/KccsdKl2a0JOzr8MqYayZdYnvQ4bpp0
+         HM0ZookUShIPJy2e8rg62FZ1aUTuckC3c9gz5RayhBMFgzibX+ztb2eJX5Uw6uggeUrv
+         WAOpH8mkrmVfc+u+X8gi9O4KFjyPgGQbUb+ev7X2BbaJreVCEz0gKeP8zPHvWE6Tr4GZ
+         nUUlw3Wh6AOgat/Qd81u8ybBEjbLLi9iixyFz1CIiCIXebTPz5OuCC9elvwp7BZtzaKT
+         IvRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:subject:message-id:mime-version
-         :content-disposition:content-transfer-encoding;
-        bh=YfSyf8u/NtA/eLp0tCJ7Xe0+tnTmVim4H2pL0vEsIiU=;
-        b=Ti36DHaGT0AUYwjC8ywCoy6YLQUBNdvHm34Ev3kwlprhepCWUraKNnxZA8x9ghzTGr
-         5FwWN4drrcWcgdEHVCRNFqJ5IGseX6cS/O6diJxNmSADiBMEZIxhEc/aZs+tfXdzMS26
-         Jurs7NBNNhrUbIWZKupcL3St1qz5axqyVkqcPuKOP3ZcmYhNKZmIZedlmD0IpNoi/CIU
-         HGhyxP3LCEGWKTXV5xSvYBP/CoQVk92CjQdvYNEt+0lQvA38x5bJdzrXtAT119+tw0hE
-         YmJPIZECIA3ZykT8oHGsb2yBgN6ehsRKc3O0lP4If9w0CjHkN44b7A/MRUi0QUYmfsTl
-         PiPQ==
-X-Gm-Message-State: AOAM530/YIcZNon66y9BQDrCGExUm1dnypnrMEnVksLc6aUV7qvKP+A6
-        9w1MRIA7BL2lAOGn8BI0lH3wktJnQz26dQ==
-X-Google-Smtp-Source: ABdhPJwEkF4mdxyhyJw1VUq1yi0cunHOiqDqtKhsTWuDuqm6cZSOXpnjZ7qhYCMJiPw/3cavmMdKaw==
-X-Received: by 2002:a05:6214:2aae:b0:45b:3d6e:e6e6 with SMTP id js14-20020a0562142aae00b0045b3d6ee6e6mr2865442qvb.111.1652410606448;
-        Thu, 12 May 2022 19:56:46 -0700 (PDT)
-Received: from localhost (cpe-174-109-172-136.nc.res.rr.com. [174.109.172.136])
-        by smtp.gmail.com with ESMTPSA id e1-20020a05620a208100b0069fc13ce205sm686031qka.54.2022.05.12.19.56.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 May 2022 19:56:45 -0700 (PDT)
-Date:   Thu, 12 May 2022 22:56:44 -0400
-From:   Josef Bacik <josef@toxicpanda.com>
-To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-block@vger.kernel.org, bpf@vger.kernel.org,
-        lsf-pc@lists.linuxfoundation.org, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: LSF/MM/BPF 2022: Slides and thanks!
-Message-ID: <Yn3I7KZeuJQqVFHi@localhost.localdomain>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wrZByhrhOaJ4Z61OCWx+9vdEu735XTwBbnp3gG60fL0=;
+        b=ohqv0+L8pxLZFNimxfPNoLbRKS0V/kI53w0BXk0yEY+2VE3XZNGjTeJ7dq52CK1+dT
+         NhJ4bIjkSxKWQb4mwoJFvkxHnKIqMZvCQUrBONIF/yquNEbS3ot2wiYXv41rTaugOcaE
+         vPfaqJw4TV8a/wnYzojMtZ1chuGqlq+FBFBP08KKTd5zmt67kOfmD83jzyyEtRHnnbVh
+         e4L70qoKmheOswP9wjz4aVwQaivmL37VcKxn5cj2nm8x3Kh+MDWnuFccuJ4hPoAz8SVO
+         FO9YwyD6XOKCrgAI7ckzdNCR6vU/oClkrQaiJKb3JDrspGdJkqq70X3o1UFv1sT79Tyl
+         cP3g==
+X-Gm-Message-State: AOAM530uckuhCqgVnh3yrUg19EEs3mUaJZUhPBlLN0cQxnZEcJvBD92R
+        XfsxdORAx3RdoVwIFMvOBPJLtovWT8CcSTMs7eYtGoUW
+X-Google-Smtp-Source: ABdhPJxylNs2dKzDXwv8hl7WjQ2CzU+tvywudegY/Y5FuzzYGtp+z2rmorXunfUOQydD0tTvAiJFJRSrgFvUF+o3ZOY=
+X-Received: by 2002:a05:6214:29e9:b0:45a:c341:baaf with SMTP id
+ jv9-20020a05621429e900b0045ac341baafmr2597520qvb.77.1652411260465; Thu, 12
+ May 2022 20:07:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+References: <20220511092914.731897-1-amir73il@gmail.com> <20220511092914.731897-2-amir73il@gmail.com>
+ <20220511125440.5zsuzn7eemdvfksi@quack3.lan> <CAOQ4uxjjfaU4xefu1-qK5MzGq+m0EChB9mK6TZo1Lp6bmBviUQ@mail.gmail.com>
+ <20220512172058.j2zyhpmyt4trlwvf@quack3.lan> <CAOQ4uxitDOdh4mvY7JXN1hDuN3BmLg2AS=SJ+rW6Ex-K76NeXg@mail.gmail.com>
+In-Reply-To: <CAOQ4uxitDOdh4mvY7JXN1hDuN3BmLg2AS=SJ+rW6Ex-K76NeXg@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 13 May 2022 06:07:28 +0300
+Message-ID: <CAOQ4uxiXDjf4FJ3LA+7y6TV_RstZki3AVykv_zAbz-3Jf5khEA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] fsnotify: introduce mark type iterator
+To:     Jan Kara <jack@suse.cz>
+Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Thu, May 12, 2022 at 8:50 PM Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> On Thu, May 12, 2022 at 8:20 PM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Wed 11-05-22 21:26:16, Amir Goldstein wrote:
+> > > On Wed, May 11, 2022 at 3:54 PM Jan Kara <jack@suse.cz> wrote:
+> > > >
+> > > > On Wed 11-05-22 12:29:13, Amir Goldstein wrote:
+> > > > > fsnotify_foreach_iter_mark_type() is used to reduce boilerplate code
+> > > > > of iteratating all marks of a specific group interested in an event
+> > > > > by consulting the iterator report_mask.
+> > > > >
+> > > > > Use an open coded version of that iterator in fsnotify_iter_next()
+> > > > > that collects all marks of the current iteration group without
+> > > > > consulting the iterator report_mask.
+> > > > >
+> > > > > At the moment, the two iterator variants are the same, but this
+> > > > > decoupling will allow us to exclude some of the group's marks from
+> > > > > reporting the event, for example for event on child and inode marks
+> > > > > on parent did not request to watch events on children.
+> > > > >
+> > > > > Fixes: 2f02fd3fa13e ("fanotify: fix ignore mask logic for events on child and on dir")
+> > > > > Reported-by: Jan Kara <jack@suse.com>
+> > > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > > >
+> > > > Mostly looks good. Two nits below.
+> > > >
+> > > > >  /*
+> > > > > - * Pop from iter_info multi head queue, the marks that were iterated in the
+> > > > > + * Pop from iter_info multi head queue, the marks that belong to the group of
+> > > > >   * current iteration step.
+> > > > >   */
+> > > > >  static void fsnotify_iter_next(struct fsnotify_iter_info *iter_info)
+> > > > >  {
+> > > > > +     struct fsnotify_mark *mark;
+> > > > >       int type;
+> > > > >
+> > > > >       fsnotify_foreach_iter_type(type) {
+> > > > > -             if (fsnotify_iter_should_report_type(iter_info, type))
+> > > > > +             mark = iter_info->marks[type];
+> > > > > +             if (mark && mark->group == iter_info->current_group)
+> > > > >                       iter_info->marks[type] =
+> > > > >                               fsnotify_next_mark(iter_info->marks[type]);
+> > > >
+> > > > Wouldn't it be more natural here to use the new helper
+> > > > fsnotify_foreach_iter_mark_type()? In principle we want to advance mark
+> > > > types which were already reported...
+> > >
+> > > Took me an embarrassing amount of time to figure out why this would be wrong
+> > > and I must have known this a few weeks ago when I wrote the patch, so
+> > > a comment is in order:
+> > >
+> > >         /*
+> > >          * We cannot use fsnotify_foreach_iter_mark_type() here because we
+> > >          * may need to check if next group has a mark of type X even if current
+> > >          * group did not have a mark of type X.
+> > >          */
+> >
+> > Well, but this function is just advancing the lists for marks we have
+> > already processed. And processed marks are exactly those set in report_mask.
+> > So your code should be equivalent to the old one but using
+> > fsnotify_foreach_iter_mark_type() should work as well AFAICT.
+>
+> Yes, you are right about that. But,
+> With the 2 patches applied, fanotify09 test gets into livelock here.
+> Fixing the livelock requires that fsnotify_iter_should_report_type()
+> condition is removed.
+>
+> I am assuming that it is the next patch that introduces the livelock,
+> but I cannot figure out why the comment I have written above is not true
+> in the code in master.
 
-Thank all of the participants of this years LSF/MM/BPF! It was great to finally
-get together as a community, both in person and virtually.
+Nevermind. I got it.
 
-If you presented this year and had slides please email the slides to
-lsf-pc@lists.linuxfoundation.org so we can attach it to the videos when the
-recordings are uploaded to YouTube. We will also forward these along to the
-staff at LWN.
+>
+> Could it be that the livelock already exists but we do not have a test case
+> to trigger it and the test case in fanotify09 which checks the next patch
+> is just a private case?
+>
 
-If any of you have objections to your sessions being posted on YouTube please
-email the lsf-pc list so we can make sure to exclude those videos.  We already
-have a couple of requests, so if you've already made one you don't need to let
-us know, we already have it marked down.
+No. This is because of the change of behavior in the next patch.
 
-Thanks again for a great conference!
+> In any case, even if the logic change here is not needed before the next
+> patch, it would make no sense to convert this function to
+> fsnotify_foreach_iter_mark_type() and change it back.
+> The most that could make sense is to add this comment and remove
+> fsnotify_iter_should_report_type() together with the next patch.
 
-        Josef Bacik (Filesystems)
-        Amir Goldstein (Filesystems)
-        Martin K. Petersen (Storage)
-        Omar Sandoval (Storage)
-        Michal Hocko (MM)
-        Dan Williams (MM)
-        Alexei Starovoitov (BPF)
-        Daniel Borkmann (BPF)
+Yes. I will do that and better explain in the comment.
 
+Thanks,
+Amir.
