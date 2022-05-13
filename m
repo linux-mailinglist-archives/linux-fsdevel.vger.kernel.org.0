@@ -2,33 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E074E526A93
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 May 2022 21:39:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D10D4526A95
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 May 2022 21:39:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1383892AbiEMTjl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 May 2022 15:39:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46878 "EHLO
+        id S1383887AbiEMTjr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 May 2022 15:39:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1383887AbiEMTjk (ORCPT
+        with ESMTP id S1383877AbiEMTjq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 May 2022 15:39:40 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69AAF4DF7B;
-        Fri, 13 May 2022 12:39:39 -0700 (PDT)
+        Fri, 13 May 2022 15:39:46 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF4754C788;
+        Fri, 13 May 2022 12:39:45 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 1FBBAB83177;
-        Fri, 13 May 2022 19:39:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89C26C34113;
-        Fri, 13 May 2022 19:39:36 +0000 (UTC)
-Subject: [PATCH 2/8] NFSD: Avoid calling fh_drop_write() twice in
- do_nfsd_create()
+        by ams.source.kernel.org (Postfix) with ESMTPS id 699C4B83177;
+        Fri, 13 May 2022 19:39:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9A07C34116;
+        Fri, 13 May 2022 19:39:42 +0000 (UTC)
+Subject: [PATCH 3/8] NFSD: Refactor nfsd_create_setattr()
 From:   Chuck Lever <chuck.lever@oracle.com>
 To:     linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         viro@zeniv.linux.org.uk
-Date:   Fri, 13 May 2022 15:39:35 -0400
-Message-ID: <165247077540.6691.1645892566852216165.stgit@bazille.1015granger.net>
+Date:   Fri, 13 May 2022 15:39:42 -0400
+Message-ID: <165247078201.6691.9846456206374083162.stgit@bazille.1015granger.net>
 In-Reply-To: <165247056822.6691.9087206893184705325.stgit@bazille.1015granger.net>
 References: <165247056822.6691.9087206893184705325.stgit@bazille.1015granger.net>
 User-Agent: StGit/1.5
@@ -44,40 +43,155 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Clean up: The "out" label already invokes fh_drop_write().
+I'd like to move do_nfsd_create() out of vfs.c. Therefore
+nfsd_create_setattr() needs to be made publicly visible.
 
-Note that fh_drop_write() is already careful not to invoke
-mnt_drop_write() if either it has already been done or there is
-nothing to drop. Therefore no change in behavior is expected.
+Note that both call sites in vfs.c commit both the new object and
+its parent directory, so just combine those common metadata commits
+into nfsd_create_setattr().
 
 Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
 ---
- fs/nfsd/vfs.c |    5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ fs/nfsd/vfs.c |   79 ++++++++++++++++++++++++++++++---------------------------
+ fs/nfsd/vfs.h |    2 +
+ 2 files changed, 44 insertions(+), 37 deletions(-)
 
 diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-index 4c1984f07cdc..bbed7a986784 100644
+index bbed7a986784..83c989a5d6f3 100644
 --- a/fs/nfsd/vfs.c
 +++ b/fs/nfsd/vfs.c
-@@ -1479,7 +1479,6 @@ do_nfsd_create(struct svc_rqst *rqstp, struct svc_fh *fhp,
- 		case NFS3_CREATE_GUARDED:
- 			err = nfserr_exist;
- 		}
--		fh_drop_write(fhp);
- 		goto out;
+@@ -1181,14 +1181,26 @@ nfsd_commit(struct svc_rqst *rqstp, struct svc_fh *fhp, u64 offset,
+ 	return err;
+ }
+ 
+-static __be32
+-nfsd_create_setattr(struct svc_rqst *rqstp, struct svc_fh *resfhp,
+-			struct iattr *iap)
++/**
++ * nfsd_create_setattr - Set a created file's attributes
++ * @rqstp: RPC transaction being executed
++ * @fhp: NFS filehandle of parent directory
++ * @resfhp: NFS filehandle of new object
++ * @iap: requested attributes of new object
++ *
++ * Returns nfs_ok on success, or an nfsstat in network byte order.
++ */
++__be32
++nfsd_create_setattr(struct svc_rqst *rqstp, struct svc_fh *fhp,
++		    struct svc_fh *resfhp, struct iattr *iap)
+ {
++	__be32 status;
++
+ 	/*
+-	 * Mode has already been set earlier in create:
++	 * Mode has already been set by file creation.
+ 	 */
+ 	iap->ia_valid &= ~ATTR_MODE;
++
+ 	/*
+ 	 * Setting uid/gid works only for root.  Irix appears to
+ 	 * send along the gid on create when it tries to implement
+@@ -1196,10 +1208,31 @@ nfsd_create_setattr(struct svc_rqst *rqstp, struct svc_fh *resfhp,
+ 	 */
+ 	if (!uid_eq(current_fsuid(), GLOBAL_ROOT_UID))
+ 		iap->ia_valid &= ~(ATTR_UID|ATTR_GID);
++
++	/*
++	 * Callers expect new file metadata to be committed even
++	 * if the attributes have not changed.
++	 */
+ 	if (iap->ia_valid)
+-		return nfsd_setattr(rqstp, resfhp, iap, 0, (time64_t)0);
+-	/* Callers expect file metadata to be committed here */
+-	return nfserrno(commit_metadata(resfhp));
++		status = nfsd_setattr(rqstp, resfhp, iap, 0, (time64_t)0);
++	else
++		status = nfserrno(commit_metadata(resfhp));
++
++	/*
++	 * Transactional filesystems had a chance to commit changes
++	 * for both parent and child simultaneously making the
++	 * following commit_metadata a noop in many cases.
++	 */
++	if (!status)
++		status = nfserrno(commit_metadata(fhp));
++
++	/*
++	 * Update the new filehandle to pick up the new attributes.
++	 */
++	if (!status)
++		status = fh_update(resfhp);
++
++	return status;
+ }
+ 
+ /* HPUX client sometimes creates a file in mode 000, and sets size to 0.
+@@ -1226,7 +1259,6 @@ nfsd_create_locked(struct svc_rqst *rqstp, struct svc_fh *fhp,
+ 	struct dentry	*dentry, *dchild;
+ 	struct inode	*dirp;
+ 	__be32		err;
+-	__be32		err2;
+ 	int		host_err;
+ 
+ 	dentry = fhp->fh_dentry;
+@@ -1299,22 +1331,8 @@ nfsd_create_locked(struct svc_rqst *rqstp, struct svc_fh *fhp,
+ 	if (host_err < 0)
+ 		goto out_nfserr;
+ 
+-	err = nfsd_create_setattr(rqstp, resfhp, iap);
++	err = nfsd_create_setattr(rqstp, fhp, resfhp, iap);
+ 
+-	/*
+-	 * nfsd_create_setattr already committed the child.  Transactional
+-	 * filesystems had a chance to commit changes for both parent and
+-	 * child simultaneously making the following commit_metadata a
+-	 * noop.
+-	 */
+-	err2 = nfserrno(commit_metadata(fhp));
+-	if (err2)
+-		err = err2;
+-	/*
+-	 * Update the file handle to get the new inode info.
+-	 */
+-	if (!err)
+-		err = fh_update(resfhp);
+ out:
+ 	dput(dchild);
+ 	return err;
+@@ -1505,20 +1523,7 @@ do_nfsd_create(struct svc_rqst *rqstp, struct svc_fh *fhp,
  	}
  
-@@ -1487,10 +1486,8 @@ do_nfsd_create(struct svc_rqst *rqstp, struct svc_fh *fhp,
- 		iap->ia_mode &= ~current_umask();
+  set_attr:
+-	err = nfsd_create_setattr(rqstp, resfhp, iap);
+-
+-	/*
+-	 * nfsd_create_setattr already committed the child
+-	 * (and possibly also the parent).
+-	 */
+-	if (!err)
+-		err = nfserrno(commit_metadata(fhp));
+-
+-	/*
+-	 * Update the filehandle to get the new inode info.
+-	 */
+-	if (!err)
+-		err = fh_update(resfhp);
++	err = nfsd_create_setattr(rqstp, fhp, resfhp, iap);
  
- 	host_err = vfs_create(&init_user_ns, dirp, dchild, iap->ia_mode, true);
--	if (host_err < 0) {
--		fh_drop_write(fhp);
-+	if (host_err < 0)
- 		goto out_nfserr;
--	}
- 	if (created)
- 		*created = true;
- 
+  out:
+ 	fh_unlock(fhp);
+diff --git a/fs/nfsd/vfs.h b/fs/nfsd/vfs.h
+index ccb87b2864f6..1f32a83456b0 100644
+--- a/fs/nfsd/vfs.h
++++ b/fs/nfsd/vfs.h
+@@ -69,6 +69,8 @@ __be32		nfsd_create(struct svc_rqst *, struct svc_fh *,
+ 				char *name, int len, struct iattr *attrs,
+ 				int type, dev_t rdev, struct svc_fh *res);
+ __be32		nfsd_access(struct svc_rqst *, struct svc_fh *, u32 *, u32 *);
++__be32		nfsd_create_setattr(struct svc_rqst *rqstp, struct svc_fh *fhp,
++				struct svc_fh *resfhp, struct iattr *iap);
+ __be32		do_nfsd_create(struct svc_rqst *, struct svc_fh *,
+ 				char *name, int len, struct iattr *attrs,
+ 				struct svc_fh *res, int createmode,
 
 
