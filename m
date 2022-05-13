@@ -2,111 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A770B525A44
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 May 2022 05:41:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E2C3525A5C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 May 2022 05:47:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376880AbiEMDl0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 May 2022 23:41:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44692 "EHLO
+        id S1376879AbiEMDrd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 May 2022 23:47:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1376849AbiEMDlX (ORCPT
+        with ESMTP id S1352228AbiEMDrc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 May 2022 23:41:23 -0400
-Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 374162A26D
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 May 2022 20:41:21 -0700 (PDT)
-Received: by mail-pf1-x435.google.com with SMTP id y41so6561564pfw.12
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 May 2022 20:41:21 -0700 (PDT)
+        Thu, 12 May 2022 23:47:32 -0400
+Received: from mail-vk1-xa34.google.com (mail-vk1-xa34.google.com [IPv6:2607:f8b0:4864:20::a34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C87B5FF01
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 May 2022 20:47:30 -0700 (PDT)
+Received: by mail-vk1-xa34.google.com with SMTP id e7so3637737vkh.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 May 2022 20:47:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20210112.gappssmtp.com; s=20210112;
+        d=google.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=JaD/7HsV0lHA07q8V2RCBkaHsJJjfnySNbAofgOVR+s=;
-        b=c5Kb2dLIuZWvdFJVbRc2JEjzw2B2Dzf6Pnk5QeLzsmOpoGIwIXrpk2u4HDZxZATVcb
-         RQCZB7AVQpilRtH7j3HgXELDOxJYJ9AKnOiXcozN38K+eOYCpZP4eAlTuzhX/IbcCHuF
-         fD3vymdbg+d0WJZH2mnnTf1n84ziyZHJdMP43IJNspQjPgKbCRjFPWCi0TXAHs+tLuGU
-         urDfcdgnspQ7g4DGHkyU07WM4OnHipWnDR8hHhzB2+jand1Ci74ZFyKlmSFQx8u+ZRJl
-         /fHf7uqFlvRKRzQk/sbZFyLyxR/TYYupQSVu7Zpa7xukHKA19d6/I9LAJEHLHh9NSCHf
-         9I6A==
+        bh=zMLk1Ay+Dq4Ta56iDG7dM32hpID8fSkg4kAmLD778ok=;
+        b=caPJHttEez05Vmo1EY25yNiTf5aMepNmLUt0WkY3lFFYxKSq/9CC3uVzsYZpO0NFi3
+         C/7nRIPjDHSWiqsNmCzOXt6VeBAiJbrxIGgkApZzElmTCg8bhRTG2NO6Tpvx4HhNq+XS
+         XGSmBTNh/P2kTShOISVxQfanQqPcZnMo41ouGZAzUSWLp14RzCaQE8O6cjp8heqQ5Dlu
+         HAorm7X+ZmMmDRGnTHzwzRc7Un//zcN2uZEH0K0ApmLwDTpoTm71KRlBlxRg4IIAL2F5
+         TGPZEZRK97j3RF4thOWAB40zkId+FBDnSRXT8hwzCxl2VPGsu77TiD9ZNdXrtU7ZWXXL
+         7zMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=JaD/7HsV0lHA07q8V2RCBkaHsJJjfnySNbAofgOVR+s=;
-        b=IpFSJKEfXVfO9QfOaRy9v+j16DuqJWD8pT/pQ5p47kBxpcdshcaSTvywe9mmFv4WW4
-         GaetkIPPX8su11AFWlEt4+uFdqn+CV2VT6DOw17pZh/R0pB50mu0YEZ3R4cKygzrzI44
-         6kFJ/BjvLrMb7MdjsjK38wFSEpTBbWrb3YpIp76sV0TZs4VzL+pk7J9Z2dHFPcrl6SOd
-         hfYzgTukng5Ev69dcf+2Z7X/xCniAZ45GJGE+NE32xlkGyo3l+DSd0msTX5Eu1f9pneD
-         gE41IOfX+4uTahW6Raoq4feGuiB6KueVnrhB/018erIE+J9ryHYxZKsJah180PGLqZcE
-         4EZg==
-X-Gm-Message-State: AOAM533aLpjfBu6a3meOSC4SWwzkRcJrhncNWTbh5dwGV3l87/HbWe79
-        3h/Bu/5ixwwMPfDf3EoanC3ULUhRDnRTRZRdgSUPYQ==
-X-Google-Smtp-Source: ABdhPJztXj3NI4LlWRYrTyoHNrGuFPmTDU30zBctcBdUbZiL2txSy8W/riK1TBgLzTUumv2yr+YHO2k/aNd90/TW10s=
-X-Received: by 2002:a63:1117:0:b0:399:2df0:7fb9 with SMTP id
- g23-20020a631117000000b003992df07fb9mr2395090pgl.40.1652413280701; Thu, 12
- May 2022 20:41:20 -0700 (PDT)
+        bh=zMLk1Ay+Dq4Ta56iDG7dM32hpID8fSkg4kAmLD778ok=;
+        b=jBEGwI2UUg38bz9yti5/GuoNrV9zv2jyxDuT0iKtaaW0pznokLjPBgAr833JNxBhSH
+         OrPKth7lkjzlqpuePEDlHgVvLtM20pTI4Z6dIyPADOYNf620moGYWYJ5By8C6gZDYMEO
+         flVItAAJCGeNDvkgZ3cozPhA23BOeohYSzIr8XuyqTiZK3vOzmbC3tSKaxoEfTL3fN7B
+         7O1eMLjOXIVpdNRrAirnB5djznECPGLG8cfh6mTksXynrlTJZN4WC/PigXg1ANL6uiQm
+         FfKF3hqoNqBEM4BdaZLmSJK7pkBRlSuBvGJnfkPCfNNeJG9REf8sOsqAbazOVpQ2+uSH
+         lM+g==
+X-Gm-Message-State: AOAM530jdZFMX1tB0lqhDYgh/OgLHumhOSSUEhumCR0ML5GzyK9zHN0o
+        tChqVwUI0RsEZSjEn3KtTX1O00utmlFw/tFciG5Pe390pvs=
+X-Google-Smtp-Source: ABdhPJxV0TetOu+mRPeQoHxb7dsAS7IbYg8HeKbEJMIVBQ1No7E0qF1ZLEHUpf0gg4dJuTVuzCor3TMukC/4GEBpEgc=
+X-Received: by 2002:a1f:ec45:0:b0:34e:6cdc:334e with SMTP id
+ k66-20020a1fec45000000b0034e6cdc334emr1600555vkh.26.1652413649607; Thu, 12
+ May 2022 20:47:29 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220422224508.440670-1-jane.chu@oracle.com> <20220422224508.440670-4-jane.chu@oracle.com>
- <CAPcyv4i7xi=5O=HSeBEzvoLvsmBB_GdEncbasMmYKf3vATNy0A@mail.gmail.com>
- <CAPcyv4id8AbTFpO7ED_DAPren=eJQHwcdY8Mjx18LhW+u4MdNQ@mail.gmail.com>
- <Ynt3WlpcJwuqffDX@zn.tnic> <5aa1c9aacc5a4086a904440641062669@intel.com>
-In-Reply-To: <5aa1c9aacc5a4086a904440641062669@intel.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Thu, 12 May 2022 20:41:09 -0700
-Message-ID: <CAPcyv4hOD--eFPX9v4U0iowzQZVfOX2KgNYQU7Cb+WSnZmWpiw@mail.gmail.com>
-Subject: Re: [PATCH v9 3/7] mce: fix set_mce_nospec to always unmap the whole page
-To:     "Luck, Tony" <tony.luck@intel.com>
-Cc:     Borislav Petkov <bp@alien8.de>, "chu, jane" <jane.chu@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Lutomirski, Andy" <luto@kernel.org>, david <david@fromorbit.com>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux NVDIMM <nvdimm@lists.linux.dev>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        X86 ML <x86@kernel.org>,
-        "Verma, Vishal L" <vishal.l.verma@intel.com>,
-        "Jiang, Dave" <dave.jiang@intel.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        device-mapper development <dm-devel@redhat.com>,
-        "Weiny, Ira" <ira.weiny@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Vivek Goyal <vgoyal@redhat.com>, "Wang, Jue" <juew@google.com>
+References: <Yn10Iz1mJX1Mu1rv@casper.infradead.org>
+In-Reply-To: <Yn10Iz1mJX1Mu1rv@casper.infradead.org>
+From:   Yu Zhao <yuzhao@google.com>
+Date:   Thu, 12 May 2022 21:46:53 -0600
+Message-ID: <CAOUHufbF5tLgJF+W8PBv1i1annSb9ySkJbhwQaJOsK04KdYJzg@mail.gmail.com>
+Subject: Re: Freeing page flags
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 11, 2022 at 10:17 AM Luck, Tony <tony.luck@intel.com> wrote:
+On Thu, May 12, 2022 at 2:55 PM Matthew Wilcox <willy@infradead.org> wrote:
 >
-> > I - just like you - am waiting for Tony to say whether he still needs
-> > this whole_page() thing. I already suggested removing it so I'm fine
-> > with this patch.
->
-> IIRC this new patch effectively reverts back to the original behavior that
-> I implemented back at the dawn of time. I.e. just always mark the whole
-> page "not present" and don't try to mess with UC mappings to allow
-> partial (but non-speculative) access to the not-poisoned parts of the
-> page.
->
-> If that is the case ... then Acked-by: Tony Luck <tony.luck@intel.com>
->
-> If I've misunderstood ... then please explain what it is doing.
+> The LWN writeup [1] on merging the MGLRU reminded me that I need to send
+> out a plan for removing page flags that we can do without.
 
-You are correct. The page is always marked not present as far as the
-page-offlining code is concerned, back to the way it always was.
+Much appreciated.
 
-The code in the pmem driver that repairs the page now knows that the
-page is to be kept "not present" until the poison is cleared and
-clear_mce_nospec() returns the mapping to typical write-back caching.
+> 1. PG_error.  It's basically useless.  If the page was read successfully,
+> PG_uptodate is set.  If not, PG_uptodate is clear.  The page cache
+> doesn't use PG_error.  Some filesystems do, and we need to transition
+> them away from using it.
+>
+> 2. PG_private.  This tells us whether we have anything stored at
+> page->private.  We can just check if page->private is NULL or not.
+> No need to have this extra bit.  Again, there may be some filesystems
+> that are a bit wonky here, but I'm sure they're fixable.
+>
+> 3. PG_mappedtodisk.  This is really only used by the buffer cache.
+> Once the filesystems that use bufferheads have been converted, this can
+> go away.
+>
+> 4. I think I can also consolidate PG_slab and PG_reserved into a "single
+> bit" (not really, but change the encoding so that effectively they only
+> take a single bit).
+>
+> That gives us 4 bits back, which should relieve the pressure on page flag
+> bits for a while.  I have Thoughts on PG_private_2 and PG_owner_priv_1,
+> as well as a suspicion that not all combinations of referenced, lru,
+> active, workingset, reclaim and unevictable are possible, and there
+> might be scope for a better encoding.  But I don't know that we need to
+> do that work; gaining back 4 bits is already a Big Deal.
 
-There is no support for what the UC case previously allowed which was
-reading the good lines around the one bad line, just handle overwrites
-to clear poison and restore access.
+PG_active, PG_ unevictable and PG_swapbacked seem to be the low
+hanging fruit among those you mentioned above. They indicate which LRU
+list a folio is currently on, was deleted from or should be added to.
+We should be able to use the spare bits in folio->lru for this
+purpose. WDYT?
+
+> I'm slowly doing the PG_private transition as part of the folio work.
+> For example, eagle eyed reviewers may have spotted that there is no
+> folio_has_buffers().  Converted code calls folio_buffers() and checks
+> if it's NULL.  Help from filesystem maintainers on removing the uses of
+> PG_error gratefully appreciated.
+>
+> [1] https://lwn.net/Articles/894859/
+
+We'd be very happy to help with testing and reviewing, etc.
