@@ -2,100 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E3EB525F76
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 May 2022 12:08:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E6C1525EE5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 May 2022 12:07:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379197AbiEMJhC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 May 2022 05:37:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41986 "EHLO
+        id S1379038AbiEMJjg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 May 2022 05:39:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51678 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379190AbiEMJg6 (ORCPT
+        with ESMTP id S1353324AbiEMJje (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 May 2022 05:36:58 -0400
-Received: from mail-qk1-x72a.google.com (mail-qk1-x72a.google.com [IPv6:2607:f8b0:4864:20::72a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFFFC289BEA;
-        Fri, 13 May 2022 02:36:56 -0700 (PDT)
-Received: by mail-qk1-x72a.google.com with SMTP id c1so6628104qkf.13;
-        Fri, 13 May 2022 02:36:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5/QaHzIsDx+VUbkQpyJdrmhr5ZThzTeQgKRfTCqVyP0=;
-        b=LoECVbfRBi4FDUjlO+TsWlNINlegPwvqwXrR2czl8byOnVKt85YnYW+sZhWjopmjyD
-         cCBo/gmgUyl1Biu+wqDU2ZebY8KSUmnucMeRaz94Yxx9B2Qz8iwL8B6tIT3khC3iHhHH
-         duozL9qSrIk2DZgTbNl9tXtu/aJhdNvROLmAVZ633A3MQ+mv9SoBoGjMUB1z8pgb+H6n
-         g6NlEsKczLjIweg2IucLK3xCkZ6FivZse6yZ0kl2TWG6XO1oMwyKU/6W+lAEB8lhZib2
-         jvi+Yi9Jncwfl+APhDRIi7emZekDCYv5Ivd76x37C6N1or6FIPK3ElJk2Uri1gtt+HXD
-         yAHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5/QaHzIsDx+VUbkQpyJdrmhr5ZThzTeQgKRfTCqVyP0=;
-        b=0xQiaiAyLPFhNwWod9uS9GcVopo3bu/fNzILPMkMdmc2xB7ezEofeicQPBXGPsaeZp
-         SdZE36ZVM7NAzoIKVF+4EgWVdzSj990pQGg4u3UJiaBo13WBjOsHCWh1RnGqKi4kQz9y
-         cgTa45r/4elFT74DlzEe+RUSCYVNU9bSGScDi3Rsuc3LU4urKt+6l3RRojrwlX6M7rIK
-         6lTFNF6FkQo8flVsbidkDir8lfWBJRx1fv1sQN1a1LTCD1J70esnYx0oQylPoKdGggSP
-         QOLE1yGaiIU7sf7fAQhTBVoh+6gkJ3B4B5OL5DwW0gwNOPHTLHCy9pAI0AvYS4wrft48
-         ZOdg==
-X-Gm-Message-State: AOAM532M6LJaN8M/hzB3uYB4xcWypQmYgy8PYyADscfsnIPXeMC2MARL
-        X+DWH0JMv7qKgEpTOYMbFnM6RG0USe7sLIQvtIs7h+fUdy4=
-X-Google-Smtp-Source: ABdhPJwTAuDj69E8va6LLbGC/UtsCBaq2ghW54E2TbfuYUPG9cPdUfAUsJnmuH17yXT67cbhf9mGJImwDlL8l1MabHc=
-X-Received: by 2002:a05:620a:1aa0:b0:6a0:a34:15e0 with SMTP id
- bl32-20020a05620a1aa000b006a00a3415e0mr2940089qkb.19.1652434615582; Fri, 13
- May 2022 02:36:55 -0700 (PDT)
+        Fri, 13 May 2022 05:39:34 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC8D4291CDC
+        for <linux-fsdevel@vger.kernel.org>; Fri, 13 May 2022 02:39:32 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 8935521ABA;
+        Fri, 13 May 2022 09:39:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1652434771; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=RKGLaV6peCQRz1XBWcpMDRG/NtpXOzj4Bb4XSCgxoy8=;
+        b=BiWpz7uatSEHH+dWThvoCEO+79pncusW/90PUh4zgcM1REc5gyAV8Mn5Wvkxww0KvU1rWw
+        Z2K3Nly/EzbEXCWy1WtNWccd7qYiFKZLnChmX2wlfm1VR/XQwJrauBAQlGutl/S5yGR836
+        IW47ibAzrT8yMChWW1RtfdXiOH2O1HU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1652434771;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=RKGLaV6peCQRz1XBWcpMDRG/NtpXOzj4Bb4XSCgxoy8=;
+        b=/jp3FHVCnKqoxGNsYQ4W9NR+12RudgIyq56nvLnP51ZPtYYmjBlths786gOTQlbODXwSsX
+        beHEQqjt1IEVaCCg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 1319A13A84;
+        Fri, 13 May 2022 09:39:31 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id jm8gAFMnfmIEAwAAMHmgww
+        (envelope-from <lhenriques@suse.de>); Fri, 13 May 2022 09:39:30 +0000
+Received: from localhost (brahms.olymp [local])
+        by brahms.olymp (OpenSMTPD) with ESMTPA id 3d4c2108;
+        Fri, 13 May 2022 09:40:05 +0000 (UTC)
+From:   =?utf-8?Q?Lu=C3=ADs_Henriques?= <lhenriques@suse.de>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Xiubo Li <xiubli@redhat.com>, Jeff Layton <jlayton@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: Freeing page flags
+References: <Yn10Iz1mJX1Mu1rv@casper.infradead.org>
+        <Yn3FZSZbEDssbRnk@localhost.localdomain>
+        <Yn3S8A9I/G5F4u80@casper.infradead.org>
+Date:   Fri, 13 May 2022 10:40:05 +0100
+In-Reply-To: <Yn3S8A9I/G5F4u80@casper.infradead.org> (Matthew Wilcox's message
+        of "Fri, 13 May 2022 04:39:28 +0100")
+Message-ID: <87sfpd22kq.fsf@brahms.olymp>
 MIME-Version: 1.0
-References: <lGo7a4qQABKb-u_xsz6p-QtLIy2bzciBLTUJ7-ksv7ppK3mRrJhXqFmCFU4AtQf6EyrZUrYuSLDMBHEUMe5st_iT9VcRuyYPMU_jVpSzoWg=@emersion.fr>
- <CAOQ4uxjOOe0aouDYNdkVyk7Mu1jQ-eY-6XoW=FrVRtKyBd2KFg@mail.gmail.com> <Uc-5mYLV3EgTlSFyEEzmpLvNdXKVJSL9pOSCiNylGIONHoljlV9kKizN2bz6lHsTDPDR_4ugSxLYNCO7xjdSeF3daahq8_kvxWhpIvXcuHA=@emersion.fr>
-In-Reply-To: <Uc-5mYLV3EgTlSFyEEzmpLvNdXKVJSL9pOSCiNylGIONHoljlV9kKizN2bz6lHsTDPDR_4ugSxLYNCO7xjdSeF3daahq8_kvxWhpIvXcuHA=@emersion.fr>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 13 May 2022 12:36:44 +0300
-Message-ID: <CAOQ4uxiw0gaa+=afk=Avnr+8+DiyP9CRgUNUDK6NYZbo+Z7dOQ@mail.gmail.com>
-Subject: Re: procfs: open("/proc/self/fd/...") allows bypassing O_RDONLY
-To:     Simon Ser <contact@emersion.fr>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 12, 2022 at 3:38 PM Simon Ser <contact@emersion.fr> wrote:
->
-> On Thursday, May 12th, 2022 at 14:30, Amir Goldstein <amir73il@gmail.com> wrote:
->
-> > Clients can also readlink("/proc/self/fd/<fd>") to get the path of the file
-> > and open it from its path (if path is accessible in their mount namespace).
->
-> What the compositor does is:
->
-> - shm_open with O_RDWR
-> - Write the kyeboard keymap
-> - shm_open again the same file with O_RDONLY
-> - shm_unlink
-> - Send the O_RDONLY FD to clients
->
-> Thus, the file doesn't exist anymore when clients get the FD.
+Matthew Wilcox <willy@infradead.org> writes:
 
-From system POV, a readonly bind mount of /dev/shm
-could be created (e.g. at /dev/shm-ro) and then wayland could open
-the shm rdonly file from that path.
+> On Thu, May 12, 2022 at 10:41:41PM -0400, Josef Bacik wrote:
+>> On Thu, May 12, 2022 at 09:54:59PM +0100, Matthew Wilcox wrote:
+>> > The LWN writeup [1] on merging the MGLRU reminded me that I need to se=
+nd
+>> > out a plan for removing page flags that we can do without.
+>> >=20
+>> > 1. PG_error.  It's basically useless.  If the page was read successful=
+ly,
+>> > PG_uptodate is set.  If not, PG_uptodate is clear.  The page cache
+>> > doesn't use PG_error.  Some filesystems do, and we need to transition
+>> > them away from using it.
+>> >
+>>=20
+>> What about writes?  A cursory look shows we don't clear Uptodate if we f=
+ail to
+>> write, which is correct I think.  The only way to indicate we had a writ=
+e error
+>> to check later is the page error.
+>
+> On encountering a write error, we're supposed to call mapping_set_error(),
+> not SetPageError().
+>
+>> > 2. PG_private.  This tells us whether we have anything stored at
+>> > page->private.  We can just check if page->private is NULL or not.
+>> > No need to have this extra bit.  Again, there may be some filesystems
+>> > that are a bit wonky here, but I'm sure they're fixable.
+>> >=20
+>>=20
+>> At least for Btrfs we serialize the page->private with the private_lock,=
+ so we
+>> could probably just drop PG_private, but it's kind of nice to check firs=
+t before
+>> we have to take the spin lock.  I suppose we can just do
+>>=20
+>> if (page->private)
+>> 	// do lock and check thingy
+>
+> That's my hope!  I think btrfs is already using folio_attach_private() /
+> attach_page_private(), which makes everything easier.  Some filesystems
+> still manipulate page->private and PagePrivate by hand.
 
-If wayland cannot rely on system to create the bind mount for it,
-it could also clone its own mount namespace and create the
-bind mount in its own namespace for opening the rdonly file.
+In ceph we've recently [1] spent a bit of time debugging a bug related
+with ->private not being NULL even though we expected it to be.  The
+solution found was to replace the check for NULL and use
+folio_test_private() instead, but we _may_ have not figured the whole
+thing out.
 
-But that implementation would be Linux specific an Linux has many
-other APIs that were suggested on the linked gitlab issue.
-You did not mention them in your question and did not say why
-those solutions are not a good enough for your needs.
+We assumed that folios were being recycled and not cleaned-up.  The values
+we were seeing in ->private looked like they were some sort of flags as
+only a few bits were set (e.g. 0x0200000):
 
-Thanks,
-Amir.
+[ 1672.578313] page:00000000e23868c1 refcount:2 mapcount:0 mapping:00000000=
+22e0d3b4 index:0xd8 pfn:0x74e83
+[ 1672.581934] aops:ceph_aops [ceph] ino:10000016c9e dentry name:"faed"
+[ 1672.584457] flags: 0x4000000000000015(locked|uptodate|lru|zone=3D1)
+[ 1672.586878] raw: 4000000000000015 ffffea0001d3a108 ffffea0001d3a088 ffff=
+888003491948
+[ 1672.589894] raw: 00000000000000d8 0000000000200000 00000002ffffffff 0000=
+000000000000
+[ 1672.592935] page dumped because: VM_BUG_ON_FOLIO(1)
+
+[1] https://lore.kernel.org/all/20220508061543.318394-1-xiubli@redhat.com/
+
+Cheers,
+--=20
+Lu=C3=ADs
