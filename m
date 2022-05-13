@@ -2,40 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D9782526A86
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 May 2022 21:38:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 228A6526A82
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 May 2022 21:38:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1383894AbiEMTiv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 May 2022 15:38:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44950 "EHLO
+        id S1383857AbiEMTik (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 May 2022 15:38:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44832 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1383871AbiEMTim (ORCPT
+        with ESMTP id S1383849AbiEMTii (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 May 2022 15:38:42 -0400
+        Fri, 13 May 2022 15:38:38 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 815F9712ED;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80FE6712EA;
         Fri, 13 May 2022 12:38:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
-        Content-ID:Content-Description:In-Reply-To:References;
-        bh=7AQ1tnmhdj6GIYIC2jyaasQB2WbOtM0epCQajREwxjk=; b=SCCmofz3S3HUQcBWMURDzrOQWY
-        GByb02Xi3RCgjqfZC/HDw6IJuRFVfxzvoLe2RTYOI9S6uknoOv/r8y5/nCeDTV/jDFdYo4ieAOxGn
-        ikha2qhXoeDeMmlI0DvnatYzcang7YQcyWbeVWIDfDv6iiyFXZrmP0UzLYgPbBh9QM2Z4TOoIJYXK
-        /cShfIxHCHcsjreGCVX0yJM/tpEowzBD3ifmSg7pL4FDPCBj4c0MINTOTXl3ees1VngzhXWlBrOan
-        uHFZrzAL7/hZYI0W4PjY6QjsMwK+BdEIEfMOLBIU4GLQQM3XGuvf+fkH5z2vSleSb539JAy7Sbqyu
-        VXXoX4+w==;
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
+        Reply-To:Content-Type:Content-ID:Content-Description;
+        bh=iGO39EDVjPnTYXbXk4m8oqTPwLMaY1sb1Vley0Ob2Bs=; b=xpbCJEZVFLojPYYKLedVllObpJ
+        sIKinKb0p4nX/oHMltMoDAc0PB64XIfu2HYPQe9s403D2iryESyykHgKMjzr9inJ9W0jGRh6n0o8U
+        yaP6pEuyLGdK2XhsBydQKxUg5VkoD41qsPkLM0zM4tONyTXoFz066JnV872EBNQQ0CkqPK16Zq0PX
+        usWYLbFworSaNvmRhDJYjn2h1guPnX5ON2Wx/pk+MLUWFOE74lypAvvcuHZGNmyEA/xXfMkXvbQVS
+        X8e/cARTNoRnDpEU1nuCZ9TOLinymaY/TjPbXgJewdSLmXghwq1DboR0x77p8hLTKCawb2v9AGsxq
+        Pzvcnmsw==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1npb7T-00HM1v-Cn; Fri, 13 May 2022 19:38:35 +0000
+        id 1npb7T-00HM1x-Fl; Fri, 13 May 2022 19:38:35 +0000
 From:   Luis Chamberlain <mcgrof@kernel.org>
 To:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
 Cc:     patches@lists.linux.dev, amir73il@gmail.com, pankydev8@gmail.com,
         tytso@mit.edu, josef@toxicpanda.com, jmeneghi@redhat.com,
         jake@lwn.net, mcgrof@kernel.org
-Subject: [PATCH 0/4] kdevops: use linux-kdevops for the main tree
-Date:   Fri, 13 May 2022 12:38:27 -0700
-Message-Id: <20220513193831.4136212-1-mcgrof@kernel.org>
+Subject: [PATCH 1/4] workflows/Kconfig: be consistent when enabling fstests or blktests
+Date:   Fri, 13 May 2022 12:38:28 -0700
+Message-Id: <20220513193831.4136212-2-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220513193831.4136212-1-mcgrof@kernel.org>
+References: <20220513193831.4136212-1-mcgrof@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Luis Chamberlain <mcgrof@infradead.org>
@@ -49,36 +51,43 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-More just like a heads up as to the next steps from discussions at
-LSFMM with regards to kdevops. Those using kdevops in some environemnts
-will want to read the last commit.
+We have two kconfig variables which we use to be able to express
+when we are going to enable fstests or blktests, either as a dedicated
+set of tests or when we want to enable testing both fstests and blktests
+in one system. But right now we only select this kconfig variable when
+we are using a dedicated system. This is not an issue as the kconfig
+is a kconfig symbols are bools which are set default to y if either
+the test is dedicated or not.
 
-This work starts off by making the linux-kdevops organization the default
-for the source of commits for the kdevops projects. We can now share
-efforts, and commits. The last commit will contain more details as
-to the motivation for this.
+But to be pedantic, and clear, let's make sure the tests select the
+respective kconfig for each case as we'd expect to see it. Otherwise
+this can confuse folks reading this.
 
-Luis Chamberlain (4):
-  workflows/Kconfig: be consistent when enabling fstests or blktests
-  kdevops: move generic kdevops variables to its own file
-  playbooks: add a common playbook a git reset task for kdevops
-  kdevops: make linux-kdevops the default tree
+Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+---
+ kconfigs/workflows/Kconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
- kconfigs/workflows/Kconfig               |  6 ++++
- kconfigs/workflows/Kconfig.shared        |  2 +-
- playbooks/common.yml                     |  4 +++
- playbooks/roles/common/README.md         | 38 ++++++++++++++++++++
- playbooks/roles/common/defaults/main.yml |  7 ++++
- playbooks/roles/common/tasks/main.yml    | 23 ++++++++++++
- workflows/Makefile                       | 33 +----------------
- workflows/common/Makefile                | 46 ++++++++++++++++++++++++
- 8 files changed, 126 insertions(+), 33 deletions(-)
- create mode 100644 playbooks/common.yml
- create mode 100644 playbooks/roles/common/README.md
- create mode 100644 playbooks/roles/common/defaults/main.yml
- create mode 100644 playbooks/roles/common/tasks/main.yml
- create mode 100644 workflows/common/Makefile
-
+diff --git a/kconfigs/workflows/Kconfig b/kconfigs/workflows/Kconfig
+index 7e5c518..7f71470 100644
+--- a/kconfigs/workflows/Kconfig
++++ b/kconfigs/workflows/Kconfig
+@@ -133,6 +133,7 @@ if !WORKFLOWS_DEDICATED_WORKFLOW
+ 
+ config KDEVOPS_WORKFLOW_NOT_DEDICATED_ENABLE_FSTESTS
+ 	bool "fstests"
++	select KDEVOPS_WORKFLOW_ENABLE_FSTESTS
+ 	help
+ 	  Select this option if you are doing filesystem development and want
+ 	  to target development for a filesystem and enable fstests so that
+@@ -146,6 +147,7 @@ config KDEVOPS_WORKFLOW_NOT_DEDICATED_ENABLE_FSTESTS
+ 
+ config KDEVOPS_WORKFLOW_NOT_DEDICATED_ENABLE_BLKTESTS
+ 	bool "blktests"
++	select KDEVOPS_WORKFLOW_ENABLE_BLKTESTS
+ 	help
+ 	  Select this option if you are doing block layer development and want
+ 	  to run blktests. The git tree for blktests will be git clone and
 -- 
 2.35.1
 
