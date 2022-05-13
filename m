@@ -2,82 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C2F96525D82
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 May 2022 10:38:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E3EB525F76
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 May 2022 12:08:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1378300AbiEMIcq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 May 2022 04:32:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33278 "EHLO
+        id S1379197AbiEMJhC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 May 2022 05:37:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1378326AbiEMIcj (ORCPT
+        with ESMTP id S1379190AbiEMJg6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 May 2022 04:32:39 -0400
-Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EED362A8077
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 May 2022 01:32:36 -0700 (PDT)
-Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-2f825f8c944so66455817b3.15
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 May 2022 01:32:36 -0700 (PDT)
+        Fri, 13 May 2022 05:36:58 -0400
+Received: from mail-qk1-x72a.google.com (mail-qk1-x72a.google.com [IPv6:2607:f8b0:4864:20::72a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AFFFC289BEA;
+        Fri, 13 May 2022 02:36:56 -0700 (PDT)
+Received: by mail-qk1-x72a.google.com with SMTP id c1so6628104qkf.13;
+        Fri, 13 May 2022 02:36:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=hk5uEtV3LYTwsgSEedR4CtG2vms3qpu/B7wOj7VdRzM=;
-        b=kYsNC7Eo1NPKL0cqSlEK8e68ZyQYRtrrD4EnKB7z+KZUKXD6WFKCXPMla4tDAyiQIg
-         R1v92Ef6+EDCeojrvVKCFLPHuTXNldGmrN3nb9HL03DPkjJYrcMFg+FEzjRUKnv41p52
-         DaTPHxS5FuqN17a+jcm7VV3rkWuvNzYSRlAFDZ1WVlmZkoCNSAgwxJJ6kx1/K1dpk8UB
-         oLOfeDKbeXB/4ENa6HPZYZL19N2I5sPvx4Acjap9xrQm9O0s0oit88YP4JxMHjYgoid+
-         UzSwLRjFMOKiGSVr/IAHMiXkp3ltx/Ft57LuU27hwohf3PH9UIVrKDk0ITX5r4ZD9gmV
-         /XZA==
+        bh=5/QaHzIsDx+VUbkQpyJdrmhr5ZThzTeQgKRfTCqVyP0=;
+        b=LoECVbfRBi4FDUjlO+TsWlNINlegPwvqwXrR2czl8byOnVKt85YnYW+sZhWjopmjyD
+         cCBo/gmgUyl1Biu+wqDU2ZebY8KSUmnucMeRaz94Yxx9B2Qz8iwL8B6tIT3khC3iHhHH
+         duozL9qSrIk2DZgTbNl9tXtu/aJhdNvROLmAVZ633A3MQ+mv9SoBoGjMUB1z8pgb+H6n
+         g6NlEsKczLjIweg2IucLK3xCkZ6FivZse6yZ0kl2TWG6XO1oMwyKU/6W+lAEB8lhZib2
+         jvi+Yi9Jncwfl+APhDRIi7emZekDCYv5Ivd76x37C6N1or6FIPK3ElJk2Uri1gtt+HXD
+         yAHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=hk5uEtV3LYTwsgSEedR4CtG2vms3qpu/B7wOj7VdRzM=;
-        b=y28GPIA77wC02IL+D7Oc7woG/54rnU3xO61764zfJlvyDnvAOx8OP9zKj/OhuDV75f
-         7s/ayHvIHwOG5TEnLYJZQBmCLqKs4BeDM7eKp8Z1E5HqMXgXqwYJq5Jf9zB7uBNTG88J
-         icLuOZUsWy6ELa95qJpdqtwHXQyp4nZhIJ57Yza+fHtUFQPqSq6DjMfaBSR3WziGB5kL
-         CGb6nTYPAqmazJjMF3RaO+/0cU2etq4ob+v6JQ5fyYP9FdbUPwiQs0Q3yXZHzE63wgpY
-         r3dCSsb2pgrIu9j58/YPrT8miT21smfEhb3u3XcPCbShUYFEoMlyw5wgo43/mNR0cg66
-         X1ww==
-X-Gm-Message-State: AOAM532KKKWKk6Nsx5VmT13iHRsOBwKv7273Fal4F5lvgHCTPehzvNbG
-        UsqXlY+2PnHLVa1bzs7eQsI7yY0nUraCUw==
-X-Google-Smtp-Source: ABdhPJw+htFPIH6EdUeS8xrLV26f4EOL11gNUDqQ9wJshw5TbY2Hsc8UJKgk0N0pjRBQIDiAvH1OrXDakVEOHQ==
-X-Received: from slicestar.c.googlers.com ([fda3:e722:ac3:cc00:4f:4b78:c0a8:20a1])
- (user=davidgow job=sendgmr) by 2002:a25:4902:0:b0:648:d1db:af83 with SMTP id
- w2-20020a254902000000b00648d1dbaf83mr3678022yba.559.1652430756152; Fri, 13
- May 2022 01:32:36 -0700 (PDT)
-Date:   Fri, 13 May 2022 16:32:13 +0800
-In-Reply-To: <20220429043913.626647-1-davidgow@google.com>
-Message-Id: <20220513083212.3537869-3-davidgow@google.com>
-Mime-Version: 1.0
-References: <20220429043913.626647-1-davidgow@google.com>
-X-Mailer: git-send-email 2.36.0.550.gb090851708-goog
-Subject: [PATCH v3 3/3] selftest: Taint kernel when test module loaded
-From:   David Gow <davidgow@google.com>
-To:     Brendan Higgins <brendanhiggins@google.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Luis Chamberlain <mcgrof@kernel.org>
-Cc:     David Gow <davidgow@google.com>,
-        "Guilherme G . Piccoli" <gpiccoli@igalia.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        John Ogness <john.ogness@linutronix.de>,
-        Joe Fradley <joefradley@google.com>,
-        Daniel Latypov <dlatypov@google.com>,
-        kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Lucas De Marchi <lucas.demarchi@intel.com>,
-        Aaron Tomlin <atomlin@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5/QaHzIsDx+VUbkQpyJdrmhr5ZThzTeQgKRfTCqVyP0=;
+        b=0xQiaiAyLPFhNwWod9uS9GcVopo3bu/fNzILPMkMdmc2xB7ezEofeicQPBXGPsaeZp
+         SdZE36ZVM7NAzoIKVF+4EgWVdzSj990pQGg4u3UJiaBo13WBjOsHCWh1RnGqKi4kQz9y
+         cgTa45r/4elFT74DlzEe+RUSCYVNU9bSGScDi3Rsuc3LU4urKt+6l3RRojrwlX6M7rIK
+         6lTFNF6FkQo8flVsbidkDir8lfWBJRx1fv1sQN1a1LTCD1J70esnYx0oQylPoKdGggSP
+         QOLE1yGaiIU7sf7fAQhTBVoh+6gkJ3B4B5OL5DwW0gwNOPHTLHCy9pAI0AvYS4wrft48
+         ZOdg==
+X-Gm-Message-State: AOAM532M6LJaN8M/hzB3uYB4xcWypQmYgy8PYyADscfsnIPXeMC2MARL
+        X+DWH0JMv7qKgEpTOYMbFnM6RG0USe7sLIQvtIs7h+fUdy4=
+X-Google-Smtp-Source: ABdhPJwTAuDj69E8va6LLbGC/UtsCBaq2ghW54E2TbfuYUPG9cPdUfAUsJnmuH17yXT67cbhf9mGJImwDlL8l1MabHc=
+X-Received: by 2002:a05:620a:1aa0:b0:6a0:a34:15e0 with SMTP id
+ bl32-20020a05620a1aa000b006a00a3415e0mr2940089qkb.19.1652434615582; Fri, 13
+ May 2022 02:36:55 -0700 (PDT)
+MIME-Version: 1.0
+References: <lGo7a4qQABKb-u_xsz6p-QtLIy2bzciBLTUJ7-ksv7ppK3mRrJhXqFmCFU4AtQf6EyrZUrYuSLDMBHEUMe5st_iT9VcRuyYPMU_jVpSzoWg=@emersion.fr>
+ <CAOQ4uxjOOe0aouDYNdkVyk7Mu1jQ-eY-6XoW=FrVRtKyBd2KFg@mail.gmail.com> <Uc-5mYLV3EgTlSFyEEzmpLvNdXKVJSL9pOSCiNylGIONHoljlV9kKizN2bz6lHsTDPDR_4ugSxLYNCO7xjdSeF3daahq8_kvxWhpIvXcuHA=@emersion.fr>
+In-Reply-To: <Uc-5mYLV3EgTlSFyEEzmpLvNdXKVJSL9pOSCiNylGIONHoljlV9kKizN2bz6lHsTDPDR_4ugSxLYNCO7xjdSeF3daahq8_kvxWhpIvXcuHA=@emersion.fr>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 13 May 2022 12:36:44 +0300
+Message-ID: <CAOQ4uxiw0gaa+=afk=Avnr+8+DiyP9CRgUNUDK6NYZbo+Z7dOQ@mail.gmail.com>
+Subject: Re: procfs: open("/proc/self/fd/...") allows bypassing O_RDONLY
+To:     Simon Ser <contact@emersion.fr>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -85,44 +67,35 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Make any kselftest test module (using the kselftest_module framework)
-taint the kernel with TAINT_TEST on module load.
+On Thu, May 12, 2022 at 3:38 PM Simon Ser <contact@emersion.fr> wrote:
+>
+> On Thursday, May 12th, 2022 at 14:30, Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> > Clients can also readlink("/proc/self/fd/<fd>") to get the path of the file
+> > and open it from its path (if path is accessible in their mount namespace).
+>
+> What the compositor does is:
+>
+> - shm_open with O_RDWR
+> - Write the kyeboard keymap
+> - shm_open again the same file with O_RDONLY
+> - shm_unlink
+> - Send the O_RDONLY FD to clients
+>
+> Thus, the file doesn't exist anymore when clients get the FD.
 
-Note that several selftests use kernel modules which are not based on
-the kselftest_module framework, and so will not automatically taint the
-kernel. These modules will have to be manually modified if they should
-taint the kernel this way.
+From system POV, a readonly bind mount of /dev/shm
+could be created (e.g. at /dev/shm-ro) and then wayland could open
+the shm rdonly file from that path.
 
-Similarly, selftests which do not load modules into the kernel generally
-should not taint the kernel (or possibly should only do so on failure),
-as it's assumed that testing from user-space should be safe. Regardless,
-they can write to /proc/sys/kernel/tainted if required.
+If wayland cannot rely on system to create the bind mount for it,
+it could also clone its own mount namespace and create the
+bind mount in its own namespace for opening the rdonly file.
 
-Signed-off-by: David Gow <davidgow@google.com>
----
- tools/testing/selftests/kselftest_module.h | 2 ++
- 1 file changed, 2 insertions(+)
+But that implementation would be Linux specific an Linux has many
+other APIs that were suggested on the linked gitlab issue.
+You did not mention them in your question and did not say why
+those solutions are not a good enough for your needs.
 
-diff --git a/tools/testing/selftests/kselftest_module.h b/tools/testing/selftests/kselftest_module.h
-index e2ea41de3f35..226e616b82e0 100644
---- a/tools/testing/selftests/kselftest_module.h
-+++ b/tools/testing/selftests/kselftest_module.h
-@@ -3,6 +3,7 @@
- #define __KSELFTEST_MODULE_H
- 
- #include <linux/module.h>
-+#include <linux/panic.h>
- 
- /*
-  * Test framework for writing test modules to be loaded by kselftest.
-@@ -41,6 +42,7 @@ static inline int kstm_report(unsigned int total_tests, unsigned int failed_test
- static int __init __module##_init(void)			\
- {							\
- 	pr_info("loaded.\n");				\
-+	add_taint(TAINT_KUNIT, LOCKDEP_STILL_OK);	\
- 	selftest();					\
- 	return kstm_report(total_tests, failed_tests, skipped_tests);	\
- }							\
--- 
-2.36.0.550.gb090851708-goog
-
+Thanks,
+Amir.
