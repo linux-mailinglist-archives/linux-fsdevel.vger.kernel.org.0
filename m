@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 80636526A9E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 May 2022 21:40:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E7A6B526AA1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 May 2022 21:40:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1383857AbiEMTkK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 May 2022 15:40:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47822 "EHLO
+        id S1379969AbiEMTkQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 May 2022 15:40:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1383904AbiEMTkI (ORCPT
+        with ESMTP id S1383876AbiEMTkM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 May 2022 15:40:08 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 963182DAB7;
-        Fri, 13 May 2022 12:40:03 -0700 (PDT)
+        Fri, 13 May 2022 15:40:12 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 458F42DAB7;
+        Fri, 13 May 2022 12:40:11 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id F2EDD616D4;
-        Fri, 13 May 2022 19:40:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33F58C34100;
-        Fri, 13 May 2022 19:40:02 +0000 (UTC)
-Subject: [PATCH 6/8] NFSD: Remove do_nfsd_create()
+        by ams.source.kernel.org (Postfix) with ESMTPS id 03900B83132;
+        Fri, 13 May 2022 19:40:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 812F5C34100;
+        Fri, 13 May 2022 19:40:08 +0000 (UTC)
+Subject: [PATCH 7/8] NFSD: Clean up nfsd_open_verified()
 From:   Chuck Lever <chuck.lever@oracle.com>
 To:     linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         viro@zeniv.linux.org.uk
-Date:   Fri, 13 May 2022 15:40:01 -0400
-Message-ID: <165247080126.6691.4551488427075062993.stgit@bazille.1015granger.net>
+Date:   Fri, 13 May 2022 15:40:07 -0400
+Message-ID: <165247080760.6691.5323075828197734796.stgit@bazille.1015granger.net>
 In-Reply-To: <165247056822.6691.9087206893184705325.stgit@bazille.1015granger.net>
 References: <165247056822.6691.9087206893184705325.stgit@bazille.1015granger.net>
 User-Agent: StGit/1.5
@@ -43,201 +43,74 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Now that its two callers have their own version-specific instance of
-this function, do_nfsd_create() is no longer used.
+Its only caller always passes S_IFREG as the @type parameter. As an
+additional clean-up, add a kerneldoc comment.
 
 Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
 ---
- fs/nfsd/vfs.c |  150 ---------------------------------------------------------
- fs/nfsd/vfs.h |   10 ----
- 2 files changed, 160 deletions(-)
+ fs/nfsd/filecache.c |    4 ++--
+ fs/nfsd/vfs.c       |   15 ++++++++++++---
+ fs/nfsd/vfs.h       |    2 +-
+ 3 files changed, 15 insertions(+), 6 deletions(-)
 
+diff --git a/fs/nfsd/filecache.c b/fs/nfsd/filecache.c
+index 2c1b027774d4..781bef7e42d9 100644
+--- a/fs/nfsd/filecache.c
++++ b/fs/nfsd/filecache.c
+@@ -995,8 +995,8 @@ nfsd_file_acquire(struct svc_rqst *rqstp, struct svc_fh *fhp,
+ 
+ 	nf->nf_mark = nfsd_file_mark_find_or_create(nf);
+ 	if (nf->nf_mark)
+-		status = nfsd_open_verified(rqstp, fhp, S_IFREG,
+-				may_flags, &nf->nf_file);
++		status = nfsd_open_verified(rqstp, fhp, may_flags,
++					    &nf->nf_file);
+ 	else
+ 		status = nfserr_jukebox;
+ 	/*
 diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-index 83c989a5d6f3..0b0dbb8e0894 100644
+index 0b0dbb8e0894..840e3af63a6f 100644
 --- a/fs/nfsd/vfs.c
 +++ b/fs/nfsd/vfs.c
-@@ -1387,156 +1387,6 @@ nfsd_create(struct svc_rqst *rqstp, struct svc_fh *fhp,
- 					rdev, resfhp);
+@@ -827,14 +827,23 @@ nfsd_open(struct svc_rqst *rqstp, struct svc_fh *fhp, umode_t type,
+ 	return err;
  }
  
--/*
-- * NFSv3 and NFSv4 version of nfsd_create
-- */
--__be32
--do_nfsd_create(struct svc_rqst *rqstp, struct svc_fh *fhp,
--		char *fname, int flen, struct iattr *iap,
--		struct svc_fh *resfhp, int createmode, u32 *verifier,
--	        bool *truncp, bool *created)
--{
--	struct dentry	*dentry, *dchild = NULL;
--	struct inode	*dirp;
--	__be32		err;
--	int		host_err;
--	__u32		v_mtime=0, v_atime=0;
--
--	err = nfserr_perm;
--	if (!flen)
--		goto out;
--	err = nfserr_exist;
--	if (isdotent(fname, flen))
--		goto out;
--	if (!(iap->ia_valid & ATTR_MODE))
--		iap->ia_mode = 0;
--	err = fh_verify(rqstp, fhp, S_IFDIR, NFSD_MAY_EXEC);
--	if (err)
--		goto out;
--
--	dentry = fhp->fh_dentry;
--	dirp = d_inode(dentry);
--
--	host_err = fh_want_write(fhp);
--	if (host_err)
--		goto out_nfserr;
--
--	fh_lock_nested(fhp, I_MUTEX_PARENT);
--
--	/*
--	 * Compose the response file handle.
--	 */
--	dchild = lookup_one_len(fname, dentry, flen);
--	host_err = PTR_ERR(dchild);
--	if (IS_ERR(dchild))
--		goto out_nfserr;
--
--	/* If file doesn't exist, check for permissions to create one */
--	if (d_really_is_negative(dchild)) {
--		err = fh_verify(rqstp, fhp, S_IFDIR, NFSD_MAY_CREATE);
--		if (err)
--			goto out;
--	}
--
--	err = fh_compose(resfhp, fhp->fh_export, dchild, fhp);
--	if (err)
--		goto out;
--
--	if (nfsd_create_is_exclusive(createmode)) {
--		/* solaris7 gets confused (bugid 4218508) if these have
--		 * the high bit set, as do xfs filesystems without the
--		 * "bigtime" feature.  So just clear the high bits. If this is
--		 * ever changed to use different attrs for storing the
--		 * verifier, then do_open_lookup() will also need to be fixed
--		 * accordingly.
--		 */
--		v_mtime = verifier[0]&0x7fffffff;
--		v_atime = verifier[1]&0x7fffffff;
--	}
--	
--	if (d_really_is_positive(dchild)) {
--		err = 0;
--
--		switch (createmode) {
--		case NFS3_CREATE_UNCHECKED:
--			if (! d_is_reg(dchild))
--				goto out;
--			else if (truncp) {
--				/* in nfsv4, we need to treat this case a little
--				 * differently.  we don't want to truncate the
--				 * file now; this would be wrong if the OPEN
--				 * fails for some other reason.  furthermore,
--				 * if the size is nonzero, we should ignore it
--				 * according to spec!
--				 */
--				*truncp = (iap->ia_valid & ATTR_SIZE) && !iap->ia_size;
--			}
--			else {
--				iap->ia_valid &= ATTR_SIZE;
--				goto set_attr;
--			}
--			break;
--		case NFS3_CREATE_EXCLUSIVE:
--			if (   d_inode(dchild)->i_mtime.tv_sec == v_mtime
--			    && d_inode(dchild)->i_atime.tv_sec == v_atime
--			    && d_inode(dchild)->i_size  == 0 ) {
--				if (created)
--					*created = true;
--				break;
--			}
--			fallthrough;
--		case NFS4_CREATE_EXCLUSIVE4_1:
--			if (   d_inode(dchild)->i_mtime.tv_sec == v_mtime
--			    && d_inode(dchild)->i_atime.tv_sec == v_atime
--			    && d_inode(dchild)->i_size  == 0 ) {
--				if (created)
--					*created = true;
--				goto set_attr;
--			}
--			fallthrough;
--		case NFS3_CREATE_GUARDED:
--			err = nfserr_exist;
--		}
--		goto out;
--	}
--
--	if (!IS_POSIXACL(dirp))
--		iap->ia_mode &= ~current_umask();
--
--	host_err = vfs_create(&init_user_ns, dirp, dchild, iap->ia_mode, true);
--	if (host_err < 0)
--		goto out_nfserr;
--	if (created)
--		*created = true;
--
--	nfsd_check_ignore_resizing(iap);
--
--	if (nfsd_create_is_exclusive(createmode)) {
--		/* Cram the verifier into atime/mtime */
--		iap->ia_valid = ATTR_MTIME|ATTR_ATIME
--			| ATTR_MTIME_SET|ATTR_ATIME_SET;
--		/* XXX someone who knows this better please fix it for nsec */ 
--		iap->ia_mtime.tv_sec = v_mtime;
--		iap->ia_atime.tv_sec = v_atime;
--		iap->ia_mtime.tv_nsec = 0;
--		iap->ia_atime.tv_nsec = 0;
--	}
--
-- set_attr:
--	err = nfsd_create_setattr(rqstp, fhp, resfhp, iap);
--
-- out:
--	fh_unlock(fhp);
--	if (dchild && !IS_ERR(dchild))
--		dput(dchild);
--	fh_drop_write(fhp);
-- 	return err;
-- 
-- out_nfserr:
--	err = nfserrno(host_err);
--	goto out;
--}
--
- /*
-  * Read a symlink. On entry, *lenp must contain the maximum path length that
-  * fits into the buffer. On return, it contains the true length.
++/**
++ * nfsd_open_verified - Open a regular file for the filecache
++ * @rqstp: RPC request
++ * @fhp: NFS filehandle of the file to open
++ * @may_flags: internal permission flags
++ * @filp: OUT: open "struct file *"
++ *
++ * Returns an nfsstat value in network byte order.
++ */
+ __be32
+-nfsd_open_verified(struct svc_rqst *rqstp, struct svc_fh *fhp, umode_t type,
+-		int may_flags, struct file **filp)
++nfsd_open_verified(struct svc_rqst *rqstp, struct svc_fh *fhp, int may_flags,
++		   struct file **filp)
+ {
+ 	__be32 err;
+ 
+ 	validate_process_creds();
+-	err = __nfsd_open(rqstp, fhp, type, may_flags, filp);
++	err = __nfsd_open(rqstp, fhp, S_IFREG, may_flags, filp);
+ 	validate_process_creds();
+ 	return err;
+ }
 diff --git a/fs/nfsd/vfs.h b/fs/nfsd/vfs.h
-index 1f32a83456b0..f99794b033a5 100644
+index f99794b033a5..26347d76f44a 100644
 --- a/fs/nfsd/vfs.h
 +++ b/fs/nfsd/vfs.h
-@@ -71,10 +71,6 @@ __be32		nfsd_create(struct svc_rqst *, struct svc_fh *,
- __be32		nfsd_access(struct svc_rqst *, struct svc_fh *, u32 *, u32 *);
- __be32		nfsd_create_setattr(struct svc_rqst *rqstp, struct svc_fh *fhp,
- 				struct svc_fh *resfhp, struct iattr *iap);
--__be32		do_nfsd_create(struct svc_rqst *, struct svc_fh *,
--				char *name, int len, struct iattr *attrs,
--				struct svc_fh *res, int createmode,
--				u32 *verifier, bool *truncp, bool *created);
- __be32		nfsd_commit(struct svc_rqst *rqst, struct svc_fh *fhp,
- 				u64 offset, u32 count, __be32 *verf);
- #ifdef CONFIG_NFSD_V4
-@@ -161,10 +157,4 @@ static inline __be32 fh_getattr(const struct svc_fh *fh, struct kstat *stat)
- 				    AT_STATX_SYNC_AS_STAT));
- }
- 
--static inline int nfsd_create_is_exclusive(int createmode)
--{
--	return createmode == NFS3_CREATE_EXCLUSIVE
--	       || createmode == NFS4_CREATE_EXCLUSIVE4_1;
--}
--
- #endif /* LINUX_NFSD_VFS_H */
+@@ -86,7 +86,7 @@ __be32		nfsd_setxattr(struct svc_rqst *rqstp, struct svc_fh *fhp,
+ int 		nfsd_open_break_lease(struct inode *, int);
+ __be32		nfsd_open(struct svc_rqst *, struct svc_fh *, umode_t,
+ 				int, struct file **);
+-__be32		nfsd_open_verified(struct svc_rqst *, struct svc_fh *, umode_t,
++__be32		nfsd_open_verified(struct svc_rqst *, struct svc_fh *,
+ 				int, struct file **);
+ __be32		nfsd_splice_read(struct svc_rqst *rqstp, struct svc_fh *fhp,
+ 				struct file *file, loff_t offset,
 
 
