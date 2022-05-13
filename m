@@ -2,39 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 228A6526A82
+	by mail.lfdr.de (Postfix) with ESMTP id 6DB12526A83
 	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 May 2022 21:38:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1383857AbiEMTik (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 May 2022 15:38:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44832 "EHLO
+        id S1383870AbiEMTil (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 May 2022 15:38:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44830 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1383849AbiEMTii (ORCPT
+        with ESMTP id S1383685AbiEMTii (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 13 May 2022 15:38:38 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80FE6712EA;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FD20712D5;
         Fri, 13 May 2022 12:38:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=iGO39EDVjPnTYXbXk4m8oqTPwLMaY1sb1Vley0Ob2Bs=; b=xpbCJEZVFLojPYYKLedVllObpJ
-        sIKinKb0p4nX/oHMltMoDAc0PB64XIfu2HYPQe9s403D2iryESyykHgKMjzr9inJ9W0jGRh6n0o8U
-        yaP6pEuyLGdK2XhsBydQKxUg5VkoD41qsPkLM0zM4tONyTXoFz066JnV872EBNQQ0CkqPK16Zq0PX
-        usWYLbFworSaNvmRhDJYjn2h1guPnX5ON2Wx/pk+MLUWFOE74lypAvvcuHZGNmyEA/xXfMkXvbQVS
-        X8e/cARTNoRnDpEU1nuCZ9TOLinymaY/TjPbXgJewdSLmXghwq1DboR0x77p8hLTKCawb2v9AGsxq
-        Pzvcnmsw==;
+        bh=/APt/fREJUivm2PL8Qip+DxLUsOoVfNgqWfQfNmKkEM=; b=2L3lR8RT+ik15tlc3Fk0Zwr327
+        vxDNvlTDagP9N62xnZg5ps/Lo3KS5NHaRwxIkc1EHB5WJGyy9nZtqAh/snrNzXOc4eIOirgqZWhjj
+        Rg6CDQPJKppnwByCq2hXFIXhQfj+p8d5oaq+6IEJIxq7nlQhI8+3qaDXgF7LQ0qTQOSQ7Go8mcVL5
+        scX/ZXtnvESB9XTqpwLzX3zjT2O2RD99aSjGj3QR4rfKC/3GzrYomRPI6qbOtm+M5mWSrKgxs+GLH
+        igbFNYm7tbCIL98z9YO40Cng6tFVpHquoatLkTQQK86hsE9pHEuzEuBQ7Sb5+L+xZVJ+yI81mep2K
+        /7QMUxfQ==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1npb7T-00HM1x-Fl; Fri, 13 May 2022 19:38:35 +0000
+        id 1npb7T-00HM1z-IL; Fri, 13 May 2022 19:38:35 +0000
 From:   Luis Chamberlain <mcgrof@kernel.org>
 To:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
 Cc:     patches@lists.linux.dev, amir73il@gmail.com, pankydev8@gmail.com,
         tytso@mit.edu, josef@toxicpanda.com, jmeneghi@redhat.com,
         jake@lwn.net, mcgrof@kernel.org
-Subject: [PATCH 1/4] workflows/Kconfig: be consistent when enabling fstests or blktests
-Date:   Fri, 13 May 2022 12:38:28 -0700
-Message-Id: <20220513193831.4136212-2-mcgrof@kernel.org>
+Subject: [PATCH 2/4] kdevops: move generic kdevops variables to its own file
+Date:   Fri, 13 May 2022 12:38:29 -0700
+Message-Id: <20220513193831.4136212-3-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20220513193831.4136212-1-mcgrof@kernel.org>
 References: <20220513193831.4136212-1-mcgrof@kernel.org>
@@ -43,51 +43,110 @@ Content-Transfer-Encoding: 8bit
 Sender: Luis Chamberlain <mcgrof@infradead.org>
 X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,
+        UPPERCASE_50_75 autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We have two kconfig variables which we use to be able to express
-when we are going to enable fstests or blktests, either as a dedicated
-set of tests or when we want to enable testing both fstests and blktests
-in one system. But right now we only select this kconfig variable when
-we are using a dedicated system. This is not an issue as the kconfig
-is a kconfig symbols are bools which are set default to y if either
-the test is dedicated or not.
+There are shared kdevops variables between different workflows,
+which *can* be used by any workflow. Move these into a generic
+kdevops helper Makefile, as we can later expand on this.
 
-But to be pedantic, and clear, let's make sure the tests select the
-respective kconfig for each case as we'd expect to see it. Otherwise
-this can confuse folks reading this.
+This makes no functional changes.
 
 Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 ---
- kconfigs/workflows/Kconfig | 2 ++
- 1 file changed, 2 insertions(+)
+ workflows/Makefile        | 33 +--------------------------------
+ workflows/common/Makefile | 34 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 35 insertions(+), 32 deletions(-)
+ create mode 100644 workflows/common/Makefile
 
-diff --git a/kconfigs/workflows/Kconfig b/kconfigs/workflows/Kconfig
-index 7e5c518..7f71470 100644
---- a/kconfigs/workflows/Kconfig
-+++ b/kconfigs/workflows/Kconfig
-@@ -133,6 +133,7 @@ if !WORKFLOWS_DEDICATED_WORKFLOW
+diff --git a/workflows/Makefile b/workflows/Makefile
+index 928e42f..033ffc7 100644
+--- a/workflows/Makefile
++++ b/workflows/Makefile
+@@ -1,37 +1,6 @@
+ # SPDX-License-Identifier: copyleft-next-0.3.1
  
- config KDEVOPS_WORKFLOW_NOT_DEDICATED_ENABLE_FSTESTS
- 	bool "fstests"
-+	select KDEVOPS_WORKFLOW_ENABLE_FSTESTS
- 	help
- 	  Select this option if you are doing filesystem development and want
- 	  to target development for a filesystem and enable fstests so that
-@@ -146,6 +147,7 @@ config KDEVOPS_WORKFLOW_NOT_DEDICATED_ENABLE_FSTESTS
+-# How we create the partition for the workflow data partition
+-WORKFLOW_DATA_DEVICE:=$(subst ",,$(CONFIG_WORKFLOW_DATA_DEVICE))
+-WORKFLOW_DATA_PATH:=$(subst ",,$(CONFIG_WORKFLOW_DATA_PATH))
+-WORKFLOW_DATA_FSTYPE:=$(subst ",,$(CONFIG_WORKFLOW_DATA_FSTYPE))
+-WORKFLOW_DATA_LABEL:=$(subst ",,$(CONFIG_WORKFLOW_DATA_LABEL))
+-
+-WORKFLOW_KDEVOPS_GIT:=$(subst ",,$(CONFIG_WORKFLOW_KDEVOPS_GIT))
+-WORKFLOW_KDEVOPS_GIT_DATA:=$(subst ",,$(CONFIG_WORKFLOW_KDEVOPS_GIT_DATA))
+-WORKFLOW_KDEVOPS_DIR:=$(subst ",,$(CONFIG_WORKFLOW_KDEVOPS_DIR))
+-
+-WORKFLOW_ARGS	+= data_device=$(WORKFLOW_DATA_DEVICE)
+-WORKFLOW_ARGS	+= data_path=$(WORKFLOW_DATA_PATH)
+-WORKFLOW_ARGS	+= data_fstype=$(WORKFLOW_DATA_FSTYPE)
+-WORKFLOW_ARGS	+= data_label=$(WORKFLOW_DATA_LABEL)
+-WORKFLOW_ARGS	+= kdevops_git=$(WORKFLOW_KDEVOPS_GIT)
+-WORKFLOW_ARGS	+= kdevops_data=\"$(WORKFLOW_KDEVOPS_GIT_DATA)\"
+-WORKFLOW_ARGS	+= kdevops_dir=\"$(WORKFLOW_KDEVOPS_DIR)\"
+-
+-ifeq (y,$(CONFIG_WORKFLOW_MAKE_CMD_OVERRIDE))
+-WORKFLOW_MAKE_CMD:=$(subst ",,$(CONFIG_WORKFLOW_MAKE_CMD))
+-endif
+-
+-ifeq (y,$(CONFIG_WORKFLOW_INFER_USER_AND_GROUP))
+-WORKFLOW_ARGS	+= infer_uid_and_group=True
+-else
+-WORKFLOW_DATA_USER:=$(subst ",,$(CONFIG_WORKFLOW_DATA_USER))
+-WORKFLOW_DATA_GROUP:=$(subst ",,$(CONFIG_WORKFLOW_DATA_GROUP))
+-
+-WORKFLOW_ARGS	+= data_user=$(WORKFLOW_DATA_USER)
+-WORKFLOW_ARGS	+= data_group=$(WORKFLOW_DATA_GROUP)
+-
+-endif # CONFIG_WORKFLOW_MAKE_CMD_OVERRIDE == y
++include workflows/common/Makefile
  
- config KDEVOPS_WORKFLOW_NOT_DEDICATED_ENABLE_BLKTESTS
- 	bool "blktests"
-+	select KDEVOPS_WORKFLOW_ENABLE_BLKTESTS
- 	help
- 	  Select this option if you are doing block layer development and want
- 	  to run blktests. The git tree for blktests will be git clone and
+ BOOTLINUX_ARGS	:=
+ ifeq (y,$(CONFIG_BOOTLINUX))
+diff --git a/workflows/common/Makefile b/workflows/common/Makefile
+new file mode 100644
+index 0000000..da21d78
+--- /dev/null
++++ b/workflows/common/Makefile
+@@ -0,0 +1,34 @@
++# SPDX-License-Identifier: copyleft-next-0.3.1
++
++# How we create the partition for the workflow data partition
++WORKFLOW_DATA_DEVICE:=$(subst ",,$(CONFIG_WORKFLOW_DATA_DEVICE))
++WORKFLOW_DATA_PATH:=$(subst ",,$(CONFIG_WORKFLOW_DATA_PATH))
++WORKFLOW_DATA_FSTYPE:=$(subst ",,$(CONFIG_WORKFLOW_DATA_FSTYPE))
++WORKFLOW_DATA_LABEL:=$(subst ",,$(CONFIG_WORKFLOW_DATA_LABEL))
++
++WORKFLOW_KDEVOPS_GIT:=$(subst ",,$(CONFIG_WORKFLOW_KDEVOPS_GIT))
++WORKFLOW_KDEVOPS_GIT_DATA:=$(subst ",,$(CONFIG_WORKFLOW_KDEVOPS_GIT_DATA))
++WORKFLOW_KDEVOPS_DIR:=$(subst ",,$(CONFIG_WORKFLOW_KDEVOPS_DIR))
++
++WORKFLOW_ARGS	+= data_device=$(WORKFLOW_DATA_DEVICE)
++WORKFLOW_ARGS	+= data_path=$(WORKFLOW_DATA_PATH)
++WORKFLOW_ARGS	+= data_fstype=$(WORKFLOW_DATA_FSTYPE)
++WORKFLOW_ARGS	+= data_label=$(WORKFLOW_DATA_LABEL)
++WORKFLOW_ARGS	+= kdevops_git=$(WORKFLOW_KDEVOPS_GIT)
++WORKFLOW_ARGS	+= kdevops_data=\"$(WORKFLOW_KDEVOPS_GIT_DATA)\"
++WORKFLOW_ARGS	+= kdevops_dir=\"$(WORKFLOW_KDEVOPS_DIR)\"
++
++ifeq (y,$(CONFIG_WORKFLOW_MAKE_CMD_OVERRIDE))
++WORKFLOW_MAKE_CMD:=$(subst ",,$(CONFIG_WORKFLOW_MAKE_CMD))
++endif
++
++ifeq (y,$(CONFIG_WORKFLOW_INFER_USER_AND_GROUP))
++WORKFLOW_ARGS	+= infer_uid_and_group=True
++else
++WORKFLOW_DATA_USER:=$(subst ",,$(CONFIG_WORKFLOW_DATA_USER))
++WORKFLOW_DATA_GROUP:=$(subst ",,$(CONFIG_WORKFLOW_DATA_GROUP))
++
++WORKFLOW_ARGS	+= data_user=$(WORKFLOW_DATA_USER)
++WORKFLOW_ARGS	+= data_group=$(WORKFLOW_DATA_GROUP)
++
++endif # CONFIG_WORKFLOW_INFER_USER_AND_GROUP == y
 -- 
 2.35.1
 
