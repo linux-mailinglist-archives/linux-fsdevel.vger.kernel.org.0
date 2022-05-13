@@ -2,204 +2,252 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DB5ED526BEF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 May 2022 22:53:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D595526C65
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 May 2022 23:41:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1384566AbiEMUx2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 May 2022 16:53:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56178 "EHLO
+        id S1384707AbiEMVlW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 May 2022 17:41:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1384551AbiEMUx0 (ORCPT
+        with ESMTP id S1383692AbiEMVlU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 May 2022 16:53:26 -0400
-Received: from vulcan.natalenko.name (vulcan.natalenko.name [IPv6:2001:19f0:6c00:8846:5400:ff:fe0c:dfa0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2186140FF;
-        Fri, 13 May 2022 13:53:23 -0700 (PDT)
-Received: from spock.localnet (unknown [83.148.33.151])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by vulcan.natalenko.name (Postfix) with ESMTPSA id 794FDEDEB30;
-        Fri, 13 May 2022 22:53:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
-        s=dkim-20170712; t=1652475198;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=or0NKeUsbE01vgrU5fNAJITH1vwKDIErppkCvQpSrPA=;
-        b=LbulMFpXvocMvhpK93KvRsv+Q2NABXhQtu/RLQ284R+Mg5gUH5urrWVmpOXOV18v+LsEhG
-        HX60DMFprIuin+muTeoCrCXkip2NpUA7jWQUjTUURTCD8dx4doEh/ef4nQRh0+YNYBqoQZ
-        7NYEnNneDB9MURIT/lbaQOCvBMbFzPk=
-From:   Oleksandr Natalenko <oleksandr@natalenko.name>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     cgel.zte@gmail.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org, corbet@lwn.net,
-        xu xin <xu.xin16@zte.com.cn>,
-        Yang Yang <yang.yang29@zte.com.cn>,
-        Ran Xiaokai <ran.xiaokai@zte.com.cn>,
-        wangyong <wang.yong12@zte.com.cn>,
-        Yunkai Zhang <zhang.yunkai@zte.com.cn>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v6] mm/ksm: introduce ksm_force for each process
-Date:   Fri, 13 May 2022 22:53:16 +0200
-Message-ID: <1817008.tdWV9SEqCh@natalenko.name>
-In-Reply-To: <20220513133210.9dd0a4216bd8baaa1047562c@linux-foundation.org>
-References: <20220510122242.1380536-1-xu.xin16@zte.com.cn> <1835064.A2aMcgg3dW@natalenko.name> <20220513133210.9dd0a4216bd8baaa1047562c@linux-foundation.org>
+        Fri, 13 May 2022 17:41:20 -0400
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8AAC827B2D;
+        Fri, 13 May 2022 14:41:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1652478079; x=1684014079;
+  h=subject:from:to:cc:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=qAF9zD9EtuX3tbZ+GfTkFflelIxMa30w8V3BNOoliu8=;
+  b=FQkXlkKFict6sKfP3zmg9V+WB+0j33+O/d58yimFuyomU1PlSEw4mCtN
+   Xzc2nrn9lKMoGy1ZzLn3v1fkMheDpkyn+pqvq/89Pq80RB6IJ3rkRxTIW
+   hb1i17I5umOuMl/13+9Sw7FopoPOr+9P4/NksyLpp03B3UjCys5oZW/RO
+   SShE1tcDrzrBmGVee0GaUKhMQHCD6gx/KD6yZC1BM3R87ezwvy4xaqy7f
+   LFxAQ2QpEPSCU1dLGlL6A0N7Qd4lvKMiLqGRv7cEMcjxSR4IBUK/S0EcM
+   hCv1IL9i0BZ3A2JqRjAc5NpzAhkWXp3lhrwf5+hEkWbIgantfuEBK1Q5+
+   Q==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10346"; a="250325813"
+X-IronPort-AV: E=Sophos;i="5.91,223,1647327600"; 
+   d="scan'208";a="250325813"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2022 14:41:19 -0700
+X-IronPort-AV: E=Sophos;i="5.91,223,1647327600"; 
+   d="scan'208";a="554398099"
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.25])
+  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2022 14:41:18 -0700
+Subject: [PATCH v10 2/7] x86/mce: relocate set{clear}_mce_nospec() functions
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Christoph Hellwig <hch@lst.de>, Jane Chu <jane.chu@oracle.com>,
+        Borislav Petkov <bp@suse.de>, x86@kernel.org,
+        nvdimm@lists.linux.dev, linux-fsdevel@vger.kernel.org
+Date:   Fri, 13 May 2022 14:41:18 -0700
+Message-ID: <165247798860.4117683.4554602198740624216.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <20220422224508.440670-3-jane.chu@oracle.com>
+References: <20220422224508.440670-3-jane.chu@oracle.com>
+User-Agent: StGit/0.18-3-g996c
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello.
+From: Jane Chu <jane.chu@oracle.com>
 
-On p=C3=A1tek 13. kv=C4=9Btna 2022 22:32:10 CEST Andrew Morton wrote:
-> On Fri, 13 May 2022 11:51:53 +0200 Oleksandr Natalenko <oleksandr@natalen=
-ko.name> wrote:
-> > On p=C3=A1tek 13. kv=C4=9Btna 2022 0:37:53 CEST Andrew Morton wrote:
-> > > On Tue, 10 May 2022 15:30:36 +0200 Oleksandr Natalenko <oleksandr@nat=
-alenko.name> wrote:
-> > >=20
-> > > > > If ksm_force is set to 1, force all anonymous and 'qualified' VMAs
-> > > > > of this mm to be involved in KSM scanning without explicitly call=
-ing
-> > > > > madvise to mark VMA as MADV_MERGEABLE. But It is effective only w=
-hen
-> > > > > the klob of /sys/kernel/mm/ksm/run is set as 1.
-> > > > >=20
-> > > > > If ksm_force is set to 0, cancel the feature of ksm_force of this
-> > > > > process (fallback to the default state) and unmerge those merged =
-pages
-> > > > > belonging to VMAs which is not madvised as MADV_MERGEABLE of this=
- process,
-> > > > > but still leave MADV_MERGEABLE areas merged.
-> > > >=20
-> > > > To my best knowledge, last time a forcible KSM was discussed (see t=
-hreads [1], [2], [3] and probably others) it was concluded that a) procfs w=
-as a horrible interface for things like this one; and b) process_madvise() =
-syscall was among the best suggested places to implement this (which would =
-require a more tricky handling from userspace, but still).
-> > > >=20
-> > > > So, what changed since that discussion?
-> > > >=20
-> > > > P.S. For now I do it via dedicated syscall, but I'm not trying to u=
-pstream this approach.
-> > >=20
-> > > Why are you patching the kernel with a new syscall rather than using
-> > > process_madvise()?
-> >=20
-> > Because I'm not sure how to use `process_madvise()` to achieve $subj pr=
-operly.
-> >=20
-> > The objective is to mark all the eligible VMAs of the target task for K=
-SM to consider them for merging.
-> >=20
-> > For that, all the eligible VMAs have to be traversed.
-> >=20
-> > Given `process_madvise()` has got an iovec API, this means the process =
-that will call `process_madvise()` has to know the list of VMAs of the targ=
-et process. In order to traverse them in a race-free manner the target task=
- has to be SIGSTOP'ped or frozen, then the list of VMAs has to be obtained,=
- then `process_madvise()` has to be called, and the the target task can con=
-tinue. This is:
-> >=20
-> > a) superfluous (the kernel already knows the list of VMAs of the target=
- tasks, why proxy it through the userspace then?); and
-> > b) may induce more latency than needed because the target task has to b=
-e stopped to avoid races.
->=20
-> OK.  And what happens to new vmas that the target process creates after
-> the process_madvise()?
+Relocate the twin mce functions to arch/x86/mm/pat/set_memory.c
+file where they belong.
 
-Call `process_madvise()` on them again. And do that again. Regularly, with =
-some intervals. Use some daemon for that (like [1]).
+While at it, fixup a function name in a comment.
 
-[1] https://gitlab.com/post-factum/uksmd
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Jane Chu <jane.chu@oracle.com>
+Acked-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+---
+Changes since v9:
+- fixup a 0day report: "no previous prototype for 'set_mce_nospec'",
+  include linux/set_memory.h in set_memory.c.
 
-> > OTOH, IIUC, even if `MADV_MERGEABLE` is allowed for `process_madvise()`,
->=20
-> Is it not?
+ arch/x86/include/asm/set_memory.h |   52 -------------------------------------
+ arch/x86/mm/pat/set_memory.c      |   51 +++++++++++++++++++++++++++++++++++-
+ include/linux/set_memory.h        |    8 +++---
+ 3 files changed, 53 insertions(+), 58 deletions(-)
 
-It is not:
-
-```
-1158 static bool
-1159 process_madvise_behavior_valid(int behavior)
-1160 {
-1161     switch (behavior) {
-1162     case MADV_COLD:
-1163     case MADV_PAGEOUT:
-1164     case MADV_WILLNEED:
-1165         return true;
-1166     default:
-1167         return false;
-1168     }
-1169 }
-```
-
-Initially, when `process_madvise()` stuff was being prepared for merging, I=
- tried to enabled it but failed [2], and it was decided [3] to move forward=
- without it.
-
-[2] https://lore.kernel.org/linux-api/34f812b8-df54-eaad-5cf0-335f07da55c6@=
-suse.cz/
-[3] https://lore.kernel.org/lkml/20200623085944.cvob63vrv54fo7cs@butterfly.=
-localdomain/
-
-> > I cannot just call it like this:
-> >=20
-> > ```
-> > iovec.iov_base =3D 0;
-> > iovec.iov_len =3D ~0ULL;
-> > process_madvise(pidfd, &iovec, 1, MADV_MERGEABLE, 0);
-> > ```
-> >=20
-> > to cover the whole address space because iovec expects total size to be=
- under ssize_t.
-> >=20
-> > Or maybe there's no need to cover the whole address space, only the low=
-er half of it?
->=20
-> Call process_madvise() twice, once for each half?
-
-And still get `-ENOMEM`?
-
-```
-1191     /*
-1192      * If the interval [start,end) covers some unmapped address
-1193      * ranges, just ignore them, but return -ENOMEM at the end.
-1194      * - different from the way of handling in mlock etc.
-1195      */
-```
-
-I mean, it probably will work, and probably having the error returned is fi=
-ne, but generally speaking an error value should hint that something is not=
- being done right.
-
-> > Or maybe there's another way of doing things, and I just look stupid an=
-d do not understand how this is supposed to work?..
-> >=20
-> > I'm more than happy to read your comments on this.
-> >=20
->=20
-> I see the problem.  I do like the simplicity of the ksm_force concept.=20
-> Are there alternative ideas?
-
-I do like it too. I wonder what to do with older concerns [4] [5] regarding=
- presenting such an API.
-
-[4] https://lore.kernel.org/lkml/20190516172452.GA2106@avx2/
-[5] https://lore.kernel.org/lkml/20190515145151.GG16651@dhcp22.suse.cz/
-
-=2D-=20
-Oleksandr Natalenko (post-factum)
-
+diff --git a/arch/x86/include/asm/set_memory.h b/arch/x86/include/asm/set_memory.h
+index 78ca53512486..b45c4d27fd46 100644
+--- a/arch/x86/include/asm/set_memory.h
++++ b/arch/x86/include/asm/set_memory.h
+@@ -86,56 +86,4 @@ bool kernel_page_present(struct page *page);
+ 
+ extern int kernel_set_to_readonly;
+ 
+-#ifdef CONFIG_X86_64
+-/*
+- * Prevent speculative access to the page by either unmapping
+- * it (if we do not require access to any part of the page) or
+- * marking it uncacheable (if we want to try to retrieve data
+- * from non-poisoned lines in the page).
+- */
+-static inline int set_mce_nospec(unsigned long pfn, bool unmap)
+-{
+-	unsigned long decoy_addr;
+-	int rc;
+-
+-	/* SGX pages are not in the 1:1 map */
+-	if (arch_is_platform_page(pfn << PAGE_SHIFT))
+-		return 0;
+-	/*
+-	 * We would like to just call:
+-	 *      set_memory_XX((unsigned long)pfn_to_kaddr(pfn), 1);
+-	 * but doing that would radically increase the odds of a
+-	 * speculative access to the poison page because we'd have
+-	 * the virtual address of the kernel 1:1 mapping sitting
+-	 * around in registers.
+-	 * Instead we get tricky.  We create a non-canonical address
+-	 * that looks just like the one we want, but has bit 63 flipped.
+-	 * This relies on set_memory_XX() properly sanitizing any __pa()
+-	 * results with __PHYSICAL_MASK or PTE_PFN_MASK.
+-	 */
+-	decoy_addr = (pfn << PAGE_SHIFT) + (PAGE_OFFSET ^ BIT(63));
+-
+-	if (unmap)
+-		rc = set_memory_np(decoy_addr, 1);
+-	else
+-		rc = set_memory_uc(decoy_addr, 1);
+-	if (rc)
+-		pr_warn("Could not invalidate pfn=0x%lx from 1:1 map\n", pfn);
+-	return rc;
+-}
+-#define set_mce_nospec set_mce_nospec
+-
+-/* Restore full speculative operation to the pfn. */
+-static inline int clear_mce_nospec(unsigned long pfn)
+-{
+-	return set_memory_wb((unsigned long) pfn_to_kaddr(pfn), 1);
+-}
+-#define clear_mce_nospec clear_mce_nospec
+-#else
+-/*
+- * Few people would run a 32-bit kernel on a machine that supports
+- * recoverable errors because they have too much memory to boot 32-bit.
+- */
+-#endif
+-
+ #endif /* _ASM_X86_SET_MEMORY_H */
+diff --git a/arch/x86/mm/pat/set_memory.c b/arch/x86/mm/pat/set_memory.c
+index abf5ed76e4b7..8297cf82c613 100644
+--- a/arch/x86/mm/pat/set_memory.c
++++ b/arch/x86/mm/pat/set_memory.c
+@@ -19,6 +19,7 @@
+ #include <linux/vmstat.h>
+ #include <linux/kernel.h>
+ #include <linux/cc_platform.h>
++#include <linux/set_memory.h>
+ 
+ #include <asm/e820/api.h>
+ #include <asm/processor.h>
+@@ -29,7 +30,6 @@
+ #include <asm/pgalloc.h>
+ #include <asm/proto.h>
+ #include <asm/memtype.h>
+-#include <asm/set_memory.h>
+ #include <asm/hyperv-tlfs.h>
+ #include <asm/mshyperv.h>
+ 
+@@ -1816,7 +1816,7 @@ static inline int cpa_clear_pages_array(struct page **pages, int numpages,
+ }
+ 
+ /*
+- * _set_memory_prot is an internal helper for callers that have been passed
++ * __set_memory_prot is an internal helper for callers that have been passed
+  * a pgprot_t value from upper layers and a reservation has already been taken.
+  * If you want to set the pgprot to a specific page protocol, use the
+  * set_memory_xx() functions.
+@@ -1925,6 +1925,53 @@ int set_memory_wb(unsigned long addr, int numpages)
+ }
+ EXPORT_SYMBOL(set_memory_wb);
+ 
++/*
++ * Prevent speculative access to the page by either unmapping
++ * it (if we do not require access to any part of the page) or
++ * marking it uncacheable (if we want to try to retrieve data
++ * from non-poisoned lines in the page).
++ */
++int set_mce_nospec(unsigned long pfn, bool unmap)
++{
++	unsigned long decoy_addr;
++	int rc;
++
++	if (!IS_ENABLED(CONFIG_64BIT))
++		return 0;
++
++	/* SGX pages are not in the 1:1 map */
++	if (arch_is_platform_page(pfn << PAGE_SHIFT))
++		return 0;
++	/*
++	 * We would like to just call:
++	 *      set_memory_XX((unsigned long)pfn_to_kaddr(pfn), 1);
++	 * but doing that would radically increase the odds of a
++	 * speculative access to the poison page because we'd have
++	 * the virtual address of the kernel 1:1 mapping sitting
++	 * around in registers.
++	 * Instead we get tricky.  We create a non-canonical address
++	 * that looks just like the one we want, but has bit 63 flipped.
++	 * This relies on set_memory_XX() properly sanitizing any __pa()
++	 * results with __PHYSICAL_MASK or PTE_PFN_MASK.
++	 */
++	decoy_addr = (pfn << PAGE_SHIFT) + (PAGE_OFFSET ^ BIT(63));
++
++	if (unmap)
++		rc = set_memory_np(decoy_addr, 1);
++	else
++		rc = set_memory_uc(decoy_addr, 1);
++	if (rc)
++		pr_warn("Could not invalidate pfn=0x%lx from 1:1 map\n", pfn);
++	return rc;
++}
++
++/* Restore full speculative operation to the pfn. */
++int clear_mce_nospec(unsigned long pfn)
++{
++	return set_memory_wb((unsigned long) pfn_to_kaddr(pfn), 1);
++}
++EXPORT_SYMBOL_GPL(clear_mce_nospec);
++
+ int set_memory_x(unsigned long addr, int numpages)
+ {
+ 	if (!(__supported_pte_mask & _PAGE_NX))
+diff --git a/include/linux/set_memory.h b/include/linux/set_memory.h
+index f36be5166c19..683a6c3f7179 100644
+--- a/include/linux/set_memory.h
++++ b/include/linux/set_memory.h
+@@ -42,14 +42,14 @@ static inline bool can_set_direct_map(void)
+ #endif
+ #endif /* CONFIG_ARCH_HAS_SET_DIRECT_MAP */
+ 
+-#ifndef set_mce_nospec
++#ifdef CONFIG_X86_64
++int set_mce_nospec(unsigned long pfn, bool unmap);
++int clear_mce_nospec(unsigned long pfn);
++#else
+ static inline int set_mce_nospec(unsigned long pfn, bool unmap)
+ {
+ 	return 0;
+ }
+-#endif
+-
+-#ifndef clear_mce_nospec
+ static inline int clear_mce_nospec(unsigned long pfn)
+ {
+ 	return 0;
 
