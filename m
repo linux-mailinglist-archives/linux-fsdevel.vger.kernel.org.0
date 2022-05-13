@@ -2,122 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E3A50526A81
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 May 2022 21:38:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27EA5526A8E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 May 2022 21:39:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1383853AbiEMTij (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 May 2022 15:38:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44816 "EHLO
+        id S1383796AbiEMTj2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 May 2022 15:39:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46452 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346242AbiEMTii (ORCPT
+        with ESMTP id S1383685AbiEMTj1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 May 2022 15:38:38 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E4B76FD36;
-        Fri, 13 May 2022 12:38:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=GAZcGk03ehrHc5Dtxk7odt4Ht5+ef2Nl5pEGHuLhXTc=; b=o1Xegp6GbvaEkEIroQaEaDuJbO
-        2zmGch5vozo3M0a8yTt7EHCU0DiarL2Ecc/pGhadzqhihoMrvMA/UnuhfGRNLraCmW9/o34DKzN49
-        ZmbWrhS09pw8kvvEkHw9EAOA2JFVUIP1ag3FXllW6g1dSEQPS3fFRrBj3n/niwLkP3co8XQBkG9Su
-        /0u+ggTYZKC9F8Db/gZkKRKDsnIueDBlSksFHNLILEgfAU5yRm1yxjPS86xaCFE1XIgmEPnyF1aV3
-        jLugS7RYjt+DaoPY7z6DyT1iH4ZWWGjXZ/TT/hBuG96asJomP91qLFFwLNb+VJvBfMONMVt4UOTm4
-        RVNNI4kA==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1npb7T-00HM23-Nh; Fri, 13 May 2022 19:38:35 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
-Cc:     patches@lists.linux.dev, amir73il@gmail.com, pankydev8@gmail.com,
-        tytso@mit.edu, josef@toxicpanda.com, jmeneghi@redhat.com,
-        jake@lwn.net, mcgrof@kernel.org
-Subject: [PATCH 4/4] kdevops: make linux-kdevops the default tree
-Date:   Fri, 13 May 2022 12:38:31 -0700
-Message-Id: <20220513193831.4136212-5-mcgrof@kernel.org>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220513193831.4136212-1-mcgrof@kernel.org>
-References: <20220513193831.4136212-1-mcgrof@kernel.org>
+        Fri, 13 May 2022 15:39:27 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55AF54B1FE;
+        Fri, 13 May 2022 12:39:26 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 091A9B83177;
+        Fri, 13 May 2022 19:39:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E776C34100;
+        Fri, 13 May 2022 19:39:23 +0000 (UTC)
+Subject: [PATCH 0/8] Make NFSv4 OPEN(CREATE) less brittle
+From:   Chuck Lever <chuck.lever@oracle.com>
+To:     linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        viro@zeniv.linux.org.uk
+Date:   Fri, 13 May 2022 15:39:22 -0400
+Message-ID: <165247056822.6691.9087206893184705325.stgit@bazille.1015granger.net>
+User-Agent: StGit/1.5
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-6.7 required=5.0 tests=BAYES_00,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-At LSFMM 2022 at Palm Springs it was discussed that we should
-*strive* towards a shared expunge list for fstests / blktests. Although
-that effort requires splitting out the expunge list from kdevops to a
-new git subtree, sharing a git tree for commit work for kdevops seems
-also innevitable and desirable since some of us are already
-collaborating on at least one shared test runner, kdevops.
+fsdevel experts TL;DR: patch 8/8 is the only one that touches the
+VFS. The other patches prepare NFSD for 8/8.
 
-So we can start by using a shared organization for what we need
-to share, we call this organization linux-kdevops [0]. This encompasses a
-few usual suspects git trees which can be used by both fstests and
-blktests picking a "stable" sort of git sha1sum for each and always
-striving towards the latest:
+Attempt to address occasional reports of test failures caused by
+NFSv4 OPEN(CREATE) failing internally only after the target file
+object has already been created.
 
-  * fstests
-  * blktests
-  * dbench
-  * ndd
+The basic approach is to re-organize the NFSv4 OPEN code path so
+that common failure modes occur /before/ the call to vfs_create()
+rather than afterwards. In addition, the local file is opened and
+created atomically so that another client can't race and de-permit
+that file just after it is created but before the server has opened
+it.
 
-We'll be using the linux-kdevops organization for what trees we use and
-trust that those in the organization will communicate what is needed before
-making controversial changes.
+This series was posted a few weeks ago as an RFC. Since then, Red
+Hat QE has used a Lustre racer-based reproducer to confirm that
+the issue is not reproducible. Therefore I'd like to include this
+series in the NFSD 5.19 pull request.
 
-This is perhaps the first controversial change, but it only applies to
-kdevops, so if you are not using kdevops as a test runner you probably
-won't care.
 
-Those using kdevops should become aware that they should change
-their default upstream to use linux-kdevops URL now:
-
-So we switch from:
-https://github.com/mcgrof/kdevops
-To:
-https://github.com/linux-kdevops/kdevops
-
-Users which change this on a live environemtn would also then just have
-to change the CONFIG_WORKFLOW_KDEVOPS_GIT on their configuration so
-they'd just run:
-
- make menuconfig # set CONFIG_WORKFLOW_KDEVOPS_GIT to https://github.com/linux-kdevops/kdevops
- make
- make kdevops-git-reset
-
-Those who have commit access to the organization linux-kdevops can
-then just commit as needed to help move baselines forwards and if
-and when something comes up which really seems controversial we can
-use the mailing lists as with this change.
-
-[0] https://github.com/orgs/linux-kdevops/
-
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 ---
- kconfigs/workflows/Kconfig.shared | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kconfigs/workflows/Kconfig.shared b/kconfigs/workflows/Kconfig.shared
-index 4cccfbe..4a2ecf6 100644
---- a/kconfigs/workflows/Kconfig.shared
-+++ b/kconfigs/workflows/Kconfig.shared
-@@ -47,7 +47,7 @@ endif
- 
- config WORKFLOW_KDEVOPS_GIT
- 	string "Git tree of kdevops to clone on targets"
--	default "https://github.com/mcgrof/kdevops.git" if !GIT_ALTERNATIVES && !HAVE_CUSTOM_KDEVOPS_GIT
-+	default "https://github.com/linux-kdevops/kdevops.git" if !GIT_ALTERNATIVES && !HAVE_CUSTOM_KDEVOPS_GIT
- 	default "https://github.com/linux-kdevops/kdevops.git" if GIT_LINUX_KDEVOPS_GITHUB
- 	default "https://gitlab.com/linux-kdevops/kdevops.git" if GIT_LINUX_KDEVOPS_GITLAB
- 	default CUSTOM_KDEVOPS_GIT if HAVE_CUSTOM_KDEVOPS_GIT
--- 
-2.35.1
+Chuck Lever (8):
+      NFSD: Clean up nfsd3_proc_create()
+      NFSD: Avoid calling fh_drop_write() twice in do_nfsd_create()
+      NFSD: Refactor nfsd_create_setattr()
+      NFSD: Refactor NFSv3 CREATE
+      NFSD: Refactor NFSv4 OPEN(CREATE)
+      NFSD: Remove do_nfsd_create()
+      NFSD: Clean up nfsd_open_verified()
+      NFSD: Instantiate a struct file when creating a regular NFSv4 file
+
+
+ fs/nfsd/filecache.c |  51 +++++++--
+ fs/nfsd/filecache.h |   2 +
+ fs/nfsd/nfs3proc.c  | 141 +++++++++++++++++++++----
+ fs/nfsd/nfs4proc.c  | 197 +++++++++++++++++++++++++++++++++--
+ fs/nfsd/nfs4state.c |  16 ++-
+ fs/nfsd/vfs.c       | 245 ++++++++++----------------------------------
+ fs/nfsd/vfs.h       |  14 +--
+ fs/nfsd/xdr4.h      |   1 +
+ fs/open.c           |  44 ++++++++
+ include/linux/fs.h  |   2 +
+ 10 files changed, 471 insertions(+), 242 deletions(-)
+
+--
+Chuck Lever
 
