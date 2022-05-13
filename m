@@ -2,69 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E2FC2526625
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 May 2022 17:30:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7981F526638
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 May 2022 17:36:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1382044AbiEMPau (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 May 2022 11:30:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35990 "EHLO
+        id S1382109AbiEMPgd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 May 2022 11:36:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45942 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1382039AbiEMPar (ORCPT
+        with ESMTP id S1382165AbiEMPgH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 May 2022 11:30:47 -0400
-Received: from mail-qv1-xf2d.google.com (mail-qv1-xf2d.google.com [IPv6:2607:f8b0:4864:20::f2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B6316F4AB
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 May 2022 08:30:46 -0700 (PDT)
-Received: by mail-qv1-xf2d.google.com with SMTP id n10so6902293qvi.5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 May 2022 08:30:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=aW+qiuuX9T5JCP8jrcHcLIm5ncOFZRpDVkBGr8nNpZk=;
-        b=GoNducfn8OiKDJnmDyd9adoiAaTkNjaodB+e/MzGdyU/Bh2YV7b2Mfg/9tFEHr/Cmn
-         ZaT97VZC5O4yMubi4aYxyovu3QbPt0M4tI3InUb0N9DuoE4C6Qh/7pL5xmRtTODimyGN
-         0RbXrFccpxJ6NSDIox+nXhjLWmwMPqO508b1AcM8JQdtHwxye48Ez/PCFXnQCPeDp+si
-         /0/GdjN8ogs6v2Iy6vqQtQnJyDEQKgePpAMlZxTtqPo9jVZw5awH36vm2gMbbOft9ueO
-         xhm92ovGSt5DSiWHe7H/n62XJ1zg4wkFd3/EeFcLF44LncRuChfJgLIGVd2w2UL3rthv
-         yHUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=aW+qiuuX9T5JCP8jrcHcLIm5ncOFZRpDVkBGr8nNpZk=;
-        b=ho3dGUHQt9PmDhLPcKDPM3fvdFJCPKgUHRNjLQm8u1WjwypPQW/ZI35hThh69FRqYU
-         QO8p5XFiKiyw/DpewTbcjInXS7XUbYYWDzJEtSkTrqP1HMVByxAsxz0HDDuXFnVhv1nz
-         IsPnkTdb9Cu2BbJeG55iJeDn/+s5HlP08ledk7SK3rQwxU++UdTG+prFzRtpxILa4es7
-         HQSb3QdVZO9JoM8pOGHZvgZXP+yaIKgsygXPl5bNYVWYS6rPZs/xqij/ubbFOAHfRbWP
-         czcvGz3BM4rwk8skLQEYEX8BOCycV6g598ePMVXhQBJ49y90a/opYjhvEIDaCTwXh4Rr
-         f10Q==
-X-Gm-Message-State: AOAM532TzCoRzAnhZUP27Fq3U957uTdclGvLi5rxunulz98ZBcTZRdDL
-        rI0Yek1kskUbIB3Slf5z2cMV7A==
-X-Google-Smtp-Source: ABdhPJz1kFwidIR/VFz9WYpp4JgCZ1bYA+NPg4EHkUicTTkXJTZdB/1BbO4AJYAPgXiOWV6iM3G8xQ==
-X-Received: by 2002:ad4:5aeb:0:b0:45a:f61f:d9d1 with SMTP id c11-20020ad45aeb000000b0045af61fd9d1mr4858160qvh.120.1652455845325;
-        Fri, 13 May 2022 08:30:45 -0700 (PDT)
-Received: from google.com (122.213.145.34.bc.googleusercontent.com. [34.145.213.122])
-        by smtp.gmail.com with ESMTPSA id g20-20020a37e214000000b0069fc13ce23csm1453598qki.109.2022.05.13.08.30.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 May 2022 08:30:44 -0700 (PDT)
-Date:   Fri, 13 May 2022 15:30:41 +0000
-From:   Matthew Bobrowski <repnop@google.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [RFC] Volatile fanotify marks
-Message-ID: <Yn55ocRH8f83n4RY@google.com>
-References: <CAOQ4uxiRDpuS=2uA6+ZUM7yG9vVU-u212tkunBmSnP_u=mkv=Q@mail.gmail.com>
- <20220228140556.ae5rhgqsyzm5djbp@quack3.lan>
+        Fri, 13 May 2022 11:36:07 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE620101C4;
+        Fri, 13 May 2022 08:36:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=IzQ9owkt8YiZe1369EAKIafa5obLJ/EHaGRPb2JnnbM=; b=W2k6pVD2XZSvc+QSfttXCU/bUD
+        OZCk9dzOVnxPbkF5YIhtpIhTheDdhQUleH6hDnDLx9Ig0n6tIwR3KOXNS3eLATawiWFy+mnSZJABk
+        gBjQDYDw+zLRY1ZDBj5Dfck9IA37sYMald2vTwgkjYJ+C4smFN5ixIUT08bXygbb+oXOWROBQYrV5
+        zYIuXn/hjLqPR7x1rMm5x4aFhrlNkkewDUsE7XciDZx2jZW5FzIJngcsRNChagJLibuWAgIWzbtKo
+        Vx4YYrtA19tWfw0zJtsZsEU1tIOmp91enosDVjJcCHW8SFRiNc0Go+WQBd7vCJ18DykDvYplLiaQO
+        2xW34pKQ==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1npXKY-00Giv4-Jd; Fri, 13 May 2022 15:35:50 +0000
+Date:   Fri, 13 May 2022 08:35:50 -0700
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     David Gow <davidgow@google.com>
+Cc:     Brendan Higgins <brendanhiggins@google.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "Guilherme G . Piccoli" <gpiccoli@igalia.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        John Ogness <john.ogness@linutronix.de>,
+        Joe Fradley <joefradley@google.com>,
+        Daniel Latypov <dlatypov@google.com>,
+        kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Lucas De Marchi <lucas.demarchi@intel.com>,
+        Aaron Tomlin <atomlin@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] panic: Taint kernel if tests are run
+Message-ID: <Yn561lzWDuiVdTHT@bombadil.infradead.org>
+References: <20220429043913.626647-1-davidgow@google.com>
+ <20220513083212.3537869-1-davidgow@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220228140556.ae5rhgqsyzm5djbp@quack3.lan>
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+In-Reply-To: <20220513083212.3537869-1-davidgow@google.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -72,52 +67,67 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Feb 28, 2022 at 03:05:56PM +0100, Jan Kara wrote:
-> Hi Amir!
+On Fri, May 13, 2022 at 04:32:11PM +0800, David Gow wrote:
+> Most in-kernel tests (such as KUnit tests) are not supposed to run on
+> production systems: they may do deliberately illegal things to trigger
+> errors, and have security implications (for example, KUnit assertions
+> will often deliberately leak kernel addresses).
 > 
-> On Wed 23-02-22 20:42:37, Amir Goldstein wrote:
-> > I wanted to get your feedback on an idea I have been playing with.
-> > It started as a poor man's alternative to the old subtree watch problem.
-> > For my employer's use case, we are watching the entire filesystem using
-> > a filesystem mark, but would like to exclude events on a subtree
-> > (i.e. all files underneath .private/).
-> > 
-> > At the moment, those events are filtered in userspace.
-> > I had considered adding directory marks with an ignored mask on every
-> > event that is received for a directory path under .private/, but that has the
-> > undesired side effect of pinning those directory inodes to cache.
-> > 
-> > I have this old fsnotify-volatile branch [1] that I am using for an overlayfs
-> > kernel internal fsnotify backend. I wonder what are your thoughts on
-> > exposing this functionally to fanotify UAPI (i.e. FAN_MARK_VOLATILE).
+> Add a new taint type, TAINT_TEST to signal that a test has been run.
+> This will be printed as 'N' (originally for kuNit, as every other
+> sensible letter was taken.)
 > 
-> Interesting idea. I have some reservations wrt to the implementation (e.g.
-> fsnotify_add_mark_list() convention of returning EEXIST when it updated
-> mark's mask, or the fact that inode reclaim should now handle freeing of
-> mark connector and attached marks - which may get interesting locking wise)
-> but they are all fixable.
+> This should discourage people from running these tests on production
+> systems, and to make it easier to tell if tests have been run
+> accidentally (by loading the wrong configuration, etc.)
 > 
-> I'm wondering a bit whether this is really useful enough (and consequently
-> whether we will not get another request to extend fanotify API in some
-> other way to cater better to some other usecase related to subtree watches
-> in the near future). I understand ignore marks are mainly a performance
-> optimization and as such allowing inodes to be reclaimed (which means they
-> are not used much and hence ignored mark is not very useful anyway) makes
-> sense. Thinking about this more, I guess it is useful to improve efficiency
-> when you want to implement any userspace event-filtering scheme.
+> Signed-off-by: David Gow <davidgow@google.com>
+> ---
 > 
-> The only remaining pending question I have is whether we should not go
-> further and allow event filtering to happen using an eBPF program. That
-> would be even more efficient (both in terms of memory and CPU). What do you
-> think?
+> Updated this to handle the most common case of selftest modules, in
+> addition to KUnit tests. There's room for other tests or test frameworks
+> to use this as well, either with a call to add_taint() from within the
+> kernel, or by writing to /proc/sys/kernel/tainted.
+> 
+> The 'N' character for the taint is even less useful now that it's no
+> longer short for kuNit, but all the letters in TEST are taken. :-(
+> 
+> Changes since v2:
+> https://lore.kernel.org/linux-kselftest/20220430030019.803481-1-davidgow@google.com/
+> - Rename TAINT_KUNIT -> TAINT_TEST.
+> - Split into separate patches for adding the taint, and triggering it.
+> - Taint on a kselftest_module being loaded (patch 3/3)
+> 
+> Changes since v1:
+> https://lore.kernel.org/linux-kselftest/20220429043913.626647-1-davidgow@google.com/
+> - Make the taint per-module, to handle the case when tests are in
+>   (longer lasting) modules. (Thanks Greg KH).
+> 
+> Note that this still has checkpatch.pl warnings around bracket
+> placement, which are intentional as part of matching the surrounding
+> code.
+> 
+> ---
+>  Documentation/admin-guide/tainted-kernels.rst | 1 +
+>  include/linux/panic.h                         | 3 ++-
+>  kernel/panic.c                                | 1 +
+>  3 files changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/admin-guide/tainted-kernels.rst b/Documentation/admin-guide/tainted-kernels.rst
+> index ceeed7b0798d..546f3071940d 100644
+> --- a/Documentation/admin-guide/tainted-kernels.rst
+> +++ b/Documentation/admin-guide/tainted-kernels.rst
+> @@ -100,6 +100,7 @@ Bit  Log  Number  Reason that got the kernel tainted
+>   15  _/K   32768  kernel has been live patched
+>   16  _/X   65536  auxiliary taint, defined for and used by distros
+>   17  _/T  131072  kernel was built with the struct randomization plugin
+> + 18  _/N  262144  an in-kernel test (such as a KUnit test) has been run
 
-Wait. Did I just read that Jan is open to implementing in kernel event
-filtering through eBPF? This feature is something that I'd definitely
-be interested in and perhaps also open to running with doing the
-design/implementation. One of the really obvious filtering semantics
-that immediately comes to mind for me would be to filter on expected
-processes/binary images touching an expected set of files. Currently,
-this level of filtering has traditionally been done in userspace, but
-if we could offload that it'd be nice...
+I think mentioning just kunit fuzzes its interpretation here.
+Best to keep that out.
 
-/M
+Other than that:
+
+Acked-by: Luis Chamberlain <mcgrof@kernel.org>
+
+  Luis
