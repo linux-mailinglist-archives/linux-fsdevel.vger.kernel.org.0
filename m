@@ -2,32 +2,34 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EB48D5272F9
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 May 2022 18:37:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFC325272FB
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 May 2022 18:37:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234291AbiENQh1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 14 May 2022 12:37:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48852 "EHLO
+        id S232727AbiENQhd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 14 May 2022 12:37:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229617AbiENQhZ (ORCPT
+        with ESMTP id S229591AbiENQhd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 14 May 2022 12:37:25 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88734245BC;
-        Sat, 14 May 2022 09:37:24 -0700 (PDT)
+        Sat, 14 May 2022 12:37:33 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FE29245BC;
+        Sat, 14 May 2022 09:37:32 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1D0BA61013;
-        Sat, 14 May 2022 16:37:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C690C340EE;
-        Sat, 14 May 2022 16:37:23 +0000 (UTC)
-Subject: [PATCH v2 0/8] Make NFSv4 OPEN(CREATE) less brittle
+        by ams.source.kernel.org (Postfix) with ESMTPS id 0D598B80AEA;
+        Sat, 14 May 2022 16:37:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A42B2C340EE;
+        Sat, 14 May 2022 16:37:29 +0000 (UTC)
+Subject: [PATCH v2 1/8] NFSD: Clean up nfsd3_proc_create()
 From:   Chuck Lever <chuck.lever@oracle.com>
 To:     linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         viro@zeniv.linux.org.uk
-Date:   Sat, 14 May 2022 12:37:21 -0400
-Message-ID: <165254610700.2361.2480451215356922637.stgit@bazille.1015granger.net>
+Date:   Sat, 14 May 2022 12:37:28 -0400
+Message-ID: <165254624868.2361.1144532307953943311.stgit@bazille.1015granger.net>
+In-Reply-To: <165254610700.2361.2480451215356922637.stgit@bazille.1015granger.net>
+References: <165254610700.2361.2480451215356922637.stgit@bazille.1015granger.net>
 User-Agent: StGit/1.5
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -41,51 +43,51 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Attempt to address occasional reports of failures caused by NFSv4
-OPEN(CREATE) failing internally only after the target file object
-has already been created.
+As near as I can tell, mode bit masking and setting S_IFREG is
+already done by do_nfsd_create() and vfs_create(). The NFSv4 path
+(do_open_lookup), for example, does not bother with this special
+processing.
 
-The basic approach is to re-organize the NFSv4 OPEN code path so
-that common failure modes occur /before/ the call to vfs_create()
-rather than afterwards. In addition, the local file is opened and
-created atomically so that another client can't race and de-permit
-that file just after it is created but before the server has opened
-it.
-
-This series was posted a few weeks ago as an RFC. Since then, Red
-Hat QE has used a Lustre racer-based reproducer to confirm that
-the issue is not reproducible. Therefore I'd like to include this
-series in the NFSD 5.19 pull request.
-
-Changes since v1:
-- Address review comments in dentry_create()
-
-
+Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
 ---
+ fs/nfsd/nfs3proc.c |   16 ++--------------
+ 1 file changed, 2 insertions(+), 14 deletions(-)
 
-Chuck Lever (8):
-      NFSD: Clean up nfsd3_proc_create()
-      NFSD: Avoid calling fh_drop_write() twice in do_nfsd_create()
-      NFSD: Refactor nfsd_create_setattr()
-      NFSD: Refactor NFSv3 CREATE
-      NFSD: Refactor NFSv4 OPEN(CREATE)
-      NFSD: Remove do_nfsd_create()
-      NFSD: Clean up nfsd_open_verified()
-      NFSD: Instantiate a struct file when creating a regular NFSv4 file
+diff --git a/fs/nfsd/nfs3proc.c b/fs/nfsd/nfs3proc.c
+index 936eebd4c56d..981a2a71c5af 100644
+--- a/fs/nfsd/nfs3proc.c
++++ b/fs/nfsd/nfs3proc.c
+@@ -229,8 +229,7 @@ nfsd3_proc_create(struct svc_rqst *rqstp)
+ {
+ 	struct nfsd3_createargs *argp = rqstp->rq_argp;
+ 	struct nfsd3_diropres *resp = rqstp->rq_resp;
+-	svc_fh		*dirfhp, *newfhp = NULL;
+-	struct iattr	*attr;
++	svc_fh *dirfhp, *newfhp;
+ 
+ 	dprintk("nfsd: CREATE(3)   %s %.*s\n",
+ 				SVCFH_fmt(&argp->fh),
+@@ -239,20 +238,9 @@ nfsd3_proc_create(struct svc_rqst *rqstp)
+ 
+ 	dirfhp = fh_copy(&resp->dirfh, &argp->fh);
+ 	newfhp = fh_init(&resp->fh, NFS3_FHSIZE);
+-	attr   = &argp->attrs;
+-
+-	/* Unfudge the mode bits */
+-	attr->ia_mode &= ~S_IFMT;
+-	if (!(attr->ia_valid & ATTR_MODE)) { 
+-		attr->ia_valid |= ATTR_MODE;
+-		attr->ia_mode = S_IFREG;
+-	} else {
+-		attr->ia_mode = (attr->ia_mode & ~S_IFMT) | S_IFREG;
+-	}
+ 
+-	/* Now create the file and set attributes */
+ 	resp->status = do_nfsd_create(rqstp, dirfhp, argp->name, argp->len,
+-				      attr, newfhp, argp->createmode,
++				      &argp->attrs, newfhp, argp->createmode,
+ 				      (u32 *)argp->verf, NULL, NULL);
+ 	return rpc_success;
+ }
 
-
- fs/nfsd/filecache.c |  51 +++++++--
- fs/nfsd/filecache.h |   2 +
- fs/nfsd/nfs3proc.c  | 141 +++++++++++++++++++++----
- fs/nfsd/nfs4proc.c  | 197 +++++++++++++++++++++++++++++++++--
- fs/nfsd/nfs4state.c |  16 ++-
- fs/nfsd/vfs.c       | 245 ++++++++++----------------------------------
- fs/nfsd/vfs.h       |  14 +--
- fs/nfsd/xdr4.h      |   1 +
- fs/open.c           |  42 ++++++++
- include/linux/fs.h  |   2 +
- 10 files changed, 469 insertions(+), 242 deletions(-)
-
---
-Chuck Lever
 
