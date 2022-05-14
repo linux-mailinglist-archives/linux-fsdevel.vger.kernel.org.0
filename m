@@ -2,149 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AB60B526E75
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 May 2022 09:14:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D584526E8D
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 May 2022 09:14:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230117AbiENDEr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 May 2022 23:04:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60640 "EHLO
+        id S231716AbiENEoY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 14 May 2022 00:44:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46966 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230221AbiENDEp (ORCPT
+        with ESMTP id S230201AbiENEoX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 May 2022 23:04:45 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE5702E0D33
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 May 2022 20:04:40 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id c190-20020a1c35c7000000b0038e37907b5bso7866434wma.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 May 2022 20:04:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=UoAT8pjpOFcRyIaX+ZhbsdRFzNEAyY56dcHcgCnxySo=;
-        b=edjiyqrDP2iLrGQci5HqJboHVDFmTJ/F0cVt2hEhqmcmZ1Bk3naqPevsH50aZD4bgL
-         uBgAhlV9Rj0RBJ56NenEvJKuGc6772MbvBrXXNbzVOP+EC1sBTEu+10lN8/8axj7fG1N
-         vk97VTRaDsfr5aMeV0pBT5JNUKtnKH5L6QaFyXYcbvuHq5NHIerSyN4yyEtubLhbHgUj
-         IIBX/JBXVmbeHvA8pLO/5tUmzYZ2pkRoQwfskzITXr4dHOmkfxhcL42inxRIGVbqhEe7
-         iQc1vYNPhvt+x0PWly/ZBGnxlxc2VJ/wpp56ADg9gnyrloSquEsApgEvgYEUFNnORcv/
-         Ll4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=UoAT8pjpOFcRyIaX+ZhbsdRFzNEAyY56dcHcgCnxySo=;
-        b=L1bUjrvGzFIJwIk/J6x7gVADr9yB41AFK5WlzptcATZhHnLYETSivof4M4RjyaK3cl
-         CSYwFregDwUmXGVmkx5X3FCQlSuO1vTuo8XkvvrlwN/o8gIEyIU2cgqOtcmh1rXG5WWU
-         pl//evAHtPF6ijBPZ/uSPq1gZMvzB2yCTNFma2koSg03Jtfw/3QSYxQsd9LGecD5Ris6
-         PomS6/BEQOtKNq3HTiUtlcFqqj0OOtldnS/gyAJXK+OglVjYTPXDPK61ufpU6QlbKHZv
-         xgSMpAI6oX21F+eh/WqNXeeslcWfyHlXmAyNQSCVW3pVQeN91thuj7wY06JOH7tGCug8
-         vtFQ==
-X-Gm-Message-State: AOAM530lS1ochZev0DE7zFXxVRT+YDNdwskEUoXcRfABr4rJ3IBABVOl
-        byJuvPjZjxMd5WUjnmKgKi/Nfa3M9ixcQAAhFFchNA==
-X-Google-Smtp-Source: ABdhPJyqMTuCvPq2xupVijryWNy90M9KW5CbLPjYdKU/0lgqe+OXIfvdq3TgEH84h6n59TOZr0qbmIWNpw3XU3CMz+w=
-X-Received: by 2002:a05:600c:264e:b0:394:2c56:eeb5 with SMTP id
- 14-20020a05600c264e00b003942c56eeb5mr7208280wmy.6.1652497479045; Fri, 13 May
- 2022 20:04:39 -0700 (PDT)
+        Sat, 14 May 2022 00:44:23 -0400
+Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABA9723BC0;
+        Fri, 13 May 2022 21:44:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=AmIj0gSjkDYxzy2jeo+/OtEoFwBF/q9BWriaitKkkWg=; b=wv5j/9DDwgQTA0y9hUVOtUjX6Z
+        dR+Vo9YSE+g8k6ZICXv7Fek6sU8MhthF1DC2nkxI6mnef9p660V9uS+bMLACvvhzRP/wcrACYZ5Nc
+        KZu5Ew1/CEuZe/oPUClUS7OBHoG13cn5EozWPinj+M7PixODElCRGGNPrWr74eCmRd6RdWarrWEpG
+        pVYiL4sVR4wwp9cDSZmsbflsrL4SB++wsu1SOb81yPoU1bD1xkJOMlX03qDRPQAi2HzIE59uzJiQa
+        Qe1PMRU4C8TYuM+ZjKKlAJdjDRBaIXFBoTJ7HYmI3TL6SaRTkzmKzdmWFYjJ8toGllbHdbGbn8246
+        jCYJ/4jA==;
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1npjdc-00Enxi-2A; Sat, 14 May 2022 04:44:20 +0000
+Date:   Sat, 14 May 2022 04:44:20 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Chuck Lever <chuck.lever@oracle.com>
+Cc:     linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 8/8] NFSD: Instantiate a struct file when creating a
+ regular NFSv4 file
+Message-ID: <Yn8zpAbwe9yFq8/i@zeniv-ca.linux.org.uk>
+References: <165247056822.6691.9087206893184705325.stgit@bazille.1015granger.net>
+ <165247081391.6691.14842389384935416109.stgit@bazille.1015granger.net>
+ <Yn7ZooZbccSrAru0@zeniv-ca.linux.org.uk>
 MIME-Version: 1.0
-References: <20220429043913.626647-1-davidgow@google.com> <20220513083212.3537869-2-davidgow@google.com>
- <CAGS_qxr54nYThsj6UhqX54JO5WnyJXVQURnNF1eCzGB+4GCKLA@mail.gmail.com>
-In-Reply-To: <CAGS_qxr54nYThsj6UhqX54JO5WnyJXVQURnNF1eCzGB+4GCKLA@mail.gmail.com>
-From:   David Gow <davidgow@google.com>
-Date:   Sat, 14 May 2022 11:04:27 +0800
-Message-ID: <CABVgOS=gTznLFBTZbmNH7AFDnr7O70mWR9v4q6sDA7q04fKT=Q@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] kunit: Taint the kernel when KUnit tests are run
-To:     Daniel Latypov <dlatypov@google.com>
-Cc:     Brendan Higgins <brendanhiggins@google.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        "Guilherme G . Piccoli" <gpiccoli@igalia.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        John Ogness <john.ogness@linutronix.de>,
-        Joe Fradley <joefradley@google.com>,
-        KUnit Development <kunit-dev@googlegroups.com>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Lucas De Marchi <lucas.demarchi@intel.com>,
-        Aaron Tomlin <atomlin@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Yn7ZooZbccSrAru0@zeniv-ca.linux.org.uk>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, May 14, 2022 at 3:09 AM Daniel Latypov <dlatypov@google.com> wrote:
->
-> On Fri, May 13, 2022 at 1:32 AM David Gow <davidgow@google.com> wrote:
-> >
-> > Make KUnit trigger the new TAINT_TEST taint when any KUnit test is run.
-> > Due to KUnit tests not being intended to run on production systems, and
-> > potentially causing problems (or security issues like leaking kernel
-> > addresses), the kernel's state should not be considered safe for
-> > production use after KUnit tests are run.
-> >
-> > Signed-off-by: David Gow <davidgow@google.com>
->
-> Tested-by: Daniel Latypov <dlatypov@google.com>
->
-> Looks good to me.
->
-> There's an edge case where we might have 0 suites or 0 tests and we
-> still taint the kernel, but I don't think we need to deal with that.
-> At the start of kunit_run_tests() is the cleanest place to do this.
+On Fri, May 13, 2022 at 10:20:18PM +0000, Al Viro wrote:
 
-Hmm... thinking about it, I think it might be worth not tainting if 0
-suites run, but tainting if 0 tests run.
+> Yuck.  dget_parent() is not entirely without valid uses, but this isn't
+> one.  It's for the cases when parent is *not* stable and you need to grab
+> what had been the parent at some point (even though it might not be the
+> parent anymore by the time dget_parent() returns).  Here you seriously
+> depend upon it remaining the parent of that sucker all the way through -
+> otherwise vfs_create() would break.  And you really, really depend upon
+> its survival - the caller is holding it locked, so they would better
+> have it pinned.
 
-If we taint even if there are no suites present, that'll make things
-awkward for the "build KUnit in, but not any tests" case: the kernel
-would be tainted regardless. Given Android might be having the KUnit
-execution stuff built-in (but using modules for tests), it's probably
-worth not tainting there. (Though I think they have a separate way of
-disabling KUnit as well, so it's probably not a complete
-deal-breaker).
+As an aside, the reason why vfs_create() takes inode of parent directory
+and dentry of child is basically that it's easier to describe the locking
+rules that way: vfs_create(..., dir, child, ...) must be called with
+1) dir being held by caller (exclusive) and
+2) child->d_parent->d_inode == dir, which is stabilized by (1)
 
-The case of having suites but no tests should still taint the kernel,
-as suite_init functions could still run.
+inode of parent directory is a redundant argument - it can be easily
+derived from the child dentry, for all that family.  The only real
+objection against dropping it from vfs_create() and friends is that
+having rules described as "inode of parent dentry of child must be held
+exclusive by the caller" invites breakage along the lines of
 
-Assuming that seems sensible, I'll send out a v4 with that changed.
+	parent = dget_parent(child);
+	inode_lock(d_inode(parent));
+	vfs_create(..., child, ...);	// WRONG
+	inode_unlock(d_inode(parent));
+	dput(parent);
 
-> I wasn't quite sure where this applied, but I manually applied the changes here.
-> Without this patch, this command exits fine:
-> $ ./tools/testing/kunit/kunit.py run --kernel_args=panic_on_taint=0x40000
->
-> With it, I get
-> [12:03:31] Kernel panic - not syncing: panic_on_taint set ...
-> [12:03:31] CPU: 0 PID: 1 Comm: swapper Tainted: G                 N
+which *seems* to match the rules, but actually breaks them badly -
+'parent' in the snippet above might be no longer related to child by the
+time dget_parent() returns it, so we end up calling vfs_create() with
+wrong directory locked, child->d_parent being completely unstable, etc.
+Note that the difference from your code (which is correct, if redundant) is
+rather subtle.
 
-This is showing both 'G' and 'N' ('G' being the character for GPL --
-i.e. the kernel is not tainted by proprietary modules: 'P').
-
-Jani did suggest a better way of printing these in the v1 discussion
-(printing the actual names of taints present), which I might do in a
-follow-up.
-
-> 5.17.0-00001-gea9ee5e7aed8-dirty #60
->
-> I'm a bit surprised that it prints 'G' and not 'N', but this does seem
-> to be the right mask
-> $ python3 -c 'print(hex(1<<18))'
-> 0x40000
-> and it only takes effect when this patch is applied.
-> I'll chalk that up to my ignorance of how taint works.
-
--- David
+If you have any suggestions how to describe these locking rules without
+an explicit inode-of-parent argument, I would really like to hear those.
+The best I'd been able to come up with had been "there's an inode
+locked exclusive by the caller that had been observed to be equal to
+child->d_parent->d_inode at some point after it had been locked", which
+is both cumbersome and confusing...
