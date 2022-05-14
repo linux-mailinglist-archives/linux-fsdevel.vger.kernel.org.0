@@ -2,134 +2,159 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A086652700B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 May 2022 10:34:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 185AE5270A1
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 May 2022 12:22:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230207AbiENIek (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 14 May 2022 04:34:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43230 "EHLO
+        id S231778AbiENKWe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 14 May 2022 06:22:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230139AbiENIei (ORCPT
+        with ESMTP id S230233AbiENKWd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 14 May 2022 04:34:38 -0400
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16D97122
-        for <linux-fsdevel@vger.kernel.org>; Sat, 14 May 2022 01:34:36 -0700 (PDT)
-Received: by mail-wm1-x32c.google.com with SMTP id bd25-20020a05600c1f1900b0039485220e16so6197786wmb.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 14 May 2022 01:34:36 -0700 (PDT)
+        Sat, 14 May 2022 06:22:33 -0400
+Received: from mail-lf1-x131.google.com (mail-lf1-x131.google.com [IPv6:2a00:1450:4864:20::131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 751003153A
+        for <linux-fsdevel@vger.kernel.org>; Sat, 14 May 2022 03:22:31 -0700 (PDT)
+Received: by mail-lf1-x131.google.com with SMTP id c24so8837238lfv.11
+        for <linux-fsdevel@vger.kernel.org>; Sat, 14 May 2022 03:22:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Wqqxn5+q5xmPpZtFRIbD60XulpYnUc5+LRYDs7jEaLY=;
-        b=BRlzdhTV9zT8+bxHgq0iD5R/JhGL/k8jAR9b7CiU8hDeCgzVWFrrjTP0aHZq5tQ8XX
-         3pYNl+Xbb81AWFyTev3K9GimQzlDxKm5/ng/W1WSUjRhKZN93OQN0hDCuANEnE1eNUL6
-         +aUzBtR+QI4bADN71NUFlQC83QglUyIurXGuydMevh73G+uVG3TYo/sIvqErTRAzb58h
-         nzGFgjXKmB/RG2aqyyKCKKFmMioLSkKXxX9GlafBjaZm1KrP7Lw/OTZCsI8ACoMpACYq
-         Rphk6LNz2/OeuYMnsUUf1WipjrlSd1VS+CWBrGJUgfc8Muq8FPXmuSTbP+VZ/Q+iIMod
-         U5zQ==
+        d=openvz-org.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:from:subject:to:cc
+         :content-language:content-transfer-encoding;
+        bh=71mBNyH9B09u2q3LU3Ju59I/HS2yC5xAPDJGFqnY1VY=;
+        b=aDNslnbKSGb4N2xm1Lxo4JxC4fAdYDbFa2mX+wCqkePx5mKCMbOD5iCq1sfQ4987Ly
+         pknma9OKnD55wK9708N0oBvqAdYOUcm5Az6rId19fcg02Ws62hKcfzOhMqR3M/o8PrLT
+         gj6GmVJmadt1Q6ikgZmpoha1PxC2zu9pP27midOTTvFra8OJt0emu5vd+7PT0uiq6Y9d
+         12DQijP7/V04zHpW/6n8kdepYQ97ZFhJf+PtwkCHdsOBLtENyltKd4LGYu1SWRWsvYA+
+         nFL4NUStGXtMLH9yefk27zuXk9ipvER/7g6r1EYIOYlifhm6zULorvCMq4FGU1drfKW2
+         iMng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Wqqxn5+q5xmPpZtFRIbD60XulpYnUc5+LRYDs7jEaLY=;
-        b=hUgFTcoxwoP/zqQ/Xys3F3SBfv+T4B6XSwBiqz8ec/B8C6l0lop6U/eOQd9GNihzKt
-         8KbxSoJiMRqy+pLo/BJKKIOTEnqJylsvdk53To8WaRDj0ZwBTxmimJsHYgjvFMhHx/Xh
-         iBzroaA2IIf8KEem/EiCuEO3tyxEAoUo9BhHvYQqEQBxeGIxSrevmcddAIj5j2YwHMhX
-         hHvfDw8UVXvIhfuxTpEz9aBWEmp89MZIrgrqUDMHDQvSveS0yIPme8IY8Upf+rJnEvsa
-         FkJ77uWqZCTW5j5kg8Em5hbpP5gZPk4qgW4vYRDuRK6OmyfuEIUg8QbJv5z28M/VZjs4
-         cKxA==
-X-Gm-Message-State: AOAM533mnjKgUonXGWiFYedEon01VWHaD5/1fAfMhZFJISxdYa7nmhgJ
-        S8O9FlNZnCQnpzlyJb2FalMGpZWsYkVPthUrn+WXoQ==
-X-Google-Smtp-Source: ABdhPJw8xpJdudoWgJ+1Jx86Q9PASwEwAJPZhccKtWf1cQJ07oWyo0/CpzTe9bNFHE+Eixp2zZJuUPINfVgMRPZ/+Bw=
-X-Received: by 2002:a05:600c:1d9f:b0:394:7a51:cb8b with SMTP id
- p31-20020a05600c1d9f00b003947a51cb8bmr8040011wms.163.1652517274539; Sat, 14
- May 2022 01:34:34 -0700 (PDT)
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:from
+         :subject:to:cc:content-language:content-transfer-encoding;
+        bh=71mBNyH9B09u2q3LU3Ju59I/HS2yC5xAPDJGFqnY1VY=;
+        b=rEVDMIMGBHtXAmlsMaAE5zmuTtQfEdueL9hbQvsGLzoamv4jRjBXXXFBlEl6+uxwuH
+         4Uu1rTEinBBJ1zTHgwz2DNbx0mPyybPus2CFjw/WbXPlMe5oFDnHMNJZrV1BiRAzJpRh
+         G1z6BXSIw+G37kIqwoMYIpLbVy999hT0rjpYc98Qk/Ilcap+/HiEsj4gEeqgdHylUDHK
+         T9GgBJcfvRs3/Nhwea4C+RBEkJFPi/hZkxt5voqT1xtKqNqp16Qhpho1zUaAcdTZC3kb
+         MtfNAOKpsWRwjLLlSVCZTF5hKpAvjtRZ8eklHFNVAglKoMPON3T3PILfaRMR0F23MvMs
+         YWhg==
+X-Gm-Message-State: AOAM533gp+OjpvULcDiFR8FW93otedRaPv4Sssv6Hnh67dWgdu3vFp5r
+        ItnjwITqJzRbUmPjD534UJob9g==
+X-Google-Smtp-Source: ABdhPJwZxMpGHEZgzMQNdvGnPixwwGWS54tSUBK+DTtqe6KWoYW3KsgiSQ5njS8i16pr3UdHcaKJ5A==
+X-Received: by 2002:a05:6512:39c1:b0:471:b37e:fe5a with SMTP id k1-20020a05651239c100b00471b37efe5amr6108692lfu.527.1652523749833;
+        Sat, 14 May 2022 03:22:29 -0700 (PDT)
+Received: from [192.168.1.65] ([46.188.121.177])
+        by smtp.gmail.com with ESMTPSA id m22-20020a195216000000b0047255d21149sm665060lfb.120.2022.05.14.03.22.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 14 May 2022 03:22:29 -0700 (PDT)
+Message-ID: <1eb3b298-4f7e-32ad-74ae-12044ed637ed@openvz.org>
+Date:   Sat, 14 May 2022 13:22:28 +0300
 MIME-Version: 1.0
-References: <20220429043913.626647-1-davidgow@google.com> <20220513083212.3537869-3-davidgow@google.com>
- <Yn57d1e6k8uv2uQj@bombadil.infradead.org>
-In-Reply-To: <Yn57d1e6k8uv2uQj@bombadil.infradead.org>
-From:   David Gow <davidgow@google.com>
-Date:   Sat, 14 May 2022 16:34:23 +0800
-Message-ID: <CABVgOSkhr6xfgXZWW6UdbU4MpAvqsDOsqVP0THsH0gVB949HjA@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] selftest: Taint kernel when test module loaded
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Brendan Higgins <brendanhiggins@google.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "Guilherme G . Piccoli" <gpiccoli@igalia.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        John Ogness <john.ogness@linutronix.de>,
-        Joe Fradley <joefradley@google.com>,
-        Daniel Latypov <dlatypov@google.com>,
-        KUnit Development <kunit-dev@googlegroups.com>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Lucas De Marchi <lucas.demarchi@intel.com>,
-        Aaron Tomlin <atomlin@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+From:   Vasily Averin <vvs@openvz.org>
+Subject: [PATCH] sparse: use force attribute for fmode_t casts
+To:     Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     kernel@openvz.org, linux-kernel@vger.kernel.org,
+        Amir Goldstein <amir73il@gmail.com>,
+        Matthew Bobrowski <repnop@google.com>,
+        linux-fsdevel@vger.kernel.org
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 13, 2022 at 11:38 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
->
-> On Fri, May 13, 2022 at 04:32:13PM +0800, David Gow wrote:
-> > Make any kselftest test module (using the kselftest_module framework)
-> > taint the kernel with TAINT_TEST on module load.
-> >
-> > Note that several selftests use kernel modules which are not based on
-> > the kselftest_module framework, and so will not automatically taint the
-> > kernel. These modules will have to be manually modified if they should
-> > taint the kernel this way.
-> >
-> > Similarly, selftests which do not load modules into the kernel generally
-> > should not taint the kernel (or possibly should only do so on failure),
-> > as it's assumed that testing from user-space should be safe. Regardless,
-> > they can write to /proc/sys/kernel/tainted if required.
-> >
-> > Signed-off-by: David Gow <davidgow@google.com>
->
-> Not all selftest modules use KSTM_MODULE_LOADERS() so I'd like to see a
-> modpost target as well, otherwise this just covers a sliver of
-> selftests.
->
+Fixes sparce warnings:
+fs/notify/fanotify/fanotify_user.c:267:63: sparse:
+ warning: restricted fmode_t degrades to integer
+fs/notify/fanotify/fanotify_user.c:1351:28: sparse:
+ warning: restricted fmode_t degrades to integer
+fs/proc/base.c:2240:25: sparse: warning: cast to restricted fmode_t
+fs/proc/base.c:2297:42: sparse: warning: cast from restricted fmode_t
+fs/proc/base.c:2394:48: sparse: warning: cast from restricted fmode_t
+fs/open.c:1024:21: sparse: warning: restricted fmode_t degrades to integer
 
-My personal feeling is that the ideal way of solving this is actually
-to port those modules which aren't using KSTM_MODULE_LOADERS() (or
-KUnit, or some other system) to do so, or to otherwise manually tag
-them as selftests and/or make them taint the kernel.
+Signed-off-by: Vasily Averin <vvs@openvz.org>
+---
+ fs/notify/fanotify/fanotify_user.c | 4 ++--
+ fs/open.c                          | 2 +-
+ fs/proc/base.c                     | 6 +++---
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
-That being said, we can gain a bit my making the module-loading
-helpers in kselftest/module.sh manually taint the kernel with
-/proc/sys/kernel/tainted, which will catch quite a few of them (even
-if tainting from userspace before they're loaded is suboptimal).
+diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+index 9b32b76a9c30..6b058828e412 100644
+--- a/fs/notify/fanotify/fanotify_user.c
++++ b/fs/notify/fanotify/fanotify_user.c
+@@ -264,7 +264,7 @@ static int create_fd(struct fsnotify_group *group, struct path *path,
+ 	 * originally opened O_WRONLY.
+ 	 */
+ 	new_file = dentry_open(path,
+-			       group->fanotify_data.f_flags | FMODE_NONOTIFY,
++			       group->fanotify_data.f_flags | (__force int)FMODE_NONOTIFY,
+ 			       current_cred());
+ 	if (IS_ERR(new_file)) {
+ 		/*
+@@ -1348,7 +1348,7 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
+ 	    (!(fid_mode & FAN_REPORT_NAME) || !(fid_mode & FAN_REPORT_FID)))
+ 		return -EINVAL;
+ 
+-	f_flags = O_RDWR | FMODE_NONOTIFY;
++	f_flags = O_RDWR | (__force int)FMODE_NONOTIFY;
+ 	if (flags & FAN_CLOEXEC)
+ 		f_flags |= O_CLOEXEC;
+ 	if (flags & FAN_NONBLOCK)
+diff --git a/fs/open.c b/fs/open.c
+index 1315253e0247..b5ff39ccebfd 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -1021,7 +1021,7 @@ inline struct open_how build_open_how(int flags, umode_t mode)
+ inline int build_open_flags(const struct open_how *how, struct open_flags *op)
+ {
+ 	u64 flags = how->flags;
+-	u64 strip = FMODE_NONOTIFY | O_CLOEXEC;
++	u64 strip = (__force u64)FMODE_NONOTIFY | O_CLOEXEC;
+ 	int lookup_flags = 0;
+ 	int acc_mode = ACC_MODE(flags);
+ 
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index c1031843cc6a..194b5ac069e7 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -2237,7 +2237,7 @@ static struct dentry *
+ proc_map_files_instantiate(struct dentry *dentry,
+ 			   struct task_struct *task, const void *ptr)
+ {
+-	fmode_t mode = (fmode_t)(unsigned long)ptr;
++	fmode_t mode = (__force fmode_t)(unsigned long)ptr;
+ 	struct proc_inode *ei;
+ 	struct inode *inode;
+ 
+@@ -2294,7 +2294,7 @@ static struct dentry *proc_map_files_lookup(struct inode *dir,
+ 
+ 	if (vma->vm_file)
+ 		result = proc_map_files_instantiate(dentry, task,
+-				(void *)(unsigned long)vma->vm_file->f_mode);
++				(void *)(__force unsigned long)vma->vm_file->f_mode);
+ 
+ out_no_vma:
+ 	mmap_read_unlock(mm);
+@@ -2391,7 +2391,7 @@ proc_map_files_readdir(struct file *file, struct dir_context *ctx)
+ 				      buf, len,
+ 				      proc_map_files_instantiate,
+ 				      task,
+-				      (void *)(unsigned long)p->mode))
++				      (void *)(__force unsigned long)p->mode))
+ 			break;
+ 		ctx->pos++;
+ 	}
+-- 
+2.31.1
 
-I've also started experimenting with a "test" MODULE_INFO field, which
-modpost would add with the -t option. That still requires sprinkling
-MODULE_INFO() everwhere, or the '-t' option to a bunch of makefiles,
-or doing something more drastic to set it automatically for modules in
-a given directory / makefile. Or the staging thing of checking the
-directory / prefix in modpost.
-
-I'll play around some more and have something to show in v4. (If we
-have a MODULE_INFO field, we should use it for KUnit modules, but we'd
-still have to taint the kernel manually for built-in tests anyway, so
-it'd be redundant...)
-
--- David
