@@ -2,151 +2,180 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 31BF15277EC
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 May 2022 16:00:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4145852781D
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 May 2022 16:38:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236184AbiEOOAo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 15 May 2022 10:00:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47072 "EHLO
+        id S237101AbiEOOiW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 15 May 2022 10:38:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231848AbiEOOAn (ORCPT
+        with ESMTP id S233996AbiEOOiU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 15 May 2022 10:00:43 -0400
-Received: from mail.parknet.co.jp (mail.parknet.co.jp [210.171.160.6])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B4B5411A27
-        for <linux-fsdevel@vger.kernel.org>; Sun, 15 May 2022 07:00:41 -0700 (PDT)
-Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
-        by mail.parknet.co.jp (Postfix) with ESMTPSA id 22D7D20A3062;
-        Sun, 15 May 2022 23:00:41 +0900 (JST)
-Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
-        by ibmpc.myhome.or.jp (8.16.1/8.16.1/Debian-3) with ESMTPS id 24FE0Ylt069331
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-        Sun, 15 May 2022 23:00:36 +0900
-Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
-        by devron.myhome.or.jp (8.16.1/8.16.1/Debian-3) with ESMTPS id 24FE0Ym4327987
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-        Sun, 15 May 2022 23:00:34 +0900
-Received: (from hirofumi@localhost)
-        by devron.myhome.or.jp (8.16.1/8.16.1/Submit) id 24FE0YT4327986;
-        Sun, 15 May 2022 23:00:34 +0900
-From:   OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-To:     Chung-Chiang Cheng <cccheng@synology.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, shepjeng@gmail.com,
-        kernel@cccheng.net
-Subject: Re: [PATCH v6 4/4] fat: remove time truncations in
- vfat_create/vfat_mkdir
-References: <20220503152536.2503003-1-cccheng@synology.com>
-        <20220503152536.2503003-4-cccheng@synology.com>
-Date:   Sun, 15 May 2022 23:00:34 +0900
-In-Reply-To: <20220503152536.2503003-4-cccheng@synology.com> (Chung-Chiang
-        Cheng's message of "Tue, 3 May 2022 23:25:36 +0800")
-Message-ID: <87h75qlwu5.fsf@mail.parknet.co.jp>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/29.0.50 (gnu/linux)
+        Sun, 15 May 2022 10:38:20 -0400
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3190114019
+        for <linux-fsdevel@vger.kernel.org>; Sun, 15 May 2022 07:38:18 -0700 (PDT)
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20220515143814epoutp0442d973095f932f03aa889d57c797d3f2~vTiGlNmaV2430724307epoutp04z
+        for <linux-fsdevel@vger.kernel.org>; Sun, 15 May 2022 14:38:14 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20220515143814epoutp0442d973095f932f03aa889d57c797d3f2~vTiGlNmaV2430724307epoutp04z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1652625494;
+        bh=7RsPuR6maoTSQ3xD/FzglrkwUTukPTBdJ2U8wdye52o=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=P2oFmD1eBKLlV+VbfKs0HoR7h7Wp4ZDxyifkp/fmlrQVUqPI09iA0YLT5FRi8LwFA
+         vuQULIYZDPxxJqS/iQlI3lKzqDdkJJzBRobQ72ZDf5UVEGwF0CVbNXuuUwM2q4GBBt
+         yEORxywXLrKJ81NZ9EFbKwz1/Dm6wwzwQp039RE0=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20220515143813epcas1p4f322632a98f6906e8cb2a7602215245b~vTiFRL2G_1901619016epcas1p45;
+        Sun, 15 May 2022 14:38:13 +0000 (GMT)
+Received: from epsmges1p3.samsung.com (unknown [182.195.36.226]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4L1Q3S6zRsz4x9Pr; Sun, 15 May
+        2022 14:38:12 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        D3.D7.10038.45011826; Sun, 15 May 2022 23:38:12 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20220515143811epcas1p1c801016b8952f9102d723dc32b9f2669~vTiDvIeKY2746327463epcas1p1o;
+        Sun, 15 May 2022 14:38:11 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220515143811epsmtrp2dbb99eb395622cc60d4aa9f68e41b5ed~vTiDrXXto1416314163epsmtrp2g;
+        Sun, 15 May 2022 14:38:11 +0000 (GMT)
+X-AuditID: b6c32a37-127ff70000002736-3b-628110540658
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        56.D4.08924.35011826; Sun, 15 May 2022 23:38:11 +0900 (KST)
+Received: from W10PB11329 (unknown [10.253.152.129]) by epsmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20220515143811epsmtip1167796d618e2558a06dd2bb69342c084~vTiDgKOaf0777507775epsmtip1i;
+        Sun, 15 May 2022 14:38:11 +0000 (GMT)
+From:   "Sungjong Seo" <sj1557.seo@samsung.com>
+To:     "'Tadeusz Struk'" <tadeusz.struk@linaro.org>,
+        <linkinjeon@kernel.org>
+Cc:     <linux-fsdevel@vger.kernel.org>, <stable@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <sj1557.seo@samsung.com>
+In-Reply-To: <20220511185909.175110-1-tadeusz.struk@linaro.org>
+Subject: RE: [PATCH v2 1/2] exfat: move is_valid_cluster to a common header
+Date:   Sun, 15 May 2022 23:38:11 +0900
+Message-ID: <000001d86869$66d66110$34832330$@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 15.0
+Thread-Index: AQHMB4wnXVnWWJdAVeLcAg1Vsxu+wwF3Brc3rS0K6LA=
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrAJsWRmVeSWpSXmKPExsWy7bCmrm6IQGOSwdIfBhYTpy1lttiz9ySL
+        xeVdc9gstvw7wmqxYOMjRosHD/+zOrB5bFrVyeZx59oeNo++LasYPT5vkgtgiWpgtEksSs7I
+        LEtVSM1Lzk/JzEu3VQoNcdO1UFLIyC8usVWKNjQ00jM0MNczMjLSM7aMtTIyVVLIS8xNtVWq
+        0IXqVVIoSi4Aqs2tLAYakJOqBxXXK07NS3HIyi8FuVivODG3uDQvXS85P1dJoSwxpxRohJJ+
+        wjfGjL/zb7IXPOCt+LZoMUsD43zuLkZODgkBE4mVjd3MXYxcHEICOxglNs6bxgbhfGKUmLti
+        HQuE85lR4visD0wwLa0PtrFDJHYxSvxc9oAFJCEk8JJRYvmnVBCbTUBX4smNn8wgtoiAp0TD
+        h/mMIDazQKVEx9cGdhCbU8Be4vblU2C2sIC3RO+7pWALWARUJe40/gDr5RWwlGjds5ANwhaU
+        ODnzCQvEHHmJ7W/nMEMcpCCx+9NR1i5GDqBdVhJzbwhAlIhIzO5sA3tNQqCTQ2LS5RssEPUu
+        EptaV0HZwhKvjm9hh7ClJD6/28sGYTczSjQ3GkHYHYwSTzfKgsyXALr5/SULEJNZQFNi/S59
+        iApFiZ2/5zJC2IISp691M0OcwCfx7msPK0Qnr0RHmxBEiYrE9w87WSYwKs9C8tcsJH/NQvLA
+        LIRlCxhZVjGKpRYU56anFhsWGCPH9iZGcGLVMt/BOO3tB71DjEwcjIcYJTiYlUR4DSoakoR4
+        UxIrq1KL8uOLSnNSiw8xJgNDeiKzlGhyPjC155XEG5oYGxgYAROhuaW5MRHClgYmZkYmFsaW
+        xmZK4ryrpp1OFBJITyxJzU5NLUgtgtnCxMEp1cAUYM1QfW+i9uXgE3Y5HpHr5MqfxvNP0Ll9
+        S8X/+d5EGZELG5OjWTg0JqzXFswzWdrklnpH0+jsl4xpWfkFRzY0yP6+Ob0voXSuLruTYYti
+        xpFohq7b3Xea1KUPuVU/cnRc+zHXdfWU6Z0fD3MsvHBNX1XoxK0NLf0zUplmpzif9ks+o6Ih
+        LPAnpGsDR7OmdNXan62dDUFlRTYdZ083h2YvmneM+5ZP/e5biY63vqyR2s6bZ+jz55XtugdT
+        mz4HH/CYWvrWgo/faL+3/tqYhJrMsjnKKjMmm4rPalcMyGvNXOPvVtGU/2NTsUnM8YXO0+4z
+        5a+/u/xK88+W01zlzsZPdePfHPq+7lXk5wWTZiqxFGckGmoxFxUnAgCBqp/2YwQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrKLMWRmVeSWpSXmKPExsWy7bCSnG6wQGOSwds2WYuJ05YyW+zZe5LF
+        4vKuOWwWW/4dYbVYsPERo8WDh/9ZHdg8Nq3qZPO4c20Pm0ffllWMHp83yQWwRHHZpKTmZJal
+        FunbJXBl/J1/k73gAW/Ft0WLWRoY53N3MXJySAiYSLQ+2MbexcjFISSwg1Fi5dmDjF2MHEAJ
+        KYmD+zQhTGGJw4eLIUqeM0osP3uDHaSXTUBX4smNn8wgtoiAt8TLg52sIDazQK1E375brBAN
+        ExglFj2cBdbAKWAvcfvyKTBbGKih991SJhCbRUBV4k7jD7BBvAKWEq17FrJB2IISJ2c+YQE5
+        gllAT6JtIyPEfHmJ7W/nMEPcryCx+9NRVpASEQEribk3BCBKRCRmd7YxT2AUnoVk0CyEQbOQ
+        DJqFpGMBI8sqRsnUguLc9NxiwwKjvNRyveLE3OLSvHS95PzcTYzgmNHS2sG4Z9UHvUOMTByM
+        hxglOJiVRHgNKhqShHhTEiurUovy44tKc1KLDzFKc7AoifNe6DoZLySQnliSmp2aWpBaBJNl
+        4uCUamDavsf6apGTsrG8r227kFVsW8iL3xuWptYrvU5Mv861wyhh2lzrxG8M2fOW3fVkCKzY
+        sGP2rHl3ZaRbDS6unrMp/XSTZE5bg9WXGK3fPU+SRLf/Ws3FwRVcJ1V5seY1e3NxKX+Tzd/9
+        nMnzvi/vnXCbcet6puLynUmWZt+V7L5Ls0W0HTn1zfcWx7uf/zZn7slS2+QjbLqfM3pC+PRm
+        g2/5tUtvxM+cVxQTWXJu5tMLNxxmd5249Sn17gf/SX1hTyouMd7KnvYx6s6fr07dc/Lyvl6c
+        e8xeZs0T9qn8ftvOTPRM/q5o7l6Qc0n7f+m27Ye3P7d6HbKl+cGWLLPMvYUW/acfaYZf73ll
+        GuKhfktMiaU4I9FQi7moOBEAqEhp3wgDAAA=
+X-CMS-MailID: 20220515143811epcas1p1c801016b8952f9102d723dc32b9f2669
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+X-ArchiveUser: EV
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220511185940epcas1p3c5eb0603b969fe2753b4f16f6f8842a7
+References: <CGME20220511185940epcas1p3c5eb0603b969fe2753b4f16f6f8842a7@epcas1p3.samsung.com>
+        <20220511185909.175110-1-tadeusz.struk@linaro.org>
+X-Spam-Status: No, score=-4.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Chung-Chiang Cheng <cccheng@synology.com> writes:
+> Move the is_valid_cluster() helper from fatent.c to a common header to
+> make it reusable in other *.c files.
+> 
+> Cc: Namjae Jeon <linkinjeon@kernel.org>
+> Cc: Sungjong Seo <sj1557.seo@samsung.com>
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: stable@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> 
+> Signed-off-by: Tadeusz Struk <tadeusz.struk@linaro.org>
 
-> All the timestamps in vfat_create() and vfat_mkdir() come from
-> fat_time_fat2unix() which ensures time granularity. We don't need to
-> truncate them to fit FAT's format.
->
-> Moreover, fat_truncate_crtime() and fat_timespec64_trunc_10ms() are
-> also removed because there is no caller anymore.
+Looks good, thanks for your patch!
 
-Acked-by: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Reviewed-by: Sungjong Seo <sj1557.seo@samsung.com>
 
-Thanks.
-
-> Signed-off-by: Chung-Chiang Cheng <cccheng@synology.com>
 > ---
->  fs/fat/fat.h        |  2 --
->  fs/fat/misc.c       | 21 ---------------------
->  fs/fat/namei_vfat.c |  4 ----
->  3 files changed, 27 deletions(-)
->
-> diff --git a/fs/fat/fat.h b/fs/fat/fat.h
-> index f3bbf17ee352..47b90deef284 100644
-> --- a/fs/fat/fat.h
-> +++ b/fs/fat/fat.h
-> @@ -449,8 +449,6 @@ extern void fat_time_unix2fat(struct msdos_sb_info *sbi, struct timespec64 *ts,
->  			      __le16 *time, __le16 *date, u8 *time_cs);
->  extern struct timespec64 fat_truncate_atime(const struct msdos_sb_info *sbi,
->  					    const struct timespec64 *ts);
-> -extern struct timespec64 fat_truncate_crtime(const struct msdos_sb_info *sbi,
-> -					     const struct timespec64 *ts);
->  extern struct timespec64 fat_truncate_mtime(const struct msdos_sb_info *sbi,
->  					    const struct timespec64 *ts);
->  extern int fat_truncate_time(struct inode *inode, struct timespec64 *now,
-> diff --git a/fs/fat/misc.c b/fs/fat/misc.c
-> index 85bb9dc3af2d..010865dfc46b 100644
-> --- a/fs/fat/misc.c
-> +++ b/fs/fat/misc.c
-> @@ -275,13 +275,6 @@ static inline struct timespec64 fat_timespec64_trunc_2secs(struct timespec64 ts)
->  	return (struct timespec64){ ts.tv_sec & ~1ULL, 0 };
+>  fs/exfat/exfat_fs.h | 6 ++++++
+>  fs/exfat/fatent.c   | 6 ------
+>  2 files changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h index
+> c6800b880920..42d06c68d5c5 100644
+> --- a/fs/exfat/exfat_fs.h
+> +++ b/fs/exfat/exfat_fs.h
+> @@ -381,6 +381,12 @@ static inline int exfat_sector_to_cluster(struct
+> exfat_sb_info *sbi,
+>  		EXFAT_RESERVED_CLUSTERS;
 >  }
->  
-> -static inline struct timespec64 fat_timespec64_trunc_10ms(struct timespec64 ts)
+> 
+> +static inline bool is_valid_cluster(struct exfat_sb_info *sbi,
+> +		unsigned int clus)
+> +{
+> +	return clus >= EXFAT_FIRST_CLUSTER && clus < sbi->num_clusters; }
+> +
+>  /* super.c */
+>  int exfat_set_volume_dirty(struct super_block *sb);  int
+> exfat_clear_volume_dirty(struct super_block *sb); diff --git
+> a/fs/exfat/fatent.c b/fs/exfat/fatent.c index a3464e56a7e1..421c27353104
+> 100644
+> --- a/fs/exfat/fatent.c
+> +++ b/fs/exfat/fatent.c
+> @@ -81,12 +81,6 @@ int exfat_ent_set(struct super_block *sb, unsigned int
+> loc,
+>  	return 0;
+>  }
+> 
+> -static inline bool is_valid_cluster(struct exfat_sb_info *sbi,
+> -		unsigned int clus)
 > -{
-> -	if (ts.tv_nsec)
-> -		ts.tv_nsec -= ts.tv_nsec % 10000000UL;
-> -	return ts;
+> -	return clus >= EXFAT_FIRST_CLUSTER && clus < sbi->num_clusters;
 > -}
 > -
->  /*
->   * truncate atime to 24 hour granularity (00:00:00 in local timezone)
->   */
-> @@ -299,20 +292,6 @@ struct timespec64 fat_truncate_atime(const struct msdos_sb_info *sbi,
->  	return (struct timespec64){ seconds, 0 };
->  }
->  
-> -/*
-> - * truncate creation time with appropriate granularity:
-> - *   msdos - 2 seconds
-> - *   vfat  - 10 milliseconds
-> - */
-> -struct timespec64 fat_truncate_crtime(const struct msdos_sb_info *sbi,
-> -				      const struct timespec64 *ts)
-> -{
-> -	if (sbi->options.isvfat)
-> -		return fat_timespec64_trunc_10ms(*ts);
-> -	else
-> -		return fat_timespec64_trunc_2secs(*ts);
-> -}
-> -
->  /*
->   * truncate mtime to 2 second granularity
->   */
-> diff --git a/fs/fat/namei_vfat.c b/fs/fat/namei_vfat.c
-> index 5369d82e0bfb..c573314806cf 100644
-> --- a/fs/fat/namei_vfat.c
-> +++ b/fs/fat/namei_vfat.c
-> @@ -780,8 +780,6 @@ static int vfat_create(struct user_namespace *mnt_userns, struct inode *dir,
->  		goto out;
->  	}
->  	inode_inc_iversion(inode);
-> -	fat_truncate_time(inode, &ts, S_ATIME|S_CTIME|S_MTIME);
-> -	/* timestamp is already written, so mark_inode_dirty() is unneeded. */
->  
->  	d_instantiate(dentry, inode);
->  out:
-> @@ -878,8 +876,6 @@ static int vfat_mkdir(struct user_namespace *mnt_userns, struct inode *dir,
->  	}
->  	inode_inc_iversion(inode);
->  	set_nlink(inode, 2);
-> -	fat_truncate_time(inode, &ts, S_ATIME|S_CTIME|S_MTIME);
-> -	/* timestamp is already written, so mark_inode_dirty() is unneeded. */
->  
->  	d_instantiate(dentry, inode);
+>  int exfat_ent_get(struct super_block *sb, unsigned int loc,
+>  		unsigned int *content)
+>  {
+> --
+> 2.36.1
 
--- 
-OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+
