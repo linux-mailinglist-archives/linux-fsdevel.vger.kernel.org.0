@@ -2,192 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A303D5278B7
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 May 2022 18:15:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6410A52797F
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 May 2022 21:29:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237640AbiEOQO7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 15 May 2022 12:14:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47114 "EHLO
+        id S229587AbiEOT3i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 15 May 2022 15:29:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231624AbiEOQO6 (ORCPT
+        with ESMTP id S229536AbiEOT3h (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 15 May 2022 12:14:58 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 60999DEF1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 15 May 2022 09:14:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1652631295;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ZHCbrv8X4Zn3SHqMsUHWOUnyTCb3eO5VuCPZtPP2NLk=;
-        b=EPouBrD/dN+3gL17R4BBgiDZwwVBDqOLZH1dfKkUe+nwA+RWcnaxL/hX4EZ9JBc+8C0Zex
-        wSqZ0MsIOoNd8WBByu6AZlCarQRB4Sd0oZcK+uMhnnSruBiAYwrumFE7izdMNHxIGovjDV
-        fsaEpnznl8ePeQTfRy9ydPEBOZbmujc=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-529-07aIcmVDOPuR0gkuYMIjog-1; Sun, 15 May 2022 12:14:54 -0400
-X-MC-Unique: 07aIcmVDOPuR0gkuYMIjog-1
-Received: by mail-wm1-f72.google.com with SMTP id v124-20020a1cac82000000b003948b870a8dso9020707wme.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 15 May 2022 09:14:54 -0700 (PDT)
+        Sun, 15 May 2022 15:29:37 -0400
+Received: from mail-yb1-xb2d.google.com (mail-yb1-xb2d.google.com [IPv6:2607:f8b0:4864:20::b2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BD1E27CEE
+        for <linux-fsdevel@vger.kernel.org>; Sun, 15 May 2022 12:29:36 -0700 (PDT)
+Received: by mail-yb1-xb2d.google.com with SMTP id w187so23806420ybe.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 15 May 2022 12:29:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=/rL+TycpMQLfB5P4Zn9xgGfUWg8yPCNTwrE46ZNldMM=;
+        b=DMUWO0ynk/rpM+QD0WMgkL9JB6boPabsDdg0IWsnjTSKKEudYKJ/6jKiU4qOtYMIeA
+         KyYOg69wWo3bBjvE5YzeHm17ePL9PyO98jBa/7tlT3viCadH+PIGEEtMZ42T0jdt3n1E
+         YJkWwHBcbhVZI7JxpllGtA13wW+kzMmznqsiqC3CNUj5SZbA5REcLgA9es+POiMtL7uS
+         2+8klS7o1ZXCrifaL1H/AoNVuxct92SoKcNBJ44NZhlXXEoFNtfdKieRPL7/4/DTiNWf
+         EHDUaNEVC23zjVh3IPCPAw9lSzwZr89BdnvhSQ3jW29xl1TPehNtsd+ul9LeStOcGQKW
+         N5nA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ZHCbrv8X4Zn3SHqMsUHWOUnyTCb3eO5VuCPZtPP2NLk=;
-        b=5mmO9OpOq9Ggqvh/GU5Wkv5wvYvaams2SVeEy9g6pLDtEaSElnXGuAkhx6viFMtNt+
-         SRKXjRcunR5jn3TFES0/VLEvTYNMSR0ZLmOdGh974wQ/CKqF42oQRVbj65Pds4wXOXLs
-         YXjOwPnZl+BccFAzEBPOF1w+9cX4Le0SR+Q12MLPKp1uBR5Ees6tACfNoWtodghDjIqW
-         5BMwAd3aulG/cDZWU0htdt8+blqwVKbYLeE1+NXMUtghZ1GcobK5O9gd+gD2FPVkIIGm
-         WKlDC/2L2Vy14lobXzGHBab8sdmBUG3u0hxAf44Djn/1rr7hOu0Y2wu7Hv8qcZx/9RnS
-         ZpOg==
-X-Gm-Message-State: AOAM531mVJFRlhJDw4d/1KRyhhNuB8N0GCMTEfYN8ITvR+xv/3QHzuBG
-        NcE0BUA9RtCUPjhxo1VRPBHE9zvT/SIzrqaPLaN+GNqVsVioWlVGWS821UxMNvbbtzHPrlnRM+x
-        ry7J0aUSuXFm+Ce28P15eC1A3RA==
-X-Received: by 2002:a5d:6da4:0:b0:20c:6d76:cc54 with SMTP id u4-20020a5d6da4000000b0020c6d76cc54mr10791006wrs.317.1652631293202;
-        Sun, 15 May 2022 09:14:53 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxxzWFlE2O3317L1pCqcWYjMbUPTjGV2tm24fDmcpBbvgOWh4tUvPS8YH+q/jOBhpdMg5a+xg==
-X-Received: by 2002:a5d:6da4:0:b0:20c:6d76:cc54 with SMTP id u4-20020a5d6da4000000b0020c6d76cc54mr10790994wrs.317.1652631292923;
-        Sun, 15 May 2022 09:14:52 -0700 (PDT)
-Received: from redhat.com ([2.55.141.66])
-        by smtp.gmail.com with ESMTPSA id n36-20020a05600c502400b003942a244ebfsm7974671wmr.4.2022.05.15.09.14.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 May 2022 09:14:52 -0700 (PDT)
-Date:   Sun, 15 May 2022 12:14:48 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Eric Biggers <ebiggers@kernel.org>, linux-fsdevel@vger.kernel.org,
-        Jason Wang <jasowang@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: Re: [BUG] double fget() in vhost/net (was Re: [PATCH] vfs: move
- fdput() to right place in ksys_sync_file_range())
-Message-ID: <20220515121035-mutt-send-email-mst@kernel.org>
-References: <20220511154503.28365-1-cgxu519@mykernel.net>
- <YnvbhmRUxPxWU2S3@casper.infradead.org>
- <YnwIDpkIBem+MeeC@gmail.com>
- <YnwuEt2Xm1iPjW7S@zeniv-ca.linux.org.uk>
- <YoBzzxlYHYXEP3qj@zeniv-ca.linux.org.uk>
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=/rL+TycpMQLfB5P4Zn9xgGfUWg8yPCNTwrE46ZNldMM=;
+        b=Mt1fyvZuHkw0WPZp3xFDj3cqo6npCDoGBK/tF3Bp/x4DHQ5oL60oilSQaB1ES0341A
+         Z/+MtpPACt5JVHfmg8XcVqrmRVhFEtbt+WyjOvSfUL3Jp3g29zVA8rTzib+qi9RYMZ0H
+         FkJuxS206Cd4TNiPijG53tJODwu4oj7qq1IuVUIDGh42q0OW8Nd/0FAo4n67EvguR7UF
+         OoaiFNaBCCy5ZZGdibrpLR+v5OwYQmTk3RqsPnReN3ozeaazib7WxSVSY7xlvgdXu7pR
+         knRcYCl5tceOEnd8j7VdsH+90hdgPth8EMoGz69scKYriaLn6Kgg5ZRY7zXKDr5RkqLw
+         C0gA==
+X-Gm-Message-State: AOAM530PUAcM4KbT/ZP3pU5nHD/06g0hh5c7Jt33hDozLAs/QqEF/8+G
+        McO+57ZzX78o9MvR0z3NM2rrpGTimoacmAosbYs=
+X-Google-Smtp-Source: ABdhPJy8Lv+lsliAN1ayS+omTe2bPc+ObxtAunTsrOhTcISjYxvfZG4AzdV4l8Z/hw4Vo7PpUMz4+5qKSRIhXvuFsKI=
+X-Received: by 2002:a25:23d4:0:b0:64d:6e1f:d309 with SMTP id
+ j203-20020a2523d4000000b0064d6e1fd309mr6379219ybj.208.1652642975168; Sun, 15
+ May 2022 12:29:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YoBzzxlYHYXEP3qj@zeniv-ca.linux.org.uk>
-X-Spam-Status: No, score=-3.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Received: by 2002:a05:7010:510e:b0:2ad:1077:d463 with HTTP; Sun, 15 May 2022
+ 12:29:34 -0700 (PDT)
+Reply-To: dravasmith27@gmail.com
+From:   Dr Ava Smith <drwilliam48@gmail.com>
+Date:   Sun, 15 May 2022 12:29:34 -0700
+Message-ID: <CAFd1zB2RHA1ae9GMr0SPi-JETSzM85cTtPB3tLySEWNyJ6q81g@mail.gmail.com>
+Subject: GREETINGS FROM DR AVA SMITH
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: Yes, score=6.0 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,FREEMAIL_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,SUBJ_ALL_CAPS,
+        T_SCC_BODY_TEXT_LINE,UNDISC_FREEM autolearn=no autolearn_force=no
+        version=3.4.6
+X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
+        *      https://www.dnswl.org/, no trust
+        *      [2607:f8b0:4864:20:0:0:0:b2d listed in]
+        [list.dnswl.org]
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5005]
+        *  0.2 FREEMAIL_ENVFROM_END_DIGIT Envelope-from freemail username ends
+        *       in digit
+        *      [drwilliam48[at]gmail.com]
+        *  0.5 SUBJ_ALL_CAPS Subject is all capitals
+        *  0.2 FREEMAIL_REPLYTO_END_DIGIT Reply-To freemail username ends in
+        *      digit
+        *      [dravasmith27[at]gmail.com]
+        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
+        * -0.0 SPF_PASS SPF: sender matches SPF record
+        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
+        *      provider
+        *      [drwilliam48[at]gmail.com]
+        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
+        *       valid
+        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
+        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
+        *      author's domain
+        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
+        *      envelope-from domain
+        * -0.0 T_SCC_BODY_TEXT_LINE No description available.
+        *  3.4 UNDISC_FREEM Undisclosed recipients + freemail reply-to
+        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
+        *      different freemails
+X-Spam-Level: *****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, May 15, 2022 at 03:30:23AM +0000, Al Viro wrote:
-> [tun/tap and vhost folks Cc'd]
-> 
-> here's another piece of code assuming that repeated fget() will yield the
-> same opened file: in vhost_net_set_backend() we have
-> 
->         sock = get_socket(fd);
->         if (IS_ERR(sock)) {
->                 r = PTR_ERR(sock);
->                 goto err_vq;
->         }
-> 
->         /* start polling new socket */
->         oldsock = vhost_vq_get_backend(vq);
->         if (sock != oldsock) {
-> ...
->                 vhost_vq_set_backend(vq, sock);
-> ...
->                 if (index == VHOST_NET_VQ_RX)
->                         nvq->rx_ring = get_tap_ptr_ring(fd);
-> 
-> with
-> static struct socket *get_socket(int fd)
-> {
->         struct socket *sock;
-> 
->         /* special case to disable backend */
->         if (fd == -1)
->                 return NULL;
->         sock = get_raw_socket(fd);
->         if (!IS_ERR(sock))
->                 return sock;
->         sock = get_tap_socket(fd);
->         if (!IS_ERR(sock))
->                 return sock;
->         return ERR_PTR(-ENOTSOCK);
-> }
-> and
-> static struct ptr_ring *get_tap_ptr_ring(int fd)
-> {
->         struct ptr_ring *ring;
->         struct file *file = fget(fd);
-> 
->         if (!file)
->                 return NULL;
->         ring = tun_get_tx_ring(file);
->         if (!IS_ERR(ring))
->                 goto out;
->         ring = tap_get_ptr_ring(file);
->         if (!IS_ERR(ring))
->                 goto out;
->         ring = NULL;
-> out:
->         fput(file);
->         return ring;
-> }
-> 
-> Again, there is no promise that fd will resolve to the same thing for
-> lookups in get_socket() and in get_tap_ptr_ring().  I'm not familiar
-> enough with the guts of drivers/vhost to tell how easy it is to turn
-> into attack, but it looks like trouble.  If nothing else, the pointer
-> returned by tun_get_tx_ring() is not guaranteed to be pinned down by
-> anything - the reference to sock will _usually_ suffice, but that
-> doesn't help any if we get a different socket on that second fget().
-> 
-> One possible way to fix it would be the patch below; objections?
-> 
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-
-Suspect you are right, didn't test yet. Jason?
-
-> ---
-> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-> index 792ab5f23647..86ea7695241e 100644
-> --- a/drivers/vhost/net.c
-> +++ b/drivers/vhost/net.c
-> @@ -1450,13 +1450,9 @@ static struct socket *get_raw_socket(int fd)
->  	return ERR_PTR(r);
->  }
->  
-> -static struct ptr_ring *get_tap_ptr_ring(int fd)
-> +static struct ptr_ring *get_tap_ptr_ring(struct file *file)
->  {
->  	struct ptr_ring *ring;
-> -	struct file *file = fget(fd);
-> -
-> -	if (!file)
-> -		return NULL;
->  	ring = tun_get_tx_ring(file);
->  	if (!IS_ERR(ring))
->  		goto out;
-> @@ -1465,7 +1461,6 @@ static struct ptr_ring *get_tap_ptr_ring(int fd)
->  		goto out;
->  	ring = NULL;
->  out:
-> -	fput(file);
->  	return ring;
->  }
->  
-> @@ -1553,7 +1548,7 @@ static long vhost_net_set_backend(struct vhost_net *n, unsigned index, int fd)
->  		if (r)
->  			goto err_used;
->  		if (index == VHOST_NET_VQ_RX)
-> -			nvq->rx_ring = get_tap_ptr_ring(fd);
-> +			nvq->rx_ring = get_tap_ptr_ring(sock->file);
->  
->  		oldubufs = nvq->ubufs;
->  		nvq->ubufs = ubufs;
-
+-- 
+Hello Dear,
+how are you today?hope you are fine
+My name is Dr Ava Smith ,Am an English and French nationalities.
+I will give you pictures and more details about me as soon as i hear from you
+Thanks
+Ava
