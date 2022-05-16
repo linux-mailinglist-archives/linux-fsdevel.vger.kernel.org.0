@@ -2,92 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 338A85294AD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 May 2022 01:06:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74B46529510
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 May 2022 01:19:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350088AbiEPXGx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 May 2022 19:06:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49576 "EHLO
+        id S237243AbiEPXS6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 May 2022 19:18:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350512AbiEPXGk (ORCPT
+        with ESMTP id S231344AbiEPXS5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 May 2022 19:06:40 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DF3C33E9B
-        for <linux-fsdevel@vger.kernel.org>; Mon, 16 May 2022 16:06:38 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id h14so2731988wrc.6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 16 May 2022 16:06:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GWbhKr4uIgUJdqioayLfv0a/97vu9JuV374NJIuj07k=;
-        b=srCDnu0GFgxUWJi+fbEi5+IRCNr5P8YyBqD/ANuYnVBRNhOZlxyc1Kq7tP5Ujjbef8
-         GD6tlfL7VBbP+GzV3JA7qP4xgQJb3w+9iU82QMe3jKpf8n203zwYotjwe+bylMxPtAkh
-         B6Qd+jBHp39THWYfGS8RQbMOBPNCKvhsqdkbhmfKAf8JpN0MSZ3on0uj413fBDi7rekB
-         3w7C51qoVD9+iYGB8NdvyksbJsGVPX4wePRpRuYeQSko03SZP7uyt2UE2xoGli6DwoYJ
-         yEwideiPF+2R6hD8GsSU3lM7MuE40Q2peGFuEbND5FTsIiCZaKIkhvtLhNFK4VcYkVgb
-         YWBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GWbhKr4uIgUJdqioayLfv0a/97vu9JuV374NJIuj07k=;
-        b=hnC1IunuLvcc641Mf4sv/OvqY+GXBDqhCuZIUHKwKO/RAz/ASWAFsy4pA2cYQYBDtt
-         UJ3R4T9H+p1UrrQy939+TXKDj29GeAvVtkjpeIRWhUhfOCcBpG0V1aZ4HV0/dz+u8o9P
-         zjz8WE/QDxPdOOWIypPMF3vP6y5eWomj8A9/yO8+hEo1kcuMzFrC5aRWOVRy9SICIFRA
-         sPyL822zcu4dB5vb8X/J3qPzmC+/5S2K4aRcLKavEij1fyrx/IPBKR2p4NKRc9b+bfNS
-         O3SBKEs1sY7uKaZTr0hnNz3MCYHYdFXkBJsqQN2FapJntcBUyyDtkI0T/wWB9VY4M89A
-         44Sw==
-X-Gm-Message-State: AOAM533w4rL54RLq48r9MSISlsDn+19wctpcPVTy/NvD4VX/jkvrg7hG
-        MGF6dcommaCmMB9R+WtCV87Gs3vOH/4ZAsDjqf8k
-X-Google-Smtp-Source: ABdhPJzMOUlYHtDAXxonPowZHZVLJu4wBPBpRYjA/BeHhRo120bLMO/D+T6lSRrgQH7hQWbqtYdTp3CU8xpDNFGiNn0=
-X-Received: by 2002:a5d:4806:0:b0:20a:da03:711b with SMTP id
- l6-20020a5d4806000000b0020ada03711bmr15470768wrq.395.1652742396890; Mon, 16
- May 2022 16:06:36 -0700 (PDT)
+        Mon, 16 May 2022 19:18:57 -0400
+Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B5C033A27;
+        Mon, 16 May 2022 16:18:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1652743136; x=1684279136;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=i7wsPh2fobRlYAsrYMy+rFuqEKWx5TVdq2AvC5j5cTM=;
+  b=cKfVcab3x8TlxZMvvXgy1t6xPlZ+QB4xUaOzgfYQDAJdPwo/fFHkUtRK
+   LdbpUysTlea/lPTAvifA1yQk3BXFFyufA/4V42+pMwqK5zR/Vo0YuhkFW
+   XVKBEYApt9TPT/cFlAmvadYpDURXLQx1r93ZuDvzBj9XJRFoSyRrNpPM8
+   mxBEJ6Yqth0Ytoj0R4TOA3dR5MBS9P7FlzAkyFEn00HCPTzwmx0yA+VS2
+   flIkOISPO1rpSyZMgqOqfhSRGBvNpPG1sISdBqQEPnB84NZNaw8zWZpAR
+   AeFbeFAU2ER7Ornrxv8wygG7m2IbInjA1OvDTwRP2LVS6zpi76pkLj4Rn
+   Q==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10349"; a="334034458"
+X-IronPort-AV: E=Sophos;i="5.91,231,1647327600"; 
+   d="scan'208";a="334034458"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2022 16:18:56 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.91,231,1647327600"; 
+   d="scan'208";a="555493661"
+Received: from lkp-server02.sh.intel.com (HELO 242b25809ac7) ([10.239.97.151])
+  by orsmga002.jf.intel.com with ESMTP; 16 May 2022 16:18:53 -0700
+Received: from kbuild by 242b25809ac7 with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1nqjzI-0000PN-Ql;
+        Mon, 16 May 2022 23:18:52 +0000
+Date:   Tue, 17 May 2022 07:18:23 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Xiubo Li <xiubli@redhat.com>, jlayton@kernel.org,
+        viro@zeniv.linux.org.uk
+Cc:     kbuild-all@lists.01.org, idryomov@gmail.com, vshankar@redhat.com,
+        ceph-devel@vger.kernel.org, mcgrof@kernel.org,
+        akpm@linux-foundation.org, arnd@arndb.de,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Xiubo Li <xiubli@redhat.com>
+Subject: Re: [PATCH 2/2] ceph: wait the first reply of inflight unlink/rmdir
+Message-ID: <202205170751.AZfL9JiX-lkp@intel.com>
+References: <20220516122046.40655-3-xiubli@redhat.com>
 MIME-Version: 1.0
-References: <cover.1652730821.git.rgb@redhat.com> <b70eb9b7620fdda8c46acf055dfd518b81ae2931.1652730821.git.rgb@redhat.com>
-In-Reply-To: <b70eb9b7620fdda8c46acf055dfd518b81ae2931.1652730821.git.rgb@redhat.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 16 May 2022 19:06:26 -0400
-Message-ID: <CAHC9VhRaDV21BE+UuiOpwnwtdmi39iTNO7pUuLiJZ8ABZH+83g@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] fanotify: Ensure consistent variable type for response
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
-        Steve Grubb <sgrubb@redhat.com>, Jan Kara <jack@suse.cz>,
-        Amir Goldstein <amir73il@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220516122046.40655-3-xiubli@redhat.com>
+X-Spam-Status: No, score=-4.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 16, 2022 at 4:22 PM Richard Guy Briggs <rgb@redhat.com> wrote:
->
-> The user space API for the response variable is __u32. This patch makes
-> sure that the whole path through the kernel uses u32 so that there is
-> no sign extension or truncation of the user space response.
->
-> Suggested-by: Steve Grubb <sgrubb@redhat.com>
-> Link: https://lore.kernel.org/r/12617626.uLZWGnKmhe@x2
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> ---
->  fs/notify/fanotify/fanotify.h      | 2 +-
->  fs/notify/fanotify/fanotify_user.c | 6 +++---
->  include/linux/audit.h              | 6 +++---
->  kernel/auditsc.c                   | 2 +-
->  4 files changed, 8 insertions(+), 8 deletions(-)
+Hi Xiubo,
 
-We're at -rc7, so this should wait until after the upcoming merge
-window, but it looks okay to me.
+I love your patch! Yet something to improve:
 
-Acked-by: Paul Moore <paul@paul-moore.com>
+[auto build test ERROR on ceph-client/for-linus]
+[also build test ERROR on linus/master v5.18-rc7 next-20220516]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Xiubo-Li/ceph-wait-async-unlink-to-finish/20220516-202249
+base:   https://github.com/ceph/ceph-client.git for-linus
+config: i386-debian-10.3-kselftests (https://download.01.org/0day-ci/archive/20220517/202205170751.AZfL9JiX-lkp@intel.com/config)
+compiler: gcc-11 (Debian 11.2.0-20) 11.2.0
+reproduce (this is a W=1 build):
+        # https://github.com/intel-lab-lkp/linux/commit/85d578952d01b70d71fccd86ccb0fdd1dbd0df8b
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Xiubo-Li/ceph-wait-async-unlink-to-finish/20220516-202249
+        git checkout 85d578952d01b70d71fccd86ccb0fdd1dbd0df8b
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        make W=1 O=build_dir ARCH=i386 SHELL=/bin/bash
+
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
+
+All errors (new ones prefixed by >>, old ones prefixed by <<):
+
+>> ERROR: modpost: "ceph_wait_on_conflict_unlink" [fs/ceph/ceph.ko] undefined!
 
 -- 
-paul-moore.com
+0-DAY CI Kernel Test Service
+https://01.org/lkp
