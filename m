@@ -2,111 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A82425292B2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 May 2022 23:19:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0DCE529345
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 May 2022 23:59:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349201AbiEPVNL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 May 2022 17:13:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41046 "EHLO
+        id S1349535AbiEPV72 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 May 2022 17:59:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40832 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349413AbiEPVM4 (ORCPT
+        with ESMTP id S1349539AbiEPV7X (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 May 2022 17:12:56 -0400
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0796838B3;
-        Mon, 16 May 2022 14:05:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1652735160; x=1684271160;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ZYt40Q+PfFSSqQhOuPpZ/jVUPjaP/eVg7/MgNninAro=;
-  b=IeyTe/ArzNPfXAP2ZFH8Cbk5fHR0ZOkI7sfLSfQLKTEUTaqYDAZC1Ji3
-   /w2ZlNBLitq8UpaKLn8N0cd7hGaMOloePNd8kQpnlU0MItyPUCVrHJcl9
-   YAIEISBmStg3jg6uZNtWP8aNuGiNMNkOZDn2GcIxTJJYbHgbeQjWimo9h
-   7UcnU91GRLGf7yRHivdDEYtCBlJyMANIFS+PUJ+u0luNj+yWIcCDxvVcv
-   6Fwr8MImad0qfkbvSjraWk14VYVy1PFu5o1AiZDnmFKxkbGYiEXuQ9UUj
-   BOUrsiBk+eWwLay9YWqAIP4Keln4+iC/8Mzz1MRrGL/mOIswQlOOJdEsP
-   g==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10349"; a="258524322"
-X-IronPort-AV: E=Sophos;i="5.91,230,1647327600"; 
-   d="scan'208";a="258524322"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2022 14:05:54 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.91,230,1647327600"; 
-   d="scan'208";a="544548627"
-Received: from lkp-server02.sh.intel.com (HELO 242b25809ac7) ([10.239.97.151])
-  by orsmga006.jf.intel.com with ESMTP; 16 May 2022 14:05:51 -0700
-Received: from kbuild by 242b25809ac7 with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1nqhuY-0000LC-JA;
-        Mon, 16 May 2022 21:05:50 +0000
-Date:   Tue, 17 May 2022 05:05:43 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Xiubo Li <xiubli@redhat.com>, jlayton@kernel.org,
-        viro@zeniv.linux.org.uk
-Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org, idryomov@gmail.com,
-        vshankar@redhat.com, ceph-devel@vger.kernel.org, mcgrof@kernel.org,
-        akpm@linux-foundation.org, arnd@arndb.de,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Xiubo Li <xiubli@redhat.com>
-Subject: Re: [PATCH 2/2] ceph: wait the first reply of inflight unlink/rmdir
-Message-ID: <202205170402.ez4Z5njh-lkp@intel.com>
-References: <20220516122046.40655-3-xiubli@redhat.com>
+        Mon, 16 May 2022 17:59:23 -0400
+Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A5554617E;
+        Mon, 16 May 2022 14:59:20 -0700 (PDT)
+Received: by mail-wr1-x436.google.com with SMTP id h14so2583615wrc.6;
+        Mon, 16 May 2022 14:59:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=HcmBvUgsVeNM17CUNnfRIku+R4yL2gP60EC6MoAvwrg=;
+        b=IFPjQkUx6GkRaADbf42xb/jtRznMIH61XR1C1J/SPH5ePYaVsHDqdqkBMX5LaBkHhr
+         1ytV3SU4nMwLxjZZExiByoLP8OLiiLdBwqhA1q5XXcXaOiFoap0YU536uOL7ro0kQys+
+         up0tQT2lFx0wwR5d43Via0+btZhUY9LPADgEfluawiYt+ZLWZzOGHpvEzF2VRAfpXUA/
+         G13Qjl+WWCjI5EIZ0eMCTEuT6rhpKy6PkubfuPMAFWm/j44uaIB7CqNBd3s2DMSo7ZLB
+         if1Fhlvd7BT1hnmFkEXuiGMx2Xp0Dat8nC/oM2DuDe6BVVj+VFyHQ+gN5Tspmd9ClJbd
+         PneQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=HcmBvUgsVeNM17CUNnfRIku+R4yL2gP60EC6MoAvwrg=;
+        b=v/kssIvQEdHP8SqOFMEDdej7XLd/axE3lZqPpqdnFrSf1sD+83F4ktQkkwQrXHG7k5
+         WKIrd9zvyyyp5GYMWRg8/qdbVjtwY/I78cb6+QNlawZ6f0LOwnvGlk6wQrguwuGuOCn5
+         keUHDI4KmggtVyqZn+tpMJopoLvZpZo0NlOd2gcMZwLNhcNziQVswfCRojv7uFvCREr2
+         U7lNrgjbq851E0A2UpWJg+QzOs4oK0nK8tZY6Qz+SC3sMR58uuW/yokSjNgjHDYuQtpD
+         xNEHWXCEI1zw6yoZQnm8Ujvba53XF5TwS3D9xh9cxKiA+r7K2iVLrgx8ruPnNWOSuysx
+         T9BA==
+X-Gm-Message-State: AOAM533BmR3Fc1fFrmujmpIy36lAtfX4x0q7Q/Na/AXao23VA64Utpfh
+        KUsGuksnja+FhGEeEy4X6qU=
+X-Google-Smtp-Source: ABdhPJwNMVgFJjW9VU03XHirlfrHvC4J/bHqM3E3Dq2ucnd4p2MQKweoc23r9WDrtvbM5OJ/vuZH6w==
+X-Received: by 2002:a5d:47ac:0:b0:20c:550b:4cf2 with SMTP id 12-20020a5d47ac000000b0020c550b4cf2mr16005442wrb.420.1652738358559;
+        Mon, 16 May 2022 14:59:18 -0700 (PDT)
+Received: from leap.localnet (host-79-50-182-226.retail.telecomitalia.it. [79.50.182.226])
+        by smtp.gmail.com with ESMTPSA id e12-20020adfa44c000000b0020c5253d8dcsm10422969wra.40.2022.05.16.14.59.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 May 2022 14:59:17 -0700 (PDT)
+From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Evgeniy Dushistov <dushistov@mail.ru>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Ira Weiny <ira.weiny@intel.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] fs/ufs: Replace kmap() with kmap_local_page()
+Date:   Mon, 16 May 2022 23:59:15 +0200
+Message-ID: <2117615.Icojqenx9y@leap>
+In-Reply-To: <YoJl+lh0QELbv/TL@casper.infradead.org>
+References: <20220516101925.15272-1-fmdefrancesco@gmail.com> <YoJl+lh0QELbv/TL@casper.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220516122046.40655-3-xiubli@redhat.com>
-X-Spam-Status: No, score=-4.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Xiubo,
+On luned=C3=AC 16 maggio 2022 16:55:54 CEST Matthew Wilcox wrote:
+> On Mon, May 16, 2022 at 12:19:25PM +0200, Fabio M. De Francesco wrote:
+> > The use of kmap() is being deprecated in favor of kmap_local_page().=20
+With
+> > kmap_local_page(), the mapping is per thread, CPU local and not=20
+globally
+> > visible.
+> >=20
+> > The usage of kmap_local_page() in fs/ufs is pre-thread, therefore=20
+replace
+> > kmap() / kunmap() calls with kmap_local_page() / kunmap_local().
+> >=20
+> > kunmap_local() requires the mapping address, so return that address=20
+from
+> > ufs_get_page() to be used in ufs_put_page().
+> >=20
+> > These changes are essentially ported from fs/ext2 and are largely based=
+=20
+on
+> > commit 782b76d7abdf ("fs/ext2: Replace kmap() with kmap_local_page()").
+> >=20
+> > Suggested-by: Ira Weiny <ira.weiny@intel.com>
+> > Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+> > Signed-off-by: Fabio M. De Francesco <fmdefrancesco@gmail.com>
+>=20
+> Have you done more than compile-tested this?  I'd like to know that it's
+> been tested on a machine with HIGHMEM enabled (in a VM, presumably).
+> UFS doesn't get a lot of testing, and it'd be annoying to put out a
+> patch that breaks the kmap_local() rules.
+>=20
+No, I have not done more than compile-testing.=20
 
-I love your patch! Yet something to improve:
+However, I understand your concerns regarding these changes. I can only say
+that, while they may seem like mechanical replacements, I have carefully
+checked the code to be sure enough not to break the logic of the UFS and /
+or the rules of local mapping.
 
-[auto build test ERROR on ceph-client/for-linus]
-[also build test ERROR on linus/master v5.18-rc7 next-20220516]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
+I have nothing against testing, but I think they are not needed here unless
+you see something that is potentially harmful or suspiciously broken and=20
+you explicitly request it. If so, I'll be testing the code by the end of
+this week (I cannot before).
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Xiubo-Li/ceph-wait-async-unlink-to-finish/20220516-202249
-base:   https://github.com/ceph/ceph-client.git for-linus
-config: i386-randconfig-a001-20220516 (https://download.01.org/0day-ci/archive/20220517/202205170402.ez4Z5njh-lkp@intel.com/config)
-compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project 853fa8ee225edf2d0de94b0dcbd31bea916e825e)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/85d578952d01b70d71fccd86ccb0fdd1dbd0df8b
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Xiubo-Li/ceph-wait-async-unlink-to-finish/20220516-202249
-        git checkout 85d578952d01b70d71fccd86ccb0fdd1dbd0df8b
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=i386 SHELL=/bin/bash
+Thanks,
 
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
+=46abio
 
-All errors (new ones prefixed by >>):
 
->> ld.lld: error: undefined symbol: ceph_wait_on_conflict_unlink
-   >>> referenced by dir.c
-   >>>               ceph/dir.o:(ceph_link) in archive fs/built-in.a
-   >>> referenced by dir.c
-   >>>               ceph/dir.o:(ceph_symlink) in archive fs/built-in.a
-   >>> referenced by dir.c
-   >>>               ceph/dir.o:(ceph_mkdir) in archive fs/built-in.a
-   >>> referenced 3 more times
 
--- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
