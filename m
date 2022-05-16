@@ -2,181 +2,244 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E1945291EA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 May 2022 22:49:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4103C529225
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 May 2022 23:08:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237428AbiEPUrq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 May 2022 16:47:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33436 "EHLO
+        id S242418AbiEPU4x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 May 2022 16:56:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345252AbiEPUpD (ORCPT
+        with ESMTP id S1349021AbiEPU4T (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 May 2022 16:45:03 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id EEDD6427D4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 16 May 2022 13:22:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1652732567;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=a3sk0Kg+x7hgril7kpmaVqy1YQpLRjOv9hNg1DEjNQg=;
-        b=U8InVS0MCvcD3+Zh7YSB6nL2ZMVO+QaFNzoceV1lix5nMNqJkXwQBbZS0Syb3YXcJRNrBi
-        oXikR9BuX9D6oMwwYwNQWwcPV/IyLOMQM2o5+fowVPHA7685ab8weahSJUsNlQ6PlS72x+
-        YRLDMGHNhvbv/FS6da7xQ/gSnCeDOnY=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-380-X4qdOPM-Phqj4Q5GmDnttg-1; Mon, 16 May 2022 16:22:41 -0400
-X-MC-Unique: X4qdOPM-Phqj4Q5GmDnttg-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id B64C58032EA;
-        Mon, 16 May 2022 20:22:40 +0000 (UTC)
-Received: from madcap2.tricolour.com (unknown [10.22.50.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 625D940CF8E2;
-        Mon, 16 May 2022 20:22:39 +0000 (UTC)
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Cc:     Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Richard Guy Briggs <rgb@redhat.com>, Jan Kara <jack@suse.cz>,
-        Amir Goldstein <amir73il@gmail.com>
-Subject: [PATCH v3 3/3] fanotify: Allow audit to use the full permission event response
-Date:   Mon, 16 May 2022 16:22:24 -0400
-Message-Id: <81264e038b7b1e0d8fd8bafb25452fb777cd664a.1652730821.git.rgb@redhat.com>
-In-Reply-To: <cover.1652730821.git.rgb@redhat.com>
-References: <cover.1652730821.git.rgb@redhat.com>
+        Mon, 16 May 2022 16:56:19 -0400
+Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5EA0CBAD
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 May 2022 13:30:43 -0700 (PDT)
+Received: by mail-pg1-x534.google.com with SMTP id q76so15110963pgq.10
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 May 2022 13:30:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3ACVB3Y0E0YBB7tPTLWC9kOdJEJz9VBk49uvnZGm168=;
+        b=qGydRqSWRmHEQXYWmP7xMI27DcIFY/huv3iAZeyWMrXsevjA/vluKjedm9wtt9X32P
+         iUvChArCrzR4ORotZg6i6NqXMMeXQ5c0xG80tUiASZRn6cwEMkpCy+spDWjB/0AmYeSe
+         9y33tA/Zw1YcrbeOz3ij6n39xxkrUCu7fQYZvNDNJ/+7QTq/o47w94oCDPsvP/jLiIWq
+         3GgfFkC9tcKnoewv3pgIJX1LVvsI/MOFs1pIJziXrfIqYY38MkQGstWWozTQtPWcJbea
+         TpOIcniKYiC3q8XlKKDX/TlRQRn6fsBB/qWp+q79LMsO+hn9bBhXZPy994JoFyC2Vfll
+         gXTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3ACVB3Y0E0YBB7tPTLWC9kOdJEJz9VBk49uvnZGm168=;
+        b=QOMUwkr47m9X4htVhDId0tXLgW51+QW3ql3yyWpwL5AKZX8Adn00bw5oQdNMqyj295
+         4MECY6oTUqr5PEmYfyXVFTOraojjiYSkoKMlaOmXllcGoZWXmmsio8nPwuXXVzTR6Bj0
+         YUNfqk0qEGTmXHRcaVxrik/dYePU/XUucfIfJegyghT/OVB+H4CnFt3Fb9ys1ykWJ7IA
+         lhNmP7rypzz0dDGAsoZrlfqyF9U4vtOZDl2UXBuWoOw/1AhrnpXVScYLxevT1lzV/DCR
+         drpKB45mSt9h1JDTx7DiYOopJrpQXgZ3qC9QlL0G9pXqNnymb9hsUg2XPxIBd8Vi099h
+         R3lA==
+X-Gm-Message-State: AOAM5324/ngjc2f7NuniQ5X5dljJoTnMG9aQotg6+B6mO6ajY5PzTXkF
+        dxV2RqSVD5iQ3tNePabG5XjSMlg3asvEAJnVnpC2zQ==
+X-Google-Smtp-Source: ABdhPJxNfgFTQfSkBwC0NJUOFm4ZykQQ/RD3rs42AoQjvgd05emu3aDGtrxluv0uzUNgQwYGRoYx/NUiZsqjsEDg+7c=
+X-Received: by 2002:a62:a105:0:b0:50d:c97b:3084 with SMTP id
+ b5-20020a62a105000000b0050dc97b3084mr18768863pff.61.1652733042575; Mon, 16
+ May 2022 13:30:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-type: text/plain
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.11.54.1
-X-Spam-Status: No, score=-3.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+References: <20220422224508.440670-1-jane.chu@oracle.com> <20220422224508.440670-3-jane.chu@oracle.com>
+In-Reply-To: <20220422224508.440670-3-jane.chu@oracle.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Mon, 16 May 2022 13:30:31 -0700
+Message-ID: <CAPcyv4g02C5LnDxqDG0_U51+v05fQa966LnrvvdadN2Eqf7eKA@mail.gmail.com>
+Subject: Re: [PATCH v9 2/7] x86/mce: relocate set{clear}_mce_nospec() functions
+To:     Jane Chu <jane.chu@oracle.com>
+Cc:     Borislav Petkov <bp@alien8.de>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andy Lutomirski <luto@kernel.org>, david <david@fromorbit.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux NVDIMM <nvdimm@lists.linux.dev>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        X86 ML <x86@kernel.org>,
+        Vishal L Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        device-mapper development <dm-devel@redhat.com>,
+        "Weiny, Ira" <ira.weiny@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Vivek Goyal <vgoyal@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch passes the full value so that the audit function can use all
-of it. The audit function was updated to log the additional information in
-the AUDIT_FANOTIFY record. The following is an example of the new record
-format:
+On Fri, Apr 22, 2022 at 3:46 PM Jane Chu <jane.chu@oracle.com> wrote:
+>
+> Relocate the twin mce functions to arch/x86/mm/pat/set_memory.c
+> file where they belong.
+>
+> While at it, fixup a function name in a comment.
+>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+> Signed-off-by: Jane Chu <jane.chu@oracle.com>
+> ---
+>  arch/x86/include/asm/set_memory.h | 52 -------------------------------
+>  arch/x86/mm/pat/set_memory.c      | 49 ++++++++++++++++++++++++++++-
+>  include/linux/set_memory.h        |  8 ++---
+>  3 files changed, 52 insertions(+), 57 deletions(-)
+>
+> diff --git a/arch/x86/include/asm/set_memory.h b/arch/x86/include/asm/set_memory.h
+> index 78ca53512486..b45c4d27fd46 100644
+> --- a/arch/x86/include/asm/set_memory.h
+> +++ b/arch/x86/include/asm/set_memory.h
+> @@ -86,56 +86,4 @@ bool kernel_page_present(struct page *page);
+>
+>  extern int kernel_set_to_readonly;
+>
+> -#ifdef CONFIG_X86_64
+> -/*
+> - * Prevent speculative access to the page by either unmapping
+> - * it (if we do not require access to any part of the page) or
+> - * marking it uncacheable (if we want to try to retrieve data
+> - * from non-poisoned lines in the page).
+> - */
+> -static inline int set_mce_nospec(unsigned long pfn, bool unmap)
+> -{
+> -       unsigned long decoy_addr;
+> -       int rc;
+> -
+> -       /* SGX pages are not in the 1:1 map */
+> -       if (arch_is_platform_page(pfn << PAGE_SHIFT))
+> -               return 0;
+> -       /*
+> -        * We would like to just call:
+> -        *      set_memory_XX((unsigned long)pfn_to_kaddr(pfn), 1);
+> -        * but doing that would radically increase the odds of a
+> -        * speculative access to the poison page because we'd have
+> -        * the virtual address of the kernel 1:1 mapping sitting
+> -        * around in registers.
+> -        * Instead we get tricky.  We create a non-canonical address
+> -        * that looks just like the one we want, but has bit 63 flipped.
+> -        * This relies on set_memory_XX() properly sanitizing any __pa()
+> -        * results with __PHYSICAL_MASK or PTE_PFN_MASK.
+> -        */
+> -       decoy_addr = (pfn << PAGE_SHIFT) + (PAGE_OFFSET ^ BIT(63));
+> -
+> -       if (unmap)
+> -               rc = set_memory_np(decoy_addr, 1);
+> -       else
+> -               rc = set_memory_uc(decoy_addr, 1);
+> -       if (rc)
+> -               pr_warn("Could not invalidate pfn=0x%lx from 1:1 map\n", pfn);
+> -       return rc;
+> -}
+> -#define set_mce_nospec set_mce_nospec
+> -
+> -/* Restore full speculative operation to the pfn. */
+> -static inline int clear_mce_nospec(unsigned long pfn)
+> -{
+> -       return set_memory_wb((unsigned long) pfn_to_kaddr(pfn), 1);
+> -}
+> -#define clear_mce_nospec clear_mce_nospec
+> -#else
+> -/*
+> - * Few people would run a 32-bit kernel on a machine that supports
+> - * recoverable errors because they have too much memory to boot 32-bit.
+> - */
+> -#endif
+> -
+>  #endif /* _ASM_X86_SET_MEMORY_H */
+> diff --git a/arch/x86/mm/pat/set_memory.c b/arch/x86/mm/pat/set_memory.c
+> index abf5ed76e4b7..978cf5bd2ab6 100644
+> --- a/arch/x86/mm/pat/set_memory.c
+> +++ b/arch/x86/mm/pat/set_memory.c
+> @@ -1816,7 +1816,7 @@ static inline int cpa_clear_pages_array(struct page **pages, int numpages,
+>  }
+>
+>  /*
+> - * _set_memory_prot is an internal helper for callers that have been passed
+> + * __set_memory_prot is an internal helper for callers that have been passed
+>   * a pgprot_t value from upper layers and a reservation has already been taken.
+>   * If you want to set the pgprot to a specific page protocol, use the
+>   * set_memory_xx() functions.
+> @@ -1925,6 +1925,53 @@ int set_memory_wb(unsigned long addr, int numpages)
+>  }
+>  EXPORT_SYMBOL(set_memory_wb);
+>
+> +/*
+> + * Prevent speculative access to the page by either unmapping
+> + * it (if we do not require access to any part of the page) or
+> + * marking it uncacheable (if we want to try to retrieve data
+> + * from non-poisoned lines in the page).
+> + */
+> +int set_mce_nospec(unsigned long pfn, bool unmap)
+> +{
+> +       unsigned long decoy_addr;
+> +       int rc;
+> +
+> +       if (!IS_ENABLED(CONFIG_64BIT))
+> +               return 0;
+> +
+> +       /* SGX pages are not in the 1:1 map */
+> +       if (arch_is_platform_page(pfn << PAGE_SHIFT))
+> +               return 0;
+> +       /*
+> +        * We would like to just call:
+> +        *      set_memory_XX((unsigned long)pfn_to_kaddr(pfn), 1);
+> +        * but doing that would radically increase the odds of a
+> +        * speculative access to the poison page because we'd have
+> +        * the virtual address of the kernel 1:1 mapping sitting
+> +        * around in registers.
+> +        * Instead we get tricky.  We create a non-canonical address
+> +        * that looks just like the one we want, but has bit 63 flipped.
+> +        * This relies on set_memory_XX() properly sanitizing any __pa()
+> +        * results with __PHYSICAL_MASK or PTE_PFN_MASK.
+> +        */
+> +       decoy_addr = (pfn << PAGE_SHIFT) + (PAGE_OFFSET ^ BIT(63));
+> +
+> +       if (unmap)
+> +               rc = set_memory_np(decoy_addr, 1);
+> +       else
+> +               rc = set_memory_uc(decoy_addr, 1);
+> +       if (rc)
+> +               pr_warn("Could not invalidate pfn=0x%lx from 1:1 map\n", pfn);
+> +       return rc;
+> +}
+> +
+> +/* Restore full speculative operation to the pfn. */
+> +int clear_mce_nospec(unsigned long pfn)
+> +{
+> +       return set_memory_wb((unsigned long) pfn_to_kaddr(pfn), 1);
+> +}
+> +EXPORT_SYMBOL_GPL(clear_mce_nospec);
+> +
+>  int set_memory_x(unsigned long addr, int numpages)
+>  {
+>         if (!(__supported_pte_mask & _PAGE_NX))
+> diff --git a/include/linux/set_memory.h b/include/linux/set_memory.h
+> index f36be5166c19..683a6c3f7179 100644
+> --- a/include/linux/set_memory.h
+> +++ b/include/linux/set_memory.h
+> @@ -42,14 +42,14 @@ static inline bool can_set_direct_map(void)
+>  #endif
+>  #endif /* CONFIG_ARCH_HAS_SET_DIRECT_MAP */
+>
+> -#ifndef set_mce_nospec
+> +#ifdef CONFIG_X86_64
 
-type=FANOTIFY msg=audit(1600385147.372:590): resp=2 fan_type=1 fan_ctx=17
+Jane,
 
-Suggested-by: Steve Grubb <sgrubb@redhat.com>
-Link: https://lore.kernel.org/r/3075502.aeNJFYEL58@x2
-Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
----
- fs/notify/fanotify/fanotify.c |  4 +++-
- include/linux/audit.h         |  9 +++++----
- kernel/auditsc.c              | 18 +++++++++++++++---
- 3 files changed, 23 insertions(+), 8 deletions(-)
-
-diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-index ea0e60488f12..85ce36e59e0c 100644
---- a/fs/notify/fanotify/fanotify.c
-+++ b/fs/notify/fanotify/fanotify.c
-@@ -273,7 +273,9 @@ static int fanotify_get_response(struct fsnotify_group *group,
- 
- 	/* Check if the response should be audited */
- 	if (event->response & FAN_AUDIT)
--		audit_fanotify(event->response & ~FAN_AUDIT);
-+		audit_fanotify(event->response & ~FAN_AUDIT,
-+			       event->extra_info_type,
-+			       &event->extra_info);
- 
- 	pr_debug("%s: group=%p event=%p about to return ret=%d\n", __func__,
- 		 group, event, ret);
-diff --git a/include/linux/audit.h b/include/linux/audit.h
-index 217784d602b3..737f1c109aa1 100644
---- a/include/linux/audit.h
-+++ b/include/linux/audit.h
-@@ -14,6 +14,7 @@
- #include <linux/audit_arch.h>
- #include <uapi/linux/audit.h>
- #include <uapi/linux/netfilter/nf_tables.h>
-+#include <uapi/linux/fanotify.h>
- 
- #define AUDIT_INO_UNSET ((unsigned long)-1)
- #define AUDIT_DEV_UNSET ((dev_t)-1)
-@@ -419,7 +420,7 @@ extern void __audit_log_capset(const struct cred *new, const struct cred *old);
- extern void __audit_mmap_fd(int fd, int flags);
- extern void __audit_openat2_how(struct open_how *how);
- extern void __audit_log_kern_module(char *name);
--extern void __audit_fanotify(u32 response);
-+extern void __audit_fanotify(u32 response, u32 type, union fanotify_response_extra *info);
- extern void __audit_tk_injoffset(struct timespec64 offset);
- extern void __audit_ntp_log(const struct audit_ntp_data *ad);
- extern void __audit_log_nfcfg(const char *name, u8 af, unsigned int nentries,
-@@ -526,10 +527,10 @@ static inline void audit_log_kern_module(char *name)
- 		__audit_log_kern_module(name);
- }
- 
--static inline void audit_fanotify(u32 response)
-+static inline void audit_fanotify(u32 response, u32 type, union fanotify_response_extra *info)
- {
- 	if (!audit_dummy_context())
--		__audit_fanotify(response);
-+		__audit_fanotify(response, type, info);
- }
- 
- static inline void audit_tk_injoffset(struct timespec64 offset)
-@@ -686,7 +687,7 @@ static inline void audit_log_kern_module(char *name)
- {
- }
- 
--static inline void audit_fanotify(u32 response)
-+static inline void audit_fanotify(u32 response, u32 type, union fanotify_response_extra *info)
- { }
- 
- static inline void audit_tk_injoffset(struct timespec64 offset)
-diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index 6973be0bf6c9..cb93c6ed07cd 100644
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@ -64,6 +64,7 @@
- #include <uapi/linux/limits.h>
- #include <uapi/linux/netfilter/nf_tables.h>
- #include <uapi/linux/openat2.h> // struct open_how
-+#include <uapi/linux/fanotify.h>
- 
- #include "audit.h"
- 
-@@ -2893,10 +2894,21 @@ void __audit_log_kern_module(char *name)
- 	context->type = AUDIT_KERN_MODULE;
- }
- 
--void __audit_fanotify(u32 response)
-+void __audit_fanotify(u32 response, u32 type, union fanotify_response_extra *info)
- {
--	audit_log(audit_context(), GFP_KERNEL,
--		AUDIT_FANOTIFY,	"resp=%u", response);
-+	switch (type) {
-+	case FAN_RESPONSE_INFO_AUDIT_RULE:
-+		audit_log(audit_context(), GFP_KERNEL, AUDIT_FANOTIFY,
-+			  "resp=%u fan_type=%u fan_ctx=%u",
-+			  response, type, info->audit_rule);
-+		break;
-+	case FAN_RESPONSE_INFO_NONE:
-+	default:
-+		audit_log(audit_context(), GFP_KERNEL, AUDIT_FANOTIFY,
-+			  "resp=%u fan_type=%u fan_ctx=?",
-+			  response, type);
-+		break;
-+	}
- }
- 
- void __audit_tk_injoffset(struct timespec64 offset)
--- 
-2.27.0
-
+I just noticed that this makes set_mce_nospec() and clear_mce_nospec()
+x86_64-only. If / when more architectures add support for these
+helpers they will need to go back to the "#ifndef $symbol" scheme to
+allow asm/set_memory.h to indicate the availability of the arch-local
+helper.
