@@ -2,81 +2,229 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 619E25280E7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 May 2022 11:34:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36E4D52817D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 May 2022 12:08:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236617AbiEPJei (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 May 2022 05:34:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56674 "EHLO
+        id S242174AbiEPKII (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 May 2022 06:08:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232428AbiEPJef (ORCPT
+        with ESMTP id S236329AbiEPKHf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 May 2022 05:34:35 -0400
-Received: from mail-yb1-xb2f.google.com (mail-yb1-xb2f.google.com [IPv6:2607:f8b0:4864:20::b2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 740E62C66C
-        for <linux-fsdevel@vger.kernel.org>; Mon, 16 May 2022 02:34:32 -0700 (PDT)
-Received: by mail-yb1-xb2f.google.com with SMTP id r11so25914729ybg.6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 16 May 2022 02:34:32 -0700 (PDT)
+        Mon, 16 May 2022 06:07:35 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C45E29FFA;
+        Mon, 16 May 2022 03:07:20 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id u3so19824794wrg.3;
+        Mon, 16 May 2022 03:07:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IsnZHn/Yb4Gg4uzTdxR5MipH5YV//XGbgl5gxawgKOw=;
-        b=kmC6qA4DQSfbPbmqKTjTBN+WiFA0Fp/1W+HQRhmuXM+3VJxNSa/n6DET1zzSgB32zM
-         2MdZbryi1/IyT1ZUQaOX3m4fIjXz6nZrhkvXoK6vI7TgQx/7eqC5YqIfuAG5e5mwlrHw
-         qshxLVL14zm59d3UYcGrOutXSgZehfPbu1a/S9zlUl7bW8M3pY3GsN7ksSHniACf7GGy
-         sHR9INC1Pb5TFxTh1M55e0zQx6jrLoXmLKpbRrdDsC0ul5eQHwk/0Z4CPAi0ES5I6Gf6
-         Ij0NDczGoDm2JiJex3kKBcSWZMdNPALUNFF3aPIRfKFB6mRTQx6Qphp0wWMo/07ZAfk1
-         2Fug==
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=kHy1DxskfYtTzR10hFBW7KtNkaksqkV+HwXuSa/N4gY=;
+        b=oHg1d6xCKDdsdL8NE3bwuG0bBwUAYpTjeAn1LP/Tc3cG+Ohr9OyXruxPKDzu4MafuG
+         bJPbjUwD6tPDUc0O9jQAjhoustpTvj4NbfSYuKXxuT6OEzH3Gl4utxzVC/bdWsrWDkrA
+         gpzgjL0IEkPmqu+ab5r5K4gXSZMmpODSlO7CkeDEY/nr32hkZYxB5TKe7N5F1/3lqwaA
+         Z12iGlkOUQHHYWBLWPLlb9UWzw7pSJDKWTiYygUNoN/Oz9EYRLplKNF3qp7zqT5uS+eZ
+         9/agR7NiVUUqFqCricljbOy/b6qxIuv2hv0p+Ei42WX7ya+V5I9SDNmdIZiKMgrTaNFO
+         cPCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IsnZHn/Yb4Gg4uzTdxR5MipH5YV//XGbgl5gxawgKOw=;
-        b=53vWu7yMNqimrJccl9Xc/EbhtiYZK5Z5SDFpHzoXiTO90cTz4/rjxOQcups9gD/wPv
-         AiqBgGstLpnqwHaH0NYRKq1FnIJncnrnN6aW/0CZWsG1Qpzr1c5m6lblLV34z/hK+4As
-         g52TA7YAHnqJu5Uc3SZiv7gE1B2ivb29EHzW1LMRqd8wkuoURCikPffnxWQK7pcAT5BJ
-         yGKZ/iKRV5fG5KA+JYUIj4nCBsGouSQvUJHFfOQaWCJO9o0tMNgiHmSp0YXzsEjoLsf8
-         Crw594Kw8+NgYj0V/9IEilt/c04EdLSp582bOqtomCpa9lJK811nQS1DyQLzjLBENhg1
-         qV7Q==
-X-Gm-Message-State: AOAM531s5hj3XgTUtweSNdUVzfMW8qxkh2lfToETOVsunOFp6qBcQU7M
-        qaCCpJxOGNhkr0kMfVWN98xUTbhJYVBp92v7qM6TL1z43r9QQA==
-X-Google-Smtp-Source: ABdhPJyeoQNI9JDCmFz0km+ymnaePhVCU3SoEOUk9C3+XEExM8+dDbDOgXuSUOaR7g4ZF7g8zFfUQptgZ03LEbD8kTA=
-X-Received: by 2002:a25:9a43:0:b0:64a:bc11:3132 with SMTP id
- r3-20020a259a43000000b0064abc113132mr16724281ybo.261.1652693671784; Mon, 16
- May 2022 02:34:31 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=kHy1DxskfYtTzR10hFBW7KtNkaksqkV+HwXuSa/N4gY=;
+        b=Ykg1hG/luQ4yhkUGwQHtbEX/zoDaVeFsHbd+WPoatkoesakDxLtvz5VVt/tTMZ+VxC
+         2Ih4U4Ao0uLsBx0oMJGpIf+BYOso/hRu3wnzyUZ+KicvXYatg8MJCVKTUmIrn+gbsXFk
+         RNFhM6CDWfkpcxWiAGFw/gnFU2iKPwyiwD80YptD9W3jrv0voWOu9Mkh86KywMv873Eh
+         WecNuQCDP22kVOM11R/YQXUppfNCUCsMdHBHv99SvgzEi8mlYb/4p1L2E4fAlFEr4YKs
+         QWMvD0GFtCilp6/F1jNkOP4CJJlj1eIDIfRcXB5CUvw6s1DS2/es/t0wtW8C8JvmkYHD
+         6MQA==
+X-Gm-Message-State: AOAM531kcq/eTUz/wIfeKeh0ssQexVoDodrVXJvkcAxs83fRBi2hCUSI
+        kDUwcDUvqv34Hlw26KcXdy8=
+X-Google-Smtp-Source: ABdhPJy/6QfJ7ppvNa6HTP7+zrPrP1+x08PdImq+qjJ/69VIe1VDgNed6Ps0e/Ei+JDetfbC3ad/sg==
+X-Received: by 2002:a05:6000:1848:b0:20c:713b:8e1e with SMTP id c8-20020a056000184800b0020c713b8e1emr14059824wri.640.1652695639241;
+        Mon, 16 May 2022 03:07:19 -0700 (PDT)
+Received: from leap.localnet (host-79-50-182-226.retail.telecomitalia.it. [79.50.182.226])
+        by smtp.gmail.com with ESMTPSA id n9-20020a1c7209000000b0039482d95ab7sm9820684wmc.24.2022.05.16.03.07.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 May 2022 03:07:17 -0700 (PDT)
+From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     Evgeniy Dushistov <dushistov@mail.ru>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] fs/ufs: Replace kmap() with kmap_local_page()
+Date:   Mon, 16 May 2022 12:07:14 +0200
+Message-ID: <13020190.uLZWGnKmhe@leap>
+In-Reply-To: <YoGSjZlucCKjSxVX@iweiny-desk3>
+References: <20220509071207.16176-1-fmdefrancesco@gmail.com> <YoGSjZlucCKjSxVX@iweiny-desk3>
 MIME-Version: 1.0
-References: <20220516090752.2137286-1-bh1scw@gmail.com>
-In-Reply-To: <20220516090752.2137286-1-bh1scw@gmail.com>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Mon, 16 May 2022 17:33:55 +0800
-Message-ID: <CAMZfGtU+WrB9FsiToZJZAVQ26+vS63CeBTAa-AhbhLpi1rGCNw@mail.gmail.com>
-Subject: Re: [PATCH] kernel/sysysctl.c: Remove trailing white space
-To:     bh1scw@gmail.com
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 16, 2022 at 5:08 PM <bh1scw@gmail.com> wrote:
->
-> From: Fanjun Kong <bh1scw@gmail.com>
->
-> This patch removes the trailing white space in kernel/sysysctl.c
-> Special thanks to Muchun Song.
->
-> Signed-off-by: Fanjun Kong <bh1scw@gmail.com>
+On luned=C3=AC 16 maggio 2022 01:53:49 CEST Ira Weiny wrote:
+> On Mon, May 09, 2022 at 09:12:07AM +0200, Fabio M. De Francesco wrote:
+> > The use of kmap() is being deprecated in favor of kmap_local_page().=20
+With
+> > kmap_local_page(), the mapping is thread-local, CPU-local and not=20
+globally
+> > visible.
+> >=20
+> > The usage of kmap_local_page() in fs/ufs is thread-local, therefore=20
+replace
+> > kmap() / kunmap() calls with kmap_local_page() / kunmap_local().
+> >=20
+> > kunmap_local() requires the mapping address, so return that address=20
+from
+> > ufs_get_page() to be used in ufs_put_page().
+> >=20
+> > These changes are essentially ported from fs/ext2 and relie largely on
+> > commit 782b76d7abdf ("fs/ext2: Replace kmap() with kmap_local_page()").
+> >=20
+> > Suggested-by: Ira Weiny <ira.weiny@intel.com>
+> > Signed-off-by: Fabio M. De Francesco <fmdefrancesco@gmail.com>
+> > ---
+> >=20
+> > v1 -> v2: Correct some style's issues reported by checkpatch.pl.
+> > 	  Remove "inline" compiler directive from fs/ufs/ufs.h,
+> > 	  Reported-by: kernel test robot <lkp@intel.com>
+> >=20
+> >  fs/ufs/dir.c   | 116 +++++++++++++++++++++++++++++++------------------
+> >  fs/ufs/namei.c |  38 ++++++++--------
+> >  fs/ufs/ufs.h   |  12 +++--
+> >  3 files changed, 102 insertions(+), 64 deletions(-)
+> >=20
+> >
+> > [snip]
+> >  =20
+> > @@ -250,27 +251,31 @@ static int ufs_rename(struct user_namespace=20
+*mnt_userns, struct inode *old_dir,
+> >  	struct inode *old_inode =3D d_inode(old_dentry);
+> >  	struct inode *new_inode =3D d_inode(new_dentry);
+> >  	struct page *dir_page =3D NULL;
+> > +	void *dir_page_addr;
+> >  	struct ufs_dir_entry * dir_de =3D NULL;
+> >  	struct page *old_page;
+> > +	void *old_page_addr;
+> >  	struct ufs_dir_entry *old_de;
+> >  	int err =3D -ENOENT;
+> > =20
+> >  	if (flags & ~RENAME_NOREPLACE)
+> >  		return -EINVAL;
+> > =20
+> > -	old_de =3D ufs_find_entry(old_dir, &old_dentry->d_name, &old_page);
+> > +	old_de =3D ufs_find_entry(old_dir, &old_dentry->d_name, &old_page,
+> > +				&old_page_addr);
+> >  	if (!old_de)
+> >  		goto out;
+> > =20
+> >  	if (S_ISDIR(old_inode->i_mode)) {
+> >  		err =3D -EIO;
+> > -		dir_de =3D ufs_dotdot(old_inode, &dir_page);
+> > +		dir_de =3D ufs_dotdot(old_inode, &dir_page,=20
+&dir_page_addr);
+> >  		if (!dir_de)
+> >  			goto out_old;
+> >  	}
+> > =20
+> >  	if (new_inode) {
+> >  		struct page *new_page;
+> > +		void *page_addr;
+>=20
+> Nit:
+>=20
+> It might be good to make this new_page_addr to keep it straight with the=
+=20
+other
+> pages mapped in this function.
+>=20
 
-Reviewed-by: Muchun Song <songmuchun@bytedance.com>
+Yes, it should be "new_page_addr" for consistency. I'm going to rename this=
+=20
+variable and send v3.
 
-Thanks.
+>
+> Regardless:
+>=20
+> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+>=20
+
+Thanks!
+
+=46abio
+
+> >  		struct ufs_dir_entry *new_de;
+> > =20
+> >  		err =3D -ENOTEMPTY;
+> > @@ -278,10 +283,11 @@ static int ufs_rename(struct user_namespace=20
+*mnt_userns, struct inode *old_dir,
+> >  			goto out_dir;
+> > =20
+> >  		err =3D -ENOENT;
+> > -		new_de =3D ufs_find_entry(new_dir, &new_dentry->d_name,=20
+&new_page);
+> > +		new_de =3D ufs_find_entry(new_dir, &new_dentry->d_name,=20
+&new_page,
+> > +					&page_addr);
+> >  		if (!new_de)
+> >  			goto out_dir;
+> > -		ufs_set_link(new_dir, new_de, new_page, old_inode, 1);
+> > +		ufs_set_link(new_dir, new_de, new_page, page_addr,=20
+old_inode, 1);
+> >  		new_inode->i_ctime =3D current_time(new_inode);
+> >  		if (dir_de)
+> >  			drop_nlink(new_inode);
+> > @@ -300,29 +306,25 @@ static int ufs_rename(struct user_namespace=20
+*mnt_userns, struct inode *old_dir,
+> >  	 */
+> >  	old_inode->i_ctime =3D current_time(old_inode);
+> > =20
+> > -	ufs_delete_entry(old_dir, old_de, old_page);
+> > +	ufs_delete_entry(old_dir, old_de, old_page, old_page_addr);
+> >  	mark_inode_dirty(old_inode);
+> > =20
+> >  	if (dir_de) {
+> >  		if (old_dir !=3D new_dir)
+> > -			ufs_set_link(old_inode, dir_de, dir_page,=20
+new_dir, 0);
+> > -		else {
+> > -			kunmap(dir_page);
+> > -			put_page(dir_page);
+> > -		}
+> > +			ufs_set_link(old_inode, dir_de, dir_page,
+> > +				     dir_page_addr, new_dir, 0);
+> > +		else
+> > +			ufs_put_page(dir_page, dir_page_addr);
+> >  		inode_dec_link_count(old_dir);
+> >  	}
+> >  	return 0;
+> > =20
+> > =20
+> >  out_dir:
+> > -	if (dir_de) {
+> > -		kunmap(dir_page);
+> > -		put_page(dir_page);
+> > -	}
+> > +	if (dir_de)
+> > +		ufs_put_page(dir_page, dir_page_addr);
+> >  out_old:
+> > -	kunmap(old_page);
+> > -	put_page(old_page);
+> > +	ufs_put_page(old_page, old_page_addr);
+> >  out:
+> >  	return err;
+> >  }
+> >
+> > [snip]
+> >
+
+
