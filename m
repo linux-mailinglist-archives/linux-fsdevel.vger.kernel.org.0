@@ -2,65 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 74B46529510
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 May 2022 01:19:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FF7352954F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 May 2022 01:32:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237243AbiEPXS6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 May 2022 19:18:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53486 "EHLO
+        id S1347927AbiEPXcB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 May 2022 19:32:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50378 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231344AbiEPXS5 (ORCPT
+        with ESMTP id S1346625AbiEPXcA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 May 2022 19:18:57 -0400
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B5C033A27;
-        Mon, 16 May 2022 16:18:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1652743136; x=1684279136;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=i7wsPh2fobRlYAsrYMy+rFuqEKWx5TVdq2AvC5j5cTM=;
-  b=cKfVcab3x8TlxZMvvXgy1t6xPlZ+QB4xUaOzgfYQDAJdPwo/fFHkUtRK
-   LdbpUysTlea/lPTAvifA1yQk3BXFFyufA/4V42+pMwqK5zR/Vo0YuhkFW
-   XVKBEYApt9TPT/cFlAmvadYpDURXLQx1r93ZuDvzBj9XJRFoSyRrNpPM8
-   mxBEJ6Yqth0Ytoj0R4TOA3dR5MBS9P7FlzAkyFEn00HCPTzwmx0yA+VS2
-   flIkOISPO1rpSyZMgqOqfhSRGBvNpPG1sISdBqQEPnB84NZNaw8zWZpAR
-   AeFbeFAU2ER7Ornrxv8wygG7m2IbInjA1OvDTwRP2LVS6zpi76pkLj4Rn
-   Q==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10349"; a="334034458"
-X-IronPort-AV: E=Sophos;i="5.91,231,1647327600"; 
-   d="scan'208";a="334034458"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2022 16:18:56 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.91,231,1647327600"; 
-   d="scan'208";a="555493661"
-Received: from lkp-server02.sh.intel.com (HELO 242b25809ac7) ([10.239.97.151])
-  by orsmga002.jf.intel.com with ESMTP; 16 May 2022 16:18:53 -0700
-Received: from kbuild by 242b25809ac7 with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1nqjzI-0000PN-Ql;
-        Mon, 16 May 2022 23:18:52 +0000
-Date:   Tue, 17 May 2022 07:18:23 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Xiubo Li <xiubli@redhat.com>, jlayton@kernel.org,
-        viro@zeniv.linux.org.uk
-Cc:     kbuild-all@lists.01.org, idryomov@gmail.com, vshankar@redhat.com,
-        ceph-devel@vger.kernel.org, mcgrof@kernel.org,
-        akpm@linux-foundation.org, arnd@arndb.de,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Xiubo Li <xiubli@redhat.com>
-Subject: Re: [PATCH 2/2] ceph: wait the first reply of inflight unlink/rmdir
-Message-ID: <202205170751.AZfL9JiX-lkp@intel.com>
-References: <20220516122046.40655-3-xiubli@redhat.com>
+        Mon, 16 May 2022 19:32:00 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FF312C673;
+        Mon, 16 May 2022 16:31:59 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 13B3AB816A9;
+        Mon, 16 May 2022 23:31:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0726C385B8;
+        Mon, 16 May 2022 23:31:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1652743916;
+        bh=iLc5AL3V7Ys+hwNkZmlnccb1Qrnh6JQ/xtPdNvzpUUw=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=Le/A75jBBAMVkJ9BDNodn34IKwIrFXp6YQVYwBq34f4nJGm3r91vynuAA5k/+EVKr
+         6InQkgg3ui/OxjzmDT+gGDIY8km7R50beteNcJIdLTBq8d7qyC7/nznbBNQ6pL5wbc
+         /L5Xz+5D5g4FaU4n0oJ1IEx85GEGPofQFtT1AQD7aHM7SY1LsFFMN4LlxW1P1tCNmU
+         suxtIozIUSki2QmgUsXOSX8OhF3nlcULhIBk1skPo03ahdcf032fCEPIiR9H3efESF
+         dLFsqsaqYxPQjpZu3q7lwm8zh+fIY5hrlBlqlDTnvpaX6gVMy2CudnLuMaR11c4JYw
+         zn/Nb9sVNd9jw==
+Received: by mail-wr1-f51.google.com with SMTP id d21so6518187wra.10;
+        Mon, 16 May 2022 16:31:56 -0700 (PDT)
+X-Gm-Message-State: AOAM532cACQ9fCGGYuX7+JK31rDhihnzGdqTn37/Ns1/FILei17PeSV+
+        lGZ/v6FAuZG8HYSK9wl750KZGLz9/ICzO0WJVzk=
+X-Google-Smtp-Source: ABdhPJySq1/ubpgJ7MHSploXrO4dg3+DRK3Y/FHkqhTWcHXVQH6mmocEBYrS4XZKXEZvUpRC4F0Eem0GwkB/oYWmp0c=
+X-Received: by 2002:a5d:6286:0:b0:20d:9b5:6a97 with SMTP id
+ k6-20020a5d6286000000b0020d09b56a97mr5547888wru.165.1652743914881; Mon, 16
+ May 2022 16:31:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220516122046.40655-3-xiubli@redhat.com>
-X-Spam-Status: No, score=-4.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+Received: by 2002:adf:f344:0:0:0:0:0 with HTTP; Mon, 16 May 2022 16:31:54
+ -0700 (PDT)
+In-Reply-To: <c9ab0896-b19b-b8b8-cf63-ad437a123270@linaro.org>
+References: <20220511185909.175110-1-tadeusz.struk@linaro.org>
+ <CGME20220511185940epcas1p1e51c30e41ff82ae642f8f949ffa4b189@epcas1p1.samsung.com>
+ <20220511185909.175110-2-tadeusz.struk@linaro.org> <000101d8686b$56d88750$048995f0$@samsung.com>
+ <c9ab0896-b19b-b8b8-cf63-ad437a123270@linaro.org>
+From:   Namjae Jeon <linkinjeon@kernel.org>
+Date:   Tue, 17 May 2022 08:31:54 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd_kcZF0tHMX_CsR83qmX25PhdGQPJibMh1-30=5przrjQ@mail.gmail.com>
+Message-ID: <CAKYAXd_kcZF0tHMX_CsR83qmX25PhdGQPJibMh1-30=5przrjQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] exfat: check if cluster num is valid
+To:     Tadeusz Struk <tadeusz.struk@linaro.org>
+Cc:     Sungjong Seo <sj1557.seo@samsung.com>,
+        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        syzbot+a4087e40b9c13aad7892@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-7.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -68,36 +69,63 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Xiubo,
-
-I love your patch! Yet something to improve:
-
-[auto build test ERROR on ceph-client/for-linus]
-[also build test ERROR on linus/master v5.18-rc7 next-20220516]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Xiubo-Li/ceph-wait-async-unlink-to-finish/20220516-202249
-base:   https://github.com/ceph/ceph-client.git for-linus
-config: i386-debian-10.3-kselftests (https://download.01.org/0day-ci/archive/20220517/202205170751.AZfL9JiX-lkp@intel.com/config)
-compiler: gcc-11 (Debian 11.2.0-20) 11.2.0
-reproduce (this is a W=1 build):
-        # https://github.com/intel-lab-lkp/linux/commit/85d578952d01b70d71fccd86ccb0fdd1dbd0df8b
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Xiubo-Li/ceph-wait-async-unlink-to-finish/20220516-202249
-        git checkout 85d578952d01b70d71fccd86ccb0fdd1dbd0df8b
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        make W=1 O=build_dir ARCH=i386 SHELL=/bin/bash
-
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
-
-All errors (new ones prefixed by >>, old ones prefixed by <<):
-
->> ERROR: modpost: "ceph_wait_on_conflict_unlink" [fs/ceph/ceph.ko] undefined!
-
--- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+2022-05-16 23:51 GMT+09:00, Tadeusz Struk <tadeusz.struk@linaro.org>:
+> On 5/15/22 07:52, Sungjong Seo wrote:
+>>> Syzbot reported slab-out-of-bounds read in exfat_clear_bitmap.
+>>> This was triggered by reproducer calling truncute with size 0, which
+>>> causes the following trace:
+>>>
+>>> BUG: KASAN: slab-out-of-bounds in exfat_clear_bitmap+0x147/0x490
+>>> fs/exfat/balloc.c:174 Read of size 8 at addr ffff888115aa9508 by task
+>>> syz-
+>>> executor251/365
+>>>
+>>> Call Trace:
+>>>   __dump_stack lib/dump_stack.c:77 [inline]  dump_stack_lvl+0x1e2/0x24b
+>>> lib/dump_stack.c:118
+>>>   print_address_description+0x81/0x3c0 mm/kasan/report.c:233
+>>> __kasan_report mm/kasan/report.c:419 [inline]
+>>>   kasan_report+0x1a4/0x1f0 mm/kasan/report.c:436
+>>>   __asan_report_load8_noabort+0x14/0x20 mm/kasan/report_generic.c:309
+>>>   exfat_clear_bitmap+0x147/0x490 fs/exfat/balloc.c:174
+>>>   exfat_free_cluster+0x25a/0x4a0 fs/exfat/fatent.c:181
+>>>   __exfat_truncate+0x99e/0xe00 fs/exfat/file.c:217
+>>>   exfat_truncate+0x11b/0x4f0 fs/exfat/file.c:243
+>>>   exfat_setattr+0xa03/0xd40 fs/exfat/file.c:339
+>>>   notify_change+0xb76/0xe10 fs/attr.c:336
+>>>   do_truncate+0x1ea/0x2d0 fs/open.c:65
+>>>
+>>> Add checks to validate if cluster number is within valid range in
+>>> exfat_clear_bitmap() and exfat_set_bitmap()
+>>>
+>>> Cc: Namjae Jeon<linkinjeon@kernel.org>
+>>> Cc: Sungjong Seo<sj1557.seo@samsung.com>
+>>> Cc:linux-fsdevel@vger.kernel.org
+>>> Cc:stable@vger.kernel.org
+>>> Cc:linux-kernel@vger.kernel.org
+>>>
+>>> Link:https://protect2.fireeye.com/v1/url?k=24a746d8-45dcec51-24a6cd97-
+>>> 74fe48600034-8e4653a49a463f3c&q=1&e=0efc824d-6463-4253-9cd7-
+>>> ce3199dbf513&u=https%3A%2F%2Fsyzkaller.appspot.com%2Fbug%3Fid%3D50381fc738
+>>> 21ecae743b8cf24b4c9a04776f767c
+>>> Reported-by:syzbot+a4087e40b9c13aad7892@syzkaller.appspotmail.com
+>>> Fixes: 1e49a94cf707 ("exfat: add bitmap operations")
+>>> Signed-off-by: Tadeusz Struk<tadeusz.struk@linaro.org>
+>> Looks good.
+>> And it seems that WARN_ON() is no longer needed.
+>
+> Right. Do you want me to send a follow up patch that drops the WARN_ONs?
+You don't need to do it. I have applied this patch to #exfat dev
+branch after removing it.
+Note that I have combined 1/2 into 2/2 patch.
+Thanks!
+>
+>> Reviewed-by: Sungjong Seo<sj1557.seo@samsung.com>
+>>
+>
+> Thank you.
+>
+> --
+> Thanks,
+> Tadeusz
+>
