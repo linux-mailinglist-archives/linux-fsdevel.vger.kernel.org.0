@@ -2,126 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BA81552934B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 May 2022 00:02:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 338A85294AD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 May 2022 01:06:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349541AbiEPWCt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 May 2022 18:02:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50158 "EHLO
+        id S1350088AbiEPXGx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 May 2022 19:06:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49576 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238440AbiEPWCs (ORCPT
+        with ESMTP id S1350512AbiEPXGk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 May 2022 18:02:48 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C047E639D;
-        Mon, 16 May 2022 15:02:46 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 795551F939;
-        Mon, 16 May 2022 22:02:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1652738565;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=6cIkZu1t4JcnuW9jTK0PkgF8th7GaouWhYTdI3D3pyk=;
-        b=WIhYvYEZcJpAzfluzqgnCgqoHviPg90OjQmw4bs072LgnnGqsiE/4UuMiX7NNiu7SYt0tG
-        N29JVeHRfPwAAO9zoEFeDTIvjtO682d2smEJwb8eqWO+upjxNP+SQ10Vg5hyFnbAuIZ8zk
-        DAltVMxGzxwpgu2Y/RcPgjBCG29y9zI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1652738565;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=6cIkZu1t4JcnuW9jTK0PkgF8th7GaouWhYTdI3D3pyk=;
-        b=98ihLesEtp+MaFmDUwSOzucf9EYfg9IyKPNxVVFd/HqJJ3yMz3X35in+n0wIM10GXhgEZu
-        JK7GAlzwShThY5CQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 102A313ADC;
-        Mon, 16 May 2022 22:02:45 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id w1/AAgXKgmLnQAAAMHmgww
-        (envelope-from <dsterba@suse.cz>); Mon, 16 May 2022 22:02:45 +0000
-Date:   Mon, 16 May 2022 23:58:26 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     Pankaj Raghav <p.raghav@samsung.com>
-Cc:     axboe@kernel.dk, damien.lemoal@opensource.wdc.com,
-        pankydev8@gmail.com, dsterba@suse.com, hch@lst.de,
-        linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, jiangbo.365@bytedance.com,
-        linux-block@vger.kernel.org, gost.dev@samsung.com,
-        linux-kernel@vger.kernel.org, dm-devel@redhat.com,
-        Luis Chamberlain <mcgrof@kernel.org>
-Subject: Re: [PATCH v4 05/13] btrfs: zoned: Cache superblock location in
- btrfs_zoned_device_info
-Message-ID: <20220516215826.GZ18596@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Pankaj Raghav <p.raghav@samsung.com>,
-        axboe@kernel.dk, damien.lemoal@opensource.wdc.com,
-        pankydev8@gmail.com, dsterba@suse.com, hch@lst.de,
-        linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, jiangbo.365@bytedance.com,
-        linux-block@vger.kernel.org, gost.dev@samsung.com,
-        linux-kernel@vger.kernel.org, dm-devel@redhat.com,
-        Luis Chamberlain <mcgrof@kernel.org>
-References: <20220516165416.171196-1-p.raghav@samsung.com>
- <CGME20220516165425eucas1p29fcd11d7051d9d3a9a9efc17cd3b6999@eucas1p2.samsung.com>
- <20220516165416.171196-6-p.raghav@samsung.com>
+        Mon, 16 May 2022 19:06:40 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DF3C33E9B
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 May 2022 16:06:38 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id h14so2731988wrc.6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 May 2022 16:06:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GWbhKr4uIgUJdqioayLfv0a/97vu9JuV374NJIuj07k=;
+        b=srCDnu0GFgxUWJi+fbEi5+IRCNr5P8YyBqD/ANuYnVBRNhOZlxyc1Kq7tP5Ujjbef8
+         GD6tlfL7VBbP+GzV3JA7qP4xgQJb3w+9iU82QMe3jKpf8n203zwYotjwe+bylMxPtAkh
+         B6Qd+jBHp39THWYfGS8RQbMOBPNCKvhsqdkbhmfKAf8JpN0MSZ3on0uj413fBDi7rekB
+         3w7C51qoVD9+iYGB8NdvyksbJsGVPX4wePRpRuYeQSko03SZP7uyt2UE2xoGli6DwoYJ
+         yEwideiPF+2R6hD8GsSU3lM7MuE40Q2peGFuEbND5FTsIiCZaKIkhvtLhNFK4VcYkVgb
+         YWBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GWbhKr4uIgUJdqioayLfv0a/97vu9JuV374NJIuj07k=;
+        b=hnC1IunuLvcc641Mf4sv/OvqY+GXBDqhCuZIUHKwKO/RAz/ASWAFsy4pA2cYQYBDtt
+         UJ3R4T9H+p1UrrQy939+TXKDj29GeAvVtkjpeIRWhUhfOCcBpG0V1aZ4HV0/dz+u8o9P
+         zjz8WE/QDxPdOOWIypPMF3vP6y5eWomj8A9/yO8+hEo1kcuMzFrC5aRWOVRy9SICIFRA
+         sPyL822zcu4dB5vb8X/J3qPzmC+/5S2K4aRcLKavEij1fyrx/IPBKR2p4NKRc9b+bfNS
+         O3SBKEs1sY7uKaZTr0hnNz3MCYHYdFXkBJsqQN2FapJntcBUyyDtkI0T/wWB9VY4M89A
+         44Sw==
+X-Gm-Message-State: AOAM533w4rL54RLq48r9MSISlsDn+19wctpcPVTy/NvD4VX/jkvrg7hG
+        MGF6dcommaCmMB9R+WtCV87Gs3vOH/4ZAsDjqf8k
+X-Google-Smtp-Source: ABdhPJzMOUlYHtDAXxonPowZHZVLJu4wBPBpRYjA/BeHhRo120bLMO/D+T6lSRrgQH7hQWbqtYdTp3CU8xpDNFGiNn0=
+X-Received: by 2002:a5d:4806:0:b0:20a:da03:711b with SMTP id
+ l6-20020a5d4806000000b0020ada03711bmr15470768wrq.395.1652742396890; Mon, 16
+ May 2022 16:06:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220516165416.171196-6-p.raghav@samsung.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+References: <cover.1652730821.git.rgb@redhat.com> <b70eb9b7620fdda8c46acf055dfd518b81ae2931.1652730821.git.rgb@redhat.com>
+In-Reply-To: <b70eb9b7620fdda8c46acf055dfd518b81ae2931.1652730821.git.rgb@redhat.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 16 May 2022 19:06:26 -0400
+Message-ID: <CAHC9VhRaDV21BE+UuiOpwnwtdmi39iTNO7pUuLiJZ8ABZH+83g@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] fanotify: Ensure consistent variable type for response
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
+        Steve Grubb <sgrubb@redhat.com>, Jan Kara <jack@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 16, 2022 at 06:54:08PM +0200, Pankaj Raghav wrote:
-> Instead of calculating the superblock location every time, cache the
-> superblock zone location in btrfs_zoned_device_info struct and use it to
-> locate the zone index.
-> 
-> The functions such as btrfs_sb_log_location_bdev() and
-> btrfs_reset_sb_log_zones() which work directly on block_device shall
-> continue to use the sb_zone_number because btrfs_zoned_device_info
-> struct might not have been initialized at that point.
-> 
-> This patch will enable non power-of-2 zoned devices to not perform
-> division to lookup superblock and its mirror location.
-> 
-> Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
-> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+On Mon, May 16, 2022 at 4:22 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+>
+> The user space API for the response variable is __u32. This patch makes
+> sure that the whole path through the kernel uses u32 so that there is
+> no sign extension or truncation of the user space response.
+>
+> Suggested-by: Steve Grubb <sgrubb@redhat.com>
+> Link: https://lore.kernel.org/r/12617626.uLZWGnKmhe@x2
+> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
 > ---
->  fs/btrfs/zoned.c | 13 +++++++++----
->  fs/btrfs/zoned.h |  1 +
->  2 files changed, 10 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
-> index 06f22c021..e8c7cebb2 100644
-> --- a/fs/btrfs/zoned.c
-> +++ b/fs/btrfs/zoned.c
-> @@ -511,6 +511,11 @@ int btrfs_get_dev_zone_info(struct btrfs_device *device, bool populate_cache)
->  			   max_active_zones - nactive);
->  	}
->  
-> +	/* Cache the sb zone number */
-> +	for (i = 0; i < BTRFS_SUPER_MIRROR_MAX; ++i) {
-> +		zone_info->sb_zone_location[i] =
-> +			sb_zone_number(zone_info->zone_size_shift, i);
-> +	}
+>  fs/notify/fanotify/fanotify.h      | 2 +-
+>  fs/notify/fanotify/fanotify_user.c | 6 +++---
+>  include/linux/audit.h              | 6 +++---
+>  kernel/auditsc.c                   | 2 +-
+>  4 files changed, 8 insertions(+), 8 deletions(-)
 
-I don't think we need to cache the value right now, it's not in any hot
-path and call to bdev_zone_no is relatively cheap (only dereferencing a
-few pointers, all in-memory values).
+We're at -rc7, so this should wait until after the upcoming merge
+window, but it looks okay to me.
+
+Acked-by: Paul Moore <paul@paul-moore.com>
+
+-- 
+paul-moore.com
