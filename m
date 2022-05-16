@@ -2,202 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BE7C527FFC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 May 2022 10:46:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06252528066
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 May 2022 11:08:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238210AbiEPIo5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 May 2022 04:44:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46368 "EHLO
+        id S238055AbiEPJIo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 May 2022 05:08:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241911AbiEPIoj (ORCPT
+        with ESMTP id S241315AbiEPJIY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 May 2022 04:44:39 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 93438F5A1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 16 May 2022 01:44:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1652690666;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=sIh/SA6Lh64JUzXDkOFTJ2gpJyP3Qx/KaUYhX+otn9k=;
-        b=hOMitaAJh+pjpEL0/UVbNK1eAbyEJ67uxU70dpdHnMFHujW8se3Icf417F5N65fRNU4TPB
-        mCUi6/cS7zmY9BlEVd2T+qXIby+uXT3BfpfN14FEz9HXYFOqUIdwmHSvrBzus5PbF9c+SL
-        ttM+J/dfgc4Sav7l/bBqndUw+8PX5q4=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-608-qRBgVyijPsarCCejX1lAIQ-1; Mon, 16 May 2022 04:44:25 -0400
-X-MC-Unique: qRBgVyijPsarCCejX1lAIQ-1
-Received: by mail-wm1-f71.google.com with SMTP id k35-20020a05600c1ca300b003946a9764baso10026212wms.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 16 May 2022 01:44:24 -0700 (PDT)
+        Mon, 16 May 2022 05:08:24 -0400
+Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC55ABE2B;
+        Mon, 16 May 2022 02:08:22 -0700 (PDT)
+Received: by mail-pf1-x431.google.com with SMTP id p8so13461994pfh.8;
+        Mon, 16 May 2022 02:08:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=whKmTTMPgrsmaBTT+liiA9Q6qWWn3/ujAQeCBvW7hg4=;
+        b=J+s41SYBzaZiF+BIqdqio5MKIMM9Nbu+9tNDfxzaRzgIIK6Ryvu9Hr1pF0qBtmJQS2
+         dAX2b2Xwr0q1HJ67aetOdYf4CSjsm83RcpZ1aL4grETuvtJimawDHnNsU51aAlm8gUW3
+         p++HcQDqoyq2nDi7or6r5JXNFopckzWb6iDBo8TsJrDmvP9eUvOo3GK2+Gf2c9XdzT9l
+         sKGba6PITaMUnw1jahSUZqRCnEGoY+YXD/Oq13YFDGBCga1UMEWI5nRc8qK7bJj7QHK6
+         2EcPHv0OndoxJdyEs9OeOlnMVyG1GWY/F1+pkvLXmFH4vsXSxvfD2DCun3yRnPzJbzT0
+         8rIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=sIh/SA6Lh64JUzXDkOFTJ2gpJyP3Qx/KaUYhX+otn9k=;
-        b=E1shZqzRpgspxDUe0eE7BpZcKqj4v8sPswdKXZOZuyh0POU0el8YxeXtKEJX5L2AAn
-         HZPlB4XEDockNgfSrPLEbRDrdFGwybCRw5TYSKBK4qE50an21SG3A5jwmRW8gg+Qv3r6
-         nFmEivWHf8VeXv7SIr7XAzOYix6QPxA8Nv0l5RTm+aw90GRLERSImoyv/PIqJKYHfCeo
-         ZHSL7Fu7C/lTd44IdofWvEdJSMSKiWQ6pU24qCieQdk/gCK+DqydusY2UzY1YHqp15p3
-         rD5YMGW2ewdsXyxaVT+R7ckZZ7OmYatPFcKlUPaVRMlTl7+z5WkenuWSf7GhdMBpCaeW
-         eQ6A==
-X-Gm-Message-State: AOAM531kCChhzROhd0D8aw1yk2rc6FlEhlSPWN72Qsf/9LiCAA0WTUK8
-        lN24NMqUZPam0CZdeCPU2xvoVTGGwrD1ewckm27MGk4viZEQRTEsDc3eg6CZfFWkFknaIY4081N
-        Eyj0eS0A1aqyyzF4+GrVPl9FEUA==
-X-Received: by 2002:adf:d1e7:0:b0:20c:61a7:de2a with SMTP id g7-20020adfd1e7000000b0020c61a7de2amr13269784wrd.332.1652690663749;
-        Mon, 16 May 2022 01:44:23 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxbBG8LK3Kh/lhJrrOS7oQF11zBcMwtWlGcaXVik8WHSHfaxvjP441ee8zh05lWN6MkOd+W8g==
-X-Received: by 2002:adf:d1e7:0:b0:20c:61a7:de2a with SMTP id g7-20020adfd1e7000000b0020c61a7de2amr13269770wrd.332.1652690663494;
-        Mon, 16 May 2022 01:44:23 -0700 (PDT)
-Received: from redhat.com ([2.55.141.66])
-        by smtp.gmail.com with ESMTPSA id d3-20020a1c7303000000b003942a244ee6sm9682633wmb.43.2022.05.16.01.44.21
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=whKmTTMPgrsmaBTT+liiA9Q6qWWn3/ujAQeCBvW7hg4=;
+        b=4bu35NpGg63dEJLH45BNY/XrH1IqZp4MUYl8C3ONwKGvFdK03kkE+twXovZCdV184t
+         0KIFA8d9PQ4INxQcm7Qwb00WjstLcFCJs4GADCh7zQeJoPA7BUGlHyBcTKy+GmNBm5zM
+         fGPbFrUfb+3DrgPkVNDi/LA9vGgSwvs45pZYHhv0iAAYRkr/2Lc/9cgM5vinP/dQ5pLW
+         G21JPYin1+tdaCMENGl8HZjGRhAJuFn+f799LiVw7A0rxw+E/mhqIT49kUh91ADHgRqc
+         6HRYYirvGApZ9cslJzxKtSYHyJjYSixox9ud4y6EBzKy5wE2S9W4SmU7kwonq89X3DwR
+         aGsA==
+X-Gm-Message-State: AOAM531PAcmM/ddWbUwVqlI2ntikPTQIt1asc7+7+Kly5Qe3DR20nDu8
+        tEQ15lJ82qjf8DaIvcZmmfE=
+X-Google-Smtp-Source: ABdhPJwLub86flnlwWLj9AmkxcpGA/5RSSJ41bKr/TcufVkI/FoPIxlQxg4n4XoCeukAGz2xv8Cg/Q==
+X-Received: by 2002:a63:a06:0:b0:3c2:3345:bf99 with SMTP id 6-20020a630a06000000b003c23345bf99mr14710016pgk.477.1652692102334;
+        Mon, 16 May 2022 02:08:22 -0700 (PDT)
+Received: from localhost (014136220210.static.ctinets.com. [14.136.220.210])
+        by smtp.gmail.com with ESMTPSA id u6-20020a654c06000000b003db904128d5sm6170096pgq.21.2022.05.16.02.08.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 May 2022 01:44:23 -0700 (PDT)
-Date:   Mon, 16 May 2022 04:44:19 -0400
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     viro@zeniv.linux.org.uk, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        ebiggers@kernel.org, davem@davemloft.net
-Subject: Re: [PATCH] vhost_net: fix double fget()
-Message-ID: <20220516044400-mutt-send-email-mst@kernel.org>
-References: <20220516084213.26854-1-jasowang@redhat.com>
+        Mon, 16 May 2022 02:08:21 -0700 (PDT)
+From:   bh1scw@gmail.com
+To:     mcgrof@kernel.org, keescook@chromium.org, yzaikin@google.com
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        songmuchun@bytedance.com, Fanjun Kong <bh1scw@gmail.com>
+Subject: [PATCH] kernel/sysysctl.c: Remove trailing white space
+Date:   Mon, 16 May 2022 17:07:53 +0800
+Message-Id: <20220516090752.2137286-1-bh1scw@gmail.com>
+X-Mailer: git-send-email 2.36.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220516084213.26854-1-jasowang@redhat.com>
-X-Spam-Status: No, score=-3.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 16, 2022 at 04:42:13PM +0800, Jason Wang wrote:
-> From: Al Viro <viro@zeniv.linux.org.uk>
-> 
-> Here's another piece of code assuming that repeated fget() will yield the
-> same opened file: in vhost_net_set_backend() we have
-> 
->         sock = get_socket(fd);
->         if (IS_ERR(sock)) {
->                 r = PTR_ERR(sock);
->                 goto err_vq;
->         }
-> 
->         /* start polling new socket */
->         oldsock = vhost_vq_get_backend(vq);
->         if (sock != oldsock) {
-> ...
->                 vhost_vq_set_backend(vq, sock);
-> ...
->                 if (index == VHOST_NET_VQ_RX)
->                         nvq->rx_ring = get_tap_ptr_ring(fd);
-> 
-> with
-> static struct socket *get_socket(int fd)
-> {
->         struct socket *sock;
-> 
->         /* special case to disable backend */
->         if (fd == -1)
->                 return NULL;
->         sock = get_raw_socket(fd);
->         if (!IS_ERR(sock))
->                 return sock;
->         sock = get_tap_socket(fd);
->         if (!IS_ERR(sock))
->                 return sock;
->         return ERR_PTR(-ENOTSOCK);
-> }
-> and
-> static struct ptr_ring *get_tap_ptr_ring(int fd)
-> {
->         struct ptr_ring *ring;
->         struct file *file = fget(fd);
-> 
->         if (!file)
->                 return NULL;
->         ring = tun_get_tx_ring(file);
->         if (!IS_ERR(ring))
->                 goto out;
->         ring = tap_get_ptr_ring(file);
->         if (!IS_ERR(ring))
->                 goto out;
->         ring = NULL;
-> out:
->         fput(file);
->         return ring;
-> }
-> 
-> Again, there is no promise that fd will resolve to the same thing for
-> lookups in get_socket() and in get_tap_ptr_ring().  I'm not familiar
-> enough with the guts of drivers/vhost to tell how easy it is to turn
-> into attack, but it looks like trouble.  If nothing else, the pointer
-> returned by tun_get_tx_ring() is not guaranteed to be pinned down by
-> anything - the reference to sock will _usually_ suffice, but that
-> doesn't help any if we get a different socket on that second fget().
-> 
-> One possible way to fix it would be the patch below; objections?
-> 
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
+From: Fanjun Kong <bh1scw@gmail.com>
 
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
+This patch removes the trailing white space in kernel/sysysctl.c
+Special thanks to Muchun Song.
 
-and this is stable material I guess.
+Signed-off-by: Fanjun Kong <bh1scw@gmail.com>
+---
+ kernel/sysctl.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-> ---
->  drivers/vhost/net.c | 15 +++++++--------
->  1 file changed, 7 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-> index 28ef323882fb..0bd7d91de792 100644
-> --- a/drivers/vhost/net.c
-> +++ b/drivers/vhost/net.c
-> @@ -1449,13 +1449,9 @@ static struct socket *get_raw_socket(int fd)
->  	return ERR_PTR(r);
->  }
->  
-> -static struct ptr_ring *get_tap_ptr_ring(int fd)
-> +static struct ptr_ring *get_tap_ptr_ring(struct file *file)
->  {
->  	struct ptr_ring *ring;
-> -	struct file *file = fget(fd);
-> -
-> -	if (!file)
-> -		return NULL;
->  	ring = tun_get_tx_ring(file);
->  	if (!IS_ERR(ring))
->  		goto out;
-> @@ -1464,7 +1460,6 @@ static struct ptr_ring *get_tap_ptr_ring(int fd)
->  		goto out;
->  	ring = NULL;
->  out:
-> -	fput(file);
->  	return ring;
->  }
->  
-> @@ -1551,8 +1546,12 @@ static long vhost_net_set_backend(struct vhost_net *n, unsigned index, int fd)
->  		r = vhost_net_enable_vq(n, vq);
->  		if (r)
->  			goto err_used;
-> -		if (index == VHOST_NET_VQ_RX)
-> -			nvq->rx_ring = get_tap_ptr_ring(fd);
-> +		if (index == VHOST_NET_VQ_RX) {
-> +			if (sock)
-> +				nvq->rx_ring = get_tap_ptr_ring(sock->file);
-> +			else
-> +				nvq->rx_ring = NULL;
-> +		}
->  
->  		oldubufs = nvq->ubufs;
->  		nvq->ubufs = ubufs;
-> -- 
-> 2.25.1
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index e52b6e372c60..e68a3e70d44e 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -492,12 +492,12 @@ static int __do_proc_dointvec(void *tbl_data, struct ctl_table *table,
+ 	int *i, vleft, first = 1, err = 0;
+ 	size_t left;
+ 	char *p;
+-	
++
+ 	if (!tbl_data || !table->maxlen || !*lenp || (*ppos && !write)) {
+ 		*lenp = 0;
+ 		return 0;
+ 	}
+-	
++
+ 	i = (int *) tbl_data;
+ 	vleft = table->maxlen / sizeof(*i);
+ 	left = *lenp;
+@@ -729,7 +729,7 @@ int proc_dobool(struct ctl_table *table, int write, void *buffer,
+  * @ppos: file position
+  *
+  * Reads/writes up to table->maxlen/sizeof(unsigned int) integer
+- * values from/to the user buffer, treated as an ASCII string. 
++ * values from/to the user buffer, treated as an ASCII string.
+  *
+  * Returns 0 on success.
+  */
+@@ -1246,7 +1246,7 @@ static int do_proc_dointvec_ms_jiffies_conv(bool *negp, unsigned long *lvalp,
+  * @ppos: file position
+  *
+  * Reads/writes up to table->maxlen/sizeof(unsigned int) integer
+- * values from/to the user buffer, treated as an ASCII string. 
++ * values from/to the user buffer, treated as an ASCII string.
+  * The values read are assumed to be in seconds, and are converted into
+  * jiffies.
+  *
+@@ -1268,8 +1268,8 @@ int proc_dointvec_jiffies(struct ctl_table *table, int write,
+  * @ppos: pointer to the file position
+  *
+  * Reads/writes up to table->maxlen/sizeof(unsigned int) integer
+- * values from/to the user buffer, treated as an ASCII string. 
+- * The values read are assumed to be in 1/USER_HZ seconds, and 
++ * values from/to the user buffer, treated as an ASCII string.
++ * The values read are assumed to be in 1/USER_HZ seconds, and
+  * are converted into jiffies.
+  *
+  * Returns 0 on success.
+@@ -1291,8 +1291,8 @@ int proc_dointvec_userhz_jiffies(struct ctl_table *table, int write,
+  * @ppos: the current position in the file
+  *
+  * Reads/writes up to table->maxlen/sizeof(unsigned int) integer
+- * values from/to the user buffer, treated as an ASCII string. 
+- * The values read are assumed to be in 1/1000 seconds, and 
++ * values from/to the user buffer, treated as an ASCII string.
++ * The values read are assumed to be in 1/1000 seconds, and
+  * are converted into jiffies.
+  *
+  * Returns 0 on success.
+-- 
+2.36.0
 
