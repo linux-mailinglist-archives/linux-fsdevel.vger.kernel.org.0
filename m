@@ -2,250 +2,245 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 55A5A528D34
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 May 2022 20:38:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4950E528DA5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 May 2022 21:05:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344989AbiEPSiO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 May 2022 14:38:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48728 "EHLO
+        id S1345258AbiEPTFq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 May 2022 15:05:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240403AbiEPSiO (ORCPT
+        with ESMTP id S235967AbiEPTFn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 May 2022 14:38:14 -0400
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E77583E5CE;
-        Mon, 16 May 2022 11:38:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1652726293; x=1684262293;
-  h=subject:from:to:cc:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=g7AM5k8AO/W2t+cZjnYYeeQP/HpRONzh9TN18QNX30k=;
-  b=TpTZGeBLGJVrNWLoQHfPe41igvXv4XsuWYqhz8vl+iTqmdLGcg+Bv8fp
-   2sQVwMh9QEHR2pDyUNOZJJnUxh0D93fjuInuVeH6DH4Jev3Z9SGrFLWlZ
-   Iec0kOtso26cH6r/+a8SFy13C5Ou7WQA3y5fesLtfnm9i5cNYDK4tKJGZ
-   zKk3drS1vkV/O3TcxxtQLgHcBNuTOf/aw6HdododakUP2w1P+sAZXKMqV
-   A585lifCTxNVSx9NtGVy55N2toSHJw6PedNYrBv4zMUVUprUcjgtraqA1
-   Rmg6t1qQXSbe+R0lX8Uz63kmjq9yUeAC0GOk3eimekrwmDOi+CxpJkYuE
-   A==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10349"; a="333974255"
-X-IronPort-AV: E=Sophos;i="5.91,230,1647327600"; 
-   d="scan'208";a="333974255"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2022 11:38:11 -0700
-X-IronPort-AV: E=Sophos;i="5.91,230,1647327600"; 
-   d="scan'208";a="672478686"
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.25])
-  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 May 2022 11:38:10 -0700
-Subject: [PATCH v10 3/7] mce: fix set_mce_nospec to always unmap the whole
- page
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Christoph Hellwig <hch@lst.de>, Jane Chu <jane.chu@oracle.com>,
-        Tony Luck <tony.luck@intel.com>, x86@kernel.org,
-        nvdimm@lists.linux.dev, linux-fsdevel@vger.kernel.org
-Date:   Mon, 16 May 2022 11:38:10 -0700
-Message-ID: <165272615484.103830.2563950688772226611.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <20220422224508.440670-4-jane.chu@oracle.com>
-References: <20220422224508.440670-4-jane.chu@oracle.com>
-User-Agent: StGit/0.18-3-g996c
+        Mon, 16 May 2022 15:05:43 -0400
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F8BADE
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 May 2022 12:05:40 -0700 (PDT)
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20220516190537euoutp0182f26594b6d8fd6ecc26c19e71f7e776~vq018Q6mx1702717027euoutp01B
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 May 2022 19:05:37 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20220516190537euoutp0182f26594b6d8fd6ecc26c19e71f7e776~vq018Q6mx1702717027euoutp01B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1652727937;
+        bh=h7+/E7H/MRyrFasC/KFBpCGKVHCYzopaapRzkpChakE=;
+        h=Date:Subject:To:CC:From:In-Reply-To:References:From;
+        b=J3t8bIKww9U91/aXllUx1XFJqoWz8qTBsMAIBINzB4M2tDEHcb+K6B6lI4mhfdYdv
+         nmXw042wt9qwP8rLDH3WmzHnrEHxQT8ddWthxFJqP1JuiQMvWK9SF6apfRvdc+glKc
+         UfLYZ0UWK1ScE07V9alm7bMZyRwAt0qHqwyjX2r0=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20220516190537eucas1p1827e4dc46edb0e9fd4eef7e9067f07a0~vq01ienVy2497024970eucas1p1I;
+        Mon, 16 May 2022 19:05:37 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 07.CC.10260.080A2826; Mon, 16
+        May 2022 20:05:37 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20220516190536eucas1p2ee3b60a2f6bc708919b76d35e69562a2~vq00_9hJ02269122691eucas1p28;
+        Mon, 16 May 2022 19:05:36 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20220516190536eusmtrp14da1d7baf4a6dcff2f764c9908a67164~vq00_HXpd1633216332eusmtrp1D;
+        Mon, 16 May 2022 19:05:36 +0000 (GMT)
+X-AuditID: cbfec7f5-bddff70000002814-8b-6282a080c59a
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id D6.23.09404.080A2826; Mon, 16
+        May 2022 20:05:36 +0100 (BST)
+Received: from CAMSVWEXC01.scsc.local (unknown [106.1.227.71]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20220516190536eusmtip2c5868c94ebcb947cde3c0db117dc5408~vq00zV-qZ2254722547eusmtip23;
+        Mon, 16 May 2022 19:05:36 +0000 (GMT)
+Received: from [192.168.8.130] (106.210.248.7) by CAMSVWEXC01.scsc.local
+        (2002:6a01:e347::6a01:e347) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+        Mon, 16 May 2022 20:05:34 +0100
+Message-ID: <b9a02707-8628-b7de-487b-a93697e8a2cb@samsung.com>
+Date:   Mon, 16 May 2022 21:05:32 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+        Thunderbird/91.8.1
+Subject: Re: [PATCH v4 02/13] block: allow blk-zoned devices to have
+ non-power-of-2 zone size
+Content-Language: en-US
+To:     <damien.lemoal@opensource.wdc.com>
+CC:     <linux-nvme@lists.infradead.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-btrfs@vger.kernel.org>, <jiangbo.365@bytedance.com>,
+        <linux-block@vger.kernel.org>, <gost.dev@samsung.com>,
+        <linux-kernel@vger.kernel.org>, <dm-devel@redhat.com>,
+        Luis Chamberlain <mcgrof@kernel.org>, <axboe@kernel.dk>,
+        <pankydev8@gmail.com>, <dsterba@suse.com>, <hch@lst.de>
+From:   Pankaj Raghav <p.raghav@samsung.com>
+In-Reply-To: <20220516165416.171196-3-p.raghav@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Originating-IP: [106.210.248.7]
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+        CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrEKsWRmVeSWpSXmKPExsWy7djP87qNC5qSDGa2MlmsvtvPZvH77Hlm
+        i73vZrNaXPjRyGSxcvVRJoueAx9YLPbe0ra49HgFu8WevSdZLC7vmsNmMX/ZU3aLGxOeMlqs
+        ufmUxYHX49+JNWweO2fdZfe4fLbUY9OqTjaPzUvqPXbfbAAKt95n9Xi/7yqbx/otV1k8Pm+S
+        C+CK4rJJSc3JLEst0rdL4MrY/uA0Y8EfuYrDCzYxNjAuk+hi5OSQEDCReLf0HUsXIxeHkMAK
+        RomN/X+YIJwvjBLvry1ih3A+M0r0nO1khmlZsf8xmC0ksJxRYv4qUbii6Y/2sEI4Oxklml98
+        ZwGp4hWwk/i2aQcriM0ioCqxedZ9Roi4oMTJmU/AakQFIiSmzTrDBmILC8RLfGlezw5iMwuI
+        S9x6Mh/oJg4OEQE1iQ8L60DmMwu8ZpKYPGUXM0icTUBLorETrJxTwFri8opGRohWTYnW7b+h
+        xshLbH87B+oBRYmbK3+xQdi1EmuPnWGHsC9xSpw4AQ0XF4krFyZA1QhLvDq+BapGRuL05B4W
+        CLta4umN38wg90gItDBK9O9czwZyjwTQEX1nciBqHCXmnbnHBBHmk7jxVhDiHD6JSdumM09g
+        VJ2FFBCzkDw8C8kHs5B8sICRZRWjeGppcW56arFxXmq5XnFibnFpXrpecn7uJkZgsjv97/jX
+        HYwrXn3UO8TIxMF4iFGCg1lJhNegoiFJiDclsbIqtSg/vqg0J7X4EKM0B4uSOG9y5oZEIYH0
+        xJLU7NTUgtQimCwTB6dUA5OSlPKnTTOmG6u0zZw9ddGzfB2e8i7tSrXzm89WCX/ZKlM4/czF
+        DQy1pzcXmO6qa5Y88Z5/z4zy2OyluySyrwm7P/bimaI94WCpw2UNSZeYZHEFSxO/hPu9p5pv
+        G4enOooleXd1LOg0mbaR5WWbtUmQy4LPlX4uC++rL33ReuHrvpiiNYxvXTIX/J74XF+E5bUF
+        y9rogK0ur/cITJujILV3tczx7G9nlz3+tIrj2NKSNdb7c7bvNr/Sb39mAufEG6FM/tpFy+sb
+        Kxm7ujYeuPHwnqdO49fY1N+9xoLPald3zp6kepFpc7rPkX99rk87g6dsn7tot3+gJ/PbuhBZ
+        9V1fyg99df8WLNqUMSN84yQlluKMREMt5qLiRACLt3n95QMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkleLIzCtJLcpLzFFi42I5/e/4Pd2GBU1JBs/uSVmsvtvPZvH77Hlm
+        i73vZrNaXPjRyGSxcvVRJoueAx9YLPbe0ra49HgFu8WevSdZLC7vmsNmMX/ZU3aLGxOeMlqs
+        ufmUxYHX49+JNWweO2fdZfe4fLbUY9OqTjaPzUvqPXbfbAAKt95n9Xi/7yqbx/otV1k8Pm+S
+        C+CK0rMpyi8tSVXIyC8usVWKNrQw0jO0tNAzMrHUMzQ2j7UyMlXSt7NJSc3JLEst0rdL0MvY
+        /uA0Y8EfuYrDCzYxNjAuk+hi5OSQEDCRWLH/MXMXIxeHkMBSRomN7VOYIBIyEp+ufGSHsIUl
+        /lzrYoMo+sgosWHxPSYIZyejxI1bD5hBqngF7CS+bdrBCmKzCKhKbJ51nxEiLihxcuYTFhBb
+        VCBC4sHus2A1wgLxEl+a14NtYBYQl7j1ZD7QUA4OEQE1iQ8L60DmMwu8ZpKYPGUX1Hn7GSV2
+        rG8FK2IT0JJo7ATr5RSwlri8opERYo6mROv231Az5SW2v53DDPGBosTNlb/YIOxaiVf3dzNO
+        YBSdheS8WUjOmIVk1CwkoxYwsqxiFEktLc5Nzy020itOzC0uzUvXS87P3cQITBPbjv3csoNx
+        5auPeocYmTgYDzFKcDArifAaVDQkCfGmJFZWpRblxxeV5qQWH2I0BYbRRGYp0eR8YKLKK4k3
+        NDMwNTQxszQwtTQzVhLn9SzoSBQSSE8sSc1OTS1ILYLpY+LglGpgyjnx9+gPLaZLM8zrQ/ax
+        ywQENiyIvd067VKoaNRld+uMnRfds571ndjPYP5p1/n6gsak2YKp12Nefj55tSQz8MXbvYvb
+        Hs9dWOCx9Ox398nPJZd+PnKlSC9L4+zrOf5MfvdnJU16+jhK6jvjk0uTTspMXDNh59z/JyWi
+        /QsuOeWn2p92ZuKcrdXLcPl4RGHYnYO+yzac7SqOXGhw6O3OXnY+yYRfv+Yoa9rVRXpbbCi2
+        EFn8Sa1MJeL9lfM7Uv6tPLjo3/cLedtcTjc33BZ5YrV6MVdASiWfxf5p8rovZUzvLn2SvJy5
+        8O1C5m06P86/O1pwcaPlRGOxtSUF8Rtr9d3nB15NnHb4aej6yFM/Ym8psRRnJBpqMRcVJwIA
+        66Cj/pwDAAA=
+X-CMS-MailID: 20220516190536eucas1p2ee3b60a2f6bc708919b76d35e69562a2
+X-Msg-Generator: CA
+X-RootMTR: 20220516165421eucas1p2515446ac290987bdb9af24ffb835b287
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20220516165421eucas1p2515446ac290987bdb9af24ffb835b287
+References: <20220516165416.171196-1-p.raghav@samsung.com>
+        <CGME20220516165421eucas1p2515446ac290987bdb9af24ffb835b287@eucas1p2.samsung.com>
+        <20220516165416.171196-3-p.raghav@samsung.com>
+X-Spam-Status: No, score=-7.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_HI,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Jane Chu <jane.chu@oracle.com>
+Hi Damien,
+I copied your comments from the previous thread to avoid confusion.
 
-The set_memory_uc() approach doesn't work well in all cases.
-As Dan pointed out when "The VMM unmapped the bad page from
-guest physical space and passed the machine check to the guest."
-"The guest gets virtual #MC on an access to that page. When
-the guest tries to do set_memory_uc() and instructs cpa_flush()
-to do clean caches that results in taking another fault / exception
-perhaps because the VMM unmapped the page from the guest."
 
-Since the driver has special knowledge to handle NP or UC,
-mark the poisoned page with NP and let driver handle it when
-it comes down to repair.
+On 2022-05-16 16:00, Damien Le Moal wrote:
+> On 2022/05/16 15:39, Pankaj Raghav wrote:
+>> Checking if a given sector is aligned to a zone is a common
+>> operation that is performed for zoned devices. Add
+>> blk_queue_is_zone_start helper to check for this instead of opencoding it
+>> everywhere.
+>>
+>> Convert the calculations on zone size to be generic instead of relying on
+>> power_of_2 based logic in the block layer using the helpers wherever
+>> possible.
+>>
+>> @@ -490,14 +490,29 @@ static int blk_revalidate_zone_cb(struct blk_zone *zone, unsigned int idx,
+>>  	 * smaller last zone.
+>>  	 */
+>>  	if (zone->start == 0) {
+>> -		if (zone->len == 0 || !is_power_of_2(zone->len)) {
+>> -			pr_warn("%s: Invalid zoned device with non power of two zone size (%llu)\n",
+>> -				disk->disk_name, zone->len);
+>> +		if (zone->len == 0) {
+>> +			pr_warn("%s: Invalid zone size",
+>> +				disk->disk_name);
+>
+> This fits on one line, no ?
+>
+Yeah. I don't know why my formatter decided to do that. I will fix it. Thanks.
+>> +			return -ENODEV;
+>> +		}
+>> +
+>> +		/*
+>> +		 * Don't allow zoned device with non power_of_2 zone size with
+>> +		 * zone capacity less than zone size.
+>> +		 */
+>> +		if (!is_power_of_2(zone->len) &&
+>> +		    zone->capacity < zone->len) {
+>> +			pr_warn("%s: Invalid zoned size with non power of 2 zone size and zone capacity < zone size",
+>> +				disk->disk_name);
+>
+> Very long... What about:
+>
+> pr_warn("%s: Invalid zone capacity for non power of 2 zone size",
+> 	disk->disk_name);
+>
+This looks better. I will fix it up!
+>>  			return -ENODEV;
+>>  		}
+>>
+>>  		args->zone_sectors = zone->len;
+>> -		args->nr_zones = (capacity + zone->len - 1) >> ilog2(zone->len);
+>> +		/*
+>> +		 * Division is used to calculate nr_zones for both power_of_2
+>> +		 * and non power_of_2 zone sizes as it is not in the hot path.
+>> +		 */
+>
+> This comment is not very useful.
+>
 
-Please refer to discussions here for more details.
-https://lore.kernel.org/all/CAPcyv4hrXPb1tASBZUg-GgdVs0OOFKXMXLiHmktg_kFi7YBMyQ@mail.gmail.com/
+I also saw you mentioning the comment was not useful in nvme code for
+a similar scenario. Hannes brought up a point about making it
+explicit when we are not using any special path for power of 2 zone sizes as in
+most cases we do branching if the zone size is power of 2 to avoid division.
 
-Now since poisoned page is marked as not-present, in order to
-avoid writing to a not-present page and trigger kernel Oops,
-also fix pmem_do_write().
+>> +		args->nr_zones = div64_u64(capacity + zone->len - 1, zone->len);
+>>  	} else if (zone->start + args->zone_sectors < capacity) {
+>>  		if (zone->len != args->zone_sectors) {
+>>  			pr_warn("%s: Invalid zoned device with non constant zone size\n",
+>> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+>> index 22fe512ee..32d7bd7b1 100644
+>> --- a/include/linux/blkdev.h
+>> +++ b/include/linux/blkdev.h
+>> @@ -686,6 +686,22 @@ static inline unsigned int blk_queue_zone_no(struct request_queue *q,
+>>  	return div64_u64(sector, zone_sectors);
+>>  }
+>>
+>> +static inline bool blk_queue_is_zone_start(struct request_queue *q, sector_t sec)
+>> +{
+>> +	sector_t zone_sectors = blk_queue_zone_sectors(q);
+>> +	u64 remainder = 0;
+>> +
+>> +	if (!blk_queue_is_zoned(q))
+>> +		return false;
+>> +
+>> +	if (is_power_of_2(zone_sectors))
+>> +		return IS_ALIGNED(sec, zone_sectors);
+>> +
+>> +	div64_u64_rem(sec, zone_sectors, &remainder);
+>> +	/* if there is a remainder, then the sector is not aligned */
+>
+> Hmmm... Fairly obvious. Not sure this comment is useful.
+>
+True. I will remove it.
 
-Fixes: 284ce4011ba6 ("x86/memory_failure: Introduce {set, clear}_mce_nospec()")
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Jane Chu <jane.chu@oracle.com>
-Acked-by: Tony Luck <tony.luck@intel.com>
-Link: https://lore.kernel.org/r/20220422224508.440670-4-jane.chu@oracle.com
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
-Changes since v9:
-- Collect Tony's ack
-- Rebase on [PATCH v11 2/7]:
-https://lore.kernel.org/r/165272527328.90175.8336008202048685278.stgit@dwillia2-desk3.amr.corp.intel.com
-
- arch/x86/kernel/cpu/mce/core.c |    6 +++---
- arch/x86/mm/pat/set_memory.c   |   23 +++++++++++------------
- drivers/nvdimm/pmem.c          |   30 +++++++-----------------------
- include/linux/set_memory.h     |    4 ++--
- 4 files changed, 23 insertions(+), 40 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
-index 981496e6bc0e..fa67bb9d1afe 100644
---- a/arch/x86/kernel/cpu/mce/core.c
-+++ b/arch/x86/kernel/cpu/mce/core.c
-@@ -579,7 +579,7 @@ static int uc_decode_notifier(struct notifier_block *nb, unsigned long val,
- 
- 	pfn = mce->addr >> PAGE_SHIFT;
- 	if (!memory_failure(pfn, 0)) {
--		set_mce_nospec(pfn, whole_page(mce));
-+		set_mce_nospec(pfn);
- 		mce->kflags |= MCE_HANDLED_UC;
- 	}
- 
-@@ -1316,7 +1316,7 @@ static void kill_me_maybe(struct callback_head *cb)
- 
- 	ret = memory_failure(p->mce_addr >> PAGE_SHIFT, flags);
- 	if (!ret) {
--		set_mce_nospec(p->mce_addr >> PAGE_SHIFT, p->mce_whole_page);
-+		set_mce_nospec(p->mce_addr >> PAGE_SHIFT);
- 		sync_core();
- 		return;
- 	}
-@@ -1342,7 +1342,7 @@ static void kill_me_never(struct callback_head *cb)
- 	p->mce_count = 0;
- 	pr_err("Kernel accessed poison in user space at %llx\n", p->mce_addr);
- 	if (!memory_failure(p->mce_addr >> PAGE_SHIFT, 0))
--		set_mce_nospec(p->mce_addr >> PAGE_SHIFT, p->mce_whole_page);
-+		set_mce_nospec(p->mce_addr >> PAGE_SHIFT);
- }
- 
- static void queue_task_work(struct mce *m, char *msg, void (*func)(struct callback_head *))
-diff --git a/arch/x86/mm/pat/set_memory.c b/arch/x86/mm/pat/set_memory.c
-index 0caf4b0edcbc..44f0d4260bd8 100644
---- a/arch/x86/mm/pat/set_memory.c
-+++ b/arch/x86/mm/pat/set_memory.c
-@@ -1925,14 +1925,9 @@ int set_memory_wb(unsigned long addr, int numpages)
- }
- EXPORT_SYMBOL(set_memory_wb);
- 
--/*
-- * Prevent speculative access to the page by either unmapping
-- * it (if we do not require access to any part of the page) or
-- * marking it uncacheable (if we want to try to retrieve data
-- * from non-poisoned lines in the page).
-- */
-+/* Prevent speculative access to a page by marking it not-present */
- #ifdef CONFIG_X86_64
--int set_mce_nospec(unsigned long pfn, bool unmap)
-+int set_mce_nospec(unsigned long pfn)
- {
- 	unsigned long decoy_addr;
- 	int rc;
-@@ -1954,19 +1949,23 @@ int set_mce_nospec(unsigned long pfn, bool unmap)
- 	 */
- 	decoy_addr = (pfn << PAGE_SHIFT) + (PAGE_OFFSET ^ BIT(63));
- 
--	if (unmap)
--		rc = set_memory_np(decoy_addr, 1);
--	else
--		rc = set_memory_uc(decoy_addr, 1);
-+	rc = set_memory_np(decoy_addr, 1);
- 	if (rc)
- 		pr_warn("Could not invalidate pfn=0x%lx from 1:1 map\n", pfn);
- 	return rc;
- }
- 
-+static int set_memory_present(unsigned long *addr, int numpages)
-+{
-+	return change_page_attr_set(addr, numpages, __pgprot(_PAGE_PRESENT), 0);
-+}
-+
- /* Restore full speculative operation to the pfn. */
- int clear_mce_nospec(unsigned long pfn)
- {
--	return set_memory_wb((unsigned long) pfn_to_kaddr(pfn), 1);
-+	unsigned long addr = (unsigned long) pfn_to_kaddr(pfn);
-+
-+	return set_memory_present(&addr, 1);
- }
- EXPORT_SYMBOL_GPL(clear_mce_nospec);
- #endif /* CONFIG_X86_64 */
-diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
-index 58d95242a836..4aa17132a557 100644
---- a/drivers/nvdimm/pmem.c
-+++ b/drivers/nvdimm/pmem.c
-@@ -158,36 +158,20 @@ static blk_status_t pmem_do_write(struct pmem_device *pmem,
- 			struct page *page, unsigned int page_off,
- 			sector_t sector, unsigned int len)
- {
--	blk_status_t rc = BLK_STS_OK;
--	bool bad_pmem = false;
- 	phys_addr_t pmem_off = sector * 512 + pmem->data_offset;
- 	void *pmem_addr = pmem->virt_addr + pmem_off;
- 
--	if (unlikely(is_bad_pmem(&pmem->bb, sector, len)))
--		bad_pmem = true;
-+	if (unlikely(is_bad_pmem(&pmem->bb, sector, len))) {
-+		blk_status_t rc = pmem_clear_poison(pmem, pmem_off, len);
-+
-+		if (rc != BLK_STS_OK)
-+			return rc;
-+	}
- 
--	/*
--	 * Note that we write the data both before and after
--	 * clearing poison.  The write before clear poison
--	 * handles situations where the latest written data is
--	 * preserved and the clear poison operation simply marks
--	 * the address range as valid without changing the data.
--	 * In this case application software can assume that an
--	 * interrupted write will either return the new good
--	 * data or an error.
--	 *
--	 * However, if pmem_clear_poison() leaves the data in an
--	 * indeterminate state we need to perform the write
--	 * after clear poison.
--	 */
- 	flush_dcache_page(page);
- 	write_pmem(pmem_addr, page, page_off, len);
--	if (unlikely(bad_pmem)) {
--		rc = pmem_clear_poison(pmem, pmem_off, len);
--		write_pmem(pmem_addr, page, page_off, len);
--	}
- 
--	return rc;
-+	return BLK_STS_OK;
- }
- 
- static void pmem_submit_bio(struct bio *bio)
-diff --git a/include/linux/set_memory.h b/include/linux/set_memory.h
-index 683a6c3f7179..369769ce7399 100644
---- a/include/linux/set_memory.h
-+++ b/include/linux/set_memory.h
-@@ -43,10 +43,10 @@ static inline bool can_set_direct_map(void)
- #endif /* CONFIG_ARCH_HAS_SET_DIRECT_MAP */
- 
- #ifdef CONFIG_X86_64
--int set_mce_nospec(unsigned long pfn, bool unmap);
-+int set_mce_nospec(unsigned long pfn);
- int clear_mce_nospec(unsigned long pfn);
- #else
--static inline int set_mce_nospec(unsigned long pfn, bool unmap)
-+static inline int set_mce_nospec(unsigned long pfn)
- {
- 	return 0;
- }
-
+>> +	return remainder == 0;
+>> +}
+>> +
+>>  static inline bool blk_queue_zone_is_seq(struct request_queue *q,
+>>  					 sector_t sector)
+>>  {
+>> @@ -732,6 +748,12 @@ static inline unsigned int blk_queue_zone_no(struct request_queue *q,
+>>  {
+>>  	return 0;
+>>  }
+>> +
+>> +static inline bool blk_queue_is_zone_start(struct request_queue *q, sector_t sec)
+>> +{
+>> +	return false;
+>> +}
+>> +
+>>  static inline unsigned int queue_max_open_zones(const struct request_queue *q)
+>>  {
+>>  	return 0;
+>
+>
