@@ -2,54 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A1AB65285A6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 May 2022 15:41:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3419F5285AE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 May 2022 15:43:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243924AbiEPNki (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 May 2022 09:40:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35732 "EHLO
+        id S232450AbiEPNnt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 May 2022 09:43:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243891AbiEPNkG (ORCPT
+        with ESMTP id S230398AbiEPNnt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 May 2022 09:40:06 -0400
+        Mon, 16 May 2022 09:43:49 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B94BB2F02C;
-        Mon, 16 May 2022 06:39:58 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BA6935879;
+        Mon, 16 May 2022 06:43:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=ag+kYhBHOWVHyefgJy+1K09AOBdX5dHXPtZQwUVHJuA=; b=sVKb5rfhrwztbNXlQsxaBDThEY
-        Jd72MNm9Nb2HCQ6eFtQlQwOL0coIvmAbA17ffxPAYu5wIMRcnFqK/K34tD71axZPLWVKczUkIZTv+
-        B7oZisAJTOwpCJWVaP756Ti8JeOX6+UrD1VJh4PvZMQpmlrmtaRB9U8AnDD9ZKHmolCFVVvo4LoVK
-        rwxDgE3Z5tP2ERGFhOc4B1geKQgFCYbL6JlD24VmAmBRB5dT7qKcrSN/hDhrowvmVBwqS2tXmOEKp
-        kvDZBgbczt5k8tKDo7qcr4exuG1oPIbIiUYcos3pPRdm4Fe2Qgm2KHHf8IcClRt+mXaWcmxRE5iIK
-        NTv62z/g==;
+        bh=bdKEgcBu660QK59Q7ijUEpupyYvQqpjvn1VWbciI8qw=; b=O/SokAB18zhm+omASVU0WcYHV4
+        pBaIDuyPT8BdWj0IvU5nAl7VHstuV4EgY3Na29XZ6YIeAtQoFfctGmHpInbBc9MO3G8vJQAFGkONP
+        5z92l/5uDZ3B3e2zRs5Yagnhi8Sbk5DXTZ9OfERsyNy9w37eBeB9GDoz06oT0HRLJKrgEhBu7QW1m
+        naIVgpg0nPy/xS2SAVFzYZwkh9E7x/JcTd41TLtxaNEPsTvD36+CezTZNZOPGgbyqcovB9W4jCYJ3
+        6cFzR3Q0u6I7u6JJg7NdCA9nK11udjZO5NKGD7tQ0Gou3ySkStzUmesg8Oz2mypgTU0WYSWNjJeOi
+        j2yXTD/g==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nqawz-0080Wh-RC; Mon, 16 May 2022 13:39:53 +0000
-Date:   Mon, 16 May 2022 06:39:53 -0700
+        id 1nqb0h-0081X1-86; Mon, 16 May 2022 13:43:43 +0000
+Date:   Mon, 16 May 2022 06:43:43 -0700
 From:   Christoph Hellwig <hch@infradead.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <djwong@kernel.org>, Stefan Roesch <shr@fb.com>,
-        io-uring@vger.kernel.org, kernel-team@fb.com, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH v1 11/18] xfs: add async buffered write support
-Message-ID: <YoJUKdV7p71fDO2Q@infradead.org>
-References: <30f2920c-5262-7cb0-05b5-6e84a76162a7@fb.com>
- <20220428215442.GW1098723@dread.disaster.area>
- <19d411e5-fe1f-a3f8-36e0-87284a1c02f3@fb.com>
- <20220506092915.GI1098723@dread.disaster.area>
- <31f09969-2277-6692-b204-f884dc65348f@fb.com>
- <20220509232425.GQ1098723@dread.disaster.area>
- <20220509234424.GX27195@magnolia>
- <20220510011205.GR1098723@dread.disaster.area>
- <YnoKnyzqe3D70zoE@infradead.org>
- <20220516022430.GN1098723@dread.disaster.area>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        xfs <linux-xfs@vger.kernel.org>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH] iomap: don't invalidate folios after writeback errors
+Message-ID: <YoJVD7wmX6r6mFTe@infradead.org>
+References: <YoHG5cMwvx8PSddI@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220516022430.GN1098723@dread.disaster.area>
+In-Reply-To: <YoHG5cMwvx8PSddI@magnolia>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
@@ -61,10 +53,18 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 16, 2022 at 12:24:30PM +1000, Dave Chinner wrote:
-> Ok, so we can just use XFS_I(file_inode(iocb->ki_filp)) then and we
-> don't need to pass the xfs_inode at all. We probably should convert
-> the rest of the io path to do this as well so we don't end up
-> forgetting this again...
+The changes looks good to me:
 
-Yes.
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+
+I did a little digging and the invalidatepage call first appeared
+in
+
+commit 90ce6b6a90f62578a141359ffe9261e65f2c5265
+Author: Steve Lord <lord@sgi.com>
+Date:   Mon Sep 2 12:36:59 2002 +0000
+
+    move page_buf_io.c to xfs_aops.c
+
+The old page_buf_io.c file seems to not have made it through to
+git, so this seems rather prehistoric.
