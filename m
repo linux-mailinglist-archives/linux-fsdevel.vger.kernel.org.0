@@ -2,122 +2,237 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DA3D528ACA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 May 2022 18:45:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65201528AD3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 May 2022 18:48:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343822AbiEPQpK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 May 2022 12:45:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56614 "EHLO
+        id S1343833AbiEPQsl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 May 2022 12:48:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37362 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343776AbiEPQpG (ORCPT
+        with ESMTP id S232786AbiEPQsh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 May 2022 12:45:06 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 936303C4BB;
-        Mon, 16 May 2022 09:45:05 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 12F2722023;
-        Mon, 16 May 2022 16:45:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1652719504; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=T1cuhmg/5wnGfWVCfJ3OzVK0K9C2gJVK76XQYPz6KqI=;
-        b=Llq6vrw2FLzDd7Ehr6QLl+N0BoHmma0XEANDL72UpqofMZMo5j2CDuWWJLYok6jijOAu+c
-        aaQ7lVgOZe5+suqo7db8fp+u52SFsfKuJrznCh8rc45nwrXUcRol8JxokYILkGhRfWZ4ej
-        u8Lqds9e+S0nLT6TtjeqOuuwKyZyRHM=
-Received: from suse.cz (unknown [10.100.201.86])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 134102C141;
-        Mon, 16 May 2022 16:45:01 +0000 (UTC)
-Date:   Mon, 16 May 2022 18:44:58 +0200
-From:   Michal Hocko <mhocko@suse.com>
-To:     Gang Li <ligang.bdlg@bytedance.com>
-Cc:     akpm@linux-foundation.org, songmuchun@bytedance.com,
-        hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com,
-        borntraeger@linux.ibm.com, svens@linux.ibm.com,
-        ebiederm@xmission.com, keescook@chromium.org,
-        viro@zeniv.linux.org.uk, rostedt@goodmis.org, mingo@redhat.com,
-        peterz@infradead.org, acme@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        namhyung@kernel.org, david@redhat.com, imbrenda@linux.ibm.com,
-        apopple@nvidia.com, adobriyan@gmail.com,
-        stephen.s.brennan@oracle.com, ohoono.kwon@samsung.com,
-        haolee.swjtu@gmail.com, kaleshsingh@google.com,
-        zhengqi.arch@bytedance.com, peterx@redhat.com, shy828301@gmail.com,
-        surenb@google.com, ccross@google.com, vincent.whitchurch@axis.com,
-        tglx@linutronix.de, bigeasy@linutronix.de, fenghua.yu@intel.com,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH 0/5 v1] mm, oom: Introduce per numa node oom for
- CONSTRAINT_MEMORY_POLICY
-Message-ID: <YoJ/ioXwGTdCywUE@dhcp22.suse.cz>
-References: <20220512044634.63586-1-ligang.bdlg@bytedance.com>
+        Mon, 16 May 2022 12:48:37 -0400
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC1343C719
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 May 2022 09:48:35 -0700 (PDT)
+Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24GFMDn5005642
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 May 2022 09:48:35 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=facebook; bh=lG16viWiL0fgqGwpPbfMTmF+zs4wNm89FAHhNuXwt9I=;
+ b=jtsVzelj0G3GOjVBTz0uWkWszgSVWDwkNSVorSOspgU+2v/IUA6HuktkyMCFhLV4CKwE
+ 7+KUTncFwNwrjgDyYv8LrEUinmUxeFmdyPxzxHiqqs0rksv+jXvIfJUF/V7zFW87EuQm
+ 41W9fSwquC1HSFYkJmej44sjcs38ocaEm5g= 
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3g27rnu228-2
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 May 2022 09:48:35 -0700
+Received: from snc-exhub201.TheFacebook.com (2620:10d:c085:21d::7) by
+ snc-exhub204.TheFacebook.com (2620:10d:c085:21d::4) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Mon, 16 May 2022 09:48:35 -0700
+Received: from twshared6696.05.ash7.facebook.com (2620:10d:c085:208::11) by
+ mail.thefacebook.com (2620:10d:c085:21d::7) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Mon, 16 May 2022 09:48:34 -0700
+Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
+        id 37B3EF146DCF; Mon, 16 May 2022 09:48:25 -0700 (PDT)
+From:   Stefan Roesch <shr@fb.com>
+To:     <io-uring@vger.kernel.org>, <kernel-team@fb.com>,
+        <linux-mm@kvack.org>, <linux-xfs@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>
+CC:     <shr@fb.com>, <david@fromorbit.com>, <jack@suse.cz>
+Subject: [RFC PATCH v2 00/16] io-uring/xfs: support async buffered writes
+Date:   Mon, 16 May 2022 09:47:02 -0700
+Message-ID: <20220516164718.2419891-1-shr@fb.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220512044634.63586-1-ligang.bdlg@bytedance.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: RYi014YFukjH9yX1rhEc5AxFConpnUoL
+X-Proofpoint-GUID: RYi014YFukjH9yX1rhEc5AxFConpnUoL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.858,Hydra:6.0.486,FMLib:17.11.64.514
+ definitions=2022-05-16_15,2022-05-16_02,2022-02-23_01
+X-Spam-Status: No, score=-3.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 12-05-22 12:46:29, Gang Li wrote:
-> TLDR:
-> If a mempolicy is in effect(oc->constraint == CONSTRAINT_MEMORY_POLICY), out_of_memory() will
-> select victim on specific node to kill. So that kernel can avoid accidental killing on NUMA system.
-> 
-> Problem:
-> Before this patch series, oom will only kill the process with the highest memory usage.
-> by selecting process with the highest oom_badness on the entire system to kill.
-> 
-> This works fine on UMA system, but may have some accidental killing on NUMA system.
-> 
-> As shown below, if process c.out is bind to Node1 and keep allocating pages from Node1,
-> a.out will be killed first. But killing a.out did't free any mem on Node1, so c.out
-> will be killed then.
-> 
-> A lot of our AMD machines have 8 numa nodes. In these systems, there is a greater chance
-> of triggering this problem.
+This patch series adds support for async buffered writes when using both
+xfs and io-uring. Currently io-uring only supports buffered writes in the
+slow path, by processing them in the io workers. With this patch series i=
+t is
+now possible to support buffered writes in the fast path. To be able to u=
+se
+the fast path the required pages must be in the page cache, the required =
+locks
+in xfs can be granted immediately and no additional blocks need to be rea=
+d
+form disk.
 
-Sorry, I have only now found this email thread. The limitation of the
-NUMA constrained oom is well known and long standing. Basically the
-whole thing is a best effort as we are lacking per numa node memory
-stats. I can see that you are trying to fill up that gap but this is
-not really free. Have you measured the runtime overhead? Accounting is
-done in a very performance sensitive paths and it would be rather
-unfortunate to make everybody pay the overhead while binding to a
-specific node or sets of nodes is not the most common usecase.
+Updating the inode can take time. An optimization has been implemented fo=
+r
+the time update. Time updates will be processed in the slow path. While t=
+here
+is already a time update in process, other write requests for the same fi=
+le,
+can skip the update of the modification time.
+ =20
 
-Also have you tried to have a look at cpusets? Those should be easier to
-make a proper selection as it should be possible to iterate over tasks
-belonging to a specific cpuset much more easier - essentialy something
-similar to memcg oom killer. We do not do that right now and by a very
-brief look at the CONSTRAINT_CPUSET it seems that this code is not
-really doing much these days. Maybe that would be a more appropriate way
-to deal with more precise node aware oom killing?
+Performance results:
+  For fio the following results have been obtained with a queue depth of
+  1 and 4k block size (runtime 600 secs):
 
-[...]
->  21 files changed, 317 insertions(+), 111 deletions(-)
+                 sequential writes:
+                 without patch           with patch      libaio     psync
+  iops:              77k                    209k          195K       233K
+  bw:               314MB/s                 854MB/s       790MB/s    953M=
+B/s
+  clat:            9600ns                   120ns         540ns     3000n=
+s
 
-The code footprint is not free either. And more importantnly does this
-even work much more reliably? I can see quite some NUMA_NO_NODE
-accounting (e.g. copy_pte_range!).Is this somehow fixable?
 
-Also how do those numbers add up. Let's say you increase the counter as
-NUMA_NO_NODE but later on during the clean up you decrease based on the
-page node?
+For an io depth of 1, the new patch improves throughput by over three tim=
+es
+(compared to the exiting behavior, where buffered writes are processed by=
+ an
+io-worker process) and also the latency is considerably reduced. To achie=
+ve the
+same or better performance with the exisiting code an io depth of 4 is re=
+quired.
+Increasing the iodepth further does not lead to improvements.
 
-Last but not least I am really not following MM_NO_TYPE concept. I can
-only see add_mm_counter users without any decrements. What is going on
-there?
--- 
-Michal Hocko
-SUSE Labs
+In addition the latency of buffered write operations is reduced considera=
+bly.
+
+
+
+Support for async buffered writes:
+
+  To support async buffered writes the flag FMODE_BUF_WASYNC is introduce=
+d. In
+  addition the check in generic_write_checks is modified to allow for asy=
+nc
+  buffered writes that have this flag set.
+
+  Changes to the iomap page create function to allow the caller to specif=
+y
+  the gfp flags. Sets the IOMAP_NOWAIT flag in iomap if IOCB_NOWAIT has b=
+een set
+  and specifies the requested gfp flags.
+
+  Adds the iomap async buffered write support to the xfs iomap layer.
+  Adds async buffered write support to the xfs iomap layer.
+
+Support for async buffered write support and inode time modification
+
+  Splits the functions for checking if the file privileges need to be rem=
+oved in
+  two functions: check function and a function for the removal of file pr=
+ivileges.
+  The same split is also done for the function to update the file modific=
+ation time.
+
+  Implement an optimization that while a file modification time is pendin=
+g other
+  requests for the same file don't need to wait for the file modification=
+ update.=20
+  This avoids that a considerable number of buffered async write requests=
+ get
+  punted.
+
+  Take the ilock in nowait mode if async buffered writes are enabled and =
+enable
+  the async buffered writes optimization in io_uring.
+
+Support for write throttling of async buffered writes:
+
+  Split of a _balance_dirty_pages() function that tells wether to sleep o=
+r not.
+  The function is called by the async buffered writes in iomap_write_iter=
+() to
+  determine if write throttling is required or not. In case write throttl=
+ing is
+  necessary, return -EAGAIN to the caller in io-uring. The request will t=
+hen be
+  handled in io-uring io-worker.
+ =20
+  The existing function balance_dirty_pages() will call _balance_dirty_pa=
+ges().
+
+Enable async buffered write support in xfs
+  Patch 18: xfs: enable async buffered write support
+    This enables the flag that enables async buffered writes for xfs.
+
+
+Testing:
+  This patch has been tested with xfstests and fio.
+
+
+Changes:
+  V2:
+  - Remove atomic allocation
+  - Use direct write in xfs_buffered_write_iomap_begin()
+  - Use xfs_ilock_for_iomap() in xfs_buffered_write_iomap_begin()
+  - Remove no_wait check at the end of xfs_buffered_write_iomap_begin() f=
+or
+    the COW path.
+  - Pass xfs_inode pointer to xfs_ilock_iocb and rename function to
+    xfs_lock_xfs_inode
+  - Replace exisitng uses of xfs_ilock_iocb with xfs_ilock_xfs_inode
+  - Use xfs_ilock_xfs_inode in xfs_file_buffered_write()
+  - Callers of xfs_ilock_for_iomap need to initialize lock mode. This is
+    required so writes use an exclusive lock
+  - Split of _balance_dirty_pages() from balance_dirty_pages() and return
+    sleep time
+  - Call _balance_dirty_pages() in balance_dirty_pages_ratelimited_flags(=
+)
+  - Move call to balance_dirty_pages_ratelimited_flags() in iomap_write_i=
+ter()
+    to the beginning of the loop
+   =20
+
+
+Stefan Roesch (16):
+  block: add check for async buffered writes to generic_write_checks
+  iomap: add iomap_page_create_gfp to allocate iomap_pages
+  iomap: use iomap_page_create_gfp() in __iomap_write_begin
+  iomap: add async buffered write support
+  xfs: add iomap async buffered write support
+  fs: split off need_remove_file_privs() do_remove_file_privs()
+  fs: split off need_file_update_time and do_file_update_time
+  fs: add pending file update time flag.
+  xfs: enable async write file modification handling.
+  xfs: add async buffered write support
+  io_uring: add support for async buffered writes
+  mm: factor out _balance_dirty_pages() from balance_dirty_pages()
+  mm: add balance_dirty_pages_ratelimited_flags() function
+  iomap: use balance_dirty_pages_ratelimited_flags in iomap_write_iter
+  io_uring: add tracepoint for short writes
+  xfs: enable async buffered write support
+
+ fs/inode.c                      | 146 +++++++---
+ fs/io_uring.c                   |  32 +-
+ fs/iomap/buffered-io.c          |  67 ++++-
+ fs/read_write.c                 |   3 +-
+ fs/xfs/xfs_file.c               |  36 ++-
+ fs/xfs/xfs_iomap.c              |  14 +-
+ include/linux/fs.h              |   7 +
+ include/linux/writeback.h       |   1 +
+ include/trace/events/io_uring.h |  25 ++
+ mm/page-writeback.c             | 500 +++++++++++++++++---------------
+ 10 files changed, 520 insertions(+), 311 deletions(-)
+
+
+base-commit: 0cdd776ec92c0fec768c7079331804d3e52d4b27
+--=20
+2.30.2
+
