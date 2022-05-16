@@ -2,48 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D7705284BA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 May 2022 14:54:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 409B852850F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 May 2022 15:13:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243662AbiEPMye (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 May 2022 08:54:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45216 "EHLO
+        id S243074AbiEPNNE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 May 2022 09:13:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243671AbiEPMyJ (ORCPT
+        with ESMTP id S237841AbiEPNM7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 May 2022 08:54:09 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48AF5393F0;
-        Mon, 16 May 2022 05:53:44 -0700 (PDT)
+        Mon, 16 May 2022 09:12:59 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D9811EEC8;
+        Mon, 16 May 2022 06:12:58 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 97CA4CE1308;
-        Mon, 16 May 2022 12:53:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72703C385AA;
-        Mon, 16 May 2022 12:53:40 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id E7F3FB811B6;
+        Mon, 16 May 2022 13:12:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DB10C385B8;
+        Mon, 16 May 2022 13:12:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1652705621;
-        bh=FeFCtcoIMmiZDS7K86j8dEgmeuPJ8nXufxixTXfHCko=;
+        s=k20201202; t=1652706775;
+        bh=8FPoe1RAON30o/pCWwFs0A713UVrLNGUKmHerCIG1qQ=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=KOLYsx35/5Gy1jpzsbH6cQbYN6j+Pi1xMhpDNBbD0kHeRY0LG73xnv5dbusD3xyyW
-         bTLztq78rZ64dMOBIhdgtsdTKKTcd03kqZaCdeHqmLY9Gnn91DZh7E0AfbWlL6+l2C
-         LdfB3GxksNKJXRXxo9O9kryCcZKyqqz4cy/0PN5R0JROaaTDCp+tX4oG+F2mU/65DV
-         WeC4c976LAliqcj3+eRJTIJrAbtHd1ez7EiG2TIrCsgkEfvbOUjRZONhZ4jXnpaQVG
-         Cu0BiGtRRluR6wJMCUHhE+OiMtv1vUg2tHN3LMQn4jagXv+Cq98oLzCXoKHlTHPyMB
-         B1qBTtYXb5zZA==
-Message-ID: <eb3905425dfd44db3e035831c8cfd44305d3de65.camel@kernel.org>
-Subject: Re: [PATCH] iomap: don't invalidate folios after writeback errors
+        b=nH3efThIppw0sM26m2Bc3LimWeB3POnLRTd7U7offMmfKpz5GMVyiXJfNT2O43Dro
+         o6f5MFYs2Hi4cCnaIYHK43gb63YOh8OvzhAvt1bxSbKnhC9DfDhOkEhLIhC5jHtqVZ
+         b/wXmwCA1cLA/3CXjBCSHFyat4voaYzevS5dtPrWtRrWgptCQzRrNSwtdsRzYEswWQ
+         mGGx7MN3qLkYeYJMzyXFJXRK+CW2AKE1wHkQ46s6vkpu+o60fm3GHAqhqASscElFOY
+         dmUZ295Z2emRo84c+TrzUPokDHemLm3Y/ozZTAOo3tJAsCCNSkvs1HKnE6TfE44pxN
+         Tw2Sud2GlExvg==
+Message-ID: <2412ef109c2af459189b9cce9a39c2ed34eb7b61.camel@kernel.org>
+Subject: Re: [PATCH 1/2] fs/dcache: add d_compare() helper support
 From:   Jeff Layton <jlayton@kernel.org>
-To:     "Darrick J. Wong" <djwong@kernel.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        xfs <linux-xfs@vger.kernel.org>,
-        Christoph Hellwig <hch@infradead.org>
-Date:   Mon, 16 May 2022 08:53:39 -0400
-In-Reply-To: <YoHG5cMwvx8PSddI@magnolia>
-References: <YoHG5cMwvx8PSddI@magnolia>
+To:     Xiubo Li <xiubli@redhat.com>, viro@zeniv.linux.org.uk
+Cc:     idryomov@gmail.com, vshankar@redhat.com,
+        ceph-devel@vger.kernel.org, mcgrof@kernel.org,
+        akpm@linux-foundation.org, arnd@arndb.de,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 16 May 2022 09:12:53 -0400
+In-Reply-To: <20220516122046.40655-2-xiubli@redhat.com>
+References: <20220516122046.40655-1-xiubli@redhat.com>
+         <20220516122046.40655-2-xiubli@redhat.com>
 Content-Type: text/plain; charset="ISO-8859-15"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.44.1 (3.44.1-1.fc36) 
@@ -58,83 +58,61 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, 2022-05-15 at 20:37 -0700, Darrick J. Wong wrote:
-> From: Darrick J. Wong <djwong@kernel.org>
->=20
-> XFS has the unique behavior (as compared to the other Linux filesystems)
-> that on writeback errors it will completely invalidate the affected
-> folio and force the page cache to reread the contents from disk.  All
-> other filesystems leave the page mapped and up to date.
->=20
-> This is a rude awakening for user programs, since (in the case where
-> write fails but reread doesn't) file contents will appear to revert to
-> old disk contents with no notification other than an EIO on fsync.  This
-> might have been annoying back in the days when iomap dealt with one page
-> at a time, but with multipage folios, we can now throw away *megabytes*
-> worth of data for a single write error.
->=20
-> On *most* Linux filesystems, a program can respond to an EIO on write by
-> redirtying the entire file and scheduling it for writeback.  This isn't
-> foolproof, since the page that failed writeback is no longer dirty and
-> could be evicted, but programs that want to recover properly *also*
-> have to detect XFS and regenerate every write they've made to the file.
->=20
-> When running xfs/314 on arm64, I noticed a UAF bug when xfs_discard_folio
-> invalidates multipage folios that could be undergoing writeback.  If,
-> say, we have a 256K folio caching a mix of written and unwritten
-> extents, it's possible that we could start writeback of the first (say)
-> 64K of the folio and then hit a writeback error on the next 64K.  We
-> then free the iop attached to the folio, which is really bad because
-> writeback completion on the first 64k will trip over the "blocks per
-> folio > 1 && !iop" assertion.
->=20
-> This can't be fixed by only invalidating the folio if writeback fails at
-> the start of the folio, since the folio is marked !uptodate, which trips
-> other assertions elsewhere.  Get rid of the whole behavior entirely.
->=20
-> Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+On Mon, 2022-05-16 at 20:20 +0800, Xiubo Li wrote:
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
 > ---
->  fs/iomap/buffered-io.c |    1 -
->  fs/xfs/xfs_aops.c      |    4 +---
->  2 files changed, 1 insertion(+), 4 deletions(-)
+>  fs/dcache.c            | 15 +++++++++++++++
+>  include/linux/dcache.h |  2 ++
+>  2 files changed, 17 insertions(+)
 >=20
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 8fb9b2797fc5..94b53cbdefad 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -1387,7 +1387,6 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc=
-,
->  		if (wpc->ops->discard_folio)
->  			wpc->ops->discard_folio(folio, pos);
->  		if (!count) {
-> -			folio_clear_uptodate(folio);
->  			folio_unlock(folio);
->  			goto done;
->  		}
-> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-> index 90b7f4d127de..f6216d0fb0c2 100644
-> --- a/fs/xfs/xfs_aops.c
-> +++ b/fs/xfs/xfs_aops.c
-> @@ -464,7 +464,7 @@ xfs_discard_folio(
->  	int			error;
-> =20
->  	if (xfs_is_shutdown(mp))
-> -		goto out_invalidate;
-> +		return;
-> =20
->  	xfs_alert_ratelimited(mp,
->  		"page discard on page "PTR_FMT", inode 0x%llx, pos %llu.",
-> @@ -474,8 +474,6 @@ xfs_discard_folio(
->  			i_blocks_per_folio(inode, folio) - pageoff_fsb);
->  	if (error && !xfs_is_shutdown(mp))
->  		xfs_alert(mp, "page discard unable to remove delalloc mapping.");
-> -out_invalidate:
-> -	iomap_invalidate_folio(folio, offset, folio_size(folio) - offset);
+> diff --git a/fs/dcache.c b/fs/dcache.c
+> index 93f4f5ee07bf..95a72f92a94b 100644
+> --- a/fs/dcache.c
+> +++ b/fs/dcache.c
+> @@ -2262,6 +2262,21 @@ static inline bool d_same_name(const struct dentry=
+ *dentry,
+>  				       name) =3D=3D 0;
 >  }
 > =20
->  static const struct iomap_writeback_ops xfs_writeback_ops =3D {
+> +/**
+> + * d_compare - compare dentry name with case-exact name
+> + * @parent: parent dentry
+> + * @dentry: the negative dentry that was passed to the parent's lookup f=
+unc
+> + * @name:   the case-exact name to be associated with the returned dentr=
+y
+> + *
+> + * Return: 0 if names are same, or 1
+> + */
+> +bool d_compare(const struct dentry *parent, const struct dentry *dentry,
+> +	       const struct qstr *name)
+> +{
+> +	return !d_same_name(dentry, parent, name);
+> +}
+> +EXPORT_SYMBOL(d_compare);
+> +
+>  /**
+>   * __d_lookup_rcu - search for a dentry (racy, store-free)
+>   * @parent: parent dentry
+> diff --git a/include/linux/dcache.h b/include/linux/dcache.h
+> index f5bba51480b2..444b2230e5c3 100644
+> --- a/include/linux/dcache.h
+> +++ b/include/linux/dcache.h
+> @@ -233,6 +233,8 @@ extern struct dentry * d_alloc_parallel(struct dentry=
+ *, const struct qstr *,
+>  					wait_queue_head_t *);
+>  extern struct dentry * d_splice_alias(struct inode *, struct dentry *);
+>  extern struct dentry * d_add_ci(struct dentry *, struct inode *, struct =
+qstr *);
+> +extern bool d_compare(const struct dentry *parent, const struct dentry *=
+dentry,
+> +		      const struct qstr *name);
+>  extern struct dentry * d_exact_alias(struct dentry *, struct inode *);
+>  extern struct dentry *d_find_any_alias(struct inode *inode);
+>  extern struct dentry * d_obtain_alias(struct inode *);
 
-Nice to start bringing some consistency to this behavior across the
-kernel!
+I wonder if we ought to just un-inline and export d_same_name instead?
+Still, this is less disruptive and the dcache code is hugely performance
+sensitive. It's possible that inlining that function makes a difference.
 
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
