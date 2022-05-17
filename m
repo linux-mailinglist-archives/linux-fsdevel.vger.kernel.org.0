@@ -2,164 +2,188 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A66752A94E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 May 2022 19:33:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B31D052AC7E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 May 2022 22:12:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351433AbiEQRdT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 May 2022 13:33:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50290 "EHLO
+        id S1351392AbiEQUM1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 May 2022 16:12:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229938AbiEQRdS (ORCPT
+        with ESMTP id S1350965AbiEQUMZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 May 2022 13:33:18 -0400
-Received: from mail-qk1-x72f.google.com (mail-qk1-x72f.google.com [IPv6:2607:f8b0:4864:20::72f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A686F38D91;
-        Tue, 17 May 2022 10:33:17 -0700 (PDT)
-Received: by mail-qk1-x72f.google.com with SMTP id w3so15096747qkb.3;
-        Tue, 17 May 2022 10:33:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Vd7DNzYY5RY8Ws70viIR8qIHp/wYw4KLcew0bLswino=;
-        b=Hisn4oaWo4hxXNgE1UWte+a2zKZ+Fw/C2WeWR6edaGPndtlFtOBJ+adHKmHRAWvUEU
-         ChEZrTCByomFGYwHSUsNXwz1ab2FjIhTSaKXgn3FfcmpG/r9ipvjWciJXTD5Dy8YwHU6
-         bOACh+2l5O+isYSak+sK4xGzyMSfmjlYUc1OgIwiAmq4f6b4h2zjqK7tRsmCWxpLBsZR
-         ZSYWKhf/iB7wmVTr90tp6yNJxOBMCbeBeJo+6iiDdWhWyu21ugbFGVD93+EprbmFPo5i
-         McFwBWYxhgWSMeUO+iIzuNvk0B1RQinT7g0F93s6y1KKCJi8D/4dasOcBGtPf8r5OiQQ
-         EeiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Vd7DNzYY5RY8Ws70viIR8qIHp/wYw4KLcew0bLswino=;
-        b=jgn1UKWTzkxz6FWeaJWfK13rFFhrKP899u1usVnC6WbeeRe39pn6JgjFgutrgmcdra
-         jcECuReGlbtZXpVTh7/ISuiS6hGAcMRu3Z4sckmp3gkIogYWmf1sIVowmnpEb7svNiSZ
-         ki9J2peYdh9tAPyoXSSIgM16iweeZ26rexW3SrWPcbeAMLG4+ZUGvipXTRzpfpO2lTnS
-         LAYALVIlOSrCvBG/C+IhyVcHY5wkBhZaJcUgeJOneduFjfElQM3qbfYEGnA7GgThAvgT
-         JjovoBqki0lCMOaEg3UNkfOnmeh0TSBQxaqBZs9y0lMM7sEpChpDXuS8tpl8Srg6xr0z
-         QJsA==
-X-Gm-Message-State: AOAM5332AT0ax9bMa134Eot5jxnajVs9TL51GoAKtneCIFthmXtSS5pX
-        02Z0161Y/QUW6FafgRjwuzkOyWdTyzrL7oB+gks=
-X-Google-Smtp-Source: ABdhPJyfxHzdzBcFHoPWaImkuUIrBfAyRXqKbAYVkX9/5hK5XT5pEEEa8tOENehW2+XAf2Tj0KIqOJ3G3CquCYe/pi8=
-X-Received: by 2002:a05:620a:2909:b0:6a0:472b:a30d with SMTP id
- m9-20020a05620a290900b006a0472ba30dmr17027154qkp.258.1652808796796; Tue, 17
- May 2022 10:33:16 -0700 (PDT)
+        Tue, 17 May 2022 16:12:25 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A2863ED3D;
+        Tue, 17 May 2022 13:12:22 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 6A66D1F895;
+        Tue, 17 May 2022 20:12:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1652818341; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=wMAzSosFrjpyRNHwhTimMiNBTp0PkkatvGjrNxqNU48=;
+        b=ciBGttDVnx396lqefuZvz7Jaz9e46oM1bffmaTeWnfaGG9gVqVF9ERwEgpeDU6R1TczXyO
+        lxwngz++2bjaHQzSy/Qss77vOTGr3PXqIiOUs995jNSAKhdXw5HbNGZ9vBixKH20FEz8gT
+        DAG94sGBCn5AK+gSXyKs9fLFn22r0+M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1652818341;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=wMAzSosFrjpyRNHwhTimMiNBTp0PkkatvGjrNxqNU48=;
+        b=JgFSfLg37D5cCZs4p9bObYfTEs+h+fQURBXHEKRMmgvZRFU969Yj4IyNx6/lRo9uGCx55h
+        qSy7tyPZxj1KpiAA==
+Received: from quack3.suse.cz (jack.udp.ovpn2.nue.suse.de [10.163.43.118])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 3AC632C141;
+        Tue, 17 May 2022 20:12:21 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id E8F10A0631; Tue, 17 May 2022 22:12:17 +0200 (CEST)
+Date:   Tue, 17 May 2022 22:12:17 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Stefan Roesch <shr@fb.com>
+Cc:     io-uring@vger.kernel.org, kernel-team@fb.com, linux-mm@kvack.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        david@fromorbit.com, jack@suse.cz
+Subject: Re: [RFC PATCH v2 13/16] mm: add
+ balance_dirty_pages_ratelimited_flags() function
+Message-ID: <20220517201217.sr2sojdeas5k5cim@quack3.lan>
+References: <20220516164718.2419891-1-shr@fb.com>
+ <20220516164718.2419891-14-shr@fb.com>
 MIME-Version: 1.0
-References: <20220407011257.114287-1-sashal@kernel.org> <20220407011257.114287-21-sashal@kernel.org>
- <CAOQ4uxi+Z_YDga+fkcuOjwo5EKfRkhsCp4SwxMHK0ARdJ_-+Aw@mail.gmail.com> <CAOQ4uxg2c+MtCaA6+how4WOP3a3EAYfR1Rzz-PB9fxX411t3+Q@mail.gmail.com>
-In-Reply-To: <CAOQ4uxg2c+MtCaA6+how4WOP3a3EAYfR1Rzz-PB9fxX411t3+Q@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 17 May 2022 20:33:05 +0300
-Message-ID: <CAOQ4uxjcCnp3ctMZ4QL4Yc2McfLPZhRnfu=8E2YQVXRbTrJv1w@mail.gmail.com>
-Subject: Re: [PATCH AUTOSEL 5.15 21/27] fs: fix an infinite loop in iomap_fiemap
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     stable <stable@vger.kernel.org>, Guo Xuenan <guoxuenan@huawei.com>,
-        Hulk Robot <hulkci@huawei.com>, Christoph Hellwig <hch@lst.de>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220516164718.2419891-14-shr@fb.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Apr 7, 2022 at 2:30 PM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> On Thu, Apr 7, 2022 at 2:28 PM Amir Goldstein <amir73il@gmail.com> wrote:
-> >
-> > On Thu, Apr 7, 2022 at 7:26 AM Sasha Levin <sashal@kernel.org> wrote:
-> > >
-> > > From: Guo Xuenan <guoxuenan@huawei.com>
-> > >
-> > > [ Upstream commit 49df34221804cfd6384135b28b03c9461a31d024 ]
-> > >
-> > > when get fiemap starting from MAX_LFS_FILESIZE, (maxbytes - *len) < start
-> > > will always true , then *len set zero. because of start offset is beyond
-> > > file size, for erofs filesystem it will always return iomap.length with
-> > > zero,iomap iterate will enter infinite loop. it is necessary cover this
-> > > corner case to avoid this situation.
-> > >
-> > > ------------[ cut here ]------------
-> > > WARNING: CPU: 7 PID: 905 at fs/iomap/iter.c:35 iomap_iter+0x97f/0xc70
-> > > Modules linked in: xfs erofs
-> > > CPU: 7 PID: 905 Comm: iomap Tainted: G        W         5.17.0-rc8 #27
-> > > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubuntu1.1 04/01/2014
-> > > RIP: 0010:iomap_iter+0x97f/0xc70
-> > > Code: 85 a1 fc ff ff e8 71 be 9c ff 0f 1f 44 00 00 e9 92 fc ff ff e8 62 be 9c ff 0f 0b b8 fb ff ff ff e9 fc f8 ff ff e8 51 be 9c ff <0f> 0b e9 2b fc ff ff e8 45 be 9c ff 0f 0b e9 e1 fb ff ff e8 39 be
-> > > RSP: 0018:ffff888060a37ab0 EFLAGS: 00010293
-> > > RAX: 0000000000000000 RBX: ffff888060a37bb0 RCX: 0000000000000000
-> > > RDX: ffff88807e19a900 RSI: ffffffff81a7da7f RDI: ffff888060a37be0
-> > > RBP: 7fffffffffffffff R08: 0000000000000000 R09: ffff888060a37c20
-> > > R10: ffff888060a37c67 R11: ffffed100c146f8c R12: 7fffffffffffffff
-> > > R13: 0000000000000000 R14: ffff888060a37bd8 R15: ffff888060a37c20
-> > > FS:  00007fd3cca01540(0000) GS:ffff888108780000(0000) knlGS:0000000000000000
-> > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > CR2: 0000000020010820 CR3: 0000000054b92000 CR4: 00000000000006e0
-> > > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > > Call Trace:
-> > >  <TASK>
-> > >  iomap_fiemap+0x1c9/0x2f0
-> > >  erofs_fiemap+0x64/0x90 [erofs]
-> > >  do_vfs_ioctl+0x40d/0x12e0
-> > >  __x64_sys_ioctl+0xaa/0x1c0
-> > >  do_syscall_64+0x35/0x80
-> > >  entry_SYSCALL_64_after_hwframe+0x44/0xae
-> > >  </TASK>
-> > > ---[ end trace 0000000000000000 ]---
-> > > watchdog: BUG: soft lockup - CPU#7 stuck for 26s! [iomap:905]
-> > >
-> > > Reported-by: Hulk Robot <hulkci@huawei.com>
-> > > Signed-off-by: Guo Xuenan <guoxuenan@huawei.com>
-> > > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > > [djwong: fix some typos]
-> > > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-> > > Signed-off-by: Darrick J. Wong <djwong@kernel.org>
-> > > Signed-off-by: Sasha Levin <sashal@kernel.org>
-> > > ---
-> > >  fs/ioctl.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/fs/ioctl.c b/fs/ioctl.c
-> > > index 504e69578112..e0a3455f9a0f 100644
-> > > --- a/fs/ioctl.c
-> > > +++ b/fs/ioctl.c
-> > > @@ -173,7 +173,7 @@ int fiemap_prep(struct inode *inode, struct fiemap_extent_info *fieinfo,
-> > >
-> > >         if (*len == 0)
-> > >                 return -EINVAL;
-> > > -       if (start > maxbytes)
-> > > +       if (start >= maxbytes)
-> > >                 return -EFBIG;
-> > >
-> > >         /*
-> > > --
-> > > 2.35.1
-> > >
-> >
-> > Sasha,
-> >
-> > Any reason why I didn't see this patch posted for 5.10.y?
-> > I happen to know that it applies cleanly to 5.10.109 and I also included it in
-> > my xfs-5.10.y patch candidates branch [1] which has gone through some
-> > xfstests cycles already.
-> >
->
-> Nevermind, I see it was just posted :)
->
+On Mon 16-05-22 09:47:15, Stefan Roesch wrote:
+> This adds the function balance_dirty_pages_ratelimited_flags(). It adds
+> the parameter is_async to balance_dirty_pages_ratelimited(). In case
+> this is an async write, it will call _balance_diirty_pages() to
+> determine if write throttling needs to be enabled. If write throttling
+> is enabled, it retuns -EAGAIN, so the write request can be punted to
+> the io-uring worker.
+> 
+> The new function is changed to return the sleep time, so callers can
+> observe if the write has been punted.
+> 
+> For non-async writes the current behavior is maintained.
+> 
+> Signed-off-by: Stefan Roesch <shr@fb.com>
+> ---
+>  include/linux/writeback.h |  1 +
+>  mm/page-writeback.c       | 48 ++++++++++++++++++++++++++-------------
+>  2 files changed, 33 insertions(+), 16 deletions(-)
+> 
+> diff --git a/include/linux/writeback.h b/include/linux/writeback.h
+> index fec248ab1fec..d589804bb3be 100644
+> --- a/include/linux/writeback.h
+> +++ b/include/linux/writeback.h
+> @@ -373,6 +373,7 @@ unsigned long wb_calc_thresh(struct bdi_writeback *wb, unsigned long thresh);
+>  
+>  void wb_update_bandwidth(struct bdi_writeback *wb);
+>  void balance_dirty_pages_ratelimited(struct address_space *mapping);
+> +int  balance_dirty_pages_ratelimited_flags(struct address_space *mapping, bool is_async);
+>  bool wb_over_bg_thresh(struct bdi_writeback *wb);
+>  
+>  typedef int (*writepage_t)(struct page *page, struct writeback_control *wbc,
+> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+> index cbb74c0666c6..78f1326f3f20 100644
+> --- a/mm/page-writeback.c
+> +++ b/mm/page-writeback.c
+> @@ -1877,28 +1877,17 @@ static DEFINE_PER_CPU(int, bdp_ratelimits);
+>   */
+>  DEFINE_PER_CPU(int, dirty_throttle_leaks) = 0;
+>  
+> -/**
+> - * balance_dirty_pages_ratelimited - balance dirty memory state
+> - * @mapping: address_space which was dirtied
+> - *
+> - * Processes which are dirtying memory should call in here once for each page
+> - * which was newly dirtied.  The function will periodically check the system's
+> - * dirty state and will initiate writeback if needed.
+> - *
+> - * Once we're over the dirty memory limit we decrease the ratelimiting
+> - * by a lot, to prevent individual processes from overshooting the limit
+> - * by (ratelimit_pages) each.
+> - */
+> -void balance_dirty_pages_ratelimited(struct address_space *mapping)
+> +int balance_dirty_pages_ratelimited_flags(struct address_space *mapping, bool is_async)
 
-Sasha,
+Perhaps I'd call the other function balance_dirty_pages_ratelimited_async()
+and then keep balance_dirty_pages_ratelimited_flags() as an internal
+function. It is then more obvious at the external call sites what the call
+is about (unlike the true/false argument).
 
-I do not see this patch in either of the stable trees.
-Did it fall through the cracks?
+								Honza
 
-Thanks,
-Amir.
+>  {
+>  	struct inode *inode = mapping->host;
+>  	struct backing_dev_info *bdi = inode_to_bdi(inode);
+>  	struct bdi_writeback *wb = NULL;
+>  	int ratelimit;
+> +	int ret = 0;
+>  	int *p;
+>  
+>  	if (!(bdi->capabilities & BDI_CAP_WRITEBACK))
+> -		return;
+> +		return ret;
+>  
+>  	if (inode_cgwb_enabled(inode))
+>  		wb = wb_get_create_current(bdi, GFP_KERNEL);
+> @@ -1937,10 +1926,37 @@ void balance_dirty_pages_ratelimited(struct address_space *mapping)
+>  	}
+>  	preempt_enable();
+>  
+> -	if (unlikely(current->nr_dirtied >= ratelimit))
+> -		balance_dirty_pages(wb, current->nr_dirtied);
+> +	if (unlikely(current->nr_dirtied >= ratelimit)) {
+> +		if (is_async) {
+> +			struct bdp_ctx ctx = { BDP_CTX_INIT(ctx, wb) };
+> +
+> +			ret = _balance_dirty_pages(wb, current->nr_dirtied, &ctx);
+> +			if (ret)
+> +				ret = -EAGAIN;
+> +		} else {
+> +			balance_dirty_pages(wb, current->nr_dirtied);
+> +		}
+> +	}
+>  
+>  	wb_put(wb);
+> +	return ret;
+> +}
+> +
+> +/**
+> + * balance_dirty_pages_ratelimited - balance dirty memory state
+> + * @mapping: address_space which was dirtied
+> + *
+> + * Processes which are dirtying memory should call in here once for each page
+> + * which was newly dirtied.  The function will periodically check the system's
+> + * dirty state and will initiate writeback if needed.
+> + *
+> + * Once we're over the dirty memory limit we decrease the ratelimiting
+> + * by a lot, to prevent individual processes from overshooting the limit
+> + * by (ratelimit_pages) each.
+> + */
+> +void balance_dirty_pages_ratelimited(struct address_space *mapping)
+> +{
+> +	balance_dirty_pages_ratelimited_flags(mapping, false);
+>  }
+>  EXPORT_SYMBOL(balance_dirty_pages_ratelimited);
+>  
+> -- 
+> 2.30.2
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
