@@ -2,222 +2,505 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 95C3152A06C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 May 2022 13:31:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CEDA52A081
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 May 2022 13:36:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343881AbiEQLbT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 May 2022 07:31:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36792 "EHLO
+        id S1344335AbiEQLgO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 May 2022 07:36:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233488AbiEQLbR (ORCPT
+        with ESMTP id S1345293AbiEQLgA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 May 2022 07:31:17 -0400
-Received: from mail-qt1-x835.google.com (mail-qt1-x835.google.com [IPv6:2607:f8b0:4864:20::835])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25B7726ACC;
-        Tue, 17 May 2022 04:31:15 -0700 (PDT)
-Received: by mail-qt1-x835.google.com with SMTP id u35so14026416qtc.13;
-        Tue, 17 May 2022 04:31:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JkT6sjdKQ4EcOctcNvzAX+AKkerDWu5LLVQt4wUPvkk=;
-        b=HwF7PmsW84Bx6hf9aV2SI5DvhdCSJjsgMaSLTQCv8Vj5gSa7Bs74kwOCpLmBikMjx/
-         LR6ra/UqNk8+8hx4XoaHc3ftCM4gdPo4DgIhAi1eIkEkuYqgNiD5kbGo6UbjlxqER0kq
-         4FGkGanHsYCLCGv6yrFPI33bo558kB1KfHsp4coLIBdBn7vDR59w+7Hh84Cv406OXGMF
-         RJkCOM1uDOZvmVSYd2hWhruHqeEOVpnhVxTK4K+uZR0S9llASMDBc3o2+lualYL7KQi0
-         SzO+YJSwWj8u3GxqOYWCUdo+eSX3eS7TBr3/6tlJho3guFa31GVQfFjx+nxTMsK7O77O
-         elag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JkT6sjdKQ4EcOctcNvzAX+AKkerDWu5LLVQt4wUPvkk=;
-        b=F9ZR/oBcD6kYaGcpI+PWAhJPknMBWIA6ZcLdTE2FU2HJZTs/X992jZoZFAYqkHvtNR
-         TXw/CggOBhdhuQCwgPQtlIp3wl/CY+4Gmk8EZ8AGqmnerMQcEIgv2X8s9no0dOCyy3xu
-         WibRaM5dx5kOSdflJ97MmtsyZFVbe+8hk3I0kb+sPJhzu6PVZcPSLjnHZ8FUm/YzfIcy
-         Lq5FF4sxMoYAlmyOCpErn1gC2NbaQb4tez/xYVT8uV5NZ/SYBxQnk8s6qJBifqTgjyN7
-         xXhoF2yIbV7VT15uPK8JiYS8VsVQCIQILsBTUWQpt14/4qCV0yQPqiERD1jDbfD9s0z0
-         PSKA==
-X-Gm-Message-State: AOAM530Flp3RqROl5G7126I8kkZ4qEX244wvSPLzR0+WjMdnFrfn/vb5
-        20RqnKUSPn2QhJkF/WV7JCG+G8DFwrhfR+oQqNs=
-X-Google-Smtp-Source: ABdhPJxGde08Dr24KPdJkb021fHXk+Ytng0RuldUpyBWBpCzIQUnJok1bs+nr9kLdYy+jSdDobH2zo0LcdnlBpcigNM=
-X-Received: by 2002:ac8:4e42:0:b0:2f4:fc3c:b0c8 with SMTP id
- e2-20020ac84e42000000b002f4fc3cb0c8mr19381943qtw.684.1652787074230; Tue, 17
- May 2022 04:31:14 -0700 (PDT)
+        Tue, 17 May 2022 07:36:00 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B69B1111;
+        Tue, 17 May 2022 04:35:57 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3F9F660B42;
+        Tue, 17 May 2022 11:35:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88D0BC385B8;
+        Tue, 17 May 2022 11:35:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1652787356;
+        bh=454QTHXqd/7ItXLbdFoYQRE57t9fkkVFtXsXRQcOe2I=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=Fx7waUJcaLTe72DygUNyzsfId9ea34MiIZsAlU/WXzhFxpxxXLioYwNAAs9dqaqAL
+         /B3FwSHB2SUGOQxa5vlL/PmxprK9DdDutdaUIc+hD/mQGxRRZu2L+h932aXt99sG3k
+         FmR6zQ4zUgRzpoD4zIKhpXiv3B+YfQ2+yf2Q/KrDH3R+R/5C/ahxmhQdBjE81b/rKw
+         ZKckwTDXtj/fjibKdmmlZg1tPcT0kx0pIabvTKpjX8NNo52/beHKlV8NkEckGAxaVv
+         MzRvY24cetpOfm3TTzBxwkw96H+Ph2H7WYWGePaxHQPKHI5Z8D1+lSV4EKSOI0u2iw
+         svPDz4r8aHvaQ==
+Message-ID: <a2d05d80e30831e915e707a48520139500befc2b.camel@kernel.org>
+Subject: Re: [PATCH v2 2/2] ceph: wait the first reply of inflight
+ unlink/rmdir
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Xiubo Li <xiubli@redhat.com>, viro@zeniv.linux.org.uk
+Cc:     idryomov@gmail.com, vshankar@redhat.com,
+        ceph-devel@vger.kernel.org, arnd@arndb.de, mcgrof@kernel.org,
+        akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
+Date:   Tue, 17 May 2022 07:35:54 -0400
+In-Reply-To: <20220517010316.81483-3-xiubli@redhat.com>
+References: <20220517010316.81483-1-xiubli@redhat.com>
+         <20220517010316.81483-3-xiubli@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.1 (3.44.1-1.fc36) 
 MIME-Version: 1.0
-References: <cover.1652730821.git.rgb@redhat.com> <1520f08c023d1e919b1a2af161d5a19367b6b4bf.1652730821.git.rgb@redhat.com>
- <CAOQ4uxjV-eNxJ=O_WFTTzspCxXZqpMdh3Fe-N5aB-h1rDr_1hQ@mail.gmail.com> <20220517103236.i7gtsw7akiikqwam@quack3.lan>
-In-Reply-To: <20220517103236.i7gtsw7akiikqwam@quack3.lan>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 17 May 2022 14:31:02 +0300
-Message-ID: <CAOQ4uxj5HZva82g_ku8uexnqE65K-ThKFJqABNg-A-rc03cVfg@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] fanotify: define struct members to hold response
- decision context
-To:     Jan Kara <jack@suse.cz>
-Cc:     Richard Guy Briggs <rgb@redhat.com>,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Steve Grubb <sgrubb@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 17, 2022 at 1:32 PM Jan Kara <jack@suse.cz> wrote:
->
-> On Tue 17-05-22 08:37:28, Amir Goldstein wrote:
-> > On Mon, May 16, 2022 at 11:22 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > >
-> > > This patch adds 2 structure members to the response returned from user
-> > > space on a permission event. The first field is 32 bits for the context
-> > > type.  The context type will describe what the meaning is of the second
-> > > field. The default is none. The patch defines one additional context
-> > > type which means that the second field is a union containing a 32-bit
-> > > rule number. This will allow for the creation of other context types in
-> > > the future if other users of the API identify different needs.  The
-> > > second field size is defined by the context type and can be used to pass
-> > > along the data described by the context.
-> > >
-> > > To support this, there is a macro for user space to check that the data
-> > > being sent is valid. Of course, without this check, anything that
-> > > overflows the bit field will trigger an EINVAL based on the use of
-> > > FAN_INVALID_RESPONSE_MASK in process_access_response().
-> > >
-> > > Suggested-by: Steve Grubb <sgrubb@redhat.com>
-> > > Link: https://lore.kernel.org/r/2745105.e9J7NaK4W3@x2
-> > > Suggested-by: Jan Kara <jack@suse.cz>
-> > > Link: https://lore.kernel.org/r/20201001101219.GE17860@quack2.suse.cz
-> > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
->
-> ...
-> > >  static int process_access_response(struct fsnotify_group *group,
-> > > -                                  struct fanotify_response *response_struct)
-> > > +                                  struct fanotify_response *response_struct,
-> > > +                                  size_t count)
-> > >  {
-> > >         struct fanotify_perm_event *event;
-> > >         int fd = response_struct->fd;
-> > >         u32 response = response_struct->response;
-> > >
-> > > -       pr_debug("%s: group=%p fd=%d response=%u\n", __func__, group,
-> > > -                fd, response);
-> > > +       pr_debug("%s: group=%p fd=%d response=%u type=%u size=%lu\n", __func__,
-> > > +                group, fd, response, response_struct->extra_info_type, count);
-> > > +       if (fd < 0)
-> > > +               return -EINVAL;
-> > >         /*
-> > >          * make sure the response is valid, if invalid we do nothing and either
-> > >          * userspace can send a valid response or we will clean it up after the
-> > >          * timeout
-> > >          */
-> > > -       switch (response & ~FAN_AUDIT) {
-> > > -       case FAN_ALLOW:
-> > > -       case FAN_DENY:
-> > > -               break;
-> > > -       default:
-> > > -               return -EINVAL;
-> > > -       }
-> > > -
-> > > -       if (fd < 0)
-> > > +       if (FAN_INVALID_RESPONSE_MASK(response))
-> >
-> > That is a logic change, because now the response value of 0 becomes valid.
-> >
-> > Since you did not document this change in the commit message I assume this was
-> > non intentional?
-> > However, this behavior change is something that I did ask for, but it should be
-> > done is a separate commit:
-> >
-> >  /* These are NOT bitwise flags.  Both bits can be used together.  */
-> > #define FAN_TEST          0x00
-> > #define FAN_ALLOW       0x01
-> > #define FAN_DENY        0x02
-> > #define FANOTIFY_RESPONSE_ACCESS \
-> >             (FAN_TEST|FAN_ALLOW | FAN_DENY)
-> >
-> > ...
-> > int access = response & FANOTIFY_RESPONSE_ACCESS;
-> >
-> > 1. Do return EINVAL for access == 0
-> > 2. Let all the rest of the EINVAL checks run (including extra type)
-> > 3. Move if (fd < 0) to last check
-> > 4. Add if (!access) return 0 before if (fd < 0)
-> >
-> > That will provide a mechanism for userspace to probe the
-> > kernel support for extra types in general and specific types
-> > that it may respond with.
->
-> I have to admit I didn't quite grok your suggestion here although I
-> understand (and agree with) the general direction of the proposal :). Maybe
-> code would explain it better what you have in mind?
->
+On Tue, 2022-05-17 at 09:03 +0800, Xiubo Li wrote:
+> In async unlink case the kclient won't wait for the first reply
+> from MDS and just drop all the links and unhash the dentry and then
+> succeeds immediately.
+>=20
+> For any new create/link/rename,etc requests followed by using the
+> same file names we must wait for the first reply of the inflight
+> unlink request, or the MDS possibly will fail these following
+> requests with -EEXIST if the inflight async unlink request was
+> delayed for some reasons.
+>=20
+> And the worst case is that for the none async openc request it will
+> successfully open the file if the CDentry hasn't been unlinked yet,
+> but later the previous delayed async unlink request will remove the
+> CDenty. That means the just created file is possiblly deleted later
+> by accident.
+>=20
+> We need to wait for the inflight async unlink requests to finish
+> when creating new files/directories by using the same file names.
+>=20
+> URL: https://tracker.ceph.com/issues/55332
+> Reported-by: kernel test robot <lkp@intel.com>
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>  fs/ceph/dir.c        | 70 +++++++++++++++++++++++++++++++++++++++----
+>  fs/ceph/file.c       |  5 ++++
+>  fs/ceph/mds_client.c | 71 ++++++++++++++++++++++++++++++++++++++++++++
+>  fs/ceph/mds_client.h |  1 +
+>  fs/ceph/super.c      |  3 ++
+>  fs/ceph/super.h      | 19 ++++++++----
+>  6 files changed, 159 insertions(+), 10 deletions(-)
+>=20
+> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+> index eae417d71136..88e0048d719e 100644
+> --- a/fs/ceph/dir.c
+> +++ b/fs/ceph/dir.c
+> @@ -856,6 +856,10 @@ static int ceph_mknod(struct user_namespace *mnt_use=
+rns, struct inode *dir,
+>  	if (ceph_snap(dir) !=3D CEPH_NOSNAP)
+>  		return -EROFS;
+> =20
+> +	err =3D ceph_wait_on_conflict_unlink(dentry);
+> +	if (err)
+> +		return err;
+> +
+>  	if (ceph_quota_is_max_files_exceeded(dir)) {
+>  		err =3D -EDQUOT;
+>  		goto out;
+> @@ -918,6 +922,10 @@ static int ceph_symlink(struct user_namespace *mnt_u=
+serns, struct inode *dir,
+>  	if (ceph_snap(dir) !=3D CEPH_NOSNAP)
+>  		return -EROFS;
+> =20
+> +	err =3D ceph_wait_on_conflict_unlink(dentry);
+> +	if (err)
+> +		return err;
+> +
+>  	if (ceph_quota_is_max_files_exceeded(dir)) {
+>  		err =3D -EDQUOT;
+>  		goto out;
+> @@ -968,9 +976,13 @@ static int ceph_mkdir(struct user_namespace *mnt_use=
+rns, struct inode *dir,
+>  	struct ceph_mds_client *mdsc =3D ceph_sb_to_mdsc(dir->i_sb);
+>  	struct ceph_mds_request *req;
+>  	struct ceph_acl_sec_ctx as_ctx =3D {};
+> -	int err =3D -EROFS;
+> +	int err;
+>  	int op;
+> =20
+> +	err =3D ceph_wait_on_conflict_unlink(dentry);
+> +	if (err)
+> +		return err;
+> +
+>  	if (ceph_snap(dir) =3D=3D CEPH_SNAPDIR) {
+>  		/* mkdir .snap/foo is a MKSNAP */
+>  		op =3D CEPH_MDS_OP_MKSNAP;
+> @@ -980,6 +992,7 @@ static int ceph_mkdir(struct user_namespace *mnt_user=
+ns, struct inode *dir,
+>  		dout("mkdir dir %p dn %p mode 0%ho\n", dir, dentry, mode);
+>  		op =3D CEPH_MDS_OP_MKDIR;
+>  	} else {
+> +		err =3D -EROFS;
+>  		goto out;
+>  	}
+> =20
+> @@ -1037,6 +1050,10 @@ static int ceph_link(struct dentry *old_dentry, st=
+ruct inode *dir,
+>  	struct ceph_mds_request *req;
+>  	int err;
+> =20
+> +	err =3D ceph_wait_on_conflict_unlink(dentry);
+> +	if (err)
+> +		return err;
+> +
+>  	if (ceph_snap(dir) !=3D CEPH_NOSNAP)
+>  		return -EROFS;
+> =20
+> @@ -1071,9 +1088,27 @@ static int ceph_link(struct dentry *old_dentry, st=
+ruct inode *dir,
+>  static void ceph_async_unlink_cb(struct ceph_mds_client *mdsc,
+>  				 struct ceph_mds_request *req)
+>  {
+> +	struct dentry *dentry =3D req->r_dentry;
+> +	struct ceph_fs_client *fsc =3D ceph_sb_to_client(dentry->d_sb);
+> +	struct ceph_dentry_info *di =3D ceph_dentry(dentry);
+>  	int result =3D req->r_err ? req->r_err :
+>  			le32_to_cpu(req->r_reply_info.head->result);
+> =20
+> +	if (test_bit(CEPH_DENTRY_ASYNC_UNLINK_BIT, &di->flags)) {
 
-+/* These are NOT bitwise flags.  Both bits can be used together.  */
-+#define FAN_TEST          0x00
-#define FAN_ALLOW       0x01
-#define FAN_DENY        0x02
-#define FAN_AUDIT       0x10    /* Bit mask to create audit record for result */
-+#define FANOTIFY_RESPONSE_ACCESS \
-+            (FAN_TEST|FAN_ALLOW | FAN_DENY)
+Shouldn't this bit always be set in this case? Maybe this should be a
+WARN_ON ?
 
-...
+> +		BUG_ON(req->r_op !=3D CEPH_MDS_OP_UNLINK);
 
-@@ -311,6 +314,7 @@ static int process_access_response(struct
-fsnotify_group *group,
-        struct fanotify_perm_event *event;
-        int fd = response_struct->fd;
-        int response = response_struct->response;
-+       int access = response & FANOTIFY_RESPONSE_ACCESS;
+Note that this will crash the box in some environments (e.g. RHEL
+kernels). I really advise against adding new BUG_ON calls unless the
+situation is so dire that the machine can't (or shouldn't) continue on.
 
-        pr_debug("%s: group=%p fd=%d response=%d\n", __func__, group,
-                 fd, response);
-@@ -319,18 +323,33 @@ static int process_access_response(struct
-fsnotify_group *group,
-         * userspace can send a valid response or we will clean it up after the
-         * timeout
-         */
--       switch (response & ~FAN_AUDIT) {
-+       if (!response)
-+               return -EINVAL;
-+
-+       switch (access) {
-        case FAN_ALLOW:
-        case FAN_DENY:
-+       case FAN_TEST:
-                break;
-        default:
-                return -EINVAL;
-        }
+In this case, we got a bogus reply from the MDS. I think throwing a
+pr_warn message and erroring out the unlink would be better.
 
--       if (fd < 0)
--                return -EINVAL;
--
-       if ((response & FAN_AUDIT) && !FAN_GROUP_FLAG(group, FAN_ENABLE_AUDIT))
-                return -EINVAL;
+> +
+> +		spin_lock(&fsc->async_unlink_conflict_lock);
+> +		hash_del_rcu(&di->hnode);
+> +		spin_unlock(&fsc->async_unlink_conflict_lock);
+> +
+> +		spin_lock(&dentry->d_lock);
+> +		di->flags &=3D ~CEPH_DENTRY_ASYNC_UNLINK;
+> +		wake_up_bit(&di->flags, CEPH_DENTRY_ASYNC_UNLINK_BIT);
+> +		spin_unlock(&dentry->d_lock);
+> +
+> +		synchronize_rcu();
 
-+       /*
-+        * FAN_TEST|FAN_AUDIT response can be written during setup time to probe
-+        * if the kernel has support for FAN_AUDIT.
-+        * For FAN_TEST, fd must not be valid.
-+        */
-+       if (access == FAN_TEST) {
-+               if (fd >= 0)
-+                       return -EINVAL;
-+               return 0;
-+       }
-+
-+       if (fd < 0)
-+                return -EINVAL;
+Why do you need to synchronize_rcu here?
 
-Thanks,
-Amir.
+I guess the concern is that once we put the req, then it could put the
+dentry and free di while someone is still walking the hash?
+
+> +	}
+> +
+>  	if (result =3D=3D -EJUKEBOX)
+>  		goto out;
+> =20
+> @@ -1081,7 +1116,7 @@ static void ceph_async_unlink_cb(struct ceph_mds_cl=
+ient *mdsc,
+>  	if (result) {
+>  		int pathlen =3D 0;
+>  		u64 base =3D 0;
+> -		char *path =3D ceph_mdsc_build_path(req->r_dentry, &pathlen,
+> +		char *path =3D ceph_mdsc_build_path(dentry, &pathlen,
+>  						  &base, 0);
+> =20
+>  		/* mark error on parent + clear complete */
+> @@ -1089,13 +1124,13 @@ static void ceph_async_unlink_cb(struct ceph_mds_=
+client *mdsc,
+>  		ceph_dir_clear_complete(req->r_parent);
+> =20
+>  		/* drop the dentry -- we don't know its status */
+> -		if (!d_unhashed(req->r_dentry))
+> -			d_drop(req->r_dentry);
+> +		if (!d_unhashed(dentry))
+> +			d_drop(dentry);
+> =20
+>  		/* mark inode itself for an error (since metadata is bogus) */
+>  		mapping_set_error(req->r_old_inode->i_mapping, result);
+> =20
+> -		pr_warn("ceph: async unlink failure path=3D(%llx)%s result=3D%d!\n",
+> +		pr_warn("async unlink failure path=3D(%llx)%s result=3D%d!\n",
+>  			base, IS_ERR(path) ? "<<bad>>" : path, result);
+>  		ceph_mdsc_free_path(path, pathlen);
+>  	}
+> @@ -1180,6 +1215,8 @@ static int ceph_unlink(struct inode *dir, struct de=
+ntry *dentry)
+> =20
+>  	if (try_async && op =3D=3D CEPH_MDS_OP_UNLINK &&
+>  	    (req->r_dir_caps =3D get_caps_for_async_unlink(dir, dentry))) {
+> +		struct ceph_dentry_info *di =3D ceph_dentry(dentry);
+> +
+>  		dout("async unlink on %llu/%.*s caps=3D%s", ceph_ino(dir),
+>  		     dentry->d_name.len, dentry->d_name.name,
+>  		     ceph_cap_string(req->r_dir_caps));
+> @@ -1187,6 +1224,16 @@ static int ceph_unlink(struct inode *dir, struct d=
+entry *dentry)
+>  		req->r_callback =3D ceph_async_unlink_cb;
+>  		req->r_old_inode =3D d_inode(dentry);
+>  		ihold(req->r_old_inode);
+> +
+> +		spin_lock(&dentry->d_lock);
+> +		di->flags |=3D CEPH_DENTRY_ASYNC_UNLINK;
+> +		spin_unlock(&dentry->d_lock);
+> +
+> +		spin_lock(&fsc->async_unlink_conflict_lock);
+> +		hash_add_rcu(fsc->async_unlink_conflict, &di->hnode,
+> +			     dentry->d_name.hash);
+> +		spin_unlock(&fsc->async_unlink_conflict_lock);
+> +
+>  		err =3D ceph_mdsc_submit_request(mdsc, dir, req);
+>  		if (!err) {
+>  			/*
+> @@ -1198,6 +1245,15 @@ static int ceph_unlink(struct inode *dir, struct d=
+entry *dentry)
+>  		} else if (err =3D=3D -EJUKEBOX) {
+>  			try_async =3D false;
+>  			ceph_mdsc_put_request(req);
+> +
+> +			spin_lock(&dentry->d_lock);
+> +			di->flags &=3D ~CEPH_DENTRY_ASYNC_UNLINK;
+> +			spin_unlock(&dentry->d_lock);
+> +
+> +			spin_lock(&fsc->async_unlink_conflict_lock);
+> +			hash_del_rcu(&di->hnode);
+> +			spin_unlock(&fsc->async_unlink_conflict_lock);
+> +
+>  			goto retry;
+>  		}
+>  	} else {
+> @@ -1237,6 +1293,10 @@ static int ceph_rename(struct user_namespace *mnt_=
+userns, struct inode *old_dir,
+>  	    (!ceph_quota_is_same_realm(old_dir, new_dir)))
+>  		return -EXDEV;
+> =20
+> +	err =3D ceph_wait_on_conflict_unlink(new_dentry);
+> +	if (err)
+> +		return err;
+> +
+>  	dout("rename dir %p dentry %p to dir %p dentry %p\n",
+>  	     old_dir, old_dentry, new_dir, new_dentry);
+>  	req =3D ceph_mdsc_create_request(mdsc, op, USE_AUTH_MDS);
+> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> index 8c8226c0feac..47d068e6436a 100644
+> --- a/fs/ceph/file.c
+> +++ b/fs/ceph/file.c
+> @@ -740,6 +740,10 @@ int ceph_atomic_open(struct inode *dir, struct dentr=
+y *dentry,
+>  	if (dentry->d_name.len > NAME_MAX)
+>  		return -ENAMETOOLONG;
+> =20
+> +	err =3D ceph_wait_on_conflict_unlink(dentry);
+> +	if (err)
+> +		return err;
+> +
+>  	if (flags & O_CREAT) {
+>  		if (ceph_quota_is_max_files_exceeded(dir))
+>  			return -EDQUOT;
+> @@ -757,6 +761,7 @@ int ceph_atomic_open(struct inode *dir, struct dentry=
+ *dentry,
+>  		/* If it's not being looked up, it's negative */
+>  		return -ENOENT;
+>  	}
+> +
+>  retry:
+>  	/* do the open */
+>  	req =3D prepare_open_request(dir->i_sb, flags, mode);
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index e8c87dea0551..bb67f3d5a337 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -655,6 +655,77 @@ static void destroy_reply_info(struct ceph_mds_reply=
+_info_parsed *info)
+>  	free_pages((unsigned long)info->dir_entries, get_order(info->dir_buf_si=
+ze));
+>  }
+> =20
+> +/*
+> + * In async unlink case the kclient won't wait for the first reply
+> + * from MDS and just drop all the links and unhash the dentry and then
+> + * succeeds immediately.
+> + *
+> + * For any new create/link/rename,etc requests followed by using the
+> + * same file names we must wait for the first reply of the inflight
+> + * unlink request, or the MDS possibly will fail these following
+> + * requests with -EEXIST if the inflight async unlink request was
+> + * delayed for some reasons.
+> + *
+> + * And the worst case is that for the none async openc request it will
+> + * successfully open the file if the CDentry hasn't been unlinked yet,
+> + * but later the previous delayed async unlink request will remove the
+> + * CDenty. That means the just created file is possiblly deleted later
+> + * by accident.
+> + *
+> + * We need to wait for the inflight async unlink requests to finish
+> + * when creating new files/directories by using the same file names.
+> + */
+> +int ceph_wait_on_conflict_unlink(struct dentry *dentry)
+> +{
+> +	struct ceph_fs_client *fsc =3D ceph_sb_to_client(dentry->d_sb);
+> +	struct dentry *pdentry =3D dentry->d_parent;
+> +	struct dentry *udentry, *found =3D NULL;
+> +	struct ceph_dentry_info *di;
+> +	struct qstr dname;
+> +	u32 hash =3D dentry->d_name.hash;
+> +	int err;
+> +
+> +	dname.name =3D dentry->d_name.name;
+> +	dname.len =3D dentry->d_name.len;
+> +
+> +	rcu_read_lock();
+> +	hash_for_each_possible_rcu(fsc->async_unlink_conflict, di,
+> +				   hnode, hash) {
+> +		udentry =3D di->dentry;
+> +
+> +		spin_lock(&udentry->d_lock);
+> +		if (udentry->d_name.hash !=3D hash)
+> +			goto next;
+> +		if (unlikely(udentry->d_parent !=3D pdentry))
+> +			goto next;
+> +		if (!hash_hashed(&di->hnode))
+> +			goto next;
+> +
+> +		WARN_ON_ONCE(!test_bit(CEPH_DENTRY_ASYNC_UNLINK_BIT, &di->flags));
+
+A stack trace is not likely to be useful here. This means that we have
+an entry in the hash that looks invalid. The stack trace of the waiter
+probably won't tell us anything useful.
+
+What might be better is to pr_warn some info about the dentry in this
+case. Maybe the name, parent inode, etc...
+
+> +
+> +		if (d_compare(pdentry, udentry, &dname))
+> +			goto next;
+> +
+> +		spin_unlock(&udentry->d_lock);
+> +		found =3D dget(udentry);
+> +		break;
+> +next:
+> +		spin_unlock(&udentry->d_lock);
+> +	}
+> +	rcu_read_unlock();
+> +
+> +	if (likely(!found))
+> +		return 0;
+> +
+> +	dout("%s dentry %p:%pd conflict with old %p:%pd\n", __func__,
+> +	     dentry, dentry, found, found);
+> +
+> +	err =3D wait_on_bit(&di->flags, CEPH_DENTRY_ASYNC_UNLINK_BIT,
+> +			  TASK_INTERRUPTIBLE);
+> +	dput(found);
+> +	return err;
+> +}
+> +
+> =20
+>  /*
+>   * sessions
+> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+> index 33497846e47e..d1ae679c52c3 100644
+> --- a/fs/ceph/mds_client.h
+> +++ b/fs/ceph/mds_client.h
+> @@ -582,6 +582,7 @@ static inline int ceph_wait_on_async_create(struct in=
+ode *inode)
+>  			   TASK_INTERRUPTIBLE);
+>  }
+> =20
+> +extern int ceph_wait_on_conflict_unlink(struct dentry *dentry);
+>  extern u64 ceph_get_deleg_ino(struct ceph_mds_session *session);
+>  extern int ceph_restore_deleg_ino(struct ceph_mds_session *session, u64 =
+ino);
+>  #endif
+> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+> index b73b4f75462c..6542b71f8627 100644
+> --- a/fs/ceph/super.c
+> +++ b/fs/ceph/super.c
+> @@ -816,6 +816,9 @@ static struct ceph_fs_client *create_fs_client(struct=
+ ceph_mount_options *fsopt,
+>  	if (!fsc->cap_wq)
+>  		goto fail_inode_wq;
+> =20
+> +	hash_init(fsc->async_unlink_conflict);
+> +	spin_lock_init(&fsc->async_unlink_conflict_lock);
+> +
+>  	spin_lock(&ceph_fsc_lock);
+>  	list_add_tail(&fsc->metric_wakeup, &ceph_fsc_list);
+>  	spin_unlock(&ceph_fsc_lock);
+> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> index 506d52633627..c10adb7c1cde 100644
+> --- a/fs/ceph/super.h
+> +++ b/fs/ceph/super.h
+> @@ -19,6 +19,7 @@
+>  #include <linux/security.h>
+>  #include <linux/netfs.h>
+>  #include <linux/fscache.h>
+> +#include <linux/hashtable.h>
+> =20
+>  #include <linux/ceph/libceph.h>
+> =20
+> @@ -99,6 +100,8 @@ struct ceph_mount_options {
+>  	char *mon_addr;
+>  };
+> =20
+> +#define CEPH_ASYNC_CREATE_CONFLICT_BITS 12
+> +
+
+Wow, that's 4k buckets. The hashtable alone will take 32k of memory on
+64 bit arch.
+
+I doubt you need this large a hashtable, particularly given that this is
+per-superblock. In most cases, we'll just have a few of these in flight
+at a time.
+
+>  struct ceph_fs_client {
+>  	struct super_block *sb;
+> =20
+> @@ -124,6 +127,9 @@ struct ceph_fs_client {
+>  	struct workqueue_struct *inode_wq;
+>  	struct workqueue_struct *cap_wq;
+> =20
+> +	DECLARE_HASHTABLE(async_unlink_conflict, CEPH_ASYNC_CREATE_CONFLICT_BIT=
+S);
+> +	spinlock_t async_unlink_conflict_lock;
+> +
+>  #ifdef CONFIG_DEBUG_FS
+>  	struct dentry *debugfs_dentry_lru, *debugfs_caps;
+>  	struct dentry *debugfs_congestion_kb;
+> @@ -281,7 +287,8 @@ struct ceph_dentry_info {
+>  	struct dentry *dentry;
+>  	struct ceph_mds_session *lease_session;
+>  	struct list_head lease_list;
+> -	unsigned flags;
+> +	struct hlist_node hnode;
+> +	unsigned long flags;
+>  	int lease_shared_gen;
+>  	u32 lease_gen;
+>  	u32 lease_seq;
+> @@ -290,10 +297,12 @@ struct ceph_dentry_info {
+>  	u64 offset;
+>  };
+> =20
+> -#define CEPH_DENTRY_REFERENCED		1
+> -#define CEPH_DENTRY_LEASE_LIST		2
+> -#define CEPH_DENTRY_SHRINK_LIST		4
+> -#define CEPH_DENTRY_PRIMARY_LINK	8
+> +#define CEPH_DENTRY_REFERENCED		(1 << 0)
+> +#define CEPH_DENTRY_LEASE_LIST		(1 << 1)
+> +#define CEPH_DENTRY_SHRINK_LIST		(1 << 2)
+> +#define CEPH_DENTRY_PRIMARY_LINK	(1 << 3)
+> +#define CEPH_DENTRY_ASYNC_UNLINK_BIT	(4)
+> +#define CEPH_DENTRY_ASYNC_UNLINK	(1 << CEPH_DENTRY_ASYNC_UNLINK_BIT)
+> =20
+>  struct ceph_inode_xattrs_info {
+>  	/*
+
+--=20
+Jeff Layton <jlayton@kernel.org>
