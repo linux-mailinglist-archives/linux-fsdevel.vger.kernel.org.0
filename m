@@ -2,237 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BA84852A89E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 May 2022 18:53:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A66752A94E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 May 2022 19:33:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350665AbiEQQw4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 May 2022 12:52:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56830 "EHLO
+        id S1351433AbiEQRdT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 May 2022 13:33:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346916AbiEQQwz (ORCPT
+        with ESMTP id S229938AbiEQRdS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 May 2022 12:52:55 -0400
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEB6B3FD99
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 May 2022 09:52:54 -0700 (PDT)
-Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24HBGEaF015995;
-        Tue, 17 May 2022 09:50:39 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=message-id : date :
- subject : to : cc : references : from : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=facebook;
- bh=k8xyvKAQ+vBHG3lX/bEXoeWScPmGoVdOJqo1d3iF2l0=;
- b=LsBhRj0cBkuinnKFgiBKEUaPD3l0TPzfxeb3gMQGPlJcKa5r7DGSoJwH2QLR7F+pw64H
- NHqgpGyC+qZhSWYBv5VVkIteND9jIkXmSfFsX4UPd2ypfNRo+wf5CuWTqlCNla+hU5zQ
- 21B0rQ5A4mY17d4Wf+JJ1MdR0r0+n6nPm2M= 
-Received: from nam02-bn1-obe.outbound.protection.outlook.com (mail-bn1nam07lp2049.outbound.protection.outlook.com [104.47.51.49])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3g4ap6j9yt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 17 May 2022 09:50:39 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=QyvTmZ16BCh5QWuv4vgMz22yMwCNw9pF8ac8zz78tH6GGYWObW21viGxAw7DxD2YAUYVEhHY77s0BukDWdWMOCtjK7aP0qlHQS/DoA9GhU8gfFDQLf0gM4zpTxshPlflmvj2efLpIsr++6ZQBXvcmK8d0O04t0LXLn41+26XekrgGoQ55SAha1VuKqK+eu+MQGhA4BIRn5fmIaAlnb6tKZZu+zasYsOi/fi97sJZNdgvPPRb5H71QkThAjF3nyhotat5LoQezRdScLJQ2keSaL/SsTQS95D4gXLXl8qHTR0GuM/qVjgkD9mM/hk49pmBTuWyJ6vR+rPwa+QfpYZvDg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=k8xyvKAQ+vBHG3lX/bEXoeWScPmGoVdOJqo1d3iF2l0=;
- b=auxYTfTKOVgdKH5yz/WkFdUSL61nM1boLZId7rkbnoLFrraXTZfSWpN/gEYWnqChfG6xuzGrSGZDKK5EB3uPbk+WNV9jSMVgOnNrnLCgIMGI/LWaaGpHEae0zk4iAKIGMJ3gH5wCPRltru5njXBkr8eDR8CFOiMfXSFQ77N6/MpEOM+XtG9f4cJVU2sajhpXCxhmmkoX4kHz6Xl+dTgEJk4xRpqOM2477j8lLAL/xe3bxpTkxohbDK/ni6Pp7QR/ek8/M/ZuNPuLhbPf93/cnKFLj6WPb4sx22PySmtofCLR4AsmM8sQIUESj1D/bp5qrgfjok4SyNgb+8x3EaXxEQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-Received: from DM6PR15MB4039.namprd15.prod.outlook.com (2603:10b6:5:2b2::20)
- by SA1PR15MB5298.namprd15.prod.outlook.com (2603:10b6:806:236::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5250.18; Tue, 17 May
- 2022 16:50:37 +0000
-Received: from DM6PR15MB4039.namprd15.prod.outlook.com
- ([fe80::108d:108:5da8:4acb]) by DM6PR15MB4039.namprd15.prod.outlook.com
- ([fe80::108d:108:5da8:4acb%8]) with mapi id 15.20.5250.018; Tue, 17 May 2022
- 16:50:35 +0000
-Message-ID: <d6f632bc-c321-488d-f50e-749d641786d6@fb.com>
-Date:   Tue, 17 May 2022 12:50:32 -0400
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.9.0
-Subject: Re: [PATCH] fuse: allow CAP_SYS_ADMIN in root userns to access
- allow_other mount
-Content-Language: en-US
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        linux-fsdevel@vger.kernel.org,
-        Seth Forshee <sforshee@digitalocean.com>,
-        Rik van Riel <riel@surriel.com>,
-        kernel-team <kernel-team@fb.com>,
-        Andrii Nakryiko <andrii@kernel.org>
-References: <20211111221142.4096653-1-davemarchevsky@fb.com>
- <20211112101307.iqf3nhxgchf2u2i3@wittgenstein>
- <0515c3c8-c9e3-25dd-4b49-bb8e19c76f0d@fb.com>
- <CAJfpegtBuULgvqSkOP==HV3_cU2KuvnywLWvmMTGUihRnDcJmQ@mail.gmail.com>
-From:   Dave Marchevsky <davemarchevsky@fb.com>
-In-Reply-To: <CAJfpegtBuULgvqSkOP==HV3_cU2KuvnywLWvmMTGUihRnDcJmQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BLAPR03CA0049.namprd03.prod.outlook.com
- (2603:10b6:208:32d::24) To DM6PR15MB4039.namprd15.prod.outlook.com
- (2603:10b6:5:2b2::20)
+        Tue, 17 May 2022 13:33:18 -0400
+Received: from mail-qk1-x72f.google.com (mail-qk1-x72f.google.com [IPv6:2607:f8b0:4864:20::72f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A686F38D91;
+        Tue, 17 May 2022 10:33:17 -0700 (PDT)
+Received: by mail-qk1-x72f.google.com with SMTP id w3so15096747qkb.3;
+        Tue, 17 May 2022 10:33:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Vd7DNzYY5RY8Ws70viIR8qIHp/wYw4KLcew0bLswino=;
+        b=Hisn4oaWo4hxXNgE1UWte+a2zKZ+Fw/C2WeWR6edaGPndtlFtOBJ+adHKmHRAWvUEU
+         ChEZrTCByomFGYwHSUsNXwz1ab2FjIhTSaKXgn3FfcmpG/r9ipvjWciJXTD5Dy8YwHU6
+         bOACh+2l5O+isYSak+sK4xGzyMSfmjlYUc1OgIwiAmq4f6b4h2zjqK7tRsmCWxpLBsZR
+         ZSYWKhf/iB7wmVTr90tp6yNJxOBMCbeBeJo+6iiDdWhWyu21ugbFGVD93+EprbmFPo5i
+         McFwBWYxhgWSMeUO+iIzuNvk0B1RQinT7g0F93s6y1KKCJi8D/4dasOcBGtPf8r5OiQQ
+         EeiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Vd7DNzYY5RY8Ws70viIR8qIHp/wYw4KLcew0bLswino=;
+        b=jgn1UKWTzkxz6FWeaJWfK13rFFhrKP899u1usVnC6WbeeRe39pn6JgjFgutrgmcdra
+         jcECuReGlbtZXpVTh7/ISuiS6hGAcMRu3Z4sckmp3gkIogYWmf1sIVowmnpEb7svNiSZ
+         ki9J2peYdh9tAPyoXSSIgM16iweeZ26rexW3SrWPcbeAMLG4+ZUGvipXTRzpfpO2lTnS
+         LAYALVIlOSrCvBG/C+IhyVcHY5wkBhZaJcUgeJOneduFjfElQM3qbfYEGnA7GgThAvgT
+         JjovoBqki0lCMOaEg3UNkfOnmeh0TSBQxaqBZs9y0lMM7sEpChpDXuS8tpl8Srg6xr0z
+         QJsA==
+X-Gm-Message-State: AOAM5332AT0ax9bMa134Eot5jxnajVs9TL51GoAKtneCIFthmXtSS5pX
+        02Z0161Y/QUW6FafgRjwuzkOyWdTyzrL7oB+gks=
+X-Google-Smtp-Source: ABdhPJyfxHzdzBcFHoPWaImkuUIrBfAyRXqKbAYVkX9/5hK5XT5pEEEa8tOENehW2+XAf2Tj0KIqOJ3G3CquCYe/pi8=
+X-Received: by 2002:a05:620a:2909:b0:6a0:472b:a30d with SMTP id
+ m9-20020a05620a290900b006a0472ba30dmr17027154qkp.258.1652808796796; Tue, 17
+ May 2022 10:33:16 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 1a7b4e9e-145c-4790-cbd9-08da38255cc7
-X-MS-TrafficTypeDiagnostic: SA1PR15MB5298:EE_
-X-Microsoft-Antispam-PRVS: <SA1PR15MB52981A28CE51CE0D5BD5E321A0CE9@SA1PR15MB5298.namprd15.prod.outlook.com>
-X-FB-Source: Internal
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: pbh9Vg+JZjvt5vWlt0kRrcLgF8U1PsH8juDkt1DJUGWJhrcq/Q02b6ASO3NFR9sJB4bF+i5WmHFdDp8frRRg2fsIwkJTR+FCu+H72uo6nq2WtBqI1ahxmNgnfUIU0ZAdTu+LWe8gvFzonu0a0Jt4BuBfd5FYI8c84RlC3GswrV4jmtKYdC0RTD9UlraKvNvy8oznqkaLHmxKYi5GnwQyKO4y4VOh1yvIRwUxQ7NKYIEnLKS+UVW0ZD6p30A9AnXSoQTUeLydMu9rl3gczBVOZpkze6BDFx6+H+naon98vN5FFc1PxS9mGteJObrtjGO9lTYqSgLbTSYoFq1tku82MydBN8G2yUvlUtQ8lmIe74s/7Fsy0WS/Q8CVTRd5HNEQW/mtxMyi6M3fIZx+YN3RtR8hZs63RSH89aTcu6AdIRW7iu7c0wvaxNvlLupjGiAbh3MT5Z+qxR410n/KxZC8wipVLWjfbn2rttk0EhE057z7T8+u9wYBCQ9EB+AyCGbLjsG2lfXnycy7kIbzf/nHlXtlIbYRakbTlXb8nRCL0pE/hyEkGFZqJN6quCF62jMXxlp8FUzxp7n6NRwZGKp0RjMtLBfRyn69jB925dS1oen68eSaH3K85UIMu4JoxhTAO/DS4TLwxNoUMixkG5jBxw5hLfOmOVUT83QiwZRINjjoKSdlt98UoUNLEFpb+JAjDtHtN5cOSdC3mQdgT/9BtGJVcpwCb2xpftzmVj3rYk0=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR15MB4039.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(6486002)(6512007)(86362001)(186003)(4326008)(8676002)(66476007)(31696002)(66556008)(8936002)(83380400001)(31686004)(316002)(6666004)(6916009)(53546011)(6506007)(38100700002)(36756003)(508600001)(54906003)(5660300002)(2616005)(66946007)(2906002)(43740500002)(45980500001);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?K3BnUllGZGZDbGZpRzdndzhOWjJLSWlKM0xFOU1UbVBLLyt3UEszeGxwM2JK?=
- =?utf-8?B?TXhKVThvTWFjVmNUUHNzeWZrdnZQcEc1ME8zeHNsTjIydXpoSnVwajdsR0Zj?=
- =?utf-8?B?LzNPZGkrQlRnRTFyY2wyRS8xTkcyd0cvZXJsNGRaSGRWc3RPenhkWVd4emgx?=
- =?utf-8?B?OERUWjB4cmlHSzJEZVZMRkxadGRhcUhMbyt3NXVqVXBQa1EvWENLZVdkc2Ft?=
- =?utf-8?B?RWtpSFozZ090VFBxd3AvZFcxNUhLUk9ydGh1SlE5K2dZRDVYNDhCS2orRk1S?=
- =?utf-8?B?WmM3a2lzRUx3UUFBMEprKzQrbFVjMlZNOUcvYkY5SzB2YjJEWTJ1bVd3ZkIv?=
- =?utf-8?B?ZzRZNUxhc0U3TFZlV2Qwdlp6ekFIZW9MMDlJTE0zU3cxL2x4QXV6VnNwNWh5?=
- =?utf-8?B?dWhNTFBuVnR5MUdVM3YrOUQzR21FMXBFak1FS3Nxb1NiWEQ4eElHRFhFT0tN?=
- =?utf-8?B?dkNNbWhjdWtnOWlCSkJUaGsyWmU5WVQ2Nm92RHM1NzZwMXNXc3dDY0dQaDBr?=
- =?utf-8?B?cDdPaVJrSjYydGF0WTdTeXBCSlNadFRLaGsrLzVFK0lzZ1Z1Y3NBQ1FVaUln?=
- =?utf-8?B?bkxzQ0Z2cHN6VU9LYlprQW5FZGpOT1JjOTBJVUlxZE1sdVhnb3hSeDE0ZzZw?=
- =?utf-8?B?TmZxVGtoQ0dxNjZDUXk0Vy93UFlUMXBWZ3Q0WXBHOXppdHI2NE5USEUwdjcw?=
- =?utf-8?B?UXVnaUQyU09ja0JkWWViVkZQdjNEVDZQZDZNOW4vN0dKb21NUUhMMGZmUkYw?=
- =?utf-8?B?STMxUmtoUkNoVTUzbUl2SlBoZzluVHNFOGtRMERaT3Y0U3FiVWxWaU5VZSt0?=
- =?utf-8?B?THE2MUpSTi9XK2lUeXVkd0p0VDR4MnJDeXVIYitDQmZvd0dMV2JlUG4zTkpS?=
- =?utf-8?B?b3BaTDhvc3B3TlM2ZmoxUjVTeUJ0V3ZOWHV3UW5rNCtnbVVROGxRUWZLWW1l?=
- =?utf-8?B?R2QwMTN2MzMzUUw1aHdGZExIMmprVmhRWDhhUTc0b0RPVHl5bFRxUUZ6Y084?=
- =?utf-8?B?UU8xSERocWYvVU04cytxZTFVZGNBNWFJZGRocTRZKy9xdkFJdHBoeVFNTFdZ?=
- =?utf-8?B?Nm9vVGtOYnlab1dyV0d6ZnEzL1ZuRVJSU2kzUnJrZ0lUMUowVUtYWWhkS3pz?=
- =?utf-8?B?Nzh2K2RoL2h6NE8xVDJ1WnE1cVFzL1R2b09sWnZvS3ZTWmVxMUNzTEJrM0ph?=
- =?utf-8?B?cW9BYy96SmdNalVrOFQrclhqVk9UNmdCZ0prcUgyb0Q0bkdpTzhzVVUyazRY?=
- =?utf-8?B?akFzTFhLcitxNEZNd1BFNmxicWJ2MVFkU0dyU2kwSGVMcHUyYjVKNGx6RTFm?=
- =?utf-8?B?WE9pK2w0TUpUQ1ZBRW1haElSNXluMGFuWFAxbTR5K3V1YnVoMGJJV0UwZ0lD?=
- =?utf-8?B?V1E1VHZuUHRxcTcrdzYyT3JTTGRHempiMGIybVFkNGZqdkRYTHRzMUtIZnpK?=
- =?utf-8?B?U0Vra051dmNPVnMzTG8vaFpZSTB1UWhPQUREcDI1dXFTZFhVaW43UzRPVEdl?=
- =?utf-8?B?Skl2QlBFNUVBSjV6K0tTRGNpNVFxc0svMmM0dXFkSWNFUkhTMXowMFZHNis2?=
- =?utf-8?B?SEc3RlovNjc0Q1kwQVR0N2EwR3Y1dHhsNlpZNk5iOVp1YWtqTFBBdE5rc1FD?=
- =?utf-8?B?ZTBqR3kxU0VaQi9lKytQSEp1amM5ZkJiZnFNdVBOTXo4WUE1QUhPREM5eHht?=
- =?utf-8?B?Q3h5WnpXUzdaNktXQ0lEbUhHOStJeHp5TDdKNXVpUU5NVjlFajJUOUZRb3NV?=
- =?utf-8?B?MWZSUFNScy9iMGdqV1RDcHF2N3JhTGFiUmhlTU1nVFB1aC9yWjBFbU5sMW5Y?=
- =?utf-8?B?QWkyK2pyUGRrZGJucWNQM0ljdmZ1ZTdiMjF1ZjYyNStkcm92cVMzRnFOTWRs?=
- =?utf-8?B?ZitsM1BoeWJFamhVZTA5SzVJYUUvbUoyUHRRTmFZbWpEWTZKNTZ4MGdJNzFB?=
- =?utf-8?B?SUVMOG9xTGlHOFN4Mmdqb2ZwMGJCbjZsWklGWWhhWTJRcnBpd05UNno5UzBK?=
- =?utf-8?B?QjFxNmc4Q1FmZXYxYWRRZmg2b2M4M2h2dDRHc210amVnQ0twUlVGSlNCLzJp?=
- =?utf-8?B?OE1XbHM4T2EwUHFQZGxTaS9SNkhudFo0dWRkSkZyVGhkZlU5TWk1Zmovb0xM?=
- =?utf-8?B?R091dzl1YVFhODlmcERuQnc1K1dzMHRvcmhtaDJhblRBWWVnNEJ2b2JiOEVL?=
- =?utf-8?B?R21zUGVPK1ZMQjVUOUNZWFhUVTNmblVaYXRCek5uZUxNL2dzNVpCVTV3a0Ez?=
- =?utf-8?B?ZWZDdEN1U1RIRENqc0UrTjNob3lKSEVQdDhmSzkyMEtzV1JpVDhSbjVOVkJL?=
- =?utf-8?B?WGhyOFVmUWpFdVRpUlJCaisvRDZlQzZHclFUL082N29USmp6cGVnR3l3NjNa?=
- =?utf-8?Q?mh871xJsbG9ylmjXrd+g650jyB/A1wFq1Nhw8?=
-X-OriginatorOrg: fb.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1a7b4e9e-145c-4790-cbd9-08da38255cc7
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR15MB4039.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 May 2022 16:50:34.9608
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: q4L0xBQpWlehnErvXsiX7aq+7rM5rgIDC0jpmAiNVgNFiJ2Jdgl2o6OCiPdQU9RwFlxvH+0Y5vISf2nwuQhHew==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR15MB5298
-X-Proofpoint-GUID: pgtsnbhtapfibgFgw99kbGsKoa3hVSWJ
-X-Proofpoint-ORIG-GUID: pgtsnbhtapfibgFgw99kbGsKoa3hVSWJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.874,Hydra:6.0.486,FMLib:17.11.64.514
- definitions=2022-05-17_03,2022-05-17_02,2022-02-23_01
-X-Spam-Status: No, score=-5.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+References: <20220407011257.114287-1-sashal@kernel.org> <20220407011257.114287-21-sashal@kernel.org>
+ <CAOQ4uxi+Z_YDga+fkcuOjwo5EKfRkhsCp4SwxMHK0ARdJ_-+Aw@mail.gmail.com> <CAOQ4uxg2c+MtCaA6+how4WOP3a3EAYfR1Rzz-PB9fxX411t3+Q@mail.gmail.com>
+In-Reply-To: <CAOQ4uxg2c+MtCaA6+how4WOP3a3EAYfR1Rzz-PB9fxX411t3+Q@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 17 May 2022 20:33:05 +0300
+Message-ID: <CAOQ4uxjcCnp3ctMZ4QL4Yc2McfLPZhRnfu=8E2YQVXRbTrJv1w@mail.gmail.com>
+Subject: Re: [PATCH AUTOSEL 5.15 21/27] fs: fix an infinite loop in iomap_fiemap
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     stable <stable@vger.kernel.org>, Guo Xuenan <guoxuenan@huawei.com>,
+        Hulk Robot <hulkci@huawei.com>, Christoph Hellwig <hch@lst.de>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/15/21 10:28 AM, Miklos Szeredi wrote:   
-> On Sat, 13 Nov 2021 at 00:29, Dave Marchevsky <davemarchevsky@fb.com> wrote:
-> 
->>> If your tracing daemon runs in init_user_ns with CAP_SYS_ADMIN why can't
->>> it simply use a helper process/thread to
->>> setns(userns_fd/pidfd, CLONE_NEWUSER)
->>> to the target userns? This way we don't need to special-case
->>> init_user_ns at all.
->>
->> helper process + setns could work for my usecase. But the fact that there's no
->> way to say "I know what I am about to do is potentially stupid and dangerous,
->> but I am root so let me do it", without spawning a helper process in this case,
->> feels like it'll result in special-case userspace workarounds for anyone doing
->> symbolication of backtraces.
-> 
-> Note: any mechanism that grants filesystem access to users that have
-> higher privileges than the daemon serving the filesystem will
-> potentially open DoS attacks against the higher privilege task.  This
-> would be somewhat mitigated if the filesystem is only mounted in a
-> private mount namespace, but AFAICS that's not guaranteed.
-> 
-> The above obviously applies to your original patch but it also applies
-> to any other mechanism where the high privilege user doesn't
-> explicitly acknowledge and accept the consequences.   IOW granting the
-> exception has to be initiated by the high privleged user.
-> 
-> Thanks,
-> Miklos
-> 
+On Thu, Apr 7, 2022 at 2:30 PM Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> On Thu, Apr 7, 2022 at 2:28 PM Amir Goldstein <amir73il@gmail.com> wrote:
+> >
+> > On Thu, Apr 7, 2022 at 7:26 AM Sasha Levin <sashal@kernel.org> wrote:
+> > >
+> > > From: Guo Xuenan <guoxuenan@huawei.com>
+> > >
+> > > [ Upstream commit 49df34221804cfd6384135b28b03c9461a31d024 ]
+> > >
+> > > when get fiemap starting from MAX_LFS_FILESIZE, (maxbytes - *len) < start
+> > > will always true , then *len set zero. because of start offset is beyond
+> > > file size, for erofs filesystem it will always return iomap.length with
+> > > zero,iomap iterate will enter infinite loop. it is necessary cover this
+> > > corner case to avoid this situation.
+> > >
+> > > ------------[ cut here ]------------
+> > > WARNING: CPU: 7 PID: 905 at fs/iomap/iter.c:35 iomap_iter+0x97f/0xc70
+> > > Modules linked in: xfs erofs
+> > > CPU: 7 PID: 905 Comm: iomap Tainted: G        W         5.17.0-rc8 #27
+> > > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubuntu1.1 04/01/2014
+> > > RIP: 0010:iomap_iter+0x97f/0xc70
+> > > Code: 85 a1 fc ff ff e8 71 be 9c ff 0f 1f 44 00 00 e9 92 fc ff ff e8 62 be 9c ff 0f 0b b8 fb ff ff ff e9 fc f8 ff ff e8 51 be 9c ff <0f> 0b e9 2b fc ff ff e8 45 be 9c ff 0f 0b e9 e1 fb ff ff e8 39 be
+> > > RSP: 0018:ffff888060a37ab0 EFLAGS: 00010293
+> > > RAX: 0000000000000000 RBX: ffff888060a37bb0 RCX: 0000000000000000
+> > > RDX: ffff88807e19a900 RSI: ffffffff81a7da7f RDI: ffff888060a37be0
+> > > RBP: 7fffffffffffffff R08: 0000000000000000 R09: ffff888060a37c20
+> > > R10: ffff888060a37c67 R11: ffffed100c146f8c R12: 7fffffffffffffff
+> > > R13: 0000000000000000 R14: ffff888060a37bd8 R15: ffff888060a37c20
+> > > FS:  00007fd3cca01540(0000) GS:ffff888108780000(0000) knlGS:0000000000000000
+> > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > CR2: 0000000020010820 CR3: 0000000054b92000 CR4: 00000000000006e0
+> > > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > > Call Trace:
+> > >  <TASK>
+> > >  iomap_fiemap+0x1c9/0x2f0
+> > >  erofs_fiemap+0x64/0x90 [erofs]
+> > >  do_vfs_ioctl+0x40d/0x12e0
+> > >  __x64_sys_ioctl+0xaa/0x1c0
+> > >  do_syscall_64+0x35/0x80
+> > >  entry_SYSCALL_64_after_hwframe+0x44/0xae
+> > >  </TASK>
+> > > ---[ end trace 0000000000000000 ]---
+> > > watchdog: BUG: soft lockup - CPU#7 stuck for 26s! [iomap:905]
+> > >
+> > > Reported-by: Hulk Robot <hulkci@huawei.com>
+> > > Signed-off-by: Guo Xuenan <guoxuenan@huawei.com>
+> > > Reviewed-by: Christoph Hellwig <hch@lst.de>
+> > > [djwong: fix some typos]
+> > > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+> > > Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+> > > Signed-off-by: Sasha Levin <sashal@kernel.org>
+> > > ---
+> > >  fs/ioctl.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/fs/ioctl.c b/fs/ioctl.c
+> > > index 504e69578112..e0a3455f9a0f 100644
+> > > --- a/fs/ioctl.c
+> > > +++ b/fs/ioctl.c
+> > > @@ -173,7 +173,7 @@ int fiemap_prep(struct inode *inode, struct fiemap_extent_info *fieinfo,
+> > >
+> > >         if (*len == 0)
+> > >                 return -EINVAL;
+> > > -       if (start > maxbytes)
+> > > +       if (start >= maxbytes)
+> > >                 return -EFBIG;
+> > >
+> > >         /*
+> > > --
+> > > 2.35.1
+> > >
+> >
+> > Sasha,
+> >
+> > Any reason why I didn't see this patch posted for 5.10.y?
+> > I happen to know that it applies cleanly to 5.10.109 and I also included it in
+> > my xfs-5.10.y patch candidates branch [1] which has gone through some
+> > xfstests cycles already.
+> >
+>
+> Nevermind, I see it was just posted :)
+>
 
-Sorry to ressurect this old thread. My proposed alternate approach of "special
-ioctl to grant exception to descendant userns check" proved unnecessarily
-complex: ioctls also go through fuse_allow_current_process check, so a special
-carve-out would be necessary for in both ioctl and fuse_permission check in
-order to make it possible for non-descendant-userns user to opt in to exception.
+Sasha,
 
-How about a version of this patch with CAP_DAC_READ_SEARCH check? This way 
-there's more of a clear opt-in vs CAP_SYS_ADMIN.
+I do not see this patch in either of the stable trees.
+Did it fall through the cracks?
 
-FWIW we've been running CAP_SYS_ADMIN version of this patch internally and
-can confirm it fixes tracing tools' ability to symbolicate binaries in FUSE.
-
-> 
->>
->> e.g. perf will have to add some logic: "did I fail
->> to grab this exe that some process had mapped? Is it in a FUSE mounted by some
->> descendant userns? let's fork a helper process..." Not the end of the world,
->> but unnecessary complexity nonetheless.
->>
->> That being said, I agree that this patch's special-casing of init_user_ns is
->> hacky. What do you think about a more explicit and general "let me do this
->> stupid and dangerous thing" mechanism - perhaps a new struct fuse_conn field
->> containing a set of exception userns', populated with ioctl or similar.
-> 
-> 
-> 
->>
->>>
->>>>
->>>> Note: I was unsure whether CAP_SYS_ADMIN or CAP_SYS_PTRACE was the best
->>>> choice of capability here. Went with the former as it's checked
->>>> elsewhere in fs/fuse while CAP_SYS_PTRACE isn't.
->>>>
->>>>  fs/fuse/dir.c | 2 +-
->>>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
->>>> index 0654bfedcbb0..2524eeb0f35d 100644
->>>> --- a/fs/fuse/dir.c
->>>> +++ b/fs/fuse/dir.c
->>>> @@ -1134,7 +1134,7 @@ int fuse_allow_current_process(struct fuse_conn *fc)
->>>>      const struct cred *cred;
->>>>
->>>>      if (fc->allow_other)
->>>> -            return current_in_userns(fc->user_ns);
->>>> +            return current_in_userns(fc->user_ns) || capable(CAP_SYS_ADMIN);
->>>>
->>>>      cred = current_cred();
->>>>      if (uid_eq(cred->euid, fc->user_id) &&
->>>> --
->>>> 2.30.2
->>>>
->>>>
->>
+Thanks,
+Amir.
