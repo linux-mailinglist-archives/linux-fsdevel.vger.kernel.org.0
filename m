@@ -2,105 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8467152A776
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 May 2022 17:57:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8278852A8FC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 May 2022 19:09:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350693AbiEQP5o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 May 2022 11:57:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38492 "EHLO
+        id S1351421AbiEQRI4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 May 2022 13:08:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350691AbiEQP5l (ORCPT
+        with ESMTP id S1351405AbiEQRIs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 May 2022 11:57:41 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52D112DA9E;
-        Tue, 17 May 2022 08:57:38 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5EC8B60A51;
-        Tue, 17 May 2022 15:57:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE671C385B8;
-        Tue, 17 May 2022 15:57:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1652803057;
-        bh=owgmp1DiD03PRv6m+MFi+X4+vQ4q8Ap30A0lH1rSqOE=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=KNTqNJi7fmFYeUkGnyiV8amJYDWm3kSBSpVGLtjJRfsk58bnE2WYxD+veQwDNhkCf
-         MsF59Rntla0minCoGJWJCEHIqFrxdtu1SL6WKjbsZiuEPQsU0ANrBxKkvKjHJFZNCO
-         be1NB7wIep2R77+DBOwmr81llNwZ/zOwK9dqY6thcuDxLAgbM/AbBpKgwG+hP/0F6R
-         XfqpDZEPkME7tSjz+bWN8l8wozWw5zFtr7PUOF/8VDxaCOew5lqcsb6+cVYAa4el6Q
-         2gmvlFk6CHJdBgYeA41hNtJD+XMTk6x+Gk/89yrw8Yj0hg622gcZdkCa8K6lArO+Vd
-         OFwmJzmiCESOQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-        id 5D1835C04E7; Tue, 17 May 2022 08:57:37 -0700 (PDT)
-Date:   Tue, 17 May 2022 08:57:37 -0700
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sysctl: Merge adjacent CONFIG_TREE_RCU blocks
-Message-ID: <20220517155737.GA1790663@paulmck-ThinkPad-P17-Gen-1>
-Reply-To: paulmck@kernel.org
-References: <a6931221b532ae7a5cf0eb229ace58acee4f0c1a.1652799977.git.geert+renesas@glider.be>
+        Tue, 17 May 2022 13:08:48 -0400
+X-Greylist: delayed 2396 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 17 May 2022 10:08:41 PDT
+Received: from mail.neweas.com (mail.neweas.com [162.19.155.127])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB399506E1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 May 2022 10:08:41 -0700 (PDT)
+Received: by mail.neweas.com (Postfix, from userid 1002)
+        id B93C122D61; Tue, 17 May 2022 15:51:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=neweas.com; s=mail;
+        t=1652802674; bh=qQhd+6rcOH+OhrNQ6A9OWLCE/79cwvyTtb6LUe1aYuU=;
+        h=Date:From:To:Subject:From;
+        b=BOVZlrFUG0qI0bwJae9XIYY7xJqVr0NA7HEagoGQiea0nCp4xJ37ExDpHfbHkGBpD
+         5UOpcTtzsMRu29wsLT9OeCJWOn42zrPWtglhmMumqmNnSV+UWNLdWRVo3OqtgAQRB7
+         mW5q1oCvCQ1TcQQf4dwUNj3vx+F/m+7SXGv+TMr5/n8HdPqDknaA5EGyjqIoKaVgkJ
+         /fLThpwOJ+K8NbHBzkR5neWwaSyufD4SxhBptrs+siHBoOzkRTnddZHLGbzuZwl1O2
+         aFYmegQYZFVkQX/kCd9BjcYnUM7SXoiKkiAH0MUHIN5jnOZ1drqi0Rm/yDvNGl3KNe
+         U+VFa3lMcaDwQ==
+Received: by mail.neweas.com for <linux-fsdevel@vger.kernel.org>; Tue, 17 May 2022 15:50:50 GMT
+Message-ID: <20220517141500-0.1.f.10zj.0.5eo75b32je@neweas.com>
+Date:   Tue, 17 May 2022 15:50:50 GMT
+From:   "Luca Gauthier" <luca.gauthier@neweas.com>
+To:     <linux-fsdevel@vger.kernel.org>
+Subject: New collaboration
+X-Mailer: mail.neweas.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a6931221b532ae7a5cf0eb229ace58acee4f0c1a.1652799977.git.geert+renesas@glider.be>
-X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=0.6 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 17, 2022 at 05:07:31PM +0200, Geert Uytterhoeven wrote:
-> There are two adjacent sysctl entries protected by the same
-> CONFIG_TREE_RCU config symbol.  Merge them into a single block to
-> improve readability.
-> 
-> Use the more common "#ifdef" form while at it.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Hello,
 
-If you would like me to take this, please let me know.  (The default
-would be not the upcoming merge window, but the one after that.)
+are you looking for more business clients?
 
-If you would rather send it via some other path:
+We would like to start working with you as a partner in acquiring or exch=
+anging leads, which directly translates into mutual benefits in the form =
+of an increased client portfolio.
 
-Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
+We work in the sector of internet marketing and as one of the first in Eu=
+rope SEO Agencies we=E2=80=99ve introduced the SEO 360 service which allo=
+ws your clients to gain the access to original SEO consultations.
 
-> ---
->  kernel/sysctl.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> index 82bcf5e3009fa377..597069da18148f42 100644
-> --- a/kernel/sysctl.c
-> +++ b/kernel/sysctl.c
-> @@ -2227,7 +2227,7 @@ static struct ctl_table kern_table[] = {
->  		.extra1		= SYSCTL_ZERO,
->  		.extra2		= SYSCTL_ONE,
->  	},
-> -#if defined(CONFIG_TREE_RCU)
-> +#ifdef CONFIG_TREE_RCU
->  	{
->  		.procname	= "panic_on_rcu_stall",
->  		.data		= &sysctl_panic_on_rcu_stall,
-> @@ -2237,8 +2237,6 @@ static struct ctl_table kern_table[] = {
->  		.extra1		= SYSCTL_ZERO,
->  		.extra2		= SYSCTL_ONE,
->  	},
-> -#endif
-> -#if defined(CONFIG_TREE_RCU)
->  	{
->  		.procname	= "max_rcu_stall_to_panic",
->  		.data		= &sysctl_max_rcu_stall_to_panic,
-> -- 
-> 2.25.1
-> 
+By choosing to work with us you receive support in achieving your busines=
+s goals, and help in handling Digital Marketing for your clients.
+
+We support over 237 partner companies. We have one of the biggest executi=
+ve departments in Europe at our disposal, we=E2=80=99ve prepared over 200=
+0 campaigns in Europe and 200 in the USA and Canada.
+
+Are you interested in the details of our partnership programme?
+
+Yours sincerely,
+Luca Gauthier
