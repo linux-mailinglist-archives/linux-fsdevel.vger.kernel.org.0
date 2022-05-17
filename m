@@ -2,111 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FA8852A507
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 May 2022 16:36:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9867352A5A6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 May 2022 17:07:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349144AbiEQOgq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 May 2022 10:36:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38980 "EHLO
+        id S234068AbiEQPHv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 May 2022 11:07:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349131AbiEQOgp (ORCPT
+        with ESMTP id S1349657AbiEQPHj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 May 2022 10:36:45 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72AC04FC7E;
-        Tue, 17 May 2022 07:36:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=CZekkTwrC4S+/YZo062E5YXgbQ0lRlxuhi1puw/bt/M=; b=uTu+DhNslWz8qWcmVmfH54N8KF
-        wBUcjSpcSJ2nJHiPkW7OMlvxTG/p7GEThEEHmIvejja/Th7nfN9SgZs00QOlQM9lj+Afr/XBUlo9R
-        NrTdcBD6HaKEn4+/erscw4J7/nD/1qbABGbfPcXEEHrYgWpC05pJYW4yylOjsTLWa0bEYrIzJQo0j
-        VUNXn4UnOlD/Q6uzKfMD5D0zfW6v/HOp6ZKwl4bfC1jArn8OIVR7L/zd15dOZ8Xp32hfTMdhGXBVc
-        eqd2lhtWc8OhEElbhDSM0FafInhFphzZrN3tEQldNOPtBzY0xKcDd66gODXEYjQfYUyYdLqn8zXDV
-        q6Wf+5IQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nqyJ9-00Ave3-IJ; Tue, 17 May 2022 14:36:19 +0000
-Date:   Tue, 17 May 2022 15:36:19 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Xiubo Li <xiubli@redhat.com>
-Cc:     jlayton@kernel.org, viro@zeniv.linux.org.uk, idryomov@gmail.com,
-        vshankar@redhat.com, ceph-devel@vger.kernel.org,
-        dchinner@redhat.com, hch@lst.de, arnd@arndb.de, mcgrof@kernel.org,
-        akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v3 2/2] ceph: wait the first reply of inflight async
- unlink
-Message-ID: <YoOy40sGQv4DjmAq@casper.infradead.org>
-References: <20220517125549.148429-1-xiubli@redhat.com>
- <20220517125549.148429-3-xiubli@redhat.com>
+        Tue, 17 May 2022 11:07:39 -0400
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACE513B566
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 May 2022 08:07:36 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed30:c0f6:7ccf:c217:5f21])
+        by albert.telenet-ops.be with bizsmtp
+        id Xr7a270090nFbBY06r7aqB; Tue, 17 May 2022 17:07:34 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1nqynN-000huY-Qg; Tue, 17 May 2022 17:07:33 +0200
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1nqynN-004NOP-CH; Tue, 17 May 2022 17:07:33 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        "Paul E . McKenney" <paulmck@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] sysctl: Merge adjacent CONFIG_TREE_RCU blocks
+Date:   Tue, 17 May 2022 17:07:31 +0200
+Message-Id: <a6931221b532ae7a5cf0eb229ace58acee4f0c1a.1652799977.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220517125549.148429-3-xiubli@redhat.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.4 required=5.0 tests=BAYES_00,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 17, 2022 at 08:55:49PM +0800, Xiubo Li wrote:
-> +int ceph_wait_on_conflict_unlink(struct dentry *dentry)
-> +{
-> +	struct ceph_fs_client *fsc = ceph_sb_to_client(dentry->d_sb);
-> +	struct dentry *pdentry = dentry->d_parent;
-> +	struct dentry *udentry, *found = NULL;
-> +	struct ceph_dentry_info *di;
-> +	struct qstr dname;
-> +	u32 hash = dentry->d_name.hash;
-> +	int err;
-> +
-> +	dname.name = dentry->d_name.name;
-> +	dname.len = dentry->d_name.len;
-> +
-> +	rcu_read_lock();
-> +	hash_for_each_possible_rcu(fsc->async_unlink_conflict, di,
-> +				   hnode, hash) {
-> +		udentry = di->dentry;
-> +
-> +		spin_lock(&udentry->d_lock);
-> +		if (udentry->d_name.hash != hash)
-> +			goto next;
-> +		if (unlikely(udentry->d_parent != pdentry))
-> +			goto next;
-> +		if (!hash_hashed(&di->hnode))
-> +			goto next;
-> +
-> +		if (!test_bit(CEPH_DENTRY_ASYNC_UNLINK_BIT, &di->flags))
-> +			pr_warn("%s dentry %p:%pd async unlink bit is not set\n",
-> +				__func__, dentry, dentry);
-> +
-> +		if (d_compare(pdentry, udentry, &dname))
-> +			goto next;
-> +
-> +		spin_unlock(&udentry->d_lock);
-> +		found = dget(udentry);
-> +		break;
-> +next:
-> +		spin_unlock(&udentry->d_lock);
-> +	}
-> +	rcu_read_unlock();
-> +
-> +	if (likely(!found))
-> +		return 0;
-> +
-> +	dout("%s dentry %p:%pd conflict with old %p:%pd\n", __func__,
-> +	     dentry, dentry, found, found);
-> +
-> +	err = wait_on_bit(&di->flags, CEPH_DENTRY_ASYNC_UNLINK_BIT,
-> +			  TASK_INTERRUPTIBLE);
+There are two adjacent sysctl entries protected by the same
+CONFIG_TREE_RCU config symbol.  Merge them into a single block to
+improve readability.
 
-Do you really want to use TASK_INTERRUPTIBLE here?  If the window is
-resized and you get a SIGWINCH, or a timer goes off and you get a
-SIGALRM, you want to return -EINTR?  I would suggest that TASK_KILLABLE
-is probably the semantics that you want.
+Use the more common "#ifdef" form while at it.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ kernel/sysctl.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 82bcf5e3009fa377..597069da18148f42 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -2227,7 +2227,7 @@ static struct ctl_table kern_table[] = {
+ 		.extra1		= SYSCTL_ZERO,
+ 		.extra2		= SYSCTL_ONE,
+ 	},
+-#if defined(CONFIG_TREE_RCU)
++#ifdef CONFIG_TREE_RCU
+ 	{
+ 		.procname	= "panic_on_rcu_stall",
+ 		.data		= &sysctl_panic_on_rcu_stall,
+@@ -2237,8 +2237,6 @@ static struct ctl_table kern_table[] = {
+ 		.extra1		= SYSCTL_ZERO,
+ 		.extra2		= SYSCTL_ONE,
+ 	},
+-#endif
+-#if defined(CONFIG_TREE_RCU)
+ 	{
+ 		.procname	= "max_rcu_stall_to_panic",
+ 		.data		= &sysctl_max_rcu_stall_to_panic,
+-- 
+2.25.1
 
