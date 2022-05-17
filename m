@@ -2,112 +2,186 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E0D6E52A0EF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 May 2022 14:00:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 65AE052A126
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 May 2022 14:07:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345642AbiEQL74 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 May 2022 07:59:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51466 "EHLO
+        id S241022AbiEQMHF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 May 2022 08:07:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44488 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345585AbiEQL7r (ORCPT
+        with ESMTP id S231470AbiEQMHE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 May 2022 07:59:47 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E2EA04B408
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 May 2022 04:59:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1652788784;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=bky1QCX4iUNRvLfJN4MOMnAL4Kz8bDrwtH7Mk3KIwD4=;
-        b=NGSmJJMhVOayQpbekUDjhEF5k0tuG2E+luv/lohyut477fgbU7leSH3fqYBWep6WjGBb0B
-        3/J3DwNCUVnjcrkTut/B9OcM7CtXygDorEUPmd96mf61RCYxx3jjNZuKe+xSifLqvV2I0C
-        HfIq2yIttLuy8Rhg22yedbtEshY2g+o=
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
- [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-593-Q8x3qY3EOoaRs1BCg14xyg-1; Tue, 17 May 2022 07:59:43 -0400
-X-MC-Unique: Q8x3qY3EOoaRs1BCg14xyg-1
-Received: by mail-pl1-f199.google.com with SMTP id h13-20020a170902f70d00b0015f4cc5d19aso7161129plo.18
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 May 2022 04:59:43 -0700 (PDT)
+        Tue, 17 May 2022 08:07:04 -0400
+Received: from mail-qt1-x82a.google.com (mail-qt1-x82a.google.com [IPv6:2607:f8b0:4864:20::82a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8290444746;
+        Tue, 17 May 2022 05:07:03 -0700 (PDT)
+Received: by mail-qt1-x82a.google.com with SMTP id k2so14125433qtp.1;
+        Tue, 17 May 2022 05:07:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qHCPn/5+IVbOfCi9iuEGhFmI1sfcIXa1/Qs52bDuAk0=;
+        b=SOh6EcMWhqj1rRTK+fVaTib5Wo+a7e/L9Fs8VOuS9uF1/qtWusul3kpCrScepzF0wP
+         6u8IaM+JgyJNaF4JOnrKqjNPudVUU8bzHESYxMNGKef9q+ECsd+AIcyTtNDjIsDZLIQb
+         RP7LLWwYVugwykCD8aIqaMsP0CR8xHLb45qGeVYvfTVDhcItNfr96GDxKCoM8RjyTSJm
+         l6ym8XXJxqfr68fKvDn7yxJWm/NrTO7XcRq93griWlVnMV3QnQvhSSQLeWSFI8AbSyfW
+         YbRKy9/2tmwySLVlmeIK36sY0yEQmWfGkMkLi5Re2g4hdKdx8yXY9lUrqWTdFJuwb3L/
+         hhIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=bky1QCX4iUNRvLfJN4MOMnAL4Kz8bDrwtH7Mk3KIwD4=;
-        b=Zty/cjk/tMu2q1ucLn3pDN1164OmYjZJEYLHHSrHCKNdDAZOuIEOG7xBZp9Wo07m2e
-         e0WCavD1/TgEO5Alp9pf+KfBRI2Y3Flz+zRH2EZsbsPp6FXOn27kGXwETsjDy+PDYYb2
-         2skcOhokIIzoDllbRxeS7Rw05p4+qUbwlk922HVRfTlU1rFSLS52XpHYJHWpBo6E6Gjm
-         SJT8LBq+eNONX6xMzBlUEoUWKmJHqtSJbvDnvNOjFYvKn7uKwW6ZH3wKdRrg/zztkljG
-         +JX6F7RrD6Yvny07Ay2eMVSL4Ut7RttS0f+e6CHwM9ZdDhNMT8aDS7hxcGMTFY3kDfhx
-         814w==
-X-Gm-Message-State: AOAM533N5F4gD1nU9FF5Um20+x3qMAqVAeJzGUhpJI4819RjmWM/vwCL
-        zkbfep6GsL3hMQeCIe+3BrTxgzioJmz3giYbOMDO367i1NkxeoZQeCtcLzI8MIgy3Z0Wqzx4DwG
-        1FbjPEE62vrD0E+9K3OVitMaTiQ==
-X-Received: by 2002:a17:902:864b:b0:15e:f9e0:20ca with SMTP id y11-20020a170902864b00b0015ef9e020camr21879629plt.122.1652788782578;
-        Tue, 17 May 2022 04:59:42 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJz7NyXpdX9BSQpzfJPwSczWlBe7ODqWrJK9S94Cn5fydFV8bNFIfqDgh6xxvNJ3ZGMTNnNGTw==
-X-Received: by 2002:a17:902:864b:b0:15e:f9e0:20ca with SMTP id y11-20020a170902864b00b0015ef9e020camr21879607plt.122.1652788782352;
-        Tue, 17 May 2022 04:59:42 -0700 (PDT)
-Received: from [10.72.12.136] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id z7-20020a170902d54700b0015e8d4eb2e8sm5132142plf.306.2022.05.17.04.59.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 17 May 2022 04:59:41 -0700 (PDT)
-Subject: Re: [PATCH v2 2/2] ceph: wait the first reply of inflight
- unlink/rmdir
-To:     Jeff Layton <jlayton@kernel.org>, viro@zeniv.linux.org.uk
-Cc:     idryomov@gmail.com, vshankar@redhat.com,
-        ceph-devel@vger.kernel.org, arnd@arndb.de, mcgrof@kernel.org,
-        akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
-References: <20220517010316.81483-1-xiubli@redhat.com>
- <20220517010316.81483-3-xiubli@redhat.com>
- <a2d05d80e30831e915e707a48520139500befc2b.camel@kernel.org>
- <bce4ef40-277f-8bc0-6cdb-3435eddddf44@redhat.com>
- <bd2ea8d6467ff8ea98c7bd048fd417aced86e20d.camel@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <718ffcfa-d211-23ec-947c-0c9dec33781c@redhat.com>
-Date:   Tue, 17 May 2022 19:59:34 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qHCPn/5+IVbOfCi9iuEGhFmI1sfcIXa1/Qs52bDuAk0=;
+        b=3urMK9tpfciF5ZD7kcw4PW+Ar1mljXioRPn3z0xjIMaMg6JVSG0xiyqbkXL4ViNl0O
+         O94z8Nweb18YvJv3BsQu6FlMedOPExmumcqHkyA/TQaTZpw15QltgUjPicgST2Cp9QTk
+         4ZD6DfJKv3MX/4XreP+UkmLUFfuCLXX1LLR5aDX9Rx2iuAYl9fNyN1S+YCjiAx4cSdnu
+         M9C7IfDQ/64R40J+QtJzbQ4Io2S736XCzoQ8Enj9X9VofeJMHPWanzo1eDj5ZSR/9amQ
+         czQPMxBPabsq041Of4Zj8snpjkqIQBXw2Wp5j0WnWvSP6Oc3//4h8FyUYq7S4oOoA1Rp
+         ie6Q==
+X-Gm-Message-State: AOAM533qi068TI/B/MyGRNMYjN37MpvAEAAHn2KiqznhK3LZ8xPLgSFU
+        ruSDUhCiYPxx+Nmp6nnO9hPUkF1ULpSjWUTPmdA=
+X-Google-Smtp-Source: ABdhPJx6dQalt69lWc63M4e+8wGXLuOE1/eDQYeJ+SA5ExGvxJJtlQN/wjbt+8RYCUNNbbswNb0CJ1q8DRFBP/Zvdgg=
+X-Received: by 2002:ac8:4e42:0:b0:2f4:fc3c:b0c8 with SMTP id
+ e2-20020ac84e42000000b002f4fc3cb0c8mr19509798qtw.684.1652789222633; Tue, 17
+ May 2022 05:07:02 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <bd2ea8d6467ff8ea98c7bd048fd417aced86e20d.camel@kernel.org>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Spam-Status: No, score=-5.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+References: <cover.1652730821.git.rgb@redhat.com> <1520f08c023d1e919b1a2af161d5a19367b6b4bf.1652730821.git.rgb@redhat.com>
+ <CAOQ4uxjV-eNxJ=O_WFTTzspCxXZqpMdh3Fe-N5aB-h1rDr_1hQ@mail.gmail.com>
+ <20220517103236.i7gtsw7akiikqwam@quack3.lan> <CAOQ4uxj5HZva82g_ku8uexnqE65K-ThKFJqABNg-A-rc03cVfg@mail.gmail.com>
+In-Reply-To: <CAOQ4uxj5HZva82g_ku8uexnqE65K-ThKFJqABNg-A-rc03cVfg@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 17 May 2022 15:06:51 +0300
+Message-ID: <CAOQ4uxg2Kq_+cwn+7SxvE_8vpObpBHvuXpMLnu29FJWQwR2CFA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] fanotify: define struct members to hold response
+ decision context
+To:     Jan Kara <jack@suse.cz>
+Cc:     Richard Guy Briggs <rgb@redhat.com>,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Steve Grubb <sgrubb@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Tue, May 17, 2022 at 2:31 PM Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> On Tue, May 17, 2022 at 1:32 PM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Tue 17-05-22 08:37:28, Amir Goldstein wrote:
+> > > On Mon, May 16, 2022 at 11:22 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > >
+> > > > This patch adds 2 structure members to the response returned from user
+> > > > space on a permission event. The first field is 32 bits for the context
+> > > > type.  The context type will describe what the meaning is of the second
+> > > > field. The default is none. The patch defines one additional context
+> > > > type which means that the second field is a union containing a 32-bit
+> > > > rule number. This will allow for the creation of other context types in
+> > > > the future if other users of the API identify different needs.  The
+> > > > second field size is defined by the context type and can be used to pass
+> > > > along the data described by the context.
+> > > >
+> > > > To support this, there is a macro for user space to check that the data
+> > > > being sent is valid. Of course, without this check, anything that
+> > > > overflows the bit field will trigger an EINVAL based on the use of
+> > > > FAN_INVALID_RESPONSE_MASK in process_access_response().
+> > > >
+> > > > Suggested-by: Steve Grubb <sgrubb@redhat.com>
+> > > > Link: https://lore.kernel.org/r/2745105.e9J7NaK4W3@x2
+> > > > Suggested-by: Jan Kara <jack@suse.cz>
+> > > > Link: https://lore.kernel.org/r/20201001101219.GE17860@quack2.suse.cz
+> > > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> >
+> > ...
+> > > >  static int process_access_response(struct fsnotify_group *group,
+> > > > -                                  struct fanotify_response *response_struct)
+> > > > +                                  struct fanotify_response *response_struct,
+> > > > +                                  size_t count)
+> > > >  {
+> > > >         struct fanotify_perm_event *event;
+> > > >         int fd = response_struct->fd;
+> > > >         u32 response = response_struct->response;
+> > > >
+> > > > -       pr_debug("%s: group=%p fd=%d response=%u\n", __func__, group,
+> > > > -                fd, response);
+> > > > +       pr_debug("%s: group=%p fd=%d response=%u type=%u size=%lu\n", __func__,
+> > > > +                group, fd, response, response_struct->extra_info_type, count);
+> > > > +       if (fd < 0)
+> > > > +               return -EINVAL;
+> > > >         /*
+> > > >          * make sure the response is valid, if invalid we do nothing and either
+> > > >          * userspace can send a valid response or we will clean it up after the
+> > > >          * timeout
+> > > >          */
+> > > > -       switch (response & ~FAN_AUDIT) {
+> > > > -       case FAN_ALLOW:
+> > > > -       case FAN_DENY:
+> > > > -               break;
+> > > > -       default:
+> > > > -               return -EINVAL;
+> > > > -       }
+> > > > -
+> > > > -       if (fd < 0)
+> > > > +       if (FAN_INVALID_RESPONSE_MASK(response))
+> > >
+> > > That is a logic change, because now the response value of 0 becomes valid.
+> > >
+> > > Since you did not document this change in the commit message I assume this was
+> > > non intentional?
+> > > However, this behavior change is something that I did ask for, but it should be
+> > > done is a separate commit:
+> > >
+> > >  /* These are NOT bitwise flags.  Both bits can be used together.  */
+> > > #define FAN_TEST          0x00
+> > > #define FAN_ALLOW       0x01
+> > > #define FAN_DENY        0x02
+> > > #define FANOTIFY_RESPONSE_ACCESS \
+> > >             (FAN_TEST|FAN_ALLOW | FAN_DENY)
+> > >
+> > > ...
+> > > int access = response & FANOTIFY_RESPONSE_ACCESS;
+> > >
+> > > 1. Do return EINVAL for access == 0
+> > > 2. Let all the rest of the EINVAL checks run (including extra type)
+> > > 3. Move if (fd < 0) to last check
+> > > 4. Add if (!access) return 0 before if (fd < 0)
+> > >
+> > > That will provide a mechanism for userspace to probe the
+> > > kernel support for extra types in general and specific types
+> > > that it may respond with.
+> >
+> > I have to admit I didn't quite grok your suggestion here although I
+> > understand (and agree with) the general direction of the proposal :). Maybe
+> > code would explain it better what you have in mind?
+> >
+>
+> +/* These are NOT bitwise flags.  Both bits can be used together.  */
 
-On 5/17/22 7:54 PM, Jeff Layton wrote:
-> On Tue, 2022-05-17 at 19:49 +0800, Xiubo Li wrote:
->> On 5/17/22 7:35 PM, Jeff Layton wrote:
->>> On Tue, 2022-05-17 at 09:03 +0800, Xiubo Li wrote:
->>>> In async unlink case the kclient won't wait for the first reply
->>>> from MDS and just drop all the links and unhash the dentry and then
->>>> succeeds immediately.
->>>>
->>>> For any new create/link/rename,etc requests followed by using the
->>>> same file names we must wait for the first reply of the inflight
-...
->>> I doubt you need this large a hashtable, particularly given that this is
->>> per-superblock. In most cases, we'll just have a few of these in flight
->>> at a time.
->> A global hashtable ? And set the order to 8 ?
-> Per-sb is fine, IMO. 6-8 bits sounds reasonable.
+I realize when reading this that this comment is weird, because
+0x01 and 0x02 cannot currently be used together.
+The comment was copied from above FAN_MARK_INODE where it
+has the same weirdness.
 
-Sure, let's use 8. From my snaptest I can see there had a lot of 
-dentries in the hashtable at the same time some times.
+The meaning is that (response & FANOTIFY_RESPONSE_ACCESS)
+is an enum. I am sure that a less confusing phrasing for this comment
+can be found.
 
--- Xiubo
+> +#define FAN_TEST          0x00
+> #define FAN_ALLOW       0x01
+> #define FAN_DENY        0x02
+> #define FAN_AUDIT       0x10    /* Bit mask to create audit record for result */
+> +#define FANOTIFY_RESPONSE_ACCESS \
+> +            (FAN_TEST|FAN_ALLOW | FAN_DENY)
 
+Thanks,
+Amir.
