@@ -2,60 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 29E3552A245
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 May 2022 14:58:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3633252A311
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 May 2022 15:18:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346998AbiEQM5K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 May 2022 08:57:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37702 "EHLO
+        id S1347449AbiEQNSw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 May 2022 09:18:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346773AbiEQM42 (ORCPT
+        with ESMTP id S239044AbiEQNSt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 May 2022 08:56:28 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 223F1188
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 May 2022 05:56:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1652792186;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=2pbrC0ccXNbn0M/vwJ7mEw/NOu7CiMEM/hIUWf/LhP8=;
-        b=be1+NPd37Pld2Z9KxPsdP8rBhKtWX/YMFyM+JSwArINjjCE3uNXHC1oZ8VtFwthWGAwWHe
-        6bK2/aaCInUGKuFdRWzeePngorc0nQYqO1qESaSaqutZfTESfdcfeQ509YPtwaqvFMDw0w
-        Y94gUdJu3hfUBQfTCcKhbmA3qTMiQKw=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-508-CcRcNTb8PC2ME0a94C9bbw-1; Tue, 17 May 2022 08:56:25 -0400
-X-MC-Unique: CcRcNTb8PC2ME0a94C9bbw-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Tue, 17 May 2022 09:18:49 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A7AE41F94;
+        Tue, 17 May 2022 06:18:48 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 6CB053C01D9C;
-        Tue, 17 May 2022 12:56:24 +0000 (UTC)
-Received: from localhost (unknown [10.72.47.117])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 71EBF400E114;
-        Tue, 17 May 2022 12:56:23 +0000 (UTC)
-From:   Xiubo Li <xiubli@redhat.com>
-To:     jlayton@kernel.org, viro@zeniv.linux.org.uk
-Cc:     idryomov@gmail.com, vshankar@redhat.com,
-        ceph-devel@vger.kernel.org, dchinner@redhat.com, hch@lst.de,
-        arnd@arndb.de, mcgrof@kernel.org, akpm@linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Xiubo Li <xiubli@redhat.com>, kernel test robot <lkp@intel.com>
-Subject: [PATCH v3 2/2] ceph: wait the first reply of inflight async unlink
-Date:   Tue, 17 May 2022 20:55:49 +0800
-Message-Id: <20220517125549.148429-3-xiubli@redhat.com>
-In-Reply-To: <20220517125549.148429-1-xiubli@redhat.com>
-References: <20220517125549.148429-1-xiubli@redhat.com>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9ED3C614A4;
+        Tue, 17 May 2022 13:18:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAFEAC385B8;
+        Tue, 17 May 2022 13:18:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1652793527;
+        bh=/EUREbTS3LyoHsYjut8bYc/O9ZMXv63PeDjg8xMEuoM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=t9zTth6EOx2/k9M4nc62KO2zsWg10ZVl4Tv5nxeCiZbc6X0dtiYYn+9mg7xJ9upxO
+         vXs6OYI5PRVbN/lUhNfYTlckpoGQUTWME8hU0+sIGR5uwIGuY0XP6jU6WFBZYvV0+T
+         ZXMXB4kuub6Jw0CRT5Hobwvws0w7tjmCxcjH8pek+YZUAawc0WXh91McyOnOyWoVyF
+         qMFnyMti61cz5xCupTfJs8guc3e6J09B2PWo6Dwi79R7EXoJ1tEahhWfx844HfWSdN
+         5S64GiG0cI/sRXYWRq/R5JVPYcNBzXZR/FLkdTPdF2nQiZnVSjWvrqHZnp9k+eLnDK
+         O9+deqmWcMKDw==
+Date:   Tue, 17 May 2022 15:18:41 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Stefan Roesch <shr@fb.com>
+Cc:     io-uring@vger.kernel.org, kernel-team@fb.com, linux-mm@kvack.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        david@fromorbit.com, jack@suse.cz
+Subject: Re: [RFC PATCH v2 06/16] fs: split off need_remove_file_privs()
+ do_remove_file_privs()
+Message-ID: <20220517131841.wjuy7mmqo3w2rdsv@wittgenstein>
+References: <20220516164718.2419891-1-shr@fb.com>
+ <20220516164718.2419891-7-shr@fb.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.11.54.2
-X-Spam-Status: No, score=-2.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20220516164718.2419891-7-shr@fb.com>
+X-Spam-Status: No, score=-7.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -63,387 +57,170 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In async unlink case the kclient won't wait for the first reply
-from MDS and just drop all the links and unhash the dentry and then
-succeeds immediately.
+On Mon, May 16, 2022 at 09:47:08AM -0700, Stefan Roesch wrote:
+> This splits off the function need_remove_file_privs() from the function
+> do_remove_file_privs() from the function file_remove_privs().
+> 
+> No intended functional changes in this patch.
+> 
+> Signed-off-by: Stefan Roesch <shr@fb.com>
+> ---
 
-For any new create/link/rename,etc requests followed by using the
-same file names we must wait for the first reply of the inflight
-unlink request, or the MDS possibly will fail these following
-requests with -EEXIST if the inflight async unlink request was
-delayed for some reasons.
+Just a few nits...
 
-And the worst case is that for the none async openc request it will
-successfully open the file if the CDentry hasn't been unlinked yet,
-but later the previous delayed async unlink request will remove the
-CDenty. That means the just created file is possiblly deleted later
-by accident.
+>  fs/inode.c | 57 ++++++++++++++++++++++++++++++++++++------------------
+>  1 file changed, 38 insertions(+), 19 deletions(-)
+> 
+> diff --git a/fs/inode.c b/fs/inode.c
+> index 9d9b422504d1..a6d70a1983f8 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -2010,17 +2010,8 @@ static int __remove_privs(struct user_namespace *mnt_userns,
+>  	return notify_change(mnt_userns, dentry, &newattrs, NULL);
+>  }
+>  
+> -/*
+> - * Remove special file priviledges (suid, capabilities) when file is written
+> - * to or truncated.
+> - */
+> -int file_remove_privs(struct file *file)
+> +static int need_file_remove_privs(struct inode *inode, struct dentry *dentry)
 
-We need to wait for the inflight async unlink requests to finish
-when creating new files/directories by using the same file names.
+I'd rather call this file_needs_remove_privs()?
 
-URL: https://tracker.ceph.com/issues/55332
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
----
- fs/ceph/dir.c        | 70 +++++++++++++++++++++++++++++++++++++++---
- fs/ceph/file.c       |  4 +++
- fs/ceph/mds_client.c | 73 ++++++++++++++++++++++++++++++++++++++++++++
- fs/ceph/mds_client.h |  1 +
- fs/ceph/super.c      |  3 ++
- fs/ceph/super.h      | 19 +++++++++---
- 6 files changed, 160 insertions(+), 10 deletions(-)
+>  {
+> -	struct dentry *dentry = file_dentry(file);
+> -	struct inode *inode = file_inode(file);
+> -	int kill;
+> -	int error = 0;
+> -
+>  	/*
+>  	 * Fast path for nothing security related.
+>  	 * As well for non-regular files, e.g. blkdev inodes.
+> @@ -2030,16 +2021,37 @@ int file_remove_privs(struct file *file)
+>  	if (IS_NOSEC(inode) || !S_ISREG(inode->i_mode))
+>  		return 0;
+>  
+> -	kill = dentry_needs_remove_privs(dentry);
+> -	if (kill < 0)
+> -		return kill;
+> -	if (kill)
+> -		error = __remove_privs(file_mnt_user_ns(file), dentry, kill);
+> +	return dentry_needs_remove_privs(dentry);
+> +}
+> +
+> +static int do_file_remove_privs(struct file *file, struct inode *inode,
+> +				struct dentry *dentry, int kill)
 
-diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-index eae417d71136..01e7facef9b2 100644
---- a/fs/ceph/dir.c
-+++ b/fs/ceph/dir.c
-@@ -856,6 +856,10 @@ static int ceph_mknod(struct user_namespace *mnt_userns, struct inode *dir,
- 	if (ceph_snap(dir) != CEPH_NOSNAP)
- 		return -EROFS;
- 
-+	err = ceph_wait_on_conflict_unlink(dentry);
-+	if (err)
-+		return err;
-+
- 	if (ceph_quota_is_max_files_exceeded(dir)) {
- 		err = -EDQUOT;
- 		goto out;
-@@ -918,6 +922,10 @@ static int ceph_symlink(struct user_namespace *mnt_userns, struct inode *dir,
- 	if (ceph_snap(dir) != CEPH_NOSNAP)
- 		return -EROFS;
- 
-+	err = ceph_wait_on_conflict_unlink(dentry);
-+	if (err)
-+		return err;
-+
- 	if (ceph_quota_is_max_files_exceeded(dir)) {
- 		err = -EDQUOT;
- 		goto out;
-@@ -968,9 +976,13 @@ static int ceph_mkdir(struct user_namespace *mnt_userns, struct inode *dir,
- 	struct ceph_mds_client *mdsc = ceph_sb_to_mdsc(dir->i_sb);
- 	struct ceph_mds_request *req;
- 	struct ceph_acl_sec_ctx as_ctx = {};
--	int err = -EROFS;
-+	int err;
- 	int op;
- 
-+	err = ceph_wait_on_conflict_unlink(dentry);
-+	if (err)
-+		return err;
-+
- 	if (ceph_snap(dir) == CEPH_SNAPDIR) {
- 		/* mkdir .snap/foo is a MKSNAP */
- 		op = CEPH_MDS_OP_MKSNAP;
-@@ -980,6 +992,7 @@ static int ceph_mkdir(struct user_namespace *mnt_userns, struct inode *dir,
- 		dout("mkdir dir %p dn %p mode 0%ho\n", dir, dentry, mode);
- 		op = CEPH_MDS_OP_MKDIR;
- 	} else {
-+		err = -EROFS;
- 		goto out;
- 	}
- 
-@@ -1037,6 +1050,10 @@ static int ceph_link(struct dentry *old_dentry, struct inode *dir,
- 	struct ceph_mds_request *req;
- 	int err;
- 
-+	err = ceph_wait_on_conflict_unlink(dentry);
-+	if (err)
-+		return err;
-+
- 	if (ceph_snap(dir) != CEPH_NOSNAP)
- 		return -EROFS;
- 
-@@ -1071,9 +1088,27 @@ static int ceph_link(struct dentry *old_dentry, struct inode *dir,
- static void ceph_async_unlink_cb(struct ceph_mds_client *mdsc,
- 				 struct ceph_mds_request *req)
- {
-+	struct dentry *dentry = req->r_dentry;
-+	struct ceph_fs_client *fsc = ceph_sb_to_client(dentry->d_sb);
-+	struct ceph_dentry_info *di = ceph_dentry(dentry);
- 	int result = req->r_err ? req->r_err :
- 			le32_to_cpu(req->r_reply_info.head->result);
- 
-+	if (!test_bit(CEPH_DENTRY_ASYNC_UNLINK_BIT, &di->flags))
-+		pr_warn("%s dentry %p:%pd async unlink bit is not set\n",
-+			__func__, dentry, dentry);
-+
-+	spin_lock(&fsc->async_unlink_conflict_lock);
-+	hash_del_rcu(&di->hnode);
-+	spin_unlock(&fsc->async_unlink_conflict_lock);
-+
-+	spin_lock(&dentry->d_lock);
-+	di->flags &= ~CEPH_DENTRY_ASYNC_UNLINK;
-+	wake_up_bit(&di->flags, CEPH_DENTRY_ASYNC_UNLINK_BIT);
-+	spin_unlock(&dentry->d_lock);
-+
-+	synchronize_rcu();
-+
- 	if (result == -EJUKEBOX)
- 		goto out;
- 
-@@ -1081,7 +1116,7 @@ static void ceph_async_unlink_cb(struct ceph_mds_client *mdsc,
- 	if (result) {
- 		int pathlen = 0;
- 		u64 base = 0;
--		char *path = ceph_mdsc_build_path(req->r_dentry, &pathlen,
-+		char *path = ceph_mdsc_build_path(dentry, &pathlen,
- 						  &base, 0);
- 
- 		/* mark error on parent + clear complete */
-@@ -1089,13 +1124,13 @@ static void ceph_async_unlink_cb(struct ceph_mds_client *mdsc,
- 		ceph_dir_clear_complete(req->r_parent);
- 
- 		/* drop the dentry -- we don't know its status */
--		if (!d_unhashed(req->r_dentry))
--			d_drop(req->r_dentry);
-+		if (!d_unhashed(dentry))
-+			d_drop(dentry);
- 
- 		/* mark inode itself for an error (since metadata is bogus) */
- 		mapping_set_error(req->r_old_inode->i_mapping, result);
- 
--		pr_warn("ceph: async unlink failure path=(%llx)%s result=%d!\n",
-+		pr_warn("async unlink failure path=(%llx)%s result=%d!\n",
- 			base, IS_ERR(path) ? "<<bad>>" : path, result);
- 		ceph_mdsc_free_path(path, pathlen);
- 	}
-@@ -1180,6 +1215,8 @@ static int ceph_unlink(struct inode *dir, struct dentry *dentry)
- 
- 	if (try_async && op == CEPH_MDS_OP_UNLINK &&
- 	    (req->r_dir_caps = get_caps_for_async_unlink(dir, dentry))) {
-+		struct ceph_dentry_info *di = ceph_dentry(dentry);
-+
- 		dout("async unlink on %llu/%.*s caps=%s", ceph_ino(dir),
- 		     dentry->d_name.len, dentry->d_name.name,
- 		     ceph_cap_string(req->r_dir_caps));
-@@ -1187,6 +1224,16 @@ static int ceph_unlink(struct inode *dir, struct dentry *dentry)
- 		req->r_callback = ceph_async_unlink_cb;
- 		req->r_old_inode = d_inode(dentry);
- 		ihold(req->r_old_inode);
-+
-+		spin_lock(&dentry->d_lock);
-+		di->flags |= CEPH_DENTRY_ASYNC_UNLINK;
-+		spin_unlock(&dentry->d_lock);
-+
-+		spin_lock(&fsc->async_unlink_conflict_lock);
-+		hash_add_rcu(fsc->async_unlink_conflict, &di->hnode,
-+			     dentry->d_name.hash);
-+		spin_unlock(&fsc->async_unlink_conflict_lock);
-+
- 		err = ceph_mdsc_submit_request(mdsc, dir, req);
- 		if (!err) {
- 			/*
-@@ -1198,6 +1245,15 @@ static int ceph_unlink(struct inode *dir, struct dentry *dentry)
- 		} else if (err == -EJUKEBOX) {
- 			try_async = false;
- 			ceph_mdsc_put_request(req);
-+
-+			spin_lock(&dentry->d_lock);
-+			di->flags &= ~CEPH_DENTRY_ASYNC_UNLINK;
-+			spin_unlock(&dentry->d_lock);
-+
-+			spin_lock(&fsc->async_unlink_conflict_lock);
-+			hash_del_rcu(&di->hnode);
-+			spin_unlock(&fsc->async_unlink_conflict_lock);
-+
- 			goto retry;
- 		}
- 	} else {
-@@ -1237,6 +1293,10 @@ static int ceph_rename(struct user_namespace *mnt_userns, struct inode *old_dir,
- 	    (!ceph_quota_is_same_realm(old_dir, new_dir)))
- 		return -EXDEV;
- 
-+	err = ceph_wait_on_conflict_unlink(new_dentry);
-+	if (err)
-+		return err;
-+
- 	dout("rename dir %p dentry %p to dir %p dentry %p\n",
- 	     old_dir, old_dentry, new_dir, new_dentry);
- 	req = ceph_mdsc_create_request(mdsc, op, USE_AUTH_MDS);
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index 8c8226c0feac..f039e799f5f4 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -740,6 +740,10 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
- 	if (dentry->d_name.len > NAME_MAX)
- 		return -ENAMETOOLONG;
- 
-+	err = ceph_wait_on_conflict_unlink(dentry);
-+	if (err)
-+		return err;
-+
- 	if (flags & O_CREAT) {
- 		if (ceph_quota_is_max_files_exceeded(dir))
- 			return -EDQUOT;
-diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
-index e8c87dea0551..480c69bc51b1 100644
---- a/fs/ceph/mds_client.c
-+++ b/fs/ceph/mds_client.c
-@@ -655,6 +655,79 @@ static void destroy_reply_info(struct ceph_mds_reply_info_parsed *info)
- 	free_pages((unsigned long)info->dir_entries, get_order(info->dir_buf_size));
- }
- 
-+/*
-+ * In async unlink case the kclient won't wait for the first reply
-+ * from MDS and just drop all the links and unhash the dentry and then
-+ * succeeds immediately.
-+ *
-+ * For any new create/link/rename,etc requests followed by using the
-+ * same file names we must wait for the first reply of the inflight
-+ * unlink request, or the MDS possibly will fail these following
-+ * requests with -EEXIST if the inflight async unlink request was
-+ * delayed for some reasons.
-+ *
-+ * And the worst case is that for the none async openc request it will
-+ * successfully open the file if the CDentry hasn't been unlinked yet,
-+ * but later the previous delayed async unlink request will remove the
-+ * CDenty. That means the just created file is possiblly deleted later
-+ * by accident.
-+ *
-+ * We need to wait for the inflight async unlink requests to finish
-+ * when creating new files/directories by using the same file names.
-+ */
-+int ceph_wait_on_conflict_unlink(struct dentry *dentry)
-+{
-+	struct ceph_fs_client *fsc = ceph_sb_to_client(dentry->d_sb);
-+	struct dentry *pdentry = dentry->d_parent;
-+	struct dentry *udentry, *found = NULL;
-+	struct ceph_dentry_info *di;
-+	struct qstr dname;
-+	u32 hash = dentry->d_name.hash;
-+	int err;
-+
-+	dname.name = dentry->d_name.name;
-+	dname.len = dentry->d_name.len;
-+
-+	rcu_read_lock();
-+	hash_for_each_possible_rcu(fsc->async_unlink_conflict, di,
-+				   hnode, hash) {
-+		udentry = di->dentry;
-+
-+		spin_lock(&udentry->d_lock);
-+		if (udentry->d_name.hash != hash)
-+			goto next;
-+		if (unlikely(udentry->d_parent != pdentry))
-+			goto next;
-+		if (!hash_hashed(&di->hnode))
-+			goto next;
-+
-+		if (!test_bit(CEPH_DENTRY_ASYNC_UNLINK_BIT, &di->flags))
-+			pr_warn("%s dentry %p:%pd async unlink bit is not set\n",
-+				__func__, dentry, dentry);
-+
-+		if (d_compare(pdentry, udentry, &dname))
-+			goto next;
-+
-+		spin_unlock(&udentry->d_lock);
-+		found = dget(udentry);
-+		break;
-+next:
-+		spin_unlock(&udentry->d_lock);
-+	}
-+	rcu_read_unlock();
-+
-+	if (likely(!found))
-+		return 0;
-+
-+	dout("%s dentry %p:%pd conflict with old %p:%pd\n", __func__,
-+	     dentry, dentry, found, found);
-+
-+	err = wait_on_bit(&di->flags, CEPH_DENTRY_ASYNC_UNLINK_BIT,
-+			  TASK_INTERRUPTIBLE);
-+	dput(found);
-+	return err;
-+}
-+
- 
- /*
-  * sessions
-diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
-index 33497846e47e..d1ae679c52c3 100644
---- a/fs/ceph/mds_client.h
-+++ b/fs/ceph/mds_client.h
-@@ -582,6 +582,7 @@ static inline int ceph_wait_on_async_create(struct inode *inode)
- 			   TASK_INTERRUPTIBLE);
- }
- 
-+extern int ceph_wait_on_conflict_unlink(struct dentry *dentry);
- extern u64 ceph_get_deleg_ino(struct ceph_mds_session *session);
- extern int ceph_restore_deleg_ino(struct ceph_mds_session *session, u64 ino);
- #endif
-diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-index b73b4f75462c..6542b71f8627 100644
---- a/fs/ceph/super.c
-+++ b/fs/ceph/super.c
-@@ -816,6 +816,9 @@ static struct ceph_fs_client *create_fs_client(struct ceph_mount_options *fsopt,
- 	if (!fsc->cap_wq)
- 		goto fail_inode_wq;
- 
-+	hash_init(fsc->async_unlink_conflict);
-+	spin_lock_init(&fsc->async_unlink_conflict_lock);
-+
- 	spin_lock(&ceph_fsc_lock);
- 	list_add_tail(&fsc->metric_wakeup, &ceph_fsc_list);
- 	spin_unlock(&ceph_fsc_lock);
-diff --git a/fs/ceph/super.h b/fs/ceph/super.h
-index 506d52633627..251e726ec628 100644
---- a/fs/ceph/super.h
-+++ b/fs/ceph/super.h
-@@ -19,6 +19,7 @@
- #include <linux/security.h>
- #include <linux/netfs.h>
- #include <linux/fscache.h>
-+#include <linux/hashtable.h>
- 
- #include <linux/ceph/libceph.h>
- 
-@@ -99,6 +100,8 @@ struct ceph_mount_options {
- 	char *mon_addr;
- };
- 
-+#define CEPH_ASYNC_CREATE_CONFLICT_BITS 8
-+
- struct ceph_fs_client {
- 	struct super_block *sb;
- 
-@@ -124,6 +127,9 @@ struct ceph_fs_client {
- 	struct workqueue_struct *inode_wq;
- 	struct workqueue_struct *cap_wq;
- 
-+	DECLARE_HASHTABLE(async_unlink_conflict, CEPH_ASYNC_CREATE_CONFLICT_BITS);
-+	spinlock_t async_unlink_conflict_lock;
-+
- #ifdef CONFIG_DEBUG_FS
- 	struct dentry *debugfs_dentry_lru, *debugfs_caps;
- 	struct dentry *debugfs_congestion_kb;
-@@ -281,7 +287,8 @@ struct ceph_dentry_info {
- 	struct dentry *dentry;
- 	struct ceph_mds_session *lease_session;
- 	struct list_head lease_list;
--	unsigned flags;
-+	struct hlist_node hnode;
-+	unsigned long flags;
- 	int lease_shared_gen;
- 	u32 lease_gen;
- 	u32 lease_seq;
-@@ -290,10 +297,12 @@ struct ceph_dentry_info {
- 	u64 offset;
- };
- 
--#define CEPH_DENTRY_REFERENCED		1
--#define CEPH_DENTRY_LEASE_LIST		2
--#define CEPH_DENTRY_SHRINK_LIST		4
--#define CEPH_DENTRY_PRIMARY_LINK	8
-+#define CEPH_DENTRY_REFERENCED		(1 << 0)
-+#define CEPH_DENTRY_LEASE_LIST		(1 << 1)
-+#define CEPH_DENTRY_SHRINK_LIST		(1 << 2)
-+#define CEPH_DENTRY_PRIMARY_LINK	(1 << 3)
-+#define CEPH_DENTRY_ASYNC_UNLINK_BIT	(4)
-+#define CEPH_DENTRY_ASYNC_UNLINK	(1 << CEPH_DENTRY_ASYNC_UNLINK_BIT)
- 
- struct ceph_inode_xattrs_info {
- 	/*
--- 
-2.36.0.rc1
+and that __file_remove_privs() which matches the rest of the file since
+here we don't have a lot of do_* but rather __* convention afaict.
 
+> +{
+> +	int error = 0;
+> +
+> +	error = __remove_privs(file_mnt_user_ns(file), dentry, kill);
+>  	if (!error)
+>  		inode_has_no_xattr(inode);
+>  
+>  	return error;
+>  }
+> +
+> +/*
+> + * Remove special file privileges (suid, capabilities) when file is written
+> + * to or truncated.
+> + */
+> +int file_remove_privs(struct file *file)
+
+This is a generic comment, not aimed specifically at your change but we
+really need to get better at kernel-doc...
+
+Since you're already touching this code could you at least to the
+exported function you're modifying add sm like:
+
+/**
+ * file_remove_privs - remove special file privileges (suid, capabilities) 
+ * @file: file to remove privileges from
+ * 
+ * When file is modified by a write or truncation ensure that special
+ * file privileges are removed.
+ *
+ * Return: 0 on success, negative errno on failure.
+ */
+int file_remove_privs(struct file *file)
+
+This will then render on kernel.org/doc see e.g. lookup_one():
+https://www.kernel.org/doc/html/latest/filesystems/api-summary.html?highlight=lookup_one#c.lookup_one
+
+> +{
+> +	struct dentry *dentry = file_dentry(file);
+> +	struct inode *inode = file_inode(file);
+> +	int kill;
+> +
+> +	kill = need_file_remove_privs(inode, dentry);
+> +	if (kill <= 0)
+> +		return kill;
+> +
+> +	return do_file_remove_privs(file, inode, dentry, kill);
+> +}
+>  EXPORT_SYMBOL(file_remove_privs);
+>  
+>  /**
+> @@ -2093,15 +2105,22 @@ EXPORT_SYMBOL(file_update_time);
+>  /* Caller must hold the file's inode lock */
+>  int file_modified(struct file *file)
+
+Similar I'd add sm like:
+
+/**
+ * file_modified - handle mandated vfs changes when modifying a file
+ * @file: file that was was modified
+ * 
+ * When file has been modified ensure that special
+ * file privileges are removed and time settings are updated.
+ *
+ * Context: Caller must hold the file's inode lock.
+ *
+ * Return: 0 on success, negative errno on failure.
+ */
+int file_remove_privs(struct file *file)
+
+>  {
+> -	int err;
+> +	int ret;
+> +	struct dentry *dentry = file_dentry(file);
+> +	struct inode *inode = file_inode(file);
+>  
+>  	/*
+>  	 * Clear the security bits if the process is not being run by root.
+>  	 * This keeps people from modifying setuid and setgid binaries.
+>  	 */
+> -	err = file_remove_privs(file);
+> -	if (err)
+> -		return err;
+> +	ret = need_file_remove_privs(inode, dentry);
+> +	if (ret < 0) {
+> +		return ret;
+> +	} else if (ret > 0) {
+> +		ret = do_file_remove_privs(file, inode, dentry, ret);
+> +		if (ret)
+> +			return ret;
+> +	}
+
+The else-if branch looks a bit unorthodox to me. I'd probably rather
+make this:
+
+	ret = need_file_remove_privs(inode, dentry);
+	if (ret < 0)
+		return ret;
+	
+	if (ret > 0) {
+		ret = do_file_remove_privs(file, inode, dentry, ret);
+		if (ret)
+			return ret;
+	}
+>  
+>  	if (unlikely(file->f_mode & FMODE_NOCMTIME))
+>  		return 0;
+> -- 
+> 2.30.2
+> 
