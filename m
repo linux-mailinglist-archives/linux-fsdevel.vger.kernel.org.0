@@ -2,186 +2,185 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 65AE052A126
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 May 2022 14:07:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DE4952A19B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 May 2022 14:34:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241022AbiEQMHF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 May 2022 08:07:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44488 "EHLO
+        id S1346110AbiEQMec (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 May 2022 08:34:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231470AbiEQMHE (ORCPT
+        with ESMTP id S242745AbiEQMea (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 May 2022 08:07:04 -0400
-Received: from mail-qt1-x82a.google.com (mail-qt1-x82a.google.com [IPv6:2607:f8b0:4864:20::82a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8290444746;
-        Tue, 17 May 2022 05:07:03 -0700 (PDT)
-Received: by mail-qt1-x82a.google.com with SMTP id k2so14125433qtp.1;
-        Tue, 17 May 2022 05:07:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qHCPn/5+IVbOfCi9iuEGhFmI1sfcIXa1/Qs52bDuAk0=;
-        b=SOh6EcMWhqj1rRTK+fVaTib5Wo+a7e/L9Fs8VOuS9uF1/qtWusul3kpCrScepzF0wP
-         6u8IaM+JgyJNaF4JOnrKqjNPudVUU8bzHESYxMNGKef9q+ECsd+AIcyTtNDjIsDZLIQb
-         RP7LLWwYVugwykCD8aIqaMsP0CR8xHLb45qGeVYvfTVDhcItNfr96GDxKCoM8RjyTSJm
-         l6ym8XXJxqfr68fKvDn7yxJWm/NrTO7XcRq93griWlVnMV3QnQvhSSQLeWSFI8AbSyfW
-         YbRKy9/2tmwySLVlmeIK36sY0yEQmWfGkMkLi5Re2g4hdKdx8yXY9lUrqWTdFJuwb3L/
-         hhIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qHCPn/5+IVbOfCi9iuEGhFmI1sfcIXa1/Qs52bDuAk0=;
-        b=3urMK9tpfciF5ZD7kcw4PW+Ar1mljXioRPn3z0xjIMaMg6JVSG0xiyqbkXL4ViNl0O
-         O94z8Nweb18YvJv3BsQu6FlMedOPExmumcqHkyA/TQaTZpw15QltgUjPicgST2Cp9QTk
-         4ZD6DfJKv3MX/4XreP+UkmLUFfuCLXX1LLR5aDX9Rx2iuAYl9fNyN1S+YCjiAx4cSdnu
-         M9C7IfDQ/64R40J+QtJzbQ4Io2S736XCzoQ8Enj9X9VofeJMHPWanzo1eDj5ZSR/9amQ
-         czQPMxBPabsq041Of4Zj8snpjkqIQBXw2Wp5j0WnWvSP6Oc3//4h8FyUYq7S4oOoA1Rp
-         ie6Q==
-X-Gm-Message-State: AOAM533qi068TI/B/MyGRNMYjN37MpvAEAAHn2KiqznhK3LZ8xPLgSFU
-        ruSDUhCiYPxx+Nmp6nnO9hPUkF1ULpSjWUTPmdA=
-X-Google-Smtp-Source: ABdhPJx6dQalt69lWc63M4e+8wGXLuOE1/eDQYeJ+SA5ExGvxJJtlQN/wjbt+8RYCUNNbbswNb0CJ1q8DRFBP/Zvdgg=
-X-Received: by 2002:ac8:4e42:0:b0:2f4:fc3c:b0c8 with SMTP id
- e2-20020ac84e42000000b002f4fc3cb0c8mr19509798qtw.684.1652789222633; Tue, 17
- May 2022 05:07:02 -0700 (PDT)
+        Tue, 17 May 2022 08:34:30 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0D214B876;
+        Tue, 17 May 2022 05:34:28 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 4F01221CD1;
+        Tue, 17 May 2022 12:34:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1652790867;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=HuIMRN14JGi6FVhkYyikXn4jfOnEwx41w5UWTDF8TaI=;
+        b=Z8zGI2cKe92t43wF3IU8bzZyLOD1eIzVh+XRmfFfA6iEaBK3UDTIJIKDdQYPthEOG3zt1o
+        g2YKAKlDnuaZQmDsxJ5dBK03IpuardW3AsptMLcG2p3bv0Z/s6ifQGoHjb3qEhcPPor/Sg
+        aozwRi1f3Fd79OLBoBPL33qpmG9NK9c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1652790867;
+        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+         cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=HuIMRN14JGi6FVhkYyikXn4jfOnEwx41w5UWTDF8TaI=;
+        b=Iw3UGc1yIjzzyQ8fyKM97yOidrUBmUbrPGDJQSoaNowvHl51NhOMmoquPvOoNgp/eBpYAo
+        pjcfAiOlbvzbLCCw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id E47AA13305;
+        Tue, 17 May 2022 12:34:26 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 8iC/NlKWg2KVFwAAMHmgww
+        (envelope-from <dsterba@suse.cz>); Tue, 17 May 2022 12:34:26 +0000
+Date:   Tue, 17 May 2022 14:30:08 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     Pankaj Raghav <p.raghav@samsung.com>
+Cc:     axboe@kernel.dk, damien.lemoal@opensource.wdc.com,
+        pankydev8@gmail.com, dsterba@suse.com, hch@lst.de,
+        linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, jiangbo.365@bytedance.com,
+        linux-block@vger.kernel.org, gost.dev@samsung.com,
+        linux-kernel@vger.kernel.org, dm-devel@redhat.com,
+        Luis Chamberlain <mcgrof@kernel.org>
+Subject: Re: [PATCH v4 07/13] btrfs: zoned: use generic btrfs zone helpers to
+ support npo2 zoned devices
+Message-ID: <20220517123008.GC18596@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Pankaj Raghav <p.raghav@samsung.com>,
+        axboe@kernel.dk, damien.lemoal@opensource.wdc.com,
+        pankydev8@gmail.com, dsterba@suse.com, hch@lst.de,
+        linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, jiangbo.365@bytedance.com,
+        linux-block@vger.kernel.org, gost.dev@samsung.com,
+        linux-kernel@vger.kernel.org, dm-devel@redhat.com,
+        Luis Chamberlain <mcgrof@kernel.org>
+References: <20220516165416.171196-1-p.raghav@samsung.com>
+ <CGME20220516165428eucas1p1374b5f9592db3ca6a6551aff975537ce@eucas1p1.samsung.com>
+ <20220516165416.171196-8-p.raghav@samsung.com>
 MIME-Version: 1.0
-References: <cover.1652730821.git.rgb@redhat.com> <1520f08c023d1e919b1a2af161d5a19367b6b4bf.1652730821.git.rgb@redhat.com>
- <CAOQ4uxjV-eNxJ=O_WFTTzspCxXZqpMdh3Fe-N5aB-h1rDr_1hQ@mail.gmail.com>
- <20220517103236.i7gtsw7akiikqwam@quack3.lan> <CAOQ4uxj5HZva82g_ku8uexnqE65K-ThKFJqABNg-A-rc03cVfg@mail.gmail.com>
-In-Reply-To: <CAOQ4uxj5HZva82g_ku8uexnqE65K-ThKFJqABNg-A-rc03cVfg@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 17 May 2022 15:06:51 +0300
-Message-ID: <CAOQ4uxg2Kq_+cwn+7SxvE_8vpObpBHvuXpMLnu29FJWQwR2CFA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] fanotify: define struct members to hold response
- decision context
-To:     Jan Kara <jack@suse.cz>
-Cc:     Richard Guy Briggs <rgb@redhat.com>,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Steve Grubb <sgrubb@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220516165416.171196-8-p.raghav@samsung.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 17, 2022 at 2:31 PM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> On Tue, May 17, 2022 at 1:32 PM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Tue 17-05-22 08:37:28, Amir Goldstein wrote:
-> > > On Mon, May 16, 2022 at 11:22 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > >
-> > > > This patch adds 2 structure members to the response returned from user
-> > > > space on a permission event. The first field is 32 bits for the context
-> > > > type.  The context type will describe what the meaning is of the second
-> > > > field. The default is none. The patch defines one additional context
-> > > > type which means that the second field is a union containing a 32-bit
-> > > > rule number. This will allow for the creation of other context types in
-> > > > the future if other users of the API identify different needs.  The
-> > > > second field size is defined by the context type and can be used to pass
-> > > > along the data described by the context.
-> > > >
-> > > > To support this, there is a macro for user space to check that the data
-> > > > being sent is valid. Of course, without this check, anything that
-> > > > overflows the bit field will trigger an EINVAL based on the use of
-> > > > FAN_INVALID_RESPONSE_MASK in process_access_response().
-> > > >
-> > > > Suggested-by: Steve Grubb <sgrubb@redhat.com>
-> > > > Link: https://lore.kernel.org/r/2745105.e9J7NaK4W3@x2
-> > > > Suggested-by: Jan Kara <jack@suse.cz>
-> > > > Link: https://lore.kernel.org/r/20201001101219.GE17860@quack2.suse.cz
-> > > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> >
-> > ...
-> > > >  static int process_access_response(struct fsnotify_group *group,
-> > > > -                                  struct fanotify_response *response_struct)
-> > > > +                                  struct fanotify_response *response_struct,
-> > > > +                                  size_t count)
-> > > >  {
-> > > >         struct fanotify_perm_event *event;
-> > > >         int fd = response_struct->fd;
-> > > >         u32 response = response_struct->response;
-> > > >
-> > > > -       pr_debug("%s: group=%p fd=%d response=%u\n", __func__, group,
-> > > > -                fd, response);
-> > > > +       pr_debug("%s: group=%p fd=%d response=%u type=%u size=%lu\n", __func__,
-> > > > +                group, fd, response, response_struct->extra_info_type, count);
-> > > > +       if (fd < 0)
-> > > > +               return -EINVAL;
-> > > >         /*
-> > > >          * make sure the response is valid, if invalid we do nothing and either
-> > > >          * userspace can send a valid response or we will clean it up after the
-> > > >          * timeout
-> > > >          */
-> > > > -       switch (response & ~FAN_AUDIT) {
-> > > > -       case FAN_ALLOW:
-> > > > -       case FAN_DENY:
-> > > > -               break;
-> > > > -       default:
-> > > > -               return -EINVAL;
-> > > > -       }
-> > > > -
-> > > > -       if (fd < 0)
-> > > > +       if (FAN_INVALID_RESPONSE_MASK(response))
-> > >
-> > > That is a logic change, because now the response value of 0 becomes valid.
-> > >
-> > > Since you did not document this change in the commit message I assume this was
-> > > non intentional?
-> > > However, this behavior change is something that I did ask for, but it should be
-> > > done is a separate commit:
-> > >
-> > >  /* These are NOT bitwise flags.  Both bits can be used together.  */
-> > > #define FAN_TEST          0x00
-> > > #define FAN_ALLOW       0x01
-> > > #define FAN_DENY        0x02
-> > > #define FANOTIFY_RESPONSE_ACCESS \
-> > >             (FAN_TEST|FAN_ALLOW | FAN_DENY)
-> > >
-> > > ...
-> > > int access = response & FANOTIFY_RESPONSE_ACCESS;
-> > >
-> > > 1. Do return EINVAL for access == 0
-> > > 2. Let all the rest of the EINVAL checks run (including extra type)
-> > > 3. Move if (fd < 0) to last check
-> > > 4. Add if (!access) return 0 before if (fd < 0)
-> > >
-> > > That will provide a mechanism for userspace to probe the
-> > > kernel support for extra types in general and specific types
-> > > that it may respond with.
-> >
-> > I have to admit I didn't quite grok your suggestion here although I
-> > understand (and agree with) the general direction of the proposal :). Maybe
-> > code would explain it better what you have in mind?
-> >
->
-> +/* These are NOT bitwise flags.  Both bits can be used together.  */
+On Mon, May 16, 2022 at 06:54:10PM +0200, Pankaj Raghav wrote:
+> Add helpers to calculate alignment, round up and round down
+> for zoned devices. These helpers encapsulates the necessary handling for
+> power_of_2 and non-power_of_2 zone sizes. Optimized calculations are
+> performed for zone sizes that are power_of_2 with log and shifts.
+> 
+> btrfs_zoned_is_aligned() is added instead of reusing bdev_zone_aligned()
+> helper due to some use cases in btrfs where zone alignment is checked
+> before having access to the underlying block device such as in this
+> function: btrfs_load_block_group_zone_info().
+> 
+> Use the generic btrfs zone helpers to calculate zone index, check zone
+> alignment, round up and round down operations.
+> 
+> The zone_size_shift field is not needed anymore as generic helpers are
+> used for calculation.
 
-I realize when reading this that this comment is weird, because
-0x01 and 0x02 cannot currently be used together.
-The comment was copied from above FAN_MARK_INODE where it
-has the same weirdness.
+Overall this looks reasonable to me.
 
-The meaning is that (response & FANOTIFY_RESPONSE_ACCESS)
-is an enum. I am sure that a less confusing phrasing for this comment
-can be found.
+> Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+> ---
+>  fs/btrfs/volumes.c | 24 +++++++++-------
+>  fs/btrfs/zoned.c   | 72 ++++++++++++++++++++++------------------------
+>  fs/btrfs/zoned.h   | 43 +++++++++++++++++++++++----
+>  3 files changed, 85 insertions(+), 54 deletions(-)
+> 
+> --- a/fs/btrfs/zoned.c
+> +++ b/fs/btrfs/zoned.c
+> @@ -1108,14 +1101,14 @@ int btrfs_reset_device_zone(struct btrfs_device *device, u64 physical,
+>  int btrfs_ensure_empty_zones(struct btrfs_device *device, u64 start, u64 size)
+>  {
+>  	struct btrfs_zoned_device_info *zinfo = device->zone_info;
+> -	const u8 shift = zinfo->zone_size_shift;
+> -	unsigned long begin = start >> shift;
+> -	unsigned long end = (start + size) >> shift;
+> +	unsigned long begin = bdev_zone_no(device->bdev, start >> SECTOR_SHIFT);
+> +	unsigned long end =
+> +		bdev_zone_no(device->bdev, (start + size) >> SECTOR_SHIFT);
 
-> +#define FAN_TEST          0x00
-> #define FAN_ALLOW       0x01
-> #define FAN_DENY        0x02
-> #define FAN_AUDIT       0x10    /* Bit mask to create audit record for result */
-> +#define FANOTIFY_RESPONSE_ACCESS \
-> +            (FAN_TEST|FAN_ALLOW | FAN_DENY)
+There are unsinged long types here though I'd rather see u64, better for
+a separate patch. Fixed width types are cleaner here and in the zoned
+code as there's always some conversion to/from sectors.
 
-Thanks,
-Amir.
+>  	u64 pos;
+>  	int ret;
+>  
+> -	ASSERT(IS_ALIGNED(start, zinfo->zone_size));
+> -	ASSERT(IS_ALIGNED(size, zinfo->zone_size));
+> +	ASSERT(btrfs_zoned_is_aligned(start, zinfo->zone_size));
+> +	ASSERT(btrfs_zoned_is_aligned(size, zinfo->zone_size));
+>  
+>  	if (end > zinfo->nr_zones)
+>  		return -ERANGE;
+> --- a/fs/btrfs/zoned.h
+> +++ b/fs/btrfs/zoned.h
+> @@ -30,6 +30,36 @@ struct btrfs_zoned_device_info {
+>  	u32 sb_zone_location[BTRFS_SUPER_MIRROR_MAX];
+>  };
+>  
+> +static inline bool btrfs_zoned_is_aligned(u64 pos, u64 zone_size)
+> +{
+> +	u64 remainder = 0;
+> +
+> +	if (is_power_of_two_u64(zone_size))
+> +		return IS_ALIGNED(pos, zone_size);
+> +
+> +	div64_u64_rem(pos, zone_size, &remainder);
+> +	return remainder == 0;
+> +}
+> +
+> +static inline u64 btrfs_zoned_roundup(u64 pos, u64 zone_size)
+> +{
+> +	if (is_power_of_two_u64(zone_size))
+> +		return ALIGN(pos, zone_size);
+
+Please use round_up as the rounddown helper uses round_down
+
+> +
+> +	return div64_u64(pos + zone_size - 1, zone_size) * zone_size;
+> +}
+> +
+> +static inline u64 btrfs_zoned_rounddown(u64 pos, u64 zone_size)
+> +{
+> +	u64 remainder = 0;
+> +	if (is_power_of_two_u64(zone_size))
+> +		return round_down(pos, zone_size);
+> +
+> +	div64_u64_rem(pos, zone_size, &remainder);
+> +	pos -= remainder;
+> +	return pos;
+> +}
+> +
+>  #ifdef CONFIG_BLK_DEV_ZONED
+>  int btrfs_get_dev_zone(struct btrfs_device *device, u64 pos,
+>  		       struct blk_zone *zone);
