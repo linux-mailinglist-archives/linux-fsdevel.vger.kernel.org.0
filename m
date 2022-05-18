@@ -2,53 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B1FD052BDDA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 May 2022 17:25:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EC5552BDF6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 May 2022 17:25:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238902AbiEROqL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 May 2022 10:46:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60228 "EHLO
+        id S238910AbiEROqV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 May 2022 10:46:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60716 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238908AbiEROqH (ORCPT
+        with ESMTP id S238915AbiEROqO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 May 2022 10:46:07 -0400
+        Wed, 18 May 2022 10:46:14 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C19DF3ED1D
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 May 2022 07:46:06 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 787524A3C4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 May 2022 07:46:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1652885165;
+        s=mimecast20190719; t=1652885169;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=gGE+Ub17qq/C1GkdhUyvVjCTwA0D6nQtm+wNAxOQhrU=;
-        b=aPGj6tm1HCRAUdf6gAizRyjaxIUPZc4QLkWEdOh9C+ra6r4muOSNU4z0R48Otm5c7AHt3n
-        BSGzpYOoD8JPefuoDFVwhsgZX8U24I+jO2MkEpnnGUqH6YJAo9YxfA29PeHRwAdVdVfJKo
-        fPjV8n8LsV6mfoTrOAfnNkrkI9GlwpY=
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=sr0Su8VmpTGq2+kXIOmhRI/79j0nmk1mBS04kJYAJN4=;
+        b=PB3zCRjkONg0ZY7DCop9rWmrPtxqO7fD8RQTqNrTjV9IuAvn6jOq+qh2R9cpRYcSHJ3tb3
+        O4/hkkRaWLF3R2rb0xGWo4dk3YNJTqBNTSCEYfSprpWo+lfenZgGfFx8siHDJJCi3miTn3
+        mbVFrzuEqfniNehgQc93kGJbJ6q0+nQ=
 Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
  [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-594-d6QY-msDMG6MLmcXX9hRyA-1; Wed, 18 May 2022 10:46:01 -0400
-X-MC-Unique: d6QY-msDMG6MLmcXX9hRyA-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+ us-mta-528-b2lhbogwOO-ybMHWfCZ-Rg-1; Wed, 18 May 2022 10:46:04 -0400
+X-MC-Unique: b2lhbogwOO-ybMHWfCZ-Rg-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id F04B8801210;
-        Wed, 18 May 2022 14:46:00 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id E093B86B8B2;
+        Wed, 18 May 2022 14:46:03 +0000 (UTC)
 Received: from localhost (unknown [10.72.47.117])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4568D2026D64;
-        Wed, 18 May 2022 14:45:54 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3F39640C1244;
+        Wed, 18 May 2022 14:46:02 +0000 (UTC)
 From:   Xiubo Li <xiubli@redhat.com>
 To:     jlayton@kernel.org, idryomov@gmail.com, viro@zeniv.linux.org.uk
 Cc:     willy@infradead.org, vshankar@redhat.com,
         ceph-devel@vger.kernel.org, arnd@arndb.de, mcgrof@kernel.org,
         akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>
-Subject: [PATCH v4 0/2] ceph: wait async unlink to finish
-Date:   Wed, 18 May 2022 22:45:43 +0800
-Message-Id: <20220518144545.246604-1-xiubli@redhat.com>
+Subject: [PATCH v4 1/2] fs/dcache: add d_compare() helper support
+Date:   Wed, 18 May 2022 22:45:44 +0800
+Message-Id: <20220518144545.246604-2-xiubli@redhat.com>
+In-Reply-To: <20220518144545.246604-1-xiubli@redhat.com>
+References: <20220518144545.246604-1-xiubli@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Scanned-By: MIMEDefang 2.84 on 10.11.54.2
 X-Spam-Status: No, score=-3.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
         SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
@@ -59,34 +62,52 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-V4:
-- Switch to use TASK_KILLABLE
-
-V3:
-- Removed WARN_ON_ONCE()/BUG_ON().
-- Set the hashtable bit to 8.
-
-V2:
-- Add one dedicated spin lock to protect the list_add/del_rcu
-- Other small fixes
-- Fix the compile error from kernel test robot
-
-
-
-Xiubo Li (2):
-  fs/dcache: add d_compare() helper support
-  ceph: wait the first reply of inflight async unlink
-
- fs/ceph/dir.c          | 70 +++++++++++++++++++++++++++++++++++++---
- fs/ceph/file.c         |  4 +++
- fs/ceph/mds_client.c   | 73 ++++++++++++++++++++++++++++++++++++++++++
- fs/ceph/mds_client.h   |  1 +
- fs/ceph/super.c        |  3 ++
- fs/ceph/super.h        | 19 ++++++++---
- fs/dcache.c            | 15 +++++++++
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+---
+ fs/dcache.c            | 15 +++++++++++++++
  include/linux/dcache.h |  2 ++
- 8 files changed, 177 insertions(+), 10 deletions(-)
+ 2 files changed, 17 insertions(+)
 
+diff --git a/fs/dcache.c b/fs/dcache.c
+index 93f4f5ee07bf..95a72f92a94b 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -2262,6 +2262,21 @@ static inline bool d_same_name(const struct dentry *dentry,
+ 				       name) == 0;
+ }
+ 
++/**
++ * d_compare - compare dentry name with case-exact name
++ * @parent: parent dentry
++ * @dentry: the negative dentry that was passed to the parent's lookup func
++ * @name:   the case-exact name to be associated with the returned dentry
++ *
++ * Return: 0 if names are same, or 1
++ */
++bool d_compare(const struct dentry *parent, const struct dentry *dentry,
++	       const struct qstr *name)
++{
++	return !d_same_name(dentry, parent, name);
++}
++EXPORT_SYMBOL(d_compare);
++
+ /**
+  * __d_lookup_rcu - search for a dentry (racy, store-free)
+  * @parent: parent dentry
+diff --git a/include/linux/dcache.h b/include/linux/dcache.h
+index f5bba51480b2..444b2230e5c3 100644
+--- a/include/linux/dcache.h
++++ b/include/linux/dcache.h
+@@ -233,6 +233,8 @@ extern struct dentry * d_alloc_parallel(struct dentry *, const struct qstr *,
+ 					wait_queue_head_t *);
+ extern struct dentry * d_splice_alias(struct inode *, struct dentry *);
+ extern struct dentry * d_add_ci(struct dentry *, struct inode *, struct qstr *);
++extern bool d_compare(const struct dentry *parent, const struct dentry *dentry,
++		      const struct qstr *name);
+ extern struct dentry * d_exact_alias(struct dentry *, struct inode *);
+ extern struct dentry *d_find_any_alias(struct inode *inode);
+ extern struct dentry * d_obtain_alias(struct inode *);
 -- 
 2.36.0.rc1
 
