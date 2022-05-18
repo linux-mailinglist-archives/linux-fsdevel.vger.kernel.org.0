@@ -2,93 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DD3752C6E8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 May 2022 00:57:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45E6552C74D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 May 2022 01:06:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231280AbiERW5K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 May 2022 18:57:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45048 "EHLO
+        id S230348AbiERXGy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 May 2022 19:06:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231208AbiERW5A (ORCPT
+        with ESMTP id S230125AbiERXGw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 May 2022 18:57:00 -0400
-Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CA06F07
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 May 2022 15:56:55 -0700 (PDT)
-Received: by mail-yb1-xb32.google.com with SMTP id a3so6156083ybg.5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 May 2022 15:56:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to;
-        bh=mZ3wqB4NmL7z6lpFr/h15h1rYqsZKafJnUpMVahbEPg=;
-        b=ovbcf3BPb/ZrA/FpQ+ZjErGDIEZ9sF3fYOxqsE4Z0xdiTlYY9UY36hS3ty6MLllddq
-         FdZzNc2PcFHW5cwKZ0FlQqx6F8uTY06Ab/cmT+eL89dkm6I4fHT5v6DDGzwY+fqIjM8b
-         RjeYQt93Ckr4p0lPVWY342OwWKznH6xDl4nV36uj7bwrBPcHFh3ePzF5GNEmu/mQBhIV
-         GwWDekgJIDWSV60014hyLdzt2NtjUStY8MI6SiwBWMH8LEBnRGkE0W6Db0zUE9IYWmDQ
-         Ifd6nbhkESdcIbQrjo3sdEfmdPtb1VAIHCw/LAZv1DOtvQwqLYnhML4dVDmuoYeMmVFn
-         q7TQ==
+        Wed, 18 May 2022 19:06:52 -0400
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F810149173;
+        Wed, 18 May 2022 16:06:51 -0700 (PDT)
+Received: by mail-pj1-f48.google.com with SMTP id f10so3500090pjs.3;
+        Wed, 18 May 2022 16:06:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to;
-        bh=mZ3wqB4NmL7z6lpFr/h15h1rYqsZKafJnUpMVahbEPg=;
-        b=U6jyAgEKc0Hdj+B86PFN7IcZiggxham2ledqjOGsv9pEkvscv4b/BR1BJheeT0HN/u
-         pyMwGo3qqs8ZKwKvMC20bTo1tQDXuqdLh0lunbIWTwT77ypJDtfzYLdJKhzvLGG+U210
-         o3P7d7dwouEO2NXG6U5zkSoojS2iUkifB03RsY9IRdwu2aas3annOd3g5JQSCLb6fpqG
-         EJ3J+7T4NnwPjaW+5PKQCyDgFzW7dKffbqZMOinAI5SOSFOKqynC9POVs0ICn3zuoSKZ
-         8nxN4GISB64qgGznsd8YeokPzkubKhFCAwUZdOLU5JgUqgEGJP3KTYnBTTSE0ioiMfkB
-         9NOA==
-X-Gm-Message-State: AOAM532VCNxGeAtkO35aYRqQRfpXXfu4tFN5YyXp0BopcrZM/36C9GvZ
-        ui3mA3doRYIsCwNbRGiv4aAmsb2wJlXYSKCoWcM=
-X-Google-Smtp-Source: ABdhPJyyLDAg+sVdsLTxwEXiZ5avjedwK/uWMP/Y3UWcChEjwDE+iXuY4kOycHY8vIqM/rcV0hLTcVdg0IN0RAQYgBc=
-X-Received: by 2002:a5b:f87:0:b0:64a:9aa6:e181 with SMTP id
- q7-20020a5b0f87000000b0064a9aa6e181mr1852277ybh.157.1652914614913; Wed, 18
- May 2022 15:56:54 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=M2OU/ev/wtDvqHYNj5hP9zKluj3H/LLJ6QYPls9G5Tw=;
+        b=She1oSRkXAOR2vDYrAltVV/WB7OxYOBeezghF/surT4V49JqBCK9Nh/jSmT8WqsquH
+         7W6X8Jf+MKZfvjkXW3wVAjITl9fhJhtC+L+4dpkUvApsFZeyDnxT18dYRubYRRVTrBL7
+         BN2UbupOH3kN1JjNdoLa9w/S+E1YS0vxSYJUY938W4hxOgRH0IqlvxGOwhdLHbJWYJQj
+         rsfaAQVJz9FY/gXNt2XBQDPE92DpqgCshwTEz+W98ALbI6eWdmQmwrIsvx8fp2vKUNHA
+         dM3w9iMxU9a3hLr5n9/eKj8JbYWxCOioFOi6zYowocS4h2MbZa5SS1fLSymGij4O/DmJ
+         Edcg==
+X-Gm-Message-State: AOAM533NybFLfg2ehZTJbYlNPlb4sJ+1RExNY12cBNfWio6Cu7+LGqeU
+        5IEOwkiXieziWpob0glETJI=
+X-Google-Smtp-Source: ABdhPJxrRrwxuaXVXZU5unUYT2Wp/ah35BZYv61mf/nd9Yr//ww7daRstQvEvrGocfyzbj6E/VCrbQ==
+X-Received: by 2002:a17:90a:9282:b0:1dc:4a1b:ea55 with SMTP id n2-20020a17090a928200b001dc4a1bea55mr1854383pjo.24.1652915210525;
+        Wed, 18 May 2022 16:06:50 -0700 (PDT)
+Received: from garbanzo (136-24-173-63.cab.webpass.net. [136.24.173.63])
+        by smtp.gmail.com with ESMTPSA id t1-20020a17090340c100b0015e8d4eb271sm2130390pld.187.2022.05.18.16.06.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 May 2022 16:06:49 -0700 (PDT)
+Date:   Wed, 18 May 2022 16:06:46 -0700
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Theodore Ts'o <tytso@mit.edu>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Pankaj Raghav <p.raghav@samsung.com>, axboe@kernel.dk,
+        pankydev8@gmail.com, gost.dev@samsung.com,
+        damien.lemoal@opensource.wdc.com, jiangbo.365@bytedance.com,
+        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        dm-devel@redhat.com, dsterba@suse.com, linux-btrfs@vger.kernel.org
+Subject: Re: [dm-devel] [PATCH v4 00/13] support non power of 2 zoned devices
+Message-ID: <20220518230646.5xx6dpo4helwyqcv@garbanzo>
+References: <CGME20220516165418eucas1p2be592d9cd4b35f6b71d39ccbe87f3fef@eucas1p2.samsung.com>
+ <20220516165416.171196-1-p.raghav@samsung.com>
+ <20220517081048.GA13947@lst.de>
+ <YoPAnj9ufkt5nh1G@mit.edu>
 MIME-Version: 1.0
-Received: by 2002:a05:7000:7143:0:0:0:0 with HTTP; Wed, 18 May 2022 15:56:53
- -0700 (PDT)
-Reply-To: tonywenn@asia.com
-From:   Tony Wen <weboutloock4@gmail.com>
-Date:   Thu, 19 May 2022 06:56:53 +0800
-Message-ID: <CAE2_YrD=5bo8j9+ah-xptEBBV-HEC4=Gb0SRHf996phiopc3WQ@mail.gmail.com>
-Subject: engage
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: Yes, score=5.2 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,FREEMAIL_REPLYTO,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,UNDISC_FREEM autolearn=no
-        autolearn_force=no version=3.4.6
-X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
-        *      https://www.dnswl.org/, no trust
-        *      [2607:f8b0:4864:20:0:0:0:b32 listed in]
-        [list.dnswl.org]
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4933]
-        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
-        *      provider
-        *      [weboutloock4[at]gmail.com]
-        * -0.0 SPF_PASS SPF: sender matches SPF record
-        *  0.2 FREEMAIL_ENVFROM_END_DIGIT Envelope-from freemail username ends
-        *       in digit
-        *      [weboutloock4[at]gmail.com]
-        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
-        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
-        *      author's domain
-        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
-        *      envelope-from domain
-        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
-        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
-        *       valid
-        * -0.0 T_SCC_BODY_TEXT_LINE No description available.
-        *  3.4 UNDISC_FREEM Undisclosed recipients + freemail reply-to
-        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
-        *      different freemails
-X-Spam-Level: *****
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YoPAnj9ufkt5nh1G@mit.edu>
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Can I engage your services?
+On Tue, May 17, 2022 at 11:34:54AM -0400, Theodore Ts'o wrote:
+> On Tue, May 17, 2022 at 10:10:48AM +0200, Christoph Hellwig wrote:
+> > I'm a little surprised about all this activity.
+> > 
+> > I though the conclusion at LSF/MM was that for Linux itself there
+> > is very little benefit in supporting this scheme.  It will massively
+> > fragment the supported based of devices and applications, while only
+> > having the benefit of supporting some Samsung legacy devices.
+> 
+> FWIW,
+> 
+> That wasn't my impression from that LSF/MM session, but once the
+> videos become available, folks can decide for themselves.
+
+Agreed, contrary to conventional storage devices, with the zone storage
+ecosystem we simply have a requirement of zone drive replacements matching
+zone size. That requirement exists for po2 or npo2. The work in this patch
+set proves that supporting npo2 was in the end straight forward. As the one
+putting together the BoF I can say that there were no sticking points raised
+to move forward with this when the topic came up. So I am very surprised to
+hear about any other perceived conclusion.
+
+  Luis
