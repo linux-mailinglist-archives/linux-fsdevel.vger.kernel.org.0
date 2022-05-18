@@ -2,43 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7435C52BEB9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 May 2022 17:26:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4180952BE9D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 May 2022 17:26:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239223AbiERPLZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 May 2022 11:11:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41690 "EHLO
+        id S239316AbiERPLf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 May 2022 11:11:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239209AbiERPLS (ORCPT
+        with ESMTP id S239230AbiERPLV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 May 2022 11:11:18 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 031EE26C9;
-        Wed, 18 May 2022 08:11:17 -0700 (PDT)
+        Wed, 18 May 2022 11:11:21 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64F05B875;
+        Wed, 18 May 2022 08:11:19 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 935C26198B;
+        by ams.source.kernel.org (Postfix) with ESMTPS id 10318B81BD9;
+        Wed, 18 May 2022 15:11:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 439A5C385A9;
         Wed, 18 May 2022 15:11:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 771A2C385A5;
-        Wed, 18 May 2022 15:11:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1652886676;
-        bh=dkf7GEao8AI86nB58euIIl4y2hwL/HMgAhrL7Jqi2PU=;
+        bh=9W71JbdZqORON3ZtMJgsQNIwd/tY1dgG9++fufgZKwA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=koja2v5EfPv5p8uYwa2nV3BWflBJjkS3mdnxieoyw3NN3tW3uy/W/wmasPSj3G30s
-         ajmU8C/CZamVATA9MmWousMT9I3DBTagpsTaq3Qi8LENMhxOT+me4G3pxDOlpTH5SQ
-         w4GbT+Yu2yoo124FKiTK9laWV1sqrgXhpaapV8lpCwx1NpwGySKF/PHvAhU0Jq7fPC
-         RxOxKp1po61jGXUNGkCYXrEPRihckbDfxs/XnV1wmnkrOKWKozQFnr7IVWc8ttrLiJ
-         Aew1xHDRpq5908e46d3N1yyxyaaVVXGftrU73bTQhaaZdfraSiF34+vrkLDqIfGZj1
-         6QIHVolLCZp+g==
+        b=qpS827J0FpXk4qMRKfP+Hq5MO//kSLfG/2gJaudQpOvEBGjoeUR4ao0EJWYcvFdXS
+         kqjNEYG/zzwGx7BsV2TYGmAvdOwkw5Ike7tK6BdbJRrLxPhtr3B9aEZ+FONWrvSmij
+         kj64goLQtUrRivIM4iuEfo8q1IagOIYR19gukMfaWmGgkkn8Dz/O4TkkQvbIKxrfJp
+         beMzi4EZLz4/jGALPVUVLx/AIYoWTBPzVbSNSmeQzzst8TNmcNX7y5oaWJZ/HMQ2jV
+         1F7kGvwLQzjzaco50YOKEZX5MH2/YVYvwVReOLjq4sFnR8X+tbR+7j5ABBpF3D5i66
+         WQxbpkd6lmLRg==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     dhowells@redhat.com
 Cc:     linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org,
         xiubli@redhat.com, idryomov@gmail.com
-Subject: [PATCH 3/4] ceph: enhance dout messages in issue_read codepaths
-Date:   Wed, 18 May 2022 11:11:10 -0400
-Message-Id: <20220518151111.79735-4-jlayton@kernel.org>
+Subject: [PATCH 4/4] ceph: switch to netfs_direct_read_iter
+Date:   Wed, 18 May 2022 11:11:11 -0400
+Message-Id: <20220518151111.79735-5-jlayton@kernel.org>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220518151111.79735-1-jlayton@kernel.org>
 References: <20220518151111.79735-1-jlayton@kernel.org>
@@ -56,33 +56,103 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/ceph/addr.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ fs/ceph/addr.c | 41 +++++++++++++++++++++++++++++------------
+ fs/ceph/file.c |  3 +--
+ 2 files changed, 30 insertions(+), 14 deletions(-)
 
 diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index d14a9378d120..475df4efd2c7 100644
+index 475df4efd2c7..938679a7a1e3 100644
 --- a/fs/ceph/addr.c
 +++ b/fs/ceph/addr.c
-@@ -190,6 +190,8 @@ static bool ceph_netfs_clamp_length(struct netfs_io_subrequest *subreq)
- 	/* Truncate the extent at the end of the current block */
- 	ceph_calc_file_object_mapping(&ci->i_layout, subreq->start, subreq->len,
- 				      &objno, &objoff, &xlen);
-+	dout("%s: subreq->len=0x%zx xlen=0x%x rsize=0x%x",
-+		__func__, subreq->len, xlen, fsc->mount_options->rsize);
- 	subreq->len = min(xlen, fsc->mount_options->rsize);
- 	return true;
+@@ -201,7 +201,6 @@ static void finish_netfs_read(struct ceph_osd_request *req)
+ 	struct ceph_fs_client *fsc = ceph_inode_to_client(req->r_inode);
+ 	struct ceph_osd_data *osd_data = osd_req_op_extent_osd_data(req, 0);
+ 	struct netfs_io_subrequest *subreq = req->r_priv;
+-	int num_pages;
+ 	int err = req->r_result;
+ 
+ 	ceph_update_read_metrics(&fsc->mdsc->metric, req->r_start_latency,
+@@ -216,13 +215,18 @@ static void finish_netfs_read(struct ceph_osd_request *req)
+ 	else if (err == -EBLOCKLISTED)
+ 		fsc->blocklisted = true;
+ 
+-	if (err >= 0 && err < subreq->len)
+-		__set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
++	if (err >= 0) {
++		if (err < subreq->len)
++			__set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
++		iov_iter_advance(&subreq->iter, err);
++	}
++	if (!iov_iter_is_bvec(&subreq->iter))
++		ceph_put_page_vector(osd_data->pages,
++				     calc_pages_for(osd_data->alignment,
++				     osd_data->length),
++				     false);
+ 
+ 	netfs_subreq_terminated(subreq, err, true);
+-
+-	num_pages = calc_pages_for(osd_data->alignment, osd_data->length);
+-	ceph_put_page_vector(osd_data->pages, num_pages, false);
+ 	iput(req->r_inode);
  }
-@@ -304,7 +306,9 @@ static void ceph_netfs_issue_read(struct netfs_io_subrequest *subreq)
- 		goto out;
+ 
+@@ -287,6 +291,7 @@ static void ceph_netfs_issue_read(struct netfs_io_subrequest *subreq)
+ 	struct ceph_fs_client *fsc = ceph_inode_to_client(inode);
+ 	struct ceph_osd_request *req;
+ 	struct ceph_vino vino = ceph_vino(inode);
++	struct iov_iter *iter = &subreq->iter;
+ 	struct page **pages;
+ 	size_t page_off;
+ 	int err = 0;
+@@ -310,16 +315,28 @@ static void ceph_netfs_issue_read(struct netfs_io_subrequest *subreq)
+ 		__func__, subreq->start, subreq->len, len, rreq->debug_id,
+ 		subreq->debug_index, iov_iter_count(&subreq->iter));
+ 
+-	err = iov_iter_get_pages_alloc(&subreq->iter, &pages, len, &page_off);
+-	if (err < 0) {
+-		dout("%s: iov_ter_get_pages_alloc returned %d\n", __func__, err);
+-		goto out;
++	if (iov_iter_is_bvec(iter)) {
++		/*
++		 * FIXME: remove force cast, ideally by plumbing an IOV_ITER osd_data
++		 * 	  variant.
++		 */
++		osd_req_op_extent_osd_data_bvecs(req, 0, (__force struct bio_vec *)iter->bvec,
++				iter->nr_segs, len);
++		goto submit;
  	}
  
--	dout("%s: pos=%llu orig_len=%zu len=%llu\n", __func__, subreq->start, subreq->len, len);
-+	dout("%s: pos=%llu orig_len=%zu len=%llu debug_id=%x debug_idx=%hx iter->count=%zx\n",
-+		__func__, subreq->start, subreq->len, len, rreq->debug_id,
-+		subreq->debug_index, iov_iter_count(&subreq->iter));
+-	/* FIXME: adjust the len in req downward if necessary */
+-	len = err;
++	err = iov_iter_get_pages_alloc(&subreq->iter, &pages, len, &page_off);
++	if (err < len) {
++		if (err < 0) {
++			dout("%s: iov_ter_get_pages_alloc returned %d\n", __func__, err);
++			goto out;
++		}
++		len = err;
++		req->r_ops[0].extent.length = err;
++	}
  
- 	err = iov_iter_get_pages_alloc(&subreq->iter, &pages, len, &page_off);
- 	if (err < 0) {
+ 	osd_req_op_extent_osd_data_pages(req, 0, pages, len, 0, false, false);
++submit:
+ 	req->r_callback = finish_netfs_read;
+ 	req->r_priv = subreq;
+ 	req->r_inode = inode;
+diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+index 8c8226c0feac..81ce6753fa67 100644
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@ -1634,8 +1634,7 @@ static ssize_t ceph_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 
+ 		if (ci->i_inline_version == CEPH_INLINE_NONE) {
+ 			if (!retry_op && (iocb->ki_flags & IOCB_DIRECT)) {
+-				ret = ceph_direct_read_write(iocb, to,
+-							     NULL, NULL);
++				ret = netfs_direct_read_iter(iocb, to);
+ 				if (ret >= 0 && ret < len)
+ 					retry_op = CHECK_EOF;
+ 			} else {
 -- 
 2.36.1
 
