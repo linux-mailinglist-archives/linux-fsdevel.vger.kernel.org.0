@@ -2,243 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 21D4B52C124
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 May 2022 19:50:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B425C52C18F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 May 2022 19:51:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240748AbiERRLp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 May 2022 13:11:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53402 "EHLO
+        id S241070AbiERRlS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 May 2022 13:41:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50146 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240894AbiERRLn (ORCPT
+        with ESMTP id S241153AbiERRlL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 May 2022 13:11:43 -0400
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11AE75419A
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 May 2022 10:11:41 -0700 (PDT)
-Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24IFiBwi014227
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 May 2022 10:11:40 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding : content-type; s=facebook;
- bh=oWw+bc+rJhlNN3apliQ9xsJQL9S1G4MZnFOj+WYiR5w=;
- b=Fsd+vV/keQUYdqoCHJ7XVQHZ+rYT8uK8PvUFgHI22X9cm29EwB6XQPQLbL6iu5HGcfB7
- NBmh8ehxar+tf6W7GwT+OmNeba/lK5wxduFFmd2Ci59GbCgkiUmUm4rvzeaAbXQl5NNq
- jlOk3adlepEs5337FZBCzbv2KZYOFsJOz2c= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3g4ap6tey3-6
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 May 2022 10:11:40 -0700
-Received: from twshared8508.05.ash9.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:83::4) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Wed, 18 May 2022 10:11:37 -0700
-Received: by devbig007.nao1.facebook.com (Postfix, from userid 544533)
-        id 5DE4C414B92B; Wed, 18 May 2022 10:11:32 -0700 (PDT)
-From:   Keith Busch <kbusch@fb.com>
-To:     <linux-fsdevel@vger.kernel.org>, <linux-block@vger.kernel.org>
-CC:     <axboe@kernel.dk>, Kernel Team <Kernel-team@fb.com>, <hch@lst.de>,
-        <bvanassche@acm.org>, <damien.lemoal@opensource.wdc.com>,
-        Keith Busch <kbusch@kernel.org>
-Subject: [PATCHv2 3/3] block: relax direct io memory alignment
-Date:   Wed, 18 May 2022 10:11:31 -0700
-Message-ID: <20220518171131.3525293-4-kbusch@fb.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20220518171131.3525293-1-kbusch@fb.com>
-References: <20220518171131.3525293-1-kbusch@fb.com>
+        Wed, 18 May 2022 13:41:11 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2CE2035257
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 May 2022 10:41:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1652895669;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=sPnZ+RZGIkLqRaIJaYL7JahMWqDmcz+voS99NuTbAns=;
+        b=VsFpr7Ter1raDeHNH9uuFd1x1u6Sva+vug9QjvY83/abuQOrD+2onGANVgRkJ+JD1u95/7
+        hXGUvFfTNfXLl1oqTAMuqHt2TLv/rCufXSH4O+sj7WMg4VcrBiq/XgHrKIH0T14SQ3Vjv3
+        UPnf8huxsEt00yDGXm1GezFIWKEwiRo=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-561-6pijxGN6NR6xvj_bJ_OBrw-1; Wed, 18 May 2022 13:41:03 -0400
+X-MC-Unique: 6pijxGN6NR6xvj_bJ_OBrw-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 90BB3811E78;
+        Wed, 18 May 2022 17:41:02 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.22.16.154])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 581882026D2F;
+        Wed, 18 May 2022 17:41:02 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 0C6E22208FA; Wed, 18 May 2022 13:41:02 -0400 (EDT)
+Date:   Wed, 18 May 2022 13:41:01 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Dharmendra Singh <dharamhans87@gmail.com>
+Cc:     miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
+        fuse-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        bschubert@ddn.com, Dharmendra Singh <dsingh@ddn.com>
+Subject: Re: [PATCH v5 1/3] FUSE: Avoid lookups in fuse create
+Message-ID: <YoUvrSdh4B0rKy78@redhat.com>
+References: <20220517100744.26849-1-dharamhans87@gmail.com>
+ <20220517100744.26849-2-dharamhans87@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-GUID: RmD4cmzepoqBbQaQRW9_KKBsQkyCHfFI
-X-Proofpoint-ORIG-GUID: RmD4cmzepoqBbQaQRW9_KKBsQkyCHfFI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.874,Hydra:6.0.486,FMLib:17.11.64.514
- definitions=2022-05-18_06,2022-05-17_02,2022-02-23_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220517100744.26849-2-dharamhans87@gmail.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
 X-Spam-Status: No, score=-3.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Keith Busch <kbusch@kernel.org>
+On Tue, May 17, 2022 at 03:37:42PM +0530, Dharmendra Singh wrote:
 
-Use the address alignment requirements from the hardware for direct io
-instead of requiring addresses be aligned to the block size. User space
-can discover the alignment requirements from the dma_alignment queue
-attribute.
+[..]
+> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+> index d6ccee961891..bebe4be3f1cb 100644
+> --- a/include/uapi/linux/fuse.h
+> +++ b/include/uapi/linux/fuse.h
+> @@ -301,6 +301,7 @@ struct fuse_file_lock {
+>   * FOPEN_CACHE_DIR: allow caching this directory
+>   * FOPEN_STREAM: the file is stream-like (no file position at all)
+>   * FOPEN_NOFLUSH: don't flush data cache on close (unless FUSE_WRITEBACK_CACHE)
+> + * FOPEN_FILE_CREATED: the file was actually created
+>   */
+>  #define FOPEN_DIRECT_IO		(1 << 0)
+>  #define FOPEN_KEEP_CACHE	(1 << 1)
+> @@ -308,6 +309,7 @@ struct fuse_file_lock {
+>  #define FOPEN_CACHE_DIR		(1 << 3)
+>  #define FOPEN_STREAM		(1 << 4)
+>  #define FOPEN_NOFLUSH		(1 << 5)
+> +#define FOPEN_FILE_CREATED	(1 << 6)
+>  
+>  /**
+>   * INIT request/reply flags
+> @@ -537,6 +539,7 @@ enum fuse_opcode {
+>  	FUSE_SETUPMAPPING	= 48,
+>  	FUSE_REMOVEMAPPING	= 49,
+>  	FUSE_SYNCFS		= 50,
+> +	FUSE_CREATE_EXT		= 51,
 
-User space can specify any hardware compatible DMA offset for each
-segment, but every segment length is still required to be a multiple of
-the block size.
+I am wondering if we really have to introduce a new opcode for this. Both
+FUSE_CREATE and FUSE_CREATE_EXT prepare and send fuse_create_in{} and
+expect fuse_entry_out and fuse_open_out in response. So no new structures
+are being added. Only thing FUSE_CREATE_EXT does extra is that it also
+reports back whether file was actually created or not.
 
-Signed-off-by: Keith Busch <kbusch@kernel.org>
----
-v1->v2:
+May be instead of adding an new fuse_opcode, we could simply add a
+new flag which we send in fuse_create_in and that reqeusts to report
+if file was created or not. This is along the lines of
+FUSE_OPEN_KILL_SUIDGID.
 
-  Squashed the alignment patch into this one
+So say, a new flag FUSE_OPEN_REPORT_CREATE flag. Which we will set in
+fuse_create_in->open_flags. If file server sees this flag is set, it
+knows that it needs to set FOPEN_FILE_CREATED flag in response.
 
-  Use ALIGN_DOWN macro instead of reimplementing it
+To me creating a new flag FUSE_OPEN_REPORT_CREATE seems better instead
+of adding a new opcode.
 
-  Check for unalignment in _simple case
-
- block/bio.c            |  3 +++
- block/fops.c           | 20 ++++++++++++++------
- fs/direct-io.c         | 11 +++++++----
- fs/iomap/direct-io.c   |  3 ++-
- include/linux/blkdev.h |  5 +++++
- 5 files changed, 31 insertions(+), 11 deletions(-)
-
-diff --git a/block/bio.c b/block/bio.c
-index 320514a47527..bde9b475a4d8 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -1207,6 +1207,7 @@ static int __bio_iov_iter_get_pages(struct bio *bio=
-, struct iov_iter *iter)
- {
- 	unsigned short nr_pages =3D bio->bi_max_vecs - bio->bi_vcnt;
- 	unsigned short entries_left =3D bio->bi_max_vecs - bio->bi_vcnt;
-+	struct request_queue *q =3D bdev_get_queue(bio->bi_bdev);
- 	struct bio_vec *bv =3D bio->bi_io_vec + bio->bi_vcnt;
- 	struct page **pages =3D (struct page **)bv;
- 	bool same_page =3D false;
-@@ -1223,6 +1224,8 @@ static int __bio_iov_iter_get_pages(struct bio *bio=
-, struct iov_iter *iter)
- 	pages +=3D entries_left * (PAGE_PTRS_PER_BVEC - 1);
-=20
- 	size =3D iov_iter_get_pages(iter, pages, LONG_MAX, nr_pages, &offset);
-+	if (size > 0)
-+		size =3D ALIGN_DOWN(size, queue_logical_block_size(q));
- 	if (unlikely(size <=3D 0))
- 		return size ? size : -EFAULT;
-=20
-diff --git a/block/fops.c b/block/fops.c
-index b9b83030e0df..d8537c29602f 100644
---- a/block/fops.c
-+++ b/block/fops.c
-@@ -54,8 +54,9 @@ static ssize_t __blkdev_direct_IO_simple(struct kiocb *=
-iocb,
- 	struct bio bio;
- 	ssize_t ret;
-=20
--	if ((pos | iov_iter_alignment(iter)) &
--	    (bdev_logical_block_size(bdev) - 1))
-+	if ((pos | iov_iter_count(iter)) & (bdev_logical_block_size(bdev) - 1))
-+		return -EINVAL;
-+	if (iov_iter_alignment(iter) & bdev_dma_alignment(bdev))
- 		return -EINVAL;
-=20
- 	if (nr_pages <=3D DIO_INLINE_BIO_VECS)
-@@ -80,6 +81,11 @@ static ssize_t __blkdev_direct_IO_simple(struct kiocb =
-*iocb,
- 	ret =3D bio_iov_iter_get_pages(&bio, iter);
- 	if (unlikely(ret))
- 		goto out;
-+	if (unlikely(iov_iter_count(iter))) {
-+		/* iov is not aligned for a single bio */
-+		ret =3D -EINVAL;
-+		goto out;
-+	}
- 	ret =3D bio.bi_iter.bi_size;
-=20
- 	if (iov_iter_rw(iter) =3D=3D WRITE)
-@@ -173,8 +179,9 @@ static ssize_t __blkdev_direct_IO(struct kiocb *iocb,=
- struct iov_iter *iter,
- 	loff_t pos =3D iocb->ki_pos;
- 	int ret =3D 0;
-=20
--	if ((pos | iov_iter_alignment(iter)) &
--	    (bdev_logical_block_size(bdev) - 1))
-+	if ((pos | iov_iter_count(iter)) & (bdev_logical_block_size(bdev) - 1))
-+		return -EINVAL;
-+	if (iov_iter_alignment(iter) & bdev_dma_alignment(bdev))
- 		return -EINVAL;
-=20
- 	if (iocb->ki_flags & IOCB_ALLOC_CACHE)
-@@ -298,8 +305,9 @@ static ssize_t __blkdev_direct_IO_async(struct kiocb =
-*iocb,
- 	loff_t pos =3D iocb->ki_pos;
- 	int ret =3D 0;
-=20
--	if ((pos | iov_iter_alignment(iter)) &
--	    (bdev_logical_block_size(bdev) - 1))
-+	if ((pos | iov_iter_count(iter)) & (bdev_logical_block_size(bdev) - 1))
-+		return -EINVAL;
-+	if (iov_iter_alignment(iter) & bdev_dma_alignment(bdev))
- 		return -EINVAL;
-=20
- 	if (iocb->ki_flags & IOCB_ALLOC_CACHE)
-diff --git a/fs/direct-io.c b/fs/direct-io.c
-index 840752006f60..64cc176be60c 100644
---- a/fs/direct-io.c
-+++ b/fs/direct-io.c
-@@ -1131,7 +1131,7 @@ ssize_t __blockdev_direct_IO(struct kiocb *iocb, st=
-ruct inode *inode,
- 	struct dio_submit sdio =3D { 0, };
- 	struct buffer_head map_bh =3D { 0, };
- 	struct blk_plug plug;
--	unsigned long align =3D offset | iov_iter_alignment(iter);
-+	unsigned long align =3D iov_iter_alignment(iter);
-=20
- 	/*
- 	 * Avoid references to bdev if not absolutely needed to give
-@@ -1165,11 +1165,14 @@ ssize_t __blockdev_direct_IO(struct kiocb *iocb, =
-struct inode *inode,
- 		goto fail_dio;
- 	}
-=20
--	if (align & blocksize_mask) {
--		if (bdev)
-+	if ((offset | align) & blocksize_mask) {
-+		if (bdev) {
- 			blkbits =3D blksize_bits(bdev_logical_block_size(bdev));
-+			if (align & bdev_dma_alignment(bdev))
-+				goto fail_dio;
-+		}
- 		blocksize_mask =3D (1 << blkbits) - 1;
--		if (align & blocksize_mask)
-+		if ((offset | count) & blocksize_mask)
- 			goto fail_dio;
- 	}
-=20
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index 80f9b047aa1b..0256d28baa8e 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -244,7 +244,8 @@ static loff_t iomap_dio_bio_iter(const struct iomap_i=
-ter *iter,
- 	size_t copied =3D 0;
- 	size_t orig_count;
-=20
--	if ((pos | length | align) & ((1 << blkbits) - 1))
-+	if ((pos | length) & ((1 << blkbits) - 1) ||
-+	    align & bdev_dma_alignment(iomap->bdev))
- 		return -EINVAL;
-=20
- 	if (iomap->type =3D=3D IOMAP_UNWRITTEN) {
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 5bdf2ac9142c..834b981ef01b 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -1365,6 +1365,11 @@ static inline int queue_dma_alignment(const struct=
- request_queue *q)
- 	return q ? q->dma_alignment : 511;
- }
-=20
-+static inline unsigned int bdev_dma_alignment(struct block_device *bdev)
-+{
-+	return queue_dma_alignment(bdev_get_queue(bdev));
-+}
-+
- static inline int blk_rq_aligned(struct request_queue *q, unsigned long =
-addr,
- 				 unsigned int len)
- {
---=20
-2.30.2
+Thanks
+Vivek
+>  
+>  	/* CUSE specific operations */
+>  	CUSE_INIT		= 4096,
+> -- 
+> 2.17.1
+> 
 
