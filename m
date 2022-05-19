@@ -2,82 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FF3352D166
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 May 2022 13:25:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 319C752D17C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 May 2022 13:30:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237398AbiESLZJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 May 2022 07:25:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41342 "EHLO
+        id S237397AbiESLad (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 May 2022 07:30:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237392AbiESLZH (ORCPT
+        with ESMTP id S235135AbiESLac (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 May 2022 07:25:07 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 59FD1A5AA6
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 May 2022 04:25:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1652959504;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=7vdcYJPfw3K20SGqsUJxe2PIWkf1u9aw8heNjncBU0s=;
-        b=dUEhrUd6G+EoVVjIQwmre9njzCJhFqkU6qzSc7k9EO+2z+gMrFyQYFB73WhsyORmhOh1G4
-        glWmiscztvv84CkJAdKWEUglh6445IhBq6eqPgEpCRxycWHix8iT+ybBzbbgOGjqpY3NDP
-        Ny7eNd0JTlwn0jDrYNeAn2VVeXqSUxQ=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-296-kXXIiY8BNgSbhAz3wVPKGw-1; Thu, 19 May 2022 07:25:01 -0400
-X-MC-Unique: kXXIiY8BNgSbhAz3wVPKGw-1
-Received: by mail-qk1-f197.google.com with SMTP id j12-20020ae9c20c000000b0069e8ac6b244so3906295qkg.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 May 2022 04:25:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=7vdcYJPfw3K20SGqsUJxe2PIWkf1u9aw8heNjncBU0s=;
-        b=lOyXKOKQuQMKMbemyhBFp9kTlH2WZsg1gCyN+MCE+RBD5F/IHFs3ekc9Ih0BgaPJqT
-         awX9+/Xemx2eq3XWZezYEeIAn/5R+EFp4T2kHu4029mG3SB9eSBfU135wr9dkptto+Jv
-         m9e5Y1zbmgrC7db7gER+rDv+wxQ3miGH1OTwvUngESieG6eqpSfl4NDryps8X5a0g/tU
-         Uvt9DDxPUPawro8QsTt3PYwUpawzobuEum1tETnEQ/nY488H6yDNg1hU1qjQN9HgQB1g
-         1pcMxAu0nagKgfAT2ZnLS6PhCsB/ewTJChA1AiM93GU3ZvkwrIs5sxR8ERlE4oeQ0GpU
-         fzoQ==
-X-Gm-Message-State: AOAM531XBHGx7vRVUBz9acOL4rKpKVCgbQ/2v9nDV8kD9D3fJkYsRPIv
-        9iOp8DPFn5L39pfA/AyQ9t1emVNKZxBP6bYlQu+qTPTCjvD+iiCB6wGZqV5PcdQYRq3jWgRVn6R
-        VqF6j81ys3IXicehbzPZBVmZlXw==
-X-Received: by 2002:a05:6214:21ee:b0:461:e557:6051 with SMTP id p14-20020a05621421ee00b00461e5576051mr3192101qvj.25.1652959500836;
-        Thu, 19 May 2022 04:25:00 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzzVLRXKQV7vapB74AbsI6Pv2aIVCodGu8MZhS0bY7xw2bb4xa+6a46uJRM71FEqv/6H91NNA==
-X-Received: by 2002:a05:6214:21ee:b0:461:e557:6051 with SMTP id p14-20020a05621421ee00b00461e5576051mr3192088qvj.25.1652959500596;
-        Thu, 19 May 2022 04:25:00 -0700 (PDT)
-Received: from zlang-mailbox ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id p66-20020a37bf45000000b0069fcdbabdb4sm1084980qkf.69.2022.05.19.04.24.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 May 2022 04:24:59 -0700 (PDT)
-Date:   Thu, 19 May 2022 19:24:50 +0800
-From:   Zorro Lang <zlang@redhat.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>, pankydev8@gmail.com,
-        Theodore Tso <tytso@mit.edu>,
-        Josef Bacik <josef@toxicpanda.com>, jmeneghi@redhat.com,
-        Jan Kara <jack@suse.cz>, Davidlohr Bueso <dave@stgolabs.net>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jake Edge <jake@lwn.net>, Klaus Jensen <its@irrelevant.dk>,
-        fstests <fstests@vger.kernel.org>
-Subject: Re: [RFC: kdevops] Standardizing on failure rate nomenclature for
- expunges
-Message-ID: <20220519112450.zbje64mrh65pifnz@zlang-mailbox>
-References: <YoW0ZC+zM27Pi0Us@bombadil.infradead.org>
- <CAOQ4uxhKHMjGq0QKKMPFAV6iJFwe1H5hBomCVVeT1EWJzo0eXg@mail.gmail.com>
+        Thu, 19 May 2022 07:30:32 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8EC04F467;
+        Thu, 19 May 2022 04:30:30 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 45E6EB823E2;
+        Thu, 19 May 2022 11:30:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D87FAC385AA;
+        Thu, 19 May 2022 11:30:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1652959828;
+        bh=Sms09XACd7yd8zjKehxBBYAzAuL4Pp8LUqBmSdhiZQU=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=MEF165ojs+tXVPIqK9RhYDC0VPX6kqNppki++cdLE6tcZOKXcp97L/v+awZdqsw8p
+         g5alO5qShQWnjzmyILAcy2akllhA7B54x3AuNpBykRyltKiF24kRM2t/MnKN/0yzr7
+         TRoLykrCUze5203IeI+NcbZz56CKdc5nzkA5C5bbf5S4MqFzQ65OfDhmlBP755N7H8
+         kEMPzizOiO6/8+FxRypu5Pv7dLaD7IKqaS4jjMQG3Rhpm85uTUvxpMZpiOH2RbdeEA
+         R+RfdboumZBS4xN49kF4jJg34ZB1Nt1yVD8QouMfXubXizw5S6AkQupfU2TpsLBw6A
+         iKg/vERAq5dZw==
+Message-ID: <f03c8c7ef004ddde6766e43c021183f2d2454d17.camel@kernel.org>
+Subject: Re: [PATCH v5 2/2] ceph: wait the first reply of inflight async
+ unlink
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Xiubo Li <xiubli@redhat.com>, idryomov@gmail.com,
+        viro@zeniv.linux.org.uk
+Cc:     willy@infradead.org, vshankar@redhat.com,
+        ceph-devel@vger.kernel.org, arnd@arndb.de, mcgrof@kernel.org,
+        akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
+Date:   Thu, 19 May 2022 07:30:25 -0400
+In-Reply-To: <20220519101847.87907-3-xiubli@redhat.com>
+References: <20220519101847.87907-1-xiubli@redhat.com>
+         <20220519101847.87907-3-xiubli@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.1 (3.44.1-1.fc36) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxhKHMjGq0QKKMPFAV6iJFwe1H5hBomCVVeT1EWJzo0eXg@mail.gmail.com>
-X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+X-Spam-Status: No, score=-7.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -85,159 +60,434 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 19, 2022 at 09:36:41AM +0300, Amir Goldstein wrote:
-> [adding fstests and Zorro]
-> 
-> On Thu, May 19, 2022 at 6:07 AM Luis Chamberlain <mcgrof@kernel.org> wrote:
-> >
-> > I've been promoting the idea that running fstests once is nice,
-> > but things get interesting if you try to run fstests multiple
-> > times until a failure is found. It turns out at least kdevops has
-> > found tests which fail with a failure rate of typically 1/2 to
-> > 1/30 average failure rate. That is 1/2 means a failure can happen
-> > 50% of the time, whereas 1/30 means it takes 30 runs to find the
-> > failure.
-> >
-> > I have tried my best to annotate failure rates when I know what
-> > they might be on the test expunge list, as an example:
-> >
-> > workflows/fstests/expunges/5.17.0-rc7/xfs/unassigned/xfs_reflink.txt:generic/530 # failure rate about 1/15 https://gist.github.com/mcgrof/4129074db592c170e6bf748aa11d783d
-> >
-> > The term "failure rate 1/15" is 16 characters long, so I'd like
-> > to propose to standardize a way to represent this. How about
-> >
-> > generic/530 # F:1/15
-> >
-> 
-> I am not fond of the 1/15 annotation at all, because the only fact that you
-> are able to document is that the test failed after 15 runs.
-> Suggesting that this means failure rate of 1/15 is a very big step.
-> 
-> > Then we could extend the definition. F being current estimate, and this
-> > can be just how long it took to find the first failure. A more valuable
-> > figure would be failure rate avarage, so running the test multiple
-> > times, say 10, to see what the failure rate is and then averaging the
-> > failure out. So this could be a more accurate representation. For this
-> > how about:
-> >
-> > generic/530 # FA:1/15
-> >
-> > This would mean on average there failure rate has been found to be about
-> > 1/15, and this was determined based on 10 runs.
-> >
-> > We should also go extend check for fstests/blktests to run a test
-> > until a failure is found and report back the number of successes.
-> >
-> > Thoughts?
-> >
-> 
-> I have had a discussion about those tests with Zorro.
+On Thu, 2022-05-19 at 18:18 +0800, Xiubo Li wrote:
+> In async unlink case the kclient won't wait for the first reply
+> from MDS and just drop all the links and unhash the dentry and then
+> succeeds immediately.
+>=20
+> For any new create/link/rename,etc requests followed by using the
+> same file names we must wait for the first reply of the inflight
+> unlink request, or the MDS possibly will fail these following
+> requests with -EEXIST if the inflight async unlink request was
+> delayed for some reasons.
+>=20
+> And the worst case is that for the none async openc request it will
+> successfully open the file if the CDentry hasn't been unlinked yet,
+> but later the previous delayed async unlink request will remove the
+> CDenty. That means the just created file is possiblly deleted later
+> by accident.
+>=20
+> We need to wait for the inflight async unlink requests to finish
+> when creating new files/directories by using the same file names.
+>=20
+> URL: https://tracker.ceph.com/issues/55332
+> Reported-by: kernel test robot <lkp@intel.com>
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>  fs/ceph/dir.c        | 79 +++++++++++++++++++++++++++++++++++++++-----
+>  fs/ceph/file.c       |  6 +++-
+>  fs/ceph/mds_client.c | 75 ++++++++++++++++++++++++++++++++++++++++-
+>  fs/ceph/mds_client.h |  1 +
+>  fs/ceph/super.c      |  3 ++
+>  fs/ceph/super.h      | 19 ++++++++---
+>  6 files changed, 167 insertions(+), 16 deletions(-)
+>=20
+> diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+> index eae417d71136..e7e2ebac330d 100644
+> --- a/fs/ceph/dir.c
+> +++ b/fs/ceph/dir.c
+> @@ -856,6 +856,10 @@ static int ceph_mknod(struct user_namespace *mnt_use=
+rns, struct inode *dir,
+>  	if (ceph_snap(dir) !=3D CEPH_NOSNAP)
+>  		return -EROFS;
+> =20
+> +	err =3D ceph_wait_on_conflict_unlink(dentry);
+> +	if (err)
+> +		return err;
+> +
+>  	if (ceph_quota_is_max_files_exceeded(dir)) {
+>  		err =3D -EDQUOT;
+>  		goto out;
+> @@ -918,6 +922,10 @@ static int ceph_symlink(struct user_namespace *mnt_u=
+serns, struct inode *dir,
+>  	if (ceph_snap(dir) !=3D CEPH_NOSNAP)
+>  		return -EROFS;
+> =20
+> +	err =3D ceph_wait_on_conflict_unlink(dentry);
+> +	if (err)
+> +		return err;
+> +
+>  	if (ceph_quota_is_max_files_exceeded(dir)) {
+>  		err =3D -EDQUOT;
+>  		goto out;
+> @@ -968,9 +976,13 @@ static int ceph_mkdir(struct user_namespace *mnt_use=
+rns, struct inode *dir,
+>  	struct ceph_mds_client *mdsc =3D ceph_sb_to_mdsc(dir->i_sb);
+>  	struct ceph_mds_request *req;
+>  	struct ceph_acl_sec_ctx as_ctx =3D {};
+> -	int err =3D -EROFS;
+> +	int err;
+>  	int op;
+> =20
+> +	err =3D ceph_wait_on_conflict_unlink(dentry);
+> +	if (err)
+> +		return err;
+> +
+>  	if (ceph_snap(dir) =3D=3D CEPH_SNAPDIR) {
+>  		/* mkdir .snap/foo is a MKSNAP */
+>  		op =3D CEPH_MDS_OP_MKSNAP;
+> @@ -980,6 +992,7 @@ static int ceph_mkdir(struct user_namespace *mnt_user=
+ns, struct inode *dir,
+>  		dout("mkdir dir %p dn %p mode 0%ho\n", dir, dentry, mode);
+>  		op =3D CEPH_MDS_OP_MKDIR;
+>  	} else {
+> +		err =3D -EROFS;
+>  		goto out;
+>  	}
+> =20
+> @@ -1037,6 +1050,10 @@ static int ceph_link(struct dentry *old_dentry, st=
+ruct inode *dir,
+>  	struct ceph_mds_request *req;
+>  	int err;
+> =20
+> +	err =3D ceph_wait_on_conflict_unlink(dentry);
+> +	if (err)
+> +		return err;
+> +
+>  	if (ceph_snap(dir) !=3D CEPH_NOSNAP)
+>  		return -EROFS;
+> =20
+> @@ -1071,9 +1088,27 @@ static int ceph_link(struct dentry *old_dentry, st=
+ruct inode *dir,
+>  static void ceph_async_unlink_cb(struct ceph_mds_client *mdsc,
+>  				 struct ceph_mds_request *req)
+>  {
+> +	struct dentry *dentry =3D req->r_dentry;
+> +	struct ceph_fs_client *fsc =3D ceph_sb_to_client(dentry->d_sb);
+> +	struct ceph_dentry_info *di =3D ceph_dentry(dentry);
+>  	int result =3D req->r_err ? req->r_err :
+>  			le32_to_cpu(req->r_reply_info.head->result);
+> =20
+> +	if (!test_bit(CEPH_DENTRY_ASYNC_UNLINK_BIT, &di->flags))
+> +		pr_warn("%s dentry %p:%pd async unlink bit is not set\n",
+> +			__func__, dentry, dentry);
+> +
+> +	spin_lock(&fsc->async_unlink_conflict_lock);
+> +	hash_del_rcu(&di->hnode);
+> +	spin_unlock(&fsc->async_unlink_conflict_lock);
+> +
+> +	spin_lock(&dentry->d_lock);
+> +	di->flags &=3D ~CEPH_DENTRY_ASYNC_UNLINK;
+> +	wake_up_bit(&di->flags, CEPH_DENTRY_ASYNC_UNLINK_BIT);
+> +	spin_unlock(&dentry->d_lock);
+> +
+> +	synchronize_rcu();
+> +
+>  	if (result =3D=3D -EJUKEBOX)
+>  		goto out;
+> =20
+> @@ -1081,7 +1116,7 @@ static void ceph_async_unlink_cb(struct ceph_mds_cl=
+ient *mdsc,
+>  	if (result) {
+>  		int pathlen =3D 0;
+>  		u64 base =3D 0;
+> -		char *path =3D ceph_mdsc_build_path(req->r_dentry, &pathlen,
+> +		char *path =3D ceph_mdsc_build_path(dentry, &pathlen,
+>  						  &base, 0);
+> =20
+>  		/* mark error on parent + clear complete */
+> @@ -1089,13 +1124,13 @@ static void ceph_async_unlink_cb(struct ceph_mds_=
+client *mdsc,
+>  		ceph_dir_clear_complete(req->r_parent);
+> =20
+>  		/* drop the dentry -- we don't know its status */
+> -		if (!d_unhashed(req->r_dentry))
+> -			d_drop(req->r_dentry);
+> +		if (!d_unhashed(dentry))
+> +			d_drop(dentry);
+> =20
+>  		/* mark inode itself for an error (since metadata is bogus) */
+>  		mapping_set_error(req->r_old_inode->i_mapping, result);
+> =20
+> -		pr_warn("ceph: async unlink failure path=3D(%llx)%s result=3D%d!\n",
+> +		pr_warn("async unlink failure path=3D(%llx)%s result=3D%d!\n",
+>  			base, IS_ERR(path) ? "<<bad>>" : path, result);
+>  		ceph_mdsc_free_path(path, pathlen);
+>  	}
+> @@ -1180,6 +1215,8 @@ static int ceph_unlink(struct inode *dir, struct de=
+ntry *dentry)
+> =20
+>  	if (try_async && op =3D=3D CEPH_MDS_OP_UNLINK &&
+>  	    (req->r_dir_caps =3D get_caps_for_async_unlink(dir, dentry))) {
+> +		struct ceph_dentry_info *di =3D ceph_dentry(dentry);
+> +
+>  		dout("async unlink on %llu/%.*s caps=3D%s", ceph_ino(dir),
+>  		     dentry->d_name.len, dentry->d_name.name,
+>  		     ceph_cap_string(req->r_dir_caps));
+> @@ -1187,6 +1224,16 @@ static int ceph_unlink(struct inode *dir, struct d=
+entry *dentry)
+>  		req->r_callback =3D ceph_async_unlink_cb;
+>  		req->r_old_inode =3D d_inode(dentry);
+>  		ihold(req->r_old_inode);
+> +
+> +		spin_lock(&dentry->d_lock);
+> +		di->flags |=3D CEPH_DENTRY_ASYNC_UNLINK;
+> +		spin_unlock(&dentry->d_lock);
+> +
+> +		spin_lock(&fsc->async_unlink_conflict_lock);
+> +		hash_add_rcu(fsc->async_unlink_conflict, &di->hnode,
+> +			     dentry->d_name.hash);
+> +		spin_unlock(&fsc->async_unlink_conflict_lock);
+> +
+>  		err =3D ceph_mdsc_submit_request(mdsc, dir, req);
+>  		if (!err) {
+>  			/*
+> @@ -1195,10 +1242,20 @@ static int ceph_unlink(struct inode *dir, struct =
+dentry *dentry)
+>  			 */
+>  			drop_nlink(inode);
+>  			d_delete(dentry);
+> -		} else if (err =3D=3D -EJUKEBOX) {
+> -			try_async =3D false;
+> -			ceph_mdsc_put_request(req);
+> -			goto retry;
+> +		} else {
+> +			spin_lock(&fsc->async_unlink_conflict_lock);
+> +			hash_del_rcu(&di->hnode);
+> +			spin_unlock(&fsc->async_unlink_conflict_lock);
+> +
+> +			spin_lock(&dentry->d_lock);
+> +			di->flags &=3D ~CEPH_DENTRY_ASYNC_UNLINK;
+> +			spin_unlock(&dentry->d_lock);
+> +
+> +			if (err =3D=3D -EJUKEBOX) {
+> +				try_async =3D false;
+> +				ceph_mdsc_put_request(req);
+> +				goto retry;
+> +			}
+>  		}
+>  	} else {
+>  		set_bit(CEPH_MDS_R_PARENT_LOCKED, &req->r_req_flags);
+> @@ -1237,6 +1294,10 @@ static int ceph_rename(struct user_namespace *mnt_=
+userns, struct inode *old_dir,
+>  	    (!ceph_quota_is_same_realm(old_dir, new_dir)))
+>  		return -EXDEV;
+> =20
+> +	err =3D ceph_wait_on_conflict_unlink(new_dentry);
+> +	if (err)
+> +		return err;
+> +
+>  	dout("rename dir %p dentry %p to dir %p dentry %p\n",
+>  	     old_dir, old_dentry, new_dir, new_dentry);
+>  	req =3D ceph_mdsc_create_request(mdsc, op, USE_AUTH_MDS);
+> diff --git a/fs/ceph/file.c b/fs/ceph/file.c
+> index 8c8226c0feac..0f863e1d6ae9 100644
+> --- a/fs/ceph/file.c
+> +++ b/fs/ceph/file.c
+> @@ -569,7 +569,7 @@ static void ceph_async_create_cb(struct ceph_mds_clie=
+nt *mdsc,
+>  		char *path =3D ceph_mdsc_build_path(req->r_dentry, &pathlen,
+>  						  &base, 0);
+> =20
+> -		pr_warn("ceph: async create failure path=3D(%llx)%s result=3D%d!\n",
+> +		pr_warn("async create failure path=3D(%llx)%s result=3D%d!\n",
+>  			base, IS_ERR(path) ? "<<bad>>" : path, result);
+>  		ceph_mdsc_free_path(path, pathlen);
+> =20
+> @@ -740,6 +740,10 @@ int ceph_atomic_open(struct inode *dir, struct dentr=
+y *dentry,
+>  	if (dentry->d_name.len > NAME_MAX)
+>  		return -ENAMETOOLONG;
+> =20
+> +	err =3D ceph_wait_on_conflict_unlink(dentry);
+> +	if (err)
+> +		return err;
+> +
+>  	if (flags & O_CREAT) {
+>  		if (ceph_quota_is_max_files_exceeded(dir))
+>  			return -EDQUOT;
+> diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+> index e8c87dea0551..9ea2dcc02710 100644
+> --- a/fs/ceph/mds_client.c
+> +++ b/fs/ceph/mds_client.c
+> @@ -456,7 +456,7 @@ static int ceph_parse_deleg_inos(void **p, void *end,
+>  				dout("added delegated inode 0x%llx\n",
+>  				     start - 1);
+>  			} else if (err =3D=3D -EBUSY) {
+> -				pr_warn("ceph: MDS delegated inode 0x%llx more than once.\n",
+> +				pr_warn("MDS delegated inode 0x%llx more than once.\n",
+>  					start - 1);
+>  			} else {
+>  				return err;
+> @@ -655,6 +655,79 @@ static void destroy_reply_info(struct ceph_mds_reply=
+_info_parsed *info)
+>  	free_pages((unsigned long)info->dir_entries, get_order(info->dir_buf_si=
+ze));
+>  }
+> =20
+> +/*
+> + * In async unlink case the kclient won't wait for the first reply
+> + * from MDS and just drop all the links and unhash the dentry and then
+> + * succeeds immediately.
+> + *
+> + * For any new create/link/rename,etc requests followed by using the
+> + * same file names we must wait for the first reply of the inflight
+> + * unlink request, or the MDS possibly will fail these following
+> + * requests with -EEXIST if the inflight async unlink request was
+> + * delayed for some reasons.
+> + *
+> + * And the worst case is that for the none async openc request it will
+> + * successfully open the file if the CDentry hasn't been unlinked yet,
+> + * but later the previous delayed async unlink request will remove the
+> + * CDenty. That means the just created file is possiblly deleted later
+> + * by accident.
+> + *
+> + * We need to wait for the inflight async unlink requests to finish
+> + * when creating new files/directories by using the same file names.
+> + */
+> +int ceph_wait_on_conflict_unlink(struct dentry *dentry)
+> +{
+> +	struct ceph_fs_client *fsc =3D ceph_sb_to_client(dentry->d_sb);
+> +	struct dentry *pdentry =3D dentry->d_parent;
+> +	struct dentry *udentry, *found =3D NULL;
+> +	struct ceph_dentry_info *di;
+> +	struct qstr dname;
+> +	u32 hash =3D dentry->d_name.hash;
+> +	int err;
+> +
+> +	dname.name =3D dentry->d_name.name;
+> +	dname.len =3D dentry->d_name.len;
+> +
+> +	rcu_read_lock();
+> +	hash_for_each_possible_rcu(fsc->async_unlink_conflict, di,
+> +				   hnode, hash) {
+> +		udentry =3D di->dentry;
+> +
+> +		spin_lock(&udentry->d_lock);
+> +		if (udentry->d_name.hash !=3D hash)
+> +			goto next;
+> +		if (unlikely(udentry->d_parent !=3D pdentry))
+> +			goto next;
+> +		if (!hash_hashed(&di->hnode))
+> +			goto next;
+> +
+> +		if (!test_bit(CEPH_DENTRY_ASYNC_UNLINK_BIT, &di->flags))
+> +			pr_warn("%s dentry %p:%pd async unlink bit is not set\n",
+> +				__func__, dentry, dentry);
+> +
+> +		if (d_compare(pdentry, udentry, &dname))
+> +			goto next;
+> +
+> +		spin_unlock(&udentry->d_lock);
+> +		found =3D dget(udentry);
+> +		break;
+> +next:
+> +		spin_unlock(&udentry->d_lock);
+> +	}
+> +	rcu_read_unlock();
+> +
+> +	if (likely(!found))
+> +		return 0;
+> +
+> +	dout("%s dentry %p:%pd conflict with old %p:%pd\n", __func__,
+> +	     dentry, dentry, found, found);
+> +
+> +	err =3D wait_on_bit(&di->flags, CEPH_DENTRY_ASYNC_UNLINK_BIT,
+> +			  TASK_KILLABLE);
+> +	dput(found);
+> +	return err;
+> +}
+> +
+> =20
+>  /*
+>   * sessions
+> diff --git a/fs/ceph/mds_client.h b/fs/ceph/mds_client.h
+> index 33497846e47e..d1ae679c52c3 100644
+> --- a/fs/ceph/mds_client.h
+> +++ b/fs/ceph/mds_client.h
+> @@ -582,6 +582,7 @@ static inline int ceph_wait_on_async_create(struct in=
+ode *inode)
+>  			   TASK_INTERRUPTIBLE);
+>  }
+> =20
+> +extern int ceph_wait_on_conflict_unlink(struct dentry *dentry);
+>  extern u64 ceph_get_deleg_ino(struct ceph_mds_session *session);
+>  extern int ceph_restore_deleg_ino(struct ceph_mds_session *session, u64 =
+ino);
+>  #endif
+> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+> index b73b4f75462c..6542b71f8627 100644
+> --- a/fs/ceph/super.c
+> +++ b/fs/ceph/super.c
+> @@ -816,6 +816,9 @@ static struct ceph_fs_client *create_fs_client(struct=
+ ceph_mount_options *fsopt,
+>  	if (!fsc->cap_wq)
+>  		goto fail_inode_wq;
+> =20
+> +	hash_init(fsc->async_unlink_conflict);
+> +	spin_lock_init(&fsc->async_unlink_conflict_lock);
+> +
+>  	spin_lock(&ceph_fsc_lock);
+>  	list_add_tail(&fsc->metric_wakeup, &ceph_fsc_list);
+>  	spin_unlock(&ceph_fsc_lock);
+> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> index 506d52633627..251e726ec628 100644
+> --- a/fs/ceph/super.h
+> +++ b/fs/ceph/super.h
+> @@ -19,6 +19,7 @@
+>  #include <linux/security.h>
+>  #include <linux/netfs.h>
+>  #include <linux/fscache.h>
+> +#include <linux/hashtable.h>
+> =20
+>  #include <linux/ceph/libceph.h>
+> =20
+> @@ -99,6 +100,8 @@ struct ceph_mount_options {
+>  	char *mon_addr;
+>  };
+> =20
+> +#define CEPH_ASYNC_CREATE_CONFLICT_BITS 8
+> +
+>  struct ceph_fs_client {
+>  	struct super_block *sb;
+> =20
+> @@ -124,6 +127,9 @@ struct ceph_fs_client {
+>  	struct workqueue_struct *inode_wq;
+>  	struct workqueue_struct *cap_wq;
+> =20
+> +	DECLARE_HASHTABLE(async_unlink_conflict, CEPH_ASYNC_CREATE_CONFLICT_BIT=
+S);
+> +	spinlock_t async_unlink_conflict_lock;
+> +
+>  #ifdef CONFIG_DEBUG_FS
+>  	struct dentry *debugfs_dentry_lru, *debugfs_caps;
+>  	struct dentry *debugfs_congestion_kb;
+> @@ -281,7 +287,8 @@ struct ceph_dentry_info {
+>  	struct dentry *dentry;
+>  	struct ceph_mds_session *lease_session;
+>  	struct list_head lease_list;
+> -	unsigned flags;
+> +	struct hlist_node hnode;
+> +	unsigned long flags;
+>  	int lease_shared_gen;
+>  	u32 lease_gen;
+>  	u32 lease_seq;
+> @@ -290,10 +297,12 @@ struct ceph_dentry_info {
+>  	u64 offset;
+>  };
+> =20
+> -#define CEPH_DENTRY_REFERENCED		1
+> -#define CEPH_DENTRY_LEASE_LIST		2
+> -#define CEPH_DENTRY_SHRINK_LIST		4
+> -#define CEPH_DENTRY_PRIMARY_LINK	8
+> +#define CEPH_DENTRY_REFERENCED		(1 << 0)
+> +#define CEPH_DENTRY_LEASE_LIST		(1 << 1)
+> +#define CEPH_DENTRY_SHRINK_LIST		(1 << 2)
+> +#define CEPH_DENTRY_PRIMARY_LINK	(1 << 3)
+> +#define CEPH_DENTRY_ASYNC_UNLINK_BIT	(4)
+> +#define CEPH_DENTRY_ASYNC_UNLINK	(1 << CEPH_DENTRY_ASYNC_UNLINK_BIT)
+> =20
+>  struct ceph_inode_xattrs_info {
+>  	/*
 
-Hi Amir,
-
-Thanks for publicing this discussion.
-
-Yes, we talked about this, but if I don't rememeber wrong, I recommended each
-downstream testers maintain their own "testing data/config", likes exclude
-list, failed ratio, known failures etc. I think they're not suitable to be
-fixed in the mainline fstests.
-
-About the other idea I metioned in LSF, we can create some more group names to
-mark those cases with random load/data/env etc, they're worth to be run more
-times. I also talked about that with Darrick, we haven't maken a decision,
-but I'd like to push that if most of other forks would like to see that.
-
-In my internal regression test for RHEL, I give some fstests cases a new
-group name "redhat_random" (sure, I know it's not a good name, it's just
-for my internal test, welcome better name, I'm not a good english speaker :).
-Then combine with quick and stress group name, I loop run "redhat_random"
-cases different times, with different LOAD/TIME_FACTOR.
-
-So I hope to have one "or more specific" group name to mark those random
-test cases at first, likes [1] (I'm sure it's incomplete, but can be improved
-if we can get more help from more people :)
-
-Thanks,
-Zorro
-
-[1]
-generic/013
-generic/019
-generic/051
-generic/068
-generic/070
-generic/075
-generic/076
-generic/083
-generic/091
-generic/112
-generic/117
-generic/127
-generic/231
-generic/232
-generic/233
-generic/263
-generic/269
-generic/270
-generic/388
-generic/390
-generic/413
-generic/455
-generic/457
-generic/461
-generic/464
-generic/475
-generic/476
-generic/482
-generic/521
-generic/522
-generic/547
-generic/551
-generic/560
-generic/561
-generic/616
-generic/617
-generic/648
-generic/650
-xfs/011
-xfs/013
-xfs/017
-xfs/032
-xfs/051
-xfs/057
-xfs/068
-xfs/079
-xfs/104
-xfs/137
-xfs/141
-xfs/167
-xfs/297
-xfs/305
-xfs/442
-xfs/517
-
-> 
-> Those tests that some people refer to as "flaky" are valuable,
-> but they are not deterministic, they are stochastic.
-> 
-> I think MTBF is the standard way to describe reliability
-> of such tests, but I am having a hard time imagining how
-> the community can manage to document accurate annotations
-> of this sort, so I would stick with documenting the facts
-> (i.e. the test fails after N runs).
-> 
-> OTOH, we do have deterministic tests, maybe even the majority of
-> fstests are deterministic(?)
-> 
-> Considering that every auto test loop takes ~2 hours on our rig and that
-> I have been running over 100 loops over the past two weeks, if half
-> of fstests are deterministic, that is a lot of wait time and a lot of carbon
-> emission gone to waste.
-> 
-> It would have been nice if I was able to exclude a "deterministic" group.
-> The problem is - can a developer ever tag a test as being "deterministic"?
-> 
-> Thanks,
-> Amir.
-> 
-
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
