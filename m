@@ -2,138 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7563452CA33
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 May 2022 05:19:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8011152CA4F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 May 2022 05:25:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233051AbiESDT3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 May 2022 23:19:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44894 "EHLO
+        id S232354AbiESDZs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 May 2022 23:25:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53766 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232763AbiESDT0 (ORCPT
+        with ESMTP id S230114AbiESDZs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 May 2022 23:19:26 -0400
-Received: from esa1.hgst.iphmx.com (esa1.hgst.iphmx.com [68.232.141.245])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0C975007E
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 May 2022 20:19:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1652930365; x=1684466365;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=/fjrsnNb+UMSk1eAp1vdCajfjX7evM0A7SUCPImugSk=;
-  b=PIVTq+NX/zSlzxo4GSJ8/RDoKVy7uKqI9g2LPrk5jh9x+4si//Uvor6M
-   9npfNVzoz7hftMholQqO68rR18/L1yKmJR/1YJ87l4Urm8XdQEzE1q/Vp
-   xQ9u98uxwMUxHEaTP+jUHVy6R0jljxuATdcb6ZI7Y37n/1151zl/QLnOf
-   LyVscx9pTXzsP6kgdYfJy7l/uWYsES6ohksMIsVRBV5xjDo+8/dMuTSN3
-   11JdzLZrRZV0IZEcMPT4TVVo95xMmTGyYzLOEs8M05YZZOaCMa8Y1vmhI
-   XXYWbwLtNHCZaVSZJ9+MOssghEs1Y0FN1Ewi9EJmZU7MVO2OVP+Ae6267
-   A==;
-X-IronPort-AV: E=Sophos;i="5.91,236,1647273600"; 
-   d="scan'208";a="312724359"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 19 May 2022 11:19:24 +0800
-IronPort-SDR: D076rAeMex781L1gjTpfnkLw8VT77L2Ljm2q22/XNQsYmRV1eUeybfVJNKPX/XiKOVngyyR+cW
- RUmaRqRzkBZWPQJ98nbRk00QQccJ0L4I1vi781DDVS32SH/cfCcgra2F2a3zDuMoUKWyLIfhaL
- TlX3MYO5ItcL959JBBRWtHrlu8TU4aOmusdGh8wrbExvgb+E0z8oIlVVZsIr6dvJuOwIm8YwyX
- e07CFhT7QcyuUZ2vDKCCySXBlaoKpSS/c7uOR5tKU9DOffUz4VTDZvdqnAOxRDN8BsXg+sxdts
- qem0hNJF8PmDNI/GBRexQvX/
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 18 May 2022 19:44:55 -0700
-IronPort-SDR: l0H1V4HZlLuDXrToYuuyAkAXsvmrmjozQVXpgd/B2OeA1y0Oyrz2xnuFBmIs3S3g1cs2YWQSUA
- 5wq+UUaOdpiU5e0cYU/9neml5EDXxqKFBbJ1Q9/cv3BgjoSQB1aOan3V3mcCtRvjulaXq04EDX
- GDz98rk6gXbjgl2B++GJmtyKe7RH7CSl3BkZwOeUc5wSVKli9ZvCtbcfm7usKuG15ZmHtQYsn4
- oF2jP9/JlOw9gnFXmG5cQmR2wqG0c7onaQrSittzYYk7NPAyOQ2ELUXihEuCVsODqgdw7lps0C
- PVQ=
-WDCIronportException: Internal
-Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
-  by uls-op-cesaip01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 18 May 2022 20:19:24 -0700
-Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4L3ZpM3DjHz1SVp3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 May 2022 20:19:23 -0700 (PDT)
-Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)"
-        header.d=opensource.wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
-        opensource.wdc.com; h=content-transfer-encoding:content-type
-        :in-reply-to:organization:from:references:to:content-language
-        :subject:user-agent:mime-version:date:message-id; s=dkim; t=
-        1652930362; x=1655522363; bh=/fjrsnNb+UMSk1eAp1vdCajfjX7evM0A7SU
-        CPImugSk=; b=nzaWEP3sKrJcNJ3FPCURQIKIvl67f8jA/2wm/ii3lwBWbn3WDZi
-        IE/sOdtD7+ND9OHmBJ3aUEGU0W+1DpoA2XmrAamVj/mQ0HVTFq1EL8uyncO3DMS+
-        J6dNpyjlz4DKmYidGmO8sIfPQfmUBBnQpWUjWhL8w9LCRAZR9TmFfAodNv2Kwouw
-        wDtjAfO6lQ1N7Nuceziw58wMV3A4b6DnW+N3QWimfF9u6RsX5pftmjiOUJ84QuPu
-        NIbYasgAX+/cJ6wQy20ztixoasu2bW+bMu0rTHXYzniKQom03aoiKFnWeujXub7H
-        jv0tF2/umdPgH5kXJ8hmdql6xR52NXpLPmQ==
-X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
-Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
-        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id sqSw0nVBY3yT for <linux-fsdevel@vger.kernel.org>;
-        Wed, 18 May 2022 20:19:22 -0700 (PDT)
-Received: from [10.225.163.43] (unknown [10.225.163.43])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4L3ZpJ0qRQz1Rvlc;
-        Wed, 18 May 2022 20:19:19 -0700 (PDT)
-Message-ID: <69f06f90-d31b-620b-9009-188d1d641562@opensource.wdc.com>
-Date:   Thu, 19 May 2022 12:19:18 +0900
+        Wed, 18 May 2022 23:25:48 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E83111456;
+        Wed, 18 May 2022 20:25:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=OSyE8SOU5BkfOUgGl2faWPnm3KPoXoHKqGtKZbhztWw=; b=DbZp3OmrzgVn17w7AqGMFwsC6v
+        knDkZgFfKC1VBF7bXaGk587Q7AljPclSLmZfD2jMuqB+XZWuFrYqAO160c26bVXOY49UuxCMMOSwQ
+        GEFVGmB7EKICylb73a2XMnX91mbvk13Toizx7FoDiHzVP0Nq5kdqMbUuXuDqv7VbnB+ZRBW+IGhVa
+        Tluj/U+PsDgacmQ+gTcvdEG2PJnkl6/6w/ikUwwK1ciGG2c5VKvYakEm2zYP64mWXGIc7M48zB/ia
+        E3nZY3OlRUCrHTWnO81vc8akdNKd22/aUBCY4MDttHDrGiS9WxOySsVrESIIAYy08MAmvAJgTkgK/
+        lzq3jOpg==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nrWnF-004s6A-PC; Thu, 19 May 2022 03:25:41 +0000
+Date:   Wed, 18 May 2022 20:25:41 -0700
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     "Paul E. McKenney" <paulmck@kernel.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sysctl: Merge adjacent CONFIG_TREE_RCU blocks
+Message-ID: <YoW4tRf693CSAioE@bombadil.infradead.org>
+References: <a6931221b532ae7a5cf0eb229ace58acee4f0c1a.1652799977.git.geert+renesas@glider.be>
+ <20220517155737.GA1790663@paulmck-ThinkPad-P17-Gen-1>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [dm-devel] [PATCH v4 00/13] support non power of 2 zoned devices
-Content-Language: en-US
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Theodore Ts'o <tytso@mit.edu>, Christoph Hellwig <hch@lst.de>,
-        Pankaj Raghav <p.raghav@samsung.com>, axboe@kernel.dk,
-        pankydev8@gmail.com, gost.dev@samsung.com,
-        jiangbo.365@bytedance.com, linux-nvme@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, dm-devel@redhat.com,
-        dsterba@suse.com, linux-btrfs@vger.kernel.org
-References: <CGME20220516165418eucas1p2be592d9cd4b35f6b71d39ccbe87f3fef@eucas1p2.samsung.com>
- <20220516165416.171196-1-p.raghav@samsung.com>
- <20220517081048.GA13947@lst.de> <YoPAnj9ufkt5nh1G@mit.edu>
- <7f9cb19b-621b-75ea-7273-2d2769237851@opensource.wdc.com>
- <20220519031237.sw45lvzrydrm7fpb@garbanzo>
-From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
-Organization: Western Digital Research
-In-Reply-To: <20220519031237.sw45lvzrydrm7fpb@garbanzo>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-6.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220517155737.GA1790663@paulmck-ThinkPad-P17-Gen-1>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/19/22 12:12, Luis Chamberlain wrote:
-> On Thu, May 19, 2022 at 12:08:26PM +0900, Damien Le Moal wrote:
->> On 5/18/22 00:34, Theodore Ts'o wrote:
->>> On Tue, May 17, 2022 at 10:10:48AM +0200, Christoph Hellwig wrote:
->>>> I'm a little surprised about all this activity.
->>>>
->>>> I though the conclusion at LSF/MM was that for Linux itself there
->>>> is very little benefit in supporting this scheme.  It will massively
->>>> fragment the supported based of devices and applications, while only
->>>> having the benefit of supporting some Samsung legacy devices.
->>>
->>> FWIW,
->>>
->>> That wasn't my impression from that LSF/MM session, but once the
->>> videos become available, folks can decide for themselves.
->>
->> There was no real discussion about zone size constraint on the zone
->> storage BoF. Many discussions happened in the hallway track though.
+On Tue, May 17, 2022 at 08:57:37AM -0700, Paul E. McKenney wrote:
+> On Tue, May 17, 2022 at 05:07:31PM +0200, Geert Uytterhoeven wrote:
+> > There are two adjacent sysctl entries protected by the same
+> > CONFIG_TREE_RCU config symbol.  Merge them into a single block to
+> > improve readability.
+> > 
+> > Use the more common "#ifdef" form while at it.
+> > 
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > 
-> Right so no direct clear blockers mentioned at all during the BoF.
-
-Nor any clear OK.
-
+> If you would like me to take this, please let me know.  (The default
+> would be not the upcoming merge window, but the one after that.)
 > 
->   Luis
+> If you would rather send it via some other path:
+> 
+> Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
 
+The one that that occurs to me is that while at it, Geert,
+can you also just then follow up with a patch 2/2 which then
+moves the sysctl out to the respective RCU code. If you look
+at linux-nxt kernel/sysctl.c is getting modified heavily with
+time to avoid stuffing everyone's sysctls there because this
+creates merge conflicts, make the file hard to read, and we
+have ways to split this.
 
--- 
-Damien Le Moal
-Western Digital Research
+This work started about 2 kernel releases ago and is ongoing,
+it may take 3-4 more before kernel/sysctl.c stop being a kitchen
+sink of everyone's syctls.
+
+Paul, I've been collecting these modifications in a sysctl-next
+tree to avoid merge conflicts, and I try to not do to much per
+kernel release. If you like I can take this in for that tree
+as well, but as you noted, this would be for the next release,
+not the current one which we'll soon enter the merge window for.
+
+Let me know!
+
+  Luis
+> 
+> > ---
+> >  kernel/sysctl.c | 4 +---
+> >  1 file changed, 1 insertion(+), 3 deletions(-)
+> > 
+> > diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> > index 82bcf5e3009fa377..597069da18148f42 100644
+> > --- a/kernel/sysctl.c
+> > +++ b/kernel/sysctl.c
+> > @@ -2227,7 +2227,7 @@ static struct ctl_table kern_table[] = {
+> >  		.extra1		= SYSCTL_ZERO,
+> >  		.extra2		= SYSCTL_ONE,
+> >  	},
+> > -#if defined(CONFIG_TREE_RCU)
+> > +#ifdef CONFIG_TREE_RCU
+> >  	{
+> >  		.procname	= "panic_on_rcu_stall",
+> >  		.data		= &sysctl_panic_on_rcu_stall,
+> > @@ -2237,8 +2237,6 @@ static struct ctl_table kern_table[] = {
+> >  		.extra1		= SYSCTL_ZERO,
+> >  		.extra2		= SYSCTL_ONE,
+> >  	},
+> > -#endif
+> > -#if defined(CONFIG_TREE_RCU)
+> >  	{
+> >  		.procname	= "max_rcu_stall_to_panic",
+> >  		.data		= &sysctl_max_rcu_stall_to_panic,
+> > -- 
+> > 2.25.1
+> > 
