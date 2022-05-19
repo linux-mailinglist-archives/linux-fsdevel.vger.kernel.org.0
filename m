@@ -2,115 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BB1452C9C2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 May 2022 04:25:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0BCC52CA00
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 May 2022 05:07:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232482AbiESCZd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 May 2022 22:25:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52032 "EHLO
+        id S232564AbiESDHX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 May 2022 23:07:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50246 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229589AbiESCZc (ORCPT
+        with ESMTP id S231875AbiESDHW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 May 2022 22:25:32 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41E8C19F81;
-        Wed, 18 May 2022 19:25:31 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B35A061879;
-        Thu, 19 May 2022 02:25:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67A16C385A5;
-        Thu, 19 May 2022 02:25:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1652927130;
-        bh=TydeY+jtKnJsH8MD4u7T9PDCuCkyRPCbzKN2YzuDzCo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=C7KUr50bcjN0SR7p08PFvWwjd1+HJGvsNNpzRB54ByPt15479RBA02nbID94vp8nZ
-         jMQm/+4KzwoqtsqyZK/OqPRzcxO4IvtVXAg0Iww459TkSioSG7MI8XHI4/EQL8bfhR
-         v3yi9qxwFBRqoxlJ+kEflQoQabpP0hsZuglx2vXyl+FE7wTnAfPjAxiQo4EqiWXkUS
-         BohNM5ghRi5FD1ceNeAs8q/HHNrH1JjMQk0c9LRDob027dxV5lUJaDFL8EeA3ni+rr
-         lPVpyBmWLyCmJHri0YF8uk6Ry3pM/gEbjH7gnrdOO285qHBj7nCz2b501FueVeq0Jr
-         EcoE0faimbCgA==
-Date:   Wed, 18 May 2022 20:25:26 -0600
-From:   Keith Busch <kbusch@kernel.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Keith Busch <kbusch@fb.com>, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, axboe@kernel.dk,
-        Kernel Team <Kernel-team@fb.com>, hch@lst.de,
-        bvanassche@acm.org, damien.lemoal@opensource.wdc.com
-Subject: Re: [PATCHv2 3/3] block: relax direct io memory alignment
-Message-ID: <YoWqlqIzBcYGkcnu@kbusch-mbp.dhcp.thefacebook.com>
-References: <20220518171131.3525293-1-kbusch@fb.com>
- <20220518171131.3525293-4-kbusch@fb.com>
- <YoWL+T8JiIO5Ln3h@sol.localdomain>
- <YoWWtwsiKGqoTbVU@kbusch-mbp.dhcp.thefacebook.com>
- <YoWjBxmKDQC1mCIz@sol.localdomain>
- <YoWkiCdduzyQxHR+@kbusch-mbp.dhcp.thefacebook.com>
- <YoWmi0mvoIk3CfQN@sol.localdomain>
+        Wed, 18 May 2022 23:07:22 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D08FD410B;
+        Wed, 18 May 2022 20:07:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:Content-Type:MIME-Version:
+        Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=ucU2ycwR/3vbing5KlGnmp6Xzs7PQTT5XGfqvZ+d7l4=; b=1Sh30bhcNyvFY5B5eD1Ueq4AHQ
+        IzEfAlCFMNRbh0FijzOilVJEwAhL8JUxcnYiO3MxsM8PhEt0KXNWGObbiaSW6DQ7I5Fb0+ddDDHsD
+        3z3wx5TJWw79GtBq7nX72xPPWe2zjkXEAsG7gkgIy7w1ajqlnRDwAUlcZD+fM0VzUeyZJ7Sj1eRom
+        KtD7haft5MShpQhmEGSDIgwUf4bQYySXhneRj67Sv+AAcLBppX0fjHXEFBnxAa6JTNcL9xO599FBC
+        6p02EVZXfjaacXcDECWV3rRYhV2+dU9JoU9SCjlCiq94EzwSBYMuRwPwu7IAAG8iPxUgwU/T+Sq54
+        2O6ZZ26g==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nrWVQ-004lFn-Bo; Thu, 19 May 2022 03:07:16 +0000
+Date:   Wed, 18 May 2022 20:07:16 -0700
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
+Cc:     amir73il@gmail.com, pankydev8@gmail.com, tytso@mit.edu,
+        josef@toxicpanda.com, jmeneghi@redhat.com, Jan Kara <jack@suse.cz>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jake Edge <jake@lwn.net>, Klaus Jensen <its@irrelevant.dk>
+Subject: [RFC: kdevops] Standardizing on failure rate nomenclature for
+ expunges
+Message-ID: <YoW0ZC+zM27Pi0Us@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YoWmi0mvoIk3CfQN@sol.localdomain>
-X-Spam-Status: No, score=-7.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-4.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 18, 2022 at 07:08:11PM -0700, Eric Biggers wrote:
-> On Wed, May 18, 2022 at 07:59:36PM -0600, Keith Busch wrote:
-> > I'm aware that spanning pages can cause bad splits on the bi_max_vecs
-> > condition, but I believe it's well handled here. Unless I'm terribly confused,
-> > which is certainly possible, I think you may have missed this part of the
-> > patch:
-> > 
-> > @@ -1223,6 +1224,8 @@ static int __bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
-> >  	pages += entries_left * (PAGE_PTRS_PER_BVEC - 1);
-> > 
-> >  	size = iov_iter_get_pages(iter, pages, LONG_MAX, nr_pages, &offset);
-> > +	if (size > 0)
-> > +		size = ALIGN_DOWN(size, queue_logical_block_size(q));
-> >  	if (unlikely(size <= 0))
-> >  		return size ? size : -EFAULT;
-> > 
-> 
-> That makes the total length of each "batch" of pages be a multiple of the
-> logical block size, but individual logical blocks within that batch can still be
-> divided into multiple bvecs in the loop just below it:
+I've been promoting the idea that running fstests once is nice,
+but things get interesting if you try to run fstests multiple
+times until a failure is found. It turns out at least kdevops has
+found tests which fail with a failure rate of typically 1/2 to
+1/30 average failure rate. That is 1/2 means a failure can happen
+50% of the time, whereas 1/30 means it takes 30 runs to find the
+failure.
 
-I understand that, but the existing code conservatively assumes all pages are
-physically discontiguous and wouldn't have requested more pages if it didn't
-have enough bvecs for each of them:
+I have tried my best to annotate failure rates when I know what
+they might be on the test expunge list, as an example:
 
-	unsigned short nr_pages = bio->bi_max_vecs - bio->bi_vcnt;
+workflows/fstests/expunges/5.17.0-rc7/xfs/unassigned/xfs_reflink.txt:generic/530 # failure rate about 1/15 https://gist.github.com/mcgrof/4129074db592c170e6bf748aa11d783d
 
-So with the segment alignment guarantee, and ensured available bvec space, the
-created bio will always be a logical block size multiple.
+The term "failure rate 1/15" is 16 characters long, so I'd like
+to propose to standardize a way to represent this. How about
 
-If we need to split it later due to some other constraint, we'll only split on
-a logical block size, even if its in the middle of a bvec.
+generic/530 # F:1/15
 
-> 	for (left = size, i = 0; left > 0; left -= len, i++) {
-> 		struct page *page = pages[i];
-> 
-> 		len = min_t(size_t, PAGE_SIZE - offset, left);
-> 
-> 		if (__bio_try_merge_page(bio, page, len, offset, &same_page)) {
-> 			if (same_page)
-> 				put_page(page);
-> 		} else {
-> 			if (WARN_ON_ONCE(bio_full(bio, len))) {
-> 				bio_put_pages(pages + i, left, offset);
-> 				return -EINVAL;
-> 			}
-> 			__bio_add_page(bio, page, len, offset);
-> 		}
-> 		offset = 0;
-> 	}
-> 
-> - Eric
+Then we could extend the definition. F being current estimate, and this
+can be just how long it took to find the first failure. A more valuable
+figure would be failure rate avarage, so running the test multiple
+times, say 10, to see what the failure rate is and then averaging the
+failure out. So this could be a more accurate representation. For this
+how about:
+
+generic/530 # FA:1/15
+
+This would mean on average there failure rate has been found to be about
+1/15, and this was determined based on 10 runs.
+
+We should also go extend check for fstests/blktests to run a test
+until a failure is found and report back the number of successes.
+
+Thoughts?
+
+Note: yes failure rates lower than 1/100 do exist but they are rare
+creatures. I love them though as my experience shows so far that they
+uncover hidden bones in the closet, and they they make take months and
+a lot of eyeballs to resolve.
+
+  Luis
