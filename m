@@ -2,259 +2,274 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ECD1652D7DE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 May 2022 17:37:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13D9552D800
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 May 2022 17:42:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233289AbiESPg4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 May 2022 11:36:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57420 "EHLO
+        id S241486AbiESPmW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 May 2022 11:42:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241170AbiESPgq (ORCPT
+        with ESMTP id S241142AbiESPkx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 May 2022 11:36:46 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDAD857126;
-        Thu, 19 May 2022 08:36:10 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5EE8661AF9;
-        Thu, 19 May 2022 15:36:10 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB9DDC385AA;
-        Thu, 19 May 2022 15:36:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1652974569;
-        bh=4l+f8/FsvKGSq0ZcLXOKryvIIq/q/PQxFRhzHWMgZcs=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=l/jTg5jDJVgM03BwlhMc1p10Ck8YAHV7/MQxqf7bvxAyNTDHvEPCS5lRUddcXMp23
-         rYOb5BZo5UsWeKntebmb8qJqVsJa4Fta3b64HWRYI5KaZ8BbvOBctniPinr2yVUpxA
-         2ysQeYJkTb3SdTXon6SXGpbVlm4BECd/Oohrp2+L5nHk03wqaFlP/pe91GyS2hk3S5
-         3bbIn5g9KNRh3s2Dv7WCBrJhh/X6no338KzTXHb1Cg7PLz673Yv3QBKGayywZlm8fA
-         SLbcLRyPUF8O4ZgwWnVK8Gy3ipSlGRn9BhIgZKl9rFJHBJ6khQTuEunc7dcyB1c1Op
-         Z7vFRzzROBA2w==
-Message-ID: <e5f6fee5518ce8e1b4fc5aa7038de1617a341c2f.camel@kernel.org>
-Subject: Re: [PATCH 1/2] netfs: ->cleanup() op is always given a rreq
- pointer now
-From:   Jeff Layton <jlayton@kernel.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Steve French <sfrench@samba.org>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        David Wysochanski <dwysocha@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        v9fs-developer@lists.sourceforge.net, ceph-devel@vger.kernel.org,
-        linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-        linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Thu, 19 May 2022 11:36:07 -0400
-In-Reply-To: <165296980082.3595490.3561111064004493810.stgit@warthog.procyon.org.uk>
-References: <165296980082.3595490.3561111064004493810.stgit@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.1 (3.44.1-1.fc36) 
+        Thu, 19 May 2022 11:40:53 -0400
+Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBE7410C3;
+        Thu, 19 May 2022 08:40:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1652974851; x=1684510851;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=2gQabxIn8tPmd6ZL9v/swSq/nd87q2Ez4Gvfaiq6P+g=;
+  b=kGItLVNZA1Muqh7qEmRLz6D5HxVgDTFDh/PFFakiDGWodNSeDUjZ60Eb
+   rO9UAZrU7zplGU/jb9rL4OPjAvtFRIUORzZl3mihAt68DxZ70VcPiUjRJ
+   ylX1ZjWhLyzP/zvFesdPikivmi977YnYBKpWJ5Rl+2n4IwoUUZGvbkcFe
+   hrD1qFdzAZ9ImtqdcJWZjaSPz3sObSMfSi88/tLtUBH5x9nj/qo00214x
+   vo9Nz0tTsw4eta7zMaXFVslG2ISj8U8mZZBU2Vl9TKr5Q3JvhPjV7env1
+   0b0wLsTMNzInRjHaRG6U2DrFe4vNm/vvr1XzvF2aGJ+EyOSWiUZhIzo+W
+   A==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10352"; a="272377334"
+X-IronPort-AV: E=Sophos;i="5.91,237,1647327600"; 
+   d="scan'208";a="272377334"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2022 08:40:51 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.91,237,1647327600"; 
+   d="scan'208";a="598634928"
+Received: from chaop.bj.intel.com ([10.240.192.101])
+  by orsmga008.jf.intel.com with ESMTP; 19 May 2022 08:40:41 -0700
+From:   Chao Peng <chao.p.peng@linux.intel.com>
+To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        qemu-devel@nongnu.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com
+Subject: [PATCH v6 0/8] KVM: mm: fd-based approach for supporting KVM guest private memory 
+Date:   Thu, 19 May 2022 23:37:05 +0800
+Message-Id: <20220519153713.819591-1-chao.p.peng@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2022-05-19 at 15:16 +0100, David Howells wrote:
-> As the ->init() netfs op is now used to set up the netfslib I/O request
-> rather than passing stuff in, thereby allowing the netfslib functions to =
-be
-> pointed at directly by the address_space_operations struct, we're always
-> going to be able to pass an I/O request pointer to the cleanup function.
->=20
-> Therefore, change the ->cleanup() function to take a pointer to the I/O
-> request rather than taking a pointer to the network filesystem's
-> address_space and a piece of private data.
->=20
-> Also, rename ->cleanup() to ->free_request() to match the ->init_request(=
-)
-> function.
->=20
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Jeff Layton <jlayton@kernel.org>
-> cc: Steve French <sfrench@samba.org>
-> cc: Dominique Martinet <asmadeus@codewreck.org>
-> cc: Jeff Layton <jlayton@redhat.com>
-> cc: David Wysochanski <dwysocha@redhat.com>
-> cc: Ilya Dryomov <idryomov@gmail.com>
-> cc: v9fs-developer@lists.sourceforge.net
-> cc: ceph-devel@vger.kernel.org
-> cc: linux-afs@lists.infradead.org
-> cc: linux-cifs@vger.kernel.org
-> cc: linux-cachefs@redhat.com
-> cc: linux-fsdevel@vger.kernel.org
-> ---
->=20
->  fs/9p/vfs_addr.c      |   11 +++++------
->  fs/afs/file.c         |    6 +++---
->  fs/ceph/addr.c        |    9 ++++-----
->  fs/netfs/objects.c    |    8 +++++---
->  include/linux/netfs.h |    4 +++-
->  5 files changed, 20 insertions(+), 18 deletions(-)
->=20
-> diff --git a/fs/9p/vfs_addr.c b/fs/9p/vfs_addr.c
-> index 501128188343..002c482794dc 100644
-> --- a/fs/9p/vfs_addr.c
-> +++ b/fs/9p/vfs_addr.c
-> @@ -66,13 +66,12 @@ static int v9fs_init_request(struct netfs_io_request =
-*rreq, struct file *file)
->  }
-> =20
->  /**
-> - * v9fs_req_cleanup - Cleanup request initialized by v9fs_init_request
-> - * @mapping: unused mapping of request to cleanup
-> - * @priv: private data to cleanup, a fid, guaranted non-null.
-> + * v9fs_free_request - Cleanup request initialized by v9fs_init_rreq
-> + * @rreq: The I/O request to clean up
->   */
-> -static void v9fs_req_cleanup(struct address_space *mapping, void *priv)
-> +static void v9fs_free_request(struct netfs_io_request *rreq)
->  {
-> -	struct p9_fid *fid =3D priv;
-> +	struct p9_fid *fid =3D rreq->netfs_priv;
-> =20
->  	p9_client_clunk(fid);
->  }
-> @@ -94,9 +93,9 @@ static int v9fs_begin_cache_operation(struct netfs_io_r=
-equest *rreq)
-> =20
->  const struct netfs_request_ops v9fs_req_ops =3D {
->  	.init_request		=3D v9fs_init_request,
-> +	.free_request		=3D v9fs_free_request,
->  	.begin_cache_operation	=3D v9fs_begin_cache_operation,
->  	.issue_read		=3D v9fs_issue_read,
-> -	.cleanup		=3D v9fs_req_cleanup,
->  };
-> =20
->  /**
-> diff --git a/fs/afs/file.c b/fs/afs/file.c
-> index 26292a110a8f..b9ca72fbbcf9 100644
-> --- a/fs/afs/file.c
-> +++ b/fs/afs/file.c
-> @@ -383,17 +383,17 @@ static int afs_check_write_begin(struct file *file,=
- loff_t pos, unsigned len,
->  	return test_bit(AFS_VNODE_DELETED, &vnode->flags) ? -ESTALE : 0;
->  }
-> =20
-> -static void afs_priv_cleanup(struct address_space *mapping, void *netfs_=
-priv)
-> +static void afs_free_request(struct netfs_io_request *rreq)
->  {
-> -	key_put(netfs_priv);
-> +	key_put(rreq->netfs_priv);
->  }
-> =20
->  const struct netfs_request_ops afs_req_ops =3D {
->  	.init_request		=3D afs_init_request,
-> +	.free_request		=3D afs_free_request,
->  	.begin_cache_operation	=3D afs_begin_cache_operation,
->  	.check_write_begin	=3D afs_check_write_begin,
->  	.issue_read		=3D afs_issue_read,
-> -	.cleanup		=3D afs_priv_cleanup,
->  };
-> =20
->  int afs_write_inode(struct inode *inode, struct writeback_control *wbc)
-> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-> index b6edcf89a429..ee8c1b099c4f 100644
-> --- a/fs/ceph/addr.c
-> +++ b/fs/ceph/addr.c
-> @@ -392,11 +392,10 @@ static int ceph_init_request(struct netfs_io_reques=
-t *rreq, struct file *file)
->  	return 0;
->  }
-> =20
-> -static void ceph_readahead_cleanup(struct address_space *mapping, void *=
-priv)
-> +static void ceph_netfs_free_request(struct netfs_io_request *rreq)
->  {
-> -	struct inode *inode =3D mapping->host;
-> -	struct ceph_inode_info *ci =3D ceph_inode(inode);
-> -	int got =3D (uintptr_t)priv;
-> +	struct ceph_inode_info *ci =3D ceph_inode(rreq->inode);
-> +	int got =3D (uintptr_t)rreq->netfs_priv;
-> =20
->  	if (got)
->  		ceph_put_cap_refs(ci, got);
-> @@ -404,12 +403,12 @@ static void ceph_readahead_cleanup(struct address_s=
-pace *mapping, void *priv)
-> =20
->  const struct netfs_request_ops ceph_netfs_ops =3D {
->  	.init_request		=3D ceph_init_request,
-> +	.free_request		=3D ceph_netfs_free_request,
->  	.begin_cache_operation	=3D ceph_begin_cache_operation,
->  	.issue_read		=3D ceph_netfs_issue_read,
->  	.expand_readahead	=3D ceph_netfs_expand_readahead,
->  	.clamp_length		=3D ceph_netfs_clamp_length,
->  	.check_write_begin	=3D ceph_netfs_check_write_begin,
-> -	.cleanup		=3D ceph_readahead_cleanup,
->  };
-> =20
->  #ifdef CONFIG_CEPH_FSCACHE
-> diff --git a/fs/netfs/objects.c b/fs/netfs/objects.c
-> index e86107b30ba4..d6b8c0cbeb7c 100644
-> --- a/fs/netfs/objects.c
-> +++ b/fs/netfs/objects.c
-> @@ -75,10 +75,10 @@ static void netfs_free_request(struct work_struct *wo=
-rk)
->  	struct netfs_io_request *rreq =3D
->  		container_of(work, struct netfs_io_request, work);
-> =20
-> -	netfs_clear_subrequests(rreq, false);
-> -	if (rreq->netfs_priv)
-> -		rreq->netfs_ops->cleanup(rreq->mapping, rreq->netfs_priv);
->  	trace_netfs_rreq(rreq, netfs_rreq_trace_free);
-> +	netfs_clear_subrequests(rreq, false);
-> +	if (rreq->netfs_ops->free_request)
-> +		rreq->netfs_ops->free_request(rreq);
->  	if (rreq->cache_resources.ops)
->  		rreq->cache_resources.ops->end_operation(&rreq->cache_resources);
->  	kfree(rreq);
-> @@ -140,6 +140,8 @@ static void netfs_free_subrequest(struct netfs_io_sub=
-request *subreq,
->  	struct netfs_io_request *rreq =3D subreq->rreq;
-> =20
->  	trace_netfs_sreq(subreq, netfs_sreq_trace_free);
-> +	if (rreq->netfs_ops->free_subrequest)
-> +		rreq->netfs_ops->free_subrequest(subreq);
->  	kfree(subreq);
->  	netfs_stat_d(&netfs_n_rh_sreq);
->  	netfs_put_request(rreq, was_async, netfs_rreq_trace_put_subreq);
-> diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-> index c7bf1eaf51d5..1970c21b4f80 100644
-> --- a/include/linux/netfs.h
-> +++ b/include/linux/netfs.h
-> @@ -204,7 +204,10 @@ struct netfs_io_request {
->   */
->  struct netfs_request_ops {
->  	int (*init_request)(struct netfs_io_request *rreq, struct file *file);
-> +	void (*free_request)(struct netfs_io_request *rreq);
-> +	void (*free_subrequest)(struct netfs_io_subrequest *rreq);
+This is the v6 of this series which tries to implement the fd-based KVM
+guest private memory. The patches are based on latest kvm/queue branch
+commit:
 
-Do we need free_subrequest? It looks like nothing defines it in this
-series.
+  2764011106d0 (kvm/queue) KVM: VMX: Include MKTME KeyID bits in
+shadow_zero_check
+ 
+and Sean's below patch:
 
->  	int (*begin_cache_operation)(struct netfs_io_request *rreq);
-> +
->  	void (*expand_readahead)(struct netfs_io_request *rreq);
->  	bool (*clamp_length)(struct netfs_io_subrequest *subreq);
->  	void (*issue_read)(struct netfs_io_subrequest *subreq);
-> @@ -212,7 +215,6 @@ struct netfs_request_ops {
->  	int (*check_write_begin)(struct file *file, loff_t pos, unsigned len,
->  				 struct folio *folio, void **_fsdata);
->  	void (*done)(struct netfs_io_request *rreq);
-> -	void (*cleanup)(struct address_space *mapping, void *netfs_priv);
->  };
-> =20
->  /*
->=20
->=20
+  KVM: x86/mmu: Add RET_PF_CONTINUE to eliminate bool+int* "returns"
+  https://lkml.org/lkml/2022/4/22/1598
 
---=20
-Jeff Layton <jlayton@kernel.org>
+Introduction
+------------
+In general this patch series introduce fd-based memslot which provides
+guest memory through memory file descriptor fd[offset,size] instead of
+hva/size. The fd can be created from a supported memory filesystem
+like tmpfs/hugetlbfs etc. which we refer as memory backing store. KVM
+and the the memory backing store exchange callbacks when such memslot
+gets created. At runtime KVM will call into callbacks provided by the
+backing store to get the pfn with the fd+offset. Memory backing store
+will also call into KVM callbacks when userspace fallocate/punch hole
+on the fd to notify KVM to map/unmap secondary MMU page tables.
+
+Comparing to existing hva-based memslot, this new type of memslot allows
+guest memory unmapped from host userspace like QEMU and even the kernel
+itself, therefore reduce attack surface and prevent bugs.
+
+Based on this fd-based memslot, we can build guest private memory that
+is going to be used in confidential computing environments such as Intel
+TDX and AMD SEV. When supported, the memory backing store can provide
+more enforcement on the fd and KVM can use a single memslot to hold both
+the private and shared part of the guest memory. 
+
+mm extension
+---------------------
+Introduces new MFD_INACCESSIBLE flag for memfd_create(), the file created
+with these flags cannot read(), write() or mmap() etc via normal
+MMU operations. The file content can only be used with the newly
+introduced memfile_notifier extension.
+
+The memfile_notifier extension provides two sets of callbacks for KVM to
+interact with the memory backing store:
+  - memfile_notifier_ops: callbacks for memory backing store to notify
+    KVM when memory gets allocated/invalidated.
+  - backing store callbacks: callbacks for KVM to call into memory backing
+    store to request memory pages for guest private memory.
+
+The memfile_notifier extension also provides APIs for memory backing
+store to register/unregister itself and to trigger the notifier when the
+bookmarked memory gets fallocated/invalidated.
+
+memslot extension
+-----------------
+Add the private fd and the fd offset to existing 'shared' memslot so that
+both private/shared guest memory can live in one single memslot. A page in
+the memslot is either private or shared. A page is private only when it's
+already allocated in the backing store fd, all the other cases it's treated
+as shared, this includes those already mapped as shared as well as those
+having not been mapped. This means the memory backing store is the place
+which tells the truth of which page is private.
+
+Private memory map/unmap and conversion
+---------------------------------------
+Userspace's map/unmap operations are done by fallocate() ioctl on the
+backing store fd.
+  - map: default fallocate() with mode=0.
+  - unmap: fallocate() with FALLOC_FL_PUNCH_HOLE.
+The map/unmap will trigger above memfile_notifier_ops to let KVM map/unmap
+secondary MMU page tables.
+
+Test
+----
+To test the new functionalities of this patch TDX patchset is needed.
+Since TDX patchset has not been merged so I did two kinds of test:
+
+-  Selftest on normal VM from Vishal
+   https://lkml.org/lkml/2022/5/10/2045
+   The selftest has been ported to this patchset and you can find it in
+   repo: https://github.com/chao-p/linux/tree/privmem-v6
+
+-  Private memory funational test on latest TDX code
+   The patch is rebased to latest TDX code and tested the new
+   funcationalities. See below repos:
+   Linux: https://github.com/chao-p/linux/commits/privmem-v6-tdx
+   QEMU: https://github.com/chao-p/qemu/tree/privmem-v6
+
+An example QEMU command line for TDX test:
+-object tdx-guest,id=tdx \
+-object memory-backend-memfd-private,id=ram1,size=2G \
+-machine q35,kvm-type=tdx,pic=no,kernel_irqchip=split,memory-encryption=tdx,memory-backend=ram1
+
+What's missing
+--------------
+  - The accounting for longterm pinned memory in the backing store is
+    not included since I havn't come out a good solution yet.
+  - Batch invalidation notify for shmem is not ready, as I still see
+    it's a bit tricky to do that clearly.
+
+Changelog
+----------
+v6:
+  - Re-organzied patch for both mm/KVM parts.
+  - Added flags for memfile_notifier so its consumers can state their
+    features and memory backing store can check against these flags.
+  - Put a backing store reference in the memfile_notifier and move pfn_ops
+    into backing store.
+  - Only support boot time backing store register.
+  - Overall KVM part improvement suggested by Sean and some others.
+v5:
+  - Removed userspace visible F_SEAL_INACCESSIBLE, instead using an
+    in-kernel flag (SHM_F_INACCESSIBLE for shmem). Private fd can only
+    be created by MFD_INACCESSIBLE.
+  - Introduced new APIs for backing store to register itself to
+    memfile_notifier instead of direct function call.
+  - Added the accounting and restriction for MFD_INACCESSIBLE memory.
+  - Added KVM API doc for new memslot extensions and man page for the new
+    MFD_INACCESSIBLE flag.
+  - Removed the overlap check for mapping the same file+offset into
+    multiple gfns due to perf consideration, warned in document.
+  - Addressed other comments in v4.
+v4:
+  - Decoupled the callbacks between KVM/mm from memfd and use new
+    name 'memfile_notifier'.
+  - Supported register multiple memslots to the same backing store.
+  - Added per-memslot pfn_ops instead of per-system.
+  - Reworked the invalidation part.
+  - Improved new KVM uAPIs (private memslot extension and memory
+    error) per Sean's suggestions.
+  - Addressed many other minor fixes for comments from v3.
+v3:
+  - Added locking protection when calling
+    invalidate_page_range/fallocate callbacks.
+  - Changed memslot structure to keep use useraddr for shared memory.
+  - Re-organized F_SEAL_INACCESSIBLE and MEMFD_OPS.
+  - Added MFD_INACCESSIBLE flag to force F_SEAL_INACCESSIBLE.
+  - Commit message improvement.
+  - Many small fixes for comments from the last version.
+
+Links to previous discussions
+-----------------------------
+[1] Original design proposal:
+https://lkml.kernel.org/kvm/20210824005248.200037-1-seanjc@google.com/
+[2] Updated proposal and RFC patch v1:
+https://lkml.kernel.org/linux-fsdevel/20211111141352.26311-1-chao.p.peng@linux.intel.com/
+[3] Patch v5: https://lkml.org/lkml/2022/3/10/457
+
+Chao Peng (6):
+  mm: Introduce memfile_notifier
+  mm/memfd: Introduce MFD_INACCESSIBLE flag
+  KVM: Extend the memslot to support fd-based private memory
+  KVM: Add KVM_EXIT_MEMORY_FAULT exit
+  KVM: Handle page fault for private memory
+  KVM: Enable and expose KVM_MEM_PRIVATE
+
+Kirill A. Shutemov (1):
+  mm/shmem: Support memfile_notifier
+
+ Documentation/virt/kvm/api.rst   |  60 ++++++++++--
+ arch/mips/include/asm/kvm_host.h |   2 +-
+ arch/x86/include/asm/kvm_host.h  |   2 +-
+ arch/x86/kvm/Kconfig             |   2 +
+ arch/x86/kvm/mmu.h               |   1 +
+ arch/x86/kvm/mmu/mmu.c           |  70 +++++++++++++-
+ arch/x86/kvm/mmu/mmu_internal.h  |  17 ++++
+ arch/x86/kvm/mmu/mmutrace.h      |   1 +
+ arch/x86/kvm/mmu/paging_tmpl.h   |   5 +-
+ arch/x86/kvm/x86.c               |   2 +-
+ include/linux/kvm_host.h         |  51 +++++++++--
+ include/linux/memfile_notifier.h |  99 ++++++++++++++++++++
+ include/linux/shmem_fs.h         |   2 +
+ include/uapi/linux/kvm.h         |  33 +++++++
+ include/uapi/linux/memfd.h       |   1 +
+ mm/Kconfig                       |   4 +
+ mm/Makefile                      |   1 +
+ mm/memfd.c                       |  15 ++-
+ mm/memfile_notifier.c            | 137 +++++++++++++++++++++++++++
+ mm/shmem.c                       | 120 +++++++++++++++++++++++-
+ virt/kvm/Kconfig                 |   3 +
+ virt/kvm/kvm_main.c              | 153 +++++++++++++++++++++++++++++--
+ 22 files changed, 748 insertions(+), 33 deletions(-)
+ create mode 100644 include/linux/memfile_notifier.h
+ create mode 100644 mm/memfile_notifier.c
+
+-- 
+2.25.1
+
