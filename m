@@ -2,121 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E1D0852D85C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 May 2022 17:44:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EBC952D815
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 May 2022 17:43:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241397AbiESPoC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 May 2022 11:44:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47662 "EHLO
+        id S241465AbiESPmG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 May 2022 11:42:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233022AbiESPmO (ORCPT
+        with ESMTP id S241107AbiESPkx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 May 2022 11:42:14 -0400
-Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79D735C845;
-        Thu, 19 May 2022 08:42:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1652974933; x=1684510933;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=XcUkjLL+YpWw11P834waxgWm/NgeT+vT/ACdu5U5CAo=;
-  b=lIi2fiLkt8EW9XmGeKZ3DL2Mw4ExFhwsBMFo4zIQLEv/mfuqfgqQw4Fv
-   WiIyXEhhsMc2f0ziJG0K4PN+zMsBDcRfrrAs6nwKqCBn++Ji8E8ZSNIQz
-   vGwtyLMGLnthYzd79cZNe8C5lzn+7Si8Yu9XG2XH7kv4PmBH0CbSqgehq
-   Plb4WxW7vbQ7k/azGC9hneLxIv8R7Z0283EBKlZTtpINJW9Dqu7zb9jJe
-   Jw98quqjDNz2AGxqLwXxz2qFG1q/6DhyIYuaQSf25patS3lqOtpf4xAJt
-   RR/H6S8c5COBVDvkq386+CF8m61nnwo9/ZcIlhMOk5+MsV+JTwXRhSCA4
-   w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10352"; a="272213468"
-X-IronPort-AV: E=Sophos;i="5.91,237,1647327600"; 
-   d="scan'208";a="272213468"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 May 2022 08:42:13 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.91,237,1647327600"; 
-   d="scan'208";a="598635609"
-Received: from chaop.bj.intel.com ([10.240.192.101])
-  by orsmga008.jf.intel.com with ESMTP; 19 May 2022 08:42:03 -0700
-From:   Chao Peng <chao.p.peng@linux.intel.com>
-To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-        qemu-devel@nongnu.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        Chao Peng <chao.p.peng@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com
-Subject: [PATCH v6 8/8] memfd_create.2: Describe MFD_INACCESSIBLE flag
-Date:   Thu, 19 May 2022 23:37:13 +0800
-Message-Id: <20220519153713.819591-9-chao.p.peng@linux.intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220519153713.819591-1-chao.p.peng@linux.intel.com>
-References: <20220519153713.819591-1-chao.p.peng@linux.intel.com>
+        Thu, 19 May 2022 11:40:53 -0400
+Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 596D82621
+        for <linux-fsdevel@vger.kernel.org>; Thu, 19 May 2022 08:40:50 -0700 (PDT)
+Received: by mail-pf1-x42b.google.com with SMTP id p8so5473287pfh.8
+        for <linux-fsdevel@vger.kernel.org>; Thu, 19 May 2022 08:40:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:content-language:to:cc
+         :references:from:subject:in-reply-to:content-transfer-encoding;
+        bh=YC/TQekEQMw0NH762DTjCurcW9GINdVnwHMeh2s+uw4=;
+        b=kuiu9oZhvF54Qzcfg9cySrjvEvn6zYrznGInC2+X0DDWCWSzgy1boVUSxL4zJypQQc
+         Xblzle8ep5i6Y8lk/LWC3AFDdb/axse/zAXNyuHzOTA6RbQ2m0Xe68eX8ngSHG2ZENmI
+         vZVVcGClmI30cAotMo4DKshGm6YVt9TIhB5tLLAUzLnArcKRIn5JgAsL/EW5Qu1SwWPz
+         +lP2y+cZGWngs8vC8S1XaXH87O0nJk0OgCO/FjjO2gqbAIX+YV9R48Xmgl7F35QxpxLB
+         k5uHTP9EDXFJvsWWzEvYYNByZ5eXKtlDY6h/V1lPFu3S6PaOTYmTLuBYbZ0SzBtbYjMJ
+         /N7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent
+         :content-language:to:cc:references:from:subject:in-reply-to
+         :content-transfer-encoding;
+        bh=YC/TQekEQMw0NH762DTjCurcW9GINdVnwHMeh2s+uw4=;
+        b=qTVArvaB9K7PNxlv7elXmAf2PUp6FrAEdNRFHOSsTAGoYybAEg0wRL4ZiZ/QZLcL6J
+         8AFGSJY8RBhp2giP7rnKUTpK4Oxw4J79WX/jqg86rkS8cHF1b3mSuOQSmBpwGvN9r+0j
+         BJnLV0w/SobHD0SqSa5+tUNTMXkb1mwMP77H9CoCTAkUqCtQG8GJwio4WykSc3UnjmDZ
+         EEa7AOh6S+cUvbNYW5d6/pj0Fc3ZP59HiTtBR7aE/fhCLnGAUfd47Xa3GwSzp4SAJRQp
+         oOQoP0nYAO3AqW5rFT/kl1xouIBi9huBzI5I4tDwB2Vb4X5Tx6yd9wNiTc4yBZnly7dr
+         X2HQ==
+X-Gm-Message-State: AOAM533YpXYGaTi/FHYWYDC0UANqRbRoyoxmF4ChCIlT3BTqFJw8VWWN
+        jk/Ic4wnGENKgTx42Vz0xczQlg==
+X-Google-Smtp-Source: ABdhPJxwqa2CA1D4Nh6u/HrWw9OSWEpCsDZsU2aDMDHxcRKH/2bYYMwZEs5/QkB8zRpMnH+RprFljQ==
+X-Received: by 2002:a63:343:0:b0:3f6:52e5:edbe with SMTP id 64-20020a630343000000b003f652e5edbemr1682179pgd.272.1652974849844;
+        Thu, 19 May 2022 08:40:49 -0700 (PDT)
+Received: from [192.168.254.17] ([50.39.160.154])
+        by smtp.gmail.com with ESMTPSA id m11-20020a17090a7f8b00b001cd4989fee6sm5721035pjl.50.2022.05.19.08.40.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 19 May 2022 08:40:49 -0700 (PDT)
+Message-ID: <bcad7602-890c-d7ce-1b01-2b3ef82674d9@linaro.org>
+Date:   Thu, 19 May 2022 08:40:49 -0700
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Content-Language: en-US
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-ext4@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org
+References: <49ac1697-5235-ca2e-2738-f0399c26d718@linaro.org>
+ <20220519122353.eqpnxiaybvobfszb@quack3.lan>
+From:   Tadeusz Struk <tadeusz.struk@linaro.org>
+Subject: Re: kernel BUG in ext4_writepages
+In-Reply-To: <20220519122353.eqpnxiaybvobfszb@quack3.lan>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
----
- man2/memfd_create.2 | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+On 5/19/22 05:23, Jan Kara wrote:
+> Hi!
+> 
+> On Tue 10-05-22 15:28:38, Tadeusz Struk wrote:
+>> Syzbot found another BUG in ext4_writepages [1].
+>> This time it complains about inode with inline data.
+>> C reproducer can be found here [2]
+>> I was able to trigger it on 5.18.0-rc6
+>>
+>> [1] https://syzkaller.appspot.com/bug?id=a1e89d09bbbcbd5c4cb45db230ee28c822953984
+>> [2] https://syzkaller.appspot.com/text?tag=ReproC&x=129da6caf00000
+> 
+> Thanks for report. This should be fixed by:
+> 
+> https://lore.kernel.org/all/20220516012752.17241-1-yebin10@huawei.com/
 
-diff --git a/man2/memfd_create.2 b/man2/memfd_create.2
-index 89e9c4136..2698222ae 100644
---- a/man2/memfd_create.2
-+++ b/man2/memfd_create.2
-@@ -101,6 +101,19 @@ meaning that no other seals can be set on the file.
- .\" FIXME Why is the MFD_ALLOW_SEALING behavior not simply the default?
- .\" Is it worth adding some text explaining this?
- .TP
-+.BR MFD_INACCESSIBLE
-+Disallow userspace access through ordinary MMU accesses via
-+.BR read (2),
-+.BR write (2)
-+and
-+.BR mmap (2).
-+The file size cannot be changed once initialized.
-+This flag cannot coexist with
-+.B MFD_ALLOW_SEALING
-+and when this flag is set, the initial set of seals will be
-+.B F_SEAL_SEAL,
-+meaning that no other seals can be set on the file.
-+.TP
- .BR MFD_HUGETLB " (since Linux 4.14)"
- .\" commit 749df87bd7bee5a79cef073f5d032ddb2b211de8
- The anonymous file will be created in the hugetlbfs filesystem using
+Hi,
+Thanks for info. I tested the patch, but it doesn't fix the issue.
+In this case it doesn't even call ext4_convert_inline_data()
+
 -- 
-2.17.1
-
+Thanks,
+Tadeusz
