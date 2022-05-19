@@ -2,228 +2,273 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DC1752DD8A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 May 2022 21:15:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26F3A52DDDE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 May 2022 21:33:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244485AbiESTOl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 May 2022 15:14:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50872 "EHLO
+        id S240779AbiESTdw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 May 2022 15:33:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244458AbiESTOJ (ORCPT
+        with ESMTP id S234946AbiESTdv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 May 2022 15:14:09 -0400
-Received: from mail-io1-xd2b.google.com (mail-io1-xd2b.google.com [IPv6:2607:f8b0:4864:20::d2b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D6DD111BAA
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 May 2022 12:13:55 -0700 (PDT)
-Received: by mail-io1-xd2b.google.com with SMTP id e3so6746746ios.6
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 May 2022 12:13:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6/y06+DLzN/eyg4fXfBHtcLRTnFYxYLYCPqBTJsbH6s=;
-        b=Hr7YTVx/XDlLAKxrqvGt3HM8lkbQ7yU2d3o62RUBreCJgrHoA8OSdL53fbQ3KLFiO2
-         /1vHpfewwHUWgXcLIj3wMgTZ5sGELoRatnJpC5h8N64AtjuyzTrKNDDMAgk+T9w7cCeF
-         Wg4EpROQ9lznY84WpbrXLJWghT/JB4bwz2w3PVWYuRB3zMZAcBIpkH5LdEYGfnVJpdOt
-         BfSvIidMaMzxVrCEapVPuz5jtfaWcxAdLMsxpucS1Nk1ppff19DluwXMBAn4FJlGa24U
-         mln4eXx0GXrxxAde1IcxQBsW5gzB/5zTgmkb5K81Vk8Gua1sTGxvoARNWc84yLIwalG9
-         /3sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6/y06+DLzN/eyg4fXfBHtcLRTnFYxYLYCPqBTJsbH6s=;
-        b=DrAP0/x7Fhptjymu0QqtM5zb9EvpO6rKSiBJngEQDhQxZioCt/FMhgtW+b0J9S1HBR
-         tW9rsrE/Fcs0CevzPbWLMqK3NizAyqKAwo9Ei1AhZZ5eGP7obw9zC/LUqMIVKfdT+Cj4
-         qcMAuiKe0281dKn4TTlw3u/8dWmXw7qQEbG1wqAIpptnopkYn4g9CtS/4AqI6bSF8UNY
-         TMIQAmlywxigA6mqmiNPrjh/QwdeG56HMWsSAKnIgBdcgm3qRU5/k0ebYbrK5pwrY+Q+
-         1gqEFa7w74mR4PprClzJNMMkVEtWk/xoBIyAU3+g5BlSN7GBAyJBzjBs4hsHjWj5Zw85
-         2Yzg==
-X-Gm-Message-State: AOAM530lCNNmbnm0mOeQU/rMZdFX09fWP1eekFvBPngxgzGVH2pqe16Z
-        dJpllH/Wfy9IaTHmzbAtCx4utj9brISIfQenzq+pcg==
-X-Google-Smtp-Source: ABdhPJy0GdftMdljZ/DggUvp858hbLHvZ0ZTwbMCuqHX0TPJ3QqmV+8xMprTqaPj1WirWbD9+n0Ce98OwaQRgHhTvhY=
-X-Received: by 2002:a05:6638:1693:b0:32b:96d6:5fc0 with SMTP id
- f19-20020a056638169300b0032b96d65fc0mr3499533jat.167.1652987633996; Thu, 19
- May 2022 12:13:53 -0700 (PDT)
+        Thu, 19 May 2022 15:33:51 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BA88A5930F
+        for <linux-fsdevel@vger.kernel.org>; Thu, 19 May 2022 12:33:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1652988828;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=ZlRs+bfxWYbBbjnLR2rK0SLWkDzLq4+HCX4OhBU9Tww=;
+        b=A4FfuNXyj8Z/OtrCI9Pb9kqoALYrR9BI/4WAhDz0ThRiUhyoRdofMSWSilWsGEbpNk2Yn9
+        HvTbZTq6jC+q23l91hkEgctNHsy+ALYO6+IjQTwHv5oXCuDEOsrGTrqmNiIsCInYUkN400
+        RkQzuSQufPW3q057RMvjfd5yT0k9pKo=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-655-zrJHUk78NhaUxtngxbrHzw-1; Thu, 19 May 2022 15:33:45 -0400
+X-MC-Unique: zrJHUk78NhaUxtngxbrHzw-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id EDFDB29AA2F2;
+        Thu, 19 May 2022 19:33:44 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.22.18.71])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D46C0400E895;
+        Thu, 19 May 2022 19:33:44 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 85CC52208FA; Thu, 19 May 2022 15:33:44 -0400 (EDT)
+Date:   Thu, 19 May 2022 15:33:44 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Dharmendra Singh <dharamhans87@gmail.com>,
+        linux-fsdevel@vger.kernel.org,
+        fuse-devel <fuse-devel@lists.sourceforge.net>,
+        linux-kernel@vger.kernel.org, Bernd Schubert <bschubert@ddn.com>
+Subject: Re: [PATCH v5 0/3] FUSE: Implement atomic lookup + open/create
+Message-ID: <YoabmCQAWpBY5++X@redhat.com>
+References: <20220517100744.26849-1-dharamhans87@gmail.com>
+ <CAJfpegsDxsMsyfP4a_5H1q91xFtwcEdu9-WBnzWKwjUSrPNdmw@mail.gmail.com>
 MIME-Version: 1.0
-References: <20220422212945.2227722-1-axelrasmussen@google.com>
- <20220422212945.2227722-6-axelrasmussen@google.com> <bceb4b77-24fa-7654-0c59-fc858bea096a@linuxfoundation.org>
-In-Reply-To: <bceb4b77-24fa-7654-0c59-fc858bea096a@linuxfoundation.org>
-From:   Axel Rasmussen <axelrasmussen@google.com>
-Date:   Thu, 19 May 2022 12:13:18 -0700
-Message-ID: <CAJHvVcj8FnOAQ7HqrgiXiN+k2=XbXPerLZy6QBG1mDMW3=7ewA@mail.gmail.com>
-Subject: Re: [PATCH v2 5/6] userfaultfd: selftests: make /dev/userfaultfd
- testing configurable
-To:     Shuah Khan <skhan@linuxfoundation.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Charan Teja Reddy <charante@codeaurora.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Gleb Fotengauer-Malinovskiy <glebfm@altlinux.org>,
-        Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.cz>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
-        Peter Xu <peterx@redhat.com>, Shuah Khan <shuah@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        zhangyi <yi.zhang@huawei.com>, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linuxkselftest <linux-kselftest@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegsDxsMsyfP4a_5H1q91xFtwcEdu9-WBnzWKwjUSrPNdmw@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.11.54.1
+X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 26, 2022 at 9:56 AM Shuah Khan <skhan@linuxfoundation.org> wrote:
->
-> On 4/22/22 3:29 PM, Axel Rasmussen wrote:
-> > Instead of always testing both userfaultfd(2) and /dev/userfaultfd,
-> > let the user choose which to test.
+On Thu, May 19, 2022 at 11:39:01AM +0200, Miklos Szeredi wrote:
+> On Tue, 17 May 2022 at 12:08, Dharmendra Singh <dharamhans87@gmail.com> wrote:
 > >
-> > As with other test features, change the behavior based on a new
-> > command line flag. Introduce the idea of "test mods", which are
-> > generic (not specific to a test type) modifications to the behavior of
-> > the test. This is sort of borrowed from this RFC patch series [1], but
-> > simplified a bit.
+> > In FUSE, as of now, uncached lookups are expensive over the wire.
+> > E.g additional latencies and stressing (meta data) servers from
+> > thousands of clients. These lookup calls possibly can be avoided
+> > in some cases. Incoming three patches address this issue.
 > >
-> > The benefit is, in "typical" configurations this test is somewhat slow
-> > (say, 30sec or something). Testing both clearly doubles it, so it may
-> > not always be desirable, as users are likely to use one or the other,
-> > but never both, in the "real world".
 > >
-> > [1]: https://patchwork.kernel.org/project/linux-mm/patch/20201129004548.1619714-14-namit@vmware.com/
-> >
-> > Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
-> > ---
-> >   tools/testing/selftests/vm/userfaultfd.c | 41 +++++++++++++++++-------
-> >   1 file changed, 30 insertions(+), 11 deletions(-)
-> >
-> > diff --git a/tools/testing/selftests/vm/userfaultfd.c b/tools/testing/selftests/vm/userfaultfd.c
-> > index 12ae742a9981..274522704e40 100644
-> > --- a/tools/testing/selftests/vm/userfaultfd.c
-> > +++ b/tools/testing/selftests/vm/userfaultfd.c
-> > @@ -142,8 +142,17 @@ static void usage(void)
-> >   {
-> >       fprintf(stderr, "\nUsage: ./userfaultfd <test type> <MiB> <bounces> "
-> >               "[hugetlbfs_file]\n\n");
-> > +
->
-> Remove the extra blank line here.
->
-> >       fprintf(stderr, "Supported <test type>: anon, hugetlb, "
-> >               "hugetlb_shared, shmem\n\n");
-> > +
->
-> Remove the extra blank line here.
->
-> > +     fprintf(stderr, "'Test mods' can be joined to the test type string with a ':'. "
-> > +             "Supported mods:\n");
-> > +     fprintf(stderr, "\tdev - Use /dev/userfaultfd instead of userfaultfd(2)\n");
-> > +     fprintf(stderr, "\nExample test mod usage:\n");
-> > +     fprintf(stderr, "# Run anonymous memory test with /dev/userfaultfd:\n");
-> > +     fprintf(stderr, "./userfaultfd anon:dev 100 99999\n\n");
-> > +
-> >       fprintf(stderr, "Examples:\n\n");
-> >       fprintf(stderr, "%s", examples);
->
-> Update examples above with new test cases if any.
+> > Fist patch handles the case where we are creating a file with O_CREAT.
+> > Before we go for file creation, we do a lookup on the file which is most
+> > likely non-existent. After this lookup is done, we again go into libfuse
+> > to create file. Such lookups where file is most likely non-existent, can
+> > be avoided.
+> 
+> I'd really like to see a bit wider picture...
+> 
+> We have several cases, first of all let's look at plain O_CREAT
+> without O_EXCL (assume that there were no changes since the last
+> lookup for simplicity):
 
-Will fix the above comments in v3.
+Hi Miklos,
 
->
-> >       exit(1);
-> > @@ -1610,8 +1619,6 @@ unsigned long default_huge_page_size(void)
-> >
-> >   static void set_test_type(const char *type)
-> >   {
-> > -     uint64_t features = UFFD_API_FEATURES;
-> > -
-> >       if (!strcmp(type, "anon")) {
-> >               test_type = TEST_ANON;
-> >               uffd_test_ops = &anon_uffd_test_ops;
-> > @@ -1631,10 +1638,28 @@ static void set_test_type(const char *type)
-> >               test_type = TEST_SHMEM;
-> >               uffd_test_ops = &shmem_uffd_test_ops;
-> >               test_uffdio_minor = true;
-> > -     } else {
-> > -             err("Unknown test type: %s", type);
-> > +     }
->
-> At this point, it might make it so much easier and maintainable if
-> we were to use getopt instead of parsing options.
+Thanks for providing this breakup. There are too many cases here and
+this data helps a lot with that. I feel this should really be captured
+in commit logs to show the current paths and how these have been 
+optimized with ATOMIC_OPEN/CREATE_EXT.
 
-Agreed, I'd like that as well. But, since it's a bigger refactor that
-affects all test types, I think it may be cleaner to leave it for a
-follow-up series.
+> 
+> [not cached, negative]
+>    ->atomic_open()
+>       LOOKUP
+>       CREATE
+> 
+> [not cached, positive]
+>    ->atomic_open()
+>       LOOKUP
+>    ->open()
+>       OPEN
+> 
+> [cached, negative, validity timeout not expired]
+>    ->d_revalidate()
+>       return 1
+>    ->atomic_open()
+>       CREATE
+> 
+> [cached, negative, validity timeout expired]
+>    ->d_revalidate()
+>       return 0
+>    ->atomic_open()
+>       LOOKUP
+>       CREATE
+> 
+> [cached, positive, validity timeout not expired]
+>    ->d_revalidate()
+>       return 1
+>    ->open()
+>       OPEN
+> 
+> [cached, positive, validity timeout expired]
+>    ->d_revalidate()
+>       LOOKUP
+>       return 1
+>    ->open()
+>       OPEN
+> 
+> (Caveat emptor: I'm just looking at the code and haven't actually
+> tested what happens.)
+> 
+> Apparently in all of these cases we are doing at least one request, so
+> it would make sense to make them uniform:
+> 
+> [not cached]
+>    ->atomic_open()
+>       CREATE_EXT
+> 
+> [cached]
+>    ->d_revalidate()
+>       return 0
 
->
-> > +}
-> > +
-> > +static void parse_test_type_arg(const char *raw_type)
-> > +{
-> > +     char *buf = strdup(raw_type);
-> > +     uint64_t features = UFFD_API_FEATURES;
-> > +
-> > +     while (buf) {
-> > +             const char *token = strsep(&buf, ":");
-> > +
-> > +             if (!test_type)
-> > +                     set_test_type(token);
-> > +             else if (!strcmp(token, "dev"))
-> > +                     test_dev_userfaultfd = true;
-> > +             else
-> > +                     err("unrecognized test mod '%s'", token);
-> >       }
-> >
-> > +     if (!test_type)
-> > +             err("failed to parse test type argument: '%s'", raw_type);
-> > +
-> >       if (test_type == TEST_HUGETLB)
-> >               page_size = default_huge_page_size();
-> >       else
-> > @@ -1681,7 +1706,7 @@ int main(int argc, char **argv)
-> >               err("failed to arm SIGALRM");
-> >       alarm(ALARM_INTERVAL_SECS);
-> >
-> > -     set_test_type(argv[1]);
-> > +     parse_test_type_arg(argv[1]);
-> >
-> >       nr_cpus = sysconf(_SC_NPROCESSORS_ONLN);
-> >       nr_pages_per_cpu = atol(argv[2]) * 1024*1024 / page_size /
-> > @@ -1719,12 +1744,6 @@ int main(int argc, char **argv)
-> >       }
-> >       printf("nr_pages: %lu, nr_pages_per_cpu: %lu\n",
-> >              nr_pages, nr_pages_per_cpu);
-> > -
-> > -     test_dev_userfaultfd = false;
-> > -     if (userfaultfd_stress())
-> > -             return 1;
-> > -
-> > -     test_dev_userfaultfd = true;
-> >       return userfaultfd_stress();
-> >   }
-> >
-> >
->
-> Same comments as before on fail vs. skip conditions to watch out
-> for and report them correctly.
+So fuse_dentry_revalidate() will return 0 even if timeout has not
+expired (if server supports so called atomic_open()).
+And that will lead to calling d_invalidate() on existing positive dentry
+always. IOW, if I am calling open() on a dentry, dentry will always be
+dropped and a new dentry will always be created from ->atomic_open() path,
+is that right.
 
-I think in v3 things will be correct. Basically, in the skip cases we
-just exit(KSFT_SKIP) directly, instead of relying on the return value
-here. I'll take a pass and double check though before sending v3.
+I am not sure what does it mean from VFS perspective to always call
+d_invalidate() on a cached positive dentry when open() is called. 
 
->
-> thanks,
-> -- Shuah
->
+/**
+ * d_invalidate - detach submounts, prune dcache, and drop
+ * @dentry: dentry to invalidate (aka detach, prune and drop)
+ */
+
+Thanks
+Vivek
+
+>    ->atomic_open()
+>       CREATE_EXT
+> 
+> Similarly we can look at the current O_CREAT | O_EXCL cases:
+> 
+> [not cached, negative]
+>    ->atomic_open()
+>       LOOKUP
+>       CREATE
+> 
+> [not cached, positive]
+>    ->atomic_open()
+>       LOOKUP
+>    return -EEXIST
+> 
+> [cached, negative]
+>    ->d_revalidate()
+>       return 0 (see LOOKUP_EXCL check)
+>    ->atomic_open()
+>       LOOKUP
+>       CREATE
+> 
+> [cached, positive]
+>    ->d_revalidate()
+>       LOOKUP
+>       return 1
+>    return -EEXIST
+> 
+> Again we are doing at least one request, so we can unconditionally
+> replace them with CREATE_EXT like the non-O_EXCL case.
+> 
+> 
+> >
+> > Second patch handles the case where we open first time a file/dir
+> > but do a lookup first on it. After lookup is performed we make another
+> > call into libfuse to open the file. Now these two separate calls into
+> > libfuse can be combined and performed as a single call into libfuse.
+> 
+> And here's my analysis:
+> 
+> [not cached, negative]
+>    ->lookup()
+>       LOOKUP
+>    return -ENOENT
+> 
+> [not cached, positive]
+>    ->lookup()
+>       LOOKUP
+>    ->open()
+>       OPEN
+> 
+> [cached, negative, validity timeout not expired]
+>     ->d_revalidate()
+>        return 1
+>     return -ENOENT
+> 
+> [cached, negative, validity timeout expired]
+>    ->d_revalidate()
+>       return 0
+>    ->atomic_open()
+>       LOOKUP
+>    return -ENOENT
+> 
+> [cached, positive, validity timeout not expired]
+>    ->d_revalidate()
+>       return 1
+>    ->open()
+>       OPEN
+> 
+> [cached, positive, validity timeout expired]
+>    ->d_revalidate()
+>       LOOKUP
+>       return 1
+>    ->open()
+>       OPEN
+> 
+> There's one case were no request is sent:  a valid cached negative
+> dentry.   Possibly we can also make this uniform, e.g.:
+> 
+> [not cached]
+>    ->atomic_open()
+>        OPEN_ATOMIC
+> 
+> [cached, negative, validity timeout not expired]
+>     ->d_revalidate()
+>        return 1
+>     return -ENOENT
+> 
+> [cached, negative, validity timeout expired]
+>    ->d_revalidate()
+>       return 0
+>    ->atomic_open()
+>       OPEN_ATOMIC
+> 
+> [cached, positive]
+>    ->d_revalidate()
+>       return 0
+>    ->atomic_open()
+>       OPEN_ATOMIC
+> 
+> It may even make the code simpler to clearly separate the cases where
+> the atomic variants are supported and when not.  I'd also consider
+> merging CREATE_EXT into OPEN_ATOMIC, since a filesystem implementing
+> one will highly likely want to implement the other as well.
+> 
+> Thanks,
+> Miklos
+> 
+
