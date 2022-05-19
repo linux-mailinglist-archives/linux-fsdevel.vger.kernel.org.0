@@ -2,61 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C15A52CED1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 May 2022 10:59:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A35E52CF21
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 May 2022 11:15:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235723AbiESI7c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 May 2022 04:59:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44398 "EHLO
+        id S235915AbiESJOs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 May 2022 05:14:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233230AbiESI73 (ORCPT
+        with ESMTP id S235916AbiESJOp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 May 2022 04:59:29 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBD80A5033
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 May 2022 01:59:27 -0700 (PDT)
+        Thu, 19 May 2022 05:14:45 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BBEBA5028;
+        Thu, 19 May 2022 02:14:44 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id F1DB7618A9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 May 2022 08:59:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D1E9C385AA;
-        Thu, 19 May 2022 08:59:22 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id BCF27B82397;
+        Thu, 19 May 2022 09:14:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD8CFC34100;
+        Thu, 19 May 2022 09:14:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1652950766;
-        bh=GY6SZbFS5otLT8yQYUe0RJ2U4Gc+ZzIdcfkzMQBRkUo=;
+        s=k20201202; t=1652951681;
+        bh=TAmLjhtfKyTqHdWCAxE9xi89WgIOWlJdQAIS4rJUevQ=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YKCJPlaPNPSgBq0s9Zvs7qdaq5CSuiDYo5NEUhPXsm3wlviVWctQoiQASKGoT2KcA
-         1bQ0H7/L2FstEYx3JxbvFnhDfhRvoGyqQI3OsSh5aCYX4XuawhAeY5/ad1rro7iR57
-         jMCLgjK1E9GrFUBFyS27uO4wZ/dnAeuOnBAt+TN2KneTggt7EFtNHcNJmjAcgdWnzr
-         24CW70/MT+L0sPSIATFzs3g5arNwpeoJUk/Z4VYd6aAr3yrza+6ngfgPMwO2485SNU
-         nznbphTp/3we6cl/MT9QZZIiIv2sOgLeFJ1YZ7iY1MjoR0lwX7bSX0i8n+0iqwU+Wo
-         M9YSbsKxXIcpg==
-Date:   Thu, 19 May 2022 10:59:19 +0200
+        b=snAweLXtTQun4KLBiKzJxrqRcWHW9DbAaOg5AxSk/k2EJfQk2sSg7Q0Xp3JP9Iqab
+         5GtAaHbl0wjL7XrGW8guqNfOZnTHfsUTi8RgaFjpdoYW0aVMaSaxofVfIIfQFh5OQo
+         akBTvUIDT/wMOHdHmKWxQw2D3LJDPI9QEQl+5+PboTzHOowDqzFFdZ3WygQQZD+Wpk
+         vCxa6VNsNm7i1UrQQfbW1ZzI4q0HR+VXCl2WRyZuPUQPqmeNet2pgrm/pifn4nSaJy
+         HaTyKvo67SSvumoVA28nJjpEdY7TLMKemAZqXwQr04U54loxlSKP0L9KnY5fl5E7s7
+         Sb4uWEh/qReLQ==
+Date:   Thu, 19 May 2022 11:14:35 +0200
 From:   Christian Brauner <brauner@kernel.org>
-To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Dave Marchevsky <davemarchevsky@fb.com>,
-        linux-fsdevel@vger.kernel.org,
-        Seth Forshee <sforshee@digitalocean.com>,
-        Rik van Riel <riel@surriel.com>,
-        kernel-team <kernel-team@fb.com>,
-        Andrii Nakryiko <andrii@kernel.org>, clm@fb.com
-Subject: Re: [PATCH] fuse: allow CAP_SYS_ADMIN in root userns to access
- allow_other mount
-Message-ID: <20220519085919.yqj2hvlzg7gpzby3@wittgenstein>
-References: <20211111221142.4096653-1-davemarchevsky@fb.com>
- <20211112101307.iqf3nhxgchf2u2i3@wittgenstein>
- <0515c3c8-c9e3-25dd-4b49-bb8e19c76f0d@fb.com>
- <CAJfpegtBuULgvqSkOP==HV3_cU2KuvnywLWvmMTGUihRnDcJmQ@mail.gmail.com>
- <d6f632bc-c321-488d-f50e-749d641786d6@fb.com>
- <20220518112229.s5nalbyd523nxxru@wittgenstein>
- <CAJfpegtNKbOzu0F=-k_ovxrAOYsOBk91e3v6GPgpfYYjsAM5xw@mail.gmail.com>
- <CAEf4BzaNjPMgBWuRH_me=+Gp6_nmuwyY7L-wiGFs6G=5A=fQ4g@mail.gmail.com>
+To:     "xuyang2018.jy@fujitsu.com" <xuyang2018.jy@fujitsu.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
+        "david@fromorbit.com" <david@fromorbit.com>,
+        "djwong@kernel.org" <djwong@kernel.org>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "jlayton@kernel.org" <jlayton@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jann Horn <jannh@google.com>
+Subject: Re: [PATCH v8 1/4] fs: add mode_strip_sgid() helper
+Message-ID: <20220519091435.ycdvix3drsr5tl24@wittgenstein>
+References: <1650971490-4532-1-git-send-email-xuyang2018.jy@fujitsu.com>
+ <Ymn05eNgOnaYy36R@zeniv-ca.linux.org.uk>
+ <Ymn4xPXXWe4LFhPZ@zeniv-ca.linux.org.uk>
+ <626A08DA.3060802@fujitsu.com>
+ <YmoAp+yWBpH5T8rt@zeniv-ca.linux.org.uk>
+ <YmoGHrNVtfXsl6vM@zeniv-ca.linux.org.uk>
+ <YmoOMz+3ul5uHclV@zeniv-ca.linux.org.uk>
+ <20220428093434.yc7hjjplvicugfqs@wittgenstein>
+ <6285A58F.3070700@fujitsu.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAEf4BzaNjPMgBWuRH_me=+Gp6_nmuwyY7L-wiGFs6G=5A=fQ4g@mail.gmail.com>
+In-Reply-To: <6285A58F.3070700@fujitsu.com>
 X-Spam-Status: No, score=-7.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -67,59 +69,59 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 18, 2022 at 09:56:26PM -0700, Andrii Nakryiko wrote:
-> On Wed, May 18, 2022 at 4:26 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
+On Thu, May 19, 2022 at 01:03:12AM +0000, xuyang2018.jy@fujitsu.com wrote:
+> on 2022/4/28 17:34, Christian Brauner wrote:
+> > On Thu, Apr 28, 2022 at 03:46:59AM +0000, Al Viro wrote:
+> >> On Thu, Apr 28, 2022 at 03:12:30AM +0000, Al Viro wrote:
+> >>
+> >>>> Note, BTW, that while XFS has inode_fsuid_set() on the non-inode_init_owner()
+> >>>> path, it doesn't have inode_fsgid_set() there.  Same goes for ext4, while
+> >>>> ext2 doesn't bother with either in such case...
+> >>>>
+> >>>> Let's try to separate the issues here.  Jann, could you explain what makes
+> >>>> empty sgid files dangerous?
+> >>>
+> >>> Found the original thread in old mailbox, and the method of avoiding the
+> >>> SGID removal on modification is usable.  Which answers the question above...
+> >>
+> >> OK, what do we want for grpid mounts?  Aside of "don't forget inode_fsuid_set(),
+> >> please", that is.  We don't want inode_fsgid_set() there (whatever went for
+> >> the parent directory should be the right value for the child).  Same "strip
 > >
-> > On Wed, 18 May 2022 at 13:22, Christian Brauner <brauner@kernel.org> wrote:
-> > >
-> > > On Tue, May 17, 2022 at 12:50:32PM -0400, Dave Marchevsky wrote:
+> > Exactly. You sounded puzzled why we don't call that in an earlier mail.
 > >
-> > > > Sorry to ressurect this old thread. My proposed alternate approach of "special
-> > > > ioctl to grant exception to descendant userns check" proved unnecessarily
-> > > > complex: ioctls also go through fuse_allow_current_process check, so a special
-> > > > carve-out would be necessary for in both ioctl and fuse_permission check in
-> > > > order to make it possible for non-descendant-userns user to opt in to exception.
-> > > >
-> > > > How about a version of this patch with CAP_DAC_READ_SEARCH check? This way
-> > > > there's more of a clear opt-in vs CAP_SYS_ADMIN.
-> > >
-> > > I still think this isn't needed given that especially for the use-cases
-> > > listed here you have a workable userspace solution to this problem.
+> >> SGID from non-directory child, unless we are in the resulting group"?
+> >
+> > Honestly, I think we should try and see if we can't use the same setgid
+> > inheritance enforcement of the new mode_strip_sgid() helper for the
+> > grpid mount option as well. Iow, just don't give the grpid mount option
+> > a separate setgid treatment and try it with the current approach.
+> >
+> > It'll allow us to move things into vfs proper which I think is a robust
+> > solution with clear semantics. It also gives us a uniform ordering wrt
+> > to umask stripping and POSIX ACLs.
+> >
+> > Yes, as we've pointed out in the thread this carries a non-zero
+> > regression risk. But so does the whole patch series. But this might end
+> > up being a big win security wise and makes maintenance way easier going
+> > forward.
+> >
+> > The current setgid situation is thoroughly messy though and we keep
+> > plugging holes. Even writing tests for the current situation is an
+> > almost herculean task let alone reviewing it.
 > 
-> Unfortunately such userspace solution isn't that great in practice.
-> It's both very cumbersome to implement and integrate into existing
-> profiling solutions and causes undesired inefficiencies when
-> processing (typically for stack trace symbolization) lots of profiled
-> processes.
+> Sorry for the late reply.
+> I am agree with these. So what should I do in next step?
+
+I'd say we try to go forward with the original approach and not
+special-casing the grpid option.
+
 > 
-> > >
-> > > If the CAP_SYS_ADMIN/CAP_DAC_READ_SEARCH check were really just about
-> > > giving a privileged task access then it'd be fine imho. But given that
-> > > this means the privileged task is open to a DoS attack it seems we're
-> > > building a trap into the fuse code.
-> 
-> Running under root presumably means that the application knows what
-> it's doing (and it can do a lot of dangerous and harmful things
-> outside of FUSE already), so why should there be any more opt in for
-> it to access file contents? CAP_SYS_ADMIN can do pretty much anything
-> in the system, it seems a bit asymmetric to have extra FUSE-specific
-> restrictions for it.
+> ps:I also think I may send test case to xfstests for posix acl and umask 
+> ASAP, then xfstests can merge these test and so more people will notice 
+> this problem.
 
-Processes trying to access a fuse filesystem that is not in the same
-userns or a descendant userns are open to DoS attacks. This specifically
-includes processes capable in the initial userns.
-
-If it suddenly becomes possible that an initial userns capable process
-can access fuse filesystems in any userns than any such process
-accessing a fuse filesystem unintentionally will be susceptible to DoS
-attacks.
-
-Iow, the problem isn't that an initial userns capable process is doing
-something harmful and we're overly careful trying to prevent this and
-thereby going against standard CAP_SYS_ADMIN assumptions; it's that an
-initial userns capable process can unintentionally have something
-harmful done to it simply by accessing a fuse filesystem.
-
-This is even more concerning since rn this isn't possible so this patch
-is removing a protection/security mechanism. The performance argument
-isn't enough to justify this imho.
+The big refactoring of the idmapped mounts testsuite into a generic
+vfstest refactoring is sitting in for-next of xfstests so make sure to
+base your patches on that because you really won't enjoy having to
+rebase them...
