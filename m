@@ -2,223 +2,172 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A32B152D2FA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 May 2022 14:50:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 080CF52D316
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 May 2022 14:55:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238204AbiESMum (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 May 2022 08:50:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52074 "EHLO
+        id S238205AbiESMzd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 May 2022 08:55:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34246 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238136AbiESMud (ORCPT
+        with ESMTP id S230073AbiESMz3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 May 2022 08:50:33 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67259BCE85
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 May 2022 05:50:30 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id tk15so9740511ejc.6
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 May 2022 05:50:30 -0700 (PDT)
+        Thu, 19 May 2022 08:55:29 -0400
+Received: from mail-pg1-x531.google.com (mail-pg1-x531.google.com [IPv6:2607:f8b0:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0AFFA7E28
+        for <linux-fsdevel@vger.kernel.org>; Thu, 19 May 2022 05:55:27 -0700 (PDT)
+Received: by mail-pg1-x531.google.com with SMTP id j21so4778686pga.13
+        for <linux-fsdevel@vger.kernel.org>; Thu, 19 May 2022 05:55:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vRE/oJtdGWdN444bPnrord4cMpAoUxxz8a+T8mrufqA=;
-        b=N4bXORpvmxzJvDMuETcmC63g8ePtxhxyMv7u7BDJcpfMrcfpL8QhERL80OsjtI3tpv
-         gIKsZRpervYUxhOP1C1U1qhYkgOikh/xXxjuSrfHTC6Do/8AHAVA8eq5AKfzgqhPJNXS
-         tVg67vgiAyzU6JLVN3PmghCkb7gaEtgqYLprU=
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XiUsRi0TcKngRpQ/Aq2tkPZeo5Erutd/MtmCgm/5bYU=;
+        b=MRvUskMS0dP9aYF0X75Mw2BIhDXmrUI5V2pM7+rkEZ158WuT9cZe4IexXcTj+ckM6i
+         +iz8Rx1U7C3CnSE5DvvQPv9cnm7wPAnYi3p07DcDBhtTMuiZ6trrjNVBdEKWUXgBJm0D
+         wxQLG3pJmHYv6LiStLin3J3zLFhidhzdyRuA2VtubHUeAfgtUKMsjeDCSokJoaLDnLke
+         IGWzmoAgd9tqR/0J3vNW2mQJqh3Sg2aEdgo99EpPShPJhNszGRPIULjKkfTpChErPPuG
+         sURwiVhnCKdDino+ptabRTeyYJwwSGLrNzYflyG8C/0073CdhdU+WnYgekHMXwL8uKt9
+         7X2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vRE/oJtdGWdN444bPnrord4cMpAoUxxz8a+T8mrufqA=;
-        b=qUOfKfigGuiap9bTj1OiE33x48tuvbN0mJuNhvvRKKY/5/itTM5S/0hOhtuaRyApbY
-         vUW7avir1FaKv43wiQMSV5wQ8LXA7PY0V14GjI1S8fVgUTfVNqa2Hhz0S+ygoS0fWhKa
-         gx95NtyfpagtGbFyeATNnRdjniar3Gb5kp3FXLk3g5zC13T6mVNPBujdtiCz4XKFu5oj
-         ji3UqQrfgo1EocOkCJ+BOjFOsUoP0RuQRC0+EBrVlMkcZMX4LVHO95P6mfN3K8891ig3
-         HMuuQVy2WLbUBfSCsAn9RUhPAqBh6WYt84sB+LOjTmetn4FxVQ7aisicgYasL47BkkQ5
-         tG2g==
-X-Gm-Message-State: AOAM530/QuLOfgqANg38k9Iw4H0aSGnVnT5Ag8aPj1l25/kvDrWbxDTd
-        vvmon43/djZTI6Lw0zCqnlqL+zzjsdnHpl42fxc6jw==
-X-Google-Smtp-Source: ABdhPJyigk/9qiR/DyzziY2RHs7Q1+TAfNZLV9nE6P5Zl0DrH+Z38HOA5BLPFbtuO4a/ughxjMuvbpiYu8tNyTpAujo=
-X-Received: by 2002:a17:907:6e0f:b0:6fe:382a:6657 with SMTP id
- sd15-20020a1709076e0f00b006fe382a6657mr4117416ejc.192.1652964628871; Thu, 19
- May 2022 05:50:28 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XiUsRi0TcKngRpQ/Aq2tkPZeo5Erutd/MtmCgm/5bYU=;
+        b=emGDmyXIemRJI893U4rOPghOSFc/bCzu7JWtWpEMX4KdnEPZ0An1A787uTQcXHVDnP
+         cVdz9kq+TC40VYvIxCfxkNetTkY//b7zA/lyGYO/d5y4QpQ7dkyEBSA1Zu0E/Vg64EU1
+         f0fYe9ZSTwL9GIRRQbTFmhQL04nhp1vn78nxBhdzx+tgDBkr+ZEWYnuCqhTIOVNSHOjq
+         R0eJN7UDA8PlJ8T/WB36Z3F/O4yY/34m883QwwECUjHoFiCCSujxzqz9j5yiYVcwt+tj
+         tSMkAs17pm8SRvOuEOV8Pff7Ppvo+x7ev2KN9ChKm3CtBggUXFiOC+CVEZ5ZG+nDAshT
+         3lKA==
+X-Gm-Message-State: AOAM533VzEtzhH8wy2TOqN7yjKLS3QKCQwqvaA2YD5rFFr1kTDjmWOMK
+        5nhovWgcunfv9G4l5XCGFmWkSQ==
+X-Google-Smtp-Source: ABdhPJxMmOwhWa8SHa/gVmsNZFJ9NCopj+W+34thmpChLqFM/4MyZoVb5YqSIWIq+rP6kZLzTnkSCA==
+X-Received: by 2002:a05:6a00:140f:b0:4e0:6995:9c48 with SMTP id l15-20020a056a00140f00b004e069959c48mr4568784pfu.59.1652964927356;
+        Thu, 19 May 2022 05:55:27 -0700 (PDT)
+Received: from FVFYT0MHHV2J.bytedance.net ([139.177.225.250])
+        by smtp.gmail.com with ESMTPSA id iz10-20020a170902ef8a00b0015e8d4eb1ddsm3664659plb.39.2022.05.19.05.55.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 May 2022 05:55:27 -0700 (PDT)
+From:   Muchun Song <songmuchun@bytedance.com>
+To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     duanxiongchun@bytedance.com, smuchun@gmail.com,
+        Muchun Song <songmuchun@bytedance.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>
+Subject: [PATCH] sysctl: handle table->maxlen properly for proc_dobool
+Date:   Thu, 19 May 2022 20:55:05 +0800
+Message-Id: <20220519125505.92400-1-songmuchun@bytedance.com>
+X-Mailer: git-send-email 2.32.1 (Apple Git-133)
 MIME-Version: 1.0
-References: <20220509105847.8238-1-dharamhans87@gmail.com> <20220509105847.8238-2-dharamhans87@gmail.com>
-In-Reply-To: <20220509105847.8238-2-dharamhans87@gmail.com>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Thu, 19 May 2022 14:50:17 +0200
-Message-ID: <CAJfpeguEHFTk9u2h8-Le5aQYYPdSdTNY0nUj440YJUR8V3jY-Q@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] Allow non-extending parallel direct writes
-To:     Dharmendra Singh <dharamhans87@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        linux-kernel@vger.kernel.org, Bernd Schubert <bschubert@ddn.com>,
-        Dharmendra Singh <dsingh@ddn.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 9 May 2022 at 12:59, Dharmendra Singh <dharamhans87@gmail.com> wrote:
->
-> From: Dharmendra Singh <dsingh@ddn.com>
->
-> In general, as of now, in FUSE, direct writes on the same file are
-> serialized over inode lock i.e we hold inode lock for the full duration
-> of the write request. I could not found in fuse code a comment which
-> clearly explains why this exclusive lock is taken for direct writes.
-> Our guess is some USER space fuse implementations might be relying
-> on this lock for seralization and also it protects for the issues
-> arising due to file size assumption or write failures.  This patch
-> relaxes this exclusive lock in some cases of direct writes.
->
-> With these changes, we allows non-extending parallel direct writes
-> on the same file with the help of a flag called FOPEN_PARALLEL_WRITES.
-> If this flag is set on the file (flag is passed from libfuse to fuse
-> kernel as part of file open/create), we do not take exclusive lock instead
-> use shared lock so that all non-extending writes can run in parallel.
->
-> Best practise would be to enable parallel direct writes of all kinds
-> including extending writes as well but we see some issues such as
-> when one write completes and other fails, how we should truncate(if
-> needed) the file if underlying file system does not support holes
-> (For file systems which supports holes, there might be a possibility
-> of enabling parallel writes for all cases).
->
-> FUSE implementations which rely on this inode lock for serialisation
-> can continue to do so and this is default behaviour i.e no parallel
-> direct writes.
->
-> Signed-off-by: Dharmendra Singh <dsingh@ddn.com>
-> ---
->  fs/fuse/file.c            | 45 ++++++++++++++++++++++++++++++++++++---
->  include/uapi/linux/fuse.h |  2 ++
->  2 files changed, 44 insertions(+), 3 deletions(-)
->
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index 829094451774..495138a68306 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -1541,14 +1541,48 @@ static ssize_t fuse_direct_read_iter(struct kiocb *iocb, struct iov_iter *to)
->         return res;
->  }
->
-> +static bool fuse_direct_write_extending_i_size(struct kiocb *iocb,
-> +                                              struct iov_iter *iter)
-> +{
-> +       struct inode *inode = file_inode(iocb->ki_filp);
-> +       loff_t i_size;
-> +       loff_t offset;
-> +       size_t count;
-> +
-> +       if (iocb->ki_flags & IOCB_APPEND)
-> +               return true;
-> +
-> +       offset = iocb->ki_pos;
-> +       count = iov_iter_count(iter);
-> +       i_size = i_size_read(inode);
-> +
-> +       return offset + count <= i_size ? false : true;
-> +}
+Setting ->proc_handler to proc_dobool at the same time setting ->maxlen
+to sizeof(int) is counter-intuitive, it is easy to make mistakes.  For
+robustness, fix it by handling able->maxlen properly for proc_dobool in
+__do_proc_dointvec().
 
-This could be rewritten in much fewer lines:
+Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Iurii Zaikin <yzaikin@google.com>
+---
+ fs/lockd/svc.c  |  2 +-
+ kernel/sysctl.c | 22 ++++++++++++----------
+ 2 files changed, 13 insertions(+), 11 deletions(-)
 
-static bool fuse_is_extending_write(struct kiocb *iocb, struct iov_iter *iter)
-{
-    struct inode *inode = file_inode(iocb->ki_filp);
+diff --git a/fs/lockd/svc.c b/fs/lockd/svc.c
+index 59ef8a1f843f..6e48ee787f49 100644
+--- a/fs/lockd/svc.c
++++ b/fs/lockd/svc.c
+@@ -496,7 +496,7 @@ static struct ctl_table nlm_sysctls[] = {
+ 	{
+ 		.procname	= "nsm_use_hostnames",
+ 		.data		= &nsm_use_hostnames,
+-		.maxlen		= sizeof(int),
++		.maxlen		= sizeof(nsm_use_hostnames),
+ 		.mode		= 0644,
+ 		.proc_handler	= proc_dobool,
+ 	},
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index e52b6e372c60..353fb9093012 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -428,6 +428,8 @@ static int do_proc_dobool_conv(bool *negp, unsigned long *lvalp,
+ 				int write, void *data)
+ {
+ 	if (write) {
++		if (*negp || (*lvalp != 0 && *lvalp != 1))
++			return -EINVAL;
+ 		*(bool *)valp = *lvalp;
+ 	} else {
+ 		int val = *(bool *)valp;
+@@ -489,17 +491,17 @@ static int __do_proc_dointvec(void *tbl_data, struct ctl_table *table,
+ 			      int write, void *data),
+ 		  void *data)
+ {
+-	int *i, vleft, first = 1, err = 0;
++	int vleft, first = 1, err = 0, size;
+ 	size_t left;
+ 	char *p;
+-	
++
+ 	if (!tbl_data || !table->maxlen || !*lenp || (*ppos && !write)) {
+ 		*lenp = 0;
+ 		return 0;
+ 	}
+-	
+-	i = (int *) tbl_data;
+-	vleft = table->maxlen / sizeof(*i);
++
++	size = conv == do_proc_dobool_conv ? sizeof(bool) : sizeof(int);
++	vleft = table->maxlen / size;
+ 	left = *lenp;
+ 
+ 	if (!conv)
+@@ -514,7 +516,7 @@ static int __do_proc_dointvec(void *tbl_data, struct ctl_table *table,
+ 		p = buffer;
+ 	}
+ 
+-	for (; left && vleft--; i++, first=0) {
++	for (; left && vleft--; tbl_data = (char *)tbl_data + size, first=0) {
+ 		unsigned long lval;
+ 		bool neg;
+ 
+@@ -528,12 +530,12 @@ static int __do_proc_dointvec(void *tbl_data, struct ctl_table *table,
+ 					     sizeof(proc_wspace_sep), NULL);
+ 			if (err)
+ 				break;
+-			if (conv(&neg, &lval, i, 1, data)) {
++			if (conv(&neg, &lval, tbl_data, 1, data)) {
+ 				err = -EINVAL;
+ 				break;
+ 			}
+ 		} else {
+-			if (conv(&neg, &lval, i, 0, data)) {
++			if (conv(&neg, &lval, tbl_data, 0, data)) {
+ 				err = -EINVAL;
+ 				break;
+ 			}
+@@ -708,8 +710,8 @@ int do_proc_douintvec(struct ctl_table *table, int write,
+  * @lenp: the size of the user buffer
+  * @ppos: file position
+  *
+- * Reads/writes up to table->maxlen/sizeof(unsigned int) integer
+- * values from/to the user buffer, treated as an ASCII string.
++ * Reads/writes up to table->maxlen/sizeof(bool) bool values from/to
++ * the user buffer, treated as an ASCII string.
+  *
+  * Returns 0 on success.
+  */
+-- 
+2.11.0
 
-    return (iocb->ki_flags & IOCB_APPEND) ||
-        iocb->ki_pos + iov_iter_count(iter) > i_size_read(inode);
-}
-
-
-> +
->  static ssize_t fuse_direct_write_iter(struct kiocb *iocb, struct iov_iter *from)
->  {
->         struct inode *inode = file_inode(iocb->ki_filp);
-> +       struct file *file = iocb->ki_filp;
-> +       struct fuse_file *ff = file->private_data;
->         struct fuse_io_priv io = FUSE_IO_PRIV_SYNC(iocb);
->         ssize_t res;
-> +       bool p_write = ff->open_flags & FOPEN_PARALLEL_WRITES ? true : false;
-
-Please just use "bool v = expr" instead of "bool v = expr ? true :
-false" as they are equivalent.
-
-> +       bool exclusive_lock = !p_write ||
-> +                              fuse_direct_write_extending_i_size(iocb, from) ?
-> +                              true : false;
-
-Same.
-
-> +
-> +       /*
-> +        * Take exclusive lock if
-> +        * - parallel writes are disabled.
-> +        * - parallel writes are enabled and i_size is being extended
-> +        * Take shared lock if
-> +        * - parallel writes are enabled but i_size does not extend.
-> +        */
-> +       if (exclusive_lock)
-> +               inode_lock(inode);
-> +       else
-> +               inode_lock_shared(inode);
->
-> -       /* Don't allow parallel writes to the same file */
-> -       inode_lock(inode);
->         res = generic_write_checks(iocb, from);
->         if (res > 0) {
->                 if (!is_sync_kiocb(iocb) && iocb->ki_flags & IOCB_DIRECT) {
-> @@ -1559,7 +1593,10 @@ static ssize_t fuse_direct_write_iter(struct kiocb *iocb, struct iov_iter *from)
->                         fuse_write_update_attr(inode, iocb->ki_pos, res);
->                 }
->         }
-> -       inode_unlock(inode);
-> +       if (exclusive_lock)
-> +               inode_unlock(inode);
-> +       else
-> +               inode_unlock_shared(inode);
->
->         return res;
->  }
-> @@ -2900,7 +2937,9 @@ fuse_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
->         kref_put(&io->refcnt, fuse_io_release);
->
->         if (iov_iter_rw(iter) == WRITE) {
-> +
-
-Unnecessary empty line.
-
->                 fuse_write_update_attr(inode, pos, ret);
-> +               /* For extending writes we already hold exclusive lock */
->                 if (ret < 0 && offset + count > i_size)
->                         fuse_do_truncate(file);
->         }
-> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-> index d6ccee961891..ee5379d41906 100644
-> --- a/include/uapi/linux/fuse.h
-> +++ b/include/uapi/linux/fuse.h
-> @@ -301,6 +301,7 @@ struct fuse_file_lock {
->   * FOPEN_CACHE_DIR: allow caching this directory
->   * FOPEN_STREAM: the file is stream-like (no file position at all)
->   * FOPEN_NOFLUSH: don't flush data cache on close (unless FUSE_WRITEBACK_CACHE)
-> + * FOPEN_PARALLEL_WRITES: Allow concurrent writes on the same inode
->   */
->  #define FOPEN_DIRECT_IO                (1 << 0)
->  #define FOPEN_KEEP_CACHE       (1 << 1)
-> @@ -308,6 +309,7 @@ struct fuse_file_lock {
->  #define FOPEN_CACHE_DIR                (1 << 3)
->  #define FOPEN_STREAM           (1 << 4)
->  #define FOPEN_NOFLUSH          (1 << 5)
-> +#define FOPEN_PARALLEL_WRITES  (1 << 6)
->
->  /**
->   * INIT request/reply flags
-> --
-> 2.17.1
->
