@@ -2,273 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 26F3A52DDDE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 May 2022 21:33:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 286E252DDE9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 May 2022 21:44:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240779AbiESTdw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 May 2022 15:33:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37096 "EHLO
+        id S244092AbiESTop (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 May 2022 15:44:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234946AbiESTdv (ORCPT
+        with ESMTP id S240779AbiESToo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 May 2022 15:33:51 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BA88A5930F
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 May 2022 12:33:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1652988828;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=ZlRs+bfxWYbBbjnLR2rK0SLWkDzLq4+HCX4OhBU9Tww=;
-        b=A4FfuNXyj8Z/OtrCI9Pb9kqoALYrR9BI/4WAhDz0ThRiUhyoRdofMSWSilWsGEbpNk2Yn9
-        HvTbZTq6jC+q23l91hkEgctNHsy+ALYO6+IjQTwHv5oXCuDEOsrGTrqmNiIsCInYUkN400
-        RkQzuSQufPW3q057RMvjfd5yT0k9pKo=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-655-zrJHUk78NhaUxtngxbrHzw-1; Thu, 19 May 2022 15:33:45 -0400
-X-MC-Unique: zrJHUk78NhaUxtngxbrHzw-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id EDFDB29AA2F2;
-        Thu, 19 May 2022 19:33:44 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.18.71])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D46C0400E895;
-        Thu, 19 May 2022 19:33:44 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 85CC52208FA; Thu, 19 May 2022 15:33:44 -0400 (EDT)
-Date:   Thu, 19 May 2022 15:33:44 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Dharmendra Singh <dharamhans87@gmail.com>,
-        linux-fsdevel@vger.kernel.org,
-        fuse-devel <fuse-devel@lists.sourceforge.net>,
-        linux-kernel@vger.kernel.org, Bernd Schubert <bschubert@ddn.com>
-Subject: Re: [PATCH v5 0/3] FUSE: Implement atomic lookup + open/create
-Message-ID: <YoabmCQAWpBY5++X@redhat.com>
-References: <20220517100744.26849-1-dharamhans87@gmail.com>
- <CAJfpegsDxsMsyfP4a_5H1q91xFtwcEdu9-WBnzWKwjUSrPNdmw@mail.gmail.com>
+        Thu, 19 May 2022 15:44:44 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 822E9BC6FC
+        for <linux-fsdevel@vger.kernel.org>; Thu, 19 May 2022 12:44:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=lsqGn3eyK2DrcqkGnGxhUNX0KbccC55iqHUDsH+ISxQ=; b=m3krLVnnv6dE0c0ZuTMUF3caxM
+        yHZVlcnaml88CSGkYPGUYgSQL6o7KbXO+kHJRWnrwNqoa7ukkg4o8k7UwqHfcuIFjRHMs9VRznhjF
+        faiVC4q71JfZLFRVTefy9vnjG8Neqco1uDPDMlF1VvZ6I716ZUveWQKwCluJQNy1AMmba48qpJ2Vw
+        a/6TLzbnRRmk1npTlySlFXRrcmcSHxLaNc24axP9tLlzjvRMUdeIvJbJ0CN54FhjyOKlfClafkxV4
+        dsAwwiIAZHJvAf1mmRePQ5XJJ9ergenfPddR/qJpidQzJ4+MWNNpJ0uJp2cNDWsly/GispnHCNSIl
+        Krfq+OhQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nrm4a-00D3FG-Ea; Thu, 19 May 2022 19:44:36 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     Dave Kleikamp <shaggy@kernel.org>,
+        jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Subject: [PATCH] jfs: Release even dirty metapages on invalidate
+Date:   Thu, 19 May 2022 20:44:35 +0100
+Message-Id: <20220519194435.3110635-1-willy@infradead.org>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegsDxsMsyfP4a_5H1q91xFtwcEdu9-WBnzWKwjUSrPNdmw@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.11.54.1
-X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 19, 2022 at 11:39:01AM +0200, Miklos Szeredi wrote:
-> On Tue, 17 May 2022 at 12:08, Dharmendra Singh <dharamhans87@gmail.com> wrote:
-> >
-> > In FUSE, as of now, uncached lookups are expensive over the wire.
-> > E.g additional latencies and stressing (meta data) servers from
-> > thousands of clients. These lookup calls possibly can be avoided
-> > in some cases. Incoming three patches address this issue.
-> >
-> >
-> > Fist patch handles the case where we are creating a file with O_CREAT.
-> > Before we go for file creation, we do a lookup on the file which is most
-> > likely non-existent. After this lookup is done, we again go into libfuse
-> > to create file. Such lookups where file is most likely non-existent, can
-> > be avoided.
-> 
-> I'd really like to see a bit wider picture...
-> 
-> We have several cases, first of all let's look at plain O_CREAT
-> without O_EXCL (assume that there were no changes since the last
-> lookup for simplicity):
+This isn't going to apply to your tree; it will apply to today's -next
+though.  Happy to take this on top of my current pagecache patch set
+with appropriate acks.  Maybe it's the wrong fix; I haven't spent very
+long trying to understand what all the parts of mp mean ... maybe it
+should only override the META_Dirty check and it needs to do something
+else for the other two checks?
 
-Hi Miklos,
+--- 8< ---
 
-Thanks for providing this breakup. There are too many cases here and
-this data helps a lot with that. I feel this should really be captured
-in commit logs to show the current paths and how these have been 
-optimized with ATOMIC_OPEN/CREATE_EXT.
+For ->release_folio(), we can fail to release the metapage if, for
+example, it's dirty.  For ->invalidate_folio(), we must release the
+metapage as the page is being removed and will be freed.  Failing to
+release the metapage results in xfstests generic/537 hitting BUG reports
+like this:
 
-> 
-> [not cached, negative]
->    ->atomic_open()
->       LOOKUP
->       CREATE
-> 
-> [not cached, positive]
->    ->atomic_open()
->       LOOKUP
->    ->open()
->       OPEN
-> 
-> [cached, negative, validity timeout not expired]
->    ->d_revalidate()
->       return 1
->    ->atomic_open()
->       CREATE
-> 
-> [cached, negative, validity timeout expired]
->    ->d_revalidate()
->       return 0
->    ->atomic_open()
->       LOOKUP
->       CREATE
-> 
-> [cached, positive, validity timeout not expired]
->    ->d_revalidate()
->       return 1
->    ->open()
->       OPEN
-> 
-> [cached, positive, validity timeout expired]
->    ->d_revalidate()
->       LOOKUP
->       return 1
->    ->open()
->       OPEN
-> 
-> (Caveat emptor: I'm just looking at the code and haven't actually
-> tested what happens.)
-> 
-> Apparently in all of these cases we are doing at least one request, so
-> it would make sense to make them uniform:
-> 
-> [not cached]
->    ->atomic_open()
->       CREATE_EXT
-> 
-> [cached]
->    ->d_revalidate()
->       return 0
+BUG: Bad page state in process umount  pfn:12b03a
+page:000000000c3e2db5 refcount:0 mapcount:0 mapping:0000000000000000 index:0x10 pfn:0x12b03a
+flags: 0x8000000000002004(uptodate|private|zone=2)
+raw: 8000000000002004 ffffea000417a5c8 ffff88810a41bbe0 0000000000000000
+raw: 0000000000000010 ffff888124e12680 00000000ffffffff 0000000000000000
+page dumped because: PAGE_FLAGS_CHECK_AT_FREE flag(s) set
 
-So fuse_dentry_revalidate() will return 0 even if timeout has not
-expired (if server supports so called atomic_open()).
-And that will lead to calling d_invalidate() on existing positive dentry
-always. IOW, if I am calling open() on a dentry, dentry will always be
-dropped and a new dentry will always be created from ->atomic_open() path,
-is that right.
+as the page allocator checks that the page no longer has private data.
 
-I am not sure what does it mean from VFS perspective to always call
-d_invalidate() on a cached positive dentry when open() is called. 
+Add a bool argument to inform the release routine whether to override
+the checks and release the metapage anyway.
 
-/**
- * d_invalidate - detach submounts, prune dcache, and drop
- * @dentry: dentry to invalidate (aka detach, prune and drop)
- */
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ fs/jfs/jfs_metapage.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-Thanks
-Vivek
-
->    ->atomic_open()
->       CREATE_EXT
-> 
-> Similarly we can look at the current O_CREAT | O_EXCL cases:
-> 
-> [not cached, negative]
->    ->atomic_open()
->       LOOKUP
->       CREATE
-> 
-> [not cached, positive]
->    ->atomic_open()
->       LOOKUP
->    return -EEXIST
-> 
-> [cached, negative]
->    ->d_revalidate()
->       return 0 (see LOOKUP_EXCL check)
->    ->atomic_open()
->       LOOKUP
->       CREATE
-> 
-> [cached, positive]
->    ->d_revalidate()
->       LOOKUP
->       return 1
->    return -EEXIST
-> 
-> Again we are doing at least one request, so we can unconditionally
-> replace them with CREATE_EXT like the non-O_EXCL case.
-> 
-> 
-> >
-> > Second patch handles the case where we open first time a file/dir
-> > but do a lookup first on it. After lookup is performed we make another
-> > call into libfuse to open the file. Now these two separate calls into
-> > libfuse can be combined and performed as a single call into libfuse.
-> 
-> And here's my analysis:
-> 
-> [not cached, negative]
->    ->lookup()
->       LOOKUP
->    return -ENOENT
-> 
-> [not cached, positive]
->    ->lookup()
->       LOOKUP
->    ->open()
->       OPEN
-> 
-> [cached, negative, validity timeout not expired]
->     ->d_revalidate()
->        return 1
->     return -ENOENT
-> 
-> [cached, negative, validity timeout expired]
->    ->d_revalidate()
->       return 0
->    ->atomic_open()
->       LOOKUP
->    return -ENOENT
-> 
-> [cached, positive, validity timeout not expired]
->    ->d_revalidate()
->       return 1
->    ->open()
->       OPEN
-> 
-> [cached, positive, validity timeout expired]
->    ->d_revalidate()
->       LOOKUP
->       return 1
->    ->open()
->       OPEN
-> 
-> There's one case were no request is sent:  a valid cached negative
-> dentry.   Possibly we can also make this uniform, e.g.:
-> 
-> [not cached]
->    ->atomic_open()
->        OPEN_ATOMIC
-> 
-> [cached, negative, validity timeout not expired]
->     ->d_revalidate()
->        return 1
->     return -ENOENT
-> 
-> [cached, negative, validity timeout expired]
->    ->d_revalidate()
->       return 0
->    ->atomic_open()
->       OPEN_ATOMIC
-> 
-> [cached, positive]
->    ->d_revalidate()
->       return 0
->    ->atomic_open()
->       OPEN_ATOMIC
-> 
-> It may even make the code simpler to clearly separate the cases where
-> the atomic variants are supported and when not.  I'd also consider
-> merging CREATE_EXT into OPEN_ATOMIC, since a filesystem implementing
-> one will highly likely want to implement the other as well.
-> 
-> Thanks,
-> Miklos
-> 
+diff --git a/fs/jfs/jfs_metapage.c b/fs/jfs/jfs_metapage.c
+index 2e8461ce74de..5b4f0cd8d276 100644
+--- a/fs/jfs/jfs_metapage.c
++++ b/fs/jfs/jfs_metapage.c
+@@ -524,7 +524,8 @@ static int metapage_read_folio(struct file *fp, struct folio *folio)
+ 	return -EIO;
+ }
+ 
+-static bool metapage_release_folio(struct folio *folio, gfp_t gfp_mask)
++static bool __metapage_release_folio(struct folio *folio, gfp_t gfp_mask,
++		bool force)
+ {
+ 	struct metapage *mp;
+ 	bool ret = true;
+@@ -537,8 +538,9 @@ static bool metapage_release_folio(struct folio *folio, gfp_t gfp_mask)
+ 			continue;
+ 
+ 		jfs_info("metapage_release_folio: mp = 0x%p", mp);
+-		if (mp->count || mp->nohomeok ||
+-		    test_bit(META_dirty, &mp->flag)) {
++		if (!force &&
++		    (mp->count || mp->nohomeok ||
++		     test_bit(META_dirty, &mp->flag))) {
+ 			jfs_info("count = %ld, nohomeok = %d", mp->count,
+ 				 mp->nohomeok);
+ 			ret = false;
+@@ -553,6 +555,11 @@ static bool metapage_release_folio(struct folio *folio, gfp_t gfp_mask)
+ 	return ret;
+ }
+ 
++static bool metapage_release_folio(struct folio *folio, gfp_t gfp)
++{
++	return __metapage_release_folio(folio, gfp, false);
++}
++
+ static void metapage_invalidate_folio(struct folio *folio, size_t offset,
+ 				    size_t length)
+ {
+@@ -560,7 +567,7 @@ static void metapage_invalidate_folio(struct folio *folio, size_t offset,
+ 
+ 	BUG_ON(folio_test_writeback(folio));
+ 
+-	metapage_release_folio(folio, 0);
++	__metapage_release_folio(folio, 0, true);
+ }
+ 
+ const struct address_space_operations jfs_metapage_aops = {
+-- 
+2.34.1
 
