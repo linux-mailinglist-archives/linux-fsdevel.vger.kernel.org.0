@@ -2,152 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D63A52C96E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 May 2022 03:51:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EB1352C97B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 May 2022 03:53:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232600AbiESBvl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 May 2022 21:51:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47646 "EHLO
+        id S232340AbiESBxQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 May 2022 21:53:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231748AbiESBvk (ORCPT
+        with ESMTP id S229995AbiESBxP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 May 2022 21:51:40 -0400
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45A92286FF;
-        Wed, 18 May 2022 18:51:37 -0700 (PDT)
-Received: from kwepemi100023.china.huawei.com (unknown [172.30.72.54])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4L3XqS5yZnzgYNF;
-        Thu, 19 May 2022 09:50:12 +0800 (CST)
-Received: from kwepemm600013.china.huawei.com (7.193.23.68) by
- kwepemi100023.china.huawei.com (7.221.188.59) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Thu, 19 May 2022 09:51:35 +0800
-Received: from [10.174.178.46] (10.174.178.46) by
- kwepemm600013.china.huawei.com (7.193.23.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Thu, 19 May 2022 09:51:34 +0800
-Subject: Re: [PATCH -next] exec: Remove redundant check in
- do_open_execat/uselib
-To:     Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-CC:     <viro@zeniv.linux.org.uk>, <linux-mm@kvack.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <yukuai3@huawei.com>
-References: <20220518081227.1278192-1-chengzhihao1@huawei.com>
- <20220518104601.fc21907008231b60a0e54a8e@linux-foundation.org>
- <202205181215.D448675BEA@keescook>
-From:   Zhihao Cheng <chengzhihao1@huawei.com>
-Message-ID: <c937de42-6288-7ea4-c4ac-bba08e3424c4@huawei.com>
-Date:   Thu, 19 May 2022 09:51:34 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Wed, 18 May 2022 21:53:15 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56094C5E6E;
+        Wed, 18 May 2022 18:53:14 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id F0AF061839;
+        Thu, 19 May 2022 01:53:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 215ECC385A5;
+        Thu, 19 May 2022 01:53:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1652925193;
+        bh=aR9cS75tdLbbSx+T3PLo+uQZ1YiTcPLqyagxqI8zzkk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=M+0sDSn6M7YqlZAJOe5uP7318UVtZq1YUyEtcz2GbCbPvBWRYjoxmoY8iVrfUzg/T
+         4f29LFZHO+WVZbsh8groIyO94Xa345t5ZBnywUW3uTmpHyHCJ759oUSTVPMfrXLy3O
+         vEum7NNX0bVx7LQ1+1dKYQkJbcJ0LZz+twtaS6EGZEy08vij39aeCH+SmG1Z3HHgRg
+         wl4hTyyTpK1G+KD/Q+LtCP37/EO/5Ku2U/Z6jX/m7/SgNTb2DunuQrSMlZRMyJ3OrK
+         qN2YBkL5ErJLCF5/OsHRZ80l9YuxTJLHNeytD7Emer9jHEIfjkXF94tBBy085UuNEj
+         K/dw/LN6DLOrg==
+Date:   Wed, 18 May 2022 18:53:11 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Keith Busch <kbusch@kernel.org>
+Cc:     Keith Busch <kbusch@fb.com>, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, axboe@kernel.dk,
+        Kernel Team <Kernel-team@fb.com>, hch@lst.de,
+        bvanassche@acm.org, damien.lemoal@opensource.wdc.com
+Subject: Re: [PATCHv2 3/3] block: relax direct io memory alignment
+Message-ID: <YoWjBxmKDQC1mCIz@sol.localdomain>
+References: <20220518171131.3525293-1-kbusch@fb.com>
+ <20220518171131.3525293-4-kbusch@fb.com>
+ <YoWL+T8JiIO5Ln3h@sol.localdomain>
+ <YoWWtwsiKGqoTbVU@kbusch-mbp.dhcp.thefacebook.com>
 MIME-Version: 1.0
-In-Reply-To: <202205181215.D448675BEA@keescook>
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.174.178.46]
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemm600013.china.huawei.com (7.193.23.68)
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-6.3 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YoWWtwsiKGqoTbVU@kbusch-mbp.dhcp.thefacebook.com>
+X-Spam-Status: No, score=-7.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-ÔÚ 2022/5/19 3:17, Kees Cook Ð´µÀ:
-
->>> WARNON(path_noexec(&file->f_path)) // path_noexec() checks fail
+On Wed, May 18, 2022 at 07:00:39PM -0600, Keith Busch wrote:
+> On Wed, May 18, 2022 at 05:14:49PM -0700, Eric Biggers wrote:
+> > On Wed, May 18, 2022 at 10:11:31AM -0700, Keith Busch wrote:
+> > > diff --git a/block/fops.c b/block/fops.c
+> > > index b9b83030e0df..d8537c29602f 100644
+> > > --- a/block/fops.c
+> > > +++ b/block/fops.c
+> > > @@ -54,8 +54,9 @@ static ssize_t __blkdev_direct_IO_simple(struct kiocb *iocb,
+> > >  	struct bio bio;
+> > >  	ssize_t ret;
+> > >  
+> > > -	if ((pos | iov_iter_alignment(iter)) &
+> > > -	    (bdev_logical_block_size(bdev) - 1))
+> > > +	if ((pos | iov_iter_count(iter)) & (bdev_logical_block_size(bdev) - 1))
+> > > +		return -EINVAL;
+> > > +	if (iov_iter_alignment(iter) & bdev_dma_alignment(bdev))
+> > >  		return -EINVAL;
+> > 
+> > The block layer makes a lot of assumptions that bios can be split at any bvec
+> > boundary.  With this patch, bios whose length isn't a multiple of the logical
+> > block size can be generated by splitting, which isn't valid.
 > 
-> Did you encounter this in the real world?
-I found the problem by running fuzz test.(syzkaller)
+> How? This patch ensures every segment is block size aligned.
 
-Here is a brief reproducer.
-1. Apply diff
-2. Complie and run repo.c
-diff
-diff --git a/fs/exec.c b/fs/exec.c
-index e3e55d5e0be1..388d38b87e9a 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -897,6 +897,7 @@ EXPORT_SYMBOL(transfer_args_to_stack);
+No, it doesn't.  It ensures that the *total* length of each bio is logical block
+size aligned.  It doesn't ensure that for the individual bvecs.  By decreasing
+the required memory alignment to below the logical block size, you're allowing
+logical blocks to span a page boundary.  Whenever the two pages involved aren't
+physically contiguous, the data of the block will be split across two bvecs.
 
-  #endif /* CONFIG_MMU */
-
-+#include <linux/delay.h>
-  static struct file *do_open_execat(int fd, struct filename *name, int 
-flags)
-  {
-  	struct file *file;
-@@ -925,9 +926,15 @@ static struct file *do_open_execat(int fd, struct 
-filename *name, int flags)
-  	 * and check again at the very end too.
-  	 */
-  	err = -EACCES;
-+	if (!strcmp(file->f_path.dentry->d_iname, "my_bin")) {
-+		pr_err("wait ...\n");
-+		msleep(3000);
-+	}
-  	if (WARN_ON_ONCE(!S_ISREG(file_inode(file)->i_mode) ||
--			 path_noexec(&file->f_path)))
-+			 path_noexec(&file->f_path))) {
-+		pr_err("exec %pd %d %d %s\n", file->f_path.dentry, 
-file->f_path.mnt->mnt_flags & MNT_NOEXEC, 
-file->f_path.mnt->mnt_sb->s_iflags & SB_I_NOEXEC, 
-file->f_path.mnt->mnt_sb->s_type->name);
-  		goto exit;
-+	}
-
-  	err = deny_write_access(file);
-  	if (err)
-
-repo.c
-int main(void)
-{
-	int ret;
-
-	system("umount temp 2>&1 > /dev/null");
-	system("mount -t tmpfs none temp");
-	system("echo 12312 > temp/my_bin && chmod +x temp/my_bin");
-	ret = fork();
-	if (ret < 0) {
-		perror("fork fail");
-		return 0;
-	}
-	if (ret == 0) {
-		system("mount -oremount,noexec temp");
-		exit(0);
-	} else {
-		execve("/root/temp/my_bin", NULL, 0);
-		//syscall(__NR_uselib, "/root/temp/my_bin");
-	}
-	return 0;
-}
+> > Also some devices aren't compatible with logical blocks spanning bdevs at all.
+> > dm-crypt errors out in this case, for example.
 > 
->>
->> You're saying this is a race condition?  A concurrent remount causes
->> this warning?
-> 
-> It seems not an unreasonable thing to warn about. Perhaps since it's
-> technically reachable from userspace, it could be downgraded to
-> pr_warn(), but I certainly don't want to remove the checks.
+> I'm sorry, but I am not understanding this.
 
+I meant to write bvecs, not bdevs.
 
-> 
-> I'd like to leave this as-is, since we _do_ want to find the cases where
-> we're about to allow an exec and a very important security check was NOT
-> handled.
->I think removing redundant checking is okay,
-
-do_open_execat/uselib has initialized the acc_mode and open_flag for 
-exec file, the check is equivalent to check in may_open().
-
-Remount(noexec) operations can alos happen after the latest check, 
-double check has no means for the concurrent situation.
-
-The MNT_NOEXEC flag only affects the open operation, it won't cause any 
-problems that an opened bin file is executing in a non-exec mounted 
-filesystem.
+- Eric
