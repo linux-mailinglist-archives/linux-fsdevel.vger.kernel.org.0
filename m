@@ -2,141 +2,216 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C02FD52D5CC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 May 2022 16:19:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5524152D5CF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 May 2022 16:19:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239286AbiESOTQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 May 2022 10:19:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44918 "EHLO
+        id S239562AbiESOTr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 May 2022 10:19:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45380 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229807AbiESOTP (ORCPT
+        with ESMTP id S239275AbiESOTq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 May 2022 10:19:15 -0400
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8CAB72223;
-        Thu, 19 May 2022 07:19:12 -0700 (PDT)
-Received: from cwcc.thunk.org (pool-108-7-220-252.bstnma.fios.verizon.net [108.7.220.252])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 24JEImoK027227
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 19 May 2022 10:18:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-        t=1652969932; bh=uR7LNtTtYP5uzs7OWgks6v34m+NZrTSkmLVmqO1vVRo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=IQPgP5EAgoxZjC0ZoapHkl+dpzOd8IhR/ZbvTzWvXCxjIRSC328Tw6o947MU38VY/
-         Lp9a6ImCCjrMi90Vilh1YqhwxmB9F+hH3yzuA6H2GaMicSUGuc8OqCeV10QVVT3Woe
-         o4Gx3ooKepx5Fs64PSnSzxQe4fX5weA6Vxbh48M+xd7nMtONZC9/qX9UK1kjCrUi1o
-         gMAM2t5Ogg1EgMdQGVQBWA1v5QpzbJ26eCI1g8jlpROdSiTp3B7RfEai1+gm18VHub
-         cMR67SCCjX4j+dYAPV3niQXWCfePhc82F43FD25zs9Mce5hsvivJzrJQrIQjUCQDX/
-         DYlKXPCXOfK8Q==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id 7F8BA15C3EC0; Thu, 19 May 2022 10:18:48 -0400 (EDT)
-Date:   Thu, 19 May 2022 10:18:48 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Zorro Lang <zlang@redhat.com>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>, pankydev8@gmail.com,
-        Josef Bacik <josef@toxicpanda.com>, jmeneghi@redhat.com,
-        Jan Kara <jack@suse.cz>, Davidlohr Bueso <dave@stgolabs.net>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jake Edge <jake@lwn.net>, Klaus Jensen <its@irrelevant.dk>,
-        fstests <fstests@vger.kernel.org>
-Subject: Re: [RFC: kdevops] Standardizing on failure rate nomenclature for
- expunges
-Message-ID: <YoZRyGOwde+xkK1y@mit.edu>
-References: <YoW0ZC+zM27Pi0Us@bombadil.infradead.org>
- <CAOQ4uxhKHMjGq0QKKMPFAV6iJFwe1H5hBomCVVeT1EWJzo0eXg@mail.gmail.com>
- <20220519112450.zbje64mrh65pifnz@zlang-mailbox>
+        Thu, 19 May 2022 10:19:46 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A124B225F;
+        Thu, 19 May 2022 07:19:41 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 6FADFB824AB;
+        Thu, 19 May 2022 14:19:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C0BEC385AA;
+        Thu, 19 May 2022 14:19:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1652969979;
+        bh=AjcVgLoqYhR+OmjDZ/KC9hQplvQiRocHLy3+qkbQDfk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QdjVjQPnxxFIK55MMaaGa6M3zks5qKVGEKHVtrlY48UpoWbJgGNfj8egsjgeu8Rzc
+         0fvtF2YcNKanPs1pljIo6gxkvbjA+c/Bq26Gswomfq+2Sixs0DlN1eXxzlSA0rnfiW
+         cGzyA3p51UdS43U9GMsq9dV9QyRS5DdXhnENVXVLujguvvBYy+AvySLDaA69q7bEzr
+         6c7BXWqU8uQTg6v+WyJAFRSF9x2x8ptKkOwkA0gmbO3+B84qyJS1iu0p/MMZLLgOdw
+         3OrRTCMvcAOQopjnQMZ7SaeSvEeCVf7ojsW8UlVKMNDI4FW5nt1QWRgB4gh9FwTsJ4
+         IUdaJH0Cxe4lQ==
+Date:   Thu, 19 May 2022 08:19:35 -0600
+From:   Keith Busch <kbusch@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Keith Busch <kbusch@fb.com>, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, axboe@kernel.dk,
+        Kernel Team <Kernel-team@fb.com>, bvanassche@acm.org,
+        damien.lemoal@opensource.wdc.com
+Subject: Re: [PATCHv2 1/3] block/bio: remove duplicate append pages code
+Message-ID: <YoZR9zJl/o0XgQtN@kbusch-mbp>
+References: <20220518171131.3525293-1-kbusch@fb.com>
+ <20220518171131.3525293-2-kbusch@fb.com>
+ <20220519073256.GC22301@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220519112450.zbje64mrh65pifnz@zlang-mailbox>
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20220519073256.GC22301@lst.de>
+X-Spam-Status: No, score=-7.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 19, 2022 at 07:24:50PM +0800, Zorro Lang wrote:
+On Thu, May 19, 2022 at 09:32:56AM +0200, Christoph Hellwig wrote:
+> On Wed, May 18, 2022 at 10:11:29AM -0700, Keith Busch wrote:
+> > From: Keith Busch <kbusch@kernel.org>
+> > 
+> > The setup for getting pages are identical for zone append and normal IO.
+> > Use common code for each.
 > 
-> Yes, we talked about this, but if I don't rememeber wrong, I recommended each
-> downstream testers maintain their own "testing data/config", likes exclude
-> list, failed ratio, known failures etc. I think they're not suitable to be
-> fixed in the mainline fstests.
+> How about using even more common code and avoiding churn at the same
+> time?  Something like:
 
-Failure ratios are the sort of thing that are only applicable for
-
-* A specific filesystem
-* A specific configuration
-* A specific storage device / storage device class
-* A specific CPU architecture / CPU speed
-* A specific amount of memory available
-
-Put another way, there are problems that fail so close to rarely as to
-be "hever" on, say, an x86_64 class server with gobs and gobs of
-memory, but which can more reliably fail on, say, a Rasberry PI using
-eMMC flash.
-
-I don't think that Luis was suggesting that this kind of failure
-annotation would go in upstream fstests.  I suspect he just wants to
-use it in kdevops, and hope that other people would use it as well in
-other contexts.  But even in the context of test runners like kdevops
-and {kvm,gce,android}-xfstests, it's going to be very specific to a
-particular test environment, and for the global list of excludes for a
-particular file system.  So in the gce-xfstests context, this is the
-difference between the excludes in the files:
-
-	fs/ext4/excludes
-vs
-	fs/ext4/cfg/bigalloc.exclude
-
-even if I only cared about, say, how things ran on GCE using
-SSD-backed Persistent Disk (never mind that I can only run
-gce-xfstests on Local SSD, and PD Extreme, etc.), failure percentages
-would never make sense for fs/ext4/excludes, since that covers
-multiple file system configs.  And my infrastructure supports kvm,
-gce, and Android, as well as some people (such as at $WORK for our
-data center kernels) who run the test appliacce directly on bare
-metal, so I wouldn't use the failure percentages in these files, etc.
-
-Now, what I *do* is to track this sort of thing in my own notes, e.g:
-
-generic/051	ext4/adv	Failure percentage: 16% (4/25)
-    "Basic log recovery stress test - do lots of stuff, shut down in
-    the middle of it and check that recovery runs to completion and
-    everything can be successfully removed afterwards."
-
-generic/410 nojournal	Couldn't reproduce after running 25 times
-     "Test mount shared subtrees, verify the state transitions..."
-
-generic/68[12]	encrypt   Failure percentage: 100%
-    The directory does grow, but blocks aren't charged to either root or
-    the non-privileged users' quota.  So this appears to be a real bug.
-
-
-There is one thing that I'd like to add to upstream fstests, and that
-is some kind of option so that "check --retry-failures NN" would cause
-fstests to automatically, upon finding a test failure, will rerun that
-failing test NN aditional times.  Another potential related feature
-which we currently have in our daily spinner infrastructure at $WORK
-would be to on a test failure, rerun a test up to M times (typically a
-small number, such as 3), and if it passes on a retry attempt, declare
-the test result as "flaky", and stop running the retries.  If the test
-repeatedly fails after M attempts, then the test result is "fail".
-
-These results would be reported in the junit XML file, and would allow
-the test runners to annotate their test summaries appropriately.
-
-I'm thinking about trying to implement something like this in my
-copious spare time; but before I do, does the general idea seem
-acceptable?
-
-Thanks,
-
-					- Ted
+Yes, I'll fold this in.
+ 
+> diff --git a/block/bio.c b/block/bio.c
+> index a3893d80dccc9..15da722ed26d1 100644
+> --- a/block/bio.c
+> +++ b/block/bio.c
+> @@ -1158,6 +1158,37 @@ static void bio_put_pages(struct page **pages, size_t size, size_t off)
+>  		put_page(pages[i]);
+>  }
+>  
+> +static int bio_iov_add_page(struct bio *bio, struct page *page,
+> +		unsigned int len, unsigned int offset)
+> +{
+> +	bool same_page = false;
+> +
+> +	if (!__bio_try_merge_page(bio, page, len, offset, &same_page)) {
+> +		if (WARN_ON_ONCE(bio_full(bio, len)))
+> +			return -EINVAL;
+> +		__bio_add_page(bio, page, len, offset);
+> +		return 0;
+> +	}
+> +
+> +	if (same_page)
+> +		put_page(page);
+> +	return 0;
+> +}
+> +
+> +static int bio_iov_add_zone_append_page(struct bio *bio, struct page *page,
+> +		unsigned int len, unsigned int offset)
+> +{
+> +	struct request_queue *q = bdev_get_queue(bio->bi_bdev);
+> +	bool same_page = false;
+> +
+> +	if (bio_add_hw_page(q, bio, page, len, offset,
+> +			queue_max_zone_append_sectors(q), &same_page) != len)
+> +		return -EINVAL;
+> +	if (same_page)
+> +		put_page(page);
+> +	return 0;
+> +}
+> +
+>  #define PAGE_PTRS_PER_BVEC     (sizeof(struct bio_vec) / sizeof(struct page *))
+>  
+>  /**
+> @@ -1176,7 +1207,6 @@ static int __bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
+>  	unsigned short entries_left = bio->bi_max_vecs - bio->bi_vcnt;
+>  	struct bio_vec *bv = bio->bi_io_vec + bio->bi_vcnt;
+>  	struct page **pages = (struct page **)bv;
+> -	bool same_page = false;
+>  	ssize_t size, left;
+>  	unsigned len, i;
+>  	size_t offset;
+> @@ -1195,18 +1225,18 @@ static int __bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
+>  
+>  	for (left = size, i = 0; left > 0; left -= len, i++) {
+>  		struct page *page = pages[i];
+> +		int ret;
+>  
+>  		len = min_t(size_t, PAGE_SIZE - offset, left);
+> +		if (bio_op(bio) == REQ_OP_ZONE_APPEND)	
+> +			ret = bio_iov_add_zone_append_page(bio, page, len,
+> +					offset);
+> +		else
+> +			ret = bio_iov_add_page(bio, page, len, offset);
+>  
+> -		if (__bio_try_merge_page(bio, page, len, offset, &same_page)) {
+> -			if (same_page)
+> -				put_page(page);
+> -		} else {
+> -			if (WARN_ON_ONCE(bio_full(bio, len))) {
+> -				bio_put_pages(pages + i, left, offset);
+> -				return -EINVAL;
+> -			}
+> -			__bio_add_page(bio, page, len, offset);
+> +		if (ret) {
+> +			bio_put_pages(pages + i, left, offset);
+> +			return ret;
+>  		}
+>  		offset = 0;
+>  	}
+> @@ -1215,54 +1245,6 @@ static int __bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
+>  	return 0;
+>  }
+>  
+> -static int __bio_iov_append_get_pages(struct bio *bio, struct iov_iter *iter)
+> -{
+> -	unsigned short nr_pages = bio->bi_max_vecs - bio->bi_vcnt;
+> -	unsigned short entries_left = bio->bi_max_vecs - bio->bi_vcnt;
+> -	struct request_queue *q = bdev_get_queue(bio->bi_bdev);
+> -	unsigned int max_append_sectors = queue_max_zone_append_sectors(q);
+> -	struct bio_vec *bv = bio->bi_io_vec + bio->bi_vcnt;
+> -	struct page **pages = (struct page **)bv;
+> -	ssize_t size, left;
+> -	unsigned len, i;
+> -	size_t offset;
+> -	int ret = 0;
+> -
+> -	if (WARN_ON_ONCE(!max_append_sectors))
+> -		return 0;
+> -
+> -	/*
+> -	 * Move page array up in the allocated memory for the bio vecs as far as
+> -	 * possible so that we can start filling biovecs from the beginning
+> -	 * without overwriting the temporary page array.
+> -	 */
+> -	BUILD_BUG_ON(PAGE_PTRS_PER_BVEC < 2);
+> -	pages += entries_left * (PAGE_PTRS_PER_BVEC - 1);
+> -
+> -	size = iov_iter_get_pages(iter, pages, LONG_MAX, nr_pages, &offset);
+> -	if (unlikely(size <= 0))
+> -		return size ? size : -EFAULT;
+> -
+> -	for (left = size, i = 0; left > 0; left -= len, i++) {
+> -		struct page *page = pages[i];
+> -		bool same_page = false;
+> -
+> -		len = min_t(size_t, PAGE_SIZE - offset, left);
+> -		if (bio_add_hw_page(q, bio, page, len, offset,
+> -				max_append_sectors, &same_page) != len) {
+> -			bio_put_pages(pages + i, left, offset);
+> -			ret = -EINVAL;
+> -			break;
+> -		}
+> -		if (same_page)
+> -			put_page(page);
+> -		offset = 0;
+> -	}
+> -
+> -	iov_iter_advance(iter, size - left);
+> -	return ret;
+> -}
+> -
+>  /**
+>   * bio_iov_iter_get_pages - add user or kernel pages to a bio
+>   * @bio: bio to add pages to
+> @@ -1297,10 +1279,7 @@ int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
+>  	}
+>  
+>  	do {
+> -		if (bio_op(bio) == REQ_OP_ZONE_APPEND)
+> -			ret = __bio_iov_append_get_pages(bio, iter);
+> -		else
+> -			ret = __bio_iov_iter_get_pages(bio, iter);
+> +		ret = __bio_iov_iter_get_pages(bio, iter);
+>  	} while (!ret && iov_iter_count(iter) && !bio_full(bio, 0));
+>  
+>  	/* don't account direct I/O as memory stall */
