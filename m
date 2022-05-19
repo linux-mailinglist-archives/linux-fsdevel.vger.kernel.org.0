@@ -2,62 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6527B52C902
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 May 2022 02:56:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CDDCE52C915
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 May 2022 03:00:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232215AbiESAz4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 May 2022 20:55:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49142 "EHLO
+        id S232358AbiESBAt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 May 2022 21:00:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232107AbiESAzy (ORCPT
+        with ESMTP id S231552AbiESBAs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 May 2022 20:55:54 -0400
+        Wed, 18 May 2022 21:00:48 -0400
 Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D57A2C4F;
-        Wed, 18 May 2022 17:55:51 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 354ADB496;
+        Wed, 18 May 2022 18:00:45 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id A6843CE229B;
-        Thu, 19 May 2022 00:55:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF0BAC385A5;
-        Thu, 19 May 2022 00:55:47 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 4B52CCE2225;
+        Thu, 19 May 2022 01:00:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10031C385A5;
+        Thu, 19 May 2022 01:00:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1652921747;
-        bh=+w7bxSwboW1VzAC18RChvyM/QQVFk/VXGDrhCmYTkKM=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=sj33+a6eM/yrurgd05V1SCh9AA7YADFweeVAmx8tNxRPqzYEtQwcpd08oK+zQiX9H
-         cVvMKMf1JnETwr8FhftPgWe38RNC/q4Da18MJNZzOxbevDGjx45BuX1OQgWyeLPLOj
-         s4qBg1QdmS0vHtXE8UlmTYzt/7pRYyX6ogsN+pvkJ2xeg6h9qQUifiaPm8P4+Soo8o
-         bHaHZjtcz/600JCQFnMpmSCCRU9iM/ImuEjn6/+vd4WCN7EC6ZU2H5s76M8jAoilYd
-         XbdwGhI0+HktrUnM+Gz/AJ6LOb/pRwemUVp50kWkeyL/bbQHr6laC0z8wT/musQMu9
-         y0UltHu10rmBA==
-Received: by mail-wr1-f45.google.com with SMTP id r23so4986919wrr.2;
-        Wed, 18 May 2022 17:55:47 -0700 (PDT)
-X-Gm-Message-State: AOAM5329j3KPSYLvAptok23PhE5TCAPIUVnBimyRFXsRt3Ys6BpwC4eN
-        FLzNM2BR7cNNZLqsvhSxIYXp9ivD8mhQH9RRNrs=
-X-Google-Smtp-Source: ABdhPJzUNgRO6DvQuX8+CsnYTnp5W7tYne/MYsgi00ftQrYYON5+oXvWIDFqia9QsujGG30+jmTKALuqGOP6lqY+cHg=
-X-Received: by 2002:a5d:584a:0:b0:20c:5bad:11c1 with SMTP id
- i10-20020a5d584a000000b0020c5bad11c1mr1831044wrf.62.1652921746214; Wed, 18
- May 2022 17:55:46 -0700 (PDT)
+        s=k20201202; t=1652922042;
+        bh=teuUUHJv1w1WIKqBd3yZ4A1Y/Iy2Xta7+Y8wePbXFU8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZjOnjx1Y2+5HnKp+oyOoBszE7ADqR2uur0TSDCPXLsp70HQQwsuWvMdBSdbBwOhrW
+         JaZn3TeaA7dwEED0CH7M1FCR7yyw4W9t02dvNvZZ1SsB8KVF40+kd0B0idgu7PfjqJ
+         9P72MX3TDEgm3Bye1jC1GROsQ/UuYJxYrF752AyoEM/MnpveU6bmI7VM9chisnni1e
+         1dC9A1d1w0rTA12zcmBMoYUo0RVRKck7gSsFDXDGpvXncIB034KhhTiWJM+SgbIK6G
+         rFAbVVgaZop1/bYW/NGmoVjroczShuFLXOIxY0MdS+daubs4L/4gc2eLZGkRFFHNnZ
+         5K8ZtcXtOrvug==
+Date:   Wed, 18 May 2022 19:00:39 -0600
+From:   Keith Busch <kbusch@kernel.org>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Keith Busch <kbusch@fb.com>, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, axboe@kernel.dk,
+        Kernel Team <Kernel-team@fb.com>, hch@lst.de,
+        bvanassche@acm.org, damien.lemoal@opensource.wdc.com
+Subject: Re: [PATCHv2 3/3] block: relax direct io memory alignment
+Message-ID: <YoWWtwsiKGqoTbVU@kbusch-mbp.dhcp.thefacebook.com>
+References: <20220518171131.3525293-1-kbusch@fb.com>
+ <20220518171131.3525293-4-kbusch@fb.com>
+ <YoWL+T8JiIO5Ln3h@sol.localdomain>
 MIME-Version: 1.0
-Received: by 2002:adf:f344:0:0:0:0:0 with HTTP; Wed, 18 May 2022 17:55:45
- -0700 (PDT)
-In-Reply-To: <YnjY58EpRzaZP+YC@kili>
-References: <YnjY58EpRzaZP+YC@kili>
-From:   Namjae Jeon <linkinjeon@kernel.org>
-Date:   Thu, 19 May 2022 09:55:45 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd8qxUTJLnah1Yu46j-esGKCaOb6aM-CUPNf-bvFn_e5uQ@mail.gmail.com>
-Message-ID: <CAKYAXd8qxUTJLnah1Yu46j-esGKCaOb6aM-CUPNf-bvFn_e5uQ@mail.gmail.com>
-Subject: Re: [PATCH] fs/ntfs3: Don't clear upper bits accidentally in log_replay()
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        kernel-janitors <kernel-janitors@vger.kernel.org>,
-        Kari Argillander <kari.argillander@stargateuniverse.net>,
-        Kari Argillander <kari.argillander@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YoWL+T8JiIO5Ln3h@sol.localdomain>
 X-Spam-Status: No, score=-7.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -68,38 +58,33 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-2022-05-09 18:03 GMT+09:00, Dan Carpenter <dan.carpenter@oracle.com>:
-> The "vcn" variable is a 64 bit.  The "log->clst_per_page" variable is a
-> u32.  This means that the mask accidentally clears out the high 32 bits
-> when it was only supposed to clear some low bits.  Fix this by adding a
-> cast to u64.
->
-> Fixes: b46acd6a6a62 ("fs/ntfs3: Add NTFS journal")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Namjae Jeon <linkinjeon@kernel.org>
+On Wed, May 18, 2022 at 05:14:49PM -0700, Eric Biggers wrote:
+> On Wed, May 18, 2022 at 10:11:31AM -0700, Keith Busch wrote:
+> > diff --git a/block/fops.c b/block/fops.c
+> > index b9b83030e0df..d8537c29602f 100644
+> > --- a/block/fops.c
+> > +++ b/block/fops.c
+> > @@ -54,8 +54,9 @@ static ssize_t __blkdev_direct_IO_simple(struct kiocb *iocb,
+> >  	struct bio bio;
+> >  	ssize_t ret;
+> >  
+> > -	if ((pos | iov_iter_alignment(iter)) &
+> > -	    (bdev_logical_block_size(bdev) - 1))
+> > +	if ((pos | iov_iter_count(iter)) & (bdev_logical_block_size(bdev) - 1))
+> > +		return -EINVAL;
+> > +	if (iov_iter_alignment(iter) & bdev_dma_alignment(bdev))
+> >  		return -EINVAL;
+> 
+> The block layer makes a lot of assumptions that bios can be split at any bvec
+> boundary.  With this patch, bios whose length isn't a multiple of the logical
+> block size can be generated by splitting, which isn't valid.
 
-> ---
-> Why am I getting new Smatch warnings in old ntfs3 code?  It is a mystery.
->
->  fs/ntfs3/fslog.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/ntfs3/fslog.c b/fs/ntfs3/fslog.c
-> index 915f42cf07bc..0da339fda2f4 100644
-> --- a/fs/ntfs3/fslog.c
-> +++ b/fs/ntfs3/fslog.c
-> @@ -5057,7 +5057,7 @@ int log_replay(struct ntfs_inode *ni, bool
-> *initialized)
->  		goto add_allocated_vcns;
->
->  	vcn = le64_to_cpu(lrh->target_vcn);
-> -	vcn &= ~(log->clst_per_page - 1);
-> +	vcn &= ~(u64)(log->clst_per_page - 1);
->
->  add_allocated_vcns:
->  	for (i = 0, vcn = le64_to_cpu(lrh->target_vcn),
-> --
-> 2.35.1
->
->
->
+How? This patch ensures every segment is block size aligned. We can always
+split a bio in the middle of a bvec for any lower level hardware constraints,
+and I'm not finding any splitting criteria that would try to break a bio on a
+non-block aligned boundary.
+
+> Also some devices aren't compatible with logical blocks spanning bdevs at all.
+> dm-crypt errors out in this case, for example.
+
+I'm sorry, but I am not understanding this.
