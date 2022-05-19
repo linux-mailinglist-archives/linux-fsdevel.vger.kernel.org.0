@@ -2,178 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DE44B52DC18
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 May 2022 19:57:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45CDB52DC3F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 May 2022 20:04:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243409AbiESR5Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 May 2022 13:57:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41776 "EHLO
+        id S243579AbiESSCo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 May 2022 14:02:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52088 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240855AbiESR5L (ORCPT
+        with ESMTP id S243582AbiESSCn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 May 2022 13:57:11 -0400
-Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88342CFE04
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 May 2022 10:57:09 -0700 (PDT)
-Received: by mail-io1-xd30.google.com with SMTP id d198so1515954iof.12
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 May 2022 10:57:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nTvwJwfDzauPQ+of5JXtLLkQatXip/21hHhzryuEKQA=;
-        b=j3LimxuhjsDMbf3h7pgM2pWwYSD4AVDqwr9ip1QCctj49RKDncQaqTHeIyXLl50zzU
-         4LG3je7shHcDY1r8jzTsxpcHjD9pp0lfGzlQqhuk55gzgWRRU5pqfxpRJbcJFKW03pa3
-         LLtD7ehpQwpgyXa+eY0hUTZk4ioiKf7glMqpvtARWpYoJpPWD8StCBp85+mKbJnmGOEO
-         TBKLipGuUQdEgRWPXm1GzIGIFeMe5N0+DDsTrPgxpZj900S2UeEVlLAND2cbavGFIQGt
-         CTjt5zWmLaAZRopYq3odW6ZOoq4jz7+VypCEx0y6zLBALPoGbIsN3k2WOTSsu3sefi7x
-         DLGQ==
+        Thu, 19 May 2022 14:02:43 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 806D25AEFF
+        for <linux-fsdevel@vger.kernel.org>; Thu, 19 May 2022 11:02:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1652983361;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=+vRbUI4/GPSCZt1VwOoZEQyVUcK9j3r3qdubIZdOiHI=;
+        b=ejlgjJ3ZAiyW9ykQM2XTq3c8q4ercwdPtKLMVtdHN/22qdsMxlcPY0hae3y8oy1KFTk0av
+        kZz2w98jTZmtpJynEv+lMEnYfjoQvpyMKLwKLirasFPqvd1iDqeLfDTs8qRQ0CDp8LhJkI
+        qaOOonXgBFZ5bb5+F9yYdHramRsz6ZM=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-390-3OYFdW9OOTKNIUu3k3hs_g-1; Thu, 19 May 2022 14:02:34 -0400
+X-MC-Unique: 3OYFdW9OOTKNIUu3k3hs_g-1
+Received: by mail-ej1-f70.google.com with SMTP id pj21-20020a170906d79500b006fea2020e78so567471ejb.11
+        for <linux-fsdevel@vger.kernel.org>; Thu, 19 May 2022 11:02:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=nTvwJwfDzauPQ+of5JXtLLkQatXip/21hHhzryuEKQA=;
-        b=xQ/1WU4QsXTNJBFUrscRmH+z6EUUD819fUoM8R3HJD0gULMU7K79RGN1nm5emARgTR
-         1o3P0VCncHQ6MPwhAayROyPbJvVJJkYvh+5FQeToSH0BqfTzDjLlIuck9jb0BvzU+Q0E
-         pSbLZvpKVkgnQcQdrUIBmDljLOEc7hohlGjoKPgqx76kCqpDpUVagLVyxeVKVHMFOdm+
-         aji2MVI0s+xgnczZnJX1c+crXPUJEN5ZJThwzK37Do8MGP4cVtKHEnANPihRu9C1Epm5
-         n6kQ6Q5mYq1keYnrzF0rjmnRYMgfuN8NSxlFGSpiBPh4/xU/4EVOhPxqZOljMZOp3bz/
-         4IRQ==
-X-Gm-Message-State: AOAM532d3E/ONFCp7mMyhQMtNIxAkz8bz0Zo+N9UMx/JNRc+Nf//g3C7
-        sm+9OmyKoWl1z6UI2w6zJlRkKB2YDDif6eTxmC5Heg==
-X-Google-Smtp-Source: ABdhPJxLnLPad++snwSrGlFPy2lO2WAmvA7axVeAQ6DyfojYPDblWdyjk16yhcxDogtbfCy3V2mwhAIveq3XhTsBM0Y=
-X-Received: by 2002:a5d:94c2:0:b0:60b:bd34:bb6f with SMTP id
- y2-20020a5d94c2000000b0060bbd34bb6fmr3044953ior.32.1652983028426; Thu, 19 May
- 2022 10:57:08 -0700 (PDT)
+        bh=+vRbUI4/GPSCZt1VwOoZEQyVUcK9j3r3qdubIZdOiHI=;
+        b=GDOGunrLzDFeUDtwbuPS3Cp0M8KdNbBYg2z2FeLyCXoPEkuQTwNsrXkKage3IvW0oz
+         dfb7g8BmxT7y6KFtDqZ/WuWqTuPsicHp/jx8bw+noyk9HxPNFQhHr0VKNdFAiTAjGBDP
+         qTkvmQ8NaNWiAbHeh5tcVtol0NA/ia+tzSrQGVT7Q+eqpoJTgawvewUNpdy3CM6GJzJz
+         zpCWoGeQxgghrQocWMzS16NKdJD3kbiLXPx/Fsny2AYp8UtW1osgqysoKe81ghbL7QcD
+         OMBThj6GBrvjx3CtbZOZxMQOm3XgOkTg9ltd9w2bZJduzzMTpTXaI1gIWjeaA/e2oQ9I
+         fwdA==
+X-Gm-Message-State: AOAM533yxoH0FKBay25NpbW2KLKVkvW6OqEZwvET5xzsL9eyzMjx9t9X
+        zwvOZCig9oIsGeyt6pWn+Lr/INvZV7p6Rxc3udu6Y6vns/B1j8sM6PKwSQpmZiU55i056rg5etM
+        5cU9wuA3VZoGATwo5o6/g1w6qzxSEdDlUYF666mlZCg==
+X-Received: by 2002:a05:6402:5298:b0:42a:cb63:5d10 with SMTP id en24-20020a056402529800b0042acb635d10mr6750413edb.415.1652983353660;
+        Thu, 19 May 2022 11:02:33 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxn6/Tj4V8KVXox3lSlmm5Gz66eQBDgYCQAVpr2miM030h/XBUwtnvlrRGYYV9HfkeB+8UEO+uov7EtDJwHTak=
+X-Received: by 2002:a05:6402:5298:b0:42a:cb63:5d10 with SMTP id
+ en24-20020a056402529800b0042acb635d10mr6750403edb.415.1652983353522; Thu, 19
+ May 2022 11:02:33 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220422212945.2227722-1-axelrasmussen@google.com>
- <20220422212945.2227722-4-axelrasmussen@google.com> <a6f7ff80-ea77-75d0-2454-99d14f164708@linuxfoundation.org>
-In-Reply-To: <a6f7ff80-ea77-75d0-2454-99d14f164708@linuxfoundation.org>
-From:   Axel Rasmussen <axelrasmussen@google.com>
-Date:   Thu, 19 May 2022 10:56:32 -0700
-Message-ID: <CAJHvVciqx17ERazHNLyyFDGV6Fh0K=SyZ78DTO62xL4rqOTdgw@mail.gmail.com>
-Subject: Re: [PATCH v2 3/6] userfaultfd: selftests: modify selftest to use /dev/userfaultfd
-To:     Shuah Khan <skhan@linuxfoundation.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Charan Teja Reddy <charante@codeaurora.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Gleb Fotengauer-Malinovskiy <glebfm@altlinux.org>,
-        Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.cz>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
-        Peter Xu <peterx@redhat.com>, Shuah Khan <shuah@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        zhangyi <yi.zhang@huawei.com>, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linuxkselftest <linux-kselftest@vger.kernel.org>
+References: <165294669215.3283481.13374322806917745974.stgit@warthog.procyon.org.uk>
+In-Reply-To: <165294669215.3283481.13374322806917745974.stgit@warthog.procyon.org.uk>
+From:   David Wysochanski <dwysocha@redhat.com>
+Date:   Thu, 19 May 2022 14:01:57 -0400
+Message-ID: <CALF+zOk923ZnSucxitYQFN9m3AY=iOy+j90WrFmqZbKMuOcVsA@mail.gmail.com>
+Subject: Re: [PATCH] nfs: Fix fscache volume key rendering for endianness
+To:     David Howells <dhowells@redhat.com>
+Cc:     Trond Myklebust <trond.myklebust@hammerspace.com>, anna@kernel.org,
+        Jeff Layton <jlayton@kernel.org>,
+        linux-nfs <linux-nfs@vger.kernel.org>,
+        linux-cachefs <linux-cachefs@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Apr 26, 2022 at 9:16 AM Shuah Khan <skhan@linuxfoundation.org> wrote:
+On Thu, May 19, 2022 at 3:51 AM David Howells <dhowells@redhat.com> wrote:
 >
-> On 4/22/22 3:29 PM, Axel Rasmussen wrote:
-> > We clearly want to ensure both userfaultfd(2) and /dev/userfaultfd keep
-> > working into the future, so just run the test twice, using each
-> > interface.
-> >
-> > Signed-off-by: Axel Rasmussen <axelrasmussen@google.com>
-> > ---
-> >   tools/testing/selftests/vm/userfaultfd.c | 31 ++++++++++++++++++++++--
-> >   1 file changed, 29 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/tools/testing/selftests/vm/userfaultfd.c b/tools/testing/selftests/vm/userfaultfd.c
-> > index 92a4516f8f0d..12ae742a9981 100644
-> > --- a/tools/testing/selftests/vm/userfaultfd.c
-> > +++ b/tools/testing/selftests/vm/userfaultfd.c
-> > @@ -77,6 +77,9 @@ static int bounces;
-> >   #define TEST_SHMEM  3
-> >   static int test_type;
-> >
-> > +/* test using /dev/userfaultfd, instead of userfaultfd(2) */
-> > +static bool test_dev_userfaultfd;
-> > +
-> >   /* exercise the test_uffdio_*_eexist every ALARM_INTERVAL_SECS */
-> >   #define ALARM_INTERVAL_SECS 10
-> >   static volatile bool test_uffdio_copy_eexist = true;
-> > @@ -383,13 +386,31 @@ static void assert_expected_ioctls_present(uint64_t mode, uint64_t ioctls)
-> >       }
-> >   }
-> >
-> > +static void __userfaultfd_open_dev(void)
-> > +{
-> > +     int fd;
-> > +
-> > +     uffd = -1;
-> > +     fd = open("/dev/userfaultfd", O_RDWR | O_CLOEXEC);
-> > +     if (fd < 0)
-> > +             return;
-> > +
-> > +     uffd = ioctl(fd, USERFAULTFD_IOC_NEW,
-> > +                  O_CLOEXEC | O_NONBLOCK | UFFD_USER_MODE_ONLY);
-> > +     close(fd);
-> > +}
-> > +
-> >   static void userfaultfd_open(uint64_t *features)
-> >   {
-> >       struct uffdio_api uffdio_api;
-> >
-> > -     uffd = syscall(__NR_userfaultfd, O_CLOEXEC | O_NONBLOCK | UFFD_USER_MODE_ONLY);
-> > +     if (test_dev_userfaultfd)
-> > +             __userfaultfd_open_dev();
-> > +     else
-> > +             uffd = syscall(__NR_userfaultfd,
-> > +                            O_CLOEXEC | O_NONBLOCK | UFFD_USER_MODE_ONLY);
-> >       if (uffd < 0)
-> > -             err("userfaultfd syscall not available in this kernel");
-> > +             err("creating userfaultfd failed");
+> Fix fscache volume key rendering for endianness.  Convert the BE numbers in
+> the address to host-endian before printing them so that they're consistent
+> if the cache is copied between architectures.
 >
-> This isn't an error as in test failure. This will be a skip because of
-> unmet dependencies. Also if this test requires root access, please check
-> for that and make that a skip as well.
+> Question: This change could lead to misidentification of a volume directory
+> in the cache on a LE machine (it's unlikely because the port number as well
+> as the address numbers all get flipped), but it was introduced in -rc1 in
+> this cycle so probably isn't in any distro kernels yet.  Should I add a
+> version number to enforce non-matching?
+>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Dave Wysochanski <dwysocha@redhat.com>
+> cc: Trond Myklebust <trond.myklebust@hammerspace.com>
+> cc: Anna Schumaker <anna@kernel.org>
+> cc: Jeff Layton <jlayton@kernel.org>
+> cc: linux-nfs@vger.kernel.org
+> cc: linux-cachefs@redhat.com
+> ---
+>
+>  fs/nfs/fscache.c |   14 +++++++-------
+>  1 file changed, 7 insertions(+), 7 deletions(-)
+>
+> diff --git a/fs/nfs/fscache.c b/fs/nfs/fscache.c
+> index f73c09a9cf0a..0e5572b192b2 100644
+> --- a/fs/nfs/fscache.c
+> +++ b/fs/nfs/fscache.c
+> @@ -54,17 +54,17 @@ static bool nfs_fscache_get_client_key(struct nfs_client *clp,
+>
+>         switch (clp->cl_addr.ss_family) {
+>         case AF_INET:
+> -               if (!nfs_append_int(key, _len, sin->sin_port) ||
+> -                   !nfs_append_int(key, _len, sin->sin_addr.s_addr))
+> +               if (!nfs_append_int(key, _len, ntohs(sin->sin_port)) ||
+> +                   !nfs_append_int(key, _len, ntohl(sin->sin_addr.s_addr)))
+>                         return false;
+>                 return true;
+>
+>         case AF_INET6:
+> -               if (!nfs_append_int(key, _len, sin6->sin6_port) ||
+> -                   !nfs_append_int(key, _len, sin6->sin6_addr.s6_addr32[0]) ||
+> -                   !nfs_append_int(key, _len, sin6->sin6_addr.s6_addr32[1]) ||
+> -                   !nfs_append_int(key, _len, sin6->sin6_addr.s6_addr32[2]) ||
+> -                   !nfs_append_int(key, _len, sin6->sin6_addr.s6_addr32[3]))
+> +               if (!nfs_append_int(key, _len, ntohs(sin6->sin6_port)) ||
+> +                   !nfs_append_int(key, _len, ntohl(sin6->sin6_addr.s6_addr32[0])) ||
+> +                   !nfs_append_int(key, _len, ntohl(sin6->sin6_addr.s6_addr32[1])) ||
+> +                   !nfs_append_int(key, _len, ntohl(sin6->sin6_addr.s6_addr32[2])) ||
+> +                   !nfs_append_int(key, _len, ntohl(sin6->sin6_addr.s6_addr32[3])))
+>                         return false;
+>                 return true;
+>
+>
+>
 
-Testing with the userfaultfd syscall doesn't require any special
-permissions (root or otherwise).
+IMO it's not worth versioning in this case but I agree with this change.
+Did someone report the "cache copied between architectures" issue, or
+is that mostly a theoretical problem you noticed?
 
-But testing with /dev/userfaultfd will require access to that device
-node, which is root:root by default, but the system administrator may
-have changed this. In general I think this will only fail due to a)
-lack of kernel support or b) lack of permissions though, so always
-exiting with KSFT_SKIP here seems reasonable. I'll make that change in
-v3.
+Acked-by: Dave Wysochanski <dwysocha@redhat.com>
 
->
-> >       uffd_flags = fcntl(uffd, F_GETFD, NULL);
-> >
-> >       uffdio_api.api = UFFD_API;
-> > @@ -1698,6 +1719,12 @@ int main(int argc, char **argv)
-> >       }
-> >       printf("nr_pages: %lu, nr_pages_per_cpu: %lu\n",
-> >              nr_pages, nr_pages_per_cpu);
-> > +
-> > +     test_dev_userfaultfd = false;
-> > +     if (userfaultfd_stress())
-> > +             return 1;
-> > +
-> > +     test_dev_userfaultfd = true;
-> >       return userfaultfd_stress();
-> >   }
-> >
-> >
->
-> thanks,
-> -- Shuah
