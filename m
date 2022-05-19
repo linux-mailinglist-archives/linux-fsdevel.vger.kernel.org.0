@@ -2,227 +2,307 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 50A4752CDB8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 May 2022 09:59:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 345D752CDC7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 May 2022 10:01:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233479AbiESH6z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 May 2022 03:58:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39226 "EHLO
+        id S232049AbiESH7e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 May 2022 03:59:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235174AbiESH6O (ORCPT
+        with ESMTP id S229627AbiESH7b (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 May 2022 03:58:14 -0400
-Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C102F4969A;
-        Thu, 19 May 2022 00:58:12 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-2-147.pa.nsw.optusnet.com.au [49.181.2.147])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 6FE6D10E683F;
-        Thu, 19 May 2022 17:58:07 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1nrb2r-00DmGt-NH; Thu, 19 May 2022 17:58:05 +1000
-Date:   Thu, 19 May 2022 17:58:05 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>, pankydev8@gmail.com,
-        Theodore Tso <tytso@mit.edu>,
-        Josef Bacik <josef@toxicpanda.com>, jmeneghi@redhat.com,
-        Jan Kara <jack@suse.cz>, Davidlohr Bueso <dave@stgolabs.net>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jake Edge <jake@lwn.net>, Klaus Jensen <its@irrelevant.dk>,
-        Zorro Lang <zlang@redhat.com>,
-        fstests <fstests@vger.kernel.org>
-Subject: Re: [RFC: kdevops] Standardizing on failure rate nomenclature for
- expunges
-Message-ID: <20220519075805.GU2306852@dread.disaster.area>
-References: <YoW0ZC+zM27Pi0Us@bombadil.infradead.org>
- <CAOQ4uxhKHMjGq0QKKMPFAV6iJFwe1H5hBomCVVeT1EWJzo0eXg@mail.gmail.com>
+        Thu, 19 May 2022 03:59:31 -0400
+Received: from esa1.hgst.iphmx.com (esa1.hgst.iphmx.com [68.232.141.245])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D81A137BF1;
+        Thu, 19 May 2022 00:59:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1652947170; x=1684483170;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=mbJvuIx3HwTQ0FMunggQFkn+bCs/J96P9NqH3gzjaxo=;
+  b=SEDKGvs5hqSxSGgEEa9pvxconDDZVzaaIVhSrxZJDlLpJWGGFx3CnMjt
+   cKAquWxz8SmK27+AT3+H7RfCRCUPLOp5Nvtz+ZE8CkcetEkQi4AU3HxX7
+   a0988JQ/4mdmd0/p0f1u3ohjoVXZQASfAPi5ZE/mB1W/mi8Axd9FkHEtL
+   dc5jA3XrQ/ca//JfY6cnTOfe9mglc49TcZI+gvGlFw0VvmgQ3siZYIosV
+   Mpi1CGsJXkxbz078m0Iyk6QAvw9KJM+hO5mD3XanZbMfwR43R3uAnizzt
+   Wps1SNO5brZK8S7qxEW5/+niB2VgetYWyNiy/Ze6tsFKe3XH+nrJMFLZ6
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.91,237,1647273600"; 
+   d="scan'208";a="312747531"
+Received: from mail-dm6nam10lp2109.outbound.protection.outlook.com (HELO NAM10-DM6-obe.outbound.protection.outlook.com) ([104.47.58.109])
+  by ob1.hgst.iphmx.com with ESMTP; 19 May 2022 15:59:29 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=QuEySeB57ZDxSwDHfp1F4vwtVHEilnsbmB9yFFIWc9t0cFPmmZiqgGZBTNU42eBKwPmtiro2cg9ZI9WQxixQ4rrnPcG3+ujyhi/h71ZSr2JikhX0Vcb2B0VO8ErinnamGFu9+QoiNHdAozZ1cjE1+OqL3Q7pIYrTkPoyQ8NpnoS3pZ2P5RQO8Jjnc2pKkty56GLnCAKUv7IB++AxZI7oaVB5abHfUhY3X8iioGJb1u5z3MmhYJD0XojRs47sw5rZdbSvSlXHSiiyTVehXHTueDEVqrJLCTk+LKZRzfvBsB5iIARKr2Ug5v1olG4BNg1Qh5iFpm5t2pkWcZ/pKcEFZQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=77eTUi+otyfRdDlf0NHaMboEsjiOGAU4EQVHkJ3fIz4=;
+ b=JwSdS6UqJmHPuDBZrpsnyhmcLveklo8ocM5G29M2BWEKwNeWLuR50DJ1lTyHOUcW2bfnUnZNkXm9MY+b8oPFGmIujCZTpc4qGVapsEp9DW0D/DwXQdZfuyaKUHhOCyymplDXSnZmYpeIRx4xOaWsuvJK0WreN2k9+VTQDIFo26Y/LW0wIDORy2homEUHD3m19KkGSnPgWfR2l/S2W+3DzNW+94OT/AZdc3VP/Ips/iTIMprX7x1JazpeHu0sWAjMALAervT5EGdEwilod35Ak6PcG5et1K5LpU9orOEnWVoO5kSC0AMD19/DHbpp46OuYO/VZDr/A07Rh4q+gM86kQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=77eTUi+otyfRdDlf0NHaMboEsjiOGAU4EQVHkJ3fIz4=;
+ b=RIO7aDqSgaqTi64IYDmeNNQ0u7jHEuxuf7+TwaLubIqwhp9OUNvpsj87dHCi1tJDJFN5ZdMUMlwI/eYFIH1HRAAQmOsttdrFzoMFS/UxJiUFbsPjPcIxJ/fn3DqCZKIjBTpF/yvipglm+iI/5In8nfrTykwOx/JxIyHXAc5lw0w=
+Received: from SJ0PR04MB7776.namprd04.prod.outlook.com (2603:10b6:a03:300::11)
+ by CY4PR04MB0185.namprd04.prod.outlook.com (2603:10b6:903:39::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5273.13; Thu, 19 May
+ 2022 07:59:28 +0000
+Received: from SJ0PR04MB7776.namprd04.prod.outlook.com
+ ([fe80::65d0:a39a:4bca:3eb5]) by SJ0PR04MB7776.namprd04.prod.outlook.com
+ ([fe80::65d0:a39a:4bca:3eb5%6]) with mapi id 15.20.5273.016; Thu, 19 May 2022
+ 07:59:28 +0000
+From:   Naohiro Aota <Naohiro.Aota@wdc.com>
+To:     Pankaj Raghav <p.raghav@samsung.com>
+CC:     "axboe@kernel.dk" <axboe@kernel.dk>,
+        "damien.lemoal@opensource.wdc.com" <damien.lemoal@opensource.wdc.com>,
+        "pankydev8@gmail.com" <pankydev8@gmail.com>,
+        "dsterba@suse.com" <dsterba@suse.com>, "hch@lst.de" <hch@lst.de>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "jiangbo.365@bytedance.com" <jiangbo.365@bytedance.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "gost.dev@samsung.com" <gost.dev@samsung.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dm-devel@redhat.com" <dm-devel@redhat.com>
+Subject: Re: [PATCH v4 08/13] btrfs:zoned: make sb for npo2 zone devices align
+ with sb log offsets
+Thread-Topic: [PATCH v4 08/13] btrfs:zoned: make sb for npo2 zone devices
+ align with sb log offsets
+Thread-Index: AQHYaUWuK9pdWulqgUKkXVqwDmJuba0l2iwA
+Date:   Thu, 19 May 2022 07:59:27 +0000
+Message-ID: <20220519075926.6h4ka3qbo3vv26ve@naota-xeon>
+References: <20220516165416.171196-1-p.raghav@samsung.com>
+ <CGME20220516165429eucas1p272c8b4325a488675f08f2d7016aa6230@eucas1p2.samsung.com>
+ <20220516165416.171196-9-p.raghav@samsung.com>
+In-Reply-To: <20220516165416.171196-9-p.raghav@samsung.com>
+Accept-Language: ja-JP, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=wdc.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 9c1be9c4-5f5a-46ca-3042-08da396d7f96
+x-ms-traffictypediagnostic: CY4PR04MB0185:EE_
+x-microsoft-antispam-prvs: <CY4PR04MB0185D8F46F90B48A3E3ADE168CD09@CY4PR04MB0185.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: jPTtZvGaDzov0qmE/4snG3XCS2e5fV1ofS7DXxoeI6+0AwitSamPDucpBmvPaYHDt6s+qfd0jS4rL0ikasJn/fiTej9eKA3cFglKUSjmybLA4uV6WR6mHerY8cRmUJDLi4LMtnpSzyRL5I8dmdf89A2T3fH0/II4s9Hn0xmnhA6KhJX4Do9S00v59UBw24o8zR+9W7d2IkOJ1+ztNGd1HKpopVJAjbMhyFsHwBnj4NTlPcPH9ZXu7IOW1q8kwK9rqI1fxDzDTV/IY3II9jGL1KQvCD5G0WRtNJoosjhSH+Ms4ozp+6dPBp676hJX9NY7LrRxL3hEo9/FjAgh91OnH4EQZ0PykgQHPJ3wuzzvPtVBXmxDVHMn0j0vBVwNZJGSE2B7Y/I0yZ5FZtciyUnLv7uYJYApwifbl5vVzdXTnYA6UHZSEBsy7Xl4SYmFPXRCEt8FFPcdq+B39x3OHWh5OQUy3KGxBiLsaAYhsQGYoLV9v0XTVEn6kS2FGv/NoYq6YGniCtsjillU6vRKHGzWpO6KvUVLPleDkDJ2pUUh7D4KPJwKj2RnWeObxFpVLXbY7Cf4oqku/0f93Be+nRqccGUMPDGhunFThTrjgFaFaws86JRO/9bO0llDp24T1YbkKLZlx0P/PymOTvJOn+/LvshOaodManM1720lM849sPt7QUTHlLTwEwvYjRi+eOYeS8BFfxy17X9ny9+exMrzhQ==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR04MB7776.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(7916004)(4636009)(366004)(2906002)(6486002)(316002)(8676002)(83380400001)(66556008)(4326008)(66476007)(38100700002)(82960400001)(71200400001)(6506007)(33716001)(91956017)(7416002)(76116006)(66446008)(66946007)(122000001)(508600001)(1076003)(186003)(6916009)(64756008)(26005)(6512007)(5660300002)(86362001)(38070700005)(54906003)(8936002)(9686003);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?0XmuPBaHCfJ6a0hZb0AY6Beme9KkZ6YkZSdDbQpu9TtESSupukodetyobN3s?=
+ =?us-ascii?Q?L+6zYJ12L7ZEhl6gOnaxQq279nrMK4vJB/6g2VF0GsMv8b7xfceuzSe8ZQyZ?=
+ =?us-ascii?Q?TdQ9Fxas6klCiMMRtxg/CvYLaGYc34BWoHsv0a9FI9D/eXGx/UszgWImUPdA?=
+ =?us-ascii?Q?zVd/cdXX1kg81fscOrX/qh1gMvhY6od6E22tUcXtXzZ0dKqxosrGDnySFEbU?=
+ =?us-ascii?Q?oN4EoePDOgSG+AEi9/kYPMeaNKfPM+MqFcBwBYidYtXuE2aFp+nGfu2VzK8N?=
+ =?us-ascii?Q?y6Cvk86TKWpoVmhPecPHNK7F+xqnnUJof6dja2f/1rJ6tydynzM1WbsnjKpO?=
+ =?us-ascii?Q?YuQDjBmlQqgYyD+Arfm4/dWjzIIJF22ZIlFtOGsiGzaQn1P5qlwYRAzwyjS3?=
+ =?us-ascii?Q?x1YdUCpUOsmDW3t/I97M1CyYqObUxOYhYC0Gi1ELgCR6ukaClPFIpLtkVRCH?=
+ =?us-ascii?Q?0GdjADumknm58SjAQZ2nVSsgZbDQGEb8d3G52lebZPAhjEnLygHB3mPAmOa1?=
+ =?us-ascii?Q?pW93L7h0rgZl8unQcZnj22Wc5KLM6pzuVzwLzAdBKe4L2gZtoeta9E6GzWF2?=
+ =?us-ascii?Q?R5feTZyE7S09YaSZNhytoGbXLcsncL2XlCWS4/Hs5vf+TBMkRpjPJoof1+3t?=
+ =?us-ascii?Q?89tOfwHQJ2LX1IPmpqAa3mwfEpphS3/DARC+wDoLdMbM6/VXKtyGKBQ0eAvF?=
+ =?us-ascii?Q?Lg1qX+Xt97Hvzu0O9P2z18qnacKQ5e7Lz/HCf1eiJg1afog3guErVPrdkiqr?=
+ =?us-ascii?Q?LGkJ25h6REGZ7uLLpe4BvcsjWbdsuSAvMYxoTKzZ6T/2ncjjoYMCTHxmmCmo?=
+ =?us-ascii?Q?QuD9kWFFDD2rWYx0zB3j/M+DjdwEAg/CSriWw8L+1pQtfy5Z50Kve1cnWow7?=
+ =?us-ascii?Q?D0Mq94NOcWhnUJqFSAqdNfWvulcwYDbUYKNQg0VOIsuyYqN/gXd2GnjwPPZk?=
+ =?us-ascii?Q?mnSs82ZeqjGXHpiRADT1uug0SjDBFHIlVzCBhLiT/nPF6AiBC4LumHYSbU7+?=
+ =?us-ascii?Q?bAkJ0VoR3wMZ7etEvkaDRPL3wu1cEPLo1ukVEpB2bFIoROHurFaKfacUqsjw?=
+ =?us-ascii?Q?T+VbqI71j3ZRkLG/Irl/EoOVcOh88+3xD35XwYo2xTyNQJi5zp+QvWLJSYz2?=
+ =?us-ascii?Q?1ql749EVevSKS6Kkfkh5BsZ1j4K+rJo+JgYWuIgI9lXs6AJlAhQ5IricsA5F?=
+ =?us-ascii?Q?+0tT8OTTQ7QmXOJ4wfLsbSqhID2w2eIxXiwP+lcan8uV0aDuUqvIiF0DNKuD?=
+ =?us-ascii?Q?16Gx2eVq9TJqNZhA8GwjKdvKf4J8mM1RDSq2yJw4jE7xk7NgGiv51FwnMkQG?=
+ =?us-ascii?Q?gb3wo7T2mly9b8mRsW+ELccb3gZmZmReJTMBc6Qx75+9yjXItw62Mg46b4jt?=
+ =?us-ascii?Q?LmyWAoolrcmh1e2OIzRth59nieUtcp6HBEd6x4bpXayJGf+rznSGiK4DWu6s?=
+ =?us-ascii?Q?w2GldoP1fm8E2p1szoeaVbryZ2la4LT/K0bpLnYdhuLBlAUu+iq4aFiR+lCJ?=
+ =?us-ascii?Q?QSJvlOzkW4a6IlcKKOB6Z6zQ7fgm+LiJ+FbPk6DPg86yCvLzoSPY8Z3BNL+Z?=
+ =?us-ascii?Q?vl/7BxIr8rHPA7u7Vhdub2tQ0vtO5sfAwmuImXFIq8KXlQCFj7iLZFFFT8KQ?=
+ =?us-ascii?Q?zhQZmN/sSZ+Ym4e/C5DIZITEBMYnGxp8cY4Au2IhE4pftPnKEb7UtqBwjVhS?=
+ =?us-ascii?Q?wzjse+4UOuQY4n2DnIgpkmHSgG6WJzUTbpDa5R5KpCFYRftliaBjTwFgf5w1?=
+ =?us-ascii?Q?zZm0P4kndXjiuBjgMjk0h+zy9dhEobw=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <0F953BA55E83C847B01213B4210A659D@namprd04.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxhKHMjGq0QKKMPFAV6iJFwe1H5hBomCVVeT1EWJzo0eXg@mail.gmail.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=6285f894
-        a=ivVLWpVy4j68lT4lJFbQgw==:117 a=ivVLWpVy4j68lT4lJFbQgw==:17
-        a=kj9zAlcOel0A:10 a=oZkIemNP1mAA:10 a=VwQbUJbxAAAA:8 a=NEAV23lmAAAA:8
-        a=7-415B0cAAAA:8 a=WYAslt1FCcnMpPg_tJMA:9 a=CjuIK1q_8ugA:10
-        a=AjGcO6oz07-iQ99wixmX:22 a=biEYGPWJfzWAr4FL6Ov7:22
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR04MB7776.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9c1be9c4-5f5a-46ca-3042-08da396d7f96
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 May 2022 07:59:28.0645
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: z2Zog4ru/vb4vmw93OTC8/MzTsV9ZvamhHuiG2Y3PXn/vnIcYCac56mdrjWVvYTZ8FsSeD6zmJwTktbWjq2m8Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR04MB0185
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 19, 2022 at 09:36:41AM +0300, Amir Goldstein wrote:
-> [adding fstests and Zorro]
-> 
-> On Thu, May 19, 2022 at 6:07 AM Luis Chamberlain <mcgrof@kernel.org> wrote:
-> >
-> > I've been promoting the idea that running fstests once is nice,
-> > but things get interesting if you try to run fstests multiple
-> > times until a failure is found. It turns out at least kdevops has
-> > found tests which fail with a failure rate of typically 1/2 to
-> > 1/30 average failure rate. That is 1/2 means a failure can happen
-> > 50% of the time, whereas 1/30 means it takes 30 runs to find the
-> > failure.
-> >
-> > I have tried my best to annotate failure rates when I know what
-> > they might be on the test expunge list, as an example:
-> >
-> > workflows/fstests/expunges/5.17.0-rc7/xfs/unassigned/xfs_reflink.txt:generic/530 # failure rate about 1/15 https://gist.github.com/mcgrof/4129074db592c170e6bf748aa11d783d
-> >
-> > The term "failure rate 1/15" is 16 characters long, so I'd like
-> > to propose to standardize a way to represent this. How about
-> >
-> > generic/530 # F:1/15
-> >
-> 
-> I am not fond of the 1/15 annotation at all, because the only fact that you
-> are able to document is that the test failed after 15 runs.
-> Suggesting that this means failure rate of 1/15 is a very big step.
-> 
-> > Then we could extend the definition. F being current estimate, and this
-> > can be just how long it took to find the first failure. A more valuable
-> > figure would be failure rate avarage, so running the test multiple
-> > times, say 10, to see what the failure rate is and then averaging the
-> > failure out. So this could be a more accurate representation. For this
-> > how about:
-> >
-> > generic/530 # FA:1/15
-> >
-> > This would mean on average there failure rate has been found to be about
-> > 1/15, and this was determined based on 10 runs.
+On Mon, May 16, 2022 at 06:54:11PM +0200, Pankaj Raghav wrote:
+> Superblocks for zoned devices are fixed as 2 zones at 0, 512GB and 4TB.
+> These are fixed at these locations so that recovery tools can reliably
+> retrieve the superblocks even if one of the mirror gets corrupted.
+>=20
+> power of 2 zone sizes align at these offsets irrespective of their
+> value but non power of 2 zone sizes will not align.
+>=20
+> To make sure the first zone at mirror 1 and mirror 2 align, write zero
+> operation is performed to move the write pointer of the first zone to
+> the expected offset. This operation is performed only after a zone reset
+> of the first zone, i.e., when the second zone that contains the sb is FUL=
+L.
+>=20
+> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+> ---
+>  fs/btrfs/zoned.c | 68 ++++++++++++++++++++++++++++++++++++++++++++----
+>  1 file changed, 63 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
+> index 3023c871e..805aeaa76 100644
+> --- a/fs/btrfs/zoned.c
+> +++ b/fs/btrfs/zoned.c
+> @@ -760,11 +760,44 @@ int btrfs_check_mountopts_zoned(struct btrfs_fs_inf=
+o *info)
+>  	return 0;
+>  }
+> =20
+> +static int fill_sb_wp_offset(struct block_device *bdev, struct blk_zone =
+*zone,
+> +			     int mirror, u64 *wp_ret)
+> +{
+> +	u64 offset =3D 0;
+> +	int ret =3D 0;
+> +
+> +	ASSERT(!is_power_of_two_u64(zone->len));
+> +	ASSERT(zone->wp =3D=3D zone->start);
+> +	ASSERT(mirror !=3D 0);
+> +
+> +	switch (mirror) {
+> +	case 1:
+> +		div64_u64_rem(BTRFS_SB_LOG_FIRST_OFFSET >> SECTOR_SHIFT,
+> +			      zone->len, &offset);
+> +		break;
+> +	case 2:
+> +		div64_u64_rem(BTRFS_SB_LOG_SECOND_OFFSET >> SECTOR_SHIFT,
+> +			      zone->len, &offset);
+> +		break;
+> +	}
+> +
+> +	ret =3D  blkdev_issue_zeroout(bdev, zone->start, offset, GFP_NOFS, 0);
+> +	if (ret)
+> +		return ret;
+> +
+> +	zone->wp +=3D offset;
+> +	zone->cond =3D BLK_ZONE_COND_IMP_OPEN;
+> +	*wp_ret =3D zone->wp << SECTOR_SHIFT;
+> +
+> +	return 0;
+> +}
+> +
+>  static int sb_log_location(struct block_device *bdev, struct blk_zone *z=
+ones,
+> -			   int rw, u64 *bytenr_ret)
+> +			   int rw, int mirror, u64 *bytenr_ret)
+>  {
+>  	u64 wp;
+>  	int ret;
+> +	bool zones_empty =3D false;
+> =20
+>  	if (zones[0].type =3D=3D BLK_ZONE_TYPE_CONVENTIONAL) {
+>  		*bytenr_ret =3D zones[0].start << SECTOR_SHIFT;
+> @@ -775,13 +808,31 @@ static int sb_log_location(struct block_device *bde=
+v, struct blk_zone *zones,
+>  	if (ret !=3D -ENOENT && ret < 0)
+>  		return ret;
+> =20
+> +	if (ret =3D=3D -ENOENT)
+> +		zones_empty =3D true;
+> +
 
-These tests are run on multiple different filesystems. What happens
-if you run xfs, ext4, btrfs, overlay in sequence? We now have 4
-tests results, and 1 failure.
+I think, we don't need this. We need to issue the zeroout when
+zones[0]->cond =3D=3D BLK_ZONE_COND_EMPTY && !is_power_of_2(...) after send=
+ing
+ZONE_RESET if necessary. No?
 
-Does that make it FA: 1/4, or does it make it 1/1,0/1,0/1,0/1?
-
-What happens if we run, say, XFS w/ defaults, rmapbt=1, v4, quotas?
-
-Does that make it FA: 1/4, or does it make it 0/1,1/1,0/1,0/1?
-
-In each case above, 1/4 tells us nothing useful. OTOH, the 0/1 vs
-1/1 breakdown is useful information, because it tells us whihc
-filesystem failed the test, or which specific config failed the
-test.
-
-Hence I think the ability for us to draw useful conclusions from a
-number like this is large dependent on the specific data set it is
-drawn from...
-
-> > We should also go extend check for fstests/blktests to run a test
-> > until a failure is found and report back the number of successes.
-> >
-> > Thoughts?
-
-Who is the expected consumer of this information?
-
-I'm not sure it will be meaningful for anyone developing new code
-and needing to run every test every time they run fstests.
-
-OTOH, for a QA environment where you have a fixed progression of the
-kernel releases you are testing, it's likely valuable and already
-being tracked in various distro QE management tools and
-dashboards....
-
-> I have had a discussion about those tests with Zorro.
-> 
-> Those tests that some people refer to as "flaky" are valuable,
-> but they are not deterministic, they are stochastic.
-
-Extremely valuable. Worth their weight in gold to developers like
-me.
-
-The recoveryloop group tests are a good example of this. The name of
-the group indicates how we use it. I typically set it up to run with
-an loop iteration like "-I 100" knowing that is will likely fail a
-random test in the group within 10 iterations.
-
-Those one-off failures are almost always a real bug, and they are
-often unique and difficult to reproduce exactly. Post-mortem needs
-to be performed immediately because it may well be a unique on-off
-failure and running another test after the failure destroys the
-state needed to perform a post-mortem.
-
-Hence having a test farm running these multiple times and then
-reporting "failed once in 15 runs" isn't really useful to me as a
-developer - it doesn't tell us anything new, nor does it help us
-find the bugs that are being tripped over.
-
-Less obvious stochastic tests exist, too. There are many tests that
-use fstress as a workload that runs while some other operation is
-performed - freeze, grow, ENOSPC, error injections, etc. They will
-never be deterministic, any again any failure tends to be a real
-bug, too.
-
-However, I think these should be run by QE environments all the time
-as they require long term, frequent execution across different
-configs in different environments to find the deep dark corners
-where the bugs may lie dormant. These are the tests that find things
-like subtle timing races no other tests ever exercise.
-
-I suspect that tests that alter their behaviour via LOAD_FACTOR or
-TIME_FACTOR will fall into this category.
-
-> I think MTBF is the standard way to describe reliability
-> of such tests, but I am having a hard time imagining how
-> the community can manage to document accurate annotations
-> of this sort, so I would stick with documenting the facts
-> (i.e. the test fails after N runs).
-
-I'm unsure of what "reliablity of such tests" means in this context.
-The tests are trying to exercise and measure the reliability of the
-kernel code - if the *test is unreliable* then that says to me the
-test needs fixing. If the test is reliable, then any failures that
-occur indicate that the filesystem/kernel/fs tools are unreliable,
-not the test....
-
-"test reliability" and "reliability of filesystem under test" are
-different things with similar names. The latter is what I think we
-are talking about measuring and reporting here, right?
-
-> OTOH, we do have deterministic tests, maybe even the majority of
-> fstests are deterministic(?)
-
-Very likely. As a generalisation, I'd say that anything that has a
-fixed, single step at a time recipe and a very well defined golden
-output or exact output comparison match is likely deterministic.
-
-We use things like 'within tolerance' so that slight variations in
-test results don't cause spurious failures and hence make the test
-more deterministic.  Hence any test that uses 'within_tolerance' is
-probably a test that is expecting deterministic behaviour....
-
-> Considering that every auto test loop takes ~2 hours on our rig and that
-> I have been running over 100 loops over the past two weeks, if half
-> of fstests are deterministic, that is a lot of wait time and a lot of carbon
-> emission gone to waste.
-> 
-> It would have been nice if I was able to exclude a "deterministic" group.
-> The problem is - can a developer ever tag a test as being "deterministic"?
-
-fstests allows private exclude lists to be used - perhaps these
-could be used to start building such a group for your test
-environment. Building a list from the tests you never see fail in
-your environment could be a good way to seed such a group...
-
-Maybe you have all the raw results from those hundreds of tests
-sitting around - what does crunching that data look like? Who else
-has large sets of consistent historic data sitting around? I don't
-because I pollute my results archive by frequently running varied
-and badly broken kernels through fstests, but people who just run
-released or stable kernels may have data sets that could be used....
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+>  	if (rw =3D=3D WRITE) {
+>  		struct blk_zone *reset =3D NULL;
+> +		bool is_sb_offset_write_req =3D false;
+> +		u32 reset_zone_nr =3D -1;
+> =20
+> -		if (wp =3D=3D zones[0].start << SECTOR_SHIFT)
+> +		if (wp =3D=3D zones[0].start << SECTOR_SHIFT) {
+>  			reset =3D &zones[0];
+> -		else if (wp =3D=3D zones[1].start << SECTOR_SHIFT)
+> +			reset_zone_nr =3D 0;
+> +		} else if (wp =3D=3D zones[1].start << SECTOR_SHIFT) {
+>  			reset =3D &zones[1];
+> +			reset_zone_nr =3D 1;
+> +		}
+> +
+> +		/*
+> +		 * Non po2 zone sizes will not align naturally at
+> +		 * mirror 1 (512GB) and mirror 2 (4TB). The wp of the
+> +		 * 1st zone in those superblock mirrors need to be
+> +		 * moved to align at those offsets.
+> +		 */
+> +		is_sb_offset_write_req =3D
+> +			(zones_empty || (reset_zone_nr =3D=3D 0)) && mirror &&
+> +			!is_power_of_2(zones[0].len);
+> =20
+>  		if (reset && reset->cond !=3D BLK_ZONE_COND_EMPTY) {
+>  			ASSERT(sb_zone_is_full(reset));
+> @@ -795,6 +846,13 @@ static int sb_log_location(struct block_device *bdev=
+, struct blk_zone *zones,
+>  			reset->cond =3D BLK_ZONE_COND_EMPTY;
+>  			reset->wp =3D reset->start;
+>  		}
+> +
+> +		if (is_sb_offset_write_req) {
+> +			ret =3D fill_sb_wp_offset(bdev, &zones[0], mirror, &wp);
+> +			if (ret)
+> +				return ret;
+> +		}
+> +
+>  	} else if (ret !=3D -ENOENT) {
+>  		/*
+>  		 * For READ, we want the previous one. Move write pointer to
+> @@ -851,7 +909,7 @@ int btrfs_sb_log_location_bdev(struct block_device *b=
+dev, int mirror, int rw,
+>  	if (ret !=3D BTRFS_NR_SB_LOG_ZONES)
+>  		return -EIO;
+> =20
+> -	return sb_log_location(bdev, zones, rw, bytenr_ret);
+> +	return sb_log_location(bdev, zones, rw, mirror, bytenr_ret);
+>  }
+> =20
+>  int btrfs_sb_log_location(struct btrfs_device *device, int mirror, int r=
+w,
+> @@ -877,7 +935,7 @@ int btrfs_sb_log_location(struct btrfs_device *device=
+, int mirror, int rw,
+> =20
+>  	return sb_log_location(device->bdev,
+>  			       &zinfo->sb_zones[BTRFS_NR_SB_LOG_ZONES * mirror],
+> -			       rw, bytenr_ret);
+> +			       rw, mirror, bytenr_ret);
+>  }
+> =20
+>  static inline bool is_sb_log_zone(struct btrfs_zoned_device_info *zinfo,
+> --=20
+> 2.25.1
+> =
