@@ -2,121 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 286C152CEC0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 May 2022 10:55:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C15A52CED1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 May 2022 10:59:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235677AbiESIyQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 May 2022 04:54:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34434 "EHLO
+        id S235723AbiESI7c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 May 2022 04:59:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231418AbiESIyO (ORCPT
+        with ESMTP id S233230AbiESI73 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 May 2022 04:54:14 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB4BB9CF5C;
-        Thu, 19 May 2022 01:54:13 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 87D632190C;
-        Thu, 19 May 2022 08:54:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1652950452; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Fcqmrpxaer0Q0d9KKEW1aRv2ycWgGPdWyzaSn+WUbBk=;
-        b=MCqflNXNG3ngH2MmJW00KgKiExOrIVLN0FjbU1tW/EjTGsQoOt4VFLU44GX9dgv4k0vDWj
-        oiGvElYDh1fZtGPXkj4GrjWCc4A2LzW2xS7tI5XSE5jLbx9+Qaj+1ajb/FG1EX2xEp6VHy
-        /TTH4BL7tSch0QManLpc1RCH/PFlWkY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1652950452;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Fcqmrpxaer0Q0d9KKEW1aRv2ycWgGPdWyzaSn+WUbBk=;
-        b=CSE0dPEFDF1WBQ1nOUVh0VvJ3pzuB+V0rQ9k1XNYeePdsxTD4zd1GicWO9Gw9VSL9LgghM
-        lUuBj/2cI6p+HwBg==
-Received: from quack3.suse.cz (unknown [10.100.224.230])
+        Thu, 19 May 2022 04:59:29 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBD80A5033
+        for <linux-fsdevel@vger.kernel.org>; Thu, 19 May 2022 01:59:27 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 76B932C143;
-        Thu, 19 May 2022 08:54:12 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 17A81A062F; Thu, 19 May 2022 10:54:12 +0200 (CEST)
-Date:   Thu, 19 May 2022 10:54:12 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
-        kernel-team@fb.com, linux-mm@kvack.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, david@fromorbit.com, jack@suse.cz
-Subject: Re: [RFC PATCH v3 15/18] mm: Add
- balance_dirty_pages_ratelimited_async() function
-Message-ID: <20220519085412.ngnnhsf6iy35vqn3@quack3.lan>
-References: <20220518233709.1937634-1-shr@fb.com>
- <20220518233709.1937634-16-shr@fb.com>
- <YoX/4fwQOYyTL34a@infradead.org>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id F1DB7618A9
+        for <linux-fsdevel@vger.kernel.org>; Thu, 19 May 2022 08:59:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D1E9C385AA;
+        Thu, 19 May 2022 08:59:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1652950766;
+        bh=GY6SZbFS5otLT8yQYUe0RJ2U4Gc+ZzIdcfkzMQBRkUo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=YKCJPlaPNPSgBq0s9Zvs7qdaq5CSuiDYo5NEUhPXsm3wlviVWctQoiQASKGoT2KcA
+         1bQ0H7/L2FstEYx3JxbvFnhDfhRvoGyqQI3OsSh5aCYX4XuawhAeY5/ad1rro7iR57
+         jMCLgjK1E9GrFUBFyS27uO4wZ/dnAeuOnBAt+TN2KneTggt7EFtNHcNJmjAcgdWnzr
+         24CW70/MT+L0sPSIATFzs3g5arNwpeoJUk/Z4VYd6aAr3yrza+6ngfgPMwO2485SNU
+         nznbphTp/3we6cl/MT9QZZIiIv2sOgLeFJ1YZ7iY1MjoR0lwX7bSX0i8n+0iqwU+Wo
+         M9YSbsKxXIcpg==
+Date:   Thu, 19 May 2022 10:59:19 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Dave Marchevsky <davemarchevsky@fb.com>,
+        linux-fsdevel@vger.kernel.org,
+        Seth Forshee <sforshee@digitalocean.com>,
+        Rik van Riel <riel@surriel.com>,
+        kernel-team <kernel-team@fb.com>,
+        Andrii Nakryiko <andrii@kernel.org>, clm@fb.com
+Subject: Re: [PATCH] fuse: allow CAP_SYS_ADMIN in root userns to access
+ allow_other mount
+Message-ID: <20220519085919.yqj2hvlzg7gpzby3@wittgenstein>
+References: <20211111221142.4096653-1-davemarchevsky@fb.com>
+ <20211112101307.iqf3nhxgchf2u2i3@wittgenstein>
+ <0515c3c8-c9e3-25dd-4b49-bb8e19c76f0d@fb.com>
+ <CAJfpegtBuULgvqSkOP==HV3_cU2KuvnywLWvmMTGUihRnDcJmQ@mail.gmail.com>
+ <d6f632bc-c321-488d-f50e-749d641786d6@fb.com>
+ <20220518112229.s5nalbyd523nxxru@wittgenstein>
+ <CAJfpegtNKbOzu0F=-k_ovxrAOYsOBk91e3v6GPgpfYYjsAM5xw@mail.gmail.com>
+ <CAEf4BzaNjPMgBWuRH_me=+Gp6_nmuwyY7L-wiGFs6G=5A=fQ4g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <YoX/4fwQOYyTL34a@infradead.org>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+In-Reply-To: <CAEf4BzaNjPMgBWuRH_me=+Gp6_nmuwyY7L-wiGFs6G=5A=fQ4g@mail.gmail.com>
+X-Spam-Status: No, score=-7.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 19-05-22 01:29:21, Christoph Hellwig wrote:
-> > +static int balance_dirty_pages_ratelimited_flags(struct address_space *mapping,
-> > +						bool no_wait)
-> >  {
+On Wed, May 18, 2022 at 09:56:26PM -0700, Andrii Nakryiko wrote:
+> On Wed, May 18, 2022 at 4:26 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
+> >
+> > On Wed, 18 May 2022 at 13:22, Christian Brauner <brauner@kernel.org> wrote:
+> > >
+> > > On Tue, May 17, 2022 at 12:50:32PM -0400, Dave Marchevsky wrote:
+> >
+> > > > Sorry to ressurect this old thread. My proposed alternate approach of "special
+> > > > ioctl to grant exception to descendant userns check" proved unnecessarily
+> > > > complex: ioctls also go through fuse_allow_current_process check, so a special
+> > > > carve-out would be necessary for in both ioctl and fuse_permission check in
+> > > > order to make it possible for non-descendant-userns user to opt in to exception.
+> > > >
+> > > > How about a version of this patch with CAP_DAC_READ_SEARCH check? This way
+> > > > there's more of a clear opt-in vs CAP_SYS_ADMIN.
+> > >
+> > > I still think this isn't needed given that especially for the use-cases
+> > > listed here you have a workable userspace solution to this problem.
 > 
-> This doesn't actully take flags, but a single boolean argument.  So
-> either it needs a new name, or we actually pass a descriptiv flag.
->
-> > +/**
-> > + * balance_dirty_pages_ratelimited_async - balance dirty memory state
-> > + * @mapping: address_space which was dirtied
-> > + *
-> > + * Processes which are dirtying memory should call in here once for each page
-> > + * which was newly dirtied.  The function will periodically check the system's
-> > + * dirty state and will initiate writeback if needed.
-> > + *
-> > + * Once we're over the dirty memory limit we decrease the ratelimiting
-> > + * by a lot, to prevent individual processes from overshooting the limit
-> > + * by (ratelimit_pages) each.
-> > + *
-> > + * This is the async version of the API. It only checks if it is required to
-> > + * balance dirty pages. In case it needs to balance dirty pages, it returns
-> > + * -EAGAIN.
-> > + */
-> > +int  balance_dirty_pages_ratelimited_async(struct address_space *mapping)
-> > +{
-> > +	return balance_dirty_pages_ratelimited_flags(mapping, true);
-> > +}
-> > +EXPORT_SYMBOL(balance_dirty_pages_ratelimited_async);
+> Unfortunately such userspace solution isn't that great in practice.
+> It's both very cumbersome to implement and integrate into existing
+> profiling solutions and causes undesired inefficiencies when
+> processing (typically for stack trace symbolization) lots of profiled
+> processes.
 > 
-> I'd much rather export the underlying
-> balance_dirty_pages_ratelimited_flags helper than adding a pointless
-> wrapper here.  And as long as only iomap is supported there is no need
-> to export it at all.
+> > >
+> > > If the CAP_SYS_ADMIN/CAP_DAC_READ_SEARCH check were really just about
+> > > giving a privileged task access then it'd be fine imho. But given that
+> > > this means the privileged task is open to a DoS attack it seems we're
+> > > building a trap into the fuse code.
+> 
+> Running under root presumably means that the application knows what
+> it's doing (and it can do a lot of dangerous and harmful things
+> outside of FUSE already), so why should there be any more opt in for
+> it to access file contents? CAP_SYS_ADMIN can do pretty much anything
+> in the system, it seems a bit asymmetric to have extra FUSE-specific
+> restrictions for it.
 
-This was actually my suggestion so I take the blame ;) I have suggested
-this because I don't like non-static functions with bool arguments (it is
-unnecessarily complicated to understand what the argument means or grep for
-it etc.). If you don't like the wrapper, creating
+Processes trying to access a fuse filesystem that is not in the same
+userns or a descendant userns are open to DoS attacks. This specifically
+includes processes capable in the initial userns.
 
-int balance_dirty_pages_ratelimited_flags(struct address_space *mapping,
-					  unsigned int flags)
+If it suddenly becomes possible that an initial userns capable process
+can access fuse filesystems in any userns than any such process
+accessing a fuse filesystem unintentionally will be susceptible to DoS
+attacks.
 
-and have something like:
+Iow, the problem isn't that an initial userns capable process is doing
+something harmful and we're overly careful trying to prevent this and
+thereby going against standard CAP_SYS_ADMIN assumptions; it's that an
+initial userns capable process can unintentionally have something
+harmful done to it simply by accessing a fuse filesystem.
 
-#define BDP_NOWAIT 0x0001
-
-is fine with me as well.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+This is even more concerning since rn this isn't possible so this patch
+is removing a protection/security mechanism. The performance argument
+isn't enough to justify this imho.
