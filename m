@@ -2,85 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5328252CB32
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 May 2022 06:40:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC0C952CB55
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 May 2022 06:56:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233724AbiESEkr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 May 2022 00:40:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48440 "EHLO
+        id S233854AbiESE4N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 May 2022 00:56:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231560AbiESEkp (ORCPT
+        with ESMTP id S231965AbiESE4K (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 May 2022 00:40:45 -0400
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F39ADA;
-        Wed, 18 May 2022 21:40:43 -0700 (PDT)
-Received: by mail-ed1-f54.google.com with SMTP id fd25so5520337edb.3;
-        Wed, 18 May 2022 21:40:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=gJpugRid5rPt6TxVqL25aUNgN6RjYO2hhneZw/oa1YE=;
-        b=fg7Ym5UW8w707cRxQ5thfonzH1Y177+xUzN9pbPDATWjwtj90asQWoEJuiXDdu/VUk
-         FtGkT/Yb6VtWeTXuo6tReQYW3eS2BGx4icDuxCv6YS+l89fSdIbohfXj8/6hhL0sT8Fl
-         tGRXVvXvVU9D+PKn60nzRkgNX/wNWpnd4EiIgOt+lKlqJga9iadl17O8KyxIzGE9knV+
-         GljuRoIchCRE8/S+JIho1jfrY3kCM0r1SBGmCAOijdlFW5KFwaU9ydk1m6QxgremYaPh
-         zWdZNm0E8hpd+80iuhN1jMKxi8+kKsai787oMf+HsyU6IDoumAdFZYLfZ5/QCOVJcVD4
-         fRDw==
-X-Gm-Message-State: AOAM532r6j7sD4VxaiBLm4ebC/xzZZcXHzJjhzhzZ1ZplRpwIha630AS
-        hGSLejB3QDjLPhBybQCvDTA=
-X-Google-Smtp-Source: ABdhPJzMVd6V+6dPgGlnuHVA0Zwht1ML3Ao8TREzj1ndYR5sK6Bmq6nlszpuDmOEVjaK8+HeoNGGHw==
-X-Received: by 2002:aa7:d619:0:b0:42a:af7b:eda7 with SMTP id c25-20020aa7d619000000b0042aaf7beda7mr3239231edr.235.1652935241859;
-        Wed, 18 May 2022 21:40:41 -0700 (PDT)
-Received: from [192.168.50.14] (178-117-55-239.access.telenet.be. [178.117.55.239])
-        by smtp.gmail.com with ESMTPSA id z18-20020a17090674d200b006f3ef214e42sm1703223ejl.168.2022.05.18.21.40.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 May 2022 21:40:41 -0700 (PDT)
-Message-ID: <ec944a31-3edb-37fa-135e-bfcd970d8231@acm.org>
-Date:   Thu, 19 May 2022 06:40:40 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCHv2 3/3] block: relax direct io memory alignment
-Content-Language: en-US
-To:     Eric Biggers <ebiggers@kernel.org>, Keith Busch <kbusch@kernel.org>
+        Thu, 19 May 2022 00:56:10 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F3D53DDC8;
+        Wed, 18 May 2022 21:56:09 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id F0D1F619C5;
+        Thu, 19 May 2022 04:56:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6AC2C385B8;
+        Thu, 19 May 2022 04:56:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1652936168;
+        bh=Mlu435KOBZN9YaaP2njYDaCi7dTqDX12su/oOqTE3TA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=TA3uT4S1inQrAp/hoFhxBBckcMayyyl3WrP1LsbSNRxxHqGz+Qh70ZJH6wbZ6n5E1
+         I5mKLj6+Yyaz4H+vrXbfoOPkq6XMoVFdFoPw6AWl7G8S9Pifcv1ioX41gu/wJahPbq
+         bre4/Ty4BEl6HUsKtOxuXzQ0LXr3b1s86vCMJGDqZiR9IBOosiLWFdLg22vRdkQAk6
+         6Z9Ui0xPmfQwB+92RUyG+qboCoxC1L6zlXzl3NdMq2bk89UjZhfPHj0gqOE2Gx+HxG
+         iG0Qye2Tw7iVXOwuKaRcb6YLPgTTshmFDR+oDNc3agFRscwOWa5HVW70GXIpHDiBBe
+         VZ5KFXAZnasIA==
+Date:   Wed, 18 May 2022 22:56:04 -0600
+From:   Keith Busch <kbusch@kernel.org>
+To:     Eric Biggers <ebiggers@kernel.org>
 Cc:     Keith Busch <kbusch@fb.com>, linux-fsdevel@vger.kernel.org,
         linux-block@vger.kernel.org, axboe@kernel.dk,
         Kernel Team <Kernel-team@fb.com>, hch@lst.de,
-        damien.lemoal@opensource.wdc.com
+        bvanassche@acm.org, damien.lemoal@opensource.wdc.com
+Subject: Re: [PATCHv2 3/3] block: relax direct io memory alignment
+Message-ID: <YoXN5CpSGGe7+OJs@kbusch-mbp.dhcp.thefacebook.com>
 References: <20220518171131.3525293-1-kbusch@fb.com>
- <20220518171131.3525293-4-kbusch@fb.com> <YoWL+T8JiIO5Ln3h@sol.localdomain>
+ <20220518171131.3525293-4-kbusch@fb.com>
+ <YoWL+T8JiIO5Ln3h@sol.localdomain>
  <YoWWtwsiKGqoTbVU@kbusch-mbp.dhcp.thefacebook.com>
  <YoWjBxmKDQC1mCIz@sol.localdomain>
  <YoWkiCdduzyQxHR+@kbusch-mbp.dhcp.thefacebook.com>
  <YoWmi0mvoIk3CfQN@sol.localdomain>
  <YoWqlqIzBcYGkcnu@kbusch-mbp.dhcp.thefacebook.com>
  <YoW5Iy+Vbk4Rv3zT@sol.localdomain>
-From:   Bart Van Assche <bvanassche@acm.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 In-Reply-To: <YoW5Iy+Vbk4Rv3zT@sol.localdomain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.5 required=5.0 tests=BAYES_00,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-7.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/19/22 05:27, Eric Biggers wrote:
-> But the DMA alignment can be much lower, like 8 bytes (see nvme_set_queue_limits()).
+On Wed, May 18, 2022 at 08:27:31PM -0700, Eric Biggers wrote:
+> 
+> So the bio ends up with a total length that is a multiple of the logical block
+> size, but the lengths of the individual bvecs in the bio are *not* necessarily
+> multiples of the logical block size.  That's the problem.
 
-There are block drivers that support byte alignment of block layer data 
-buffers. From the iSCSI over TCP driver:
+I'm surely missing something here. I know the bvecs are not necessarily lbs
+aligned, but why does that matter? Is there some driver that can only take
+exactly 1 bvec, but allows it to be unaligned? If so, we could take the segment
+queue limit into account, but I am not sure that we need to.
+ 
+> Note, there's also lots of code that assumes that bio_vec::bv_len is a multiple
+> of 512.  
 
-	blk_queue_dma_alignment(sdev->request_queue, 0);
+Could you point me to some examples?
 
-Thanks,
+> That was implied by it being a multiple of the logical block size.  But
+> the DMA alignment can be much lower, like 8 bytes (see nvme_set_queue_limits()).
 
-Bart.
+That's the driver this was tested on, though I just changed it to 4 bytes for
+5.19.
