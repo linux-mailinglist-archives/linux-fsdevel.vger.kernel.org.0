@@ -2,65 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EB86B52E867
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 May 2022 11:09:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE7F952E87F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 May 2022 11:15:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347598AbiETJJb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 May 2022 05:09:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53364 "EHLO
+        id S1347636AbiETJPN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 May 2022 05:15:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241563AbiETJJ3 (ORCPT
+        with ESMTP id S231345AbiETJPM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 May 2022 05:09:29 -0400
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E894366699
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 May 2022 02:09:27 -0700 (PDT)
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20220520090926euoutp020a6991c8e8cb6005a1068b8eef4758ed~wxRc7CAkw1518215182euoutp021
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 May 2022 09:09:26 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20220520090926euoutp020a6991c8e8cb6005a1068b8eef4758ed~wxRc7CAkw1518215182euoutp021
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1653037766;
-        bh=EDj6j9kMtVDfHH3Ex41sLPuCJwXBjQ9MILCkOs8LWTI=;
-        h=Date:Subject:To:CC:From:In-Reply-To:References:From;
-        b=kGUiVKPcItz2XiHZ74bIYNO1u/vpDWI0Yrs43Jnkt/aQ4Z35We7eBY79PHrs7Y2ZB
-         C52yHtVoZvofaf2AObEEW4bVtwWzd7jobCP1W4+zoYKp17JETYTOXtBlHaS+fidV3E
-         Nbz97JHc9t7yu3Ij6M1+w/UJflMwV4Vwmo9jos9I=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20220520090926eucas1p1bc12b0a9dc442b78da3af9ddc2202325~wxRcsrHdB0182901829eucas1p19;
-        Fri, 20 May 2022 09:09:26 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id B3.9D.10009.6CA57826; Fri, 20
-        May 2022 10:09:26 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20220520090925eucas1p26954f3932778b1e6d579d50095b3f138~wxRcJyMFD2110521105eucas1p2s;
-        Fri, 20 May 2022 09:09:25 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220520090925eusmtrp1b0e8eda967a664f924b0e66aa52a2ca9~wxRcI0pXY2190521905eusmtrp1Y;
-        Fri, 20 May 2022 09:09:25 +0000 (GMT)
-X-AuditID: cbfec7f2-e95ff70000002719-49-62875ac6612c
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id EC.2D.09522.5CA57826; Fri, 20
-        May 2022 10:09:25 +0100 (BST)
-Received: from CAMSVWEXC01.scsc.local (unknown [106.1.227.71]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20220520090925eusmtip11d5b71aafeef920d4c670fe714700b5a~wxRb-0jrS1395113951eusmtip1U;
-        Fri, 20 May 2022 09:09:25 +0000 (GMT)
-Received: from [192.168.8.130] (106.210.248.20) by CAMSVWEXC01.scsc.local
-        (2002:6a01:e347::6a01:e347) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-        Fri, 20 May 2022 10:09:24 +0100
-Message-ID: <fc015adb-4b18-a144-7859-cfe434b74166@samsung.com>
-Date:   Fri, 20 May 2022 11:09:23 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
-        Thunderbird/91.8.1
-Subject: Re: [PATCH v4 08/13] btrfs:zoned: make sb for npo2 zone devices
- align with sb log offsets
-Content-Language: en-US
-To:     Naohiro Aota <Naohiro.Aota@wdc.com>
+        Fri, 20 May 2022 05:15:12 -0400
+Received: from esa1.hgst.iphmx.com (esa1.hgst.iphmx.com [68.232.141.245])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E19014640A;
+        Fri, 20 May 2022 02:15:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1653038108; x=1684574108;
+  h=from:to:cc:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=1+qRp5Mll28ogQWLOE7BRtDBLY8ceOHLj35KfCnX8Tc=;
+  b=QK3vvUxpQK/joBnEqvHC3lKxc3na3ykaYpgWBYOIjRdyfrvp8g2LB/Gj
+   std8DMwzQcjYgsZCDITuZXRB7R+UpG6iimy5zmQ6WiuFgDDLNqAAFq1Ao
+   Vry/Cr/3+7DckeJGyZnbmH6XN22trStpA7ue/YXA8lApWTHytDYt1xvSS
+   4mQFRafYp/+tPwVhhFq7XHpuvLF9RKeb7XRiNE5xa1RJ4dHm7cCCrOive
+   ARpFtw4USXp9fV0byngKcQEedUbTzXi6YYVKg7qwXXtGKKpMPfQ/N6gNA
+   v8+mXYKRFrXWbtD5IEtjtV72JbPJa3Uhiqht5vrmdFTFIsQZB2bJ+dh/8
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.91,238,1647273600"; 
+   d="scan'208";a="312877680"
+Received: from mail-dm6nam10lp2108.outbound.protection.outlook.com (HELO NAM10-DM6-obe.outbound.protection.outlook.com) ([104.47.58.108])
+  by ob1.hgst.iphmx.com with ESMTP; 20 May 2022 17:15:06 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=hbVxxqVdrUPmHxTzRQKGeNafT4qAGJ5fcHHbkII+UaE2nMIjBwkmtUPMvrX7JodsI27OvDQcim4sOhiiufILec1QF6+8+fKvr9mpp/gvBPcO/cfsq1rRoqyXe+6p9p8CQzCfxxAW2vgiDHXaQI2M5wfakbkSfnePvfzDIDtJQV7jReTHV8aLXBo6YxODbFS8HXzmDEru032KYKH8C1LKW1uufKO/5i3fVAwJ901EgkD/jwfs8UOuaffTO/SrVmWogrKtCAv1Wd94oRnBWIsI2gZxsej9SdYb04PeS0AkC+fCpoXt8+N+WtSt8gdVLMgIXAHeM7NkXbAMm/CNxQMXQQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1+qRp5Mll28ogQWLOE7BRtDBLY8ceOHLj35KfCnX8Tc=;
+ b=ar4+zXFo7iPlQsFe/N8fQ/MgcN1UUF35/J0ezWpPbN+aYL7FOUUUqtUmrnjHcQJtvnbm4cJ7S7PrY2Ic644LCC+tONBtEAgp0S3peArpGrsqSHVlygylTsEONFGzmKtMHadYC6sZP1jmrwFDPaM+djqtf3YOR9PDnQWNANLLHZ6tcU1lCvQ7eK1IydzJtUSjQvkJkdEU0O0i9BFEfGTIEyaBFJp5pMtTLPz+0z/7jr7fAv45xSX+GiCBBNxfMn6EodIBVM/YJ4ULQRl++vArJZ/MS7wYQ3IMk/9nV1qkM7lPyKE83ehlwRcgMl0UwYTzkdvfs5SqTY/mEtfUImzUiQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1+qRp5Mll28ogQWLOE7BRtDBLY8ceOHLj35KfCnX8Tc=;
+ b=X2FaGONDIvz9GVu65lKP2Ai5aDk9Wj0wdeKSEKfYHrDJihN2/GDpYXs6RtAt1nR66UyYSxVte3tOt+Xk9p8kJ1ZVVaRZCM0pXa5LEvTbO/RmVQwVZ8M0SpptUM3ngNP/eg32IKIvZHOTdYjjjNYIDp19pAgNZh5prGTUgA7YrgY=
+Received: from PH0PR04MB7416.namprd04.prod.outlook.com (2603:10b6:510:12::17)
+ by DM6PR04MB6668.namprd04.prod.outlook.com (2603:10b6:5:249::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5273.17; Fri, 20 May
+ 2022 09:15:05 +0000
+Received: from PH0PR04MB7416.namprd04.prod.outlook.com
+ ([fe80::81de:9644:6159:cb38]) by PH0PR04MB7416.namprd04.prod.outlook.com
+ ([fe80::81de:9644:6159:cb38%4]) with mapi id 15.20.5273.017; Fri, 20 May 2022
+ 09:15:05 +0000
+From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+To:     Pankaj Raghav <p.raghav@samsung.com>,
+        "dsterba@suse.cz" <dsterba@suse.cz>
 CC:     "axboe@kernel.dk" <axboe@kernel.dk>,
         "damien.lemoal@opensource.wdc.com" <damien.lemoal@opensource.wdc.com>,
         "pankydev8@gmail.com" <pankydev8@gmail.com>,
@@ -73,103 +71,138 @@ CC:     "axboe@kernel.dk" <axboe@kernel.dk>,
         "gost.dev@samsung.com" <gost.dev@samsung.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "dm-devel@redhat.com" <dm-devel@redhat.com>
-From:   Pankaj Raghav <p.raghav@samsung.com>
-In-Reply-To: <20220519075926.6h4ka3qbo3vv26ve@naota-xeon>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [106.210.248.20]
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-        CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrEKsWRmVeSWpSXmKPExsWy7djP87rHotqTDPrnylusvtvPZvH77Hlm
-        i73vZrNaXPjRyGSxcvVRJoueAx9YLPbe0ra49HgFu8WevSdZLC7vmsNmMX/ZU3aLicc3s1qs
-        ufmUxYHX49+JNWweO2fdZfe4fLbUY/OSeo/dNxuAIq33WT3e77vK5rF+y1UWj8+b5DzaD3Qz
-        BXBFcdmkpOZklqUW6dslcGXcm3KbraCVu+Laut9sDYwnOLoYOTkkBEwk7p+Zw9TFyMUhJLCC
-        UWJd32NWCOcLo8T5teegnM+MEl+vnGaFabl3cjk7iC0ksJxRYts6NbiiJyd/QM3aBeQsfccM
-        UsUrYCcxf9NZJhCbRUBVYur1TlaIuKDEyZlPWEBsUYEIiWmzzrB1MXJwCAukSOxYWQQSZhYQ
-        l7j1ZD5Yq4iAusTHp0fZQOYzCxxmldh0FuQ8Dg42AS2Jxk6wgzgFLCVOHj/MDNGrKdG6/Tc7
-        hC0vsf3tHGaQcgkBJYltv0wgfqmVWHvsDDvISAmBc5wSp950sUMkXCSuX25nhrCFJV4d3wIV
-        l5E4PbmHBcKulnh64zczRHMLo0T/zvVsEAusJfrO5EDUOEpc+vYZai+fxI23ghDn8ElM2jad
-        eQKj6iykgJiF5ONZSD6YheSDBYwsqxjFU0uLc9NTiw3zUsv1ihNzi0vz0vWS83M3MQKT3el/
-        xz/tYJz76qPeIUYmDsZDjBIczEoivIy5LUlCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeZMzNyQK
-        CaQnlqRmp6YWpBbBZJk4OKUamNxCf7tJ1t2s1Hz+7jrnPw6zY7nP1Gae4nZ7Ut5V97hxi/xt
-        27a+6Ac71q7fGzmfObXL7nrh1pVLb86TrPi3trps1Ylt+lOUTh4wmu3361fuzrtdTxuZRX3Y
-        fu/uz5ti8PP+lKT5Gz5sWim9368tN3BK7VS1qP0Xvky5eyMzsknr+TbnrNDtLHdf+tWybRe7
-        F3m5h8nw+qXApDlRq9bElXze7jD39oOz755tF5omKL3n+gz5ae2P/x3/cDetnbtBpkk4XVxo
-        YkR0+UGW2R4Wz9YuMHxaXjhj5elFk4uTWG9/PJrH9DLlW0VmyaYrHauP37d7qqvsbx4iFLvV
-        5Vm0q16nyIUcjfNh8132sHHPktRTYinOSDTUYi4qTgQAS/3CwuUDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgleLIzCtJLcpLzFFi42I5/e/4Xd2jUe1JBucOm1usvtvPZvH77Hlm
-        i73vZrNaXPjRyGSxcvVRJoueAx9YLPbe0ra49HgFu8WevSdZLC7vmsNmMX/ZU3aLicc3s1qs
-        ufmUxYHX49+JNWweO2fdZfe4fLbUY/OSeo/dNxuAIq33WT3e77vK5rF+y1UWj8+b5DzaD3Qz
-        BXBF6dkU5ZeWpCpk5BeX2CpFG1oY6RlaWugZmVjqGRqbx1oZmSrp29mkpOZklqUW6dsl6GXc
-        m3KbraCVu+Laut9sDYwnOLoYOTkkBEwk7p1czt7FyMUhJLCUUeLjl1lsEAkZiU9XPrJD2MIS
-        f651sUEUfWSUeHh+GZSzi1Hi/u+zzCBVvAJ2EvM3nWUCsVkEVCWmXu9khYgLSpyc+YQFxBYV
-        iJB4sPssWFxYIEXi0afZYDazgLjErSfzwXpFBNQlPj49ygYRP8wqsWuJOMSyd4wSO3Z+Zuxi
-        5OBgE9CSaOwEu45TwFLi5PHDzBD1mhKt23+zQ9jyEtvfzmEGKZcQUJLY9ssE4plaiVf3dzNO
-        YBSdheS6WUiumIVk0iwkkxYwsqxiFEktLc5Nzy021CtOzC0uzUvXS87P3cQITBLbjv3cvINx
-        3quPeocYmTgYDzFKcDArifAy5rYkCfGmJFZWpRblxxeV5qQWH2I0BQbRRGYp0eR8YJrKK4k3
-        NDMwNTQxszQwtTQzVhLn9SzoSBQSSE8sSc1OTS1ILYLpY+LglGpgCgrZYGzEus/cpDohxXPx
-        v2V7X3GsE+/ekbPvwL6G0oeTjlxzVRP+u1l1XvtrR7G+PRbrJh1WUDDzfBnhuTdlM3Privfm
-        JtwuDMJexpctXa/0TtZY9eqnxclNTFyHuZcH/W/Jcm+Ya74y5J3l1Y0R1/gWvGtc/0O9vHYr
-        7yfzkt8pDJnBKvfyYj5MKzE7uFTrfOX/1W5XE6+YX+tlMTtnfcyc2/cSp1uG5YKSvZ+OqzK4
-        PhF8evlhzyGHuglXWur4VfY1zLLX4LxYqTk7fXKzrKCp0AvvL+fydE6IS86Wf82QL+FTuDk+
-        T+tS/8UHe6tPn1t52vTqn/UMgpY3d37ez73sB+O/+Nh/jUf1RBR1lViKMxINtZiLihMBGIST
-        t5sDAAA=
-X-CMS-MailID: 20220520090925eucas1p26954f3932778b1e6d579d50095b3f138
-X-Msg-Generator: CA
-X-RootMTR: 20220516165429eucas1p272c8b4325a488675f08f2d7016aa6230
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20220516165429eucas1p272c8b4325a488675f08f2d7016aa6230
+Subject: Re: [PATCH v4 08/13] btrfs:zoned: make sb for npo2 zone devices align
+ with sb log offsets
+Thread-Topic: [PATCH v4 08/13] btrfs:zoned: make sb for npo2 zone devices
+ align with sb log offsets
+Thread-Index: AQHYaUWvGG/TZMkJWESbmBi0yiTiyA==
+Date:   Fri, 20 May 2022 09:15:05 +0000
+Message-ID: <PH0PR04MB7416C7CBF8E4E41D64DF147A9BD39@PH0PR04MB7416.namprd04.prod.outlook.com>
 References: <20220516165416.171196-1-p.raghav@samsung.com>
-        <CGME20220516165429eucas1p272c8b4325a488675f08f2d7016aa6230@eucas1p2.samsung.com>
-        <20220516165416.171196-9-p.raghav@samsung.com>
-        <20220519075926.6h4ka3qbo3vv26ve@naota-xeon>
-X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_HI,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+ <CGME20220516165429eucas1p272c8b4325a488675f08f2d7016aa6230@eucas1p2.samsung.com>
+ <20220516165416.171196-9-p.raghav@samsung.com>
+ <20220517124257.GD18596@twin.jikos.cz>
+ <717a2c83-0678-9310-4c75-9ad5da0472f6@samsung.com>
+ <PH0PR04MB7416FF84CE207FEC3ED8912F9BD09@PH0PR04MB7416.namprd04.prod.outlook.com>
+ <2252c3b2-0f65-945e-dc39-c0726bce72e8@samsung.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=wdc.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: f5f3f2af-e100-48eb-e8dc-08da3a413a5b
+x-ms-traffictypediagnostic: DM6PR04MB6668:EE_
+x-microsoft-antispam-prvs: <DM6PR04MB6668DA2A73C4CB34C4F6108F9BD39@DM6PR04MB6668.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: QXEpMyuy4WxqATlFhkTReMuS/vGlQEWrVlxB+wEiLlydTPBIovLOP6yQBkDltFzt13S4mSsxlfZ6b7s2wQEqDucK7M8/WdLMMGxPZ6gj93e10VL/St2cA4uUHUTUOSyryF5/ft6ndgjhyCzgHFXDQSMv/Hi2T3D1qV4wI/oF40hwwQtG+UpozqaBlHGaoW/hg9nBzwXsP0R2VJU3xre167i42Tt+e7rq1m0byoO423EHsnNgeEkT9tR9rkgBO44IWZCV/6Q0ngxub3XWBfQir9Wj1dtPpxRG4P55OIY72ve08Un6ahGQPnq6nB6pge4VLFk+erpZor38565RYN1hs880ZIiXEsL7nsljf15hAfHumkj/iwG0+dp9NyckN9xWsgWQ5XBfjNCQ+mVrIv/DG4pJg3+9Y1uNJuVoYmPdT9FTH5mHckkmXmlCr9apJSRGml72tslwj3/IL7VsJhWjKsfSU5PgMKUmfCpAkmS1ZZ/ppkf6LD21jf+R/pTU/O+0E0+251SkyUtMzWzMy1q+py9ExtapY6qIbEImFha6vJzyw0VBtFV/Io2PC5/n1qspfsMpn4LGcjsBM2cqm47m2ZqZyDvFCLkKudz59MlUueRq2YwyBVU+5Lh6MtSMSKCnAQbcMK8nC+MJEG8rp60fKIGx+cdQkBEoyfXhn/EGkkOb/xsn1Qasawz8Ju9no9xXy+/anBNjVlr4IrOc1Ii6IQ==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR04MB7416.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(5660300002)(7416002)(38070700005)(86362001)(55016003)(54906003)(316002)(33656002)(186003)(83380400001)(9686003)(82960400001)(2906002)(508600001)(110136005)(4326008)(8676002)(38100700002)(122000001)(26005)(66476007)(53546011)(71200400001)(66446008)(91956017)(8936002)(66556008)(76116006)(7696005)(52536014)(6506007)(64756008)(66946007);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?WSXsknwM54ib8CNLzcjmNtUCQDu4s3yssQ5mdrLEkmAUXfVLvvfmU9ixkaa2?=
+ =?us-ascii?Q?kboHLYw+sMxzaHW4QlY0YC6Bw/Y8DSK1/cLPVOvD/JoG4fnv91AkrXSbARDC?=
+ =?us-ascii?Q?Pr+ihTZX6BMuk2bMu3kr7R+Fw6x79fqkAUCoItFxVuKLI1AxjzCi1YDROeXZ?=
+ =?us-ascii?Q?mSGVxC7IkzDOuhCI292nJznoHZEGsi4yA/pU8m2dGoyhgmgK4wc3UBHRedZW?=
+ =?us-ascii?Q?JcYU7zjj13whhwIgP6cUk+C2joANfVkJ7xE0JSczP7v93nhIVFmxo/j8/Ml5?=
+ =?us-ascii?Q?G+WYbBE8WOuPFt+4IaGMgghoksITC1F7T3yhSxu4xoTi0jN2EfBPFbLAj685?=
+ =?us-ascii?Q?qG1IhVF461PuxX7ODKBeoQSu8jIQ62e1xb1oM5HfENCFq43dXizIOwrViKr7?=
+ =?us-ascii?Q?D1vCkcOYtw0H0N3jY4SjYVr4z1HNpmwmtuUg9/fIck8DPW0Jb245c+tcTCjx?=
+ =?us-ascii?Q?TwpVoVQaAM90Gt14YeATMFGMSxmco+FL6hcfkv2oPkah6ncLvsvBgX1L2ZuV?=
+ =?us-ascii?Q?7uVnykUOFeH9m0JNih5Ihj7ndjnpu3Qp2TWrR8BGy3+bZJzfQ5isopsr49lM?=
+ =?us-ascii?Q?kVAP6B1aLulELjA1nbh0SmfQ6+yqZrzTZMO6p864EfpBTgcgb2GRIWU1UCG0?=
+ =?us-ascii?Q?XUXAJ/evCFLT9hs3eVNRJ6JyX0DENb/YJg6vHTj0GqunPtAyzmhHdDKPUFJr?=
+ =?us-ascii?Q?ZrD5Ocrv+3lexV3KVmHJzdq+sXg1qhmuQ5YBMKiqv251x+EfQDaftAR6OktQ?=
+ =?us-ascii?Q?EmSd85xz1zyW8j8IGBM6uOh6Yj0QuhSFQiLwj0tLmV949XzxdMrHP/7iDkbU?=
+ =?us-ascii?Q?24y2mlA8xoBGk6KUQzCnopNEmbwnxZ74e3g1nqCVkbCyzlV665gW4lWv65Ey?=
+ =?us-ascii?Q?dKoyq7ocy8wsMa0fjT4wLsleC71hv3zXg++g9GQeRsvukJcZviJ9Cu0E1vo9?=
+ =?us-ascii?Q?gogjhZeKrfSn4CSJ4SWdU/BkBRa9qFYGLcvsEHGsrkpMl3PeARnug25mktBk?=
+ =?us-ascii?Q?yZhCZd1KZrMlSoqeOZ7CwZeWjE8290+m89d1o5zOxAu/OHBDnSbOkFHyzWEo?=
+ =?us-ascii?Q?7zwqPhzK59FQfc9kHQF5tjJ7aiBt9L0afifk3CWh8LTUCXesr/1z0FPZ2UVz?=
+ =?us-ascii?Q?QOI1/iFbBPYfqfHcDmprbAZrRZ9JQ0ycd1XNah33raa0WmQ5USHSc+nMlKOo?=
+ =?us-ascii?Q?BqE1cc2fKmKTyNANqZeg9BJ2/MmFvxNuFGYDmfwVbFxCpsEEOtK3mnMvLPwR?=
+ =?us-ascii?Q?ScC+7RU/4fJnNdbZeB9khE4thu/C6z7bL+z9dsj8eqoWtc1lVP0jVK7eYN9r?=
+ =?us-ascii?Q?fHK0RRtUT7Gk5Yw82Ts5taxac8NFq9k1z/zGpJjOl6iJ3IL7+Ykn+jJoq05H?=
+ =?us-ascii?Q?hZd8lUDmgc3ic2ECIHlfACz23y8/AOSedHGbztCwLGr0T3yNofFBewjhQKDA?=
+ =?us-ascii?Q?CgQZRmwUMiYd1J3COq8VoyoXt9V08Ve/UMEB6sKycCCCiX7uuczy0M4knjaP?=
+ =?us-ascii?Q?hwyFRlru9rP+B/t8aVMtQAdEofPV7p4Y+cxamvdsxcNMIGbqcO6moUyfTdbS?=
+ =?us-ascii?Q?yeX8KPXXXvSjwmns9xtMyFsfjroDSoymQaiNfEeG82duC5Lp/9TPgQudCuf3?=
+ =?us-ascii?Q?RwF5B7ZjYM0d7vuLxBgnYKOolBtHwoisUsRM/NnBLgf1gTEDh5GwdSsWY5lo?=
+ =?us-ascii?Q?MDi7lpuunmTLkvuwtiBIHhvuiRbQlnAV5PoXI2yttHHqRXCAMQtS2BQT6cdQ?=
+ =?us-ascii?Q?NgLAINBuBJ40ePOJYquhOuZIbNZqsMHHjisv+6UfIHrUrbOssyX2?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR04MB7416.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f5f3f2af-e100-48eb-e8dc-08da3a413a5b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 May 2022 09:15:05.2265
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: DLwgx1Q+Dnwk3RsZDZxwA+SULokeFGc6+o8MCY3eY0pEYNPCBkiTMnoRUDGzCTcrYhhe8ZvQzaB8TzXx4yqZzgiYdgwwBz2ri4HAZbwk1R8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR04MB6668
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/19/22 09:59, Naohiro Aota wrote:
->> +
->>  static int sb_log_location(struct block_device *bdev, struct blk_zone *zones,
->> -			   int rw, u64 *bytenr_ret)
->> +			   int rw, int mirror, u64 *bytenr_ret)
->>  {
->>  	u64 wp;
->>  	int ret;
->> +	bool zones_empty = false;
->>  
->>  	if (zones[0].type == BLK_ZONE_TYPE_CONVENTIONAL) {
->>  		*bytenr_ret = zones[0].start << SECTOR_SHIFT;
->> @@ -775,13 +808,31 @@ static int sb_log_location(struct block_device *bdev, struct blk_zone *zones,
->>  	if (ret != -ENOENT && ret < 0)
->>  		return ret;
->>  
->> +	if (ret == -ENOENT)
->> +		zones_empty = true;
->> +
-> 
-> I think, we don't need this. We need to issue the zeroout when
-> zones[0]->cond == BLK_ZONE_COND_EMPTY && !is_power_of_2(...) after sending
-> ZONE_RESET if necessary. No?
-> 
-Yeah. I added this extra check to cover all the cases possible. But you
-are right that it is enough to issue zeroout only for this condition:
-zones[0]->cond == BLK_ZONE_COND_EMPTY && !is_power_of_2(...) as both the
-zones empty is not likely to happen.
->>  	if (rw == WRITE) {
->>  		struct blk_zone *reset = NULL;
->> +		bool is_sb_offset_write_req = false;
->> +		u32 reset_zone_nr = -1;
->>  
->> -		if (wp == zones[0].start << SECTOR_SHIFT)
->> +		if (wp == zones[0].start << SECTOR_SHIFT) {
->>  			reset = &zones[0];
->> -		else if (wp == zones[1].start << SECTOR_SHIFT)
->> +			reset_zone_nr = 0;
+On 20/05/2022 11:07, Pankaj Raghav wrote:=0A=
+> On 5/19/22 09:57, Johannes Thumshirn wrote:=0A=
+>>> Unfortunately it is not possible to just move the WP in zoned devices.=
+=0A=
+>>> The only alternative that I could use is to do write zeroes which are=
+=0A=
+>>> natively supported by some devices such as ZNS. It would be nice to kno=
+w=0A=
+>>> if someone had a better solution to this instead of doing write zeroes=
+=0A=
+>>> in zoned devices.=0A=
+>>>=0A=
+>>=0A=
+>> I have another question. In case we need to pad the sb zone with a write=
+=0A=
+>> zeros and have a power fail between the write-zeros and the regular =0A=
+>> super-block write, what happens? I know this padding is only done for th=
+e=0A=
+>> backup super blocks, never the less it can happen and it can happen when=
+=0A=
+>> the primary super block is also corrupted.=0A=
+>>=0A=
+>> AFAIU we're then trying to reach out for a backup super block, look at t=
+he=0A=
+>> write pointer and it only contains zeros but no super block, as only the=
+ =0A=
+>> write-zeros has reached the device and not the super block write.=0A=
+>>=0A=
+>> How is this situation handled?=0A=
+>>=0A=
+> That is a very good point. I did think about this situation while adding=
+=0A=
+> padding to the mirror superblock with write zeroes. If the drive is=0A=
+> **less than 4TB** and with the **primary superblock corrupted**, then it=
+=0A=
+> will be an issue with the situation you have described for npo2 drives.=
+=0A=
+> That situation is not handled here. Ofc this is not an issue when we=0A=
+> have the second mirror at 4TB for bigger drives. Do you have some ideas=
+=0A=
+> in mind for this failure mode?=0A=
+=0A=
+The only idea I have for this is creating a bounce buffer, write the paddin=
+g=0A=
+and the super-block into the buffer and then submit it. But that's too ugly=
+=0A=
+to live.=0A=
+=0A=
+And it would involve changing non-zoned super-block writing code, which I t=
+hink=0A=
+is way to risky.=0A=
