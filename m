@@ -2,276 +2,168 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C78652E7CE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 May 2022 10:39:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC46F52E84A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 May 2022 11:07:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347343AbiETIjc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 May 2022 04:39:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58834 "EHLO
+        id S1347556AbiETJHG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 May 2022 05:07:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344602AbiETIjZ (ORCPT
+        with ESMTP id S1347546AbiETJHD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 May 2022 04:39:25 -0400
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 146F7AFAED;
-        Fri, 20 May 2022 01:39:19 -0700 (PDT)
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20220520083916epoutp023cb1a42d725b95d6d8f1594f01295d96~ww3GiYS5L1883218832epoutp02L;
-        Fri, 20 May 2022 08:39:16 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20220520083916epoutp023cb1a42d725b95d6d8f1594f01295d96~ww3GiYS5L1883218832epoutp02L
+        Fri, 20 May 2022 05:07:03 -0400
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1A42713C357
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 May 2022 02:07:01 -0700 (PDT)
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20220520090659euoutp0259007e3c9ccf421f0d1549751df6f7e4~wxPTi0Aja1108711087euoutp028
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 May 2022 09:06:59 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20220520090659euoutp0259007e3c9ccf421f0d1549751df6f7e4~wxPTi0Aja1108711087euoutp028
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1653035956;
-        bh=UsfrS4UvuS4dFM05SqF8Ta7tbBY/QrlkptYTWqQNH+E=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aia/QyHkPpm/zR9tj4Cj7Hno19svunmYHyHwsInquziQDKY6IlXghgdpNSmRLJkwO
-         rMMgMNRRTwdODovo4wXmgmRKS2FfG2tsdIrmOBUT4Rusv/VF9vkaCQC3zAi4lJgly2
-         CJZrPhtTbfKzpzk8glBclSgx019w9KpRKn0+ZccE=
-Received: from epsmges5p3new.samsung.com (unknown [182.195.42.75]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-        20220520083915epcas5p4ec28bb7c4b401490d717d8b028e47e93~ww3FwITUq1733217332epcas5p44;
-        Fri, 20 May 2022 08:39:15 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        5B.93.09762.3B357826; Fri, 20 May 2022 17:39:15 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-        20220520083805epcas5p40642f5a7f9844c61792cd3ac41ac01d3~ww2E389Eb1223812238epcas5p4E;
-        Fri, 20 May 2022 08:38:05 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220520083805epsmtrp14fa161785f4b8b8d2ec9823b3eae2ad9~ww2E2p3KN0239102391epsmtrp1b;
-        Fri, 20 May 2022 08:38:05 +0000 (GMT)
-X-AuditID: b6c32a4b-1fdff70000002622-65-628753b319ca
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        25.08.08924.D6357826; Fri, 20 May 2022 17:38:05 +0900 (KST)
-Received: from localhost.localdomain (unknown [107.109.224.44]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20220520083757epsmtip233116cea119605d9acfdc1abbb98de9a~ww19d5gaj3055430554epsmtip28;
-        Fri, 20 May 2022 08:37:57 +0000 (GMT)
-From:   Maninder Singh <maninder1.s@samsung.com>
-To:     keescook@chromium.org, pmladek@suse.com, bcain@quicinc.com,
-        mpe@ellerman.id.au, benh@kernel.crashing.org, paulus@samba.org,
-        hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com,
-        borntraeger@linux.ibm.com, svens@linux.ibm.com, satishkh@cisco.com,
-        sebaddel@cisco.com, kartilak@cisco.com, jejb@linux.ibm.com,
-        martin.petersen@oracle.com, mcgrof@kernel.org,
-        jason.wessel@windriver.com, daniel.thompson@linaro.org,
-        dianders@chromium.org, naveen.n.rao@linux.ibm.com,
-        anil.s.keshavamurthy@intel.com, davem@davemloft.net,
-        mhiramat@kernel.org, peterz@infradead.org, mingo@redhat.com,
-        will@kernel.org, longman@redhat.com, boqun.feng@gmail.com,
-        rostedt@goodmis.org, senozhatsky@chromium.org,
-        andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk,
-        akpm@linux-foundation.org, arnd@arndb.de
-Cc:     linux-hexagon@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-modules@vger.kernel.org,
-        kgdb-bugreport@lists.sourceforge.net, v.narang@samsung.com,
-        onkarnath.1@samsung.com, Maninder Singh <maninder1.s@samsung.com>
-Subject: [PATCH 5/5] kallsyms: remove unsed API lookup_symbol_attrs
-Date:   Fri, 20 May 2022 14:07:01 +0530
-Message-Id: <20220520083701.2610975-6-maninder1.s@samsung.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220520083701.2610975-1-maninder1.s@samsung.com>
+        s=mail20170921; t=1653037619;
+        bh=7sUENLoCJCYs1MSYcCbbd75YbMDrAHaelawSM1l7SHo=;
+        h=Date:Subject:To:CC:From:In-Reply-To:References:From;
+        b=U83b2tqKHnKKza0eNrjooK0Gqmpuqkt3920Uitjbn4gdgQQdjZU7jem4VnboYRXna
+         ArdQRocEFlAEG9LIitKHQtNlq0D5G5/Ak6NfWqOGBVJb4fDDI0Upxui8KlE5l8dwMd
+         AfAQPCPWAr0TiU9OVIrPc60cAsNJb9StPy9f8Ous=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20220520090658eucas1p19241042c1d4d4bf5821401c597a1af02~wxPTNJ9M-0637606376eucas1p1x;
+        Fri, 20 May 2022 09:06:58 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 42.2D.10009.23A57826; Fri, 20
+        May 2022 10:06:58 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20220520090658eucas1p1b33f4cb964566691674c4b015509ceec~wxPS0eI0V3138931389eucas1p1D;
+        Fri, 20 May 2022 09:06:58 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20220520090658eusmtrp1fc09ac06a8697122e1bebb8cc020ff52~wxPSzj_us2148821488eusmtrp1T;
+        Fri, 20 May 2022 09:06:58 +0000 (GMT)
+X-AuditID: cbfec7f2-e7fff70000002719-2a-62875a32e7b5
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id CA.BC.09522.23A57826; Fri, 20
+        May 2022 10:06:58 +0100 (BST)
+Received: from CAMSVWEXC01.scsc.local (unknown [106.1.227.71]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20220520090658eusmtip198be26f25d7bc7783e6b666edad5d54a~wxPSqRLcC1273112731eusmtip1c;
+        Fri, 20 May 2022 09:06:58 +0000 (GMT)
+Received: from [192.168.8.130] (106.210.248.20) by CAMSVWEXC01.scsc.local
+        (2002:6a01:e347::6a01:e347) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+        Fri, 20 May 2022 10:06:56 +0100
+Message-ID: <2252c3b2-0f65-945e-dc39-c0726bce72e8@samsung.com>
+Date:   Fri, 20 May 2022 11:06:55 +0200
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01TfUxTVxzNfX0fBVPyBBfvIBsbC05RYc4577IJyzTL0w3nwjYzNwdFX5BI
-        kbV2sI/MCgUHiGuQD2lLsZAhFgaUryDfFMdnBxaRgUAEQaHAoMigIgFW+kbmf+f8zvndc89N
-        Lp/nnEi58kPDz7PicGGYB+mIVzTt2L67NOBS8BulPRTSd5hJpC4qIFFSdDqGqicGcLSS3Eyh
-        kWo5jizRsTxUUHYRQ6MrBhIZp4copO6yCX/mNpLojnKRQFMaHUCjzWUYyu6rwFB/vgQZE0VI
-        rjcRqKa2DUez8koS3a1Sk0imshJIoY3hocS/bLNRpYZEy9ZVAnU0t+KoKSsORzdaVjHUp3gE
-        UM6Nbai74TqGymS25PyUFQrlXbYQqOB2DoVakhowtDa6QKC6X4YxZPxNBVDiswyAqvXZJMot
-        +p1ChrZMgOSD+973ZpafJQNGJTPhTMqynmDKbvZjTLZZhjO3lEMUI6+7TzGleV5MTo0ZYy5P
-        ywmmRBdPMoO9NSTTem0ZZxTZDYDRtH3KdF3TgmOuJxzfO82GhX7Hin18gxzPDOU9JiLGPaOm
-        RzpxGYh1TwAOfEi/Be8Wl5IJwJHvTFcDqJi08DjyBEDz03qKI/MAli52gI2V9OpOjBOqALTW
-        rgKO/ANg/GUFb91F0t5QV1WDr+MttJ6Ei0b/dROPHsJg4YSFWhdc6INwYCbevoDTnnCksNuO
-        BbQv1K5qcC7OHWZ0W+1+B9oP9s0M4pxnM2zLGLNjns0TU66yXxzStY5wbGncVolvI4fgROPL
-        3DkucLKljOKwKzT/GkdxlkhYrrjArcoBrFenkJzHD46ZtMS6h0fvgEVVPtz4JZjaXohxsU4w
-        aXkM4+YCWKnZwJ5Q3l9McNgNzs/N/VeFgU2djTj3WMkAmiavkgrwivK5Osrn6ij/j74OeDrw
-        IhshEYWwkn0Re8PZSG+JUCSRhod4nzonKgH2/+L1USV4OGzxNgCMDwwA8nkeWwRAJA92FpwW
-        fv8DKz4XKJaGsRIDcOPjHlsF9NrFYGc6RHiePcuyEax4Q8X4Dq4y7M5tn9dFPytNBVHDn3TB
-        qMBevfBI1/Fdkq+7s75ofDN2oTygZ2vl4R9Ptn9jPLLywI/EpVfLye3tj9QTA/wpjXXSY6L4
-        aeCFPzpmnVJ3BmTHfGbOP/ll5M1Dqlu7Kw86bwu5EuHV66t7OzowxCUt98q8dPaA1XQ0vmTm
-        SXvOzIGizHH3o0Pl8dITToJ7cWLfhb87EvZaej4//m3Fx24qg1vAqzXvXprXhavPDgZ+eCp1
-        oTXNa080HZWeZk7K72kX7pfOkgmblpaC/EFmkPaBZX9oKlHUdvjhY113fWdMLFp7jR69N/fB
-        rvvvuA9vOtYj1XZ+pczaOVUX+oLTTwEi44K/OmdzrQcuOSPc48UTS4T/ApmcuBOeBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0xTdxiH/Z+ec3rJGGeF4BksMqto0gHOIdub6JiJW3JiFhnRZAynrMwT
-        0NHKWnGic6lYueNYwwK0FbmEi6VO65ChdIyVpbYD5bJFKLSZlZVSIIWYOCKFulK2xG9Pfs+T
-        vF9eHkfYS0TzjstOsXKZJFdECvCuflFsgvRgcdab11doMA54SdDdMJBQWViDQc/MJA6ragsX
-        XD0qHBYLL3HA0HkBg6lVMwmD804u6IaC4n7rryQMa/4hYK5ej2DK0olB03gXBvYOBQyWS0Fl
-        HCHA9LMNhwVVNwl/3NWRoNQuEVDVeJED5WPBbUpTT4J/KUDAgMWKQ//VIhza7gUwGK9yI2hu
-        2wajfQ0YdCqDlzuqV7nQXrFIgOG3Zi7cq+zD4PnUUwJ6Sx5hMNiiRVC+XIegx9hEQuuN61ww
-        264gUDmS9yYy/mU1YrTKEZyp9hsJpvOaHWOavEqcuaNxchlV7wSX+bFdzDSbvBhTMa8imFv6
-        UpJxPDSRjLXWjzNVTX2IqbelMUO1jeij6AzBnmNs7vHTrHxHymeCHGf7NJHniTsz73qAK9Gl
-        2DLE59HULrqm5wFWhgQ8IdWN6OWGGXJdxNDPAgv4OkfQ1wIe7nr0BNG6b2uINUFSibT+rglf
-        E5GUk6Sniy+HKg7lweibLitnrYqg9tGTvtIQ41Qc7fphNMRhVArdGKj/70QsXTe6xF1jPvUe
-        Pe5zhHZhsLFUN5Lr/Su0re7v0M4J9hdvazlViNK8oDQvqAaE6dGrbJ5Cmi1V7Mx7S8Z+laiQ
-        SBX5suzEz09Kb6HQi4nF3cikX0w0I4yHzIjmcUSRYUiqyhKGHZMUnGXlJzPl+bmswoxieLho
-        Y9hwmS1TSGVLTrFfsGweK//fYjx+tBI7YTQmGeJnde6MidSi0iTVmQGXzukLXw0Pm9k6mbDP
-        942sfLfk7a9lfv/RykPuHe5DHanTFbrph0eYp+fTV9Rfnk+98rtNkHM6OS7jWUG/Y/cd/i+F
-        aV6zs9k6S+79fv8ndm3xhN7kOMHJlFrISiYeb4lq5be0PUpfeGfTOZ5hxZMp9tcMHNjy6eEN
-        +qRsdUTlk4Vau2BMNnw7P6Fkv3nznrqX5g98cLREXdKtvhp12X/zp8dpvr9Syy6oLTHuubMH
-        7wtmz/25a+z5+60bVWmvf7jJLrNu8bhFrqjtkckb3hgZSv+uaC78tcMfCzQJj1MiJrcuZhkL
-        4t3e5SPvGl/uUsVtFuGKHMlOMUeukPwLrdBORtEDAAA=
-X-CMS-MailID: 20220520083805epcas5p40642f5a7f9844c61792cd3ac41ac01d3
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+        Thunderbird/91.8.1
+Subject: Re: [PATCH v4 08/13] btrfs:zoned: make sb for npo2 zone devices
+ align with sb log offsets
+Content-Language: en-US
+To:     Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        "dsterba@suse.cz" <dsterba@suse.cz>
+CC:     "axboe@kernel.dk" <axboe@kernel.dk>,
+        "damien.lemoal@opensource.wdc.com" <damien.lemoal@opensource.wdc.com>,
+        "pankydev8@gmail.com" <pankydev8@gmail.com>,
+        "dsterba@suse.com" <dsterba@suse.com>, "hch@lst.de" <hch@lst.de>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "jiangbo.365@bytedance.com" <jiangbo.365@bytedance.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "gost.dev@samsung.com" <gost.dev@samsung.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dm-devel@redhat.com" <dm-devel@redhat.com>
+From:   Pankaj Raghav <p.raghav@samsung.com>
+In-Reply-To: <PH0PR04MB7416FF84CE207FEC3ED8912F9BD09@PH0PR04MB7416.namprd04.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [106.210.248.20]
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+        CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrFKsWRmVeSWpSXmKPExsWy7djP87pGUe1JBi9uGVusvtvPZvH77Hlm
+        i73vZrNaXPjRyGSx+Pd3FouVq48yWfQc+MBi8bfrHpPF3lvaFpcer2C32LP3JIvF5V1z2Czm
+        L3vKbrHm5lMWBz6PfyfWsHnsnHWX3ePy2VKPzUvqPXbfbACKtN5n9Xi/7yqbx/otV1k8ziw4
+        wu7xeZOcR/uBbqYA7igum5TUnMyy1CJ9uwSujL9f7jMVnOKuWLbqIksD40TOLkYODgkBE4kz
+        P7O6GLk4hARWMEocOzSLDcL5wiix+PURFgjnM6PEtv/3gDKcYB3fT/2CqlrOKDHjbD8bXNXt
+        TV+YIJxdjBKTlz5mB2nhFbCTeLS1A8xmEVCVWLNwJSNEXFDi5MwnLCC2qECExLRZZ9hAjhIW
+        SJHYsbIIJMwsIC5x68l8JpCwiECUxK93ASDjmQUOs0psOnuOFSTOJqAl0djJDmJyCsRKfP/h
+        C9GpKdG6/Tc7hC0vsf3tHGaIj5Uktv0ygXilVmLtsTPsIBMlBO5xSky88Y0dIuEisX/2IyYI
+        W1ji1fEtUHEZidOTe1gg7GqJpzd+M0M0tzBK9O9czwaxwFqi70wORI2jxKVvn6H28knceCsI
+        cQ6fxKRt05knMKrOQgqGWUj+nYXkg1lIPljAyLKKUTy1tDg3PbXYMC+1XK84Mbe4NC9dLzk/
+        dxMjMPmd/nf80w7Gua8+6h1iZOJgPMQowcGsJMLLmNuSJMSbklhZlVqUH19UmpNafIhRmoNF
+        SZw3OXNDopBAemJJanZqakFqEUyWiYNTqoEpQ2Dqnx+JRanq3I1XvVZM2b/zQnodu4NsqUmX
+        XmqfK8uDX5JOAs+Vc+YemHcy2eK67v+wuSrft+w3+LvQOc6W81LyAX7tt7WnGvdwsEa8nhp7
+        KSCKYyPrcl6bQPsrUf1F/itWen26xrZJKk6Q9522cO+04ohnlis+Xg4xsXofoxSsv0Al+Yht
+        U4n5xGZL3mKOpfn7tqQ8b7FMiHm+NveK05xlEzou+27+7vRlj+mPd9+qOBx2briXzNZqe5y5
+        VHrXIxWriUKyW9Q9OrzVOgVblvmezw7xNc57w1c2kTevkd9ZfK9gyNwJXJPmxQr6yLB2hR36
+        2ZTSV6T2carCujez14vdzwj4nPtzRtYpDSWW4oxEQy3mouJEAI6rGDvtAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupnleLIzCtJLcpLzFFi42I5/e/4XV2jqPYkg7ezpC1W3+1ns/h99jyz
+        xd53s1ktLvxoZLJY/Ps7i8XK1UeZLHoOfGCx+Nt1j8li7y1ti0uPV7Bb7Nl7ksXi8q45bBbz
+        lz1lt1hz8ymLA5/HvxNr2Dx2zrrL7nH5bKnH5iX1HrtvNgBFWu+zerzfd5XNY/2WqyweZxYc
+        Yff4vEnOo/1AN1MAd5SeTVF+aUmqQkZ+cYmtUrShhZGeoaWFnpGJpZ6hsXmslZGpkr6dTUpq
+        TmZZapG+XYJext8v95kKTnFXLFt1kaWBcSJnFyMnh4SAicT3U7/Yuhi5OIQEljJKzDy7hh0i
+        ISPx6cpHKFtY4s+1LjYQW0jgI6PEuhfKEA27GCUWnO8GK+IVsJN4tLUDzGYRUJVYs3AlI0Rc
+        UOLkzCcsILaoQITEg91nWUFsYYEUiUefZoPZzALiEreezGfqYuTgEBGIkvj1LgAifJhVYtcS
+        cYhdH5gkHt+axgJSwyagJdHYyQ5icgrESnz/4QtRrinRuv03O4QtL7H97RxmkBIJASWJbb9M
+        ID6plXh1fzfjBEbRWUhum4XkhllIJs1CMmkBI8sqRpHU0uLc9NxiQ73ixNzi0rx0veT83E2M
+        wJSx7djPzTsY5736qHeIkYmD8RCjBAezkggvY25LkhBvSmJlVWpRfnxRaU5q8SFGU2AATWSW
+        Ek3OByatvJJ4QzMDU0MTM0sDU0szYyVxXs+CjkQhgfTEktTs1NSC1CKYPiYOTqkGpuhgPda3
+        v54fzDnk17HzgM7sJXNPscZfP5Eh/EB7efPOEtOQn9XV1zy+fyr/d4Dr7tqTy59YC5oe+n5x
+        9vI5OUm3eKYdkbabvm67x4Nv37ddC+lXlgp5s2ftbgPOma8zprFs0o4O3j4l9v0BJk4tywL9
+        KcdaPO+8D/khVXjqWffhv1NOhF/+J+TBrR7F/YvvIGf+Vu4HzyQcPq//kmZc03uSIaYjzDVp
+        xvu+6gm//fZ4u557nDol7bdqwr79l36u+Pax9c7igDkmMmlqVzTbZhZM/rEs8ejcjTZ/toRL
+        vzXiOi/VZqZvmV51drLJUrO3kZsu7M/mzT3r5+Zkt/VtxwJVCR37c4pTXulc82EJ29StxFKc
+        kWioxVxUnAgA6L2ujKIDAAA=
+X-CMS-MailID: 20220520090658eucas1p1b33f4cb964566691674c4b015509ceec
 X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-X-CMS-RootMailID: 20220520083805epcas5p40642f5a7f9844c61792cd3ac41ac01d3
-References: <20220520083701.2610975-1-maninder1.s@samsung.com>
-        <CGME20220520083805epcas5p40642f5a7f9844c61792cd3ac41ac01d3@epcas5p4.samsung.com>
-X-Spam-Status: No, score=-4.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-RootMTR: 20220516165429eucas1p272c8b4325a488675f08f2d7016aa6230
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20220516165429eucas1p272c8b4325a488675f08f2d7016aa6230
+References: <20220516165416.171196-1-p.raghav@samsung.com>
+        <CGME20220516165429eucas1p272c8b4325a488675f08f2d7016aa6230@eucas1p2.samsung.com>
+        <20220516165416.171196-9-p.raghav@samsung.com>
+        <20220517124257.GD18596@twin.jikos.cz>
+        <717a2c83-0678-9310-4c75-9ad5da0472f6@samsung.com>
+        <PH0PR04MB7416FF84CE207FEC3ED8912F9BD09@PH0PR04MB7416.namprd04.prod.outlook.com>
+X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_HI,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-with commit '7878c231dae0 ("slab: remove /proc/slab_allocators")'
-lookup_symbol_attrs usage is removed.
-
-Thus removing redundant API.
-
-Signed-off-by: Maninder Singh <maninder1.s@samsung.com>
----
- include/linux/kallsyms.h |  6 ------
- include/linux/module.h   |  6 ------
- kernel/kallsyms.c        | 28 ----------------------------
- kernel/module/kallsyms.c | 28 ----------------------------
- 4 files changed, 68 deletions(-)
-
-diff --git a/include/linux/kallsyms.h b/include/linux/kallsyms.h
-index 8fe535fd848a..b78e9d942a77 100644
---- a/include/linux/kallsyms.h
-+++ b/include/linux/kallsyms.h
-@@ -91,7 +91,6 @@ extern int sprint_backtrace(char *buffer, size_t size, unsigned long address);
- extern int sprint_backtrace_build_id(char *buffer, size_t size, unsigned long address);
- 
- int lookup_symbol_name(unsigned long addr, char *symname, size_t size);
--int lookup_symbol_attrs(unsigned long addr, unsigned long *size, unsigned long *offset, char *modname, char *name);
- 
- /* How and when do we show kallsyms values? */
- extern bool kallsyms_show_value(const struct cred *cred);
-@@ -153,11 +152,6 @@ static inline int lookup_symbol_name(unsigned long addr, char *symname, size_t s
- 	return -ERANGE;
- }
- 
--static inline int lookup_symbol_attrs(unsigned long addr, unsigned long *size, unsigned long *offset, char *modname, char *name)
--{
--	return -ERANGE;
--}
--
- static inline bool kallsyms_show_value(const struct cred *cred)
- {
- 	return false;
-diff --git a/include/linux/module.h b/include/linux/module.h
-index 9b91209d615f..4c5f8f99a252 100644
---- a/include/linux/module.h
-+++ b/include/linux/module.h
-@@ -658,7 +658,6 @@ const char *module_address_lookup(unsigned long addr,
- 			    char **modname, const unsigned char **modbuildid,
- 			    char *namebuf, size_t buf_size);
- int lookup_module_symbol_name(unsigned long addr, char *symname, size_t size);
--int lookup_module_symbol_attrs(unsigned long addr, unsigned long *size, unsigned long *offset, char *modname, char *name);
- 
- int register_module_notifier(struct notifier_block *nb);
- int unregister_module_notifier(struct notifier_block *nb);
-@@ -766,11 +765,6 @@ static inline int lookup_module_symbol_name(unsigned long addr, char *symname, s
- 	return -ERANGE;
- }
- 
--static inline int lookup_module_symbol_attrs(unsigned long addr, unsigned long *size, unsigned long *offset, char *modname, char *name)
--{
--	return -ERANGE;
--}
--
- static inline int module_get_kallsym(unsigned int symnum, unsigned long *value,
- 					char *type, char *name,
- 					char *module_name, int *exported)
-diff --git a/kernel/kallsyms.c b/kernel/kallsyms.c
-index d6efce28505d..96ad59b5b2fd 100644
---- a/kernel/kallsyms.c
-+++ b/kernel/kallsyms.c
-@@ -430,34 +430,6 @@ int lookup_symbol_name(unsigned long addr, char *symname, size_t size)
- 	return 0;
- }
- 
--int lookup_symbol_attrs(unsigned long addr, unsigned long *size,
--			unsigned long *offset, char *modname, char *name)
--{
--	int res;
--
--	name[0] = '\0';
--	name[KSYM_NAME_LEN - 1] = '\0';
--
--	if (is_ksym_addr(addr)) {
--		unsigned long pos;
--
--		pos = get_symbol_pos(addr, size, offset);
--		/* Grab name */
--		kallsyms_expand_symbol(get_symbol_offset(pos),
--				       name, KSYM_NAME_LEN);
--		modname[0] = '\0';
--		goto found;
--	}
--	/* See if it's in a module. */
--	res = lookup_module_symbol_attrs(addr, size, offset, modname, name);
--	if (res)
--		return res;
--
--found:
--	cleanup_symbol_name(name);
--	return 0;
--}
--
- /* Look up a kernel symbol and return it in a text buffer. */
- static int __sprint_symbol(char *buffer, size_t buf_size, unsigned long address,
- 			   int symbol_offset, int add_offset, int add_buildid)
-diff --git a/kernel/module/kallsyms.c b/kernel/module/kallsyms.c
-index c982860405c6..e6f16c62a888 100644
---- a/kernel/module/kallsyms.c
-+++ b/kernel/module/kallsyms.c
-@@ -375,34 +375,6 @@ int lookup_module_symbol_name(unsigned long addr, char *symname, size_t size)
- 	return -ERANGE;
- }
- 
--int lookup_module_symbol_attrs(unsigned long addr, unsigned long *size,
--			       unsigned long *offset, char *modname, char *name)
--{
--	struct module *mod;
--
--	preempt_disable();
--	list_for_each_entry_rcu(mod, &modules, list) {
--		if (mod->state == MODULE_STATE_UNFORMED)
--			continue;
--		if (within_module(addr, mod)) {
--			const char *sym;
--
--			sym = find_kallsyms_symbol(mod, addr, size, offset);
--			if (!sym)
--				goto out;
--			if (modname)
--				strscpy(modname, mod->name, MODULE_NAME_LEN);
--			if (name)
--				strscpy(name, sym, KSYM_NAME_LEN);
--			preempt_enable();
--			return 0;
--		}
--	}
--out:
--	preempt_enable();
--	return -ERANGE;
--}
--
- int module_get_kallsym(unsigned int symnum, unsigned long *value, char *type,
- 		       char *name, char *module_name, int *exported)
- {
--- 
-2.17.1
-
+On 5/19/22 09:57, Johannes Thumshirn wrote:
+>> Unfortunately it is not possible to just move the WP in zoned devices.
+>> The only alternative that I could use is to do write zeroes which are
+>> natively supported by some devices such as ZNS. It would be nice to know
+>> if someone had a better solution to this instead of doing write zeroes
+>> in zoned devices.
+>>
+> 
+> I have another question. In case we need to pad the sb zone with a write
+> zeros and have a power fail between the write-zeros and the regular 
+> super-block write, what happens? I know this padding is only done for the
+> backup super blocks, never the less it can happen and it can happen when
+> the primary super block is also corrupted.
+> 
+> AFAIU we're then trying to reach out for a backup super block, look at the
+> write pointer and it only contains zeros but no super block, as only the 
+> write-zeros has reached the device and not the super block write.
+> 
+> How is this situation handled?
+> 
+That is a very good point. I did think about this situation while adding
+padding to the mirror superblock with write zeroes. If the drive is
+**less than 4TB** and with the **primary superblock corrupted**, then it
+will be an issue with the situation you have described for npo2 drives.
+That situation is not handled here. Ofc this is not an issue when we
+have the second mirror at 4TB for bigger drives. Do you have some ideas
+in mind for this failure mode?
+> Thanks,
+> 	Johannes
