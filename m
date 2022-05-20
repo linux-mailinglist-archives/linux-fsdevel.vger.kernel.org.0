@@ -2,42 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CB23452E300
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 May 2022 05:18:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF6E352E30E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 May 2022 05:20:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345124AbiETDSf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 May 2022 23:18:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53402 "EHLO
+        id S241667AbiETDUK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 May 2022 23:20:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345127AbiETDSe (ORCPT
+        with ESMTP id S238077AbiETDUJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 May 2022 23:18:34 -0400
+        Thu, 19 May 2022 23:20:09 -0400
 Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60DD45D5EA
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 May 2022 20:18:33 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 091576162A
+        for <linux-fsdevel@vger.kernel.org>; Thu, 19 May 2022 20:20:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
         MIME-Version:References:Message-ID:Subject:To:From:Date:Reply-To:Cc:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=SPXO38tGZkuNyt1CtgbfYpB02lf7sBpJcGAY9aRyD8k=; b=Y3px/QLlbyOQOPfkeb/fX9V/Zq
-        glCb2zDDya8n+4hG8uCXOxLBqVptTuBHDLN0KYPxB1defXRV/jnx74RiJZotNNS4XLvZONhDqDVHI
-        XnSOdAkG7zK++jOz+gB5XGZZWuIsNA/VNxA2VsW5X2cw1R2vRxT+kjBeda2bYAPzYYJciiRyHcW7c
-        cZ6iV1cTsVchYgK0oYSyrJGyu0CjpCqcAttuuKjiJ0b6egg1p3Vsizch3eYNY96k2226H/SQM/et5
-        mf440RNdTo81nu2qtpArqMsnRJPNAFW4a4NuEPWa3VXBCtbJl3gpJwt7oorNmWimcz6Pv+GoV32z8
-        9NC5Y+3Q==;
+        bh=oq69YaFflploRej3MW5HneuCo2VfXovYA4cutfAhPsY=; b=FKBg3V9dP/bZGlmaNp8V9gzI6x
+        0x4UFiTAOzFHM6YvkWIjpg+HBwBEQ805HxjOrkHWvTs0hir7ZhS7AIpSsbgwNvgfTVPSmWxS8Yidy
+        LmAgDBDU0/K2SjeVwhj4xZtDUrc9VLvKnfUEGL9UoP6IPUShuKqrSp4imGW+NqNg3UPtvprNKlPrZ
+        VJMfWy3N62jwn6sdTUbheU591BDYnhx57I5oNcx5X+960JiWxTj8oLR/tm2UIDkDhWcAeuFhfV/nS
+        POGA912H1gG4/Yh96Z18zeCojLV2fQeAHxl7EK6/u5otZYDonG00IomC32IOEfwWNXvU6NLiN+5uG
+        GDkY6aPA==;
 Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nrt9s-00GU8J-6s
-        for linux-fsdevel@vger.kernel.org; Fri, 20 May 2022 03:18:32 +0000
-Date:   Fri, 20 May 2022 03:18:32 +0000
+        id 1nrtBP-00GU9n-0O
+        for linux-fsdevel@vger.kernel.org; Fri, 20 May 2022 03:20:07 +0000
+Date:   Fri, 20 May 2022 03:20:06 +0000
 From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     linux-fsdevel@vger.kernel.org
-Subject: [PATCH] get rid of dead code in legitimize_root()
-Message-ID: <YocIiPQjR7tuYdkP@zeniv-ca.linux.org.uk>
+Subject: [PATCH] uninline may_mount() and don't opencode it in
+ fspick(2)/fsopen(2)
+Message-ID: <YocI5jIou18bDDuy@zeniv-ca.linux.org.uk>
 References: <YocIMkS1qcPGrik0@zeniv-ca.linux.org.uk>
+ <YocIiPQjR7tuYdkP@zeniv-ca.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YocIMkS1qcPGrik0@zeniv-ca.linux.org.uk>
+In-Reply-To: <YocIiPQjR7tuYdkP@zeniv-ca.linux.org.uk>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,
@@ -48,46 +50,63 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Combination of LOOKUP_IS_SCOPED and NULL nd->root.mnt is impossible
-after successful path_init().  All places where ->root.mnt might
-become NULL do that only if LOOKUP_IS_SCOPED is not there and
-path_init() itself can return success without setting nd->root
-only if ND_ROOT_PRESET had been set (in which case nd->root
-had been set by caller and never changed) or if the name had
-been a relative one *and* none of the bits in LOOKUP_IS_SCOPED
-had been present.
-
-Since all calls of legitimize_root() must be downstream of successful
-path_init(), the check for !nd->root.mnt && (nd->flags & LOOKUP_IS_SCOPED)
-is pure paranoia.
-
-FWIW, it had been discussed (and agreed upon) with Aleksa back when
-scoped lookups had been merged; looks like that had fallen through the
-cracks back then.
+It's done once per (mount-related) syscall and there's no point
+whatsoever making it inline.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/namei.c | 7 -------
- 1 file changed, 7 deletions(-)
+ fs/fsopen.c    | 4 ++--
+ fs/internal.h  | 1 +
+ fs/namespace.c | 2 +-
+ 3 files changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 2d6b94a950fe..bfe4ec9e282b 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -729,13 +729,6 @@ static bool legitimize_links(struct nameidata *nd)
+diff --git a/fs/fsopen.c b/fs/fsopen.c
+index 27a890aa493a..fc9d2d9fd234 100644
+--- a/fs/fsopen.c
++++ b/fs/fsopen.c
+@@ -119,7 +119,7 @@ SYSCALL_DEFINE2(fsopen, const char __user *, _fs_name, unsigned int, flags)
+ 	const char *fs_name;
+ 	int ret;
  
- static bool legitimize_root(struct nameidata *nd)
+-	if (!ns_capable(current->nsproxy->mnt_ns->user_ns, CAP_SYS_ADMIN))
++	if (!may_mount())
+ 		return -EPERM;
+ 
+ 	if (flags & ~FSOPEN_CLOEXEC)
+@@ -162,7 +162,7 @@ SYSCALL_DEFINE3(fspick, int, dfd, const char __user *, path, unsigned int, flags
+ 	unsigned int lookup_flags;
+ 	int ret;
+ 
+-	if (!ns_capable(current->nsproxy->mnt_ns->user_ns, CAP_SYS_ADMIN))
++	if (!may_mount())
+ 		return -EPERM;
+ 
+ 	if ((flags & ~(FSPICK_CLOEXEC |
+diff --git a/fs/internal.h b/fs/internal.h
+index 8590c973c2f4..315ec2f419f7 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -84,6 +84,7 @@ extern int __mnt_want_write_file(struct file *);
+ extern void __mnt_drop_write_file(struct file *);
+ 
+ extern void dissolve_on_fput(struct vfsmount *);
++extern bool may_mount(void);
+ 
+ int path_mount(const char *dev_name, struct path *path,
+ 		const char *type_page, unsigned long flags, void *data_page);
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 40b994a29e90..6f91ce77e16b 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -1717,7 +1717,7 @@ void __detach_mounts(struct dentry *dentry)
+ /*
+  * Is the caller allowed to modify his namespace?
+  */
+-static inline bool may_mount(void)
++bool may_mount(void)
  {
--	/*
--	 * For scoped-lookups (where nd->root has been zeroed), we need to
--	 * restart the whole lookup from scratch -- because set_root() is wrong
--	 * for these lookups (nd->dfd is the root, not the filesystem root).
--	 */
--	if (!nd->root.mnt && (nd->flags & LOOKUP_IS_SCOPED))
--		return false;
- 	/* Nothing to do if nd->root is zero or is managed by the VFS user. */
- 	if (!nd->root.mnt || (nd->state & ND_ROOT_PRESET))
- 		return true;
+ 	return ns_capable(current->nsproxy->mnt_ns->user_ns, CAP_SYS_ADMIN);
+ }
 -- 
 2.30.2
 
