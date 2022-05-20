@@ -2,208 +2,337 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F26A852E4F4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 May 2022 08:27:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3421A52E4FD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 May 2022 08:29:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345827AbiETG1d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 May 2022 02:27:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33538 "EHLO
+        id S1345837AbiETG3c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 May 2022 02:29:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345820AbiETG1b (ORCPT
+        with ESMTP id S1345817AbiETG3a (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 May 2022 02:27:31 -0400
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F1A214AF51
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 May 2022 23:27:26 -0700 (PDT)
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20220520062724euoutp0117211817721ba87c51556bea77646515~wvD_UeLjU3066930669euoutp01I
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 May 2022 06:27:24 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20220520062724euoutp0117211817721ba87c51556bea77646515~wvD_UeLjU3066930669euoutp01I
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1653028044;
-        bh=NWcmjHxVvCkOxG1z+lqRA9bprQ9RJiXcv6vgQCSVJso=;
-        h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-        b=ZFy/4xVl3d3hjX0Z/G9HEvtfxQflLB02JHHJfq4i8Gm4jV6OlFSWAnQXo5zCtiwdP
-         HmAGlJsF/MOxE7W1TQyHEtURCMu28pARFdHKn0tJ9L4VXqh4Ebf878pPcMnV6Zzbfa
-         iXC6KtuFS/Z6MQcBxleS54Rq7SxzOw2f/YXOwqhY=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20220520062724eucas1p214361a79ca87b367183b71a01e2378ee~wvD_AVEY92215422154eucas1p2P;
-        Fri, 20 May 2022 06:27:24 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 97.F3.10260.CC437826; Fri, 20
-        May 2022 07:27:24 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20220520062723eucas1p240797e3e285a45576201cf785e92a677~wvD9oan6J1329813298eucas1p2g;
-        Fri, 20 May 2022 06:27:23 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220520062723eusmtrp2fe5220a95ad3bee610b372f5fe699a3b~wvD9njb0S2573125731eusmtrp2f;
-        Fri, 20 May 2022 06:27:23 +0000 (GMT)
-X-AuditID: cbfec7f5-bddff70000002814-7e-628734cc74ea
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id D9.62.09522.BC437826; Fri, 20
-        May 2022 07:27:23 +0100 (BST)
-Received: from CAMSVWEXC01.scsc.local (unknown [106.1.227.71]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20220520062723eusmtip1533e0c66af30c7e4b73d513c38052c01~wvD9dFNwx1838918389eusmtip1j;
-        Fri, 20 May 2022 06:27:23 +0000 (GMT)
-Received: from localhost (106.210.248.142) by CAMSVWEXC01.scsc.local
-        (2002:6a01:e347::6a01:e347) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-        Fri, 20 May 2022 07:27:21 +0100
-Date:   Fri, 20 May 2022 08:27:20 +0200
-From:   Javier =?utf-8?B?R29uesOhbGV6?= <javier.gonz@samsung.com>
-To:     Hannes Reinecke <hare@suse.de>
-CC:     Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        "Theodore Ts'o" <tytso@mit.edu>, Christoph Hellwig <hch@lst.de>,
-        Pankaj Raghav <p.raghav@samsung.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "pankydev8@gmail.com" <pankydev8@gmail.com>,
-        "gost.dev@samsung.com" <gost.dev@samsung.com>,
-        "jiangbo.365@bytedance.com" <jiangbo.365@bytedance.com>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "dm-devel@redhat.com" <dm-devel@redhat.com>,
-        "dsterba@suse.com" <dsterba@suse.com>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [dm-devel] [PATCH v4 00/13] support non power of 2 zoned
- devices
-Message-ID: <20220520062720.wxdcp5lkscesppch@mpHalley-2.localdomain>
+        Fri, 20 May 2022 02:29:30 -0400
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam08on2051.outbound.protection.outlook.com [40.107.102.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 461F914C773;
+        Thu, 19 May 2022 23:29:28 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ZUgcfFT8R+wKxNEb7QThBqUreTWQ8g7RORP7vhl9jZoNh+VekzJw1YHjPtl3nt0EGffcOer6+B7OcZZOuTt+7paSXHDlVajpgY989jK2iaTzNgT+gLgjs0VIi6El35YcWnyNN1qBKXut3XTIsh1M9dKgQhdsK88xXRPo3dVGsFKj5V+OjUqpWtGLDaUPeVXBX3uGH2l7HjESAX8XyvvpmHuhHHz/h31IcMigavTvSZWOkJ7TIUn1mWqUSRQ6fwtbhODDvu8pAPmGT0G8Tkwci3UnMGwr5SIo+2+aVXX1AbZS2eMicKstOsAFgt/5OFLjRrkkCosnsxbIFLR4tXhLeg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RbHbPLiJpa/HyDLtdxyhgztgfUdoVwbXkv5/zsw6aMc=;
+ b=Nb/floog+tdkwjAsr91wF0e41a0ePTa1x8D0RYsuwRfLgVlNytToeJMuQYuuSBF5E6gRUVaSbhpEZMjWw/q8QsEQCxWSDS2FfBnRQGRnh26UTZa6MguCSoOFNoWIZ4HfRWsxXoyZIYleWQprkwdmwdw7OFXNfp/K1y4KUjopacBqeA4Ka6ACMU1iycbzna9ewpuAWXSQVtphO2TqU4mUMK0ZUBdoX5UVzfLBlZz49FQ3xk3d9LTU0Pzim2HQGNhqtFoxHKyAlPF/sPMLQo3AgXmlYt0kqlw4/h8Ljqrqo8yRdp6+/Zt2Q4kcbI4hu26Hg4dlpzfBHFF0Ji09aKuvuw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RbHbPLiJpa/HyDLtdxyhgztgfUdoVwbXkv5/zsw6aMc=;
+ b=wDFoZX7f+GbIDbwh2aLsmBYZClvIV4zVvTC1DicTDAoOn2fK3ttEBAEqLsaZobxX+35t/A82EbsqJWrhWQWDdHT8X56HRPF4h2LMF2zqtK4g0cUH7wZVD9ODyJWq553bxJThpPC5VSgMYXF4B1szqO5WHuFjpulJJP7fQbr75fc=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BN8PR12MB3587.namprd12.prod.outlook.com (2603:10b6:408:43::13)
+ by BN6PR12MB1315.namprd12.prod.outlook.com (2603:10b6:404:1f::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5250.16; Fri, 20 May
+ 2022 06:29:26 +0000
+Received: from BN8PR12MB3587.namprd12.prod.outlook.com
+ ([fe80::7146:65ee:8fd3:dd03]) by BN8PR12MB3587.namprd12.prod.outlook.com
+ ([fe80::7146:65ee:8fd3:dd03%4]) with mapi id 15.20.5273.017; Fri, 20 May 2022
+ 06:29:26 +0000
+Message-ID: <4e35dc30-1157-50b3-e3b6-954481a0524d@amd.com>
+Date:   Fri, 20 May 2022 08:29:18 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [RFC PATCH] procfs: Add file path and size to /proc/<pid>/fdinfo
+Content-Language: en-US
+To:     Kalesh Singh <kaleshsingh@google.com>
+Cc:     ilkos@google.com, tjmercier@google.com, surenb@google.com,
+        kernel-team@android.com, Jonathan Corbet <corbet@lwn.net>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Anton Mitterer <mail@christoph.anton.mitterer.name>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Colin Cross <ccross@google.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org
+References: <20220519214021.3572840-1-kaleshsingh@google.com>
+From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+In-Reply-To: <20220519214021.3572840-1-kaleshsingh@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AM6PR04CA0050.eurprd04.prod.outlook.com
+ (2603:10a6:20b:f0::27) To BN8PR12MB3587.namprd12.prod.outlook.com
+ (2603:10b6:408:43::13)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Disposition: inline
-In-Reply-To: <16f3f9ee-7db7-2173-840c-534f67bcaf04@suse.de>
-X-Originating-IP: [106.210.248.142]
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-        CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCKsWRmVeSWpSXmKPExsWy7djPc7pnTNqTDFovs1isvtvPZvH77Hlm
-        i73vZrNaXPjRyGSxZ9EkJouVq48yWTxZP4vZoufABxaLv133mCz23tK2uPR4BbvFnr0nWSwu
-        75rDZjF/2VN2ixsTnjJarLn5lMWitecnu4Ogx78Ta9g8ds66y+5x+Wypx6ZVnWwem5fUe+y+
-        2cDm0XTmKLPHztb7rB7v911l81i/5SqLx+bT1R6fN8l5tB/oZgrgjeKySUnNySxLLdK3S+DK
-        uPf0IXPBO5GK9+27WRoYvwp0MXJySAiYSGx+95cNxBYSWMEocXteXhcjF5D9hVHiwc17zBCJ
-        z4wSh5ZbdTFygDXcvSgCUbOcUeLblV/MEA5QzcH599ggnK2MEldfXwQbyyKgKtGz8gkTiM0m
-        YC9xadktsKkiAkoSH9sPsYM0MAv8YpO43f4ArEFYwF9i4q47YDavgIvEmbVnmSBsQYmTM5+w
-        gNjMAlYSnR+aWEFOYhaQllj+jwMkzClgLdGy6xkLxKXKEsun+0J8WSux9tgZsFUSAs84JTZ1
-        fWKCSLhI7Pp1iRHCFpZ4dXwLO4QtI/F/53yommyJi2e6mSHsEonF748xQ8y3lug7kwMRdpRo
-        v7WXHSLMJ3HjrSDEkXwSk7ZNh6rmlehoE4KoVpPY0bSVcQKj8iwkb81C8tYshLcWMDKvYhRP
-        LS3OTU8tNs5LLdcrTswtLs1L10vOz93ECEyIp/8d/7qDccWrj3qHGJk4GA8xSnAwK4nwMua2
-        JAnxpiRWVqUW5ccXleakFh9ilOZgURLnTc7ckCgkkJ5YkpqdmlqQWgSTZeLglGpgWhM0hfv2
-        /LULZOclTI2XckvavO3etZebVBW2LHC6rK+2fI/17Z7fOhcqwnfbTb1yMa5BQWi9R2z21pNu
-        Z0TNIkNf3VWfG7bX/ZB/g+jHgo2nbtvvEbjSz7uiRczla3+02+ZKtT/1StNXrtkjvWPG70rr
-        lCU9rlvfzvn2ZfWGu8sur+//wnXp3KQfag5TPWvz6012ME1u9Lt6tzt/sfea6GpVxzW73p3v
-        4d+ss1j/16+CqUt18xcdPRLyZFltVlOsmbP8i5dJnz+mLOHV5NfMCpf4+2GT6Oc1B4x3Z5Zq
-        NQnufKq27OjhHq2nnBXPklceFVBYlRVyJOy6wfLuuzHZ8UY3+jy1LlpxBPCb3BO5JK/EUpyR
-        aKjFXFScCACm8OgY9wMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmplleLIzCtJLcpLzFFi42I5/e/4Xd3TJu1JBjvXaFqsvtvPZvH77Hlm
-        i73vZrNaXPjRyGSxZ9EkJouVq48yWTxZP4vZoufABxaLv133mCz23tK2uPR4BbvFnr0nWSwu
-        75rDZjF/2VN2ixsTnjJarLn5lMWitecnu4Ogx78Ta9g8ds66y+5x+Wypx6ZVnWwem5fUe+y+
-        2cDm0XTmKLPHztb7rB7v911l81i/5SqLx+bT1R6fN8l5tB/oZgrgjdKzKcovLUlVyMgvLrFV
-        ija0MNIztLTQMzKx1DM0No+1MjJV0rezSUnNySxLLdK3S9DLuPf0IXPBO5GK9+27WRoYvwp0
-        MXJwSAiYSNy9KNLFyMUhJLCUUeJCw03GLkZOoLiMxKcrH9khbGGJP9e62CCKPjJKPJv/hRHC
-        2cooce9/JytIFYuAqkTPyidMIDabgL3EpWW3mEFsEQEliY/th9hBGpgFfrBJ/Dt6EmyFsICv
-        xNUpb1hAbF4BF4kza88yQUzdxCKx4PlnZoiEoMTJmU/AipgFLCRmzj/PCHI3s4C0xPJ/HCBh
-        TgFriZZdz1gg3lGWWD7dF+LqWolX93czTmAUnoVk0Cwkg2YhDFrAyLyKUSS1tDg3PbfYUK84
-        Mbe4NC9dLzk/dxMjMD1sO/Zz8w7Gea8+6h1iZOJgPMQowcGsJMLLmNuSJMSbklhZlVqUH19U
-        mpNafIjRFBgUE5mlRJPzgQkqryTe0MzA1NDEzNLA1NLMWEmc17OgI1FIID2xJDU7NbUgtQim
-        j4mDU6qBiWXvbkvfKLFr03W+iKazKzXfOTdPsigvpem9dYSrpdqe1EVffCbWeApb/sm37pa+
-        5T8pROjmh/a+6LUiV7+FmnUHbfd9rd69hSWSMX3t9V8T12xNXe7Dvzv/38XnFs3sDxlUUqdl
-        z+zwcntixHDjq8PC+TW2NYEWf1n4beQzwxjsfFP4Q6SS0icwfH0xz5U7X1SosivVsu1xQe7+
-        Sgf+J5LvV0XYfrQRSvrh93K7gGNW+uPpQf/m3zGoXOTUbHTRJi206tr6kwfffJTxWWgf6CPx
-        SJxjikOv6YQD/8WtXllmC5VyGdZ9V5Y9s09B6uh6ReGsO9nKMSIH57J/si3/uW+3201jH9Y0
-        hv7iCCWW4oxEQy3mouJEAIId+h+YAwAA
-X-CMS-MailID: 20220520062723eucas1p240797e3e285a45576201cf785e92a677
-X-Msg-Generator: CA
-X-RootMTR: 20220516165418eucas1p2be592d9cd4b35f6b71d39ccbe87f3fef
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20220516165418eucas1p2be592d9cd4b35f6b71d39ccbe87f3fef
-References: <CGME20220516165418eucas1p2be592d9cd4b35f6b71d39ccbe87f3fef@eucas1p2.samsung.com>
-        <20220516165416.171196-1-p.raghav@samsung.com>
-        <20220517081048.GA13947@lst.de> <YoPAnj9ufkt5nh1G@mit.edu>
-        <7f9cb19b-621b-75ea-7273-2d2769237851@opensource.wdc.com>
-        <20220519031237.sw45lvzrydrm7fpb@garbanzo>
-        <69f06f90-d31b-620b-9009-188d1d641562@opensource.wdc.com>
-        <PH0PR04MB74166C87F694B150A5AE0F009BD09@PH0PR04MB7416.namprd04.prod.outlook.com>
-        <4a8f0e1b-0acb-1ed4-8d7a-c9ba93fcfd02@opensource.wdc.com>
-        <16f3f9ee-7db7-2173-840c-534f67bcaf04@suse.de>
-X-Spam-Status: No, score=-7.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 40043f3e-713e-4085-ce2f-08da3a2a15e3
+X-MS-TrafficTypeDiagnostic: BN6PR12MB1315:EE_
+X-Microsoft-Antispam-PRVS: <BN6PR12MB131550335EABD2DC65C3FAA883D39@BN6PR12MB1315.namprd12.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: d14YZn+irmJVw34RjNcmW/gCfI3fQ87go371MwkzyiYWn6Ub+//5nuMkUQYZ1SSWQuPUCrUYz/sHws1p3Uo4olFMkteDLWEYEY/H0u3ME0yk0T1l6TGDUSL/IO0NzvLExg1SG67agPM07OWYzW9DJXd0rOSKcoJ+NQdndiliaZuT+uOHUTtTd37EGTw3tgo5ZMCtC0nHW0PCMJA21KfTgGrLZSRpklnyU7GJt46uSb8oDsBiHEe5MIEoT1haUdpXEeVktO2t/HEQZVaovLmhuVKwsirSxeOu/3cQceh7TdWqmO7TmOVLE3n+XgFNxD88B5JMpyZuC3JBM4uAwABN2Pj6fbGufevnvyIuij62uaI6Pnq71Mg0ANRzbg2g+Ax/cBVp38OoNafMwBSRYnMliOcrbVd+t61s3+3GUyXB9fD8Pj9H/0Iu3Wwc1WwbgRBj5Rf7rJFj3gSElhPVgZz+KmOdHwC6WFESqZo5BPwE6ysGQyM+MZozN5Kp53zu8rKNQWWJz/Co1N3yXhVhxo501Kup9iuDtybXQz29SDzbIKsM9BzJMgCS426K7joN4ryP0aC6spTmKfEKZcADCF0qYfTQn0JB0vhO70lTmq94m0LlWOpZsNIQZmCv1zKKDZUAcFzqSrkEKWQdqIWAKU1O/f0va5ZyPkJIF6RFEIE5C3IAG56jb9tMtTLUuOl7g/4eQJNRPFkHenwA4q/H2fQdy72fwNWvfNDNbm5u9R73e3GOdu8SkQKnrXTRDgNFH3W/NLAndzSV3rD9UZAecwkc84nDYydZaPBsT4UiRVgX3H3n0WjK8NIMy4pmUE8y3oOGUiyOVfTDfSnIF/c9B0xMg8X4g9tiRAt0eQ1F8SCc+rE=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN8PR12MB3587.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(83380400001)(2906002)(36756003)(8676002)(4326008)(2616005)(6506007)(6486002)(966005)(7416002)(8936002)(6512007)(66556008)(54906003)(66946007)(5660300002)(508600001)(45080400002)(38100700002)(86362001)(316002)(66476007)(31696002)(6666004)(6916009)(31686004)(186003)(21314003)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ZXp1ZkRMVU9NRmZCSzdGMGlzazFnVHBTVEVYQmhUNEdBU01EcjM3Z29QV2dt?=
+ =?utf-8?B?ajBZdjUvSUdjbXFaT0xIYmJEeFoybXQxbmMya1MwaEkrbXhjWWptdU5KYi9S?=
+ =?utf-8?B?THIwRGwrMmNheU1PTG5BZlhreFpxTnhKNnZ1QXc1UTdSNm5tejhEbmdCeXdN?=
+ =?utf-8?B?anIrZ0E2Ti8valdmRHA2ZU5KM244OXBnclpQVG9TRXkvNE41cFFrQVRta0p0?=
+ =?utf-8?B?MXhqeHBTaWx0dWlGbHVZSHJtMi83YW1Ld1RqYXJnWGVFQ2RjQ25DOW9ITXdp?=
+ =?utf-8?B?cWJNQS9DMTdvVXIvcTJlb3dkOWVmY3VSTEFRQzNtRlNlcmgrQWQyNjdPQjZE?=
+ =?utf-8?B?bzJPZncvVFlXTWRtaXVNUGwwWTZCZEFGSEFWUTRwL3ArYmJUWVNKNXpyTHpK?=
+ =?utf-8?B?OThJRlZ0R2pOUnZDSTVWbkJZTmlzcFZ1YmpHeGUvcmQyb2Z0MVVwdVJ2QjJG?=
+ =?utf-8?B?U0tzb2VIZTVzUEprWXFZQUlGUnlLMmsyU1crVVp1aDZ1TTgyY0RmMjBZMndT?=
+ =?utf-8?B?TUtTNmQ2M1prcDFHQ2JhWDlUd002TGlRZUI2d2VQb25kTDJaa2ZGUTdqWWN1?=
+ =?utf-8?B?RWlkeEY4bE5OZ1JFWDRxNUx2Nm5kUjhOKzhCMnlvanpGN0NPTlJjMWxYdGt6?=
+ =?utf-8?B?Nm9OdStadFk5T1NQRndBTSsyTXVhc2J4YVFFYTYxckRkSVNzK25xTllMbFJi?=
+ =?utf-8?B?dEdNdHlPd2tZWWRWMjdJY2haUzlVWWVUZnR1b2cxV29DRnZXdWJ3OUlLM0ZP?=
+ =?utf-8?B?R292T3k5NlMydXVyNHBrZEY4VTBzM2RpK2NFTGpHRmtEdWJNczlHMGVRNmQy?=
+ =?utf-8?B?bkRKYnFFNFJqVUN0MFlaWnVIRnQ5eHlhNHhBaDZYaUVWZElEWU5WYkZ5cU0y?=
+ =?utf-8?B?dzBGZUYrT0NlVEx1VE44NjRYZ0EzSDZsaEY0TWZtS3pmNTE3ckZhS1dyWktN?=
+ =?utf-8?B?ZVFFMUVjTUNJbUxmbzF5dkREQU0zUkxYd2Y0S2w0K3MzWDdLbTZnR3h6cEd1?=
+ =?utf-8?B?Z0lpbFA5WEh0NzBLcHQxQnlFUnJPZVFHSDlGdmUyazRGUFNHZGxleTdnK3RM?=
+ =?utf-8?B?cVJQbkp2S1BhS3Y2Wnk3SGF0V3d3dHd0NU93MmsxOTRtZnJFK3lLb0ZYRXhS?=
+ =?utf-8?B?U1FYcFhUUnV6V09NcnNEZ2VJdmJTZ2NYOWE2TXZSaG4rckEwSmhlNG5KL0dp?=
+ =?utf-8?B?K3FyZDAxNjFYNHNBZzUwc1VkWnUvcGZVVEV5UE90SU1nUjdKZnVrd0xJcTA3?=
+ =?utf-8?B?ODB2YVMvSFhqSW5wTWtVZk1BNE9EcFlaMkM3RGl3RVQxaWhUU0lvRndzNWJs?=
+ =?utf-8?B?d0QxVkhHcFljU0VkMFJxRmg2bml2WWNGVFZEWnNDWGovQUx3aUJxckpmMG00?=
+ =?utf-8?B?WW0xR0hjMzN4NFFhUk9Jek40Ujg4dFdTTXlXV29xZjVTVnNzVjhDK1QrU0Ro?=
+ =?utf-8?B?WDExZDZhS2I1dnZhZ0ZkeHhXVkgraWJTSytyQzQ0ODdTWWxYNm5GVFNjbnBG?=
+ =?utf-8?B?TXVXbVd1dTczbXQrK2h2L0wvY2FjbmltU0s1RS96R1YyditnaC9zZHpPeXlX?=
+ =?utf-8?B?aVAwOU1GWmlZQWhMOUg3ek52REdlaXhoeUdGVXpPTkttcndQVzF2NDdRZ01Q?=
+ =?utf-8?B?bGl3bytXeGc0aStPQTJkM29Ic20yUnBnbUFSUTFEVDFzQ3A1VDVqWFo4a0xs?=
+ =?utf-8?B?dDI0aVVOUll2K0hWVFNZbmNkanFGOWI1Y2VydmZaOGRPNVpqRzZmbVplMk1x?=
+ =?utf-8?B?d050QVVjajROZUt0QjFINk5hNFZJRk5mNGlxTUN2VnhFZ3hZU2NpaEUyZUI5?=
+ =?utf-8?B?bGFDV2x3L3ZnVVlsSnRvUnIyaktjQisyNm00RCtsSXgvYXR6Vit3YzdaWlcv?=
+ =?utf-8?B?cmQ4d2RkL0Z3Rm9Kc3pkYjM0TVFGZGpmYzZIYTVwOWgrREEzZFd4SFd1Qm1T?=
+ =?utf-8?B?K2daR29NeEVrQndXWVlKV1BjNTZtQTdHdFN6dGk4MzczMlpaSXNHbldSUXFD?=
+ =?utf-8?B?N0NHTGd1ZDdlZTlTNXYzcGpoMnFzWngwSmk0OUUzaU5sUUUrSlBnZi82ZG94?=
+ =?utf-8?B?cUNGYkhRb29nU1JTaHBXbEdPTlNJZm5semwrb0ZqY2pNc2o1RUZKMC9LWkw1?=
+ =?utf-8?B?UXJWY0I3WGZXNTNTMHl5amxZWTR4QXZWVWx1LzlPOFh4ZkFwczY3VjB0Vm9Q?=
+ =?utf-8?B?Q0QzcGtqckI2QjlaMzZHc01oUlM1KzQ5Z0NrTWZLR3c0ejYrZzVrQXE0U1BF?=
+ =?utf-8?B?RGtzMmtZd2RiUjliRXJLbmFwS0dvOTBOZStOU040ODN1WWI5MWo0TjJUQnJU?=
+ =?utf-8?B?UmRrb2FrclpDbCs0Z25sSWp0endGN2kvaVBvUm94NmtiSHRpOTJwYlpCZjF5?=
+ =?utf-8?Q?VhoBvsR6+H+F767+5Tp6Y3wCyG55ZeafLeU35Apumovd8?=
+X-MS-Exchange-AntiSpam-MessageData-1: 9U5E0eeqH8uiLg==
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 40043f3e-713e-4085-ce2f-08da3a2a15e3
+X-MS-Exchange-CrossTenant-AuthSource: BN8PR12MB3587.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 May 2022 06:29:25.8978
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: GlAlIRkuByxzRffjDqYa46Xl5xpGJeJpAu551ByIULurg5UBvsqCKr9DnAnm2k9a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR12MB1315
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 20.05.2022 08:07, Hannes Reinecke wrote:
->On 5/19/22 20:47, Damien Le Moal wrote:
->>On 5/19/22 16:34, Johannes Thumshirn wrote:
->>>On 19/05/2022 05:19, Damien Le Moal wrote:
->>>>On 5/19/22 12:12, Luis Chamberlain wrote:
->>>>>On Thu, May 19, 2022 at 12:08:26PM +0900, Damien Le Moal wrote:
->>>>>>On 5/18/22 00:34, Theodore Ts'o wrote:
->>>>>>>On Tue, May 17, 2022 at 10:10:48AM +0200, Christoph Hellwig wrote:
->>>>>>>>I'm a little surprised about all this activity.
->>>>>>>>
->>>>>>>>I though the conclusion at LSF/MM was that for Linux itself there
->>>>>>>>is very little benefit in supporting this scheme.  It will massively
->>>>>>>>fragment the supported based of devices and applications, while only
->>>>>>>>having the benefit of supporting some Samsung legacy devices.
->>>>>>>
->>>>>>>FWIW,
->>>>>>>
->>>>>>>That wasn't my impression from that LSF/MM session, but once the
->>>>>>>videos become available, folks can decide for themselves.
->>>>>>
->>>>>>There was no real discussion about zone size constraint on the zone
->>>>>>storage BoF. Many discussions happened in the hallway track though.
->>>>>
->>>>>Right so no direct clear blockers mentioned at all during the BoF.
->>>>
->>>>Nor any clear OK.
->>>
->>>So what about creating a device-mapper target, that's taking npo2 drives and
->>>makes them po2 drives for the FS layers? It will be very similar code to
->>>dm-linear.
->>
->>+1
->>
->>This will simplify the support for FSes, at least for the initial drop (if
->>accepted).
->>
->>And more importantly, this will also allow addressing any potential
->>problem with user space breaking because of the non power of 2 zone size.
->>
->Seconded (or maybe thirded).
+Am 19.05.22 um 23:40 schrieb Kalesh Singh:
+> Processes can pin shared memory by keeping a handle to it through a
+> file descriptor; for instance dmabufs, memfd, and ashsmem (in Android).
 >
->The changes to support npo2 in the block layer are pretty simple, and 
->really I don't have an issue with those.
->Then adding a device-mapper target transforming npo2 drives in po2 
->block devices should be pretty trivial.
+> In the case of a memory leak, to identify the process pinning the
+> memory, userspace needs to:
+>    - Iterate the /proc/<pid>/fd/* for each process
+>    - Do a readlink on each entry to identify the type of memory from
+>      the file path.
+>    - stat() each entry to get the size of the memory.
 >
->And once that is in you can start arguing with the the FS folks on 
->whether to implement it natively.
+> The file permissions on /proc/<pid>/fd/* only allows for the owner
+> or root to perform the operations above; and so is not suitable for
+> capturing the system-wide state in a production environment.
 >
+> This issue was addressed for dmabufs by making /proc/*/fdinfo/*
+> accessible to a process with PTRACE_MODE_READ_FSCREDS credentials[1]
+> To allow the same kind of tracking for other types of shared memory,
+> add the following fields to /proc/<pid>/fdinfo/<fd>:
+>
+> path - This allows identifying the type of memory based on common
+>         prefixes: e.g. "/memfd...", "/dmabuf...", "/dev/ashmem..."
+>
+>         This was not an issued when dmabuf tracking was introduced
+>         because the exp_name field of dmabuf fdinfo could be used
+>         to distinguish dmabuf fds from other types.
+>
+> size - To track the amount of memory that is being pinned.
+>
+>         dmabufs expose size as an additional field in fdinfo. Remove
+>         this and make it a common field for all fds.
+>
+> Access to /proc/<pid>/fdinfo is governed by PTRACE_MODE_READ_FSCREDS
+> -- the same as for /proc/<pid>/maps which also exposes the path and
+> size for mapped memory regions.
+>
+> This allows for a system process with PTRACE_MODE_READ_FSCREDS to
+> account the pinned per-process memory via fdinfo.
 
-So you are suggesting adding support for !PO2 in the block layer and
-then a dm to present the device as a PO2 to the FS? This at least
-addresses the hole issue for raw zoned block devices, so it can be a
-first step.
+I think this should be split into two patches, one adding the size and 
+one adding the path.
 
-This said, it seems to me that the changes to the FS are not being a
-real issue. In fact, we are exposing some bugs while we generalize the
-zone size support.
+Adding the size is completely unproblematic, but the path might raise 
+some eyebrows.
 
-Could you point out what the challenges in btrfs are in the current
-patches, that it makes sense to add an extra dm layer?
+>
+> [1] https://nam11.safelinks.protection.outlook.com/?url=https%3A%2F%2Flore.kernel.org%2Flkml%2F20210308170651.919148-1-kaleshsingh%40google.com%2F&amp;data=05%7C01%7Cchristian.koenig%40amd.com%7C95ee7bf71c2c4aa342fa08da39e03398%7C3dd8961fe4884e608e11a82d994e183d%7C0%7C0%7C637885932392014544%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&amp;sdata=kf%2B2es12hV3z5zjOFhx3EyxI1XEMeHexqTLNpNoDhAY%3D&amp;reserved=0
+>
+> Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
+> ---
+>   Documentation/filesystems/proc.rst | 22 ++++++++++++++++++++--
+>   drivers/dma-buf/dma-buf.c          |  1 -
+>   fs/proc/fd.c                       |  9 +++++++--
+>   3 files changed, 27 insertions(+), 5 deletions(-)
+>
+> diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
+> index 061744c436d9..ad66d78aca51 100644
+> --- a/Documentation/filesystems/proc.rst
+> +++ b/Documentation/filesystems/proc.rst
+> @@ -1922,13 +1922,16 @@ if precise results are needed.
+>   3.8	/proc/<pid>/fdinfo/<fd> - Information about opened file
+>   ---------------------------------------------------------------
+>   This file provides information associated with an opened file. The regular
+> -files have at least four fields -- 'pos', 'flags', 'mnt_id' and 'ino'.
+> +files have at least six fields -- 'pos', 'flags', 'mnt_id', 'ino', 'size',
+> +and 'path'.
+> +
+>   The 'pos' represents the current offset of the opened file in decimal
+>   form [see lseek(2) for details], 'flags' denotes the octal O_xxx mask the
+>   file has been created with [see open(2) for details] and 'mnt_id' represents
+>   mount ID of the file system containing the opened file [see 3.5
+>   /proc/<pid>/mountinfo for details]. 'ino' represents the inode number of
+> -the file.
+> +the file, 'size' represents the size of the file in bytes, and 'path'
+> +represents the file path.
+>   
+>   A typical output is::
+>   
+> @@ -1936,6 +1939,8 @@ A typical output is::
+>   	flags:	0100002
+>   	mnt_id:	19
+>   	ino:	63107
+> +        size:   0
+> +        path:   /dev/null
+>   
+>   All locks associated with a file descriptor are shown in its fdinfo too::
+>   
+> @@ -1953,6 +1958,8 @@ Eventfd files
+>   	flags:	04002
+>   	mnt_id:	9
+>   	ino:	63107
+> +        size:   0
+> +        path:   anon_inode:[eventfd]
+>   	eventfd-count:	5a
+>   
+>   where 'eventfd-count' is hex value of a counter.
+> @@ -1966,6 +1973,8 @@ Signalfd files
+>   	flags:	04002
+>   	mnt_id:	9
+>   	ino:	63107
+> +        size:   0
+> +        path:   anon_inode:[signalfd]
+>   	sigmask:	0000000000000200
+>   
+>   where 'sigmask' is hex value of the signal mask associated
+> @@ -1980,6 +1989,8 @@ Epoll files
+>   	flags:	02
+>   	mnt_id:	9
+>   	ino:	63107
+> +        size:   0
+> +        path:   anon_inode:[eventpoll]
+>   	tfd:        5 events:       1d data: ffffffffffffffff pos:0 ino:61af sdev:7
+>   
+>   where 'tfd' is a target file descriptor number in decimal form,
+> @@ -1998,6 +2009,8 @@ For inotify files the format is the following::
+>   	flags:	02000000
+>   	mnt_id:	9
+>   	ino:	63107
+> +        size:   0
+> +        path:   anon_inode:inotify
+>   	inotify wd:3 ino:9e7e sdev:800013 mask:800afce ignored_mask:0 fhandle-bytes:8 fhandle-type:1 f_handle:7e9e0000640d1b6d
+>   
+>   where 'wd' is a watch descriptor in decimal form, i.e. a target file
+> @@ -2021,6 +2034,8 @@ For fanotify files the format is::
+>   	flags:	02
+>   	mnt_id:	9
+>   	ino:	63107
+> +        size:   0
+> +        path:   anon_inode:[fanotify]
+>   	fanotify flags:10 event-flags:0
+>   	fanotify mnt_id:12 mflags:40 mask:38 ignored_mask:40000003
+>   	fanotify ino:4f969 sdev:800013 mflags:0 mask:3b ignored_mask:40000000 fhandle-bytes:8 fhandle-type:1 f_handle:69f90400c275b5b4
+> @@ -2046,6 +2061,8 @@ Timerfd files
+>   	flags:	02
+>   	mnt_id:	9
+>   	ino:	63107
+> +        size:   0
+> +        path:   anon_inode:[timerfd]
+>   	clockid: 0
+>   	ticks: 0
+>   	settime flags: 01
+> @@ -2070,6 +2087,7 @@ DMA Buffer files
+>   	mnt_id:	9
+>   	ino:	63107
+>   	size:   32768
+> +        path:   /dmabuf:
+>   	count:  2
+>   	exp_name:  system-heap
+>   
+> diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
+> index b1e25ae98302..d61183ff3c30 100644
+> --- a/drivers/dma-buf/dma-buf.c
+> +++ b/drivers/dma-buf/dma-buf.c
+> @@ -377,7 +377,6 @@ static void dma_buf_show_fdinfo(struct seq_file *m, struct file *file)
+>   {
+>   	struct dma_buf *dmabuf = file->private_data;
+>   
+> -	seq_printf(m, "size:\t%zu\n", dmabuf->size);
+>   	/* Don't count the temporary reference taken inside procfs seq_show */
+>   	seq_printf(m, "count:\t%ld\n", file_count(dmabuf->file) - 1);
+>   	seq_printf(m, "exp_name:\t%s\n", dmabuf->exp_name);
+> diff --git a/fs/proc/fd.c b/fs/proc/fd.c
+> index 913bef0d2a36..a8a968bc58f0 100644
+> --- a/fs/proc/fd.c
+> +++ b/fs/proc/fd.c
+> @@ -54,10 +54,15 @@ static int seq_show(struct seq_file *m, void *v)
+>   	if (ret)
+>   		return ret;
+>   
+> -	seq_printf(m, "pos:\t%lli\nflags:\t0%o\nmnt_id:\t%i\nino:\t%lu\n",
+> +	seq_printf(m, "pos:\t%lli\nflags:\t0%o\nmnt_id:\t%i\nino:\t%lu\nsize:\t%zu\n",
+>   		   (long long)file->f_pos, f_flags,
+>   		   real_mount(file->f_path.mnt)->mnt_id,
+> -		   file_inode(file)->i_ino);
+> +		   file_inode(file)->i_ino,
+> +		   file_inode(file)->i_size);
 
-Note that for F2FS there is no blocker. Jaegeuk picked the initial
-patches, and he agreed to add native support.
+We might consider splitting this into multiple seq_printf calls, one for 
+each printed attribute.
+
+It becomes a bit unreadable and the minimal additional overhead 
+shouldn't matter that much.
+
+Regards,
+Christian.
+
+> +
+> +	seq_puts(m, "path:\t");
+> +	seq_file_path(m, file, "\n");
+> +	seq_putc(m, '\n');
+>   
+>   	/* show_fd_locks() never deferences files so a stale value is safe */
+>   	show_fd_locks(m, file, files);
+>
+> base-commit: b015dcd62b86d298829990f8261d5d154b8d7af5
+
