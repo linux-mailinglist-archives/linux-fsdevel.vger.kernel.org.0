@@ -2,177 +2,333 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B3E9E52E9B9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 May 2022 12:16:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D659752E9EC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 May 2022 12:32:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348025AbiETKQU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 May 2022 06:16:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59980 "EHLO
+        id S1348133AbiETKcd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 May 2022 06:32:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346515AbiETKQS (ORCPT
+        with ESMTP id S1348135AbiETKc0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 May 2022 06:16:18 -0400
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94F3050014
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 May 2022 03:16:16 -0700 (PDT)
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20220520101612euoutp024b35bf9ecd8192f2b805f8940cafe43b~wyLvIfR1N2207422074euoutp02A
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 May 2022 10:16:12 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20220520101612euoutp024b35bf9ecd8192f2b805f8940cafe43b~wyLvIfR1N2207422074euoutp02A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1653041772;
-        bh=FtiPxxeAqMIydXwHrRmAPLbmQRTffpcOCZWfzxgX4dc=;
-        h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-        b=lbsQvIKjmr7DQm90bC35XjusJN3VDdtxYqakSNKuWhxjpVZM3XI8N8B5gb36z8DIB
-         6w+vF34ajTMKNRA2/wDSKjxb1YUOSlpaTjlsviiSRmfCATSwUXtjhTUVZxqj1gsZOP
-         4+IeCbocrVHw7VRQL61WYU1TZtaKhRO0ogqy8tZ4=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20220520101611eucas1p13dd922345f7e91a0211cced9694b3ca9~wyLuh2GuU0792907929eucas1p1Q;
-        Fri, 20 May 2022 10:16:11 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 07.A9.10009.B6A67826; Fri, 20
-        May 2022 11:16:11 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20220520101610eucas1p1822ca6014e2a1d55ae74476f83c4de1d~wyLuEwPad0813608136eucas1p1M;
-        Fri, 20 May 2022 10:16:10 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20220520101610eusmtrp1b047ec44358d3e2d4b2d8fd18217aacf~wyLuDudnP3260932609eusmtrp1e;
-        Fri, 20 May 2022 10:16:10 +0000 (GMT)
-X-AuditID: cbfec7f2-e95ff70000002719-0a-62876a6b4f0d
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 76.A7.09522.A6A67826; Fri, 20
-        May 2022 11:16:10 +0100 (BST)
-Received: from CAMSVWEXC01.scsc.local (unknown [106.1.227.71]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20220520101610eusmtip1c7c8b787f20b055e8d604b8a9c64259c~wyLt1hgig2764527645eusmtip1t;
-        Fri, 20 May 2022 10:16:10 +0000 (GMT)
-Received: from localhost (106.210.248.142) by CAMSVWEXC01.scsc.local
-        (2002:6a01:e347::6a01:e347) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-        Fri, 20 May 2022 11:16:09 +0100
-Date:   Fri, 20 May 2022 12:16:08 +0200
-From:   Javier =?utf-8?B?R29uesOhbGV6?= <javier.gonz@samsung.com>
-To:     Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-CC:     Hannes Reinecke <hare@suse.de>,
-        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Theodore Ts'o <tytso@mit.edu>, Christoph Hellwig <hch@lst.de>,
-        Pankaj Raghav <p.raghav@samsung.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "pankydev8@gmail.com" <pankydev8@gmail.com>,
-        "gost.dev@samsung.com" <gost.dev@samsung.com>,
-        "jiangbo.365@bytedance.com" <jiangbo.365@bytedance.com>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "dm-devel@redhat.com" <dm-devel@redhat.com>,
-        "dsterba@suse.com" <dsterba@suse.com>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: Re: [dm-devel] [PATCH v4 00/13] support non power of 2 zoned
- devices
-Message-ID: <20220520101608.m6lngep5bvp22k6p@ArmHalley.local>
+        Fri, 20 May 2022 06:32:26 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 648C68CB3E;
+        Fri, 20 May 2022 03:32:25 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 1914B21C3B;
+        Fri, 20 May 2022 10:32:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1653042744; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Se0O+Pmmx7T7bG9ciKf5iYkSWkZFYvL8Glc6PyiN4CY=;
+        b=1nz5pCwWKOHvcXIHQeFCeYSzIVs0AyRZUsEa75u5WVebO5t2oicgfxu2QAl26lUb7PpQxa
+        XR0nuJiCT06E3NN4+N64CIeOhj/Kv0CZgU5fq4gjgtqf1pXHvL0QFJ0POV7L4jlQkC5Ctl
+        nzT9+yjynA96ch/OG9MGqVmTjVH9boQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1653042744;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Se0O+Pmmx7T7bG9ciKf5iYkSWkZFYvL8Glc6PyiN4CY=;
+        b=V1cCR3TD36xC+53qzxxXC9FhB8skB5/vdbF2KS61xUIxcGj5CUojBVN+uaYfC4Y+cP/OX5
+        q/3rKu254CbJdTAA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 662AD13AF4;
+        Fri, 20 May 2022 10:32:23 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id GibiFTduh2JODwAAMHmgww
+        (envelope-from <lhenriques@suse.de>); Fri, 20 May 2022 10:32:23 +0000
+Received: from localhost (brahms.olymp [local])
+        by brahms.olymp (OpenSMTPD) with ESMTPA id 1adf4034;
+        Fri, 20 May 2022 10:33:00 +0000 (UTC)
+From:   =?utf-8?Q?Lu=C3=ADs_Henriques?= <lhenriques@suse.de>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Olga Kornievskaia <olga.kornievskaia@gmail.com>,
+        Dave Chinner <david@fromorbit.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        He Zhe <zhe.he@windriver.com>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>,
+        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        kernel test robot <oliver.sang@intel.com>
+Subject: Re: [PATCH v13] vfs: fix copy_file_range regression in cross-fs copies
+References: <20220520082111.2066400-1-amir73il@gmail.com>
+Date:   Fri, 20 May 2022 11:33:00 +0100
+In-Reply-To: <20220520082111.2066400-1-amir73il@gmail.com> (Amir Goldstein's
+        message of "Fri, 20 May 2022 11:21:11 +0300")
+Message-ID: <87ilq0334z.fsf@brahms.olymp>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <PH0PR04MB741634259FDCF264BF1CA7259BD39@PH0PR04MB7416.namprd04.prod.outlook.com>
-X-Originating-IP: [106.210.248.142]
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-        CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrAKsWRmVeSWpSXmKPExsWy7djPc7rZWe1JBi+milmsvtvPZvH77Hlm
-        i73vZrNaXPjRyGSxZ9EkJouVq48yWTxZP4vZoufABxaLv133mCz23tK2uPR4BbvFnr0nWSwu
-        75rDZjF/2VN2ixsTnjJarLn5lMWitecnu4Ogx78Ta9g8ds66y+5x+Wypx6ZVnWwem5fUe+y+
-        2cDm0XTmKLPHztb7rB7v911l81i/5SqLx+bT1R6fN8l5tB/oZgrgjeKySUnNySxLLdK3S+DK
-        uHnwD1vBep6KJbM+MzcwNnN1MXJySAiYSHRN+cXYxcjFISSwglHi2cKVLBDOF0aJX/OXQjmf
-        GSXWTNjKAtPSeWMJM0RiOaPEwrfTWEESYFVPHptCJLYySkx985qti5GDg0VAVeLpI22QGjYB
-        e4lLy24xg4RFBIwlfq6zBilnFnjOJrH01w92kBphAX+JibvusIHYvAK2Esd2NjBD2IISJ2c+
-        ATuCWcBKovNDEyvIHGYBaYnl/zggwvISzVtng5VzCsRKtD5ZAFYiIaAssXy6L8T5tRJrj51h
-        B1krIfCJU6L1SCMTRMJFor/3CCOELSzx6vgWdghbRuL05B6o37MlLp7pZoawSyQWvz/GDDHf
-        WqLvTA5E2FFi16T/jBBhPokbbwUhLuOTmLRtOlQ1r0RHm9AERpVZSN6aheStWQhvzULy1gJG
-        llWM4qmlxbnpqcWGeanlesWJucWleel6yfm5mxiBifL0v+OfdjDOffVR7xAjEwfjIUYJDmYl
-        EV7G3JYkId6UxMqq1KL8+KLSnNTiQ4zSHCxK4rzJmRsShQTSE0tSs1NTC1KLYLJMHJxSDUyG
-        nEIXztz3vhu9S/FVmABz2MlOXaaDKbsD2bYtdfEyLQz+7Pr8jYyjzfrSV4J3EtXtd55n9NDU
-        vfO8svHUHd7DJTesQ3LTL05oPO3rNEdm2pwY5wrVfz+ezSwsqJoVtPvSQ+Eb8sI36367rpv8
-        OUszwsj6d2Dit5po1e1fdd88W3muat/9OW89w4RLJ+k8sHmdJ7Xp8ami/cYyvierZucv/yXk
-        JLr31ZfgH0dfrKg7+tX8RtyVDz1SeQceyhfdtOoyqTgSfL9HZ664sYjwlNYDcx7c8na996c/
-        6UX/qYOLIz6J3+UqZbm19NkXz9kve/bsvrz2q9Ox0Pp1BxLU/9zdEOP/fN5V/ndFC2cZGxvL
-        KrEUZyQaajEXFScCAP71JLADBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprDKsWRmVeSWpSXmKPExsVy+t/xu7pZWe1JBm9uGVisvtvPZvH77Hlm
-        i73vZrNaXPjRyGSxZ9EkJouVq48yWTxZP4vZoufABxaLv133mCz23tK2uPR4BbvFnr0nWSwu
-        75rDZjF/2VN2ixsTnjJarLn5lMWitecnu4Ogx78Ta9g8ds66y+5x+Wypx6ZVnWwem5fUe+y+
-        2cDm0XTmKLPHztb7rB7v911l81i/5SqLx+bT1R6fN8l5tB/oZgrgjdKzKcovLUlVyMgvLrFV
-        ija0MNIztLTQMzKx1DM0No+1MjJV0rezSUnNySxLLdK3S9DLuHnwD1vBep6KJbM+MzcwNnN1
-        MXJySAiYSHTeWMLcxcjFISSwlFHi5dU/bBAJGYlPVz6yQ9jCEn+udbFBFH1klPh7/yErhLOV
-        UeLJ/DdA7RwcLAKqEk8faYM0sAnYS1xadgssLCJgLPFznTVIObPAUzaJxR9PsIDUCAv4Slyd
-        8gbM5hWwlTi2swHqit0sEucXLIVKCEqcnPkEzGYWsJCYOf88I8hQZgFpieX/OCDC8hLNW2cz
-        g9icArESrU8WsIKUSAgoSyyf7gtxf63Eq/u7GScwisxCMnQWkqGzEIbOQjJ0ASPLKkaR1NLi
-        3PTcYkO94sTc4tK8dL3k/NxNjMBksu3Yz807GOe9+qh3iJGJg/EQowQHs5IIL2NuS5IQb0pi
-        ZVVqUX58UWlOavEhRlNgAE1klhJNzgems7ySeEMzA1NDEzNLA1NLM2MlcV7Pgo5EIYH0xJLU
-        7NTUgtQimD4mDk6pBibmupTz6mKn6297tPhpBH5z/B5ZeVtmweyHqhETZLJSC8yqVDfv77e8
-        qPJPRajC484M9dSph6Q60lb5T7zUfrWySDxlocBNE4UP4ntUFe98XbZVTeUxU2W1Bae2h4tL
-        4FmZS1e+sP5OMuotX35x8vb4h5sufNTOy3RZffpzxfK4pIcfqm4+eJvPt2HvRP4bNXETg48a
-        uF05tK5SwKyCs5/z/aV5M/T3cm9S6xWQYq/Yta3rYnLK1gMbDPZP97/p+VDL6qmbQZxl9twD
-        cTymGg6xEdLZ7mEKRYa5McqX1rC8vPXhGvMV2eWnG1M0jEtOqE/vOCYn3LJYwWi/RLoAc+jL
-        W8mabN/MGBcbbPPfp8RSnJFoqMVcVJwIAH96gSuvAwAA
-X-CMS-MailID: 20220520101610eucas1p1822ca6014e2a1d55ae74476f83c4de1d
-X-Msg-Generator: CA
-X-RootMTR: 20220520101610eucas1p1822ca6014e2a1d55ae74476f83c4de1d
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20220520101610eucas1p1822ca6014e2a1d55ae74476f83c4de1d
-References: <20220517081048.GA13947@lst.de> <YoPAnj9ufkt5nh1G@mit.edu>
-        <7f9cb19b-621b-75ea-7273-2d2769237851@opensource.wdc.com>
-        <20220519031237.sw45lvzrydrm7fpb@garbanzo>
-        <69f06f90-d31b-620b-9009-188d1d641562@opensource.wdc.com>
-        <PH0PR04MB74166C87F694B150A5AE0F009BD09@PH0PR04MB7416.namprd04.prod.outlook.com>
-        <4a8f0e1b-0acb-1ed4-8d7a-c9ba93fcfd02@opensource.wdc.com>
-        <16f3f9ee-7db7-2173-840c-534f67bcaf04@suse.de>
-        <20220520062720.wxdcp5lkscesppch@mpHalley-2.localdomain>
-        <PH0PR04MB741634259FDCF264BF1CA7259BD39@PH0PR04MB7416.namprd04.prod.outlook.com>
-        <CGME20220520101610eucas1p1822ca6014e2a1d55ae74476f83c4de1d@eucas1p1.samsung.com>
-X-Spam-Status: No, score=-7.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 20.05.2022 09:30, Johannes Thumshirn wrote:
->On 20/05/2022 08:27, Javier González wrote:
->> So you are suggesting adding support for !PO2 in the block layer and
->> then a dm to present the device as a PO2 to the FS? This at least
->> addresses the hole issue for raw zoned block devices, so it can be a
->> first step.
->>
->> This said, it seems to me that the changes to the FS are not being a
->> real issue. In fact, we are exposing some bugs while we generalize the
->> zone size support.
->>
->> Could you point out what the challenges in btrfs are in the current
->> patches, that it makes sense to add an extra dm layer?
->
->I personally don't like the padding we need to do for the super block.
->
->As I've pointed out to Pankaj already, I don't think it is 100% powerfail
->safe as of now. It could probably be made, but that would also involve
->changing non-zoned btrfs code which we try to avoid as much as we can.
->
->As Damien already said, we still have issues with the general zoned
->support in btrfs, just have a look at the list of open issues [1] we
->have.
->
-Sounds good Johannes. I understand that the priority is to make btrfs
-stable now, before introducing more variables. Let's stick to this and
-then we can bring it back as the list of open issues becomes more
-manageable.
+Amir Goldstein <amir73il@gmail.com> writes:
 
->[1] https://protect2.fireeye.com/v1/url?k=f14a1d6f-90c10859-f14b9620-74fe485fffe0-3f1861e7739d8cc7&q=1&e=213fcc28-3f9d-41a1-b653-0dc0e203c718&u=https%3A%2F%2Fgithub.com%2Fnaota%2Flinux%2Fissues%2F
+> From: Luis Henriques <lhenriques@suse.de>
+>
+> A regression has been reported by Nicolas Boichat, found while using the
+> copy_file_range syscall to copy a tracefs file.  Before commit
+> 5dae222a5ff0 ("vfs: allow copy_file_range to copy across devices") the
+> kernel would return -EXDEV to userspace when trying to copy a file across
+> different filesystems.  After this commit, the syscall doesn't fail anymo=
+re
+> and instead returns zero (zero bytes copied), as this file's content is
+> generated on-the-fly and thus reports a size of zero.
+>
+> Another regression has been reported by He Zhe and Paul Gortmaker -
+> WARN_ON_ONCE(ret =3D=3D -EOPNOTSUPP) can be triggered from userspace when
+> copying from a sysfs file whose read operation may return -EOPNOTSUPP:
+>
+>   xfs_io -f -c "copy_range /sys/class/net/lo/phys_switch_id" /tmp/foo
+>
+> Since we do not have test coverage for copy_file_range() between any
+> two types of filesystems, the best way to avoid with this sort of issues
+> in the future is for the kernel to be more picky about filesystems that
+> are allowed to do copy_file_range().
+>
+> This patch restores some cross-filesystem copy restrictions that existed
+> prior to commit 5dae222a5ff0 ("vfs: allow copy_file_range to copy across
+> devices").
+>
+> Filesystems that implement copy_file_range() or remap_file_range() may
+> still fall-back to the generic_copy_file_range() implementation when the
+> filesystem cannot handle the copy, so kernel can maintain a consistent
+> story about which filesystems support copy_file_range().
+> That will allow userspace tools to make consistent desicions w.r.t using
+> copy_file_range().
+>
+> nfsd is also modified to fall-back into generic_copy_file_range() in case
+> vfs_copy_file_range() fails with -EOPNOTSUPP or -EXDEV.
+>
+> Fixes: 5dae222a5ff0 ("vfs: allow copy_file_range to copy across devices")
+> Link: https://lore.kernel.org/linux-fsdevel/20210212044405.4120619-1-drin=
+kcat@chromium.org/
+> Link: https://lore.kernel.org/linux-fsdevel/CANMq1KDZuxir2LM5jOTm0xx+BnvW=
+=3DZmpsG47CyHFJwnw7zSX6Q@mail.gmail.com/
+> Link: https://lore.kernel.org/linux-fsdevel/20210126135012.1.If45b7cdc3ff=
+707bc1efa17f5366057d60603c45f@changeid/
+> Link: https://lore.kernel.org/linux-fsdevel/20210630161320.29006-1-lhenri=
+ques@suse.de/
+> Reported-by: Nicolas Boichat <drinkcat@chromium.org>
+> Reported-by: kernel test robot <oliver.sang@intel.com>
+> Signed-off-by: Luis Henriques <lhenriques@suse.de>
+> Fixes: 64bf5ff58dff ("vfs: no fallback for ->copy_file_range")
+> Link: https://lore.kernel.org/linux-fsdevel/20f17f64-88cb-4e80-07c1-85cb9=
+6c83619@windriver.com/
+> Reported-by: He Zhe <zhe.he@windriver.com>
+> Reported-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> ---
+>
+> Al,
+>
+> Please take this patch to fix several issues that started to pop up
+> as userspace tools started using copy_file_range(), which could only
+> get more popular in the future.
+>
+> I've decides to pick this up from Luis' v12 last year [1] following
+> some recent bug report. Although Luis' patch was reviewed by me back
+> then and tested by Olga on nfs, I tested it now and found that it
+> regressed fstests on xfs,btrfs, so decided on a slightly differnt logic.
+>
+> The rationale behind my change is that given src fs and dst fs, the
+> outcomes of EOPNOTSUPP and EXDEV are consistent, while keeping the
+> fs that may return success from this syscall to a minimum.
+>
+> I've tested this with the -g copy_range tests from fstests on
+> ext4,xfs,btrfs,nfs,overlayfs (over xfs).
+>
+> For ext4, all tests are skipping as expected.
+> For xfs,btrfs (support clone) the cross-fs copy test (genric/565)
+> is skipped.
+> For nfs,overlayfs the tests pass including the cross-fs copy test.
 
-Thanks for sharing this too. It is a good way to where to help
+Thanks a lot for taking care of this, Amir.  I've also tested it with ceph
+and didn't saw anything breaking (well... there was a bug in a
+ceph-specific test, but that's unrelated).  So, FWIW:
+
+Reviewed-by: Lu=C3=ADs Henriques <lhenriques@suse.de>
+Tested-by: Lu=C3=ADs Henriques <lhenriques@suse.de>
+
+Cheers
+--=20
+Lu=C3=ADs
+
+>
+> Thanks,
+> Amir.
+>
+> [1] https://lore.kernel.org/linux-fsdevel/CAOQ4uxh6PegaOtMXQ9WmU=3D05bhQf=
+YTeweGjFWR7T+XVAbuR09A@mail.gmail.com/
+>
+>  fs/nfsd/vfs.c   |  8 ++++-
+>  fs/read_write.c | 79 +++++++++++++++++++++++++++----------------------
+>  2 files changed, 50 insertions(+), 37 deletions(-)
+>
+> diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+> index c22ad0532e8e..74f7fef48504 100644
+> --- a/fs/nfsd/vfs.c
+> +++ b/fs/nfsd/vfs.c
+> @@ -577,6 +577,7 @@ __be32 nfsd4_clone_file_range(struct svc_rqst *rqstp,
+>  ssize_t nfsd_copy_file_range(struct file *src, u64 src_pos, struct file =
+*dst,
+>  			     u64 dst_pos, u64 count)
+>  {
+> +	ssize_t ret;
+>=20=20
+>  	/*
+>  	 * Limit copy to 4MB to prevent indefinitely blocking an nfsd
+> @@ -587,7 +588,12 @@ ssize_t nfsd_copy_file_range(struct file *src, u64 s=
+rc_pos, struct file *dst,
+>  	 * limit like this and pipeline multiple COPY requests.
+>  	 */
+>  	count =3D min_t(u64, count, 1 << 22);
+> -	return vfs_copy_file_range(src, src_pos, dst, dst_pos, count, 0);
+> +	ret =3D vfs_copy_file_range(src, src_pos, dst, dst_pos, count, 0);
+> +
+> +	if (ret =3D=3D -EOPNOTSUPP || ret =3D=3D -EXDEV)
+> +		ret =3D generic_copy_file_range(src, src_pos, dst, dst_pos,
+> +					      count, 0);
+> +	return ret;
+>  }
+>=20=20
+>  __be32 nfsd4_vfs_fallocate(struct svc_rqst *rqstp, struct svc_fh *fhp,
+> diff --git a/fs/read_write.c b/fs/read_write.c
+> index e643aec2b0ef..a8f12e91762f 100644
+> --- a/fs/read_write.c
+> +++ b/fs/read_write.c
+> @@ -1381,28 +1381,6 @@ ssize_t generic_copy_file_range(struct file *file_=
+in, loff_t pos_in,
+>  }
+>  EXPORT_SYMBOL(generic_copy_file_range);
+>=20=20
+> -static ssize_t do_copy_file_range(struct file *file_in, loff_t pos_in,
+> -				  struct file *file_out, loff_t pos_out,
+> -				  size_t len, unsigned int flags)
+> -{
+> -	/*
+> -	 * Although we now allow filesystems to handle cross sb copy, passing
+> -	 * a file of the wrong filesystem type to filesystem driver can result
+> -	 * in an attempt to dereference the wrong type of ->private_data, so
+> -	 * avoid doing that until we really have a good reason.  NFS defines
+> -	 * several different file_system_type structures, but they all end up
+> -	 * using the same ->copy_file_range() function pointer.
+> -	 */
+> -	if (file_out->f_op->copy_file_range &&
+> -	    file_out->f_op->copy_file_range =3D=3D file_in->f_op->copy_file_ran=
+ge)
+> -		return file_out->f_op->copy_file_range(file_in, pos_in,
+> -						       file_out, pos_out,
+> -						       len, flags);
+> -
+> -	return generic_copy_file_range(file_in, pos_in, file_out, pos_out, len,
+> -				       flags);
+> -}
+> -
+>  /*
+>   * Performs necessary checks before doing a file copy
+>   *
+> @@ -1424,6 +1402,25 @@ static int generic_copy_file_checks(struct file *f=
+ile_in, loff_t pos_in,
+>  	if (ret)
+>  		return ret;
+>=20=20
+> +	/*
+> +	 * Although we now allow filesystems to handle cross sb copy, passing
+> +	 * a file of the wrong filesystem type to filesystem driver can result
+> +	 * in an attempt to dereference the wrong type of ->private_data, so
+> +	 * avoid doing that until we really have a good reason.  NFS defines
+> +	 * several different file_system_type structures, but they all end up
+> +	 * using the same ->copy_file_range() function pointer.
+> +	 */
+> +	if (file_out->f_op->copy_file_range) {
+> +		if (file_in->f_op->copy_file_range !=3D
+> +		    file_out->f_op->copy_file_range)
+> +			return -EXDEV;
+> +	} else if (file_in->f_op->remap_file_range) {
+> +		if (file_inode(file_in)->i_sb !=3D file_inode(file_out)->i_sb)
+> +			return -EXDEV;
+> +	} else {
+> +                return -EOPNOTSUPP;
+> +	}
+> +
+>  	/* Don't touch certain kinds of inodes */
+>  	if (IS_IMMUTABLE(inode_out))
+>  		return -EPERM;
+> @@ -1489,26 +1486,36 @@ ssize_t vfs_copy_file_range(struct file *file_in,=
+ loff_t pos_in,
+>  	file_start_write(file_out);
+>=20=20
+>  	/*
+> -	 * Try cloning first, this is supported by more file systems, and
+> -	 * more efficient if both clone and copy are supported (e.g. NFS).
+> +	 * Cloning is supported by more file systems, so we implement copy on
+> +	 * same sb using clone, but for filesystems were both clone and copy
+> +	 * are supported (e.g. NFS), we only call the copy method.
+>  	 */
+> -	if (file_in->f_op->remap_file_range &&
+> -	    file_inode(file_in)->i_sb =3D=3D file_inode(file_out)->i_sb) {
+> -		loff_t cloned;
+> -
+> -		cloned =3D file_in->f_op->remap_file_range(file_in, pos_in,
+> +	if (file_out->f_op->copy_file_range) {
+> +		ret =3D file_out->f_op->copy_file_range(file_in, pos_in,
+> +						      file_out, pos_out,
+> +						      len, flags);
+> +	} else if (file_in->f_op->remap_file_range &&
+> +		   file_inode(file_in)->i_sb =3D=3D file_inode(file_out)->i_sb) {
+> +		ret =3D file_in->f_op->remap_file_range(file_in, pos_in,
+>  				file_out, pos_out,
+>  				min_t(loff_t, MAX_RW_COUNT, len),
+>  				REMAP_FILE_CAN_SHORTEN);
+> -		if (cloned > 0) {
+> -			ret =3D cloned;
+> -			goto done;
+> -		}
+>  	}
+>=20=20
+> -	ret =3D do_copy_file_range(file_in, pos_in, file_out, pos_out, len,
+> -				flags);
+> -	WARN_ON_ONCE(ret =3D=3D -EOPNOTSUPP);
+> +	if (ret > 0)
+> +		goto done;
+> +
+> +	/*
+> +	 * We can get here if filesystem supports clone but rejected the clone
+> +	 * request (e.g. because it was not block aligned).
+> +	 * In that case, fall back to kernel copy so we are able to maintain a
+> +	 * consistent story about which filesystems support copy_file_range()
+> +	 * and which filesystems do not, that will allow userspace tools to
+> +	 * make consistent desicions w.r.t using copy_file_range().
+> +	 */
+> +	ret =3D generic_copy_file_range(file_in, pos_in, file_out, pos_out, len,
+> +				      flags);
+> +
+>  done:
+>  	if (ret > 0) {
+>  		fsnotify_access(file_in);
+> --=20
+>
+> 2.25.1
+>
+
