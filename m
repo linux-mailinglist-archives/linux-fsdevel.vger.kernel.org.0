@@ -2,122 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 48AB152F54B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 May 2022 23:45:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8604852F556
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 May 2022 23:53:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353671AbiETVpn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 May 2022 17:45:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35762 "EHLO
+        id S1353728AbiETVx2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 May 2022 17:53:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50706 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352695AbiETVpj (ORCPT
+        with ESMTP id S1345461AbiETVxZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 May 2022 17:45:39 -0400
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FB7D185CBA;
-        Fri, 20 May 2022 14:45:37 -0700 (PDT)
-Received: from cwcc.thunk.org (pool-108-7-220-252.bstnma.fios.verizon.net [108.7.220.252])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 24KLjCF7022100
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 20 May 2022 17:45:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-        t=1653083116; bh=Kena1s74NfZpE/ieHVoWi+W9Tj+cPireegTJMkTYQ9Y=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=K/MlzjrH88/7BkC/Pt1fYXFhfFSaNv5AOfMMqBDmZulnsCbvSIu6afJzH18Dg3TFL
-         TPmv6srejeH0g5cbsCqb8RZmScwyeYzw0JVoKL6khT0y2cT1eYk3xiVM3XdQQlQjnh
-         /AhfdW4LJv7dC2bstYXB1OxiMNdD3Woc2wauGpfYhR4uOkYzdlbsX2NDapwRePK/jw
-         WtV9a80O7fuBLDD4zOw9mZ8CfqZ8YyrKhsvyYvvcnFUV2yfyWjqfZsFM9wnTWwG9cF
-         C/4f0wISNRYBkXD6WFzUHT+F9k0VNT9z8E/uxG985iDW3oMz9rgAcmnBief4IDKylz
-         nKv1dY/zFuzFg==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id 84DFA15C3EC0; Fri, 20 May 2022 17:45:12 -0400 (EDT)
-Date:   Fri, 20 May 2022 17:45:12 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Hillf Danton <hdanton@sina.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        syzbot <syzbot+9c3fb12e9128b6e1d7eb@syzkaller.appspotmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com,
-        syzkaller <syzkaller@googlegroups.com>
-Subject: Re: [syzbot] INFO: task hung in jbd2_journal_commit_transaction (3)
-Message-ID: <YogL6MCdYVrqGcRf@mit.edu>
-References: <00000000000032992d05d370f75f@google.com>
- <20211219023540.1638-1-hdanton@sina.com>
- <Yb6zKVoxuD3lQMA/@casper.infradead.org>
- <20211221090804.1810-1-hdanton@sina.com>
- <20211222022527.1880-1-hdanton@sina.com>
- <YcKrHc11B/2tcfRS@mit.edu>
- <CACT4Y+YHxkL5aAgd4wXPe-J+RG6_VBcPs=e8QpRM8=3KJe+GCg@mail.gmail.com>
+        Fri, 20 May 2022 17:53:25 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A5240193210
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 May 2022 14:53:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1653083603;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=vkFJsoZDsyIifpQvkNeOKq32BmlJWWA3G3NXR1CfHY0=;
+        b=RTx1ekA17nb4ckelwcryQxssygVJJiIiRePJzRR2anYv3XbMhcVzevvpfBUWo30rAM2Z0H
+        1uU7hdJWQMp4vwZrGIMu0r6QJF6HsY3MNIdABzGxshOUneihC2cReA0lMcNjwg9naD6Cv5
+        W8rhJk9LHbYVqCtPxBOC7ijEFpAK/d8=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-277-ApshW4Y_NuOwox0TEvDu3w-1; Fri, 20 May 2022 17:53:20 -0400
+X-MC-Unique: ApshW4Y_NuOwox0TEvDu3w-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 939E6800B21;
+        Fri, 20 May 2022 21:53:19 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.8])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B8AC37AD5;
+        Fri, 20 May 2022 21:53:18 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH] afs: Fix afs_getattr() to refetch file status if callback
+ break occurred
+From:   David Howells <dhowells@redhat.com>
+To:     Markus Suvanto <markus.suvanto@gmail.com>
+Cc:     Marc Dionne <marc.dionne@auristor.com>,
+        linux-afs@lists.infradead.org, dhowells@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 20 May 2022 22:53:18 +0100
+Message-ID: <165308359800.162686.14122417881564420962.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/1.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+YHxkL5aAgd4wXPe-J+RG6_VBcPs=e8QpRM8=3KJe+GCg@mail.gmail.com>
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 20, 2022 at 01:57:07PM +0200, Dmitry Vyukov wrote:
-> 
-> Hi Ted,
-> 
-> Reviving this old thread re syzkaller using SCHED_FIFO.
-> 
-> It's a bit hard to restrict what the fuzzer can do if we give it
-> sched_setattr() and friends syscalls. We could remove them from the
-> fuzzer entirely, but it's probably suboptimal as well.
-> 
-> I see that setting up SCHED_FIFO is guarded by CAP_SYS_NICE:
-> https://elixir.bootlin.com/linux/v5.18-rc7/source/kernel/sched/core.c#L7264
-> 
-> And I see we drop CAP_SYS_NICE from the fuzzer process since 2019
-> (after a similar discussion):
-> https://github.com/google/syzkaller/commit/f3ad68446455a
->
-> The latest C reproducer contains: ....
+If a callback break occurs (change notification), afs_getattr() needs to
+issue an FS.FetchStatus RPC operation to update the status of the file
+being examined by the stat-family of system calls.
 
-For this particular report, there *was* no C reproducer.  There was
-only a syz reproducer:
+Fix afs_getattr() to do this if AFS_VNODE_CB_PROMISED has been cleared on a
+vnode by a callback break.  Skip this if AT_STATX_DONT_SYNC is set.
 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    5472f14a3742 Merge tag 'for_linus' of git://git.kernel.org..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=11132113b00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=e3bdfd29b408d1b6
-> dashboard link: https://syzkaller.appspot.com/bug?extid=9c3fb12e9128b6e1d7eb
-> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14559113b00000
+This can be tested by appending to a file on one AFS client and then using
+"stat -L" to examine its length on a machine running kafs.  This can also
+be watched through tracing on the kafs machine.  The callback break is
+seen:
 
-So let me ask a counter question.  I thought syzbot tries to create a
-minimal reproducer?  So if the sched_setattr is a no-op, and is
-returning EPERM, why wasn't the sched_setattr line removed from the
-syz repro?
+     kworker/1:1-46      [001] .....   978.910812: afs_cb_call: c=0000005f YFSCB.CallBack
+     kworker/1:1-46      [001] ...1.   978.910829: afs_cb_break: 100058:23b4c:242d2c2 b=2 s=1 break-cb
+     kworker/1:1-46      [001] .....   978.911062: afs_call_done:    c=0000005f ret=0 ab=0 [0000000082994ead]
 
-As a side note, since in many cases running a reproducer can be
-painful, would it be possible for the syzkiller dashboard to provide
-the output of running "strace -f" while the reproducer is running?
+And then the stat command generated no traffic if unpatched, but with this
+change a call to fetch the status can be observed:
 
-That would also especially help since even when there is a C
-reproducer, trying to understand what it is doing from reading the
-syzbot-generated C source code is often non-trivial, and strace does a
-much better job decoding what the !@#?@ the reproducer.  Another
-advantage of using strace is that it will also show us the return code
-from the system call, which would very quickly confirm whether the
-sched_setattr() was actually returning EPERM or not --- and it will
-decode the system call arguments in a way that I often wished would be
-included as comments in the syzbot-generated reproducer.
+            stat-4471    [000] .....   986.744122: afs_make_fs_call: c=000000ab 100058:023b4c:242d2c2 YFS.FetchStatus
+            stat-4471    [000] .....   986.745578: afs_call_done:    c=000000ab ret=0 ab=0 [0000000087fc8c84]
 
-Providing the strace output could significantly reduce the amount of
-upstream developer toil, and might therefore improve upstream
-developer engagement with syzkaller.
+Fixes: 08e0e7c82eea ("[AF_RXRPC]: Make the in-kernel AFS filesystem use AF_RXRPC.")
+Reported-by: Markus Suvanto <markus.suvanto@gmail.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Marc Dionne <marc.dionne@auristor.com>
+cc: linux-afs@lists.infradead.org
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=216010
+---
 
-Cheers,
+ fs/afs/inode.c |   14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-						- Ted
+diff --git a/fs/afs/inode.c b/fs/afs/inode.c
+index 2fe402483ad5..30b066299d39 100644
+--- a/fs/afs/inode.c
++++ b/fs/afs/inode.c
+@@ -740,10 +740,22 @@ int afs_getattr(struct user_namespace *mnt_userns, const struct path *path,
+ {
+ 	struct inode *inode = d_inode(path->dentry);
+ 	struct afs_vnode *vnode = AFS_FS_I(inode);
+-	int seq = 0;
++	struct key *key;
++	int ret, seq = 0;
+ 
+ 	_enter("{ ino=%lu v=%u }", inode->i_ino, inode->i_generation);
+ 
++	if (!(query_flags & AT_STATX_DONT_SYNC) &&
++	    !test_bit(AFS_VNODE_CB_PROMISED, &vnode->flags)) {
++		key = afs_request_key(vnode->volume->cell);
++		if (IS_ERR(key))
++			return PTR_ERR(key);
++		ret = afs_validate(vnode, key);
++		key_put(key);
++		if (ret < 0)
++			return ret;
++	}
++
+ 	do {
+ 		read_seqbegin_or_lock(&vnode->cb_lock, &seq);
+ 		generic_fillattr(&init_user_ns, inode, stat);
+
+
