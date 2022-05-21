@@ -2,175 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8363A52F656
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 May 2022 01:46:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABAF052F803
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 May 2022 05:25:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350443AbiETXpv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 May 2022 19:45:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41246 "EHLO
+        id S1347413AbiEUDZQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 May 2022 23:25:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245165AbiETXpu (ORCPT
+        with ESMTP id S231743AbiEUDZO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 May 2022 19:45:50 -0400
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1DBDA45D;
-        Fri, 20 May 2022 16:45:48 -0700 (PDT)
-Received: from cwcc.thunk.org (pool-108-7-220-252.bstnma.fios.verizon.net [108.7.220.252])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 24KNjdLe007351
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 20 May 2022 19:45:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-        t=1653090341; bh=zNkUN2OdaR6T5z6DFiVEPSLXWY0c67eIv0P3bisFFoE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=R/EsrVJI0OXzPEVVHh2YKwrEEhYu+vVfME3Z2wpXZDEcXY97u8QsxYgkVQlMGkERc
-         jjncRSfIF41ahJylLHnBDcdzK8kioVNM2efI8qqsW+ClBcwWABoipJTt9YoA/2KQT5
-         Apg2TOB7lv6TxI8ASku0GY4QrvRXlTtBUYRw+EeMS+0a+qdb4sJ/kDYbQdU4kzNre1
-         tPHucqGX2tzU98oreCcPCqh77TDaH8haIXXNf2xPT9D9/7grqJGkx4I4CQnjBxeH2q
-         wPDzirIYoueTXJD2f8V/4mM0D9EVD95Z6Xmp7jIkjQdg5QVQDyAhHAVM3KMsvrJ5Sz
-         /EdRgOTjFaGZQ==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id 77A6115C3EC0; Fri, 20 May 2022 19:45:39 -0400 (EDT)
-Date:   Fri, 20 May 2022 19:45:39 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Kent Overstreet <kent.overstreet@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org, netdev@vger.kernel.org,
-        mcgrof@kernel.org
-Subject: Re: RFC: Ioctl v2
-Message-ID: <YogoI6Augr1V6AHn@mit.edu>
-References: <20220520161652.rmhqlvwvfrvskg4w@moria.home.lan>
+        Fri, 20 May 2022 23:25:14 -0400
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4E05187D8F;
+        Fri, 20 May 2022 20:25:12 -0700 (PDT)
+Received: by mail-pj1-x102c.google.com with SMTP id gg20so9528989pjb.1;
+        Fri, 20 May 2022 20:25:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=srHucyXa3M3L2xwtZzIWQdA+RV7TAlhAfzh/7sAefe8=;
+        b=NTqXHE9UCcyj7Bih4sgeeQfhBLD7/niyepd8g2nJpwh3FEhdqVm1Lb13kRt+qOogHX
+         owgvx4hSBva1Y9OvIwr3lxDFxN0quT7ul8Bn3r4xRK72lRAQsq+EkrgtbWmPuHWRK0NC
+         F6qm2rsKnWWuIqSL0VChbsbwzF9+8rRSLV4wJALe2OQ5bShU3wXbGtUUk8INKcNplcn1
+         XGKUi0cUDD5O160LpOhU91QAW8+nMiEd4JkBdWIN3tz8WsBj90ker8ZL5aTmzWWmUEtQ
+         eBywN02hMHBhmc8lj22ZmpRGqb9LGM2cPYOtSdJlCd6A1zBO4dfbpedwHHcPTrYaoMFB
+         KWiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=srHucyXa3M3L2xwtZzIWQdA+RV7TAlhAfzh/7sAefe8=;
+        b=e2lctWyqxzTYYbcOseXuDpZSnRqI2twfV/QxYmNG1qGgY/RHfF6j2jP1jEDOfwKIV2
+         Qf639iy1QC65/L6731Z5T3M+kWzkSHQRTYEDX0komp7pJbJxF0Y4ALumS5J2TILHhJda
+         zpABNVw5FBoh5S/X2kqS8OE29xAZ89ZffaGQnSYhDVASbLewJE4o2oruQGT+6RBecebz
+         iZ7g3rEdVPa4KaTJd3XYsaoLOZc6vcoS1lM0ke4KK2n5Mt/9OnrNIYT7+cr1zSFTT2Tl
+         0TX/GUhUGE4FQj/3FswiKjJVZnCowte03cDTtqQiSTPU1aszrmcj6Y4NYURSJAGxeDl7
+         368g==
+X-Gm-Message-State: AOAM5337xhiLphQXoBVSLa6BXG+FnCB/PGq+l5N4izXMNkp8UJGkgsbs
+        fKEwbokTX3sjwbpEhchxUrc=
+X-Google-Smtp-Source: ABdhPJz7hkAsuMIxzrZUQvOGLFk7XGtePhFKoNgQzk26Rbwa+SGIYLu8hqxi0XatY3eNzsWsIrWgRg==
+X-Received: by 2002:a17:903:3112:b0:161:80df:f11 with SMTP id w18-20020a170903311200b0016180df0f11mr12268414plc.68.1653103512206;
+        Fri, 20 May 2022 20:25:12 -0700 (PDT)
+Received: from hyeyoo ([114.29.24.243])
+        by smtp.gmail.com with ESMTPSA id e1-20020a170902b78100b0015e8d4eb229sm448235pls.115.2022.05.20.20.24.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 May 2022 20:25:11 -0700 (PDT)
+Date:   Sat, 21 May 2022 12:24:56 +0900
+From:   Hyeonggon Yoo <42.hyeyoo@gmail.com>
+To:     Byungchul Park <byungchul.park@lge.com>
+Cc:     torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
+        linux-ide@vger.kernel.org, adilger.kernel@dilger.ca,
+        linux-ext4@vger.kernel.org, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, peterz@infradead.org,
+        will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
+        joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
+        chris@chris-wilson.co.uk, duyuyang@gmail.com,
+        johannes.berg@intel.com, tj@kernel.org, tytso@mit.edu,
+        willy@infradead.org, david@fromorbit.com, amir73il@gmail.com,
+        bfields@fieldses.org, gregkh@linuxfoundation.org,
+        kernel-team@lge.com, linux-mm@kvack.org, akpm@linux-foundation.org,
+        mhocko@kernel.org, minchan@kernel.org, hannes@cmpxchg.org,
+        vdavydov.dev@gmail.com, sj@kernel.org, jglisse@redhat.com,
+        dennis@kernel.org, cl@linux.com, penberg@kernel.org,
+        rientjes@google.com, vbabka@suse.cz, ngupta@vflare.org,
+        linux-block@vger.kernel.org, paolo.valente@linaro.org,
+        josef@toxicpanda.com, linux-fsdevel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, jack@suse.cz, jack@suse.com,
+        jlayton@kernel.org, dan.j.williams@intel.com, hch@infradead.org,
+        djwong@kernel.org, dri-devel@lists.freedesktop.org,
+        airlied@linux.ie, rodrigosiqueiramelo@gmail.com,
+        melissa.srw@gmail.com, hamohammed.sa@gmail.com
+Subject: Re: [PATCH RFC v6 02/21] dept: Implement Dept(Dependency Tracker)
+Message-ID: <YohbiJquna5LlgVv@hyeyoo>
+References: <1651652269-15342-1-git-send-email-byungchul.park@lge.com>
+ <1651652269-15342-3-git-send-email-byungchul.park@lge.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220520161652.rmhqlvwvfrvskg4w@moria.home.lan>
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <1651652269-15342-3-git-send-email-byungchul.park@lge.com>
+X-Spam-Status: No, score=-0.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,HK_RANDOM_ENVFROM,
+        HK_RANDOM_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 20, 2022 at 12:16:52PM -0400, Kent Overstreet wrote:
-> 
-> Where the lack of real namespacing bites us more is when ioctls get promoted
-> from filesystem or driver on up. Ted had a good example of an ext2 ioctl getting
-> promoted to the VFS when it really shouldn't have, because it was exposing ext2
-> specific data structures.
-> 
-> But because this is as simple as changing a #define EXT2_IOC to #define FS_IOC,
-> it's really easy to do without adequate review - you don't have to change the
-> ioctl number and break userspace, so why would you?
-> 
-> Introducing real namespacing would mean that promoting an ioctl to the VFS level
-> would really have to be a new ioctl, and it'll get people to think more about
-> what the new ioctl would be.
+On Wed, May 04, 2022 at 05:17:30PM +0900, Byungchul Park wrote:
+> CURRENT STATUS
+> +/*
 
-It's not clear that making harder not to break userspace is a
-*feature*.  If existing programs are using a particular ioctl
-namespace, being able to have other file systems adopt it has
-historically been considered a *feature* not a *bug*.
+[...]
 
-At the time, we had working utilities, chattr and lsattr, which were
-deployed on all Linux distributions, and newer file systems, such as
-xfs, reiserfs, btrfs, etc., decided they wanted to piggy-back on those
-existing utilities.  Forcing folks to deploy new utilities just
-because it's the best way to force "adequate review" might be swinging
-the pendulum too far in the straight-jacket direction.
+> + * Ensure it has been called on ON/OFF transition.
+> + */
+> +void dept_enirq_transition(unsigned long ip)
+> +{
+> +	struct dept_task *dt = dept_task();
+> +	unsigned long flags;
+> +
+> +	if (unlikely(READ_ONCE(dept_stop) || in_nmi()))
+> +		return;
+> +
+> +	/*
+> +	 * IRQ ON/OFF transition might happen while Dept is working.
+> +	 * We cannot handle recursive entrance. Just ingnore it.
+> +	 * Only transitions outside of Dept will be considered.
+> +	 */
+> +	if (dt->recursive)
+> +		return;
+> +
+> +	flags = dept_enter();
+> +
+> +	enirq_update(ip);
+> +
+> +	dept_exit(flags);
+> +}
 
-It's worked the other way, too.  For example, the "shutdown" ioctl was
-originally comes from XFS, and ext4 adopted that feature because the
-existing interface was perfectly good, and that allows us to to get
-the testing from xfstests for free.  The same goes for the extended
-attribute, "trim", "freeze" and "thaw" ioctls.  
+EXPORT_SYMBOL_GPL(dept_enirq_transition);
 
-We've also promoted ioctls from btrfs to the VFS layer, including
-FICLONE, GETLABEL, SETLABEL.  Take a look at include/uapi/linux/fs.h.
-Ioctl's in 'X' namespace come from XFS.  Ioctl's in the 0x94 interface
-come from btrfs.  And of course ioctl's in the 'f' interface come from
-ext2/ext3/ext4.  It's actually worked pretty well, and we should
-acknowledge that.
+ERROR: modpost: "dept_enirq_transition" [arch/x86/kvm/kvm-amd.ko] undefined!
+ERROR: modpost: "dept_enirq_transition" [arch/x86/kvm/kvm-intel.ko] undefined!
 
-In the case of extended attributes, we had perfectly working userspace
-tools that would have ***broken*** if we adhered to a doctrinaire,
-when you promote an interface, we break the userspace interface Just
-Because it's the Good Computer Science Thing To Do.
+This function needs to be exported for modules.
 
-> ioctls are just private syscalls. Syscalls look like normal function calls, why
-> can't ioctls?  Some ioctls do complicated things that require defining structs
-> with all the tricky layout rules that we kernel devs have all had beaten into
-> our brains - but most probably would not, if we could do normal-looking function
-> calls.
-> 
-> Well, syscalls do require arch specific code to handle calling conventions, and
-> we don't want that.....
->
-> Userspace won't call this directly. Userspace will call normal looking
-> functions, like:
-> 
-> int bcachefs_ioctl_disk_add(int fd, unsigned flags, char __user *disk_path);
-> 
-> Which will be a wrapper that casts the function arguments to u64s (or s64s for
-> signed integers, so that we don't have surprises when kernel space and user
-> space disagree about sizeof(long)) and then does the actual syscall.
+Thanks.
 
-So this approach requires that someone has to actually implement the
-wrapper library.  Who will that be?  The answer could be, "let libc do
-it", but then we need to worry about all the C libraries out there
-actually adopting the new ioctl, which takes a long time, and
-historically, some C library maintainers have had.... opinionated
-points of view about the sort of "value add that should be done at the
-C Library level".
-
-There are other examples, such as the AIO and extended attribute
-libraries, but they require someone willing to maintain those
-libraries for the long term.  In some cases, such as the extended
-attribute, that makes total sense --- but that's because that's a
-library which is using an ioctl which was promoted from a specific
-file system to a generic VFS interface, and so it had a lot of users.
-
-In other cases, the only user of a particular interface might be a
-file system specific userspace utility --- the kind of thing which is
-shipped in btrfs-progs, e2fsprogs, f2fs-tools, xfsprogs, etc.
-Creating a wrapper library for those kinds of ioctls is going to be
-overkill.
-
-So I suspect there won't be a lot of standardization here.  It could
-be that there will be wrapper function that lives in util-linux, or
-e2fsprogs, or xfsprogs, or whatever.  But in that case, we could do
-exactly the same thing vis-a-vis creating wrapper function using the
-existing ioctl interface.
-
-For example, I have an ext2fs library function
-ext2fs_get_device_size2(), which wraps not only the BLKGETSIZE and
-BLKGETSIZE64 ioctls, but also the equivalents for Apple Darwin
-(DKIOCGETBLOCKCOUNT), FreeBSD/NetBSD (DIOCGDINFO and later
-DIOCGMEDIASIZE), and the Window's DeviceIoControl()'s
-IOCTL_DISK_GET_DRIVE_GEOMETRY call.  The point is that wrapper
-functions are very much orthogonal to the ioctl interface; we're all
-going to have wrapper functions, and we'll create them where they are
-needed.
-
-If we force developers to have to create and maintain wrapper
-libraries for all new ioctl2 interfaces, Just Because It's Proper
-Computer Science Design Best Practices, it's going to be painful
-enough that I suspect people will just stick to adding new ioctl code
-points to the existing ioctl() interface.
-
-So I think we need to be a little careful here.  We made adding System
-Calls difficult, because it was Better(tm).  And there would good
-reasons for that.  But that has also incentivized people to use the
-escape hatches.  Make the "perfect" too painful, and people will find
-ways to avoid using it when at all possible.
-
-						- Ted
-
-P.S.  During the LSF/MM hallway track, one maintainer said that the
-fsdevel bikeshedding had gotten *so* painful with the process not
-having a guaranteed consensus within a reasonal period of time, that
-he was planning on adding a file system specific ioctl, and then later
-on, if other people were wanted to use it, they would be free to use
-the same ioctl code point and interface that he had come up with.
+-- 
+Thanks,
+Hyeonggon
