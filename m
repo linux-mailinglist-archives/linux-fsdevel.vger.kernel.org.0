@@ -2,136 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DE9452F982
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 May 2022 09:18:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21B3752FA23
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 May 2022 11:03:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240595AbiEUHSk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 21 May 2022 03:18:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43230 "EHLO
+        id S236210AbiEUJBs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 21 May 2022 05:01:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46268 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235566AbiEUHSi (ORCPT
+        with ESMTP id S229490AbiEUJBr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 21 May 2022 03:18:38 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 3FBB61611FF
-        for <linux-fsdevel@vger.kernel.org>; Sat, 21 May 2022 00:18:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1653117514;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=1yTCoDRJvqGj7AA5Nj4TtGqeOJVmsCsgoM9y6NAj+ic=;
-        b=RjGA6VRuhzvffFj7CAHDeKhAm8JuZM1vMRPJl1iBNOFkdOE6/5FaGwfd4NNcfX77m89PQp
-        zd+a+WwgqZ8AL3JNpM0+bvIpFc3zSq8dOmfKpDek6H9309brmW7ZloIK1HWoxEBEB0uLXK
-        JgC3xs7wHD8/nD9O+7DFcisuyuNdIc0=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-320-uxnVpYHIP5mRzaBOfMBHMw-1; Sat, 21 May 2022 03:18:30 -0400
-X-MC-Unique: uxnVpYHIP5mRzaBOfMBHMw-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id DA2EB185A79C;
-        Sat, 21 May 2022 07:18:29 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.8])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C150C492C3B;
-        Sat, 21 May 2022 07:18:28 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH] afs: Fix afs_getattr() to refetch file status if callback
- break occurred
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     Markus Suvanto <markus.suvanto@gmail.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        linux-afs@lists.infradead.org,
-        Markus Suvanto <markus.suvanto@gmail.com>,
-        kafs-testing+fedora34_64checkkafs-build-496@auristor.com,
-        dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Sat, 21 May 2022 08:18:28 +0100
-Message-ID: <165311750805.192844.10284715285667771691.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/1.4
+        Sat, 21 May 2022 05:01:47 -0400
+Received: from mail-qk1-x72c.google.com (mail-qk1-x72c.google.com [IPv6:2607:f8b0:4864:20::72c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E973F980A6
+        for <linux-fsdevel@vger.kernel.org>; Sat, 21 May 2022 02:01:45 -0700 (PDT)
+Received: by mail-qk1-x72c.google.com with SMTP id m1so9473505qkn.10
+        for <linux-fsdevel@vger.kernel.org>; Sat, 21 May 2022 02:01:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=SUWQMmwZSct1NUq5pHL/uGOr0m/f9iWjJQkP63QJuAY=;
+        b=Ha+MZHXwll61BrfP97EXkY0HJkcJNFQ78sC6U0pnBKZ+hSnKS+K1JqFkiL1wzIl6nL
+         jFnIsjJTP3gkUtffyhEzxuTfq79G2JWca/82bSeAiYTlXCjwun2j3ZgIUgyFzlgMUgNs
+         WWkOl1N6GFs3+sotkrSpSlsxxJKdHTomOgISPyknShNh8mcfIRg6/0fwmyXTr8s01XJj
+         PneEIcguOAFnwL+pN2J2DoWGVVXWmoKurlR/XwjS9NJxolOSixyK4I3Bz47DARVcgRh/
+         4lDM/jHwu9+PPBR1D2t+4/LYfC0Bkspr6/IsxUgzguuB3+fZTO05rIUneb4I3+Hrzj3u
+         1J/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=SUWQMmwZSct1NUq5pHL/uGOr0m/f9iWjJQkP63QJuAY=;
+        b=WAz2/K/BTXWB27+iUkj5YVrk6dTJIkQwbv+HuvEtTH9wglTdCKi0QIv/Bxe1tOoL4h
+         uykJ7kRmS9+GSAg0hA+wKvT0yNddZozYgt7M45BfssupHHL1vWQCBViH6tVFwWgVB+Ik
+         Gixp3ixJrF9P6iQIALXRnN08cjS3mXffkTVQ30sZs7B+WQTKLK9flTWdVqADOEOAqusH
+         YOOxRVa18XjjSLrJnO7bnWHwHpI/0XgoRK2h4HHQffpDwdV8TpClXlrsvfy/0enzhK2V
+         sYpqGzkPalA8jcEbDyjem1ceasldxsFG/f07KdqHtdshe/gximrUKS6133VOWNu46n0m
+         LRpQ==
+X-Gm-Message-State: AOAM530UiG+XQw3MCjG0dIdXbqrdAOPsWngsFTbYttlTDl8nxe6BEPLi
+        NUb7WD6rFqiNI+K6TGdC05osZFT8MpZAXL8eD3qku03jdQQ87w==
+X-Google-Smtp-Source: ABdhPJxElHOPDd2lORmUckZFaNpwB/mljkT4mDA0ipuEF7Lpoe4wk8C+fX/H1XEsFif6jGnLTktsejWXViVYUXNAWlM=
+X-Received: by 2002:a05:620a:254c:b0:6a2:e7dc:25e3 with SMTP id
+ s12-20020a05620a254c00b006a2e7dc25e3mr8321894qko.63.1653123704933; Sat, 21
+ May 2022 02:01:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.85 on 10.11.54.9
-X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Received: by 2002:ac8:5b05:0:0:0:0:0 with HTTP; Sat, 21 May 2022 02:01:44
+ -0700 (PDT)
+Reply-To: jub47823@gmail.com
+From:   Julian Bikram <senyokomiadonko@gmail.com>
+Date:   Sat, 21 May 2022 09:01:44 +0000
+Message-ID: <CAEdpTfQMKdx44vJqY5hU3=v1mKyL33pq0fRWUkZ4Up-+g4EtVA@mail.gmail.com>
+Subject: Please can i have your attention
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: Yes, score=5.2 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,FREEMAIL_REPLYTO,
+        FREEMAIL_REPLYTO_END_DIGIT,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,UNDISC_FREEM autolearn=no autolearn_force=no
+        version=3.4.6
+X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
+        *      https://www.dnswl.org/, no trust
+        *      [2607:f8b0:4864:20:0:0:0:72c listed in]
+        [list.dnswl.org]
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.4958]
+        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
+        *  0.2 FREEMAIL_REPLYTO_END_DIGIT Reply-To freemail username ends in
+        *      digit
+        *      [jub47823[at]gmail.com]
+        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
+        *      provider
+        *      [senyokomiadonko[at]gmail.com]
+        * -0.0 SPF_PASS SPF: sender matches SPF record
+        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
+        *      author's domain
+        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
+        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
+        *       valid
+        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
+        *      envelope-from domain
+        * -0.0 T_SCC_BODY_TEXT_LINE No description available.
+        *  3.4 UNDISC_FREEM Undisclosed recipients + freemail reply-to
+        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
+        *      different freemails
+X-Spam-Level: *****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-If a callback break occurs (change notification), afs_getattr() needs to
-issue an FS.FetchStatus RPC operation to update the status of the file
-being examined by the stat-family of system calls.
-
-Fix afs_getattr() to do this if AFS_VNODE_CB_PROMISED has been cleared on a
-vnode by a callback break.  Skip this if AT_STATX_DONT_SYNC is set.
-
-This can be tested by appending to a file on one AFS client and then using
-"stat -L" to examine its length on a machine running kafs.  This can also
-be watched through tracing on the kafs machine.  The callback break is
-seen:
-
-     kworker/1:1-46      [001] .....   978.910812: afs_cb_call: c=0000005f YFSCB.CallBack
-     kworker/1:1-46      [001] ...1.   978.910829: afs_cb_break: 100058:23b4c:242d2c2 b=2 s=1 break-cb
-     kworker/1:1-46      [001] .....   978.911062: afs_call_done:    c=0000005f ret=0 ab=0 [0000000082994ead]
-
-And then the stat command generated no traffic if unpatched, but with this
-change a call to fetch the status can be observed:
-
-            stat-4471    [000] .....   986.744122: afs_make_fs_call: c=000000ab 100058:023b4c:242d2c2 YFS.FetchStatus
-            stat-4471    [000] .....   986.745578: afs_call_done:    c=000000ab ret=0 ab=0 [0000000087fc8c84]
-
-Fixes: 08e0e7c82eea ("[AF_RXRPC]: Make the in-kernel AFS filesystem use AF_RXRPC.")
-Reported-by: Markus Suvanto <markus.suvanto@gmail.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Marc Dionne <marc.dionne@auristor.com>
-cc: linux-afs@lists.infradead.org
-Tested-by: Markus Suvanto <markus.suvanto@gmail.com>
-Tested-by: kafs-testing+fedora34_64checkkafs-build-496@auristor.com
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=216010
-Link: https://lore.kernel.org/r/165308359800.162686.14122417881564420962.stgit@warthog.procyon.org.uk/ # v1
----
-
- fs/afs/inode.c |   14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
-
-diff --git a/fs/afs/inode.c b/fs/afs/inode.c
-index 2fe402483ad5..30b066299d39 100644
---- a/fs/afs/inode.c
-+++ b/fs/afs/inode.c
-@@ -740,10 +740,22 @@ int afs_getattr(struct user_namespace *mnt_userns, const struct path *path,
- {
- 	struct inode *inode = d_inode(path->dentry);
- 	struct afs_vnode *vnode = AFS_FS_I(inode);
--	int seq = 0;
-+	struct key *key;
-+	int ret, seq = 0;
- 
- 	_enter("{ ino=%lu v=%u }", inode->i_ino, inode->i_generation);
- 
-+	if (!(query_flags & AT_STATX_DONT_SYNC) &&
-+	    !test_bit(AFS_VNODE_CB_PROMISED, &vnode->flags)) {
-+		key = afs_request_key(vnode->volume->cell);
-+		if (IS_ERR(key))
-+			return PTR_ERR(key);
-+		ret = afs_validate(vnode, key);
-+		key_put(key);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
- 	do {
- 		read_seqbegin_or_lock(&vnode->cb_lock, &seq);
- 		generic_fillattr(&init_user_ns, inode, stat);
+Dear ,
 
 
+Please can I have your attention and possibly help me for humanity's
+sake please. I am writing this message with a heavy heart filled with
+sorrows and sadness.
+
+Please if you can respond, i have an issue that i will be most
+grateful if you could help me deal with it please.
+
+Julian
