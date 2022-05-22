@@ -2,147 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CAC65530074
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 May 2022 06:03:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C538653010A
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 May 2022 07:27:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234023AbiEVEDf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 22 May 2022 00:03:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53128 "EHLO
+        id S237353AbiEVF0v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 22 May 2022 01:26:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229545AbiEVEDb (ORCPT
+        with ESMTP id S235406AbiEVF0s (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 22 May 2022 00:03:31 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32DF93E5CD;
-        Sat, 21 May 2022 21:03:29 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 74D05B80AC0;
-        Sun, 22 May 2022 04:03:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 279FEC34116;
-        Sun, 22 May 2022 04:03:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1653192207;
-        bh=H8VxeRRGU1YvvB/gDGQdsDIur//wMHZ+GBccWBSTA4s=;
-        h=In-Reply-To:References:Date:From:To:Cc:Subject:From;
-        b=ogO7bURGMZjZY7Se7Ca+PlvmooeylSGOcmEVhlOvBfxQ6eNBOuYSlc7lye/lzX1gw
-         oSZpH68lcUNhCGBQPbOoCPttQczz9lqiGvLSS7zpjlBVCKhlvLJT8sgEYqFORXxr88
-         LMa7WENGD63Rs+0T7UBliYzNh0naPxCDjvfVYxbFM53JAyW+3GAlREGLSiBfnCMvU1
-         LRmIXsOvNqqm3Z7p8jDzMg8ntEJaWd8QxCHVKjPWh48mnpAzrD3Va7p6rC5eMABYu0
-         X/VekAVyZqB/w/yNgdEOTq2RhTUrVFjxKVBv0le1cPXUJ6sXoz0egBoAsTMe93KYsW
-         vVtz8zIpWIjmw==
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-        by mailauth.nyi.internal (Postfix) with ESMTP id E57B027C0054;
-        Sun, 22 May 2022 00:03:24 -0400 (EDT)
-Received: from imap48 ([10.202.2.98])
-  by compute2.internal (MEProxy); Sun, 22 May 2022 00:03:24 -0400
-X-ME-Sender: <xms:C7aJYqXjGfM4wQuodo607NjCU7PYVCu2Nf4CmUoeKrg1BJLSx7XzZg>
-    <xme:C7aJYmlHnv72dQ8EoYnKirE_LOZ3kTXO40X-kdOe5RXnWn49nNecmEywlY7yQopLh
-    28ExrBKGpBdj_3Cstk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrieejgdejjecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetnhgu
-    hicunfhuthhomhhirhhskhhifdcuoehluhhtoheskhgvrhhnvghlrdhorhhgqeenucggtf
-    frrghtthgvrhhnpedvhfeuvddthfdufffhkeekffetgffhledtleegffetheeugeejffdu
-    hefgteeihfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
-    hmpegrnhguhidomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqudduiedukeeh
-    ieefvddqvdeifeduieeitdekqdhluhhtoheppehkvghrnhgvlhdrohhrgheslhhinhhugi
-    drlhhuthhordhush
-X-ME-Proxy: <xmx:C7aJYuYVuXc6-n2rtnHJr-4hXRuGMt2-n6Fi-6i-PRQbwWRrklD5pQ>
-    <xmx:C7aJYhVjZixJLh_aI5dYUZ-ppl2q-9UUAw-iaNwXiutFsbo6JXT1jg>
-    <xmx:C7aJYknSPK7hrO2kEN3oZsQQWBSL9WHgDO8QD1SQXxvC326OwMbEKA>
-    <xmx:DLaJYuvHWMkfc_q-57cYIYJF2SXVodDLkZm9p2keZbWlQiDzjMXLE8biMqU>
-Feedback-ID: ieff94742:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-        id 3F6EB31A005D; Sun, 22 May 2022 00:03:23 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.7.0-alpha0-591-gfe6c3a2700-fm-20220427.001-gfe6c3a27
-Mime-Version: 1.0
-Message-Id: <f0f9c66d-ae94-4eb1-b7e5-6a0a9f0d4798@www.fastmail.com>
-In-Reply-To: <YofeZps9YXgtP3f1@google.com>
-References: <20220519153713.819591-1-chao.p.peng@linux.intel.com>
- <20220519153713.819591-5-chao.p.peng@linux.intel.com>
- <8840b360-cdb2-244c-bfb6-9a0e7306c188@kernel.org>
- <YofeZps9YXgtP3f1@google.com>
-Date:   Sat, 21 May 2022 21:03:01 -0700
-From:   "Andy Lutomirski" <luto@kernel.org>
-To:     "Sean Christopherson" <seanjc@google.com>
-Cc:     "Chao Peng" <chao.p.peng@linux.intel.com>,
-        "kvm list" <kvm@vger.kernel.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        "Linux API" <linux-api@vger.kernel.org>, linux-doc@vger.kernel.org,
-        qemu-devel@nongnu.org, "Paolo Bonzini" <pbonzini@redhat.com>,
-        "Jonathan Corbet" <corbet@lwn.net>,
-        "Vitaly Kuznetsov" <vkuznets@redhat.com>,
-        "Wanpeng Li" <wanpengli@tencent.com>,
-        "Jim Mattson" <jmattson@google.com>,
-        "Joerg Roedel" <joro@8bytes.org>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Ingo Molnar" <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "Hugh Dickins" <hughd@google.com>,
-        "Jeff Layton" <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        "Andrew Morton" <akpm@linux-foundation.org>,
-        "Mike Rapoport" <rppt@kernel.org>,
-        "Steven Price" <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        "Vlastimil Babka" <vbabka@suse.cz>,
-        "Vishal Annapurve" <vannapurve@google.com>,
-        "Yu Zhang" <yu.c.zhang@linux.intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        "Nakajima, Jun" <jun.nakajima@intel.com>,
-        "Dave Hansen" <dave.hansen@intel.com>,
-        "Andi Kleen" <ak@linux.intel.com>,
-        "David Hildenbrand" <david@redhat.com>, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        "Quentin Perret" <qperret@google.com>,
-        "Michael Roth" <michael.roth@amd.com>,
-        "Michal Hocko" <mhocko@suse.com>
-Subject: Re: [PATCH v6 4/8] KVM: Extend the memslot to support fd-based private memory
-Content-Type: text/plain
-X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+        Sun, 22 May 2022 01:26:48 -0400
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49BBD377E3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 21 May 2022 22:26:44 -0700 (PDT)
+Received: by mail-pj1-x1036.google.com with SMTP id ob14-20020a17090b390e00b001dff2a43f8cso4039464pjb.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 21 May 2022 22:26:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nyIl7rq+5OzWaIZhzUK6oYT0qxVsI4l129gaLjPCMbw=;
+        b=JN/tFyoh8pK3b0z547jn//8E5dBkP3lfiamf2L2Q4++pDnt9Z2pj+uauBLiCc4mthY
+         8/EVXRycJvww3ATQRfWuKvuOmbQEXA6LAm7H43ETuvr94uQc89g1fYqeog1tCG0rw58X
+         lQF5VUDM1UlasrF9lLJ8d0s95Xg6y541JHYYXgeydIY655Pxc1kTDuMAqpNsdgeYIOrA
+         cq7XpXCXDiUOskCebkrd1tS9iCcSeFIDe73MU4MTTZ4iSED36UcXu2QHcuNWinRDAWOn
+         TVu0/Blf9FIuSKoahKNX1BzAY0v0Qkwk9JKA28tER2Ce4+wTycxGb86g4XcgdG2rbt4D
+         jNdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nyIl7rq+5OzWaIZhzUK6oYT0qxVsI4l129gaLjPCMbw=;
+        b=cuNlJOS46E7MjkgNQjnM8QqGjQV9cjrXVQ8XOITdtswejZim3du9wGoT3Kr8aiAgqT
+         A2TjXS85akfpeNOVF8AeA0xmX1PBU4O8MdO6t7jlchlcqu3kwevN8fbxuTM10bfw35XN
+         NJRQRbFkci1r61r3DpRkG6BjY6U0zKuT5uUbE5Q1QBrjDMbEvdljEtEFJzfMFsbYYO2T
+         TF6bM4msIRmXr6/eQ4FGUS9nTow8WEnbCGSXSgKsZpInBqCs6Int9EzFAPGt7RanCPfu
+         XpdQxQ7hxQzQsJrL0U8aNwgci6sG1UnDkexv3MYssoCCIXuW7TMMlXuwvIiWVGDnVHBy
+         GOCw==
+X-Gm-Message-State: AOAM530TNHWVo4J4RWk/UXLmE7/vVbA4FBxCJLJkZo7auFglzLDE0PVc
+        Hsl6csMRpNMOvDpJvaYqok1iGLn2MGtO4g==
+X-Google-Smtp-Source: ABdhPJzS8xrUQGH455H99C7NphFK6jeJo4W+92RyiPjSO8kIPzZY3v9f0mH8fSAvR6qhhOnYnGRgbA==
+X-Received: by 2002:a17:903:120e:b0:15e:84d2:4bbb with SMTP id l14-20020a170903120e00b0015e84d24bbbmr16713769plh.165.1653197203800;
+        Sat, 21 May 2022 22:26:43 -0700 (PDT)
+Received: from FVFYT0MHHV2J.bytedance.net ([139.177.225.250])
+        by smtp.gmail.com with ESMTPSA id f9-20020a170902f38900b0015e8d4eb29asm2429036ple.228.2022.05.21.22.26.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 21 May 2022 22:26:43 -0700 (PDT)
+From:   Muchun Song <songmuchun@bytedance.com>
+To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     willy@infradead.org, Muchun Song <songmuchun@bytedance.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Iurii Zaikin <yzaikin@google.com>
+Subject: [PATCH v2] sysctl: handle table->maxlen properly for proc_dobool
+Date:   Sun, 22 May 2022 13:26:24 +0800
+Message-Id: <20220522052624.21493-1-songmuchun@bytedance.com>
+X-Mailer: git-send-email 2.32.1 (Apple Git-133)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Setting ->proc_handler to proc_dobool at the same time setting ->maxlen
+to sizeof(int) is counter-intuitive, it is easy to make mistakes.  For
+robustness, fix it by reimplementing proc_dobool() properly.
 
+Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Iurii Zaikin <yzaikin@google.com>
+---
+v2:
+ - Reimplementing proc_dobool().
 
-On Fri, May 20, 2022, at 11:31 AM, Sean Christopherson wrote:
+ fs/lockd/svc.c  |  2 +-
+ kernel/sysctl.c | 38 +++++++++++++++++++-------------------
+ 2 files changed, 20 insertions(+), 20 deletions(-)
 
-> But a dedicated KVM ioctl() to add/remove shared ranges would be easy 
-> to implement
-> and wouldn't necessarily even need to interact with the memslots.  It 
-> could be a
-> consumer of memslots, e.g. if we wanted to disallow registering regions 
-> without an
-> associated memslot, but I think we'd want to avoid even that because 
-> things will
-> get messy during memslot updates, e.g. if dirty logging is toggled or a 
-> shared
-> memory region is temporarily removed then we wouldn't want to destroy 
-> the tracking.
->
-> I don't think we'd want to use a bitmap, e.g. for a well-behaved guest, XArray
-> should be far more efficient.
->
-> One benefit to explicitly tracking this in KVM is that it might be 
-> useful for
-> software-only protected VMs, e.g. KVM could mark a region in the XArray 
-> as "pending"
-> based on guest hypercalls to share/unshare memory, and then complete 
-> the transaction
-> when userspace invokes the ioctl() to complete the share/unshare.
+diff --git a/fs/lockd/svc.c b/fs/lockd/svc.c
+index 59ef8a1f843f..6e48ee787f49 100644
+--- a/fs/lockd/svc.c
++++ b/fs/lockd/svc.c
+@@ -496,7 +496,7 @@ static struct ctl_table nlm_sysctls[] = {
+ 	{
+ 		.procname	= "nsm_use_hostnames",
+ 		.data		= &nsm_use_hostnames,
+-		.maxlen		= sizeof(int),
++		.maxlen		= sizeof(nsm_use_hostnames),
+ 		.mode		= 0644,
+ 		.proc_handler	= proc_dobool,
+ 	},
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index e52b6e372c60..50a2c29efc94 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -423,21 +423,6 @@ static void proc_put_char(void **buf, size_t *size, char c)
+ 	}
+ }
+ 
+-static int do_proc_dobool_conv(bool *negp, unsigned long *lvalp,
+-				int *valp,
+-				int write, void *data)
+-{
+-	if (write) {
+-		*(bool *)valp = *lvalp;
+-	} else {
+-		int val = *(bool *)valp;
+-
+-		*lvalp = (unsigned long)val;
+-		*negp = false;
+-	}
+-	return 0;
+-}
+-
+ static int do_proc_dointvec_conv(bool *negp, unsigned long *lvalp,
+ 				 int *valp,
+ 				 int write, void *data)
+@@ -708,16 +693,31 @@ int do_proc_douintvec(struct ctl_table *table, int write,
+  * @lenp: the size of the user buffer
+  * @ppos: file position
+  *
+- * Reads/writes up to table->maxlen/sizeof(unsigned int) integer
+- * values from/to the user buffer, treated as an ASCII string.
++ * Reads/writes up to table->maxlen/sizeof(bool) bool values from/to
++ * the user buffer, treated as an ASCII string.
+  *
+  * Returns 0 on success.
+  */
+ int proc_dobool(struct ctl_table *table, int write, void *buffer,
+ 		size_t *lenp, loff_t *ppos)
+ {
+-	return do_proc_dointvec(table, write, buffer, lenp, ppos,
+-				do_proc_dobool_conv, NULL);
++	struct ctl_table tmp = *table;
++	bool *data = table->data;
++	unsigned int val = READ_ONCE(*data);
++	int ret;
++
++	/* Do not support arrays yet. */
++	if (table->maxlen != sizeof(bool))
++		return -EINVAL;
++
++	tmp.maxlen = sizeof(val);
++	tmp.data = &val;
++	ret = do_proc_douintvec(&tmp, write, buffer, lenp, ppos, NULL, NULL);
++	if (ret)
++		return ret;
++	if (write)
++		WRITE_ONCE(*data, val ? true : false);
++	return 0;
+ }
+ 
+ /**
+-- 
+2.11.0
 
-That makes sense.
-
-If KVM goes this route, perhaps there the allowed states for a GPA should include private, shared, and also private-and-shared.  Then anyone who wanted to use the same masked GPA for shared and private on TDX could do so if they wanted to.
