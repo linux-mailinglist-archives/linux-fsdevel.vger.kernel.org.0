@@ -2,48 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9963953019C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 May 2022 09:35:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A47DA5301AC
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 May 2022 09:43:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344951AbiEVHfB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 22 May 2022 03:35:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58226 "EHLO
+        id S233865AbiEVHnf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 22 May 2022 03:43:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44808 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240870AbiEVHfA (ORCPT
+        with ESMTP id S229771AbiEVHnf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 22 May 2022 03:35:00 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8816238792;
-        Sun, 22 May 2022 00:34:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=WBuaIM5SKIXkLPP9GWovDc27LNx1rhfUlIGL8EkGrgs=; b=EwTBzO6RfBEUY2QPJdzOnVRXd2
-        +nQXck0mDSvWFS2pFxxni3O1VHw2qB9PX7111rCqBQGS2xHtBuNbsHRUzhLAhtomICYUikAecEc0H
-        dRmnAYjm01u7kqAHYjfyU8sH0WZE/rysNjFbFvUnwzlijdOSoGaWMsZvQVwDE2jx4p8FWq6fkPc+v
-        JCwDLtUzftgDrjbJWOdj73kOmWRKpX93IezC97pC7wOleWdut3zk1eo/btvhKupXJ0cOAiK/EpEzI
-        CuW8xYYIMUsDYdAnQE7jk/3D6uIJuCxceN4f4LxDvCTNZHQZpS8GawlLeI9/vl3m9Mo8Ay77+85Hw
-        dL3pBZww==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nsg78-000oB1-JL; Sun, 22 May 2022 07:34:58 +0000
-Date:   Sun, 22 May 2022 00:34:58 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Stefan Roesch <shr@fb.com>
-Cc:     io-uring@vger.kernel.org, kernel-team@fb.com, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        david@fromorbit.com, jack@suse.cz, hch@infradead.org
-Subject: Re: [RFC PATCH v4 16/17] xfs: Add async buffered write support
-Message-ID: <YonnogxhDz2jeFBt@infradead.org>
-References: <20220520183646.2002023-1-shr@fb.com>
- <20220520183646.2002023-17-shr@fb.com>
+        Sun, 22 May 2022 03:43:35 -0400
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E69613F8AE
+        for <linux-fsdevel@vger.kernel.org>; Sun, 22 May 2022 00:43:32 -0700 (PDT)
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id D3DCA68B05; Sun, 22 May 2022 09:43:27 +0200 (CEST)
+Date:   Sun, 22 May 2022 09:43:27 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>
+Subject: Re: [RFC] what to do with IOCB_DSYNC?
+Message-ID: <20220522074327.GA15562@lst.de>
+References: <YM/hZgxPM+2cP+I7@zeniv-ca.linux.org.uk> <20210621135958.GA1013@lst.de> <YNCcG97WwRlSZpoL@casper.infradead.org> <20210621140956.GA1887@lst.de> <YNCfUoaTNyi4xiF+@casper.infradead.org> <20210621142235.GA2391@lst.de> <YNCjDmqeomXagKIe@zeniv-ca.linux.org.uk> <20210621143501.GA3789@lst.de> <Yokl+uHTVWFxoQGn@zeniv-ca.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220520183646.2002023-17-shr@fb.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+In-Reply-To: <Yokl+uHTVWFxoQGn@zeniv-ca.linux.org.uk>
+User-Agent: Mutt/1.5.17 (2007-11-01)
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
         SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -52,16 +40,36 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 20, 2022 at 11:36:45AM -0700, Stefan Roesch wrote:
-> This adds the async buffered write support to XFS. For async buffered
-> write requests, the request will return -EAGAIN if the ilock cannot be
-> obtained immediately.
+On Sat, May 21, 2022 at 05:48:42PM +0000, Al Viro wrote:
+> There's a problem with that variant.  Take a look at btrfs_direct_write():
+>         const bool is_sync_write = (iocb->ki_flags & IOCB_DSYNC);
+> 	...
+>         /*
+> 	 * We remove IOCB_DSYNC so that we don't deadlock when iomap_dio_rw()
+> 	 * calls generic_write_sync() (through iomap_dio_complete()), because
+> 	 * that results in calling fsync (btrfs_sync_file()) which will try to
+> 	 * lock the inode in exclusive/write mode.
+> 	 */
+> 	if (is_sync_write)
+> 		iocb->ki_flags &= ~IOCB_DSYNC;
+> 	...
 > 
-> This splits off a new helper xfs_ilock_inode from the existing helper
-> xfs_ilock_iocb so it can be used for this function. The exising helper
-> cannot be used as it hardcoded the inode to be used.
+> 	/*
+> 	 * Add back IOCB_DSYNC. Our caller, btrfs_file_write_iter(), will do  
+> 	 * the fsync (call generic_write_sync()).
+> 	 */
+> 	if (is_sync_write)
+> 		iocb->ki_flags |= IOCB_DSYNC;
+> 
+> will run into trouble.  How about this (completely untested):
 
-Actually this should also be a prep patch - but the please try to
-follow the rule that standalone enablement like refactoring or new
-funtionality for helpers is one patch, the actual use of it for a new
-feature should preferably one patch for the whole feature.
+Which is pretty gross.  We can just add a IOMAP_DIO_NOSYNC flag
+to do what btrfs wants is a much less gross way.
+
+> Precalculate iocb_flags()
+> 
+> Store the value in file->f_i_flags; calculate at open time (do_dentry_open()
+> for opens, alloc_file() for pipe(2)/socket(2)/etc.), update at FCNTL_SETFL
+> time.
+
+Eww.  I don't think we should grow struct file for tht.
