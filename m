@@ -2,56 +2,80 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4820B530527
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 May 2022 20:28:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32D06530529
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 May 2022 20:29:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234549AbiEVS16 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 22 May 2022 14:27:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40646 "EHLO
+        id S238791AbiEVS3V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 22 May 2022 14:29:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350219AbiEVS0B (ORCPT
+        with ESMTP id S232321AbiEVS3T (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 22 May 2022 14:26:01 -0400
-Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E8C6EB1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 22 May 2022 11:25:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=7mfcSc6El5emS1pWXoZJ7ZRKvgTUNMA64rxeps25vqc=; b=FoVkttD1HTPpH+e8HsKv8t1c87
-        QjsLP+0q4F4da/vOj6z8Zos1fZF5gwtPycxntYt/LcAYIi+KlBR8G4FSD/JF/WUVGF3Fqj6gdxoHT
-        wx7cV63Ib+SXDkpuePOkzSUeJ7r+UXyuUsEGkTA4MGj8SD9UbQZLBhdIeSm6nSNMYyKH96pyclUhN
-        zjh/WEqtoswZRzRXsIoyoAkvfnvmSMjFPG9QLu+4yTEQaN+mufAguaDNrxfD8m0AeyMxhZo57L74q
-        tgut0nLLf5LwK7Uf9eVtPkvF5n7AP81DyJSLl3yA2vHRWBwAZhDkc2iD8UQAf1E6SLV/ygQwT3sat
-        5fpKKWWw==;
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nsqH5-00HGAy-I3; Sun, 22 May 2022 18:25:55 +0000
-Date:   Sun, 22 May 2022 18:25:55 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Jens Axboe <axboe@kernel.dk>
+        Sun, 22 May 2022 14:29:19 -0400
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C103E2B19F
+        for <linux-fsdevel@vger.kernel.org>; Sun, 22 May 2022 11:29:18 -0700 (PDT)
+Received: by mail-pf1-x42e.google.com with SMTP id v11so11860342pff.6
+        for <linux-fsdevel@vger.kernel.org>; Sun, 22 May 2022 11:29:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=7ySKjn29iAOCRph0da3VPaMJx7axnY+y7puUCDnhmjA=;
+        b=zT+qs3dMPSkFMMagPj1p86bXA+vQv1J1D1kcKrXryVlQPs3w2BE4L6hfiY1IPPcT9U
+         W3m0Cae1RgIj75WGgAurr4t05dmCn+lSnYShz8EX5K50S8mcfZV+Ma5FP5EwsBMsGW1d
+         G2GWXtW5D3rO/JNIyoROdjMya/EO5sNn91ufv7GOoULzddcFFQ7PA5RpjOu/L6yiu+iq
+         TCrm33MY2o4/9cqP8va3XkdB5ZSs4q2L0y+ei6USv013dBwkVs8e9l4sNF/3bx2Ps1zm
+         15qK1hW3wXVAMFFuamNqSU96Y/uw4h8HfZYeLDs/RM/v6gBf4ERScpFxuNQ33goxnbXV
+         Ieow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=7ySKjn29iAOCRph0da3VPaMJx7axnY+y7puUCDnhmjA=;
+        b=rlRxPfPWHW2oMIR5cw8cRnN9tRvwAQYhLsfyLjdZmv8CVAylXEKZE60jT8ZO+IgGnS
+         YbSf3g8NHO2H6eDfgKZLdUhbSbnxOZOZzEo8DasKIKAvVGbZokXzyCNvdoonrvQXVTj/
+         SKOnNZ/4wyzPoMSweOpqwV8mZiY5zxgXOM/uobPgvx0Kox5PZbswW91vxgoun0WCtjdp
+         kUyf6WiVBj6BBGFgll981AyZPj3XUAS6I1ZB/pW4x72F+Eed49py/2lxEAhbkhQqSLvV
+         Zt6Ei8Vv6HUizSNhUW2ZUcYod+iT2V025V9zhS/kFH2lJUVh7Bb4uXZJXD49JLwSfKcd
+         S7gQ==
+X-Gm-Message-State: AOAM532CsW9ZYavjMhyo0nUi2ecpdU0POyFT3ImtoAzx70Jd+AQb1q3e
+        OR7qMX4kYWohuerj3xXxYObJi4oCe4m/7A==
+X-Google-Smtp-Source: ABdhPJxwzC6eDaHBxUC5WJnIyIs4HBSayHmqUpLmJ2HpBjkkxhi//MGarQDFuTUseXRXNoyIzBgf/g==
+X-Received: by 2002:a63:43c2:0:b0:3c1:829a:5602 with SMTP id q185-20020a6343c2000000b003c1829a5602mr17617454pga.252.1653244158198;
+        Sun, 22 May 2022 11:29:18 -0700 (PDT)
+Received: from [192.168.1.100] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id s32-20020a056a0017a000b0050dc762814asm5649569pfg.36.2022.05.22.11.29.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 22 May 2022 11:29:17 -0700 (PDT)
+Message-ID: <41f4fba6-3ab2-32a6-28d9-8c3313e92fa5@kernel.dk>
+Date:   Sun, 22 May 2022 12:29:16 -0600
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.8.1
+Subject: Re: [RFC] what to do with IOCB_DSYNC?
+Content-Language: en-US
+To:     Al Viro <viro@zeniv.linux.org.uk>
 Cc:     Christoph Hellwig <hch@lst.de>,
         Matthew Wilcox <willy@infradead.org>,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC] what to do with IOCB_DSYNC?
-Message-ID: <YoqAM1RnN/er6GDP@zeniv-ca.linux.org.uk>
 References: <YooPLyv578I029ij@casper.infradead.org>
  <YooSEKClbDemxZVy@zeniv-ca.linux.org.uk>
- <Yoobb6GZPbNe7s0/@casper.infradead.org>
- <20220522114540.GA20469@lst.de>
+ <Yoobb6GZPbNe7s0/@casper.infradead.org> <20220522114540.GA20469@lst.de>
  <e563d92f-7236-fbde-14ee-1010740a0983@kernel.dk>
  <YooxLS8Lrt6ErwIM@zeniv-ca.linux.org.uk>
  <96aa35fc-3ff7-a3a1-05b5-9fae5c9c1067@kernel.dk>
  <Yoo1q1+ZRrjBP2y3@zeniv-ca.linux.org.uk>
  <e2bb980b-42e8-27dc-cb6b-51dfb90d7e0a@kernel.dk>
  <7abc2e36-f2f3-e89c-f549-9edd6633b4a1@kernel.dk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7abc2e36-f2f3-e89c-f549-9edd6633b4a1@kernel.dk>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,
+ <YoqAM1RnN/er6GDP@zeniv-ca.linux.org.uk>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <YoqAM1RnN/er6GDP@zeniv-ca.linux.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-3.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -59,96 +83,11 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, May 22, 2022 at 12:06:24PM -0600, Jens Axboe wrote:
->  	union {
-> +		size_t uaddr_len;
+It was sent out as a discussion point, it's not a submission and it's by
+no means complete (as mentioned!). If you're working on this, I'd be
+happy to drop it, it's not like I really enjoy the iov_iter code... And
+it sounds like you are?
 
-WTF for?
+-- 
+Jens Axboe
 
-> +#define iterate_uaddr(i, n, base, len, off, STEP) {		\
-> +	size_t off = 0;						\
-> +	size_t skip = i->iov_offset;				\
-> +	len = min(n, i->uaddr_len - skip);			\
-
-How would you ever get offset past the size?  Note that we do
-keep track of amount of space left...
-
-> -	if (iter_is_iovec(i))
-> +	if (!i->nofault)
->  		might_fault();
-
-Nope.  Sorry, but by default nofault will be false for *all* types.
-It's not "I won't fault", it's "pass FOLL_NOFAULT to g_u_p".
-
-> -	if (iov_iter_is_bvec(i) || iov_iter_is_kvec(i) || iov_iter_is_xarray(i)) {
-> +	if (iov_iter_is_bvec(i) || iov_iter_is_kvec(i) ||
-> +	    iter_is_uaddr(i) || iov_iter_is_xarray(i)) {
->  		void *kaddr = kmap_local_page(page);
->  		size_t wanted = _copy_to_iter(kaddr + offset, bytes, i);
->  		kunmap_local(kaddr);
-
-Nope.  This is bogus - _copy_to_iter() *can* legitimately fault for those, so
-the same considerations as for iovec apply.
-
-> @@ -900,7 +934,8 @@ size_t copy_page_from_iter(struct page *page, size_t offset, size_t bytes,
->  		return 0;
->  	if (likely(iter_is_iovec(i)))
->  		return copy_page_from_iter_iovec(page, offset, bytes, i);
-> -	if (iov_iter_is_bvec(i) || iov_iter_is_kvec(i) || iov_iter_is_xarray(i)) {
-> +	if (iov_iter_is_bvec(i) || iov_iter_is_kvec(i) ||
-> +	    iter_is_uaddr(i) || iov_iter_is_xarray(i)) {
-
-Ditto.
-
-> @@ -1319,6 +1368,14 @@ unsigned long iov_iter_alignment(const struct iov_iter *i)
->  	if (iov_iter_is_bvec(i))
->  		return iov_iter_alignment_bvec(i);
->  
-> +	if (iter_is_uaddr(i)) {
-> +		size_t len = i->count - i->iov_offset;
-> +
-> +		if (len)
-> +			return (unsigned long) i->uaddr + i->iov_offset;
-
-Huh?  iov_iter_alignment() wants the worse of beginning and end, if there's
-any data at all.
-
-> @@ -1527,6 +1584,9 @@ ssize_t iov_iter_get_pages(struct iov_iter *i,
->  	if (!maxsize)
->  		return 0;
->  
-> +	if (WARN_ON_ONCE(iter_is_uaddr(i)))
-> +		return 0;
-
-So no DIO read(2) or write(2) anymore?  Harsh...
-
-> @@ -1652,6 +1712,8 @@ ssize_t iov_iter_get_pages_alloc(struct iov_iter *i,
->  		maxsize = i->count;
->  	if (!maxsize)
->  		return 0;
-> +	if (WARN_ON_ONCE(iter_is_uaddr(i)))
-> +		return 0;
-
-Ditto.
-
-> +	if (iter_is_uaddr(i)) {
-> +		unsigned long uaddr = (unsigned long) i->uaddr;
-> +		unsigned long start, end;
-> +
-> +		end = (uaddr + i->count - i->iov_offset + PAGE_SIZE - 1)
-> +				>> PAGE_SHIFT;
-> +		start = uaddr >> PAGE_SHIFT;
-> +		return min_t(int, end - start, maxpages);
-
-Nope.  The value is wrong (sanity check - decrement the base and increment
-iov_offset by the same amount; the range of addresses is the same,
-and the same should go for the result; yours fails that test).
-
-FWIW, here it's
-        if (likely(iter_is_ubuf(i))) {
-		unsigned offs = offset_in_page(i->ubuf + i->iov_offset);
-		int npages = DIV_ROUND_UP(offs + i->count, PAGE_SIZE);
-		return min(npages, maxpages);
-	}
-
-BTW, you've missed iov_iter_gap_alignment()...
