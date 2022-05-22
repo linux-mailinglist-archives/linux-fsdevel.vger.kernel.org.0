@@ -2,65 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 886A6530620
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 May 2022 23:26:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9F9353063E
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 May 2022 23:36:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351718AbiEVV0Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 22 May 2022 17:26:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39562 "EHLO
+        id S229742AbiEVVgN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 22 May 2022 17:36:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53440 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351648AbiEVV0G (ORCPT
+        with ESMTP id S1351690AbiEVVgL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 22 May 2022 17:26:06 -0400
-Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54E14767B
-        for <linux-fsdevel@vger.kernel.org>; Sun, 22 May 2022 14:26:04 -0700 (PDT)
-Received: by mail-pf1-x42c.google.com with SMTP id c14so12087400pfn.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 22 May 2022 14:26:04 -0700 (PDT)
+        Sun, 22 May 2022 17:36:11 -0400
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A96AA10545
+        for <linux-fsdevel@vger.kernel.org>; Sun, 22 May 2022 14:36:08 -0700 (PDT)
+Received: by mail-pj1-x1036.google.com with SMTP id ds11so12405638pjb.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 22 May 2022 14:36:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:from:subject:to:cc
-         :content-language:content-transfer-encoding;
-        bh=t27NbU/sEvE5Ri3vCjzv2EKdw2O05IpZ7eJRF2bYoK4=;
-        b=RkEA05HftNb+833WE+hkgAgBfYDRUxUfmQevrXLQAVTwdyx099x+9eo6GxUIjiGZS7
-         /mCGbxxosldwH/QywT3xBj12LCaPxcFrb1mukFqd2iJNsSOKOg3WCq6BRCEHz1D2T6dY
-         edJmz0uPynehCT+Kn6WXisEcT9pzHn5xDGCHlCNx1zv9cx2gUfbO9lCKeBWsjbDShCiD
-         QrHBVP0dfQQWw4bw9q3u+yOymWVf/NdiccFJw7kgvkouYQ1jDFaUSgca33KpZzaqc+lN
-         Km9mJGecJr0TFtOqPN7rKzrB+tMRXzu1avMLPKkgzOkHS7Gn8Re7kbYntxO/PrVx3hIi
-         0AyA==
+        h=message-id:date:mime-version:user-agent:content-language:to:cc:from
+         :subject:content-transfer-encoding;
+        bh=ANTuiG8sH1YQNazm/U6xOM/Aboo3pAO1E7wbIbAYufU=;
+        b=THHUh48oqegFjDPVCH3dWAzbCbQeKFXHTiTX1X8qk2wd2JngW/AtGneSDbkJ7mOmuZ
+         sFdaUDCRnzUN+FiwoNwssTh0mzsrf71mVQ0Vojtn3ice1nIxJx0Dipbd5fWFM9c2A6ko
+         ZaxstHSBpv/b/mX3hT81lZWWolmbw7zfn5gMtlMB76Rl6kEHWsAW6VVlyM8civFY+C+C
+         olJPNqQpODWZn3dakL1zat/yCk/sdTsMEl90QKEwewd+CYrBbpRrdkeX4Bp79VQA3AJV
+         qTXdtWifln2Bw5rBGTOKOsCBx3oH0gy32T/f4vLoQrNlBzx5JyqXOQ22W/bfw/aR4Tl7
+         Q0Vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:from
-         :subject:to:cc:content-language:content-transfer-encoding;
-        bh=t27NbU/sEvE5Ri3vCjzv2EKdw2O05IpZ7eJRF2bYoK4=;
-        b=s1qHZK0kCFyEGOY4iJQ01E2y8JppbDn3wf0NNBd3855hH1yc4kPBf2ichTlUoyXYrV
-         gm4OA0GepVizeLpEK2wlh1/c5iUsj2zAsag3/gCzEPO5PsOKhI0vqv/2tvc03LczmZPE
-         Kt0ikKGh5nHz1TarF41lVhaM0ztLJEGW6lJKjxIurYihiI7PhXz4BrLTpMNWQKgrQ/rU
-         cBAFV/gJ/pOZYVJGCUj9jg1dBOgelnU0Mhm3QzJYT9zWwjPIQlGNi1rVDv1MhsEoj9ZT
-         gNH37kYD14mjfO6GuHbjV89dzjkyTo1sjyxiPAAvLWo4D+morDcfNa/LrnDZLyZ35jFR
-         Zb/A==
-X-Gm-Message-State: AOAM530jqDCqnUVNkdk0WpYaQpLslrh19pompSeqmqkaunS9JZP3JGxp
-        vbGfI4ivNt7T2e2jrv0ipn+lbQ==
-X-Google-Smtp-Source: ABdhPJzQFCH+sLZxxfeHLmxK2BD6Qv+DIbuzmqy2Hfd8NvSxtQHTLt2PtzL71WQP/jFJCUfzXbJ66A==
-X-Received: by 2002:a05:6a00:1a53:b0:510:a045:b92e with SMTP id h19-20020a056a001a5300b00510a045b92emr20451649pfv.64.1653254763797;
-        Sun, 22 May 2022 14:26:03 -0700 (PDT)
+        h=x-gm-message-state:message-id:date:mime-version:user-agent
+         :content-language:to:cc:from:subject:content-transfer-encoding;
+        bh=ANTuiG8sH1YQNazm/U6xOM/Aboo3pAO1E7wbIbAYufU=;
+        b=CiVjd6e8XkNLZS+jSqnouLSfs3JiqLpCR0jz4nFeykDf4wOJbldgMsu/thyO20ov8c
+         UYfSbvtH9f2ub0Ohdhl66F1F/97Urn0E9cFX1BfXJcFgK/92f9OE7AYOeDXTSXUytYVk
+         7Vf/BsowdE+Fp3991AZFsQSzF6njprloPA2fqH/1SpeX5Lo5x/yFVS2WKiCgkqzxJXFg
+         YP9JoDzq8covBIqQjj+Q6mMpUFFoL+Ft99HHpgd/c3L21jswd1V9okml89SupHtsgMCr
+         dOY0cfW0re/U5msDU3ixHs8e601PhoKzhMJRrDJnV6xLWKurudICkeW6ISwHF5w2MnUP
+         m3uA==
+X-Gm-Message-State: AOAM532QSR6Qm+BpaYf1Exc5bFXQqBBOCzCcbbKgucEx9DUk1xexeHGx
+        5XveqjN5Sddi37lD/Vg2cP1eYg==
+X-Google-Smtp-Source: ABdhPJxBJogRkAGha6tWbdDTAU6DVDLdsD/RSjLAPaTJq/KO4Hn2SBQrDCTx1bwZw5cxg00+sFbBcg==
+X-Received: by 2002:a17:902:8d83:b0:161:f4b3:6457 with SMTP id v3-20020a1709028d8300b00161f4b36457mr12857018plo.122.1653255368154;
+        Sun, 22 May 2022 14:36:08 -0700 (PDT)
 Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d10-20020a170902f14a00b00161955fe0d5sm2794219plb.274.2022.05.22.14.26.02
+        by smtp.gmail.com with ESMTPSA id mp11-20020a17090b190b00b001d96bc27a57sm5540462pjb.54.2022.05.22.14.36.07
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 22 May 2022 14:26:03 -0700 (PDT)
-Message-ID: <d94a4e55-c4f2-73d8-9e2c-e55ae8436622@kernel.dk>
-Date:   Sun, 22 May 2022 15:26:02 -0600
+        Sun, 22 May 2022 14:36:07 -0700 (PDT)
+Message-ID: <f9ff32f1-3573-37bd-a9ab-1b9ed6cfadd9@kernel.dk>
+Date:   Sun, 22 May 2022 15:36:06 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
  Thunderbird/91.8.1
-From:   Jens Axboe <axboe@kernel.dk>
-Subject: [GIT PULL] io_uring xattr support
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     io-uring <io-uring@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
 Content-Language: en-US
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] Writeback fix for 5.19-rc
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
@@ -72,46 +72,33 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Hi Linus,
 
-On top of the core io_uring changes, this pull request includes support
-for the xattr variants.
+A single writeback fix that didn't belong in any other branch,
+correcting the number of skipped pages.
 
 Please pull!
 
 
-The following changes since commit 155bc9505dbd6613585abbf0be6466f1c21536c4:
+The following changes since commit 42226c989789d8da4af1de0c31070c96726d990c:
 
-  io_uring: return an error when cqe is dropped (2022-04-24 18:18:18 -0600)
+  Linux 5.18-rc7 (2022-05-15 18:08:58 -0700)
 
 are available in the Git repository at:
 
-  git://git.kernel.dk/linux-block.git tags/for-5.19/io_uring-xattr-2022-05-22
+  git://git.kernel.dk/linux-block.git tags/for-5.19/writeback-2022-05-22
 
-for you to fetch changes up to 4ffaa94b9c047fe0e82b1f271554f31f0e2e2867:
+for you to fetch changes up to 68f4c6eba70df70a720188bce95c85570ddfcc87:
 
-  io_uring: cleanup error-handling around io_req_complete (2022-04-24 18:29:33 -0600)
-
-----------------------------------------------------------------
-for-5.19/io_uring-xattr-2022-05-22
+  fs-writeback: writeback_sb_inodes：Recalculate 'wrote' according skipped pages (2022-05-19 06:29:41 -0600)
 
 ----------------------------------------------------------------
-Jens Axboe (1):
-      io_uring: fix trace for reduced sqe padding
+for-5.19/writeback-2022-05-22
 
-Kanchan Joshi (1):
-      io_uring: cleanup error-handling around io_req_complete
+----------------------------------------------------------------
+Zhihao Cheng (1):
+      fs-writeback: writeback_sb_inodes：Recalculate 'wrote' according skipped pages
 
-Stefan Roesch (4):
-      fs: split off setxattr_copy and do_setxattr function from setxattr
-      fs: split off do_getxattr from getxattr
-      io_uring: add fsetxattr and setxattr support
-      io_uring: add fgetxattr and getxattr support
-
- fs/internal.h                   |  29 ++++
- fs/io_uring.c                   | 322 ++++++++++++++++++++++++++++++++++++----
- fs/xattr.c                      | 143 ++++++++++++------
- include/trace/events/io_uring.h |   9 +-
- include/uapi/linux/io_uring.h   |   8 +-
- 5 files changed, 434 insertions(+), 77 deletions(-)
+ fs/fs-writeback.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
 -- 
 Jens Axboe
