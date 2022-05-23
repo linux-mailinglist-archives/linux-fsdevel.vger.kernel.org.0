@@ -2,48 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 13759531970
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 May 2022 22:54:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48C4253196C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 May 2022 22:54:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232775AbiEWUTg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S232714AbiEWUTg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Mon, 23 May 2022 16:19:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37652 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229600AbiEWUTf (ORCPT
+        with ESMTP id S229594AbiEWUTe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 May 2022 16:19:35 -0400
-X-Greylist: delayed 1069 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 23 May 2022 13:19:34 PDT
+        Mon, 23 May 2022 16:19:34 -0400
+X-Greylist: delayed 2991 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 23 May 2022 13:19:32 PDT
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33978BCE9E;
-        Mon, 23 May 2022 13:19:34 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5369BC6C1;
+        Mon, 23 May 2022 13:19:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
         MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=NPVP0vP+ExmNroRIHFq1qAD6xpWTFjMAiNHPjfVwZHs=; b=ELvOYeRnaJaljBF9bn7TrryW0X
-        Idy3hj2oF4skLt14h3gGeXSbKVmNEQ+zOmAq+TfdEh9NbZ/0XGz/MXFB0xU8fuJuUp2NnxmLFkd/E
-        tz9t12EEbZ6SYURJp/2/fSBW+kDV3tq0tF+O05/5NHSLVQdy5GIl2YBTiPhzzcs4wqHrm7Ux3TTCp
-        IJB/Kb7KeoU2wu5FF4yqeh+HJQ7EMxjcTmD4bwiYlHWZc5KVqiwSrjEAdNUDVhAh80joDt0vp9MtF
-        wcyB2EP0oDwJPsQcsPx+Jhtmw7fZQScA53pA/FIH7+P//5cENFcALfga+orkN77ZbuMFs9PGfKiHI
-        ovXWuwIA==;
+        bh=BEjCKmEEMSSOtJMVmqVfIC+RkZgNI8u3xBenZK+hUro=; b=XRTrc4lAUy9jkpgVFOq2TSxezd
+        I3wKs11DSNWPt0smYy84y8nX4OQpi2ShTNU+G9tW+Yllwv6rMJhJQ7BXgKVp1vNon4qhiH1MqoODT
+        l/Z0+UcxTluUmD/IPXWAYoogG+L7bdnoCFn41igpJqE+Z0iBqPr6hgZahTLWZDS1Hs5bTMGfphH8F
+        XO5iqaxMoV2nZbBszT3k9ljMldkb1qdaL4+ZUE91w5xsku3P8VN18E/atgx0/LbcuB5y8eG65c+zb
+        8J/dPbRR92XSx0HQiulEuZ4Sjx1DrsRys+Q+UVF9bIaUIPS+JwEisoXZvd78Aoa+iG3xZ0t7m7ri2
+        Y+kik54w==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1ntC0w-005Q5a-21; Mon, 23 May 2022 17:38:42 +0000
-Date:   Mon, 23 May 2022 10:38:42 -0700
+        id 1ntCIl-005SSl-Cr; Mon, 23 May 2022 17:57:07 +0000
+Date:   Mon, 23 May 2022 10:57:07 -0700
 From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Pankaj Raghav <pankydev8@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        patches@lists.linux.dev, amir73il@gmail.com, tytso@mit.edu,
-        josef@toxicpanda.com, jmeneghi@redhat.com, jake@lwn.net
-Subject: Re: [PATCH 3/4] playbooks: add a common playbook a git reset task
- for kdevops
-Message-ID: <YovGojXJQMbGQkqu@bombadil.infradead.org>
-References: <20220513193831.4136212-1-mcgrof@kernel.org>
- <20220513193831.4136212-4-mcgrof@kernel.org>
- <20220520144405.uzzejos24qizwa5c@quentin>
+To:     Xiubo Li <xiubli@redhat.com>
+Cc:     jlayton@kernel.org, idryomov@gmail.com, viro@zeniv.linux.org.uk,
+        willy@infradead.org, vshankar@redhat.com,
+        ceph-devel@vger.kernel.org, arnd@arndb.de,
+        akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 1/2] fs/dcache: add d_compare() helper support
+Message-ID: <YovK86vEmOUUoBn6@bombadil.infradead.org>
+References: <20220519101847.87907-1-xiubli@redhat.com>
+ <20220519101847.87907-2-xiubli@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220520144405.uzzejos24qizwa5c@quentin>
+In-Reply-To: <20220519101847.87907-2-xiubli@redhat.com>
 Sender: Luis Chamberlain <mcgrof@infradead.org>
 X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,SPF_HELO_NONE,
@@ -55,59 +55,42 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 20, 2022 at 04:44:05PM +0200, Pankaj Raghav wrote:
-> Hi Luis,
+On Thu, May 19, 2022 at 06:18:45PM +0800, Xiubo Li wrote:
+> Reviewed-by: Jeff Layton <jlayton@kernel.org>
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>  fs/dcache.c            | 15 +++++++++++++++
+>  include/linux/dcache.h |  2 ++
+>  2 files changed, 17 insertions(+)
 > 
-> On Fri, May 13, 2022 at 12:38:30PM -0700, Luis Chamberlain wrote:
-> > Two playbooks share the concept of git cloning kdevops into
-> > the target nodes (guests, cloud hosts, baremetal hosts) so that
-> > expunge files can be used for avoiding tests. If you decide
-> > you want to change the URL for that git tree it may not be
-> > so obvious what to do.
-> > 
-> > Fortunately the solution is simple. You just tell ansible to use
-> > the new git tree URL. That's it. It won't remove the old directory
-> > and things work as expected.
-> > 
-> > But since we use the kdevops git tree on both fstests and blktests
-> > it is not so obvious to developers that the thing to do here is
-> > to just run 'make fstests' or 'make blktests' and even that is not
-> > as efficient as that will also re-clone the fstests or blktests
-> > tree respectively. When we just want to reset the kdevops git tree
-> > we currently have no semantics to specify that. But since this is
-> > a common post-deployment goal, just add a common playbook that let's
-> > us do common tasks.
-> > 
-> > All we need then is the kconfig logic to define when some commmon
-> > tasks might make sense. So to reset your kdevops git tree, all you
-> > have to do now is change the configuration for it, then run:
-> > 
-> > make
-> > make kdevops-git-reset
-> > 
-> 
-> While I do like the idea of having this option, I still do not
-> understand the main use case to have it as a separate make target.
-> Wouldn't the developer already put the custom kdevops tree with
-> CONFIG_WORKFLOW_KDEVOPS_GIT during the initial make menuconfig phase?
+> diff --git a/fs/dcache.c b/fs/dcache.c
+> index 93f4f5ee07bf..95a72f92a94b 100644
+> --- a/fs/dcache.c
+> +++ b/fs/dcache.c
+> @@ -2262,6 +2262,21 @@ static inline bool d_same_name(const struct dentry *dentry,
+>  				       name) == 0;
+>  }
+>  
+> +/**
+> + * d_compare - compare dentry name with case-exact name
+> + * @parent: parent dentry
+> + * @dentry: the negative dentry that was passed to the parent's lookup func
+> + * @name:   the case-exact name to be associated with the returned dentry
+> + *
+> + * Return: 0 if names are same, or 1
+> + */
+> +bool d_compare(const struct dentry *parent, const struct dentry *dentry,
+> +	       const struct qstr *name)
+> +{
+> +	return !d_same_name(dentry, parent, name);
 
-For initial setup yes. The value of the new make target is for when
-you already deployed kdevops, and now you want to change the git URL
-for the guests if they have workflows which clone kdevops for using
-expunges when testing such as with fstests and blktest.
+What's wrong with d_same_name()? Why introduce a whole new operation
+and export it when you the same prototype except first and second
+argument moved with an even more confusing name?
 
-> I am just trying to understand the usecase when someone wants to change
-> the kdevops tree after a test run. Maybe I am missing something here.
+> +}
+> +EXPORT_SYMBOL(d_compare);
 
-That is right, the use case here of the new make target is so that a
-user can change the target kdevops tree on the guests if they are
-working with fstests and blktests. Otherwise then the git tree will
-only change on the host. If you ran 'make fstests' for instance you
-git cloned fstests, compiled and installed it, but the kdevops tree
-was also cloned and used on each guest so to ensure only tests which
-are not expunged for the target test are run. Without this new make
-target if you wanted to reset the git tree on the guests you'd have to
-re-run 'make fstests'. Where as with the new target, it's just a one
-liner.
+New symbols should go with EXPORT_SYMBOL_GPL() instead.
 
   Luis
