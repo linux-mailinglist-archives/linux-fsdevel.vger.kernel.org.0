@@ -2,173 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D4C02530E50
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 May 2022 12:43:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DF6C530F07
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 May 2022 15:18:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234204AbiEWKlE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 May 2022 06:41:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44984 "EHLO
+        id S234303AbiEWKrS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 May 2022 06:47:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58694 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234194AbiEWKlD (ORCPT
+        with ESMTP id S234296AbiEWKrP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 May 2022 06:41:03 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE76C218D;
-        Mon, 23 May 2022 03:41:00 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 7321E1F8F8;
-        Mon, 23 May 2022 10:40:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1653302459; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        Mon, 23 May 2022 06:47:15 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4EE834C79B
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 May 2022 03:47:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1653302825;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=kgEfxB0bafp72pEF3bsPaBk5QKQf3h1LBgwkt9FtAcc=;
-        b=of8zcOWsFHZDIqcStn6jk0L07eCAkj7Z8H0ki9kjc3DijS92ipNJ6iheI7CXC+eRY55dlp
-        jfBJrpLFJA1MekBms+l+UXQKMg/e11EOmzROj8tK2vhzNechBjY3HNqFQo5MHrK3nvu4fJ
-        M8TdLfti2noZ+rLDNYrcMYnZVeK9xvc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1653302459;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=kgEfxB0bafp72pEF3bsPaBk5QKQf3h1LBgwkt9FtAcc=;
-        b=7veQnmTX/Pu0sB8DVD6EluIlW9tBmC3bod58EvRvMEQBkGqgbBteza1HQVPZN7rZPxSsod
-        HWATcQrmHgWSoxAQ==
-Received: from quack3.suse.cz (unknown [10.100.224.230])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        bh=Tufy4k9IUm7Dd+4tryigNXPHptoH5ASjzZkRMX/8R8c=;
+        b=cZx/CKQ3LHSLW4b+Ng1GpRp7ZUx8eW4PZZrUO+bpknaDGzJL9UGSy1MABtq3AS411z8gCW
+        +0KjmUgK4DZAGDtGgEcdHXY7hvYKcfmQUP5FMKZMUntRNchqwEAja1uUeOOCiA0KilaZYN
+        cOUb9EMJZaTIHDujYDzVAxrVVOm7kuc=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-212-KDjXxgU3PtSpCbc6xpsVuA-1; Mon, 23 May 2022 06:47:02 -0400
+X-MC-Unique: KDjXxgU3PtSpCbc6xpsVuA-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 3A0F52C141;
-        Mon, 23 May 2022 10:40:59 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id DDD8CA0632; Mon, 23 May 2022 12:40:58 +0200 (CEST)
-Date:   Mon, 23 May 2022 12:40:58 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Stefan Roesch <shr@fb.com>
-Cc:     io-uring@vger.kernel.org, kernel-team@fb.com, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        david@fromorbit.com, jack@suse.cz, hch@infradead.org
-Subject: Re: [RFC PATCH v4 04/17] mm: Add
- balance_dirty_pages_ratelimited_flags() function
-Message-ID: <20220523104058.c727tj7tl2y43snu@quack3.lan>
-References: <20220520183646.2002023-1-shr@fb.com>
- <20220520183646.2002023-5-shr@fb.com>
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 78C7E3C222C5;
+        Mon, 23 May 2022 10:47:01 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.8])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8D71D1121314;
+        Mon, 23 May 2022 10:46:58 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <1b5daa4695b62795b617049e32c784052deabad4.camel@kernel.org>
+References: <1b5daa4695b62795b617049e32c784052deabad4.camel@kernel.org> <165305805651.4094995.7763502506786714216.stgit@warthog.procyon.org.uk>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     dhowells@redhat.com, keescook@chromium.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Christian Schoenebeck <linux_oss@crudebyte.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        Xiubo Li <xiubli@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Steve French <smfrench@gmail.com>,
+        William Kucharski <william.kucharski@oracle.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-doc@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
+        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+        linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] netfs: Fix gcc-12 warning by embedding vfs inode in netfs_i_context
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220520183646.2002023-5-shr@fb.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <658390.1653302817.1@warthog.procyon.org.uk>
+Date:   Mon, 23 May 2022 11:46:57 +0100
+Message-ID: <658391.1653302817@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Spam-Status: No, score=-3.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 20-05-22 11:36:33, Stefan Roesch wrote:
-> This adds the helper function balance_dirty_pages_ratelimited_flags().
-> It adds the parameter flags to balance_dirty_pages_ratelimited().
-> The flags parameter is passed to balance_dirty_pages(). For async
-> buffered writes the flag value will be BDP_ASYNC.
-> 
-> The new helper function is also used by balance_dirty_pages_ratelimited().
-> 
-> Signed-off-by: Stefan Roesch <shr@fb.com>
+Jeff Layton <jlayton@kernel.org> wrote:
 
-Yeah, as Christoph says perhaps fold this into patch 3. Otherwise the
-changes look good to me.
-
-								Honza
-
-> ---
->  include/linux/writeback.h |  3 +++
->  mm/page-writeback.c       | 38 +++++++++++++++++++++++---------------
->  2 files changed, 26 insertions(+), 15 deletions(-)
 > 
-> diff --git a/include/linux/writeback.h b/include/linux/writeback.h
-> index a9114c5090e9..1bddad86a4f6 100644
-> --- a/include/linux/writeback.h
-> +++ b/include/linux/writeback.h
-> @@ -377,6 +377,9 @@ void wb_update_bandwidth(struct bdi_writeback *wb);
->  #define BDP_ASYNC 0x0001
->  
->  void balance_dirty_pages_ratelimited(struct address_space *mapping);
-> +int balance_dirty_pages_ratelimited_flags(struct address_space *mapping,
-> +		unsigned int flags);
-> +
->  bool wb_over_bg_thresh(struct bdi_writeback *wb);
->  
->  typedef int (*writepage_t)(struct page *page, struct writeback_control *wbc,
-> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-> index 7a320fd2ad33..3701e813d05f 100644
-> --- a/mm/page-writeback.c
-> +++ b/mm/page-writeback.c
-> @@ -1851,28 +1851,18 @@ static DEFINE_PER_CPU(int, bdp_ratelimits);
->   */
->  DEFINE_PER_CPU(int, dirty_throttle_leaks) = 0;
->  
-> -/**
-> - * balance_dirty_pages_ratelimited - balance dirty memory state
-> - * @mapping: address_space which was dirtied
-> - *
-> - * Processes which are dirtying memory should call in here once for each page
-> - * which was newly dirtied.  The function will periodically check the system's
-> - * dirty state and will initiate writeback if needed.
-> - *
-> - * Once we're over the dirty memory limit we decrease the ratelimiting
-> - * by a lot, to prevent individual processes from overshooting the limit
-> - * by (ratelimit_pages) each.
-> - */
-> -void balance_dirty_pages_ratelimited(struct address_space *mapping)
-> +int balance_dirty_pages_ratelimited_flags(struct address_space *mapping,
-> +					unsigned int flags)
->  {
->  	struct inode *inode = mapping->host;
->  	struct backing_dev_info *bdi = inode_to_bdi(inode);
->  	struct bdi_writeback *wb = NULL;
->  	int ratelimit;
-> +	int ret = 0;
->  	int *p;
->  
->  	if (!(bdi->capabilities & BDI_CAP_WRITEBACK))
-> -		return;
-> +		return ret;
->  
->  	if (inode_cgwb_enabled(inode))
->  		wb = wb_get_create_current(bdi, GFP_KERNEL);
-> @@ -1912,9 +1902,27 @@ void balance_dirty_pages_ratelimited(struct address_space *mapping)
->  	preempt_enable();
->  
->  	if (unlikely(current->nr_dirtied >= ratelimit))
-> -		balance_dirty_pages(wb, current->nr_dirtied, 0);
-> +		balance_dirty_pages(wb, current->nr_dirtied, flags);
->  
->  	wb_put(wb);
-> +	return ret;
-> +}
-> +
-> +/**
-> + * balance_dirty_pages_ratelimited - balance dirty memory state
-> + * @mapping: address_space which was dirtied
-> + *
-> + * Processes which are dirtying memory should call in here once for each page
-> + * which was newly dirtied.  The function will periodically check the system's
-> + * dirty state and will initiate writeback if needed.
-> + *
-> + * Once we're over the dirty memory limit we decrease the ratelimiting
-> + * by a lot, to prevent individual processes from overshooting the limit
-> + * by (ratelimit_pages) each.
-> + */
-> +void balance_dirty_pages_ratelimited(struct address_space *mapping)
-> +{
-> +	balance_dirty_pages_ratelimited_flags(mapping, 0);
->  }
->  EXPORT_SYMBOL(balance_dirty_pages_ratelimited);
->  
-> -- 
-> 2.30.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> Note that there are some conflicts between this patch and some of the
+> patches in the current ceph-client/testing branch. Depending on the
+> order of merge, one or the other will need to be fixed.
+
+Do you think it could be taken through the ceph tree?
+
+David
+
