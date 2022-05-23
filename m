@@ -2,91 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DF6C530F07
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 May 2022 15:18:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D3965310BC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 May 2022 15:20:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234303AbiEWKrS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 May 2022 06:47:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58694 "EHLO
+        id S234558AbiEWKwJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 May 2022 06:52:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234296AbiEWKrP (ORCPT
+        with ESMTP id S234448AbiEWKv4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 May 2022 06:47:15 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4EE834C79B
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 May 2022 03:47:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1653302825;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+        Mon, 23 May 2022 06:51:56 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 259A82E9D1;
+        Mon, 23 May 2022 03:51:54 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 348AC1F8FC;
+        Mon, 23 May 2022 10:51:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1653303113; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=Tufy4k9IUm7Dd+4tryigNXPHptoH5ASjzZkRMX/8R8c=;
-        b=cZx/CKQ3LHSLW4b+Ng1GpRp7ZUx8eW4PZZrUO+bpknaDGzJL9UGSy1MABtq3AS411z8gCW
-        +0KjmUgK4DZAGDtGgEcdHXY7hvYKcfmQUP5FMKZMUntRNchqwEAja1uUeOOCiA0KilaZYN
-        cOUb9EMJZaTIHDujYDzVAxrVVOm7kuc=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-212-KDjXxgU3PtSpCbc6xpsVuA-1; Mon, 23 May 2022 06:47:02 -0400
-X-MC-Unique: KDjXxgU3PtSpCbc6xpsVuA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        bh=er9JYArnLSJeQuHrUgEU6Pg3HhcWIglyAYqRTH2CiW0=;
+        b=BKTR8X/ocHJX69A557i5YSZLaDBaiQBIdAwGZx2Kh8YY1pfzT8IaH0twOttAKHtIj/dDiK
+        wQL5V90y6BlcT5aSJeq0fy8X1E+120v+oQwONU6zNNRrHNA38fslpFUTpT8CmlP5504vue
+        O6i5N9ceNydatQKdydO1C81gHH4vxAM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1653303113;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=er9JYArnLSJeQuHrUgEU6Pg3HhcWIglyAYqRTH2CiW0=;
+        b=DAfS6cAwiJcK146v8X+p9SwPWrG9J5hbRbAAHzs6Ign2VMVVRZ1Z1Nx8VYKxQbDrwFf+xd
+        dSOIxDRANxdGGFCA==
+Received: from quack3.suse.cz (unknown [10.100.224.230])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 78C7E3C222C5;
-        Mon, 23 May 2022 10:47:01 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.8])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8D71D1121314;
-        Mon, 23 May 2022 10:46:58 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <1b5daa4695b62795b617049e32c784052deabad4.camel@kernel.org>
-References: <1b5daa4695b62795b617049e32c784052deabad4.camel@kernel.org> <165305805651.4094995.7763502506786714216.stgit@warthog.procyon.org.uk>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     dhowells@redhat.com, keescook@chromium.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Christian Schoenebeck <linux_oss@crudebyte.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Xiubo Li <xiubli@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Steve French <smfrench@gmail.com>,
-        William Kucharski <william.kucharski@oracle.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-doc@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
-        linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
-        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-        linux-fsdevel@vger.kernel.org, linux-hardening@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] netfs: Fix gcc-12 warning by embedding vfs inode in netfs_i_context
+        by relay2.suse.de (Postfix) with ESMTPS id 1F92B2C141;
+        Mon, 23 May 2022 10:51:53 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id B547EA0632; Mon, 23 May 2022 12:51:52 +0200 (CEST)
+Date:   Mon, 23 May 2022 12:51:52 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Stefan Roesch <shr@fb.com>
+Cc:     io-uring@vger.kernel.org, kernel-team@fb.com, linux-mm@kvack.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        david@fromorbit.com, jack@suse.cz, hch@infradead.org
+Subject: Re: [RFC PATCH v4 12/17] fs: Optimization for concurrent file time
+ updates.
+Message-ID: <20220523105152.36hpyx7jd2fsy2i5@quack3.lan>
+References: <20220520183646.2002023-1-shr@fb.com>
+ <20220520183646.2002023-13-shr@fb.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <658390.1653302817.1@warthog.procyon.org.uk>
-Date:   Mon, 23 May 2022 11:46:57 +0100
-Message-ID: <658391.1653302817@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Spam-Status: No, score=-3.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220520183646.2002023-13-shr@fb.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Jeff Layton <jlayton@kernel.org> wrote:
-
+On Fri 20-05-22 11:36:41, Stefan Roesch wrote:
+> This introduces the S_PENDING_TIME flag. If an async buffered write
+> needs to update the time, it cannot be processed in the fast path of
+> io-uring. When a time update is pending this flag is set for async
+> buffered writes. Other concurrent async buffered writes for the same
+> file do not need to wait while this time update is pending.
 > 
-> Note that there are some conflicts between this patch and some of the
-> patches in the current ceph-client/testing branch. Depending on the
-> order of merge, one or the other will need to be fixed.
+> This reduces the number of async buffered writes that need to get punted
+> to the io-workers in io-uring.
+> 
+> Signed-off-by: Stefan Roesch <shr@fb.com>
 
-Do you think it could be taken through the ceph tree?
+...
 
-David
+> @@ -2184,10 +2184,17 @@ int file_modified_async(struct file *file, int flags)
+>  	ret = file_needs_update_time(inode, file, &now);
+>  	if (ret <= 0)
+>  		return ret;
+> -	if (flags & IOCB_NOWAIT)
+> +	if (flags & IOCB_NOWAIT) {
+> +		if (IS_PENDING_TIME(inode))
+> +			return 0;
+> +
+> +		inode->i_flags |= S_PENDING_TIME;
+>  		return -EAGAIN;
+> +	}
+>  
+> -	return __file_update_time(inode, file, &now, ret);
+> +	ret = __file_update_time(inode, file, &now, ret);
+> +	inode->i_flags &= ~S_PENDING_TIME;
+> +	return ret;
+>  }
+>  EXPORT_SYMBOL(file_modified_async);
 
+You still didn't address my concern that i_flags is modified without the
+protection of i_rwsem here. That can lead to corruption of i_flags value
+and rather nasty (and hard to debug) consequences. You can use
+inode_set_flags() here to make things kinda safe. The whole inode->i_flags
+handling is a mess but not yours to resolve ;)
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
