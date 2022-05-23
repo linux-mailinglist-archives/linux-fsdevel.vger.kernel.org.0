@@ -2,107 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C53B531C27
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 May 2022 22:57:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72D26531644
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 May 2022 22:50:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230388AbiEWTnR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 May 2022 15:43:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38914 "EHLO
+        id S231296AbiEWTnU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 May 2022 15:43:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234006AbiEWTmT (ORCPT
+        with ESMTP id S234706AbiEWTmw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 May 2022 15:42:19 -0400
-Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D67AC11C20
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 May 2022 12:39:15 -0700 (PDT)
-Received: by mail-pl1-x62c.google.com with SMTP id q4so13982708plr.11
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 May 2022 12:39:15 -0700 (PDT)
+        Mon, 23 May 2022 15:42:52 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4446BE008
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 May 2022 12:41:41 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id rs12so19235740ejb.13
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 May 2022 12:41:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=9i0mf5EWjId+dJhDG42zI0t8gO1U5xR/fPTtg8h/guQ=;
-        b=G67mgEOcbKAzzfRqWT2tyqM6K9pitcq9pbTVcwT0LjmKZNi0oiqVsX8V97hEFwl2hf
-         AMnpF3tfbp0thJvNCE4CX5dI4O8ELTGwmxs1K5fhCNP737yCqZGbfIr/xW9c33Xf+LOK
-         scdJ+18kS7hWnfRSUS9ItgijmeteaopgZF3uU=
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HnMg9PaJ6KDavvSY7bvDnr4e+cLVAv92In4gmvI8qTo=;
+        b=HCaV3MV+Wk0Z923y3RiL9cz3mSUV0XeHVnP4FDh3NRxQZA+nm0aJ/Epv8MQnI8vcSc
+         7zBAZSQ5t7wRZ8+gtBpm/ooAo0kdVyNyfRYoOO+JacEkD/OOyTn1L5NpMsVymQAbAwZu
+         uYpqxRnwshqaGtIGG+BQ7pA8+4kShZx1czvPg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=9i0mf5EWjId+dJhDG42zI0t8gO1U5xR/fPTtg8h/guQ=;
-        b=hatTxjc4Sd9LYYfof09Y3MooL1wN8ROHEgZdZBoAMHnEMKHBTgjGIk/EdozaAYNodD
-         ei1C8ZnIpnZYl0rysdFEX3XcHd5keMnRLJ7cuZ0oQG1oBGv1vLTV9avNS7NvE4fB3RxJ
-         WWWZemKWdQssWvpkX2bJmU7u3vwfvz2EcwFlkGqWn9iDPB7BU8Y8CsBApKlkJObVzTCg
-         DeSUoDOmm0avSALS1lC8ob78INr5bs5r7nhblxm3XORQq83YN3d6sU57vIzBMSREos+r
-         YjJQqeDrZHdXJVh64MgKPUeyYFVWV1mK2kR8zs7W+cm4R5X7lik68efbbcgbz27bv/ry
-         yfTg==
-X-Gm-Message-State: AOAM531arTjwMybu79tCPoEJhGK7MB3ysKnMCqo1abpWTjGvPsVsNHPl
-        cRU3X5FZeKnfrnUAuNGYB+t4yw==
-X-Google-Smtp-Source: ABdhPJwpmlrfLvCqOEAWUHk/iFb9vTBCFvDV+XiSslGuIShWmQMdDaruCMB2aTz4o4uZEjpK38rAug==
-X-Received: by 2002:a17:902:f605:b0:14d:9e11:c864 with SMTP id n5-20020a170902f60500b0014d9e11c864mr24236615plg.54.1653334755308;
-        Mon, 23 May 2022 12:39:15 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id a9-20020a62bd09000000b0051827128aeasm7543246pff.131.2022.05.23.12.39.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 May 2022 12:39:14 -0700 (PDT)
-Date:   Mon, 23 May 2022 12:39:12 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Maninder Singh <maninder1.s@samsung.com>, pmladek@suse.com,
-        bcain@quicinc.com, mpe@ellerman.id.au, benh@kernel.crashing.org,
-        paulus@samba.org, hca@linux.ibm.com, gor@linux.ibm.com,
-        agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
-        svens@linux.ibm.com, satishkh@cisco.com, sebaddel@cisco.com,
-        kartilak@cisco.com, jejb@linux.ibm.com, martin.petersen@oracle.com,
-        mcgrof@kernel.org, jason.wessel@windriver.com,
-        daniel.thompson@linaro.org, dianders@chromium.org,
-        naveen.n.rao@linux.ibm.com, anil.s.keshavamurthy@intel.com,
-        davem@davemloft.net, mhiramat@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, will@kernel.org, longman@redhat.com,
-        boqun.feng@gmail.com, rostedt@goodmis.org,
-        senozhatsky@chromium.org, andriy.shevchenko@linux.intel.com,
-        linux@rasmusvillemoes.dk, akpm@linux-foundation.org, arnd@arndb.de,
-        linux-hexagon@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-modules@vger.kernel.org,
-        kgdb-bugreport@lists.sourceforge.net, v.narang@samsung.com,
-        onkarnath.1@samsung.com
-Subject: Re: [PATCH 0/5] kallsyms: make kallsym APIs more safe with scnprintf
-Message-ID: <202205231238.FAF6D28@keescook>
-References: <CGME20220520083715epcas5p400b11adef4d540756c985feb20ba29bc@epcas5p4.samsung.com>
- <20220520083701.2610975-1-maninder1.s@samsung.com>
- <YonTOL4zC4CytVrn@infradead.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HnMg9PaJ6KDavvSY7bvDnr4e+cLVAv92In4gmvI8qTo=;
+        b=Q4OEHwsfkOl/oh0BFKyDibuvgpgL3VZNqLv7sHwIlCK04j9fLyFGhlP4xs0f3xMmZh
+         JbdIeBrNEPTfCy973SAahnrH+cHo7MFc+JizYC+K/858WXiECMml3EWZEMS6e9Du5h42
+         MYa305qQflC2rM8CR6bgZb5s4DRKTvCIq0EoYv0L8zO6zl8TzDz5eBVFbmBGkqNHw7be
+         ovKr1LnjCMDJbSfprkP9dZdHd287hJME6ItrvajNEYRb9ktMb0fwsoNvJsTQhj36SsQl
+         +sOqHJA2HV5qDqCPIbWippT0BN3b6cqd30TXiGAIRCiD+svichPfVLdU36Ktmw6e2PXt
+         YdNw==
+X-Gm-Message-State: AOAM5318yPDM7Mo8Cx02df06DI5LLdyaurcQvkHiD0szRw+GMPTA0E3k
+        Ul9Gxw4Oxi2P8RxiESbdm+YZh44/TDCgKTvWYtY=
+X-Google-Smtp-Source: ABdhPJw3z5HNOSZqhFReQqb9RAe5UKvt2HP4s6qAxqSSCV8uzXmvwcyXvul+vj0nTFD4E9/oZ7+XeA==
+X-Received: by 2002:a17:907:1b1e:b0:6d7:31b0:e821 with SMTP id mp30-20020a1709071b1e00b006d731b0e821mr21392057ejc.334.1653334899511;
+        Mon, 23 May 2022 12:41:39 -0700 (PDT)
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com. [209.85.128.50])
+        by smtp.gmail.com with ESMTPSA id pk14-20020a170906d7ae00b006fed3fdf421sm1870542ejb.139.2022.05.23.12.41.38
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 May 2022 12:41:39 -0700 (PDT)
+Received: by mail-wm1-f50.google.com with SMTP id p189so9415461wmp.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 May 2022 12:41:38 -0700 (PDT)
+X-Received: by 2002:a05:600c:4f06:b0:394:836b:1552 with SMTP id
+ l6-20020a05600c4f0600b00394836b1552mr518911wmq.145.1653334898506; Mon, 23 May
+ 2022 12:41:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YonTOL4zC4CytVrn@infradead.org>
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+References: <d94a4e55-c4f2-73d8-9e2c-e55ae8436622@kernel.dk>
+In-Reply-To: <d94a4e55-c4f2-73d8-9e2c-e55ae8436622@kernel.dk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 23 May 2022 12:41:22 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wg54n0DONm_2Fqtpq63ZgfQUef0WLNhW_KaJX4HTh19YQ@mail.gmail.com>
+Message-ID: <CAHk-=wg54n0DONm_2Fqtpq63ZgfQUef0WLNhW_KaJX4HTh19YQ@mail.gmail.com>
+Subject: Re: [GIT PULL] io_uring xattr support
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, May 21, 2022 at 11:07:52PM -0700, Christoph Hellwig wrote:
-> On Fri, May 20, 2022 at 02:06:56PM +0530, Maninder Singh wrote:
-> > kallsyms functionality depends on KSYM_NAME_LEN directly.
-> > but if user passed array length lesser than it, sprintf
-> > can cause issues of buffer overflow attack.
-> > 
-> > So changing *sprint* and *lookup* APIs in this patch set
-> > to have buffer size as an argument and replacing sprintf with
-> > scnprintf.
-> 
-> This is still a pretty horrible API.  Passing something like
-> a struct seq_buf seems like the much better API here.  Also with
-> the amount of arguments and by reference passing it might be worth
-> to pass them as a structure while you're at it.
+On Sun, May 22, 2022 at 2:26 PM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On top of the core io_uring changes, this pull request includes support
+> for the xattr variants.
 
-Yeah, I agree. It really seems like seq_buf would be nicer.
+So I don't mind the code (having seen the earlier versions), but
+looking at this all I *do* end up reacting to this part:
 
--- 
-Kees Cook
+    [torvalds@ryzen linux]$ wc -l fs/io_uring.c
+    12744 fs/io_uring.c
+
+and no, this is not due to this xattr pull, but the xattr code did add
+another few hundred lines of "io_uring command boilerplate for another
+command" to this file that is a nasty file from hell.
+
+I really think that it might be time to start thinking about splitting
+that io_uring.c file up. Make it a directory, and have the core
+command engine in io_uring/core.c, and then have the different actual
+IO_URING_OP_xyz handling in separate files.
+
+And yes, that would probably necessitate making the OP handling use
+more of a dispatch table approach, but wouldn't that be good anyway?
+That io_uring.c file is starting to have a lot of *big* switch
+statements for the different cases.
+
+Wouldn't it be nice to have a "op descriptor array" instead of the
+
+        switch (req->opcode) {
+        ...
+        case IORING_OP_WRITE:
+                return io_prep_rw(req, sqe);
+        ...
+
+kind of tables?
+
+Yes, the compiler may end up generating a binary-tree
+compare-and-branch thing for a switch like that, and it might be
+better than an indirect branch in these days of spectre costs for
+branch prediction safety, but if we're talking a few tens of cycles
+per op, that's probably not really a big deal.
+
+And from a maintenenace standpoint, I really think it would be good to
+try to try to walk away from those "case IORING_OP_xyz" things, and
+try to split things up into more manageable pieces.
+
+Hmm?
+
+               Linus
