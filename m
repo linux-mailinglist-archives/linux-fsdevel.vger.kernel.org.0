@@ -2,154 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 54C10531B35
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 May 2022 22:56:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71C05531726
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 May 2022 22:52:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231935AbiEWT7T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 May 2022 15:59:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49200 "EHLO
+        id S232564AbiEWUMB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 May 2022 16:12:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231950AbiEWT7S (ORCPT
+        with ESMTP id S232932AbiEWULt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 May 2022 15:59:18 -0400
-Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9394E7A447
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 May 2022 12:59:16 -0700 (PDT)
-Received: by mail-pf1-x434.google.com with SMTP id h13so8330612pfq.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 May 2022 12:59:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=rX4IiCNid2HeUSQHi+fLuxHYFKgICAtdWuid37aWMsM=;
-        b=OwVuoJnVGGp8CHIBxbaKF2wDvnC1VRQgX7FqyKaVgo42Ayu2qXouYEobpaAgf7LtK6
-         afVE/APRNd999vCii0N6vd1o2VYwlouvjHlHjvqmI+Vq4f+an6GDXreWy8wVceSPRtgy
-         xFWVpFx63QcKl97UHBmW2//d783lRXiZqXQZIKWx8leNOwMReWd1iPZiYCYO+4lWAlYg
-         YJTRTR5FFt2IoCdvss6CxclqItuizgd9PaOG8rGOveTPtrWFa6Rq2DRFlOD05KZCoYGL
-         da5Hqy8IATSc13B2XmumjVkEaoLjfO0tukrsnwBqB+pTJ/vD9KEh58MyRVHfQ6/CS/mG
-         KKyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=rX4IiCNid2HeUSQHi+fLuxHYFKgICAtdWuid37aWMsM=;
-        b=8LHc6kk0XkesFh12rfKXVz9/SYlwTiIe7gtWJs8SgewKR9ivwmtK2vz0Asc6E2c2Ul
-         ypRYqniaoxvmMv81HNjUP2km1pzlt+RyXLLPmuGXH0qp71fdTAcj+fCrCKRdlTQBVLJ6
-         04KATse9ZIl26zmIi3rD79Qw+qoAxMEMdTJGDMnUc09hdyGdfh8zdkXzJ3g2629NjBKq
-         8IZuCkiQ0XDx6BVbOCrHlecHlNfWgsjubHevJnISt8MS3NtVf7ibKcV4LA6jQwynQybB
-         ksJCvI5KWogVEPZM8pW2uRn5esAZZDNAxSZp5dgqt/XM55w4CAztYU3X+T5DSBu+tAh/
-         LoXQ==
-X-Gm-Message-State: AOAM531pG+1WLc2Fica3BU2owWpELtcacrstBEk0Fe7teh57hJQEjv1j
-        p4F7ulmAjHqLLBBzb73+9HBs09PPPK7gig==
-X-Google-Smtp-Source: ABdhPJwYsqzCh77kq63IWp/7Ve18+MbVu94/wALJNksAiWMakr2h64pGW/KKpV+6FsP7iiyluY5A9A==
-X-Received: by 2002:a63:f407:0:b0:3fa:91cf:270 with SMTP id g7-20020a63f407000000b003fa91cf0270mr2278519pgi.428.1653335955992;
-        Mon, 23 May 2022 12:59:15 -0700 (PDT)
-Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id i23-20020aa78b57000000b005187ed76a78sm5683918pfd.174.2022.05.23.12.59.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 May 2022 12:59:15 -0700 (PDT)
-Message-ID: <d9b44d03-2060-86ef-2864-be263fbcba84@kernel.dk>
-Date:   Mon, 23 May 2022 13:59:14 -0600
+        Mon, 23 May 2022 16:11:49 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A08C72FE75;
+        Mon, 23 May 2022 13:11:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=LbEcr7zqhWPFnXoF/KuL5Wkx22JBJ3c2clwbQUl5zn8=; b=YcCYg3bARqXOKkr9KCnYiIVA/O
+        4kCGq1j7NQnK1rCwBYjYcBp79yCaa+veSl2Dx1quLuGeDujO4BSEVcsIJGp+a5QSK2RSosFhG3hjW
+        xMKesUVI3DHJzHAD6RzkDdbXBW7hElXVml8xn3gObBiogi3m/SAMCruazsCZFCQi0CtlYy+m25fRB
+        GdrhCmxTa54gy4NdhbEa5uiYAFKqPXLSZDUoPwg3i3ujBkmThEqmmRcFfV5FH8FYiLnW1rC06isEs
+        gxhmy88B4LOk1iYVg8NmSU4PzSUEtrzQx8JtrCSV1UcEQ9kp/mviuzgA9wrsqNlGmevPCjJQzStwY
+        X8M8EN4Q==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1ntEOy-00GVbU-0B; Mon, 23 May 2022 20:11:40 +0000
+Date:   Mon, 23 May 2022 21:11:39 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Xiubo Li <xiubli@redhat.com>
+Cc:     jlayton@kernel.org, idryomov@gmail.com, viro@zeniv.linux.org.uk,
+        vshankar@redhat.com, ceph-devel@vger.kernel.org, arnd@arndb.de,
+        mcgrof@kernel.org, akpm@linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 1/2] fs/dcache: add d_compare() helper support
+Message-ID: <YovqeybXUKEmhvsi@casper.infradead.org>
+References: <20220519101847.87907-1-xiubli@redhat.com>
+ <20220519101847.87907-2-xiubli@redhat.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [GIT PULL] io_uring xattr support
-Content-Language: en-US
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     io-uring <io-uring@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-References: <d94a4e55-c4f2-73d8-9e2c-e55ae8436622@kernel.dk>
- <CAHk-=wg54n0DONm_2Fqtpq63ZgfQUef0WLNhW_KaJX4HTh19YQ@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CAHk-=wg54n0DONm_2Fqtpq63ZgfQUef0WLNhW_KaJX4HTh19YQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-5.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220519101847.87907-2-xiubli@redhat.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/23/22 1:41 PM, Linus Torvalds wrote:
-> On Sun, May 22, 2022 at 2:26 PM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> On top of the core io_uring changes, this pull request includes support
->> for the xattr variants.
+On Thu, May 19, 2022 at 06:18:45PM +0800, Xiubo Li wrote:
+> Reviewed-by: Jeff Layton <jlayton@kernel.org>
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+
+... empty commit message?
+
+> ---
+>  fs/dcache.c            | 15 +++++++++++++++
+>  include/linux/dcache.h |  2 ++
+>  2 files changed, 17 insertions(+)
 > 
-> So I don't mind the code (having seen the earlier versions), but
-> looking at this all I *do* end up reacting to this part:
+> diff --git a/fs/dcache.c b/fs/dcache.c
+> index 93f4f5ee07bf..95a72f92a94b 100644
+> --- a/fs/dcache.c
+> +++ b/fs/dcache.c
+> @@ -2262,6 +2262,21 @@ static inline bool d_same_name(const struct dentry *dentry,
+>  				       name) == 0;
+>  }
+>  
+> +/**
+> + * d_compare - compare dentry name with case-exact name
+> + * @parent: parent dentry
+> + * @dentry: the negative dentry that was passed to the parent's lookup func
+> + * @name:   the case-exact name to be associated with the returned dentry
+> + *
+> + * Return: 0 if names are same, or 1
+> + */
+> +bool d_compare(const struct dentry *parent, const struct dentry *dentry,
+> +	       const struct qstr *name)
+> +{
+> +	return !d_same_name(dentry, parent, name);
+> +}
+> +EXPORT_SYMBOL(d_compare);
+> +
+>  /**
+>   * __d_lookup_rcu - search for a dentry (racy, store-free)
+>   * @parent: parent dentry
+> diff --git a/include/linux/dcache.h b/include/linux/dcache.h
+> index f5bba51480b2..444b2230e5c3 100644
+> --- a/include/linux/dcache.h
+> +++ b/include/linux/dcache.h
+> @@ -233,6 +233,8 @@ extern struct dentry * d_alloc_parallel(struct dentry *, const struct qstr *,
+>  					wait_queue_head_t *);
+>  extern struct dentry * d_splice_alias(struct inode *, struct dentry *);
+>  extern struct dentry * d_add_ci(struct dentry *, struct inode *, struct qstr *);
+> +extern bool d_compare(const struct dentry *parent, const struct dentry *dentry,
+> +		      const struct qstr *name);
+>  extern struct dentry * d_exact_alias(struct dentry *, struct inode *);
+>  extern struct dentry *d_find_any_alias(struct inode *inode);
+>  extern struct dentry * d_obtain_alias(struct inode *);
+> -- 
+> 2.36.0.rc1
 > 
->     [torvalds@ryzen linux]$ wc -l fs/io_uring.c
->     12744 fs/io_uring.c
-> 
-> and no, this is not due to this xattr pull, but the xattr code did add
-> another few hundred lines of "io_uring command boilerplate for another
-> command" to this file that is a nasty file from hell.
-
-I know, it really is a monster file at this point...
-
-> I really think that it might be time to start thinking about splitting
-> that io_uring.c file up. Make it a directory, and have the core
-> command engine in io_uring/core.c, and then have the different actual
-> IO_URING_OP_xyz handling in separate files.
-
-I've been pondering that for a while actually, and yes I agree it's time
-to organize this a bit differently. When you are in this code all the
-time you notice less as you know where everything is, but it would be
-nice to take the time to split it into some manageable and separately
-readable/maintainable pieces.
-
-> And yes, that would probably necessitate making the OP handling use
-> more of a dispatch table approach, but wouldn't that be good anyway?
-> That io_uring.c file is starting to have a lot of *big* switch
-> statements for the different cases.
-> 
-> Wouldn't it be nice to have a "op descriptor array" instead of the
-> 
->         switch (req->opcode) {
->         ...
->         case IORING_OP_WRITE:
->                 return io_prep_rw(req, sqe);
->         ...
-> 
-> kind of tables?
-> 
-> Yes, the compiler may end up generating a binary-tree
-> compare-and-branch thing for a switch like that, and it might be
-> better than an indirect branch in these days of spectre costs for
-> branch prediction safety, but if we're talking a few tens of cycles
-> per op, that's probably not really a big deal.
-
-I was resistant to the indirect function call initially because of the
-spectre overhead, but that was when the table was a lot smaller. The
-tides may indeed have shifted on this now that the table has grown to
-the size that it has. Plus we have both a prep handler and issue handler
-for each, so you end up with two massive switches to deal with that.
-
-> And from a maintenenace standpoint, I really think it would be good to
-> try to try to walk away from those "case IORING_OP_xyz" things, and
-> try to split things up into more manageable pieces.
-> 
-> Hmm?
-
-As mentioned, it's something that I have myself been thinking about for
-the past few releases. It's not difficult work and can be done in a
-sequential kind of manner, but it will add some pain in terms of
-backports. Nothing _really_ major, but... Longer term it'll be nicer for
-sure, which is the most important bit.
-
-I've got some ideas on how to split the core bits, and the
-related-op-per file kind of idea for the rest makes sense. Eg net
-related bits can go in one, or maybe we can even go finer grained and
-(almost) do per-op.
-
-I'll spend some time after the merge window to try and get this sorted
-out.
-
--- 
-Jens Axboe
-
