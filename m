@@ -2,60 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0349E53134B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 May 2022 18:23:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9530B5314C8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 May 2022 18:26:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238232AbiEWPz0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 May 2022 11:55:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37486 "EHLO
+        id S238178AbiEWQDu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 May 2022 12:03:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238178AbiEWPzZ (ORCPT
+        with ESMTP id S236538AbiEWQDt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 May 2022 11:55:25 -0400
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D32F9483BE
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 May 2022 08:55:24 -0700 (PDT)
-Received: by mail-pj1-x102d.google.com with SMTP id z11so4630473pjc.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 May 2022 08:55:24 -0700 (PDT)
+        Mon, 23 May 2022 12:03:49 -0400
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 806D54BFDA
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 May 2022 09:03:48 -0700 (PDT)
+Received: by mail-pj1-x1030.google.com with SMTP id v5-20020a17090a7c0500b001df84fa82f8so14121343pjf.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 May 2022 09:03:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=P4ZfphBhDovakA75HZAhY8GVYg9+YKorXxncvQcZlso=;
-        b=YzQjbagMepjAfizZibzvhCJFjXu/HoNku2o23uhUqw3/HPFP304cL4LLRXD6gSw7/N
-         DLtMQRZc88+r7fwus8gfYHgbHO0CHUE9zM5lZGYpvJ2SJaqBw0B6JXLbC1YpXiNGIZVH
-         tU5eo60h1UUptlqTfh/vaKF4RDk/b7FSGdz8pkIwz2lB+Re1muTk04aaUbr4uYTxGmJ7
-         sRiXP6sKoZ50TMaK3Df3BK/Tjw8Ps2tsDHiFDybz0b860LcjMRvjUWdXhq1zjFhPRlXT
-         glVq2/2fCocmINuXBEi/g1ppFSiV+Jn45lMmcJ+I5DpOAFiYCofy86ICk50jKQlIUtKn
-         IW7A==
+        h=message-id:date:mime-version:user-agent:subject:content-language
+         :from:to:cc:references:in-reply-to:content-transfer-encoding;
+        bh=vSCjcvJ2ZRHtedxxM6RJiAnBTIw2Jkv1Z+FzU8zPfUI=;
+        b=ZASa2PtKSJ8YfWOYobC6aheWblf+PuFO6WJepVS76NKjivHb2FIqEyHQCmWfm8PJZD
+         3pWR+3hXXYyHMcfjY6ITpz3f1R27PveGOGI46Wyh6uKLeRPCUdhsOPsx1Gph+yOMYPkM
+         KbgZut3YrfOcKxakvFRZ5b3fLijdMW81JvR00UP/xA7CrUy/sFwfgbn5NPszVXJpOi/q
+         vrhOlarwCJ0LZuUmKVRxN7gAZ7Qba66XmBsVF3lhzi6n2YeBmntiiHKEAHrHsWfE4pPC
+         flXeDasVrhJxCXeoOg+J/EQGQfnraIPnEnq150MmP//lp/Wx9Ebhv3GdWY30vsaObeoP
+         nY5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
+         :content-language:from:to:cc:references:in-reply-to
          :content-transfer-encoding;
-        bh=P4ZfphBhDovakA75HZAhY8GVYg9+YKorXxncvQcZlso=;
-        b=ZZZCl03tV4lfYp0VM/8vt/owGG/FZrl3GGlxcV6Q3UOO3atUAjWLIoslQLk1em3JR3
-         z/kwiD6UaxJ5vFCdeH4AAGjsSOCAAnDEFFkg/xe2XJ/IJXDvGlvty9ph3le/qIHqQJvu
-         ikPPTKMToZoHDKTKiTfOULUZvP46UcLWR+ZklIoIlagzv0Ir8G6bJ83cVpjBzcSQC4Nx
-         ZLx1ymj7je7N0OwUC7KJ0GnAbT/mPiLsFOBrOw381QjxuxhRHmH5xsdxezuWZUEb0vty
-         hqo1uWYkdL0qROSg5yM77mvcDQ+gN29KzKVyDEm25C2C4KRPDr3QMVw4a+lKKGh5RJ+A
-         d8Vw==
-X-Gm-Message-State: AOAM5319euGeq6pSrDw3EciPVJ1lckGvqLO3BY5ENgqKDKIB2+zv3osO
-        bpp8xRyAdyDvZ1hbCO2as65U0aFQrTaiWA==
-X-Google-Smtp-Source: ABdhPJzuxl1LznThyn0jUUhx1RLQPX9ebBpK75fHPu8UBU2CEy3D+I4iIIx61LK1G/+3Cx4vIxjzhQ==
-X-Received: by 2002:a17:90a:8914:b0:1dc:20c0:40f4 with SMTP id u20-20020a17090a891400b001dc20c040f4mr27494552pjn.11.1653321324297;
-        Mon, 23 May 2022 08:55:24 -0700 (PDT)
+        bh=vSCjcvJ2ZRHtedxxM6RJiAnBTIw2Jkv1Z+FzU8zPfUI=;
+        b=1YM8MZ1PIgI+FGObE0jqxLy06Iv6rNcDqVfEmM8MNgXV75IhJmGEatl6L9Tg6u7FiC
+         XtLvaDVH4kgZxhAi5B7oVJc1rHSuTl2OTyAvJUlle5HHj2/GwPU2dTAVVLTyNs+P/KDc
+         s4QFofUfKWH6NhWDa76rbL3pigZRIBBEoLv2Wa7r8M6Y4vgtW5weffA+QjRbcMcEoBQ1
+         sx6Me6a1yMn4Rm6UaSNGM7dhHsvh6iOqiPcjqIpPJHYADm8s38VdpqTFFXV7b5vhn0h5
+         eo8GQhSLL1uM7T7tB6n3WByCEcSZYvtNZH9wEY0s93Nx2x9nwbByR2+JCFbkbtVQ2pJx
+         77Tw==
+X-Gm-Message-State: AOAM5316FYOubI8lPMw+C0Ko/QWA00YbTJ7O6rl6isVJrLY2ft6cgDK6
+        6gHWjRXmBueB7JVDK6BTTcInzQ==
+X-Google-Smtp-Source: ABdhPJwUJL/dEKkP0OQIR6hIL/lw9waPI2mynzq551a/81N5h8MQyM/nMgAyijZebY1ehg6BiMoCRg==
+X-Received: by 2002:a17:90b:3142:b0:1df:77f2:e169 with SMTP id ip2-20020a17090b314200b001df77f2e169mr27101732pjb.245.1653321827990;
+        Mon, 23 May 2022 09:03:47 -0700 (PDT)
 Received: from [192.168.1.100] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id c13-20020a170903234d00b0015f0dcd1579sm3758261plh.9.2022.05.23.08.55.23
+        by smtp.gmail.com with ESMTPSA id w14-20020a1709029a8e00b0015e8d4eb2e1sm5282737plp.299.2022.05.23.09.03.46
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 May 2022 08:55:23 -0700 (PDT)
-Message-ID: <ef4d18ee-1c3e-2bd6-eff5-344a0359884d@kernel.dk>
-Date:   Mon, 23 May 2022 09:55:22 -0600
+        Mon, 23 May 2022 09:03:46 -0700 (PDT)
+Message-ID: <2ae13aa9-f180-0c71-55db-922c0f18dc1b@kernel.dk>
+Date:   Mon, 23 May 2022 10:03:45 -0600
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
  Thunderbird/91.9.0
 Subject: Re: [RFC] what to do with IOCB_DSYNC?
 Content-Language: en-US
+From:   Jens Axboe <axboe@kernel.dk>
 To:     Matthew Wilcox <willy@infradead.org>
 Cc:     Al Viro <viro@zeniv.linux.org.uk>, Christoph Hellwig <hch@lst.de>,
         linux-fsdevel@vger.kernel.org
@@ -70,8 +71,8 @@ References: <YorYeQpW9nBJEeSx@zeniv-ca.linux.org.uk>
  <6594c360-0c7c-412f-29c9-377ddda16937@kernel.dk>
  <f74235f7-8c55-8def-9a3f-bc5bacd7ee3c@kernel.dk>
  <YoutEnMCVdwlzboT@casper.infradead.org>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <YoutEnMCVdwlzboT@casper.infradead.org>
+ <ef4d18ee-1c3e-2bd6-eff5-344a0359884d@kernel.dk>
+In-Reply-To: <ef4d18ee-1c3e-2bd6-eff5-344a0359884d@kernel.dk>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-5.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -83,60 +84,31 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/23/22 9:49 AM, Matthew Wilcox wrote:
-> On Mon, May 23, 2022 at 09:44:12AM -0600, Jens Axboe wrote:
->> On 5/23/22 9:12 AM, Jens Axboe wrote:
->>>> Current branch pushed to #new.iov_iter (at the moment; will rename
->>>> back to work.iov_iter once it gets more or less stable).
->>>
->>> Sounds good, I'll see what I need to rebase.
->>
->> On the previous branch, ran a few quick numbers. dd from /dev/zero to
->> /dev/null, with /dev/zero using ->read() as it does by default:
->>
->> 32      260MB/sec
->> 1k      6.6GB/sec
->> 4k      17.9GB/sec
->> 16k     28.8GB/sec
->>
->> now comment out ->read() so it uses ->read_iter() instead:
->>
->> 32      259MB/sec
->> 1k      6.6GB/sec
->> 4k      18.0GB/sec
->> 16k	28.6GB/sec
->>
->> which are roughly identical, all things considered. Just a sanity check,
->> but looks good from a performance POV in this basic test.
->>
->> Now let's do ->read_iter() but make iov_iter_zero() copy from the zero
->> page instead:
->>
->> 32      250MB/sec
->> 1k      7.7GB/sec
->> 4k      28.8GB/sec
->> 16k	71.2GB/sec
->>
->> Looks like it's a tad slower for 32-bytes, considerably better for 1k,
->> and massively better at page size and above. This is on an Intel 12900K,
->> so recent CPU. Let's try cacheline and above:
->>
->> Size	Method			BW		
->> 64	copy_from_zero()	508MB/sec
->> 128	copy_from_zero()	1.0GB/sec
->> 64	clear_user()		513MB/sec
->> 128	clear_user()		1.0GB/sec
-> 
-> See this thread-of-doom:
-> 
-> https://lore.kernel.org/all/Ynq1nVpu1xCpjnXm@zn.tnic/
+On 5/23/22 9:55 AM, Jens Axboe wrote:
+> Was going to test on aarch64 next...
 
-Yikes, will check. Also realized that my > PAGE_SIZE 16k result is
-invalid as it should iterate with min(left, PAGE_SIZE). But that just
-changes it from 71.2GB/sec to 68.9MB/sec, still a substantial win.
-Updated diff below.
+Just for completeness, before diving into that thread. On aarch64, 16k
+native page size, but running in a vm with 4k page size:
 
-Was going to test on aarch64 next...
+clear_user()
+32	~96MB/sec
+64	195MB/sec
+128	386MB/sec
+1k	2.7GB/sec
+4k	7.8GB/sec
+16k	14.8GB/sec
+
+copy_from_zero_page()
+32	~96MB/sec
+64	193MB/sec
+128	383MB/sec
+1k	2.9GB/sec
+4k	9.8GB/sec
+16k	21.8GB/sec
+
+Tad slower on <= 128 bytes, 1k a bit faster, and substantially faster
+above that. Eg same logic would be sane on aarch64 as it is on x86-64,
+use copy_from_zero_page at > 128 bytes.
 
 -- 
 Jens Axboe
