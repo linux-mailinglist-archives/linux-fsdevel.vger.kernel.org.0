@@ -2,59 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D00D5331F4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 May 2022 21:53:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F36E53322B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 May 2022 22:06:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241323AbiEXTxU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 24 May 2022 15:53:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43226 "EHLO
+        id S241398AbiEXUG2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 24 May 2022 16:06:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241320AbiEXTxP (ORCPT
+        with ESMTP id S241433AbiEXUGY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 24 May 2022 15:53:15 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D279463BE5;
-        Tue, 24 May 2022 12:53:14 -0700 (PDT)
+        Tue, 24 May 2022 16:06:24 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AC6720BE4;
+        Tue, 24 May 2022 13:06:20 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B5698616C9;
-        Tue, 24 May 2022 19:53:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 28CFAC36AE5;
-        Tue, 24 May 2022 19:53:14 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 78CD7CE1D1E;
+        Tue, 24 May 2022 20:06:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEC17C34100;
+        Tue, 24 May 2022 20:06:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1653421994;
-        bh=7vCQf4vTrafHpbFlTVFe9qAPgMyoesliZ7cB5zsfznE=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=l7nVX+XLhiNFzMN0IvOoXAjS2btaJ/At8c3DNT5Wwu8r/LU3IYAD4o7dGumNySCAX
-         25C5LLzWDn+zC7WRnNcfg1JxD/U/kWv9gxLRNAS3Q428K/p3t0Z30qAbz6/mskVsYF
-         lp1lG0lMJh0rq8q7gtbwk93/ODvOPbSduCrWisWx3+/bcoDvyKy/zrsKNZYXZMM96p
-         +vigOT/A2S7qrxwYfK04YcIKzNT2wdTOiIDve+6/ZpVRoKdOSC0QuddJHnPDcGA5Sm
-         0OKOU+a78vQlmQ/YIn1Ckf274wuu2y3k8XACcgCzj2cBfE9GPDy2BnKSmuHIuOaz4d
-         tGu4sK+qXKW+g==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 0CD80F03943;
-        Tue, 24 May 2022 19:53:14 +0000 (UTC)
-Subject: Re: [GIT PULL] fscrypt updates for 5.19
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <Yosyx2FYZOIOWs9g@sol.localdomain>
-References: <Yosyx2FYZOIOWs9g@sol.localdomain>
-X-PR-Tracked-List-Id: <linux-ext4.vger.kernel.org>
-X-PR-Tracked-Message-Id: <Yosyx2FYZOIOWs9g@sol.localdomain>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git tags/fscrypt-for-linus
-X-PR-Tracked-Commit-Id: 218d921b581eadf312c8ef0e09113b111f104eeb
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: c1f4cfdbef409971fd9d6b1faae4d7cc72af3e20
-Message-Id: <165342199404.18932.5994094539908457947.pr-tracker-bot@kernel.org>
-Date:   Tue, 24 May 2022 19:53:14 +0000
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>
+        s=k20201202; t=1653422776;
+        bh=DJcj/Ms9n82tm2p+fi143c/whYeefmc3dPnhMgtFVX8=;
+        h=Date:From:To:Cc:Subject:From;
+        b=SGbu7qQqoHZQ0dhRSjok++5KTJC1xudsUyveKR1jTYM+8V3dASm2P7JOHEY6zVfHy
+         pRscfULAQNo8ChY1WFEVb7qfSG/S/9IBvwlHNigtospW1Ie6cqV+wYV0HIdJ3S56qM
+         JWpcZJu1p+8GEdehTm17Cw05BPAybZHddoMuEXd4gdGK6OS4Zevlh9u1HDwc8NfJ84
+         9IcdQlvZUZURw9vwspdLCb+QbkQtRCOSzgm/VgbqrKPMeGSuAkJREphs0mPe2vXlCm
+         P9s+ojBuF7P8ag0nskWKOLDiDmI5cSRVm7JYhED8QdLsRNS6w+84kMBVF2gqsAC134
+         uR4b50XiQIBSQ==
+Date:   Tue, 24 May 2022 13:06:16 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        david@fromorbit.com, linux-kernel@vger.kernel.org,
+        sandeen@sandeen.net, hch@lst.de
+Subject: [GIT PULL] iomap: new code for 5.19
+Message-ID: <Yo06uCPonxSkD0Md@magnolia>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 X-Spam-Status: No, score=-7.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -65,15 +53,55 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pull request you sent on Mon, 23 May 2022 00:07:51 -0700:
+Hi Linus,
 
-> https://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git tags/fscrypt-for-linus
+Please pull this branch containing all the new code for iomap for
+5.19.  There's a couple of corrections sent in by Andreas for some
+accounting errors.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/c1f4cfdbef409971fd9d6b1faae4d7cc72af3e20
+The biggest change this time around is that writeback errors longer
+clear pageuptodate nor does XFS invalidate the page cache anymore.  This
+brings XFS (and gfs2/zonefs) behavior in line with every other Linux
+filesystem driver, and fixes some UAF bugs that only cropped up after
+willy turned on multipage folios for XFS in 5.18-rc1.  Regrettably, it
+took all the way to the end of the 5.18 cycle to find the source of
+these bugs and reach a consensus that XFS' writeback failure behavior
+from 20 years ago is no longer necessary.
 
-Thank you!
+As usual, I did a test-merge with upstream master as of a few minutes
+ago, and didn't see any conflicts.  Please let me know if you encounter
+any problems.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+--D
+
+The following changes since commit c5eb0a61238dd6faf37f58c9ce61c9980aaffd7a:
+
+  Linux 5.18-rc6 (2022-05-08 13:54:17 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/iomap-5.19-merge-2
+
+for you to fetch changes up to e9c3a8e820ed0eeb2be05072f29f80d1b79f053b:
+
+  iomap: don't invalidate folios after writeback errors (2022-05-16 15:27:38 -0700)
+
+----------------------------------------------------------------
+New code for 5.19:
+- Fix a couple of accounting errors in the buffered io code.
+- Discontinue the practice of marking folios !uptodate and invalidating
+  them when writeback fails.  This fixes some UAF bugs when multipage
+  folios are enabled, and brings the behavior of XFS/gfs/zonefs into
+  alignment with the behavior of all the other Linux filesystems.
+
+----------------------------------------------------------------
+Andreas Gruenbacher (2):
+      iomap: iomap_write_failed fix
+      iomap: iomap_write_end cleanup
+
+Darrick J. Wong (1):
+      iomap: don't invalidate folios after writeback errors
+
+ fs/iomap/buffered-io.c | 6 +++---
+ fs/xfs/xfs_aops.c      | 4 +---
+ 2 files changed, 4 insertions(+), 6 deletions(-)
