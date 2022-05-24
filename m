@@ -2,76 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5475E532049
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 May 2022 03:32:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4ED34532059
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 24 May 2022 03:46:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232692AbiEXBc3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 May 2022 21:32:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44110 "EHLO
+        id S232750AbiEXBqv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 May 2022 21:46:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230404AbiEXBc2 (ORCPT
+        with ESMTP id S232728AbiEXBqt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 May 2022 21:32:28 -0400
+        Mon, 23 May 2022 21:46:49 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 05929427FE
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 May 2022 18:32:26 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 97B3D66F96
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 May 2022 18:46:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1653355946;
+        s=mimecast20190719; t=1653356807;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=mDqY6e/ZCTT5vbybB6QpEFM89saOLe+qmuOxqy77J64=;
-        b=Z3jn+clBgzjvHgUnfBPzwZUPdPR7KH5cevIiT0lzS7bqL2ogDg/u3Mz+NtT48jzfuZctxR
-        pEx/CgDp/0/xCdlx4fS8Gp9bi8NEncFlo4suhHvcxjjHPeQNMccS54p96WEZPufcHTjDMi
-        koKiT8yAjYkY2BhTdk76+2RFH5TQQ+g=
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
- [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=IMCSafXGdmuY2thLWOyQ96BnlXt8iWQ0Jbeb4u86zi0=;
+        b=dPKci6qyCAG+ET5IJKhY6HJ5wB20K5LI4NRk7WeIiify7AADHCv13IawGpfC7g+gWVSjIL
+        PZIlYAU9bnSaMO0eN1nZ130vD7LICHuj8WkCPl7vqM5RkIYg/BmSVSx+5jqeSw4HhJNp8h
+        aP9Y1BoprOt12oRZVDbhWuAiigmZHSM=
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
+ [209.85.215.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-20-4vb_Cfz-NOicVBcOb8Z7Pw-1; Mon, 23 May 2022 21:32:24 -0400
-X-MC-Unique: 4vb_Cfz-NOicVBcOb8Z7Pw-1
-Received: by mail-pg1-f200.google.com with SMTP id e33-20020a631e21000000b003f63a616b12so6582636pge.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 May 2022 18:32:24 -0700 (PDT)
+ us-mta-312-_t6IXnA1PSCyiaU_K1h90A-1; Mon, 23 May 2022 21:46:43 -0400
+X-MC-Unique: _t6IXnA1PSCyiaU_K1h90A-1
+Received: by mail-pg1-f198.google.com with SMTP id e27-20020a63371b000000b003f65557a472so5983528pga.6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 May 2022 18:46:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-transfer-encoding
          :content-language;
-        bh=mDqY6e/ZCTT5vbybB6QpEFM89saOLe+qmuOxqy77J64=;
-        b=zdQNSAz4MrKBI28TWoX3TaXaPIbjkWjB4GAp+vmXHx1w1tCoPBM69hTlCz2UBEVTtz
-         fDm4kW6yS+aIe06VX4Z285vAKgB+diYrJuqLtiw/uZYi9Gn2d3zz9E+jX5f51mDMDHpC
-         cQaVDs6WXYcq+an73KYiSv4wR2UpVQisSgN6V6ry8DwWSgN5KAjAK98Yj9mwbLqS4ITB
-         DBIyTCjW6QhRppp/IepPu43mKaEDzlZ9oE2U0084qr8tPqp9D7H4Q29kQlebF1PllAqx
-         bjZ9aoSDSYFHi0gyfqOQHbaejqvuny3J9p0IHxv/cO2PVQAJLBIUKIi8P36qRV1MnW+Y
-         YYBQ==
-X-Gm-Message-State: AOAM530FvHSoOwcWix4vWuL1aWZ39d3yhXdL6HAUwrMPegL9dPi+tabp
-        BqyAz8L3QWPP+EP1O1ovkvMUcikELLeCFV4VG+vKp5EmM0I31pe+veurHjUFbItLDXCDu7xNZ2L
-        wcLiu80Yc7/mWqdNTEh8ImtIV3Q==
-X-Received: by 2002:a17:90b:33ca:b0:1dc:e5b8:482b with SMTP id lk10-20020a17090b33ca00b001dce5b8482bmr1907546pjb.165.1653355943606;
-        Mon, 23 May 2022 18:32:23 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJxE4PFaKoyH4N/WVGpnU5+sYV8dbMj6GNSkjOf7FxYsNhFUq1QPHd7EEfxpYHEOMscQ1+Qy9w==
-X-Received: by 2002:a17:90b:33ca:b0:1dc:e5b8:482b with SMTP id lk10-20020a17090b33ca00b001dce5b8482bmr1907529pjb.165.1653355943372;
-        Mon, 23 May 2022 18:32:23 -0700 (PDT)
+        bh=IMCSafXGdmuY2thLWOyQ96BnlXt8iWQ0Jbeb4u86zi0=;
+        b=sYCXTmLS0IP94i+KF0Qb2kUL8rpchT1mKNPNZnVQydCdKdgt7BmzJp+z6wygG2f909
+         GRtLgVWg/km/BdfF9OYBLET47xNKd8NptIuVycHXsa+ImHIO3wYq1yifIDvRs6GgpGrK
+         804F01Oeb3s7qyg4Xa359yQGBRe8hElCaAD1INwIpQQAvjYaBzPP1tcwFn29915WfA/r
+         kMFqEer9dclMh/2GCJlhWWWQ0MTqYvWxof2yc0bb6ixh6K6RAcFFiXwyql1B1Kc5aUpc
+         Nz2LQc4lW/MoYe+0mF+J/7md/yFOpIE6mZOmQVlxCjL/v82TC5KuW3vwuhyWs2tSbZYC
+         4DEA==
+X-Gm-Message-State: AOAM533hupnvJ4dzcToI87UKphak36fF8QOficUYK1MwL9RfnviSgHLE
+        P0pUAUlU65MteCYoWiAzv5ZwZwsIQPv1+zW21hQQiogdMkzuM0E8r0EDlWY3Os3yBNSn5O+VT3P
+        LgnqxSJA0fnrCM8X6tDp568myug==
+X-Received: by 2002:a17:90b:3c50:b0:1df:7b1f:8b79 with SMTP id pm16-20020a17090b3c5000b001df7b1f8b79mr2011783pjb.71.1653356802812;
+        Mon, 23 May 2022 18:46:42 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzmLKzJlzwvLHI4ZZ+EhG8vgjK7IyZ53D6A6JhDfQIllhjiR9qUwgx4HwRIGf8jCR7j9tp7vw==
+X-Received: by 2002:a17:90b:3c50:b0:1df:7b1f:8b79 with SMTP id pm16-20020a17090b3c5000b001df7b1f8b79mr2011771pjb.71.1653356802565;
+        Mon, 23 May 2022 18:46:42 -0700 (PDT)
 Received: from [10.72.12.81] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id x64-20020a628643000000b0050e006279bfsm7707332pfd.137.2022.05.23.18.32.18
+        by smtp.gmail.com with ESMTPSA id s10-20020a170903214a00b001623cf06dc5sm449354ple.61.2022.05.23.18.46.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 May 2022 18:32:22 -0700 (PDT)
+        Mon, 23 May 2022 18:46:42 -0700 (PDT)
 Subject: Re: [PATCH v5 1/2] fs/dcache: add d_compare() helper support
-To:     Matthew Wilcox <willy@infradead.org>
+To:     Luis Chamberlain <mcgrof@kernel.org>
 Cc:     jlayton@kernel.org, idryomov@gmail.com, viro@zeniv.linux.org.uk,
-        vshankar@redhat.com, ceph-devel@vger.kernel.org, arnd@arndb.de,
-        mcgrof@kernel.org, akpm@linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+        willy@infradead.org, vshankar@redhat.com,
+        ceph-devel@vger.kernel.org, arnd@arndb.de,
+        akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 References: <20220519101847.87907-1-xiubli@redhat.com>
  <20220519101847.87907-2-xiubli@redhat.com>
- <YovqeybXUKEmhvsi@casper.infradead.org>
+ <YovK86vEmOUUoBn6@bombadil.infradead.org>
 From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <2bda8367-0f85-027c-33ef-6d631c791c75@redhat.com>
-Date:   Tue, 24 May 2022 09:32:14 +0800
+Message-ID: <2f43382d-3ab1-3562-c527-5cfef9ac069e@redhat.com>
+Date:   Tue, 24 May 2022 09:46:34 +0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
-In-Reply-To: <YovqeybXUKEmhvsi@casper.infradead.org>
+In-Reply-To: <YovK86vEmOUUoBn6@bombadil.infradead.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
@@ -86,17 +87,10 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
-On 5/24/22 4:11 AM, Matthew Wilcox wrote:
+On 5/24/22 1:57 AM, Luis Chamberlain wrote:
 > On Thu, May 19, 2022 at 06:18:45PM +0800, Xiubo Li wrote:
 >> Reviewed-by: Jeff Layton <jlayton@kernel.org>
 >> Signed-off-by: Xiubo Li <xiubli@redhat.com>
-> ... empty commit message?
-
-Will add it.
-
-Thanks.
-
-
 >> ---
 >>   fs/dcache.c            | 15 +++++++++++++++
 >>   include/linux/dcache.h |  2 ++
@@ -122,26 +116,28 @@ Thanks.
 >> +	       const struct qstr *name)
 >> +{
 >> +	return !d_same_name(dentry, parent, name);
+> What's wrong with d_same_name()? Why introduce a whole new operation
+> and export it when you the same prototype except first and second
+> argument moved with an even more confusing name?
+
+Sounds resonable, will export the d_same_name instead.
+
 >> +}
 >> +EXPORT_SYMBOL(d_compare);
->> +
->>   /**
->>    * __d_lookup_rcu - search for a dentry (racy, store-free)
->>    * @parent: parent dentry
->> diff --git a/include/linux/dcache.h b/include/linux/dcache.h
->> index f5bba51480b2..444b2230e5c3 100644
->> --- a/include/linux/dcache.h
->> +++ b/include/linux/dcache.h
->> @@ -233,6 +233,8 @@ extern struct dentry * d_alloc_parallel(struct dentry *, const struct qstr *,
->>   					wait_queue_head_t *);
->>   extern struct dentry * d_splice_alias(struct inode *, struct dentry *);
->>   extern struct dentry * d_add_ci(struct dentry *, struct inode *, struct qstr *);
->> +extern bool d_compare(const struct dentry *parent, const struct dentry *dentry,
->> +		      const struct qstr *name);
->>   extern struct dentry * d_exact_alias(struct dentry *, struct inode *);
->>   extern struct dentry *d_find_any_alias(struct inode *inode);
->>   extern struct dentry * d_obtain_alias(struct inode *);
->> -- 
->> 2.36.0.rc1
->>
+> New symbols should go with EXPORT_SYMBOL_GPL() instead.
+
+Not familiar with the story about this, before I checked the Doc and 
+didn't find any where says we must use it and just followed what recent 
+commits did.
+
+If this is what we should use I will switch to it in the next version.
+
+Thanks
+
+-- Xiubo
+
+
+>
+>    Luis
+>
 
