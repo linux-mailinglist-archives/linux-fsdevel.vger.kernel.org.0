@@ -2,101 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B64D9533F4D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 May 2022 16:34:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25222534014
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 May 2022 17:13:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241857AbiEYOe3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 May 2022 10:34:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58170 "EHLO
+        id S245094AbiEYPMy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 May 2022 11:12:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237558AbiEYOe1 (ORCPT
+        with ESMTP id S245103AbiEYPMq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 May 2022 10:34:27 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0958A76F4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 May 2022 07:34:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=K85kvpkkDfVbzOHRCHctLisJx1mpqqPA1WaPiZL9mvw=; b=Tpv3RwW+GGQjiaI+MGU3koMQW4
-        MzXFdVIB8tJLWqQM2V7fIEYwPaap15TH+hpePHhQBYkMsOuKoE/8dD0JrGcjM+g5iWWdfCwtqtOI3
-        w70po1kcIxIrwjqI5B2y/Pe0hLPCSGDuuE3kUhfok3Y1mcI9AfOrWK7+Tw/u9Xl0FwxYHNhNQoURe
-        TlLjay2GWiiieUSs9b+92x7QMysUtUTF2IR/23SAYfNvfnRCgbw2SMCIpwDx4GONYht54vPZlTO7h
-        9lYHL9bpq01hmD/GvZ5cUPK4pH2Rs1nW1SQgryU2NaXuJ/iEv7DPxOmlawnb8Z7Vzvua+Ge/MGhCC
-        4VUt+5Gw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nts5d-000R54-9b; Wed, 25 May 2022 14:34:21 +0000
-Date:   Wed, 25 May 2022 15:34:21 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC] what to do with IOCB_DSYNC?
-Message-ID: <Yo4+bf9ALQdF/UCR@casper.infradead.org>
-References: <Yoo1q1+ZRrjBP2y3@zeniv-ca.linux.org.uk>
- <e2bb980b-42e8-27dc-cb6b-51dfb90d7e0a@kernel.dk>
- <7abc2e36-f2f3-e89c-f549-9edd6633b4a1@kernel.dk>
- <YoqAM1RnN/er6GDP@zeniv-ca.linux.org.uk>
- <41f4fba6-3ab2-32a6-28d9-8c3313e92fa5@kernel.dk>
- <YoqDTV9sa4k9b9nb@zeniv-ca.linux.org.uk>
- <737a889f-93b9-039f-7708-c15a21fbca2a@kernel.dk>
- <YoqJROtrPpXWv948@zeniv-ca.linux.org.uk>
- <1b2cb369-2247-8c10-bd6e-405a8167f795@kernel.dk>
- <YorYeQpW9nBJEeSx@zeniv-ca.linux.org.uk>
+        Wed, 25 May 2022 11:12:46 -0400
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7EC3B0D03;
+        Wed, 25 May 2022 08:12:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1653491556; x=1685027556;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=dcB6j0j2Z3wrogy8OawuEn4BB7M0+1bgI6Iy3Cd0r/8=;
+  b=O/nP8oxQ7KQjkscmmf3pUB25ysZqovznoesalcczOBnt/saPrFhkkOoV
+   2Q7WVqUrptc+6E1+rk1KWMaVuMNFMMLZEc8X+FHytBMjGtN40KIJFjOlo
+   HfCcie0ky+tx/qfYq+jAc2Y52OYCNvVeE9zOxTLLVMhsABrqi9+Rachkl
+   sqv6NuuBU4cHrwEoyq+HKFg+Vj4SHojPQkaARDQ5CR91EB/evEGDala0C
+   DrPE4gF6lnwRyiYYAk+2277dLVKzXjem6wzBbxmJg1n3r0//uA5aVxuzW
+   M8NzD/UrEC9rUvQqpxIjfT+S/PvVH1tO/vPwnxbbaHi4GXnG2U7oedLo/
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10358"; a="271411558"
+X-IronPort-AV: E=Sophos;i="5.91,250,1647327600"; 
+   d="scan'208";a="271411558"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 May 2022 08:12:36 -0700
+X-IronPort-AV: E=Sophos;i="5.91,250,1647327600"; 
+   d="scan'208";a="601948889"
+Received: from vlpathak-mobl.amr.corp.intel.com (HELO localhost) ([10.212.116.219])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 May 2022 08:12:35 -0700
+Date:   Wed, 25 May 2022 08:12:35 -0700
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
+        Evgeniy Dushistov <dushistov@mail.ru>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] fs/ufs: Replace kmap() with kmap_local_page()
+Message-ID: <Yo5HY3dzjVigCJ7i@iweiny-desk3>
+References: <20220516101925.15272-1-fmdefrancesco@gmail.com>
+ <YoJl+lh0QELbv/TL@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YorYeQpW9nBJEeSx@zeniv-ca.linux.org.uk>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+In-Reply-To: <YoJl+lh0QELbv/TL@casper.infradead.org>
+X-Spam-Status: No, score=-7.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 23, 2022 at 12:42:33AM +0000, Al Viro wrote:
-> At the moment it's carved up into 6 commits:
-> 	btrfs_direct_write(): cleaner way to handle generic_write_sync() suppression
+On Mon, May 16, 2022 at 03:55:54PM +0100, Matthew Wilcox wrote:
+> On Mon, May 16, 2022 at 12:19:25PM +0200, Fabio M. De Francesco wrote:
+> > The use of kmap() is being deprecated in favor of kmap_local_page(). With
+> > kmap_local_page(), the mapping is per thread, CPU local and not globally
+> > visible.
+> > 
+> > The usage of kmap_local_page() in fs/ufs is pre-thread, therefore replace
+> > kmap() / kunmap() calls with kmap_local_page() / kunmap_local().
+> > 
+> > kunmap_local() requires the mapping address, so return that address from
+> > ufs_get_page() to be used in ufs_put_page().
+> > 
+> > These changes are essentially ported from fs/ext2 and are largely based on
+> > commit 782b76d7abdf ("fs/ext2: Replace kmap() with kmap_local_page()").
+> > 
+> > Suggested-by: Ira Weiny <ira.weiny@intel.com>
+> > Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+> > Signed-off-by: Fabio M. De Francesco <fmdefrancesco@gmail.com>
+> 
+> Have you done more than compile-tested this?  I'd like to know that it's
+> been tested on a machine with HIGHMEM enabled (in a VM, presumably).
+> UFS doesn't get a lot of testing, and it'd be annoying to put out a
+> patch that breaks the kmap_local() rules.
 
-I happpen to need something similar for JFS, so I tried it out.
-There's a mistake where dio->flags should have been dio_flags.
-I also added a comment on the definition of DIO_NOSYNC.
+Do you know of any real users of UFS?
 
-(the btrfs patch didn't apply cleanly, so I just dropped it since I
-wasn't going to be touching btrfs anyway)
+Fabio and I have been looking into how to test this and it seems like UFS
+support has been dropped in my system.  For example, there is no mkfs.ufs in my
+fc35 system.
 
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index 370c3241618a..6a361131080f 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -548,7 +548,8 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
- 		}
- 
- 		/* for data sync or sync, we need sync completion processing */
--		if (iocb->ki_flags & IOCB_DSYNC)
-+		if (iocb->ki_flags & IOCB_DSYNC &&
-+		    !(dio_flags & IOMAP_DIO_NOSYNC))
- 			dio->flags |= IOMAP_DIO_NEED_SYNC;
- 
- 		/*
-diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index e552097c67e0..c8622d8f064e 100644
---- a/include/linux/iomap.h
-+++ b/include/linux/iomap.h
-@@ -353,6 +353,12 @@ struct iomap_dio_ops {
-  */
- #define IOMAP_DIO_PARTIAL		(1 << 2)
- 
-+/*
-+ * The caller will sync the write if needed; do not sync it within
-+ * iomap_dio_rw.  Overrides IOMAP_DIO_FORCE_WAIT.
-+ */
-+#define IOMAP_DIO_NOSYNC		(1 << 3)
-+
- ssize_t iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
- 		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
- 		unsigned int dio_flags, void *private, size_t done_before);
+Searching google, I see that mkfs.ufs turns up a couple of Oracle documents.
+And some other links mention something called newfs which I've never heard of.
+
+The patches follow the same pattern which was added to ext2 a while back and
+have not caused an issue.  So I'm pretty confident they will be ok.
+
+However, if it is critical that these be tested I think Fabio will have to hold
+off on these patches for now as there are plenty of other kmap() call sites
+which are more important to be fixed.
+
+Ira
