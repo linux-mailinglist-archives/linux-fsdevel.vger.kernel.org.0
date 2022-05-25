@@ -2,119 +2,129 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E97375341CB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 May 2022 18:57:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B1BB5341E8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 May 2022 19:02:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245490AbiEYQ5j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 May 2022 12:57:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40062 "EHLO
+        id S240846AbiEYRCo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 May 2022 13:02:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229743AbiEYQ5g (ORCPT
+        with ESMTP id S229551AbiEYRCm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 May 2022 12:57:36 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2A769BAD0;
-        Wed, 25 May 2022 09:57:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Pd4ZKHsCuwHbRpUVf7SH7T6MocnoUW1wyZlaf+DhBgw=; b=rbb/t1Gya+2NhoVAtcLM6UX02v
-        9hSw7P9l2AHuQYsheLBHoMrfI69aZHUlfQN98ERH4tTZL+jhd/NJewBbLwDWlIEf6CdcF74g3mWs7
-        JpyH+hxaqbUAkh7kNuX+A8EccNBsGHLEGLe/XA9HJtNywrQqfnwhdYt1MnVGMkCwAArix0iB7BwIP
-        JhK3LD+ofrn2jYClqvFG3Jl/z7QWjDs//HmPO4JsrKuC5d11qmNUKWBH0XXwJQAvnjg1UebVR09Sz
-        +4xUUPz8c0rqxG2RDHC2LZhaBlFa/X+P3bQwNf12i9hf0nhE0Si/8juf1oam66p0rw5dbwSHU2FaL
-        irUGiZZg==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1ntuK6-00BuIT-QJ; Wed, 25 May 2022 16:57:26 +0000
-Date:   Wed, 25 May 2022 09:57:26 -0700
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Richard Fontana <fontana@sharpeleven.org>
-Cc:     tj@kernel.org, gregkh@linuxfoundation.org,
-        akpm@linux-foundation.org, jeyu@kernel.org, shuah@kernel.org,
-        bvanassche@acm.org, dan.j.williams@intel.com, joe@perches.com,
-        keescook@chromium.org, rostedt@goodmis.org, minchan@kernel.org,
-        linux-spdx@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Kuno Woudt <kuno@frob.nl>,
-        copyleft-next@lists.fedorahosted.org,
-        Ciaran Farrell <Ciaran.Farrell@suse.com>,
-        Christopher De Nicolo <Christopher.DeNicolo@suse.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Thorsten Leemhuis <linux@leemhuis.info>
-Subject: Re: [PATCH v9 1/6] LICENSES: Add the copyleft-next-0.3.1 license
-Message-ID: <Yo5f9nctTwHZqPbl@bombadil.infradead.org>
-References: <20211029184500.2821444-1-mcgrof@kernel.org>
- <20211029184500.2821444-2-mcgrof@kernel.org>
- <87ee0k0wrn.ffs@tglx>
+        Wed, 25 May 2022 13:02:42 -0400
+Received: from mail-qt1-x82a.google.com (mail-qt1-x82a.google.com [IPv6:2607:f8b0:4864:20::82a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FBBD35A99;
+        Wed, 25 May 2022 10:02:38 -0700 (PDT)
+Received: by mail-qt1-x82a.google.com with SMTP id v6so14471923qtx.12;
+        Wed, 25 May 2022 10:02:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=LladUyPXqhvy6xFCV+qprs26wq5bXjZ7GMD9uy8dOjU=;
+        b=IDu79vMCzRFhfyNiIh9umbhUvNvLwQDbwqdO72XBwpGHybDDImX0nn3JEQFpbppHmV
+         vVZY/7N32Pflxnga9o13wF6zOWXE8P23YXXk6+BAWj7iuLqpM+yM4Syk4rz6R4AzVNHg
+         HllxDXVz/OyGe95E6fAMy5UQDIIDZZTpqGxwDfYZEpRYjSjLb/TLvQCP58MKQzpKT+Ha
+         lR9kPb6SNIjnnlIk6NGstK2c3xys27hWmkIqCPEUfvnTh1A9MmAgEecp/rWOsZsoZT/I
+         UovQxsDsC19lCZNZUK7ESdanZshG44xMHYI4Ru4whr3uzt3mcbRwIMi7rdctqA2v20S7
+         LKDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=LladUyPXqhvy6xFCV+qprs26wq5bXjZ7GMD9uy8dOjU=;
+        b=BXYbdQvRktTk8LdJHQ8g+MHIyU6rVnXaFLdaTB6LBL+/TOaBAg0M2bD3X6godCSkVn
+         FVyYYoKFAPfmSp5s04uVu9HvtWTW3Sml45cFPRJeMTahlGAMeGawBnjGvllPScGk7/ab
+         0hQ0BvOBJ5o1UrZhpIv1oldlv1gOezMfDtq16B0mCyxHhLTFPH/ULGa0iBeS9BWnBy5I
+         ToEnYFSEBZxVy+FTFNNwt2Kw4QKlMRxQdoiDLxiqYGkJT/FC3rUJ/XWz+y2zJIgLLyMM
+         XsN16ro0cAYfABVplzksKvCyudAEVwk5kJZGJY3m3JU5zduHRF8HaddSBe+XJw2VzfUh
+         +lMw==
+X-Gm-Message-State: AOAM531IWNjIRXPYy1O3ioDMnf899ikLdGe0FSeVp7UlCkStWZ243TX3
+        Hfw5jJIw+NFayR7gnSDWvw==
+X-Google-Smtp-Source: ABdhPJywYwBXdqkjWfR3nmyH3B8L06YY/+Y8tE7ULDUzYsdGvA/vpWGoCQ+aannrrdQ65JGPhjLdfg==
+X-Received: by 2002:ac8:7dc3:0:b0:2fa:6788:4fca with SMTP id c3-20020ac87dc3000000b002fa67884fcamr4662969qte.168.1653498155984;
+        Wed, 25 May 2022 10:02:35 -0700 (PDT)
+Received: from moria.home.lan (c-73-219-103-14.hsd1.vt.comcast.net. [73.219.103.14])
+        by smtp.gmail.com with ESMTPSA id y3-20020a37f603000000b0069fc13ce1ffsm1579313qkj.48.2022.05.25.10.02.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 May 2022 10:02:35 -0700 (PDT)
+Date:   Wed, 25 May 2022 13:02:33 -0400
+From:   Kent Overstreet <kent.overstreet@gmail.com>
+To:     Stephen Hemminger <stephen@networkplumber.org>
+Cc:     Andrew Lunn <andrew@lunn.ch>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        netdev@vger.kernel.org, mcgrof@kernel.org, tytso@mit.edu
+Subject: Re: RFC: Ioctl v2
+Message-ID: <20220525170233.2yxb5pm75dehrjuj@moria.home.lan>
+References: <20220520161652.rmhqlvwvfrvskg4w@moria.home.lan>
+ <Yof6hsC1hLiYITdh@lunn.ch>
+ <20220521164546.h7huckdwvguvmmyy@moria.home.lan>
+ <20220521124559.69414fec@hermes.local>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87ee0k0wrn.ffs@tglx>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
-        version=3.4.6
+In-Reply-To: <20220521124559.69414fec@hermes.local>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 23, 2022 at 11:22:36PM +0200, Thomas Gleixner wrote:
-> On Fri, Oct 29 2021 at 11:44, Luis Chamberlain wrote:
-> > --- /dev/null
-> > +++ b/LICENSES/dual/copyleft-next-0.3.1
-> > @@ -0,0 +1,237 @@
-> > +Valid-License-Identifier: copyleft-next-0.3.1
-> > +SPDX-URL: https://spdx.org/licenses/copyleft-next-0.3.1
-> > +Usage-Guide:
-> > +  This license can be used in code, it has been found to be GPLv2 compatible
-> > +  by attorneys at Redhat and SUSE, however to air on the side of caution,
+On Sat, May 21, 2022 at 12:45:59PM -0700, Stephen Hemminger wrote:
+> On Sat, 21 May 2022 12:45:46 -0400
+> Kent Overstreet <kent.overstreet@gmail.com> wrote:
 > 
-> air ?
-
-Hehe, thanks I'll fix in the next spin.
-
-> > +  it's best to only use it together with a GPL2 compatible license using "OR".
+> > On Fri, May 20, 2022 at 10:31:02PM +0200, Andrew Lunn wrote:
+> > > > I want to circulate this and get some comments and feedback, and if
+> > > > no one raises any serious objections - I'd love to get collaborators
+> > > > to work on this with me. Flame away!  
+> > > 
+> > > Hi Kent
+> > > 
+> > > I doubt you will get much interest from netdev. netdev already
+> > > considers ioctl as legacy, and mostly uses netlink and a message
+> > > passing structure, which is easy to extend in a backwards compatible
+> > > manor.  
+> > 
+> > The more I look at netlink the more I wonder what on earth it's targeted at or
+> > was trying to solve. It must exist for a reason, but I've written a few ioctls
+> > myself and I can't fathom a situation where I'd actually want any of the stuff
+> > netlink provides.
 > 
-> This paragraph is not really understandable for Joe Developer.
+> Netlink was built for networking operations, you want to set something like a route with a large
+> number of varying parameters in one transaction. And you don't want to have to invent
+> a new system call every time a new option is added.
 > 
->   copyleft-next-0.3.1 is explicitly compatible with GPLv2 (or later) and
->   can therefore be used for kernel code. Though the best and recommended
->   practice is to express this in the SPDX license identifier by
->   licensing the code under both licenses expressed by the OR operator.
-> 
-> Hmm?
+> Also, you want to monitor changes and see these events for a userspace control
+> application such as a routing daemon.
 
-Let me try clarifying this further, how about:
+That makes sense - perhaps the new mount API could've been done as a netlink
+interface :)
 
-   copyleft-next-0.3.1 is explicitly compatible with GPLv2 (or later) and
-   can therefore be used for kernel code. Despite this, if you use
-   copyleft-next-0.3.1 on Linux, the recommended practice is to express
-   dual licensing with GPL using in the SPDX license identifiers by
-   using by the OR operator.
+But perhaps it makes sense to have both - netlink for the big complicated
+stateful operations, ioctl v2 for the simpler ones. I haven't looked at netlink
+usage at all, but most of the filesystem ioctls I've looked at fall into the the
+simple bucket, for me.
 
-> > +  To use the copyleft-next-0.3.1 license put the following SPDX tag/value
-> > +  pair into a comment according to the placement guidelines in the
-> > +  licensing rules documentation:
-> > +    SPDX-License-Identifier: GPL-2.0 OR copyleft-next-0.3.1
-> > +    SPDX-License-Identifier: GPL-2.0-only OR copyleft-next 0.3.1
-> > +    SPDX-License-Identifier: GPL-2.0+ OR copyleft-next-0.3.1
-> > +    SPDX-License-Identifier: GPL-2.0-or-later OR copyleft-next-0.3.1
-> 
-> Please don't propagate the GPL-2.0 and GPL-2.0+ tags. They are
-> outdated (still valid) in the SPDX spec, which reminds me that I should
-> update the relevant documentation...
+Actually, I have one in bcachefs that might fit better into the netlink bucket -
+maybe while I've got your attention you could tell me what this is like in
+netlink land.
 
-OK thanks for the recommendation, I'll leave it at:
+In bcachefs, we have "data jobs", where userspace asks us to do something that
+requires walking data and performing some operation on them - this is used for
+manual rebalance, evacuating data off a device, scrub (when that gets
+implemented), etc.
 
-+    SPDX-License-Identifier: GPL-2.0 OR copyleft-next-0.3.1
-+    SPDX-License-Identifier: GPL-2.0-or-later OR copyleft-next-0.3.1
+The way I did this was with an ioctl that takes as a parameter the job to
+perform, then it kicks off a kernel thread to do the work and returns a file
+descriptor, which userspace reads from to find out the current status of the job
+(which it uses to implement a progress indicator). We kill off the kthread if
+the file descriptor is closed, meaning ctrl-c works as expected.
 
-  Luis
+I really like how this turned out, it's not much code and super slick - I was
+considering abstracting it out as generic functionality. But this definitely
+sounds like what netlink is targeted at - thoughts?
