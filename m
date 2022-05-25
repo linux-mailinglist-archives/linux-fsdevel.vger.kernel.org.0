@@ -2,107 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A278C533F37
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 May 2022 16:30:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B64D9533F4D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 May 2022 16:34:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244853AbiEYO2Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 May 2022 10:28:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57236 "EHLO
+        id S241857AbiEYOe3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 May 2022 10:34:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58170 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244904AbiEYO1p (ORCPT
+        with ESMTP id S237558AbiEYOe1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 May 2022 10:27:45 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8F5D11180B
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 May 2022 07:27:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1653488827;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=m7BeKJHp4Run0Ug5EhP4SxprBH86cV+tauhT+NDg3e8=;
-        b=b6fmJnX57eduFxkIzXGXcbO1Y5IiWCDSwCgVLRFW4gdALqTkWyS+5QkgkhhH9TLpKS4x32
-        cPJwCUUMuMoY61jVnbCVU1ZE8JQTmdemfqUaDlR9lv3iQJ724+0HDm9lLoftUtDGs3TF5Z
-        effFxmpdBtlVLNTKl2vK+w8yDbSf+1Y=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-611-k8hIxlT5Nb-DVoqeScWbrQ-1; Wed, 25 May 2022 10:27:01 -0400
-X-MC-Unique: k8hIxlT5Nb-DVoqeScWbrQ-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 1EC2E801E6B;
-        Wed, 25 May 2022 14:27:01 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.8])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DAEA31121315;
-        Wed, 25 May 2022 14:26:59 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 7/7] cifs, ksmbd: Fix MAX_SGE count for softiwarp
-From:   David Howells <dhowells@redhat.com>
-To:     Steve French <smfrench@gmail.com>
-Cc:     dhowells@redhat.com, Shyam Prasad N <nspmangalore@gmail.com>,
-        Rohith Surabattula <rohiths.msft@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, linux-cifs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 25 May 2022 15:26:59 +0100
-Message-ID: <165348881917.2106726.13172444243975569879.stgit@warthog.procyon.org.uk>
-In-Reply-To: <165348876794.2106726.9240233279581920208.stgit@warthog.procyon.org.uk>
-References: <165348876794.2106726.9240233279581920208.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/1.4
+        Wed, 25 May 2022 10:34:27 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0958A76F4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 May 2022 07:34:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=K85kvpkkDfVbzOHRCHctLisJx1mpqqPA1WaPiZL9mvw=; b=Tpv3RwW+GGQjiaI+MGU3koMQW4
+        MzXFdVIB8tJLWqQM2V7fIEYwPaap15TH+hpePHhQBYkMsOuKoE/8dD0JrGcjM+g5iWWdfCwtqtOI3
+        w70po1kcIxIrwjqI5B2y/Pe0hLPCSGDuuE3kUhfok3Y1mcI9AfOrWK7+Tw/u9Xl0FwxYHNhNQoURe
+        TlLjay2GWiiieUSs9b+92x7QMysUtUTF2IR/23SAYfNvfnRCgbw2SMCIpwDx4GONYht54vPZlTO7h
+        9lYHL9bpq01hmD/GvZ5cUPK4pH2Rs1nW1SQgryU2NaXuJ/iEv7DPxOmlawnb8Z7Vzvua+Ge/MGhCC
+        4VUt+5Gw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nts5d-000R54-9b; Wed, 25 May 2022 14:34:21 +0000
+Date:   Wed, 25 May 2022 15:34:21 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC] what to do with IOCB_DSYNC?
+Message-ID: <Yo4+bf9ALQdF/UCR@casper.infradead.org>
+References: <Yoo1q1+ZRrjBP2y3@zeniv-ca.linux.org.uk>
+ <e2bb980b-42e8-27dc-cb6b-51dfb90d7e0a@kernel.dk>
+ <7abc2e36-f2f3-e89c-f549-9edd6633b4a1@kernel.dk>
+ <YoqAM1RnN/er6GDP@zeniv-ca.linux.org.uk>
+ <41f4fba6-3ab2-32a6-28d9-8c3313e92fa5@kernel.dk>
+ <YoqDTV9sa4k9b9nb@zeniv-ca.linux.org.uk>
+ <737a889f-93b9-039f-7708-c15a21fbca2a@kernel.dk>
+ <YoqJROtrPpXWv948@zeniv-ca.linux.org.uk>
+ <1b2cb369-2247-8c10-bd6e-405a8167f795@kernel.dk>
+ <YorYeQpW9nBJEeSx@zeniv-ca.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Spam-Status: No, score=-3.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YorYeQpW9nBJEeSx@zeniv-ca.linux.org.uk>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Namjae Jeon <linkinjeon@kernel.org>
+On Mon, May 23, 2022 at 12:42:33AM +0000, Al Viro wrote:
+> At the moment it's carved up into 6 commits:
+> 	btrfs_direct_write(): cleaner way to handle generic_write_sync() suppression
 
+I happpen to need something similar for JFS, so I tried it out.
+There's a mistake where dio->flags should have been dio_flags.
+I also added a comment on the definition of DIO_NOSYNC.
 
----
+(the btrfs patch didn't apply cleanly, so I just dropped it since I
+wasn't going to be touching btrfs anyway)
 
- fs/cifs/smbdirect.h       |    2 +-
- fs/ksmbd/transport_rdma.c |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/fs/cifs/smbdirect.h b/fs/cifs/smbdirect.h
-index 3a0d39e148e8..12a92054324a 100644
---- a/fs/cifs/smbdirect.h
-+++ b/fs/cifs/smbdirect.h
-@@ -226,7 +226,7 @@ struct smbd_buffer_descriptor_v1 {
- } __packed;
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index 370c3241618a..6a361131080f 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -548,7 +548,8 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+ 		}
  
- /* Default maximum number of SGEs in a RDMA send/recv */
--#define SMBDIRECT_MAX_SGE	16
-+#define SMBDIRECT_MAX_SGE	6
- /* The context for a SMBD request */
- struct smbd_request {
- 	struct smbd_connection *info;
-diff --git a/fs/ksmbd/transport_rdma.c b/fs/ksmbd/transport_rdma.c
-index e646d79554b8..70662b3bd590 100644
---- a/fs/ksmbd/transport_rdma.c
-+++ b/fs/ksmbd/transport_rdma.c
-@@ -42,7 +42,7 @@
- /* SMB_DIRECT negotiation timeout in seconds */
- #define SMB_DIRECT_NEGOTIATE_TIMEOUT		120
+ 		/* for data sync or sync, we need sync completion processing */
+-		if (iocb->ki_flags & IOCB_DSYNC)
++		if (iocb->ki_flags & IOCB_DSYNC &&
++		    !(dio_flags & IOMAP_DIO_NOSYNC))
+ 			dio->flags |= IOMAP_DIO_NEED_SYNC;
  
--#define SMB_DIRECT_MAX_SEND_SGES		8
-+#define SMB_DIRECT_MAX_SEND_SGES		6
- #define SMB_DIRECT_MAX_RECV_SGES		1
+ 		/*
+diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+index e552097c67e0..c8622d8f064e 100644
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@ -353,6 +353,12 @@ struct iomap_dio_ops {
+  */
+ #define IOMAP_DIO_PARTIAL		(1 << 2)
  
- /*
-
-
++/*
++ * The caller will sync the write if needed; do not sync it within
++ * iomap_dio_rw.  Overrides IOMAP_DIO_FORCE_WAIT.
++ */
++#define IOMAP_DIO_NOSYNC		(1 << 3)
++
+ ssize_t iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+ 		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
+ 		unsigned int dio_flags, void *private, size_t done_before);
