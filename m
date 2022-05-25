@@ -2,154 +2,212 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6689E534474
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 May 2022 21:44:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC1985344DA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 May 2022 22:31:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346115AbiEYTom (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 May 2022 15:44:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43392 "EHLO
+        id S237578AbiEYUbN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 May 2022 16:31:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346035AbiEYTo2 (ORCPT
+        with ESMTP id S231529AbiEYUbL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 May 2022 15:44:28 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7209D1145C;
-        Wed, 25 May 2022 12:44:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=S6qisVcKaqKCfdGaJluvCYtDQBbD/bLcDlVDzzD0wUo=; b=d6Lzkm3nKu9wkp/Tn/FwPo54dE
-        o7OQMJ82dZigbjNoim9XQ+8czVUTEu9Q+nDeOSKu1iP5PjtnY5/D2ltdqSbP6Zdzd+v5xBWC7uKJf
-        myeuJ1iRJEmkG90gqlMTb2KwfFAUdQOm+g99VVCpyLIBc8RpcqoJQgAR2J9Z2H8/fXbWeypdpWhuG
-        3UhrDDBbXjBH2N6caTSiJGTTZMi/do7rk40BLwdHIom+fTn7+i75cTYP2GyZROV7K0RyA+ryRCp9d
-        Zx04LGEZag2yXoYwXgh6bNMu7jSwy2g1Sd6JCwGEoIdzKzREfw88nAVRndD+aAPrrCLZJLLbUqd/y
-        5UD1mlWw==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1ntwvT-00CT7x-8u; Wed, 25 May 2022 19:44:11 +0000
-Date:   Wed, 25 May 2022 12:44:11 -0700
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     "Bird, Tim" <Tim.Bird@sony.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Richard Fontana <fontana@sharpeleven.org>,
-        "tj@kernel.org" <tj@kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "jeyu@kernel.org" <jeyu@kernel.org>,
-        "shuah@kernel.org" <shuah@kernel.org>,
-        "bvanassche@acm.org" <bvanassche@acm.org>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "joe@perches.com" <joe@perches.com>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "minchan@kernel.org" <minchan@kernel.org>,
-        "linux-spdx@vger.kernel.org" <linux-spdx@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Kuno Woudt <kuno@frob.nl>,
-        "copyleft-next@lists.fedorahosted.org" 
-        <copyleft-next@lists.fedorahosted.org>,
-        Ciaran Farrell <Ciaran.Farrell@suse.com>,
-        Christopher De Nicolo <Christopher.DeNicolo@suse.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Thorsten Leemhuis <linux@leemhuis.info>
-Subject: Re: [PATCH v9 1/6] LICENSES: Add the copyleft-next-0.3.1 license
-Message-ID: <Yo6HC9BfkCo3MBbH@bombadil.infradead.org>
-References: <20211029184500.2821444-1-mcgrof@kernel.org>
- <20211029184500.2821444-2-mcgrof@kernel.org>
- <87bkvo0wjd.ffs@tglx>
- <Yo5cxWghV/v2Fnzf@bombadil.infradead.org>
- <BN7PR13MB24998CAFCFB973C80549F308FDD69@BN7PR13MB2499.namprd13.prod.outlook.com>
- <Yo5xTwGLmbsgJhfM@bombadil.infradead.org>
- <BN7PR13MB2499BA2AFAC1C79197734D81FDD69@BN7PR13MB2499.namprd13.prod.outlook.com>
+        Wed, 25 May 2022 16:31:11 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 2F58419037
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 May 2022 13:31:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1653510668;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=k75N5FnswqlCl0SNogf2hWCSCyCFZTMJDJby5tTX8OQ=;
+        b=KRGUaLhOEvSxD4oeyIS11zJt3tsdlsEw5SZ40zgl5rl5h4mIILkz5lqfFFafr1XvAKG2oq
+        1XrAUErpV3VNxzJCKDfRnfY8GCNNLGiPBEokE3obcHnHRzloyT1g94lI/l63wauPAMIAo2
+        I1fEG6G/t9ezT9WS/avtxFH0CUtmbYw=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-396-3TD89sbSPQW-xVX83NHdhw-1; Wed, 25 May 2022 16:31:03 -0400
+X-MC-Unique: 3TD89sbSPQW-xVX83NHdhw-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id ACBA3858EFE;
+        Wed, 25 May 2022 20:31:02 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.22.32.214])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 95B2740C128B;
+        Wed, 25 May 2022 20:31:02 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 51A912208FA; Wed, 25 May 2022 16:31:02 -0400 (EDT)
+Date:   Wed, 25 May 2022 16:31:02 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Dharmendra Singh <dharamhans87@gmail.com>
+Cc:     miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
+        fuse-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        bschubert@ddn.com, Dharmendra Singh <dsingh@ddn.com>
+Subject: Re: [PATCH v3 1/1] FUSE: Allow non-extending parallel direct writes
+ on the same file.
+Message-ID: <Yo6SBoEgGgnNQv8W@redhat.com>
+References: <20220520043443.17439-1-dharamhans87@gmail.com>
+ <20220520043443.17439-2-dharamhans87@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <BN7PR13MB2499BA2AFAC1C79197734D81FDD69@BN7PR13MB2499.namprd13.prod.outlook.com>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
-        version=3.4.6
+In-Reply-To: <20220520043443.17439-2-dharamhans87@gmail.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.11.54.2
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 25, 2022 at 07:05:31PM +0000, Bird, Tim wrote:
-> > -----Original Message-----
-> > From: Luis Chamberlain <mcgrof@infradead.org> On Behalf Of Luis Chamberlain
-> > 
-> > On Wed, May 25, 2022 at 05:05:54PM +0000, Bird, Tim wrote:
-> > > I know it's being submitted as an OR, but I question
-> > > the value of introducing another license into the kernel's licensing mix.
-> > 
-> > I agree that we want to keep the number of licenses as small as
-> > possible but we cannot really dictate which dual licensing options a
-> > submitter selects unless the license is GPL-2.0-only incompatible,
-> > which copyleft-next is not.
+On Fri, May 20, 2022 at 10:04:43AM +0530, Dharmendra Singh wrote:
+> From: Dharmendra Singh <dsingh@ddn.com>
 > 
-> Um, yes we can dictate that. 
+> In general, as of now, in FUSE, direct writes on the same file are
+> serialized over inode lock i.e we hold inode lock for the full duration
+> of the write request. I could not found in fuse code a comment which
+> clearly explains why this exclusive lock is taken for direct writes.
+> Our guess is some USER space fuse implementations might be relying
+> on this lock for seralization and also it protects for the issues
+> arising due to file size assumption or write failures.  This patch
+> relaxes this exclusive lock in some cases of direct writes.
 
-The statement about us not being able to dictate which dual licensing
-options a submitter selects does not actually come from me, Thomas noted
-this [0].
+I have this question as well. My understanding was that in general,
+reads can do shared lock while writes have to take exclusive lock.
+And I assumed that extends to both buffered as well as direct
+writes.
 
-[0] https://lkml.kernel.org/r/87fsl1iqg0.ffs@tglx
+I would also like to understand what's the fundamental restriction
+and why O_DIRECT is special that this restriction does not apply.
 
-> There were good reasons that the original
-> BSD dual-licenses were allowed.
+Is any other file system doing this as well?
 
-I helped spearhead some of that effort.
+If fuse server dir is shared with other fuse clients, it is possible
+that i_size in this client is stale. Will that be a problem. I guess
+if that's the problem then, even a single write will be a problem
+because two fuse clients might be trying to write.
 
-> Those same reasons don't apply here.
+Just trying to make sure that it is safe to allow parallel direct
+writes.
 
-Correct, and I noted my own reasoning for now dual licensing with
-copyleft-next, which you seem to be disregarding?
+Thanks
+Vivek
 
-> Each license added to the kernel (even when added as an OR), requires
-> additional legal analysis.
+> 
+> With these changes, we allows non-extending parallel direct writes
+> on the same file with the help of a flag called FOPEN_PARALLEL_WRITES.
+> If this flag is set on the file (flag is passed from libfuse to fuse
+> kernel as part of file open/create), we do not take exclusive lock instead
+> use shared lock so that all non-extending writes can run in parallel.
+> 
+> Best practise would be to enable parallel direct writes of all kinds
+> including extending writes as well but we see some issues such as
+> when one write completes and other fails, how we should truncate(if
+> needed) the file if underlying file system does not support holes
+> (For file systems which supports holes, there might be a possibility
+> of enabling parallel writes for all cases).
+> 
+> FUSE implementations which rely on this inode lock for serialisation
+> can continue to do so and this is default behaviour i.e no parallel
+> direct writes.
+> 
+> Signed-off-by: Dharmendra Singh <dsingh@ddn.com>
+> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
+> ---
+>  fs/fuse/file.c            | 33 ++++++++++++++++++++++++++++++---
+>  include/uapi/linux/fuse.h |  2 ++
+>  2 files changed, 32 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index 829094451774..1a93fd80a6ce 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -1541,14 +1541,37 @@ static ssize_t fuse_direct_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>  	return res;
+>  }
+>  
+> +static bool fuse_direct_write_extending_i_size(struct kiocb *iocb,
+> +					       struct iov_iter *iter)
+> +{
+> +	struct inode *inode = file_inode(iocb->ki_filp);
+> +
+> +	return (iocb->ki_flags & IOCB_APPEND ||
+> +		iocb->ki_pos + iov_iter_count(iter) > i_size_read(inode));
+> +}
+> +
+>  static ssize_t fuse_direct_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>  {
+>  	struct inode *inode = file_inode(iocb->ki_filp);
+> +	struct file *file = iocb->ki_filp;
+> +	struct fuse_file *ff = file->private_data;
+>  	struct fuse_io_priv io = FUSE_IO_PRIV_SYNC(iocb);
+>  	ssize_t res;
+> +	bool exclusive_lock = !(ff->open_flags & FOPEN_PARALLEL_WRITES) ||
+> +			       fuse_direct_write_extending_i_size(iocb, from);
+> +
+> +	/*
+> +	 * Take exclusive lock if
+> +	 * - parallel writes are disabled.
+> +	 * - parallel writes are enabled and i_size is being extended
+> +	 * Take shared lock if
+> +	 * - parallel writes are enabled but i_size does not extend.
+> +	 */
+> +	if (exclusive_lock)
+> +		inode_lock(inode);
+> +	else
+> +		inode_lock_shared(inode);
+>  
+> -	/* Don't allow parallel writes to the same file */
+> -	inode_lock(inode);
+>  	res = generic_write_checks(iocb, from);
+>  	if (res > 0) {
+>  		if (!is_sync_kiocb(iocb) && iocb->ki_flags & IOCB_DIRECT) {
+> @@ -1559,7 +1582,10 @@ static ssize_t fuse_direct_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>  			fuse_write_update_attr(inode, iocb->ki_pos, res);
+>  		}
+>  	}
+> -	inode_unlock(inode);
+> +	if (exclusive_lock)
+> +		inode_unlock(inode);
+> +	else
+> +		inode_unlock_shared(inode);
+>  
+>  	return res;
+>  }
+> @@ -2901,6 +2927,7 @@ fuse_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+>  
+>  	if (iov_iter_rw(iter) == WRITE) {
+>  		fuse_write_update_attr(inode, pos, ret);
+> +		/* For extending writes we already hold exclusive lock */
+>  		if (ret < 0 && offset + count > i_size)
+>  			fuse_do_truncate(file);
+>  	}
+> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+> index d6ccee961891..ee5379d41906 100644
+> --- a/include/uapi/linux/fuse.h
+> +++ b/include/uapi/linux/fuse.h
+> @@ -301,6 +301,7 @@ struct fuse_file_lock {
+>   * FOPEN_CACHE_DIR: allow caching this directory
+>   * FOPEN_STREAM: the file is stream-like (no file position at all)
+>   * FOPEN_NOFLUSH: don't flush data cache on close (unless FUSE_WRITEBACK_CACHE)
+> + * FOPEN_PARALLEL_WRITES: Allow concurrent writes on the same inode
+>   */
+>  #define FOPEN_DIRECT_IO		(1 << 0)
+>  #define FOPEN_KEEP_CACHE	(1 << 1)
+> @@ -308,6 +309,7 @@ struct fuse_file_lock {
+>  #define FOPEN_CACHE_DIR		(1 << 3)
+>  #define FOPEN_STREAM		(1 << 4)
+>  #define FOPEN_NOFLUSH		(1 << 5)
+> +#define FOPEN_PARALLEL_WRITES	(1 << 6)
+>  
+>  /**
+>   * INIT request/reply flags
+> -- 
+> 2.17.1
+> 
 
-And I noted in my cover letter that copyleft-next-0.3.1 has been found to be
-to be GPLv2 compatible by three attorneys at SUSE and Redhat [1], but
-to err on the side of caution we simply recommend to always use the "OR"
-language for this license [2].
-
-[1] https://lore.kernel.org/lkml/20170516232702.GL17314@wotan.suse.de/
-[2] https://lkml.kernel.org/r/1495234558.7848.122.camel@linux.intel.com
-
-> And here's the thing.
-> The copyleft-next license has a number of legal issues that make it problematic.
-
-You say number of legal issues.
-
-> Not the least of which are that some of its terms are dependent on external
-> situations that can change over time, in a matter that is uncontrolled by either
-> the licensor or the licensee.  In order to determine what terms are effective, you
-> have to know when the license was granted, and what the FSF and OSI approved
-> licenses were at various points in time.  You literally have to use the Internet
-> Archive wayback machine, and do a bunch of research, to interpret the license terms.
-> It is not, as currently constructed, a good license, due to this lack of legal clarity.
-
-But the above seems to indicate one technical pain point in so far as
-two sections:
-
-4. Condition Against Further Restrictions; Inbound License Compatibility
-7. Nullification of Copyleft/Proprietary Dual Licensing
-
-If you are going to offer to pay for an alternative proprietary
-licensing, I'm sure you can do the work.
-
-And if in so far as clause 4 is concerned, yeah I think wayback machine
-is a sensible solution. Good idea, seems like we have that covered since
-1999 [3].
-
-[3] https://web.archive.org/web/*/https://opensource.org/licenses
-
-  Luis
