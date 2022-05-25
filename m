@@ -2,67 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DDF025336ED
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 May 2022 08:51:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 585165337C4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 May 2022 09:49:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244247AbiEYGvd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 May 2022 02:51:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42270 "EHLO
+        id S231315AbiEYHtt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 May 2022 03:49:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34192 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243504AbiEYGv3 (ORCPT
+        with ESMTP id S243014AbiEYHtp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 May 2022 02:51:29 -0400
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4913D240A8
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 May 2022 23:51:27 -0700 (PDT)
-Received: by mail-pj1-x102f.google.com with SMTP id u12-20020a17090a1d4c00b001df78c7c209so879051pju.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 24 May 2022 23:51:27 -0700 (PDT)
+        Wed, 25 May 2022 03:49:45 -0400
+Received: from mail-lf1-x12f.google.com (mail-lf1-x12f.google.com [IPv6:2a00:1450:4864:20::12f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C085A7A464;
+        Wed, 25 May 2022 00:49:44 -0700 (PDT)
+Received: by mail-lf1-x12f.google.com with SMTP id w14so34631043lfl.13;
+        Wed, 25 May 2022 00:49:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1OInmO8rSFsmcKxeQtJzT8W8mmV7pww/rcBlhAxG24c=;
-        b=NdeTwUAK0mIJ9uNUIXjugJjyZR97tAm7onnDGPVrDJNsamWTpq4soNelwQZbjHtcRb
-         ZQ9mAiNXmu3v7+xljofd50MBlb6m2jqGRbj2YatGDryT8jrv3iVH8qrZrwN3mRMwvayp
-         GWMDHQnS9WcSO3iu/aVnzo9JKAUtfPs2hUoq5yIWKXQA245O5+GK9ZsfrfibXiOc6Bk7
-         Oz53qrPN5S26eAzH3DvPHZtaQoI5EodeJ9VdjYObZlxF4IBLgxGj8RFMSiFm588sZud0
-         oAfpN5ZROawjFT+3JZMmBRgMDV4e2pwxl9QYgXEQYi3QMXdv4mI1V3OgFFw8WUimYGj/
-         26DA==
+        d=gmail.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=5lt8k9K2KA1UoNzPTqNHW6qCt9JmIf/2CxYFA0xls5w=;
+        b=CfVSjrQvck8vA31E2hsBpi6h670x34m7ft7yCObkg7qf7beHCrH3SGu6oHC997qOPu
+         4mSXsXFxEQfD93KdNCo2jw9XKSzfdXOu8jClV5pqVLSwo+MioeJ4lB1EJtrEw6YMsYZf
+         SS6OFE7MSVyagxIKABg1tmOiWKzyAxO1zvDaskeWjQmwlJilmB4TJFmOhmkKhAl8354K
+         um+tTO+J31ehacSxb71M5XWP0v2Q0bi0dVURma+Bv4JcLlnz6TSQZSed84ERj4iQFzNl
+         aHOpbUaivbWryKUd+DcIX6eImCVN9C/GHJgWVGk1g1pgk2DGAMjj8pE1sWHww/mpqUN9
+         0zPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=1OInmO8rSFsmcKxeQtJzT8W8mmV7pww/rcBlhAxG24c=;
-        b=voiugwOK8YCguRd1hNKiK4Zo0RvnhXfA+uAqX1D137ZnxUjHhl6HFyj9QfhFxOrpAh
-         QnwZU2SdMljY4xYZdUygZaTA1/PKgeGVi9eyVidLl/hCAsoi41qPa1N160ce5FeVwBkc
-         Jwu5lrxlW3E/0pLtQkrZ7qH4a6/ztfnVzMyHEB0+T+OqZ75zHlOyNs+sXcfMMDK2qWKF
-         DCuZZ6hHA3Jg1uLYsu9ZWEeLzws7JQy4ijlA0soEWUNuPmLgJtB4/a8H0jZEFyTh95TC
-         3/R5rIpGTB+j+ycHMo8wErlJZlaBSYS+5v/D1e8/FvgStaSaJkI4VTOb4soaCuu12OWK
-         3TXA==
-X-Gm-Message-State: AOAM532jj0qLzZyvqkmn1py/dz6Xlfo6+XGWkkA9lzM/28yTvSWppyng
-        bNNJozVuPeKqVwwQHuhGSJhc8w==
-X-Google-Smtp-Source: ABdhPJzbE466iFdZbKYpe1PIot8CbHomaZN9j8/BKjulSVhO8bzwNzlsoAEUZLvS6bLYcMcSnRxbvg==
-X-Received: by 2002:a17:902:e889:b0:163:4f15:8a11 with SMTP id w9-20020a170902e88900b001634f158a11mr3128660plg.11.1653461486817;
-        Tue, 24 May 2022 23:51:26 -0700 (PDT)
-Received: from FVFYT0MHHV2J.bytedance.net ([2408:8207:18da:2310:c40f:7b5:4fa8:df3f])
-        by smtp.gmail.com with ESMTPSA id y12-20020a62ce0c000000b0050dc762812esm10631922pfg.8.2022.05.24.23.51.20
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=5lt8k9K2KA1UoNzPTqNHW6qCt9JmIf/2CxYFA0xls5w=;
+        b=1oKzRWSp1N86uAYJgT9Sxu1Y7kTcL7WoJc2FRij3fZwLMfWVqE5EMV5N97iW8UARkG
+         8KQi1VxxvJDCOfsndCzQsClhez5NbhROPt4LYLn38uHnmFSHz5UdzgqeCGgLXpzb3YCa
+         TWUtw5YJ48cxaR74lSED7a0wGqjhPKpGuGZTltM37xqkGM15MIAVTkCsWD2bNzXKMHjq
+         Y/ScDKfBgg5x7/Z/Ohy0KwWfMNvHw5SJEj3floyRzpPfZ08E+OhgpucJt2v+DL61jjtb
+         V5DXnO0NTNqlRN4JgXdyyG+GVPXNmqaYhf3Acgjl0rMH7dBGhqp6cDCthLoQq3yjXffN
+         6mDw==
+X-Gm-Message-State: AOAM533WI0eaZidbYSW+xbCbPQBNToZIQN0ISWQ1kJLCVSXV/xOQjoHN
+        PLwZPMeIXFHyeaZpjOoW4Kk=
+X-Google-Smtp-Source: ABdhPJxA905EhstCxny+fZM9fEKL7H9BHS5faz6etePJul9Gm/eDBlyaZ94GS+SAE51ckRyHznRS1A==
+X-Received: by 2002:a05:6512:3e26:b0:478:5972:54b7 with SMTP id i38-20020a0565123e2600b00478597254b7mr16559490lfv.646.1653464982986;
+        Wed, 25 May 2022 00:49:42 -0700 (PDT)
+Received: from localhost (87-49-45-243-mobile.dk.customer.tdc.net. [87.49.45.243])
+        by smtp.gmail.com with ESMTPSA id f11-20020ac2532b000000b00477cae4880fsm2840295lfh.260.2022.05.25.00.49.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 May 2022 23:51:26 -0700 (PDT)
-From:   Muchun Song <songmuchun@bytedance.com>
-To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     willy@infradead.org, duanxiongchun@bytedance.com,
-        Muchun Song <songmuchun@bytedance.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>
-Subject: [PATCH v3] sysctl: handle table->maxlen robustly for proc_dobool
-Date:   Wed, 25 May 2022 14:50:50 +0800
-Message-Id: <20220525065050.38905-1-songmuchun@bytedance.com>
-X-Mailer: git-send-email 2.32.1 (Apple Git-133)
+        Wed, 25 May 2022 00:49:42 -0700 (PDT)
+Date:   Wed, 25 May 2022 09:49:41 +0200
+From:   Pankaj Raghav <pankydev8@gmail.com>
+To:     Keith Busch <kbusch@kernel.org>
+Cc:     Keith Busch <kbusch@fb.com>, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, axboe@kernel.dk,
+        Kernel Team <Kernel-team@fb.com>, hch@lst.de,
+        bvanassche@acm.org, damien.lemoal@opensource.wdc.com,
+        ebiggers@kernel.org, Pankaj Raghav <p.raghav@samsung.com>
+Subject: Re: [PATCHv3 1/6] block/bio: remove duplicate append pages code
+Message-ID: <20220525074941.2biavbbrjdjcnlsd@quentin>
+References: <20220523210119.2500150-1-kbusch@fb.com>
+ <20220523210119.2500150-2-kbusch@fb.com>
+ <20220524141754.msmt6s4spm4istsb@quentin>
+ <Yoz7+O2CAQTNfvlV@kbusch-mbp.dhcp.thefacebook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Yoz7+O2CAQTNfvlV@kbusch-mbp.dhcp.thefacebook.com>
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -70,104 +76,25 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Setting ->proc_handler to proc_dobool at the same time setting ->maxlen
-to sizeof(int) is counter-intuitive, it is easy to make mistakes in the
-future (When I first use proc_dobool() in my driver, I assign
-sizeof(variable) to table->maxlen.  Then I found it was wrong, it should
-be sizeof(int) which was very counter-intuitive).  For robustness,
-rework proc_dobool() robustly.  So it is an improvement not a real bug
-fix.
+On Tue, May 24, 2022 at 09:38:32AM -0600, Keith Busch wrote:
+> On Tue, May 24, 2022 at 04:17:54PM +0200, Pankaj Raghav wrote:
+> > On Mon, May 23, 2022 at 02:01:14PM -0700, Keith Busch wrote:
+> > > -	if (WARN_ON_ONCE(!max_append_sectors))
+> > > -		return 0;
+> > I don't see this check in the append path. Should it be added in
+> > bio_iov_add_zone_append_page() function?
+> 
+> I'm not sure this check makes a lot of sense. If it just returns 0 here, then
+> won't that get bio_iov_iter_get_pages() stuck in an infinite loop? The bio
+> isn't filling, the iov isn't advancing, and 0 indicates keep-going.
+Yeah but if max_append_sectors is zero, then bio_add_hw_page() also
+returns 0 as follows:
+....
+	if (((bio->bi_iter.bi_size + len) >> 9) > max_sectors)
+		return 0;
+....
+With WARN_ON_ONCE, we at least get a warning message if it gets stuck in an
+infinite loop because of max_append_sectors being zero right?
 
-Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-Cc: Luis Chamberlain <mcgrof@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Iurii Zaikin <yzaikin@google.com>
----
-v3:
- - Update commit log.
-
-v2:
- - Reimplementing proc_dobool().
-
- fs/lockd/svc.c  |  2 +-
- kernel/sysctl.c | 38 +++++++++++++++++++-------------------
- 2 files changed, 20 insertions(+), 20 deletions(-)
-
-diff --git a/fs/lockd/svc.c b/fs/lockd/svc.c
-index 59ef8a1f843f..6e48ee787f49 100644
---- a/fs/lockd/svc.c
-+++ b/fs/lockd/svc.c
-@@ -496,7 +496,7 @@ static struct ctl_table nlm_sysctls[] = {
- 	{
- 		.procname	= "nsm_use_hostnames",
- 		.data		= &nsm_use_hostnames,
--		.maxlen		= sizeof(int),
-+		.maxlen		= sizeof(nsm_use_hostnames),
- 		.mode		= 0644,
- 		.proc_handler	= proc_dobool,
- 	},
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index e52b6e372c60..50a2c29efc94 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -423,21 +423,6 @@ static void proc_put_char(void **buf, size_t *size, char c)
- 	}
- }
- 
--static int do_proc_dobool_conv(bool *negp, unsigned long *lvalp,
--				int *valp,
--				int write, void *data)
--{
--	if (write) {
--		*(bool *)valp = *lvalp;
--	} else {
--		int val = *(bool *)valp;
--
--		*lvalp = (unsigned long)val;
--		*negp = false;
--	}
--	return 0;
--}
--
- static int do_proc_dointvec_conv(bool *negp, unsigned long *lvalp,
- 				 int *valp,
- 				 int write, void *data)
-@@ -708,16 +693,31 @@ int do_proc_douintvec(struct ctl_table *table, int write,
-  * @lenp: the size of the user buffer
-  * @ppos: file position
-  *
-- * Reads/writes up to table->maxlen/sizeof(unsigned int) integer
-- * values from/to the user buffer, treated as an ASCII string.
-+ * Reads/writes up to table->maxlen/sizeof(bool) bool values from/to
-+ * the user buffer, treated as an ASCII string.
-  *
-  * Returns 0 on success.
-  */
- int proc_dobool(struct ctl_table *table, int write, void *buffer,
- 		size_t *lenp, loff_t *ppos)
- {
--	return do_proc_dointvec(table, write, buffer, lenp, ppos,
--				do_proc_dobool_conv, NULL);
-+	struct ctl_table tmp = *table;
-+	bool *data = table->data;
-+	unsigned int val = READ_ONCE(*data);
-+	int ret;
-+
-+	/* Do not support arrays yet. */
-+	if (table->maxlen != sizeof(bool))
-+		return -EINVAL;
-+
-+	tmp.maxlen = sizeof(val);
-+	tmp.data = &val;
-+	ret = do_proc_douintvec(&tmp, write, buffer, lenp, ppos, NULL, NULL);
-+	if (ret)
-+		return ret;
-+	if (write)
-+		WRITE_ONCE(*data, val ? true : false);
-+	return 0;
- }
- 
- /**
 -- 
-2.11.0
-
+Pankaj Raghav
