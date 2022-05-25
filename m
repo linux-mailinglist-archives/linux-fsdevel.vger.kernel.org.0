@@ -2,71 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BE4C3534495
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 May 2022 21:52:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6689E534474
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 May 2022 21:44:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344784AbiEYTwZ convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 May 2022 15:52:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48468 "EHLO
+        id S1346115AbiEYTom (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 May 2022 15:44:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241221AbiEYTwX (ORCPT
+        with ESMTP id S1346035AbiEYTo2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 May 2022 15:52:23 -0400
-X-Greylist: delayed 1200 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 25 May 2022 12:52:22 PDT
-Received: from protestant.ebb.org (protestant.ebb.org [50.56.179.12])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D08D630B;
-        Wed, 25 May 2022 12:52:22 -0700 (PDT)
-Received: from localhost (unknown [216.161.86.18])
-        (Authenticated sender: bkuhn)
-        by protestant.ebb.org (Postfix) with ESMTPSA id 9D99C820B4;
-        Wed, 25 May 2022 12:14:38 -0700 (PDT)
-From:   "Bradley M. Kuhn" <bkuhn@ebb.org>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        copyleft-next@lists.fedorahosted.org
-Cc:     Luis Chamberlain <mcgrof@kernel.org>, tj@kernel.org,
-        gregkh@linuxfoundation.org, akpm@linux-foundation.org,
-        jeyu@kernel.org, shuah@kernel.org, bvanassche@acm.org,
-        dan.j.williams@intel.com, joe@perches.com, keescook@chromium.org,
-        rostedt@goodmis.org, minchan@kernel.org,
-        linux-spdx@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Wed, 25 May 2022 15:44:28 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7209D1145C;
+        Wed, 25 May 2022 12:44:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=S6qisVcKaqKCfdGaJluvCYtDQBbD/bLcDlVDzzD0wUo=; b=d6Lzkm3nKu9wkp/Tn/FwPo54dE
+        o7OQMJ82dZigbjNoim9XQ+8czVUTEu9Q+nDeOSKu1iP5PjtnY5/D2ltdqSbP6Zdzd+v5xBWC7uKJf
+        myeuJ1iRJEmkG90gqlMTb2KwfFAUdQOm+g99VVCpyLIBc8RpcqoJQgAR2J9Z2H8/fXbWeypdpWhuG
+        3UhrDDBbXjBH2N6caTSiJGTTZMi/do7rk40BLwdHIom+fTn7+i75cTYP2GyZROV7K0RyA+ryRCp9d
+        Zx04LGEZag2yXoYwXgh6bNMu7jSwy2g1Sd6JCwGEoIdzKzREfw88nAVRndD+aAPrrCLZJLLbUqd/y
+        5UD1mlWw==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1ntwvT-00CT7x-8u; Wed, 25 May 2022 19:44:11 +0000
+Date:   Wed, 25 May 2022 12:44:11 -0700
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     "Bird, Tim" <Tim.Bird@sony.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Richard Fontana <fontana@sharpeleven.org>,
+        "tj@kernel.org" <tj@kernel.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "jeyu@kernel.org" <jeyu@kernel.org>,
+        "shuah@kernel.org" <shuah@kernel.org>,
+        "bvanassche@acm.org" <bvanassche@acm.org>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "joe@perches.com" <joe@perches.com>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "minchan@kernel.org" <minchan@kernel.org>,
+        "linux-spdx@vger.kernel.org" <linux-spdx@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Goldwyn Rodrigues <rgoldwyn@suse.com>,
         Kuno Woudt <kuno@frob.nl>,
-        Richard Fontana <fontana@sharpeleven.org>,
+        "copyleft-next@lists.fedorahosted.org" 
+        <copyleft-next@lists.fedorahosted.org>,
         Ciaran Farrell <Ciaran.Farrell@suse.com>,
         Christopher De Nicolo <Christopher.DeNicolo@suse.com>,
         Christoph Hellwig <hch@lst.de>,
         Jonathan Corbet <corbet@lwn.net>,
         Thorsten Leemhuis <linux@leemhuis.info>
 Subject: Re: [PATCH v9 1/6] LICENSES: Add the copyleft-next-0.3.1 license
-Organization: Opinions expressed in this email are my own and are not necessarily those of any organization with which I have an affiliation.
+Message-ID: <Yo6HC9BfkCo3MBbH@bombadil.infradead.org>
 References: <20211029184500.2821444-1-mcgrof@kernel.org>
-        <20211029184500.2821444-2-mcgrof@kernel.org> <87h75g0xbm.ffs@tglx>
-Face:   iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAABGdBTUEAALGPC/xhBQAAABVQ
- TFRFAAAAWjotvpiH/PHt27Sj7sq8lXFeBchlBgAAAAFiS0dEAIgFHUgAAAAJcEhZcwAACxMAAAsT
- AQCanBgAAAAHdElNRQfiCx4VFw6omMmeAAACAklEQVQ4y43UPZPbIBAGYGdu0puzQ51bI+qMdXId
- r0F1RoLrwfb+/5+QF307VVR4PDxiF14h7Xa7t3q8LJGjavj7a1euCYiZnaPnv9DF4FyMLKdXOPs4
- XM7KKzzKaF83gem+hUuF8QYUg7Fb4LEQAK1OG3hu4bbC3LpUC87+B9AMfQOg0yv0owEOK4x1+gnu
- M3yaV3jOMGxvKoXEKC9gAoabJtZYlXO8wJcb1hMHQClZgSj7cbzsY4a2vSqltIlz8nMpZnMkEmVw
- N4DtcYJo3AMPXFIMRMax/BjhOxZi2CpKKpWSZCd4C8aZ4CpzjR+Cint9WEp5H12IbbySEpHdaYVh
- OY9onf0Qq9//zDCFEW0MbFjUz7mHD1UdO4B3iErk9whdKdWVRuW5YLl5KnU2rjTBDyPmQImm5mec
- WQx7X3fBNwAzQ9kvBTKR0BwR3Bewhisn2mpkhea3BZwBcdorRlQk9QKecyZukRPeHTmuEL1FdjlJ
- tmTlvoAJPnRaMnKinNICn4QthNaKlNAlLae9sc5UODaelVh+l345u7ZMIY89GNdmWV8cIaTFlLGm
- QKLrzQykh/Aw02WsdoE2l1g7JIPdyWGFL6Hy1uJZsEjavLUXkVyeIdrbpPoXQHxDG0l68wEoW8vG
- BLI6qc2XoUEWCUI26aQfK1wypuwV7v6mtMhtgL8avOP/pBCiigAAAABJRU5ErkJggg==
-X-Disclaimer: Opinions expressed in this email are my own and are not necessarily those of any organization with which I have an affiliation.
-Date:   Wed, 25 May 2022 12:13:45 -0700
-In-Reply-To: <87h75g0xbm.ffs@tglx> (Thomas Gleixner's message of "Mon, 23 May
-        2022 23:10:37 +0200")
-Message-ID: <87y1yph1cm.fsf@ebb.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+ <20211029184500.2821444-2-mcgrof@kernel.org>
+ <87bkvo0wjd.ffs@tglx>
+ <Yo5cxWghV/v2Fnzf@bombadil.infradead.org>
+ <BN7PR13MB24998CAFCFB973C80549F308FDD69@BN7PR13MB2499.namprd13.prod.outlook.com>
+ <Yo5xTwGLmbsgJhfM@bombadil.infradead.org>
+ <BN7PR13MB2499BA2AFAC1C79197734D81FDD69@BN7PR13MB2499.namprd13.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <BN7PR13MB2499BA2AFAC1C79197734D81FDD69@BN7PR13MB2499.namprd13.prod.outlook.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -74,77 +82,74 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In answering Thomas' question …
+On Wed, May 25, 2022 at 07:05:31PM +0000, Bird, Tim wrote:
+> > -----Original Message-----
+> > From: Luis Chamberlain <mcgrof@infradead.org> On Behalf Of Luis Chamberlain
+> > 
+> > On Wed, May 25, 2022 at 05:05:54PM +0000, Bird, Tim wrote:
+> > > I know it's being submitted as an OR, but I question
+> > > the value of introducing another license into the kernel's licensing mix.
+> > 
+> > I agree that we want to keep the number of licenses as small as
+> > possible but we cannot really dictate which dual licensing options a
+> > submitter selects unless the license is GPL-2.0-only incompatible,
+> > which copyleft-next is not.
+> 
+> Um, yes we can dictate that. 
 
-Thomas Gleixner wrote at 14:10 (PDT) on Monday:
-> If I want to remove this option, then how do I express this with a SPDX
-> license identifier?
+The statement about us not being able to dictate which dual licensing
+options a submitter selects does not actually come from me, Thomas noted
+this [0].
 
-… some licensing/SPDX background is in order.  (I apologize in advance for a
-few paragraphs of license-splaining, as I know that many on this thread know
-these points already, but I suspect most only have only vague familiarity
-with this issue.)
+[0] https://lkml.kernel.org/r/87fsl1iqg0.ffs@tglx
 
-copyleft-next 0.3.1 reads:
->> +11. Later License Versions
->> +    The Copyleft-Next Project may release new versions of copyleft-next,
->> +    designated by a distinguishing version number ("Later Versions").
+> There were good reasons that the original
+> BSD dual-licenses were allowed.
 
-Many don't realize that GPL is (or was, pre-copyleft-next) unique in
-structure among copyleft licenses in that the -or-later clause of all
-licenses in the GPL family is configurable.  That yields the complex forms
-of: GPLv1-only, GPLv1-or-later, GPLv2-only, GPLv2-or-later, etc.  GPLv3 even
-added the proxy upgrade clause (— a formulation SPDX can't handle at all).
+I helped spearhead some of that effort.
 
-Other non-trivial FOSS licenses — such as Mozilla Public License (MPL),
-Common Development and Distribution License (CDDL), and Eclipse Public
-License (EPL) (as just three examples) — all have “automatic -or-later”.
-Thus, “MPLv2.0” *always* means “MPLv2.0-or-later”, so if you use the SPDX
-moniker for that (“MPL-2.0”), it really is akin to using “GPLv2-or-later”.
-Meanwhile, there is no *actual* way to license code under “MPLv2-only” — the
-license text itself prohibits it.
+> Those same reasons don't apply here.
 
-All that's to say: the GPL has (historically) always been a huge FOSS
-licensing special-case because of the complex configurability of its
-“-or-later” clause.
+Correct, and I noted my own reasoning for now dual licensing with
+copyleft-next, which you seem to be disregarding?
 
-One of the last activities I did with SPDX (in late 2017) was to help
-negotiate a solution on reworking the GPL identifiers to deal with this
-special case.  The solution was a classic political compromise — where
-*everyone* left unhappy — but that's what led to the deprecation of SPDX's
-“GPL-2.0” identifier in favor of “GPL-2.0-or-later” and “GPL-2.0-only”.
+> Each license added to the kernel (even when added as an OR), requires
+> additional legal analysis.
 
-I wasn't involved with SPDX anymore when they (much later) created the
-identifier “copyleft-next-0.3.1” — but it appears it was a case of “those
-who forget the past is condemned to repeat it” — because copyleft-next's
-SPDX identifier indeed has a similarly confusing ambiguity to “GPL-2.0”:
+And I noted in my cover letter that copyleft-next-0.3.1 has been found to be
+to be GPLv2 compatible by three attorneys at SUSE and Redhat [1], but
+to err on the side of caution we simply recommend to always use the "OR"
+language for this license [2].
 
-copyleft-next 0.3.1 text reads further:
->> +    Unless I explicitly remove the option of Distributing Covered Works
->> +    under Later Versions, You may Distribute Covered Works under any Later
->> +    Version.
-Thomas Gleixner noted about it at 14:10 (PDT) on Monday:
-> If I want to remove this option, then how do I express this with a SPDX
-> license identifier?  Sigh!
+[1] https://lore.kernel.org/lkml/20170516232702.GL17314@wotan.suse.de/
+[2] https://lkml.kernel.org/r/1495234558.7848.122.camel@linux.intel.com
 
-So, this problem that Thomas notes above is definitely an error by the SPDX
-project, *just like* the one that exists for the deprecated “GPL-2.0”
-identifier.  But, that isn't copyleft-next's fault [0], nor Luis's fault.
-IMO, Luis shouldn't be punished (i.e., by being prohibited by the Linux
-project from licensing under the GPLv2-compatible terms of his choosing)
-simply because the SPDX project erred.
+> And here's the thing.
+> The copyleft-next license has a number of legal issues that make it problematic.
 
-Fortunately, the problem *is* hypothetical here because Luis has *not*
-indicated that he's licensing under “copyleft-next-0.3.1 REVOKING
-new-version-upgrade”, so it's not a problem for Luis' patch that SPDX offers
-no way to represent that licensing sub-option in copyleft-next.
+You say number of legal issues.
 
-[0] Nevertheless, I am wondering, given that (a) opting-out-of-auto-upgrade is
-    *so* GPL-specific, and (b) the auto-upgrade opt out has caused decades
-    of pain and woe throughout the GPL-using community (and for SPDX!),
-    maybe copyleft-next should, in fact, drop that clause entirely in future
-    versions. Discussion of that is likely not of interest to most folks on
-    this wide thread, so I'll pick up that conversation more narrowly just
-    on the copyleft-next list from here …
+> Not the least of which are that some of its terms are dependent on external
+> situations that can change over time, in a matter that is uncontrolled by either
+> the licensor or the licensee.  In order to determine what terms are effective, you
+> have to know when the license was granted, and what the FSF and OSI approved
+> licenses were at various points in time.  You literally have to use the Internet
+> Archive wayback machine, and do a bunch of research, to interpret the license terms.
+> It is not, as currently constructed, a good license, due to this lack of legal clarity.
 
- -- bkuhn
+But the above seems to indicate one technical pain point in so far as
+two sections:
+
+4. Condition Against Further Restrictions; Inbound License Compatibility
+7. Nullification of Copyleft/Proprietary Dual Licensing
+
+If you are going to offer to pay for an alternative proprietary
+licensing, I'm sure you can do the work.
+
+And if in so far as clause 4 is concerned, yeah I think wayback machine
+is a sensible solution. Good idea, seems like we have that covered since
+1999 [3].
+
+[3] https://web.archive.org/web/*/https://opensource.org/licenses
+
+  Luis
