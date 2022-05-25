@@ -2,48 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D01C5346A2
+	by mail.lfdr.de (Postfix) with ESMTP id 221F55346A1
 	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 May 2022 00:35:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242320AbiEYWfc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 May 2022 18:35:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39948 "EHLO
+        id S237173AbiEYWfe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 May 2022 18:35:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345542AbiEYWfK (ORCPT
+        with ESMTP id S1345534AbiEYWfH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 May 2022 18:35:10 -0400
+        Wed, 25 May 2022 18:35:07 -0400
 Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FEB7101F3
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F5FE101CA
         for <linux-fsdevel@vger.kernel.org>; Wed, 25 May 2022 15:35:06 -0700 (PDT)
-Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24PGte42009825
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 May 2022 15:35:06 -0700
+Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24PGtee4011369
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 May 2022 15:35:05 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=facebook;
- bh=KkKc7JfZWvzdwU4gQJqw11EVWJb6LJMB0THy49VxYKA=;
- b=k/BfEgt+VinUcvXkmSe0rRGMfXU0cY4QFD0peDfky3/WsAkFaWTw9ezkrjMOzvqx1Mok
- W4veRs2+V1WDrrFZOnMnryjnsEnh9zEc67AKl3XGgPnOtmlPVd5R7f0piEvEis1jezad
- zZCpmhnV/FuXGcAadUo/JvIVVw3n9JUyv60= 
-Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3g93uphc0d-2
+ bh=j/dY8M7U0980IK7tXqhTnWDktIso9RCIpG7xYensPsA=;
+ b=p7bHRri7LXOaLHKaj6Fdm0YE8u2VWdobPaat5hVG7PaL0JCX5V53fNaGhI+3yCohtCF1
+ hO05yklFS7Ug4qr840doLbB3kTjWH3T/7xi3FOQh0zPQEUXMt2w/qAC3+YcGZiMZGOFf
+ CyiZz5gVlQXDltW/HDi0g2oG6xT7n/5GW4s= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3g93uj1cu2-2
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 May 2022 15:35:06 -0700
-Received: from twshared8508.05.ash9.facebook.com (2620:10d:c085:208::f) by
- mail.thefacebook.com (2620:10d:c085:11d::6) with Microsoft SMTP Server
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 May 2022 15:35:05 -0700
+Received: from twshared10560.18.frc3.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:82::c) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.28; Wed, 25 May 2022 15:35:05 -0700
+ 15.1.2375.28; Wed, 25 May 2022 15:35:03 -0700
 Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
-        id 3BE35F9E1B7B; Wed, 25 May 2022 15:34:35 -0700 (PDT)
+        id 4265BF9E1B81; Wed, 25 May 2022 15:34:35 -0700 (PDT)
 From:   Stefan Roesch <shr@fb.com>
 To:     <io-uring@vger.kernel.org>, <kernel-team@fb.com>,
         <linux-mm@kvack.org>, <linux-xfs@vger.kernel.org>,
         <linux-fsdevel@vger.kernel.org>
 CC:     <shr@fb.com>, <david@fromorbit.com>, <jack@suse.cz>,
         <hch@infradead.org>
-Subject: [PATCH v5 13/16] xfs: Specify lockmode when calling xfs_ilock_for_iomap()
-Date:   Wed, 25 May 2022 15:34:29 -0700
-Message-ID: <20220525223432.205676-14-shr@fb.com>
+Subject: [PATCH v5 14/16] xfs: Change function signature of xfs_ilock_iocb()
+Date:   Wed, 25 May 2022 15:34:30 -0700
+Message-ID: <20220525223432.205676-15-shr@fb.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220525223432.205676-1-shr@fb.com>
 References: <20220525223432.205676-1-shr@fb.com>
@@ -51,8 +51,8 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-GUID: 5TPt5-oGt_3WS6GV-xeLXd5SP4RwmHeY
-X-Proofpoint-ORIG-GUID: 5TPt5-oGt_3WS6GV-xeLXd5SP4RwmHeY
+X-Proofpoint-GUID: rfC8lyahOBQlsGcj0Tg_ti-i4X76IvQh
+X-Proofpoint-ORIG-GUID: rfC8lyahOBQlsGcj0Tg_ti-i4X76IvQh
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.874,Hydra:6.0.486,FMLib:17.11.64.514
  definitions=2022-05-25_06,2022-05-25_02,2022-02-23_01
@@ -67,45 +67,104 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch changes the helper function xfs_ilock_for_iomap such that the
-lock mode must be passed in.
+This changes the function signature of the function xfs_ilock_iocb():
+- the parameter iocb is replaced with ip, passing in an xfs_inode
+- the parameter iocb_flags is added to be able to pass in the iocb flags
+
+This allows to call the function from xfs_file_buffered_writes.
+All the callers are changed accordingly.
 
 Signed-off-by: Stefan Roesch <shr@fb.com>
 ---
- fs/xfs/xfs_iomap.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ fs/xfs/xfs_file.c | 23 +++++++++++------------
+ 1 file changed, 11 insertions(+), 12 deletions(-)
 
-diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-index e552ce541ec2..3aa60e53a181 100644
---- a/fs/xfs/xfs_iomap.c
-+++ b/fs/xfs/xfs_iomap.c
-@@ -659,7 +659,7 @@ xfs_ilock_for_iomap(
- 	unsigned		flags,
- 	unsigned		*lockmode)
+diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+index 5bddb1e9e0b3..50dea07f5e56 100644
+--- a/fs/xfs/xfs_file.c
++++ b/fs/xfs/xfs_file.c
+@@ -190,14 +190,13 @@ xfs_file_fsync(
+ 	return error;
+ }
+=20
+-static int
++static inline int
+ xfs_ilock_iocb(
+-	struct kiocb		*iocb,
++	struct xfs_inode	*ip,
++	int			iocb_flags,
+ 	unsigned int		lock_mode)
  {
--	unsigned		mode =3D XFS_ILOCK_SHARED;
-+	unsigned int		mode =3D *lockmode;
- 	bool			is_write =3D flags & (IOMAP_WRITE | IOMAP_ZERO);
+-	struct xfs_inode	*ip =3D XFS_I(file_inode(iocb->ki_filp));
+-
+-	if (iocb->ki_flags & IOCB_NOWAIT) {
++	if (iocb_flags & IOCB_NOWAIT) {
+ 		if (!xfs_ilock_nowait(ip, lock_mode))
+ 			return -EAGAIN;
+ 	} else {
+@@ -222,7 +221,7 @@ xfs_file_dio_read(
 =20
- 	/*
-@@ -737,7 +737,7 @@ xfs_direct_write_iomap_begin(
- 	int			nimaps =3D 1, error =3D 0;
- 	bool			shared =3D false;
- 	u16			iomap_flags =3D 0;
--	unsigned		lockmode;
-+	unsigned int		lockmode =3D XFS_ILOCK_SHARED;
+ 	file_accessed(iocb->ki_filp);
 =20
- 	ASSERT(flags & (IOMAP_WRITE | IOMAP_ZERO));
+-	ret =3D xfs_ilock_iocb(iocb, XFS_IOLOCK_SHARED);
++	ret =3D xfs_ilock_iocb(ip, iocb->ki_flags, XFS_IOLOCK_SHARED);
+ 	if (ret)
+ 		return ret;
+ 	ret =3D iomap_dio_rw(iocb, to, &xfs_read_iomap_ops, NULL, 0, 0);
+@@ -244,7 +243,7 @@ xfs_file_dax_read(
+ 	if (!iov_iter_count(to))
+ 		return 0; /* skip atime */
 =20
-@@ -1167,7 +1167,7 @@ xfs_read_iomap_begin(
- 	xfs_fileoff_t		end_fsb =3D xfs_iomap_end_fsb(mp, offset, length);
- 	int			nimaps =3D 1, error =3D 0;
- 	bool			shared =3D false;
--	unsigned		lockmode;
-+	unsigned int		lockmode =3D XFS_ILOCK_SHARED;
+-	ret =3D xfs_ilock_iocb(iocb, XFS_IOLOCK_SHARED);
++	ret =3D xfs_ilock_iocb(ip, iocb->ki_flags, XFS_IOLOCK_SHARED);
+ 	if (ret)
+ 		return ret;
+ 	ret =3D dax_iomap_rw(iocb, to, &xfs_read_iomap_ops);
+@@ -264,7 +263,7 @@ xfs_file_buffered_read(
 =20
- 	ASSERT(!(flags & (IOMAP_WRITE | IOMAP_ZERO)));
+ 	trace_xfs_file_buffered_read(iocb, to);
 =20
+-	ret =3D xfs_ilock_iocb(iocb, XFS_IOLOCK_SHARED);
++	ret =3D xfs_ilock_iocb(ip, iocb->ki_flags, XFS_IOLOCK_SHARED);
+ 	if (ret)
+ 		return ret;
+ 	ret =3D generic_file_read_iter(iocb, to);
+@@ -343,7 +342,7 @@ xfs_file_write_checks(
+ 	if (*iolock =3D=3D XFS_IOLOCK_SHARED && !IS_NOSEC(inode)) {
+ 		xfs_iunlock(ip, *iolock);
+ 		*iolock =3D XFS_IOLOCK_EXCL;
+-		error =3D xfs_ilock_iocb(iocb, *iolock);
++		error =3D xfs_ilock_iocb(ip, iocb->ki_flags, *iolock);
+ 		if (error) {
+ 			*iolock =3D 0;
+ 			return error;
+@@ -516,7 +515,7 @@ xfs_file_dio_write_aligned(
+ 	int			iolock =3D XFS_IOLOCK_SHARED;
+ 	ssize_t			ret;
+=20
+-	ret =3D xfs_ilock_iocb(iocb, iolock);
++	ret =3D xfs_ilock_iocb(ip, iocb->ki_flags, iolock);
+ 	if (ret)
+ 		return ret;
+ 	ret =3D xfs_file_write_checks(iocb, from, &iolock);
+@@ -583,7 +582,7 @@ xfs_file_dio_write_unaligned(
+ 		flags =3D IOMAP_DIO_FORCE_WAIT;
+ 	}
+=20
+-	ret =3D xfs_ilock_iocb(iocb, iolock);
++	ret =3D xfs_ilock_iocb(ip, iocb->ki_flags, iolock);
+ 	if (ret)
+ 		return ret;
+=20
+@@ -659,7 +658,7 @@ xfs_file_dax_write(
+ 	ssize_t			ret, error =3D 0;
+ 	loff_t			pos;
+=20
+-	ret =3D xfs_ilock_iocb(iocb, iolock);
++	ret =3D xfs_ilock_iocb(ip, iocb->ki_flags, iolock);
+ 	if (ret)
+ 		return ret;
+ 	ret =3D xfs_file_write_checks(iocb, from, &iolock);
 --=20
 2.30.2
 
