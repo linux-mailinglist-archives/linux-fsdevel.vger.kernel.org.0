@@ -2,164 +2,159 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D244753421F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 May 2022 19:20:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C32A25342AA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 May 2022 20:04:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245592AbiEYRU2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 May 2022 13:20:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38244 "EHLO
+        id S1343646AbiEYSEz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 May 2022 14:04:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233601AbiEYRU1 (ORCPT
+        with ESMTP id S1343640AbiEYSEy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 May 2022 13:20:27 -0400
-Received: from mail-qk1-x72b.google.com (mail-qk1-x72b.google.com [IPv6:2607:f8b0:4864:20::72b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56B0CAE271;
-        Wed, 25 May 2022 10:20:26 -0700 (PDT)
-Received: by mail-qk1-x72b.google.com with SMTP id l82so13244865qke.3;
-        Wed, 25 May 2022 10:20:26 -0700 (PDT)
+        Wed, 25 May 2022 14:04:54 -0400
+Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F0D09CC8E
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 May 2022 11:04:53 -0700 (PDT)
+Received: by mail-io1-xd2a.google.com with SMTP id i74so15476440ioa.4
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 May 2022 11:04:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=YfBPEciL5G7knzd6QMjS+T5tcQUuK2HPFFm47OcA2Rk=;
-        b=SDNuq+CpL9mwhliv/HCa2205mkKlLFnNO+bi5V221Xkf2P4zQ0OCDi03/bpZSTZN6I
-         qGU0oMfOP1x4OArMNUxmnEHIjr/i6AhyKwMM5KO35xkmUYKSqae+LxXSRDVsRJg3POOD
-         1heLb6R1u1wRDho4dxMc80pexy03gXaONqVTHtkp/iRf4HLOD+t/ODIgXRr23jky8ojq
-         oYtxDdiRvm7Grs+v0P++Kj1sM9Vc+mWhn2QNTVeGF6XvURNO+/xDOJW3/Q/NPHnTzFMp
-         KrOahJEPjGyPa2gShpPmIeTBW7Ms/s+c1rRc80U0uKAsBb4xVhGipRb10pBipHBfEfxi
-         4l5w==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language
+         :from:to:cc:references:in-reply-to:content-transfer-encoding;
+        bh=Qt+3c+YXaIfHCYOzqxLz/RsODKgYxd4undTTcmyHC+8=;
+        b=p5Wjk0AdiE/CRbKfit/y/Nzwd0KHEFtjAHOp42ZeMwxTHekaHNXXCwWZb9R2YIvJTT
+         VuxW9zB4dEo6LvY31+3E+PD4sqnSQhZvAO3hj+KV1fYuCLM6/7cayCoYYUp+4pAyd70k
+         16GtYo9HwAuBF7sUWNt6fgBs9+n2eCCUgFwcBgbl9/96Vbfk468tX432G5fDJ+YQG/FG
+         3Hf+G9UvOWQoB9w6tj3LopgvuEZ73uo72vfYAzozhOOtfhtn4gS6aAR/OMQUIwCyrdOW
+         s+GjQR2LsTmItQ5ye6g+aOd7B3ovMbTJQ0TopwJQg3Z+7Y5OdM6YSTkZy8EeORIbTfEW
+         26OQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=YfBPEciL5G7knzd6QMjS+T5tcQUuK2HPFFm47OcA2Rk=;
-        b=PxN3eicUM/W11FLC2ImYYbtnSdZ8j5V7WcOrspUKe4CLFafKebhYqEYAqa5a3FJpzL
-         n6mpw+85GFHQEaScNjxhxk0B/VxiQBlQCHQkYM6QE443LRcNLnl9P4nOpCP9aqDOlGOr
-         t3E7K7DIWNkli6EbT2HY7gIRsYscGAeEJbh9+E5P0ldb7v09HIgMSpGuskEv2Z48adgM
-         izO/mFvzoHy95Gt8YNtLsCTVEiUAcqnL2WAuxW5hwNJfu68JZyMZTI3NSWBddMtglpJG
-         a1/S0MrEj7XBgE13hitunZ4D6QNpZHtk5prZAedIbytvYM9K0Gi7Fi+/Axd/Tci31lgW
-         6VKw==
-X-Gm-Message-State: AOAM530r+G+gLZq2tiNu3scoMTVtG41BFWUVfOfkadysmm2KU1dUcRTE
-        Al8x2TsI82VL61MWUn5xQA==
-X-Google-Smtp-Source: ABdhPJxJtiJd73drvBnS+M39DznexShMWDDD0/WY8tbqvBv1sZqUR2r2Ytvsnek6D/zQiR9lKS31NQ==
-X-Received: by 2002:a05:620a:44c4:b0:6a5:a827:d86c with SMTP id y4-20020a05620a44c400b006a5a827d86cmr437283qkp.624.1653499225424;
-        Wed, 25 May 2022 10:20:25 -0700 (PDT)
-Received: from moria.home.lan (c-73-219-103-14.hsd1.vt.comcast.net. [73.219.103.14])
-        by smtp.gmail.com with ESMTPSA id r126-20020ae9dd84000000b0069ffe63228fsm1508826qkf.121.2022.05.25.10.20.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 May 2022 10:20:24 -0700 (PDT)
-Date:   Wed, 25 May 2022 13:20:22 -0400
-From:   Kent Overstreet <kent.overstreet@gmail.com>
-To:     Theodore Ts'o <tytso@mit.edu>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org, netdev@vger.kernel.org,
-        mcgrof@kernel.org
-Subject: Re: RFC: Ioctl v2
-Message-ID: <20220525172022.ml7lhby2igxtlm7a@moria.home.lan>
-References: <20220520161652.rmhqlvwvfrvskg4w@moria.home.lan>
- <YogoI6Augr1V6AHn@mit.edu>
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:from:to:cc:references:in-reply-to
+         :content-transfer-encoding;
+        bh=Qt+3c+YXaIfHCYOzqxLz/RsODKgYxd4undTTcmyHC+8=;
+        b=KfQ+KQo/Jg14En+5MDi2qerhdrDBXPVqOS3LdSl4NuEt53wEfWa11yHjXvO9bs7hcx
+         88soGSuAHfXkENoIjMvmIMFdGDaMqz75snFQqh1KFrEMg+/DbwCgeuaOdHcpftwXN0ua
+         A5ZLR4U+YOW1KtyP++ZlFJ0RLrPnxzcNmzbey6/NqunKwUMQV43mYPD2fCzn43246tjX
+         o23axaqU5wIxoxN9bJeNgOi/7QQCylHtCgmmHPK/VJNic0BCaSelo9E/9aYCzEH9PaJ9
+         VsW+4OsIo/isxgyMG6QR3M1a3RFcKetExYaujIdrLGohE9PIqAU5OXShnaWYTn1CzaV7
+         eJww==
+X-Gm-Message-State: AOAM530cAEx8m085pftRX3jw/9tdsuj64bBKwGC+j4By/VqZvBhIdago
+        5BoFIWe+5arRRnhafzcMJ4jNnA==
+X-Google-Smtp-Source: ABdhPJwvbXOCqXfGcsXL6ie4UxqR18lM/C48FMYhi5YcjZZ1k5CBQc7p7ln3n4UAXfisbmVh7ObxjA==
+X-Received: by 2002:a6b:c90a:0:b0:65b:48b5:9907 with SMTP id z10-20020a6bc90a000000b0065b48b59907mr15403140iof.102.1653501892541;
+        Wed, 25 May 2022 11:04:52 -0700 (PDT)
+Received: from [192.168.1.172] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id h2-20020a056602154200b0066580930265sm1084749iow.14.2022.05.25.11.04.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 25 May 2022 11:04:51 -0700 (PDT)
+Message-ID: <9c37e487-2f7e-6141-4f3e-62c52c28b868@kernel.dk>
+Date:   Wed, 25 May 2022 12:04:50 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YogoI6Augr1V6AHn@mit.edu>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [GIT PULL] io_uring xattr support
+Content-Language: en-US
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     io-uring <io-uring@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+References: <d94a4e55-c4f2-73d8-9e2c-e55ae8436622@kernel.dk>
+ <CAHk-=wg54n0DONm_2Fqtpq63ZgfQUef0WLNhW_KaJX4HTh19YQ@mail.gmail.com>
+ <d9b44d03-2060-86ef-2864-be263fbcba84@kernel.dk>
+In-Reply-To: <d9b44d03-2060-86ef-2864-be263fbcba84@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 20, 2022 at 07:45:39PM -0400, Theodore Ts'o wrote:
-> On Fri, May 20, 2022 at 12:16:52PM -0400, Kent Overstreet wrote:
-> > 
-> > Where the lack of real namespacing bites us more is when ioctls get promoted
-> > from filesystem or driver on up. Ted had a good example of an ext2 ioctl getting
-> > promoted to the VFS when it really shouldn't have, because it was exposing ext2
-> > specific data structures.
-> > 
-> > But because this is as simple as changing a #define EXT2_IOC to #define FS_IOC,
-> > it's really easy to do without adequate review - you don't have to change the
-> > ioctl number and break userspace, so why would you?
-> > 
-> > Introducing real namespacing would mean that promoting an ioctl to the VFS level
-> > would really have to be a new ioctl, and it'll get people to think more about
-> > what the new ioctl would be.
+On 5/23/22 1:59 PM, Jens Axboe wrote:
+>> And from a maintenenace standpoint, I really think it would be good to
+>> try to try to walk away from those "case IORING_OP_xyz" things, and
+>> try to split things up into more manageable pieces.
+>>
+>> Hmm?
 > 
-> It's not clear that making harder not to break userspace is a
-> *feature*.  If existing programs are using a particular ioctl
-> namespace, being able to have other file systems adopt it has
-> historically been considered a *feature* not a *bug*.
+> As mentioned, it's something that I have myself been thinking about for
+> the past few releases. It's not difficult work and can be done in a
+> sequential kind of manner, but it will add some pain in terms of
+> backports. Nothing _really_ major, but... Longer term it'll be nicer for
+> sure, which is the most important bit.
 > 
-> At the time, we had working utilities, chattr and lsattr, which were
-> deployed on all Linux distributions, and newer file systems, such as
-> xfs, reiserfs, btrfs, etc., decided they wanted to piggy-back on those
-> existing utilities.  Forcing folks to deploy new utilities just
-> because it's the best way to force "adequate review" might be swinging
-> the pendulum too far in the straight-jacket direction.
+> I've got some ideas on how to split the core bits, and the
+> related-op-per file kind of idea for the rest makes sense. Eg net
+> related bits can go in one, or maybe we can even go finer grained and
+> (almost) do per-op.
+> 
+> I'll spend some time after the merge window to try and get this sorted
+> out.
 
-But back in those days, users updating those core utilities was a much bigger
-hassle. That's changing, we don't really have users compiling from source
-anymore, and we're slowly but steadily moving towards the rolling releases
-world: slackware -> debian -> nixos.
+Well I spent some time yesterday, and 53 patches later, I think it looks
+pretty sane. At this point everything is split out, except read/write
+and poll handling. There's still some things we can split out, like the
+io_uring_register() side, but as it stands, ~35% of the code has been
+split into separate files for either opcodes or infrastructure that goes
+together. We can definitely get this down further, but it's a good
+start.
 
-And on the developer side of things, historically developers have worked on a
-few packages where they were comfortable with the process, and packages tended
-more towards giant monorepos, but the younger generation is more used to working
-across multiple packages/repositories as necessary (this is where github has
-been emphatically a good thing, despite being proprietary; it's standardized a
-lot of the friction-y "how do I submit to this repo" stuff).
+Anyway, I pitted -git vs -git + this merged in, to test with and without
+spectre mitigations as we now have an indirect ->prep() and ->issue()
+for each opcode in the fast path. I ran my usual peak testing, which is
+basically just polled async random reads from 3 devices. The box in
+question is a 12900K, so recent cpu. Mitigation status:
 
-So I understand where you're coming from but I think this is worth rethinking.
+/sys/devices/system/cpu/vulnerabilities/spectre_v1:Mitigation: usercopy/swapgs barriers and __user pointer sanitization
+/sys/devices/system/cpu/vulnerabilities/spectre_v2:Vulnerable: eIBRS with unprivileged eBPF
 
-Additionally, bikeshedding gets really painful when people are trying to plan
-for all eventualities and think too far ahead. Having multiple stages of review
-is _helpful_ with this. If an ioctl is filesystem-private, it's perfectly fine
-for it embed filesystem specific data structures - if we can ensure that that
-won't get lifted to the VFS layer without anyone noticing!
+Out of 5 runs, here are the results:
 
-> ...
->
-> In the case of extended attributes, we had perfectly working userspace
-> tools that would have ***broken*** if we adhered to a doctrinaire,
-> when you promote an interface, we break the userspace interface Just
-> Because it's the Good Computer Science Thing To Do.
+-git, RETPOLINE=n, mitigations=off
+Maximum IOPS=12837K
+Maximum IOPS=12812K
+Maximum IOPS=12834K
+Maximum IOPS=12856K
+Maximum IOPS=12809K
 
-Not broken, though - it just would've needed updating to support additional
-filesystems, and when the ioctls don't need changing the patches would be
-trivial:
+for-5.20/io_uring, RETPOLINE=n, mitigations=off
+Maximum IOPS=12877K
+Maximum IOPS=12870K
+Maximum IOPS=12848K
+Maximum IOPS=12837K
+Maximum IOPS=12899K
 
-ret = ioctl_xfs_goingdown(..);
-becomes
-ret = ioctl_fs_goingdown(...) ?:
-      ioctl_xfs_goingdown(...);
+-git, RETPOLINE=y, mitigations=on
+Maximum IOPS=12869K
+Maximum IOPS=12766K
+Maximum IOPS=12817K
+Maximum IOPS=12866K
+Maximum IOPS=12828K
 
-(I'm the only one I know who does that chaining syntax in C, but I like it :)
+for-5.20/io_uring, RETPOLINE=y, mitigations=on
+Maximum IOPS=12859K
+Maximum IOPS=12921K
+Maximum IOPS=12899K
+Maximum IOPS=12859K
+Maximum IOPS=12904K
 
-> So this approach requires that someone has to actually implement the
-> wrapper library.  Who will that be?  The answer could be, "let libc do
-> it", but then we need to worry about all the C libraries out there
-> actually adopting the new ioctl, which takes a long time, and
-> historically, some C library maintainers have had.... opinionated
-> points of view about the sort of "value add that should be done at the
-> C Library level".
+If anything, the new code seems a smidge faster for both mitigations=off
+vs RETPOLINE=y && mitigations=on. Hmm? But at least from a first test
+this is promising and it may be a viable path forward to make it a bit
+saner.
 
-Not libc, and we definitely don't want to have to update that library for every
-new ioctl - I'm imagining that library just being responsible for the "query
-kernel for ioctl numbers" part, the ioctl definitions themselves will still come
-from kernel headers.
+If you're curious, git tree here:
 
-> For example, I have an ext2fs library function
-> ext2fs_get_device_size2(), which wraps not only the BLKGETSIZE and
-> BLKGETSIZE64 ioctls, but also the equivalents for Apple Darwin
-> (DKIOCGETBLOCKCOUNT), FreeBSD/NetBSD (DIOCGDINFO and later
-> DIOCGMEDIASIZE), and the Window's DeviceIoControl()'s
-> IOCTL_DISK_GET_DRIVE_GEOMETRY call.  The point is that wrapper
-> functions are very much orthogonal to the ioctl interface; we're all
-> going to have wrapper functions, and we'll create them where they are
-> needed.
+https://git.kernel.dk/cgit/linux-block/log/?h=for-5.20/io_uring
 
-This seems unrelated to the ioctl v2 discussion, but - it would be _great_ if we
-could get that in a separate repository where others could make use of it :)
+with the first 5 patches being staged for 5.19 as well as they are just
+consistency cleanups.
+
+-- 
+Jens Axboe
+
