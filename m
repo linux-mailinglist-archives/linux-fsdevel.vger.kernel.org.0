@@ -2,220 +2,209 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B6141534573
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 May 2022 23:00:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CCF655343C8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 May 2022 21:08:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344217AbiEYVAd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 May 2022 17:00:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47596 "EHLO
+        id S1344059AbiEYTG6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 May 2022 15:06:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232246AbiEYVAc (ORCPT
+        with ESMTP id S1344058AbiEYTGz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 May 2022 17:00:32 -0400
-X-Greylist: delayed 6837 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 25 May 2022 14:00:30 PDT
-Received: from mx07-001d1705.pphosted.com (mx07-001d1705.pphosted.com [185.132.183.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8B8FBA551;
-        Wed, 25 May 2022 14:00:30 -0700 (PDT)
-Received: from pps.filterd (m0209326.ppops.net [127.0.0.1])
-        by mx08-001d1705.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24PGte2e030554;
-        Wed, 25 May 2022 19:05:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sony.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=S1;
- bh=FXH5Aixo14OcpZvaaOb6T73bMITOImrbV68uF3PReGo=;
- b=UUbCQNk4LP5+E1l/TxE7UNbh0yGSh06NQgjZvpnX/TillZyH49QugjVghra+CXd4reEr
- vnJVydvzfYAK9uHr9jbDi60ENKeCCTurnN9NrtJv9OsNvONNDT7HZYfljaVL4RrxPRA+
- rE1dqi2mt8k3PdOm0v+lINmK80cwpBQ0IwM4G21OrWWVuICC38m5fEWq7Fab4kPM/2KI
- EqizxSED6hbuFQBcLO1m7kCDt/6lRAVVjlqgmeu7NCcHijkPHiN7X8+kqJ/n9qJ7BRJ7
- TWVJr8eb18ruzocmMeiqVHAHduifNuSgI2/RfPQueULqRlxZ2q453XKxWuGNf1zC766C 4w== 
-Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2168.outbound.protection.outlook.com [104.47.59.168])
-        by mx08-001d1705.pphosted.com (PPS) with ESMTPS id 3g93uqs9s8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 25 May 2022 19:05:35 +0000
+        Wed, 25 May 2022 15:06:55 -0400
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam08on2058.outbound.protection.outlook.com [40.107.102.58])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DFD71182E;
+        Wed, 25 May 2022 12:06:44 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=L34ucy2EGgM0VeCMA2ZDSolFHfA0PMPOWsrd6KjpIyP36XhryVGCKfFV2XeqLovhGKarOdIbrqZOdaoWO6IqGy092c7vqjyqyDdAobUWFdgAqn1EELEFgKR1CY/kYT+Gp62BQhSFKOyXZl410ELFTzVt9Ap2Sde2wdhiI+5Dmy/Ipys8StfY6lbJjBQY9Fob0EyG4KuYwHdGPoU4nhnOv+SacSb714fWS+AMxLYkDQPOlhWphjblKoxD5YPHs72xQUav0ZY4xMgenkfGN2Et54QcAV93bD9snU1ipYfYCoiapZqTUCkBJ4MOXy+UCnGh0IVSBnxDALrD2wa1fhHt4w==
+ b=Qy2YARVnQzDpzmfpwYVaJmdqMYzk0pYrMQrBpo/fN88dppvF4wBzObB+VMRWOG3Fc6YQt0zj1FBInfCK0am/93+zGjYnkzFDXhnlMK4ITQBx/jsxdz+aiMUBOy05NJZzJonhyCGGdBoxNUXwP7pKZh/Q62S1dY7tUvzFzJTaQ8ljNQV5AYSLAgTjNTAqiucVvMbSmOlLh9I8JM25tk0V7G3Xagljy8XDgFDweMzpzUYPW20jHiBlE209QGbo3ETn2i5LK+T5KkS7ob/uI5rydqzH/zdpNu3YPBoyt4quI7PbeSXpRUtJsfwG7mMJPrigVwpFdg1MMaMq1SqBe3tncg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FXH5Aixo14OcpZvaaOb6T73bMITOImrbV68uF3PReGo=;
- b=GjoXp3/aR1xrNMVfKY1by2WWQssCLUOh7Z4ZYaVasy3fEswNLuJptVpQ0n+6BycMaQuOcCLbnMxJ6lK004nXqpWhhePIzd8jrWipMlk+GlTaObuz2eOcBskjOPIjVY05R9sqMICq5a+V52OyWRRGX78guPq0hmIqN2S1qty9Kl2BjjKkS2jR/YW7eaTmmiCHA7r2p2P7O7udqnCL7ovSzUME1oqBTJoKeOrkBe1IqkimDmSpEKNZKrhiex+mLFSaV9OFxZCGPJ/CrUXMEGWFWisy/uKwi8Lk7/3UqCbWmlAXm0lKEC/rBg4dWjvayvpdkBQI/8Adk75NoxAWOeXQPg==
+ bh=SmK0l4vrSLZqAbg+H+696K0BMp0QRrMpCNlUxOvFPZI=;
+ b=TNiIl+seE22PWNS+T2actUAXv7PrgqkOPo1IE+KBbBt6/grXwug3Nbj5mbqGaXTrD3rjF4OuXrGVqeT3B3WT2U8XXSl4jTjhetOlCj0zsfS0WB8lIBZ4R5nBflebAU3NpnXSCVtIdqPowcu2Cgv7+IjMUFXP4WVa4kxUM1KOhTFnG83LXJJ4lpdCSJv8cIisMZURl2jX2H5WO8yapsVEx5cEjCI2sZs6UN7aOCDleOidQHa3pT8AbioO/Jn/BWWwS1XwB0TOI+FL0rhHhdLjZtNqUL6oS/ahHHeq7WHXLqQJpwg0NIQqUlmq4tKWzjSQddE6HImvj2GSOYOZ5mX3uw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=sony.com; dmarc=pass action=none header.from=sony.com;
- dkim=pass header.d=sony.com; arc=none
-Received: from BN7PR13MB2499.namprd13.prod.outlook.com (2603:10b6:406:ac::18)
- by PH0PR13MB5050.namprd13.prod.outlook.com (2603:10b6:510:a0::21) with
+ smtp.mailfrom=ddn.com; dmarc=pass action=none header.from=ddn.com; dkim=pass
+ header.d=ddn.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ddn.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SmK0l4vrSLZqAbg+H+696K0BMp0QRrMpCNlUxOvFPZI=;
+ b=dE5a4wNAIJt7IKdJF83d6S/Md4+f0SCJXcW9orjXcz/LfG+4EjTWIWh/qpJZrRvetwEV+1wfDYgpDrX4frUL4sY9NiZtRDXo3nMjz30wQnDsmAIhyK8JzGbKlbWp/1/T7sdt0TZ2tln+TtItUO0orWPoRqXi7EVcbz/2MeGgJzE=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=ddn.com;
+Received: from DM5PR1901MB2037.namprd19.prod.outlook.com (2603:10b6:4:aa::29)
+ by DM6PR19MB3979.namprd19.prod.outlook.com (2603:10b6:5:242::8) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5293.7; Wed, 25 May
- 2022 19:05:32 +0000
-Received: from BN7PR13MB2499.namprd13.prod.outlook.com
- ([fe80::6d71:f79a:cbeb:b66d]) by BN7PR13MB2499.namprd13.prod.outlook.com
- ([fe80::6d71:f79a:cbeb:b66d%5]) with mapi id 15.20.5314.005; Wed, 25 May 2022
- 19:05:32 +0000
-From:   "Bird, Tim" <Tim.Bird@sony.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-CC:     Thomas Gleixner <tglx@linutronix.de>,
-        Richard Fontana <fontana@sharpeleven.org>,
-        "tj@kernel.org" <tj@kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "jeyu@kernel.org" <jeyu@kernel.org>,
-        "shuah@kernel.org" <shuah@kernel.org>,
-        "bvanassche@acm.org" <bvanassche@acm.org>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "joe@perches.com" <joe@perches.com>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "minchan@kernel.org" <minchan@kernel.org>,
-        "linux-spdx@vger.kernel.org" <linux-spdx@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Goldwyn Rodrigues <rgoldwyn@suse.com>,
-        Kuno Woudt <kuno@frob.nl>,
-        "copyleft-next@lists.fedorahosted.org" 
-        <copyleft-next@lists.fedorahosted.org>,
-        Ciaran Farrell <Ciaran.Farrell@suse.com>,
-        Christopher De Nicolo <Christopher.DeNicolo@suse.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Thorsten Leemhuis <linux@leemhuis.info>
-Subject: RE: [PATCH v9 1/6] LICENSES: Add the copyleft-next-0.3.1 license
-Thread-Topic: [PATCH v9 1/6] LICENSES: Add the copyleft-next-0.3.1 license
-Thread-Index: AQHYbuvq+O+5yJ1eNkGH1te7vK8zAK0vz1+AgAADYDCAABUcgIAACgiA
-Date:   Wed, 25 May 2022 19:05:31 +0000
-Message-ID: <BN7PR13MB2499BA2AFAC1C79197734D81FDD69@BN7PR13MB2499.namprd13.prod.outlook.com>
-References: <20211029184500.2821444-1-mcgrof@kernel.org>
- <20211029184500.2821444-2-mcgrof@kernel.org> <87bkvo0wjd.ffs@tglx>
- <Yo5cxWghV/v2Fnzf@bombadil.infradead.org>
- <BN7PR13MB24998CAFCFB973C80549F308FDD69@BN7PR13MB2499.namprd13.prod.outlook.com>
- <Yo5xTwGLmbsgJhfM@bombadil.infradead.org>
-In-Reply-To: <Yo5xTwGLmbsgJhfM@bombadil.infradead.org>
-Accept-Language: en-US
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5293.13; Wed, 25 May
+ 2022 19:06:43 +0000
+Received: from DM5PR1901MB2037.namprd19.prod.outlook.com
+ ([fe80::3994:ad08:1a41:d93a]) by DM5PR1901MB2037.namprd19.prod.outlook.com
+ ([fe80::3994:ad08:1a41:d93a%7]) with mapi id 15.20.5293.013; Wed, 25 May 2022
+ 19:06:43 +0000
+Message-ID: <77b28772-b210-6597-eedd-fe7e0b5b1db9@ddn.com>
+Date:   Wed, 25 May 2022 21:06:37 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH v3 1/1] FUSE: Allow non-extending parallel direct writes
+ on the same file.
 Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: e7cee65c-03f1-4d57-f06e-08da3e818a4e
-x-ms-traffictypediagnostic: PH0PR13MB5050:EE_
-x-microsoft-antispam-prvs: <PH0PR13MB50505E4AA86F2F5F31E02365FDD69@PH0PR13MB5050.namprd13.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: zVJzVlkh3HuFIyBbCHJ1XVYG0mjThfWJQGdwlKWKAfgB1QjzHhmuviXE7rXm7liTC3EwbWu0rjweHzQF005xPiqz79ma3eutihbO30IxO/x67x4nsrE1vo9lV9GuNpc/AvjRGNEojnEbASrckd4xZLijioeUjGCCP6XGXXhnGXpRXdpxMH/HSjqqaeUhmHYYehk6izPvEaDXTCA4NCavbHIYWmAwR/47+qU37Juy7H3levMlDk4R9osUcn7jd1n9rDKVWUf4f6poI3VA4Zv0aLX/d+TfV56RO5nWuDhdCDov/4Dmun0+LZ0JnHFOmxXLIhi/fc2IfXt58B9FsB/5s6GCgka8kciK7ThDW02FEqjr0+e7McQfzFJuFl4E78CxFcRIo6E41YJsH0D80XWObuUY+JSg23PtUTdGWsIFVgaogr1r97kKpohylN+9oIvTE1S7d7ooyLBhmNqXiH5DNmmQVSyxcQcjj2B1msJh+VGeSCJ2S/jGo8Gzbuh9/35RTudjm6ZAlGA9vqQrmZm4UZCqvUL5UG3yrefQ51eabTFxdhuxOpvQLSrhdqP/14JW7TFIHEcWpcNcCJoN2VUmZoCXJ6IvS81uRn6r6S+/P4yoMZ3OyIH+j8LjOeyT9MgNQot7VeCPWQx7lKTZhztnpOncJma+mUcpGl6wdmyoK0ikHwydIj2XK7PFmvBXTK66cSkyVVUBuk3Jo3tCm16arqznXvRE5NrckbuwFd2ouBg=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN7PR13MB2499.namprd13.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(186003)(33656002)(66446008)(7696005)(508600001)(71200400001)(55016003)(86362001)(6916009)(54906003)(316002)(64756008)(26005)(83380400001)(66574015)(38100700002)(38070700005)(66476007)(7416002)(82960400001)(66946007)(76116006)(122000001)(66556008)(4326008)(6506007)(5660300002)(8936002)(9686003)(52536014)(8676002)(2906002)(2004002);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?cYTvfmjuiSrdnhngU1RrcN5FPFUH80h023uhoQw39boUo3bsekOUOeBFJQv1?=
- =?us-ascii?Q?ABerI63wthxz4FaseMCNlXQePFY+hzjLcD6xWrSEMafx08EAuK5BStqjrjmE?=
- =?us-ascii?Q?P3og4oxFbhOAtFzT3AIjR1xg5WzfZylqzbBe1d7D+lTk4K49ca+dNLjPiKXL?=
- =?us-ascii?Q?6wUoEjD0NOjIRECA8Ib8Z+LMnxQHOTTaEEsx0qu5PCIuLDd1wlNvVvj1VVNo?=
- =?us-ascii?Q?NVksjzLbz/GLIbB5ohcoFoF4XVdKqG+FYBkutO/X2vqXEICIHqU2nFsfk0pb?=
- =?us-ascii?Q?txHW25SnWry/WQ4NcRAnhrjIn5rNTjHveo6Huvfw3Krrs/X/SLQBt5br+yZg?=
- =?us-ascii?Q?N3Z7AmeLwMcZaLUc89EaLqo7rZYUi/XEUcnJe1Ak08ybTjGCWtJnE5w7BSDU?=
- =?us-ascii?Q?DwljNhbIS1qenmNiifs3LXaoaRCkjXenvLFuQpS6/K/Rzw4V/apzO7Hxis6S?=
- =?us-ascii?Q?vjEZCgDlfgjlLUlyOgjdYdps2YJTG9GzHrpaSzRHn6gVbFYEN0QCHxDw4CAI?=
- =?us-ascii?Q?9Z9MK5iTXk4aPRmqDCaOLb5Qwa/DgIW4wtKZBSVT93d1XlyJoAf8W7FLXtht?=
- =?us-ascii?Q?su7GhAEarLwyvJ2EB3iEujt58h4tZSsm+J+FvNXAO7LYq3nG9RnsnVMLNz23?=
- =?us-ascii?Q?DiFmwBmxjFYn6J7Ij62An3bxToKtRCcDcA6ARkJtsDj7fhFQCiKwsF8HyTCe?=
- =?us-ascii?Q?1l6Hw8bUAE7jsSd30WfQgplxZaf/+pdI7zQREt3wt2fCbZnMZqF+98MlsGhs?=
- =?us-ascii?Q?8AON08QhzuiwoW30W5ONwYhd4O+QYYV1YnM2e/rHoel5CF8/q4rE/o9MY6yO?=
- =?us-ascii?Q?OgTQ+2/Xj7vapisbVf6MdfF+AaeD0P98n8q95u3mw2R4KPhRoT2zDmF+fkTj?=
- =?us-ascii?Q?lbKmV20AEpWdT6WaPejT2yj+BSRNMGz9kCqf0qodHdhCw2l6qaVp/RUMtIWR?=
- =?us-ascii?Q?CAJYviXTBiCcFL1VOJtf0eNATJDkiuw4rjK/bJG0qox+Lo68Dtm6Kycth61U?=
- =?us-ascii?Q?FZEXseuq2zDfw5yKtLKnOKbRKNO5RlVmLv8tK0C7/n6LgVHDhp3bJcVNuVX7?=
- =?us-ascii?Q?GTGXHOfU3XRA9PG0LXKGRw3e5H2GSDmSfNIRS6RVad/vpmr89C1TjS2m0kp4?=
- =?us-ascii?Q?GbwyckKV9OTVNHEamHh7wlDQJv5AHVm/jIX/RM6ciKvIrPmvzUZiHpFAyv0i?=
- =?us-ascii?Q?vAMa+bKpN2ZhhvCLRe1cyWJvy85pq92xly+HoeE//0sxppflD0vdKVa0AIQN?=
- =?us-ascii?Q?Rwv4gHbpBtbm5HV5zD8m5cC40g0SZp2WezcMQt87AMw0Jl3bXKr8HYr8Ige/?=
- =?us-ascii?Q?L2hufWf0FajqvTWuIgj+pBu8BHhFK8WEcFzFd/3Mjf4Xldt+sWesOMwvS+WT?=
- =?us-ascii?Q?JzbevtAcS37h6IIa93WMmsmtXHXMupZGfZW/WldNIs149wpYDqxp/ccSdiIz?=
- =?us-ascii?Q?I1RghDkXqKeeGRHIaGME6hUsZP1n+x73yO2X9GPfrOC3mDudMI6HEpJpajyX?=
- =?us-ascii?Q?F8EC8lG4UEOShLaMQ9hGz7IfDbbKyyY2zcPk7TJLbiqyJeXII750SsUwvBeH?=
- =?us-ascii?Q?L9srPFTdZkSAFKqH9WbZSsM5JqsJAIe4aVJil7SL3b+ZmPmbSEp4F9KDUGtz?=
- =?us-ascii?Q?qkoionIaO+s5h7FiGsXMXfHW0RuuJLxbhxsCv7uupfbH6iHPIcpopqNAq7aR?=
- =?us-ascii?Q?1c1QsdQTy67Gip8Q40XIkNlaca8Hy83wtBJ84wegu7JDLgWsS/z5CIe01W3U?=
- =?us-ascii?Q?1lSG1mMQuA=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+To:     Vivek Goyal <vgoyal@redhat.com>,
+        Dharmendra Singh <dharamhans87@gmail.com>
+Cc:     miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
+        fuse-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        Dharmendra Singh <dsingh@ddn.com>
+References: <20220520043443.17439-1-dharamhans87@gmail.com>
+ <20220520043443.17439-2-dharamhans87@gmail.com> <Yo54Z4EQjzsQbMTp@redhat.com>
+From:   Bernd Schubert <bschubert@ddn.com>
+In-Reply-To: <Yo54Z4EQjzsQbMTp@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PR3P189CA0009.EURP189.PROD.OUTLOOK.COM
+ (2603:10a6:102:52::14) To DM5PR1901MB2037.namprd19.prod.outlook.com
+ (2603:10b6:4:aa::29)
 MIME-Version: 1.0
-X-OriginatorOrg: sony.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 843e64ff-c5b0-45a4-56a4-08da3e81b473
+X-MS-TrafficTypeDiagnostic: DM6PR19MB3979:EE_
+X-Microsoft-Antispam-PRVS: <DM6PR19MB39792743D66D0952BF5B1201B5D69@DM6PR19MB3979.namprd19.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 7WR/2ZXlHS19/VmDwmI/9OFu1dqhZ405tXJqwExD4Pz7SX/8MueQwhUmccnrDtN4BFJ9uf8Amhf6x6ZfXbZsgWmsW+6yzLyuSQMyKG6CCPeahhpO/D15CstExUE3Daqc4tHQkenh0UhyPcShTGOle43mT2vsnamWu7qj6PLZd02OOvNlfF+dJ6VNAf300N89CGLvZzYl/frh+53OvGYHS+QTO/h+8J8c7g+8hlA5D1R+eLCXXcowUXCaLR9mFf0U3xhg48prMb8xYkOxbBvvc+cgm6Ni+b73pONadPhchhfY76lNFL2yh2U+Ab00fYcfn5Mv2LNx3pPMcDXrCbQBdmhcl5OTQdarVhqwgR9Ei2WOFVQKAOXKdPbFwchpAROLUcrIaKz42uWwYzYjA84HF7aiY9INyXYIwQ23RmZHQN0ja1y9n0T/gqWKj1o+zA+LZSgV2bxYnhoqmwOTe8oWumW3PU96uXxqq0t2+PudvR124Q0C8/Ks+/WRmDshNI/9m0L+43vaI6rf/pAIVxkLr8dXqSK+PZ85DHOR4Chhe+/N+691MsHDBwPw3xDa+cwktdE/2lqvulby6hmNpL3xu5xid4lxSWRhdZ95AVsOP+kghenCFOsAOAB++kO7Fy8vrnx329+FgGNp9YkdqHBUIO2udjuuNC2b3WuE63ZWJ4sGx4b5ut3y+JUI1XZdwZfbI76/NErqbdzfdyOUK63gsHoeaSXRvlbn/my/T1jGJ8M=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM5PR1901MB2037.namprd19.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(2906002)(83380400001)(31686004)(6486002)(5660300002)(31696002)(36756003)(2616005)(8936002)(186003)(6512007)(6666004)(38100700002)(6506007)(53546011)(8676002)(4326008)(66556008)(66476007)(66946007)(110136005)(86362001)(508600001)(316002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?RXBJcVZvYlJGSW5iS2NyWWxwb3FZVXZtRVZ5ZUVYVFhLNFh4WU5FWVRrOWoy?=
+ =?utf-8?B?ZHhkYXk1MUhGUVFteFl6NkhpMEI0cGdRbVFCSUdJT3JzcG1NMG1CcG1mTlpn?=
+ =?utf-8?B?RVhkaWdGV2w3WURWZlliaEsyNGQwcnJvbUVseFlrcGsvc1pOeFVnZzNKUFhL?=
+ =?utf-8?B?ZnVwalByV2NGOWN2V3pkT2dhWWpjSGVVTUFOajN5RWFFK3ZSYjJNUGZab1Jr?=
+ =?utf-8?B?bmwzaDg1NzhzcUt4V3g4OW4zTmdvSk5mV1g3MTRET1oyczBjWUhObDBYRmJm?=
+ =?utf-8?B?cFJkNHdFcjZYYkJacFBJb2NLOW5SS3JWTDcyalRBenpNZVROOTdKRmxaL3VP?=
+ =?utf-8?B?bkNwWGpnUDFlODJ3WmJ4NklqcmF3azBZY3ZBTVU2RHoyaGM5OFBHNzYxR1hm?=
+ =?utf-8?B?WU5GQnNRTVFUQmFpTGVyOFBEOW5KRkVjaWpBcSsvYXhGUlZ3dXUzc25lbGxV?=
+ =?utf-8?B?WUJCK2tQdzVRYmRrVlhCQWloN013ZTZ2Q3RaR0R3VzVnRm1HK25ETEFZRVds?=
+ =?utf-8?B?c3FvYWMzcG5HY2RDNzdtR3JUaXBxU0I5WnhsYlhGRlRoQ1lwWm1FRGFvcjNv?=
+ =?utf-8?B?Y3ZUZkkzM1dRMGJ1TmhZNkY3NEdNYVR3VndPQTJIL0dHb2xycjk5dzJIR1Jw?=
+ =?utf-8?B?bGVmeWRvREx3bUE5Z0tUNnpFTEFUUU4zMDFJWDQ4ZFRVNUVJYmk2TEVBcVg5?=
+ =?utf-8?B?QWU2WXAzL1pCd2s5Tmx1VVdwYTcxMy9KSHdRT1JZWGJpZEVuRmlWbXpPUDQr?=
+ =?utf-8?B?ZUdJeEhOcExxdXhaWHBsdFE0elRPWk9wUzFkMFdNcUJZczZMSWNHQ1J0UXd4?=
+ =?utf-8?B?N2kvMjR0QlJ0ZlBNUC9mUDc3V3FGNlF1SWhPSnRVdi9Hc0NwMUg2elBJYjEr?=
+ =?utf-8?B?cVAya3JZdW45MWhyTzNBTmF0NmpFQ0FOK0RXODVmR0RxZHlxQ2JvMzRZaDNV?=
+ =?utf-8?B?Y2lzTUxPSGpMQ3d5SDFaQWpYYy9RVERzay9aOFVtNXQwdmxocUhkYlpBZElG?=
+ =?utf-8?B?VE5JWExvQjZHSTUzZTEzckxhdVhyc1AydU1GTVlTaGcwK0R1b0c4SUlrSEZq?=
+ =?utf-8?B?djFNNnYzZG5Ga2NTckFnazRRRnNwanVBT2UxNlRYOGpHcjRxZ1V6MWpyQkow?=
+ =?utf-8?B?ZzRkd3lRMFQ5TUZiNjRWbHR6T0ZjYUZpdG1jN1JKN0sva2FCY1U0ZU9ld2pz?=
+ =?utf-8?B?cnVRYUdESXlCNDgyamw4YUkrZ1V2TE5mZmFQNTNkSWtENkVFam1JdnNNZmN4?=
+ =?utf-8?B?b3BiWGkwY1h5Z1RwSXRFbkd2c1NVWTZFWEE0VVFwNkoxN1lYUCtPb0dyUDFm?=
+ =?utf-8?B?ZVdGWUFrNnFMNHRHcWlMbkRyQzFJdXYrK0JIc2lBLzFlL0VGZVMvd2taQWdG?=
+ =?utf-8?B?V2ZGeUlKK0thaGp4TjhTZktiTEhNQU4zcno2RS9XenVBRmYvNG1CSG1OM2Fh?=
+ =?utf-8?B?YjVXRXo4TGl6TDNMVlhiWkUzMjFTdzhPWCtPWkl6Sk14UnJNUXFsVjhDbnhT?=
+ =?utf-8?B?LzFXMldOSzMwQ0NGb01rTlZ3RVFDU0xqMlZ2ZUxveTZaNUgwdUFUMWs3V0xr?=
+ =?utf-8?B?bFVNWlNtZTIwWmZ6bURRdkxlNFM2djBEbkVyK3BtNTNHSlRsdkVYc0lhanpw?=
+ =?utf-8?B?OElPdjE0V2JGczk2MGFuZXdlVUZMWFlJM3pjWGY5SzdRaG1vVUtsU0VmZ2Yx?=
+ =?utf-8?B?bWx6Y3haY0VuLy90eGYzcXhlbVZMTHNuQnhQVUVVcmhCVDdINDBvamN4TlFP?=
+ =?utf-8?B?TXZZR3UzcnJZTWhoc3NSQlhtOCtnNEd6TlhGL09NTDI0TzAxU1FZL0laQ2JZ?=
+ =?utf-8?B?d2pVRmxFY25MRUJ6OUdFRlRQT0JpanBmb2hMQ0h1TXRkQWZFTjROZTduNC9U?=
+ =?utf-8?B?ajhzc2lQekI5c1ZYRHhuUzYydGhRdW5FcWk1SzVwWnd6QzBFMWxrb0NGSG9j?=
+ =?utf-8?B?cG5pMnFrcUtPZkh1VVZaOHpKdGVMZ1JBNHFhTnJkSzlDWHFPRncybVl4cTgz?=
+ =?utf-8?B?NC9rOHFjNzV6U1Qxc0hLWCtuK3hLdUxzMFFLVWxvMjNHWDRDQ3JyWDJaVGtX?=
+ =?utf-8?B?Ky9scm90YkdkVjFUMzlocnVYQUJIRXh0QjJEVlhMYjVPZWpLSjJ3a2FXWFRV?=
+ =?utf-8?B?YVhlbmR2TmpIeU1UL3huNVk0VFdjY21LdHpGN1FUbkJydmtFZE9jcU5uTlpp?=
+ =?utf-8?B?ZzFRemlLQjlRSGRxQW1wOC83WE1aQmV6RG9DdkZnZXRHamVCYTNXK1VtUlVo?=
+ =?utf-8?B?Sjl4RDZsVjI0alRlZDk0b2RMZTQ0UzBIbnMzOXBtam5UTVBad2h5ZDRoVmRi?=
+ =?utf-8?B?alk5dzVONGlrTXdIYm9meFYzVE51T3Nod3JvSVRNUWRRVXY0a3RucDJqZVFY?=
+ =?utf-8?Q?7dcV0YibTFXmZ2O62YSxnZRlVGj30XmUkhuUj3B2ESrSe?=
+X-MS-Exchange-AntiSpam-MessageData-1: WVGy+FsxmBZleQ==
+X-OriginatorOrg: ddn.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 843e64ff-c5b0-45a4-56a4-08da3e81b473
+X-MS-Exchange-CrossTenant-AuthSource: DM5PR1901MB2037.namprd19.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN7PR13MB2499.namprd13.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e7cee65c-03f1-4d57-f06e-08da3e818a4e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 May 2022 19:05:31.8322
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 May 2022 19:06:42.9257
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 66c65d8a-9158-4521-a2d8-664963db48e4
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: t8lKZnsxzxsyFGNAPW/7Yzik/ObPz+cKAyEoJmFDgSvZQvu5zjFYFhE12sXcpAXJrxExyyazi7dtwmmRyABuyw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR13MB5050
-X-Proofpoint-GUID: VWykq81qiRocszcx58mXr4NapnVJvqBa
-X-Proofpoint-ORIG-GUID: VWykq81qiRocszcx58mXr4NapnVJvqBa
-X-Sony-Outbound-GUID: VWykq81qiRocszcx58mXr4NapnVJvqBa
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.874,Hydra:6.0.486,FMLib:17.11.64.514
- definitions=2022-05-25_05,2022-05-25_02,2022-02-23_01
-X-Spam-Status: No, score=-3.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 753b6e26-6fd3-43e6-8248-3f1735d59bb4
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: HDegmWAX5I/ZyJUUvoqeYlMNis4zgfma+cSPR8ce3dmP4nVIBtKv9TY8uBndV+th4JfrPvzXXmzwvxvI5UNmog==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR19MB3979
+X-Spam-Status: No, score=-2.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> -----Original Message-----
-> From: Luis Chamberlain <mcgrof@infradead.org> On Behalf Of Luis Chamberla=
-in
->=20
-> On Wed, May 25, 2022 at 05:05:54PM +0000, Bird, Tim wrote:
-> > I know it's being submitted as an OR, but I question
-> > the value of introducing another license into the kernel's licensing mi=
-x.
->=20
-> As a free software hacker *I* value the evolution of copyleft and copylef=
-t-next
-> does just that. Some may have thought that it may not have been possible =
-to
-> evolve copyleft and work with an evolved license on Linux, but copyleft-n=
-ext
-> shows it is possible. Here in lies the value I see in it.
->=20
-> I agree that we want to keep the number of licenses as small as
-> possible but we cannot really dictate which dual licensing options a
-> submitter selects unless the license is GPL-2.0-only incompatible,
-> which copyleft-next is not.
-
-Um, yes we can dictate that.  There were good reasons that the original
-BSD dual-licenses were allowed.  Those same reasons don't apply here.
-Each license added to the kernel (even when added as an OR), requires
-additional legal analysis.  Corporate lawyers don't usually rely on the
-interpretation of novel licenses from external sources.  They do it themsel=
-ves.
-This means that hundreds of lawyers may find themselves reading and
-trying to interpret the copyleft-next license.
-
-And here's the thing.
-The copyleft-next license has a number of legal issues that make it problem=
-atic.
-Not the least of which are that some of its terms are dependent on external
-situations that can change over time, in a matter that is uncontrolled by e=
-ither
-the licensor or the licensee.  In order to determine what terms are effecti=
-ve, you
-have to know when the license was granted, and what the FSF and OSI approve=
-d
-licenses were at various points in time.  You literally have to use the Int=
-ernet
-Archive wayback machine, and do a bunch of research, to interpret the licen=
-se terms.
-It is not, as currently constructed, a good license, due to this lack of le=
-gal clarity.
-
-Regards,
- -- Tim
 
 
+On 5/25/22 20:41, Vivek Goyal wrote:
+> On Fri, May 20, 2022 at 10:04:43AM +0530, Dharmendra Singh wrote:
+>> From: Dharmendra Singh <dsingh@ddn.com>
+>>
+>> In general, as of now, in FUSE, direct writes on the same file are
+>> serialized over inode lock i.e we hold inode lock for the full duration
+>> of the write request. I could not found in fuse code a comment which
+>> clearly explains why this exclusive lock is taken for direct writes.
+>> Our guess is some USER space fuse implementations might be relying
+>> on this lock for seralization and also it protects for the issues
+>> arising due to file size assumption or write failures.  This patch
+>> relaxes this exclusive lock in some cases of direct writes.
+>>
+>> With these changes, we allows non-extending parallel direct writes
+>> on the same file with the help of a flag called FOPEN_PARALLEL_WRITES.
+>> If this flag is set on the file (flag is passed from libfuse to fuse
+>> kernel as part of file open/create), we do not take exclusive lock instead
+>> use shared lock so that all non-extending writes can run in parallel.
+>>
+>> Best practise would be to enable parallel direct writes of all kinds
+>> including extending writes as well but we see some issues such as
+>> when one write completes and other fails, how we should truncate(if
+>> needed) the file if underlying file system does not support holes
+>> (For file systems which supports holes, there might be a possibility
+>> of enabling parallel writes for all cases).
+>>
+>> FUSE implementations which rely on this inode lock for serialisation
+>> can continue to do so and this is default behaviour i.e no parallel
+>> direct writes.
+>>
+>> Signed-off-by: Dharmendra Singh <dsingh@ddn.com>
+>> Signed-off-by: Bernd Schubert <bschubert@ddn.com>
+>> ---
+>>   fs/fuse/file.c            | 33 ++++++++++++++++++++++++++++++---
+>>   include/uapi/linux/fuse.h |  2 ++
+>>   2 files changed, 32 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+>> index 829094451774..1a93fd80a6ce 100644
+>> --- a/fs/fuse/file.c
+>> +++ b/fs/fuse/file.c
+>> @@ -1541,14 +1541,37 @@ static ssize_t fuse_direct_read_iter(struct kiocb *iocb, struct iov_iter *to)
+>>   	return res;
+>>   }
+>>   
+>> +static bool fuse_direct_write_extending_i_size(struct kiocb *iocb,
+>> +					       struct iov_iter *iter)
+>> +{
+>> +	struct inode *inode = file_inode(iocb->ki_filp);
+>> +
+>> +	return (iocb->ki_flags & IOCB_APPEND ||
+>> +		iocb->ki_pos + iov_iter_count(iter) > i_size_read(inode));
+>> +}
+> 
+> Hi Dharmendra,
+> 
+> I have a question. What makes i_size stable. This is being read outside
+> the inode_lock(). Can it race with truncate. I mean we checked
+> i_size and decided to take shared lock. In the mean time another thread
+> truncated the file and now our decision to take shared lock is wrong
+> as file will be extended due to direct write?
 
+Oh right, good catch! I guess we need to take a shared lock first, read 
+the size and if it is an extending lock need to unlock/switch to an 
+excluding lock. Theoretically could be a loop, but I guess that would be 
+overkill.
+
+
+Thanks for your review!
+
+Cheers,
+Bernd
