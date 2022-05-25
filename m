@@ -2,98 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 22AE253385D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 May 2022 10:26:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33305533876
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 May 2022 10:30:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231374AbiEYI0m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 May 2022 04:26:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58062 "EHLO
+        id S231207AbiEYIah (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 May 2022 04:30:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230340AbiEYI0l (ORCPT
+        with ESMTP id S230158AbiEYIag (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 May 2022 04:26:41 -0400
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 841DA9FC3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 May 2022 01:26:40 -0700 (PDT)
-Received: by mail-lj1-x22b.google.com with SMTP id e4so23101633ljb.13
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 May 2022 01:26:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=openvz-org.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:from:subject:to:cc
-         :content-language:content-transfer-encoding;
-        bh=TROhytUCmYi1+1zbJFOBdbpnjKvBFc00UACuo78Blu0=;
-        b=t7AXHImYt88F4yFcoFo/qiLCJPnM1PNNZclSW8YTDTfk0sG5d/ZeaKK/dKfcy4dkwO
-         m+7UDPXDNxmpmmTghEnV/L3JOGc6DgyEBn4FBQ1QVEV3PBPP7KeS30IkhMdfrA93FYp8
-         PLy0TxtWuwWlqGG3f/LH4bbArkBwE8muI0nLZSTBzkX6Zcch2vGKOR/gJv3Lpklnfg9Q
-         S924EuMCX97wqhm2YucSMxJEMYugXOIVDrEPipfoDCXxzyLxzenQEIy2ikIVQfGkdDjo
-         IUtvoRKID6OBzFaJ1EqKw6XtStq6bc9kax0JGmM3/XKnJ8INcBu3va9x6rXUG5alpisq
-         KyJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:from
-         :subject:to:cc:content-language:content-transfer-encoding;
-        bh=TROhytUCmYi1+1zbJFOBdbpnjKvBFc00UACuo78Blu0=;
-        b=WRkgHbBecT1fw+n6ynntkZzxdSJk/fTooUGtScMNoHSd+rgmxzpxda482+VLF8I3Tg
-         vEq7eVXd5zQFnC0yYviApHeW3xCrNVR3nKa18OCH10JW/cQO/pbP1TUei1ilt0IHRbJH
-         //XrPo/LdLhNmoLP8Day+C7vhzi1fyGi6HIMV0ZTxDgtikQZOplNMHbXNz6lfw4P4kM9
-         CdXMt2t2MG2pPKt8iUn7c/77Be16pn73yUpOYqlkoKNBDoX+Kn+HX7s7rxoy3FCYbw3P
-         myvBbkmyJxgLL5VFVSndceNO/iLpD0JmtNBwgBqKgRmfbwJEZLY0WINGq13cVqGZje28
-         TTwg==
-X-Gm-Message-State: AOAM532MU0PksIH0XfEFCUKPwE6Lem4HW0YZvZ3r5P2RZcy4wbX3H8/p
-        cpJtP5Yy7P1nfQl2ax3dwaLyvw==
-X-Google-Smtp-Source: ABdhPJyDCQbgxiitG7pP3j+6MDNq9Z3uJ1djPx06ET2ui6tpQIRa8zNilbO2coRGhFru9YrSGRlLjA==
-X-Received: by 2002:a2e:894a:0:b0:253:e36b:83c1 with SMTP id b10-20020a2e894a000000b00253e36b83c1mr11560558ljk.520.1653467198883;
-        Wed, 25 May 2022 01:26:38 -0700 (PDT)
-Received: from [192.168.1.65] ([46.188.121.129])
-        by smtp.gmail.com with ESMTPSA id f24-20020a19ae18000000b0047255d2111dsm2971117lfc.76.2022.05.25.01.26.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 25 May 2022 01:26:38 -0700 (PDT)
-Message-ID: <348dc099-737d-94ba-55ad-2db285084c73@openvz.org>
-Date:   Wed, 25 May 2022 11:26:37 +0300
+        Wed, 25 May 2022 04:30:36 -0400
+Received: from esa1.hgst.iphmx.com (esa1.hgst.iphmx.com [68.232.141.245])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DDF375209
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 May 2022 01:30:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1653467435; x=1685003435;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=H44rnb6YjTcI7szFqLMfC6IxwjsJO66dk1kVHObyutc=;
+  b=QQZsDwucKy9K3hsA1AI4iWj3KIFEGoA/JOCS93On8ppHYElanNC7kIHJ
+   LyN/T4o3zyIsnBj+I27cuKnRn0J7bkM13UuOkaPW6eX39XZSB1B8PVy8p
+   oJDaESPYouMnNkxmfMlgowkA1npOy3sYo2+84UFRhWV3xRNjKFTSQUn8w
+   JkTfxhDF9Cip8YzQ2R5fxQb2khvRXdTgacK6QJUP3DKkFdMEoI3BN5bGc
+   5afEA5DuiAuvIAKUyS3gCY7nbipCBIG5rTlPK8MsFmhgAWnaHfZHcGzw4
+   4RTCf7aS0BsZyyp++zzIuDLaSBi5tazO2WzWKQjpC2xD4sgomBPCDcmiv
+   g==;
+X-IronPort-AV: E=Sophos;i="5.91,250,1647273600"; 
+   d="scan'208";a="313378536"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 25 May 2022 16:30:29 +0800
+IronPort-SDR: J+4AuogVeVABYhYsRb+sUdIbP9ODUNDg0uayit69bmEjXOX8QucQi+AKIV/WP/AKgPQ86XLeV5
+ csPZo7mpfFVS0cIrkk+lh11W6Y4KUhjufMQfZzM8W0TU1/hadEXlG0qJohhWkpU/2JF9M05Zop
+ bA5eLzTYUqdvLeaW93TlNubMUEn5X3wjg4wL6gJ0VNshrCvFZdZ3zTgI9y0TyxHKfLHvvgxBo0
+ UqvmH0KlP8mUTHQbiiH5Grf5CCgFqU+Tn9ywKOhiSbMnB5srtpkT/B4NhckWTL8xzu0N5eukVH
+ t7JaHVqLOWTRm1DPNtUyZ5GO
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 25 May 2022 00:54:25 -0700
+IronPort-SDR: KMoYrqcSi1gFsEo42Pe08sGF1NMgo5Nn5JeIeQvNbf6Ck3Ntqs/pTlc0OE1qjgMdJCA9eUxczn
+ M/SxPz28fPCWameCLVwoZh5pXlNLO+25nD16HmfLEiwR4bYDK7pZUhq39so4JU727T5PAON8UB
+ UE3IJsp3S7zcw3Zl3LfuUTSwGA9kx0f0GrMJk/U0o+csn4i/FxLyK1PKKZf0IFex9zFQqTDdpi
+ VQp1WsAd/dZOZLr9x5uZI2vxOceN5K1hZBkvfeP0+79wdCw4AL7h0zrV01iU/MiU+NyvrQgRku
+ wuQ=
+WDCIronportException: Internal
+Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
+  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 25 May 2022 01:30:29 -0700
+Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4L7PQY0JDlz1SVp2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 May 2022 01:30:28 -0700 (PDT)
+Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)"
+        header.d=opensource.wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
+        opensource.wdc.com; h=content-transfer-encoding:content-type
+        :in-reply-to:organization:from:references:to:content-language
+        :subject:user-agent:mime-version:date:message-id; s=dkim; t=
+        1653467428; x=1656059429; bh=H44rnb6YjTcI7szFqLMfC6IxwjsJO66dk1k
+        VHObyutc=; b=bn27ZGKuraDKiwB8/YNJvW122+IQPqXQOWpULKKkzZcQIRW/pnB
+        25SuhXuAnXEL0ysxU5z3kz0lbOAt+hF3AytSc9/BJSBqnE7DbqrkPSZEzfth2YAI
+        A36dLXoa88AXlSbVBkFdS4usRHBZ4Gq+iImPq3JU46h2F5NllfeT8vIqMnQncsWd
+        FDw/TEsQTRk4y3BRkxiLaU6TNMb38do3adtYkRkn440RpQ9lHFLsqIUclyu15WB+
+        Z5JawCBv+WfTX2i4OTQsVKD4yzvJEIJJhk6yhtKiU5QfTRH4nPyZPOrPDW9hCMAA
+        7sJSoMk0ZETbGEOyZoGTuWhIIw2/S1SY5qw==
+X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
+Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
+        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id kaEsmGOGWcKd for <linux-fsdevel@vger.kernel.org>;
+        Wed, 25 May 2022 01:30:28 -0700 (PDT)
+Received: from [10.225.163.54] (unknown [10.225.163.54])
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4L7PQV3B7Nz1Rvlc;
+        Wed, 25 May 2022 01:30:26 -0700 (PDT)
+Message-ID: <f3ab71c9-26b2-d4f1-5340-78a82ef90c0e@opensource.wdc.com>
+Date:   Wed, 25 May 2022 17:30:24 +0900
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.1
-From:   Vasily Averin <vvs@openvz.org>
-Subject: [PATCH] XArray: handle XA_FLAGS_ACCOUNT in xas_split_alloc
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     kernel@openvz.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
+ Thunderbird/91.9.0
+Subject: Re: [PATCHv3 1/6] block/bio: remove duplicate append pages code
 Content-Language: en-US
+To:     Pankaj Raghav <pankydev8@gmail.com>,
+        Keith Busch <kbusch@kernel.org>
+Cc:     Keith Busch <kbusch@fb.com>, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, axboe@kernel.dk,
+        Kernel Team <Kernel-team@fb.com>, hch@lst.de,
+        bvanassche@acm.org, ebiggers@kernel.org,
+        Pankaj Raghav <p.raghav@samsung.com>
+References: <20220523210119.2500150-1-kbusch@fb.com>
+ <20220523210119.2500150-2-kbusch@fb.com>
+ <20220524141754.msmt6s4spm4istsb@quentin>
+ <Yoz7+O2CAQTNfvlV@kbusch-mbp.dhcp.thefacebook.com>
+ <20220525074941.2biavbbrjdjcnlsd@quentin>
+From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
+Organization: Western Digital Research
+In-Reply-To: <20220525074941.2biavbbrjdjcnlsd@quentin>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Commit 7b785645e8f1 ("mm: fix page cache convergence regression")
-added support of new XA_FLAGS_ACCOUNT flag into all Xarray allocation
-functions. Later commit 8fc75643c5e1 ("XArray: add xas_split")
-introduced xas_split_alloc() but missed about XA_FLAGS_ACCOUNT
-processing.
+On 5/25/22 16:49, Pankaj Raghav wrote:
+> On Tue, May 24, 2022 at 09:38:32AM -0600, Keith Busch wrote:
+>> On Tue, May 24, 2022 at 04:17:54PM +0200, Pankaj Raghav wrote:
+>>> On Mon, May 23, 2022 at 02:01:14PM -0700, Keith Busch wrote:
+>>>> -	if (WARN_ON_ONCE(!max_append_sectors))
+>>>> -		return 0;
+>>> I don't see this check in the append path. Should it be added in
+>>> bio_iov_add_zone_append_page() function?
+>>
+>> I'm not sure this check makes a lot of sense. If it just returns 0 here, then
+>> won't that get bio_iov_iter_get_pages() stuck in an infinite loop? The bio
+>> isn't filling, the iov isn't advancing, and 0 indicates keep-going.
+> Yeah but if max_append_sectors is zero, then bio_add_hw_page() also
+> returns 0 as follows:
+> ....
+> 	if (((bio->bi_iter.bi_size + len) >> 9) > max_sectors)
+> 		return 0;
+> ....
+> With WARN_ON_ONCE, we at least get a warning message if it gets stuck in an
+> infinite loop because of max_append_sectors being zero right?
+> 
 
-Signed-off-by: Vasily Averin <vvs@openvz.org>
----
- lib/xarray.c | 2 ++
- 1 file changed, 2 insertions(+)
+Warning about an infinite loop that can be recovered from only by
+rebooting the machine is not very useful...
+If max_append_sectors is zero and bio_iov_add_zone_append_page() is
+called, this is an error (stupid user) and everything should be failed
+with -ENOSUPP or -EIO.
 
-diff --git a/lib/xarray.c b/lib/xarray.c
-index 54e646e8e6ee..5f5b42e6f842 100644
---- a/lib/xarray.c
-+++ b/lib/xarray.c
-@@ -1013,6 +1013,8 @@ void xas_split_alloc(struct xa_state *xas, void *entry, unsigned int order,
- 	if (xas->xa_shift + XA_CHUNK_SHIFT > order)
- 		return;
- 
-+	if (xas->xa->xa_flags & XA_FLAGS_ACCOUNT)
-+		gfp |= __GFP_ACCOUNT;
- 	do {
- 		unsigned int i;
- 		void *sibling = NULL;
 -- 
-2.31.1
-
+Damien Le Moal
+Western Digital Research
