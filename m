@@ -1,139 +1,233 @@
 Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 33305533876
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 May 2022 10:30:41 +0200 (CEST)
+Received: from out1.vger.email (unknown [IPv6:2620:137:e000::1:20])
+	by mail.lfdr.de (Postfix) with ESMTP id 7A9A4533C7D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 25 May 2022 14:16:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231207AbiEYIah (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 25 May 2022 04:30:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60100 "EHLO
+        id S229843AbiEYMOL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 25 May 2022 08:14:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230158AbiEYIag (ORCPT
+        with ESMTP id S243851AbiEYMOB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 25 May 2022 04:30:36 -0400
-Received: from esa1.hgst.iphmx.com (esa1.hgst.iphmx.com [68.232.141.245])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DDF375209
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 May 2022 01:30:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1653467435; x=1685003435;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=H44rnb6YjTcI7szFqLMfC6IxwjsJO66dk1kVHObyutc=;
-  b=QQZsDwucKy9K3hsA1AI4iWj3KIFEGoA/JOCS93On8ppHYElanNC7kIHJ
-   LyN/T4o3zyIsnBj+I27cuKnRn0J7bkM13UuOkaPW6eX39XZSB1B8PVy8p
-   oJDaESPYouMnNkxmfMlgowkA1npOy3sYo2+84UFRhWV3xRNjKFTSQUn8w
-   JkTfxhDF9Cip8YzQ2R5fxQb2khvRXdTgacK6QJUP3DKkFdMEoI3BN5bGc
-   5afEA5DuiAuvIAKUyS3gCY7nbipCBIG5rTlPK8MsFmhgAWnaHfZHcGzw4
-   4RTCf7aS0BsZyyp++zzIuDLaSBi5tazO2WzWKQjpC2xD4sgomBPCDcmiv
-   g==;
-X-IronPort-AV: E=Sophos;i="5.91,250,1647273600"; 
-   d="scan'208";a="313378536"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 25 May 2022 16:30:29 +0800
-IronPort-SDR: J+4AuogVeVABYhYsRb+sUdIbP9ODUNDg0uayit69bmEjXOX8QucQi+AKIV/WP/AKgPQ86XLeV5
- csPZo7mpfFVS0cIrkk+lh11W6Y4KUhjufMQfZzM8W0TU1/hadEXlG0qJohhWkpU/2JF9M05Zop
- bA5eLzTYUqdvLeaW93TlNubMUEn5X3wjg4wL6gJ0VNshrCvFZdZ3zTgI9y0TyxHKfLHvvgxBo0
- UqvmH0KlP8mUTHQbiiH5Grf5CCgFqU+Tn9ywKOhiSbMnB5srtpkT/B4NhckWTL8xzu0N5eukVH
- t7JaHVqLOWTRm1DPNtUyZ5GO
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 25 May 2022 00:54:25 -0700
-IronPort-SDR: KMoYrqcSi1gFsEo42Pe08sGF1NMgo5Nn5JeIeQvNbf6Ck3Ntqs/pTlc0OE1qjgMdJCA9eUxczn
- M/SxPz28fPCWameCLVwoZh5pXlNLO+25nD16HmfLEiwR4bYDK7pZUhq39so4JU727T5PAON8UB
- UE3IJsp3S7zcw3Zl3LfuUTSwGA9kx0f0GrMJk/U0o+csn4i/FxLyK1PKKZf0IFex9zFQqTDdpi
- VQp1WsAd/dZOZLr9x5uZI2vxOceN5K1hZBkvfeP0+79wdCw4AL7h0zrV01iU/MiU+NyvrQgRku
- wuQ=
-WDCIronportException: Internal
-Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
-  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 25 May 2022 01:30:29 -0700
-Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4L7PQY0JDlz1SVp2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 25 May 2022 01:30:28 -0700 (PDT)
-Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)"
-        header.d=opensource.wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
-        opensource.wdc.com; h=content-transfer-encoding:content-type
-        :in-reply-to:organization:from:references:to:content-language
-        :subject:user-agent:mime-version:date:message-id; s=dkim; t=
-        1653467428; x=1656059429; bh=H44rnb6YjTcI7szFqLMfC6IxwjsJO66dk1k
-        VHObyutc=; b=bn27ZGKuraDKiwB8/YNJvW122+IQPqXQOWpULKKkzZcQIRW/pnB
-        25SuhXuAnXEL0ysxU5z3kz0lbOAt+hF3AytSc9/BJSBqnE7DbqrkPSZEzfth2YAI
-        A36dLXoa88AXlSbVBkFdS4usRHBZ4Gq+iImPq3JU46h2F5NllfeT8vIqMnQncsWd
-        FDw/TEsQTRk4y3BRkxiLaU6TNMb38do3adtYkRkn440RpQ9lHFLsqIUclyu15WB+
-        Z5JawCBv+WfTX2i4OTQsVKD4yzvJEIJJhk6yhtKiU5QfTRH4nPyZPOrPDW9hCMAA
-        7sJSoMk0ZETbGEOyZoGTuWhIIw2/S1SY5qw==
-X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
-Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
-        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id kaEsmGOGWcKd for <linux-fsdevel@vger.kernel.org>;
-        Wed, 25 May 2022 01:30:28 -0700 (PDT)
-Received: from [10.225.163.54] (unknown [10.225.163.54])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4L7PQV3B7Nz1Rvlc;
-        Wed, 25 May 2022 01:30:26 -0700 (PDT)
-Message-ID: <f3ab71c9-26b2-d4f1-5340-78a82ef90c0e@opensource.wdc.com>
-Date:   Wed, 25 May 2022 17:30:24 +0900
+        Wed, 25 May 2022 08:14:01 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74955A76D7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 25 May 2022 05:13:53 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 2FE44219BB;
+        Wed, 25 May 2022 12:13:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1653480832; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=HDn2jcOjILNzT5C5TbrbqAvZLA0JG5ArhG4Q2KPLEho=;
+        b=Q65i8WNJuqU2Z+TpApgby3Z/mvDq/vlZ0F6k50X70UbuUoylXLL/EdHsIxx3JxNyxhleV4
+        BCT7QEkuxVrzOzjo6Q6Q+m7W0+oIjPJw2AqBzDdwkhBsGOOB8l+qV/3IvEx1TajLWTtDYM
+        BGMiZIveHxJTl2QYAF1DPK7iInhgW3o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1653480832;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=HDn2jcOjILNzT5C5TbrbqAvZLA0JG5ArhG4Q2KPLEho=;
+        b=tBC0wnycGkp+0mpVvwCIyAs83zqQfibl7pRvw7rVw1SjIo+ve+mIzkOvn1antpRTpVMdEY
+        ETUb33ECuRiRxiAg==
+Received: from quack3.suse.cz (unknown [10.100.224.230])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 055C72C141;
+        Wed, 25 May 2022 12:13:52 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id B8EACA0632; Wed, 25 May 2022 14:13:51 +0200 (CEST)
+Date:   Wed, 25 May 2022 14:13:51 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Jchao Sun <sunjunchao2870@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        jack@suse.cz
+Subject: Re: [PATCH v5] writeback: Fix inode->i_io_list not be protected by
+ inode->i_lock error
+Message-ID: <20220525121351.ixs2yjcnk7ockvuv@quack3.lan>
+References: <20220524150540.12552-1-sunjunchao2870@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCHv3 1/6] block/bio: remove duplicate append pages code
-Content-Language: en-US
-To:     Pankaj Raghav <pankydev8@gmail.com>,
-        Keith Busch <kbusch@kernel.org>
-Cc:     Keith Busch <kbusch@fb.com>, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, axboe@kernel.dk,
-        Kernel Team <Kernel-team@fb.com>, hch@lst.de,
-        bvanassche@acm.org, ebiggers@kernel.org,
-        Pankaj Raghav <p.raghav@samsung.com>
-References: <20220523210119.2500150-1-kbusch@fb.com>
- <20220523210119.2500150-2-kbusch@fb.com>
- <20220524141754.msmt6s4spm4istsb@quentin>
- <Yoz7+O2CAQTNfvlV@kbusch-mbp.dhcp.thefacebook.com>
- <20220525074941.2biavbbrjdjcnlsd@quentin>
-From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
-Organization: Western Digital Research
-In-Reply-To: <20220525074941.2biavbbrjdjcnlsd@quentin>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220524150540.12552-1-sunjunchao2870@gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/25/22 16:49, Pankaj Raghav wrote:
-> On Tue, May 24, 2022 at 09:38:32AM -0600, Keith Busch wrote:
->> On Tue, May 24, 2022 at 04:17:54PM +0200, Pankaj Raghav wrote:
->>> On Mon, May 23, 2022 at 02:01:14PM -0700, Keith Busch wrote:
->>>> -	if (WARN_ON_ONCE(!max_append_sectors))
->>>> -		return 0;
->>> I don't see this check in the append path. Should it be added in
->>> bio_iov_add_zone_append_page() function?
->>
->> I'm not sure this check makes a lot of sense. If it just returns 0 here, then
->> won't that get bio_iov_iter_get_pages() stuck in an infinite loop? The bio
->> isn't filling, the iov isn't advancing, and 0 indicates keep-going.
-> Yeah but if max_append_sectors is zero, then bio_add_hw_page() also
-> returns 0 as follows:
-> ....
-> 	if (((bio->bi_iter.bi_size + len) >> 9) > max_sectors)
-> 		return 0;
-> ....
-> With WARN_ON_ONCE, we at least get a warning message if it gets stuck in an
-> infinite loop because of max_append_sectors being zero right?
+On Tue 24-05-22 08:05:40, Jchao Sun wrote:
+> Commit b35250c0816c ("writeback: Protect inode->i_io_list with
+> inode->i_lock") made inode->i_io_list not only protected by
+> wb->list_lock but also inode->i_lock, but inode_io_list_move_locked()
+> was missed. Add lock there and also update comment describing
+> things protected by inode->i_lock. This also fixes a race where
+> __mark_inode_dirty() could move inode under flush worker's hands
+> and thus sync(2) could miss writing some inodes.
 > 
+> Fixes: b35250c0816c ("writeback: Protect inode->i_io_list with inode->i_lock")
+> Signed-off-by: Jchao Sun <sunjunchao2870@gmail.com>
 
-Warning about an infinite loop that can be recovered from only by
-rebooting the machine is not very useful...
-If max_append_sectors is zero and bio_iov_add_zone_append_page() is
-called, this is an error (stupid user) and everything should be failed
-with -ENOSUPP or -EIO.
+Thanks for the fix! It looks good to me now (modulo some too long comment
+lines but I can wrap those on commit). I'll take the patch to my tree once
+I push out stuff I have ready for the merge window.
 
+								Honza
+
+> ---
+>  fs/fs-writeback.c | 37 ++++++++++++++++++++++++++++---------
+>  fs/inode.c        |  2 +-
+>  2 files changed, 29 insertions(+), 10 deletions(-)
+> 
+> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+> index 591fe9cf1659..99793bb838e5 100644
+> --- a/fs/fs-writeback.c
+> +++ b/fs/fs-writeback.c
+> @@ -120,6 +120,7 @@ static bool inode_io_list_move_locked(struct inode *inode,
+>  				      struct list_head *head)
+>  {
+>  	assert_spin_locked(&wb->list_lock);
+> +	assert_spin_locked(&inode->i_lock);
+>  
+>  	list_move(&inode->i_io_list, head);
+>  
+> @@ -1365,9 +1366,9 @@ static int move_expired_inodes(struct list_head *delaying_queue,
+>  		inode = wb_inode(delaying_queue->prev);
+>  		if (inode_dirtied_after(inode, dirtied_before))
+>  			break;
+> +		spin_lock(&inode->i_lock);
+>  		list_move(&inode->i_io_list, &tmp);
+>  		moved++;
+> -		spin_lock(&inode->i_lock);
+>  		inode->i_state |= I_SYNC_QUEUED;
+>  		spin_unlock(&inode->i_lock);
+>  		if (sb_is_blkdev_sb(inode->i_sb))
+> @@ -1383,7 +1384,12 @@ static int move_expired_inodes(struct list_head *delaying_queue,
+>  		goto out;
+>  	}
+>  
+> -	/* Move inodes from one superblock together */
+> +	/*
+> +	 * Although inode's i_io_list is moved from 'tmp' to 'dispatch_queue',
+> +	 * we don't take inode->i_lock here because it is just a pointless overhead.
+> +	 * Inode is already marked as I_SYNC_QUEUED so writeback list handling is
+> +	 * fully under our control.
+> +	 */
+>  	while (!list_empty(&tmp)) {
+>  		sb = wb_inode(tmp.prev)->i_sb;
+>  		list_for_each_prev_safe(pos, node, &tmp) {
+> @@ -1821,8 +1827,8 @@ static long writeback_sb_inodes(struct super_block *sb,
+>  			 * We'll have another go at writing back this inode
+>  			 * when we completed a full scan of b_io.
+>  			 */
+> -			spin_unlock(&inode->i_lock);
+>  			requeue_io(inode, wb);
+> +			spin_unlock(&inode->i_lock);
+>  			trace_writeback_sb_inodes_requeue(inode);
+>  			continue;
+>  		}
+> @@ -2351,6 +2357,7 @@ void __mark_inode_dirty(struct inode *inode, int flags)
+>  {
+>  	struct super_block *sb = inode->i_sb;
+>  	int dirtytime = 0;
+> +	struct bdi_writeback *wb = NULL;
+>  
+>  	trace_writeback_mark_inode_dirty(inode, flags);
+>  
+> @@ -2402,6 +2409,17 @@ void __mark_inode_dirty(struct inode *inode, int flags)
+>  			inode->i_state &= ~I_DIRTY_TIME;
+>  		inode->i_state |= flags;
+>  
+> +		/*
+> +		 * Grab inode's wb early because it requires dropping i_lock and we
+> +		 * need to make sure following checks happen atomically with dirty
+> +		 * list handling so that we don't move inodes under flush worker's
+> +		 * hands.
+> +		 */
+> +		if (!was_dirty) {
+> +			wb = locked_inode_to_wb_and_lock_list(inode);
+> +			spin_lock(&inode->i_lock);
+> +		}
+> +
+>  		/*
+>  		 * If the inode is queued for writeback by flush worker, just
+>  		 * update its dirty state. Once the flush worker is done with
+> @@ -2409,7 +2427,7 @@ void __mark_inode_dirty(struct inode *inode, int flags)
+>  		 * list, based upon its state.
+>  		 */
+>  		if (inode->i_state & I_SYNC_QUEUED)
+> -			goto out_unlock_inode;
+> +			goto out_unlock;
+>  
+>  		/*
+>  		 * Only add valid (hashed) inodes to the superblock's
+> @@ -2417,22 +2435,19 @@ void __mark_inode_dirty(struct inode *inode, int flags)
+>  		 */
+>  		if (!S_ISBLK(inode->i_mode)) {
+>  			if (inode_unhashed(inode))
+> -				goto out_unlock_inode;
+> +				goto out_unlock;
+>  		}
+>  		if (inode->i_state & I_FREEING)
+> -			goto out_unlock_inode;
+> +			goto out_unlock;
+>  
+>  		/*
+>  		 * If the inode was already on b_dirty/b_io/b_more_io, don't
+>  		 * reposition it (that would break b_dirty time-ordering).
+>  		 */
+>  		if (!was_dirty) {
+> -			struct bdi_writeback *wb;
+>  			struct list_head *dirty_list;
+>  			bool wakeup_bdi = false;
+>  
+> -			wb = locked_inode_to_wb_and_lock_list(inode);
+> -
+>  			inode->dirtied_when = jiffies;
+>  			if (dirtytime)
+>  				inode->dirtied_time_when = jiffies;
+> @@ -2446,6 +2461,7 @@ void __mark_inode_dirty(struct inode *inode, int flags)
+>  							       dirty_list);
+>  
+>  			spin_unlock(&wb->list_lock);
+> +			spin_unlock(&inode->i_lock);
+>  			trace_writeback_dirty_inode_enqueue(inode);
+>  
+>  			/*
+> @@ -2460,6 +2476,9 @@ void __mark_inode_dirty(struct inode *inode, int flags)
+>  			return;
+>  		}
+>  	}
+> +out_unlock:
+> +	if (wb)
+> +		spin_unlock(&wb->list_lock);
+>  out_unlock_inode:
+>  	spin_unlock(&inode->i_lock);
+>  }
+> diff --git a/fs/inode.c b/fs/inode.c
+> index 9d9b422504d1..bd4da9c5207e 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -27,7 +27,7 @@
+>   * Inode locking rules:
+>   *
+>   * inode->i_lock protects:
+> - *   inode->i_state, inode->i_hash, __iget()
+> + *   inode->i_state, inode->i_hash, __iget(), inode->i_io_list
+>   * Inode LRU list locks protect:
+>   *   inode->i_sb->s_inode_lru, inode->i_lru
+>   * inode->i_sb->s_inode_list_lock protects:
+> -- 
+> 2.17.1
+> 
 -- 
-Damien Le Moal
-Western Digital Research
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
