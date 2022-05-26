@@ -2,69 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 96629535031
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 May 2022 15:50:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABD3E5350F7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 May 2022 16:47:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343997AbiEZNux (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 May 2022 09:50:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33482 "EHLO
+        id S245267AbiEZOrO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 May 2022 10:47:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233900AbiEZNux (ORCPT
+        with ESMTP id S1347736AbiEZOrL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 May 2022 09:50:53 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BB582EA0C;
-        Thu, 26 May 2022 06:50:51 -0700 (PDT)
+        Thu, 26 May 2022 10:47:11 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CF1220BCC
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 May 2022 07:47:07 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 6050FB81ECB;
-        Thu, 26 May 2022 13:50:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4564BC385A9;
-        Thu, 26 May 2022 13:50:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1653573049;
-        bh=TZ9suwP2Cu23eXuYVpICjiBUHCpObZ4x+7GATJXYMQk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=kOnm6opX6rr5LBUtemokkRUtyRd735v7Fp5sqyQQFG0SlM8YVLkpNuJ9AYxhv7hPc
-         E78TZtRVqlbtQhcAmA8VEnoRaLoJBWOuy0jKxY6g1XxLOMSnn1tBpkKoeR3dUQYwzB
-         xq5XJLb7wyU+NR0IKI/h4ZaM14N3PS0FiYosM5p8l1qIIYKbena6JEd7lfmQD78CbY
-         74AeAYOknYaN68ySlucUAGuuv9P/vSGZt1az84JJLLQlukxJouYn5bVR+arZlXrK2s
-         47sEYCXRjZs+6AFavULPDjQsAaekRU7tlu4uO256fbMZb1XN37S/gXH/jtx1f5bTCO
-         0RvPdWq63DKzw==
-Date:   Thu, 26 May 2022 07:50:45 -0600
-From:   Keith Busch <kbusch@kernel.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Keith Busch <kbusch@fb.com>, linux-fsdevel@vger.kernel.org,
-        linux-block@vger.kernel.org, axboe@kernel.dk,
-        Kernel Team <Kernel-team@fb.com>, hch@lst.de,
-        bvanassche@acm.org, damien.lemoal@opensource.wdc.com,
-        pankydev8@gmail.com
-Subject: Re: [PATCHv4 8/9] block: relax direct io memory alignment
-Message-ID: <Yo+FtQ8GlHtMT3pT@kbusch-mbp.dhcp.thefacebook.com>
-References: <20220526010613.4016118-1-kbusch@fb.com>
- <20220526010613.4016118-9-kbusch@fb.com>
- <Yo8sZWNNTKM2Kwqm@sol.localdomain>
+        by ams.source.kernel.org (Postfix) with ESMTPS id CFFD5B820F8
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 May 2022 14:47:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6E6FC385A9;
+        Thu, 26 May 2022 14:47:03 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+        dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="bR5QieuF"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+        t=1653576422;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=qlg0D7t6m5vNAARZb66/P3VDfiBplW1kc1c3tetuqvg=;
+        b=bR5QieuF3jlsgoECQGnm07qptNbWLM21ZFebRW1bdk+QLO/tF8j/n37mMKZNj6jWqik3sv
+        WPYzSxghhBQzYitbolGbTsE2xuUxvUJqE0rj99qgl7a4XxycV/7gwYAlBtR79XhH9bUhxP
+        SfS8wa2VSKnQXPWJFcCZP6Ch8twyBJI=
+Received: by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 19c32fa6 (TLSv1.3:AEAD-AES256-GCM-SHA384:256:NO);
+        Thu, 26 May 2022 14:47:01 +0000 (UTC)
+Date:   Thu, 26 May 2022 16:46:56 +0200
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
+        x86@kernel.org
+Subject: Re: [RFC] what to do with IOCB_DSYNC?
+Message-ID: <Yo+S4JtT6fjwO5GL@zx2c4.com>
+References: <9c3a6ad4-cdb5-8e0d-9b01-c2825ea891ad@kernel.dk>
+ <6ea33ba8-c5a3-a1e7-92d2-da8744662ed9@kernel.dk>
+ <YouYvxEl1rF2QO5K@zeniv-ca.linux.org.uk>
+ <0343869c-c6d1-5e7c-3bcb-f8d6999a2e04@kernel.dk>
+ <YoueZl4Zx0WUH3CS@zeniv-ca.linux.org.uk>
+ <6594c360-0c7c-412f-29c9-377ddda16937@kernel.dk>
+ <f74235f7-8c55-8def-9a3f-bc5bacd7ee3c@kernel.dk>
+ <YoutEnMCVdwlzboT@casper.infradead.org>
+ <ef4d18ee-1c3e-2bd6-eff5-344a0359884d@kernel.dk>
+ <2ae13aa9-f180-0c71-55db-922c0f18dc1b@kernel.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Yo8sZWNNTKM2Kwqm@sol.localdomain>
-X-Spam-Status: No, score=-7.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <2ae13aa9-f180-0c71-55db-922c0f18dc1b@kernel.dk>
+X-Spam-Status: No, score=-6.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 26, 2022 at 12:29:41AM -0700, Eric Biggers wrote:
-> On Wed, May 25, 2022 at 06:06:12PM -0700, Keith Busch wrote:
-> > +	/*
-> > +	 * Each segment in the iov is required to be a block size multiple.
+On Mon, May 23, 2022 at 10:03:45AM -0600, Jens Axboe wrote:
+> clear_user()
+> 32	~96MB/sec
+> 64	195MB/sec
+> 128	386MB/sec
+> 1k	2.7GB/sec
+> 4k	7.8GB/sec
+> 16k	14.8GB/sec
 > 
-> Where is this enforced?
+> copy_from_zero_page()
+> 32	~96MB/sec
+> 64	193MB/sec
+> 128	383MB/sec
+> 1k	2.9GB/sec
+> 4k	9.8GB/sec
+> 16k	21.8GB/sec
 
-Right below the comment. If it isn't a block size multiple, then ALIGN_DOWN
-will eventually result in 0 and -EFAULT is returned. 
+Just FYI, on x86, Samuel Neves proposed some nice clear_user()
+performance improvements that were forgotten about:
+
+https://lore.kernel.org/lkml/20210523180423.108087-1-sneves@dei.uc.pt/
+https://lore.kernel.org/lkml/Yk9yBcj78mpXOOLL@zx2c4.com/
+
+Hoping somebody picks this up at some point...
+
+Jason
