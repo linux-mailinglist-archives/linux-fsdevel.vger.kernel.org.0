@@ -2,36 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 265B4534DD1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 May 2022 13:08:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71A65534FBD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 May 2022 15:04:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231831AbiEZLIR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 May 2022 07:08:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39060 "EHLO
+        id S1344415AbiEZNEO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 May 2022 09:04:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49242 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229464AbiEZLIP (ORCPT
+        with ESMTP id S1347398AbiEZNEM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 May 2022 07:08:15 -0400
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 032BD6D842;
-        Thu, 26 May 2022 04:08:14 -0700 (PDT)
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 74B2B1C0B8F; Thu, 26 May 2022 13:08:12 +0200 (CEST)
-Date:   Thu, 26 May 2022 13:08:11 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Simon Ser <contact@emersion.fr>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Thu, 26 May 2022 09:04:12 -0400
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [IPv6:2001:67c:2050:0:465::101])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E70B5CFE3E;
+        Thu, 26 May 2022 06:04:10 -0700 (PDT)
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4L87Rm0bs8z9sZH;
+        Thu, 26 May 2022 15:04:04 +0200 (CEST)
+Date:   Thu, 26 May 2022 23:03:55 +1000
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Simon Ser <contact@emersion.fr>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
 Subject: Re: procfs: open("/proc/self/fd/...") allows bypassing O_RDONLY
-Message-ID: <20220526110811.GB5138@localhost>
+Message-ID: <20220526130355.fo6gzbst455fxywy@senku>
 References: <lGo7a4qQABKb-u_xsz6p-QtLIy2bzciBLTUJ7-ksv7ppK3mRrJhXqFmCFU4AtQf6EyrZUrYuSLDMBHEUMe5st_iT9VcRuyYPMU_jVpSzoWg=@emersion.fr>
+ <03l0hfZIzD9KwSxSntGcmfFhvbIKiK45poGUhXtR7Qi0Av0-ZnqnSBPAP09GGpSrKGZWZNCTvme_Gpiuz0Bcg6ewDIXSH24SBx_tvfyZSWU=@emersion.fr>
+ <CAJfpegs4GVirNVtf4OqunzNwbXQywZVkxpGPtpN=ZonHU2SpiA@mail.gmail.com>
+ <20220513095817.622gcrgx3fffwk4h@wittgenstein>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ls6hlrjjszajykhe"
 Content-Disposition: inline
-In-Reply-To: <lGo7a4qQABKb-u_xsz6p-QtLIy2bzciBLTUJ7-ksv7ppK3mRrJhXqFmCFU4AtQf6EyrZUrYuSLDMBHEUMe5st_iT9VcRuyYPMU_jVpSzoWg=@emersion.fr>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20220513095817.622gcrgx3fffwk4h@wittgenstein>
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -39,36 +49,70 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi!
 
-> I'm a user-space developer working on Wayland. Recently we've been
-> discussing about security considerations related to FD passing between
-> processes [1].
-> 
-> A Wayland compositor often needs to share read-only data with its
-> clients. Examples include a keyboard keymap, or a pixel format table.
-> The clients might be untrusted. The data sharing can happen by having
-> the compositor send a read-only FD (ie, a FD opened with O_RDONLY) to
-> clients.
-> 
-> It was assumed that passing such a FD wouldn't allow Wayland clients to
-> write to the file. However, it was recently discovered that procfs
-> allows to bypass this restriction. A process can open(2)
-> "/proc/self/fd/<fd>" with O_RDWR, and that will return a FD suitable for
-> writing. This also works when running the client inside a user namespace.
-> A PoC is available at [2] and can be tested inside a compositor which
-> uses this O_RDONLY strategy (e.g. wlroots compositors).
-> 
-> Question: is this intended behavior, or is this an oversight? If this is
-> intended behavior, what would be a good way to share a FD to another
-> process without allowing it to write to the underlying file?
+--ls6hlrjjszajykhe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sounds like a bug. Not all world is Linux, and 'mount /proc' changing
-security characteristics of fd passing is nasty and surprising.
+On 2022-05-13, Christian Brauner <brauner@kernel.org> wrote:
+> On Thu, May 12, 2022 at 02:56:22PM +0200, Miklos Szeredi wrote:
+> > On Thu, 12 May 2022 at 14:41, Simon Ser <contact@emersion.fr> wrote:
+> > >
+> > > On Thursday, May 12th, 2022 at 12:37, Simon Ser <contact@emersion.fr>=
+ wrote:
+> > >
+> > > > what would be a good way to share a FD to another
+> > > > process without allowing it to write to the underlying file?
+> > >
+> > > (I'm reminded that memfd + seals exist for this purpose. Still, I'd be
+> > > interested to know whether that O_RDONLY/O_RDWR behavior is intended,
+> > > because it's pretty surprising. The motivation for using O_RDONLY over
+> > > memfd seals is that it isn't Linux-specific.)
+> >=20
+> > Yes, this is intended.   The /proc/$PID/fd/$FD file represents the
+> > inode pointed to by $FD.   So the open flags for $FD are irrelevant
+> > when operating on the proc fd file.
+>=20
+> Fwiw, the original openat2() patchset contained upgrade masks which we
+> decided to split it out into a separate patchset.
+>=20
+> The idea is that struct open_how would be extended with an upgrade mask
+> field which allows the opener to specify with which permissions a file
+> descriptor is allowed to be re-opened. This has quite a lot of
+> use-cases, especially in container runtimes. So one could open an fd and
+> restrict it from being re-opened with O_WRONLY. For container runtimes
+> this is a huge security win and for userspace in general it would
+> provide a backwards compatible way of e.g., making O_PATH fds
+> non-upgradable. The plan is to resend the extension at some point in the
+> not too distant future.
 
-We should not surprise people when it has security implications.
+I am currently working on reviving this patchset.
 
-Best regards,
-							Pavel
+The main issue at the moment is that the semantics for how we should
+deal with directories is a little difficult to define (we want to ignore
+modes for directories because of *at(2) semantics but there's no fmode_t
+bits at the moment representing that the flip is a directory), but I'm
+working on it.
 
--- 
+This is going to be included along with the O_EMPTYPATH feature (since
+making this safe is IMHO a pre-requisite for O_EMPTYPATH).
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--ls6hlrjjszajykhe
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSxZm6dtfE8gxLLfYqdlLljIbnQEgUCYo96uAAKCRCdlLljIbnQ
+EuLaAP9AIoX3ZQoBY4Zbt7eYKU1Futeff1vE4dFwviRHUzebPAEAtrMNZ1WaqSOT
+6XAkAWN2lR2wUyPESn4+ONh89CO/0gs=
+=8SCK
+-----END PGP SIGNATURE-----
+
+--ls6hlrjjszajykhe--
