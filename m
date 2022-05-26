@@ -2,109 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D3E40535025
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 May 2022 15:44:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96629535031
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 May 2022 15:50:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241303AbiEZNoB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 May 2022 09:44:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49110 "EHLO
+        id S1343997AbiEZNux (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 May 2022 09:50:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231330AbiEZNn7 (ORCPT
+        with ESMTP id S233900AbiEZNux (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 May 2022 09:43:59 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0412CDFEB;
-        Thu, 26 May 2022 06:43:58 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id A970821A06;
-        Thu, 26 May 2022 13:43:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1653572636; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=UpK3/+mflNhNMKFUzS8sRLaHIEJ6kOwAbvdU09gMH7s=;
-        b=3LryFXFDC3AdXNd2lRAYNMZxlZT+62FzmWr4B8ftgsP6BcWFelARCV2g3tqqyflpefmbZC
-        V0TO6tAhWU4d11Zz3OOY5idYus/ihMFEAn8xbzx5CbrfPymCOPoAiHnLNWT/XQO4v7rXUF
-        JKZP6bbyQG8k+ISKbPJmd0FYmlUNVDE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1653572636;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=UpK3/+mflNhNMKFUzS8sRLaHIEJ6kOwAbvdU09gMH7s=;
-        b=51eEm0IOMH3zxagbLh+mvwGB43Gpbh0I3m8y+KDeUxONAAfQ+Q4NcRdjBVzAmxjnQ89Y9M
-        yNq1pS9sp/GMhKAA==
-Received: from quack3.suse.cz (unknown [10.100.224.230])
+        Thu, 26 May 2022 09:50:53 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BB582EA0C;
+        Thu, 26 May 2022 06:50:51 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 9A9C32C141;
-        Thu, 26 May 2022 13:43:56 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 26532A0632; Thu, 26 May 2022 15:43:56 +0200 (CEST)
-Date:   Thu, 26 May 2022 15:43:56 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Stefan Roesch <shr@fb.com>
-Cc:     io-uring@vger.kernel.org, kernel-team@fb.com, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        david@fromorbit.com, jack@suse.cz, hch@infradead.org
-Subject: Re: [PATCH v5 04/16] iomap: Add flags parameter to
- iomap_page_create()
-Message-ID: <20220526134356.volr3q5ysewszfwo@quack3.lan>
-References: <20220525223432.205676-1-shr@fb.com>
- <20220525223432.205676-5-shr@fb.com>
+        by ams.source.kernel.org (Postfix) with ESMTPS id 6050FB81ECB;
+        Thu, 26 May 2022 13:50:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4564BC385A9;
+        Thu, 26 May 2022 13:50:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1653573049;
+        bh=TZ9suwP2Cu23eXuYVpICjiBUHCpObZ4x+7GATJXYMQk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kOnm6opX6rr5LBUtemokkRUtyRd735v7Fp5sqyQQFG0SlM8YVLkpNuJ9AYxhv7hPc
+         E78TZtRVqlbtQhcAmA8VEnoRaLoJBWOuy0jKxY6g1XxLOMSnn1tBpkKoeR3dUQYwzB
+         xq5XJLb7wyU+NR0IKI/h4ZaM14N3PS0FiYosM5p8l1qIIYKbena6JEd7lfmQD78CbY
+         74AeAYOknYaN68ySlucUAGuuv9P/vSGZt1az84JJLLQlukxJouYn5bVR+arZlXrK2s
+         47sEYCXRjZs+6AFavULPDjQsAaekRU7tlu4uO256fbMZb1XN37S/gXH/jtx1f5bTCO
+         0RvPdWq63DKzw==
+Date:   Thu, 26 May 2022 07:50:45 -0600
+From:   Keith Busch <kbusch@kernel.org>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Keith Busch <kbusch@fb.com>, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, axboe@kernel.dk,
+        Kernel Team <Kernel-team@fb.com>, hch@lst.de,
+        bvanassche@acm.org, damien.lemoal@opensource.wdc.com,
+        pankydev8@gmail.com
+Subject: Re: [PATCHv4 8/9] block: relax direct io memory alignment
+Message-ID: <Yo+FtQ8GlHtMT3pT@kbusch-mbp.dhcp.thefacebook.com>
+References: <20220526010613.4016118-1-kbusch@fb.com>
+ <20220526010613.4016118-9-kbusch@fb.com>
+ <Yo8sZWNNTKM2Kwqm@sol.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220525223432.205676-5-shr@fb.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+In-Reply-To: <Yo8sZWNNTKM2Kwqm@sol.localdomain>
+X-Spam-Status: No, score=-7.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 25-05-22 15:34:20, Stefan Roesch wrote:
-> Add the kiocb flags parameter to the function iomap_page_create().
-> Depending on the value of the flags parameter it enables different gfp
-> flags.
+On Thu, May 26, 2022 at 12:29:41AM -0700, Eric Biggers wrote:
+> On Wed, May 25, 2022 at 06:06:12PM -0700, Keith Busch wrote:
+> > +	/*
+> > +	 * Each segment in the iov is required to be a block size multiple.
 > 
-> No intended functional changes in this patch.
-> 
-> Signed-off-by: Stefan Roesch <shr@fb.com>
+> Where is this enforced?
 
-Just one nit below:
-
-> @@ -226,7 +231,7 @@ static int iomap_read_inline_data(const struct iomap_iter *iter,
->  	if (WARN_ON_ONCE(size > iomap->length))
->  		return -EIO;
->  	if (offset > 0)
-> -		iop = iomap_page_create(iter->inode, folio);
-> +		iop = iomap_page_create(iter->inode, folio, 0);
->  	else
->  		iop = to_iomap_page(folio);
->  
-> @@ -264,7 +269,7 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
->  		return iomap_read_inline_data(iter, folio);
->  
->  	/* zero post-eof blocks as the page may be mapped */
-> -	iop = iomap_page_create(iter->inode, folio);
-> +	iop = iomap_page_create(iter->inode, folio, 0);
->  	iomap_adjust_read_range(iter->inode, folio, &pos, length, &poff, &plen);
->  	if (plen == 0)
->  		goto done;
-
-Shouldn't we pass iter->flags to iomap_page_create() in the above two call
-sites? I know functionally it is no different currently but in the future
-it might be less surprising...
-
-With this fixed, feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Right below the comment. If it isn't a block size multiple, then ALIGN_DOWN
+will eventually result in 0 and -EFAULT is returned. 
