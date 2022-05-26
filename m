@@ -2,48 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AC64F5352C5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 May 2022 19:39:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D17F55352C9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 May 2022 19:39:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348329AbiEZRjk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 May 2022 13:39:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60302 "EHLO
+        id S235170AbiEZRjo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 May 2022 13:39:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348374AbiEZRj0 (ORCPT
+        with ESMTP id S1348362AbiEZRja (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 May 2022 13:39:26 -0400
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE6EAA774D
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 May 2022 10:39:22 -0700 (PDT)
-Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24QBRjtQ009001
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 May 2022 10:39:22 -0700
+        Thu, 26 May 2022 13:39:30 -0400
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5859994F4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 May 2022 10:39:29 -0700 (PDT)
+Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24QFAilr029233
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 May 2022 10:39:29 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=facebook;
- bh=xrXV6DDKAu8edht2TcHb7XC2Tqf/DAsX1r3VS5rTvoo=;
- b=W1pwgmeBz/Gu6rpwaqvVbg9pNPeWiUxgi5QOSJePV8Z01xqfpKqNcIoh/NmwFo6dn4cl
- Q/dhdBUxR2bv5Ani5aB0STfoquRD3YVnC8NNw2KkBng1W3B+rY2IeBelDLlQZ9iz1bSt
- +7SJdd5HXqXDs0vxWEJ7pWhuNBaZK1Lzl7U= 
+ bh=KHrcNgpGoec04+4iaa68lI4ptLIlXN7oy1iPyC/evOA=;
+ b=h24Jkrr5OHPP90yQHENm88tV675Zd+bz26TkIqQM6zgWCdzPEmJgaermkuE+zAxxHmoe
+ COb8degQhkHXLDUbGJ59/w3i17ssrZA0zPxx93Hx9JVwYTHSbpoCJH+M9cuzJBVAPtxW
+ vNT09lLV6AzkVCAQOLNu+Sk2K07/4K0ly2A= 
 Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3ga8puth7u-13
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3g9puarjkv-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 May 2022 10:39:21 -0700
-Received: from twshared10560.18.frc3.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:83::4) with Microsoft SMTP Server
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 May 2022 10:39:29 -0700
+Received: from twshared14818.18.frc3.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:83::5) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.28; Thu, 26 May 2022 10:39:20 -0700
+ 15.1.2375.28; Thu, 26 May 2022 10:39:28 -0700
 Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
-        id B2369FA621EA; Thu, 26 May 2022 10:38:45 -0700 (PDT)
+        id B80A4FA621EC; Thu, 26 May 2022 10:38:45 -0700 (PDT)
 From:   Stefan Roesch <shr@fb.com>
 To:     <io-uring@vger.kernel.org>, <kernel-team@fb.com>,
         <linux-mm@kvack.org>, <linux-xfs@vger.kernel.org>,
         <linux-fsdevel@vger.kernel.org>
 CC:     <shr@fb.com>, <david@fromorbit.com>, <jack@suse.cz>,
         <hch@infradead.org>
-Subject: [PATCH v6 15/16] xfs: Add async buffered write support
-Date:   Thu, 26 May 2022 10:38:39 -0700
-Message-ID: <20220526173840.578265-16-shr@fb.com>
+Subject: [PATCH v6 16/16] xfs: Enable async buffered write support
+Date:   Thu, 26 May 2022 10:38:40 -0700
+Message-ID: <20220526173840.578265-17-shr@fb.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220526173840.578265-1-shr@fb.com>
 References: <20220526173840.578265-1-shr@fb.com>
@@ -51,8 +51,8 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: Wr8A5MCG-n1eE0B_bRRhY2OprEIVg5yg
-X-Proofpoint-GUID: Wr8A5MCG-n1eE0B_bRRhY2OprEIVg5yg
+X-Proofpoint-GUID: 3JKnb6BldaSdhYi4mKt_PJZupzRFpQ0s
+X-Proofpoint-ORIG-GUID: 3JKnb6BldaSdhYi4mKt_PJZupzRFpQ0s
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.874,Hydra:6.0.486,FMLib:17.11.64.514
  definitions=2022-05-26_09,2022-05-25_02,2022-02-23_01
@@ -66,68 +66,26 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This adds the async buffered write support to XFS. For async buffered
-write requests, the request will return -EAGAIN if the ilock cannot be
-obtained immediately.
+This turns on the async buffered write support for XFS.
 
 Signed-off-by: Stefan Roesch <shr@fb.com>
 ---
- fs/xfs/xfs_file.c  | 9 ++++-----
- fs/xfs/xfs_iomap.c | 5 ++++-
- 2 files changed, 8 insertions(+), 6 deletions(-)
+ fs/xfs/xfs_file.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-index 50dea07f5e56..e9d615f4c209 100644
+index e9d615f4c209..2297770364b0 100644
 --- a/fs/xfs/xfs_file.c
 +++ b/fs/xfs/xfs_file.c
-@@ -409,7 +409,7 @@ xfs_file_write_checks(
- 		spin_unlock(&ip->i_flags_lock);
-=20
- out:
--	return file_modified(file);
-+	return kiocb_modified(iocb);
+@@ -1169,7 +1169,7 @@ xfs_file_open(
+ 		return -EFBIG;
+ 	if (xfs_is_shutdown(XFS_M(inode->i_sb)))
+ 		return -EIO;
+-	file->f_mode |=3D FMODE_NOWAIT | FMODE_BUF_RASYNC;
++	file->f_mode |=3D FMODE_NOWAIT | FMODE_BUF_RASYNC | FMODE_BUF_WASYNC;
+ 	return 0;
  }
 =20
- static int
-@@ -701,12 +701,11 @@ xfs_file_buffered_write(
- 	bool			cleared_space =3D false;
- 	int			iolock;
-=20
--	if (iocb->ki_flags & IOCB_NOWAIT)
--		return -EOPNOTSUPP;
--
- write_retry:
- 	iolock =3D XFS_IOLOCK_EXCL;
--	xfs_ilock(ip, iolock);
-+	ret =3D xfs_ilock_iocb(ip, iocb->ki_flags, iolock);
-+	if (ret)
-+		return ret;
-=20
- 	ret =3D xfs_file_write_checks(iocb, from, &iolock);
- 	if (ret)
-diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-index 3aa60e53a181..af8c50140f0f 100644
---- a/fs/xfs/xfs_iomap.c
-+++ b/fs/xfs/xfs_iomap.c
-@@ -881,6 +881,7 @@ xfs_buffered_write_iomap_begin(
- 	bool			eof =3D false, cow_eof =3D false, shared =3D false;
- 	int			allocfork =3D XFS_DATA_FORK;
- 	int			error =3D 0;
-+	unsigned int		lockmode =3D XFS_ILOCK_EXCL;
-=20
- 	if (xfs_is_shutdown(mp))
- 		return -EIO;
-@@ -892,7 +893,9 @@ xfs_buffered_write_iomap_begin(
-=20
- 	ASSERT(!XFS_IS_REALTIME_INODE(ip));
-=20
--	xfs_ilock(ip, XFS_ILOCK_EXCL);
-+	error =3D xfs_ilock_for_iomap(ip, flags, &lockmode);
-+	if (error)
-+		return error;
-=20
- 	if (XFS_IS_CORRUPT(mp, !xfs_ifork_has_extents(&ip->i_df)) ||
- 	    XFS_TEST_ERROR(false, mp, XFS_ERRTAG_BMAPIFORMAT)) {
 --=20
 2.30.2
 
