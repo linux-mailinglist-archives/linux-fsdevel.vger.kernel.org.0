@@ -2,87 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B8EFE5353F3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 May 2022 21:29:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 099215353ED
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 May 2022 21:29:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348758AbiEZT3h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 May 2022 15:29:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44676 "EHLO
+        id S1348191AbiEZT32 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 May 2022 15:29:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345948AbiEZT30 (ORCPT
+        with ESMTP id S229680AbiEZT30 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Thu, 26 May 2022 15:29:26 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 802A6B36C5
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 800225B894
         for <linux-fsdevel@vger.kernel.org>; Thu, 26 May 2022 12:29:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=QYulGt4krpBmevJpBluzqPg1U+NZrkxxC3VbHwa6WgE=; b=WJUh4ypE6G1Ij5mGH8aq7WLwkv
-        vy+qZ7YLhc2oXeneYj+mUEgA0UEJ/RmEg3r/QLSQLREU6796l9uR8n8vW1jaLgfJMHsIrnpMoQ6IL
-        gUBtdwBWTqYfrad2emWtYgnV/PoRke9RoqqUkocDtDxAGE2m8ZttrUXjeF/Qh51Ek95uyjX3gIxim
-        fiOo5zuUMg4zVAy/1ysrLK6EtY/PPr+ZoZMSqz+xyRQYZhmP7phtSqi/8wpTU5N1nMzlIOcJjCuiE
-        Z2lBX7kP2x9+vog+jdPLvq/r9dTEGPwdlI1lzANgzpuH3UJpI8wblQfAtUcwOUrdtfy18icXqWvOh
-        y+RkwvAA==;
+        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        Content-Type:Content-ID:Content-Description;
+        bh=9JqXy0lBEg/MQdfYlCAme5LYG4YIOIwkBWQxllmFD7g=; b=h7sSKXwy3S78KgTISdtMXLUu9x
+        ZCioesmSNcyQUHNaOZT0wXzUfvKfCA9+Ug7IWhiBpPLE51fn0Qgf0doWNmVOtlleQumu11CLhLr3W
+        OUXPLQ2eFB+LLySV/2l2yTSC4XvfOeujput/gY/qzARIEUc4aMQ1DBslMgdsklfu9jWdwn3Gih6I8
+        Rc68nSesgYSGP/lhjKTbTC1NZtYKMd/fbFGCFPNV7kiUPgMBtayVomaG9kGWsPoEqHv6mrI2iceWJ
+        G1UQi0l0rJlo+HUA05nXsJfNJxx3DRyu4pA3KpjQ2aXvZXN+PqaGTjeJA/xt+XHH5lBsz6LnzCyQR
+        ifqIl2nw==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nuJAa-001Uu9-Cm; Thu, 26 May 2022 19:29:16 +0000
+        id 1nuJAa-001UuB-Et; Thu, 26 May 2022 19:29:16 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Christoph Hellwig <hch@infradead.org>,
         "Darrick J . Wong" <djwong@kernel.org>
-Subject: [RFC PATCH 0/9] Convert JFS to use iomap
-Date:   Thu, 26 May 2022 20:29:01 +0100
-Message-Id: <20220526192910.357055-1-willy@infradead.org>
+Subject: [RFC PATCH 1/9] IOMAP_DIO_NOSYNC
+Date:   Thu, 26 May 2022 20:29:02 +0100
+Message-Id: <20220526192910.357055-2-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20220526192910.357055-1-willy@infradead.org>
+References: <20220526192910.357055-1-willy@infradead.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-3.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+        SPF_NONE,SUBJ_ALL_CAPS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patchset does not work.  It will eat your filesystem.  Do not apply.
+Al's patch.
 
-The bug starts to show up with the fourth patch ("Convert direct_IO write
-support to use iomap").  generic/013 creates a corrupt filesystem and
-fsck fails to fix it, which shows all kinds of fun places in xfstests
-where we neglect to check that 'mount' actually mounted the filesystem.
-set -x or die.
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ fs/iomap/direct-io.c  | 3 ++-
+ include/linux/iomap.h | 6 ++++++
+ 2 files changed, 8 insertions(+), 1 deletion(-)
 
-I'm hoping one of the people who knows iomap better than I do can just
-point at the bug and say "Duh, it doesn't work like that".
-
-It's safe to say that every patch after patch 6 is untested.  I'm not
-convinced that I really tested patch 6 either.
-
-Matthew Wilcox (Oracle) (9):
-  IOMAP_DIO_NOSYNC
-  jfs: Add jfs_iomap_begin()
-  jfs: Convert direct_IO read support to use iomap
-  jfs: Convert direct_IO write support to use iomap
-  jfs: Remove old direct_IO support
-  jfs: Handle bmap with iomap
-  jfs: Read quota through the page cache
-  jfs: Write quota through the page cache
-  jfs: Convert buffered IO paths to iomap
-
- fs/iomap/direct-io.c  |   3 +-
- fs/jfs/file.c         |  56 +++++++++++++++++-
- fs/jfs/inode.c        | 128 ++++++++++++++++--------------------------
- fs/jfs/jfs_inode.h    |   2 +-
- fs/jfs/jfs_logmgr.c   |   1 -
- fs/jfs/jfs_metapage.c |   1 -
- fs/jfs/super.c        | 127 +++++++++++++++++++----------------------
- include/linux/iomap.h |   6 ++
- 8 files changed, 168 insertions(+), 156 deletions(-)
-
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index 370c3241618a..6a361131080f 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -548,7 +548,8 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+ 		}
+ 
+ 		/* for data sync or sync, we need sync completion processing */
+-		if (iocb->ki_flags & IOCB_DSYNC)
++		if (iocb->ki_flags & IOCB_DSYNC &&
++		    !(dio_flags & IOMAP_DIO_NOSYNC))
+ 			dio->flags |= IOMAP_DIO_NEED_SYNC;
+ 
+ 		/*
+diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+index e552097c67e0..c8622d8f064e 100644
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@ -353,6 +353,12 @@ struct iomap_dio_ops {
+  */
+ #define IOMAP_DIO_PARTIAL		(1 << 2)
+ 
++/*
++ * The caller will sync the write if needed; do not sync it within
++ * iomap_dio_rw.  Overrides IOMAP_DIO_FORCE_WAIT.
++ */
++#define IOMAP_DIO_NOSYNC		(1 << 3)
++
+ ssize_t iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+ 		const struct iomap_ops *ops, const struct iomap_dio_ops *dops,
+ 		unsigned int dio_flags, void *private, size_t done_before);
 -- 
 2.34.1
 
