@@ -2,64 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A904A53532E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 May 2022 20:14:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C161535352
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 26 May 2022 20:25:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245254AbiEZSOa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 May 2022 14:14:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33166 "EHLO
+        id S237129AbiEZSZr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 May 2022 14:25:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236329AbiEZSO2 (ORCPT
+        with ESMTP id S1349685AbiEZSZl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 May 2022 14:14:28 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 5E9D9AFAFF
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 May 2022 11:14:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1653588866;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Y+/f5rCCX5O2YnIFMqX5A6PQPJ8kjAWayKsnZFb/i6I=;
-        b=Uu0+kDK0Ej9YaO3wgUTS+dn51UR+8kbSq49nhxyn1pdKl6Ponwm7HA4ZgWh4g6dBndgT44
-        EWAJvUL8NMZL81KjxGaer00pmTgu5I/JvxwDZ/5FRjL6LxZ6oDIhxn9qqFDv6jB5IJlrGm
-        qbIEB50j+QkyxfnEyi+GTMJHg8oPM0s=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-331-QGQMv57xNBOCTKB7phssCw-1; Thu, 26 May 2022 14:14:24 -0400
-X-MC-Unique: QGQMv57xNBOCTKB7phssCw-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Thu, 26 May 2022 14:25:41 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A9CB62A35;
+        Thu, 26 May 2022 11:25:39 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 5631E801228;
-        Thu, 26 May 2022 18:14:24 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.210])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 285D2400F3E8;
-        Thu, 26 May 2022 18:14:24 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id D98762208FA; Thu, 26 May 2022 14:14:23 -0400 (EDT)
-Date:   Thu, 26 May 2022 14:14:23 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Bernd Schubert <bschubert@ddn.com>
-Cc:     Dharmendra Singh <dharamhans87@gmail.com>, miklos@szeredi.hu,
-        linux-fsdevel@vger.kernel.org, fuse-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, Dharmendra Singh <dsingh@ddn.com>
-Subject: Re: [PATCH v3 1/1] FUSE: Allow non-extending parallel direct writes
- on the same file.
-Message-ID: <Yo/DfzU7IXZbADK5@redhat.com>
-References: <20220520043443.17439-1-dharamhans87@gmail.com>
- <20220520043443.17439-2-dharamhans87@gmail.com>
- <Yo6SBoEgGgnNQv8W@redhat.com>
- <3350e4e2-bad5-7f2f-2b09-c1807815a29c@ddn.com>
+        by sin.source.kernel.org (Postfix) with ESMTPS id 6DDEBCE22CE;
+        Thu, 26 May 2022 18:25:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5F89C385A9;
+        Thu, 26 May 2022 18:25:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1653589536;
+        bh=MYNWgivGhGmmsbjTVz5uPvg0gyA0R4dUrcZQM07Dcqo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dc2AjXmO9dHGIz24yuTGtdzntHWgcM+7HyGWa2sDUjyNeGJZy2sGhlFvT04MalrpT
+         qCxXjnTw565MQduk8+DLqbaeIclS5wGPfdnWlxJ4RI9ltkfrQJ20JtGAlsaI9ombVF
+         GDF9+ImAlgHlmLYUOhGIMy+FLo1MunRPsZ4CXwrYpBqPQ+TQOBlwgrawyNdS4neP/Y
+         cxAqdYmqc8NebWW5lT1DvAXOoPinUb5KGGqesQjs6+2iOt2RpEwOGi5AemRsAHRnA+
+         DcwmTS7tfAu7idBI9MyAxXVlB8ay3LE7QJnu02RirfkZCpxVJsQalwoIRY0UBsLab1
+         1uQHcrubSEK7g==
+Date:   Thu, 26 May 2022 11:25:36 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Stefan Roesch <shr@fb.com>
+Cc:     io-uring@vger.kernel.org, kernel-team@fb.com, linux-mm@kvack.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        david@fromorbit.com, jack@suse.cz, hch@infradead.org
+Subject: Re: [PATCH v6 04/16] iomap: Add flags parameter to
+ iomap_page_create()
+Message-ID: <Yo/GIF1EoK7Acvmy@magnolia>
+References: <20220526173840.578265-1-shr@fb.com>
+ <20220526173840.578265-5-shr@fb.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3350e4e2-bad5-7f2f-2b09-c1807815a29c@ddn.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.11.54.2
-X-Spam-Status: No, score=-3.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+In-Reply-To: <20220526173840.578265-5-shr@fb.com>
+X-Spam-Status: No, score=-7.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -67,73 +57,100 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 25, 2022 at 10:49:49PM +0200, Bernd Schubert wrote:
+On Thu, May 26, 2022 at 10:38:28AM -0700, Stefan Roesch wrote:
+> Add the kiocb flags parameter to the function iomap_page_create().
+> Depending on the value of the flags parameter it enables different gfp
+> flags.
 > 
+> No intended functional changes in this patch.
 > 
-> On 5/25/22 22:31, Vivek Goyal wrote:
-> > On Fri, May 20, 2022 at 10:04:43AM +0530, Dharmendra Singh wrote:
-> > > From: Dharmendra Singh <dsingh@ddn.com>
-> > > 
-> > > In general, as of now, in FUSE, direct writes on the same file are
-> > > serialized over inode lock i.e we hold inode lock for the full duration
-> > > of the write request. I could not found in fuse code a comment which
-> > > clearly explains why this exclusive lock is taken for direct writes.
-> > > Our guess is some USER space fuse implementations might be relying
-> > > on this lock for seralization and also it protects for the issues
-> > > arising due to file size assumption or write failures.  This patch
-> > > relaxes this exclusive lock in some cases of direct writes.
-> > 
-> > I have this question as well. My understanding was that in general,
-> > reads can do shared lock while writes have to take exclusive lock.
-> > And I assumed that extends to both buffered as well as direct
-> > writes.
-> > 
-> > I would also like to understand what's the fundamental restriction
-> > and why O_DIRECT is special that this restriction does not apply.
-> > 
-> > Is any other file system doing this as well?
-> > 
-> > If fuse server dir is shared with other fuse clients, it is possible
-> > that i_size in this client is stale. Will that be a problem. I guess
-> > if that's the problem then, even a single write will be a problem
-> > because two fuse clients might be trying to write.
-> > 
-> > Just trying to make sure that it is safe to allow parallel direct
-> > writes.
+> Signed-off-by: Stefan Roesch <shr@fb.com>
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> ---
+>  fs/iomap/buffered-io.c | 19 +++++++++++++------
+>  1 file changed, 13 insertions(+), 6 deletions(-)
 > 
-> I think missing in this series is to add a comment when this lock is needed
-> at all. Our network file system is log structured - any parallel writes to
-> the same file from different remote clients are handled through addition of
-> fragments on the network server side - lockless safe due to byte level
-> accuracy. With the exception of conflicting writes - last client wins -
-> application is then doing 'silly' things - locking would not help either.
-> And random parallel writes from the same (network) client are even an ideal
-> case for us, as that is handled through shared blocks for different
-> fragments (file offset + len). So for us shared writes are totally safe.
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 8ce8720093b9..d6ddc54e190e 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -44,16 +44,21 @@ static inline struct iomap_page *to_iomap_page(struct folio *folio)
+>  static struct bio_set iomap_ioend_bioset;
+>  
+>  static struct iomap_page *
+> -iomap_page_create(struct inode *inode, struct folio *folio)
+> +iomap_page_create(struct inode *inode, struct folio *folio, unsigned int flags)
+>  {
+>  	struct iomap_page *iop = to_iomap_page(folio);
+>  	unsigned int nr_blocks = i_blocks_per_folio(inode, folio);
+> +	gfp_t gfp = GFP_NOFS | __GFP_NOFAIL;
+>  
+>  	if (iop || nr_blocks <= 1)
+>  		return iop;
+>  
+> +	if (flags & IOMAP_NOWAIT)
+> +		gfp = GFP_NOWAIT;
+
+Hmm.  GFP_NOWAIT means we don't wait for reclaim or IO or filesystem
+callbacks, and NOFAIL means we retry indefinitely.  What happens in the
+NOWAIT|NOFAIL case?  Does that imply that the kzalloc loops without
+triggering direct reclaim until someone else frees enough memory?
+
+--D
+
+> +
+>  	iop = kzalloc(struct_size(iop, uptodate, BITS_TO_LONGS(nr_blocks)),
+> -			GFP_NOFS | __GFP_NOFAIL);
+> +		      gfp);
+> +
+>  	spin_lock_init(&iop->uptodate_lock);
+>  	if (folio_test_uptodate(folio))
+>  		bitmap_fill(iop->uptodate, nr_blocks);
+> @@ -226,7 +231,7 @@ static int iomap_read_inline_data(const struct iomap_iter *iter,
+>  	if (WARN_ON_ONCE(size > iomap->length))
+>  		return -EIO;
+>  	if (offset > 0)
+> -		iop = iomap_page_create(iter->inode, folio);
+> +		iop = iomap_page_create(iter->inode, folio, iter->flags);
+>  	else
+>  		iop = to_iomap_page(folio);
+>  
+> @@ -264,7 +269,7 @@ static loff_t iomap_readpage_iter(const struct iomap_iter *iter,
+>  		return iomap_read_inline_data(iter, folio);
+>  
+>  	/* zero post-eof blocks as the page may be mapped */
+> -	iop = iomap_page_create(iter->inode, folio);
+> +	iop = iomap_page_create(iter->inode, folio, iter->flags);
+>  	iomap_adjust_read_range(iter->inode, folio, &pos, length, &poff, &plen);
+>  	if (plen == 0)
+>  		goto done;
+> @@ -550,7 +555,7 @@ static int __iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
+>  		size_t len, struct folio *folio)
+>  {
+>  	const struct iomap *srcmap = iomap_iter_srcmap(iter);
+> -	struct iomap_page *iop = iomap_page_create(iter->inode, folio);
+> +	struct iomap_page *iop;
+>  	loff_t block_size = i_blocksize(iter->inode);
+>  	loff_t block_start = round_down(pos, block_size);
+>  	loff_t block_end = round_up(pos + len, block_size);
+> @@ -561,6 +566,8 @@ static int __iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
+>  		return 0;
+>  	folio_clear_error(folio);
+>  
+> +	iop = iomap_page_create(iter->inode, folio, iter->flags);
+> +
+>  	do {
+>  		iomap_adjust_read_range(iter->inode, folio, &block_start,
+>  				block_end - block_start, &poff, &plen);
+> @@ -1332,7 +1339,7 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+>  		struct writeback_control *wbc, struct inode *inode,
+>  		struct folio *folio, u64 end_pos)
+>  {
+> -	struct iomap_page *iop = iomap_page_create(inode, folio);
+> +	struct iomap_page *iop = iomap_page_create(inode, folio, 0);
+>  	struct iomap_ioend *ioend, *next;
+>  	unsigned len = i_blocksize(inode);
+>  	unsigned nblocks = i_blocks_per_folio(inode, folio);
+> -- 
+> 2.30.2
 > 
-> When Dharmendra and I discussed about the lock we came up with a few write
-> error handling cases where that lock might be needed - I guess that should
-> be added as comment.
-
-Right, please add the changelogs to make thought process clear.
-
-So there are no restrictions on the fuse client side from parallelism
-point of view on direct write path? 
-
-Why file extending writes are not safe? Is this a restriction from
-fuse client point of view or just being safe from server point of view.
-If fuse user space is talking to another filesystem, I guess then it
-is not problem because that filesystem will take care of locking as
-needed.
-
-I see ext4 is allowing parallel direct writes for certain cases. And
-where they can't allow it, they have documented it in comments.
-(ext4_dio_write_checks()). I think we need similar rationalization,
-especially from fuse client's perspective and have comments in code
-and specify when it is ok to have parallel direct writes and when it
-is not ok and why. This will help people when they are looking at
-the code later.
-
-Thanks
-Vivek
-
