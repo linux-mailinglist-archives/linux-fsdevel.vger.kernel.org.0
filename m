@@ -2,93 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9663853571D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 May 2022 02:33:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CECDE535747
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 May 2022 03:21:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241053AbiE0AdA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 May 2022 20:33:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57478 "EHLO
+        id S230044AbiE0BVy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 May 2022 21:21:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60652 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240998AbiE0Ac6 (ORCPT
+        with ESMTP id S229741AbiE0BVx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 May 2022 20:32:58 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF5FAE279F;
-        Thu, 26 May 2022 17:32:57 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6507F61D2F;
-        Fri, 27 May 2022 00:32:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 86E01C36AEB;
-        Fri, 27 May 2022 00:32:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1653611576;
-        bh=HSuH8lQkNnQvGfRavnp/3y3zXzXllGHmcd834/c/yBk=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=Lr5WuaeWBuCMbGojH1h0EPHBBoaQeh+t+QncjMqbzhSBrZrXBtIeTfP3lhyP11xQn
-         oDhtEjqeksrnz71Lsd5curaNhC5Z3iBwAHeaNER+QLv8QYd9kjC9yeRAjrVmGZlmZE
-         J7OWr1umkswLKOCSIAiu3VVeSXa0EwVOjnZC96IZpxoYQklrDRDCkV9lCgWP8qTJTr
-         XTlXAPAnSHl7qNcfljIpCvg1JDyugCQDpT+fEsp6cQDNN+q+ZIBVsgYAjBnw8/7aT1
-         C+PXAG93Z6JxrlHg3iHBkFpUituJ4jBJaTM0V1qF13fEuUS+zJI3xXwThhzaa+MT2b
-         UWLHc+ZPuGcnw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 71A80F03942;
-        Fri, 27 May 2022 00:32:56 +0000 (UTC)
-Subject: Re: [GIT PULL] sysctl changes for v5.19-rc1
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <Yo6x6uatAbdsn0JJ@bombadil.infradead.org>
-References: <Yo6x6uatAbdsn0JJ@bombadil.infradead.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <Yo6x6uatAbdsn0JJ@bombadil.infradead.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux.git/ tags/sysctl-5.19-rc1
-X-PR-Tracked-Commit-Id: 494dcdf46e5cdee926c9f441d37e3ea1db57d1da
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 44d35720c9a660074b77ab9de37abf2c01c5b44f
-Message-Id: <165361157645.27205.15620664423908667724.pr-tracker-bot@kernel.org>
-Date:   Fri, 27 May 2022 00:32:56 +0000
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        patches@lists.linux.dev, Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
+        Thu, 26 May 2022 21:21:53 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 308A910D4;
+        Thu, 26 May 2022 18:21:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=xkmgVlLHUrsvW9kgx9erOioxhXsicILhQsHT8zL99yU=; b=XOB+la0usr2jCz4xChRNHdSc0J
+        WhH7oxwmbJpuLADA+beMwJMHr+8/2enHvbFU5P1nHLtmmb3nCuORNtyC2BzZWXQsARo+lfJSLHxcm
+        oraiUqjZYKFprFe1EniS7BQygCgPhNEXMkXE6uAlpe8drYiWH++dR7qJ0/Qwm7QbzBH6/u1MQHP5x
+        jTSUA8lZuL3xMzyXJDmST3fWiugu1lJUBqNnyuyCejDlVZ6Mo0FgMlFg9EpQSAWECX/GzKIFHjOrz
+        nITbfhaRdhBV0zJVcVcV2lwSAgLfsIoO65FIz8KCfq5vH860jLkplEjWnzmf9iHzyGbP7hKp8JoaF
+        ISqqts7w==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nuOfj-001i49-0v; Fri, 27 May 2022 01:21:47 +0000
+Date:   Fri, 27 May 2022 02:21:46 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Vasily Averin <vvs@openvz.org>
+Cc:     kernel@openvz.org, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Zhen Ni <nizhen@uniontech.com>,
-        Baisong Zhong <zhongbaisong@huawei.com>,
-        tangmeng <tangmeng@uniontech.com>,
-        sujiaxun <sujiaxun@uniontech.com>,
-        zhanglianjie <zhanglianjie@uniontech.com>,
-        Wei Xiao <xiaowei66@huawei.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Yan Zhu <zhuyan34@huawei.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        liaohua <liaohua4@huawei.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Vasily Averin <vvs@openvz.org>, yingelin <yingelin@huawei.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Konstantin Ryabitsev <mricon@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        mcgrof@kernel.org
-X-Spam-Status: No, score=-7.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Shakeel Butt <shakeelb@google.com>
+Subject: Re: [PATCH] XArray: handle XA_FLAGS_ACCOUNT in xas_split_alloc
+Message-ID: <YpAnqqY/c3Y5ZkPG@casper.infradead.org>
+References: <348dc099-737d-94ba-55ad-2db285084c73@openvz.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <348dc099-737d-94ba-55ad-2db285084c73@openvz.org>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pull request you sent on Wed, 25 May 2022 15:47:06 -0700:
+On Wed, May 25, 2022 at 11:26:37AM +0300, Vasily Averin wrote:
+> Commit 7b785645e8f1 ("mm: fix page cache convergence regression")
+> added support of new XA_FLAGS_ACCOUNT flag into all Xarray allocation
+> functions. Later commit 8fc75643c5e1 ("XArray: add xas_split")
+> introduced xas_split_alloc() but missed about XA_FLAGS_ACCOUNT
+> processing.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux.git/ tags/sysctl-5.19-rc1
+Thanks, Vasily.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/44d35720c9a660074b77ab9de37abf2c01c5b44f
+Johannes, Shakeel, is this right?  I don't fully understand the accounting
+stuff.
 
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+> Signed-off-by: Vasily Averin <vvs@openvz.org>
+> ---
+>  lib/xarray.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/lib/xarray.c b/lib/xarray.c
+> index 54e646e8e6ee..5f5b42e6f842 100644
+> --- a/lib/xarray.c
+> +++ b/lib/xarray.c
+> @@ -1013,6 +1013,8 @@ void xas_split_alloc(struct xa_state *xas, void *entry, unsigned int order,
+>  	if (xas->xa_shift + XA_CHUNK_SHIFT > order)
+>  		return;
+>  
+> +	if (xas->xa->xa_flags & XA_FLAGS_ACCOUNT)
+> +		gfp |= __GFP_ACCOUNT;
+>  	do {
+>  		unsigned int i;
+>  		void *sibling = NULL;
+> -- 
+> 2.31.1
+> 
