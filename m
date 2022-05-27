@@ -2,211 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E315A5363F9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 May 2022 16:23:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA401536408
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 May 2022 16:24:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353133AbiE0OW4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 May 2022 10:22:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44298 "EHLO
+        id S1353196AbiE0OYM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 May 2022 10:24:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353118AbiE0OWz (ORCPT
+        with ESMTP id S235867AbiE0OYK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 May 2022 10:22:55 -0400
-Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2B4F1207DD;
-        Fri, 27 May 2022 07:22:53 -0700 (PDT)
-Received: from relayfre-01.paragon-software.com (unknown [172.30.72.12])
-        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 0065C2629;
-        Fri, 27 May 2022 14:22:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1653661344;
-        bh=sICHCfo4uTR9mxXHyCTyqelqqIWYEf1R3oO5FRPMAf0=;
-        h=Date:Subject:From:To:CC:References:In-Reply-To;
-        b=msCE6ahjekAsKMAmi68igLtf3/NyuBiUjfAW/r0yqeP4Z6GKaPq2a61ybqX7JpP2q
-         BOFcVlbiA9ciz5FZ0/T5Hzb5zUdQfVLdY39HjHud1L9UHcVRBT0eL7TfHladY1zykt
-         D0/YxHZVyuyiCFwsqQe5mRfcplYidnjcRRLSo/eM=
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id A918A220E;
-        Fri, 27 May 2022 14:22:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1653661371;
-        bh=sICHCfo4uTR9mxXHyCTyqelqqIWYEf1R3oO5FRPMAf0=;
-        h=Date:Subject:From:To:CC:References:In-Reply-To;
-        b=Pl/r9H/gBYwCQ+ylmGeSeWFFgdyYCo8S3wxh3Cz+JlFNtO19gb6/d0WU/66AlAgHK
-         b7qf2O7huWztDJ4TTi+FjHUvVkJpZU2sQRJD0m+SwoJyDHdQVZqkSCqwm3njCEQyX6
-         6rtJTVpZo6FXqQk5IjxDA7TLKcVmUP+4kqzvx53Q=
-Received: from [172.30.8.65] (172.30.8.65) by
- vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Fri, 27 May 2022 17:22:51 +0300
-Message-ID: <5de359b4-e3d5-e585-10c4-65139cef6e14@paragon-software.com>
-Date:   Fri, 27 May 2022 17:22:50 +0300
+        Fri, 27 May 2022 10:24:10 -0400
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E615C1207E4;
+        Fri, 27 May 2022 07:24:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1653661449; x=1685197449;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=8EpuGnusmRkbVa3/ggOWrpg5luflE/dlqIUDi652zT4=;
+  b=LQvWsZtuLPjcvRpFj3BPgWw2/cmVdWKJy/SQqWGpWi3jLlrpinOzXNzC
+   Gvl8pwkHv8noz+d/+ME3aBextokGjzIVdD1eS6PY8XQW4LEp02+KN5RYV
+   uIGzh0QtzG9XjywzU1K3Ob9z7bViAXOh/N4ertSKqx1pCnr5/EZwNZbkG
+   fVF4xd07OagOioefHI7rPtkVDlFtA0e+G4ftFP4bAZ7NBwQSmX/XUtKf4
+   oJCxrx3FfV40TXaeotFgiJx1ND/qS1NjJGQxZl39JN4lkrAtwOpVhA+Zx
+   XU7/NdhEbpys8m9beGf3n1AqzPaexpy1QBNy5ks5XWBjhJFcihxuzmg4k
+   w==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10359"; a="360878303"
+X-IronPort-AV: E=Sophos;i="5.91,255,1647327600"; 
+   d="scan'208";a="360878303"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2022 07:24:09 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.91,255,1647327600"; 
+   d="scan'208";a="574857026"
+Received: from lkp-server01.sh.intel.com (HELO db63a1be7222) ([10.239.97.150])
+  by orsmga007.jf.intel.com with ESMTP; 27 May 2022 07:24:06 -0700
+Received: from kbuild by db63a1be7222 with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1nuasn-0004qu-Bg;
+        Fri, 27 May 2022 14:24:05 +0000
+Date:   Fri, 27 May 2022 22:23:55 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Zhang Yuchen <zhangyuchen.lcr@bytedance.com>,
+        akpm@linux-foundation.org, david@redhat.com, mingo@redhat.com,
+        ast@kernel.org
+Cc:     kbuild-all@lists.01.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-api@vger.kernel.org, fam.zheng@bytedance.com,
+        Zhang Yuchen <zhangyuchen.lcr@bytedance.com>
+Subject: Re: [PATCH] procfs: add syscall statistics
+Message-ID: <202205272216.w7dE4biW-lkp@intel.com>
+References: <20220527110959.54559-1-zhangyuchen.lcr@bytedance.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: [PATCH 3/3] fs/ntfs3: Refactor ni_try_remove_attr_list function
-Content-Language: en-US
-From:   Almaz Alexandrovich <almaz.alexandrovich@paragon-software.com>
-To:     <ntfs3@lists.linux.dev>
-CC:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
-References: <75a1215a-eda2-d0dc-b962-0334356eef7c@paragon-software.com>
-In-Reply-To: <75a1215a-eda2-d0dc-b962-0334356eef7c@paragon-software.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.30.8.65]
-X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
- vdlg-exch-02.paragon-software.com (172.30.1.105)
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220527110959.54559-1-zhangyuchen.lcr@bytedance.com>
+X-Spam-Status: No, score=-5.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Now we save a copy of primary record for restoration.
-Also now we remove all attributes from subrecords.
+Hi Zhang,
 
-Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
----
-  fs/ntfs3/frecord.c | 49 ++++++++++++++++++++++++++++++++++------------
-  fs/ntfs3/record.c  |  5 ++---
-  2 files changed, 39 insertions(+), 15 deletions(-)
+Thank you for the patch! Perhaps something to improve:
 
-diff --git a/fs/ntfs3/frecord.c b/fs/ntfs3/frecord.c
-index 18842998c8fa..3576268ee0a1 100644
---- a/fs/ntfs3/frecord.c
-+++ b/fs/ntfs3/frecord.c
-@@ -7,6 +7,7 @@
-  
-  #include <linux/fiemap.h>
-  #include <linux/fs.h>
-+#include <linux/minmax.h>
-  #include <linux/vmalloc.h>
-  
-  #include "debug.h"
-@@ -649,6 +650,7 @@ static int ni_try_remove_attr_list(struct ntfs_inode *ni)
-  	struct mft_inode *mi;
-  	u32 asize, free;
-  	struct MFT_REF ref;
-+	struct MFT_REC *mrec;
-  	__le16 id;
-  
-  	if (!ni->attr_list.dirty)
-@@ -692,11 +694,17 @@ static int ni_try_remove_attr_list(struct ntfs_inode *ni)
-  		free -= asize;
-  	}
-  
-+	/* Make a copy of primary record to restore if error. */
-+	mrec = kmemdup(ni->mi.mrec, sbi->record_size, GFP_NOFS);
-+	if (!mrec)
-+		return 0; /* Not critical. */
-+
-  	/* It seems that attribute list can be removed from primary record. */
-  	mi_remove_attr(NULL, &ni->mi, attr_list);
-  
-  	/*
--	 * Repeat the cycle above and move all attributes to primary record.
-+	 * Repeat the cycle above and copy all attributes to primary record.
-+	 * Do not remove original attributes from subrecords!
-  	 * It should be success!
-  	 */
-  	le = NULL;
-@@ -707,14 +715,14 @@ static int ni_try_remove_attr_list(struct ntfs_inode *ni)
-  		mi = ni_find_mi(ni, ino_get(&le->ref));
-  		if (!mi) {
-  			/* Should never happened, 'cause already checked. */
--			goto bad;
-+			goto out;
-  		}
-  
-  		attr = mi_find_attr(mi, NULL, le->type, le_name(le),
-  				    le->name_len, &le->id);
-  		if (!attr) {
-  			/* Should never happened, 'cause already checked. */
--			goto bad;
-+			goto out;
-  		}
-  		asize = le32_to_cpu(attr->size);
-  
-@@ -724,18 +732,33 @@ static int ni_try_remove_attr_list(struct ntfs_inode *ni)
-  					  le16_to_cpu(attr->name_off));
-  		if (!attr_ins) {
-  			/*
--			 * Internal error.
--			 * Either no space in primary record (already checked).
--			 * Either tried to insert another
--			 * non indexed attribute (logic error).
-+			 * No space in primary record (already checked).
-  			 */
--			goto bad;
-+			goto out;
-  		}
-  
-  		/* Copy all except id. */
-  		id = attr_ins->id;
-  		memcpy(attr_ins, attr, asize);
-  		attr_ins->id = id;
-+	}
-+
-+	/*
-+	 * Repeat the cycle above and remove all attributes from subrecords.
-+	 */
-+	le = NULL;
-+	while ((le = al_enumerate(ni, le))) {
-+		if (!memcmp(&le->ref, &ref, sizeof(ref)))
-+			continue;
-+
-+		mi = ni_find_mi(ni, ino_get(&le->ref));
-+		if (!mi)
-+			continue;
-+
-+		attr = mi_find_attr(mi, NULL, le->type, le_name(le),
-+				    le->name_len, &le->id);
-+		if (!attr)
-+			continue;
-  
-  		/* Remove from original record. */
-  		mi_remove_attr(NULL, mi, attr);
-@@ -748,11 +771,13 @@ static int ni_try_remove_attr_list(struct ntfs_inode *ni)
-  	ni->attr_list.le = NULL;
-  	ni->attr_list.dirty = false;
-  
-+	kfree(mrec);
-+	return 0;
-+out:
-+	/* Restore primary record. */
-+	swap(mrec, ni->mi.mrec);
-+	kfree(mrec);
-  	return 0;
--bad:
--	ntfs_inode_err(&ni->vfs_inode, "Internal error");
--	make_bad_inode(&ni->vfs_inode);
--	return -EINVAL;
-  }
-  
-  /*
-diff --git a/fs/ntfs3/record.c b/fs/ntfs3/record.c
-index 861e35791506..8fe0a876400a 100644
---- a/fs/ntfs3/record.c
-+++ b/fs/ntfs3/record.c
-@@ -445,12 +445,11 @@ struct ATTRIB *mi_insert_attr(struct mft_inode *mi, enum ATTR_TYPE type,
-  	attr = NULL;
-  	while ((attr = mi_enum_attr(mi, attr))) {
-  		diff = compare_attr(attr, type, name, name_len, upcase);
--		if (diff > 0)
--			break;
-+
-  		if (diff < 0)
-  			continue;
-  
--		if (!is_attr_indexed(attr))
-+		if (!diff && !is_attr_indexed(attr))
-  			return NULL;
-  		break;
-  	}
+[auto build test WARNING on linus/master]
+[also build test WARNING on next-20220527]
+[cannot apply to akpm-mm/mm-everything arm64/for-next/core s390/features tip/x86/core v5.18]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Zhang-Yuchen/procfs-add-syscall-statistics/20220527-191241
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 7e284070abe53d448517b80493863595af4ab5f0
+config: arc-allyesconfig (https://download.01.org/0day-ci/archive/20220527/202205272216.w7dE4biW-lkp@intel.com/config)
+compiler: arceb-elf-gcc (GCC) 11.3.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/979bf5b1b085588caab1cbdce55e40e823c12db9
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Zhang-Yuchen/procfs-add-syscall-statistics/20220527-191241
+        git checkout 979bf5b1b085588caab1cbdce55e40e823c12db9
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.3.0 make.cross W=1 O=build_dir ARCH=arc SHELL=/bin/bash fs/proc/
+
+If you fix the issue, kindly add following tag where applicable
+Reported-by: kernel test robot <lkp@intel.com>
+
+All warnings (new ones prefixed by >>):
+
+>> fs/proc/syscall.c:13:5: warning: no previous prototype for 'show_syscalls' [-Wmissing-prototypes]
+      13 | int show_syscalls(struct seq_file *p, void *v)
+         |     ^~~~~~~~~~~~~
+
+
+vim +/show_syscalls +13 fs/proc/syscall.c
+
+    12	
+  > 13	int show_syscalls(struct seq_file *p, void *v)
+    14	{
+    15		int i = *(loff_t *)v, j;
+    16		static int prec;
+    17		const char *syscall_name = get_syscall_name(i);
+    18	
+    19		if (i > NR_syscalls)
+    20			return 0;
+    21	
+    22		/* print header and calculate the width of the first column */
+    23		if (i == 0) {
+    24			for (prec = 3, j = 1000; prec < 10 && j <= NR_syscalls; ++prec)
+    25				j *= 10;
+    26			seq_printf(p, "%*s", prec + 8, "");
+    27			for_each_online_cpu(j)
+    28				seq_printf(p, "CPU%-8d", j);
+    29			seq_putc(p, '\n');
+    30		}
+    31	
+    32		if (syscall_name == NULL)
+    33			return 0;
+    34	
+    35		seq_printf(p, "%*d: ", prec, i);
+    36		for_each_online_cpu(j)
+    37			seq_printf(p, "%10llu ",
+    38				   per_cpu(__per_cpu_syscall_count, j)[i]);
+    39		seq_printf(p, "  %s", syscall_name);
+    40		seq_putc(p, '\n');
+    41	
+    42		return 0;
+    43	}
+    44	
+
 -- 
-2.36.1
-
-
+0-DAY CI Kernel Test Service
+https://01.org/lkp
