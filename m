@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 15F7E536507
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 May 2022 17:51:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC85C536501
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 May 2022 17:51:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353705AbiE0Pvc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 May 2022 11:51:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57758 "EHLO
+        id S1353700AbiE0PvP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 May 2022 11:51:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353712AbiE0Pva (ORCPT
+        with ESMTP id S1353656AbiE0PvB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 May 2022 11:51:30 -0400
+        Fri, 27 May 2022 11:51:01 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6C0C1038
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 May 2022 08:51:12 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6E60134E3D
+        for <linux-fsdevel@vger.kernel.org>; Fri, 27 May 2022 08:51:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=Jx21YCMfVRPPtzra5uUZP9j4fCW3PrPAxum0BhgJe/Q=; b=HUSlDZ11G9WQp367CVuD3LEo4i
-        iR4xSq+OazPUd9RZVT/cqwsKeSKL8qg99HmawCwbLR7jc4Svq48NZRi8thVsEdpzcKNRZo1rfxFc6
-        emAfCyGAJ955R9nDtu0RSvbPap9XWZqAtb3KbUs36NIhvlSEgFaIhXrpTlhENx+Z1a6hdMWAx2sR7
-        Tg4x88kpmgNcuwVJ34ldHzIh09ZH2MKNsgmPOnEhSDvofx32+pNJH7U4fVqsWs9YbnxuIC4Viu2PT
-        /5VD8qPbOMEPP3ZGRxTZ6EhAd+Amz87NFUhoIMz1ppzhvL/Yd7NoC8JARCJdJbW/Ko1/EEwYfxLKh
-        Dg9AIWVQ==;
+        bh=Zo8tq/TxfJl7q8EhTtWvLm5Ur9WjdGrs5spowtCnbu0=; b=qcPSaSoXqtBX3E6xq92irx5JaP
+        bPnZQYfyuQpJH5dUaAHLxgHrBf7bEaAGoJV9OgCZ5RvsINeJ4mEPBcpwg3oZ6J/V6BVm5ucCdu4H3
+        yEKBxmpWLfbtRDKBSXiqQ7SMRTiceSitmxvnIcNxm38GL4drrpyzmUa6VXVk6/kWnvr0QP41+GK+5
+        RTfPO+owL4U7hwQ8lz6x0pTpcB80iAwpxSanR5Kt++mnQKMEyZmMLhCPx5Q4jLkaxMzzy0r+VlSCm
+        c1WRE4pXThYYcb14d+EsOIYwAGVz1USFd8CXkYheq/ok3DwifdRlz4wCxsqFx1eTvQeZ4FC22MO+E
+        DWv8pAKQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nucEa-002CWQ-Fa; Fri, 27 May 2022 15:50:40 +0000
+        id 1nucEa-002CWS-IY; Fri, 27 May 2022 15:50:40 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>, linux-mm@kvack.org
-Subject: [PATCH 03/24] freevxfs: Remove check of PageError
-Date:   Fri, 27 May 2022 16:50:15 +0100
-Message-Id: <20220527155036.524743-4-willy@infradead.org>
+Subject: [PATCH 04/24] gfs: Check PageUptodate instead of PageError
+Date:   Fri, 27 May 2022 16:50:16 +0100
+Message-Id: <20220527155036.524743-5-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220527155036.524743-1-willy@infradead.org>
 References: <20220527155036.524743-1-willy@infradead.org>
@@ -48,34 +48,27 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-If read_mapping_page() encounters an error, it returns an errno, not a
-page with PageError set, so this is dead code.
+This is the correct flag to test to know if the read completed
+successfully.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/freevxfs/vxfs_subr.c | 6 ------
- 1 file changed, 6 deletions(-)
+ fs/gfs2/lops.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/freevxfs/vxfs_subr.c b/fs/freevxfs/vxfs_subr.c
-index 6143ebab940d..041e818c4577 100644
---- a/fs/freevxfs/vxfs_subr.c
-+++ b/fs/freevxfs/vxfs_subr.c
-@@ -75,15 +75,9 @@ vxfs_get_page(struct address_space *mapping, u_long n)
- 		kmap(pp);
- 		/** if (!PageChecked(pp)) **/
- 			/** vxfs_check_page(pp); **/
--		if (PageError(pp))
--			goto fail;
- 	}
- 	
- 	return (pp);
--		 
--fail:
--	vxfs_put_page(pp);
--	return ERR_PTR(-EIO);
- }
+diff --git a/fs/gfs2/lops.c b/fs/gfs2/lops.c
+index 6ba51cbb94cf..9a9a35d68bd5 100644
+--- a/fs/gfs2/lops.c
++++ b/fs/gfs2/lops.c
+@@ -474,7 +474,7 @@ static void gfs2_jhead_process_page(struct gfs2_jdesc *jd, unsigned long index,
+ 	page = find_get_page(jd->jd_inode->i_mapping, index);
+ 	wait_on_page_locked(page);
  
- /**
+-	if (PageError(page))
++	if (!PageUptodate(page))
+ 		*done = true;
+ 
+ 	if (!*done)
 -- 
 2.34.1
 
