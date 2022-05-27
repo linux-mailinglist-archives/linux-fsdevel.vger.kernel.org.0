@@ -2,120 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D9B0535BBE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 May 2022 10:42:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC541535CEF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 May 2022 11:09:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348190AbiE0ImM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 May 2022 04:42:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36258 "EHLO
+        id S229688AbiE0JGq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 May 2022 05:06:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348426AbiE0ImL (ORCPT
+        with ESMTP id S1351209AbiE0JGA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 May 2022 04:42:11 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8497A2AC64;
-        Fri, 27 May 2022 01:42:09 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id D605321AAA;
-        Fri, 27 May 2022 08:42:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1653640927; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        Fri, 27 May 2022 05:06:00 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 1EE21111BB0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 27 May 2022 02:02:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1653642173;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=K3kR8Rvk9ywh6jthWa6f6W+fh5ln2gc1wOBcFNlUoZo=;
-        b=jGTVN/VJ3aSzzuzLCGlGXqp2VGAkPu00h7wV9ZnWD7SUhij0Sx6zjHEASn2lgODJlpPSGL
-        lev8mFDaDbK6ok1HMGyWePK8KX6SVj4N+YhmBx3qY4RWc/V+0qPCx1PTQYsPUR+wkaELOX
-        9K/jx31qvClXXqCSvgbXcA59TOs/vqI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1653640927;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=K3kR8Rvk9ywh6jthWa6f6W+fh5ln2gc1wOBcFNlUoZo=;
-        b=Pxxqrkvw7XHONluBWcBzyxmvH2RJ91//IYl9VyNDBu1px+Fb3HIb1DWpWHUvAQPYhCP6Fa
-        6NhUNoRZqFwLFwAw==
-Received: from quack3.suse.cz (unknown [10.100.224.230])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        bh=VxSx5WHE/is7ha0Qn9ZHkh6x3/barWbE89a+k35Foho=;
+        b=e4kxOsLL3jDrL7Iv5s9CIj87qlP/NqBLcYgJ/AeiG191IDB6/Dz0qDy/XOC2dnftAPdCJW
+        1ghhuHOWm6XQnBpt0uBF43Ufh6X06wRqXasgMIx8OOPsYx1hvJMecbzHqxZ9sDgvGgTQSu
+        Hgfp0O8VW2SlbNlCm/GheNqd+scG2wM=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-391-NTi_t_sZMdal6y7vIU_a0A-1; Fri, 27 May 2022 05:02:51 -0400
+X-MC-Unique: NTi_t_sZMdal6y7vIU_a0A-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id AA8FC2C141;
-        Fri, 27 May 2022 08:42:07 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id F3BFBA0632; Fri, 27 May 2022 10:42:03 +0200 (CEST)
-Date:   Fri, 27 May 2022 10:42:03 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
-        kernel-team@fb.com, linux-mm@kvack.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, jack@suse.cz, hch@infradead.org
-Subject: Re: [PATCH v6 05/16] iomap: Add async buffered write support
-Message-ID: <20220527084203.jzufgln7oqfdghvy@quack3.lan>
-References: <20220526173840.578265-1-shr@fb.com>
- <20220526173840.578265-6-shr@fb.com>
- <20220526223705.GJ1098723@dread.disaster.area>
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id BF12E858EEE;
+        Fri, 27 May 2022 09:02:50 +0000 (UTC)
+Received: from oldenburg.str.redhat.com (unknown [10.39.192.71])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 64FE7492C3B;
+        Fri, 27 May 2022 09:02:48 +0000 (UTC)
+From:   Florian Weimer <fweimer@redhat.com>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Keith Busch <kbusch@kernel.org>
+Subject: Re: [RFC PATCH v2 1/7] statx: add I/O alignment information
+References: <20220518235011.153058-1-ebiggers@kernel.org>
+        <20220518235011.153058-2-ebiggers@kernel.org>
+Date:   Fri, 27 May 2022 11:02:46 +0200
+In-Reply-To: <20220518235011.153058-2-ebiggers@kernel.org> (Eric Biggers's
+        message of "Wed, 18 May 2022 16:50:05 -0700")
+Message-ID: <87r14ffivd.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.2 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220526223705.GJ1098723@dread.disaster.area>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.85 on 10.11.54.9
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 27-05-22 08:37:05, Dave Chinner wrote:
-> On Thu, May 26, 2022 at 10:38:29AM -0700, Stefan Roesch wrote:
-> > This adds async buffered write support to iomap.
-> > 
-> > This replaces the call to balance_dirty_pages_ratelimited() with the
-> > call to balance_dirty_pages_ratelimited_flags. This allows to specify if
-> > the write request is async or not.
-> > 
-> > In addition this also moves the above function call to the beginning of
-> > the function. If the function call is at the end of the function and the
-> > decision is made to throttle writes, then there is no request that
-> > io-uring can wait on. By moving it to the beginning of the function, the
-> > write request is not issued, but returns -EAGAIN instead. io-uring will
-> > punt the request and process it in the io-worker.
-> > 
-> > By moving the function call to the beginning of the function, the write
-> > throttling will happen one page later.
-> 
-> Won't it happen one page sooner? I.e. on single page writes we'll
-> end up throttling *before* we dirty the page, not *after* we dirty
-> the page. IOWs, we can't wait for the page that we just dirtied to
-> be cleaned to make progress and so this now makes the loop dependent
-> on pages dirtied by other writers being cleaned to guarantee
-> forwards progress?
-> 
-> That seems like a subtle but quite significant change of
-> algorithm...
+* Eric Biggers:
 
-So I'm convinced the difference will be pretty much in the noise because of
-how many dirty pages there have to be to even start throttling processes
-but some more arguments are:
+> diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
+> index 1500a0f58041a..f822b23e81091 100644
+> --- a/include/uapi/linux/stat.h
+> +++ b/include/uapi/linux/stat.h
+> @@ -124,9 +124,13 @@ struct statx {
+>  	__u32	stx_dev_minor;
+>  	/* 0x90 */
+>  	__u64	stx_mnt_id;
+> -	__u64	__spare2;
+> +	__u32	stx_mem_align_dio;	/* Memory buffer alignment for direct I/O */
+> +	__u32	stx_offset_align_dio;	/* File offset alignment for direct I/O */
+>  	/* 0xa0 */
+> -	__u64	__spare3[12];	/* Spare space for future expansion */
+> +	__u32	stx_offset_align_optimal; /* Optimal file offset alignment for I/O */
+> +	__u32	__spare2;
+> +	/* 0xa8 */
+> +	__u64	__spare3[11];	/* Spare space for future expansion */
+>  	/* 0x100 */
+>  };
 
-* we ratelimit calls to balance_dirty_pages() based on number of pages
-  dirtied by the current process in balance_dirty_pages_ratelimited()
+Are 32 bits enough?  Would it make sense to store the base-2 logarithm
+instead?
 
-* balance_dirty_pages() uses number of pages dirtied by the current process
-  to decide about the delay.
+Thanks,
+Florian
 
-So the only situation where I could see this making a difference would be
-if dirty limit is a handful of pages and even there I have hard time to see
-how exactly. So I'm ok with the change and in the case we see it causes
-problems somewhere, we'll think how to fix it based on the exact scenario.
-
-I guess the above two points are the reason why Stefan writes about throttling
-one page later because we count only number of pages dirtied until this
-moment so the page dirtied by this iteration of loop in iomap_write_iter()
-will get reflected only by the call to balance_dirty_pages_ratelimited() in
-the next iteration (or the next call to iomap_write_iter()).
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
