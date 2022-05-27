@@ -2,146 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4ECA05367D7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 May 2022 22:05:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B82C536909
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 May 2022 00:56:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350492AbiE0UFo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 May 2022 16:05:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42940 "EHLO
+        id S1355062AbiE0Wwp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 May 2022 18:52:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234561AbiE0UFl (ORCPT
+        with ESMTP id S233958AbiE0Wwo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 May 2022 16:05:41 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48DBE20187
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 May 2022 13:05:39 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id m32-20020a05600c3b2000b0039756bb41f2so3316360wms.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 May 2022 13:05:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3hDs5pMehEzS9JtBcciO3du/140ZEedg4Xg+u6dsQZw=;
-        b=oihAaWbcG7Yr9p0y5ULTKT7tU46NohvPTW+4VGetJ03GHSZRqq4LU+CPKg0Z2PrH5R
-         b7AoPxPSIySEEsBuGcjzbeg273gPzUDiuDgPQe8t+O97X7MaFFmZxPWkqR1LY9W4beoO
-         n00RsO520VB1zU12ITOAw5pKWroS+wVFZbCpC2euQgZwg2TwOVdcJe/hm29p06XZbpk9
-         Sux3vMrXw4iwBHlCbOLNQjWoRtlyXEU5R6srtHjt5qRoh4UhA0D6F4jCnsUI6KqRNPOo
-         yBXjUTB2xOyeoHGBTQdQEu/248CfGEyYoUye03xA0p2HIRWz4ulUElW6T5at8G4x+QOH
-         iljg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3hDs5pMehEzS9JtBcciO3du/140ZEedg4Xg+u6dsQZw=;
-        b=mUvcQxSwmZGQkWJDokOBPr0pd6w8uE7IrKTuPvfUSQeSAYgQ3wEXAPjoHsghkvt4Lr
-         S35iO3IQ6Ypkugoc+XcWCbAHgGgMqd3WDUrYoHYGxBrCyLJN79KVLxkPO5apOL5+Yj5X
-         w/YA+j18N8j0l/DyqazBGZnwRnFx24+3au0nYtHGc2QP3lN7+PhsO6dPoqgCp7i6S4O4
-         WPz3aOaG9zgfYFBUQOzu9QPfQfL3xa3GuACGO8LDjDDSBNgf4/O8dhSQn32npbm/kKqO
-         o4YOo+ZeDkc8qQluU8f9Fd8JpobBYj/xYryCKepjgb5+Fl1WObxAj7G14i8s6HWtKkqR
-         lhYQ==
-X-Gm-Message-State: AOAM533PVijcTewCKRCzRzsFRJBvu1lTBoMg8zF1f46S7svmwU7aYN7n
-        S8Rrp7hW1PooNNQudTSox6u0czwZstCFic+d34lYwk+iBg==
-X-Google-Smtp-Source: ABdhPJzSQiwbwdo8FqZ111McYTLFv4bwIxxTTbHCjxtpHRnG+P00gPgVzRWa/5Bdb55lusFwlbu3a5oOnOFQ3+tgAU8=
-X-Received: by 2002:a05:600c:3b05:b0:397:54ce:896 with SMTP id
- m5-20020a05600c3b0500b0039754ce0896mr8458182wms.3.1653681937794; Fri, 27 May
- 2022 13:05:37 -0700 (PDT)
+        Fri, 27 May 2022 18:52:44 -0400
+Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 17278126992;
+        Fri, 27 May 2022 15:52:43 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-2-147.pa.nsw.optusnet.com.au [49.181.2.147])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id AD254537B91;
+        Sat, 28 May 2022 08:52:41 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1nuioy-00HBur-8l; Sat, 28 May 2022 08:52:40 +1000
+Date:   Sat, 28 May 2022 08:52:40 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
+        kernel-team@fb.com, linux-mm@kvack.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, hch@infradead.org
+Subject: Re: [PATCH v6 05/16] iomap: Add async buffered write support
+Message-ID: <20220527225240.GV1098723@dread.disaster.area>
+References: <20220526173840.578265-1-shr@fb.com>
+ <20220526173840.578265-6-shr@fb.com>
+ <20220526223705.GJ1098723@dread.disaster.area>
+ <20220527084203.jzufgln7oqfdghvy@quack3.lan>
 MIME-Version: 1.0
-References: <20220525183703.466936-1-fred@cloudflare.com>
-In-Reply-To: <20220525183703.466936-1-fred@cloudflare.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 27 May 2022 16:05:26 -0400
-Message-ID: <CAHC9VhS=_RvB66J9D5AZ+XnyDKupvTQpFzni2uvz348REPUT5A@mail.gmail.com>
-Subject: Re: [PATCH v2] cred: Propagate security_prepare_creds() error code
-To:     Frederick Lawler <fred@cloudflare.com>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-cachefs@redhat.com, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, linux-mm@kvack.org,
-        linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        keyrings@vger.kernel.org, selinux@vger.kernel.org,
-        serge@hallyn.com, amir73il@gmail.com, kernel-team@cloudflare.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220527084203.jzufgln7oqfdghvy@quack3.lan>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=6291563a
+        a=ivVLWpVy4j68lT4lJFbQgw==:117 a=ivVLWpVy4j68lT4lJFbQgw==:17
+        a=kj9zAlcOel0A:10 a=oZkIemNP1mAA:10 a=7-415B0cAAAA:8
+        a=56L3rgyCVsvNkpJbsA4A:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, May 25, 2022 at 2:37 PM Frederick Lawler <fred@cloudflare.com> wrote:
->
-> While experimenting with the security_prepare_creds() LSM hook, we
-> noticed that our EPERM error code was not propagated up the callstack.
-> Instead ENOMEM is always returned.  As a result, some tools may send a
-> confusing error message to the user:
->
-> $ unshare -rU
-> unshare: unshare failed: Cannot allocate memory
->
-> A user would think that the system didn't have enough memory, when
-> instead the action was denied.
->
-> This problem occurs because prepare_creds() and prepare_kernel_cred()
-> return NULL when security_prepare_creds() returns an error code. Later,
-> functions calling prepare_creds() and prepare_kernel_cred() return
-> ENOMEM because they assume that a NULL meant there was no memory
-> allocated.
->
-> Fix this by propagating an error code from security_prepare_creds() up
-> the callstack.
->
-> Signed-off-by: Frederick Lawler <fred@cloudflare.com>
->
-> ---
-> Changes since v1:
-> - Revert style churn in ovl_create_or_link() noted by Amir
-> - Revert style churn in prepare_nsset() noted by Serge
-> - Update documentation for prepare_creds()
-> - Set ofs->creator_cred in ovl_fill_super() and req->creds in aio_fsync()
->   to NULL on error noted by Amir
-> ---
->  Documentation/security/credentials.rst |  6 +++---
->  fs/aio.c                               |  9 +++++++--
->  fs/cachefiles/security.c               |  8 ++++----
->  fs/cifs/cifs_spnego.c                  |  4 ++--
->  fs/cifs/cifsacl.c                      |  4 ++--
->  fs/coredump.c                          |  2 +-
->  fs/exec.c                              | 14 ++++++++-----
->  fs/ksmbd/smb_common.c                  |  4 ++--
->  fs/nfs/flexfilelayout/flexfilelayout.c |  7 +++++--
->  fs/nfs/nfs4idmap.c                     |  4 ++--
->  fs/nfsd/auth.c                         |  4 ++--
->  fs/nfsd/nfs4callback.c                 | 10 ++++-----
->  fs/nfsd/nfs4recover.c                  |  4 ++--
->  fs/nfsd/nfsfh.c                        |  4 ++--
->  fs/open.c                              |  8 ++++----
->  fs/overlayfs/dir.c                     |  6 ++++--
->  fs/overlayfs/super.c                   |  6 ++++--
->  kernel/capability.c                    |  4 ++--
->  kernel/cred.c                          | 28 +++++++++++++++-----------
->  kernel/groups.c                        |  4 ++--
->  kernel/nsproxy.c                       |  9 ++++++++-
->  kernel/sys.c                           | 28 +++++++++++++-------------
->  kernel/trace/trace_events_user.c       |  4 ++--
->  kernel/umh.c                           |  5 +++--
->  kernel/user_namespace.c                |  6 ++++--
->  net/dns_resolver/dns_key.c             |  4 ++--
->  security/apparmor/task.c               | 12 +++++------
->  security/commoncap.c                   | 20 +++++++++---------
->  security/keys/keyctl.c                 |  8 ++++----
->  security/keys/process_keys.c           | 16 +++++++--------
->  security/landlock/syscalls.c           |  4 ++--
->  security/selinux/hooks.c               |  8 ++++----
->  security/smack/smack_lsm.c             |  8 ++++----
->  security/smack/smackfs.c               |  4 ++--
->  34 files changed, 153 insertions(+), 123 deletions(-)
+On Fri, May 27, 2022 at 10:42:03AM +0200, Jan Kara wrote:
+> On Fri 27-05-22 08:37:05, Dave Chinner wrote:
+> > On Thu, May 26, 2022 at 10:38:29AM -0700, Stefan Roesch wrote:
+> > > This adds async buffered write support to iomap.
+> > > 
+> > > This replaces the call to balance_dirty_pages_ratelimited() with the
+> > > call to balance_dirty_pages_ratelimited_flags. This allows to specify if
+> > > the write request is async or not.
+> > > 
+> > > In addition this also moves the above function call to the beginning of
+> > > the function. If the function call is at the end of the function and the
+> > > decision is made to throttle writes, then there is no request that
+> > > io-uring can wait on. By moving it to the beginning of the function, the
+> > > write request is not issued, but returns -EAGAIN instead. io-uring will
+> > > punt the request and process it in the io-worker.
+> > > 
+> > > By moving the function call to the beginning of the function, the write
+> > > throttling will happen one page later.
+> > 
+> > Won't it happen one page sooner? I.e. on single page writes we'll
+> > end up throttling *before* we dirty the page, not *after* we dirty
+> > the page. IOWs, we can't wait for the page that we just dirtied to
+> > be cleaned to make progress and so this now makes the loop dependent
+> > on pages dirtied by other writers being cleaned to guarantee
+> > forwards progress?
+> > 
+> > That seems like a subtle but quite significant change of
+> > algorithm...
+> 
+> So I'm convinced the difference will be pretty much in the noise because of
+> how many dirty pages there have to be to even start throttling processes
+> but some more arguments are:
+> 
+> * we ratelimit calls to balance_dirty_pages() based on number of pages
+>   dirtied by the current process in balance_dirty_pages_ratelimited()
+> 
+> * balance_dirty_pages() uses number of pages dirtied by the current process
+>   to decide about the delay.
+> 
+> So the only situation where I could see this making a difference would be
+> if dirty limit is a handful of pages and even there I have hard time to see
+> how exactly.
 
-The SELinux bits look fine to me.
+That's kinda what worries me - we do see people winding the dirty
+thresholds way down to work around various niche problems with
+dirty page buildup.
 
-Acked-by: Paul Moore <paul@paul-moore.com> (SELinux)
+We also have small extra accounting overhead for cases where we've
+stacked layers to so the lower layers don't dirty throttle before
+the higher layer. If the lower layer throttles first, then the
+higher layer can't clean pages and we can deadlock.
 
+Those are the sorts of subtle, niche situations where I worry that
+the subtle "throttle first, write second" change could manifest...
+
+Cheers,
+
+Dave.
 -- 
-paul-moore.com
+Dave Chinner
+david@fromorbit.com
