@@ -2,50 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 011895363F1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 May 2022 16:21:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C3A95363F4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 May 2022 16:22:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346627AbiE0OVI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 May 2022 10:21:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36686 "EHLO
+        id S1352148AbiE0OWI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 May 2022 10:22:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231825AbiE0OVI (ORCPT
+        with ESMTP id S1350235AbiE0OWG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 May 2022 10:21:08 -0400
-X-Greylist: delayed 341 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 27 May 2022 07:21:07 PDT
+        Fri, 27 May 2022 10:22:06 -0400
 Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AC28106560;
-        Fri, 27 May 2022 07:21:06 -0700 (PDT)
-Received: from relayfre-01.paragon-software.com (unknown [172.30.72.12])
-        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id EACD52629;
-        Fri, 27 May 2022 14:20:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1653661237;
-        bh=XnC7aSAr5neGOTbasoTgRb0LT1HnKG7Qv+EzDQ/U96s=;
-        h=Date:Subject:From:To:CC:References:In-Reply-To;
-        b=TJo2FR8XuGjp2J4EmDVyjwgKesMT1QCW38axW6Bg555bGml6FqTEzHGDpJU4Otbt7
-         f5iJ6T7UCq8+PqDA9gAyLh7tzVqXUw8IqAutKrMrZcTRdhFPvpbcAN5PogAz9zK0q8
-         mi/dK3fYOOOI/YNIejBMlQttPpQD/U06Ib6fNC/E=
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCCF234BAE;
+        Fri, 27 May 2022 07:22:04 -0700 (PDT)
 Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 93361220E;
-        Fri, 27 May 2022 14:21:04 +0000 (UTC)
+        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 297FA2629;
+        Fri, 27 May 2022 14:21:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1653661264;
-        bh=XnC7aSAr5neGOTbasoTgRb0LT1HnKG7Qv+EzDQ/U96s=;
+        d=paragon-software.com; s=mail; t=1653661295;
+        bh=gY524lf/gzPmcrcGqzOWu5zx71hGf3abpPOyo+Ffr80=;
         h=Date:Subject:From:To:CC:References:In-Reply-To;
-        b=XoYlcs8nM4kChSxxvHnaa/UCkpzr5vQ187tjOzeDwUdPbQZia6n1/keHbS5VOiz/N
-         hkB6+5A9TlT5s7wkL3RN3zanV2X/sNeqzdGu/FtPJJkR9j5QSXepzjJurZvEQsZo/j
-         2e3sQHB1fR+V4nqIgxcKV8ub2JSYAHX1JFovNgHo=
+        b=ED7kfG/vEm9bI9Gft1ivzFLUVj7DPujpoJSWZZ3ri7HXf/QnknuRrlbU5HZZFeLw2
+         7pjwBE5E3/+KwmjYBuVk/JhlgqYK5Gxkp6n4d0H/rE2JMjikDDyr8cT4incsbuhty9
+         Mk53R8mjisNgLESqwNw7IVtS+aPEPTZLbiYlbu9I=
 Received: from [172.30.8.65] (172.30.8.65) by
  vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Fri, 27 May 2022 17:21:04 +0300
-Message-ID: <0f9648cc-66af-077c-88e6-8650fd78f44c@paragon-software.com>
-Date:   Fri, 27 May 2022 17:21:03 +0300
+ 15.1.2375.7; Fri, 27 May 2022 17:22:02 +0300
+Message-ID: <d196d00e-1d08-36e5-a721-7b04614ec35a@paragon-software.com>
+Date:   Fri, 27 May 2022 17:22:02 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.9.0
-Subject: [PATCH 1/3] fs/ntfs3: Refactoring of indx_find function
+Subject: [PATCH 2/3] fs/ntfs3: Fix double free on remount
 Content-Language: en-US
 From:   Almaz Alexandrovich <almaz.alexandrovich@paragon-software.com>
 To:     <ntfs3@lists.linux.dev>
@@ -66,83 +55,62 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This commit makes function a bit more readable
+Pointer to options was freed twice on remount
+Fixes xfstest generic/361
+Fixes: 82cae269cfa9 ("fs/ntfs3: Add initialization of super block")
 
 Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 ---
-  fs/ntfs3/index.c | 20 ++++++--------------
-  1 file changed, 6 insertions(+), 14 deletions(-)
+  fs/ntfs3/super.c | 8 ++++----
+  1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/fs/ntfs3/index.c b/fs/ntfs3/index.c
-index 6f81e3a49abf..511f872b6650 100644
---- a/fs/ntfs3/index.c
-+++ b/fs/ntfs3/index.c
-@@ -1042,19 +1042,16 @@ int indx_find(struct ntfs_index *indx, struct ntfs_inode *ni,
-  {
-  	int err;
-  	struct NTFS_DE *e;
--	const struct INDEX_HDR *hdr;
-  	struct indx_node *node;
-  
-  	if (!root)
-  		root = indx_get_root(&ni->dir, ni, NULL, NULL);
-  
-  	if (!root) {
--		err = -EINVAL;
--		goto out;
-+		/* Should not happed. */
-+		return -EINVAL;
-  	}
-  
--	hdr = &root->ihdr;
--
-  	/* Check cache. */
-  	e = fnd->level ? fnd->de[fnd->level - 1] : fnd->root_de;
-  	if (e && !de_is_last(e) &&
-@@ -1068,39 +1065,34 @@ int indx_find(struct ntfs_index *indx, struct ntfs_inode *ni,
-  	fnd_clear(fnd);
-  
-  	/* Lookup entry that is <= to the search value. */
--	e = hdr_find_e(indx, hdr, key, key_len, ctx, diff);
-+	e = hdr_find_e(indx, &root->ihdr, key, key_len, ctx, diff);
-  	if (!e)
+diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
+index d41d76979e12..697a84ed395e 100644
+--- a/fs/ntfs3/super.c
++++ b/fs/ntfs3/super.c
+@@ -30,6 +30,7 @@
+  #include <linux/fs_context.h>
+  #include <linux/fs_parser.h>
+  #include <linux/log2.h>
++#include <linux/minmax.h>
+  #include <linux/module.h>
+  #include <linux/nls.h>
+  #include <linux/seq_file.h>
+@@ -390,7 +391,7 @@ static int ntfs_fs_reconfigure(struct fs_context *fc)
   		return -EINVAL;
-  
-  	fnd->root_de = e;
--	err = 0;
-  
-  	for (;;) {
-  		node = NULL;
-  		if (*diff >= 0 || !de_has_vcn_ex(e)) {
-  			*entry = e;
--			goto out;
-+			return 0;
-  		}
-  
-  		/* Read next level. */
-  		err = indx_read(indx, ni, de_get_vbn(e), &node);
-  		if (err)
--			goto out;
-+			return err;
-  
-  		/* Lookup entry that is <= to the search value. */
-  		e = hdr_find_e(indx, &node->index->ihdr, key, key_len, ctx,
-  			       diff);
-  		if (!e) {
--			err = -EINVAL;
-  			put_indx_node(node);
--			goto out;
-+			return -EINVAL;
-  		}
-  
-  		fnd_push(fnd, node, e);
   	}
--
--out:
--	return err;
-  }
   
-  int indx_find_sort(struct ntfs_index *indx, struct ntfs_inode *ni,
+-	memcpy(sbi->options, new_opts, sizeof(*new_opts));
++	swap(sbi->options, fc->fs_private);
+  
+  	return 0;
+  }
+@@ -897,6 +898,8 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
+  	ref.high = 0;
+  
+  	sbi->sb = sb;
++	sbi->options = fc->fs_private;
++	fc->fs_private = NULL;
+  	sb->s_flags |= SB_NODIRATIME;
+  	sb->s_magic = 0x7366746e; // "ntfs"
+  	sb->s_op = &ntfs_sops;
+@@ -1260,8 +1263,6 @@ static int ntfs_fill_super(struct super_block *sb, struct fs_context *fc)
+  		goto put_inode_out;
+  	}
+  
+-	fc->fs_private = NULL;
+-
+  	return 0;
+  
+  put_inode_out:
+@@ -1414,7 +1415,6 @@ static int ntfs_init_fs_context(struct fs_context *fc)
+  	mutex_init(&sbi->compress.mtx_lzx);
+  #endif
+  
+-	sbi->options = opts;
+  	fc->s_fs_info = sbi;
+  ok:
+  	fc->fs_private = opts;
 -- 
 2.36.1
 
