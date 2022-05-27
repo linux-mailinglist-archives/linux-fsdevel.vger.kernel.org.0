@@ -2,110 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D815A5363E0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 May 2022 16:14:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B48F536404
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 May 2022 16:24:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353021AbiE0OOM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 May 2022 10:14:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52034 "EHLO
+        id S1351987AbiE0OXz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 May 2022 10:23:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49800 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236208AbiE0OOL (ORCPT
+        with ESMTP id S1353198AbiE0OXy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 May 2022 10:14:11 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9DB75AA4A;
-        Fri, 27 May 2022 07:14:08 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id wh22so9067983ejb.7;
-        Fri, 27 May 2022 07:14:08 -0700 (PDT)
+        Fri, 27 May 2022 10:23:54 -0400
+Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25E311207EE
+        for <linux-fsdevel@vger.kernel.org>; Fri, 27 May 2022 07:23:52 -0700 (PDT)
+Received: from relayfre-01.paragon-software.com (unknown [172.30.72.12])
+        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 419F22628;
+        Fri, 27 May 2022 14:14:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mDpmMrX6ZAj99tYsLUoYw7iDnZGlJpEI/3VF/4/WHsM=;
-        b=hmiV/2279z7xlKaFk+GxCbmDFupUyDQeF53CqctYwc3ylvA1+g67fm9AYwf3aJD52U
-         2Y0VNqCIPfJbF0YC3jT9aXfuCTHrZQH0zxRrdU5jcN1U1Kr3Xyjgnel+Kg8sZAH6ee2U
-         0dRC/R9cIcfp4pxd3fmznfBJMykLh8g3O16PpM3SZgOtK4GcYkW2MzmtU5DshhyBsBBf
-         3dKOBekLlhYbIn1nXTFG8IGd4yeaLAs2b4LMzjf8mjbboq9RHjfL3e/PH9gzng8YZQoR
-         wqBZqmfZxrzbCTzS+9/EGH3SBeLUcCO/TOjFgUVkrnmnGi4VHBCbnbAcC3eLlGOH/cDk
-         d4rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mDpmMrX6ZAj99tYsLUoYw7iDnZGlJpEI/3VF/4/WHsM=;
-        b=XWvs1OzpyEqn2rhMU2sOJAnRMC9Qb0KkWrQvEEpybCDANviWERnMzdKTzV8aiyBUGn
-         HfqcPxGd+loh56t7alMhH3Q0ezryCE1SoGoUud6dfyt939qEQ4TrgjxJjr4BEoNWPvNZ
-         nmKroZJUnPRTnYy980ah4Ud0Ta9/Ccdh3twtCIZrU/dqNDrlTKjQK/GZPi6iKeX3sY0f
-         gWEXI5FzA9O12F2/E7cSft5VY1WiOxWEv4rVUMWSCqIdp44M+qyDKeZR/WAONDI2BG8v
-         K2gQVHlJ3wEXPjZyQtzfG1xN+aWXYySc4QaQiaVBdXQ5mtkDd1o6ca2HmJVlmG6XPbT9
-         ePnA==
-X-Gm-Message-State: AOAM5320hwJ+ArNo4XFq8NN+JwUKClRz+yG1JczUhHhT/Y10LQMQqysQ
-        wQRha3zL6V8EzSfVax4KAaQES3v6XH5Ksu67WVk=
-X-Google-Smtp-Source: ABdhPJzu+h5wDUX4t7z5kJNxgp3+mHRNUPXxSn4d+Qux7XVdKfp9P59rjLYvyQHCXOcEAGyObqTC+BjeidAUXP/vTKc=
-X-Received: by 2002:a17:907:7da5:b0:6fe:d818:ee49 with SMTP id
- oz37-20020a1709077da500b006fed818ee49mr24958685ejc.58.1653660847121; Fri, 27
- May 2022 07:14:07 -0700 (PDT)
+        d=paragon-software.com; s=mail; t=1653660896;
+        bh=67MOUGxu0l15uGeKsZwN2GwiXwDwoeIuJxDyF86Rp9U=;
+        h=Date:To:CC:From:Subject;
+        b=amn5GupqaKheBOh3foRQJg0q+Q1T9FL43e+1OorHlIYvnwEKZdYfJz2IRiwsJMNy8
+         krwm/TM5NwgnZBeB6neVxrONgK2rSWyKsPPtBGyVmniLxknEDEcRe3AaTLUjy8T877
+         bnVvNzxeRT7j5f9M7Q2gNAN+7Q7n1NhL2OAORC8g=
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id E352D220D;
+        Fri, 27 May 2022 14:15:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paragon-software.com; s=mail; t=1653660923;
+        bh=67MOUGxu0l15uGeKsZwN2GwiXwDwoeIuJxDyF86Rp9U=;
+        h=Date:To:CC:From:Subject;
+        b=l00AhmcIDSaUNE9GoTj82KzDDZAvSu7h9onySYWhTC/m6KqTtvQGRPIxrYhDdIOCh
+         uXcrk0VPAUB0wgUJJchpz9pZRNcxjKbw9MXq7dIJbxbKY/sACZkRp1OhFvWC01t6nS
+         3Cb4tQPCoBRxA9qy+gjbKHL8voDTmoY0y6IDW0QI=
+Received: from [172.30.8.65] (172.30.8.65) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.7; Fri, 27 May 2022 17:15:23 +0300
+Message-ID: <75a1215a-eda2-d0dc-b962-0334356eef7c@paragon-software.com>
+Date:   Fri, 27 May 2022 17:15:23 +0300
 MIME-Version: 1.0
-References: <20220527110959.54559-1-zhangyuchen.lcr@bytedance.com>
-In-Reply-To: <20220527110959.54559-1-zhangyuchen.lcr@bytedance.com>
-From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date:   Fri, 27 May 2022 07:13:54 -0700
-Message-ID: <CAADnVQL69J8MWhaNzNG=ANL_i8_QqABON+pWJDuqRTkFGPJYUQ@mail.gmail.com>
-Subject: Re: [PATCH] procfs: add syscall statistics
-To:     Zhang Yuchen <zhangyuchen.lcr@bytedance.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        David Hildenbrand <david@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>, fam.zheng@bytedance.com,
-        bpf <bpf@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Content-Language: en-US
+To:     <ntfs3@lists.linux.dev>
+CC:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
+From:   Almaz Alexandrovich <almaz.alexandrovich@paragon-software.com>
+Subject: [PATCH 0/3] fs/ntfs3: Refactoring and bugfix
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [172.30.8.65]
+X-ClientProxiedBy: vobn-exch-01.paragon-software.com (172.30.72.13) To
+ vdlg-exch-02.paragon-software.com (172.30.1.105)
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 27, 2022 at 4:10 AM Zhang Yuchen
-<zhangyuchen.lcr@bytedance.com> wrote:
->
-> Add /proc/syscalls to display percpu syscall count.
+There are 3 commits.
+First - to improve code readability.
+Second - bugfix for xfstest (fixing wrong logic).
+Third - restructuring function logic so
+we can restore inode in some error cases.
 
-I second Peter's nack.
-We don't add debug features to the production kernel.
+Konstantin Komarov (3):
+   fs/ntfs3: Refactoring of indx_find function
+   fs/ntfs3: Fix double free on remount
+   fs/ntfs3: Refactor ni_try_remove_attr_list function
 
-> We need a less resource-intensive way to count syscall per cpu
-> for system problem location.
->
-> There is a similar utility syscount in the BCC project, but syscount
-> has a high performance cost.
+  fs/ntfs3/frecord.c | 49 ++++++++++++++++++++++++++++++++++------------
+  fs/ntfs3/index.c   | 20 ++++++-------------
+  fs/ntfs3/record.c  |  5 ++---
+  fs/ntfs3/super.c   |  8 ++++----
+  4 files changed, 49 insertions(+), 33 deletions(-)
 
-There are two syscount tools in BCC:
-tools/syscount
-libbpf-tools/syscount
+-- 
+2.36.1
 
-Which one has this 42% overhead?
-
-The former tool is obsolete though.
-It was written in the days when bpf had 1/10 of
-the features it has today.
-Both tools can be optimized.
-They attach to raw_syscalls tracepoint.
-tracepoints are not cheap.
-In terms of overhead:
-tracepoint > raw_tracepoint > fentry.
-bpf can attach to all three.
-
-Please profile libbpf-tools/syscount tool
-with perf and unixbench, understand where overhead
-comes from and then optimize the tool.
