@@ -2,112 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E497153575F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 May 2022 03:40:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B02C5357F6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 May 2022 04:56:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232824AbiE0Bkd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 26 May 2022 21:40:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42900 "EHLO
+        id S237545AbiE0Czo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 26 May 2022 22:55:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232677AbiE0Bka (ORCPT
+        with ESMTP id S237320AbiE0Czk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 26 May 2022 21:40:30 -0400
-Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7016D9EB5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 May 2022 18:40:29 -0700 (PDT)
-Received: by mail-pj1-x1035.google.com with SMTP id nn3-20020a17090b38c300b001e0e091cf03so1961700pjb.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 26 May 2022 18:40:29 -0700 (PDT)
+        Thu, 26 May 2022 22:55:40 -0400
+Received: from mail-qk1-x730.google.com (mail-qk1-x730.google.com [IPv6:2607:f8b0:4864:20::730])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A42EBE732E
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 May 2022 19:55:39 -0700 (PDT)
+Received: by mail-qk1-x730.google.com with SMTP id x65so3533001qke.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 26 May 2022 19:55:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rsCeaKQYu2owUyCBDwtZbNFjRtUaibD4xCTBzD5NHwQ=;
-        b=h5Os058/7Tkd1AvepTU0323lt2cG3mwUjYbiF3arFls/6rkKiXILKvCHrwLRQsySnZ
-         96/cCr2uqYFgpmz9nwuM3rG0f2J7xv5nQ0hqC6+iVv8nc4HgwHmTAlochAsZhfhqI83i
-         saL36v4tANwGgUtHRDRXTByMQY8bwYbtQ/ll7KeQkIdOsJMyc1FvNm6aEzlzHG2k8jqo
-         +V8bpsIxil8gc9piiCPIB8XYrUg5bo5kaXjbukdEC3xyym+MtICa2qY2Tcir2U37jJ1m
-         4ORO+Hu35zYgIWw/XT9PYNPw2QnLNZ1+Eb9F16UCV9gkZsq4Szql++3KR1rUZ5VhzQ/k
-         YUJQ==
+        d=soleen.com; s=google;
+        h=from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mzG/UnfpEd7zrPeirqI9bxxqOPxgzzlm4lre7luGrs0=;
+        b=TWayWQQdicVogsTlEFK5odfOJVF28f9lszqzOpYocvlt2tF2vvYb2AHtqaDVcf/kM2
+         e9YYOp/mmdVE1x5Sb18AyiuDaJJXRwy3w4HdXWfvO82BiDEFAAjmX+kyxkcJypP88enE
+         KZnuZ2LHoikplcxwefFgZzcV0ojbOoLyiPJsFf9p2yc+s3Z3BBpzv0FuX4hojzjEjHwC
+         76ew1uT+3Mr3DGHdkRuuoiX9xZL1UhKv1uFVxQtXnmJfyutqzWmllFrQR0ETZfiHFrQw
+         LzhpywQs7m/zXlEFC9KOzNdZO6pVUA7uYMSRXyFYYagANq6l2OPUR3/xiX4cEH3MTrZv
+         PFHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rsCeaKQYu2owUyCBDwtZbNFjRtUaibD4xCTBzD5NHwQ=;
-        b=36IA3WM1oL/POAevfQkCs5Hv7EsigZTjYPgB0R8yUuwORnLjgJ2+Ct8SbAEbTZME4m
-         Ph6bn1JrxUuqXBnrIu99QIILXn6o6aEiwBMaVM+9VH09tz4fUrkP/jTzfd441IVHGfPj
-         DbizfGAGSQ8G8GNlfbdgtL+LthVYiz1Z5KzweLjBcnfTKehGqVUJhN6doXvwtFUYm4n9
-         a9cbh0fH+I1ijAwSjy+cn8z/sJOh9wyGIl1+bU7h1luV+h6P1qhT15AoxU+9WNeZm2AQ
-         Bfwew8UpLzp2QjbHHVZVh9XdOl6TfwDFtmutNov2Noi+4F+tArbjxsdB/z5Jjdqhb3mi
-         6kzQ==
-X-Gm-Message-State: AOAM530Vu1PoNzMvIA07Uu2ZYKFofdWEE0UahvH9y/QFO2ahS9Spt8Kr
-        7I2kRXw7TGCmJEL9+97rWffbE76OOmJpxuZePESY7w==
-X-Google-Smtp-Source: ABdhPJzk910Eqiuu/69sbIFt/rEQ4I6MtCDwrXFQ/nJqkbUlb/6Ny4mXvfFnPS95wsU6a5b8EAwIeusUd82ItqgJ2NA=
-X-Received: by 2002:a17:902:b58b:b0:162:2e01:9442 with SMTP id
- a11-20020a170902b58b00b001622e019442mr20257616pls.6.1653615629019; Thu, 26
- May 2022 18:40:29 -0700 (PDT)
+        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mzG/UnfpEd7zrPeirqI9bxxqOPxgzzlm4lre7luGrs0=;
+        b=xEyED9CZjz5CNZgGl9Yah5nEKydyCrjoFPTUVi/A/rocfteLf1BJvAtRRnLU4MZ3Vj
+         wBfTeeXu646v2Mb5zWh5qcXB9cIPskZApoRzlZoeZkKIsBj5KAhji7xUPiBfKHSLa+XM
+         Nc08k5MB1xsVon0OKRmbkISH3B8BJFtf15nA5KM4MhG9g6Mz0ia2alFChHVZhZ9LyAcZ
+         7MbCUeFpmSc61QPgGwqbm7G3ZHTDE7jUpmuFPhG3f6+Q3DpAF+HKXu3+9xjb8SX1rGIb
+         F9cJFc/f3U8KV3bZWd6xUfdrq+VyzYz6YvE/ILOfZBp33g1vghRykqamNagTeAo8JEr1
+         iCvA==
+X-Gm-Message-State: AOAM533ne/WXYv7eUniuU41Dy84B11t3ewXzzUdqjZf0wfJgWU6AJ1bF
+        NEdLuXYwsGIgZkTNpElLQNDEEQ==
+X-Google-Smtp-Source: ABdhPJwUqeyvHjYiti4yPhL4/c5gSOC9pYngAjeKK51N+f1LZWyIBnav+8a4aO4rCqX0RtL6GQWQ4g==
+X-Received: by 2002:a05:620a:28c1:b0:6a5:ba25:1768 with SMTP id l1-20020a05620a28c100b006a5ba251768mr3643291qkp.464.1653620138787;
+        Thu, 26 May 2022 19:55:38 -0700 (PDT)
+Received: from soleen.c.googlers.com.com (189.216.85.34.bc.googleusercontent.com. [34.85.216.189])
+        by smtp.gmail.com with ESMTPSA id r129-20020ae9dd87000000b0069fc13ce224sm2129672qkf.85.2022.05.26.19.55.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 May 2022 19:55:38 -0700 (PDT)
+From:   Pasha Tatashin <pasha.tatashin@soleen.com>
+To:     pasha.tatashin@soleen.com, sashal@kernel.org,
+        ebiederm@xmission.com, rburanyi@google.com, gthelen@google.com,
+        viro@zeniv.linux.org.uk, kexec@lists.infradead.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] Allow to kexec with initramfs larger than 2G
+Date:   Fri, 27 May 2022 02:55:33 +0000
+Message-Id: <20220527025535.3953665-1-pasha.tatashin@soleen.com>
+X-Mailer: git-send-email 2.36.1.124.g0e6072fb45-goog
 MIME-Version: 1.0
-References: <348dc099-737d-94ba-55ad-2db285084c73@openvz.org> <YpAnqqY/c3Y5ZkPG@casper.infradead.org>
-In-Reply-To: <YpAnqqY/c3Y5ZkPG@casper.infradead.org>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Thu, 26 May 2022 18:40:18 -0700
-Message-ID: <CALvZod7iyO5Ti5xhzq36UjDFNAmfEyPk1MQv_t4kUHKuPCeNng@mail.gmail.com>
-Subject: Re: [PATCH] XArray: handle XA_FLAGS_ACCOUNT in xas_split_alloc
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Vasily Averin <vvs@openvz.org>, kernel@openvz.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 26, 2022 at 6:21 PM Matthew Wilcox <willy@infradead.org> wrote:
->
-> On Wed, May 25, 2022 at 11:26:37AM +0300, Vasily Averin wrote:
-> > Commit 7b785645e8f1 ("mm: fix page cache convergence regression")
-> > added support of new XA_FLAGS_ACCOUNT flag into all Xarray allocation
-> > functions. Later commit 8fc75643c5e1 ("XArray: add xas_split")
-> > introduced xas_split_alloc() but missed about XA_FLAGS_ACCOUNT
-> > processing.
->
-> Thanks, Vasily.
->
-> Johannes, Shakeel, is this right?  I don't fully understand the accounting
-> stuff.
->
+Currently, the largest initramfs that is supported by kexec_file_load()
+syscall is 2G.
 
-If called from __filemap_add_folio() then this is correct.
+This is because kernel_read_file() returns int, and is limited to
+INT_MAX or 2G.
 
-However from split_huge_page_to_list(), we can not use the memcg from
-current as that codepath is called from reclaim which can be triggered
-by processes of other memcgs.
+On the other hand, there are kexec based boot loaders (i.e. u-root),
+that may need to boot netboot images that might be larger than 2G.
 
-> > Signed-off-by: Vasily Averin <vvs@openvz.org>
-> > ---
-> >  lib/xarray.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/lib/xarray.c b/lib/xarray.c
-> > index 54e646e8e6ee..5f5b42e6f842 100644
-> > --- a/lib/xarray.c
-> > +++ b/lib/xarray.c
-> > @@ -1013,6 +1013,8 @@ void xas_split_alloc(struct xa_state *xas, void *entry, unsigned int order,
-> >       if (xas->xa_shift + XA_CHUNK_SHIFT > order)
-> >               return;
-> >
-> > +     if (xas->xa->xa_flags & XA_FLAGS_ACCOUNT)
-> > +             gfp |= __GFP_ACCOUNT;
-> >       do {
-> >               unsigned int i;
-> >               void *sibling = NULL;
-> > --
-> > 2.31.1
-> >
+The first patch changes the return type from int to ssize_t in
+kernel_read_file* functions.
+
+The second patch increases the maximum initramfs file size to 4G.
+
+Tested: verified that can kexec_file_load() works with 4G initramfs
+on x86_64.
+
+Pasha Tatashin (2):
+  fs/kernel_read_file: Allow to read files up-to ssize_t
+  kexec_file: Increase maximum file size to 4G
+
+ fs/kernel_read_file.c            | 38 ++++++++++++++++----------------
+ include/linux/kernel_read_file.h | 32 +++++++++++++--------------
+ include/linux/limits.h           |  1 +
+ kernel/kexec_file.c              | 10 ++++++---
+ 4 files changed, 43 insertions(+), 38 deletions(-)
+
+-- 
+2.36.1.124.g0e6072fb45-goog
+
