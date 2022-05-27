@@ -2,102 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C7FED53639C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 May 2022 15:57:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D815A5363E0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 27 May 2022 16:14:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352173AbiE0N5C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 May 2022 09:57:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36484 "EHLO
+        id S1353021AbiE0OOM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 May 2022 10:14:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52034 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240514AbiE0N5A (ORCPT
+        with ESMTP id S236208AbiE0OOL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 May 2022 09:57:00 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC5A312636
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 May 2022 06:56:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=rVGNfA2KOKMMKQxHMw7Bl8sMDqhn/iAj5Rbvd+jGcrE=; b=UYhm/b1bVNzPzhbsD47JkMo1vj
-        R5iqplgtUNxUSuNc+pCWlQRknQg17DiyAyzTKgQWdU3R6RGllaC1pyYS4ateLvZU5YSXOHH1HC5gu
-        UGd+BkkskdbS/2rPIufl5w2djB7D+W92CYmDUFJ60GgSgr0MASrIXe663xZ/AN1cScISusM4bugEx
-        yDTrKexJJmI2JUNMCLE7LQY0F0dHGT1rZJyomzkOOUx+3LzbqkVzm8c/H2Mx++M0+EIY90urJsSMm
-        jEvHf/6r8ebgeocVmxbFla/lJrpu07EKNZ9LDWevVKuZdGUcQskISEAqywwB5nPH8r/Z1DJgVEn6n
-        cW7ceybQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nuaSS-0028gs-Fh; Fri, 27 May 2022 13:56:52 +0000
-Date:   Fri, 27 May 2022 14:56:52 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     jfs-discussion@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org,
-        "Darrick J . Wong" <djwong@kernel.org>
-Subject: Re: [RFC PATCH 7/9] jfs: Read quota through the page cache
-Message-ID: <YpDYpHG0cZM9E5lD@casper.infradead.org>
-References: <20220526192910.357055-1-willy@infradead.org>
- <20220526192910.357055-8-willy@infradead.org>
- <YpBlF2xbfL2yY98n@infradead.org>
+        Fri, 27 May 2022 10:14:11 -0400
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9DB75AA4A;
+        Fri, 27 May 2022 07:14:08 -0700 (PDT)
+Received: by mail-ej1-x636.google.com with SMTP id wh22so9067983ejb.7;
+        Fri, 27 May 2022 07:14:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mDpmMrX6ZAj99tYsLUoYw7iDnZGlJpEI/3VF/4/WHsM=;
+        b=hmiV/2279z7xlKaFk+GxCbmDFupUyDQeF53CqctYwc3ylvA1+g67fm9AYwf3aJD52U
+         2Y0VNqCIPfJbF0YC3jT9aXfuCTHrZQH0zxRrdU5jcN1U1Kr3Xyjgnel+Kg8sZAH6ee2U
+         0dRC/R9cIcfp4pxd3fmznfBJMykLh8g3O16PpM3SZgOtK4GcYkW2MzmtU5DshhyBsBBf
+         3dKOBekLlhYbIn1nXTFG8IGd4yeaLAs2b4LMzjf8mjbboq9RHjfL3e/PH9gzng8YZQoR
+         wqBZqmfZxrzbCTzS+9/EGH3SBeLUcCO/TOjFgUVkrnmnGi4VHBCbnbAcC3eLlGOH/cDk
+         d4rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mDpmMrX6ZAj99tYsLUoYw7iDnZGlJpEI/3VF/4/WHsM=;
+        b=XWvs1OzpyEqn2rhMU2sOJAnRMC9Qb0KkWrQvEEpybCDANviWERnMzdKTzV8aiyBUGn
+         HfqcPxGd+loh56t7alMhH3Q0ezryCE1SoGoUud6dfyt939qEQ4TrgjxJjr4BEoNWPvNZ
+         nmKroZJUnPRTnYy980ah4Ud0Ta9/Ccdh3twtCIZrU/dqNDrlTKjQK/GZPi6iKeX3sY0f
+         gWEXI5FzA9O12F2/E7cSft5VY1WiOxWEv4rVUMWSCqIdp44M+qyDKeZR/WAONDI2BG8v
+         K2gQVHlJ3wEXPjZyQtzfG1xN+aWXYySc4QaQiaVBdXQ5mtkDd1o6ca2HmJVlmG6XPbT9
+         ePnA==
+X-Gm-Message-State: AOAM5320hwJ+ArNo4XFq8NN+JwUKClRz+yG1JczUhHhT/Y10LQMQqysQ
+        wQRha3zL6V8EzSfVax4KAaQES3v6XH5Ksu67WVk=
+X-Google-Smtp-Source: ABdhPJzu+h5wDUX4t7z5kJNxgp3+mHRNUPXxSn4d+Qux7XVdKfp9P59rjLYvyQHCXOcEAGyObqTC+BjeidAUXP/vTKc=
+X-Received: by 2002:a17:907:7da5:b0:6fe:d818:ee49 with SMTP id
+ oz37-20020a1709077da500b006fed818ee49mr24958685ejc.58.1653660847121; Fri, 27
+ May 2022 07:14:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YpBlF2xbfL2yY98n@infradead.org>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+References: <20220527110959.54559-1-zhangyuchen.lcr@bytedance.com>
+In-Reply-To: <20220527110959.54559-1-zhangyuchen.lcr@bytedance.com>
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date:   Fri, 27 May 2022 07:13:54 -0700
+Message-ID: <CAADnVQL69J8MWhaNzNG=ANL_i8_QqABON+pWJDuqRTkFGPJYUQ@mail.gmail.com>
+Subject: Re: [PATCH] procfs: add syscall statistics
+To:     Zhang Yuchen <zhangyuchen.lcr@bytedance.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        David Hildenbrand <david@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>, fam.zheng@bytedance.com,
+        bpf <bpf@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 26, 2022 at 10:43:51PM -0700, Christoph Hellwig wrote:
-> >  static ssize_t jfs_quota_read(struct super_block *sb, int type, char *data,
-> > +			      size_t len, loff_t pos)
-> >  {
-> >  	struct inode *inode = sb_dqopt(sb)->files[type];
-> > +	struct address_space *mapping = inode->i_mapping;
-> >  	size_t toread;
-> > +	pgoff_t index;
-> >  	loff_t i_size = i_size_read(inode);
-> >  
-> > +	if (pos > i_size)
-> >  		return 0;
-> > +	if (pos + len > i_size)
-> > +		len = i_size - pos;
-> >  	toread = len;
-> > +	index = pos / PAGE_SIZE;
-> > +
-> >  	while (toread > 0) {
-> > +		struct folio *folio = read_mapping_folio(mapping, index, NULL);
-> > +		size_t tocopy = PAGE_SIZE - offset_in_page(pos);
-> > +		void *src;
-> > +
-> > +		if (IS_ERR(folio))
-> > +			return PTR_ERR(folio);
-> > +
-> > +		src = kmap_local_folio(folio, offset_in_folio(folio, pos));
-> > +		memcpy(data, src, tocopy);
-> > +		kunmap_local(src);
-> 
-> It would be great to have a memcpy_from_folio like the existing
-> memcpy_from_page for this.
+On Fri, May 27, 2022 at 4:10 AM Zhang Yuchen
+<zhangyuchen.lcr@bytedance.com> wrote:
+>
+> Add /proc/syscalls to display percpu syscall count.
 
-Yes, I agree.  It could copy more than a single page like
-zero_user_segments() does.
+I second Peter's nack.
+We don't add debug features to the production kernel.
 
-> > +		folio_put(folio);
-> >  
-> >  		toread -= tocopy;
-> >  		data += tocopy;
-> > +		pos += tocopy;
-> > +		index++;
-> >  	}
-> >  	return len;
-> 
-> And this whole helper is generic now.  It might be worth to move it
-> into fs/quota/dquot.c as generic_quota_read.
+> We need a less resource-intensive way to count syscall per cpu
+> for system problem location.
+>
+> There is a similar utility syscount in the BCC project, but syscount
+> has a high performance cost.
 
-I was thinking it was filemap_read_kernel(inode, pos, dst, len)
-but perhaps both of these things ...
+There are two syscount tools in BCC:
+tools/syscount
+libbpf-tools/syscount
+
+Which one has this 42% overhead?
+
+The former tool is obsolete though.
+It was written in the days when bpf had 1/10 of
+the features it has today.
+Both tools can be optimized.
+They attach to raw_syscalls tracepoint.
+tracepoints are not cheap.
+In terms of overhead:
+tracepoint > raw_tracepoint > fentry.
+bpf can attach to all three.
+
+Please profile libbpf-tools/syscount tool
+with perf and unixbench, understand where overhead
+comes from and then optimize the tool.
