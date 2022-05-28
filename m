@@ -2,126 +2,208 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CB93536E25
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 May 2022 21:08:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 11863536E66
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 May 2022 22:41:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229775AbiE1TIu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 28 May 2022 15:08:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53982 "EHLO
+        id S229871AbiE1UjE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 28 May 2022 16:39:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229811AbiE1TIs (ORCPT
+        with ESMTP id S229828AbiE1UjD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 28 May 2022 15:08:48 -0400
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C69F27B19
-        for <linux-fsdevel@vger.kernel.org>; Sat, 28 May 2022 12:08:42 -0700 (PDT)
-Received: from cwcc.thunk.org (pool-108-7-220-252.bstnma.fios.verizon.net [108.7.220.252])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 24SIxVPw001934
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 28 May 2022 14:59:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-        t=1653764373; bh=WG/9y43YVTYUGGdg0XiluI1UzSrpDLWQtVRIcUa+30k=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=NdEO1lcgtnv0yvpDMOSyvaWt5+liMNaVkEKCRAgoYm5+M7ALjaVQ05p0jWq4/PcpS
-         cXry5ARpiDQ4wsAeAru3iiqOxOQh2KzLDsWtb5qSJZHLnJG3JQyG1DqfGwhztEXxCs
-         z7M7huHxqFFWJqipqjLfHjKEr0VggBrMRx1tB4ABXt+ZoU1L+WVv/NDXJ6+eB7u8QZ
-         J76f94DQoXK44mrZVuU/i+FKzEt4QzP/vN8BI9g1BueINpDStvrGPQxNg61iK9ZiUb
-         w6+aOcemwdVjjPJYOVje8esW/wLnGGwtYBGmTm/Lzqo7Iu6tA55BSgFM2RWYs0Fm4m
-         1FcFjvOqqanUQ==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id 783FB15C009C; Sat, 28 May 2022 14:59:31 -0400 (EDT)
-Date:   Sat, 28 May 2022 14:59:31 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        jfs-discussion@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        "linux-ext4@vger.kernel.org Darrick J . Wong" <djwong@kernel.org>
-Subject: Re: [RFC PATCH 0/9] Convert JFS to use iomap
-Message-ID: <YpJxEwl+t93pSKLk@mit.edu>
-References: <20220526192910.357055-1-willy@infradead.org>
- <20220528000216.GG3923443@dread.disaster.area>
- <YpGF3ceSLt7J/UKn@casper.infradead.org>
- <20220528053639.GI3923443@dread.disaster.area>
+        Sat, 28 May 2022 16:39:03 -0400
+Received: from mail-io1-xd2c.google.com (mail-io1-xd2c.google.com [IPv6:2607:f8b0:4864:20::d2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4971846654
+        for <linux-fsdevel@vger.kernel.org>; Sat, 28 May 2022 13:39:02 -0700 (PDT)
+Received: by mail-io1-xd2c.google.com with SMTP id b4so7931670iog.11
+        for <linux-fsdevel@vger.kernel.org>; Sat, 28 May 2022 13:39:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc:content-transfer-encoding;
+        bh=U5fkrdm6TsaFizLH62ybW2z40y4ZwknSKbuYY8GwZpQ=;
+        b=F3dfbFTN3D6TC6t5jaoEGJXOHBO1yWTAwRj9d38Yy16EmFsaoBcanwLTY35RyhkiXl
+         L4DSVeQF9HMGGXbS++BztgStJhSK1eL51tx4tW7nPDuvFb/HMnHWfs8jFd3jfOQzmnKv
+         NQBZJ7sFClEF9dY0MWMZ4JECH6+vQPW5wQ6difWfC3ue3CpmsxacOAb7MZM6IwvWvzg6
+         i7SSjg8gz9KbHsDkxwquMrUThXoF7y9Z5bC3NgLXWh/7EFRM4rHOa+yDb4CqxEq3f2kc
+         FTF3bEzgrGSQnMnIjZUzHxcGO/MhEAeJWVCZ7Ttp9SBd4ZxkEaFkvGxxSuNZWH7uCITB
+         94dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc:content-transfer-encoding;
+        bh=U5fkrdm6TsaFizLH62ybW2z40y4ZwknSKbuYY8GwZpQ=;
+        b=Yw51bh/PIZJpixTE0i3+cNFwlD5PcS4VlmC4ErIVpQBpOwRXOPuvRb8cJH8YOqKr79
+         XAKvu+1BJwwkpBiaSKRUQ4RvPAQldWAEDXVG0tKJH96oUhug9MlW21mliRIvmjbrVEtB
+         9voqZzlAVvCUwoLKeRSA4XZ6xG9RDM/54bYL49nKLkmXVv875BOIOChX6MmZi4NGtq97
+         ge6qXtspwQJUKoPhKvgLfSEjfMx+tnOY+/m+5ElYFJ6QvSiSwl38ujSJaCBx/aQpFzp+
+         rOBPNTMaT8XyYlUzIf0OENgarlr1ie6QxFcmrF0ZoyBAbhnB2su5p10NHe+s7dgw2ylw
+         JZyA==
+X-Gm-Message-State: AOAM5313RcZSamfR87SUb3Cl4CNcKz06LWuwiEDGnsqc+AmJ7b1xvZ4t
+        Q63bnOuRnnCFI/a8KPtKVq7MzOKKLQGN1ifYG9g=
+X-Google-Smtp-Source: ABdhPJyHLfFryuMBfn0PsUswsDRs4m6MwqcJsoHXMhOlzEZ2PIBDzhxkc0c28KpOWqewV7cB48GWResyr2+k2AlyLyI=
+X-Received: by 2002:a05:6638:2404:b0:331:48f:bac0 with SMTP id
+ z4-20020a056638240400b00331048fbac0mr2385666jat.306.1653770341612; Sat, 28
+ May 2022 13:39:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220528053639.GI3923443@dread.disaster.area>
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+References: <YouYvxEl1rF2QO5K@zeniv-ca.linux.org.uk> <0343869c-c6d1-5e7c-3bcb-f8d6999a2e04@kernel.dk>
+ <YoueZl4Zx0WUH3CS@zeniv-ca.linux.org.uk> <6594c360-0c7c-412f-29c9-377ddda16937@kernel.dk>
+ <f74235f7-8c55-8def-9a3f-bc5bacd7ee3c@kernel.dk> <YoutEnMCVdwlzboT@casper.infradead.org>
+ <ef4d18ee-1c3e-2bd6-eff5-344a0359884d@kernel.dk> <2ae13aa9-f180-0c71-55db-922c0f18dc1b@kernel.dk>
+ <Yo+S4JtT6fjwO5GL@zx2c4.com> <YpCjaL9QuuCB23A5@gmail.com> <YpCnMaT823RM3qU5@gmail.com>
+In-Reply-To: <YpCnMaT823RM3qU5@gmail.com>
+Reply-To: sedat.dilek@gmail.com
+From:   Sedat Dilek <sedat.dilek@gmail.com>
+Date:   Sat, 28 May 2022 22:38:25 +0200
+Message-ID: <CA+icZUWf4ww4gXRxnR9P4FTK4ZiAgANQgh+QDK2sAzJx+C4LGQ@mail.gmail.com>
+Subject: Re: [RFC] what to do with IOCB_DSYNC?
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Samuel Neves <sneves@dei.uc.pt>, Jens Axboe <axboe@kernel.dk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
+        x86@kernel.org, Hugh Dickins <hughd@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-+linux-ext4
+On Sat, May 28, 2022 at 9:57 PM Ingo Molnar <mingo@kernel.org> wrote:
+>
+>
+> * Ingo Molnar <mingo@kernel.org> wrote:
+>
+> >
+> > * Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+> >
+> > > On Mon, May 23, 2022 at 10:03:45AM -0600, Jens Axboe wrote:
+> > > > clear_user()
+> > > > 32        ~96MB/sec
+> > > > 64        195MB/sec
+> > > > 128       386MB/sec
+> > > > 1k        2.7GB/sec
+> > > > 4k        7.8GB/sec
+> > > > 16k       14.8GB/sec
+> > > >
+> > > > copy_from_zero_page()
+> > > > 32        ~96MB/sec
+> > > > 64        193MB/sec
+> > > > 128       383MB/sec
+> > > > 1k        2.9GB/sec
+> > > > 4k        9.8GB/sec
+> > > > 16k       21.8GB/sec
+> > >
+> > > Just FYI, on x86, Samuel Neves proposed some nice clear_user()
+> > > performance improvements that were forgotten about:
+> > >
+> > > https://lore.kernel.org/lkml/20210523180423.108087-1-sneves@dei.uc.pt=
+/
+> > > https://lore.kernel.org/lkml/Yk9yBcj78mpXOOLL@zx2c4.com/
+> > >
+> > > Hoping somebody picks this up at some point...
+> >
+> > Those ~2x speedup numbers are indeed looking very nice:
+> >
+> > | After this patch, on a Skylake CPU, these are the
+> > | before/after figures:
+> > |
+> > | $ dd if=3D/dev/zero of=3D/dev/null bs=3D1024k status=3Dprogress
+> > | 94402248704 bytes (94 GB, 88 GiB) copied, 6 s, 15.7 GB/s
+> > |
+> > | $ dd if=3D/dev/zero of=3D/dev/null bs=3D1024k status=3Dprogress
+> > | 446476320768 bytes (446 GB, 416 GiB) copied, 15 s, 29.8 GB/s
+> >
+> > Patch fell through the cracks & it doesn't apply anymore:
+> >
+> >   checking file arch/x86/lib/usercopy_64.c
+> >   Hunk #2 FAILED at 17.
+> >   1 out of 2 hunks FAILED
+> >
+> > Would be nice to re-send it.
+>
+> Turns out Boris just sent a competing optimization to clear_user() 3 days=
+ ago:
+>
+>   https://lore.kernel.org/r/YozQZMyQ0NDdD8cH@zn.tnic
+>
+> Thanks,
+>
 
-On Sat, May 28, 2022 at 03:36:39PM +1000, Dave Chinner wrote:
-> The other filesystem that uses nobh is the standalone ext2
-> filesystem that nobody uses anymore as the ext4 module provides ext2
-> functionality for distros these days. Hence there's an argument that
-> can be made for removing fs/ext2 as well. In which case, the whole
-> nobh problem goes away by deprecating and removing both the
-> filesysetms that use that infrastructure in 2 years time....
+[ CC Hugh ]
 
-This got brought up at this past week's ext4 video chat, where Willy
-asked Jan (who has been maintaining ext2) whether he would be open to
-converting ext2 to use iomap.  The answer was yes.  So once jfs and
-ext2 are converted, we'll be able to nuke the nobh code.
+I hope I adapted both patches from Hugh and Samuel against Linux v5.18
+correctly.
 
-From Willy's comments on the video chat, my understanding is that jfs
-was even simpler to convert that ext2, and this allows us to remove
-the nobh infrastructure without asking the question about whether it's
-time to remove jfs.
+As I have no "modern CPU" meaning Intel Sandy-Bridge, the patch of
+Hugh was not predestined for me (see numbers).
 
-> > We also need to convert more filesystems to use iomap.
-> 
-> We also need to deprecate and remove more largely unmaintained and
-> unused filesystems. :)
+Samuel's patch gave me 15% of speedup with running Hugh's dd test-case
+(cannot say if this is a real benchmark for testing).
 
-Well, Dave Kleikamp is still around and sends jfs pull requests from
-time to time, and so it's not as unmaintained as, say, fs/adfs,
-fs/freevxs, fs/hpfs, fs/minix, and fs/sysv.
+Patches and latest linux-config attached.
 
-As regards to minixfs, I'd argue that ext2 is a better reference file
-system than minixfs.  So..... are we ready to remove minixfs?  I could
-easily see that some folks might still have sentimental attachment to
-minixfs.  :-)
+*** Without patch
 
-> Until ext4 is converted to use iomap, we realistically cannot ask
-> anyone to use iomap....
+root# cat /proc/version
+Linux version 5.18.0-3-amd64-clang14-lto (sedat.dilek@gmail.com@iniza)
+(dileks clang version 14.0.4 (https://github.com/llvm/llvm-project.git
+29f1039a7285a5c3a9c353d05
+4140bf2556d4c4d), LLD 14.0.4) #3~bookworm+dileks1 SMP PREEMPT_DYNAMIC 2022-=
+05-27
 
-That's something that we've been discussing on the ext4 video chats.
-What we can probably do is to convert buffered I/O to use iomap in
-stages, first starting with the easy case, and then progressing to the
-more complex ones:
+root# dd if=3D/dev/zero of=3D/dev/null bs=3D1M count=3D1M
+1048576+0 Datens=C3=A4tze ein
+1048576+0 Datens=C3=A4tze aus
+1099511627776 Bytes (1,1 TB, 1,0 TiB) kopiert, 97,18 s, 11,3 GB/s
 
-     * page_size == block_size, !fscrypt, !fsverity, !data=journal
-     * page_size != block_size, !fscrypt, !fsverity, !data=journal
-     * fsverity
-     * fscrypt
+*** With hughd patch
 
-At that point, the hard, remaining case is what to do with
-data=journal.  data=journal is already barely maintained; we don't
-support direct i/o, delayed allocation, etc., There have been some
-specialized users for it, but it's probably more for interesting
-research applications than anything else.
+Patch: 0001-x86-usercopy-Use-alternatives-for-clear_user.patch
+Link: https://lore.kernel.org/lkml/2f5ca5e4-e250-a41c-11fb-a7f4ebc7e1c9@goo=
+gle.com/
 
-So the question is whether we keep it as a special case, and never
-convert it over to iomap, or decide that it's time to deprecate and
-rip out data=journal support.  We don't need to make that decision
-right away, and so long as it remains a special case where it doesn't
-burden the rest of the kernel, we might end up keeping it so long as
-it remains a minimal maintenance burden for ext4.  I duuno....
+root# cat /proc/version
+Linux version 5.18.0-4-amd64-clang14-lto (sedat.dilek@gmail.com@iniza)
+(dileks clang version 14.0.4 (https://github.com/llvm/llvm-project.git
+29f1039a7285a5c3a9c35>
 
-In any case, rest assured that there have been quite a lot of
-discussions about how to convert all (or 99.99%) of ext4 to use iomap.
+root# dd if=3D/dev/zero of=3D/dev/null bs=3D1M count=3D1M
+1048576+0 Datens=C3=A4tze ein
+1048576+0 Datens=C3=A4tze aus
+1099511627776 Bytes (1,1 TB, 1,0 TiB) kopiert, 588,053 s, 1,9 GB/s
 
-Cheers,
+root# cat /proc/version
+Linux version 5.18.0-4-amd64-clang14-lto (sedat.dilek@gmail.com@iniza)
+(dileks clang version 14.0.4 (https://github.com/llvm/llvm-project.git
+29f1039a7285a5c3a9c353d05
+4140bf2556d4c4d), LLD 14.0.4) #4~bookworm+dileks1 SMP PREEMPT_DYNAMIC 2022-=
+05-28
 
-						- Ted
+*** With sneves patch
+
+Patch: 0001-x86-usercopy-speed-up-64-bit-__clear_user-with-stos-.patch
+Link: https://lore.kernel.org/lkml/20210523180423.108087-1-sneves@dei.uc.pt=
+/
+
+root# cat /proc/version
+Linux version 5.18.0-5-amd64-clang14-lto (sedat.dilek@gmail.com@iniza)
+(dileks clang version 14.0.4 (https://github.com/llvm/llvm-project.git
+29f1039a7285a5c3a9c353d05
+4140bf2556d4c4d), LLD 14.0.4) #5~bookworm+dileks1 SMP PREEMPT_DYNAMIC 2022-=
+05-28
+
+root# dd if=3D/dev/zero of=3D/dev/null bs=3D1M count=3D1M
+1048576+0 Datens=C3=A4tze ein
+1048576+0 Datens=C3=A4tze aus
+1099511627776 Bytes (1,1 TB, 1,0 TiB) kopiert, 82,697 s, 13,3 GB/s
+
+
+-dileks // 28-May-2022
