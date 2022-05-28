@@ -2,44 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 97142536947
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 May 2022 02:02:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EBD6536949
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 28 May 2022 02:06:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355210AbiE1ACV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 27 May 2022 20:02:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60320 "EHLO
+        id S235955AbiE1AG2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 27 May 2022 20:06:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235955AbiE1ACT (ORCPT
+        with ESMTP id S229628AbiE1AGY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 27 May 2022 20:02:19 -0400
-Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id F0F5F122B46
-        for <linux-fsdevel@vger.kernel.org>; Fri, 27 May 2022 17:02:18 -0700 (PDT)
+        Fri, 27 May 2022 20:06:24 -0400
+Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B58932DC2;
+        Fri, 27 May 2022 17:06:22 -0700 (PDT)
 Received: from dread.disaster.area (pa49-181-2-147.pa.nsw.optusnet.com.au [49.181.2.147])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 0817610E828D;
-        Sat, 28 May 2022 10:02:17 +1000 (AEST)
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 7E642538FEE;
+        Sat, 28 May 2022 10:06:21 +1000 (AEST)
 Received: from dave by dread.disaster.area with local (Exim 4.92.3)
         (envelope-from <david@fromorbit.com>)
-        id 1nujuK-00HDEL-5e; Sat, 28 May 2022 10:02:16 +1000
-Date:   Sat, 28 May 2022 10:02:16 +1000
+        id 1nujyG-00HDH2-8o; Sat, 28 May 2022 10:06:20 +1000
+Date:   Sat, 28 May 2022 10:06:20 +1000
 From:   Dave Chinner <david@fromorbit.com>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     jfs-discussion@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J . Wong" <djwong@kernel.org>
-Subject: Re: [RFC PATCH 0/9] Convert JFS to use iomap
-Message-ID: <20220528000216.GG3923443@dread.disaster.area>
-References: <20220526192910.357055-1-willy@infradead.org>
+To:     Almaz Alexandrovich <almaz.alexandrovich@paragon-software.com>
+Cc:     ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/3] fs/ntfs3: Refactoring of indx_find function
+Message-ID: <20220528000620.GH3923443@dread.disaster.area>
+References: <75a1215a-eda2-d0dc-b962-0334356eef7c@paragon-software.com>
+ <0f9648cc-66af-077c-88e6-8650fd78f44c@paragon-software.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220526192910.357055-1-willy@infradead.org>
+In-Reply-To: <0f9648cc-66af-077c-88e6-8650fd78f44c@paragon-software.com>
 X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=deDjYVbe c=1 sm=1 tr=0 ts=6291668a
+X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=6291677e
         a=ivVLWpVy4j68lT4lJFbQgw==:117 a=ivVLWpVy4j68lT4lJFbQgw==:17
-        a=kj9zAlcOel0A:10 a=oZkIemNP1mAA:10 a=7-415B0cAAAA:8
-        a=4mSRq-6Pa5T9pFwkqfQA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+        a=kj9zAlcOel0A:10 a=oZkIemNP1mAA:10 a=GFCt93a2AAAA:8 a=7-415B0cAAAA:8
+        a=0CrOsYfU3WwKmZ_veyUA:9 a=CjuIK1q_8ugA:10 a=CZlV3fpBRwkA:10
+        a=0UNspqPZPZo5crgNHNjb:22 a=biEYGPWJfzWAr4FL6Ov7:22
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
         SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
@@ -49,34 +49,17 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 26, 2022 at 08:29:01PM +0100, Matthew Wilcox (Oracle) wrote:
-> This patchset does not work.  It will eat your filesystem.  Do not apply.
+On Fri, May 27, 2022 at 05:21:03PM +0300, Almaz Alexandrovich wrote:
+> This commit makes function a bit more readable
 > 
-> The bug starts to show up with the fourth patch ("Convert direct_IO write
-> support to use iomap").  generic/013 creates a corrupt filesystem and
-> fsck fails to fix it, which shows all kinds of fun places in xfstests
-> where we neglect to check that 'mount' actually mounted the filesystem.
-> set -x or die.
-> 
-> I'm hoping one of the people who knows iomap better than I do can just
-> point at the bug and say "Duh, it doesn't work like that".
-> 
-> It's safe to say that every patch after patch 6 is untested.  I'm not
-> convinced that I really tested patch 6 either.
+> Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 
-So the question I have to ask here is "why even bother?".
+This looks wrong. The email is from
 
-JFS is a legacy filesystem, and the risk of breaking stuff or
-corrupting data and nobody noticing is really quite high.
+ "From: Almaz Alexandrovich <almaz.alexandrovich@paragon-software.com>"
 
-We recently deprecated reiserfs and scheduled it's removal because
-of the burden of keeping it up to date with VFS changes, what makes
-JFS any different in this regard?
-
-i.e. shouldn't this patchset be an indication that we should be
-seriously considering deprecating and removing more legacy
-filesystems rather than taking on the risk and burden associated
-with updating them to modern internal kernel interfaces?
+So it looks like the S-o-B has the wrong email address in it. All
+the patches have this same problem.
 
 Cheers,
 
