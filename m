@@ -2,114 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DF9A53846A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 May 2022 17:15:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B558A5384FC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 May 2022 17:33:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239817AbiE3PKs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 May 2022 11:10:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52390 "EHLO
+        id S239478AbiE3Pdq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 May 2022 11:33:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39000 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230307AbiE3PK1 (ORCPT
+        with ESMTP id S241543AbiE3Pdj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 May 2022 11:10:27 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id CDD94694BD
-        for <linux-fsdevel@vger.kernel.org>; Mon, 30 May 2022 07:09:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1653919740;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=B2gLpclaR1OD0ds87WG+CHvKTXHfN/d11Umv3JQ16uk=;
-        b=P1Car6t7N+XHRZesaYQ460tt7L1aOtiv/LHjCmm5BVFEqaUA/pgvKrS4v6FCI6HjBh86dS
-        qqOuunoV5KvPXdCyDKaSd4iSq2iwwVhDLjRiVNegf8k4iG2geTzvT/6RPFTObzL5oJwOkf
-        MnKQuBTmqo+A1+up/67M/leudN3bNLs=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-649-UzopWHUSOW202Wxlj5ukTw-1; Mon, 30 May 2022 10:08:56 -0400
-X-MC-Unique: UzopWHUSOW202Wxlj5ukTw-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 60F6180013E;
-        Mon, 30 May 2022 14:08:56 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.8])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AA74EC15E72;
-        Mon, 30 May 2022 14:08:55 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH] afs: Fix infinite loop found by xfstest generic/676
-From:   David Howells <dhowells@redhat.com>
-To:     marc.dionne@auristor.com
-Cc:     linux-afs@lists.infradead.org, dhowells@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 30 May 2022 15:08:54 +0100
-Message-ID: <165391973497.110268.2939296942213894166.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/1.4
+        Mon, 30 May 2022 11:33:39 -0400
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DDAE151FDC
+        for <linux-fsdevel@vger.kernel.org>; Mon, 30 May 2022 07:38:29 -0700 (PDT)
+Received: by mail-ej1-x62f.google.com with SMTP id q21so21291004ejm.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 30 May 2022 07:38:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=9XVHS3rlr74kwDPS9cPLZWGBf1IHIjmcfJWC5iwwI2Q=;
+        b=MbARoEMNQrQQ5S51pge6GPzZS8oHKf3IaF+XiDUy8Ks5VCzzDxfw2dNHfzHZpEiWQC
+         Lir4csByQgi8syophTh9lcO08dPkZ5b+pcyLI4xvARvyOpGO5Dz1suPagZKcrX5giq++
+         tWsVlviaPGUMTu82QwfnMk/+msafi9JIPmz0I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=9XVHS3rlr74kwDPS9cPLZWGBf1IHIjmcfJWC5iwwI2Q=;
+        b=fXXPR+kfIDohTaSdwe04zPdV9KTA+CX7klvUqlKITwNcBidv1UU6znxTgFU8Vzmn6/
+         CPew22ubIp9QCCNt1OIYJmRPpgr0eBN02sAI0QXHFXHDy9oTVq8QVYBytw8JCVypI+3T
+         Tj/Mv+3TwJ6k5rzXRB1xL+ZLEve1xLIFDRu8ILGFEwhkSTZd5AYTJbwT18SdHwpenlJi
+         laKGsh41RNM9k9wtWi3SPN1HewyQq5gVRffltHjnRs7nYBY69oWHf6lffLzU67IW0Hlb
+         HayzYUEdNla2wPpKDMd+Lx3IRsAIJvQTMYCZlkEbxUK1vne2jDQbAZ/kIunO6nNGGOyw
+         KE+w==
+X-Gm-Message-State: AOAM532iymyu7ph9WTU32q3kcSdJQOBJfFCaBXxDc/ks1V23vEEm2Gz2
+        iVJyJcJriEnqq6KpqCx1Em5zFQ==
+X-Google-Smtp-Source: ABdhPJzCJc9LIiLBdHANCcQcfp+8G5VZEaFRDSMPja3qGm5Y6mFm1R/ni7P5lpa3+cR3SNJNCX9l9A==
+X-Received: by 2002:a17:906:90c9:b0:6fe:9e40:5cc with SMTP id v9-20020a17090690c900b006fe9e4005ccmr46125940ejw.367.1653921508038;
+        Mon, 30 May 2022 07:38:28 -0700 (PDT)
+Received: from miu.piliscsaba.redhat.com (catv-178-48-189-3.catv.fixed.vodafone.hu. [178.48.189.3])
+        by smtp.gmail.com with ESMTPSA id bh19-20020a170906a0d300b006ff802baf5dsm910684ejb.54.2022.05.30.07.38.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 May 2022 07:38:27 -0700 (PDT)
+Date:   Mon, 30 May 2022 16:38:24 +0200
+From:   Miklos Szeredi <miklos@szeredi.hu>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        ChenXiaoSong <chenxiaosong2@huawei.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        liuyongqiang13@huawei.com, "zhangyi (F)" <yi.zhang@huawei.com>,
+        zhangxiaoxu5@huawei.com, Steve French <smfrench@gmail.com>,
+        NeilBrown <neilb@suse.de>
+Subject: Re: [PATCH -next,v2] fuse: return the more nuanced writeback error
+ on close()
+Message-ID: <YpTW4LNGGzuXu/bq@miu.piliscsaba.redhat.com>
+References: <20220523014838.1647498-1-chenxiaosong2@huawei.com>
+ <CAJfpegt-+6oSCxx1-LHet4qm4s7p0jSoP9Vg8PJka3=1dqBXng@mail.gmail.com>
+ <9915b7b556106d2a525941141755adcca9e50163.camel@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.85 on 10.11.54.8
-X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9915b7b556106d2a525941141755adcca9e50163.camel@kernel.org>
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
+        DKIM_SIGNED,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In AFS, a directory is handled as a file that the client downloads and
-parses locally for the purposes of performing lookup and getdents
-operations.  The in-kernel afs filesystem has a number of functions that do
-this.  A directory file is arranged as a series of 2K blocks divided into
-32-byte slots, where a directory entry occupies one or more slots, plus
-each block starts with one or more metadata blocks.
+On Mon, May 30, 2022 at 10:02:06AM -0400, Jeff Layton wrote:
 
-When parsing a block, if the last slots are occupied by a dirent that
-occupies more than a single slot and the file position points at a slot
-that's not the initial one, the logic in afs_dir_iterate_block() that skips
-over it won't advance the file pointer to the end of it.  This will cause
-an infinite loop in getdents() as it will keep retrying that block and
-failing to advance beyond the final entry.
+> The main difference is that ->flush is called from filp_close, so it's
+> called when a file descriptor (or equivalent) is being torn down out,
+> whereas ->fsync is (obviously) called from the fsync codepath.
+> 
+> We _must_ report writeback errors on fsync, but reporting them on the
+> close() syscall is less clear. The thing about close() is that it's
+> going be successful no matter what is returned. The file descriptor will
+> no longer work afterward regardless.
+> 
+> fsync also must also initiate writeback of all the buffered data, but
+> it's not required for filesystems to do that on close() (and in fact,
+> there are good reasons not to if you can). A successful close() tells
+> you nothing about whether your data made it to the backing store. It
+> might just not have been synced out yet.
+> 
+> Personally, I think it's probably best to _not_ return writeback errors
+> on close at all. The only "legitimate" error on close is -EBADF.
+> Arguably, we should make ->flush be void return. Note that most
+> filp_close callers ignore the error anyway, so it's not much of a
+> stretch.
+> 
+> In any case, if you do decide to return errors in fuse_flush, then
+> advancing the cursor would also have the effect of masking writeback
+> errors on dup()'ed file descriptors, and I don't think you want to do
+> that.
 
-Fix this by advancing the file pointer if the next entry will be beyond it
-when we skip a block.
+Thanks for clarifying.
 
-This was found by the generic/676 xfstest but can also be triggered with
-something like:
+Chen, would the following patch make sense for your case?
 
-	~/xfstests-dev/src/t_readdir_3 /xfstest.test/z 4000 1
+Thanks,
+Miklos
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Marc Dionne <marc.dionne@auristor.com>
-cc: linux-afs@lists.infradead.org
 ---
+ fs/fuse/file.c |    5 -----
+ 1 file changed, 5 deletions(-)
 
- fs/afs/dir.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/fs/afs/dir.c b/fs/afs/dir.c
-index 932e61e28e5d..bdac73554e6e 100644
---- a/fs/afs/dir.c
-+++ b/fs/afs/dir.c
-@@ -463,8 +463,11 @@ static int afs_dir_iterate_block(struct afs_vnode *dvnode,
- 		}
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -487,11 +487,6 @@ static int fuse_flush(struct file *file,
+ 	fuse_sync_writes(inode);
+ 	inode_unlock(inode);
  
- 		/* skip if starts before the current position */
--		if (offset < curr)
-+		if (offset < curr) {
-+			if (next > curr)
-+				ctx->pos = blkoff + next * sizeof(union afs_xdr_dirent);
- 			continue;
-+		}
+-	err = filemap_check_errors(file->f_mapping);
+-	if (err)
+-		return err;
+-
+-	err = 0;
+ 	if (fm->fc->no_flush)
+ 		goto inval_attr_out;
  
- 		/* found the next entry */
- 		if (!dir_emit(ctx, dire->u.name, nlen,
-
-
