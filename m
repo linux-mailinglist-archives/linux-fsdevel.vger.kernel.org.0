@@ -2,50 +2,65 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B1FC5374CB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 May 2022 09:23:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B47E45376C0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 May 2022 10:50:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233062AbiE3GwZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 May 2022 02:52:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50982 "EHLO
+        id S231494AbiE3IOR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 May 2022 04:14:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233058AbiE3GwX (ORCPT
+        with ESMTP id S233341AbiE3IOI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 May 2022 02:52:23 -0400
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51BF5579BD
-        for <linux-fsdevel@vger.kernel.org>; Sun, 29 May 2022 23:52:21 -0700 (PDT)
-Received: by mail-il1-f200.google.com with SMTP id a3-20020a924443000000b002d1bc79da14so7897776ilm.15
-        for <linux-fsdevel@vger.kernel.org>; Sun, 29 May 2022 23:52:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=fcHkapimJF4SbHQqfW94bnVePzFm6l0FaU5tLfmyMwQ=;
-        b=2c+MifTcyJ3NIgcNRTeOv41FoD4SHpPTXiJbhkrLAbi54QR+xSK56WaAVimGuMHN01
-         5lyx7GDrbtTgNS5MgJ2hbkxyPfw5Q+RETcRjv11yk/wSLDbUELyAJ0kLlJ/N+NxCBp4C
-         Ek4jB0iZQR1ALUzX5/NC9Egd+QqG2A4+OhN98NXJnnX1CXvubsYyQJop67Eem0dGJWa5
-         EDcd+QJky/w4g/bL1Ik2kWkeVjKCD2qL8aJfIZswMnkCOEtEcgh+NVtkFiuPJ0sHRA3C
-         hUqUJ/6axGEP/Gdw1/tx6yN/PoYQTtVUz5UoNSUUVyGo+ztFmnvX6hBTjTTlRJ7Wbvw1
-         2S6g==
-X-Gm-Message-State: AOAM532SgjY7O+z9piLRq5oxkRwD29vSvgFg4SKV9KMkve0f04QaQR9c
-        lcLrDMk6Ibz4J82CUmnyTFjzNkBKFY4Q066QJLMUKl7s9Bb8
-X-Google-Smtp-Source: ABdhPJw4P9PXzcYfVLK+AWJ9by1ydUKctufrvDiiIfud3exksMZjfgaLLuThv97tN8WJZbk/HPxWvlbdISHOnePw39evxaRjjFbk
+        Mon, 30 May 2022 04:14:08 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9347338BFE;
+        Mon, 30 May 2022 01:14:06 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2C63560EEB;
+        Mon, 30 May 2022 08:14:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB3A7C385B8;
+        Mon, 30 May 2022 08:14:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1653898445;
+        bh=IiUVNys82QKu71QCm8k+glI5bp4KFPNfGLhFwPbxkn0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=PEaUS7QOfbZ9ewQuHtkHiLC41azqD02A82nuPpdE5Ndwrq8UR/p+tw9S1PM26EsEQ
+         jpybBSwJ5os1HcmCyljv1BXBWah6n0CJAW4ki28jU/wIrytmS3bbhBkM6q3F6k4H9j
+         aoVt7SJZhOgZnvqMGv+IXox7tEuaDUuvHBZu3VNB+5kh+qSTHJ5UAN4z4rPHYpLwc8
+         +XUBVJ5mQT/MEgJnVjIX/Ud5hG4ZVEIS7Cd/3AKJnSCK7mBUGsMP9Bt4uoQvfeRZLB
+         MeXKC0QBZcKOCdr5L/zqxc8+53ne5KlUZuS9ob30rEnJP8BU/CwdaCM+LWllXZZhcL
+         oCn7fTxviqyqQ==
+Date:   Mon, 30 May 2022 10:13:58 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Jan Kiszka <jan.kiszka@siemens.com>
+Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Laurent Vivier <laurent@vivier.eu>,
+        linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Kees Cook <keescook@chromium.org>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Jann Horn <jannh@google.com>,
+        Henning Schild <henning.schild@siemens.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Matthew Bobrowski <repnop@google.com>,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        containers@lists.linux.dev,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: Re: [PATCH v2 2/2] binfmt_misc: enable sandboxed mounts
+Message-ID: <20220530081358.b3tvgvo63mq5o2oo@wittgenstein>
+References: <20211216112659.310979-1-brauner@kernel.org>
+ <20211216112659.310979-2-brauner@kernel.org>
+ <20211226133140.GA8064@mail.hallyn.com>
+ <0e817424-51db-fe0b-a00e-ac7933e8ac1d@siemens.com>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:1687:b0:330:b377:40a0 with SMTP id
- f7-20020a056638168700b00330b37740a0mr12256866jat.50.1653893540695; Sun, 29
- May 2022 23:52:20 -0700 (PDT)
-Date:   Sun, 29 May 2022 23:52:20 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000fd54f805e0351875@google.com>
-Subject: [syzbot] KASAN: use-after-free Read in filp_close
-From:   syzbot <syzbot+47dd250f527cb7bebf24@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <0e817424-51db-fe0b-a00e-ac7933e8ac1d@siemens.com>
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -53,221 +68,104 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Sun, May 29, 2022 at 09:35:40PM +0200, Jan Kiszka wrote:
+> On 26.12.21 14:31, Serge E. Hallyn wrote:
+> > On Thu, Dec 16, 2021 at 12:26:59PM +0100, Christian Brauner wrote:
+> >> From: Christian Brauner <christian.brauner@ubuntu.com>
+> >>
+> >> Enable unprivileged sandboxes to create their own binfmt_misc mounts.
+> >> This is based on Laurent's work in [1] but has been significantly
+> >> reworked to fix various issues we identified in earlier versions.
+> >>
+> >> While binfmt_misc can currently only be mounted in the initial user
+> >> namespace, binary types registered in this binfmt_misc instance are
+> >> available to all sandboxes (Either by having them installed in the
+> >> sandbox or by registering the binary type with the F flag causing the
+> >> interpreter to be opened right away). So binfmt_misc binary types are
+> >> already delegated to sandboxes implicitly.
+> >>
+> >> However, while a sandbox has access to all registered binary types in
+> >> binfmt_misc a sandbox cannot currently register its own binary types
+> >> in binfmt_misc. This has prevented various use-cases some of which were
+> >> already outlined in [1] but we have a range of issues associated with
+> >> this (cf. [3]-[5] below which are just a small sample).
+> >>
+> >> Extend binfmt_misc to be mountable in non-initial user namespaces.
+> >> Similar to other filesystem such as nfsd, mqueue, and sunrpc we use
+> >> keyed superblock management. The key determines whether we need to
+> >> create a new superblock or can reuse an already existing one. We use the
+> >> user namespace of the mount as key. This means a new binfmt_misc
+> >> superblock is created once per user namespace creation. Subsequent
+> >> mounts of binfmt_misc in the same user namespace will mount the same
+> >> binfmt_misc instance. We explicitly do not create a new binfmt_misc
+> >> superblock on every binfmt_misc mount as the semantics for
+> >> load_misc_binary() line up with the keying model. This also allows us to
+> >> retrieve the relevant binfmt_misc instance based on the caller's user
+> >> namespace which can be done in a simple (bounded to 32 levels) loop.
+> >>
+> >> Similar to the current binfmt_misc semantics allowing access to the
+> >> binary types in the initial binfmt_misc instance we do allow sandboxes
+> >> access to their parent's binfmt_misc mounts if they do not have created
+> >> a separate binfmt_misc instance.
+> >>
+> >> Overall, this will unblock the use-cases mentioned below and in general
+> >> will also allow to support and harden execution of another
+> >> architecture's binaries in tight sandboxes. For instance, using the
+> >> unshare binary it possible to start a chroot of another architecture and
+> >> configure the binfmt_misc interpreter without being root to run the
+> >> binaries in this chroot and without requiring the host to modify its
+> >> binary type handlers.
+> >>
+> >> Henning had already posted a few experiments in the cover letter at [1].
+> >> But here's an additional example where an unprivileged container
+> >> registers qemu-user-static binary handlers for various binary types in
+> >> its separate binfmt_misc mount and is then seamlessly able to start
+> >> containers with a different architecture without affecting the host:
+> >>
+> >> root    [lxc monitor] /var/snap/lxd/common/lxd/containers f1
+> >> 1000000  \_ /sbin/init
+> >> 1000000      \_ /lib/systemd/systemd-journald
+> >> 1000000      \_ /lib/systemd/systemd-udevd
+> >> 1000100      \_ /lib/systemd/systemd-networkd
+> >> 1000101      \_ /lib/systemd/systemd-resolved
+> >> 1000000      \_ /usr/sbin/cron -f
+> >> 1000103      \_ /usr/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+> >> 1000000      \_ /usr/bin/python3 /usr/bin/networkd-dispatcher --run-startup-triggers
+> >> 1000104      \_ /usr/sbin/rsyslogd -n -iNONE
+> >> 1000000      \_ /lib/systemd/systemd-logind
+> >> 1000000      \_ /sbin/agetty -o -p -- \u --noclear --keep-baud console 115200,38400,9600 vt220
+> >> 1000107      \_ dnsmasq --conf-file=/dev/null -u lxc-dnsmasq --strict-order --bind-interfaces --pid-file=/run/lxc/dnsmasq.pid --liste
+> >> 1000000      \_ [lxc monitor] /var/lib/lxc f1-s390x
+> >> 1100000          \_ /usr/bin/qemu-s390x-static /sbin/init
+> >> 1100000              \_ /usr/bin/qemu-s390x-static /lib/systemd/systemd-journald
+> >> 1100000              \_ /usr/bin/qemu-s390x-static /usr/sbin/cron -f
+> >> 1100103              \_ /usr/bin/qemu-s390x-static /usr/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-ac
+> >> 1100000              \_ /usr/bin/qemu-s390x-static /usr/bin/python3 /usr/bin/networkd-dispatcher --run-startup-triggers
+> >> 1100104              \_ /usr/bin/qemu-s390x-static /usr/sbin/rsyslogd -n -iNONE
+> >> 1100000              \_ /usr/bin/qemu-s390x-static /lib/systemd/systemd-logind
+> >> 1100000              \_ /usr/bin/qemu-s390x-static /sbin/agetty -o -p -- \u --noclear --keep-baud console 115200,38400,9600 vt220
+> >> 1100000              \_ /usr/bin/qemu-s390x-static /sbin/agetty -o -p -- \u --noclear --keep-baud pts/0 115200,38400,9600 vt220
+> >> 1100000              \_ /usr/bin/qemu-s390x-static /sbin/agetty -o -p -- \u --noclear --keep-baud pts/1 115200,38400,9600 vt220
+> >> 1100000              \_ /usr/bin/qemu-s390x-static /sbin/agetty -o -p -- \u --noclear --keep-baud pts/2 115200,38400,9600 vt220
+> >> 1100000              \_ /usr/bin/qemu-s390x-static /sbin/agetty -o -p -- \u --noclear --keep-baud pts/3 115200,38400,9600 vt220
+> >> 1100000              \_ /usr/bin/qemu-s390x-static /lib/systemd/systemd-udevd
+> >>
+> >> [1]: https://lore.kernel.org/all/20191216091220.465626-1-laurent@vivier.eu
+> >> [2]: https://discuss.linuxcontainers.org/t/binfmt-misc-permission-denied
+> >> [3]: https://discuss.linuxcontainers.org/t/lxd-binfmt-support-for-qemu-static-interpreters
+> >> [4]: https://discuss.linuxcontainers.org/t/3-1-0-binfmt-support-service-in-unprivileged-guest-requires-write-access-on-hosts-proc-sys-fs-binfmt-misc
+> >> [5]: https://discuss.linuxcontainers.org/t/qemu-user-static-not-working-4-11
+> >>
+> >> Link: https://lore.kernel.org/r/20191216091220.465626-2-laurent@vivier.eu (origin)
+> >> Link: https://lore.kernel.org/r/20211028103114.2849140-2-brauner@kernel.org (v1)
+> >> Cc: Sargun Dhillon <sargun@sargun.me>
+> >> Cc: Serge Hallyn <serge@hallyn.com>
+> > 
+> > (one typo below)
+> > 
+> > Acked-by: Serge Hallyn <serge@hallyn.com>
+> > 
+> 
+> What happened to this afterwards? Any remaining issues?
 
-syzbot found the following issue on:
-
-HEAD commit:    09ce5091ff97 Add linux-next specific files for 20220524
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=16b2d9c3f00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=39c2df848969b1de
-dashboard link: https://syzkaller.appspot.com/bug?extid=47dd250f527cb7bebf24
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+47dd250f527cb7bebf24@syzkaller.appspotmail.com
-
-==================================================================
-==================================================================
-BUG: KASAN: use-after-free in instrument_atomic_read include/linux/instrumented.h:71 [inline]
-BUG: KASAN: use-after-free in atomic_long_read include/linux/atomic/atomic-instrumented.h:1265 [inline]
-BUG: KASAN: use-after-free in filp_close+0x22/0x160 fs/open.c:1382
-Read of size 8 at addr ffff8880732abbf0 by task syz-executor.2/5896
-
-CPU: 1 PID: 5896 Comm: syz-executor.2 Not tainted 5.18.0-next-20220524-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:106
- print_address_description.constprop.0.cold+0xeb/0x495 mm/kasan/report.c:313
- print_report mm/kasan/report.c:429 [inline]
- kasan_report.cold+0xf4/0x1c6 mm/kasan/report.c:491
- check_region_inline mm/kasan/generic.c:183 [inline]
- kasan_check_range+0x13d/0x180 mm/kasan/generic.c:189
- instrument_atomic_read include/linux/instrumented.h:71 [inline]
- atomic_long_read include/linux/atomic/atomic-instrumented.h:1265 [inline]
- filp_close+0x22/0x160 fs/open.c:1382
- close_fd+0x76/0xa0 fs/file.c:664
- __do_sys_close fs/open.c:1407 [inline]
- __se_sys_close fs/open.c:1405 [inline]
- __x64_sys_close+0x2f/0xa0 fs/open.c:1405
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x46/0xb0
-RIP: 0033:0x7f2dab83bd4b
-Code: 0f 05 48 3d 00 f0 ff ff 77 45 c3 0f 1f 40 00 48 83 ec 18 89 7c 24 0c e8 63 fc ff ff 8b 7c 24 0c 41 89 c0 b8 03 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 35 44 89 c7 89 44 24 0c e8 a1 fc ff ff 8b 44
-RSP: 002b:00007ffd73d7f330 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
-RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 00007f2dab83bd4b
-RDX: 00007f2dab9a18b0 RSI: ffffffffffffffff RDI: 0000000000000004
-RBP: 00007f2dab99d960 R08: 0000000000000000 R09: 00007f2dab9a18b8
-R10: 00007ffd73d7f430 R11: 0000000000000293 R12: 000000000002dac5
-R13: 00007ffd73d7f430 R14: 00007f2dab99bf60 R15: 0000000000000032
- </TASK>
-
-Allocated by task 5898:
- kasan_save_stack+0x1e/0x40 mm/kasan/common.c:38
- kasan_set_track mm/kasan/common.c:45 [inline]
- set_alloc_info mm/kasan/common.c:436 [inline]
- __kasan_slab_alloc+0x90/0xc0 mm/kasan/common.c:469
- kasan_slab_alloc include/linux/kasan.h:224 [inline]
- slab_post_alloc_hook mm/slab.h:750 [inline]
- slab_alloc_node mm/slub.c:3214 [inline]
- slab_alloc mm/slub.c:3222 [inline]
- __kmem_cache_alloc_lru mm/slub.c:3229 [inline]
- kmem_cache_alloc+0x204/0x3b0 mm/slub.c:3239
- kmem_cache_zalloc include/linux/slab.h:723 [inline]
- __alloc_file+0x21/0x270 fs/file_table.c:138
- alloc_empty_file+0x6d/0x170 fs/file_table.c:187
- alloc_file+0x59/0x590 fs/file_table.c:229
- alloc_file_pseudo+0x165/0x250 fs/file_table.c:269
- sock_alloc_file+0x4f/0x190 net/socket.c:463
- sock_map_fd net/socket.c:487 [inline]
- __sys_socket+0x1a4/0x240 net/socket.c:1644
- __do_sys_socket net/socket.c:1649 [inline]
- __se_sys_socket net/socket.c:1647 [inline]
- __x64_sys_socket+0x6f/0xb0 net/socket.c:1647
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x46/0xb0
-
-Freed by task 22:
- kasan_save_stack+0x1e/0x40 mm/kasan/common.c:38
- kasan_set_track+0x21/0x30 mm/kasan/common.c:45
- kasan_set_free_info+0x20/0x30 mm/kasan/generic.c:370
- ____kasan_slab_free mm/kasan/common.c:366 [inline]
- ____kasan_slab_free+0x166/0x1a0 mm/kasan/common.c:328
- kasan_slab_free include/linux/kasan.h:200 [inline]
- slab_free_hook mm/slub.c:1727 [inline]
- slab_free_freelist_hook+0x8b/0x1c0 mm/slub.c:1753
- slab_free mm/slub.c:3507 [inline]
- kmem_cache_free+0xdd/0x5a0 mm/slub.c:3524
- rcu_do_batch kernel/rcu/tree.c:2578 [inline]
- rcu_core+0x7b1/0x1880 kernel/rcu/tree.c:2838
- __do_softirq+0x29b/0x9c2 kernel/softirq.c:571
-
-Last potentially related work creation:
- kasan_save_stack+0x1e/0x40 mm/kasan/common.c:38
- __kasan_record_aux_stack+0xbe/0xd0 mm/kasan/generic.c:348
- call_rcu+0x99/0x790 kernel/rcu/tree.c:3126
- task_work_run+0xdd/0x1a0 kernel/task_work.c:177
- get_signal+0x1c5/0x2600 kernel/signal.c:2634
- arch_do_signal_or_restart+0x82/0x20f0 arch/x86/kernel/signal.c:869
- exit_to_user_mode_loop kernel/entry/common.c:166 [inline]
- exit_to_user_mode_prepare+0x15f/0x250 kernel/entry/common.c:201
- __syscall_exit_to_user_mode_work kernel/entry/common.c:283 [inline]
- syscall_exit_to_user_mode+0x19/0x50 kernel/entry/common.c:294
- do_syscall_64+0x42/0xb0 arch/x86/entry/common.c:86
- entry_SYSCALL_64_after_hwframe+0x46/0xb0
-
-Second to last potentially related work creation:
- kasan_save_stack+0x1e/0x40 mm/kasan/common.c:38
- __kasan_record_aux_stack+0xbe/0xd0 mm/kasan/generic.c:348
- task_work_add+0x3a/0x1f0 kernel/task_work.c:48
- fput fs/file_table.c:378 [inline]
- fput+0xe7/0x190 fs/file_table.c:371
- io_close fs/io_uring.c:6032 [inline]
- io_issue_sqe+0x39cf/0xaa20 fs/io_uring.c:8360
- io_queue_sqe fs/io_uring.c:8703 [inline]
- io_req_task_submit+0xce/0x400 fs/io_uring.c:3066
- handle_tw_list fs/io_uring.c:2938 [inline]
- tctx_task_work+0x16a/0xe10 fs/io_uring.c:2967
- task_work_run+0xdd/0x1a0 kernel/task_work.c:177
- get_signal+0x1c5/0x2600 kernel/signal.c:2634
- arch_do_signal_or_restart+0x82/0x20f0 arch/x86/kernel/signal.c:869
- exit_to_user_mode_loop kernel/entry/common.c:166 [inline]
- exit_to_user_mode_prepare+0x15f/0x250 kernel/entry/common.c:201
- __syscall_exit_to_user_mode_work kernel/entry/common.c:283 [inline]
- syscall_exit_to_user_mode+0x19/0x50 kernel/entry/common.c:294
- do_syscall_64+0x42/0xb0 arch/x86/entry/common.c:86
- entry_SYSCALL_64_after_hwframe+0x46/0xb0
-
-The buggy address belongs to the object at ffff8880732abb80
- which belongs to the cache filp of size 456
-The buggy address is located 112 bytes inside of
- 456-byte region [ffff8880732abb80, ffff8880732abd48)
-
-The buggy address belongs to the physical page:
-page:ffffea0001ccaa80 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x732aa
-head:ffffea0001ccaa80 order:1 compound_mapcount:0 compound_pincount:0
-memcg:ffff88807f60f401
-flags: 0xfff00000010200(slab|head|node=0|zone=1|lastcpupid=0x7ff)
-raw: 00fff00000010200 0000000000000000 dead000000000122 ffff8881400078c0
-raw: 0000000000000000 00000000000c000c 00000001ffffffff ffff88807f60f401
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 1, migratetype Unmovable, gfp_mask 0x1d20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC|__GFP_HARDWALL), pid 2981, tgid 2981 (udevd), ts 187061397867, free_ts 187031412765
- prep_new_page mm/page_alloc.c:2439 [inline]
- get_page_from_freelist+0xa64/0x3d10 mm/page_alloc.c:4258
- __alloc_pages+0x1c7/0x510 mm/page_alloc.c:5482
- alloc_pages+0x1aa/0x310 mm/mempolicy.c:2272
- alloc_slab_page mm/slub.c:1797 [inline]
- allocate_slab+0x26c/0x3c0 mm/slub.c:1942
- new_slab mm/slub.c:2002 [inline]
- ___slab_alloc+0x985/0xd90 mm/slub.c:3002
- __slab_alloc.constprop.0+0x4d/0xa0 mm/slub.c:3089
- slab_alloc_node mm/slub.c:3180 [inline]
- slab_alloc mm/slub.c:3222 [inline]
- __kmem_cache_alloc_lru mm/slub.c:3229 [inline]
- kmem_cache_alloc+0x360/0x3b0 mm/slub.c:3239
- kmem_cache_zalloc include/linux/slab.h:723 [inline]
- __alloc_file+0x21/0x270 fs/file_table.c:138
- alloc_empty_file+0x6d/0x170 fs/file_table.c:187
- path_openat+0xe4/0x2910 fs/namei.c:3639
- do_filp_open+0x1aa/0x400 fs/namei.c:3680
- do_sys_openat2+0x16d/0x4c0 fs/open.c:1278
- do_sys_open fs/open.c:1294 [inline]
- __do_sys_openat fs/open.c:1310 [inline]
- __se_sys_openat fs/open.c:1305 [inline]
- __x64_sys_openat+0x13f/0x1f0 fs/open.c:1305
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x46/0xb0
-page last free stack trace:
- reset_page_owner include/linux/page_owner.h:24 [inline]
- free_pages_prepare mm/page_alloc.c:1354 [inline]
- free_pcp_prepare+0x549/0xd20 mm/page_alloc.c:1404
- free_unref_page_prepare mm/page_alloc.c:3290 [inline]
- free_unref_page+0x19/0x7b0 mm/page_alloc.c:3405
- __unfreeze_partials+0x17c/0x1a0 mm/slub.c:2521
- qlink_free mm/kasan/quarantine.c:168 [inline]
- qlist_free_all+0x6a/0x170 mm/kasan/quarantine.c:187
- kasan_quarantine_reduce+0x180/0x200 mm/kasan/quarantine.c:294
- __kasan_slab_alloc+0xa2/0xc0 mm/kasan/common.c:446
- kasan_slab_alloc include/linux/kasan.h:224 [inline]
- slab_post_alloc_hook mm/slab.h:750 [inline]
- slab_alloc_node mm/slub.c:3214 [inline]
- slab_alloc mm/slub.c:3222 [inline]
- __kmem_cache_alloc_lru mm/slub.c:3229 [inline]
- kmem_cache_alloc+0x204/0x3b0 mm/slub.c:3239
- getname_flags.part.0+0x50/0x4f0 fs/namei.c:139
- getname_flags include/linux/audit.h:323 [inline]
- getname+0x8e/0xd0 fs/namei.c:218
- do_sys_openat2+0xf5/0x4c0 fs/open.c:1272
- do_sys_open fs/open.c:1294 [inline]
- __do_sys_openat fs/open.c:1310 [inline]
- __se_sys_openat fs/open.c:1305 [inline]
- __x64_sys_openat+0x13f/0x1f0 fs/open.c:1305
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x46/0xb0
-
-Memory state around the buggy address:
- ffff8880732aba80: 00 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc
- ffff8880732abb00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->ffff8880732abb80: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                                             ^
- ffff8880732abc00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff8880732abc80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Not that we know. I plan to queue this up for 5.20.
