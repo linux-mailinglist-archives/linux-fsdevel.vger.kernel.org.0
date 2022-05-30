@@ -2,67 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AD395538464
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 May 2022 17:15:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB9A8538476
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 May 2022 17:15:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233727AbiE3PDm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 May 2022 11:03:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51330 "EHLO
+        id S235492AbiE3PDq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 May 2022 11:03:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243025AbiE3PBW (ORCPT
+        with ESMTP id S243235AbiE3PBs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 May 2022 11:01:22 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFAE91742B4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 30 May 2022 07:00:45 -0700 (PDT)
+        Mon, 30 May 2022 11:01:48 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71BAC74DEB;
+        Mon, 30 May 2022 07:02:09 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 01D30B80DA8
-        for <linux-fsdevel@vger.kernel.org>; Mon, 30 May 2022 14:00:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5778C385B8
-        for <linux-fsdevel@vger.kernel.org>; Mon, 30 May 2022 14:00:27 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0E02261138;
+        Mon, 30 May 2022 14:02:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 872F7C385B8;
+        Mon, 30 May 2022 14:02:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1653919227;
-        bh=nade3m6D8kJPOZMdjlWL5mfSEPUN53NjKlDBZBuiMWs=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=GaLHCQfSAk5Tp91Btvyovou86PSWaDATCKBZIZMhi/wE9YA3QF9ucPBv0szAxZlXi
-         NrJVacaCkw9T5QFPI3tBdSqgz18e/EqbdZnQ+oVG0N3WLPjpBgAzAaAU+pV7VIWvKW
-         lLn7IxtckyKTk79c0JW2dUgEnTqA08tXqd/bQqrU8v1yVIlztKhKf7X/2MQDVJgA2b
-         bzYMjWSZH0TAi/+aV83xbKrYvBtTrQQLDtCBCpN6/gx90lD39B4ix3LcJqPZtVxG4u
-         D2608ttWZI3hImCM8xjh8HqTdFwMLZbxXjlU972MSyD8aTgIWeFbh/3zkhJJL2o1cg
-         ae0JVmNPLrzpg==
-Received: by mail-wr1-f54.google.com with SMTP id t6so14787735wra.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 30 May 2022 07:00:27 -0700 (PDT)
-X-Gm-Message-State: AOAM533BkDoHg+GvqqMjaT7O5WRAixC67093eLT9D4xwhy64SFSCvdZ1
-        cJQVmM0jZMrv0pSN30aeL0nsiVJKrtgNc8kuv1U=
-X-Google-Smtp-Source: ABdhPJyUkIl9wWyoozAbidd9ZiP3y28dDMzugIJjF5VxLhga2Mjt8z7KsVxTdFJf9cGT+n9K++s+4D7bm/XDYPjsGd4=
-X-Received: by 2002:a5d:4e48:0:b0:210:18bb:6aa1 with SMTP id
- r8-20020a5d4e48000000b0021018bb6aa1mr13518514wrt.62.1653919225898; Mon, 30
- May 2022 07:00:25 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:adf:ee4e:0:0:0:0:0 with HTTP; Mon, 30 May 2022 07:00:20
- -0700 (PDT)
-In-Reply-To: <alpine.LRH.2.02.2205300746310.21817@file01.intranet.prod.int.rdu2.redhat.com>
-References: <20220524075112.5438df32.ref@yahoo.es> <20220524075112.5438df32@yahoo.es>
- <alpine.LRH.2.02.2205240501130.17784@file01.intranet.prod.int.rdu2.redhat.com>
- <20220524113314.71fe17f0@yahoo.es> <20220525130538.38fd3d35@yahoo.es>
- <20220527072629.332b078d@yahoo.es> <20220527080211.15d631be@yahoo.es>
- <alpine.LRH.2.02.2205271338250.20527@file01.intranet.prod.int.rdu2.redhat.com>
- <20220528061836.22230f86@yahoo.es> <20220530131524.7fb5640d@yahoo.es> <alpine.LRH.2.02.2205300746310.21817@file01.intranet.prod.int.rdu2.redhat.com>
-From:   Namjae Jeon <linkinjeon@kernel.org>
-Date:   Mon, 30 May 2022 23:00:20 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd-BZK9iG-Od0-60eFOjQ76uSfOJit6k13bR96A_o-wCwA@mail.gmail.com>
-Message-ID: <CAKYAXd-BZK9iG-Od0-60eFOjQ76uSfOJit6k13bR96A_o-wCwA@mail.gmail.com>
-Subject: Re: [PATCH] ntfs3: provide block_invalidate_folio to fix memory leak
-To:     Mikulas Patocka <mpatocka@redhat.com>
-Cc:     manualinux@yahoo.es,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        ntfs3@lists.linux.dev, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        s=k20201202; t=1653919328;
+        bh=C2X5kSVfJKWy7iJa8rZT/0Escr5C771N57orGsEtS1E=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=m2VzrdOoPJY4ZJttjh9yFNKKEJwm9RcAA9PY+8FsNzXxT6aAEq1JV9+owT9gl/EQZ
+         7hl+yP33+Pjd9g3H+G0JFCraxieuBqqgJNgzUqdOvdTI+7yzcq1bmfYgOAXPixaseQ
+         Y6P7yZALek06IX16wvn3SYbrThPO2siGOkGD8q5tOK2hlUaenKjEks7cv7U/f2iBDV
+         SqDFpxhRToU4Kxh8qRPlgKDUSNKoP1jPaWRYcs2eIWwey90Ay9P7Vhx9KAgrMT/xM6
+         jtEVfKJwQL/lafRqwqvyUUGIufPMicAKUEZUGsWPlVWFUUXBjGVQuHctK1XrVjv7ch
+         oHSFGfaKkprZQ==
+Message-ID: <9915b7b556106d2a525941141755adcca9e50163.camel@kernel.org>
+Subject: Re: [PATCH -next,v2] fuse: return the more nuanced writeback error
+ on close()
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Miklos Szeredi <miklos@szeredi.hu>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Cc:     ChenXiaoSong <chenxiaosong2@huawei.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        liuyongqiang13@huawei.com, "zhangyi (F)" <yi.zhang@huawei.com>,
+        zhangxiaoxu5@huawei.com, Steve French <smfrench@gmail.com>,
+        NeilBrown <neilb@suse.de>
+Date:   Mon, 30 May 2022 10:02:06 -0400
+In-Reply-To: <CAJfpegt-+6oSCxx1-LHet4qm4s7p0jSoP9Vg8PJka3=1dqBXng@mail.gmail.com>
+References: <20220523014838.1647498-1-chenxiaosong2@huawei.com>
+         <CAJfpegt-+6oSCxx1-LHet4qm4s7p0jSoP9Vg8PJka3=1dqBXng@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-15"
 Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.1 (3.44.1-1.fc36) 
+MIME-Version: 1.0
 X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -73,79 +61,76 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-2022-05-30 21:00 GMT+09:00, Mikulas Patocka <mpatocka@redhat.com>:
->
->
-> On Mon, 30 May 2022, manualinux@yahoo.es wrote:
->
->>
->> Hello again,
->>
->> When you have time, try moving a large file from a SpadFS partition to
->> an NTFS partition mounted with the NTFS3 driver and with a 5.18 kernel,
->> and then, move the same file back again, to the SpadFS partition. At
->> that very moment is when the size of the file remains permanently in
->> the system memory (in my particular case). This does not happen if we
->> do it to another Linux file system, nor does it happen if we do it from
->> a NTFS partition to another XFS or Ext4 partition.
->>
->> So no ccache or anything, I swap files quite often between the SpadFS
->> partition and an external hard disk with an NTFS partition. Anyway,
->> this problem is really unusual, and it must have some technical
->> explanation, because with the ntfs-3g driver this doesn't happen.
->>
->> If this information is of any use to you I will be satisfied.
->>
->> Regards,
->>
->> Jos=C3=A9 Luis Lara Carrascal - Webmaster de Manualinux - GNU/Linux en
->> Espa=C3=B1ol (https://manualinux.es)
->
-> Hi
->
-> SpadFS is innocent here :)
->
-> The NTFS3 driver in the kernel 5.18 contains the same bug as SpadFS did -
-> missing the invalidate_folio method. This patch adds this method and fixe=
-s
-> the bug.
->
-> Mikulas
->
->
->
-> Author: Mikulas Patocka <mpatocka@redhat.com>
->
-> The ntfs3 filesystem lacks the 'invalidate_folio' method and it causes
-> memory leak. If you write to the filesystem and then unmount it, the
-> cached written data are not freed and they are permanently leaked.
->
-> Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-> Reported-by: Jos=C3=A9 Luis Lara Carrascal <manualinux@yahoo.es>
-> Fixes: 7ba13abbd31e ("fs: Turn block_invalidatepage into
-> block_invalidate_folio")
-> Cc: stable@vger.kernel.org	# v5.18
+On Mon, 2022-05-30 at 14:13 +0200, Miklos Szeredi wrote:
+> On Mon, 23 May 2022 at 03:35, ChenXiaoSong <chenxiaosong2@huawei.com> wro=
+te:
+> >=20
+> > As filemap_check_errors() only report -EIO or -ENOSPC, we return more n=
+uanced
+> > writeback error -(file->f_mapping->wb_err & MAX_ERRNO).
+> >=20
+> >   filemap_write_and_wait
+> >     filemap_write_and_wait_range
+> >       filemap_check_errors
+> >         -ENOSPC or -EIO
+> >   filemap_check_wb_err
+> >     errseq_check
+> >       return -(file->f_mapping->wb_err & MAX_ERRNO)
+> >=20
+> > Signed-off-by: ChenXiaoSong <chenxiaosong2@huawei.com>
+> > ---
+> >  fs/fuse/file.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >=20
+> > diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> > index f18d14d5fea1..9917bc2795e6 100644
+> > --- a/fs/fuse/file.c
+> > +++ b/fs/fuse/file.c
+> > @@ -488,10 +488,10 @@ static int fuse_flush(struct file *file, fl_owner=
+_t id)
+> >         inode_unlock(inode);
+> >=20
+> >         err =3D filemap_check_errors(file->f_mapping);
+> > +       /* return more nuanced writeback errors */
+> >         if (err)
+> > -               return err;
+> > +               return filemap_check_wb_err(file->f_mapping, 0);
+>=20
+> I'm wondering if this should be file_check_and_advance_wb_err() instead.
+>=20
 
-Reviewed-by: Namjae Jeon <linkinjeon@kernel.org>
->
-> ---
->  fs/ntfs3/inode.c |    1 +
->  1 file changed, 1 insertion(+)
->
-> Index: linux-2.6/fs/ntfs3/inode.c
+I think that it probably shouldn't be, actually. Reason below...
 
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> --- linux-2.6.orig/fs/ntfs3/inode.c	2022-05-16 16:57:24.000000000 +0200
-> +++ linux-2.6/fs/ntfs3/inode.c	2022-05-30 13:36:45.000000000 +0200
-linux-2.6 ? Probably you will submit the patch again ?
+> Is there a difference between ->flush() and ->fsync()?
+>=20
+> Jeff, can you please help?
+>=20
+>=20
 
-> @@ -1951,6 +1951,7 @@ const struct address_space_operations nt
->  	.direct_IO	=3D ntfs_direct_IO,
->  	.bmap		=3D ntfs_bmap,
->  	.dirty_folio	=3D block_dirty_folio,
-> +	.invalidate_folio =3D block_invalidate_folio,
->  };
->
->  const struct address_space_operations ntfs_aops_cmpr =3D {
+The main difference is that ->flush is called from filp_close, so it's
+called when a file descriptor (or equivalent) is being torn down out,
+whereas ->fsync is (obviously) called from the fsync codepath.
+
+We _must_ report writeback errors on fsync, but reporting them on the
+close() syscall is less clear. The thing about close() is that it's
+going be successful no matter what is returned. The file descriptor will
+no longer work afterward regardless.
+
+fsync also must also initiate writeback of all the buffered data, but
+it's not required for filesystems to do that on close() (and in fact,
+there are good reasons not to if you can). A successful close() tells
+you nothing about whether your data made it to the backing store. It
+might just not have been synced out yet.
+
+Personally, I think it's probably best to _not_ return writeback errors
+on close at all. The only "legitimate" error on close is -EBADF.
+Arguably, we should make ->flush be void return. Note that most
+filp_close callers ignore the error anyway, so it's not much of a
+stretch.
+
+In any case, if you do decide to return errors in fuse_flush, then
+advancing the cursor would also have the effect of masking writeback
+errors on dup()'ed file descriptors, and I don't think you want to do
+that.
+--=20
+Jeff Layton <jlayton@kernel.org>
