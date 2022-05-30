@@ -2,135 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0653253869C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 May 2022 19:11:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77D7853873F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 May 2022 20:28:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241033AbiE3RLb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 May 2022 13:11:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58402 "EHLO
+        id S242666AbiE3S22 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 May 2022 14:28:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234576AbiE3RL2 (ORCPT
+        with ESMTP id S242766AbiE3S20 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 May 2022 13:11:28 -0400
-Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D13652E77;
-        Mon, 30 May 2022 10:11:27 -0700 (PDT)
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id F329C1F86;
-        Mon, 30 May 2022 17:10:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1653930655;
-        bh=8VawmhTG+GHXT/MqMClG55CYn/p1qfgGoNeayV4I14I=;
-        h=Date:Subject:To:CC:References:From:In-Reply-To;
-        b=FppLj4+tXN0lfjH0ZLbXyWZlpqsHu4M6HQkX8W5yhH79I9PSoeMTVxIYzm7xlCOss
-         Rc4HfZIOf62fcCL9mateBBiSLrBMMeULR1cvY3KU99IDX/gdXOgZLPS/9oAKXBuZ0Y
-         pSMhTGFE25hCSX83f5CSwiCOKd6+hfqLO84cYQlw=
-Received: from [172.30.8.65] (172.30.8.65) by
- vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Mon, 30 May 2022 20:11:24 +0300
-Message-ID: <075d601a-1d79-acbd-2d03-92a1a73cf9c7@paragon-software.com>
-Date:   Mon, 30 May 2022 20:11:24 +0300
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH 1/3] fs/ntfs3: Refactoring of indx_find function
-Content-Language: en-US
-To:     Joe Perches <joe@perches.com>, <ntfs3@lists.linux.dev>
-CC:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
-References: <75a1215a-eda2-d0dc-b962-0334356eef7c@paragon-software.com>
- <0f9648cc-66af-077c-88e6-8650fd78f44c@paragon-software.com>
- <94dd870e498e89e0998dee4dd0dbaaa4b4497929.camel@perches.com>
-From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-In-Reply-To: <94dd870e498e89e0998dee4dd0dbaaa4b4497929.camel@perches.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.30.8.65]
-X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
- vdlg-exch-02.paragon-software.com (172.30.1.105)
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+        Mon, 30 May 2022 14:28:26 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A9585A5B5;
+        Mon, 30 May 2022 11:28:26 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C2411B80E9C;
+        Mon, 30 May 2022 18:28:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 8AEF9C3411E;
+        Mon, 30 May 2022 18:28:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1653935303;
+        bh=eaXYp9++UGCP5E2UOyyCsk+iO/QRthdO3rdedzzoOXA=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=Z3s7+VG+5eeUeVyggt3hyseq6p3UcONefDrN/kUI2wX37fcdO17XIIZuI0jf2H2ef
+         OP3pdNFwb38nJmjuQYdhp+LhRjveQt9Ue2LKRSRRQbxPh6fB0mTemx/WYosLnaasnd
+         oopigYAkxdXZLTnHEQva2FmwEQypGF38SVA7wv7g/n2mWOhxez+mPvYRUnQhpaVSFX
+         oj15afyUGM1YDRAUZ7A8k5La/KyAhbe47LPWL78tP/dNh03e0ZcJIzkulsZKnS57tB
+         kBF1KpYT1d9FsURrsClDcUJKJBIl1BA/KAXe37dUO0MNbjpJxomDdDi65skdRiZLEJ
+         cCc045mXfIvxg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 75A1DF0394C;
+        Mon, 30 May 2022 18:28:23 +0000 (UTC)
+Subject: Re: [GIT PULL] overlayfs update for 5.19
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <YpR9rJkjso7lXdFC@miu.piliscsaba.redhat.com>
+References: <YpR9rJkjso7lXdFC@miu.piliscsaba.redhat.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <YpR9rJkjso7lXdFC@miu.piliscsaba.redhat.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git tags/ovl-update-5.19
+X-PR-Tracked-Commit-Id: bc70682a497c4f3c968c552e465d1d9948b1ff4c
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 2c5ca23f7414eb2c782f945aa417cfab7b5c88dd
+Message-Id: <165393530347.32021.7385395832659499208.pr-tracker-bot@kernel.org>
+Date:   Mon, 30 May 2022 18:28:23 +0000
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-unionfs@vger.kernel.org
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello.
+The pull request you sent on Mon, 30 May 2022 10:17:48 +0200:
 
-Thanks for your input.
-It's nice to have a clear typical return value, so I've updated patch.
+> git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/vfs.git tags/ovl-update-5.19
 
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/2c5ca23f7414eb2c782f945aa417cfab7b5c88dd
 
-On 5/27/22 19:07, Joe Perches wrote:
-> On Fri, 2022-05-27 at 17:21 +0300, Almaz Alexandrovich wrote:
->> This commit makes function a bit more readable
-> 
-> trivia:
-> 
->> diff --git a/fs/ntfs3/index.c b/fs/ntfs3/index.c
-> []
->> @@ -1042,19 +1042,16 @@ int indx_find(struct ntfs_index *indx, struct ntfs_inode *ni,
->>    {
->>    	int err;
->>    	struct NTFS_DE *e;
->> -	const struct INDEX_HDR *hdr;
->>    	struct indx_node *node;
->>    
->>    	if (!root)
->>    		root = indx_get_root(&ni->dir, ni, NULL, NULL);
->>    
->>    	if (!root) {
->> -		err = -EINVAL;
->> -		goto out;
->> +		/* Should not happed. */
->> +		return -EINVAL;
-> 
-> s/happed/happen/
-> 
->>    	for (;;) {
->>    		node = NULL;
->>    		if (*diff >= 0 || !de_has_vcn_ex(e)) {
->>    			*entry = e;
->> -			goto out;
->> +			return 0;
->>    		}
-> 
-> might be nicer with a break; or a while like
-> 
-> 	while (*diff < 0 && de_has_vcn_ex(e)) {
-> 		node = NULL;
-> 
-> 
->>    		/* Read next level. */
->>    		err = indx_read(indx, ni, de_get_vbn(e), &node);
->>    		if (err)
->> -			goto out;
->> +			return err;
->>    
->>    		/* Lookup entry that is <= to the search value. */
->>    		e = hdr_find_e(indx, &node->index->ihdr, key, key_len, ctx,
->>    			       diff);
->>    		if (!e) {
->> -			err = -EINVAL;
->>    			put_indx_node(node);
->> -			goto out;
->> +			return -EINVAL;
->>    		}
->>    
->>    		fnd_push(fnd, node, e);
->>    	}
->> -
->> -out:
->> -	return err;
-> 
-> and a return 0;
-> 
-> or
-> 	*entry = e;
-> 	return 0;
-> 
-> so it appears that the function has a typical return value.
-> 
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
