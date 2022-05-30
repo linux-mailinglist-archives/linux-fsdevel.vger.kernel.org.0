@@ -2,58 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AB9A8538476
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 May 2022 17:15:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DF9A53846A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 May 2022 17:15:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235492AbiE3PDq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 May 2022 11:03:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38932 "EHLO
+        id S239817AbiE3PKs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 May 2022 11:10:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52390 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243235AbiE3PBs (ORCPT
+        with ESMTP id S230307AbiE3PK1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 May 2022 11:01:48 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71BAC74DEB;
-        Mon, 30 May 2022 07:02:09 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Mon, 30 May 2022 11:10:27 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id CDD94694BD
+        for <linux-fsdevel@vger.kernel.org>; Mon, 30 May 2022 07:09:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1653919740;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=B2gLpclaR1OD0ds87WG+CHvKTXHfN/d11Umv3JQ16uk=;
+        b=P1Car6t7N+XHRZesaYQ460tt7L1aOtiv/LHjCmm5BVFEqaUA/pgvKrS4v6FCI6HjBh86dS
+        qqOuunoV5KvPXdCyDKaSd4iSq2iwwVhDLjRiVNegf8k4iG2geTzvT/6RPFTObzL5oJwOkf
+        MnKQuBTmqo+A1+up/67M/leudN3bNLs=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-649-UzopWHUSOW202Wxlj5ukTw-1; Mon, 30 May 2022 10:08:56 -0400
+X-MC-Unique: UzopWHUSOW202Wxlj5ukTw-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0E02261138;
-        Mon, 30 May 2022 14:02:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 872F7C385B8;
-        Mon, 30 May 2022 14:02:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1653919328;
-        bh=C2X5kSVfJKWy7iJa8rZT/0Escr5C771N57orGsEtS1E=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=m2VzrdOoPJY4ZJttjh9yFNKKEJwm9RcAA9PY+8FsNzXxT6aAEq1JV9+owT9gl/EQZ
-         7hl+yP33+Pjd9g3H+G0JFCraxieuBqqgJNgzUqdOvdTI+7yzcq1bmfYgOAXPixaseQ
-         Y6P7yZALek06IX16wvn3SYbrThPO2siGOkGD8q5tOK2hlUaenKjEks7cv7U/f2iBDV
-         SqDFpxhRToU4Kxh8qRPlgKDUSNKoP1jPaWRYcs2eIWwey90Ay9P7Vhx9KAgrMT/xM6
-         jtEVfKJwQL/lafRqwqvyUUGIufPMicAKUEZUGsWPlVWFUUXBjGVQuHctK1XrVjv7ch
-         oHSFGfaKkprZQ==
-Message-ID: <9915b7b556106d2a525941141755adcca9e50163.camel@kernel.org>
-Subject: Re: [PATCH -next,v2] fuse: return the more nuanced writeback error
- on close()
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Miklos Szeredi <miklos@szeredi.hu>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Cc:     ChenXiaoSong <chenxiaosong2@huawei.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        liuyongqiang13@huawei.com, "zhangyi (F)" <yi.zhang@huawei.com>,
-        zhangxiaoxu5@huawei.com, Steve French <smfrench@gmail.com>,
-        NeilBrown <neilb@suse.de>
-Date:   Mon, 30 May 2022 10:02:06 -0400
-In-Reply-To: <CAJfpegt-+6oSCxx1-LHet4qm4s7p0jSoP9Vg8PJka3=1dqBXng@mail.gmail.com>
-References: <20220523014838.1647498-1-chenxiaosong2@huawei.com>
-         <CAJfpegt-+6oSCxx1-LHet4qm4s7p0jSoP9Vg8PJka3=1dqBXng@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.1 (3.44.1-1.fc36) 
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 60F6180013E;
+        Mon, 30 May 2022 14:08:56 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.8])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AA74EC15E72;
+        Mon, 30 May 2022 14:08:55 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH] afs: Fix infinite loop found by xfstest generic/676
+From:   David Howells <dhowells@redhat.com>
+To:     marc.dionne@auristor.com
+Cc:     linux-afs@lists.infradead.org, dhowells@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 30 May 2022 15:08:54 +0100
+Message-ID: <165391973497.110268.2939296942213894166.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/1.4
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.85 on 10.11.54.8
+X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -61,76 +63,53 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2022-05-30 at 14:13 +0200, Miklos Szeredi wrote:
-> On Mon, 23 May 2022 at 03:35, ChenXiaoSong <chenxiaosong2@huawei.com> wro=
-te:
-> >=20
-> > As filemap_check_errors() only report -EIO or -ENOSPC, we return more n=
-uanced
-> > writeback error -(file->f_mapping->wb_err & MAX_ERRNO).
-> >=20
-> >   filemap_write_and_wait
-> >     filemap_write_and_wait_range
-> >       filemap_check_errors
-> >         -ENOSPC or -EIO
-> >   filemap_check_wb_err
-> >     errseq_check
-> >       return -(file->f_mapping->wb_err & MAX_ERRNO)
-> >=20
-> > Signed-off-by: ChenXiaoSong <chenxiaosong2@huawei.com>
-> > ---
-> >  fs/fuse/file.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> > index f18d14d5fea1..9917bc2795e6 100644
-> > --- a/fs/fuse/file.c
-> > +++ b/fs/fuse/file.c
-> > @@ -488,10 +488,10 @@ static int fuse_flush(struct file *file, fl_owner=
-_t id)
-> >         inode_unlock(inode);
-> >=20
-> >         err =3D filemap_check_errors(file->f_mapping);
-> > +       /* return more nuanced writeback errors */
-> >         if (err)
-> > -               return err;
-> > +               return filemap_check_wb_err(file->f_mapping, 0);
->=20
-> I'm wondering if this should be file_check_and_advance_wb_err() instead.
->=20
+In AFS, a directory is handled as a file that the client downloads and
+parses locally for the purposes of performing lookup and getdents
+operations.  The in-kernel afs filesystem has a number of functions that do
+this.  A directory file is arranged as a series of 2K blocks divided into
+32-byte slots, where a directory entry occupies one or more slots, plus
+each block starts with one or more metadata blocks.
 
-I think that it probably shouldn't be, actually. Reason below...
+When parsing a block, if the last slots are occupied by a dirent that
+occupies more than a single slot and the file position points at a slot
+that's not the initial one, the logic in afs_dir_iterate_block() that skips
+over it won't advance the file pointer to the end of it.  This will cause
+an infinite loop in getdents() as it will keep retrying that block and
+failing to advance beyond the final entry.
 
-> Is there a difference between ->flush() and ->fsync()?
->=20
-> Jeff, can you please help?
->=20
->=20
+Fix this by advancing the file pointer if the next entry will be beyond it
+when we skip a block.
 
-The main difference is that ->flush is called from filp_close, so it's
-called when a file descriptor (or equivalent) is being torn down out,
-whereas ->fsync is (obviously) called from the fsync codepath.
+This was found by the generic/676 xfstest but can also be triggered with
+something like:
 
-We _must_ report writeback errors on fsync, but reporting them on the
-close() syscall is less clear. The thing about close() is that it's
-going be successful no matter what is returned. The file descriptor will
-no longer work afterward regardless.
+	~/xfstests-dev/src/t_readdir_3 /xfstest.test/z 4000 1
 
-fsync also must also initiate writeback of all the buffered data, but
-it's not required for filesystems to do that on close() (and in fact,
-there are good reasons not to if you can). A successful close() tells
-you nothing about whether your data made it to the backing store. It
-might just not have been synced out yet.
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Marc Dionne <marc.dionne@auristor.com>
+cc: linux-afs@lists.infradead.org
+---
 
-Personally, I think it's probably best to _not_ return writeback errors
-on close at all. The only "legitimate" error on close is -EBADF.
-Arguably, we should make ->flush be void return. Note that most
-filp_close callers ignore the error anyway, so it's not much of a
-stretch.
+ fs/afs/dir.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-In any case, if you do decide to return errors in fuse_flush, then
-advancing the cursor would also have the effect of masking writeback
-errors on dup()'ed file descriptors, and I don't think you want to do
-that.
---=20
-Jeff Layton <jlayton@kernel.org>
+diff --git a/fs/afs/dir.c b/fs/afs/dir.c
+index 932e61e28e5d..bdac73554e6e 100644
+--- a/fs/afs/dir.c
++++ b/fs/afs/dir.c
+@@ -463,8 +463,11 @@ static int afs_dir_iterate_block(struct afs_vnode *dvnode,
+ 		}
+ 
+ 		/* skip if starts before the current position */
+-		if (offset < curr)
++		if (offset < curr) {
++			if (next > curr)
++				ctx->pos = blkoff + next * sizeof(union afs_xdr_dirent);
+ 			continue;
++		}
+ 
+ 		/* found the next entry */
+ 		if (!dir_emit(ctx, dire->u.name, nlen,
+
+
