@@ -2,70 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CFF93537AE1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 May 2022 14:57:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C04F537D7C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 May 2022 15:42:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236268AbiE3M52 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 May 2022 08:57:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56530 "EHLO
+        id S237531AbiE3Ngt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 May 2022 09:36:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236177AbiE3M50 (ORCPT
+        with ESMTP id S237807AbiE3Nfq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 May 2022 08:57:26 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 96558D127
-        for <linux-fsdevel@vger.kernel.org>; Mon, 30 May 2022 05:57:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1653915437;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=9RJe5ZBe82VXM39djh4zovede5FtpngukpR679+LUo0=;
-        b=ci+18NixpYIwWbINdiSOqwWCaRjqcUNOf2Wgax1eanId57HpAR47Chz2eg1zeAJCo5w/wd
-        vMgNc/GH9iG6gHn559TO+kjjCh8/RsgotOxSQew+UcUo6Ha2Ip5zFpBn+hacsUr+3AyUo9
-        h4w+xh8NCgPd1e0ZVNs8CMQhutMDgo8=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-164-2qDKP66pM56eyuhcFQSYfQ-1; Mon, 30 May 2022 08:57:15 -0400
-X-MC-Unique: 2qDKP66pM56eyuhcFQSYfQ-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Mon, 30 May 2022 09:35:46 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B96F954A3;
+        Mon, 30 May 2022 06:28:58 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7123329ABA2F;
-        Mon, 30 May 2022 12:57:15 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 69554492C3B;
-        Mon, 30 May 2022 12:57:15 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id 24UCvFVq030152;
-        Mon, 30 May 2022 08:57:15 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id 24UCvF0M030148;
-        Mon, 30 May 2022 08:57:15 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Mon, 30 May 2022 08:57:15 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Matthew Wilcox <willy@infradead.org>
-cc:     manualinux@yahoo.es,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        ntfs3@lists.linux.dev, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] ntfs3: provide block_invalidate_folio to fix memory
- leak
-In-Reply-To: <YpS2EX+lHkqaxh0d@casper.infradead.org>
-Message-ID: <alpine.LRH.2.02.2205300830220.28067@file01.intranet.prod.int.rdu2.redhat.com>
-References: <20220524075112.5438df32@yahoo.es> <alpine.LRH.2.02.2205240501130.17784@file01.intranet.prod.int.rdu2.redhat.com> <20220524113314.71fe17f0@yahoo.es> <20220525130538.38fd3d35@yahoo.es> <20220527072629.332b078d@yahoo.es> <20220527080211.15d631be@yahoo.es>
- <alpine.LRH.2.02.2205271338250.20527@file01.intranet.prod.int.rdu2.redhat.com> <20220528061836.22230f86@yahoo.es> <20220530131524.7fb5640d@yahoo.es> <alpine.LRH.2.02.2205300746310.21817@file01.intranet.prod.int.rdu2.redhat.com>
- <YpS2EX+lHkqaxh0d@casper.infradead.org>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 00E3B60EE0;
+        Mon, 30 May 2022 13:28:58 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F02FC3411E;
+        Mon, 30 May 2022 13:28:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1653917337;
+        bh=rtHzjj2GFfazvNSR27w6EM4Oeo2YGiREyRIw+vC3rmw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=CfhHlIubqgFaQ26qsyBBX62m3uUuaZOte+nyDQrtvU0kR0r3p2I0BJciH3Ns0Qr5f
+         yK/wxJDDQv2V9UzkOx0cAD4sltESdVhYyPq+dxhYOhb9hLdfApa9YR8nKu1vVwHPz/
+         0xPub9zkzr4ZlY8sjZdhxdIrm0EDe43j81/eZQeDXSW9D0MKd3mVashrunh2ZFoeVd
+         VkdjfNCojlvxJs0Kb/3hyNQLoZQmNg/otb8a6TAgtGV8H/QzFeHj8DVP1MKp5OiuyQ
+         poJvranirpFe9McO15yC3QhtE47ly5kgW556iAyE+1Mv8DcgqLNtYClyiVdoMQg3Iz
+         twcy4lVXuinVQ==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
+        Seth Forshee <seth.forshee@digitalocean.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org,
+        Christian Brauner <brauner@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.18 101/159] fs: hold writers when changing mount's idmapping
+Date:   Mon, 30 May 2022 09:23:26 -0400
+Message-Id: <20220530132425.1929512-101-sashal@kernel.org>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20220530132425.1929512-1-sashal@kernel.org>
+References: <20220530132425.1929512-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: MULTIPART/MIXED; BOUNDARY="185206533-875691919-1653915435=:28067"
-X-Scanned-By: MIMEDefang 2.85 on 10.11.54.10
-X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -73,76 +61,65 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+From: Christian Brauner <christian.brauner@ubuntu.com>
 
---185206533-875691919-1653915435=:28067
-Content-Type: TEXT/PLAIN; charset=iso-8859-1
-Content-Transfer-Encoding: 8BIT
+[ Upstream commit e1bbcd277a53e08d619ffeec56c5c9287f2bf42f ]
 
+Hold writers when changing a mount's idmapping to make it more robust.
 
+The vfs layer takes care to retrieve the idmapping of a mount once
+ensuring that the idmapping used for vfs permission checking is
+identical to the idmapping passed down to the filesystem.
 
-On Mon, 30 May 2022, Matthew Wilcox wrote:
+For ioctl codepaths the filesystem itself is responsible for taking the
+idmapping into account if they need to. While all filesystems with
+FS_ALLOW_IDMAP raised take the same precautions as the vfs we should
+enforce it explicitly by making sure there are no active writers on the
+relevant mount while changing the idmapping.
 
-> On Mon, May 30, 2022 at 08:00:12AM -0400, Mikulas Patocka wrote:
-> > The ntfs3 filesystem lacks the 'invalidate_folio' method and it causes
-> > memory leak. If you write to the filesystem and then unmount it, the
-> > cached written data are not freed and they are permanently leaked.
-> > 
-> > Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-> > Reported-by: José Luis Lara Carrascal <manualinux@yahoo.es>
-> > Fixes: 7ba13abbd31e ("fs: Turn block_invalidatepage into block_invalidate_folio")
-> 
-> That commit is innocent here.  Rather, this should be:
-> 
-> Fixes: 82cae269cfa9 ("fs/ntfs3: Add initialization of super block")
+This is similar to turning a mount ro with the difference that in
+contrast to turning a mount ro changing the idmapping can only ever be
+done once while a mount can transition between ro and rw as much as it
+wants.
 
-82cae269cfa9 is included in the 5.15 kernel - and this bug only happens in 
-5.18. So, how could 82cae269cfa9 cause it?
+This is a minor user-visible change. But it is extremely unlikely to
+matter. The caller must've created a detached mount via OPEN_TREE_CLONE
+and then handed that O_PATH fd to another process or thread which then
+must've gotten a writable fd for that mount and started creating files
+in there while the caller is still changing mount properties. While not
+impossible it will be an extremely rare corner-case and should in
+general be considered a bug in the application. Consider making a mount
+MOUNT_ATTR_NOEXEC or MOUNT_ATTR_NODEV while allowing someone else to
+perform lookups or exec'ing in parallel by handing them a copy of the
+OPEN_TREE_CLONE fd or another fd beneath that mount.
 
-> Yes, trees before 7ba13abbd31e will need to change the patch to add
-> invalidate_page instead of invalidate_folio, but that's a normal part
-> of the process.
+Link: https://lore.kernel.org/r/20220510095840.152264-1-brauner@kernel.org
+Cc: Seth Forshee <seth.forshee@digitalocean.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org
+Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/namespace.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-In the kernel 5.17 and before, if the "invalidatepage" method is NULL, the 
-kernel will use block_invalidatepage (see do_invalidatepage). So, we don't 
-have to provide explicit "invalidatepage" in 5.17 and before and we don't 
-have to backport this bugfix there.
-
-Note that the commit 7ba13abbd31e contains this piece of code:
--#ifdef CONFIG_BLOCK
--	if (!invalidatepage)
--		invalidatepage = block_invalidatepage;
--#endif
-
-So, it explicitly breaks filesystems that have NULL invalidatepage and 
-NULL invalidate_folio and that relied on block_invalidatepage being called 
-implicitly. So, I believe this commit is the root cause of this bug.
-
-I grepped the kernel for "dirty_folio" and it seems that ntfs3 is the only 
-filesystem that provides "dirty_folio" and doesn't provide 
-"invalidate_folio".
-
-Mikulas
-
-> > Cc: stable@vger.kernel.org	# v5.18
-> > 
-> > ---
-> >  fs/ntfs3/inode.c |    1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > Index: linux-2.6/fs/ntfs3/inode.c
-> > ===================================================================
-> > --- linux-2.6.orig/fs/ntfs3/inode.c	2022-05-16 16:57:24.000000000 +0200
-> > +++ linux-2.6/fs/ntfs3/inode.c	2022-05-30 13:36:45.000000000 +0200
-> > @@ -1951,6 +1951,7 @@ const struct address_space_operations nt
-> >  	.direct_IO	= ntfs_direct_IO,
-> >  	.bmap		= ntfs_bmap,
-> >  	.dirty_folio	= block_dirty_folio,
-> > +	.invalidate_folio = block_invalidate_folio,
-> >  };
-> >  
-> >  const struct address_space_operations ntfs_aops_cmpr = {
-> 
---185206533-875691919-1653915435=:28067--
+diff --git a/fs/namespace.c b/fs/namespace.c
+index afe2b64b14f1..41461f55c039 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -4026,8 +4026,9 @@ static int can_idmap_mount(const struct mount_kattr *kattr, struct mount *mnt)
+ static inline bool mnt_allow_writers(const struct mount_kattr *kattr,
+ 				     const struct mount *mnt)
+ {
+-	return !(kattr->attr_set & MNT_READONLY) ||
+-	       (mnt->mnt.mnt_flags & MNT_READONLY);
++	return (!(kattr->attr_set & MNT_READONLY) ||
++		(mnt->mnt.mnt_flags & MNT_READONLY)) &&
++	       !kattr->mnt_userns;
+ }
+ 
+ static int mount_setattr_prepare(struct mount_kattr *kattr, struct mount *mnt)
+-- 
+2.35.1
 
