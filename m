@@ -2,201 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A2EA53863F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 May 2022 18:41:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 871D3538665
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 May 2022 18:54:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241313AbiE3Qk7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 May 2022 12:40:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51974 "EHLO
+        id S241537AbiE3Qyc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 May 2022 12:54:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236007AbiE3Qk6 (ORCPT
+        with ESMTP id S241157AbiE3Qyb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 May 2022 12:40:58 -0400
-Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB90270371;
-        Mon, 30 May 2022 09:40:57 -0700 (PDT)
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 759F31F86;
-        Mon, 30 May 2022 16:40:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1653928825;
-        bh=sICHCfo4uTR9mxXHyCTyqelqqIWYEf1R3oO5FRPMAf0=;
-        h=Date:Subject:From:To:CC:References:In-Reply-To;
-        b=uGpJDEEz+5fYhvd+y3hQkruz0yb7f05Qhm3qvxK7CN586eb//uucHu1KgjKgpmXFb
-         21dBh1irQdVa0Ru3y7iQDa5+ykmabI+7exB5PspCIlL3XtSHL4xYdjWymgoqIfPdJJ
-         B8lQ0Xit7TNefNZC/GRvXNllRL/NDYkGg5U9TYOw=
-Received: from [172.30.8.65] (172.30.8.65) by
- vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Mon, 30 May 2022 19:40:55 +0300
-Message-ID: <10fe5b38-eb6c-8cb2-5355-1952a6cfb447@paragon-software.com>
-Date:   Mon, 30 May 2022 19:40:55 +0300
+        Mon, 30 May 2022 12:54:31 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id BF027A7767
+        for <linux-fsdevel@vger.kernel.org>; Mon, 30 May 2022 09:54:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1653929669;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=f/rqcKfY9mlwY6K/SoS0HIjpA/I/CVx5G0Qxm345iKE=;
+        b=EbUbkwATow2KSitLf+AEBP+DAMJ5Zx5fmgP76EeY9JM8fXkAhIur19AHbrIlAVD1Jw3WI5
+        I0cTFtcoPqR6DHybnHCVcy09V6CMkThqBJsPqdWiOpI9EKBftf0UBqhh2P7IDhTlyN54VG
+        fINKxVegIMuaLkdcyXU8y4CGYl/vo2Q=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-399-PvZC9jUkPl6lxCraINri7Q-1; Mon, 30 May 2022 12:54:28 -0400
+X-MC-Unique: PvZC9jUkPl6lxCraINri7Q-1
+Received: by mail-wm1-f72.google.com with SMTP id bg40-20020a05600c3ca800b00394779649b1so10036773wmb.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 30 May 2022 09:54:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:references:from:organization:in-reply-to
+         :content-transfer-encoding;
+        bh=f/rqcKfY9mlwY6K/SoS0HIjpA/I/CVx5G0Qxm345iKE=;
+        b=NaVstSlsZ/SxDYkwc0lryoYYl8LsruNuoicF8kQZ/Z09+sQqGrsGp0p5dxfisV1wel
+         V21EUSbaleXRD/A48aORcC1wK9X9/ecv8IRpt3eOUVxg0rJsbVWkQa76U/8HBlIoIhIu
+         od1+1kpVJEXYztpmlp4PJfVuYpweXT/YoLcP80qCPyWJ2OuQ7yAqYsBCULoJ/PYMq543
+         mTu/nE1/LZz3l8Ox0LR6XMdIKffVfe3r7bsq4bzwh+v1M/+Uj8RUsDt38GPf/F/u7s44
+         4eJn2ibtdHWQCtruFO0JkttQp7OvYO6qbMw5oxOGPSHIZ1l2zamB1ej7Mb9DMwRX8MjW
+         66tw==
+X-Gm-Message-State: AOAM532gMb+tciMwZiy5z42UZMIB/NvdbIpdj+c5pHkzniK2Q1bWpLE3
+        4pBlXup2SyYCrI9t30NZwgbj/UMKC2L84F5z2yFtIgqhJMcOptPr/OuBEjrNnYvhfrK3m7Kxohj
+        DmcTE5cPcPrXJ65kTr0FrEeIXaw==
+X-Received: by 2002:a5d:5105:0:b0:210:c28:276b with SMTP id s5-20020a5d5105000000b002100c28276bmr18002357wrt.293.1653929667153;
+        Mon, 30 May 2022 09:54:27 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJwwiR6Ws+tjOsyLLTcX2kyq+dQP75SPERKcOptjxubE5UYoa+/VWGZl1JPaNIJYKywKJwAlOA==
+X-Received: by 2002:a5d:5105:0:b0:210:c28:276b with SMTP id s5-20020a5d5105000000b002100c28276bmr18002344wrt.293.1653929666885;
+        Mon, 30 May 2022 09:54:26 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c704:7c00:aaa9:2ce5:5aa0:f736? (p200300cbc7047c00aaa92ce55aa0f736.dip0.t-ipconnect.de. [2003:cb:c704:7c00:aaa9:2ce5:5aa0:f736])
+        by smtp.gmail.com with ESMTPSA id l36-20020a05600c08a400b003942a244f48sm10240715wmp.33.2022.05.30.09.54.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 30 May 2022 09:54:26 -0700 (PDT)
+Message-ID: <df2c225e-6173-08c1-bdc8-69b37c91c01b@redhat.com>
+Date:   Mon, 30 May 2022 18:54:25 +0200
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.9.0
-Subject: [PATCH v2 3/3] fs/ntfs3: Refactor ni_try_remove_attr_list function
+Subject: Re: Freeing page flags
 Content-Language: en-US
-From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-To:     <ntfs3@lists.linux.dev>
-CC:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
-References: <6afbf4c7-825b-7148-b130-55f720857cb0@paragon-software.com>
-In-Reply-To: <6afbf4c7-825b-7148-b130-55f720857cb0@paragon-software.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+To:     Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+References: <Yn10Iz1mJX1Mu1rv@casper.infradead.org>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+In-Reply-To: <Yn10Iz1mJX1Mu1rv@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.30.8.65]
-X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
- vdlg-exch-02.paragon-software.com (172.30.1.105)
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Now we save a copy of primary record for restoration.
-Also now we remove all attributes from subrecords.
+On 12.05.22 22:54, Matthew Wilcox wrote:
+> The LWN writeup [1] on merging the MGLRU reminded me that I need to send
+> out a plan for removing page flags that we can do without.
+> 
+> 1. PG_error.  It's basically useless.  If the page was read successfully,
+> PG_uptodate is set.  If not, PG_uptodate is clear.  The page cache
+> doesn't use PG_error.  Some filesystems do, and we need to transition
+> them away from using it.
+> 
+> 2. PG_private.  This tells us whether we have anything stored at
+> page->private.  We can just check if page->private is NULL or not.
+> No need to have this extra bit.  Again, there may be some filesystems
+> that are a bit wonky here, but I'm sure they're fixable.
+> 
+> 3. PG_mappedtodisk.  This is really only used by the buffer cache.
+> Once the filesystems that use bufferheads have been converted, this can
+> go away.
 
-Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
----
-  fs/ntfs3/frecord.c | 49 ++++++++++++++++++++++++++++++++++------------
-  fs/ntfs3/record.c  |  5 ++---
-  2 files changed, 39 insertions(+), 15 deletions(-)
+Nowadays (upstream) PG_anon_exclusive for anonymous memory.
 
-diff --git a/fs/ntfs3/frecord.c b/fs/ntfs3/frecord.c
-index 18842998c8fa..3576268ee0a1 100644
---- a/fs/ntfs3/frecord.c
-+++ b/fs/ntfs3/frecord.c
-@@ -7,6 +7,7 @@
-  
-  #include <linux/fiemap.h>
-  #include <linux/fs.h>
-+#include <linux/minmax.h>
-  #include <linux/vmalloc.h>
-  
-  #include "debug.h"
-@@ -649,6 +650,7 @@ static int ni_try_remove_attr_list(struct ntfs_inode *ni)
-  	struct mft_inode *mi;
-  	u32 asize, free;
-  	struct MFT_REF ref;
-+	struct MFT_REC *mrec;
-  	__le16 id;
-  
-  	if (!ni->attr_list.dirty)
-@@ -692,11 +694,17 @@ static int ni_try_remove_attr_list(struct ntfs_inode *ni)
-  		free -= asize;
-  	}
-  
-+	/* Make a copy of primary record to restore if error. */
-+	mrec = kmemdup(ni->mi.mrec, sbi->record_size, GFP_NOFS);
-+	if (!mrec)
-+		return 0; /* Not critical. */
-+
-  	/* It seems that attribute list can be removed from primary record. */
-  	mi_remove_attr(NULL, &ni->mi, attr_list);
-  
-  	/*
--	 * Repeat the cycle above and move all attributes to primary record.
-+	 * Repeat the cycle above and copy all attributes to primary record.
-+	 * Do not remove original attributes from subrecords!
-  	 * It should be success!
-  	 */
-  	le = NULL;
-@@ -707,14 +715,14 @@ static int ni_try_remove_attr_list(struct ntfs_inode *ni)
-  		mi = ni_find_mi(ni, ino_get(&le->ref));
-  		if (!mi) {
-  			/* Should never happened, 'cause already checked. */
--			goto bad;
-+			goto out;
-  		}
-  
-  		attr = mi_find_attr(mi, NULL, le->type, le_name(le),
-  				    le->name_len, &le->id);
-  		if (!attr) {
-  			/* Should never happened, 'cause already checked. */
--			goto bad;
-+			goto out;
-  		}
-  		asize = le32_to_cpu(attr->size);
-  
-@@ -724,18 +732,33 @@ static int ni_try_remove_attr_list(struct ntfs_inode *ni)
-  					  le16_to_cpu(attr->name_off));
-  		if (!attr_ins) {
-  			/*
--			 * Internal error.
--			 * Either no space in primary record (already checked).
--			 * Either tried to insert another
--			 * non indexed attribute (logic error).
-+			 * No space in primary record (already checked).
-  			 */
--			goto bad;
-+			goto out;
-  		}
-  
-  		/* Copy all except id. */
-  		id = attr_ins->id;
-  		memcpy(attr_ins, attr, asize);
-  		attr_ins->id = id;
-+	}
-+
-+	/*
-+	 * Repeat the cycle above and remove all attributes from subrecords.
-+	 */
-+	le = NULL;
-+	while ((le = al_enumerate(ni, le))) {
-+		if (!memcmp(&le->ref, &ref, sizeof(ref)))
-+			continue;
-+
-+		mi = ni_find_mi(ni, ino_get(&le->ref));
-+		if (!mi)
-+			continue;
-+
-+		attr = mi_find_attr(mi, NULL, le->type, le_name(le),
-+				    le->name_len, &le->id);
-+		if (!attr)
-+			continue;
-  
-  		/* Remove from original record. */
-  		mi_remove_attr(NULL, mi, attr);
-@@ -748,11 +771,13 @@ static int ni_try_remove_attr_list(struct ntfs_inode *ni)
-  	ni->attr_list.le = NULL;
-  	ni->attr_list.dirty = false;
-  
-+	kfree(mrec);
-+	return 0;
-+out:
-+	/* Restore primary record. */
-+	swap(mrec, ni->mi.mrec);
-+	kfree(mrec);
-  	return 0;
--bad:
--	ntfs_inode_err(&ni->vfs_inode, "Internal error");
--	make_bad_inode(&ni->vfs_inode);
--	return -EINVAL;
-  }
-  
-  /*
-diff --git a/fs/ntfs3/record.c b/fs/ntfs3/record.c
-index 861e35791506..8fe0a876400a 100644
---- a/fs/ntfs3/record.c
-+++ b/fs/ntfs3/record.c
-@@ -445,12 +445,11 @@ struct ATTRIB *mi_insert_attr(struct mft_inode *mi, enum ATTR_TYPE type,
-  	attr = NULL;
-  	while ((attr = mi_enum_attr(mi, attr))) {
-  		diff = compare_attr(attr, type, name, name_len, upcase);
--		if (diff > 0)
--			break;
-+
-  		if (diff < 0)
-  			continue;
-  
--		if (!is_attr_indexed(attr))
-+		if (!diff && !is_attr_indexed(attr))
-  			return NULL;
-  		break;
-  	}
+
 -- 
-2.36.1
+Thanks,
 
+David / dhildenb
 
