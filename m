@@ -2,127 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B558A5384FC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 May 2022 17:33:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3301353855B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 May 2022 17:49:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239478AbiE3Pdq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 May 2022 11:33:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39000 "EHLO
+        id S238248AbiE3PtR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 May 2022 11:49:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241543AbiE3Pdj (ORCPT
+        with ESMTP id S240480AbiE3PtK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 May 2022 11:33:39 -0400
-Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DDAE151FDC
-        for <linux-fsdevel@vger.kernel.org>; Mon, 30 May 2022 07:38:29 -0700 (PDT)
-Received: by mail-ej1-x62f.google.com with SMTP id q21so21291004ejm.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 30 May 2022 07:38:29 -0700 (PDT)
+        Mon, 30 May 2022 11:49:10 -0400
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3EC026E4;
+        Mon, 30 May 2022 08:08:05 -0700 (PDT)
+Received: by mail-lf1-x134.google.com with SMTP id j10so17139757lfe.12;
+        Mon, 30 May 2022 08:08:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
+        d=gmail.com; s=20210112;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=9XVHS3rlr74kwDPS9cPLZWGBf1IHIjmcfJWC5iwwI2Q=;
-        b=MbARoEMNQrQQ5S51pge6GPzZS8oHKf3IaF+XiDUy8Ks5VCzzDxfw2dNHfzHZpEiWQC
-         Lir4csByQgi8syophTh9lcO08dPkZ5b+pcyLI4xvARvyOpGO5Dz1suPagZKcrX5giq++
-         tWsVlviaPGUMTu82QwfnMk/+msafi9JIPmz0I=
+        bh=Y1sc3SgN3N3ykWArYqFUHd/HD6dgspu5E5KUhFXFFjg=;
+        b=o6AGIOjOnwajx65qfESsnit6rWY4fglvYKRG8NWk+5/69fzaHC6BgSnsFN+OnTurgY
+         BdaQqi1zvZAJpA89C/sYRmHEN8wxx/01Mg2k4I5K1yz9gq4MT3QMW8r1Rl+wOSf4/f4R
+         zeY31kRUNECx0aTVRNmRGA8CHlm1vyuRWqNxOw/JXtq5YX4rvF24NVaaOTjri5VSGbBB
+         cHoJfKegM8EIcgBqDAwUDqEG+LzETilgZCRBui4wjoLnNx0m9+m1pH3++LaOsYAHngVq
+         mDT4PX85xVw5pnXXc9gsjfmWqT5wf6zCkVB52CJFuEtu7d6AHbC09E4X0OKdNkJhAo7e
+         hMYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=9XVHS3rlr74kwDPS9cPLZWGBf1IHIjmcfJWC5iwwI2Q=;
-        b=fXXPR+kfIDohTaSdwe04zPdV9KTA+CX7klvUqlKITwNcBidv1UU6znxTgFU8Vzmn6/
-         CPew22ubIp9QCCNt1OIYJmRPpgr0eBN02sAI0QXHFXHDy9oTVq8QVYBytw8JCVypI+3T
-         Tj/Mv+3TwJ6k5rzXRB1xL+ZLEve1xLIFDRu8ILGFEwhkSTZd5AYTJbwT18SdHwpenlJi
-         laKGsh41RNM9k9wtWi3SPN1HewyQq5gVRffltHjnRs7nYBY69oWHf6lffLzU67IW0Hlb
-         HayzYUEdNla2wPpKDMd+Lx3IRsAIJvQTMYCZlkEbxUK1vne2jDQbAZ/kIunO6nNGGOyw
-         KE+w==
-X-Gm-Message-State: AOAM532iymyu7ph9WTU32q3kcSdJQOBJfFCaBXxDc/ks1V23vEEm2Gz2
-        iVJyJcJriEnqq6KpqCx1Em5zFQ==
-X-Google-Smtp-Source: ABdhPJzCJc9LIiLBdHANCcQcfp+8G5VZEaFRDSMPja3qGm5Y6mFm1R/ni7P5lpa3+cR3SNJNCX9l9A==
-X-Received: by 2002:a17:906:90c9:b0:6fe:9e40:5cc with SMTP id v9-20020a17090690c900b006fe9e4005ccmr46125940ejw.367.1653921508038;
-        Mon, 30 May 2022 07:38:28 -0700 (PDT)
-Received: from miu.piliscsaba.redhat.com (catv-178-48-189-3.catv.fixed.vodafone.hu. [178.48.189.3])
-        by smtp.gmail.com with ESMTPSA id bh19-20020a170906a0d300b006ff802baf5dsm910684ejb.54.2022.05.30.07.38.26
+        bh=Y1sc3SgN3N3ykWArYqFUHd/HD6dgspu5E5KUhFXFFjg=;
+        b=pIWdwq1zfb1IG9iwOc4iiRcnP88gP6Ts4Xs7C82BPhN9QcCBeNNXECQy/cbk8JuHdK
+         mu0bYtTzKTL+9D9TY4uAvNvxiPJlshPv6rcURaw+3JhP9O6FGiervSLVirVY9zl+nhxP
+         YnN8jcRiE8jE0fITV8tQ6tGHsRdnAZ+0PkcDY7X6MCTx1nBNZNcey58LP9Ws0k131ksJ
+         ed34ZVqH4m5gYCQ3xYU6DrIfI8iMO4N5+GpRw4W6C3EBjSLyMykPYaLuQ2/2ZtwyEZhY
+         XZfzFxaCdRp74oEtS33qI8lEmUbdnEX2u3AJo7ijyY+ImJ7clPxD4vmsIOKSlIpvKxm+
+         3NhA==
+X-Gm-Message-State: AOAM533ex3mGo0fTOWKdN8Y2SP5VpnLG8IPOkd0+7AbUEzvRczC//1Ci
+        KnS7U7tGYy6nCMeu5zstUGI=
+X-Google-Smtp-Source: ABdhPJykyfU4vxRB5yEcqCTO5WgROZp2XyL5zwb77xA4VwjAJoRJEdFI5Zpa+r4u4gXUG5yF756U3A==
+X-Received: by 2002:a05:6512:23a9:b0:478:5595:33cb with SMTP id c41-20020a05651223a900b00478559533cbmr35442611lfv.439.1653923284186;
+        Mon, 30 May 2022 08:08:04 -0700 (PDT)
+Received: from localhost (87-49-44-105-mobile.dk.customer.tdc.net. [87.49.44.105])
+        by smtp.gmail.com with ESMTPSA id t6-20020a2e5346000000b0024f3d1daea5sm1476141ljd.45.2022.05.30.08.08.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 May 2022 07:38:27 -0700 (PDT)
-Date:   Mon, 30 May 2022 16:38:24 +0200
-From:   Miklos Szeredi <miklos@szeredi.hu>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        ChenXiaoSong <chenxiaosong2@huawei.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        liuyongqiang13@huawei.com, "zhangyi (F)" <yi.zhang@huawei.com>,
-        zhangxiaoxu5@huawei.com, Steve French <smfrench@gmail.com>,
-        NeilBrown <neilb@suse.de>
-Subject: Re: [PATCH -next,v2] fuse: return the more nuanced writeback error
- on close()
-Message-ID: <YpTW4LNGGzuXu/bq@miu.piliscsaba.redhat.com>
-References: <20220523014838.1647498-1-chenxiaosong2@huawei.com>
- <CAJfpegt-+6oSCxx1-LHet4qm4s7p0jSoP9Vg8PJka3=1dqBXng@mail.gmail.com>
- <9915b7b556106d2a525941141755adcca9e50163.camel@kernel.org>
+        Mon, 30 May 2022 08:08:03 -0700 (PDT)
+Date:   Mon, 30 May 2022 17:08:02 +0200
+From:   Pankaj Raghav <pankydev8@gmail.com>
+To:     Keith Busch <kbusch@fb.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        axboe@kernel.dk, Kernel Team <Kernel-team@fb.com>, hch@lst.de,
+        bvanassche@acm.org, damien.lemoal@opensource.wdc.com,
+        ebiggers@kernel.org, Keith Busch <kbusch@kernel.org>
+Subject: Re: [PATCHv4 7/9] block/bounce: count bytes instead of sectors
+Message-ID: <20220530150802.wqusaezaw2mefwms@quentin>
+References: <20220526010613.4016118-1-kbusch@fb.com>
+ <20220526010613.4016118-8-kbusch@fb.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9915b7b556106d2a525941141755adcca9e50163.camel@kernel.org>
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
+In-Reply-To: <20220526010613.4016118-8-kbusch@fb.com>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 30, 2022 at 10:02:06AM -0400, Jeff Layton wrote:
-
-> The main difference is that ->flush is called from filp_close, so it's
-> called when a file descriptor (or equivalent) is being torn down out,
-> whereas ->fsync is (obviously) called from the fsync codepath.
+On Wed, May 25, 2022 at 06:06:11PM -0700, Keith Busch wrote:
+> From: Keith Busch <kbusch@kernel.org>
 > 
-> We _must_ report writeback errors on fsync, but reporting them on the
-> close() syscall is less clear. The thing about close() is that it's
-> going be successful no matter what is returned. The file descriptor will
-> no longer work afterward regardless.
+> Individual bv_len's may not be a sector size.
 > 
-> fsync also must also initiate writeback of all the buffered data, but
-> it's not required for filesystems to do that on close() (and in fact,
-> there are good reasons not to if you can). A successful close() tells
-> you nothing about whether your data made it to the backing store. It
-> might just not have been synced out yet.
+> Signed-off-by: Keith Busch <kbusch@kernel.org>
+> ---
+> v3->v4:
 > 
-> Personally, I think it's probably best to _not_ return writeback errors
-> on close at all. The only "legitimate" error on close is -EBADF.
-> Arguably, we should make ->flush be void return. Note that most
-> filp_close callers ignore the error anyway, so it's not much of a
-> stretch.
+>   Use sector shift
 > 
-> In any case, if you do decide to return errors in fuse_flush, then
-> advancing the cursor would also have the effect of masking writeback
-> errors on dup()'ed file descriptors, and I don't think you want to do
-> that.
+>   Add comment explaing the ALIGN_DOWN
+> 
+>   Use unsigned int type for counting bytes
+> 
+>  block/bounce.c | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
+> 
+> diff --git a/block/bounce.c b/block/bounce.c
+> index 8f7b6fe3b4db..f6ae21ec2a70 100644
+> --- a/block/bounce.c
+> +++ b/block/bounce.c
+> @@ -205,19 +205,25 @@ void __blk_queue_bounce(struct request_queue *q, struct bio **bio_orig)
+>  	int rw = bio_data_dir(*bio_orig);
+>  	struct bio_vec *to, from;
+>  	struct bvec_iter iter;
+> -	unsigned i = 0;
+> +	unsigned i = 0, bytes = 0;
+>  	bool bounce = false;
+> -	int sectors = 0;
+> +	int sectors;
+>  
+>  	bio_for_each_segment(from, *bio_orig, iter) {
+>  		if (i++ < BIO_MAX_VECS)
+> -			sectors += from.bv_len >> 9;
+> +			bytes += from.bv_len;
+>  		if (PageHighMem(from.bv_page))
+>  			bounce = true;
+>  	}
+>  	if (!bounce)
+>  		return;
+>  
+> +	/*
+> +	 * If the original has more than BIO_MAX_VECS biovecs, the total bytes
+> +	 * may not be block size aligned. Align down to ensure both sides of
+> +	 * the split bio are appropriately sized.
+> +	 */
+> +	sectors = ALIGN_DOWN(bytes, queue_logical_block_size(q)) >> SECTOR_SHIFT;
+>  	if (sectors < bio_sectors(*bio_orig)) {
+>  		bio = bio_split(*bio_orig, sectors, GFP_NOIO, &bounce_bio_split);
+>  		bio_chain(bio, *bio_orig);
+> -- 
+> 2.30.2
+> 
 
-Thanks for clarifying.
-
-Chen, would the following patch make sense for your case?
-
-Thanks,
-Miklos
-
----
- fs/fuse/file.c |    5 -----
- 1 file changed, 5 deletions(-)
-
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -487,11 +487,6 @@ static int fuse_flush(struct file *file,
- 	fuse_sync_writes(inode);
- 	inode_unlock(inode);
- 
--	err = filemap_check_errors(file->f_mapping);
--	if (err)
--		return err;
--
--	err = 0;
- 	if (fm->fc->no_flush)
- 		goto inval_attr_out;
- 
+Looks good,
+Reviewed-by: Pankaj Raghav <p.raghav@samsung.com>
+-- 
+Pankaj Raghav
