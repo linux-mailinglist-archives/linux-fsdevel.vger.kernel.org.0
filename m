@@ -2,124 +2,185 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C04F537D7C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 May 2022 15:42:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 00600537DA0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 May 2022 15:42:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237531AbiE3Ngt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 May 2022 09:36:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44724 "EHLO
+        id S237391AbiE3Njy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 May 2022 09:39:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57128 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237807AbiE3Nfq (ORCPT
+        with ESMTP id S238150AbiE3NgI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 May 2022 09:35:46 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B96F954A3;
-        Mon, 30 May 2022 06:28:58 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 00E3B60EE0;
-        Mon, 30 May 2022 13:28:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F02FC3411E;
-        Mon, 30 May 2022 13:28:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1653917337;
-        bh=rtHzjj2GFfazvNSR27w6EM4Oeo2YGiREyRIw+vC3rmw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CfhHlIubqgFaQ26qsyBBX62m3uUuaZOte+nyDQrtvU0kR0r3p2I0BJciH3Ns0Qr5f
-         yK/wxJDDQv2V9UzkOx0cAD4sltESdVhYyPq+dxhYOhb9hLdfApa9YR8nKu1vVwHPz/
-         0xPub9zkzr4ZlY8sjZdhxdIrm0EDe43j81/eZQeDXSW9D0MKd3mVashrunh2ZFoeVd
-         VkdjfNCojlvxJs0Kb/3hyNQLoZQmNg/otb8a6TAgtGV8H/QzFeHj8DVP1MKp5OiuyQ
-         poJvranirpFe9McO15yC3QhtE47ly5kgW556iAyE+1Mv8DcgqLNtYClyiVdoMQg3Iz
-         twcy4lVXuinVQ==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Seth Forshee <seth.forshee@digitalocean.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org,
-        Christian Brauner <brauner@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.18 101/159] fs: hold writers when changing mount's idmapping
-Date:   Mon, 30 May 2022 09:23:26 -0400
-Message-Id: <20220530132425.1929512-101-sashal@kernel.org>
-X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20220530132425.1929512-1-sashal@kernel.org>
-References: <20220530132425.1929512-1-sashal@kernel.org>
+        Mon, 30 May 2022 09:36:08 -0400
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74894985AF;
+        Mon, 30 May 2022 06:29:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1653917391; x=1685453391;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   mime-version:in-reply-to;
+  bh=I21a6ClKGB+lq1NfhYRQ0tz6+Os23OEzwGczNY+MKwY=;
+  b=HpvNlcVINhWSmF2Khe79cHcXMHlqq8MD2pq5h//KORGzneoTvxjrwGOC
+   lUFqvSjakeEsFY4cAqT5ep1vHYaIhzrACuH9QR96Wdzi74dG2pH9neXJJ
+   1EPbdyEkxENjnVyAtmRK1ruUw1XeLGarOY1IgXCkVoEYe6HgjbKQ+JRPU
+   HxL/PtL7Kb8/ckE1FPkj7mmMHx5BUNKbGGYAfrPI1wjQRDKvGxs2DStk2
+   niuShl40ewrDrlfLvWcZMus1mGjAgSmYHUAlA+3IIhnFcklnQEyH17o2f
+   ZAc2tldND5vrR2yrGUFOwiHujWmUsLDqS6GT4Jrjc+JyP0GmKqQmEWixg
+   w==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10362"; a="273813992"
+X-IronPort-AV: E=Sophos;i="5.91,263,1647327600"; 
+   d="scan'208";a="273813992"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2022 06:29:49 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.91,263,1647327600"; 
+   d="scan'208";a="529175229"
+Received: from chaop.bj.intel.com (HELO localhost) ([10.240.192.101])
+  by orsmga003.jf.intel.com with ESMTP; 30 May 2022 06:29:39 -0700
+Date:   Mon, 30 May 2022 21:26:13 +0800
+From:   Chao Peng <chao.p.peng@linux.intel.com>
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     Andy Lutomirski <luto@kernel.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
+        david@redhat.com, aarcange@redhat.com, ddutile@redhat.com,
+        dhildenb@redhat.com, Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com
+Subject: Re: [PATCH v6 4/8] KVM: Extend the memslot to support fd-based
+ private memory
+Message-ID: <20220530132613.GA1200843@chaop.bj.intel.com>
+Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
+References: <20220519153713.819591-1-chao.p.peng@linux.intel.com>
+ <20220519153713.819591-5-chao.p.peng@linux.intel.com>
+ <8840b360-cdb2-244c-bfb6-9a0e7306c188@kernel.org>
+ <YofeZps9YXgtP3f1@google.com>
+ <20220523132154.GA947536@chaop.bj.intel.com>
+ <YoumuHUmgM6TH20S@google.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YoumuHUmgM6TH20S@google.com>
+X-Spam-Status: No, score=-4.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Christian Brauner <christian.brauner@ubuntu.com>
+On Mon, May 23, 2022 at 03:22:32PM +0000, Sean Christopherson wrote:
+> On Mon, May 23, 2022, Chao Peng wrote:
+> > On Fri, May 20, 2022 at 06:31:02PM +0000, Sean Christopherson wrote:
+> > > On Fri, May 20, 2022, Andy Lutomirski wrote:
+> > > > The alternative would be to have some kind of separate table or bitmap (part
+> > > > of the memslot?) that tells KVM whether a GPA should map to the fd.
+> > > > 
+> > > > What do you all think?
+> > > 
+> > > My original proposal was to have expolicit shared vs. private memslots, and punch
+> > > holes in KVM's memslots on conversion, but due to the way KVM (and userspace)
+> > > handle memslot updates, conversions would be painfully slow.  That's how we ended
+> > > up with the current propsoal.
+> > > 
+> > > But a dedicated KVM ioctl() to add/remove shared ranges would be easy to implement
+> > > and wouldn't necessarily even need to interact with the memslots.  It could be a
+> > > consumer of memslots, e.g. if we wanted to disallow registering regions without an
+> > > associated memslot, but I think we'd want to avoid even that because things will
+> > > get messy during memslot updates, e.g. if dirty logging is toggled or a shared
+> > > memory region is temporarily removed then we wouldn't want to destroy the tracking.
+> > 
+> > Even we don't tight that to memslots, that info can only be effective
+> > for private memslot, right? Setting this ioctl to memory ranges defined
+> > in a traditional non-private memslots just makes no sense, I guess we can
+> > comment that in the API document.
+> 
+> Hrm, applying it universally would be funky, e.g. emulated MMIO would need to be
+> declared "shared".  But, applying it selectively would arguably be worse, e.g.
+> letting userspace map memory into the guest as shared for a region that's registered
+> as private...
+> 
+> On option to that mess would be to make memory shared by default, and so userspace
+> must declare regions that are private.  Then there's no weirdness with emulated MMIO
+> or "legacy" memslots.
+> 
+> On page fault, KVM does a lookup to see if the GPA is shared or private.  If the
+> GPA is private, but there is no memslot or the memslot doesn't have a private fd,
+> KVM exits to userspace.  If there's a memslot with a private fd, the shared/private
+> flag is used to resolve the 
+> 
+> And to handle the ioctl(), KVM can use kvm_zap_gfn_range(), which will bump the
+> notifier sequence, i.e. force the page fault to retry if the GPA may have been
+> (un)registered between checking the type and acquiring mmu_lock.
 
-[ Upstream commit e1bbcd277a53e08d619ffeec56c5c9287f2bf42f ]
+Yeah, that makes sense.
 
-Hold writers when changing a mount's idmapping to make it more robust.
+> 
+> > > I don't think we'd want to use a bitmap, e.g. for a well-behaved guest, XArray
+> > > should be far more efficient.
+> > 
+> > What about the mis-behaved guest? I don't want to design for the worst
+> > case, but people may raise concern on the attack from such guest.
+> 
+> That's why cgroups exist.  E.g. a malicious/broken L1 can similarly abuse nested
+> EPT/NPT to generate a large number of shadow page tables.
 
-The vfs layer takes care to retrieve the idmapping of a mount once
-ensuring that the idmapping used for vfs permission checking is
-identical to the idmapping passed down to the filesystem.
+I havn't seen we had that in KVM. Is there any plan/discussion to add that?
 
-For ioctl codepaths the filesystem itself is responsible for taking the
-idmapping into account if they need to. While all filesystems with
-FS_ALLOW_IDMAP raised take the same precautions as the vfs we should
-enforce it explicitly by making sure there are no active writers on the
-relevant mount while changing the idmapping.
+> 
+> > > One benefit to explicitly tracking this in KVM is that it might be useful for
+> > > software-only protected VMs, e.g. KVM could mark a region in the XArray as "pending"
+> > > based on guest hypercalls to share/unshare memory, and then complete the transaction
+> > > when userspace invokes the ioctl() to complete the share/unshare.
+> > 
+> > OK, then this can be another field of states/flags/attributes. Let me
+> > dig up certain level of details:
+> > 
+> > First, introduce below KVM ioctl
+> > 
+> > KVM_SET_MEMORY_ATTR
+> 
+> Actually, if the semantics are that userspace declares memory as private, then we
+> can reuse KVM_MEMORY_ENCRYPT_REG_REGION and KVM_MEMORY_ENCRYPT_UNREG_REGION.  It'd
+> be a little gross because we'd need to slightly redefine the semantics for TDX, SNP,
+> and software-protected VM types, e.g. the ioctls() currently require a pre-exisitng
+> memslot.  But I think it'd work...
 
-This is similar to turning a mount ro with the difference that in
-contrast to turning a mount ro changing the idmapping can only ever be
-done once while a mount can transition between ro and rw as much as it
-wants.
+These existing ioctls looks good for TDX and probably SNP as well. For
+softrware-protected VM types, it may not be enough. Maybe for the first
+step we can reuse this for all hardware based solutions and invent new
+interface when software-protected solution gets really supported.
 
-This is a minor user-visible change. But it is extremely unlikely to
-matter. The caller must've created a detached mount via OPEN_TREE_CLONE
-and then handed that O_PATH fd to another process or thread which then
-must've gotten a writable fd for that mount and started creating files
-in there while the caller is still changing mount properties. While not
-impossible it will be an extremely rare corner-case and should in
-general be considered a bug in the application. Consider making a mount
-MOUNT_ATTR_NOEXEC or MOUNT_ATTR_NODEV while allowing someone else to
-perform lookups or exec'ing in parallel by handing them a copy of the
-OPEN_TREE_CLONE fd or another fd beneath that mount.
+There is semantics difference for fd-based private memory. Current above
+two ioctls() use userspace addreess(hva) while for fd-based it should be
+fd+offset, and probably it's better to use gpa in this case. Then we
+will need change existing semantics and break backward-compatibility.
 
-Link: https://lore.kernel.org/r/20220510095840.152264-1-brauner@kernel.org
-Cc: Seth Forshee <seth.forshee@digitalocean.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/namespace.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Chao
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index afe2b64b14f1..41461f55c039 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -4026,8 +4026,9 @@ static int can_idmap_mount(const struct mount_kattr *kattr, struct mount *mnt)
- static inline bool mnt_allow_writers(const struct mount_kattr *kattr,
- 				     const struct mount *mnt)
- {
--	return !(kattr->attr_set & MNT_READONLY) ||
--	       (mnt->mnt.mnt_flags & MNT_READONLY);
-+	return (!(kattr->attr_set & MNT_READONLY) ||
-+		(mnt->mnt.mnt_flags & MNT_READONLY)) &&
-+	       !kattr->mnt_userns;
- }
- 
- static int mount_setattr_prepare(struct mount_kattr *kattr, struct mount *mnt)
--- 
-2.35.1
-
+> 
+> I'll think more on this...
