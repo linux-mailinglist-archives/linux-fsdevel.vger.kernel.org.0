@@ -2,78 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A4B98537AB3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 May 2022 14:36:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFF93537AE1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 30 May 2022 14:57:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236142AbiE3Mgw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 30 May 2022 08:36:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57082 "EHLO
+        id S236268AbiE3M52 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 30 May 2022 08:57:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236231AbiE3Mfg (ORCPT
+        with ESMTP id S236177AbiE3M50 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 30 May 2022 08:35:36 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E9F97CB16
-        for <linux-fsdevel@vger.kernel.org>; Mon, 30 May 2022 05:35:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=dFSvQ2p+PYCQYBpVQZ7x7gApgkNJyLuRaXgrYRdhROg=; b=Qc4vcR6+59jwit6jmTm/TVBbDF
-        Q+Now18yJlb9I2tQeWyYZxEIu6xZYjCIAMATc21+USERvL9YKLDk5dz+Wrl0r8Dh5LQJRfOKJbOEn
-        uDHFI8m5xTgoX0traET9cbYuSIG2Nd14NqMH7hLnrQHhuY5ntSefnoQa61UEq7fgCXj1o1WaAIenF
-        9beiDr9MzTGOZJGHVuFwyJ9IgGLmJDY4K6V1H02m6GVyTK3+4UMXl/HxoEs5jjA1y98ogtzeN0HGx
-        5Q9EDDbJtIohcL5Mi03F2+Tetg+Seij30a0tUt0mY4kcyEPel7wDBv6pSXXFGL4j9Sk612nTHakhw
-        qI8yMDew==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nvecO-004TDL-QB; Mon, 30 May 2022 12:35:32 +0000
-Date:   Mon, 30 May 2022 13:35:32 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 14/24] remap_range: Remove check of uptodate flag
-Message-ID: <YpS6FHg0Gz7yfQsj@casper.infradead.org>
-References: <20220527155036.524743-1-willy@infradead.org>
- <20220527155036.524743-15-willy@infradead.org>
- <YpG6J7BxY3DAGp/0@infradead.org>
+        Mon, 30 May 2022 08:57:26 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 96558D127
+        for <linux-fsdevel@vger.kernel.org>; Mon, 30 May 2022 05:57:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1653915437;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=9RJe5ZBe82VXM39djh4zovede5FtpngukpR679+LUo0=;
+        b=ci+18NixpYIwWbINdiSOqwWCaRjqcUNOf2Wgax1eanId57HpAR47Chz2eg1zeAJCo5w/wd
+        vMgNc/GH9iG6gHn559TO+kjjCh8/RsgotOxSQew+UcUo6Ha2Ip5zFpBn+hacsUr+3AyUo9
+        h4w+xh8NCgPd1e0ZVNs8CMQhutMDgo8=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-164-2qDKP66pM56eyuhcFQSYfQ-1; Mon, 30 May 2022 08:57:15 -0400
+X-MC-Unique: 2qDKP66pM56eyuhcFQSYfQ-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7123329ABA2F;
+        Mon, 30 May 2022 12:57:15 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 69554492C3B;
+        Mon, 30 May 2022 12:57:15 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id 24UCvFVq030152;
+        Mon, 30 May 2022 08:57:15 -0400
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id 24UCvF0M030148;
+        Mon, 30 May 2022 08:57:15 -0400
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Mon, 30 May 2022 08:57:15 -0400 (EDT)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To:     Matthew Wilcox <willy@infradead.org>
+cc:     manualinux@yahoo.es,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        ntfs3@lists.linux.dev, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] ntfs3: provide block_invalidate_folio to fix memory
+ leak
+In-Reply-To: <YpS2EX+lHkqaxh0d@casper.infradead.org>
+Message-ID: <alpine.LRH.2.02.2205300830220.28067@file01.intranet.prod.int.rdu2.redhat.com>
+References: <20220524075112.5438df32@yahoo.es> <alpine.LRH.2.02.2205240501130.17784@file01.intranet.prod.int.rdu2.redhat.com> <20220524113314.71fe17f0@yahoo.es> <20220525130538.38fd3d35@yahoo.es> <20220527072629.332b078d@yahoo.es> <20220527080211.15d631be@yahoo.es>
+ <alpine.LRH.2.02.2205271338250.20527@file01.intranet.prod.int.rdu2.redhat.com> <20220528061836.22230f86@yahoo.es> <20220530131524.7fb5640d@yahoo.es> <alpine.LRH.2.02.2205300746310.21817@file01.intranet.prod.int.rdu2.redhat.com>
+ <YpS2EX+lHkqaxh0d@casper.infradead.org>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YpG6J7BxY3DAGp/0@infradead.org>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: MULTIPART/MIXED; BOUNDARY="185206533-875691919-1653915435=:28067"
+X-Scanned-By: MIMEDefang 2.85 on 10.11.54.10
+X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, May 27, 2022 at 10:59:03PM -0700, Christoph Hellwig wrote:
-> On Fri, May 27, 2022 at 04:50:26PM +0100, Matthew Wilcox (Oracle) wrote:
-> > read_mapping_folio() returns an ERR_PTR if the folio is not
-> > uptodate, so this check is simply dead code.
-> 
-> Looks good:
-> 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> 
-> >  /* Read a page's worth of file data into the page cache. */
-> >  static struct folio *vfs_dedupe_get_folio(struct file *file, loff_t pos)
-> >  {
-> > +	return read_mapping_folio(file->f_mapping, pos >> PAGE_SHIFT, file);
-> >  }
-> 
-> But I wonder if this isn't useful enough to go to filemap.c in one form
-> or another.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-It looks like it should be, but most in-kernel users of
-read_mapping_folio() and its friends want to pass NULL for file as they
-don't have an open file.
+--185206533-875691919-1653915435=:28067
+Content-Type: TEXT/PLAIN; charset=iso-8859-1
+Content-Transfer-Encoding: 8BIT
 
-Indeed, this code used to until I realised we actually do have open
-files here, so should pass them.  I don't think it affects anything;
-the only users who need the struct file are network filesystems, and
-nobody does dedupe across the network.  If it's not done transparently
-by the server, it's an obvious server offload operation.
+
+
+On Mon, 30 May 2022, Matthew Wilcox wrote:
+
+> On Mon, May 30, 2022 at 08:00:12AM -0400, Mikulas Patocka wrote:
+> > The ntfs3 filesystem lacks the 'invalidate_folio' method and it causes
+> > memory leak. If you write to the filesystem and then unmount it, the
+> > cached written data are not freed and they are permanently leaked.
+> > 
+> > Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+> > Reported-by: José Luis Lara Carrascal <manualinux@yahoo.es>
+> > Fixes: 7ba13abbd31e ("fs: Turn block_invalidatepage into block_invalidate_folio")
+> 
+> That commit is innocent here.  Rather, this should be:
+> 
+> Fixes: 82cae269cfa9 ("fs/ntfs3: Add initialization of super block")
+
+82cae269cfa9 is included in the 5.15 kernel - and this bug only happens in 
+5.18. So, how could 82cae269cfa9 cause it?
+
+> Yes, trees before 7ba13abbd31e will need to change the patch to add
+> invalidate_page instead of invalidate_folio, but that's a normal part
+> of the process.
+
+In the kernel 5.17 and before, if the "invalidatepage" method is NULL, the 
+kernel will use block_invalidatepage (see do_invalidatepage). So, we don't 
+have to provide explicit "invalidatepage" in 5.17 and before and we don't 
+have to backport this bugfix there.
+
+Note that the commit 7ba13abbd31e contains this piece of code:
+-#ifdef CONFIG_BLOCK
+-	if (!invalidatepage)
+-		invalidatepage = block_invalidatepage;
+-#endif
+
+So, it explicitly breaks filesystems that have NULL invalidatepage and 
+NULL invalidate_folio and that relied on block_invalidatepage being called 
+implicitly. So, I believe this commit is the root cause of this bug.
+
+I grepped the kernel for "dirty_folio" and it seems that ntfs3 is the only 
+filesystem that provides "dirty_folio" and doesn't provide 
+"invalidate_folio".
+
+Mikulas
+
+> > Cc: stable@vger.kernel.org	# v5.18
+> > 
+> > ---
+> >  fs/ntfs3/inode.c |    1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > Index: linux-2.6/fs/ntfs3/inode.c
+> > ===================================================================
+> > --- linux-2.6.orig/fs/ntfs3/inode.c	2022-05-16 16:57:24.000000000 +0200
+> > +++ linux-2.6/fs/ntfs3/inode.c	2022-05-30 13:36:45.000000000 +0200
+> > @@ -1951,6 +1951,7 @@ const struct address_space_operations nt
+> >  	.direct_IO	= ntfs_direct_IO,
+> >  	.bmap		= ntfs_bmap,
+> >  	.dirty_folio	= block_dirty_folio,
+> > +	.invalidate_folio = block_invalidate_folio,
+> >  };
+> >  
+> >  const struct address_space_operations ntfs_aops_cmpr = {
+> 
+--185206533-875691919-1653915435=:28067--
+
