@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AB0E538E4A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 May 2022 12:01:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 99D82538E3A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 May 2022 12:01:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245422AbiEaKAT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 May 2022 06:00:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43934 "EHLO
+        id S245433AbiEaKA0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 May 2022 06:00:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43942 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245405AbiEaKAP (ORCPT
+        with ESMTP id S245410AbiEaKAR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 May 2022 06:00:15 -0400
-Received: from mail-ed1-x529.google.com (mail-ed1-x529.google.com [IPv6:2a00:1450:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB26482170;
-        Tue, 31 May 2022 03:00:14 -0700 (PDT)
-Received: by mail-ed1-x529.google.com with SMTP id h11so16770606eda.8;
-        Tue, 31 May 2022 03:00:14 -0700 (PDT)
+        Tue, 31 May 2022 06:00:17 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4341782170;
+        Tue, 31 May 2022 03:00:16 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id v25so8726073eda.6;
+        Tue, 31 May 2022 03:00:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=SljQJAeVhGKeIBI51MbYTdJihy0sRNkihcgcWrQIyMk=;
-        b=ZBp9EWdv4dyFa/WsIYerVBV/5Czl1dSOQzB0bWaLR8VuemQ6QOm1M4R69eKpHA9nd6
-         c1HPF6oYuRRxZPShB/rzFxpDYr2SzpVcfmaTTI1/AsPIJMT2sPHv14VCM3Ka5VBHYXAs
-         x+RhdpJZ93axyquUdQTI8BbhfGTHEGOHs1mum12ZFtPHB/T1dEkf20VpzDu5c8o8JJxt
-         L5805s8can7oaGbMP04m/NeJEPnJ5J3kmnPoXDsme1EeBIo1b0t4i/Kl8NIO/OOcqJec
-         9FKHHAZGXXE+S9p7n7ifDG4TYZso+CBFSqXccDBgxGoDfbZX1IAhrrimZdFs69Jaqd2K
-         a48g==
+        bh=mIxGnBiNQH7wWhpTAOYvfGm3yBUdW2Lv8hSFkOKs0aA=;
+        b=YDb0d+PyOKs210qCqYAFGBvUZTTS4RAIRhhK/d+QO9gshGdaDWgKspQVMQpG7nrtX+
+         TufVc/6A+Te4bjWf9pWyv6ntrZjNTvO1o8tYpzOoAdjIqo9Bklfzy8dXk7BYMrxpSM95
+         usfHUfKLh7JEKoG9wN5zLAoQm71wvfUxu+xCGMzIBHPjTBYFFRg/fQ8Bc1mbpWvV9bwY
+         PR/pdpoW3OmlfWODJKjL9jIEkGs8hD/ZjjXmxLFGR2b/njvlb082VeR+rrGF1R55oj4p
+         qQAdYumTKMLx79UKpj8YkktDQvBcFKlZvP9zcVhZ48lAtSdY31sMnKI1F4yE0kXKaL3w
+         HsZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=SljQJAeVhGKeIBI51MbYTdJihy0sRNkihcgcWrQIyMk=;
-        b=bIK/EBT9ZWRmBQZ1y5/uAXQZk3JD7K98FWmLdZCgazPPvb0DbfH2gHX3hHejGVWY16
-         A1Sm29RQo5EgZ+K5YQc2YZOkfNsAeV83zjUg5IEI44A7Jr8XxSE8FYhOmOWFzFWfOx1l
-         VH+WKtxWfrSD9OKrHyYryG8ZWj3D0eICDCufPo4H26HN5dZbjQFDBVSibwQg9DAGWBzC
-         j92rCISMcTjVyMxuEMqBtG46pWTyrXBxLmIlVsZlgH8+Wte6PFd8U5vBbgttRzdaJ63w
-         zUNTYDawHw1vUPIk+YaVH+AmSekiU3B5lWo0oO/Zj/bUw4b18iuzihUim/702ixGmkjc
-         DlYQ==
-X-Gm-Message-State: AOAM532J04tPSt+eeGIqlsvrdV94J54m7QWlBOQ4ogtUCrtp2btAQ1I7
-        CItAg0e1kpNq5fVWCfPFq0MHj2vysV3O0w==
-X-Google-Smtp-Source: ABdhPJyZPq+OysWRAlAZamevHlLGk4fQamGD+X1EEEY6OJezkY6NR4XeOrBHuCnsv4+0HlBYkj/10Q==
-X-Received: by 2002:a05:6402:34d4:b0:42b:35e5:fc78 with SMTP id w20-20020a05640234d400b0042b35e5fc78mr53286582edc.372.1653991213421;
-        Tue, 31 May 2022 03:00:13 -0700 (PDT)
+        bh=mIxGnBiNQH7wWhpTAOYvfGm3yBUdW2Lv8hSFkOKs0aA=;
+        b=EzU/VTjDPqbd6mX5MnUJBZf5dPyBbmugrc/qa0bl+TwK43Qf7AD99U0bvcESR6zR7i
+         3uBLQU3dbVVm93HWnv8zNa6vg6WguSKa5Un9bCuy7dKs0HNmRzCbUEBMujEN1j7Ldd2q
+         LTrUSQlTbvSldcKsL1Rw7lXSyxm/gy5ekjfZY5ZE1FH6IwCGWX+Va7+Tmhh2e0NiVbOz
+         XEq+YQfaTbFCdPfOKoUMEiYwfKiwORZ+hFuE28k4dzcrKMwjJl4QTwnF2IVpf3aOS5A4
+         pgB22kveaeyPFoQZKeU/cuYogDzRX/UcPng8mYNfUE8j3BO2uPFe51bFVY/ykvKE//5T
+         K6RA==
+X-Gm-Message-State: AOAM532YkWiHHg3W2caL6K9FJxax7zUFkECOtG86b0yNgY43FdMTcjqX
+        tlWMlvEhHfSGl4LhnsYPMCrTQysD1KyrYQ==
+X-Google-Smtp-Source: ABdhPJym6XbAZzn9cN4OBs65hCeI931sSsPopVK1yV+b7qr9DjRRmdjRD8OGAyhyWkR+LhQlwkaGRQ==
+X-Received: by 2002:a50:8754:0:b0:42d:e92f:c924 with SMTP id 20-20020a508754000000b0042de92fc924mr902302edv.389.1653991214818;
+        Tue, 31 May 2022 03:00:14 -0700 (PDT)
 Received: from able.fritz.box (p5b0ea02f.dip0.t-ipconnect.de. [91.14.160.47])
-        by smtp.gmail.com with ESMTPSA id r13-20020a056402018d00b0042617ba6389sm582062edv.19.2022.05.31.03.00.12
+        by smtp.gmail.com with ESMTPSA id r13-20020a056402018d00b0042617ba6389sm582062edv.19.2022.05.31.03.00.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 May 2022 03:00:13 -0700 (PDT)
+        Tue, 31 May 2022 03:00:14 -0700 (PDT)
 From:   "=?UTF-8?q?Christian=20K=C3=B6nig?=" 
         <ckoenig.leichtzumerken@gmail.com>
 X-Google-Original-From: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
@@ -59,13 +59,14 @@ Cc:     christian.koenig@amd.com, alexander.deucher@amd.com,
         daniel@ffwll.ch, viro@zeniv.linux.org.uk,
         akpm@linux-foundation.org, hughd@google.com,
         andrey.grodzovsky@amd.com
-Subject: [PATCH 02/13] oom: take per file badness into account
-Date:   Tue, 31 May 2022 11:59:56 +0200
-Message-Id: <20220531100007.174649-3-christian.koenig@amd.com>
+Subject: [PATCH 03/13] mm: shmem: provide oom badness for shmem files
+Date:   Tue, 31 May 2022 11:59:57 +0200
+Message-Id: <20220531100007.174649-4-christian.koenig@amd.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220531100007.174649-1-christian.koenig@amd.com>
 References: <20220531100007.174649-1-christian.koenig@amd.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
@@ -77,64 +78,38 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Andrey Grodzovsky <andrey.grodzovsky@amd.com>
+This gives the OOM killer an additional hint which processes are
+referencing shmem files with potentially no other accounting for them.
 
-Try to make better decisions which process to kill based on
-per file OOM badness. For this the per file oom badness is queried from
-every file which supports that and divided by the number of references to
-that file structure.
-
-Signed-off-by: Andrey Grodzovsky <andrey.grodzovsky@amd.com>
+Signed-off-by: Christian König <christian.koenig@amd.com>
 ---
- mm/oom_kill.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ mm/shmem.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-index 49d7df39b02d..8a4d05e9568b 100644
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -52,6 +52,8 @@
- #define CREATE_TRACE_POINTS
- #include <trace/events/oom.h>
- 
-+#include <linux/fdtable.h>
-+
- int sysctl_panic_on_oom;
- int sysctl_oom_kill_allocating_task;
- int sysctl_oom_dump_tasks = 1;
-@@ -189,6 +191,19 @@ static bool should_dump_unreclaim_slab(void)
- 	return (global_node_page_state_pages(NR_SLAB_UNRECLAIMABLE_B) > nr_lru);
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 4b2fea33158e..a4ad92a16968 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -2179,6 +2179,11 @@ unsigned long shmem_get_unmapped_area(struct file *file,
+ 	return inflated_addr;
  }
  
-+/* Sumup how much resources are bound by files opened. */
-+static int oom_file_badness(const void *points, struct file *file, unsigned n)
++static long shmem_oom_badness(struct file *file)
 +{
-+	long badness;
-+
-+	if (!file->f_op->oom_badness)
-+		return 0;
-+
-+	badness = file->f_op->oom_badness(file);
-+	*((long *)points) += DIV_ROUND_UP(badness, file_count(file));
-+	return 0;
++	return i_size_read(file_inode(file)) >> PAGE_SHIFT;
 +}
 +
- /**
-  * oom_badness - heuristic function to determine which candidate task to kill
-  * @p: task struct of which task we should calculate
-@@ -229,6 +244,12 @@ long oom_badness(struct task_struct *p, unsigned long totalpages)
- 	 */
- 	points = get_mm_rss(p->mm) + get_mm_counter(p->mm, MM_SWAPENTS) +
- 		mm_pgtables_bytes(p->mm) / PAGE_SIZE;
-+
-+	/*
-+	 * Add how much memory a task uses in opened files, e.g. device drivers.
-+	 */
-+	iterate_fd(p->files, 0, oom_file_badness, &points);
-+
- 	task_unlock(p);
- 
- 	/* Normalize to oom_score_adj units */
+ #ifdef CONFIG_NUMA
+ static int shmem_set_policy(struct vm_area_struct *vma, struct mempolicy *mpol)
+ {
+@@ -3780,6 +3785,7 @@ EXPORT_SYMBOL(shmem_aops);
+ static const struct file_operations shmem_file_operations = {
+ 	.mmap		= shmem_mmap,
+ 	.get_unmapped_area = shmem_get_unmapped_area,
++	.oom_badness	= shmem_oom_badness,
+ #ifdef CONFIG_TMPFS
+ 	.llseek		= shmem_file_llseek,
+ 	.read_iter	= shmem_file_read_iter,
 -- 
 2.25.1
 
