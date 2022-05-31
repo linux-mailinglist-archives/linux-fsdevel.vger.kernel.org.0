@@ -2,57 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 07E19538B71
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 May 2022 08:30:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BDD82538B98
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 May 2022 08:52:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244286AbiEaGag (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 May 2022 02:30:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44886 "EHLO
+        id S244376AbiEaGwb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 May 2022 02:52:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232025AbiEaGaf (ORCPT
+        with ESMTP id S244370AbiEaGwa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 May 2022 02:30:35 -0400
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 211C695DFC;
-        Mon, 30 May 2022 23:30:35 -0700 (PDT)
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 134AC68AFE; Tue, 31 May 2022 08:30:32 +0200 (CEST)
-Date:   Tue, 31 May 2022 08:30:31 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Keith Busch <kbusch@kernel.org>
-Cc:     Eric Biggers <ebiggers@kernel.org>, Keith Busch <kbusch@fb.com>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        axboe@kernel.dk, Kernel Team <Kernel-team@fb.com>, hch@lst.de,
-        bvanassche@acm.org, damien.lemoal@opensource.wdc.com,
-        pankydev8@gmail.com
-Subject: Re: [PATCHv4 8/9] block: relax direct io memory alignment
-Message-ID: <20220531063031.GF21098@lst.de>
-References: <20220526010613.4016118-1-kbusch@fb.com> <20220526010613.4016118-9-kbusch@fb.com> <Yo8sZWNNTKM2Kwqm@sol.localdomain> <Yo+FtQ8GlHtMT3pT@kbusch-mbp.dhcp.thefacebook.com> <Yo/DYI17KWgXJNyB@sol.localdomain> <Yo/NNiGbnHw/G9Lc@kbusch-mbp.dhcp.thefacebook.com> <Yo/jzEDENPKpD8Al@kbusch-mbp.dhcp.thefacebook.com>
+        Tue, 31 May 2022 02:52:30 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D2B87E1C6;
+        Mon, 30 May 2022 23:52:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=QftehnXD0t6zU0rR+xdgmVq3Th
+        /2gefJLtcNI4+kZSB/Re/Q4DUK0q6ZJ1s8uh9vDhUQYeCPBzSZI1pR6cfQ1LiV3vL6XOtT96m3btv
+        u/z3+DUiy2dTLaOnPhRlbl/5hgTNv+1YGZk/j1dwRCBT1kmQMJeRV7hwVzQYFKp19J2E0C3tsJVYb
+        O+zt/3c4UXW3s9h+YY/a+bD2N0jUD/b5iOnyreRPv+ph7AjZRjvQZ0cFR3FtJs6GaU75NE9WvmmF0
+        E4oi+YFnLd0S2p+FUbf0LOYee0/yGPYgrUMFWMQSgbTqIGnKaVQRbKNeGIYciG65bpXdigWOwpTm2
+        EoW9vbww==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nvvjs-009cNG-BS; Tue, 31 May 2022 06:52:24 +0000
+Date:   Mon, 30 May 2022 23:52:24 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Stefan Roesch <shr@fb.com>
+Cc:     io-uring@vger.kernel.org, kernel-team@fb.com, linux-mm@kvack.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        david@fromorbit.com, jack@suse.cz, hch@infradead.org
+Subject: Re: [PATCH v6 03/16] mm: Add balance_dirty_pages_ratelimited_flags()
+ function
+Message-ID: <YpW7KBU56E/E/C2p@infradead.org>
+References: <20220526173840.578265-1-shr@fb.com>
+ <20220526173840.578265-4-shr@fb.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Yo/jzEDENPKpD8Al@kbusch-mbp.dhcp.thefacebook.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+In-Reply-To: <20220526173840.578265-4-shr@fb.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 26, 2022 at 02:32:12PM -0600, Keith Busch wrote:
-> On Thu, May 26, 2022 at 12:55:50PM -0600, Keith Busch wrote:
-> > 
-> > Let me see how difficult it would be catch it early in blkdev_dio_aligned().
-> 
-> Something like this appears to work:
+Looks good:
 
-This looks reasonable to me.  Nits below:
-
-> +	if (!iov_iter_aligned(iter, bdev_dma_alignment(bdev),
-> +			      bdev_logical_block_size(bdev) - 1))
-
-This probably wants a helper so that it can also be reused by e.g.
-iomap.
+Reviewed-by: Christoph Hellwig <hch@lst.de>
