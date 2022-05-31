@@ -2,198 +2,202 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 04D6F53951F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 May 2022 18:57:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 39D2A5395ED
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 May 2022 20:12:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346235AbiEaQ5s convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 May 2022 12:57:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37300 "EHLO
+        id S1346853AbiEaSM5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 May 2022 14:12:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56258 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346231AbiEaQ5r (ORCPT
+        with ESMTP id S234110AbiEaSMz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 May 2022 12:57:47 -0400
-Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70A3E32079;
-        Tue, 31 May 2022 09:57:46 -0700 (PDT)
-Received: from in01.mta.xmission.com ([166.70.13.51]:56992)
-        by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1nw5Bg-001lgm-LF; Tue, 31 May 2022 10:57:44 -0600
-Received: from ip68-227-174-4.om.om.cox.net ([68.227.174.4]:42704 helo=email.froward.int.ebiederm.org.xmission.com)
-        by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1nw5Be-007x07-HF; Tue, 31 May 2022 10:57:44 -0600
-From:   "Eric W. Biederman" <ebiederm@xmission.com>
-To:     Zhihao Cheng <chengzhihao1@huawei.com>
-Cc:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <yukuai3@huawei.com>, <yi.zhang@huawei.com>,
-        Alexey Gladkov <legion@kernel.org>
-References: <20220531153708.3449446-1-chengzhihao1@huawei.com>
-Date:   Tue, 31 May 2022 11:57:36 -0500
-In-Reply-To: <20220531153708.3449446-1-chengzhihao1@huawei.com> (Zhihao
-        Cheng's message of "Tue, 31 May 2022 23:37:08 +0800")
-Message-ID: <877d61ej27.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+        Tue, 31 May 2022 14:12:55 -0400
+Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C67C24B42B;
+        Tue, 31 May 2022 11:12:54 -0700 (PDT)
+Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
+        by m0001303.ppops.net (8.17.1.5/8.17.1.5) with ESMTP id 24VFiK9T013782;
+        Tue, 31 May 2022 11:12:42 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=message-id : date :
+ subject : to : cc : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=facebook;
+ bh=r3LzOOZ2NYamdLHSsIBBCRrtsrK03tq55mMsUs8dtE4=;
+ b=OxoFDAJVLT2HGpVEREoaY5noXMmkOEhdUQcK6BTKsLs94TR5ANK+XYTLBV+x+N8bppeE
+ 2JPRgtMyHXq4wA4up/ftAhz1LpAyHzog9KN6Gvy1zlTpFjZnG2pYSkowIZt4eCBnGaGT
+ b7f1U/UeASBwS/5eZj6P6GAyrllRd2ie9l4= 
+Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2171.outbound.protection.outlook.com [104.47.59.171])
+        by m0001303.ppops.net (PPS) with ESMTPS id 3gbfdtfquy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 31 May 2022 11:12:42 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=fUS27XD/Sov8WtoJcDunFXi5k4m3Q0nVnHb/uUpIF/7X+5E/Pc49i9j12Yqy+6Tdt8TMZdqF9T06Gn8GOcEpN89bevY8rPtJBhyKSe5SAddIhfWoECCcsFakOvwwNg1focbLFFMkosL3rMVbWKs0fLCSAz6K5+nokflEDcvCcPUMFnXTxkhIgUg3SwDwCBy7DribPL1Xl7l6Okade+TkHnIKNl7u748iBZssCF16CFcuZiR9pKZKTtK38EtYvJmNjCdmXC5KhHgeDmojZLHbFhYYIAxl7FWrQh6OzVu909XEjbqHS97h9HgbY5xdGktwwpmuiGLLwyAIGbDMIl0wvg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=r3LzOOZ2NYamdLHSsIBBCRrtsrK03tq55mMsUs8dtE4=;
+ b=K0eGCEBEOGBEjsR+b85Aw1xHktnufCsOtzdTNlN7QuKVet1TGwtQ/2aODtR3Fk6Auj8/1pQIh9jNgfqotDfHcNN/oXOydAi99h4dEVSUcCMcBpsFf402mtKFiZG6Z02HzQli9wJOEEH9PS6jLamZWRIuUzJiDSNZhqROUX4R2IPrjTtMtNnyZrkc6wG6Y8oVBScfD57SQCStUgHdhm/BQjcFhm1lReul+ttSIOlwesFC3/onVqt5mqrxZo7SOk2f2JnTqGE1t79mF5MRtksHHgy0byB38XOmOOA2+gyKPqHEROW31wh7iKCkfkpfIO4c0+BmqwaoSXBDhdnsjc0viA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
+ header.d=fb.com; arc=none
+Received: from MWHPR15MB1791.namprd15.prod.outlook.com (2603:10b6:301:4e::20)
+ by SN7PR15MB4190.namprd15.prod.outlook.com (2603:10b6:806:10c::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5293.19; Tue, 31 May
+ 2022 18:12:40 +0000
+Received: from MWHPR15MB1791.namprd15.prod.outlook.com
+ ([fe80::e17e:e90d:7675:24b8]) by MWHPR15MB1791.namprd15.prod.outlook.com
+ ([fe80::e17e:e90d:7675:24b8%11]) with mapi id 15.20.5293.019; Tue, 31 May
+ 2022 18:12:40 +0000
+Message-ID: <a2d5f74f-b354-6590-9910-82c3beca5c88@fb.com>
+Date:   Tue, 31 May 2022 11:12:38 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.9.1
+Subject: Re: [PATCH v6 04/16] iomap: Add flags parameter to
+ iomap_page_create()
+Content-Language: en-US
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     io-uring@vger.kernel.org, kernel-team@fb.com, linux-mm@kvack.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        david@fromorbit.com, jack@suse.cz
+References: <20220526173840.578265-1-shr@fb.com>
+ <20220526173840.578265-5-shr@fb.com> <YpW7nKoUB9dJk3ee@infradead.org>
+From:   Stefan Roesch <shr@fb.com>
+In-Reply-To: <YpW7nKoUB9dJk3ee@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SJ0PR13CA0152.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c7::7) To MWHPR15MB1791.namprd15.prod.outlook.com
+ (2603:10b6:301:4e::20)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-XM-SPF: eid=1nw5Be-007x07-HF;;;mid=<877d61ej27.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.174.4;;;frm=ebiederm@xmission.com;;;spf=softfail
-X-XM-AID: U2FsdGVkX194TtodTUmxt8k5gyHJn5GVYFunN63ZQUE=
-X-SA-Exim-Connect-IP: 68.227.174.4
-X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 88609a26-5ed1-4221-a7c4-08da43312658
+X-MS-TrafficTypeDiagnostic: SN7PR15MB4190:EE_
+X-Microsoft-Antispam-PRVS: <SN7PR15MB4190F10D6D8C92C990C963BDD8DC9@SN7PR15MB4190.namprd15.prod.outlook.com>
+X-FB-Source: Internal
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: PkOemQjXwq4kXtFSKyJq0AUWHWDNI9KnbPVlcFkmnIhTdoT9SRcJ3fcDbWDiavu9A6vVb9kjhmbHLpYBWkhjE29id9w6FeAiedMcZfu9Hu2m5ucN6XURac6FFXmOe1vCZfM4euQd5L2kjyxYZ5NP+Sld7WDYrJyx8dH6aKUzvu5bmajswBfirFIOD+dljJL4dbo2OogZ/2TQogsOnPrjbzc3OVGeyCevvPC7H/tBUObCV9NLMrIA/qiEj3hKltBkqNbnD/K7xgKw7Dmc9I0UhSNFYHiG0zkGb8Oib2Vn5KJiXF3/6QSlN2ppfvGfqJKV93OnGMuU4j21oRGeYYOiQz7tMkeommjAUgbDOdX/z54t1BmG2EHzoieGIiB0hwG0O602h/PtzJmTjdT5w8AvcTxaWqiCPvcWZQk4gSBmJFs1VrjS28b2JD/jPeUd00F4GpzhneNqBbxm38iNiqQh3W0zD+fCS+tOz9XzUsDJiQU7siHQdxLaJiXrQ9Cv032cKS9cdVVSWwnlSMZKZEclG6FlP1hSVyXespJUcVs+mYIM8+L2oMIaaN19xG/BlkznS1yeg5RwF15q5OLVGceiunLGMQJeutBQXiDo1yzbw/3/hf+W4LeRo+oEbMiDo/shSjyyRUYnyjIcxkgjRaSMokPoFu1uA0/bFwnbTUqPt7RRnb1DAJHyglkz+qF0RTAbXahqfbh4AQa5Vg/gHAtcS/QHZPQQ+JOUdrnTVlLkKdE=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR15MB1791.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(66476007)(66946007)(2906002)(31686004)(36756003)(4326008)(8676002)(66556008)(508600001)(2616005)(83380400001)(5660300002)(53546011)(6512007)(186003)(86362001)(6506007)(6486002)(31696002)(8936002)(38100700002)(316002)(6916009)(43740500002)(45980500001);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?TGljOG9ZMTJVM2VKWXR6NXM0WjJmQXRUb0lvSXRBTEtnSEJKZTc3U1pJT3pE?=
+ =?utf-8?B?STNkMThhK2hzLy9NdU0vbEVMWUxxSG52RjlIYmNWeWk2L3dmZ2pvMUlLRnFM?=
+ =?utf-8?B?a3BOY1NDL3JIVVNBVm1YVWFhdERRaGltNTBRWG5XNFZ4dUdDTjd6Zk5zZ0Vn?=
+ =?utf-8?B?V21qT1BLQlc4T2haVDZzenNpaDFjdk9sMWNKY1dtT2I4WGdZNi9DUmNhSE5s?=
+ =?utf-8?B?Q1EyMlRhZEMwSmZHWmMreDc3MDNzYjhyT0kzV1hWbmhMbE1kSWJBQ3hIOTZK?=
+ =?utf-8?B?KzJzajQrKzdkYzdvQzEwcC8xMzlIVllBODV1cFJ6WVRzYnVXUjMvdmtEc2JJ?=
+ =?utf-8?B?eHBTTWd1cWUzVFlTT1d5eUlUWVl3L2tENktPMWtYQVE4TzBVY0pUWXB1SzJT?=
+ =?utf-8?B?K3pQN0FFVkYxa0NCYmRVbFFrOU0yMVpHR3RKekRLajFJeDVxZkd1MERLaFFy?=
+ =?utf-8?B?S0dzK0pVSktzWnNTd0hPcTZrd2pTcXBDVkRFQWRtNjA3c1BxTU9WY0h1dExD?=
+ =?utf-8?B?cTlkK3JhS2JUVTB2VzBNeTRGYjFTQVJaLzlJVEpvNy9KV0ZrcVZOYXcwUFNt?=
+ =?utf-8?B?MkxOemkvUUVySGkyRElIdlhma2l3bUJsUmlOM1dnU3pkQ29oN2RTVW81eVFy?=
+ =?utf-8?B?ZFAvY2FBaTZLYTl0L0dkMDF4WldueHRkTkRsNEVYWi9ncWNZNVVKSkIvTWZW?=
+ =?utf-8?B?QlYrWXRvTDBMdzNjRXA2bThVR3REVllwU0lIVzNWeWhCaDJjR2pqZGhLaEl4?=
+ =?utf-8?B?bXVRbW5NYy8rVlZpQW5YVVo3WFFMZUJsbW1TZTVpZldpOTZEaDE0djB1ZUdn?=
+ =?utf-8?B?MHVIbHhDMWN1SThwZTB3NEFhQ05UdnhUTzRYcFZsaElsZDJINGloMElndlBa?=
+ =?utf-8?B?QnIzaUpCODJwOUxHSGtuNksyTmZ3U3c5RGVHV2VEbUtSL3VGMm9RWU9iUkZL?=
+ =?utf-8?B?OTVLckFwanVNRVJMa0t1K3c1RnNhb2w1TVJZOFBjNURodHI2eFRnandFelk4?=
+ =?utf-8?B?Mmo1Y1NsSDloQW9FWVJvcVhTV1A5dFJHZDJFamoyTlZpeUVTZHdSZWNieVRV?=
+ =?utf-8?B?cnJ1ZnFjdVRCdTFsejByRmYyeGpHRW1WSUxHdmpIajNXV2dhWWp1aUwrYk1t?=
+ =?utf-8?B?K0Y2cCtMeFFvOERaVXltdjNqT2VCMkhmRUt0MXRHVGRiVGQyWHBmM0t3QkVa?=
+ =?utf-8?B?SFZGdHJ2cURFa2pKL1lPSE5mNmZNNWsrSWk2RnRzVHJtZ0dRMGdlMk56NThR?=
+ =?utf-8?B?bEczNE1yQ3MrbldwYmJqZUJxM1JaYWt2NFVUc1g0NVUzSUw3eUw2Zk1qUVRx?=
+ =?utf-8?B?UkVORHVlRjlmeldFV2t3cm1SYVZsRXFRNHQvMWl3clhMM0d4OXlXSWhkKzNu?=
+ =?utf-8?B?TVNyWC9BR1lEWVhpbG0waEUrdzBzOHNaZFJ0Rnd5VUZyVHlCYndubE5QQlJW?=
+ =?utf-8?B?TkltNExSWm5waGYyZ0hoVzBZeW1LbGc2TTYydlNPN21RMTJKVjRLbGl3bU9o?=
+ =?utf-8?B?VmxHbDg5KzAvK1ZKTTAvYTdkYWlkUVl6QzBsc1ZtMjhUbUo0ek91QjBwOHVr?=
+ =?utf-8?B?dlJwM0dTVDZlYXZKdnhvQjRNTkV0dHQ5YUJvUERmei9BSFIvRE5NallzVWZK?=
+ =?utf-8?B?TTkwaHl6N1l2T0Zaa1o0OXlWZUxKOGhLSVViVXNtZk9rNzE4b0FEeTBZUy9r?=
+ =?utf-8?B?dEUrVHk5WGdpSGVGZVc5c2xmVTh3YjNtenIvM3AxVnMyQkFIbzhETWJXdG15?=
+ =?utf-8?B?QVFxZFZIeGVhWnVqN0NRVzFCSTRWZTcrL0IyOVRkTDg0ZUVOY002bU1TZjl2?=
+ =?utf-8?B?Q1N0TVZhRlc4bGVoZnNmcTJYTGdSRWQ3Tm9keUREdWhNY21EVUZ3cDNzS3Vj?=
+ =?utf-8?B?RHZoaC8xekt2QWM3RkhybWp4UmF1Um40dTdEOC9OU1V2UGluRjlrc0R2VkhQ?=
+ =?utf-8?B?eVRQdHRMQ0tmVnErZjdHZjdydHRQSmxXVU8zb0R6UlE0djEzRXFuY0ZOY2Ir?=
+ =?utf-8?B?U1FwS0xVb0o1eklHS0U2czlhN0IxZFBVRENndXpBM3poVHQxQUp3TG9rSC80?=
+ =?utf-8?B?N3ZlcWwzWjBNaHBKVC9hYWJIa0JJeEtpWnRpWWtLakoycDNiOHYxSDFKNmRh?=
+ =?utf-8?B?aWY5QVZFWnBwNVVLYWJKQ0diTC9FeFNxZkxRQ3RMbWpndFlYbklNNXRlczJU?=
+ =?utf-8?B?VVN2NHptTDVZTFBJRE9FZkJsaGplZFF5VERNM0ZGUXdTVkZTSE5iOS9WSGRv?=
+ =?utf-8?B?TWtubVFZak5UQnJJN0U5YTdDdmt2RmFkdi9qWDlrbjNKSEJOdmU2RmJPaWlB?=
+ =?utf-8?B?bkowWS82SUtBeGR4bFNPVGg1VEhlM3pBYWpBMG93aFlOUzBmVkV2TUg2ZlBH?=
+ =?utf-8?Q?TA9rfTbPjjtHPE40=3D?=
+X-OriginatorOrg: fb.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 88609a26-5ed1-4221-a7c4-08da43312658
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR15MB1791.namprd15.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 May 2022 18:12:40.4024
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7xzbaUMvxrNIcd+dHQ2OpZeaAupYl+nZW/3xYAfXVTJ91Pn6+4QN1iqpAcZGHXTh
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR15MB4190
+X-Proofpoint-ORIG-GUID: fNEJDDs0ukVZn1T8Ja-kye0kDA2Tsiwf
+X-Proofpoint-GUID: fNEJDDs0ukVZn1T8Ja-kye0kDA2Tsiwf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.874,Hydra:6.0.517,FMLib:17.11.64.514
+ definitions=2022-05-31_07,2022-05-30_03,2022-02-23_01
+X-Spam-Status: No, score=-6.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
-X-Spam-Virus: No
-X-Spam-DCC: XMission; sa02 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ***;Zhihao Cheng <chengzhihao1@huawei.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 1536 ms - load_scoreonly_sql: 0.03 (0.0%),
-        signal_user_changed: 4.0 (0.3%), b_tie_ro: 2.7 (0.2%), parse: 0.80
-        (0.1%), extract_message_metadata: 9 (0.6%), get_uri_detail_list: 1.97
-        (0.1%), tests_pri_-1000: 3.8 (0.2%), tests_pri_-950: 0.97 (0.1%),
-        tests_pri_-900: 0.79 (0.1%), tests_pri_-90: 98 (6.4%), check_bayes: 96
-        (6.3%), b_tokenize: 8 (0.5%), b_tok_get_all: 9 (0.6%), b_comp_prob:
-        1.82 (0.1%), b_tok_touch_all: 75 (4.9%), b_finish: 0.79 (0.1%),
-        tests_pri_0: 1404 (91.4%), check_dkim_signature: 0.43 (0.0%),
-        check_dkim_adsp: 1.87 (0.1%), poll_dns_idle: 0.54 (0.0%),
-        tests_pri_10: 3.4 (0.2%), tests_pri_500: 8 (0.5%), rewrite_mail: 0.00
-        (0.0%)
-Subject: Re: [PATCH RFC] proc: Fix a dentry lock race between release_task
- and lookup
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Zhihao Cheng <chengzhihao1@huawei.com> writes:
 
-> Commit 7bc3e6e55acf06 ("proc: Use a list of inodes to flush from proc")
-> moved proc_flush_task() behind __exit_signal(). Then, process systemd
-> can take long period high cpu usage during releasing task in following
-> concurrent processes:
->
->   systemd                                 ps
-> kernel_waitid                 stat(/proc/pid)
->   do_wait                       filename_lookup
->     wait_consider_task            lookup_fast
->       release_task
->         __exit_signal
->           __unhash_process
->             detach_pid
->               __change_pid // remove task->pid_links
->                                      d_revalidate -> pid_revalidate  // 0
->                                      d_invalidate(/proc/pid)
->                                        shrink_dcache_parent(/proc/pid)
->                                          d_walk(/proc/pid)
->                                            spin_lock_nested(/proc/pid/fd)
->                                            // iterating opened fd
->         proc_flush_pid                                    |
->            d_invalidate (/proc/pid/fd)                    |
->               shrink_dcache_parent(/proc/pid/fd)          |
->                 shrink_dentry_list(subdirs)               ↓
->                   shrink_lock_dentry(/proc/pid/fd) ---> race on dentry lock
->
-> Function d_invalidate() will remove dentry from hash firstly, but why does
-> proc_flush_pid() process dentry '/proc/pid/fd' before dentry '/proc/pid'?
-> That's because proc_pid_make_inode() adds proc inode in reverse order by
-> invoking hlist_add_head_rcu(). But proc should not add any inodes under
-> '/proc/pid' except '/proc/pid/task/pid', fix it by adding inode into
-> 'pid->inodes' only if the inode is /proc/pid or /proc/pid/task/pid.
 
-If I understand correctly you are saying that under some circumstances
-this code runs slow, and you are proposing an optimization.
+On 5/30/22 11:54 PM, Christoph Hellwig wrote:
+> On Thu, May 26, 2022 at 10:38:28AM -0700, Stefan Roesch wrote:
+>> Add the kiocb flags parameter to the function iomap_page_create().
+>> Depending on the value of the flags parameter it enables different gfp
+>> flags.
+>>
+>> No intended functional changes in this patch.
+>>
+>> Signed-off-by: Stefan Roesch <shr@fb.com>
+>> Reviewed-by: Jan Kara <jack@suse.cz>
+>> ---
+>>  fs/iomap/buffered-io.c | 19 +++++++++++++------
+>>  1 file changed, 13 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+>> index 8ce8720093b9..d6ddc54e190e 100644
+>> --- a/fs/iomap/buffered-io.c
+>> +++ b/fs/iomap/buffered-io.c
+>> @@ -44,16 +44,21 @@ static inline struct iomap_page *to_iomap_page(struct folio *folio)
+>>  static struct bio_set iomap_ioend_bioset;
+>>  
+>>  static struct iomap_page *
+>> -iomap_page_create(struct inode *inode, struct folio *folio)
+>> +iomap_page_create(struct inode *inode, struct folio *folio, unsigned int flags)
+>>  {
+>>  	struct iomap_page *iop = to_iomap_page(folio);
+>>  	unsigned int nr_blocks = i_blocks_per_folio(inode, folio);
+>> +	gfp_t gfp = GFP_NOFS | __GFP_NOFAIL;
+>>  
+>>  	if (iop || nr_blocks <= 1)
+>>  		return iop;
+>>  
+>> +	if (flags & IOMAP_NOWAIT)
+>> +		gfp = GFP_NOWAIT;
+>> +
+> 
+> Maybe this would confuse people less if it was:
+> 
+> 	if (flags & IOMAP_NOWAIT)
+> 		gfp = GFP_NOWAIT;
+> 	else
+> 		gfp = GFP_NOFS | __GFP_NOFAIL;
+> 
 
-That optimization is to change the content of the pid->inodes list
-from all directories under that pid, to just the /proc/<tgid> and
-/proc/<tgid>/task/<pid>.
+I made the above change.
 
-The justification being that d_invalidate on the parent directory will
-invalidate all children.  So only those two directories are interesting
-from a d_invalidate point of view.
-
-That seems like a valid optimization.
-
-This could also count as a regression fix if you can show how the
-performance changed poorly when the pid->inodes change was introduced
-and how the performance improves with your change.   I currently only
-see that you hit a pathological case and you are correcting it.
-
-As for the actual code change I think it would be better to
-remove the code from proc_pid_make_inode and make a helper
-proc_pid_make_base_inode that performs the extra work of
-adding to the pid->list.  Not adding a flag makes the code
-easier to follow.
-
-Something like the code below.  
-
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index d654ce7150fd..9d025e70ddc3 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -1915,11 +1915,6 @@ struct inode *proc_pid_make_inode(struct super_block * sb,
- 
- 	/* Let the pid remember us for quick removal */
- 	ei->pid = pid;
--	if (S_ISDIR(mode)) {
--		spin_lock(&pid->lock);
--		hlist_add_head_rcu(&ei->sibling_inodes, &pid->inodes);
--		spin_unlock(&pid->lock);
--	}
- 
- 	task_dump_owner(task, 0, &inode->i_uid, &inode->i_gid);
- 	security_task_to_inode(task, inode);
-@@ -1932,6 +1927,27 @@ struct inode *proc_pid_make_inode(struct super_block * sb,
- 	return NULL;
- }
- 
-+struct inode *proc_pid_make_base_inode(struct super_block * sb,
-+				       struct task_struct *task, umode_t mode)
-+{
-+	struct inode * inode;
-+	struct proc_inode *ei;
-+	struct pid *pid;
-+
-+	inode = proc_pid_make_inode(sb, task, mode);
-+	if (!inode)
-+		return NULL;
-+
-+	/* Let proc_flush_pid find this directory inode */
-+	ei = PROC_I(inode);
-+	pid = ei->pid;
-+	spin_lock(&pid->lock);
-+	hlist_add_head_rcu(&ei->sibling_inodes, &pid->inodes);
-+	spin_unlock(&pid->lock);
-+
-+	return inode;
-+}
-+
- int pid_getattr(struct user_namespace *mnt_userns, const struct path *path,
- 		struct kstat *stat, u32 request_mask, unsigned int query_flags)
- {
-@@ -3351,7 +3367,7 @@ static struct dentry *proc_pid_instantiate(struct dentry * dentry,
- {
- 	struct inode *inode;
- 
--	inode = proc_pid_make_inode(dentry->d_sb, task, S_IFDIR | S_IRUGO | S_IXUGO);
-+	inode = proc_pid_make_base_inode(dentry->d_sb, task, S_IFDIR | S_IRUGO | S_IXUGO);
- 	if (!inode)
- 		return ERR_PTR(-ENOENT);
- 
-@@ -3650,7 +3666,7 @@ static struct dentry *proc_task_instantiate(struct dentry *dentry,
- 	struct task_struct *task, const void *ptr)
- {
- 	struct inode *inode;
--	inode = proc_pid_make_inode(dentry->d_sb, task, S_IFDIR | S_IRUGO | S_IXUGO);
-+	inode = proc_pid_make_base_inode(dentry->d_sb, task, S_IFDIR | S_IRUGO | S_IXUGO);
- 	if (!inode)
- 		return ERR_PTR(-ENOENT);
- 
-
-Eric
+> but even as is it is perfectly fine (and I tend to write these kinds of
+> shortcuts as well).
+> 
+> Looks good either way:
+> 
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
