@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 99D82538E3A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 May 2022 12:01:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C478538E46
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 May 2022 12:01:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245433AbiEaKA0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 May 2022 06:00:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43942 "EHLO
+        id S245464AbiEaKA3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 May 2022 06:00:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245410AbiEaKAR (ORCPT
+        with ESMTP id S245419AbiEaKAT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 May 2022 06:00:17 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4341782170;
-        Tue, 31 May 2022 03:00:16 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id v25so8726073eda.6;
-        Tue, 31 May 2022 03:00:16 -0700 (PDT)
+        Tue, 31 May 2022 06:00:19 -0400
+Received: from mail-ej1-x630.google.com (mail-ej1-x630.google.com [IPv6:2a00:1450:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9170282172;
+        Tue, 31 May 2022 03:00:17 -0700 (PDT)
+Received: by mail-ej1-x630.google.com with SMTP id n10so25580324ejk.5;
+        Tue, 31 May 2022 03:00:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=mIxGnBiNQH7wWhpTAOYvfGm3yBUdW2Lv8hSFkOKs0aA=;
-        b=YDb0d+PyOKs210qCqYAFGBvUZTTS4RAIRhhK/d+QO9gshGdaDWgKspQVMQpG7nrtX+
-         TufVc/6A+Te4bjWf9pWyv6ntrZjNTvO1o8tYpzOoAdjIqo9Bklfzy8dXk7BYMrxpSM95
-         usfHUfKLh7JEKoG9wN5zLAoQm71wvfUxu+xCGMzIBHPjTBYFFRg/fQ8Bc1mbpWvV9bwY
-         PR/pdpoW3OmlfWODJKjL9jIEkGs8hD/ZjjXmxLFGR2b/njvlb082VeR+rrGF1R55oj4p
-         qQAdYumTKMLx79UKpj8YkktDQvBcFKlZvP9zcVhZ48lAtSdY31sMnKI1F4yE0kXKaL3w
-         HsZw==
+        bh=Nne0qJckA/hMuSOr0O9+SBShBUR9gCrIksc3pugIfaw=;
+        b=O04QHlDY6DBBsKrGQS2x+dxNPUvaLGwatBhA9Ypf6fUvXeQn4u2iZyLs+G4Gopi2gn
+         lMPnA9p2Gz45t7ICtHVl6tg1eE8albLaPc/BmmQBPg3ZJxqBikRQy57f7Gd//Yisj1mq
+         76jYCx/vPIdNy0UXH2etO7PDMMWd1OqeisBEgyFTI9zNlOQxBgL6irhDuYoGR91FeUzH
+         EGqVWW4gL9+MALPxEAxgJkeLA1KAldYG/7fZPitSHzltfhEhG1K7I0p/7oGL1xaLWwU1
+         IWCc36zCKbmVtfqPjeE1k5dNjDQMnB1bXMwDXVEhisX6bguza7GDvQPXMaO9uEGf9zR/
+         OIgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=mIxGnBiNQH7wWhpTAOYvfGm3yBUdW2Lv8hSFkOKs0aA=;
-        b=EzU/VTjDPqbd6mX5MnUJBZf5dPyBbmugrc/qa0bl+TwK43Qf7AD99U0bvcESR6zR7i
-         3uBLQU3dbVVm93HWnv8zNa6vg6WguSKa5Un9bCuy7dKs0HNmRzCbUEBMujEN1j7Ldd2q
-         LTrUSQlTbvSldcKsL1Rw7lXSyxm/gy5ekjfZY5ZE1FH6IwCGWX+Va7+Tmhh2e0NiVbOz
-         XEq+YQfaTbFCdPfOKoUMEiYwfKiwORZ+hFuE28k4dzcrKMwjJl4QTwnF2IVpf3aOS5A4
-         pgB22kveaeyPFoQZKeU/cuYogDzRX/UcPng8mYNfUE8j3BO2uPFe51bFVY/ykvKE//5T
-         K6RA==
-X-Gm-Message-State: AOAM532YkWiHHg3W2caL6K9FJxax7zUFkECOtG86b0yNgY43FdMTcjqX
-        tlWMlvEhHfSGl4LhnsYPMCrTQysD1KyrYQ==
-X-Google-Smtp-Source: ABdhPJym6XbAZzn9cN4OBs65hCeI931sSsPopVK1yV+b7qr9DjRRmdjRD8OGAyhyWkR+LhQlwkaGRQ==
-X-Received: by 2002:a50:8754:0:b0:42d:e92f:c924 with SMTP id 20-20020a508754000000b0042de92fc924mr902302edv.389.1653991214818;
-        Tue, 31 May 2022 03:00:14 -0700 (PDT)
+        bh=Nne0qJckA/hMuSOr0O9+SBShBUR9gCrIksc3pugIfaw=;
+        b=YKY4kc4K9h88N6xlb2ExBoxaxveasYRFz+2xrYsGxYV+Xgck5RLQL3HMbf02oopUlu
+         9c4OsC862N9XSoU7+rcvEik7eGyTqELi6YsDG2UFC859tZ98evKBlQXD5qXyNLHN6+8X
+         ZAUka2voptF66lrtZFpfD0yWS5rgT4ZOdy81KqJuSNS/46vIo4mXUjSYYRd3Kjeya//f
+         tY29+u/8OTxPY1RYPRL+Br29ixVdZ9FZmqqKlZjR5TTCvDVEJpjbiotjTnDGMxZJHZ8I
+         FkCvT3IeI4cOSJXllHvxedRguAtKARthjiw7mR82QdnpxWUt9o0+8ulDg8mMaY+gcuGr
+         73Ig==
+X-Gm-Message-State: AOAM531x4513CxI1N2RoS6rnHlA32wTcCHxZ9O6sdcWzTuuKwlmWdBQD
+        MCs/5Mhdk8OYPNY8wcrh3IGMiOjNPMdcFA==
+X-Google-Smtp-Source: ABdhPJxmWnOcxxDaVC0tQGNbj0CSrxLQR0xy8ghD6daeqEn1NVbnq/aFqlXxIqVHd6RNxE0nHnKb2Q==
+X-Received: by 2002:a17:907:3f13:b0:6ff:18ad:6936 with SMTP id hq19-20020a1709073f1300b006ff18ad6936mr25394163ejc.158.1653991216188;
+        Tue, 31 May 2022 03:00:16 -0700 (PDT)
 Received: from able.fritz.box (p5b0ea02f.dip0.t-ipconnect.de. [91.14.160.47])
-        by smtp.gmail.com with ESMTPSA id r13-20020a056402018d00b0042617ba6389sm582062edv.19.2022.05.31.03.00.13
+        by smtp.gmail.com with ESMTPSA id r13-20020a056402018d00b0042617ba6389sm582062edv.19.2022.05.31.03.00.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 May 2022 03:00:14 -0700 (PDT)
+        Tue, 31 May 2022 03:00:15 -0700 (PDT)
 From:   "=?UTF-8?q?Christian=20K=C3=B6nig?=" 
         <ckoenig.leichtzumerken@gmail.com>
 X-Google-Original-From: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
@@ -59,9 +59,9 @@ Cc:     christian.koenig@amd.com, alexander.deucher@amd.com,
         daniel@ffwll.ch, viro@zeniv.linux.org.uk,
         akpm@linux-foundation.org, hughd@google.com,
         andrey.grodzovsky@amd.com
-Subject: [PATCH 03/13] mm: shmem: provide oom badness for shmem files
-Date:   Tue, 31 May 2022 11:59:57 +0200
-Message-Id: <20220531100007.174649-4-christian.koenig@amd.com>
+Subject: [PATCH 04/13] dma-buf: provide oom badness for DMA-buf files
+Date:   Tue, 31 May 2022 11:59:58 +0200
+Message-Id: <20220531100007.174649-5-christian.koenig@amd.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20220531100007.174649-1-christian.koenig@amd.com>
 References: <20220531100007.174649-1-christian.koenig@amd.com>
@@ -78,38 +78,40 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This gives the OOM killer an additional hint which processes are
-referencing shmem files with potentially no other accounting for them.
+For now just return the size of the DMA-buf in pages as badness in the
+OOM situation. That should probably be extended to be in control of the
+exporter in the future.
 
 Signed-off-by: Christian König <christian.koenig@amd.com>
 ---
- mm/shmem.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/dma-buf/dma-buf.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 4b2fea33158e..a4ad92a16968 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -2179,6 +2179,11 @@ unsigned long shmem_get_unmapped_area(struct file *file,
- 	return inflated_addr;
+diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
+index a2f9a1815e38..bdd4e8767cd3 100644
+--- a/drivers/dma-buf/dma-buf.c
++++ b/drivers/dma-buf/dma-buf.c
+@@ -388,6 +388,12 @@ static void dma_buf_show_fdinfo(struct seq_file *m, struct file *file)
+ 	spin_unlock(&dmabuf->name_lock);
  }
  
-+static long shmem_oom_badness(struct file *file)
++static long dma_buf_oom_badness(struct file *file)
 +{
++	/* TODO: This should probably be controlled by a flag */
 +	return i_size_read(file_inode(file)) >> PAGE_SHIFT;
 +}
 +
- #ifdef CONFIG_NUMA
- static int shmem_set_policy(struct vm_area_struct *vma, struct mempolicy *mpol)
- {
-@@ -3780,6 +3785,7 @@ EXPORT_SYMBOL(shmem_aops);
- static const struct file_operations shmem_file_operations = {
- 	.mmap		= shmem_mmap,
- 	.get_unmapped_area = shmem_get_unmapped_area,
-+	.oom_badness	= shmem_oom_badness,
- #ifdef CONFIG_TMPFS
- 	.llseek		= shmem_file_llseek,
- 	.read_iter	= shmem_file_read_iter,
+ static const struct file_operations dma_buf_fops = {
+ 	.release	= dma_buf_file_release,
+ 	.mmap		= dma_buf_mmap_internal,
+@@ -396,6 +402,7 @@ static const struct file_operations dma_buf_fops = {
+ 	.unlocked_ioctl	= dma_buf_ioctl,
+ 	.compat_ioctl	= compat_ptr_ioctl,
+ 	.show_fdinfo	= dma_buf_show_fdinfo,
++	.oom_badness	= dma_buf_oom_badness,
+ };
+ 
+ /*
 -- 
 2.25.1
 
