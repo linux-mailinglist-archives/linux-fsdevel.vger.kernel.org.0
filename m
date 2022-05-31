@@ -2,207 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 581DE5396F4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 May 2022 21:24:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 996065398AE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 May 2022 23:25:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346338AbiEaTYq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 May 2022 15:24:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40136 "EHLO
+        id S1347999AbiEaVZg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 May 2022 17:25:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51390 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231365AbiEaTYk (ORCPT
+        with ESMTP id S1348019AbiEaVZc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 May 2022 15:24:40 -0400
-Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46C8C9968A
-        for <linux-fsdevel@vger.kernel.org>; Tue, 31 May 2022 12:24:39 -0700 (PDT)
-Received: by mail-pg1-x52f.google.com with SMTP id c14so397716pgu.13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 31 May 2022 12:24:39 -0700 (PDT)
+        Tue, 31 May 2022 17:25:32 -0400
+Received: from mail-yw1-x114a.google.com (mail-yw1-x114a.google.com [IPv6:2607:f8b0:4864:20::114a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8ABD39E9E8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 31 May 2022 14:25:28 -0700 (PDT)
+Received: by mail-yw1-x114a.google.com with SMTP id 00721157ae682-2dc7bdd666fso124597297b3.7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 31 May 2022 14:25:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=790ZGIWLu3M3fciHJnar3YBAhr4IOM5eNhb2rLFf0HQ=;
-        b=ZlDjvw3Ht/bFFf8r0sW6FLU2cNvq5PNson53ZKFZtoLckRqYPs6XKmwKUSlfBheNPO
-         9qDqCUTcvyoTfcE2Z9YxRa3Zx61lYn0c78qB+aSelPEiX/noLol7MJaf33lPvGph13mL
-         I6A/9bhVBjvaoD6M+4/IwGj7Nz6/mcx9KNgNk=
+        d=google.com; s=20210112;
+        h=date:message-id:mime-version:subject:from:cc;
+        bh=L5daPTOP8huWXGF9zZZ/YOQgC5+YhUKYKEYEGgJKuXI=;
+        b=ni+vDj4JsvkDI6uQO/dBS970cz6dZc8DyFe2Zer4xTkNxkSHvK+9iWBnPWmPFlu+yM
+         GldK8tXmwDcVnPqD5rTmrw1O/5Fx84SqlvyYy1O+NdSXpTGCmxmOP42PbCZEsmapK/pI
+         LdPWt3eWdMCmmsdUAyhxzJwSk4K/f3XFD8JLMQDfFMKoV7yl3wD7c0YEyQZkVTKpKRls
+         bQIXSiUx6bvVEbfIXw2C31CtGBGyRZKnhhZI0oqDXke/z5Cd5Z5SAktEbZN0415/W9kX
+         oeGofIRzd3K6V4+k9c5ZaCl6y2CNVM4tUzcRZzthBuZX0q0DdV2YxdbJ4DLgGVowVllW
+         //UA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=790ZGIWLu3M3fciHJnar3YBAhr4IOM5eNhb2rLFf0HQ=;
-        b=xdZh6IbEZak5IYT4BMhI0OwKA0E/pgzT1KsmQSWojHYXkgVQe/qodPcGR7tRUjgUfD
-         8WuOhdnjc7GMjGnbvtsdPe0e73rdkGUJWJrvBMuhd2oCJxBS+lJxid9+fiXxJos1KYmu
-         2TjQXBHEAgM6V+jmKn7jyN2QpvDC5bifMWSjOW+AGvlnF+bC0DC5dTOwYEOgjh65ucH5
-         SBOHQKlOn07BSB0zPYXB/lu6+Wrg7sb/fYtBkuUg4zB3Evn44QqP2J/uYSH687wzixyi
-         OdTEBsb+H9/gZ+TynxOjvpf3yOOfaWCkE9Sw7FZI0YJv20twA1SnPq5gGrcgIs2Fs/Na
-         Y68Q==
-X-Gm-Message-State: AOAM532J1d03nNPaGFGCl7teWtXE8/LEZB7OvDGfumQj0w0tn3w6iY2R
-        vpoevnssPJrxkR+CVEquq3Uyyg==
-X-Google-Smtp-Source: ABdhPJwjahwm2XcxJzarB0bkFTPaJCZS6iCgNIpZLQNwb7hsy9A6fndnl0egtxKCatv7ANknoIeKrw==
-X-Received: by 2002:a65:404c:0:b0:3c6:4018:ffbf with SMTP id h12-20020a65404c000000b003c64018ffbfmr54323134pgp.408.1654025078759;
-        Tue, 31 May 2022 12:24:38 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id fs24-20020a17090af29800b001e02073474csm2305234pjb.36.2022.05.31.12.24.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 May 2022 12:24:38 -0700 (PDT)
-Date:   Tue, 31 May 2022 12:24:37 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Jan Kiszka <jan.kiszka@siemens.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Laurent Vivier <laurent@vivier.eu>,
-        linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        Sargun Dhillon <sargun@sargun.me>,
-        Jann Horn <jannh@google.com>,
-        Henning Schild <henning.schild@siemens.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        Matthew Bobrowski <repnop@google.com>,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        containers@lists.linux.dev,
-        Christian Brauner <christian.brauner@ubuntu.com>
-Subject: Re: [PATCH v2 2/2] binfmt_misc: enable sandboxed mounts
-Message-ID: <202205311219.725ED1C69@keescook>
-References: <20211216112659.310979-1-brauner@kernel.org>
- <20211216112659.310979-2-brauner@kernel.org>
- <20211226133140.GA8064@mail.hallyn.com>
- <0e817424-51db-fe0b-a00e-ac7933e8ac1d@siemens.com>
- <20220530081358.b3tvgvo63mq5o2oo@wittgenstein>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220530081358.b3tvgvo63mq5o2oo@wittgenstein>
-X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:cc;
+        bh=L5daPTOP8huWXGF9zZZ/YOQgC5+YhUKYKEYEGgJKuXI=;
+        b=brZUsXvVLr+xgwzyn3TWe6djGlFnb1cZkjsKtOgPQ9ENz3H1znAOpziE4MSMlBcI8c
+         DpAPEDGbKPb405BqzdBO5tp2N3R4bAtgHoeMWNNuiJhpu+7Fb0su6I7lpSMBsygZd9rH
+         OMVI5uRMhd+P6hJLHbCoJwiMtNThhtR7ZNbvofDa/NPMgaLC1GgXsSO5avWulG3UXj1x
+         VDhK9ib5Yt0p250uy1ARHfJJeze4d+2KuWWezTSCavDTYMm0KGsRVDmFfqJiVVNoD7+U
+         q85Aq5D4EaFNjLqxlF3KlERZcHvHkHHgBHQe9WWY5aW0Fy6g7Ir+cTc202cvJsGpxJ/w
+         Ps7g==
+X-Gm-Message-State: AOAM533Ioob3VGZOjc1L25Zsfhxji4rKF+Kp10ZH2b5p80JVLHHNOsp9
+        MY8bzPw2eOrjPrqYvGJnqn1wUMJiJK4xupWgcQ==
+X-Google-Smtp-Source: ABdhPJxWIiQFRYynwXQQYY0IBjtnA6j7FHVKcbmfGUIrmeVszzJonKHXPDCnsP8F5SOq9IOCJF3wUkeCrypYAVu4VA==
+X-Received: from kaleshsingh.mtv.corp.google.com ([2620:15c:211:200:a3c0:2a66:b25c:16df])
+ (user=kaleshsingh job=sendgmr) by 2002:a25:6588:0:b0:65d:57b9:c470 with SMTP
+ id z130-20020a256588000000b0065d57b9c470mr4071204ybb.142.1654032327734; Tue,
+ 31 May 2022 14:25:27 -0700 (PDT)
+Date:   Tue, 31 May 2022 14:25:13 -0700
+Message-Id: <20220531212521.1231133-1-kaleshsingh@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.36.1.255.ge46751e96f-goog
+Subject: [PATCH 0/2] procfs: Add file path and size to /proc/<pid>/fdinfo
+From:   Kalesh Singh <kaleshsingh@google.com>
+Cc:     ilkos@google.com, tjmercier@google.com, surenb@google.com,
+        kernel-team@android.com, Kalesh Singh <kaleshsingh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        "=?UTF-8?q?Christian=20K=C3=B6nig?=" <christian.koenig@amd.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        David Hildenbrand <david@redhat.com>,
+        Christoph Anton Mitterer <mail@christoph.anton.mitterer.name>,
+        Mike Rapoport <rppt@kernel.org>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-media@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-8.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,MISSING_HEADERS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        USER_IN_DEF_DKIM_WL autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, May 30, 2022 at 10:13:58AM +0200, Christian Brauner wrote:
-> On Sun, May 29, 2022 at 09:35:40PM +0200, Jan Kiszka wrote:
-> > On 26.12.21 14:31, Serge E. Hallyn wrote:
-> > > On Thu, Dec 16, 2021 at 12:26:59PM +0100, Christian Brauner wrote:
-> > >> From: Christian Brauner <christian.brauner@ubuntu.com>
-> > >>
-> > >> Enable unprivileged sandboxes to create their own binfmt_misc mounts.
-> > >> This is based on Laurent's work in [1] but has been significantly
-> > >> reworked to fix various issues we identified in earlier versions.
-> > >>
-> > >> While binfmt_misc can currently only be mounted in the initial user
-> > >> namespace, binary types registered in this binfmt_misc instance are
-> > >> available to all sandboxes (Either by having them installed in the
-> > >> sandbox or by registering the binary type with the F flag causing the
-> > >> interpreter to be opened right away). So binfmt_misc binary types are
-> > >> already delegated to sandboxes implicitly.
-> > >>
-> > >> However, while a sandbox has access to all registered binary types in
-> > >> binfmt_misc a sandbox cannot currently register its own binary types
-> > >> in binfmt_misc. This has prevented various use-cases some of which were
-> > >> already outlined in [1] but we have a range of issues associated with
-> > >> this (cf. [3]-[5] below which are just a small sample).
-> > >>
-> > >> Extend binfmt_misc to be mountable in non-initial user namespaces.
-> > >> Similar to other filesystem such as nfsd, mqueue, and sunrpc we use
-> > >> keyed superblock management. The key determines whether we need to
-> > >> create a new superblock or can reuse an already existing one. We use the
-> > >> user namespace of the mount as key. This means a new binfmt_misc
-> > >> superblock is created once per user namespace creation. Subsequent
-> > >> mounts of binfmt_misc in the same user namespace will mount the same
-> > >> binfmt_misc instance. We explicitly do not create a new binfmt_misc
-> > >> superblock on every binfmt_misc mount as the semantics for
-> > >> load_misc_binary() line up with the keying model. This also allows us to
-> > >> retrieve the relevant binfmt_misc instance based on the caller's user
-> > >> namespace which can be done in a simple (bounded to 32 levels) loop.
-> > >>
-> > >> Similar to the current binfmt_misc semantics allowing access to the
-> > >> binary types in the initial binfmt_misc instance we do allow sandboxes
-> > >> access to their parent's binfmt_misc mounts if they do not have created
-> > >> a separate binfmt_misc instance.
-> > >>
-> > >> Overall, this will unblock the use-cases mentioned below and in general
-> > >> will also allow to support and harden execution of another
-> > >> architecture's binaries in tight sandboxes. For instance, using the
-> > >> unshare binary it possible to start a chroot of another architecture and
-> > >> configure the binfmt_misc interpreter without being root to run the
-> > >> binaries in this chroot and without requiring the host to modify its
-> > >> binary type handlers.
-> > >>
-> > >> Henning had already posted a few experiments in the cover letter at [1].
-> > >> But here's an additional example where an unprivileged container
-> > >> registers qemu-user-static binary handlers for various binary types in
-> > >> its separate binfmt_misc mount and is then seamlessly able to start
-> > >> containers with a different architecture without affecting the host:
-> > >>
-> > >> root    [lxc monitor] /var/snap/lxd/common/lxd/containers f1
-> > >> 1000000  \_ /sbin/init
-> > >> 1000000      \_ /lib/systemd/systemd-journald
-> > >> 1000000      \_ /lib/systemd/systemd-udevd
-> > >> 1000100      \_ /lib/systemd/systemd-networkd
-> > >> 1000101      \_ /lib/systemd/systemd-resolved
-> > >> 1000000      \_ /usr/sbin/cron -f
-> > >> 1000103      \_ /usr/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
-> > >> 1000000      \_ /usr/bin/python3 /usr/bin/networkd-dispatcher --run-startup-triggers
-> > >> 1000104      \_ /usr/sbin/rsyslogd -n -iNONE
-> > >> 1000000      \_ /lib/systemd/systemd-logind
-> > >> 1000000      \_ /sbin/agetty -o -p -- \u --noclear --keep-baud console 115200,38400,9600 vt220
-> > >> 1000107      \_ dnsmasq --conf-file=/dev/null -u lxc-dnsmasq --strict-order --bind-interfaces --pid-file=/run/lxc/dnsmasq.pid --liste
-> > >> 1000000      \_ [lxc monitor] /var/lib/lxc f1-s390x
-> > >> 1100000          \_ /usr/bin/qemu-s390x-static /sbin/init
-> > >> 1100000              \_ /usr/bin/qemu-s390x-static /lib/systemd/systemd-journald
-> > >> 1100000              \_ /usr/bin/qemu-s390x-static /usr/sbin/cron -f
-> > >> 1100103              \_ /usr/bin/qemu-s390x-static /usr/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-ac
-> > >> 1100000              \_ /usr/bin/qemu-s390x-static /usr/bin/python3 /usr/bin/networkd-dispatcher --run-startup-triggers
-> > >> 1100104              \_ /usr/bin/qemu-s390x-static /usr/sbin/rsyslogd -n -iNONE
-> > >> 1100000              \_ /usr/bin/qemu-s390x-static /lib/systemd/systemd-logind
-> > >> 1100000              \_ /usr/bin/qemu-s390x-static /sbin/agetty -o -p -- \u --noclear --keep-baud console 115200,38400,9600 vt220
-> > >> 1100000              \_ /usr/bin/qemu-s390x-static /sbin/agetty -o -p -- \u --noclear --keep-baud pts/0 115200,38400,9600 vt220
-> > >> 1100000              \_ /usr/bin/qemu-s390x-static /sbin/agetty -o -p -- \u --noclear --keep-baud pts/1 115200,38400,9600 vt220
-> > >> 1100000              \_ /usr/bin/qemu-s390x-static /sbin/agetty -o -p -- \u --noclear --keep-baud pts/2 115200,38400,9600 vt220
-> > >> 1100000              \_ /usr/bin/qemu-s390x-static /sbin/agetty -o -p -- \u --noclear --keep-baud pts/3 115200,38400,9600 vt220
-> > >> 1100000              \_ /usr/bin/qemu-s390x-static /lib/systemd/systemd-udevd
-> > >>
-> > >> [1]: https://lore.kernel.org/all/20191216091220.465626-1-laurent@vivier.eu
-> > >> [2]: https://discuss.linuxcontainers.org/t/binfmt-misc-permission-denied
-> > >> [3]: https://discuss.linuxcontainers.org/t/lxd-binfmt-support-for-qemu-static-interpreters
-> > >> [4]: https://discuss.linuxcontainers.org/t/3-1-0-binfmt-support-service-in-unprivileged-guest-requires-write-access-on-hosts-proc-sys-fs-binfmt-misc
-> > >> [5]: https://discuss.linuxcontainers.org/t/qemu-user-static-not-working-4-11
-> > >>
-> > >> Link: https://lore.kernel.org/r/20191216091220.465626-2-laurent@vivier.eu (origin)
-> > >> Link: https://lore.kernel.org/r/20211028103114.2849140-2-brauner@kernel.org (v1)
-> > >> Cc: Sargun Dhillon <sargun@sargun.me>
-> > >> Cc: Serge Hallyn <serge@hallyn.com>
-> > > 
-> > > (one typo below)
-> > > 
-> > > Acked-by: Serge Hallyn <serge@hallyn.com>
-> > > 
-> > 
-> > What happened to this afterwards? Any remaining issues?
-> 
-> Not that we know. I plan to queue this up for 5.20.
+Processes can pin shared memory by keeping a handle to it through a
+file descriptor; for instance dmabufs, memfd, and ashmem (in Android).
 
-Hello!
+In the case of a memory leak, to identify the process pinning the
+memory, userspace needs to:
+  - Iterate the /proc/<pid>/fd/* for each process
+  - Do a readlink on each entry to identify the type of memory from
+    the file path.
+  - stat() each entry to get the size of the memory.
 
-Thanks for the thread-ping -- I hadn't had a chance to read through this
-before, but since it's touching binfmt, it popped up on my radar. :)
+The file permissions on /proc/<pid>/fd/* only allows for the owner
+or root to perform the operations above; and so is not suitable for
+capturing the system-wide state in a production environment.
 
-I like it overall, though I'd rather see it split up more (there's
-some refactoring built into the patches that would be nice to split out
-just to make review easier), but since others have already reviewed it,
-that's probably overkill.
+This issue was addressed for dmabufs by making /proc/*/fdinfo/*
+accessible to a process with PTRACE_MODE_READ_FSCREDS credentials[1]
+To allow the same kind of tracking for other types of shared memory,
+add the following fields to /proc/<pid>/fdinfo/<fd>:
 
-I'd really like to see some self-tests for this, though. Especially
-around the cred logic changes and the namespace fallback logic. I'd like
-to explicitly document and test what the expectations are around the
-mounts, etc.
+path - This allows identifying the type of memory based on common
+       prefixes: e.g. "/memfd...", "/dmabuf...", "/dev/ashmem..."
 
-Finally, I'd prefer this went via the execve tree.
+       This was not an issued when dmabuf tracking was introduced
+       because the exp_name field of dmabuf fdinfo could be used
+       to distinguish dmabuf fds from other types.
 
--Kees
+size - To track the amount of memory that is being pinned.
 
+       dmabufs expose size as an additional field in fdinfo. Remove
+       this and make it a common field for all fds.
+
+Access to /proc/<pid>/fdinfo is governed by PTRACE_MODE_READ_FSCREDS
+-- the same as for /proc/<pid>/maps which also exposes the path and
+size for mapped memory regions.
+
+This allows for a system process with PTRACE_MODE_READ_FSCREDS to
+account the pinned per-process memory via fdinfo.
+
+-----
+
+There was some concern about exposing the file path in the RFC[2], to that
+effect the change was split into separte patches. Also retrieving the file
+path from fdinfo is guarded by the same capability (PTRACE_MODE_READ) as
+/proc/<pid>/maps which also exposes file path, so this may not be an issue.
+
+[1] https://lore.kernel.org/r/20210308170651.919148-1-kaleshsingh@google.com/
+[2] https://lore.kernel.org/r/20220519214021.3572840-1-kaleshsingh@google.com/
+
+
+Kalesh Singh (2):
+  procfs: Add 'size' to /proc/<pid>/fdinfo/
+  procfs: Add 'path' to /proc/<pid>/fdinfo/
+
+ Documentation/filesystems/proc.rst | 22 ++++++++++++++++++++--
+ drivers/dma-buf/dma-buf.c          |  1 -
+ fs/proc/fd.c                       | 13 +++++++++----
+ 3 files changed, 29 insertions(+), 7 deletions(-)
+
+
+base-commit: 8ab2afa23bd197df47819a87f0265c0ac95c5b6a
 -- 
-Kees Cook
+2.36.1.255.ge46751e96f-goog
+
