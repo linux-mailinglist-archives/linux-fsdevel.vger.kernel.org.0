@@ -2,98 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F373653941E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 May 2022 17:39:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13908539453
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 May 2022 17:53:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345786AbiEaPjo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 May 2022 11:39:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45546 "EHLO
+        id S1345916AbiEaPxp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 May 2022 11:53:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242627AbiEaPjm (ORCPT
+        with ESMTP id S1345920AbiEaPxo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 May 2022 11:39:42 -0400
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F6CC8BD18;
-        Tue, 31 May 2022 08:39:41 -0700 (PDT)
-Received: from cwcc.thunk.org (pool-108-7-220-252.bstnma.fios.verizon.net [108.7.220.252])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 24VFdFJH004068
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 31 May 2022 11:39:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-        t=1654011558; bh=fTxdM4FSLoudm9qNGxkHMxJHzf43vLhFwNmW/rU7VTA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=KMkCQvG7tjlVWymzZpN13bzwSnBHf6sP9CXk0af4AXfcYb40gq0W3IadVs0L/CfZk
-         2W4S3DE2bNZHFbaRO3Kmj9txctBWNYjtjPg2RGCvsLE0CGmjZ8f8RZdRkyAFVz3nZP
-         nTFnKXlwqga67Yu6w0lk+LGYh3cVk/vD6Vdms22aJds9K0X2q64a0ONQBsgg00hwl2
-         Jfr2UIk8D8Q2V494kj3hXJZlv7sTBHTc0kJeTt7WrUiO+ORAN0S+SwROLrssrtS/so
-         anbbVYx6N5W0qTz+Pjwgf30dETyvvFJrIT/5lf5r6iUPvATZCJtAxkowqCZNFWr6fY
-         mFjYMTQYQuXyA==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id 36EBF15C3E1F; Tue, 31 May 2022 11:39:15 -0400 (EDT)
-Date:   Tue, 31 May 2022 11:39:15 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Donald Buczek <buczek@molgen.mpg.de>
-Cc:     Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, dm-devel@redhat.com,
-        it+linux@molgen.mpg.de,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: ext4_writepages: jbd2_start: 5120 pages, ino 11; err -5
-Message-ID: <YpY2o/GG8HWJHTdo@mit.edu>
-References: <4e83fb26-4d4a-d482-640c-8104973b7ebf@molgen.mpg.de>
- <20220531103834.vhscyk3yzsocorco@quack3.lan>
- <3bfd0ad9-d378-9631-310f-0a1a80d8e482@molgen.mpg.de>
+        Tue, 31 May 2022 11:53:44 -0400
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F8968E1B7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 31 May 2022 08:53:42 -0700 (PDT)
+Received: by mail-pj1-x102d.google.com with SMTP id hv24-20020a17090ae41800b001e33eebdb5dso1335852pjb.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 31 May 2022 08:53:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=message-id:date:mime-version:user-agent:content-language:to:cc:from
+         :subject:content-transfer-encoding;
+        bh=8KcP8g0SX6NNLKFwX4YHAyEfOJb0z0q05cv5Q2aR/eA=;
+        b=lL2tO5fhoERlWz0RwF4tnTfX8QI6EM/suaQXQSU4eCJOp7xbKRr02HJgrJhU9rjnQy
+         L7Dfa+TCWRKQckeRXhfeYPDdB5OlZGzRMDpJUTgSTCHauMJ9yqDVJr1rsq5DPxjAIqNf
+         uMj8CdbZMbq9/d6VcU5fgujT5EWqkT+34PbcTlZmr1SLxAp7be9lyH6S+7OAjLDnkiVA
+         O16IwKF86TgxjDWLAey1Feyo3fbpzGZr8s4JdfgMeY+PVpZUfTHKkqEh3gNDkljhQAyy
+         jZ20MS3QsaSAxwtawZvJW7MVSCX4dWC/H1skgl/UJUNb3z5ZD1WEegvID+sLSezOeO/I
+         VWrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent
+         :content-language:to:cc:from:subject:content-transfer-encoding;
+        bh=8KcP8g0SX6NNLKFwX4YHAyEfOJb0z0q05cv5Q2aR/eA=;
+        b=2BgQGXCLDcWqilWaBJeDAl04YuvxiIC7cmvSDawh19UtYBDK//9BECfKxC5IQWgp0w
+         8mP0yiDi4XythMeAvcPFh9K4FqjlxsHWmn20e4Uu09T2rb/JoRWzy0mNbfU2i2ESVVFO
+         qH20r4gEQg0/Z0Deq8ze8eUrVwojD8DigA9hZPEbg+qG7rSt9FiK9mIUYQlZlOgqfNKO
+         cTdOIHrQReP51/0ds+RRE8d2pR9cvjaneeGLg/ojyVUaEyWeWWkQPJ43fI6EJUynCNzR
+         9CPY2ushAEvV9cv9Pxl5WU0k8tyBJaCBydDgCrPz6ZCRFi0De8TsdH0CfMr/XqG4IMz1
+         mw4Q==
+X-Gm-Message-State: AOAM533boXldJgXny7QOrvkAhw6Ysw16b1EAjdKj5C8E22dYXwMVqgmk
+        ZeM/YPfCIA5PxPVcMdj3ZD0R+Q==
+X-Google-Smtp-Source: ABdhPJySbfBH6v4drzskdrgYlUFGLJoOcPtqnEP5k0+c8039GL4KUOPVITLTxfLPRaRBrtnGWmZWVg==
+X-Received: by 2002:a17:902:ebc8:b0:162:17a3:561 with SMTP id p8-20020a170902ebc800b0016217a30561mr46756930plg.144.1654012421659;
+        Tue, 31 May 2022 08:53:41 -0700 (PDT)
+Received: from [192.168.254.36] ([50.39.160.154])
+        by smtp.gmail.com with ESMTPSA id n1-20020a170903110100b00163ac8673edsm7456119plh.35.2022.05.31.08.53.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 31 May 2022 08:53:41 -0700 (PDT)
+Message-ID: <b6ca08bb-2275-ab66-1a78-d4ac9e87057c@linaro.org>
+Date:   Tue, 31 May 2022 08:53:40 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3bfd0ad9-d378-9631-310f-0a1a80d8e482@molgen.mpg.de>
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Content-Language: en-US
+To:     "stable@vger.kernel.org" <stable@vger.kernel.org>
+Cc:     Namjae Jeon <linkinjeon@kernel.org>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        linux-fsdevel@vger.kernel.org
+From:   Tadeusz Struk <tadeusz.struk@linaro.org>
+Subject: exfat: check if cluster num is valid
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hmmm..... I think this patch should fix your issues.
+Hi,
+Please apply upstream commit: 64ba4b15e5c0 ("exfat: check if cluster num is valid")
+to stable 5.18.y and 5.17.y
+Backports for 5.15.y and 5.10.y will follow soon.
 
-If the journal has been aborted (which happens as part of the
-shutdown, we will never write out the commit block --- so it should be
-fine to skip the writeback of any dirty inodes in data=ordered mode.
-
-BTW, if you know that the file system is going to get nuked in this
-way all the time, so you never care about file system after it is shut
-down, you could mount the file system with the mount option
-data=writeback.
-
-       	      	      	    		- Ted
-
-
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 8ff4c6545a49..2e18211121f6 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -542,7 +542,10 @@ static int ext4_journalled_submit_inode_data_buffers(struct jbd2_inode *jinode)
- static int ext4_journal_submit_inode_data_buffers(struct jbd2_inode *jinode)
- {
- 	int ret;
-+	journal_t *journal = EXT4_SB(jinode->i_vfs_inode->i_sb)->s_journal;
- 
-+	if (!journal || is_journal_aborted(journal))
-+		return 0;
- 	if (ext4_should_journal_data(jinode->i_vfs_inode))
- 		ret = ext4_journalled_submit_inode_data_buffers(jinode);
- 	else
-@@ -554,7 +557,10 @@ static int ext4_journal_submit_inode_data_buffers(struct jbd2_inode *jinode)
- static int ext4_journal_finish_inode_data_buffers(struct jbd2_inode *jinode)
- {
- 	int ret = 0;
-+	journal_t *journal = EXT4_SB(jinode->i_vfs_inode->i_sb)->s_journal;
- 
-+	if (!journal || is_journal_aborted(journal))
-+		return 0;
- 	if (!ext4_should_journal_data(jinode->i_vfs_inode))
- 		ret = jbd2_journal_finish_inode_data_buffers(jinode);
-
+-- 
+Thanks,
+Tadeusz
