@@ -2,101 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 48DB0538E5B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 May 2022 12:02:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BDC8E538F1E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 May 2022 12:40:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245516AbiEaKBy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 May 2022 06:01:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44204 "EHLO
+        id S1343522AbiEaKii (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 May 2022 06:38:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56324 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245471AbiEaKAa (ORCPT
+        with ESMTP id S239301AbiEaKih (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 May 2022 06:00:30 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41C6284A14;
-        Tue, 31 May 2022 03:00:29 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id t5so16807078edc.2;
-        Tue, 31 May 2022 03:00:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=dox2mMkLl/5c9D2gga469zGN9zQ+j614KEWkuEZ4MV4=;
-        b=TtHtny7NdbtnaKMNgHxxZ1P6YiZMqlmrfAD504KQpkpUdOed8kz6s4qe73Oso8t6aL
-         GH45XnJdlS9fPbcsu06cjzlIDPfSLe4vdmLZk7L0colYmkysDdcFQUfaXrpgfhWM8Uu9
-         mwNsso9fA2grp70nK3W+gfRLzK4em/GxgeHMyOxZAQwF2uHJZHUlKeoWDTsO9Pf3mIoR
-         +MU2pw1Hj93sIubQtkBk95FwjgyvioAIuxLDOXetbKFAI5WclUufvdU4gR+xUVC90tO0
-         kjPZ8sljqOzsGufGGBR2iVo/n5ohkrTAeCPS+lQRYxTn5nYYxcG4Bmjfy2K5n7PsifJS
-         ohDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=dox2mMkLl/5c9D2gga469zGN9zQ+j614KEWkuEZ4MV4=;
-        b=R9EQlfnogdhovkuWtbKi7WmNKNGzsgbZzVQcou2RUYVzeU3Z1K/Q9/0Hf/VA291VGC
-         PJcI1he9qf43XlhXd2zDECwCEuridMqly+xh9uy00J012va49lpQX/xDBIDxKO0Gq1Hr
-         89H2ezS3LCdFQZshRPneapEvds22w3qMl88tY9CWlbIn/1PgZ4r/swKkLF5ylb0jR5Au
-         a5uON4cJc9MAWGoR2n4eD785pwbtlKXH3XvsV7/i6g56lanyyzkxtA//uzh+PF1aYNwE
-         KYcIkbTyT0ODLPgrInmMBC649i4ufFJ/IyWu4JnS70uDwXJdU1CWb4+VRiiui9czkC8h
-         43og==
-X-Gm-Message-State: AOAM533ay4mCTKdrXplfP9GfFptIV0dqH2UB+WIH6E3x6U8zFUKUOAck
-        UZRRf92qB91xKHUnRm8wH7BPVbp6SLtYTA==
-X-Google-Smtp-Source: ABdhPJwaDMI96aKfbI0lqqtNolmvi5yHB6A4EjRXIsAbd+0AZ25rrn/qiMxaKibl1aGvqzYNEfcjIQ==
-X-Received: by 2002:aa7:db02:0:b0:42d:c3ba:9c86 with SMTP id t2-20020aa7db02000000b0042dc3ba9c86mr14927377eds.337.1653991228918;
-        Tue, 31 May 2022 03:00:28 -0700 (PDT)
-Received: from able.fritz.box (p5b0ea02f.dip0.t-ipconnect.de. [91.14.160.47])
-        by smtp.gmail.com with ESMTPSA id r13-20020a056402018d00b0042617ba6389sm582062edv.19.2022.05.31.03.00.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 May 2022 03:00:28 -0700 (PDT)
-From:   "=?UTF-8?q?Christian=20K=C3=B6nig?=" 
-        <ckoenig.leichtzumerken@gmail.com>
-X-Google-Original-From: =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>
-To:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        intel-gfx@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-        nouveau@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Cc:     christian.koenig@amd.com, alexander.deucher@amd.com,
-        daniel@ffwll.ch, viro@zeniv.linux.org.uk,
-        akpm@linux-foundation.org, hughd@google.com,
-        andrey.grodzovsky@amd.com
-Subject: [PATCH 13/13] drm/tegra: use drm_oom_badness
-Date:   Tue, 31 May 2022 12:00:07 +0200
-Message-Id: <20220531100007.174649-14-christian.koenig@amd.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220531100007.174649-1-christian.koenig@amd.com>
-References: <20220531100007.174649-1-christian.koenig@amd.com>
+        Tue, 31 May 2022 06:38:37 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CA2F996B0;
+        Tue, 31 May 2022 03:38:36 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id BACC11F975;
+        Tue, 31 May 2022 10:38:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1653993514; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=2HvcditncinzmTgMYfdt0TIwv9F6NSjZGvjIg4D6xtE=;
+        b=WGEK0khVXa2/t47RV+bWG0XCY6vS4bXKy8oLscmGAAWF7A4Dnv8/L3gPBf7OUauDL0aIV7
+        TUTjF+MRLZfBX0QKnUp4AJHeFnXQQ5nyJUmGYe0DGcy+aXav0dw9tCR04zrHF9FlDTrpyE
+        /b7iFcs2iTuHHMdEa2dxjjZPAFF13ko=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1653993514;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=2HvcditncinzmTgMYfdt0TIwv9F6NSjZGvjIg4D6xtE=;
+        b=1gYmoWoUdytQiC6FidCdrB2vVgvAasVLIge8Q7ErhVzfRNWilqNCk0QdL1A7fhbNSkMFny
+        elgNlYXtwAT9EAAw==
+Received: from quack3.suse.cz (unknown [10.163.28.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id A88F82C141;
+        Tue, 31 May 2022 10:38:34 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 3955DA0633; Tue, 31 May 2022 12:38:34 +0200 (CEST)
+Date:   Tue, 31 May 2022 12:38:34 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Donald Buczek <buczek@molgen.mpg.de>
+Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        dm-devel@redhat.com, it+linux@molgen.mpg.de,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: ext4_writepages: jbd2_start: 5120 pages, ino 11; err -5
+Message-ID: <20220531103834.vhscyk3yzsocorco@quack3.lan>
+References: <4e83fb26-4d4a-d482-640c-8104973b7ebf@molgen.mpg.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4e83fb26-4d4a-d482-640c-8104973b7ebf@molgen.mpg.de>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This allows the OOM killer to make a better decision which process to reap.
+Late reply but maybe it is still useful :)
 
-Signed-off-by: Christian König <christian.koenig@amd.com>
----
- drivers/gpu/drm/tegra/drm.c | 1 +
- 1 file changed, 1 insertion(+)
+On Thu 14-04-22 17:19:49, Donald Buczek wrote:
+> We have a cluster scheduler which provides each cluster job with a
+> private scratch filesystem (TMPDIR). These are created when a job starts
+> and removed when a job completes. The setup works by fallocate, losetup,
+> mkfs.ext4, mkdir, mount, "losetup -d", rm and the teardown just does a
+> umount and rmdir.
+> 
+> This works but there is one nuisance: The systems usually have a lot of
+> memory and some jobs write a lot of data to their scratch filesystems. So
+> when a job finishes, there often is a lot to sync by umount which
+> sometimes takes many minutes and wastes a lot of I/O bandwidth.
+> Additionally, the reserved space can't be returned and reused until the
+> umount is finished and the backing file is deleted.
+> 
+> So I was looking for a way to avoid that but didn't find something
+> straightforward. The workaround I've found so far is using a dm-device
+> (linear target) between the filesystem and the loop device and then use
+> this sequence for teardown:
+> 
+> - fcntl EXT4_IOC_SHUTDOWN with EXT4_GOING_FLAGS_NOLOGFLUSH
+> - dmestup reload $dmname --table "0 $sectors zero"
+> - dmsetup resume $dmname --noflush
+> - umount $mountpoint
+> - dmsetup remove --deferred $dmname
+> - rmdir $mountpoint
+> 
+> This seems to do what I want. The unnecessary flushing of the temporary data is redirected from the backing file into the zero target and it works really fast. There is one remaining problem though, which might be just a cosmetic one: Although ext4 is shut down to prevent it from writing, I sometimes get the error message from the subject in the logs:
+> 
+> [2963044.462043] EXT4-fs (dm-1): mounted filesystem without journal. Opts: (null)
+> [2963044.686994] EXT4-fs (dm-0): mounted filesystem without journal. Opts: (null)
+> [2963044.728391] EXT4-fs (dm-2): mounted filesystem without journal. Opts: (null)
+> [2963055.585198] EXT4-fs (dm-2): shut down requested (2)
+> [2963064.821246] EXT4-fs (dm-2): mounted filesystem without journal. Opts: (null)
+> [2963074.838259] EXT4-fs (dm-2): shut down requested (2)
+> [2963095.979089] EXT4-fs (dm-0): shut down requested (2)
+> [2963096.066376] EXT4-fs (dm-0): ext4_writepages: jbd2_start: 5120 pages, ino 11; err -5
+> [2963108.636648] EXT4-fs (dm-0): mounted filesystem without journal. Opts: (null)
+> [2963125.194740] EXT4-fs (dm-0): shut down requested (2)
+> [2963166.708088] EXT4-fs (dm-1): shut down requested (2)
+> [2963169.334437] EXT4-fs (dm-0): mounted filesystem without journal. Opts: (null)
+> [2963227.515974] EXT4-fs (dm-0): shut down requested (2)
+> [2966222.515143] EXT4-fs (dm-0): mounted filesystem without journal. Opts: (null)
+> [2966222.523390] EXT4-fs (dm-1): mounted filesystem without journal. Opts: (null)
+> [2966222.598071] EXT4-fs (dm-2): mounted filesystem without journal. Opts: (null)
 
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index 9464f522e257..89ea4f658815 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -803,6 +803,7 @@ static const struct file_operations tegra_drm_fops = {
- 	.read = drm_read,
- 	.compat_ioctl = drm_compat_ioctl,
- 	.llseek = noop_llseek,
-+	.oom_badness = drm_oom_badness,
- };
- 
- static int tegra_drm_context_cleanup(int id, void *p, void *data)
+> 
+> So I'd like to ask a few questions:
+> 
+> - Is this error message expected or is it a bug?
+
+Well, shutdown is not 100% tuned for clean teardown. It is mostly a testing
+/ debugging aid.
+
+> - Can it be ignored or is there a leak or something on that error path.
+
+The error recovery path should be cleaning up everything. If not, that
+would be a bug :)
+
+> - Is there a better way to do what I want? Something I've overlooked?
+
+Why not just rm -rf $mountpoint/*? That will remove all dirty data from
+memory without writing it back. It will cost you more in terms of disk IOs
+than the above dance with shutdown but unless you have many files, it
+should be fast... And it is much more standard path than shutdown :).
+
+> - I consider to create a new dm target or add an option to an existing
+> one, because I feel that "zero" underneath a filesystem asks for problems
+> because a filesystem expects to read back the data that it wrote, and the
+> "error" target would trigger lots of errors during the writeback
+> attempts. What I really want is a target which silently discard writes
+> and returns errors on reads. Any opinion about that?
+
+> - But to use devicemapper to eat away the I/O is also just a workaround
+> to the fact that we can't parse some flag to umount to say that we are
+> okay to lose all data and leave the filesystem in a corrupted state if
+> this was the last reference to it. Would this be a useful feature?
+
+I think something like this might be useful if the "rm -rf" solution is too
+slow. But it is a bit of a niche usecase ;).
+
+
+								Honza
 -- 
-2.25.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
