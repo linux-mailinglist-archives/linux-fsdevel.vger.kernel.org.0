@@ -2,189 +2,253 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A126D539492
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 May 2022 17:57:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 12B115394B0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 31 May 2022 18:04:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345611AbiEaP5u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 May 2022 11:57:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35592 "EHLO
+        id S1346001AbiEaQE3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 May 2022 12:04:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48694 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345981AbiEaP5r (ORCPT
+        with ESMTP id S242921AbiEaQE2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 May 2022 11:57:47 -0400
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 898378FD71
-        for <linux-fsdevel@vger.kernel.org>; Tue, 31 May 2022 08:57:15 -0700 (PDT)
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 24VFtX8p022307;
-        Tue, 31 May 2022 15:56:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : date :
- subject : to : cc : references : from : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=corp-2021-07-09;
- bh=QlgH1BjkSWUI0wsOJ7ls7X/y/Kkje6Igv6hWOjcjq/4=;
- b=Uml8Dkf9hyvk+rFo+yZEsbUCLu2oYqfXQpg6/qiYqrxzjrT1BEHK1aO8wunO5lUdp1x4
- HF8n4HA8ht7hDiBGn9jK5qbXC/UMPLTczdhkdJJ8DE5sTTmB4sdfi85CHqD0KmXebRbK
- fptl5MI7wm2dlV180Y8CYzuDra6qKP/pRiThBolTX2zv+rUZe7C4Fk+E+8Y33nOZ3mpO
- gc/KgDye8elQEZmiRqSt7LCk2vfVF1wy4s+Zuua6pHGl7H34yYcD+R1kVAQ9w+mt4WAn
- 8l/stbx1BxMyedxnxBxg51CP1ogD1kNkCz+8QeQZ/7xxd5E15nbqgj4oC0IDT8BOKVqA Vw== 
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3gbc7knck5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 31 May 2022 15:56:51 +0000
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-        by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.16.1.2/8.16.1.2) with SMTP id 24VFu6hm009261;
-        Tue, 31 May 2022 15:56:48 GMT
-Received: from nam04-mw2-obe.outbound.protection.outlook.com (mail-mw2nam08lp2172.outbound.protection.outlook.com [104.47.73.172])
-        by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com with ESMTP id 3gc8p1x9ea-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 31 May 2022 15:56:48 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dUrBTMYuUtTvgBfRGhq4OIzggEqlcfTO7qn6QC3ZWgX0JpjpCNTut2a9UJ1sFPlLmYxi0PKRjDwGYhixkCITXbqELOW2C1WF0d1uEQtVguIkkUJUDd70x2Z3SqCd4UvICXaIo/I5md8Mhx2T6BRLWYBBTrKtQk/2iXkDU+eiaWf0ALjWD5yZepz/r25C9VBWflzUvblgeFcSvPkCqoeIQ1n4HOBk6E1UmcnKDho1iNgpdqYKapMDkMbBa8HHZ46JYXropaP7bzgK1k+yaC4mR51CuEbl0d37a9aa0KJUVm75eO4DNdAi5w2o2iwPOkrybRMSPKyUNItO26zlsZsxow==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QlgH1BjkSWUI0wsOJ7ls7X/y/Kkje6Igv6hWOjcjq/4=;
- b=Vffd5DoLYFZs2Eq8lOUBh+AFVrB2UQZqadml5y1C5yoi3AuGSTcQpKT+nJIaA2SoK6l4jKp3ROBWf/XKeLa2lI3k8yfFnsXbOGMJXvqx4DlZ7j4fmLuDsCI8yYWNlUgcVmA+ZdFrp8kPeRwNuXplqoU0ToHhnDWlGkQX1wTKdQerC1upbseGNrGnRIWFYA6I1SeeZaHO2NlML5i+Hj0xwG4x1QfVpAlItsQwdHd1+8ao4s55u/WYzFFEaJszhs8Hph3YmM5HcD2hiSIt3gwQx3hHZ6rPP0vvp8G/o0xoFjZLml+G1yDa3J8k1SyF1T9DI1shuh3Xv/nnLgaZaHR8hA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QlgH1BjkSWUI0wsOJ7ls7X/y/Kkje6Igv6hWOjcjq/4=;
- b=vf+5YPJcllI8v9cKraZpqWLAeSauYK2T3GsiwW2wPROJSyan2Qiis6+nfqRJGoS7AqD0kzcjRAdD69+Xx72Q0GNRS1pzUyvKsMoLyoEHtTgadaO5HAAxa6zbUxV8u2D8GEs2Vc5YB1HyE8DH2b9MjgoFNyDWn/Bz7d0pMV5gG00=
-Received: from MW5PR10MB5738.namprd10.prod.outlook.com (2603:10b6:303:19b::14)
- by BYAPR10MB2984.namprd10.prod.outlook.com (2603:10b6:a03:8f::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5293.16; Tue, 31 May
- 2022 15:56:44 +0000
-Received: from MW5PR10MB5738.namprd10.prod.outlook.com
- ([fe80::d09d:5392:dd4c:7a80]) by MW5PR10MB5738.namprd10.prod.outlook.com
- ([fe80::d09d:5392:dd4c:7a80%3]) with mapi id 15.20.5293.019; Tue, 31 May 2022
- 15:56:43 +0000
-Message-ID: <4ef9eb26-9177-1e62-1b43-a5bfff0287a8@oracle.com>
-Date:   Tue, 31 May 2022 10:56:40 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [Jfs-discussion] [RFC PATCH 0/9] Convert JFS to use iomap
-Content-Language: en-US
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Dave Chinner <david@fromorbit.com>, Theodore Ts'o <tytso@mit.edu>,
-        linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        jfs-discussion@lists.sourceforge.net,
-        "linux-ext4@vger.kernel.org Darrick J . Wong" <djwong@kernel.org>,
-        mythtv-dev@mythtv.org
-References: <20220526192910.357055-1-willy@infradead.org>
- <20220528000216.GG3923443@dread.disaster.area>
- <YpGF3ceSLt7J/UKn@casper.infradead.org>
- <20220528053639.GI3923443@dread.disaster.area> <YpJxEwl+t93pSKLk@mit.edu>
- <20220529235122.GJ3923443@dread.disaster.area>
- <b3b1a6a0-f6fe-b054-c3ad-b6ab0f62314c@oracle.com>
- <YpY05ROgPowLbC77@casper.infradead.org>
-From:   Dave Kleikamp <dave.kleikamp@oracle.com>
-In-Reply-To: <YpY05ROgPowLbC77@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA9PR13CA0067.namprd13.prod.outlook.com
- (2603:10b6:806:23::12) To MW5PR10MB5738.namprd10.prod.outlook.com
- (2603:10b6:303:19b::14)
+        Tue, 31 May 2022 12:04:28 -0400
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AB838E1B7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 31 May 2022 09:04:26 -0700 (PDT)
+Received: by mail-io1-f69.google.com with SMTP id k5-20020a6bba05000000b00668eb755190so862169iof.13
+        for <linux-fsdevel@vger.kernel.org>; Tue, 31 May 2022 09:04:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=pGVLzRimVA1xcBcn6YKbWot/T/LVmDAVCNsMSsRSgFk=;
+        b=b0H5pyL0GhswJHWj7zoS+evsFnMANZCTOwhoGLplFbf2KjfwBHIUIy4FfSuBhfPT8V
+         E5Cx5wiXv2AAfp6njokM6GkpHn9xgaDu1ytvcnJurIEQyJ8zEgOhxWnSuVdzHtMcKBr3
+         yd/7DbSnGsp87JWqiGhGyIghMo46biFHwq3mQblpaK8gTLXOrqkkwGVnhOyqjlyDoilw
+         FJMODeFE/ZrKXBX+XaybXCLcY5684cN9fxjgW9Dvnik2BRZQicioamEsIrs6OE/M0Jy/
+         3R0C+ZMj8lxGsxiZr3n1cSLxVyvOjzMsdJeqZ/LBNZN0vvEGOjDKXEbTbdQBj0ngrz4D
+         3qUg==
+X-Gm-Message-State: AOAM533mY5hxGH71w4BTAl49MS6oqt82hNx0352Cf994vGCH6jkdWgx4
+        sexw7fCv6oq5VrEDQD++koxfjN3M56GRgqQSrVGhLTZpWzel
+X-Google-Smtp-Source: ABdhPJzUX0yRAY9hpyzvG8bMPPpBLjzXn0w9hWm4EBFLFkKEa6ZdaYacol/MsDR64540KhF1mhuJHEJ1d65UofT5zlkpXQgWCGQW
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 01f742df-a128-4550-5e3e-08da431e2889
-X-MS-TrafficTypeDiagnostic: BYAPR10MB2984:EE_
-X-Microsoft-Antispam-PRVS: <BYAPR10MB29845C2786438EB867DF889B87DC9@BYAPR10MB2984.namprd10.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: rRTxI+qtVxjNQ/ikaPr+O8T7OBvywGRusBdrdtGPssbjxoNVYthoHRizaAWKF3SYaV+UkVd79/4oDyAdTv1lD9HGf2kKy/HlL7b4HU6Wwn7NMY+gNgcwcq3QbuwXBd9r75DM2BXmhFOxYBQA7WfrLQJsb/OmaqJmmdAdYezoZ9Kw5LH36SRZ5BIjD0xZ2h+lQFVcO8GDh7gcOm+eS50QnOpY4P1AO8kb4eeepMERqlsxVkHIbnmg/8kaghHo5iwdG6JE+f6NrYP76rmjVYRgrkweWK3uO2TyvH6J7p6cWUguXfn6BL1H28nYgPDw2mi1yom4c5iwV4jExX1r7P+gw/NvLlBvUTCigylimULwaMBwLQ6SW85WNRytWTrxCltS1h9Emxco+WYbwo/RA0sIitazbCiEFYbyh8MzdMAytigwMzXeX/s9sPLdfSQW0/7it5zIUteBCbTkJRTtAmengZP8/kXDCF+o2LrQPj0HgqjMiS7gKY0e0fA5JpI79rEM5uz5fFmR8RCk5LGmZWFdeoJFmK0ZYSQ+TB10K/eysiOilDsD4Hw18jYm48arpc2YdW7GKldFaBadyzdLS1U15zEBq/KHqMONc7KAg8lkbksfnK6fV7bkTJQQnMNvskGESmhe7HeNJ10Bq8XQvWC80DVPsaRM4zHR74ng3r2/xsH/5GYmjW5fYHTb/fwKMUf36FFeNd+uGNzO5qOBwXajxhrQ+NY0DdBIjLSmPZdYkQvpqQfLJhzLZxKXjehuCzMvbHV/OjfWZbPlTXlkaLiNsdmtGSAYc7XpSqOGP4/jyEeECIeyvRkBiBKwQcGdmZ5T
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW5PR10MB5738.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(366004)(2616005)(38100700002)(8936002)(186003)(4326008)(8676002)(66476007)(66946007)(66556008)(36756003)(6486002)(26005)(6506007)(6512007)(508600001)(966005)(6916009)(316002)(86362001)(5660300002)(2906002)(31696002)(44832011)(31686004)(4744005)(54906003)(45980500001)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?eVBoMFdxMUl6Q1JlSFViWTlENVRhS2FzMFYvY1dxeVQxTW1yNS9kbkgzT2M5?=
- =?utf-8?B?WWUrbFJSTnM0Z2N4Z3BEell0ZkVFcUwrd1hjL3U5T3p5NmpXQzNWc0ljM01L?=
- =?utf-8?B?aE1UU2lYVy8vU1dSQUd1RUNyMXBPNTFqeWw4SDJ6RUJCUDRGS0lZc3ZSZWVK?=
- =?utf-8?B?Z05zbC8zeE1vSVI1SzhxZURWVExka25iaFc4Q3JuZmlVc0orK3pSNUdXdzdt?=
- =?utf-8?B?RUlBNEE5VUZGditSbWRXdWhmU0VjV2pGdVBoSHZCV0tCTFh5akhrRS8zZjFx?=
- =?utf-8?B?MDQ4b09lbHAwODRSVkx1cFg0Zms3SENxaWZBNm54NDdwei9NUWpWT2dZRmhs?=
- =?utf-8?B?RmJLS1JXcWhkUGlWY212cFpEUEFudkwvV2oySWdxSzc1SFc3ZHBaYnNRSk5J?=
- =?utf-8?B?ZHlMeTcxdlA4MS9nWjZ4ZFZqWmZkeCtnbGVBR2MyMXF6STljU1NBTmFXNEhR?=
- =?utf-8?B?QVNuaXZ0WHJ0aTdLdUdpZkpjZndOWkZiaThtNFFURCtPaXdCR1lEbXRpNlBU?=
- =?utf-8?B?T0dJeW9iYUZtYVlTTk5TNmFzdVhieVVSNWtnTEs0RkpFWjQ0UDBEazI5RFRZ?=
- =?utf-8?B?WnpCbG5xYzVDbTdJOThyTWo4KzIvYm0yUnVXZkRBYWRmUHQ4dVhOK3hxV3BK?=
- =?utf-8?B?NlNlT2l6Ni9WU3JEVDRNQlhUUml5MTRDdUxrNDIrTE4xVjk4azM2dHYraXk1?=
- =?utf-8?B?bGtjRlhEOWNmdHowc3RQamt6R2dVd3NzWDFoWmJkQmg2U3UzMk1GM1JJK09O?=
- =?utf-8?B?dTBGMDlhajNxbGpkMURrMVRLZmJpc1VONUdNYUpmZWpHWWNkWFlDRkxnQU5z?=
- =?utf-8?B?cHJ1eUhSQk5vUVZ2MFBFOFlxallvVzRUaEpSYkdkSnJPZUVQczFqZUFOMmFy?=
- =?utf-8?B?SjVwTGMxQXBIY0hpYVM2MlVZUk9iRzNTYjJ3THZDY1lJZDdDQUQveE5YclIx?=
- =?utf-8?B?WjMzZkMwaUpocnYwRGVwSTdSdnM5SmFWdU1nWldzR2lqVUphUS9BbWc0Z1JV?=
- =?utf-8?B?Y1hoT3MzdHVLTkNOZ3plMDdqUzFZZWw4c0dTbHBwWWg3SjNQSjF5SEhQOXUw?=
- =?utf-8?B?SDRoL2ZvVjJGSXpKUHdzOXF2Z3Q5aENIaTF6NCtoQi9iUEQ1UU5uR05MMXV4?=
- =?utf-8?B?b3hpNk1KREZMbkVJcW5OZmZRU0JJNTJEb0VIWkhOYnEzVWxaeGN2dTlrTUNz?=
- =?utf-8?B?clFxVm03bVlMRzBaMUxXd2V2anpyN2ovcUF3dVN6N0dXOUZjSE0vU2hUVXZK?=
- =?utf-8?B?SW9iaHh5SXh2TTVNQkVzd042RXJkVURsdFdWc0h3cmFtb1M2ZTNJNXZIODJy?=
- =?utf-8?B?NUxYV3dqbUpkRTQ2QVgvRVFXQk5ITkYyWXQ4Sk1Ga0h3aFRUWEc1aFMrbVVQ?=
- =?utf-8?B?UWhEMmg5MlhwRmsyemhiZVZLNUQrMXFrSTVJaElJeHlZWFdsUUNJczAramtD?=
- =?utf-8?B?VTB2dGlrWXVwaVNRRERQTE5yaGJaUGpVbWl4YkxTMmpXVnFibHFvdU83cG81?=
- =?utf-8?B?bnYydFF3RGFyWUQzcTZma0RYYmwxTmdtS0dVaEJROG8zbUUvNXA2OVVJMmpH?=
- =?utf-8?B?MFc0TzJNRjh1ZlBDSGtCem4wVGt3ZjFPT0dKMFdreXRSTytxOUJiVm1BdkFK?=
- =?utf-8?B?dkpnM2h5T2p4bk1WRStsaHpLZGhSWUxlTXpGR21JbUM4Nk9XTmFMN0ppM2Yv?=
- =?utf-8?B?Qy9KQ1JZTTcxVXdtUWxxSzVDb3h6ZTF1L2MrWGtKenlMbkxYeDRsT0dmSFZU?=
- =?utf-8?B?ckhnSUMzS1FzV0VtaWY0bi9oUTRkWFh6ZFpoQzdYbGhXbk0yOFBpN1JxOXZr?=
- =?utf-8?B?UDJLa2dyN0NjWUtIcWprMENlUTRqR1NDbUhnMVdwNERIaFVBTGxZcWZ3Vm5o?=
- =?utf-8?B?eU1aY2dveGd4QWd1Ti95VWR6QjJUc3Zmd2VnNDcxZHhaK0RwVXg4REp5K0xn?=
- =?utf-8?B?VDlkdGZBbTN5bUVINHlwQmcxanQ2OWh2RGhxQ1VhRUZha24rc2piUVNoakRM?=
- =?utf-8?B?ZERQdHdiMTlpN1VHQkJEMGJRN1hTbzdyV09jcTF3VVdldkRWL3dMR1dkZGtK?=
- =?utf-8?B?ZlZXd3l0VUx6bkxabWZJS2VyTTRQeGV0aU9kOHhONTFZOHdGdFNQMnlScUJo?=
- =?utf-8?B?U08zTHhYRktQWkQvT0wweStGTE1DbmhVVGpoS1BZNjhqN3pqSVlyY2tnY3Er?=
- =?utf-8?B?Ukp2YU9MM3BuRzB6eWhtQk82a3Y4ektzTFZMVGQ1WkdqeUpiMGZzWElVN0VU?=
- =?utf-8?B?YjVYUVl4NHBJOVZDc3JtS21HbnRhODZXZ3lhM0ZJQnhpSFVRbkQ1V2JkQ2dY?=
- =?utf-8?B?ckdFSG1FUU9YTElCUkhrU2lLWkE0MDd5K3pZSnFieFRCSG5DNkxJdWc2c0tw?=
- =?utf-8?Q?cMAxHomctCd476js=3D?=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 01f742df-a128-4550-5e3e-08da431e2889
-X-MS-Exchange-CrossTenant-AuthSource: MW5PR10MB5738.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 May 2022 15:56:43.7173
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: PlpFPkMCVhlbkYQtSFBTOM2BEyMTOv1MLG2ecl6kfoIRGNLOIUN1doRYXNLtqZWSZDskFEdxuA4i7AReIsttW5GyMGNnyLMUoC871jXao+s=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR10MB2984
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.517,18.0.874
- definitions=2022-05-31_07:2022-05-30,2022-05-31 signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=931
- phishscore=0 suspectscore=0 malwarescore=0 mlxscore=0 adultscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2204290000 definitions=main-2205310078
-X-Proofpoint-GUID: w9C5IjLiR39jacqK0NNIesAdMfYua67K
-X-Proofpoint-ORIG-GUID: w9C5IjLiR39jacqK0NNIesAdMfYua67K
-X-Spam-Status: No, score=-5.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a5d:9d8b:0:b0:663:9916:da83 with SMTP id
+ ay11-20020a5d9d8b000000b006639916da83mr19042830iob.116.1654013065624; Tue, 31
+ May 2022 09:04:25 -0700 (PDT)
+Date:   Tue, 31 May 2022 09:04:25 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000003b02c205e050ed88@google.com>
+Subject: [syzbot] INFO: task hung in fuse_launder_folio
+From:   syzbot <syzbot+21f1723d24cb1430ec52@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        miklos@szeredi.hu, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 5/31/22 10:31AM, Matthew Wilcox wrote:
-> On Tue, May 31, 2022 at 08:51:40AM -0500, Dave Kleikamp wrote:
->> On 5/29/22 6:51PM, Dave Chinner wrote:
->>> "Just because we can" isn't a good answer. The best code is code we
->>> don't have to write and maintain. If it's a burden to maintain and a
->>> barrier to progress, then we should seriously be considering
->>> removing it, not trying to maintain the fiction that it's a viable
->>> supported production quality filesystem that people can rely on....
->>
->> I'm onboard to sunsetting jfs. I don't know of anyone that is currently
->> using it in any serious way. (jfs-discussion group, this is a good time to
->> chime in if you feel differently.)
-> 
-> We should probably get the mythtv people to stop recommending JFS.
-> 
-> https://www.mythtv.org/wiki/User_Manual:Setting_Up#Filesystems
+Hello,
 
-Good point. Maybe not mission-critical, but introducing any new 
-potential file corruption can sure make for some unhappy people.
+syzbot found the following issue on:
+
+HEAD commit:    9d004b2f4fea Merge tag 'cxl-for-5.19' of git://git.kernel...
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=155cc833f00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d5ef46f0e355ceff
+dashboard link: https://syzkaller.appspot.com/bug?extid=21f1723d24cb1430ec52
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1036d59df00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=110f21ddf00000
+
+Bisection is inconclusive: the issue happens on the oldest tested release.
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=142f7fa7f00000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=162f7fa7f00000
+console output: https://syzkaller.appspot.com/x/log.txt?x=122f7fa7f00000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+21f1723d24cb1430ec52@syzkaller.appspotmail.com
+
+INFO: task syz-executor149:3643 blocked for more than 143 seconds.
+      Not tainted 5.18.0-syzkaller-10643-g9d004b2f4fea #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor149 state:D stack:27656 pid: 3643 ppid:  3603 flags:0x00004004
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5116 [inline]
+ __schedule+0xa00/0x4b30 kernel/sched/core.c:6431
+ schedule+0xd2/0x1f0 kernel/sched/core.c:6503
+ fuse_wait_on_page_writeback fs/fuse/file.c:449 [inline]
+ fuse_wait_on_page_writeback+0x11e/0x170 fs/fuse/file.c:445
+ fuse_launder_folio fs/fuse/file.c:2361 [inline]
+ fuse_launder_folio+0xeb/0x130 fs/fuse/file.c:2351
+ folio_launder mm/truncate.c:614 [inline]
+ invalidate_inode_pages2_range+0x99a/0xde0 mm/truncate.c:680
+ fuse_finish_open+0x2fd/0x4d0 fs/fuse/file.c:217
+ fuse_open_common+0x2f0/0x500 fs/fuse/file.c:256
+ do_dentry_open+0x4a1/0x11f0 fs/open.c:824
+ do_open fs/namei.c:3477 [inline]
+ path_openat+0x1c71/0x2910 fs/namei.c:3610
+ do_filp_open+0x1aa/0x400 fs/namei.c:3637
+ do_sys_openat2+0x16d/0x4c0 fs/open.c:1254
+ do_sys_open fs/open.c:1270 [inline]
+ __do_sys_open fs/open.c:1278 [inline]
+ __se_sys_open fs/open.c:1274 [inline]
+ __x64_sys_open+0x119/0x1c0 fs/open.c:1274
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x46/0xb0
+RIP: 0033:0x7f7b892293c9
+RSP: 002b:00007f7b891b92f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
+RAX: ffffffffffffffda RBX: 00007f7b892b84d8 RCX: 00007f7b892293c9
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000100
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f7b892b84d0
+R13: 00007ffc24e5c05f R14: 00007f7b8928514c R15: 0030656c69662f2e
+ </TASK>
+INFO: task syz-executor149:3644 blocked for more than 143 seconds.
+      Not tainted 5.18.0-syzkaller-10643-g9d004b2f4fea #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor149 state:D stack:28224 pid: 3644 ppid:  3603 flags:0x00004004
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5116 [inline]
+ __schedule+0xa00/0x4b30 kernel/sched/core.c:6431
+ schedule+0xd2/0x1f0 kernel/sched/core.c:6503
+ io_schedule+0xba/0x130 kernel/sched/core.c:8618
+ folio_wait_bit_common+0x4f2/0xa90 mm/filemap.c:1324
+ __folio_lock mm/filemap.c:1690 [inline]
+ folio_lock include/linux/pagemap.h:942 [inline]
+ folio_lock include/linux/pagemap.h:938 [inline]
+ __filemap_get_folio+0xca5/0xf00 mm/filemap.c:1962
+ truncate_inode_pages_range+0x37d/0x1530 mm/truncate.c:378
+ truncate_inode_pages mm/truncate.c:452 [inline]
+ truncate_pagecache+0x63/0x90 mm/truncate.c:753
+ fuse_finish_open+0x39b/0x4d0 fs/fuse/file.c:213
+ fuse_open_common+0x2f0/0x500 fs/fuse/file.c:256
+ do_dentry_open+0x4a1/0x11f0 fs/open.c:824
+ do_open fs/namei.c:3477 [inline]
+ path_openat+0x1c71/0x2910 fs/namei.c:3610
+ do_filp_open+0x1aa/0x400 fs/namei.c:3637
+ do_sys_openat2+0x16d/0x4c0 fs/open.c:1254
+ do_sys_open fs/open.c:1270 [inline]
+ __do_sys_creat fs/open.c:1346 [inline]
+ __se_sys_creat fs/open.c:1340 [inline]
+ __x64_sys_creat+0xc9/0x120 fs/open.c:1340
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x46/0xb0
+RIP: 0033:0x7f7b892293c9
+RSP: 002b:00007f7b891982f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000055
+RAX: ffffffffffffffda RBX: 00007f7b892b84e8 RCX: 00007f7b892293c9
+RDX: 00007f7b892293c9 RSI: 0000000000000000 RDI: 00000000200001c0
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f7b892b84e0
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f7b892b84e0
+R13: 00007ffc24e5c05f R14: 00007f7b8928514c R15: 0030656c69662f2e
+ </TASK>
+
+Showing all locks held in the system:
+2 locks held by pr/ttyS0/16:
+1 lock held by khungtaskd/29:
+ #0: ffffffff8bd86860 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x53/0x260 kernel/locking/lockdep.c:6491
+2 locks held by getty/3282:
+ #0: ffff88814bbdf098 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x22/0x80 drivers/tty/tty_ldisc.c:244
+ #1: ffffc90002cd62e8 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0xcea/0x1230 drivers/tty/n_tty.c:2075
+2 locks held by syz-executor149/3644:
+ #0: ffff888074660460 (sb_writers#9){.+.+}-{0:0}, at: do_open fs/namei.c:3470 [inline]
+ #0: ffff888074660460 (sb_writers#9){.+.+}-{0:0}, at: path_openat+0x1b3c/0x2910 fs/namei.c:3610
+ #1: ffff888072ef9c50 (&sb->s_type->i_mutex_key#15){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:741 [inline]
+ #1: ffff888072ef9c50 (&sb->s_type->i_mutex_key#15){+.+.}-{3:3}, at: fuse_open_common+0x35d/0x500 fs/fuse/file.c:243
+
+=============================================
+
+NMI backtrace for cpu 0
+CPU: 0 PID: 29 Comm: khungtaskd Not tainted 5.18.0-syzkaller-10643-g9d004b2f4fea #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:106
+ nmi_cpu_backtrace.cold+0x47/0x144 lib/nmi_backtrace.c:111
+ nmi_trigger_cpumask_backtrace+0x1e6/0x230 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:220 [inline]
+ watchdog+0xc22/0xf90 kernel/hung_task.c:378
+ kthread+0x2e9/0x3a0 kernel/kthread.c:376
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:302
+ </TASK>
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 PID: 16 Comm: pr/ttyS0 Not tainted 5.18.0-syzkaller-10643-g9d004b2f4fea #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:io_serial_in+0x83/0xa0 drivers/tty/serial/8250/8250_port.c:461
+Code: 53 1a fd 48 8d 7d 40 44 89 e1 48 b8 00 00 00 00 00 fc ff df 48 89 fa d3 e3 48 c1 ea 03 80 3c 02 00 75 16 66 03 5d 40 89 da ec <5b> 0f b6 c0 5d 41 5c c3 e8 20 10 67 fd eb a6 e8 49 10 67 fd eb e3
+RSP: 0018:ffffc90000157ac0 EFLAGS: 00000002
+RAX: dffffc0000000000 RBX: 00000000000003fd RCX: 0000000000000000
+RDX: 00000000000003fd RSI: ffffffff84601dcc RDI: ffffffff908cd3a0
+RBP: ffffffff908cd360 R08: 0000000000000001 R09: 000000000000001f
+R10: 0000000000000000 R11: 0000000000000001 R12: 0000000000000000
+R13: fffffbfff2119abf R14: fffffbfff2119a76 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff8880b9d00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffe2f39f108 CR3: 00000000237d6000 CR4: 00000000003506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ serial_in drivers/tty/serial/8250/8250.h:115 [inline]
+ wait_for_xmitr+0x9a/0x210 drivers/tty/serial/8250/8250_port.c:2089
+ serial8250_console_putchar+0x1d/0x60 drivers/tty/serial/8250/8250_port.c:3310
+ uart_console_write+0x59/0x100 drivers/tty/serial/serial_core.c:1935
+ serial8250_console_write+0xa57/0xc30 drivers/tty/serial/8250/8250_port.c:3382
+ call_console_driver kernel/printk/printk.c:2075 [inline]
+ __console_emit_next_record+0x896/0xa60 kernel/printk/printk.c:2916
+ console_emit_next_record kernel/printk/printk.c:3721 [inline]
+ printk_kthread_func.cold+0x702/0x73d kernel/printk/printk.c:3837
+ kthread+0x2e9/0x3a0 kernel/kthread.c:376
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:302
+ </TASK>
+----------------
+Code disassembly (best guess):
+   0:	53                   	push   %rbx
+   1:	1a fd                	sbb    %ch,%bh
+   3:	48 8d 7d 40          	lea    0x40(%rbp),%rdi
+   7:	44 89 e1             	mov    %r12d,%ecx
+   a:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
+  11:	fc ff df
+  14:	48 89 fa             	mov    %rdi,%rdx
+  17:	d3 e3                	shl    %cl,%ebx
+  19:	48 c1 ea 03          	shr    $0x3,%rdx
+  1d:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1)
+  21:	75 16                	jne    0x39
+  23:	66 03 5d 40          	add    0x40(%rbp),%bx
+  27:	89 da                	mov    %ebx,%edx
+  29:	ec                   	in     (%dx),%al
+* 2a:	5b                   	pop    %rbx <-- trapping instruction
+  2b:	0f b6 c0             	movzbl %al,%eax
+  2e:	5d                   	pop    %rbp
+  2f:	41 5c                	pop    %r12
+  31:	c3                   	retq
+  32:	e8 20 10 67 fd       	callq  0xfd671057
+  37:	eb a6                	jmp    0xffffffdf
+  39:	e8 49 10 67 fd       	callq  0xfd671087
+  3e:	eb e3                	jmp    0x23
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
