@@ -2,186 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1584A539B3E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Jun 2022 04:24:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 22CF9539B85
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Jun 2022 05:17:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349146AbiFACXG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 May 2022 22:23:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44594 "EHLO
+        id S1349278AbiFADQF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 May 2022 23:16:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349133AbiFACXE (ORCPT
+        with ESMTP id S1349272AbiFADQC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 May 2022 22:23:04 -0400
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3785C6D19E;
-        Tue, 31 May 2022 19:23:02 -0700 (PDT)
-Received: from kwepemi500016.china.huawei.com (unknown [172.30.72.54])
-        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4LCXvP3pk0z1K981;
-        Wed,  1 Jun 2022 10:21:21 +0800 (CST)
-Received: from kwepemm600013.china.huawei.com (7.193.23.68) by
- kwepemi500016.china.huawei.com (7.221.188.220) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Wed, 1 Jun 2022 10:23:00 +0800
-Received: from huawei.com (10.175.127.227) by kwepemm600013.china.huawei.com
- (7.193.23.68) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Wed, 1 Jun
- 2022 10:23:00 +0800
-From:   Zhihao Cheng <chengzhihao1@huawei.com>
-To:     <ebiederm@xmission.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <chengzhihao1@huawei.com>, <yukuai3@huawei.com>,
-        <yi.zhang@huawei.com>
-Subject: [PATCH v3] proc: Fix a dentry lock race between release_task and lookup
-Date:   Wed, 1 Jun 2022 10:36:22 +0800
-Message-ID: <20220601023622.4191510-1-chengzhihao1@huawei.com>
-X-Mailer: git-send-email 2.31.1
+        Tue, 31 May 2022 23:16:02 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3B52915A5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 31 May 2022 20:16:00 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id k19so470306wrd.8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 31 May 2022 20:16:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=XrsyQG46hfKFpC/n788dnmSF1KyRFNfE0olCI8xti3o=;
+        b=Z8C8H3Bcb4sw+hLnFm6ELYF7JkRtcmHt94DEDN9dw/uoIgceQeex8GVkcxd/4b8Jr0
+         ZBlku+irMR14iNI4YO1P/E0Mw2/KX0ckK6Lf5w7U6QAG93USFKlNKX6g9LOnhVgAeCGd
+         cmpw0kGdcUh0zptQ/Bt1Lxxj1M//ah60M1kUrRDe52J428k3Y06m6zKcYlJExYsEuwCc
+         I/4Ib6mvkU4psj4mKfBpDsb85NaTdJb8LlJO8clLZZAWHyi3/gSSv+PfI9k8ssXhQYf0
+         3HJgPtPawFixAjMDjj7/GLWtnhrmsfZMJv4Qx7rSxZmiyhzrUnS3KHGlE3XdW5/ZQG21
+         nlmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=XrsyQG46hfKFpC/n788dnmSF1KyRFNfE0olCI8xti3o=;
+        b=KwFGfF4uA0WGK83g0OSJCQp+fjK58UzEIDBfko3a1lCPvNnPUQYK+cfsAWbNPLMbS1
+         0SgEylnxlB8Nh2VJprQn1xbn1hd3YwrSDreg8KhBzFNptAXVYzGUCgkLgeQ6ZP1Ir7BF
+         aTN3yGIDAnyFb8AyRngSJMRF8LpNhX8cLbKP5+IJ/kIxLIPJi53hCJhnRsUM6qfmDypz
+         D7MGK9+4JSwJYFk2D+ECn1kDi8FgaiM9LEDcIStCgOCrPirAldDUT4OyIL8YIs1yOM8M
+         YpNnRK5kaxGLAQRT4mK0hIJJWgC5jf6fUOQLBrtCRGy84kNIQleP3KmKRETVCqTBIhRc
+         reNQ==
+X-Gm-Message-State: AOAM533T2sPHJ71N6p+fMiADM2TmmsTEBBa9+/863t34W/OcKuPMCfT0
+        MDeH3Xdl78mrEQFqL4HWsQnDig==
+X-Google-Smtp-Source: ABdhPJzVqSzsO85fNJucH4i22uc4bYFUP8VAEP9et8+fEFwPeeaTZAcOP4+UZPL5mR4op3rPe3foYg==
+X-Received: by 2002:a5d:64e6:0:b0:20f:a608:9af9 with SMTP id g6-20020a5d64e6000000b0020fa6089af9mr48500273wri.171.1654053359412;
+        Tue, 31 May 2022 20:15:59 -0700 (PDT)
+Received: from [10.188.163.71] (cust-east-parth2-46-193-73-98.wb.wifirst.net. [46.193.73.98])
+        by smtp.gmail.com with ESMTPSA id k27-20020a05600c1c9b00b0039750c39fc5sm4588644wms.3.2022.05.31.20.15.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 31 May 2022 20:15:58 -0700 (PDT)
+Message-ID: <a29a1649-5e50-4221-9f44-66a35fbdff80@kernel.dk>
+Date:   Tue, 31 May 2022 21:15:57 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.175.127.227]
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemm600013.china.huawei.com (7.193.23.68)
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [RFC] coredump: Do not interrupt dump for TIF_NOTIFY_SIGNAL
+Content-Language: en-US
+To:     Olivier Langlois <olivier@trillion01.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Pavel Begunkov <asml.silence@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        io-uring@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <192c9697e379bf084636a8213108be6c3b948d0b.camel@trillion01.com>
+ <9692dbb420eef43a9775f425cb8f6f33c9ba2db9.camel@trillion01.com>
+ <87h7i694ij.fsf_-_@disp2133> <1b519092-2ebf-3800-306d-c354c24a9ad1@gmail.com>
+ <b3e43e07c68696b83a5bf25664a3fa912ba747e2.camel@trillion01.com>
+ <13250a8d-1a59-4b7b-92e4-1231d73cbdda@gmail.com>
+ <878rw9u6fb.fsf@email.froward.int.ebiederm.org>
+ <303f7772-eb31-5beb-2bd0-4278566591b0@gmail.com>
+ <87ilsg13yz.fsf@email.froward.int.ebiederm.org>
+ <8218f1a245d054c940e25142fd00a5f17238d078.camel@trillion01.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <8218f1a245d054c940e25142fd00a5f17238d078.camel@trillion01.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Commit 7bc3e6e55acf06 ("proc: Use a list of inodes to flush from proc")
-moved proc_flush_task() behind __exit_signal(). Then, process systemd
-can take long period high cpu usage during releasing task in following
-concurrent processes:
+On 5/31/22 2:06 PM, Olivier Langlois wrote:
+> On Mon, 2022-03-14 at 18:58 -0500, Eric W. Biederman wrote:
+>>
+>> Thank you very much for this.  There were some bugs elsewhere I had
+>> to
+>> deal with so I am slower looking at this part of the code than I was
+>> expecting.
+>>
+>> I have now reproduced this with the commit reverted on current
+>> kernels
+>> and the repro.c from the syzcaller report.  I am starting to look
+>> into
+>> how this interacts with my planned code changes in this area.
+>>
+>> In combination with my other planned changes I think all that needs
+>> to
+>> happen in do_coredump is to clear TIF_NOTIFY_SIGNAL along with
+>> TIF_SIGPENDING to prevent io_uring interaction problems.  But we will
+>> see.
+>>
+>> The deadlock you demonstrate here shows that it is definitely not
+>> enough
+>> to clear TIF_NOTIFY_SIGNAL (without other changes) so that
+>> signal_pending returns false, which I was hoping was be the case.
+>>
+>> Eric
+> 
+> I have been away for some time but if this is not resoved yet, I just
+> want to remind that clearing TIF_NOTIFY_SIGNAL along with
+> TIF_SIGPENDING won't do it because io_uring may set them asynchronously
+> to report some io completion while do_coredump() is executing.
+> 
+> IMHO, just calling io_uring_task_cancel() from do_coredump() before
+> actually writing the dump, while maybe not the perfect solution, is the
+> simplest one.
+> 
+> Otherwise, maybe masking interrupts locally could work but I wouldn't
+> dare to explore this option personally...
 
-  systemd                                 ps
-kernel_waitid                 stat(/proc/tgid)
-  do_wait                       filename_lookup
-    wait_consider_task            lookup_fast
-      release_task
-        __exit_signal
-          __unhash_process
-            detach_pid
-              __change_pid // remove task->pid_links
-                                     d_revalidate -> pid_revalidate  // 0
-                                     d_invalidate(/proc/tgid)
-                                       shrink_dcache_parent(/proc/tgid)
-                                         d_walk(/proc/tgid)
-                                           spin_lock_nested(/proc/tgid/fd)
-                                           // iterating opened fd
-        proc_flush_pid                                    |
-           d_invalidate (/proc/tgid/fd)                   |
-              shrink_dcache_parent(/proc/tgid/fd)         |
-                shrink_dentry_list(subdirs)               ↓
-                  shrink_lock_dentry(/proc/tgid/fd) --> race on dentry lock
+Eric, are you fine with doing the cancelation based patch for now? IMHO
+it's not the ideal approach, but it will resolve the issue. And it'd
+honestly be great to get some closure on this so we don't have truncated
+core dumps if they are interrupted by task_work.
 
-Function d_invalidate() will remove dentry from hash firstly, but why does
-proc_flush_pid() process dentry '/proc/tgid/fd' before dentry '/proc/tgid'?
-That's because proc_pid_make_inode() adds proc inode in reverse order by
-invoking hlist_add_head_rcu(). But proc should not add any inodes under
-'/proc/tgid' except '/proc/tgid/task/pid', fix it by adding inode into
-'pid->inodes' only if the inode is /proc/tgid or /proc/tgid/task/pid.
+The best solution would be to make the core dumps resilient to
+task_work, but a workable solution would be nice at this point...
 
-Performance regression:
-Create 200 tasks, each task open one file for 50,000 times. Kill all
-tasks when opened files exceed 10,000,000 (cat /proc/sys/fs/file-nr).
-
-Before fix:
-$ time killall -wq aa
-  real    4m40.946s   # During this period, we can see 'ps' and 'systemd'
-			taking high cpu usage.
-
-After fix:
-$ time killall -wq aa
-  real    1m20.732s   # During this period, we can see 'systemd' taking
-			high cpu usage.
-
-Fixes: 7bc3e6e55acf06 ("proc: Use a list of inodes to flush from proc")
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=216054
-Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
----
- v1->v2: Add new helper proc_pid_make_base_inode that performs the extra
-	 work of adding to the pid->list.
- v2->v3: Add performance regression in commit message.
- fs/proc/base.c | 34 ++++++++++++++++++++++++++--------
- 1 file changed, 26 insertions(+), 8 deletions(-)
-
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index c1031843cc6a..f22fad3bf7f0 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -1885,7 +1885,7 @@ void proc_pid_evict_inode(struct proc_inode *ei)
- 	put_pid(pid);
- }
- 
--struct inode *proc_pid_make_inode(struct super_block * sb,
-+struct inode *proc_pid_make_inode(struct super_block *sb,
- 				  struct task_struct *task, umode_t mode)
- {
- 	struct inode * inode;
-@@ -1914,11 +1914,6 @@ struct inode *proc_pid_make_inode(struct super_block * sb,
- 
- 	/* Let the pid remember us for quick removal */
- 	ei->pid = pid;
--	if (S_ISDIR(mode)) {
--		spin_lock(&pid->lock);
--		hlist_add_head_rcu(&ei->sibling_inodes, &pid->inodes);
--		spin_unlock(&pid->lock);
--	}
- 
- 	task_dump_owner(task, 0, &inode->i_uid, &inode->i_gid);
- 	security_task_to_inode(task, inode);
-@@ -1931,6 +1926,27 @@ struct inode *proc_pid_make_inode(struct super_block * sb,
- 	return NULL;
- }
- 
-+struct inode *proc_pid_make_base_inode(struct super_block *sb,
-+				       struct task_struct *task, umode_t mode)
-+{
-+	struct inode *inode;
-+	struct proc_inode *ei;
-+	struct pid *pid;
-+
-+	inode = proc_pid_make_inode(sb, task, mode);
-+	if (!inode)
-+		return NULL;
-+
-+	/* Let proc_flush_pid find this directory inode */
-+	ei = PROC_I(inode);
-+	pid = ei->pid;
-+	spin_lock(&pid->lock);
-+	hlist_add_head_rcu(&ei->sibling_inodes, &pid->inodes);
-+	spin_unlock(&pid->lock);
-+
-+	return inode;
-+}
-+
- int pid_getattr(struct user_namespace *mnt_userns, const struct path *path,
- 		struct kstat *stat, u32 request_mask, unsigned int query_flags)
- {
-@@ -3350,7 +3366,8 @@ static struct dentry *proc_pid_instantiate(struct dentry * dentry,
- {
- 	struct inode *inode;
- 
--	inode = proc_pid_make_inode(dentry->d_sb, task, S_IFDIR | S_IRUGO | S_IXUGO);
-+	inode = proc_pid_make_base_inode(dentry->d_sb, task,
-+					 S_IFDIR | S_IRUGO | S_IXUGO);
- 	if (!inode)
- 		return ERR_PTR(-ENOENT);
- 
-@@ -3649,7 +3666,8 @@ static struct dentry *proc_task_instantiate(struct dentry *dentry,
- 	struct task_struct *task, const void *ptr)
- {
- 	struct inode *inode;
--	inode = proc_pid_make_inode(dentry->d_sb, task, S_IFDIR | S_IRUGO | S_IXUGO);
-+	inode = proc_pid_make_base_inode(dentry->d_sb, task,
-+					 S_IFDIR | S_IRUGO | S_IXUGO);
- 	if (!inode)
- 		return ERR_PTR(-ENOENT);
- 
 -- 
-2.31.1
+Jens Axboe
 
