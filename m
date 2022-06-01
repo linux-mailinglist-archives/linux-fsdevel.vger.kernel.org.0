@@ -2,192 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EAB2C53A25C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Jun 2022 12:15:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D3F153A279
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Jun 2022 12:21:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351061AbiFAKP2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Jun 2022 06:15:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48498 "EHLO
+        id S1345117AbiFAKVY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Jun 2022 06:21:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351809AbiFAKNI (ORCPT
+        with ESMTP id S230182AbiFAKVX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Jun 2022 06:13:08 -0400
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC2CD40902;
-        Wed,  1 Jun 2022 03:13:06 -0700 (PDT)
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2519YR9u015047;
-        Wed, 1 Jun 2022 10:12:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=corp-2021-07-09;
- bh=K/JXqMSw9IVGQX/OE7W6gaU/6+6KGhZnsZUiKASkkW4=;
- b=Me58JIm1KMZI2zc+7UsEbcfS2VU6e4wZA+Uq2IstTR/DNQQyjj+zZiux97PXRbdBUR2q
- wNux81Pkot++zUmFSWlTNM3jTNA2XWRKtHhXHXVicNjsFLd+tGX4tuhJ9eGVY7tAp9cQ
- 2cn2y+VAjDCLu3B/mZxuvK6Ujw1LIZ7VBJMQ9JTq4bWFHRd6+ce/4LAS87qCsWJYeKk8
- +bijOs9CtAQWQ5+L/Ve+eZlrDfHrYgPfANofEpHR+6sV9hf3plD/XvUYSolD9BVAPBul
- f9omi8wRh6AxoKwAfRt2A2TL1lOE7yho4BQbUY1Ks8b2Qn8ggQKzPu6nPykk+Vl21a0K qg== 
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3gbc7kq72t-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 01 Jun 2022 10:12:48 +0000
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.16.1.2/8.16.1.2) with SMTP id 251A675Y030657;
-        Wed, 1 Jun 2022 10:12:47 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com with ESMTP id 3gc8hty6sg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 01 Jun 2022 10:12:47 +0000
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-        by pps.reinject (8.16.0.36/8.16.0.36) with SMTP id 251ACk66007729;
-        Wed, 1 Jun 2022 10:12:46 GMT
-Received: from t460.home (dhcp-10-175-24-90.vpn.oracle.com [10.175.24.90])
-        by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com with ESMTP id 3gc8hty6ra-1;
-        Wed, 01 Jun 2022 10:12:45 +0000
-From:   Vegard Nossum <vegard.nossum@oracle.com>
-To:     stable@vger.kernel.org
-Cc:     Kees Cook <keescook@chromium.org>,
-        Ariadne Conill <ariadne@dereferenced.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Rich Felker <dalias@libc.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Vegard Nossum <vegard.nossum@oracle.com>
-Subject: [PATCH 4.9.y] exec: Force single empty string when argv is empty
-Date:   Wed,  1 Jun 2022 12:12:26 +0200
-Message-Id: <20220601101226.1498-1-vegard.nossum@oracle.com>
-X-Mailer: git-send-email 2.35.1.46.g38062e73e0
-In-Reply-To: <164890338266171@kroah.com>
-References: <164890338266171@kroah.com>
+        Wed, 1 Jun 2022 06:21:23 -0400
+Received: from mga06.intel.com (mga06b.intel.com [134.134.136.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 189A46D955;
+        Wed,  1 Jun 2022 03:21:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1654078883; x=1685614883;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   mime-version:in-reply-to;
+  bh=MPDfwkz64kDPQGnp5LEYEWHtzrsbbGi1CtkgkpVVQ9g=;
+  b=my0Teip4tC+h3shpaalEILbiEcsZvyfUzCTkEnYUqVGXPt8d1tylIeSC
+   qhwvDylj53iu1h2GlNGQnChlyIxX+ESo1w/xIu1nQYXlAlHpX2eqW7hgr
+   zGGcipkkeX9Pz4GHyWfISA4Mg9qrVGSCNGYNROK5vWlng7/W4tw2i2sw1
+   Tic7YnnuEDcfJUyiLpRHkStg+ZOgrqEsuTyt/TKklXrE2WHj+tCU/NKHw
+   A9yqMUdVKiqRH4R7p6lf8pwEpmJRK4w1bgviNvncuhqxcC6fSoOzADrSt
+   2+QAckyQe/R4cztUs5dLmiqZYU1ioFMP2R9dPNTUuGo5dCVPPOM4p6VXA
+   w==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10364"; a="336197555"
+X-IronPort-AV: E=Sophos;i="5.91,266,1647327600"; 
+   d="scan'208";a="336197555"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Jun 2022 03:21:22 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.91,266,1647327600"; 
+   d="scan'208";a="755837829"
+Received: from chaop.bj.intel.com (HELO localhost) ([10.240.192.101])
+  by orsmga005.jf.intel.com with ESMTP; 01 Jun 2022 03:21:12 -0700
+Date:   Wed, 1 Jun 2022 18:17:47 +0800
+From:   Chao Peng <chao.p.peng@linux.intel.com>
+To:     Vishal Annapurve <vannapurve@google.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Jun Nakajima <jun.nakajima@intel.com>, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com
+Subject: Re: [PATCH v6 3/8] mm/memfd: Introduce MFD_INACCESSIBLE flag
+Message-ID: <20220601101747.GA1255243@chaop.bj.intel.com>
+Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
+References: <20220519153713.819591-1-chao.p.peng@linux.intel.com>
+ <20220519153713.819591-4-chao.p.peng@linux.intel.com>
+ <CAGtprH8EMsPMMoOEzjRu0SMVKT0RqmkLk=n+6uXkBA6-wiRtUA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: 8xu_4WoOYqdBuKT59kW2tPBBohAGW4pi
-X-Proofpoint-ORIG-GUID: 8xu_4WoOYqdBuKT59kW2tPBBohAGW4pi
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGtprH8EMsPMMoOEzjRu0SMVKT0RqmkLk=n+6uXkBA6-wiRtUA@mail.gmail.com>
+X-Spam-Status: No, score=-4.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Kees Cook <keescook@chromium.org>
+On Tue, May 31, 2022 at 12:15:00PM -0700, Vishal Annapurve wrote:
+> On Thu, May 19, 2022 at 8:41 AM Chao Peng <chao.p.peng@linux.intel.com> wrote:
+> >
+> > Introduce a new memfd_create() flag indicating the content of the
+> > created memfd is inaccessible from userspace through ordinary MMU
+> > access (e.g., read/write/mmap). However, the file content can be
+> > accessed via a different mechanism (e.g. KVM MMU) indirectly.
+> >
+> 
+> SEV, TDX, pkvm and software-only VMs seem to have usecases to set up
+> initial guest boot memory with the needed blobs.
+> TDX already supports a KVM IOCTL to transfer contents to private
+> memory using the TDX module but rest of the implementations will need
+> to invent
+> a way to do this.
 
-commit dcd46d897adb70d63e025f175a00a89797d31a43 upstream.
+There are some discussions in https://lkml.org/lkml/2022/5/9/1292
+already. I somehow agree with Sean. TDX is using an dedicated ioctl to
+copy guest boot memory to private fd so the rest can do that similarly.
+The concern is the performance (extra memcpy) but it's trivial since the
+initial guest payload is usually optimized in size.
 
-Quoting[1] Ariadne Conill:
+> 
+> Is there a plan to support a common implementation for either allowing
+> initial write access from userspace to private fd or adding a KVM
+> IOCTL to transfer contents to such a file,
+> as part of this series through future revisions?
 
-"In several other operating systems, it is a hard requirement that the
-second argument to execve(2) be the name of a program, thus prohibiting
-a scenario where argc < 1. POSIX 2017 also recommends this behaviour,
-but it is not an explicit requirement[2]:
+Indeed, adding pre-boot private memory populating on current design
+isn't impossible, but there are still some opens, e.g. how to expose
+private fd to userspace for access, pKVM and CC usages may have
+different requirements. Before that's well-studied I would tend to not
+add that and instead use an ioctl to copy. Whether we need a generic
+ioctl or feature-specific ioctl, I don't have strong opinion here.
+Current TDX uses a feature-specific ioctl so it's not covered in this
+series.
 
-    The argument arg0 should point to a filename string that is
-    associated with the process being started by one of the exec
-    functions.
-...
-Interestingly, Michael Kerrisk opened an issue about this in 2008[3],
-but there was no consensus to support fixing this issue then.
-Hopefully now that CVE-2021-4034 shows practical exploitative use[4]
-of this bug in a shellcode, we can reconsider.
-
-This issue is being tracked in the KSPP issue tracker[5]."
-
-While the initial code searches[6][7] turned up what appeared to be
-mostly corner case tests, trying to that just reject argv == NULL
-(or an immediately terminated pointer list) quickly started tripping[8]
-existing userspace programs.
-
-The next best approach is forcing a single empty string into argv and
-adjusting argc to match. The number of programs depending on argc == 0
-seems a smaller set than those calling execve with a NULL argv.
-
-Account for the additional stack space in bprm_stack_limits(). Inject an
-empty string when argc == 0 (and set argc = 1). Warn about the case so
-userspace has some notice about the change:
-
-    process './argc0' launched './argc0' with NULL argv: empty string added
-
-Additionally WARN() and reject NULL argv usage for kernel threads.
-
-[1] https://lore.kernel.org/lkml/20220127000724.15106-1-ariadne@dereferenced.org/
-[2] https://pubs.opengroup.org/onlinepubs/9699919799/functions/exec.html
-[3] https://bugzilla.kernel.org/show_bug.cgi?id=8408
-[4] https://www.qualys.com/2022/01/25/cve-2021-4034/pwnkit.txt
-[5] https://github.com/KSPP/linux/issues/176
-[6] https://codesearch.debian.net/search?q=execve%5C+*%5C%28%5B%5E%2C%5D%2B%2C+*NULL&literal=0
-[7] https://codesearch.debian.net/search?q=execlp%3F%5Cs*%5C%28%5B%5E%2C%5D%2B%2C%5Cs*NULL&literal=0
-[8] https://lore.kernel.org/lkml/20220131144352.GE16385@xsang-OptiPlex-9020/
-
-Reported-by: Ariadne Conill <ariadne@dereferenced.org>
-Reported-by: Michael Kerrisk <mtk.manpages@gmail.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Rich Felker <dalias@libc.org>
-Cc: Eric Biederman <ebiederm@xmission.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: stable@vger.kernel.org
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Acked-by: Christian Brauner <brauner@kernel.org>
-Acked-by: Ariadne Conill <ariadne@dereferenced.org>
-Acked-by: Andy Lutomirski <luto@kernel.org>
-Link: https://lore.kernel.org/r/20220201000947.2453721-1-keescook@chromium.org
-[vegard: fixed conflicts due to missing
- 886d7de631da71e30909980fdbf318f7caade262^- and
- 3950e975431bc914f7e81b8f2a2dbdf2064acb0f^- and
- 655c16a8ce9c15842547f40ce23fd148aeccc074]
-Signed-off-by: Vegard Nossum <vegard.nossum@oracle.com>
----
- fs/exec.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
-
-This has been tested in both argc == 0 and argc >= 1 cases, but I would
-still appreciate a review given the differences with mainline. If it's
-considered too risky I'm also fine with dropping it -- just wanted to
-make sure this didn't fall through the cracks, as it does block a real
-(albeit old by now) exploit.
-
-diff --git a/fs/exec.c b/fs/exec.c
-index 482a8b4f41a5b..19f8b075d3b6b 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1758,6 +1758,9 @@ static int do_execveat_common(int fd, struct filename *filename,
- 		goto out_unmark;
- 
- 	bprm->argc = count(argv, MAX_ARG_STRINGS);
-+	if (bprm->argc == 0)
-+		pr_warn_once("process '%s' launched '%s' with NULL argv: empty string added\n",
-+			     current->comm, bprm->filename);
- 	if ((retval = bprm->argc) < 0)
- 		goto out;
- 
-@@ -1782,6 +1785,20 @@ static int do_execveat_common(int fd, struct filename *filename,
- 	if (retval < 0)
- 		goto out;
- 
-+	/*
-+	 * When argv is empty, add an empty string ("") as argv[0] to
-+	 * ensure confused userspace programs that start processing
-+	 * from argv[1] won't end up walking envp. See also
-+	 * bprm_stack_limits().
-+	 */
-+	if (bprm->argc == 0) {
-+		const char *argv[] = { "", NULL };
-+		retval = copy_strings_kernel(1, argv, bprm);
-+		if (retval < 0)
-+			goto out;
-+		bprm->argc = 1;
-+	}
-+
- 	retval = exec_binprm(bprm);
- 	if (retval < 0)
- 		goto out;
--- 
-2.35.1.46.g38062e73e0
-
+Chao
+> 
+> Regards,
+> Vishal
