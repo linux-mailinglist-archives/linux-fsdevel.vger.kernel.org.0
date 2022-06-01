@@ -2,41 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 58E7353AE17
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Jun 2022 22:50:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EFF6D53AE4E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Jun 2022 22:51:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230331AbiFAUsU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Jun 2022 16:48:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44648 "EHLO
+        id S230341AbiFAUsi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Jun 2022 16:48:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41480 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230238AbiFAUrp (ORCPT
+        with ESMTP id S230420AbiFAUrp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 1 Jun 2022 16:47:45 -0400
 Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [46.235.227.227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03C1C1F48B3;
-        Wed,  1 Jun 2022 13:44:58 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2ECB91E1777;
+        Wed,  1 Jun 2022 13:45:00 -0700 (PDT)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: krisman)
-        with ESMTPSA id 5AE151F438B9
+        with ESMTPSA id 36E601F438C5
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1654116289;
-        bh=HAicmnDTWWajqPFt32opP8XSXWOdsqjYOr5lPMSjCC8=;
+        s=mail; t=1654116292;
+        bh=MlhhI4KNumY+gCoHEanKUqEAs+Rh5WqCT1slFMX1xD4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AEfzqkgV4pfRkI2BW3V+gYVqFqJkkQBCA/afcP0F9zS4QF9LAqIz5Pc9cWro/qLKz
-         /NJ8TNV7aVNX3x300o59tqR/+Y+7t3YWaO4nc6W4wvaiPEZwDCiTQ4Aw/Y8CzqB7VT
-         12DA+usAfS0BjhquWtxeLIRH8rAJfA0cmprSxxJJC3IfULb40j3DUR9QsGuJYlAHAC
-         j32pnjJluWp5VDwtgXPMqHdbzO77D7xHRjFEpSs0IV6b/Ce6wU8naGMGwh14ih4hIC
-         /u2ynNLrqxmk+p8oa+8NMv7DBotW9pSQBZMrnbmlSSSY255bBD2QQ9P4CMCQhvx035
-         yWQGp/Oau/Y8w==
+        b=atMZNmTS2/Z3FB/qUsDTkwAy3b75U/OSvu1g9Nm5kWX+CCnCF0mvO8wFqTYFJQJU9
+         dPSbFJGLpoqw8BN0NCpKT5TOYiUC1Wr/p7csdxOB1r/JZ+ttjb+QjtZ1Mw+XJDyQ4J
+         FT0Z73eO8iLzs57BPjCOvg5WgRrXk/5QqZtVhhxmMfL8E6AlW68vo/UK7m7KsXTgdi
+         +LbFAncbQHP565b1R7phYlcfr5yfpmlOqgL7lTMIYelxBcdRleePeylucRG+Rt8tOi
+         Y11IQzPWUjVVzbZ8QKUD/gOP5F+8D3K9brmubrbRGUWcnqURoQ7xXfO+3+YIX70AmL
+         6c9oMKvyEUQ4Q==
 From:   Gabriel Krisman Bertazi <krisman@collabora.com>
 To:     viro@zeniv.linux.org.uk, tytso@mit.edu, jaegeuk@kernel.org
 Cc:     ebiggers@kernel.org, linux-fsdevel@vger.kernel.org,
         linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
         Gabriel Krisman Bertazi <krisman@collabora.com>,
         kernel@collabora.com
-Subject: [PATCH RFC 2/7] fs: Add DCACHE_CASEFOLD_LOOKUP flag
-Date:   Wed,  1 Jun 2022 16:44:32 -0400
-Message-Id: <20220601204437.676872-3-krisman@collabora.com>
+Subject: [PATCH RFC 3/7] libfs: Validate negative dentries in case-insensitive directories
+Date:   Wed,  1 Jun 2022 16:44:33 -0400
+Message-Id: <20220601204437.676872-4-krisman@collabora.com>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220601204437.676872-1-krisman@collabora.com>
 References: <20220601204437.676872-1-krisman@collabora.com>
@@ -44,68 +44,65 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY autolearn=ham
-        autolearn_force=no version=3.4.6
+        T_FILL_THIS_FORM_SHORT,T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This flag marks a negative or positive dentry as being created after a
-case-insensitive lookup operation.  It is useful to differentiate
-dentries this way to detect whether the negative dentry can be trusted
-during a case-insensitive lookup.
+Introduce a dentry revalidation helper to be used by case-insensitive
+filesystems to check if it is safe to reuse a negative dentry.
+
+A negative dentry is safe to be reused on a case-insensitive lookup if
+it was created during a case-insensitive lookup and this is not a lookup
+that will instantiate a dentry. If this is a creation lookup, we also
+need to make sure the name matches sensitively the name under lookup in
+order to assure the name preserving semantics.
 
 Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
 ---
- fs/dcache.c            | 7 +++++++
- include/linux/dcache.h | 8 ++++++++
- 2 files changed, 15 insertions(+)
+ fs/libfs.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/fs/dcache.c b/fs/dcache.c
-index a0fe9e3676fb..518ddb7fbe0c 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -1958,6 +1958,13 @@ void d_set_fallthru(struct dentry *dentry)
- }
- EXPORT_SYMBOL(d_set_fallthru);
- 
-+void d_set_casefold_lookup(struct dentry *dentry)
-+{
-+	spin_lock(&dentry->d_lock);
-+	dentry->d_flags |= DCACHE_CASEFOLD_LOOKUP;
-+	spin_unlock(&dentry->d_lock);
-+}
-+
- static unsigned d_flags_for_inode(struct inode *inode)
- {
- 	unsigned add_flags = DCACHE_REGULAR_TYPE;
-diff --git a/include/linux/dcache.h b/include/linux/dcache.h
-index 871f65c8ef7f..8b71c5e418c2 100644
---- a/include/linux/dcache.h
-+++ b/include/linux/dcache.h
-@@ -208,6 +208,7 @@ struct dentry_operations {
- #define DCACHE_FALLTHRU			0x01000000 /* Fall through to lower layer */
- #define DCACHE_NOKEY_NAME		0x02000000 /* Encrypted name encoded without key */
- #define DCACHE_OP_REAL			0x04000000
-+#define DCACHE_CASEFOLD_LOOKUP		0x08000000 /* Dentry comes from a casefold directory */
- 
- #define DCACHE_PAR_LOOKUP		0x10000000 /* being looked up (with parent locked shared) */
- #define DCACHE_DENTRY_CURSOR		0x20000000
-@@ -497,6 +498,13 @@ static inline bool d_is_fallthru(const struct dentry *dentry)
- 	return dentry->d_flags & DCACHE_FALLTHRU;
+diff --git a/fs/libfs.c b/fs/libfs.c
+index e64bdedef168..618a85c08aa7 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -1450,9 +1450,33 @@ static int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str)
+ 	return 0;
  }
  
-+extern void d_set_casefold_lookup(struct dentry *dentry);
-+
-+static inline bool d_is_casefold_lookup(const struct dentry *dentry)
++static inline int generic_ci_d_revalidate(struct dentry *dentry,
++					  const struct qstr *name,
++					  unsigned int flags)
 +{
-+	return dentry->d_flags & DCACHE_CASEFOLD_LOOKUP;
++	int is_creation = flags & (LOOKUP_CREATE | LOOKUP_RENAME_TARGET);
++
++	if (d_is_negative(dentry)) {
++		const struct dentry *parent = READ_ONCE(dentry->d_parent);
++		const struct inode *dir = READ_ONCE(parent->d_inode);
++
++		if (dir && needs_casefold(dir)) {
++			if (!d_is_casefold_lookup(dentry))
++				return 0;
++
++			if (is_creation &&
++			    (dentry->d_name.len != name->len ||
++			     memcmp(dentry->d_name.name, name->name, name->len)))
++				return 0;
++		}
++	}
++	return 1;
 +}
 +
- 
- extern int sysctl_vfs_cache_pressure;
+ static const struct dentry_operations generic_ci_dentry_ops = {
+ 	.d_hash = generic_ci_d_hash,
+ 	.d_compare = generic_ci_d_compare,
++	.d_revalidate_name = generic_ci_d_revalidate,
+ };
+ #endif
  
 -- 
 2.36.1
