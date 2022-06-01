@@ -2,96 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 41FB953AA85
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Jun 2022 17:54:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDC0A53AAC0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Jun 2022 18:12:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355885AbiFAPyS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Jun 2022 11:54:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33764 "EHLO
+        id S1355298AbiFAQMc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Jun 2022 12:12:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234565AbiFAPyR (ORCPT
+        with ESMTP id S1354085AbiFAQMb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Jun 2022 11:54:17 -0400
-Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30F204D633
-        for <linux-fsdevel@vger.kernel.org>; Wed,  1 Jun 2022 08:54:16 -0700 (PDT)
-Received: by mail-lj1-x22f.google.com with SMTP id e4so2449763ljb.13
-        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Jun 2022 08:54:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=DfuNNrg3LnuPaFBzeGNj9xFXiRXwcq80wlotU2s1MKk=;
-        b=iKOGLIYIBkSMiqOKetuFOM02OtNPYLzBGX3GhsuJKyqnt+TAQ592s0jUCEurn/GS/b
-         DJ831dJJqkdykzYk2NH5yjdMpFToLyo7HsR4lO7uJJVEuOHOnK7Jcc5f27MI8Hu1U5Sk
-         zGVVQI3hPl7gykXn/0UF0jk73188v+bwKpMTnIOVVKjufwkdfmzMhFAsvnjk8rZU4AhC
-         c+f2b6fjf/B/kLPQbiAr5ah0tsncajXqgafcYJ54k70I3YRfkFMK1d8EqDmWkIgFnaxk
-         CaGau2r1Sd+ehjqU583+5QafYI5FxI/uukYsGh6kSE8YbziZBT94Oa538LuYVW18oQvo
-         65ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=DfuNNrg3LnuPaFBzeGNj9xFXiRXwcq80wlotU2s1MKk=;
-        b=oPSuqeeuODk/H1sb2QofdxFy91D/Dge95GkkNQ1J8wKAeObkZ5CU6yqQXU7pE24mID
-         x3lCn5coFRCgEA/cJqGOJsTTwrfl4PQM6K9z8qrGhfVj5b7UG0HZvSnSTzvITIChFsgD
-         OQe/0IxojxyYwkPYjT4NHFmpxEa/92nyeEjhGznH0Rhsy/QN45R2mzYtK5H3C+o1wfH9
-         D7tdLR/M5KbNmj16T2+H/+/azXDsATeGyC79ehHQWYo+LpIUv8E5t3ZVwLgX1HCcbojW
-         hzuQvImrraNMEg2TmvfemfWpSvhiwOmTuI/Q2q5c6kvhY1+j30hr3gLBAh/LActUJEEP
-         BLBw==
-X-Gm-Message-State: AOAM533B7RuByXn6k3e/jaMygUoSq5YkFqDMW9o/jDacMkx4poiG9hZl
-        zzwqv9PgxAjABJEh+oWxH0Pn/ZqtTmDqRUpzwQ==
-X-Google-Smtp-Source: ABdhPJxzb2DihUcOu8ENYFa39rOJmvMntGdpR2fwpsBt8Q9rtTxNXGLaVujOiH/2JIo99jv1mofLS3y0hpugin8oVeQ=
-X-Received: by 2002:a2e:a796:0:b0:255:485d:49b with SMTP id
- c22-20020a2ea796000000b00255485d049bmr12783247ljf.215.1654098854268; Wed, 01
- Jun 2022 08:54:14 -0700 (PDT)
+        Wed, 1 Jun 2022 12:12:31 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08CC52F03F;
+        Wed,  1 Jun 2022 09:12:31 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9B6636158B;
+        Wed,  1 Jun 2022 16:12:30 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22701C385A5;
+        Wed,  1 Jun 2022 16:12:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1654099950;
+        bh=jSnrwYSVVVvv/EVLj+vJtrVjvZIMaAqiU7n/yR71jag=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=BcO4g5pMQyTvHAaJh0kq+ldttn7ioefubEEGsAsNtV9459J87cLQEvJ2AuWleSaF4
+         IeoJlH5F5Mvjt+mX9KLQfIKuRcqmALpsVyPaypdfk1XtjMibbVwx9zKbxEg7eUfv43
+         AeHz55hf49N5ylHSX4CBa2CRdpp9psYWINWSSIZrnzFvuj+z46v/CUfElQ6v2ahIXg
+         1nEd+ogKt6kj+4wQpBdN8hRuVPC4lKAGHRqXSFO1xN/O/oOEuH/fUbP0lqDRxPmLjt
+         aQa5C2NBQsJ/SuUZgWXJEXv7vbnUDarSFJ/5vvzsdnQ8WBEsUQdzw1NKAYenzKBmiu
+         wrcC3meP4XWrA==
+Date:   Wed, 1 Jun 2022 10:12:26 -0600
+From:   Keith Busch <kbusch@kernel.org>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Keith Busch <kbusch@fb.com>, linux-fsdevel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+        axboe@kernel.dk, Kernel Team <Kernel-team@fb.com>, hch@lst.de,
+        bvanassche@acm.org, damien.lemoal@opensource.wdc.com,
+        pankydev8@gmail.com
+Subject: Re: [PATCHv5 00/11] direct-io dma alignment
+Message-ID: <YpeP6u0XXAPra3MV@kbusch-mbp.dhcp.thefacebook.com>
+References: <20220531191137.2291467-1-kbusch@fb.com>
+ <YpcRLKwZpN+NQRxn@sol.localdomain>
+ <Ypd3j9ABXhIuQDbt@kbusch-mbp.dhcp.thefacebook.com>
 MIME-Version: 1.0
-Received: by 2002:a05:6520:4410:b0:1e5:1864:63b0 with HTTP; Wed, 1 Jun 2022
- 08:54:13 -0700 (PDT)
-From:   RHONDA MILLLER <mahoneypatricia55@gmail.com>
-Date:   Wed, 1 Jun 2022 17:54:13 +0200
-Message-ID: <CAMj9NgCrY52x+fCXJJ5w3af=OHwuoRyZER6UHV0ndQrWZLBvgw@mail.gmail.com>
-Subject: =?UTF-8?Q?Your_reward_Covid=2D19_stimulation_compensation_of_=E2=82=AC?=
-        =?UTF-8?Q?1=2E500=2C000=2E00=2E?=
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=3.2 required=5.0 tests=ADVANCE_FEE_2_NEW_FORM,
-        BAYES_80,DEAR_BENEFICIARY,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
-        DKIM_VALID_EF,FILL_THIS_FORM,FREEMAIL_ENVFROM_END_DIGIT,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_FILL_THIS_FORM_LOAN,
-        T_SCC_BODY_TEXT_LINE,UNDISC_MONEY autolearn=no autolearn_force=no
-        version=3.4.6
-X-Spam-Level: ***
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Ypd3j9ABXhIuQDbt@kbusch-mbp.dhcp.thefacebook.com>
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
- Attention  Beneficiary:
+On Wed, Jun 01, 2022 at 08:28:31AM -0600, Keith Busch wrote:
+> On Wed, Jun 01, 2022 at 12:11:40AM -0700, Eric Biggers wrote:
+> > I still don't think you've taken care of all the assumptions that bv_len is a
+> > multiple of logical block size, or at least SECTOR_SIZE.  Try this:
+> > 
+> > 	git grep -E 'bv_len (>>|/)'
+> 
+> There are only 8 drivers that set the request_queue's dma alignment, which are
+> the only ones that could be affected from this patch series.
 
-We hereby inform you that the UN Compensation Committee has decided to
-compensate you. You have been selected to receive the UN Covid-19
-Incentive Compensation Package worth =E2=82=AC1.500,000.00 in the ATM VISA
-CARD.
-
-The selection process was performed using a computerized United
-Nations (UN)email selection system from a database of more than
-79,980,000 e-mail addresses from all continents of the world from
-which your e-mail address was selected. Therefore, we recommend that
-you contact our grant using the contact information below to receive
-your Covid-19 Incentive Package worth =E2=82=AC1.500,000.00.
-
-Contact person: Mrs.Rhonda Miller
-EMAIL: (ronmiller1@indamail.hu)
-Be sure to include your details below as required:
-
-1. Your full name:
-2. Your address:
-3. Your phone:
-4. Your country / occupation:
-
-Thanks
-Mrs. Belinda Hart
-Director of the Center for Disease Control and Prevention
+It's actually even simpler to audit than that. Of the 8 drivers that explicitly
+set dma alignment, only 3 set it to something smaller than a sector size. None
+of them assume any particular bv_len, so I think we're fine.
