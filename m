@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 02AE553A5D8
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Jun 2022 15:21:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B10053A5D6
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Jun 2022 15:21:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353223AbiFANVF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        id S1353221AbiFANVF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Wed, 1 Jun 2022 09:21:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41240 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353169AbiFANU7 (ORCPT
+        with ESMTP id S1353196AbiFANVD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Jun 2022 09:20:59 -0400
-Received: from us-smtp-delivery-44.mimecast.com (us-smtp-delivery-44.mimecast.com [207.211.30.44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 776C44D61F
+        Wed, 1 Jun 2022 09:21:03 -0400
+Received: from us-smtp-delivery-44.mimecast.com (us-smtp-delivery-44.mimecast.com [205.139.111.44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0C81D4D634
         for <linux-fsdevel@vger.kernel.org>; Wed,  1 Jun 2022 06:20:57 -0700 (PDT)
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-519-4Z-CMtpGOVKaHbq7mveZtw-1; Wed, 01 Jun 2022 09:20:51 -0400
-X-MC-Unique: 4Z-CMtpGOVKaHbq7mveZtw-1
+ us-mta-264-O_Pd3AsIMGigCWcA94cQtA-1; Wed, 01 Jun 2022 09:20:53 -0400
+X-MC-Unique: O_Pd3AsIMGigCWcA94cQtA-1
 Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 4838C1C0F68B;
-        Wed,  1 Jun 2022 13:20:50 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id B024B802804;
+        Wed,  1 Jun 2022 13:20:52 +0000 (UTC)
 Received: from comp-core-i7-2640m-0182e6.redhat.com (unknown [10.36.110.3])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2E85B414A7E7;
-        Wed,  1 Jun 2022 13:20:48 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 94762414A7E7;
+        Wed,  1 Jun 2022 13:20:50 +0000 (UTC)
 From:   Alexey Gladkov <legion@kernel.org>
 To:     LKML <linux-kernel@vger.kernel.org>,
         "Eric W . Biederman" <ebiederm@xmission.com>,
@@ -40,9 +40,9 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>,
         linux-fsdevel@vger.kernel.org,
         Luis Chamberlain <mcgrof@kernel.org>,
         Vasily Averin <vvs@virtuozzo.com>
-Subject: [RFC PATCH 2/4] sysctl: ipc: Do not use dynamic memory
-Date:   Wed,  1 Jun 2022 15:20:30 +0200
-Message-Id: <857cb160a981b5719d8ed6a3e5e7c456915c64fa.1654086665.git.legion@kernel.org>
+Subject: [RFC PATCH 3/4] sysctl: userns: Do not use dynamic memory
+Date:   Wed,  1 Jun 2022 15:20:31 +0200
+Message-Id: <81190e5e4879d53be2e1416bcad0b663421339d6.1654086665.git.legion@kernel.org>
 In-Reply-To: <cover.1654086665.git.legion@kernel.org>
 References: <CAHk-=whi2SzU4XT_FsdTCAuK2qtYmH+-hwi1cbSdG8zu0KXL=g@mail.gmail.com> <cover.1654086665.git.legion@kernel.org>
 MIME-Version: 1.0
@@ -57,416 +57,240 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dynamic memory allocation is needed to modify .data and specify the per
-namespace parameter. The new sysctl API is allowed to get rid of the
-need for such modification.
+Dynamic memory allocation is needed to modify .data and specify the
+per namespace parameter. The new sysctl API is allowed to get rid of
+the need for such modification.
 
 Signed-off-by: Alexey Gladkov <legion@kernel.org>
 ---
- include/linux/ipc_namespace.h |  18 ---
- ipc/ipc_sysctl.c              | 236 +++++++++++++++++-----------------
- ipc/namespace.c               |   4 -
- 3 files changed, 121 insertions(+), 137 deletions(-)
+ include/linux/user_namespace.h |   6 --
+ kernel/ucount.c                | 116 +++++++++++++--------------------
+ kernel/user_namespace.c        |  10 +--
+ 3 files changed, 46 insertions(+), 86 deletions(-)
 
-diff --git a/include/linux/ipc_namespace.h b/include/linux/ipc_namespace.h
-index e3e8c8662b49..51c2c247c447 100644
---- a/include/linux/ipc_namespace.h
-+++ b/include/linux/ipc_namespace.h
-@@ -191,22 +191,4 @@ static inline bool setup_mq_sysctls(struct ipc_namespace *ns)
- }
- 
- #endif /* CONFIG_POSIX_MQUEUE_SYSCTL */
--
--#ifdef CONFIG_SYSVIPC_SYSCTL
--
--bool setup_ipc_sysctls(struct ipc_namespace *ns);
--void retire_ipc_sysctls(struct ipc_namespace *ns);
--
--#else /* CONFIG_SYSVIPC_SYSCTL */
--
--static inline void retire_ipc_sysctls(struct ipc_namespace *ns)
--{
--}
--
--static inline bool setup_ipc_sysctls(struct ipc_namespace *ns)
--{
--	return true;
--}
--
--#endif /* CONFIG_SYSVIPC_SYSCTL */
+diff --git a/include/linux/user_namespace.h b/include/linux/user_namespace.h
+index 45f09bec02c4..7b134516e5cb 100644
+--- a/include/linux/user_namespace.h
++++ b/include/linux/user_namespace.h
+@@ -95,10 +95,6 @@ struct user_namespace {
+ 	struct key		*persistent_keyring_register;
  #endif
-diff --git a/ipc/ipc_sysctl.c b/ipc/ipc_sysctl.c
-index ef313ecfb53a..833b670c38f3 100644
---- a/ipc/ipc_sysctl.c
-+++ b/ipc/ipc_sysctl.c
-@@ -68,26 +68,94 @@ static int proc_ipc_sem_dointvec(struct ctl_table *table, int write,
- 	return ret;
- }
+ 	struct work_struct	work;
+-#ifdef CONFIG_SYSCTL
+-	struct ctl_table_set	set;
+-	struct ctl_table_header *sysctls;
+-#endif
+ 	struct ucounts		*ucounts;
+ 	long ucount_max[UCOUNT_COUNTS];
+ 	long rlimit_max[UCOUNT_RLIMIT_COUNTS];
+@@ -116,8 +112,6 @@ struct ucounts {
+ extern struct user_namespace init_user_ns;
+ extern struct ucounts init_ucounts;
  
-+static inline void *data_from_ns(struct ctl_context *ctx, struct ctl_table *table);
-+
-+static int ipc_sys_open(struct ctl_context *ctx, struct inode *inode, struct file *file)
-+{
-+	struct ipc_namespace *ns = current->nsproxy->ipc_ns;
-+
-+	// For now, we only allow changes in init_user_ns.
-+	if (ns->user_ns != &init_user_ns)
-+		return -EPERM;
-+
-+#ifdef CONFIG_CHECKPOINT_RESTORE
-+	int index = (ctx->table - ipc_sysctls);
-+
-+	switch (index) {
-+		case IPC_SYSCTL_SEM_NEXT_ID:
-+		case IPC_SYSCTL_MSG_NEXT_ID:
-+		case IPC_SYSCTL_SHM_NEXT_ID:
-+			if (!checkpoint_restore_ns_capable(ns->user_ns))
-+				return -EPERM;
-+			break;
-+	}
-+#endif
-+	ctx->ctl_data = ns;
-+	return 0;
-+}
-+
-+static ssize_t ipc_sys_read(struct ctl_context *ctx, struct file *file,
-+		     char *buffer, size_t *lenp, loff_t *ppos)
-+{
-+	struct ctl_table table = *ctx->table;
-+	table.data = data_from_ns(ctx, ctx->table);
-+	return table.proc_handler(&table, 0, buffer, lenp, ppos);
-+}
-+
-+static ssize_t ipc_sys_write(struct ctl_context *ctx, struct file *file,
-+		      char *buffer, size_t *lenp, loff_t *ppos)
-+{
-+	struct ctl_table table = *ctx->table;
-+	table.data = data_from_ns(ctx, ctx->table);
-+	return table.proc_handler(&table, 1, buffer, lenp, ppos);
-+}
-+
-+static struct ctl_fops ipc_sys_fops = {
-+	.open	= ipc_sys_open,
-+	.read	= ipc_sys_read,
-+	.write	= ipc_sys_write,
-+};
-+
- int ipc_mni = IPCMNI;
- int ipc_mni_shift = IPCMNI_SHIFT;
- int ipc_min_cycle = RADIX_TREE_MAP_SIZE;
+-bool setup_userns_sysctls(struct user_namespace *ns);
+-void retire_userns_sysctls(struct user_namespace *ns);
+ struct ucounts *inc_ucount(struct user_namespace *ns, kuid_t uid, enum ucount_type type);
+ void dec_ucount(struct ucounts *ucounts, enum ucount_type type);
+ struct ucounts *alloc_ucounts(struct user_namespace *ns, kuid_t uid);
+diff --git a/kernel/ucount.c b/kernel/ucount.c
+index ee8e57fd6f90..4a5072671847 100644
+--- a/kernel/ucount.c
++++ b/kernel/ucount.c
+@@ -7,6 +7,7 @@
+ #include <linux/hash.h>
+ #include <linux/kmemleak.h>
+ #include <linux/user_namespace.h>
++#include <linux/fs.h>
  
-+enum {
-+	IPC_SYSCTL_SHMMAX,
-+	IPC_SYSCTL_SHMALL,
-+	IPC_SYSCTL_SHMMNI,
-+	IPC_SYSCTL_SHM_RMID_FORCED,
-+	IPC_SYSCTL_MSGMAX,
-+	IPC_SYSCTL_MSGMNI,
-+	IPC_SYSCTL_AUTO_MSGMNI,
-+	IPC_SYSCTL_MSGMNB,
-+	IPC_SYSCTL_SEM,
-+#ifdef CONFIG_CHECKPOINT_RESTORE
-+	IPC_SYSCTL_SEM_NEXT_ID,
-+	IPC_SYSCTL_MSG_NEXT_ID,
-+	IPC_SYSCTL_SHM_NEXT_ID,
-+#endif
-+	IPC_SYSCTL_COUNTS
-+};
-+
- static struct ctl_table ipc_sysctls[] = {
--	{
-+	[IPC_SYSCTL_SHMMAX] = {
- 		.procname	= "shmmax",
- 		.data		= &init_ipc_ns.shm_ctlmax,
- 		.maxlen		= sizeof(init_ipc_ns.shm_ctlmax),
- 		.mode		= 0644,
--		.proc_handler	= proc_doulongvec_minmax,
-+		.proc_handler   = proc_doulongvec_minmax,
-+		.ctl_fops	= &ipc_sys_fops,
- 	},
--	{
-+	[IPC_SYSCTL_SHMALL] = {
- 		.procname	= "shmall",
- 		.data		= &init_ipc_ns.shm_ctlall,
- 		.maxlen		= sizeof(init_ipc_ns.shm_ctlall),
- 		.mode		= 0644,
--		.proc_handler	= proc_doulongvec_minmax,
-+		.proc_handler   = proc_doulongvec_minmax,
-+		.ctl_fops	= &ipc_sys_fops,
- 	},
--	{
-+	[IPC_SYSCTL_SHMMNI] = {
- 		.procname	= "shmmni",
- 		.data		= &init_ipc_ns.shm_ctlmni,
- 		.maxlen		= sizeof(init_ipc_ns.shm_ctlmni),
-@@ -95,8 +163,9 @@ static struct ctl_table ipc_sysctls[] = {
- 		.proc_handler	= proc_dointvec_minmax,
- 		.extra1		= SYSCTL_ZERO,
- 		.extra2		= &ipc_mni,
-+		.ctl_fops	= &ipc_sys_fops,
- 	},
--	{
-+	[IPC_SYSCTL_SHM_RMID_FORCED] = {
- 		.procname	= "shm_rmid_forced",
- 		.data		= &init_ipc_ns.shm_rmid_forced,
- 		.maxlen		= sizeof(init_ipc_ns.shm_rmid_forced),
-@@ -104,8 +173,9 @@ static struct ctl_table ipc_sysctls[] = {
- 		.proc_handler	= proc_ipc_dointvec_minmax_orphans,
- 		.extra1		= SYSCTL_ZERO,
- 		.extra2		= SYSCTL_ONE,
-+		.ctl_fops	= &ipc_sys_fops,
- 	},
--	{
-+	[IPC_SYSCTL_MSGMAX] = {
- 		.procname	= "msgmax",
- 		.data		= &init_ipc_ns.msg_ctlmax,
- 		.maxlen		= sizeof(init_ipc_ns.msg_ctlmax),
-@@ -113,8 +183,9 @@ static struct ctl_table ipc_sysctls[] = {
- 		.proc_handler	= proc_dointvec_minmax,
- 		.extra1		= SYSCTL_ZERO,
- 		.extra2		= SYSCTL_INT_MAX,
-+		.ctl_fops	= &ipc_sys_fops,
- 	},
--	{
-+	[IPC_SYSCTL_MSGMNI] = {
- 		.procname	= "msgmni",
- 		.data		= &init_ipc_ns.msg_ctlmni,
- 		.maxlen		= sizeof(init_ipc_ns.msg_ctlmni),
-@@ -122,8 +193,9 @@ static struct ctl_table ipc_sysctls[] = {
- 		.proc_handler	= proc_dointvec_minmax,
- 		.extra1		= SYSCTL_ZERO,
- 		.extra2		= &ipc_mni,
-+		.ctl_fops	= &ipc_sys_fops,
- 	},
--	{
-+	[IPC_SYSCTL_AUTO_MSGMNI] = {
- 		.procname	= "auto_msgmni",
- 		.data		= NULL,
- 		.maxlen		= sizeof(int),
-@@ -131,8 +203,9 @@ static struct ctl_table ipc_sysctls[] = {
- 		.proc_handler	= proc_ipc_auto_msgmni,
- 		.extra1		= SYSCTL_ZERO,
- 		.extra2		= SYSCTL_ONE,
-+		.ctl_fops	= &ipc_sys_fops,
- 	},
--	{
-+	[IPC_SYSCTL_MSGMNB] = {
- 		.procname	=  "msgmnb",
- 		.data		= &init_ipc_ns.msg_ctlmnb,
- 		.maxlen		= sizeof(init_ipc_ns.msg_ctlmnb),
-@@ -140,152 +213,85 @@ static struct ctl_table ipc_sysctls[] = {
- 		.proc_handler	= proc_dointvec_minmax,
- 		.extra1		= SYSCTL_ZERO,
- 		.extra2		= SYSCTL_INT_MAX,
-+		.ctl_fops	= &ipc_sys_fops,
- 	},
--	{
-+	[IPC_SYSCTL_SEM] = {
- 		.procname	= "sem",
- 		.data		= &init_ipc_ns.sem_ctls,
- 		.maxlen		= 4*sizeof(int),
- 		.mode		= 0644,
- 		.proc_handler	= proc_ipc_sem_dointvec,
-+		.ctl_fops	= &ipc_sys_fops,
- 	},
- #ifdef CONFIG_CHECKPOINT_RESTORE
--	{
-+	[IPC_SYSCTL_SEM_NEXT_ID] = {
- 		.procname	= "sem_next_id",
- 		.data		= &init_ipc_ns.ids[IPC_SEM_IDS].next_id,
- 		.maxlen		= sizeof(init_ipc_ns.ids[IPC_SEM_IDS].next_id),
--		.mode		= 0444,
-+		.mode		= 0666,
- 		.proc_handler	= proc_dointvec_minmax,
- 		.extra1		= SYSCTL_ZERO,
- 		.extra2		= SYSCTL_INT_MAX,
-+		.ctl_fops	= &ipc_sys_fops,
- 	},
--	{
-+	[IPC_SYSCTL_MSG_NEXT_ID] = {
- 		.procname	= "msg_next_id",
- 		.data		= &init_ipc_ns.ids[IPC_MSG_IDS].next_id,
- 		.maxlen		= sizeof(init_ipc_ns.ids[IPC_MSG_IDS].next_id),
--		.mode		= 0444,
-+		.mode		= 0666,
- 		.proc_handler	= proc_dointvec_minmax,
- 		.extra1		= SYSCTL_ZERO,
- 		.extra2		= SYSCTL_INT_MAX,
-+		.ctl_fops	= &ipc_sys_fops,
- 	},
--	{
-+	[IPC_SYSCTL_SHM_NEXT_ID] = {
- 		.procname	= "shm_next_id",
- 		.data		= &init_ipc_ns.ids[IPC_SHM_IDS].next_id,
- 		.maxlen		= sizeof(init_ipc_ns.ids[IPC_SHM_IDS].next_id),
--		.mode		= 0444,
-+		.mode		= 0666,
- 		.proc_handler	= proc_dointvec_minmax,
- 		.extra1		= SYSCTL_ZERO,
- 		.extra2		= SYSCTL_INT_MAX,
-+		.ctl_fops	= &ipc_sys_fops,
- 	},
- #endif
--	{}
-+	[IPC_SYSCTL_COUNTS] = {}
- };
+ struct ucounts init_ucounts = {
+ 	.ns    = &init_user_ns,
+@@ -26,38 +27,20 @@ static DEFINE_SPINLOCK(ucounts_lock);
  
--static struct ctl_table_set *set_lookup(struct ctl_table_root *root)
-+static inline void *data_from_ns(struct ctl_context *ctx, struct ctl_table *table)
- {
--	return &current->nsproxy->ipc_ns->ipc_set;
+ 
+ #ifdef CONFIG_SYSCTL
+-static struct ctl_table_set *
+-set_lookup(struct ctl_table_root *root)
+-{
+-	return &current_user_ns()->set;
 -}
 -
 -static int set_is_seen(struct ctl_table_set *set)
 -{
--	return &current->nsproxy->ipc_ns->ipc_set == set;
+-	return &current_user_ns()->set == set;
 -}
 -
--static int ipc_permissions(struct ctl_table_header *head, struct ctl_table *table)
+-static int set_permissions(struct ctl_table_header *head,
+-				  struct ctl_table *table)
 -{
--	int mode = table->mode;
+-	struct user_namespace *user_ns =
+-		container_of(head->set, struct user_namespace, set);
+-	int mode;
 -
-+	struct ipc_namespace *ns = ctx->ctl_data;
-+
-+	switch (ctx->table - ipc_sysctls) {
-+		case IPC_SYSCTL_SHMMAX:			return &ns->shm_ctlmax;
-+		case IPC_SYSCTL_SHMALL:			return &ns->shm_ctlall;
-+		case IPC_SYSCTL_SHMMNI:			return &ns->shm_ctlmni;
-+		case IPC_SYSCTL_SHM_RMID_FORCED:	return &ns->shm_rmid_forced;
-+		case IPC_SYSCTL_MSGMAX:			return &ns->msg_ctlmax;
-+		case IPC_SYSCTL_MSGMNI:			return &ns->msg_ctlmni;
-+		case IPC_SYSCTL_MSGMNB:			return &ns->msg_ctlmnb;
-+		case IPC_SYSCTL_SEM:			return &ns->sem_ctls;
- #ifdef CONFIG_CHECKPOINT_RESTORE
--	struct ipc_namespace *ns = current->nsproxy->ipc_ns;
--
--	if (((table->data == &ns->ids[IPC_SEM_IDS].next_id) ||
--	     (table->data == &ns->ids[IPC_MSG_IDS].next_id) ||
--	     (table->data == &ns->ids[IPC_SHM_IDS].next_id)) &&
--	    checkpoint_restore_ns_capable(ns->user_ns))
--		mode = 0666;
-+		case IPC_SYSCTL_SEM_NEXT_ID:		return &ns->ids[IPC_SEM_IDS].next_id;
-+		case IPC_SYSCTL_MSG_NEXT_ID:		return &ns->ids[IPC_MSG_IDS].next_id;
-+		case IPC_SYSCTL_SHM_NEXT_ID:		return &ns->ids[IPC_SHM_IDS].next_id;
- #endif
--	return mode;
+-	/* Allow users with CAP_SYS_RESOURCE unrestrained access */
+-	if (ns_capable(user_ns, CAP_SYS_RESOURCE))
+-		mode = (table->mode & S_IRWXU) >> 6;
+-	else
+-	/* Allow all others at most read-only access */
+-		mode = table->mode & S_IROTH;
+-	return (mode << 6) | (mode << 3) | mode;
 -}
 -
 -static struct ctl_table_root set_root = {
 -	.lookup = set_lookup,
--	.permissions = ipc_permissions,
--};
--
--bool setup_ipc_sysctls(struct ipc_namespace *ns)
--{
+-	.permissions = set_permissions,
++static int user_sys_open(struct ctl_context *ctx, struct inode *inode,
++		        struct file *file);
++static ssize_t user_sys_read(struct ctl_context *ctx, struct file *file,
++			    char *buffer, size_t *lenp, loff_t *ppos);
++static ssize_t user_sys_write(struct ctl_context *ctx, struct file *file,
++			     char *buffer, size_t *lenp, loff_t *ppos);
++
++static struct ctl_fops user_sys_fops = {
++	.open	= user_sys_open,
++	.read	= user_sys_read,
++	.write	= user_sys_write,
+ };
+ 
++static long ue_dummy = 0;
+ static long ue_zero = 0;
+ static long ue_int_max = INT_MAX;
+ 
+@@ -66,9 +49,11 @@ static long ue_int_max = INT_MAX;
+ 		.procname	= name,				\
+ 		.maxlen		= sizeof(long),			\
+ 		.mode		= 0644,				\
++		.data		= &ue_dummy,			\
+ 		.proc_handler	= proc_doulongvec_minmax,	\
+ 		.extra1		= &ue_zero,			\
+ 		.extra2		= &ue_int_max,			\
++		.ctl_fops	= &user_sys_fops,		\
+ 	}
+ static struct ctl_table user_table[] = {
+ 	UCOUNT_ENTRY("max_user_namespaces"),
+@@ -89,44 +74,43 @@ static struct ctl_table user_table[] = {
+ #endif
+ 	{ }
+ };
+-#endif /* CONFIG_SYSCTL */
+ 
+-bool setup_userns_sysctls(struct user_namespace *ns)
++static int user_sys_open(struct ctl_context *ctx, struct inode *inode, struct file *file)
+ {
+-#ifdef CONFIG_SYSCTL
 -	struct ctl_table *tbl;
 -
--	setup_sysctl_set(&ns->ipc_set, &set_root, set_is_seen);
--
--	tbl = kmemdup(ipc_sysctls, sizeof(ipc_sysctls), GFP_KERNEL);
+-	BUILD_BUG_ON(ARRAY_SIZE(user_table) != UCOUNT_COUNTS + 1);
+-	setup_sysctl_set(&ns->set, &set_root, set_is_seen);
+-	tbl = kmemdup(user_table, sizeof(user_table), GFP_KERNEL);
 -	if (tbl) {
 -		int i;
--
--		for (i = 0; i < ARRAY_SIZE(ipc_sysctls); i++) {
--			if (tbl[i].data == &init_ipc_ns.shm_ctlmax)
--				tbl[i].data = &ns->shm_ctlmax;
--
--			else if (tbl[i].data == &init_ipc_ns.shm_ctlall)
--				tbl[i].data = &ns->shm_ctlall;
--
--			else if (tbl[i].data == &init_ipc_ns.shm_ctlmni)
--				tbl[i].data = &ns->shm_ctlmni;
--
--			else if (tbl[i].data == &init_ipc_ns.shm_rmid_forced)
--				tbl[i].data = &ns->shm_rmid_forced;
--
--			else if (tbl[i].data == &init_ipc_ns.msg_ctlmax)
--				tbl[i].data = &ns->msg_ctlmax;
--
--			else if (tbl[i].data == &init_ipc_ns.msg_ctlmni)
--				tbl[i].data = &ns->msg_ctlmni;
--
--			else if (tbl[i].data == &init_ipc_ns.msg_ctlmnb)
--				tbl[i].data = &ns->msg_ctlmnb;
--
--			else if (tbl[i].data == &init_ipc_ns.sem_ctls)
--				tbl[i].data = &ns->sem_ctls;
--#ifdef CONFIG_CHECKPOINT_RESTORE
--			else if (tbl[i].data == &init_ipc_ns.ids[IPC_SEM_IDS].next_id)
--				tbl[i].data = &ns->ids[IPC_SEM_IDS].next_id;
--
--			else if (tbl[i].data == &init_ipc_ns.ids[IPC_MSG_IDS].next_id)
--				tbl[i].data = &ns->ids[IPC_MSG_IDS].next_id;
--
--			else if (tbl[i].data == &init_ipc_ns.ids[IPC_SHM_IDS].next_id)
--				tbl[i].data = &ns->ids[IPC_SHM_IDS].next_id;
--#endif
--			else
--				tbl[i].data = NULL;
+-		for (i = 0; i < UCOUNT_COUNTS; i++) {
+-			tbl[i].data = &ns->ucount_max[i];
 -		}
--
--		ns->ipc_sysctls = __register_sysctl_table(&ns->ipc_set, "kernel", tbl);
+-		ns->sysctls = __register_sysctl_table(&ns->set, "user", tbl);
 -	}
--	if (!ns->ipc_sysctls) {
+-	if (!ns->sysctls) {
 -		kfree(tbl);
--		retire_sysctl_set(&ns->ipc_set);
+-		retire_sysctl_set(&ns->set);
 -		return false;
- 	}
--
+-	}
+-#endif
 -	return true;
-+	return NULL;
++	/* Allow users with CAP_SYS_RESOURCE unrestrained access */
++	if ((file->f_mode & FMODE_WRITE) &&
++	    !ns_capable(file->f_cred->user_ns, CAP_SYS_RESOURCE))
++		return -EPERM;
++	return 0;
  }
  
--void retire_ipc_sysctls(struct ipc_namespace *ns)
--{
+-void retire_userns_sysctls(struct user_namespace *ns)
++static ssize_t user_sys_read(struct ctl_context *ctx, struct file *file,
++		     char *buffer, size_t *lenp, loff_t *ppos)
+ {
+-#ifdef CONFIG_SYSCTL
 -	struct ctl_table *tbl;
--
--	tbl = ns->ipc_sysctls->ctl_table_arg;
--	unregister_sysctl_table(ns->ipc_sysctls);
--	retire_sysctl_set(&ns->ipc_set);
++	struct ctl_table table = *ctx->table;
++	table.data = &file->f_cred->user_ns->ucount_max[ctx->table - user_table];
++	return table.proc_handler(&table, 0, buffer, lenp, ppos);
++}
+ 
+-	tbl = ns->sysctls->ctl_table_arg;
+-	unregister_sysctl_table(ns->sysctls);
+-	retire_sysctl_set(&ns->set);
 -	kfree(tbl);
--}
-+static struct ctl_table ipc_root_table[] = {
+-#endif
++static ssize_t user_sys_write(struct ctl_context *ctx, struct file *file,
++		      char *buffer, size_t *lenp, loff_t *ppos)
++{
++	struct ctl_table table = *ctx->table;
++	table.data = &file->f_cred->user_ns->ucount_max[ctx->table - user_table];
++	return table.proc_handler(&table, 1, buffer, lenp, ppos);
+ }
+ 
++static struct ctl_table user_root_table[] = {
 +	{
-+		.procname       = "kernel",
++		.procname       = "user",
 +		.mode           = 0555,
-+		.child          = ipc_sysctls,
++		.child          = user_table,
 +	},
 +	{}
 +};
- 
- static int __init ipc_sysctl_init(void)
++
++#endif /* CONFIG_SYSCTL */
++
+ static struct ucounts *find_ucounts(struct user_namespace *ns, kuid_t uid, struct hlist_head *hashent)
  {
--	if (!setup_ipc_sysctls(&init_ipc_ns)) {
--		pr_warn("ipc sysctl registration failed\n");
--		return -ENOMEM;
--	}
-+	register_sysctl_table(ipc_root_table);
+ 	struct ucounts *ucounts;
+@@ -357,17 +341,7 @@ bool is_rlimit_overlimit(struct ucounts *ucounts, enum rlimit_type type, unsigne
+ static __init int user_namespace_sysctl_init(void)
+ {
+ #ifdef CONFIG_SYSCTL
+-	static struct ctl_table_header *user_header;
+-	static struct ctl_table empty[1];
+-	/*
+-	 * It is necessary to register the user directory in the
+-	 * default set so that registrations in the child sets work
+-	 * properly.
+-	 */
+-	user_header = register_sysctl("user", empty);
+-	kmemleak_ignore(user_header);
+-	BUG_ON(!user_header);
+-	BUG_ON(!setup_userns_sysctls(&init_user_ns));
++	register_sysctl_table(user_root_table);
+ #endif
+ 	hlist_add_ucounts(&init_ucounts);
+ 	inc_rlimit_ucounts(&init_ucounts, UCOUNT_RLIMIT_NPROC, 1);
+diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
+index 981bb2d10d83..c0e707bc9a31 100644
+--- a/kernel/user_namespace.c
++++ b/kernel/user_namespace.c
+@@ -149,17 +149,10 @@ int create_user_ns(struct cred *new)
+ 	INIT_LIST_HEAD(&ns->keyring_name_list);
+ 	init_rwsem(&ns->keyring_sem);
+ #endif
+-	ret = -ENOMEM;
+-	if (!setup_userns_sysctls(ns))
+-		goto fail_keyring;
+ 
+ 	set_cred_user_ns(new, ns);
  	return 0;
- }
- 
-diff --git a/ipc/namespace.c b/ipc/namespace.c
-index 754f3237194a..f760243ca685 100644
---- a/ipc/namespace.c
-+++ b/ipc/namespace.c
-@@ -63,9 +63,6 @@ static struct ipc_namespace *create_ipc_ns(struct user_namespace *user_ns,
- 	if (!setup_mq_sysctls(ns))
- 		goto fail_put;
- 
--	if (!setup_ipc_sysctls(ns))
--		goto fail_put;
--
- 	sem_init_ns(ns);
- 	msg_init_ns(ns);
- 	shm_init_ns(ns);
-@@ -133,7 +130,6 @@ static void free_ipc_ns(struct ipc_namespace *ns)
- 	shm_exit_ns(ns);
- 
- 	retire_mq_sysctls(ns);
--	retire_ipc_sysctls(ns);
- 
- 	dec_ipc_namespaces(ns->ucounts);
- 	put_user_ns(ns->user_ns);
+-fail_keyring:
+-#ifdef CONFIG_PERSISTENT_KEYRINGS
+-	key_put(ns->persistent_keyring_register);
+-#endif
+-	ns_free_inum(&ns->ns);
++
+ fail_free:
+ 	kmem_cache_free(user_ns_cachep, ns);
+ fail_dec:
+@@ -208,7 +201,6 @@ static void free_user_ns(struct work_struct *work)
+ 			kfree(ns->projid_map.forward);
+ 			kfree(ns->projid_map.reverse);
+ 		}
+-		retire_userns_sysctls(ns);
+ 		key_free_user_ns(ns);
+ 		ns_free_inum(&ns->ns);
+ 		kmem_cache_free(user_ns_cachep, ns);
 -- 
 2.33.3
 
