@@ -2,44 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B9E22539B12
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Jun 2022 04:05:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1584A539B3E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Jun 2022 04:24:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349089AbiFACE0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 May 2022 22:04:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54342 "EHLO
+        id S1349146AbiFACXG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 May 2022 22:23:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44594 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345940AbiFACEZ (ORCPT
+        with ESMTP id S1349133AbiFACXE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 May 2022 22:04:25 -0400
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63D9E72E18;
-        Tue, 31 May 2022 19:04:22 -0700 (PDT)
-Received: from kwepemi100012.china.huawei.com (unknown [172.30.72.53])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4LCXTs42RczgYMX;
-        Wed,  1 Jun 2022 10:02:41 +0800 (CST)
+        Tue, 31 May 2022 22:23:04 -0400
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3785C6D19E;
+        Tue, 31 May 2022 19:23:02 -0700 (PDT)
+Received: from kwepemi500016.china.huawei.com (unknown [172.30.72.54])
+        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4LCXvP3pk0z1K981;
+        Wed,  1 Jun 2022 10:21:21 +0800 (CST)
 Received: from kwepemm600013.china.huawei.com (7.193.23.68) by
- kwepemi100012.china.huawei.com (7.221.188.202) with Microsoft SMTP Server
+ kwepemi500016.china.huawei.com (7.221.188.220) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.24; Wed, 1 Jun 2022 10:04:21 +0800
+ 15.1.2375.24; Wed, 1 Jun 2022 10:23:00 +0800
 Received: from huawei.com (10.175.127.227) by kwepemm600013.china.huawei.com
  (7.193.23.68) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Wed, 1 Jun
- 2022 10:04:20 +0800
+ 2022 10:23:00 +0800
 From:   Zhihao Cheng <chengzhihao1@huawei.com>
 To:     <ebiederm@xmission.com>
 CC:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
         <chengzhihao1@huawei.com>, <yukuai3@huawei.com>,
         <yi.zhang@huawei.com>
-Subject: [PATCH v2] proc: Fix a dentry lock race between release_task and lookup
-Date:   Wed, 1 Jun 2022 10:17:42 +0800
-Message-ID: <20220601021742.4163063-1-chengzhihao1@huawei.com>
+Subject: [PATCH v3] proc: Fix a dentry lock race between release_task and lookup
+Date:   Wed, 1 Jun 2022 10:36:22 +0800
+Message-ID: <20220601023622.4191510-1-chengzhihao1@huawei.com>
 X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
 X-Originating-IP: [10.175.127.227]
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
  kwepemm600013.china.huawei.com (7.193.23.68)
 X-CFilter-Loop: Reflected
 X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
@@ -84,13 +84,28 @@ invoking hlist_add_head_rcu(). But proc should not add any inodes under
 '/proc/tgid' except '/proc/tgid/task/pid', fix it by adding inode into
 'pid->inodes' only if the inode is /proc/tgid or /proc/tgid/task/pid.
 
+Performance regression:
+Create 200 tasks, each task open one file for 50,000 times. Kill all
+tasks when opened files exceed 10,000,000 (cat /proc/sys/fs/file-nr).
+
+Before fix:
+$ time killall -wq aa
+  real    4m40.946s   # During this period, we can see 'ps' and 'systemd'
+			taking high cpu usage.
+
+After fix:
+$ time killall -wq aa
+  real    1m20.732s   # During this period, we can see 'systemd' taking
+			high cpu usage.
+
 Fixes: 7bc3e6e55acf06 ("proc: Use a list of inodes to flush from proc")
 Link: https://bugzilla.kernel.org/show_bug.cgi?id=216054
 Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 ---
  v1->v2: Add new helper proc_pid_make_base_inode that performs the extra
-	 work of adding to the pid->list
+	 work of adding to the pid->list.
+ v2->v3: Add performance regression in commit message.
  fs/proc/base.c | 34 ++++++++++++++++++++++++++--------
  1 file changed, 26 insertions(+), 8 deletions(-)
 
