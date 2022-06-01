@@ -2,48 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E77ED53B01D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jun 2022 00:51:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0959453AEF8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jun 2022 00:50:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231129AbiFAVEh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Jun 2022 17:04:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39010 "EHLO
+        id S231190AbiFAVHU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Jun 2022 17:07:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47210 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230460AbiFAVE2 (ORCPT
+        with ESMTP id S231274AbiFAVHT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Jun 2022 17:04:28 -0400
+        Wed, 1 Jun 2022 17:07:19 -0400
 Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D27AF231CC3
-        for <linux-fsdevel@vger.kernel.org>; Wed,  1 Jun 2022 14:04:25 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33B596BFDF
+        for <linux-fsdevel@vger.kernel.org>; Wed,  1 Jun 2022 14:07:17 -0700 (PDT)
 Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 251I4COh010631
-        for <linux-fsdevel@vger.kernel.org>; Wed, 1 Jun 2022 14:04:25 -0700
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 251HgMO9011588
+        for <linux-fsdevel@vger.kernel.org>; Wed, 1 Jun 2022 14:07:16 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=facebook;
- bh=aWGWWAgH7Bi/du0tMMunpKLV8jXk2Gb/WQnwadv9en0=;
- b=ikJDvnU3N1AnSdYXSBN/z345AIkwnUQKGe2IkGtbNy90uZ7Cf+kLCIrKcZ6FqaNjrmCG
- +cddw22iSlX/2CtXGlL2nhyKt8o8OufEuioMQRq0ajdVR7pVyi9rfcUpkhBJxbZytFYz
- NVuRcI0v8lXGbKILo0lWNk2W85huBbtGMJk= 
+ bh=/c1tXQ+b6bxtOlEa/BmLZu1viU9avcsa0t6EYp9adkM=;
+ b=ahLuLGnBdh3I8IY+HUwXj7x1wIS/tEzXcJcIi+XHlYbF1CeV04fGbd8QYEKjaZPdf1MG
+ U8H/KOmqVjASX+7i0DTKsqV+9QGJM78ryP/0PEoM1DNiaeYwFzXiMitPPBj70/2Ie9Xf
+ HvcugF6DUtMBfnXXFQW9Kho5cnTjN5ZSVR8= 
 Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3ge3wk4tqh-4
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3ge3wk4ub5-7
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Jun 2022 14:04:24 -0700
-Received: from twshared5413.23.frc3.facebook.com (2620:10d:c085:108::8) by
- mail.thefacebook.com (2620:10d:c085:11d::7) with Microsoft SMTP Server
+        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Jun 2022 14:07:16 -0700
+Received: from twshared14818.18.frc3.facebook.com (2620:10d:c085:108::8) by
+ mail.thefacebook.com (2620:10d:c085:11d::4) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.28; Wed, 1 Jun 2022 14:04:22 -0700
+ 15.1.2375.28; Wed, 1 Jun 2022 14:07:13 -0700
 Received: by devvm225.atn0.facebook.com (Postfix, from userid 425415)
-        id E813DFEB23A7; Wed,  1 Jun 2022 14:01:42 -0700 (PDT)
+        id EE9ACFEB23A9; Wed,  1 Jun 2022 14:01:42 -0700 (PDT)
 From:   Stefan Roesch <shr@fb.com>
 To:     <io-uring@vger.kernel.org>, <kernel-team@fb.com>,
         <linux-mm@kvack.org>, <linux-xfs@vger.kernel.org>,
         <linux-fsdevel@vger.kernel.org>
 CC:     <shr@fb.com>, <david@fromorbit.com>, <jack@suse.cz>,
-        <hch@infradead.org>, <axboe@kernel.dk>
-Subject: [PATCH v7 09/15] fs: Split off inode_needs_update_time and __file_update_time
-Date:   Wed, 1 Jun 2022 14:01:35 -0700
-Message-ID: <20220601210141.3773402-10-shr@fb.com>
+        <hch@infradead.org>, <axboe@kernel.dk>,
+        Christoph Hellwig <hch@lst.de>
+Subject: [PATCH v7 10/15] fs: Add async write file modification handling.
+Date:   Wed, 1 Jun 2022 14:01:36 -0700
+Message-ID: <20220601210141.3773402-11-shr@fb.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20220601210141.3773402-1-shr@fb.com>
 References: <20220601210141.3773402-1-shr@fb.com>
@@ -51,155 +52,121 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-GUID: 9XtNVQ4JWMN1NGjlhn-0tmE2sYpgeyi2
-X-Proofpoint-ORIG-GUID: 9XtNVQ4JWMN1NGjlhn-0tmE2sYpgeyi2
+X-Proofpoint-GUID: AL_EPLyjpWcnfvyLWaBtL6NlmQhbTWEv
+X-Proofpoint-ORIG-GUID: AL_EPLyjpWcnfvyLWaBtL6NlmQhbTWEv
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.205,Aquarius:18.0.874,Hydra:6.0.517,FMLib:17.11.64.514
  definitions=2022-06-01_08,2022-06-01_01,2022-02-23_01
 X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
         RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This splits off the functions inode_needs_update_time() and
-__file_update_time() from the function file_update_time().
-
-This is required to support async buffered writes.
-No intended functional changes in this patch.
+This adds a file_modified_async() function to return -EAGAIN if the
+request either requires to remove privileges or needs to update the file
+modification time. This is required for async buffered writes, so the
+request gets handled in the io worker of io-uring.
 
 Signed-off-by: Stefan Roesch <shr@fb.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/inode.c | 76 +++++++++++++++++++++++++++++++++++-------------------
- 1 file changed, 50 insertions(+), 26 deletions(-)
+ fs/inode.c         | 43 +++++++++++++++++++++++++++++++++++++++++--
+ include/linux/fs.h |  1 +
+ 2 files changed, 42 insertions(+), 2 deletions(-)
 
 diff --git a/fs/inode.c b/fs/inode.c
-index ac1cf5aa78c8..c44573a32c6a 100644
+index c44573a32c6a..4503bed063e7 100644
 --- a/fs/inode.c
 +++ b/fs/inode.c
-@@ -2049,35 +2049,18 @@ int file_remove_privs(struct file *file)
- }
- EXPORT_SYMBOL(file_remove_privs);
-=20
--/**
-- *	file_update_time	-	update mtime and ctime time
-- *	@file: file accessed
-- *
-- *	Update the mtime and ctime members of an inode and mark the inode
-- *	for writeback.  Note that this function is meant exclusively for
-- *	usage in the file write path of filesystems, and filesystems may
-- *	choose to explicitly ignore update via this function with the
-- *	S_NOCMTIME inode flag, e.g. for network filesystem where these
-- *	timestamps are handled by the server.  This can return an error for
-- *	file systems who need to allocate space in order to update an inode.
-- */
--
--int file_update_time(struct file *file)
-+static int inode_needs_update_time(struct inode *inode, struct timespec6=
-4 *now)
- {
--	struct inode *inode =3D file_inode(file);
--	struct timespec64 now;
- 	int sync_it =3D 0;
--	int ret;
-=20
- 	/* First try to exhaust all avenues to not sync */
- 	if (IS_NOCMTIME(inode))
- 		return 0;
-=20
--	now =3D current_time(inode);
--	if (!timespec64_equal(&inode->i_mtime, &now))
-+	if (!timespec64_equal(&inode->i_mtime, now))
- 		sync_it =3D S_MTIME;
-=20
--	if (!timespec64_equal(&inode->i_ctime, &now))
-+	if (!timespec64_equal(&inode->i_ctime, now))
- 		sync_it |=3D S_CTIME;
-=20
- 	if (IS_I_VERSION(inode) && inode_iversion_need_inc(inode))
-@@ -2086,15 +2069,50 @@ int file_update_time(struct file *file)
- 	if (!sync_it)
- 		return 0;
-=20
--	/* Finally allowed to write? Takes lock. */
--	if (__mnt_want_write_file(file))
--		return 0;
-+	return sync_it;
-+}
-+
-+static int __file_update_time(struct file *file, struct timespec64 *now,
-+			int sync_mode)
-+{
-+	int ret =3D 0;
-+	struct inode *inode =3D file_inode(file);
-=20
--	ret =3D inode_update_time(inode, &now, sync_it);
--	__mnt_drop_write_file(file);
-+	/* try to update time settings */
-+	if (!__mnt_want_write_file(file)) {
-+		ret =3D inode_update_time(inode, now, sync_mode);
-+		__mnt_drop_write_file(file);
-+	}
-=20
- 	return ret;
- }
-+
-+ /**
-+  * file_update_time - update mtime and ctime time
-+  * @file: file accessed
-+  *
-+  * Update the mtime and ctime members of an inode and mark the inode fo=
-r
-+  * writeback. Note that this function is meant exclusively for usage in
-+  * the file write path of filesystems, and filesystems may choose to
-+  * explicitly ignore updates via this function with the _NOCMTIME inode
-+  * flag, e.g. for network filesystem where these imestamps are handled
-+  * by the server. This can return an error for file systems who need to
-+  * allocate space in order to update an inode.
-+  *
-+  * Return: 0 on success, negative errno on failure.
-+  */
-+int file_update_time(struct file *file)
-+{
-+	int ret;
-+	struct inode *inode =3D file_inode(file);
-+	struct timespec64 now =3D current_time(inode);
-+
-+	ret =3D inode_needs_update_time(inode, &now);
-+	if (ret <=3D 0)
-+		return ret;
-+
-+	return __file_update_time(file, &now, ret);
-+}
+@@ -2116,17 +2116,21 @@ int file_update_time(struct file *file)
  EXPORT_SYMBOL(file_update_time);
 =20
  /**
-@@ -2111,6 +2129,8 @@ EXPORT_SYMBOL(file_update_time);
- int file_modified(struct file *file)
+- * file_modified - handle mandated vfs changes when modifying a file
++ * file_modified_flags - handle mandated vfs changes when modifying a fi=
+le
+  * @file: file that was modified
++ * @flags: kiocb flags
+  *
+  * When file has been modified ensure that special
+  * file privileges are removed and time settings are updated.
+  *
++ * If IOCB_NOWAIT is set, special file privileges will not be removed an=
+d
++ * time settings will not be updated. It will return -EAGAIN.
++ *
+  * Context: Caller must hold the file's inode lock.
+  *
+  * Return: 0 on success, negative errno on failure.
+  */
+-int file_modified(struct file *file)
++static int file_modified_flags(struct file *file, int flags)
  {
  	int ret;
-+	struct inode *inode =3D file_inode(file);
-+	struct timespec64 now =3D current_time(inode);
+ 	struct inode *inode =3D file_inode(file);
+@@ -2146,11 +2150,46 @@ int file_modified(struct file *file)
+ 	ret =3D inode_needs_update_time(inode, &now);
+ 	if (ret <=3D 0)
+ 		return ret;
++	if (flags & IOCB_NOWAIT)
++		return -EAGAIN;
 =20
- 	/*
- 	 * Clear the security bits if the process is not being run by root.
-@@ -2123,7 +2143,11 @@ int file_modified(struct file *file)
- 	if (unlikely(file->f_mode & FMODE_NOCMTIME))
- 		return 0;
-=20
--	return file_update_time(file);
-+	ret =3D inode_needs_update_time(inode, &now);
-+	if (ret <=3D 0)
-+		return ret;
-+
-+	return __file_update_time(file, &now, ret);
+ 	return __file_update_time(file, &now, ret);
  }
++
++/**
++ * file_modified - handle mandated vfs changes when modifying a file
++ * @file: file that was modified
++ *
++ * When file has been modified ensure that special
++ * file privileges are removed and time settings are updated.
++ *
++ * Context: Caller must hold the file's inode lock.
++ *
++ * Return: 0 on success, negative errno on failure.
++ */
++int file_modified(struct file *file)
++{
++	return file_modified_flags(file, 0);
++}
  EXPORT_SYMBOL(file_modified);
+=20
++/**
++ * kiocb_modified - handle mandated vfs changes when modifying a file
++ * @iocb: iocb that was modified
++ *
++ * When file has been modified ensure that special
++ * file privileges are removed and time settings are updated.
++ *
++ * Context: Caller must hold the file's inode lock.
++ *
++ * Return: 0 on success, negative errno on failure.
++ */
++int kiocb_modified(struct kiocb *iocb)
++{
++	return file_modified_flags(iocb->ki_filp, iocb->ki_flags);
++}
++EXPORT_SYMBOL_GPL(kiocb_modified);
++
+ int inode_needs_sync(struct inode *inode)
+ {
+ 	if (IS_SYNC(inode))
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index bdf1ce48a458..553e57ec3efa 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2392,6 +2392,7 @@ static inline void file_accessed(struct file *file)
+ }
+=20
+ extern int file_modified(struct file *file);
++int kiocb_modified(struct kiocb *iocb);
+=20
+ int sync_inode_metadata(struct inode *inode, int wait);
 =20
 --=20
 2.30.2
