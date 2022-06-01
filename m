@@ -2,113 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B70EC53ACDE
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Jun 2022 20:35:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A4DD453ACF7
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Jun 2022 20:44:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234711AbiFASeo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Jun 2022 14:34:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51588 "EHLO
+        id S231485AbiFASo1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Jun 2022 14:44:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232140AbiFASem (ORCPT
+        with ESMTP id S231764AbiFASo0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Jun 2022 14:34:42 -0400
-Received: from mail-ed1-x534.google.com (mail-ed1-x534.google.com [IPv6:2a00:1450:4864:20::534])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 388E7AF1CE
-        for <linux-fsdevel@vger.kernel.org>; Wed,  1 Jun 2022 11:34:40 -0700 (PDT)
-Received: by mail-ed1-x534.google.com with SMTP id v25so3363406eda.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Jun 2022 11:34:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=njosF9y/4mY7h7cHbBRt7eN+aSzBOOky31pVud25XUc=;
-        b=NPllnz8RYVxm2SnTV64EXzDNNfLuN5S4zdx4+p5tMDUvBFc2HBR70PHsb0+FhzIYOe
-         5QBBj11OZ9MvXzN4JDhTfmL34kBXkF5cWwnTwj9QJCpAIQjmWFGOR+tY8hUC7FXp3TPu
-         gpZSXodqw0bfpX1vHBHuU/zTaxExUhW5Sii8s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=njosF9y/4mY7h7cHbBRt7eN+aSzBOOky31pVud25XUc=;
-        b=QvxOivjB91IjWH01BVto/iKV28ouFqCpfNLCFUxhi5NCgEDsMBt8KRYG3/ot7ZXZW9
-         HakpfO/hEMUFSLtDxq9WbOXzTx/KE0mqWUHHhy8lfwFesK5pci4hw/6FqfeAML0XNoDV
-         uCKOu33vR5mvwXmySUEg0ugBiLFV1YFEGh2a+/70D2JpjXU8bnCRUup8e6XCbmBbWsWR
-         nFaGkL2z8mJbzFMwCctwdrxLCRwp6fAyF/IasFplp0HFa/FALgxXMhEqtYHmhkKO/nwV
-         TRYPQPWcK5z4PdqSO8wnx4MCRuIsvmRnSdHMjMc82Us4znH+j4qvGOMAw0Ly8vel06JW
-         rl2g==
-X-Gm-Message-State: AOAM533Ta5Xf5IK5u5i3MTsYSvG17HVEb2GRuKKPR4ilsr10WyzS+i3J
-        QKe1/gG2o/aRnrkZ3YlZNtGJJzgzBQ7kEG+S
-X-Google-Smtp-Source: ABdhPJygSDi/5dXSrlp/A2UupKVmnsJn8AXI65/C5XZ176Q8EaL3deKSqmNWGaLt2FnuCwytOUJZuw==
-X-Received: by 2002:a05:6402:11ca:b0:42b:d282:4932 with SMTP id j10-20020a05640211ca00b0042bd2824932mr1145773edw.421.1654108478750;
-        Wed, 01 Jun 2022 11:34:38 -0700 (PDT)
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com. [209.85.128.54])
-        by smtp.gmail.com with ESMTPSA id c24-20020a056402159800b0042617ba63c2sm1356845edv.76.2022.06.01.11.34.36
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Jun 2022 11:34:36 -0700 (PDT)
-Received: by mail-wm1-f54.google.com with SMTP id o29-20020a05600c511d00b00397697f172dso2873571wms.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Jun 2022 11:34:36 -0700 (PDT)
-X-Received: by 2002:a1c:7207:0:b0:397:66ee:9d71 with SMTP id
- n7-20020a1c7207000000b0039766ee9d71mr692055wmc.8.1654108476150; Wed, 01 Jun
- 2022 11:34:36 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAHk-=whi2SzU4XT_FsdTCAuK2qtYmH+-hwi1cbSdG8zu0KXL=g@mail.gmail.com>
- <cover.1654086665.git.legion@kernel.org> <857cb160a981b5719d8ed6a3e5e7c456915c64fa.1654086665.git.legion@kernel.org>
- <CAHk-=wjJ2CP0ugbOnwAd-=Cw0i-q_xC1PbJ-_1jrvR-aisiAAA@mail.gmail.com> <Ypeu97GDg6mNiKQ8@example.org>
-In-Reply-To: <Ypeu97GDg6mNiKQ8@example.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 1 Jun 2022 11:34:18 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgBeQafNgw6DNUwM4vvw4snb83Tb65m_QH9XSic2JSJaQ@mail.gmail.com>
-Message-ID: <CAHk-=wgBeQafNgw6DNUwM4vvw4snb83Tb65m_QH9XSic2JSJaQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/4] sysctl: ipc: Do not use dynamic memory
-To:     Alexey Gladkov <legion@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        Wed, 1 Jun 2022 14:44:26 -0400
+Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12767AEE06
+        for <linux-fsdevel@vger.kernel.org>; Wed,  1 Jun 2022 11:44:24 -0700 (PDT)
+Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
+        by m0001303.ppops.net (8.17.1.5/8.17.1.5) with ESMTP id 251DIMN4030833
+        for <linux-fsdevel@vger.kernel.org>; Wed, 1 Jun 2022 11:44:24 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=facebook; bh=PvaN0SC4qFzZD21PuBqJmqzLZXx7bb9ZBgJH4uQhJHI=;
+ b=ciQmLj/PYJQUcYqn946K7R7892luncv+Me/ax2X9wO0JFY1Xjmm/++KM34dqIHjfTE/z
+ Rkw9itwZbznndbjlklqoXlbsUOGmvmyvGT1vAg5MjgCY5eWinxF1NEEVBLxolnbpPK0L
+ 9CFwjPZWBAC6HIlmeBUNgG+Zr7K2AD9bLyY= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by m0001303.ppops.net (PPS) with ESMTPS id 3gdv755s99-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Jun 2022 11:44:23 -0700
+Received: from twshared5413.23.frc3.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:83::6) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.28; Wed, 1 Jun 2022 11:44:23 -0700
+Received: by devbig077.ldc1.facebook.com (Postfix, from userid 158236)
+        id B40E5875BFA4; Wed,  1 Jun 2022 11:44:09 -0700 (PDT)
+From:   Dave Marchevsky <davemarchevsky@fb.com>
+To:     <linux-fsdevel@vger.kernel.org>
+CC:     Miklos Szeredi <miklos@szeredi.hu>,
         Christian Brauner <brauner@kernel.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Linux Containers <containers@lists.linux.dev>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Vasily Averin <vvs@virtuozzo.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=no autolearn_force=no version=3.4.6
+        Rik van Riel <riel@surriel.com>,
+        Seth Forshee <sforshee@digitalocean.com>,
+        kernel-team <kernel-team@fb.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>, <clm@fb.com>,
+        Dave Marchevsky <davemarchevsky@fb.com>
+Subject: [PATCH v2] fuse: Add module param for non-descendant userns access to allow_other
+Date:   Wed, 1 Jun 2022 11:44:07 -0700
+Message-ID: <20220601184407.2086986-1-davemarchevsky@fb.com>
+X-Mailer: git-send-email 2.30.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: isySsTk9a7yajUfROkeZSGdWk1ytnDZa
+X-Proofpoint-GUID: isySsTk9a7yajUfROkeZSGdWk1ytnDZa
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.874,Hydra:6.0.517,FMLib:17.11.64.514
+ definitions=2022-06-01_07,2022-06-01_01,2022-02-23_01
+X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 1, 2022 at 11:25 AM Alexey Gladkov <legion@kernel.org> wrote:
->
-> I'm not sure how to get rid of ctl_table since net sysctls are heavily
-> dependent on it.
+Since commit 73f03c2b4b52 ("fuse: Restrict allow_other to the
+superblock's namespace or a descendant"), access to allow_other FUSE
+filesystems has been limited to users in the mounting user namespace or
+descendants. This prevents a process that is privileged in its userns -
+but not its parent namespaces - from mounting a FUSE fs w/ allow_other
+that is accessible to processes in parent namespaces.
 
-I don't actually think it's worth getting rid of entirely, because
-there's just a lot of simple cases where it "JustWorks(tm)" and having
-just that table entry describe all the semantics is not wrong at all.
+While this restriction makes sense overall it breaks a legitimate
+usecase: I have a tracing daemon which needs to peek into
+process' open files in order to symbolicate - similar to 'perf'. The
+daemon is a privileged process in the root userns, but is unable to peek
+into FUSE filesystems mounted with allow_other by processes in child
+namespaces.
 
-The name may suck, but hey, it's not a big deal. Changing it now would
-be more pain than it's worth.
+This patch adds a module param, allow_other_parent_userns, to act as an
+escape hatch for this descendant userns logic. Setting
+allow_other_parent_userns allows non-descendant-userns processes to
+access FUSEs mounted with allow_other. A sysadmin setting this param
+must trust allow_other FUSEs on the host to not DoS processes as
+described in 73f03c2b4b52.
 
-No, I was more thinking that things that already need more
-infrastructure than that simple static ctl_table entry might be better
-off trying to migrate to your new "proper read op" model, and having
-more of that dynamic behavior in the read op.
+Signed-off-by: Dave Marchevsky <davemarchevsky@fb.com>
+---
 
-The whole "create dynamic ctl_table entries on the fly" model works,
-but it's kind of ugly.
+This is a followup to a previous attempt to solve same problem in a
+different way: "fuse: allow CAP_SYS_ADMIN in root userns to access
+allow_other mount" [0].
 
-Anyway, I think all of this is "I think there is more room for cleanup
-in this area", and maybe we'll never have enough motivation to
-actually do that.
+v1 -> v2:
+  * Use module param instead of capability check
 
-Your patches seem to fix the extant issue with the ipc namespace, and
-the truly disgusting parts (although maybe there are other truly
-disgusting things hiding - I didn't go look for them).
+  [0]: lore.kernel.org/linux-fsdevel/20211111221142.4096653-1-davemarchev=
+sky@fb.com
 
-                      Linus
+ fs/fuse/dir.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index 9dfee44e97ad..3d593ae7dc66 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -11,6 +11,7 @@
+ #include <linux/pagemap.h>
+ #include <linux/file.h>
+ #include <linux/fs_context.h>
++#include <linux/moduleparam.h>
+ #include <linux/sched.h>
+ #include <linux/namei.h>
+ #include <linux/slab.h>
+@@ -21,6 +22,12 @@
+ #include <linux/types.h>
+ #include <linux/kernel.h>
+=20
++static bool __read_mostly allow_other_parent_userns;
++module_param(allow_other_parent_userns, bool, 0644);
++MODULE_PARM_DESC(allow_other_parent_userns,
++ "Allow users not in mounting or descendant userns "
++ "to access FUSE with allow_other set");
++
+ static void fuse_advise_use_readdirplus(struct inode *dir)
+ {
+ 	struct fuse_inode *fi =3D get_fuse_inode(dir);
+@@ -1230,7 +1237,7 @@ int fuse_allow_current_process(struct fuse_conn *fc=
+)
+ 	const struct cred *cred;
+=20
+ 	if (fc->allow_other)
+-		return current_in_userns(fc->user_ns);
++		return current_in_userns(fc->user_ns) || allow_other_parent_userns;
+=20
+ 	cred =3D current_cred();
+ 	if (uid_eq(cred->euid, fc->user_id) &&
+--=20
+2.30.2
+
