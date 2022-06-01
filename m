@@ -2,92 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C1B8539DEB
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Jun 2022 09:11:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50461539EDD
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Jun 2022 10:00:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350192AbiFAHLp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Jun 2022 03:11:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46232 "EHLO
+        id S1350475AbiFAIAb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Jun 2022 04:00:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347985AbiFAHLn (ORCPT
+        with ESMTP id S245619AbiFAIAa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Jun 2022 03:11:43 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 468BF1094;
-        Wed,  1 Jun 2022 00:11:43 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id DD10561348;
-        Wed,  1 Jun 2022 07:11:42 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF87AC385B8;
-        Wed,  1 Jun 2022 07:11:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1654067502;
-        bh=msvXeenbVZkFFjDrBwDGhupiSlP9tbiX4Ft0x4Ech6Y=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=uZEnabnhlnptNTwlqLetggxM0qB9RfzMjTfcYWooe8t39hTdz3Neg44WxfFOcxWZu
-         GseZdVPiLFptSKd3XGZrDbTo0pqhWAuzVVytqByTMVvrg7cTHwE5Us4XzXdaC1HF2A
-         N7C/oVr7CcFSN7FzyEo5KvBCsd05XUmyRQWCU8fAifVwI3KXc2jMeaPQLOV2YzvPgL
-         kQwoBIZv/IQN/ugsODtQsBIXGRrpjAqSJw2oNo3+a00mim7kk7GVOHTsm81sGj98yl
-         rGA8dmLVmIrzLofXBsyt6/uCMb+3xHt8UV0mZ4S4ty748cnysXqJMXPeWgKtyEfQVg
-         unHxy8dSjbJjw==
-Date:   Wed, 1 Jun 2022 00:11:40 -0700
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Keith Busch <kbusch@fb.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-nvme@lists.infradead.org, axboe@kernel.dk,
-        Kernel Team <Kernel-team@fb.com>, hch@lst.de,
-        bvanassche@acm.org, damien.lemoal@opensource.wdc.com,
-        pankydev8@gmail.com, Keith Busch <kbusch@kernel.org>
-Subject: Re: [PATCHv5 00/11] direct-io dma alignment
-Message-ID: <YpcRLKwZpN+NQRxn@sol.localdomain>
-References: <20220531191137.2291467-1-kbusch@fb.com>
+        Wed, 1 Jun 2022 04:00:30 -0400
+X-Greylist: delayed 722 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 01 Jun 2022 01:00:29 PDT
+Received: from mail.forindustry.pl (mail.forindustry.pl [37.187.225.170])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FC03939B1
+        for <linux-fsdevel@vger.kernel.org>; Wed,  1 Jun 2022 01:00:29 -0700 (PDT)
+Received: by mail.forindustry.pl (Postfix, from userid 1002)
+        id 7E180A61FE; Wed,  1 Jun 2022 07:46:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=forindustry.pl;
+        s=mail; t=1654069657;
+        bh=Vw5jk5D1DE7WK/GNf/MxRQNyAyPYcC0rMJLibxKTj58=;
+        h=Date:From:To:Subject:From;
+        b=wUYUwyufsofqU3hiOPoSTsAAaCEX/dZ9aZriemVNMD8sc21dtynFA+C/LpRShXN+Y
+         aSzj9BW07HNjsAomsQqUiL8f7FkD8iU6Lw6i2T3o30VghrcbQRUNn6RErdVzSOYivV
+         jSa4yDXM3+ELkxLlwdito6vQf1OiRgSCUOjZdVx9IhevBrIQICtfD1sGTImnZ0y1uw
+         YoX1VS6u6E2oxQekbHsHevR59IH3aa2PdRDiA8xu0aM5YDkMSKe8jFXUM+IZM/0zDE
+         4ePgw/aM1sMLgJUmbR4KZcaKSUTWTNOVN9vOtLl1Lh8u9SJJtxhrnUuKvdpZ5na3eh
+         gyyAQ432/InIg==
+Received: by mail.forindustry.pl for <linux-fsdevel@vger.kernel.org>; Wed,  1 Jun 2022 07:45:30 GMT
+Message-ID: <20220601064501-0.1.3k.lmpx.0.j0gy0i5sck@forindustry.pl>
+Date:   Wed,  1 Jun 2022 07:45:30 GMT
+From:   =?UTF-8?Q? "Arkadiusz_Soko=C5=82owski" ?= 
+        <arkadiusz.sokolowski@forindustry.pl>
+To:     <linux-fsdevel@vger.kernel.org>
+Subject: Koszty instalacji fotowoltaicznej
+X-Mailer: mail.forindustry.pl
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220531191137.2291467-1-kbusch@fb.com>
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, May 31, 2022 at 12:11:26PM -0700, Keith Busch wrote:
-> From: Keith Busch <kbusch@kernel.org>
-> 
-> The most significant change from v4 is the alignment is now checked
-> prior to building the bio. This gets the expected EINVAL error for
-> misaligned userspace iovecs in all cases now (Eric Biggers).
-> 
-> I've removed the legacy fs change, so only iomap filesystems get to use
-> this alignement capability (Christoph Hellwig).
-> 
-> The block fops check for alignment returns a bool now (Damien).
-> 
-> Adjusted some comments, docs, and other minor style issues.
-> 
-> Reviews added for unchanged or trivially changed patches, removed
-> reviews for ones that changed more significantly.
-> 
-> As before, I tested using 'fio' with forced misaligned user buffers on
-> raw block, xfs, and ext4 (example raw block profile below).
-> 
+Dzie=C5=84 dobry,
 
-I still don't think you've taken care of all the assumptions that bv_len is a
-multiple of logical block size, or at least SECTOR_SIZE.  Try this:
+stworzyli=C5=9Bmy specjaln=C4=85 ofert=C4=99 dla firm, na kompleksow=C4=85=
+ obs=C5=82ug=C4=99 inwestycji w fotowoltaik=C4=99.
 
-	git grep -E 'bv_len (>>|/)'
+Specjalizujemy si=C4=99 w zakresie doboru, monta=C5=BCu i serwisie instal=
+acji fotowoltaicznych, dysponujemy najnowocze=C5=9Bniejszymi rozwi=C4=85z=
+ania, kt=C3=B3re zapewni=C4=85 Pa=C5=84stwu oczekiwane rezultaty.
 
-Also:
+Mo=C5=BCemy przygotowa=C4=87 dla Pa=C5=84stwa wst=C4=99pn=C4=85 kalkulacj=
+=C4=99 i przeanalizowa=C4=87 efekty mo=C5=BCliwe do osi=C4=85gni=C4=99cia=
+=2E
 
-	git grep '<.*bv_len;'
+Czy s=C4=85 Pa=C5=84stwo otwarci na wst=C4=99pn=C4=85 rozmow=C4=99 w tym =
+temacie?
 
-Also take a look at bio_for_each_segment(), specifically how iter->bi_sector is
-updated.
-
-- Eric
+Pozdrawiam,
+Arkadiusz Soko=C5=82owski
