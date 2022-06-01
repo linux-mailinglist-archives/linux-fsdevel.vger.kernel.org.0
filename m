@@ -2,103 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8138E53AD79
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Jun 2022 21:48:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B839353AD64
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Jun 2022 21:48:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229560AbiFATcE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Jun 2022 15:32:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33954 "EHLO
+        id S229680AbiFATsM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Jun 2022 15:48:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53246 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229833AbiFATcE (ORCPT
+        with ESMTP id S229454AbiFATsL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Jun 2022 15:32:04 -0400
-Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E11A923B140
-        for <linux-fsdevel@vger.kernel.org>; Wed,  1 Jun 2022 12:30:28 -0700 (PDT)
-Received: by mail-lj1-x22c.google.com with SMTP id t13so3075468ljd.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Jun 2022 12:30:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XQjh59P+YL657/ugkQgJkelCDXFl1T1Vs2NaT8wJJmg=;
-        b=ZZSpwU9hNx1vIgT23ZqORpMaSlb67mK71XYRdg7+sMMlwAstjUOjkA0TEXRoOiSjBx
-         1jZ+YVX1Q02lET6yIsH0PSBUu0oWXEAM0SWXWzAqwObT9JFumL5b5q+9KN6/0sp3uyvB
-         Pok3GJX3EYSYz40c743Gtv1qk9/v1YKTSe4Gk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XQjh59P+YL657/ugkQgJkelCDXFl1T1Vs2NaT8wJJmg=;
-        b=tTSUce7x8eEkP4vC/foi5hFIUgfIqG0xakAoUxW6jXGBC5FFdPNbQAUB5wHuoHViUZ
-         YMRhA0/fuEd7546gOBFskvxtlcdwtgkk57dc4F0HZiiiKHSK3lWBPUUj1IyL42TMsEKe
-         K8xkxTEAFsXWdqwiUm6b6/JdEgKwXqcgfjaXg9Jypggnmw2sGFq3Cz4cckrbRRRTll7e
-         /zBNt15byvMA4EyoE4LZIAtu6qxutuSGgs5JaCXd3iLaoQv3Zw2MKHlnximRMSRDLX2h
-         CFC1WSkcZ1HH75TickzSE5v7I4cKCgTV7z6yPlhTsz3duoFOwmUFzSh74VO8RSPZmUfd
-         dDiQ==
-X-Gm-Message-State: AOAM530mQf9Q9KJUnRmXhAALYUeGC6Y2gMdp9jQPtsaBm0jH/bjVYto7
-        +bp9NIEyPwgdpPz4dlVE5Iuwl6IkeQg813P1
-X-Google-Smtp-Source: ABdhPJwTjcFEBUyADWUx3W1o96Ydu8hmrGk50bgnld8f0rdyn0QWtIl9qLRNZD5iQH3QUjCXSBKFng==
-X-Received: by 2002:a05:6402:2713:b0:42b:7127:8614 with SMTP id y19-20020a056402271300b0042b71278614mr1390363edd.317.1654111405031;
-        Wed, 01 Jun 2022 12:23:25 -0700 (PDT)
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com. [209.85.221.42])
-        by smtp.gmail.com with ESMTPSA id fw9-20020a170907500900b006f3ef214e22sm94680ejc.136.2022.06.01.12.23.23
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Jun 2022 12:23:23 -0700 (PDT)
-Received: by mail-wr1-f42.google.com with SMTP id q7so3656623wrg.5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 01 Jun 2022 12:23:23 -0700 (PDT)
-X-Received: by 2002:a05:6000:1605:b0:210:307a:a94a with SMTP id
- u5-20020a056000160500b00210307aa94amr744700wrb.97.1654111402828; Wed, 01 Jun
- 2022 12:23:22 -0700 (PDT)
+        Wed, 1 Jun 2022 15:48:11 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BDB41CE79C
+        for <linux-fsdevel@vger.kernel.org>; Wed,  1 Jun 2022 12:42:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=yHw2wth7/QLOgYffmoVtxIbJyeLsT+RCXVJBn8zWZQY=; b=QG+ZQSqDYzChC/tXlZ0CU21mHr
+        CVnJM+j61y6HDa5o2wWnKmDGvtcvf+7USIFccIBdEI2/Ek1WjbRh7/aj7iKPno6mwujQb9rLdAyzB
+        A5paRudachwOhX7hC3eoWudfqfhaSHpWgVZRKJawguR6q4Rmh9X8CTJp3AwdtIRfB/OuYvCv+6Qw3
+        l6HnPToPnuuS0Fay3pX1VYsf3kgvX9DOZCitMjlDjf01pMluR5/36XjEjbVwB9vcPym5y3HU4JKHr
+        GfA8x4TB0OuhYd99LTybpScwKkNZI1GxnKEZyuHqaAF9xW2AoR30eOlC3KF26QyEBu3c3Hg7ZR/zp
+        nI7WBKog==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nwTwM-006Y2d-96; Wed, 01 Jun 2022 19:23:34 +0000
+From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
+To:     linux-mm@kvack.org
+Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Muchun Song <songmuchun@bytedance.com>
+Subject: [PATCH 1/2] hugetlb: Convert huge_add_to_page_cache() to use a folio
+Date:   Wed,  1 Jun 2022 20:23:32 +0100
+Message-Id: <20220601192333.1560777-1-willy@infradead.org>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-References: <CAHk-=whi2SzU4XT_FsdTCAuK2qtYmH+-hwi1cbSdG8zu0KXL=g@mail.gmail.com>
- <cover.1654086665.git.legion@kernel.org> <5ec6759ab3b617f9c12449a9606b6f0b5a7582d0.1654086665.git.legion@kernel.org>
- <Ype7skNJzEQ1W96v@casper.infradead.org>
-In-Reply-To: <Ype7skNJzEQ1W96v@casper.infradead.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 1 Jun 2022 12:23:06 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiTtYMia0FR4h7_nV2RZ5pq=wR-7oMMK3o8o=EgAxMsmg@mail.gmail.com>
-Message-ID: <CAHk-=wiTtYMia0FR4h7_nV2RZ5pq=wR-7oMMK3o8o=EgAxMsmg@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/4] sysctl: API extension for handling sysctl
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Alexey Gladkov <legion@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Linux Containers <containers@lists.linux.dev>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Vasily Averin <vvs@virtuozzo.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=no autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 1, 2022 at 12:19 PM Matthew Wilcox <willy@infradead.org> wrote:
->
-> Why not pass the iocb in ->read and ->write?  We're still regretting not
-> doing that with file_operations.
+Remove the last caller of add_to_page_cache()
 
-No, all the actual "io" is done by the caller.
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ fs/hugetlbfs/inode.c |  2 +-
+ mm/hugetlb.c         | 14 ++++++++++----
+ 2 files changed, 11 insertions(+), 5 deletions(-)
 
-There is no way in hell I want the sysctl callbacks to actually
-possibly do user space accesses etc.
+diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+index 62408047e8d7..ae2524480f23 100644
+--- a/fs/hugetlbfs/inode.c
++++ b/fs/hugetlbfs/inode.c
+@@ -759,7 +759,7 @@ static long hugetlbfs_fallocate(struct file *file, int mode, loff_t offset,
+ 
+ 		SetHPageMigratable(page);
+ 		/*
+-		 * unlock_page because locked by add_to_page_cache()
++		 * unlock_page because locked by huge_add_to_page_cache()
+ 		 * put_page() due to reference from alloc_huge_page()
+ 		 */
+ 		unlock_page(page);
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 7c468ac1d069..eb9d6fe9c492 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -5406,19 +5406,25 @@ static bool hugetlbfs_pagecache_present(struct hstate *h,
+ int huge_add_to_page_cache(struct page *page, struct address_space *mapping,
+ 			   pgoff_t idx)
+ {
++	struct folio *folio = page_folio(page);
+ 	struct inode *inode = mapping->host;
+ 	struct hstate *h = hstate_inode(inode);
+-	int err = add_to_page_cache(page, mapping, idx, GFP_KERNEL);
++	int err;
+ 
+-	if (err)
++	__folio_set_locked(folio);
++	err = __filemap_add_folio(mapping, folio, idx, GFP_KERNEL, NULL);
++
++	if (unlikely(err)) {
++		__folio_clear_locked(folio);
+ 		return err;
++	}
+ 	ClearHPageRestoreReserve(page);
+ 
+ 	/*
+-	 * set page dirty so that it will not be removed from cache/file
++	 * mark folio dirty so that it will not be removed from cache/file
+ 	 * by non-hugetlbfs specific code paths.
+ 	 */
+-	set_page_dirty(page);
++	folio_mark_dirty(folio);
+ 
+ 	spin_lock(&inode->i_lock);
+ 	inode->i_blocks += blocks_per_huge_page(h);
+-- 
+2.34.1
 
-They get a kernel buffer that has already been set up. There is no
-iocb or iovec left for them.
-
-(That also means that they can take whatever locks they need,
-including spinlocks, because there's not going to be any random user
-accesses or complex pipe buffer lookups or whatever).
-
-                Linus
