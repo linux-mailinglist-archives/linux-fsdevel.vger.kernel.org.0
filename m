@@ -2,93 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CB0E539AB8
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Jun 2022 03:24:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 495B3539AA4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Jun 2022 03:11:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348532AbiFABYS convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 31 May 2022 21:24:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44180 "EHLO
+        id S1348426AbiFABLT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 31 May 2022 21:11:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43554 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231534AbiFABYR (ORCPT
+        with ESMTP id S230105AbiFABLS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 31 May 2022 21:24:17 -0400
-X-Greylist: delayed 2991 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 31 May 2022 18:24:16 PDT
-Received: from cloud48395.mywhc.ca (cloud48395.mywhc.ca [173.209.37.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A71948CB21;
-        Tue, 31 May 2022 18:24:16 -0700 (PDT)
-Received: from [45.44.224.220] (port=40386 helo=[192.168.1.179])
-        by cloud48395.mywhc.ca with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.95)
-        (envelope-from <olivier@olivierlanglois.net>)
-        id 1nwCJa-0005jM-Mx;
-        Tue, 31 May 2022 20:34:22 -0400
-Message-ID: <12a76c029e9f3cac279c025776dfb2f59331dca0.camel@olivierlanglois.net>
-Subject: Re: [PATCH v6 04/16] iomap: Add flags parameter to
- iomap_page_create()
-From:   Olivier Langlois <olivier@olivierlanglois.net>
-To:     "Darrick J. Wong" <djwong@kernel.org>, Stefan Roesch <shr@fb.com>
-Cc:     io-uring@vger.kernel.org, kernel-team@fb.com, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        david@fromorbit.com, jack@suse.cz, hch@infradead.org
-Date:   Tue, 31 May 2022 20:34:20 -0400
-In-Reply-To: <Yo/GIF1EoK7Acvmy@magnolia>
-References: <20220526173840.578265-1-shr@fb.com>
-         <20220526173840.578265-5-shr@fb.com> <Yo/GIF1EoK7Acvmy@magnolia>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.44.1 
+        Tue, 31 May 2022 21:11:18 -0400
+Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E90D29398C
+        for <linux-fsdevel@vger.kernel.org>; Tue, 31 May 2022 18:11:16 -0700 (PDT)
+Received: by mail-pl1-x631.google.com with SMTP id o17so326783pla.6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 31 May 2022 18:11:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PY52JYSItUrD0Mk4PEiJ0pqT4TM+vNP414Zt5LGtliE=;
+        b=PAW8k48qlNqQflXlFpEJ0cX8I5KIPtuqqme5jdgYIyESn5OZDzntu7JT7gqsB4mWDH
+         gtiliobRdEBNFVdLZ2q/orekQSS9fxq50GYUVTopeXIBONpf/cENekuuqeZd9L0MD099
+         FgDDvH80EefjJDmahtzu/bT0h6YMoN1rU+vRc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PY52JYSItUrD0Mk4PEiJ0pqT4TM+vNP414Zt5LGtliE=;
+        b=6BNkK+xZPMlH3W+WpYx8XiwaZwNwnPKShTwmoD0jxbnjDLBV7LdRoiroxNQxJOQ9g9
+         oIrqe8Wg/6a6YtEp1lSYTu71V7JSz74/o+GYCgYt/k/+iiG6fj/8Jxpke5d1FqOru3CE
+         PGeb4mEjpg/eGa++kNae8+VmpVp8INoP2ymEwdWMwztsnXtaoZLVPkxA4gMdNb8KL4GZ
+         F2dLIVFN9ZWehI2ZeBfv6oHmY+6h0BrvhjfnD9kP5zcai+36/wdHo43xLZ7w8pQaEn2j
+         kSD8Eguz+5tRz6IKVP8/f0F4RZe2fAnbpYt7vQkHuvhT1Pxhmh7Kf+lo7N2mkofBupBM
+         0NCg==
+X-Gm-Message-State: AOAM530Fg0ApVzEwJ3ht8EGbp0hkIybEcixbCZLS+ENpqHRhixu3Ik76
+        xKXHswIUbzpiehrjAnb4ADTaRbJhSXed5w==
+X-Google-Smtp-Source: ABdhPJz5XtkTLFu8eWOaq840/e37fMnCQQr3fVv46InGOG5yauQ8+yK6cLIyG1qAM7LHMXYy+5kukA==
+X-Received: by 2002:a17:902:a585:b0:14d:58ef:65 with SMTP id az5-20020a170902a58500b0014d58ef0065mr62807127plb.139.1654045876273;
+        Tue, 31 May 2022 18:11:16 -0700 (PDT)
+Received: from dlunevwfh.roam.corp.google.com (n122-107-196-14.sbr2.nsw.optusnet.com.au. [122.107.196.14])
+        by smtp.gmail.com with ESMTPSA id mi16-20020a17090b4b5000b001df6173700dsm2621916pjb.49.2022.05.31.18.11.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 31 May 2022 18:11:15 -0700 (PDT)
+From:   Daniil Lunev <dlunev@chromium.org>
+X-Google-Original-From: Daniil Lunev <dlunev@google.com>
+To:     linux-fsdevel@vger.kernel.org, miklos@szeredi.hu,
+        viro@zeniv.linux.org.uk, hch@infradead.org, tytso@mit.edu
+Cc:     linux-kernel@vger.kernel.org, fuse-devel@lists.sourceforge.net,
+        Daniil Lunev <dlunev@google.com>
+Subject: [PATCH v4 0/2] Prevent re-use of FUSE superblock after force unmount
+Date:   Wed,  1 Jun 2022 11:11:01 +1000
+Message-Id: <20220601011103.12681-1-dlunev@google.com>
+X-Mailer: git-send-email 2.31.0
 MIME-Version: 1.0
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cloud48395.mywhc.ca
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - olivierlanglois.net
-X-Get-Message-Sender-Via: cloud48395.mywhc.ca: authenticated_id: olivier@olivierlanglois.net
-X-Authenticated-Sender: cloud48395.mywhc.ca: olivier@olivierlanglois.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2022-05-26 at 11:25 -0700, Darrick J. Wong wrote:
-> On Thu, May 26, 2022 at 10:38:28AM -0700, Stefan Roesch wrote:
-> > 
-> >  static struct iomap_page *
-> > -iomap_page_create(struct inode *inode, struct folio *folio)
-> > +iomap_page_create(struct inode *inode, struct folio *folio,
-> > unsigned int flags)
-> >  {
-> >         struct iomap_page *iop = to_iomap_page(folio);
-> >         unsigned int nr_blocks = i_blocks_per_folio(inode, folio);
-> > +       gfp_t gfp = GFP_NOFS | __GFP_NOFAIL;
-> >  
-> >         if (iop || nr_blocks <= 1)
-> >                 return iop;
-> >  
-> > +       if (flags & IOMAP_NOWAIT)
-> > +               gfp = GFP_NOWAIT;
-> 
-> Hmm.  GFP_NOWAIT means we don't wait for reclaim or IO or filesystem
-> callbacks, and NOFAIL means we retry indefinitely.  What happens in
-> the
-> NOWAIT|NOFAIL case?  Does that imply that the kzalloc loops without
-> triggering direct reclaim until someone else frees enough memory?
-> 
-> --D
+Force unmount of fuse severes the connection between FUSE driver and its
+userspace counterpart. However, open file handles will prevent the
+superblock from being reclaimed. An attempt to remount the filesystem at
+the same endpoint will try re-using the superblock, if still present.
+Since the superblock re-use path doesn't go through the fs-specific
+superblock setup code, its state in FUSE case is already disfunctional,
+and that will prevent the mount from succeeding.
 
-I have a question that is a bit offtopic but since it is concerning GFP
-flags and this is what is discussed here maybe a participant will
-kindly give me some hints about this mystery that has burned me for so
-long...
+Changes in v4:
+- Simplify condition according to Christoph Hellwig's comments.
 
-Why does out_of_memory() requires GFP_FS to kill a process? AFAIK, no
-filesystem-dependent operations are needed to kill a process...
+Changes in v3:
+- Back to state tracking from v1
+- Use s_iflag to mark superblocked ignored
+- Only unregister private bdi in retire, without freeing
+
+Changes in v2:
+- Remove super from list of superblocks instead of using a flag
+
+Daniil Lunev (2):
+  fs/super: function to prevent super re-use
+  FUSE: Retire superblock on force unmount
+
+ fs/fuse/inode.c    |  7 +++++--
+ fs/super.c         | 28 ++++++++++++++++++++++++++--
+ include/linux/fs.h |  2 ++
+ 3 files changed, 33 insertions(+), 4 deletions(-)
+
+-- 
+2.31.0
 
