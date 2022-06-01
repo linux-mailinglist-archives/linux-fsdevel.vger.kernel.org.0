@@ -2,117 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C8FAB539F47
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Jun 2022 10:22:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B12F6539F79
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  1 Jun 2022 10:29:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348794AbiFAIVm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 1 Jun 2022 04:21:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35166 "EHLO
+        id S1350747AbiFAI3V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 1 Jun 2022 04:29:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48772 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348724AbiFAIVi (ORCPT
+        with ESMTP id S1349252AbiFAI3T (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 1 Jun 2022 04:21:38 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 222638BD09;
-        Wed,  1 Jun 2022 01:21:34 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id A0F1E1F8C2;
-        Wed,  1 Jun 2022 08:21:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1654071692; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=qFW9bTmKBS2+gHojijvkjkqL/6eg0hnOyIs9tcdOTgY=;
-        b=rzKGxBWKlTdfgQJeou5aTTP3eotyRDYh0h5IgTWh9X3T+mol14UPDdeW5WuJUV+JsJB05q
-        hg+x/HZjYhAN/WUl3jiDHvDs2Sp7G+waBsH5Ktd5/7foaZIrGmYPyuC8Kw3lap9xjfIzXe
-        iSUu/C/rSN/RCW9CWT4kmiOirvokkyI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1654071692;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=qFW9bTmKBS2+gHojijvkjkqL/6eg0hnOyIs9tcdOTgY=;
-        b=8O8b/MlDnnsYqt5E0buDIbYgfGJz2wStygFZ2QukhPHcEQ55VrhQiN9iweqFDlO2zvWGOr
-        lRTj5r4fXMNxE4BA==
-Received: from quack3.suse.cz (unknown [10.163.28.18])
+        Wed, 1 Jun 2022 04:29:19 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A25824B861;
+        Wed,  1 Jun 2022 01:29:18 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 6A6D42C141;
-        Wed,  1 Jun 2022 08:21:32 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 08F35A0633; Wed,  1 Jun 2022 10:21:32 +0200 (CEST)
-Date:   Wed, 1 Jun 2022 10:21:31 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Olivier Langlois <olivier@olivierlanglois.net>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>, Stefan Roesch <shr@fb.com>,
-        io-uring@vger.kernel.org, kernel-team@fb.com, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        david@fromorbit.com, jack@suse.cz, hch@infradead.org
-Subject: Re: [PATCH v6 04/16] iomap: Add flags parameter to
- iomap_page_create()
-Message-ID: <20220601082131.rem4qaqabu4ktofl@quack3.lan>
-References: <20220526173840.578265-1-shr@fb.com>
- <20220526173840.578265-5-shr@fb.com>
- <Yo/GIF1EoK7Acvmy@magnolia>
- <12a76c029e9f3cac279c025776dfb2f59331dca0.camel@olivierlanglois.net>
+        by ams.source.kernel.org (Postfix) with ESMTPS id 513D3B81854;
+        Wed,  1 Jun 2022 08:29:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8AB1C385A5;
+        Wed,  1 Jun 2022 08:29:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1654072155;
+        bh=1iXjC+c5NDksDK4JWBcsRyUMhftWpjNZ5o01WmkxYAc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=HAildSU/sq7Bgxx0sWq8pyb5IW7hO4kp1mXK9VDpSGGieB/7DZd6I8AvLt0YkEDB5
+         +9cFXyLVug9Vm/WIEm8VnZNUT1z4Cq5kg6vxviY5FCRX+zYt+qLBnUkiDVvOmLyK5S
+         Vg07weRxFj18FDJWZQi0lB1p2bS1+QR/pMOUgNmyRTu+bsRv+D/tdfQN1BzCCN+cV2
+         efEexTSPtk+K5OXjyDx9LUL8ZJ2inc1V9RNShdvvit0zVWv85IWkYtNwak3eDwNJsp
+         Te868s6mOvSqgnV87dZx3TlrTHQeRWEjOuELjgaBo7/vwhXdgF+CD8Y975G7UB7sz/
+         TDqCVKcQG9zjg==
+Date:   Wed, 1 Jun 2022 11:29:10 +0300
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Kent Overstreet <kent.overstreet@gmail.com>
+Cc:     Stephen Hemminger <stephen@networkplumber.org>,
+        Andrew Lunn <andrew@lunn.ch>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        netdev@vger.kernel.org, mcgrof@kernel.org, tytso@mit.edu,
+        RDMA mailing list <linux-rdma@vger.kernel.org>
+Subject: Re: RFC: Ioctl v2
+Message-ID: <YpcjVs/41EzAtr9k@unreal>
+References: <20220520161652.rmhqlvwvfrvskg4w@moria.home.lan>
+ <Yof6hsC1hLiYITdh@lunn.ch>
+ <20220521164546.h7huckdwvguvmmyy@moria.home.lan>
+ <20220521124559.69414fec@hermes.local>
+ <20220525170233.2yxb5pm75dehrjuj@moria.home.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <12a76c029e9f3cac279c025776dfb2f59331dca0.camel@olivierlanglois.net>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+In-Reply-To: <20220525170233.2yxb5pm75dehrjuj@moria.home.lan>
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 31-05-22 20:34:20, Olivier Langlois wrote:
-> On Thu, 2022-05-26 at 11:25 -0700, Darrick J. Wong wrote:
-> > On Thu, May 26, 2022 at 10:38:28AM -0700, Stefan Roesch wrote:
+On Wed, May 25, 2022 at 01:02:33PM -0400, Kent Overstreet wrote:
+> On Sat, May 21, 2022 at 12:45:59PM -0700, Stephen Hemminger wrote:
+> > On Sat, 21 May 2022 12:45:46 -0400
+> > Kent Overstreet <kent.overstreet@gmail.com> wrote:
+> > 
+> > > On Fri, May 20, 2022 at 10:31:02PM +0200, Andrew Lunn wrote:
+> > > > > I want to circulate this and get some comments and feedback, and if
+> > > > > no one raises any serious objections - I'd love to get collaborators
+> > > > > to work on this with me. Flame away!  
+> > > > 
+> > > > Hi Kent
+> > > > 
+> > > > I doubt you will get much interest from netdev. netdev already
+> > > > considers ioctl as legacy, and mostly uses netlink and a message
+> > > > passing structure, which is easy to extend in a backwards compatible
+> > > > manor.  
 > > > 
-> > >  static struct iomap_page *
-> > > -iomap_page_create(struct inode *inode, struct folio *folio)
-> > > +iomap_page_create(struct inode *inode, struct folio *folio,
-> > > unsigned int flags)
-> > >  {
-> > >         struct iomap_page *iop = to_iomap_page(folio);
-> > >         unsigned int nr_blocks = i_blocks_per_folio(inode, folio);
-> > > +       gfp_t gfp = GFP_NOFS | __GFP_NOFAIL;
-> > >  
-> > >         if (iop || nr_blocks <= 1)
-> > >                 return iop;
-> > >  
-> > > +       if (flags & IOMAP_NOWAIT)
-> > > +               gfp = GFP_NOWAIT;
+> > > The more I look at netlink the more I wonder what on earth it's targeted at or
+> > > was trying to solve. It must exist for a reason, but I've written a few ioctls
+> > > myself and I can't fathom a situation where I'd actually want any of the stuff
+> > > netlink provides.
 > > 
-> > Hmm.  GFP_NOWAIT means we don't wait for reclaim or IO or filesystem
-> > callbacks, and NOFAIL means we retry indefinitely.  What happens in
-> > the
-> > NOWAIT|NOFAIL case?  Does that imply that the kzalloc loops without
-> > triggering direct reclaim until someone else frees enough memory?
+> > Netlink was built for networking operations, you want to set something like a route with a large
+> > number of varying parameters in one transaction. And you don't want to have to invent
+> > a new system call every time a new option is added.
 > > 
-> > --D
+> > Also, you want to monitor changes and see these events for a userspace control
+> > application such as a routing daemon.
 > 
-> I have a question that is a bit offtopic but since it is concerning GFP
-> flags and this is what is discussed here maybe a participant will
-> kindly give me some hints about this mystery that has burned me for so
-> long...
+> That makes sense - perhaps the new mount API could've been done as a netlink
+> interface :)
 > 
-> Why does out_of_memory() requires GFP_FS to kill a process? AFAIK, no
-> filesystem-dependent operations are needed to kill a process...
+> But perhaps it makes sense to have both - netlink for the big complicated
+> stateful operations, ioctl v2 for the simpler ones. I haven't looked at netlink
+> usage at all, but most of the filesystem ioctls I've looked at fall into the the
+> simple bucket, for me.
 
-AFAIK it is because without GFP_FS, the chances for direct reclaim are
-fairly limited so we are not sure whether the machine is indeed out of
-memory or whether it is just that we need to reclaim from fs pools to free
-up memory.
+In RDMA, we solved this thing (standard entry points, multiple
+parameters and vendor specific data) by combining netlink and ioctls.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+The entry point is done with ioctls (mainly performance reason, but not
+only) while data is passed in netlink attributes style.
+
+ib_uverbs_ioctl:
+https://elixir.bootlin.com/linux/v5.18/source/drivers/infiniband/core/uverbs_ioctl.c#L605
+
+Latest example of newly added global to whole stack command:
+RDMA/uverbs: Add uverbs command for dma-buf based MR registration
+https://lore.kernel.org/linux-rdma/1608067636-98073-4-git-send-email-jianxin.xiong@intel.com/
+
+Thanks
