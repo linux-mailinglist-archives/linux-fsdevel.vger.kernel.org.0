@@ -2,50 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DEF1353B934
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jun 2022 14:57:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B4F353BB80
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jun 2022 17:21:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235089AbiFBM52 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Jun 2022 08:57:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37016 "EHLO
+        id S233610AbiFBPVY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Jun 2022 11:21:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231722AbiFBM50 (ORCPT
+        with ESMTP id S229899AbiFBPVX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Jun 2022 08:57:26 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE0A4243ECD;
-        Thu,  2 Jun 2022 05:57:25 -0700 (PDT)
+        Thu, 2 Jun 2022 11:21:23 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A5112A5515;
+        Thu,  2 Jun 2022 08:21:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=JFp6WmIipFimbqeAO2j6Pm5GVuKNfBoT3pvUwbllZnA=; b=EaOwh2x2mocIMqrnZBG42H9vhj
-        fFAYFS+ggTcKhu/R2RtmlDR+KMVxQmsqX1pej1AqDXG5+Wc47ebk0leECNPfHABrz4l/c2xKcss+C
-        +2Rd+sZKsuf4Qsm/6GwB8t2NJaK4HdlMPHroCIJYeySix5yjlcgRuGOWKA7N2pRjgz0gJYkL95/NF
-        KpJSmRlKBoNaRgt/tQrpY2Gjf6FMySseSZBQjJl1tu6PFDHBMBrOORRBnnnsbZn/vHqQBSGTxa0gw
-        v1fBZYuwSwLNl+IUoJr3TywjwoLFhA13CKmDcSsTWesLVtg/updwQjCiPm50wQSp5OqH7L/o+S9H5
-        ocqNU0OQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nwkO6-0079V8-OD; Thu, 02 Jun 2022 12:57:18 +0000
-Date:   Thu, 2 Jun 2022 13:57:18 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Stefan Roesch <shr@fb.com>
-Cc:     io-uring@vger.kernel.org, kernel-team@fb.com, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        david@fromorbit.com, jack@suse.cz, hch@infradead.org,
-        axboe@kernel.dk
-Subject: Re: [PATCH v7 09/15] fs: Split off inode_needs_update_time and
- __file_update_time
-Message-ID: <YpizrjBiAvMiXduL@casper.infradead.org>
-References: <20220601210141.3773402-1-shr@fb.com>
- <20220601210141.3773402-10-shr@fb.com>
+        d=infradead.org; s=bombadil.20210309; h=Sender:Content-Type:MIME-Version:
+        Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=JIw8aKjJnDAUMfW/ZoAS3ykhzT+7C9tK1kg2A9Q7aFE=; b=dYtKQhtFUXzYAr4tHRCc7eIobY
+        OqE7Yfif70F45glOPSt41CFw8FgQ2zhaeZ3A/xgayBzLDgf+ROvjy8kRRwlJaAYsMz/YEwBiWD/sB
+        ZrLliJldX1+hlCnicbZof+iHBL23JEPGsqhvZhH5j4CUn5DYwW1ul0zhElxLUFKBwFL6NBGvCAmZF
+        4CBDk8rDX9m4nRfBovQRJQN8n18btfznjKeXOG8KfT0WtgyAqS75TbN/w1hhD4EdZtpBz3pzvSIkZ
+        AoSEugHfWhTAQKEYwcckFIspB8DdPsM8Ku00B6z52MznXh+xLsicwOMlmM26FQZcLmxAgCjaiozEF
+        P0lBVFRA==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nwmdU-003gSj-6r; Thu, 02 Jun 2022 15:21:20 +0000
+Date:   Thu, 2 Jun 2022 08:21:20 -0700
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        fstests <fstests@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Amir Goldstein <amir73il@gmail.com>, pankydev8@gmail.com,
+        Josef Bacik <josef@toxicpanda.com>,
+        Theodore Tso <tytso@mit.edu>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Javier Gonzalez <javier.gonz@samsung.com>,
+        a.manzanares@samsung.com, Tyler Hicks <code@tyhicks.com>,
+        Leah Rumancik <lrumancik@google.com>,
+        Klaus Jensen <its@irrelevant.dk>,
+        Zorro Lang <zlang@redhat.com>, shirley.ma@oracle.com,
+        chandan.babu@oracle.com, konrad.wilk@oracle.com, mcgrof@kernel.org
+Subject: [ANN] Discord server for testing Linux with kdevops
+Message-ID: <YpjVcHuxhEQwPusN@bombadil.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220601210141.3773402-10-shr@fb.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -53,21 +60,23 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 01, 2022 at 02:01:35PM -0700, Stefan Roesch wrote:
-> + /**
-> +  * file_update_time - update mtime and ctime time
-> +  * @file: file accessed
-> +  *
-> +  * Update the mtime and ctime members of an inode and mark the inode for
-> +  * writeback. Note that this function is meant exclusively for usage in
-> +  * the file write path of filesystems, and filesystems may choose to
-> +  * explicitly ignore updates via this function with the _NOCMTIME inode
-> +  * flag, e.g. for network filesystem where these imestamps are handled
-> +  * by the server. This can return an error for file systems who need to
-> +  * allocate space in order to update an inode.
-> +  *
-> +  * Return: 0 on success, negative errno on failure.
-> +  */
+I've setup a discord server for general discussions around Linux
+kernel testing with kdevops. This should help with coordination
+around kdevops in an accessible way for:
 
-Can you remove the extra leading space from each of these lines?
+  * The shared kdevops repository and dependent trees on the linux-kdevops
+    organization: https://github.com/linux-kdevops/
+  * Sharing of expunges for fstests / blktests for different
+    filesystems / configuration / kernel releases
+  * Shared hardware resources such as the public Super Micro bigtwin server
+    currently used to help test fstests and blktests
+  * Future potential shared cloud credits
+  * Streamlining reports for new issues found on stable kernels or
+    Linus's tree or linux-next
+  * Storing / sharing test failure artifacts
 
+The discord server:
+
+https://discord.gg/pWgZZhRp
+
+  Luis
