@@ -2,96 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 35E9953B4CA
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jun 2022 10:09:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A129753B4C7
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  2 Jun 2022 10:08:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232072AbiFBIJH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 2 Jun 2022 04:09:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60454 "EHLO
+        id S232063AbiFBIIM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 2 Jun 2022 04:08:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232060AbiFBIJE (ORCPT
+        with ESMTP id S232062AbiFBIIL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 2 Jun 2022 04:09:04 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86CFE4839C
-        for <linux-fsdevel@vger.kernel.org>; Thu,  2 Jun 2022 01:09:03 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id q7so5407247wrg.5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Jun 2022 01:09:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=eUM9+XnalZT18c7gwsWOLxfN4u2iAez4Y1cABKmJu7Y=;
-        b=pEjALHln/V5MI9KV/B8S84wKMxLpaS6mFQYsQg4h1Pw54EPO1vAV8zqlmjOHzeRiKS
-         qFAOHOdwesAKJ+PBPUEOiwmIh5shZOixMb6R4W/6Ndz9dtr+CYBytV4gTde4NlQJFuyF
-         jtQ76iLIWD/UxnCIq420Md4LDbyHKOpT/r7DDphdjP+JT+B5PFW1yBKTJXu7XqaHcRzR
-         rhFrfUic4ClKv1WRcrM3H8g1C61tTdejTt6RQ9oy8R66zL0YE8m5xngYIGRFiHLQb2B9
-         QLXUUcfzqAw24VJLu0K7m1AyLCYxCpArGXpmStRDdkq3TSF9bqhcOeiMkHio/qX/MTKu
-         JQbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=eUM9+XnalZT18c7gwsWOLxfN4u2iAez4Y1cABKmJu7Y=;
-        b=OH0S4jIhCF82mSMa2lqUpKNTllmCJyfTOsT8VZuoSQCRb/mkU2Y4V1G9Ctn/NYfwOG
-         05DZ3oAX1RmhzrXO/WC0wrmET/PUOUgRsk2TR40BftcWfwW0Nn7FOOmLU7C+eg7iirdm
-         UCDJzCKajrIzGDM3XGlm2bzRZiVQ+Qt6fKWoL7y+6JUMcyzz+zDHoCyd46gOGq8hZh6I
-         6QPUjotQnhOeubTUjjiZqO6cMU8yt1K8ZNiBKtDusuOr0bdZx9P5cvpaHRecJ0673VWe
-         pHE3E/K8u200Nb4ooRxtKMxx23Yp+MibU+YKeBvdQhW2RoC4pD1Ft1Ybaa0WZeS/rDaz
-         2brg==
-X-Gm-Message-State: AOAM533w8ORa8hspwdNnWYV753Y82kHolaNYfyaYugY/4sQvdedyumKL
-        ZWCNGjPpGxuvBOkLmqJ8h9dZcA==
-X-Google-Smtp-Source: ABdhPJyJQE6sH13ogO1etQC1ENO2og0WoBGaPBG3HKHQ+nyT0I31zdiYkJyuiDyDUMe3DaMxCJwp1A==
-X-Received: by 2002:adf:d193:0:b0:210:2e72:48b6 with SMTP id v19-20020adfd193000000b002102e7248b6mr2483115wrc.387.1654157342024;
-        Thu, 02 Jun 2022 01:09:02 -0700 (PDT)
-Received: from [10.40.36.78] ([193.52.24.5])
-        by smtp.gmail.com with ESMTPSA id z14-20020adfd0ce000000b0020e68dd2598sm3574188wrh.97.2022.06.02.01.09.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Jun 2022 01:09:01 -0700 (PDT)
-Message-ID: <545ab14b-a95a-de2e-dbc6-f5688b09b47c@kernel.dk>
-Date:   Thu, 2 Jun 2022 02:09:00 -0600
+        Thu, 2 Jun 2022 04:08:11 -0400
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75DDB25FE;
+        Thu,  2 Jun 2022 01:08:08 -0700 (PDT)
+Received: from kwepemi500025.china.huawei.com (unknown [172.30.72.54])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4LDJTR4TJ2zRhYy;
+        Thu,  2 Jun 2022 16:04:59 +0800 (CST)
+Received: from kwepemm600009.china.huawei.com (7.193.23.164) by
+ kwepemi500025.china.huawei.com (7.221.188.170) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Thu, 2 Jun 2022 16:08:06 +0800
+Received: from huawei.com (10.175.127.227) by kwepemm600009.china.huawei.com
+ (7.193.23.164) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.24; Thu, 2 Jun
+ 2022 16:08:05 +0800
+From:   Yu Kuai <yukuai3@huawei.com>
+To:     <willy@infradead.org>, <akpm@linux-foundation.org>,
+        <kent.overstreet@gmail.com>
+CC:     <axboe@kernel.dk>, <linux-fsdevel@vger.kernel.org>,
+        <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+        <yukuai3@huawei.com>, <yi.zhang@huawei.com>
+Subject: [PATCH -next] mm/filemap: fix that first page is not mark accessed in filemap_read()
+Date:   Thu, 2 Jun 2022 16:21:29 +0800
+Message-ID: <20220602082129.2805890-1-yukuai3@huawei.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH v7 00/15] io-uring/xfs: support async buffered writes
-Content-Language: en-US
-To:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
-        kernel-team@fb.com, linux-mm@kvack.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Cc:     david@fromorbit.com, jack@suse.cz, hch@infradead.org
-References: <20220601210141.3773402-1-shr@fb.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20220601210141.3773402-1-shr@fb.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.127.227]
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemm600009.china.huawei.com (7.193.23.164)
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/1/22 3:01 PM, Stefan Roesch wrote:
-> This patch series adds support for async buffered writes when using both
-> xfs and io-uring. Currently io-uring only supports buffered writes in the
-> slow path, by processing them in the io workers. With this patch series it is
-> now possible to support buffered writes in the fast path. To be able to use
-> the fast path the required pages must be in the page cache, the required locks
-> in xfs can be granted immediately and no additional blocks need to be read
-> form disk.
+In filemap_read(), 'ra->prev_pos' is set to 'iocb->ki_pos + copied',
+while it should be 'iocb->ki_ops'. For consequence,
+folio_mark_accessed() will not be called for 'fbatch.folios[0]' since
+'iocb->ki_pos' is always equal to 'ra->prev_pos'.
 
-This series looks good to me now, but will need some slight rebasing
-since the 5.20 io_uring branch has split up the code a bit. Trivial to
-do though, I suspect it'll apply directly if we just change
-fs/io_uring.c to io_uring/rw.c instead.
+Fixes: 06c0444290ce ("mm/filemap.c: generic_file_buffered_read() now uses find_get_pages_contig")
+Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+---
+ mm/filemap.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-The bigger question is how to stage this, as it's touching a bit of fs,
-mm, and io_uring...
-
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 9daeaab36081..0b776e504d35 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2728,10 +2728,11 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
+ 				flush_dcache_folio(folio);
+ 
+ 			copied = copy_folio_to_iter(folio, offset, bytes, iter);
+-
+-			already_read += copied;
+-			iocb->ki_pos += copied;
+-			ra->prev_pos = iocb->ki_pos;
++			if (copied) {
++				ra->prev_pos = iocb->ki_pos;
++				already_read += copied;
++				iocb->ki_pos += copied;
++			}
+ 
+ 			if (copied < bytes) {
+ 				error = -EFAULT;
 -- 
-Jens Axboe
+2.31.1
 
