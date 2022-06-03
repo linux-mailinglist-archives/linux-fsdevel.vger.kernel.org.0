@@ -2,65 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F90253C8EF
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jun 2022 12:48:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C9EB53C947
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jun 2022 13:29:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243838AbiFCKsc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Jun 2022 06:48:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38198 "EHLO
+        id S243970AbiFCL1F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Jun 2022 07:27:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39688 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230419AbiFCKsa (ORCPT
+        with ESMTP id S237380AbiFCL1E (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Jun 2022 06:48:30 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 717F23A5E0;
-        Fri,  3 Jun 2022 03:48:29 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 26D0621BAF;
-        Fri,  3 Jun 2022 10:48:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1654253308; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=lL0sA5XjtLFXOSPYhZwL9fsYRctZLSHfZMiugzXEhy0=;
-        b=MPG+EDLZ7zWtvgYAuhwBRZAbEQTvwn0S2ojkdsEWGzgDARk6FtZCjTh6LDLjkoAh1HAeN1
-        qLdFYFKplq7W9P08Xhuw0g0LCJVECJgSB6rKoueH+O4alAy0avP5ZySJH0mkHhLwkCpn5C
-        z7KWS13dFbs4yhmJFUkRSLpn/FLQ6gg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1654253308;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=lL0sA5XjtLFXOSPYhZwL9fsYRctZLSHfZMiugzXEhy0=;
-        b=virjceIuMs1e0WcsnZvBKAq6RwjObIP8bs1bt75KotsmFk5fqGF4hiId5i+c8xrxXcVouG
-        cD1xxqDFti5G2ZAg==
-Received: from quack3.suse.cz (unknown [10.100.224.230])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id BB5F02C141;
-        Fri,  3 Jun 2022 10:48:27 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id F3E10A0633; Fri,  3 Jun 2022 12:12:02 +0200 (CEST)
-Date:   Fri, 3 Jun 2022 12:12:02 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Stefan Roesch <shr@fb.com>
-Cc:     Jan Kara <jack@suse.cz>, io-uring@vger.kernel.org,
-        kernel-team@fb.com, linux-mm@kvack.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, david@fromorbit.com,
-        hch@infradead.org, axboe@kernel.dk, Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v7 10/15] fs: Add async write file modification handling.
-Message-ID: <20220603101202.sabns7qs4cv4z2yp@quack3.lan>
-References: <20220601210141.3773402-1-shr@fb.com>
- <20220601210141.3773402-11-shr@fb.com>
- <20220602090605.ulwxr4edbrsgdxtl@quack3.lan>
- <06c41c2d-4265-3dad-ad97-755ade33a8fa@fb.com>
+        Fri, 3 Jun 2022 07:27:04 -0400
+Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0CBB13D44;
+        Fri,  3 Jun 2022 04:26:59 -0700 (PDT)
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 49AEC2698;
+        Fri,  3 Jun 2022 11:26:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paragon-software.com; s=mail; t=1654255584;
+        bh=HVPX9ugwZpjN4d10W+xJnrpqV9wwOQw9BPCuiHwX/Z4=;
+        h=Date:To:CC:From:Subject;
+        b=XsmIGJkbYCZ/8M03RLAOCj60tGHjaZZ4KYoBL30IENFRY8HO6vvRAvdPppu2Le/qX
+         szw96Y1ikALRSYczYTpcb/3JtYAaUlw/cRSWAi1GPVXk9Yuh/601qhJVYMbZCeQgZd
+         0pzI+fbueqaKRPf6g26GluIBZziY5AaDvC1fhb+Q=
+Received: from [172.30.8.65] (172.30.8.65) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.7; Fri, 3 Jun 2022 14:26:57 +0300
+Message-ID: <c5c16f3d-c8a7-96b0-4fd6-056c4159fcef@paragon-software.com>
+Date:   Fri, 3 Jun 2022 14:26:57 +0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <06c41c2d-4265-3dad-ad97-755ade33a8fa@fb.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Content-Language: en-US
+To:     <torvalds@linux-foundation.org>
+CC:     <ntfs3@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Subject: [GIT PULL] ntfs3: bugfixes for 5.19
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [172.30.8.65]
+X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
+ vdlg-exch-02.paragon-software.com (172.30.1.105)
+X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,HEXHASH_WORD,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -68,44 +55,84 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 02-06-22 14:00:38, Stefan Roesch wrote:
-> 
-> 
-> On 6/2/22 2:06 AM, Jan Kara wrote:
-> > On Wed 01-06-22 14:01:36, Stefan Roesch wrote:
-> >> This adds a file_modified_async() function to return -EAGAIN if the
-> >> request either requires to remove privileges or needs to update the file
-> >> modification time. This is required for async buffered writes, so the
-> >> request gets handled in the io worker of io-uring.
-> >>
-> >> Signed-off-by: Stefan Roesch <shr@fb.com>
-> >> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > 
-> > I've found one small bug here:
-> > 
-> >> diff --git a/fs/inode.c b/fs/inode.c
-> >> index c44573a32c6a..4503bed063e7 100644
-> >> --- a/fs/inode.c
-> >> +++ b/fs/inode.c
-> > ...
-> >> -int file_modified(struct file *file)
-> >> +static int file_modified_flags(struct file *file, int flags)
-> >>  {
-> >>  	int ret;
-> >>  	struct inode *inode = file_inode(file);
-> > 
-> > We need to use 'flags' for __file_remove_privs_flags() call in this patch.
-> > 
-> 
-> I assume that you meant that the function should not be called _file_remove_privs(),
-> but instead file_remove_privs_flags(). Is that correct?
+Hi Linus,
 
-No, I meant that patch 8 adds call __file_remove_privs(..., 0) to
-file_modified() and this patch then forgets to update that call to
-__file_remove_privs(..., flags) so that information propagates properly.
+Please pull this branch containing ntfs3 code for 5.19.
 
-								Honza
+Fixed:
+- some memory leaks and panic;
+- fixed xfstests (tested on x86_64)
+generic/092 generic/099 generic/228 generic/240 generic/307 generic/444;
+- bugfix (memory leak) for 5.18 [1];
+- some typos, dead code, etc.
 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Most of the code was in linux-next branch for several months,
+but there are some patches, that were in linux-next branch only
+for a couple of days. Hopefully it is ok - no regression
+was detected in tests.
+
+Note: after first 9 commits there was merge with Linux 5.18.
+I'm not sure if this complicates things, so I've listed all commits too.
+
+Regards,
+
+Konstantin
+
+[1]: https://www.spinics.net/lists/ntfs3/msg01036.html
+
+----------------------------------------------------------------
+
+The following changes since commit 8bb7eca972ad531c9b149c0a51ab43a417385813:
+
+   Linux 5.15 (Sun Oct 31 13:53:10 2021 -0700)
+
+are available in the Git repository at:
+
+   https://github.com/Paragon-Software-Group/linux-ntfs3.git ntfs3_for_5.19
+
+for you to fetch changes up to 724bbe49c5e427cb077357d72d240a649f2e4054:
+
+   fs/ntfs3: provide block_invalidate_folio to fix memory leak (Mon May 30 13:36:45 2022 +0200)
+
+All commits:
+
+724bbe49c5e4 fs/ntfs3: provide block_invalidate_folio to fix memory leak
+f26967b9f7a8 fs/ntfs3: Fix invalid free in log_replay
+< merge with 5.18 happened >
+52e00ea6b26e fs/ntfs3: Update valid size if -EIOCBQUEUED
+114346978cf6 fs/ntfs3: Check new size for limits
+3880f2b816a7 fs/ntfs3: Fix fiemap + fix shrink file size (to remove preallocated space)
+9186d472ee78 fs/ntfs3: In function ntfs_set_acl_ex do not change inode->i_mode if called from function ntfs_init_acl
+3a2154b25a9f fs/ntfs3: Optimize locking in ntfs_save_wsl_perm
+2d44667c306e fs/ntfs3: Update i_ctime when xattr is added
+87e21c99bad7 fs/ntfs3: Restore ntfs_xattr_get_acl and ntfs_xattr_set_acl functions
+e95113ed4d42 fs/ntfs3: Keep preallocated only if option prealloc enabled
+e589f9b7078e fs/ntfs3: Fix some memory leaks in an error handling path of 'log_replay()'
+
+----------------------------------------------------------------
+
+Konstantin Komarov (8)
+  fs/ntfs3: Update valid size if -EIOCBQUEUED
+  fs/ntfs3: Check new size for limits
+  fs/ntfs3: Fix fiemap + fix shrink file size (to remove preallocated space)
+  fs/ntfs3: In function ntfs_set_acl_ex do not change inode->i_mode if called from function ntfs_init_acl
+  fs/ntfs3: Optimize locking in ntfs_save_wsl_perm
+  fs/ntfs3: Update i_ctime when xattr is added
+  fs/ntfs3: Restore ntfs_xattr_get_acl and ntfs_xattr_set_acl functions
+  fs/ntfs3: Keep preallocated only if option prealloc enabled
+
+Mikulas Patocka (1)
+  fs/ntfs3: provide block_invalidate_folio to fix memory leak
+
+Namjae Jeon (1)
+  fs/ntfs3: Fix invalid free in log_replay
+
+Christophe JAILLET (1)
+  fs/ntfs3: Fix some memory leaks in an error handling path of 'log_replay()'
+
+  fs/ntfs3/file.c    |  12 +++++++++---
+  fs/ntfs3/frecord.c |  10 +++++++---
+  fs/ntfs3/fslog.c   |  12 +++++++-----
+  fs/ntfs3/inode.c   |   9 ++++++--
+  fs/ntfs3/xattr.c   | 136 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----------------
+  5 files changed, 149 insertions(+), 30 deletions(-)
