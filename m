@@ -2,33 +2,33 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4486053CE40
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jun 2022 19:40:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6794E53CE80
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jun 2022 19:43:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344693AbiFCRke (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Jun 2022 13:40:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55702 "EHLO
+        id S1344880AbiFCRmz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Jun 2022 13:42:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344650AbiFCRkR (ORCPT
+        with ESMTP id S1344866AbiFCRmg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Jun 2022 13:40:17 -0400
+        Fri, 3 Jun 2022 13:42:36 -0400
 Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3DBF532F3;
-        Fri,  3 Jun 2022 10:40:14 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AE9D544CD;
+        Fri,  3 Jun 2022 10:41:38 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id F35ACB8242F;
-        Fri,  3 Jun 2022 17:40:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A757C3411C;
-        Fri,  3 Jun 2022 17:40:11 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 50BE2B8241E;
+        Fri,  3 Jun 2022 17:41:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 718E5C385B8;
+        Fri,  3 Jun 2022 17:41:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1654278011;
-        bh=H+33qVGEmmmRXd4D8HKPoED2WQ8+Wv50Xo0oV+noaXc=;
+        s=korg; t=1654278095;
+        bh=3ViZWjmJ+Nek5pl0FuNMo3ymqto6EzWkpqpCjbVe+J8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0/EVWW4b5dAbUugoe4ydwCC+4fGo9alvvec39ygv7HDT6l1vuPhwGU3CLcDA/7S8u
-         O/pogg7RAB4BhuE0+fM27KWAm9j7DOlb2NaUVoaVHzrYL66yzo8Xyaz8bOFSNpLwnq
-         H084RR5Dbat4C3fE8EJZYSwiNJsbU9PBoVsEXrjg=
+        b=q+UhhMdM8ZGiHeU+Wu9gYbJ8SIehtwd30o0Mb9XbmwAJz5OiMJVKS9GD9daCBpXqo
+         hJFeS8uUp/JVmb6pkUfvD+M3RyAaUV6yNfaJephoCJG1Xogha4qx06a4uH0oSEisUB
+         MQKnC30D5e/y1U7RpSAPpl72BnvSj9SS2wpbC9Pc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -42,12 +42,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-fsdevel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
         Andy Lutomirski <luto@kernel.org>,
         Vegard Nossum <vegard.nossum@oracle.com>
-Subject: [PATCH 4.9 06/12] exec: Force single empty string when argv is empty
-Date:   Fri,  3 Jun 2022 19:39:32 +0200
-Message-Id: <20220603173812.713763455@linuxfoundation.org>
+Subject: [PATCH 4.14 13/23] exec: Force single empty string when argv is empty
+Date:   Fri,  3 Jun 2022 19:39:40 +0200
+Message-Id: <20220603173814.769065032@linuxfoundation.org>
 X-Mailer: git-send-email 2.36.1
-In-Reply-To: <20220603173812.524184588@linuxfoundation.org>
-References: <20220603173812.524184588@linuxfoundation.org>
+In-Reply-To: <20220603173814.362515009@linuxfoundation.org>
+References: <20220603173814.362515009@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -142,7 +142,7 @@ make sure this didn't fall through the cracks, as it does block a real
 
 --- a/fs/exec.c
 +++ b/fs/exec.c
-@@ -1758,6 +1758,9 @@ static int do_execveat_common(int fd, st
+@@ -1788,6 +1788,9 @@ static int do_execveat_common(int fd, st
  		goto out_unmark;
  
  	bprm->argc = count(argv, MAX_ARG_STRINGS);
@@ -152,7 +152,7 @@ make sure this didn't fall through the cracks, as it does block a real
  	if ((retval = bprm->argc) < 0)
  		goto out;
  
-@@ -1782,6 +1785,20 @@ static int do_execveat_common(int fd, st
+@@ -1812,6 +1815,20 @@ static int do_execveat_common(int fd, st
  	if (retval < 0)
  		goto out;
  
