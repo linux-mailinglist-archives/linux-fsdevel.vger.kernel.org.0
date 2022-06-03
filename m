@@ -2,99 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 63ADC53CDD3
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jun 2022 19:11:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCB9F53CDF3
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jun 2022 19:17:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344265AbiFCRL5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Jun 2022 13:11:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54104 "EHLO
+        id S242190AbiFCRR0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Jun 2022 13:17:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45028 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344205AbiFCRL4 (ORCPT
+        with ESMTP id S238989AbiFCRRZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Jun 2022 13:11:56 -0400
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F26D31D;
-        Fri,  3 Jun 2022 10:11:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1654276315; x=1685812315;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=zo6YQ9IdWIOXgcCc9f+nONd+0knf9UreZRGv23diN2E=;
-  b=bSLIaFdiHqTwK+uDeSvVUTbaZTuemn1JccaVUzPY+36hD+vJk4OGYQzH
-   Z+rRhkwjKSLQaZf+7LfS74Suzgpluca7/tlJyeK+Wk31LXJ+glGYB+UPs
-   0jvaLPl7JHpv0vyQqHTxkZTSXKgjuO+/7X46arq/bLRla1QEJ4a1ELsJS
-   mU1pg2fA/AaFbaSsQoQS6cJVfmYzKY1dfWp0lxFrT5BlYN/ayRnVF6wM6
-   EzlSz42IcON7qLKuYr86m3HdUnvkBBfyCnoKBbBwH7Xf75gMQXQLwswTj
-   bamUMQGjCWff7rFAhYCbrepsjQWkQZPGUlkFlgO6oe7AFC+hlytCDPXpW
-   g==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10367"; a="263956486"
-X-IronPort-AV: E=Sophos;i="5.91,275,1647327600"; 
-   d="scan'208";a="263956486"
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2022 10:11:54 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.91,275,1647327600"; 
-   d="scan'208";a="824812029"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga006.fm.intel.com with ESMTP; 03 Jun 2022 10:11:53 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id E7414F8; Fri,  3 Jun 2022 20:11:55 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/1] xarray: Replace kernel.h with the necessary inclusions
-Date:   Fri,  3 Jun 2022 20:11:53 +0300
-Message-Id: <20220603171153.48928-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.35.1
+        Fri, 3 Jun 2022 13:17:25 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BE0C52511;
+        Fri,  3 Jun 2022 10:17:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=nBx/NbU4HXIOKAcGrEAiFD5zI7/ONKNqMop28OvDkIw=; b=I04kpGV5e0ITx/ywVzkXX+jlwh
+        36Fko0jxoKN9eTovUrASkrAhhDzvQhMQ539r3r6hjRtjzJ/mpCIYVG6C0Py5NEbc4IqUpj8Ak/5Sp
+        e1pRvQeFeFkOHMV8pT+zvbsmgu2ihS0bnuexJHnG+17jvN3tyqHuEd9XKGHPT9BSXNx4HNO5mYwy5
+        K3sNY/O5d0tEVLBhitErxiUgb1Qn/GBgt41jk3HPjSnJO0ag4b3AIrGWNHvjbjzN/+85DBIO39nfr
+        E5yZIH2xypOGdm3SlujzAQpX7Jnd7/gtXDQtYjOIHIs70Z2B6kyN9w9gz6/RTUY3uOUiOJgVfUie8
+        Gu+TJblw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nxAvK-0081lU-FM; Fri, 03 Jun 2022 17:17:22 +0000
+Date:   Fri, 3 Jun 2022 18:17:22 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v1 1/1] xarray: Replace kernel.h with the necessary
+ inclusions
+Message-ID: <YppCIr4qM3lVYi8N@casper.infradead.org>
+References: <20220603171153.48928-1-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.9 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220603171153.48928-1-andriy.shevchenko@linux.intel.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When kernel.h is used in the headers it adds a lot into dependency hell,
-especially when there are circular dependencies are involved.
+On Fri, Jun 03, 2022 at 08:11:53PM +0300, Andy Shevchenko wrote:
+> When kernel.h is used in the headers it adds a lot into dependency hell,
+> especially when there are circular dependencies are involved.
+> 
+> Replace kernel.h inclusion with the list of what is really being used.
 
-Replace kernel.h inclusion with the list of what is really being used.
+Thanks.  Can you fix the test suite too?
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- include/linux/xarray.h | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/xarray.h b/include/linux/xarray.h
-index 72feab5ea8d4..e9fedaa3498a 100644
---- a/include/linux/xarray.h
-+++ b/include/linux/xarray.h
-@@ -12,13 +12,18 @@
- #include <linux/bitmap.h>
- #include <linux/bug.h>
- #include <linux/compiler.h>
-+#include <linux/err.h>
- #include <linux/gfp.h>
- #include <linux/kconfig.h>
--#include <linux/kernel.h>
-+#include <linux/limits.h>
-+#include <linux/lockdep.h>
-+#include <linux/math.h>
- #include <linux/rcupdate.h>
- #include <linux/spinlock.h>
- #include <linux/types.h>
- 
-+#include <asm/bitsperlong.h>
-+
- /*
-  * The bottom two bits of the entry determine how the XArray interprets
-  * the contents:
--- 
-2.35.1
-
+(cd tools/testing/radix-tree; make)
