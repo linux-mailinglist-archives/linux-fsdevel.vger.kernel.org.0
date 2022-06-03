@@ -2,177 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C55EF53C51F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jun 2022 08:41:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30B4453C659
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jun 2022 09:36:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241705AbiFCGki (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Jun 2022 02:40:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51344 "EHLO
+        id S242515AbiFCHfZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Jun 2022 03:35:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60544 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237447AbiFCGkh (ORCPT
+        with ESMTP id S242596AbiFCHfO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Jun 2022 02:40:37 -0400
-Received: from mail-yw1-x112a.google.com (mail-yw1-x112a.google.com [IPv6:2607:f8b0:4864:20::112a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37C5F38787
-        for <linux-fsdevel@vger.kernel.org>; Thu,  2 Jun 2022 23:40:35 -0700 (PDT)
-Received: by mail-yw1-x112a.google.com with SMTP id 00721157ae682-30c1c9b9b6cso72825747b3.13
-        for <linux-fsdevel@vger.kernel.org>; Thu, 02 Jun 2022 23:40:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RfTNEksliZ3y2poNDmDeIKONIqonojXSfIHkatdp5wA=;
-        b=IzFzYEXuWY1GJiMU/NqMxDg9AH710M3ZuBEesd8VJGccuOl+bIht9xKv4Th4TqHSpc
-         eWOJoiIdi/j5QAenz9PGqOifjhIfuICyi5m0hn2YYejz+TsDGSf1fFa/kyrlthrWONxq
-         jDaHVXtfUkkYOwNB9qw/7Rj8QZRTrUcEUl76XejrlXfx62lG/x4lFnPHIbTdhD8MaOnG
-         a9yjumLGdKWxqTkIDdkNQJdJh2OjQpuwB21L+GDVsKgYDzMDw3uTwM4xyMUQctyezlMj
-         Du0QDBbyTJuhyjY3sunXEH9KxEdVVoTSV7oCOu77Q6Li9ncnngBEFE/e77ZujC/S7uxo
-         ES6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RfTNEksliZ3y2poNDmDeIKONIqonojXSfIHkatdp5wA=;
-        b=QLmISHNNscpotUxWrbX0SG52GU7f+hHVbCV3TtkNbVHNuCsa6V0OW/BQ2rchFdDlb9
-         fwaf9X5I7LEf2enYHYTSzJqRaHdtOxbonCzdhpXZ8w66FJmYCfCNO9+ygwGF+ouuKnv4
-         pL0asAzsL2euO392LNw6NGKDDPeaFWGEMUTofW/jvspRR7OQmuR63HaqaMqqWyRmA/8v
-         wYW0ZZyMqM31lHtIi8ZK1VDPUOuadteC7v/EhKX+WdYaDVbhk9EiPJSYFSyppf9aQB69
-         936eJ5BbEJ8cnTqW5Uhj029ABgtmTX/SzCngc/kYBAef/ZX3HJiVoA9HbWIJeNl9nvLX
-         DPZQ==
-X-Gm-Message-State: AOAM533oW1/JhA4uWFgXilDNXbqen4j2AfnjxkZy5klLeMj3OppdVsR9
-        CqMr2mKqI6Nz400Ip/GEzpkJXf71smToA78bFD2Zew==
-X-Google-Smtp-Source: ABdhPJzbniNopbD7WI9L6d2fjFTtiuHbwNIZGmDW2ibkKHKW8tsgdRqstdZMqPsBAzAoBIJQEpbXcX2nDDJS7S6LUy8=
-X-Received: by 2002:a81:4c8e:0:b0:300:37ba:2c1e with SMTP id
- z136-20020a814c8e000000b0030037ba2c1emr10333837ywa.141.1654238434452; Thu, 02
- Jun 2022 23:40:34 -0700 (PDT)
+        Fri, 3 Jun 2022 03:35:14 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1585E1DA5B;
+        Fri,  3 Jun 2022 00:34:59 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 784151F8AE;
+        Fri,  3 Jun 2022 07:34:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1654241698; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=j7Ww7cKCif3bOsw9nkqMS3BtrJ26nS6Z6FXIoNR0jpQ=;
+        b=oxPMfFD9UnHIqHEMVYa+A/rDi+lEg2/rOilAxQb91rBOIGs+WQy3unBKE0vPYtMctoFn/z
+        /09HiNPJL2ckjhbJZY92zXoQZuZl1HU5yD3dxTvBWm15OPpITg6LRzkdOsFD2Q/bCCPEB9
+        0M12dN1UVy9PBuAqXUCCzZkNPxKFIVg=
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 2439413B11;
+        Fri,  3 Jun 2022 07:34:58 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id pJX7BaK5mWKOVQAAMHmgww
+        (envelope-from <nborisov@suse.com>); Fri, 03 Jun 2022 07:34:58 +0000
+From:   Nikolay Borisov <nborisov@suse.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nikolay Borisov <nborisov@suse.com>
+Subject: [PATCH] pipe: Remove redundant zeroing of pipe->offset
+Date:   Fri,  3 Jun 2022 10:34:56 +0300
+Message-Id: <20220603073456.311724-1-nborisov@suse.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20220525065050.38905-1-songmuchun@bytedance.com>
-In-Reply-To: <20220525065050.38905-1-songmuchun@bytedance.com>
-From:   Muchun Song <songmuchun@bytedance.com>
-Date:   Fri, 3 Jun 2022 14:39:58 +0800
-Message-ID: <CAMZfGtU_Sp28CO2ZfvO_ta2_f5V5hVax3q86TqqHbOskCJPp7Q@mail.gmail.com>
-Subject: Re: [PATCH v3] sysctl: handle table->maxlen robustly for proc_dobool
-To:     LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Xiongchun duan <duanxiongchun@bytedance.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi all,
+This member is already set to 0 for the newly initialized buffer, no
+need to duplicate the operation.
 
-Ping guys. Any comments or objections?
+Signed-off-by: Nikolay Borisov <nborisov@suse.com>
+---
+ fs/pipe.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-On Wed, May 25, 2022 at 2:51 PM Muchun Song <songmuchun@bytedance.com> wrote:
->
-> Setting ->proc_handler to proc_dobool at the same time setting ->maxlen
-> to sizeof(int) is counter-intuitive, it is easy to make mistakes in the
-> future (When I first use proc_dobool() in my driver, I assign
-> sizeof(variable) to table->maxlen.  Then I found it was wrong, it should
-> be sizeof(int) which was very counter-intuitive).  For robustness,
-> rework proc_dobool() robustly.  So it is an improvement not a real bug
-> fix.
->
-> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-> Cc: Luis Chamberlain <mcgrof@kernel.org>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Iurii Zaikin <yzaikin@google.com>
-> ---
-> v3:
->  - Update commit log.
->
-> v2:
->  - Reimplementing proc_dobool().
->
->  fs/lockd/svc.c  |  2 +-
->  kernel/sysctl.c | 38 +++++++++++++++++++-------------------
->  2 files changed, 20 insertions(+), 20 deletions(-)
->
-> diff --git a/fs/lockd/svc.c b/fs/lockd/svc.c
-> index 59ef8a1f843f..6e48ee787f49 100644
-> --- a/fs/lockd/svc.c
-> +++ b/fs/lockd/svc.c
-> @@ -496,7 +496,7 @@ static struct ctl_table nlm_sysctls[] = {
->         {
->                 .procname       = "nsm_use_hostnames",
->                 .data           = &nsm_use_hostnames,
-> -               .maxlen         = sizeof(int),
-> +               .maxlen         = sizeof(nsm_use_hostnames),
->                 .mode           = 0644,
->                 .proc_handler   = proc_dobool,
->         },
-> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> index e52b6e372c60..50a2c29efc94 100644
-> --- a/kernel/sysctl.c
-> +++ b/kernel/sysctl.c
-> @@ -423,21 +423,6 @@ static void proc_put_char(void **buf, size_t *size, char c)
->         }
->  }
->
-> -static int do_proc_dobool_conv(bool *negp, unsigned long *lvalp,
-> -                               int *valp,
-> -                               int write, void *data)
-> -{
-> -       if (write) {
-> -               *(bool *)valp = *lvalp;
-> -       } else {
-> -               int val = *(bool *)valp;
-> -
-> -               *lvalp = (unsigned long)val;
-> -               *negp = false;
-> -       }
-> -       return 0;
-> -}
-> -
->  static int do_proc_dointvec_conv(bool *negp, unsigned long *lvalp,
->                                  int *valp,
->                                  int write, void *data)
-> @@ -708,16 +693,31 @@ int do_proc_douintvec(struct ctl_table *table, int write,
->   * @lenp: the size of the user buffer
->   * @ppos: file position
->   *
-> - * Reads/writes up to table->maxlen/sizeof(unsigned int) integer
-> - * values from/to the user buffer, treated as an ASCII string.
-> + * Reads/writes up to table->maxlen/sizeof(bool) bool values from/to
-> + * the user buffer, treated as an ASCII string.
->   *
->   * Returns 0 on success.
->   */
->  int proc_dobool(struct ctl_table *table, int write, void *buffer,
->                 size_t *lenp, loff_t *ppos)
->  {
-> -       return do_proc_dointvec(table, write, buffer, lenp, ppos,
-> -                               do_proc_dobool_conv, NULL);
-> +       struct ctl_table tmp = *table;
-> +       bool *data = table->data;
-> +       unsigned int val = READ_ONCE(*data);
-> +       int ret;
-> +
-> +       /* Do not support arrays yet. */
-> +       if (table->maxlen != sizeof(bool))
-> +               return -EINVAL;
-> +
-> +       tmp.maxlen = sizeof(val);
-> +       tmp.data = &val;
-> +       ret = do_proc_douintvec(&tmp, write, buffer, lenp, ppos, NULL, NULL);
-> +       if (ret)
-> +               return ret;
-> +       if (write)
-> +               WRITE_ONCE(*data, val ? true : false);
-> +       return 0;
->  }
->
->  /**
-> --
-> 2.11.0
->
+diff --git a/fs/pipe.c b/fs/pipe.c
+index 74ae9fafd25a..56950aa850be 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -536,7 +536,6 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
+ 				break;
+ 			}
+ 			ret += copied;
+-			buf->offset = 0;
+ 			buf->len = copied;
+ 
+ 			if (!iov_iter_count(from))
+-- 
+2.25.1
+
