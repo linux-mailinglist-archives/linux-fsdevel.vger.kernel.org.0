@@ -2,50 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 342B053CBA8
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jun 2022 16:40:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6223E53CBAF
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jun 2022 16:41:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243981AbiFCOkT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Jun 2022 10:40:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37980 "EHLO
+        id S245149AbiFCOlf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Jun 2022 10:41:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38530 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236288AbiFCOkS (ORCPT
+        with ESMTP id S245138AbiFCOle (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Jun 2022 10:40:18 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC4EC48E59;
-        Fri,  3 Jun 2022 07:40:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=aUeh3TS7yGsWjasgaqZC24BFaRSUEZ62WTQKuLG/trQ=; b=Rqpqty5tCsq2jB3TvZzzfKJD4l
-        pb5a7z5ruClsgoUHFfwNxqUKUN7YcBdi3NZa/hveC9iQzmuYkjH0B3pmL8lxBtYU0Q46iJTLOFAl6
-        IKeRglu339/99NOmrlt8avDqhCgseACC1zojteE6QfkjcOU18GFeCnUJV2JPGRHNhlyGcNfs27K79
-        K8dfWfy9vvXs7/clYWfepxLhev3B0XaWxE/DPMY6hIldB38pXsEtbm2AjBdQK1GigomlRu4+ahAQZ
-        SyrgT37FNKsOkuzfHBbjQt8Gl2lPaqd+tJ4eivbFAuFBeSGZVbazqTxsocDxIyjLnxq+6TppM0hZ5
-        Ql0o3aOw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nx8TF-007xAb-Kc; Fri, 03 Jun 2022 14:40:13 +0000
-Date:   Fri, 3 Jun 2022 15:40:13 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     jfs-discussion@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org,
-        "Darrick J . Wong" <djwong@kernel.org>, linux-ext4@vger.kernel.org,
-        Jan Kara <jack@suse.com>
-Subject: generic_quota_read
-Message-ID: <YpodTd+YN/FtiaP3@casper.infradead.org>
-References: <20220526192910.357055-1-willy@infradead.org>
- <20220526192910.357055-8-willy@infradead.org>
- <YpBlF2xbfL2yY98n@infradead.org>
+        Fri, 3 Jun 2022 10:41:34 -0400
+Received: from wout2-smtp.messagingengine.com (wout2-smtp.messagingengine.com [64.147.123.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0252548E59;
+        Fri,  3 Jun 2022 07:41:33 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.west.internal (Postfix) with ESMTP id 1B1BD32002F9;
+        Fri,  3 Jun 2022 10:41:30 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Fri, 03 Jun 2022 10:41:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm1; t=1654267289; x=1654353689; bh=bdf6OG8oFg
+        5pHlwH19Dh8WKLl53MNJOfNyG8ctdsTPE=; b=IRzI1rPr6whBdIr4f0KDz5ySgi
+        61E6CobQ6wtp/ALq+hKXOs3Z3gmveqRd9eCo6G8YXEjcv7FTyduDPFWugrX7vFqR
+        Lx8NeiNCo9nVtBRkvctl5VEmYmEtMEAuA3G5nzwA4C766x1ynBOrnLw9tlG0MQ48
+        CSF9Y07A20TMNnouD9dMgKBzUrj0F+1JjGGeptJb4mCFyNBNyDSEztqU3E2uz7h7
+        0WvDG98dWCPHu2euSjcEscdXa5m5Uw4dfDyO58a9fvHcvoYqGyAeUMFjA4PU/J3Z
+        ufoOEEhaglzUFXFCdzoMrXwG/LSGzhJOWxEWgSTeI7AhR4D6A5xNc9xJbn+Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
+        :mime-version:references:reply-to:sender:subject:subject:to:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm1; t=1654267289; x=1654353689; bh=bdf6OG8oFg5pHlwH19Dh8WKLl53M
+        NJOfNyG8ctdsTPE=; b=qkkmEqlP9gly5Q/6/GTas1xz5w2pLrlXYrBDqofuGTHc
+        DytNF5JR88bbrp/wxmh4TRhokUPWvhxl0WoH2BSvb6tnmQyWi9U+/vcWXp+LltdO
+        5orrp4PTpKwhrEL2/LL5ecOMHxrU5ohxcAaGT52XhMTiTQFMsr18TO8H2tjX7sHs
+        +HJRchymTQ8r7oN6XpLZEK4in5YCnvryW95mODDHBXTKMRENe0PHfh3b0tXp+Yg9
+        VpTevF/9qcWnadCTZoKRawgP9/ctY8vChTBy44Gk9qdrfqPpZc/blt4MzFxFiwmz
+        twC9w0R24quSp1VvnW5W4CVa1oAurt0NB8n29O6rSw==
+X-ME-Sender: <xms:mB2aYnRqFiONT56wPlEps55qr7nSOw4f6CExJyWWejU65jZachJYmw>
+    <xme:mB2aYoynFRfDKSMnqL63Z5Ub0uD_nzJwaEdWMqCRZd8saW494U0kPj4CfcNd2ugW3
+    ddwZZv2OA6nEw>
+X-ME-Received: <xmr:mB2aYs12MB3d-ivPgqkpXyFW7tJn6acOICiS6PkO3Qll_D0vCccQTr9DOqTPC4FVACmU9pJ9j57lVIF4dMR4-nHH89dBZjen>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrleeigdejjecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvvefukfhfgggtuggjsehttdortddttddvnecuhfhrohhmpefirhgvghcu
+    mffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpeejhfelff
+    ejkeejheetgfeigeekueeuuddvveekjeekueeggfdvhfefteelgefgvdenucevlhhushht
+    vghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhh
+    drtghomh
+X-ME-Proxy: <xmx:mB2aYnAvPoi_6SzwgLfr6RRS1LObp-nQ3_LFuARIT0uefuq_zjBOEQ>
+    <xmx:mB2aYgiXnPhQb0TXjwjpRTibBSvk-eE4N6dZZupmuqWRt8wshKQqUg>
+    <xmx:mB2aYroapDY1r3p7hJy2itf2eZQSF6nnv3GJcn-pmSteZgKEQGaLdA>
+    <xmx:mR2aYpWszrYW25vfK1QZ1W2UiAyAmirlfO_IsDBuvchQulxZ6MVWOg>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 3 Jun 2022 10:41:28 -0400 (EDT)
+Date:   Fri, 3 Jun 2022 16:41:26 +0200
+From:   Greg KH <greg@kroah.com>
+To:     Tadeusz Struk <tadeusz.struk@linaro.org>
+Cc:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        Sungjong Seo <sj1557.seo@samsung.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: exfat: check if cluster num is valid
+Message-ID: <YpodliEhKuIPEowh@kroah.com>
+References: <b6ca08bb-2275-ab66-1a78-d4ac9e87057c@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YpBlF2xbfL2yY98n@infradead.org>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+In-Reply-To: <b6ca08bb-2275-ab66-1a78-d4ac9e87057c@linaro.org>
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -53,26 +85,12 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, May 26, 2022 at 10:43:51PM -0700, Christoph Hellwig wrote:
-> >  static ssize_t jfs_quota_read(struct super_block *sb, int type, char *data,
-> > +			      size_t len, loff_t pos)
->
-> And this whole helper is generic now.  It might be worth to move it
-> into fs/quota/dquot.c as generic_quota_read.
+On Tue, May 31, 2022 at 08:53:40AM -0700, Tadeusz Struk wrote:
+> Hi,
+> Please apply upstream commit: 64ba4b15e5c0 ("exfat: check if cluster num is valid")
+> to stable 5.18.y and 5.17.y
+> Backports for 5.15.y and 5.10.y will follow soon.
 
-I've been working on that this week.  Unfortunately, you have to convert
-both quota_read and quota_write at the same time, it turns out.  At
-least ext4_quota_write() uses the bdev's inode's page cache to back
-the buffer_heads, so quota_read() and quota_write() are incoherent
-with each other:
+All now queued up, thanks.
 
-00017 gqr: mapping:00000000ee19acfb index:0x1 pos:0x1470 len:0x30
-00017 4qw: mapping:000000007f9a811e index:0x18405 pos:0x1440 len:0x30
-
-I don't know if there's a way around this.  Can't really use
-read_mapping_folio() on the bdev's inode in generic_quota_read() -- the
-blocks for a given page might be fragmented on disk.  I don't know
-if there's a way to tell ext4_bread() to use the inode's page cache
-instead of the bdev's.  And if we did that, would it even work as
-being part of a transaction?
-
+greg k-h
