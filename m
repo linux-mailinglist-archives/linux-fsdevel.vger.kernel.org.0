@@ -2,110 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4C08053CA57
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jun 2022 15:04:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 342B053CBA8
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jun 2022 16:40:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244497AbiFCNEi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Jun 2022 09:04:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37372 "EHLO
+        id S243981AbiFCOkT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Jun 2022 10:40:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239263AbiFCNEi (ORCPT
+        with ESMTP id S236288AbiFCOkS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Jun 2022 09:04:38 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01F7F10E5
-        for <linux-fsdevel@vger.kernel.org>; Fri,  3 Jun 2022 06:04:36 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id n124-20020a1c2782000000b003972dfca96cso4303951wmn.4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Jun 2022 06:04:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=Xefno9BRMaznVjGWpJqFujzBMkdM7h0wTTai3ECWRnw=;
-        b=DSGw+PQnD1zilwmt8UG6eTzMKU/KiULGYnvDBrk9sNsYbtG24Z5PJyRFmRQKDDVFRv
-         JgVgL6yt5+ii1kPjHe8MdjYzvNOxzCkxJGnZ/8/ND5LADeQcHqwxG/aH2rNhEiVxlmG3
-         puB3M5aKburUFpm7XdPSf304z11btuh6vPQOrlmtBMXZUGaO8t2lY1YJC6zNK19HfQAV
-         XOeQt11YIIs2MQBOeXl7c8WJ9fE9wc2RFPGjQw2BizqZyz2IoZCS6FJ4Cu1mAzx3P73g
-         MXtyWvgLpNMxm0HTT2wwW3BgXOBOIEi1V+XG82LPalMIIS9zG+OWzD9/Q1WAwH635nS+
-         NvOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=Xefno9BRMaznVjGWpJqFujzBMkdM7h0wTTai3ECWRnw=;
-        b=6T0VcCryyVhAmZlRNfItrKGFTCJjfvJdYbGhRUanVxB+x2ukn1AcN6BRCBsSlgpYpV
-         PWEU7D/i5DqKJGj7axYdv6EeqStcTW11rAzwbg/dYzNDhuwNTidEBDGWQXOy/tIxwd0i
-         b7xtg3VWUtAlRNCb0aLih45cYDhZ4T+VXzL9LCltPIvsxlWHUFHyCi0iDJkTPnC8WGw9
-         T6GikmlejfdGW9xp3vf3rCSnAdVSVkZ2Z/BcVEmhBAOZuJC2GcQopgstYVudue9wfHYD
-         jyIGz/ZC9Nd8ROFO62UjJRYH1+fRnJ9cMvsBvamjk2Sfwcml0qdB8Py4fIbisKpLWfeQ
-         TREg==
-X-Gm-Message-State: AOAM531/XYlOZwe43fNpfoqqYU2yrRWh66UR0P7kuXUnsZ/QxYK/76l2
-        xCkgQCbHxxG+XVLUCfNI47E4eQ==
-X-Google-Smtp-Source: ABdhPJyFiUIiXqa6BnyIIt8MXwIskAfhmGqYHLaz1nxTa+gqvCOZ9W8kKM3ThR27pu9THilhOOyoaw==
-X-Received: by 2002:a05:600c:35c1:b0:394:8621:a1d5 with SMTP id r1-20020a05600c35c100b003948621a1d5mr37855746wmq.196.1654261474422;
-        Fri, 03 Jun 2022 06:04:34 -0700 (PDT)
-Received: from [10.40.36.78] ([193.52.24.5])
-        by smtp.gmail.com with ESMTPSA id h21-20020a05600c351500b003942a244f53sm11611241wmq.44.2022.06.03.06.04.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 Jun 2022 06:04:33 -0700 (PDT)
-Message-ID: <324b506e-ad35-797d-d7d7-cfc8bec26e8e@kernel.dk>
-Date:   Fri, 3 Jun 2022 07:04:32 -0600
+        Fri, 3 Jun 2022 10:40:18 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC4EC48E59;
+        Fri,  3 Jun 2022 07:40:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=aUeh3TS7yGsWjasgaqZC24BFaRSUEZ62WTQKuLG/trQ=; b=Rqpqty5tCsq2jB3TvZzzfKJD4l
+        pb5a7z5ruClsgoUHFfwNxqUKUN7YcBdi3NZa/hveC9iQzmuYkjH0B3pmL8lxBtYU0Q46iJTLOFAl6
+        IKeRglu339/99NOmrlt8avDqhCgseACC1zojteE6QfkjcOU18GFeCnUJV2JPGRHNhlyGcNfs27K79
+        K8dfWfy9vvXs7/clYWfepxLhev3B0XaWxE/DPMY6hIldB38pXsEtbm2AjBdQK1GigomlRu4+ahAQZ
+        SyrgT37FNKsOkuzfHBbjQt8Gl2lPaqd+tJ4eivbFAuFBeSGZVbazqTxsocDxIyjLnxq+6TppM0hZ5
+        Ql0o3aOw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nx8TF-007xAb-Kc; Fri, 03 Jun 2022 14:40:13 +0000
+Date:   Fri, 3 Jun 2022 15:40:13 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     jfs-discussion@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org,
+        "Darrick J . Wong" <djwong@kernel.org>, linux-ext4@vger.kernel.org,
+        Jan Kara <jack@suse.com>
+Subject: generic_quota_read
+Message-ID: <YpodTd+YN/FtiaP3@casper.infradead.org>
+References: <20220526192910.357055-1-willy@infradead.org>
+ <20220526192910.357055-8-willy@infradead.org>
+ <YpBlF2xbfL2yY98n@infradead.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH v7 00/15] io-uring/xfs: support async buffered writes
-Content-Language: en-US
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
-        kernel-team@fb.com, linux-mm@kvack.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, jack@suse.cz, hch@infradead.org
-References: <20220601210141.3773402-1-shr@fb.com>
- <545ab14b-a95a-de2e-dbc6-f5688b09b47c@kernel.dk>
- <20220603024329.GI1098723@dread.disaster.area>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20220603024329.GI1098723@dread.disaster.area>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YpBlF2xbfL2yY98n@infradead.org>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/2/22 8:43 PM, Dave Chinner wrote:
-> On Thu, Jun 02, 2022 at 02:09:00AM -0600, Jens Axboe wrote:
->> On 6/1/22 3:01 PM, Stefan Roesch wrote:
->>> This patch series adds support for async buffered writes when using both
->>> xfs and io-uring. Currently io-uring only supports buffered writes in the
->>> slow path, by processing them in the io workers. With this patch series it is
->>> now possible to support buffered writes in the fast path. To be able to use
->>> the fast path the required pages must be in the page cache, the required locks
->>> in xfs can be granted immediately and no additional blocks need to be read
->>> form disk.
->>
->> This series looks good to me now, but will need some slight rebasing
->> since the 5.20 io_uring branch has split up the code a bit. Trivial to
->> do though, I suspect it'll apply directly if we just change
->> fs/io_uring.c to io_uring/rw.c instead.
->>
->> The bigger question is how to stage this, as it's touching a bit of fs,
->> mm, and io_uring...
-> 
-> What data integrity testing has this had? Has it been run through a
-> few billion fsx operations with w/ io_uring read/write enabled?
+On Thu, May 26, 2022 at 10:43:51PM -0700, Christoph Hellwig wrote:
+> >  static ssize_t jfs_quota_read(struct super_block *sb, int type, char *data,
+> > +			      size_t len, loff_t pos)
+>
+> And this whole helper is generic now.  It might be worth to move it
+> into fs/quota/dquot.c as generic_quota_read.
 
-I'll let Stefan expand on this, but just mention what I know - it has
-been fun via fio at least. Each of the performance tests were hour long
-each, and also specific test cases were written to test the boundary
-conditions of what pages of a range where in page cache, etc. Also with
-data verification.
+I've been working on that this week.  Unfortunately, you have to convert
+both quota_read and quota_write at the same time, it turns out.  At
+least ext4_quota_write() uses the bdev's inode's page cache to back
+the buffer_heads, so quota_read() and quota_write() are incoherent
+with each other:
 
-Don't know if fsx specifically has been used it.
+00017 gqr: mapping:00000000ee19acfb index:0x1 pos:0x1470 len:0x30
+00017 4qw: mapping:000000007f9a811e index:0x18405 pos:0x1440 len:0x30
 
--- 
-Jens Axboe
+I don't know if there's a way around this.  Can't really use
+read_mapping_folio() on the bdev's inode in generic_quota_read() -- the
+blocks for a given page might be fragmented on disk.  I don't know
+if there's a way to tell ext4_bread() to use the inode's page cache
+instead of the bdev's.  And if we did that, would it even work as
+being part of a transaction?
 
