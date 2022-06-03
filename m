@@ -2,56 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C66F053C41D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jun 2022 07:21:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F417853C46C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jun 2022 07:38:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240380AbiFCFUz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Jun 2022 01:20:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45086 "EHLO
+        id S241006AbiFCFh7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Jun 2022 01:37:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54716 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239190AbiFCFUx (ORCPT
+        with ESMTP id S240872AbiFCFhw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Jun 2022 01:20:53 -0400
-Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 180202A71E;
-        Thu,  2 Jun 2022 22:20:52 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-2-147.pa.nsw.optusnet.com.au [49.181.2.147])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 1CE805EC50D;
-        Fri,  3 Jun 2022 15:20:50 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1nwzjr-0024P8-N0; Fri, 03 Jun 2022 15:20:47 +1000
-Date:   Fri, 3 Jun 2022 15:20:47 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Chris Mason <clm@fb.com>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "dchinner@redhat.com" <dchinner@redhat.com>
-Subject: Re: [PATCH RFC] iomap: invalidate pages past eof in
- iomap_do_writepage()
-Message-ID: <20220603052047.GJ1098723@dread.disaster.area>
-References: <20220601011116.495988-1-clm@fb.com>
- <YpdZKbrtXJJ9mWL7@infradead.org>
- <BB5F778F-BFE5-4CC9-94DE-3118C60E13B6@fb.com>
- <20220602065252.GD1098723@dread.disaster.area>
- <YpjYDjeR2Wpx3ImB@cmpxchg.org>
- <20220602220625.GG1098723@dread.disaster.area>
- <B186E2FB-BCAF-4019-9DFF-9FF05BAC557E@fb.com>
+        Fri, 3 Jun 2022 01:37:52 -0400
+Received: from heian.cn.fujitsu.com (mail.cn.fujitsu.com [183.91.158.132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A99E836E01;
+        Thu,  2 Jun 2022 22:37:50 -0700 (PDT)
+IronPort-Data: =?us-ascii?q?A9a23=3AoybKC6IRENG85+JmFE+RLJQlxSXFcZb7ZxGrkP8?=
+ =?us-ascii?q?bfHCwhT4mgzMFzjcbDG/SPPqMZTCgfNl+Pdi3oR4F7Z7QzINqS1BcGVNFFSwT8?=
+ =?us-ascii?q?ZWfbTi6wuYcBwvLd4ubChsPA/w2MrEsF+hpCC+MzvuRGuK59yMkj/nRHuOU5NP?=
+ =?us-ascii?q?sYUideyc1EU/Ntjozw4bVsqYw6TSIK1vlVeHa+qUzC3f5s9JACV/43orYwP9ZU?=
+ =?us-ascii?q?FsejxtD1rA2TagjUFYzDBD5BrpHTU26ByOQroW5goeHq+j/ILGRpgs1/j8mDJW?=
+ =?us-ascii?q?rj7T6blYXBLXVOGBiiFIPA+773EcE/Xd0j87XN9JFAatToy+UltZq2ZNDs4esY?=
+ =?us-ascii?q?Qk0PKzQg/lbWB5de817FfQcpOGXfyjn66R/yGWDKRMA2c5GAEgoPIEw9PxwBGZ?=
+ =?us-ascii?q?U//0EbjsKa3irg+OwxbOyTelhrsQ+JdbmPcUUvXQI5THSDd4nR57ZSqnH7NMe2?=
+ =?us-ascii?q?y0/7uhRHPLaduIYbzR1ZRjNahEJPU0YYLoyleHuhD/gcjlcqVuQvoI25XTeyEp?=
+ =?us-ascii?q?6172FGNbXZduMSu1Wk1yeq2aA+H72ajkeNdqC2X+A91qvmObEnmX8Qo16PLS77?=
+ =?us-ascii?q?vtChFyV23xWBhoLU1eyvfi+jAi5Qd03A0oK9isrqIA29Ve3VZ/5XhulsDiIswB?=
+ =?us-ascii?q?0c9xZFPwzrgGK0Kvb/g2ZB0ACQzUHY9sj3Oc0TDonkFSJgvvuHzVktLDTQnWYn?=
+ =?us-ascii?q?p+OojS2NTcEK0cZeDQJCwcIi/HnoYcunlfBVdpuDqOxpsP6FCu2wD2QqiU6wbI?=
+ =?us-ascii?q?JgqYj06S94ECCgD+2oJXNZhA66x+RXW+/6A59Iom/aOSA7Vnd8OYFPIiCZkeOs?=
+ =?us-ascii?q?WJCmMWE6u0KS5aXm0SlXuQXG5m76vCELnvYgFhyD98m7Tvr5n3LQGz6yFmSP28?=
+ =?us-ascii?q?waoBdJ2CvOxSV5GtsCFZoFCPCRcdKj0iZV6zGFZTdKOk=3D?=
+IronPort-HdrOrdr: =?us-ascii?q?A9a23=3AV2RlyakWU/iGSUXqst/NsziZbFLpDfLE3DAb?=
+ =?us-ascii?q?v31ZSRFFG/Fxl6iV8sjzsiWE7Ar5OUtQ/uxoV5PhfZqxz/JICOoqTNKftWvdyQ?=
+ =?us-ascii?q?iVxehZhOOIqVDd8kbFl9K1u50OT0EHMqyTMbFlt7eA3CCIV8Yn3MKc8L2lwcPX?=
+ =?us-ascii?q?z3JWRwlsbK16hj0JczqzIwlnQhVcH5olGN657spDnTCpfnMadYCVHX8ANtKz3+?=
+ =?us-ascii?q?Hjpdb3ZwIcHR475E2rhTOs0rTzFB+VxVM/flp0sNEfzVQ=3D?=
+X-IronPort-AV: E=Sophos;i="5.88,333,1635177600"; 
+   d="scan'208";a="124686802"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 03 Jun 2022 13:37:45 +0800
+Received: from G08CNEXMBPEKD04.g08.fujitsu.local (unknown [10.167.33.201])
+        by cn.fujitsu.com (Postfix) with ESMTP id ECBEC4D17189;
+        Fri,  3 Jun 2022 13:37:40 +0800 (CST)
+Received: from G08CNEXCHPEKD07.g08.fujitsu.local (10.167.33.80) by
+ G08CNEXMBPEKD04.g08.fujitsu.local (10.167.33.201) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.23; Fri, 3 Jun 2022 13:37:41 +0800
+Received: from irides.mr.mr (10.167.225.141) by
+ G08CNEXCHPEKD07.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
+ id 15.0.1497.23 via Frontend Transport; Fri, 3 Jun 2022 13:37:40 +0800
+From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
+To:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
+        <nvdimm@lists.linux.dev>, <linux-mm@kvack.org>,
+        <linux-fsdevel@vger.kernel.org>
+CC:     <djwong@kernel.org>, <dan.j.williams@intel.com>,
+        <david@fromorbit.com>, <hch@infradead.org>,
+        <akpm@linux-foundation.org>, <jane.chu@oracle.com>,
+        <rgoldwyn@suse.de>, <viro@zeniv.linux.org.uk>,
+        <willy@infradead.org>, <naoya.horiguchi@nec.com>,
+        <linmiaohe@huawei.com>
+Subject: [PATCHSETS v2]  v14 fsdax-rmap + v11 fsdax-reflink
+Date:   Fri, 3 Jun 2022 13:37:24 +0800
+Message-ID: <20220603053738.1218681-1-ruansy.fnst@fujitsu.com>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <B186E2FB-BCAF-4019-9DFF-9FF05BAC557E@fb.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=VuxAv86n c=1 sm=1 tr=0 ts=62999a32
-        a=ivVLWpVy4j68lT4lJFbQgw==:117 a=ivVLWpVy4j68lT4lJFbQgw==:17
-        a=IkcTkHD0fZMA:10 a=JPEYwPQDsx4A:10 a=7-415B0cAAAA:8
-        a=Xvn0XkXP7fblPhEtvuMA:9 a=QEXdDO2ut3YA:10 a=biEYGPWJfzWAr4FL6Ov7:22
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-yoursite-MailScanner-ID: ECBEC4D17189.A392F
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: ruansy.fnst@fujitsu.com
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -59,183 +78,65 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[ Chris, can you lne wrap your emails at 72 columns, please? ]
+ Changes since v1[1]:
+  1. Rebased to mm-unstable, solved many conflicts
 
-On Fri, Jun 03, 2022 at 01:29:40AM +0000, Chris Mason wrote:
-> > On Jun 2, 2022, at 6:06 PM, Dave Chinner <david@fromorbit.com>
-> > wrote: On Thu, Jun 02, 2022 at 11:32:30AM -0400, Johannes Weiner
-> > wrote:
-> >> On Thu, Jun 02, 2022 at 04:52:52PM +1000, Dave Chinner wrote:
-> >>> On Wed, Jun 01, 2022 at 02:13:42PM +0000, Chris Mason wrote:
-> >>>> In prod, bpftrace showed looping on a single inode inside a
-> >>>> mysql cgroup. That inode was usually in the middle of being
-> >>>> deleted, i_size set to zero, but it still had 40-90 pages
-> >>>> sitting in the xarray waiting for truncation. We’d loop
-> >>>> through the whole call path above over and over again, mostly
-> >>>> because writepages() was returning progress had been made on
-> >>>> this one inode. The redirty_page_for_writepage() path does
-> >>>> drop wbc->nr_to_write, so the rest of the writepages
-> >>>> machinery believes real work is being done. nr_to_write is
-> >>>> LONG_MAX, so we’ve got a while to loop.
-> >>> 
-> >>> Yup, this code relies on truncate making progress to avoid
-> >>> looping forever. Truncate should only block on the page while
-> >>> it locks it and waits for writeback to complete, then it gets
-> >>> forcibly invalidated and removed from the page cache.
-> >> 
-> >> It's not looping forever, truncate can just take a relatively
-> >> long time during which the flusher is busy-spinning full bore
-> >> on a relatively small number of unflushable pages
-> >> (range_cyclic).
-> >> 
-> >> But you raise a good point asking "why is truncate stuck?". I
-> >> first thought they might be cannibalizing each other over the
-> >> page locks, but that wasn't it (and wouldn't explain the clear
-> >> asymmetry between truncate and flusher). That leaves the
-> >> waiting for writeback. I just confirmed with tracing that
-> >> that's exactly where truncate sits while the flusher goes
-> >> bananas on the same inode. So the race must be this:
-> >> 
-> >> truncate: flusher put a subset of pages under writeback
-> >> i_size_write(0) wait_on_page_writeback() loop with range_cyclic
-> >> over remaining dirty >EOF pages
-> > 
-> > But write_cache_pages() doesn't repeatedly loop over the
-> > pages.
-> > 
-> > The flusher is
-> > 
-> > ->writepages iomap_writepages write_cache_pages() loop over
-> > mapping tree lock page iomap_do_writepage set_page_writeback()
-> > add page to ioend <end of mapping reached> iomap_submit_ioend()
-> > <pages under writeback get sent for IO> return to high level
-> > writeback
-> > 
-> > And eventually IO completion will clear page writeback state.
-> > 
-> 
-> Yes, this is actually happening before the truncate starts.  The
-> truncate finds these writeback pages and waits for them to finish
-> IO, and while it’s waiting wb_check_background_flush() goes wild
-> on the redirty path.
+[1] https://lore.kernel.org/linux-xfs/20220508143620.1775214-1-ruansy.fnst@fujitsu.com/
 
-I still don't think the redirty path is the underlying problem. Yes,
-it triggers it, but it looks to be triggering an existing behaviour
-that the writeback path should not have...
 
-> > i.e. write_cache_pages() should not be hard looping over the
-> > pages beyond EOF even if range_cyclic is set - it's skipping
-> > those pages, submitting any that are under writeback, and the,
-> > going back to high level code for it to make a decision about
-> > continuation of writeback. It may call back down and we loop
-> > over dirty pages beyond EOF again, but the flusher should not be
-> > holding on to pages under writeback for any signification length
-> > of time before they are submitted for IO.
-> > 
-> 
-> I spent a while trying to blame write_cache_pages() for looping
-> repeatedly, and ended up making a series of bpftrace scripts that
-> collected call stack frequency counters for all the different ways
-> to wander into write_cache_pages().  I eventually ran it across
-> 100K systems to figure out exactly how we were getting into
-> trouble.  It was (thankfully) really consistent.
-> 
-> As you describe above, the loops are definitely coming from higher
-> in the stack.  wb_writeback() will loop as long as
-> __writeback_inodes_wb() returns that it’s making progress and
-> we’re still globally over the bg threshold, so write_cache_pages()
-> is just being called over and over again.  We’re coming from
-> wb_check_background_flush(), so:
-> 
->                 struct wb_writeback_work work = {
->                         .nr_pages       = LONG_MAX,
->                         .sync_mode      = WB_SYNC_NONE,
->                         .for_background = 1,
->                         .range_cyclic   = 1,
->                         .reason         = WB_REASON_BACKGROUND,
->                 };
+This is an *updated* combination of two patchsets:
+ 1.fsdax-rmap: https://lore.kernel.org/linux-xfs/20220419045045.1664996-1-ruansy.fnst@fujitsu.com/
+ 2.fsdax-reflink: https://lore.kernel.org/linux-xfs/20210928062311.4012070-1-ruansy.fnst@fujitsu.com/
 
-Sure, but we end up in writeback_sb_inodes() which does this after
-the __writeback_single_inode()->do_writepages() call that iterates
-the dirty pages:
 
-               if (need_resched()) {
-                        /*
-                         * We're trying to balance between building up a nice
-                         * long list of IOs to improve our merge rate, and
-                         * getting those IOs out quickly for anyone throttling
-                         * in balance_dirty_pages().  cond_resched() doesn't
-                         * unplug, so get our IOs out the door before we
-                         * give up the CPU.
-                         */
-                        blk_flush_plug(current->plug, false);
-                        cond_resched();
-                }
+==
+Shiyang Ruan (14):
+  dax: Introduce holder for dax_device
+  mm: factor helpers for memory_failure_dev_pagemap
+  pagemap,pmem: Introduce ->memory_failure()
+  fsdax: Introduce dax_lock_mapping_entry()
+  mm: Introduce mf_dax_kill_procs() for fsdax case
+  xfs: Implement ->notify_failure() for XFS
+  fsdax: set a CoW flag when associate reflink mappings
+  fsdax: Output address in dax_iomap_pfn() and rename it
+  fsdax: Introduce dax_iomap_cow_copy()
+  fsdax: Replace mmap entry in case of CoW
+  fsdax: Add dax_iomap_cow_copy() for dax zero
+  fsdax: Dedup file range to use a compare function
+  xfs: support CoW in fsdax mode
+  xfs: Add dax dedupe support
 
-So if there is a pending IO completion on this CPU on a work queue
-here, we'll reschedule to it because the work queue kworkers are
-bound to CPUs and they take priority over user threads.
+ drivers/dax/super.c         |  67 +++++-
+ drivers/md/dm.c             |   2 +-
+ drivers/nvdimm/pmem.c       |  17 ++
+ fs/dax.c                    | 399 ++++++++++++++++++++++++++++++------
+ fs/erofs/super.c            |  10 +-
+ fs/ext2/super.c             |   7 +-
+ fs/ext4/super.c             |   9 +-
+ fs/remap_range.c            |  31 ++-
+ fs/xfs/Makefile             |   5 +
+ fs/xfs/xfs_buf.c            |  10 +-
+ fs/xfs/xfs_file.c           |  35 +++-
+ fs/xfs/xfs_fsops.c          |   3 +
+ fs/xfs/xfs_inode.c          |  69 ++++++-
+ fs/xfs/xfs_inode.h          |   1 +
+ fs/xfs/xfs_iomap.c          |  30 ++-
+ fs/xfs/xfs_iomap.h          |   1 +
+ fs/xfs/xfs_mount.h          |   1 +
+ fs/xfs/xfs_notify_failure.c | 220 ++++++++++++++++++++
+ fs/xfs/xfs_reflink.c        |  12 +-
+ fs/xfs/xfs_super.h          |   1 +
+ include/linux/dax.h         |  56 ++++-
+ include/linux/fs.h          |  12 +-
+ include/linux/memremap.h    |  12 ++
+ include/linux/mm.h          |   2 +
+ include/linux/page-flags.h  |   6 +
+ mm/memory-failure.c         | 265 +++++++++++++++++-------
+ 26 files changed, 1098 insertions(+), 185 deletions(-)
+ create mode 100644 fs/xfs/xfs_notify_failure.c
 
-Also, this then requeues the inode of the b_more_io queue, and
-wb_check_background_flush() won't come back to it until all other
-inodes on all other superblocks on the bdi have had writeback
-attempted. So if the system truly is over the background dirty
-threshold, why is writeback getting stuck on this one inode in this
-way?
-
-> > IOWs, if truncate is getting stuck waiting on writeback, then that
-> > implies something is holding up IO completions for a long time,
-> 
-> From Johannes’s tracing today, that’s about 17us.
-
-Which means there should only be a delay of 17us between IO completion
-being queued on this CPU and the flusher thread being preempted and
-completion being run, right?
-
-> Our victim cgroup has just a handful of files, so we can burn
-> through a lot of write_cache_pages loops in the time truncate is
-> waiting for a single IO on a relatively fast ssd.
-
-Yes, I'm not denying that, but background writeback when over global
-dirty thresholds should not be spinning on a single inode with
-50-100 pages attached to it. It should visit it, try to flush it,
-and then move on to the next.
-
-> > not
-> > that there's a problem in writeback submission. i.e. you might
-> > actually be looking at a workqueue backlog
-> 
-> I actually think a workqueue backlog is coming from the flusher
-> thread hogging the CPU.
-
-I can't see how that happens with that need_resched() check in
-writeback_sb_inodes().
-
-> The investigation started by looking for long tail latencies in
-> write() systemcalls, and Domas’s original finding was IO
-> completion workers were waiting for CPUs.  That’s how he ended up
-> finding the redirty calls using high levels of CPU.  We honestly
-> won’t be sure until we live patch a lot of boxes and look for long
-> tail latency improvements, but I’m pretty optimistic.
-
-Something still doesn't add up. I don't see how submission spinning
-is holding off completion because it plays nice with resched
-checks. You're now saying that this started because someone found
-long tail completion latencies, and that explains truncate getting
-stuck. But AFAICT the writeback behaviour isn't responsible for
-completion latencies as writeback will give up the CPU to any other
-thread scheduled to run on that CPU pretty quickly.
-
-It feels like there still something unknown behaviour here, and it
-still smells to me like IO completions are getting backed up by
-something. I wonder - are there large files getting written using
-buffered IO on these machines? Commit ebb7fb1557b1 ("xfs, iomap:
-limit individual ioend chain lengths in writeback") might be
-relevant if that is the case....
-
-Cheers,
-
-Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+2.36.1
+
+
+
