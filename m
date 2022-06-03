@@ -2,180 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 04F2053CBC4
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jun 2022 16:51:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 474D753CBFE
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jun 2022 17:06:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230457AbiFCOvC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Jun 2022 10:51:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55270 "EHLO
+        id S245336AbiFCPG2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Jun 2022 11:06:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230375AbiFCOvB (ORCPT
+        with ESMTP id S238913AbiFCPG0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Jun 2022 10:51:01 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10CAA13F9D;
-        Fri,  3 Jun 2022 07:50:59 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id C7DFDB82345;
-        Fri,  3 Jun 2022 14:50:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03442C385B8;
-        Fri,  3 Jun 2022 14:50:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1654267856;
-        bh=Loo+eR1jL+X8O8VaZAHx+/ptX+/WuXg0POlWL1UADwg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CNNCKNvbxbyvV1+wAUK9F/ptTxn1IfR3hq5aQSXNSNiCdiqitF6/puKn2rrp0z4e7
-         Biuy6ld2FcY2YXE9eKa4P64gFPKb6qzwtYMLQ8UaNvHWX35KZZuX52XctZ3JlI1aXK
-         qZloZzJpEjlj26pcw+gEap255RLSIXIy63hM8HnY=
-Date:   Fri, 3 Jun 2022 16:50:53 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Vegard Nossum <vegard.nossum@oracle.com>
-Cc:     stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Ariadne Conill <ariadne@dereferenced.org>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Rich Felker <dalias@libc.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH 4.9.y] exec: Force single empty string when argv is empty
-Message-ID: <YpofzcMaOWneccCp@kroah.com>
-References: <164890338266171@kroah.com>
- <20220601101226.1498-1-vegard.nossum@oracle.com>
+        Fri, 3 Jun 2022 11:06:26 -0400
+Received: from mail-qv1-xf2b.google.com (mail-qv1-xf2b.google.com [IPv6:2607:f8b0:4864:20::f2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8489E01B
+        for <linux-fsdevel@vger.kernel.org>; Fri,  3 Jun 2022 08:06:24 -0700 (PDT)
+Received: by mail-qv1-xf2b.google.com with SMTP id h18so5720675qvj.11
+        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Jun 2022 08:06:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20210112.gappssmtp.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=JYSh5kn5ThMI8CCaOPSJ53f4sBIED+WUhUG7FktR1dY=;
+        b=siZl67/nQ8Im4grN9O1OmTzhS3rdMxs0Bq48muqZNNe5/kMScYOTWAg34Q2P5CPUR9
+         H9wMUyjObyZlrxS9/BifA3LVTjcekusU8qt4jMRlpb+LGXEcnA1DVdo3JSiqMRomVZaw
+         Zm7MIIujnZRxNpYqYWsTVaDfwte+vWvmZcSCVTlrx4a/Fo2ZVVUydCpQuLA7YpBVCyWm
+         KKCKa2y5cyt1sxdcu3H5POuCIGXq0FtYDtNpHsoGwF/IJ6+l61esjOg3pu+39mPVAk3W
+         n9DV4PFS6XX8kTP+SlqZOUFnyfK5+QUCxZ547WkydNEMrd1mFeTV4lS8mQwVS9P/XPVp
+         LiMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=JYSh5kn5ThMI8CCaOPSJ53f4sBIED+WUhUG7FktR1dY=;
+        b=fb0HWNH9rZSejcKJ07O4MHhwBFszWN2SJsY+JV+KR4lNoGK2/z0E0WK4Ss+xGTbthp
+         Cp/sutXl2ZWP4t+eAzLuB5nWvvHjcNRf0JJrIUDKiwbogKEJ8D2sngev/dlCQ2PeaKbC
+         5hIV7H++XiCxodjh9/df9g81qCzvSmGHP5VS/1FMX2ZjMKYPfI827w9qeclZMOqAg1fA
+         KRS516RGwm8kBaemYmZdxvmkVtbJTlfFK06BzWz3hGLYpoMfPdINTso5bkuy2zzxzJGy
+         kVveW14t3X9Fa/lWjwUj8/gK2/iBc5j7On4XP8lomlRBnmW0L7rDObsXvYvEutf/qJTa
+         giqg==
+X-Gm-Message-State: AOAM53270ZU5ANQmbsFEyurbV8X6RY8O7d+2R51xnXk23lNVQ7xuicKX
+        d/pfE8mHLI2+GdrMLillDxaGyA==
+X-Google-Smtp-Source: ABdhPJzNuFC4GmuFvrERREiLuT2vBmWyVZTMOB3y8uBoWR8lo3pSSZ4wrdBEYDTWNNb6mBUa7vtirg==
+X-Received: by 2002:a05:6214:301b:b0:461:f5e9:5f9a with SMTP id ke27-20020a056214301b00b00461f5e95f9amr62557099qvb.2.1654268784051;
+        Fri, 03 Jun 2022 08:06:24 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:480::1:1d66])
+        by smtp.gmail.com with ESMTPSA id g27-20020a05620a109b00b006a34bdb0c36sm5212260qkk.31.2022.06.03.08.06.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Jun 2022 08:06:23 -0700 (PDT)
+Date:   Fri, 3 Jun 2022 11:06:22 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Chris Mason <clm@fb.com>, Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "dchinner@redhat.com" <dchinner@redhat.com>
+Subject: Re: [PATCH RFC] iomap: invalidate pages past eof in
+ iomap_do_writepage()
+Message-ID: <YpojbvB/+wPqHT8y@cmpxchg.org>
+References: <20220601011116.495988-1-clm@fb.com>
+ <YpdZKbrtXJJ9mWL7@infradead.org>
+ <BB5F778F-BFE5-4CC9-94DE-3118C60E13B6@fb.com>
+ <20220602065252.GD1098723@dread.disaster.area>
+ <YpjYDjeR2Wpx3ImB@cmpxchg.org>
+ <20220602220625.GG1098723@dread.disaster.area>
+ <B186E2FB-BCAF-4019-9DFF-9FF05BAC557E@fb.com>
+ <20220603052047.GJ1098723@dread.disaster.area>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20220601101226.1498-1-vegard.nossum@oracle.com>
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220603052047.GJ1098723@dread.disaster.area>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 01, 2022 at 12:12:26PM +0200, Vegard Nossum wrote:
-> From: Kees Cook <keescook@chromium.org>
-> 
-> commit dcd46d897adb70d63e025f175a00a89797d31a43 upstream.
-> 
-> Quoting[1] Ariadne Conill:
-> 
-> "In several other operating systems, it is a hard requirement that the
-> second argument to execve(2) be the name of a program, thus prohibiting
-> a scenario where argc < 1. POSIX 2017 also recommends this behaviour,
-> but it is not an explicit requirement[2]:
-> 
->     The argument arg0 should point to a filename string that is
->     associated with the process being started by one of the exec
->     functions.
-> ...
-> Interestingly, Michael Kerrisk opened an issue about this in 2008[3],
-> but there was no consensus to support fixing this issue then.
-> Hopefully now that CVE-2021-4034 shows practical exploitative use[4]
-> of this bug in a shellcode, we can reconsider.
-> 
-> This issue is being tracked in the KSPP issue tracker[5]."
-> 
-> While the initial code searches[6][7] turned up what appeared to be
-> mostly corner case tests, trying to that just reject argv == NULL
-> (or an immediately terminated pointer list) quickly started tripping[8]
-> existing userspace programs.
-> 
-> The next best approach is forcing a single empty string into argv and
-> adjusting argc to match. The number of programs depending on argc == 0
-> seems a smaller set than those calling execve with a NULL argv.
-> 
-> Account for the additional stack space in bprm_stack_limits(). Inject an
-> empty string when argc == 0 (and set argc = 1). Warn about the case so
-> userspace has some notice about the change:
-> 
->     process './argc0' launched './argc0' with NULL argv: empty string added
-> 
-> Additionally WARN() and reject NULL argv usage for kernel threads.
-> 
-> [1] https://lore.kernel.org/lkml/20220127000724.15106-1-ariadne@dereferenced.org/
-> [2] https://pubs.opengroup.org/onlinepubs/9699919799/functions/exec.html
-> [3] https://bugzilla.kernel.org/show_bug.cgi?id=8408
-> [4] https://www.qualys.com/2022/01/25/cve-2021-4034/pwnkit.txt
-> [5] https://github.com/KSPP/linux/issues/176
-> [6] https://codesearch.debian.net/search?q=execve%5C+*%5C%28%5B%5E%2C%5D%2B%2C+*NULL&literal=0
-> [7] https://codesearch.debian.net/search?q=execlp%3F%5Cs*%5C%28%5B%5E%2C%5D%2B%2C%5Cs*NULL&literal=0
-> [8] https://lore.kernel.org/lkml/20220131144352.GE16385@xsang-OptiPlex-9020/
-> 
-> Reported-by: Ariadne Conill <ariadne@dereferenced.org>
-> Reported-by: Michael Kerrisk <mtk.manpages@gmail.com>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Rich Felker <dalias@libc.org>
-> Cc: Eric Biederman <ebiederm@xmission.com>
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> Acked-by: Christian Brauner <brauner@kernel.org>
-> Acked-by: Ariadne Conill <ariadne@dereferenced.org>
-> Acked-by: Andy Lutomirski <luto@kernel.org>
-> Link: https://lore.kernel.org/r/20220201000947.2453721-1-keescook@chromium.org
-> [vegard: fixed conflicts due to missing
->  886d7de631da71e30909980fdbf318f7caade262^- and
->  3950e975431bc914f7e81b8f2a2dbdf2064acb0f^- and
->  655c16a8ce9c15842547f40ce23fd148aeccc074]
-> Signed-off-by: Vegard Nossum <vegard.nossum@oracle.com>
-> ---
->  fs/exec.c | 17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
-> 
-> This has been tested in both argc == 0 and argc >= 1 cases, but I would
-> still appreciate a review given the differences with mainline. If it's
-> considered too risky I'm also fine with dropping it -- just wanted to
-> make sure this didn't fall through the cracks, as it does block a real
-> (albeit old by now) exploit.
-> 
-> diff --git a/fs/exec.c b/fs/exec.c
-> index 482a8b4f41a5b..19f8b075d3b6b 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -1758,6 +1758,9 @@ static int do_execveat_common(int fd, struct filename *filename,
->  		goto out_unmark;
->  
->  	bprm->argc = count(argv, MAX_ARG_STRINGS);
-> +	if (bprm->argc == 0)
-> +		pr_warn_once("process '%s' launched '%s' with NULL argv: empty string added\n",
-> +			     current->comm, bprm->filename);
->  	if ((retval = bprm->argc) < 0)
->  		goto out;
->  
-> @@ -1782,6 +1785,20 @@ static int do_execveat_common(int fd, struct filename *filename,
->  	if (retval < 0)
->  		goto out;
->  
-> +	/*
-> +	 * When argv is empty, add an empty string ("") as argv[0] to
-> +	 * ensure confused userspace programs that start processing
-> +	 * from argv[1] won't end up walking envp. See also
-> +	 * bprm_stack_limits().
-> +	 */
-> +	if (bprm->argc == 0) {
-> +		const char *argv[] = { "", NULL };
-> +		retval = copy_strings_kernel(1, argv, bprm);
-> +		if (retval < 0)
-> +			goto out;
-> +		bprm->argc = 1;
-> +	}
-> +
->  	retval = exec_binprm(bprm);
->  	if (retval < 0)
->  		goto out;
-> -- 
-> 2.35.1.46.g38062e73e0
-> 
+Hello Dave,
 
-All now queued up, thanks.
+On Fri, Jun 03, 2022 at 03:20:47PM +1000, Dave Chinner wrote:
+> On Fri, Jun 03, 2022 at 01:29:40AM +0000, Chris Mason wrote:
+> > As you describe above, the loops are definitely coming from higher
+> > in the stack.  wb_writeback() will loop as long as
+> > __writeback_inodes_wb() returns that it’s making progress and
+> > we’re still globally over the bg threshold, so write_cache_pages()
+> > is just being called over and over again.  We’re coming from
+> > wb_check_background_flush(), so:
+> > 
+> >                 struct wb_writeback_work work = {
+> >                         .nr_pages       = LONG_MAX,
+> >                         .sync_mode      = WB_SYNC_NONE,
+> >                         .for_background = 1,
+> >                         .range_cyclic   = 1,
+> >                         .reason         = WB_REASON_BACKGROUND,
+> >                 };
+> 
+> Sure, but we end up in writeback_sb_inodes() which does this after
+> the __writeback_single_inode()->do_writepages() call that iterates
+> the dirty pages:
+> 
+>                if (need_resched()) {
+>                         /*
+>                          * We're trying to balance between building up a nice
+>                          * long list of IOs to improve our merge rate, and
+>                          * getting those IOs out quickly for anyone throttling
+>                          * in balance_dirty_pages().  cond_resched() doesn't
+>                          * unplug, so get our IOs out the door before we
+>                          * give up the CPU.
+>                          */
+>                         blk_flush_plug(current->plug, false);
+>                         cond_resched();
+>                 }
+> 
+> So if there is a pending IO completion on this CPU on a work queue
+> here, we'll reschedule to it because the work queue kworkers are
+> bound to CPUs and they take priority over user threads.
 
-greg k-h
+The flusher thread is also a kworker, though. So it may hit this
+cond_resched(), but it doesn't yield until the timeslice expires.
+
+> Also, this then requeues the inode of the b_more_io queue, and
+> wb_check_background_flush() won't come back to it until all other
+> inodes on all other superblocks on the bdi have had writeback
+> attempted. So if the system truly is over the background dirty
+> threshold, why is writeback getting stuck on this one inode in this
+> way?
+
+The explanation for this part at least is that the bdi/flush domain is
+split per cgroup. The cgroup in question is over its proportional bg
+thresh. It has very few dirty pages, but it also has very few
+*dirtyable* pages, which makes for a high dirty ratio. And those
+handful of dirty pages are the unflushable ones past EOF.
+
+There is no next inode to move onto on subsequent loops.
