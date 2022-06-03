@@ -2,166 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 74F7153C990
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jun 2022 13:52:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C08053CA57
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jun 2022 15:04:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244100AbiFCLts (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Jun 2022 07:49:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46748 "EHLO
+        id S244497AbiFCNEi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Jun 2022 09:04:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242528AbiFCLtq (ORCPT
+        with ESMTP id S239263AbiFCNEi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Jun 2022 07:49:46 -0400
-Received: from esa2.hgst.iphmx.com (esa2.hgst.iphmx.com [68.232.143.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87FCC39BB7
-        for <linux-fsdevel@vger.kernel.org>; Fri,  3 Jun 2022 04:49:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1654256985; x=1685792985;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=9nhu5NysG9JPBaxpdwYr2yXgINht9A1r4WJbvYD23+E=;
-  b=GiolUfmqlKfI7x62knTx3Qag2vnUX560coyx27/OUNvwhujIWRrUL1Xf
-   5UaRJKIfFlwVFesgd8L90/WI5Q4cBJy11B+SIsF8zS91zeNCzqJ9ugmXv
-   gru79FZm405ycN2nOYG+vt9HSg9buwZ3izG/V3NjljXzvWLzLeNVAKn7c
-   0OleHJjfCyDgtJZkmZs6MGK2P1tWFbPGRm8nCCnrGsuNW1CyisX4ssj6G
-   MxOqdUzFdzX6vIF4UsqYoWEJ6FltE20/wFq2gfkafCzquIQdSpshejBVp
-   H/CLb+lM/+0AxC5HGvXGaul1WXLkrhp0LmVjs682dYc5wL5CDHYsohQJG
-   g==;
-X-IronPort-AV: E=Sophos;i="5.91,274,1647273600"; 
-   d="scan'208";a="306454537"
-Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 03 Jun 2022 19:49:44 +0800
-IronPort-SDR: BNja+oBTKaDcrqXkkOGyYMjbkaUHzSB2f2Ba8xgr9DJP2Yg+OtDV6nK+wYR78LQD6RHhHgcshp
- j9jCdcVt+O0xOS2dqGF15kgl8IrEEMOGu2DUEysODD3HJNzABSiVNYS2szL1/FJ2dfAKMYHX2x
- 1BbKpp6tmyabGeDTOWzsFJXM5maR1svGzaOFLTO+W35vPy/WIbVcxsqel8Tsy3s+2MZX1X1FF5
- 8eaTJMSYPR/Z2kV4SBUHH3odIhmBrihGh5k8eWNWnbDhJjcHLsHsnc2NutGh4auQyJ++EThrr7
- MhVNVsEMHhEGe+KNL51xJKWj
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 03 Jun 2022 04:08:48 -0700
-IronPort-SDR: jdJZo8qD1vBeX9noSxcCnJ/FZW6j1kjonUthjmWwm0gc+UQTEmIzzdmiZj8iQ0HF1rnfTVulGe
- WoFQa0qG/8JX3+UT+/nJ8+3uIt8ZIuQB3aAYvJMO5kFD1915GlmP/fhsMq8SPKpceyJez6x4ku
- zvdfvUizr9+8Leuad2cSvkkAqRQNihSSH7Bznj2T6S5O6wZWi9bPCPg1dN6jlpIs0zpYKdcupz
- pu5ApKkk1xxH+HhdbJmpFnyB/Noj2xCAVupI+B5rKorl7Z0uaLzESRzaDUEXGdmRsw3aQOWnt+
- s+k=
-WDCIronportException: Internal
-Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
-  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 03 Jun 2022 04:49:44 -0700
-Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4LF1QJ0bKqz1Rwrw
-        for <linux-fsdevel@vger.kernel.org>; Fri,  3 Jun 2022 04:49:44 -0700 (PDT)
-Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)"
-        header.d=opensource.wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
-        opensource.wdc.com; h=content-transfer-encoding:mime-version
-        :references:in-reply-to:x-mailer:message-id:date:subject:to
-        :from; s=dkim; t=1654256983; x=1656848984; bh=9nhu5NysG9JPBaxpdw
-        Yr2yXgINht9A1r4WJbvYD23+E=; b=jCYLnkGkuhne/HX74rz2WSqMTU5xMgRkGJ
-        nURkjoW888MhQTWoAZLfHtltnFAfNzSU/t3uKrwl+BvYDstt+Z40US+UwTwXoyYz
-        Q5/Ft3eDLaxIYLwpwS+5qO5er+kjouitEAzJzRTZUrcQCcIx/uYBHmq/7X/aCO6c
-        GoA02Jfxl927JkIYgVQ63xHm3HTlQyoUjGtq6GN5hXWm9E9N1bXxO6QT6qXUABmW
-        ZgQBwPHKTmraj6MA9QuNBgi89N+Lv7DAxgwCmxW05jaxYWSkPlPkIFECJACTC4DU
-        cWrSPBtZEtEw4vxjhNCQKWq5dmOOOPt15cQdOCGWbS2ndxGEhhww==
-X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
-Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
-        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id MaQ5gM0fZEiV for <linux-fsdevel@vger.kernel.org>;
-        Fri,  3 Jun 2022 04:49:43 -0700 (PDT)
-Received: from washi.fujisawa.hgst.com (washi.fujisawa.hgst.com [10.149.53.254])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4LF1QH22BLz1Rvlx;
-        Fri,  3 Jun 2022 04:49:43 -0700 (PDT)
-From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: [PATCH 3/3] zonefs: fix zonefs_iomap_begin() for reads
-Date:   Fri,  3 Jun 2022 20:49:39 +0900
-Message-Id: <20220603114939.236783-4-damien.lemoal@opensource.wdc.com>
-X-Mailer: git-send-email 2.36.1
-In-Reply-To: <20220603114939.236783-1-damien.lemoal@opensource.wdc.com>
-References: <20220603114939.236783-1-damien.lemoal@opensource.wdc.com>
+        Fri, 3 Jun 2022 09:04:38 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01F7F10E5
+        for <linux-fsdevel@vger.kernel.org>; Fri,  3 Jun 2022 06:04:36 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id n124-20020a1c2782000000b003972dfca96cso4303951wmn.4
+        for <linux-fsdevel@vger.kernel.org>; Fri, 03 Jun 2022 06:04:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=Xefno9BRMaznVjGWpJqFujzBMkdM7h0wTTai3ECWRnw=;
+        b=DSGw+PQnD1zilwmt8UG6eTzMKU/KiULGYnvDBrk9sNsYbtG24Z5PJyRFmRQKDDVFRv
+         JgVgL6yt5+ii1kPjHe8MdjYzvNOxzCkxJGnZ/8/ND5LADeQcHqwxG/aH2rNhEiVxlmG3
+         puB3M5aKburUFpm7XdPSf304z11btuh6vPQOrlmtBMXZUGaO8t2lY1YJC6zNK19HfQAV
+         XOeQt11YIIs2MQBOeXl7c8WJ9fE9wc2RFPGjQw2BizqZyz2IoZCS6FJ4Cu1mAzx3P73g
+         MXtyWvgLpNMxm0HTT2wwW3BgXOBOIEi1V+XG82LPalMIIS9zG+OWzD9/Q1WAwH635nS+
+         NvOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=Xefno9BRMaznVjGWpJqFujzBMkdM7h0wTTai3ECWRnw=;
+        b=6T0VcCryyVhAmZlRNfItrKGFTCJjfvJdYbGhRUanVxB+x2ukn1AcN6BRCBsSlgpYpV
+         PWEU7D/i5DqKJGj7axYdv6EeqStcTW11rAzwbg/dYzNDhuwNTidEBDGWQXOy/tIxwd0i
+         b7xtg3VWUtAlRNCb0aLih45cYDhZ4T+VXzL9LCltPIvsxlWHUFHyCi0iDJkTPnC8WGw9
+         T6GikmlejfdGW9xp3vf3rCSnAdVSVkZ2Z/BcVEmhBAOZuJC2GcQopgstYVudue9wfHYD
+         jyIGz/ZC9Nd8ROFO62UjJRYH1+fRnJ9cMvsBvamjk2Sfwcml0qdB8Py4fIbisKpLWfeQ
+         TREg==
+X-Gm-Message-State: AOAM531/XYlOZwe43fNpfoqqYU2yrRWh66UR0P7kuXUnsZ/QxYK/76l2
+        xCkgQCbHxxG+XVLUCfNI47E4eQ==
+X-Google-Smtp-Source: ABdhPJyFiUIiXqa6BnyIIt8MXwIskAfhmGqYHLaz1nxTa+gqvCOZ9W8kKM3ThR27pu9THilhOOyoaw==
+X-Received: by 2002:a05:600c:35c1:b0:394:8621:a1d5 with SMTP id r1-20020a05600c35c100b003948621a1d5mr37855746wmq.196.1654261474422;
+        Fri, 03 Jun 2022 06:04:34 -0700 (PDT)
+Received: from [10.40.36.78] ([193.52.24.5])
+        by smtp.gmail.com with ESMTPSA id h21-20020a05600c351500b003942a244f53sm11611241wmq.44.2022.06.03.06.04.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 03 Jun 2022 06:04:33 -0700 (PDT)
+Message-ID: <324b506e-ad35-797d-d7d7-cfc8bec26e8e@kernel.dk>
+Date:   Fri, 3 Jun 2022 07:04:32 -0600
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH v7 00/15] io-uring/xfs: support async buffered writes
+Content-Language: en-US
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Stefan Roesch <shr@fb.com>, io-uring@vger.kernel.org,
+        kernel-team@fb.com, linux-mm@kvack.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, jack@suse.cz, hch@infradead.org
+References: <20220601210141.3773402-1-shr@fb.com>
+ <545ab14b-a95a-de2e-dbc6-f5688b09b47c@kernel.dk>
+ <20220603024329.GI1098723@dread.disaster.area>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20220603024329.GI1098723@dread.disaster.area>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-If a read operation (e.g. a readahead) is issued to a sequential zone
-file with an offset exactly equal to the current file size, the iomap
-type will be set to IOMAP_UNWRITTEN, which will prevent an IO, but the
-iomap length is always calculated as 0. This causes a WARN_ON() in
-iomap_iter():
+On 6/2/22 8:43 PM, Dave Chinner wrote:
+> On Thu, Jun 02, 2022 at 02:09:00AM -0600, Jens Axboe wrote:
+>> On 6/1/22 3:01 PM, Stefan Roesch wrote:
+>>> This patch series adds support for async buffered writes when using both
+>>> xfs and io-uring. Currently io-uring only supports buffered writes in the
+>>> slow path, by processing them in the io workers. With this patch series it is
+>>> now possible to support buffered writes in the fast path. To be able to use
+>>> the fast path the required pages must be in the page cache, the required locks
+>>> in xfs can be granted immediately and no additional blocks need to be read
+>>> form disk.
+>>
+>> This series looks good to me now, but will need some slight rebasing
+>> since the 5.20 io_uring branch has split up the code a bit. Trivial to
+>> do though, I suspect it'll apply directly if we just change
+>> fs/io_uring.c to io_uring/rw.c instead.
+>>
+>> The bigger question is how to stage this, as it's touching a bit of fs,
+>> mm, and io_uring...
+> 
+> What data integrity testing has this had? Has it been run through a
+> few billion fsx operations with w/ io_uring read/write enabled?
 
-[17309.548939] WARNING: CPU: 3 PID: 2137 at fs/iomap/iter.c:34 iomap_iter=
-+0x9cf/0xe80
-[...]
-[17309.650907] RIP: 0010:iomap_iter+0x9cf/0xe80
-[...]
-[17309.754560] Call Trace:
-[17309.757078]  <TASK>
-[17309.759240]  ? lock_is_held_type+0xd8/0x130
-[17309.763531]  iomap_readahead+0x1a8/0x870
-[17309.767550]  ? iomap_read_folio+0x4c0/0x4c0
-[17309.771817]  ? lockdep_hardirqs_on_prepare+0x400/0x400
-[17309.778848]  ? lock_release+0x370/0x750
-[17309.784462]  ? folio_add_lru+0x217/0x3f0
-[17309.790220]  ? reacquire_held_locks+0x4e0/0x4e0
-[17309.796543]  read_pages+0x17d/0xb60
-[17309.801854]  ? folio_add_lru+0x238/0x3f0
-[17309.807573]  ? readahead_expand+0x5f0/0x5f0
-[17309.813554]  ? policy_node+0xb5/0x140
-[17309.819018]  page_cache_ra_unbounded+0x27d/0x450
-[17309.825439]  filemap_get_pages+0x500/0x1450
-[17309.831444]  ? filemap_add_folio+0x140/0x140
-[17309.837519]  ? lock_is_held_type+0xd8/0x130
-[17309.843509]  filemap_read+0x28c/0x9f0
-[17309.848953]  ? zonefs_file_read_iter+0x1ea/0x4d0 [zonefs]
-[17309.856162]  ? trace_contention_end+0xd6/0x130
-[17309.862416]  ? __mutex_lock+0x221/0x1480
-[17309.868151]  ? zonefs_file_read_iter+0x166/0x4d0 [zonefs]
-[17309.875364]  ? filemap_get_pages+0x1450/0x1450
-[17309.881647]  ? __mutex_unlock_slowpath+0x15e/0x620
-[17309.888248]  ? wait_for_completion_io_timeout+0x20/0x20
-[17309.895231]  ? lock_is_held_type+0xd8/0x130
-[17309.901115]  ? lock_is_held_type+0xd8/0x130
-[17309.906934]  zonefs_file_read_iter+0x356/0x4d0 [zonefs]
-[17309.913750]  new_sync_read+0x2d8/0x520
-[17309.919035]  ? __x64_sys_lseek+0x1d0/0x1d0
+I'll let Stefan expand on this, but just mention what I know - it has
+been fun via fio at least. Each of the performance tests were hour long
+each, and also specific test cases were written to test the boundary
+conditions of what pages of a range where in page cache, etc. Also with
+data verification.
 
-Furthermore, this causes iomap_readahead() to loop forever as
-iomap_readahead_iter() always return 0, making no progress.
+Don't know if fsx specifically has been used it.
 
-Fix this by avoiding that the iomap length be calculated as 0 by not
-modifying the original length argument passed to zonefs_iomap_begin().
-
-Reported-by: Jorgen Hansen <Jorgen.Hansen@wdc.com>
-Fixes: 8dcc1a9d90c1 ("fs: New zonefs file system")
-Cc: stable@vger.kernel.org
-Signed-off-by: Damien Le Moal <damien.lemoal@opensource.wdc.com>
----
- fs/zonefs/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
-index 123464d2145a..64f4ceb6f579 100644
---- a/fs/zonefs/super.c
-+++ b/fs/zonefs/super.c
-@@ -144,7 +144,7 @@ static int zonefs_iomap_begin(struct inode *inode, lo=
-ff_t offset, loff_t length,
- 		iomap->type =3D IOMAP_MAPPED;
- 	if (flags & IOMAP_WRITE)
- 		length =3D zi->i_max_size - offset;
--	else
-+	else if (offset < isize)
- 		length =3D min(length, isize - offset);
- 	mutex_unlock(&zi->i_truncate_mutex);
-=20
---=20
-2.36.1
+-- 
+Jens Axboe
 
