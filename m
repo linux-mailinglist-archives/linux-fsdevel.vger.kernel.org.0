@@ -2,85 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 158D953D285
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  3 Jun 2022 21:55:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3E3B53D400
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Jun 2022 02:06:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1346707AbiFCTyp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Jun 2022 15:54:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47964 "EHLO
+        id S1349710AbiFDAGD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 3 Jun 2022 20:06:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240471AbiFCTyk (ORCPT
+        with ESMTP id S231737AbiFDAGC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Jun 2022 15:54:40 -0400
-Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A53801D30E;
-        Fri,  3 Jun 2022 12:54:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1654286077; x=1685822077;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=CaFO/iXD7sRcghcUSPnu+r4c0rV8FNtB7V9ExAVELc0=;
-  b=i1GCS2U2FXVhcjTOdvYv/CuebLdMmb2/uhBePB9vILb8VMZYEA/f/Rrv
-   IKVmkSOLkXlu3JO+q8aiVGKDQ4t3bTCLLRVF0PupokI2s3UA+Z8Qp8LZy
-   OSYiXDleCIstuWkoSr8Y3vS4iQVZ1ImMFa1guiS19V6pe0bZZuqkEYwv6
-   L14HoDPgNl/GsyljwVQgPb9Qr1pqPG1cmCNISwA6oaqYFUNePpijrS+Uw
-   McOVdIpgyYEfDtVyxsxAq1ZPaAJSlZK6WAoeOSw95wQ7E8zQvgg9L0u9W
-   S1wYNZsnra33fqXsVmxMMP0eeFdMte69UFWknTQaI7i3pxG+KWGdlJUJP
-   Q==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10367"; a="258416711"
-X-IronPort-AV: E=Sophos;i="5.91,275,1647327600"; 
-   d="scan'208";a="258416711"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2022 12:54:37 -0700
-X-IronPort-AV: E=Sophos;i="5.91,275,1647327600"; 
-   d="scan'208";a="563953452"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2022 12:54:36 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.95)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1nxDNR-000SlB-9z;
-        Fri, 03 Jun 2022 22:54:33 +0300
-Date:   Fri, 3 Jun 2022 22:54:33 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v1 1/1] xarray: Replace kernel.h with the necessary
- inclusions
-Message-ID: <Yppm+dpvOGjy7nlf@smile.fi.intel.com>
-References: <20220603171153.48928-1-andriy.shevchenko@linux.intel.com>
- <YppCIr4qM3lVYi8N@casper.infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YppCIr4qM3lVYi8N@casper.infradead.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+        Fri, 3 Jun 2022 20:06:02 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98A8D4F9ED;
+        Fri,  3 Jun 2022 17:06:01 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3732B60B49;
+        Sat,  4 Jun 2022 00:06:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 9E983C385A9;
+        Sat,  4 Jun 2022 00:06:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1654301160;
+        bh=bB/7Qg/ZWdTRZBizAQW+tLeYFyUrjLlJ+g9oiaJnNPQ=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=rF4ikw/L2wjG3Aa8eLURpCFcpl9uqcsY7m6zMeF+ead3CbyZH9+R0DCTpO5lsmawc
+         +SCIlyAZ+nG4+zLOaqjaVXzvV+op0CcTOrUuxfiSyeQK+4XBwdgq82heNSGY8MjduU
+         AFDpNO0aVaMrPkodlCbRBLadr444fhAIo+id3qGzKSYqEKkYUQVxtDmbjO/wY9+gMm
+         Y+c1xrK89GVQMWKi5qM3X1O3HRYgw3y14EEXE6rlpotDIH82J9WUDRWBmKV+twivcR
+         wFTbtumYFZphBH7x2Nk57Ptb+ZVMupbS7rbnTrMROdog4InFPH6ANtossUkWIj5ua2
+         Cnjgpyv2OkOvg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 8AA20F03950;
+        Sat,  4 Jun 2022 00:06:00 +0000 (UTC)
+Subject: Re: [GIT PULL] ntfs3: bugfixes for 5.19
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <c5c16f3d-c8a7-96b0-4fd6-056c4159fcef@paragon-software.com>
+References: <c5c16f3d-c8a7-96b0-4fd6-056c4159fcef@paragon-software.com>
+X-PR-Tracked-List-Id: <ntfs3.lists.linux.dev>
+X-PR-Tracked-Message-Id: <c5c16f3d-c8a7-96b0-4fd6-056c4159fcef@paragon-software.com>
+X-PR-Tracked-Remote: https://github.com/Paragon-Software-Group/linux-ntfs3.git ntfs3_for_5.19
+X-PR-Tracked-Commit-Id: 724bbe49c5e427cb077357d72d240a649f2e4054
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 1f952675835bfe18d6ae494a5581724d68c52352
+Message-Id: <165430116055.8653.4989553009324938778.pr-tracker-bot@kernel.org>
+Date:   Sat, 04 Jun 2022 00:06:00 +0000
+To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Cc:     torvalds@linux-foundation.org, ntfs3@lists.linux.dev,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 03, 2022 at 06:17:22PM +0100, Matthew Wilcox wrote:
-> On Fri, Jun 03, 2022 at 08:11:53PM +0300, Andy Shevchenko wrote:
-> > When kernel.h is used in the headers it adds a lot into dependency hell,
-> > especially when there are circular dependencies are involved.
-> > 
-> > Replace kernel.h inclusion with the list of what is really being used.
-> 
-> Thanks.  Can you fix the test suite too?
-> 
-> (cd tools/testing/radix-tree; make)
+The pull request you sent on Fri, 3 Jun 2022 14:26:57 +0300:
 
-Works for me. Anything special I should try?
+> https://github.com/Paragon-Software-Group/linux-ntfs3.git ntfs3_for_5.19
 
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/1f952675835bfe18d6ae494a5581724d68c52352
+
+Thank you!
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
