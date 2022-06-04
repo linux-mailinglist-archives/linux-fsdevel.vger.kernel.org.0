@@ -2,74 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C3E3B53D400
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Jun 2022 02:06:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E70153D64F
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  4 Jun 2022 11:50:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349710AbiFDAGD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 3 Jun 2022 20:06:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50836 "EHLO
+        id S234324AbiFDJun (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 4 Jun 2022 05:50:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231737AbiFDAGC (ORCPT
+        with ESMTP id S234310AbiFDJuj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 3 Jun 2022 20:06:02 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98A8D4F9ED;
-        Fri,  3 Jun 2022 17:06:01 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3732B60B49;
-        Sat,  4 Jun 2022 00:06:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 9E983C385A9;
-        Sat,  4 Jun 2022 00:06:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1654301160;
-        bh=bB/7Qg/ZWdTRZBizAQW+tLeYFyUrjLlJ+g9oiaJnNPQ=;
-        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-        b=rF4ikw/L2wjG3Aa8eLURpCFcpl9uqcsY7m6zMeF+ead3CbyZH9+R0DCTpO5lsmawc
-         +SCIlyAZ+nG4+zLOaqjaVXzvV+op0CcTOrUuxfiSyeQK+4XBwdgq82heNSGY8MjduU
-         AFDpNO0aVaMrPkodlCbRBLadr444fhAIo+id3qGzKSYqEKkYUQVxtDmbjO/wY9+gMm
-         Y+c1xrK89GVQMWKi5qM3X1O3HRYgw3y14EEXE6rlpotDIH82J9WUDRWBmKV+twivcR
-         wFTbtumYFZphBH7x2Nk57Ptb+ZVMupbS7rbnTrMROdog4InFPH6ANtossUkWIj5ua2
-         Cnjgpyv2OkOvg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 8AA20F03950;
-        Sat,  4 Jun 2022 00:06:00 +0000 (UTC)
-Subject: Re: [GIT PULL] ntfs3: bugfixes for 5.19
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <c5c16f3d-c8a7-96b0-4fd6-056c4159fcef@paragon-software.com>
-References: <c5c16f3d-c8a7-96b0-4fd6-056c4159fcef@paragon-software.com>
-X-PR-Tracked-List-Id: <ntfs3.lists.linux.dev>
-X-PR-Tracked-Message-Id: <c5c16f3d-c8a7-96b0-4fd6-056c4159fcef@paragon-software.com>
-X-PR-Tracked-Remote: https://github.com/Paragon-Software-Group/linux-ntfs3.git ntfs3_for_5.19
-X-PR-Tracked-Commit-Id: 724bbe49c5e427cb077357d72d240a649f2e4054
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 1f952675835bfe18d6ae494a5581724d68c52352
-Message-Id: <165430116055.8653.4989553009324938778.pr-tracker-bot@kernel.org>
-Date:   Sat, 04 Jun 2022 00:06:00 +0000
-To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc:     torvalds@linux-foundation.org, ntfs3@lists.linux.dev,
+        Sat, 4 Jun 2022 05:50:39 -0400
+Received: from out30-43.freemail.mail.aliyun.com (out30-43.freemail.mail.aliyun.com [115.124.30.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C94012AD9;
+        Sat,  4 Jun 2022 02:50:35 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04395;MF=xhao@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0VFIW1-m_1654336231;
+Received: from B-X3VXMD6M-2058.local(mailfrom:xhao@linux.alibaba.com fp:SMTPD_---0VFIW1-m_1654336231)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Sat, 04 Jun 2022 17:50:32 +0800
+From:   Xin Hao <xhao@linux.alibaba.com>
+Reply-To: xhao@linux.alibaba.com
+Subject: Re: [PATCH] proc: export page young and skip_kasan_poison flag via
+ kpageflags
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     changbin.du@intel.com, sashal@kernel.org,
+        akpm@linux-foundation.org, adobriyan@gmail.com,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-X-Spam-Status: No, score=-7.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20220602154302.12634-1-xhao@linux.alibaba.com>
+ <YpkBQTWWUuOzagvd@casper.infradead.org>
+Message-ID: <55263fe2-f8ae-f681-69fd-1064a74f2bb6@linux.alibaba.com>
+Date:   Sat, 4 Jun 2022 17:50:31 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0)
+ Gecko/20100101 Thunderbird/78.14.0
+MIME-Version: 1.0
+In-Reply-To: <YpkBQTWWUuOzagvd@casper.infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-11.6 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The pull request you sent on Fri, 3 Jun 2022 14:26:57 +0300:
 
-> https://github.com/Paragon-Software-Group/linux-ntfs3.git ntfs3_for_5.19
+On 6/3/22 2:28 AM, Matthew Wilcox wrote:
+> On Thu, Jun 02, 2022 at 11:43:02PM +0800, Xin Hao wrote:
+>> Now the young and skip_kasan_poison flag are supported in
+> Why do we want userspace to know about whether skip_kasan_poison is set?
+> That seems like a kernel-internal detail to me.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/1f952675835bfe18d6ae494a5581724d68c52352
+the  skip_kasan_poison also a page flags, we use page_types tool to 
+display them not only include user-internal,
 
-Thank you!
+but also  kernel-internal, add them, the page-types tool can more detail 
+display the kernel-internal page flags,
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+just in case we don't miss some page flags when check the whole memory.
+
+-
+Best Regards!
+Xin Hao
+
