@@ -2,46 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D1CF53DC46
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Jun 2022 16:38:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66BBE53DCEB
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Jun 2022 18:16:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345065AbiFEOig (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 5 Jun 2022 10:38:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45564 "EHLO
+        id S1351061AbiFEQQR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 5 Jun 2022 12:16:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345052AbiFEOie (ORCPT
+        with ESMTP id S1345605AbiFEQQQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 5 Jun 2022 10:38:34 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D8E611811;
-        Sun,  5 Jun 2022 07:38:33 -0700 (PDT)
+        Sun, 5 Jun 2022 12:16:16 -0400
+Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B44EE4D9F1;
+        Sun,  5 Jun 2022 09:16:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=280Wtqh+IaR+ohRn0i2SNeEIg3cG1n1gmfJkVF27ebM=; b=BiAVdWspfWXj/AOzHUemf++t4T
-        k1JAoS9zARQrO/zZSlmWWy3MLu+WzBYbanzB0z33evw4UEHInxjyWB/0/H424pmzV7+Z7SOvY1Bvc
-        T/fLowpBzOmFSBSPYGG7l12f8YZsEMUR3SZ54eoLftKyecse+eFeWK9YD8eusKDhGlc0FPPFNKXYl
-        gRW9RKhejDW8Su8HkhlYNk/U8MV7KHmJJtEnXF1+ckWljZc1XUmRnf0/5yER5VNGWLVLUsLM9RnD8
-        nw2MTagIu62BjLnoS3qRYXdQJcuywYSqAVHdXfsqSptfQ01mqF0/F6EI6RhOtC14ibBz1eQiX+1OE
-        lgsmvymA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nxrOU-009mNu-SR; Sun, 05 Jun 2022 14:38:18 +0000
-From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To:     Jan Kara <jack@suse.com>
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>, tytso@mit.edu,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 3/3] ext4: Use generic_quota_read()
-Date:   Sun,  5 Jun 2022 15:38:15 +0100
-Message-Id: <20220605143815.2330891-4-willy@infradead.org>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20220605143815.2330891-1-willy@infradead.org>
-References: <20220605143815.2330891-1-willy@infradead.org>
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=k0GdkbNDkasejj3kFBrsT8Gqu51kpsqMIcWZEZu6ukg=; b=nmfeBVtpMsoJcxuqepI3QEi1JJ
+        zH2x0OL0814+dLD0PfySc77wJNU3QK7ZjuetHTPRmCQnLCPtruWd3jj1/QvwJBTMQS9CQwwEvR9/x
+        MdBjDrj7SOGxE2XFnxEu+LYWQETJY333TVYZRdRyEtY6qNSM28sxPoafPyMwLVeZuAa4660BTZU3z
+        EwXbxFDOh6V41lf9ljFZaBietjmwREAmDLwWBlGKINaVS2bQV2lYPQeYNrmm4nSWEGDb/qCXrsAq0
+        dx33q6jE6zFo4sXThCrkEwtdXtFQ1wzmj6vLUJ9lqCQUP/ygEfTapGECjKxeyMY33WoqCoNqc+CSx
+        NmpUn9Fg==;
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nxsv0-003ooh-Vh; Sun, 05 Jun 2022 16:15:59 +0000
+Date:   Sun, 5 Jun 2022 16:15:58 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     syzbot <syzbot+47dd250f527cb7bebf24@syzkaller.appspotmail.com>
+Cc:     arve@android.com, asml.silence@gmail.com, axboe@kernel.dk,
+        brauner@kernel.org, gregkh@linuxfoundation.org, hdanton@sina.com,
+        hridya@google.com, io-uring@vger.kernel.org,
+        joel@joelfernandes.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, maco@android.com, surenb@google.com,
+        syzkaller-bugs@googlegroups.com, tkjos@android.com
+Subject: Re: [syzbot] KASAN: use-after-free Read in filp_close
+Message-ID: <YpzWvkNcq0llgdkW@zeniv-ca.linux.org.uk>
+References: <000000000000fd54f805e0351875@google.com>
+ <00000000000061dcef05e0b3d4e3@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <00000000000061dcef05e0b3d4e3@google.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SORTED_RECIPS,SPF_HELO_NONE,
         SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -50,156 +55,87 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The comment about the page cache is rather stale; the buffer cache will
-read into the page cache if the buffer isn't present, and the page cache
-will not take any locks if the page is present.
+On Sun, Jun 05, 2022 at 07:04:10AM -0700, syzbot wrote:
+> syzbot has bisected this issue to:
+> 
+> commit 6319194ec57b0452dcda4589d24c4e7db299c5bf
+> Author: Al Viro <viro@zeniv.linux.org.uk>
+> Date:   Thu May 12 21:08:03 2022 +0000
+> 
+>     Unify the primitives for file descriptor closing
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=134cbe4ff00000
+> start commit:   952923ddc011 Merge tag 'pull-18-rc1-work.namei' of git://g..
+> git tree:       upstream
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=10ccbe4ff00000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=174cbe4ff00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3096247591885bfa
+> dashboard link: https://syzkaller.appspot.com/bug?extid=47dd250f527cb7bebf24
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=114f7bcdf00000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1659a94ff00000
+> 
+> Reported-by: syzbot+47dd250f527cb7bebf24@syzkaller.appspotmail.com
+> Fixes: 6319194ec57b ("Unify the primitives for file descriptor closing")
+> 
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- fs/ext4/super.c | 81 ++++++++++++-------------------------------------
- 1 file changed, 20 insertions(+), 61 deletions(-)
+Argh...  I see what's going on.  Check if the following fixes the problem,
+please.
 
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 450c918d68fc..1780649ed224 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -1506,8 +1506,6 @@ static int ext4_mark_dquot_dirty(struct dquot *dquot);
- static int ext4_write_info(struct super_block *sb, int type);
- static int ext4_quota_on(struct super_block *sb, int type, int format_id,
- 			 const struct path *path);
--static ssize_t ext4_quota_read(struct super_block *sb, int type, char *data,
--			       size_t len, loff_t off);
- static ssize_t ext4_quota_write(struct super_block *sb, int type,
- 				const char *data, size_t len, loff_t off);
- static int ext4_quota_enable(struct super_block *sb, int type, int format_id,
-@@ -1535,7 +1533,7 @@ static const struct dquot_operations ext4_quota_operations = {
- static const struct quotactl_ops ext4_qctl_operations = {
- 	.quota_on	= ext4_quota_on,
- 	.quota_off	= ext4_quota_off,
--	.quota_sync	= dquot_quota_sync,
-+	.quota_sync	= generic_quota_sync,
- 	.get_state	= dquot_get_state,
- 	.set_info	= dquot_set_dqinfo,
- 	.get_dqblk	= dquot_get_dqblk,
-@@ -1559,7 +1557,7 @@ static const struct super_operations ext4_sops = {
- 	.statfs		= ext4_statfs,
- 	.show_options	= ext4_show_options,
- #ifdef CONFIG_QUOTA
--	.quota_read	= ext4_quota_read,
-+	.quota_read	= generic_quota_read,
- 	.quota_write	= ext4_quota_write,
- 	.get_dquots	= ext4_get_dquots,
- #endif
-@@ -6856,55 +6854,15 @@ static int ext4_quota_off(struct super_block *sb, int type)
- 	return dquot_quota_off(sb, type);
- }
+diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+index 27c9b004823a..73beea5dc18c 100644
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -1857,6 +1857,8 @@ static void binder_deferred_fd_close(int fd)
+ 	init_task_work(&twcb->twork, binder_do_fd_close);
+ 	twcb->file = close_fd_get_file(fd);
+ 	if (twcb->file) {
++		// pin it until binder_do_fd_close(); see comments there
++		get_file(twcb->file);
+ 		filp_close(twcb->file, current->files);
+ 		task_work_add(current, &twcb->twork, TWA_RESUME);
+ 	} else {
+diff --git a/fs/file.c b/fs/file.c
+index dd6692048f4f..3bcc1ecc314a 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -800,8 +800,7 @@ struct file *__close_fd_get_file(unsigned int fd)
  
--/* Read data from quotafile - avoid pagecache and such because we cannot afford
-- * acquiring the locks... As quota files are never truncated and quota code
-- * itself serializes the operations (and no one else should touch the files)
-- * we don't have to be afraid of races */
--static ssize_t ext4_quota_read(struct super_block *sb, int type, char *data,
--			       size_t len, loff_t off)
--{
--	struct inode *inode = sb_dqopt(sb)->files[type];
--	ext4_lblk_t blk = off >> EXT4_BLOCK_SIZE_BITS(sb);
--	int offset = off & (sb->s_blocksize - 1);
--	int tocopy;
--	size_t toread;
--	struct buffer_head *bh;
--	loff_t i_size = i_size_read(inode);
--
--	if (off > i_size)
--		return 0;
--	if (off+len > i_size)
--		len = i_size-off;
--	toread = len;
--	while (toread > 0) {
--		tocopy = sb->s_blocksize - offset < toread ?
--				sb->s_blocksize - offset : toread;
--		bh = ext4_bread(NULL, inode, blk, 0);
--		if (IS_ERR(bh))
--			return PTR_ERR(bh);
--		if (!bh)	/* A hole? */
--			memset(data, 0, tocopy);
--		else
--			memcpy(data, bh->b_data+offset, tocopy);
--		brelse(bh);
--		offset = 0;
--		toread -= tocopy;
--		data += tocopy;
--		blk++;
--	}
--	return len;
--}
--
- /* Write to quotafile (we know the transaction is already started and has
-  * enough credits) */
- static ssize_t ext4_quota_write(struct super_block *sb, int type,
- 				const char *data, size_t len, loff_t off)
+ /*
+  * variant of close_fd that gets a ref on the file for later fput.
+- * The caller must ensure that filp_close() called on the file, and then
+- * an fput().
++ * The caller must ensure that filp_close() called on the file.
+  */
+ struct file *close_fd_get_file(unsigned int fd)
  {
- 	struct inode *inode = sb_dqopt(sb)->files[type];
--	ext4_lblk_t blk = off >> EXT4_BLOCK_SIZE_BITS(sb);
--	int err = 0, err2 = 0, offset = off & (sb->s_blocksize - 1);
--	int retries = 0;
--	struct buffer_head *bh;
-+	int err = 0, offset = off & (sb->s_blocksize - 1);
-+	struct buffer_head *bh, *head;
-+	struct folio *folio;
- 	handle_t *handle = journal_current_handle();
+diff --git a/fs/io_uring.c b/fs/io_uring.c
+index 7257b0870353..33da5116cc38 100644
+--- a/fs/io_uring.c
++++ b/fs/io_uring.c
+@@ -5110,7 +5110,7 @@ static int io_close(struct io_kiocb *req, unsigned int issue_flags)
+ 	struct files_struct *files = current->files;
+ 	struct io_close *close = &req->close;
+ 	struct fdtable *fdt;
+-	struct file *file = NULL;
++	struct file *file;
+ 	int ret = -EBADF;
  
- 	if (!handle) {
-@@ -6924,20 +6882,21 @@ static ssize_t ext4_quota_write(struct super_block *sb, int type,
- 		return -EIO;
+ 	if (req->close.file_slot) {
+@@ -5127,7 +5127,6 @@ static int io_close(struct io_kiocb *req, unsigned int issue_flags)
+ 	file = fdt->fd[close->fd];
+ 	if (!file || file->f_op == &io_uring_fops) {
+ 		spin_unlock(&files->file_lock);
+-		file = NULL;
+ 		goto err;
  	}
  
--	do {
--		bh = ext4_bread(handle, inode, blk,
--				EXT4_GET_BLOCKS_CREATE |
--				EXT4_GET_BLOCKS_METADATA_NOFAIL);
--	} while (PTR_ERR(bh) == -ENOSPC &&
--		 ext4_should_retry_alloc(inode->i_sb, &retries));
--	if (IS_ERR(bh))
--		return PTR_ERR(bh);
--	if (!bh)
-+	folio = read_mapping_folio(inode->i_mapping, off / PAGE_SIZE, NULL);
-+	if (IS_ERR(folio))
-+		return PTR_ERR(folio);
-+	head = folio_buffers(folio);
-+	if (!head)
-+		head = alloc_page_buffers(&folio->page, sb->s_blocksize, false);
-+	if (!head)
- 		goto out;
-+	bh = head;
-+	while ((bh_offset(bh) + sb->s_blocksize) <= (off % PAGE_SIZE))
-+		bh = bh->b_this_page;
- 	BUFFER_TRACE(bh, "get write access");
- 	err = ext4_journal_get_write_access(handle, sb, bh, EXT4_JTR_NONE);
- 	if (err) {
--		brelse(bh);
-+		folio_put(folio);
- 		return err;
- 	}
- 	lock_buffer(bh);
-@@ -6945,14 +6904,14 @@ static ssize_t ext4_quota_write(struct super_block *sb, int type,
- 	flush_dcache_page(bh->b_page);
- 	unlock_buffer(bh);
- 	err = ext4_handle_dirty_metadata(handle, NULL, bh);
--	brelse(bh);
- out:
-+	folio_put(folio);
-+	if (err)
-+		return err;
- 	if (inode->i_size < off + len) {
- 		i_size_write(inode, off + len);
- 		EXT4_I(inode)->i_disksize = inode->i_size;
--		err2 = ext4_mark_inode_dirty(handle, inode);
--		if (unlikely(err2 && !err))
--			err = err2;
-+		err = ext4_mark_inode_dirty(handle, inode);
- 	}
- 	return err ? err : len;
+@@ -5147,8 +5146,6 @@ static int io_close(struct io_kiocb *req, unsigned int issue_flags)
+ err:
+ 	if (ret < 0)
+ 		req_set_fail(req);
+-	if (file)
+-		fput(file);
+ 	__io_req_complete(req, issue_flags, ret, 0);
+ 	return 0;
  }
--- 
-2.35.1
-
