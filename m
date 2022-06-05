@@ -2,41 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3837A53DDFC
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Jun 2022 21:39:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4816D53DDF9
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Jun 2022 21:39:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351651AbiFETjo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 5 Jun 2022 15:39:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43304 "EHLO
+        id S1347218AbiFETjJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 5 Jun 2022 15:39:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42528 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351617AbiFETje (ORCPT
+        with ESMTP id S1347115AbiFETjG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 5 Jun 2022 15:39:34 -0400
+        Sun, 5 Jun 2022 15:39:06 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3874F11A00;
-        Sun,  5 Jun 2022 12:39:20 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C3C21181A;
+        Sun,  5 Jun 2022 12:39:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:In-Reply-To:References;
-        bh=pFaDJUkNgKV/oU+nKufi51KbavXmhswow0vSfNYzKrI=; b=IQQ3chWAAqod3iNOvZPz+sg3JL
-        Hk+ApUMeqh7NT3g6IWWJNzgueSDKfvvNhBx6utIRkRDW0gX3AiQfvMXnwsyaJ/64KiwRfHwjSy/dv
-        8J6uezBFHQnTUj8EMV7+h4tSlGa2WN04lIzx/EyXL84mDYJOn+khSbti+8XKflhn9L4r/WhR6xbM7
-        +MZ9IYhStDA3yihxRhpkHHC+OXeBpvNCGWk5fEeGTb1H9CRJG5lEjoY1+jSkJw8hVgtSw7cxw6GvV
-        KZogb0QToLdgR6kEf13Hcr4syZG2xfRXsnqeCO+zpSb6FDBtT5Fx6Rp6rYpWkgGY3OjWTTkHnJk29
-        kJYadcSQ==;
+        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        Content-Type:Content-ID:Content-Description;
+        bh=6g09y1A9jVwuZlJR1irGeBqDpd31Ui3pSGWrlaz4nb0=; b=pg4gnoTyTVQMZkuLsLjufELZOm
+        zdlkyM6Epz9Y5ls6kjBxq58ihNIUrb2VqIKn1nUlONRVxbp4g7dlQzMHo9JPUvh1cyx4cdcigWDI1
+        slwAgDoI7SkWyyzH+j97LCItJ0qSvavcuPnYPdS5zdoFT4aZpCiGwaGGj7aUofkedaHvtjKzyVrNI
+        42u9ldindn05Wm1yrBmLckPHwYi8R4I2j0QnGjrpg23633uwpEOoaC3S55ItOiGyvCgkUjK/1UElz
+        ks1lQWAPi22UiL9YIdwqGaBwOialRfaScxUmJwyto5dh3WMxU2Ag123Wygqx+r/Kt4P8V7BgYZyFl
+        43sDr6cA==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nxw5Q-009wsN-GO; Sun, 05 Jun 2022 19:38:56 +0000
+        id 1nxw5Q-009wsP-JZ; Sun, 05 Jun 2022 19:38:56 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
         linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
         linux-nilfs@vger.kernel.org
-Subject: [PATCH 00/10] Convert to filemap_get_folios()
-Date:   Sun,  5 Jun 2022 20:38:44 +0100
-Message-Id: <20220605193854.2371230-1-willy@infradead.org>
+Subject: [PATCH 01/10] filemap: Add filemap_get_folios()
+Date:   Sun,  5 Jun 2022 20:38:45 +0100
+Message-Id: <20220605193854.2371230-2-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20220605193854.2371230-1-willy@infradead.org>
+References: <20220605193854.2371230-1-willy@infradead.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -49,40 +51,94 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch series removes find_get_pages_range(), pagevec_lookup()
-and pagevec_lookup_range(), converting all callers to use the new
-filemap_get_folios().  I've only run xfstests over ext4 ... some other
-testing might be appropriate.
+This is the equivalent of find_get_pages() but fills a folio_batch
+instead of an array of pages.
 
-Matthew Wilcox (Oracle) (10):
-  filemap: Add filemap_get_folios()
-  buffer: Convert clean_bdev_aliases() to use filemap_get_folios()
-  ext4: Convert mpage_release_unused_pages() to use filemap_get_folios()
-  ext4: Convert mpage_map_and_submit_buffers() to use
-    filemap_get_folios()
-  f2fs: Convert f2fs_invalidate_compress_pages() to use
-    filemap_get_folios()
-  hugetlbfs: Convert remove_inode_hugepages() to use
-    filemap_get_folios()
-  nilfs2: Convert nilfs_copy_back_pages() to use filemap_get_folios()
-  vmscan: Add check_move_unevictable_folios()
-  shmem: Convert shmem_unlock_mapping() to use filemap_get_folios()
-  filemap: Remove find_get_pages_range() and associated functions
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ include/linux/pagemap.h |  2 ++
+ mm/filemap.c            | 55 +++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 57 insertions(+)
 
- fs/buffer.c             | 26 +++++++--------
- fs/ext4/inode.c         | 40 ++++++++++++-----------
- fs/f2fs/compress.c      | 35 +++++++++-----------
- fs/hugetlbfs/inode.c    | 44 ++++++++-----------------
- fs/nilfs2/page.c        | 60 +++++++++++++++++-----------------
- include/linux/pagemap.h |  5 ++-
- include/linux/pagevec.h | 10 ------
- include/linux/swap.h    |  3 +-
- mm/filemap.c            | 72 +++++++++++++++++------------------------
- mm/shmem.c              | 13 ++++----
- mm/swap.c               | 29 -----------------
- mm/vmscan.c             | 55 ++++++++++++++++++-------------
- 12 files changed, 166 insertions(+), 226 deletions(-)
-
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 5555689ea809..50e57b2d845f 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -718,6 +718,8 @@ static inline struct page *find_subpage(struct page *head, pgoff_t index)
+ 	return head + (index & (thp_nr_pages(head) - 1));
+ }
+ 
++unsigned filemap_get_folios(struct address_space *mapping, pgoff_t *start,
++		pgoff_t end, struct folio_batch *fbatch);
+ unsigned find_get_pages_range(struct address_space *mapping, pgoff_t *start,
+ 			pgoff_t end, unsigned int nr_pages,
+ 			struct page **pages);
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 1e66eea98a7e..ea4145b7a84c 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2127,6 +2127,61 @@ unsigned find_lock_entries(struct address_space *mapping, pgoff_t start,
+ 	return folio_batch_count(fbatch);
+ }
+ 
++/**
++ * filemap_get_folios - Get a batch of folios
++ * @mapping:	The address_space to search
++ * @start:	The starting page index
++ * @end:	The final page index (inclusive)
++ * @fbatch:	The batch to fill.
++ *
++ * Search for and return a batch of folios in the mapping starting at
++ * index @start and up to index @end (inclusive).  The folios are returned
++ * in @fbatch with an elevated reference count.
++ *
++ * The first folio may start before @start; if it does, it will contain
++ * @start.  The final folio may extend beyond @end; if it does, it will
++ * contain @end.  The folios have ascending indices.  There may be gaps
++ * between the folios if there are indices which have no folio in the
++ * page cache.  If folios are added to or removed from the page cache
++ * while this is running, they may or may not be found by this call.
++ *
++ * Return: The number of folios which were found.
++ * We also update @start to index the next folio for the traversal.
++ */
++unsigned filemap_get_folios(struct address_space *mapping, pgoff_t *start,
++		pgoff_t end, struct folio_batch *fbatch)
++{
++	XA_STATE(xas, &mapping->i_pages, *start);
++	struct folio *folio;
++
++	rcu_read_lock();
++	while ((folio = find_get_entry(&xas, end, XA_PRESENT)) != NULL) {
++		/* Skip over shadow, swap and DAX entries */
++		if (xa_is_value(folio))
++			continue;
++		if (!folio_batch_add(fbatch, folio)) {
++			*start = folio->index + folio_nr_pages(folio);
++			goto out;
++		}
++	}
++
++	/*
++	 * We come here when there is no page beyond @end. We take care to not
++	 * overflow the index @start as it confuses some of the callers. This
++	 * breaks the iteration when there is a page at index -1 but that is
++	 * already broken anyway.
++	 */
++	if (end == (pgoff_t)-1)
++		*start = (pgoff_t)-1;
++	else
++		*start = end + 1;
++out:
++	rcu_read_unlock();
++
++	return folio_batch_count(fbatch);
++}
++EXPORT_SYMBOL(filemap_get_folios);
++
+ static inline
+ bool folio_more_pages(struct folio *folio, pgoff_t index, pgoff_t max)
+ {
 -- 
 2.35.1
 
