@@ -2,39 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1460A53DC43
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Jun 2022 16:38:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D1CF53DC46
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Jun 2022 16:38:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345038AbiFEOib (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 5 Jun 2022 10:38:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45078 "EHLO
+        id S1345065AbiFEOig (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 5 Jun 2022 10:38:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345028AbiFEOi2 (ORCPT
+        with ESMTP id S1345052AbiFEOie (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 5 Jun 2022 10:38:28 -0400
+        Sun, 5 Jun 2022 10:38:34 -0400
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39EAAB842;
-        Sun,  5 Jun 2022 07:38:27 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D8E611811;
+        Sun,  5 Jun 2022 07:38:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=iOxPhk92n3ev2haNNYjCIoSSRP3MVk1T1zZQSDFdgow=; b=PslZ9i4ExgBUnYLYFag7GhUQOX
-        LNJQcX2OKQfS+sWRbnBASViUUcCVfdt7jjFPe4K/LGN2x6amTyr+mH1f/2TFb66Gm0MTv/0wiS/6H
-        HQE4TdMRJwTuW5N9kNsO4Am0pQLscNbm3HBc1J2cD1hsfteY/tFlBffCg0+vUEcRA019cWgTK+Gng
-        rP1Jm9EAYcedt/ZaS8XPquia4xagoS882Ic13GRGgffpb56CTlFnnEozhJ3ZXbb303k3bTKDniqfD
-        XJHH6Zm46pVbeeZas0kiGtUX+bAfu1H99TOyoWqwBnBwUKGNk093ReEdOVoVRV3DbG0St2EzxLwNd
-        lHUrjmsg==;
+        bh=280Wtqh+IaR+ohRn0i2SNeEIg3cG1n1gmfJkVF27ebM=; b=BiAVdWspfWXj/AOzHUemf++t4T
+        k1JAoS9zARQrO/zZSlmWWy3MLu+WzBYbanzB0z33evw4UEHInxjyWB/0/H424pmzV7+Z7SOvY1Bvc
+        T/fLowpBzOmFSBSPYGG7l12f8YZsEMUR3SZ54eoLftKyecse+eFeWK9YD8eusKDhGlc0FPPFNKXYl
+        gRW9RKhejDW8Su8HkhlYNk/U8MV7KHmJJtEnXF1+ckWljZc1XUmRnf0/5yER5VNGWLVLUsLM9RnD8
+        nw2MTagIu62BjLnoS3qRYXdQJcuywYSqAVHdXfsqSptfQ01mqF0/F6EI6RhOtC14ibBz1eQiX+1OE
+        lgsmvymA==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nxrOU-009mNs-Pl; Sun, 05 Jun 2022 14:38:18 +0000
+        id 1nxrOU-009mNu-SR; Sun, 05 Jun 2022 14:38:18 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To:     Jan Kara <jack@suse.com>
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>, tytso@mit.edu,
         Andreas Dilger <adilger.kernel@dilger.ca>,
         linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 2/3] quota: Support using the page cache for quota files
-Date:   Sun,  5 Jun 2022 15:38:14 +0100
-Message-Id: <20220605143815.2330891-3-willy@infradead.org>
+Subject: [PATCH 3/3] ext4: Use generic_quota_read()
+Date:   Sun,  5 Jun 2022 15:38:15 +0100
+Message-Id: <20220605143815.2330891-4-willy@infradead.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20220605143815.2330891-1-willy@infradead.org>
 References: <20220605143815.2330891-1-willy@infradead.org>
@@ -50,135 +50,156 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Quota files are usually cached in the buffer cache of the block device.
-These support functions allow a filesystem to cache quota files in their
-page cache instead which is more efficient.
+The comment about the page cache is rather stale; the buffer cache will
+read into the page cache if the buffer isn't present, and the page cache
+will not take any locks if the page is present.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/quota/dquot.c         | 68 ++++++++++++++++++++++++++++++++++++++++
- include/linux/fs.h       |  2 ++
- include/linux/quotaops.h |  1 +
- 3 files changed, 71 insertions(+)
+ fs/ext4/super.c | 81 ++++++++++++-------------------------------------
+ 1 file changed, 20 insertions(+), 61 deletions(-)
 
-diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
-index cdb22d6d7488..ef9aeae802c7 100644
---- a/fs/quota/dquot.c
-+++ b/fs/quota/dquot.c
-@@ -59,6 +59,7 @@
- #include <linux/fs.h>
- #include <linux/mount.h>
- #include <linux/mm.h>
-+#include <linux/pagemap.h>
- #include <linux/time.h>
- #include <linux/types.h>
- #include <linux/string.h>
-@@ -73,6 +74,7 @@
- #include <linux/proc_fs.h>
- #include <linux/security.h>
- #include <linux/sched.h>
-+#include <linux/sched/mm.h>
- #include <linux/cred.h>
- #include <linux/kmod.h>
- #include <linux/namei.h>
-@@ -2161,6 +2163,72 @@ const struct dquot_operations dquot_operations = {
- };
- EXPORT_SYMBOL(dquot_operations);
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 450c918d68fc..1780649ed224 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -1506,8 +1506,6 @@ static int ext4_mark_dquot_dirty(struct dquot *dquot);
+ static int ext4_write_info(struct super_block *sb, int type);
+ static int ext4_quota_on(struct super_block *sb, int type, int format_id,
+ 			 const struct path *path);
+-static ssize_t ext4_quota_read(struct super_block *sb, int type, char *data,
+-			       size_t len, loff_t off);
+ static ssize_t ext4_quota_write(struct super_block *sb, int type,
+ 				const char *data, size_t len, loff_t off);
+ static int ext4_quota_enable(struct super_block *sb, int type, int format_id,
+@@ -1535,7 +1533,7 @@ static const struct dquot_operations ext4_quota_operations = {
+ static const struct quotactl_ops ext4_qctl_operations = {
+ 	.quota_on	= ext4_quota_on,
+ 	.quota_off	= ext4_quota_off,
+-	.quota_sync	= dquot_quota_sync,
++	.quota_sync	= generic_quota_sync,
+ 	.get_state	= dquot_get_state,
+ 	.set_info	= dquot_set_dqinfo,
+ 	.get_dqblk	= dquot_get_dqblk,
+@@ -1559,7 +1557,7 @@ static const struct super_operations ext4_sops = {
+ 	.statfs		= ext4_statfs,
+ 	.show_options	= ext4_show_options,
+ #ifdef CONFIG_QUOTA
+-	.quota_read	= ext4_quota_read,
++	.quota_read	= generic_quota_read,
+ 	.quota_write	= ext4_quota_write,
+ 	.get_dquots	= ext4_get_dquots,
+ #endif
+@@ -6856,55 +6854,15 @@ static int ext4_quota_off(struct super_block *sb, int type)
+ 	return dquot_quota_off(sb, type);
+ }
  
-+ssize_t generic_quota_read(struct super_block *sb, int type, char *data,
-+			      size_t len, loff_t pos)
-+{
-+	struct inode *inode = sb_dqopt(sb)->files[type];
-+	struct address_space *mapping = inode->i_mapping;
-+	size_t toread;
-+	pgoff_t index;
-+	loff_t i_size = i_size_read(inode);
-+
-+	if (pos > i_size)
-+		return 0;
-+	if (pos + len > i_size)
-+		len = i_size - pos;
-+	toread = len;
-+	index = pos / PAGE_SIZE;
-+
-+	while (toread > 0) {
-+		struct folio *folio = read_mapping_folio(mapping, index, NULL);
-+		size_t tocopy = min(toread, PAGE_SIZE - offset_in_page(pos));
-+		void *src;
-+
-+		if (folio == ERR_PTR(-ENOMEM)) {
-+			memalloc_retry_wait(GFP_NOFS);
-+			continue;
-+		} else if (IS_ERR(folio))
-+			return PTR_ERR(folio);
-+
-+		src = kmap_local_folio(folio, offset_in_folio(folio, pos));
-+		memcpy(data, src, tocopy);
-+		kunmap_local(src);
+-/* Read data from quotafile - avoid pagecache and such because we cannot afford
+- * acquiring the locks... As quota files are never truncated and quota code
+- * itself serializes the operations (and no one else should touch the files)
+- * we don't have to be afraid of races */
+-static ssize_t ext4_quota_read(struct super_block *sb, int type, char *data,
+-			       size_t len, loff_t off)
+-{
+-	struct inode *inode = sb_dqopt(sb)->files[type];
+-	ext4_lblk_t blk = off >> EXT4_BLOCK_SIZE_BITS(sb);
+-	int offset = off & (sb->s_blocksize - 1);
+-	int tocopy;
+-	size_t toread;
+-	struct buffer_head *bh;
+-	loff_t i_size = i_size_read(inode);
+-
+-	if (off > i_size)
+-		return 0;
+-	if (off+len > i_size)
+-		len = i_size-off;
+-	toread = len;
+-	while (toread > 0) {
+-		tocopy = sb->s_blocksize - offset < toread ?
+-				sb->s_blocksize - offset : toread;
+-		bh = ext4_bread(NULL, inode, blk, 0);
+-		if (IS_ERR(bh))
+-			return PTR_ERR(bh);
+-		if (!bh)	/* A hole? */
+-			memset(data, 0, tocopy);
+-		else
+-			memcpy(data, bh->b_data+offset, tocopy);
+-		brelse(bh);
+-		offset = 0;
+-		toread -= tocopy;
+-		data += tocopy;
+-		blk++;
+-	}
+-	return len;
+-}
+-
+ /* Write to quotafile (we know the transaction is already started and has
+  * enough credits) */
+ static ssize_t ext4_quota_write(struct super_block *sb, int type,
+ 				const char *data, size_t len, loff_t off)
+ {
+ 	struct inode *inode = sb_dqopt(sb)->files[type];
+-	ext4_lblk_t blk = off >> EXT4_BLOCK_SIZE_BITS(sb);
+-	int err = 0, err2 = 0, offset = off & (sb->s_blocksize - 1);
+-	int retries = 0;
+-	struct buffer_head *bh;
++	int err = 0, offset = off & (sb->s_blocksize - 1);
++	struct buffer_head *bh, *head;
++	struct folio *folio;
+ 	handle_t *handle = journal_current_handle();
+ 
+ 	if (!handle) {
+@@ -6924,20 +6882,21 @@ static ssize_t ext4_quota_write(struct super_block *sb, int type,
+ 		return -EIO;
+ 	}
+ 
+-	do {
+-		bh = ext4_bread(handle, inode, blk,
+-				EXT4_GET_BLOCKS_CREATE |
+-				EXT4_GET_BLOCKS_METADATA_NOFAIL);
+-	} while (PTR_ERR(bh) == -ENOSPC &&
+-		 ext4_should_retry_alloc(inode->i_sb, &retries));
+-	if (IS_ERR(bh))
+-		return PTR_ERR(bh);
+-	if (!bh)
++	folio = read_mapping_folio(inode->i_mapping, off / PAGE_SIZE, NULL);
++	if (IS_ERR(folio))
++		return PTR_ERR(folio);
++	head = folio_buffers(folio);
++	if (!head)
++		head = alloc_page_buffers(&folio->page, sb->s_blocksize, false);
++	if (!head)
+ 		goto out;
++	bh = head;
++	while ((bh_offset(bh) + sb->s_blocksize) <= (off % PAGE_SIZE))
++		bh = bh->b_this_page;
+ 	BUFFER_TRACE(bh, "get write access");
+ 	err = ext4_journal_get_write_access(handle, sb, bh, EXT4_JTR_NONE);
+ 	if (err) {
+-		brelse(bh);
 +		folio_put(folio);
-+
-+		toread -= tocopy;
-+		data += tocopy;
-+		pos += tocopy;
-+		index++;
-+	}
-+	return len;
-+}
-+EXPORT_SYMBOL(generic_quota_read);
-+
-+int generic_quota_sync(struct super_block *sb, int type)
-+{
-+	struct quota_info *dqopt = sb_dqopt(sb);
-+	int i, ret;
-+
-+	ret = dquot_writeback_dquots(sb, type);
-+	if (ret)
-+		return ret;
-+	if (dqopt->flags & DQUOT_QUOTA_SYS_FILE)
-+		return 0;
-+
-+	for (i = 0; i < MAXQUOTAS; i++) {
-+		if (type != -1 && type != i)
-+			continue;
-+		if (!sb_has_quota_active(sb, i))
-+			continue;
-+		ret = write_inode_now(dqopt->files[i], true);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL(generic_quota_sync);
-+
- /*
-  * Generic helper for ->open on filesystems supporting disk quotas.
-  */
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 9ad5e3520fae..2e798fc4c118 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2449,6 +2449,8 @@ struct super_block *sget(struct file_system_type *type,
- 			int (*test)(struct super_block *,void *),
- 			int (*set)(struct super_block *,void *),
- 			int flags, void *data);
-+ssize_t generic_quota_read(struct super_block *sb, int type, char *data,
-+		size_t len, loff_t pos);
- 
- /* Alas, no aliases. Too much hassle with bringing module.h everywhere */
- #define fops_get(fops) \
-diff --git a/include/linux/quotaops.h b/include/linux/quotaops.h
-index a0f6668924d3..fe12b04948f6 100644
---- a/include/linux/quotaops.h
-+++ b/include/linux/quotaops.h
-@@ -105,6 +105,7 @@ int dquot_quota_on_mount(struct super_block *sb, char *qf_name,
- int dquot_quota_off(struct super_block *sb, int type);
- int dquot_writeback_dquots(struct super_block *sb, int type);
- int dquot_quota_sync(struct super_block *sb, int type);
-+int generic_quota_sync(struct super_block *sb, int type);
- int dquot_get_state(struct super_block *sb, struct qc_state *state);
- int dquot_set_dqinfo(struct super_block *sb, int type, struct qc_info *ii);
- int dquot_get_dqblk(struct super_block *sb, struct kqid id,
+ 		return err;
+ 	}
+ 	lock_buffer(bh);
+@@ -6945,14 +6904,14 @@ static ssize_t ext4_quota_write(struct super_block *sb, int type,
+ 	flush_dcache_page(bh->b_page);
+ 	unlock_buffer(bh);
+ 	err = ext4_handle_dirty_metadata(handle, NULL, bh);
+-	brelse(bh);
+ out:
++	folio_put(folio);
++	if (err)
++		return err;
+ 	if (inode->i_size < off + len) {
+ 		i_size_write(inode, off + len);
+ 		EXT4_I(inode)->i_disksize = inode->i_size;
+-		err2 = ext4_mark_inode_dirty(handle, inode);
+-		if (unlikely(err2 && !err))
+-			err = err2;
++		err = ext4_mark_inode_dirty(handle, inode);
+ 	}
+ 	return err ? err : len;
+ }
 -- 
 2.35.1
 
