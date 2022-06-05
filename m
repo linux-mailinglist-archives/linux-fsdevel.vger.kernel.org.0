@@ -2,48 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EF4E453DE05
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  5 Jun 2022 21:39:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A6FDD53DEF0
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jun 2022 01:32:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347248AbiFETjL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 5 Jun 2022 15:39:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42516 "EHLO
+        id S1348623AbiFEXcU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 5 Jun 2022 19:32:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347104AbiFETjF (ORCPT
+        with ESMTP id S242272AbiFEXcT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 5 Jun 2022 15:39:05 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08E2A65F8;
-        Sun,  5 Jun 2022 12:39:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=kW7acvpugaZzYgKpNVxP3YXlqqo8ej9HniApAt9C7Wk=; b=GayB5dkNyETT1aj143hZpJ9xJr
-        2W3PmmqCmdsuLmQY9SEJ2F5XCz/p7+bPpCYBl4Z5FqoKlX63+mesk72QIxc8GbTFN6Vj7N693OPSz
-        EAzmfYVOvCExzpQVT6Eo/3ppcpw0dDWOCBIJT0J9+VT3SAskMmWebD7iZwtwga09wxGXdZq+DsWH5
-        zr7rRtR8Ot38QThbkmEFP5sH8mKV2McSI3M5hohoBkIJ5y1yhfwz8O//gZN4YDvKQv5lqJ1I98SFm
-        mt+aJZdCZBveBW7dWweDqSqXxJAfQ3m2/dVOOj384TYkN3SRcXmxaAndo0qADxxP6/AoDc9ozluPC
-        6SRvx5Ow==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nxw5R-009wsh-Ac; Sun, 05 Jun 2022 19:38:57 +0000
-From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
-        linux-nilfs@vger.kernel.org
-Subject: [PATCH 10/10] filemap: Remove find_get_pages_range() and associated functions
-Date:   Sun,  5 Jun 2022 20:38:54 +0100
-Message-Id: <20220605193854.2371230-11-willy@infradead.org>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20220605193854.2371230-1-willy@infradead.org>
-References: <20220605193854.2371230-1-willy@infradead.org>
+        Sun, 5 Jun 2022 19:32:19 -0400
+Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id ECB2F17E3F;
+        Sun,  5 Jun 2022 16:32:16 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-2-147.pa.nsw.optusnet.com.au [49.181.2.147])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 4E11F10E70B8;
+        Mon,  6 Jun 2022 09:32:15 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1nxzjB-0039qy-9W; Mon, 06 Jun 2022 09:32:13 +1000
+Date:   Mon, 6 Jun 2022 09:32:13 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Chris Mason <clm@fb.com>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "dchinner@redhat.com" <dchinner@redhat.com>
+Subject: Re: [PATCH RFC] iomap: invalidate pages past eof in
+ iomap_do_writepage()
+Message-ID: <20220605233213.GN1098723@dread.disaster.area>
+References: <20220601011116.495988-1-clm@fb.com>
+ <YpdZKbrtXJJ9mWL7@infradead.org>
+ <BB5F778F-BFE5-4CC9-94DE-3118C60E13B6@fb.com>
+ <20220602065252.GD1098723@dread.disaster.area>
+ <YpjYDjeR2Wpx3ImB@cmpxchg.org>
+ <20220602220625.GG1098723@dread.disaster.area>
+ <B186E2FB-BCAF-4019-9DFF-9FF05BAC557E@fb.com>
+ <20220603052047.GJ1098723@dread.disaster.area>
+ <YpojbvB/+wPqHT8y@cmpxchg.org>
+ <c3620e1f-91c5-777c-4193-2478c69a033c@fb.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,SUSPICIOUS_RECIPS,T_SCC_BODY_TEXT_LINE autolearn=ham
+In-Reply-To: <c3620e1f-91c5-777c-4193-2478c69a033c@fb.com>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=VuxAv86n c=1 sm=1 tr=0 ts=629d3d00
+        a=ivVLWpVy4j68lT4lJFbQgw==:117 a=ivVLWpVy4j68lT4lJFbQgw==:17
+        a=IkcTkHD0fZMA:10 a=JPEYwPQDsx4A:10 a=7-415B0cAAAA:8
+        a=WK0IlTMwbJH2blhR84wA:9 a=QEXdDO2ut3YA:10 a=igBNqPyMv6gA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -51,170 +63,89 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-All callers of find_get_pages_range(), pagevec_lookup_range() and
-pagevec_lookup() have now been removed.
+On Fri, Jun 03, 2022 at 12:09:06PM -0400, Chris Mason wrote:
+> [ From a different message, Dave asks wtf my email client was doing. Thanks
+> Dave, apparently exchange is being exchangey with base64 in unpredictable
+> ways.  This was better in my test reply, lets see. ]
+> 
+> On 6/3/22 11:06 AM, Johannes Weiner wrote:
+> > Hello Dave,
+> > 
+> > On Fri, Jun 03, 2022 at 03:20:47PM +1000, Dave Chinner wrote:
+> > > On Fri, Jun 03, 2022 at 01:29:40AM +0000, Chris Mason wrote:
+> > > > As you describe above, the loops are definitely coming from higher
+> > > > in the stack.  wb_writeback() will loop as long as
+> > > > __writeback_inodes_wb() returns that it’s making progress and
+> > > > we’re still globally over the bg threshold, so write_cache_pages()
+> > > > is just being called over and over again.  We’re coming from
+> > > > wb_check_background_flush(), so:
+> > > > 
+> > > >                  struct wb_writeback_work work = {
+> > > >                          .nr_pages       = LONG_MAX,
+> > > >                          .sync_mode      = WB_SYNC_NONE,
+> > > >                          .for_background = 1,
+> > > >                          .range_cyclic   = 1,
+> > > >                          .reason         = WB_REASON_BACKGROUND,
+> > > >                  };
+> > > 
+> > > Sure, but we end up in writeback_sb_inodes() which does this after
+> > > the __writeback_single_inode()->do_writepages() call that iterates
+> > > the dirty pages:
+> > > 
+> > >                 if (need_resched()) {
+> > >                          /*
+> > >                           * We're trying to balance between building up a nice
+> > >                           * long list of IOs to improve our merge rate, and
+> > >                           * getting those IOs out quickly for anyone throttling
+> > >                           * in balance_dirty_pages().  cond_resched() doesn't
+> > >                           * unplug, so get our IOs out the door before we
+> > >                           * give up the CPU.
+> > >                           */
+> > >                          blk_flush_plug(current->plug, false);
+> > >                          cond_resched();
+> > >                  }
+> > > 
+> > > So if there is a pending IO completion on this CPU on a work queue
+> > > here, we'll reschedule to it because the work queue kworkers are
+> > > bound to CPUs and they take priority over user threads.
+> > 
+> > The flusher thread is also a kworker, though. So it may hit this
+> > cond_resched(), but it doesn't yield until the timeslice expires.
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- include/linux/pagemap.h |  3 --
- include/linux/pagevec.h | 10 ------
- mm/filemap.c            | 67 -----------------------------------------
- mm/swap.c               | 29 ------------------
- 4 files changed, 109 deletions(-)
+17us or 10ms, it doesn't matter. The fact is the writeback thread
+will give up the CPU long before the latency durations (seconds)
+that were reported upthread are seen. Writeback spinning can
+not explain why truncate is not making progress - everything points
+to it being a downstream symptom, not a cause.
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 50e57b2d845f..1caccb9f99aa 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -720,9 +720,6 @@ static inline struct page *find_subpage(struct page *head, pgoff_t index)
- 
- unsigned filemap_get_folios(struct address_space *mapping, pgoff_t *start,
- 		pgoff_t end, struct folio_batch *fbatch);
--unsigned find_get_pages_range(struct address_space *mapping, pgoff_t *start,
--			pgoff_t end, unsigned int nr_pages,
--			struct page **pages);
- unsigned find_get_pages_contig(struct address_space *mapping, pgoff_t start,
- 			       unsigned int nr_pages, struct page **pages);
- unsigned find_get_pages_range_tag(struct address_space *mapping, pgoff_t *index,
-diff --git a/include/linux/pagevec.h b/include/linux/pagevec.h
-index 67b1246f136b..6649154a2115 100644
---- a/include/linux/pagevec.h
-+++ b/include/linux/pagevec.h
-@@ -27,16 +27,6 @@ struct pagevec {
- 
- void __pagevec_release(struct pagevec *pvec);
- void __pagevec_lru_add(struct pagevec *pvec);
--unsigned pagevec_lookup_range(struct pagevec *pvec,
--			      struct address_space *mapping,
--			      pgoff_t *start, pgoff_t end);
--static inline unsigned pagevec_lookup(struct pagevec *pvec,
--				      struct address_space *mapping,
--				      pgoff_t *start)
--{
--	return pagevec_lookup_range(pvec, mapping, start, (pgoff_t)-1);
--}
--
- unsigned pagevec_lookup_range_tag(struct pagevec *pvec,
- 		struct address_space *mapping, pgoff_t *index, pgoff_t end,
- 		xa_mark_t tag);
-diff --git a/mm/filemap.c b/mm/filemap.c
-index ea4145b7a84c..340ccb37f6b6 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2192,73 +2192,6 @@ bool folio_more_pages(struct folio *folio, pgoff_t index, pgoff_t max)
- 	return index < folio->index + folio_nr_pages(folio) - 1;
- }
- 
--/**
-- * find_get_pages_range - gang pagecache lookup
-- * @mapping:	The address_space to search
-- * @start:	The starting page index
-- * @end:	The final page index (inclusive)
-- * @nr_pages:	The maximum number of pages
-- * @pages:	Where the resulting pages are placed
-- *
-- * find_get_pages_range() will search for and return a group of up to @nr_pages
-- * pages in the mapping starting at index @start and up to index @end
-- * (inclusive).  The pages are placed at @pages.  find_get_pages_range() takes
-- * a reference against the returned pages.
-- *
-- * The search returns a group of mapping-contiguous pages with ascending
-- * indexes.  There may be holes in the indices due to not-present pages.
-- * We also update @start to index the next page for the traversal.
-- *
-- * Return: the number of pages which were found. If this number is
-- * smaller than @nr_pages, the end of specified range has been
-- * reached.
-- */
--unsigned find_get_pages_range(struct address_space *mapping, pgoff_t *start,
--			      pgoff_t end, unsigned int nr_pages,
--			      struct page **pages)
--{
--	XA_STATE(xas, &mapping->i_pages, *start);
--	struct folio *folio;
--	unsigned ret = 0;
--
--	if (unlikely(!nr_pages))
--		return 0;
--
--	rcu_read_lock();
--	while ((folio = find_get_entry(&xas, end, XA_PRESENT))) {
--		/* Skip over shadow, swap and DAX entries */
--		if (xa_is_value(folio))
--			continue;
--
--again:
--		pages[ret] = folio_file_page(folio, xas.xa_index);
--		if (++ret == nr_pages) {
--			*start = xas.xa_index + 1;
--			goto out;
--		}
--		if (folio_more_pages(folio, xas.xa_index, end)) {
--			xas.xa_index++;
--			folio_ref_inc(folio);
--			goto again;
--		}
--	}
--
--	/*
--	 * We come here when there is no page beyond @end. We take care to not
--	 * overflow the index @start as it confuses some of the callers. This
--	 * breaks the iteration when there is a page at index -1 but that is
--	 * already broken anyway.
--	 */
--	if (end == (pgoff_t)-1)
--		*start = (pgoff_t)-1;
--	else
--		*start = end + 1;
--out:
--	rcu_read_unlock();
--
--	return ret;
--}
--
- /**
-  * find_get_pages_contig - gang contiguous pagecache lookup
-  * @mapping:	The address_space to search
-diff --git a/mm/swap.c b/mm/swap.c
-index f3922a96b2e9..f65e284247b2 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -1086,35 +1086,6 @@ void folio_batch_remove_exceptionals(struct folio_batch *fbatch)
- 	fbatch->nr = j;
- }
- 
--/**
-- * pagevec_lookup_range - gang pagecache lookup
-- * @pvec:	Where the resulting pages are placed
-- * @mapping:	The address_space to search
-- * @start:	The starting page index
-- * @end:	The final page index
-- *
-- * pagevec_lookup_range() will search for & return a group of up to PAGEVEC_SIZE
-- * pages in the mapping starting from index @start and upto index @end
-- * (inclusive).  The pages are placed in @pvec.  pagevec_lookup() takes a
-- * reference against the pages in @pvec.
-- *
-- * The search returns a group of mapping-contiguous pages with ascending
-- * indexes.  There may be holes in the indices due to not-present pages. We
-- * also update @start to index the next page for the traversal.
-- *
-- * pagevec_lookup_range() returns the number of pages which were found. If this
-- * number is smaller than PAGEVEC_SIZE, the end of specified range has been
-- * reached.
-- */
--unsigned pagevec_lookup_range(struct pagevec *pvec,
--		struct address_space *mapping, pgoff_t *start, pgoff_t end)
--{
--	pvec->nr = find_get_pages_range(mapping, start, end, PAGEVEC_SIZE,
--					pvec->pages);
--	return pagevec_count(pvec);
--}
--EXPORT_SYMBOL(pagevec_lookup_range);
--
- unsigned pagevec_lookup_range_tag(struct pagevec *pvec,
- 		struct address_space *mapping, pgoff_t *index, pgoff_t end,
- 		xa_mark_t tag)
+Also important to note, as we are talking about kworker sheduling
+hold-offs, the writeback flusher work is unbound (can run on any
+CPU), whilst the IO completion workers in XFS are per-CPU and bound
+to individual CPUs. Bound kernel tasks usually take run queue
+priority on a CPU over unbound and/or user tasks that can be punted
+to a different CPU. So, again, with this taken into account I don't
+see how the flusher thread consuming CPU would cause long duration
+hold-offs of IO completion work....
+
+> Just to underline this, the long tail latencies aren't softlockups or major
+> explosions.  It's just suboptimal enough that different metrics and
+> dashboards noticed it.
+
+Sure, but you've brought a problem we don't understand the root
+cause of to my attention. I want to know what the root cause is so
+that I can determine that there are no other unknown underlying
+issues that are contributing to this issue.
+
+Nothing found so far explains why truncate is not making progress
+and that's what *I* need to understand here. Sure, go ahead and
+patch your systems to get rid of the bad writeback looping
+behaviour, but that does not explain or solve the underlying long IO
+completion tail latency issue that originally lead to finding
+writeback spinning.
+
+Cheers,
+
+Dave.
 -- 
-2.35.1
-
+Dave Chinner
+david@fromorbit.com
