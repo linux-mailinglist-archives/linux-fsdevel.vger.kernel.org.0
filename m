@@ -2,147 +2,110 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AD4553E371
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jun 2022 10:56:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4541D53EB90
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jun 2022 19:09:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231970AbiFFIiZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Jun 2022 04:38:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39100 "EHLO
+        id S237026AbiFFMbV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Jun 2022 08:31:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231911AbiFFIiS (ORCPT
+        with ESMTP id S237025AbiFFMbU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Jun 2022 04:38:18 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3074C3193A;
-        Mon,  6 Jun 2022 01:38:17 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 8DE0D1F461;
-        Mon,  6 Jun 2022 08:38:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1654504695; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=E/ycmcP40JfEr5ZA2cVnkunkPduEzl79HGPWdaa0J4s=;
-        b=bfGNF+pd/JsCb2543fqSLDK2cwhTVUdVVgsivmWkvWBvOlY50u3Erg0fkax5sk8W3LdAo5
-        AqfBD8smGy/l2AnZJYo+bUj3HeyntbaWPORU6Ti2ZTXiBtrJGAuLmL5TZaj2FUVg6V3tU7
-        +EJ+gZl6OcpO6BF6/tQTpAS52pKLXgY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1654504695;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=E/ycmcP40JfEr5ZA2cVnkunkPduEzl79HGPWdaa0J4s=;
-        b=vhIE0NnKC0zBb/W9efmO6bYIz1D0vxZggfAoqi9e8uaTCMm1pxoqLPaySAhUOGThSvdHjT
-        KUZP9zRwKDSfvWCQ==
-Received: from quack3.suse.cz (unknown [10.163.28.18])
+        Mon, 6 Jun 2022 08:31:20 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21E7D2ADF49;
+        Mon,  6 Jun 2022 05:31:18 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 79B3A2C141;
-        Mon,  6 Jun 2022 08:38:15 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id BC475A0633; Mon,  6 Jun 2022 10:38:14 +0200 (CEST)
-Date:   Mon, 6 Jun 2022 10:38:14 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     Jan Kara <jack@suse.com>, tytso@mit.edu,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 3/3] ext4: Use generic_quota_read()
-Message-ID: <20220606083814.skjv34b2tjn7l7pi@quack3.lan>
-References: <20220605143815.2330891-1-willy@infradead.org>
- <20220605143815.2330891-4-willy@infradead.org>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D54D6611C2;
+        Mon,  6 Jun 2022 12:31:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1EC0C385A9;
+        Mon,  6 Jun 2022 12:31:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1654518677;
+        bh=pYeWqcY2mDQ7I/toOPoxEWcKA0b4/xQcH8ci6cMtt8w=;
+        h=Subject:To:Cc:From:Date:From;
+        b=OS5W27ZIreuNQC/BsPJXoeO2DQLC4gBwoCr3vt6p8KDOMf7+t7oWUR2jxhngEIf6l
+         m0xWDuMPCFc0g3VLar4fIFpvVejCoIHnsWJ323yQNNwB3fOV/O1QVTLJ/sZGJNwrcg
+         O7h0ET/FRoqPC/JT21snaKeQEeO3xoNESS6/x624=
+Subject: FAILED: patch "[PATCH] exportfs: support idmapped mounts" failed to apply to 4.14-stable tree
+To:     brauner@kernel.org, amir73il@gmail.com, gscrivan@redhat.com,
+        hch@lst.de, linux-fsdevel@vger.kernel.org, mszeredi@redhat.com,
+        stable@vger.kernel.org
+Cc:     <stable@vger.kernel.org>
+From:   <gregkh@linuxfoundation.org>
+Date:   Mon, 06 Jun 2022 14:31:06 +0200
+Message-ID: <16545186664188@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220605143815.2330891-4-willy@infradead.org>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=ANSI_X3.4-1968
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun 05-06-22 15:38:15, Matthew Wilcox (Oracle) wrote:
-> The comment about the page cache is rather stale; the buffer cache will
-> read into the page cache if the buffer isn't present, and the page cache
-> will not take any locks if the page is present.
-> 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
-This will not work for couple of reasons, see below. BTW, I don't think the
-comment about page cache was stale (but lacking details I admit ;). As far
-as I remember (and it was really many years ago - definitely pre-git era)
-the problem was (mainly on the write side) that before current state of the
-code we were using calls like vfs_read() / vfs_write() to get quota
-information and that was indeed prone to deadlocks.
+The patch below does not apply to the 4.14-stable tree.
+If someone wants it applied there, or to any other stable or longterm
+tree, then please email the backport, including the original git commit
+id to <stable@vger.kernel.org>.
 
-> @@ -6924,20 +6882,21 @@ static ssize_t ext4_quota_write(struct super_block *sb, int type,
->  		return -EIO;
->  	}
->  
-> -	do {
-> -		bh = ext4_bread(handle, inode, blk,
-> -				EXT4_GET_BLOCKS_CREATE |
-> -				EXT4_GET_BLOCKS_METADATA_NOFAIL);
-> -	} while (PTR_ERR(bh) == -ENOSPC &&
-> -		 ext4_should_retry_alloc(inode->i_sb, &retries));
-> -	if (IS_ERR(bh))
-> -		return PTR_ERR(bh);
-> -	if (!bh)
-> +	folio = read_mapping_folio(inode->i_mapping, off / PAGE_SIZE, NULL);
-> +	if (IS_ERR(folio))
-> +		return PTR_ERR(folio);
-> +	head = folio_buffers(folio);
-> +	if (!head)
-> +		head = alloc_page_buffers(&folio->page, sb->s_blocksize, false);
-> +	if (!head)
->  		goto out;
-> +	bh = head;
-> +	while ((bh_offset(bh) + sb->s_blocksize) <= (off % PAGE_SIZE))
-> +		bh = bh->b_this_page;
+thanks,
 
-We miss proper handling of blocks that are currently beyond i_size
-(we are extending the quota file), plus we also miss any mapping of buffers
-to appropriate disk blocks here...
+greg k-h
 
-It could be all fixed by replicating what we do in ext4_write_begin() but
-I'm not quite convinced using inode's page cache is really worth it...
+------------------ original commit in Linus's tree ------------------
 
-								Honza
+From 3a761d72fa62eec8913e45d29375344f61706541 Mon Sep 17 00:00:00 2001
+From: Christian Brauner <brauner@kernel.org>
+Date: Mon, 4 Apr 2022 12:51:41 +0200
+Subject: [PATCH] exportfs: support idmapped mounts
 
->  	BUFFER_TRACE(bh, "get write access");
->  	err = ext4_journal_get_write_access(handle, sb, bh, EXT4_JTR_NONE);
->  	if (err) {
-> -		brelse(bh);
-> +		folio_put(folio);
->  		return err;
->  	}
->  	lock_buffer(bh);
-> @@ -6945,14 +6904,14 @@ static ssize_t ext4_quota_write(struct super_block *sb, int type,
->  	flush_dcache_page(bh->b_page);
->  	unlock_buffer(bh);
->  	err = ext4_handle_dirty_metadata(handle, NULL, bh);
-> -	brelse(bh);
->  out:
-> +	folio_put(folio);
-> +	if (err)
-> +		return err;
->  	if (inode->i_size < off + len) {
->  		i_size_write(inode, off + len);
->  		EXT4_I(inode)->i_disksize = inode->i_size;
-> -		err2 = ext4_mark_inode_dirty(handle, inode);
-> -		if (unlikely(err2 && !err))
-> -			err = err2;
-> +		err = ext4_mark_inode_dirty(handle, inode);
->  	}
->  	return err ? err : len;
->  }
-> -- 
-> 2.35.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Make the two locations where exportfs helpers check permission to lookup
+a given inode idmapped mount aware by switching it to the lookup_one()
+helper. This is a bugfix for the open_by_handle_at() system call which
+doesn't take idmapped mounts into account currently. It's not tied to a
+specific commit so we'll just Cc stable.
+
+In addition this is required to support idmapped base layers in overlay.
+The overlay filesystem uses exportfs to encode and decode file handles
+for its index=on mount option and when nfs_export=on.
+
+Cc: <stable@vger.kernel.org>
+Cc: <linux-fsdevel@vger.kernel.org>
+Tested-by: Giuseppe Scrivano <gscrivan@redhat.com>
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+
+diff --git a/fs/exportfs/expfs.c b/fs/exportfs/expfs.c
+index 0106eba46d5a..3ef80d000e13 100644
+--- a/fs/exportfs/expfs.c
++++ b/fs/exportfs/expfs.c
+@@ -145,7 +145,7 @@ static struct dentry *reconnect_one(struct vfsmount *mnt,
+ 	if (err)
+ 		goto out_err;
+ 	dprintk("%s: found name: %s\n", __func__, nbuf);
+-	tmp = lookup_one_len_unlocked(nbuf, parent, strlen(nbuf));
++	tmp = lookup_one_unlocked(mnt_user_ns(mnt), nbuf, parent, strlen(nbuf));
+ 	if (IS_ERR(tmp)) {
+ 		dprintk("%s: lookup failed: %d\n", __func__, PTR_ERR(tmp));
+ 		err = PTR_ERR(tmp);
+@@ -525,7 +525,8 @@ exportfs_decode_fh_raw(struct vfsmount *mnt, struct fid *fid, int fh_len,
+ 		}
+ 
+ 		inode_lock(target_dir->d_inode);
+-		nresult = lookup_one_len(nbuf, target_dir, strlen(nbuf));
++		nresult = lookup_one(mnt_user_ns(mnt), nbuf,
++				     target_dir, strlen(nbuf));
+ 		if (!IS_ERR(nresult)) {
+ 			if (unlikely(nresult->d_inode != result->d_inode)) {
+ 				dput(nresult);
+
