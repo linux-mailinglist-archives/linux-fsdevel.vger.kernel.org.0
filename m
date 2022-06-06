@@ -2,144 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BA9753E83F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jun 2022 19:08:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F5A453ED0C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jun 2022 19:36:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231259AbiFFQjg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Jun 2022 12:39:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59786 "EHLO
+        id S229720AbiFFRgT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Jun 2022 13:36:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33176 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241778AbiFFQjd (ORCPT
+        with ESMTP id S229700AbiFFRgS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Jun 2022 12:39:33 -0400
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F6631447A0;
-        Mon,  6 Jun 2022 09:39:23 -0700 (PDT)
-Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 256GKJgB012088;
-        Mon, 6 Jun 2022 09:39:09 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=message-id : date :
- subject : to : cc : references : from : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=facebook;
- bh=mZZXFuBxK+9vemOSYznqcI91x9aVSgrOd2Y1n5oFpME=;
- b=BDgWtxnw4wUebGlSX29MmP3h9LeNY5ghaePLXhh7v4ivUJgw8yWnOAyGsi7eKb1XbKio
- VOAPUXuAz59/3WrMPb7fHkH+2DeBjNPQv/lOh4S64Q+0S3a5qI8UB4tZvQxFB4WHKAKx
- 9BEo5iO7ChWxv9OhKLVWYy0D9HDXO54RqGo= 
-Received: from nam04-bn8-obe.outbound.protection.outlook.com (mail-bn8nam04lp2044.outbound.protection.outlook.com [104.47.74.44])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3gg3ejhhaa-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 06 Jun 2022 09:39:09 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Sd+D+HLd/iBhx7aNuZ8tbpWFKil+68+ewXM5Sxn7KtN6P6fdkPM+xGyhBU9eXr2/5kcitKnf5Fd8GEV/S921GdNIZOrkqvH0FRZjrcsqNhr61ewGkR+KPr+u0HnK/1LmchHJr2JN4jNE8E6aiS6KWNrfyny3p9ihzg2RXw1xlN0ogfloOqESOOqGpNGLoGK77HIR+cAyV4QIZnYxUmYLzWiWiDKkySjQ3H6iaSPWQ6dGCzzWjYk9xbPBrhs+PzvvbOFYAIevHt0aFiKDVBNks1rtwxPIbdNtpmoAKDz9h3IOuD6Y94mTBhJG8iYtpz7yQf16xO1oG2juMQpiNBxBgA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mZZXFuBxK+9vemOSYznqcI91x9aVSgrOd2Y1n5oFpME=;
- b=Q0DfmQH9DjLBZ6tZfuRWXOPRnX9z5GrPv/u6rGYOUxAeQpwavK2rPGRG+gMkxzkRXlzAZJT2/yh7vNvrI7dPjY+9gbf1k632kkiSP7AnFARf563HeXR+uGnjh5qgX9Limcw2Zx+MLFW/rUc2IpPMteNfKq3FT37oUP61IQZvFeGMveEscTJ7YTFH7/zYLabxHMMPLlV0hYOO/38CMvJvhnbdfk6EpseXXGSQCwlw7p0aq+pNfoSw7OFsqjCPDzaMwKmfQlsiNjDKBRfijSfqW1A4XOyV+gSWAiHyz1zakwuxaYbgmMUyXF08FCjnmTWAzTFIVXeF2PjhOzW5yqYkyA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-Received: from MWHPR15MB1791.namprd15.prod.outlook.com (2603:10b6:301:4e::20)
- by BL0PR1501MB2035.namprd15.prod.outlook.com (2603:10b6:207:32::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5314.19; Mon, 6 Jun
- 2022 16:39:07 +0000
-Received: from MWHPR15MB1791.namprd15.prod.outlook.com
- ([fe80::e17e:e90d:7675:24b8]) by MWHPR15MB1791.namprd15.prod.outlook.com
- ([fe80::e17e:e90d:7675:24b8%11]) with mapi id 15.20.5314.019; Mon, 6 Jun 2022
- 16:39:07 +0000
-Message-ID: <0f83316c-3aa2-3cb6-ede1-c2dd2dd3ab31@fb.com>
-Date:   Mon, 6 Jun 2022 09:39:03 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.9.1
-Subject: Re: [PATCH v7 06/15] iomap: Return error code from iomap_write_iter()
-Content-Language: en-US
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     io-uring@vger.kernel.org, kernel-team@fb.com, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        david@fromorbit.com, jack@suse.cz, hch@infradead.org,
-        axboe@kernel.dk
-References: <20220601210141.3773402-1-shr@fb.com>
- <20220601210141.3773402-7-shr@fb.com> <YpivQhqhZxwvdDUm@casper.infradead.org>
-From:   Stefan Roesch <shr@fb.com>
-In-Reply-To: <YpivQhqhZxwvdDUm@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BY3PR03CA0027.namprd03.prod.outlook.com
- (2603:10b6:a03:39a::32) To MWHPR15MB1791.namprd15.prod.outlook.com
- (2603:10b6:301:4e::20)
+        Mon, 6 Jun 2022 13:36:18 -0400
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 526DB1B1F6D;
+        Mon,  6 Jun 2022 10:36:16 -0700 (PDT)
+Received: by mail-pj1-x1035.google.com with SMTP id l7-20020a17090aaa8700b001dd1a5b9965so13132482pjq.2;
+        Mon, 06 Jun 2022 10:36:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=38rRbl1KJ6UEN1624ENNGyhfuPodsyGpkTzqYE6VRPI=;
+        b=bkyqs9Q4ra8BvMpr09o2r42UICJNMfTuOotbsGdcBqCGUQujAoHdvW3V+m8aDB6UxK
+         Gl6DQzvxA7h4DILMQAa2Li4nen5TIh4UtuDtSrHpemMHyGswHaWlUzzzqWpMMOx54iV/
+         NK/NrEC84rnej+KOd3x+fKjzzW3c3yJ4znpXg4mSi8j3cwtYFV7uzNR83jjeC3pNfWcK
+         Z9GUtR1yprzuqHpblVj/jNqTHUZF6hfG3HSxAGMHNlKhvsSXZvqkS0Bpqh1nM6H7v/Gj
+         qBsRKQ/L7xI+ZupbCKpNMrQk/Y3794bWchI6koRcdaVAdmcIqIrGtk1w06x7ScapqBct
+         o8fg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=38rRbl1KJ6UEN1624ENNGyhfuPodsyGpkTzqYE6VRPI=;
+        b=yZ1Ge7FSvwIktBevTGNI+alOYqKRXBxJ6lwrEe35Rrucz5nIGUZqfLL0F8SmgN9zOC
+         Q7kGcIPvy/eaIYtfQFNxrVSyfwLFPwmNbeJ5ocs998JFU3NBlvgbP26JJMnXLN9UIbGG
+         TnVkUTCLuo5iTenDrKWoZqvn/HRRLdNNbvoybzh+u2NXiU9kvnaaAZRcCuBeGUYdC3+c
+         0aJlfXYpE9c/IPabYxLZ5bEubwvlpE4L+aYZrBolDsjAw2I3VRg3pLoydQN86kSpUzTo
+         YOsehFc9mRAFafAJ+yUI1lvWkTqf+1sssg2b6Cio6PIxRANzvvF7Mo5e+yWn7qq8htDA
+         wdNg==
+X-Gm-Message-State: AOAM5314MJgb2ENosrDQlt3Z/fj4oc5vTivLP9F4suTqetlYshz0CXII
+        I6GdJEzWbBcr5k4YSq+RlaTcoqY0jSU=
+X-Google-Smtp-Source: ABdhPJyhFebpdhtnPfAAuqB2JYWS5bfuJiMkUDXn0vASD+v2oJitRQdv746vPJguDlubfrAwEmQGgg==
+X-Received: by 2002:a17:902:f552:b0:163:f64a:6154 with SMTP id h18-20020a170902f55200b00163f64a6154mr25375339plf.147.1654536975624;
+        Mon, 06 Jun 2022 10:36:15 -0700 (PDT)
+Received: from google.com ([2620:15c:211:201:e75e:2c04:7854:d454])
+        by smtp.gmail.com with ESMTPSA id b20-20020aa79514000000b0051b97828505sm11090531pfp.166.2022.06.06.10.36.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Jun 2022 10:36:14 -0700 (PDT)
+Sender: Minchan Kim <minchan.kim@gmail.com>
+Date:   Mon, 6 Jun 2022 10:36:12 -0700
+From:   Minchan Kim <minchan@kernel.org>
+To:     Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        regressions@lists.linux.dev, Jens Axboe <axboe@kernel.dk>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Nitin Gupta <ngupta@vflare.org>
+Subject: Re: qemu-arm: zram: mkfs.ext4 : Unable to handle kernel NULL pointer
+ dereference at virtual address 00000140
+Message-ID: <Yp47DODPCz0kNgE8@google.com>
+References: <CA+G9fYtVOfWWpx96fa3zzKzBPKiNu1w3FOD4j++G8MOG3Vs0EA@mail.gmail.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: a1bec282-a35d-4c98-a14a-08da47db12fb
-X-MS-TrafficTypeDiagnostic: BL0PR1501MB2035:EE_
-X-Microsoft-Antispam-PRVS: <BL0PR1501MB203524AD77CEFD319C61427BD8A29@BL0PR1501MB2035.namprd15.prod.outlook.com>
-X-FB-Source: Internal
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: ufS+D0Jc416eO7RVQnw4FgDqC1L2mpYw+4NBitkebnrfCbx7fAgQO75U5kooGZAuUDTvevr667vDxHuZvOTWvFo5keJkSCYiEWnf1PDwT2Ti3VYYq/NoLCDQ8n7SRF+TScQqCPj3cnlYSEUhcnpnm7+Nz2cXDmpBZTMXFoMpUjb9yan+58bZiqZviixxOcOYd+UZWUfvKKlgfbLSvj/C+e7ItShlEDjQWY7WeUfVkQYbh5mQOFU5tnWCSJABrOBy86qqQVGfJreDJLt2geeSLY999uYhjxspcwGmiWjfcyobQyjXHnarOlbxjuyfCtp7Fd3JT0qomXP5dKfR7vysJitIuY9bVn8ng843TidtSxcXny2GOgtKS0mJ9cKX9WFL4pfA4ezGbrOdf56kSDakLGlDBchFXfmPZ1pLhwCAXtz7TC/8nLJvjfhjuWkLnQGWvPkClxPRqKHEbHMp2mF9MCLZjgkkniBrY3bat0oap1RauVustE6QQzuJNImq1SeDXDf8jPy9jTFlOG/Wha78TM54O71zH/UsruxPAtYIZpkD+laq+rWGHU33kD0i3A0/Rqo+tYZMgydiwNMmDmou5wVZGqVWtpToTQiquzWtmJdGwBHje+ffrr7FjDTohe2yXzsZXQzOD3+UffY+gG+KLzs3N1g1UKxlJAltJ9IIQQ7CfCZngU9PdykrZM1w2osQlNdM65B3bDlZxoX4Y72h6c0aVMRFP5WGDfV9x6p87EM=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR15MB1791.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(86362001)(83380400001)(31696002)(6666004)(508600001)(6486002)(2906002)(38100700002)(316002)(186003)(2616005)(6512007)(6916009)(53546011)(6506007)(5660300002)(36756003)(4326008)(8676002)(8936002)(66556008)(66946007)(66476007)(31686004)(45980500001)(43740500002);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?MWE2djRobHI0djg4YlFMTzhXVmUwYjNWQjlBaVFVVFVQNi94enJGeG15Qzdm?=
- =?utf-8?B?NUVwMTQ1VVZYb0JORkg2UFhIM3oxYldYeFM2NHltdDVEUjYwMXhwVWpvb1BS?=
- =?utf-8?B?V084dGRQRFZBdVVkbGtQQUlwRlF3d2tGTzRNTjlGaU03MmQ1WEVONnNLa2xW?=
- =?utf-8?B?VmVYUEh3SnJrUkY1cUJ5alJFa2RRUmY5NUZQcTA1UTJLeHZkL25QM3JqNys5?=
- =?utf-8?B?dFc4TnQ4YlUzT09IQ2ZHdWtlT2FFYTYxQUZ5cndhRmNTQ1QwakJoNW82ejh4?=
- =?utf-8?B?Z21lUWFrNVhaeFVTcklDUU0vTWQxRUZlQmRFVnhkQ1JwVCtsZWVWTU5Ia2VW?=
- =?utf-8?B?dE05bU5TSThGTHlUZ0lrcUx3QUpIWVlqNDNsQVY4bVFMV3QxMk1wcDBYMVpG?=
- =?utf-8?B?VE9NTlJjaGRXNGxleGtrUXJpSENtQUZ1Nit6c2hlalJTS1N2UTIwcjZ1dWFz?=
- =?utf-8?B?N3R4ck11NnRzNktBdUQ4Mk1RRWo1Wm9LclNJWFkvUmhVL04wcFFaQmNyMTho?=
- =?utf-8?B?NENZSWhhd1V5S2ZqcmZxTEh1L3IzcWhVYWtCNVdJQWduenhwWXRaNE93d1Fn?=
- =?utf-8?B?WC9WRGllWjNYZXhLOGpOajF6TGpHNlRsS3lmMEhpVW5rcWFHQjBpdjljSktV?=
- =?utf-8?B?dmpacXNzbVdacHo0bDArMVJhcUErRDAvN0o1bEV6cWtTdXVObkdpR3MyL0hJ?=
- =?utf-8?B?WEhwSVJCU2JVYzJoUEYxRCtoMUsrRXRkT3M3cThlR0tGeEdhMEJHSCtOUEoy?=
- =?utf-8?B?VHBtNXAxZUROTzZOTEJiRThVN0x0ekZnUVRoK0tZNU9jUGl6MTBTZTQzQ2d6?=
- =?utf-8?B?bVNJTHpqb2NVc1VzNkp3dWRLdmd3RU5DRitySUFmMmZYRERTeHRMOXJ2cjJC?=
- =?utf-8?B?NmcwRDYvbTUyS3VvREx1QUorUGN1b01lRW05UCtDZVFmVllQbzMzc0dpT01t?=
- =?utf-8?B?ZVlMMFRld0t5amVuY3hUMlRxRFlvV2xmWFRRdzFZMHdJT1hWRG0zQXFsamF0?=
- =?utf-8?B?T2IxOEQ3T1BpbE1ETDJHalJPU28rZzFTL05XTmw0VHBoLzBjK1d2Qkc0ejBh?=
- =?utf-8?B?NlpTMTR4U0YyR2V6cEhDaHRleTA2aVpUT1V4UTJ2OVZ6SzNXdjlTWU42SFlH?=
- =?utf-8?B?c3RZc0FlOHhCTzY0bjVTalpjMjFzZWJiWmVIZTlWY3Y4TTAzTVhlWmswcVZz?=
- =?utf-8?B?S05Md21hWFVBU3dHYWZIWm1kUTdKQmVjWXNhbnVxS0U2ak9udVJFUHJiVFZa?=
- =?utf-8?B?QlUyWldyb0l0SUxwK3dVdnpwVEZjS2dIeDdydVZWZk9EZ2tSRUp3U1NNYVJy?=
- =?utf-8?B?ZEl1M20wLzNFRlR2UWpJVW5sVk5QMTkzajNIREcxUG5FOEJ0NWpYT1M3K09P?=
- =?utf-8?B?SzB4MWtsMGNCTytoTk1USnJ6em0xQTB6K1MxRDdjdnV4bW5EN21oWFBPTHgz?=
- =?utf-8?B?SHhTSDJRS1c2Zm9OWnB5RmVMRFhmR1FzSHdkTS95MkJIcGxYVTRRemZRNEJJ?=
- =?utf-8?B?Wkt3dnZwMGFobDVzOHl0NFBpK3d6Rml5d2NZVWw1UWdaNXF4WTRLbGV3aExY?=
- =?utf-8?B?N2E5OFUzZDBBVHdYTDVmNU5jNHNYRllxYjViWFBnNTVzeGlsQzRWNG9lUmJS?=
- =?utf-8?B?V2FrL1VLQzd1M2tYSm1JYVBGODRmUW9lS0dEY3orYituanlYeGNUQ3FkQk1K?=
- =?utf-8?B?VWNsS2dvVnBjdGZrV3RlRWIrMys4RXJzZ1pyNzUwR3cyUlBpVG1MeVlCYXJW?=
- =?utf-8?B?ekZKbS8xMjdKTUlicEpMNWtyUElUWDNRTDJkSEN3dGxNejZKdHdQUXQzTC9k?=
- =?utf-8?B?a1NpN1RXQXJNTTQvbTJmQU9pcWtHUXpHakRkUkJJOW9Nc1pzK0RwendpbGx3?=
- =?utf-8?B?R2pOZzRxWUwzRFdWQk52VGU2S1VaUXJDdS9NZHpWRHptcWVCM1R5SzVCcjUv?=
- =?utf-8?B?VkRSS004Rnk1dzI3b0owU1Exa3hCb1h5VmZaUk5ndytZNnNNeDIxcEFlU2tS?=
- =?utf-8?B?OEd1cnlyNCt2Y0xFZUJHMXBCUkpRT3V5YXZFbUQrL1FkRGluVFVVQ3ZQYjlY?=
- =?utf-8?B?MlFzRlBYa1RlNituN20ydnAzYzZZVWN5clFROTFYSlZYM25laWRhaGpxU2VD?=
- =?utf-8?B?VlVrVmZMRCs5QkdtbE14aHZYbmVlQWJUWkxRcFg1aDNSRkVGR1ZJYUJwckFP?=
- =?utf-8?B?T0Erc0hMcFUwd1lVV3FXbXNSMHFBU3BaMlB5U056N29LMlNCaC93bHVyU09t?=
- =?utf-8?B?MWZVUTFGS2twRWhVN25MS2RPbmF5RkJrRUxOb3pqdjdYd1lZVXZVbWV3czJK?=
- =?utf-8?B?cGJjQ1dsN1dGOHJNR0JsOWN5T0t4ek1YN251dklkWVUzQXJvcHY1UWxKRlB3?=
- =?utf-8?Q?1a+nBDjd9s6sISD4=3D?=
-X-OriginatorOrg: fb.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a1bec282-a35d-4c98-a14a-08da47db12fb
-X-MS-Exchange-CrossTenant-AuthSource: MWHPR15MB1791.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2022 16:39:07.0112
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: PyDixXdyjQ8auiGWydCBVb255z/AG2+xpG3H+nlttSMTO7OEQzAS91wfCL8eBIn4
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR1501MB2035
-X-Proofpoint-ORIG-GUID: c7JY0PQrhR30P-asHHMGne91_SWxbaMe
-X-Proofpoint-GUID: c7JY0PQrhR30P-asHHMGne91_SWxbaMe
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.874,Hydra:6.0.517,FMLib:17.11.64.514
- definitions=2022-06-06_04,2022-06-03_01,2022-02-23_01
-X-Spam-Status: No, score=-6.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+G9fYtVOfWWpx96fa3zzKzBPKiNu1w3FOD4j++G8MOG3Vs0EA@mail.gmail.com>
+X-Spam-Status: No, score=-1.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -147,61 +80,301 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Thu, Jun 02, 2022 at 02:19:34PM +0530, Naresh Kamboju wrote:
+> The following kernel crash reported while running selftests: zram: zram.sh
+> test case on qemu-arm with Linux mainline v5.18.0 kernel version.
+> 
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> 
+> Started noticing from kernel crash from
+> BAD: git_sha: cdeffe87f790dfd1baa193020411ce9a538446d7
+> GOOD:   git_sha: babf0bb978e3c9fce6c4eba6b744c8754fd43d8e
+> 
+> # git log  --oneline
+> babf0bb978e3c9fce6c4eba6b744c8754fd43d8e..cdeffe87f790dfd1baa193020411ce9a538446d7
+>   -- drivers/block/
+> 98931dd95fd4 Merge tag 'mm-stable-2022-05-25' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
+> 6140ae41effe zram: fix Kconfig dependency warning
+> b3fbd58fcbb1 mm: Kconfig: simplify zswap configuration
+> e7be8d1dd983 zram: remove double compression logic
+> a2ad63daa88b VFS: add FMODE_CAN_ODIRECT file flag
+> 30226b69f876 zram: add a huge_idle writeback mode
 
+Hi Nalesh,
 
-On 6/2/22 5:38 AM, Matthew Wilcox wrote:
-> On Wed, Jun 01, 2022 at 02:01:32PM -0700, Stefan Roesch wrote:
->> Change the signature of iomap_write_iter() to return an error code. In
->> case we cannot allocate a page in iomap_write_begin(), we will not retry
->> the memory alloction in iomap_write_begin().
-> 
-> loff_t can already represent an error code.  And it's already used like
-> that.
-> 
->> @@ -829,7 +830,8 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
->>  		length -= status;
->>  	} while (iov_iter_count(i) && length);
->>  
->> -	return written ? written : status;
->> +	*processed = written ? written : error;
->> +	return error;
-> 
-> I think the change you really want is:
-> 
-> 	if (status == -EAGAIN)
-> 		return -EAGAIN;
-> 	if (written)
-> 		return written;
-> 	return status;
-> 
+Thanks for the reporting the bug!
 
-I think the change needs to be:
+I locally ran the test in my x86 KVM machine but couldn't reproduce it.
+How is it easy to reproduce?  Could you help to bisect it?
 
--    return written ? written : status;
-+    if (status == -EAGAIN) {
-+        iov_iter_revert(i, written);
-+        return -EAGAIN;
-+    }
-+    if (written)
-+        return written;
-+    return status;
-
->> @@ -843,12 +845,15 @@ iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *i,
->>  		.flags		= IOMAP_WRITE,
->>  	};
->>  	int ret;
->> +	int error = 0;
->>  
->>  	if (iocb->ki_flags & IOCB_NOWAIT)
->>  		iter.flags |= IOMAP_NOWAIT;
->>  
->> -	while ((ret = iomap_iter(&iter, ops)) > 0)
->> -		iter.processed = iomap_write_iter(&iter, i);
->> +	while ((ret = iomap_iter(&iter, ops)) > 0) {
->> +		if (error != -EAGAIN)
->> +			error = iomap_write_iter(&iter, i, &iter.processed);
->> +	}
 > 
-> You don't need to change any of this.  Look at how iomap_iter_advance()
-> works.
 > 
+> metadata:
+>   git_ref: master
+>   git_repo: https://gitlab.com/Linaro/lkft/mirrors/torvalds/linux-mainline
+>   git_sha: 54eb8462f21fb170a05ad64620f0d8d0cf2b7fb5
+>   git_describe: v5.18-11934-g54eb8462f21f
+>   kernel_version: 5.18.0
+>   kernel-config: https://builds.tuxbuild.com/29zhqJJizU2Y7Ka7ArhryUOrNDC/config
+>   build-url: https://gitlab.com/Linaro/lkft/mirrors/torvalds/linux-mainline/-/pipelines/553652229
+>   artifact-location: https://builds.tuxbuild.com/29zhqJJizU2Y7Ka7ArhryUOrNDC
+>   toolchain: gcc-10
+> 
+> 
+> # selftests: zram: zram.sh
+> # --------------------
+> # running zram tests
+> # --------------------
+> # create '1' zram device(s)
+> [  637.356319] zram: Added device: zram0
+> # all zram devices (/dev/zram0~0) successfully created
+> # set max_comp_streams to zram device(s)
+> # The device attribute max_comp_streams was deprecated in 4.7
+> # test that we can set compression algorithm
+> [  637.494965] zram0: detected capacity change from 0 to 4096
+> # supported algs: lzo [lzo-rle] lz4 lz4hc 842 zstd
+> # /sys/block/zram0/comp_algorithm = 'lzo'
+> # zram set compression algorithm: OK
+> # set disk size to zram device(s)
+> # /sys/block/zram0/disksize = '2097152'
+> # zram set disksizes: OK
+> # set memory limit to zram device(s)
+> # /sys/block/zram0/mem_limit = '2M'
+> # zram set memory limit: OK
+> # make ext4 filesystem on /dev/zram0
+> [  637.601876] 8<--- cut here ---
+> [  637.603507] Unable to handle kernel NULL pointer dereference at
+> virtual address 00000140
+> [  637.607417] [00000140] *pgd=fb433835
+> [  637.609482] Internal error: Oops: 17 [#1] SMP ARM
+> [  637.612210] Modules linked in: zram zsmalloc crc32_arm_ce
+> sha2_arm_ce sha256_arm sha1_arm_ce sha1_arm aes_arm_ce crypto_simd
+> fuse [last unloaded: test_user_copy]
+> [  637.620508] CPU: 0 PID: 1841 Comm: mkfs.ext4 Not tainted 5.18.0 #1
+> [  637.624068] Hardware name: Generic DT based system
+> [  637.626863] PC is at strcmp+0x4/0x34
+> [  637.628970] LR is at register_lock_class+0x420/0x990
+> [  637.631865] pc : [<c09a55b0>]    lr : [<c03d2750>]    psr: a00d0093
+> [  637.635534] sp : f8ddda08  ip : 00000001  fp : c223c860
+> [  637.638621] r10: 00000000  r9 : ee4d62b4  r8 : c4bfd8c0
+> [  637.641668] r7 : ee4d62b4  r6 : c2b1b468  r5 : 00000140  r4 : c296e298
+> [  637.645436] r3 : 00000028  r2 : c223cd14  r1 : 00000140  r0 : c1ce4c99
+> [  637.649203] Flags: NzCv  IRQs off  FIQs on  Mode SVC_32  ISA ARM
+> Segment none
+> [  637.653360] Control: 10c5383d  Table: 44ba406a  DAC: 00000051
+> [  637.656672] Register r0 information: non-slab/vmalloc memory
+> [  637.659948] Register r1 information: non-paged memory
+> [  637.662879] Register r2 information: non-slab/vmalloc memory
+> [  637.666158] Register r3 information: non-paged memory
+> [  637.669080] Register r4 information: non-slab/vmalloc memory
+> [  637.672359] Register r5 information: non-paged memory
+> [  637.675297] Register r6 information: non-slab/vmalloc memory
+> [  637.678576] Register r7 information: non-slab/vmalloc memory
+> [  637.681866] Register r8 information: slab task_struct start
+> c4bfd8c0 pointer offset 0
+> [  637.686367] Register r9 information: non-slab/vmalloc memory
+> [  637.689643] Register r10 information: NULL pointer
+> [  637.692425] Register r11 information: non-slab/vmalloc memory
+> [  637.695753] Register r12 information: non-paged memory
+> [  637.698763] Process mkfs.ext4 (pid: 1841, stack limit = 0xf5a44654)
+> [  637.702444] Stack: (0xf8ddda08 to 0xf8dde000)
+> [  637.704993] da00:                   c4bfe180 c03cb19c c223c80c
+> c250fde0 00000e9c c2966278
+> [  637.709779] da20: c21955d0 c2212b38 c298c1e4 c2969ce8 c223c80c
+> 000004cb c223c860 c298c1ec
+> [  637.714547] da40: 00000000 00000000 ee4d62b4 44aaea53 c4bfe1a0
+> 00000000 ee4d62b4 00000000
+> [  637.719313] da60: 00000000 00000000 c4bfd8c0 c21955d0 600d0013
+> c03ce488 c4bfd8c0 c2212b3c
+> [  637.724079] da80: 00000000 c2b1b468 00000001 c2212b38 c21955d0
+> 00000001 00000001 00000000
+> [  637.728872] daa0: fc90bff3 695acb4d c1cd9994 c2212b38 c03c9c78
+> 00000081 c278cf1c 00000000
+> [  637.733663] dac0: c4bfd8c0 c4bfd8c0 00000000 c03f543c c24c8120
+> c298c054 00cd9994 00000000
+> [  637.738484] dae0: 00000000 00000000 000325c8 efe7b070 c2211fd0
+> 00000000 c4bfe180 00000001
+> [  637.742919] db00: c4bfe1a0 44aaea53 c4bfd8c0 c4bfe1c0 c298c180
+> 00000002 00000003 00000001
+> [  637.747712] db20: c4bfe1a0 44aaea53 c4bfd8c0 c4bfd8c0 c21955d0
+> f8dddb50 2c337000 00000000
+> [  637.752446] db40: 00000000 c21955d0 600d0013 c03d1f0c 00000001
+> 00000000 00000000 bf03b20c
+> [  637.757225] db60: 00000000 00000000 600d0013 00000000 c4bfe1a0
+> 00000003 c4bfe8c0 c03d1bf8
+> [  637.761947] db80: bf03b214 00000000 efe7b070 00000001 00000001
+> 44aaea53 c5a2a45c c4bfd8c0
+> [  637.766631] dba0: c219f2b4 00000000 efe7b070 c4f67500 00000000
+> c5dc4480 ee4d62b4 bf03b284
+> [  637.771341] dbc0: 00000001 00000000 bf03b20c efe7b070 00000001
+> 00000002 c4d6c000 44aaea53
+> [  637.776474] dbe0: 00000041 c4b87400 c4bfd8c0 00000008 00000001
+> 00000000 c5ffd000 c25096d8
+> [  637.781409] dc00: c4bfe8c0 bf05db68 00000001 ee5d05bc ff7e1b00
+> c08d4100 00000041 44aaea53
+> [  637.786573] dc20: 000083db 00001000 c4b7ab40 c4b87400 00001000
+> 00001000 00000000 00000001
+> [  637.791837] dc40: 00000000 bf05e694 00000001 c4b7ab40 00000000
+> 00000000 c4bfd8c0 000083db
+> [  637.796665] dc60: ee5d05bc 00001000 00000000 44aaea53 f8dddef0
+> c4b7ab40 c5b6a200 c488ca50
+> [  637.801628] dc80: 00000000 c488ca50 c0637bf4 f8dddef0 ee5d05bc
+> c08d3434 c4bfd8c0 f8dddcac
+> [  637.806855] dca0: f8dddcb4 c08d384c f8dddef0 00000000 00000000
+> 00000000 00000000 44aaea53
+> [  637.811925] dcc0: c57e1900 c4b7ab40 f8dddef0 00000001 c15a0678
+> c063690c c2b805e4 00000000
+> [  637.816901] dce0: c57e1900 c57e1900 c57e1900 00000001 00000800
+> c063ae74 00000001 00000000
+> [  637.821961] dd00: c063b460 c21955d0 c388b60c ee5d05bc c08ca7b4
+> 00000800 00001000 c03d1b80
+> [  637.827194] dd20: f8dddef0 c1d0be34 00000000 c388b568 ee5d05bc
+> c054b91c 200d0013 c08ca7b4
+> [  637.832004] dd40: f8dddef0 00000001 c388b60c c063b460 c0637bf4
+> 00000000 c054b91c 00000000
+> [  637.837231] dd60: c054d370 00000000 000003bf ee5d05bc c388b6e0
+> 00000000 f8dddef0 c388b6e0
+> [  637.842190] dd80: 00000001 c1cec1c8 c4bfd8c0 c054b91c ee5d05bc
+> 00000002 00000000 c054c3bc
+> [  637.846933] dda0: 00000002 c2b1b468 c295c3a8 0000000f c24c87a0
+> c054b900 c388b6e0 ffffffff
+> [  637.852066] ddc0: 00000002 00000000 c24c4d16 00000001 c1cc76d0
+> c056c994 000001f4 c054000f
+> [  637.856917] dde0: ee5d02ec ee5d05bc ee5d0f70 ee5d0574 ee5d0550
+> ee5d0604 ee5d0628 ee5d064c
+> [  637.861861] de00: ee5d0670 ee5d05e0 ee5d0598 ee5d0310 ee5d0334
+> ee5d0358 ee5d037c 44aaea53
+> [  637.867225] de20: f8dddf10 c388b6e0 f8dddef0 c4bfd8c0 c24bec40
+> c5a29040 c2205d40 c054b900
+> [  637.872597] de40: c4bfd8c0 c054c754 600d0013 00000000 00000000
+> 00000001 00000000 f8ddde5c
+> [  637.877550] de60: f8ddde5c 44aaea53 000083db f8dddef0 c388b6e0
+> c054f870 00000000 c03c94bc
+> [  637.882533] de80: c4bfd8c0 c21955d0 c388b5e8 600d0013 c053df8c
+> c03d1b80 f8dddf10 c388b5d8
+> [  637.887577] dea0: c388b6e0 00000001 00000000 44aaea53 c388b5d8
+> c388b568 c388b6e0 f8dddef0
+> [  637.892439] dec0: c4bfd8c0 ffffffff 7fffffff c388b6e0 bee70850
+> c053df98 c4d8d140 00000000
+> [  637.897445] dee0: 00000000 c053f8e8 c05e6a9c 00002000 7ffffffe
+> 00000000 00000000 00000000
+> [  637.902564] df00: ffffffff 7fffffff 00000001 00000000 00000000
+> 00000000 00000000 00000000
+> [  637.907597] df20: 00000000 00000000 00000000 00000000 00000000
+> 00000000 00000000 44aaea53
+> [  637.912524] df40: 00000000 c4d8d140 c388b200 ffffffff 7fffffff
+> c03002f0 c4bfd8c0 00000076
+> [  637.917404] df60: bee70850 c08caa6c ffffffff 7fffffff c4bfd8c0
+> c4d8d140 00000000 c4d8d140
+> [  637.922414] df80: 00000076 c062dea8 ffffffff 7fffffff 00000000
+> c0484968 0003b930 0003b828
+> [  637.927508] dfa0: 00000000 c03000c0 0003b930 0003b828 00000005
+> 00046ac0 00000064 00000000
+> [  637.932747] dfc0: 0003b930 0003b828 00000000 00000076 00000000
+> bee70858 bee70848 bee70850
+> [  637.937624] dfe0: b6dcc5ec bee707f8 b6f0e0d0 b6dcc614 600d0010
+> 00000005 00000000 00000000
+> [  637.942533]  strcmp from register_lock_class+0x420/0x990
+> [  637.945907]  register_lock_class from __lock_acquire+0x6c/0x3160
+> [  637.949593]  __lock_acquire from lock_acquire+0x110/0x368
+> [  637.953086]  lock_acquire from zs_map_object+0x114/0x338 [zsmalloc]
+> [  637.957120]  zs_map_object [zsmalloc] from zram_bvec_rw+0x254/0xa58 [zram]
+> [  637.961317]  zram_bvec_rw [zram] from zram_submit_bio+0x1a0/0x3fc [zram]
+> [  637.965458]  zram_submit_bio [zram] from __submit_bio+0x50/0x80
+> [  637.969232]  __submit_bio from submit_bio_noacct_nocheck+0xb8/0x218
+> [  637.973158]  submit_bio_noacct_nocheck from submit_bh_wbc+0x150/0x184
+> [  637.977451]  submit_bh_wbc from __block_write_full_page+0x3d0/0x6d0
+> [  637.981234]  __block_write_full_page from block_write_full_page+0x148/0x18c
+> [  637.985521]  block_write_full_page from __writepage+0x1c/0x74
+> [  637.989230]  __writepage from write_cache_pages+0x1b4/0x4f4
+> [  637.992870]  write_cache_pages from generic_writepages+0x58/0x84
+> [  637.996662]  generic_writepages from do_writepages+0x7c/0x1b8
+> [  638.000211]  do_writepages from filemap_fdatawrite_wbc+0x6c/0x8c
+> [  638.003882]  filemap_fdatawrite_wbc from file_write_and_wait_range+0x90/0xec
+> [  638.008430]  file_write_and_wait_range from blkdev_fsync+0x20/0x44
+> [  638.012599]  blkdev_fsync from do_fsync+0x44/0x78
+> [  638.015687]  do_fsync from ret_fast_syscall+0x0/0x1c
+> [  638.018753] Exception stack(0xf8dddfa8 to 0xf8dddff0)
+> [  638.021970] dfa0:                   0003b930 0003b828 00000005
+> 00046ac0 00000064 00000000
+> [  638.027005] dfc0: 0003b930 0003b828 00000000 00000076 00000000
+> bee70858 bee70848 bee70850
+> [  638.032283] dfe0: b6dcc5ec bee707f8 b6f0e0d0 b6dcc614
+> [  638.035336] Code: e3520000 1afffffb e12fff1e e4d03001 (e4d12001)
+> [  638.038967] ---[ end trace 0000000000000000 ]---
+> [  638.042059] note: mkfs.ext4[1841] exited with preempt_count 3
+> [  638.045764] ------------[ cut here ]------------
+> [  638.048739] WARNING: CPU: 0 PID: 1841 at kernel/exit.c:741
+> do_exit+0x89c/0xabc
+> [  638.053078] Modules linked in: zram zsmalloc crc32_arm_ce
+> sha2_arm_ce sha256_arm sha1_arm_ce sha1_arm aes_arm_ce crypto_simd
+> fuse [last unloaded: test_user_copy]
+> [  638.062016] CPU: 0 PID: 1841 Comm: mkfs.ext4 Tainted: G      D
+>      5.18.0 #1
+> [  638.066616] Hardware name: Generic DT based system
+> [  638.069774]  unwind_backtrace from show_stack+0x18/0x1c
+> [  638.073014]  show_stack from dump_stack_lvl+0x58/0x70
+> [  638.076068]  dump_stack_lvl from __warn+0xd4/0x1f8
+> [  638.079207]  __warn from warn_slowpath_fmt+0x64/0xc8
+> [  638.082237]  warn_slowpath_fmt from do_exit+0x89c/0xabc
+> [  638.085673]  do_exit from make_task_dead+0x64/0x108
+> [  638.088805]  make_task_dead from die+0x4c8/0x4e8
+> [  638.091686]  die from die_kernel_fault+0x6c/0x7c
+> [  638.094593]  die_kernel_fault from do_page_fault+0x260/0x4d0
+> [  638.098154]  do_page_fault from do_DataAbort+0x44/0xb8
+> [  638.101252]  do_DataAbort from __dabt_svc+0x50/0x80
+> [  638.104195] Exception stack(0xf8ddd9b8 to 0xf8ddda00)
+> [  638.107270] d9a0:
+>     c1ce4c99 00000140
+> [  638.112202] d9c0: c223cd14 00000028 c296e298 00000140 c2b1b468
+> ee4d62b4 c4bfd8c0 ee4d62b4
+> [  638.117497] d9e0: 00000000 c223c860 00000001 f8ddda08 c03d2750
+> c09a55b0 a00d0093 ffffffff
+> [  638.122444]  __dabt_svc from strcmp+0x4/0x34
+> [  638.125046]  strcmp from register_lock_class+0x420/0x990
+> [  638.128479]  register_lock_class from __lock_acquire+0x6c/0x3160
+> [  638.132377]  __lock_acquire from lock_acquire+0x110/0x368
+> [  638.135805]  lock_acquire from zs_map_object+0x114/0x338 [zsmalloc]
+> [  638.139633]  zs_map_object [zsmalloc] from zram_bvec_rw+0x254/0xa58 [zram]
+> [  638.143938]  zram_bvec_rw [zram] from zram_submit_bio+0x1a0/0x3fc [zram]
+> [  638.148313]  zram_submit_bio [zram] from __submit_bio+0x50/0x80
+> [  638.152092]  __submit_bio from submit_bio_noacct_nocheck+0xb8/0x218
+> [  638.155933]  submit_bio_noacct_nocheck from submit_bh_wbc+0x150/0x184
+> [  638.159978]  submit_bh_wbc from __block_write_full_page+0x3d0/0x6d0
+> [  638.164067]  __block_write_full_page from block_write_full_page+0x148/0x18c
+> [  638.168468]  block_write_full_page from __writepage+0x1c/0x74
+> [  638.171927]  __writepage from write_cache_pages+0x1b4/0x4f4
+> [  638.175439]  write_cache_pages from generic_writepages+0x58/0x84
+> [  638.179326]  generic_writepages from do_writepages+0x7c/0x1b8
+> [  638.183127]  do_writepages from filemap_fdatawrite_wbc+0x6c/0x8c
+> [  638.186969]  filemap_fdatawrite_wbc from file_write_and_wait_range+0x90/0xec
+> [  638.191265]  file_write_and_wait_range from blkdev_fsync+0x20/0x44
+> [  638.195170]  blkdev_fsync from do_fsync+0x44/0x78
+> [  638.198082]  do_fsync from ret_fast_syscall+0x0/0x1c
+> [  638.201275] Exception stack(0xf8dddfa8 to 0xf8dddff0)
+> [  638.204268] dfa0:                   0003b930 0003b828 00000005
+> 00046ac0 00000064 00000000
+> [  638.209369] dfc0: 0003b930 0003b828 00000000 00000076 00000000
+> bee70858 bee70848 bee70850
+> [  638.214332] dfe0: b6dcc5ec bee707f8 b6f0e0d0 b6dcc614
+> [  638.217355] irq event stamp: 8301
+> [  638.219375] hardirqs last  enabled at (8301): [<c056b870>]
+> inc_zone_page_state+0x5c/0x64
+> [  638.224163] hardirqs last disabled at (8300): [<c056b860>]
+> inc_zone_page_state+0x4c/0x64
+> [  638.228961] softirqs last  enabled at (8066): [<c0301f40>]
+> __do_softirq+0x300/0x538
+> [  638.233533] softirqs last disabled at (8057): [<c035a19c>]
+> __irq_exit_rcu+0x14c/0x170
+> [  638.238189] ---[ end trace 0000000000000000 ]---
+> 
+> 
+> Full test log link:
+> https://lkft.validation.linaro.org/scheduler/job/5121436#L1583
+> https://lkft.validation.linaro.org/scheduler/job/5123008
+> https://qa-reports.linaro.org/lkft/linux-mainline-master/build/v5.18-11934-g54eb8462f21f/testrun/9879010/suite/log-parser-test/test/check-kernel-oops-5121436/details/
+> 
+> --
+> Linaro LKFT
+> https://lkft.linaro.org
