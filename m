@@ -2,148 +2,219 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C22253F12D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jun 2022 22:55:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D34C453F162
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jun 2022 23:07:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234631AbiFFUty (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Jun 2022 16:49:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50126 "EHLO
+        id S230032AbiFFVHW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Jun 2022 17:07:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234770AbiFFUsr (ORCPT
+        with ESMTP id S235180AbiFFVHC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Jun 2022 16:48:47 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2659DAB0FE;
-        Mon,  6 Jun 2022 13:41:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=quK8OUavZ3OQPvhjOxFusobdtZi/WBT8qXGvQ++yDug=; b=tGIvKVNaAMu+xJKfT56my7OcDx
-        h9X6EZkV+3b6YmzNyoYE3J6PNxC8ld3BfaS12Hr37OHw34qvlxQU6NGjNQ/dhsoPlowRv53o4VZC8
-        91hwnrb/Zx7IV1o0tPxKat0n3HHdibhLf1anGJsS6EN4ly8FblGaD7fyrz5/ADem0hQXlXK2IoJvA
-        sPpCKXuC4FxWa83HkItcygw65l/Lm7ADmBY+uIWsBaElOylJp/RskeiJHQuGZ0eifLCpWGHHcEWMR
-        60Qcs3Ka1CFA2jYOxR4TNlZ/5Tzf5uG0HfDIKzfTaxNpzixl4yt2Na7VkKuOo78WUgHz+NeXqWgXa
-        nGtfT5aA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nyJWy-00B19w-6M; Mon, 06 Jun 2022 20:40:56 +0000
-From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-aio@kvack.org, linux-btrfs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        cluster-devel@redhat.com, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-ntfs-dev@lists.sourceforge.net, ocfs2-devel@oss.oracle.com,
-        linux-mtd@lists.infradead.org,
-        virtualization@lists.linux-foundation.org
-Subject: [PATCH 20/20] mm/folio-compat: Remove migration compatibility functions
-Date:   Mon,  6 Jun 2022 21:40:50 +0100
-Message-Id: <20220606204050.2625949-21-willy@infradead.org>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20220606204050.2625949-1-willy@infradead.org>
-References: <20220606204050.2625949-1-willy@infradead.org>
+        Mon, 6 Jun 2022 17:07:02 -0400
+Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEDB9BC1B;
+        Mon,  6 Jun 2022 14:00:49 -0700 (PDT)
+Received: from [192.168.192.153] (unknown [50.126.114.69])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 73E703FC0B;
+        Mon,  6 Jun 2022 21:00:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+        s=20210705; t=1654549247;
+        bh=egAx8k1tp5BtzVe4or5ueR2I8jajiJYqIwRxxuqtiR8=;
+        h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+         In-Reply-To:Content-Type;
+        b=i3XeEZ93GGbpSoPqjBoSHrEZ+eC496H5ziCENuaLv+ffpGyQg3xze1D8UTZZJ5Met
+         rlceAAOAJkZ0Yg4EponBE5AA0raKdAV1/oarjq3XXYbDCeEZgj4d06ferL6xtRrVP3
+         FS8OD+HWgOVp3IJp4Ce2XqRs/s26mf/fgiydaEcEkJi0Sa0SDBU0ZS/nFICq5GmSzi
+         WNYdCbBFgHDmEJ/FmDerHFVtS5rA3EAn/Y8k+W5Coqz5JZkOhP31qW9axhHulP5yAn
+         +IT/jNzQl87fSnpHTI5oIryZrsi7UTslqLkuz3AZdu8piq0yzEVFEuGOQLE8BvO1ka
+         ddP5jr8dX/zIg==
+Message-ID: <dd654ee2-ae10-e247-f98b-f5057dbb380b@canonical.com>
+Date:   Mon, 6 Jun 2022 14:00:33 -0700
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: Linux 5.18-rc4
+Content-Language: en-US
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Ammar Faizi <ammarfaizi2@gnuweeb.org>,
+        James Morris <jmorris@namei.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Kees Cook <keescook@chromium.org>,
+        linux-fsdevel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
+        gwml@vger.gnuweeb.org
+References: <CAHk-=whmtHMzjaVUF9bS+7vE_rrRctcCTvsAeB8fuLYcyYLN-g@mail.gmail.com>
+ <226cee6a-6ca1-b603-db08-8500cd8f77b7@gnuweeb.org>
+ <CAHk-=whayT+o58FrPCXVVJ3Bn-3SeoDkMA77TOd9jg4yMGNExw@mail.gmail.com>
+ <87r1414y5v.fsf@email.froward.int.ebiederm.org>
+ <CAHk-=wijAnOcC2qQEAvFtRD_xpPbG+aSUXkfM-nFTHuMmPbZGA@mail.gmail.com>
+ <266e648a-c537-66bc-455b-37105567c942@canonical.com>
+ <Yp5iOlrgELc9SkSI@casper.infradead.org>
+From:   John Johansen <john.johansen@canonical.com>
+Organization: Canonical
+In-Reply-To: <Yp5iOlrgELc9SkSI@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-8.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-migrate_page_move_mapping(), migrate_page_copy() and migrate_page_states()
-are all now unused after converting all the filesystems from
-aops->migratepage() to aops->migrate_folio().
+On 6/6/22 13:23, Matthew Wilcox wrote:
+> On Mon, Jun 06, 2022 at 12:19:36PM -0700, John Johansen wrote:
+>>> I suspect that part is that both Apparmor and IPC use the idr local lock.
+>>>
+>> bingo,
+>>
+>> apparmor moved its secids allocation from a custom radix tree to idr in
+>>
+>>   99cc45e48678 apparmor: Use an IDR to allocate apparmor secids
+>>
+>> and ipc is using the idr for its id allocation as well
+>>
+>> I can easily lift the secid() allocation out of the ctx->lock but that
+>> would still leave it happening under the file_lock and not fix the problem.
+>> I think the quick solution would be for apparmor to stop using idr, reverting
+>> back at least temporarily to the custom radix tree.
+> 
+> How about moving forward to the XArray that doesn't use that horrid
+> prealloc gunk?  Compile tested only.
+> 
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- include/linux/migrate.h | 11 -----------
- mm/folio-compat.c       | 22 ----------------------
- mm/ksm.c                |  2 +-
- 3 files changed, 1 insertion(+), 34 deletions(-)
+I'm not very familiar with XArray but it does seem like a good fit. We do try
+to keep the secid allocation dense, ideally no holes. Wrt the current locking
+issue I want to hear what Thomas has to say. Regardless I am looking into
+whether we should just switch to XArrays going forward.
 
-diff --git a/include/linux/migrate.h b/include/linux/migrate.h
-index 088749471485..4670f3aec232 100644
---- a/include/linux/migrate.h
-+++ b/include/linux/migrate.h
-@@ -33,12 +33,8 @@ extern int migrate_pages(struct list_head *l, new_page_t new, free_page_t free,
- extern struct page *alloc_migration_target(struct page *page, unsigned long private);
- extern int isolate_movable_page(struct page *page, isolate_mode_t mode);
- 
--extern void migrate_page_states(struct page *newpage, struct page *page);
--extern void migrate_page_copy(struct page *newpage, struct page *page);
- int migrate_huge_page_move_mapping(struct address_space *mapping,
- 		struct folio *dst, struct folio *src);
--extern int migrate_page_move_mapping(struct address_space *mapping,
--		struct page *newpage, struct page *page, int extra_count);
- void migration_entry_wait_on_locked(swp_entry_t entry, pte_t *ptep,
- 				spinlock_t *ptl);
- void folio_migrate_flags(struct folio *newfolio, struct folio *folio);
-@@ -59,13 +55,6 @@ static inline struct page *alloc_migration_target(struct page *page,
- static inline int isolate_movable_page(struct page *page, isolate_mode_t mode)
- 	{ return -EBUSY; }
- 
--static inline void migrate_page_states(struct page *newpage, struct page *page)
--{
--}
--
--static inline void migrate_page_copy(struct page *newpage,
--				     struct page *page) {}
--
- static inline int migrate_huge_page_move_mapping(struct address_space *mapping,
- 				  struct folio *dst, struct folio *src)
- {
-diff --git a/mm/folio-compat.c b/mm/folio-compat.c
-index 20bc15b57d93..458618c7302c 100644
---- a/mm/folio-compat.c
-+++ b/mm/folio-compat.c
-@@ -51,28 +51,6 @@ void mark_page_accessed(struct page *page)
- }
- EXPORT_SYMBOL(mark_page_accessed);
- 
--#ifdef CONFIG_MIGRATION
--int migrate_page_move_mapping(struct address_space *mapping,
--		struct page *newpage, struct page *page, int extra_count)
--{
--	return folio_migrate_mapping(mapping, page_folio(newpage),
--					page_folio(page), extra_count);
--}
--EXPORT_SYMBOL(migrate_page_move_mapping);
--
--void migrate_page_states(struct page *newpage, struct page *page)
--{
--	folio_migrate_flags(page_folio(newpage), page_folio(page));
--}
--EXPORT_SYMBOL(migrate_page_states);
--
--void migrate_page_copy(struct page *newpage, struct page *page)
--{
--	folio_migrate_copy(page_folio(newpage), page_folio(page));
--}
--EXPORT_SYMBOL(migrate_page_copy);
--#endif
--
- bool set_page_writeback(struct page *page)
- {
- 	return folio_start_writeback(page_folio(page));
-diff --git a/mm/ksm.c b/mm/ksm.c
-index 54f78c9eecae..e8f8c1a2bb39 100644
---- a/mm/ksm.c
-+++ b/mm/ksm.c
-@@ -712,7 +712,7 @@ static struct page *get_ksm_page(struct stable_node *stable_node,
- 	 * however, it might mean that the page is under page_ref_freeze().
- 	 * The __remove_mapping() case is easy, again the node is now stale;
- 	 * the same is in reuse_ksm_page() case; but if page is swapcache
--	 * in migrate_page_move_mapping(), it might still be our page,
-+	 * in folio_migrate_mapping(), it might still be our page,
- 	 * in which case it's essential to keep the node.
- 	 */
- 	while (!get_page_unless_zero(page)) {
--- 
-2.35.1
+
+> 
+> diff --git a/security/apparmor/include/secid.h b/security/apparmor/include/secid.h
+> index 48ff1ddecad5..278dff5ecd1f 100644
+> --- a/security/apparmor/include/secid.h
+> +++ b/security/apparmor/include/secid.h
+> @@ -31,6 +31,4 @@ int aa_alloc_secid(struct aa_label *label, gfp_t gfp);
+>  void aa_free_secid(u32 secid);
+>  void aa_secid_update(u32 secid, struct aa_label *label);
+>  
+> -void aa_secids_init(void);
+> -
+>  #endif /* __AA_SECID_H */
+> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+> index 900bc540656a..9dfb4e4631da 100644
+> --- a/security/apparmor/lsm.c
+> +++ b/security/apparmor/lsm.c
+> @@ -1857,8 +1857,6 @@ static int __init apparmor_init(void)
+>  {
+>  	int error;
+>  
+> -	aa_secids_init();
+> -
+>  	error = aa_setup_dfa_engine();
+>  	if (error) {
+>  		AA_ERROR("Unable to setup dfa engine\n");
+> diff --git a/security/apparmor/secid.c b/security/apparmor/secid.c
+> index ce545f99259e..3b08942db1f6 100644
+> --- a/security/apparmor/secid.c
+> +++ b/security/apparmor/secid.c
+> @@ -13,9 +13,9 @@
+>  #include <linux/errno.h>
+>  #include <linux/err.h>
+>  #include <linux/gfp.h>
+> -#include <linux/idr.h>
+>  #include <linux/slab.h>
+>  #include <linux/spinlock.h>
+> +#include <linux/xarray.h>
+>  
+>  #include "include/cred.h"
+>  #include "include/lib.h"
+> @@ -29,8 +29,7 @@
+>   */
+>  #define AA_FIRST_SECID 2
+>  
+> -static DEFINE_IDR(aa_secids);
+> -static DEFINE_SPINLOCK(secid_lock);
+> +static DEFINE_XARRAY_FLAGS(aa_secids, XA_FLAGS_LOCK_IRQ | XA_FLAGS_TRACK_FREE);
+>  
+>  /*
+>   * TODO: allow policy to reserve a secid range?
+> @@ -47,9 +46,9 @@ void aa_secid_update(u32 secid, struct aa_label *label)
+>  {
+>  	unsigned long flags;
+>  
+> -	spin_lock_irqsave(&secid_lock, flags);
+> -	idr_replace(&aa_secids, label, secid);
+> -	spin_unlock_irqrestore(&secid_lock, flags);
+> +	xa_lock_irqsave(&aa_secids, flags);
+> +	__xa_store(&aa_secids, secid, label, 0);
+> +	xa_unlock_irqrestore(&aa_secids, flags);
+>  }
+>  
+>  /**
+> @@ -58,13 +57,7 @@ void aa_secid_update(u32 secid, struct aa_label *label)
+>   */
+>  struct aa_label *aa_secid_to_label(u32 secid)
+>  {
+> -	struct aa_label *label;
+> -
+> -	rcu_read_lock();
+> -	label = idr_find(&aa_secids, secid);
+> -	rcu_read_unlock();
+> -
+> -	return label;
+> +	return xa_load(&aa_secids, secid);
+>  }
+>  
+>  int apparmor_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
+> @@ -126,19 +119,16 @@ int aa_alloc_secid(struct aa_label *label, gfp_t gfp)
+>  	unsigned long flags;
+>  	int ret;
+>  
+> -	idr_preload(gfp);
+> -	spin_lock_irqsave(&secid_lock, flags);
+> -	ret = idr_alloc(&aa_secids, label, AA_FIRST_SECID, 0, GFP_ATOMIC);
+> -	spin_unlock_irqrestore(&secid_lock, flags);
+> -	idr_preload_end();
+> +	xa_lock_irqsave(&aa_secids, flags);
+> +	ret = __xa_alloc(&aa_secids, &label->secid, label,
+> +			XA_LIMIT(AA_FIRST_SECID, INT_MAX), gfp);
+> +	xa_unlock_irqrestore(&aa_secids, flags);
+>  
+>  	if (ret < 0) {
+>  		label->secid = AA_SECID_INVALID;
+>  		return ret;
+>  	}
+>  
+> -	AA_BUG(ret == AA_SECID_INVALID);
+> -	label->secid = ret;
+>  	return 0;
+>  }
+>  
+> @@ -150,12 +140,7 @@ void aa_free_secid(u32 secid)
+>  {
+>  	unsigned long flags;
+>  
+> -	spin_lock_irqsave(&secid_lock, flags);
+> -	idr_remove(&aa_secids, secid);
+> -	spin_unlock_irqrestore(&secid_lock, flags);
+> -}
+> -
+> -void aa_secids_init(void)
+> -{
+> -	idr_init_base(&aa_secids, AA_FIRST_SECID);
+> +	xa_lock_irqsave(&aa_secids, flags);
+> +	__xa_erase(&aa_secids, secid);
+> +	xa_unlock_irqrestore(&aa_secids, flags);
+>  }
 
