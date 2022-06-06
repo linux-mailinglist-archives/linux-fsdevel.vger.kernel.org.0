@@ -2,150 +2,96 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A6FDD53DEF0
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jun 2022 01:32:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC0FF53DF0F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jun 2022 02:15:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348623AbiFEXcU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 5 Jun 2022 19:32:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49448 "EHLO
+        id S1348737AbiFFAPe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 5 Jun 2022 20:15:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242272AbiFEXcT (ORCPT
+        with ESMTP id S1343957AbiFFAPd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 5 Jun 2022 19:32:19 -0400
-Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id ECB2F17E3F;
-        Sun,  5 Jun 2022 16:32:16 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-2-147.pa.nsw.optusnet.com.au [49.181.2.147])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 4E11F10E70B8;
-        Mon,  6 Jun 2022 09:32:15 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1nxzjB-0039qy-9W; Mon, 06 Jun 2022 09:32:13 +1000
-Date:   Mon, 6 Jun 2022 09:32:13 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Chris Mason <clm@fb.com>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "dchinner@redhat.com" <dchinner@redhat.com>
-Subject: Re: [PATCH RFC] iomap: invalidate pages past eof in
- iomap_do_writepage()
-Message-ID: <20220605233213.GN1098723@dread.disaster.area>
-References: <20220601011116.495988-1-clm@fb.com>
- <YpdZKbrtXJJ9mWL7@infradead.org>
- <BB5F778F-BFE5-4CC9-94DE-3118C60E13B6@fb.com>
- <20220602065252.GD1098723@dread.disaster.area>
- <YpjYDjeR2Wpx3ImB@cmpxchg.org>
- <20220602220625.GG1098723@dread.disaster.area>
- <B186E2FB-BCAF-4019-9DFF-9FF05BAC557E@fb.com>
- <20220603052047.GJ1098723@dread.disaster.area>
- <YpojbvB/+wPqHT8y@cmpxchg.org>
- <c3620e1f-91c5-777c-4193-2478c69a033c@fb.com>
+        Sun, 5 Jun 2022 20:15:33 -0400
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33CA7218E
+        for <linux-fsdevel@vger.kernel.org>; Sun,  5 Jun 2022 17:15:32 -0700 (PDT)
+Received: by mail-ej1-x631.google.com with SMTP id n10so25996426ejk.5
+        for <linux-fsdevel@vger.kernel.org>; Sun, 05 Jun 2022 17:15:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=a86dFrA2K8KFLQGTOqTrUMlYEox+AOFVEanULuwTYkA=;
+        b=H92tXX1FUoCLFBrmhsASqAgtqal0q1BaHokM3sJhfBHKRTtIA6zm7vNvUXqJYIYszz
+         QYCmMnnWVY/A/Mw5Cadr2i1+wyEGoXqNUkwTYx9MSqx5+kqqOEBDy90ozhzh61WPWz1+
+         xcGKG9JO77zeS3ExHkqTeW7PDE31kM2sA01qY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=a86dFrA2K8KFLQGTOqTrUMlYEox+AOFVEanULuwTYkA=;
+        b=bNEY4/GF0SCtAllZSKeXs6JU+a5yD1LGkEtC9I6L4jvChbSOYEka16C/2uV5QKcW2m
+         FZBz/jJyLAlD3FVjFXtSIoAMml6BVwBDtC2PFCBDT4SdUyBN/2OxEvCxOfdbn8IYFtpx
+         f4I3xn6XDWOPkcwjZnAOhZUvUyJidPW0IR1iJMWgclLSfyiKX09Uc7K7MvV3oDR93Esi
+         1fSGJgtVcnWQkcWwTPilUKuXAOEkvuVKbKjAddp2Fy8Q4nWQFCj7vNMN3fE2xxNH2jHL
+         29i4+iqEPiOX0B/IcPE8zxcX04nnJqV3vpt7X5ZRk7pLg+8TlfXINMMdWUQhneKpsB6s
+         TUeA==
+X-Gm-Message-State: AOAM53220NonnBKIOSUlITcissfcH1MlhBqy51CkxB21dB2VxNgrGI+x
+        SBCtOcr0aqTsyQgJpvujYUpw5yOLsc+gDUorvus=
+X-Google-Smtp-Source: ABdhPJwXfCvqG+0yDkLya1E/vMykNjmD2cXEizRvX1m9Tyw8oRm8NRFW0ha1x3K10XuIUyY1TYxtvQ==
+X-Received: by 2002:a17:906:b053:b0:6fd:d8d5:5cac with SMTP id bj19-20020a170906b05300b006fdd8d55cacmr18915594ejb.370.1654474530389;
+        Sun, 05 Jun 2022 17:15:30 -0700 (PDT)
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com. [209.85.221.52])
+        by smtp.gmail.com with ESMTPSA id s23-20020aa7d797000000b0042bc54296a1sm7538813edq.91.2022.06.05.17.15.29
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 05 Jun 2022 17:15:30 -0700 (PDT)
+Received: by mail-wr1-f52.google.com with SMTP id d14so8756171wra.10
+        for <linux-fsdevel@vger.kernel.org>; Sun, 05 Jun 2022 17:15:29 -0700 (PDT)
+X-Received: by 2002:a5d:414d:0:b0:213:be00:a35 with SMTP id
+ c13-20020a5d414d000000b00213be000a35mr13202054wrq.97.1654474529482; Sun, 05
+ Jun 2022 17:15:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c3620e1f-91c5-777c-4193-2478c69a033c@fb.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=VuxAv86n c=1 sm=1 tr=0 ts=629d3d00
-        a=ivVLWpVy4j68lT4lJFbQgw==:117 a=ivVLWpVy4j68lT4lJFbQgw==:17
-        a=IkcTkHD0fZMA:10 a=JPEYwPQDsx4A:10 a=7-415B0cAAAA:8
-        a=WK0IlTMwbJH2blhR84wA:9 a=QEXdDO2ut3YA:10 a=igBNqPyMv6gA:10
-        a=biEYGPWJfzWAr4FL6Ov7:22
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <Yp0AamPDLOK6mTIn@zeniv-ca.linux.org.uk>
+In-Reply-To: <Yp0AamPDLOK6mTIn@zeniv-ca.linux.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun, 5 Jun 2022 17:15:13 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgj8Lg30YpGPK4D45VndfdU4a=8f3uf0EiXtHDSb5o0bw@mail.gmail.com>
+Message-ID: <CAHk-=wgj8Lg30YpGPK4D45VndfdU4a=8f3uf0EiXtHDSb5o0bw@mail.gmail.com>
+Subject: Re: [git pull] work.fd fix
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 03, 2022 at 12:09:06PM -0400, Chris Mason wrote:
-> [ From a different message, Dave asks wtf my email client was doing. Thanks
-> Dave, apparently exchange is being exchangey with base64 in unpredictable
-> ways.  This was better in my test reply, lets see. ]
-> 
-> On 6/3/22 11:06 AM, Johannes Weiner wrote:
-> > Hello Dave,
-> > 
-> > On Fri, Jun 03, 2022 at 03:20:47PM +1000, Dave Chinner wrote:
-> > > On Fri, Jun 03, 2022 at 01:29:40AM +0000, Chris Mason wrote:
-> > > > As you describe above, the loops are definitely coming from higher
-> > > > in the stack.  wb_writeback() will loop as long as
-> > > > __writeback_inodes_wb() returns that it’s making progress and
-> > > > we’re still globally over the bg threshold, so write_cache_pages()
-> > > > is just being called over and over again.  We’re coming from
-> > > > wb_check_background_flush(), so:
-> > > > 
-> > > >                  struct wb_writeback_work work = {
-> > > >                          .nr_pages       = LONG_MAX,
-> > > >                          .sync_mode      = WB_SYNC_NONE,
-> > > >                          .for_background = 1,
-> > > >                          .range_cyclic   = 1,
-> > > >                          .reason         = WB_REASON_BACKGROUND,
-> > > >                  };
-> > > 
-> > > Sure, but we end up in writeback_sb_inodes() which does this after
-> > > the __writeback_single_inode()->do_writepages() call that iterates
-> > > the dirty pages:
-> > > 
-> > >                 if (need_resched()) {
-> > >                          /*
-> > >                           * We're trying to balance between building up a nice
-> > >                           * long list of IOs to improve our merge rate, and
-> > >                           * getting those IOs out quickly for anyone throttling
-> > >                           * in balance_dirty_pages().  cond_resched() doesn't
-> > >                           * unplug, so get our IOs out the door before we
-> > >                           * give up the CPU.
-> > >                           */
-> > >                          blk_flush_plug(current->plug, false);
-> > >                          cond_resched();
-> > >                  }
-> > > 
-> > > So if there is a pending IO completion on this CPU on a work queue
-> > > here, we'll reschedule to it because the work queue kworkers are
-> > > bound to CPUs and they take priority over user threads.
-> > 
-> > The flusher thread is also a kworker, though. So it may hit this
-> > cond_resched(), but it doesn't yield until the timeslice expires.
+On Sun, Jun 5, 2022 at 12:13 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> [BTW, what conventions are generally used for pull tag names?]
 
-17us or 10ms, it doesn't matter. The fact is the writeback thread
-will give up the CPU long before the latency durations (seconds)
-that were reported upthread are seen. Writeback spinning can
-not explain why truncate is not making progress - everything points
-to it being a downstream symptom, not a cause.
+I don't think we have conventions.
 
-Also important to note, as we are talking about kworker sheduling
-hold-offs, the writeback flusher work is unbound (can run on any
-CPU), whilst the IO completion workers in XFS are per-CPU and bound
-to individual CPUs. Bound kernel tasks usually take run queue
-priority on a CPU over unbound and/or user tasks that can be punted
-to a different CPU. So, again, with this taken into account I don't
-see how the flusher thread consuming CPU would cause long duration
-hold-offs of IO completion work....
+There's a few common patterns, where the tag-name might be the
+subsystem name, followed by the version number, followed by a possible
+sequential tag number. So "acpi-5.17-rc1-3" or "powerpc-5.16-1" or
+"net-5.15-rc8" or "mtd/fixes-for-5.14-rc7".
 
-> Just to underline this, the long tail latencies aren't softlockups or major
-> explosions.  It's just suboptimal enough that different metrics and
-> dashboards noticed it.
+But another common pattern is to just re-use the same tag-name over
+and over again, just updating the tag: "arm64-fixes" or
+"clk-fixes-for-linus" or whatever.
 
-Sure, but you've brought a problem we don't understand the root
-cause of to my attention. I want to know what the root cause is so
-that I can determine that there are no other unknown underlying
-issues that are contributing to this issue.
+In fact, the most common tag-name is just some variation of
+"for-linus" (variations: "fixes-for-linus", "for_linus",
+"hwmon-for-linus" etc etc)
 
-Nothing found so far explains why truncate is not making progress
-and that's what *I* need to understand here. Sure, go ahead and
-patch your systems to get rid of the bad writeback looping
-behaviour, but that does not explain or solve the underlying long IO
-completion tail latency issue that originally lead to finding
-writeback spinning.
+It really doesn't matter, and your "pull-work.fd-fixes" name is fine.
 
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+                  Linus
