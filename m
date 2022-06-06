@@ -2,150 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A28A653E0F0
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jun 2022 08:03:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 640D953E21E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jun 2022 10:54:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229646AbiFFF1s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Jun 2022 01:27:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47582 "EHLO
+        id S231346AbiFFHhn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Jun 2022 03:37:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229619AbiFFF1p (ORCPT
+        with ESMTP id S231341AbiFFHhm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Jun 2022 01:27:45 -0400
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AFB212B027;
-        Sun,  5 Jun 2022 22:06:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1654491995; x=1686027995;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=cxIZCHsRfBQh7J3e/3zeQZMrbh7+Lv72KC1u0AMk09o=;
-  b=UR/dhrTj8Q6Js9nFUdd636u69WhBQ8dSeoTq06VQvUSQIcza5c6NFiMK
-   bf+tQybmWOU+JH/hIkwMNJWaidUHqvUJ9EJVtERlEfo73ihISEFRTy5/n
-   htUDgUJxi/aB9uK9Kn8OsoJQBoOXEMs1eV0ShLiseTN2k8fUxbeUFU0uL
-   /RAaq6m1R3JJv6hu0OLFGF/IHsAs4kRBetHNPHJOtd624dfkYG3mm+J+l
-   epnivYIzjgXZjXK5oLEy7vbQOUEC1KfbbYHfVvKHotCL+R0MJdyhllxbA
-   wfNuwHsdysM5k5somGKeVgsisGClIF0GqvEbbORZNae/Gflj50qBeDkHH
-   A==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10369"; a="276478356"
-X-IronPort-AV: E=Sophos;i="5.91,280,1647327600"; 
-   d="scan'208";a="276478356"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jun 2022 21:37:08 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.91,280,1647327600"; 
-   d="scan'208";a="708919848"
-Received: from lkp-server01.sh.intel.com (HELO 60dabacc1df6) ([10.239.97.150])
-  by orsmga004.jf.intel.com with ESMTP; 05 Jun 2022 21:37:06 -0700
-Received: from kbuild by 60dabacc1df6 with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1ny4UE-000CUD-0I;
-        Mon, 06 Jun 2022 04:37:06 +0000
-Date:   Mon, 6 Jun 2022 12:36:17 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Mon, 6 Jun 2022 03:37:42 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7584924F1B;
+        Mon,  6 Jun 2022 00:37:40 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 1C1831F390;
+        Mon,  6 Jun 2022 07:37:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1654501059; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Nyo7mFRwTaKeHK83OFLmqqb5+OhN6a5HfrVNoOD8vPU=;
+        b=0tkSIz0QzZosMinaVpAHB3cIiMl5/bzKZOHXNwCLyQrkOvkBjLmIqijqxT+XIuuYF5OEhG
+        GqhbgtZ0mQoQWRdvkUQ/m8uBQrHAuHhIoBaI6WCFmp7JMbcKFeJ2K5n8wFEepm2YRsUU3A
+        7/6d9avqElVwR5864Al8rRJ2H6gwMeI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1654501059;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Nyo7mFRwTaKeHK83OFLmqqb5+OhN6a5HfrVNoOD8vPU=;
+        b=jKZsMXv59W2p3fdsVKC+QF6V78vcNcCodArofFlXUfJ/DqBou78NivzpqYviBeIeBfYDnP
+        pTce7kKzx4KNTmCA==
+Received: from quack3.suse.cz (unknown [10.163.28.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id 071AC2C141;
+        Mon,  6 Jun 2022 07:37:38 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id B4CD4A0633; Mon,  6 Jun 2022 09:37:38 +0200 (CEST)
+Date:   Mon, 6 Jun 2022 09:37:38 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        jfs-discussion@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org,
+        "Darrick J . Wong" <djwong@kernel.org>, linux-ext4@vger.kernel.org,
         Jan Kara <jack@suse.com>
-Cc:     kbuild-all@lists.01.org,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>, tytso@mit.edu,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/3] quota: Support using the page cache for quota files
-Message-ID: <202206061211.HKxbKbgS-lkp@intel.com>
-References: <20220605143815.2330891-3-willy@infradead.org>
+Subject: Re: generic_quota_read
+Message-ID: <20220606073738.oqcdn4hxl5jpkntr@quack3.lan>
+References: <20220526192910.357055-1-willy@infradead.org>
+ <20220526192910.357055-8-willy@infradead.org>
+ <YpBlF2xbfL2yY98n@infradead.org>
+ <YpodTd+YN/FtiaP3@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220605143815.2330891-3-willy@infradead.org>
-X-Spam-Status: No, score=-5.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <YpodTd+YN/FtiaP3@casper.infradead.org>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi "Matthew,
+On Fri 03-06-22 15:40:13, Matthew Wilcox wrote:
+> On Thu, May 26, 2022 at 10:43:51PM -0700, Christoph Hellwig wrote:
+> > >  static ssize_t jfs_quota_read(struct super_block *sb, int type, char *data,
+> > > +			      size_t len, loff_t pos)
+> >
+> > And this whole helper is generic now.  It might be worth to move it
+> > into fs/quota/dquot.c as generic_quota_read.
+> 
+> I've been working on that this week.  Unfortunately, you have to convert
+> both quota_read and quota_write at the same time, it turns out.  At
+> least ext4_quota_write() uses the bdev's inode's page cache to back
+> the buffer_heads, so quota_read() and quota_write() are incoherent
+> with each other:
+> 
+> 00017 gqr: mapping:00000000ee19acfb index:0x1 pos:0x1470 len:0x30
+> 00017 4qw: mapping:000000007f9a811e index:0x18405 pos:0x1440 len:0x30
 
-Thank you for the patch! Perhaps something to improve:
+Yes, reads and writes have to use the same cache. Otherwise bad things
+happen...
 
-[auto build test WARNING on tytso-ext4/dev]
-[also build test WARNING on jack-fs/for_next linus/master v5.19-rc1 next-20220603]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
+> I don't know if there's a way around this.  Can't really use
+> read_mapping_folio() on the bdev's inode in generic_quota_read() -- the
+> blocks for a given page might be fragmented on disk.  I don't know
+> if there's a way to tell ext4_bread() to use the inode's page cache
+> instead of the bdev's.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Matthew-Wilcox-Oracle/Cache-quota-files-in-the-page-cache/20220606-021629
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git dev
-config: i386-randconfig-s002 (https://download.01.org/0day-ci/archive/20220606/202206061211.HKxbKbgS-lkp@intel.com/config)
-compiler: gcc-11 (Debian 11.3.0-1) 11.3.0
-reproduce:
-        # apt-get install sparse
-        # sparse version: v0.6.4-18-g56afb504-dirty
-        # https://github.com/intel-lab-lkp/linux/commit/a7ff347e002ef476c8c116f30858f83529638a9b
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Matthew-Wilcox-Oracle/Cache-quota-files-in-the-page-cache/20220606-021629
-        git checkout a7ff347e002ef476c8c116f30858f83529638a9b
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        make W=1 C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__' O=build_dir ARCH=i386 SHELL=/bin/bash fs/quota/
+There's no way for ext4_bread() to read from inode's page cache. And that
+is deliberate - ext4_bread() is used for filesystem metadata (and quota is
+treated as filesystem metadata) and we use bdev page cache for all the
+metadata.
 
-If you fix the issue, kindly add following tag where applicable
-Reported-by: kernel test robot <lkp@intel.com>
+> And if we did that, would it even work as being part of a transaction?
 
+In principle it could work because we would then treat quota as journalled
+data and jbd2 supports that. But honestly, special-casing quota as
+journalled data IMHO brings more hassle on the write side than it can save
+by sharing some code on the read side.
 
-sparse warnings: (new ones prefixed by >>)
->> fs/quota/dquot.c:2184:33: sparse: sparse: incompatible types in comparison expression (different type sizes):
->> fs/quota/dquot.c:2184:33: sparse:    unsigned int *
->> fs/quota/dquot.c:2184:33: sparse:    unsigned long *
-
-vim +2184 fs/quota/dquot.c
-
-  2165	
-  2166	ssize_t generic_quota_read(struct super_block *sb, int type, char *data,
-  2167				      size_t len, loff_t pos)
-  2168	{
-  2169		struct inode *inode = sb_dqopt(sb)->files[type];
-  2170		struct address_space *mapping = inode->i_mapping;
-  2171		size_t toread;
-  2172		pgoff_t index;
-  2173		loff_t i_size = i_size_read(inode);
-  2174	
-  2175		if (pos > i_size)
-  2176			return 0;
-  2177		if (pos + len > i_size)
-  2178			len = i_size - pos;
-  2179		toread = len;
-  2180		index = pos / PAGE_SIZE;
-  2181	
-  2182		while (toread > 0) {
-  2183			struct folio *folio = read_mapping_folio(mapping, index, NULL);
-> 2184			size_t tocopy = min(toread, PAGE_SIZE - offset_in_page(pos));
-  2185			void *src;
-  2186	
-  2187			if (folio == ERR_PTR(-ENOMEM)) {
-  2188				memalloc_retry_wait(GFP_NOFS);
-  2189				continue;
-  2190			} else if (IS_ERR(folio))
-  2191				return PTR_ERR(folio);
-  2192	
-  2193			src = kmap_local_folio(folio, offset_in_folio(folio, pos));
-  2194			memcpy(data, src, tocopy);
-  2195			kunmap_local(src);
-  2196			folio_put(folio);
-  2197	
-  2198			toread -= tocopy;
-  2199			data += tocopy;
-  2200			pos += tocopy;
-  2201			index++;
-  2202		}
-  2203		return len;
-  2204	}
-  2205	EXPORT_SYMBOL(generic_quota_read);
-  2206	
-
+								Honza
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
