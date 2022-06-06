@@ -2,114 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 95F2053EED9
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jun 2022 21:48:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A9C553EF28
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jun 2022 22:10:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232676AbiFFTsQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Jun 2022 15:48:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35172 "EHLO
+        id S232917AbiFFUKG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Jun 2022 16:10:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232663AbiFFTsP (ORCPT
+        with ESMTP id S233622AbiFFUKD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Jun 2022 15:48:15 -0400
-Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A45C75A090
-        for <linux-fsdevel@vger.kernel.org>; Mon,  6 Jun 2022 12:48:14 -0700 (PDT)
-Received: by mail-ed1-x52d.google.com with SMTP id o10so20197731edi.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Jun 2022 12:48:14 -0700 (PDT)
+        Mon, 6 Jun 2022 16:10:03 -0400
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F11512D1DD
+        for <linux-fsdevel@vger.kernel.org>; Mon,  6 Jun 2022 13:10:02 -0700 (PDT)
+Received: by mail-pf1-x42e.google.com with SMTP id e11so13571186pfj.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Jun 2022 13:10:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=google.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=DT6839JbDy2yIdEYMFoTCSnqwzHXVdWj4aG9+gbEJ94=;
-        b=TD3VNjXXe98Co3b86I6MMAPvAqs7GFH9zK5G2EFMl80w/4jTsLDTJTlvJaPlCJ165s
-         hN2+7BnMlwCh8SH5aG2nXEF9n5Jn6LQtN4zAVq5mmshHyYzYyDJZcnSBlQSMRFduucv2
-         UlPhDYoxVlqwIbAP7DMLZrAx/ovYm8t7HBN8I=
+        bh=oQFpDXi6bD7+wKzTyAPy27GXXUSscdFak0V6JCay3LM=;
+        b=Lt8bn1CKv27NBAN2LZ6a3kjXi7zTNT9n5YC6qdlDRRz27wSGX169ro34tJXroQ4ylw
+         9Wh5AtBkZYrRJCB6VOaJC0MlhiSdzn1C4PqwPfP5C2UQ58ClSnY1eORDsS+jz9o2IDri
+         ni9cn1KDaMb5LTVmi0K48gTlOfkMsvw04FEVxngHWMm311dg/8tSsLNw8NZngXEjzLdm
+         MRj2v0erbTuphncL4y5iv8ZG1Wuu7I1voO3ifQtd6JmL8xCnR4egkVJv67k8mCcsucuy
+         B7Vorowmpt94+GNwzICo6EQEcNJyTDkVWQJuYGl9kQjzC8CdwmuVUJOWPEVPDexxdgNI
+         LvRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=DT6839JbDy2yIdEYMFoTCSnqwzHXVdWj4aG9+gbEJ94=;
-        b=DnFC8Cns3ObAZBxEbhryMszTC+4KOUe9Vb1r8JDInRhEPhQ6Xruhsfv/sLG0j7UWst
-         8BqUi8Oi7y7XqH4i5Y/FXcVgh58Ndtw1pFi8i85Jn2G4/71m0UNDOFs0lf2wbofyd4Eo
-         FJ3MhYuDWjYyesiniF7Vx6pYbReHDqnBJJJDATEg8nY6DnQDGM//O9frS4RjqJcYxmtk
-         Qi8kxD1pOKzFe24kL2EeBOZ2Hd7RLTFpcZZEvKUOivOpPfaTWGCvMGt2ToRMQ5wA8hE0
-         1vwvPy7v20ccKprOlQ58zGjr5FCRWxSpk5uAZgZg2KdLw8DXoWHQTEOZEjysQZOC74+E
-         iAqw==
-X-Gm-Message-State: AOAM531M9SXWl3ToRjghjgTaK0DthVzUP1j/autAEZGNjj+VsWpMuE2V
-        w0DWxjfyLGdnc6krJ5E/0BUuSBrMUtuC/OJ7DP4=
-X-Google-Smtp-Source: ABdhPJwtQ0ZDdCErizZdjZHj3SyUUwPqbmGW/qffC0T3jgMDP1lTfyphN6ff5n0AnT58ai5ZgsFCEw==
-X-Received: by 2002:aa7:c34d:0:b0:42d:ce57:5df2 with SMTP id j13-20020aa7c34d000000b0042dce575df2mr28801635edr.315.1654544892883;
-        Mon, 06 Jun 2022 12:48:12 -0700 (PDT)
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com. [209.85.221.42])
-        by smtp.gmail.com with ESMTPSA id c10-20020a056402120a00b0042dd1d3d571sm9026248edw.26.2022.06.06.12.48.11
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Jun 2022 12:48:11 -0700 (PDT)
-Received: by mail-wr1-f42.google.com with SMTP id p10so21200928wrg.12
-        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Jun 2022 12:48:11 -0700 (PDT)
-X-Received: by 2002:a05:6000:16c4:b0:20f:cd5d:4797 with SMTP id
- h4-20020a05600016c400b0020fcd5d4797mr23878066wrf.193.1654544891292; Mon, 06
- Jun 2022 12:48:11 -0700 (PDT)
+        bh=oQFpDXi6bD7+wKzTyAPy27GXXUSscdFak0V6JCay3LM=;
+        b=PLdmS4vTzJpzuUCDL4sSyKCJPFYMe7CwcwQVdSb1faPM7bjRGYWj73xidN7Fan+nyN
+         81bXBCIDFSJvjzQ1K6NJkrwOb02av0FZe0+xiIyX5znv0hNCjDdfapTl1TpahtlS2fah
+         G/as800DziNR+xyDCRDzvMEpr33dW8rF9Pb3pp49GG7CB8ezWVBTBqQvhqoakD+Bbid7
+         wJIaFykPG5A8+ybiHagOCNHiWSPnmtERy4Snb4isF1mMVq0pEN686KvOLy1CNBNJslxy
+         yrl3RJrrd8mXzDg0wt7WTLHugFklh7qU3gRlN3/TI1fp7twTptYWAeQQadgAnb5bgDap
+         t8uQ==
+X-Gm-Message-State: AOAM533DF+T/d7SgYPamiZV2xNMUDCzKJh+63FdRAeiR2P2vhVcQc6G/
+        TK0HlClQvQ0tZ4INqx71u2hI/m5Ado01A+cKBukI8A==
+X-Google-Smtp-Source: ABdhPJz71kp7wjsXPjRB2ML7eIa2fwB82eNGfeI62OXeQw8INa+MLyq06Q2ncMec3mjRtswZPQ72CnuvPkBz4ir4YOc=
+X-Received: by 2002:a63:69c2:0:b0:3fa:78b5:d991 with SMTP id
+ e185-20020a6369c2000000b003fa78b5d991mr23043411pgc.40.1654546201400; Mon, 06
+ Jun 2022 13:10:01 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAHk-=whmtHMzjaVUF9bS+7vE_rrRctcCTvsAeB8fuLYcyYLN-g@mail.gmail.com>
- <226cee6a-6ca1-b603-db08-8500cd8f77b7@gnuweeb.org> <CAHk-=whayT+o58FrPCXVVJ3Bn-3SeoDkMA77TOd9jg4yMGNExw@mail.gmail.com>
- <87r1414y5v.fsf@email.froward.int.ebiederm.org> <CAHk-=wijAnOcC2qQEAvFtRD_xpPbG+aSUXkfM-nFTHuMmPbZGA@mail.gmail.com>
- <266e648a-c537-66bc-455b-37105567c942@canonical.com>
-In-Reply-To: <266e648a-c537-66bc-455b-37105567c942@canonical.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 6 Jun 2022 12:47:54 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wi+C9XYbu59vuBv1Z9KHd7_tQN_Skd6xzrM512hFJq5aw@mail.gmail.com>
-Message-ID: <CAHk-=wi+C9XYbu59vuBv1Z9KHd7_tQN_Skd6xzrM512hFJq5aw@mail.gmail.com>
-Subject: Re: Linux 5.18-rc4
-To:     John Johansen <john.johansen@canonical.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Ammar Faizi <ammarfaizi2@gnuweeb.org>,
-        James Morris <jmorris@namei.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Kees Cook <keescook@chromium.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>, gwml@vger.gnuweeb.org
+References: <20220519153713.819591-1-chao.p.peng@linux.intel.com>
+In-Reply-To: <20220519153713.819591-1-chao.p.peng@linux.intel.com>
+From:   Vishal Annapurve <vannapurve@google.com>
+Date:   Mon, 6 Jun 2022 13:09:50 -0700
+Message-ID: <CAGtprH_83CEC0U-cBR2FzHsxbwbGn0QJ87WFNOEet8sineOcbQ@mail.gmail.com>
+Subject: Re: [PATCH v6 0/8] KVM: mm: fd-based approach for supporting KVM
+ guest private memory
+To:     Chao Peng <chao.p.peng@linux.intel.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Jun Nakajima <jun.nakajima@intel.com>, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 6, 2022 at 12:19 PM John Johansen
-<john.johansen@canonical.com> wrote:
 >
-> > I suspect that part is that both Apparmor and IPC use the idr local lock.
+> Private memory map/unmap and conversion
+> ---------------------------------------
+> Userspace's map/unmap operations are done by fallocate() ioctl on the
+> backing store fd.
+>   - map: default fallocate() with mode=0.
+>   - unmap: fallocate() with FALLOC_FL_PUNCH_HOLE.
+> The map/unmap will trigger above memfile_notifier_ops to let KVM map/unmap
+> secondary MMU page tables.
 >
-> bingo,
+....
+>    QEMU: https://github.com/chao-p/qemu/tree/privmem-v6
 >
-> apparmor moved its secids allocation from a custom radix tree to idr in
+> An example QEMU command line for TDX test:
+> -object tdx-guest,id=tdx \
+> -object memory-backend-memfd-private,id=ram1,size=2G \
+> -machine q35,kvm-type=tdx,pic=no,kernel_irqchip=split,memory-encryption=tdx,memory-backend=ram1
 >
->   99cc45e48678 apparmor: Use an IDR to allocate apparmor secids
->
-> and ipc is using the idr for its id allocation as well
 
-The thing is, I'm not entirely convinced you can deadlock on a local lock.
+There should be more discussion around double allocation scenarios
+when using the private fd approach. A malicious guest or buggy
+userspace VMM can cause physical memory getting allocated for both
+shared (memory accessible from host) and private fds backing the guest
+memory.
+Userspace VMM will need to unback the shared guest memory while
+handling the conversion from shared to private in order to prevent
+double allocation even with malicious guests or bugs in userspace VMM.
 
-A local lock is per-cpu, so one CPU holding that lock won't actually
-block another CPU holding it. Even on RT, I think.
+Options to unback shared guest memory seem to be:
+1) madvise(.., MADV_DONTNEED/MADV_REMOVE) - This option won't stop
+kernel from backing the shared memory on subsequent write accesses
+2) fallocate(..., FALLOC_FL_PUNCH_HOLE...) - For file backed shared
+guest memory, this option still is similar to madvice since this would
+still allow shared memory to get backed on write accesses
+3) munmap - This would give away the contiguous virtual memory region
+reservation with holes in the guest backing memory, which might make
+guest memory management difficult.
+4) mprotect(... PROT_NONE) - This would keep the virtual memory
+address range backing the guest memory preserved
 
-I *think* local locks are useful for lockdep not because of any lock
-chains they introduce, but because of how lockdep catches irq mis-use
-(where they *can* deadlock).
+ram_block_discard_range_fd from reference implementation:
+https://github.com/chao-p/qemu/tree/privmem-v6 seems to be relying on
+fallocate/madvise.
 
-But I may be entirely wrong, and maybe that lock chain through the
-local lock actually does matter.
+Any thoughts/suggestions around better ways to unback the shared
+memory in order to avoid double allocation scenarios?
 
-Let's bring in people who actually know what they are doing, rather
-than my wild speculation. Thomas?
-
-                    Linus
+Regards,
+Vishal
