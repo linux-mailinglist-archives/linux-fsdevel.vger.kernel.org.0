@@ -2,41 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E2C053EA1E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jun 2022 19:09:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6913853E708
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jun 2022 19:07:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237043AbiFFMbc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Jun 2022 08:31:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53020 "EHLO
+        id S237025AbiFFMb2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Jun 2022 08:31:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52722 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237030AbiFFMb1 (ORCPT
+        with ESMTP id S237028AbiFFMbY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Jun 2022 08:31:27 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF1D72AE9F3;
-        Mon,  6 Jun 2022 05:31:26 -0700 (PDT)
+        Mon, 6 Jun 2022 08:31:24 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E29802ADF71;
+        Mon,  6 Jun 2022 05:31:22 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 79B7F611D7;
-        Mon,  6 Jun 2022 12:31:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80FC3C34119;
-        Mon,  6 Jun 2022 12:31:25 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 95A75B818AC;
+        Mon,  6 Jun 2022 12:31:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08254C3411F;
+        Mon,  6 Jun 2022 12:31:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1654518685;
-        bh=5EZzxT4uyGoybyhZgufPoeU5c2OESr/k5cvrbjzySFE=;
+        s=korg; t=1654518680;
+        bh=4iL99PzkC/+O4xrsCbsm6NfouWAj9xoK8C8JGz835JM=;
         h=Subject:To:Cc:From:Date:From;
-        b=QC0F/Fz54hwrUTzN8gmofJ3o8uBdM/5Q6Mb9QCMvirFX7kVM6NnZ1iyKxb40Gd1BE
-         lIDW32+PkYHB1lFDkINsgFFEMj1MmhVxPrR8Xu0nMdGQJPAT7WU9CJx0ckhv16QG9F
-         o/AJnRQ2Hrq34MbA/Qd7xwEQr0bHCJAXGOLHCFYY=
-Subject: FAILED: patch "[PATCH] exportfs: support idmapped mounts" failed to apply to 4.19-stable tree
+        b=2Yeq3U8MTMvUAvLQ9DDIUj4w4cHQVlHXaay9fPA75yrM+ZPpNL+8NZBD32HtYOurc
+         uMyMZCQZJs32JwAekhmfvQPDVSh31lX5LNYwa6Vk1MiqF8NZmDJaAnCTWot4nQNxEB
+         vc75pAN4a9WU/VOgflOUAl7xqiIa6rNm75+4QbB4=
+Subject: FAILED: patch "[PATCH] exportfs: support idmapped mounts" failed to apply to 5.4-stable tree
 To:     brauner@kernel.org, amir73il@gmail.com, gscrivan@redhat.com,
         hch@lst.de, linux-fsdevel@vger.kernel.org, mszeredi@redhat.com,
         stable@vger.kernel.org
 Cc:     <stable@vger.kernel.org>
 From:   <gregkh@linuxfoundation.org>
 Date:   Mon, 06 Jun 2022 14:31:07 +0200
-Message-ID: <16545186676208@kroah.com>
+Message-ID: <165451866750136@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=ANSI_X3.4-1968
 Content-Transfer-Encoding: 8bit
@@ -51,7 +51,7 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
-The patch below does not apply to the 4.19-stable tree.
+The patch below does not apply to the 5.4-stable tree.
 If someone wants it applied there, or to any other stable or longterm
 tree, then please email the backport, including the original git commit
 id to <stable@vger.kernel.org>.
