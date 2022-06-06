@@ -2,135 +2,172 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 48E7753E852
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jun 2022 19:08:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B795153E9DE
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  6 Jun 2022 19:08:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239594AbiFFOKy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Jun 2022 10:10:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33046 "EHLO
+        id S240040AbiFFOq6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Jun 2022 10:46:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34364 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239450AbiFFOKu (ORCPT
+        with ESMTP id S240033AbiFFOq5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Jun 2022 10:10:50 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80F4B25EAC;
-        Mon,  6 Jun 2022 07:10:47 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id n10so29227534ejk.5;
-        Mon, 06 Jun 2022 07:10:47 -0700 (PDT)
+        Mon, 6 Jun 2022 10:46:57 -0400
+Received: from mail-qk1-x72b.google.com (mail-qk1-x72b.google.com [IPv6:2607:f8b0:4864:20::72b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D9A26BFC8
+        for <linux-fsdevel@vger.kernel.org>; Mon,  6 Jun 2022 07:46:54 -0700 (PDT)
+Received: by mail-qk1-x72b.google.com with SMTP id x65so11015352qke.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 06 Jun 2022 07:46:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:content-language:to:from
-         :subject:cc:content-transfer-encoding;
-        bh=zcfwBnYsaM3osnPpLQRxR1JrABrX/zB0kh++woByQVw=;
-        b=gEpMt7Yd2UxBYkCte5IR1tgFlFVQEJ5SylH2/PBFk99wiIMXMkM+sU44fPiSwHBSIa
-         IMN0bB6BoqeG1sEJlrPjvDJwshD0q/AyS0IJHSN0P9Ag849SN82OU8Ve5PJzspiKPaW1
-         ixl/BLksjnyF6+Q+zGJYXDzeZpi/LDj+JclfL1cyrON5hgnvjaUXMyC7nb1ksactUBIH
-         jb2tLQZDR3UZzGNzC9dAr2e1XwZYvkD5WfHeYwhKxD+AUN/NVrWM8f/WdIoZfPQ/vOJo
-         Hy5xj1R8bnKIgXu+lNCl9xqLdJ5CDltw8jt+jMNUJK7Q1MpOo0KjmNKdY80vONgP9gY3
-         g/vA==
+        d=cmpxchg-org.20210112.gappssmtp.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=eQu9ZnX8ucverwBnDY0Hbf0nWmuq5mODKce4nw3PixY=;
+        b=Ubyhrg7oYj6wEKi/XSECYFfgns4Z6SUY6LLvp7TNnqOuq/P9MoGQkkWA76q1IHWVgh
+         BJ+amIrxzH6/3bF3YXnHxiUY9VYTPnNH6ayxYOhFfhtyvMPR0hYNy/ATGHnsLWNtuShC
+         gIA+xiDHLfCH9pQgB9JKKQuDQo7sy7nOpcUERSvUvkehHmN1ra+VfHpaZC1/NCINr2tb
+         mdCuVPgU9LLkHhfDizwvQ0Yq3XfUTrHsx9aCEPp1O4qmAYuOj3AmfA1YzA9xx7Jm6+hA
+         A3bjeLRbgHhj2PfOUFds28+XnQYmbB69dDrc/v9fyjmVjX/gK1gld77HQ+TtB5zID5zK
+         jFHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent
-         :content-language:to:from:subject:cc:content-transfer-encoding;
-        bh=zcfwBnYsaM3osnPpLQRxR1JrABrX/zB0kh++woByQVw=;
-        b=ss3fQdadU5gm21exoNWt7o3haLozUczfmXkPubPJabujpQWjlH8XniKWvLOfjBxJPw
-         dhzV0q+V6v++/2qb57tbq8uOscmIZ12L8HhM3tfEQ+Qs9S7StNnw/gO+QKmKYVq1jxYy
-         0Vd2j15ZZieUrvHokggrKElPc1GuyPXHAB/gWZi8hOz7zrQKRH7iuaCfPjX/78wfg9A2
-         PAUaj8OzOv9GCR45D9vUVyk0xxZZ5BXxONJCF3jEod7R+qCJM7AvsI7y6AIDM9WlnacE
-         5pOHPDgtXI1AISGq4OFkEAvwv6OBT8Kxp4HqmJm3cYA+FIGp3/sdt1R+xdclT+FP+cwG
-         H6kA==
-X-Gm-Message-State: AOAM532d8PaRKNM0RkupMzqtzQtcQB0j0dSlYbQw7km3DXWATjhCXi/Y
-        qpHp6FpNWxC7wu3QfRO/8is=
-X-Google-Smtp-Source: ABdhPJzqBAw+J0OHGwBe1PkTWA7yEhL5aB2O9MeJxPiApU6qXMja7NqcmfnC2G25AjnP5JFxsUOEog==
-X-Received: by 2002:a17:907:16a4:b0:711:c9a7:dc75 with SMTP id hc36-20020a17090716a400b00711c9a7dc75mr6290181ejc.542.1654524645895;
-        Mon, 06 Jun 2022 07:10:45 -0700 (PDT)
-Received: from [192.168.0.210] (cpc154979-craw9-2-0-cust193.16-3.cable.virginm.net. [80.193.200.194])
-        by smtp.googlemail.com with ESMTPSA id e1-20020a17090618e100b006f3ef214dc3sm6357044ejf.41.2022.06.06.07.10.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Jun 2022 07:10:45 -0700 (PDT)
-Message-ID: <a1aab4df-9e1c-793f-5c3d-d735e4f4fb57@gmail.com>
-Date:   Mon, 6 Jun 2022 15:10:44 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Content-Language: en-US
-To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
-From:   "Colin King (gmail)" <colin.i.king@gmail.com>
-Subject: re: fsdax: output address in dax_iomap_pfn() and rename it
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=eQu9ZnX8ucverwBnDY0Hbf0nWmuq5mODKce4nw3PixY=;
+        b=jto6SwNUP+CgElr+KFEQJEyVF9oWi+ZTOD6Z6DKXoxD/79ieiXQ/tYsSpOM/MTkmo/
+         00jrXco/15Xk2SsSd8aCbobEoDgal76MEVmCRUwFET34ZteMy2SxMyOnbFPpjl1dK4/H
+         8FNsucvhg+aZt6ZAHkpooPwlt6OkWTkhWGLPTfm0DH3gxEiptd/hKXG2K3HsZxlNVvHu
+         iqEYr6Cl45qH2zwjpmi5W23s2De2uzrgg2Ais/x3FqTcRQETW8TX8pfurMd9iQ+PHrgc
+         3cNTp4havI6G0YDqRPK8Vz7hajqSj/LE65eCwi1wbQpHVEfW7K9fWQ6Qgd3l1SxlGlHM
+         Vjbw==
+X-Gm-Message-State: AOAM532RCS0XZkcL918pDgXxjqwY5FSN9/Z8qXzlHmQjJfe355kRS8nd
+        FRUwTvwXq42kCdz1Y6FhGqMlTA==
+X-Google-Smtp-Source: ABdhPJwUs2Akgf0T0k8/bDLJiGlFm8/U6mOikC7RqSSflYpRf/LqLTdusx1iBPTQnPANF/f7tdt9Fg==
+X-Received: by 2002:a05:620a:942:b0:6a6:aed6:29b6 with SMTP id w2-20020a05620a094200b006a6aed629b6mr7017946qkw.147.1654526813425;
+        Mon, 06 Jun 2022 07:46:53 -0700 (PDT)
+Received: from localhost (cpe-67-251-217-1.hvc.res.rr.com. [67.251.217.1])
+        by smtp.gmail.com with ESMTPSA id bi37-20020a05620a31a500b006a6a550d371sm6545080qkb.121.2022.06.06.07.46.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Jun 2022 07:46:52 -0700 (PDT)
+Date:   Mon, 6 Jun 2022 10:46:51 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Chris Mason <clm@fb.com>, Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        xfs <linux-xfs@vger.kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        nvdimm@lists.linux.dev,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        "dchinner@redhat.com" <dchinner@redhat.com>
+Subject: Re: [PATCH RFC] iomap: invalidate pages past eof in
+ iomap_do_writepage()
+Message-ID: <Yp4TWwLrNM1Lhwq3@cmpxchg.org>
+References: <YpdZKbrtXJJ9mWL7@infradead.org>
+ <BB5F778F-BFE5-4CC9-94DE-3118C60E13B6@fb.com>
+ <20220602065252.GD1098723@dread.disaster.area>
+ <YpjYDjeR2Wpx3ImB@cmpxchg.org>
+ <20220602220625.GG1098723@dread.disaster.area>
+ <B186E2FB-BCAF-4019-9DFF-9FF05BAC557E@fb.com>
+ <20220603052047.GJ1098723@dread.disaster.area>
+ <YpojbvB/+wPqHT8y@cmpxchg.org>
+ <c3620e1f-91c5-777c-4193-2478c69a033c@fb.com>
+ <20220605233213.GN1098723@dread.disaster.area>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20220605233213.GN1098723@dread.disaster.area>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+Hello,
 
-Static analysis with clang scan-build found a potential issue with the 
-following commit in linux-next today:
+On Mon, Jun 06, 2022 at 09:32:13AM +1000, Dave Chinner wrote:
+> On Fri, Jun 03, 2022 at 12:09:06PM -0400, Chris Mason wrote:
+> > On 6/3/22 11:06 AM, Johannes Weiner wrote:
+> > > On Fri, Jun 03, 2022 at 03:20:47PM +1000, Dave Chinner wrote:
+> > > > On Fri, Jun 03, 2022 at 01:29:40AM +0000, Chris Mason wrote:
+> > > > > As you describe above, the loops are definitely coming from higher
+> > > > > in the stack.  wb_writeback() will loop as long as
+> > > > > __writeback_inodes_wb() returns that it’s making progress and
+> > > > > we’re still globally over the bg threshold, so write_cache_pages()
+> > > > > is just being called over and over again.  We’re coming from
+> > > > > wb_check_background_flush(), so:
+> > > > > 
+> > > > >                  struct wb_writeback_work work = {
+> > > > >                          .nr_pages       = LONG_MAX,
+> > > > >                          .sync_mode      = WB_SYNC_NONE,
+> > > > >                          .for_background = 1,
+> > > > >                          .range_cyclic   = 1,
+> > > > >                          .reason         = WB_REASON_BACKGROUND,
+> > > > >                  };
+> > > > 
+> > > > Sure, but we end up in writeback_sb_inodes() which does this after
+> > > > the __writeback_single_inode()->do_writepages() call that iterates
+> > > > the dirty pages:
+> > > > 
+> > > >                 if (need_resched()) {
+> > > >                          /*
+> > > >                           * We're trying to balance between building up a nice
+> > > >                           * long list of IOs to improve our merge rate, and
+> > > >                           * getting those IOs out quickly for anyone throttling
+> > > >                           * in balance_dirty_pages().  cond_resched() doesn't
+> > > >                           * unplug, so get our IOs out the door before we
+> > > >                           * give up the CPU.
+> > > >                           */
+> > > >                          blk_flush_plug(current->plug, false);
+> > > >                          cond_resched();
+> > > >                  }
+> > > > 
+> > > > So if there is a pending IO completion on this CPU on a work queue
+> > > > here, we'll reschedule to it because the work queue kworkers are
+> > > > bound to CPUs and they take priority over user threads.
+> > > 
+> > > The flusher thread is also a kworker, though. So it may hit this
+> > > cond_resched(), but it doesn't yield until the timeslice expires.
+> 
+> 17us or 10ms, it doesn't matter. The fact is the writeback thread
+> will give up the CPU long before the latency durations (seconds)
+> that were reported upthread are seen. Writeback spinning can
+> not explain why truncate is not making progress - everything points
+> to it being a downstream symptom, not a cause.
 
-commit 1447ac26a96463a05ad9f5cfba7eef43d52913ef
-Author: Shiyang Ruan <ruansy.fnst@fujitsu.com>
-Date:   Fri Jun 3 13:37:32 2022 +0800
+Chris can clarify, but I don't remember second-long latencies being
+mentioned. Rather sampling periods of multiple seconds during which
+the spin bursts occur multiple times.
 
-     fsdax: output address in dax_iomap_pfn() and rename it
+> Also important to note, as we are talking about kworker sheduling
+> hold-offs, the writeback flusher work is unbound (can run on any
+> CPU), whilst the IO completion workers in XFS are per-CPU and bound
+> to individual CPUs. Bound kernel tasks usually take run queue
+> priority on a CPU over unbound and/or user tasks that can be punted
+> to a different CPU.
 
+Is that actually true? I'm having trouble finding the corresponding
+code in the scheduler.
 
-The analysis is as follows:
+That said, I'm not sure it matters that much. Even if you take CPU
+contention out of the equation entirely, I think we agree it's not a
+good idea (from a climate POV) to have CPUs busywait on IO. Even if
+that IO is just an ordinary wait_on_page_writeback() on a fast drive.
 
+So if we can get rid of the redirtying, and it sounds like we can, IMO
+we should just go ahead and do so.
 
-static int dax_iomap_direct_access(const struct iomap *iomap, loff_t pos,
-                 size_t size, void **kaddr, pfn_t *pfnp)
-{
-         pgoff_t pgoff = dax_iomap_pgoff(iomap, pos);
-         int id, rc;
-         long length;
+> > Just to underline this, the long tail latencies aren't softlockups or major
+> > explosions.  It's just suboptimal enough that different metrics and
+> > dashboards noticed it.
+> 
+> Sure, but you've brought a problem we don't understand the root
+> cause of to my attention. I want to know what the root cause is so
+> that I can determine that there are no other unknown underlying
+> issues that are contributing to this issue.
 
-         id = dax_read_lock();
-         length = dax_direct_access(iomap->dax_dev, pgoff, PHYS_PFN(size),
-                                    DAX_ACCESS, kaddr, pfnp);
-         if (length < 0) {
-                 rc = length;
-                 goto out;
-         }
-         if (!pfnp)
-                 goto out_check_addr;
-
-The above check jumps to out_check_addr, if kaddr is null then rc is not 
-set and a garbage uninitialized value for rc is returned on the out path.
-
-
-         rc = -EINVAL;
-         if (PFN_PHYS(length) < size)
-                 goto out;
-         if (pfn_t_to_pfn(*pfnp) & (PHYS_PFN(size)-1))
-                 goto out;
-         /* For larger pages we need devmap */
-         if (length > 1 && !pfn_t_devmap(*pfnp))
-                 goto out;
-         rc = 0;
-
-out_check_addr:
-         if (!kaddr)
-                 goto out;
-         if (!*kaddr)
-                 rc = -EFAULT;
-out:
-         dax_read_unlock(id);
-         return rc;
-}
-
-
-Colin
-
+It seems to me we're just not on the same page on what the reported
+bug is. From my POV, there currently isn't a missing piece in this
+puzzle. But Chris worked closer with the prod folks on this, so I'll
+leave it to him :)
