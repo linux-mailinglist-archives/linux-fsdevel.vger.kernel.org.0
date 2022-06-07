@@ -2,64 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 78D71542021
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jun 2022 02:23:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E3D8542027
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jun 2022 02:24:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1380798AbiFHAR2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jun 2022 20:17:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53440 "EHLO
+        id S1352049AbiFHASN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jun 2022 20:18:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1578242AbiFGXbz (ORCPT
+        with ESMTP id S1587907AbiFGXxu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jun 2022 19:31:55 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id CBCBA2509F6
-        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jun 2022 15:01:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1654639264;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=bMoHrYtckfc4pwaLoUCwp8YR9pNNBcpYBih/HMrWY2U=;
-        b=WoaJ3nuOliRY6bl+dXdNOuaSFgE6jE7NLallflqX+iY3C+l0mXYGN+yUbfWmdGFys+B8tf
-        KBOmmetJ1U0GMTPHKsNqVtGRH1EWqOcm6FzHrac4oVC2BgqYBE16S4CTqYKv4IKI7V8VzM
-        bQnll1YuE4O/FmZMrzXVUFT9XsiLfRA=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-116-V_ZYYpPZOn6FNOhZnUMt-g-1; Tue, 07 Jun 2022 18:01:01 -0400
-X-MC-Unique: V_ZYYpPZOn6FNOhZnUMt-g-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 1B28A1C161AF;
-        Tue,  7 Jun 2022 22:01:01 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.22.9.106])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 04CF11415100;
-        Tue,  7 Jun 2022 22:01:01 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id BB16D220882; Tue,  7 Jun 2022 18:01:00 -0400 (EDT)
-Date:   Tue, 7 Jun 2022 18:01:00 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Bernd Schubert <bschubert@ddn.com>
-Cc:     Dharmendra Singh <dharamhans87@gmail.com>, miklos@szeredi.hu,
-        linux-fsdevel@vger.kernel.org, fuse-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, Dharmendra Singh <dsingh@ddn.com>
-Subject: Re: [PATCH v4 1/1] Allow non-extending parallel direct writes on the
- same file.
-Message-ID: <Yp/KnF0oSIsk0SYd@redhat.com>
-References: <20220605072201.9237-1-dharamhans87@gmail.com>
- <20220605072201.9237-2-dharamhans87@gmail.com>
- <Yp/CYjONZHoekSVA@redhat.com>
- <34dd96b3-e253-de4e-d5d3-a49bc1990e6f@ddn.com>
+        Tue, 7 Jun 2022 19:53:50 -0400
+Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 117825EDEA;
+        Tue,  7 Jun 2022 15:52:07 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-2-147.pa.nsw.optusnet.com.au [49.181.2.147])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id C06E35EC5CF;
+        Wed,  8 Jun 2022 08:52:05 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1nyi3P-003w7D-R2; Wed, 08 Jun 2022 08:52:03 +1000
+Date:   Wed, 8 Jun 2022 08:52:03 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Johannes Weiner <hannes@cmpxchg.org>, Chris Mason <clm@fb.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "dchinner@redhat.com" <dchinner@redhat.com>
+Subject: Re: [PATCH RFC] iomap: invalidate pages past eof in
+ iomap_do_writepage()
+Message-ID: <20220607225203.GV227878@dread.disaster.area>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <34dd96b3-e253-de4e-d5d3-a49bc1990e6f@ddn.com>
-X-Scanned-By: MIMEDefang 2.85 on 10.11.54.7
-X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <da9984a7-a3f1-8a62-f2ca-f8f6d4321e80@fb.com>
+ <Yp4TWwLrNM1Lhwq3@cmpxchg.org>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=629fd697
+        a=ivVLWpVy4j68lT4lJFbQgw==:117 a=ivVLWpVy4j68lT4lJFbQgw==:17
+        a=IkcTkHD0fZMA:10 a=JPEYwPQDsx4A:10 a=7-415B0cAAAA:8
+        a=gt4SOwb8OZzSaSjGkrgA:9 a=QEXdDO2ut3YA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -67,107 +52,161 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 07, 2022 at 11:42:16PM +0200, Bernd Schubert wrote:
-> 
-> 
-> On 6/7/22 23:25, Vivek Goyal wrote:
-> > On Sun, Jun 05, 2022 at 12:52:00PM +0530, Dharmendra Singh wrote:
-> > > From: Dharmendra Singh <dsingh@ddn.com>
+On Mon, Jun 06, 2022 at 11:13:18AM -0400, Chris Mason wrote:
+> On Mon, Jun 06, 2022 at 10:46:51AM -0400, Johannes Weiner wrote:
+> > Hello,
+> > 
+> > On Mon, Jun 06, 2022 at 09:32:13AM +1000, Dave Chinner wrote:
+> > > On Fri, Jun 03, 2022 at 12:09:06PM -0400, Chris Mason wrote:
+> > > > On 6/3/22 11:06 AM, Johannes Weiner wrote:
+> > > > > On Fri, Jun 03, 2022 at 03:20:47PM +1000, Dave Chinner wrote:
+> > > > > > On Fri, Jun 03, 2022 at 01:29:40AM +0000, Chris Mason wrote:
+> > > > > > > As you describe above, the loops are definitely coming from higher
+> > > > > > > in the stack.  wb_writeback() will loop as long as
+> > > > > > > __writeback_inodes_wb() returns that it’s making progress and
+> > > > > > > we’re still globally over the bg threshold, so write_cache_pages()
+> > > > > > > is just being called over and over again.  We’re coming from
+> > > > > > > wb_check_background_flush(), so:
+> > > > > > > 
+> > > > > > >                  struct wb_writeback_work work = {
+> > > > > > >                          .nr_pages       = LONG_MAX,
+> > > > > > >                          .sync_mode      = WB_SYNC_NONE,
+> > > > > > >                          .for_background = 1,
+> > > > > > >                          .range_cyclic   = 1,
+> > > > > > >                          .reason         = WB_REASON_BACKGROUND,
+> > > > > > >                  };
+> > > > > > 
+> > > > > > Sure, but we end up in writeback_sb_inodes() which does this after
+> > > > > > the __writeback_single_inode()->do_writepages() call that iterates
+> > > > > > the dirty pages:
+> > > > > > 
+> > > > > >                 if (need_resched()) {
+> > > > > >                          /*
+> > > > > >                           * We're trying to balance between building up a nice
+> > > > > >                           * long list of IOs to improve our merge rate, and
+> > > > > >                           * getting those IOs out quickly for anyone throttling
+> > > > > >                           * in balance_dirty_pages().  cond_resched() doesn't
+> > > > > >                           * unplug, so get our IOs out the door before we
+> > > > > >                           * give up the CPU.
+> > > > > >                           */
+> > > > > >                          blk_flush_plug(current->plug, false);
+> > > > > >                          cond_resched();
+> > > > > >                  }
+> > > > > > 
+> > > > > > So if there is a pending IO completion on this CPU on a work queue
+> > > > > > here, we'll reschedule to it because the work queue kworkers are
+> > > > > > bound to CPUs and they take priority over user threads.
+> > > > > 
+> > > > > The flusher thread is also a kworker, though. So it may hit this
+> > > > > cond_resched(), but it doesn't yield until the timeslice expires.
 > > > 
-> > > In general, as of now, in FUSE, direct writes on the same file are
-> > > serialized over inode lock i.e we hold inode lock for the full duration
-> > > of the write request. I could not found in fuse code a comment which
-> > > clearly explains why this exclusive lock is taken for direct writes.
+> > > 17us or 10ms, it doesn't matter. The fact is the writeback thread
+> > > will give up the CPU long before the latency durations (seconds)
+> > > that were reported upthread are seen. Writeback spinning can
+> > > not explain why truncate is not making progress - everything points
+> > > to it being a downstream symptom, not a cause.
+> > 
+> > Chris can clarify, but I don't remember second-long latencies being
+> > mentioned. Rather sampling periods of multiple seconds during which
+> > the spin bursts occur multiple times.
+
+The initial commit said "long tail latencies for write IOs" without
+specifying an amount.
+
+In general, long latencies in IO mean seconds, even on SSDs,
+especially for writes. If the write requires allocation to be done
+we then have to run completion transactions to convert extents to
+written. The transaction reservation in completion can get stuck for
+seconds if the journal is full and requires waiting on tail pushing.
+We can have thousands of IO completions in flight (ever noticed XFS
+have several thousand completion kworker threads in the process
+listings?) which can then all block in a FIFO queue waiting for
+journal space, and getting journal space might involve waiting for
+tens of thousands of metadata IOs to complete....
+
+So when anyone says "long tail latencies for write IO" I'm thinking
+seconds to tens of seconds because tens to hundreds of milliseconds
+for completion latencies is pretty common and somewhat unavoidable
+on heavily loaded filesystems....
+
+> > > Also important to note, as we are talking about kworker sheduling
+> > > hold-offs, the writeback flusher work is unbound (can run on any
+> > > CPU), whilst the IO completion workers in XFS are per-CPU and bound
+> > > to individual CPUs. Bound kernel tasks usually take run queue
+> > > priority on a CPU over unbound and/or user tasks that can be punted
+> > > to a different CPU.
+> > 
+> > Is that actually true? I'm having trouble finding the corresponding
+> > code in the scheduler.
+
+I can't remember exactly which bit of the scheduler code does this
+because the scheduler code is completely different every time I look
+at it. The behaviour has been around for a long time - the workqueue
+thread pools largely rely on bound kthread tasks pre-empting user
+tasks to get scheduled work done with low latencies....
+
+> > That said, I'm not sure it matters that much. Even if you take CPU
+> > contention out of the equation entirely, I think we agree it's not a
+> > good idea (from a climate POV) to have CPUs busywait on IO. Even if
+> > that IO is just an ordinary wait_on_page_writeback() on a fast drive.
+> > 
+> > So if we can get rid of the redirtying, and it sounds like we can, IMO
+> > we should just go ahead and do so.
+
+As I've said multiple times now, yes, we should fix that, and I've
+pointed out how it should be fixed. I'm waiting for a new patch
+to be posted to fix that behaviour while I'm also trying to get to
+the bottom of what is causing the truncate hold-offs.
+
+> > > > Just to underline this, the long tail latencies aren't softlockups or major
+> > > > explosions.  It's just suboptimal enough that different metrics and
+> > > > dashboards noticed it.
 > > > 
-> > > Following might be the reasons for acquiring exclusive lock but not
-> > > limited to
-> > > 1) Our guess is some USER space fuse implementations might be relying
-> > >     on this lock for seralization.
+> > > Sure, but you've brought a problem we don't understand the root
+> > > cause of to my attention. I want to know what the root cause is so
+> > > that I can determine that there are no other unknown underlying
+> > > issues that are contributing to this issue.
 > > 
-> > Hi Dharmendra,
-> > 
-> > I will just try to be devil's advocate. So if this is server side
-> > limitation, then it is possible that fuse client's isize data in
-> > cache is stale. For example, filesystem is shared between two
-> > clients.
-> > 
-> > - File size is 4G as seen by client A.
-> > - Client B truncates the file to 2G.
-> > - Two processes in client A, try to do parallel direct writes and will
-> >    be able to proceed and server will get two parallel writes both
-> >    extending file size.
-> > 
-> > I can see that this can happen with virtiofs with cache=auto policy.
-> > 
-> > IOW, if this is a fuse server side limitation, then how do you ensure
-> > that fuse kernel's i_size definition is not stale.
+> > It seems to me we're just not on the same page on what the reported
+> > bug is. From my POV, there currently isn't a missing piece in this
+> > puzzle. But Chris worked closer with the prod folks on this, so I'll
+> > leave it to him :)
 > 
-> Hi Vivek,
+> The basic description of the investigation:
 > 
-> I'm sorry, to be sure, can you explain where exactly a client is located for
-> you? For us these are multiple daemons linked to libufse - which you seem to
-> call 'server' Typically these clients are on different machines. And servers
-> are for us on the other side of the network - like an NFS server.
+> * Multiple hits per hour on per 100K machines, but almost impossible to
+> catch across a single box.
+> * The debugging information from the long tail detector showed high IO and
+> high CPU time.  (high CPU is relative here, these machines tend to be IO
+> bound).
+> * Kernel stack analysis showed IO completion threads waiting for CPU.
+> * CPU profiling showed redirty_page_for_writepage() dominating.
 
-Hi Bernd,
+Right, that's what I thought was described - high CPU load was
+occuring from re-dirtying, but ithere's also high IO load and CPU
+load is not obviously the cause of the high IO load or IO latencies.
+I'm more interested in what is causing the IO latencies because the
+high CPU looks to be a downstream symptom of the high IO latencies,
+not the cause....
 
-Agreed, terminology is little confusing. I am calling "fuse kernel" as
-client and fuse daemon (user space) as server. This server in turn might
-be the client to another network filesystem and real files might be
-served by that server on network.
-
-So for simple virtiofs case, There can be two fuse daemons (virtiofsd
-instances) sharing same directory (either on local filesystem or on
-a network filesystem).
-
+> From here we made a relatively simple reproduction of the
+> redirty_page_for_writepage() part of the problem.  It's a good fix in
+> isolation, but we'll have to circle back to see how much of the long tail
+> latency issue it solves.
 > 
-> So now while I'm not sure what you mean with 'client', I'm wondering about
-> two generic questions
+> We can livepatch it quickly, but filtering out the long tail latency hits
+> for just this one bug is labor intensive, so it'll take a little bit of time
+> to get good data.
 > 
-> a) I need to double check, but we were under the assumption the code in
-> question is a direct-io code path. I assume cache=auto would use the page
-> cache and should not be effected?
+> I've got a v2 of the patch that drops the invalidate, doing a load test with
+> fsx this morning and then getting a second xfstests baseline run to see if
+> I've added new failures.
 
-By default cache=auto use page cache but if application initiates a
-direct I/O, it should use direct I/O path.
+Thanks!
 
-> 
-> b) How would the current lock help for distributed clients? Or multiple fuse
-> daemons (what you seem to call server) per local machine?
+Cheers,
 
-I thought that current lock is trying to protect fuse kernel side and
-assumed fuse server (daemon linked to libfuse) can handle multiple
-parallel writes. Atleast that's how I thought about the things. I might
-be wrong. I am not sure.
-
-> 
-> For a single vfs mount point served by fuse, truncate should take the
-> exclusive lock and parallel writes the shared lock - I don't see a problem
-> here either.
-
-Agreed that this does not seem like a problem from fuse kernel side. I was
-just questioning that where parallel direct writes become a problem. And
-answer I heard was that it probably is fuse server (daemon linked with
-libfuse) which is expecting the locking. And if that's the case, this
-patch is not fool proof. It is possible that file got truncated from
-a different client (from a different fuse daemon linked with libfuse).
-
-So say A is first fuse daemon and B is another fuse daemon. Both are
-clients to some network file system as NFS.
-
-- Fuse kernel for A, sees file size as 4G.
-- fuse daemon B truncates the file to size 2G.
-- Fuse kernel for A, has stale cache, and can send two parallel writes
-  say at 3G and 3.5G offset.
-- Fuser daemon A might not like it.(Assuming this is fuse daemon/user
-  space side limitation).
-
-I hope I am able to explain my concern. I am not saying that this patch
-is not good. All I am saying that fuse daemon (user space) can not rely
-on that it will never get two parallel direct writes which can be beyond
-the file size. If fuse kernel cache is stale, it can happen. Just trying
-to set the expectations right.
-
-Thanks
-Vivek
-
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
