@@ -2,76 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B3DE53F5E1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jun 2022 08:09:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82E3653F5EB
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jun 2022 08:13:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235211AbiFGGJn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jun 2022 02:09:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44820 "EHLO
+        id S236941AbiFGGNz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jun 2022 02:13:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230292AbiFGGJk (ORCPT
+        with ESMTP id S230292AbiFGGNx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jun 2022 02:09:40 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07F43A7E3A
-        for <linux-fsdevel@vger.kernel.org>; Mon,  6 Jun 2022 23:09:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=1WewuiiNJnj7c2oS3OjnniLNWZ+YQwmFd9YXnAQvIR4=; b=hllmm5GNyy43wdaRVnBxQai159
-        fcguIwtaK9pyV2buO1+dYiLj3+q2sVsCyxplEjv3pVHVsPBr4SReKtKcn/Ugj0PZHKaM7xjtEwWzv
-        3quNJ6UgfUsptRiU8sIEHzRTiHo1Mcm8LJOXKPXLuXvTAy5QlXRrRzEOyW4wrMUlceHsR/hQunACW
-        R3ahRkJWPTQxF0nnlHKdK9yeaecvj0NkdIjKp6IV8E1RBroI/53EcstZMnt7cgY5jLumuR7rQey4A
-        GmOrS/uF4D7Q6T0iYg0f3ws9Nv0utjJ93nD3kll9VbmNLA1QBr8m+MDV4BWzim/Da1jAMtHUY2NSZ
-        XPGHuxeQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nySPL-004wq2-Ky; Tue, 07 Jun 2022 06:09:39 +0000
-Date:   Mon, 6 Jun 2022 23:09:39 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Damien Le Moal <damien.lemoal@opensource.wdc.com>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: Re: [PATCH 3/3] zonefs: fix zonefs_iomap_begin() for reads
-Message-ID: <Yp7rox7SRvKcsZPT@infradead.org>
-References: <20220603114939.236783-1-damien.lemoal@opensource.wdc.com>
- <20220603114939.236783-4-damien.lemoal@opensource.wdc.com>
+        Tue, 7 Jun 2022 02:13:53 -0400
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C35C9BC6DF;
+        Mon,  6 Jun 2022 23:13:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1654582431; x=1686118431;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=pViZck3K1Rq0vF4B9iREn005L3q1DYrrwNaeY+v9f0c=;
+  b=QKKK+0byDSz1oDYDQEy0NxbMp9GB7AJHHAgkEbJKEqqdIzvCnxvOVR3F
+   pVB/L1QThNbZR0pE7ABG8PH0GA8n0QVT/hiDebOWw0UUI3RVidqB6h0hr
+   fhKWWYtwTKJX28nMgds1JbInUg3GgllVvV53505tfavHMvHwQAWwuJnrG
+   ravYW1EfUwogg/PjR3GcSeUbTvXjVSf/sSL6poHhmlFOJvY3jTfGhdSWL
+   ixY7SqGrJMEbuBla9Sf3PDmNN/gbhZDYV1Fhufy3XjqS+kX//PknmvFOf
+   Sa6GtkIY8Itzz86d4Xfl//y+BnDPzMg3Z/psOmOi9lm/yGIBFonxb2az5
+   Q==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10370"; a="277338689"
+X-IronPort-AV: E=Sophos;i="5.91,282,1647327600"; 
+   d="scan'208";a="277338689"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2022 23:13:49 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.91,282,1647327600"; 
+   d="scan'208";a="614746862"
+Received: from lkp-server01.sh.intel.com (HELO 60dabacc1df6) ([10.239.97.150])
+  by orsmga001.jf.intel.com with ESMTP; 06 Jun 2022 23:13:44 -0700
+Received: from kbuild by 60dabacc1df6 with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1nySTI-000DQ5-17;
+        Tue, 07 Jun 2022 06:13:44 +0000
+Date:   Tue, 7 Jun 2022 14:13:26 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org
+Cc:     kbuild-all@lists.01.org,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-aio@kvack.org, linux-btrfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        cluster-devel@redhat.com, linux-mm@kvack.org,
+        linux-xfs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-ntfs-dev@lists.sourceforge.net, ocfs2-devel@oss.oracle.com,
+        linux-mtd@lists.infradead.org,
+        virtualization@lists.linux-foundation.org
+Subject: Re: [PATCH 14/20] hugetlb: Convert to migrate_folio
+Message-ID: <202206071414.41wGG8fp-lkp@intel.com>
+References: <20220606204050.2625949-15-willy@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220603114939.236783-4-damien.lemoal@opensource.wdc.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20220606204050.2625949-15-willy@infradead.org>
+X-Spam-Status: No, score=-5.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 03, 2022 at 08:49:39PM +0900, Damien Le Moal wrote:
-> If a read operation (e.g. a readahead) is issued to a sequential zone
-> file with an offset exactly equal to the current file size, the iomap
-> type will be set to IOMAP_UNWRITTEN, which will prevent an IO, but the
-> iomap length is always calculated as 0. This causes a WARN_ON() in
-> iomap_iter():
+Hi "Matthew,
 
-Is there a testsuite somewhere with a reproducer?
+I love your patch! Yet something to improve:
 
-> diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
-> index 123464d2145a..64f4ceb6f579 100644
-> --- a/fs/zonefs/super.c
-> +++ b/fs/zonefs/super.c
-> @@ -144,7 +144,7 @@ static int zonefs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
->  		iomap->type = IOMAP_MAPPED;
->  	if (flags & IOMAP_WRITE)
->  		length = zi->i_max_size - offset;
-> -	else
-> +	else if (offset < isize)
->  		length = min(length, isize - offset);
+[auto build test ERROR on linus/master]
+[also build test ERROR on v5.19-rc1 next-20220607]
+[cannot apply to jaegeuk-f2fs/dev-test trondmy-nfs/linux-next kdave/for-next xfs-linux/for-next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
-So you still report an IOMAP_UNWRITTEN extent for the whole size of
-the requst past EOF?  Looking at XFS we do return the whole requested
-length, but do return it as HOLE.  Maybe we need to clarify the behavior
-here and document it.
+url:    https://github.com/intel-lab-lkp/linux/commits/Matthew-Wilcox-Oracle/Convert-aops-migratepage-to-aops-migrate_folio/20220607-044509
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git f2906aa863381afb0015a9eb7fefad885d4e5a56
+config: ia64-randconfig-r015-20220605 (https://download.01.org/0day-ci/archive/20220607/202206071414.41wGG8fp-lkp@intel.com/config)
+compiler: ia64-linux-gcc (GCC) 11.3.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/b038962c9c8c2ab77c71dfba24356ce24bd7a242
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Matthew-Wilcox-Oracle/Convert-aops-migratepage-to-aops-migrate_folio/20220607-044509
+        git checkout b038962c9c8c2ab77c71dfba24356ce24bd7a242
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.3.0 make.cross W=1 O=build_dir ARCH=ia64 SHELL=/bin/bash fs/hugetlbfs/
+
+If you fix the issue, kindly add following tag where applicable
+Reported-by: kernel test robot <lkp@intel.com>
+
+All errors (new ones prefixed by >>):
+
+   fs/hugetlbfs/inode.c: In function 'hugetlbfs_migrate_folio':
+>> fs/hugetlbfs/inode.c:990:17: error: implicit declaration of function 'folio_migrate_copy' [-Werror=implicit-function-declaration]
+     990 |                 folio_migrate_copy(dst, src);
+         |                 ^~~~~~~~~~~~~~~~~~
+>> fs/hugetlbfs/inode.c:992:17: error: implicit declaration of function 'folio_migrate_flags'; did you mean 'folio_mapping_flags'? [-Werror=implicit-function-declaration]
+     992 |                 folio_migrate_flags(dst, src);
+         |                 ^~~~~~~~~~~~~~~~~~~
+         |                 folio_mapping_flags
+   cc1: some warnings being treated as errors
+
+
+vim +/folio_migrate_copy +990 fs/hugetlbfs/inode.c
+
+   972	
+   973	static int hugetlbfs_migrate_folio(struct address_space *mapping,
+   974					struct folio *dst, struct folio *src,
+   975					enum migrate_mode mode)
+   976	{
+   977		int rc;
+   978	
+   979		rc = migrate_huge_page_move_mapping(mapping, dst, src);
+   980		if (rc != MIGRATEPAGE_SUCCESS)
+   981			return rc;
+   982	
+   983		if (hugetlb_page_subpool(&src->page)) {
+   984			hugetlb_set_page_subpool(&dst->page,
+   985						hugetlb_page_subpool(&src->page));
+   986			hugetlb_set_page_subpool(&src->page, NULL);
+   987		}
+   988	
+   989		if (mode != MIGRATE_SYNC_NO_COPY)
+ > 990			folio_migrate_copy(dst, src);
+   991		else
+ > 992			folio_migrate_flags(dst, src);
+   993	
+   994		return MIGRATEPAGE_SUCCESS;
+   995	}
+   996	
+
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
