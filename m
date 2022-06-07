@@ -2,149 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E6CE153F894
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jun 2022 10:49:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8401553F8D1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jun 2022 10:55:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238466AbiFGItG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jun 2022 04:49:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33544 "EHLO
+        id S237612AbiFGIyw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jun 2022 04:54:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238528AbiFGIsA (ORCPT
+        with ESMTP id S238798AbiFGIye (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jun 2022 04:48:00 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D3F4419AE
-        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jun 2022 01:47:33 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id C1A5AB81DA6
-        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jun 2022 08:47:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B61BC385A5;
-        Tue,  7 Jun 2022 08:47:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1654591650;
-        bh=5toDH5vzxjpFX5QTO3J3WkWEC+LSds2wTBAsR5+qmMA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XpMNnJIbVCUJ8IKvEB6NkpEHoaRTVTUe0GuUOYyadV+oo3hSgqkQfDIEhUSfjKiYo
-         qhvX8+htVGBIVlJyguQFIoS9aOPF6Ax7N1fuHKacPU/PvueOepcQCXSD+0/l7CFkLf
-         +NAR9dJI77xYRgQQzIN/OF6Ub1RPL/S0v6G3ZG4ut4YiPY34gy5vUwcvPGHZumd1J3
-         fOR6vYmbghcQf3EgCRoSG3yJnc6h84uqdPfNHftcD4Jm0GLsTpTk1cCF9bdCvLVowa
-         iCcMh1Sqx9EnoxnHPZP4aB6B3Ne6KYrDStM92B+stZtrCH5B1Tv8Pj3x/um2QpFiXv
-         SMNa46QiZZLaQ==
-Date:   Tue, 7 Jun 2022 10:47:24 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Dave Marchevsky <davemarchevsky@fb.com>
-Cc:     linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
-        Rik van Riel <riel@surriel.com>,
-        Seth Forshee <sforshee@digitalocean.com>,
-        kernel-team <kernel-team@fb.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>, clm@fb.com
-Subject: Re: [PATCH v2] fuse: Add module param for non-descendant userns
- access to allow_other
-Message-ID: <20220607084724.7gseviks4h2seeza@wittgenstein>
-References: <20220601184407.2086986-1-davemarchevsky@fb.com>
+        Tue, 7 Jun 2022 04:54:34 -0400
+Received: from heian.cn.fujitsu.com (mail.cn.fujitsu.com [183.91.158.132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 31680E5298
+        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jun 2022 01:54:33 -0700 (PDT)
+IronPort-Data: =?us-ascii?q?A9a23=3Ahu7RuK5kbGoq26c89/4r+QxRtATFchMFZxGqfqr?=
+ =?us-ascii?q?LsXjdYENS0jxTxmZLDWHTb/jeYTbxKt12Pd619U4DvJ+BzINmTVA5pCpnJ55og?=
+ =?us-ascii?q?ZCbXIzGdC8cHM8zwvXrFRsht4NHAjX5BJhcokT0+1H9YtANkVEmjfvSHuCkUba?=
+ =?us-ascii?q?dUsxMbVQMpBkJ2EsLd9ER0tYAbeiRW2thiPuqyyHtEAbNNw1cbgr435m+RCZH5?=
+ =?us-ascii?q?5wejt+3UmsWPpintHeG/5Uc4Ql2yauZdxMUSaEMdgK2qnqq8V23wo/Z109F5tK?=
+ =?us-ascii?q?NmbC9fFAIQ6LJIE6FjX8+t6qK20AE/3JtlP1gcqd0hUR/0l1lm/hr1dxLro32R?=
+ =?us-ascii?q?wEyIoXCheYcTwJFVSp5OMWq/ZeeeyTg7JLIkhSun3zEhq8G4FsNFYER/KB8CHt?=
+ =?us-ascii?q?W+PoEJSolaQqKjOa7hrm8T4FEgsUlMdmuMpgTt29tyRnHAvs8B5POWaPH4Zlfx?=
+ =?us-ascii?q?jhYuyzkNZ4yfOJAMXw2MkuGOEYJZz8q5FsFtL/ArhHCn/dw8jp5fZYK3lU=3D?=
+IronPort-HdrOrdr: =?us-ascii?q?A9a23=3A7dv+MaCfrBUjrUblHemQ55DYdb4zR+YMi2TD?=
+ =?us-ascii?q?tnoBLSC9F/b0qynAppomPGDP4gr5NEtApTniAtjkfZq/z+8X3WB5B97LMzUO01?=
+ =?us-ascii?q?HYTr2Kg7GD/xTQXwX69sN4kZxrarVCDrTLZmRSvILX5xaZHr8brOW6zA=3D=3D?=
+X-IronPort-AV: E=Sophos;i="5.88,333,1635177600"; 
+   d="scan'208";a="124756351"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 07 Jun 2022 16:54:32 +0800
+Received: from G08CNEXMBPEKD04.g08.fujitsu.local (unknown [10.167.33.201])
+        by cn.fujitsu.com (Postfix) with ESMTP id 8725B4D17162;
+        Tue,  7 Jun 2022 16:54:29 +0800 (CST)
+Received: from G08CNEXCHPEKD07.g08.fujitsu.local (10.167.33.80) by
+ G08CNEXMBPEKD04.g08.fujitsu.local (10.167.33.201) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.23; Tue, 7 Jun 2022 16:54:29 +0800
+Received: from [192.168.22.78] (10.167.225.141) by
+ G08CNEXCHPEKD07.g08.fujitsu.local (10.167.33.209) with Microsoft SMTP Server
+ id 15.0.1497.23 via Frontend Transport; Tue, 7 Jun 2022 16:54:29 +0800
+Message-ID: <8d640912-d253-bcbb-fcd1-cff645fb09a2@fujitsu.com>
+Date:   Tue, 7 Jun 2022 16:54:29 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20220601184407.2086986-1-davemarchevsky@fb.com>
-X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [bug report] fsdax: output address in dax_iomap_pfn() and rename
+ it
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+CC:     <linux-fsdevel@vger.kernel.org>
+References: <Yp8FUZnO64Qvyx5G@kili>
+From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
+In-Reply-To: <Yp8FUZnO64Qvyx5G@kili>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-yoursite-MailScanner-ID: 8725B4D17162.ADD2E
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: ruansy.fnst@fujitsu.com
+X-Spam-Status: No, score=-5.4 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 01, 2022 at 11:44:07AM -0700, Dave Marchevsky wrote:
-> Since commit 73f03c2b4b52 ("fuse: Restrict allow_other to the
-> superblock's namespace or a descendant"), access to allow_other FUSE
-> filesystems has been limited to users in the mounting user namespace or
-> descendants. This prevents a process that is privileged in its userns -
-> but not its parent namespaces - from mounting a FUSE fs w/ allow_other
-> that is accessible to processes in parent namespaces.
-> 
-> While this restriction makes sense overall it breaks a legitimate
-> usecase: I have a tracing daemon which needs to peek into
-> process' open files in order to symbolicate - similar to 'perf'. The
-> daemon is a privileged process in the root userns, but is unable to peek
-> into FUSE filesystems mounted with allow_other by processes in child
-> namespaces.
-> 
-> This patch adds a module param, allow_other_parent_userns, to act as an
-> escape hatch for this descendant userns logic. Setting
-> allow_other_parent_userns allows non-descendant-userns processes to
-> access FUSEs mounted with allow_other. A sysadmin setting this param
-> must trust allow_other FUSEs on the host to not DoS processes as
-> described in 73f03c2b4b52.
-> 
-> Signed-off-by: Dave Marchevsky <davemarchevsky@fb.com>
-> ---
-> 
-> This is a followup to a previous attempt to solve same problem in a
-> different way: "fuse: allow CAP_SYS_ADMIN in root userns to access
-> allow_other mount" [0].
-> 
-> v1 -> v2:
->   * Use module param instead of capability check
-> 
->   [0]: lore.kernel.org/linux-fsdevel/20211111221142.4096653-1-davemarchevsky@fb.com
-> 
->  fs/fuse/dir.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-> index 9dfee44e97ad..3d593ae7dc66 100644
-> --- a/fs/fuse/dir.c
-> +++ b/fs/fuse/dir.c
-> @@ -11,6 +11,7 @@
->  #include <linux/pagemap.h>
->  #include <linux/file.h>
->  #include <linux/fs_context.h>
-> +#include <linux/moduleparam.h>
->  #include <linux/sched.h>
->  #include <linux/namei.h>
->  #include <linux/slab.h>
-> @@ -21,6 +22,12 @@
->  #include <linux/types.h>
->  #include <linux/kernel.h>
->  
-> +static bool __read_mostly allow_other_parent_userns;
-> +module_param(allow_other_parent_userns, bool, 0644);
-> +MODULE_PARM_DESC(allow_other_parent_userns,
-> + "Allow users not in mounting or descendant userns "
-> + "to access FUSE with allow_other set");
 
-The name of the parameter also suggests that access is granted to parent
-userns tasks whereas the change seems to me to allows every task access
-to that fuse filesystem independent of what userns they are in.
 
-So even a task in a sibling userns could - probably with rather
-elaborate mount propagation trickery - access that fuse filesystem.
+在 2022/6/7 15:59, Dan Carpenter 写道:
+> Hello Shiyang Ruan,
+> 
+> The patch 1447ac26a964: "fsdax: output address in dax_iomap_pfn() and
+> rename it" from Jun 3, 2022, leads to the following Smatch static
+> checker warning:
+> 
+> 	fs/dax.c:1085 dax_iomap_direct_access()
+> 	error: uninitialized symbol 'rc'.
+> 
+> fs/dax.c
+>      1052 static int dax_iomap_direct_access(const struct iomap *iomap, loff_t pos,
+>      1053                 size_t size, void **kaddr, pfn_t *pfnp)
+>      1054 {
+>      1055         pgoff_t pgoff = dax_iomap_pgoff(iomap, pos);
+>      1056         int id, rc;
+>      1057         long length;
+>      1058
+>      1059         id = dax_read_lock();
+>      1060         length = dax_direct_access(iomap->dax_dev, pgoff, PHYS_PFN(size),
+>      1061                                    DAX_ACCESS, kaddr, pfnp);
+>      1062         if (length < 0) {
+>      1063                 rc = length;
+>      1064                 goto out;
+>      1065         }
+>      1066         if (!pfnp)
+>      1067                 goto out_check_addr;
+> 
+> Is this an error path?
+> 
+>      1068         rc = -EINVAL;
+>      1069         if (PFN_PHYS(length) < size)
+>      1070                 goto out;
+>      1071         if (pfn_t_to_pfn(*pfnp) & (PHYS_PFN(size)-1))
+>      1072                 goto out;
+>      1073         /* For larger pages we need devmap */
+>      1074         if (length > 1 && !pfn_t_devmap(*pfnp))
+>      1075                 goto out;
+>      1076         rc = 0;
+>      1077
+>      1078 out_check_addr:
+>      1079         if (!kaddr)
+>      1080                 goto out;
+> 
+> How is it supposed to be handled if both "pfnp" and "kaddr" are NULL?
+> 
+> Smatch says that "kaddr" can never be NULL so this code is just future
+> proofing but I didn't look at it carefully.
 
-AFaict, either the module parameter is misnamed or the patch doesn't
-implement the behavior expressed in the name.
+Yes, we always pass the @kaddr in all caller, it won't be NULL now.  And 
+even @kaddr and @pfnp are both NULL, it won't cause any error.  So, I 
+think the rc should be initialized to 0 :
 
-The original patch restricted access to a CAP_SYS_ADMIN capable task.
-Did we agree that it was a good idea to weaken it to all tasks?
-Shouldn't we still just restrict this to CAP_SYS_ADMIN capable tasks in
-the initial userns?
+  {
+         pgoff_t pgoff = dax_iomap_pgoff(iomap, pos);
+-       int id, rc;
++       int id, rc = 0;
+         long length;
 
-> +
->  static void fuse_advise_use_readdirplus(struct inode *dir)
->  {
->  	struct fuse_inode *fi = get_fuse_inode(dir);
-> @@ -1230,7 +1237,7 @@ int fuse_allow_current_process(struct fuse_conn *fc)
->  	const struct cred *cred;
->  
->  	if (fc->allow_other)
-> -		return current_in_userns(fc->user_ns);
-> +		return current_in_userns(fc->user_ns) || allow_other_parent_userns;
->  
->  	cred = current_cred();
->  	if (uid_eq(cred->euid, fc->user_id) &&
-> -- 
-> 2.30.2
->
+Do I need to fix this and resend a patch to the list?  Or you could help 
+me fix this?
+
+
+--
+Thanks,
+Ruan.
+
+> 
+>      1081         if (!*kaddr)
+>      1082                 rc = -EFAULT;
+>      1083 out:
+>      1084         dax_read_unlock(id);
+> --> 1085         return rc;
+>      1086 }
+> 
+> regards,
+> dan carpenter
+
+
