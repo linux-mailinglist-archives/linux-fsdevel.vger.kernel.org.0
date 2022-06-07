@@ -2,97 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 72F9853F4E1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jun 2022 06:14:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0034553F522
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jun 2022 06:30:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236468AbiFGEOD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jun 2022 00:14:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53818 "EHLO
+        id S236557AbiFGEaz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jun 2022 00:30:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35580 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229638AbiFGEOC (ORCPT
+        with ESMTP id S231687AbiFGEaw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jun 2022 00:14:02 -0400
-Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF79033E0A
-        for <linux-fsdevel@vger.kernel.org>; Mon,  6 Jun 2022 21:13:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=6wfIImN1V5bWomaOl/DuvOp7dK2fJI8QCN7xBf4qf0c=; b=Zhlrq57iIVSjnqlmjM6lAcsNC8
-        DosyABp2tYc4iTW5p3zZgYbD9CsYQm0WFz27wRrgJi8i1Yt9sAMxXMZUQa/mJt0Kdg9I+ejBr3cFs
-        aRVNus0imXtmeej2XFdKY3J+zxJ8PQkmopz3Yfk/sF6wBnVKbQiu7SqU1YrGVGdMjlRR0XGum4HMv
-        6joGoALz0hyWPehEDrjdSBsfPntUjOjqEuKu9CfcuqfP/1fSkh3XQI74PD35q2KZd5BlWMY1YGN+l
-        Q1JCt8sgFVORbDUw6Qe2c6iRLyCQmWxAmO3n10sxg6PptehfeIAJab+m+uXTNKWEXGmVbglxOyb1g
-        jgQy/RbQ==;
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nyQbO-004YrN-Qr; Tue, 07 Jun 2022 04:13:58 +0000
-Date:   Tue, 7 Jun 2022 04:13:58 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH 9/9] iov_iter_bvec_advance(): don't bother with bvec_iter
-Message-ID: <Yp7QhjR1h0KpgI9N@zeniv-ca.linux.org.uk>
-References: <Yp7PTZ2nckKDTkKu@zeniv-ca.linux.org.uk>
+        Tue, 7 Jun 2022 00:30:52 -0400
+Received: from mail-vk1-xa2f.google.com (mail-vk1-xa2f.google.com [IPv6:2607:f8b0:4864:20::a2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53D605D674;
+        Mon,  6 Jun 2022 21:30:51 -0700 (PDT)
+Received: by mail-vk1-xa2f.google.com with SMTP id p83so350986vkf.6;
+        Mon, 06 Jun 2022 21:30:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=7BF9WyjOUstLU5sdiPd4MgM1fQOqAYwFJgrDPasxIrI=;
+        b=cOLgKQAUY5z5y0ifx1jE/IHkRIIl8B5szLm0fdHeWMDyyf/ZWDFBiFFQywNUmtYkMp
+         UFfn9dOAn9At5LwvAlaQRsERJ9PSmyszxf3ViS2Otshvn4woEWuUXvBOEhBv8iu6g12z
+         eHARpHPnKmoUL/zXQAg5JouTR3worF05zns+QdU1jZL4KEwaHoP6OXWrILsLxmKzw30X
+         zk90/tHjJ2tKX6En7BDwVRF5dQaR4vE6smDWxdL953+eYVP0LFwtKKAkvxksCbv7BpWV
+         ySHOetK2nqnVd9MAwJsvCs/fw6qwLRAdHPM/l3M3B57r2QsT3l5zl294uHIz7HNwXa5k
+         Xi4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=7BF9WyjOUstLU5sdiPd4MgM1fQOqAYwFJgrDPasxIrI=;
+        b=VtBZF+jUURySUTwcljK5+cfU0AqqlNypbo3rLojf2eGXnxhPVmqHXyTNM0DUlaDeKT
+         aPbTZJBXi0KbDuaNH1b8sonw1rMF4T8vNeDch/Hf64JU7Fjhph5pSXUrQGrhixnnhr6H
+         5ZiHiUR4r8Xvk9zAvITwZ7D40HdDQvj/gD6s8aPOs7P7GQHZIjdFgbI7FYkXYgwu3E44
+         /YGCBjzEnEW51cTBN/+2gixiNdipOSYyhsihPCVU3v0IpAdpsPK/1NxGLQlpnULUcMrJ
+         x60VQOxFKsTVRDVoqz2s9mf93Aes2FZE53apRmQYGBNMs/9yBqBu01TDy1tZscg9BuKz
+         WygQ==
+X-Gm-Message-State: AOAM533XIgDbs/XRoGhvBig5BIBWceu1F3BuNn1ljtu1jWEtOA0oURCR
+        yh3wj0GgN5EAUb3Yo6b9z442Yzo2FC4R+PtIV/A=
+X-Google-Smtp-Source: ABdhPJzvBpDBGudyCiIc9ttpYLYI3ZZ5JzmlmAVbO6+QHjRdMM26bbgJJv1EiZWe4nxuDQfsXnWL5NG5KHyWM02U56s=
+X-Received: by 2002:a05:6122:2205:b0:321:230a:53e1 with SMTP id
+ bb5-20020a056122220500b00321230a53e1mr15105573vkb.25.1654576250472; Mon, 06
+ Jun 2022 21:30:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Yp7PTZ2nckKDTkKu@zeniv-ca.linux.org.uk>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+References: <20220606224241.25254-1-ojford@gmail.com>
+In-Reply-To: <20220606224241.25254-1-ojford@gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 7 Jun 2022 07:30:39 +0300
+Message-ID: <CAOQ4uxhuMTw7fHY-2NGCs4s2vqnCQF3EKHtozjn-1UP4Jm9=1Q@mail.gmail.com>
+Subject: Re: [PATCH 0/1] fs: inotify: Add full paths option to inotify
+To:     Oliver Ford <ojford@gmail.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jan Kara <jack@suse.cz>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-do what we do for iovec/kvec; that ends up generating better code,
-AFAICS.
+On Tue, Jun 7, 2022 at 1:43 AM Oliver Ford <ojford@gmail.com> wrote:
+>
+> Adds an option to return the full path in inotify events. Currently, user=
+ space has to keep track of watch descriptors and paths, mapping the descri=
+ptor returned when reading inotify events to the path. Adding an option to =
+return the full path simplifies user space code.
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
- lib/iov_iter.c | 23 ++++++++++++++---------
- 1 file changed, 14 insertions(+), 9 deletions(-)
+That is exactly what FAN_REPORT_DFID_NAME fanofiy mode is for.
+Please try to use it and see if it fits your needs.
 
-diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index 8275b28e886b..93ceb13ec7b5 100644
---- a/lib/iov_iter.c
-+++ b/lib/iov_iter.c
-@@ -870,17 +870,22 @@ static void pipe_advance(struct iov_iter *i, size_t size)
- 
- static void iov_iter_bvec_advance(struct iov_iter *i, size_t size)
- {
--	struct bvec_iter bi;
-+	const struct bio_vec *bvec, *end;
- 
--	bi.bi_size = i->count;
--	bi.bi_bvec_done = i->iov_offset;
--	bi.bi_idx = 0;
--	bvec_iter_advance(i->bvec, &bi, size);
-+	if (!i->count)
-+		return;
-+	i->count -= size;
-+
-+	size += i->iov_offset;
- 
--	i->bvec += bi.bi_idx;
--	i->nr_segs -= bi.bi_idx;
--	i->count = bi.bi_size;
--	i->iov_offset = bi.bi_bvec_done;
-+	for (bvec = i->bvec, end = bvec + i->nr_segs; bvec < end; bvec++) {
-+		if (likely(size < bvec->bv_len))
-+			break;
-+		size -= bvec->bv_len;
-+	}
-+	i->iov_offset = size;
-+	i->nr_segs -= bvec - i->bvec;
-+	i->bvec = bvec;
- }
- 
- static void iov_iter_iovec_advance(struct iov_iter *i, size_t size)
--- 
-2.30.2
-
+Thanks,
+Amir.
