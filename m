@@ -2,140 +2,198 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F01FD54019C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jun 2022 16:40:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5BD35401B4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jun 2022 16:47:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245703AbiFGOkg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jun 2022 10:40:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53492 "EHLO
+        id S1343498AbiFGOrB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jun 2022 10:47:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244561AbiFGOkf (ORCPT
+        with ESMTP id S243135AbiFGOrA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jun 2022 10:40:35 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D9F129350;
-        Tue,  7 Jun 2022 07:40:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=DqhUPNqPqyZw8ImGoA3Lje37HJW9u7YTTYnkSSKpLPA=; b=X3/PZchuCR0debqSS6DBVa/lY2
-        VDTL4fSQzZowwrqlDKPWRF65ifo1JXGa2OtShPKgy8a4mE2SioeN5agFI7zgHcN7tiIMsyjswsosu
-        KEredvIZccs05CPO1ZRBunCT+stDRPc8ZVHilbNxwFkX/WoA6ugd10SG0nwEbxO5v3icuyppc1Trn
-        p0EKW/b3tqspQ7w058LTjGHyTaQtvrtog+Fg4Wqsaryi1pwfyl3lD5ZPqRzeQlJx2GCicRwsx2V0G
-        hjurILEmo19AB/22r28lkfWRhpUy6+DvvrHZhsry2hkP2s9FOX9kPivoT4tgdIZENhjmnPHQkgOia
-        sTvxvdhw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nyaNi-00BiJP-0S; Tue, 07 Jun 2022 14:40:30 +0000
-Date:   Tue, 7 Jun 2022 15:40:29 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     syzbot <syzbot+2c93b863a7698df84bad@syzkaller.appspotmail.com>
-Cc:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        syzkaller-bugs@googlegroups.com, ntfs3@lists.linux.dev
-Subject: Re: [syzbot] WARNING: locking bug in truncate_inode_pages_final
-Message-ID: <Yp9jXahFS8WyQDYt@casper.infradead.org>
-References: <0000000000000cf8be05e0d65e09@google.com>
+        Tue, 7 Jun 2022 10:47:00 -0400
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 148B111459;
+        Tue,  7 Jun 2022 07:46:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1654613219; x=1686149219;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=odwdWlnQ9jRF9jWN7q93T9igP7HxtCpuPP7OPv+3EpE=;
+  b=mGaAKf7hMnOiO8eWT2hvBQpl0fTtg0yvVoJ5TDjALlcVLFXA5ZmhVhT3
+   Pw5p38D3XWSx7EpHPmozkAj2BPaK7F2REbokP7n0Xs4v1WRDDyhXEXT7E
+   qYMjUAXdaGgOG4arNL00GVu1pZjnDh/9VyBOT78x4g2PUM+ePGHiDEeh9
+   2pLzPsbtzZvd0vFUFxpjRPJvPYYoajky1EchZzsD3mNbWV82duASiDhl0
+   yxPmJ63GaHSu9xfDTl+xV19aR3/qbOkFA9QBp6LLCaFu+it096DJ31hl5
+   XKuZxSnEgZAMVyJcK5Dv09gRVtlY4WFH1PYYED6ih+fFJs0Fmwr7Epuen
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10371"; a="274260366"
+X-IronPort-AV: E=Sophos;i="5.91,284,1647327600"; 
+   d="scan'208";a="274260366"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2022 07:46:58 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.91,284,1647327600"; 
+   d="scan'208";a="669999355"
+Received: from lkp-server01.sh.intel.com (HELO 60dabacc1df6) ([10.239.97.150])
+  by FMSMGA003.fm.intel.com with ESMTP; 07 Jun 2022 07:46:56 -0700
+Received: from kbuild by 60dabacc1df6 with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1nyaTv-000DiX-De;
+        Tue, 07 Jun 2022 14:46:55 +0000
+Date:   Tue, 7 Jun 2022 22:46:03 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     gregkh@linuxfoundation.org, brauner@kernel.org, amir73il@gmail.com,
+        gscrivan@redhat.com, hch@lst.de, linux-fsdevel@vger.kernel.org,
+        mszeredi@redhat.com, stable@vger.kernel.org
+Cc:     kbuild-all@lists.01.org
+Subject: Re: FAILED: patch "[PATCH] exportfs: support idmapped mounts" failed
+ to apply to 5.4-stable tree
+Message-ID: <202206072252.SYRt38ih-lkp@intel.com>
+References: <165451866750136@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0000000000000cf8be05e0d65e09@google.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+In-Reply-To: <165451866750136@kroah.com>
+X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 07, 2022 at 12:16:29AM -0700, syzbot wrote:
-> HEAD commit:    d1dc87763f40 assoc_array: Fix BUG_ON during garbage collect
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=14979947f00000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=c51cd24814bb5665
-> dashboard link: https://syzkaller.appspot.com/bug?extid=2c93b863a7698df84bad
-> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+2c93b863a7698df84bad@syzkaller.appspotmail.com
-> 
-> ntfs3: loop3: Different NTFS' sector size (2048) and media sector size (512)
-> ntfs3: loop3: Different NTFS' sector size (2048) and media sector size (512)
-> ------------[ cut here ]------------
-> releasing a pinned lock
+Hi,
 
-This has to be a memory corruption.  The lock being released here is
-the mapping->i_pages xa_lock.  That lock is never pinned.  So somebody
-has corrupted lockdep's data structures.
+I love your patch! Perhaps something to improve:
 
-The only locks which are pinned are:
-drivers/gpu/drm/i915/gt/intel_context.c:        rq->cookie = lockdep_pin_lock(&ce->timeline->mutex);
-drivers/gpu/drm/i915/gt/selftest_timeline.c:            to->cookie = lockdep_pin_lock(&to->context->timeline->mutex);
-drivers/gpu/drm/i915/i915_request.c:    rq->cookie = lockdep_pin_lock(&tl->mutex);
-kernel/sched/deadline.c:                rf.cookie = lockdep_pin_lock(__rq_lockp(rq));
-kernel/sched/sched.h:   rf->cookie = lockdep_pin_lock(__rq_lockp(rq));
+[auto build test WARNING on hch-configfs/for-next]
+[cannot apply to linus/master v5.19-rc1 next-20220607]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
-> WARNING: CPU: 2 PID: 21856 at kernel/locking/lockdep.c:5349 __lock_release kernel/locking/lockdep.c:5349 [inline]
-> WARNING: CPU: 2 PID: 21856 at kernel/locking/lockdep.c:5349 lock_release+0x6a9/0x780 kernel/locking/lockdep.c:5685
-> Modules linked in:
-> CPU: 2 PID: 21856 Comm: syz-executor.3 Not tainted 5.18.0-syzkaller-11972-gd1dc87763f40 #0
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.14.0-2 04/01/2014
-> RIP: 0010:__lock_release kernel/locking/lockdep.c:5349 [inline]
-> RIP: 0010:lock_release+0x6a9/0x780 kernel/locking/lockdep.c:5685
-> Code: 68 00 e9 5a fa ff ff 4c 89 f7 e8 f2 3d 68 00 e9 36 fc ff ff e8 78 3d 68 00 e9 f5 fb ff ff 48 c7 c7 e0 9a cc 89 e8 d1 84 d3 07 <0f> 0b e9 87 fb ff ff e8 3b b3 18 08 48 c7 c7 4c 44 bb 8d e8 4f 3d
-> RSP: 0018:ffffc90003497a00 EFLAGS: 00010082
-> RAX: 0000000000000000 RBX: ffff88801e742c48 RCX: 0000000000000000
-> RDX: 0000000000040000 RSI: ffffffff81601908 RDI: fffff52000692f32
-> RBP: 1ffff92000692f42 R08: 0000000000000005 R09: 0000000000000000
-> R10: 0000000080000001 R11: 0000000000000001 R12: ffff88804fb22498
-> R13: 0000000000000002 R14: ffff88801e742c18 R15: ffff88801e7421c0
-> FS:  00007f64be4cb700(0000) GS:ffff88802cc00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f64be4cc000 CR3: 00000000669a7000 CR4: 0000000000150ee0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 000000000000003b DR6: 00000000ffff0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:157 [inline]
->  _raw_spin_unlock_irq+0x12/0x40 kernel/locking/spinlock.c:202
->  spin_unlock_irq include/linux/spinlock.h:399 [inline]
->  truncate_inode_pages_final+0x5f/0x80 mm/truncate.c:484
->  ntfs_evict_inode+0x16/0xa0 fs/ntfs3/inode.c:1750
->  evict+0x2ed/0x6b0 fs/inode.c:664
->  iput_final fs/inode.c:1744 [inline]
->  iput.part.0+0x562/0x820 fs/inode.c:1770
->  iput+0x58/0x70 fs/inode.c:1760
->  ntfs_fill_super+0x2d66/0x3730 fs/ntfs3/super.c:1180
->  get_tree_bdev+0x440/0x760 fs/super.c:1292
->  vfs_get_tree+0x89/0x2f0 fs/super.c:1497
->  do_new_mount fs/namespace.c:3040 [inline]
->  path_mount+0x1320/0x1fa0 fs/namespace.c:3370
->  do_mount fs/namespace.c:3383 [inline]
->  __do_sys_mount fs/namespace.c:3591 [inline]
->  __se_sys_mount fs/namespace.c:3568 [inline]
->  __x64_sys_mount+0x27f/0x300 fs/namespace.c:3568
->  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
->  do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
->  entry_SYSCALL_64_after_hwframe+0x46/0xb0
-> RIP: 0033:0x7f64bd28a63a
-> Code: 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 b8 ff ff ff ff eb d2 e8 b8 04 00 00 0f 1f 84 00 00 00 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007f64be4caf88 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
-> RAX: ffffffffffffffda RBX: 0000000020000200 RCX: 00007f64bd28a63a
-> RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007f64be4cafe0
-> RBP: 00007f64be4cb020 R08: 00007f64be4cb020 R09: 0000000020000000
-> R10: 0000000000000000 R11: 0000000000000206 R12: 0000000020000000
-> R13: 0000000020000100 R14: 00007f64be4cafe0 R15: 000000002007a980
->  </TASK>
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+url:    https://github.com/intel-lab-lkp/linux/commits/gregkh-linuxfoundation-org/FAILED-patch-PATCH-exportfs-support-idmapped-mounts-failed-to-apply-to-5-4-stable-tree/20220606-203330
+base:   git://git.infradead.org/users/hch/configfs.git for-next
+config: x86_64-rhel-8.3 (https://download.01.org/0day-ci/archive/20220607/202206072252.SYRt38ih-lkp@intel.com/config)
+compiler: gcc-11 (Debian 11.3.0-1) 11.3.0
+reproduce (this is a W=1 build):
+        # https://github.com/intel-lab-lkp/linux/commit/cda5e21742a0ec193c2dfd7e445a2024f9685eb9
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review gregkh-linuxfoundation-org/FAILED-patch-PATCH-exportfs-support-idmapped-mounts-failed-to-apply-to-5-4-stable-tree/20220606-203330
+        git checkout cda5e21742a0ec193c2dfd7e445a2024f9685eb9
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        make W=1 O=build_dir ARCH=x86_64 SHELL=/bin/bash fs/exportfs/
+
+If you fix the issue, kindly add following tag where applicable
+Reported-by: kernel test robot <lkp@intel.com>
+
+All warnings (new ones prefixed by >>):
+
+   fs/exportfs/expfs.c: In function 'reconnect_one':
+   fs/exportfs/expfs.c:148:15: error: implicit declaration of function 'lookup_one_unlocked'; did you mean 'lookup_one_len_unlocked'? [-Werror=implicit-function-declaration]
+     148 |         tmp = lookup_one_unlocked(mnt_user_ns(mnt), nbuf, parent, strlen(nbuf));
+         |               ^~~~~~~~~~~~~~~~~~~
+         |               lookup_one_len_unlocked
+>> fs/exportfs/expfs.c:148:13: warning: assignment to 'struct dentry *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+     148 |         tmp = lookup_one_unlocked(mnt_user_ns(mnt), nbuf, parent, strlen(nbuf));
+         |             ^
+   cc1: some warnings being treated as errors
+
+
+vim +148 fs/exportfs/expfs.c
+
+   108	
+   109	/*
+   110	 * Reconnect a directory dentry with its parent.
+   111	 *
+   112	 * This can return a dentry, or NULL, or an error.
+   113	 *
+   114	 * In the first case the returned dentry is the parent of the given
+   115	 * dentry, and may itself need to be reconnected to its parent.
+   116	 *
+   117	 * In the NULL case, a concurrent VFS operation has either renamed or
+   118	 * removed this directory.  The concurrent operation has reconnected our
+   119	 * dentry, so we no longer need to.
+   120	 */
+   121	static struct dentry *reconnect_one(struct vfsmount *mnt,
+   122			struct dentry *dentry, char *nbuf)
+   123	{
+   124		struct dentry *parent;
+   125		struct dentry *tmp;
+   126		int err;
+   127	
+   128		parent = ERR_PTR(-EACCES);
+   129		inode_lock(dentry->d_inode);
+   130		if (mnt->mnt_sb->s_export_op->get_parent)
+   131			parent = mnt->mnt_sb->s_export_op->get_parent(dentry);
+   132		inode_unlock(dentry->d_inode);
+   133	
+   134		if (IS_ERR(parent)) {
+   135			dprintk("%s: get_parent of %ld failed, err %d\n",
+   136				__func__, dentry->d_inode->i_ino, PTR_ERR(parent));
+   137			return parent;
+   138		}
+   139	
+   140		dprintk("%s: find name of %lu in %lu\n", __func__,
+   141			dentry->d_inode->i_ino, parent->d_inode->i_ino);
+   142		err = exportfs_get_name(mnt, parent, nbuf, dentry);
+   143		if (err == -ENOENT)
+   144			goto out_reconnected;
+   145		if (err)
+   146			goto out_err;
+   147		dprintk("%s: found name: %s\n", __func__, nbuf);
+ > 148		tmp = lookup_one_unlocked(mnt_user_ns(mnt), nbuf, parent, strlen(nbuf));
+   149		if (IS_ERR(tmp)) {
+   150			dprintk("%s: lookup failed: %d\n", __func__, PTR_ERR(tmp));
+   151			err = PTR_ERR(tmp);
+   152			goto out_err;
+   153		}
+   154		if (tmp != dentry) {
+   155			/*
+   156			 * Somebody has renamed it since exportfs_get_name();
+   157			 * great, since it could've only been renamed if it
+   158			 * got looked up and thus connected, and it would
+   159			 * remain connected afterwards.  We are done.
+   160			 */
+   161			dput(tmp);
+   162			goto out_reconnected;
+   163		}
+   164		dput(tmp);
+   165		if (IS_ROOT(dentry)) {
+   166			err = -ESTALE;
+   167			goto out_err;
+   168		}
+   169		return parent;
+   170	
+   171	out_err:
+   172		dput(parent);
+   173		return ERR_PTR(err);
+   174	out_reconnected:
+   175		dput(parent);
+   176		/*
+   177		 * Someone must have renamed our entry into another parent, in
+   178		 * which case it has been reconnected by the rename.
+   179		 *
+   180		 * Or someone removed it entirely, in which case filehandle
+   181		 * lookup will succeed but the directory is now IS_DEAD and
+   182		 * subsequent operations on it will fail.
+   183		 *
+   184		 * Alternatively, maybe there was no race at all, and the
+   185		 * filesystem is just corrupt and gave us a parent that doesn't
+   186		 * actually contain any entry pointing to this inode.  So,
+   187		 * double check that this worked and return -ESTALE if not:
+   188		 */
+   189		if (!dentry_connected(dentry))
+   190			return ERR_PTR(-ESTALE);
+   191		return NULL;
+   192	}
+   193	
+
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
