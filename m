@@ -2,51 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 189BA53FFB8
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jun 2022 15:11:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D967540048
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jun 2022 15:42:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244491AbiFGNLh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jun 2022 09:11:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36418 "EHLO
+        id S244863AbiFGNmH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jun 2022 09:42:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244471AbiFGNL0 (ORCPT
+        with ESMTP id S242626AbiFGNmF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jun 2022 09:11:26 -0400
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DF78C9662
-        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jun 2022 06:11:23 -0700 (PDT)
-Received: by mail-io1-f70.google.com with SMTP id k4-20020a6b4004000000b006697f6074e6so708994ioa.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Jun 2022 06:11:23 -0700 (PDT)
+        Tue, 7 Jun 2022 09:42:05 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 11CE9BCE8B
+        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jun 2022 06:42:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1654609323;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=U9GWchY9hZYcIJP7lDw5j1KYfu5h/jhdfCsZWPH40Q8=;
+        b=SGwI3oo2udhcgRJgauoltrxTaB33zFqMlPsUaH8WUZz4QPIfAwGwg4PQm17iO6cMEItOsM
+        axYMGK9vuHGzqjAgNSzaY2WgqSRWlBsuwmpD94X3OUi80GtTPvkLf0mlT6SB4dZTKdLAHC
+        E6M6wjnVELJzqQIovGlU8wuUTz4hh/8=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-591--nvHW1b-PlOInLByhNsaBQ-1; Tue, 07 Jun 2022 09:42:01 -0400
+X-MC-Unique: -nvHW1b-PlOInLByhNsaBQ-1
+Received: by mail-qk1-f199.google.com with SMTP id i5-20020a05620a404500b006a6d7a765d9so1515315qko.7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Jun 2022 06:42:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=QdpiH1zf2g1QfmGEmiyd/ASppcMDWZ+/Qd+vKzppL80=;
-        b=JgRKuVmXOarnHUwWtaSp966CV25Yya070hF7LVKJAKf5IMqQvf8YsB2ST8epU1lRs4
-         UqfbrH83GmrRjV/OeE+BYk1ldKMWOQdOX+2V29aKCet4HYhC4qFsv2tkZdSKe3AkOE3T
-         MehP732O21ANkqM7HwoSNPrtwhn196nLqDGi7G1R3idBzwdm6BHXYl9tXYB1w+iuvChY
-         9BPewAwecucMdNLP1LwWpUXP2cL4xycU1ODQDKxbgTKTxo7NrCsb/891KHbfri5IQjqC
-         xNz/hFaz6PPjozugLvnbmX/vkQ69NegKLWYV5+pxqtyNjyo6iDbV0lcLAeYXxW/bZ4cQ
-         6pjg==
-X-Gm-Message-State: AOAM533aXRWg0/0IvYRRxqAicjtT0I57MU2BRYSJSs+Z48ZpEST1yfUX
-        EuF4NfRcU+j/9qoZszx5nmmaFkFxI0TvcwPjS49oFMepdCyv
-X-Google-Smtp-Source: ABdhPJzpsElH7CPkj15sJP83oYbAf5DXGOYbkFiMYnv/JqtbiwHAf5e7dMZADXg1Y8w3A9Y3Zst4XhlgjYmAuvLs1hgPCC51LgTL
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=U9GWchY9hZYcIJP7lDw5j1KYfu5h/jhdfCsZWPH40Q8=;
+        b=BvkPdES/y8G6dAYO7YT5cSWZCHsTGcLpZUC10Z793A9qvr/NEaFBe8GAvLma3CnzHK
+         bLAkQo9WySaZUIQwSz3104oda7h3Hc42pylSKNa0olNKR7AiwrMt3W6GONrXQZTAcf+N
+         B5UQhyAApPWRmVgSDOUakeJrZ3kyVBXyjzpc7OzOXMAulcfuHW7z7iFm3ydRRVGIcdcV
+         YX2t5LjnKMg3MLZpnCQLwxCWwzmiVbgmXV5bXunSgm8g1K0Ptk/3uA6+yBP66NNXb6sW
+         NKJ+fQR7uOVnue7wdtKo5/ji8IVLtvauSsknfiIxcaUhR0peldcF4TvaThzdEk/49j8l
+         r9Lg==
+X-Gm-Message-State: AOAM533ZAKFan3FiQsaC58D+2nCkFBPZW5D+wyiqJxh118dSSuShuTK9
+        lddb2lfJeeoWlL+LB6dFV97mtuwC/AoVUS3K2/Id0sYPuST4Ou+2Ix0yyn4uwllxJ4/cDzUmrF1
+        MvUJ2+cRFr9i+Fj/e1UHFtmp19Q==
+X-Received: by 2002:ac8:5acc:0:b0:304:f75a:4a1d with SMTP id d12-20020ac85acc000000b00304f75a4a1dmr3015558qtd.120.1654609320536;
+        Tue, 07 Jun 2022 06:42:00 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJyyavNr4YW+NLtrlTYw3DwYvyx9zxVnBrVGsEoQi3F5ODngxQYCXvCvG44n4ArB8DEsaTyYSw==
+X-Received: by 2002:ac8:5acc:0:b0:304:f75a:4a1d with SMTP id d12-20020ac85acc000000b00304f75a4a1dmr3015540qtd.120.1654609320271;
+        Tue, 07 Jun 2022 06:42:00 -0700 (PDT)
+Received: from bfoster (c-24-61-119-116.hsd1.ma.comcast.net. [24.61.119.116])
+        by smtp.gmail.com with ESMTPSA id ay33-20020a05620a17a100b006a6f68c8a87sm148860qkb.126.2022.06.07.06.41.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Jun 2022 06:41:59 -0700 (PDT)
+Date:   Tue, 7 Jun 2022 09:41:57 -0400
+From:   Brian Foster <bfoster@redhat.com>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-aio@kvack.org,
+        linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-mm@kvack.org, linux-xfs@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
+        ocfs2-devel@oss.oracle.com, linux-mtd@lists.infradead.org,
+        virtualization@lists.linux-foundation.org
+Subject: Re: [PATCH 05/20] mm/migrate: Convert expected_page_refs() to
+ folio_expected_refs()
+Message-ID: <Yp9VpZDsUEAZHEuy@bfoster>
+References: <20220606204050.2625949-1-willy@infradead.org>
+ <20220606204050.2625949-6-willy@infradead.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c26:b0:2d3:bbe3:9223 with SMTP id
- m6-20020a056e021c2600b002d3bbe39223mr16048928ilh.176.1654607482511; Tue, 07
- Jun 2022 06:11:22 -0700 (PDT)
-Date:   Tue, 07 Jun 2022 06:11:22 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003ce9d105e0db53c8@google.com>
-Subject: [syzbot] KASAN: use-after-free Read in copy_page_from_iter_atomic (2)
-From:   syzbot <syzbot+d2dd123304b4ae59f1bd@syzkaller.appspotmail.com>
-To:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        syzkaller-bugs@googlegroups.com, willy@infradead.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220606204050.2625949-6-willy@infradead.org>
+X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -54,81 +84,72 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Mon, Jun 06, 2022 at 09:40:35PM +0100, Matthew Wilcox (Oracle) wrote:
+> Now that both callers have a folio, convert this function to
+> take a folio & rename it.
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  mm/migrate.c | 19 ++++++++++++-------
+>  1 file changed, 12 insertions(+), 7 deletions(-)
+> 
+> diff --git a/mm/migrate.c b/mm/migrate.c
+> index 77b8c662c9ca..e0a593e5b5f9 100644
+> --- a/mm/migrate.c
+> +++ b/mm/migrate.c
+> @@ -337,13 +337,18 @@ void pmd_migration_entry_wait(struct mm_struct *mm, pmd_t *pmd)
+>  }
+>  #endif
+>  
+> -static int expected_page_refs(struct address_space *mapping, struct page *page)
+> +static int folio_expected_refs(struct address_space *mapping,
+> +		struct folio *folio)
+>  {
+> -	int expected_count = 1;
+> +	int refs = 1;
+> +	if (!mapping)
+> +		return refs;
+>  
+> -	if (mapping)
+> -		expected_count += compound_nr(page) + page_has_private(page);
+> -	return expected_count;
+> +	refs += folio_nr_pages(folio);
+> +	if (folio_get_private(folio))
+> +		refs++;
 
-syzbot found the following issue on:
+Why not folio_has_private() (as seems to be used for later
+page_has_private() conversions) here?
 
-HEAD commit:    73d0e32571a0 Add linux-next specific files for 20220607
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1433bacff00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=448ee2b64e828049
-dashboard link: https://syzkaller.appspot.com/bug?extid=d2dd123304b4ae59f1bd
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+> +
+> +	return refs;;
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Nit: extra ;
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d2dd123304b4ae59f1bd@syzkaller.appspotmail.com
+Brian
 
-BTRFS error (device loop2): bad tree block start, want 22036480 have 0
-==================================================================
-BUG: KASAN: use-after-free in copy_page_from_iter_atomic+0xef6/0x1b30 lib/iov_iter.c:969
-Read of size 4096 at addr ffff888177101000 by task kworker/u4:30/4131
+>  }
+>  
+>  /*
+> @@ -360,7 +365,7 @@ int folio_migrate_mapping(struct address_space *mapping,
+>  	XA_STATE(xas, &mapping->i_pages, folio_index(folio));
+>  	struct zone *oldzone, *newzone;
+>  	int dirty;
+> -	int expected_count = expected_page_refs(mapping, &folio->page) + extra_count;
+> +	int expected_count = folio_expected_refs(mapping, folio) + extra_count;
+>  	long nr = folio_nr_pages(folio);
+>  
+>  	if (!mapping) {
+> @@ -670,7 +675,7 @@ static int __buffer_migrate_folio(struct address_space *mapping,
+>  		return migrate_page(mapping, &dst->page, &src->page, mode);
+>  
+>  	/* Check whether page does not have extra refs before we do more work */
+> -	expected_count = expected_page_refs(mapping, &src->page);
+> +	expected_count = folio_expected_refs(mapping, src);
+>  	if (folio_ref_count(src) != expected_count)
+>  		return -EAGAIN;
+>  
+> -- 
+> 2.35.1
+> 
+> 
 
-CPU: 0 PID: 4131 Comm: kworker/u4:30 Not tainted 5.19.0-rc1-next-20220607-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Workqueue: loop2 loop_workfn
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:106
- print_address_description.constprop.0.cold+0xeb/0x495 mm/kasan/report.c:313
- print_report mm/kasan/report.c:429 [inline]
- kasan_report.cold+0xf4/0x1c6 mm/kasan/report.c:491
- check_region_inline mm/kasan/generic.c:183 [inline]
- kasan_check_range+0x13d/0x180 mm/kasan/generic.c:189
- memcpy+0x20/0x60 mm/kasan/shadow.c:65
- copy_page_from_iter_atomic+0xef6/0x1b30 lib/iov_iter.c:969
- generic_perform_write+0x2b8/0x560 mm/filemap.c:3734
- __generic_file_write_iter+0x2aa/0x4d0 mm/filemap.c:3854
- generic_file_write_iter+0xd7/0x220 mm/filemap.c:3886
- call_write_iter include/linux/fs.h:2059 [inline]
- do_iter_readv_writev+0x3d1/0x640 fs/read_write.c:742
- do_iter_write+0x182/0x700 fs/read_write.c:868
- vfs_iter_write+0x70/0xa0 fs/read_write.c:909
- lo_write_bvec drivers/block/loop.c:249 [inline]
- lo_write_simple drivers/block/loop.c:271 [inline]
- do_req_filebacked drivers/block/loop.c:495 [inline]
- loop_handle_cmd drivers/block/loop.c:1859 [inline]
- loop_process_work+0xd83/0x2050 drivers/block/loop.c:1894
- process_one_work+0x996/0x1610 kernel/workqueue.c:2289
- worker_thread+0x665/0x1080 kernel/workqueue.c:2436
- kthread+0x2e9/0x3a0 kernel/kthread.c:376
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:302
- </TASK>
-
-The buggy address belongs to the physical page:
-page:ffffea0005dc4040 refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x177101
-flags: 0x57ff00000000000(node=1|zone=2|lastcpupid=0x7ff)
-raw: 057ff00000000000 ffffea0005dc4048 ffffea0005dc4048 0000000000000000
-raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner info is not present (never set?)
-
-Memory state around the buggy address:
- ffff888177100f00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
- ffff888177100f80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
->ffff888177101000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-                   ^
- ffff888177101080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
- ffff888177101100: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
