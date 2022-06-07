@@ -2,156 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 97B6D53F6C0
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jun 2022 09:01:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41F4653F701
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jun 2022 09:16:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237400AbiFGHBr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jun 2022 03:01:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38936 "EHLO
+        id S237490AbiFGHQc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jun 2022 03:16:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231392AbiFGHBq (ORCPT
+        with ESMTP id S235243AbiFGHQa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jun 2022 03:01:46 -0400
-Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13DA2DFD13;
-        Tue,  7 Jun 2022 00:01:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1654585305; x=1686121305;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   mime-version:in-reply-to;
-  bh=ZV74rA8Yj9vsewf5ZR+zBoOmFi7pomIO9JTPNnhNKN8=;
-  b=K0kATua1kyotCI00blMzra3BpvqvEwQpBF3ONucBFBtci+cCdKzXAutw
-   TBRE/He+PipiFuZbJFq3dCEGT8pTGxug7femgjarN8qJP2e2NkuICxD85
-   HC2IekcArSCZXgpkrgzLbRbmtScHP5OtGxCXKBJ+cHOVpPd0euTpANd31
-   dky0nXhbdal3koQTU6Fcg0ba6j2EmTCTISRqo90924sTdqmqBovn664lZ
-   u+cIB0RT1tm9jbvR+OqPKgjFNCp2zunFI7j0sJQzy7fe8fnKCkWxXteXY
-   FQOOWwTmyKy2m/CdR8+Ki7bZBapqBZfdYU7urAQ18blSGx87h3yeYkBFq
-   g==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10370"; a="277355550"
-X-IronPort-AV: E=Sophos;i="5.91,283,1647327600"; 
-   d="scan'208";a="277355550"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2022 00:01:22 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.91,283,1647327600"; 
-   d="scan'208";a="579485634"
-Received: from chaop.bj.intel.com (HELO localhost) ([10.240.192.101])
-  by orsmga007.jf.intel.com with ESMTP; 07 Jun 2022 00:01:13 -0700
-Date:   Tue, 7 Jun 2022 14:57:49 +0800
-From:   Chao Peng <chao.p.peng@linux.intel.com>
-To:     Vishal Annapurve <vannapurve@google.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Jun Nakajima <jun.nakajima@intel.com>, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com
-Subject: Re: [PATCH v6 0/8] KVM: mm: fd-based approach for supporting KVM
- guest private memory
-Message-ID: <20220607065749.GA1513445@chaop.bj.intel.com>
-Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
-References: <20220519153713.819591-1-chao.p.peng@linux.intel.com>
- <CAGtprH_83CEC0U-cBR2FzHsxbwbGn0QJ87WFNOEet8sineOcbQ@mail.gmail.com>
+        Tue, 7 Jun 2022 03:16:30 -0400
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C62E392715
+        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jun 2022 00:16:29 -0700 (PDT)
+Received: by mail-il1-f199.google.com with SMTP id q6-20020a056e0215c600b002c2c4091914so13257716ilu.14
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Jun 2022 00:16:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=wOUpr7ahlyF1rLdn4KbRen7FyA30JfhTbBcwjnokP9E=;
+        b=jNMFQZSpcIpSwbGVVRxFzZnM8V6mvvmiAwbeVNGP41g8PlRFYb5uY7oJPsROx3OYWo
+         NZGdOWPZ4l1G16+hUu1H4pqZdL0zdmB25cvb6qA3e+15ZWOGVAbH01uIiS8B4omNPBjf
+         wwtMDtCjpAXceiwbJypUfrgDsKPu5X2K8CwOMsmqPAj6DxvNsB/RAQ1x32SeD5ptubHD
+         EdUbHuYKuSBggVErv1uX8ygIK9KIAzOvIuHBnbp42PqfBvfxLGQMZ2FDfq3jenrNlf0k
+         UT4SMmaEke9dxNuPHtvdbZBzlss2NaMqpEZYZuO7HSvFTGofnwj3h9xtmVJjUKeOgbFM
+         9Y6g==
+X-Gm-Message-State: AOAM533cp1BsOxS/nJAmGKnrWzhdmJUapaSHqOqJQb39+ncOmK37ElB9
+        v7Y/FBiIGQ6tbWqrfvGNHaiLlZe8ayD52biavCatgL32nYuv
+X-Google-Smtp-Source: ABdhPJzGJdv5PdP3xXCFMVVSyakAl/JJTw9rcSy1ZKVQ8G6mVoWbuD5SL8zlsWDfGSwEHej9wlFLngvxyQiSJh2jcrSkAHw+o8Jb
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGtprH_83CEC0U-cBR2FzHsxbwbGn0QJ87WFNOEet8sineOcbQ@mail.gmail.com>
-X-Spam-Status: No, score=-5.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+X-Received: by 2002:a05:6e02:1245:b0:2d3:a86e:c587 with SMTP id
+ j5-20020a056e02124500b002d3a86ec587mr14715853ilq.274.1654586189082; Tue, 07
+ Jun 2022 00:16:29 -0700 (PDT)
+Date:   Tue, 07 Jun 2022 00:16:29 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000000cf8be05e0d65e09@google.com>
+Subject: [syzbot] WARNING: locking bug in truncate_inode_pages_final
+From:   syzbot <syzbot+2c93b863a7698df84bad@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        syzkaller-bugs@googlegroups.com, willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 06, 2022 at 01:09:50PM -0700, Vishal Annapurve wrote:
-> >
-> > Private memory map/unmap and conversion
-> > ---------------------------------------
-> > Userspace's map/unmap operations are done by fallocate() ioctl on the
-> > backing store fd.
-> >   - map: default fallocate() with mode=0.
-> >   - unmap: fallocate() with FALLOC_FL_PUNCH_HOLE.
-> > The map/unmap will trigger above memfile_notifier_ops to let KVM map/unmap
-> > secondary MMU page tables.
-> >
-> ....
-> >    QEMU: https://github.com/chao-p/qemu/tree/privmem-v6
-> >
-> > An example QEMU command line for TDX test:
-> > -object tdx-guest,id=tdx \
-> > -object memory-backend-memfd-private,id=ram1,size=2G \
-> > -machine q35,kvm-type=tdx,pic=no,kernel_irqchip=split,memory-encryption=tdx,memory-backend=ram1
-> >
-> 
-> There should be more discussion around double allocation scenarios
-> when using the private fd approach. A malicious guest or buggy
-> userspace VMM can cause physical memory getting allocated for both
-> shared (memory accessible from host) and private fds backing the guest
-> memory.
-> Userspace VMM will need to unback the shared guest memory while
-> handling the conversion from shared to private in order to prevent
-> double allocation even with malicious guests or bugs in userspace VMM.
+Hello,
 
-I don't know how malicious guest can cause that. The initial design of
-this serie is to put the private/shared memory into two different
-address spaces and gives usersapce VMM the flexibility to convert
-between the two. It can choose respect the guest conversion request or
-not.
+syzbot found the following issue on:
 
-It's possible for a usrspace VMM to cause double allocation if it fails
-to call the unback operation during the conversion, this may be a bug
-or not. Double allocation may not be a wrong thing, even in conception.
-At least TDX allows you to use half shared half private in guest, means
-both shared/private can be effective. Unbacking the memory is just the
-current QEMU implementation choice.
+HEAD commit:    d1dc87763f40 assoc_array: Fix BUG_ON during garbage collect
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14979947f00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c51cd24814bb5665
+dashboard link: https://syzkaller.appspot.com/bug?extid=2c93b863a7698df84bad
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
 
-Chao
-> 
-> Options to unback shared guest memory seem to be:
-> 1) madvise(.., MADV_DONTNEED/MADV_REMOVE) - This option won't stop
-> kernel from backing the shared memory on subsequent write accesses
-> 2) fallocate(..., FALLOC_FL_PUNCH_HOLE...) - For file backed shared
-> guest memory, this option still is similar to madvice since this would
-> still allow shared memory to get backed on write accesses
-> 3) munmap - This would give away the contiguous virtual memory region
-> reservation with holes in the guest backing memory, which might make
-> guest memory management difficult.
-> 4) mprotect(... PROT_NONE) - This would keep the virtual memory
-> address range backing the guest memory preserved
-> 
-> ram_block_discard_range_fd from reference implementation:
-> https://github.com/chao-p/qemu/tree/privmem-v6 seems to be relying on
-> fallocate/madvise.
-> 
-> Any thoughts/suggestions around better ways to unback the shared
-> memory in order to avoid double allocation scenarios?
-> 
-> Regards,
-> Vishal
+Unfortunately, I don't have any reproducer for this issue yet.
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+2c93b863a7698df84bad@syzkaller.appspotmail.com
+
+ntfs3: loop3: Different NTFS' sector size (2048) and media sector size (512)
+ntfs3: loop3: Different NTFS' sector size (2048) and media sector size (512)
+------------[ cut here ]------------
+releasing a pinned lock
+WARNING: CPU: 2 PID: 21856 at kernel/locking/lockdep.c:5349 __lock_release kernel/locking/lockdep.c:5349 [inline]
+WARNING: CPU: 2 PID: 21856 at kernel/locking/lockdep.c:5349 lock_release+0x6a9/0x780 kernel/locking/lockdep.c:5685
+Modules linked in:
+CPU: 2 PID: 21856 Comm: syz-executor.3 Not tainted 5.18.0-syzkaller-11972-gd1dc87763f40 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.14.0-2 04/01/2014
+RIP: 0010:__lock_release kernel/locking/lockdep.c:5349 [inline]
+RIP: 0010:lock_release+0x6a9/0x780 kernel/locking/lockdep.c:5685
+Code: 68 00 e9 5a fa ff ff 4c 89 f7 e8 f2 3d 68 00 e9 36 fc ff ff e8 78 3d 68 00 e9 f5 fb ff ff 48 c7 c7 e0 9a cc 89 e8 d1 84 d3 07 <0f> 0b e9 87 fb ff ff e8 3b b3 18 08 48 c7 c7 4c 44 bb 8d e8 4f 3d
+RSP: 0018:ffffc90003497a00 EFLAGS: 00010082
+RAX: 0000000000000000 RBX: ffff88801e742c48 RCX: 0000000000000000
+RDX: 0000000000040000 RSI: ffffffff81601908 RDI: fffff52000692f32
+RBP: 1ffff92000692f42 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000080000001 R11: 0000000000000001 R12: ffff88804fb22498
+R13: 0000000000000002 R14: ffff88801e742c18 R15: ffff88801e7421c0
+FS:  00007f64be4cb700(0000) GS:ffff88802cc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f64be4cc000 CR3: 00000000669a7000 CR4: 0000000000150ee0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 000000000000003b DR6: 00000000ffff0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:157 [inline]
+ _raw_spin_unlock_irq+0x12/0x40 kernel/locking/spinlock.c:202
+ spin_unlock_irq include/linux/spinlock.h:399 [inline]
+ truncate_inode_pages_final+0x5f/0x80 mm/truncate.c:484
+ ntfs_evict_inode+0x16/0xa0 fs/ntfs3/inode.c:1750
+ evict+0x2ed/0x6b0 fs/inode.c:664
+ iput_final fs/inode.c:1744 [inline]
+ iput.part.0+0x562/0x820 fs/inode.c:1770
+ iput+0x58/0x70 fs/inode.c:1760
+ ntfs_fill_super+0x2d66/0x3730 fs/ntfs3/super.c:1180
+ get_tree_bdev+0x440/0x760 fs/super.c:1292
+ vfs_get_tree+0x89/0x2f0 fs/super.c:1497
+ do_new_mount fs/namespace.c:3040 [inline]
+ path_mount+0x1320/0x1fa0 fs/namespace.c:3370
+ do_mount fs/namespace.c:3383 [inline]
+ __do_sys_mount fs/namespace.c:3591 [inline]
+ __se_sys_mount fs/namespace.c:3568 [inline]
+ __x64_sys_mount+0x27f/0x300 fs/namespace.c:3568
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x46/0xb0
+RIP: 0033:0x7f64bd28a63a
+Code: 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 b8 ff ff ff ff eb d2 e8 b8 04 00 00 0f 1f 84 00 00 00 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f64be4caf88 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0000000020000200 RCX: 00007f64bd28a63a
+RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007f64be4cafe0
+RBP: 00007f64be4cb020 R08: 00007f64be4cb020 R09: 0000000020000000
+R10: 0000000000000000 R11: 0000000000000206 R12: 0000000020000000
+R13: 0000000020000100 R14: 00007f64be4cafe0 R15: 000000002007a980
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
