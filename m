@@ -2,52 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D1C3053F38A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jun 2022 03:49:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC71E53F38C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jun 2022 03:49:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235430AbiFGBtm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Jun 2022 21:49:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53800 "EHLO
+        id S235516AbiFGBtn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Jun 2022 21:49:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55062 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235473AbiFGBt0 (ORCPT
+        with ESMTP id S235608AbiFGBtk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Jun 2022 21:49:26 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE08466F94;
-        Mon,  6 Jun 2022 18:49:24 -0700 (PDT)
+        Mon, 6 Jun 2022 21:49:40 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5964B6948A;
+        Mon,  6 Jun 2022 18:49:30 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4ADE9611E8;
-        Tue,  7 Jun 2022 01:49:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABB4FC3411C;
-        Tue,  7 Jun 2022 01:49:23 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D770161203;
+        Tue,  7 Jun 2022 01:49:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E670C385A9;
+        Tue,  7 Jun 2022 01:49:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1654566563;
-        bh=UDONAaKGGd3UwTf4kkDP8Lt1KEBys8H8hC9AJd75qPw=;
+        s=k20201202; t=1654566569;
+        bh=qSvr7Gh3LPbX6JdisRAwN1KiQUP4h+g+NqN2y5XhZEg=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=fZvkIueHrFY2BdCaUVwzumV7/gqYIYErNR5LIbNP/nsGZh8iG0U3HX0rRSy+Tt1Yq
-         1fcVkAlgDzO9EKkudT8aNZAVTm8wQx0f2IDV3PBeFXhbUdwpLVutJCF9RviXgg6Krr
-         fDTTT3TKVZ8fwrDYO1jpXBc5WaJY9/H1nEuGAl/vVDhTCgR5rLz9+0474RNl6SI9pa
-         Sw2xQg8sjEjNsOEYCfd6tER5ChKHbGMUYXhNxveAJ6wQ8pCaxXF25F0Pv15jQbUadr
-         Mqw68It/dMTWX+ZShCtom5XiLblj6/TbF7NyzbypxQWbcKYQYzTxmmINJouIyUSsdg
-         100HcxSHd3jFQ==
-Subject: [PATCH 7/8] xfs: document specific technical aspects of userspace
- driver program
+        b=GOWzi6oQ4/DuYtv4mxtmwy0U8advVwMdaNkJp4JtAn2O1XTGWylJIYyfgoGiFQXXr
+         LKlP4lStEIglBYXQy0pn8KEQ75seZaeyssEzYBmAV9euO/9X2t9dXesVsStncg3d9t
+         KLrjzTsAm+K8XbDsTYiLPBC3H4l/YtfLp/thV0GCWrFEs3areKbyX6zq6zbTcMsETG
+         G3x4zRg3UxjF7/3K3Hpri11RmfeYoQm1RWYbgJ9UojTOaOOBWDFJFzZsbr4IC385G2
+         Eu3n+tg+HgOeqqlpe3vN2suX1XnDk7cQEJP7OjHzDMoUzlDDaz//lH9XUEawopMU3U
+         vUEb48uUzLoEg==
+Subject: [PATCH 8/8] xfs: document future directions of online fsck
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     djwong@kernel.org
 Cc:     linux-xfs@vger.kernel.org, willy@infradead.org,
         chandan.babu@oracle.com, allison.henderson@oracle.com,
         linux-fsdevel@vger.kernel.org, hch@infradead.org,
         catherine.hoang@oracle.com
-Date:   Mon, 06 Jun 2022 18:49:23 -0700
-Message-ID: <165456656324.167418.13728838498028089183.stgit@magnolia>
+Date:   Mon, 06 Jun 2022 18:49:28 -0700
+Message-ID: <165456656884.167418.6681877656704618850.stgit@magnolia>
 In-Reply-To: <165456652256.167418.912764930038710353.stgit@magnolia>
 References: <165456652256.167418.912764930038710353.stgit@magnolia>
 User-Agent: StGit/0.19
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -60,318 +59,219 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Add the sixth chapter of the online fsck design documentation, where
-we discuss the details of the data structures and algorithms used by the
-driver program xfs_scrub.
+Add the seventh and final chapter of the online fsck documentation,
+where we talk about future functionality that can tie in with the
+functionality provided by the online fsck patchset.
 
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 ---
- .../filesystems/xfs-online-fsck-design.rst         |  289 ++++++++++++++++++++
- 1 file changed, 289 insertions(+)
+ .../filesystems/xfs-online-fsck-design.rst         |  190 ++++++++++++++++++++
+ 1 file changed, 190 insertions(+)
 
 
 diff --git a/Documentation/filesystems/xfs-online-fsck-design.rst b/Documentation/filesystems/xfs-online-fsck-design.rst
-index d9662c9653c9..47bedce146b8 100644
+index 47bedce146b8..254c9bb2f2dc 100644
 --- a/Documentation/filesystems/xfs-online-fsck-design.rst
 +++ b/Documentation/filesystems/xfs-online-fsck-design.rst
-@@ -268,6 +268,9 @@ The seven phases are as follows:
- 7. The final phase re-checks the summary counters and presents the caller with
-    a summary of space usage and file counts.
+@@ -3101,6 +3101,8 @@ The extra flexibility enables several new use cases:
+   (``FIEXCHANGE_RANGE``) to exchange the file contents, thereby committing all
+   of the updates to the original file, or none of them.
  
-+This allocation of responsibilities will be :ref:`revisited <scrubcheck>`
-+later in this document.
++.. _swapext_if_unchanged:
 +
- Steps for Each Scrub Item
- -------------------------
- 
-@@ -3383,3 +3386,289 @@ The proposed patches are in the
- `directory repair
- <https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=repair-dirs>`_
- series.
+ - **Transactional file updates**: The same mechanism as above, but the caller
+   only wants the commit to occur if the original file's contents have not
+   changed.
+@@ -3672,3 +3674,191 @@ the failure to the specific region of the media and recorded.
+ When we have finished issuing verification requests, we again use the space map
+ ioctl to map the recorded media errors back to the metadata structures or files
+ that own the space, and report the data have been lost.
 +
-+Userspace Algorithms and Data Structures
-+========================================
++Conclusion
++==========
 +
-+In this chapter, we discuss the key algorithms and data structures employed by
-+the driver program, ``xfs_scrub``, to check and repair metadata, verify file
-+data, and look for other potential problems.
++It is hoped that the reader of this document has followed the designs laid out
++in this document and now has some familiarity with how XFS performs online
++rebuilding of its metadata indices, and how filesystem users can interact with
++that functionality.
++Although the scope of this work is daunting, it is hoped that this guide will
++make it easier for code readers to understand what has been built, for whom it
++has been built, and why.
++Please feel free to contact the XFS mailing list with questions.
 +
-+.. _scrubcheck:
++Future Work
++===========
 +
-+Checking Metadata
-+-----------------
++Quite a lot of future XFS work ties into the online fsck feature.
++Here is a quick discussion of a few pieces that are immediately adjacent.
 +
-+Recall the overview of the :ref:`work phases <scrubphases>` outlined earlier.
-+This structure follows naturally from the data dependencies designed into the
-+filesystem from its beginnings in 1993.
-+In XFS, there are several groups of metadata dependencies:
++FIEXCHANGE_RANGE
++----------------
 +
-+a. Filesystem summary counts depend on consistency within the inode indices,
-+   the allocation group space btrees, and the realtime volume space information.
++As discussed earlier, a second frontend to the atomic extent swap mechanism is
++a new ioctl call that userspace programs can use to commit updates to files
++atomically.
++This frontend has been out for review for several years now, though the
++necessary refinements to online repair and lack of customer demand mean that
++the proposal has not been pushed very hard.
 +
-+b. Quota resource counts depend on consistency within the quota file data forks
-+   and the file forks of every file on the system.
++Vectorized Scrub
++----------------
 +
-+c. The naming hierarchy depends on consistency within the directory and
-+   extended attribute structures.
-+   This includes file link counts.
++As it turns out, the :ref:`refactoring <scrubrepair>` of repair items mentioned
++earlier was a catalyst for enabling a vectorized scrub system call.
++Since 2018, the cost of making a kernel call has increased considerably on some
++systems to mitigate the effects of speculative execution attacks.
++This incentivizes us to make as few system calls as possible to reduce the
++number of times we have to cross a security boundary.
 +
-+d. Directories, extended attributes, and file data depend on consistency within
-+   the file forks that map directory and extended attribute data to physical
-+   storage media.
++With vectorized scrub, we now push to the kernel the identity of a filesystem
++object, a list of scrub types to run against that object, and a simple
++representation of the data dependencies between the selected scrub types.
++The kernel executes as much of the userspace plan as it can until it hits a
++dependency that cannot be satisfied due to a corruption, and tells userspace
++how much was accomplished.
++It is hoped that ``io_uring`` will pick up enough of this functionality that we
++can use that instead of adding a separate vectored scrub system call to XFS.
 +
-+e. The file forks depends on consistency within inode records and the space
-+   metadata indices of the allocation groups and the realtime volume.
-+   This includes quota and realtime metadata files.
-+
-+f. The inode records depends on consistency within the inode metadata indices.
-+
-+g. The realtime space metadata depend on the data forks of the realtime
-+   metadata inodes.
-+
-+h. The allocation group metadata indices (free space, inodes, reference count,
-+   and reverse mapping btrees) depend on consistency within the AG headers and
-+   between all the AG metadata btrees.
-+
-+i. ``xfs_scrub`` depends on the filesystem being mounted and kernel support
-+   for online fsck functionality.
-+
-+Therefore, a metadata dependency graph is a convenient way to schedule checking
-+operations in the ``xfs_scrub`` program, and that is exactly what we do:
-+
-+- Phase 1 checks that the provided path maps to an XFS filesystem and detect
-+  the kernel's scrubbing abilities, which validates group (i).
-+
-+- Phase 2 scrubs groups (g) and (h) in parallel using a threaded workqueue.
-+
-+- Phase 3 checks groups (f), (e), and (d), in that order.
-+  These groups are all file metadata, which means that we can scan the inodes
-+  in parallel.
-+
-+- Phase 5 starts by checking groups (b) and (c) in parallel before moving on
-+  to checking names.
-+
-+- Phase 6 depends on phase 2 to have validated all the metadata that it uses
-+  to find file data blocks to verify.
-+
-+- Phase 7 checks group (a), having validated everything else.
-+
-+Notice that the data dependencies between groups are enforced by the structure
-+of the program flow.
-+
-+Parallel Inode Scans
-+--------------------
-+
-+An XFS filesystem can easily contain many millions of inodes.
-+Given that XFS targets installations with large high-performance storage,
-+we'd like to be able to scrub inodes in parallel to minimize runtime.
-+This requires careful scheduling to keep the threads as evenly loaded as
-+possible.
-+
-+Early iterations of the ``xfs_scrub`` inode scanner naïvely created a single
-+workqueue and scheduled a single work item per AG.
-+Each work item walked the inode btree (with ``XFS_IOC_INUMBERS``) to find inode
-+chunks, called bulkstat (``XFS_IOC_BULKSTAT``) to gather enough information to
-+construct file handles, and invoked a callback function with the bulkstat
-+information and the handle.
-+This leads to thread balancing problems in phase 3 if the filesystem contains
-+one AG with a few large sparse files, and the rest of the AGs contain many
-+smaller files, because we serialized the per-AG part of the inode scan.
-+
-+Thanks to Dave Chinner, bounded workqueues in userspace enable us to fix this
-+problem with ease by adding a second workqueue.
-+Just like before, the first workqueue is seeded with one work item per AG, and
-+it uses INUMBERS to find inode btree chunks.
-+The second workqueue, however, is created with an upper bound on the number of
-+items that can be pending.
-+Each inode btree chunk found by the first workqueue's workers are queued as a
-+work item for the second workqueue, and it is this second workqueue that
-+queries BULKSTAT and actually invokes the callback.
-+This doesn't completely solve the balancing problem, but reduces it enough to
-+move on to more pressing issues.
-+
-+The proposed patchsets are the scrub
-+`performance tweaks
-+<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfsprogs-dev.git/log/?h=scrub-performance-tweaks>`_
-+and the
-+`inode scan rebalance
-+<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfsprogs-dev.git/log/?h=scrub-iscan-rebalance>`_
++The relevant patchsets are the
++`kernel
++<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=vectorized-scrub>`_
++and
++`userspace vectorized scrub
++<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfsprogs-dev.git/log/?h=vectorized-scrub>`_
 +series.
 +
-+.. _scrubrepair:
++Quality of Service Targets for Scrub
++------------------------------------
 +
-+Scheduling Repairs
-+------------------
++One serious shortcoming of the online fsck code is that the amount of time that
++we can spend in the kernel holding resource locks is basically unbounded.
++Userspace is allowed to send a fatal signal to the process which will cause
++``xfs_scrub`` to exit when it reaches a good stopping point, but there's no way
++for userspace to provide a time budget to the kernel.
++Given that we have helpers to detect fatal signals, it shouldn't be too much
++work to allow userspace to specify a timeout for a scrub/repair operation
++and abort the operation if it exceeds budget.
 +
-+During phase 2, corruptions and inconsistencies reported in any AGI header or
-+inode btree are repaired immediately, because phase 3 relies on proper
-+functioning of the inode indices to find inodes to scan.
-+Failed repairs are rescheduled to phase 4.
-+Problems and optimization opportunities reported in any other space metadata
-+are deferred to phase 4.
++Parent Pointers
++---------------
 +
-+During phase 3, corruptions and inconsistencies reported in any part of a
-+file's metadata can be repaired immediately if all space metadata were
-+validated.
-+Otherwise, unfixed repairs and optimization opportunities are scheduled for
-+phase 4.
++Directory parent pointers were first proposed as an XFS feature more than a
++decade ago by SGI.
++In that implementation, each link from a parent directory to a child file would
++be augmented by an extended attribute in the child that could be used to
++identify the directory.
++Unfortunately, this early implementation had two major shortcomings:
++First, the XFS codebase of the late 2000s did not have the infrastructure to
++enforce strong referential integrity in the directory tree, which is a fancy
++way to say that it could not guarantee that a change in a forward link would
++always be followed up by a corresponding change to the reverse links.
++Second, the extended attribute did not record the name of the directory entry
++in the parent, so the first parent pointer implementation cannot be used to
++reconnect the directory tree.
 +
-+In the original design of ``xfs_scrub``, we thought that repairs would be so
-+infrequent that we could get away with using the ``struct xfs_scrub_metadata``
-+that we use to communicate with the kernel as the primary object to control
-+repairs.
-+Unfortunately, with recent increases in the number of optimizations possible
-+for a given primary filesystem object (allocation group, realtime volume, file,
-+the entire filesystem), it became much more memory-efficient to track all
-+eligible repairs for a given filesystem object with a single repair item.
++In the second implementation (currently being developed by Allison Henderson),
++the extended attribute code will be enhanced to use log intent items to
++guarantee that an extended attribute update can always be completed by log
++recovery.
++The parent pointer data will also include the entry name and location in the
++parent.
++In other words, we will be storing parent pointer mappings of the form
++``(parent_ino, parent_gen, dirent_pos) => (dirent_name)`` in the extended
++attribute data.
++With that in place, XFS can guarantee strong referential integrity of directory
++tree operations -- forward links will always be complemented with reverse
++links.
 +
-+Phase 4 is responsible for scheduling a lot of repair work in as quick a
-+manner as is practical.
-+The :ref:`data dependencies <scrubcheck>` outlined earlier still apply, which
-+means that we must try to complete the repair work scheduled by phase 2 before
-+trying the work scheduled by phase 3.
++When parent pointers have landed, it will no longer be necessary to salvage
++damaged directories and hope for the best!
++Instead, we will set up a :ref:`coordinated inode scan <iscan>` and a
++:ref:`directory entry live update hook <liveupdate>`.
++We can then scan the filesystem to find the parent of a directory being
++repaired, and we can reconstruct the rest of the directory entries from the
++parent pointer information.
++The new entries will be written to the temporary directory like they are now,
++and the atomic extent swap will be used to replace the old directory with the
++new one.
 +
-+1. Start a round of repair with a workqueue and enough workers to keep the CPUs
-+   as busy as the user desires.
++**Question**: How do we ensure that the ``dirent_pos`` fields match in the
++reconstructed directory?
++Is that field merely advisory, since the other three values are sufficient to
++find the entry in the parent?
++Or will we have to remove the parent pointer entry and re-add it?
 +
-+   a. For each repair item queued by phase 2,
++Defragmenting Free Space
++------------------------
 +
-+      i.   Ask the kernel to repair everything listed in the repair item for a
-+           given filesystem object.
++We define this operation as clearing a portion of the physical storage so that
++it becomes a contiguous chunk of free space.
 +
-+      ii.  Make a note if the kernel made any progress in reducing the number of
-+           repairs needed for this object.
++The first piece we need is the ability to read the reverse mapping index from
++userspace.
++This already exists in the form of the ``FS_IOC_GETFSMAP`` ioctl.
++The second piece we need is a new fallocate mode (``FALLOC_FL_MAP_FREE_SPACE``)
++that allocates the free space in a region and maps it to a file.
++Call this file the "space collector" file.
++The third piece is the ability to force an online repair.
 +
-+      iii. If the object no longer requires repairs, revalidate all metadata
-+           associated with this object.
-+           If the revalidation succeeds, drop the repair item.
-+           If not, requeue the item for more repairs.
++To clear all the metadata out of a portion of physical storage, we use the new
++fallocate call to map any free space in that region to the space collector.
++Next, we find all metadata blocks in that region by way of ``GETFSMAP``,
++and issue forced repair requests on the data structure.
++This will most probably result in the metadata being rebuilt somewhere else.
++That takes care of everything except inode chunks and file data.
++After each rebuild operation, we re-call the "map free space" function to
++collect the newly freed space.
 +
-+   b. While we're making progress on repairs, jump back to 1a to retry all the
-+      phase 2 items.
++To clear all the file data out of a portion of the physical storage, we again
++use the FSMAP information to find relevant file data blocks.
++Once we've identified a good target, we use the ``FICLONERANGE`` call on that
++file to try to map the space to a dummy file.
++Cloning the extent means that the original owners cannot overwrite the
++contents; any changes will be staged somewhere else via copy-on-write.
++We can then make our own copy of the frozen extent in an area that we are not
++clearing, and use ``FIEDEUPRANGE`` (or the
++:ref:`atomic extent swap <swapext_if_unchanged>` feature) to change the target
++file's data extent mapping away from the area we're clearing.
++After we've frozen the file data extent and removed all other mappings, we
++reflink the space into the space collector file.
 +
-+   c. For each repair item queued by phase 3,
++There are further optimizations to be had in the above algorithm.
++If we need to clear a piece of physical storage that has a high sharing factor,
++we would strongly prefer to retain this sharing factor.
++In fact, we prefer to relocate highly shared chunks first.
++To make this work smoothly, we add a fourth piece: a new ioctl
++(``FS_IOC_GETREFCOUNTS``) to report the reference count records to userspace.
++With the refcount information exposed, we can quickly find the longest, most
++shared data extents in the filesystem, and target them first.
 +
-+      i.   Ask the kernel to repair everything listed in the repair item for a
-+           given filesystem object.
++**Question**: How do we move inode chunks?
++Dave Chinner has a prototype that creates a new file with the old contents and
++then locklessly runs around the filesystem updating directory entries.
++The operation cannot complete if the filesystem goes down.
++That problem isn't totally insurmountable: create an inode remapping table
++hidden behind a jump label, and a log item that tracks the kernel walking the
++filesystem to update directory entries.
++The trouble is, we can't do anything about open files, since we can't revoke
++them.
++Can we abuse jump labels even further to add a revoke-me-hard bailout to
++*every* code path coming in from userspace?
 +
-+      ii.  Make a note if the kernel made any progress in reducing the number of
-+           repairs needed for this object.
-+
-+      iii. If the object no longer requires repairs, revalidate all metadata
-+           associated with this object.
-+           If the revalidation succeeds, drop the repair item.
-+           If not, requeue the item for more repairs.
-+
-+   d. While we're making progress on repairs, jump back to 1c to retry all the
-+      phase 3 items.
-+
-+2. If step 1 made any repair progress of any kind, jump back to step 1 to start
-+   another round of repair.
-+
-+3. If there are items left to repair, run them all serially one more time.
-+   This time we complain if the repairs were not successful, since this is
-+   the last chance to any work in phase 4.
-+
-+Corruptions and inconsistencies encountered during phases 5 and 7 are repaired
-+immediately.
-+
-+The proposed patchsets are the
-+`repair warning improvements
-+<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfsprogs-dev.git/log/?h=scrub-better-repair-warnings>`_,
-+refactoring of the
-+`repair data dependency
-+<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfsprogs-dev.git/log/?h=scrub-repair-data-deps>`_
++The relevant patchsets are the
++`kernel
++<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=defrag-freespace>`_
 +and
-+`object tracking
-+<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfsprogs-dev.git/log/?h=scrub-object-tracking>`_,
-+and the
-+`repair scheduling
-+<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfsprogs-dev.git/log/?h=scrub-repair-scheduling>`_
-+improvement series.
++`userspace freespace defrag
++<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfsprogs-dev.git/log/?h=defrag-freespace>`_
++series.
 +
-+Checking Names for Confusable Unicode Sequences
-+-----------------------------------------------
++Shrinking Filesystems
++---------------------
 +
-+If ``xfs_scrub`` succeeds in validating the filesystem metadata by the end of
-+phase 4, it moves on to checking for suspicious looking names in the
-+filesystem.
-+These names consist of the filesystem label, names in directory entries, and
-+the names of extended attributes.
-+Like most Unix filesystems, XFS imposes the sparest of constraints on the
-+contents of a name -- slashes and null bytes are not allowed in directory
-+entries; and null bytes are not allowed in extended attributes and the
-+filesystem label.
-+However, the reality of most modern-day Linux systems is that programs work
-+with Unicode character code points to support international languages.
-+These programs encode those code points in UTF-8 when talking to the kernel,
-+which means that in the common case, names found in an XFS filesystem are
-+actually UTF-8 encoded Unicode data.
-+
-+To maximize its expressiveness, the Unicode standard defines separate control
-+points for various characters that are rendered similarly or identically in
-+writing systems around the world.
-+For example, the character "Cyrillic Small Letter A" U+0430 "а" often renders
-+identically to "Latin Small Letter A" U+0061 "a".
-+
-+The standard also permits characters to be constructed in multiple ways --
-+either by using a defined code point, or by combining one code point with
-+various combining marks.
-+For example, the character "Angstrom Sign U+212B "Å" can also be expressed
-+as "Latin Capital Letter A" U+0041 "A" followed by "Combining Ring Above"
-+U+030A "◌̊".
-+
-+Like the standards that preceded it, Unicode also defines various control
-+characters to alter the presentation of text.
-+For example, the character "Right-to-Left Override" U+202E can trick some
-+programs into rendering "moo\\xe2\\x80\\xaegnp.txt" as "mootxt.png".
-+A second category of rendering problems involves whitespace characters.
-+If the character "Zero Width Space" U+200B is encountered in a file name,
-+the name will be rendered with no whitespace between the previous and the next
-+character.
-+If there is a name in the same name domain with the previous and next
-+characters in sequence but omitting the zero width space, the rendering will be
-+identical and user may be confused by it.
-+The kernel, in its indifference to byte encoding schemes, permits this.
-+
-+As you can see, the flexibility of Unicode comes at a cost -- malicious actors
-+can create names that can be used to mislead users.
-+UTF-8 codecs faithfully translate whatever Unicode sequences are provided,
-+which means that these sequences are persisted to disk.
-+
-+Techniques for detecting confusable names are explained in great detail in
-+sections 4 and 5 of the
-+`Unicode Security Mechanisms <https://unicode.org/reports/tr39/>`_
-+document.
-+``xfs_scrub``, when it detects UTF-8 encoding in use on a system, uses the
-+Unicode normalization form NFD in conjunction with the confusable name
-+detection component of
-+`libicu <https://github.com/unicode-org/icu>`_
-+to identify names with a directory or within a file's extended attributes that
-+could be confused for each other.
-+Names are also checked for control characters, non-rendering characters, and
-+mixing of bidirectional characters.
-+All of these potential issues are reported to the system administrator during
-+phase 5.
-+
-+Media Verification of File Data Extents
-+---------------------------------------
-+
-+The system administrator can elect to initiate a media scan of all file data
-+blocks.
-+This scan after validation of all filesystem metadata (except for the summary
-+counters) as phase 6.
-+The scan starts by calling ``FS_IOC_GETFSMAP`` to scan the filesystem space map
-+to find areas that are allocated to file data fork extents.
-+Gaps betweeen data fork extents that are smaller than 64k are treated as if
-+they were data fork extents to reduce the command setup overhead.
-+When the space map scan accumulates a region larger than 32MB, a media
-+verification request is sent to the disk, either as a SCSI_VERIFY command, or a
-+directio read of the raw block device.
-+
-+If the verification read fails, we retry with single-block reads to narrow down
-+the failure to the specific region of the media and recorded.
-+When we have finished issuing verification requests, we again use the space map
-+ioctl to map the recorded media errors back to the metadata structures or files
-+that own the space, and report the data have been lost.
++Removing the end of the filesystem ought to be a simple matter of evacuating
++the data and metadata at the end of the filesystem, and handing the freed space
++to the shrink code.
++Unfortunately, that requires an evacuation of the space at end of the
++filesystem, which sounds an awful lot like free space defragmentation!
 
