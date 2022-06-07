@@ -2,49 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E3D8542027
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jun 2022 02:24:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC2FF542015
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jun 2022 02:23:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352049AbiFHASN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jun 2022 20:18:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37068 "EHLO
+        id S231238AbiFHAPL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jun 2022 20:15:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1587907AbiFGXxu (ORCPT
+        with ESMTP id S1588209AbiFGXyT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jun 2022 19:53:50 -0400
-Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 117825EDEA;
-        Tue,  7 Jun 2022 15:52:07 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-2-147.pa.nsw.optusnet.com.au [49.181.2.147])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id C06E35EC5CF;
-        Wed,  8 Jun 2022 08:52:05 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1nyi3P-003w7D-R2; Wed, 08 Jun 2022 08:52:03 +1000
-Date:   Wed, 8 Jun 2022 08:52:03 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Johannes Weiner <hannes@cmpxchg.org>, Chris Mason <clm@fb.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "dchinner@redhat.com" <dchinner@redhat.com>
-Subject: Re: [PATCH RFC] iomap: invalidate pages past eof in
- iomap_do_writepage()
-Message-ID: <20220607225203.GV227878@dread.disaster.area>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <da9984a7-a3f1-8a62-f2ca-f8f6d4321e80@fb.com>
- <Yp4TWwLrNM1Lhwq3@cmpxchg.org>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=629fd697
-        a=ivVLWpVy4j68lT4lJFbQgw==:117 a=ivVLWpVy4j68lT4lJFbQgw==:17
-        a=IkcTkHD0fZMA:10 a=JPEYwPQDsx4A:10 a=7-415B0cAAAA:8
-        a=gt4SOwb8OZzSaSjGkrgA:9 a=QEXdDO2ut3YA:10 a=biEYGPWJfzWAr4FL6Ov7:22
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        Tue, 7 Jun 2022 19:54:19 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A268BAF304;
+        Tue,  7 Jun 2022 16:00:24 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id A4987B82455;
+        Tue,  7 Jun 2022 23:00:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08EB8C3411C;
+        Tue,  7 Jun 2022 23:00:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1654642821;
+        bh=SWeesriEZ4fpvNTKN1uebhuYgwpzgJTdbmuGMFiYqdU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=aJS4LTAjEVx5s7WjkKVl8rRkm1KNwC5Pr7QhxoVWzTkhfbPXXHr/q4LShQLPF2Psc
+         tHkC3UWx7dR8DHz5jXQJgTQvoA1AMnpgWJ5FZkZ9/YDY+Db/1LJ2PloyHJir1oX2MG
+         CgN7azoapYTzzcBr5g2qTdS2aJfmmNEFwa+JIrok=
+Date:   Tue, 7 Jun 2022 16:00:20 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     syzbot <syzbot+2c93b863a7698df84bad@syzkaller.appspotmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, syzkaller-bugs@googlegroups.com,
+        willy@infradead.org,
+        Stephen Brennan <stephen.s.brennan@oracle.com>,
+        David Howells <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        ntfs3@lists.linux.dev
+Subject: Re: [syzbot] WARNING: locking bug in truncate_inode_pages_final
+Message-Id: <20220607160020.c088f4d29929310f2a3c1c32@linux-foundation.org>
+In-Reply-To: <0000000000000cf8be05e0d65e09@google.com>
+References: <0000000000000cf8be05e0d65e09@google.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -52,161 +59,107 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 06, 2022 at 11:13:18AM -0400, Chris Mason wrote:
-> On Mon, Jun 06, 2022 at 10:46:51AM -0400, Johannes Weiner wrote:
-> > Hello,
-> > 
-> > On Mon, Jun 06, 2022 at 09:32:13AM +1000, Dave Chinner wrote:
-> > > On Fri, Jun 03, 2022 at 12:09:06PM -0400, Chris Mason wrote:
-> > > > On 6/3/22 11:06 AM, Johannes Weiner wrote:
-> > > > > On Fri, Jun 03, 2022 at 03:20:47PM +1000, Dave Chinner wrote:
-> > > > > > On Fri, Jun 03, 2022 at 01:29:40AM +0000, Chris Mason wrote:
-> > > > > > > As you describe above, the loops are definitely coming from higher
-> > > > > > > in the stack.  wb_writeback() will loop as long as
-> > > > > > > __writeback_inodes_wb() returns that it’s making progress and
-> > > > > > > we’re still globally over the bg threshold, so write_cache_pages()
-> > > > > > > is just being called over and over again.  We’re coming from
-> > > > > > > wb_check_background_flush(), so:
-> > > > > > > 
-> > > > > > >                  struct wb_writeback_work work = {
-> > > > > > >                          .nr_pages       = LONG_MAX,
-> > > > > > >                          .sync_mode      = WB_SYNC_NONE,
-> > > > > > >                          .for_background = 1,
-> > > > > > >                          .range_cyclic   = 1,
-> > > > > > >                          .reason         = WB_REASON_BACKGROUND,
-> > > > > > >                  };
-> > > > > > 
-> > > > > > Sure, but we end up in writeback_sb_inodes() which does this after
-> > > > > > the __writeback_single_inode()->do_writepages() call that iterates
-> > > > > > the dirty pages:
-> > > > > > 
-> > > > > >                 if (need_resched()) {
-> > > > > >                          /*
-> > > > > >                           * We're trying to balance between building up a nice
-> > > > > >                           * long list of IOs to improve our merge rate, and
-> > > > > >                           * getting those IOs out quickly for anyone throttling
-> > > > > >                           * in balance_dirty_pages().  cond_resched() doesn't
-> > > > > >                           * unplug, so get our IOs out the door before we
-> > > > > >                           * give up the CPU.
-> > > > > >                           */
-> > > > > >                          blk_flush_plug(current->plug, false);
-> > > > > >                          cond_resched();
-> > > > > >                  }
-> > > > > > 
-> > > > > > So if there is a pending IO completion on this CPU on a work queue
-> > > > > > here, we'll reschedule to it because the work queue kworkers are
-> > > > > > bound to CPUs and they take priority over user threads.
-> > > > > 
-> > > > > The flusher thread is also a kworker, though. So it may hit this
-> > > > > cond_resched(), but it doesn't yield until the timeslice expires.
-> > > 
-> > > 17us or 10ms, it doesn't matter. The fact is the writeback thread
-> > > will give up the CPU long before the latency durations (seconds)
-> > > that were reported upthread are seen. Writeback spinning can
-> > > not explain why truncate is not making progress - everything points
-> > > to it being a downstream symptom, not a cause.
-> > 
-> > Chris can clarify, but I don't remember second-long latencies being
-> > mentioned. Rather sampling periods of multiple seconds during which
-> > the spin bursts occur multiple times.
+Lots of cc's added.
 
-The initial commit said "long tail latencies for write IOs" without
-specifying an amount.
+On Tue, 07 Jun 2022 00:16:29 -0700 syzbot <syzbot+2c93b863a7698df84bad@syzkaller.appspotmail.com> wrote:
 
-In general, long latencies in IO mean seconds, even on SSDs,
-especially for writes. If the write requires allocation to be done
-we then have to run completion transactions to convert extents to
-written. The transaction reservation in completion can get stuck for
-seconds if the journal is full and requires waiting on tail pushing.
-We can have thousands of IO completions in flight (ever noticed XFS
-have several thousand completion kworker threads in the process
-listings?) which can then all block in a FIFO queue waiting for
-journal space, and getting journal space might involve waiting for
-tens of thousands of metadata IOs to complete....
+> Hello,
 
-So when anyone says "long tail latencies for write IO" I'm thinking
-seconds to tens of seconds because tens to hundreds of milliseconds
-for completion latencies is pretty common and somewhat unavoidable
-on heavily loaded filesystems....
+Thanks.
 
-> > > Also important to note, as we are talking about kworker sheduling
-> > > hold-offs, the writeback flusher work is unbound (can run on any
-> > > CPU), whilst the IO completion workers in XFS are per-CPU and bound
-> > > to individual CPUs. Bound kernel tasks usually take run queue
-> > > priority on a CPU over unbound and/or user tasks that can be punted
-> > > to a different CPU.
-> > 
-> > Is that actually true? I'm having trouble finding the corresponding
-> > code in the scheduler.
+> syzbot found the following issue on:
 
-I can't remember exactly which bit of the scheduler code does this
-because the scheduler code is completely different every time I look
-at it. The behaviour has been around for a long time - the workqueue
-thread pools largely rely on bound kthread tasks pre-empting user
-tasks to get scheduled work done with low latencies....
+Oh dear.
 
-> > That said, I'm not sure it matters that much. Even if you take CPU
-> > contention out of the equation entirely, I think we agree it's not a
-> > good idea (from a climate POV) to have CPUs busywait on IO. Even if
-> > that IO is just an ordinary wait_on_page_writeback() on a fast drive.
-> > 
-> > So if we can get rid of the redirtying, and it sounds like we can, IMO
-> > we should just go ahead and do so.
+> HEAD commit:    d1dc87763f40 assoc_array: Fix BUG_ON during garbage collect
 
-As I've said multiple times now, yes, we should fix that, and I've
-pointed out how it should be fixed. I'm waiting for a new patch
-to be posted to fix that behaviour while I'm also trying to get to
-the bottom of what is causing the truncate hold-offs.
+I think this bisection is wrong.
 
-> > > > Just to underline this, the long tail latencies aren't softlockups or major
-> > > > explosions.  It's just suboptimal enough that different metrics and
-> > > > dashboards noticed it.
-> > > 
-> > > Sure, but you've brought a problem we don't understand the root
-> > > cause of to my attention. I want to know what the root cause is so
-> > > that I can determine that there are no other unknown underlying
-> > > issues that are contributing to this issue.
-> > 
-> > It seems to me we're just not on the same page on what the reported
-> > bug is. From my POV, there currently isn't a missing piece in this
-> > puzzle. But Chris worked closer with the prod folks on this, so I'll
-> > leave it to him :)
+I sure hope it's wrong - that patch went straight from the mailing list
+into mainline and two days later was added to what appears to be every
+-stable kernel we own.  It spent no time in -next except for a week or
+so when I was sitting on an earlier version.
+
+But I think the bisection is wrong.  I don't see how d1dc87763f40 can
+affect ntfs3 and pagecache truncate.
+
+Does that testcase even use the security keyrings code?  I'd be
+suspicious of ntfs3 here.
+
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=14979947f00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=c51cd24814bb5665
+> dashboard link: https://syzkaller.appspot.com/bug?extid=2c93b863a7698df84bad
+> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
 > 
-> The basic description of the investigation:
+> Unfortunately, I don't have any reproducer for this issue yet.
+
+Confused.  How is it possible to do a git-bisect without a reproducer?
+
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+2c93b863a7698df84bad@syzkaller.appspotmail.com
 > 
-> * Multiple hits per hour on per 100K machines, but almost impossible to
-> catch across a single box.
-> * The debugging information from the long tail detector showed high IO and
-> high CPU time.  (high CPU is relative here, these machines tend to be IO
-> bound).
-> * Kernel stack analysis showed IO completion threads waiting for CPU.
-> * CPU profiling showed redirty_page_for_writepage() dominating.
-
-Right, that's what I thought was described - high CPU load was
-occuring from re-dirtying, but ithere's also high IO load and CPU
-load is not obviously the cause of the high IO load or IO latencies.
-I'm more interested in what is causing the IO latencies because the
-high CPU looks to be a downstream symptom of the high IO latencies,
-not the cause....
-
-> From here we made a relatively simple reproduction of the
-> redirty_page_for_writepage() part of the problem.  It's a good fix in
-> isolation, but we'll have to circle back to see how much of the long tail
-> latency issue it solves.
+> ntfs3: loop3: Different NTFS' sector size (2048) and media sector size (512)
+> ntfs3: loop3: Different NTFS' sector size (2048) and media sector size (512)
+> ------------[ cut here ]------------
+> releasing a pinned lock
+> WARNING: CPU: 2 PID: 21856 at kernel/locking/lockdep.c:5349 __lock_release kernel/locking/lockdep.c:5349 [inline]
+> WARNING: CPU: 2 PID: 21856 at kernel/locking/lockdep.c:5349 lock_release+0x6a9/0x780 kernel/locking/lockdep.c:5685
+> Modules linked in:
+> CPU: 2 PID: 21856 Comm: syz-executor.3 Not tainted 5.18.0-syzkaller-11972-gd1dc87763f40 #0
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.14.0-2 04/01/2014
+> RIP: 0010:__lock_release kernel/locking/lockdep.c:5349 [inline]
+> RIP: 0010:lock_release+0x6a9/0x780 kernel/locking/lockdep.c:5685
+> Code: 68 00 e9 5a fa ff ff 4c 89 f7 e8 f2 3d 68 00 e9 36 fc ff ff e8 78 3d 68 00 e9 f5 fb ff ff 48 c7 c7 e0 9a cc 89 e8 d1 84 d3 07 <0f> 0b e9 87 fb ff ff e8 3b b3 18 08 48 c7 c7 4c 44 bb 8d e8 4f 3d
+> RSP: 0018:ffffc90003497a00 EFLAGS: 00010082
+> RAX: 0000000000000000 RBX: ffff88801e742c48 RCX: 0000000000000000
+> RDX: 0000000000040000 RSI: ffffffff81601908 RDI: fffff52000692f32
+> RBP: 1ffff92000692f42 R08: 0000000000000005 R09: 0000000000000000
+> R10: 0000000080000001 R11: 0000000000000001 R12: ffff88804fb22498
+> R13: 0000000000000002 R14: ffff88801e742c18 R15: ffff88801e7421c0
+> FS:  00007f64be4cb700(0000) GS:ffff88802cc00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f64be4cc000 CR3: 00000000669a7000 CR4: 0000000000150ee0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 000000000000003b DR6: 00000000ffff0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:157 [inline]
+>  _raw_spin_unlock_irq+0x12/0x40 kernel/locking/spinlock.c:202
+>  spin_unlock_irq include/linux/spinlock.h:399 [inline]
+>  truncate_inode_pages_final+0x5f/0x80 mm/truncate.c:484
+>  ntfs_evict_inode+0x16/0xa0 fs/ntfs3/inode.c:1750
+>  evict+0x2ed/0x6b0 fs/inode.c:664
+>  iput_final fs/inode.c:1744 [inline]
+>  iput.part.0+0x562/0x820 fs/inode.c:1770
+>  iput+0x58/0x70 fs/inode.c:1760
+>  ntfs_fill_super+0x2d66/0x3730 fs/ntfs3/super.c:1180
+>  get_tree_bdev+0x440/0x760 fs/super.c:1292
+>  vfs_get_tree+0x89/0x2f0 fs/super.c:1497
+>  do_new_mount fs/namespace.c:3040 [inline]
+>  path_mount+0x1320/0x1fa0 fs/namespace.c:3370
+>  do_mount fs/namespace.c:3383 [inline]
+>  __do_sys_mount fs/namespace.c:3591 [inline]
+>  __se_sys_mount fs/namespace.c:3568 [inline]
+>  __x64_sys_mount+0x27f/0x300 fs/namespace.c:3568
+>  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+>  do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+>  entry_SYSCALL_64_after_hwframe+0x46/0xb0
+> RIP: 0033:0x7f64bd28a63a
+> Code: 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 b8 ff ff ff ff eb d2 e8 b8 04 00 00 0f 1f 84 00 00 00 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007f64be4caf88 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
+> RAX: ffffffffffffffda RBX: 0000000020000200 RCX: 00007f64bd28a63a
+> RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007f64be4cafe0
+> RBP: 00007f64be4cb020 R08: 00007f64be4cb020 R09: 0000000020000000
+> R10: 0000000000000000 R11: 0000000000000206 R12: 0000000020000000
+> R13: 0000000020000100 R14: 00007f64be4cafe0 R15: 000000002007a980
+>  </TASK>
 > 
-> We can livepatch it quickly, but filtering out the long tail latency hits
-> for just this one bug is labor intensive, so it'll take a little bit of time
-> to get good data.
 > 
-> I've got a v2 of the patch that drops the invalidate, doing a load test with
-> fsx this morning and then getting a second xfstests baseline run to see if
-> I've added new failures.
-
-Thanks!
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
