@@ -2,135 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 41F4653F701
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jun 2022 09:16:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F8B653F754
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jun 2022 09:36:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237490AbiFGHQc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jun 2022 03:16:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49484 "EHLO
+        id S237643AbiFGHga (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jun 2022 03:36:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46786 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235243AbiFGHQa (ORCPT
+        with ESMTP id S231764AbiFGHg2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jun 2022 03:16:30 -0400
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C62E392715
-        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jun 2022 00:16:29 -0700 (PDT)
-Received: by mail-il1-f199.google.com with SMTP id q6-20020a056e0215c600b002c2c4091914so13257716ilu.14
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Jun 2022 00:16:29 -0700 (PDT)
+        Tue, 7 Jun 2022 03:36:28 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 38ACD69B62
+        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jun 2022 00:36:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1654587386;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=poSLf3SQpSQVqGAvfY9ZUAc4mDsdNw09sPQoA12+Xn0=;
+        b=hfSm24hAkAxOtxAdK5RtalOFpv2znDhW0w8uprj18UcuDvaE1104doT8gg0EGQRE7IVVae
+        Iv9ibPBqibKHQJSPOIOBqaEpuEYNNXoxMCplEm6QKG0vQjt/Q4MwCr3NAXeroafSH4Hism
+        Hc6SSzDGX6eaNpnk8i7CZOns7zf1qCw=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-616-ErILNDbvNr6rupVMh2Rmqw-1; Tue, 07 Jun 2022 03:36:25 -0400
+X-MC-Unique: ErILNDbvNr6rupVMh2Rmqw-1
+Received: by mail-wr1-f72.google.com with SMTP id v4-20020adfebc4000000b002102c69be5eso3571489wrn.13
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Jun 2022 00:36:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=wOUpr7ahlyF1rLdn4KbRen7FyA30JfhTbBcwjnokP9E=;
-        b=jNMFQZSpcIpSwbGVVRxFzZnM8V6mvvmiAwbeVNGP41g8PlRFYb5uY7oJPsROx3OYWo
-         NZGdOWPZ4l1G16+hUu1H4pqZdL0zdmB25cvb6qA3e+15ZWOGVAbH01uIiS8B4omNPBjf
-         wwtMDtCjpAXceiwbJypUfrgDsKPu5X2K8CwOMsmqPAj6DxvNsB/RAQ1x32SeD5ptubHD
-         EdUbHuYKuSBggVErv1uX8ygIK9KIAzOvIuHBnbp42PqfBvfxLGQMZ2FDfq3jenrNlf0k
-         UT4SMmaEke9dxNuPHtvdbZBzlss2NaMqpEZYZuO7HSvFTGofnwj3h9xtmVJjUKeOgbFM
-         9Y6g==
-X-Gm-Message-State: AOAM533cp1BsOxS/nJAmGKnrWzhdmJUapaSHqOqJQb39+ncOmK37ElB9
-        v7Y/FBiIGQ6tbWqrfvGNHaiLlZe8ayD52biavCatgL32nYuv
-X-Google-Smtp-Source: ABdhPJzGJdv5PdP3xXCFMVVSyakAl/JJTw9rcSy1ZKVQ8G6mVoWbuD5SL8zlsWDfGSwEHej9wlFLngvxyQiSJh2jcrSkAHw+o8Jb
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:organization:in-reply-to
+         :content-transfer-encoding;
+        bh=poSLf3SQpSQVqGAvfY9ZUAc4mDsdNw09sPQoA12+Xn0=;
+        b=y+jRrKpdxQdNXSHSNHC0FDiKy7dlfvfRuorIf/YgTj7OrHyPeFAe9bf2jCWXgQRotS
+         eiMJIA7Y5X3DFg2j5bUeq2F+MCxNuUTOqHLWTiojAEyRbZiLKmxZUvhQIvXx6tL3y9E/
+         iJAH66NTB7yKKwb1ec72FA8tdti912ifxcUTgJkLomZXMxLLTdl/8OdjdSdIJASTAeX1
+         tbQdwYeW/16otbXQl33LFh25STh18GM7p7oq3kEhoAMm8yOLB2gVrBY3AVaM6dGitJIO
+         m06wEGYxnwDfNDmqn6/ZrhmRjvb4o3Imw9JlWal3Au4ejlzOrc2V4uRCnJcCUVRea4yx
+         JaPA==
+X-Gm-Message-State: AOAM531xecSZrujDT3ZObfrUZ2+MhpxQ8xKx4MXBuobd0ONrSVaIVJoV
+        lomreFM/w7kMOtJNpktOfGWb1AinSjCkOPDmMmCtaTbKsip2csF0iqSm4UhPME0fwozezKKOL12
+        qKreEi7euuQIDZO3v2zRL1OXWpQ==
+X-Received: by 2002:a05:600c:4ec9:b0:397:750a:798a with SMTP id g9-20020a05600c4ec900b00397750a798amr56010319wmq.169.1654587384023;
+        Tue, 07 Jun 2022 00:36:24 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJz/TT1zDaD6ih4ST/0Z6l6/VJexv/LUjWrit9gRiSM2S633qB8aLjqIdjv8Hs+falCUt0H+YA==
+X-Received: by 2002:a05:600c:4ec9:b0:397:750a:798a with SMTP id g9-20020a05600c4ec900b00397750a798amr56010293wmq.169.1654587383789;
+        Tue, 07 Jun 2022 00:36:23 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c709:500:4c8d:4886:f874:7b6f? (p200300cbc70905004c8d4886f8747b6f.dip0.t-ipconnect.de. [2003:cb:c709:500:4c8d:4886:f874:7b6f])
+        by smtp.gmail.com with ESMTPSA id j37-20020a05600c1c2500b0039c235fb6a5sm19943141wms.8.2022.06.07.00.36.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 Jun 2022 00:36:22 -0700 (PDT)
+Message-ID: <e4d017a4-556d-bb5f-9830-a8843591bc8d@redhat.com>
+Date:   Tue, 7 Jun 2022 09:36:21 +0200
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1245:b0:2d3:a86e:c587 with SMTP id
- j5-20020a056e02124500b002d3a86ec587mr14715853ilq.274.1654586189082; Tue, 07
- Jun 2022 00:16:29 -0700 (PDT)
-Date:   Tue, 07 Jun 2022 00:16:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000cf8be05e0d65e09@google.com>
-Subject: [syzbot] WARNING: locking bug in truncate_inode_pages_final
-From:   syzbot <syzbot+2c93b863a7698df84bad@syzkaller.appspotmail.com>
-To:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        syzkaller-bugs@googlegroups.com, willy@infradead.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH 15/20] balloon: Convert to migrate_folio
+Content-Language: en-US
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-aio@kvack.org, linux-btrfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        cluster-devel@redhat.com, linux-mm@kvack.org,
+        linux-xfs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-ntfs-dev@lists.sourceforge.net, ocfs2-devel@oss.oracle.com,
+        linux-mtd@lists.infradead.org,
+        virtualization@lists.linux-foundation.org
+References: <20220606204050.2625949-1-willy@infradead.org>
+ <20220606204050.2625949-16-willy@infradead.org>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+In-Reply-To: <20220606204050.2625949-16-willy@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-6.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On 06.06.22 22:40, Matthew Wilcox (Oracle) wrote:
+> This is little more than changing the types over; there's no real work
+> being done in this function.
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  mm/balloon_compaction.c | 15 +++++++--------
+>  1 file changed, 7 insertions(+), 8 deletions(-)
+> 
+> diff --git a/mm/balloon_compaction.c b/mm/balloon_compaction.c
+> index 4b8eab4b3f45..3f75b876ad76 100644
+> --- a/mm/balloon_compaction.c
+> +++ b/mm/balloon_compaction.c
+> @@ -230,11 +230,10 @@ static void balloon_page_putback(struct page *page)
+>  
+>  
+>  /* move_to_new_page() counterpart for a ballooned page */
+> -static int balloon_page_migrate(struct address_space *mapping,
+> -		struct page *newpage, struct page *page,
+> -		enum migrate_mode mode)
+> +static int balloon_migrate_folio(struct address_space *mapping,
+> +		struct folio *dst, struct folio *src, enum migrate_mode mode)
+>  {
+> -	struct balloon_dev_info *balloon = balloon_page_device(page);
+> +	struct balloon_dev_info *balloon = balloon_page_device(&src->page);
+>  
+>  	/*
+>  	 * We can not easily support the no copy case here so ignore it as it
+> @@ -244,14 +243,14 @@ static int balloon_page_migrate(struct address_space *mapping,
+>  	if (mode == MIGRATE_SYNC_NO_COPY)
+>  		return -EINVAL;
+>  
+> -	VM_BUG_ON_PAGE(!PageLocked(page), page);
+> -	VM_BUG_ON_PAGE(!PageLocked(newpage), newpage);
+> +	VM_BUG_ON_FOLIO(!folio_test_locked(src), src);
+> +	VM_BUG_ON_FOLIO(!folio_test_locked(dst), dst);
+>  
+> -	return balloon->migratepage(balloon, newpage, page, mode);
+> +	return balloon->migratepage(balloon, &dst->page, &src->page, mode);
+>  }
+>  
+>  const struct address_space_operations balloon_aops = {
+> -	.migratepage = balloon_page_migrate,
+> +	.migrate_folio = balloon_migrate_folio,
+>  	.isolate_page = balloon_page_isolate,
+>  	.putback_page = balloon_page_putback,
+>  };
 
-syzbot found the following issue on:
+I assume you're working on conversion of the other callbacks as well,
+because otherwise, this ends up looking a bit inconsistent and confusing :)
 
-HEAD commit:    d1dc87763f40 assoc_array: Fix BUG_ON during garbage collect
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14979947f00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c51cd24814bb5665
-dashboard link: https://syzkaller.appspot.com/bug?extid=2c93b863a7698df84bad
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+Change LGTM.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+-- 
+Thanks,
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+2c93b863a7698df84bad@syzkaller.appspotmail.com
+David / dhildenb
 
-ntfs3: loop3: Different NTFS' sector size (2048) and media sector size (512)
-ntfs3: loop3: Different NTFS' sector size (2048) and media sector size (512)
-------------[ cut here ]------------
-releasing a pinned lock
-WARNING: CPU: 2 PID: 21856 at kernel/locking/lockdep.c:5349 __lock_release kernel/locking/lockdep.c:5349 [inline]
-WARNING: CPU: 2 PID: 21856 at kernel/locking/lockdep.c:5349 lock_release+0x6a9/0x780 kernel/locking/lockdep.c:5685
-Modules linked in:
-CPU: 2 PID: 21856 Comm: syz-executor.3 Not tainted 5.18.0-syzkaller-11972-gd1dc87763f40 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.14.0-2 04/01/2014
-RIP: 0010:__lock_release kernel/locking/lockdep.c:5349 [inline]
-RIP: 0010:lock_release+0x6a9/0x780 kernel/locking/lockdep.c:5685
-Code: 68 00 e9 5a fa ff ff 4c 89 f7 e8 f2 3d 68 00 e9 36 fc ff ff e8 78 3d 68 00 e9 f5 fb ff ff 48 c7 c7 e0 9a cc 89 e8 d1 84 d3 07 <0f> 0b e9 87 fb ff ff e8 3b b3 18 08 48 c7 c7 4c 44 bb 8d e8 4f 3d
-RSP: 0018:ffffc90003497a00 EFLAGS: 00010082
-RAX: 0000000000000000 RBX: ffff88801e742c48 RCX: 0000000000000000
-RDX: 0000000000040000 RSI: ffffffff81601908 RDI: fffff52000692f32
-RBP: 1ffff92000692f42 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000080000001 R11: 0000000000000001 R12: ffff88804fb22498
-R13: 0000000000000002 R14: ffff88801e742c18 R15: ffff88801e7421c0
-FS:  00007f64be4cb700(0000) GS:ffff88802cc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f64be4cc000 CR3: 00000000669a7000 CR4: 0000000000150ee0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 000000000000003b DR6: 00000000ffff0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:157 [inline]
- _raw_spin_unlock_irq+0x12/0x40 kernel/locking/spinlock.c:202
- spin_unlock_irq include/linux/spinlock.h:399 [inline]
- truncate_inode_pages_final+0x5f/0x80 mm/truncate.c:484
- ntfs_evict_inode+0x16/0xa0 fs/ntfs3/inode.c:1750
- evict+0x2ed/0x6b0 fs/inode.c:664
- iput_final fs/inode.c:1744 [inline]
- iput.part.0+0x562/0x820 fs/inode.c:1770
- iput+0x58/0x70 fs/inode.c:1760
- ntfs_fill_super+0x2d66/0x3730 fs/ntfs3/super.c:1180
- get_tree_bdev+0x440/0x760 fs/super.c:1292
- vfs_get_tree+0x89/0x2f0 fs/super.c:1497
- do_new_mount fs/namespace.c:3040 [inline]
- path_mount+0x1320/0x1fa0 fs/namespace.c:3370
- do_mount fs/namespace.c:3383 [inline]
- __do_sys_mount fs/namespace.c:3591 [inline]
- __se_sys_mount fs/namespace.c:3568 [inline]
- __x64_sys_mount+0x27f/0x300 fs/namespace.c:3568
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x46/0xb0
-RIP: 0033:0x7f64bd28a63a
-Code: 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 b8 ff ff ff ff eb d2 e8 b8 04 00 00 0f 1f 84 00 00 00 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f64be4caf88 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0000000020000200 RCX: 00007f64bd28a63a
-RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007f64be4cafe0
-RBP: 00007f64be4cb020 R08: 00007f64be4cb020 R09: 0000000020000000
-R10: 0000000000000000 R11: 0000000000000206 R12: 0000000020000000
-R13: 0000000020000100 R14: 00007f64be4cafe0 R15: 000000002007a980
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
