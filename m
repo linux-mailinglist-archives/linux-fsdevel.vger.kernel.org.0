@@ -2,276 +2,218 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AC71E53F38C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jun 2022 03:49:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67B9653F416
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jun 2022 04:50:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235516AbiFGBtn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 6 Jun 2022 21:49:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55062 "EHLO
+        id S233355AbiFGCuG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 6 Jun 2022 22:50:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34688 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235608AbiFGBtk (ORCPT
+        with ESMTP id S236126AbiFGCt5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 6 Jun 2022 21:49:40 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5964B6948A;
-        Mon,  6 Jun 2022 18:49:30 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D770161203;
-        Tue,  7 Jun 2022 01:49:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E670C385A9;
-        Tue,  7 Jun 2022 01:49:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1654566569;
-        bh=qSvr7Gh3LPbX6JdisRAwN1KiQUP4h+g+NqN2y5XhZEg=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=GOWzi6oQ4/DuYtv4mxtmwy0U8advVwMdaNkJp4JtAn2O1XTGWylJIYyfgoGiFQXXr
-         LKlP4lStEIglBYXQy0pn8KEQ75seZaeyssEzYBmAV9euO/9X2t9dXesVsStncg3d9t
-         KLrjzTsAm+K8XbDsTYiLPBC3H4l/YtfLp/thV0GCWrFEs3areKbyX6zq6zbTcMsETG
-         G3x4zRg3UxjF7/3K3Hpri11RmfeYoQm1RWYbgJ9UojTOaOOBWDFJFzZsbr4IC385G2
-         Eu3n+tg+HgOeqqlpe3vN2suX1XnDk7cQEJP7OjHzDMoUzlDDaz//lH9XUEawopMU3U
-         vUEb48uUzLoEg==
-Subject: [PATCH 8/8] xfs: document future directions of online fsck
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     djwong@kernel.org
-Cc:     linux-xfs@vger.kernel.org, willy@infradead.org,
-        chandan.babu@oracle.com, allison.henderson@oracle.com,
-        linux-fsdevel@vger.kernel.org, hch@infradead.org,
-        catherine.hoang@oracle.com
-Date:   Mon, 06 Jun 2022 18:49:28 -0700
-Message-ID: <165456656884.167418.6681877656704618850.stgit@magnolia>
-In-Reply-To: <165456652256.167418.912764930038710353.stgit@magnolia>
-References: <165456652256.167418.912764930038710353.stgit@magnolia>
-User-Agent: StGit/0.19
+        Mon, 6 Jun 2022 22:49:57 -0400
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2097.outbound.protection.outlook.com [40.107.117.97])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BC32C5D8B;
+        Mon,  6 Jun 2022 19:49:54 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ChUktE4qZb/X3mWCzSggw5fRiEK/0zbbrhQhmB1YwnutRMtF1JggGqS5nzI11EXMrgxGh8OBaHrLxmGXi0BVIQGVJbyDnfDldSn4kJVfFv8tpl8syYR8NEeMGgqn3pjSOm+2ZhAbiYPTEyUiXlX7ylAZFwjwdWchIQtQQlTOka/Akhybmyy1plIVyn9UkXlKJsUZ5EXJ8/rajdVDyE69Vt2IrpGPHtNDk/j3HALN7aFst5nXS8BWtdy49F+vQu8s6dENouiNN10OBs9xPZYfb+kVjv+09eJWSj9JUsY0R0xKeMbN9SIqRoXol/OK+RlvcYhEjhDJ5f0xsI9hA/JXxg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Bcvw37cBXAgF/BSF1p/zye6fXaE6PtlBSlqV+N6AAxI=;
+ b=mxoYGcLfa80EO1nXJ63xq7tNeixMHUd+DvB+3Mx17Acvdd4DoS+mBOTCFI5SDN6/d5hzdtL/2UB1fdNKUeW5ARID5Tg+84xKIGvc49AGak6rfPIl+eRndON1fIrvoQJ7HwI5KGe7az5PXq8Fj70lDZtW9+z5C9+X1rkcmsR91Lr/RGXbdw+PB23P6GsIjLVnCzybiT2bvA0DiH5yYITlVNCRhmYSU05Kp9YXBx2QvxRPNWefhwvqYPnU1KXucE4d3h2QfcHILL/+kghC7rJ6cggschCnTjukT2Wf9k9aUkg/+1xiPfTBSqOKa7mapgcbF/aq3HBaZo4tzbvnTtpBag==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo0.onmicrosoft.com;
+ s=selector2-vivo0-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Bcvw37cBXAgF/BSF1p/zye6fXaE6PtlBSlqV+N6AAxI=;
+ b=WO7F3zm7dB3hRHS2KzUqxbHj/jJJYuv9zNVk8Sjrwz++uP8eYFzPYLf/bbv0lHFF/m8zUhB8F0lEzB0PQZBh70UrlVdFnrB5RxXWgRhFhf8P2CsrckodFTCPNfMde4iwrTfS6LagguZNZGk7Tb3V8pyYC70fDS432ZVk/lnM0YI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
+ by TY2PR06MB2525.apcprd06.prod.outlook.com (2603:1096:404:4e::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5314.17; Tue, 7 Jun
+ 2022 02:49:51 +0000
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::8588:9527:6e72:69c2]) by SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::8588:9527:6e72:69c2%5]) with mapi id 15.20.5314.018; Tue, 7 Jun 2022
+ 02:49:51 +0000
+From:   Yangtao Li <frank.li@vivo.com>
+To:     linkinjeon@kernel.org, sj1557.seo@samsung.com
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yangtao Li <frank.li@vivo.com>
+Subject: [PATCH] exfat: intorduce skip_stream_check mount opt
+Date:   Tue,  7 Jun 2022 10:49:42 +0800
+Message-Id: <20220607024942.811-1-frank.li@vivo.com>
+X-Mailer: git-send-email 2.35.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR01CA0041.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:193::15) To SEZPR06MB5269.apcprd06.prod.outlook.com
+ (2603:1096:101:78::6)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: ca7d2ff9-2372-46ed-2761-08da483064ac
+X-MS-TrafficTypeDiagnostic: TY2PR06MB2525:EE_
+X-Microsoft-Antispam-PRVS: <TY2PR06MB2525247A8CA8D6D7ECD211DCE8A59@TY2PR06MB2525.apcprd06.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: JeeC1NW7zttV9o6E+vI3eTUSsfMdzptyw8yfXDkuLQbfkzrmwDkY4RsDrozqJDU+FDwx010mMWSEa9tFCvwAPkZ09Cpo/KFP3lwhfwkH1IsEgnNF1VBXz5KjyJ0QzrUFstGXn1CBgaVxeOCLdTiHSMU49+L/Lnpy7yCHv6yK5qTQz3T1G5jLfkMBbBaT59QeRC74jSjKjn1YwS6zMEu2cvJM4hDSqhdKvYFwbAkQQ8FbXEdsYt5VjlUwQcRrJWhqcFRNtVgNOrNgHsyajlclNSFtKYK6SMr5kHMhrvsM9eu77KMVEWoHWkBk0TZVh9lfbTvTjq0+vLgsXyl1PPOhUwljqDAZLFNi2CslybgRwlSAiCwPavO6Cb9hz0Ddt4Z/AogXX+9IHPmAq6TXnuhAkl1BSGqFaTC+nfUDn2viD1yiXOJZlioOqHXmhimOHnX8038c1WDhvbJ6ulh9XWhKOuG97ybFP7UNziYFulbugzXKIo/xkDwBKwcEFXX/9KHwL9+P061Fv5an2wBhOXETKjv6Wr94TQdu624z1tSwIL+rKyNkp+T7dtPnaFyKWNoiBIIljPKu65kGLdibGwDSZ5OFIxn5LG4XENVYMNR012JOa1Nosr2wOUYYJUvuQcQAlDIZjsiOEKM4umx5InaGtimzOA/0uSqH+j885SwqXEObLBJ17SVTQD6IOi5yKx0o
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230001)(4636009)(366004)(6666004)(83380400001)(6486002)(52116002)(26005)(6506007)(107886003)(508600001)(6512007)(1076003)(2616005)(186003)(86362001)(8936002)(8676002)(4326008)(5660300002)(66476007)(66556008)(66946007)(38350700002)(2906002)(38100700002)(36756003)(316002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?4ZWlsJH0EbFtmX/4jrx77n6w/R54baS/HLrYcenQy6w+NOE9XCTnhnBGhL/Q?=
+ =?us-ascii?Q?xvNptnsSOsqPCq54+hFwaq2546M6cejlVfgpj5pAiJZ5+yOTRKgVbXyz6x5Q?=
+ =?us-ascii?Q?T0vhd8i73iqKv3J/sQtnHOeI6Nuz2dkYHakQhXidoP+MFanNTn47CdiVNqfs?=
+ =?us-ascii?Q?c962g89f4GPGEDMKmg75hGUgNdYVAjZoSOGzasN0vQC9vzD9CvacNmKRKT2M?=
+ =?us-ascii?Q?1erciUk0VF0Z8ZKGgzPRwp3kBW5fF1+hKUOEqMurXT+L4CWghxyb5AVSPVva?=
+ =?us-ascii?Q?WDBCLHU4dECIgDffP5aiKEN3f9sSihtk7lFXhNZ1v1WiipvOHrDn+X23bX+m?=
+ =?us-ascii?Q?VYzxKPyv5hYxYkrI/h6J1YAkPx85nhLwZNsDkwwAYxSRDdGJemOb2ZaCbBp9?=
+ =?us-ascii?Q?1H6ojDYCvkHdh7uP5wxBdQsR+HSShNnm8QixspMu4CsGceXTk5QJIaPCVQuO?=
+ =?us-ascii?Q?1+Ws5XqnO1wUPjyesW4MkCGqjGfzRQkNwDOMgSofcTfO9u18foJaJ9dLkTU9?=
+ =?us-ascii?Q?IKZY7kZs66Toxf5o/AaQcY/gOjWynXgniXzYsoAf7PmGNzlgozAyl6Eczfvc?=
+ =?us-ascii?Q?n3hfbfaztg2eY3ynDMfYxpBWtuNqioBYfdEZV9z7qdPlaGKOqygnLf46U7nn?=
+ =?us-ascii?Q?+tWKI+sUxHulJHIUxVSlqW8q9Ky0b7k6Zr23Pg2zfkCIIl2a8Zmm9vq06jnI?=
+ =?us-ascii?Q?LL+XJJKdBOSw9CXruxsZIttVWCUtocMfsuCTLIIWKCla5XSQOKTnSoJjjVux?=
+ =?us-ascii?Q?bokz4h7ulSTcFPGFz822vZmuFjDHzEO5crs/vQ4Aa1GbExx6vnVU4z3j/DjQ?=
+ =?us-ascii?Q?I4/UipBPOzI9R3u5Vg3su6dMrOohQOthjIkvM74zlXU9Y0t6c3wNdXRvCOkX?=
+ =?us-ascii?Q?uz2xZXKUUjkQTu/hqU/mEL8vaX7ffKyTlhftlnDWUttbyQIRG9HvAUabqH9d?=
+ =?us-ascii?Q?S10Z94izM9fLOnfcxZs15Zc+PN3pUxNtUdbQXvkqS8RkKFFvnePywgNKOwM5?=
+ =?us-ascii?Q?OFPyX/rCbzxyPTYBTVYV/ST1bjs1jqdMP4TrAMFeXEoyWS0W1qJTBeUUIVRL?=
+ =?us-ascii?Q?5278LLuPBKCkCgqtPE0NfsQC/sLUMZ3d7L+3ETE41zjjSQL/VfR8iQS4uIcd?=
+ =?us-ascii?Q?XI8CXZmNsvMyk3kAIs1+EVISbIZNwUBIHDR1Er2zVFlC3WjwSYcSOdgeXtio?=
+ =?us-ascii?Q?3TFrHdc8QfaPMLaOIMAsCm4PIFIkPRZA+XQ7yPmwOG0Sfq4+YvErnfVqkMWv?=
+ =?us-ascii?Q?SzGjKWTUjduC3HwnzkVeNeYGbEXmFC0bfkBkukIVhmxSh3Nazku8sWtUG6w+?=
+ =?us-ascii?Q?IB9HKcwQUY+vBbPuElKSAt+ZtswFD9wU7NJA/7vBr+WAbZwgt73ZCYFrLNPG?=
+ =?us-ascii?Q?DfdgdchYkcFk/Yh6m/gSFwa9N5Ye1oVKu1PkpCzTdzTn/CNSMd4XdJC1tGaP?=
+ =?us-ascii?Q?7gNiwDcZvqOdtEjhM4DjhIgTpw4kRVsf6psIvKRPXJoh4Qoy/ujnCINgJm9d?=
+ =?us-ascii?Q?42fvXfod2Ufa0Wmnem8tKvBVRfppi0j/tJb/dxY3bxK6rAqmzWc3RZRsNvIq?=
+ =?us-ascii?Q?52uFh2fnBYuNippFVlwsVzJ+NDo/JIuMWP3QBhmheDxOhrE9jGUCTRGwxi9y?=
+ =?us-ascii?Q?zu8YIdqOdmqO5+3ZbJEkZXp4SlcRhQgQ3oQeShVJRht9eiVt2EgjFblJZzPP?=
+ =?us-ascii?Q?i2CW2+WoUPAhF9JjhBXGMyF0KEL2WOtq/Rt+fVVecPKcaeOvTuCddwm9LihB?=
+ =?us-ascii?Q?FSJC8Ve8IA=3D=3D?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ca7d2ff9-2372-46ed-2761-08da483064ac
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jun 2022 02:49:51.2386
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: O/LhmQKChBCgfFfICx77DFkG7Y8Z1/FuSxW1yQZ922iJbVkh9X+hFLFYDbau5H7xFc0jXkqM1S/QqMCqKiIltA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PR06MB2525
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Darrick J. Wong <djwong@kernel.org>
+There are some files in my USB flash drive that can be recognized by
+the Windows computer, but on Linux, only the existence of the file name
+can be seen.
 
-Add the seventh and final chapter of the online fsck documentation,
-where we talk about future functionality that can tie in with the
-functionality provided by the online fsck patchset.
+When executing ls command to view the file attributes or access, the file
+does not exist. Therefore, when the current windows and linux drivers
+access a file, there is a difference in the checking of the file metadata,
+which leads to this situation.
+(There is also a difference between traversing all children of the parent
+directory and finding a child in the parent directory on linux.)
 
-Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+So, we introduce a new mount option that skips the check of the file stream
+entry in exfat_find_dir_entry().
+
+Signed-off-by: Yangtao Li <frank.li@vivo.com>
 ---
- .../filesystems/xfs-online-fsck-design.rst         |  190 ++++++++++++++++++++
- 1 file changed, 190 insertions(+)
+ fs/exfat/dir.c      | 6 ++++--
+ fs/exfat/exfat_fs.h | 3 ++-
+ fs/exfat/super.c    | 7 +++++++
+ 3 files changed, 13 insertions(+), 3 deletions(-)
 
-
-diff --git a/Documentation/filesystems/xfs-online-fsck-design.rst b/Documentation/filesystems/xfs-online-fsck-design.rst
-index 47bedce146b8..254c9bb2f2dc 100644
---- a/Documentation/filesystems/xfs-online-fsck-design.rst
-+++ b/Documentation/filesystems/xfs-online-fsck-design.rst
-@@ -3101,6 +3101,8 @@ The extra flexibility enables several new use cases:
-   (``FIEXCHANGE_RANGE``) to exchange the file contents, thereby committing all
-   of the updates to the original file, or none of them.
+diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c
+index cb1c0d8c1714..4ea0077f2955 100644
+--- a/fs/exfat/dir.c
++++ b/fs/exfat/dir.c
+@@ -1013,6 +1013,7 @@ int exfat_find_dir_entry(struct super_block *sb, struct exfat_inode_info *ei,
+ 			}
  
-+.. _swapext_if_unchanged:
-+
- - **Transactional file updates**: The same mechanism as above, but the caller
-   only wants the commit to occur if the original file's contents have not
-   changed.
-@@ -3672,3 +3674,191 @@ the failure to the specific region of the media and recorded.
- When we have finished issuing verification requests, we again use the space map
- ioctl to map the recorded media errors back to the metadata structures or files
- that own the space, and report the data have been lost.
-+
-+Conclusion
-+==========
-+
-+It is hoped that the reader of this document has followed the designs laid out
-+in this document and now has some familiarity with how XFS performs online
-+rebuilding of its metadata indices, and how filesystem users can interact with
-+that functionality.
-+Although the scope of this work is daunting, it is hoped that this guide will
-+make it easier for code readers to understand what has been built, for whom it
-+has been built, and why.
-+Please feel free to contact the XFS mailing list with questions.
-+
-+Future Work
-+===========
-+
-+Quite a lot of future XFS work ties into the online fsck feature.
-+Here is a quick discussion of a few pieces that are immediately adjacent.
-+
-+FIEXCHANGE_RANGE
-+----------------
-+
-+As discussed earlier, a second frontend to the atomic extent swap mechanism is
-+a new ioctl call that userspace programs can use to commit updates to files
-+atomically.
-+This frontend has been out for review for several years now, though the
-+necessary refinements to online repair and lack of customer demand mean that
-+the proposal has not been pushed very hard.
-+
-+Vectorized Scrub
-+----------------
-+
-+As it turns out, the :ref:`refactoring <scrubrepair>` of repair items mentioned
-+earlier was a catalyst for enabling a vectorized scrub system call.
-+Since 2018, the cost of making a kernel call has increased considerably on some
-+systems to mitigate the effects of speculative execution attacks.
-+This incentivizes us to make as few system calls as possible to reduce the
-+number of times we have to cross a security boundary.
-+
-+With vectorized scrub, we now push to the kernel the identity of a filesystem
-+object, a list of scrub types to run against that object, and a simple
-+representation of the data dependencies between the selected scrub types.
-+The kernel executes as much of the userspace plan as it can until it hits a
-+dependency that cannot be satisfied due to a corruption, and tells userspace
-+how much was accomplished.
-+It is hoped that ``io_uring`` will pick up enough of this functionality that we
-+can use that instead of adding a separate vectored scrub system call to XFS.
-+
-+The relevant patchsets are the
-+`kernel
-+<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=vectorized-scrub>`_
-+and
-+`userspace vectorized scrub
-+<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfsprogs-dev.git/log/?h=vectorized-scrub>`_
-+series.
-+
-+Quality of Service Targets for Scrub
-+------------------------------------
-+
-+One serious shortcoming of the online fsck code is that the amount of time that
-+we can spend in the kernel holding resource locks is basically unbounded.
-+Userspace is allowed to send a fatal signal to the process which will cause
-+``xfs_scrub`` to exit when it reaches a good stopping point, but there's no way
-+for userspace to provide a time budget to the kernel.
-+Given that we have helpers to detect fatal signals, it shouldn't be too much
-+work to allow userspace to specify a timeout for a scrub/repair operation
-+and abort the operation if it exceeds budget.
-+
-+Parent Pointers
-+---------------
-+
-+Directory parent pointers were first proposed as an XFS feature more than a
-+decade ago by SGI.
-+In that implementation, each link from a parent directory to a child file would
-+be augmented by an extended attribute in the child that could be used to
-+identify the directory.
-+Unfortunately, this early implementation had two major shortcomings:
-+First, the XFS codebase of the late 2000s did not have the infrastructure to
-+enforce strong referential integrity in the directory tree, which is a fancy
-+way to say that it could not guarantee that a change in a forward link would
-+always be followed up by a corresponding change to the reverse links.
-+Second, the extended attribute did not record the name of the directory entry
-+in the parent, so the first parent pointer implementation cannot be used to
-+reconnect the directory tree.
-+
-+In the second implementation (currently being developed by Allison Henderson),
-+the extended attribute code will be enhanced to use log intent items to
-+guarantee that an extended attribute update can always be completed by log
-+recovery.
-+The parent pointer data will also include the entry name and location in the
-+parent.
-+In other words, we will be storing parent pointer mappings of the form
-+``(parent_ino, parent_gen, dirent_pos) => (dirent_name)`` in the extended
-+attribute data.
-+With that in place, XFS can guarantee strong referential integrity of directory
-+tree operations -- forward links will always be complemented with reverse
-+links.
-+
-+When parent pointers have landed, it will no longer be necessary to salvage
-+damaged directories and hope for the best!
-+Instead, we will set up a :ref:`coordinated inode scan <iscan>` and a
-+:ref:`directory entry live update hook <liveupdate>`.
-+We can then scan the filesystem to find the parent of a directory being
-+repaired, and we can reconstruct the rest of the directory entries from the
-+parent pointer information.
-+The new entries will be written to the temporary directory like they are now,
-+and the atomic extent swap will be used to replace the old directory with the
-+new one.
-+
-+**Question**: How do we ensure that the ``dirent_pos`` fields match in the
-+reconstructed directory?
-+Is that field merely advisory, since the other three values are sufficient to
-+find the entry in the parent?
-+Or will we have to remove the parent pointer entry and re-add it?
-+
-+Defragmenting Free Space
-+------------------------
-+
-+We define this operation as clearing a portion of the physical storage so that
-+it becomes a contiguous chunk of free space.
-+
-+The first piece we need is the ability to read the reverse mapping index from
-+userspace.
-+This already exists in the form of the ``FS_IOC_GETFSMAP`` ioctl.
-+The second piece we need is a new fallocate mode (``FALLOC_FL_MAP_FREE_SPACE``)
-+that allocates the free space in a region and maps it to a file.
-+Call this file the "space collector" file.
-+The third piece is the ability to force an online repair.
-+
-+To clear all the metadata out of a portion of physical storage, we use the new
-+fallocate call to map any free space in that region to the space collector.
-+Next, we find all metadata blocks in that region by way of ``GETFSMAP``,
-+and issue forced repair requests on the data structure.
-+This will most probably result in the metadata being rebuilt somewhere else.
-+That takes care of everything except inode chunks and file data.
-+After each rebuild operation, we re-call the "map free space" function to
-+collect the newly freed space.
-+
-+To clear all the file data out of a portion of the physical storage, we again
-+use the FSMAP information to find relevant file data blocks.
-+Once we've identified a good target, we use the ``FICLONERANGE`` call on that
-+file to try to map the space to a dummy file.
-+Cloning the extent means that the original owners cannot overwrite the
-+contents; any changes will be staged somewhere else via copy-on-write.
-+We can then make our own copy of the frozen extent in an area that we are not
-+clearing, and use ``FIEDEUPRANGE`` (or the
-+:ref:`atomic extent swap <swapext_if_unchanged>` feature) to change the target
-+file's data extent mapping away from the area we're clearing.
-+After we've frozen the file data extent and removed all other mappings, we
-+reflink the space into the space collector file.
-+
-+There are further optimizations to be had in the above algorithm.
-+If we need to clear a piece of physical storage that has a high sharing factor,
-+we would strongly prefer to retain this sharing factor.
-+In fact, we prefer to relocate highly shared chunks first.
-+To make this work smoothly, we add a fourth piece: a new ioctl
-+(``FS_IOC_GETREFCOUNTS``) to report the reference count records to userspace.
-+With the refcount information exposed, we can quickly find the longest, most
-+shared data extents in the filesystem, and target them first.
-+
-+**Question**: How do we move inode chunks?
-+Dave Chinner has a prototype that creates a new file with the old contents and
-+then locklessly runs around the filesystem updating directory entries.
-+The operation cannot complete if the filesystem goes down.
-+That problem isn't totally insurmountable: create an inode remapping table
-+hidden behind a jump label, and a log item that tracks the kernel walking the
-+filesystem to update directory entries.
-+The trouble is, we can't do anything about open files, since we can't revoke
-+them.
-+Can we abuse jump labels even further to add a revoke-me-hard bailout to
-+*every* code path coming in from userspace?
-+
-+The relevant patchsets are the
-+`kernel
-+<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=defrag-freespace>`_
-+and
-+`userspace freespace defrag
-+<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfsprogs-dev.git/log/?h=defrag-freespace>`_
-+series.
-+
-+Shrinking Filesystems
-+---------------------
-+
-+Removing the end of the filesystem ought to be a simple matter of evacuating
-+the data and metadata at the end of the filesystem, and handing the freed space
-+to the shrink code.
-+Unfortunately, that requires an evacuation of the space at end of the
-+filesystem, which sounds an awful lot like free space defragmentation!
+ 			if (entry_type == TYPE_STREAM) {
++				struct exfat_mount_options *opts = &sbi->options;
+ 				u16 name_hash;
+ 
+ 				if (step != DIRENT_STEP_STRM) {
+@@ -1023,9 +1024,10 @@ int exfat_find_dir_entry(struct super_block *sb, struct exfat_inode_info *ei,
+ 				step = DIRENT_STEP_FILE;
+ 				name_hash = le16_to_cpu(
+ 						ep->dentry.stream.name_hash);
+-				if (p_uniname->name_hash == name_hash &&
++				if ((p_uniname->name_hash == name_hash &&
+ 				    p_uniname->name_len ==
+-						ep->dentry.stream.name_len) {
++						ep->dentry.stream.name_len) ||
++					opts->skip_stream_check == 1) {
+ 					step = DIRENT_STEP_NAME;
+ 					order = 1;
+ 					name_len = 0;
+diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
+index 1d6da61157c9..5cd00ac112d9 100644
+--- a/fs/exfat/exfat_fs.h
++++ b/fs/exfat/exfat_fs.h
+@@ -204,7 +204,8 @@ struct exfat_mount_options {
+ 	/* on error: continue, panic, remount-ro */
+ 	enum exfat_error_mode errors;
+ 	unsigned utf8:1, /* Use of UTF-8 character set */
+-		 discard:1; /* Issue discard requests on deletions */
++		 discard:1, /* Issue discard requests on deletions */
++		 skip_stream_check:1; /* Skip stream entry check in exfat_find_dir_entry() */
+ 	int time_offset; /* Offset of timestamps from UTC (in minutes) */
+ };
+ 
+diff --git a/fs/exfat/super.c b/fs/exfat/super.c
+index 5539ffc20d16..e9c7df25f2b5 100644
+--- a/fs/exfat/super.c
++++ b/fs/exfat/super.c
+@@ -173,6 +173,8 @@ static int exfat_show_options(struct seq_file *m, struct dentry *root)
+ 		seq_puts(m, ",errors=remount-ro");
+ 	if (opts->discard)
+ 		seq_puts(m, ",discard");
++	if (opts->skip_stream_check)
++		seq_puts(m, ",skip_stream_check");
+ 	if (opts->time_offset)
+ 		seq_printf(m, ",time_offset=%d", opts->time_offset);
+ 	return 0;
+@@ -216,6 +218,7 @@ enum {
+ 	Opt_charset,
+ 	Opt_errors,
+ 	Opt_discard,
++	Opt_skip_stream_check,
+ 	Opt_time_offset,
+ 
+ 	/* Deprecated options */
+@@ -242,6 +245,7 @@ static const struct fs_parameter_spec exfat_parameters[] = {
+ 	fsparam_string("iocharset",		Opt_charset),
+ 	fsparam_enum("errors",			Opt_errors, exfat_param_enums),
+ 	fsparam_flag("discard",			Opt_discard),
++	fsparam_flag("skip_stream_check",	Opt_skip_stream_check),
+ 	fsparam_s32("time_offset",		Opt_time_offset),
+ 	__fsparam(NULL, "utf8",			Opt_utf8, fs_param_deprecated,
+ 		  NULL),
+@@ -296,6 +300,9 @@ static int exfat_parse_param(struct fs_context *fc, struct fs_parameter *param)
+ 	case Opt_discard:
+ 		opts->discard = 1;
+ 		break;
++	case Opt_skip_stream_check:
++		opts->skip_stream_check = 1;
++		break;
+ 	case Opt_time_offset:
+ 		/*
+ 		 * Make the limit 24 just in case someone invents something
+-- 
+2.35.1
 
