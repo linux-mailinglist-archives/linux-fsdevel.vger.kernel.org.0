@@ -2,41 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D11353F4D6
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jun 2022 06:08:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28CE353F4D7
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jun 2022 06:09:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229583AbiFGEIz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jun 2022 00:08:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36652 "EHLO
+        id S229591AbiFGEJd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jun 2022 00:09:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229553AbiFGEIu (ORCPT
+        with ESMTP id S229553AbiFGEJ0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jun 2022 00:08:50 -0400
+        Tue, 7 Jun 2022 00:09:26 -0400
 Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B665C6E5C
-        for <linux-fsdevel@vger.kernel.org>; Mon,  6 Jun 2022 21:08:47 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2B8BCA3C6
+        for <linux-fsdevel@vger.kernel.org>; Mon,  6 Jun 2022 21:09:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
-        Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:In-Reply-To:References;
-        bh=/32PqYKkg3p7PY81HRnudN6KBTfqZHXOfc4dk5u5pCk=; b=l+8TrHnr6WCJadj6+rgyY0+L0+
-        M9zosBrA4ZiDKkkc2cJpUyVMTazThb+wAHTcZQAwVBLeZ8WIMB2VU2l/AvIbL3mCFfbwmboOheMLB
-        CR84Y8qqV71gzp8/Dmp5gPK0vWVNHVqiEfGsCojtfL3VtgtbT1NSpzqKc69Vg6MZCuhm5yNdBcN2N
-        ZQ9oA/7wyc0eExwz/DF8/AvxuAvT5lt7HWPvyg30ICRuQCQdXPHjZMCIy5mCeebVhfY8FUSDGCn6y
-        cFo3O5qPhsvsDmtSwLLXPHap/3XDgXazzEAHU3m2L/dOhvQ2zaDS6i+Vvr5c9C/eU2/78olGxe2CZ
-        aZMYAoYg==;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=jknoJQ92h4cswHLsSG3/W6P6N2bECbisLr5tEqHbuA8=; b=eAk3TDMySklNvghehd/OZI44w+
+        nBAAmbLWrcQ5SAm/Z9HbNUulYuUG398LkFJqlUK6FLJ6Sx9YmM4N0eoHaZAx+DKfpw6VFRqvuVsFX
+        +QSV37y181fHFHUM2yD6zuIiIo43FZkRLDGt3q7fTE0lzrHqVMWEK+8jB/QdfmAfajBJ+2oU199xF
+        i1RwumMMkVMFSfd+jsbHoTIwgRKx9pCbvVk+AORix+bocFuIW4PRnJKuzQPYe/jQtfqU8Mbd/142s
+        NmScad2vt/T98+EbQ9GVhbvTD8B+VnEJ68aLogzNusmgsw1hBsfudI/daJfvpDMGCmF+nyTuhB0Je
+        xk+wy8Iw==;
 Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nyQWL-004Yi4-V5; Tue, 07 Jun 2022 04:08:46 +0000
-Date:   Tue, 7 Jun 2022 04:08:45 +0000
+        id 1nyQWx-004YjI-Om; Tue, 07 Jun 2022 04:09:23 +0000
+Date:   Tue, 7 Jun 2022 04:09:23 +0000
 From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
         Matthew Wilcox <willy@infradead.org>
-Subject: [RFC][PATCHES] iov_iter stuff
-Message-ID: <Yp7PTZ2nckKDTkKu@zeniv-ca.linux.org.uk>
+Subject: [PATCH 1/9] No need of likely/unlikely on calls of check_copy_size()
+Message-ID: <Yp7Pc2PFBke5FyWa@zeniv-ca.linux.org.uk>
+References: <Yp7PTZ2nckKDTkKu@zeniv-ca.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <Yp7PTZ2nckKDTkKu@zeniv-ca.linux.org.uk>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,
@@ -47,73 +49,117 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-	Rebased to -rc1 and reordered.  Sits in vfs.git #work.iov_iter,
-individual patches in followups
+it's inline and unlikely() inside of it (including the implicit one
+in WARN_ON_ONCE()) suffice to convince the compiler that getting
+false from check_copy_size() is unlikely.
 
-1/9: No need of likely/unlikely on calls of check_copy_size()
-	not just in uio.h; the thing is inlined and it has unlikely on
-all paths leading to return false
+Spotted-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+---
+ arch/powerpc/include/asm/uaccess.h |  2 +-
+ arch/s390/include/asm/uaccess.h    |  4 ++--
+ include/linux/uaccess.h            |  4 ++--
+ include/linux/uio.h                | 15 ++++++---------
+ 4 files changed, 11 insertions(+), 14 deletions(-)
 
-2/9: btrfs_direct_write(): cleaner way to handle generic_write_sync() suppression
-	new flag for iomap_dio_rw(), telling it to suppress generic_write_sync()
+diff --git a/arch/powerpc/include/asm/uaccess.h b/arch/powerpc/include/asm/uaccess.h
+index 9b82b38ff867..105f200b1e31 100644
+--- a/arch/powerpc/include/asm/uaccess.h
++++ b/arch/powerpc/include/asm/uaccess.h
+@@ -348,7 +348,7 @@ copy_mc_to_kernel(void *to, const void *from, unsigned long size)
+ static inline unsigned long __must_check
+ copy_mc_to_user(void __user *to, const void *from, unsigned long n)
+ {
+-	if (likely(check_copy_size(from, n, true))) {
++	if (check_copy_size(from, n, true)) {
+ 		if (access_ok(to, n)) {
+ 			allow_write_to_user(to, n);
+ 			n = copy_mc_generic((void *)to, from, n);
+diff --git a/arch/s390/include/asm/uaccess.h b/arch/s390/include/asm/uaccess.h
+index f4511e21d646..c2c9995466e0 100644
+--- a/arch/s390/include/asm/uaccess.h
++++ b/arch/s390/include/asm/uaccess.h
+@@ -39,7 +39,7 @@ _copy_from_user_key(void *to, const void __user *from, unsigned long n, unsigned
+ static __always_inline unsigned long __must_check
+ copy_from_user_key(void *to, const void __user *from, unsigned long n, unsigned long key)
+ {
+-	if (likely(check_copy_size(to, n, false)))
++	if (check_copy_size(to, n, false))
+ 		n = _copy_from_user_key(to, from, n, key);
+ 	return n;
+ }
+@@ -50,7 +50,7 @@ _copy_to_user_key(void __user *to, const void *from, unsigned long n, unsigned l
+ static __always_inline unsigned long __must_check
+ copy_to_user_key(void __user *to, const void *from, unsigned long n, unsigned long key)
+ {
+-	if (likely(check_copy_size(from, n, true)))
++	if (check_copy_size(from, n, true))
+ 		n = _copy_to_user_key(to, from, n, key);
+ 	return n;
+ }
+diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
+index 5a328cf02b75..47e5d374c7eb 100644
+--- a/include/linux/uaccess.h
++++ b/include/linux/uaccess.h
+@@ -148,7 +148,7 @@ _copy_to_user(void __user *, const void *, unsigned long);
+ static __always_inline unsigned long __must_check
+ copy_from_user(void *to, const void __user *from, unsigned long n)
+ {
+-	if (likely(check_copy_size(to, n, false)))
++	if (check_copy_size(to, n, false))
+ 		n = _copy_from_user(to, from, n);
+ 	return n;
+ }
+@@ -156,7 +156,7 @@ copy_from_user(void *to, const void __user *from, unsigned long n)
+ static __always_inline unsigned long __must_check
+ copy_to_user(void __user *to, const void *from, unsigned long n)
+ {
+-	if (likely(check_copy_size(from, n, true)))
++	if (check_copy_size(from, n, true))
+ 		n = _copy_to_user(to, from, n);
+ 	return n;
+ }
+diff --git a/include/linux/uio.h b/include/linux/uio.h
+index 739285fe5a2f..76d305f3d4c2 100644
+--- a/include/linux/uio.h
++++ b/include/linux/uio.h
+@@ -156,19 +156,17 @@ static inline size_t copy_folio_to_iter(struct folio *folio, size_t offset,
+ static __always_inline __must_check
+ size_t copy_to_iter(const void *addr, size_t bytes, struct iov_iter *i)
+ {
+-	if (unlikely(!check_copy_size(addr, bytes, true)))
+-		return 0;
+-	else
++	if (check_copy_size(addr, bytes, true))
+ 		return _copy_to_iter(addr, bytes, i);
++	return 0;
+ }
+ 
+ static __always_inline __must_check
+ size_t copy_from_iter(void *addr, size_t bytes, struct iov_iter *i)
+ {
+-	if (unlikely(!check_copy_size(addr, bytes, false)))
+-		return 0;
+-	else
++	if (check_copy_size(addr, bytes, false))
+ 		return _copy_from_iter(addr, bytes, i);
++	return 0;
+ }
+ 
+ static __always_inline __must_check
+@@ -184,10 +182,9 @@ bool copy_from_iter_full(void *addr, size_t bytes, struct iov_iter *i)
+ static __always_inline __must_check
+ size_t copy_from_iter_nocache(void *addr, size_t bytes, struct iov_iter *i)
+ {
+-	if (unlikely(!check_copy_size(addr, bytes, false)))
+-		return 0;
+-	else
++	if (check_copy_size(addr, bytes, false))
+ 		return _copy_from_iter_nocache(addr, bytes, i);
++	return 0;
+ }
+ 
+ static __always_inline __must_check
+-- 
+2.30.2
 
-3/9: struct file: use anonymous union member for rcuhead and llist
-	"f_u" might have been an amusing name, but... we expect anon unions to
-work.
-
-4/9: iocb: delay evaluation of IS_SYNC(...) until we want to check IOCB_DSYNC
-	makes iocb_flags() much cheaper, and it's easier to keep track of
-the places where it can change.
-
-5/9: keep iocb_flags() result cached in struct file
-	that, along with the previous commit, reduces the overhead of
-new_sync_{read,write}().  struct file doesn't grow - we can keep that
-thing in the same anon union where rcuhead and llist live; that field
-gets used only before ->f_count reaches zero while the other two are
-used only after ->f_count has reached zero.
-
-6/9: copy_page_{to,from}_iter(): switch iovec variants to generic
-	kmap_local_page() allows that.  And it kills quite a bit of
-code.
-
-7/9: new iov_iter flavour - ITER_UBUF
-	iovec analogue, with single segment.  That case is fairly common and it
-can be handled with less overhead than full-blown iovec.
-
-8/9: switch new_sync_{read,write}() to ITER_UBUF
-	... and this is why it is so common.  Further reduction of overhead
-for new_sync_{read,write}().
-
-9/9: iov_iter_bvec_advance(): don't bother with bvec_iter
-	AFAICS, variant similar to what we do for iovec/kvec generates better
-code.  Needs profiling, obviously.
-
-Diffstat:
- arch/powerpc/include/asm/uaccess.h |   2 +-
- arch/s390/include/asm/uaccess.h    |   4 +-
- block/fops.c                       |   8 +-
- drivers/nvme/target/io-cmd-file.c  |   2 +-
- fs/aio.c                           |   2 +-
- fs/btrfs/file.c                    |  19 +--
- fs/btrfs/inode.c                   |   2 +-
- fs/ceph/file.c                     |   2 +-
- fs/cifs/file.c                     |   2 +-
- fs/direct-io.c                     |   4 +-
- fs/fcntl.c                         |   1 +
- fs/file_table.c                    |  17 +-
- fs/fuse/dev.c                      |   4 +-
- fs/fuse/file.c                     |   4 +-
- fs/gfs2/file.c                     |   2 +-
- fs/io_uring.c                      |   2 +-
- fs/iomap/direct-io.c               |  24 +--
- fs/nfs/direct.c                    |   2 +-
- fs/open.c                          |   1 +
- fs/read_write.c                    |   6 +-
- fs/zonefs/super.c                  |   2 +-
- include/linux/fs.h                 |  21 ++-
- include/linux/iomap.h              |   2 +
- include/linux/uaccess.h            |   4 +-
- include/linux/uio.h                |  41 +++--
- lib/iov_iter.c                     | 308 +++++++++++--------------------------
- mm/shmem.c                         |   2 +-
- 27 files changed, 191 insertions(+), 299 deletions(-)
