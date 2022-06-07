@@ -2,49 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 045915418EF
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jun 2022 23:18:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 346535410C9
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  7 Jun 2022 21:29:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1359059AbiFGVST (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 7 Jun 2022 17:18:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52364 "EHLO
+        id S1346415AbiFGT33 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jun 2022 15:29:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53270 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1380299AbiFGVQD (ORCPT
+        with ESMTP id S1356503AbiFGT1t (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 7 Jun 2022 17:16:03 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E6FB158750;
-        Tue,  7 Jun 2022 11:54:48 -0700 (PDT)
+        Tue, 7 Jun 2022 15:27:49 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E8501A0047;
+        Tue,  7 Jun 2022 11:10:00 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 201E8B81FE1;
-        Tue,  7 Jun 2022 18:54:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85513C385A2;
-        Tue,  7 Jun 2022 18:54:45 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 623286194C;
+        Tue,  7 Jun 2022 18:10:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72130C385A2;
+        Tue,  7 Jun 2022 18:09:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1654628085;
-        bh=rtHzjj2GFfazvNSR27w6EM4Oeo2YGiREyRIw+vC3rmw=;
+        s=korg; t=1654625399;
+        bh=szR72GWSqH7x+phHBBmxy1siDxqYSsbp9og3m7l+Jsc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Pk74MNeSdHj7EdsUhuj7se1jle8JmV8c4LETPOd1LoTGcSMUNc9S0TJAnjdT3ht9l
-         JxeTmUfznG852oW6LkhtTI5qOj8YQ3lQ92p1OYmicuZaJHto9bDXRIngptKRjla4oy
-         s2ve/UT2ABV6CZgHy1Eh1N+RPC37FE7B1K/1OLlY=
+        b=KYlKeoym6dbP9CKFPmQOFI71vZDqO2wr5QbKYm/7rtAtGEwO7Gwvw8X3U3oA6uhxc
+         i8UXoiukF8Ka2O1jAFlLJrcmISj2qy2w/pO5dakTr64Frx+WURw/XHjRcPIXq8ah+4
+         ov346OGR6TbsANfJPvvrRZFP6oWck42cUSewlVcI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Seth Forshee <seth.forshee@digitalocean.com>,
+        stable@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Giuseppe Scrivano <gscrivan@redhat.com>,
+        Amir Goldstein <amir73il@gmail.com>,
         Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org,
         "Christian Brauner (Microsoft)" <brauner@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.18 151/879] fs: hold writers when changing mounts idmapping
-Date:   Tue,  7 Jun 2022 18:54:29 +0200
-Message-Id: <20220607165007.088140974@linuxfoundation.org>
+        Miklos Szeredi <mszeredi@redhat.com>
+Subject: [PATCH 5.15 662/667] fs: add two trivial lookup helpers
+Date:   Tue,  7 Jun 2022 19:05:27 +0200
+Message-Id: <20220607164954.498288205@linuxfoundation.org>
 X-Mailer: git-send-email 2.36.1
-In-Reply-To: <20220607165002.659942637@linuxfoundation.org>
-References: <20220607165002.659942637@linuxfoundation.org>
+In-Reply-To: <20220607164934.766888869@linuxfoundation.org>
+References: <20220607164934.766888869@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -59,67 +58,146 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Christian Brauner <christian.brauner@ubuntu.com>
+From: Christian Brauner <brauner@kernel.org>
 
-[ Upstream commit e1bbcd277a53e08d619ffeec56c5c9287f2bf42f ]
+commit 00675017e0aeba5305665c52ded4ddce6a4c0231 upstream.
 
-Hold writers when changing a mount's idmapping to make it more robust.
+Similar to the addition of lookup_one() add a version of
+lookup_one_unlocked() and lookup_one_positive_unlocked() that take
+idmapped mounts into account. This is required to port overlay to
+support idmapped base layers.
 
-The vfs layer takes care to retrieve the idmapping of a mount once
-ensuring that the idmapping used for vfs permission checking is
-identical to the idmapping passed down to the filesystem.
-
-For ioctl codepaths the filesystem itself is responsible for taking the
-idmapping into account if they need to. While all filesystems with
-FS_ALLOW_IDMAP raised take the same precautions as the vfs we should
-enforce it explicitly by making sure there are no active writers on the
-relevant mount while changing the idmapping.
-
-This is similar to turning a mount ro with the difference that in
-contrast to turning a mount ro changing the idmapping can only ever be
-done once while a mount can transition between ro and rw as much as it
-wants.
-
-This is a minor user-visible change. But it is extremely unlikely to
-matter. The caller must've created a detached mount via OPEN_TREE_CLONE
-and then handed that O_PATH fd to another process or thread which then
-must've gotten a writable fd for that mount and started creating files
-in there while the caller is still changing mount properties. While not
-impossible it will be an extremely rare corner-case and should in
-general be considered a bug in the application. Consider making a mount
-MOUNT_ATTR_NOEXEC or MOUNT_ATTR_NODEV while allowing someone else to
-perform lookups or exec'ing in parallel by handing them a copy of the
-OPEN_TREE_CLONE fd or another fd beneath that mount.
-
-Link: https://lore.kernel.org/r/20220510095840.152264-1-brauner@kernel.org
-Cc: Seth Forshee <seth.forshee@digitalocean.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org
+Cc: <linux-fsdevel@vger.kernel.org>
+Tested-by: Giuseppe Scrivano <gscrivan@redhat.com>
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/namespace.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/namei.c            |   70 ++++++++++++++++++++++++++++++++++++++++++--------
+ include/linux/namei.h |    6 ++++
+ 2 files changed, 66 insertions(+), 10 deletions(-)
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index afe2b64b14f1..41461f55c039 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -4026,8 +4026,9 @@ static int can_idmap_mount(const struct mount_kattr *kattr, struct mount *mnt)
- static inline bool mnt_allow_writers(const struct mount_kattr *kattr,
- 				     const struct mount *mnt)
- {
--	return !(kattr->attr_set & MNT_READONLY) ||
--	       (mnt->mnt.mnt_flags & MNT_READONLY);
-+	return (!(kattr->attr_set & MNT_READONLY) ||
-+		(mnt->mnt.mnt_flags & MNT_READONLY)) &&
-+	       !kattr->mnt_userns;
- }
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -2718,7 +2718,8 @@ struct dentry *lookup_one(struct user_na
+ EXPORT_SYMBOL(lookup_one);
  
- static int mount_setattr_prepare(struct mount_kattr *kattr, struct mount *mnt)
--- 
-2.35.1
-
+ /**
+- * lookup_one_len_unlocked - filesystem helper to lookup single pathname component
++ * lookup_one_unlocked - filesystem helper to lookup single pathname component
++ * @mnt_userns:	idmapping of the mount the lookup is performed from
+  * @name:	pathname component to lookup
+  * @base:	base directory to lookup from
+  * @len:	maximum length @len should be interpreted to
+@@ -2729,14 +2730,15 @@ EXPORT_SYMBOL(lookup_one);
+  * Unlike lookup_one_len, it should be called without the parent
+  * i_mutex held, and will take the i_mutex itself if necessary.
+  */
+-struct dentry *lookup_one_len_unlocked(const char *name,
+-				       struct dentry *base, int len)
++struct dentry *lookup_one_unlocked(struct user_namespace *mnt_userns,
++				   const char *name, struct dentry *base,
++				   int len)
+ {
+ 	struct qstr this;
+ 	int err;
+ 	struct dentry *ret;
+ 
+-	err = lookup_one_common(&init_user_ns, name, base, len, &this);
++	err = lookup_one_common(mnt_userns, name, base, len, &this);
+ 	if (err)
+ 		return ERR_PTR(err);
+ 
+@@ -2745,6 +2747,59 @@ struct dentry *lookup_one_len_unlocked(c
+ 		ret = lookup_slow(&this, base, 0);
+ 	return ret;
+ }
++EXPORT_SYMBOL(lookup_one_unlocked);
++
++/**
++ * lookup_one_positive_unlocked - filesystem helper to lookup single
++ *				  pathname component
++ * @mnt_userns:	idmapping of the mount the lookup is performed from
++ * @name:	pathname component to lookup
++ * @base:	base directory to lookup from
++ * @len:	maximum length @len should be interpreted to
++ *
++ * This helper will yield ERR_PTR(-ENOENT) on negatives. The helper returns
++ * known positive or ERR_PTR(). This is what most of the users want.
++ *
++ * Note that pinned negative with unlocked parent _can_ become positive at any
++ * time, so callers of lookup_one_unlocked() need to be very careful; pinned
++ * positives have >d_inode stable, so this one avoids such problems.
++ *
++ * Note that this routine is purely a helper for filesystem usage and should
++ * not be called by generic code.
++ *
++ * The helper should be called without i_mutex held.
++ */
++struct dentry *lookup_one_positive_unlocked(struct user_namespace *mnt_userns,
++					    const char *name,
++					    struct dentry *base, int len)
++{
++	struct dentry *ret = lookup_one_unlocked(mnt_userns, name, base, len);
++
++	if (!IS_ERR(ret) && d_flags_negative(smp_load_acquire(&ret->d_flags))) {
++		dput(ret);
++		ret = ERR_PTR(-ENOENT);
++	}
++	return ret;
++}
++EXPORT_SYMBOL(lookup_one_positive_unlocked);
++
++/**
++ * lookup_one_len_unlocked - filesystem helper to lookup single pathname component
++ * @name:	pathname component to lookup
++ * @base:	base directory to lookup from
++ * @len:	maximum length @len should be interpreted to
++ *
++ * Note that this routine is purely a helper for filesystem usage and should
++ * not be called by generic code.
++ *
++ * Unlike lookup_one_len, it should be called without the parent
++ * i_mutex held, and will take the i_mutex itself if necessary.
++ */
++struct dentry *lookup_one_len_unlocked(const char *name,
++				       struct dentry *base, int len)
++{
++	return lookup_one_unlocked(&init_user_ns, name, base, len);
++}
+ EXPORT_SYMBOL(lookup_one_len_unlocked);
+ 
+ /*
+@@ -2758,12 +2813,7 @@ EXPORT_SYMBOL(lookup_one_len_unlocked);
+ struct dentry *lookup_positive_unlocked(const char *name,
+ 				       struct dentry *base, int len)
+ {
+-	struct dentry *ret = lookup_one_len_unlocked(name, base, len);
+-	if (!IS_ERR(ret) && d_flags_negative(smp_load_acquire(&ret->d_flags))) {
+-		dput(ret);
+-		ret = ERR_PTR(-ENOENT);
+-	}
+-	return ret;
++	return lookup_one_positive_unlocked(&init_user_ns, name, base, len);
+ }
+ EXPORT_SYMBOL(lookup_positive_unlocked);
+ 
+--- a/include/linux/namei.h
++++ b/include/linux/namei.h
+@@ -69,6 +69,12 @@ extern struct dentry *lookup_one_len(con
+ extern struct dentry *lookup_one_len_unlocked(const char *, struct dentry *, int);
+ extern struct dentry *lookup_positive_unlocked(const char *, struct dentry *, int);
+ struct dentry *lookup_one(struct user_namespace *, const char *, struct dentry *, int);
++struct dentry *lookup_one_unlocked(struct user_namespace *mnt_userns,
++				   const char *name, struct dentry *base,
++				   int len);
++struct dentry *lookup_one_positive_unlocked(struct user_namespace *mnt_userns,
++					    const char *name,
++					    struct dentry *base, int len);
+ 
+ extern int follow_down_one(struct path *);
+ extern int follow_down(struct path *);
 
 
