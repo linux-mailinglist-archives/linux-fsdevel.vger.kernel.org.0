@@ -2,158 +2,206 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A1F4542409
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jun 2022 08:52:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0DF2D542268
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jun 2022 08:47:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231997AbiFHEbe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jun 2022 00:31:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55008 "EHLO
+        id S232323AbiFHFKv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jun 2022 01:10:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232929AbiFHEa3 (ORCPT
+        with ESMTP id S232408AbiFHFKS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jun 2022 00:30:29 -0400
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D4A439B22C
-        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jun 2022 19:05:40 -0700 (PDT)
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20220608020504epoutp02467a41a1955fbe252a7933f2661c70d2~2gvWR89-E2168421684epoutp02M
-        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Jun 2022 02:05:04 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20220608020504epoutp02467a41a1955fbe252a7933f2661c70d2~2gvWR89-E2168421684epoutp02M
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1654653904;
-        bh=zV++LEuLCtfADlbIL+S4XEKvrkR3B7fzf/3W6WqqlXE=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=KE6nOKFRTAXVoN5bXm/k0P67vdubXxge6WUdNMYa4U+cPuzNvWvmoZfyMKRsGSQa9
-         XNN6PGbJk4nuFeeN3RssUSudl1XngBUSSC83dWDI7I/+IBsWdbKV06bYC3IFD342Me
-         54tIPH25LPhnA6WCtY5tEn5iFYgOfA//vk+i+W9U=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20220608020503epcas1p453af091c62ceca012d5725ee44685fd9~2gvV6E_7r0582005820epcas1p4Q;
-        Wed,  8 Jun 2022 02:05:03 +0000 (GMT)
-Received: from epsmges1p1.samsung.com (unknown [182.195.38.243]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4LHrCM0rfNz4x9Q9; Wed,  8 Jun
-        2022 02:05:03 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        D3.6C.10063.EC300A26; Wed,  8 Jun 2022 11:05:02 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20220608020502epcas1p14911cac6731ee98fcb9c64282455caf7~2gvUqFrRa3160731607epcas1p1q;
-        Wed,  8 Jun 2022 02:05:02 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20220608020502epsmtrp27109742c01b157316f7169686850bf9b~2gvUpDv7O0065500655epsmtrp2k;
-        Wed,  8 Jun 2022 02:05:02 +0000 (GMT)
-X-AuditID: b6c32a35-1dbff7000000274f-95-62a003ce46dc
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        26.66.11276.EC300A26; Wed,  8 Jun 2022 11:05:02 +0900 (KST)
-Received: from U20PB1-0435.tn.corp.samsungelectronics.net (unknown
-        [10.91.133.14]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20220608020502epsmtip175c4ee626a432d6f06729d48657aa8e2~2gvUc6E5Q2678226782epsmtip1e;
-        Wed,  8 Jun 2022 02:05:02 +0000 (GMT)
-From:   Sungjong Seo <sj1557.seo@samsung.com>
-To:     linkinjeon@kernel.org
-Cc:     sj1557.seo@samsung.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] exfat: use updated exfat_chain directly during renaming
-Date:   Wed,  8 Jun 2022 11:04:08 +0900
-Message-Id: <20220608020408.2351676-1-sj1557.seo@samsung.com>
-X-Mailer: git-send-email 2.25.1
+        Wed, 8 Jun 2022 01:10:18 -0400
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 870F33D11CC;
+        Tue,  7 Jun 2022 19:22:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1654654940; x=1686190940;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   mime-version:in-reply-to;
+  bh=qzLzlpXmYtyfLnr9kD61/kS6Q6YUitGZU8+jgBaVRi8=;
+  b=W3++W/LsvZvNyJwSCTDeqBlsjlidRm3msrk4fG74NjVOTwPCmLlPBvdk
+   HE+fEd8B67l3JTjpVZfXr+13zYU7kKHHuZ+CIErLo/1RaOAsPAh9xLBIU
+   9pmfOjam0n6al0ujbp5UB5Gc8cfqXWnBp6goIvAhct71ZhNJKssdvSzRf
+   97+RsA2FekA0AqtfI2/a6TzCq8crHjC4iiCnC4MDWZf/toM4tpXE613z4
+   7WHb8IB147go1OpRXc9ldHm6v0ttnEXy5qtXuHk/jHGYIhWSpgAj155DE
+   DVWWp9qRucQtcnaQWtd7zPJ+9jtSDMNFRhqAwzX6PeE1sjA0DF1adp4Qe
+   g==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10371"; a="257216797"
+X-IronPort-AV: E=Sophos;i="5.91,284,1647327600"; 
+   d="scan'208";a="257216797"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2022 19:21:54 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.91,284,1647327600"; 
+   d="scan'208";a="579856828"
+Received: from chaop.bj.intel.com (HELO localhost) ([10.240.192.101])
+  by orsmga007.jf.intel.com with ESMTP; 07 Jun 2022 19:21:44 -0700
+Date:   Wed, 8 Jun 2022 10:18:20 +0800
+From:   Chao Peng <chao.p.peng@linux.intel.com>
+To:     Marc Orr <marcorr@google.com>
+Cc:     Vishal Annapurve <vannapurve@google.com>,
+        kvm list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86 <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Jun Nakajima <jun.nakajima@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com
+Subject: Re: [PATCH v6 0/8] KVM: mm: fd-based approach for supporting KVM
+ guest private memory
+Message-ID: <20220608021820.GA1548172@chaop.bj.intel.com>
+Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
+References: <20220519153713.819591-1-chao.p.peng@linux.intel.com>
+ <CAGtprH_83CEC0U-cBR2FzHsxbwbGn0QJ87WFNOEet8sineOcbQ@mail.gmail.com>
+ <20220607065749.GA1513445@chaop.bj.intel.com>
+ <CAA03e5H_vOQS-qdZgacnmqP5T5jJLnEfm44yfRzJQ2KVu0Br+Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMJsWRmVeSWpSXmKPExsWy7bCmge555gVJBq/FLCZOW8pssWfvSRaL
-        y7vmsFls+XeE1YHFY9OqTjaPvi2rGD0+b5ILYI5qYLRJLErOyCxLVUjNS85PycxLt1UKDXHT
-        tVBSyMgvLrFVijY0NNIzNDDXMzIy0jO2jLUyMlVSyEvMTbVVqtCF6lVSKEouAKrNrSwGGpCT
-        qgcV1ytOzUtxyMovBblQrzgxt7g0L10vOT9XSaEsMacUaISSfsI3xoym599YCjbyVixbPZOt
-        gXE6dxcjJ4eEgInE+cYt7F2MXBxCAjsYJW7OmADlfGKUWLXnBRuE841R4s+NJkaYll9L5jCB
-        2EICexklls5jhihqZ5L4fayJDSTBJqAtsbxpGVCCg0NEQFJi7f1UkDCzQKTE5IuL2UFsYQEP
-        iY3P/4LZLAKqErO6DoLZvAK2EpuuzGSG2CUvMfPSd6i4oMTJmU9YIObISzRvnQ22V0JgFbvE
-        8aeL2EB2SQi4SMxeZwrRKyzx6vgWdghbSuLzu71sEHYzo0RzoxGE3cEo8XSjLESrvcT7SxYg
-        JrOApsT6XfoQFYoSO3/PhfpcUOL0tW5miAv4JN597WGF6OSV6GgTgihRkfj+YScLzNIrP64y
-        QdgeEjuXXmaBBFqsxJXfq5gnMCrMQvLXLCR/zUI4YgEj8ypGsdSC4tz01GLDAkPkCN7ECE6P
-        WqY7GCe+/aB3iJGJg/EQowQHs5IIr2T4/CQh3pTEyqrUovz4otKc1OJDjMnAkJ7ILCWanA9M
-        0Hkl8YYmxgYGRsB0Z25pbkyEsKWBiZmRiYWxpbGZkjjvqmmnE4UE0hNLUrNTUwtSi2C2MHFw
-        SjUwLbj8NypBa5It253NLHeEmBX3fn/waCfb5Mlu1j/09r9ucb289OvNXTzJb//bnAtVjFSe
-        W/VNQdLypsZ0d+6dHBqVTMm/N85Z3t1mebCD79bF62FVvu28e32nLdrnbblv6fpE618WKwOT
-        r0lNuPBO3VK57j5vJasGu/rrtfYSgrt/z7zaHKbDrKP/NqlN5f6vu58yNstd/Pj9+dnb1nn+
-        J03O+c1LLSjkfLnuQVjgUsFtFeUuzkcZvzQ4tExY7KjVbMgxU9S2K/Htqes6Mj17dPgFX99d
-        aNp3w2mTuZ4JY+eqXyWzjixgu7t9w1mxGIaaNW9PVsoVzlsZfEbK9cy+fT563JMf7o0Nb9A8
-        KxsdpMRSnJFoqMVcVJwIAGpvhhRGBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMLMWRmVeSWpSXmKPExsWy7bCSnO455gVJBvc3SltMnLaU2WLP3pMs
-        Fpd3zWGz2PLvCKsDi8emVZ1sHn1bVjF6fN4kF8AcxWWTkpqTWZZapG+XwJXR9PwbS8FG3opl
-        q2eyNTBO5+5i5OSQEDCR+LVkDlMXIxeHkMBuRolHO9vZuhg5gBJSEgf3aUKYwhKHDxdDlLQy
-        SZz9eIkdpJdNQFtiedMyZpAaEQFJibX3U0HCzALREk1//jKC2MICHhIbn/8FK2cRUJWY1XUQ
-        zOYVsJXYdGUmM8QJ8hIzL32HigtKnJz5hAVijrxE89bZzBMY+WYhSc1CklrAyLSKUTK1oDg3
-        PbfYsMAwL7Vcrzgxt7g0L10vOT93EyM43LQ0dzBuX/VB7xAjEwfjIUYJDmYlEV7J8PlJQrwp
-        iZVVqUX58UWlOanFhxilOViUxHkvdJ2MFxJITyxJzU5NLUgtgskycXBKNTDVLj9xu/Sibffs
-        xSWMfbuyDryYpuXxmT07QeRNbAinhOklj/Ls48cf/uDhaPDednrD+5jGmo6339YZrP3nMNPy
-        CFNuQZPjjen9x1bJ/t6v++rlxfjrnXfCtu86cKTu0j/ukkvl6SKLpv/lvNngtHiK0Id1x9/8
-        jyr5o7tbWZHfXjYnK+plwDrzvluOvPenz0w+vqlkudjP5juPPvat9OdpORa7zkH5kabAI2Up
-        R0Wth1P5XAVWOc5avjBph8UtuQXn9Pa/Y3556naJWK3w/eMT5dsf+3DwHM7gUZ90tPbp8Xe7
-        wgWuc1XH6csER2sFBUeKMU/icbhaJX+p3GfCyrW/moq7vm/pLty4RZ3/46KFSizFGYmGWsxF
-        xYkAB1lNpqYCAAA=
-X-CMS-MailID: 20220608020502epcas1p14911cac6731ee98fcb9c64282455caf7
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-X-ArchiveUser: EV
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20220608020502epcas1p14911cac6731ee98fcb9c64282455caf7
-References: <CGME20220608020502epcas1p14911cac6731ee98fcb9c64282455caf7@epcas1p1.samsung.com>
-X-Spam-Status: No, score=-5.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAA03e5H_vOQS-qdZgacnmqP5T5jJLnEfm44yfRzJQ2KVu0Br+Q@mail.gmail.com>
+X-Spam-Status: No, score=-5.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In order for a file to access its own directory entry set,
-exfat_inode_info(ei) has two copied values. One is ei->dir, which is
-a snapshot of exfat_chain of the parent directory, and the other is
-ei->entry, which is the offset of the start of the directory entry set
-in the parent directory.
+On Tue, Jun 07, 2022 at 05:55:46PM -0700, Marc Orr wrote:
+> On Tue, Jun 7, 2022 at 12:01 AM Chao Peng <chao.p.peng@linux.intel.com> wrote:
+> >
+> > On Mon, Jun 06, 2022 at 01:09:50PM -0700, Vishal Annapurve wrote:
+> > > >
+> > > > Private memory map/unmap and conversion
+> > > > ---------------------------------------
+> > > > Userspace's map/unmap operations are done by fallocate() ioctl on the
+> > > > backing store fd.
+> > > >   - map: default fallocate() with mode=0.
+> > > >   - unmap: fallocate() with FALLOC_FL_PUNCH_HOLE.
+> > > > The map/unmap will trigger above memfile_notifier_ops to let KVM map/unmap
+> > > > secondary MMU page tables.
+> > > >
+> > > ....
+> > > >    QEMU: https://github.com/chao-p/qemu/tree/privmem-v6
+> > > >
+> > > > An example QEMU command line for TDX test:
+> > > > -object tdx-guest,id=tdx \
+> > > > -object memory-backend-memfd-private,id=ram1,size=2G \
+> > > > -machine q35,kvm-type=tdx,pic=no,kernel_irqchip=split,memory-encryption=tdx,memory-backend=ram1
+> > > >
+> > >
+> > > There should be more discussion around double allocation scenarios
+> > > when using the private fd approach. A malicious guest or buggy
+> > > userspace VMM can cause physical memory getting allocated for both
+> > > shared (memory accessible from host) and private fds backing the guest
+> > > memory.
+> > > Userspace VMM will need to unback the shared guest memory while
+> > > handling the conversion from shared to private in order to prevent
+> > > double allocation even with malicious guests or bugs in userspace VMM.
+> >
+> > I don't know how malicious guest can cause that. The initial design of
+> > this serie is to put the private/shared memory into two different
+> > address spaces and gives usersapce VMM the flexibility to convert
+> > between the two. It can choose respect the guest conversion request or
+> > not.
+> 
+> For example, the guest could maliciously give a device driver a
+> private page so that a host-side virtual device will blindly write the
+> private page.
 
-Since the parent directory can be updated after the snapshot point,
-it should be used only for accessing one's own directory entry set.
+With this patch series, it's actually even not possible for userspace VMM
+to allocate private page by a direct write, it's basically unmapped from
+there. If it really wants to, it should so something special, by intention,
+that's basically the conversion, which we should allow.
 
-However, as of now, during renaming, it could try to traverse or to
-allocate clusters via snapshot values, it does not make sense.
+> 
+> > It's possible for a usrspace VMM to cause double allocation if it fails
+> > to call the unback operation during the conversion, this may be a bug
+> > or not. Double allocation may not be a wrong thing, even in conception.
+> > At least TDX allows you to use half shared half private in guest, means
+> > both shared/private can be effective. Unbacking the memory is just the
+> > current QEMU implementation choice.
+> 
+> Right. But the idea is that this patch series should accommodate all
+> of the CVM architectures. Or at least that's what I know was
+> envisioned last time we discussed this topic for SNP [*].
 
-This potential problem has been revealed when exfat_update_parent_info()
-was removed by commit d8dad2588add ("exfat: fix referencing wrong parent
-directory information after renaming"). However, I don't think it's good
-idea to bring exfat_update_parent_info() back.
+AFAICS, this series should work for both TDX and SNP, and other CVM
+architectures. I don't see where TDX can work but SNP cannot, or I
+missed something here?
 
-Instead, let's use the updated exfat_chain of parent directory diectly.
+> 
+> Regardless, it's important to ensure that the VM respects its memory
+> budget. For example, within Google, we run VMs inside of containers.
+> So if we double allocate we're going to OOM. This seems acceptable for
+> an early version of CVMs. But ultimately, I think we need a more
+> robust way to ensure that the VM operates within its memory container.
+> Otherwise, the OOM is going to be hard to diagnose and distinguish
+> from a real OOM.
 
-Fixes: d8dad2588add ("exfat: fix referencing wrong parent directory information after renaming")
+Thanks for bringing this up. But in my mind I still think userspace VMM
+can do and it's its responsibility to guarantee that, if that is hard
+required. By design, userspace VMM is the decision-maker for page
+conversion and has all the necessary information to know which page is
+shared/private. It also has the necessary knobs to allocate/free the
+physical pages for guest memory. Definitely, we should make userspace
+VMM more robust.
 
-Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
----
- fs/exfat/namei.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c
-index 76acc3721951..c6eaf7e9ea74 100644
---- a/fs/exfat/namei.c
-+++ b/fs/exfat/namei.c
-@@ -1198,7 +1198,9 @@ static int __exfat_rename(struct inode *old_parent_inode,
- 		return -ENOENT;
- 	}
- 
--	exfat_chain_dup(&olddir, &ei->dir);
-+	exfat_chain_set(&olddir, EXFAT_I(old_parent_inode)->start_clu,
-+		EXFAT_B_TO_CLU_ROUND_UP(i_size_read(old_parent_inode), sbi),
-+		EXFAT_I(old_parent_inode)->flags);
- 	dentry = ei->entry;
- 
- 	ep = exfat_get_dentry(sb, &olddir, dentry, &old_bh);
--- 
-2.25.1
-
+Chao
+> 
+> [*] https://lore.kernel.org/all/20210820155918.7518-1-brijesh.singh@amd.com/
+> 
+> >
+> > Chao
+> > >
+> > > Options to unback shared guest memory seem to be:
+> > > 1) madvise(.., MADV_DONTNEED/MADV_REMOVE) - This option won't stop
+> > > kernel from backing the shared memory on subsequent write accesses
+> > > 2) fallocate(..., FALLOC_FL_PUNCH_HOLE...) - For file backed shared
+> > > guest memory, this option still is similar to madvice since this would
+> > > still allow shared memory to get backed on write accesses
+> > > 3) munmap - This would give away the contiguous virtual memory region
+> > > reservation with holes in the guest backing memory, which might make
+> > > guest memory management difficult.
+> > > 4) mprotect(... PROT_NONE) - This would keep the virtual memory
+> > > address range backing the guest memory preserved
+> > >
+> > > ram_block_discard_range_fd from reference implementation:
+> > > https://github.com/chao-p/qemu/tree/privmem-v6 seems to be relying on
+> > > fallocate/madvise.
+> > >
+> > > Any thoughts/suggestions around better ways to unback the shared
+> > > memory in order to avoid double allocation scenarios?
+> 
+> I agree with Vishal. I think this patch set is making great progress.
+> But the double allocation scenario seems like a high-level design
+> issue that warrants more discussion.
