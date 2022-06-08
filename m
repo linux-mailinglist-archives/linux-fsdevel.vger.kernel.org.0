@@ -2,102 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 45D4E543137
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jun 2022 15:19:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5147543168
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jun 2022 15:33:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240041AbiFHNTd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jun 2022 09:19:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57864 "EHLO
+        id S240168AbiFHNdA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jun 2022 09:33:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33904 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240033AbiFHNTd (ORCPT
+        with ESMTP id S231342AbiFHNc7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jun 2022 09:19:33 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id DF566387AB
-        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Jun 2022 06:19:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1654694371;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-        bh=SwNazhl3yXSKLkMfxmQhMsW0Mn4hYb8ENtRNGo7fZsI=;
-        b=JEtyEL6zlTLOe4pfSB7/ZxWf7xGcKLHmcCR3P6ZrsZxfogD1PLYum7tcfOmFYjKlaQxqOa
-        w86ktbx9WKMj8kcnA7h07Bqo8MaGb6OB5ufh5LpFbftNKBGJpavwg2LNLjtIbhCjds7OeE
-        DBsneEOxt/fkkHtO+tLBLAvNTjxvaSI=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-64-RuXIvppwNLmlFL63uYHP5A-1; Wed, 08 Jun 2022 09:19:27 -0400
-X-MC-Unique: RuXIvppwNLmlFL63uYHP5A-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Wed, 8 Jun 2022 09:32:59 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E943D104C81
+        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Jun 2022 06:32:57 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id A98C121A37;
+        Wed,  8 Jun 2022 13:32:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1654695176; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=gnLOhhDPu4tb7fF9sVfBNFpAzk9p0jbQIUSDv/qtZC4=;
+        b=GbcfsLq9Dw55ThRSMsNeQrXOF4ngsoPQP2/QpzMbu48LrflWuU5hNfB8nKInunvzhr1430
+        sPFR8CcLdnkg6ykf+XLh5sEPwkfena00dq8l3fZ7DuSWWgMHz9Xmyp70YSuFeQO4ZXRmSI
+        OUEvRTISJ1fj+jEx3lsBKW7MsrevX44=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1654695176;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=gnLOhhDPu4tb7fF9sVfBNFpAzk9p0jbQIUSDv/qtZC4=;
+        b=WABdONHwiLhpjxTJcCzjc/cFPexXbEZGBDrVZIPQiF6yfen18AsoEECHCL1rzA7g5ybOfm
+        bG1gfA0G43UOFQBQ==
+Received: from quack3.suse.cz (unknown [10.163.28.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 6BB013810D2A;
-        Wed,  8 Jun 2022 13:19:27 +0000 (UTC)
-Received: from [172.16.176.1] (ovpn-0-4.rdu2.redhat.com [10.22.0.4])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id ABCB7492C3B;
-        Wed,  8 Jun 2022 13:19:26 +0000 (UTC)
-From:   "Benjamin Coddington" <bcodding@redhat.com>
-To:     viro@zeniv.linux.org.uk, jlayton@kernel.org, bfields@fieldses.org
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "Roberto Bergantinos Corpas" <rbergant@redhat.com>
-Subject: vfs_test_lock - should it WARN if F_UNLCK and modified file_lock?
-Date:   Wed, 08 Jun 2022 09:19:25 -0400
-Message-ID: <9559FAE9-4E4A-4161-995F-32D800EC0D5B@redhat.com>
+        by relay2.suse.de (Postfix) with ESMTPS id 9DABE2C141;
+        Wed,  8 Jun 2022 13:32:56 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 391E4A06E2; Wed,  8 Jun 2022 15:32:56 +0200 (CEST)
+Date:   Wed, 8 Jun 2022 15:32:56 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Gal Rosen <gal.rosen@cybereason.com>, Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: Failed on reading from FANOTIFY file descriptor
+Message-ID: <20220608133256.2d7tsy3wtipny64l@quack3.lan>
+References: <CAJ-MHhCyDB576-vpcJuazyrO-4Q1UuTprD88pdd0WRzjOx8ptQ@mail.gmail.com>
+ <CAOQ4uxj=Cd=R7oj4i3vE+VNcpWGD3W=NpqBu8E09K205W-CTAA@mail.gmail.com>
+ <CAJ-MHhCJYc_NDRvMfB2S9tHTvOdc4Tqrzo=wRNkqedSLyfAnRg@mail.gmail.com>
+ <CAOQ4uxjH9o_XwowdyjyCYswpfvwRSq9wUAkYvg_XoKULvx23-g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed
-X-Scanned-By: MIMEDefang 2.85 on 10.11.54.9
-X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxjH9o_XwowdyjyCYswpfvwRSq9wUAkYvg_XoKULvx23-g@mail.gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-NLM sometimes gets burnt by implementations of f_op->lock for F_GETLK
-modifying the lock structure (swapping out fl_owner) when the return is
-F_UNLCK.
+On Wed 08-06-22 15:01:17, Amir Goldstein wrote:
+> On Wed, Jun 8, 2022 at 2:01 PM Gal Rosen <gal.rosen@cybereason.com> wrote:
+> > Regarding the EPERM, how do we continue to investigate it ?
+> 
+> Besides adding prints to the kernel I don't know.
+> Basically, there is a file that is being opened by some process
+> that your listener process has no permissions to open, so
+> check with the people responsible to the SELinux policy what that could be.
 
-Yes, NLM should be more defensive, but perhaps we should be checking for
-everyone, as per POSIX "If no lock is found that would prevent this lock
-from being created, then the structure shall be left unchanged except 
-for
-the lock type which shall be set to F_UNLCK."
+If it is SELinux denying the open, you should be able to set SELinux to
+logging mode so that you can see opens that are getting denied and why (I
+don't know SELinux so I cannot really give you details how to do it). But
+it is not necessarily SELinux that's causing the EPERM errors. It may be
+that you are watching e.g. some special filesystem like /proc/ and the open
+gets denied there...
 
-That would save others from the pain, as the offenders would hopefully 
-take
-notice.
+If you can reproduce the problem, you can enable some kernel tracing to get
+more information about the situation. Sadly it is not easy to get to the
+filename for which we are reporting the EPERM error so you'll need to use
+something like Systemtap (or eBPF) to get the information (about arguments
+and return value) from dentry_open() calls.
 
-Something like:
+								Honza
 
-diff --git a/fs/locks.c b/fs/locks.c
-index 32c948fe2944..4cc425008036 100644
---- a/fs/locks.c
-+++ b/fs/locks.c
-@@ -2274,8 +2274,16 @@ SYSCALL_DEFINE2(flock, unsigned int, fd, unsigned 
-int, cmd)
-   */
-  int vfs_test_lock(struct file *filp, struct file_lock *fl)
-  {
--       if (filp->f_op->lock)
--               return filp->f_op->lock(filp, F_GETLK, fl);
-+       int ret;
-+       fl_owner_t test_owner = fl->fl_owner;
-+
-+       if (filp->f_op->lock) {
-+               ret = filp->f_op->lock(filp, F_GETLK, fl);
-+               if (fl->fl_type == F_UNLCK)
-+                       WARN_ON(fl->fl_owner != test_owner);
-+               return ret;
-+       }
-+
-         posix_test_lock(filp, fl);
-         return 0;
-  }
 
-.. I'm worried that might be too big of a hammer though.  Any thoughts?
-
-Ben
-
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
