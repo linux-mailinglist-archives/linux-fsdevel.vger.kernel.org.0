@@ -2,116 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 547C8543257
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jun 2022 16:18:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CB48543265
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jun 2022 16:21:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241172AbiFHOSk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jun 2022 10:18:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39278 "EHLO
+        id S241227AbiFHOVu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jun 2022 10:21:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52842 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241166AbiFHOSj (ORCPT
+        with ESMTP id S241166AbiFHOVs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jun 2022 10:18:39 -0400
-Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1A6365D21;
-        Wed,  8 Jun 2022 07:18:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1654697918; x=1686233918;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=N8RRxR3D8dumuwBq3CnD0xuB5dnkYBY30V4U88YR70s=;
-  b=ee1pydQDQZOZrtXrGd70L+f04Uv7PEhqTExwy+UR9PU9NTd3o9HP9pwp
-   F056peQ8xlH/4CqYIwgxUo46QsfM+ruqTsSj31jrnUV80PjG1bi2f7cS0
-   vUwIOu/JpWYVMLMvxtLbCdu03nsI3h9ZC1C2+r8Z9HVDRq+gmq+SZjh+C
-   r7B8PztU3f/75Xu2mLZXoCIjrEOnAoE+GRoptXkQyE6KSvsTTrCsxKv0e
-   JDWQ1zkmEJLuyAqsRGA6eGK8r4ozyPuSBKkGRWKc74QabBVFkVCOOVWpb
-   vSYPypw5KIO//K6x0omSaT4UlnNdcrkp20cT5GXX+o4KoEek33rx/e2Lz
-   Q==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10371"; a="302270880"
-X-IronPort-AV: E=Sophos;i="5.91,286,1647327600"; 
-   d="scan'208";a="302270880"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jun 2022 07:18:37 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.91,286,1647327600"; 
-   d="scan'208";a="584915911"
-Received: from lkp-server01.sh.intel.com (HELO 60dabacc1df6) ([10.239.97.150])
-  by fmsmga007.fm.intel.com with ESMTP; 08 Jun 2022 07:18:35 -0700
-Received: from kbuild by 60dabacc1df6 with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1nywW2-000Eh3-Hh;
-        Wed, 08 Jun 2022 14:18:34 +0000
-Date:   Wed, 8 Jun 2022 22:18:32 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Hao Xu <hao.xu@linux.dev>, io-uring@vger.kernel.org
-Cc:     kbuild-all@lists.01.org, Jens Axboe <axboe@kernel.dk>,
-        Pavel Begunkov <asml.silence@gmail.com>,
-        linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kuniyuki Iwashima <kuniyu@amazon.co.jp>
-Subject: Re: [PATCH 4/5] io_uring: support nonblock try for splicing from
- pipe to pipe
-Message-ID: <202206082229.xoMAgqIw-lkp@intel.com>
-References: <20220607080619.513187-5-hao.xu@linux.dev>
+        Wed, 8 Jun 2022 10:21:48 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3CC93C4A4;
+        Wed,  8 Jun 2022 07:21:40 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id DF8F11F926;
+        Wed,  8 Jun 2022 14:21:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1654698098; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=XdKortsHM16Ii6T0CbgUf/+Hz9663skh5coLaKDgeig=;
+        b=3cupTFPSCVWQobq4I+VAr+myiPGAy+Ro8YUUpDbtD55o8Dc8v8ejrfe5zb7zC6Jpz7YP58
+        vrAn3h31h0S69hR2jvlexiqBLGqRq/r40OkJU0fDpnJpZIzoOGD/zlAxTP1bQjStYUKmNv
+        O3r04MCjiX4+HRnuUmRMK6dTNQ8lQ3Q=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1654698098;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=XdKortsHM16Ii6T0CbgUf/+Hz9663skh5coLaKDgeig=;
+        b=YPRbFwiIODIER4Zf44ekM6nCojD6d7UiB+dh/Jr2W3dL5Z5a/L0OpJLPDgj0goo1/x6MMp
+        TJEgzavdZmTb3gBg==
+Received: from quack3.suse.cz (unknown [10.163.28.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id D02202C141;
+        Wed,  8 Jun 2022 14:21:38 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 86940A06E2; Wed,  8 Jun 2022 16:21:38 +0200 (CEST)
+Date:   Wed, 8 Jun 2022 16:21:38 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Jan Kara <jack@suse.cz>, Jan Kara <jack@suse.com>, tytso@mit.edu,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 3/3] ext4: Use generic_quota_read()
+Message-ID: <20220608142138.7nejka3yobgsdmd7@quack3.lan>
+References: <20220605143815.2330891-1-willy@infradead.org>
+ <20220605143815.2330891-4-willy@infradead.org>
+ <20220606083814.skjv34b2tjn7l7pi@quack3.lan>
+ <Yp/+fSoHgPIhiHQR@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220607080619.513187-5-hao.xu@linux.dev>
-X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <Yp/+fSoHgPIhiHQR@casper.infradead.org>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Hao,
+On Wed 08-06-22 02:42:21, Matthew Wilcox wrote:
+> On Mon, Jun 06, 2022 at 10:38:14AM +0200, Jan Kara wrote:
+> > On Sun 05-06-22 15:38:15, Matthew Wilcox (Oracle) wrote:
+> > > The comment about the page cache is rather stale; the buffer cache will
+> > > read into the page cache if the buffer isn't present, and the page cache
+> > > will not take any locks if the page is present.
+> > > 
+> > > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> > 
+> > This will not work for couple of reasons, see below. BTW, I don't think the
+> > comment about page cache was stale (but lacking details I admit ;). As far
+> > as I remember (and it was really many years ago - definitely pre-git era)
+> > the problem was (mainly on the write side) that before current state of the
+> > code we were using calls like vfs_read() / vfs_write() to get quota
+> > information and that was indeed prone to deadlocks.
+> 
+> Ah yes, vfs_write() might indeed be prone to deadlocks.  Particularly
+> if we're doing it under the dq_mutex and any memory allocation might
+> have recursed into reclaim ;-)
+> 
+> I actually found the commit in linux-fullhistory.  Changelog for
+> context:
+> 
+> commit b72debd66a6ed
+> Author: Jan Kara <jack@suse.cz>
+> Date:   Mon Jan 3 04:12:24 2005 -0800
+> 
+>     [PATCH] Fix of quota deadlock on pagelock: quota core
 
-Thank you for the patch! Perhaps something to improve:
+\o/ to you history searching skills :)
 
-[auto build test WARNING on d8271bf021438f468dab3cd84fe5279b5bbcead8]
+> > > @@ -6924,20 +6882,21 @@ static ssize_t ext4_quota_write(struct super_block *sb, int type,
+> > >  		return -EIO;
+> > >  	}
+> > >  
+> > > -	do {
+> > > -		bh = ext4_bread(handle, inode, blk,
+> > > -				EXT4_GET_BLOCKS_CREATE |
+> > > -				EXT4_GET_BLOCKS_METADATA_NOFAIL);
+> > > -	} while (PTR_ERR(bh) == -ENOSPC &&
+> > > -		 ext4_should_retry_alloc(inode->i_sb, &retries));
+> > > -	if (IS_ERR(bh))
+> > > -		return PTR_ERR(bh);
+> > > -	if (!bh)
+> > > +	folio = read_mapping_folio(inode->i_mapping, off / PAGE_SIZE, NULL);
+> > > +	if (IS_ERR(folio))
+> > > +		return PTR_ERR(folio);
+> > > +	head = folio_buffers(folio);
+> > > +	if (!head)
+> > > +		head = alloc_page_buffers(&folio->page, sb->s_blocksize, false);
+> > > +	if (!head)
+> > >  		goto out;
+> > > +	bh = head;
+> > > +	while ((bh_offset(bh) + sb->s_blocksize) <= (off % PAGE_SIZE))
+> > > +		bh = bh->b_this_page;
+> > 
+> > We miss proper handling of blocks that are currently beyond i_size
+> > (we are extending the quota file), plus we also miss any mapping of buffers
+> > to appropriate disk blocks here...
+> > 
+> > It could be all fixed by replicating what we do in ext4_write_begin() but
+> > I'm not quite convinced using inode's page cache is really worth it...
+> 
+> Ah, yes, write_begin.  Of course that's what I should have used.
+> 
+> I'm looking at this from the point of view of removing buffer_heads
+> where possible.  Of course, it's not possible for ext4 while the journal
+> relies on buffer_heads, but if we can steer filesystems away from using
+> sb_bread() (or equivalents), I think that's a good thing.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Hao-Xu/support-nonblock-submission-for-splice-pipe-to-pipe/20220607-161605
-base:   d8271bf021438f468dab3cd84fe5279b5bbcead8
-config: x86_64-defconfig (https://download.01.org/0day-ci/archive/20220608/202206082229.xoMAgqIw-lkp@intel.com/config)
-compiler: gcc-11 (Debian 11.3.0-1) 11.3.0
-reproduce (this is a W=1 build):
-        # https://github.com/intel-lab-lkp/linux/commit/96683840c3f19b77a536a259094d24e0cd93ebc0
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Hao-Xu/support-nonblock-submission-for-splice-pipe-to-pipe/20220607-161605
-        git checkout 96683840c3f19b77a536a259094d24e0cd93ebc0
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        make W=1 O=build_dir ARCH=x86_64 SHELL=/bin/bash
+Well, ext4 uses sb_bread() (sb_getblk()) for all its metadata so quota
+code, which is rather well localized, is the least of your worries I'm
+afraid ;).
 
-If you fix the issue, kindly add following tag where applicable
-Reported-by: kernel test robot <lkp@intel.com>
-
-All warnings (new ones prefixed by >>):
-
->> io_uring/splice.c:91:6: warning: no previous prototype for 'io_splice_support_nowait' [-Wmissing-prototypes]
-      91 | bool io_splice_support_nowait(struct file *in, struct file *out)
-         |      ^~~~~~~~~~~~~~~~~~~~~~~~
-
-
-vim +/io_splice_support_nowait +91 io_uring/splice.c
-
-    90	
-  > 91	bool io_splice_support_nowait(struct file *in, struct file *out)
-    92	{
-    93		if (get_pipe_info(in, true) && get_pipe_info(out, true))
-    94			return true;
-    95	
-    96		return false;
-    97	}
-    98	
-
+								Honza
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
