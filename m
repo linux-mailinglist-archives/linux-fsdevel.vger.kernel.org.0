@@ -2,63 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BF700543010
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jun 2022 14:15:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CF4154304E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jun 2022 14:30:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238887AbiFHMOb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jun 2022 08:14:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43348 "EHLO
+        id S238802AbiFHM3L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jun 2022 08:29:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55248 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239223AbiFHMO2 (ORCPT
+        with ESMTP id S238771AbiFHM3G (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jun 2022 08:14:28 -0400
-Received: from mail-vs1-xe2d.google.com (mail-vs1-xe2d.google.com [IPv6:2607:f8b0:4864:20::e2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2527AE472
-        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Jun 2022 05:14:25 -0700 (PDT)
-Received: by mail-vs1-xe2d.google.com with SMTP id r12so16797618vsg.8
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Jun 2022 05:14:25 -0700 (PDT)
+        Wed, 8 Jun 2022 08:29:06 -0400
+Received: from mail-vk1-xa35.google.com (mail-vk1-xa35.google.com [IPv6:2607:f8b0:4864:20::a35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D95A2197633;
+        Wed,  8 Jun 2022 05:29:04 -0700 (PDT)
+Received: by mail-vk1-xa35.google.com with SMTP id b81so8929394vkf.1;
+        Wed, 08 Jun 2022 05:29:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=UphCuTEHGjwSL9MTgnC/UFi4c6fLqWmcDLiOGFRdqjc=;
-        b=a9pBJI68sosVxORhsfsFVR86Ytgt/JCJ+7b8yzMYUUoILN9OqKi7/9HRM1FkhDXioR
-         8my35aTDUkrdF9PtTkn9SNecP+q/y8ILDX8KP+z0ytRI1ANSmYcpuzafMvxkAt6y/lGg
-         mKofHIqNG+Zkya7YhpRtHK7GN3cdYiZxwq/lW0utHMRn9iKdWlU44OXwFJIPcazFPIWR
-         VB6nBfhQ6UvSe2+WvUM7APhygY8s4jpwoGIb2iRc0nX9NeRN+j4U5hpZxrEBQelu9Uvv
-         pFl68ADRUwo3jXUonTakB3L+kIoZLSrVW7mTTTxgsDqovvvGmZ4Ve/786eR/Dzu3YqNB
-         NPwg==
+         :cc:content-transfer-encoding;
+        bh=f4V/IVq1SDeom2vqT5N+sNfIDOM6t2OTeeKHOwD8dgU=;
+        b=pVjO1TAswW7Hhn2+lFzvRdcMwOw+WmK2bljOQKFQ+RAOtqLXCZ0F17V3HRHhYkFi9w
+         MyIKoR2lZP3t1HsfLpIrB+Wcd2O8uON+0fA/fWHpqQIVFpxWkQR45PEusG15UdjyxVJ5
+         9NAno4FgTzlwGxa3SKjPPeyNA7ZeAV4KLuDQavEHZIY5aqjPcv+wP0FuziBHxy+DVsSu
+         ee0GH/81eTRUCUcalKp2ZboUIDhm2b7bKAD9WJbziuGlDQLvGa3OqLFNX+MdhiqFNp9x
+         49Evmr88+qwbBSMfikgfmDDkuaMzSBR7yFSEcBKsTUHX/3SLmLnMyhW6eYr8Ts/2MjPx
+         QPmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=UphCuTEHGjwSL9MTgnC/UFi4c6fLqWmcDLiOGFRdqjc=;
-        b=tT6V2FDcXDCdVicrRQeBleGRQpOjTPOZFsANVyNysEvKbq15cNOPcbN5nrHHxkb+ll
-         lg+OHtdA5eGEz+Jq3Mmt+Bk5iCpRh4kMy2IKDDsl6RJKlQK6LZmEQ2EqnvvtpwiAsA8q
-         H6NoMMj+k+ns9RzQdny/bLmN5U5AVb1212r9PgvqQ8oFdFs1exA5jtkuOACuPpak3tSZ
-         zMQ/ffvvjnJHJzvuojELA6upGazzhX/bkuffn83SJrgXQOQGKaoS+CoG3/CdNMF7XApH
-         R/CqzaVrpi+aPXxk+vQ+/CcjjTn8EYLl53c+7O5XBarkvxytPU61yPw/3sD5o7a3vbR/
-         9feQ==
-X-Gm-Message-State: AOAM530okAYKVa76Th0Zq+HxqcGT7+isW1N5l0GZ3nIdBTjUByKYFbvP
-        /5Jz3zu2V4apn5kBNiIImHJJm7yph6L0gyLvYOhe0nsb4Wy8jw==
-X-Google-Smtp-Source: ABdhPJxnuSbA9SJFpK5WT2h4VBcwqUG/byIKzx0EGK4QMtcnLqk49q455fSKB46SG1bX0mvOeKxyFq1OFxb8llwZexk=
-X-Received: by 2002:a67:486:0:b0:349:e59c:51f4 with SMTP id
- 128-20020a670486000000b00349e59c51f4mr16832084vse.3.1654690463579; Wed, 08
- Jun 2022 05:14:23 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=f4V/IVq1SDeom2vqT5N+sNfIDOM6t2OTeeKHOwD8dgU=;
+        b=BqHQMiECIei0LdGNv9bKplAkZ+6LCx7URkCdxv49usmButOURVngTjk1e6oQN4wSBr
+         qdvTkSLpHXzd5JESfYpXBnAGLk1ajDKh3BtiNEg2IjW85rzet2T5OwB/pm6fbdzpAR3N
+         tmcLmF6mkbDxiuIQqmAT7QT6qPz2GKSH/37x5KSnS/J5avx2VgY+H552dzvszwAzJO8p
+         jyfUVyDHBVr/dmocqmBu1mmSNT89JyBcHhMwP4SV3KwN1QMXzJ7ZLLWlhdbOTsCkeqjr
+         jdqx9rulSbZmEIjOYK/ktqgwBWAY+Rz46m39sELQRP/S6LCslFcEKb4wzTHBzsryE4gc
+         8RHw==
+X-Gm-Message-State: AOAM533KqNOLCQqR8gIPwM9FDj5Q8druLYZREqosu8QSxdTDB9wKIA8X
+        Ii4Z+AoJ9cbN+zvIfZwFISURWAbO1UyFdPEeHgc=
+X-Google-Smtp-Source: ABdhPJz+JRSH7Idqz2ZYYyaHo9knqc1AnXrfwLvNptq2n0uw8RR6U3EXffp2wvgixb9A4ygoHKoQfkN8+4owOPQWuU8=
+X-Received: by 2002:a05:6122:2205:b0:321:230a:53e1 with SMTP id
+ bb5-20020a056122220500b00321230a53e1mr18619635vkb.25.1654691343974; Wed, 08
+ Jun 2022 05:29:03 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAJ-MHhCyDB576-vpcJuazyrO-4Q1UuTprD88pdd0WRzjOx8ptQ@mail.gmail.com>
- <CAOQ4uxj=Cd=R7oj4i3vE+VNcpWGD3W=NpqBu8E09K205W-CTAA@mail.gmail.com>
- <CAJ-MHhCJYc_NDRvMfB2S9tHTvOdc4Tqrzo=wRNkqedSLyfAnRg@mail.gmail.com>
- <CAJ-MHhBkKycGJnMVwt+KuFnzz=8sDzyuHWTxvHVJnJ55mKLiPQ@mail.gmail.com> <20220608115738.gcnviw7ldunw6vb5@quack3.lan>
-In-Reply-To: <20220608115738.gcnviw7ldunw6vb5@quack3.lan>
+References: <20220607153139.35588-1-cgzones@googlemail.com> <20220608112728.b4xrdppxqmyqmtwf@wittgenstein>
+In-Reply-To: <20220608112728.b4xrdppxqmyqmtwf@wittgenstein>
 From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 8 Jun 2022 15:14:12 +0300
-Message-ID: <CAOQ4uxif8aoYBqLZp30Sf6Ad5MKWh+sYBZJ7kT3yRtabnNYJ9g@mail.gmail.com>
-Subject: Re: Failed on reading from FANOTIFY file descriptor
-To:     Jan Kara <jack@suse.cz>
-Cc:     Gal Rosen <gal.rosen@cybereason.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Date:   Wed, 8 Jun 2022 15:28:52 +0300
+Message-ID: <CAOQ4uxipD6khNUYuZT80WUa0KOMdyyP0ia55uhmeRCLj4NBicg@mail.gmail.com>
+Subject: Re: [RFC PATCH] f*xattr: allow O_PATH descriptors
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>,
+        selinux@vger.kernel.org, Miklos Szeredi <mszeredi@redhat.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-man <linux-man@vger.kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
         RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
@@ -69,40 +72,72 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 8, 2022 at 2:57 PM Jan Kara <jack@suse.cz> wrote:
+On Wed, Jun 8, 2022 at 2:57 PM Christian Brauner <brauner@kernel.org> wrote=
+:
 >
-> Hello,
+> On Tue, Jun 07, 2022 at 05:31:39PM +0200, Christian G=C3=B6ttsche wrote:
+> > From: Miklos Szeredi <mszeredi@redhat.com>
+> >
+> > Support file descriptors obtained via O_PATH for extended attribute
+> > operations.
+> >
+> > Extended attributes are for example used by SELinux for the security
+> > context of file objects. To avoid time-of-check-time-of-use issues whil=
+e
+> > setting those contexts it is advisable to pin the file in question and
+> > operate on a file descriptor instead of the path name. This can be
+> > emulated in userspace via /proc/self/fd/NN [1] but requires a procfs,
+> > which might not be mounted e.g. inside of chroots, see[2].
+> >
+> > [1]: https://github.com/SELinuxProject/selinux/commit/7e979b56fd2cee28f=
+647376a7233d2ac2d12ca50
+> > [2]: https://github.com/SELinuxProject/selinux/commit/de285252a18013973=
+06032e070793889c9466845
+> >
+> > Original patch by Miklos Szeredi <mszeredi@redhat.com>
+> > https://patchwork.kernel.org/project/linux-fsdevel/patch/20200505095915=
+.11275-6-mszeredi@redhat.com/
+> >
+> > > While this carries a minute risk of someone relying on the property o=
+f
+> > > xattr syscalls rejecting O_PATH descriptors, it saves the trouble of
+> > > introducing another set of syscalls.
+> > >
+> > > Only file->f_path and file->f_inode are accessed in these functions.
+> > >
+> > > Current versions return EBADF, hence easy to detect the presense of
+> > > this feature and fall back in case it's missing.
+> >
+> > CC: linux-api@vger.kernel.org
+> > CC: linux-man@vger.kernel.org
+> > Signed-off-by: Christian G=C3=B6ttsche <cgzones@googlemail.com>
+> > ---
 >
-> On Wed 08-06-22 14:33:47, Gal Rosen wrote:
-> > One more question, if I do get into a situation in which I reach the limit
-> > of the number of open files per my process, can I continue ? Can I continue
-> > in my while loop and after a couple of microseconds for example can try to
-> > re-read ?
-> > If I get the error of EMFILE, it could be that some of the events
-> > successfully read and are already in my user buffer, but I still get return
-> > value of -1 on the read, does all the successful events are still in the
-> > kernel queue and will be still there for the next read ?
+> I'd be somewhat fine with getxattr and listxattr but I'm worried that
+> setxattr/removexattr waters down O_PATH semantics even more. I don't
+> want O_PATH fds to be useable for operations which are semantically
+> equivalent to a write.
+
+It is not really semantically equivalent to a write if it works on a
+O_RDONLY fd already.
+
 >
-> So if you get the EMFILE error, it means that we were not able to open file
-> descriptor for the first event you are trying to read. If the same error
-> happens for the second or later event copied into user provided buffer, we
-> return length corresponding to the succesfully formatted events. Sadly, the
-> event for which we failed to open file will be silently dropped in that case
-> :-|. Amir, I guess we should at least report the event without the fd in
-> that case. What do you think?
+> In sensitive environments such as service management/container runtimes
+> we often send O_PATH fds around precisely because it is restricted what
+> they can be used for. I'd prefer to not to plug at this string.
 
-Yes, that is unfortunate.
-We could return an event without fd.
-We could return the error in event->fd but I don't like it.
-We could store the error in the group and return success for
-whatever events have been read so far, then on the next read
-we just return the error immediately and clear the group error state.
+But unless I am mistaken, path_setxattr() and syscall_fsetxattr()
+are almost identical w.r.t permission checks and everything else.
 
-That will keep existing UAPI semantics intact.
+So this change introduces nothing new that a user in said environment
+cannot already accomplish with setxattr().
 
-BTW, in the category of possible errors from reading event there are
-also ENXIO ENODEV when a process tries to open a device file
-with nothing behind it, which is very easy to reproduce.
+Besides, as the commit message said, doing setxattr() on an O_PATH
+fd is already possible with setxattr("/proc/self/$fd"), so whatever securit=
+y
+hole you are trying to prevent is already wide open.
+
+In effect, I think containing setxattr() can only be accomplished with LSM.
 
 Thanks,
 Amir.
