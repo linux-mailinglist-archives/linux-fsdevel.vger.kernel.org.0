@@ -2,84 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FF2754319F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jun 2022 15:41:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C36D543202
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jun 2022 15:57:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240522AbiFHNlS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jun 2022 09:41:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42490 "EHLO
+        id S240950AbiFHN5A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jun 2022 09:57:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240367AbiFHNlJ (ORCPT
+        with ESMTP id S241041AbiFHN45 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jun 2022 09:41:09 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id B3BE11DC87F
-        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Jun 2022 06:41:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1654695662;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=+FRvLtHpL+lFu/Ve4k0BDHQ9OKaNS8tYQAlmzPxz+uc=;
-        b=M7IPI8OZhGSPhl2NIIhtw5FoOqn4eUrPHDkizp+mMT4nnHHzzC3jHq+VywruYW7RMFqesW
-        S+pCp1fv9fN4fzG8lzwNxDqvjTrzx8fwNiHj5SX4ZLrGD756bmLSKWaN16aeh8/300o10y
-        wqBcTySTxcOYDu76EM8VftLbG2XPpaQ=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-424-WWnTU5i9PAeCXfPzyrqR6Q-1; Wed, 08 Jun 2022 09:40:57 -0400
-X-MC-Unique: WWnTU5i9PAeCXfPzyrqR6Q-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 748FB3C0E203;
-        Wed,  8 Jun 2022 13:40:57 +0000 (UTC)
-Received: from [172.16.176.1] (ovpn-0-4.rdu2.redhat.com [10.22.0.4])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7A683492C3B;
-        Wed,  8 Jun 2022 13:40:56 +0000 (UTC)
-From:   "Benjamin Coddington" <bcodding@redhat.com>
-To:     "J. Bruce Fields" <bfields@fieldses.org>
-Cc:     viro@zeniv.linux.org.uk, jlayton@kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "Roberto Bergantinos Corpas" <rbergant@redhat.com>
-Subject: Re: vfs_test_lock - should it WARN if F_UNLCK and modified file_lock?
-Date:   Wed, 08 Jun 2022 09:40:54 -0400
-Message-ID: <2E73BEEA-C668-4C62-BCEA-D85F31DC89F8@redhat.com>
-In-Reply-To: <20220608133655.GA13884@fieldses.org>
-References: <9559FAE9-4E4A-4161-995F-32D800EC0D5B@redhat.com>
- <20220608133655.GA13884@fieldses.org>
+        Wed, 8 Jun 2022 09:56:57 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 902D3E1169
+        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Jun 2022 06:56:55 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id x62so27198648ede.10
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Jun 2022 06:56:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3wwE0unoP9gEwX3qZBuFgRBN3f+/T10rOo/LXy/ltz0=;
+        b=dgmB/YghVdC+j53rz8r2eIa0oeMEY8/KltPUI1WjwDBxqkokN8JjMKLga6S4mXzkZn
+         ztlWVXbeYZdI7SYyW38vlqCOBxLHUwnA5HJLIGk6IcDp2pSEwh+Xlj6co7q6xNvxZC0c
+         hr6aw6Bv95BohHf0pFiIPbleJZDOZtmTHO3Te7mLx7oqkWvX0GZcB+ea1KXxP4/zeM2q
+         UBdM73cCbLxgQXjVYo0To2ig5appLINxACwuKTgoSq1I9dQVRjpjSDniteBUb8sl6SnP
+         ajl2wM8hnWio4ss59UZBICDX27KCx63VvolFRnCb+B9Tw7FQh+gQJnEJXf3yf5qy4/Ch
+         SI+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3wwE0unoP9gEwX3qZBuFgRBN3f+/T10rOo/LXy/ltz0=;
+        b=HIvY1SZixa7SN1pQmJ+qCs6bT+Mwfo1BgGDTGe3JJNqE29j7rtl68p8eC+fDfDDl6f
+         9wYhC3MySQ4e/Pw46vyhqARKrHwP3afQ+PepEl5K+unX4aKUgB/QCRns1KscGX0w9rUs
+         VKc2joHc9vWNL7LCQt1FBsNMvVWOGj1IhqO9gpGomXQDk94RbYGHTsbP++WkXbm0IFb+
+         m8OUpWpqcc2vZ6KaLIHQLXjrAmZDjdJw2aiMedgvAmqgr+HmDSl7ZVLGwlfAz8AG2X0W
+         ARm9eXDQNjETQLDI+TnnW9zyiVY7N73kJ44se3IBeSgsWAhIwF0rqJSmT18938D8haed
+         Ct4g==
+X-Gm-Message-State: AOAM533QC5eNPaMtwLkHiPpm46cjyd8C+ok2TDbxc6Y8JscjjBrL95mD
+        uyI0SWejar00XL0baWw3o4enpz8mT6oDzlkQTBlY
+X-Google-Smtp-Source: ABdhPJwkt/HypsvRlBngb2nAQwKKYF8P1puyc6PgoJKDG7MaO4efQ9clheHXv8MpjdmkFvGbusHMpKriZqAHesgscDc=
+X-Received: by 2002:a05:6402:23a2:b0:42d:d5f1:d470 with SMTP id
+ j34-20020a05640223a200b0042dd5f1d470mr26336851eda.365.1654696614164; Wed, 08
+ Jun 2022 06:56:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.85 on 10.11.54.9
-X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20220607110504.198-1-xieyongji@bytedance.com> <Yp+oEPGnisNx+Nzo@redhat.com>
+ <CACycT3vKZJ4YhPgGq1VFeh3Tqnr-vK3X+rPz0rObH=MraxrhYA@mail.gmail.com> <YqCZt7tyEH50ktKq@redhat.com>
+In-Reply-To: <YqCZt7tyEH50ktKq@redhat.com>
+From:   Yongji Xie <xieyongji@bytedance.com>
+Date:   Wed, 8 Jun 2022 21:57:51 +0800
+Message-ID: <CACycT3sMe8EdBWxZhT0HTwVB7mGPk=eV3jG-8EkNK+W-Y_RAiw@mail.gmail.com>
+Subject: Re: [PATCH] fuse: allow skipping abort interface for virtiofs
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        =?UTF-8?B?5byg5L2z6L6w?= <zhangjiachen.jaycee@bytedance.com>,
+        linux-fsdevel@vger.kernel.org,
+        virtualization <virtualization@lists.linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 8 Jun 2022, at 9:36, J. Bruce Fields wrote:
-
-> On Wed, Jun 08, 2022 at 09:19:25AM -0400, Benjamin Coddington wrote:
->> NLM sometimes gets burnt by implementations of f_op->lock for F_GETLK
->> modifying the lock structure (swapping out fl_owner) when the return is
->> F_UNLCK.
->>
->> Yes, NLM should be more defensive, but perhaps we should be checking for
->> everyone, as per POSIX "If no lock is found that would prevent this lock
->> from being created, then the structure shall be left unchanged
->> except for
->> the lock type which shall be set to F_UNLCK."
+On Wed, Jun 8, 2022 at 8:44 PM Vivek Goyal <vgoyal@redhat.com> wrote:
 >
-> Doesn't seem like changing fl_owner affects fcntl_getlk results in this
-> case, so I don't think posix applies?  Though, OK, maybe it violates the
-> principle of least surprise for vfs_test_lock to behave differently.
+> On Wed, Jun 08, 2022 at 04:42:46PM +0800, Yongji Xie wrote:
+> > On Wed, Jun 8, 2022 at 3:34 AM Vivek Goyal <vgoyal@redhat.com> wrote:
+> > >
+> > > On Tue, Jun 07, 2022 at 07:05:04PM +0800, Xie Yongji wrote:
+> > > > The commit 15c8e72e88e0 ("fuse: allow skipping control
+> > > > interface and forced unmount") tries to remove the control
+> > > > interface for virtio-fs since it does not support aborting
+> > > > requests which are being processed. But it doesn't work now.
+> > >
+> > > Aha.., so "no_control" basically has no effect? I was looking at
+> > > the code and did not find anybody using "no_control" and I was
+> > > wondering who is making use of "no_control" variable.
+> > >
+> > > I mounted virtiofs and noticed a directory named "40" showed up
+> > > under /sys/fs/fuse/connections/. That must be belonging to
+> > > virtiofs instance, I am assuming.
+> > >
+> >
+> > I think so.
+> >
+> > > BTW, if there are multiple fuse connections, how will one figure
+> > > out which directory belongs to which instance. Because without knowing
+> > > that, one will be shooting in dark while trying to read/write any
+> > > of the control files.
+> > >
+> >
+> > We can use "stat $mountpoint" to get the device minor ID which is the
+> > name of the corresponding control directory.
+> >
+> > > So I think a separate patch should be sent which just gets rid of
+> > > "no_control" saying nobody uses. it.
+> > >
+> >
+> > OK.
+> >
+> > > >
+> > > > This commit fixes the bug, but only remove the abort interface
+> > > > instead since other interfaces should be useful.
+> > >
+> > > Hmm.., so writing to "abort" file is bad as it ultimately does.
+> > >
+> > > fc->connected = 0;
+> > >
+> >
+> > Another problem is that it might trigger UAF since
+> > virtio_fs_request_complete() doesn't know the requests are aborted.
+> >
+> > > So getting rid of this file till we support aborting the pending
+> > > requests properly, makes sense.
+> > >
+> > > I think this probably should be a separate patch which explains
+> > > why adding "no_abort_control" is a good idea.
+> > >
+> >
+> > OK.
+>
+> BTW, which particular knob you are finding useful in control filesystem
+> for virtiofs. As you mentioned "abort" we will not implement. "waiting"
+> might not have much significance as well because requests are handed
+> over to virtiofs immidiately and if they can be sent to server (because
+> virtqueue is full) these are queued internally and fuse layer will not
+> have an idea.
+>
 
-Oh yeah, good point.  fl_owner is just internal.  That's enough of a reason
-for me to drop this idea.
+Couldn't it be used to check the inflight I/O for virtiofs?
 
-Ben
+> That leaves us with "congestion_threshold" and "max_background".
+> max_background seems to control how many background requests can be
+> submitted at a time. That probably can be useful if server is overwhelemed
+> and we want to slow down the client a bit.
+>
+> Not sure about congestion threshold.
+>
+> So have you found some knob useful for your use case?
+>
 
+Since it doesn't do harm to the system, I think it would be better to
+just keep it as it is. Maybe some fuse users can make use of it.
+
+Thanks,
+Yongji
