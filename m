@@ -2,206 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DF2D542268
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jun 2022 08:47:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 124575425A9
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jun 2022 08:55:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232323AbiFHFKv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jun 2022 01:10:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50328 "EHLO
+        id S233555AbiFHFZX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jun 2022 01:25:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39820 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232408AbiFHFKS (ORCPT
+        with ESMTP id S234677AbiFHFYy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jun 2022 01:10:18 -0400
-Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 870F33D11CC;
-        Tue,  7 Jun 2022 19:22:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1654654940; x=1686190940;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   mime-version:in-reply-to;
-  bh=qzLzlpXmYtyfLnr9kD61/kS6Q6YUitGZU8+jgBaVRi8=;
-  b=W3++W/LsvZvNyJwSCTDeqBlsjlidRm3msrk4fG74NjVOTwPCmLlPBvdk
-   HE+fEd8B67l3JTjpVZfXr+13zYU7kKHHuZ+CIErLo/1RaOAsPAh9xLBIU
-   9pmfOjam0n6al0ujbp5UB5Gc8cfqXWnBp6goIvAhct71ZhNJKssdvSzRf
-   97+RsA2FekA0AqtfI2/a6TzCq8crHjC4iiCnC4MDWZf/toM4tpXE613z4
-   7WHb8IB147go1OpRXc9ldHm6v0ttnEXy5qtXuHk/jHGYIhWSpgAj155DE
-   DVWWp9qRucQtcnaQWtd7zPJ+9jtSDMNFRhqAwzX6PeE1sjA0DF1adp4Qe
-   g==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10371"; a="257216797"
-X-IronPort-AV: E=Sophos;i="5.91,284,1647327600"; 
-   d="scan'208";a="257216797"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Jun 2022 19:21:54 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.91,284,1647327600"; 
-   d="scan'208";a="579856828"
-Received: from chaop.bj.intel.com (HELO localhost) ([10.240.192.101])
-  by orsmga007.jf.intel.com with ESMTP; 07 Jun 2022 19:21:44 -0700
-Date:   Wed, 8 Jun 2022 10:18:20 +0800
-From:   Chao Peng <chao.p.peng@linux.intel.com>
-To:     Marc Orr <marcorr@google.com>
-Cc:     Vishal Annapurve <vannapurve@google.com>,
-        kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86 <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Jun Nakajima <jun.nakajima@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com
-Subject: Re: [PATCH v6 0/8] KVM: mm: fd-based approach for supporting KVM
- guest private memory
-Message-ID: <20220608021820.GA1548172@chaop.bj.intel.com>
-Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
-References: <20220519153713.819591-1-chao.p.peng@linux.intel.com>
- <CAGtprH_83CEC0U-cBR2FzHsxbwbGn0QJ87WFNOEet8sineOcbQ@mail.gmail.com>
- <20220607065749.GA1513445@chaop.bj.intel.com>
- <CAA03e5H_vOQS-qdZgacnmqP5T5jJLnEfm44yfRzJQ2KVu0Br+Q@mail.gmail.com>
+        Wed, 8 Jun 2022 01:24:54 -0400
+Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB494255B7
+        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jun 2022 19:39:58 -0700 (PDT)
+Received: by mail-pj1-x1033.google.com with SMTP id gc3-20020a17090b310300b001e33092c737so17105209pjb.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Jun 2022 19:39:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=6bOa4esw0xksLVfNdAT6B93rV/P/8VSGEKMP6EjzR0E=;
+        b=K6KpXwM81tTGGNFDdq17Lj1eMk1q3eODHH8nocGcaU9nWe7rFntrd/gnI4dJmrX5ot
+         jelT47mS9pdJT0S2PzSCrNgL5Sh63CeXCG+aYcN+ywbxrVtSsSCUllZRXU38BSZmlUri
+         DAKxKJgyjtIwfLg5ysES88sOtfU39kmTixM4U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=6bOa4esw0xksLVfNdAT6B93rV/P/8VSGEKMP6EjzR0E=;
+        b=WgfEKf9T5Lucyljz9D3XxY8y/GqZZhIyPVQjWdGUiX7b0c+Ff9BdopulxmEKyth4Ux
+         tI80LqVVn3X36QoOu1ur2EPqyBfVfATxcfnQlUUEJaSMw8CsDUq+JhfEXYYJnNy9+zCE
+         WNk5HEdqtOaRBW0idK1MW9Ipg2+xADJpp/p5QnplCaYK3qWviUzex4cghVr+xHAl4dg/
+         1Drte7cXS3DGOqX0a2+ZHN2w5qa8tSXR/ORedpp8DVGxLAX7CF1lKGVyyRD9ckMJi55C
+         0vDlxetYbMhVvwkANuLoKOACbIoR3pmNYCAT1mpwgv/0zDSOx8CfmOWN3GiRPca94ekL
+         5w1Q==
+X-Gm-Message-State: AOAM532Kx0mgx736q+VPxdgSuLueVUDSd7HaCXYDtZmgtNGdsakkuYcg
+        ZqxU9Gt2uX/1x6wE44SNL8RGfg==
+X-Google-Smtp-Source: ABdhPJyJZwIgrQupdT+vh6Z2lrRhM1s6jhssKdeRPoFc/TqToiSIDBj6GM5p6VPlbfki0O4rCxkesQ==
+X-Received: by 2002:a17:90b:3a8f:b0:1e8:7669:8a2f with SMTP id om15-20020a17090b3a8f00b001e876698a2fmr16728205pjb.55.1654655998366;
+        Tue, 07 Jun 2022 19:39:58 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:463d:a192:6128:66e])
+        by smtp.gmail.com with ESMTPSA id 84-20020a621857000000b0050dc7628158sm13612168pfy.50.2022.06.07.19.39.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Jun 2022 19:39:57 -0700 (PDT)
+Date:   Wed, 8 Jun 2022 11:39:52 +0900
+From:   Sergey Senozhatsky <senozhatsky@chromium.org>
+To:     Minchan Kim <minchan@kernel.org>
+Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        regressions@lists.linux.dev, Jens Axboe <axboe@kernel.dk>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Nitin Gupta <ngupta@vflare.org>
+Subject: Re: qemu-arm: zram: mkfs.ext4 : Unable to handle kernel NULL pointer
+ dereference at virtual address 00000140
+Message-ID: <YqAL+HeZDk5Wug28@google.com>
+References: <CA+G9fYtVOfWWpx96fa3zzKzBPKiNu1w3FOD4j++G8MOG3Vs0EA@mail.gmail.com>
+ <Yp47DODPCz0kNgE8@google.com>
+ <CA+G9fYsjn0zySHU4YYNJWAgkABuJuKtHty7ELHmN-+30VYgCDA@mail.gmail.com>
+ <Yp/kpPA7GdbArXDo@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAA03e5H_vOQS-qdZgacnmqP5T5jJLnEfm44yfRzJQ2KVu0Br+Q@mail.gmail.com>
-X-Spam-Status: No, score=-5.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+In-Reply-To: <Yp/kpPA7GdbArXDo@google.com>
+X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 07, 2022 at 05:55:46PM -0700, Marc Orr wrote:
-> On Tue, Jun 7, 2022 at 12:01 AM Chao Peng <chao.p.peng@linux.intel.com> wrote:
-> >
-> > On Mon, Jun 06, 2022 at 01:09:50PM -0700, Vishal Annapurve wrote:
-> > > >
-> > > > Private memory map/unmap and conversion
-> > > > ---------------------------------------
-> > > > Userspace's map/unmap operations are done by fallocate() ioctl on the
-> > > > backing store fd.
-> > > >   - map: default fallocate() with mode=0.
-> > > >   - unmap: fallocate() with FALLOC_FL_PUNCH_HOLE.
-> > > > The map/unmap will trigger above memfile_notifier_ops to let KVM map/unmap
-> > > > secondary MMU page tables.
-> > > >
-> > > ....
-> > > >    QEMU: https://github.com/chao-p/qemu/tree/privmem-v6
-> > > >
-> > > > An example QEMU command line for TDX test:
-> > > > -object tdx-guest,id=tdx \
-> > > > -object memory-backend-memfd-private,id=ram1,size=2G \
-> > > > -machine q35,kvm-type=tdx,pic=no,kernel_irqchip=split,memory-encryption=tdx,memory-backend=ram1
-> > > >
-> > >
-> > > There should be more discussion around double allocation scenarios
-> > > when using the private fd approach. A malicious guest or buggy
-> > > userspace VMM can cause physical memory getting allocated for both
-> > > shared (memory accessible from host) and private fds backing the guest
-> > > memory.
-> > > Userspace VMM will need to unback the shared guest memory while
-> > > handling the conversion from shared to private in order to prevent
-> > > double allocation even with malicious guests or bugs in userspace VMM.
-> >
-> > I don't know how malicious guest can cause that. The initial design of
-> > this serie is to put the private/shared memory into two different
-> > address spaces and gives usersapce VMM the flexibility to convert
-> > between the two. It can choose respect the guest conversion request or
-> > not.
+On (22/06/07 16:52), Minchan Kim wrote:
+> > rootfs: https://oebuilds.tuxbuild.com/29zhlbEc3EWq2wod9Uy964Bp27q/images/am57xx-evm/rpb-console-image-lkft-am57xx-evm-20220601222434.rootfs.ext4.gz
+> > kernel: https://builds.tuxbuild.com/29zhqJJizU2Y7Ka7ArhryUOrNDC/zImage
+> > 
+> > Boot command,
+> >  /usr/bin/qemu-system-aarch64 -cpu host,aarch64=off -machine
+> > virt-2.10,accel=kvm -nographic -net
+> > nic,model=virtio,maaacaddr=BA:DD:AD:CC:09:04 -net tap -m 2048 -monitor
+> > none -kernel kernel/zImage --append "console=ttyAMA0 root=/dev/vda rw"
+> > -hda rootfs/rpb-console-image-lkft-am57xx-evm-20220601222434.rootfs.ext4
+> > -m 4096 -smp 2
+> > 
+> > # cd /opt/kselftests/default-in-kernel/zram
+> > # ./zram.sh
+> > 
+> > Allow me sometime I will try to bisect this problem.
 > 
-> For example, the guest could maliciously give a device driver a
-> private page so that a host-side virtual device will blindly write the
-> private page.
+> Thanks for sharing the info. 
+> 
+> I managed to work your rootfs with my local arm build
+> based on the problematic git tip. 
+> However, I couldn't suceed to reproduce it.
+> 
+> I needed to build zsmalloc/zram built-in instead of modules
+> Is it related? Hmm,
+> 
+> Yeah, It would be very helpful if you could help to bisect it.
 
-With this patch series, it's actually even not possible for userspace VMM
-to allocate private page by a direct write, it's basically unmapped from
-there. If it really wants to, it should so something special, by intention,
-that's basically the conversion, which we should allow.
-
-> 
-> > It's possible for a usrspace VMM to cause double allocation if it fails
-> > to call the unback operation during the conversion, this may be a bug
-> > or not. Double allocation may not be a wrong thing, even in conception.
-> > At least TDX allows you to use half shared half private in guest, means
-> > both shared/private can be effective. Unbacking the memory is just the
-> > current QEMU implementation choice.
-> 
-> Right. But the idea is that this patch series should accommodate all
-> of the CVM architectures. Or at least that's what I know was
-> envisioned last time we discussed this topic for SNP [*].
-
-AFAICS, this series should work for both TDX and SNP, and other CVM
-architectures. I don't see where TDX can work but SNP cannot, or I
-missed something here?
-
-> 
-> Regardless, it's important to ensure that the VM respects its memory
-> budget. For example, within Google, we run VMs inside of containers.
-> So if we double allocate we're going to OOM. This seems acceptable for
-> an early version of CVMs. But ultimately, I think we need a more
-> robust way to ensure that the VM operates within its memory container.
-> Otherwise, the OOM is going to be hard to diagnose and distinguish
-> from a real OOM.
-
-Thanks for bringing this up. But in my mind I still think userspace VMM
-can do and it's its responsibility to guarantee that, if that is hard
-required. By design, userspace VMM is the decision-maker for page
-conversion and has all the necessary information to know which page is
-shared/private. It also has the necessary knobs to allocate/free the
-physical pages for guest memory. Definitely, we should make userspace
-VMM more robust.
-
-Chao
-> 
-> [*] https://lore.kernel.org/all/20210820155918.7518-1-brijesh.singh@amd.com/
-> 
-> >
-> > Chao
-> > >
-> > > Options to unback shared guest memory seem to be:
-> > > 1) madvise(.., MADV_DONTNEED/MADV_REMOVE) - This option won't stop
-> > > kernel from backing the shared memory on subsequent write accesses
-> > > 2) fallocate(..., FALLOC_FL_PUNCH_HOLE...) - For file backed shared
-> > > guest memory, this option still is similar to madvice since this would
-> > > still allow shared memory to get backed on write accesses
-> > > 3) munmap - This would give away the contiguous virtual memory region
-> > > reservation with holes in the guest backing memory, which might make
-> > > guest memory management difficult.
-> > > 4) mprotect(... PROT_NONE) - This would keep the virtual memory
-> > > address range backing the guest memory preserved
-> > >
-> > > ram_block_discard_range_fd from reference implementation:
-> > > https://github.com/chao-p/qemu/tree/privmem-v6 seems to be relying on
-> > > fallocate/madvise.
-> > >
-> > > Any thoughts/suggestions around better ways to unback the shared
-> > > memory in order to avoid double allocation scenarios?
-> 
-> I agree with Vishal. I think this patch set is making great progress.
-> But the double allocation scenario seems like a high-level design
-> issue that warrants more discussion.
+This looks like a NULL lock->name dereference in lockdep. I suspect
+that somehow local_lock doesn't get .dep_map initialized. Maybe running
+the kernel with CONFIG_DEBUG_LOCK_ALLOC would help us? Naresh, can you
+help us with this?
