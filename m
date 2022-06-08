@@ -2,272 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D89AD543189
+	by mail.lfdr.de (Postfix) with ESMTP id 5C505543188
 	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jun 2022 15:37:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240421AbiFHNgp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jun 2022 09:36:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51660 "EHLO
+        id S240423AbiFHNhA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jun 2022 09:37:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240264AbiFHNgo (ORCPT
+        with ESMTP id S240422AbiFHNg6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jun 2022 09:36:44 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F11F7D771E
-        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Jun 2022 06:36:41 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id 87BD521ACF;
-        Wed,  8 Jun 2022 13:36:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1654695400; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=8d5zMDCFN11/PgbbjWSDgq6qBBpsmXIJJwVGVB3QRds=;
-        b=f0JYIREshK4cT6V63l2Ej0aJQmHIt485gzlWyhdm+G+8aUuku25X14arYwAkXuSptsmfgA
-        mGyyYq9X+ZLbN2GyaLU5njlh7SFbkEvLL16Q/0Od7HBf+vhhHImng+kL9hr1RrPaYv921c
-        oeAO1eJoqWphfqMJz387dmYq9UTVxHI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1654695400;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=8d5zMDCFN11/PgbbjWSDgq6qBBpsmXIJJwVGVB3QRds=;
-        b=jtt2rYA4jkGFMhvxhGZbhA4pBzG8BA3iqoZVVewDn0KISYanNVzuQ1mx6akjhgMz1qibBz
-        DBCCkMipaYhJDiAw==
-Received: from quack3.suse.cz (unknown [10.163.28.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 71F152C141;
-        Wed,  8 Jun 2022 13:36:40 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 1AB42A06E2; Wed,  8 Jun 2022 15:36:40 +0200 (CEST)
-Date:   Wed, 8 Jun 2022 15:36:40 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Gal Rosen <gal.rosen@cybereason.com>
-Cc:     Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: Failed on reading from FANOTIFY file descriptor
-Message-ID: <20220608133640.6dzpiwwkoiuh2orl@quack3.lan>
-References: <CAJ-MHhCyDB576-vpcJuazyrO-4Q1UuTprD88pdd0WRzjOx8ptQ@mail.gmail.com>
- <CAOQ4uxj=Cd=R7oj4i3vE+VNcpWGD3W=NpqBu8E09K205W-CTAA@mail.gmail.com>
- <CAJ-MHhCJYc_NDRvMfB2S9tHTvOdc4Tqrzo=wRNkqedSLyfAnRg@mail.gmail.com>
- <CAJ-MHhBkKycGJnMVwt+KuFnzz=8sDzyuHWTxvHVJnJ55mKLiPQ@mail.gmail.com>
- <20220608115738.gcnviw7ldunw6vb5@quack3.lan>
- <CAJ-MHhD4HZq3G8AoPVGGc6+AEPR7G0UXkT0m=6AeeEMq3CjPDw@mail.gmail.com>
- <20220608125039.jpeufb2pl7xacs4t@quack3.lan>
- <CAJ-MHhAgSah9B9a3wztbkhLLMUP1X0MR4rovq+qxp8KwGOouNQ@mail.gmail.com>
+        Wed, 8 Jun 2022 09:36:58 -0400
+Received: from fieldses.org (fieldses.org [IPv6:2600:3c00:e000:2f7::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0299DF0734
+        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Jun 2022 06:36:56 -0700 (PDT)
+Received: by fieldses.org (Postfix, from userid 2815)
+        id D8A627171; Wed,  8 Jun 2022 09:36:55 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 fieldses.org D8A627171
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fieldses.org;
+        s=default; t=1654695415;
+        bh=Fn6B0pmZwoPY22gWtvqSEoLpF/15yGM7F1ECHXtChTw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=RAes4Gv8ktd3OvijJJXIcwaW7aeM19P2o3QLRgCftX6kxWtTYnHdI3VQfFEQ+nwEF
+         JHVtbxCyglySj5BkRRlx88ctgl6czchx3AXAmfD/InveiV36V40I2V+1GtsenOMepw
+         1C5EHH9mFs9M8jtnlPZ+Nd3r3g25A7dG5iUkxDKI=
+Date:   Wed, 8 Jun 2022 09:36:55 -0400
+From:   "J. Bruce Fields" <bfields@fieldses.org>
+To:     Benjamin Coddington <bcodding@redhat.com>
+Cc:     viro@zeniv.linux.org.uk, jlayton@kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Roberto Bergantinos Corpas <rbergant@redhat.com>
+Subject: Re: vfs_test_lock - should it WARN if F_UNLCK and modified file_lock?
+Message-ID: <20220608133655.GA13884@fieldses.org>
+References: <9559FAE9-4E4A-4161-995F-32D800EC0D5B@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJ-MHhAgSah9B9a3wztbkhLLMUP1X0MR4rovq+qxp8KwGOouNQ@mail.gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+In-Reply-To: <9559FAE9-4E4A-4161-995F-32D800EC0D5B@redhat.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Gal,
-
-On Wed 08-06-22 16:11:34, Gal Rosen wrote:
-> Thanks for the response.
-> Regarding the EPERM, will it also get an automatic denied response ?
-
-Yes.
-
-> Let's say SELinux policy is preventing our process (which has root
-> privilege) to open some files, will this event popup in the next read and
-> prevent us from getting other events ?
-
-With EPERM fanotify behaves exactly the same as with EMFILE...
-
-> And regarding all other errors that can return on read, are all recoverable
-> ?
-
-Yes, they are all recoverable as EMFILE, except for EFAULT (i.e., when the
-buffer you provide to copy events to is not accessible). But in that case
-your application will get killed anyway (unless you try to handle SIGSEGV
-signal) so your service will restart in that case.
-
-								Honza
-
-> On Wed, Jun 8, 2022 at 3:50 PM Jan Kara <jack@suse.cz> wrote:
+On Wed, Jun 08, 2022 at 09:19:25AM -0400, Benjamin Coddington wrote:
+> NLM sometimes gets burnt by implementations of f_op->lock for F_GETLK
+> modifying the lock structure (swapping out fl_owner) when the return is
+> F_UNLCK.
 > 
-> > Hi Gal!
-> >
-> > On Wed 08-06-22 15:41:45, Gal Rosen wrote:
-> > > Thanks for the answer, just to make sure that I understand, if I see the
-> > > EMFILE error then it was on the first event and no event was copied to
-> > the
-> > > user buffer.
-> > > If it happened on the second or later events then the user will not see
-> > the
-> > > error, and will get length corresponding to the successfully formatted
-> > > events.
-> > > In both cases the events after the failure event will be saved in the
-> > > kernel queue, and I can try to read them at the next read ?
-> >
-> > Yes.
-> >
-> > > I want to understand if such a case is recoverable, because today at any
-> > > FANOTIFY error we use a methodology of safe-mode, in which we shutdown
-> > the
-> > > FANOTIFY, kill our service and come up again.
-> > > We do it because in the past we had some cases in which we did not write
-> > a
-> > > response on some file events and it stuck the whole system.
-> >
-> > So if you read permission event and do not write reply, it can indeed stall
-> > the whole system. But in case fanotify subsystem fails to create an event
-> > (such as in the EMFILE error case), we do properly clean up the failed
-> > event
-> > and the operation generating the event gets automatic "denied" response.
-> >
-> > > We do it for safety because we thought that there might be some file
-> > events
-> > > that we did not respond in a case of error, but if you are saying that
-> > all
-> > > events after the error event are still in the kernel queue and we do not
-> > > need to respond on them, then I guess we can continue run without
-> > > restarting our service.
-> >
-> > Yes, you should be able to continue without restarting.
-> >
-> >                                                                 Honza
-> >
-> > > On Wed, Jun 8, 2022 at 2:57 PM Jan Kara <jack@suse.cz> wrote:
-> > >
-> > > > Hello,
-> > > >
-> > > > On Wed 08-06-22 14:33:47, Gal Rosen wrote:
-> > > > > One more question, if I do get into a situation in which I reach the
-> > > > limit
-> > > > > of the number of open files per my process, can I continue ? Can I
-> > > > continue
-> > > > > in my while loop and after a couple of microseconds for example can
-> > try
-> > > > to
-> > > > > re-read ?
-> > > > > If I get the error of EMFILE, it could be that some of the events
-> > > > > successfully read and are already in my user buffer, but I still get
-> > > > return
-> > > > > value of -1 on the read, does all the successful events are still in
-> > the
-> > > > > kernel queue and will be still there for the next read ?
-> > > >
-> > > > So if you get the EMFILE error, it means that we were not able to open
-> > file
-> > > > descriptor for the first event you are trying to read. If the same
-> > error
-> > > > happens for the second or later event copied into user provided
-> > buffer, we
-> > > > return length corresponding to the succesfully formatted events.
-> > Sadly, the
-> > > > event for which we failed to open file will be silently dropped in that
-> > > > case
-> > > > :-|. Amir, I guess we should at least report the event without the fd
-> > in
-> > > > that case. What do you think?
-> > > >
-> > > >                                                                 Honza
-> > > >
-> > > > > On Wed, Jun 8, 2022 at 2:01 PM Gal Rosen <gal.rosen@cybereason.com>
-> > > > wrote:
-> > > > >
-> > > > > > Hi Amir,
-> > > > > >
-> > > > > > What do you mean by bumping the CAP_SYS_ADMIN limit ?
-> > > > > > You mean to increase the max open file for my process that watches
-> > the
-> > > > > > FANOTIFY fd ?
-> > > > > > May I instead decrease the read buffer size ?
-> > > > > > My read buffer is 4096 * 6, the fanotify_event_metadata structure
-> > size
-> > > > is
-> > > > > > 24 bytes, so it can hold 1024 file events at one read.
-> > > > > > My process Max open files soft limit is 1024, so why do I get this
-> > > > error ?
-> > > > > > Ohh, maybe because after reading the events I put them in a queue
-> > and
-> > > > > > continue for the next read, so if file events still have not been
-> > > > released
-> > > > > > by my application, then the next read can exceed 1024 files opened.
-> > > > > >
-> > > > > > Yes ,we use permission events. We watch on FAN_OPEN_PERM |
-> > > > FAN_CLOSE_WRITE.
-> > > > > > We also want to support the oldest kernels.
-> > > > > >
-> > > > > > BTW: What do you mean by "assuming that your process has
-> > > > CAP_SYS_ADMIN" ?
-> > > > > >
-> > > > > > Regarding the EPERM, how do we continue to investigate it ?
-> > > > > >
-> > > > > > Thanks,
-> > > > > > Gal.
-> > > > > >
-> > > > > > בתאריך יום ד׳, 8 ביוני 2022, 12:00, מאת Amir Goldstein ‏<
-> > > > > > amir73il@gmail.com>:
-> > > > > >
-> > > > > >> On Wed, Jun 8, 2022 at 11:31 AM Gal Rosen <
-> > gal.rosen@cybereason.com>
-> > > > > >> wrote:
-> > > > > >> >
-> > > > > >> > Hi Jack,
-> > > > > >> >
-> > > > > >> > Can you provide details on the reason I sometimes get read
-> > errors on
-> > > > > >> events that I get from FANOTIFY ?
-> > > > > >> > My user space program watches on all mount points in the system
-> > and
-> > > > > >> sometimes when in parallel I run full scan with another
-> > application
-> > > > on all
-> > > > > >> my files in the endpoint, I get a read error when trying to read
-> > from
-> > > > the
-> > > > > >> FANOTIFY fd on a new event.
-> > > > > >> > The errno is sometimes EPERM (Operation not permitted) and
-> > sometimes
-> > > > > >> EMFILE (Too many open files).
-> > > > > >> >
-> > > > > >>
-> > > > > >> Hi Gal,
-> > > > > >>
-> > > > > >> EPERM is a bit surprising assuming that your process has
-> > > > CAP_SYS_ADMIN,
-> > > > > >> so needs investigating, but EMFILE is quite obvious.
-> > > > > >> Every event read needs to open a fd to place in event->fd.
-> > > > > >> If you exceed your configured limit, this error is expected.
-> > > > > >> You can bump the limit as CAP_SYS_ADMIN if that helps.
-> > > > > >>
-> > > > > >> > The last time I saw these errors, it was on RHEL 8.5, kernel
-> > > > > >> 4.18.0-348.23.1.el8_5.x86_64.
-> > > > > >>
-> > > > > >> Does your application even use permission events?
-> > > > > >> If it doesn't then watching with a newer kernel (>5.1) and
-> > > > FAN_ERPORT_FID
-> > > > > >> is going to be more efficient in resources and you wont need to
-> > worry
-> > > > > >> about open files limits.
-> > > > > >>
-> > > > > >> Thanks,
-> > > > > >> Amir.
-> > > > > >>
-> > > > > >
-> > > > --
-> > > > Jan Kara <jack@suse.com>
-> > > > SUSE Labs, CR
-> > > >
-> > --
-> > Jan Kara <jack@suse.com>
-> > SUSE Labs, CR
-> >
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> Yes, NLM should be more defensive, but perhaps we should be checking for
+> everyone, as per POSIX "If no lock is found that would prevent this lock
+> from being created, then the structure shall be left unchanged
+> except for
+> the lock type which shall be set to F_UNLCK."
+
+Doesn't seem like changing fl_owner affects fcntl_getlk results in this
+case, so I don't think posix applies?  Though, OK, maybe it violates the
+principle of least surprise for vfs_test_lock to behave differently.
+
+> That would save others from the pain, as the offenders would
+> hopefully take
+> notice.
+> 
+> Something like:
+> 
+> diff --git a/fs/locks.c b/fs/locks.c
+> index 32c948fe2944..4cc425008036 100644
+> --- a/fs/locks.c
+> +++ b/fs/locks.c
+> @@ -2274,8 +2274,16 @@ SYSCALL_DEFINE2(flock, unsigned int, fd,
+> unsigned int, cmd)
+>   */
+>  int vfs_test_lock(struct file *filp, struct file_lock *fl)
+>  {
+> -       if (filp->f_op->lock)
+> -               return filp->f_op->lock(filp, F_GETLK, fl);
+> +       int ret;
+> +       fl_owner_t test_owner = fl->fl_owner;
+> +
+> +       if (filp->f_op->lock) {
+> +               ret = filp->f_op->lock(filp, F_GETLK, fl);
+> +               if (fl->fl_type == F_UNLCK)
+> +                       WARN_ON(fl->fl_owner != test_owner);
+
+WARN_ON_ONCE?
+
+> +               return ret;
+> +       }
+> +
+>         posix_test_lock(filp, fl);
+>         return 0;
+>  }
+> 
+> .. I'm worried that might be too big of a hammer though.  Any thoughts?
+
+No strong opinions here.
+
+--b.
