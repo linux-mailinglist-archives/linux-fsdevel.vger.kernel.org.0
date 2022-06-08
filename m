@@ -2,60 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A5147543168
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jun 2022 15:33:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D89AD543189
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jun 2022 15:37:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240168AbiFHNdA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jun 2022 09:33:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33904 "EHLO
+        id S240421AbiFHNgp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jun 2022 09:36:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231342AbiFHNc7 (ORCPT
+        with ESMTP id S240264AbiFHNgo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jun 2022 09:32:59 -0400
+        Wed, 8 Jun 2022 09:36:44 -0400
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E943D104C81
-        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Jun 2022 06:32:57 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F11F7D771E
+        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Jun 2022 06:36:41 -0700 (PDT)
 Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out1.suse.de (Postfix) with ESMTP id A98C121A37;
-        Wed,  8 Jun 2022 13:32:56 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTP id 87BD521ACF;
+        Wed,  8 Jun 2022 13:36:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1654695176; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1654695400; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=gnLOhhDPu4tb7fF9sVfBNFpAzk9p0jbQIUSDv/qtZC4=;
-        b=GbcfsLq9Dw55ThRSMsNeQrXOF4ngsoPQP2/QpzMbu48LrflWuU5hNfB8nKInunvzhr1430
-        sPFR8CcLdnkg6ykf+XLh5sEPwkfena00dq8l3fZ7DuSWWgMHz9Xmyp70YSuFeQO4ZXRmSI
-        OUEvRTISJ1fj+jEx3lsBKW7MsrevX44=
+        bh=8d5zMDCFN11/PgbbjWSDgq6qBBpsmXIJJwVGVB3QRds=;
+        b=f0JYIREshK4cT6V63l2Ej0aJQmHIt485gzlWyhdm+G+8aUuku25X14arYwAkXuSptsmfgA
+        mGyyYq9X+ZLbN2GyaLU5njlh7SFbkEvLL16Q/0Od7HBf+vhhHImng+kL9hr1RrPaYv921c
+        oeAO1eJoqWphfqMJz387dmYq9UTVxHI=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1654695176;
+        s=susede2_ed25519; t=1654695400;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=gnLOhhDPu4tb7fF9sVfBNFpAzk9p0jbQIUSDv/qtZC4=;
-        b=WABdONHwiLhpjxTJcCzjc/cFPexXbEZGBDrVZIPQiF6yfen18AsoEECHCL1rzA7g5ybOfm
-        bG1gfA0G43UOFQBQ==
+        bh=8d5zMDCFN11/PgbbjWSDgq6qBBpsmXIJJwVGVB3QRds=;
+        b=jtt2rYA4jkGFMhvxhGZbhA4pBzG8BA3iqoZVVewDn0KISYanNVzuQ1mx6akjhgMz1qibBz
+        DBCCkMipaYhJDiAw==
 Received: from quack3.suse.cz (unknown [10.163.28.18])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 9DABE2C141;
-        Wed,  8 Jun 2022 13:32:56 +0000 (UTC)
+        by relay2.suse.de (Postfix) with ESMTPS id 71F152C141;
+        Wed,  8 Jun 2022 13:36:40 +0000 (UTC)
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 391E4A06E2; Wed,  8 Jun 2022 15:32:56 +0200 (CEST)
-Date:   Wed, 8 Jun 2022 15:32:56 +0200
+        id 1AB42A06E2; Wed,  8 Jun 2022 15:36:40 +0200 (CEST)
+Date:   Wed, 8 Jun 2022 15:36:40 +0200
 From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Gal Rosen <gal.rosen@cybereason.com>, Jan Kara <jack@suse.cz>,
+To:     Gal Rosen <gal.rosen@cybereason.com>
+Cc:     Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Subject: Re: Failed on reading from FANOTIFY file descriptor
-Message-ID: <20220608133256.2d7tsy3wtipny64l@quack3.lan>
+Message-ID: <20220608133640.6dzpiwwkoiuh2orl@quack3.lan>
 References: <CAJ-MHhCyDB576-vpcJuazyrO-4Q1UuTprD88pdd0WRzjOx8ptQ@mail.gmail.com>
  <CAOQ4uxj=Cd=R7oj4i3vE+VNcpWGD3W=NpqBu8E09K205W-CTAA@mail.gmail.com>
  <CAJ-MHhCJYc_NDRvMfB2S9tHTvOdc4Tqrzo=wRNkqedSLyfAnRg@mail.gmail.com>
- <CAOQ4uxjH9o_XwowdyjyCYswpfvwRSq9wUAkYvg_XoKULvx23-g@mail.gmail.com>
+ <CAJ-MHhBkKycGJnMVwt+KuFnzz=8sDzyuHWTxvHVJnJ55mKLiPQ@mail.gmail.com>
+ <20220608115738.gcnviw7ldunw6vb5@quack3.lan>
+ <CAJ-MHhD4HZq3G8AoPVGGc6+AEPR7G0UXkT0m=6AeeEMq3CjPDw@mail.gmail.com>
+ <20220608125039.jpeufb2pl7xacs4t@quack3.lan>
+ <CAJ-MHhAgSah9B9a3wztbkhLLMUP1X0MR4rovq+qxp8KwGOouNQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAOQ4uxjH9o_XwowdyjyCYswpfvwRSq9wUAkYvg_XoKULvx23-g@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJ-MHhAgSah9B9a3wztbkhLLMUP1X0MR4rovq+qxp8KwGOouNQ@mail.gmail.com>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
         SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
@@ -66,31 +73,201 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed 08-06-22 15:01:17, Amir Goldstein wrote:
-> On Wed, Jun 8, 2022 at 2:01 PM Gal Rosen <gal.rosen@cybereason.com> wrote:
-> > Regarding the EPERM, how do we continue to investigate it ?
-> 
-> Besides adding prints to the kernel I don't know.
-> Basically, there is a file that is being opened by some process
-> that your listener process has no permissions to open, so
-> check with the people responsible to the SELinux policy what that could be.
+Hi Gal,
 
-If it is SELinux denying the open, you should be able to set SELinux to
-logging mode so that you can see opens that are getting denied and why (I
-don't know SELinux so I cannot really give you details how to do it). But
-it is not necessarily SELinux that's causing the EPERM errors. It may be
-that you are watching e.g. some special filesystem like /proc/ and the open
-gets denied there...
+On Wed 08-06-22 16:11:34, Gal Rosen wrote:
+> Thanks for the response.
+> Regarding the EPERM, will it also get an automatic denied response ?
 
-If you can reproduce the problem, you can enable some kernel tracing to get
-more information about the situation. Sadly it is not easy to get to the
-filename for which we are reporting the EPERM error so you'll need to use
-something like Systemtap (or eBPF) to get the information (about arguments
-and return value) from dentry_open() calls.
+Yes.
+
+> Let's say SELinux policy is preventing our process (which has root
+> privilege) to open some files, will this event popup in the next read and
+> prevent us from getting other events ?
+
+With EPERM fanotify behaves exactly the same as with EMFILE...
+
+> And regarding all other errors that can return on read, are all recoverable
+> ?
+
+Yes, they are all recoverable as EMFILE, except for EFAULT (i.e., when the
+buffer you provide to copy events to is not accessible). But in that case
+your application will get killed anyway (unless you try to handle SIGSEGV
+signal) so your service will restart in that case.
 
 								Honza
 
-
+> On Wed, Jun 8, 2022 at 3:50 PM Jan Kara <jack@suse.cz> wrote:
+> 
+> > Hi Gal!
+> >
+> > On Wed 08-06-22 15:41:45, Gal Rosen wrote:
+> > > Thanks for the answer, just to make sure that I understand, if I see the
+> > > EMFILE error then it was on the first event and no event was copied to
+> > the
+> > > user buffer.
+> > > If it happened on the second or later events then the user will not see
+> > the
+> > > error, and will get length corresponding to the successfully formatted
+> > > events.
+> > > In both cases the events after the failure event will be saved in the
+> > > kernel queue, and I can try to read them at the next read ?
+> >
+> > Yes.
+> >
+> > > I want to understand if such a case is recoverable, because today at any
+> > > FANOTIFY error we use a methodology of safe-mode, in which we shutdown
+> > the
+> > > FANOTIFY, kill our service and come up again.
+> > > We do it because in the past we had some cases in which we did not write
+> > a
+> > > response on some file events and it stuck the whole system.
+> >
+> > So if you read permission event and do not write reply, it can indeed stall
+> > the whole system. But in case fanotify subsystem fails to create an event
+> > (such as in the EMFILE error case), we do properly clean up the failed
+> > event
+> > and the operation generating the event gets automatic "denied" response.
+> >
+> > > We do it for safety because we thought that there might be some file
+> > events
+> > > that we did not respond in a case of error, but if you are saying that
+> > all
+> > > events after the error event are still in the kernel queue and we do not
+> > > need to respond on them, then I guess we can continue run without
+> > > restarting our service.
+> >
+> > Yes, you should be able to continue without restarting.
+> >
+> >                                                                 Honza
+> >
+> > > On Wed, Jun 8, 2022 at 2:57 PM Jan Kara <jack@suse.cz> wrote:
+> > >
+> > > > Hello,
+> > > >
+> > > > On Wed 08-06-22 14:33:47, Gal Rosen wrote:
+> > > > > One more question, if I do get into a situation in which I reach the
+> > > > limit
+> > > > > of the number of open files per my process, can I continue ? Can I
+> > > > continue
+> > > > > in my while loop and after a couple of microseconds for example can
+> > try
+> > > > to
+> > > > > re-read ?
+> > > > > If I get the error of EMFILE, it could be that some of the events
+> > > > > successfully read and are already in my user buffer, but I still get
+> > > > return
+> > > > > value of -1 on the read, does all the successful events are still in
+> > the
+> > > > > kernel queue and will be still there for the next read ?
+> > > >
+> > > > So if you get the EMFILE error, it means that we were not able to open
+> > file
+> > > > descriptor for the first event you are trying to read. If the same
+> > error
+> > > > happens for the second or later event copied into user provided
+> > buffer, we
+> > > > return length corresponding to the succesfully formatted events.
+> > Sadly, the
+> > > > event for which we failed to open file will be silently dropped in that
+> > > > case
+> > > > :-|. Amir, I guess we should at least report the event without the fd
+> > in
+> > > > that case. What do you think?
+> > > >
+> > > >                                                                 Honza
+> > > >
+> > > > > On Wed, Jun 8, 2022 at 2:01 PM Gal Rosen <gal.rosen@cybereason.com>
+> > > > wrote:
+> > > > >
+> > > > > > Hi Amir,
+> > > > > >
+> > > > > > What do you mean by bumping the CAP_SYS_ADMIN limit ?
+> > > > > > You mean to increase the max open file for my process that watches
+> > the
+> > > > > > FANOTIFY fd ?
+> > > > > > May I instead decrease the read buffer size ?
+> > > > > > My read buffer is 4096 * 6, the fanotify_event_metadata structure
+> > size
+> > > > is
+> > > > > > 24 bytes, so it can hold 1024 file events at one read.
+> > > > > > My process Max open files soft limit is 1024, so why do I get this
+> > > > error ?
+> > > > > > Ohh, maybe because after reading the events I put them in a queue
+> > and
+> > > > > > continue for the next read, so if file events still have not been
+> > > > released
+> > > > > > by my application, then the next read can exceed 1024 files opened.
+> > > > > >
+> > > > > > Yes ,we use permission events. We watch on FAN_OPEN_PERM |
+> > > > FAN_CLOSE_WRITE.
+> > > > > > We also want to support the oldest kernels.
+> > > > > >
+> > > > > > BTW: What do you mean by "assuming that your process has
+> > > > CAP_SYS_ADMIN" ?
+> > > > > >
+> > > > > > Regarding the EPERM, how do we continue to investigate it ?
+> > > > > >
+> > > > > > Thanks,
+> > > > > > Gal.
+> > > > > >
+> > > > > > בתאריך יום ד׳, 8 ביוני 2022, 12:00, מאת Amir Goldstein ‏<
+> > > > > > amir73il@gmail.com>:
+> > > > > >
+> > > > > >> On Wed, Jun 8, 2022 at 11:31 AM Gal Rosen <
+> > gal.rosen@cybereason.com>
+> > > > > >> wrote:
+> > > > > >> >
+> > > > > >> > Hi Jack,
+> > > > > >> >
+> > > > > >> > Can you provide details on the reason I sometimes get read
+> > errors on
+> > > > > >> events that I get from FANOTIFY ?
+> > > > > >> > My user space program watches on all mount points in the system
+> > and
+> > > > > >> sometimes when in parallel I run full scan with another
+> > application
+> > > > on all
+> > > > > >> my files in the endpoint, I get a read error when trying to read
+> > from
+> > > > the
+> > > > > >> FANOTIFY fd on a new event.
+> > > > > >> > The errno is sometimes EPERM (Operation not permitted) and
+> > sometimes
+> > > > > >> EMFILE (Too many open files).
+> > > > > >> >
+> > > > > >>
+> > > > > >> Hi Gal,
+> > > > > >>
+> > > > > >> EPERM is a bit surprising assuming that your process has
+> > > > CAP_SYS_ADMIN,
+> > > > > >> so needs investigating, but EMFILE is quite obvious.
+> > > > > >> Every event read needs to open a fd to place in event->fd.
+> > > > > >> If you exceed your configured limit, this error is expected.
+> > > > > >> You can bump the limit as CAP_SYS_ADMIN if that helps.
+> > > > > >>
+> > > > > >> > The last time I saw these errors, it was on RHEL 8.5, kernel
+> > > > > >> 4.18.0-348.23.1.el8_5.x86_64.
+> > > > > >>
+> > > > > >> Does your application even use permission events?
+> > > > > >> If it doesn't then watching with a newer kernel (>5.1) and
+> > > > FAN_ERPORT_FID
+> > > > > >> is going to be more efficient in resources and you wont need to
+> > worry
+> > > > > >> about open files limits.
+> > > > > >>
+> > > > > >> Thanks,
+> > > > > >> Amir.
+> > > > > >>
+> > > > > >
+> > > > --
+> > > > Jan Kara <jack@suse.com>
+> > > > SUSE Labs, CR
+> > > >
+> > --
+> > Jan Kara <jack@suse.com>
+> > SUSE Labs, CR
+> >
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
