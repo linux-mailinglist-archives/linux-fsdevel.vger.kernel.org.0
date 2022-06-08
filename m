@@ -2,164 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E8D4554255D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jun 2022 08:54:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A1F4542409
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jun 2022 08:52:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232482AbiFHEUe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jun 2022 00:20:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43140 "EHLO
+        id S231997AbiFHEbe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jun 2022 00:31:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55008 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232734AbiFHEUA (ORCPT
+        with ESMTP id S232929AbiFHEa3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jun 2022 00:20:00 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A1D430A465;
-        Tue,  7 Jun 2022 18:43:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=oj6iBHbhY6wXvQP55JwyIS4V24gHjxSYo9c883R7TUw=; b=UfcjCcAZzQcl+QqNdFDayL0DrM
-        rVsFMvfFUXJ+7oDg0pQnlpqu8q9pinredTIeMnZWJx7xr81EuHQZejrMDcKM5oM6LxeQPUOp4s5iX
-        ZSlisTnw/St+HpFk9wwmSqM+LHciBRgwgWakpdRGd3adD7O0iYUtaFaX5R63bQzoG7LRFpPJ4R+6o
-        QTbenogFjZKniIch80zZmMTGAqhansPk4Fgz2CPBlusie4PkzHtBvzj0pHemLIlcBqz4I7YWekTUf
-        ODqwv9lHI37DiFMD5p4KndP3XL35ySlCLg7fIX147nJVyBtb79ZnjXvTWY+K0vIvQUROpSy8Axhht
-        24wQ41bw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1nykiD-00CCvI-Vy; Wed, 08 Jun 2022 01:42:22 +0000
-Date:   Wed, 8 Jun 2022 02:42:21 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Jan Kara <jack@suse.com>, tytso@mit.edu,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 3/3] ext4: Use generic_quota_read()
-Message-ID: <Yp/+fSoHgPIhiHQR@casper.infradead.org>
-References: <20220605143815.2330891-1-willy@infradead.org>
- <20220605143815.2330891-4-willy@infradead.org>
- <20220606083814.skjv34b2tjn7l7pi@quack3.lan>
+        Wed, 8 Jun 2022 00:30:29 -0400
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D4A439B22C
+        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jun 2022 19:05:40 -0700 (PDT)
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20220608020504epoutp02467a41a1955fbe252a7933f2661c70d2~2gvWR89-E2168421684epoutp02M
+        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Jun 2022 02:05:04 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20220608020504epoutp02467a41a1955fbe252a7933f2661c70d2~2gvWR89-E2168421684epoutp02M
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1654653904;
+        bh=zV++LEuLCtfADlbIL+S4XEKvrkR3B7fzf/3W6WqqlXE=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=KE6nOKFRTAXVoN5bXm/k0P67vdubXxge6WUdNMYa4U+cPuzNvWvmoZfyMKRsGSQa9
+         XNN6PGbJk4nuFeeN3RssUSudl1XngBUSSC83dWDI7I/+IBsWdbKV06bYC3IFD342Me
+         54tIPH25LPhnA6WCtY5tEn5iFYgOfA//vk+i+W9U=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20220608020503epcas1p453af091c62ceca012d5725ee44685fd9~2gvV6E_7r0582005820epcas1p4Q;
+        Wed,  8 Jun 2022 02:05:03 +0000 (GMT)
+Received: from epsmges1p1.samsung.com (unknown [182.195.38.243]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 4LHrCM0rfNz4x9Q9; Wed,  8 Jun
+        2022 02:05:03 +0000 (GMT)
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        D3.6C.10063.EC300A26; Wed,  8 Jun 2022 11:05:02 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20220608020502epcas1p14911cac6731ee98fcb9c64282455caf7~2gvUqFrRa3160731607epcas1p1q;
+        Wed,  8 Jun 2022 02:05:02 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20220608020502epsmtrp27109742c01b157316f7169686850bf9b~2gvUpDv7O0065500655epsmtrp2k;
+        Wed,  8 Jun 2022 02:05:02 +0000 (GMT)
+X-AuditID: b6c32a35-1dbff7000000274f-95-62a003ce46dc
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        26.66.11276.EC300A26; Wed,  8 Jun 2022 11:05:02 +0900 (KST)
+Received: from U20PB1-0435.tn.corp.samsungelectronics.net (unknown
+        [10.91.133.14]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20220608020502epsmtip175c4ee626a432d6f06729d48657aa8e2~2gvUc6E5Q2678226782epsmtip1e;
+        Wed,  8 Jun 2022 02:05:02 +0000 (GMT)
+From:   Sungjong Seo <sj1557.seo@samsung.com>
+To:     linkinjeon@kernel.org
+Cc:     sj1557.seo@samsung.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] exfat: use updated exfat_chain directly during renaming
+Date:   Wed,  8 Jun 2022 11:04:08 +0900
+Message-Id: <20220608020408.2351676-1-sj1557.seo@samsung.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220606083814.skjv34b2tjn7l7pi@quack3.lan>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMJsWRmVeSWpSXmKPExsWy7bCmge555gVJBq/FLCZOW8pssWfvSRaL
+        y7vmsFls+XeE1YHFY9OqTjaPvi2rGD0+b5ILYI5qYLRJLErOyCxLVUjNS85PycxLt1UKDXHT
+        tVBSyMgvLrFVijY0NNIzNDDXMzIy0jO2jLUyMlVSyEvMTbVVqtCF6lVSKEouAKrNrSwGGpCT
+        qgcV1ytOzUtxyMovBblQrzgxt7g0L10vOT9XSaEsMacUaISSfsI3xoym599YCjbyVixbPZOt
+        gXE6dxcjJ4eEgInE+cYt7F2MXBxCAjsYJW7OmADlfGKUWLXnBRuE841R4s+NJkaYll9L5jCB
+        2EICexklls5jhihqZ5L4fayJDSTBJqAtsbxpGVCCg0NEQFJi7f1UkDCzQKTE5IuL2UFsYQEP
+        iY3P/4LZLAKqErO6DoLZvAK2EpuuzGSG2CUvMfPSd6i4oMTJmU9YIObISzRvnQ22V0JgFbvE
+        8aeL2EB2SQi4SMxeZwrRKyzx6vgWdghbSuLzu71sEHYzo0RzoxGE3cEo8XSjLESrvcT7SxYg
+        JrOApsT6XfoQFYoSO3/PhfpcUOL0tW5miAv4JN597WGF6OSV6GgTgihRkfj+YScLzNIrP64y
+        QdgeEjuXXmaBBFqsxJXfq5gnMCrMQvLXLCR/zUI4YgEj8ypGsdSC4tz01GLDAkPkCN7ECE6P
+        WqY7GCe+/aB3iJGJg/EQowQHs5IIr2T4/CQh3pTEyqrUovz4otKc1OJDjMnAkJ7ILCWanA9M
+        0Hkl8YYmxgYGRsB0Z25pbkyEsKWBiZmRiYWxpbGZkjjvqmmnE4UE0hNLUrNTUwtSi2C2MHFw
+        SjUwLbj8NypBa5It253NLHeEmBX3fn/waCfb5Mlu1j/09r9ucb289OvNXTzJb//bnAtVjFSe
+        W/VNQdLypsZ0d+6dHBqVTMm/N85Z3t1mebCD79bF62FVvu28e32nLdrnbblv6fpE618WKwOT
+        r0lNuPBO3VK57j5vJasGu/rrtfYSgrt/z7zaHKbDrKP/NqlN5f6vu58yNstd/Pj9+dnb1nn+
+        J03O+c1LLSjkfLnuQVjgUsFtFeUuzkcZvzQ4tExY7KjVbMgxU9S2K/Htqes6Mj17dPgFX99d
+        aNp3w2mTuZ4JY+eqXyWzjixgu7t9w1mxGIaaNW9PVsoVzlsZfEbK9cy+fT563JMf7o0Nb9A8
+        KxsdpMRSnJFoqMVcVJwIAGpvhhRGBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMLMWRmVeSWpSXmKPExsWy7bCSnO455gVJBvc3SltMnLaU2WLP3pMs
+        Fpd3zWGz2PLvCKsDi8emVZ1sHn1bVjF6fN4kF8AcxWWTkpqTWZZapG+XwJXR9PwbS8FG3opl
+        q2eyNTBO5+5i5OSQEDCR+LVkDlMXIxeHkMBuRolHO9vZuhg5gBJSEgf3aUKYwhKHDxdDlLQy
+        SZz9eIkdpJdNQFtiedMyZpAaEQFJibX3U0HCzALREk1//jKC2MICHhIbn/8FK2cRUJWY1XUQ
+        zOYVsJXYdGUmM8QJ8hIzL32HigtKnJz5hAVijrxE89bZzBMY+WYhSc1CklrAyLSKUTK1oDg3
+        PbfYsMAwL7Vcrzgxt7g0L10vOT93EyM43LQ0dzBuX/VB7xAjEwfjIUYJDmYlEV7J8PlJQrwp
+        iZVVqUX58UWlOanFhxilOViUxHkvdJ2MFxJITyxJzU5NLUgtgskycXBKNTDVLj9xu/Sibffs
+        xSWMfbuyDryYpuXxmT07QeRNbAinhOklj/Ls48cf/uDhaPDednrD+5jGmo6339YZrP3nMNPy
+        CFNuQZPjjen9x1bJ/t6v++rlxfjrnXfCtu86cKTu0j/ukkvl6SKLpv/lvNngtHiK0Id1x9/8
+        jyr5o7tbWZHfXjYnK+plwDrzvluOvPenz0w+vqlkudjP5juPPvat9OdpORa7zkH5kabAI2Up
+        R0Wth1P5XAVWOc5avjBph8UtuQXn9Pa/Y3556naJWK3w/eMT5dsf+3DwHM7gUZ90tPbp8Xe7
+        wgWuc1XH6csER2sFBUeKMU/icbhaJX+p3GfCyrW/moq7vm/pLty4RZ3/46KFSizFGYmGWsxF
+        xYkAB1lNpqYCAAA=
+X-CMS-MailID: 20220608020502epcas1p14911cac6731ee98fcb9c64282455caf7
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+X-ArchiveUser: EV
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20220608020502epcas1p14911cac6731ee98fcb9c64282455caf7
+References: <CGME20220608020502epcas1p14911cac6731ee98fcb9c64282455caf7@epcas1p1.samsung.com>
+X-Spam-Status: No, score=-5.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 06, 2022 at 10:38:14AM +0200, Jan Kara wrote:
-> On Sun 05-06-22 15:38:15, Matthew Wilcox (Oracle) wrote:
-> > The comment about the page cache is rather stale; the buffer cache will
-> > read into the page cache if the buffer isn't present, and the page cache
-> > will not take any locks if the page is present.
-> > 
-> > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> 
-> This will not work for couple of reasons, see below. BTW, I don't think the
-> comment about page cache was stale (but lacking details I admit ;). As far
-> as I remember (and it was really many years ago - definitely pre-git era)
-> the problem was (mainly on the write side) that before current state of the
-> code we were using calls like vfs_read() / vfs_write() to get quota
-> information and that was indeed prone to deadlocks.
+In order for a file to access its own directory entry set,
+exfat_inode_info(ei) has two copied values. One is ei->dir, which is
+a snapshot of exfat_chain of the parent directory, and the other is
+ei->entry, which is the offset of the start of the directory entry set
+in the parent directory.
 
-Ah yes, vfs_write() might indeed be prone to deadlocks.  Particularly
-if we're doing it under the dq_mutex and any memory allocation might
-have recursed into reclaim ;-)
+Since the parent directory can be updated after the snapshot point,
+it should be used only for accessing one's own directory entry set.
 
-I actually found the commit in linux-fullhistory.  Changelog for
-context:
+However, as of now, during renaming, it could try to traverse or to
+allocate clusters via snapshot values, it does not make sense.
 
-commit b72debd66a6ed
-Author: Jan Kara <jack@suse.cz>
-Date:   Mon Jan 3 04:12:24 2005 -0800
+This potential problem has been revealed when exfat_update_parent_info()
+was removed by commit d8dad2588add ("exfat: fix referencing wrong parent
+directory information after renaming"). However, I don't think it's good
+idea to bring exfat_update_parent_info() back.
 
-    [PATCH] Fix of quota deadlock on pagelock: quota core
+Instead, let's use the updated exfat_chain of parent directory diectly.
 
-    The four patches in this series fix deadlocks with quotas of pagelock (the
-    problem was lock inversion on PageLock and transaction start - quota code
-    needed to first start a transaction and then write the data which subsequent
-ly
-    needed acquisition of PageLock while the standard ordering - PageLock first
-    and transaction start later - was used e.g.  by pdflush).  They implement a
-    new way of quota access to disk: Every filesystem that would like to impleme
-nt
-    quotas now has to provide quota_read() and quota_write() functions.  These
-    functions must obey quota lock ordering (in particular they should not take
-    PageLock inside a transaction).
+Fixes: d8dad2588add ("exfat: fix referencing wrong parent directory information after renaming")
 
-    The first patch implements the changes in the quota core, the other three
-    patches implement needed functions in ext2, ext3 and reiserfs.  The patch for
-    reiserfs also fixes several other lock inversion problems (similar as ext3
-    had) and implements the journaled quota functionality (which comes almost for
-    free after the locking fixes...).
-    
-    The quota core patch makes quota support in other filesystems (except XFS
-    which implements everything on its own ;)) unfunctional (quotaon() will refuse
-    to turn on quotas on them).  When the patches get reasonable wide testing and
-    it will seem that no major changes will be needed I can make fixes also for
-    the other filesystems (JFS, UDF, UFS).
-    
-    This patch:
-    
-    The patch implements the new way of quota io in the quota core.  Every
-    filesystem wanting to support quotas has to provide functions quota_read()
-    and quota_write() obeying quota locking rules.  As the writes and reads
-    bypass the pagecache there is some ugly stuff ensuring that userspace can
-    see all the data after quotaoff() (or Q_SYNC quotactl).  In future I plan
-    to make quota files inaccessible from userspace (with the exception of
-    quotacheck(8) which will take care about the cache flushing and such stuff
-    itself) so that this synchronization stuff can be removed...
-    
-    The rewrite of the quota core. Quota uses the filesystem read() and write()
-    functions no more to avoid possible deadlocks on PageLock. From now on every
-    filesystem supporting quotas must provide functions quota_read() and
-    quota_write() which obey the quota locking rules (e.g. they cannot acquire the
-    PageLock).
-    
-    Signed-off-by: Jan Kara <jack@suse.cz>
-    Signed-off-by: Andrew Morton <akpm@osdl.org>
-    Signed-off-by: Linus Torvalds <torvalds@osdl.org>
+Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
+---
+ fs/exfat/namei.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-> > @@ -6924,20 +6882,21 @@ static ssize_t ext4_quota_write(struct super_block *sb, int type,
-> >  		return -EIO;
-> >  	}
-> >  
-> > -	do {
-> > -		bh = ext4_bread(handle, inode, blk,
-> > -				EXT4_GET_BLOCKS_CREATE |
-> > -				EXT4_GET_BLOCKS_METADATA_NOFAIL);
-> > -	} while (PTR_ERR(bh) == -ENOSPC &&
-> > -		 ext4_should_retry_alloc(inode->i_sb, &retries));
-> > -	if (IS_ERR(bh))
-> > -		return PTR_ERR(bh);
-> > -	if (!bh)
-> > +	folio = read_mapping_folio(inode->i_mapping, off / PAGE_SIZE, NULL);
-> > +	if (IS_ERR(folio))
-> > +		return PTR_ERR(folio);
-> > +	head = folio_buffers(folio);
-> > +	if (!head)
-> > +		head = alloc_page_buffers(&folio->page, sb->s_blocksize, false);
-> > +	if (!head)
-> >  		goto out;
-> > +	bh = head;
-> > +	while ((bh_offset(bh) + sb->s_blocksize) <= (off % PAGE_SIZE))
-> > +		bh = bh->b_this_page;
-> 
-> We miss proper handling of blocks that are currently beyond i_size
-> (we are extending the quota file), plus we also miss any mapping of buffers
-> to appropriate disk blocks here...
-> 
-> It could be all fixed by replicating what we do in ext4_write_begin() but
-> I'm not quite convinced using inode's page cache is really worth it...
+diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c
+index 76acc3721951..c6eaf7e9ea74 100644
+--- a/fs/exfat/namei.c
++++ b/fs/exfat/namei.c
+@@ -1198,7 +1198,9 @@ static int __exfat_rename(struct inode *old_parent_inode,
+ 		return -ENOENT;
+ 	}
+ 
+-	exfat_chain_dup(&olddir, &ei->dir);
++	exfat_chain_set(&olddir, EXFAT_I(old_parent_inode)->start_clu,
++		EXFAT_B_TO_CLU_ROUND_UP(i_size_read(old_parent_inode), sbi),
++		EXFAT_I(old_parent_inode)->flags);
+ 	dentry = ei->entry;
+ 
+ 	ep = exfat_get_dentry(sb, &olddir, dentry, &old_bh);
+-- 
+2.25.1
 
-Ah, yes, write_begin.  Of course that's what I should have used.
-
-I'm looking at this from the point of view of removing buffer_heads
-where possible.  Of course, it's not possible for ext4 while the journal
-relies on buffer_heads, but if we can steer filesystems away from using
-sb_bread() (or equivalents), I think that's a good thing.
