@@ -2,231 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 349085423B9
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jun 2022 08:51:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8D4554255D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jun 2022 08:54:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231964AbiFHEsF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jun 2022 00:48:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33130 "EHLO
+        id S232482AbiFHEUe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jun 2022 00:20:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232052AbiFHErX (ORCPT
+        with ESMTP id S232734AbiFHEUA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jun 2022 00:47:23 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 99631248035
-        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jun 2022 18:06:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1654650339;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=DYVGlTfcixWRpDZ+Xnrns02OLERH2O9N67sLNCT2XaM=;
-        b=BaIWN7rF0q/HANe/gQrvFrIrdspxPxhE2OGfFS3BAu/fJXejA6kjeidkoCvBaejophPAVC
-        LGHYAOYjDbrQDPZg5uzUTuuNsb/eHC5GtcdVkYkbQ0LmbNTBk/WZgRWjp+YxYoHWSJ1S/s
-        /z8wc0b5NDJy7G191s7HEdAu+UID4eE=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-98-H_xe-6JtPiCty6iROnStrQ-1; Tue, 07 Jun 2022 20:58:59 -0400
-X-MC-Unique: H_xe-6JtPiCty6iROnStrQ-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 50D12800124;
-        Wed,  8 Jun 2022 00:58:59 +0000 (UTC)
-Received: from localhost (ovpn-12-81.pek2.redhat.com [10.72.12.81])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 783F6492C3B;
-        Wed,  8 Jun 2022 00:58:58 +0000 (UTC)
-Date:   Wed, 8 Jun 2022 08:58:54 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc:     sashal@kernel.org, ebiederm@xmission.com, rburanyi@google.com,
-        akpm@linux-foundation.org, gthelen@google.com,
-        viro@zeniv.linux.org.uk, kexec@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] fs/kernel_read_file: Allow to read files up-to
- ssize_t
-Message-ID: <Yp/0TjxQGJJtjqAu@MiWiFi-R3L-srv>
-References: <20220527025535.3953665-1-pasha.tatashin@soleen.com>
- <20220527025535.3953665-2-pasha.tatashin@soleen.com>
+        Wed, 8 Jun 2022 00:20:00 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A1D430A465;
+        Tue,  7 Jun 2022 18:43:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=oj6iBHbhY6wXvQP55JwyIS4V24gHjxSYo9c883R7TUw=; b=UfcjCcAZzQcl+QqNdFDayL0DrM
+        rVsFMvfFUXJ+7oDg0pQnlpqu8q9pinredTIeMnZWJx7xr81EuHQZejrMDcKM5oM6LxeQPUOp4s5iX
+        ZSlisTnw/St+HpFk9wwmSqM+LHciBRgwgWakpdRGd3adD7O0iYUtaFaX5R63bQzoG7LRFpPJ4R+6o
+        QTbenogFjZKniIch80zZmMTGAqhansPk4Fgz2CPBlusie4PkzHtBvzj0pHemLIlcBqz4I7YWekTUf
+        ODqwv9lHI37DiFMD5p4KndP3XL35ySlCLg7fIX147nJVyBtb79ZnjXvTWY+K0vIvQUROpSy8Axhht
+        24wQ41bw==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nykiD-00CCvI-Vy; Wed, 08 Jun 2022 01:42:22 +0000
+Date:   Wed, 8 Jun 2022 02:42:21 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Jan Kara <jack@suse.com>, tytso@mit.edu,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 3/3] ext4: Use generic_quota_read()
+Message-ID: <Yp/+fSoHgPIhiHQR@casper.infradead.org>
+References: <20220605143815.2330891-1-willy@infradead.org>
+ <20220605143815.2330891-4-willy@infradead.org>
+ <20220606083814.skjv34b2tjn7l7pi@quack3.lan>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220527025535.3953665-2-pasha.tatashin@soleen.com>
-X-Scanned-By: MIMEDefang 2.85 on 10.11.54.10
-X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+In-Reply-To: <20220606083814.skjv34b2tjn7l7pi@quack3.lan>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 05/27/22 at 02:55am, Pasha Tatashin wrote:
-> Currently, the maximum file size that is supported is 2G. This may be
-> too small in some cases. For example, kexec_file_load() system call
-> loads initramfs. In some netboot cases initramfs can be rather large.
+On Mon, Jun 06, 2022 at 10:38:14AM +0200, Jan Kara wrote:
+> On Sun 05-06-22 15:38:15, Matthew Wilcox (Oracle) wrote:
+> > The comment about the page cache is rather stale; the buffer cache will
+> > read into the page cache if the buffer isn't present, and the page cache
+> > will not take any locks if the page is present.
+> > 
+> > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 > 
-> Allow to use up-to ssize_t bytes. The callers still can limit the
-> maximum file size via buf_size.
+> This will not work for couple of reasons, see below. BTW, I don't think the
+> comment about page cache was stale (but lacking details I admit ;). As far
+> as I remember (and it was really many years ago - definitely pre-git era)
+> the problem was (mainly on the write side) that before current state of the
+> code we were using calls like vfs_read() / vfs_write() to get quota
+> information and that was indeed prone to deadlocks.
 
-LGTM,
+Ah yes, vfs_write() might indeed be prone to deadlocks.  Particularly
+if we're doing it under the dq_mutex and any memory allocation might
+have recursed into reclaim ;-)
 
-Acked-by: Baoquan He <bhe@redhat.com>
+I actually found the commit in linux-fullhistory.  Changelog for
+context:
 
+commit b72debd66a6ed
+Author: Jan Kara <jack@suse.cz>
+Date:   Mon Jan 3 04:12:24 2005 -0800
+
+    [PATCH] Fix of quota deadlock on pagelock: quota core
+
+    The four patches in this series fix deadlocks with quotas of pagelock (the
+    problem was lock inversion on PageLock and transaction start - quota code
+    needed to first start a transaction and then write the data which subsequent
+ly
+    needed acquisition of PageLock while the standard ordering - PageLock first
+    and transaction start later - was used e.g.  by pdflush).  They implement a
+    new way of quota access to disk: Every filesystem that would like to impleme
+nt
+    quotas now has to provide quota_read() and quota_write() functions.  These
+    functions must obey quota lock ordering (in particular they should not take
+    PageLock inside a transaction).
+
+    The first patch implements the changes in the quota core, the other three
+    patches implement needed functions in ext2, ext3 and reiserfs.  The patch for
+    reiserfs also fixes several other lock inversion problems (similar as ext3
+    had) and implements the journaled quota functionality (which comes almost for
+    free after the locking fixes...).
+    
+    The quota core patch makes quota support in other filesystems (except XFS
+    which implements everything on its own ;)) unfunctional (quotaon() will refuse
+    to turn on quotas on them).  When the patches get reasonable wide testing and
+    it will seem that no major changes will be needed I can make fixes also for
+    the other filesystems (JFS, UDF, UFS).
+    
+    This patch:
+    
+    The patch implements the new way of quota io in the quota core.  Every
+    filesystem wanting to support quotas has to provide functions quota_read()
+    and quota_write() obeying quota locking rules.  As the writes and reads
+    bypass the pagecache there is some ugly stuff ensuring that userspace can
+    see all the data after quotaoff() (or Q_SYNC quotactl).  In future I plan
+    to make quota files inaccessible from userspace (with the exception of
+    quotacheck(8) which will take care about the cache flushing and such stuff
+    itself) so that this synchronization stuff can be removed...
+    
+    The rewrite of the quota core. Quota uses the filesystem read() and write()
+    functions no more to avoid possible deadlocks on PageLock. From now on every
+    filesystem supporting quotas must provide functions quota_read() and
+    quota_write() which obey the quota locking rules (e.g. they cannot acquire the
+    PageLock).
+    
+    Signed-off-by: Jan Kara <jack@suse.cz>
+    Signed-off-by: Andrew Morton <akpm@osdl.org>
+    Signed-off-by: Linus Torvalds <torvalds@osdl.org>
+
+> > @@ -6924,20 +6882,21 @@ static ssize_t ext4_quota_write(struct super_block *sb, int type,
+> >  		return -EIO;
+> >  	}
+> >  
+> > -	do {
+> > -		bh = ext4_bread(handle, inode, blk,
+> > -				EXT4_GET_BLOCKS_CREATE |
+> > -				EXT4_GET_BLOCKS_METADATA_NOFAIL);
+> > -	} while (PTR_ERR(bh) == -ENOSPC &&
+> > -		 ext4_should_retry_alloc(inode->i_sb, &retries));
+> > -	if (IS_ERR(bh))
+> > -		return PTR_ERR(bh);
+> > -	if (!bh)
+> > +	folio = read_mapping_folio(inode->i_mapping, off / PAGE_SIZE, NULL);
+> > +	if (IS_ERR(folio))
+> > +		return PTR_ERR(folio);
+> > +	head = folio_buffers(folio);
+> > +	if (!head)
+> > +		head = alloc_page_buffers(&folio->page, sb->s_blocksize, false);
+> > +	if (!head)
+> >  		goto out;
+> > +	bh = head;
+> > +	while ((bh_offset(bh) + sb->s_blocksize) <= (off % PAGE_SIZE))
+> > +		bh = bh->b_this_page;
 > 
-> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-> ---
->  fs/kernel_read_file.c            | 38 ++++++++++++++++----------------
->  include/linux/kernel_read_file.h | 32 +++++++++++++--------------
->  include/linux/limits.h           |  1 +
->  3 files changed, 36 insertions(+), 35 deletions(-)
+> We miss proper handling of blocks that are currently beyond i_size
+> (we are extending the quota file), plus we also miss any mapping of buffers
+> to appropriate disk blocks here...
 > 
-> diff --git a/fs/kernel_read_file.c b/fs/kernel_read_file.c
-> index 1b07550485b9..5d826274570c 100644
-> --- a/fs/kernel_read_file.c
-> +++ b/fs/kernel_read_file.c
-> @@ -29,15 +29,15 @@
->   * change between calls to kernel_read_file().
->   *
->   * Returns number of bytes read (no single read will be bigger
-> - * than INT_MAX), or negative on error.
-> + * than SSIZE_MAX), or negative on error.
->   *
->   */
-> -int kernel_read_file(struct file *file, loff_t offset, void **buf,
-> -		     size_t buf_size, size_t *file_size,
-> -		     enum kernel_read_file_id id)
-> +ssize_t kernel_read_file(struct file *file, loff_t offset, void **buf,
-> +			 size_t buf_size, size_t *file_size,
-> +			 enum kernel_read_file_id id)
->  {
->  	loff_t i_size, pos;
-> -	size_t copied;
-> +	ssize_t copied;
->  	void *allocated = NULL;
->  	bool whole_file;
->  	int ret;
-> @@ -58,7 +58,7 @@ int kernel_read_file(struct file *file, loff_t offset, void **buf,
->  		goto out;
->  	}
->  	/* The file is too big for sane activities. */
-> -	if (i_size > INT_MAX) {
-> +	if (i_size > SSIZE_MAX) {
->  		ret = -EFBIG;
->  		goto out;
->  	}
-> @@ -124,12 +124,12 @@ int kernel_read_file(struct file *file, loff_t offset, void **buf,
->  }
->  EXPORT_SYMBOL_GPL(kernel_read_file);
->  
-> -int kernel_read_file_from_path(const char *path, loff_t offset, void **buf,
-> -			       size_t buf_size, size_t *file_size,
-> -			       enum kernel_read_file_id id)
-> +ssize_t kernel_read_file_from_path(const char *path, loff_t offset, void **buf,
-> +				   size_t buf_size, size_t *file_size,
-> +				   enum kernel_read_file_id id)
->  {
->  	struct file *file;
-> -	int ret;
-> +	ssize_t ret;
->  
->  	if (!path || !*path)
->  		return -EINVAL;
-> @@ -144,14 +144,14 @@ int kernel_read_file_from_path(const char *path, loff_t offset, void **buf,
->  }
->  EXPORT_SYMBOL_GPL(kernel_read_file_from_path);
->  
-> -int kernel_read_file_from_path_initns(const char *path, loff_t offset,
-> -				      void **buf, size_t buf_size,
-> -				      size_t *file_size,
-> -				      enum kernel_read_file_id id)
-> +ssize_t kernel_read_file_from_path_initns(const char *path, loff_t offset,
-> +					  void **buf, size_t buf_size,
-> +					  size_t *file_size,
-> +					  enum kernel_read_file_id id)
->  {
->  	struct file *file;
->  	struct path root;
-> -	int ret;
-> +	ssize_t ret;
->  
->  	if (!path || !*path)
->  		return -EINVAL;
-> @@ -171,12 +171,12 @@ int kernel_read_file_from_path_initns(const char *path, loff_t offset,
->  }
->  EXPORT_SYMBOL_GPL(kernel_read_file_from_path_initns);
->  
-> -int kernel_read_file_from_fd(int fd, loff_t offset, void **buf,
-> -			     size_t buf_size, size_t *file_size,
-> -			     enum kernel_read_file_id id)
-> +ssize_t kernel_read_file_from_fd(int fd, loff_t offset, void **buf,
-> +				 size_t buf_size, size_t *file_size,
-> +				 enum kernel_read_file_id id)
->  {
->  	struct fd f = fdget(fd);
-> -	int ret = -EBADF;
-> +	ssize_t ret = -EBADF;
->  
->  	if (!f.file || !(f.file->f_mode & FMODE_READ))
->  		goto out;
-> diff --git a/include/linux/kernel_read_file.h b/include/linux/kernel_read_file.h
-> index 575ffa1031d3..90451e2e12bd 100644
-> --- a/include/linux/kernel_read_file.h
-> +++ b/include/linux/kernel_read_file.h
-> @@ -35,21 +35,21 @@ static inline const char *kernel_read_file_id_str(enum kernel_read_file_id id)
->  	return kernel_read_file_str[id];
->  }
->  
-> -int kernel_read_file(struct file *file, loff_t offset,
-> -		     void **buf, size_t buf_size,
-> -		     size_t *file_size,
-> -		     enum kernel_read_file_id id);
-> -int kernel_read_file_from_path(const char *path, loff_t offset,
-> -			       void **buf, size_t buf_size,
-> -			       size_t *file_size,
-> -			       enum kernel_read_file_id id);
-> -int kernel_read_file_from_path_initns(const char *path, loff_t offset,
-> -				      void **buf, size_t buf_size,
-> -				      size_t *file_size,
-> -				      enum kernel_read_file_id id);
-> -int kernel_read_file_from_fd(int fd, loff_t offset,
-> -			     void **buf, size_t buf_size,
-> -			     size_t *file_size,
-> -			     enum kernel_read_file_id id);
-> +ssize_t kernel_read_file(struct file *file, loff_t offset,
-> +			 void **buf, size_t buf_size,
-> +			 size_t *file_size,
-> +			 enum kernel_read_file_id id);
-> +ssize_t kernel_read_file_from_path(const char *path, loff_t offset,
-> +				   void **buf, size_t buf_size,
-> +				   size_t *file_size,
-> +				   enum kernel_read_file_id id);
-> +ssize_t kernel_read_file_from_path_initns(const char *path, loff_t offset,
-> +					  void **buf, size_t buf_size,
-> +					  size_t *file_size,
-> +					  enum kernel_read_file_id id);
-> +ssize_t kernel_read_file_from_fd(int fd, loff_t offset,
-> +				 void **buf, size_t buf_size,
-> +				 size_t *file_size,
-> +				 enum kernel_read_file_id id);
->  
->  #endif /* _LINUX_KERNEL_READ_FILE_H */
-> diff --git a/include/linux/limits.h b/include/linux/limits.h
-> index b568b9c30bbf..f6bcc9369010 100644
-> --- a/include/linux/limits.h
-> +++ b/include/linux/limits.h
-> @@ -7,6 +7,7 @@
->  #include <vdso/limits.h>
->  
->  #define SIZE_MAX	(~(size_t)0)
-> +#define SSIZE_MAX	((ssize_t)(SIZE_MAX >> 1))
->  #define PHYS_ADDR_MAX	(~(phys_addr_t)0)
->  
->  #define U8_MAX		((u8)~0U)
-> -- 
-> 2.36.1.124.g0e6072fb45-goog
-> 
+> It could be all fixed by replicating what we do in ext4_write_begin() but
+> I'm not quite convinced using inode's page cache is really worth it...
 
+Ah, yes, write_begin.  Of course that's what I should have used.
+
+I'm looking at this from the point of view of removing buffer_heads
+where possible.  Of course, it's not possible for ext4 while the journal
+relies on buffer_heads, but if we can steer filesystems away from using
+sb_bread() (or equivalents), I think that's a good thing.
