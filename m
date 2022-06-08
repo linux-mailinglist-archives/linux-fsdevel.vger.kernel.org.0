@@ -2,66 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3C36D543202
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jun 2022 15:57:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 547C8543257
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jun 2022 16:18:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240950AbiFHN5A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jun 2022 09:57:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33080 "EHLO
+        id S241172AbiFHOSk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jun 2022 10:18:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39278 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241041AbiFHN45 (ORCPT
+        with ESMTP id S241166AbiFHOSj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jun 2022 09:56:57 -0400
-Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 902D3E1169
-        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Jun 2022 06:56:55 -0700 (PDT)
-Received: by mail-ed1-x52e.google.com with SMTP id x62so27198648ede.10
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Jun 2022 06:56:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3wwE0unoP9gEwX3qZBuFgRBN3f+/T10rOo/LXy/ltz0=;
-        b=dgmB/YghVdC+j53rz8r2eIa0oeMEY8/KltPUI1WjwDBxqkokN8JjMKLga6S4mXzkZn
-         ztlWVXbeYZdI7SYyW38vlqCOBxLHUwnA5HJLIGk6IcDp2pSEwh+Xlj6co7q6xNvxZC0c
-         hr6aw6Bv95BohHf0pFiIPbleJZDOZtmTHO3Te7mLx7oqkWvX0GZcB+ea1KXxP4/zeM2q
-         UBdM73cCbLxgQXjVYo0To2ig5appLINxACwuKTgoSq1I9dQVRjpjSDniteBUb8sl6SnP
-         ajl2wM8hnWio4ss59UZBICDX27KCx63VvolFRnCb+B9Tw7FQh+gQJnEJXf3yf5qy4/Ch
-         SI+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3wwE0unoP9gEwX3qZBuFgRBN3f+/T10rOo/LXy/ltz0=;
-        b=HIvY1SZixa7SN1pQmJ+qCs6bT+Mwfo1BgGDTGe3JJNqE29j7rtl68p8eC+fDfDDl6f
-         9wYhC3MySQ4e/Pw46vyhqARKrHwP3afQ+PepEl5K+unX4aKUgB/QCRns1KscGX0w9rUs
-         VKc2joHc9vWNL7LCQt1FBsNMvVWOGj1IhqO9gpGomXQDk94RbYGHTsbP++WkXbm0IFb+
-         m8OUpWpqcc2vZ6KaLIHQLXjrAmZDjdJw2aiMedgvAmqgr+HmDSl7ZVLGwlfAz8AG2X0W
-         ARm9eXDQNjETQLDI+TnnW9zyiVY7N73kJ44se3IBeSgsWAhIwF0rqJSmT18938D8haed
-         Ct4g==
-X-Gm-Message-State: AOAM533QC5eNPaMtwLkHiPpm46cjyd8C+ok2TDbxc6Y8JscjjBrL95mD
-        uyI0SWejar00XL0baWw3o4enpz8mT6oDzlkQTBlY
-X-Google-Smtp-Source: ABdhPJwkt/HypsvRlBngb2nAQwKKYF8P1puyc6PgoJKDG7MaO4efQ9clheHXv8MpjdmkFvGbusHMpKriZqAHesgscDc=
-X-Received: by 2002:a05:6402:23a2:b0:42d:d5f1:d470 with SMTP id
- j34-20020a05640223a200b0042dd5f1d470mr26336851eda.365.1654696614164; Wed, 08
- Jun 2022 06:56:54 -0700 (PDT)
-MIME-Version: 1.0
-References: <20220607110504.198-1-xieyongji@bytedance.com> <Yp+oEPGnisNx+Nzo@redhat.com>
- <CACycT3vKZJ4YhPgGq1VFeh3Tqnr-vK3X+rPz0rObH=MraxrhYA@mail.gmail.com> <YqCZt7tyEH50ktKq@redhat.com>
-In-Reply-To: <YqCZt7tyEH50ktKq@redhat.com>
-From:   Yongji Xie <xieyongji@bytedance.com>
-Date:   Wed, 8 Jun 2022 21:57:51 +0800
-Message-ID: <CACycT3sMe8EdBWxZhT0HTwVB7mGPk=eV3jG-8EkNK+W-Y_RAiw@mail.gmail.com>
-Subject: Re: [PATCH] fuse: allow skipping abort interface for virtiofs
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        =?UTF-8?B?5byg5L2z6L6w?= <zhangjiachen.jaycee@bytedance.com>,
+        Wed, 8 Jun 2022 10:18:39 -0400
+Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1A6365D21;
+        Wed,  8 Jun 2022 07:18:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1654697918; x=1686233918;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=N8RRxR3D8dumuwBq3CnD0xuB5dnkYBY30V4U88YR70s=;
+  b=ee1pydQDQZOZrtXrGd70L+f04Uv7PEhqTExwy+UR9PU9NTd3o9HP9pwp
+   F056peQ8xlH/4CqYIwgxUo46QsfM+ruqTsSj31jrnUV80PjG1bi2f7cS0
+   vUwIOu/JpWYVMLMvxtLbCdu03nsI3h9ZC1C2+r8Z9HVDRq+gmq+SZjh+C
+   r7B8PztU3f/75Xu2mLZXoCIjrEOnAoE+GRoptXkQyE6KSvsTTrCsxKv0e
+   JDWQ1zkmEJLuyAqsRGA6eGK8r4ozyPuSBKkGRWKc74QabBVFkVCOOVWpb
+   vSYPypw5KIO//K6x0omSaT4UlnNdcrkp20cT5GXX+o4KoEek33rx/e2Lz
+   Q==;
+X-IronPort-AV: E=McAfee;i="6400,9594,10371"; a="302270880"
+X-IronPort-AV: E=Sophos;i="5.91,286,1647327600"; 
+   d="scan'208";a="302270880"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Jun 2022 07:18:37 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.91,286,1647327600"; 
+   d="scan'208";a="584915911"
+Received: from lkp-server01.sh.intel.com (HELO 60dabacc1df6) ([10.239.97.150])
+  by fmsmga007.fm.intel.com with ESMTP; 08 Jun 2022 07:18:35 -0700
+Received: from kbuild by 60dabacc1df6 with local (Exim 4.95)
+        (envelope-from <lkp@intel.com>)
+        id 1nywW2-000Eh3-Hh;
+        Wed, 08 Jun 2022 14:18:34 +0000
+Date:   Wed, 8 Jun 2022 22:18:32 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Hao Xu <hao.xu@linux.dev>, io-uring@vger.kernel.org
+Cc:     kbuild-all@lists.01.org, Jens Axboe <axboe@kernel.dk>,
+        Pavel Begunkov <asml.silence@gmail.com>,
         linux-fsdevel@vger.kernel.org,
-        virtualization <virtualization@lists.linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Kuniyuki Iwashima <kuniyu@amazon.co.jp>
+Subject: Re: [PATCH 4/5] io_uring: support nonblock try for splicing from
+ pipe to pipe
+Message-ID: <202206082229.xoMAgqIw-lkp@intel.com>
+References: <20220607080619.513187-5-hao.xu@linux.dev>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220607080619.513187-5-hao.xu@linux.dev>
+X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
         T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -69,86 +71,47 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 8, 2022 at 8:44 PM Vivek Goyal <vgoyal@redhat.com> wrote:
->
-> On Wed, Jun 08, 2022 at 04:42:46PM +0800, Yongji Xie wrote:
-> > On Wed, Jun 8, 2022 at 3:34 AM Vivek Goyal <vgoyal@redhat.com> wrote:
-> > >
-> > > On Tue, Jun 07, 2022 at 07:05:04PM +0800, Xie Yongji wrote:
-> > > > The commit 15c8e72e88e0 ("fuse: allow skipping control
-> > > > interface and forced unmount") tries to remove the control
-> > > > interface for virtio-fs since it does not support aborting
-> > > > requests which are being processed. But it doesn't work now.
-> > >
-> > > Aha.., so "no_control" basically has no effect? I was looking at
-> > > the code and did not find anybody using "no_control" and I was
-> > > wondering who is making use of "no_control" variable.
-> > >
-> > > I mounted virtiofs and noticed a directory named "40" showed up
-> > > under /sys/fs/fuse/connections/. That must be belonging to
-> > > virtiofs instance, I am assuming.
-> > >
-> >
-> > I think so.
-> >
-> > > BTW, if there are multiple fuse connections, how will one figure
-> > > out which directory belongs to which instance. Because without knowing
-> > > that, one will be shooting in dark while trying to read/write any
-> > > of the control files.
-> > >
-> >
-> > We can use "stat $mountpoint" to get the device minor ID which is the
-> > name of the corresponding control directory.
-> >
-> > > So I think a separate patch should be sent which just gets rid of
-> > > "no_control" saying nobody uses. it.
-> > >
-> >
-> > OK.
-> >
-> > > >
-> > > > This commit fixes the bug, but only remove the abort interface
-> > > > instead since other interfaces should be useful.
-> > >
-> > > Hmm.., so writing to "abort" file is bad as it ultimately does.
-> > >
-> > > fc->connected = 0;
-> > >
-> >
-> > Another problem is that it might trigger UAF since
-> > virtio_fs_request_complete() doesn't know the requests are aborted.
-> >
-> > > So getting rid of this file till we support aborting the pending
-> > > requests properly, makes sense.
-> > >
-> > > I think this probably should be a separate patch which explains
-> > > why adding "no_abort_control" is a good idea.
-> > >
-> >
-> > OK.
->
-> BTW, which particular knob you are finding useful in control filesystem
-> for virtiofs. As you mentioned "abort" we will not implement. "waiting"
-> might not have much significance as well because requests are handed
-> over to virtiofs immidiately and if they can be sent to server (because
-> virtqueue is full) these are queued internally and fuse layer will not
-> have an idea.
->
+Hi Hao,
 
-Couldn't it be used to check the inflight I/O for virtiofs?
+Thank you for the patch! Perhaps something to improve:
 
-> That leaves us with "congestion_threshold" and "max_background".
-> max_background seems to control how many background requests can be
-> submitted at a time. That probably can be useful if server is overwhelemed
-> and we want to slow down the client a bit.
->
-> Not sure about congestion threshold.
->
-> So have you found some knob useful for your use case?
->
+[auto build test WARNING on d8271bf021438f468dab3cd84fe5279b5bbcead8]
 
-Since it doesn't do harm to the system, I think it would be better to
-just keep it as it is. Maybe some fuse users can make use of it.
+url:    https://github.com/intel-lab-lkp/linux/commits/Hao-Xu/support-nonblock-submission-for-splice-pipe-to-pipe/20220607-161605
+base:   d8271bf021438f468dab3cd84fe5279b5bbcead8
+config: x86_64-defconfig (https://download.01.org/0day-ci/archive/20220608/202206082229.xoMAgqIw-lkp@intel.com/config)
+compiler: gcc-11 (Debian 11.3.0-1) 11.3.0
+reproduce (this is a W=1 build):
+        # https://github.com/intel-lab-lkp/linux/commit/96683840c3f19b77a536a259094d24e0cd93ebc0
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Hao-Xu/support-nonblock-submission-for-splice-pipe-to-pipe/20220607-161605
+        git checkout 96683840c3f19b77a536a259094d24e0cd93ebc0
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        make W=1 O=build_dir ARCH=x86_64 SHELL=/bin/bash
 
-Thanks,
-Yongji
+If you fix the issue, kindly add following tag where applicable
+Reported-by: kernel test robot <lkp@intel.com>
+
+All warnings (new ones prefixed by >>):
+
+>> io_uring/splice.c:91:6: warning: no previous prototype for 'io_splice_support_nowait' [-Wmissing-prototypes]
+      91 | bool io_splice_support_nowait(struct file *in, struct file *out)
+         |      ^~~~~~~~~~~~~~~~~~~~~~~~
+
+
+vim +/io_splice_support_nowait +91 io_uring/splice.c
+
+    90	
+  > 91	bool io_splice_support_nowait(struct file *in, struct file *out)
+    92	{
+    93		if (get_pipe_info(in, true) && get_pipe_info(out, true))
+    94			return true;
+    95	
+    96		return false;
+    97	}
+    98	
+
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
