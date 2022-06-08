@@ -2,104 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 376685426A8
+	by mail.lfdr.de (Postfix) with ESMTP id 838195426AB
 	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jun 2022 08:58:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231659AbiFHGog (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jun 2022 02:44:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33660 "EHLO
+        id S231993AbiFHGom (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jun 2022 02:44:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52602 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348967AbiFHF6m (ORCPT
+        with ESMTP id S236872AbiFHGEP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jun 2022 01:58:42 -0400
-Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32E9445CB5D
-        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jun 2022 21:31:15 -0700 (PDT)
-Received: by mail-ed1-x533.google.com with SMTP id n28so25453428edb.9
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Jun 2022 21:31:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=lQzGWzSzNym33MQ84Y+l0IYApxkDWXsfpOoAO4fDHlI=;
-        b=pLcIgzoF06q+6p7bNMxbfyeIE4USudtWpeFahTUvEnR7xMfelU2/kdyscp0xEzX39O
-         7F0y8uzCOtb+mZZMSlT27TPASU2K/shDy0TCDGhjgqPupzzLX4mh0tUrI9xkRgoL2L3C
-         XuEGpxyF5MqhnqdknPMsjAPoWxsyQ5KPyOvH4NHOPGZkW3ds/2o61RSNL0Ynqt1Y1VdG
-         Bfd76BmUlSqRAXXVDA2CV/UTWJVjcfAkMB9lNC0Ud/ky7YG1dM1S8jv6FqlwgjECA/IT
-         qdjfu9Wvf2AxBL9OQ+F2eH+lrRAcunRWSRcpGZCba31FBX1TobN8MBKOdQaqyorboDyH
-         unMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=lQzGWzSzNym33MQ84Y+l0IYApxkDWXsfpOoAO4fDHlI=;
-        b=um3A4KOFsbk1QzBySR0f1Kq71sIrr/FhZ/Sr7uXFbqOvnuaes0birKlu3L9f7j26lt
-         +2n3QVO7iRh8EScdBwd72VXJ0asrsKvCEjrCMcGw2avi0WQTf/wPYzzgDO0orJSZC4xp
-         6KGe/N+Nv730Wi8WLnHswLJAxhOSK3zs+rjS1Ijt7hC4zyKtiAFF3s4WZwaCqvBnK/Hq
-         bvkHwVVJ0qALMACkcQB21p5kynPBhtj6isNJZQZaMzp6qTsUTYqPY6/NY8F+aQXW+e9O
-         iV+86G/OdmGbdvErx5Zpa2kl+IGFCvio8FI7+TwdusPVv1m0aEL0Xj/Bmrha5U03+X48
-         wggw==
-X-Gm-Message-State: AOAM531WPUIWnm9gF6y4n0vDISHNkYp2XXbxq8OI9/SyUeink/WxVd06
-        P5k+8dC5+oPAaBnZt8k5z5Vl7g==
-X-Google-Smtp-Source: ABdhPJz8pE9/Vjr7/i5C+fk0/UyWIJaVLXaAMlSya4uBXn9u4OSqYRLr3nLBaRZ5u6D83V8/t2c8dA==
-X-Received: by 2002:a50:fc10:0:b0:42d:cbd2:4477 with SMTP id i16-20020a50fc10000000b0042dcbd24477mr36791934edr.363.1654662673432;
-        Tue, 07 Jun 2022 21:31:13 -0700 (PDT)
-Received: from [192.168.1.99] ([80.208.69.52])
-        by smtp.gmail.com with ESMTPSA id u15-20020a05640207cf00b0042dd60352d1sm11550692edy.35.2022.06.07.21.31.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Jun 2022 21:31:12 -0700 (PDT)
-Message-ID: <539fb998-bbc2-b630-6549-ed8fe23fa167@kernel.dk>
-Date:   Tue, 7 Jun 2022 22:31:11 -0600
+        Wed, 8 Jun 2022 02:04:15 -0400
+Received: from esa4.hgst.iphmx.com (esa4.hgst.iphmx.com [216.71.154.42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DEBE25B060
+        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jun 2022 21:59:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1654664348; x=1686200348;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=5MCC2NCfizAc51KKnCPh5+tZCCgO8+U9GNalsixgaXM=;
+  b=hh9wGaj2PyiWibwh/5CqvBTRb3yzeSYDSMjFBofbPUgcNI0vnNKDnzb8
+   mxGU4klkZbblrChkVHLP+PtIQbs/F8E4g4ROei3XlSS3He3XYTrzmeckN
+   mG0q3f66sFhjZ8Z7Yi6d6akubAl6lKZ9NVoAvOF8Adl0WlcJnKL8mvr+v
+   MzhlxTipPFyG4qW1pqvCLbH6Etu7ThTKpcHgpNBsLKagRwzwdXSuOJ5Il
+   ImxX91z/fECgSoDpyxZlmKoXy46YIvk8FGebpfFPOnv69BxtlL6jCnGTM
+   AmPfaABxFYQofGfuPRmZAMQjdKTLjy/c1wZB0wwM19lfiDEqj6LFviKwI
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.91,285,1647273600"; 
+   d="scan'208";a="201289624"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 08 Jun 2022 12:56:31 +0800
+IronPort-SDR: TCxifgpJkh2JVry2BlA3R5cJZY9zMXvwycCc7jS8s4HF5kQWCRRlj2oFKFFOTKEd9HLVhbqSsN
+ 2vu8O5xi2UCBqPoucoAihjgGkt1S90Ao36/iYSZvwbb1MosmyPOoYHQhnT3zj7AYYqxIhj2/4T
+ di+C27khMagOPytHCaLMSFpx14182MPmzh64OmW1v27Mydd8Pb85Bik+OYOpNRxw4avLWIyVZk
+ S5VBDYuG3KNdpiZRldllOJJDgZT8OgX4bwyRO96IOWQvOBX5gEsY3ImcNpbXdRAIZLwl+uQ706
+ Rw8fab1q0JYKdZgVoX4oX2vL
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 07 Jun 2022 21:15:20 -0700
+IronPort-SDR: Fjjh9QmasPdBRAe9PIbhubQy9e8GWmzITCb5iJUarrWVHAG+AhxQhDJmrt6zDYV229sJz8LhIS
+ scRgDLtXR4kyacMbzmWoyVUxMg1GHiG+sX6qnFrd2oySpisEue23mMnFvVnegkyW9Eo9Ssg9XJ
+ qwLAgTKj7N3Eham6xg+sGDIYsrMg8eGYPDOGlvaj5ZZbhnIketSHqLlGHg67PNA2G6APm10f35
+ Cqt/Y73XutmHYN8RXPNTqDnBB57tS1ZjlU2jnTLGCB+kD3fWDfQw6aEjPVTNDD+u765IZQTicU
+ zEs=
+WDCIronportException: Internal
+Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
+  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 07 Jun 2022 21:56:32 -0700
+Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4LHw1C0QDzz1SHwl
+        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jun 2022 21:56:31 -0700 (PDT)
+Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)"
+        header.d=opensource.wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
+        opensource.wdc.com; h=content-transfer-encoding:mime-version
+        :x-mailer:message-id:date:subject:to:from; s=dkim; t=1654664190;
+         x=1657256191; bh=5MCC2NCfizAc51KKnCPh5+tZCCgO8+U9GNalsixgaXM=; b=
+        NVeRIfhZfwh4tj2B5FIbIv9/WOHkC8MgAerJBKILeHzXr0pM7Gb4UpRdG4LTPjgu
+        kpTWRMkxO7OvrEDJnEdDAyqUQ6PLYiawmGpHq1DYT4vOia877poXq8+bGJawQ8LY
+        c7xCvyzJX80iADT7Sd/na7Lse9QO6GeDC8mzUkiCE6BVl1PyjItnvnwfT47Oosfh
+        3Tm2ZfjU9Kg3/GXnmqlo9zB8iTeHVaZt62JDK+mLxJIrjfVrb15DXLK3BVmiIOa5
+        33Rlb8+Ibw7hX5W38GTpm/M7YKuUANUX/XEkeXypcErSwFDASW5gOrzxYVBDw1fC
+        GqdPMSFxPkT3wOfEWquCIg==
+X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
+Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
+        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id HPvsQSJfFAQW for <linux-fsdevel@vger.kernel.org>;
+        Tue,  7 Jun 2022 21:56:30 -0700 (PDT)
+Received: from washi.fujisawa.hgst.com (washi.fujisawa.hgst.com [10.149.53.254])
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4LHw194ldVz1Rvlc;
+        Tue,  7 Jun 2022 21:56:29 -0700 (PDT)
+From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: [PATCH v2 0/3] zonefs fixes
+Date:   Wed,  8 Jun 2022 13:56:24 +0900
+Message-Id: <20220608045627.142408-1-damien.lemoal@opensource.wdc.com>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [RFC 0/5] support nonblock submission for splice pipe to pipe
-Content-Language: en-US
-To:     Hao Xu <hao.xu@linux.dev>, Pavel Begunkov <asml.silence@gmail.com>,
-        io-uring@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kuniyuki Iwashima <kuniyu@amazon.co.jp>
-References: <20220607080619.513187-1-hao.xu@linux.dev>
- <d350c35e-1d73-b2c8-5ae4-e6ead92aebba@gmail.com>
- <68b1a721-217a-f52b-ae41-0faec77edf3f@linux.dev>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <68b1a721-217a-f52b-ae41-0faec77edf3f@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/7/22 10:19 PM, Hao Xu wrote:
-> On 6/7/22 17:27, Pavel Begunkov wrote:
->> On 6/7/22 09:06, Hao Xu wrote:
->>> From: Hao Xu <howeyxu@tencent.com>
->>>
->>> splice from pipe to pipe is a trivial case, and we can support nonblock
->>> try for it easily. splice depends on iowq at all which is slow. Let's
->>> build a fast submission path for it by supporting nonblock.
->>
->> fwiw,
->>
->> https://www.spinics.net/lists/kernel/msg3652757.html
->>
-> 
-> Thanks, Pavel. Seems it has been discussed for a long time but the
-> result remains unclear...For me, I think this patch is necessary for
-> getting a good SPLICE_F_NONBLOCK user experience.
+3 patches to address zonefs fixes for bugs discovered with an improved
+zonefs test suite.
 
-I'd just take it up again, this is something we do need to get done to
-avoid io-wq offload. Which is important...
+The first 2 patches fix handling of the explicit-open mount option. The
+third patch fixes a hang triggered by readahead reaching the end of a
+sequential file.
 
--- 
-Jens Axboe
+Changes from v1:
+* Added review tags to patch 1 and 2
+* Replaced patch 3 with a more extensive cleanup fix.
+
+Damien Le Moal (3):
+  zonefs: fix handling of explicit_open option on mount
+  zonefs: Do not ignore explicit_open with active zone limit
+  zonefs: fix zonefs_iomap_begin() for reads
+
+ fs/zonefs/super.c | 111 ++++++++++++++++++++++++++++++----------------
+ 1 file changed, 74 insertions(+), 37 deletions(-)
+
+--=20
+2.36.1
 
