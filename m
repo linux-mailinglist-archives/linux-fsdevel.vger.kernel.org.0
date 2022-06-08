@@ -2,207 +2,188 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 24B2854268F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jun 2022 08:57:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C52F542310
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jun 2022 08:51:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231953AbiFHE3k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jun 2022 00:29:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50490 "EHLO
+        id S231360AbiFHDqF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 7 Jun 2022 23:46:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232130AbiFHE2J (ORCPT
+        with ESMTP id S235332AbiFHDpZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jun 2022 00:28:09 -0400
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CC843835BA
-        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jun 2022 18:58:01 -0700 (PDT)
-Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 257NtE9b022611
-        for <linux-fsdevel@vger.kernel.org>; Tue, 7 Jun 2022 17:44:21 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : subject :
- date : message-id : mime-version : content-transfer-encoding :
- content-type; s=facebook; bh=mN2w1Mw8T1gj8MghJ6bggafHvQVRo1kwqVFlNfUTqKU=;
- b=TOcIQXP9Xco71XEbczHC6WOqE7RuFeLyNrEKe3aH5qTFYPUkdeCqJB+JGt9tnLRW4sMD
- vwfW9EN5EwEaQ7ty/nA2VhLBloj4spFWgFtbJ1ybHOuHfUK945Er5j1T7oNlZIRxfFpo
- +mnk/sngxtXtbD34ATWO9pH1tKlnV7KCc1U= 
-Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3gjadujwdy-5
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Jun 2022 17:44:20 -0700
-Received: from twshared25107.07.ash9.facebook.com (2620:10d:c085:108::4) by
- mail.thefacebook.com (2620:10d:c085:11d::4) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.28; Tue, 7 Jun 2022 17:44:19 -0700
-Received: by devbig003.nao1.facebook.com (Postfix, from userid 8731)
-        id 5834A4EC4229; Tue,  7 Jun 2022 17:44:08 -0700 (PDT)
-From:   Chris Mason <clm@fb.com>
-To:     <djwong@kernel.org>, <hch@infradead.org>,
-        <linux-xfs@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <hannes@cmpxchg.org>, <david@fromorbit.com>
-Subject: [PATCH v2] iomap: skip pages past eof in iomap_do_writepage()
-Date:   Tue, 7 Jun 2022 17:42:29 -0700
-Message-ID: <20220608004228.3658429-1-clm@fb.com>
-X-Mailer: git-send-email 2.30.2
+        Tue, 7 Jun 2022 23:45:25 -0400
+Received: from mail-oi1-x231.google.com (mail-oi1-x231.google.com [IPv6:2607:f8b0:4864:20::231])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1774619CB79
+        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jun 2022 17:56:07 -0700 (PDT)
+Received: by mail-oi1-x231.google.com with SMTP id h187so13061790oif.4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 07 Jun 2022 17:56:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wFH16JpjBRikHN1IAO48ehtoxfzCGCzN3oM9EiMa6X8=;
+        b=l4i+k+6Abr5HeudzU075zO0r/BLzbacv0V6STNZIEAEBluaeTcRvx1TChTOuxyCASs
+         uAUgVwmDgoEyG6k0dhZ8NFmw5OEbd2l74yvSxXxWA53CBaw9OoBV3iEq26EPYk4y+7IT
+         qKn9JDYz2OP806c9cvPpDahmxZAZDvrVhTSIayulr7dYNanhmDiOChse+RJNE6HykCsj
+         9xuaaLmPGA8/BJDWN8cpUzOPbGbAyNe0shOzPx2NRgDBxX7ug5Bu5rZe5CkKdYsGZDwp
+         RBwBbso17/gWhg2hEdQ9VBPL7L2J3NplhFzwna8YW9Inmvn2hE+jo34OGkRp4w12iAUj
+         sThA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wFH16JpjBRikHN1IAO48ehtoxfzCGCzN3oM9EiMa6X8=;
+        b=TlHSx72af03jzI8Fr369SwU7JY/bYF8uoXSQfbyliPA9dlyc+TojeQGdZgZvY9S9+m
+         ZlnnL8mzPBAJSsRAkjeZqEJZquxLG8pOFGJ7/KQrOCQUCHdDgqb6wx7Ftce222mjFsCI
+         yfD56vReAg0aPg6RU5r7n+vlnAViL5ptw77XOyOuAzzDKEMLJYbdDAJhHDgYqlsvRHzt
+         yXz1NiXVzP+ZgBnMqbm4N0VJJbezTd6U52l0rD9qxqou9N9I4U+bR5xy6fFeJAUXnWKu
+         vFmj2jT4385f3brSgpv5Aq46tqXaGx7uWchcT8HMzUrd5RDYoegohvHOm6eflTZD+RY+
+         eMnw==
+X-Gm-Message-State: AOAM530EClbhZeRQRm+K+OU3mqCa5MvDXE474h4ZY/YFUK9K4sTIT8Q0
+        dACpJ7eJQJXmAOEwi1NXduEcIDK0vMFnzLbL2ajm2Q==
+X-Google-Smtp-Source: ABdhPJwjBSZgp55zoUZOFIm3kjCTD4NqCF0p7muhSr/F2gMJemxqIIRloSiqM46aTGwoS/mB8l6y90gRDZltreZ8pZ8=
+X-Received: by 2002:a05:6808:bd3:b0:32e:400d:1eb1 with SMTP id
+ o19-20020a0568080bd300b0032e400d1eb1mr1047136oik.110.1654649757116; Tue, 07
+ Jun 2022 17:55:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-GUID: 4suVCpUsoabSMxmHBp8akwrmiaYX8hV4
-X-Proofpoint-ORIG-GUID: 4suVCpUsoabSMxmHBp8akwrmiaYX8hV4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.874,Hydra:6.0.517,FMLib:17.11.64.514
- definitions=2022-06-07_11,2022-06-07_02,2022-02-23_01
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+References: <20220519153713.819591-1-chao.p.peng@linux.intel.com>
+ <CAGtprH_83CEC0U-cBR2FzHsxbwbGn0QJ87WFNOEet8sineOcbQ@mail.gmail.com> <20220607065749.GA1513445@chaop.bj.intel.com>
+In-Reply-To: <20220607065749.GA1513445@chaop.bj.intel.com>
+From:   Marc Orr <marcorr@google.com>
+Date:   Tue, 7 Jun 2022 17:55:46 -0700
+Message-ID: <CAA03e5H_vOQS-qdZgacnmqP5T5jJLnEfm44yfRzJQ2KVu0Br+Q@mail.gmail.com>
+Subject: Re: [PATCH v6 0/8] KVM: mm: fd-based approach for supporting KVM
+ guest private memory
+To:     Chao Peng <chao.p.peng@linux.intel.com>
+Cc:     Vishal Annapurve <vannapurve@google.com>,
+        kvm list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86 <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Jun Nakajima <jun.nakajima@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-iomap_do_writepage() sends pages past i_size through
-folio_redirty_for_writepage(), which normally isn't a problem because
-truncate and friends clean them very quickly.
+On Tue, Jun 7, 2022 at 12:01 AM Chao Peng <chao.p.peng@linux.intel.com> wrote:
+>
+> On Mon, Jun 06, 2022 at 01:09:50PM -0700, Vishal Annapurve wrote:
+> > >
+> > > Private memory map/unmap and conversion
+> > > ---------------------------------------
+> > > Userspace's map/unmap operations are done by fallocate() ioctl on the
+> > > backing store fd.
+> > >   - map: default fallocate() with mode=0.
+> > >   - unmap: fallocate() with FALLOC_FL_PUNCH_HOLE.
+> > > The map/unmap will trigger above memfile_notifier_ops to let KVM map/unmap
+> > > secondary MMU page tables.
+> > >
+> > ....
+> > >    QEMU: https://github.com/chao-p/qemu/tree/privmem-v6
+> > >
+> > > An example QEMU command line for TDX test:
+> > > -object tdx-guest,id=tdx \
+> > > -object memory-backend-memfd-private,id=ram1,size=2G \
+> > > -machine q35,kvm-type=tdx,pic=no,kernel_irqchip=split,memory-encryption=tdx,memory-backend=ram1
+> > >
+> >
+> > There should be more discussion around double allocation scenarios
+> > when using the private fd approach. A malicious guest or buggy
+> > userspace VMM can cause physical memory getting allocated for both
+> > shared (memory accessible from host) and private fds backing the guest
+> > memory.
+> > Userspace VMM will need to unback the shared guest memory while
+> > handling the conversion from shared to private in order to prevent
+> > double allocation even with malicious guests or bugs in userspace VMM.
+>
+> I don't know how malicious guest can cause that. The initial design of
+> this serie is to put the private/shared memory into two different
+> address spaces and gives usersapce VMM the flexibility to convert
+> between the two. It can choose respect the guest conversion request or
+> not.
 
-When the system has cgroups configured, we can end up in situations
-where one cgroup has almost no dirty pages at all, and other cgroups
-consume the entire background dirty limit.  This is especially common in
-our XFS workloads in production because they have cgroups using O_DIRECT
-for almost all of the IO mixed in with cgroups that do more traditional
-buffered IO work.
+For example, the guest could maliciously give a device driver a
+private page so that a host-side virtual device will blindly write the
+private page.
 
-We've hit storms where the redirty path hits millions of times in a few
-seconds, on all a single file that's only ~40 pages long.  This leads to
-long tail latencies for file writes because the pdflush workers are
-hogging the CPU from some kworkers bound to the same CPU.
+> It's possible for a usrspace VMM to cause double allocation if it fails
+> to call the unback operation during the conversion, this may be a bug
+> or not. Double allocation may not be a wrong thing, even in conception.
+> At least TDX allows you to use half shared half private in guest, means
+> both shared/private can be effective. Unbacking the memory is just the
+> current QEMU implementation choice.
 
-Reproducing this on 5.18 was tricky because 869ae85dae ("xfs: flush new
-eof page on truncate...") ends up writing/waiting most of these dirty pag=
-es
-before truncate gets a chance to wait on them.
+Right. But the idea is that this patch series should accommodate all
+of the CVM architectures. Or at least that's what I know was
+envisioned last time we discussed this topic for SNP [*].
 
-The actual repro looks like this:
+Regardless, it's important to ensure that the VM respects its memory
+budget. For example, within Google, we run VMs inside of containers.
+So if we double allocate we're going to OOM. This seems acceptable for
+an early version of CVMs. But ultimately, I think we need a more
+robust way to ensure that the VM operates within its memory container.
+Otherwise, the OOM is going to be hard to diagnose and distinguish
+from a real OOM.
 
-/*
- * run me in a cgroup all alone.  Start a second cgroup with dd
- * streaming IO into the block device.
- */
-int main(int ac, char **av) {
-	int fd;
-	int ret;
-	char buf[BUFFER_SIZE];
-	char *filename =3D av[1];
+[*] https://lore.kernel.org/all/20210820155918.7518-1-brijesh.singh@amd.com/
 
-	memset(buf, 0, BUFFER_SIZE);
+>
+> Chao
+> >
+> > Options to unback shared guest memory seem to be:
+> > 1) madvise(.., MADV_DONTNEED/MADV_REMOVE) - This option won't stop
+> > kernel from backing the shared memory on subsequent write accesses
+> > 2) fallocate(..., FALLOC_FL_PUNCH_HOLE...) - For file backed shared
+> > guest memory, this option still is similar to madvice since this would
+> > still allow shared memory to get backed on write accesses
+> > 3) munmap - This would give away the contiguous virtual memory region
+> > reservation with holes in the guest backing memory, which might make
+> > guest memory management difficult.
+> > 4) mprotect(... PROT_NONE) - This would keep the virtual memory
+> > address range backing the guest memory preserved
+> >
+> > ram_block_discard_range_fd from reference implementation:
+> > https://github.com/chao-p/qemu/tree/privmem-v6 seems to be relying on
+> > fallocate/madvise.
+> >
+> > Any thoughts/suggestions around better ways to unback the shared
+> > memory in order to avoid double allocation scenarios?
 
-	if (ac !=3D 2) {
-		fprintf(stderr, "usage: looper filename\n");
-		exit(1);
-	}
-	fd =3D open(filename, O_WRONLY | O_CREAT, 0600);
-	if (fd < 0) {
-		err(errno, "failed to open");
-	}
-	fprintf(stderr, "looping on %s\n", filename);
-	while(1) {
-		/*
-		 * skip past page 0 so truncate doesn't write and wait
-		 * on our extent before changing i_size
-		 */
-		ret =3D lseek(fd, 8192, SEEK_SET);
-		if (ret < 0)
-			err(errno, "lseek");
-		ret =3D write(fd, buf, BUFFER_SIZE);
-		if (ret !=3D BUFFER_SIZE)
-			err(errno, "write failed");
-		/* start IO so truncate has to wait after i_size is 0 */
-		ret =3D sync_file_range(fd, 16384, 4095, SYNC_FILE_RANGE_WRITE);
-		if (ret < 0)
-			err(errno, "sync_file_range");
-		ret =3D ftruncate(fd, 0);
-		if (ret < 0)
-			err(errno, "truncate");
-		usleep(1000);
-	}
-}
-
-And this bpftrace script will show when you've hit a redirty storm:
-
-kretprobe:xfs_vm_writepages {
-    delete(@dirty[pid]);
-}
-
-kprobe:xfs_vm_writepages {
-    @dirty[pid] =3D 1;
-}
-
-kprobe:folio_redirty_for_writepage /@dirty[pid] > 0/ {
-    $inode =3D ((struct folio *)arg1)->mapping->host->i_ino;
-    @inodes[$inode] =3D count();
-    @redirty++;
-    if (@redirty > 90000) {
-        printf("inode %d redirty was %d", $inode, @redirty);
-        exit();
-    }
-}
-
-This patch has the same number of failures on xfstests as unpatched 5.18:
-Failures: generic/648 xfs/019 xfs/050 xfs/168 xfs/299 xfs/348 xfs/506
-xfs/543
-
-I also ran it through a long stress of multiple fsx processes hammering.
-
-(Johannes Weiner did significant tracing and debugging on this as well)
-
-Signed-off-by: Chris Mason <clm@fb.com>
-Co-authored-by: Johannes Weiner <hannes@cmpxchg.org>
-Reviewed-by: Johannes Weiner <hannes@cmpxchg.org>
-Reported-by: Domas Mituzas <domas@fb.com>
----
- fs/iomap/buffered-io.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
-
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 8ce8720093b9..64d1476c457d 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -1482,10 +1482,10 @@ iomap_do_writepage(struct page *page, struct writ=
-eback_control *wbc, void *data)
- 		pgoff_t end_index =3D isize >> PAGE_SHIFT;
-=20
- 		/*
--		 * Skip the page if it's fully outside i_size, e.g. due to a
--		 * truncate operation that's in progress. We must redirty the
--		 * page so that reclaim stops reclaiming it. Otherwise
--		 * iomap_vm_releasepage() is called on it and gets confused.
-+		 * Skip the page if it's fully outside i_size, e.g.
-+		 * due to a truncate operation that's in progress.  We've
-+		 * cleaned this page and truncate will finish things off for
-+		 * us.
- 		 *
- 		 * Note that the end_index is unsigned long.  If the given
- 		 * offset is greater than 16TB on a 32-bit system then if we
-@@ -1500,7 +1500,7 @@ iomap_do_writepage(struct page *page, struct writeb=
-ack_control *wbc, void *data)
- 		 */
- 		if (folio->index > end_index ||
- 		    (folio->index =3D=3D end_index && poff =3D=3D 0))
--			goto redirty;
-+			goto unlock;
-=20
- 		/*
- 		 * The page straddles i_size.  It must be zeroed out on each
-@@ -1518,6 +1518,7 @@ iomap_do_writepage(struct page *page, struct writeb=
-ack_control *wbc, void *data)
-=20
- redirty:
- 	folio_redirty_for_writepage(wbc, folio);
-+unlock:
- 	folio_unlock(folio);
- 	return 0;
- }
---=20
-2.30.2
-
+I agree with Vishal. I think this patch set is making great progress.
+But the double allocation scenario seems like a high-level design
+issue that warrants more discussion.
