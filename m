@@ -2,82 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 36F6B542690
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jun 2022 08:57:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DA6C5426B9
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jun 2022 08:58:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230332AbiFHGoA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jun 2022 02:44:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47580 "EHLO
+        id S233891AbiFHGp2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jun 2022 02:45:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236895AbiFHGEQ (ORCPT
+        with ESMTP id S236902AbiFHGEQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 8 Jun 2022 02:04:16 -0400
 Received: from esa4.hgst.iphmx.com (esa4.hgst.iphmx.com [216.71.154.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86A9426D90D
-        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jun 2022 21:59:11 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F10D244091
+        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jun 2022 21:59:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1654664351; x=1686200351;
+  t=1654664353; x=1686200353;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=gEIEXCYZy1bxZWP7CIJZ7DkiyLXVfXSlBA1Ynd5HU38=;
-  b=ROzPSbY7aOM386Bo5uWX5FyJn8yv29m/66h0vTkx7iJ4nRbJnlNki8Zp
-   cC0Zd/FiMSfj8BiaGYQW6WA9s7RudbzNKZPI0MezHZQdksit8aYayFEuz
-   NqM2WDSZhIIHiuOajD1Ki3O/uYd+q++NWJOY0MR+BCn2iEAuux23W63jw
-   tANg0Stux63CEld14IexU6azfuiP3VhyVnx+tNltareuPZpnsRe+LDkYS
-   aE6HN9yirBAHUrrCw/kgoFgERomOIqpTjhYghiFXKNBCJHWKl/67tVzSp
-   /mz9CnSx1PmDsz60rfhUs0xksIhiGH6y4gwcbSbET1N7TtNzhmgRLXbSv
-   g==;
+  bh=CevkZZnhv6j2Mk73kiuiXO8Tmh2N1oB2gvlfpnKcSXs=;
+  b=cufsK0OCBVBaHPrhqkbcmcecPPPTIAjoyl8o/ySgTzzwSMEn+JCTaKmh
+   N2TVxFPva0AG8d7FRASoiGC/i9GoeOXWeWaoyw5iVibsxxXnRqS4XIEkK
+   iZaezqlxumO2DpkyCXHwfV5ECmVRt4nrj4B+wzx+N0h0ywum6+b2ewnXl
+   OAFbQDuO07MKqn7SweWAKXhqaXDHKLDqy3MZsexhz4/lsGkUZL3BeKziV
+   z/K5lStIxjmvu3DxUue/yoosgT2kc8L1JqaBsI5e5NvvdbZzKbxsj4+3U
+   CgJsLGBv7y6+9AkEZ8a+XLwxLdA4xs+rwSETLV55MADCKr7KVy61o17Yo
+   Q==;
 X-IronPort-AV: E=Sophos;i="5.91,285,1647273600"; 
-   d="scan'208";a="201289625"
+   d="scan'208";a="201289626"
 Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 08 Jun 2022 12:56:31 +0800
-IronPort-SDR: rhbpqddpf6h9y2FCWSJNNUVPaDCL40UoStDewDxF+RUv9GsCm6aHUh85tAF6IsdSp48rC0CZ6U
- GH4eaLzOTipsXprKGxV8igTUWagBym7pb5CgVhkj/cOnWZYLAnDgnwH8ZthSakaS6oSJgEXm9k
- Gq6akIEzFZBvjwjq62krKLWgh7kZ1is66GMq5V0MVHdL15sQeNyMZDq+C6hJoUYCE77XsqQphU
- 6rVJvyR8qPAKVTicw5ZQykBO66TJUZMzvm4lpDuVBYziQj8ecdul9zfiTM/QQsL9x9w3zaTiks
- C+FJZzGNJ2FiHzV5DI72LH4t
+  by ob1.hgst.iphmx.com with ESMTP; 08 Jun 2022 12:56:33 +0800
+IronPort-SDR: 68t6Yfuskz8xCr7SsUzWtaD65CfftbtwsKEbLTl7Q24HXFdQNUp/YccWHYXYEt/aNP3XR4xoau
+ CfbzCLKn0OEaHxyXt8VlNNKXlXIQWJkybT1RY58K040TUKGpl/sf3zEPNLKHFx7ECJJX6ADt0N
+ 9HDnVS8fNwv5UQbDyYprBVwxEKu1llI1kvMshfJ0lLKjKFbhxcNEqpcex1CFfO0xp8f3kY8sh8
+ xRCLKm7SjA7GrhwcuhYLK26hrtIfepWSOdlzZ3iBfJ0U6VNZJU8YV7A9N9gwD0kXbz+jeg7TY5
+ yuqGJr1DoffLK/Rf18Ab4N5C
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 07 Jun 2022 21:15:20 -0700
-IronPort-SDR: jawGZo+S+b5S8PC10FsZELZ3jBQ8F2xgeRTmA+XAo/80jOezJdgRK4Jlgwq3I3CgpVtbRmEk9J
- z5gMWgWOk5Fv3LTi/z6G3y59z0zuhTM+AZo5mAYTLY0tKZjivk1co3fyzAqE5EkkJnzjcJ9goa
- PIHOVUFmsM46+22AjceBuFWJSMeRAlB2Fm6eVgvz9EPDD73MFDxtFp0MHM28+gnJLsBmtlVLum
- 0VnlPRoXUul6OoAxEZjPzA8z5W2Z30nsJytxkARjihW1j/uE7QFRg7wos29rFPidRKbDlPWLyW
- hos=
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 07 Jun 2022 21:15:22 -0700
+IronPort-SDR: 4VRWl695KZdHYi3VsQggBnPVVIneZU8A0yxUqX/vxU2FYKCtc7AwAjevA5Z9FOj0SdCFChYI1v
+ m8L9mxgI5hSGEGdduiqc+F5agwzf3RBs8yyGcmkZoDd9oZZ9YPY6ZepuqO/92/FdBYcbqL0qqk
+ KFXu1QobZdCV6mrU1Zivtcfrif3sgFzboMTwm3iROh4olSwKo7bo+3rlfRV0RpxY+w2MbWp98i
+ 0+NeII/Pwzzv0hEuPfc3GfDGwIkmrsNjDcSu8nEWAQ/OFusd+wNsxLfOnUxyjJP/JDtjsNh9LE
+ h/o=
 WDCIronportException: Internal
 Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
-  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 07 Jun 2022 21:56:32 -0700
+  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 07 Jun 2022 21:56:34 -0700
 Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4LHw1C46RLz1SVnx
-        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jun 2022 21:56:31 -0700 (PDT)
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4LHw1D2ytlz1Rwrw
+        for <linux-fsdevel@vger.kernel.org>; Tue,  7 Jun 2022 21:56:32 -0700 (PDT)
 Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
         reason="pass (just generated, assumed good)"
         header.d=opensource.wdc.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
         opensource.wdc.com; h=content-transfer-encoding:mime-version
         :references:in-reply-to:x-mailer:message-id:date:subject:to
-        :from; s=dkim; t=1654664191; x=1657256192; bh=gEIEXCYZy1bxZWP7CI
-        JZ7DkiyLXVfXSlBA1Ynd5HU38=; b=ro3njAENukHogAe8v1Mn68ai4id+gOAk84
-        Rya5AexUlRqcbtGm5tJ0E2iWKGXY/A3xkU8wh8dhYlXgOrm9pqoOYBb/oh/JG6AV
-        xm5Uj9+/elbqoLemr8ei2ArApMVXujuqmN9eeA3H7qjMOu2bC2q/Foav+2KpjQBK
-        tfxPojSR1nGZxZz+7eOn0Po8NhuVT/mDTYrePpls2D88jiGWtz0yjIX4pLVDhW9B
-        my5fg3faR3f98irnZz6xbEq0u20U4ZfcYR9iyL5JeKI6T6213hO/AzwbqX550WD5
-        ezgKFh/zuC3RopkQXToK7vkntO9pYOdIuhgWSy0VV8Bt7a8wgKkA==
+        :from; s=dkim; t=1654664192; x=1657256193; bh=CevkZZnhv6j2Mk73ki
+        uiXO8Tmh2N1oB2gvlfpnKcSXs=; b=fPYCwaG+BWMsBpnZgkdP1CbR8GsW/MDAi+
+        4tYdNSpIVMNyjyP/1+VZsofflPOwnLl3SDplJoLLcAp8FYbuWl1vp2/fUxu9V2mz
+        0ySDNygvHnUOx/k4SQebt4RPki39zmy6U595AA+EDcq2uFsCFyamPEVzkvWSQqdI
+        NV8/0Nawoo6Z2dqiPxwMA7prejpDfnm43dViXhfx2k9LkIOFGWlqFzaVHARkOj9J
+        UcV39qUKKSjQfPPGOxh/15dFi5cPmv+99sIJWtYiVvwoWGdzMLa5JOLXCMzT4QKk
+        lFZvUyzKWFhhzpi/SBvzI86IbS4mtA0wBhCcVXGG/+SASn0pXjbA==
 X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
 Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
         by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id jpGHqflJRT40 for <linux-fsdevel@vger.kernel.org>;
-        Tue,  7 Jun 2022 21:56:31 -0700 (PDT)
+        with ESMTP id 3LsKR1Ne2NSe for <linux-fsdevel@vger.kernel.org>;
+        Tue,  7 Jun 2022 21:56:32 -0700 (PDT)
 Received: from washi.fujisawa.hgst.com (washi.fujisawa.hgst.com [10.149.53.254])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4LHw1B4K0kz1Rvlx;
-        Tue,  7 Jun 2022 21:56:30 -0700 (PDT)
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4LHw1C3WXpz1Rvlc;
+        Tue,  7 Jun 2022 21:56:31 -0700 (PDT)
 From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Johannes Thumshirn <johannes.thumshirn@wdc.com>,
         Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v2 1/3] zonefs: fix handling of explicit_open option on mount
-Date:   Wed,  8 Jun 2022 13:56:25 +0900
-Message-Id: <20220608045627.142408-2-damien.lemoal@opensource.wdc.com>
+Subject: [PATCH v2 2/3] zonefs: Do not ignore explicit_open with active zone limit
+Date:   Wed,  8 Jun 2022 13:56:26 +0900
+Message-Id: <20220608045627.142408-3-damien.lemoal@opensource.wdc.com>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20220608045627.142408-1-damien.lemoal@opensource.wdc.com>
 References: <20220608045627.142408-1-damien.lemoal@opensource.wdc.com>
@@ -93,55 +93,52 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Ignoring the explicit_open mount option on mount for devices that do not
-have a limit on the number of open zones must be done after the mount
-options are parsed and set in s_mount_opts. Move the check to ignore
-the explicit_open option after the call to zonefs_parse_options() in
-zonefs_fill_super().
+A zoned device may have no limit on the number of open zones but may
+have a limit on the number of active zones it can support. In such
+case, the explicit_open mount option should not be ignored to ensure
+that the open() system call activates the zone with an explicit zone
+open command, thus guaranteeing that the zone can be written.
 
-Fixes: b5c00e975779 ("zonefs: open/close zone on file open/close")
-Cc: <stable@vger.kernel.org>
+Enforce this by ignoring the explicit_open mount option only for
+devices that have both the open and active zone limits equal to 0.
+
+Fixes: 87c9ce3ffec9 ("zonefs: Add active seq file accounting")
 Signed-off-by: Damien Le Moal <damien.lemoal@opensource.wdc.com>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 ---
- fs/zonefs/super.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ fs/zonefs/super.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
 diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
-index bcb21aea990a..ecce84909ca1 100644
+index ecce84909ca1..123464d2145a 100644
 --- a/fs/zonefs/super.c
 +++ b/fs/zonefs/super.c
-@@ -1760,12 +1760,6 @@ static int zonefs_fill_super(struct super_block *s=
-b, void *data, int silent)
+@@ -1085,7 +1085,8 @@ static int zonefs_seq_file_write_open(struct inode =
+*inode)
 =20
- 	atomic_set(&sbi->s_wro_seq_files, 0);
- 	sbi->s_max_wro_seq_files =3D bdev_max_open_zones(sb->s_bdev);
--	if (!sbi->s_max_wro_seq_files &&
--	    sbi->s_mount_opts & ZONEFS_MNTOPT_EXPLICIT_OPEN) {
--		zonefs_info(sb, "No open zones limit. Ignoring explicit_open mount opt=
-ion\n");
--		sbi->s_mount_opts &=3D ~ZONEFS_MNTOPT_EXPLICIT_OPEN;
--	}
--
- 	atomic_set(&sbi->s_active_seq_files, 0);
- 	sbi->s_max_active_seq_files =3D bdev_max_active_zones(sb->s_bdev);
+ 		if (sbi->s_mount_opts & ZONEFS_MNTOPT_EXPLICIT_OPEN) {
 =20
-@@ -1790,6 +1784,12 @@ static int zonefs_fill_super(struct super_block *s=
+-			if (wro > sbi->s_max_wro_seq_files) {
++			if (sbi->s_max_wro_seq_files
++			    && wro > sbi->s_max_wro_seq_files) {
+ 				atomic_dec(&sbi->s_wro_seq_files);
+ 				ret =3D -EBUSY;
+ 				goto unlock;
+@@ -1785,8 +1786,10 @@ static int zonefs_fill_super(struct super_block *s=
 b, void *data, int silent)
- 	zonefs_info(sb, "Mounting %u zones",
  		    blkdev_nr_zones(sb->s_bdev->bd_disk));
 =20
-+	if (!sbi->s_max_wro_seq_files &&
-+	    sbi->s_mount_opts & ZONEFS_MNTOPT_EXPLICIT_OPEN) {
-+		zonefs_info(sb, "No open zones limit. Ignoring explicit_open mount opt=
+ 	if (!sbi->s_max_wro_seq_files &&
++	    !sbi->s_max_active_seq_files &&
+ 	    sbi->s_mount_opts & ZONEFS_MNTOPT_EXPLICIT_OPEN) {
+-		zonefs_info(sb, "No open zones limit. Ignoring explicit_open mount opt=
 ion\n");
-+		sbi->s_mount_opts &=3D ~ZONEFS_MNTOPT_EXPLICIT_OPEN;
-+	}
-+
- 	/* Create root directory inode */
- 	ret =3D -ENOMEM;
- 	inode =3D new_inode(sb);
++		zonefs_info(sb,
++			"No open and active zone limits. Ignoring explicit_open mount option\=
+n");
+ 		sbi->s_mount_opts &=3D ~ZONEFS_MNTOPT_EXPLICIT_OPEN;
+ 	}
+=20
 --=20
 2.36.1
 
