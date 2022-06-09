@@ -2,63 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A2629544DB4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jun 2022 15:31:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37E2A544E15
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jun 2022 15:53:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239779AbiFINbW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Jun 2022 09:31:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49256 "EHLO
+        id S234872AbiFINxI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Jun 2022 09:53:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238801AbiFINbV (ORCPT
+        with ESMTP id S230425AbiFINxH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Jun 2022 09:31:21 -0400
+        Thu, 9 Jun 2022 09:53:07 -0400
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4357D1ABA7B
-        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Jun 2022 06:31:19 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4C2951AD5BE
+        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Jun 2022 06:53:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1654781478;
+        s=mimecast20190719; t=1654782782;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=KMPwHw/Q9eNYynI7+rtrxtdteC/ovjXlvHhbRHIpVsk=;
-        b=IDK5fYS7CS3a5zRYM05VRMs50VD4C6cABW9vF2YXIjILdcn8AgxJizafase2jEKYI32P8B
-        2tmkar4s/Cc9WGvmB0+Jkc6P2IqUuDymcR1hL4Cmsv1YHgIvGl1aQSYB6doJCqzyX4y0Ci
-        CFiH7HGFyCSzZTS6vTI7kzuHAueHOL0=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=zpelrKcCBvxZODnS+e4yu6gn9thjf5wVTXhf5pEuG28=;
+        b=VJbaqDzIGM9lhE6mkrIDGdYcx+rWj4//JIfuOurnYOAPiuTjUXsSSg+snA38YRya/J5eSI
+        lSOkdukmzBEv+QiU8RbO4PIqMHOwEpYkBRcQ+HMmWqSfRqLNRvNw5jDbMm9XsYaU442NqE
+        AcsFnVR3SSYMKkzvDHjkYlaGrdrfPcM=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-331-MC8o3B3aOta2xz9Xz0x6tA-1; Thu, 09 Jun 2022 09:31:07 -0400
-X-MC-Unique: MC8o3B3aOta2xz9Xz0x6tA-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+ us-mta-39-EbfAzZOFPE-wBWnuLoq_sg-1; Thu, 09 Jun 2022 09:53:01 -0400
+X-MC-Unique: EbfAzZOFPE-wBWnuLoq_sg-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 502C829AA3B4;
-        Thu,  9 Jun 2022 13:31:07 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D592B811E81;
+        Thu,  9 Jun 2022 13:53:00 +0000 (UTC)
 Received: from horse.redhat.com (unknown [10.18.25.210])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3B9F6C53360;
-        Thu,  9 Jun 2022 13:31:07 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C31C22026D64;
+        Thu,  9 Jun 2022 13:53:00 +0000 (UTC)
 Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 12D9B220882; Thu,  9 Jun 2022 09:31:07 -0400 (EDT)
-Date:   Thu, 9 Jun 2022 09:31:06 -0400
+        id 7E614220882; Thu,  9 Jun 2022 09:53:00 -0400 (EDT)
+Date:   Thu, 9 Jun 2022 09:53:00 -0400
 From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Yongji Xie <xieyongji@bytedance.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        =?utf-8?B?5byg5L2z6L6w?= <zhangjiachen.jaycee@bytedance.com>,
-        linux-fsdevel@vger.kernel.org,
-        virtualization <virtualization@lists.linux-foundation.org>
-Subject: Re: [PATCH] fuse: allow skipping abort interface for virtiofs
-Message-ID: <YqH2GofHjS4nkWpQ@redhat.com>
-References: <20220607110504.198-1-xieyongji@bytedance.com>
- <Yp+oEPGnisNx+Nzo@redhat.com>
- <CACycT3vKZJ4YhPgGq1VFeh3Tqnr-vK3X+rPz0rObH=MraxrhYA@mail.gmail.com>
- <YqCZt7tyEH50ktKq@redhat.com>
- <CACycT3sMe8EdBWxZhT0HTwVB7mGPk=eV3jG-8EkNK+W-Y_RAiw@mail.gmail.com>
+To:     Bernd Schubert <bschubert@ddn.com>
+Cc:     Dharmendra Singh <dharamhans87@gmail.com>, miklos@szeredi.hu,
+        linux-fsdevel@vger.kernel.org, fuse-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, Dharmendra Singh <dsingh@ddn.com>
+Subject: Re: [PATCH v4 1/1] Allow non-extending parallel direct writes on the
+ same file.
+Message-ID: <YqH7PO7KtoiXkmVH@redhat.com>
+References: <20220605072201.9237-1-dharamhans87@gmail.com>
+ <20220605072201.9237-2-dharamhans87@gmail.com>
+ <Yp/CYjONZHoekSVA@redhat.com>
+ <34dd96b3-e253-de4e-d5d3-a49bc1990e6f@ddn.com>
+ <Yp/KnF0oSIsk0SYd@redhat.com>
+ <3d189ccc-437e-d9c0-e9f1-b4e0d2012e3c@ddn.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CACycT3sMe8EdBWxZhT0HTwVB7mGPk=eV3jG-8EkNK+W-Y_RAiw@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.85 on 10.11.54.8
+In-Reply-To: <3d189ccc-437e-d9c0-e9f1-b4e0d2012e3c@ddn.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
 X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
@@ -69,107 +69,197 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 08, 2022 at 09:57:51PM +0800, Yongji Xie wrote:
-> On Wed, Jun 8, 2022 at 8:44 PM Vivek Goyal <vgoyal@redhat.com> wrote:
-> >
-> > On Wed, Jun 08, 2022 at 04:42:46PM +0800, Yongji Xie wrote:
-> > > On Wed, Jun 8, 2022 at 3:34 AM Vivek Goyal <vgoyal@redhat.com> wrote:
-> > > >
-> > > > On Tue, Jun 07, 2022 at 07:05:04PM +0800, Xie Yongji wrote:
-> > > > > The commit 15c8e72e88e0 ("fuse: allow skipping control
-> > > > > interface and forced unmount") tries to remove the control
-> > > > > interface for virtio-fs since it does not support aborting
-> > > > > requests which are being processed. But it doesn't work now.
-> > > >
-> > > > Aha.., so "no_control" basically has no effect? I was looking at
-> > > > the code and did not find anybody using "no_control" and I was
-> > > > wondering who is making use of "no_control" variable.
-> > > >
-> > > > I mounted virtiofs and noticed a directory named "40" showed up
-> > > > under /sys/fs/fuse/connections/. That must be belonging to
-> > > > virtiofs instance, I am assuming.
-> > > >
-> > >
-> > > I think so.
-> > >
-> > > > BTW, if there are multiple fuse connections, how will one figure
-> > > > out which directory belongs to which instance. Because without knowing
-> > > > that, one will be shooting in dark while trying to read/write any
-> > > > of the control files.
-> > > >
-> > >
-> > > We can use "stat $mountpoint" to get the device minor ID which is the
-> > > name of the corresponding control directory.
-> > >
-> > > > So I think a separate patch should be sent which just gets rid of
-> > > > "no_control" saying nobody uses. it.
-> > > >
-> > >
-> > > OK.
-> > >
-> > > > >
-> > > > > This commit fixes the bug, but only remove the abort interface
-> > > > > instead since other interfaces should be useful.
-> > > >
-> > > > Hmm.., so writing to "abort" file is bad as it ultimately does.
-> > > >
-> > > > fc->connected = 0;
-> > > >
-> > >
-> > > Another problem is that it might trigger UAF since
-> > > virtio_fs_request_complete() doesn't know the requests are aborted.
-> > >
-> > > > So getting rid of this file till we support aborting the pending
-> > > > requests properly, makes sense.
-> > > >
-> > > > I think this probably should be a separate patch which explains
-> > > > why adding "no_abort_control" is a good idea.
-> > > >
-> > >
-> > > OK.
-> >
-> > BTW, which particular knob you are finding useful in control filesystem
-> > for virtiofs. As you mentioned "abort" we will not implement. "waiting"
-> > might not have much significance as well because requests are handed
-> > over to virtiofs immidiately and if they can be sent to server (because
-> > virtqueue is full) these are queued internally and fuse layer will not
-> > have an idea.
-> >
+On Wed, Jun 08, 2022 at 12:42:20AM +0200, Bernd Schubert wrote:
 > 
-> Couldn't it be used to check the inflight I/O for virtiofs?
+> 
+> On 6/8/22 00:01, Vivek Goyal wrote:
+> > On Tue, Jun 07, 2022 at 11:42:16PM +0200, Bernd Schubert wrote:
+> > > 
+> > > 
+> > > On 6/7/22 23:25, Vivek Goyal wrote:
+> > > > On Sun, Jun 05, 2022 at 12:52:00PM +0530, Dharmendra Singh wrote:
+> > > > > From: Dharmendra Singh <dsingh@ddn.com>
+> > > > > 
+> > > > > In general, as of now, in FUSE, direct writes on the same file are
+> > > > > serialized over inode lock i.e we hold inode lock for the full duration
+> > > > > of the write request. I could not found in fuse code a comment which
+> > > > > clearly explains why this exclusive lock is taken for direct writes.
+> > > > > 
+> > > > > Following might be the reasons for acquiring exclusive lock but not
+> > > > > limited to
+> > > > > 1) Our guess is some USER space fuse implementations might be relying
+> > > > >      on this lock for seralization.
+> > > > 
+> > > > Hi Dharmendra,
+> > > > 
+> > > > I will just try to be devil's advocate. So if this is server side
+> > > > limitation, then it is possible that fuse client's isize data in
+> > > > cache is stale. For example, filesystem is shared between two
+> > > > clients.
+> > > > 
+> > > > - File size is 4G as seen by client A.
+> > > > - Client B truncates the file to 2G.
+> > > > - Two processes in client A, try to do parallel direct writes and will
+> > > >     be able to proceed and server will get two parallel writes both
+> > > >     extending file size.
+> > > > 
+> > > > I can see that this can happen with virtiofs with cache=auto policy.
+> > > > 
+> > > > IOW, if this is a fuse server side limitation, then how do you ensure
+> > > > that fuse kernel's i_size definition is not stale.
+> > > 
+> > > Hi Vivek,
+> > > 
+> > > I'm sorry, to be sure, can you explain where exactly a client is located for
+> > > you? For us these are multiple daemons linked to libufse - which you seem to
+> > > call 'server' Typically these clients are on different machines. And servers
+> > > are for us on the other side of the network - like an NFS server.
+> > 
+> > Hi Bernd,
+> > 
+> > Agreed, terminology is little confusing. I am calling "fuse kernel" as
+> > client and fuse daemon (user space) as server. This server in turn might
+> > be the client to another network filesystem and real files might be
+> > served by that server on network.
+> > 
+> > So for simple virtiofs case, There can be two fuse daemons (virtiofsd
+> > instances) sharing same directory (either on local filesystem or on
+> > a network filesystem).
+> 
+> So the combination of fuse-kernel + fuse-daemon == vfs mount.
 
-Actually I might be wrong. It probably should work. Looking at
-implementation.
+This is fine for regular fuse file systems. For virtiofs fuse-kernel is
+running in a VM and fuse-daemon is running outside the VM on host.
+> 
+> > 
+> > > 
+> > > So now while I'm not sure what you mean with 'client', I'm wondering about
+> > > two generic questions
+> > > 
+> > > a) I need to double check, but we were under the assumption the code in
+> > > question is a direct-io code path. I assume cache=auto would use the page
+> > > cache and should not be effected?
+> > 
+> > By default cache=auto use page cache but if application initiates a
+> > direct I/O, it should use direct I/O path.
+> 
+> Ok, so we are on the same page regarding direct-io.
+> 
+> > 
+> > > 
+> > > b) How would the current lock help for distributed clients? Or multiple fuse
+> > > daemons (what you seem to call server) per local machine?
+> > 
+> > I thought that current lock is trying to protect fuse kernel side and
+> > assumed fuse server (daemon linked to libfuse) can handle multiple
+> > parallel writes. Atleast that's how I thought about the things. I might
+> > be wrong. I am not sure.
+> > 
+> > > 
+> > > For a single vfs mount point served by fuse, truncate should take the
+> > > exclusive lock and parallel writes the shared lock - I don't see a problem
+> > > here either.
+> > 
+> > Agreed that this does not seem like a problem from fuse kernel side. I was
+> > just questioning that where parallel direct writes become a problem. And
+> > answer I heard was that it probably is fuse server (daemon linked with
+> > libfuse) which is expecting the locking. And if that's the case, this
+> > patch is not fool proof. It is possible that file got truncated from
+> > a different client (from a different fuse daemon linked with libfuse).
+> > 
+> > So say A is first fuse daemon and B is another fuse daemon. Both are
+> > clients to some network file system as NFS.
+> > 
+> > - Fuse kernel for A, sees file size as 4G.
+> > - fuse daemon B truncates the file to size 2G.
+> > - Fuse kernel for A, has stale cache, and can send two parallel writes
+> >    say at 3G and 3.5G offset.
+> 
+> I guess you mean inode cache, not data cache, as this is direct-io.
 
-fuse_conn_waiting_read() looks at fc->num_waiting to figure out
-how many requests are in flight.
+Yes inode cache and cached ->i_size might be an issue. These patches
+used cached ->i_size to determine if parallel direct I/O should be
+allowed or not.
 
-And either fuse_get_req()/fuse_simple_request() will bump up the
-fc->num_request count and fuse_put_request() will drop that count
-once request completes. And this seems to be independent of
-virtiofs.
 
-So looks like it should work even with virtiofs. Please give it a try.
+> But now
+> why would we need to worry about any cache here, if this is direct-io - the
+> application writes without going into any cache and at the same time a
+> truncate happens? The current kernel side lock would not help here, but a
+> distrubuted lock is needed to handle this correctly?
+> 
+> int fd = open(path, O_WRONLY | O_DIRECT);
+> 
+> clientA: pwrite(fd, buf, 100G, 0) -> takes a long time
+> clientB: ftruncate(fd, 0)
+> 
+> I guess on a local file system that will result in a zero size file. On
+> different fuse mounts (without a DLM) or NFS, undefined behavior.
+> 
+> 
+> > - Fuser daemon A might not like it.(Assuming this is fuse daemon/user
+> >    space side limitation).
+> 
+> I think there are two cases for the fuser daemons:
+> 
+> a) does not have a distributed lock - just needs to handle the writes, the
+> local kernel lock does not protect against distributed races.
+
+Exactly. This is the point I am trying to raise. "Local kernel lock does
+not protect against distributed races".
+
+So in this case local kernel has ->i_size cached and this might be an
+old value and checking i_size does not guarantee that fuse daemon
+will not get parallel extending writes.
+
+> I guess most
+> of these file systems can enable parallel writes, unless the kernel lock is
+> used to handle userspace thread synchronization.
+
+Right. If user space is relying on kernel lock for thread synchronization,
+it can not enable parallel writes.
+
+But if it is not relying on this, it should be able to enable parallel
+writes. Just keep in mind that ->i_size check is not sufficient to
+guarantee that you will not get "two extnding parallel writes". If
+another client on a different machine truncated the file, it is
+possible this client has old cached ->i_size and it will can
+get multiple file extending parallel writes.
+
+So if fuse daemon enables parallel extending writes, it should be
+prepared to deal with multiple extending parallel writes.
+
+And if this is correct assumption, I am wondering why to even try
+to do ->i_size check and try to avoid parallel extending writes
+in fuse kernel. May be there is something I am not aware of. And
+that's why I am just raising questions.
 
 > 
-> > That leaves us with "congestion_threshold" and "max_background".
-> > max_background seems to control how many background requests can be
-> > submitted at a time. That probably can be useful if server is overwhelemed
-> > and we want to slow down the client a bit.
-> >
-> > Not sure about congestion threshold.
-> >
-> > So have you found some knob useful for your use case?
-> >
+> b) has a distributed lock - needs a callback to fuse kernel to inform the
+> kernel to invalidate all data.
 > 
-> Since it doesn't do harm to the system, I think it would be better to
-> just keep it as it is. Maybe some fuse users can make use of it.
+> At DDN we have both of them, a) is in production, the successor b) is being
+> worked on. We might come back with more patches for more callbacks for the
+> DLM - I'm not sure yet.
+> 
+> 
+> > 
+> > I hope I am able to explain my concern. I am not saying that this patch
+> > is not good. All I am saying that fuse daemon (user space) can not rely
+> > on that it will never get two parallel direct writes which can be beyond
+> > the file size. If fuse kernel cache is stale, it can happen. Just trying
+> > to set the expectations right.
+> 
+> 
+> I don't see an issue yet. Regarding virtiofs, does it have a distributed
+> lock manager (DLM)? I guess not?
 
-I guess fair enough. I don't mind creating "control" file system for
-virtiofs. Either we don't create "abort" file or may be somehow
-writing to file returns error. I guess both the solutions should
-work. 
+Nope. virtiofs does not have any DLM.
 
-Thanks
 Vivek
+> 
+> 
+> Thanks,
+> Bernd
+> 
 
