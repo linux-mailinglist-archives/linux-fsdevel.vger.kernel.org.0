@@ -2,93 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D1F0544999
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jun 2022 13:02:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBA325449B3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jun 2022 13:05:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236439AbiFILCt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Jun 2022 07:02:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36286 "EHLO
+        id S239764AbiFILFx convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>); Thu, 9 Jun 2022 07:05:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229654AbiFILCs (ORCPT
+        with ESMTP id S230108AbiFILFt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Jun 2022 07:02:48 -0400
-Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A693E23162
-        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Jun 2022 04:02:47 -0700 (PDT)
-Received: by mail-pg1-x532.google.com with SMTP id y187so21538464pgd.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Jun 2022 04:02:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=eA2rSMTUFSewTOnPsmOrnE6HCmgRpXaUuyafBR4ipFo=;
-        b=PhF2l/vtHVZjCKAqz4OpktNX8yi0juQT7/9mlOjaRI+WJ/8mFLlvmrChupswhPlMoa
-         bc7vMTDPOhZSuBdmsu8Ao+uRlmChD/jUJbcP2miIjzmjYzQ9L3TWeewo4w8AdkVg1o6p
-         4Y0jslyAC5Xw0nkFpxZEl70DVxJkswiTrwXxo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=eA2rSMTUFSewTOnPsmOrnE6HCmgRpXaUuyafBR4ipFo=;
-        b=z20UHpohRsJdQxdQR+p92DU2ML4i94pZfvs9+lp//i024IGG/zKUssHjzZpkp9vf/a
-         5MtNgEYDmDzlvMVyS3iIhPEqW84omR6XKtvfKCvbOVeJVR/kw/IFtbm2lGhM2JZQxUwR
-         BtZrZRLkz8pplIq6MIZLoq7YER4KAhbxeTIfL8A7AhuTItXi6IC7Is1yC4lnmmmCGmY5
-         LUxg881Ym8dc/9K2l99DMNDlLJtmPVvKW55k0XSOenBvKWQCqwzwYr32EMY6XibaMETt
-         1jPQc6v4TqeMlA8OnR8rTTI+GUyo92IdSCmjOB7OwGbBXx+/+FtNcwKlnVgYJJ+Sa9fW
-         c9kw==
-X-Gm-Message-State: AOAM533zip0DRobeo0HMS6BdOHD9ns8ccgKWohen4bWyWWF7BKLQR89N
-        mYwY1BsP8rMB5Ml47qnSVJBq6w==
-X-Google-Smtp-Source: ABdhPJyRD8M4C4AIWlnMkoCdrxA428zPc/65lMrKv7boT8iwH7ATo4M+sNcCYcjeZm4RCxc0iZEi5Q==
-X-Received: by 2002:a63:8242:0:b0:3fe:3601:747f with SMTP id w63-20020a638242000000b003fe3601747fmr6713986pgd.314.1654772567192;
-        Thu, 09 Jun 2022 04:02:47 -0700 (PDT)
-Received: from google.com ([240f:75:7537:3187:1572:8d44:6d26:109d])
-        by smtp.gmail.com with ESMTPSA id t1-20020a1709027fc100b00163f2f9f07csm194145plb.48.2022.06.09.04.02.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jun 2022 04:02:46 -0700 (PDT)
-Date:   Thu, 9 Jun 2022 20:02:41 +0900
-From:   Sergey Senozhatsky <senozhatsky@chromium.org>
-To:     Minchan Kim <minchan@kernel.org>
-Cc:     Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        regressions@lists.linux.dev, Jens Axboe <axboe@kernel.dk>,
-        Nitin Gupta <ngupta@vflare.org>
-Subject: Re: qemu-arm: zram: mkfs.ext4 : Unable to handle kernel NULL pointer
- dereference at virtual address 00000140
-Message-ID: <YqHTUdeZ8H0Lnf8E@google.com>
-References: <CA+G9fYtVOfWWpx96fa3zzKzBPKiNu1w3FOD4j++G8MOG3Vs0EA@mail.gmail.com>
- <Yp47DODPCz0kNgE8@google.com>
- <CA+G9fYsjn0zySHU4YYNJWAgkABuJuKtHty7ELHmN-+30VYgCDA@mail.gmail.com>
- <Yp/kpPA7GdbArXDo@google.com>
- <YqAL+HeZDk5Wug28@google.com>
- <YqAMmTiwcyS3Ttla@google.com>
- <YqEKapKLBgKEXGBg@google.com>
+        Thu, 9 Jun 2022 07:05:49 -0400
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5172F21A540;
+        Thu,  9 Jun 2022 04:05:48 -0700 (PDT)
+Received: from fraeml704-chm.china.huawei.com (unknown [172.18.147.206])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4LJh3F5cDyz689QR;
+        Thu,  9 Jun 2022 19:00:57 +0800 (CST)
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ fraeml704-chm.china.huawei.com (10.206.15.53) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2375.24; Thu, 9 Jun 2022 13:05:45 +0200
+Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
+ fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2375.024;
+ Thu, 9 Jun 2022 13:05:45 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     Eugeniu Rosca <erosca@de.adit-jv.com>
+CC:     Rob Landley <rob@landley.net>, "hpa@zytor.com" <hpa@zytor.com>,
+        "Masahiro Yamada" <masahiroy@kernel.org>,
+        Arvind Sankar <nivedita@alum.mit.edu>,
+        "Mimi Zohar" <zohar@linux.ibm.com>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "initramfs@vger.kernel.org" <initramfs@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bug-cpio@gnu.org" <bug-cpio@gnu.org>,
+        "zohar@linux.vnet.ibm.com" <zohar@linux.vnet.ibm.com>,
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@huawei.com>,
+        "takondra@cisco.com" <takondra@cisco.com>,
+        "kamensky@cisco.com" <kamensky@cisco.com>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "james.w.mcmechan@gmail.com" <james.w.mcmechan@gmail.com>,
+        "linux-kbuild@vger.kernel.org" <linux-kbuild@vger.kernel.org>,
+        Dirk Behme <dirk.behme@de.bosch.com>,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>
+Subject: RE: [PATCH v4 0/3] initramfs: add support for xattrs in the initial
+ ram disk
+Thread-Topic: [PATCH v4 0/3] initramfs: add support for xattrs in the initial
+ ram disk
+Thread-Index: AQHYe+tsPH1HC/8x8Uq7oovD5MPpKK1G5r2Q
+Date:   Thu, 9 Jun 2022 11:05:45 +0000
+Message-ID: <21b3aeab20554a30b9796b82cc58e55b@huawei.com>
+References: <20190523121803.21638-1-roberto.sassu@huawei.com>
+ <cf9d08ca-74c7-c945-5bf9-7c3495907d1e@huawei.com>
+ <541e9ea1-024f-5c22-0b58-f8692e6c1eb1@landley.net>
+ <33cfb804-6a17-39f0-92b7-01d54e9c452d@huawei.com>
+ <1561909199.3985.33.camel@linux.ibm.com>
+ <45164486-782f-a442-e442-6f56f9299c66@huawei.com>
+ <1561991485.4067.14.camel@linux.ibm.com>
+ <f85ed711-f583-51cd-34e2-80018a592280@huawei.com>
+ <0c17bf9e-9b0b-b067-cf18-24516315b682@huawei.com>
+ <20220609102627.GA3922@lxhi-065>
+In-Reply-To: <20220609102627.GA3922@lxhi-065>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.204.63.21]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YqEKapKLBgKEXGBg@google.com>
-X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
-        autolearn=ham autolearn_force=no version=3.4.6
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On (22/06/08 13:45), Minchan Kim wrote:
+> From: Eugeniu Rosca [mailto:erosca@de.adit-jv.com]
+> Sent: Thursday, June 9, 2022 12:26 PM
+> Dear Roberto,
+> Cc: Yamada-san, linux-kbuild
 > 
-> I am trying to understand the problem. AFAIK, the mapping_area was
-> static allocation per cpu so in zs_cpu_down, we never free the
-> mapping_area itself. Then, why do we need to reinitialize the local
-> lock again?
+> On Mi, Jul 24, 2019 at 05:34:53 +0200, Roberto Sassu wrote:
+> > Is there anything I didn't address in this patch set, that is delaying
+> > the review? I would appreciate if you can give me a feedback, positive
+> > or negative.
+> >
+> > Thanks a lot!
+> >
+> > Roberto
+> 
+> Some of our users have recently asked for this patch series.
 
-Well... Something zero-s out that memory. NULL deref in strcmp() in
-lockdep points at NULL ->name. So I'm merely testing my theories here.
-If it's not area lock then it's pool->migrate_lock?
+Hello
+
+thanks for your interest in this patch set.
+
+> Could you please feedback if this is the latest revision available or
+> maybe there is a newer one developed and potentially not shared on LKML?
+
+Yes, it is the latest revision available. There might have been few
+fixes in the final code. You may want to have a look at:
+
+https://github.com/openeuler-mirror/kernel/commit/888460f17775b62f77e33e774e6673587c61cabd
+https://github.com/openeuler-mirror/kernel/commit/4adaeecd5d23cc75ffd1883d9b677bbd67c535d1
+https://github.com/openeuler-mirror/kernel/commit/59db8952e91c2ac443bccdcacfd37ae94c49a259
+
+and:
+
+https://gitee.com/src-openeuler/cpio/blob/master/add-option-to-add-metadata-in-copy-out-mode.patch
+https://gitee.com/src-openeuler/cpio/blob/master/Fix-use-after-free-and-return-appropriate-error.patch
+
+Roberto
+
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Li Peng, Yang Xi, Li He
