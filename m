@@ -2,129 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E312F543DB0
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  8 Jun 2022 22:46:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B25D4544081
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jun 2022 02:22:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232823AbiFHUpg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jun 2022 16:45:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41730 "EHLO
+        id S236183AbiFIAWP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jun 2022 20:22:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40130 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232224AbiFHUpf (ORCPT
+        with ESMTP id S235988AbiFIAWN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jun 2022 16:45:35 -0400
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A2E9EBE88;
-        Wed,  8 Jun 2022 13:45:33 -0700 (PDT)
-Received: by mail-pj1-x1036.google.com with SMTP id k5-20020a17090a404500b001e8875e6242so8629322pjg.5;
-        Wed, 08 Jun 2022 13:45:33 -0700 (PDT)
+        Wed, 8 Jun 2022 20:22:13 -0400
+Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45E1F1116EA
+        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Jun 2022 17:22:13 -0700 (PDT)
+Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-31336535373so74953187b3.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Jun 2022 17:22:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=bTBDtpW2qpcmzetkuUn9+lFzWx5HLxWub8Bm7cJfh2o=;
-        b=Ebv8KX8PrhCbhkiUOwrYsdSxtwhEYjuLpaIcWDDUxSEhuOm5U2E/ijtPueb/kBf9on
-         UVGe3xTfppkY+qsf3Oc9TnYJjgyaLdovdnHfAF+PSF2bgjoDAg6x78SLsWc5kosawUIm
-         ZzVM6u3shW7LjAmkuYlKaJIyw6UX3eUeMYTugbSxHS+oUYBy/UW9b8m5mVg81JUUgPcD
-         1RV33HRC0GYVgdFGBeEgmIw3B5rDlmCPMYhChQVskDJcmSqmiN4TxJ41JOj/P5FUWDGb
-         lkMV7KEPpp0mCp4/P0mm97GwH7ojt8SUXm9n3engCy4mE4p/vFKnatudqpX5jbO0nOE/
-         CySg==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wAASEe2qSVRx5v90LFy0O2abfHE0hmvo9XEQ+358lUE=;
+        b=kwE/erjvbftBlQmQ/NLaQvC4qULKGZs0BrQFNg9Sfc+RjEnOOW7vJ5CxpERfsW0PY7
+         xB4S40cgclJVrsiGce/PIiddCW5JpeN7ycvsii7sw1il49TOPGxthiRnfrWZqcbA3Fya
+         IDu2PoBN2rbucDmMMQAp0Mtb4nlf9pwTBAj64=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to;
-        bh=bTBDtpW2qpcmzetkuUn9+lFzWx5HLxWub8Bm7cJfh2o=;
-        b=rlMfQoJNTs1+LUVxdFeuJ57sY5dE9BE9YMcTkNS0VVPiiALecP73AEzjLvfOzG4giS
-         mXA3bRae4+BIoNqeHyeQVtw5yht0iVoW6GEv9Dde5NmgdoHHcaQPlpbAtAZCklect9ix
-         6vr1qDWsAoj+uhjQWZ/bsjONzVw2N3YQiLaxPERihSyzGuTN5kqlhYPOTjGleWSobpMw
-         0hK3vNxv2wW3O+TOrL9qUokg5/nic4juckoSX5fETPQ+f3gt9loW8FxTGr+AWTUtP/eT
-         62CERHBiXTePu6jctzCHqvu0Kq5OV7XpmjDS2ag/9E9mqEVCYmO2Uz+A8PoSFlBPEIg7
-         AXBg==
-X-Gm-Message-State: AOAM530F8cUeeaPBvHTPZLJ8s8ANCH63Sm3RyZIY/et0L7VSV5ZR4y8G
-        BV+jjhlS12MJ96A/McxuWzY=
-X-Google-Smtp-Source: ABdhPJxWnOVLKSSb2udV5MEgFj+HgqKRxSGhFY7d0TphKFpZQyhmluBHlgWM/bio1Z4rR05TfrYjvA==
-X-Received: by 2002:a17:903:22c9:b0:163:e49d:648c with SMTP id y9-20020a17090322c900b00163e49d648cmr36311082plg.54.1654721132718;
-        Wed, 08 Jun 2022 13:45:32 -0700 (PDT)
-Received: from google.com ([2620:15c:211:201:f30f:4d03:66e6:b121])
-        by smtp.gmail.com with ESMTPSA id cj24-20020a056a00299800b0051bc1865ca5sm13796026pfb.122.2022.06.08.13.45.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jun 2022 13:45:32 -0700 (PDT)
-Sender: Minchan Kim <minchan.kim@gmail.com>
-Date:   Wed, 8 Jun 2022 13:45:30 -0700
-From:   Minchan Kim <minchan@kernel.org>
-To:     Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        regressions@lists.linux.dev, Jens Axboe <axboe@kernel.dk>,
-        Nitin Gupta <ngupta@vflare.org>
-Subject: Re: qemu-arm: zram: mkfs.ext4 : Unable to handle kernel NULL pointer
- dereference at virtual address 00000140
-Message-ID: <YqEKapKLBgKEXGBg@google.com>
-References: <CA+G9fYtVOfWWpx96fa3zzKzBPKiNu1w3FOD4j++G8MOG3Vs0EA@mail.gmail.com>
- <Yp47DODPCz0kNgE8@google.com>
- <CA+G9fYsjn0zySHU4YYNJWAgkABuJuKtHty7ELHmN-+30VYgCDA@mail.gmail.com>
- <Yp/kpPA7GdbArXDo@google.com>
- <YqAL+HeZDk5Wug28@google.com>
- <YqAMmTiwcyS3Ttla@google.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wAASEe2qSVRx5v90LFy0O2abfHE0hmvo9XEQ+358lUE=;
+        b=Kx3g5wnss73x8EhDVYUgO9fS1y3WCHzqsS2YzyJ3HNyEVGcI2DPBaRavsv37Gxz93h
+         auLY6SDlZCo04OP+puRHH3tTj0Cb2WL5yUeywwIikd1t/+EAEa1ndCbRnATgGaC1qIYR
+         CU4UpFOFoV24BXHiDlOgB1kMoF9kMCJmUItggSf6SxeBphjPWqKNAKUfnxcAQOT6ecjT
+         OXcmuT6ZCtWcjkFhwR+4jsMOmsRNJyoY/7nvqE/VpYovyDRnvX8VIJ6l0talcEhp8l70
+         3wpm0I56FRzgwidLCcYSSdQbBfxiuExoRpsdTBUqhtVNKTxoZgKznDMdwrfEFFrdJimK
+         ynWg==
+X-Gm-Message-State: AOAM533FuQkqTfjgZCT6iw0lsOKeGWyXHXoUaBQrYrFBkvvtYOqJgHCU
+        LBC6BtQIJhMPdE2kTz90uuXyd8ccumx9jpS+73FWXg==
+X-Google-Smtp-Source: ABdhPJxSq6eknAUuCjgJOBPmooxCXhCn9/o0F90u2gDHYkcU69KroNgXnGX9PlANl/ZQ6HFzIugNllXb74KORnf5gCc=
+X-Received: by 2002:a81:9206:0:b0:30c:2dfc:e9e with SMTP id
+ j6-20020a819206000000b0030c2dfc0e9emr38539273ywg.296.1654734132539; Wed, 08
+ Jun 2022 17:22:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YqAMmTiwcyS3Ttla@google.com>
-X-Spam-Status: No, score=-1.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no
-        version=3.4.6
+References: <20220601011103.12681-1-dlunev@google.com>
+In-Reply-To: <20220601011103.12681-1-dlunev@google.com>
+From:   Daniil Lunev <dlunev@chromium.org>
+Date:   Thu, 9 Jun 2022 10:22:01 +1000
+Message-ID: <CAONX=-ck0kfSpZhu8vBstmen1U++rzn0_HcntiWAWKE8FP+1UA@mail.gmail.com>
+Subject: Re: [PATCH v4 0/2] Prevent re-use of FUSE superblock after force unmount
+To:     miklos@szeredi.hu, viro@zeniv.linux.org.uk, tytso@mit.edu
+Cc:     linux-kernel@vger.kernel.org, fuse-devel@lists.sourceforge.net,
+        Daniil Lunev <dlunev@google.com>,
+        linux-fsdevel@vger.kernel.org, hch@infradead.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 08, 2022 at 11:42:33AM +0900, Sergey Senozhatsky wrote:
-> On (22/06/08 11:39), Sergey Senozhatsky wrote:
-> > On (22/06/07 16:52), Minchan Kim wrote:
-> > > > rootfs: https://oebuilds.tuxbuild.com/29zhlbEc3EWq2wod9Uy964Bp27q/images/am57xx-evm/rpb-console-image-lkft-am57xx-evm-20220601222434.rootfs.ext4.gz
-> > > > kernel: https://builds.tuxbuild.com/29zhqJJizU2Y7Ka7ArhryUOrNDC/zImage
-> > > > 
-> > > > Boot command,
-> > > >  /usr/bin/qemu-system-aarch64 -cpu host,aarch64=off -machine
-> > > > virt-2.10,accel=kvm -nographic -net
-> > > > nic,model=virtio,maaacaddr=BA:DD:AD:CC:09:04 -net tap -m 2048 -monitor
-> > > > none -kernel kernel/zImage --append "console=ttyAMA0 root=/dev/vda rw"
-> > > > -hda rootfs/rpb-console-image-lkft-am57xx-evm-20220601222434.rootfs.ext4
-> > > > -m 4096 -smp 2
-> > > > 
-> > > > # cd /opt/kselftests/default-in-kernel/zram
-> > > > # ./zram.sh
-> > > > 
-> > > > Allow me sometime I will try to bisect this problem.
-> > > 
-> > > Thanks for sharing the info. 
-> > > 
-> > > I managed to work your rootfs with my local arm build
-> > > based on the problematic git tip. 
-> > > However, I couldn't suceed to reproduce it.
-> > > 
-> > > I needed to build zsmalloc/zram built-in instead of modules
-> > > Is it related? Hmm,
-> > > 
-> > > Yeah, It would be very helpful if you could help to bisect it.
-> > 
-> > This looks like a NULL lock->name dereference in lockdep. I suspect
-> > that somehow local_lock doesn't get .dep_map initialized. Maybe running
-> > the kernel with CONFIG_DEBUG_LOCK_ALLOC would help us? Naresh, can you
-> > help us with this?
-> 
-> Hmm, actually, hold on. mapping_area is per-CPU, so what happens if CPU
-> get offlined and onlined again? I don't see us re-initializing mapping_area
-> local_lock_init(&zs_map_area.lock) and so on.
+Hi Miklos and Alexander,
+Do you have any more concerns or comments regarding the patchset or do
+you think we can proceed with it?
+--Daniil
 
-I am trying to understand the problem. AFAIK, the mapping_area was
-static allocation per cpu so in zs_cpu_down, we never free the
-mapping_area itself. Then, why do we need to reinitialize the local
-lock again?
+On Wed, Jun 1, 2022 at 11:11 AM Daniil Lunev <dlunev@chromium.org> wrote:
+>
+> Force unmount of fuse severes the connection between FUSE driver and its
+> userspace counterpart. However, open file handles will prevent the
+> superblock from being reclaimed. An attempt to remount the filesystem at
+> the same endpoint will try re-using the superblock, if still present.
+> Since the superblock re-use path doesn't go through the fs-specific
+> superblock setup code, its state in FUSE case is already disfunctional,
+> and that will prevent the mount from succeeding.
+>
+> Changes in v4:
+> - Simplify condition according to Christoph Hellwig's comments.
+>
+> Changes in v3:
+> - Back to state tracking from v1
+> - Use s_iflag to mark superblocked ignored
+> - Only unregister private bdi in retire, without freeing
+>
+> Changes in v2:
+> - Remove super from list of superblocks instead of using a flag
+>
+> Daniil Lunev (2):
+>   fs/super: function to prevent super re-use
+>   FUSE: Retire superblock on force unmount
+>
+>  fs/fuse/inode.c    |  7 +++++--
+>  fs/super.c         | 28 ++++++++++++++++++++++++++--
+>  include/linux/fs.h |  2 ++
+>  3 files changed, 33 insertions(+), 4 deletions(-)
+>
+> --
+> 2.31.0
+>
