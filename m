@@ -2,202 +2,267 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C1BC54424E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jun 2022 06:05:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87D4A544254
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jun 2022 06:07:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236703AbiFIEEq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Jun 2022 00:04:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37798 "EHLO
+        id S236839AbiFIEHN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Jun 2022 00:07:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49052 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229752AbiFIEEn (ORCPT
+        with ESMTP id S230137AbiFIEHJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Jun 2022 00:04:43 -0400
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 656FB1A4096
-        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Jun 2022 21:04:42 -0700 (PDT)
-Received: by mail-pj1-x1034.google.com with SMTP id q12-20020a17090a304c00b001e2d4fb0eb4so25596352pjl.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 08 Jun 2022 21:04:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=zY5mFinMaMydRM+H9UjtKkuWSUe8T7k3YskeQQPjglc=;
-        b=5pcuzgGc3KBBFq/TL1YCOhhPlIrvGxqmJS9pDZOYdOG1VGHxT+uZqf9JOa/4l1K6X5
-         092+6X4ZZO+JXbC4846duJGZd5Wq/uOAFkUeq2NAJ2U6oXcxvor25M8/SfcMktkETzH/
-         VUgKoR43Ka+v5PDqZYzLlChYpe24PNasEDGR9GsJepygHa7n0+SCzVXSIuGBxxHwFM6l
-         dngHYNvRBLMCxY5jYSBB4eAtY1IUsdAOZJNY7GNU7+aBOdX01+Jdp+vktzgtWKmb5saH
-         0NUlHFKxQzknqYr/D26kG/DXegbR0aA6vk/0i+YgfrR7aXTAO9qy0t/ykINGPvQwmZtQ
-         /RlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=zY5mFinMaMydRM+H9UjtKkuWSUe8T7k3YskeQQPjglc=;
-        b=jFDbbzBUjIuMlzMgVqW4DkpJoTegdyJiIR5yd2QAcDpvL/FV03OJ5lu0GKJVqNxSmV
-         arNdS3rgZzot5s6tnGULRLj6lLR1+AaH7IOBsoD5kCE0dt7Fz1OAUXsb1tpuLRnppzrf
-         A0YGySF+J5lpMDP0V6gQNS3nhdHiEHdubKQtymtJ0LODpdAdcsPxhAqfHdXEQ3c9a5xC
-         xNj2XQjLwV6uDE0SbP1S91hentMWbCO1qide+JRxwjPpdKuaUwm4kJ/0GrlwC6+jP0js
-         uU1rl2cwKFvKK4KxxyqTuLaWTrheGUzbnSj4/Dq5aRatKBfZl9fCxkHEtXwiGwNffjvo
-         QlVA==
-X-Gm-Message-State: AOAM53008zrOU/agt4QyGwQeHEX9pZ+2Fgvg/o1AV7g06bZAUFAzHcXb
-        L5nMT0x+b2JazbyCGuMvmPWekg==
-X-Google-Smtp-Source: ABdhPJwLD5D90RbLdd1NhQp9diUE2EhXlyXUqaO7S6k3tR7O5xwtfMN8z7LwN9K2fHURcGSStMdhCA==
-X-Received: by 2002:a17:903:228c:b0:163:baf6:582a with SMTP id b12-20020a170903228c00b00163baf6582amr37184890plh.43.1654747481887;
-        Wed, 08 Jun 2022 21:04:41 -0700 (PDT)
-Received: from FVFYT0MHHV2J.bytedance.net ([139.177.225.238])
-        by smtp.gmail.com with ESMTPSA id t5-20020a170902e84500b00163ffe73300sm15887049plg.137.2022.06.08.21.04.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jun 2022 21:04:41 -0700 (PDT)
-From:   Muchun Song <songmuchun@bytedance.com>
-To:     mcgrof@kernel.org, keescook@chromium.org, yzaikin@google.com,
-        akpm@linux-foundation.org, vbabka@suse.cz,
-        mgorman@techsingularity.net, peterz@infradead.org,
-        dhowells@redhat.com, willy@infradead.org, Liam.Howlett@Oracle.com,
-        kemi.wang@intel.com, mhocko@suse.com
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, Muchun Song <songmuchun@bytedance.com>,
-        stable@vger.kernel.org
-Subject: [PATCH] mm: sysctl: fix missing numa_stat when !CONFIG_HUGETLB_PAGE
-Date:   Thu,  9 Jun 2022 12:03:42 +0800
-Message-Id: <20220609040342.2703-1-songmuchun@bytedance.com>
-X-Mailer: git-send-email 2.32.1 (Apple Git-133)
+        Thu, 9 Jun 2022 00:07:09 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 539D93A4
+        for <linux-fsdevel@vger.kernel.org>; Wed,  8 Jun 2022 21:07:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1654747625;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=bfsgIEBSD3MKhVEVos6ZeDV40VyqPqMeZ8H4o3Wfok4=;
+        b=WwZaSdNJ7XF7qgCpbELdlMAEidfRy/wQp4y3ECbsnmlQNHLWNYjBl66sxwvWGivNq3YUgq
+        EnEBVJsCiyPOgE5TdX+cEbY3o5/9VseuZzGHP+2bwOjVomiTDFLaVw1vTOENlSh5oA3VEI
+        VYbpUY8utujyWNlUhTXv9/kAlkvfyUA=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-100-g3OkGcopPEOm5tDSln5Oew-1; Thu, 09 Jun 2022 00:07:01 -0400
+X-MC-Unique: g3OkGcopPEOm5tDSln5Oew-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A8977800124;
+        Thu,  9 Jun 2022 04:07:00 +0000 (UTC)
+Received: from T590 (ovpn-8-17.pek2.redhat.com [10.72.8.17])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4B28040EC002;
+        Thu,  9 Jun 2022 04:06:54 +0000 (UTC)
+Date:   Thu, 9 Jun 2022 12:06:48 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        lsf-pc@lists.linux-foundation.org, linux-block@vger.kernel.org,
+        Pavel Machek <pavel@ucw.cz>, linux-fsdevel@vger.kernel.org
+Subject: Re: [LSF/MM/BPF TOPIC] block drivers in user space
+Message-ID: <YqFx2GGACopPmLaM@T590>
+References: <YhXMu/GcceyDx637@B-P7TQMD6M-0146.local>
+ <a55211a1-a610-3d86-e21a-98751f20f21e@opensource.wdc.com>
+ <YhXsQdkOpBY2nmFG@B-P7TQMD6M-0146.local>
+ <3702afe7-2918-42e7-110b-efa75c0b58e8@opensource.wdc.com>
+ <YhbYOeMUv5+U1XdQ@B-P7TQMD6M-0146.local>
+ <YqFUc8jhYp5ijS/C@T590>
+ <YqFashbvU+v5lGZy@B-P7TQMD6M-0146.local>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YqFashbvU+v5lGZy@B-P7TQMD6M-0146.local>
+X-Scanned-By: MIMEDefang 2.84 on 10.11.54.2
+X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-"numa_stat" should not be included in the scope of CONFIG_HUGETLB_PAGE,
-if CONFIG_HUGETLB_PAGE is not configured even if CONFIG_NUMA is configured,
-"numa_stat" is missed form /proc.  Remove it out of CONFIG_HUGETLB_PAGE
-and move numa_stat sysctl handling to mm/vmstat.c.
+On Thu, Jun 09, 2022 at 10:28:02AM +0800, Gao Xiang wrote:
+> On Thu, Jun 09, 2022 at 10:01:23AM +0800, Ming Lei wrote:
+> > On Thu, Feb 24, 2022 at 08:58:33AM +0800, Gao Xiang wrote:
+> > > On Thu, Feb 24, 2022 at 07:40:47AM +0900, Damien Le Moal wrote:
+> > > > On 2/23/22 17:11, Gao Xiang wrote:
+> > > > > On Wed, Feb 23, 2022 at 04:46:41PM +0900, Damien Le Moal wrote:
+> > > > >> On 2/23/22 14:57, Gao Xiang wrote:
+> > > > >>> On Mon, Feb 21, 2022 at 02:59:48PM -0500, Gabriel Krisman Bertazi wrote:
+> > > > >>>> I'd like to discuss an interface to implement user space block devices,
+> > > > >>>> while avoiding local network NBD solutions.  There has been reiterated
+> > > > >>>> interest in the topic, both from researchers [1] and from the community,
+> > > > >>>> including a proposed session in LSFMM2018 [2] (though I don't think it
+> > > > >>>> happened).
+> > > > >>>>
+> > > > >>>> I've been working on top of the Google iblock implementation to find
+> > > > >>>> something upstreamable and would like to present my design and gather
+> > > > >>>> feedback on some points, in particular zero-copy and overall user space
+> > > > >>>> interface.
+> > > > >>>>
+> > > > >>>> The design I'm pending towards uses special fds opened by the driver to
+> > > > >>>> transfer data to/from the block driver, preferably through direct
+> > > > >>>> splicing as much as possible, to keep data only in kernel space.  This
+> > > > >>>> is because, in my use case, the driver usually only manipulates
+> > > > >>>> metadata, while data is forwarded directly through the network, or
+> > > > >>>> similar. It would be neat if we can leverage the existing
+> > > > >>>> splice/copy_file_range syscalls such that we don't ever need to bring
+> > > > >>>> disk data to user space, if we can avoid it.  I've also experimented
+> > > > >>>> with regular pipes, But I found no way around keeping a lot of pipes
+> > > > >>>> opened, one for each possible command 'slot'.
+> > > > >>>>
+> > > > >>>> [1] https://dl.acm.org/doi/10.1145/3456727.3463768
+> > > > >>>> [2] https://www.spinics.net/lists/linux-fsdevel/msg120674.html
+> > > > >>>
+> > > > >>> I'm interested in this general topic too. One of our use cases is
+> > > > >>> that we need to process network data in some degree since many
+> > > > >>> protocols are application layer protocols so it seems more reasonable
+> > > > >>> to process such protocols in userspace. And another difference is that
+> > > > >>> we may have thousands of devices in a machine since we'd better to run
+> > > > >>> containers as many as possible so the block device solution seems
+> > > > >>> suboptimal to us. Yet I'm still interested in this topic to get more
+> > > > >>> ideas.
+> > > > >>>
+> > > > >>> Btw, As for general userspace block device solutions, IMHO, there could
+> > > > >>> be some deadlock issues out of direct reclaim, writeback, and userspace
+> > > > >>> implementation due to writeback user requests can be tripped back to
+> > > > >>> the kernel side (even the dependency crosses threads). I think they are
+> > > > >>> somewhat hard to fix with user block device solutions. For example,
+> > > > >>> https://lore.kernel.org/r/CAM1OiDPxh0B1sXkyGCSTEpdgDd196-ftzLE-ocnM8Jd2F9w7AA@mail.gmail.com
+> > > > >>
+> > > > >> This is already fixed with prctl() support. See:
+> > > > >>
+> > > > >> https://lore.kernel.org/linux-fsdevel/20191112001900.9206-1-mchristi@redhat.com/
+> > > > > 
+> > > > > As I mentioned above, IMHO, we could add some per-task state to avoid
+> > > > > the majority of such deadlock cases (also what I mentioned above), but
+> > > > > there may still some potential dependency could happen between threads,
+> > > > > such as using another kernel workqueue and waiting on it (in principle
+> > > > > at least) since userspace program can call any syscall in principle (
+> > > > > which doesn't like in-kernel drivers). So I think it can cause some
+> > > > > risk due to generic userspace block device restriction, please kindly
+> > > > > correct me if I'm wrong.
+> > > > 
+> > > > Not sure what you mean with all this. prctl() works per process/thread
+> > > > and a context that has PR_SET_IO_FLUSHER set will have PF_MEMALLOC_NOIO
+> > > > set. So for the case of a user block device driver, setting this means
+> > > > that it cannot reenter itself during a memory allocation, regardless of
+> > > > the system call it executes (FS etc): all memory allocations in any
+> > > > syscall executed by the context will have GFP_NOIO.
+> > > 
+> > > I mean,
+> > > 
+> > > assuming PR_SET_IO_FLUSHER is already set on Thread A by using prctl,
+> > > but since it can call any valid system call, therefore, after it
+> > > received data due to direct reclaim and writeback, it is still
+> > > allowed to call some system call which may do something as follows:
+> > > 
+> > >    Thread A (PR_SET_IO_FLUSHER)   Kernel thread B (another context)
+> > > 
+> > >    (call some syscall which)
+> > > 
+> > >    submit something to Thread B
+> > >                                   
+> > >                                   ... (do something)
+> > > 
+> > >                                   memory allocation with GFP_KERNEL (it
+> > >                                   may trigger direct memory reclaim
+> > >                                   again and reenter the original fs.)
+> > > 
+> > >                                   wake up Thread A
+> > > 
+> > >    wait Thread B to complete
+> > > 
+> > > Normally such system call won't cause any problem since userspace
+> > > programs cannot be in a context out of writeback and direct reclaim.
+> > > Yet I'm not sure if it works under userspace block driver
+> > > writeback/direct reclaim cases.
+> > 
+> > Hi Gao Xiang,
+> > 
+> > I'd rather to reply you in this original thread, and the recent
+> > discussion is from the following link:
+> > 
+> > https://lore.kernel.org/linux-block/Yp1jRw6kiUf5jCrW@B-P7TQMD6M-0146.local/
+> > 
+> > kernel loop & nbd is really in the same situation.
+> > 
+> > For example of kernel loop, PF_MEMALLOC_NOIO is added in commit
+> > d0a255e795ab ("loop: set PF_MEMALLOC_NOIO for the worker thread"),
+> > so loop's worker thread can be thought as the above Thread A, and
+> > of course, writeback/swapout IO can reach the loop worker thread(
+> > the above Thread A), then loop just calls into FS from the worker
+> > thread for handling the loop IO, that is same with user space driver's
+> > case, and the kernel 'thread B' should be in FS code.
+> > 
+> > Your theory might be true, but it does depend on FS's implementation,
+> > and we don't see such report in reality.
+> > 
+> > Also you didn't mentioned that what kernel thread B exactly is? And what
+> > the allocation is in kernel thread B.
+> > 
+> > If you have actual report, I am happy to take account into it, otherwise not
+> > sure if it is worth of time/effort in thinking/addressing one pure theoretical
+> > concern.
+> 
+> Hi Ming,
+> 
+> Thanks for your look & reply.
+> 
+> That is not a wild guess. That is a basic difference between
+> in-kernel native block-based drivers and user-space block drivers.
 
-Fixes: 4518085e127d ("mm, sysctl: make NUMA stats configurable")
-Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-Cc: <stable@vger.kernel.org>
----
- include/linux/vmstat.h |  5 -----
- kernel/sysctl.c        |  9 ---------
- mm/vmstat.c            | 52 +++++++++++++++++++++++++-------------------------
- 3 files changed, 26 insertions(+), 40 deletions(-)
+Please look at my comment, wrt. your pure theoretical concern, userspace
+block driver is same with kernel loop/nbd.
 
-diff --git a/include/linux/vmstat.h b/include/linux/vmstat.h
-index bfe38869498d..1297a6b8ba23 100644
---- a/include/linux/vmstat.h
-+++ b/include/linux/vmstat.h
-@@ -13,12 +13,7 @@
- extern int sysctl_stat_interval;
- 
- #ifdef CONFIG_NUMA
--#define ENABLE_NUMA_STAT   1
--#define DISABLE_NUMA_STAT   0
--extern int sysctl_vm_numa_stat;
- DECLARE_STATIC_KEY_TRUE(vm_numa_stat_key);
--int sysctl_vm_numa_stat_handler(struct ctl_table *table, int write,
--		void *buffer, size_t *length, loff_t *ppos);
- #endif
- 
- struct reclaim_stat {
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index e52b6e372c60..3d6f36f230bb 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -2107,15 +2107,6 @@ static struct ctl_table vm_table[] = {
- 		.mode           = 0644,
- 		.proc_handler   = &hugetlb_mempolicy_sysctl_handler,
- 	},
--	{
--		.procname		= "numa_stat",
--		.data			= &sysctl_vm_numa_stat,
--		.maxlen			= sizeof(int),
--		.mode			= 0644,
--		.proc_handler	= sysctl_vm_numa_stat_handler,
--		.extra1			= SYSCTL_ZERO,
--		.extra2			= SYSCTL_ONE,
--	},
- #endif
- 	 {
- 		.procname	= "hugetlb_shm_group",
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index 373d2730fcf2..e10afbee888e 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -33,8 +33,6 @@
- #include "internal.h"
- 
- #ifdef CONFIG_NUMA
--int sysctl_vm_numa_stat = ENABLE_NUMA_STAT;
--
- /* zero numa counters within a zone */
- static void zero_zone_numa_counters(struct zone *zone)
- {
-@@ -73,35 +71,37 @@ static void invalid_numa_statistics(void)
- 	zero_global_numa_counters();
- }
- 
--static DEFINE_MUTEX(vm_numa_stat_lock);
--
--int sysctl_vm_numa_stat_handler(struct ctl_table *table, int write,
--		void *buffer, size_t *length, loff_t *ppos)
-+static int sysctl_numa_stat_handler(struct ctl_table *table, int write,
-+				    void *buffer, size_t *length, loff_t *ppos)
- {
--	int ret, oldval;
-+	int ret;
-+	struct static_key *key = table->data;
-+	static DEFINE_MUTEX(lock);
- 
--	mutex_lock(&vm_numa_stat_lock);
--	if (write)
--		oldval = sysctl_vm_numa_stat;
--	ret = proc_dointvec_minmax(table, write, buffer, length, ppos);
--	if (ret || !write)
--		goto out;
--
--	if (oldval == sysctl_vm_numa_stat)
--		goto out;
--	else if (sysctl_vm_numa_stat == ENABLE_NUMA_STAT) {
--		static_branch_enable(&vm_numa_stat_key);
--		pr_info("enable numa statistics\n");
--	} else {
--		static_branch_disable(&vm_numa_stat_key);
-+	mutex_lock(&lock);
-+	ret = proc_do_static_key(table, write, buffer, length, ppos);
-+	if (!ret && write && !static_key_enabled(key))
- 		invalid_numa_statistics();
--		pr_info("disable numa statistics, and clear numa counters\n");
--	}
--
--out:
--	mutex_unlock(&vm_numa_stat_lock);
-+	mutex_unlock(&lock);
- 	return ret;
- }
-+
-+static struct ctl_table numa_stat_sysctl[] = {
-+	{
-+		.procname	= "numa_stat",
-+		.data		= &vm_numa_stat_key.key,
-+		.mode		= 0644,
-+		.proc_handler	= sysctl_numa_stat_handler,
-+	},
-+	{ }
-+};
-+
-+static int __init numa_stat_sysctl_init(void)
-+{
-+	register_sysctl_init("vm", numa_stat_sysctl);
-+	return 0;
-+}
-+late_initcall(numa_stat_sysctl_init);
- #endif
- 
- #ifdef CONFIG_VM_EVENT_COUNTERS
--- 
-2.11.0
+Did you see such report on loop & nbd? Can you answer my questions wrt.
+kernel thread B?
+
+> 
+> That is userspace block driver can call _any_ system call if they want.
+> Since users can call any system call and any _new_ system call can be
+> introduced later, you have to audit all system calls "Which are safe
+> and which are _not_ safe" all the time. Otherwise, attacker can make
+
+Isn't nbd server capable of calling any system call? Is there any
+security risk for nbd?
+
+> use of it to hung the system if such userspace driver is used widely.
+
+From the beginning, only ADMIN can create ubd, that is same with
+nbd/loop, and it gets default permission as disk device.
+
+ubd is really in same situation with nbd wrt. security, the only difference
+is just that nbd uses socket for communication, and ubd uses io_uring, that
+is all.
+
+Yeah, Stefan Hajnoczi and I discussed to make ubd as one container
+block device, so normal user can create & use ubd, but it won't be done
+from the beginning, and won't be enabled until the potential security
+risks are addressed, and there should be more limits on ubd when normal user
+can create & use it, such as:
+
+- not allow unprivileged ubd device to be mounted
+- not allow unprivileged ubd device's partition table to be read from
+  kernel
+- not support buffered io for unprivileged ubd device, and only direct io
+  is allowed
+- maybe more limit for minimizing security risk.
+
+> 
+> IOWs, in my humble opinion, that is quite a fundamental security
+> concern of all userspace block drivers.
+
+But nbd is still there and widely used, and there are lots of people who
+shows interest in userspace block device. Then think about who is wrong?
+
+As one userspace block driver, it is normal to see some limits there,
+but I don't agree that there is fundamental security issue.
+
+> 
+> Actually, you cannot ignore block I/O requests if they actually push
+
+Who wants to ignore block I/O? And why ignore it?
+
+> into block layer, since that is too late if I/O actually is submitted
+> by some FS. And you don't even know which type of such I/O is.
+
+We do know the I/O type.
+
+> 
+> On the other side, user-space FS implementations can avoid this since
+> FS can know if under direct reclaim and don't do such I/O requests.
+
+But it is nothing to do with userspace block device.
+
+
+
+Thanks,
+Ming
 
