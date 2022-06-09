@@ -2,119 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D81915440AB
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jun 2022 02:53:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55E905440C7
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jun 2022 03:00:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229720AbiFIAxT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 8 Jun 2022 20:53:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33806 "EHLO
+        id S236552AbiFIA7z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 8 Jun 2022 20:59:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229520AbiFIAxS (ORCPT
+        with ESMTP id S236535AbiFIA7v (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 8 Jun 2022 20:53:18 -0400
-Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id AF09A4B875;
-        Wed,  8 Jun 2022 17:53:16 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-2-147.pa.nsw.optusnet.com.au [49.181.2.147])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 1A22E10E70BC;
-        Thu,  9 Jun 2022 10:53:15 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1nz6QD-004Mhp-7R; Thu, 09 Jun 2022 10:53:13 +1000
-Date:   Thu, 9 Jun 2022 10:53:13 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Chris Mason <clm@fb.com>
-Cc:     djwong@kernel.org, hch@infradead.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org
-Subject: Re: [PATCH v2] iomap: skip pages past eof in iomap_do_writepage()
-Message-ID: <20220609005313.GX227878@dread.disaster.area>
-References: <20220608004228.3658429-1-clm@fb.com>
+        Wed, 8 Jun 2022 20:59:51 -0400
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 818AE27CE1;
+        Wed,  8 Jun 2022 17:59:50 -0700 (PDT)
+Received: from dggemv703-chm.china.huawei.com (unknown [172.30.72.56])
+        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4LJQjF3fPzz8wyG;
+        Thu,  9 Jun 2022 08:59:29 +0800 (CST)
+Received: from kwepemm600009.china.huawei.com (7.193.23.164) by
+ dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Thu, 9 Jun 2022 08:59:48 +0800
+Received: from [10.174.176.73] (10.174.176.73) by
+ kwepemm600009.china.huawei.com (7.193.23.164) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Thu, 9 Jun 2022 08:59:47 +0800
+Subject: Re: [PATCH -next] mm/filemap: fix that first page is not mark
+ accessed in filemap_read()
+To:     <willy@infradead.org>, <akpm@linux-foundation.org>,
+        <kent.overstreet@gmail.com>
+CC:     <axboe@kernel.dk>, <linux-fsdevel@vger.kernel.org>,
+        <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+        <yi.zhang@huawei.com>
+References: <20220602082129.2805890-1-yukuai3@huawei.com>
+From:   Yu Kuai <yukuai3@huawei.com>
+Message-ID: <abb3ec4c-ee22-0132-4c60-bc15e9871527@huawei.com>
+Date:   Thu, 9 Jun 2022 08:59:47 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220608004228.3658429-1-clm@fb.com>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=VuxAv86n c=1 sm=1 tr=0 ts=62a1447c
-        a=ivVLWpVy4j68lT4lJFbQgw==:117 a=ivVLWpVy4j68lT4lJFbQgw==:17
-        a=kj9zAlcOel0A:10 a=JPEYwPQDsx4A:10 a=20KFwNOVAAAA:8 a=7-415B0cAAAA:8
-        a=aaJEA_Hj0o49BXF2jZMA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_PASS,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <20220602082129.2805890-1-yukuai3@huawei.com>
+Content-Type: text/plain; charset="gbk"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.174.176.73]
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemm600009.china.huawei.com (7.193.23.164)
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-5.4 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 07, 2022 at 05:42:29PM -0700, Chris Mason wrote:
-> iomap_do_writepage() sends pages past i_size through
-> folio_redirty_for_writepage(), which normally isn't a problem because
-> truncate and friends clean them very quickly.
+friendly ping ...
+
+ÔÚ 2022/06/02 16:21, Yu Kuai Ð´µÀ:
+> In filemap_read(), 'ra->prev_pos' is set to 'iocb->ki_pos + copied',
+> while it should be 'iocb->ki_ops'. For consequence,
+> folio_mark_accessed() will not be called for 'fbatch.folios[0]' since
+> 'iocb->ki_pos' is always equal to 'ra->prev_pos'.
 > 
-> When the system has cgroups configured, we can end up in situations
-> where one cgroup has almost no dirty pages at all, and other cgroups
-> consume the entire background dirty limit.  This is especially common in
-> our XFS workloads in production because they have cgroups using O_DIRECT
-> for almost all of the IO mixed in with cgroups that do more traditional
-> buffered IO work.
+> Fixes: 06c0444290ce ("mm/filemap.c: generic_file_buffered_read() now uses find_get_pages_contig")
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> ---
+>   mm/filemap.c | 9 +++++----
+>   1 file changed, 5 insertions(+), 4 deletions(-)
 > 
-> We've hit storms where the redirty path hits millions of times in a few
-> seconds, on all a single file that's only ~40 pages long.  This leads to
-> long tail latencies for file writes because the pdflush workers are
-> hogging the CPU from some kworkers bound to the same CPU.
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index 9daeaab36081..0b776e504d35 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -2728,10 +2728,11 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
+>   				flush_dcache_folio(folio);
+>   
+>   			copied = copy_folio_to_iter(folio, offset, bytes, iter);
+> -
+> -			already_read += copied;
+> -			iocb->ki_pos += copied;
+> -			ra->prev_pos = iocb->ki_pos;
+> +			if (copied) {
+> +				ra->prev_pos = iocb->ki_pos;
+> +				already_read += copied;
+> +				iocb->ki_pos += copied;
+> +			}
+>   
+>   			if (copied < bytes) {
+>   				error = -EFAULT;
 > 
-> Reproducing this on 5.18 was tricky because 869ae85dae ("xfs: flush new
-> eof page on truncate...") ends up writing/waiting most of these dirty pages
-> before truncate gets a chance to wait on them.
-
-That commit went into 5.10, so this would mean it's not easily
-reproducable on kernels released since then?
-
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 8ce8720093b9..64d1476c457d 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -1482,10 +1482,10 @@ iomap_do_writepage(struct page *page, struct writeback_control *wbc, void *data)
->  		pgoff_t end_index = isize >> PAGE_SHIFT;
->  
->  		/*
-> -		 * Skip the page if it's fully outside i_size, e.g. due to a
-> -		 * truncate operation that's in progress. We must redirty the
-> -		 * page so that reclaim stops reclaiming it. Otherwise
-> -		 * iomap_vm_releasepage() is called on it and gets confused.
-> +		 * Skip the page if it's fully outside i_size, e.g.
-> +		 * due to a truncate operation that's in progress.  We've
-> +		 * cleaned this page and truncate will finish things off for
-> +		 * us.
->  		 *
->  		 * Note that the end_index is unsigned long.  If the given
->  		 * offset is greater than 16TB on a 32-bit system then if we
-> @@ -1500,7 +1500,7 @@ iomap_do_writepage(struct page *page, struct writeback_control *wbc, void *data)
->  		 */
->  		if (folio->index > end_index ||
->  		    (folio->index == end_index && poff == 0))
-> -			goto redirty;
-> +			goto unlock;
->  
->  		/*
->  		 * The page straddles i_size.  It must be zeroed out on each
-> @@ -1518,6 +1518,7 @@ iomap_do_writepage(struct page *page, struct writeback_control *wbc, void *data)
->  
->  redirty:
->  	folio_redirty_for_writepage(wbc, folio);
-> +unlock:
->  	folio_unlock(folio);
->  	return 0;
->  }
-
-Regardless, the change looks fine.
-
-Reviewed-by: Dave Chinner <dchinner@redhat.com>
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
