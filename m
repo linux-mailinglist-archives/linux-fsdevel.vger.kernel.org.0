@@ -2,91 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BA222545806
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jun 2022 01:09:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9E1A545881
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jun 2022 01:19:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345895AbiFIXJi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Jun 2022 19:09:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48136 "EHLO
+        id S1346161AbiFIXS6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Jun 2022 19:18:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345214AbiFIXJg (ORCPT
+        with ESMTP id S1345664AbiFIXSz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Jun 2022 19:09:36 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75DF1E86C2;
-        Thu,  9 Jun 2022 16:09:33 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        Thu, 9 Jun 2022 19:18:55 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AE5E202D09;
+        Thu,  9 Jun 2022 16:18:46 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id A49541FF09;
-        Thu,  9 Jun 2022 23:09:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1654816172;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=qJ6CI0mpfkDIaS/pnwJC/3BIuCFzValbcslJLDqCmdg=;
-        b=I4/06b2ltiKrPbL7GgKqUfyrBDeCyX3UBUG59EJr4ULzJeSHMklpbChcFfJ1kbSeucBXix
-        La6qOv94FBGz6zARxy9vvZ/rfr+o4fJAO1+4sOg84lO5ESeVeDRRH4GNx2iw82Lzfy4RBp
-        n/81rXgBPEK2N99/Wl5n9BN9FjCnnSs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1654816172;
-        h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-         cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=qJ6CI0mpfkDIaS/pnwJC/3BIuCFzValbcslJLDqCmdg=;
-        b=L3W4XRXz86YAqVEeWGz5ZqCwllS9CYkUvRzkZLgLEjLQjJDb2qGw16RPUqD736ufsddkqi
-        GP6X1OhCsdJk3BBQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 31C9113456;
-        Thu,  9 Jun 2022 23:09:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id kuItC6x9omLpJgAAMHmgww
-        (envelope-from <dsterba@suse.cz>); Thu, 09 Jun 2022 23:09:32 +0000
-Date:   Fri, 10 Jun 2022 01:05:01 +0200
-From:   David Sterba <dsterba@suse.cz>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     dsterba@suse.cz, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-aio@kvack.org, linux-btrfs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        cluster-devel@redhat.com, linux-mm@kvack.org,
-        linux-xfs@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-ntfs-dev@lists.sourceforge.net, ocfs2-devel@oss.oracle.com,
-        linux-mtd@lists.infradead.org,
-        virtualization@lists.linux-foundation.org,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v2 12/19] btrfs: Convert btrfs_migratepage to
- migrate_folio
-Message-ID: <20220609230501.GY20633@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-aio@kvack.org,
-        linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        linux-mm@kvack.org, linux-xfs@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
-        ocfs2-devel@oss.oracle.com, linux-mtd@lists.infradead.org,
-        virtualization@lists.linux-foundation.org,
-        Christoph Hellwig <hch@lst.de>
-References: <20220608150249.3033815-1-willy@infradead.org>
- <20220608150249.3033815-13-willy@infradead.org>
- <20220609163323.GV20633@twin.jikos.cz>
- <YqIwjEO1a0Sbxbym@casper.infradead.org>
+        by ams.source.kernel.org (Postfix) with ESMTPS id 29401B82D85;
+        Thu,  9 Jun 2022 23:18:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 580E0C34114;
+        Thu,  9 Jun 2022 23:18:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1654816723;
+        bh=jV7HoOubF6PTB2ncQUr11grjqLBwpz0PFhGJjzU5azE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=GFF+OvYad586MW1XA098aEQbKkZR/csWDoiuq1bsWvvpmFu96w9PTb+Q1L3yeRM1m
+         VAQ+RTjn4X2LdsCEMPHLp+CNprlppcO5JeRczRLxBIU1dqd7wuwnMztQ1p3TivfCv7
+         QeuvQoxzm+hJduo9ugf698Ws4UIxvWCW5t02Dp5WudTA0MgpCC3Xr4bMlV1XSyXC+w
+         82JghlyQfOk4n9LKvTCSGs7c1YyjvAUNaU6cQwM0Eam2KZQWOo9xuw5GAsvw09pIWK
+         aSXRHVRr6b1g0LBCSakH0Z+xC/42BzxxKYxyGQqii4lUPxH4F4ECgdxEZl6EY1sRJW
+         ilwdH5o4JlgeA==
+Date:   Thu, 9 Jun 2022 16:18:41 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Frederick Lawler <fred@cloudflare.com>
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-cachefs@redhat.com, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-mm@kvack.org,
+        linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        keyrings@vger.kernel.org, selinux@vger.kernel.org,
+        serge@hallyn.com, amir73il@gmail.com, kernel-team@cloudflare.com,
+        Jeff Moyer <jmoyer@redhat.com>,
+        Paul Moore <paul@paul-moore.com>
+Subject: Re: [PATCH v3] cred: Propagate security_prepare_creds() error code
+Message-ID: <YqJ/0W3wxPThWqgC@sol.localdomain>
+References: <20220608150942.776446-1-fred@cloudflare.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YqIwjEO1a0Sbxbym@casper.infradead.org>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
+In-Reply-To: <20220608150942.776446-1-fred@cloudflare.com>
+X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -94,40 +62,109 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 09, 2022 at 06:40:28PM +0100, Matthew Wilcox wrote:
-> On Thu, Jun 09, 2022 at 06:33:23PM +0200, David Sterba wrote:
-> > On Wed, Jun 08, 2022 at 04:02:42PM +0100, Matthew Wilcox (Oracle) wrote:
-> > > Use filemap_migrate_folio() to do the bulk of the work, and then copy
-> > > the ordered flag across if needed.
-> > > 
-> > > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> > > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > 
-> > Acked-by: David Sterba <dsterba@suse.com>
-> > 
-> > > +static int btrfs_migrate_folio(struct address_space *mapping,
-> > > +			     struct folio *dst, struct folio *src,
-> > >  			     enum migrate_mode mode)
-> > >  {
-> > > -	int ret;
-> > > +	int ret = filemap_migrate_folio(mapping, dst, src, mode);
-> > >  
-> > > -	ret = migrate_page_move_mapping(mapping, newpage, page, 0);
-> > >  	if (ret != MIGRATEPAGE_SUCCESS)
-> > >  		return ret;
-> > >  
-> > > -	if (page_has_private(page))
-> > > -		attach_page_private(newpage, detach_page_private(page));
-> > 
-> > If I'm reading it correctly, the private pointer does not need to be set
-> > like that anymore because it's done somewhere during the
-> > filemap_migrate_folio() call.
-> 
-> That's correct.  Everything except moving the ordered flag across is
-> done for you, and I'm kind of tempted to modify folio_migrate_flags()
-> to copy the ordered flag across as well.  Then you could just use
-> filemap_migrate_folio() directly.
+On Wed, Jun 08, 2022 at 10:09:42AM -0500, Frederick Lawler wrote:
+> diff --git a/fs/aio.c b/fs/aio.c
+> index 3c249b938632..5abbe88c3ca7 100644
+> --- a/fs/aio.c
+> +++ b/fs/aio.c
+> @@ -1620,6 +1620,8 @@ static void aio_fsync_work(struct work_struct *work)
+>  static int aio_fsync(struct fsync_iocb *req, const struct iocb *iocb,
+>  		     bool datasync)
+>  {
+> +	int err;
+> +
+>  	if (unlikely(iocb->aio_buf || iocb->aio_offset || iocb->aio_nbytes ||
+>  			iocb->aio_rw_flags))
+>  		return -EINVAL;
+> @@ -1628,8 +1630,11 @@ static int aio_fsync(struct fsync_iocb *req, const struct iocb *iocb,
+>  		return -EINVAL;
+>  
+>  	req->creds = prepare_creds();
+> -	if (!req->creds)
+> -		return -ENOMEM;
+> +	if (IS_ERR(req->creds)) {
+> +		err = PTR_ERR(req->creds);
+> +		req->creds = NULL;
+> +		return err;
+> +	}
 
-Either way it works for me. If it would mean an unsafe change in folios
-or complicate other code I'm fine with the migration callback that
-does additional work for btrfs that could be changed later.
+This part is a little ugly.  How about doing:
+
+	creds = prepare_creds();
+	if (IS_ERR(creds))
+		return PTR_ERR(creds);
+	req->creds = creds;
+
+> diff --git a/fs/exec.c b/fs/exec.c
+> index 0989fb8472a1..02624783e40e 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -1468,15 +1468,19 @@ EXPORT_SYMBOL(finalize_exec);
+>   */
+>  static int prepare_bprm_creds(struct linux_binprm *bprm)
+>  {
+> +	int err = -ERESTARTNOINTR;
+>  	if (mutex_lock_interruptible(&current->signal->cred_guard_mutex))
+> -		return -ERESTARTNOINTR;
+> +		return err;
+>  
+>  	bprm->cred = prepare_exec_creds();
+> -	if (likely(bprm->cred))
+> -		return 0;
+> +	if (IS_ERR(bprm->cred)) {
+> +		err = PTR_ERR(bprm->cred);
+> +		bprm->cred = NULL;
+> +		mutex_unlock(&current->signal->cred_guard_mutex);
+> +		return err;
+> +	}
+>  
+> -	mutex_unlock(&current->signal->cred_guard_mutex);
+> -	return -ENOMEM;
+> +	return 0;
+>  }
+
+Similarly:
+
+static int prepare_bprm_creds(struct linux_binprm *bprm)
+{
+	struct cred *cred;
+
+	if (mutex_lock_interruptible(&current->signal->cred_guard_mutex))
+		return -ERESTARTNOINTR;
+
+	cred = prepare_exec_creds();
+	if (IS_ERR(cred)) {
+		mutex_unlock(&current->signal->cred_guard_mutex);
+		return PTR_ERR(cred);
+	}
+	bprm->cred = cred;
+	return 0;
+}
+
+> diff --git a/kernel/nsproxy.c b/kernel/nsproxy.c
+> index eec72ca962e2..6cf75aa83b6c 100644
+> --- a/kernel/nsproxy.c
+> +++ b/kernel/nsproxy.c
+> @@ -311,6 +311,7 @@ static void put_nsset(struct nsset *nsset)
+>  
+>  static int prepare_nsset(unsigned flags, struct nsset *nsset)
+>  {
+> +	int err = -ENOMEM;
+>  	struct task_struct *me = current;
+>  
+>  	nsset->nsproxy = create_new_namespaces(0, me, current_user_ns(), me->fs);
+> @@ -324,6 +325,12 @@ static int prepare_nsset(unsigned flags, struct nsset *nsset)
+>  	if (!nsset->cred)
+>  		goto out;
+>  
+> +	if (IS_ERR(nsset->cred)) {
+> +		err = PTR_ERR(nsset->cred);
+> +		nsset->cred = NULL;
+> +		goto out;
+> +	}
+
+Why is the NULL check above being kept?
+
+Also, drivers/crypto/ccp/sev-dev.c needs to be updated.
+
+- Eric
