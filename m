@@ -2,89 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 04D63544C33
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jun 2022 14:35:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4128F544C70
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jun 2022 14:46:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245385AbiFIMff (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Jun 2022 08:35:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33604 "EHLO
+        id S235883AbiFIMqa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Jun 2022 08:46:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54034 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236095AbiFIMfe (ORCPT
+        with ESMTP id S237492AbiFIMqZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Jun 2022 08:35:34 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3215F22BCF;
-        Thu,  9 Jun 2022 05:35:33 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id DFBA3B82D89;
-        Thu,  9 Jun 2022 12:35:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E30EC341C0;
-        Thu,  9 Jun 2022 12:35:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1654778130;
-        bh=MPcMQ41HLrc/IOjg0nu4+FGIsqHgomusGWnWSPlu8rs=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=S0lPxoEeUYlxxGn7ul/0YW2mp0NYFEuIHb0tv7qTdyFh9g+R3YA9A9RJRSd6UYPji
-         /REsQXJhcG1Ub1rPHKtbxuqg3nM7aVRP7inCVKkefd2Heo2WJMPA0WV2s6JX50yxdj
-         C/+kqAVWnq3nvpOrrdi1+AuJQPDOv8qCNPtpfZS1X1YmDddj827lq3yU1SeJnKNUU4
-         vL2v8XrmmmIeSHD7XhPXuoojw1CgEBcPJnC4Cux+DrjuOJZVkJl/roGR1FQsgo0jIB
-         sO+Lt4Y1zKnAYwOoqiArO6W3J7dwUQ41c1G8PLYMCj9EvC1gijb7B6ncZPWVQaQMny
-         zh9XUyUf7d9Hw==
-Received: by mail-wr1-f43.google.com with SMTP id a15so23702734wrh.2;
-        Thu, 09 Jun 2022 05:35:30 -0700 (PDT)
-X-Gm-Message-State: AOAM53020sVMGuRaVUT3jn/itiC2BXmbZCDgWv5Ve2dLIEbi5A7PBtV5
-        MiBg5pzVpA+n716/FrvYkMhRNLRLEgCqSl4I9Zk=
-X-Google-Smtp-Source: ABdhPJzWmxxxSbqiI1wPb6ox88dsOK65z29Pli+VzltNwa/NX2TcBjJ8wz3i/w4MrUE9k30MHgq1RyVmZcnEVCMk/g0=
-X-Received: by 2002:a5d:43d2:0:b0:218:3fe6:4127 with SMTP id
- v18-20020a5d43d2000000b002183fe64127mr21421249wrr.62.1654778128805; Thu, 09
- Jun 2022 05:35:28 -0700 (PDT)
+        Thu, 9 Jun 2022 08:46:25 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9799C228497
+        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Jun 2022 05:46:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1654778783;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=zufIRXqzWNkS/vBQ6LnlofDt3t0aO0GgELLgxZEV3qM=;
+        b=fTuIioWoij2o6uk1U/nZiO8tpugyRdc2wvL0ifbzMQc71Jk4rG4/yL75W4awah3dgei52y
+        VhfuHcaJqFWgPl0MN/3CrLpbi3aM9jh9iXmvdvlCfnOVrK6wl0cD0Hspkl8GvG+8MXIhcf
+        qYuX+kRV+TyxkIxjYrv7jdHr73wEAXM=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-395-BS8zdUFSNsKGVCXDVKeQbg-1; Thu, 09 Jun 2022 08:46:15 -0400
+X-MC-Unique: BS8zdUFSNsKGVCXDVKeQbg-1
+Received: by mail-wm1-f72.google.com with SMTP id h189-20020a1c21c6000000b0039c65f0e4ccso1526201wmh.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Jun 2022 05:46:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:organization:in-reply-to
+         :content-transfer-encoding;
+        bh=zufIRXqzWNkS/vBQ6LnlofDt3t0aO0GgELLgxZEV3qM=;
+        b=U1AVMJCmBNNHjku9qePEKnhWKw6qJbXMowsai55OS027Ux5PBXHFUM0G8dqw7ON71C
+         zxmnmRcvE8NWN3Gdq3pJnxXD4IsQGcX8wPZIC1zLdSbC5iXOXz+C+sIxjTABjSMKQ1W/
+         pwopDhoGwdKk2qQ8Wiej9U0JiwCU0lUMrkktqnSxEDmrFaaufrfS9YXAU7W1IEb/ImDm
+         jFj1p98j/7PE96FD9gE+Tyt7PqdwcWGFliX/QcD8v08tsSmSrL0i9Spq02gbxKqtTbNV
+         gWc3+D7c+Ve2RBvo3pzipZ3DKplAZLgGm/vTsabJeICM+2Sr6AGLjFUcpRYof5YIMjB+
+         pppw==
+X-Gm-Message-State: AOAM533tgj7+OPUx+lpEq2cusGuj41yyiG3xj+EfvgD/dJHqXqhJsg0F
+        8viDNIve1NzfX0rvSiqt2Z6S2XGFaB9kMLJAJRbqMikk7DcbREhSAtOYpemiFYsbqfES2fDfFwo
+        N2jyVkOOqB/zgeNiC7ZemI3fsXg==
+X-Received: by 2002:a05:6000:168b:b0:218:54da:90ba with SMTP id y11-20020a056000168b00b0021854da90bamr12022149wrd.283.1654778773730;
+        Thu, 09 Jun 2022 05:46:13 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJxFg5i2EPJ88Gv87gtw7EHVrLhSwsyQAltgpPZk1DxRKIUlDObIOhdmhH9jKki5ThpOI9Vqng==
+X-Received: by 2002:a05:6000:168b:b0:218:54da:90ba with SMTP id y11-20020a056000168b00b0021854da90bamr12022117wrd.283.1654778773451;
+        Thu, 09 Jun 2022 05:46:13 -0700 (PDT)
+Received: from ?IPV6:2a09:80c0:192:0:20af:34be:985b:b6c8? ([2a09:80c0:192:0:20af:34be:985b:b6c8])
+        by smtp.gmail.com with ESMTPSA id a7-20020a05600c224700b0039c693a54ecsm3854607wmm.23.2022.06.09.05.46.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 Jun 2022 05:46:12 -0700 (PDT)
+Message-ID: <c204c627-ec6b-cd8c-412d-57c8f55c61fa@redhat.com>
+Date:   Thu, 9 Jun 2022 14:46:11 +0200
 MIME-Version: 1.0
-Received: by 2002:a5d:4c4a:0:0:0:0:0 with HTTP; Thu, 9 Jun 2022 05:35:28 -0700 (PDT)
-In-Reply-To: <20220608020408.2351676-1-sj1557.seo@samsung.com>
-References: <CGME20220608020502epcas1p14911cac6731ee98fcb9c64282455caf7@epcas1p1.samsung.com>
- <20220608020408.2351676-1-sj1557.seo@samsung.com>
-From:   Namjae Jeon <linkinjeon@kernel.org>
-Date:   Thu, 9 Jun 2022 21:35:28 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd-8HsO71kvwkuF0u56i2JigR5sF58s+ufh4rH7vKUDkCA@mail.gmail.com>
-Message-ID: <CAKYAXd-8HsO71kvwkuF0u56i2JigR5sF58s+ufh4rH7vKUDkCA@mail.gmail.com>
-Subject: Re: [PATCH] exfat: use updated exfat_chain directly during renaming
-To:     Sungjong Seo <sj1557.seo@samsung.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH v2 01/19] secretmem: Remove isolate_page
+Content-Language: en-US
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-aio@kvack.org, linux-btrfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        cluster-devel@redhat.com, linux-mm@kvack.org,
+        linux-xfs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-ntfs-dev@lists.sourceforge.net, ocfs2-devel@oss.oracle.com,
+        linux-mtd@lists.infradead.org,
+        virtualization@lists.linux-foundation.org
+References: <20220608150249.3033815-1-willy@infradead.org>
+ <20220608150249.3033815-2-willy@infradead.org>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+In-Reply-To: <20220608150249.3033815-2-willy@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-2022-06-08 11:04 GMT+09:00, Sungjong Seo <sj1557.seo@samsung.com>:
-> In order for a file to access its own directory entry set,
-> exfat_inode_info(ei) has two copied values. One is ei->dir, which is
-> a snapshot of exfat_chain of the parent directory, and the other is
-> ei->entry, which is the offset of the start of the directory entry set
-> in the parent directory.
->
-> Since the parent directory can be updated after the snapshot point,
-> it should be used only for accessing one's own directory entry set.
->
-> However, as of now, during renaming, it could try to traverse or to
-> allocate clusters via snapshot values, it does not make sense.
->
-> This potential problem has been revealed when exfat_update_parent_info()
-> was removed by commit d8dad2588add ("exfat: fix referencing wrong parent
-> directory information after renaming"). However, I don't think it's good
-> idea to bring exfat_update_parent_info() back.
->
-> Instead, let's use the updated exfat_chain of parent directory diectly.
->
-> Fixes: d8dad2588add ("exfat: fix referencing wrong parent directory
-> information after renaming")
->
-> Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
-Applied, Thanks for your patch!
+On 08.06.22 17:02, Matthew Wilcox (Oracle) wrote:
+> The isolate_page operation is never called for filesystems, only
+> for device drivers which call SetPageMovable.
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  mm/secretmem.c | 6 ------
+>  1 file changed, 6 deletions(-)
+> 
+> diff --git a/mm/secretmem.c b/mm/secretmem.c
+> index 206ed6b40c1d..1c7f1775b56e 100644
+> --- a/mm/secretmem.c
+> +++ b/mm/secretmem.c
+> @@ -133,11 +133,6 @@ static const struct file_operations secretmem_fops = {
+>  	.mmap		= secretmem_mmap,
+>  };
+>  
+> -static bool secretmem_isolate_page(struct page *page, isolate_mode_t mode)
+> -{
+> -	return false;
+> -}
+> -
+>  static int secretmem_migratepage(struct address_space *mapping,
+>  				 struct page *newpage, struct page *page,
+>  				 enum migrate_mode mode)
+> @@ -155,7 +150,6 @@ const struct address_space_operations secretmem_aops = {
+>  	.dirty_folio	= noop_dirty_folio,
+>  	.free_folio	= secretmem_free_folio,
+>  	.migratepage	= secretmem_migratepage,
+> -	.isolate_page	= secretmem_isolate_page,
+>  };
+>  
+>  static int secretmem_setattr(struct user_namespace *mnt_userns,
+
+Reviewed-by: David Hildenbrand <david@redhat.com>
+
+-- 
+Thanks,
+
+David / dhildenb
+
