@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 03AB55451FF
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jun 2022 18:30:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C2B6545218
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jun 2022 18:38:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344761AbiFIQas (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Jun 2022 12:30:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41214 "EHLO
+        id S1344784AbiFIQh6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Jun 2022 12:37:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45028 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344261AbiFIQar (ORCPT
+        with ESMTP id S244063AbiFIQh5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Jun 2022 12:30:47 -0400
+        Thu, 9 Jun 2022 12:37:57 -0400
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F00233CF66;
-        Thu,  9 Jun 2022 09:30:46 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE136994E6;
+        Thu,  9 Jun 2022 09:37:55 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id C82491FEAA;
-        Thu,  9 Jun 2022 16:30:44 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 65EBB1FECD;
+        Thu,  9 Jun 2022 16:37:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1654792244;
+        t=1654792674;
         h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
          cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=Y2i6/2xfXmqrG3UQrxWuJBZA/au7sKNam077cWguoHI=;
-        b=WAFGqmnIhYNvM2ssVKG3KczLLHpzVExLaqbMNaaD4TxG3LoWXkMqgKnr5sAnFUCBPyx6Bj
-        RhP7Axe2UJS1vtWME26BQmMzF4seMk852MkeYIJ1XbXQW9TzZc/m/RdeIYLyaRgTqpIusE
-        ixbzVs/BQECC0I+aIWNnX7/19GjySKk=
+        bh=zfYT+PR9lXha9hYJlMd2oONaI1SUc3WGC1Bck/G8ec0=;
+        b=b2KEX6ZCINZeKoHTynlrz3FMDUbnVbIkotULQQM8wta+qakmo0wc5ILD3yfYynBGt8D1yz
+        HYV/+JhfacH7KcZ34tTxnGAMq0+073DU9INO4NM3aBmmmH1cmHo9hWrrTnPyGWxZmapSer
+        hIaGVqCWyAZ99ysi+fFP8RhgxxrPFtk=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1654792244;
+        s=susede2_ed25519; t=1654792674;
         h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
          cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=Y2i6/2xfXmqrG3UQrxWuJBZA/au7sKNam077cWguoHI=;
-        b=OcorPq9pvgFSPMUepbubrqyCj9P6m8KkNJ5KgBjsd3ExzLQ6RMGB6JpwEUQqKFOx6b3ocZ
-        x6fso1mpPJmN9sCA==
+        bh=zfYT+PR9lXha9hYJlMd2oONaI1SUc3WGC1Bck/G8ec0=;
+        b=Irv56z+I7t/5vmpdqARm0xsfrzoUND1o/lJUqjcW0uNId73f8zXP/st70yGmLiPVj3W5Qe
+        j8Fgd9g+H7+p0iCw==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 5E9DB13A8C;
-        Thu,  9 Jun 2022 16:30:44 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id E9F2713A8C;
+        Thu,  9 Jun 2022 16:37:53 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id s5sbFjQgomLwJQAAMHmgww
-        (envelope-from <dsterba@suse.cz>); Thu, 09 Jun 2022 16:30:44 +0000
-Date:   Thu, 9 Jun 2022 18:26:14 +0200
+        id sFfPN+EhomK4KAAAMHmgww
+        (envelope-from <dsterba@suse.cz>); Thu, 09 Jun 2022 16:37:53 +0000
+Date:   Thu, 9 Jun 2022 18:33:23 +0200
 From:   David Sterba <dsterba@suse.cz>
 To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -60,9 +60,9 @@ Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         ocfs2-devel@oss.oracle.com, linux-mtd@lists.infradead.org,
         virtualization@lists.linux-foundation.org,
         Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v2 10/19] mm/migrate: Convert migrate_page() to
- migrate_folio()
-Message-ID: <20220609162614.GU20633@twin.jikos.cz>
+Subject: Re: [PATCH v2 12/19] btrfs: Convert btrfs_migratepage to
+ migrate_folio
+Message-ID: <20220609163323.GV20633@twin.jikos.cz>
 Reply-To: dsterba@suse.cz
 Mail-Followup-To: dsterba@suse.cz,
         "Matthew Wilcox (Oracle)" <willy@infradead.org>,
@@ -76,11 +76,11 @@ Mail-Followup-To: dsterba@suse.cz,
         virtualization@lists.linux-foundation.org,
         Christoph Hellwig <hch@lst.de>
 References: <20220608150249.3033815-1-willy@infradead.org>
- <20220608150249.3033815-11-willy@infradead.org>
+ <20220608150249.3033815-13-willy@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220608150249.3033815-11-willy@infradead.org>
+In-Reply-To: <20220608150249.3033815-13-willy@infradead.org>
 User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
@@ -92,18 +92,38 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 08, 2022 at 04:02:40PM +0100, Matthew Wilcox (Oracle) wrote:
-> Convert all callers to pass a folio.  Most have the folio
-> already available.  Switch all users from aops->migratepage to
-> aops->migrate_folio.  Also turn the documentation into kerneldoc.
+On Wed, Jun 08, 2022 at 04:02:42PM +0100, Matthew Wilcox (Oracle) wrote:
+> Use filemap_migrate_folio() to do the bulk of the work, and then copy
+> the ordered flag across if needed.
 > 
 > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> ---
->  drivers/gpu/drm/i915/gem/i915_gem_userptr.c |  4 +--
-
-For
-
->  fs/btrfs/disk-io.c                          |  2 +-
 
 Acked-by: David Sterba <dsterba@suse.com>
+
+> +static int btrfs_migrate_folio(struct address_space *mapping,
+> +			     struct folio *dst, struct folio *src,
+>  			     enum migrate_mode mode)
+>  {
+> -	int ret;
+> +	int ret = filemap_migrate_folio(mapping, dst, src, mode);
+>  
+> -	ret = migrate_page_move_mapping(mapping, newpage, page, 0);
+>  	if (ret != MIGRATEPAGE_SUCCESS)
+>  		return ret;
+>  
+> -	if (page_has_private(page))
+> -		attach_page_private(newpage, detach_page_private(page));
+
+If I'm reading it correctly, the private pointer does not need to be set
+like that anymore because it's done somewhere during the
+filemap_migrate_folio() call.
+
+> -
+> -	if (PageOrdered(page)) {
+> -		ClearPageOrdered(page);
+> -		SetPageOrdered(newpage);
+> +	if (folio_test_ordered(src)) {
+> +		folio_clear_ordered(src);
+> +		folio_set_ordered(dst);
+>  	}
