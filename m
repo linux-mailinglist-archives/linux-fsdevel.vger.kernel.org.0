@@ -2,93 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 076B15448CC
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jun 2022 12:26:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABF37544957
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jun 2022 12:41:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242638AbiFIK0h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Jun 2022 06:26:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47872 "EHLO
+        id S243290AbiFIKld (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Jun 2022 06:41:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240043AbiFIK0g (ORCPT
+        with ESMTP id S243344AbiFIKlY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Jun 2022 06:26:36 -0400
-Received: from hi1smtp01.de.adit-jv.com (smtp1.de.adit-jv.com [93.241.18.167])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B0A31D8712;
-        Thu,  9 Jun 2022 03:26:35 -0700 (PDT)
-Received: from hi2exch02.adit-jv.com (hi2exch02.adit-jv.com [10.72.92.28])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by hi1smtp01.de.adit-jv.com (Postfix) with ESMTPS id 7F5B0520171;
-        Thu,  9 Jun 2022 12:26:33 +0200 (CEST)
-Received: from lxhi-065 (10.72.94.24) by hi2exch02.adit-jv.com (10.72.92.28)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2308.27; Thu, 9 Jun
- 2022 12:26:32 +0200
-Date:   Thu, 9 Jun 2022 12:26:27 +0200
-From:   Eugeniu Rosca <erosca@de.adit-jv.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-CC:     Rob Landley <rob@landley.net>, <hpa@zytor.com>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Arvind Sankar <nivedita@alum.mit.edu>,
-        Mimi Zohar <zohar@linux.ibm.com>, <viro@zeniv.linux.org.uk>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-integrity@vger.kernel.org>, <initramfs@vger.kernel.org>,
-        <linux-api@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <bug-cpio@gnu.org>,
-        <zohar@linux.vnet.ibm.com>, <silviu.vlasceanu@huawei.com>,
-        <dmitry.kasatkin@huawei.com>, <takondra@cisco.com>,
-        <kamensky@cisco.com>, <arnd@arndb.de>,
-        <james.w.mcmechan@gmail.com>, <linux-kbuild@vger.kernel.org>,
-        Dirk Behme <dirk.behme@de.bosch.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>
-Subject: Re: [PATCH v4 0/3] initramfs: add support for xattrs in the initial
- ram disk
-Message-ID: <20220609102627.GA3922@lxhi-065>
-References: <20190523121803.21638-1-roberto.sassu@huawei.com>
- <cf9d08ca-74c7-c945-5bf9-7c3495907d1e@huawei.com>
- <541e9ea1-024f-5c22-0b58-f8692e6c1eb1@landley.net>
- <33cfb804-6a17-39f0-92b7-01d54e9c452d@huawei.com>
- <1561909199.3985.33.camel@linux.ibm.com>
- <45164486-782f-a442-e442-6f56f9299c66@huawei.com>
- <1561991485.4067.14.camel@linux.ibm.com>
- <f85ed711-f583-51cd-34e2-80018a592280@huawei.com>
- <0c17bf9e-9b0b-b067-cf18-24516315b682@huawei.com>
+        Thu, 9 Jun 2022 06:41:24 -0400
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FF0E267CCB
+        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Jun 2022 03:41:12 -0700 (PDT)
+Received: by mail-pl1-x62b.google.com with SMTP id f9so9470080plg.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Jun 2022 03:41:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0L4gtE6Nwxhqko2H3PVb/r993pNhceWeKw07NNRQ85Q=;
+        b=NrMB5dQ59veFB/XnXQezjBFT8bcCwIl+jP9JXN1LY3wqizYRbZhWCeG2BBxkzHxgKA
+         TW9eCxYWQ5pRg2LcWQMuXTOq9cGKeQTSaK6UExTCqC9B0AgJMTcxo10PadO4FY01B8dE
+         HHCVZIC4UQ0UOGii059G94L0dyi/EXzmsDHqwzIGVrif4HzFOFuF4zO70v8WaBYuqxoZ
+         ItVHkYfr/Ivd3N58JXuzhQ88h8IlrxdP+0Kv4ZMM4dPVqPkHXlz9wXLfpPywaN0m0HLs
+         kZJuse1PW00OrZqVYQhnMPQJ/7cf71kZ/KMnOIAFW1xrYKZohKGNsw59OZK1s0LJqXf3
+         hMvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0L4gtE6Nwxhqko2H3PVb/r993pNhceWeKw07NNRQ85Q=;
+        b=OXEu6q1bv2F/DyZqJp6zyzHTu1Stpj8cbZcjOlkMgTKF5zqgoa/2xjD5jIXTMBztM/
+         YIcSXlTLgSWCquMEeVRwHYVtlQN/0gG2dGsd6MkPxp/morHWVj01rdcVWiRgJdaP00ov
+         aQ8dklmJNsWuoV1KjmI9V8xE/BEcrwryNuk8/OF5uc/hjtH/0NrAxFcYRGoJjTAWYC+7
+         5STV5MYjxzdrtQKScgzCjkkUdcLHmKAzjqRyWL/9daNr5te3ZZseYVlI+jdJmIt7NSvX
+         zhcDFouJYxlUfzWmylb4CembT7bvyDHmUJtIVwHlLeufb3kr2vc3KeRd+6eErndNpmbP
+         ux6A==
+X-Gm-Message-State: AOAM533h19wOFEjeKpj+5Wvx/ItOeRD1xjZ22QlytcZ/c/I0KQk91g9q
+        4ZvwJFp/mCawaGiRpzpulUm0Rg==
+X-Google-Smtp-Source: ABdhPJzt6m5YXoPxvbvRGzD1gjnrN+7PwLhdRyVD97c8O32Cyzco5wjx5mltJH0di35bufdVPJ7fhg==
+X-Received: by 2002:a17:90b:2404:b0:1e3:4db0:f32a with SMTP id nr4-20020a17090b240400b001e34db0f32amr2828865pjb.201.1654771271434;
+        Thu, 09 Jun 2022 03:41:11 -0700 (PDT)
+Received: from FVFYT0MHHV2J.bytedance.net ([139.177.225.238])
+        by smtp.gmail.com with ESMTPSA id b127-20020a62cf85000000b0051b9c02e4a3sm17458544pfg.178.2022.06.09.03.41.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Jun 2022 03:41:11 -0700 (PDT)
+From:   Muchun Song <songmuchun@bytedance.com>
+To:     mcgrof@kernel.org, keescook@chromium.org, yzaikin@google.com,
+        akpm@linux-foundation.org, vbabka@suse.cz,
+        mgorman@techsingularity.net, peterz@infradead.org,
+        dhowells@redhat.com, willy@infradead.org, Liam.Howlett@Oracle.com,
+        mhocko@suse.com
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, Muchun Song <songmuchun@bytedance.com>,
+        stable@vger.kernel.org
+Subject: [PATCH v2] mm: sysctl: fix missing numa_stat when !CONFIG_HUGETLB_PAGE
+Date:   Thu,  9 Jun 2022 18:40:32 +0800
+Message-Id: <20220609104032.18350-1-songmuchun@bytedance.com>
+X-Mailer: git-send-email 2.32.1 (Apple Git-133)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <0c17bf9e-9b0b-b067-cf18-24516315b682@huawei.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Originating-IP: [10.72.94.24]
-X-ClientProxiedBy: hi2exch02.adit-jv.com (10.72.92.28) To
- hi2exch02.adit-jv.com (10.72.92.28)
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,KHOP_HELO_FCRDNS,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dear Roberto,
-Cc: Yamada-san, linux-kbuild
+"numa_stat" should not be included in the scope of CONFIG_HUGETLB_PAGE, if
+CONFIG_HUGETLB_PAGE is not configured even if CONFIG_NUMA is configured,
+"numa_stat" is missed form /proc. Move it out of CONFIG_HUGETLB_PAGE to
+fix it.
 
-On Mi, Jul 24, 2019 at 05:34:53 +0200, Roberto Sassu wrote:
-> Is there anything I didn't address in this patch set, that is delaying
-> the review? I would appreciate if you can give me a feedback, positive
-> or negative.
-> 
-> Thanks a lot!
-> 
-> Roberto
+Fixes: 4518085e127d ("mm, sysctl: make NUMA stats configurable")
+Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+Cc: <stable@vger.kernel.org>
+---
+v2:
+ - Simplify the fix, thanks to Michal.
 
-Some of our users have recently asked for this patch series.
+ kernel/sysctl.c | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
-Could you please feedback if this is the latest revision available or
-maybe there is a newer one developed and potentially not shared on LKML?
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 50a2c29efc94..485d2b1bc873 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -2091,6 +2091,17 @@ static struct ctl_table vm_table[] = {
+ 		.extra1		= SYSCTL_ZERO,
+ 		.extra2		= SYSCTL_TWO_HUNDRED,
+ 	},
++#ifdef CONFIG_NUMA
++	{
++		.procname	= "numa_stat",
++		.data		= &sysctl_vm_numa_stat,
++		.maxlen		= sizeof(int),
++		.mode		= 0644,
++		.proc_handler	= sysctl_vm_numa_stat_handler,
++		.extra1		= SYSCTL_ZERO,
++		.extra2		= SYSCTL_ONE,
++	},
++#endif
+ #ifdef CONFIG_HUGETLB_PAGE
+ 	{
+ 		.procname	= "nr_hugepages",
+@@ -2107,15 +2118,6 @@ static struct ctl_table vm_table[] = {
+ 		.mode           = 0644,
+ 		.proc_handler   = &hugetlb_mempolicy_sysctl_handler,
+ 	},
+-	{
+-		.procname		= "numa_stat",
+-		.data			= &sysctl_vm_numa_stat,
+-		.maxlen			= sizeof(int),
+-		.mode			= 0644,
+-		.proc_handler	= sysctl_vm_numa_stat_handler,
+-		.extra1			= SYSCTL_ZERO,
+-		.extra2			= SYSCTL_ONE,
+-	},
+ #endif
+ 	 {
+ 		.procname	= "hugetlb_shm_group",
+-- 
+2.11.0
 
-Appreciate your time.
-
-Thanks and Best Regards,
-Eugeniu
