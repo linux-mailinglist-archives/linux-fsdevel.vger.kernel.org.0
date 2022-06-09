@@ -2,57 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 81760545297
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jun 2022 19:05:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D1185452E4
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jun 2022 19:25:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344602AbiFIRFJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Jun 2022 13:05:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58586 "EHLO
+        id S1344759AbiFIRZk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Jun 2022 13:25:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237847AbiFIRFI (ORCPT
+        with ESMTP id S244617AbiFIRZi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Jun 2022 13:05:08 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E696B0D0E;
-        Thu,  9 Jun 2022 10:05:07 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        Thu, 9 Jun 2022 13:25:38 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9494C27B25;
+        Thu,  9 Jun 2022 10:25:37 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 20B841FEC7;
+        Thu,  9 Jun 2022 17:25:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1654795536; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Qqv5M93wpHo23KHWJ4hOb2+wV7cmIhR4afJUVlNrr4U=;
+        b=ITmVuKoPV03RoO2+mK8TXq0amJTLvwnDZe0aqwtVO9PtH4SY/Lfk/gofY95bT3aRhlJVRW
+        Zw+T2xfLTKDGPtSNDQuVzZPJxzxo7oLfY5FvR0OU2qNRR6OQzJYetKsWGgdwZZILRxilfL
+        v5V5fs6JqR8RpiWudRI7T0Sbx2Fnfik=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1654795536;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Qqv5M93wpHo23KHWJ4hOb2+wV7cmIhR4afJUVlNrr4U=;
+        b=fiqhUZwHZDSMOLZttYnvjndI1d6PgUdKXGp5dyuFMCkdkjm6L/Y//rikXFpu1lK8Cv7vAk
+        PW+5IM1fhIeSGbBg==
+Received: from quack3.suse.cz (unknown [10.163.28.18])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CFB486198A;
-        Thu,  9 Jun 2022 17:05:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F7CFC34114;
-        Thu,  9 Jun 2022 17:05:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1654794306;
-        bh=TyXSDd71ITvKQbVh8Cn4dAI1JmsPDXjiP1sZFC/KfUM=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=rhg3JZaXznf78tW/tdEvAZeK/jwmr6IJEVpWLJd1VzkAPNn8y6eM+SNyfgZyDXy6e
-         lzNm1gVEVN6ZxDQI0KQgBKkvEzQ+MruELC+MDfMaYKEPkGtGnbNol3EH4cG6y7wszl
-         RSNzsHsZGrDFkVBcL2W3CtahOkx0VPF8D5bRAHWyKUNBAnwvCdaHOOoRWWBPCZ/LB0
-         EdTtz6w1OAan7q0dkZFoSIYs5zY7KpT60WZA/RwiE64PBTEnog/9i09qZAd8i/ZqaL
-         lUBjad8+Mef5m3Dvqhc486tjVH/i4T9OHs7pJmqLnpyFS54OL7mg+W6iz0arPzr7AY
-         /TBgqR61XVDlQ==
-Message-ID: <480f3b02d2cda67cb2a1b68e88afa03e95809b8c.camel@kernel.org>
-Subject: Re: [PATCH] iov_iter: Fix iter_xarray_get_pages{,_alloc}()
-From:   Jeff Layton <jlayton@kernel.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Mike Marshall <hubcap@omnibond.com>,
-        Gao Xiang <xiang@kernel.org>, linux-afs@lists.infradead.org,
-        v9fs-developer@lists.sourceforge.net, devel@lists.orangefs.org,
-        linux-erofs@lists.ozlabs.org, linux-cachefs@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Thu, 09 Jun 2022 13:05:03 -0400
-In-Reply-To: <165476202136.3999992.433442175457370240.stgit@warthog.procyon.org.uk>
-References: <165476202136.3999992.433442175457370240.stgit@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.2 (3.44.2-1.fc36) 
+        by relay2.suse.de (Postfix) with ESMTPS id 083E62C141;
+        Thu,  9 Jun 2022 17:25:36 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 4C8D8A0633; Thu,  9 Jun 2022 19:25:30 +0200 (CEST)
+Date:   Thu, 9 Jun 2022 19:25:30 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.com>,
+        Dave Kleikamp <shaggy@kernel.org>, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jfs-discussion@lists.sourceforge.net
+Subject: Re: [PATCH 5/5] fs: remove the NULL get_block case in
+ mpage_writepages
+Message-ID: <20220609172530.q7bzttn5v2orirre@quack3.lan>
+References: <20220608150451.1432388-1-hch@lst.de>
+ <20220608150451.1432388-6-hch@lst.de>
 MIME-Version: 1.0
-X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220608150451.1432388-6-hch@lst.de>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -60,103 +67,68 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2022-06-09 at 09:07 +0100, David Howells wrote:
-> The maths at the end of iter_xarray_get_pages() to calculate the actual
-> size doesn't work under some circumstances, such as when it's been asked =
-to
-> extract a partial single page.  Various terms of the equation cancel out
-> and you end up with actual =3D=3D offset.  The same issue exists in
-> iter_xarray_get_pages_alloc().
->=20
-> Fix these to just use min() to select the lesser amount from between the
-> amount of page content transcribed into the buffer, minus the offset, and
-> the size limit specified.
->=20
-> This doesn't appear to have caused a problem yet upstream because network
-> filesystems aren't getting the pages from an xarray iterator, but rather
-> passing it directly to the socket, which just iterates over it.  Cachefil=
-es
-> *does* do DIO from one to/from ext4/xfs/btrfs/etc. but it always asks for
-> whole pages to be written or read.
->=20
-> Fixes: 7ff5062079ef ("iov_iter: Add ITER_XARRAY")
-> Reported-by: Jeff Layton <jlayton@kernel.org>
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> cc: Dominique Martinet <asmadeus@codewreck.org>
-> cc: Mike Marshall <hubcap@omnibond.com>
-> cc: Gao Xiang <xiang@kernel.org>
-> cc: linux-afs@lists.infradead.org
-> cc: v9fs-developer@lists.sourceforge.net
-> cc: devel@lists.orangefs.org
-> cc: linux-erofs@lists.ozlabs.org
-> cc: linux-cachefs@redhat.com
-> cc: linux-fsdevel@vger.kernel.org
+On Wed 08-06-22 17:04:51, Christoph Hellwig wrote:
+> No one calls mpage_writepages with a NULL get_block paramter, so remove
+> support for that case.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+
+What about ntfs_writepages()? That seems to call mpage_writepages() with
+NULL get_block() in one case...
+
+								Honza
+
 > ---
->=20
->  lib/iov_iter.c |   20 ++++----------------
->  1 file changed, 4 insertions(+), 16 deletions(-)
->=20
-> diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-> index 834e1e268eb6..814f65fd0c42 100644
-> --- a/lib/iov_iter.c
-> +++ b/lib/iov_iter.c
-> @@ -1434,7 +1434,7 @@ static ssize_t iter_xarray_get_pages(struct iov_ite=
-r *i,
+>  fs/mpage.c | 22 ++++++----------------
+>  1 file changed, 6 insertions(+), 16 deletions(-)
+> 
+> diff --git a/fs/mpage.c b/fs/mpage.c
+> index a354ef2b4b4eb..e4cf881634a6a 100644
+> --- a/fs/mpage.c
+> +++ b/fs/mpage.c
+> @@ -636,8 +636,6 @@ static int __mpage_writepage(struct page *page, struct writeback_control *wbc,
+>   * @mapping: address space structure to write
+>   * @wbc: subtract the number of written pages from *@wbc->nr_to_write
+>   * @get_block: the filesystem's block mapper function.
+> - *             If this is NULL then use a_ops->writepage.  Otherwise, go
+> - *             direct-to-BIO.
+>   *
+>   * This is a library function, which implements the writepages()
+>   * address_space_operation.
+> @@ -654,24 +652,16 @@ int
+>  mpage_writepages(struct address_space *mapping,
+>  		struct writeback_control *wbc, get_block_t get_block)
 >  {
->  	unsigned nr, offset;
->  	pgoff_t index, count;
-> -	size_t size =3D maxsize, actual;
-> +	size_t size =3D maxsize;
->  	loff_t pos;
-> =20
->  	if (!size || !maxpages)
-> @@ -1461,13 +1461,7 @@ static ssize_t iter_xarray_get_pages(struct iov_it=
-er *i,
->  	if (nr =3D=3D 0)
->  		return 0;
-> =20
-> -	actual =3D PAGE_SIZE * nr;
-> -	actual -=3D offset;
-> -	if (nr =3D=3D count && size > 0) {
-> -		unsigned last_offset =3D (nr > 1) ? 0 : offset;
-> -		actual -=3D PAGE_SIZE - (last_offset + size);
+> +	struct mpage_data mpd = {
+> +		.get_block	= get_block,
+> +	};
+>  	struct blk_plug plug;
+>  	int ret;
+>  
+>  	blk_start_plug(&plug);
+> -
+> -	if (!get_block)
+> -		ret = generic_writepages(mapping, wbc);
+> -	else {
+> -		struct mpage_data mpd = {
+> -			.bio = NULL,
+> -			.last_block_in_bio = 0,
+> -			.get_block = get_block,
+> -		};
+> -
+> -		ret = write_cache_pages(mapping, wbc, __mpage_writepage, &mpd);
+> -		if (mpd.bio)
+> -			mpage_bio_submit(mpd.bio);
 > -	}
-> -	return actual;
-> +	return min(nr * PAGE_SIZE - offset, maxsize);
+> +	ret = write_cache_pages(mapping, wbc, __mpage_writepage, &mpd);
+> +	if (mpd.bio)
+> +		mpage_bio_submit(mpd.bio);
+>  	blk_finish_plug(&plug);
+>  	return ret;
 >  }
-> =20
->  /* must be done on non-empty ITER_IOVEC one */
-> @@ -1602,7 +1596,7 @@ static ssize_t iter_xarray_get_pages_alloc(struct i=
-ov_iter *i,
->  	struct page **p;
->  	unsigned nr, offset;
->  	pgoff_t index, count;
-> -	size_t size =3D maxsize, actual;
-> +	size_t size =3D maxsize;
->  	loff_t pos;
-> =20
->  	if (!size)
-> @@ -1631,13 +1625,7 @@ static ssize_t iter_xarray_get_pages_alloc(struct =
-iov_iter *i,
->  	if (nr =3D=3D 0)
->  		return 0;
-> =20
-> -	actual =3D PAGE_SIZE * nr;
-> -	actual -=3D offset;
-> -	if (nr =3D=3D count && size > 0) {
-> -		unsigned last_offset =3D (nr > 1) ? 0 : offset;
-> -		actual -=3D PAGE_SIZE - (last_offset + size);
-> -	}
-> -	return actual;
-> +	return min(nr * PAGE_SIZE - offset, maxsize);
->  }
-> =20
->  ssize_t iov_iter_get_pages_alloc(struct iov_iter *i,
->=20
->=20
-
-This seems to fix the bug I was hitting. Thanks!
-
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
-Tested-by: Jeff Layton <jlayton@kernel.org>
+> -- 
+> 2.30.2
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
