@@ -2,130 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ABF37544957
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jun 2022 12:41:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D1F0544999
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  9 Jun 2022 13:02:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243290AbiFIKld (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Jun 2022 06:41:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53018 "EHLO
+        id S236439AbiFILCt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Jun 2022 07:02:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243344AbiFIKlY (ORCPT
+        with ESMTP id S229654AbiFILCs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Jun 2022 06:41:24 -0400
-Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FF0E267CCB
-        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Jun 2022 03:41:12 -0700 (PDT)
-Received: by mail-pl1-x62b.google.com with SMTP id f9so9470080plg.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Jun 2022 03:41:12 -0700 (PDT)
+        Thu, 9 Jun 2022 07:02:48 -0400
+Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A693E23162
+        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Jun 2022 04:02:47 -0700 (PDT)
+Received: by mail-pg1-x532.google.com with SMTP id y187so21538464pgd.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Jun 2022 04:02:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=0L4gtE6Nwxhqko2H3PVb/r993pNhceWeKw07NNRQ85Q=;
-        b=NrMB5dQ59veFB/XnXQezjBFT8bcCwIl+jP9JXN1LY3wqizYRbZhWCeG2BBxkzHxgKA
-         TW9eCxYWQ5pRg2LcWQMuXTOq9cGKeQTSaK6UExTCqC9B0AgJMTcxo10PadO4FY01B8dE
-         HHCVZIC4UQ0UOGii059G94L0dyi/EXzmsDHqwzIGVrif4HzFOFuF4zO70v8WaBYuqxoZ
-         ItVHkYfr/Ivd3N58JXuzhQ88h8IlrxdP+0Kv4ZMM4dPVqPkHXlz9wXLfpPywaN0m0HLs
-         kZJuse1PW00OrZqVYQhnMPQJ/7cf71kZ/KMnOIAFW1xrYKZohKGNsw59OZK1s0LJqXf3
-         hMvg==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=eA2rSMTUFSewTOnPsmOrnE6HCmgRpXaUuyafBR4ipFo=;
+        b=PhF2l/vtHVZjCKAqz4OpktNX8yi0juQT7/9mlOjaRI+WJ/8mFLlvmrChupswhPlMoa
+         bc7vMTDPOhZSuBdmsu8Ao+uRlmChD/jUJbcP2miIjzmjYzQ9L3TWeewo4w8AdkVg1o6p
+         4Y0jslyAC5Xw0nkFpxZEl70DVxJkswiTrwXxo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=0L4gtE6Nwxhqko2H3PVb/r993pNhceWeKw07NNRQ85Q=;
-        b=OXEu6q1bv2F/DyZqJp6zyzHTu1Stpj8cbZcjOlkMgTKF5zqgoa/2xjD5jIXTMBztM/
-         YIcSXlTLgSWCquMEeVRwHYVtlQN/0gG2dGsd6MkPxp/morHWVj01rdcVWiRgJdaP00ov
-         aQ8dklmJNsWuoV1KjmI9V8xE/BEcrwryNuk8/OF5uc/hjtH/0NrAxFcYRGoJjTAWYC+7
-         5STV5MYjxzdrtQKScgzCjkkUdcLHmKAzjqRyWL/9daNr5te3ZZseYVlI+jdJmIt7NSvX
-         zhcDFouJYxlUfzWmylb4CembT7bvyDHmUJtIVwHlLeufb3kr2vc3KeRd+6eErndNpmbP
-         ux6A==
-X-Gm-Message-State: AOAM533h19wOFEjeKpj+5Wvx/ItOeRD1xjZ22QlytcZ/c/I0KQk91g9q
-        4ZvwJFp/mCawaGiRpzpulUm0Rg==
-X-Google-Smtp-Source: ABdhPJzt6m5YXoPxvbvRGzD1gjnrN+7PwLhdRyVD97c8O32Cyzco5wjx5mltJH0di35bufdVPJ7fhg==
-X-Received: by 2002:a17:90b:2404:b0:1e3:4db0:f32a with SMTP id nr4-20020a17090b240400b001e34db0f32amr2828865pjb.201.1654771271434;
-        Thu, 09 Jun 2022 03:41:11 -0700 (PDT)
-Received: from FVFYT0MHHV2J.bytedance.net ([139.177.225.238])
-        by smtp.gmail.com with ESMTPSA id b127-20020a62cf85000000b0051b9c02e4a3sm17458544pfg.178.2022.06.09.03.41.05
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=eA2rSMTUFSewTOnPsmOrnE6HCmgRpXaUuyafBR4ipFo=;
+        b=z20UHpohRsJdQxdQR+p92DU2ML4i94pZfvs9+lp//i024IGG/zKUssHjzZpkp9vf/a
+         5MtNgEYDmDzlvMVyS3iIhPEqW84omR6XKtvfKCvbOVeJVR/kw/IFtbm2lGhM2JZQxUwR
+         BtZrZRLkz8pplIq6MIZLoq7YER4KAhbxeTIfL8A7AhuTItXi6IC7Is1yC4lnmmmCGmY5
+         LUxg881Ym8dc/9K2l99DMNDlLJtmPVvKW55k0XSOenBvKWQCqwzwYr32EMY6XibaMETt
+         1jPQc6v4TqeMlA8OnR8rTTI+GUyo92IdSCmjOB7OwGbBXx+/+FtNcwKlnVgYJJ+Sa9fW
+         c9kw==
+X-Gm-Message-State: AOAM533zip0DRobeo0HMS6BdOHD9ns8ccgKWohen4bWyWWF7BKLQR89N
+        mYwY1BsP8rMB5Ml47qnSVJBq6w==
+X-Google-Smtp-Source: ABdhPJyRD8M4C4AIWlnMkoCdrxA428zPc/65lMrKv7boT8iwH7ATo4M+sNcCYcjeZm4RCxc0iZEi5Q==
+X-Received: by 2002:a63:8242:0:b0:3fe:3601:747f with SMTP id w63-20020a638242000000b003fe3601747fmr6713986pgd.314.1654772567192;
+        Thu, 09 Jun 2022 04:02:47 -0700 (PDT)
+Received: from google.com ([240f:75:7537:3187:1572:8d44:6d26:109d])
+        by smtp.gmail.com with ESMTPSA id t1-20020a1709027fc100b00163f2f9f07csm194145plb.48.2022.06.09.04.02.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jun 2022 03:41:11 -0700 (PDT)
-From:   Muchun Song <songmuchun@bytedance.com>
-To:     mcgrof@kernel.org, keescook@chromium.org, yzaikin@google.com,
-        akpm@linux-foundation.org, vbabka@suse.cz,
-        mgorman@techsingularity.net, peterz@infradead.org,
-        dhowells@redhat.com, willy@infradead.org, Liam.Howlett@Oracle.com,
-        mhocko@suse.com
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, Muchun Song <songmuchun@bytedance.com>,
-        stable@vger.kernel.org
-Subject: [PATCH v2] mm: sysctl: fix missing numa_stat when !CONFIG_HUGETLB_PAGE
-Date:   Thu,  9 Jun 2022 18:40:32 +0800
-Message-Id: <20220609104032.18350-1-songmuchun@bytedance.com>
-X-Mailer: git-send-email 2.32.1 (Apple Git-133)
+        Thu, 09 Jun 2022 04:02:46 -0700 (PDT)
+Date:   Thu, 9 Jun 2022 20:02:41 +0900
+From:   Sergey Senozhatsky <senozhatsky@chromium.org>
+To:     Minchan Kim <minchan@kernel.org>
+Cc:     Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        regressions@lists.linux.dev, Jens Axboe <axboe@kernel.dk>,
+        Nitin Gupta <ngupta@vflare.org>
+Subject: Re: qemu-arm: zram: mkfs.ext4 : Unable to handle kernel NULL pointer
+ dereference at virtual address 00000140
+Message-ID: <YqHTUdeZ8H0Lnf8E@google.com>
+References: <CA+G9fYtVOfWWpx96fa3zzKzBPKiNu1w3FOD4j++G8MOG3Vs0EA@mail.gmail.com>
+ <Yp47DODPCz0kNgE8@google.com>
+ <CA+G9fYsjn0zySHU4YYNJWAgkABuJuKtHty7ELHmN-+30VYgCDA@mail.gmail.com>
+ <Yp/kpPA7GdbArXDo@google.com>
+ <YqAL+HeZDk5Wug28@google.com>
+ <YqAMmTiwcyS3Ttla@google.com>
+ <YqEKapKLBgKEXGBg@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YqEKapKLBgKEXGBg@google.com>
+X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-"numa_stat" should not be included in the scope of CONFIG_HUGETLB_PAGE, if
-CONFIG_HUGETLB_PAGE is not configured even if CONFIG_NUMA is configured,
-"numa_stat" is missed form /proc. Move it out of CONFIG_HUGETLB_PAGE to
-fix it.
+On (22/06/08 13:45), Minchan Kim wrote:
+> 
+> I am trying to understand the problem. AFAIK, the mapping_area was
+> static allocation per cpu so in zs_cpu_down, we never free the
+> mapping_area itself. Then, why do we need to reinitialize the local
+> lock again?
 
-Fixes: 4518085e127d ("mm, sysctl: make NUMA stats configurable")
-Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-Cc: <stable@vger.kernel.org>
----
-v2:
- - Simplify the fix, thanks to Michal.
-
- kernel/sysctl.c | 20 +++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
-
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 50a2c29efc94..485d2b1bc873 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -2091,6 +2091,17 @@ static struct ctl_table vm_table[] = {
- 		.extra1		= SYSCTL_ZERO,
- 		.extra2		= SYSCTL_TWO_HUNDRED,
- 	},
-+#ifdef CONFIG_NUMA
-+	{
-+		.procname	= "numa_stat",
-+		.data		= &sysctl_vm_numa_stat,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler	= sysctl_vm_numa_stat_handler,
-+		.extra1		= SYSCTL_ZERO,
-+		.extra2		= SYSCTL_ONE,
-+	},
-+#endif
- #ifdef CONFIG_HUGETLB_PAGE
- 	{
- 		.procname	= "nr_hugepages",
-@@ -2107,15 +2118,6 @@ static struct ctl_table vm_table[] = {
- 		.mode           = 0644,
- 		.proc_handler   = &hugetlb_mempolicy_sysctl_handler,
- 	},
--	{
--		.procname		= "numa_stat",
--		.data			= &sysctl_vm_numa_stat,
--		.maxlen			= sizeof(int),
--		.mode			= 0644,
--		.proc_handler	= sysctl_vm_numa_stat_handler,
--		.extra1			= SYSCTL_ZERO,
--		.extra2			= SYSCTL_ONE,
--	},
- #endif
- 	 {
- 		.procname	= "hugetlb_shm_group",
--- 
-2.11.0
-
+Well... Something zero-s out that memory. NULL deref in strcmp() in
+lockdep points at NULL ->name. So I'm merely testing my theories here.
+If it's not area lock then it's pool->migrate_lock?
