@@ -2,192 +2,177 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 69533545904
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jun 2022 02:11:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AAF3E54596B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jun 2022 03:04:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238862AbiFJALi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 9 Jun 2022 20:11:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47286 "EHLO
+        id S242631AbiFJBEW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 9 Jun 2022 21:04:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52610 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238141AbiFJALg (ORCPT
+        with ESMTP id S238751AbiFJBEV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 9 Jun 2022 20:11:36 -0400
-Received: from mail-oa1-x36.google.com (mail-oa1-x36.google.com [IPv6:2001:4860:4864:20::36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BB7845AC2
-        for <linux-fsdevel@vger.kernel.org>; Thu,  9 Jun 2022 17:11:35 -0700 (PDT)
-Received: by mail-oa1-x36.google.com with SMTP id 586e51a60fabf-fb6b4da1dfso1428933fac.4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 09 Jun 2022 17:11:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lN+fOqwv9bBcDqIpukqHItG5mOqsK9h2lCdbXTf1cPM=;
-        b=DayT0SdBt1ymTKyry+8RI8dWvFXfKXAgjmO8VhNnB1yoDZK63YuzcCUTHD3X1Z3+t5
-         KxmGEbccYszaa9LA1rH+uPvXkUot/k7y+eYJ5dVw1vcNDUZMV9ll/y/F+7N08dr0Wzcn
-         baBzETzPA15Z2tn9QgoF5S7+WOA0j8RJa/fH3l+HKIsIdEIRN75ENG6RuJQTaJE4f7s+
-         tdQ6ePOMDHk+W48X2uZ7KmmqPYEcwu7pMK65fJXjpYRLWoV5X97j/IkcgrkGUpYpxwIB
-         E5LIO66muSm/XASIShQU2K4+YUS/ejVNHYtSotPk8eFHXkkvvETkJhzMm8POKoBM9Wup
-         sSZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lN+fOqwv9bBcDqIpukqHItG5mOqsK9h2lCdbXTf1cPM=;
-        b=dqqkmu3fdYVwcvrsVAtWJ2xm6+ghvZVsoirShz5/vxwx8soq9MY8zTcBjSZDyEKbmw
-         V3DLo8+Y2vK7t+1wdY6Onarweq0rXyILW1LCoSWfQFG02d8adOLCiMCESxNtPpfAnMug
-         U9nrwb7pE0p+aPZkLhd3Hnr9hr/akgF9JWNPqiXc78e0imGtWvtO5YXGcjLsfFhlPMX5
-         DE9JZFupcDlqtAUdWA90GjkI8/cbS8YHy9oirqn2MRkYFSiYs08nfiIs7MaoE/ngHKhf
-         pyW0SnyQjS1AAJATaG/cTs15qonpnoKdsCjx/Em2UYwWe04OYOTW+NDX0rFcvH9xav4r
-         XTNQ==
-X-Gm-Message-State: AOAM531qD/d6rB7+XAu58Gy0luV8QsFE9QT+KnZg9fGHUIsfW9dt7FkL
-        KHoClsPx37ayBrHhwyXBn8Z32xk+qxsagj/ebCj0RA==
-X-Google-Smtp-Source: ABdhPJzdaT0C30mX9Im9rqGsL6x1Rmi0294lLn68XE92+pqgxWwSN0AqB6f3CMYnEGDUJ7ZH1btvuZX8xfTHzXelZbU=
-X-Received: by 2002:a05:6870:b616:b0:e2:f8bb:5eb with SMTP id
- cm22-20020a056870b61600b000e2f8bb05ebmr3338490oab.218.1654819893261; Thu, 09
- Jun 2022 17:11:33 -0700 (PDT)
+        Thu, 9 Jun 2022 21:04:21 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D6B162A09;
+        Thu,  9 Jun 2022 18:04:20 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id DFC47B80AE9;
+        Fri, 10 Jun 2022 01:04:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A944DC34115;
+        Fri, 10 Jun 2022 01:04:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1654823057;
+        bh=K8C+z1NqPryvLx1nUhl6GqD+lIyAyqOk+GeG936m8Y0=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=l7BRkehnuQyY0J0wz7UkdbCjCATMODOMQC3QEMy8bt/5iOKRgW2bjW09rnMN3NCpz
+         Ydq5DOOa1NcVvh1XL7fRUPmIGYZUoEx28n/096h6GfXMyNnY/59jutuR0H/m3NnFIp
+         Sm42byXllF+QuSFgbnWDhuoI96hqvPA2oM4Q0NcrMtuBZTrPgG9DwoMOYddAmu4Zar
+         GM5cJ5FuKfvhbNMLzm1e9t+uS9acd9cyFh0LwUHywTeDiWpQ8ZYq1qH5VjL5C+eSEi
+         c3aTol4bULXO79LaNvgUzg5mbwxaCSFWDwSYKCJpyIvC04zIUHgY2k1tJuVUex29oX
+         KvqNH/ohnQ6rQ==
+Received: by mail-wm1-f48.google.com with SMTP id o37-20020a05600c512500b0039c4ba4c64dso391099wms.2;
+        Thu, 09 Jun 2022 18:04:17 -0700 (PDT)
+X-Gm-Message-State: AOAM533r/ZOpa6gDIvnVQc3gLUby/2A2kuYYH20m1ql4fjwfu9Poj+5u
+        RsvMUyLT0AtnYLumLL8yH9dBPXxjUIBQvf5lWCM=
+X-Google-Smtp-Source: ABdhPJzkrJAvKw2gfrAMWmKuz3Jw8SFHgWphE0qe1ty+w7RiDpYU4lnuX8Z4NeIkl3zoc5Hm5kRw3NzHwHwFl0MaXB4=
+X-Received: by 2002:a05:600c:19c7:b0:39c:30b0:2b05 with SMTP id
+ u7-20020a05600c19c700b0039c30b02b05mr5877640wmq.170.1654823055856; Thu, 09
+ Jun 2022 18:04:15 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220519153713.819591-1-chao.p.peng@linux.intel.com>
- <CAGtprH_83CEC0U-cBR2FzHsxbwbGn0QJ87WFNOEet8sineOcbQ@mail.gmail.com>
- <20220607065749.GA1513445@chaop.bj.intel.com> <CAA03e5H_vOQS-qdZgacnmqP5T5jJLnEfm44yfRzJQ2KVu0Br+Q@mail.gmail.com>
- <20220608021820.GA1548172@chaop.bj.intel.com>
-In-Reply-To: <20220608021820.GA1548172@chaop.bj.intel.com>
-From:   Marc Orr <marcorr@google.com>
-Date:   Thu, 9 Jun 2022 17:11:21 -0700
-Message-ID: <CAA03e5GmJw8u83=OG2wYrhdO81Sx5Jme-jkUnoTMQ7cc_o7u=w@mail.gmail.com>
-Subject: Re: [PATCH v6 0/8] KVM: mm: fd-based approach for supporting KVM
- guest private memory
-To:     Chao Peng <chao.p.peng@linux.intel.com>
-Cc:     Vishal Annapurve <vannapurve@google.com>,
-        kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86 <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Jun Nakajima <jun.nakajima@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com
+Received: by 2002:a5d:4c4a:0:0:0:0:0 with HTTP; Thu, 9 Jun 2022 18:04:14 -0700 (PDT)
+In-Reply-To: <20220607024942.811-1-frank.li@vivo.com>
+References: <20220607024942.811-1-frank.li@vivo.com>
+From:   Namjae Jeon <linkinjeon@kernel.org>
+Date:   Fri, 10 Jun 2022 10:04:14 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd99NAbQP6m93P3bcjvWTN-T8Qy59DHJyfyTHqdH-7aWBQ@mail.gmail.com>
+Message-ID: <CAKYAXd99NAbQP6m93P3bcjvWTN-T8Qy59DHJyfyTHqdH-7aWBQ@mail.gmail.com>
+Subject: Re: [PATCH] exfat: intorduce skip_stream_check mount opt
+To:     Yangtao Li <frank.li@vivo.com>
+Cc:     sj1557.seo@samsung.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
-        autolearn=unavailable autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 7, 2022 at 7:22 PM Chao Peng <chao.p.peng@linux.intel.com> wrote:
+2022-06-07 11:49 GMT+09:00, Yangtao Li <frank.li@vivo.com>:
+> There are some files in my USB flash drive that can be recognized by
+> the Windows computer, but on Linux, only the existence of the file name
+> can be seen.
 >
-> On Tue, Jun 07, 2022 at 05:55:46PM -0700, Marc Orr wrote:
-> > On Tue, Jun 7, 2022 at 12:01 AM Chao Peng <chao.p.peng@linux.intel.com> wrote:
-> > >
-> > > On Mon, Jun 06, 2022 at 01:09:50PM -0700, Vishal Annapurve wrote:
-> > > > >
-> > > > > Private memory map/unmap and conversion
-> > > > > ---------------------------------------
-> > > > > Userspace's map/unmap operations are done by fallocate() ioctl on the
-> > > > > backing store fd.
-> > > > >   - map: default fallocate() with mode=0.
-> > > > >   - unmap: fallocate() with FALLOC_FL_PUNCH_HOLE.
-> > > > > The map/unmap will trigger above memfile_notifier_ops to let KVM map/unmap
-> > > > > secondary MMU page tables.
-> > > > >
-> > > > ....
-> > > > >    QEMU: https://github.com/chao-p/qemu/tree/privmem-v6
-> > > > >
-> > > > > An example QEMU command line for TDX test:
-> > > > > -object tdx-guest,id=tdx \
-> > > > > -object memory-backend-memfd-private,id=ram1,size=2G \
-> > > > > -machine q35,kvm-type=tdx,pic=no,kernel_irqchip=split,memory-encryption=tdx,memory-backend=ram1
-> > > > >
-> > > >
-> > > > There should be more discussion around double allocation scenarios
-> > > > when using the private fd approach. A malicious guest or buggy
-> > > > userspace VMM can cause physical memory getting allocated for both
-> > > > shared (memory accessible from host) and private fds backing the guest
-> > > > memory.
-> > > > Userspace VMM will need to unback the shared guest memory while
-> > > > handling the conversion from shared to private in order to prevent
-> > > > double allocation even with malicious guests or bugs in userspace VMM.
-> > >
-> > > I don't know how malicious guest can cause that. The initial design of
-> > > this serie is to put the private/shared memory into two different
-> > > address spaces and gives usersapce VMM the flexibility to convert
-> > > between the two. It can choose respect the guest conversion request or
-> > > not.
-> >
-> > For example, the guest could maliciously give a device driver a
-> > private page so that a host-side virtual device will blindly write the
-> > private page.
+> When executing ls command to view the file attributes or access, the file
+> does not exist. Therefore, when the current windows and linux drivers
+> access a file, there is a difference in the checking of the file metadata,
+> which leads to this situation.
+> (There is also a difference between traversing all children of the parent
+> directory and finding a child in the parent directory on linux.)
+Still having problem on linux-exfat after recovering it using windows chkdsk?
+
+Thanks.
 >
-> With this patch series, it's actually even not possible for userspace VMM
-> to allocate private page by a direct write, it's basically unmapped from
-> there. If it really wants to, it should so something special, by intention,
-> that's basically the conversion, which we should allow.
-
-I think Vishal did a better job to explain this scenario in his last
-reply than I did.
-
-> > > It's possible for a usrspace VMM to cause double allocation if it fails
-> > > to call the unback operation during the conversion, this may be a bug
-> > > or not. Double allocation may not be a wrong thing, even in conception.
-> > > At least TDX allows you to use half shared half private in guest, means
-> > > both shared/private can be effective. Unbacking the memory is just the
-> > > current QEMU implementation choice.
-> >
-> > Right. But the idea is that this patch series should accommodate all
-> > of the CVM architectures. Or at least that's what I know was
-> > envisioned last time we discussed this topic for SNP [*].
+> So, we introduce a new mount option that skips the check of the file stream
+> entry in exfat_find_dir_entry().
 >
-> AFAICS, this series should work for both TDX and SNP, and other CVM
-> architectures. I don't see where TDX can work but SNP cannot, or I
-> missed something here?
-
-Agreed. I was just responding to the "At least TDX..." bit. Sorry for
-any confusion.
-
-> >
-> > Regardless, it's important to ensure that the VM respects its memory
-> > budget. For example, within Google, we run VMs inside of containers.
-> > So if we double allocate we're going to OOM. This seems acceptable for
-> > an early version of CVMs. But ultimately, I think we need a more
-> > robust way to ensure that the VM operates within its memory container.
-> > Otherwise, the OOM is going to be hard to diagnose and distinguish
-> > from a real OOM.
+> Signed-off-by: Yangtao Li <frank.li@vivo.com>
+> ---
+>  fs/exfat/dir.c      | 6 ++++--
+>  fs/exfat/exfat_fs.h | 3 ++-
+>  fs/exfat/super.c    | 7 +++++++
+>  3 files changed, 13 insertions(+), 3 deletions(-)
 >
-> Thanks for bringing this up. But in my mind I still think userspace VMM
-> can do and it's its responsibility to guarantee that, if that is hard
-> required. By design, userspace VMM is the decision-maker for page
-> conversion and has all the necessary information to know which page is
-> shared/private. It also has the necessary knobs to allocate/free the
-> physical pages for guest memory. Definitely, we should make userspace
-> VMM more robust.
-
-Vishal and Sean did a better job to articulate the concern in their
-most recent replies.
+> diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c
+> index cb1c0d8c1714..4ea0077f2955 100644
+> --- a/fs/exfat/dir.c
+> +++ b/fs/exfat/dir.c
+> @@ -1013,6 +1013,7 @@ int exfat_find_dir_entry(struct super_block *sb,
+> struct exfat_inode_info *ei,
+>  			}
+>
+>  			if (entry_type == TYPE_STREAM) {
+> +				struct exfat_mount_options *opts = &sbi->options;
+>  				u16 name_hash;
+>
+>  				if (step != DIRENT_STEP_STRM) {
+> @@ -1023,9 +1024,10 @@ int exfat_find_dir_entry(struct super_block *sb,
+> struct exfat_inode_info *ei,
+>  				step = DIRENT_STEP_FILE;
+>  				name_hash = le16_to_cpu(
+>  						ep->dentry.stream.name_hash);
+> -				if (p_uniname->name_hash == name_hash &&
+> +				if ((p_uniname->name_hash == name_hash &&
+>  				    p_uniname->name_len ==
+> -						ep->dentry.stream.name_len) {
+> +						ep->dentry.stream.name_len) ||
+> +					opts->skip_stream_check == 1) {
+>  					step = DIRENT_STEP_NAME;
+>  					order = 1;
+>  					name_len = 0;
+> diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
+> index 1d6da61157c9..5cd00ac112d9 100644
+> --- a/fs/exfat/exfat_fs.h
+> +++ b/fs/exfat/exfat_fs.h
+> @@ -204,7 +204,8 @@ struct exfat_mount_options {
+>  	/* on error: continue, panic, remount-ro */
+>  	enum exfat_error_mode errors;
+>  	unsigned utf8:1, /* Use of UTF-8 character set */
+> -		 discard:1; /* Issue discard requests on deletions */
+> +		 discard:1, /* Issue discard requests on deletions */
+> +		 skip_stream_check:1; /* Skip stream entry check in
+> exfat_find_dir_entry() */
+>  	int time_offset; /* Offset of timestamps from UTC (in minutes) */
+>  };
+>
+> diff --git a/fs/exfat/super.c b/fs/exfat/super.c
+> index 5539ffc20d16..e9c7df25f2b5 100644
+> --- a/fs/exfat/super.c
+> +++ b/fs/exfat/super.c
+> @@ -173,6 +173,8 @@ static int exfat_show_options(struct seq_file *m, struct
+> dentry *root)
+>  		seq_puts(m, ",errors=remount-ro");
+>  	if (opts->discard)
+>  		seq_puts(m, ",discard");
+> +	if (opts->skip_stream_check)
+> +		seq_puts(m, ",skip_stream_check");
+>  	if (opts->time_offset)
+>  		seq_printf(m, ",time_offset=%d", opts->time_offset);
+>  	return 0;
+> @@ -216,6 +218,7 @@ enum {
+>  	Opt_charset,
+>  	Opt_errors,
+>  	Opt_discard,
+> +	Opt_skip_stream_check,
+>  	Opt_time_offset,
+>
+>  	/* Deprecated options */
+> @@ -242,6 +245,7 @@ static const struct fs_parameter_spec exfat_parameters[]
+> = {
+>  	fsparam_string("iocharset",		Opt_charset),
+>  	fsparam_enum("errors",			Opt_errors, exfat_param_enums),
+>  	fsparam_flag("discard",			Opt_discard),
+> +	fsparam_flag("skip_stream_check",	Opt_skip_stream_check),
+>  	fsparam_s32("time_offset",		Opt_time_offset),
+>  	__fsparam(NULL, "utf8",			Opt_utf8, fs_param_deprecated,
+>  		  NULL),
+> @@ -296,6 +300,9 @@ static int exfat_parse_param(struct fs_context *fc,
+> struct fs_parameter *param)
+>  	case Opt_discard:
+>  		opts->discard = 1;
+>  		break;
+> +	case Opt_skip_stream_check:
+> +		opts->skip_stream_check = 1;
+> +		break;
+>  	case Opt_time_offset:
+>  		/*
+>  		 * Make the limit 24 just in case someone invents something
+> --
+> 2.35.1
+>
+>
