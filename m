@@ -2,160 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 63B75546CB9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jun 2022 20:50:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86C8D546D1D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jun 2022 21:19:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350268AbiFJStB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Jun 2022 14:49:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54302 "EHLO
+        id S1348278AbiFJTSt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Jun 2022 15:18:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346510AbiFJSs7 (ORCPT
+        with ESMTP id S1348112AbiFJTSr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Jun 2022 14:48:59 -0400
-Received: from mail-qt1-x832.google.com (mail-qt1-x832.google.com [IPv6:2607:f8b0:4864:20::832])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 428F140E6D;
-        Fri, 10 Jun 2022 11:48:57 -0700 (PDT)
-Received: by mail-qt1-x832.google.com with SMTP id hf10so19980652qtb.7;
-        Fri, 10 Jun 2022 11:48:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=dsVz6sG+QhEZcNwTGOArZ/kX+5MgCaSwZcV401gNIGU=;
-        b=forey2c9tKFYXq7+kCogDAeaGLIWGBnkKKbMYYobPEeDX3BS5XdCWV1hZZgzGNpC4+
-         xsq2zslzZxpH9T+BoUnxmMcb1k83y+SgSJsHm6TqjL4gLQxT/2CeLZt8Gz9Fxa0W2TiN
-         TivTbubpJKebbJqSx8Eo3/9cPscaLMwtH/pHcMjORe8n3CL1P3PNBDKxr30amK7O9F91
-         MLTBYARLa0gG/j2CaS6t1lvKV8xTvi9ujz81bcP+60F10KQWjgcZxP9r+qBxasnqkhH4
-         IowChp6yN21zTOFhg3D3hriwEeoZlZ5TjwkVicqLvgUdCJkeIkeG3OPb2YZD6L3+QC/g
-         5nXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=dsVz6sG+QhEZcNwTGOArZ/kX+5MgCaSwZcV401gNIGU=;
-        b=eeDDkPuXp7yO/2heCqDyaGY0DfRBWIV4e6/Fkm/ZqLhr0U6CVDl87gs3oO24ALQ19j
-         zmxKyUJAReehGBo49ngE6/peWRIADMV+p1bhbq+z9brHGUSFjh8bO8Zw3m5glUPWsfnu
-         Wz1/UxD8lHWBRWEPQNkUMQ8VuOMYRhq2FLusELwg2/xERz2P+rPdf8Px/tyAezJUEh8O
-         TzJPEQNmTNK2rqQOQ059AADO0wG4l2O5m1A3lOrLt8I0qJDBSQkSazzQeTSUGwWpYp9W
-         EOayv6Kbo03a3kOjTSHbj96NSulnbcUQh0NjQLuzelC1WhkkH23WjoVBZww/EsHjbP5S
-         b9uQ==
-X-Gm-Message-State: AOAM533V+7m+mr9VoWuZvtP4J6E8+v9a61oEcBp3NLXe5MHgY1/FjJjW
-        Bv3x/xTd3HEY2M7S19Q8ow==
-X-Google-Smtp-Source: ABdhPJz6CSbXPIgAGNDAvAP3516sdviaGWfTyK404V3gkg/DvjOeZ7c5k3v/IEZFuvU9BBdyimVzqw==
-X-Received: by 2002:ac8:5e13:0:b0:304:b452:9ec8 with SMTP id h19-20020ac85e13000000b00304b4529ec8mr37967680qtx.356.1654886936265;
-        Fri, 10 Jun 2022 11:48:56 -0700 (PDT)
-Received: from [192.168.1.210] (c-73-219-103-14.hsd1.vt.comcast.net. [73.219.103.14])
-        by smtp.gmail.com with ESMTPSA id ew5-20020a05622a514500b0030503a897b1sm6020938qtb.42.2022.06.10.11.48.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Jun 2022 11:48:55 -0700 (PDT)
-Message-ID: <115fe76f-f5f2-338b-c4a6-d900ec151abe@gmail.com>
-Date:   Fri, 10 Jun 2022 14:48:54 -0400
+        Fri, 10 Jun 2022 15:18:47 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FCF92E699
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Jun 2022 12:18:43 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 8CD0CB8372B
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Jun 2022 19:18:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AFC6C341CB
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Jun 2022 19:18:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1654888720;
+        bh=hM5nW1VA3yu5jpO3mlOUoDJaWYFKk3W0xm89jLGspjI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=HhH/LtWGsBwB06n1CnPo9lhK0VtlQ6R1OeUxR4n65mwZeBEFV6sMuVM/FQ4mWjKfC
+         U0buD2yynVGlZgaWK2yhy6sCYPwzRpoLMXXRNC35AXp8WPmbjWScn8eeu+b4znMsyo
+         SBLsipBoAgnNOKj9AmZY2W5Wf3H0Kmmm5b4EHejPbftkHKC+R73iWdRMndn/qU7LdN
+         mi8mlFucHHdXR3vU1iUTLqfm10BRj29AjwGU2+vcfzCq9fPpj35CHw9WzOEvI4Yn5B
+         f5qeWPoNNahJsN/WYeZcsckWm0SeiIae32rB0ZzDFftWrWFELWEKh7GyQQVeErl1tH
+         OVUa6I1o1xhTA==
+Received: by mail-ej1-f47.google.com with SMTP id o7so21926942eja.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 10 Jun 2022 12:18:40 -0700 (PDT)
+X-Gm-Message-State: AOAM5325onBDhdIMDYLAhqSRfehljn/0xnPgfyU9+AUDwS5IzcFSM9Et
+        N7coJ5O+Fl/zT2mWQfpi0EKxagunllW2SBoFxltWeg==
+X-Google-Smtp-Source: ABdhPJwexJxeTadU2a/HS+Q0PaTCtU7UH0lxqqpyQzdJR6JkeVtaY0mkRVT4jHiiW5JTPVMgfQPUbTO0E50JluvSE3Y=
+X-Received: by 2002:a17:906:25d8:b0:6fe:9f11:3906 with SMTP id
+ n24-20020a17090625d800b006fe9f113906mr40977072ejb.538.1654888718314; Fri, 10
+ Jun 2022 12:18:38 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH -next] mm/filemap: fix that first page is not mark
- accessed in filemap_read()
-Content-Language: en-US
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Yu Kuai <yukuai3@huawei.com>, akpm@linux-foundation.org,
-        axboe@kernel.dk, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, yi.zhang@huawei.com
-References: <20220602082129.2805890-1-yukuai3@huawei.com>
- <YpkB1+PwIZ3AKUqg@casper.infradead.org>
- <c49af4f7-5005-7cf1-8b58-a398294472ab@huawei.com>
- <YqNWY46ZRoK6Cwbu@casper.infradead.org>
- <YqNW8cYn9gM7Txg6@casper.infradead.org>
- <c5f97e2f-8a48-2906-91a2-1d84629b3641@gmail.com>
- <YqOOsHecZUWlHEn/@casper.infradead.org>
-From:   Kent Overstreet <kent.overstreet@gmail.com>
-In-Reply-To: <YqOOsHecZUWlHEn/@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+References: <83fd55f8-cd42-4588-9bf6-199cbce70f33@www.fastmail.com>
+ <YksIQYdG41v3KWkr@google.com> <Ykslo2eo2eRXrpFR@google.com>
+ <eefc3c74-acca-419c-8947-726ce2458446@www.fastmail.com> <Ykwbqv90C7+8K+Ao@google.com>
+ <YkyEaYiL0BrDYcZv@google.com> <20220422105612.GB61987@chaop.bj.intel.com>
+ <3b99f157-0f30-4b30-8399-dd659250ab8d@www.fastmail.com> <20220425134051.GA175928@chaop.bj.intel.com>
+ <27616b2f-1eff-42ff-91e0-047f531639ea@www.fastmail.com> <YmcFAJEJmmtYa+82@google.com>
+In-Reply-To: <YmcFAJEJmmtYa+82@google.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Fri, 10 Jun 2022 12:18:25 -0700
+X-Gmail-Original-Message-ID: <CALCETrU_BdaYcPgVcjj4o9zFPyvU9oyjCCtjKTbSSgeL0aZaGQ@mail.gmail.com>
+Message-ID: <CALCETrU_BdaYcPgVcjj4o9zFPyvU9oyjCCtjKTbSSgeL0aZaGQ@mail.gmail.com>
+Subject: Re: [PATCH v5 00/13] KVM: mm: fd-based approach for supporting KVM
+ guest private memory
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        Quentin Perret <qperret@google.com>,
+        Steven Price <steven.price@arm.com>,
+        kvm list <kvm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        Linux API <linux-api@vger.kernel.org>, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        "Nakajima, Jun" <jun.nakajima@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,URIBL_BLOCKED
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/10/22 14:34, Matthew Wilcox wrote:
-> On Fri, Jun 10, 2022 at 01:47:02PM -0400, Kent Overstreet wrote:
->> I think this is the fix we want - I think Yu basically had the right idea
->> and had the off by one fix, this should be clearer though:
->>
->> Yu, can you confirm the fix?
->>
->> -- >8 --
->> Subject: [PATCH] filemap: Fix off by one error when marking folios accessed
->>
->> In filemap_read() we mark pages accessed as we read them - but we don't
->> want to do so redundantly, if the previous read already did so.
->>
->> But there was an off by one error: we want to check if the current page
->> was the same as the last page we read from, but the last page we read
->> from was (ra->prev_pos - 1) >> PAGE_SHIFT.
->>
->> Reported-by: Yu Kuai <yukuai3@huawei.com>
->> Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
->>
->> diff --git a/mm/filemap.c b/mm/filemap.c
->> index 9daeaab360..8d5c8043cb 100644
->> --- a/mm/filemap.c
->> +++ b/mm/filemap.c
->> @@ -2704,7 +2704,7 @@ ssize_t filemap_read(struct kiocb *iocb, struct
->> iov_iter *iter,
->>                   * mark it as accessed the first time.
->>                   */
->>                  if (iocb->ki_pos >> PAGE_SHIFT !=
->> -                   ra->prev_pos >> PAGE_SHIFT)
->> +                   (ra->prev_pos - 1) >> PAGE_SHIFT)
->>                          folio_mark_accessed(fbatch.folios[0]);
->>
->>                  for (i = 0; i < folio_batch_count(&fbatch); i++) {
->>
-> 
-> This is going to mark the folio as accessed multiple times if it's
-> a multi-page folio.  How about this one?
+On Mon, Apr 25, 2022 at 1:31 PM Sean Christopherson <seanjc@google.com> wro=
+te:
+>
+> On Mon, Apr 25, 2022, Andy Lutomirski wrote:
+> >
+> >
+> > On Mon, Apr 25, 2022, at 6:40 AM, Chao Peng wrote:
+> > > On Sun, Apr 24, 2022 at 09:59:37AM -0700, Andy Lutomirski wrote:
+> > >>
+> >
+> > >>
+> > >> 2. Bind the memfile to a VM (or at least to a VM technology).  Now i=
+t's in
+> > >> the initial state appropriate for that VM.
+> > >>
+> > >> For TDX, this completely bypasses the cases where the data is prepop=
+ulated
+> > >> and TDX can't handle it cleanly.
+>
+> I believe TDX can handle this cleanly, TDH.MEM.PAGE.ADD doesn't require t=
+hat the
+> source and destination have different HPAs.  There's just no pressing nee=
+d to
+> support such behavior because userspace is highly motivated to keep the i=
+nitial
+> image small for performance reasons, i.e. burning a few extra pages while=
+ building
+> the guest is a non-issue.
 
-I like that one - you can add my Reviewed-by
+Following up on this, rather belatedly.  After re-reading the docs,
+TDX can populate guest memory using TDH.MEM.PAGE.ADD, but see Intel=C2=AE
+TDX Module Base Spec v1.5, section 2.3, step D.4 substeps 1 and 2
+here:
 
-> 
-> 
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 5f227b5420d7..a30587f2e598 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -2599,6 +2599,13 @@ static int filemap_get_pages(struct kiocb *iocb, struct iov_iter *iter,
->   	return err;
->   }
->   
-> +static inline bool pos_same_folio(loff_t pos1, loff_t pos2, struct folio *folio)
-> +{
-> +	unsigned int shift = folio_shift(folio);
-> +
-> +	return (pos1 >> shift == pos2 >> shift);
-> +}
-> +
->   /**
->    * filemap_read - Read data from the page cache.
->    * @iocb: The iocb to read.
-> @@ -2670,11 +2677,11 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
->   		writably_mapped = mapping_writably_mapped(mapping);
->   
->   		/*
-> -		 * When a sequential read accesses a page several times, only
-> +		 * When a read accesses the same folio several times, only
->   		 * mark it as accessed the first time.
->   		 */
-> -		if (iocb->ki_pos >> PAGE_SHIFT !=
-> -		    ra->prev_pos >> PAGE_SHIFT)
-> +		if (!pos_same_folio(iocb->ki_pos, ra->prev_pos - 1,
-> +							fbatch.folios[0]))
->   			folio_mark_accessed(fbatch.folios[0]);
->   
->   		for (i = 0; i < folio_batch_count(&fbatch); i++) {
+https://www.intel.com/content/dam/develop/external/us/en/documents/intel-td=
+x-module-1.5-base-spec-348549001.pdf
 
+For each TD page:
+
+1. The host VMM specifies a TDR as a parameter and calls the
+TDH.MEM.PAGE.ADD function. It copies the contents from the TD
+image page into the target TD page which is encrypted with the TD
+ephemeral key. TDH.MEM.PAGE.ADD also extends the TD
+measurement with the page GPA.
+
+2. The host VMM extends the TD measurement with the contents of
+the new page by calling the TDH.MR.EXTEND function on each 256-
+byte chunk of the new TD page.
+
+So this is a bit like SGX.  There is a specific series of operations
+that have to be done in precisely the right order to reproduce the
+intended TD measurement.  Otherwise the guest will boot and run until
+it tries to get a report and then it will have a hard time getting
+anyone to believe its report.
+
+So I don't think the host kernel can get away with host userspace just
+providing pre-populated memory.  Userspace needs to tell the host
+kernel exactly what sequence of adds, extends, etc to perform and in
+what order, and the host kernel needs to do precisely what userspace
+asks it to do.  "Here's the contents of memory" doesn't cut it unless
+the tooling that builds the guest image matches the exact semantics
+that the host kernel provides.
+
+--Andy
