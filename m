@@ -2,132 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 33DE5546C85
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jun 2022 20:37:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63B75546CB9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 10 Jun 2022 20:50:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350371AbiFJSgc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 10 Jun 2022 14:36:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48330 "EHLO
+        id S1350268AbiFJStB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 10 Jun 2022 14:49:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350385AbiFJSgQ (ORCPT
+        with ESMTP id S1346510AbiFJSs7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 10 Jun 2022 14:36:16 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A703E3FBF3;
-        Fri, 10 Jun 2022 11:35:56 -0700 (PDT)
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25AGvIRj017300;
-        Fri, 10 Jun 2022 18:35:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
- subject : message-id : in-reply-to : references : mime-version :
- content-type : content-transfer-encoding; s=pp1;
- bh=Ff3S4Dmkc/EDKyt1tbsvQyIpd2d1S9VM2W5+qZ2nG3s=;
- b=SCN1AstLfBC3fODuKUXKBY6WrlZrz3fThbU1wCedwFT0CaFQD5jJxGOYZdT/ajeMEL/u
- uANcjk+7qt9eYyJ18VOhHCJV6Df7HaLGzno0nD2f85JtoJBClfxRMcZ+0TT0qn3p8KRZ
- 7b/8XKkUc83HWO4UeeTgz9FJ7DcRoIi8yuTEHGrN9AKAbC/jeAwZ2+DaIshwH8XCfvpN
- eOr3ay+BYBuGwNhUvP8p+dn7HgW2witLegMJ1wVQCilvjGKmx1pL3G5i73v9Tb/cXZAK
- yZKr3reZ12SDFAq1E2OfXbjlgGKDTOmPfnQChktV0nDHmoJ5aBjo3otDWzZNFzIGAHpN Fw== 
-Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3gm9xa9n51-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 10 Jun 2022 18:35:39 +0000
-Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
-        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 25AIK5Pq014728;
-        Fri, 10 Jun 2022 18:35:37 GMT
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
-        by ppma06ams.nl.ibm.com with ESMTP id 3gfxnj0m5f-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 10 Jun 2022 18:35:37 +0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 25AIZXWb22413676
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 10 Jun 2022 18:35:34 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DDA7AAE04D;
-        Fri, 10 Jun 2022 18:35:33 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4A105AE045;
-        Fri, 10 Jun 2022 18:35:33 +0000 (GMT)
-Received: from thinkpad (unknown [9.171.11.220])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with SMTP;
-        Fri, 10 Jun 2022 18:35:33 +0000 (GMT)
-Date:   Fri, 10 Jun 2022 20:35:30 +0200
-From:   Gerald Schaefer <gerald.schaefer@linux.ibm.com>
-To:     willy@infradead.org
-Cc:     Sumanth Korikkar <sumanthk@linux.ibm.com>,
-        linux-ext4@vger.kernel.org, gor@linux.ibm.com,
-        agordeev@linux.ibm.com, linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-nilfs@vger.kernel.org,
-        linux-s390@vger.kernel.org
-Subject: Re: [PATCH 06/10] hugetlbfs: Convert remove_inode_hugepages() to
- use filemap_get_folios()
-Message-ID: <20220610203530.7f84bbc0@thinkpad>
-In-Reply-To: <20220610155205.3111213-1-sumanthk@linux.ibm.com>
-References: <20220605193854.2371230-7-willy@infradead.org>
-        <20220610155205.3111213-1-sumanthk@linux.ibm.com>
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.34; x86_64-redhat-linux-gnu)
+        Fri, 10 Jun 2022 14:48:59 -0400
+Received: from mail-qt1-x832.google.com (mail-qt1-x832.google.com [IPv6:2607:f8b0:4864:20::832])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 428F140E6D;
+        Fri, 10 Jun 2022 11:48:57 -0700 (PDT)
+Received: by mail-qt1-x832.google.com with SMTP id hf10so19980652qtb.7;
+        Fri, 10 Jun 2022 11:48:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=dsVz6sG+QhEZcNwTGOArZ/kX+5MgCaSwZcV401gNIGU=;
+        b=forey2c9tKFYXq7+kCogDAeaGLIWGBnkKKbMYYobPEeDX3BS5XdCWV1hZZgzGNpC4+
+         xsq2zslzZxpH9T+BoUnxmMcb1k83y+SgSJsHm6TqjL4gLQxT/2CeLZt8Gz9Fxa0W2TiN
+         TivTbubpJKebbJqSx8Eo3/9cPscaLMwtH/pHcMjORe8n3CL1P3PNBDKxr30amK7O9F91
+         MLTBYARLa0gG/j2CaS6t1lvKV8xTvi9ujz81bcP+60F10KQWjgcZxP9r+qBxasnqkhH4
+         IowChp6yN21zTOFhg3D3hriwEeoZlZ5TjwkVicqLvgUdCJkeIkeG3OPb2YZD6L3+QC/g
+         5nXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=dsVz6sG+QhEZcNwTGOArZ/kX+5MgCaSwZcV401gNIGU=;
+        b=eeDDkPuXp7yO/2heCqDyaGY0DfRBWIV4e6/Fkm/ZqLhr0U6CVDl87gs3oO24ALQ19j
+         zmxKyUJAReehGBo49ngE6/peWRIADMV+p1bhbq+z9brHGUSFjh8bO8Zw3m5glUPWsfnu
+         Wz1/UxD8lHWBRWEPQNkUMQ8VuOMYRhq2FLusELwg2/xERz2P+rPdf8Px/tyAezJUEh8O
+         TzJPEQNmTNK2rqQOQ059AADO0wG4l2O5m1A3lOrLt8I0qJDBSQkSazzQeTSUGwWpYp9W
+         EOayv6Kbo03a3kOjTSHbj96NSulnbcUQh0NjQLuzelC1WhkkH23WjoVBZww/EsHjbP5S
+         b9uQ==
+X-Gm-Message-State: AOAM533V+7m+mr9VoWuZvtP4J6E8+v9a61oEcBp3NLXe5MHgY1/FjJjW
+        Bv3x/xTd3HEY2M7S19Q8ow==
+X-Google-Smtp-Source: ABdhPJz6CSbXPIgAGNDAvAP3516sdviaGWfTyK404V3gkg/DvjOeZ7c5k3v/IEZFuvU9BBdyimVzqw==
+X-Received: by 2002:ac8:5e13:0:b0:304:b452:9ec8 with SMTP id h19-20020ac85e13000000b00304b4529ec8mr37967680qtx.356.1654886936265;
+        Fri, 10 Jun 2022 11:48:56 -0700 (PDT)
+Received: from [192.168.1.210] (c-73-219-103-14.hsd1.vt.comcast.net. [73.219.103.14])
+        by smtp.gmail.com with ESMTPSA id ew5-20020a05622a514500b0030503a897b1sm6020938qtb.42.2022.06.10.11.48.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Jun 2022 11:48:55 -0700 (PDT)
+Message-ID: <115fe76f-f5f2-338b-c4a6-d900ec151abe@gmail.com>
+Date:   Fri, 10 Jun 2022 14:48:54 -0400
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH -next] mm/filemap: fix that first page is not mark
+ accessed in filemap_read()
+Content-Language: en-US
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Yu Kuai <yukuai3@huawei.com>, akpm@linux-foundation.org,
+        axboe@kernel.dk, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, yi.zhang@huawei.com
+References: <20220602082129.2805890-1-yukuai3@huawei.com>
+ <YpkB1+PwIZ3AKUqg@casper.infradead.org>
+ <c49af4f7-5005-7cf1-8b58-a398294472ab@huawei.com>
+ <YqNWY46ZRoK6Cwbu@casper.infradead.org>
+ <YqNW8cYn9gM7Txg6@casper.infradead.org>
+ <c5f97e2f-8a48-2906-91a2-1d84629b3641@gmail.com>
+ <YqOOsHecZUWlHEn/@casper.infradead.org>
+From:   Kent Overstreet <kent.overstreet@gmail.com>
+In-Reply-To: <YqOOsHecZUWlHEn/@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 4ZOyDC1ZmZItV06B7HHJoujAuO7lAcg6
-X-Proofpoint-ORIG-GUID: 4ZOyDC1ZmZItV06B7HHJoujAuO7lAcg6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.874,Hydra:6.0.517,FMLib:17.11.64.514
- definitions=2022-06-10_07,2022-06-09_02,2022-02-23_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 phishscore=0 spamscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=347 clxscore=1011 suspectscore=0 adultscore=0
- priorityscore=1501 malwarescore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2204290000 definitions=main-2206100070
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 10 Jun 2022 17:52:05 +0200
-Sumanth Korikkar <sumanthk@linux.ibm.com> wrote:
-
-[...]
+On 6/10/22 14:34, Matthew Wilcox wrote:
+> On Fri, Jun 10, 2022 at 01:47:02PM -0400, Kent Overstreet wrote:
+>> I think this is the fix we want - I think Yu basically had the right idea
+>> and had the off by one fix, this should be clearer though:
+>>
+>> Yu, can you confirm the fix?
+>>
+>> -- >8 --
+>> Subject: [PATCH] filemap: Fix off by one error when marking folios accessed
+>>
+>> In filemap_read() we mark pages accessed as we read them - but we don't
+>> want to do so redundantly, if the previous read already did so.
+>>
+>> But there was an off by one error: we want to check if the current page
+>> was the same as the last page we read from, but the last page we read
+>> from was (ra->prev_pos - 1) >> PAGE_SHIFT.
+>>
+>> Reported-by: Yu Kuai <yukuai3@huawei.com>
+>> Signed-off-by: Kent Overstreet <kent.overstreet@gmail.com>
+>>
+>> diff --git a/mm/filemap.c b/mm/filemap.c
+>> index 9daeaab360..8d5c8043cb 100644
+>> --- a/mm/filemap.c
+>> +++ b/mm/filemap.c
+>> @@ -2704,7 +2704,7 @@ ssize_t filemap_read(struct kiocb *iocb, struct
+>> iov_iter *iter,
+>>                   * mark it as accessed the first time.
+>>                   */
+>>                  if (iocb->ki_pos >> PAGE_SHIFT !=
+>> -                   ra->prev_pos >> PAGE_SHIFT)
+>> +                   (ra->prev_pos - 1) >> PAGE_SHIFT)
+>>                          folio_mark_accessed(fbatch.folios[0]);
+>>
+>>                  for (i = 0; i < folio_batch_count(&fbatch); i++) {
+>>
 > 
-> * Bisected the crash to this commit.
+> This is going to mark the folio as accessed multiple times if it's
+> a multi-page folio.  How about this one?
+
+I like that one - you can add my Reviewed-by
+
 > 
-> To reproduce:
-> * clone libhugetlbfs:
-> * Execute, PATH=$PATH:"obj64/" LD_LIBRARY_PATH=../obj64/ alloc-instantiate-race shared
->  
-> Crashes on both s390 and x86. 
+> 
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index 5f227b5420d7..a30587f2e598 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -2599,6 +2599,13 @@ static int filemap_get_pages(struct kiocb *iocb, struct iov_iter *iter,
+>   	return err;
+>   }
+>   
+> +static inline bool pos_same_folio(loff_t pos1, loff_t pos2, struct folio *folio)
+> +{
+> +	unsigned int shift = folio_shift(folio);
+> +
+> +	return (pos1 >> shift == pos2 >> shift);
+> +}
+> +
+>   /**
+>    * filemap_read - Read data from the page cache.
+>    * @iocb: The iocb to read.
+> @@ -2670,11 +2677,11 @@ ssize_t filemap_read(struct kiocb *iocb, struct iov_iter *iter,
+>   		writably_mapped = mapping_writably_mapped(mapping);
+>   
+>   		/*
+> -		 * When a sequential read accesses a page several times, only
+> +		 * When a read accesses the same folio several times, only
+>   		 * mark it as accessed the first time.
+>   		 */
+> -		if (iocb->ki_pos >> PAGE_SHIFT !=
+> -		    ra->prev_pos >> PAGE_SHIFT)
+> +		if (!pos_same_folio(iocb->ki_pos, ra->prev_pos - 1,
+> +							fbatch.folios[0]))
+>   			folio_mark_accessed(fbatch.folios[0]);
+>   
+>   		for (i = 0; i < folio_batch_count(&fbatch); i++) {
 
-FWIW, not really able to understand the code changes, so I added some
-printks to track the state of inode->i_data.nrpages during
-remove_inode_hugepages().
-
-Before this commit, we enter with nrpages = 99, and leave with nrpages = 0.
-With this commit we enter with nrpages = 99, and leave with nrpages = 84
-(i.e. 99 - PAGEVEC_SIZE), resulting in the BUG later in fs/inode.c:612.
-
-The difference seems to be that with this commit, the outer
-while(filemap_get_folios) loop is only traversed once, while before
-the corresponding while(pagevec_lookup_range) loop was repeated until
-nrpages reached 0 (in steps of 15 == PAGEVEC_SIZE for the inner loop).
-
-Both before and after the commit, the pagevec_count / folio_batch_count
-for the inner loop starts with 15, but before the pagevec_lookup_range()
-also increased &next in steps of 15, while now the filemap_get_folios()
-moved &next from 0 to 270 in one step, while still only returning
-15 as folio_batch_count for the inner loop. I assume the next index
-of 270 is then too big to find any other folios, so it stops after the
-first iteration, even though only 15 pages have been processed yet with
-remove_huge_page(&folio->page).
-
-I guess it is either wrong to return 15 as folio_batch_count (although
-it seems that would be the maximum possible value), or it is wrong to
-advance &next by 270 instead of 15.
-
-Hope that makes any sense, and might be of help for debugging, to someone
-more familiar with this code.
