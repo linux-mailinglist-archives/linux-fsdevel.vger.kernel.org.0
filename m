@@ -2,152 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 50C245474D6
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Jun 2022 15:36:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F8DA5474E1
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Jun 2022 15:44:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233674AbiFKNgV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 11 Jun 2022 09:36:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47486 "EHLO
+        id S233638AbiFKNoE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 11 Jun 2022 09:44:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232660AbiFKNgV (ORCPT
+        with ESMTP id S231393AbiFKNoB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 11 Jun 2022 09:36:21 -0400
-X-Greylist: delayed 483 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 11 Jun 2022 06:36:19 PDT
-Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0EFF60C9
-        for <linux-fsdevel@vger.kernel.org>; Sat, 11 Jun 2022 06:36:19 -0700 (PDT)
-Received: by nautica.notk.org (Postfix, from userid 108)
-        id 329A4C01A; Sat, 11 Jun 2022 15:28:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1654954093; bh=TGzmb/Iu7QpV6WSsoJdFI/dC7IRxWq/cmuz/luanVAc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dt2q9XUu9/oSr0PyKezWHmXLR7Rof7oltz6rhJ7Kh0KpuA6Rh3JiNTavmXcB6BjKo
-         dlygBCddWdwMnciiM4uf/ZFxCRrtTWY3Ghf3+D5fNYlI2dcUXbeisd2ny59u4NxkWY
-         FEP6SkAnlplQmRpa/rsrx0dwvI40J6QHwEGSuNAqFx85mqXR04W4JD3t+ByzSmSnS2
-         LL2pY3ilI4ko3guXk5f4a3oPPwiZ7WzlnGMk7PBxxt4KJXsy1I0asc3at8ebQe4YsN
-         AfyPZZcRF8Q+fkvobcX8w43WyNCx00TW5+dAsniSvXpgQdCbySAGX1am4Kr+czRpCt
-         jJNiTuaOxZzDw==
+        Sat, 11 Jun 2022 09:44:01 -0400
+Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E002B4A4;
+        Sat, 11 Jun 2022 06:44:00 -0700 (PDT)
+Received: by mail-pl1-x635.google.com with SMTP id f9so1522106plg.0;
+        Sat, 11 Jun 2022 06:44:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Ixh/tGjYEGtd9B0U4un+L2Dg2/GvxVifxx8JOO5/xxs=;
+        b=dWFageSqD+a/p7/dg6peuXBetNvvozPq1OrZOQ/jnLrmOlYGPzNGQ4RjNm2jbazw9i
+         u781rrcK5N+1rObNiGXHrWMqVQY7pZTTAMDXq7DNXEPeF453QBw6/bxOS0JTWBW4mEFL
+         oUM/P6Tc2N9Ofg4sbBfsItn4mThyJNPYPK0dfcLnQTh5rjJPmndWQJuSTs7DAwaCi/Vx
+         rL+jaeKda3xCTVgeOwll+wUPQ1XB4/3T0OO18jS1/nlZwt9iAYKwdDwzN6eMueoG9fyg
+         LLwuRDA7jXNLhI6Pff6Xji5gCQ5vnnxkZEApvX0oXAyGKRCiRXSTKan8B5OV8LXdXJGh
+         CGZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to;
+        bh=Ixh/tGjYEGtd9B0U4un+L2Dg2/GvxVifxx8JOO5/xxs=;
+        b=wXfDFrpYDnGpiJnabp8sN75w74M9E0Y8PzOb3H9hcO0MwIMY1UoXYS9gZgecAlipg/
+         P4t2ad522G9Jmha+shE3ydjXSt585sVGVllOVzPEuRPMPcWiAI5fkFyuRblI/PFi09cE
+         PCVEXLTQMaFfb6n8Z4hqM5dbAcpUVcfqyKEIZxhDo/1H/iUN+TDRAGQElxYbq3zMan52
+         Bi0cyjOME63xd3YUimrMXVnN0pbh7M2iCTCqZJkAnIcHfU+8qrOqBsQo+rj6y0gyQvtB
+         3yLKcTZM8EqDnmhq3sssAN9Hro4vN54l1WzEIzYuQVhS19tY8sUc1pNWNSjkl6PmU6Xw
+         bPMA==
+X-Gm-Message-State: AOAM530t+ot3f2XxpbZgzfbXzC/hnDSy1T3Q24Fw1FOOEtAXFy3QcckV
+        1ioMKzn1A6Kfl1Ovmi5/H6j+Y3DvhqU=
+X-Google-Smtp-Source: ABdhPJyVm1Qx3rpbnexbaPz3LjRNh5xdY5jWDRPJD5O1BPtSHpLAWd+II5ejGzWE9luF6mWKd4zRSA==
+X-Received: by 2002:a17:902:9f96:b0:163:dc33:6b72 with SMTP id g22-20020a1709029f9600b00163dc336b72mr50033692plq.34.1654955039652;
+        Sat, 11 Jun 2022 06:43:59 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id a12-20020a1709027e4c00b00164097a779fsm1523377pln.147.2022.06.11.06.43.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 11 Jun 2022 06:43:58 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date:   Sat, 11 Jun 2022 06:43:57 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     David Howells <dhowells@redhat.com>
+Cc:     jlayton@kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Gao Xiang <xiang@kernel.org>, linux-afs@lists.infradead.org,
+        v9fs-developer@lists.sourceforge.net, devel@lists.orangefs.org,
+        linux-erofs@lists.ozlabs.org, linux-cachefs@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iov_iter: Fix iter_xarray_get_pages{,_alloc}()
+Message-ID: <20220611134357.GA278954@roeck-us.net>
+References: <165476202136.3999992.433442175457370240.stgit@warthog.procyon.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <165476202136.3999992.433442175457370240.stgit@warthog.procyon.org.uk>
+X-Spam-Status: No, score=-1.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
-Received: from odin.codewreck.org (localhost [127.0.0.1])
-        by nautica.notk.org (Postfix) with ESMTPS id B5814C009;
-        Sat, 11 Jun 2022 15:28:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1654954092; bh=TGzmb/Iu7QpV6WSsoJdFI/dC7IRxWq/cmuz/luanVAc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oBKAGwxwZjWU0vDddmpjSlML42V0uJgzRWo0YNv9mF6HRGaJ4rT/scSgW6gno069C
-         UY31d5HdJOjDIKlJ7uB6CfgN1qvVbEMRxrQYArwlSW7DWns6pfAvML8NQ5hKD83FBv
-         RuSNCS4itsT6tXloguYAQNetaD48+EDiNn+Qi3QhqXhT+5auTTuDOgLRsxX/RpX8bo
-         ebS57Rm9aOHSuRo4E5YNYf2w2GbG5JM06h8v8f1oAfICX1LvwMcgLpGm/P2A/FnvQj
-         InRpqVner+PJV0uZcFH8NVBmWM/iB5q3XZ/ZTFGtKUzhlFPlTFQvgkPLNEERqWEv6m
-         /58ghFMxuoz/g==
-Received: from localhost (odin.codewreck.org [local])
-        by odin.codewreck.org (OpenSMTPD) with ESMTPA id cdccf9d2;
-        Sat, 11 Jun 2022 13:28:09 +0000 (UTC)
-Date:   Sat, 11 Jun 2022 22:27:54 +0900
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org, v9fs-developer@lists.sourceforge.net
-Subject: Re: [RFC][CFT] handling Rerror without copy_from_iter_full()
-Message-ID: <YqSYWgeQqenOYwVf@codewreck.org>
-References: <YqDfWho8+f2AXPrj@zeniv-ca.linux.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <YqDfWho8+f2AXPrj@zeniv-ca.linux.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Al Viro wrote on Wed, Jun 08, 2022 at 05:41:46PM +0000:
-> 	As it is, p9_client_zc_rpc()/p9_check_zc_errors() is playing fast
-> and loose with copy_from_iter_full().
+On Thu, Jun 09, 2022 at 09:07:01AM +0100, David Howells wrote:
+> The maths at the end of iter_xarray_get_pages() to calculate the actual
+> size doesn't work under some circumstances, such as when it's been asked to
+> extract a partial single page.  Various terms of the equation cancel out
+> and you end up with actual == offset.  The same issue exists in
+> iter_xarray_get_pages_alloc().
 > 
-> 	Background: reading from file is done by sending Tread request.
-> Response consists of fixed-sized header (including the amount of data
-> actually read) followed by the data itself.
+> Fix these to just use min() to select the lesser amount from between the
+> amount of page content transcribed into the buffer, minus the offset, and
+> the size limit specified.
 > 
-> 	For zero-copy case we arrange the things so that the first 11
-> bytes of reply go into the fixed-sized buffer, with the rest going
-> straight into the pages we want to read into.
-
-Ugh... zc really needs something like direct data placement NFS/RDMA has
-been doing... (But that's just not possible without extending the
-protocol)
-
-> 	What makes the things inconvenient is that sglist describing
-> what should go where has to be set *before* the reply arrives.  As
-> the result, if reply is an error, the things get interesting.  Success
-> is
-> 	size[4] Rread tag[2] count[4] data[count]
-> For error layout varies depending upon the protocol variant -
-> in original 9P and 9P2000 it's
-> 	size[4] Rerror tag[2] len[2] error[len]
-> in 9P2000.U
-> 	size[4] Rerror tag[2] len[2] error[len] errno[4]
-> in 9P2000.L
-> 	size[4] Rlerror tag[2] errno[4]
+> This doesn't appear to have caused a problem yet upstream because network
+> filesystems aren't getting the pages from an xarray iterator, but rather
+> passing it directly to the socket, which just iterates over it.  Cachefiles
+> *does* do DIO from one to/from ext4/xfs/btrfs/etc. but it always asks for
+> whole pages to be written or read.
 > 
-> The last case is nice and simple - we have an 11-byte response that fits
-> into the fixed-sized buffer we hoped to get an Rread into.  In other
-> two, though, we get a variable-length string spill into the pages
-> we'd prepared for the data to be read.
-
-That makes me wonder just how much use we get for the legacy
-protocols -- I guess we do have some but all the filesystem-y
-implementations that I would expect to be main users for large
-IOs/zc are 9P2000.L as far as I know -- especially considering
-virtio is pretty much limited to qemu? Are there other 9p virtio
-servers?
-
-So would it make sense to just say "not .L? tough luck, no zc",
-or am I just being lazy?
-
-> Had that been in fixed-sized buffer (which is actually 4K), we would've
-> dealt with that the same way we handle non-zerocopy case.  However,
-> for zerocopy it doesn't end up there, so we need to copy it from
-> those pages.
+> Fixes: 7ff5062079ef ("iov_iter: Add ITER_XARRAY")
+> Reported-by: Jeff Layton <jlayton@kernel.org>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> cc: Dominique Martinet <asmadeus@codewreck.org>
+> cc: Mike Marshall <hubcap@omnibond.com>
+> cc: Gao Xiang <xiang@kernel.org>
+> cc: linux-afs@lists.infradead.org
+> cc: v9fs-developer@lists.sourceforge.net
+> cc: devel@lists.orangefs.org
+> cc: linux-erofs@lists.ozlabs.org
+> cc: linux-cachefs@redhat.com
+> cc: linux-fsdevel@vger.kernel.org
+> ---
 > 
-> The trouble is, by the time we get around to that, the references to
-> pages in question are already dropped.  As the result, p9_zc_check_errors()
-> tries to get the data using copy_from_iter_full().  Unfortunately, the
-> iov_iter it's trying to read from might *NOT* be capable of that.
-> It is, after all, a data destination, not data source.  In particular,
-> if it's an ITER_PIPE one, copy_from_iter_full() will simply fail.
-
-Silly question, in case of a pipe we'll have written something we
-shouldn't have, or is it not gone yet until we actually finish the IO
-with iov_iter_advance?
-(my understanding is that reader won't have anything to read until
-someone else does the advance, and that someone else will have
-overwritten the data with their own content so no garbage wlll be read)
-
-
-> The thing is, in ->zc_request() itself we have those pages.  There it
-> would be a simple matter of memcpy_from_page() into the fixed-sized
-> buffer and it isn't hard to recognize the (rare) case when such
-> copying is needed.  That way we get rid of p9_zc_check_errors() entirely
-> - p9_check_errors() can be used instead both for zero-copy and non-zero-copy
-> cases.
+>  lib/iov_iter.c |   20 ++++----------------
+>  1 file changed, 4 insertions(+), 16 deletions(-)
 > 
-> Do you see any problems with the variant below?
+> diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+> index 834e1e268eb6..814f65fd0c42 100644
+> --- a/lib/iov_iter.c
+> +++ b/lib/iov_iter.c
+> @@ -1434,7 +1434,7 @@ static ssize_t iter_xarray_get_pages(struct iov_iter *i,
+>  {
+>  	unsigned nr, offset;
+>  	pgoff_t index, count;
+> -	size_t size = maxsize, actual;
+> +	size_t size = maxsize;
+>  	loff_t pos;
+>  
+>  	if (!size || !maxpages)
+> @@ -1461,13 +1461,7 @@ static ssize_t iter_xarray_get_pages(struct iov_iter *i,
+>  	if (nr == 0)
+>  		return 0;
+>  
+> -	actual = PAGE_SIZE * nr;
+> -	actual -= offset;
+> -	if (nr == count && size > 0) {
+> -		unsigned last_offset = (nr > 1) ? 0 : offset;
+> -		actual -= PAGE_SIZE - (last_offset + size);
+> -	}
+> -	return actual;
+> +	return min(nr * PAGE_SIZE - offset, maxsize);
 
-... With that said though your approach here definitely looks better
-than what we currently have -- my main issue is that truncating is fine
-for the original 9p2000 but for .U you'd be losing the ecode that we
-currently trust for being errno-compatible.
-It's *probably* not a problem in practice, but preserving that errno
-would theorically make us look for the page where the last few bytes
-went to and overwrite the end of the string with it but that's starting
-to be ugly.
+This needs min_t to avoid a build error on 32-bit builds.
 
-Anyway even not doing that is probably better than reading from
-something we no longer own; but I'm still thinking just refusing non-.L
-variants to zc calls is a better decision long term.
+In file included from include/linux/kernel.h:26,
+                 from include/linux/crypto.h:16,
+                 from include/crypto/hash.h:11,
+                 from lib/iov_iter.c:2:
+lib/iov_iter.c: In function 'iter_xarray_get_pages':
+include/linux/minmax.h:20:35: error: comparison of distinct pointer types lacks a cast [-Werror]
+...
+lib/iov_iter.c:1628:16: note: in expansion of macro 'min'
+ 1628 |         return min(nr * PAGE_SIZE - offset, maxsize);
+      |                ^~~
 
--- 
-Dominique
+Guenter
