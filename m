@@ -2,73 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1076A547464
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Jun 2022 13:48:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1911547470
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Jun 2022 14:13:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231734AbiFKLsU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 11 Jun 2022 07:48:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39066 "EHLO
+        id S231603AbiFKMNP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 11 Jun 2022 08:13:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229484AbiFKLsS (ORCPT
+        with ESMTP id S230289AbiFKMNO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 11 Jun 2022 07:48:18 -0400
-Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8B3356F80
-        for <linux-fsdevel@vger.kernel.org>; Sat, 11 Jun 2022 04:48:16 -0700 (PDT)
-Received: by mail-pg1-x52f.google.com with SMTP id 123so1486018pgb.5
-        for <linux-fsdevel@vger.kernel.org>; Sat, 11 Jun 2022 04:48:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=XbdOdn7uobFHsuN9XLMlNq65m3JV0c6v1jahkCkk1ss=;
-        b=UvaIwvyQ4ZdHoblTiuRRXOZnkO1bZC9zJWB6UtSzqJKaJUUrdZUkLrSfRrFxMpFS1K
-         SbeM1YHoA7BXA/6eQikO2Cved34bdIAPT3r6JwNuVzMcMbEpsasGWm0e3iYr+8NsoT6y
-         /Ed8Ap/DVydu/UVK+ZBDWdoaepoh/43SlPtzz2HSC1sKPVrSE4g4V0OG8KgxtH5u+lxS
-         hcrKr9LnSTVk+lOZywT89+HSo5WDSCHiGBSEt0cfdjZouvbGXQEqM+u+B/wVPCkcvtTL
-         7FVorIWy9bthXyaFMo2WluTQlVJn+pRgNzGlO/uCOv0acP1/TuYumz5crxVKTQyW7P0Q
-         OAew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=XbdOdn7uobFHsuN9XLMlNq65m3JV0c6v1jahkCkk1ss=;
-        b=6JXWRIsJhR1sm1BAsohuxcVZ8LH/iu73MSUAdz8ZObdqPMjvu1xFdBmrXZjRIdAW1b
-         rXDlimTVrKpmuOgR+tn9iWcoF4YlGgKUStd1v9NuUiaa4mtuPNmzJdl7wexSpsrHyeC8
-         FYFe9UfGhcxWlFtkwjFUVqP3DsxZGibJ9NaRhIyW2sbInCalUuRkk+z2R0efISP4DNPC
-         roCVkxVmni+XDN6dxZlnVQm5CZxDBSakzuKUlJ4h/jhfcnmOV2JPf0EYFYXlq+vCxEef
-         tKZh9e0pq7POq5pAHjDQlNsTAlFEj39ofcJC613wf8MT9ARaSxUpFH29uNMHtC18XIw0
-         wcBQ==
-X-Gm-Message-State: AOAM532w2biPxKLoUblh/XZTMl4rr39QgR1xe/CXiwJaZHneJYuwD1Et
-        zX04VL5kaf0GLbkdMytQuiiXRmaEVbsMGTzHeCA=
-X-Google-Smtp-Source: ABdhPJzwRSmASWNb8Ugyf209EbrC1T+AbN+iRHPmzefuwRpSgCkBgYrhE4Pn5d8Mc3q5Owd/YSvmTs5WZmmWL04Df9c=
-X-Received: by 2002:a05:6a00:2390:b0:51c:21e1:782 with SMTP id
- f16-20020a056a00239000b0051c21e10782mr30137029pfc.21.1654948096245; Sat, 11
- Jun 2022 04:48:16 -0700 (PDT)
+        Sat, 11 Jun 2022 08:13:14 -0400
+Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C4C68DDFB;
+        Sat, 11 Jun 2022 05:13:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=atgndddR6SXbIyqaExtJZJhw3ic+UgK9VwWvZJVDRqM=; b=DTBELQ0XOtAet4aUT4efB1q+ia
+        sP7gw1tag71Ut9T9J0Y25hndtEHuQORviFREhu65NZ0JgunSjujQajXnFDN3Uhx2zyhojxkmZdwl0
+        qFbkPtFs+jzPUrd06AFHJ66iAw0ZejUG7QGBkdYtMMAUYvF9gwQ6+Ge5hl2MN67J7+9sdYld9SbYL
+        7zB8a17jvdMvDNcoBdbiC4mM+jU2vVpWX0/p6VbQ5opblAuQF9I0QDAwkqUReQnlGVQzFY2iASRbs
+        tjceebpiSFE/FT8okP3RGX3Tw9QnTYrgEfjEhqkRpch/IGE+mV1sULTrAUnDj20FxAqpoFnIyfoHN
+        le1+vSDQ==;
+Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1nzzyx-0065U6-SO; Sat, 11 Jun 2022 12:12:48 +0000
+Date:   Sat, 11 Jun 2022 12:12:47 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Gao Xiang <xiang@kernel.org>, linux-afs@lists.infradead.org,
+        v9fs-developer@lists.sourceforge.net, devel@lists.orangefs.org,
+        linux-erofs@lists.ozlabs.org, linux-cachefs@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: mainline build failure due to 6c77676645ad ("iov_iter: Fix
+ iter_xarray_get_pages{,_alloc}()")
+Message-ID: <YqSGv6uaZzLxKfmG@zeniv-ca.linux.org.uk>
+References: <YqRyL2sIqQNDfky2@debian>
 MIME-Version: 1.0
-Received: by 2002:a05:6a20:d043:b0:84:2d19:269e with HTTP; Sat, 11 Jun 2022
- 04:48:15 -0700 (PDT)
-Reply-To: stefanopessina92@gmail.com
-From:   stefano pessina <nicholasmbivii506@gmail.com>
-Date:   Sat, 11 Jun 2022 04:48:15 -0700
-Message-ID: <CAAVPN7h-rsBffsuFve4baEjOht30Hz-W5YOZVcBuSbEaFoxq0w@mail.gmail.com>
-Subject: =?UTF-8?B?R2zDvGNrd3Vuc2No?=
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=4.4 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,FREEMAIL_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE,
-        UNDISC_FREEM autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: ****
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YqRyL2sIqQNDfky2@debian>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---=20
-Die Summe von 1.500.000,00 =E2=82=AC wurde Ihnen von STEFANO PESSINA
-gespendet. Bitte kontaktieren Sie uns f=C3=BCr weitere Informationen per
-stefanopessina92@gmail.com
+On Sat, Jun 11, 2022 at 11:45:03AM +0100, Sudip Mukherjee wrote:
+> Hi All,
+> 
+> The latest mainline kernel branch fails to build for "arm allmodconfig",
+> "xtensa allmodconfig" and "csky allmodconfig" with the error:
+> 
+> In file included from ./include/linux/kernel.h:26,
+>                  from ./include/linux/crypto.h:16,
+>                  from ./include/crypto/hash.h:11,
+>                  from lib/iov_iter.c:2:
+> lib/iov_iter.c: In function 'iter_xarray_get_pages':
+> ./include/linux/minmax.h:20:35: error: comparison of distinct pointer types lacks a cast [-Werror]
+>    20 |         (!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
+>       |                                   ^~
+> ./include/linux/minmax.h:26:18: note: in expansion of macro '__typecheck'
+>    26 |                 (__typecheck(x, y) && __no_side_effects(x, y))
+>       |                  ^~~~~~~~~~~
+> ./include/linux/minmax.h:36:31: note: in expansion of macro '__safe_cmp'
+>    36 |         __builtin_choose_expr(__safe_cmp(x, y), \
+>       |                               ^~~~~~~~~~
+> ./include/linux/minmax.h:45:25: note: in expansion of macro '__careful_cmp'
+>    45 | #define min(x, y)       __careful_cmp(x, y, <)
+>       |                         ^~~~~~~~~~~~~
+> lib/iov_iter.c:1464:16: note: in expansion of macro 'min'
+>  1464 |         return min(nr * PAGE_SIZE - offset, maxsize);
+>       |                ^~~
+> lib/iov_iter.c: In function 'iter_xarray_get_pages_alloc':
+> ./include/linux/minmax.h:20:35: error: comparison of distinct pointer types lacks a cast [-Werror]
+>    20 |         (!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
+>       |                                   ^~
+> ./include/linux/minmax.h:26:18: note: in expansion of macro '__typecheck'
+>    26 |                 (__typecheck(x, y) && __no_side_effects(x, y))
+>       |                  ^~~~~~~~~~~
+> ./include/linux/minmax.h:36:31: note: in expansion of macro '__safe_cmp'
+>    36 |         __builtin_choose_expr(__safe_cmp(x, y), \
+>       |                               ^~~~~~~~~~
+> ./include/linux/minmax.h:45:25: note: in expansion of macro '__careful_cmp'
+>    45 | #define min(x, y)       __careful_cmp(x, y, <)
+>       |                         ^~~~~~~~~~~~~
+> lib/iov_iter.c:1628:16: note: in expansion of macro 'min'
+>  1628 |         return min(nr * PAGE_SIZE - offset, maxsize);
+> 
+> 
+> git bisect pointed to 6c77676645ad ("iov_iter: Fix iter_xarray_get_pages{,_alloc}()")
+
+At a guess, should be
+	return min((size_t)nr * PAGE_SIZE - offset, maxsize);
+
+in both places.  I'm more than half-asleep right now; could you verify that it
+(as the last lines of both iter_xarray_get_pages() and iter_xarray_get_pages_alloc())
+builds correctly?
