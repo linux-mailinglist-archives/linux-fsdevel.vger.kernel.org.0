@@ -2,70 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F8DA5474E1
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Jun 2022 15:44:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DF51547522
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 11 Jun 2022 16:00:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233638AbiFKNoE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 11 Jun 2022 09:44:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45898 "EHLO
+        id S233419AbiFKOA5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 11 Jun 2022 10:00:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59310 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231393AbiFKNoB (ORCPT
+        with ESMTP id S233159AbiFKOA4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 11 Jun 2022 09:44:01 -0400
-Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E002B4A4;
-        Sat, 11 Jun 2022 06:44:00 -0700 (PDT)
-Received: by mail-pl1-x635.google.com with SMTP id f9so1522106plg.0;
-        Sat, 11 Jun 2022 06:44:00 -0700 (PDT)
+        Sat, 11 Jun 2022 10:00:56 -0400
+Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 012EF225;
+        Sat, 11 Jun 2022 07:00:54 -0700 (PDT)
+Received: by mail-pg1-x52c.google.com with SMTP id r71so1716115pgr.0;
+        Sat, 11 Jun 2022 07:00:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=sender:date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=Ixh/tGjYEGtd9B0U4un+L2Dg2/GvxVifxx8JOO5/xxs=;
-        b=dWFageSqD+a/p7/dg6peuXBetNvvozPq1OrZOQ/jnLrmOlYGPzNGQ4RjNm2jbazw9i
-         u781rrcK5N+1rObNiGXHrWMqVQY7pZTTAMDXq7DNXEPeF453QBw6/bxOS0JTWBW4mEFL
-         oUM/P6Tc2N9Ofg4sbBfsItn4mThyJNPYPK0dfcLnQTh5rjJPmndWQJuSTs7DAwaCi/Vx
-         rL+jaeKda3xCTVgeOwll+wUPQ1XB4/3T0OO18jS1/nlZwt9iAYKwdDwzN6eMueoG9fyg
-         LLwuRDA7jXNLhI6Pff6Xji5gCQ5vnnxkZEApvX0oXAyGKRCiRXSTKan8B5OV8LXdXJGh
-         CGZA==
+        bh=c9HBwLp0Uv5MjgxnDuQRISysx2V5J/58czPWYFl7Y+c=;
+        b=J5ILuXUYWMfQjDH4S2msyhgkPRceCZoVKL6RHwfqAlOBIL3InHqK7wcsqLhDuwhGTZ
+         GsjxoYTI3nxq09rAthVavpFmZpRa+WedvYuXMvFelYFG3anGgzlvOOBCY+ZykdsLpO47
+         h1m8c9Tcc7+0Lauceew5EJJAFiqE3YeTfZNkBsc29H0tpyHmPqrWyRoJ32cuqoshLtVO
+         zgGt03epVWoeR0d70Oj2+9baQg1u7RWDjy9RJ4Y+9prhr5JI7fEHU/Z0P83Aevjfpsvr
+         GduSckWxvPbVquHtRFul5qZ4pcxW88Gt5KPQHgjN1kPTnzQ1hujOcnEWnAZ9NFOac9S3
+         EWjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
          :references:mime-version:content-disposition:in-reply-to;
-        bh=Ixh/tGjYEGtd9B0U4un+L2Dg2/GvxVifxx8JOO5/xxs=;
-        b=wXfDFrpYDnGpiJnabp8sN75w74M9E0Y8PzOb3H9hcO0MwIMY1UoXYS9gZgecAlipg/
-         P4t2ad522G9Jmha+shE3ydjXSt585sVGVllOVzPEuRPMPcWiAI5fkFyuRblI/PFi09cE
-         PCVEXLTQMaFfb6n8Z4hqM5dbAcpUVcfqyKEIZxhDo/1H/iUN+TDRAGQElxYbq3zMan52
-         Bi0cyjOME63xd3YUimrMXVnN0pbh7M2iCTCqZJkAnIcHfU+8qrOqBsQo+rj6y0gyQvtB
-         3yLKcTZM8EqDnmhq3sssAN9Hro4vN54l1WzEIzYuQVhS19tY8sUc1pNWNSjkl6PmU6Xw
-         bPMA==
-X-Gm-Message-State: AOAM530t+ot3f2XxpbZgzfbXzC/hnDSy1T3Q24Fw1FOOEtAXFy3QcckV
-        1ioMKzn1A6Kfl1Ovmi5/H6j+Y3DvhqU=
-X-Google-Smtp-Source: ABdhPJyVm1Qx3rpbnexbaPz3LjRNh5xdY5jWDRPJD5O1BPtSHpLAWd+II5ejGzWE9luF6mWKd4zRSA==
-X-Received: by 2002:a17:902:9f96:b0:163:dc33:6b72 with SMTP id g22-20020a1709029f9600b00163dc336b72mr50033692plq.34.1654955039652;
-        Sat, 11 Jun 2022 06:43:59 -0700 (PDT)
+        bh=c9HBwLp0Uv5MjgxnDuQRISysx2V5J/58czPWYFl7Y+c=;
+        b=2HMfCdnpZEHbdIsN0lQdqQf0431GtzLwpapNpYsxdg4hwHn09G40qSo/SEha1i+r07
+         XV9dx87s7n1G8b5sJtr6GWEn7cHOL4oAcuCHkudjmUQk1VY+kfnvrgU2Rh4I1M/Af9hN
+         lM/GBVZLzm9+MkcGDcvld4MmuzoWAbK1fEbnsraLrQb9Uj7SwG4rQwyLYmXu0GczcfJ1
+         +YmX244gu+Ei+ntAe578jjKVfoJ9LR3T7rZxyy6bQ49d2dR7RGWxSIKbRxNu0nIKoXh3
+         Xfq0PYMaIQrDoLwADQ4bgkIAVESXlNs/fi67hltBr6I/AXGKfJDlThQ5v9aCe7brH1/k
+         lvzQ==
+X-Gm-Message-State: AOAM532qz+EYjB4vOg+rhtFNIvmT96DdcG0twRexDo4WR00NtLzSGa+1
+        SjXlcFK251Z4J7OniAEPFxc=
+X-Google-Smtp-Source: ABdhPJx8aXzG7lARTjf0DGMNWJ7cU2i9+ckERmOuVpIwDU+ICn1bZ2jiI0zO6THloqk9kmx74bkHfg==
+X-Received: by 2002:a63:2a0c:0:b0:3fc:9b04:541d with SMTP id q12-20020a632a0c000000b003fc9b04541dmr44653939pgq.546.1654956054512;
+        Sat, 11 Jun 2022 07:00:54 -0700 (PDT)
 Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id a12-20020a1709027e4c00b00164097a779fsm1523377pln.147.2022.06.11.06.43.58
+        by smtp.gmail.com with ESMTPSA id g10-20020a170902d5ca00b00163d4dc6e95sm1528126plh.307.2022.06.11.07.00.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 Jun 2022 06:43:58 -0700 (PDT)
+        Sat, 11 Jun 2022 07:00:54 -0700 (PDT)
 Sender: Guenter Roeck <groeck7@gmail.com>
-Date:   Sat, 11 Jun 2022 06:43:57 -0700
+Date:   Sat, 11 Jun 2022 07:00:52 -0700
 From:   Guenter Roeck <linux@roeck-us.net>
-To:     David Howells <dhowells@redhat.com>
-Cc:     jlayton@kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        David Howells <dhowells@redhat.com>,
         Dominique Martinet <asmadeus@codewreck.org>,
         Mike Marshall <hubcap@omnibond.com>,
         Gao Xiang <xiang@kernel.org>, linux-afs@lists.infradead.org,
         v9fs-developer@lists.sourceforge.net, devel@lists.orangefs.org,
         linux-erofs@lists.ozlabs.org, linux-cachefs@redhat.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iov_iter: Fix iter_xarray_get_pages{,_alloc}()
-Message-ID: <20220611134357.GA278954@roeck-us.net>
-References: <165476202136.3999992.433442175457370240.stgit@warthog.procyon.org.uk>
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: mainline build failure due to 6c77676645ad ("iov_iter: Fix
+ iter_xarray_get_pages{,_alloc}()")
+Message-ID: <20220611140052.GA288528@roeck-us.net>
+References: <YqRyL2sIqQNDfky2@debian>
+ <YqSGv6uaZzLxKfmG@zeniv-ca.linux.org.uk>
+ <YqSMmC/UuQpXdxtR@zeniv-ca.linux.org.uk>
+ <YqSQ++8UnEW0AJ2y@zeniv-ca.linux.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <165476202136.3999992.433442175457370240.stgit@warthog.procyon.org.uk>
+In-Reply-To: <YqSQ++8UnEW0AJ2y@zeniv-ca.linux.org.uk>
 X-Spam-Status: No, score=-1.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
         FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
@@ -77,78 +83,92 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 09, 2022 at 09:07:01AM +0100, David Howells wrote:
-> The maths at the end of iter_xarray_get_pages() to calculate the actual
-> size doesn't work under some circumstances, such as when it's been asked to
-> extract a partial single page.  Various terms of the equation cancel out
-> and you end up with actual == offset.  The same issue exists in
-> iter_xarray_get_pages_alloc().
+On Sat, Jun 11, 2022 at 12:56:27PM +0000, Al Viro wrote:
+> On Sat, Jun 11, 2022 at 12:37:44PM +0000, Al Viro wrote:
+> > On Sat, Jun 11, 2022 at 12:12:47PM +0000, Al Viro wrote:
+> > 
+> > 
+> > > At a guess, should be
+> > > 	return min((size_t)nr * PAGE_SIZE - offset, maxsize);
+> > > 
+> > > in both places.  I'm more than half-asleep right now; could you verify that it
+> > > (as the last lines of both iter_xarray_get_pages() and iter_xarray_get_pages_alloc())
+> > > builds correctly?
+> > 
+> > No, I'm misreading it - it's unsigned * unsigned long - unsigned vs. size_t.
+> > On arm it ends up with unsigned long vs. unsigned int; functionally it *is*
+> > OK (both have the same range there), but it triggers the tests.  Try 
+> > 
+> > 	return min_t(size_t, nr * PAGE_SIZE - offset, maxsize);
+> > 
+> > there (both places).
 > 
-> Fix these to just use min() to select the lesser amount from between the
-> amount of page content transcribed into the buffer, minus the offset, and
-> the size limit specified.
+> The reason we can't overflow on multiplication there, BTW, is that we have
+> nr <= count, and count has come from weirdly open-coded
+> 	DIV_ROUND_UP(size + offset, PAGE_SIZE)
+
+That is often done to avoid possible overflows. Is size + offset
+guaranteed to be smaller than ULONG_MAX ?
+
+Guenter
+
+> IMO we'd better make it explicit, so how about the following:
 > 
-> This doesn't appear to have caused a problem yet upstream because network
-> filesystems aren't getting the pages from an xarray iterator, but rather
-> passing it directly to the socket, which just iterates over it.  Cachefiles
-> *does* do DIO from one to/from ext4/xfs/btrfs/etc. but it always asks for
-> whole pages to be written or read.
-> 
-> Fixes: 7ff5062079ef ("iov_iter: Add ITER_XARRAY")
-> Reported-by: Jeff Layton <jlayton@kernel.org>
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> cc: Dominique Martinet <asmadeus@codewreck.org>
-> cc: Mike Marshall <hubcap@omnibond.com>
-> cc: Gao Xiang <xiang@kernel.org>
-> cc: linux-afs@lists.infradead.org
-> cc: v9fs-developer@lists.sourceforge.net
-> cc: devel@lists.orangefs.org
-> cc: linux-erofs@lists.ozlabs.org
-> cc: linux-cachefs@redhat.com
-> cc: linux-fsdevel@vger.kernel.org
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 > ---
-> 
->  lib/iov_iter.c |   20 ++++----------------
->  1 file changed, 4 insertions(+), 16 deletions(-)
-> 
 > diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-> index 834e1e268eb6..814f65fd0c42 100644
+> index dda6d5f481c1..150dbd314d25 100644
 > --- a/lib/iov_iter.c
 > +++ b/lib/iov_iter.c
-> @@ -1434,7 +1434,7 @@ static ssize_t iter_xarray_get_pages(struct iov_iter *i,
->  {
->  	unsigned nr, offset;
->  	pgoff_t index, count;
-> -	size_t size = maxsize, actual;
-> +	size_t size = maxsize;
->  	loff_t pos;
+> @@ -1445,15 +1445,7 @@ static ssize_t iter_xarray_get_pages(struct iov_iter *i,
+>  	offset = pos & ~PAGE_MASK;
+>  	*_start_offset = offset;
 >  
->  	if (!size || !maxpages)
-> @@ -1461,13 +1461,7 @@ static ssize_t iter_xarray_get_pages(struct iov_iter *i,
+> -	count = 1;
+> -	if (size > PAGE_SIZE - offset) {
+> -		size -= PAGE_SIZE - offset;
+> -		count += size >> PAGE_SHIFT;
+> -		size &= ~PAGE_MASK;
+> -		if (size)
+> -			count++;
+> -	}
+> -
+> +	count = DIV_ROUND_UP(size + offset, PAGE_SIZE);
+>  	if (count > maxpages)
+>  		count = maxpages;
+>  
+> @@ -1461,7 +1453,7 @@ static ssize_t iter_xarray_get_pages(struct iov_iter *i,
 >  	if (nr == 0)
 >  		return 0;
 >  
-> -	actual = PAGE_SIZE * nr;
-> -	actual -= offset;
-> -	if (nr == count && size > 0) {
-> -		unsigned last_offset = (nr > 1) ? 0 : offset;
-> -		actual -= PAGE_SIZE - (last_offset + size);
+> -	return min(nr * PAGE_SIZE - offset, maxsize);
+> +	return min_t(size_t, nr * PAGE_SIZE - offset, maxsize);
+>  }
+>  
+>  /* must be done on non-empty ITER_IOVEC one */
+> @@ -1607,15 +1599,7 @@ static ssize_t iter_xarray_get_pages_alloc(struct iov_iter *i,
+>  	offset = pos & ~PAGE_MASK;
+>  	*_start_offset = offset;
+>  
+> -	count = 1;
+> -	if (size > PAGE_SIZE - offset) {
+> -		size -= PAGE_SIZE - offset;
+> -		count += size >> PAGE_SHIFT;
+> -		size &= ~PAGE_MASK;
+> -		if (size)
+> -			count++;
 > -	}
-> -	return actual;
-> +	return min(nr * PAGE_SIZE - offset, maxsize);
-
-This needs min_t to avoid a build error on 32-bit builds.
-
-In file included from include/linux/kernel.h:26,
-                 from include/linux/crypto.h:16,
-                 from include/crypto/hash.h:11,
-                 from lib/iov_iter.c:2:
-lib/iov_iter.c: In function 'iter_xarray_get_pages':
-include/linux/minmax.h:20:35: error: comparison of distinct pointer types lacks a cast [-Werror]
-...
-lib/iov_iter.c:1628:16: note: in expansion of macro 'min'
- 1628 |         return min(nr * PAGE_SIZE - offset, maxsize);
-      |                ^~~
-
-Guenter
+> -
+> +	count = DIV_ROUND_UP(size + offset, PAGE_SIZE);
+>  	p = get_pages_array(count);
+>  	if (!p)
+>  		return -ENOMEM;
+> @@ -1625,7 +1609,7 @@ static ssize_t iter_xarray_get_pages_alloc(struct iov_iter *i,
+>  	if (nr == 0)
+>  		return 0;
+>  
+> -	return min(nr * PAGE_SIZE - offset, maxsize);
+> +	return min_t(size_t, nr * PAGE_SIZE - offset, maxsize);
+>  }
+>  
+>  ssize_t iov_iter_get_pages_alloc(struct iov_iter *i,
