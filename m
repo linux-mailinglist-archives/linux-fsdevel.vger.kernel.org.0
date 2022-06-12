@@ -2,74 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EFD16547ACA
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Jun 2022 17:27:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D441F547BF9
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 12 Jun 2022 22:31:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235106AbiFLP1K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 12 Jun 2022 11:27:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46818 "EHLO
+        id S234863AbiFLUbw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 12 Jun 2022 16:31:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236528AbiFLP1K (ORCPT
+        with ESMTP id S231891AbiFLUbw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 12 Jun 2022 11:27:10 -0400
-Received: from mail-yw1-x112d.google.com (mail-yw1-x112d.google.com [IPv6:2607:f8b0:4864:20::112d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B0605EDE2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 12 Jun 2022 08:27:09 -0700 (PDT)
-Received: by mail-yw1-x112d.google.com with SMTP id 00721157ae682-3137eb64b67so29794067b3.12
-        for <linux-fsdevel@vger.kernel.org>; Sun, 12 Jun 2022 08:27:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JKtz7aN4iqLwpjMxddmPWT/Yv9HKk9kmTNthHMCTmzI=;
-        b=T9YefAqcwoWBIxZvqn+6v2XWWOet+BsnQU0+RFWVg6KgivzT/L5lObsCTPCQTt/t5Q
-         O40qE1hi12jMrF4WTFqKtW2LzpBjaorQNa34aV4k3hv8HKQ8PdKPMEaSSxFMV47/mzpy
-         5NB8fyovqGp5apHZFDa58gx5ZaH+tLAMzs45xITz4fb4vlzo0gMUB+DN67+3WhqdQW2m
-         K11090o1HY9Z5N/7OrH4HIp/tOUVaTeFZraEa0DnsQrfgrbOu3JKvaQW4n5bCyWXag2u
-         d53mOuvNeMu27ZoK5W99SVTmAQTCjGIg6OdP3eCz5qEG76PT5nxBz7fhGrEZ0izsu26g
-         oVZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JKtz7aN4iqLwpjMxddmPWT/Yv9HKk9kmTNthHMCTmzI=;
-        b=KDinzugn3Y0BkZxlsdZDkSpMy4loxb6l/F9rRJcuPmoOf48NvMRV3Js5/sI7KnrqAi
-         HUNLOkrWCQCG6C3lzw0U3YxnuW0OgQXYsREpRQk5edFnTPlvaQ13VbvY2B6Vqd9IdAHn
-         3Lk6PYWxtpIM5sT2hQKldTwgR2AkXe2kEDchV/5KmuhbcvutOZMJe138DW90puAUIEtR
-         vGfMAFRF7gEkonlBUaggxpA36yQGkzncAbVIdsvx8YmotrnNTkpjmDChCshBL97whKj2
-         wVT3i2F2rJVsuFWjsueBMoxruLZ4Nbn2LGl0mn92YE7mvLqADGQATbYdFMzfUR4Hvn2d
-         is9A==
-X-Gm-Message-State: AOAM532axE5TV6cZALt8MeAxNHiaCGfIxymfFOq+u5hlR+qT+/GhqxEN
-        RUURBKv3Ms4jNUXnhiVYXOFohLIBiFpAUEeyg7/1Dt1YLq7Nc+0K
-X-Google-Smtp-Source: ABdhPJzw73ekffcunyjrSkMcYzhG2oTN3hgX5618XHyVJPGma2VxAdtu2GUrDNvI7Ls/FS87wXEYytUyk6/LQyIQ8vY=
-X-Received: by 2002:a81:1a43:0:b0:30c:78b1:f23d with SMTP id
- a64-20020a811a43000000b0030c78b1f23dmr60215098ywa.166.1655047628056; Sun, 12
- Jun 2022 08:27:08 -0700 (PDT)
+        Sun, 12 Jun 2022 16:31:52 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7BBB13F96;
+        Sun, 12 Jun 2022 13:31:50 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 8ECD5B80D07;
+        Sun, 12 Jun 2022 20:31:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 661B0C34115;
+        Sun, 12 Jun 2022 20:31:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1655065908;
+        bh=AyOwRz/gKBKScbBHHI/YAvxa737PnezhWjLreCbZODo=;
+        h=Date:From:To:Cc:Subject:From;
+        b=a/z2IWkpd5qV4cXB2TknZUAP2iLaBhTIFTWqXbmHzugQvgU47X/gYznY5rgduL8uV
+         oqD5fyuvOCgbhCGLTMInBvip7PDzEopF+ENjU9x/mmwOKMKXHqLoXOQ0r0tT/pHn5g
+         dmCHhtFKopgQF3fYxhX+fa0I3MRPiwRECIoaV5YiRLgxVWPqr1jdgNxZnxgmq2iW8T
+         U47Ygdpr1XdHEhOZ7ZXBvXiqSu2CSytsTJptHm2hgYHVnFifR8ApohCOh8IRhDAUX0
+         HAMyepx9uPLj6SDKcJMewaVduj9JjzT/W/v1w2BORmO2vHURz/iK0oWEKjkm2TjCgM
+         7MSvhrJyZ1f2A==
+Date:   Mon, 13 Jun 2022 04:31:34 +0800
+From:   Gao Xiang <xiang@kernel.org>
+To:     linux-erofs@lists.ozlabs.org
+Cc:     linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        kernel-team@android.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Subject: [ANNOUNCE] erofs-utils: release 1.5
+Message-ID: <YqZNJpgQ+xLSHBqK@debian>
+Mail-Followup-To: linux-erofs@lists.ozlabs.org,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        kernel-team@android.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>
 MIME-Version: 1.0
-References: <CA+G9fYtVOfWWpx96fa3zzKzBPKiNu1w3FOD4j++G8MOG3Vs0EA@mail.gmail.com>
- <Yp47DODPCz0kNgE8@google.com> <CA+G9fYsjn0zySHU4YYNJWAgkABuJuKtHty7ELHmN-+30VYgCDA@mail.gmail.com>
- <Yp/kpPA7GdbArXDo@google.com> <YqAL+HeZDk5Wug28@google.com>
- <YqAMmTiwcyS3Ttla@google.com> <YqANP1K/6oRNCUKZ@google.com> <YqBRZcsfrRMZXMCC@google.com>
-In-Reply-To: <YqBRZcsfrRMZXMCC@google.com>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Sun, 12 Jun 2022 20:56:56 +0530
-Message-ID: <CA+G9fYvjpCOcTVdpnHTOWaf3KcDeTM3Njn_NnXvU37ppoHH5uw@mail.gmail.com>
-Subject: Re: qemu-arm: zram: mkfs.ext4 : Unable to handle kernel NULL pointer
- dereference at virtual address 00000140
-To:     Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc:     Minchan Kim <minchan@kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        regressions@lists.linux.dev, Jens Axboe <axboe@kernel.dk>,
-        Nitin Gupta <ngupta@vflare.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -77,63 +59,100 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Sergey,
+Hi folks,
 
-On Wed, 8 Jun 2022 at 13:06, Sergey Senozhatsky
-<senozhatsky@chromium.org> wrote:
->
-> On (22/06/08 11:45), Sergey Senozhatsky wrote:
-> >
-> > Something like this?
->
-> May be even something like below. Move static initializer to cpu up
-> hook.
+A new version erofs-utils 1.5 is available at:
+git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs-utils.git tags/v1.5
 
-Thanks for providing a fix patch.
-As per your suggestion debug lock enabled.
+It mainly includes the following changes:
+   - (fsck.erofs) support filesystem extraction (Igor Ostapenko);
+   - support ztailpacking inline feature for compressed files (Yue Hu);
+   - (dump.erofs) support listing directories;
+   - more liberofs APIs (including iterate APIs) (me, Kelvin Zhang);
+   - use mtime to allow more control over the timestamps (David Anderson);
+   - switch to GPL-2.0+ OR Apache-2.0 dual license for liberofs;
+   - various bugfixes and cleanups;
 
-CONFIG_DEBUG_LOCK_ALLOC=y
 
-I have tested this patch and the reported issue got resolved [1].
+A little bit delay this time for more than half a year.  This release
+mainly includes ztailpacking feature by Yue Hu which can inline the
+tail pcluster with its inode metadata thus save space and a tail I/O,
+it's highly recommended to be enabled if possible.
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Apart from that, fsck.erofs now supports extracting filesystem, thanks
+to Igor Ostapenko.  There are other changes listed above.
 
-> ---
->  mm/zsmalloc.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
->
-> diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
-> index 9152fbde33b5..6d3789d834e2 100644
-> --- a/mm/zsmalloc.c
-> +++ b/mm/zsmalloc.c
-> @@ -453,9 +453,7 @@ MODULE_ALIAS("zpool-zsmalloc");
->  #endif /* CONFIG_ZPOOL */
->
->  /* per-cpu VM mapping areas for zspage accesses that cross page boundaries */
-> -static DEFINE_PER_CPU(struct mapping_area, zs_map_area) = {
-> -       .lock   = INIT_LOCAL_LOCK(lock),
-> -};
-> +static DEFINE_PER_CPU(struct mapping_area, zs_map_area);
->
->  static __maybe_unused int is_first_page(struct page *page)
->  {
-> @@ -1113,6 +1111,7 @@ static inline int __zs_cpu_up(struct mapping_area *area)
->         area->vm_buf = kmalloc(ZS_MAX_ALLOC_SIZE, GFP_KERNEL);
->         if (!area->vm_buf)
->                 return -ENOMEM;
-> +       local_lock_init(&area->lock);
->         return 0;
->  }
->
->
-> 2.36.1.255.ge46751e96f-goog
 
-Build artifacts link [2]
+In the end, I'd like to update the roadmap of EROFS since the last
+update for the coming year:
 
---
-Linaro LKFT
-https://lkft.linaro.org
+https://lore.kernel.org/r/20211009061150.GA7479@hsiangkao-HP-ZHAN-66-Pro-G1
 
-[1] https://lkft.validation.linaro.org/scheduler/job/5160519#L828
-[2] https://builds.tuxbuild.com/2ATpwm83jTe2wlUX33YeTpshh2u/
+Thankfully many of them are finished during the past year.
+
+
+1. Common stuffs:
+
+ - Switch to folios and enable large folios if possible in the next
+   cycles;
+
+ - Get rid of PG_error flag in Linux 5.20 (pending review);
+
+ - Explore byte-addressed rolling hash compression + deduplication since
+   on-disk format already supports such way but needs runtime tuning;
+
+ - LZ4 range dictionary support.  We don't have enough manpower on this
+   yet, but hopefully it can have some progress in the coming year;
+
+ - Further code cleanups.
+
+
+2. Container image use cases:
+
+ - Recently, we posted a article to introduce erofs over fscache
+   feature working with CNCF Dragonfly Nydus image service and give
+   some performance numbers.
+
+     https://d7y.io/blog/2022/06/06/evolution-of-nydus/
+
+   Our Alibaba kernel team are still working on several stuffs about
+   Nydus image service and fscache, including:
+
+    - Better flexible cache management, including repacking and blob
+      GC in order to make better use to the local cache database;
+
+    - Convert and run (e)stargz and others on the fly with fscache
+      feature.  In the future, different formats are also able to be
+      merged in one fs tree:
+      https://github.com/dragonflyoss/image-service/pull/486
+
+    - Runtime decompression support over fscache;
+
+    - Blob cache sharing within the same trusted domain;
+
+    - Page cache sharing between different files with the same chunk;
+
+    - Enhanced convergent encryption to share chunk data in a trusted
+      domain and runtime verification;
+
+    - And other fscache/cachefiles common improvements like fallback
+      format, multiple daemons/dirs, FSDAX, etc.
+
+ - Apart from Nydus, it's planned to introduce a native fscache daemon
+   integrated in erofs-utils to mount EROFS, (e)stargz images from
+   network as well as provide fscache interfaces as liberofs APIs.
+
+
+3. Embedded devices
+
+ - Yue Hu is currently working on a fragment-likewise feature, which
+   can merged tails or the whole files into a special inode in order to
+   minimize the space;
+
+ - Multi-threaded mkfs, fsck.erofs.  I know someone is working on this
+   but I'm not sure the current progress.  It's a bit delay but needs
+   to be resolved anyway.
+
+
+Thanks,
+Gao Xiang
