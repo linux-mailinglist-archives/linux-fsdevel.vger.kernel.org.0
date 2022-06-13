@@ -2,124 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 31D0754A23F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jun 2022 00:47:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66EE454A215
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jun 2022 00:29:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229783AbiFMWrr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Jun 2022 18:47:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49904 "EHLO
+        id S235001AbiFMW3f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Jun 2022 18:29:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229671AbiFMWrq (ORCPT
+        with ESMTP id S229808AbiFMW3e (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Jun 2022 18:47:46 -0400
-X-Greylist: delayed 1140 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 13 Jun 2022 15:47:45 PDT
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10B3130572;
-        Mon, 13 Jun 2022 15:47:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=+COkvdNrG6nWHW8DeXVNn4pSIXXVecQkufUo12vTZqM=; b=F1GaohTqdVyGbYtsxIq1ypUFSB
-        P1lDuj/SfIxIUbtNOkI8o8CmCXWpPq/1+OMrMMOxMWjRQoykrHF01Bq4OG0vxR0hKM5bbwC9uWOd9
-        2/mdrfapr7kM/8zZ6/tsuHr3nPIYSd/WzF2XWntJS3FWWPOug6sDaEw/SFUeb0PMXbBSmi7lByhJm
-        GA2PvhnaqVNF03pAh+K/YYGKB64ks4khKPFs48hRmwGveqm7TfpcG87sSbrydMzgtxbcH248jh/q/
-        d6pEaGxSHgZi/+SunJ6dUdtnr+ZWQL5awJRvRUba+eqJscSETAyFR+DCrVKsFj874VH3hJcv8Nh/L
-        0SgvT1OQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
-        id 1o0sXy-0005E5-FL;
-        Mon, 13 Jun 2022 22:28:34 +0000
-Date:   Mon, 13 Jun 2022 23:28:34 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        nvdimm@lists.linux.dev, David Howells <dhowells@redhat.com>
-Subject: Re: [RFC][PATCH] fix short copy handling in copy_mc_pipe_to_iter()
-Message-ID: <Yqe6EjGTpkvJUU28@ZenIV>
-References: <YqaAcKsd6uGfIQzM@zeniv-ca.linux.org.uk>
- <CAHk-=wjmCzdNDCt6L8-N33WSRaYjnj0=yTc_JG8A_Pd7ZEtEJw@mail.gmail.com>
+        Mon, 13 Jun 2022 18:29:34 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 9172E2D1CC
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Jun 2022 15:29:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1655159372;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=N9slvxSG8yuHf5LjsS6/OHnxn9VuKQYSBmJtKIsodrQ=;
+        b=TjRM9LR4WC3YlE8PD2X3jJdNx1EnExzaqP037+4HgLHzVT0fByLT7mBbeNJbK2KZCQYPnB
+        a6u/c/eS9OByf40OaHNmIRQ59ZD7Z+Ev4SX/dULjLP9mNr+13qdW9PfCDrhGG9TR1lAFsm
+        rXhJ8r5f6WO1JLpyryJ+6zzrQCraH1U=
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com
+ [209.85.166.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-185-WtiVBq4BMNyu6pZNNRje6A-1; Mon, 13 Jun 2022 18:29:31 -0400
+X-MC-Unique: WtiVBq4BMNyu6pZNNRje6A-1
+Received: by mail-io1-f69.google.com with SMTP id r1-20020a6b8f01000000b00669d87aebc5so2339078iod.18
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Jun 2022 15:29:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=N9slvxSG8yuHf5LjsS6/OHnxn9VuKQYSBmJtKIsodrQ=;
+        b=sz5OGxNZoaHW20Uoal/+MK1Lr8gZ5azEtkY5vqyFaN1EImqN8eaQIEsJFV8ZQkl0hv
+         yop/Xq5ILIzju+2YGBHv5A7m8JC6jicvKmoe4vQ8/29tBKEh6H8MUPiJ+zrCCA1saK0B
+         E6RZ1rXrF4LSxOMwCkeIost8Z5v2ZKp/0IwnVymQsoaDfBpn6wRHUjtwxvd4kmeJEuCT
+         uGfYecQOkY03fyn5BI8Pgd5cqnRH8kEaIzuWuviqWvc1wDOIQUB/uliqmgJ7owd1Pzxu
+         AqZXfpKqmR0lCyHhUGG74CzY9YaLOmiuWoKnwO2Sns1W9UcHIjGJPAmjY0KQxWKCXdsV
+         c+TA==
+X-Gm-Message-State: AOAM530zoYaJ6reQJZhzrNumLWKV5m3buvkApV8kJjR+jkHkiJuz72Yy
+        0hlCPvdTF8RR6qFUy8mRdmfGh3dlaAcvAqPsGmt+Z7GxWDQqd5AA8sxD+1hCz0e+faBAa7DPF/a
+        U4r5gIVFXT97iTJu/e0sBYGbMow==
+X-Received: by 2002:a05:6602:2d0e:b0:64f:d1ff:ac9c with SMTP id c14-20020a0566022d0e00b0064fd1ffac9cmr999336iow.41.1655159370930;
+        Mon, 13 Jun 2022 15:29:30 -0700 (PDT)
+X-Google-Smtp-Source: ABdhPJzYuLiEIgEbDCMpfZ5G5MofdrV4wPXivgDYQrkwahKK9C4xyx5BABua4comPb9o8kU9eTD8mQ==
+X-Received: by 2002:a05:6602:2d0e:b0:64f:d1ff:ac9c with SMTP id c14-20020a0566022d0e00b0064fd1ffac9cmr999316iow.41.1655159370649;
+        Mon, 13 Jun 2022 15:29:30 -0700 (PDT)
+Received: from xz-m1.local (cpec09435e3e0ee-cmc09435e3e0ec.cpe.net.cable.rogers.com. [99.241.198.116])
+        by smtp.gmail.com with ESMTPSA id k26-20020a02661a000000b0032e22496addsm4041331jac.139.2022.06.13.15.29.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Jun 2022 15:29:29 -0700 (PDT)
+Date:   Mon, 13 Jun 2022 18:29:27 -0400
+From:   Peter Xu <peterx@redhat.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Axel Rasmussen <axelrasmussen@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Charan Teja Reddy <charante@codeaurora.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        Gleb Fotengauer-Malinovskiy <glebfm@altlinux.org>,
+        Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.cz>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        zhangyi <yi.zhang@huawei.com>, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v3 2/6] userfaultfd: add /dev/userfaultfd for fine
+ grained access control
+Message-ID: <Yqe6R+XSH+nFc8se@xz-m1.local>
+References: <20220601210951.3916598-1-axelrasmussen@google.com>
+ <20220601210951.3916598-3-axelrasmussen@google.com>
+ <20220613145540.1c9f7750092911bae1332b92@linux-foundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wjmCzdNDCt6L8-N33WSRaYjnj0=yTc_JG8A_Pd7ZEtEJw@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20220613145540.1c9f7750092911bae1332b92@linux-foundation.org>
+X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 13, 2022 at 10:54:36AM -0700, Linus Torvalds wrote:
-> On Sun, Jun 12, 2022 at 5:10 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> > Unlike other copying operations on ITER_PIPE, copy_mc_to_iter() can
-> > result in a short copy.  In that case we need to trim the unused
-> > buffers, as well as the length of partially filled one - it's not
-> > enough to set ->head, ->iov_offset and ->count to reflect how
-> > much had we copied.  Not hard to fix, fortunately...
-> >
-> > I'd put a helper (pipe_discard_from(pipe, head)) into pipe_fs_i.h,
-> > rather than iov_iter.c -
+On Mon, Jun 13, 2022 at 02:55:40PM -0700, Andrew Morton wrote:
+> On Wed,  1 Jun 2022 14:09:47 -0700 Axel Rasmussen <axelrasmussen@google.com> wrote:
 > 
-> Actually, since this "copy_mc_xyz()" stuff is going to be entirely
-> impossible to debug and replicate for any normal situation, I would
-> suggest we take the approach that we (long ago) used to take with
-> copy_from_user(): zero out the destination buffer, so that developers
-> that can't test the faulting behavior don't have to worry about it.
+> > To achieve this, add a /dev/userfaultfd misc device. This device
+> > provides an alternative to the userfaultfd(2) syscall for the creation
+> > of new userfaultfds. The idea is, any userfaultfds created this way will
+> > be able to handle kernel faults, without the caller having any special
+> > capabilities. Access to this mechanism is instead restricted using e.g.
+> > standard filesystem permissions.
 > 
-> And then the existing code is fine: it will break out of the loop, but
-> it won't do the odd revert games and the "randomnoise.len -= rem"
-> thing that I can't wrap my head around.
+> The use of a /dev node isn't pretty.  Why can't this be done by
+> tweaking sys_userfaultfd() or by adding a sys_userfaultfd2()?
 > 
-> Hmm?
+> Peter, will you be completing review of this patchset?
 
-Not really - we would need to zero the rest of those pages somehow.
-They are already allocated and linked into pipe; leaving them
-there (and subsequent ones hadn't seen any stores whatsoever - they
-are fresh out of alloc_page(GFP_USER)) is a non-starter.
+Sorry to not have reviewed it proactively..
 
-We could do allocation as we go, but that's a much more intrusive
-change...
+I think it's because I never had a good picture/understanding of what
+should be the best security model for uffd, meanwhile I am (it seems) just
+seeing more and more ways to "provide a safer uffd" by different people
+using different ways.. and I never had time (and probably capability too..)
+to figure out the correct approach if not to accept all options provided.
 
-BTW, speaking of pipes:
-static inline unsigned int pipe_space_for_user(unsigned int head, unsigned int tail,
-                                               struct pipe_inode_info *pipe)
-{
-        unsigned int p_occupancy, p_space;
+I think I'll just assume the whole thing is acked already from you
+generally, then I'll read at least the implementation before the end of
+tomorrow.
 
-        p_occupancy = pipe_occupancy(head, tail);
-        if (p_occupancy >= pipe->max_usage)
-                return 0;
-        p_space = pipe->ring_size - p_occupancy;
-        if (p_space > pipe->max_usage)
-                p_space = pipe->max_usage;
-        return p_space;
-}
+Thanks,
 
-OK, if head - tail >= max_usage, we get 0.  Fair enough, since
-pipe_full() callers will get "it's full, sod off" in that situation.
-But...  what the hell is the rest doing?  p_space is the amount of
-slots not in use.  So we return the lesser of it and max_usage?
+-- 
+Peter Xu
 
-Suppose we have 128 slots in the ring, with max_usage being below
-that (e.g. 64).  63 slots are in use; you can add at most one.
-And p_space is 65, so this sucker will return 64.
-
-Dave, could you explain what's going on there?  Note that pipe_write()
-does *not* use that thing at all; it's only splice (i.e. ITER_PIPE
-stuff) that is using it.
-
-What's wrong with
-        p_occupancy = pipe_occupancy(head, tail);
-        if (p_occupancy >= pipe->max_usage)
-                return 0;
-	else
-		return pipe->max_usage - p_occupancy;
-
-which would match the way you are using ->max_usage in pipe_write()
-et.al.  Including the use in copy_page_to_iter_pipe(), BTW...
