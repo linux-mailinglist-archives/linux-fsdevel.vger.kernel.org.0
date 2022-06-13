@@ -2,120 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 97FF7547D07
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jun 2022 02:10:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 294F9547D72
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jun 2022 03:32:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237913AbiFMAKa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 12 Jun 2022 20:10:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47888 "EHLO
+        id S232645AbiFMBbo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 12 Jun 2022 21:31:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232350AbiFMAK3 (ORCPT
+        with ESMTP id S232238AbiFMBbU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 12 Jun 2022 20:10:29 -0400
-Received: from zeniv-ca.linux.org.uk (zeniv-ca.linux.org.uk [IPv6:2607:5300:60:148a::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47E933A73E;
-        Sun, 12 Jun 2022 17:10:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
-        Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:In-Reply-To:References;
-        bh=/eT01oHM8scLQTOGBAnJYt6o46Km3/nksV0jfD6gFIo=; b=kEGYdqXk+xMJqu3h8BdUHNwdHJ
-        9CIwbIdhL5ZWRQwqTv6MxoC/juVD+xrbIPG55VRgqM2hHZ+sMrYV/SKNTEWlEO4WC100pNDBLAONE
-        TT3PaEKU0Pr4loNF4cfYKncrBqfuu5OnGLZ8PfS/ylp3GnWiWcOXNEj1AiVrcR7WZ6yQ/DqR3GcIo
-        YJWRtWv6N8ZH12pgkks4F6+xKC1sha28tQqSzpShqsuPxGVlf3uF19M6ejZLXFFr5adDeIBEskoQ8
-        vEVwAWUX8cQGet5iER2lqBddGWFOeRr7lySwgKZLlsMA35T5ewAybPLEs3lsQ9Wve3xxmaFeFLRZK
-        Ny1hIDvw==;
-Received: from viro by zeniv-ca.linux.org.uk with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1o0Xey-006ZFh-1h; Mon, 13 Jun 2022 00:10:24 +0000
-Date:   Mon, 13 Jun 2022 00:10:24 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        nvdimm@lists.linux.dev
-Subject: [RFC][PATCH] fix short copy handling in copy_mc_pipe_to_iter()
-Message-ID: <YqaAcKsd6uGfIQzM@zeniv-ca.linux.org.uk>
+        Sun, 12 Jun 2022 21:31:20 -0400
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C46CC10FFD;
+        Sun, 12 Jun 2022 18:31:15 -0700 (PDT)
+Received: from dggemv711-chm.china.huawei.com (unknown [172.30.72.53])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4LLvBp6Zk0zjXZc;
+        Mon, 13 Jun 2022 09:30:10 +0800 (CST)
+Received: from kwepemm600009.china.huawei.com (7.193.23.164) by
+ dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Mon, 13 Jun 2022 09:31:13 +0800
+Received: from [10.174.176.73] (10.174.176.73) by
+ kwepemm600009.china.huawei.com (7.193.23.164) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.24; Mon, 13 Jun 2022 09:31:12 +0800
+Subject: Re: [PATCH -next] mm/filemap: fix that first page is not mark
+ accessed in filemap_read()
+To:     Matthew Wilcox <willy@infradead.org>
+CC:     Kent Overstreet <kent.overstreet@gmail.com>,
+        <akpm@linux-foundation.org>, <axboe@kernel.dk>,
+        <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>, <yi.zhang@huawei.com>
+References: <20220602082129.2805890-1-yukuai3@huawei.com>
+ <YpkB1+PwIZ3AKUqg@casper.infradead.org>
+ <c49af4f7-5005-7cf1-8b58-a398294472ab@huawei.com>
+ <YqNWY46ZRoK6Cwbu@casper.infradead.org>
+ <YqNW8cYn9gM7Txg6@casper.infradead.org>
+ <c5f97e2f-8a48-2906-91a2-1d84629b3641@gmail.com>
+ <YqOOsHecZUWlHEn/@casper.infradead.org>
+ <dfa6d60d-0efd-f12d-9e71-a6cd24188bba@huawei.com>
+ <YqTUEZ+Pa24p09Uc@casper.infradead.org>
+From:   Yu Kuai <yukuai3@huawei.com>
+Message-ID: <7e9889b7-8eeb-5e97-3f4b-cdc914a032f4@huawei.com>
+Date:   Mon, 13 Jun 2022 09:31:11 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <YqTUEZ+Pa24p09Uc@casper.infradead.org>
+Content-Type: text/plain; charset="gbk"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.174.176.73]
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemm600009.china.huawei.com (7.193.23.164)
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-5.4 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[commit in question sits in vfs.git#fixes]
+ÔÚ 2022/06/12 1:42, Matthew Wilcox Ð´µÀ:
+> On Sat, Jun 11, 2022 at 04:23:42PM +0800, Yu Kuai wrote:
+>>> This is going to mark the folio as accessed multiple times if it's
+>>> a multi-page folio.  How about this one?
+>>>
+>> Hi, Matthew
+>>
+>> Thanks for the patch, it looks good to me.
+> 
+> Did you test it?  This is clearly a little subtle ;-)
 
-Unlike other copying operations on ITER_PIPE, copy_mc_to_iter() can
-result in a short copy.  In that case we need to trim the unused
-buffers, as well as the length of partially filled one - it's not
-enough to set ->head, ->iov_offset and ->count to reflect how
-much had we copied.  Not hard to fix, fortunately...
+Yes, I confirmed that with this patch, small sequential read will mark
+page accessed. However, multi-page folio is not tested yet.
 
-I'd put a helper (pipe_discard_from(pipe, head)) into pipe_fs_i.h,
-rather than iov_iter.c - it has nothing to do with iov_iter and
-having it will allow us to avoid an ugly kludge in fs/splice.c.
-We could put it into lib/iov_iter.c for now and move it later,
-but I don't see the point going that way...
+> 
+>> BTW, I still think the fix should be commit 06c0444290ce ("mm/filemap.c:
+>> generic_file_buffered_read() now uses find_get_pages_contig").
+> 
+> Hmm, yes.  That code also has problems, but they're more subtle and
+> probably don't amount to much.
+> 
+> -       iocb->ki_pos += copied;
+> -
+> -       /*
+> -        * When a sequential read accesses a page several times,
+> -        * only mark it as accessed the first time.
+> -        */
+> -       if (iocb->ki_pos >> PAGE_SHIFT != ra->prev_pos >> PAGE_SHIFT)
+> -               mark_page_accessed(page);
+> -
+> -       ra->prev_pos = iocb->ki_pos;
+> 
+> This will mark the page accessed when we _exit_ a page.  So reading
+> 512-bytes at a time from offset 0, we'll mark page 0 as accessed on the
+> first read (because the prev_pos is initialised to -1).  Then on the
+> eighth read, we'll mark page 0 as accessed again (because ki_pos will
+> now be 4096 and prev_pos is 3584).  We'll then read chunks of page 1
+> without marking it as accessed, until we're about to step into page 2.
 
-Fixes: ca146f6f091e "lib/iov_iter: Fix pipe handling in _copy_to_iter_mcsafe()"
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
-diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
-index cb0fd633a610..4ea496924106 100644
---- a/include/linux/pipe_fs_i.h
-+++ b/include/linux/pipe_fs_i.h
-@@ -229,6 +229,15 @@ static inline bool pipe_buf_try_steal(struct pipe_inode_info *pipe,
- 	return buf->ops->try_steal(pipe, buf);
- }
- 
-+static inline void pipe_discard_from(struct pipe_inode_info *pipe,
-+		unsigned int old_head)
-+{
-+	unsigned int mask = pipe->ring_size - 1;
-+
-+	while (pipe->head > old_head)
-+		pipe_buf_release(pipe, &pipe->bufs[--pipe->head & mask]);
-+}
-+
- /* Differs from PIPE_BUF in that PIPE_SIZE is the length of the actual
-    memory allocation, whereas PIPE_BUF makes atomicity guarantees.  */
- #define PIPE_SIZE		PAGE_SIZE
-diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index 0b64695ab632..2bf20b48a04a 100644
---- a/lib/iov_iter.c
-+++ b/lib/iov_iter.c
-@@ -689,6 +689,7 @@ static size_t copy_mc_pipe_to_iter(const void *addr, size_t bytes,
- 	struct pipe_inode_info *pipe = i->pipe;
- 	unsigned int p_mask = pipe->ring_size - 1;
- 	unsigned int i_head;
-+	unsigned int valid = pipe->head;
- 	size_t n, off, xfer = 0;
- 
- 	if (!sanity(i))
-@@ -702,11 +703,17 @@ static size_t copy_mc_pipe_to_iter(const void *addr, size_t bytes,
- 		rem = copy_mc_to_kernel(p + off, addr + xfer, chunk);
- 		chunk -= rem;
- 		kunmap_local(p);
--		i->head = i_head;
--		i->iov_offset = off + chunk;
--		xfer += chunk;
--		if (rem)
-+		if (chunk) {
-+			i->head = i_head;
-+			i->iov_offset = off + chunk;
-+			xfer += chunk;
-+			valid = i_head + 1;
-+		}
-+		if (rem) {
-+			pipe->bufs[i_head & p_mask].len -= rem;
-+			pipe_discard_from(pipe, valid);
- 			break;
-+		}
- 		n -= chunk;
- 		off = 0;
- 		i_head++;
+You are right, I didn't think of that situation.
+> 
+> Marking page 0 accessed twice is bad; it'll set the referenced bit the
+> first time, and then the second time, it'll activate it.  So it'll be
+> thought to be part of the workingset when it's really just been part of
+> a streaming read.
+> 
+> And the last page we read will never be marked accessed unless it
+> happens to finish at the end of a page.
+> 
+> Before Kent started his refactoring, I think it worked:
+> 
+> -       pgoff_t prev_index;
+> -       unsigned int prev_offset;
+> ...
+> -       prev_index = ra->prev_pos >> PAGE_SHIFT;
+> -       prev_offset = ra->prev_pos & (PAGE_SIZE-1);
+> ...
+> -               if (prev_index != index || offset != prev_offset)
+> -                       mark_page_accessed(page);
+> -               prev_index = index;
+> -               prev_offset = offset;
+> ...
+> -       ra->prev_pos = prev_index;
+> -       ra->prev_pos <<= PAGE_SHIFT;
+> -       ra->prev_pos |= prev_offset;
+> 
+> At least, I don't detect any bugs in this.
+
+Sure, thanks for your explanation.
