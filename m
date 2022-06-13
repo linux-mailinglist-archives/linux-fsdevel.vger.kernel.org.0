@@ -2,134 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BE62548838
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jun 2022 18:00:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA81154985A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jun 2022 18:36:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355183AbiFMO5Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Jun 2022 10:57:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51892 "EHLO
+        id S1380118AbiFMN5g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Jun 2022 09:57:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54726 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241654AbiFMO5H (ORCPT
+        with ESMTP id S1380287AbiFMNyB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Jun 2022 10:57:07 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0880D80A8
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Jun 2022 04:59:11 -0700 (PDT)
-Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
-        by smtp-out2.suse.de (Postfix) with ESMTP id 68A171F38A;
-        Mon, 13 Jun 2022 11:59:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1655121550; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=MtaDkSTsqZB2N4cu2+iMP7NifscKGHK83cRkNJtJRmY=;
-        b=kYry5WLZPt8QgK932vtihfgnf4/R9WMbmuPoPA8dx8WfIS5j82sxqXq5HoDR/smbLIq3PH
-        h+UU2qrnXuBW+AMHLCs9K/6AOiVNMG9FhP0QuhvBjPXJDD77J8bixEIlx+KMzhGZQVEaW3
-        0xcZaFYpx6CnnDceB/BfcUeZp+IRhag=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1655121550;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=MtaDkSTsqZB2N4cu2+iMP7NifscKGHK83cRkNJtJRmY=;
-        b=AtFdndIAxHsV1Rzph+EqibF0s4UZe8Qb17ys8eNr9FqRU1lDXJpTbhSaa2f6qsjg/PLmNl
-        a/SXlDSs0e6MIGCg==
-Received: from quack3.suse.cz (unknown [10.163.28.18])
+        Mon, 13 Jun 2022 09:54:01 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03A4D42A21;
+        Mon, 13 Jun 2022 04:34:26 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by relay2.suse.de (Postfix) with ESMTPS id 4294E2C141;
-        Mon, 13 Jun 2022 11:59:10 +0000 (UTC)
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id D235FA0634; Mon, 13 Jun 2022 13:59:09 +0200 (CEST)
-Date:   Mon, 13 Jun 2022 13:59:09 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: LTP test for fanotify evictable marks
-Message-ID: <20220613115909.fkprdllsxawc3trg@quack3.lan>
-References: <20220307155741.1352405-1-amir73il@gmail.com>
- <20220317141204.hbpflysc7p5e5vdo@quack3.lan>
- <CAOQ4uxh2KuLk21530upP0VYWDrks1m++0jfk6RGqGVayNnEHcg@mail.gmail.com>
- <CAOQ4uxhx=-RT_J-hiogPE9=LTyYVD2Q7FnZH03Hgba4Y3eh-QA@mail.gmail.com>
- <CAOQ4uxjuM4p7S6sg6R5=7skcKcC7GFcsrZ7ZftdadkLP4-Fk=g@mail.gmail.com>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 91BBF612D0;
+        Mon, 13 Jun 2022 11:34:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DE7FC34114;
+        Mon, 13 Jun 2022 11:34:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1655120065;
+        bh=ZjDVsKHFBSnws36ePAnZg275uQcp5H4PcRvFzlD2OCY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=GdOw7yAMTFxOtA1uIG2rgNiapakQfWnLMWiyHKauhP60cOEWFLhhU6YCfuehZ7/3F
+         SEMXPUP2zht6b6B9NZ5JUOBkLujbvj8izhd3/QNwn8xvHfP6o+PN9XsSrQZDUAe3tu
+         G+4cVlx+UfapznwBQ8Vo+Zp5V5G4MeRrM+yCMJTE=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Gao Xiang <xiang@kernel.org>, linux-afs@lists.infradead.org,
+        v9fs-developer@lists.sourceforge.net, devel@lists.orangefs.org,
+        linux-erofs@lists.ozlabs.org, linux-cachefs@redhat.com,
+        linux-fsdevel@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.18 222/339] iov_iter: Fix iter_xarray_get_pages{,_alloc}()
+Date:   Mon, 13 Jun 2022 12:10:47 +0200
+Message-Id: <20220613094933.390057932@linuxfoundation.org>
+X-Mailer: git-send-email 2.36.1
+In-Reply-To: <20220613094926.497929857@linuxfoundation.org>
+References: <20220613094926.497929857@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxjuM4p7S6sg6R5=7skcKcC7GFcsrZ7ZftdadkLP4-Fk=g@mail.gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 13-06-22 08:40:37, Amir Goldstein wrote:
-> On Sun, Mar 20, 2022 at 2:54 PM Amir Goldstein <amir73il@gmail.com> wrote:
-> >
-> > On Thu, Mar 17, 2022 at 5:14 PM Amir Goldstein <amir73il@gmail.com> wrote:
-> > >
-> > > On Thu, Mar 17, 2022 at 4:12 PM Jan Kara <jack@suse.cz> wrote:
-> > > >
-> > > > On Mon 07-03-22 17:57:36, Amir Goldstein wrote:
-> > > > > Jan,
-> > > > >
-> > > > > Following RFC discussion [1], following are the volatile mark patches.
-> > > > >
-> > > > > Tested both manually and with this LTP test [2].
-> > > > > I was struggling with this test for a while because drop caches
-> > > > > did not get rid of the un-pinned inode when test was run with
-> > > > > ext2 or ext4 on my test VM. With xfs, the test works fine for me,
-> > > > > but it may not work for everyone.
-> > > > >
-> > > > > Perhaps you have a suggestion for a better way to test inode eviction.
-> > > >
-> > > > Drop caches does not evict dirty inodes. The inode is likely dirty because
-> > > > you have chmodded it just before drop caches. So I think calling sync or
-> > > > syncfs before dropping caches should fix your problems with ext2 / ext4.  I
-> > > > suspect this has worked for XFS only because it does its private inode
-> > > > dirtiness tracking and keeps the inode behind VFS's back.
-> > >
-> > > I did think of that and tried to fsync which did not help, but maybe
-> > > I messed it up somehow.
-> > >
-> >
-> > You were right. fsync did fix the test.
-> 
-> Hi Jan,
-> 
-> I was preparing to post the LTP test for FAN_MARK_EVICTABLE [1]
-> and I realized the issue we discussed above was not really resolved.
-> fsync() + drop_caches is not enough to guarantee reliable inode eviction.
-> 
-> It "kind of" works for ext2 and xfs, but not for ext4, ext3, btrfs.
-> "kind of" because even for ext2 and xfs, dropping only inode cache (2)
-> doesn't evict the inode/mark and dropping inode+page cache (3) does work
-> most of the time, although I did occasionally see failures.
-> I suspect those failures were related to running the test on a system
-> with very low page cache usage.
-> The fact that I had to tweak vfs_cache_pressure to increase test reliability
-> also suggests that there are heuristics at play.
+From: David Howells <dhowells@redhat.com>
 
-Well, yes, there's no guaranteed way to force inode out of cache. It is all
-best-effort stuff. When we needed to make sure inode goes out of cache on
-nearest occasion, we have introduced d_mark_dontcache() but there's no
-fs common way to set this flag on dentry and I don't think we want to
-expose one.
+[ Upstream commit 6c77676645ad42993e0a8bdb8dafa517851a352a ]
 
-I was thinking whether we have some more reliable way to test this
-functionality and I didn't find one. One other obvious approach to the test
-is to create memcgroup with low memory limit, tag large tree with evictable
-mark, and see whether the memory gets exhausted. This is kind of where this
-functionality is aimed. But there are also variables in this testing scheme
-that may be difficult to tame and the test will likely take rather long
-time to perform.
+The maths at the end of iter_xarray_get_pages() to calculate the actual
+size doesn't work under some circumstances, such as when it's been asked to
+extract a partial single page.  Various terms of the equation cancel out
+and you end up with actual == offset.  The same issue exists in
+iter_xarray_get_pages_alloc().
 
-								Honza
+Fix these to just use min() to select the lesser amount from between the
+amount of page content transcribed into the buffer, minus the offset, and
+the size limit specified.
+
+This doesn't appear to have caused a problem yet upstream because network
+filesystems aren't getting the pages from an xarray iterator, but rather
+passing it directly to the socket, which just iterates over it.  Cachefiles
+*does* do DIO from one to/from ext4/xfs/btrfs/etc. but it always asks for
+whole pages to be written or read.
+
+Fixes: 7ff5062079ef ("iov_iter: Add ITER_XARRAY")
+Reported-by: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Alexander Viro <viro@zeniv.linux.org.uk>
+cc: Dominique Martinet <asmadeus@codewreck.org>
+cc: Mike Marshall <hubcap@omnibond.com>
+cc: Gao Xiang <xiang@kernel.org>
+cc: linux-afs@lists.infradead.org
+cc: v9fs-developer@lists.sourceforge.net
+cc: devel@lists.orangefs.org
+cc: linux-erofs@lists.ozlabs.org
+cc: linux-cachefs@redhat.com
+cc: linux-fsdevel@vger.kernel.org
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ lib/iov_iter.c | 20 ++++----------------
+ 1 file changed, 4 insertions(+), 16 deletions(-)
+
+diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+index 6dd5330f7a99..dda6d5f481c1 100644
+--- a/lib/iov_iter.c
++++ b/lib/iov_iter.c
+@@ -1434,7 +1434,7 @@ static ssize_t iter_xarray_get_pages(struct iov_iter *i,
+ {
+ 	unsigned nr, offset;
+ 	pgoff_t index, count;
+-	size_t size = maxsize, actual;
++	size_t size = maxsize;
+ 	loff_t pos;
+ 
+ 	if (!size || !maxpages)
+@@ -1461,13 +1461,7 @@ static ssize_t iter_xarray_get_pages(struct iov_iter *i,
+ 	if (nr == 0)
+ 		return 0;
+ 
+-	actual = PAGE_SIZE * nr;
+-	actual -= offset;
+-	if (nr == count && size > 0) {
+-		unsigned last_offset = (nr > 1) ? 0 : offset;
+-		actual -= PAGE_SIZE - (last_offset + size);
+-	}
+-	return actual;
++	return min(nr * PAGE_SIZE - offset, maxsize);
+ }
+ 
+ /* must be done on non-empty ITER_IOVEC one */
+@@ -1602,7 +1596,7 @@ static ssize_t iter_xarray_get_pages_alloc(struct iov_iter *i,
+ 	struct page **p;
+ 	unsigned nr, offset;
+ 	pgoff_t index, count;
+-	size_t size = maxsize, actual;
++	size_t size = maxsize;
+ 	loff_t pos;
+ 
+ 	if (!size)
+@@ -1631,13 +1625,7 @@ static ssize_t iter_xarray_get_pages_alloc(struct iov_iter *i,
+ 	if (nr == 0)
+ 		return 0;
+ 
+-	actual = PAGE_SIZE * nr;
+-	actual -= offset;
+-	if (nr == count && size > 0) {
+-		unsigned last_offset = (nr > 1) ? 0 : offset;
+-		actual -= PAGE_SIZE - (last_offset + size);
+-	}
+-	return actual;
++	return min(nr * PAGE_SIZE - offset, maxsize);
+ }
+ 
+ ssize_t iov_iter_get_pages_alloc(struct iov_iter *i,
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.35.1
+
+
+
