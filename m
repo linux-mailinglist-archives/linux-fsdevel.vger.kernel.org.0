@@ -2,90 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AAF554A2AE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jun 2022 01:23:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B3E854A2B7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jun 2022 01:25:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241052AbiFMXXa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Jun 2022 19:23:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56820 "EHLO
+        id S241052AbiFMXZR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Jun 2022 19:25:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238421AbiFMXXR (ORCPT
+        with ESMTP id S239465AbiFMXZQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Jun 2022 19:23:17 -0400
-Received: from ms.lwn.net (ms.lwn.net [IPv6:2600:3c01:e000:3a1::42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53D2031DFC;
-        Mon, 13 Jun 2022 16:23:17 -0700 (PDT)
-Received: from localhost (unknown [IPv6:2601:281:8300:73::5f6])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ms.lwn.net (Postfix) with ESMTPSA id 63E322D6;
-        Mon, 13 Jun 2022 23:23:15 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 63E322D6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-        t=1655162595; bh=DaRek4VCbbCEWDVHGSepYt+fEnKtHG9ut+awCzRUXRQ=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-        b=FvS3IOr2TAOGBY3ITgsqcvlVGpzQmoKdunLDI+3/shEpR/t7oSEVVeHoGDDdKX6dK
-         Cd2H+2nc/WjM5b4sVQ8yNi7nlUuPXXG+a4sIK+UrOD6YPML0Y/EpPTvLykfUtrihqp
-         1XS8NPeT74mLMvk6FtO/Ac9KHGggTSOoAru8AlmMmkiVFfNrdkZ8ngujBF+HYdqN34
-         3UJ5krv9fnSnhbPSzoTQy5sHuxOwVSwaZWMBP/YU3q+oSaktASpzcEQaAUL/OUsBas
-         i3jQ8659pZFpkCyCBVVeNy4nrowO+LjnbeEtjztKMVkqznwuc4JCXqMY6ZifUbJ8c6
-         OCm5Hpe4Z58GQ==
-From:   Jonathan Corbet <corbet@lwn.net>
-To:     Axel Rasmussen <axelrasmussen@google.com>,
-        Peter Xu <peterx@redhat.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Charan Teja Reddy <charante@codeaurora.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Dmitry V . Levin" <ldv@altlinux.org>,
-        Gleb Fotengauer-Malinovskiy <glebfm@altlinux.org>,
-        Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        zhangyi <yi.zhang@huawei.com>, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linuxkselftest <linux-kselftest@vger.kernel.org>
-Subject: Re: [PATCH v3 2/6] userfaultfd: add /dev/userfaultfd for fine
- grained access control
-In-Reply-To: <CAJHvVchdmV42qCgO6j=zGBi0DeVcvW1OC88rHUP6V66Fg3CSww@mail.gmail.com>
-References: <20220601210951.3916598-1-axelrasmussen@google.com>
- <20220601210951.3916598-3-axelrasmussen@google.com>
- <20220613145540.1c9f7750092911bae1332b92@linux-foundation.org>
- <Yqe6R+XSH+nFc8se@xz-m1.local>
- <CAJHvVchdmV42qCgO6j=zGBi0DeVcvW1OC88rHUP6V66Fg3CSww@mail.gmail.com>
-Date:   Mon, 13 Jun 2022 17:23:14 -0600
-Message-ID: <87k09kxi59.fsf@meer.lwn.net>
+        Mon, 13 Jun 2022 19:25:16 -0400
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49B1632065;
+        Mon, 13 Jun 2022 16:25:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=aJziV53ZNLcQpCnTSJ1xxm7rGO6TWzWG0v4urvX8NyU=; b=OT0sULAjLdDaLe/ufoRgRaz7h6
+        lrNif+4H2x52/rVv8ukb76PFqzdihC65C1EMUDEvF+Al/I3OixmZVOhwnHVxnbiuj7E2UrBJAcK3i
+        jq5BxKMcUf79LcpEbksN/HeGbGhMS59DgwAcyqzfBHXGBAr4eL+w8z1Xhz9hgreXdCcLdwZtYOSwB
+        ZYuHacQ5p0oL3Ji5PO+Cu6tPRFt3jXOxRhifbYIa0FpTmQz+qczlVENomVFoigy/tiAnImRolar+O
+        VX6TvKMmZD5xYum3sDP3LaVe4eMJSNR1tv14TqHfsPe1Hd8QoCCwuRCuyn+faTB7sA1Dm1z4QhW25
+        kX5Ovdfg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
+        id 1o0tQd-0005hJ-Th;
+        Mon, 13 Jun 2022 23:25:04 +0000
+Date:   Tue, 14 Jun 2022 00:25:03 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        nvdimm@lists.linux.dev, David Howells <dhowells@redhat.com>
+Subject: Re: [RFC][PATCH] fix short copy handling in copy_mc_pipe_to_iter()
+Message-ID: <YqfHT7Ha/N/wAdcG@ZenIV>
+References: <YqaAcKsd6uGfIQzM@zeniv-ca.linux.org.uk>
+ <CAHk-=wjmCzdNDCt6L8-N33WSRaYjnj0=yTc_JG8A_Pd7ZEtEJw@mail.gmail.com>
+ <Yqe6EjGTpkvJUU28@ZenIV>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Yqe6EjGTpkvJUU28@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Axel Rasmussen <axelrasmussen@google.com> writes:
+On Mon, Jun 13, 2022 at 11:28:34PM +0100, Al Viro wrote:
 
-> I think for any approach involving syscalls, we need to be able to
-> control access to who can call a syscall. Maybe there's another way
-> I'm not aware of, but I think today the only mechanism to do this is
-> capabilities. I proposed adding a CAP_USERFAULTFD for this purpose,
-> but that approach was rejected [1]. So, I'm not sure of another way
-> besides using a device node.
+> Dave, could you explain what's going on there?  Note that pipe_write()
+> does *not* use that thing at all; it's only splice (i.e. ITER_PIPE
+> stuff) that is using it.
+> 
+> What's wrong with
+>         p_occupancy = pipe_occupancy(head, tail);
+>         if (p_occupancy >= pipe->max_usage)
+>                 return 0;
+> 	else
+> 		return pipe->max_usage - p_occupancy;
+> 
+> which would match the way you are using ->max_usage in pipe_write()
+> et.al.  Including the use in copy_page_to_iter_pipe(), BTW...
 
-I take it there's a reason why this can't be done with a security module
-- either a custom module or a policy in one of the existing modules?
-That sort of access control is just what security modules are supposed
-to be for, after all.
+The more I'm looking at that thing, the more it smells like a bug;
+it had the same 3 callers since the time it had been introduced.
 
-Thanks,
+1) pipe_get_pages().  We are about to try and allocate up to that
+many pipe buffers.  Allocation (done in push_pipe()) is done only
+if we have !pipe_full(pipe->head, pipe->tail, pipe->max_usage).
 
-jon
+It simply won't give you more than max_usage - occupancy.
+Your function returns min(ring_size - occupancy, max_usage), which
+is always greater than or equal to that (ring_size >= max_usage).
+
+2) pipe_get_pages_alloc().  Same story, same push_pipe() being
+called, same "we'll never get that much - it'll hit the limit
+first".
+
+3) iov_iter_npages() in case of ITER_PIPE.  Again, the value
+is bogus - it should not be greater than the amount of pages
+we would be able to write there.
+
+AFAICS, 6718b6f855a0 "pipe: Allow pipes to have kernel-reserved slots"
+broke it for cases when ring_size != max_usage...
