@@ -2,161 +2,208 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4967554926C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jun 2022 18:30:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A127F549906
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jun 2022 18:37:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241971AbiFMPpg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Jun 2022 11:45:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59860 "EHLO
+        id S244211AbiFMP4i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Jun 2022 11:56:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236555AbiFMPpU (ORCPT
+        with ESMTP id S243220AbiFMP4M (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Jun 2022 11:45:20 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17F1016F90D
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Jun 2022 06:22:53 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id gl15so11173793ejb.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Jun 2022 06:22:53 -0700 (PDT)
+        Mon, 13 Jun 2022 11:56:12 -0400
+Received: from mail-oi1-x235.google.com (mail-oi1-x235.google.com [IPv6:2607:f8b0:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8DD8193222
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Jun 2022 06:46:52 -0700 (PDT)
+Received: by mail-oi1-x235.google.com with SMTP id bf7so6565702oib.11
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Jun 2022 06:46:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tYzFpJHsjVS9uc3prNzYOugZOo9Xe8Jgbmt0HTJd3Pc=;
-        b=JDSWkIntiOSlPn5TIbBDrHJj3EePySo727AbtYQyGe+IVVJWl5dgr7Z9CaZP9NzxmT
-         bkp3itOv0nnE5lQB9+orvEDZA6hp56WCdrvRA7vNelJ7sQKdAJBeZvDx8PUw0VSX12LB
-         OwVb+lUFFFDj0Y+GrRkvj0VwWfiYrtAUIxbpI=
+        d=cloudflare.com; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=F8034aqgQYOIDnTJYbKnqdxe/P3NxT2RcNrYib0/ruQ=;
+        b=R4MMR5hyemRuM3l2mh4JZIS+Ysd67mGMs9w57QzxuAYNivT2oR2uA0ccLItOXx/Nff
+         HI6/bkCTWcHzuf8uaxK0aZVKIRxAzJmo3pQ4NckjHUXisjQlQKqlTIlGGFMleFZ26TS5
+         XrbPJQzMEXp3LBINHndQ9fwG3XW2+NnK70OZQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tYzFpJHsjVS9uc3prNzYOugZOo9Xe8Jgbmt0HTJd3Pc=;
-        b=HXAHpLHga8FR0y8Gmb+xsjvJWrcKlaIrtxGLD1Uxt4dgzef35zR53dhApR0IlaF0Vd
-         bf+35DsswxVrPiPqHERlVYwNXszOQmWlBPbuPyLGwQG+rK/osTpFkls4AaQupZwgJ3ik
-         2AiX98OU9QymgWkRNiziCLj1nQEv0exjp1Shq+LbwOmSsQooaDJjBvDM77Wmgh9Ld7w/
-         2WAjfh7VdFLDi61j+8oBJ18vSnLLUplaFpLIFRIpgQZdke5XdJvo9/eZafh0PoG5schd
-         aRW6QZBBILgkZsXt3x/8B0lrlbPRLe1Oz+UbI3QtL7KshVmc7/opGVjfdoFTlWuxUF3M
-         Q80w==
-X-Gm-Message-State: AOAM53326+2umIVPWgMfvs0Ig9nTzfz1MSzWZ/l+CpT0MINVCz9LqYZO
-        RAutYQ2cFiYBj6XhCEkSqyhVmvxZKy5wsIQcJROyirlcWyA=
-X-Google-Smtp-Source: ABdhPJw4g/FlkoYT6Hc4IjwQtLbHgLA56oBDxX5CzRtmJkdBv+f9jU0e+7sJxSAijYTfkjXfkGGkBemEuRlf4hfn6co=
-X-Received: by 2002:a17:907:9715:b0:711:ca06:ca50 with SMTP id
- jg21-20020a170907971500b00711ca06ca50mr38087186ejc.192.1655126552161; Mon, 13
- Jun 2022 06:22:32 -0700 (PDT)
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=F8034aqgQYOIDnTJYbKnqdxe/P3NxT2RcNrYib0/ruQ=;
+        b=SOOjpB9m0wFxRILdcYcSV7yIeibTdrG/biNgSReP0ULFwS9BFKajStmXLxlgyMrbTw
+         LKJD3ExwKv98kqjEf0ZJ8K/SNDLIwX19mBu5CVxNWaotX2ow9M6V2J9f4zuOBaL5d0/X
+         ZwVYkE411ws/2ziJnY9qtWw8HD+x2/qhMWvZpP5awLWXbdaD0vAgZjgCr19SzBRLtNKC
+         S56DbHV3I4SfOBVFqDA2+UMxtHdOuheNK3Y5zgR0285W4mERgJCjVg8F8giCZYg4SGAW
+         TIH9hHvd1g9ZS1wk+ILfh44qs4kM5rSxurkThd5zQ1VhN0Z5t9sNDBCzQE0W7An3BRI6
+         Gejg==
+X-Gm-Message-State: AOAM531ZVDe2KAAYlkxQvbdoLmJY9LDae5qKmyxkFuhXJBXy+nl0Mvyn
+        e6whuFHkuf+6az/0al3nGyW+Ew==
+X-Google-Smtp-Source: ABdhPJxMf2Qm5H8GA35Xq5n+x+nRvAKUAEETko5C92sldqd/ieCBtB6EHAADbYtdN68bTfZpGjw0Ow==
+X-Received: by 2002:aca:b744:0:b0:32f:4c19:cec1 with SMTP id h65-20020acab744000000b0032f4c19cec1mr1696209oif.43.1655128012170;
+        Mon, 13 Jun 2022 06:46:52 -0700 (PDT)
+Received: from [192.168.0.41] ([184.4.90.121])
+        by smtp.gmail.com with ESMTPSA id o20-20020a4ad494000000b0035eb4e5a6b5sm3699171oos.11.2022.06.13.06.46.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Jun 2022 06:46:51 -0700 (PDT)
+Message-ID: <b4113083-73de-3ab6-e23f-32c6627d177e@cloudflare.com>
+Date:   Mon, 13 Jun 2022 08:46:49 -0500
 MIME-Version: 1.0
-References: <20220601184407.2086986-1-davemarchevsky@fb.com>
- <20220607084724.7gseviks4h2seeza@wittgenstein> <e933791c-21d1-18f9-de91-b194728432b8@fb.com>
- <CAJfpegssrypgpDDheiYJS13=_p14sN4BK+bZShPG4VZu=WpSaA@mail.gmail.com>
- <20220613093745.4szlhoutyqpizyys@wittgenstein> <CAJfpegu0Aj65rrPN_TtN8ugQNCP2d2LEB47zSDLy7H6aqd-HuA@mail.gmail.com>
- <20220613104604.t5ptuhrl2d4l7kbl@wittgenstein>
-In-Reply-To: <20220613104604.t5ptuhrl2d4l7kbl@wittgenstein>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Mon, 13 Jun 2022 15:22:21 +0200
-Message-ID: <CAJfpegs7Pepc3przdGLPFCATe1wNT--zLjqp4Nxi1MXOtE2P=w@mail.gmail.com>
-Subject: Re: [PATCH v2] fuse: Add module param for non-descendant userns
- access to allow_other
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Andrii Nakryiko <andriin@fb.com>,
-        Dave Marchevsky <davemarchevsky@fb.com>,
-        linux-fsdevel@vger.kernel.org, Rik van Riel <riel@surriel.com>,
-        Seth Forshee <sforshee@digitalocean.com>,
-        kernel-team <kernel-team@fb.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Chris Mason <clm@fb.com>, Andrii Nakryiko <andrii@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v3] cred: Propagate security_prepare_creds() error code
+Content-Language: en-US
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-cachefs@redhat.com, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-mm@kvack.org,
+        linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        keyrings@vger.kernel.org, selinux@vger.kernel.org,
+        serge@hallyn.com, amir73il@gmail.com, kernel-team@cloudflare.com,
+        Jeff Moyer <jmoyer@redhat.com>,
+        Paul Moore <paul@paul-moore.com>
+References: <20220608150942.776446-1-fred@cloudflare.com>
+ <YqJ/0W3wxPThWqgC@sol.localdomain>
+From:   Frederick Lawler <fred@cloudflare.com>
+In-Reply-To: <YqJ/0W3wxPThWqgC@sol.localdomain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 13 Jun 2022 at 12:46, Christian Brauner <brauner@kernel.org> wrote:
->
-> On Mon, Jun 13, 2022 at 12:34:05PM +0200, Miklos Szeredi wrote:
-> > On Mon, 13 Jun 2022 at 11:37, Christian Brauner <brauner@kernel.org> wrote:
-> > >
-> > > On Mon, Jun 13, 2022 at 10:23:47AM +0200, Miklos Szeredi wrote:
-> > > > On Fri, 10 Jun 2022 at 23:39, Andrii Nakryiko <andriin@fb.com> wrote:
-> > > > >
-> > > > >
-> > > > >
-> > > > > On 6/7/22 1:47 AM, Christian Brauner wrote:
-> > > > > > On Wed, Jun 01, 2022 at 11:44:07AM -0700, Dave Marchevsky wrote:
-> > > >
-> > > > [...]
-> > > >
-> > > > > >> +static bool __read_mostly allow_other_parent_userns;
-> > > > > >> +module_param(allow_other_parent_userns, bool, 0644);
-> > > > > >> +MODULE_PARM_DESC(allow_other_parent_userns,
-> > > > > >> + "Allow users not in mounting or descendant userns "
-> > > > > >> + "to access FUSE with allow_other set");
-> > > > > >
-> > > > > > The name of the parameter also suggests that access is granted to parent
-> > > > > > userns tasks whereas the change seems to me to allows every task access
-> > > > > > to that fuse filesystem independent of what userns they are in.
-> > > > > >
-> > > > > > So even a task in a sibling userns could - probably with rather
-> > > > > > elaborate mount propagation trickery - access that fuse filesystem.
-> > > > > >
-> > > > > > AFaict, either the module parameter is misnamed or the patch doesn't
-> > > > > > implement the behavior expressed in the name.
-> > > > > >
-> > > > > > The original patch restricted access to a CAP_SYS_ADMIN capable task.
-> > > > > > Did we agree that it was a good idea to weaken it to all tasks?
-> > > > > > Shouldn't we still just restrict this to CAP_SYS_ADMIN capable tasks in
-> > > > > > the initial userns?
-> > > > >
-> > > > > I think it's fine to allow for CAP_SYS_ADMIN only, but can we then
-> > > > > ignore the allow_other mount option in such case? The idea is that
-> > > > > CAP_SYS_ADMIN allows you to read FUSE-backed contents no matter what, so
-> > > > > user not mounting with allow_other preventing root from reading contents
-> > > > > defeats the purpose at least partially.
-> > > >
-> > > > If we want to be compatible with "user_allow_other", then it should be
-> > > > checking if the uid/gid of the current task is mapped in the
-> > > > filesystems user_ns (fsuidgid_has_mapping()).  Right?
-> > >
-> > > I think that's doable. So assuming we're still talking about requiring
-> > > cap_sys_admin then we'd roughly have sm like:
-> > >
-> > >         if (fc->allow_other)
-> > >                 return current_in_userns(fc->user_ns) ||
-> > >                         (capable(CAP_SYS_ADMIN) &&
-> > >                         fsuidgid_has_mapping(..., &init_user_ns));
-> >
-> > No, I meant this:
-> >
-> >         if (fc->allow_other)
-> >                 return current_in_userns(fc->user_ns) ||
-> >                         (userns_allow_other &&
-> >                         fsuidgid_has_mapping(..., &init_user_ns));
-> >
-> > But I think the OP wanted to allow real root to access the fs, which
-> > this doesn't allow (since 0 will have no mapping in the user ns), so
-> > I'm not sure what's the right solution...
->
-> I aimed to show that. You can setfs*id() and retain capabilities and
-> still access the filesystem.
->
-> >
-> > Maybe the original patch is fine: this check isn't meant to protect
-> > the filesystem from access, it's meant to protect the accessor.
->
-> I don't have specific worries here. I'm just a bit hesitant to just let
-> anyone access the fs. But if we go for allow other semantics then that's
-> probably fine. Though I wonder why then we don't just do:
->
-> if (fc->allow_other)
->         return current_in_userns(fc->user_ns) ||
->                 (userns_allow_other &&
->                 ns_capable(fc->user_ns, CAP_SYS_ADMIN));
->
-> ? That'll let any ancestor userns access the fs not just descendants of
-> fc->user_ns.
+Hi Eric,
 
-Looks good to me.
+On 6/9/22 6:18 PM, Eric Biggers wrote:
+> On Wed, Jun 08, 2022 at 10:09:42AM -0500, Frederick Lawler wrote:
+>> diff --git a/fs/aio.c b/fs/aio.c
+>> index 3c249b938632..5abbe88c3ca7 100644
+>> --- a/fs/aio.c
+>> +++ b/fs/aio.c
+>> @@ -1620,6 +1620,8 @@ static void aio_fsync_work(struct work_struct *work)
+>>   static int aio_fsync(struct fsync_iocb *req, const struct iocb *iocb,
+>>   		     bool datasync)
+>>   {
+>> +	int err;
+>> +
+>>   	if (unlikely(iocb->aio_buf || iocb->aio_offset || iocb->aio_nbytes ||
+>>   			iocb->aio_rw_flags))
+>>   		return -EINVAL;
+>> @@ -1628,8 +1630,11 @@ static int aio_fsync(struct fsync_iocb *req, const struct iocb *iocb,
+>>   		return -EINVAL;
+>>   
+>>   	req->creds = prepare_creds();
+>> -	if (!req->creds)
+>> -		return -ENOMEM;
+>> +	if (IS_ERR(req->creds)) {
+>> +		err = PTR_ERR(req->creds);
+>> +		req->creds = NULL;
+>> +		return err;
+>> +	}
+> 
+> This part is a little ugly.  How about doing:
+> 
+> 	creds = prepare_creds();
+> 	if (IS_ERR(creds))
+> 		return PTR_ERR(creds);
+> 	req->creds = creds;
+> 
 
-Thanks,
-Miklos
+I can do that, and same for below.
+
+>> diff --git a/fs/exec.c b/fs/exec.c
+>> index 0989fb8472a1..02624783e40e 100644
+>> --- a/fs/exec.c
+>> +++ b/fs/exec.c
+>> @@ -1468,15 +1468,19 @@ EXPORT_SYMBOL(finalize_exec);
+>>    */
+>>   static int prepare_bprm_creds(struct linux_binprm *bprm)
+>>   {
+>> +	int err = -ERESTARTNOINTR;
+>>   	if (mutex_lock_interruptible(&current->signal->cred_guard_mutex))
+>> -		return -ERESTARTNOINTR;
+>> +		return err;
+>>   
+>>   	bprm->cred = prepare_exec_creds();
+>> -	if (likely(bprm->cred))
+>> -		return 0;
+>> +	if (IS_ERR(bprm->cred)) {
+>> +		err = PTR_ERR(bprm->cred);
+>> +		bprm->cred = NULL;
+>> +		mutex_unlock(&current->signal->cred_guard_mutex);
+>> +		return err;
+>> +	}
+>>   
+>> -	mutex_unlock(&current->signal->cred_guard_mutex);
+>> -	return -ENOMEM;
+>> +	return 0;
+>>   }
+> 
+> Similarly:
+> 
+> static int prepare_bprm_creds(struct linux_binprm *bprm)
+> {
+> 	struct cred *cred;
+> 
+> 	if (mutex_lock_interruptible(&current->signal->cred_guard_mutex))
+> 		return -ERESTARTNOINTR;
+> 
+> 	cred = prepare_exec_creds();
+> 	if (IS_ERR(cred)) {
+> 		mutex_unlock(&current->signal->cred_guard_mutex);
+> 		return PTR_ERR(cred);
+> 	}
+> 	bprm->cred = cred;
+> 	return 0;
+> }
+> 
+>> diff --git a/kernel/nsproxy.c b/kernel/nsproxy.c
+>> index eec72ca962e2..6cf75aa83b6c 100644
+>> --- a/kernel/nsproxy.c
+>> +++ b/kernel/nsproxy.c
+>> @@ -311,6 +311,7 @@ static void put_nsset(struct nsset *nsset)
+>>   
+>>   static int prepare_nsset(unsigned flags, struct nsset *nsset)
+>>   {
+>> +	int err = -ENOMEM;
+>>   	struct task_struct *me = current;
+>>   
+>>   	nsset->nsproxy = create_new_namespaces(0, me, current_user_ns(), me->fs);
+>> @@ -324,6 +325,12 @@ static int prepare_nsset(unsigned flags, struct nsset *nsset)
+>>   	if (!nsset->cred)
+>>   		goto out;
+>>   
+>> +	if (IS_ERR(nsset->cred)) {
+>> +		err = PTR_ERR(nsset->cred);
+>> +		nsset->cred = NULL;
+>> +		goto out;
+>> +	}
+> 
+> Why is the NULL check above being kept?
+> 
+
+In the branch prior:
+
+	if (flags & CLONE_NEWUSER) {
+		nsset->cred = prepare_creds();
+	else
+		nsset->cred = current_cred();
+
+I don't see cases where others are checking for null after 
+current_cred(), therefore I can remove that check.
+
+> Also, drivers/crypto/ccp/sev-dev.c needs to be updated.
+> 
+
+Nice catch! I clearly missed addition after the merge window.
+
+> - Eric
+
