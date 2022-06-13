@@ -2,124 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E88A8547FFB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jun 2022 08:57:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DEC75480C3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jun 2022 09:45:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237859AbiFMG5A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Jun 2022 02:57:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42538 "EHLO
+        id S237225AbiFMHpH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Jun 2022 03:45:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55148 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233263AbiFMG47 (ORCPT
+        with ESMTP id S230522AbiFMHpG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Jun 2022 02:56:59 -0400
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D122140F8;
-        Sun, 12 Jun 2022 23:56:52 -0700 (PDT)
-Received: from pps.filterd (m0127361.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 25D5DFNr037410;
-        Mon, 13 Jun 2022 06:56:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
- subject : message-id : references : mime-version : content-type :
- in-reply-to; s=pp1; bh=sg4r/3HlNtUZCzfEQKxVVhzIMzc01uTkxBUOjFJpuKA=;
- b=NTLr3Rw9NouBrw7ClKulUEjebkO6A5itEqempmqPPPMIe5WxzTU1RSeuSNqgfcQn+Qel
- mpyWvvRoLkX7BBylqpkYunkyAsl/lIGSSHiWYnubBtx0gSiorItaeUnSnErhVKh1TYVb
- G6DM9VtcvymwPUdxADeoOwB370fMvCzk3ag/yA/bfNUIAGHLBm5gy/BIuEuLSd+rfBFo
- ScYM+CzYJZsSDOfTyT1jJMuHuhBoFfgAdXkwemiKCqxo5iqi4dpnLscBe+et+zL7PfDK
- I9Adon6TD+u/6m2HYQfxfvzeSbDXAYku8Dd0+d8W7hGVcYHuGVi7UIhMuQ6Gzx7IjLiC uQ== 
-Received: from ppma01fra.de.ibm.com (46.49.7a9f.ip4.static.sl-reverse.com [159.122.73.70])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3gn53qhkpg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 13 Jun 2022 06:56:29 +0000
-Received: from pps.filterd (ppma01fra.de.ibm.com [127.0.0.1])
-        by ppma01fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 25D6oulj030905;
-        Mon, 13 Jun 2022 06:56:28 GMT
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
-        by ppma01fra.de.ibm.com with ESMTP id 3gmjp8srqq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 13 Jun 2022 06:56:28 +0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 25D6uOd822544728
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 13 Jun 2022 06:56:24 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DB10811C052;
-        Mon, 13 Jun 2022 06:56:24 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5FC3B11C050;
-        Mon, 13 Jun 2022 06:56:24 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.171.48.106])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Mon, 13 Jun 2022 06:56:24 +0000 (GMT)
-Date:   Mon, 13 Jun 2022 08:56:22 +0200
-From:   Sumanth Korikkar <sumanthk@linux.ibm.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-ext4@vger.kernel.org, gerald.schaefer@linux.ibm.com,
-        gor@linux.ibm.com, agordeev@linux.ibm.com,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-nilfs@vger.kernel.org
-Subject: Re: [PATCH 06/10] hugetlbfs: Convert remove_inode_hugepages() to use
- filemap_get_folios()
-Message-ID: <YqbflvrB9oEZ1whX@localhost.localdomain>
-References: <20220605193854.2371230-7-willy@infradead.org>
- <20220610155205.3111213-1-sumanthk@linux.ibm.com>
- <YqO08Dsq8ZcAcWDQ@casper.infradead.org>
+        Mon, 13 Jun 2022 03:45:06 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74079BC03;
+        Mon, 13 Jun 2022 00:45:05 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out1.suse.de (Postfix) with ESMTP id 2E50D21A93;
+        Mon, 13 Jun 2022 07:45:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1655106304; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=5WMle8KoXV0j63rwJ5QZ4pysRjmykK+gll6/m96aiCQ=;
+        b=FuLo+VOBBkI+oWNStM4seHkoiyK0Hr+aHMOvDiwt9GGELjWedVV4eVmmgJbe872jPvORqJ
+        Vc5aqY4498GBGJEsynJOBtP7uacBYTxS6Qceg9YAfnVQkKLxppmCRYRI6VnRd0Ehidw6e7
+        VkwY4jb2uXaKjgqii9bZJVgtGLmxSos=
+Received: from suse.cz (unknown [10.100.201.86])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id B0E0C2C141;
+        Mon, 13 Jun 2022 07:45:03 +0000 (UTC)
+Date:   Mon, 13 Jun 2022 09:45:01 +0200
+From:   Michal Hocko <mhocko@suse.com>
+To:     Christian =?iso-8859-1?Q?K=F6nig?= 
+        <ckoenig.leichtzumerken@gmail.com>
+Cc:     Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        nouveau@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        alexander.deucher@amd.com, daniel@ffwll.ch,
+        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        hughd@google.com, andrey.grodzovsky@amd.com
+Subject: Re: [PATCH 03/13] mm: shmem: provide oom badness for shmem files
+Message-ID: <Yqbq/Q5jz2ou87Jx@dhcp22.suse.cz>
+References: <YqHuH5brYFQUfW8l@dhcp22.suse.cz>
+ <26d3e1c7-d73c-cc95-54ef-58b2c9055f0c@gmail.com>
+ <YqIB0bavUeU8Abwl@dhcp22.suse.cz>
+ <d4a19481-7a9f-19bf-c270-d89baa0970fc@amd.com>
+ <YqIMmK18mb/+s5de@dhcp22.suse.cz>
+ <3f7d3d96-0858-fb6d-07a3-4c18964f888e@gmail.com>
+ <YqMuq/ZrV8loC3jE@dhcp22.suse.cz>
+ <2e7e050e-04eb-0c0a-0675-d7f1c3ae7aed@amd.com>
+ <YqNSSFQELx/LeEHR@dhcp22.suse.cz>
+ <288528c3-411e-fb25-2f08-92d4bb9f1f13@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <YqO08Dsq8ZcAcWDQ@casper.infradead.org>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: avIoxhTFiSlJjY2R9CmSKMJMnKj8Jgxi
-X-Proofpoint-ORIG-GUID: avIoxhTFiSlJjY2R9CmSKMJMnKj8Jgxi
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.874,Hydra:6.0.517,FMLib:17.11.64.514
- definitions=2022-06-13_02,2022-06-09_02,2022-02-23_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
- priorityscore=1501 phishscore=0 mlxscore=0 adultscore=0 mlxlogscore=774
- lowpriorityscore=0 suspectscore=0 malwarescore=0 bulkscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2204290000
- definitions=main-2206130029
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <288528c3-411e-fb25-2f08-92d4bb9f1f13@gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jun 10, 2022 at 10:17:36PM +0100, Matthew Wilcox wrote:
-> On Fri, Jun 10, 2022 at 05:52:05PM +0200, Sumanth Korikkar wrote:
-> > To reproduce:
-> > * clone libhugetlbfs:
-> > * Execute, PATH=$PATH:"obj64/" LD_LIBRARY_PATH=../obj64/ alloc-instantiate-race shared
+On Sat 11-06-22 10:06:18, Christian König wrote:
+> Am 10.06.22 um 16:16 schrieb Michal Hocko:
+[...]
+> > > So what happens when a games over allocates texture resources is that your
+> > > whole desktop restarts because the compositor is killed. This obviously also
+> > > kills the game, but it would be much nice if we would be more selective
+> > > here.
+> > > 
+> > > For hardware rendering DMA-buf and GPU drivers are used, but for the
+> > > software fallback shmem files is what is used under the hood as far as I
+> > > know. And the underlying problem is the same for both.
+> > For shmem files the end user of the buffer can preallocate and so own
+> > the buffer and be accounted for it.
 > 
-> ... it's a lot harder to set up hugetlb than that ...
+> The problem is just that it can easily happen that one process is allocating
+> the resource and a different one freeing it.
 > 
-> anyway, i figured it out without being able to run the reproducer.
+> So just imaging the following example: Process opens X window, get reference
+> to the handle of the buffer backing this window for drawing, tells X to
+> close the window again and then a bit later closes the buffer handle.
 > 
-> Can you try this?
-> 
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index a30587f2e598..8ef861297ffb 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -2160,7 +2160,11 @@ unsigned filemap_get_folios(struct address_space *mapping, pgoff_t *start,
->  		if (xa_is_value(folio))
->  			continue;
->  		if (!folio_batch_add(fbatch, folio)) {
-> -			*start = folio->index + folio_nr_pages(folio);
-> +			unsigned long nr = folio_nr_pages(folio);
-> +
-> +			if (folio_test_hugetlb(folio))
-> +				nr = 1;
-> +			*start = folio->index + nr;
->  			goto out;
->  		}
->  	}
+> In this example the X server would be charged allocating the buffer and the
+> client (which is most likely in a different memcg group) is charged freeing
+> it.
 
-Yes, With the patch, The above tests works fine. 
+Thanks for the clarification.
 
---
-Thanks,
-Sumanth
+> I could of course add something to struct page to track which memcg (or
+> process) it was charged against, but extending struct page is most likely a
+> no-go.
+
+Struct page already maintains is memcg. The one which has charged it and
+it will stay constatnt throughout of the allocation lifetime (cgroup v1
+has a concept of the charge migration but this hasn't been adopted in
+v2).
+
+We have a concept of active_memcg which allows to charge against a
+different memcg than the allocating context. From your example above I
+do not think this is really usable for the described usecase as the X is
+not aware where the request comes from?
+
+> Alternative I could try to track the "owner" of a buffer (e.g. a shmem
+> file), but then it can happen that one processes creates the object and
+> another one is writing to it and actually allocating the memory.
+
+If you can enforce that the owner is really responsible for the
+allocation then all should be fine. That would require MAP_POPULATE like
+semantic and I suspect this is not really feasible with the existing
+userspace. It would be certainly hard to enforce for bad players.
+-- 
+Michal Hocko
+SUSE Labs
