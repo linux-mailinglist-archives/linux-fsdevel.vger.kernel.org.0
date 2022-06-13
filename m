@@ -2,110 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 62342547F1E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jun 2022 07:46:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D3DD6547F12
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jun 2022 07:46:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235222AbiFMFiy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Jun 2022 01:38:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46758 "EHLO
+        id S239483AbiFMFoU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Jun 2022 01:44:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236746AbiFMFih (ORCPT
+        with ESMTP id S235997AbiFMFnK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Jun 2022 01:38:37 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5065C1263C;
-        Sun, 12 Jun 2022 22:37:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=Zp2A2WsdHhKodTSMNz93mFV0bupP5ggkN3XKeFjb+k0=; b=TkFyl6H75fM8c9tKEtfeL1KjsG
-        CaJ7Oa0Qby+KbEh93MbSGeNt6+Hb0Lsv4whlxvXNFQru8rZdWgVQPCWbmlNxFDK/doxGYWpgCjkIL
-        FLoWBjKj8yg5+LWJwsn1xbEpvaKsIcE/n//P51Nh0sVCcD74niLAOC9BL7tfa+CpEE4KGhniOxYlu
-        korHNvCyxqqp1We7PbToGW9NGxeC6/ymAX43zRsxTYdeEX4ESxpkpstlYzG5NSojl0Ndkcmjojn6h
-        1yVZl0stpkYwXy3332y+rRPyZmpO8UQu0QDJCe7Ldx6GgbaIjPwdXs3UPLTipev2ydkLedaXeggZl
-        ss3HGNUA==;
-Received: from [2001:4bb8:180:36f6:f125:c38b:d3d6:ae6c] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1o0cla-001V6O-Kt; Mon, 13 Jun 2022 05:37:35 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.com>,
-        Dave Kleikamp <shaggy@kernel.org>,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jfs-discussion@lists.sourceforge.net,
-        ntfs3@lists.linux.dev
-Subject: [PATCH 6/6] fs: remove the NULL get_block case in mpage_writepages
-Date:   Mon, 13 Jun 2022 07:37:15 +0200
-Message-Id: <20220613053715.2394147-7-hch@lst.de>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20220613053715.2394147-1-hch@lst.de>
-References: <20220613053715.2394147-1-hch@lst.de>
+        Mon, 13 Jun 2022 01:43:10 -0400
+Received: from mail-vs1-xe35.google.com (mail-vs1-xe35.google.com [IPv6:2607:f8b0:4864:20::e35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E44E13D7A
+        for <linux-fsdevel@vger.kernel.org>; Sun, 12 Jun 2022 22:40:50 -0700 (PDT)
+Received: by mail-vs1-xe35.google.com with SMTP id g6so4894339vsb.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 12 Jun 2022 22:40:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=K0bYlsh+RbjmYUR9Jg/kpe6pj6lKuZexZE/egZa6lT4=;
+        b=GFlonUvq158L9htFNygN9DUTfNk0DUMAbREFEsy9BSSKGvDZZAV2nvfnNtZrORwbRq
+         uaq7cMa5qmW2hTkiyZA+latUYUdzjhUnvzvKaAfYoTQIYZ69WXAeiPPR6c6NemdG8utc
+         S8og8puoT2V+T/tq0b56KI25cPi8Zx+QIKmGvYGwaumn6BhA8ms46yYDQJDQ5y2fUW/S
+         6vsPzRNgwdjF5VGs84Wo1TWYIIvAXS40DqQTBKTSi+BEohcKmWKjFGFS75g0MVNHcreY
+         7uy5BTICPs8rK+8VtXx0DhYke9gcvhWk8VayGUcHeCwbyFDBYtBxdB0+NxVy2hlL65iE
+         nT0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=K0bYlsh+RbjmYUR9Jg/kpe6pj6lKuZexZE/egZa6lT4=;
+        b=0/9rYaoDCzmr/KOc5QhFP7D39DMcbm4fWsh47uaA0nr1UDbNQ65UYsfZztY0jQzTZB
+         i7fbP7+Xb2gPEKetq2BXN2qzuy+HVPeVUvhypKYtIuzyJxeyvomVz7FseUoOdiARhK4i
+         bLvjZG6E0z02Z+XV+HB1Vk8Ld4BJa6NibNCAy7RiySfm6eEpQLgBWrX5VqoUToK2T1Kj
+         1EZVfuwvXgdMR8bKJymwFmMZinO0BdVULb10rkxBx4v6ife1MygglCTf/yFYy8pSaDCe
+         QNEiikSPT2yOqsb5HVqmsxSHRHQ2eFKd/wW7aOs9IRY6OihFIRMRVgHAVTrSzRb0e8Ti
+         +7ZA==
+X-Gm-Message-State: AOAM531vli8AHa+2YmdognBDIiTlzu/xoWuTdHKNlJKal9rVMhD8s64N
+        lPsoVenM2xvMnhGfL/FYAFdL0K/7nRz7nYEOdTljGkbD/qt8Ag==
+X-Google-Smtp-Source: ABdhPJy71VK0VlyAv+DDfevPfMpZ0Z9eprZh8QBVihFyBmtnJLRbPlFkIW/UkUHu88JEz5VAU2QyU33BaCzM8XKB7f4=
+X-Received: by 2002:a67:486:0:b0:349:e59c:51f4 with SMTP id
+ 128-20020a670486000000b00349e59c51f4mr25419876vse.3.1655098849602; Sun, 12
+ Jun 2022 22:40:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=no autolearn_force=no version=3.4.6
+References: <20220307155741.1352405-1-amir73il@gmail.com> <20220317141204.hbpflysc7p5e5vdo@quack3.lan>
+ <CAOQ4uxh2KuLk21530upP0VYWDrks1m++0jfk6RGqGVayNnEHcg@mail.gmail.com> <CAOQ4uxhx=-RT_J-hiogPE9=LTyYVD2Q7FnZH03Hgba4Y3eh-QA@mail.gmail.com>
+In-Reply-To: <CAOQ4uxhx=-RT_J-hiogPE9=LTyYVD2Q7FnZH03Hgba4Y3eh-QA@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Mon, 13 Jun 2022 08:40:37 +0300
+Message-ID: <CAOQ4uxjuM4p7S6sg6R5=7skcKcC7GFcsrZ7ZftdadkLP4-Fk=g@mail.gmail.com>
+Subject: Re: LTP test for fanotify evictable marks
+To:     Jan Kara <jack@suse.cz>
+Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-No one calls mpage_writepages with a NULL get_block paramter, so remove
-support for that case.
+On Sun, Mar 20, 2022 at 2:54 PM Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> On Thu, Mar 17, 2022 at 5:14 PM Amir Goldstein <amir73il@gmail.com> wrote:
+> >
+> > On Thu, Mar 17, 2022 at 4:12 PM Jan Kara <jack@suse.cz> wrote:
+> > >
+> > > On Mon 07-03-22 17:57:36, Amir Goldstein wrote:
+> > > > Jan,
+> > > >
+> > > > Following RFC discussion [1], following are the volatile mark patches.
+> > > >
+> > > > Tested both manually and with this LTP test [2].
+> > > > I was struggling with this test for a while because drop caches
+> > > > did not get rid of the un-pinned inode when test was run with
+> > > > ext2 or ext4 on my test VM. With xfs, the test works fine for me,
+> > > > but it may not work for everyone.
+> > > >
+> > > > Perhaps you have a suggestion for a better way to test inode eviction.
+> > >
+> > > Drop caches does not evict dirty inodes. The inode is likely dirty because
+> > > you have chmodded it just before drop caches. So I think calling sync or
+> > > syncfs before dropping caches should fix your problems with ext2 / ext4.  I
+> > > suspect this has worked for XFS only because it does its private inode
+> > > dirtiness tracking and keeps the inode behind VFS's back.
+> >
+> > I did think of that and tried to fsync which did not help, but maybe
+> > I messed it up somehow.
+> >
+>
+> You were right. fsync did fix the test.
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- fs/mpage.c | 22 ++++++----------------
- 1 file changed, 6 insertions(+), 16 deletions(-)
+Hi Jan,
 
-diff --git a/fs/mpage.c b/fs/mpage.c
-index a354ef2b4b4eb..e4cf881634a6a 100644
---- a/fs/mpage.c
-+++ b/fs/mpage.c
-@@ -636,8 +636,6 @@ static int __mpage_writepage(struct page *page, struct writeback_control *wbc,
-  * @mapping: address space structure to write
-  * @wbc: subtract the number of written pages from *@wbc->nr_to_write
-  * @get_block: the filesystem's block mapper function.
-- *             If this is NULL then use a_ops->writepage.  Otherwise, go
-- *             direct-to-BIO.
-  *
-  * This is a library function, which implements the writepages()
-  * address_space_operation.
-@@ -654,24 +652,16 @@ int
- mpage_writepages(struct address_space *mapping,
- 		struct writeback_control *wbc, get_block_t get_block)
- {
-+	struct mpage_data mpd = {
-+		.get_block	= get_block,
-+	};
- 	struct blk_plug plug;
- 	int ret;
- 
- 	blk_start_plug(&plug);
--
--	if (!get_block)
--		ret = generic_writepages(mapping, wbc);
--	else {
--		struct mpage_data mpd = {
--			.bio = NULL,
--			.last_block_in_bio = 0,
--			.get_block = get_block,
--		};
--
--		ret = write_cache_pages(mapping, wbc, __mpage_writepage, &mpd);
--		if (mpd.bio)
--			mpage_bio_submit(mpd.bio);
--	}
-+	ret = write_cache_pages(mapping, wbc, __mpage_writepage, &mpd);
-+	if (mpd.bio)
-+		mpage_bio_submit(mpd.bio);
- 	blk_finish_plug(&plug);
- 	return ret;
- }
--- 
-2.30.2
+I was preparing to post the LTP test for FAN_MARK_EVICTABLE [1]
+and I realized the issue we discussed above was not really resolved.
+fsync() + drop_caches is not enough to guarantee reliable inode eviction.
 
+It "kind of" works for ext2 and xfs, but not for ext4, ext3, btrfs.
+"kind of" because even for ext2 and xfs, dropping only inode cache (2)
+doesn't evict the inode/mark and dropping inode+page cache (3) does work
+most of the time, although I did occasionally see failures.
+I suspect those failures were related to running the test on a system with very
+low page cache usage.
+The fact that I had to tweak vfs_cache_pressure to increase test reliability
+also suggests that there are heuristics at play.
+
+I guess I could fill the page cache with pages to rig the game.
+Do you have other suggestions on how to increase the reliability of the test?
+That is, how to reliably evict a non-dirty inode.
+
+Thanks,
+Amir.
+
+[1] https://github.com/amir73il/ltp/blob/fan_evictable/testcases/kernel/syscalls/fanotify/fanotify23.c
