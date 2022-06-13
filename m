@@ -2,174 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AA77B548F45
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jun 2022 18:22:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DF71548F7D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jun 2022 18:23:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239625AbiFMM52 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Jun 2022 08:57:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50412 "EHLO
+        id S1386415AbiFMPF5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Jun 2022 11:05:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1358394AbiFMMzU (ORCPT
+        with ESMTP id S1386392AbiFMPFg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Jun 2022 08:55:20 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE850D12B;
-        Mon, 13 Jun 2022 04:15:58 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        Mon, 13 Jun 2022 11:05:36 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C4ACF7499;
+        Mon, 13 Jun 2022 05:11:25 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id ED1C71F38A;
+        Mon, 13 Jun 2022 12:11:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1655122279; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=cWi4yPYQYuWcLCZhlzRL/FUwfVjRk7PfFZtsphXFstQ=;
+        b=fWc9Ypl2KcwfmmeUMR5vxJsHU3nImiAo3Pbtm/FripjpX/mp8Fjs3Rh1gZ6Tn3ex0cZ3W+
+        0OvfKRLBxncV3yGLDHAgrGqvdZlefo3rLxodVymu5Y4osdFhZqLOhmsWXnI11DWNlx/VZ0
+        h9lRYJlBhcSh3hyTWiqlBbym/yTUmaw=
+Received: from suse.cz (unknown [10.100.201.86])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 9EB0AB80EA7;
-        Mon, 13 Jun 2022 11:15:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 041D9C3411F;
-        Mon, 13 Jun 2022 11:15:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1655118956;
-        bh=kDx7bmMaP24X/iui8cBI2amajK5ZSQD2VXc5aV6AaBI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Rqv2cjRgID9DazjOF93YbT82/g4HbZp0PCO/4gSzIVtDJXT2tlOhiWipfBKXDo22Z
-         KxgW/bKu6eIF8c5QVed3uE9AUC9CqqfVnXdkyYcNvQhlQnTUnY9mg+ak6havirTI0G
-         EsNyyTy6jU3YSgenkhzdBXdCB9yhDDkjD6Tw7EOnHiG31ljEj6sGNs1349sXvZRVs7
-         MNnXmBHBvUPHAklaZ80QuINFqy646FtpS0Es1s5tPy7sKSAKXvYrzbUcOsx6hO7Aea
-         fX6gZ+6GOJWxBS+YNyoZfTVJ+H8SuL9VtcG7K8KKLrfBlHH4Z/zs8a7vpKQkCtPp+h
-         6dbD2e0qqSQHg==
-From:   Christian Brauner <brauner@kernel.org>
-To:     linux-fsdevel@vger.kernel.org,
-        Seth Forshee <seth.forshee@digitalocean.com>,
-        Christoph Hellwig <hch@lst.de>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        Aleksa Sarai <cyphar@cyphar.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, stable@vger.kernel.org
-Subject: [PATCH] fs: account for group membership
-Date:   Mon, 13 Jun 2022 13:15:17 +0200
-Message-Id: <20220613111517.2186646-1-brauner@kernel.org>
-X-Mailer: git-send-email 2.34.1
+        by relay2.suse.de (Postfix) with ESMTPS id 66AB32C141;
+        Mon, 13 Jun 2022 12:11:18 +0000 (UTC)
+Date:   Mon, 13 Jun 2022 14:11:17 +0200
+From:   Michal Hocko <mhocko@suse.com>
+To:     Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Cc:     Christian =?iso-8859-1?Q?K=F6nig?= 
+        <ckoenig.leichtzumerken@gmail.com>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        amd-gfx@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        linux-tegra@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, alexander.deucher@amd.com, daniel@ffwll.ch,
+        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        hughd@google.com, andrey.grodzovsky@amd.com
+Subject: Re: [PATCH 03/13] mm: shmem: provide oom badness for shmem files
+Message-ID: <YqcpZY3Xx7Mk2ROH@dhcp22.suse.cz>
+References: <YqIB0bavUeU8Abwl@dhcp22.suse.cz>
+ <d4a19481-7a9f-19bf-c270-d89baa0970fc@amd.com>
+ <YqIMmK18mb/+s5de@dhcp22.suse.cz>
+ <3f7d3d96-0858-fb6d-07a3-4c18964f888e@gmail.com>
+ <YqMuq/ZrV8loC3jE@dhcp22.suse.cz>
+ <2e7e050e-04eb-0c0a-0675-d7f1c3ae7aed@amd.com>
+ <YqNSSFQELx/LeEHR@dhcp22.suse.cz>
+ <288528c3-411e-fb25-2f08-92d4bb9f1f13@gmail.com>
+ <Yqbq/Q5jz2ou87Jx@dhcp22.suse.cz>
+ <b8b9aba5-575e-8a34-e627-79bef4ed7f97@amd.com>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4598; h=from:subject; bh=kDx7bmMaP24X/iui8cBI2amajK5ZSQD2VXc5aV6AaBI=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSQtl1H0lpkmwnL3ucxJ7u12l32/eS489bp5dsckmfC5hfP1 nqUEdZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAExk12ZGhj1BkgqL2bfq7otltnx04M Ia9qxvT3QU09QOGlVf2DJ7eiTD/8JPkzl0eQ98DpApn7z/h3l52pWqA3MSXyyQfaH98uDE9YwA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <b8b9aba5-575e-8a34-e627-79bef4ed7f97@amd.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When calling setattr_prepare() to determine the validity of the
-attributes the ia_{g,u}id fields contain the value that will be written
-to inode->i_{g,u}id. This is exactly the same for idmapped and
-non-idmapped mounts and allows callers to pass in the values they want
-to see written to inode->i_{g,u}id.
+On Mon 13-06-22 13:50:28, Christian König wrote:
+> Am 13.06.22 um 09:45 schrieb Michal Hocko:
+> > On Sat 11-06-22 10:06:18, Christian König wrote:
+> > > Am 10.06.22 um 16:16 schrieb Michal Hocko:
+[...]
+> > > Alternative I could try to track the "owner" of a buffer (e.g. a shmem
+> > > file), but then it can happen that one processes creates the object and
+> > > another one is writing to it and actually allocating the memory.
+> > If you can enforce that the owner is really responsible for the
+> > allocation then all should be fine. That would require MAP_POPULATE like
+> > semantic and I suspect this is not really feasible with the existing
+> > userspace. It would be certainly hard to enforce for bad players.
+> 
+> I've tried this today and the result was: "BUG: Bad rss-counter state
+> mm:000000008751d9ff type:MM_FILEPAGES val:-571286".
+> 
+> The problem is once more that files are not informed when the process
+> clones. So what happened is that somebody called fork() with an mm_struct
+> I've accounted my pages to. The result is just that we messed up the
+> rss_stats and  the the "BUG..." above.
+> 
+> The key difference between normal allocated pages and the resources here is
+> just that we are not bound to an mm_struct in any way.
 
-When group ownership is changed a caller whose fsuid owns the inode can
-change the group of the inode to any group they are a member of. When
-searching through the caller's groups we need to use the gid mapped
-according to the idmapped mount otherwise we will fail to change
-ownership for unprivileged users.
-
-Consider a caller running with fsuid and fsgid 1000 using an idmapped
-mount that maps id 65534 to 1000 and 65535 to 1001. Consequently, a file
-owned by 65534:65535 in the filesystem will be owned by 1000:1001 in the
-idmapped mount.
-
-The caller now requests the gid of the file to be changed to 1000 going
-through the idmapped mount. In the vfs we will immediately map the
-requested gid to the value that will need to be written to inode->i_gid
-and place it in attr->ia_gid. Since this idmapped mount maps 65534 to
-1000 we place 65534 in attr->ia_gid.
-
-When we check whether the caller is allowed to change group ownership we
-first validate that their fsuid matches the inode's uid. The
-inode->i_uid is 65534 which is mapped to uid 1000 in the idmapped mount.
-Since the caller's fsuid is 1000 we pass the check.
-
-We now check whether the caller is allowed to change inode->i_gid to the
-requested gid by calling in_group_p(). This will compare the passed in
-gid to the caller's fsgid and search the caller's additional groups.
-
-Since we're dealing with an idmapped mount we need to pass in the gid
-mapped according to the idmapped mount. This is akin to checking whether
-a caller is privileged over the future group the inode is owned by. And
-that needs to take the idmapped mount into account. Note, all helpers
-are nops without idmapped mounts.
-
-New regression test sent to xfstests.
-
-Link: https://github.com/lxc/lxd/issues/10537
-Fixes: 2f221d6f7b88 ("attr: handle idmapped mounts")
-Cc: Seth Forshee <seth.forshee@digitalocean.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Aleksa Sarai <cyphar@cyphar.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: stable@vger.kernel.org # 5.15+
-CC: linux-fsdevel@vger.kernel.org
-Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
----
-Hey,
-
-Detected while working on additional tests and also reported by a user
-and brain on my part. I plan to work on patches to disentangle the
-codepaths here a bit and make them easier to understand going forward.
-
-Passes xfstests including new tests and LTP test suite.
-
-Thanks!
-Christian
----
- fs/attr.c | 26 ++++++++++++++++++++------
- 1 file changed, 20 insertions(+), 6 deletions(-)
-
-diff --git a/fs/attr.c b/fs/attr.c
-index 66899b6e9bd8..dbe996b0dedf 100644
---- a/fs/attr.c
-+++ b/fs/attr.c
-@@ -61,9 +61,15 @@ static bool chgrp_ok(struct user_namespace *mnt_userns,
- 		     const struct inode *inode, kgid_t gid)
- {
- 	kgid_t kgid = i_gid_into_mnt(mnt_userns, inode);
--	if (uid_eq(current_fsuid(), i_uid_into_mnt(mnt_userns, inode)) &&
--	    (in_group_p(gid) || gid_eq(gid, inode->i_gid)))
--		return true;
-+	if (uid_eq(current_fsuid(), i_uid_into_mnt(mnt_userns, inode))) {
-+		kgid_t mapped_gid;
-+
-+		if (gid_eq(gid, inode->i_gid))
-+			return true;
-+		mapped_gid = mapped_kgid_fs(mnt_userns, i_user_ns(inode), gid);
-+		if (in_group_p(mapped_gid))
-+			return true;
-+	}
- 	if (capable_wrt_inode_uidgid(mnt_userns, inode, CAP_CHOWN))
- 		return true;
- 	if (gid_eq(kgid, INVALID_GID) &&
-@@ -123,12 +129,20 @@ int setattr_prepare(struct user_namespace *mnt_userns, struct dentry *dentry,
- 
- 	/* Make sure a caller can chmod. */
- 	if (ia_valid & ATTR_MODE) {
-+		kgid_t mapped_gid;
-+
- 		if (!inode_owner_or_capable(mnt_userns, inode))
- 			return -EPERM;
-+
-+		if (ia_valid & ATTR_GID)
-+			mapped_gid = mapped_kgid_fs(mnt_userns,
-+						i_user_ns(inode), attr->ia_gid);
-+		else
-+			mapped_gid = i_gid_into_mnt(mnt_userns, inode);
-+
- 		/* Also check the setgid bit! */
--               if (!in_group_p((ia_valid & ATTR_GID) ? attr->ia_gid :
--                                i_gid_into_mnt(mnt_userns, inode)) &&
--                    !capable_wrt_inode_uidgid(mnt_userns, inode, CAP_FSETID))
-+		if (!in_group_p(mapped_gid) &&
-+		    !capable_wrt_inode_uidgid(mnt_userns, inode, CAP_FSETID))
- 			attr->ia_mode &= ~S_ISGID;
- 	}
- 
-
-base-commit: f2906aa863381afb0015a9eb7fefad885d4e5a56
+It is not really clear to me what exactly you have tried.
 -- 
-2.34.1
-
+Michal Hocko
+SUSE Labs
