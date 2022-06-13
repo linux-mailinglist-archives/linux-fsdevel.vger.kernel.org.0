@@ -2,33 +2,33 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CA81154985A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jun 2022 18:36:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9E9C548FB7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jun 2022 18:24:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1380118AbiFMN5g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Jun 2022 09:57:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54726 "EHLO
+        id S1357390AbiFMNLl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Jun 2022 09:11:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37018 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1380287AbiFMNyB (ORCPT
+        with ESMTP id S1359257AbiFMNJo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Jun 2022 09:54:01 -0400
+        Mon, 13 Jun 2022 09:09:44 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03A4D42A21;
-        Mon, 13 Jun 2022 04:34:26 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FF5E28E04;
+        Mon, 13 Jun 2022 04:19:47 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 91BBF612D0;
-        Mon, 13 Jun 2022 11:34:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DE7FC34114;
-        Mon, 13 Jun 2022 11:34:24 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3C13860F2B;
+        Mon, 13 Jun 2022 11:19:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2422FC34114;
+        Mon, 13 Jun 2022 11:19:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1655120065;
-        bh=ZjDVsKHFBSnws36ePAnZg275uQcp5H4PcRvFzlD2OCY=;
+        s=korg; t=1655119186;
+        bh=VDEMdKayyI9mHvjQiuo3UP5gP86R8hGnkAqeLT6SQmc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GdOw7yAMTFxOtA1uIG2rgNiapakQfWnLMWiyHKauhP60cOEWFLhhU6YCfuehZ7/3F
-         SEMXPUP2zht6b6B9NZ5JUOBkLujbvj8izhd3/QNwn8xvHfP6o+PN9XsSrQZDUAe3tu
-         G+4cVlx+UfapznwBQ8Vo+Zp5V5G4MeRrM+yCMJTE=
+        b=aUphnpHkeiwAoEJ/p8vT5D+KX5PuNdMmyVw1T+WW0YoYkAXoe5UIYO25XR/O4RCFk
+         BOZwRoTreLZlx2xJ9Uee8lxlos9w3aqtMCDVsk32al/tAXuasg6YNqOvmA9bgnY9vP
+         VEXuy3v+N5DK0qzYmsGcagcnkPOnSi2+1nd5wzQU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -41,12 +41,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         v9fs-developer@lists.sourceforge.net, devel@lists.orangefs.org,
         linux-erofs@lists.ozlabs.org, linux-cachefs@redhat.com,
         linux-fsdevel@vger.kernel.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.18 222/339] iov_iter: Fix iter_xarray_get_pages{,_alloc}()
-Date:   Mon, 13 Jun 2022 12:10:47 +0200
-Message-Id: <20220613094933.390057932@linuxfoundation.org>
+Subject: [PATCH 5.15 164/247] iov_iter: Fix iter_xarray_get_pages{,_alloc}()
+Date:   Mon, 13 Jun 2022 12:11:06 +0200
+Message-Id: <20220613094927.932137292@linuxfoundation.org>
 X-Mailer: git-send-email 2.36.1
-In-Reply-To: <20220613094926.497929857@linuxfoundation.org>
-References: <20220613094926.497929857@linuxfoundation.org>
+In-Reply-To: <20220613094922.843438024@linuxfoundation.org>
+References: <20220613094922.843438024@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -101,10 +101,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 4 insertions(+), 16 deletions(-)
 
 diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index 6dd5330f7a99..dda6d5f481c1 100644
+index 6d146f77601d..be07eb24ab2f 100644
 --- a/lib/iov_iter.c
 +++ b/lib/iov_iter.c
-@@ -1434,7 +1434,7 @@ static ssize_t iter_xarray_get_pages(struct iov_iter *i,
+@@ -1436,7 +1436,7 @@ static ssize_t iter_xarray_get_pages(struct iov_iter *i,
  {
  	unsigned nr, offset;
  	pgoff_t index, count;
@@ -113,7 +113,7 @@ index 6dd5330f7a99..dda6d5f481c1 100644
  	loff_t pos;
  
  	if (!size || !maxpages)
-@@ -1461,13 +1461,7 @@ static ssize_t iter_xarray_get_pages(struct iov_iter *i,
+@@ -1463,13 +1463,7 @@ static ssize_t iter_xarray_get_pages(struct iov_iter *i,
  	if (nr == 0)
  		return 0;
  
@@ -128,7 +128,7 @@ index 6dd5330f7a99..dda6d5f481c1 100644
  }
  
  /* must be done on non-empty ITER_IOVEC one */
-@@ -1602,7 +1596,7 @@ static ssize_t iter_xarray_get_pages_alloc(struct iov_iter *i,
+@@ -1604,7 +1598,7 @@ static ssize_t iter_xarray_get_pages_alloc(struct iov_iter *i,
  	struct page **p;
  	unsigned nr, offset;
  	pgoff_t index, count;
@@ -137,7 +137,7 @@ index 6dd5330f7a99..dda6d5f481c1 100644
  	loff_t pos;
  
  	if (!size)
-@@ -1631,13 +1625,7 @@ static ssize_t iter_xarray_get_pages_alloc(struct iov_iter *i,
+@@ -1633,13 +1627,7 @@ static ssize_t iter_xarray_get_pages_alloc(struct iov_iter *i,
  	if (nr == 0)
  		return 0;
  
