@@ -2,158 +2,138 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BA20548D13
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jun 2022 18:14:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C24C7548DA2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 13 Jun 2022 18:16:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1384515AbiFMOgQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Jun 2022 10:36:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47278 "EHLO
+        id S1350824AbiFMLFh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Jun 2022 07:05:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1384571AbiFMOeN (ORCPT
+        with ESMTP id S1351842AbiFMLFI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Jun 2022 10:34:13 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3A1AAE240;
-        Mon, 13 Jun 2022 04:49:16 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id CE2BFB80EC6;
-        Mon, 13 Jun 2022 11:49:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D887EC34114;
-        Mon, 13 Jun 2022 11:49:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1655120951;
-        bh=ZjDVsKHFBSnws36ePAnZg275uQcp5H4PcRvFzlD2OCY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C2VNNnSDuzssjT4v8h5W44Kbe+IzWJJ1+4cOzM4wbbZ39q5RujfIuCLloKczU12KN
-         vEzp3thvxFLwmn0rtXp9X6gG9FT6hfQ1P1zL2PHMcZHin51ex2EQ3Imaz2lXPrqqwe
-         fc+fTLuvUdvqx/eGxCVomjVhybqiUWBpD1J8y74k=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Mike Marshall <hubcap@omnibond.com>,
-        Gao Xiang <xiang@kernel.org>, linux-afs@lists.infradead.org,
-        v9fs-developer@lists.sourceforge.net, devel@lists.orangefs.org,
-        linux-erofs@lists.ozlabs.org, linux-cachefs@redhat.com,
-        linux-fsdevel@vger.kernel.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.17 195/298] iov_iter: Fix iter_xarray_get_pages{,_alloc}()
-Date:   Mon, 13 Jun 2022 12:11:29 +0200
-Message-Id: <20220613094931.021071516@linuxfoundation.org>
-X-Mailer: git-send-email 2.36.1
-In-Reply-To: <20220613094924.913340374@linuxfoundation.org>
-References: <20220613094924.913340374@linuxfoundation.org>
-User-Agent: quilt/0.66
+        Mon, 13 Jun 2022 07:05:08 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EF561FA6D
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Jun 2022 03:34:18 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id gl15so10312722ejb.4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 13 Jun 2022 03:34:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1Us1zc6m+ozV1ZtHxfelnSiC+YK2LK1NOUXmmJ9vZF8=;
+        b=KkJ3vLTEbmtDLoY/yjzGlpStmsdRtNpstwN3pDAJIa10JoCWXVLs0d4RSWybiWXV26
+         wQqQrQ2cv0mO5MwoKz9GjVie/qEcJXUFhKpYZa37ObJ6FiV+Y+kFwcgrhUziaK/ZsB5u
+         On9doKI+5ZoCk6be+tQObMLuaWNfZUfYNnz9g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1Us1zc6m+ozV1ZtHxfelnSiC+YK2LK1NOUXmmJ9vZF8=;
+        b=L2L29fu2cp8dcE4l9UlGcs6hhX+S9o6djldLE/aOj0+AvihbPDO89+BPAu720ihGsS
+         7v+w3CrLs1urO5N2znZL4zYhLS4xJfIHWxzSqstC5xGJRscVpu1ysbI/eQ6azTK4vDwi
+         +5NNMl4FQU1ZaNPBVADFsqMWZJyWxIAp5hJR8eR/klsYgbePwVrrEoKLT6bMxEik0lUd
+         /EvZSoa4Sl7OUoMVYKIsM3oNyNu5PNZPCca/urqKBZ7eNmmpC0l53NxVs1yH6z0lfWAz
+         LhuLvL5wsBXt/2sMHn179bA1p9PG69w0j+yGNKcOl+qqu23S2K0UwA7e+cGOl2KAaB6o
+         q7bA==
+X-Gm-Message-State: AOAM531a5N22cm3k7GWvwZztbi2bNSQvsZObuPZi4Q9uPEKiM8jZ3vjD
+        oGqDdR3E/Ea0m94drkaa86NLHKkpHyuDDfDp2JoJfw==
+X-Google-Smtp-Source: ABdhPJy9lYLV0YNU7k01NIn/Mv1xvVEU2HVq61DwjPsZxSq4zrZAHZza4EOJ8FvR2QMOpcQovbrEX6icxsZVXjYKPuI=
+X-Received: by 2002:a17:906:7308:b0:710:dad0:f56d with SMTP id
+ di8-20020a170906730800b00710dad0f56dmr40493203ejc.691.1655116456756; Mon, 13
+ Jun 2022 03:34:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20220601184407.2086986-1-davemarchevsky@fb.com>
+ <20220607084724.7gseviks4h2seeza@wittgenstein> <e933791c-21d1-18f9-de91-b194728432b8@fb.com>
+ <CAJfpegssrypgpDDheiYJS13=_p14sN4BK+bZShPG4VZu=WpSaA@mail.gmail.com> <20220613093745.4szlhoutyqpizyys@wittgenstein>
+In-Reply-To: <20220613093745.4szlhoutyqpizyys@wittgenstein>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 13 Jun 2022 12:34:05 +0200
+Message-ID: <CAJfpegu0Aj65rrPN_TtN8ugQNCP2d2LEB47zSDLy7H6aqd-HuA@mail.gmail.com>
+Subject: Re: [PATCH v2] fuse: Add module param for non-descendant userns
+ access to allow_other
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Andrii Nakryiko <andriin@fb.com>,
+        Dave Marchevsky <davemarchevsky@fb.com>,
+        linux-fsdevel@vger.kernel.org, Rik van Riel <riel@surriel.com>,
+        Seth Forshee <sforshee@digitalocean.com>,
+        kernel-team <kernel-team@fb.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Chris Mason <clm@fb.com>, Andrii Nakryiko <andrii@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_INVALID,
+        DKIM_SIGNED,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: David Howells <dhowells@redhat.com>
+On Mon, 13 Jun 2022 at 11:37, Christian Brauner <brauner@kernel.org> wrote:
+>
+> On Mon, Jun 13, 2022 at 10:23:47AM +0200, Miklos Szeredi wrote:
+> > On Fri, 10 Jun 2022 at 23:39, Andrii Nakryiko <andriin@fb.com> wrote:
+> > >
+> > >
+> > >
+> > > On 6/7/22 1:47 AM, Christian Brauner wrote:
+> > > > On Wed, Jun 01, 2022 at 11:44:07AM -0700, Dave Marchevsky wrote:
+> >
+> > [...]
+> >
+> > > >> +static bool __read_mostly allow_other_parent_userns;
+> > > >> +module_param(allow_other_parent_userns, bool, 0644);
+> > > >> +MODULE_PARM_DESC(allow_other_parent_userns,
+> > > >> + "Allow users not in mounting or descendant userns "
+> > > >> + "to access FUSE with allow_other set");
+> > > >
+> > > > The name of the parameter also suggests that access is granted to parent
+> > > > userns tasks whereas the change seems to me to allows every task access
+> > > > to that fuse filesystem independent of what userns they are in.
+> > > >
+> > > > So even a task in a sibling userns could - probably with rather
+> > > > elaborate mount propagation trickery - access that fuse filesystem.
+> > > >
+> > > > AFaict, either the module parameter is misnamed or the patch doesn't
+> > > > implement the behavior expressed in the name.
+> > > >
+> > > > The original patch restricted access to a CAP_SYS_ADMIN capable task.
+> > > > Did we agree that it was a good idea to weaken it to all tasks?
+> > > > Shouldn't we still just restrict this to CAP_SYS_ADMIN capable tasks in
+> > > > the initial userns?
+> > >
+> > > I think it's fine to allow for CAP_SYS_ADMIN only, but can we then
+> > > ignore the allow_other mount option in such case? The idea is that
+> > > CAP_SYS_ADMIN allows you to read FUSE-backed contents no matter what, so
+> > > user not mounting with allow_other preventing root from reading contents
+> > > defeats the purpose at least partially.
+> >
+> > If we want to be compatible with "user_allow_other", then it should be
+> > checking if the uid/gid of the current task is mapped in the
+> > filesystems user_ns (fsuidgid_has_mapping()).  Right?
+>
+> I think that's doable. So assuming we're still talking about requiring
+> cap_sys_admin then we'd roughly have sm like:
+>
+>         if (fc->allow_other)
+>                 return current_in_userns(fc->user_ns) ||
+>                         (capable(CAP_SYS_ADMIN) &&
+>                         fsuidgid_has_mapping(..., &init_user_ns));
 
-[ Upstream commit 6c77676645ad42993e0a8bdb8dafa517851a352a ]
+No, I meant this:
 
-The maths at the end of iter_xarray_get_pages() to calculate the actual
-size doesn't work under some circumstances, such as when it's been asked to
-extract a partial single page.  Various terms of the equation cancel out
-and you end up with actual == offset.  The same issue exists in
-iter_xarray_get_pages_alloc().
+        if (fc->allow_other)
+                return current_in_userns(fc->user_ns) ||
+                        (userns_allow_other &&
+                        fsuidgid_has_mapping(..., &init_user_ns));
 
-Fix these to just use min() to select the lesser amount from between the
-amount of page content transcribed into the buffer, minus the offset, and
-the size limit specified.
+But I think the OP wanted to allow real root to access the fs, which
+this doesn't allow (since 0 will have no mapping in the user ns), so
+I'm not sure what's the right solution...
 
-This doesn't appear to have caused a problem yet upstream because network
-filesystems aren't getting the pages from an xarray iterator, but rather
-passing it directly to the socket, which just iterates over it.  Cachefiles
-*does* do DIO from one to/from ext4/xfs/btrfs/etc. but it always asks for
-whole pages to be written or read.
+Maybe the original patch is fine: this check isn't meant to protect
+the filesystem from access, it's meant to protect the accessor.
 
-Fixes: 7ff5062079ef ("iov_iter: Add ITER_XARRAY")
-Reported-by: Jeff Layton <jlayton@kernel.org>
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Alexander Viro <viro@zeniv.linux.org.uk>
-cc: Dominique Martinet <asmadeus@codewreck.org>
-cc: Mike Marshall <hubcap@omnibond.com>
-cc: Gao Xiang <xiang@kernel.org>
-cc: linux-afs@lists.infradead.org
-cc: v9fs-developer@lists.sourceforge.net
-cc: devel@lists.orangefs.org
-cc: linux-erofs@lists.ozlabs.org
-cc: linux-cachefs@redhat.com
-cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- lib/iov_iter.c | 20 ++++----------------
- 1 file changed, 4 insertions(+), 16 deletions(-)
-
-diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index 6dd5330f7a99..dda6d5f481c1 100644
---- a/lib/iov_iter.c
-+++ b/lib/iov_iter.c
-@@ -1434,7 +1434,7 @@ static ssize_t iter_xarray_get_pages(struct iov_iter *i,
- {
- 	unsigned nr, offset;
- 	pgoff_t index, count;
--	size_t size = maxsize, actual;
-+	size_t size = maxsize;
- 	loff_t pos;
- 
- 	if (!size || !maxpages)
-@@ -1461,13 +1461,7 @@ static ssize_t iter_xarray_get_pages(struct iov_iter *i,
- 	if (nr == 0)
- 		return 0;
- 
--	actual = PAGE_SIZE * nr;
--	actual -= offset;
--	if (nr == count && size > 0) {
--		unsigned last_offset = (nr > 1) ? 0 : offset;
--		actual -= PAGE_SIZE - (last_offset + size);
--	}
--	return actual;
-+	return min(nr * PAGE_SIZE - offset, maxsize);
- }
- 
- /* must be done on non-empty ITER_IOVEC one */
-@@ -1602,7 +1596,7 @@ static ssize_t iter_xarray_get_pages_alloc(struct iov_iter *i,
- 	struct page **p;
- 	unsigned nr, offset;
- 	pgoff_t index, count;
--	size_t size = maxsize, actual;
-+	size_t size = maxsize;
- 	loff_t pos;
- 
- 	if (!size)
-@@ -1631,13 +1625,7 @@ static ssize_t iter_xarray_get_pages_alloc(struct iov_iter *i,
- 	if (nr == 0)
- 		return 0;
- 
--	actual = PAGE_SIZE * nr;
--	actual -= offset;
--	if (nr == count && size > 0) {
--		unsigned last_offset = (nr > 1) ? 0 : offset;
--		actual -= PAGE_SIZE - (last_offset + size);
--	}
--	return actual;
-+	return min(nr * PAGE_SIZE - offset, maxsize);
- }
- 
- ssize_t iov_iter_get_pages_alloc(struct iov_iter *i,
--- 
-2.35.1
-
-
-
+Thanks,
+Miklos
