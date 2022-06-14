@@ -2,120 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E947654AC80
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jun 2022 10:52:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D944B54AD0D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jun 2022 11:16:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354361AbiFNIvP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Jun 2022 04:51:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46968 "EHLO
+        id S1351069AbiFNJOr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Jun 2022 05:14:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54734 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354482AbiFNIuy (ORCPT
+        with ESMTP id S242195AbiFNJOn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Jun 2022 04:50:54 -0400
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D90B91004;
-        Tue, 14 Jun 2022 01:50:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1655196631;
-        bh=SSwUJf2qwRRbaZd++lZS60kPIH49wvQPY3CwMrUjTd4=;
-        h=X-UI-Sender-Class:Date:Subject:To:References:From:In-Reply-To;
-        b=KXdh+hAyaXHpmvpx6xkz9KNcxpWJY6vO2/DbaJhl4A4a5wx1yIK2KNHAIktncIdfq
-         4m4P11upDW54wU1wtvxPmRRdQHZ7RwD1BzeMgAuTA5hYCpOWGHLUUQvUV5KfgMSXT+
-         CIQSinCvmCpk7DJfB7yZxYnXnCVWv6fPgroAfsVE=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from [0.0.0.0] ([149.28.201.231]) by mail.gmx.net (mrgmx105
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1MfYPY-1nUBPJ3uJs-00fzXd; Tue, 14
- Jun 2022 10:50:30 +0200
-Message-ID: <2cc67037-cf90-cca2-1655-46b92b43eba8@gmx.com>
-Date:   Tue, 14 Jun 2022 16:50:22 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [syzbot] KASAN: use-after-free Read in copy_page_from_iter_atomic
- (2)
-Content-Language: en-US
-To:     Christoph Hellwig <hch@lst.de>, dsterba@suse.cz,
-        syzbot <syzbot+d2dd123304b4ae59f1bd@syzkaller.appspotmail.com>,
-        akpm@linux-foundation.org, clm@fb.com, dsterba@suse.com,
-        josef@toxicpanda.com, linux-btrfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, syzkaller-bugs@googlegroups.com,
-        willy@infradead.org
-References: <0000000000003ce9d105e0db53c8@google.com>
- <00000000000085068105e112a117@google.com>
- <20220613193912.GI20633@twin.jikos.cz> <20220614071757.GA1207@lst.de>
-From:   Qu Wenruo <quwenruo.btrfs@gmx.com>
-In-Reply-To: <20220614071757.GA1207@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:i8aMBCfBMPWuzbC1vKjvmN0BZxwNkVC5GuImuj/IaO48QbbgqQZ
- rRQUgAI0L+Es+alusDJ4kSYGqc9EoZZMJg0Vrm2aeqjxSCqdWPxEHIGC3/+qHJ4+hzQVnjg
- lO9zc7BI2hfBqFS84n10onGbzULt81Tdoryq48GgWon+x3+NwmSyyVG7QS0o+Ij2y3g0nkf
- gbnozN+NduFMqSy8f0icw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:tl/jVn197pY=:7sRfFjthlxd0bqcIzmCQXu
- CzQwRPhxWErHfYPAcPR8YYj8WMjpe4pqCvMiWnkoI83ZfmT+Wy74o5/UklfG0Eb/5D80slsoe
- 2a3q0tL5PgolRGX6kxDI7Jy7mHjE7QiGKxbU1o6tk+TGaDl8WfwZtxAchTEoIz646ZeVlMjeW
- VA04gq8yLWn0lSUfdm3SCrL78YiHSJAttrNQIJtFDAtCgFGdQ0KvTOK1L1X1QQfQOFsW3vlhd
- 3XC0bJ2CqAuMF0XaiRLDzhC3S6GM9tSwPW+2GZFmbXJBhp92XAiosRTtpbwlK7+MqcxjyBAoZ
- kaiACgDE/4vYE4CuDl9qe/CgpsU9lFf7IErLAN/eNPdiNtLbfZujqrB+6lk8HDoXQEXeZrvpC
- OjiXBpQLSeEYsi7nt+Yq8ZT8vlX91kowuRO+Q2OYrcxmEdEclA7F+7X8nfD5WjxLGRJggzOsA
- 5JEBdYwmxKPv0rqAB6sg8zU0M1W5OMONxXFZZoRIVoVUZvCRVvBOG6QUUUdwYtW8gH55Nh2Mw
- vOGEsFHIKrYgLeIMHPVvsTtFcsn+icszSlr6/9eQX16+Gjf/jwv+Om6+hvX3+0KgEJP4hkI5Z
- fB81sd1BHZWJVoBWeFQ5b1UscrAtvYS8e3+xS8t5vXj9QFQtzeVmZbAgwWLbp+btRF5yRuVZ7
- TjZhVqiFfoJi/RXJRi5vrJHnSZfoNEmwjT7WSb/G9wpSfJrchorQ/F9Np7KsM8S1ZarT4mq0n
- JVG1ubjt1pct2tH9t3rEfGBWSuuYq10wWMc+urg9lqRvFgSx3x0nTEvL5t4/9KMfoz1z6TGEu
- qnCi47NDXx1eYSkpd1Djl2ZleeEhupt2BssVNVHDImpNrEF/qzDwmUHYO/r1WTm5RSsSxxKr8
- nOJKOnnsRuip2bf7yHDkHH9PzGfrJgSeqdeRduLvSYgUfgaOhAs108m8x3edj5TibjP8IDb6A
- np2hZT8/39iCXlXiZlryfFoZS38wzYov5ea1YmYQByPPH7NlFp3oXw8+9NN4wF592ns+sgqM5
- DYwcNg5K+MoelRSnnfW6quR+lEiLQGq+XMLRDXWxfTRqFpGcWenfbfdYKTssx7yhgbwE5VlWT
- WRUmPaMYy+jrvc9z6fkPKVDJYUevWWtK9V6MZop8t7sodSjorFYUcM0yQ==
-X-Spam-Status: No, score=-3.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,FREEMAIL_FROM,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+        Tue, 14 Jun 2022 05:14:43 -0400
+Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70D083ED27;
+        Tue, 14 Jun 2022 02:14:42 -0700 (PDT)
+Received: by mail-pf1-x435.google.com with SMTP id z17so8046278pff.7;
+        Tue, 14 Jun 2022 02:14:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=from:to:cc:subject:date:message-id;
+        bh=gJFBaDNeDWHqIuYxMoyid973bHu6eCZFeTplZbLAlQM=;
+        b=nmCAJ0Vo8mpyqfk4PFkmzbVcuyHTf4vtw4VqhEUALeYAh52fkNxCYqfgww0nQ91U4j
+         vEFvYksb8QRlDqeUDYKoTlUA0wT0T4hIjuj9At+GZxIvof0yNFr1KPAh3dcVHjPPoRCW
+         SJcCk+Hd/EmcKFG3R0ia94GaB2b0rOxjcCAIcnKuUWzLacrt3+u/Vn1HORMD4bg7QLcb
+         JZ06SSNEB1PYrzwnPdyCHOucYy7Hz2M47XnGjR4y04X+p89Zksw8gXPA7bj74j+aD9VC
+         8tgnUOL0qjkl0VPjhphGKdQLxGq733KrIbq7LmnP5AhS+DjrGSC246r1JWDlcXwtTwcu
+         5eHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=gJFBaDNeDWHqIuYxMoyid973bHu6eCZFeTplZbLAlQM=;
+        b=MlAY7HSmYnlhei1uFSUQEPzY5mnYVqbq7Ww3qrSuvbpMg009z0B/RfoEddx9l14pEd
+         8mcVb4JCKCwQ4FpE8LvPYfHZivD/KOInWuZ5Dcfn1ZgsgTmvgX6KtBbeouNYupZpDjCK
+         ryTKQ9+HudalXL241U8VPxs5XjxhV+4lJjkrG0ULUbM3Cw3D8zhnGFVio9lh4j7GZOqh
+         6of5eZ0QmaoHxYnH4SpyheHoCyvVpji+/NLgJzyKvUk87aTJ/QSCkUZtqWx6e3/UDS15
+         ln+uMebo8KSCojUUGdqR2GDwddR/lmEO82gg/oP77EkHxM7LkVboYzsDm+URADBq0dvT
+         66yQ==
+X-Gm-Message-State: AOAM533Vh5/rdmvgM9DhRW11Q2shuMeitsBuE2PBdecp+cWHUQ9XFebl
+        mcdJp/PVZrGL9S+dMOS/Ff/oPlZWpg==
+X-Google-Smtp-Source: ABdhPJxOEf+NYlo6q+Xkfe6D29qF4mZoOxHYr5+J4iChhXrHGM5voG0sVDT6xWcdd8XVr4UoAxj+CQ==
+X-Received: by 2002:a63:6a4a:0:b0:3fd:4f3a:3f0f with SMTP id f71-20020a636a4a000000b003fd4f3a3f0fmr3689529pgc.625.1655198081656;
+        Tue, 14 Jun 2022 02:14:41 -0700 (PDT)
+Received: from localhost.localdomain ([43.132.141.9])
+        by smtp.gmail.com with ESMTPSA id s3-20020a170903200300b001678e9670d8sm6657721pla.2.2022.06.14.02.14.40
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 14 Jun 2022 02:14:41 -0700 (PDT)
+From:   xiakaixu1987@gmail.com
+X-Google-Original-From: kaixuxia@tencent.com
+To:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     djwong@kernel.org, hch@infradead.org,
+        Kaixu Xia <kaixuxia@tencent.com>
+Subject: [PATCH] iomap: set did_zero to true when zeroing successfully
+Date:   Tue, 14 Jun 2022 17:14:22 +0800
+Message-Id: <1655198062-13288-1-git-send-email-kaixuxia@tencent.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+From: Kaixu Xia <kaixuxia@tencent.com>
 
+It is unnecessary to check and set did_zero value in while() loop,
+we can set did_zero to true only when zeroing successfully at last.
 
-On 2022/6/14 15:17, Christoph Hellwig wrote:
-> On Mon, Jun 13, 2022 at 09:39:12PM +0200, David Sterba wrote:
->> On Fri, Jun 10, 2022 at 12:10:19AM -0700, syzbot wrote:
->>> syzbot has bisected this issue to:
->>>
->>> commit 4cd4aed63125ccd4efc35162627827491c2a7be7
->>> Author: Christoph Hellwig <hch@lst.de>
->>> Date:   Fri May 27 08:43:20 2022 +0000
->>>
->>>      btrfs: fold repair_io_failure into btrfs_repair_eb_io_failure
->>
->> Josef also reported a crash and found a bug in the patch, now added as
->> fixup that'll be in for-next:
->
-> The patch looks correct to me.  Two things to note here:
->
->   - I hadn't realized you had queued up the series.  I've actually
->     started to merge some of my bio work with the bio split at
->     submission time work from Qu and after a few iterations I think
->     I would do the repair code a bit differently based on that.
->     Can you just drop the series for now?
->   - I find it interesting that syzbot hits btrfs metadata repair.
->     xfstests seems to have no coverage and I could not come up with
->     a good idea how to properly test it.  Does anyone have a good
->     idea on how to intentially corrupt metadata in a deterministic
->     way?
+Signed-off-by: Kaixu Xia <kaixuxia@tencent.com>
+---
+ fs/dax.c               | 4 ++--
+ fs/iomap/buffered-io.c | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-The same way as data?
+diff --git a/fs/dax.c b/fs/dax.c
+index 4155a6107fa1..649ff51c9a26 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -1088,10 +1088,10 @@ static s64 dax_zero_iter(struct iomap_iter *iter, bool *did_zero)
+ 		pos += size;
+ 		length -= size;
+ 		written += size;
+-		if (did_zero)
+-			*did_zero = true;
+ 	} while (length > 0);
+ 
++	if (did_zero)
++		*did_zero = true;
+ 	return written;
+ }
+ 
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index d2a9f699e17e..1cadb24a1498 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -917,10 +917,10 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
+ 		pos += bytes;
+ 		length -= bytes;
+ 		written += bytes;
+-		if (did_zero)
+-			*did_zero = true;
+ 	} while (length > 0);
+ 
++	if (did_zero)
++		*did_zero = true;
+ 	return written;
+ }
+ 
+-- 
+2.27.0
 
-map-logical to find the location of a mirror, write 4 bytes of zero into
-the location, then call it a day.
-
-Although for metadata, you may want to choose a metadata that would
-definitely get read.
-Thus tree root is a good candidate.
-
-Thanks,
-Qu
