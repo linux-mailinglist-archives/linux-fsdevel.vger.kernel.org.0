@@ -2,126 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E61754B1A0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jun 2022 14:56:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26FAF54B1AF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jun 2022 14:56:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235202AbiFNMqI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Jun 2022 08:46:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57112 "EHLO
+        id S243144AbiFNMqe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Jun 2022 08:46:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57362 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230242AbiFNMqG (ORCPT
+        with ESMTP id S243000AbiFNMqd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Jun 2022 08:46:06 -0400
-Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FAB525C5;
-        Tue, 14 Jun 2022 05:46:04 -0700 (PDT)
-Received: by nautica.notk.org (Postfix, from userid 108)
-        id 6D9ECC01E; Tue, 14 Jun 2022 14:46:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1655210762; bh=RBQSMhJpK15hWi9SMdepI4O7Y2eSyNHR2US+GQyQ36o=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LilRbVJUfwYoA1//wDU1shCOR5jIlx8SHihvxDmteQ1l1gMs5kgxlk7aM3k7hIFAw
-         3A0uRVv0xz4CtRSZK6YZUxF2bAZ3e18O0OOswRu9skzz4N90QpkV2qKn83rSv6KWtd
-         vqViBfUVAGcvn02WxoMFlmUDsnA6ae6ww+mwbzj3On574KLvCb1Q9U4rZqn27j9CfH
-         +7vb3NOKulwEBsUfb9dWM1abLj30rBDKUOuCh8WHT8VRH1UfOWGJuIdS68MLBfruDo
-         maz9BHaJqUwPxGX4Ic2m8vmia6GxKVZP5tvrZ0APgofnHBnqIm5W8Op4BIZNPjboaJ
-         Qrkz60btiZZ0A==
+        Tue, 14 Jun 2022 08:46:33 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C9E2511461;
+        Tue, 14 Jun 2022 05:46:32 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A47261650;
+        Tue, 14 Jun 2022 05:46:32 -0700 (PDT)
+Received: from ewhatever.cambridge.arm.com (ewhatever.cambridge.arm.com [10.1.197.1])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 70F723F73B;
+        Tue, 14 Jun 2022 05:46:31 -0700 (PDT)
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        stable@vger.kernel.org, Jchao Sun <sunjunchao2870@gmail.com>,
+        Jan Kara <jack@suse.cz>
+Subject: [PATCH] writeback: Avoid grabbing the wb if the we don't add it to dirty list
+Date:   Tue, 14 Jun 2022 13:46:18 +0100
+Message-Id: <20220614124618.2830569-1-suzuki.poulose@arm.com>
+X-Mailer: git-send-email 2.35.3
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-6.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
-Received: from odin.codewreck.org (localhost [127.0.0.1])
-        by nautica.notk.org (Postfix) with ESMTPS id 6B33DC009;
-        Tue, 14 Jun 2022 14:45:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1655210761; bh=RBQSMhJpK15hWi9SMdepI4O7Y2eSyNHR2US+GQyQ36o=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VUcy+z4XRKn7+vtvt02If6n53Kq01LfCtnbgiQl1vimsdQQuBo7mMmbPyEj1vKTzU
-         UkuQcg3gu2kaXLwSRZ0hWQzJxlgsVZc5CweX9hlL64WeGSNSM/qvhOphK9x5NB3NGC
-         nQT2qVZ2nLp2RQIEvrPV+ESJDRrNgoCglQYndTU6cHhI+VdWUGCsTBL9vzb531YY6w
-         qrEQXM6+rUxhbXlpWZzw24Gt/M26s/px/ctjthKXsvmdF7S+wKYUkkkl7lodK1FDe5
-         UWqFGS0xf/iWIbj8BLlkuSSb6Nqu4LomRlCFD1gyJktnqi3qD3YgWYFn9zqVMfg9Z4
-         ohkHGDvGz9xXQ==
-Received: from localhost (odin.codewreck.org [local])
-        by odin.codewreck.org (OpenSMTPD) with ESMTPA id 81288279;
-        Tue, 14 Jun 2022 12:45:53 +0000 (UTC)
-Date:   Tue, 14 Jun 2022 21:45:38 +0900
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     Christian Schoenebeck <linux_oss@crudebyte.com>
-Cc:     Eric Van Hensbergen <ericvh@gmail.com>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        David Howells <dhowells@redhat.com>,
-        linux-fsdevel@vger.kernel.org, stable@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] 9p: fix EBADF errors in cached mode
-Message-ID: <YqiC8luskkxUftQl@codewreck.org>
-References: <YqW5s+GQZwZ/DP5q@codewreck.org>
- <20220614033802.1606738-1-asmadeus@codewreck.org>
- <YqgDdNUxC0hV6KR9@codewreck.org>
- <19026878.01OTk6HtWb@silver>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <19026878.01OTk6HtWb@silver>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Christian Schoenebeck wrote on Tue, Jun 14, 2022 at 02:10:01PM +0200:
-> It definitely goes into the right direction, but I think it's going a bit too 
-> far by using writeback_fid also in cases where it is not necessary and wasn't 
-> used before in the past.
+Commit 10e14073107d moved grabbing the wb for an inode early enough,
+skipping the checks whether if this inode needs to be really added
+to the dirty list (backed by blockdev or unhashed inode). This causes
+a crash with kdevtmpfs as below, on an arm64 Juno board, as below:
 
-Would help if I had an idea of what was used where in the past.. :)
+[    1.446493] printk: console [ttyAMA0] printing thread started
+[    1.447195] printk: bootconsole [pl11] printing thread stopped
+[    1.467193] Unable to handle kernel paging request at virtual address ffff800871242000
+[    1.467793] Mem abort info:
+[    1.468093]   ESR = 0x0000000096000005
+[    1.468413]   EC = 0x25: DABT (current EL), IL = 32 bits
+[    1.468741]   SET = 0, FnV = 0
+[    1.469093]   EA = 0, S1PTW = 0
+[    1.469396]   FSC = 0x05: level 1 translation fault
+[    1.470493] Data abort info:
+[    1.470793]   ISV = 0, ISS = 0x00000005
+[    1.471093]   CM = 0, WnR = 0
+[    1.471444] swapper pgtable: 4k pages, 48-bit VAs, 	pgdp=0000000081c10000
+[    1.471798] [ffff800871242000] pgd=10000008fffff003,
+p4d=10000008fffff003, pud=0000000000000000
+[    1.472836] Internal error: Oops: 96000005 [#1] PREEMPT SMP
+[    1.472918] Modules linked in:
+[    1.473085] CPU: 1 PID: 35 Comm: kdevtmpfs Tainted: G T 5.19.0-rc1+ #49
+[    1.473246] Hardware name: Foundation-v8A (DT)
+[    1.473345] pstate: 40400009 (nZcv daif +PAN -UAO -TCO -DIT 	-SSBS BTYPE=--)
+[    1.473493] pc : locked_inode_to_wb_and_lock_list+0xbc/0x2a4
+[    1.473656] lr : locked_inode_to_wb_and_lock_list+0x8c/0x2a4
+[    1.473820] sp : ffff80000b77bc10
+[    1.473901] x29: ffff80000b77bc10 x28: 0000000000000001 x27: 0000000000000004
+[    1.474193] x26: 0000000000000000 x25: ffff000800888600 x24: ffff0008008885e8
+[    1.474393] x23: ffff80000848ddd4 x22: ffff80000a754f30 x21: ffff80000a7eaaf0
+[    1.474693] x20: ffff000800888150 x19: ffff80000b6a4150 x18: ffff80000ac3ac00
+[    1.474917] x17: 0000000070526bee x16: 000000003ac581ee x15: ffff80000ac42660
+[    1.475195] x14: 0000000000000000 x13: 0000000000007a60 x12: 0000000000000002
+[    1.475428] x11: ffff80000a7eaaf0 x10: 0000000000000004 x9 : 000000008845fe88
+[    1.475622] x8 : ffff000800868000 x7 : ffff80000ab98000 x6 : 00000000114514e2
+[    1.475893] x5 : 0000000000000000 x4 : 0000000000020019 x3 : 0000000000000001
+[    1.476113] x2 : ffff800871242000 x1 : ffff800871242000 x0 : ffff000800868000
+[    1.476393] Call trace:
+[    1.476493]  locked_inode_to_wb_and_lock_list+0xbc/0x2a4
+[    1.476605]  __mark_inode_dirty+0x3d8/0x6e0
+[    1.476793]  simple_setattr+0x5c/0x84
+[    1.476933]  notify_change+0x3ec/0x470
+[    1.477096]  handle_create+0x1b8/0x224
+[    1.477193]  devtmpfsd+0x98/0xf8
+[    1.477342]  kthread+0x124/0x130
+[    1.477512]  ret_from_fork+0x10/0x20
+[    1.477670] Code: b9000802 d2800023 d53cd042 8b020021 (f823003f)
+[    1.477793] ---[ end trace 0000000000000000 ]---
+[    1.478093] note: kdevtmpfs[35] exited with preempt_count 2
 
-From a quick look at the code, checking out v5.10,
-v9fs_vfs_writepage_locked() used the writeback fid always for all writes
-v9fs_vfs_readpages is a bit more complex but only seems to be using the
-"direct" private_data fid for reads...
-It took me a bit of time but I think the reads you were seeing on
-writeback fid come from v9fs_write_begin that does some readpage on the
-writeback fid to populate the page before a non-filling write happens.
+The problem was bisected to the above commit and moving the bail check
+early solves the problem for me.
 
-> What about something like this in v9fs_init_request() (yet untested):
-> 
->     /* writeback_fid is always opened O_RDWR (instead of just O_WRONLY) 
->      * explicitly for this case: partial write backs that require a read
->      * prior to actual write and therefore requires a fid with read
->      * capability.
->      */
->     if (rreq->origin == NETFS_READ_FOR_WRITE)
->         fid = v9inode->writeback_fid;
+Fixes: 10e14073107d ("writeback: Fix inode->i_io_list not be protected by inode->i_lock error")
+CC: stable@vger.kernel.org
+Cc: Jchao Sun <sunjunchao2870@gmail.com>
+Cc: Jan Kara <jack@suse.cz>
+Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+---
+ fs/fs-writeback.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-... Which seems to be exactly what this origin is about, so if that
-works I'm all for it.
-
-> If desired, this could be further constrained later on like:
-> 
->     if (rreq->origin == NETFS_READ_FOR_WRITE &&
->         (fid->mode & O_ACCMODE) == O_WRONLY)
->     {
->         fid = v9inode->writeback_fid;
->     }
-
-That also makes sense, if the fid mode has read permissions we might as
-well use these as the writeback fid would needlessly be doing root IOs.
-
-> I will definitely give these options some test spins here, a short feedback 
-> ahead would be appreciated though.
-
-Please let me know how that works out, I'd be happy to use either of
-your versions instead of mine.
-If I can be greedy though I'd like to post it together with the other
-couple of fixes next week, so having something before the end of the
-week would be great -- I think even my first overkill version early and
-building on it would make sense at this point.
-
-But I think you've got the right end, so hopefully won't be needing to
-delay
-
-
-Cheers,
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index 05221366a16d..cf68114af68b 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -2416,6 +2416,14 @@ void __mark_inode_dirty(struct inode *inode, int flags)
+ 			inode->i_state &= ~I_DIRTY_TIME;
+ 		inode->i_state |= flags;
+ 
++		/*
++		 * Only add valid (hashed) inodes to the superblock's
++		 * dirty list.  Add blockdev inodes as well.
++		 */
++		if (!S_ISBLK(inode->i_mode)) {
++			if (inode_unhashed(inode))
++				goto out_unlock_inode;
++		}
+ 		/*
+ 		 * Grab inode's wb early because it requires dropping i_lock and we
+ 		 * need to make sure following checks happen atomically with dirty
+@@ -2436,14 +2444,6 @@ void __mark_inode_dirty(struct inode *inode, int flags)
+ 		if (inode->i_state & I_SYNC_QUEUED)
+ 			goto out_unlock;
+ 
+-		/*
+-		 * Only add valid (hashed) inodes to the superblock's
+-		 * dirty list.  Add blockdev inodes as well.
+-		 */
+-		if (!S_ISBLK(inode->i_mode)) {
+-			if (inode_unhashed(inode))
+-				goto out_unlock;
+-		}
+ 		if (inode->i_state & I_FREEING)
+ 			goto out_unlock;
+ 
 -- 
-Dominique
+2.35.3
+
