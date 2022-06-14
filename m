@@ -2,86 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B960754A89B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jun 2022 07:15:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2144D54A8B1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jun 2022 07:25:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237350AbiFNFPy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Jun 2022 01:15:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57728 "EHLO
+        id S237787AbiFNFZX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Jun 2022 01:25:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38712 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230137AbiFNFPx (ORCPT
+        with ESMTP id S232427AbiFNFZW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Jun 2022 01:15:53 -0400
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 699F818383;
-        Mon, 13 Jun 2022 22:15:52 -0700 (PDT)
-Received: by mail-wm1-f54.google.com with SMTP id n185so4001272wmn.4;
-        Mon, 13 Jun 2022 22:15:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=BKPCEej7XNpKZCmWUzCvozlUOdtWySqWwvAYCO0M4ug=;
-        b=GfCawZYyLSZcNEaa6FkhKokBg4n6tSFGhDXfVAuFYecVaM4Q1fYLt9Rkp6pJQBBSt6
-         T+rzaX1zKeupHqjmLA2DVR4pCmvYlvSWT3d/5tAyDaXVDnbyUBVTjmEk7l5ZdrIzTtV5
-         XUIaRn43WP46OtZxDygBJ9t8uRktz9cN7ehYFTf07B3BTPSKUL7ra7zld3hkWCIYd4A8
-         XbUodL+FVKKvwhOZ2iZiWZvFabOyeAqIseGLtZt6LPFpGwu2gSoiXssxHIkJIlskmRQX
-         kM64KiKzMJytz5fD28WuXXC1RXB+x2MEN0zcZ3kbmFUSfBFZzJHpKtsWqdoGoZk3q0ej
-         NUjQ==
-X-Gm-Message-State: AOAM533H/bvL59A/fzhevNt4JaZvXR059Mq+nbZDXnKllhTzYD9kvB/H
-        oQGSke3mKu3jlfUjnRcx8e1BDdADKEhCdA==
-X-Google-Smtp-Source: ABdhPJwUBl/sB3fsDVIR+RwP9lapXhzMNi9BnuL0kim5pq2+MZneitk7qs+SsvWOlrYy9e99M78qvQ==
-X-Received: by 2002:a05:600c:3510:b0:39c:7fe7:cbd3 with SMTP id h16-20020a05600c351000b0039c7fe7cbd3mr2143641wmq.191.1655183750835;
-        Mon, 13 Jun 2022 22:15:50 -0700 (PDT)
-Received: from ?IPV6:2a0b:e7c0:0:107::70f? ([2a0b:e7c0:0:107::70f])
-        by smtp.gmail.com with ESMTPSA id ay4-20020a5d6f04000000b00219b391c2d2sm12741996wrb.36.2022.06.13.22.15.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Jun 2022 22:15:49 -0700 (PDT)
-Message-ID: <297b268a-85de-bc8c-88eb-b8d050ac1ec3@kernel.org>
-Date:   Tue, 14 Jun 2022 07:15:48 +0200
+        Tue, 14 Jun 2022 01:25:22 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFDDB26AC4;
+        Mon, 13 Jun 2022 22:25:18 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 15EF6CE181B;
+        Tue, 14 Jun 2022 05:25:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9603C3411B;
+        Tue, 14 Jun 2022 05:25:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1655184315;
+        bh=yVv5NBSoS8jRKy5ozRnvXgCu1M0fCe/nJRys6szNJx8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=V3vMc4a/nCEXDbFNP/4wKJ/IRtOdNoppRm3KT6glab4LkOZA75EmhzGbtaA1xJ+t3
+         zvkLdo81p05dnXKT+qKQuo6DrZwA4lYN2s4XqyUV53L250GdKda6QGguEubwN+2Tiu
+         d4A9dR7WcBIqi94WqvepH+Mo3dRm4pzTy62UhK2d0tWAEz0EaNQA/qG3VSjqGh/ZGP
+         BfUQkMRf8IKtoMh07F+Bm4ksrN2SWxyqmzziAxnkoynG7uOflh+qdDkUkyMvYFq2EJ
+         VUGOVK9SwNY9c0UT3JGvInxETeshxNeq+5qJGUa9Q4x+rKmPDCLKDNxg8c1GJk61r1
+         KqP5kl72VRMGw==
+Date:   Mon, 13 Jun 2022 22:25:12 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Keith Busch <kbusch@kernel.org>
+Subject: Re: [RFC PATCH v2 1/7] statx: add I/O alignment information
+Message-ID: <YqgbuDbdH2OLcbC7@sol.localdomain>
+References: <20220518235011.153058-1-ebiggers@kernel.org>
+ <20220518235011.153058-2-ebiggers@kernel.org>
+ <YobNXbYnhBiqniTH@magnolia>
+ <20220520032739.GB1098723@dread.disaster.area>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [BUG] rockpro64 board hangs in console_init() after commit
- 10e14073107d
-Content-Language: en-US
-To:     Alexandru Elisei <alexandru.elisei@arm.com>,
-        sunjunchao2870@gmail.com, jack@suse.cz, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pmladek@suse.com, senozhatsky@chromium.org, rostedt@goodmis.org,
-        john.ogness@linutronix.de, keescook@chromium.org, anton@enomsg.org,
-        ccross@android.com, tony.luck@intel.com, heiko@sntech.de,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, maco@android.com, hch@lst.de,
-        gregkh@linuxfoundation.org
-References: <Yqdry+IghSWnJ6pe@monolith.localdoman>
-From:   Jiri Slaby <jirislaby@kernel.org>
-In-Reply-To: <Yqdry+IghSWnJ6pe@monolith.localdoman>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
-        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220520032739.GB1098723@dread.disaster.area>
+X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 13. 06. 22, 18:54, Alexandru Elisei wrote:
-> I've booted a kernel compiled with CONFIG_PROVE_LOCKING=y, as the offending
-> commit fiddles with locks, but no splat was produced that would explain the
-> hang.
+On Fri, May 20, 2022 at 01:27:39PM +1000, Dave Chinner wrote:
+> > > * stx_offset_align_optimal: the alignment (in bytes) suggested for file
+> > >   offsets and I/O segment lengths to get optimal performance.  This
+> > >   applies to both DIO and buffered I/O.  It differs from stx_blocksize
+> > >   in that stx_offset_align_optimal will contain the real optimum I/O
+> > >   size, which may be a large value.  In contrast, for compatibility
+> > >   reasons stx_blocksize is the minimum size needed to avoid page cache
+> > >   read/write/modify cycles, which may be much smaller than the optimum
+> > >   I/O size.  For more details about the motivation for this field, see
+> > >   https://lore.kernel.org/r/20220210040304.GM59729@dread.disaster.area
+> > 
+> > Hmm.  So I guess this is supposed to be the filesystem's best guess at
+> > the IO size that will minimize RMW cycles in the entire stack?  i.e. if
+> > the user does not want RMW of pagecache pages, of file allocation units
+> > (if COW is enabled), of RAID stripes, or in the storage itself, then it
+> > should ensure that all IOs are aligned to this value?
+> > 
+> > I guess that means for XFS it's effectively max(pagesize, i_blocksize,
+> > bdev io_opt, sb_width, and (pretend XFS can reflink the realtime volume)
+> > the rt extent size)?  I didn't see a manpage update for statx(2) but
+> > that's mostly what I'm interested in. :)
+> 
+> Yup, xfs_stat_blksize() should give a good idea of what we should
+> do. It will end up being pretty much that, except without the need
+> to a mount option to turn on the sunit/swidth return, and always
+> taking into consideration extent size hints rather than just doing
+> that for RT inodes...
 
-It's too early for lockdep. Could you try to move lockdep_init() before 
-console_init() in start_kernel()?
+While working on the man-pages update, I'm having second thoughts about the
+stx_offset_align_optimal field.  Does any filesystem other than XFS actually
+want stx_offset_align_optimal, when st[x]_blksize already exists?  Many network
+filesystems, as well as tmpfs when hugepages are enabled, already report large
+(megabytes) sizes in st[x]_blksize.  And all documentation I looked at (man
+pages for Linux, POSIX, FreeBSD, NetBSD, macOS) documents st_blksize as
+something like "the preferred blocksize for efficient I/O".  It's never
+documented as being limited to PAGE_SIZE, which makes sense because it's not.
 
-You'd need to use early console (which you already do).
+So stx_offset_align_optimal seems redundant, and it is going to confuse
+application developers who will have to decide when to use st[x]_blksize and
+when to use stx_offset_align_optimal.
 
-thanks,
--- 
-js
-suse labs
+Also, applications that don't work well with huge reported optimal I/O sizes
+would still continue to exist, as it will remain possible for applications to
+only be tested on filesystems that report a small optimal I/O size.
+
+Perhaps for now we should just add STATX_DIOALIGN instead of STATX_IOALIGN,
+leaving out the stx_offset_align_optimal field?  What do people think?
+
+- Eric
