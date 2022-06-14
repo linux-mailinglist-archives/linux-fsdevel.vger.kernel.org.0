@@ -2,45 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ADCC654B659
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jun 2022 18:40:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 169DA54B768
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jun 2022 19:13:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245282AbiFNQko (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Jun 2022 12:40:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55644 "EHLO
+        id S1343615AbiFNRMl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Jun 2022 13:12:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244022AbiFNQkn (ORCPT
+        with ESMTP id S244672AbiFNRMi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Jun 2022 12:40:43 -0400
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0B54835AAC;
-        Tue, 14 Jun 2022 09:40:42 -0700 (PDT)
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D9BF716F3;
-        Tue, 14 Jun 2022 09:40:41 -0700 (PDT)
-Received: from [10.57.84.132] (unknown [10.57.84.132])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9F61E3F66F;
-        Tue, 14 Jun 2022 09:40:40 -0700 (PDT)
-Message-ID: <65477f82-cb48-7f4c-db2f-d7e359fe2144@arm.com>
-Date:   Tue, 14 Jun 2022 17:40:39 +0100
+        Tue, 14 Jun 2022 13:12:38 -0400
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5938A11160;
+        Tue, 14 Jun 2022 10:12:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=UnkcKB4NsDJ0e+mJiYWNx+eCTEwD4IDtNjFvnXDcokg=; b=JXA09RScBAaWksG9w8f1eTRDx4
+        jPYffuxU/Oy99uzq/dqd//WYwokS38bI/QGvYknm8zFgS3vrQtkcoOX6qIO7tKKQRLFroHKgAkjSb
+        /tvxwZw2q5CrF7NG3K0+O5rp7pIMysDT64NN6/ccTPvjXzCgRYF4ZXZWRGSgm/GTaAwh3ankYtsj2
+        i1oLpSEKv0CjPVVjmPZkIIBFcgaJA+8/C78nDnACERWnKrtVFsFAjbuPdTHnA3fHbQqUY3QahA2TN
+        IYY426fKPxYxFAz+mA4FdDG8SpuVxjKd2wLkgh7y/iu+e9O/fTibDiIVfWIcDfvjF3seVpliF0mH6
+        h7djO54g==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
+        id 1o1A5W-000L3R-Dg;
+        Tue, 14 Jun 2022 17:12:22 +0000
+Date:   Tue, 14 Jun 2022 18:12:22 +0100
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        nvdimm@lists.linux.dev, David Howells <dhowells@redhat.com>
+Subject: Re: [RFC][PATCH] fix short copy handling in copy_mc_pipe_to_iter()
+Message-ID: <YqjBdtzXSKgwUi8f@ZenIV>
+References: <YqaAcKsd6uGfIQzM@zeniv-ca.linux.org.uk>
+ <CAHk-=wjmCzdNDCt6L8-N33WSRaYjnj0=yTc_JG8A_Pd7ZEtEJw@mail.gmail.com>
+ <Yqe6EjGTpkvJUU28@ZenIV>
+ <YqfcHiBldIqgbu7e@ZenIV>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
- Gecko/20100101 Thunderbird/91.10.0
-Subject: Re: [PATCH] writeback: Avoid grabbing the wb if the we don't add it
- to dirty list
-To:     Jan Kara <jack@suse.cz>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org,
-        Jchao Sun <sunjunchao2870@gmail.com>
-References: <20220614124618.2830569-1-suzuki.poulose@arm.com>
- <20220614142955.7wvv5dfqdcwp5ftw@quack3.lan>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20220614142955.7wvv5dfqdcwp5ftw@quack3.lan>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-8.1 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <YqfcHiBldIqgbu7e@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -48,80 +55,117 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 14/06/2022 15:29, Jan Kara wrote:
-> On Tue 14-06-22 13:46:18, Suzuki K Poulose wrote:
->> Commit 10e14073107d moved grabbing the wb for an inode early enough,
->> skipping the checks whether if this inode needs to be really added
->> to the dirty list (backed by blockdev or unhashed inode). This causes
->> a crash with kdevtmpfs as below, on an arm64 Juno board, as below:
->>
->> [    1.446493] printk: console [ttyAMA0] printing thread started
->> [    1.447195] printk: bootconsole [pl11] printing thread stopped
->> [    1.467193] Unable to handle kernel paging request at virtual address ffff800871242000
->> [    1.467793] Mem abort info:
->> [    1.468093]   ESR = 0x0000000096000005
->> [    1.468413]   EC = 0x25: DABT (current EL), IL = 32 bits
->> [    1.468741]   SET = 0, FnV = 0
->> [    1.469093]   EA = 0, S1PTW = 0
->> [    1.469396]   FSC = 0x05: level 1 translation fault
->> [    1.470493] Data abort info:
->> [    1.470793]   ISV = 0, ISS = 0x00000005
->> [    1.471093]   CM = 0, WnR = 0
->> [    1.471444] swapper pgtable: 4k pages, 48-bit VAs, 	pgdp=0000000081c10000
->> [    1.471798] [ffff800871242000] pgd=10000008fffff003,
->> p4d=10000008fffff003, pud=0000000000000000
->> [    1.472836] Internal error: Oops: 96000005 [#1] PREEMPT SMP
->> [    1.472918] Modules linked in:
->> [    1.473085] CPU: 1 PID: 35 Comm: kdevtmpfs Tainted: G T 5.19.0-rc1+ #49
->> [    1.473246] Hardware name: Foundation-v8A (DT)
->> [    1.473345] pstate: 40400009 (nZcv daif +PAN -UAO -TCO -DIT 	-SSBS BTYPE=--)
->> [    1.473493] pc : locked_inode_to_wb_and_lock_list+0xbc/0x2a4
->> [    1.473656] lr : locked_inode_to_wb_and_lock_list+0x8c/0x2a4
->> [    1.473820] sp : ffff80000b77bc10
->> [    1.473901] x29: ffff80000b77bc10 x28: 0000000000000001 x27: 0000000000000004
->> [    1.474193] x26: 0000000000000000 x25: ffff000800888600 x24: ffff0008008885e8
->> [    1.474393] x23: ffff80000848ddd4 x22: ffff80000a754f30 x21: ffff80000a7eaaf0
->> [    1.474693] x20: ffff000800888150 x19: ffff80000b6a4150 x18: ffff80000ac3ac00
->> [    1.474917] x17: 0000000070526bee x16: 000000003ac581ee x15: ffff80000ac42660
->> [    1.475195] x14: 0000000000000000 x13: 0000000000007a60 x12: 0000000000000002
->> [    1.475428] x11: ffff80000a7eaaf0 x10: 0000000000000004 x9 : 000000008845fe88
->> [    1.475622] x8 : ffff000800868000 x7 : ffff80000ab98000 x6 : 00000000114514e2
->> [    1.475893] x5 : 0000000000000000 x4 : 0000000000020019 x3 : 0000000000000001
->> [    1.476113] x2 : ffff800871242000 x1 : ffff800871242000 x0 : ffff000800868000
->> [    1.476393] Call trace:
->> [    1.476493]  locked_inode_to_wb_and_lock_list+0xbc/0x2a4
->> [    1.476605]  __mark_inode_dirty+0x3d8/0x6e0
->> [    1.476793]  simple_setattr+0x5c/0x84
->> [    1.476933]  notify_change+0x3ec/0x470
->> [    1.477096]  handle_create+0x1b8/0x224
->> [    1.477193]  devtmpfsd+0x98/0xf8
->> [    1.477342]  kthread+0x124/0x130
->> [    1.477512]  ret_from_fork+0x10/0x20
->> [    1.477670] Code: b9000802 d2800023 d53cd042 8b020021 (f823003f)
->> [    1.477793] ---[ end trace 0000000000000000 ]---
->> [    1.478093] note: kdevtmpfs[35] exited with preempt_count 2
->>
->> The problem was bisected to the above commit and moving the bail check
->> early solves the problem for me.
->>
->> Fixes: 10e14073107d ("writeback: Fix inode->i_io_list not be protected by inode->i_lock error")
->> CC: stable@vger.kernel.org
->> Cc: Jchao Sun <sunjunchao2870@gmail.com>
->> Cc: Jan Kara <jack@suse.cz>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+On Tue, Jun 14, 2022 at 01:53:50AM +0100, Al Viro wrote:
+
+> FWIW, I've got quite a bit of cleanups in the local tree; reordering and
+> cleaning that queue up at the moment, will post tonight or tomorrow.
 > 
-> Thanks for debugging this! The problem actually is not that we cannot call
-> locked_inode_to_wb_and_lock_list() for devtmpfs inode. The problem is that
-> we get called so early during boot that noop_backing_dev_info is not
-> initialized yet and that breaks the code. But I agree the quick fix for
-> this breakage is to exclude unhashed inodes early in __mark_inode_dirty().
-> I'll update the changelog and code comment (and cleanup the condition when
-> moving it) and push the result to my tree.
+> I've looked into doing allocations page-by-page (instead of single
+> push_pipe(), followed by copying into those).  Doable, but it ends
+> up being much messier.
 
-Thanks for the clarification. Btw, here is another report, that is fixed 
-with the same patch [0].
+Hmm...  Maybe not - a possible interface would be
+	append_pipe(iter, size, &off)
 
-[0] 
-https://lore.kernel.org/linux-arm-kernel/YqiJH1phG%2FLWu9bs@monolith.localdoman/
+that would either do kmap_local_page() on the last buffer (if it's
+anonymous and has space in it) or allocated and mapped a page and
+added a new buffer.  Returning the mapped address and offset from it.
+Then these loops would looks like this:
 
-Suzuki
+	while (left) {
+		p = append_pipe(iter, left, &off);
+		if (!p)
+			break;
+		chunk = min(left, PAGE_SIZE - off);
+		rem = copy(p + off, whatever, chunk);
+		chunk -= rem;
+		kunmap_local(p);
+
+		copied += chunk;
+		left -= chunk;
+
+		if (unlikely(rem)) {
+			pipe_revert(i, rem);
+			break;
+		}
+	}
+	return copied;
+
+with no push_pipe() used at all.  For operations that can't fail,
+the things are simplified in an obvious way (rem is always 0).
+
+Or we could have append_pipe() return a struct page * and leave
+kmap_local_page() to the caller...
+
+struct page *append_pipe(struct iov_iter *i, size_t size, unsigned *off)
+{
+	struct pipe_inode_info *pipe = i->pipe;
+	unsigned offset = i->iov_offset;
+	struct page_buffer *buf;
+	struct page *page;
+
+	if (offset && offset < PAGE_SIZE) {
+		// some space in the last buffer; can we add to it?
+		buf = pipe_buf(pipe, pipe->head - 1);
+		if (allocated(buf)) {
+			size = min(size, PAGE_SIZE - offset);
+			buf->len += size;
+			i->iov_offset += size;
+			i->count -= size;
+			*off = offset;
+			return buf->page;	// or kmap_local_page(...)
+		}
+	}
+	// OK, we need a new buffer
+	size = min(size, PAGE_SIZE);
+	if (pipe_full(.....))
+		return NULL;
+	page = alloc_page(GFP_USER);
+	if (!page)
+		return NULL;
+	// got it...
+	buf = pipe_buf(pipe, pipe->head++);
+	*buf = (struct pipe_buffer){.ops = &default_pipe_buf_ops,
+				    .page = page, .len = size };
+	i->head = pipe->head - 1;
+	i->iov_offset = size;
+	i->count -= size;
+	*off = 0;
+	return page;	 // or kmap_local_page(...)
+}
+
+(matter of fact, the last part could use another helper in my tree - there
+the tail would be
+	// OK, we need a new buffer
+	size = min(size, PAGE_SIZE);
+	page = push_anon(pipe, size);
+	if (!page)
+		return NULL;
+	i->head = pipe->head - 1;
+	i->iov_offset = size;
+	i->count -= size;
+	*off = 0;
+	return page;
+)
+
+Would that be readable enough from your POV?  That way push_pipe()
+loses almost all callers and after the "make iov_iter_get_pages()
+advancing" part of the series it simply goes away...
+
+It's obviously too intrusive for backports, though - there I'd very much
+prefer the variant I posted.
+
+Comments?
+
+PS: re local helpers:
+
+static inline struct pipe_buffer *pipe_buf(const struct pipe_inode_info *pipe,
+                                           unsigned int slot)
+{
+	return &pipe->bufs[slot & (pipe->ring_size - 1)];
+}
+
+pretty much all places where we cache pipe->ring_size - 1 had been
+absolutely pointless; there are several exceptions, but back in 2019
+"pipe: Use head and tail pointers for the ring, not cursor and length"
+went overboard with microoptimizations...
