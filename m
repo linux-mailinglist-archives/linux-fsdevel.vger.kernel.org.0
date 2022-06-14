@@ -2,86 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7646F54B047
+	by mail.lfdr.de (Postfix) with ESMTP id EF3BA54B048
 	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jun 2022 14:18:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356817AbiFNMM1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Jun 2022 08:12:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38498 "EHLO
+        id S1356959AbiFNMOo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Jun 2022 08:14:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1356814AbiFNMMR (ORCPT
+        with ESMTP id S1356975AbiFNMOV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Jun 2022 08:12:17 -0400
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A7B24A3CD;
-        Tue, 14 Jun 2022 05:12:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=gdQNv3H02tLJyNTWKuZB1Pun4d0Yppvy9PsduYHadVU=; b=htPwzWNBUQ+6KH93emBqdgCHcP
-        edy5Qq3D4SjFxNnxqapMHYEdX0urLwxC2lK+BXnvXyNZ8X23OjsD74VManmBvG1InroTibh4lpoGU
-        cvQnb0eWImOz5GP0GRt8zhwrQBWZXTkfsG6SEH/jAbeq2ngYXZPM8Dgu3dM6TseTrgiBWQkb9+Tz+
-        sBJE5C+n6WbZaxvleQ4u6kbq+vwvZwOmxxeWu/HGjRqufgpVDM7/CbaGdiqdWkA5Pkxp4DkL4fO94
-        nsi3GX3uEAHaeD/U80bOI8UOwQpw5z+HtFSYtuwLyUja3Jk0xNftGRqfvcDADCpyOR4ORR+8mi1Zg
-        1XiE6cGw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
-        id 1o15Oh-000Gd2-Px;
-        Tue, 14 Jun 2022 12:11:51 +0000
-Date:   Tue, 14 Jun 2022 13:11:51 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        nvdimm@lists.linux.dev
-Subject: Re: [RFC][PATCH] fix short copy handling in copy_mc_pipe_to_iter()
-Message-ID: <Yqh7B+tVDutCwuG1@ZenIV>
-References: <Yqe6EjGTpkvJUU28@ZenIV>
- <YqaAcKsd6uGfIQzM@zeniv-ca.linux.org.uk>
- <CAHk-=wjmCzdNDCt6L8-N33WSRaYjnj0=yTc_JG8A_Pd7ZEtEJw@mail.gmail.com>
- <1586153.1655188579@warthog.procyon.org.uk>
+        Tue, 14 Jun 2022 08:14:21 -0400
+Received: from mail-ot1-x336.google.com (mail-ot1-x336.google.com [IPv6:2607:f8b0:4864:20::336])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EA6FDFAA
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jun 2022 05:14:14 -0700 (PDT)
+Received: by mail-ot1-x336.google.com with SMTP id 93-20020a9d02e6000000b0060c252ee7a4so6405604otl.13
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jun 2022 05:14:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=lBFrwc11MgcaK75qf3EwNhKoIfwLYz4Dn7scEjO7Hwc=;
+        b=UNA00ExpSe/IYk9qRpK3nhNY3MQGhIZVH9b+TBjq+LdlUjXIh78z6gPdY8GF0sQHK1
+         HJ2n3gfPpUPhyyacfGQvRyEpF1QlynrQ30w+G5Aew5oVgyNdOMVYVhySdHNUBZObva2y
+         PuLir0DHRxYshYjhyycNkTLQ7VsAQLmTK6m5EVJfcKtgRbmxa7D08ugJk7y5pLRJ/ze1
+         6cL1+ieOt2sNltOPHDSKZebgxow79UdI2TUNij2cNTn50jsq9VR126vHNmWni88LExVM
+         7xKsxa1nHQ7JrwK4VAXG7j0wCn6FqCQrLI4ANDOm8760jdm8KbeqIvWnFua/uGvpfZQ4
+         nejg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=lBFrwc11MgcaK75qf3EwNhKoIfwLYz4Dn7scEjO7Hwc=;
+        b=evpXq/9OdvAsQSTtnsB3+wz/foMKnN30X6macbz0hyXw3lVhCjwiYhnBnYaHGKwj/d
+         sozTLp1Nllzppmv1z6uH7UwUsuiA/IzCuryN9WteK0Uiigp6ffdMDRRNwk88fM3o97P0
+         QLqm14mrt/aVDMVCZ9r0LvY0qnCeMBe5nVwgXlEfVSkmRoNIjwDarz9mxabGbSVlYc3R
+         jEf1ECL4d58XTWIfvgLSMNEcRb8c+nRXjcQCtKSdimWhTjf8VukhRERUbtdcGebM76gG
+         efYYqWOzJ5vEZw5l99DCeq6z4j3Q0UpSfQ8e90mL2zsObOU5JF0DIja6t7jVpcSKbWp+
+         wA5g==
+X-Gm-Message-State: AOAM533D33nETRVZpuqPL6GPxbizXF+i7OZDL7fJaGfnfQPC55185jes
+        erfSZTd9nkAPWhyXk5pyVqv2rPPIc1xCZfwIhog=
+X-Google-Smtp-Source: ABdhPJxH036Sb3549Y0f3hc7Zhwns93SCbnuybCuqmcROW8sIBDtc8O0vPfU6QLql+6epoXLTxfkWaoTwfvvDQjMptA=
+X-Received: by 2002:a05:6830:1691:b0:60c:1eb1:6ddf with SMTP id
+ k17-20020a056830169100b0060c1eb16ddfmr1906144otr.205.1655208853785; Tue, 14
+ Jun 2022 05:14:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1586153.1655188579@warthog.procyon.org.uk>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Received: by 2002:a8a:c46:0:b0:42d:ab20:ed24 with HTTP; Tue, 14 Jun 2022
+ 05:14:13 -0700 (PDT)
+From:   Daniel Affum <danielaffum05@gmail.com>
+Date:   Tue, 14 Jun 2022 15:14:13 +0300
+Message-ID: <CAPkju_PQmptLCUNLrFjDqn4sN-xwFQ9XOg5Cv+KN_pd6V1aXpA@mail.gmail.com>
+Subject: Confirm Receipt
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=1.8 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,FREEMAIL_REPLY,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Level: *
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 14, 2022 at 07:36:19AM +0100, David Howells wrote:
-> Al Viro <viro@zeniv.linux.org.uk> wrote:
-> 
-> > What's wrong with
-> >         p_occupancy = pipe_occupancy(head, tail);
-> >         if (p_occupancy >= pipe->max_usage)
-> >                 return 0;
-> > 	else
-> > 		return pipe->max_usage - p_occupancy;
-> 
-> Because "pipe->max_usage - p_occupancy" can be negative.
+Hello Dear,
 
-Sure can.  And in that case you return 0; no problem wiht that.
-It's what happens when occupancy is below max_usage that is weird.
+I am Daniel Affum a retired civil servant i have a  business to
+discuss with you from the Eastern part of Africa aimed at agreed
+percentage upon your acceptance of my hand in business and friendship.
+Kindly respond to me if you are interested to partner with me for an
+update.Very important.
 
-> post_one_notification() is limited by pipe->ring_size, not pipe->max_usage.
-> 
-> The idea is to allow some slack in a watch pipe for the watch_queue code to
-> use that userspace can't.
-
-Sure.  And if this function is supposed to report how many times would
-userspace be able to grab a slot, it's returning the wrong value.
-
-Look: 32-slot ring.  max_usage is 16.  14 slots are already occupied.
-Userland (sure as hell, anything in iov_iter.c) will be able to occupy
-two more before it runs into the pipe_full().  And your function returns
-min(32 - 14, 16), i.e. 16.
-
-What am I missing here?
+Yours Sincerely,
+Daniel Affum.
+Reply to:danielaffum005@yahoo.com
