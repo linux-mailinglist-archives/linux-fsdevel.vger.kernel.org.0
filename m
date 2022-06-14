@@ -2,170 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 169DA54B768
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jun 2022 19:13:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B1BB54B7CE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jun 2022 19:37:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343615AbiFNRMl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Jun 2022 13:12:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33910 "EHLO
+        id S240802AbiFNRh5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Jun 2022 13:37:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244672AbiFNRMi (ORCPT
+        with ESMTP id S241299AbiFNRhx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Jun 2022 13:12:38 -0400
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5938A11160;
-        Tue, 14 Jun 2022 10:12:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=UnkcKB4NsDJ0e+mJiYWNx+eCTEwD4IDtNjFvnXDcokg=; b=JXA09RScBAaWksG9w8f1eTRDx4
-        jPYffuxU/Oy99uzq/dqd//WYwokS38bI/QGvYknm8zFgS3vrQtkcoOX6qIO7tKKQRLFroHKgAkjSb
-        /tvxwZw2q5CrF7NG3K0+O5rp7pIMysDT64NN6/ccTPvjXzCgRYF4ZXZWRGSgm/GTaAwh3ankYtsj2
-        i1oLpSEKv0CjPVVjmPZkIIBFcgaJA+8/C78nDnACERWnKrtVFsFAjbuPdTHnA3fHbQqUY3QahA2TN
-        IYY426fKPxYxFAz+mA4FdDG8SpuVxjKd2wLkgh7y/iu+e9O/fTibDiIVfWIcDfvjF3seVpliF0mH6
-        h7djO54g==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.95 #2 (Red Hat Linux))
-        id 1o1A5W-000L3R-Dg;
-        Tue, 14 Jun 2022 17:12:22 +0000
-Date:   Tue, 14 Jun 2022 18:12:22 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        nvdimm@lists.linux.dev, David Howells <dhowells@redhat.com>
-Subject: Re: [RFC][PATCH] fix short copy handling in copy_mc_pipe_to_iter()
-Message-ID: <YqjBdtzXSKgwUi8f@ZenIV>
-References: <YqaAcKsd6uGfIQzM@zeniv-ca.linux.org.uk>
- <CAHk-=wjmCzdNDCt6L8-N33WSRaYjnj0=yTc_JG8A_Pd7ZEtEJw@mail.gmail.com>
- <Yqe6EjGTpkvJUU28@ZenIV>
- <YqfcHiBldIqgbu7e@ZenIV>
+        Tue, 14 Jun 2022 13:37:53 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42D1EFDC
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jun 2022 10:37:52 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D6E50616A4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jun 2022 17:37:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36AB1C3411E
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jun 2022 17:37:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1655228271;
+        bh=IfvLnQR788L8QWGOY03Cidk5AO0MFCOejaXVfQOMPCw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=rVsqTEMCOYtQg0EhaeIyrGXi4SPR+xCja/Zzrm4/rXKs2rHudfxst4/iDfEc7IQHK
+         231UQkTDY6d6nmdAlt1kRM+zRgLLBDu035jXo5xVowLng3mEh3oiXDy8mQR20Hacmd
+         LnzQlaeG3xrE2iaFi/ZdceqCE70b9VENcDWjU+WHKEa2HJsyqUZj0vCI94Pk49Z42u
+         h/RWzCu6j4a9w8yEsj7rK5e9uiDjc2EiFUc+avH0qZI0dyuzeA/z91zXgiRd7yeSl3
+         8mOVqXBg2pv8zvUY79qtaym4zlYLKvBcSVb7us+LoO+lJ2erExWSiAMs/ARQBPGhP9
+         Q8CDnPjgM2DNQ==
+Received: by mail-ej1-f44.google.com with SMTP id g25so18562681ejh.9
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jun 2022 10:37:51 -0700 (PDT)
+X-Gm-Message-State: AOAM530WZIJfSBIq9KhEXUFWYDSBp457eDs5hGDnJjbJdeeaGJfqIn82
+        SF5b8FMUxFGl4qpsf26ZDzPlwYAPZZz0VnQcjqykGw==
+X-Google-Smtp-Source: ABdhPJww+lYVXFvUzPwylC2186LPMaNfdFPXgghAh2gRgIANvpNaY/HFZOJeSAxuhp7fvjON6/ZRor4QvsJ9snnK8jU=
+X-Received: by 2002:a17:906:2298:b0:715:7f3d:32ec with SMTP id
+ p24-20020a170906229800b007157f3d32ecmr5255068eja.538.1655228269361; Tue, 14
+ Jun 2022 10:37:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YqfcHiBldIqgbu7e@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+References: <20220519153713.819591-1-chao.p.peng@linux.intel.com>
+ <CAGtprH_83CEC0U-cBR2FzHsxbwbGn0QJ87WFNOEet8sineOcbQ@mail.gmail.com>
+ <20220607065749.GA1513445@chaop.bj.intel.com> <CAA03e5H_vOQS-qdZgacnmqP5T5jJLnEfm44yfRzJQ2KVu0Br+Q@mail.gmail.com>
+ <20220608021820.GA1548172@chaop.bj.intel.com> <CAGtprH8xyf07jMN7ubTC__BvDj+z41uVGRiCJ7Rc5cv3KWg03w@mail.gmail.com>
+ <YqJYEheLiGI4KqXF@google.com> <20220614072800.GB1783435@chaop.bj.intel.com>
+In-Reply-To: <20220614072800.GB1783435@chaop.bj.intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Tue, 14 Jun 2022 10:37:37 -0700
+X-Gmail-Original-Message-ID: <CALCETrWw=Q=1AKW0Jcj3ZGscjyjDJXAjuxOnQx_sabQ6ZtS-wg@mail.gmail.com>
+Message-ID: <CALCETrWw=Q=1AKW0Jcj3ZGscjyjDJXAjuxOnQx_sabQ6ZtS-wg@mail.gmail.com>
+Subject: Re: [PATCH v6 0/8] KVM: mm: fd-based approach for supporting KVM
+ guest private memory
+To:     Chao Peng <chao.p.peng@linux.intel.com>
+Cc:     Sean Christopherson <seanjc@google.com>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Marc Orr <marcorr@google.com>, kvm list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86 <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Jun Nakajima <jun.nakajima@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jun 14, 2022 at 01:53:50AM +0100, Al Viro wrote:
+On Tue, Jun 14, 2022 at 12:32 AM Chao Peng <chao.p.peng@linux.intel.com> wrote:
+>
+> On Thu, Jun 09, 2022 at 08:29:06PM +0000, Sean Christopherson wrote:
+> > On Wed, Jun 08, 2022, Vishal Annapurve wrote:
+> >
+> > One argument is that userspace can simply rely on cgroups to detect misbehaving
+> > guests, but (a) those types of OOMs will be a nightmare to debug and (b) an OOM
+> > kill from the host is typically considered a _host_ issue and will be treated as
+> > a missed SLO.
+> >
+> > An idea for handling this in the kernel without too much complexity would be to
+> > add F_SEAL_FAULT_ALLOCATIONS (terrible name) that would prevent page faults from
+> > allocating pages, i.e. holes can only be filled by an explicit fallocate().  Minor
+> > faults, e.g. due to NUMA balancing stupidity, and major faults due to swap would
+> > still work, but writes to previously unreserved/unallocated memory would get a
+> > SIGSEGV on something it has mapped.  That would allow the userspace VMM to prevent
+> > unintentional allocations without having to coordinate unmapping/remapping across
+> > multiple processes.
+>
+> Since this is mainly for shared memory and the motivation is catching
+> misbehaved access, can we use mprotect(PROT_NONE) for this? We can mark
+> those range backed by private fd as PROT_NONE during the conversion so
+> subsequence misbehaved accesses will be blocked instead of causing double
+> allocation silently.
 
-> FWIW, I've got quite a bit of cleanups in the local tree; reordering and
-> cleaning that queue up at the moment, will post tonight or tomorrow.
-> 
-> I've looked into doing allocations page-by-page (instead of single
-> push_pipe(), followed by copying into those).  Doable, but it ends
-> up being much messier.
+This patch series is fairly close to implementing a rather more
+efficient solution.  I'm not familiar enough with hypervisor userspace
+to really know if this would work, but:
 
-Hmm...  Maybe not - a possible interface would be
-	append_pipe(iter, size, &off)
+What if shared guest memory could also be file-backed, either in the
+same fd or with a second fd covering the shared portion of a memslot?
+This would allow changes to the backing store (punching holes, etc) to
+be some without mmap_lock or host-userspace TLB flushes?  Depending on
+what the guest is doing with its shared memory, userspace might need
+the memory mapped or it might not.
 
-that would either do kmap_local_page() on the last buffer (if it's
-anonymous and has space in it) or allocated and mapped a page and
-added a new buffer.  Returning the mapped address and offset from it.
-Then these loops would looks like this:
-
-	while (left) {
-		p = append_pipe(iter, left, &off);
-		if (!p)
-			break;
-		chunk = min(left, PAGE_SIZE - off);
-		rem = copy(p + off, whatever, chunk);
-		chunk -= rem;
-		kunmap_local(p);
-
-		copied += chunk;
-		left -= chunk;
-
-		if (unlikely(rem)) {
-			pipe_revert(i, rem);
-			break;
-		}
-	}
-	return copied;
-
-with no push_pipe() used at all.  For operations that can't fail,
-the things are simplified in an obvious way (rem is always 0).
-
-Or we could have append_pipe() return a struct page * and leave
-kmap_local_page() to the caller...
-
-struct page *append_pipe(struct iov_iter *i, size_t size, unsigned *off)
-{
-	struct pipe_inode_info *pipe = i->pipe;
-	unsigned offset = i->iov_offset;
-	struct page_buffer *buf;
-	struct page *page;
-
-	if (offset && offset < PAGE_SIZE) {
-		// some space in the last buffer; can we add to it?
-		buf = pipe_buf(pipe, pipe->head - 1);
-		if (allocated(buf)) {
-			size = min(size, PAGE_SIZE - offset);
-			buf->len += size;
-			i->iov_offset += size;
-			i->count -= size;
-			*off = offset;
-			return buf->page;	// or kmap_local_page(...)
-		}
-	}
-	// OK, we need a new buffer
-	size = min(size, PAGE_SIZE);
-	if (pipe_full(.....))
-		return NULL;
-	page = alloc_page(GFP_USER);
-	if (!page)
-		return NULL;
-	// got it...
-	buf = pipe_buf(pipe, pipe->head++);
-	*buf = (struct pipe_buffer){.ops = &default_pipe_buf_ops,
-				    .page = page, .len = size };
-	i->head = pipe->head - 1;
-	i->iov_offset = size;
-	i->count -= size;
-	*off = 0;
-	return page;	 // or kmap_local_page(...)
-}
-
-(matter of fact, the last part could use another helper in my tree - there
-the tail would be
-	// OK, we need a new buffer
-	size = min(size, PAGE_SIZE);
-	page = push_anon(pipe, size);
-	if (!page)
-		return NULL;
-	i->head = pipe->head - 1;
-	i->iov_offset = size;
-	i->count -= size;
-	*off = 0;
-	return page;
-)
-
-Would that be readable enough from your POV?  That way push_pipe()
-loses almost all callers and after the "make iov_iter_get_pages()
-advancing" part of the series it simply goes away...
-
-It's obviously too intrusive for backports, though - there I'd very much
-prefer the variant I posted.
-
-Comments?
-
-PS: re local helpers:
-
-static inline struct pipe_buffer *pipe_buf(const struct pipe_inode_info *pipe,
-                                           unsigned int slot)
-{
-	return &pipe->bufs[slot & (pipe->ring_size - 1)];
-}
-
-pretty much all places where we cache pipe->ring_size - 1 had been
-absolutely pointless; there are several exceptions, but back in 2019
-"pipe: Use head and tail pointers for the ring, not cursor and length"
-went overboard with microoptimizations...
+--Andy
