@@ -2,146 +2,197 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AD77E54B851
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jun 2022 20:10:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E394454B9FA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jun 2022 21:02:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345139AbiFNSJ4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Jun 2022 14:09:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60756 "EHLO
+        id S1357479AbiFNTBc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Jun 2022 15:01:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343661AbiFNSJy (ORCPT
+        with ESMTP id S1357246AbiFNTBN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Jun 2022 14:09:54 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E92DA45792
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jun 2022 11:09:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1655230192;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=MpQuarki66IR7CQ0JeO2Q3emNhjmVObdjJYvYB9eELg=;
-        b=DXHbNWs6N2IiHRc9iFZb4qG/M00yHfmBrDHYS9oXa4fexqXgJAEajDTda91lkUaPShQEBa
-        QDuOObY2s668yEJdVCV1HHJFFrIPBbAtqG5jTPuJny9rmT+WFgw3XKh5jqvhUYz6oymXlV
-        G2ZrbfhyVUviCEWJOeTLZ2SNgQpPkew=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-442-eKpFmPZfNvq5ByL94CXf4Q-1; Tue, 14 Jun 2022 14:09:50 -0400
-X-MC-Unique: eKpFmPZfNvq5ByL94CXf4Q-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7E2F63817A6C;
-        Tue, 14 Jun 2022 18:09:50 +0000 (UTC)
-Received: from bfoster.redhat.com (unknown [10.22.16.60])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 51D38492C3B;
-        Tue, 14 Jun 2022 18:09:50 +0000 (UTC)
-From:   Brian Foster <bfoster@redhat.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     ikent@redhat.com, onestero@redhat.com
-Subject: [PATCH 3/3] proc: use idr tgid tag hint to iterate pids in readdir
-Date:   Tue, 14 Jun 2022 14:09:49 -0400
-Message-Id: <20220614180949.102914-4-bfoster@redhat.com>
-In-Reply-To: <20220614180949.102914-1-bfoster@redhat.com>
-References: <20220614180949.102914-1-bfoster@redhat.com>
+        Tue, 14 Jun 2022 15:01:13 -0400
+Received: from mail-oa1-x35.google.com (mail-oa1-x35.google.com [IPv6:2001:4860:4864:20::35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77CF325294
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jun 2022 11:59:13 -0700 (PDT)
+Received: by mail-oa1-x35.google.com with SMTP id 586e51a60fabf-fe4ac3b87fso13703831fac.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jun 2022 11:59:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=P/zvL47bzMX9zv6R9Iu19Vam9aHyZ/GbOGpqtXAWqMc=;
+        b=YbrS1rTCXkBCIbh142yEwubaBQ2XkSJH/0xKf0lf6tUumEJSdjOkNie1Nx61lojoXo
+         7ghRJ4k9WRR4jECQ0Dr2ZPBq/WU7t6xV2yqW0HATlcT/2Yl8k5zRPz4Fct1kN9ZfM/ig
+         wiY+zF/49Otr9jZ/sUBro5DEDVmoThVwMV6c4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=P/zvL47bzMX9zv6R9Iu19Vam9aHyZ/GbOGpqtXAWqMc=;
+        b=NQcfBWCPlKP4vnmZLCeHp0yZvsOneYRzjcEkt3a1deqPFkcCQwcd6LaNiZ6FYGcG4T
+         lZ8e8iSw4kdK4+VTPN47XJZECJN/8f8B94LXQ4z9NdS2C41iI1FY8iZ7PAJSXIYDCIgY
+         pW1vmrybRX51QHW5GgtrpHGFfd5Mprwy8NiovjmZDJFI8Voa8RNGqZeY/lGwkAuUK8Tg
+         ykWQNvBH4WD6MZbktHX+bD/adCN9l4dWv9rOKSXJYvZqiejGyZE//KFroqHoYMCM86Oo
+         Nrde5zgGvw8pvbquI8udZahjKYFa0yk6i39FTnvzrwdKRA1WPuA0C1DBa4AS8hchysjF
+         ohlw==
+X-Gm-Message-State: AJIora+lDurNx+Ux8Y2rz/srfMDiNqPXqntQ9At9iMJYGbibuEJ9lBlH
+        JLRns04at364xilH4XJfOofjyg==
+X-Google-Smtp-Source: AGRyM1ufL5MDqjvHIo4wa13zoHeLqce3gwGBqjZkT/cfGeJacNorGFZd87ZD1rOQxbOuCm8UywPhnQ==
+X-Received: by 2002:a05:6870:c151:b0:fe:251b:804c with SMTP id g17-20020a056870c15100b000fe251b804cmr3187763oad.15.1655233152767;
+        Tue, 14 Jun 2022 11:59:12 -0700 (PDT)
+Received: from [192.168.0.41] ([184.4.90.121])
+        by smtp.gmail.com with ESMTPSA id x64-20020acae043000000b0032ecb7370ffsm5017316oig.41.2022.06.14.11.59.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Jun 2022 11:59:10 -0700 (PDT)
+Message-ID: <9ed91f15-420c-3db6-8b3b-85438b02bf97@cloudflare.com>
+Date:   Tue, 14 Jun 2022 13:59:08 -0500
 MIME-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.85 on 10.11.54.9
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v3] cred: Propagate security_prepare_creds() error code
+Content-Language: en-US
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-cachefs@redhat.com, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-mm@kvack.org,
+        linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        keyrings@vger.kernel.org, selinux@vger.kernel.org,
+        serge@hallyn.com, amir73il@gmail.com, kernel-team@cloudflare.com,
+        Jeff Moyer <jmoyer@redhat.com>,
+        Paul Moore <paul@paul-moore.com>
+References: <20220608150942.776446-1-fred@cloudflare.com>
+ <87tu8oze94.fsf@email.froward.int.ebiederm.org>
+ <e1b62234-9b8a-e7c2-2946-5ef9f6f23a08@cloudflare.com>
+ <87y1xzyhub.fsf@email.froward.int.ebiederm.org>
+ <859cb593-9e96-5846-2191-6613677b07c5@cloudflare.com>
+ <87o7yvxl4x.fsf@email.froward.int.ebiederm.org>
+From:   Frederick Lawler <fred@cloudflare.com>
+In-Reply-To: <87o7yvxl4x.fsf@email.froward.int.ebiederm.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The tgid pid/task scan in proc_pid_readdir() is rather inefficient.
-It linearly walks the pid_namespace and checks each allocated pid
-for an associated PIDTYPE_TGID task. This has shown to impact
-getdents() latency in environments that might have processes with
-very large thread counts.
+On 6/14/22 11:30 AM, Eric W. Biederman wrote:
+> Frederick Lawler <fred@cloudflare.com> writes:
+> 
+>> On 6/13/22 11:44 PM, Eric W. Biederman wrote:
+>>> Frederick Lawler <fred@cloudflare.com> writes:
+>>>
+>>>> Hi Eric,
+>>>>
+>>>> On 6/13/22 12:04 PM, Eric W. Biederman wrote:
+>>>>> Frederick Lawler <fred@cloudflare.com> writes:
+>>>>>
+>>>>>> While experimenting with the security_prepare_creds() LSM hook, we
+>>>>>> noticed that our EPERM error code was not propagated up the callstack.
+>>>>>> Instead ENOMEM is always returned.  As a result, some tools may send a
+>>>>>> confusing error message to the user:
+>>>>>>
+>>>>>> $ unshare -rU
+>>>>>> unshare: unshare failed: Cannot allocate memory
+>>>>>>
+>>>>>> A user would think that the system didn't have enough memory, when
+>>>>>> instead the action was denied.
+>>>>>>
+>>>>>> This problem occurs because prepare_creds() and prepare_kernel_cred()
+>>>>>> return NULL when security_prepare_creds() returns an error code. Later,
+>>>>>> functions calling prepare_creds() and prepare_kernel_cred() return
+>>>>>> ENOMEM because they assume that a NULL meant there was no memory
+>>>>>> allocated.
+>>>>>>
+>>>>>> Fix this by propagating an error code from security_prepare_creds() up
+>>>>>> the callstack.
+>>>>> Why would it make sense for security_prepare_creds to return an error
+>>>>> code other than ENOMEM?
+>>>>>    > That seems a bit of a violation of what that function is supposed to do
+>>>>>
+>>>>
+>>>> The API allows LSM authors to decide what error code is returned from the
+>>>> cred_prepare hook. security_task_alloc() is a similar hook, and has its return
+>>>> code propagated.
+>>> It is not an api.  It is an implementation detail of the linux kernel.
+>>> It is a set of convenient functions that do a job.
+>>> The general rule is we don't support cases without an in-tree user.  I
+>>> don't see an in-tree user.
+>>>
+>>>> I'm proposing we follow security_task_allocs() pattern, and add visibility for
+>>>> failure cases in prepare_creds().
+>>> I am asking why we would want to.  Especially as it is not an API, and I
+>>> don't see any good reason for anything but an -ENOMEM failure to be
+>>> supported.
+>>>
+>> We're writing a LSM BPF policy, and not a new LSM. Our policy aims to solve
+>> unprivileged unshare, similar to Debian's patch [1]. We're in a position such
+>> that we can't use that patch because we can't block _all_ of our applications
+>> from performing an unshare. We prefer a granular approach. LSM BPF seems like a
+>> good choice.
+> 
+> I am quite puzzled why doesn't /proc/sys/user/max_user_namespaces work
+> for you?
+> 
 
-For example, on a mostly idle 2.4GHz Intel Xeon running Fedora on
-5.19.0-rc2, 'strace -T xfs_io -c readdir /proc' shows the following:
+We have the following requirements:
 
-  getdents64(... /* 814 entries */, 32768) = 20624 <0.000568>
+1. Allow list criteria
+2. root user must be able to create namespaces whenever
+3. Everything else not in 1 & 2 must be denied
 
-With the addition of a dummy (i.e. idle) process running that
-creates an additional 100k threads, that latency increases to:
+We use per task attributes to determine whether or not we allow/deny the 
+current call to unshare().
 
-  getdents64(... /* 815 entries */, 32768) = 20656 <0.011315>
+/proc/sys/user/max_user_namespaces limits are a bit broad for this level 
+of detail.
 
-While this may not be noticeable in one off /proc scans or simple
-usage of ps or top, we have users that report problems caused by
-this latency increase in these sort of scaled environments with
-custom tooling that makes heavier use of task monitoring.
-
-Optimize the tgid task scanning in proc_pid_readdir() by using
-IDR_TGID tag lookups in the pid namespace tree. Tagged pids are not
-guaranteed to have an associated PIDTYPE_TGID task, but pids that do
-are always tagged. This significantly improves readdir() latency
-when the pid namespace is populated with group leader tasks with
-unusually large thread counts. For example, the above 100k idle task
-test against a patched kernel now results in the following:
-
-Idle:
-  getdents64(... /* 861 entries */, 32768) = 21048 <0.000670>
-
-"" + 100k threads:
-  getdents64(... /* 862 entries */, 32768) = 21096 <0.000959>
-
-... which is a much smaller latency hit after the high thread count
-task is started.
-
-Signed-off-by: Brian Foster <bfoster@redhat.com>
----
- fs/proc/base.c      |  2 +-
- include/linux/idr.h | 14 ++++++++++++++
- 2 files changed, 15 insertions(+), 1 deletion(-)
-
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 8dfa36a99c74..fd3c8a5f8c2d 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -3436,7 +3436,7 @@ static struct tgid_iter next_tgid(struct pid_namespace *ns, struct tgid_iter ite
- 	rcu_read_lock();
- retry:
- 	iter.task = NULL;
--	pid = find_ge_pid(iter.tgid, ns);
-+	pid = find_tgid_pid(&ns->idr, iter.tgid);
- 	if (pid) {
- 		iter.tgid = pid_nr_ns(pid, ns);
- 		iter.task = pid_task(pid, PIDTYPE_TGID);
-diff --git a/include/linux/idr.h b/include/linux/idr.h
-index 11e0ccedfc92..5ef32311b232 100644
---- a/include/linux/idr.h
-+++ b/include/linux/idr.h
-@@ -185,6 +185,20 @@ static inline bool idr_is_group_lead(struct idr *idr, unsigned long id)
- 	return radix_tree_tag_get(&idr->idr_rt, id, IDR_TGID);
- }
- 
-+/*
-+ * Find the next id with a potentially associated TGID task using the internal
-+ * tag. Task association is not guaranteed and must be checked explicitly.
-+ */
-+static inline struct pid *find_tgid_pid(struct idr *idr, unsigned long id)
-+{
-+	struct pid *pid;
-+
-+	if (radix_tree_gang_lookup_tag(&idr->idr_rt, (void **) &pid, id, 1,
-+				       IDR_TGID) != 1)
-+		return NULL;
-+	return pid;
-+}
-+
- /**
-  * idr_for_each_entry() - Iterate over an IDR's elements of a given type.
-  * @idr: IDR handle.
--- 
-2.34.1
+>> Because LSM BPF exposes these hooks, we should probably treat them as an
+>> API. From that perspective, userspace expects unshare to return a EPERM
+>> when the call is denied permissions.
+> 
+> The BPF code gets to be treated as a out of tree kernel module.
+> 
+>>> Without an in-tree user that cares it is probably better to go the
+>>> opposite direction and remove the possibility of return anything but
+>>> memory allocation failure.  That will make it clearer to implementors
+>>> that a general error code is not supported and this is not a location
+>>> to implement policy, this is only a hook to allocate state for the LSM.
+>>>
+>>
+>> That's a good point, and it's possible we're using the wrong hook for the
+>> policy. Do you know of other hooks we can look into?
+> 
+> Not off the top of my head.
+> 
+>>>>> I have probably missed a very interesting discussion where that was
+>>>>> mentioned but I don't see link to the discussion or anything explaining
+>>>>> why we want to do that in this change.
+>>>>>
+>>>>
+>>>> AFAIK, this is the start of the discussion.
+>>> You were on v3 and had an out of tree piece of code so I assumed someone
+>>> had at least thought about why you want to implement policy in a piece
+>>> of code whose only purpose is to allocate memory to store state.
+>>>
+>>
+>> No worries.
+>>
+>>> Eric
+>>>
+>>>
+>>
+>> Links:
+>> 1:
+>> https://sources.debian.org/patches/linux/3.16.56-1+deb8u1/debian/add-sysctl-to-disallow-unprivileged-CLONE_NEWUSER-by-default.patch/
+> 
+> Eric
 
