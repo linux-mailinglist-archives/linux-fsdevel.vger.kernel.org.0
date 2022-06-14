@@ -2,176 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 005C654B63C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jun 2022 18:35:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADCC654B659
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jun 2022 18:40:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244022AbiFNQbj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Jun 2022 12:31:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46564 "EHLO
+        id S245282AbiFNQko (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Jun 2022 12:40:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243064AbiFNQbg (ORCPT
+        with ESMTP id S244022AbiFNQkn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Jun 2022 12:31:36 -0400
-Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1D82443C9;
-        Tue, 14 Jun 2022 09:31:35 -0700 (PDT)
-Received: from in02.mta.xmission.com ([166.70.13.52]:56828)
-        by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1o19S2-00AmWn-9i; Tue, 14 Jun 2022 10:31:34 -0600
-Received: from ip68-227-174-4.om.om.cox.net ([68.227.174.4]:40454 helo=email.froward.int.ebiederm.org.xmission.com)
-        by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1o19S0-009rSu-TN; Tue, 14 Jun 2022 10:31:33 -0600
-From:   "Eric W. Biederman" <ebiederm@xmission.com>
-To:     Frederick Lawler <fred@cloudflare.com>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-cachefs@redhat.com, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, linux-mm@kvack.org,
-        linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        keyrings@vger.kernel.org, selinux@vger.kernel.org,
-        serge@hallyn.com, amir73il@gmail.com, kernel-team@cloudflare.com,
-        Jeff Moyer <jmoyer@redhat.com>,
-        Paul Moore <paul@paul-moore.com>
-References: <20220608150942.776446-1-fred@cloudflare.com>
-        <87tu8oze94.fsf@email.froward.int.ebiederm.org>
-        <e1b62234-9b8a-e7c2-2946-5ef9f6f23a08@cloudflare.com>
-        <87y1xzyhub.fsf@email.froward.int.ebiederm.org>
-        <859cb593-9e96-5846-2191-6613677b07c5@cloudflare.com>
-Date:   Tue, 14 Jun 2022 11:30:54 -0500
-In-Reply-To: <859cb593-9e96-5846-2191-6613677b07c5@cloudflare.com> (Frederick
-        Lawler's message of "Tue, 14 Jun 2022 11:06:24 -0500")
-Message-ID: <87o7yvxl4x.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+        Tue, 14 Jun 2022 12:40:43 -0400
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0B54835AAC;
+        Tue, 14 Jun 2022 09:40:42 -0700 (PDT)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D9BF716F3;
+        Tue, 14 Jun 2022 09:40:41 -0700 (PDT)
+Received: from [10.57.84.132] (unknown [10.57.84.132])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9F61E3F66F;
+        Tue, 14 Jun 2022 09:40:40 -0700 (PDT)
+Message-ID: <65477f82-cb48-7f4c-db2f-d7e359fe2144@arm.com>
+Date:   Tue, 14 Jun 2022 17:40:39 +0100
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1o19S0-009rSu-TN;;;mid=<87o7yvxl4x.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.174.4;;;frm=ebiederm@xmission.com;;;spf=softfail
-X-XM-AID: U2FsdGVkX19OwrPXsW8XkXxckntCYt4oo3aNKl7qziA=
-X-SA-Exim-Connect-IP: 68.227.174.4
-X-SA-Exim-Mail-From: ebiederm@xmission.com
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0)
+ Gecko/20100101 Thunderbird/91.10.0
+Subject: Re: [PATCH] writeback: Avoid grabbing the wb if the we don't add it
+ to dirty list
+To:     Jan Kara <jack@suse.cz>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org,
+        Jchao Sun <sunjunchao2870@gmail.com>
+References: <20220614124618.2830569-1-suzuki.poulose@arm.com>
+ <20220614142955.7wvv5dfqdcwp5ftw@quack3.lan>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20220614142955.7wvv5dfqdcwp5ftw@quack3.lan>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-8.1 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
-X-Spam-DCC: XMission; sa04 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: *****;Frederick Lawler <fred@cloudflare.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 748 ms - load_scoreonly_sql: 0.04 (0.0%),
-        signal_user_changed: 10 (1.3%), b_tie_ro: 9 (1.2%), parse: 0.81 (0.1%),
-         extract_message_metadata: 10 (1.4%), get_uri_detail_list: 2.1 (0.3%),
-        tests_pri_-1000: 18 (2.4%), tests_pri_-950: 1.02 (0.1%),
-        tests_pri_-900: 0.85 (0.1%), tests_pri_-90: 303 (40.5%), check_bayes:
-        299 (39.9%), b_tokenize: 8 (1.1%), b_tok_get_all: 11 (1.5%),
-        b_comp_prob: 2.8 (0.4%), b_tok_touch_all: 271 (36.3%), b_finish: 1.36
-        (0.2%), tests_pri_0: 387 (51.7%), check_dkim_signature: 0.80 (0.1%),
-        check_dkim_adsp: 2.9 (0.4%), poll_dns_idle: 0.91 (0.1%), tests_pri_10:
-        3.9 (0.5%), tests_pri_500: 11 (1.5%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH v3] cred: Propagate security_prepare_creds() error code
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Frederick Lawler <fred@cloudflare.com> writes:
-
-> On 6/13/22 11:44 PM, Eric W. Biederman wrote:
->> Frederick Lawler <fred@cloudflare.com> writes:
->> 
->>> Hi Eric,
->>>
->>> On 6/13/22 12:04 PM, Eric W. Biederman wrote:
->>>> Frederick Lawler <fred@cloudflare.com> writes:
->>>>
->>>>> While experimenting with the security_prepare_creds() LSM hook, we
->>>>> noticed that our EPERM error code was not propagated up the callstack.
->>>>> Instead ENOMEM is always returned.  As a result, some tools may send a
->>>>> confusing error message to the user:
->>>>>
->>>>> $ unshare -rU
->>>>> unshare: unshare failed: Cannot allocate memory
->>>>>
->>>>> A user would think that the system didn't have enough memory, when
->>>>> instead the action was denied.
->>>>>
->>>>> This problem occurs because prepare_creds() and prepare_kernel_cred()
->>>>> return NULL when security_prepare_creds() returns an error code. Later,
->>>>> functions calling prepare_creds() and prepare_kernel_cred() return
->>>>> ENOMEM because they assume that a NULL meant there was no memory
->>>>> allocated.
->>>>>
->>>>> Fix this by propagating an error code from security_prepare_creds() up
->>>>> the callstack.
->>>> Why would it make sense for security_prepare_creds to return an error
->>>> code other than ENOMEM?
->>>>   > That seems a bit of a violation of what that function is supposed to do
->>>>
->>>
->>> The API allows LSM authors to decide what error code is returned from the
->>> cred_prepare hook. security_task_alloc() is a similar hook, and has its return
->>> code propagated.
->> It is not an api.  It is an implementation detail of the linux kernel.
->> It is a set of convenient functions that do a job.
->> The general rule is we don't support cases without an in-tree user.  I
->> don't see an in-tree user.
->> 
->>> I'm proposing we follow security_task_allocs() pattern, and add visibility for
->>> failure cases in prepare_creds().
->> I am asking why we would want to.  Especially as it is not an API, and I
->> don't see any good reason for anything but an -ENOMEM failure to be
->> supported.
+On 14/06/2022 15:29, Jan Kara wrote:
+> On Tue 14-06-22 13:46:18, Suzuki K Poulose wrote:
+>> Commit 10e14073107d moved grabbing the wb for an inode early enough,
+>> skipping the checks whether if this inode needs to be really added
+>> to the dirty list (backed by blockdev or unhashed inode). This causes
+>> a crash with kdevtmpfs as below, on an arm64 Juno board, as below:
 >>
-> We're writing a LSM BPF policy, and not a new LSM. Our policy aims to solve
-> unprivileged unshare, similar to Debian's patch [1]. We're in a position such
-> that we can't use that patch because we can't block _all_ of our applications
-> from performing an unshare. We prefer a granular approach. LSM BPF seems like a
-> good choice.
+>> [    1.446493] printk: console [ttyAMA0] printing thread started
+>> [    1.447195] printk: bootconsole [pl11] printing thread stopped
+>> [    1.467193] Unable to handle kernel paging request at virtual address ffff800871242000
+>> [    1.467793] Mem abort info:
+>> [    1.468093]   ESR = 0x0000000096000005
+>> [    1.468413]   EC = 0x25: DABT (current EL), IL = 32 bits
+>> [    1.468741]   SET = 0, FnV = 0
+>> [    1.469093]   EA = 0, S1PTW = 0
+>> [    1.469396]   FSC = 0x05: level 1 translation fault
+>> [    1.470493] Data abort info:
+>> [    1.470793]   ISV = 0, ISS = 0x00000005
+>> [    1.471093]   CM = 0, WnR = 0
+>> [    1.471444] swapper pgtable: 4k pages, 48-bit VAs, 	pgdp=0000000081c10000
+>> [    1.471798] [ffff800871242000] pgd=10000008fffff003,
+>> p4d=10000008fffff003, pud=0000000000000000
+>> [    1.472836] Internal error: Oops: 96000005 [#1] PREEMPT SMP
+>> [    1.472918] Modules linked in:
+>> [    1.473085] CPU: 1 PID: 35 Comm: kdevtmpfs Tainted: G T 5.19.0-rc1+ #49
+>> [    1.473246] Hardware name: Foundation-v8A (DT)
+>> [    1.473345] pstate: 40400009 (nZcv daif +PAN -UAO -TCO -DIT 	-SSBS BTYPE=--)
+>> [    1.473493] pc : locked_inode_to_wb_and_lock_list+0xbc/0x2a4
+>> [    1.473656] lr : locked_inode_to_wb_and_lock_list+0x8c/0x2a4
+>> [    1.473820] sp : ffff80000b77bc10
+>> [    1.473901] x29: ffff80000b77bc10 x28: 0000000000000001 x27: 0000000000000004
+>> [    1.474193] x26: 0000000000000000 x25: ffff000800888600 x24: ffff0008008885e8
+>> [    1.474393] x23: ffff80000848ddd4 x22: ffff80000a754f30 x21: ffff80000a7eaaf0
+>> [    1.474693] x20: ffff000800888150 x19: ffff80000b6a4150 x18: ffff80000ac3ac00
+>> [    1.474917] x17: 0000000070526bee x16: 000000003ac581ee x15: ffff80000ac42660
+>> [    1.475195] x14: 0000000000000000 x13: 0000000000007a60 x12: 0000000000000002
+>> [    1.475428] x11: ffff80000a7eaaf0 x10: 0000000000000004 x9 : 000000008845fe88
+>> [    1.475622] x8 : ffff000800868000 x7 : ffff80000ab98000 x6 : 00000000114514e2
+>> [    1.475893] x5 : 0000000000000000 x4 : 0000000000020019 x3 : 0000000000000001
+>> [    1.476113] x2 : ffff800871242000 x1 : ffff800871242000 x0 : ffff000800868000
+>> [    1.476393] Call trace:
+>> [    1.476493]  locked_inode_to_wb_and_lock_list+0xbc/0x2a4
+>> [    1.476605]  __mark_inode_dirty+0x3d8/0x6e0
+>> [    1.476793]  simple_setattr+0x5c/0x84
+>> [    1.476933]  notify_change+0x3ec/0x470
+>> [    1.477096]  handle_create+0x1b8/0x224
+>> [    1.477193]  devtmpfsd+0x98/0xf8
+>> [    1.477342]  kthread+0x124/0x130
+>> [    1.477512]  ret_from_fork+0x10/0x20
+>> [    1.477670] Code: b9000802 d2800023 d53cd042 8b020021 (f823003f)
+>> [    1.477793] ---[ end trace 0000000000000000 ]---
+>> [    1.478093] note: kdevtmpfs[35] exited with preempt_count 2
+>>
+>> The problem was bisected to the above commit and moving the bail check
+>> early solves the problem for me.
+>>
+>> Fixes: 10e14073107d ("writeback: Fix inode->i_io_list not be protected by inode->i_lock error")
+>> CC: stable@vger.kernel.org
+>> Cc: Jchao Sun <sunjunchao2870@gmail.com>
+>> Cc: Jan Kara <jack@suse.cz>
+>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> 
+> Thanks for debugging this! The problem actually is not that we cannot call
+> locked_inode_to_wb_and_lock_list() for devtmpfs inode. The problem is that
+> we get called so early during boot that noop_backing_dev_info is not
+> initialized yet and that breaks the code. But I agree the quick fix for
+> this breakage is to exclude unhashed inodes early in __mark_inode_dirty().
+> I'll update the changelog and code comment (and cleanup the condition when
+> moving it) and push the result to my tree.
 
-I am quite puzzled why doesn't /proc/sys/user/max_user_namespaces work
-for you?
+Thanks for the clarification. Btw, here is another report, that is fixed 
+with the same patch [0].
 
-> Because LSM BPF exposes these hooks, we should probably treat them as an
-> API. From that perspective, userspace expects unshare to return a EPERM 
-> when the call is denied permissions.
+[0] 
+https://lore.kernel.org/linux-arm-kernel/YqiJH1phG%2FLWu9bs@monolith.localdoman/
 
-The BPF code gets to be treated as a out of tree kernel module.
-
->> Without an in-tree user that cares it is probably better to go the
->> opposite direction and remove the possibility of return anything but
->> memory allocation failure.  That will make it clearer to implementors
->> that a general error code is not supported and this is not a location
->> to implement policy, this is only a hook to allocate state for the LSM.
->> 
->
-> That's a good point, and it's possible we're using the wrong hook for the
-> policy. Do you know of other hooks we can look into?
-
-Not off the top of my head.
-
->>>> I have probably missed a very interesting discussion where that was
->>>> mentioned but I don't see link to the discussion or anything explaining
->>>> why we want to do that in this change.
->>>>
->>>
->>> AFAIK, this is the start of the discussion.
->> You were on v3 and had an out of tree piece of code so I assumed someone
->> had at least thought about why you want to implement policy in a piece
->> of code whose only purpose is to allocate memory to store state.
->> 
->
-> No worries.
->
->> Eric
->> 
->> 
->
-> Links:
-> 1:
-> https://sources.debian.org/patches/linux/3.16.56-1+deb8u1/debian/add-sysctl-to-disallow-unprivileged-CLONE_NEWUSER-by-default.patch/
-
-Eric
+Suzuki
