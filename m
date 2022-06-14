@@ -2,165 +2,179 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D3ED154B34E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jun 2022 16:37:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E52A854B3B4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jun 2022 16:47:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235860AbiFNOfR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Jun 2022 10:35:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55318 "EHLO
+        id S1350266AbiFNOjh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Jun 2022 10:39:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35496 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347316AbiFNOeC (ORCPT
+        with ESMTP id S1347316AbiFNOjb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Jun 2022 10:34:02 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5FAB3703A
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jun 2022 07:33:58 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 307B2B818E3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jun 2022 14:33:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22942C3411B;
-        Tue, 14 Jun 2022 14:33:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1655217235;
-        bh=+h5Gkxi6P4QAdEYIx3YgbpjuNNXHxiiQXJ9zzw6ICfU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WOTe8X51CwYH7PrvJ8p4T5HW2OfCCCL5yHotMdp43XQCd6gVYV8b/p7+Ns6plfFtC
-         fjgVQCZaa7Mwqr/H3+ORwonqOeGSABztQ2i8W/olh+B3Kx5pl38BFE0+PMKoPkxphl
-         k/lF4jiZagZKAYhM7im5ZMkRb57ZV6bLWSJmzH8K9JgjmJut9m662aCrgHLeAsjhnP
-         WHtggj60AnEXhWCrjN3jHj28T4yX01ueSL2VtRhhNj9RIIoX3R5rxNE7EohqUBnvLF
-         1K8OOdQAgdBmrHTiCZWlpoMosJx8niXsGZNkkh3lz5D2eLNzKHSyqYlg+0L5+ipXHx
-         HHeV6IG1S5cEA==
-Date:   Tue, 14 Jun 2022 16:33:44 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Andrii Nakryiko <andriin@fb.com>,
-        Dave Marchevsky <davemarchevsky@fb.com>,
-        linux-fsdevel@vger.kernel.org, Rik van Riel <riel@surriel.com>,
-        Seth Forshee <sforshee@digitalocean.com>,
-        kernel-team <kernel-team@fb.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Chris Mason <clm@fb.com>, Andrii Nakryiko <andrii@kernel.org>
-Subject: Re: [PATCH v2] fuse: Add module param for non-descendant userns
- access to allow_other
-Message-ID: <20220614143344.wxh2rmwz3gikhzga@wittgenstein>
-References: <20220601184407.2086986-1-davemarchevsky@fb.com>
- <20220607084724.7gseviks4h2seeza@wittgenstein>
- <e933791c-21d1-18f9-de91-b194728432b8@fb.com>
- <CAJfpegssrypgpDDheiYJS13=_p14sN4BK+bZShPG4VZu=WpSaA@mail.gmail.com>
- <20220613093745.4szlhoutyqpizyys@wittgenstein>
- <CAJfpegu0Aj65rrPN_TtN8ugQNCP2d2LEB47zSDLy7H6aqd-HuA@mail.gmail.com>
- <CAEf4BzaqfkfTgjbE2bEzELsTRpofv1Bstz2cPL8bGKS7jXvYTg@mail.gmail.com>
+        Tue, 14 Jun 2022 10:39:31 -0400
+Received: from sonic316-26.consmr.mail.ne1.yahoo.com (sonic316-26.consmr.mail.ne1.yahoo.com [66.163.187.152])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B6DE1DA56
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jun 2022 07:39:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1655217569; bh=Gk+oETTOXCvl6hKJwiKfVQx247tk4GOZsL6eS8rtiko=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=fRFIaqLcfobn1LNVl0zrObgmf1hRdINcfRrUmpLcvSg3N0XuqRqgsWlZn5KxMH8l49l0D/abHlPhyAMUUO2GGCDJesuNH8Kpmaa3YgqX0v4VvY06jPrF5HScxPs366YY2ONTePIsLO6+bsIrz/oFE0ETMPJwiL5Fc7l9A5O52eqlUVEn2u6Hv446oiu3mS7Em6viRQw0Eerb2KZ/WLQFgjnvwinwyVZgUZqVxvTHUHjPZlUOcpmI7z+3pcZ+UkItKYPlyw2PX6J4h25WWNn2cNwE4TCrQ8Jlmq2H+Rgpn+lDH1kZESTNcLpJSjPABDc+86KBFATzQZC91mBFay1TDw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1655217569; bh=lRUBSB76OG5uRwjsyAtEUmfLb2iPR7sDD1HFxFWV66b=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=Qf8RR/99yPxdxlUs+k9WbY66HCWw5zL3eg/AG/d8PaF2ZW7sRQsWq6gmO9A/l7NZTWI7UdRqKM5bDHbs6wupQkeVNnPnRU2E5aJ02Zk+dMR4zD7/s5cNknCyMX/GityW/LiHFvSd/XM7aartsEujYu09UY1GhHeq1D712AxFIJsY8aK/OlILZVF6egzn6sq8A7407LfIYkuACSJL8g1M/mmbhUgbiOsQ+CYK1mUY0RpwWvYX8gqa2sPB3WEOxqty1MukDjP2FW6rxr1jRuQBeQgVCqktKQ2g163zpXEobbQtJYRhHhj9nK4BnkDO+kDP4JBwDWeJ+g1U93EjktSC1Q==
+X-YMail-OSG: l34EP_4VM1mCZNS.V_eCLpRm9dh5I1CsXixH4kuccuVcaljnubvC2j4A6MMQ129
+ Y2Pi1pBZKWkGXaXj27i38I8ExPjiKP1Xgpcl4tm9xqnMiwV4KKbA3RIP0pHjrVRzdj7MRxTx9iBG
+ YkdEQiInROMc3joMrXGCf9wmezHz6P8mJ.fFwD3SDeBlElgidwY8jLECc4hnW5TJm2DZ.k.jf483
+ xuskZUVuBZ_.7nYZM3Q6oMDqD16BRAXdGDrt0RJ_foeLdgA5bonrmkWFCR3gASY_oflWZvXQixlq
+ UF1m.qP9YXbSsWZFj812VhzLVpyQ.9F32n9h1HmEh69jx_hRtAaRIdgwaAfngbVWVJSKavMjVMfQ
+ XSXz0eYuXsWCwdfhD196BTPVVtMbrJkHzY6Xk9iE5UHCsUBamqZuh8ubo3QILsuwtLsCNFKyzrlY
+ vF4UN_H53gUTXszFFk2yLOyY55uNmgcqWwzFBPIfnM150R3f0Jfb8fh5Mzo_Cg0qaQvSchBKjCXj
+ nTjHJJOq.fI2fCTCBN3A870QDzGDAkOKrM.MsNpsLweC7IaQy.BbmtdwUXg3AQDgxaX8sTWqySH_
+ YK5rjqHBdeevCU9nZl2LemqBf.vLuvTdVi3q0_6s36rQkUJeC8EDY4s_ity57vDuikZT8YgGAV2k
+ GQo4ZHWmnm4lDk7xTd50gp0t_DJ.Hafgjqy64gvtibxS1SHL0D9MqZg76zZNAcQl5zu0Exhv4OcW
+ mDH5_kPytoYBvgcpDzUXj5OtiUT.rs03EresI6Qrd1muzCGUw99JUhwVKK40RSvSZXMM815o3TH6
+ fIwQnXzwajujE9szKg5ZCG.oh8QawNsxRxn.qck.uP4fzRlaBP9DE545T2hkZSFslMoNmyD9YjDu
+ DPyG49HGFuxQy6RMUV5D6tgRq2Jopfx_d.mJpEqNoUiuIWnKil4PEXFovbbhpvuyUhOL3VE2GmDX
+ VDBVqCAZbiZhRu7UKrQLPpAf4FtH9tiEdWyHvyrkqbXg__AQJ_N3sxY4nnv6lAtDCk3xv8g4zA7q
+ br.dMb13NA4a2TtcCtBHvVIzzWlvGv4U9JfN73FVEuv77CejNVNcPQ8XO0e3i2_eBbyDtuzTowpF
+ r7tocTWs53b.gwK4kDv_pTqO0hkqXLBV9X.I0Z6r8V3u504t5eb2cOQisOd4Mhos8dnXyaAN9cvu
+ 7acgLpOpZcWqyW9UMNNm1ShkpPPdBQprBadtvMrLPJFHbWwRyzdUL1sXWTpogylt3tdIon.0FUKm
+ rYQHTIZKXN0FbJz4FKuZgtnj76nzxXdow3yqiqKvKnjZ5MSJnwK0MtpYhCeyLNxltgJfN4K5iM2N
+ 7_UXaTuwcmiKL82RDIrVJ_m4tLhQSD0TMdB.C2.RuC3DLR6EZjR8icmJ5Pcyp1FBSAS.nzoMlvyG
+ wQetEXAUX6UnRnxz4Y.joRItG62ICV6zPRT7DkNFqhLrhD49oEyY7OTpUAHfUzW96T3TjU.z.xtX
+ BRJ59.VxAXDse4eqIhZpOo67ruAxITzCz2bwWgj9_3BVGoKrKa2hdF1EbK_wrXYCphFhgdP591BM
+ 8Dx4nw.OvDUtcFSmwaX38z91xvkNg2gGzURgEg.1aIahIoxGy.8HwC2Lo.9sDMjQ0LoYEOVKAezC
+ pGYewkGVTBsGHmpazBNDJ2yGdk1YnZ2RsxVQ6cVhAQ9oSC.UcB_QDBHfOgxJ0tQNNGx1hsc2BMQ7
+ fEPpEXJ8GKjioBsLIWpvl67R9boFpyk8B0YFa.DQk0VZ10896guGPPSX8tQw0bHPw998u2wOlfFK
+ r4iYVN6y2wwWwSC6Fp.DmjY5e6rtZVgjns0R9CrneHrhI2xoZjTxHqHrwpBEtqFrzK3GFPPTQtAK
+ 8hT6WRqTR8iJ_lz5fcEMBfDgXpLb2mzq7IppLiwFTDPN0ML7c0cKS8RDnYr0QMe9gdGZvRZcaZ81
+ oYqSjE5Ttah8mMWG6l3Obhj.YZXwg55XNndIG65ct.wK5BmQd6aYUN9KcjQYh._prdA3e2KLlb8V
+ tqRYdouhudJUpS29Eru77mKyHJcKeNct9WUI81o1XVVm1AGD8KRjrhBrE7_R.Nf_EiTNWlcVA8hx
+ BP.uDsYOJpVvf8mbQloJ5acD1I.TpGP2NfRbjr1FwYfk8z6l8gQUDe39HzYrWKeDUt_IRlNJ7_gD
+ KwvB64DCfDs5Yr2pbiRmfb0WwIP2scfxv4AA1X3gcjY0nFjSemkRJmqKpJEA2xu5VIOqoZ9kt3Fy
+ lGpmYgJNyn592qSxpIAHi28oenfQQFZhXz4JO5sR.3hWwhS2Z
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Tue, 14 Jun 2022 14:39:29 +0000
+Received: by hermes--canary-production-bf1-856dbf94db-nwd6f (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 047d13c43786ba81a547ff9186866ac4;
+          Tue, 14 Jun 2022 14:39:27 +0000 (UTC)
+Message-ID: <b9d27b14-3b45-470d-9c7b-c6f7fb0ca8a5@schaufler-ca.com>
+Date:   Tue, 14 Jun 2022 07:39:24 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAEf4BzaqfkfTgjbE2bEzELsTRpofv1Bstz2cPL8bGKS7jXvYTg@mail.gmail.com>
-X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v3] cred: Propagate security_prepare_creds() error code
+Content-Language: en-US
+To:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Frederick Lawler <fred@cloudflare.com>
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-cachefs@redhat.com, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-mm@kvack.org,
+        linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        keyrings@vger.kernel.org, selinux@vger.kernel.org,
+        serge@hallyn.com, amir73il@gmail.com, kernel-team@cloudflare.com,
+        Jeff Moyer <jmoyer@redhat.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Casey Schaufler <casey@schaufler-ca.com>
+References: <20220608150942.776446-1-fred@cloudflare.com>
+ <87tu8oze94.fsf@email.froward.int.ebiederm.org>
+ <e1b62234-9b8a-e7c2-2946-5ef9f6f23a08@cloudflare.com>
+ <87y1xzyhub.fsf@email.froward.int.ebiederm.org>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <87y1xzyhub.fsf@email.froward.int.ebiederm.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.20280 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+X-Spam-Status: No, score=-3.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jun 13, 2022 at 11:21:24AM -0700, Andrii Nakryiko wrote:
-> On Mon, Jun 13, 2022 at 3:34 AM Miklos Szeredi <miklos@szeredi.hu> wrote:
-> >
-> > On Mon, 13 Jun 2022 at 11:37, Christian Brauner <brauner@kernel.org> wrote:
-> > >
-> > > On Mon, Jun 13, 2022 at 10:23:47AM +0200, Miklos Szeredi wrote:
-> > > > On Fri, 10 Jun 2022 at 23:39, Andrii Nakryiko <andriin@fb.com> wrote:
-> > > > >
-> > > > >
-> > > > >
-> > > > > On 6/7/22 1:47 AM, Christian Brauner wrote:
-> > > > > > On Wed, Jun 01, 2022 at 11:44:07AM -0700, Dave Marchevsky wrote:
-> > > >
-> > > > [...]
-> > > >
-> > > > > >> +static bool __read_mostly allow_other_parent_userns;
-> > > > > >> +module_param(allow_other_parent_userns, bool, 0644);
-> > > > > >> +MODULE_PARM_DESC(allow_other_parent_userns,
-> > > > > >> + "Allow users not in mounting or descendant userns "
-> > > > > >> + "to access FUSE with allow_other set");
-> > > > > >
-> > > > > > The name of the parameter also suggests that access is granted to parent
-> > > > > > userns tasks whereas the change seems to me to allows every task access
-> > > > > > to that fuse filesystem independent of what userns they are in.
-> > > > > >
-> > > > > > So even a task in a sibling userns could - probably with rather
-> > > > > > elaborate mount propagation trickery - access that fuse filesystem.
-> > > > > >
-> > > > > > AFaict, either the module parameter is misnamed or the patch doesn't
-> > > > > > implement the behavior expressed in the name.
-> > > > > >
-> > > > > > The original patch restricted access to a CAP_SYS_ADMIN capable task.
-> > > > > > Did we agree that it was a good idea to weaken it to all tasks?
-> > > > > > Shouldn't we still just restrict this to CAP_SYS_ADMIN capable tasks in
-> > > > > > the initial userns?
-> > > > >
-> > > > > I think it's fine to allow for CAP_SYS_ADMIN only, but can we then
-> > > > > ignore the allow_other mount option in such case? The idea is that
-> > > > > CAP_SYS_ADMIN allows you to read FUSE-backed contents no matter what, so
-> > > > > user not mounting with allow_other preventing root from reading contents
-> > > > > defeats the purpose at least partially.
-> > > >
-> > > > If we want to be compatible with "user_allow_other", then it should be
-> > > > checking if the uid/gid of the current task is mapped in the
-> > > > filesystems user_ns (fsuidgid_has_mapping()).  Right?
-> > >
-> > > I think that's doable. So assuming we're still talking about requiring
-> > > cap_sys_admin then we'd roughly have sm like:
-> > >
-> > >         if (fc->allow_other)
-> > >                 return current_in_userns(fc->user_ns) ||
-> > >                         (capable(CAP_SYS_ADMIN) &&
-> > >                         fsuidgid_has_mapping(..., &init_user_ns));
-> >
-> > No, I meant this:
-> >
-> >         if (fc->allow_other)
-> >                 return current_in_userns(fc->user_ns) ||
-> >                         (userns_allow_other &&
-> >                         fsuidgid_has_mapping(..., &init_user_ns));
-> >
-> > But I think the OP wanted to allow real root to access the fs, which
-> > this doesn't allow (since 0 will have no mapping in the user ns), so
-> > I'm not sure what's the right solution...
-> 
-> Right, so I was basically asking why not do something like this:
-> 
-> $ git diff
-> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-> index 74303d6e987b..8c04955eb26e 100644
-> --- a/fs/fuse/dir.c
-> +++ b/fs/fuse/dir.c
-> @@ -1224,6 +1224,9 @@ int fuse_allow_current_process(struct fuse_conn *fc)
->  {
->         const struct cred *cred;
-> 
-> +       if (fuse_allow_sys_admin_access && capable(CAP_SYS_ADMIN))
-> +               return 1;
-> +
->         if (fc->allow_other)
->                 return current_in_userns(fc->user_ns);
-> 
-> 
-> where fuse_allow_sys_admin_access is module param which has to be
-> opted into through sysfs?
+On 6/13/2022 9:44 PM, Eric W. Biederman wrote:
+> Frederick Lawler <fred@cloudflare.com> writes:
+>
+>> Hi Eric,
+>>
+>> On 6/13/22 12:04 PM, Eric W. Biederman wrote:
+>>> Frederick Lawler <fred@cloudflare.com> writes:
+>>>
+>>>> While experimenting with the security_prepare_creds() LSM hook, we
+>>>> noticed that our EPERM error code was not propagated up the callstack.
+>>>> Instead ENOMEM is always returned.  As a result, some tools may send a
+>>>> confusing error message to the user:
+>>>>
+>>>> $ unshare -rU
+>>>> unshare: unshare failed: Cannot allocate memory
+>>>>
+>>>> A user would think that the system didn't have enough memory, when
+>>>> instead the action was denied.
+>>>>
+>>>> This problem occurs because prepare_creds() and prepare_kernel_cred()
+>>>> return NULL when security_prepare_creds() returns an error code. Later,
+>>>> functions calling prepare_creds() and prepare_kernel_cred() return
+>>>> ENOMEM because they assume that a NULL meant there was no memory
+>>>> allocated.
+>>>>
+>>>> Fix this by propagating an error code from security_prepare_creds() up
+>>>> the callstack.
+>>> Why would it make sense for security_prepare_creds to return an error
+>>> code other than ENOMEM?
+>>>   > That seems a bit of a violation of what that function is supposed to do
+>>>
+>> The API allows LSM authors to decide what error code is returned from the
+>> cred_prepare hook. security_task_alloc() is a similar hook, and has its return
+>> code propagated.
+> It is not an api.  It is an implementation detail of the linux kernel.
+> It is a set of convenient functions that do a job.
 
-You can either do this or do what I suggested in:
-https://lore.kernel.org/linux-fsdevel/20220613104604.t5ptuhrl2d4l7kbl@wittgenstein
-which is a bit more lax.
+Yeah, sort of. We still don't want to change it willy-nilly as it
+has multiple users from both ends.
 
-If you make it module load parameter only it has the advantage that it
-can't be changed after fuse has been loaded which in this case might be
-an advantage. It's likely that users might not be too happy if module
-semantics can be changed that drastically at runtime. But I have no
-strong opinions here.
+>
+> The general rule is we don't support cases without an in-tree user.  I
+> don't see an in-tree user.
 
-Christian
+Unfortunately, the BPF security module allows arbitrary out-of-tree programs
+in any hook. While returns other than -ENOMEM may be nonsensical, they are
+possible. This is driving the LSM infrastructure in the direction of being
+an API, in that users of BPF need to know what they are allowed to do in
+their hook programs.
+
+> I'm proposing we follow security_task_allocs() pattern, and add visibility for
+> failure cases in prepare_creds().
+> I am asking why we would want to.  Especially as it is not an API, and I
+> don't see any good reason for anything but an -ENOMEM failure to be
+> supported.
+>
+> Without an in-tree user that cares it is probably better to go the
+> opposite direction and remove the possibility of return anything but
+> memory allocation failure.  That will make it clearer to implementors
+> that a general error code is not supported and this is not a location
+> to implement policy, this is only a hook to allocate state for the LSM.
+
+The more clearly we define how a function is to be used the more it looks
+like an API. The LSM security_ interfaces are not well designed. They have
+appeared, changed and disappeared organically. This was fine when there was
+one user and tolerable when there were a few, but is getting to be painful
+as the number of security modules increases and their assumptions and
+behavior diverges from subject/object mandatory access control.
+
+
+>>> I have probably missed a very interesting discussion where that was
+>>> mentioned but I don't see link to the discussion or anything explaining
+>>> why we want to do that in this change.
+>>>
+>> AFAIK, this is the start of the discussion.
+> You were on v3 and had an out of tree piece of code so I assumed someone
+> had at least thought about why you want to implement policy in a piece
+> of code whose only purpose is to allocate memory to store state.
+
+I agree with both sides to some extent. The caller shouldn't assume that
+the only possible error is -ENOMEM, but the LSM hook should never do anything
+else, either. If there is a legitimate case where an different error may
+be returned and a reasonable, different action the caller(s) would take in
+that case, the change makes sense. Otherwise, no.
+
+> Eric
+>
