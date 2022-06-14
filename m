@@ -2,175 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1731954B24A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jun 2022 15:29:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB51354B2A5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jun 2022 15:58:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245363AbiFNN3j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Jun 2022 09:29:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47258 "EHLO
+        id S229654AbiFNN6z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Jun 2022 09:58:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235715AbiFNN3h (ORCPT
+        with ESMTP id S1343608AbiFNN6l (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Jun 2022 09:29:37 -0400
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27D092AE39;
-        Tue, 14 Jun 2022 06:29:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1655213376; x=1686749376;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=N09Lo78A/vN3Z9Ilmb4LDXjX/Vl0OGOLeOGeV0vZZ5Y=;
-  b=QX6I1bMlQatqcdfRT6CaDpkwrh+MN5dQKb44Yr58zv/mZATp9aCS9+52
-   EixQEHtD1aEm8MWRc02+QZegstzA9qOTa8ktDXgvrcBGDQFzeV7rZd/Qy
-   6XYBShYpvy8p2fbtxnzlYMHKD8kA9lWb1thofkxlB7OsZUnioiwCqKM+C
-   7G5lBUCD/gJcERrTAvsjjhZ9tKo5O6yKZF5NC3aJb1pfOvDhRRjzTypxh
-   2masPah03TtMYl3f62RXM9Hgp9jGr/Fldm+O42Omo+gbLDVfXZvEf1slX
-   fG7KpEWTCxUewl2Iva1VLhdFM6mT329gFVWUsQwXkjnEHZ4HenQcd+/gR
-   w==;
-X-IronPort-AV: E=McAfee;i="6400,9594,10377"; a="267301739"
-X-IronPort-AV: E=Sophos;i="5.91,300,1647327600"; 
-   d="scan'208";a="267301739"
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jun 2022 06:29:35 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.91,300,1647327600"; 
-   d="scan'208";a="726820139"
-Received: from lkp-server01.sh.intel.com (HELO 60dabacc1df6) ([10.239.97.150])
-  by fmsmga001.fm.intel.com with ESMTP; 14 Jun 2022 06:29:32 -0700
-Received: from kbuild by 60dabacc1df6 with local (Exim 4.95)
-        (envelope-from <lkp@intel.com>)
-        id 1o16br-000Lvx-PJ;
-        Tue, 14 Jun 2022 13:29:31 +0000
-Date:   Tue, 14 Jun 2022 21:28:46 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     NeilBrown <neilb@suse.de>, Al Viro <viro@zeniv.linux.org.uk>,
-        Daire Byrne <daire@dneg.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Chuck Lever <chuck.lever@oracle.com>
-Cc:     llvm@lists.linux.dev, kbuild-all@lists.01.org,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 06/12] VFS: support concurrent renames.
-Message-ID: <202206142141.w8ni6M0m-lkp@intel.com>
-References: <165516230199.21248.18142980966152036732.stgit@noble.brown>
+        Tue, 14 Jun 2022 09:58:41 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9251A2E696;
+        Tue, 14 Jun 2022 06:58:39 -0700 (PDT)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 2C44B1F984;
+        Tue, 14 Jun 2022 13:58:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1655215118; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=CeiLcPaUWpFLyUL+9AfxzQ6cCLGBau32H4tijDd9jqk=;
+        b=nTBARfnLs4xqal0/JTkbIDZlKIg8p/c6pqNEIzOBzKMJh6ZxTO8uc9V3JB2zxJ+mzBkOIl
+        len1iN+co9yZfNxXip8sirINpP0bWdJQkjl7/Bd2Dj8O/TXETPsPOkqUwx4VfWnZLSYtjv
+        7NfnJknbXbvnm0DSQhNNYEqohtnuS34=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1655215118;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=CeiLcPaUWpFLyUL+9AfxzQ6cCLGBau32H4tijDd9jqk=;
+        b=Gp7XaVEqQ5AwGE4SIN4e1AWnakNRl3vK1lqe/keGYSlZ9PP9Eb/siFJSVmuirbU1d/8HMs
+        Md9NdyeL5Dx/AKAA==
+Received: from quack3.suse.cz (unknown [10.163.28.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by relay2.suse.de (Postfix) with ESMTPS id C687D2C143;
+        Tue, 14 Jun 2022 13:58:37 +0000 (UTC)
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 835F9A062E; Tue, 14 Jun 2022 15:58:37 +0200 (CEST)
+Date:   Tue, 14 Jun 2022 15:58:37 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Alexandru Elisei <alexandru.elisei@arm.com>, jack@suse.cz,
+        sunjunchao2870@gmail.com, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        senozhatsky@chromium.org, rostedt@goodmis.org,
+        john.ogness@linutronix.de, keescook@chromium.org, anton@enomsg.org,
+        ccross@android.com, tony.luck@intel.com, heiko@sntech.de,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, maco@android.com, hch@lst.de,
+        gregkh@linuxfoundation.org, jirislaby@kernel.org
+Subject: Re: [BUG] rockpro64 board hangs in console_init() after commit
+ 10e14073107d
+Message-ID: <20220614135837.3doyrnekzja6grzc@quack3.lan>
+References: <Yqdry+IghSWnJ6pe@monolith.localdoman>
+ <Yqh9xIwBVcabpSLe@alley>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <165516230199.21248.18142980966152036732.stgit@noble.brown>
-X-Spam-Status: No, score=-5.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <Yqh9xIwBVcabpSLe@alley>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi NeilBrown,
+On Tue 14-06-22 14:23:32, Petr Mladek wrote:
+> On Mon 2022-06-13 17:54:35, Alexandru Elisei wrote:
 
-Thank you for the patch! Perhaps something to improve:
+<snip>
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v5.19-rc2 next-20220614]
-[cannot apply to trondmy-nfs/linux-next viro-vfs/for-next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch]
+> > Config can be found at [1] (expires after 6 months). I've also built the
+> > kernel with gcc 10.3.1 [2] (aarch64-none-linux-gnu), same issue.
+> > 
+> > I've bisected the build failure to commit 10e14073107d ("writeback: Fix
+> > inode->i_io_list not be protected by inode->i_lock error"); I've confirmed
+> > that that commit is responsible by successfully booting the board with a
+> > kernel built from v5.19-rc2 + the above commit reverted.
+> 
+> It is strange. I can't see how consoles are related to filesystem
+> writeback.
+> 
+> Anyway, the commit 10e14073107d ("writeback: Fix inode->i_io_list not
+> be protected by inode->i_lock error") modifies some locking and
+> might be source of possible deadlocks.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/NeilBrown/Allow-concurrent-directory-updates/20220614-072355
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git b13baccc3850ca8b8cccbf8ed9912dbaa0fdf7f3
-config: i386-buildonly-randconfig-r005-20220613 (https://download.01.org/0day-ci/archive/20220614/202206142141.w8ni6M0m-lkp@intel.com/config)
-compiler: clang version 15.0.0 (https://github.com/llvm/llvm-project c97436f8b6e2718286e8496faf53a2c800e281cf)
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://github.com/intel-lab-lkp/linux/commit/46a2afd9f68f24a42f38f3a8afebafe7e494e9d8
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review NeilBrown/Allow-concurrent-directory-updates/20220614-072355
-        git checkout 46a2afd9f68f24a42f38f3a8afebafe7e494e9d8
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=i386 SHELL=/bin/bash
+Yes, I've got other reports from ARM people that this commit causes issues
+for them (kernel oops or so) so the locking changes are likely at fault...
 
-If you fix the issue, kindly add following tag where applicable
-Reported-by: kernel test robot <lkp@intel.com>
+> I am not familiar with the fs code. But I noticed the following.
+> The patch adds:
+> 
+> +               if (!was_dirty) {
+> +                       wb = locked_inode_to_wb_and_lock_list(inode);
+> +                       spin_lock(&inode->i_lock);
+> 
+> And locked_inode_to_wb_and_lock_list() is defined this way:
+> 
+> /**
+>  * locked_inode_to_wb_and_lock_list - determine a locked inode's wb and lock it
+>  * @inode: inode of interest with i_lock held
+>  *
+>  * Returns @inode's wb with its list_lock held.  @inode->i_lock must be
+>  * held on entry and is released on return.  The returned wb is guaranteed
+>  * to stay @inode's associated wb until its list_lock is released.
+>  */
+> static struct bdi_writeback *
+> locked_inode_to_wb_and_lock_list(struct inode *inode)
+> 	__releases(&inode->i_lock)
+> 	__acquires(&wb->list_lock)
+> {
+> 	while (true) {
+> 		struct bdi_writeback *wb = inode_to_wb(inode);
+> 
+> 		/*
+> 		 * inode_to_wb() association is protected by both
+> 		 * @inode->i_lock and @wb->list_lock but list_lock nests
+> 		 * outside i_lock.  Drop i_lock and verify that the
+> 		 * association hasn't changed after acquiring list_lock.
+> 		 */
+> 		wb_get(wb);
+> 		spin_unlock(&inode->i_lock);
+> 
+> It expects that inode->i_lock is taken before. But the problematic
+> commit takes it later. It might mess the lock and cause a deadlock.
 
-All warnings (new ones prefixed by >>):
+No. AFAICS inode->i_lock is held on entry to
+locked_inode_to_wb_and_lock_list(). The function releases it so we have to
+grab it again. The locking is ugly here but correct in this regard.
 
->> fs/namei.c:3175:16: warning: no previous prototype for function 'lock_rename_lookup_excl' [-Wmissing-prototypes]
-   struct dentry *lock_rename_lookup_excl(struct dentry *p1, struct dentry *p2,
-                  ^
-   fs/namei.c:3175:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
-   struct dentry *lock_rename_lookup_excl(struct dentry *p1, struct dentry *p2,
-   ^
-   static 
-   1 warning generated.
+It rather likely has to do something with reordering the checks and running
+locked_inode_to_wb_and_lock_list() on inodes for which we previously didn't
+do it but I have to yet fully understand why things crash...
 
-
-vim +/lock_rename_lookup_excl +3175 fs/namei.c
-
-  3174	
-> 3175	struct dentry *lock_rename_lookup_excl(struct dentry *p1, struct dentry *p2,
-  3176					       struct dentry **d1p, struct dentry **d2p,
-  3177					       struct qstr *last1, struct qstr *last2,
-  3178					       unsigned int flags1, unsigned int flags2)
-  3179	{
-  3180		struct dentry *p;
-  3181		struct dentry *d1, *d2;
-  3182	
-  3183		if (p1 == p2) {
-  3184			inode_lock_nested(p1->d_inode, I_MUTEX_PARENT);
-  3185			d1 = __lookup_hash(last1, p1, flags1, NULL);
-  3186			if (IS_ERR(d1))
-  3187				goto out_unlock_1;
-  3188			d2 = __lookup_hash(last2, p2, flags2, NULL);
-  3189			if (IS_ERR(d2))
-  3190				goto out_unlock_2;
-  3191			*d1p = d1; *d2p = d2;
-  3192			return NULL;
-  3193		out_unlock_2:
-  3194			dput(d1);
-  3195			d1 = d2;
-  3196		out_unlock_1:
-  3197			inode_unlock(p1->d_inode);
-  3198			return d1;
-  3199		}
-  3200	
-  3201		mutex_lock(&p1->d_sb->s_vfs_rename_mutex);
-  3202	
-  3203		if ((p = d_ancestor(p2, p1)) != NULL) {
-  3204			inode_lock_nested(p2->d_inode, I_MUTEX_PARENT);
-  3205			inode_lock_nested(p1->d_inode, I_MUTEX_CHILD);
-  3206		} else if ((p = d_ancestor(p1, p2)) != NULL) {
-  3207			inode_lock_nested(p1->d_inode, I_MUTEX_PARENT);
-  3208			inode_lock_nested(p2->d_inode, I_MUTEX_CHILD);
-  3209		} else {
-  3210			inode_lock_nested(p1->d_inode, I_MUTEX_PARENT);
-  3211			inode_lock_nested(p2->d_inode, I_MUTEX_PARENT2);
-  3212		}
-  3213		d1 = __lookup_hash(last1, p1, flags1, NULL);
-  3214		if (IS_ERR(d1))
-  3215			goto unlock_out_3;
-  3216		d2 = __lookup_hash(last2, p2, flags2, NULL);
-  3217		if (IS_ERR(d2))
-  3218			goto unlock_out_4;
-  3219	
-  3220		*d1p = d1;
-  3221		*d2p = d2;
-  3222		return p;
-  3223	unlock_out_4:
-  3224		dput(d1);
-  3225		d1 = d2;
-  3226	unlock_out_3:
-  3227		inode_unlock(p1->d_inode);
-  3228		inode_unlock(p2->d_inode);
-  3229		mutex_unlock(&p1->d_sb->s_vfs_rename_mutex);
-  3230		return d1;
-  3231	}
-  3232	
-
+								Honza
 -- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
