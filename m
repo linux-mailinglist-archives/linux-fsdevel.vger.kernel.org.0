@@ -2,197 +2,157 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E394454B9FA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jun 2022 21:02:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EEE5954BA19
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jun 2022 21:09:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357479AbiFNTBc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 14 Jun 2022 15:01:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34510 "EHLO
+        id S232105AbiFNTJT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 14 Jun 2022 15:09:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357246AbiFNTBN (ORCPT
+        with ESMTP id S1345187AbiFNTJB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 14 Jun 2022 15:01:13 -0400
-Received: from mail-oa1-x35.google.com (mail-oa1-x35.google.com [IPv6:2001:4860:4864:20::35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77CF325294
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jun 2022 11:59:13 -0700 (PDT)
-Received: by mail-oa1-x35.google.com with SMTP id 586e51a60fabf-fe4ac3b87fso13703831fac.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jun 2022 11:59:13 -0700 (PDT)
+        Tue, 14 Jun 2022 15:09:01 -0400
+Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1DAAB1A387
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jun 2022 12:09:00 -0700 (PDT)
+Received: by mail-pg1-x534.google.com with SMTP id 31so7684559pgv.11
+        for <linux-fsdevel@vger.kernel.org>; Tue, 14 Jun 2022 12:09:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=P/zvL47bzMX9zv6R9Iu19Vam9aHyZ/GbOGpqtXAWqMc=;
-        b=YbrS1rTCXkBCIbh142yEwubaBQ2XkSJH/0xKf0lf6tUumEJSdjOkNie1Nx61lojoXo
-         7ghRJ4k9WRR4jECQ0Dr2ZPBq/WU7t6xV2yqW0HATlcT/2Yl8k5zRPz4Fct1kN9ZfM/ig
-         wiY+zF/49Otr9jZ/sUBro5DEDVmoThVwMV6c4=
+        d=google.com; s=20210112;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=WxVFX8SQoTkO2asaGhNARNyU0t4WV/p9VWUwvDYpcsM=;
+        b=Xh80bV+FmkQM9epsA7aMCOshN8wzgXzzNfcH1Mc5l2PMPe+NVyrmidG+ZAIomvJRtU
+         RwgYBZBLNjvMpgnLGqwffyVKFtkt95EvQJE7V+yhNJd4WI+Y0tU/+mvZfD/c+ZQ5IwjW
+         awNyTzTiwwpe/fFELOsgLdQ+96PwyMOQ36VM5zE678kFN78bKFVWurGuCW2jPter6rTJ
+         UnK3MeTmvxnDOMbC1zWiS64QnXHMoJpqeZXS0bwZBWQpiEshgMr7JbhokFHwuNAu5XM4
+         XGvYYWMpjtxj1AxQuoVI4g6+R6kOiDBnYQeRcjBoiYkH2ZASJ7TlFQcVFSnBSo6YMR1V
+         KAAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=P/zvL47bzMX9zv6R9Iu19Vam9aHyZ/GbOGpqtXAWqMc=;
-        b=NQcfBWCPlKP4vnmZLCeHp0yZvsOneYRzjcEkt3a1deqPFkcCQwcd6LaNiZ6FYGcG4T
-         lZ8e8iSw4kdK4+VTPN47XJZECJN/8f8B94LXQ4z9NdS2C41iI1FY8iZ7PAJSXIYDCIgY
-         pW1vmrybRX51QHW5GgtrpHGFfd5Mprwy8NiovjmZDJFI8Voa8RNGqZeY/lGwkAuUK8Tg
-         ykWQNvBH4WD6MZbktHX+bD/adCN9l4dWv9rOKSXJYvZqiejGyZE//KFroqHoYMCM86Oo
-         Nrde5zgGvw8pvbquI8udZahjKYFa0yk6i39FTnvzrwdKRA1WPuA0C1DBa4AS8hchysjF
-         ohlw==
-X-Gm-Message-State: AJIora+lDurNx+Ux8Y2rz/srfMDiNqPXqntQ9At9iMJYGbibuEJ9lBlH
-        JLRns04at364xilH4XJfOofjyg==
-X-Google-Smtp-Source: AGRyM1ufL5MDqjvHIo4wa13zoHeLqce3gwGBqjZkT/cfGeJacNorGFZd87ZD1rOQxbOuCm8UywPhnQ==
-X-Received: by 2002:a05:6870:c151:b0:fe:251b:804c with SMTP id g17-20020a056870c15100b000fe251b804cmr3187763oad.15.1655233152767;
-        Tue, 14 Jun 2022 11:59:12 -0700 (PDT)
-Received: from [192.168.0.41] ([184.4.90.121])
-        by smtp.gmail.com with ESMTPSA id x64-20020acae043000000b0032ecb7370ffsm5017316oig.41.2022.06.14.11.59.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Jun 2022 11:59:10 -0700 (PDT)
-Message-ID: <9ed91f15-420c-3db6-8b3b-85438b02bf97@cloudflare.com>
-Date:   Tue, 14 Jun 2022 13:59:08 -0500
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=WxVFX8SQoTkO2asaGhNARNyU0t4WV/p9VWUwvDYpcsM=;
+        b=R78a+4miveEzTb1kZ70XYftThZc1mxzIGGXOxHU7KLl4snMk90RylLzzAh6ICgZw+4
+         3Hizt15NSnDEwS/p5gNW2nqmn+CBzq8MIfal5MP/RuzR5+tE80FO4Q+uItyiRHtAWi2o
+         BLzQ6giWacfgiyS9yV1b/8msLVNydOb4hczrITQfv3eGqk2jdGQ/Q39RlgTtGAdnZiK1
+         zPt1nDOJPg1RUgnKpd7ryTq9+h8jDLCBbXBJ4w8efL6yTlA9MOXGTHdQRsdolb8Z1MPJ
+         hPePuiV2Wsw++Nj4ZSVQtOC+tlNsA+RYNXFZd7/LA7/lMs78OwHddRRVx9SJ1oErRbeL
+         Clww==
+X-Gm-Message-State: AOAM531QxJybLC2eGQwp3xuoIY+y+gCYZaGZ7DHY3HC6AJQJ8CChEdKX
+        tmmJMMrZ9Q6/ZZklNF70xey9yw==
+X-Google-Smtp-Source: ABdhPJzHn2Ye3YjC05M4BzToAcQNR5uLK5arwJemtulnC/fJwq6gRuGbN+I9cWXJrKe2+YDZm5QL5w==
+X-Received: by 2002:a05:6a00:1744:b0:51b:d4d5:f34 with SMTP id j4-20020a056a00174400b0051bd4d50f34mr6274754pfc.0.1655233739275;
+        Tue, 14 Jun 2022 12:08:59 -0700 (PDT)
+Received: from google.com (157.214.185.35.bc.googleusercontent.com. [35.185.214.157])
+        by smtp.gmail.com with ESMTPSA id s8-20020a170902a50800b00161ac982b9esm7590467plq.185.2022.06.14.12.08.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Jun 2022 12:08:58 -0700 (PDT)
+Date:   Tue, 14 Jun 2022 19:08:55 +0000
+From:   Sean Christopherson <seanjc@google.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Chao Peng <chao.p.peng@linux.intel.com>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Marc Orr <marcorr@google.com>, kvm list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86 <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Jun Nakajima <jun.nakajima@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        David Hildenbrand <david@redhat.com>, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com
+Subject: Re: [PATCH v6 0/8] KVM: mm: fd-based approach for supporting KVM
+ guest private memory
+Message-ID: <Yqjcx6u0KJcJuZfI@google.com>
+References: <20220519153713.819591-1-chao.p.peng@linux.intel.com>
+ <CAGtprH_83CEC0U-cBR2FzHsxbwbGn0QJ87WFNOEet8sineOcbQ@mail.gmail.com>
+ <20220607065749.GA1513445@chaop.bj.intel.com>
+ <CAA03e5H_vOQS-qdZgacnmqP5T5jJLnEfm44yfRzJQ2KVu0Br+Q@mail.gmail.com>
+ <20220608021820.GA1548172@chaop.bj.intel.com>
+ <CAGtprH8xyf07jMN7ubTC__BvDj+z41uVGRiCJ7Rc5cv3KWg03w@mail.gmail.com>
+ <YqJYEheLiGI4KqXF@google.com>
+ <20220614072800.GB1783435@chaop.bj.intel.com>
+ <CALCETrWw=Q=1AKW0Jcj3ZGscjyjDJXAjuxOnQx_sabQ6ZtS-wg@mail.gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v3] cred: Propagate security_prepare_creds() error code
-Content-Language: en-US
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-cachefs@redhat.com, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, linux-mm@kvack.org,
-        linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        keyrings@vger.kernel.org, selinux@vger.kernel.org,
-        serge@hallyn.com, amir73il@gmail.com, kernel-team@cloudflare.com,
-        Jeff Moyer <jmoyer@redhat.com>,
-        Paul Moore <paul@paul-moore.com>
-References: <20220608150942.776446-1-fred@cloudflare.com>
- <87tu8oze94.fsf@email.froward.int.ebiederm.org>
- <e1b62234-9b8a-e7c2-2946-5ef9f6f23a08@cloudflare.com>
- <87y1xzyhub.fsf@email.froward.int.ebiederm.org>
- <859cb593-9e96-5846-2191-6613677b07c5@cloudflare.com>
- <87o7yvxl4x.fsf@email.froward.int.ebiederm.org>
-From:   Frederick Lawler <fred@cloudflare.com>
-In-Reply-To: <87o7yvxl4x.fsf@email.froward.int.ebiederm.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrWw=Q=1AKW0Jcj3ZGscjyjDJXAjuxOnQx_sabQ6ZtS-wg@mail.gmail.com>
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/14/22 11:30 AM, Eric W. Biederman wrote:
-> Frederick Lawler <fred@cloudflare.com> writes:
-> 
->> On 6/13/22 11:44 PM, Eric W. Biederman wrote:
->>> Frederick Lawler <fred@cloudflare.com> writes:
->>>
->>>> Hi Eric,
->>>>
->>>> On 6/13/22 12:04 PM, Eric W. Biederman wrote:
->>>>> Frederick Lawler <fred@cloudflare.com> writes:
->>>>>
->>>>>> While experimenting with the security_prepare_creds() LSM hook, we
->>>>>> noticed that our EPERM error code was not propagated up the callstack.
->>>>>> Instead ENOMEM is always returned.  As a result, some tools may send a
->>>>>> confusing error message to the user:
->>>>>>
->>>>>> $ unshare -rU
->>>>>> unshare: unshare failed: Cannot allocate memory
->>>>>>
->>>>>> A user would think that the system didn't have enough memory, when
->>>>>> instead the action was denied.
->>>>>>
->>>>>> This problem occurs because prepare_creds() and prepare_kernel_cred()
->>>>>> return NULL when security_prepare_creds() returns an error code. Later,
->>>>>> functions calling prepare_creds() and prepare_kernel_cred() return
->>>>>> ENOMEM because they assume that a NULL meant there was no memory
->>>>>> allocated.
->>>>>>
->>>>>> Fix this by propagating an error code from security_prepare_creds() up
->>>>>> the callstack.
->>>>> Why would it make sense for security_prepare_creds to return an error
->>>>> code other than ENOMEM?
->>>>>    > That seems a bit of a violation of what that function is supposed to do
->>>>>
->>>>
->>>> The API allows LSM authors to decide what error code is returned from the
->>>> cred_prepare hook. security_task_alloc() is a similar hook, and has its return
->>>> code propagated.
->>> It is not an api.  It is an implementation detail of the linux kernel.
->>> It is a set of convenient functions that do a job.
->>> The general rule is we don't support cases without an in-tree user.  I
->>> don't see an in-tree user.
->>>
->>>> I'm proposing we follow security_task_allocs() pattern, and add visibility for
->>>> failure cases in prepare_creds().
->>> I am asking why we would want to.  Especially as it is not an API, and I
->>> don't see any good reason for anything but an -ENOMEM failure to be
->>> supported.
->>>
->> We're writing a LSM BPF policy, and not a new LSM. Our policy aims to solve
->> unprivileged unshare, similar to Debian's patch [1]. We're in a position such
->> that we can't use that patch because we can't block _all_ of our applications
->> from performing an unshare. We prefer a granular approach. LSM BPF seems like a
->> good choice.
-> 
-> I am quite puzzled why doesn't /proc/sys/user/max_user_namespaces work
-> for you?
-> 
+On Tue, Jun 14, 2022, Andy Lutomirski wrote:
+> On Tue, Jun 14, 2022 at 12:32 AM Chao Peng <chao.p.peng@linux.intel.com> wrote:
+> >
+> > On Thu, Jun 09, 2022 at 08:29:06PM +0000, Sean Christopherson wrote:
+> > > On Wed, Jun 08, 2022, Vishal Annapurve wrote:
+> > >
+> > > One argument is that userspace can simply rely on cgroups to detect misbehaving
+> > > guests, but (a) those types of OOMs will be a nightmare to debug and (b) an OOM
+> > > kill from the host is typically considered a _host_ issue and will be treated as
+> > > a missed SLO.
+> > >
+> > > An idea for handling this in the kernel without too much complexity would be to
+> > > add F_SEAL_FAULT_ALLOCATIONS (terrible name) that would prevent page faults from
+> > > allocating pages, i.e. holes can only be filled by an explicit fallocate().  Minor
+> > > faults, e.g. due to NUMA balancing stupidity, and major faults due to swap would
+> > > still work, but writes to previously unreserved/unallocated memory would get a
+> > > SIGSEGV on something it has mapped.  That would allow the userspace VMM to prevent
+> > > unintentional allocations without having to coordinate unmapping/remapping across
+> > > multiple processes.
+> >
+> > Since this is mainly for shared memory and the motivation is catching
+> > misbehaved access, can we use mprotect(PROT_NONE) for this? We can mark
+> > those range backed by private fd as PROT_NONE during the conversion so
+> > subsequence misbehaved accesses will be blocked instead of causing double
+> > allocation silently.
 
-We have the following requirements:
-
-1. Allow list criteria
-2. root user must be able to create namespaces whenever
-3. Everything else not in 1 & 2 must be denied
-
-We use per task attributes to determine whether or not we allow/deny the 
-current call to unshare().
-
-/proc/sys/user/max_user_namespaces limits are a bit broad for this level 
-of detail.
-
->> Because LSM BPF exposes these hooks, we should probably treat them as an
->> API. From that perspective, userspace expects unshare to return a EPERM
->> when the call is denied permissions.
+PROT_NONE, a.k.a. mprotect(), has the same vma downsides as munmap().
+ 
+> This patch series is fairly close to implementing a rather more
+> efficient solution.  I'm not familiar enough with hypervisor userspace
+> to really know if this would work, but:
 > 
-> The BPF code gets to be treated as a out of tree kernel module.
-> 
->>> Without an in-tree user that cares it is probably better to go the
->>> opposite direction and remove the possibility of return anything but
->>> memory allocation failure.  That will make it clearer to implementors
->>> that a general error code is not supported and this is not a location
->>> to implement policy, this is only a hook to allocate state for the LSM.
->>>
->>
->> That's a good point, and it's possible we're using the wrong hook for the
->> policy. Do you know of other hooks we can look into?
-> 
-> Not off the top of my head.
-> 
->>>>> I have probably missed a very interesting discussion where that was
->>>>> mentioned but I don't see link to the discussion or anything explaining
->>>>> why we want to do that in this change.
->>>>>
->>>>
->>>> AFAIK, this is the start of the discussion.
->>> You were on v3 and had an out of tree piece of code so I assumed someone
->>> had at least thought about why you want to implement policy in a piece
->>> of code whose only purpose is to allocate memory to store state.
->>>
->>
->> No worries.
->>
->>> Eric
->>>
->>>
->>
->> Links:
->> 1:
->> https://sources.debian.org/patches/linux/3.16.56-1+deb8u1/debian/add-sysctl-to-disallow-unprivileged-CLONE_NEWUSER-by-default.patch/
-> 
-> Eric
+> What if shared guest memory could also be file-backed, either in the
+> same fd or with a second fd covering the shared portion of a memslot?
+> This would allow changes to the backing store (punching holes, etc) to
+> be some without mmap_lock or host-userspace TLB flushes?  Depending on
+> what the guest is doing with its shared memory, userspace might need
+> the memory mapped or it might not.
 
+That's what I'm angling for with the F_SEAL_FAULT_ALLOCATIONS idea.  The issue,
+unless I'm misreading code, is that punching a hole in the shared memory backing
+store doesn't prevent reallocating that hole on fault, i.e. a helper process that
+keeps a valid mapping of guest shared memory can silently fill the hole.
+
+What we're hoping to achieve is a way to prevent allocating memory without a very
+explicit action from userspace, e.g. fallocate().
