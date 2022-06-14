@@ -2,145 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C09954A79D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jun 2022 05:42:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D32354A7A2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 14 Jun 2022 05:45:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241374AbiFNDmE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 13 Jun 2022 23:42:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37862 "EHLO
+        id S243692AbiFNDpr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 13 Jun 2022 23:45:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231129AbiFNDmD (ORCPT
+        with ESMTP id S231129AbiFNDpp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 13 Jun 2022 23:42:03 -0400
-X-Greylist: delayed 154066 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 13 Jun 2022 20:42:02 PDT
-Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F293F36315;
-        Mon, 13 Jun 2022 20:42:01 -0700 (PDT)
-Received: by nautica.notk.org (Postfix, from userid 108)
-        id B9F35C01D; Tue, 14 Jun 2022 05:42:00 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1655178120; bh=kMhrbHmtDy8FgmIFOYrbI1pKa88ais5XYanlCNmLm+4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EJfWrgZ3HXfWO/UQCWGDmW7ZCSuYL8dR9Lmc2kF710OpYtEWfGZ5UMNFnWsGUYdSJ
-         BvqwzFNePwZRalWakPC25IN8crVstzf9mmlO98v+o7X+IWIrucEOLzxr8WDOIn3XCP
-         wPlE/SZtCrtAhnHmC6shrJhXzkPpbj3xUNRnvnyXUQHlK3o4MoL4S5jyqbdxSbACq5
-         cOIR9zlE5lPOZDo/6eaVHmPaE83/QfVGe+3RYpT74j7P0QwxuGtSB4b0Wv5mLmBdgy
-         A4LP36pSTbhlT1HscCfxuGn3XuHkxoLsO6H2P/R1V1wtI3HoE4bQK5Xl2ICvdF75zv
-         f+Ut48QSmErpw==
+        Mon, 13 Jun 2022 23:45:45 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45A2038BD2;
+        Mon, 13 Jun 2022 20:45:44 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C9A9DB8171F;
+        Tue, 14 Jun 2022 03:45:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3557BC3411B;
+        Tue, 14 Jun 2022 03:45:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1655178341;
+        bh=E43p/1kIrr7HyaK7jk6FV/lC1nEfSk6tb8CtzMzfw/8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=r/om+l2Z077ToQOFTNDRjZnjM0v/5agF/NWPdnHMVt9LPw/3AhwK1eybmAhewWfX8
+         xuKgUCTGpauyuBrcEOqxqZnE9RKs6O0wzIVoQPUExZXDRJcINW0Vz7KqMhWClDu/rZ
+         MYC3vMJ9PPNHRfuTXbeCQZDxubmxi6laVxU0G11AfHVvrdRgS4XKcBICd02dYi/3+2
+         sg7iVQ4RF335gqk5nKLY6DP2U65wphOWQOEbfcEqtmF5LcYP1vQA3HNs9kKXjDRkK2
+         uhys1pXgWN5DalxrnaHqXRTYc6eml/S5KDaUZ9thFUun+P+QMboDHdI97axO4ufdGV
+         cTtlbSeqI074g==
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-man@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: [man-pages PATCH] statx.2: correctly document STATX_ALL
+Date:   Mon, 13 Jun 2022 20:44:59 -0700
+Message-Id: <20220614034459.79889-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.36.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
-Received: from odin.codewreck.org (localhost [127.0.0.1])
-        by nautica.notk.org (Postfix) with ESMTPS id AE1E6C009;
-        Tue, 14 Jun 2022 05:41:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1655178120; bh=kMhrbHmtDy8FgmIFOYrbI1pKa88ais5XYanlCNmLm+4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EJfWrgZ3HXfWO/UQCWGDmW7ZCSuYL8dR9Lmc2kF710OpYtEWfGZ5UMNFnWsGUYdSJ
-         BvqwzFNePwZRalWakPC25IN8crVstzf9mmlO98v+o7X+IWIrucEOLzxr8WDOIn3XCP
-         wPlE/SZtCrtAhnHmC6shrJhXzkPpbj3xUNRnvnyXUQHlK3o4MoL4S5jyqbdxSbACq5
-         cOIR9zlE5lPOZDo/6eaVHmPaE83/QfVGe+3RYpT74j7P0QwxuGtSB4b0Wv5mLmBdgy
-         A4LP36pSTbhlT1HscCfxuGn3XuHkxoLsO6H2P/R1V1wtI3HoE4bQK5Xl2ICvdF75zv
-         f+Ut48QSmErpw==
-Received: from localhost (odin.codewreck.org [local])
-        by odin.codewreck.org (OpenSMTPD) with ESMTPA id dfc027e7;
-        Tue, 14 Jun 2022 03:41:55 +0000 (UTC)
-Date:   Tue, 14 Jun 2022 12:41:40 +0900
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     Eric Van Hensbergen <ericvh@gmail.com>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Christian Schoenebeck <linux_oss@crudebyte.com>,
-        David Howells <dhowells@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, stable@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] 9p: fix EBADF errors in cached mode
-Message-ID: <YqgDdNUxC0hV6KR9@codewreck.org>
-References: <YqW5s+GQZwZ/DP5q@codewreck.org>
- <20220614033802.1606738-1-asmadeus@codewreck.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20220614033802.1606738-1-asmadeus@codewreck.org>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dominique Martinet wrote on Tue, Jun 14, 2022 at 12:38:02PM +0900:
-> cached operations sometimes need to do invalid operations (e.g. read
-> on a write only file)
-> Historic fscache had added a "writeback fid" for this, but the conversion
-> to new fscache somehow lost usage of it: use the writeback fid instead
-> of normal one.
-> 
-> Note that the way this works (writeback fid being linked to inode) means
-> we might use overprivileged fid for some operations, e.g. write as root
-> when we shouldn't.
-> Ideally we should keep both fids handy, and only use the writeback fid
-> when really required e.g. reads to a write-only file to fill in the page
-> cache (read-modify-write); but this is the situation we've always had
-> and this commit only fixes an issue we've had for too long.
-> 
-> Fixes: eb497943fa21 ("9p: Convert to using the netfs helper lib to do reads and caching")
-> Cc: stable@vger.kernel.org
-> Cc: David Howells <dhowells@redhat.com>
-> Reported-By: Christian Schoenebeck <linux_oss@crudebyte.com>
-> Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
-> ---
-> Ok so finally had time to look at this, and it's not a lot so this is
-> the most straight forward way to do: just reverting to how the old
-> fscache worked.
-> 
-> This appears to work from quick testing, Chiristian could you test it?
-> 
-> I think the warnings you added in p9_client_read/write that check
-> fid->mode might a lot of sense, if you care to resend it as
-> WARN_ON((fid->mode & ACCMODE) == O_xyz);
-> instead I'll queue that for 5.20
-> 
-> 
-> @Stable people, I've checked it applies to 5.17 and 5.18 so should be
-> good to grab once I submit it for inclusion (that commit was included in
-> 5.16, which is no longer stable)
-> 
-> 
->  fs/9p/vfs_addr.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/9p/vfs_addr.c b/fs/9p/vfs_addr.c
-> index 7382c5227e94..262968d02f55 100644
-> --- a/fs/9p/vfs_addr.c
-> +++ b/fs/9p/vfs_addr.c
-> @@ -58,7 +58,11 @@ static void v9fs_issue_read(struct netfs_io_subrequest *subreq)
->   */
->  static int v9fs_init_request(struct netfs_io_request *rreq, struct file *file)
->  {
-> -	struct p9_fid *fid = file->private_data;
-> +	struct inode *inode = file_inode(file);
-> +	struct v9fs_inode *v9inode = V9FS_I(inode);
-> +	struct p9_fid *fid = v9inode->writeback_fid;
-> +
+From: Eric Biggers <ebiggers@google.com>
 
-Sorry for mails back-to-back (grmbl I hate git commit --amend not
-warning I only have unstaged changes), this is missing the following
-here:
+Since kernel commit 581701b7efd6 ("uapi: deprecate STATX_ALL"),
+STATX_ALL is deprecated.  It doesn't include STATX_MNT_ID, and it won't
+include any future flags.  Update the man page accordingly.
 
-+    /* If there is no writeback fid this file only ever has had
-+     * read-only opens, so we can use file's fid which should
-+     * always be set instead */
-+    if (!fid)
-+        fid = file->private_data;
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ man2/statx.2 | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Christian, you can find it here to test:
-https://github.com/martinetd/linux/commit/a6e033c41cc9f0ec105f5d208b0a820118e2bda8
+diff --git a/man2/statx.2 b/man2/statx.2
+index a8620be6f..561e64f7b 100644
+--- a/man2/statx.2
++++ b/man2/statx.2
+@@ -244,8 +244,9 @@ STATX_SIZE	Want stx_size
+ STATX_BLOCKS	Want stx_blocks
+ STATX_BASIC_STATS	[All of the above]
+ STATX_BTIME	Want stx_btime
++STATX_ALL	The same as STATX_BASIC_STATS | STATX_BTIME.
++         	This is deprecated and should not be used.
+ STATX_MNT_ID	Want stx_mnt_id (since Linux 5.8)
+-STATX_ALL	[All currently available fields]
+ .TE
+ .in
+ .PP
 
-> +	BUG_ON(!fid);
->  
->  	p9_fid_get(fid);
->  	rreq->netfs_priv = fid;
-
-Thanks,
+base-commit: 756761bf7f23e6fd679d708a1c2d1e94547f4fce
 -- 
-Dominique
+2.36.1
+
