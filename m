@@ -2,97 +2,182 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CFA754CD93
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jun 2022 17:54:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB18E54CAF9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jun 2022 16:14:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243847AbiFOPyR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jun 2022 11:54:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49834 "EHLO
+        id S243886AbiFOOOx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jun 2022 10:14:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237952AbiFOPyO (ORCPT
+        with ESMTP id S231311AbiFOOOx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jun 2022 11:54:14 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 299E11D302
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jun 2022 08:54:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1655308452;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=TEmJ1fJ8Yf6oDfx0MBc+zDdacxWq2un2XNoeG1V4KKU=;
-        b=WjVXW4872yl6AdOAUoltvLR6pZUbFbqc0r50GMWvDkzkCrPUGLGWcSqopuwQT6ZIGKBrnO
-        iYYpUBnSQBA3bJqgb7KLuzDy4pWF++D5IroxcnNsECVgWdFhgCVd+9YNEOvr3uF8nQvtHz
-        p8zyDYPOW7SX49e/9s8IoyTlLI/ZLcY=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-58-D_983ZWxOxWyh_k1LNsgaw-1; Wed, 15 Jun 2022 11:54:10 -0400
-X-MC-Unique: D_983ZWxOxWyh_k1LNsgaw-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 5728B38005CB;
-        Wed, 15 Jun 2022 15:54:10 +0000 (UTC)
-Received: from localhost (unknown [10.39.192.100])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E2EE51415107;
-        Wed, 15 Jun 2022 15:54:09 +0000 (UTC)
-Date:   Wed, 15 Jun 2022 14:54:29 +0100
-From:   Stefan Hajnoczi <stefanha@redhat.com>
-To:     Deming Wang <wangdeming@inspur.com>
-Cc:     vgoyal@redhat.com, miklos@szeredi.hu,
-        virtualization@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] virtiofs: delete unused parameter for
- virtio_fs_cleanup_vqs
-Message-ID: <YqnklWCUQBamzmJJ@stefanha-x1.localdomain>
-References: <20220610020838.1543-1-wangdeming@inspur.com>
+        Wed, 15 Jun 2022 10:14:53 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F16836E09
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jun 2022 07:14:51 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id u8so15534980wrm.13
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jun 2022 07:14:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TmFspR35i19OaG7kIq4BfP3Z5+5KHooJY8o+wf2Eu7g=;
+        b=hnjS0y0DJB+Pgxck/o6M0KR1CyJPsNohu8wEV1ngzYEvfR3BNgdCgc8bBCjYcSn/q2
+         LGrABHBIuN5wiJVr3vFBZSQoyuo+ow5O4zy8y+xuerraxDm52W00Ql6GN8mxJBK7Aged
+         DMepzdaFMPS1SBM8wU0DjvHn5zjVaCWGHNtmseACjEovZd9TfrOheGRLWXnnpvnFbk3L
+         Oh5JBbb6A+TcxaBr62FlW4W2kMYFlFl4qBPFa5Vljf/kfuiWpPulvsvFhKfMVnlp7H1I
+         /Ewf9GWseGoqqzdlh7+S2YPdnfxgjB6XJIAkXpRzobHf9nGOIaKrkjPQFKm48HdjqWaG
+         xCzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TmFspR35i19OaG7kIq4BfP3Z5+5KHooJY8o+wf2Eu7g=;
+        b=TCii6yNLex8LV/yfiBts0TGfKBFGOfRXd2WQGUHqunzUVTBq/3WhD+2fsCdsXq9jo/
+         CIEmQm3fq0Mks6s8GK0dwCOee2RGe3n5s5u/VnEkLQLtXoeI/4D78LPZ0E3mGSaQybdP
+         W9A+NfRft3xOgiIhTzfXCw1y0ySyE86NOdwcq4xsv1oeT3CUwKPr1fPge5bCh8HItDve
+         q9ked/LLLH1q7rmqRq++Yoqz2NBCd8dRKHdVXZKT4CZYCd2Hg8UFhlYCdNzD8MFkTsby
+         /8ZYXCK4Blgc3FmmNC2s8wsl8NCO3PIwJF8ND75lE/XUBlbl5ZOHm3lqZnXLLBGTQ6w0
+         vQvQ==
+X-Gm-Message-State: AJIora9FT8xTbihtE4RdjVLoXbKWECSn4IJ/9iFzZDlBER2KC1+UYQ1c
+        jkx7qqGhRqVg/LzXzVzXJc9Tp4noA7OjKzUjSDAE
+X-Google-Smtp-Source: AGRyM1shZLCqZkkSojukqCXaW+5XT6IN8fQuWUaigb52d2YijY5GHtpeOYg1i3lr6LTItEcWJJFmcKwvqWFcwysL51U=
+X-Received: by 2002:a05:6000:1447:b0:21a:278a:181c with SMTP id
+ v7-20020a056000144700b0021a278a181cmr27393wrx.161.1655302489487; Wed, 15 Jun
+ 2022 07:14:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="VSfWJTB4dTlkafrv"
-Content-Disposition: inline
-In-Reply-To: <20220610020838.1543-1-wangdeming@inspur.com>
-X-Scanned-By: MIMEDefang 2.85 on 10.11.54.7
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20220608150942.776446-1-fred@cloudflare.com> <87tu8oze94.fsf@email.froward.int.ebiederm.org>
+ <e1b62234-9b8a-e7c2-2946-5ef9f6f23a08@cloudflare.com> <87y1xzyhub.fsf@email.froward.int.ebiederm.org>
+ <859cb593-9e96-5846-2191-6613677b07c5@cloudflare.com> <87o7yvxl4x.fsf@email.froward.int.ebiederm.org>
+ <9ed91f15-420c-3db6-8b3b-85438b02bf97@cloudflare.com> <20220615103031.qkzae4xr34wysj4b@wittgenstein>
+In-Reply-To: <20220615103031.qkzae4xr34wysj4b@wittgenstein>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 15 Jun 2022 10:14:38 -0400
+Message-ID: <CAHC9VhR8yPHZb2sCu4JGgXOSs7rudm=9opB+-LsG6_Lta9466A@mail.gmail.com>
+Subject: Re: [PATCH v3] cred: Propagate security_prepare_creds() error code
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Frederick Lawler <fred@cloudflare.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-cachefs@redhat.com, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-mm@kvack.org,
+        linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        keyrings@vger.kernel.org, selinux@vger.kernel.org,
+        serge@hallyn.com, amir73il@gmail.com, kernel-team@cloudflare.com,
+        Jeff Moyer <jmoyer@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, Jun 15, 2022 at 6:30 AM Christian Brauner <brauner@kernel.org> wrote:
+>
+> On Tue, Jun 14, 2022 at 01:59:08PM -0500, Frederick Lawler wrote:
+> > On 6/14/22 11:30 AM, Eric W. Biederman wrote:
+> > > Frederick Lawler <fred@cloudflare.com> writes:
+> > >
+> > > > On 6/13/22 11:44 PM, Eric W. Biederman wrote:
+> > > > > Frederick Lawler <fred@cloudflare.com> writes:
+> > > > >
+> > > > > > Hi Eric,
+> > > > > >
+> > > > > > On 6/13/22 12:04 PM, Eric W. Biederman wrote:
+> > > > > > > Frederick Lawler <fred@cloudflare.com> writes:
+> > > > > > >
+> > > > > > > > While experimenting with the security_prepare_creds() LSM hook, we
+> > > > > > > > noticed that our EPERM error code was not propagated up the callstack.
+> > > > > > > > Instead ENOMEM is always returned.  As a result, some tools may send a
+> > > > > > > > confusing error message to the user:
+> > > > > > > >
+> > > > > > > > $ unshare -rU
+> > > > > > > > unshare: unshare failed: Cannot allocate memory
+> > > > > > > >
+> > > > > > > > A user would think that the system didn't have enough memory, when
+> > > > > > > > instead the action was denied.
+> > > > > > > >
+> > > > > > > > This problem occurs because prepare_creds() and prepare_kernel_cred()
+> > > > > > > > return NULL when security_prepare_creds() returns an error code. Later,
+> > > > > > > > functions calling prepare_creds() and prepare_kernel_cred() return
+> > > > > > > > ENOMEM because they assume that a NULL meant there was no memory
+> > > > > > > > allocated.
+> > > > > > > >
+> > > > > > > > Fix this by propagating an error code from security_prepare_creds() up
+> > > > > > > > the callstack.
+> > > > > > > Why would it make sense for security_prepare_creds to return an error
+> > > > > > > code other than ENOMEM?
+> > > > > > >    > That seems a bit of a violation of what that function is supposed to do
+> > > > > > >
+> > > > > >
+> > > > > > The API allows LSM authors to decide what error code is returned from the
+> > > > > > cred_prepare hook. security_task_alloc() is a similar hook, and has its return
+> > > > > > code propagated.
+> > > > > It is not an api.  It is an implementation detail of the linux kernel.
+> > > > > It is a set of convenient functions that do a job.
+> > > > > The general rule is we don't support cases without an in-tree user.  I
+> > > > > don't see an in-tree user.
+> > > > >
+> > > > > > I'm proposing we follow security_task_allocs() pattern, and add visibility for
+> > > > > > failure cases in prepare_creds().
+> > > > > I am asking why we would want to.  Especially as it is not an API, and I
+> > > > > don't see any good reason for anything but an -ENOMEM failure to be
+> > > > > supported.
+> > > > >
+> > > > We're writing a LSM BPF policy, and not a new LSM. Our policy aims to solve
+> > > > unprivileged unshare, similar to Debian's patch [1]. We're in a position such
+> > > > that we can't use that patch because we can't block _all_ of our applications
+> > > > from performing an unshare. We prefer a granular approach. LSM BPF seems like a
+> > > > good choice.
+> > >
+> > > I am quite puzzled why doesn't /proc/sys/user/max_user_namespaces work
+> > > for you?
+> > >
+> >
+> > We have the following requirements:
+> >
+> > 1. Allow list criteria
+> > 2. root user must be able to create namespaces whenever
+> > 3. Everything else not in 1 & 2 must be denied
+> >
+> > We use per task attributes to determine whether or not we allow/deny the
+> > current call to unshare().
+> >
+> > /proc/sys/user/max_user_namespaces limits are a bit broad for this level of
+> > detail.
+> >
+> > > > Because LSM BPF exposes these hooks, we should probably treat them as an
+> > > > API. From that perspective, userspace expects unshare to return a EPERM
+> > > > when the call is denied permissions.
+> > >
+> > > The BPF code gets to be treated as a out of tree kernel module.
+> > >
+> > > > > Without an in-tree user that cares it is probably better to go the
+> > > > > opposite direction and remove the possibility of return anything but
+> > > > > memory allocation failure.  That will make it clearer to implementors
+> > > > > that a general error code is not supported and this is not a location
+> > > > > to implement policy, this is only a hook to allocate state for the LSM.
+> > > > >
+> > > >
+> > > > That's a good point, and it's possible we're using the wrong hook for the
+> > > > policy. Do you know of other hooks we can look into?
+>
+> Fwiw, from this commit it wasn't very clear what you wanted to achieve
+> with this. It might be worth considering adding a new security hook for
+> this. Within msft it recently came up SELinux might have an interest in
+> something like this as well.
 
---VSfWJTB4dTlkafrv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Just to clarify things a bit, I believe SELinux would have an interest
+in a LSM hook capable of implementing an access control point for user
+namespaces regardless of Microsoft's current needs.  I suspect due to
+the security relevant nature of user namespaces most other LSMs would
+be interested as well; it seems like a well crafted hook would be
+welcome by most folks I think.
 
-On Thu, Jun 09, 2022 at 10:08:38PM -0400, Deming Wang wrote:
-> fs parameter not used. So, it needs to be deleted.
->=20
-> Signed-off-by: Deming Wang <wangdeming@inspur.com>
-> ---
->  fs/fuse/virtio_fs.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
-
-Reviewed-by: Stefan Hajnoczi <stefanha@redhat.com>
-
---VSfWJTB4dTlkafrv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmKp5JUACgkQnKSrs4Gr
-c8i8ogf+JVNIK5wafiTY0HlfRmCOIhYMJ8AbK4vwM0rKJeoQc+tgLDPQHHCVMGDM
-lqtAdpnNzCHGOTTe8+sbTVhxhH+THmJvh1c7fX630vgW6MQWQICOT1ablFIJN/jF
-4snTGcSXXaPWMp9B4YJp4n+LBkH3WPHLYGuy1tzgDSYRCnv7ofeKitJ5b3BVWhuc
-zBgS6VNklGbEycPII0gUR8doCeW3laSbHT/3Cai3lVs6iqfZlv/wfvpG8gszeHqm
-IFb5Y93cFAWvxZg11kx8g8Ps3GirNj/y1tq/USKPaQ1PlbQmSZKrSW/6eku2RMXO
-yvOmooxFHUf/aUVMw/BqAynlUDfLLg==
-=BmCq
------END PGP SIGNATURE-----
-
---VSfWJTB4dTlkafrv--
-
+-- 
+paul-moore.com
