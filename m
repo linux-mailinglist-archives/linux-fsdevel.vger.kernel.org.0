@@ -2,117 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1ECEF54D080
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jun 2022 19:57:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E62654D0ED
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jun 2022 20:29:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349551AbiFOR5i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jun 2022 13:57:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40680 "EHLO
+        id S1349698AbiFOS3N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jun 2022 14:29:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40782 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350133AbiFOR5f (ORCPT
+        with ESMTP id S1358465AbiFOS3J (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jun 2022 13:57:35 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 02E8C544E4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jun 2022 10:57:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1655315844;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=IsV319NZNgDzu9DPo6i72lisoqYXO+k9cCPYQoqn8LA=;
-        b=i+pYetlEPMk9wry5TGcEZZ6VzjKFEwX5p2Hbj0QQ4FdRBOA5VcspOiXw48n3zNLhVX3Nww
-        Q5TV/0Mv+uAg9fQd8A2X1OwtQ2IX+lWT1rAdC4TEToW6D4zLUyrwCVC+oETRfse90+vi7I
-        M3PeCPFnoVJEABatZFlxgaPnhMpHnXs=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-490-c2Q-mJ0zPsyh09IqDQBOCw-1; Wed, 15 Jun 2022 13:57:20 -0400
-X-MC-Unique: c2Q-mJ0zPsyh09IqDQBOCw-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 511AC800971;
-        Wed, 15 Jun 2022 17:57:20 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.210])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 38C9F18EA9;
-        Wed, 15 Jun 2022 17:57:20 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id E9F252209F9; Wed, 15 Jun 2022 13:57:19 -0400 (EDT)
-Date:   Wed, 15 Jun 2022 13:57:19 -0400
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Deming Wang <wangdeming@inspur.com>
-Cc:     stefanha@redhat.com, miklos@szeredi.hu,
-        virtualization@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] virtiofs: delete unused parameter for
- virtio_fs_cleanup_vqs
-Message-ID: <YqodfwS3KSVIaqKD@redhat.com>
-References: <20220610020838.1543-1-wangdeming@inspur.com>
+        Wed, 15 Jun 2022 14:29:09 -0400
+Received: from smtp.smtpout.orange.fr (smtp03.smtpout.orange.fr [80.12.242.125])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAF363C499
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jun 2022 11:29:06 -0700 (PDT)
+Received: from [192.168.1.18] ([90.11.190.129])
+        by smtp.orange.fr with ESMTPA
+        id 1XlHoHz3y26JC1XlHo1Z7E; Wed, 15 Jun 2022 20:29:04 +0200
+X-ME-Helo: [192.168.1.18]
+X-ME-Auth: YWZlNiIxYWMyZDliZWIzOTcwYTEyYzlhMmU3ZiQ1M2U2MzfzZDfyZTMxZTBkMTYyNDBjNDJlZmQ3ZQ==
+X-ME-Date: Wed, 15 Jun 2022 20:29:04 +0200
+X-ME-IP: 90.11.190.129
+Message-ID: <52d33450-44ae-3e05-9a3f-5835b3e97a7a@wanadoo.fr>
+Date:   Wed, 15 Jun 2022 20:29:03 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20220610020838.1543-1-wangdeming@inspur.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH] eventfd: Directly use ida_alloc()/free()
+Content-Language: fr
+To:     Bo Liu <liubo03@inspur.com>, viro@zeniv.linux.org.uk
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220615060314.2306-1-liubo03@inspur.com>
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20220615060314.2306-1-liubo03@inspur.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-3.1 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jun 09, 2022 at 10:08:38PM -0400, Deming Wang wrote:
-> fs parameter not used. So, it needs to be deleted.
+Le 15/06/2022 à 08:03, Bo Liu a écrit :
+> Use ida_alloc()/ida_free() instead of
+> ida_simple_get()/ida_simple_remove().
+> The latter is deprecated and more verbose.
 > 
-> Signed-off-by: Deming Wang <wangdeming@inspur.com>
+> Signed-off-by: Bo Liu <liubo03@inspur.com>
 
-Thanks Deming Wang for the patch. Good cleanup.
+Hi,
+for what it's worth:
 
-Reviewed-by: Vivek Goyal <vgoyal@redhat.com>
-
-Thanks
-Vivek
+Reviewed-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
 > ---
->  fs/fuse/virtio_fs.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
+>   fs/eventfd.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-> index 8db53fa67359..0991199d19c1 100644
-> --- a/fs/fuse/virtio_fs.c
-> +++ b/fs/fuse/virtio_fs.c
-> @@ -741,8 +741,7 @@ static int virtio_fs_setup_vqs(struct virtio_device *vdev,
->  }
->  
->  /* Free virtqueues (device must already be reset) */
-> -static void virtio_fs_cleanup_vqs(struct virtio_device *vdev,
-> -				  struct virtio_fs *fs)
-> +static void virtio_fs_cleanup_vqs(struct virtio_device *vdev)
->  {
->  	vdev->config->del_vqs(vdev);
->  }
-> @@ -895,7 +894,7 @@ static int virtio_fs_probe(struct virtio_device *vdev)
->  
->  out_vqs:
->  	virtio_reset_device(vdev);
-> -	virtio_fs_cleanup_vqs(vdev, fs);
-> +	virtio_fs_cleanup_vqs(vdev);
->  	kfree(fs->vqs);
->  
->  out:
-> @@ -927,7 +926,7 @@ static void virtio_fs_remove(struct virtio_device *vdev)
->  	virtio_fs_stop_all_queues(fs);
->  	virtio_fs_drain_all_queues_locked(fs);
->  	virtio_reset_device(vdev);
-> -	virtio_fs_cleanup_vqs(vdev, fs);
-> +	virtio_fs_cleanup_vqs(vdev);
->  
->  	vdev->priv = NULL;
->  	/* Put device reference on virtio_fs object */
-> -- 
-> 2.27.0
-> 
+> diff --git a/fs/eventfd.c b/fs/eventfd.c
+> index 3627dd7d25db..e17a2ea53da9 100644
+> --- a/fs/eventfd.c
+> +++ b/fs/eventfd.c
+> @@ -89,7 +89,7 @@ EXPORT_SYMBOL_GPL(eventfd_signal);
+>   static void eventfd_free_ctx(struct eventfd_ctx *ctx)
+>   {
+>   	if (ctx->id >= 0)
+> -		ida_simple_remove(&eventfd_ida, ctx->id);
+> +		ida_free(&eventfd_ida, ctx->id);
+>   	kfree(ctx);
+>   }
+>   
+> @@ -423,7 +423,7 @@ static int do_eventfd(unsigned int count, int flags)
+>   	init_waitqueue_head(&ctx->wqh);
+>   	ctx->count = count;
+>   	ctx->flags = flags;
+> -	ctx->id = ida_simple_get(&eventfd_ida, 0, 0, GFP_KERNEL);
+> +	ctx->id = ida_alloc(&eventfd_ida, GFP_KERNEL);
+>   
+>   	flags &= EFD_SHARED_FCNTL_FLAGS;
+>   	flags |= O_RDWR;
 
