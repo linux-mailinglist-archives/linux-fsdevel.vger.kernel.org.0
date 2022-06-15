@@ -2,182 +2,190 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AB18E54CAF9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jun 2022 16:14:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E2C054CB36
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jun 2022 16:24:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243886AbiFOOOx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jun 2022 10:14:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59486 "EHLO
+        id S1345057AbiFOOYZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jun 2022 10:24:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231311AbiFOOOx (ORCPT
+        with ESMTP id S239055AbiFOOYY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jun 2022 10:14:53 -0400
-Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F16836E09
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jun 2022 07:14:51 -0700 (PDT)
-Received: by mail-wr1-x432.google.com with SMTP id u8so15534980wrm.13
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jun 2022 07:14:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TmFspR35i19OaG7kIq4BfP3Z5+5KHooJY8o+wf2Eu7g=;
-        b=hnjS0y0DJB+Pgxck/o6M0KR1CyJPsNohu8wEV1ngzYEvfR3BNgdCgc8bBCjYcSn/q2
-         LGrABHBIuN5wiJVr3vFBZSQoyuo+ow5O4zy8y+xuerraxDm52W00Ql6GN8mxJBK7Aged
-         DMepzdaFMPS1SBM8wU0DjvHn5zjVaCWGHNtmseACjEovZd9TfrOheGRLWXnnpvnFbk3L
-         Oh5JBbb6A+TcxaBr62FlW4W2kMYFlFl4qBPFa5Vljf/kfuiWpPulvsvFhKfMVnlp7H1I
-         /Ewf9GWseGoqqzdlh7+S2YPdnfxgjB6XJIAkXpRzobHf9nGOIaKrkjPQFKm48HdjqWaG
-         xCzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TmFspR35i19OaG7kIq4BfP3Z5+5KHooJY8o+wf2Eu7g=;
-        b=TCii6yNLex8LV/yfiBts0TGfKBFGOfRXd2WQGUHqunzUVTBq/3WhD+2fsCdsXq9jo/
-         CIEmQm3fq0Mks6s8GK0dwCOee2RGe3n5s5u/VnEkLQLtXoeI/4D78LPZ0E3mGSaQybdP
-         W9A+NfRft3xOgiIhTzfXCw1y0ySyE86NOdwcq4xsv1oeT3CUwKPr1fPge5bCh8HItDve
-         q9ked/LLLH1q7rmqRq++Yoqz2NBCd8dRKHdVXZKT4CZYCd2Hg8UFhlYCdNzD8MFkTsby
-         /8ZYXCK4Blgc3FmmNC2s8wsl8NCO3PIwJF8ND75lE/XUBlbl5ZOHm3lqZnXLLBGTQ6w0
-         vQvQ==
-X-Gm-Message-State: AJIora9FT8xTbihtE4RdjVLoXbKWECSn4IJ/9iFzZDlBER2KC1+UYQ1c
-        jkx7qqGhRqVg/LzXzVzXJc9Tp4noA7OjKzUjSDAE
-X-Google-Smtp-Source: AGRyM1shZLCqZkkSojukqCXaW+5XT6IN8fQuWUaigb52d2YijY5GHtpeOYg1i3lr6LTItEcWJJFmcKwvqWFcwysL51U=
-X-Received: by 2002:a05:6000:1447:b0:21a:278a:181c with SMTP id
- v7-20020a056000144700b0021a278a181cmr27393wrx.161.1655302489487; Wed, 15 Jun
- 2022 07:14:49 -0700 (PDT)
+        Wed, 15 Jun 2022 10:24:24 -0400
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2048.outbound.protection.outlook.com [40.107.94.48])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E131C27FEC;
+        Wed, 15 Jun 2022 07:24:22 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=KgzTBN0h7QNZa2tjMtPDbcFlbT45D2mPxyncu80oearDePXgJrJRIv9kqpT0XrOE2QKaHNrDH59hZC+MCfyzdl/DOIj3FmF4Pqt+7PYZXRLxE8nt7kJp35NHt8C+3XiTwfC3FuE3gxE93U/WOmlyDXNmRX432axOXMQMkV8w3HI8b2Tg+yRh3Pg2Z6PeSVYdpNW+jC4HKZK8Y578D3lluXkKtSnUVuZI3ABnpYnz8Ddp76CfLYQAJPlRD65Gg7c7v3zd4KdMjiPETp+0BhP9cXYFCWWGSUlufcH6yJ58FM3P3BKZCLrL7sV92c04VjCIrrM0jo/TWdR1rdnmsnuWeQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DOvyYAqZDIMrja3KT4rYrszEU0Q89uhz/I9Lxm9kJhQ=;
+ b=E4Gw8kkQATtkcytft9SOS8n2hPiDLgv3bt0QxzL2xvWVvMCme7d3ynxrTMk0Ro7y0+1CBQKPIETxw5LTuW9GhtpUWph9wvdnBV3Jpjhlf56qKn+9sp8r1Uwj4iKGRtr5CAK8Po0soPa0Q6CFhtA2AW7kQnRV3p8oEe8ljRI7VoPMLW3os47upaqZEHJ58/UYn8UbdjC0n4puNybkpyJdAa+XCUMNBp1yeiD7aRhKoegnQsRbO869xCqzXW03nkn/uF0MypasNDlf3jZIeDDhvuTfmLGmQHYpbeahNms7zp9i49SyO4biRf5/c4HrE21mHHSWyRcG660hqXx5AkOqjw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DOvyYAqZDIMrja3KT4rYrszEU0Q89uhz/I9Lxm9kJhQ=;
+ b=zkUqGdeXVGRlPcKY8qr8wGxfi78M1cEWcMmv77WCcmKOAYT8pzcrfJOwbZSGy+L3pl25KGWLcKOLliDUN6xM4Ka/8++hUK2OmbzV+7oh6UvNqcCq+5k5horr3RYON0005XiQv46e5/NWtkAt6vlY4m5I06YaHqeBcEldhFzomZo=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BN8PR12MB3587.namprd12.prod.outlook.com (2603:10b6:408:43::13)
+ by SN6PR12MB2733.namprd12.prod.outlook.com (2603:10b6:805:77::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5332.15; Wed, 15 Jun
+ 2022 14:24:17 +0000
+Received: from BN8PR12MB3587.namprd12.prod.outlook.com
+ ([fe80::e0fd:45cf:c701:2731]) by BN8PR12MB3587.namprd12.prod.outlook.com
+ ([fe80::e0fd:45cf:c701:2731%6]) with mapi id 15.20.5353.014; Wed, 15 Jun 2022
+ 14:24:17 +0000
+Message-ID: <3ef8af8b-2dfa-79cf-e7cd-8a3e5ec20d6c@amd.com>
+Date:   Wed, 15 Jun 2022 16:24:10 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH 03/13] mm: shmem: provide oom badness for shmem files
+Content-Language: en-US
+To:     Michal Hocko <mhocko@suse.com>
+Cc:     =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        intel-gfx@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        nouveau@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        alexander.deucher@amd.com, daniel@ffwll.ch,
+        viro@zeniv.linux.org.uk, akpm@linux-foundation.org,
+        hughd@google.com, andrey.grodzovsky@amd.com
+References: <YqMuq/ZrV8loC3jE@dhcp22.suse.cz>
+ <2e7e050e-04eb-0c0a-0675-d7f1c3ae7aed@amd.com>
+ <YqNSSFQELx/LeEHR@dhcp22.suse.cz>
+ <288528c3-411e-fb25-2f08-92d4bb9f1f13@gmail.com>
+ <Yqbq/Q5jz2ou87Jx@dhcp22.suse.cz>
+ <b8b9aba5-575e-8a34-e627-79bef4ed7f97@amd.com>
+ <YqcpZY3Xx7Mk2ROH@dhcp22.suse.cz>
+ <34daa8ab-a9f4-8f7b-0ea7-821bc36b9497@gmail.com>
+ <YqdFkfLVFUD5K6EK@dhcp22.suse.cz>
+ <9e170201-35df-cfcc-8d07-2f9693278829@amd.com>
+ <Yqnba1E2FSRVUATY@dhcp22.suse.cz>
+From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+In-Reply-To: <Yqnba1E2FSRVUATY@dhcp22.suse.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: AS9PR06CA0491.eurprd06.prod.outlook.com
+ (2603:10a6:20b:49b::15) To BN8PR12MB3587.namprd12.prod.outlook.com
+ (2603:10b6:408:43::13)
 MIME-Version: 1.0
-References: <20220608150942.776446-1-fred@cloudflare.com> <87tu8oze94.fsf@email.froward.int.ebiederm.org>
- <e1b62234-9b8a-e7c2-2946-5ef9f6f23a08@cloudflare.com> <87y1xzyhub.fsf@email.froward.int.ebiederm.org>
- <859cb593-9e96-5846-2191-6613677b07c5@cloudflare.com> <87o7yvxl4x.fsf@email.froward.int.ebiederm.org>
- <9ed91f15-420c-3db6-8b3b-85438b02bf97@cloudflare.com> <20220615103031.qkzae4xr34wysj4b@wittgenstein>
-In-Reply-To: <20220615103031.qkzae4xr34wysj4b@wittgenstein>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 15 Jun 2022 10:14:38 -0400
-Message-ID: <CAHC9VhR8yPHZb2sCu4JGgXOSs7rudm=9opB+-LsG6_Lta9466A@mail.gmail.com>
-Subject: Re: [PATCH v3] cred: Propagate security_prepare_creds() error code
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Frederick Lawler <fred@cloudflare.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-cachefs@redhat.com, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, linux-mm@kvack.org,
-        linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-        keyrings@vger.kernel.org, selinux@vger.kernel.org,
-        serge@hallyn.com, amir73il@gmail.com, kernel-team@cloudflare.com,
-        Jeff Moyer <jmoyer@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=ham autolearn_force=no version=3.4.6
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: ddedf206-058f-4d4e-f885-08da4edababa
+X-MS-TrafficTypeDiagnostic: SN6PR12MB2733:EE_
+X-Microsoft-Antispam-PRVS: <SN6PR12MB27334D39829FDC2DBA46CF2983AD9@SN6PR12MB2733.namprd12.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: fEA4IY3qFPQhQHHzX/H20resZd0FS60QETjfrGXtpwc7pntRPuIJGh86DjMRnz8XUyVZZfVFAEAHgxVY991ZzzHv2DOBGeI5+D5amaPL4C/AynkuY+z+BUUmn0hSxnsvDDyGocDr6c+vAn8CqsVoWnEfhKiQxoEblkH3mLhZKp9D9kl6+YfdMsp6RcFBcYtln5PKc5WixLjPDQaz83x9RCbyRgB/kECiX7Jjq+1PzOJr9RVz0d2mNgbkEf/fOfhbugXxpGlvKqUROIRFHKwEQ0p4gd42/IWmJoWEZK+/6GvfmBe+TmGim/bzgbNGl7iBRiZckNzg1uXnI5GmEw64LYuW0qRbP6BgnTQfd7u58hKvdocv/kWj9i7b3SIwfHT8U3KgQNJuMLvIwcRVBTSVQiUXlfk3TIBDGz6Bhy4VHkg4t9vB1mMchpNYc8MkMSq5V+3IHv0GtOUbwPSFm/Q8QCd037h516/LTbl7Ofykla8DvcVNGlz3G4lT1f4hvpOpSb09cTCUrd8lVxWGapiQkPzdvsZGs+mvgpswaQGoGTrhi68TAT31gRYqrIhKHZ7KYBUC4eaEcnnXjdNMaOcxoZPz1ZsYqu9da4MBv/eYne6ZqdegFaZznA01tAXjtt9iFNzi6JIkwf9FyJL0oHh9KU+qKtSuU20qyuEN7/RWwACPWBDvecb6Hofz71f/9i8HaN2kVUA08vq7AlIm2VZz5FgRgCX0oIuC0GrCXtdRfmqYA9tiHGmwNyHmaMiEBUot
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN8PR12MB3587.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230016)(4636009)(366004)(7416002)(2906002)(31686004)(38100700002)(2616005)(36756003)(6486002)(508600001)(186003)(66476007)(66556008)(5660300002)(8936002)(6512007)(4326008)(83380400001)(6506007)(316002)(8676002)(6666004)(66946007)(6916009)(86362001)(66574015)(31696002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 2
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?SXREL0ZQZ1hQN2UzUm9HbWhlL1dwdy9FT04vNDBQWTBEcnd5Z1NvOUhFb01M?=
+ =?utf-8?B?SXZmSnRIMUt0NTZlYTBJaWduN1NVRURsMkNLRisrYTBQZE96L3JhdForVG81?=
+ =?utf-8?B?K285MktqeG1TUDVkTUhQaFRTTG42MGptZURTRTNBN005UXRvVENTa0lnblFE?=
+ =?utf-8?B?cXQwRXNDMkRkRTN2Sk04T2pZT3hzNVNWczJiQnZ1aE5yZjQwVER3NytldFRP?=
+ =?utf-8?B?UEFpZEoyTFkvR0dCM3I2RVBsNS9aenlrUWo0WERVQ0pna0NSdURnVzNRc2Fv?=
+ =?utf-8?B?RlRxenpscU1HdmNBVzUvWEU2SGpLdnFGZ1FJZlhUTldHWHlWdFBTTEZYc3Rs?=
+ =?utf-8?B?dnJLRXdpcUw3WWlSaHRSMzNNY09qZnc2eXNVUkdkUGIxVEk0bVlrV2JnblRY?=
+ =?utf-8?B?NURLT0RwZEZpQXZHTEJSOFBLWEpVeFBmTHZzd29qcUpXeTg1ckV2T3QySDJj?=
+ =?utf-8?B?eXRNN3R2UjUyby9GTWl1Y2ttQXV3QmlYcVdObVN4Q0x2Tnc5cmE3Y3J2TTVa?=
+ =?utf-8?B?MWdoVFY2c1luV3dyaEEyN003T2trNjA4eSt3VXdZSlhFdzYwK04xdWNaNElL?=
+ =?utf-8?B?YlhlN2xQYXgwamFvVmVmQ2dpc0RyU3dVTWNUUTBIUlo5RWRDbjVWZnI0UHJy?=
+ =?utf-8?B?V3huNStWdkpuREJhUEFLaGJaT2gzTXUvNWxrZHUwVi9meUZoOEI1WEI4N04v?=
+ =?utf-8?B?NWJEcmswOHVXWm1VWFJCamlhdzg1WWZreFRUOEpmTENseE5ibExTdVRBQzFR?=
+ =?utf-8?B?ZjV1UXJZcFR3c24rSjFSVCtUSkJSV3BSWStkdkpPQXYzU0dBcTc0V2xzM0x4?=
+ =?utf-8?B?dHdzZ09kU1dmdWN3Z3lmbzRMNW5JR0U3Y0sybkZLZGdUcThaUDZMdEtYSkJL?=
+ =?utf-8?B?anRWV2I4d3FnYmtpa3ZaeWt6NE9idS9pRzN1UVdtRWFpbkNhUndzMlNZR3V0?=
+ =?utf-8?B?dWoycm9teUtEWEZ6NjVHc05xcUoxODJjMmJ6VG1oTzF1QTZhZmFISC8vV2oy?=
+ =?utf-8?B?NXdNYXdPMjgvQjcrQ2V0WUhmL1JYTWFTZy9BL1J1S0RmWHdOSnJHdGprbXNV?=
+ =?utf-8?B?a1V0WXNKVW10VjJNR2xoNmpDTDhLekl0QTc1MC9PaDJVZlVqekZobHd1SHU4?=
+ =?utf-8?B?U2d5RWZEeG92M1AvRmo1c3B1MkdodGFQbEdUWERGS1U3VDNJd0dJQ2JXOGp3?=
+ =?utf-8?B?dWovZXdXcC9mSFF4K2xUek5vdmplS3ZpWjk4dFAxSXlhWlR0RUROd245NTc2?=
+ =?utf-8?B?V3R2eDNXTnErbWdmemhlWFJWVVE4bDlKeWcrc3MvclZTdGxDZ0R1VSsraHlS?=
+ =?utf-8?B?WXBxSUFYcHhRajIrWklwaHFteFNGTGZ1Q09WTHN6eEs4aUw5Y0pOZUo4Q3Bl?=
+ =?utf-8?B?VFV0YmZPeCtObGdNLzFCVkJ0SC9nMTlmMDRmNSt5UG9mb1p1aEhPejNaYWVG?=
+ =?utf-8?B?UHV6RVdwS0EvNVJ2UEREdnpodEVCU2hXMzRBZ0diUU1QaG8xUHRPemFwNWlw?=
+ =?utf-8?B?ek96OUgzL3d5T0l6YjE2eUtmVTFJdDc5bnVueStkTktaYWwwK2FLbDJISWhy?=
+ =?utf-8?B?RTRNUnNuenFBZjdHb1lSUUpTU2FHRUN5Zkhqb2JrWk5OTlZCWTRIdWhlRGp6?=
+ =?utf-8?B?V3ppQTZOcVZrbXVaQ0g1QUZMajY2QlBwa2hRQzV4T29qL1h5bzVzcVg3Z2xP?=
+ =?utf-8?B?bDVLeC9QMTlzS2hqTVgvNGxBbGdkSG9sRGVETHh0c0RFVTNwZHlwYXB2T2x3?=
+ =?utf-8?B?V0RjN3dZb3JvSHFjK0w5NWxlMXFuSXZhNHZvYlQ0L1dNUUlrZXBEa3RiUVZj?=
+ =?utf-8?B?Rk4yMTlwTFdSWEg4V3ZaUUtUdy9tWWhRSnpNTUZGbEIyajFVVm5yTUl0Z0dQ?=
+ =?utf-8?B?MkVLWEJ5ZFBYTXBvU3BiZlJwVjc4ci90alhNSWdjeDFQYzgzNFFkMGJqVjBn?=
+ =?utf-8?B?UGdUYUh5TThPaC9VdUJVbXZITnVaWnZqYklaaFdCR0U0WkJiQ3RqYTBMNzJS?=
+ =?utf-8?B?ekpOUzBmSVdKQ3Q5ZnRXazZwVlFrRTc3MDFFYmw1L2pXMEFxdWJ0Rm5tUGNx?=
+ =?utf-8?B?Z3JjTFY3NUIwUVhnLzE4QlY4OVpheHVwNDV5akF6emNXSHVHbjAzRU8zRnZQ?=
+ =?utf-8?B?a3l4b2JCZ3QybWhqOEQvb09BTkpnUmVJTlI2WjJaUUs4RFByVWZ3eGxUUHY1?=
+ =?utf-8?B?YnVBcms2Z2dSVy9uZlovTDNPMlNsTFlLWnVwbkNqdFRSb3JEUnFQM2JBUVRo?=
+ =?utf-8?B?R3FMYy81MHVmeTRqWENUY0JFd1Bmdll0N2RPTC83QVBWYWZieEdObHppU3NH?=
+ =?utf-8?B?SzEvYnJ5THQ2Z3g3MUhzVGU3UG5KTWNtd1QwUU9Fam1ndHczRnNod1Z1R3lE?=
+ =?utf-8?Q?KUrew6soKrMkCyPCI9caBWzCEgnvxLE/7+TSFNj2rQ/KU?=
+X-MS-Exchange-AntiSpam-MessageData-1: /Lro2J2aDa26xQ==
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ddedf206-058f-4d4e-f885-08da4edababa
+X-MS-Exchange-CrossTenant-AuthSource: BN8PR12MB3587.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jun 2022 14:24:17.1811
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: U0FmoRIJylMxGGYqevwxi4fBsLTyu90ftIgB8P9LV6lq/tMVAWixDRHYKfw6ItDD
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR12MB2733
+X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 15, 2022 at 6:30 AM Christian Brauner <brauner@kernel.org> wrote:
->
-> On Tue, Jun 14, 2022 at 01:59:08PM -0500, Frederick Lawler wrote:
-> > On 6/14/22 11:30 AM, Eric W. Biederman wrote:
-> > > Frederick Lawler <fred@cloudflare.com> writes:
-> > >
-> > > > On 6/13/22 11:44 PM, Eric W. Biederman wrote:
-> > > > > Frederick Lawler <fred@cloudflare.com> writes:
-> > > > >
-> > > > > > Hi Eric,
-> > > > > >
-> > > > > > On 6/13/22 12:04 PM, Eric W. Biederman wrote:
-> > > > > > > Frederick Lawler <fred@cloudflare.com> writes:
-> > > > > > >
-> > > > > > > > While experimenting with the security_prepare_creds() LSM hook, we
-> > > > > > > > noticed that our EPERM error code was not propagated up the callstack.
-> > > > > > > > Instead ENOMEM is always returned.  As a result, some tools may send a
-> > > > > > > > confusing error message to the user:
-> > > > > > > >
-> > > > > > > > $ unshare -rU
-> > > > > > > > unshare: unshare failed: Cannot allocate memory
-> > > > > > > >
-> > > > > > > > A user would think that the system didn't have enough memory, when
-> > > > > > > > instead the action was denied.
-> > > > > > > >
-> > > > > > > > This problem occurs because prepare_creds() and prepare_kernel_cred()
-> > > > > > > > return NULL when security_prepare_creds() returns an error code. Later,
-> > > > > > > > functions calling prepare_creds() and prepare_kernel_cred() return
-> > > > > > > > ENOMEM because they assume that a NULL meant there was no memory
-> > > > > > > > allocated.
-> > > > > > > >
-> > > > > > > > Fix this by propagating an error code from security_prepare_creds() up
-> > > > > > > > the callstack.
-> > > > > > > Why would it make sense for security_prepare_creds to return an error
-> > > > > > > code other than ENOMEM?
-> > > > > > >    > That seems a bit of a violation of what that function is supposed to do
-> > > > > > >
-> > > > > >
-> > > > > > The API allows LSM authors to decide what error code is returned from the
-> > > > > > cred_prepare hook. security_task_alloc() is a similar hook, and has its return
-> > > > > > code propagated.
-> > > > > It is not an api.  It is an implementation detail of the linux kernel.
-> > > > > It is a set of convenient functions that do a job.
-> > > > > The general rule is we don't support cases without an in-tree user.  I
-> > > > > don't see an in-tree user.
-> > > > >
-> > > > > > I'm proposing we follow security_task_allocs() pattern, and add visibility for
-> > > > > > failure cases in prepare_creds().
-> > > > > I am asking why we would want to.  Especially as it is not an API, and I
-> > > > > don't see any good reason for anything but an -ENOMEM failure to be
-> > > > > supported.
-> > > > >
-> > > > We're writing a LSM BPF policy, and not a new LSM. Our policy aims to solve
-> > > > unprivileged unshare, similar to Debian's patch [1]. We're in a position such
-> > > > that we can't use that patch because we can't block _all_ of our applications
-> > > > from performing an unshare. We prefer a granular approach. LSM BPF seems like a
-> > > > good choice.
-> > >
-> > > I am quite puzzled why doesn't /proc/sys/user/max_user_namespaces work
-> > > for you?
-> > >
-> >
-> > We have the following requirements:
-> >
-> > 1. Allow list criteria
-> > 2. root user must be able to create namespaces whenever
-> > 3. Everything else not in 1 & 2 must be denied
-> >
-> > We use per task attributes to determine whether or not we allow/deny the
-> > current call to unshare().
-> >
-> > /proc/sys/user/max_user_namespaces limits are a bit broad for this level of
-> > detail.
-> >
-> > > > Because LSM BPF exposes these hooks, we should probably treat them as an
-> > > > API. From that perspective, userspace expects unshare to return a EPERM
-> > > > when the call is denied permissions.
-> > >
-> > > The BPF code gets to be treated as a out of tree kernel module.
-> > >
-> > > > > Without an in-tree user that cares it is probably better to go the
-> > > > > opposite direction and remove the possibility of return anything but
-> > > > > memory allocation failure.  That will make it clearer to implementors
-> > > > > that a general error code is not supported and this is not a location
-> > > > > to implement policy, this is only a hook to allocate state for the LSM.
-> > > > >
-> > > >
-> > > > That's a good point, and it's possible we're using the wrong hook for the
-> > > > policy. Do you know of other hooks we can look into?
->
-> Fwiw, from this commit it wasn't very clear what you wanted to achieve
-> with this. It might be worth considering adding a new security hook for
-> this. Within msft it recently came up SELinux might have an interest in
-> something like this as well.
+Am 15.06.22 um 15:15 schrieb Michal Hocko:
+> On Wed 15-06-22 14:35:22, Christian König wrote:
+> [...]
+>> Even the classic mm_struct based accounting includes MM_SHMEMPAGES into the
+>> badness. So accounting shared resources as badness to make a decision is
+>> nothing new here.
+> Yeah, it is nothing really new but it also doesn't mean it is an example
+> worth following as this doesn't really work currently. Also please note
+> that MM_SHMEMPAGES is counting at least something process specific as
+> those pages are mapped in to the process (and with enough of wishful
+> thinking unmapping can drop the last reference and free something up
+> actually) . With generic per-file memory this is even more detached from
+> process.
 
-Just to clarify things a bit, I believe SELinux would have an interest
-in a LSM hook capable of implementing an access control point for user
-namespaces regardless of Microsoft's current needs.  I suspect due to
-the security relevant nature of user namespaces most other LSMs would
-be interested as well; it seems like a well crafted hook would be
-welcome by most folks I think.
+But this is exactly the use case here. See I do have the 1% which is 
+shared between processes, but 99% of the allocations only one process 
+has a reference to them.
 
--- 
-paul-moore.com
+So that wishful thinking that we can drop the last reference when we 
+kill this specific process is perfectly justified.
+
+It can be that this doesn't fit all use cases for the shmem file, but it 
+certainly does for DRM and DMA-buf.
+
+>> The difference is that this time the badness doesn't come from the memory
+>> management subsystem, but rather from the I/O subsystem.
+>>
+>>> This is also the reason why I am not really fan of the per file
+>>> badness because it adds a notion of resource that is not process bound
+>>> in general so it will add all sorts of weird runtime corner cases which
+>>> are impossible to anticipate [*]. Maybe that will work in some scenarios
+>>> but definitely not something to be done by default without users opting
+>>> into that and being aware of consequences.
+>> Would a kernel command line option to control the behavior be helpful here?
+> I am not sure what would be the proper way to control that that would be
+> future extensible. Kernel command line is certainly and option but if we
+> want to extend that to module like or eBPF interface then it wouldn't
+> stand a future test very quickly.
+
+Well kernel command lines are not really meant to be stable, aren't they?
+
+Regards,
+Christian.
