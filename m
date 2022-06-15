@@ -2,134 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 644CF54D1AD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jun 2022 21:34:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C95554D222
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jun 2022 21:56:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347213AbiFOTey (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jun 2022 15:34:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37348 "EHLO
+        id S1350424AbiFOT4g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jun 2022 15:56:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1344237AbiFOTex (ORCPT
+        with ESMTP id S244636AbiFOT4d (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jun 2022 15:34:53 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8460E2F004
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jun 2022 12:34:49 -0700 (PDT)
+        Wed, 15 Jun 2022 15:56:33 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id C78382F027
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jun 2022 12:56:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1655321688;
+        s=mimecast20190719; t=1655322991;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=80vStOZaBcAfkx2F0Vpvkz4FvyHsZJU8xm8Q9HsP33Q=;
-        b=PXWTFV70O/33G9oRs2cBlzV45OpK4RZolbxld+yvh1D5vGk694aQ1a1BRUEtewowAopzb0
-        skmPEcukXkILSCNx+6j8cux8VgWN8Qd9Wvs1RmWaZwmfrwM72FD5X3pAl5aqIS6KSFdAcM
-        KLXNijptvClTj+rE3G+6tsdWR7BGq7k=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=xqOAqAfVo6ZqE+Onf7A4WZQ8MUXyjM3cOFODgGTtWdE=;
+        b=JAT4zLSD19PMK97tKB4cd2Vkyl8L42N4alKWIPN868OKsKEKv89EGtBtvmgJXJvnJMnkRS
+        5SSzEG6cNk6vvGehe4Th8XUMTzBNf/yWqwRDXnphiH/R2BBLi6A0S8cBUCTpF84MIwNxei
+        m7iOIOR11mwSLphjaW3hlPlmPB+e9gU=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-614-3Dm-VFCXMgSYIsq40Yka9g-1; Wed, 15 Jun 2022 15:34:47 -0400
-X-MC-Unique: 3Dm-VFCXMgSYIsq40Yka9g-1
-Received: by mail-ej1-f72.google.com with SMTP id lv2-20020a170906bc8200b0070e0d6bcec0so4678269ejb.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jun 2022 12:34:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=80vStOZaBcAfkx2F0Vpvkz4FvyHsZJU8xm8Q9HsP33Q=;
-        b=iNjtzWHHR0DFuHcko/NJzRkTpDynde31ansU4svXwH+3u2hwG/r1mipcssG8np23qd
-         Qftsl4Aj0XWdnWgmvA2DNwJW97+lUk1yMeScniLqSo2ms7Lz4wLi9W4pPT8GLq+AGlw0
-         gZ3bbPFiEUD9PuPK4w6fqqHeXfF0MBn+s+qMIXkQLQS+yG0YXYTOKTGUIZptbe0hT6j/
-         ZfjEVn46Iy1O0UbbfVl3RJExvgMJkkStoHLnJbe/L5vWqfS+u85nXtqdFTFa1hPhNBo6
-         BqcJmEsObKfrhqfRbOSrXwm86zmekyRUzimg2DPc0e9lx9JoYE1CdJtprqJUoDPLfwy2
-         b03A==
-X-Gm-Message-State: AJIora+jslOeo2m1GmVxNf9+j65NXt6utu8vifqeN8eGctce/bLmRns3
-        Dq16gnjQFAfpYNB7m4dvgR3961UfqskAvBPH8bcGX77qx/PEHdiQKASpDrytXr+z7+qDamuWo8/
-        hNDK3XY7jDdTTy4W5cZCpzBeVXA==
-X-Received: by 2002:aa7:d8d8:0:b0:42d:dbb0:f05b with SMTP id k24-20020aa7d8d8000000b0042ddbb0f05bmr1729860eds.82.1655321686044;
-        Wed, 15 Jun 2022 12:34:46 -0700 (PDT)
-X-Google-Smtp-Source: AGRyM1uMO7lU8SUzHOQRcWKOZNG4+RppmgPyLrEcObB5bwCLKVADj9bSdRBnn93QIuhb8xvFTgERQA==
-X-Received: by 2002:aa7:d8d8:0:b0:42d:dbb0:f05b with SMTP id k24-20020aa7d8d8000000b0042ddbb0f05bmr1729853eds.82.1655321685899;
-        Wed, 15 Jun 2022 12:34:45 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c1e:bf00:d69d:5353:dba5:ee81? (2001-1c00-0c1e-bf00-d69d-5353-dba5-ee81.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:d69d:5353:dba5:ee81])
-        by smtp.gmail.com with ESMTPSA id r4-20020aa7cb84000000b0042dc9aafbfbsm32277edt.39.2022.06.15.12.34.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Jun 2022 12:34:45 -0700 (PDT)
-Message-ID: <982a47a2-8340-a9e6-0a44-b132b94e0b52@redhat.com>
-Date:   Wed, 15 Jun 2022 21:34:44 +0200
+ us-mta-99-BT-X8-u-OGydkdp13PjrIg-1; Wed, 15 Jun 2022 15:56:26 -0400
+X-MC-Unique: BT-X8-u-OGydkdp13PjrIg-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 1FB8A29AB3F3;
+        Wed, 15 Jun 2022 19:56:26 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.22.19.47])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 06ADE492CA5;
+        Wed, 15 Jun 2022 19:56:25 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id 74D942209F9; Wed, 15 Jun 2022 15:56:25 -0400 (EDT)
+Date:   Wed, 15 Jun 2022 15:56:25 -0400
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Xie Yongji <xieyongji@bytedance.com>
+Cc:     miklos@szeredi.hu, stefanha@redhat.com,
+        zhangjiachen.jaycee@bytedance.com, linux-fsdevel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org
+Subject: Re: [PATCH v2 1/2] fuse: Remove unused "no_control" related code
+Message-ID: <Yqo5aaKITxivWsdV@redhat.com>
+References: <20220615055755.197-1-xieyongji@bytedance.com>
+ <20220615055755.197-2-xieyongji@bytedance.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH] vboxsf: Directly use ida_alloc()/free()
-Content-Language: en-US
-To:     Bo Liu <liubo03@inspur.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20220615062930.2893-1-liubo03@inspur.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20220615062930.2893-1-liubo03@inspur.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-5.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220615055755.197-2-xieyongji@bytedance.com>
+X-Scanned-By: MIMEDefang 2.85 on 10.11.54.9
+X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
-
-On 6/15/22 08:29, Bo Liu wrote:
-> Use ida_alloc()/ida_free() instead of
-> ida_simple_get()/ida_simple_remove().
-> The latter is deprecated and more verbose.
+On Wed, Jun 15, 2022 at 01:57:54PM +0800, Xie Yongji wrote:
+> This gets rid of "no_control" related code since
+> nobody uses it.
 > 
-> Signed-off-by: Bo Liu <liubo03@inspur.com>
+> Signed-off-by: Xie Yongji <xieyongji@bytedance.com>
 
-Thanks, patch looks good to me:
+Good to get rid of this knob. Nobody is using it.
 
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Reviewed-by: Vivek Goyal <vgoyal@redhat.com>
 
-Regards,
-
-Hans
+Vivek
 
 > ---
->  fs/vboxsf/super.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+>  fs/fuse/fuse_i.h    | 4 ----
+>  fs/fuse/inode.c     | 1 -
+>  fs/fuse/virtio_fs.c | 1 -
+>  3 files changed, 6 deletions(-)
 > 
-> diff --git a/fs/vboxsf/super.c b/fs/vboxsf/super.c
-> index d2f6df69f611..24ef7ddecf89 100644
-> --- a/fs/vboxsf/super.c
-> +++ b/fs/vboxsf/super.c
-> @@ -155,7 +155,7 @@ static int vboxsf_fill_super(struct super_block *sb, struct fs_context *fc)
->  		}
->  	}
+> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> index 488b460e046f..a47f14d0ee3f 100644
+> --- a/fs/fuse/fuse_i.h
+> +++ b/fs/fuse/fuse_i.h
+> @@ -507,7 +507,6 @@ struct fuse_fs_context {
+>  	bool default_permissions:1;
+>  	bool allow_other:1;
+>  	bool destroy:1;
+> -	bool no_control:1;
+>  	bool no_force_umount:1;
+>  	bool legacy_opts_show:1;
+>  	enum fuse_dax_mode dax_mode;
+> @@ -766,9 +765,6 @@ struct fuse_conn {
+>  	/* Delete dentries that have gone stale */
+>  	unsigned int delete_stale:1;
 >  
-> -	sbi->bdi_id = ida_simple_get(&vboxsf_bdi_ida, 0, 0, GFP_KERNEL);
-> +	sbi->bdi_id = ida_alloc(&vboxsf_bdi_ida, GFP_KERNEL);
->  	if (sbi->bdi_id < 0) {
->  		err = sbi->bdi_id;
->  		goto fail_free;
-> @@ -221,7 +221,7 @@ static int vboxsf_fill_super(struct super_block *sb, struct fs_context *fc)
->  	vboxsf_unmap_folder(sbi->root);
->  fail_free:
->  	if (sbi->bdi_id >= 0)
-> -		ida_simple_remove(&vboxsf_bdi_ida, sbi->bdi_id);
-> +		ida_free(&vboxsf_bdi_ida, sbi->bdi_id);
->  	if (sbi->nls)
->  		unload_nls(sbi->nls);
->  	idr_destroy(&sbi->ino_idr);
-> @@ -268,7 +268,7 @@ static void vboxsf_put_super(struct super_block *sb)
+> -	/** Do not create entry in fusectl fs */
+> -	unsigned int no_control:1;
+> -
+>  	/** Do not allow MNT_FORCE umount */
+>  	unsigned int no_force_umount:1;
 >  
->  	vboxsf_unmap_folder(sbi->root);
->  	if (sbi->bdi_id >= 0)
-> -		ida_simple_remove(&vboxsf_bdi_ida, sbi->bdi_id);
-> +		ida_free(&vboxsf_bdi_ida, sbi->bdi_id);
->  	if (sbi->nls)
->  		unload_nls(sbi->nls);
+> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> index 8c0665c5dff8..4059c6898e08 100644
+> --- a/fs/fuse/inode.c
+> +++ b/fs/fuse/inode.c
+> @@ -1564,7 +1564,6 @@ int fuse_fill_super_common(struct super_block *sb, struct fuse_fs_context *ctx)
+>  	fc->legacy_opts_show = ctx->legacy_opts_show;
+>  	fc->max_read = max_t(unsigned int, 4096, ctx->max_read);
+>  	fc->destroy = ctx->destroy;
+> -	fc->no_control = ctx->no_control;
+>  	fc->no_force_umount = ctx->no_force_umount;
 >  
+>  	err = -ENOMEM;
+> diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+> index 8db53fa67359..24bcf4dbca2a 100644
+> --- a/fs/fuse/virtio_fs.c
+> +++ b/fs/fuse/virtio_fs.c
+> @@ -1287,7 +1287,6 @@ static inline void virtio_fs_ctx_set_defaults(struct fuse_fs_context *ctx)
+>  	ctx->max_read = UINT_MAX;
+>  	ctx->blksize = 512;
+>  	ctx->destroy = true;
+> -	ctx->no_control = true;
+>  	ctx->no_force_umount = true;
+>  }
+>  
+> -- 
+> 2.20.1
+> 
 
