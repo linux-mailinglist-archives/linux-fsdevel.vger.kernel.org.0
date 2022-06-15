@@ -2,106 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F11B454D3B0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jun 2022 23:27:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8ED7C54D40C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jun 2022 23:59:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349740AbiFOV1n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jun 2022 17:27:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50862 "EHLO
+        id S1349884AbiFOV7l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jun 2022 17:59:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349710AbiFOV1l (ORCPT
+        with ESMTP id S1349828AbiFOV7k (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jun 2022 17:27:41 -0400
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65BFC167C7;
-        Wed, 15 Jun 2022 14:27:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1655328434;
-        bh=sewS1k19E5zNFt7guGx8ADD0uovsZroqX/MykOeNoAw=;
-        h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=ZaY29LgSeKsC0VKC0SfEO8gCT/mbD6Qy/5eG//rKUlfwQK32wCZyAB8p4+MeiczAs
-         wEnfd+sTmcT94yqzlRVJePYywnp5EvPECoxAhy5pRe56snX/8JFtBBgpCsKSUAfHNV
-         jL/7QpKzQmAvk0RCH/rLb4FqlMv8n1jXIqjxFB38=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from [0.0.0.0] ([149.28.201.231]) by mail.gmx.net (mrgmx105
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1MsHru-1nhIVP2ZLu-00tnF1; Wed, 15
- Jun 2022 23:27:14 +0200
-Message-ID: <00bbda63-dc00-05c0-4244-343352591d98@gmx.com>
-Date:   Thu, 16 Jun 2022 05:27:04 +0800
+        Wed, 15 Jun 2022 17:59:40 -0400
+Received: from EUR01-HE1-obe.outbound.protection.outlook.com (mail-he1eur01hn2225.outbound.protection.outlook.com [52.100.5.225])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CDAB54BD7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jun 2022 14:59:39 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ZrpuU0DGy+9TZMc1JVi8omG8nXMQSMyzWlw38LCynlHx5XY++HV14iR+qrHBYEZF9mev9llGQaZPF3ybWT1AkTDhXURUrkw3Rb5xECsaPQrZRkyPOoIKqVtmgiMV76Vox+hGAzTPM4jmsiYHnLaoQG0OT0z+hxKCyEjbROBS5cZsmbnChpEo+lJdFUaTWgAUP7cDW/mev40VE0oblXow+qxwBrUH2CU+ehMpUs5FeYXZBW13PGk4qsNPdcNx6y0NNkqOLBsnD8ZOla9N2sH4sJbI/x0axvv/b1HhpTGJ1DNs73Db7Byx4sSKv6mbv+oPwguAKGg6qsa2nBHjkv7fFA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lQsm62DnO3DRMaTO7/AWxijWtNxIrL/VW/Qe6xhipJU=;
+ b=BKDZqkaAt52ONW0BCGf2GUjy1ipV2uSTC48krX6Xq7e+ihMuAiQJXAFy7Bl1KiDm5t7s2y2q4x8cozSIEOo8KEltGTjFLPvWICLPJRzuty0xYCZJfi8lXoO4goLEOO5ounSGzQmZgZsVv4zf5oHs5cZW2OAwEHjzYrmWCKo7zR11ndlXzarV8MH5JLFoKKDPFVgNBbWslAYxjPwJ5re68A4PJ3fuxBJ9h44IDhMr706Wmek34vfER0vU+kgaSrIDlNvYFeF1QVsRua+kq/1bBwqrTTfFe/UBJVjDwJKXcYzKEf9cs0Cx4JYZLwLJEZbtMi5ggpvwVEV0DdXu0gLCoA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=permerror (sender ip
+ is 91.151.71.70) smtp.rcpttodomain=vger.kernel.org
+ smtp.mailfrom=solairedirect.co.za; dmarc=none action=none
+ header.from=solairedirect.co.za; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=solairdirect.onmicrosoft.com; s=selector1-solairdirect-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lQsm62DnO3DRMaTO7/AWxijWtNxIrL/VW/Qe6xhipJU=;
+ b=H1To2M3lUeyp7deLJqzwzf3GFFLDv8uytNyVPOmfWN40DVYWbJykFSojXSV6el7wI0E6y2VUFdvufSq0L4S4BPVgYMZsmY+4s5D+euu60Iwn199LGDg0BOzW1uOkGX3GJNgtFHhD0h7B/9/MPpzKTTygSq49Ly/pEj/3gRn0ku8=
+Received: from DB6PR0601CA0009.eurprd06.prod.outlook.com (2603:10a6:4:7b::19)
+ by VI1PR0601MB2543.eurprd06.prod.outlook.com (2603:10a6:800:8b::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5332.13; Wed, 15 Jun
+ 2022 21:59:37 +0000
+Received: from DB5EUR01FT086.eop-EUR01.prod.protection.outlook.com
+ (2603:10a6:4:7b:cafe::46) by DB6PR0601CA0009.outlook.office365.com
+ (2603:10a6:4:7b::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5353.14 via Frontend
+ Transport; Wed, 15 Jun 2022 21:59:37 +0000
+X-MS-Exchange-Authentication-Results: spf=permerror (sender IP is
+ 91.151.71.70) smtp.mailfrom=solairedirect.co.za; dkim=none (message not
+ signed) header.d=none;dmarc=none action=none header.from=solairedirect.co.za;
+Received-SPF: PermError (protection.outlook.com: domain of solairedirect.co.za
+ used an invalid SPF mechanism)
+Received: from SDSV152-VM.solairedirect.lan (91.151.71.70) by
+ DB5EUR01FT086.mail.protection.outlook.com (10.152.5.118) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.5353.14 via Frontend Transport; Wed, 15 Jun 2022 21:59:36 +0000
+Received: from [206.72.197.122] ([206.72.197.122] unverified) by SDSV152-VM.solairedirect.lan with Microsoft SMTPSVC(8.5.9600.16384);
+         Thu, 16 Jun 2022 00:00:12 +0200
+Content-Type: text/plain; charset="iso-8859-1"
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [syzbot] KASAN: use-after-free Read in copy_page_from_iter_atomic
- (2)
-Content-Language: en-US
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     dsterba@suse.cz,
-        syzbot <syzbot+d2dd123304b4ae59f1bd@syzkaller.appspotmail.com>,
-        akpm@linux-foundation.org, clm@fb.com, dsterba@suse.com,
-        josef@toxicpanda.com, linux-btrfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, syzkaller-bugs@googlegroups.com,
-        willy@infradead.org
-References: <0000000000003ce9d105e0db53c8@google.com>
- <00000000000085068105e112a117@google.com>
- <20220613193912.GI20633@twin.jikos.cz> <20220614071757.GA1207@lst.de>
- <2cc67037-cf90-cca2-1655-46b92b43eba8@gmx.com>
- <20220615132147.GA18252@lst.de>
-From:   Qu Wenruo <quwenruo.btrfs@gmx.com>
-In-Reply-To: <20220615132147.GA18252@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:GzvWUv7j+dS6fGBh0O76pQHRuv0QctvPBDKfUco4+Y/GlL/5y5g
- BXHYTJT9fnyYxlKhn1+btWdWvWOiF9BDnLfCq+EChmasKSAq6b9B1pCQq6ZQASuejlOodGV
- HN32edj0jLN7bwq3m5m0D0pObpIh6RNHWquJ644IBNrDdnIdMTXGq0sbFfGfNtFwiDuTyIw
- bbtKn1jfl54A+36cVRM4w==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:lmKkDBBaQN4=:jf9gSILfZGEkHNseXPaNRe
- PvP7u+k40FY2CY2c0qVJJZBB/SSwTJDnZaUJ+SDpqeZrdOVsk4C8rtHyoZ8VARRoOxw5VTHmO
- Ccz1d/+zDolUMSDJN/JxkTSUDCi2OKfQeM8YN7zQyU1v+Pg8h/hVzRfH+sXiLqZHpm7yImcXe
- Zns22cRY5ahuRaE2oWaY1UC1+UNPve57Dv7F1pFGJQVGEqTOvkI1xzJuM8qT/ieBd55fD/oAs
- +55imKkenFxKoBNFuRBqJtrb98zaAbF0NbNBl5pktTcEOsz1cjYh4KKWMFNa5qnu3lHRVjFW3
- ONRUrJDpOunQSHpCP8sruk9PrSwAmxUHeIWZdGTY7XIfJUMs/ISyhdsYDW1cMmK2JGnUtyp0q
- /5fzm0FFf6xdr6G9q4cwF1q2jsuHIV+y7uKkqGyNicAXak9LPk7aXkU6Mnw0WYUKFdBmMPYTJ
- 8TvJRrLCXnJB4RQGlAe2KNe3jelUpxv0Ei6DJqn7gTb5tiESBPwTu7NHZ7EcZ+io2rjhfrJ7y
- Y/FP/JpHG1b//XFXHUbQTCvbMJ/43T/wrLGtw3wwa2RDgtWGdP+XwIGL5sAlQODdEKXMR2hxa
- L6yL2jOirN64cSOHfNuQ5aHJ9fhfqmezh1imJwI7+nWdkjiKYZMgucyVWFqTwZAyclAj4jLka
- eSVL2A07OUVdeB6IDpq4LW4KFqX+HFtZD566Dw61X8vjl4W2kSyTdZknPV/eatpzAEQKJ+YA3
- +wvPTCK/09H35naTvpU8cdM9FDkWK2rEQHZZpBSlCC0D6F+x3GT0XL2fj+v9j+51RUk2Q4Hbc
- ByLPN/HiArHr1xbq6ktyJEjpMmjMQMv30Vq/4BM6ZqJty8OHCs7dnwqBo1RxgcaDcglFBAy6r
- Wwsy3UqRjM3N3/IsstSmsF1f112zJKzsOYGBVU4n+YxJgSKiRC7yDB2VPVt3e6jdeK3Y8m5gg
- qq53Pz/u7c4wKhvf5ASPAnB2ygA748E+2SLwxVHmnm0UFKhZJCJA+GnZsL21qOCyZ6N0bei8M
- QRln+yhh05sPLbVNlsPEmewJAHICI57FsNDrKog79AJsQEEtviKYHZqb1O8GsrBevAn4KBoZi
- Xr+vzv/l0huLKyq0FCz7buQROHIxWvDxZDm22i6sWCwe/AwVl79didzmQ==
-X-Spam-Status: No, score=-3.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,FREEMAIL_FROM,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Description: Mail message body
+Subject: Hi
+To:     linux-fsdevel@vger.kernel.org
+From:   "Emerald Johansson" <marketing@solairedirect.co.za>
+Date:   Wed, 15 Jun 2022 17:59:34 -0400
+Reply-To: emjo680@gmail.com
+Message-ID: <SDSV152-VMzxxQLj9Kx00047014@SDSV152-VM.solairedirect.lan>
+X-OriginalArrivalTime: 15 Jun 2022 22:00:12.0354 (UTC) FILETIME=[49630220:01D88103]
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: ebb67c95-00b3-428f-bc6f-08da4f1a569b
+X-MS-TrafficTypeDiagnostic: VI1PR0601MB2543:EE_
+X-Microsoft-Antispam-PRVS: <VI1PR0601MB25439143F241D89DC69D2C8EEBAD9@VI1PR0601MB2543.eurprd06.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?JHCpFA75ALIvmhXUmEHLZX+DgUQqL5H9V9+qjYoyfInpsSvxXjJiDmXMs+?=
+ =?iso-8859-1?Q?guRyM8D2bfYFmfdt3t1hXRk4YGml8OUCs62ol63RtGX30FhnRqNoJD44YR?=
+ =?iso-8859-1?Q?FuuxOkSdeeFMO9C+Hq7rMRMSelblarsD/BbBAdLabB5+ZJR6yFUK8cCMUa?=
+ =?iso-8859-1?Q?8JkO5HZkcYB9NrtXF+s5dLPLqtz8bd/pxcTMQjlvIWEBzlTWFwlunKEsEz?=
+ =?iso-8859-1?Q?65UJ7gfa80HfmZrbEg0nkDcrMQnFHdSx8atMKc2YV3FgNxwMYQd11mL0IM?=
+ =?iso-8859-1?Q?EF4T+qjJoprCDTDYqyNWrsrO5VDuyRrygUthTNr7KgAjDSa9t80CVZYRyC?=
+ =?iso-8859-1?Q?d5fR/SLZVh/egqtyFkJHC4s28G13KhNd7x+YPXfwZRupqRjyhrF7Y6L1lz?=
+ =?iso-8859-1?Q?U8idjQMLlp0nhcfuWH+xm50tLXmUdxVoQBw5SoVG1iiClU+54dFjiTvDK+?=
+ =?iso-8859-1?Q?GBqd415IEdYZmmFTTx8NA2t+Ofn0DtOErgfoEsEliJhoZQaXn4mUfUjbcB?=
+ =?iso-8859-1?Q?UYZv9g3/iMWX8tDCpFJba+XzPP4EXrJ+hcj0mxUAeUXokqlb0wp171hKFA?=
+ =?iso-8859-1?Q?jifamGqLc1/dP97Ukx/mkNsd1hOY6shhjzNtcL2QWecV2v3Y+1ftZvwO9d?=
+ =?iso-8859-1?Q?VIKPbD1k87RILpdnZmBvqKP0sJ1/DQMJ14knopwU+7x0Y2QgPmgmYoY0dj?=
+ =?iso-8859-1?Q?Be2VETjaet5Iv8MMvtIyr4JvyfH5mS0Imy4KBzgIwPA3hCmxGRZxMaE5xR?=
+ =?iso-8859-1?Q?3nKo9ZvqqoVhcUq0TefGbvJgd050myUx3zKuo7WSDx9Dtvo3yyAqzrMsBa?=
+ =?iso-8859-1?Q?GUo3Anq8DVj0CF2R2YaijH09K0w6fVjv8tXVE5M3uHfk+Et7qEGCY19S+F?=
+ =?iso-8859-1?Q?MM8v1ImDp2V5cnilotNMrun04toRy5/n9EcWDYxWNueljcf5xyLxmW5p3u?=
+ =?iso-8859-1?Q?EXfnYPp3pyZOX/Rc0opaxijaJs/nghDwRsSyVM9GneBLk3ELkHzyd08Gtm?=
+ =?iso-8859-1?Q?Y0sg5tUUUeEJlJpEXxgfFiZ4tHixmrYGzucxUEKWyUQbIVlCrsWMMW1SQh?=
+ =?iso-8859-1?Q?mn8BPgahFbM5hRfAYFYxuow=3D?=
+X-Forefront-Antispam-Report: CIP:91.151.71.70;CTRY:FR;LANG:en;SCL:5;SRV:;IPV:CAL;SFV:SPM;H:SDSV152-VM.solairedirect.lan;PTR:undef-71-70.c-si.fr;CAT:OSPM;SFS:(13230016)(396003)(136003)(39860400002)(346002)(40470700004)(36840700001)(46966006)(40460700003)(3480700007)(47076005)(5660300002)(40480700001)(7116003)(4744005)(6666004)(336012)(41300700001)(70206006)(26005)(86362001)(81166007)(70586007)(2860700004)(2906002)(316002)(9686003)(186003)(36860700001)(356005)(8936002)(82310400005)(6916009)(8676002)(508600001)(956004)(16900700008);DIR:OUT;SFP:1501;
+X-OriginatorOrg: solairedirect.co.za
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jun 2022 21:59:36.6043
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ebb67c95-00b3-428f-bc6f-08da4f1a569b
+X-MS-Exchange-CrossTenant-Id: 1c138fa9-0b91-4473-baea-5be5feac0f7e
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=1c138fa9-0b91-4473-baea-5be5feac0f7e;Ip=[91.151.71.70];Helo=[SDSV152-VM.solairedirect.lan]
+X-MS-Exchange-CrossTenant-AuthSource: DB5EUR01FT086.eop-EUR01.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0601MB2543
+X-Spam-Status: No, score=4.1 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,FORGED_SPF_HELO,FREEMAIL_FORGED_REPLYTO,
+        FREEMAIL_REPLYTO_END_DIGIT,RCVD_IN_DNSWL_NONE,SPF_HELO_PASS,
+        T_SCC_BODY_TEXT_LINE,T_SPF_PERMERROR autolearn=no autolearn_force=no
+        version=3.4.6
+X-Spam-Level: ****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+I hope that you are at your best and doing well. The purpose of this letter=
+ is seeking for a pen pal like friendship and I'd love to and be honored to=
+ be friends with you if you do not mind.. If the Idea sounds OK with you, j=
+ust say yes and we can take it on from there. I look forward to hear hearin=
+g from you.. My name is Emerald From Sweden 36 years , this will mean a lot=
+ to me to hear back from you.
 
+Warm Regards.
 
-On 2022/6/15 21:21, Christoph Hellwig wrote:
-> On Tue, Jun 14, 2022 at 04:50:22PM +0800, Qu Wenruo wrote:
->> The same way as data?
->>
->> map-logical to find the location of a mirror, write 4 bytes of zero int=
-o
->> the location, then call it a day.
->>
->> Although for metadata, you may want to choose a metadata that would
->> definitely get read.
->> Thus tree root is a good candidate.
->
-> And how do I find out the logic address of the tree root?
-
-For tree root, "btrfs ins dump-super <dev> | grep '^root\s'.
-
-For other tree blocks, "btrfs ins dump-tree <dev>" then with other other
-keywords to grab.
-
-Thanks,
-Qu
+Emerald
