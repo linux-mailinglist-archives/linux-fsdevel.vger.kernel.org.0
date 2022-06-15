@@ -2,225 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E304055B5FE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 27 Jun 2022 06:15:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 377E755F07E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 28 Jun 2022 23:44:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231151AbiF0EPa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 27 Jun 2022 00:15:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49016 "EHLO
+        id S229781AbiF1Voj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 28 Jun 2022 17:44:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229746AbiF0EP3 (ORCPT
+        with ESMTP id S229455AbiF1Voi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 27 Jun 2022 00:15:29 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1B3F2BE9;
-        Sun, 26 Jun 2022 21:15:28 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1E8C8611E3;
-        Mon, 27 Jun 2022 04:15:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A8B2C341C8;
-        Mon, 27 Jun 2022 04:15:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1656303327;
-        bh=Ulx6aqzrlbxaA/jiQit1/Ykye9FA3EESv3aCio3r3fA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=T46pjQxABqtqqI4q0dy8MnZEOKczGhoPW/rYLQwq7+vJ+88TCaJWmahikfWQB5FAM
-         8QhzQucl7rdpZsRKONvnkZ2r31q7juCrzknDZ2KsWDefBoah6pUmag3TYWDrmuhEPs
-         rmu9Dw4Z42fvxU7aKC9Vs9iaBjCFaNi8poMseuudS+65sLlLrxFoVyxcYp3oq05oZq
-         Ij39MJ/pnN/eQyLf0QyRWuCU3d2KTKCLtLV9Gv3DE8i6cds2o0Qi9ZRzRn7JAEPIZp
-         WyIXp77PJ00S/rZKeHKil9kxi/2Dc/cMPMsyXrdFDFDou7hutqcCYhOCgITmQH14cu
-         ywqXLQiXDg0/w==
-Date:   Sun, 26 Jun 2022 21:15:27 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v3 25/25] xfs: Support large folios
-Message-ID: <Yrku31ws6OCxRGSQ@magnolia>
-References: <20211216210715.3801857-1-willy@infradead.org>
- <20211216210715.3801857-26-willy@infradead.org>
- <YrO243DkbckLTfP7@magnolia>
+        Tue, 28 Jun 2022 17:44:38 -0400
+Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 030C51B7B2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jun 2022 14:44:38 -0700 (PDT)
+Received: by mail-pf1-x42b.google.com with SMTP id 136so8070573pfy.10
+        for <linux-fsdevel@vger.kernel.org>; Tue, 28 Jun 2022 14:44:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=from:to:cc:subject:date:message-id:user-agent:mime-version;
+        bh=TeO0t0DJhH40WIl7Vbgx7DQrmpnWJwpLVnwQgvva4x4=;
+        b=KRkasxtHfuIGPlHfbWQTNG6foYVaYvPaKcOtI5HwDb2AOGP7QItQDDgNuopHUcga/H
+         OLf3n7av5mB6vG9RPPSkTqynn5wLyvhrtQS9++zeNZuevyPFQD0RwmgxznqgJYXz333S
+         jQot788JZnFFWnlMI++YSrPWVDDzrb+ohqODSWw6L7NVl6WNVfu6vMAYtbp6Abrdhpu8
+         9kjd8KOy0/0MlZPBJsAZffSgFNZ5fhnFu+W6TPIIJq2TXYo81qIcGwAvW/pLktIHUB2u
+         lzXRGaYqB/abn1lCCnC1zz8aLBgvoom000fBXqmyXUxtTEVEyLr9vHshwXQ8zomi9ECx
+         BZew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:user-agent
+         :mime-version;
+        bh=TeO0t0DJhH40WIl7Vbgx7DQrmpnWJwpLVnwQgvva4x4=;
+        b=CruT9jirsS2hK0cHd/iz3psTy5MZyJ1lHPh01L+nMLrT3xVUTHJmF6iPpFqzGneUyC
+         ZkpWQ4pDraqazL7CgxiGzjFY0Ahq/FD9KqjEZT8/rp4x4l4t7Y8S+EqDg/gbiPHDxF/Z
+         75iH+mqbYngWoD8EnsWx3KW+HfB8WykiZ7Pn3zc4uvhauktMePZxmHxdIoWUNEVVoMGj
+         euZoZ4vnRb8DbMXlduf3nEimgUQHpTGAu5b7GMsDWddMT8lxvWkilZ27m6Se5xgbDGHg
+         tGtqANIRNJCXmTIHNG3eZpn6fgBFsSeea7UscVuTqD0QY35xyOzLOQkB6LTYlc1/ql1N
+         7pEA==
+X-Gm-Message-State: AJIora/6FAN8fI+v/pPXETp6/0AttSfLV9Xfiyhl22FAv9P8xJ5GGYiD
+        eF7XlBCTwVLIebvrTL/AuF1PpWVqmLmeJw==
+X-Google-Smtp-Source: AGRyM1uLeOu44xplLd/CxLafuzCbkEBJZa98R3umT6BodvfxtgAAPRjzUEEW1sZM3M9/DYscE9bl+A==
+X-Received: by 2002:a05:6a00:218c:b0:525:5236:74c with SMTP id h12-20020a056a00218c00b005255236074cmr6938808pfi.44.1656452677380;
+        Tue, 28 Jun 2022 14:44:37 -0700 (PDT)
+Received: from bsegall-glaptop.localhost (c-67-188-112-16.hsd1.ca.comcast.net. [67.188.112.16])
+        by smtp.gmail.com with ESMTPSA id g4-20020a655944000000b003fe4da67980sm9692585pgu.68.2022.06.28.14.44.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Jun 2022 14:44:35 -0700 (PDT)
+From:   Benjamin Segall <bsegall@google.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Eric Dumazet <edumazet@google.com>
+Subject: [RESEND RFC PATCH] epoll: autoremove wakers even more aggressively
+Date:   Wed, 15 Jun 2022 14:24:23 -0700
+Message-ID: <xm26fsjotqda.fsf@google.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.2 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <YrO243DkbckLTfP7@magnolia>
-X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain
+X-Spam-Status: No, score=-14.2 required=5.0 tests=BAYES_00,DATE_IN_PAST_96_XX,
+        DKIMWL_WL_MED,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_SCC_BODY_TEXT_LINE,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 22, 2022 at 05:42:11PM -0700, Darrick J. Wong wrote:
-> [resend with shorter 522.out file to keep us under the 300k maximum]
-> 
-> On Thu, Dec 16, 2021 at 09:07:15PM +0000, Matthew Wilcox (Oracle) wrote:
-> > Now that iomap has been converted, XFS is large folio safe.
-> > Indicate to the VFS that it can now create large folios for XFS.
-> > 
-> > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-> > ---
-> >  fs/xfs/xfs_icache.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
-> > index da4af2142a2b..cdc39f576ca1 100644
-> > --- a/fs/xfs/xfs_icache.c
-> > +++ b/fs/xfs/xfs_icache.c
-> > @@ -87,6 +87,7 @@ xfs_inode_alloc(
-> >  	/* VFS doesn't initialise i_mode or i_state! */
-> >  	VFS_I(ip)->i_mode = 0;
-> >  	VFS_I(ip)->i_state = 0;
-> > +	mapping_set_large_folios(VFS_I(ip)->i_mapping);
-> >  
-> >  	XFS_STATS_INC(mp, vn_active);
-> >  	ASSERT(atomic_read(&ip->i_pincount) == 0);
-> > @@ -320,6 +321,7 @@ xfs_reinit_inode(
-> >  	inode->i_rdev = dev;
-> >  	inode->i_uid = uid;
-> >  	inode->i_gid = gid;
-> > +	mapping_set_large_folios(inode->i_mapping);
-> 
-> Hmm.  Ever since 5.19-rc1, I've noticed that fsx in generic/522 now
-> reports file corruption after 20 minutes of runtime.  The corruption is
-> surprisingly reproducible (522.out.bad attached below) in that I ran it
-> three times and always got the same bad offset (0x6e000) and always the
-> same opcode (6213798(166 mod 256) MAPREAD).
-> 
-> I turned off multipage folios and now 522 has run for over an hour
-> without problems, so before I go do more debugging, does this ring a
-> bell to anyone?
+If a process is killed or otherwise exits while having active network
+connections and many threads waiting on epoll_wait, the threads will all
+be woken immediately, but not removed from ep->wq. Then when network
+traffic scans ep->wq in wake_up, every wakeup attempt will fail, and
+will not remove the entries from the list.
 
-I tried bisecting, but that didn't yield anything productive and
-5.19-rc4 still fails after 25 minutes; however, it seems that g/522 will
-run without problems for at least 3-4 days after reverting this patch
-from -rc3.
+This means that the cost of the wakeup attempt is far higher than usual,
+does not decrease, and this also competes with the dying threads trying
+to actually make progress and remove themselves from the wq.
 
-So I guess I have a blunt force fix if we can't figure this one out
-before 5.19 final, but I'd really rather not.  Will keep trying this
-week.
+Handle this by removing visited epoll wq entries unconditionally, rather
+than only when the wakeup succeeds - the structure of ep_poll means that
+the only potential loss is the timed_out->eavail heuristic, which now
+can race and result in a redundant ep_send_events attempt. (But only
+when incoming data and a timeout actually race, not on every timeout)
 
---D
+Signed-off-by: Ben Segall <bsegall@google.com>
+---
+ fs/eventpoll.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-> [addendum: Apparently vger now has a 300K message size limit; if you
-> want the full output, see https://djwong.org/docs/522.out.txt ]
-> 
-> --D
-> 
-> QA output created by 522
-> READ BAD DATA: offset = 0x69e3e, size = 0x1c922, fname = /mnt/junk
-> OFFSET	GOOD	BAD	RANGE
-> 0x6e000	0x0000	0x9173	0x00000
-> operation# (mod 256) for the bad data may be 145
-> 0x6e001	0x0000	0x7391	0x00001
-> operation# (mod 256) for the bad data may be 145
-> 0x6e002	0x0000	0x9195	0x00002
-> operation# (mod 256) for the bad data may be 145
-> 0x6e003	0x0000	0x9591	0x00003
-> operation# (mod 256) for the bad data may be 145
-> 0x6e004	0x0000	0x91b5	0x00004
-> operation# (mod 256) for the bad data may be 145
-> 0x6e005	0x0000	0xb591	0x00005
-> operation# (mod 256) for the bad data may be 145
-> 0x6e006	0x0000	0x91e2	0x00006
-> operation# (mod 256) for the bad data may be 145
-> 0x6e007	0x0000	0xe291	0x00007
-> operation# (mod 256) for the bad data may be 145
-> 0x6e008	0x0000	0x919d	0x00008
-> operation# (mod 256) for the bad data may be 145
-> 0x6e009	0x0000	0x9d91	0x00009
-> operation# (mod 256) for the bad data may be 145
-> 0x6e00a	0x0000	0x91e8	0x0000a
-> operation# (mod 256) for the bad data may be 145
-> 0x6e00b	0x0000	0xe891	0x0000b
-> operation# (mod 256) for the bad data may be 145
-> 0x6e00c	0x0000	0x91c9	0x0000c
-> operation# (mod 256) for the bad data may be 145
-> 0x6e00d	0x0000	0xc991	0x0000d
-> operation# (mod 256) for the bad data may be 145
-> 0x6e00e	0x0000	0x9147	0x0000e
-> operation# (mod 256) for the bad data may be 145
-> 0x6e00f	0x0000	0x4791	0x0000f
-> operation# (mod 256) for the bad data may be 145
-> LOG DUMP (6213798 total operations):
-> 
-> <snip>
-> 
-> 6213732(100 mod 256): COLLAPSE 0x3b000 thru 0x4efff	(0x14000 bytes)
-> 6213733(101 mod 256): READ     0x1953d thru 0x29311	(0xfdd5 bytes)
-> 6213734(102 mod 256): INSERT 0x14000 thru 0x2ffff	(0x1c000 bytes)
-> 6213735(103 mod 256): COPY 0x1d381 thru 0x36d38	(0x199b8 bytes) to 0x64491 thru 0x7de48	******EEEE
-> 6213736(104 mod 256): ZERO     0x74247 thru 0x927bf	(0x1e579 bytes)
-> 6213737(105 mod 256): INSERT 0x8000 thru 0x16fff	(0xf000 bytes)
-> 6213738(106 mod 256): READ     0x87aba thru 0x8ce48	(0x538f bytes)
-> 6213739(107 mod 256): TRUNCATE DOWN	from 0x8ce49 to 0x46571	******WWWW
-> 6213740(108 mod 256): SKIPPED (no operation)
-> 6213741(109 mod 256): ZERO     0x55674 thru 0x70d41	(0x1b6ce bytes)	******ZZZZ
-> 6213742(110 mod 256): PUNCH    0xc8b5 thru 0xe80d	(0x1f59 bytes)
-> 6213743(111 mod 256): TRUNCATE DOWN	from 0x70d42 to 0x11ade	******WWWW
-> 6213744(112 mod 256): COLLAPSE 0x6000 thru 0xffff	(0xa000 bytes)
-> 6213745(113 mod 256): SKIPPED (no operation)
-> 6213746(114 mod 256): MAPREAD  0x2625 thru 0x7add	(0x54b9 bytes)
-> 6213747(115 mod 256): CLONE 0x2000 thru 0x6fff	(0x5000 bytes) to 0x10000 thru 0x14fff
-> 6213748(116 mod 256): SKIPPED (no operation)
-> 6213749(117 mod 256): TRUNCATE UP	from 0x15000 to 0x8d131	******WWWW
-> 6213750(118 mod 256): WRITE    0x82547 thru 0x88334	(0x5dee bytes)
-> 6213751(119 mod 256): DEDUPE 0x7d000 thru 0x83fff	(0x7000 bytes) to 0x22000 thru 0x28fff
-> 6213752(120 mod 256): READ     0x11e69 thru 0x2864c	(0x167e4 bytes)
-> 6213753(121 mod 256): INSERT 0x41000 thru 0x45fff	(0x5000 bytes)
-> 6213754(122 mod 256): COPY 0x2ca4c thru 0x2ed9f	(0x2354 bytes) to 0x2fef1 thru 0x32244
-> 6213755(123 mod 256): MAPWRITE 0x70677 thru 0x8b993	(0x1b31d bytes)
-> 6213756(124 mod 256): FALLOC   0x7229f thru 0x91158	(0x1eeb9 bytes) INTERIOR
-> 6213757(125 mod 256): COLLAPSE 0x13000 thru 0x2bfff	(0x19000 bytes)
-> 6213758(126 mod 256): COPY 0x9271 thru 0xba34	(0x27c4 bytes) to 0x3227c thru 0x34a3f
-> 6213759(127 mod 256): CLONE 0x23000 thru 0x2cfff	(0xa000 bytes) to 0x6c000 thru 0x75fff	******JJJJ
-> 6213760(128 mod 256): READ     0x44cff thru 0x4c4a1	(0x77a3 bytes)
-> 6213761(129 mod 256): DEDUPE 0x60000 thru 0x73fff	(0x14000 bytes) to 0x39000 thru 0x4cfff	BBBB******
-> 6213762(130 mod 256): COLLAPSE 0x39000 thru 0x3ffff	(0x7000 bytes)
-> 6213763(131 mod 256): WRITE    0x57565 thru 0x5e710	(0x71ac bytes)
-> 6213764(132 mod 256): MAPREAD  0x39c49 thru 0x4accd	(0x11085 bytes)
-> 6213765(133 mod 256): ZERO     0x4faf5 thru 0x6a5cc	(0x1aad8 bytes)
-> 6213766(134 mod 256): MAPREAD  0x57f8 thru 0x8c98	(0x34a1 bytes)
-> 6213767(135 mod 256): MAPREAD  0x5cbd8 thru 0x72130	(0x15559 bytes)	***RRRR***
-> 6213768(136 mod 256): SKIPPED (no operation)
-> 6213769(137 mod 256): INSERT 0x24000 thru 0x32fff	(0xf000 bytes)
-> 6213770(138 mod 256): COPY 0x32b0c thru 0x4d035	(0x1a52a bytes) to 0x4f97f thru 0x69ea8
-> 6213771(139 mod 256): DEDUPE 0x3f000 thru 0x52fff	(0x14000 bytes) to 0x23000 thru 0x36fff
-> 6213772(140 mod 256): READ     0x6d9bf thru 0x81130	(0x13772 bytes)	***RRRR***
-> 6213773(141 mod 256): TRUNCATE DOWN	from 0x81131 to 0x569c0	******WWWW
-> 6213774(142 mod 256): MAPREAD  0x354d5 thru 0x44e7b	(0xf9a7 bytes)
-> 6213775(143 mod 256): MAPWRITE 0x547c4 thru 0x60a8e	(0xc2cb bytes)
-> 6213776(144 mod 256): SKIPPED (no operation)
-> 6213777(145 mod 256): WRITE    0x28ada thru 0x4356c	(0x1aa93 bytes)
-> 6213778(146 mod 256): ZERO     0x74c28 thru 0x91fec	(0x1d3c5 bytes)
-> 6213779(147 mod 256): INSERT 0x12000 thru 0x1cfff	(0xb000 bytes)
-> 6213780(148 mod 256): ZERO     0x30834 thru 0x330f7	(0x28c4 bytes)
-> 6213781(149 mod 256): PUNCH    0x36080 thru 0x42edc	(0xce5d bytes)
-> 6213782(150 mod 256): DEDUPE 0x14000 thru 0x19fff	(0x6000 bytes) to 0x49000 thru 0x4efff
-> 6213783(151 mod 256): DEDUPE 0x51000 thru 0x5efff	(0xe000 bytes) to 0x2a000 thru 0x37fff
-> 6213784(152 mod 256): WRITE    0x2448e thru 0x400f5	(0x1bc68 bytes)
-> 6213785(153 mod 256): ZERO     0x87615 thru 0x927bf	(0xb1ab bytes)
-> 6213786(154 mod 256): READ     0x5afc thru 0xa32c	(0x4831 bytes)
-> 6213787(155 mod 256): SKIPPED (no operation)
-> 6213788(156 mod 256): ZERO     0x7aab0 thru 0x7e2b3	(0x3804 bytes)
-> 6213789(157 mod 256): INSERT 0x45000 thru 0x58fff	(0x14000 bytes)
-> 6213790(158 mod 256): FALLOC   0x1a80e thru 0x289a3	(0xe195 bytes) INTERIOR
-> 6213791(159 mod 256): SKIPPED (no operation)
-> 6213792(160 mod 256): SKIPPED (no operation)
-> 6213793(161 mod 256): FALLOC   0x2aca thru 0x20562	(0x1da98 bytes) INTERIOR
-> 6213794(162 mod 256): ZERO     0x72fb9 thru 0x75887	(0x28cf bytes)
-> 6213795(163 mod 256): COPY 0xa62e thru 0x218d0	(0x172a3 bytes) to 0x28ab1 thru 0x3fd53
-> 6213796(164 mod 256): SKIPPED (no operation)
-> 6213797(165 mod 256): COPY 0xa666 thru 0xf6a1	(0x503c bytes) to 0x353f0 thru 0x3a42b
-> 6213798(166 mod 256): MAPREAD  0x69e3e thru 0x8675f	(0x1c922 bytes)	***RRRR***
-> Log of operations saved to "/mnt/junk.fsxops"; replay with --replay-ops
-> Correct content saved for comparison
-> (maybe hexdump "/mnt/junk" vs "/mnt/junk.fsxgood")
-> Silence is golden
+diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+index e2daa940ebce..8b56b94e2f56 100644
+--- a/fs/eventpoll.c
++++ b/fs/eventpoll.c
+@@ -1745,10 +1745,25 @@ static struct timespec64 *ep_timeout_to_timespec(struct timespec64 *to, long ms)
+ 	ktime_get_ts64(&now);
+ 	*to = timespec64_add_safe(now, *to);
+ 	return to;
+ }
+ 
++/*
++ * autoremove_wake_function, but remove even on failure to wake up, because we
++ * know that default_wake_function/ttwu will only fail if the thread is already
++ * woken, and in that case the ep_poll loop will remove the entry anyways, not
++ * try to reuse it.
++ */
++static int ep_autoremove_wake_function(struct wait_queue_entry *wq_entry,
++				       unsigned int mode, int sync, void *key)
++{
++	int ret = default_wake_function(wq_entry, mode, sync, key);
++
++	list_del_init(&wq_entry->entry);
++	return ret;
++}
++
+ /**
+  * ep_poll - Retrieves ready events, and delivers them to the caller-supplied
+  *           event buffer.
+  *
+  * @ep: Pointer to the eventpoll context.
+@@ -1826,12 +1841,19 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
+ 		 * chance to harvest new event. Otherwise wakeup can be
+ 		 * lost. This is also good performance-wise, because on
+ 		 * normal wakeup path no need to call __remove_wait_queue()
+ 		 * explicitly, thus ep->lock is not taken, which halts the
+ 		 * event delivery.
++		 *
++		 * In fact, we now use an even more aggressive function that
++		 * unconditionally removes, because we don't reuse the wait
++		 * entry between loop iterations. This lets us also avoid the
++		 * performance issue if a process is killed, causing all of its
++		 * threads to wake up without being removed normally.
+ 		 */
+ 		init_wait(&wait);
++		wait.func = ep_autoremove_wake_function;
+ 
+ 		write_lock_irq(&ep->lock);
+ 		/*
+ 		 * Barrierless variant, waitqueue_active() is called under
+ 		 * the same lock on wakeup ep_poll_callback() side, so it
+-- 
+2.36.1.476.g0c4daa206d-goog
+
