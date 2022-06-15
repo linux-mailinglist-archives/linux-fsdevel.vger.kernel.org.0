@@ -2,149 +2,189 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7641A54CDA1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jun 2022 17:55:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B57C654CDB6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jun 2022 18:03:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345297AbiFOPzj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jun 2022 11:55:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51176 "EHLO
+        id S240929AbiFOQDm convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jun 2022 12:03:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245605AbiFOPzh (ORCPT
+        with ESMTP id S230162AbiFOQDk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jun 2022 11:55:37 -0400
-Received: from sonic316-26.consmr.mail.ne1.yahoo.com (sonic316-26.consmr.mail.ne1.yahoo.com [66.163.187.152])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EE3C34B82
-        for <linux-fsdevel@vger.kernel.org>; Wed, 15 Jun 2022 08:55:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1655308534; bh=tKXZOSW+rCggK4tmMM0+06TKBO7wswzabCTCRNXsBhc=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=lZfFWkSjhQbMXIDwPR/vSXPS8txg/aIdCiH99K/WKEGkivC7KbjYctBYz7bmYlFMGyFAw+5/EO70Y2KcWNWNdNUiElp2bKdz+BtHxboa8NCCC8jxoSxpNTcRnVXuNzUMiKfNoNfGsnUmetngJ0K1cmbbxrl1tRq+SRxaGmD7/uW98dLGX+TaSmzfJufUHUUsebWMv21GHRPMdGlz2vvpG/Zs4q+qOdp4LTp/lM9pX3ra/zfIOMkVTE0+pbiBk9eSWihirtybbEXXmBk50G+i2arJj5NT5VIXLTGhokEL+SA+4Wh+MKzbm8QQO1Mtlv+TgsivDcic6IREvOuiW9r+ig==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1655308534; bh=DcasrK3Ao+uO7dv08ByHIA6gNyoX3cBO6RPIFwgZ0GF=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=P43cJCGEerBt9uDPLGhS6GCkC+nIVTHPXe+tIyjO6qKPnY5/WU7EGEGIXeUwU6JU+OHeJmY4TXkXC3uspiTga0itpEyHbiKd4ZFJ2Vfujw7i8yu29hKll7kjLzi+QVKkzawRd7/Wm3xhp7kdJQvfTwTsCJi+lC+ywSi48z0MuRmiw8GtVpeDgUDmQ0+jQPf6ePv1Oqf/ErM04mTnyrnEG5O0jPbhNwUQwrvMTOqwZR/9/lgxQ9iRkHx1pvCkzNJpOESpIc5nQ05jGwvQpxERCqn9z4Vhdn0y4ZldTxR6kxuGSGQVGOFeOB/HBiaL9JqlHT1zRhjcIiISATH+I2BP8Q==
-X-YMail-OSG: 3.kxmMUVM1kALftCQOBOMDo0pwNt7N.gDwuaeG9n5J_gI6pT9kPEZctmfUZnpQN
- sj2P4HrPTnoRepKNiEiLv1xEV33fsgijjYcverCyhETE.8TeWydBXEmsKLdPjbs_x4u0ESMF7wio
- hzpfoJJadZ49RcVNHXe3XesQwRh.9Jr38oywKbpq.46hIucoXsGQmfBNEIDjXOo9bfNd5LqavkQ6
- ERdKJDJRqVfrfOO4_91Yobz3LnvShHzVtNCWTdeyyYtvpnWjjswG9zWLpLYoeU6ZOKTwtHFRLJfR
- W560sfptAJE.w918ny4Wa308w8e0lkCkAa6N1vxZNOSlms95DzcIgswYZxT..eC4VVnc6NbWaq_L
- Mr2bOHIryUCP.qo3oSGT7jrnNQ4Tv3OJDSlJZWcCz0LQEBGtGrkr5xegqgLtnoNXvCssr31GRozz
- gN005oHtmPy5eH1EZkTtx1M7Gz5.IKKMPCXZ5LGeJML5tRVy9AWQxp5lX_5CMlzFhyibPgUGi9LR
- BF8Vajr5yh97X6rzAOnIOckonNdkQyWRIuDSYixwQMP7XzdmrrYk79pIUgqB8H60B2FIvsjfKD5R
- l_IYZ_dZLMJ5dNmSs8.NcS1mV4GX7BdaodJXYZq1K4MD7EVFFJ04ybNSSwsTWV9j6YZKB85mxJar
- pXwRLvXQK8FzmSJ7Mb6Tq2z1.VtDYB1v2hOMducQQ12PP3mjWd2HYQvOgqBE7hCa5kqLSd8kQ7Bd
- M7i_GVuIQH9WSE_R9mSI89zHGMH24l6hc3Ig.b7i3R9Aht8Nci0BTeML5nOprafi6Fkb6z3VHIys
- sUAGHO55Y2h5Pe5mc4KOuN0G68IeGoGawKA.0d.UKiPMMdxe2ZuC0BWShlH5iZfWgQC1qNgVuJqe
- FgJFPYXe7y8HCkqklwZyGwhpe86OkSa390EyEFyCOHqOMlSth7XiOCUIdxI_mYT5h9VaCqrIZeoS
- t4w2NonhvVZI4tbV20Ytl5g.VVmjl1wjMqzj2xwGzrDYS5mAZ44M3H7tDBkZksnsoPdoz.x6x11G
- rvfiZixYchKYZsFUxOr3WO2UiOTMlJYd8yS4NC9eJ5hVWetnPoCa5EcCwwmBOTFkdLrDmAS0VhuD
- wqRPssrf4rJ7lJprdLziI5lZxEuV9AjEBx61CAzMhNvRVZJhI3wRENPpd6amAE3K53.HMjjwY5TA
- rhNb_m3KSlOcLK3WSeS.JUpjOBCHPfAgXLBdcvH0.LfmGVnLGlzAN.6cvffkeBHL9SDx_JQ6MZMv
- r32puXUCaqd2M6kAXstBWlsxNazPtWW0WyKEtD.A6epsaVeTXk6iNPLRxN5xCaXyZ1J.Yj71LPtS
- EmyHs0X3T7MSTgEUI5H92AY_ONrlBWnbSmdOk9d0AN2Pkrj7GPNw3bi0wzFPchsCqkUxejO2KlGN
- ReixQqwNpnhruPswKUHoxMojY75XYCJWrWz0Tphft_DsL529CGzKD7wnDgLktSfEVEzBCzJOq.2C
- FktretqsYCkfrAYwRPI2AFE02VsUoBGHeRKfv1ATxxyIyyP4wpNC2tucBriI3_vDnXEGdE75v3eQ
- z0DfJ1dF2t8Z8jhd1ApFFQaC4BsSPZIxWe9dC_lmeqUgGQGOMvcuFN7FlJ5lzasBpbP9yx8bhvXu
- cc1G6KZF7Ew.iGNU6esZnuAFrgr66dtw9P9b14qxTBwrOyJBzsq.ipPPSosa_TIJ4YHdIhdMo8N3
- Cw4j74AihIsCg150KpQ48QC4I0q_lY82cq3kDUKvA8B55OPjW5bKepKcxJWWpRiBXn9P.rgAzG7b
- ZagNnBMsfNfg5EV3u4P0rqgBMEia6cQLbQEUbScDEjB4KEN_kx4KlhzrIVc5fBgF18dxgUGpI1aY
- HFpQsYfPjGsLqVBvBc8LZl42At8Gt4m2YHVLBWCJPxC9TE0rfcwzPkWPevyy8kE7fNhP5lpQqANO
- Fefz4FKrLD2OwR6hDnnIWyb92ru22Hokk77jelyiRuZhgQ6DlUvuOZnalYISpjg7zyq9w6KMbtpg
- mg2EyBXe6vAPZgiolrQjFoXaCRvNLoPMLEhg2SzfePcMKcyiizbKKfnaZ5tk9ZRxWtf9M3UVt0Ds
- ypnw2Iw9X2ecIrwEl6iPTPbq9VvBKDelLNGr_6ujN6mjpV8U4Elb6132EdclVmcc5u5AuWz1lLWh
- WVGI.FR2LF4sAInFbD9lW9d4d4ZOhiGPbeNrNxuJNlui6AtUqMyGJfar3Ni2LZBvcnovcxzhj6Du
- woOHuP3sWOm5T2kRagJI8RBdazpZ4KmxpzyJdoS2CP99LADeT9FH3LKX1U4hhBGiDRO0.bKPzbfv
- RHnbGbCQ.eSw-
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Wed, 15 Jun 2022 15:55:34 +0000
-Received: by hermes--canary-production-ne1-799d7bd497-fg7z7 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 75078b18cfc3ccad112c2b90a6626809;
-          Wed, 15 Jun 2022 15:55:31 +0000 (UTC)
-Message-ID: <1c4b1c0d-12f6-6e9e-a6a3-cdce7418110c@schaufler-ca.com>
-Date:   Wed, 15 Jun 2022 08:55:30 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v3] cred: Propagate security_prepare_creds() error code
+        Wed, 15 Jun 2022 12:03:40 -0400
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B16F9237EF;
+        Wed, 15 Jun 2022 09:03:37 -0700 (PDT)
+Received: from fraeml703-chm.china.huawei.com (unknown [172.18.147.226])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4LNVRp2wCgz683yD;
+        Thu, 16 Jun 2022 00:01:58 +0800 (CST)
+Received: from fraeml714-chm.china.huawei.com (10.206.15.33) by
+ fraeml703-chm.china.huawei.com (10.206.15.52) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.2375.24; Wed, 15 Jun 2022 18:03:35 +0200
+Received: from fraeml714-chm.china.huawei.com ([10.206.15.33]) by
+ fraeml714-chm.china.huawei.com ([10.206.15.33]) with mapi id 15.01.2375.024;
+ Wed, 15 Jun 2022 18:03:35 +0200
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     Alexander Lobakin <alexandr.lobakin@intel.com>
+CC:     "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "initramfs@vger.kernel.org" <initramfs@vger.kernel.org>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bug-cpio@gnu.org" <bug-cpio@gnu.org>,
+        "zohar@linux.vnet.ibm.com" <zohar@linux.vnet.ibm.com>,
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@huawei.com>,
+        "takondra@cisco.com" <takondra@cisco.com>,
+        "kamensky@cisco.com" <kamensky@cisco.com>,
+        "hpa@zytor.com" <hpa@zytor.com>, "arnd@arndb.de" <arnd@arndb.de>,
+        "rob@landley.net" <rob@landley.net>,
+        "james.w.mcmechan@gmail.com" <james.w.mcmechan@gmail.com>,
+        "niveditas98@gmail.com" <niveditas98@gmail.com>
+Subject: RE: [PATCH v4 0/3] initramfs: add support for xattrs in the initial
+ ram disk
+Thread-Topic: [PATCH v4 0/3] initramfs: add support for xattrs in the initial
+ ram disk
+Thread-Index: AQHYgM+mPH1HC/8x8Uq7oovD5MPpKK1QoLWg
+Date:   Wed, 15 Jun 2022 16:03:35 +0000
+Message-ID: <d6479ebe656d4a75909b556d4cbcee22@huawei.com>
+References: <20190523121803.21638-1-roberto.sassu@huawei.com>
+ <20220615155034.1271240-1-alexandr.lobakin@intel.com>
+In-Reply-To: <20220615155034.1271240-1-alexandr.lobakin@intel.com>
+Accept-Language: en-US
 Content-Language: en-US
-To:     Paul Moore <paul@paul-moore.com>,
-        Ignat Korchagin <ignat@cloudflare.com>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Frederick Lawler <fred@cloudflare.com>,
-        linux-doc@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>, linux-aio@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-cachefs@redhat.com,
-        linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-        linux-mm@kvack.org, linux-nfs@vger.kernel.org,
-        linux-unionfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        netdev <netdev@vger.kernel.org>, keyrings@vger.kernel.org,
-        selinux@vger.kernel.org, serge@hallyn.com, amir73il@gmail.com,
-        kernel-team <kernel-team@cloudflare.com>,
-        Jeff Moyer <jmoyer@redhat.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
-References: <20220608150942.776446-1-fred@cloudflare.com>
- <87tu8oze94.fsf@email.froward.int.ebiederm.org>
- <e1b62234-9b8a-e7c2-2946-5ef9f6f23a08@cloudflare.com>
- <87y1xzyhub.fsf@email.froward.int.ebiederm.org>
- <859cb593-9e96-5846-2191-6613677b07c5@cloudflare.com>
- <87o7yvxl4x.fsf@email.froward.int.ebiederm.org>
- <9ed91f15-420c-3db6-8b3b-85438b02bf97@cloudflare.com>
- <20220615103031.qkzae4xr34wysj4b@wittgenstein>
- <CAHC9VhR8yPHZb2sCu4JGgXOSs7rudm=9opB+-LsG6_Lta9466A@mail.gmail.com>
- <CALrw=nGZtrNYn+CV+Q_w-2=Va_9m3C8PDvvPtd01d0tS=2NMWQ@mail.gmail.com>
- <CAHC9VhRSzXeAZmBdNSAFEh=6XR57ecO7Ov+6BV9b0xVN1YR_Qw@mail.gmail.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAHC9VhRSzXeAZmBdNSAFEh=6XR57ecO7Ov+6BV9b0xVN1YR_Qw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.20280 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
-X-Spam-Status: No, score=-3.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,
-        T_SCC_BODY_TEXT_LINE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.204.63.21]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 6/15/2022 8:33 AM, Paul Moore wrote:
-> On Wed, Jun 15, 2022 at 11:06 AM Ignat Korchagin <ignat@cloudflare.com> wrote:
->> On Wed, Jun 15, 2022 at 3:14 PM Paul Moore <paul@paul-moore.com> wrote:
->>> On Wed, Jun 15, 2022 at 6:30 AM Christian Brauner <brauner@kernel.org> wrote:
-> ...
->
->>>> Fwiw, from this commit it wasn't very clear what you wanted to achieve
->>>> with this. It might be worth considering adding a new security hook for
->>>> this. Within msft it recently came up SELinux might have an interest in
->>>> something like this as well.
->>> Just to clarify things a bit, I believe SELinux would have an interest
->>> in a LSM hook capable of implementing an access control point for user
->>> namespaces regardless of Microsoft's current needs.  I suspect due to
->>> the security relevant nature of user namespaces most other LSMs would
->>> be interested as well; it seems like a well crafted hook would be
->>> welcome by most folks I think.
->> Just to get the full picture: is there actually a good reason not to
->> make this hook support this scenario? I understand it was not
->> originally intended for this, but it is well positioned in the code,
->> covers multiple subsystems (not only user namespaces), doesn't require
->> changing the LSM interface and it already does the job - just the
->> kernel internals need to respect the error code better. What bad
->> things can happen if we extend its use case to not only allocate
->> resources in LSMs?
-> My concern is that the security_prepare_creds() hook, while only
-> called from two different functions, ends up being called for a
-> variety of different uses (look at the prepare_creds() and
-> perpare_kernel_cred() callers) and I think it would be a challenge to
-> identify the proper calling context in the LSM hook implementation
-> given the current hook parameters.  One might be able to modify the
-> hook to pass the necessary information, but I don't think that would
-> be any cleaner than adding a userns specific hook.  I'm also guessing
-> that the modified security_prepare_creds() hook implementations would
-> also be more likely to encounter future maintenance issues as
-> overriding credentials in the kernel seems only to be increasing, and
-> each future caller would risk using the modified hook wrong by passing
-> the wrong context and triggering the wrong behavior in the LSM.
+> From: Alexander Lobakin [mailto:alexandr.lobakin@intel.com]
+> Sent: Wednesday, June 15, 2022 5:51 PM
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+> Date: Thu, 23 May 2019 14:18:00 +0200
+> 
+> > This patch set aims at solving the following use case: appraise files from
+> > the initial ram disk. To do that, IMA checks the signature/hash from the
+> 
+> Hi,
+> is this[0] relatable somehow?
 
-We don't usually have hooks that do both attribute management and
-access control. Some people seem excessively concerned about "cluttering"
-calling code with security_something() instances, but for the most
-part I think we're past that. I agree that making security_prepare_creds()
-multi-purpose is a bad idea. Shared cred management isn't simple, and
-adding access checks there is only going to make it worse.
+Hi Alexander
 
+seems a separate problem. For that, we opted for having a dedicated
+kernel option:
+
+https://github.com/openeuler-mirror/kernel/commit/18a502f7e3b1de7b9ba0c70896ce08ee13d052da
+
+Thanks
+
+Roberto
+
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Li Peng, Yang Xi, Li He
+
+> > security.ima xattr. Unfortunately, this use case cannot be implemented
+> > currently, as the CPIO format does not support xattrs.
+> >
+> > This proposal consists in including file metadata as additional files named
+> > METADATA!!!, for each file added to the ram disk. The CPIO parser in the
+> > kernel recognizes these special files from the file name, and calls the
+> > appropriate parser to add metadata to the previously extracted file. It has
+> > been proposed to use bit 17:16 of the file mode as a way to recognize files
+> > with metadata, but both the kernel and the cpio tool declare the file mode
+> > as unsigned short.
+> >
+> > The difference from v2, v3 (https://lkml.org/lkml/2019/5/9/230,
+> > https://lkml.org/lkml/2019/5/17/466) is that file metadata are stored in
+> > separate files instead of a single file. Given that files with metadata
+> > must immediately follow the files metadata will be added to, image
+> > generators have to be modified in this version.
+> >
+> > The difference from v1 (https://lkml.org/lkml/2018/11/22/1182) is that
+> > all files have the same name. The file metadata are added to is always the
+> > previous one, and the image generator in user space will make sure that
+> > files are in the correct sequence.
+> >
+> > The difference with another proposal
+> > (https://lore.kernel.org/patchwork/cover/888071/) is that xattrs can be
+> > included in an image without changing the image format. Files with metadata
+> > will appear as regular files. It will be task of the parser in the kernel
+> > to process them.
+> >
+> > This patch set extends the format of data defined in patch 9/15 of the last
+> > proposal. It adds header version and type, so that new formats can be
+> > defined and arbitrary metadata types can be processed.
+> >
+> > The changes introduced by this patch set don't cause any compatibility
+> > issue: kernels without the metadata parser simply extract the special files
+> > and don't process metadata; kernels with the metadata parser don't process
+> > metadata if the special files are not included in the image.
+> >
+> > >>From the kernel space perspective, backporting this functionality to older
+> > kernels should be very easy. It is sufficient to add two calls to the new
+> > function do_process_metadata() in do_copy(), and to check the file name in
+> > do_name(). From the user space perspective, unlike the previous version of
+> > the patch set, it is required to modify the image generators in order to
+> > include metadata as separate files.
+> >
+> > Changelog
+> >
+> > v3:
+> > - include file metadata as separate files named METADATA!!!
+> > - add the possibility to include in the ram disk arbitrary metadata types
+> >
+> > v2:
+> > - replace ksys_lsetxattr() with kern_path() and vfs_setxattr()
+> >   (suggested by Jann Horn)
+> > - replace ksys_open()/ksys_read()/ksys_close() with
+> >   filp_open()/kernel_read()/fput()
+> >   (suggested by Jann Horn)
+> > - use path variable instead of name_buf in do_readxattrs()
+> > - set last byte of str to 0 in do_readxattrs()
+> > - call do_readxattrs() in do_name() before replacing an existing
+> >   .xattr-list
+> > - pass pathname to do_setxattrs()
+> >
+> > v1:
+> > - move xattr unmarshaling to CPIO parser
+> >
+> >
+> > Mimi Zohar (1):
+> >   initramfs: add file metadata
+> >
+> > Roberto Sassu (2):
+> >   initramfs: read metadata from special file METADATA!!!
+> >   gen_init_cpio: add support for file metadata
+> >
+> >  include/linux/initramfs.h |  21 ++++++
+> >  init/initramfs.c          | 137 +++++++++++++++++++++++++++++++++++++-
+> >  usr/Kconfig               |   8 +++
+> >  usr/Makefile              |   4 +-
+> >  usr/gen_init_cpio.c       | 137 ++++++++++++++++++++++++++++++++++++--
+> >  usr/gen_initramfs_list.sh |  10 ++-
+> >  6 files changed, 305 insertions(+), 12 deletions(-)
+> >  create mode 100644 include/linux/initramfs.h
+> >
+> > --
+> > 2.17.1
+> 
+> [0] https://lore.kernel.org/all/20210702233727.21301-1-alobakin@pm.me
+> 
+> Thanks,
+> Olek
