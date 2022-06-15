@@ -2,160 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DD71054C5F5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jun 2022 12:22:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7A16054C62D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 15 Jun 2022 12:31:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347515AbiFOKWa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 15 Jun 2022 06:22:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38318 "EHLO
+        id S1348720AbiFOKbQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 15 Jun 2022 06:31:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244130AbiFOKWO (ORCPT
+        with ESMTP id S1348390AbiFOKbH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 15 Jun 2022 06:22:14 -0400
-Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A994349F12;
-        Wed, 15 Jun 2022 03:21:04 -0700 (PDT)
-Received: by mail-ej1-x629.google.com with SMTP id m20so22214541ejj.10;
-        Wed, 15 Jun 2022 03:21:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ht5yNJv6U/VAL82aX6i5nQDIRsBdgWpM9aDfCPLHOJc=;
-        b=aHOydtVyEBWVd0DRrbNy5j5N5WGuuowKT9sw4hEBJ6TZItYU5k6sA4MlZXrtRvYeAg
-         XISZ8sfOJaaSbM+n74oZ7e9+3yw23r2pPbIr5lR2bP87N2rSoDMV/pEjtXWqLGFZRuVE
-         /D6Eq0e6e43r6vq56RwXwL1alkxk2fjzVw60uZRKFOfILAgja+Ci/AkvFrDG5T4r0GMB
-         D66v263NUoGpWEmgwuSt2a/hPVPdYBvGFUmj9kZtztDkEtS09Zzg99jbkgr4LyQ03NmR
-         GGf7OyBFh4iy2GygxhM1tiXUqWDzLJOyY3T6Ct0dujnFaMHHgof3ogGi4Ssya/0gIad9
-         UVgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ht5yNJv6U/VAL82aX6i5nQDIRsBdgWpM9aDfCPLHOJc=;
-        b=NeA7wIMlr7YWgt1GZn210IMU72XjM+qBF/FW2tqgGiPchQXBi6zdC1pFGtFxI77KHE
-         D1JC85Ry9lJR83YSKV+/m0bg5WRo0k8rcSXTYa+RnB59Csm6Y7xweMhrJeLobGciDo/T
-         JBtrx/DgooTXOycgtVkxQllQenNahEqJSmdspGVtjPYqnwRafhFz6pUhPXrBC/DBydNs
-         Y32ldMfI4s8KP104eX6O3y0jyhSzxKiUM3JTsQsNr0t+cKqIco6Wc2z6pxh3R3ql5w++
-         AurWgwweAjypqShVCzVKHah47b4MsoSLkGbKXGLTyYGBFMX/5CjJ938qa2wh0pzX/aa3
-         gmRQ==
-X-Gm-Message-State: AJIora+pHiiL8lIXrurTT+iRytWDLhyttfroi5m6BUkwbz9Egj/I7o/w
-        SdI2MusoW6AqBfZrcNfr8Q1qzrl59Tao068Wwf0=
-X-Google-Smtp-Source: ABdhPJwA0YhVpMtFFLsm5nOXKfp12AEPXdYN/grs2h9+q/PZbwjRdUwlAdKtIvQXKw6771NyM4E7VhAj/uqpfTbYbQA=
-X-Received: by 2002:a17:906:739d:b0:713:c3f4:6ef with SMTP id
- f29-20020a170906739d00b00713c3f406efmr8110222ejl.180.1655288457343; Wed, 15
- Jun 2022 03:20:57 -0700 (PDT)
+        Wed, 15 Jun 2022 06:31:07 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 11CF3522C1;
+        Wed, 15 Jun 2022 03:30:41 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9C2386124F;
+        Wed, 15 Jun 2022 10:30:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 573BAC34115;
+        Wed, 15 Jun 2022 10:30:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1655289040;
+        bh=YafxQjI7ufgKbi/etVjbtyfiMqolpy9uY6amJmgj0/U=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=LJ8R0L3Z4Jmi1KlcuklT1wWOVBxnXRyLMSAm0VAIF4BW7eGhh8KQQBVeovw7amJcV
+         VTY91dFe4RUXbAByaUghGetxipTYk7lXMAaZNn9r5zpUEiaffGRHXtHTcDT0ewykbm
+         lp7wcl8Nh9YzrKgMga8EuiiA9tNraPvKFrsi2wd/4Zj2n9vUv3m1a02J2pEfWq5oR6
+         OmspHS3307xy9oukdHKKAWkTuxsr5Jh4ZzKMrjUwwfJblDjFQU9dlYJDPWL/5hb1NJ
+         fbm3aZNkiQe4NGdOl/RRiPPNcwSDPXPC8hGOS7T5zPjIa7Ot4UK1c9K5SjhClCe0m4
+         Fm2YpZs6kb3aQ==
+Date:   Wed, 15 Jun 2022 12:30:31 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Frederick Lawler <fred@cloudflare.com>
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-cachefs@redhat.com, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, linux-mm@kvack.org,
+        linux-nfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+        keyrings@vger.kernel.org, selinux@vger.kernel.org,
+        serge@hallyn.com, amir73il@gmail.com, kernel-team@cloudflare.com,
+        Jeff Moyer <jmoyer@redhat.com>,
+        Paul Moore <paul@paul-moore.com>
+Subject: Re: [PATCH v3] cred: Propagate security_prepare_creds() error code
+Message-ID: <20220615103031.qkzae4xr34wysj4b@wittgenstein>
+References: <20220608150942.776446-1-fred@cloudflare.com>
+ <87tu8oze94.fsf@email.froward.int.ebiederm.org>
+ <e1b62234-9b8a-e7c2-2946-5ef9f6f23a08@cloudflare.com>
+ <87y1xzyhub.fsf@email.froward.int.ebiederm.org>
+ <859cb593-9e96-5846-2191-6613677b07c5@cloudflare.com>
+ <87o7yvxl4x.fsf@email.froward.int.ebiederm.org>
+ <9ed91f15-420c-3db6-8b3b-85438b02bf97@cloudflare.com>
 MIME-Version: 1.0
-References: <20220615081212.GF36441@xsang-OptiPlex-9020>
-In-Reply-To: <20220615081212.GF36441@xsang-OptiPlex-9020>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 15 Jun 2022 13:20:44 +0300
-Message-ID: <CAOQ4uxgHPgFTWBOF34=UDtaCOk0EA6f=66szS-Ox62YNPx1b=A@mail.gmail.com>
-Subject: Re: [vfs] 0b398f980a: ltp.copy_file_range01.fail
-To:     kernel test robot <oliver.sang@intel.com>
-Cc:     Luis Henriques <lhenriques@suse.de>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>, lkp@lists.01.org,
-        kbuild test robot <lkp@intel.com>,
-        LTP List <ltp@lists.linux.it>, Petr Vorel <pvorel@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <9ed91f15-420c-3db6-8b3b-85438b02bf97@cloudflare.com>
+X-Spam-Status: No, score=-8.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,T_SCC_BODY_TEXT_LINE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jun 15, 2022 at 11:12 AM kernel test robot
-<oliver.sang@intel.com> wrote:
->
->
->
-> Greeting,
->
-> FYI, we noticed the following commit (built with gcc-11):
->
-> commit: 0b398f980a75ee5e5d7317a9d0e5860e4c79e9b8 ("vfs: fix copy_file_range() regression in cross-fs copies")
-> https://github.com/amir73il/linux copy-file-range-fixes
->
-> in testcase: ltp
-> version: ltp-x86_64-14c1f76-1_20220614
-> with following parameters:
->
->         disk: 1HDD
->         fs: ext4
->         test: syscalls-03
->         ucode: 0xec
->
-> test-description: The LTP testsuite contains a collection of tools for testing the Linux kernel and related features.
-> test-url: http://linux-test-project.github.io/
->
->
-> on test machine: 4 threads Intel(R) Core(TM) i5-6500 CPU @ 3.20GHz with 32G memory
->
-> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
->
->
->
->
-> If you fix the issue, kindly add following tag
-> Reported-by: kernel test robot <oliver.sang@intel.com>
->
->
-> <<<test_start>>>
-> tag=copy_file_range01 stime=1655248189
-> cmdline="copy_file_range01"
-> contacts=""
-> analysis=exit
-> <<<test_output>>>
-> tst_device.c:89: TINFO: Found free device 0 '/dev/loop0'
-> tst_test.c:1526: TINFO: Timeout per run is 0h 02m 30s
-> tst_supported_fs_types.c:89: TINFO: Kernel supports ext2
-> tst_supported_fs_types.c:51: TINFO: mkfs.ext2 does exist
-> tst_supported_fs_types.c:89: TINFO: Kernel supports ext3
-> tst_supported_fs_types.c:51: TINFO: mkfs.ext3 does exist
-> tst_supported_fs_types.c:89: TINFO: Kernel supports ext4
-> tst_supported_fs_types.c:51: TINFO: mkfs.ext4 does exist
-> tst_supported_fs_types.c:89: TINFO: Kernel supports xfs
-> tst_supported_fs_types.c:51: TINFO: mkfs.xfs does exist
-> tst_supported_fs_types.c:89: TINFO: Kernel supports btrfs
-> tst_supported_fs_types.c:51: TINFO: mkfs.btrfs does exist
-> tst_supported_fs_types.c:89: TINFO: Kernel supports vfat
-> tst_supported_fs_types.c:51: TINFO: mkfs.vfat does exist
-> tst_supported_fs_types.c:115: TINFO: Filesystem exfat is not supported
-> tst_supported_fs_types.c:119: TINFO: FUSE does support ntfs
-> tst_supported_fs_types.c:51: TINFO: mkfs.ntfs does exist
-> tst_supported_fs_types.c:89: TINFO: Kernel supports tmpfs
-> tst_supported_fs_types.c:38: TINFO: mkfs is not needed for tmpfs
-> tst_test.c:1599: TINFO: Testing on ext2
-> tst_test.c:1064: TINFO: Formatting /dev/loop0 with ext2 opts='' extra opts=''
-> mke2fs 1.46.2 (28-Feb-2021)
-> copy_file_range.h:36: TINFO: Testing libc copy_file_range()
-> copy_file_range01.c:133: TFAIL: copy_file_range() failed: EOPNOTSUPP (95)
-> copy_file_range01.c:133: TFAIL: copy_file_range() failed: EOPNOTSUPP (95)
->
-> ...
->
-> copy_file_range01.c:133: TFAIL: copy_file_range() failed: EOPNOTSUPP (95)
-> copy_file_range01.c:133: TFAIL: copy_file_range() failed: EOPNOTSUPP (95)
-> copy_file_range01.c:210: TFAIL: non cross-device copy_file_range failed 144 of 144 copy jobs.
+On Tue, Jun 14, 2022 at 01:59:08PM -0500, Frederick Lawler wrote:
+> On 6/14/22 11:30 AM, Eric W. Biederman wrote:
+> > Frederick Lawler <fred@cloudflare.com> writes:
+> > 
+> > > On 6/13/22 11:44 PM, Eric W. Biederman wrote:
+> > > > Frederick Lawler <fred@cloudflare.com> writes:
+> > > > 
+> > > > > Hi Eric,
+> > > > > 
+> > > > > On 6/13/22 12:04 PM, Eric W. Biederman wrote:
+> > > > > > Frederick Lawler <fred@cloudflare.com> writes:
+> > > > > > 
+> > > > > > > While experimenting with the security_prepare_creds() LSM hook, we
+> > > > > > > noticed that our EPERM error code was not propagated up the callstack.
+> > > > > > > Instead ENOMEM is always returned.  As a result, some tools may send a
+> > > > > > > confusing error message to the user:
+> > > > > > > 
+> > > > > > > $ unshare -rU
+> > > > > > > unshare: unshare failed: Cannot allocate memory
+> > > > > > > 
+> > > > > > > A user would think that the system didn't have enough memory, when
+> > > > > > > instead the action was denied.
+> > > > > > > 
+> > > > > > > This problem occurs because prepare_creds() and prepare_kernel_cred()
+> > > > > > > return NULL when security_prepare_creds() returns an error code. Later,
+> > > > > > > functions calling prepare_creds() and prepare_kernel_cred() return
+> > > > > > > ENOMEM because they assume that a NULL meant there was no memory
+> > > > > > > allocated.
+> > > > > > > 
+> > > > > > > Fix this by propagating an error code from security_prepare_creds() up
+> > > > > > > the callstack.
+> > > > > > Why would it make sense for security_prepare_creds to return an error
+> > > > > > code other than ENOMEM?
+> > > > > >    > That seems a bit of a violation of what that function is supposed to do
+> > > > > > 
+> > > > > 
+> > > > > The API allows LSM authors to decide what error code is returned from the
+> > > > > cred_prepare hook. security_task_alloc() is a similar hook, and has its return
+> > > > > code propagated.
+> > > > It is not an api.  It is an implementation detail of the linux kernel.
+> > > > It is a set of convenient functions that do a job.
+> > > > The general rule is we don't support cases without an in-tree user.  I
+> > > > don't see an in-tree user.
+> > > > 
+> > > > > I'm proposing we follow security_task_allocs() pattern, and add visibility for
+> > > > > failure cases in prepare_creds().
+> > > > I am asking why we would want to.  Especially as it is not an API, and I
+> > > > don't see any good reason for anything but an -ENOMEM failure to be
+> > > > supported.
+> > > > 
+> > > We're writing a LSM BPF policy, and not a new LSM. Our policy aims to solve
+> > > unprivileged unshare, similar to Debian's patch [1]. We're in a position such
+> > > that we can't use that patch because we can't block _all_ of our applications
+> > > from performing an unshare. We prefer a granular approach. LSM BPF seems like a
+> > > good choice.
+> > 
+> > I am quite puzzled why doesn't /proc/sys/user/max_user_namespaces work
+> > for you?
+> > 
+> 
+> We have the following requirements:
+> 
+> 1. Allow list criteria
+> 2. root user must be able to create namespaces whenever
+> 3. Everything else not in 1 & 2 must be denied
+> 
+> We use per task attributes to determine whether or not we allow/deny the
+> current call to unshare().
+> 
+> /proc/sys/user/max_user_namespaces limits are a bit broad for this level of
+> detail.
+> 
+> > > Because LSM BPF exposes these hooks, we should probably treat them as an
+> > > API. From that perspective, userspace expects unshare to return a EPERM
+> > > when the call is denied permissions.
+> > 
+> > The BPF code gets to be treated as a out of tree kernel module.
+> > 
+> > > > Without an in-tree user that cares it is probably better to go the
+> > > > opposite direction and remove the possibility of return anything but
+> > > > memory allocation failure.  That will make it clearer to implementors
+> > > > that a general error code is not supported and this is not a location
+> > > > to implement policy, this is only a hook to allocate state for the LSM.
+> > > > 
+> > > 
+> > > That's a good point, and it's possible we're using the wrong hook for the
+> > > policy. Do you know of other hooks we can look into?
 
-
-First of all, good catch! and thanks for testing my github branches :)
-I should not have changed the behavior for non cross-device copy.
-
-Second, the history of cross-device copy is hazy - old kernels do not support
-it then v5.3 does support it and now we want to un-support it again,
-so it's nice
-to see that the work that Petr did on this test to work correctly by first
-testing verify_cross_fs_copy_support() works as expected and the test passes
-with my fixed patch.
-
-Will post v15 soon...
-
-Thanks,
-Amir.
+Fwiw, from this commit it wasn't very clear what you wanted to achieve
+with this. It might be worth considering adding a new security hook for
+this. Within msft it recently came up SELinux might have an interest in
+something like this as well.
